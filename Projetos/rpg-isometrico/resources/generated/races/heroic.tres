@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="RaceDefinitionResource" format=3]
+
+[ext_resource type="Script" path="res://gameplay/content/race_definition_resource.gd" id="1_4kk5f"]
+
+[resource]
+script = ExtResource("1_4kk5f")
+id = &"heroic"
+display_name = "Heroico"
+description = "Linhagem base do slice G1, focada em combate direto e leitura clara."
+weapon_ids = PackedStringArray("heroic_hammer")
+skill_ids = PackedStringArray("hammer_impact", "heroic_rally", "seismic_ring", "breaker_leap")
+potion_ids = PackedStringArray("vital_flask", "bastion_tonic")

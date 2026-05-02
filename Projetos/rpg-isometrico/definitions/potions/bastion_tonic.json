@@ -1,0 +1,10 @@
+{
+  "id": "bastion_tonic",
+  "race_id": "heroic",
+  "display_name": "Tonico de Baluarte",
+  "description": "Concede uma barreira curta para segurar a troca de golpes.",
+  "kind": "barrier",
+  "cooldown": 15.0,
+  "value": 42.0,
+  "duration": 4.0
+}

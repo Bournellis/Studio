@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://modes/campaign/campaign_root.gd" id="1_gg0xl"]
+
+[node name="Campaign" type="Node3D" unique_id=1436319717]
+script = ExtResource("1_gg0xl")

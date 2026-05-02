@@ -1,0 +1,69 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://modes/campaign/campaign_stage_scene.gd" id="1_ks6pf"]
+
+[node name="CampaignMission01Normal" type="Node3D" unique_id=917765775]
+script = ExtResource("1_ks6pf")
+stage_id = "mission_01"
+display_name = "Mapa 1 - Entrada Aquecida"
+objective_text = "Segure a entrada aquecida da forja enquanto a rota Normal traz a primeira investida completa."
+player_spawn_position = Vector3(-5, 1.05, -1.2)
+camera_offset = Vector3(8.2, 17.2, 8.2)
+camera_size = 13.2
+floor_size = Vector3(34, 1, 28)
+floor_color = Color(0.2, 0.17, 0.15, 1)
+floor_emission = Color(0.12, 0.06, 0.04, 1)
+wall_color = Color(0.3, 0.25, 0.22, 1)
+wall_emission = Color(0.11, 0.06, 0.05, 1)
+prop_specs_json = "[{
+\"albedo\": Color(0.32, 0.27, 0.24, 1),
+\"emission\": Color(0.14, 0.08, 0.05, 1),
+\"name\": \"NormalForgeRack\",
+\"position\": Vector3(6.4, 0.9, -3.6),
+\"size\": Vector3(2.6, 1.8, 1.4)
+}, {
+\"albedo\": Color(0.26, 0.22, 0.2, 1),
+\"emission\": Color(0.1, 0.05, 0.04, 1),
+\"name\": \"NormalCoalCrate\",
+\"position\": Vector3(5.8, 0.75, 3.4),
+\"size\": Vector3(2.2, 1.5, 1.8)
+}]"
+enemy_specs_json = "[{
+\"config\": {
+\"attack_cooldown\": 1.24,
+\"attack_damage\": 10.5,
+\"max_health\": 52.0,
+\"move_speed\": 3.05,
+\"orbit_sign\": -1
+},
+\"enemy_type\": \"troll\",
+\"position\": Vector3(2.2, 1.05, -4.4)
+}, {
+\"config\": {
+\"attack_cooldown\": 1.2,
+\"attack_damage\": 11.0,
+\"max_health\": 56.0,
+\"move_speed\": 3.1,
+\"orbit_sign\": 1
+},
+\"enemy_type\": \"troll\",
+\"position\": Vector3(4.8, 1.05, 0.4)
+}, {
+\"config\": {
+\"attack_cooldown\": 1.16,
+\"attack_damage\": 11.4,
+\"body_scale\": 1.08,
+\"max_health\": 60.0,
+\"move_speed\": 3.14,
+\"orbit_sign\": -1
+},
+\"enemy_type\": \"troll\",
+\"position\": Vector3(1.6, 1.05, 4.2)
+}]"
+reward_title = "Entrada Aquecida dominada"
+reward_summary_lines = PackedStringArray("A rota Normal segue para o proximo setor da forja sem novas recompensas permanentes.")
+reward_permanent_skill_unlock_ids = PackedStringArray()
+reward_permanent_potion_unlock_ids = PackedStringArray()
+reward_menu_unlock_mode_ids = PackedStringArray()
+reward_pending_level_increase = 1
+reward_pending_skill_points = 1

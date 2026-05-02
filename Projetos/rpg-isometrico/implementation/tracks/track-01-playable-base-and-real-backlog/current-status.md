@@ -1,0 +1,32 @@
+# Track 01 Current Status
+
+- Last Updated: `2026-04-26`
+- Track: `Track 01 - Playable Base And Real Backlog`
+- Status: `PRESERVED_BASELINE`
+- Starting Baseline: `accepted local Arena / Survival / Boss runtime with shared shell/results parity and clean return flow`
+- Current Goal: `preserve the accepted Godot B0 baseline and Track 01 backlog context for historical reference only; active implementation routing lives in Track 02 unless implementation/current-status.md says otherwise`
+- Immediate Outputs:
+  - `Godot-first read order fully inside D:\Estudio`
+  - `clear separation between canon, active work, and historical validation`
+  - `bounded backlog buckets for follow-up implementation threads`
+  - `first concrete thread candidate grounded in the accepted frontend/loadout baseline`
+  - `validated frontend/loadout UX tightening on top of the accepted local frontend`
+  - `validated shared results and return presentation tightening on top of the accepted overlay family`
+  - `validated local persistence tightening with saved-mode continuity and explicit stale-save handling`
+  - `validated in-mode polish on the shared combat shell without reopening accepted mode-foundation contracts`
+  - `defined Godot-first content surface that records C0, package-language rules, and the still-open content lanes`
+- Read Next:
+  - `backlog.md`
+  - `content-surface/current-godot-content-baseline.md`
+  - `content-surface/content-decision-rules.md`
+  - `content-surface/candidate-lanes.md`
+  - `implementation-map.md`
+  - `progress-log.md`
+- Validation Baseline:
+  - `tools/validate.gd`
+  - `GUT`
+  - `docs/g4-shared-mode-foundation-smoke.md`
+- Historical Context:
+  - `../../phase-g4/` for the accepted multi-mode baseline
+  - earlier `../../phase-g1/` through `../../phase-g3/` only when a question is truly historical
+- Next Gate: `None - Track 01 is preserved baseline context; choose future work through the active Track 02 status`

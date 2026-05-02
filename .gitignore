@@ -1,0 +1,15 @@
+# Workspace-local tools and caches
+.local-tools/
+
+# Generated builds and heavy temp exports
+builds/
+materiais/art-source/
+materiais/exports-temp/
+
+# Godot-generated files
+Projetos/rpg-isometrico/.godot/
+Projetos/rpg-isometrico/android/
+
+# OS/editor noise
+Thumbs.db
+Desktop.ini

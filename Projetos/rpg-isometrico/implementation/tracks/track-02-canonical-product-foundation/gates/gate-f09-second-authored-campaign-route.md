@@ -1,0 +1,67 @@
+# Gate F09 - Second Authored Campaign Route
+
+- Phase: `Phase 9 - Second Authored Campaign Route`
+- Status: `APPROVED`
+- Supersession Note: `This gate preserves the F09 implementation context. Later F10/F11 product realignment governs current mode hierarchy, Free replay framing, and PvP posture.`
+- Canon Review:
+  - campaigns remain authored 5-stage roguelite runs, with Stage 1 as the tutorial mission for the first campaign and Stage 5 reserved for the boss encounter
+  - `Easy` remains the intended entry point for permanent unlock progression
+  - the active `Lane C` posture remains authoritative here: deepen the current Heroic / Hammer baseline before opening new race or weapon breadth
+  - the approved F05 reward contract and F07 catalog-backed route contract remain authoritative and must not be reopened
+- Scope In:
+  - one second public authored route for `blacksmith_campaign`, implemented as `difficulty_id = normal`
+  - one frontend campaign difficulty selector that keeps `Easy` and `Normal` visible under the same `Campanha do Troll` surface
+  - one authored `blacksmith_campaign / normal` route in `definitions/campaigns/` with 5 stage references and boss-stage resolution through the existing catalog pipeline
+  - one second authored stage set for `Normal`, using the same Heroic / Hammer gameplay baseline with harder encounter tuning and route variation instead of new content breadth
+  - one per-route suspended-run contract so `Easy` and `Normal` runs do not overwrite each other
+  - one compatibility bridge that migrates or consumes the legacy campaign suspend key into the new route-specific key for existing `Easy` suspended runs
+- Scope Out:
+  - `Hard` difficulty
+  - new campaign ids beyond `blacksmith_campaign`
+  - new race, new weapon, new skill, or new potion breadth
+  - new permanent content unlocks tied to `Normal`
+  - co-op recovery rules
+  - shops, meta-currency, Steam services, or PvP promotion
+  - final production campaign art or narrative cutscene delivery
+- Acceptance:
+  - `Campanha do Troll` exposes `Easy` and `Normal` in the frontend under one campaign entry
+  - `Easy` remains selectable from the start and remains the only route that matters for the current permanent unlock ladder
+  - `Normal` is visible but disabled until `blacksmith_campaign / easy` is completed on the local profile
+  - launching `Normal` resolves the authored route `blacksmith_campaign / normal` from the generated campaign catalog, not from hardcoded frontend or runtime branches
+  - `blacksmith_campaign / normal` contains exactly 5 authored stages, with Stage 5 marked as the boss stage
+  - `Normal` stage rewards continue to use the F05 payload surface, but they grant no new permanent skills, potions, or menu unlocks in this phase
+  - `Easy` and `Normal` suspended runs are stored independently and resume independently
+  - an existing suspended `Easy` run saved under the old campaign-only key remains resumable after the route-specific suspend-key change
+  - completing `blacksmith_campaign / normal` persists completion for `difficulty_id = normal` without changing the current Boss unlock rule, which remains satisfied by `Easy`
+  - the current `blacksmith_campaign / easy` route remains behaviorally unchanged for rewards, unlocks, resume, and Boss gating
+- Contracts:
+  - `definitions/campaigns/blacksmith_campaign_normal.json`
+  - generated `CampaignCatalogResource` now contains both `blacksmith_campaign / easy` and `blacksmith_campaign / normal`
+  - `CampaignCatalogResource` or equivalent route-list API for frontend difficulty presentation
+  - `LocalModeLaunchRequest.parameters.difficulty_id`
+  - `FrontendRoot` campaign difficulty selection and route-specific resume messaging
+  - `ProgressionResolver.build_campaign_run_key(campaign_id, difficulty_id)`
+  - `ProfileStore` suspended-run compatibility path for legacy `campaign:<campaign_id>` keys
+  - `CampaignRoot` route-specific suspend/resume flow
+- Art Manifest:
+  - proxy difficulty chips or segmented controls for `Easy` and `Normal` in the campaign panel
+  - proxy route-variation treatment for the `Normal` stage set so it reads as a harder pass through the same forge campaign instead of a duplicate copy
+  - no final production UI or narrative art required before validation as long as the selected route and difficulty state are legible
+- Validation:
+  - `tools/validate.gd`
+  - GUT coverage for:
+    - generated catalog containing both `easy` and `normal`
+    - frontend difficulty visibility and lock state
+    - launch of `normal` through the catalog-backed route
+    - route-specific suspended-run keys for `easy` and `normal`
+    - legacy `easy` suspended-run compatibility after the key migration
+    - persistence of `completed_campaign_difficulties["blacksmith_campaign"]` including `normal`
+    - unchanged Boss unlock behavior tied to `easy`
+  - manual smoke through `docs/campaign-framework-smoke.md`, `docs/canonical-product-foundation-smoke.md`, and the B0 regression smoke
+- Resolved Defaults:
+  - the second authored public route is `blacksmith_campaign / normal`, not a brand-new campaign id
+  - `Normal` stays inside the current Heroic / Hammer content baseline and does not introduce new permanent unlock content
+  - `Normal` becomes visible immediately in the frontend but remains disabled until `Easy` is completed
+  - stage ids remain `mission_01` through `mission_05`; the `Normal` route uses distinct authored stage scene files while preserving the same stage-id vocabulary
+  - suspended campaign runs become keyed by both campaign and difficulty; legacy `Easy` suspend data is migrated forward on first compatible resume
+- Next Gate: `hard-route campaign expansion or first breadth-lane switch after the two-route campaign surface is validated`

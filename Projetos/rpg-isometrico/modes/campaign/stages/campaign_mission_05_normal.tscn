@@ -1,0 +1,40 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://modes/campaign/campaign_stage_scene.gd" id="1_tul43"]
+
+[node name="CampaignMission05Normal" type="Node3D" unique_id=700414687]
+script = ExtResource("1_tul43")
+stage_number = 5
+stage_id = "mission_05"
+display_name = "Mapa 5 - Chefe da Muralha"
+objective_text = "Derrote o Boss Troll no passe Normal da Campanha do Troll."
+is_boss_stage = true
+player_spawn_position = Vector3(0, 1.05, 10.2)
+floor_size = Vector3(40, 1, 40)
+floor_color = Color(0.18, 0.17, 0.19, 1)
+floor_emission = Color(0.15, 0.08, 0.08, 1)
+wall_color = Color(0.31, 0.27, 0.28, 1)
+wall_emission = Color(0.13, 0.08, 0.08, 1)
+prop_specs_json = "[{
+\"albedo\": Color(0.36, 0.31, 0.29, 1),
+\"emission\": Color(0.26, 0.11, 0.07, 1),
+\"name\": \"NormalBossTorchWest\",
+\"position\": Vector3(-11.2, 0.9, -1.8),
+\"size\": Vector3(1.4, 1.9, 1.4)
+}, {
+\"albedo\": Color(0.36, 0.31, 0.29, 1),
+\"emission\": Color(0.26, 0.11, 0.07, 1),
+\"name\": \"NormalBossTorchEast\",
+\"position\": Vector3(11.2, 0.9, 1.8),
+\"size\": Vector3(1.4, 1.9, 1.4)
+}]"
+enemy_specs_json = "[{
+\"boss_id\": \"boss_troll\",
+\"enemy_type\": \"boss_troll\",
+\"position\": Vector3(0, 1.05, 0)
+}]"
+reward_title = "Campanha Classica em Normal concluida"
+reward_summary_lines = PackedStringArray("A Campanha do Troll em Normal foi concluida.")
+reward_permanent_skill_unlock_ids = PackedStringArray()
+reward_permanent_potion_unlock_ids = PackedStringArray()
+reward_menu_unlock_mode_ids = PackedStringArray()

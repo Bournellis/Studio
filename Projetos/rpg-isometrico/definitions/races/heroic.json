@@ -1,0 +1,18 @@
+{
+  "id": "heroic",
+  "display_name": "Heroico",
+  "description": "Linhagem base do slice G1, focada em combate direto e leitura clara.",
+  "weapon_ids": [
+    "heroic_hammer"
+  ],
+  "skill_ids": [
+    "hammer_impact",
+    "heroic_rally",
+    "seismic_ring",
+    "breaker_leap"
+  ],
+  "potion_ids": [
+    "vital_flask",
+    "bastion_tonic"
+  ]
+}

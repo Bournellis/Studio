@@ -1,0 +1,42 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://modes/arena/arena_root.gd" id="1_vmmv5"]
+
+[node name="Arena" type="Node3D"]
+script = ExtResource("1_vmmv5")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+
+[node name="KeyLight" type="DirectionalLight3D" parent="."]
+
+[node name="FillLight" type="OmniLight3D" parent="."]
+
+[node name="ArenaFloor" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ArenaFloor"]
+
+[node name="FloorMesh" type="MeshInstance3D" parent="ArenaFloor"]
+
+[node name="ArenaRing" type="MeshInstance3D" parent="."]
+
+[node name="ArenaMarkers" type="Node3D" parent="."]
+
+[node name="Marker0" type="MeshInstance3D" parent="ArenaMarkers"]
+
+[node name="Marker1" type="MeshInstance3D" parent="ArenaMarkers"]
+
+[node name="Marker2" type="MeshInstance3D" parent="ArenaMarkers"]
+
+[node name="Marker3" type="MeshInstance3D" parent="ArenaMarkers"]
+
+[node name="PlayerSpawn" type="Marker3D" parent="."]
+
+[node name="BotSpawn" type="Marker3D" parent="."]
+
+[node name="ArenaCamera" type="Camera3D" parent="."]
+
+[node name="CombatReadabilityRoot" type="Node3D" parent="."]
+
+[node name="RuntimeRoot" type="Node3D" parent="."]
+
+[node name="PresentationRoot" type="Node" parent="."]

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Estúdio — Mapa de Arquitetura</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.10.0/dist/mermaid.min.js"></script>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #f7f6f2;
+  color: #1f2329;
+  padding: 24px;
+  line-height: 1.5;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.nav { margin-bottom: 16px; font-size: 13px; }
+.nav a { color: #4a5470; text-decoration: none; margin-right: 16px; }
+.nav a:hover { text-decoration: underline; }
+.header {
+  border-bottom: 2px solid #1f2329;
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+}
+.header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+.header .meta { color: #6b6f76; font-size: 13px; margin-top: 6px; }
+.section {
+  background: white;
+  border: 1px solid #e3e0d8;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 16px;
+}
+.section h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.section .desc { color: #6b6f76; font-size: 14px; margin-bottom: 18px; }
+.mermaid {
+  background: #faf9f5;
+  border-radius: 6px;
+  padding: 20px;
+  text-align: center;
+  overflow-x: auto;
+}
+.legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+.legend-item {
+  padding: 12px;
+  background: #faf9f5;
+  border-radius: 6px;
+  border-left: 4px solid #4a5470;
+}
+.legend-item .name { font-weight: 700; font-size: 14px; }
+.legend-item .desc { font-size: 12px; color: #6b6f76; margin-top: 4px; }
+.foundation { border-left-color: #4a5470; }
+.gameplay { border-left-color: #2c6b3f; }
+.presentation { border-left-color: #8a6a1a; }
+.composition { border-left-color: #6b4f8a; }
+.online { border-left-color: #8a4a4a; }
+.rule {
+  background: #fff3d4;
+  border: 1px solid #e3c97a;
+  border-radius: 6px;
+  padding: 14px;
+  font-size: 13px;
+  margin-top: 14px;
+}
+.rule strong { color: #6b4f0a; }
+</style>
+</head>
+<body>
+<div class="nav">
+  <a href="index.html">← Visual</a>
+  <a href="01-status-dashboard.html">Status</a>
+  <a href="03-roadmap.html">Roadmap</a>
+  <a href="04-folder-map.html">Estrutura</a>
+</div>
+<div class="header">
+  <h1>Mapa de Arquitetura</h1>
+  <div class="meta">Boundaries de software, modos do jogo, contrato de loadout · fonte: canon/architecture/</div>
+</div>
+
+<div class="section">
+  <h2>Boundaries compartilhados</h2>
+  <div class="desc">As 5 camadas canônicas e como dependem entre si. Setas indicam dependência permitida.</div>
+  <div class="mermaid">
+flowchart TB
+    Composition["Composition<br/><i>bootstraps · scene wiring<br/>launch contexts · session assembly</i>"]
+    Gameplay["Gameplay<br/><i>combat rules · loadout rules<br/>mode rules · enemies · bosses</i>"]
+    Presentation["Presentation<br/><i>HUD · camera · input<br/>UX flow · combat feedback</i>"]
+    Online["Online<br/><i>networking · persistence<br/>profile sync · platform adapters</i>"]
+    Foundation["Foundation<br/><i>identifiers · contracts<br/>snapshots · results · helpers</i>"]
+
+    Composition --> Gameplay
+    Composition --> Presentation
+    Composition --> Online
+    Gameplay --> Foundation
+    Presentation --> Foundation
+    Online --> Foundation
+
+    classDef foundation fill:#e6e9f0,stroke:#4a5470,stroke-width:2px,color:#1f2329
+    classDef gameplay fill:#e8f4ec,stroke:#2c6b3f,stroke-width:2px,color:#1f2329
+    classDef presentation fill:#fff3d4,stroke:#8a6a1a,stroke-width:2px,color:#1f2329
+    classDef composition fill:#ede4f0,stroke:#6b4f8a,stroke-width:2px,color:#1f2329
+    classDef online fill:#f0e0e0,stroke:#8a4a4a,stroke-width:2px,color:#1f2329
+
+    class Foundation foundation
+    class Gameplay gameplay
+    class Presentation presentation
+    class Composition composition
+    class Online online
+  </div>
+  <div class="legend">
+    <div class="legend-item foundation"><div class="name">Foundation</div><div class="desc">Identifiers, contratos, snapshots, results — base neutra.</div></div>
+    <div class="legend-item gameplay"><div class="name">Gameplay</div><div class="desc">Regras de combate, loadout, modos. Não depende de UI ou SDK.</div></div>
+    <div class="legend-item presentation"><div class="name">Presentation</div><div class="desc">HUD, câmera, input, feedback. Não decide regra.</div></div>
+    <div class="legend-item composition"><div class="name">Composition</div><div class="desc">Wiring de cenas e seams. Não vira "manager genérico".</div></div>
+    <div class="legend-item online"><div class="name">Online</div><div class="desc">Networking, save sync, plataforma. Não dona regra.</div></div>
+  </div>
+  <div class="rule">
+    <strong>Regras invariantes:</strong> Gameplay nunca depende de Presentation/SDK · Presentation nunca decide regra · Online nunca dona combate · Composition wira mas não vira manager genérico.
+  </div>
+</div>
+
+<div class="section">
+  <h2>Modos sobre runtime compartilhado</h2>
+  <div class="desc">Cada modo segue o Game Mode Standard (7 layers): Launch Context → Bootstrap → Session Manager → Game Loop → Simulation Context → HUD Presenter → Results Presenter.</div>
+  <div class="mermaid">
+flowchart LR
+    Shared["Shared Combat<br/>+ Loadout Foundation"]
+    Campaign["Campaign<br/><b>spine</b>"]
+    Survival["Survival<br/><i>extra</i>"]
+    Boss["Boss<br/><i>extra</i>"]
+    Arena["Arena Bot<br/><i>extra</i>"]
+    CoOp["Co-op Campaign<br/><i>future · optional</i>"]
+    Duel["Private Duel<br/><i>dev-only</i>"]
+
+    Shared --> Campaign
+    Shared --> Survival
+    Shared --> Boss
+    Shared --> Arena
+    Shared -.-> CoOp
+    Shared -.-> Duel
+
+    classDef primary fill:#e8f4ec,stroke:#2c6b3f,stroke-width:2px
+    classDef extra fill:#fff3d4,stroke:#8a6a1a,stroke-width:1px
+    classDef future fill:#f0e6e0,stroke:#b39c8c,stroke-width:1px,stroke-dasharray:5 5
+    classDef shared fill:#e6e9f0,stroke:#4a5470,stroke-width:2px
+
+    class Shared shared
+    class Campaign primary
+    class Survival,Boss,Arena extra
+    class CoOp,Duel future
+  </div>
+</div>
+
+<div class="section">
+  <h2>Game Mode Standard — 7 camadas</h2>
+  <div class="desc">Toda mode playable deve definir equivalentes claros destas camadas.</div>
+  <div class="mermaid">
+flowchart TB
+    LC["1. Launch Context<br/><i>loadout selecionado · params do modo</i>"]
+    BS["2. Bootstrap<br/><i>monta cena · wira seams</i>"]
+    SM["3. Session Manager<br/><i>state machine · loading/pre/in/end</i>"]
+    GL["4. Game Loop<br/><i>tick · win/loss · end conditions</i>"]
+    SC["5. Simulation Context<br/><i>emite eventos · não regra</i>"]
+    HP["6. HUD Presenter<br/><i>UI in-game</i>"]
+    RP["7. Results Presenter<br/><i>tela de fim</i>"]
+
+    LC --> BS --> SM --> GL --> SC
+    SC --> HP
+    SC --> RP
+
+    classDef layer fill:#faf9f5,stroke:#4a5470,stroke-width:1px
+    class LC,BS,SM,GL,SC,HP,RP layer
+  </div>
+</div>
+
+<div class="section">
+  <h2>Contrato de loadout</h2>
+  <div class="mermaid">
+flowchart LR
+    Race["Race<br/><i>identidade<br/>+ pool de conteúdo</i>"]
+    Weapon["1 Weapon<br/><i>basic attack<br/>+ movement skill</i>"]
+    Skills["4 Skills<br/><i>selecionadas pré-match<br/>upgradeáveis in-match</i>"]
+    Potions["2 Potions<br/><i>pré-match</i>"]
+
+    Race --> Weapon --> Skills --> Potions
+
+    classDef piece fill:#1f2329,stroke:#1f2329,color:#ffffff,stroke-width:1px
+    class Race,Weapon,Skills,Potions piece
+  </div>
+  <div class="rule">
+    <strong>Não existem:</strong> passive slots · weapon swap · second weapon. Qualquer seam legacy mencionando isso é compatibilidade histórica, não canon atual.
+  </div>
+</div>
+
+<div class="section">
+  <h2>Persistência e autoridade</h2>
+  <div class="mermaid">
+flowchart LR
+    Local["Save Local<br/><i>unlocks · mastery<br/>settings · loadouts</i>"]
+    Defs["Definitions<br/><i>JSON autorado<br/>+ resources Godot</i>"]
+    Cloud["Steam Cloud<br/><i>sync opcional</i>"]
+    LB["Steam Leaderboards<br/><i>submissão em result</i>"]
+    Game["Runtime"]
+
+    Defs --> Game
+    Local --> Game
+    Game -.-> Cloud
+    Game -.-> LB
+
+    classDef truth fill:#e6e9f0,stroke:#4a5470,stroke-width:2px
+    classDef optional fill:#faf9f5,stroke:#8a8a8a,stroke-width:1px,stroke-dasharray:5 5
+    class Local,Defs truth
+    class Cloud,LB optional
+    class Game truth
+  </div>
+  <div class="rule">
+    <strong>Regras:</strong> PvE não depende de backend always-online · gameplay não bloqueia esperando cloud/leaderboard · result submission só em boundary natural · solo roda 100% local · co-op futuro usa host authority sem servidor dedicado.
+  </div>
+</div>
+
+<script>
+  mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+</script>
+</body>
+</html>

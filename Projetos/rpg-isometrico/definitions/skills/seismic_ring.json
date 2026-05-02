@@ -1,0 +1,13 @@
+{
+  "id": "seismic_ring",
+  "race_id": "heroic",
+  "weapon_id": "heroic_hammer",
+  "display_name": "Anel Sismico",
+  "description": "Explosao em area curta ao redor do heroi para punir aproximacao do bot.",
+  "kind": "area_burst",
+  "cooldown": 5.2,
+  "damage": 28.0,
+  "range": 3.4,
+  "duration": 0.0,
+  "value": 0.0
+}

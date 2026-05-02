@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Estúdio — Visual</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #f7f6f2;
+  color: #1f2329;
+  padding: 40px 24px;
+  line-height: 1.5;
+  max-width: 1000px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+.header {
+  border-bottom: 2px solid #1f2329;
+  padding-bottom: 16px;
+  margin-bottom: 32px;
+}
+.header h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.5px; }
+.header .meta { color: #6b6f76; font-size: 14px; margin-top: 8px; }
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+a.card {
+  display: block;
+  background: white;
+  border: 1px solid #e3e0d8;
+  border-radius: 8px;
+  padding: 24px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+a.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  border-color: #4a5470;
+}
+a.card .num {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #8a8a8a;
+  font-weight: 600;
+}
+a.card h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-top: 6px;
+  margin-bottom: 10px;
+}
+a.card p {
+  font-size: 14px;
+  color: #6b6f76;
+  margin-bottom: 14px;
+}
+a.card .source {
+  font-size: 11px;
+  font-family: ui-monospace, "SF Mono", monospace;
+  color: #4a5470;
+  background: #faf9f5;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+}
+.footer {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid #e3e0d8;
+  font-size: 12px;
+  color: #6b6f76;
+}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Estúdio — Visual</h1>
+  <div class="meta">Visualizações do projeto RPG Isométrico · D:\Estudio\Visual</div>
+</div>
+
+<div class="cards">
+  <a class="card" href="01-status-dashboard.html">
+    <div class="num">01</div>
+    <h2>Status do Projeto</h2>
+    <p>Track ativo, F-gates concluídos, modos disponíveis, contrato de loadout, conteúdo autorado, próximos passos.</p>
+    <span class="source">implementation/current-status.md</span>
+  </a>
+  <a class="card" href="02-architecture-map.html">
+    <div class="num">02</div>
+    <h2>Mapa de Arquitetura</h2>
+    <p>5 boundaries (Foundation, Gameplay, Presentation, Composition, Online), 7-layer game mode standard, contrato de loadout, modelo de persistência.</p>
+    <span class="source">canon/architecture/</span>
+  </a>
+  <a class="card" href="03-roadmap.html">
+    <div class="num">03</div>
+    <h2>Roadmap</h2>
+    <p>Phases G1-G4 históricas, Track 02 atual, F-gates, release horizons (R1 → next → later → long), princípios de evolução.</p>
+    <span class="source">canon/roadmap/</span>
+  </a>
+  <a class="card" href="04-folder-map.html">
+    <div class="num">04</div>
+    <h2>Mapa de Pastas</h2>
+    <p>Árvore navegável de canon/, Projetos/, migration/, materiais/. Read order canônico e papéis de cada pasta.</p>
+    <span class="source">D:\Estudio (raiz)</span>
+  </a>
+</div>
+
+<div class="footer">
+  Como atualizar: peça pra mim "atualiza os visuais do Estúdio" depois de mudanças importantes em <code>canon/</code> ou <code>implementation/current-status.md</code>.
+</div>
+</body>
+</html>

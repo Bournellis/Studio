@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="SkillDefinitionResource" format=3]
+
+[ext_resource type="Script" path="res://gameplay/content/skill_definition_resource.gd" id="1_6o6ja"]
+
+[resource]
+script = ExtResource("1_6o6ja")
+id = &"seismic_ring"
+race_id = &"heroic"
+weapon_id = &"heroic_hammer"
+display_name = "Anel Sismico"
+description = "Explosao em area curta ao redor do heroi para punir aproximacao do bot."
+kind = 2
+cooldown = 5.2
+damage = 28.0
+range = 3.4

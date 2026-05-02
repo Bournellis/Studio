@@ -1,0 +1,83 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://modes/campaign/campaign_stage_scene.gd" id="1_hpf4n"]
+
+[node name="CampaignMission03Normal" type="Node3D" unique_id=1565712216]
+script = ExtResource("1_hpf4n")
+stage_number = 3
+stage_id = "mission_03"
+display_name = "Mapa 3 - Cruzamento das Tenazes"
+objective_text = "Segure o cruzamento das tenazes antes que os trolls fechem o arco central da forja."
+player_spawn_position = Vector3(0, 1.05, -10.2)
+floor_size = Vector3(42, 1, 36)
+floor_color = Color(0.16, 0.16, 0.18, 1)
+floor_emission = Color(0.1, 0.05, 0.06, 1)
+wall_color = Color(0.24, 0.23, 0.26, 1)
+wall_emission = Color(0.09, 0.05, 0.06, 1)
+prop_specs_json = "[{
+\"albedo\": Color(0.33, 0.33, 0.35, 1),
+\"emission\": Color(0.11, 0.07, 0.06, 1),
+\"name\": \"ClampBlockWest\",
+\"position\": Vector3(-8.4, 0.8, -0.4),
+\"size\": Vector3(2.8, 1.6, 2.2)
+}, {
+\"albedo\": Color(0.33, 0.33, 0.35, 1),
+\"emission\": Color(0.11, 0.07, 0.06, 1),
+\"name\": \"ClampBlockEast\",
+\"position\": Vector3(8.4, 0.8, 0.6),
+\"size\": Vector3(2.8, 1.6, 2.2)
+}]"
+enemy_specs_json = "[{
+\"config\": {
+\"attack_damage\": 13.2,
+\"max_health\": 88.0,
+\"move_speed\": 3.2,
+\"orbit_sign\": 1
+},
+\"enemy_type\": \"troll\",
+\"position\": Vector3(-9, 1.05, 4.2)
+}, {
+\"config\": {
+\"attack_damage\": 13.6,
+\"max_health\": 92.0,
+\"move_speed\": 3.22,
+\"orbit_sign\": -1
+},
+\"enemy_type\": \"troll\",
+\"position\": Vector3(-4, 1.05, 7)
+}, {
+\"config\": {
+\"attack_damage\": 14.0,
+\"max_health\": 96.0,
+\"move_speed\": 3.24,
+\"orbit_sign\": 1
+},
+\"enemy_type\": \"troll\",
+\"position\": Vector3(0, 1.05, 8)
+}, {
+\"config\": {
+\"attack_damage\": 14.3,
+\"max_health\": 98.0,
+\"move_speed\": 3.24,
+\"orbit_sign\": -1
+},
+\"enemy_type\": \"troll\",
+\"position\": Vector3(4, 1.05, 7)
+}, {
+\"config\": {
+\"attack_damage\": 14.8,
+\"body_scale\": 1.22,
+\"max_health\": 104.0,
+\"move_speed\": 3.26,
+\"orbit_sign\": 1
+},
+\"enemy_type\": \"troll\",
+\"position\": Vector3(9.2, 1.05, 4)
+}]"
+reward_title = "Cruzamento das Tenazes seguro"
+reward_summary_lines = PackedStringArray("A reta final da rota Normal ja esta aberta.")
+reward_permanent_skill_unlock_ids = PackedStringArray()
+reward_permanent_potion_unlock_ids = PackedStringArray()
+reward_menu_unlock_mode_ids = PackedStringArray()
+reward_pending_level_increase = 1
+reward_pending_skill_points = 1

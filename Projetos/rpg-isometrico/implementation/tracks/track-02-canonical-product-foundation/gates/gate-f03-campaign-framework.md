@@ -1,0 +1,46 @@
+# Gate F03 - Campaign Framework
+
+- Phase: `Phase 3 - First Campaign Framework`
+- Status: `APPROVED`
+- Supersession Note: `This gate preserves the F03 implementation context. Later F10/F11 product realignment supersedes its frontend/PvP framing: Campaign is now primary, Extras are secondary, and Arena PvP / Private Duel is hidden from normal public navigation until a future gate explicitly changes that posture.`
+- Canon Review:
+  - the first canonical journey now starts in the frontend and enters the tutorial through the campaign
+  - campaign completion must stay local-first and persist in `PlayerProfile`
+  - Boss Mode may unlock from one explicit campaign completion gate before broader campaign content exists
+  - the shared combat shell, result overlay, and return flow must remain unified with the accepted local base
+- Scope In:
+  - one local `Campanha do Troll` entry in the temporary frontend
+  - direct-menu `Aventura / Versus` shell with product-facing mode visibility
+  - `Campaign 1 / Classic - Easy` runtime framework with staged local progression
+  - profile persistence for campaign completion
+  - Boss unlock driven by the first campaign completion
+  - automated coverage for launch parameters, campaign runtime, profile completion, and Boss unlock
+- Scope Out:
+  - broader authored campaign map packs
+  - between-stage shops or deep roguelite upgrade surfaces
+  - co-op, Steam, cloud, or reward-service seams
+  - Arena PvP promotion out of placeholder posture
+- Acceptance:
+  - the first boot lands in the frontend instead of a pre-menu tutorial
+  - the frontend exposes `Campanha do Troll`, `Survival`, `Boss`, `Arena Bot`, and `Arena PvP` with the correct grouped visibility and gating
+  - a fresh profile can launch the campaign through Mission 1 / Tutorial directly from the frontend
+  - completing the campaign persists profile completion and unlocks `Boss`
+  - shared HUD, result, and return flow remain coherent across `Campanha`, `Survival`, `Boss`, and `Arena Bot`
+- Contracts:
+  - `PlayerProfile.completed_campaign_difficulties`
+  - `ProfileStore.complete_campaign`
+  - `ProgressionResolver.apply_campaign_completion`
+  - `LocalModeCatalog.CAMPAIGN_MODE_ID`
+  - `CampaignStageManager`
+- Art Manifest:
+  - proxy forge floor and wall kit for the campaign route
+  - proxy forge landmarks that distinguish the campaign from Survival without requiring final production art
+  - no final boss replacement art required for this framework phase
+- Validation:
+  - `tools/validate.gd`
+  - GUT coverage for boot routing, campaign runtime, launch-context sanitation, frontend gating, and Boss unlock persistence
+  - manual smoke through `docs/canonical-product-foundation-smoke.md`, `docs/campaign-framework-smoke.md`, and the B0 regression smoke
+- Open TBDs:
+  - exact between-stage reward surface remains deferred to the next gate
+  - broader authored campaign map lists remain deferred until the post-framework expansion gate
+- Next Gate: `Gate F05 - Reward And Expansion`

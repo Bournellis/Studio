@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Estúdio — Mapa de Pastas</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #f7f6f2;
+  color: #1f2329;
+  padding: 24px;
+  line-height: 1.5;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.nav { margin-bottom: 16px; font-size: 13px; }
+.nav a { color: #4a5470; text-decoration: none; margin-right: 16px; }
+.nav a:hover { text-decoration: underline; }
+.header {
+  border-bottom: 2px solid #1f2329;
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+}
+.header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+.header .meta { color: #6b6f76; font-size: 13px; margin-top: 6px; }
+
+.tree {
+  background: white;
+  border: 1px solid #e3e0d8;
+  border-radius: 8px;
+  padding: 24px;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+.tree details {
+  margin-left: 0;
+}
+.tree details summary {
+  cursor: pointer;
+  list-style: none;
+  outline: none;
+  padding: 2px 0;
+}
+.tree details summary::-webkit-details-marker { display: none; }
+.tree details summary::before {
+  content: "▶";
+  color: #8a8a8a;
+  display: inline-block;
+  margin-right: 6px;
+  transition: transform 0.15s ease;
+  width: 12px;
+}
+.tree details[open] > summary::before { transform: rotate(90deg); }
+.tree details details, .tree details > div.leaf { margin-left: 18px; }
+.dir { color: #4a5470; font-weight: 700; }
+.file { color: #6b6f76; }
+.note { color: #8a6a1a; font-style: italic; font-family: -apple-system, sans-serif; font-size: 12px; margin-left: 6px; }
+.role-pill {
+  display: inline-block;
+  font-family: -apple-system, sans-serif;
+  padding: 1px 8px;
+  font-size: 10px;
+  border-radius: 999px;
+  margin-left: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+.canon { background: #e6e9f0; color: #4a5470; }
+.active { background: #e8f4ec; color: #2c6b3f; }
+.archive { background: #f0e6e0; color: #8a5a3a; }
+.support { background: #fff3d4; color: #8a6a1a; }
+
+.section {
+  background: white;
+  border: 1px solid #e3e0d8;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.section h2 { font-size: 16px; font-weight: 700; margin-bottom: 14px; }
+.legend-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+.legend-card {
+  padding: 12px 14px;
+  background: #faf9f5;
+  border-radius: 6px;
+  border-left: 4px solid;
+  font-size: 13px;
+}
+.legend-card.canon { border-left-color: #4a5470; }
+.legend-card.active { border-left-color: #2c6b3f; }
+.legend-card.archive { border-left-color: #b39c8c; }
+.legend-card.support { border-left-color: #8a6a1a; }
+.legend-card .name { font-weight: 700; }
+.legend-card .desc { font-size: 12px; color: #6b6f76; margin-top: 4px; }
+
+.read-order {
+  background: #faf9f5;
+  border-radius: 6px;
+  padding: 16px;
+  font-size: 13px;
+  font-family: ui-monospace, monospace;
+}
+.read-order ol { margin-left: 22px; }
+.read-order li { padding: 3px 0; }
+
+.controls { margin-bottom: 12px; }
+.btn {
+  padding: 6px 12px;
+  border: 1px solid #4a5470;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  margin-right: 8px;
+}
+.btn:hover { background: #e6e9f0; }
+</style>
+</head>
+<body>
+<div class="nav">
+  <a href="index.html">← Visual</a>
+  <a href="01-status-dashboard.html">Status</a>
+  <a href="02-architecture-map.html">Arquitetura</a>
+  <a href="03-roadmap.html">Roadmap</a>
+</div>
+<div class="header">
+  <h1>Mapa da Estrutura D:\Estudio</h1>
+  <div class="meta">Árvore navegável das pastas principais · clique nos triângulos pra expandir</div>
+</div>
+
+<div class="section">
+  <h2>Legenda de papéis</h2>
+  <div class="legend-grid">
+    <div class="legend-card canon"><div class="name">canon/</div><div class="desc">Source of truth compartilhada — produto, design, arquitetura, roadmap, plataforma. Engine-neutral.</div></div>
+    <div class="legend-card active"><div class="name">Projetos/rpg-isometrico/</div><div class="desc">Workspace ativo do Godot. Todo trabalho de implementação acontece aqui.</div></div>
+    <div class="legend-card archive"><div class="name">migration/</div><div class="desc">Arquivo histórico de cutover, parity, mapping. Consultar só pra contexto histórico.</div></div>
+    <div class="legend-card support"><div class="name">materiais/</div><div class="desc">Material de apoio do estúdio (não-canônico): refs, guides, art-source.</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Read Order canônico</h2>
+  <div class="read-order">
+    <ol>
+      <li>canon/product/product-vision.md</li>
+      <li>canon/design/game-design-document.md</li>
+      <li>canon/design/progression-design.md</li>
+      <li>canon/architecture/shared-architecture.md</li>
+      <li>canon/architecture/game-mode-standard.md</li>
+      <li>canon/roadmap/evolution-roadmap.md</li>
+      <li>canon/roadmap/release-horizons.md</li>
+      <li>canon/platform/steam-platform.md</li>
+      <li>Projetos/rpg-isometrico/AGENTS.md</li>
+      <li>Projetos/rpg-isometrico/implementation/current-status.md</li>
+      <li>D:\Estudio\AGENTS.md</li>
+    </ol>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Árvore de pastas</h2>
+  <div class="controls">
+    <button class="btn" onclick="document.querySelectorAll('.tree details').forEach(d=>d.open=true)">Expandir tudo</button>
+    <button class="btn" onclick="document.querySelectorAll('.tree details').forEach(d=>d.open=false)">Recolher tudo</button>
+  </div>
+  <div class="tree">
+
+<details open>
+<summary><span class="dir">D:\Estudio\</span><span class="role-pill canon">workspace root</span></summary>
+
+  <div class="leaf"><span class="file">README.md</span><span class="note">— overview do workspace</span></div>
+  <div class="leaf"><span class="file">AGENTS.md</span><span class="note">— governança de agentes (read order, regras)</span></div>
+
+  <details>
+    <summary><span class="dir">canon/</span><span class="role-pill canon">truth compartilhada</span></summary>
+    <details>
+      <summary><span class="dir">product/</span></summary>
+      <div class="leaf"><span class="file">product-vision.md</span></div>
+    </details>
+    <details>
+      <summary><span class="dir">design/</span></summary>
+      <div class="leaf"><span class="file">game-design-document.md</span></div>
+      <div class="leaf"><span class="file">progression-design.md</span></div>
+    </details>
+    <details>
+      <summary><span class="dir">architecture/</span></summary>
+      <div class="leaf"><span class="file">shared-architecture.md</span><span class="note">— 5 boundaries</span></div>
+      <div class="leaf"><span class="file">game-mode-standard.md</span><span class="note">— 7 layers</span></div>
+    </details>
+    <details>
+      <summary><span class="dir">roadmap/</span></summary>
+      <div class="leaf"><span class="file">evolution-roadmap.md</span></div>
+      <div class="leaf"><span class="file">release-horizons.md</span></div>
+    </details>
+    <details>
+      <summary><span class="dir">platform/</span></summary>
+      <div class="leaf"><span class="file">steam-platform.md</span></div>
+    </details>
+  </details>
+
+  <details>
+    <summary><span class="dir">Projetos/</span><span class="role-pill active">implementação</span></summary>
+    <details open>
+      <summary><span class="dir">rpg-isometrico/</span><span class="note">— Godot 4.6.2</span></summary>
+      <div class="leaf"><span class="file">project.godot</span></div>
+      <div class="leaf"><span class="file">AGENTS.md</span></div>
+      <details>
+        <summary><span class="dir">autoloads/</span></summary>
+        <div class="leaf"><span class="note">singletons globais</span></div>
+      </details>
+      <details>
+        <summary><span class="dir">definitions/</span><span class="note">— conteúdo autorado em JSON</span></summary>
+        <div class="leaf"><span class="dir">campaigns/</span><span class="note">— blacksmith easy/normal/free</span></div>
+        <div class="leaf"><span class="dir">races/</span><span class="note">— heroic</span></div>
+        <div class="leaf"><span class="dir">weapons/</span><span class="note">— heroic_hammer</span></div>
+        <div class="leaf"><span class="dir">skills/</span><span class="note">— 5 skills</span></div>
+        <div class="leaf"><span class="dir">potions/</span><span class="note">— bastion_tonic, vital_flask</span></div>
+      </details>
+      <details>
+        <summary><span class="dir">gameplay/</span><span class="note">— camada Gameplay (boundary)</span></summary>
+        <div class="leaf"><span class="dir">combat/</span></div>
+        <div class="leaf"><span class="dir">player/</span></div>
+        <div class="leaf"><span class="dir">enemies/</span></div>
+        <div class="leaf"><span class="dir">boss/</span></div>
+        <div class="leaf"><span class="dir">bot/</span></div>
+        <div class="leaf"><span class="dir">loadouts/</span></div>
+        <div class="leaf"><span class="dir">profile/</span></div>
+        <div class="leaf"><span class="dir">simulation/</span></div>
+        <div class="leaf"><span class="dir">content/</span></div>
+      </details>
+      <details>
+        <summary><span class="dir">modes/</span><span class="note">— 1 pasta por modo</span></summary>
+        <div class="leaf"><span class="dir">campaign/</span></div>
+        <div class="leaf"><span class="dir">survival/</span></div>
+        <div class="leaf"><span class="dir">boss/</span></div>
+        <div class="leaf"><span class="dir">arena/</span></div>
+        <div class="leaf"><span class="dir">tutorial/</span></div>
+        <div class="leaf"><span class="dir">frontend/</span></div>
+        <div class="leaf"><span class="dir">boot/</span></div>
+        <div class="leaf"><span class="dir">shared/</span></div>
+      </details>
+      <details>
+        <summary><span class="dir">presentation/</span><span class="note">— camada Presentation (boundary)</span></summary>
+        <div class="leaf"><span class="dir">hud/</span></div>
+        <div class="leaf"><span class="dir">campaign/</span></div>
+        <div class="leaf"><span class="dir">results/</span></div>
+        <div class="leaf"><span class="dir">feedback/</span></div>
+      </details>
+      <div class="leaf"><span class="dir">online/</span><span class="note">— camada Online (boundary)</span></div>
+      <div class="leaf"><span class="dir">scenes/</span></div>
+      <div class="leaf"><span class="dir">resources/</span><span class="note">— assets gerados/importados</span></div>
+      <div class="leaf"><span class="dir">addons/</span><span class="note">— gut</span></div>
+      <div class="leaf"><span class="dir">tools/</span><span class="note">— validate.gd e helpers</span></div>
+      <details>
+        <summary><span class="dir">tests/</span></summary>
+        <div class="leaf"><span class="dir">unit/</span></div>
+      </details>
+      <div class="leaf"><span class="dir">docs/</span><span class="note">— smoke docs, validation, platform notes</span></div>
+      <details open>
+        <summary><span class="dir">implementation/</span><span class="role-pill active">cabine de comando</span></summary>
+        <div class="leaf"><span class="file">current-status.md</span><span class="note">— ler primeiro</span></div>
+        <details>
+          <summary><span class="dir">tracks/</span></summary>
+          <div class="leaf"><span class="dir">track-01-playable-base-and-real-backlog/</span><span class="note">— B0</span></div>
+          <details>
+            <summary><span class="dir">track-02-canonical-product-foundation/</span><span class="note">— ATIVO</span></summary>
+            <div class="leaf"><span class="file">current-status.md</span></div>
+            <div class="leaf"><span class="file">implementation-map.md</span></div>
+            <div class="leaf"><span class="file">progress-log.md</span></div>
+            <div class="leaf"><span class="dir">gates/</span><span class="note">— F01, F03, F05, F07, F09, F10, F11</span></div>
+            <div class="leaf"><span class="dir">art-track/</span></div>
+          </details>
+        </details>
+        <div class="leaf"><span class="dir">checkpoints/</span><span class="note">— G1, G3, G4 acceptance docs</span></div>
+        <div class="leaf"><span class="dir">phase-g1/</span><span class="role-pill archive">histórico</span></div>
+        <div class="leaf"><span class="dir">phase-g2/</span><span class="role-pill archive">histórico</span></div>
+        <div class="leaf"><span class="dir">phase-g3/</span><span class="role-pill archive">histórico</span></div>
+        <div class="leaf"><span class="dir">phase-g4/</span><span class="role-pill archive">histórico</span></div>
+      </details>
+    </details>
+  </details>
+
+  <details>
+    <summary><span class="dir">migration/</span><span class="role-pill archive">arquivo histórico</span></summary>
+    <div class="leaf"><span class="dir">audit/</span></div>
+    <div class="leaf"><span class="dir">cutover/</span></div>
+    <div class="leaf"><span class="dir">mapping/</span></div>
+    <div class="leaf"><span class="dir">parity/</span></div>
+  </details>
+
+  <details>
+    <summary><span class="dir">materiais/</span><span class="role-pill support">apoio</span></summary>
+    <div class="leaf"><span class="dir">art-source/</span><span class="note">— fontes de arte</span></div>
+    <div class="leaf"><span class="dir">guides/</span></div>
+    <div class="leaf"><span class="dir">references/</span><span class="note">— inclui discovery/</span></div>
+    <div class="leaf"><span class="dir">exports-temp/</span></div>
+  </details>
+
+  <details>
+    <summary><span class="dir">builds/</span><span class="role-pill support">disposable</span></summary>
+    <div class="leaf"><span class="note">outputs gerados de export</span></div>
+  </details>
+
+  <details>
+    <summary><span class="dir">.local-tools/</span><span class="role-pill support">tooling</span></summary>
+    <div class="leaf"><span class="dir">godot/4.6.2/</span><span class="note">— engine local</span></div>
+    <div class="leaf"><span class="dir">gut-9.6.0/</span><span class="note">— framework de teste</span></div>
+  </details>
+
+  <details>
+    <summary><span class="dir">Visual/</span><span class="role-pill support">esta pasta</span></summary>
+    <div class="leaf"><span class="file">index.html</span><span class="note">— menu</span></div>
+    <div class="leaf"><span class="file">01-status-dashboard.html</span></div>
+    <div class="leaf"><span class="file">02-architecture-map.html</span></div>
+    <div class="leaf"><span class="file">03-roadmap.html</span></div>
+    <div class="leaf"><span class="file">04-folder-map.html</span></div>
+  </details>
+
+</details>
+
+  </div>
+</div>
+
+</body>
+</html>

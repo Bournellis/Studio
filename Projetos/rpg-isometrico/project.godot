@@ -1,0 +1,36 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="RPG Isometrico"
+run/main_scene="res://modes/boot/boot.tscn"
+config/features=PackedStringArray("4.6", "Forward Plus")
+config/icon="res://icon.svg"
+
+[autoload]
+
+AppBootstrap="*res://autoloads/app_bootstrap.gd"
+LaunchContext="*res://autoloads/launch_context.gd"
+SettingsStore="*res://autoloads/settings_store.gd"
+ProfileStore="*res://autoloads/profile_store.gd"
+ContentLibrary="*res://autoloads/content_library.gd"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/gut/plugin.cfg")
+
+[rendering]
+
+anti_aliasing/quality/msaa_3d=2
+scaling_3d/scale.mobile=0.67
+anti_aliasing/quality/msaa_3d.mobile=0
+anti_aliasing/quality/screen_space_aa.mobile=1
+anti_aliasing/quality/use_taa.mobile=false

@@ -1,0 +1,51 @@
+# Gate F05 - Reward And Expansion
+
+- Phase: `Phase 5 - Reward And Expansion`
+- Status: `APPROVED`
+- Supersession Note: `This gate preserves the F05 implementation context. Later F10/F11 product realignment governs current mode hierarchy and PvP posture.`
+- Canon Review:
+  - the first permanent unlock ladder still comes only from `Campanha do Troll / Classico / Easy`
+  - campaign rewards must stay local-first, informative, and authored rather than turning into a loot or shop economy
+  - free-loadout modes must begin respecting permanent account unlocks instead of assuming the full authored pool is always available
+  - campaign expansion should open through stable reward and content contracts, not through more stage-number-specific branches in UI and progression code
+- Scope In:
+  - one explicit campaign reward contract that describes stage completion rewards, menu unlocks, permanent item unlocks, and next-map level-up setup
+  - one product-facing reward surface that clearly names what became permanent after each mission and what changed in the frontend
+  - one account-unlock resolver for builder modes so `Survival`, `Boss`, and `Arena Bot` can filter or mark skills and potions from the persisted profile state
+  - one first expansion seam for future campaign authoring so reward data and stage metadata can grow from authored campaign stages instead of hardcoded stage branches in `ProgressionResolver`
+  - one regression-safe resume rule so suspended runs cannot duplicate permanent rewards or desync the reward overlay from the saved run state
+- Scope Out:
+  - co-op rules for suspended runs
+  - new campaigns, higher difficulties, or post-Boss authored chapters
+  - shops, meta-currency, roguelite branching upgrades, or service-backed inventories
+  - Arena PvP promotion out of placeholder posture
+  - final production art for reward cards, boss replacement, or full menu rebrand
+- Acceptance:
+  - each `Campanha do Troll / Classico / Easy` stage completion produces one stable reward payload that can be rendered without ad hoc copy branches
+  - the reward overlay explicitly communicates permanent unlocks, menu unlocks, and pending level-up context before the next map starts
+  - builder modes no longer assume the full item pool; they read the account unlock state and stay coherent with campaign-earned permanent progression
+  - resuming or abandoning a suspended run cannot re-grant already persisted stage rewards
+  - automated tests cover reward persistence, builder-mode unlock filtering, and reward-surface behavior around suspend/resume
+- Contracts:
+  - `CampaignRewardPayload.reward_id`
+  - `CampaignRewardPayload.marks_tutorial_completed`
+  - `CampaignStageScene` reward exports plus `build_reward_payload(...)`
+  - `ProgressionResolver.apply_campaign_reward_payload(...)`
+  - `PlayerProfile.unlocked_skill_ids`
+  - `PlayerProfile.unlocked_potion_ids`
+  - `PlayerProfile.applied_reward_ids`
+  - `FrontendRoot` reward and builder surfaces
+  - `ProfileStore.apply_campaign_stage_completion`
+- Art Manifest:
+  - proxy reward card treatment for permanent unlocks, mode unlocks, and campaign progression beats
+  - icon or badge placeholders for spell, potion, and mode unlock callouts
+  - no final production UI kit required before validation as long as reward state is legible and consistent
+- Validation:
+  - `tools/validate.gd`
+  - GUT coverage for reward payload generation, profile persistence after stage completion, suspend/resume reward idempotency, and builder unlock filtering
+  - manual smoke through `docs/campaign-framework-smoke.md` plus the canonical product smoke and B0 regression smoke
+- Resolved Defaults:
+  - locked builder content is shown in a disabled state with explanatory copy instead of being hidden
+  - future non-campaign unlock sources should reuse the same reward payload contract and extend it through reward-source metadata when needed
+  - `PlayerProfile.applied_reward_ids` is an internal idempotency ledger and does not become a player-facing reward-history surface in F05
+- Next Gate: `campaign-content expansion after the reward contract and builder unlock posture are validated`

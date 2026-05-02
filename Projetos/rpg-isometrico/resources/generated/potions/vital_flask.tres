@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="PotionDefinitionResource" format=3]
+
+[ext_resource type="Script" path="res://gameplay/content/potion_definition_resource.gd" id="1_r6ktf"]
+
+[resource]
+script = ExtResource("1_r6ktf")
+id = &"vital_flask"
+race_id = &"heroic"
+display_name = "Frasco Vital"
+description = "Recupera vida suficiente para prolongar a luta na primeira avaliacao."
+cooldown = 13.0
+value = 34.0

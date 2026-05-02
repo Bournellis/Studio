@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="SkillDefinitionResource" format=3]
+
+[ext_resource type="Script" path="res://gameplay/content/skill_definition_resource.gd" id="1_bjkmx"]
+
+[resource]
+script = ExtResource("1_bjkmx")
+id = &"hammer_impact"
+race_id = &"heroic"
+weapon_id = &"heroic_hammer"
+display_name = "Impacto do Martelo"
+description = "Golpe frontal rapido para confirmar dano de curta distancia."
+cooldown = 2.4
+damage = 24.0
+range = 4.4

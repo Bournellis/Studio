@@ -1,0 +1,13 @@
+{
+  "id": "blacksmith_hammer_throw",
+  "race_id": "heroic",
+  "weapon_id": "heroic_hammer",
+  "display_name": "Arremesso de Martelo",
+  "description": "Arremessa o martelo do ferreiro para uma curta distancia e confirma dano na chegada.",
+  "kind": "projectile",
+  "cooldown": 2.6,
+  "damage": 22.0,
+  "range": 5.0,
+  "duration": 0.0,
+  "value": 0.0
+}

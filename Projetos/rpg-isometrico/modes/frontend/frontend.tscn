@@ -1,0 +1,154 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://modes/frontend/frontend_root.gd" id="1_qnjaj"]
+
+[node name="Frontend" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_qnjaj")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Glow" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PageMargin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MainLayout" type="HBoxContainer" parent="PageMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="InfoPanel" type="PanelContainer" parent="PageMargin/MainLayout"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="InfoMargin" type="MarginContainer" parent="PageMargin/MainLayout/InfoPanel"]
+layout_mode = 2
+
+[node name="InfoColumn" type="VBoxContainer" parent="PageMargin/MainLayout/InfoPanel/InfoMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="EyebrowLabel" type="Label" parent="PageMargin/MainLayout/InfoPanel/InfoMargin/InfoColumn"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="PageMargin/MainLayout/InfoPanel/InfoMargin/InfoColumn"]
+layout_mode = 2
+
+[node name="SubtitleLabel" type="Label" parent="PageMargin/MainLayout/InfoPanel/InfoMargin/InfoColumn"]
+layout_mode = 2
+
+[node name="CanonLabel" type="Label" parent="PageMargin/MainLayout/InfoPanel/InfoMargin/InfoColumn"]
+layout_mode = 2
+
+[node name="InfoLabel" type="Label" parent="PageMargin/MainLayout/InfoPanel/InfoMargin/InfoColumn"]
+layout_mode = 2
+
+[node name="SaveStateLabel" type="Label" parent="PageMargin/MainLayout/InfoPanel/InfoMargin/InfoColumn"]
+layout_mode = 2
+
+[node name="ControlsLabel" type="Label" parent="PageMargin/MainLayout/InfoPanel/InfoMargin/InfoColumn"]
+layout_mode = 2
+
+[node name="LoadoutPanel" type="PanelContainer" parent="PageMargin/MainLayout"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="LoadoutMargin" type="MarginContainer" parent="PageMargin/MainLayout/LoadoutPanel"]
+layout_mode = 2
+
+[node name="LoadoutColumn" type="VBoxContainer" parent="PageMargin/MainLayout/LoadoutPanel/LoadoutMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ConfigTitleLabel" type="Label" parent="PageMargin/MainLayout/LoadoutPanel/LoadoutMargin/LoadoutColumn"]
+layout_mode = 2
+
+[node name="RaceSection" type="VBoxContainer" parent="PageMargin/MainLayout/LoadoutPanel/LoadoutMargin/LoadoutColumn"]
+layout_mode = 2
+
+[node name="RaceSectionLabel" type="Label" parent="PageMargin/MainLayout/LoadoutPanel/LoadoutMargin/LoadoutColumn/RaceSection"]
+layout_mode = 2
+
+[node name="RaceOption" type="OptionButton" parent="PageMargin/MainLayout/LoadoutPanel/LoadoutMargin/LoadoutColumn/RaceSection"]
+layout_mode = 2
+
+[node name="WeaponSection" type="VBoxContainer" parent="PageMargin/MainLayout/LoadoutPanel/LoadoutMargin/LoadoutColumn"]
+layout_mode = 2
+
+[node name="WeaponSectionLabel" type="Label" parent="PageMargin/MainLayout/LoadoutPanel/LoadoutMargin/LoadoutColumn/WeaponSection"]
+layout_mode = 2
+
+[node name="WeaponOption" type="OptionButton" parent="PageMargin/MainLayout/LoadoutPanel/LoadoutMargin/LoadoutColumn/WeaponSection"]
+layout_mode = 2
+
+[node name="ActionRow" type="HBoxContainer" parent="PageMargin/MainLayout/LoadoutPanel/LoadoutMargin/LoadoutColumn"]
+layout_mode = 2
+
+[node name="SavedButton" type="Button" parent="PageMargin/MainLayout/LoadoutPanel/LoadoutMargin/LoadoutColumn/ActionRow"]
+layout_mode = 2
+
+[node name="CanonicalButton" type="Button" parent="PageMargin/MainLayout/LoadoutPanel/LoadoutMargin/LoadoutColumn/ActionRow"]
+layout_mode = 2
+
+[node name="StartButton" type="Button" parent="PageMargin/MainLayout/LoadoutPanel/LoadoutMargin/LoadoutColumn/ActionRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SummaryLabel" type="Label" parent="PageMargin/MainLayout/LoadoutPanel/LoadoutMargin/LoadoutColumn"]
+layout_mode = 2
+
+[node name="MessageLabel" type="Label" parent="PageMargin/MainLayout/LoadoutPanel/LoadoutMargin/LoadoutColumn"]
+layout_mode = 2
+
+[node name="SelectionScroll" type="ScrollContainer" parent="PageMargin/MainLayout/LoadoutPanel/LoadoutMargin/LoadoutColumn"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="SelectionContent" type="VBoxContainer" parent="PageMargin/MainLayout/LoadoutPanel/LoadoutMargin/LoadoutColumn/SelectionScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SkillsSection" type="VBoxContainer" parent="PageMargin/MainLayout/LoadoutPanel/LoadoutMargin/LoadoutColumn/SelectionScroll/SelectionContent"]
+layout_mode = 2
+
+[node name="SkillsSectionLabel" type="Label" parent="PageMargin/MainLayout/LoadoutPanel/LoadoutMargin/LoadoutColumn/SelectionScroll/SelectionContent/SkillsSection"]
+layout_mode = 2
+
+[node name="SkillsColumn" type="VBoxContainer" parent="PageMargin/MainLayout/LoadoutPanel/LoadoutMargin/LoadoutColumn/SelectionScroll/SelectionContent/SkillsSection"]
+layout_mode = 2
+
+[node name="PotionsSection" type="VBoxContainer" parent="PageMargin/MainLayout/LoadoutPanel/LoadoutMargin/LoadoutColumn/SelectionScroll/SelectionContent"]
+layout_mode = 2
+
+[node name="PotionsSectionLabel" type="Label" parent="PageMargin/MainLayout/LoadoutPanel/LoadoutMargin/LoadoutColumn/SelectionScroll/SelectionContent/PotionsSection"]
+layout_mode = 2
+
+[node name="PotionsColumn" type="VBoxContainer" parent="PageMargin/MainLayout/LoadoutPanel/LoadoutMargin/LoadoutColumn/SelectionScroll/SelectionContent/PotionsSection"]
+layout_mode = 2

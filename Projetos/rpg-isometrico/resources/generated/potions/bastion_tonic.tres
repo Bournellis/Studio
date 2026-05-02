@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PotionDefinitionResource" format=3]
+
+[ext_resource type="Script" path="res://gameplay/content/potion_definition_resource.gd" id="1_8bt7g"]
+
+[resource]
+script = ExtResource("1_8bt7g")
+id = &"bastion_tonic"
+race_id = &"heroic"
+display_name = "Tonico de Baluarte"
+description = "Concede uma barreira curta para segurar a troca de golpes."
+kind = 1
+cooldown = 15.0
+value = 42.0
+duration = 4.0

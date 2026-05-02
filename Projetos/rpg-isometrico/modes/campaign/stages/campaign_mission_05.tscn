@@ -1,0 +1,40 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://modes/campaign/campaign_stage_scene.gd" id="1_qmtwv"]
+
+[node name="CampaignMission05" type="Node3D" unique_id=1303515235]
+script = ExtResource("1_qmtwv")
+stage_number = 5
+stage_id = "mission_05"
+display_name = "Mapa 5 - Chefe"
+objective_text = "Derrote o Boss Troll para concluir a Campanha do Troll."
+is_boss_stage = true
+player_spawn_position = Vector3(0, 1.05, 9.8)
+floor_size = Vector3(38, 1, 38)
+floor_color = Color(0.2, 0.18, 0.19, 1)
+floor_emission = Color(0.14, 0.08, 0.07, 1)
+wall_color = Color(0.3, 0.26, 0.26, 1)
+wall_emission = Color(0.12, 0.08, 0.08, 1)
+prop_specs_json = "[{
+\"albedo\": Color(0.36, 0.3, 0.28, 1),
+\"emission\": Color(0.24, 0.1, 0.06, 1),
+\"name\": \"BossTorchWest\",
+\"position\": Vector3(-10, 0.9, 0),
+\"size\": Vector3(1.2, 1.8, 1.2)
+}, {
+\"albedo\": Color(0.36, 0.3, 0.28, 1),
+\"emission\": Color(0.24, 0.1, 0.06, 1),
+\"name\": \"BossTorchEast\",
+\"position\": Vector3(10, 0.9, 0),
+\"size\": Vector3(1.2, 1.8, 1.2)
+}]"
+enemy_specs_json = "[{
+\"boss_id\": \"boss_troll\",
+\"enemy_type\": \"boss_troll\",
+\"position\": Vector3(0, 1.05, 0)
+}]"
+reward_title = "Campanha Classica concluida"
+reward_summary_lines = PackedStringArray("Boss abriu como desafio extra de maestria depois da jornada principal.")
+reward_permanent_skill_unlock_ids = PackedStringArray()
+reward_permanent_potion_unlock_ids = PackedStringArray()
+reward_menu_unlock_mode_ids = PackedStringArray("boss")

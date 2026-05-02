@@ -1,0 +1,23 @@
+# Current Status
+
+- Last Updated: `2026-04-26`
+- Active Surface: `tracks/track-02-canonical-product-foundation/`
+- Active Track: `Track 02 - Canonical Product Foundation`
+- Active Track Status: `OPEN`
+- Current Operational Baseline: `B0 internal Arena / Survival / Boss playable baseline plus a campaign-first frontend where Campaign is primary, Classic is authored, Campanha Livre is post-Easy replay/buildcraft, extras are secondary and explicitly framed as resistance, mastery, or kit-training surfaces, and Arena PvP / Private Duel is out of public navigation`
+- Active Goal: `F11 campaign-first runtime alignment is complete; no implementation gate is active until the next gate is explicitly selected before broadening content, co-op, PvP, Hard, race, or weapon scope`
+- Read Next:
+  - `tracks/track-02-canonical-product-foundation/current-status.md`
+  - `tracks/track-02-canonical-product-foundation/implementation-map.md`
+  - `../docs/validation.md`
+  - completed gate files only when their historical context is needed; no active gate file exists until `Next Gate` is selected
+- Canon Read Order: `../../canon/` first
+- Validation Target: `preserve B0 while covering direct boot to frontend, tutorial completion from the campaign entry path, Easy/Normal/Livre campaign route selection, route-specific suspended-run persistence, legacy Easy suspend migration, builder unlock filtering, Campanha Livre replay rewards, extra-mode result framing, Boss unlock gating, and shared presentation parity`
+- Automated Validation: `headless + GUT cover boot routing, profile persistence, tutorial completion, campaign reward payload generation, catalog-backed Easy/Normal/Livre route resolution, route-specific suspend persistence, legacy Easy suspend migration, campaign completion by difficulty, frontend route availability, Campanha Livre launch/build filtering, extra-mode result scope, plus the accepted Arena Bot / Survival / Boss regression set`
+- Manual Smoke: `docs/canonical-product-foundation-smoke.md plus docs/campaign-framework-smoke.md plus docs/g4-shared-mode-foundation-smoke.md`
+- Input Note: `desktop manual aim remains the current baseline; future mobile stays deferred as lock-on plus tap-release or drag aim`
+- Platform Art Note: `desktop-quality baseline and future mobile downscaling are governed by ../docs/platform-art-and-export-guidance.md and initially applied in ../project.godot plus ../export_presets.cfg`
+- Historical Validation Cycle: `phase-g1/` through `phase-g4/` are closed validation records, not the active workstream
+- Historical Archive: `../../migration/` preserves cutover and comparison context only
+- Product Direction Note: `Release direction is campaign PvE first; Classic is the main authored progression path; Free is replay/buildcraft after Classic; co-op is optional for Release 1 only if it preserves the solo baseline; Private Duel / Arena PvP is experimental or development-only until a future gate promotes or removes it`
+- Next Gate: `TBD - choose an explicit next gate before implementation`

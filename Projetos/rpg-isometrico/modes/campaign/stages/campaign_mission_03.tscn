@@ -1,0 +1,72 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://modes/campaign/campaign_stage_scene.gd" id="1_vg43w"]
+
+[node name="CampaignMission03" type="Node3D" unique_id=908456210]
+script = ExtResource("1_vg43w")
+stage_number = 3
+stage_id = "mission_03"
+display_name = "Mapa 3 - Patio das Bigornas"
+objective_text = "Limpe o patio das bigornas antes que os trolls tomem os acessos laterais."
+player_spawn_position = Vector3(0, 1.05, -9)
+floor_size = Vector3(40, 1, 34)
+floor_color = Color(0.16, 0.17, 0.18, 1)
+wall_color = Color(0.24, 0.24, 0.25, 1)
+prop_specs_json = "[{
+\"albedo\": Color(0.34, 0.34, 0.36, 1),
+\"emission\": Color(0.1, 0.06, 0.05, 1),
+\"name\": \"AnvilClusterA\",
+\"position\": Vector3(-6, 0.8, -1.5),
+\"size\": Vector3(2.6, 1.6, 2)
+}, {
+\"albedo\": Color(0.34, 0.34, 0.36, 1),
+\"emission\": Color(0.1, 0.06, 0.05, 1),
+\"name\": \"AnvilClusterB\",
+\"position\": Vector3(5.8, 0.8, 1.6),
+\"size\": Vector3(2.6, 1.6, 2)
+}]"
+enemy_specs_json = "[{
+\"config\": {
+\"attack_damage\": 11.2,
+\"max_health\": 72.0,
+\"move_speed\": 3.1,
+\"orbit_sign\": 1
+},
+\"enemy_type\": \"troll\",
+\"position\": Vector3(-8, 1.05, 3.8)
+}, {
+\"config\": {
+\"attack_damage\": 11.5,
+\"max_health\": 74.0,
+\"move_speed\": 3.08,
+\"orbit_sign\": -1
+},
+\"enemy_type\": \"troll\",
+\"position\": Vector3(-2, 1.05, 6.4)
+}, {
+\"config\": {
+\"attack_damage\": 11.8,
+\"max_health\": 76.0,
+\"move_speed\": 3.1,
+\"orbit_sign\": 1
+},
+\"enemy_type\": \"troll\",
+\"position\": Vector3(4.2, 1.05, 6.8)
+}, {
+\"config\": {
+\"attack_damage\": 12.4,
+\"body_scale\": 1.2,
+\"max_health\": 80.0,
+\"move_speed\": 3.15,
+\"orbit_sign\": -1
+},
+\"enemy_type\": \"troll\",
+\"position\": Vector3(8.4, 1.05, 3.6)
+}]"
+reward_title = "Patio das Bigornas recuperado"
+reward_summary_lines = PackedStringArray("Impacto do Martelo agora faz parte do kit permanente aprendido na campanha.")
+reward_permanent_skill_unlock_ids = PackedStringArray("hammer_impact")
+reward_permanent_potion_unlock_ids = PackedStringArray()
+reward_menu_unlock_mode_ids = PackedStringArray()
+reward_pending_level_increase = 1
+reward_pending_skill_points = 1

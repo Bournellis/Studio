@@ -1,0 +1,13 @@
+{
+  "id": "heroic_hammer",
+  "race_id": "heroic",
+  "display_name": "Martelo Heroico",
+  "description": "Martelo pesado para ataques curtos, dash forte e leitura frontal.",
+  "basic_attack_damage": 22.0,
+  "basic_attack_cooldown": 0.6,
+  "basic_attack_range": 2.35,
+  "move_speed": 5.8,
+  "max_health": 150.0,
+  "dash_distance": 5.4,
+  "dash_cooldown": 1.35
+}

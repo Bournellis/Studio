@@ -1,0 +1,73 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://modes/campaign/campaign_stage_scene.gd" id="1_elfs0"]
+
+[node name="CampaignMission02Normal" type="Node3D" unique_id=998118226]
+script = ExtResource("1_elfs0")
+stage_number = 2
+stage_id = "mission_02"
+display_name = "Mapa 2 - Esteira de Escoria"
+objective_text = "Atravesse a esteira de escoria enquanto os trolls chegam por dois corredores laterais."
+player_spawn_position = Vector3(0, 1.05, -9.2)
+floor_color = Color(0.18, 0.16, 0.17, 1)
+floor_emission = Color(0.12, 0.05, 0.05, 1)
+wall_color = Color(0.27, 0.24, 0.25, 1)
+wall_emission = Color(0.11, 0.05, 0.05, 1)
+prop_specs_json = "[{
+\"albedo\": Color(0.3, 0.25, 0.24, 1),
+\"emission\": Color(0.16, 0.08, 0.05, 1),
+\"name\": \"SlagChannelWest\",
+\"position\": Vector3(-7.4, 0.72, 1.2),
+\"size\": Vector3(2.2, 1.45, 4.8)
+}, {
+\"albedo\": Color(0.3, 0.25, 0.24, 1),
+\"emission\": Color(0.16, 0.08, 0.05, 1),
+\"name\": \"SlagChannelEast\",
+\"position\": Vector3(7.4, 0.72, -1.2),
+\"size\": Vector3(2.2, 1.45, 4.8)
+}]"
+enemy_specs_json = "[{
+\"config\": {
+\"attack_damage\": 11.6,
+\"max_health\": 68.0,
+\"move_speed\": 3.14,
+\"orbit_sign\": 1
+},
+\"enemy_type\": \"troll\",
+\"position\": Vector3(-7.2, 1.05, 4)
+}, {
+\"config\": {
+\"attack_damage\": 12.0,
+\"max_health\": 72.0,
+\"move_speed\": 3.16,
+\"orbit_sign\": -1
+},
+\"enemy_type\": \"troll\",
+\"position\": Vector3(-2, 1.05, 6)
+}, {
+\"config\": {
+\"attack_damage\": 12.4,
+\"max_health\": 74.0,
+\"move_speed\": 3.18,
+\"orbit_sign\": 1
+},
+\"enemy_type\": \"troll\",
+\"position\": Vector3(3, 1.05, 5.8)
+}, {
+\"config\": {
+\"attack_damage\": 12.8,
+\"body_scale\": 1.12,
+\"max_health\": 78.0,
+\"move_speed\": 3.2,
+\"orbit_sign\": -1
+},
+\"enemy_type\": \"troll\",
+\"position\": Vector3(7, 1.05, 2.2)
+}]"
+reward_title = "Esteira de Escoria atravessada"
+reward_summary_lines = PackedStringArray("A rota Normal aumenta a pressao sem abrir novas recompensas permanentes.")
+reward_permanent_skill_unlock_ids = PackedStringArray()
+reward_permanent_potion_unlock_ids = PackedStringArray()
+reward_menu_unlock_mode_ids = PackedStringArray()
+reward_pending_level_increase = 1
+reward_pending_skill_points = 1

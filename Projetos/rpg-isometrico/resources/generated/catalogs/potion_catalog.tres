@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="PotionCatalogResource" format=3]
+
+[ext_resource type="Script" path="res://gameplay/content/potion_definition_resource.gd" id="1_744ia"]
+[ext_resource type="Script" path="res://gameplay/content/potion_catalog_resource.gd" id="2_hhjej"]
+
+[sub_resource type="Resource" id="Resource_744ia"]
+script = ExtResource("1_744ia")
+id = &"bastion_tonic"
+race_id = &"heroic"
+display_name = "Tonico de Baluarte"
+description = "Concede uma barreira curta para segurar a troca de golpes."
+kind = 1
+cooldown = 15.0
+value = 42.0
+duration = 4.0
+
+[sub_resource type="Resource" id="Resource_hhjej"]
+script = ExtResource("1_744ia")
+id = &"vital_flask"
+race_id = &"heroic"
+display_name = "Frasco Vital"
+description = "Recupera vida suficiente para prolongar a luta na primeira avaliacao."
+cooldown = 13.0
+value = 34.0
+
+[resource]
+script = ExtResource("2_hhjej")
+entries = Array[ExtResource("1_744ia")]([SubResource("Resource_744ia"), SubResource("Resource_hhjej")])

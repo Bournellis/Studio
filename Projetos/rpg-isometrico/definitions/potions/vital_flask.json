@@ -1,0 +1,10 @@
+{
+  "id": "vital_flask",
+  "race_id": "heroic",
+  "display_name": "Frasco Vital",
+  "description": "Recupera vida suficiente para prolongar a luta na primeira avaliacao.",
+  "kind": "heal",
+  "cooldown": 13.0,
+  "value": 34.0,
+  "duration": 0.0
+}

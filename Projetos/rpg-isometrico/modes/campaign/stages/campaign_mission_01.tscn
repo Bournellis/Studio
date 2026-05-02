@@ -1,0 +1,63 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://modes/campaign/campaign_stage_scene.gd" id="1_2v4pk"]
+
+[node name="CampaignMission01" type="Node3D" unique_id=254355687]
+script = ExtResource("1_2v4pk")
+stage_id = "mission_01"
+display_name = "Missao 1 - Tutorial"
+objective_text = "Defenda a entrada da forja e aprenda os primeiros recursos do kit Heroico."
+player_spawn_position = Vector3(-6, 1.05, 0)
+camera_offset = Vector3(7.8, 16.4, 7.8)
+camera_size = 12.4
+floor_size = Vector3(30, 1, 24)
+floor_color = Color(0.22, 0.18, 0.14, 1)
+floor_emission = Color(0.08, 0.05, 0.03, 1)
+wall_color = Color(0.28, 0.24, 0.2, 1)
+wall_emission = Color(0.09, 0.05, 0.04, 1)
+prop_specs_json = "[{
+\"albedo\": Color(0.34, 0.32, 0.3, 1),
+\"emission\": Color(0.12, 0.08, 0.06, 1),
+\"name\": \"ForgeAnvil\",
+\"position\": Vector3(5.4, 0.9, 0),
+\"size\": Vector3(2.8, 1.8, 2)
+}, {
+\"albedo\": Color(0.3, 0.24, 0.2, 1),
+\"emission\": Color(0.1, 0.06, 0.04, 1),
+\"name\": \"ForgeBench\",
+\"position\": Vector3(7.2, 0.75, -4),
+\"size\": Vector3(2.4, 1.5, 1.2)
+}]"
+enemy_specs_json = "[{
+\"config\": {
+\"attack_cooldown\": 1.35,
+\"attack_damage\": 8.0,
+\"attack_recovery\": 0.48,
+\"attack_windup\": 0.64,
+\"body_scale\": 1.0,
+\"max_health\": 34.0,
+\"move_speed\": 2.8
+},
+\"enemy_type\": \"troll\",
+\"position\": Vector3(2.8, 1.05, -2)
+}, {
+\"config\": {
+\"attack_cooldown\": 1.24,
+\"attack_damage\": 10.0,
+\"attack_recovery\": 0.42,
+\"attack_windup\": 0.6,
+\"body_scale\": 1.08,
+\"max_health\": 46.0,
+\"move_speed\": 3.0
+},
+\"enemy_type\": \"troll\",
+\"position\": Vector3(5.2, 1.05, 2.4)
+}]"
+reward_title = "Missao 1 defendida"
+reward_summary_lines = PackedStringArray("Survival abriu como desafio extra de resistencia.", "Brado Heroico agora faz parte do kit permanente aprendido na campanha.")
+reward_permanent_skill_unlock_ids = PackedStringArray("heroic_rally")
+reward_permanent_potion_unlock_ids = PackedStringArray()
+reward_menu_unlock_mode_ids = PackedStringArray("survival")
+reward_pending_level_increase = 1
+reward_pending_skill_points = 1
+reward_marks_tutorial_completed = true

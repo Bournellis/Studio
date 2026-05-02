@@ -1,0 +1,53 @@
+# Gate F07 - Campaign Content Expansion
+
+- Phase: `Phase 7 - Campaign Content Expansion`
+- Status: `APPROVED`
+- Supersession Note: `This gate preserves the F07 implementation context. Later F10/F11 product realignment governs current mode hierarchy and PvP posture.`
+- Canon Review:
+  - campaigns remain authored 5-stage roguelite runs, with Stage 1 as the tutorial entry for the first campaign and Stage 5 reserved for the boss encounter
+  - the approved F05 reward, unlock, and suspend/resume contract remains authoritative and must not be reopened here
+  - campaign growth should deepen the current PvE baseline deliberately without widening race, weapon, or service scope
+  - broader campaign authoring must come from authored catalogs and route data, not new hardcoded scene arrays or campaign-specific runtime branches
+- Scope In:
+  - one authored campaign catalog that defines campaign id, difficulty id, display data, stage order, and boss-stage resolution for `blacksmith_campaign / easy`
+  - one route-loading contract for `CampaignStageManager` so runtime stage order no longer depends on `STAGE_SCENE_PATHS`
+  - one implementation-local content lane note for `Godot Content Candidate C1` that explicitly states this gate deepens the current Heroic / Hammer baseline instead of widening breadth
+  - one first expansion seam that allows additional 5-stage campaign routes to be added through data and generator tooling without changing campaign runtime code
+  - one regression-safe bridge so stage-authored reward payloads, suspend state, between-stage level-up flow, and Boss unlock behavior remain unchanged for the current route
+- Scope Out:
+  - second race, second weapon, or a broader permanent-unlock ladder beyond the current 4 skills / 2 potions baseline
+  - co-op campaign recovery rules
+  - shops, meta-currency, service-backed progression, cloud save, or Steam integration
+  - Arena PvP promotion out of blocked posture
+  - final narrative UI, cutscenes, or production-complete campaign art
+  - changing the 5-stage campaign structure or moving the boss out of Stage 5
+- Acceptance:
+  - `CampaignStageManager` no longer hardcodes the active campaign route through `STAGE_SCENE_PATHS`
+  - the active `blacksmith_campaign / easy` route is authored through catalog data with the exact stage order `mission_01 -> mission_02 -> mission_03 -> mission_04 -> mission_05`
+  - the route catalog explicitly marks `mission_05` as the boss stage and preserves the current frontend and campaign-entry behavior
+  - stage-authored reward payloads from F05 continue to drive mission rewards, suspend/resume, and between-stage level-up flow without compatibility regressions
+  - the campaign runtime can resolve at least one alternate non-hardcoded route definition through the same catalog contract in tests or tooling, without editing runtime code
+  - automated and manual validation cover route resolution, stage loading, Boss unlock continuity, and the current permanent progression posture for builder modes
+- Contracts:
+  - `CampaignCatalog` or equivalent generated route-definition resource
+  - `CampaignRouteDefinition`
+  - `CampaignStageReference`
+  - `CampaignStageManager` route-loading API
+  - `CampaignRoot` launch and resume flow
+  - `CampaignStageScene` authored reward payload contract from F05
+  - `FrontendRoot` campaign launch surface
+  - `ProfileStore` campaign-completion persistence
+- Art Manifest:
+  - proxy route-card treatment for the current campaign entry and future authored route slots
+  - proxy environmental variation kit that keeps the 5-stage forge route readable stage-to-stage without requiring final production art
+  - boss-stage presentation may remain proxy as long as the final mission still reads clearly as the boss encounter
+- Validation:
+  - `tools/validate.gd`
+  - GUT coverage for catalog resolution, route order, boss-stage lookup, launch-context sanitation, and continued reward-payload compatibility
+  - manual smoke through `docs/campaign-framework-smoke.md`, `docs/canonical-product-foundation-smoke.md`, and the B0 regression smoke
+  - one explicit smoke step proving the current campaign still clears, unlocks `Boss`, and resumes safely after the catalog swap
+- Resolved Defaults:
+  - this gate deepens the current campaign baseline instead of widening race or weapon breadth
+  - the first authored catalog route remains `blacksmith_campaign / easy` with stage ids `mission_01` through `mission_05`
+  - any alternate route used to prove the catalog seam may stay internal to tests or tooling until the player-facing campaign surface needs it
+- Next Gate: `Gate F09 - Second Authored Campaign Route`

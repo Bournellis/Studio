@@ -1,0 +1,44 @@
+# Gate F01 - Meta Foundation And Mandatory Tutorial
+
+- Phase: `Fase 1 + Fase 2 foundation cut`
+- Status: `APPROVED`
+- Supersession Note: `This gate preserves early Track 02 implementation context only. Later canon and gates supersede its pre-menu tutorial framing: current runtime boots to the frontend first, and the tutorial lives inside Campaign Mission 1. Do not use this gate as an active read-order or current product-status source.`
+- Canon Review:
+  - first boot must enter a mandatory tutorial before the normal menu
+  - tutorial completion must alter product mode availability
+  - Survival may open earlier than Boss and Arena
+  - PvE progress must remain local-first
+- Scope In:
+  - canonical boot scene
+  - player profile persistence
+  - tutorial completion resolver
+  - mandatory tutorial runtime wrapper
+  - current frontend lock state for `Survival`, `Boss`, and `Arena`
+- Scope Out:
+  - campaign framework
+  - product frontend replacement
+  - Free Mode and difficulty surfaces
+  - co-op and Steam
+- Acceptance:
+  - first boot routes to tutorial when no profile exists
+  - tutorial completion persists and returns later boots to the frontend
+  - Survival is unlocked after tutorial
+  - Boss remains blocked without campaign completion
+  - Arena remains internal
+- Contracts:
+  - `PlayerProfile`
+  - `ProfileStore`
+  - `ProgressionResolver`
+  - `ModeAvailabilityResolver`
+- Art Manifest:
+  - proxy Blacksmith silhouette on top of the hammer baseline
+  - proxy tutorial floor and troll encounter
+  - no final hero, boss, or menu art required for this phase
+- Validation:
+  - automated tests for profile persistence, boot routing, tutorial completion, frontend gating
+  - preserve existing B0 runtime regression
+  - manual smoke through `docs/canonical-product-foundation-smoke.md`
+- Open TBDs:
+  - exact health-potion timing inside the tutorial remains open for the next tutorial/design gate
+  - exact campaign-1 authored map list remains deferred to the campaign framework gate
+- Next Gate: `Gate F03 - Campaign Framework`

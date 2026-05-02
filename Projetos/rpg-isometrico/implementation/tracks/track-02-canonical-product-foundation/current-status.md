@@ -1,0 +1,61 @@
+# Track 02 Current Status
+
+- Last Updated: `2026-04-26`
+- Track: `Track 02 - Canonical Product Foundation`
+- Status: `OPEN`
+- B0 Baseline: `Arena / Survival / Boss local runtime with shared shell and results remains the internal validated foundation`
+- Current Goal: `F11 campaign-first runtime alignment is complete; no implementation gate is active until the next gate is explicitly selected before broadening content, co-op, PvP, Hard, race, or weapon scope`
+- Active Product Surface:
+  - `boot -> frontend as the first surface`
+  - `Campaign` routes first-time players into Mission 1 / Tutorial
+  - `ProfileStore + PlayerProfile + ProgressionResolver + ModeAvailabilityResolver`
+  - `CampaignStageScene` now authors stage reward payloads, permanent unlocks, and pending level-up context
+  - `blacksmith_campaign / easy` and `blacksmith_campaign / normal` now resolve through a generated campaign catalog sourced from `definitions/campaigns/*.json`
+  - `CampaignStageManager` now loads campaign stage order from route data instead of a hardcoded scene array
+  - `FrontendRoot` now exposes `Easy` and `Normal` under the same `Campanha do Troll` entry, with `Normal` visible but locked until `Easy` is completed
+  - `FrontendRoot` now exposes `Livre` as post-`Easy` Campanha Livre replay/buildcraft, with full kit preparation and profile-unlock filtering before launch
+  - `Campaign` suspended runs now persist per route key (`campaign + difficulty`) and migrate legacy `Easy` suspend data forward on first compatible resume
+  - `PlayerProfile.applied_reward_ids` now keeps campaign-stage rewards idempotent across suspend/resume and replay
+  - `Campaign and Arena Bot available at account start`
+  - `Survival unlocked after Mission 1`
+  - `Boss unlocked after Campaign 1 / Classic - Easy completion`
+  - `Survival`, `Boss`, and `Arena Bot` free-kit builders now keep locked content visible in a disabled state with campaign-learning guidance copy
+  - `FrontendRoot now presents Campaign as the primary public group and Survival, Boss, and Arena Bot under Extras`
+  - `Arena PvP / Private Duel remains internally defined but is hidden from normal public navigation until a future gate promotes, prototypes, or removes it`
+  - `Campaign runtime now opens Classic stages with a campaign briefing before control is released`
+  - `Campaign reward and result overlays now communicate journey progress, kit learning, and extra-mode openings instead of only technical unlock messages`
+  - `Frontend kit preparation now uses kit-first language while preserving the full 4 skills / 2 potions contract for free-selection modes`
+  - `Campanha Livre runtime uses the launch kit, skips tutorial prompts, produces replay reward copy, and does not grant permanent unlocks`
+  - `Survival now reads as an endurance/resistance extra, Boss as mastery/execution practice, and Arena Bot as kit-training simulation`
+  - `Extra-mode result overlays now use RESULTADO DO EXTRA, include an Extra section, and state that permanent progression remains campaign-owned`
+- Product Direction:
+  - `Campaign PvE is the primary commercial spine`
+  - `Classic is the authored progression and lore path`
+  - `Free is replay/buildcraft after Classic progression, not the primary unlock path`
+  - `Survival, Boss, and Arena Bot are complementary replay or mastery surfaces`
+  - `Co-op is optional for Release 1 only if it preserves the solo-first baseline`
+  - `No public matchmaking, ranked PvP, or dedicated server requirement exists in the current plan`
+- Completed Runtime Alignment:
+  - `Priority 0: frontend hierarchy, Classic campaign authority, kit/loadout UX`
+  - `Priority 1: Free replay/buildcraft, PvE extra framing, progression cleanup`
+  - `Priority 2: Private Duel / Arena PvP dev-gating and co-op feasibility only through future gates`
+  - `Priority 3: copy sweep and smoke/test updates after runtime changes`
+  - `F11-A: implemented in runtime, frontend tests, and smoke docs`
+  - `F11-B: implemented in runtime, campaign/frontend/product tests, and smoke docs`
+  - `F11-C: implemented in runtime, frontend/loadout tests, and smoke docs`
+  - `F11-D: implemented in runtime, campaign/frontend/product tests, and smoke docs`
+  - `F11-E: implemented in runtime, shared presentation/frontend/extra-mode tests, smoke docs, and validation tooling`
+- Read Next:
+  - `implementation-map.md`
+  - `art-track/foundation-style-and-proxy-kit.md`
+  - `../track-01-playable-base-and-real-backlog/current-status.md` for B0-only baseline context
+  - completed gate files only when their historical context is needed; no active gate file exists until `Next Gate` is selected
+- Validation Target:
+  - keep `tools/validate.gd` green
+  - preserve Arena / Survival / Boss runtime regression
+  - preserve stage-authored reward payload coverage, Easy/Normal/Livre route selection, route-specific suspend persistence, legacy Easy suspend migration, builder unlock filtering, reward resume idempotency, Campanha Livre replay reward behavior, extra-mode result framing, and catalog-backed campaign route resolution
+- Manual Smoke:
+  - `../../docs/canonical-product-foundation-smoke.md`
+  - `../../docs/campaign-framework-smoke.md`
+  - `../../docs/g4-shared-mode-foundation-smoke.md` remains the B0 runtime smoke gate
+- Next Gate: `TBD - choose an explicit next gate before implementation`

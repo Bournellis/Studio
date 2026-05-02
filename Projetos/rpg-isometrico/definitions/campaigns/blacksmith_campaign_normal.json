@@ -1,0 +1,33 @@
+{
+	"campaign_id": "blacksmith_campaign",
+	"difficulty_id": "normal",
+	"campaign_display_name": "Campanha do Troll",
+	"difficulty_label": "Classic - Normal",
+	"stage_references": [
+		{
+			"stage_id": "mission_01",
+			"scene_path": "res://modes/campaign/stages/campaign_mission_01_normal.tscn",
+			"is_boss_stage": false
+		},
+		{
+			"stage_id": "mission_02",
+			"scene_path": "res://modes/campaign/stages/campaign_mission_02_normal.tscn",
+			"is_boss_stage": false
+		},
+		{
+			"stage_id": "mission_03",
+			"scene_path": "res://modes/campaign/stages/campaign_mission_03_normal.tscn",
+			"is_boss_stage": false
+		},
+		{
+			"stage_id": "mission_04",
+			"scene_path": "res://modes/campaign/stages/campaign_mission_04_normal.tscn",
+			"is_boss_stage": false
+		},
+		{
+			"stage_id": "mission_05",
+			"scene_path": "res://modes/campaign/stages/campaign_mission_05_normal.tscn",
+			"is_boss_stage": true
+		}
+	]
+}

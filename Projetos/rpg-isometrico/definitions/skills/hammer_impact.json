@@ -1,0 +1,13 @@
+{
+  "id": "hammer_impact",
+  "race_id": "heroic",
+  "weapon_id": "heroic_hammer",
+  "display_name": "Impacto do Martelo",
+  "description": "Golpe frontal rapido para confirmar dano de curta distancia.",
+  "kind": "projectile",
+  "cooldown": 2.4,
+  "damage": 24.0,
+  "range": 4.4,
+  "duration": 0.0,
+  "value": 0.0
+}

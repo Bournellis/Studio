@@ -1,0 +1,66 @@
+[gd_resource type="Resource" script_class="SkillCatalogResource" format=3]
+
+[ext_resource type="Script" path="res://gameplay/content/skill_definition_resource.gd" id="1_gx4s1"]
+[ext_resource type="Script" path="res://gameplay/content/skill_catalog_resource.gd" id="2_7ygwn"]
+
+[sub_resource type="Resource" id="Resource_gx4s1"]
+script = ExtResource("1_gx4s1")
+id = &"blacksmith_hammer_throw"
+race_id = &"heroic"
+weapon_id = &"heroic_hammer"
+display_name = "Arremesso de Martelo"
+description = "Arremessa o martelo do ferreiro para uma curta distancia e confirma dano na chegada."
+cooldown = 2.6
+damage = 22.0
+
+[sub_resource type="Resource" id="Resource_7ygwn"]
+script = ExtResource("1_gx4s1")
+id = &"breaker_leap"
+race_id = &"heroic"
+weapon_id = &"heroic_hammer"
+display_name = "Salto Quebrador"
+description = "Avanca na direcao do alvo e finaliza com impacto corpo a corpo."
+kind = 3
+cooldown = 6.0
+damage = 34.0
+
+[sub_resource type="Resource" id="Resource_esfiw"]
+script = ExtResource("1_gx4s1")
+id = &"hammer_impact"
+race_id = &"heroic"
+weapon_id = &"heroic_hammer"
+display_name = "Impacto do Martelo"
+description = "Golpe frontal rapido para confirmar dano de curta distancia."
+cooldown = 2.4
+damage = 24.0
+range = 4.4
+
+[sub_resource type="Resource" id="Resource_phpln"]
+script = ExtResource("1_gx4s1")
+id = &"heroic_rally"
+race_id = &"heroic"
+weapon_id = &"heroic_hammer"
+display_name = "Brado Heroico"
+description = "Amplifica o proximo ciclo ofensivo e melhora o deslocamento por alguns segundos."
+kind = 1
+cooldown = 8.0
+damage = 0.0
+range = 0.0
+duration = 4.5
+value = 1.5
+
+[sub_resource type="Resource" id="Resource_2cib4"]
+script = ExtResource("1_gx4s1")
+id = &"seismic_ring"
+race_id = &"heroic"
+weapon_id = &"heroic_hammer"
+display_name = "Anel Sismico"
+description = "Explosao em area curta ao redor do heroi para punir aproximacao do bot."
+kind = 2
+cooldown = 5.2
+damage = 28.0
+range = 3.4
+
+[resource]
+script = ExtResource("2_7ygwn")
+entries = Array[ExtResource("1_gx4s1")]([SubResource("Resource_gx4s1"), SubResource("Resource_7ygwn"), SubResource("Resource_esfiw"), SubResource("Resource_phpln"), SubResource("Resource_2cib4")])

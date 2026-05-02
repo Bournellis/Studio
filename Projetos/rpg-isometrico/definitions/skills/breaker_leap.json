@@ -1,0 +1,13 @@
+{
+  "id": "breaker_leap",
+  "race_id": "heroic",
+  "weapon_id": "heroic_hammer",
+  "display_name": "Salto Quebrador",
+  "description": "Avanca na direcao do alvo e finaliza com impacto corpo a corpo.",
+  "kind": "leap_strike",
+  "cooldown": 6.0,
+  "damage": 34.0,
+  "range": 5.0,
+  "duration": 0.0,
+  "value": 0.0
+}

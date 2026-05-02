@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="WeaponCatalogResource" format=3]
+
+[ext_resource type="Script" path="res://gameplay/content/weapon_definition_resource.gd" id="1_e7jsj"]
+[ext_resource type="Script" path="res://gameplay/content/weapon_catalog_resource.gd" id="2_act1j"]
+
+[sub_resource type="Resource" id="Resource_e7jsj"]
+script = ExtResource("1_e7jsj")
+id = &"heroic_hammer"
+race_id = &"heroic"
+display_name = "Martelo Heroico"
+description = "Martelo pesado para ataques curtos, dash forte e leitura frontal."
+basic_attack_damage = 22.0
+basic_attack_range = 2.35
+move_speed = 5.8
+max_health = 150.0
+dash_distance = 5.4
+dash_cooldown = 1.35
+
+[resource]
+script = ExtResource("2_act1j")
+entries = Array[ExtResource("1_e7jsj")]([SubResource("Resource_e7jsj")])

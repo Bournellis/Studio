@@ -1,0 +1,13 @@
+{
+  "id": "heroic_rally",
+  "race_id": "heroic",
+  "weapon_id": "heroic_hammer",
+  "display_name": "Brado Heroico",
+  "description": "Amplifica o proximo ciclo ofensivo e melhora o deslocamento por alguns segundos.",
+  "kind": "self_buff",
+  "cooldown": 8.0,
+  "damage": 0.0,
+  "range": 0.0,
+  "duration": 4.5,
+  "value": 1.5
+}

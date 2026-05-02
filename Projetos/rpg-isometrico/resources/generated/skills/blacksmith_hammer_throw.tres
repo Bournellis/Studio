@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="SkillDefinitionResource" format=3]
+
+[ext_resource type="Script" path="res://gameplay/content/skill_definition_resource.gd" id="1_tgwe8"]
+
+[resource]
+script = ExtResource("1_tgwe8")
+id = &"blacksmith_hammer_throw"
+race_id = &"heroic"
+weapon_id = &"heroic_hammer"
+display_name = "Arremesso de Martelo"
+description = "Arremessa o martelo do ferreiro para uma curta distancia e confirma dano na chegada."
+cooldown = 2.6
+damage = 22.0

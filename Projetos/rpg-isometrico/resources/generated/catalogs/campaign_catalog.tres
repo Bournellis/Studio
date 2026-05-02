@@ -1,0 +1,111 @@
+[gd_resource type="Resource" script_class="CampaignCatalogResource" format=3]
+
+[ext_resource type="Script" path="res://modes/campaign/campaign_route_definition_resource.gd" id="1_slki2"]
+[ext_resource type="Script" path="res://modes/campaign/campaign_stage_reference_resource.gd" id="2_datht"]
+[ext_resource type="Script" path="res://modes/campaign/campaign_catalog_resource.gd" id="3_wrfup"]
+
+[sub_resource type="Resource" id="Resource_slki2"]
+script = ExtResource("2_datht")
+stage_id = &"mission_01"
+scene_path = "res://modes/campaign/stages/campaign_mission_01.tscn"
+
+[sub_resource type="Resource" id="Resource_datht"]
+script = ExtResource("2_datht")
+stage_id = &"mission_02"
+scene_path = "res://modes/campaign/stages/campaign_mission_02.tscn"
+
+[sub_resource type="Resource" id="Resource_wrfup"]
+script = ExtResource("2_datht")
+stage_id = &"mission_03"
+scene_path = "res://modes/campaign/stages/campaign_mission_03.tscn"
+
+[sub_resource type="Resource" id="Resource_8yb2t"]
+script = ExtResource("2_datht")
+stage_id = &"mission_04"
+scene_path = "res://modes/campaign/stages/campaign_mission_04.tscn"
+
+[sub_resource type="Resource" id="Resource_tee4w"]
+script = ExtResource("2_datht")
+stage_id = &"mission_05"
+scene_path = "res://modes/campaign/stages/campaign_mission_05.tscn"
+is_boss_stage = true
+
+[sub_resource type="Resource" id="Resource_a25rg"]
+script = ExtResource("1_slki2")
+campaign_id = &"blacksmith_campaign"
+difficulty_id = &"easy"
+campaign_display_name = "Campanha do Troll"
+difficulty_label = "Classic - Easy"
+stage_references = Array[ExtResource("2_datht")]([SubResource("Resource_slki2"), SubResource("Resource_datht"), SubResource("Resource_wrfup"), SubResource("Resource_8yb2t"), SubResource("Resource_tee4w")])
+
+[sub_resource type="Resource" id="Resource_66yea"]
+script = ExtResource("2_datht")
+stage_id = &"mission_01"
+scene_path = "res://modes/campaign/stages/campaign_mission_01.tscn"
+
+[sub_resource type="Resource" id="Resource_m3qxk"]
+script = ExtResource("2_datht")
+stage_id = &"mission_02"
+scene_path = "res://modes/campaign/stages/campaign_mission_02.tscn"
+
+[sub_resource type="Resource" id="Resource_iaceq"]
+script = ExtResource("2_datht")
+stage_id = &"mission_03"
+scene_path = "res://modes/campaign/stages/campaign_mission_03.tscn"
+
+[sub_resource type="Resource" id="Resource_7olkj"]
+script = ExtResource("2_datht")
+stage_id = &"mission_04"
+scene_path = "res://modes/campaign/stages/campaign_mission_04.tscn"
+
+[sub_resource type="Resource" id="Resource_h30ui"]
+script = ExtResource("2_datht")
+stage_id = &"mission_05"
+scene_path = "res://modes/campaign/stages/campaign_mission_05.tscn"
+is_boss_stage = true
+
+[sub_resource type="Resource" id="Resource_ml8x7"]
+script = ExtResource("1_slki2")
+campaign_id = &"blacksmith_campaign"
+difficulty_id = &"free"
+campaign_display_name = "Campanha do Troll"
+difficulty_label = "Livre"
+stage_references = Array[ExtResource("2_datht")]([SubResource("Resource_66yea"), SubResource("Resource_m3qxk"), SubResource("Resource_iaceq"), SubResource("Resource_7olkj"), SubResource("Resource_h30ui")])
+
+[sub_resource type="Resource" id="Resource_rduus"]
+script = ExtResource("2_datht")
+stage_id = &"mission_01"
+scene_path = "res://modes/campaign/stages/campaign_mission_01_normal.tscn"
+
+[sub_resource type="Resource" id="Resource_6nmdk"]
+script = ExtResource("2_datht")
+stage_id = &"mission_02"
+scene_path = "res://modes/campaign/stages/campaign_mission_02_normal.tscn"
+
+[sub_resource type="Resource" id="Resource_6wud1"]
+script = ExtResource("2_datht")
+stage_id = &"mission_03"
+scene_path = "res://modes/campaign/stages/campaign_mission_03_normal.tscn"
+
+[sub_resource type="Resource" id="Resource_nuw7n"]
+script = ExtResource("2_datht")
+stage_id = &"mission_04"
+scene_path = "res://modes/campaign/stages/campaign_mission_04_normal.tscn"
+
+[sub_resource type="Resource" id="Resource_6ts8a"]
+script = ExtResource("2_datht")
+stage_id = &"mission_05"
+scene_path = "res://modes/campaign/stages/campaign_mission_05_normal.tscn"
+is_boss_stage = true
+
+[sub_resource type="Resource" id="Resource_e2bei"]
+script = ExtResource("1_slki2")
+campaign_id = &"blacksmith_campaign"
+difficulty_id = &"normal"
+campaign_display_name = "Campanha do Troll"
+difficulty_label = "Classic - Normal"
+stage_references = Array[ExtResource("2_datht")]([SubResource("Resource_rduus"), SubResource("Resource_6nmdk"), SubResource("Resource_6wud1"), SubResource("Resource_nuw7n"), SubResource("Resource_6ts8a")])
+
+[resource]
+script = ExtResource("3_wrfup")
+entries = Array[ExtResource("1_slki2")]([SubResource("Resource_a25rg"), SubResource("Resource_ml8x7"), SubResource("Resource_e2bei")])
