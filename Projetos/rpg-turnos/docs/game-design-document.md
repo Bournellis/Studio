@@ -651,6 +651,22 @@ Answered design decisions:
 - Defeat consequence: reload to the pre-combat state with no negative effect.
 - Command/Presence: optional future suggestion, not required for prototype 0.1.
 
+First playable slice decisions:
+
+- Presentation: 2D top-down placeholder map for the first slice; final 2D/3D/hybrid direction remains undecided.
+- Flow: Menu -> map -> NPC reward -> deck setup -> enemy-hero duel -> result -> map/retry.
+- NPC reward: one new card, `Balista Improvisada`.
+- Combat setup: full setup before combat.
+- Deck rule: choose a fixed 10-card deck from unlocked individual card entries.
+- Hand size: 3.
+- Enemy AI: scripted deterministic actions.
+- Persistence: session-only, no disk save/load.
+- Map scope: small free 2D area with NPC and encounter marker.
+- Post-battle: victory result returns to map; defeat result retries from the pre-combat snapshot with no penalty.
+- World controls: `WASD` movement and `E` interaction.
+- Card interaction: drag-and-drop in setup and battle.
+- Menu scope: `Novo jogo` and `Sair`.
+
 Open questions before implementation locks systems:
 
 1. Is the playable combat hero always solo, or can singleplayer eventually control a party?

@@ -13,4 +13,13 @@ config_version=5
 config/name="RPG Turnos"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
+run/main_scene="res://modes/boot/boot.tscn"
 
+[autoload]
+
+ContentLibrary="*res://data/content_library.gd"
+GameSession="*res://core/game_session.gd"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/gut/plugin.cfg")

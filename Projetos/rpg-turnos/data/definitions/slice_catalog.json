@@ -1,0 +1,145 @@
+{
+  "player_hero": {
+    "id": "threshold_apprentice",
+    "display_name": "Aprendiz do Limiar",
+    "max_health": 25,
+    "hero_power_text": "Poder heroico reservado para uma versao futura."
+  },
+  "enemy_hero": {
+    "id": "scripted_duelist",
+    "display_name": "Duelista do Marco",
+    "max_health": 18,
+    "hero_power_text": "Age por roteiro fixo no primeiro slice."
+  },
+  "starter_deck": [
+    "line_guard",
+    "line_guard",
+    "quick_scout",
+    "quick_scout",
+    "watch_archer",
+    "watch_archer",
+    "short_spark",
+    "short_spark",
+    "field_barricade",
+    "hold_the_line"
+  ],
+  "reward_card": "improvised_ballista",
+  "cards": [
+    {
+      "id": "line_guard",
+      "display_name": "Guarda da Linha",
+      "type": "unit",
+      "cost": 1,
+      "attack": 1,
+      "health": 4,
+      "keywords": ["defender"],
+      "text": "Ocupa uma rota e segura dano melhor que uma unidade comum.",
+      "effect": {}
+    },
+    {
+      "id": "quick_scout",
+      "display_name": "Batedor Ligeiro",
+      "type": "unit",
+      "cost": 1,
+      "attack": 2,
+      "health": 1,
+      "keywords": ["fast"],
+      "text": "Rapido. Pode atacar no confronto do mesmo turno em que entra.",
+      "effect": {}
+    },
+    {
+      "id": "watch_archer",
+      "display_name": "Arqueira de Vigia",
+      "type": "unit",
+      "cost": 2,
+      "attack": 2,
+      "health": 2,
+      "keywords": ["reach"],
+      "text": "Unidade simples para testar pressao de rota.",
+      "effect": {}
+    },
+    {
+      "id": "short_spark",
+      "display_name": "Centelha Curta",
+      "type": "spell",
+      "cost": 1,
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Causa 2 de dano a um alvo inimigo.",
+      "effect": {"action": "damage", "amount": 2}
+    },
+    {
+      "id": "field_barricade",
+      "display_name": "Barricada de Campo",
+      "type": "structure",
+      "cost": 1,
+      "attack": 0,
+      "health": 5,
+      "keywords": ["defender"],
+      "text": "Estrutura defensiva. Bloqueia a rota sem atacar.",
+      "effect": {}
+    },
+    {
+      "id": "hold_the_line",
+      "display_name": "Manter a Linha",
+      "type": "command",
+      "cost": 1,
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Concede +2 de vida a uma unidade ou estrutura aliada.",
+      "effect": {"action": "buff_health", "amount": 2}
+    },
+    {
+      "id": "improvised_ballista",
+      "display_name": "Balista Improvisada",
+      "type": "structure",
+      "cost": 3,
+      "attack": 2,
+      "health": 3,
+      "keywords": ["siege"],
+      "text": "Recompensa do NPC. Ataca pela rota depois de ficar pronta.",
+      "effect": {}
+    },
+    {
+      "id": "enemy_recruit",
+      "display_name": "Recruta Rival",
+      "type": "unit",
+      "cost": 1,
+      "attack": 1,
+      "health": 3,
+      "keywords": [],
+      "text": "Carta de roteiro do inimigo.",
+      "effect": {}
+    },
+    {
+      "id": "enemy_marksman",
+      "display_name": "Atirador Rival",
+      "type": "unit",
+      "cost": 2,
+      "attack": 2,
+      "health": 2,
+      "keywords": [],
+      "text": "Carta de roteiro do inimigo.",
+      "effect": {}
+    },
+    {
+      "id": "enemy_veteran",
+      "display_name": "Veterano Rival",
+      "type": "unit",
+      "cost": 3,
+      "attack": 3,
+      "health": 4,
+      "keywords": [],
+      "text": "Carta de roteiro do inimigo.",
+      "effect": {}
+    }
+  ],
+  "enemy_script": [
+    {"round": 1, "action": "play", "card_id": "enemy_recruit", "slot": 1},
+    {"round": 2, "action": "play", "card_id": "enemy_marksman", "slot": 2},
+    {"round": 3, "action": "play", "card_id": "enemy_veteran", "slot": 0},
+    {"round": 4, "action": "direct_damage", "amount": 2}
+  ]
+}

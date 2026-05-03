@@ -130,6 +130,18 @@ Small hand-authored JSON definitions are preferred early. Generated Godot resour
 - `WorldActor`
 - `SaveSnapshot`
 
+## First Playable Slice Runtime
+
+The first playable slice introduced a small runtime while keeping rules visual-agnostic:
+
+- `data/definitions/slice_catalog.json` is the authored source for placeholder heroes, cards, starter deck, reward card, and enemy script.
+- `tools/content_generator.gd` generates `data/generated/slice_catalog.tres`.
+- `tools/scene_generator.gd` generates playable scenes; agents must not hand-edit generated `.tscn` files as raw text.
+- `data/content_library.gd` exposes the generated catalog as an autoload.
+- `core/game_session.gd` owns session-only progression, deck selection, pre-combat snapshot, and result state.
+- `battle/battle_engine.gd` owns card-slot rules without depending on 2D nodes.
+- `modes/world`, `modes/battle`, and `ui/controls` own presentation and input adaptation.
+
 ## Reuse Policy
 
 Reusable code from RPG Isometrico may be considered only after checking it against turn-based RPG needs.

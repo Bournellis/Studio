@@ -1,10 +1,7 @@
 # RPG Turnos Tracks
 
-No active track has been opened yet.
+Active track:
 
-The suggested first track is:
+- `track-01-foundation-first-prototype/`
 
-`Track 01 - Foundation Contracts And First Prototype`
-
-Open a track here only after the next implementation goal is explicitly chosen.
-
+Track 01 owns the first playable slice: menu, 2D map, NPC reward, deck setup, enemy-hero duel, result flow, validation, and runtime documentation.

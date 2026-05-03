@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://modes/battle/deck_setup_root.gd" id="1_dcdn8"]
+
+[node name="Deck Setup" type="Control" unique_id=1244824513]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_dcdn8")
