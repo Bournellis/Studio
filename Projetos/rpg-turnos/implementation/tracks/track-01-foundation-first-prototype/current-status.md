@@ -63,6 +63,30 @@
 - Upcoming prototypes should test different board shapes, including boards more complex than the current 3 direct routes.
 - Board positions may have attributes and should be explored as part of combat identity.
 - Position attributes may affect targeting, routes, defense, attack, card costs, hazards, control, deployment rules, or encounter-specific objectives.
+- A no-combat-phase variant should also be tested, where attacks happen as priority-spending actions during a shared main phase.
+- Instant-speed actions may be tested as actions that do not spend priority.
+
+## Cardgame Core Experiment Plan
+
+Design reference:
+
+- `../../../docs/cardgame-core-experiments.md`
+
+Implementation reference:
+
+- `cardgame-core-implementation-plan.md`
+
+Immediate next pass:
+
+- `Pass 02 - Phase State Machine`
+
+Experiment matrix:
+
+- `A1_B1`: active player plus responses, automated combat
+- `A1_B2`: active player plus responses, interactive combat
+- `A2_B1`: shared initiative, automated combat
+- `A2_B2`: shared initiative, interactive combat
+- `C1`: shared priority, no combat phase, attacks as main-phase actions
 
 ## Validation
 

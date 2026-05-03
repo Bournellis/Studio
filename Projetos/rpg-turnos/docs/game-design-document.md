@@ -200,26 +200,42 @@ Effect: Occupants take -1 damage from ranged attacks.
 
 ## 9. Round Structure
 
-The provisional round flow is:
+The current cardgame-first candidate round flow is:
 
 1. Round Start
-2. Player Phase
-3. Enemy Phase
-4. Confrontation Phase
-5. Round End
+2. Draw
+3. Main Phase 1
+4. Combat
+5. Main Phase 2
+6. Turn End
+
+This flow is not final combat canon yet. It is the next prototype target and is expanded in `cardgame-core-experiments.md`.
 
 ### Round Start
+
+Automatic phase.
+
+Likely responsibilities:
+
+- trigger start-of-round effects
+- refresh or adjust round state
+- prepare encounter timers or enemy intent if needed
+
+### Draw
+
+Automatic phase.
 
 Likely responsibilities:
 
 - draw cards
-- gain or refresh energy
-- trigger start-of-round effects
-- reveal enemy intentions when supported by the encounter
+- trigger effects that care about drawing
+- trigger effects that care about hand size or deck state
 
-### Player Phase
+### Main Phase 1
 
-The player may:
+Interactive phase.
+
+Depending on the priority model being tested, the active player or both players may:
 
 - play creatures into valid slots
 - play structures or support permanents into valid slots
@@ -229,34 +245,72 @@ The player may:
 - use hero power
 - use equipment effects
 - prepare defense
+- pass the phase
 
-### Enemy Phase
+### Combat
 
-Enemy behavior depends on encounter type.
+Combat has two candidate resolution models:
 
-An enemy hero may play cards and use a hero power. A scripted encounter may spawn enemies, trigger a portal, prepare a boss attack, or modify terrain.
+- automated combat, where players prepare positions or intent and the combat resolves at once
+- interactive combat, where players choose attacks, targets, spells, and abilities through priority windows
 
-### Confrontation Phase
+The current leaning is toward interactive combat, but both models should be tested.
 
-Ready creatures and relevant structures resolve attacks through their routes.
+### Main Phase 2
 
-Base rules:
+Interactive phase after combat.
 
-- ready creatures attack through their attack route
-- if a blocking enemy occupies the target slot, units deal damage to each other
-- if no blocker exists, the attack may hit a hero, boss part, or objective
-- dead creatures or destroyed objects leave the board
-- end-of-confrontation effects resolve
+Likely responsibilities:
 
-### Round End
+- rebuild board position after combat
+- use post-combat spells or abilities
+- prepare for the opponent, next turn, or next round
+- pass the phase
+
+### Turn End
+
+Automatic phase.
 
 Likely responsibilities:
 
 - remove dead units
 - resolve terrain damage or healing
 - reduce durations
-- trigger end-of-round effects
+- trigger end-of-turn effects
 - resolve encounter timers
+
+### Priority Model Experiments
+
+Two priority models should be tested before the turn rules are locked:
+
+- active player plus responses, where the active player plays normal actions and the opponent mostly plays response-speed actions
+- shared initiative, where both sides can act more broadly through priority windows
+
+The current leaning is toward shared initiative, but it is still an experiment.
+
+### No-Combat-Phase Experiment
+
+A third structure should be tested because it is meaningfully different from the phase-based combat models:
+
+1. Round Start
+2. Draw
+3. Main Phase
+4. Turn End
+
+In this variant:
+
+- Round Start is automatic and triggers start-of-round effects.
+- Draw is automatic, draws cards, and triggers draw effects.
+- Main Phase alternates priority between the active player and the other player.
+- There is no dedicated Combat phase.
+- Any player may use any card type on any turn if they have priority and meet the card's requirements.
+- A creature without summoning sickness may attack during Main Phase when its controller has priority.
+- Each creature may attack once per turn by default unless a card effect says otherwise.
+- Playing a creature, attacking, casting a non-instant spell, or using a character power passes priority.
+- Instant-speed spells do not spend priority.
+- Turn End is automatic and triggers end-of-turn effects.
+
+This variant is identified as `C1` in the implementation plan.
 
 ## 10. Creature Timing And Keywords
 
@@ -264,7 +318,7 @@ Default creature timing:
 
 - newly placed creatures enter as `Preparing`
 - preparing creatures can block immediately
-- preparing creatures do not attack until a later Confrontation Phase
+- preparing creatures do not attack until a later Confrontation Phase or a legal attack action, depending on the tested turn structure
 
 Initial keyword candidates:
 
@@ -673,6 +727,17 @@ First combat-depth implementation decisions:
 - `Preparar` draws 1 card.
 - `Preparar` can be used once per round.
 - Hero power does not cost Energy in the current prototype pass.
+
+Cardgame-first design experiment decisions:
+
+- Current candidate phase order: Round Start -> Draw -> Main Phase 1 -> Combat -> Main Phase 2 -> Turn End.
+- Round Start, Draw, and Turn End are automatic phases.
+- Main Phase 1 and Main Phase 2 are player-driven phases.
+- Priority model is not locked; test active-player-plus-responses against shared initiative.
+- Combat resolution is not locked; test automated combat against interactive combat.
+- Current leaning is shared initiative plus interactive combat, but this must be playtested before becoming canon.
+- Additional structural test: `C1`, with no combat phase, shared main-phase priority, attacks as actions, and instant-speed spells that do not spend priority.
+- Board topology is not locked; test more complex boards and position attributes.
 
 Open questions before implementation locks systems:
 

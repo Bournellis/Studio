@@ -96,6 +96,13 @@ Gates esperados:
 
 - reavaliar toda a regra de turno
 - testar turnos mais elaborados, com fases, janelas de decisao ou resolucoes separadas se isso melhorar o jogo
+- implementar um laboratorio de combate para comparar variacoes antes de travar regras finais
+- testar prioridade estilo jogador ativo mais respostas
+- testar prioridade por iniciativa compartilhada
+- testar combate automatizado
+- testar combate interativo com prioridade durante ataques
+- testar uma variante sem fase de combate, com ataques como acoes da fase principal
+- testar magias instantaneas que nao gastam prioridade
 - testar tabuleiros diferentes e mais complexos
 - testar posicoes com atributos proprios
 - definir como atributos de posicao afetam cartas, alvos, rotas, defesa, ataque ou efeitos
@@ -114,6 +121,21 @@ Entregas ja implementadas no primeiro passe:
 - uso limitado a 1 vez por rodada
 - botao `Poder heroico` no topo do combate
 - feedback textual e testes de motor/UI para o poder heroico
+
+Plano de implementacao atual:
+
+- `Pass 02`: maquina de fases explicita
+- `Pass 03`: experimento de prioridade
+- `Pass 04`: experimento de resolucao de combate
+- `Pass 05`: variante de fase principal continua sem fase de combate
+- `Pass 06`: topologia de tabuleiro e atributos de posicao
+- `Pass 07`: encontros de laboratorio para as cinco variacoes principais
+- `Pass 08`: avaliacao e escolha de uma direcao principal
+
+Documentos de referencia:
+
+- `../docs/cardgame-core-experiments.md`
+- `tracks/track-01-foundation-first-prototype/cardgame-core-implementation-plan.md`
 
 ### Fase 4 - Progressao RPG
 

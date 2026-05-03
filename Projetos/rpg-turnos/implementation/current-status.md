@@ -11,9 +11,11 @@
   - `../AGENTS.md`
   - `../docs/project-brief.md`
   - `../docs/game-design-document.md`
+  - `../docs/cardgame-core-experiments.md`
   - `../docs/architecture.md`
   - `roadmap.md`
   - `tracks/README.md`
+  - `tracks/track-01-foundation-first-prototype/cardgame-core-implementation-plan.md`
   - `../docs/first-playable-slice-smoke.md`
 - Shared Canon Note: `this project may share lore with RPG Isometrico, but RPG Isometrico mechanics are not automatically RPG Turnos canon`
 - Godot Baseline: `Godot 4.6.2-stable, GDScript only`
@@ -22,7 +24,7 @@
 - Automated Validation: `run Godot headless with res://tools/validate.gd`
 - Manual Smoke: `../docs/first-playable-slice-smoke.md`
 - Reuse Posture: `GUT and validation pattern were reused narrowly from RPG Isometrico; no action-RPG runtime systems were imported`
-- Next Gate: `reassess turn structure and prototype cardgame-first board variations, including more complex boards and position attributes`
+- Next Gate: `implement Cardgame Core Pass 02 phase state machine, then prototype priority and combat-resolution variants`
 
 ## Initial Premises
 
@@ -113,6 +115,25 @@ The active project roadmap is tracked in `roadmap.md`.
 - Test different board shapes instead of assuming the current 3 direct routes are final.
 - Test position attributes as first-class combat rules.
 - Keep map, NPC, stats, character progression, items, and lore as minimal placeholders until the cardgame loop is stronger.
+- Current design session is registered in `../docs/cardgame-core-experiments.md`.
+- Current implementation plan is registered in `tracks/track-01-foundation-first-prototype/cardgame-core-implementation-plan.md`.
+
+## Next Implementation Plan
+
+Use the cardgame lab plan instead of expanding RPG systems.
+
+Immediate next pass:
+
+- `Pass 02 - Phase State Machine`
+
+Planned follow-up passes:
+
+- priority model experiment: active player plus responses versus shared initiative
+- combat resolution experiment: automated combat versus interactive combat
+- continuous main phase experiment: no combat phase, attacks as priority-spending main-phase actions
+- board topology and position attributes
+- five combat lab variants: `A1_B1`, `A1_B2`, `A2_B1`, `A2_B2`, `C1`
+- evaluation pass before locking the main combat direction
 
 ## Validation Command
 
