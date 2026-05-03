@@ -667,6 +667,13 @@ First playable slice decisions:
 - Card interaction: drag-and-drop in setup and battle.
 - Menu scope: `Novo jogo` and `Sair`.
 
+First combat-depth implementation decisions:
+
+- Player hero power: `Preparar`.
+- `Preparar` draws 1 card.
+- `Preparar` can be used once per round.
+- Hero power does not cost Energy in the current prototype pass.
+
 Open questions before implementation locks systems:
 
 1. Is the playable combat hero always solo, or can singleplayer eventually control a party?

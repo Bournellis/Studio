@@ -6,6 +6,8 @@ const CardTokenScript = preload("res://ui/controls/card_token.gd")
 const DeckSlotControlScript = preload("res://ui/controls/deck_slot_control.gd")
 
 var pool_container
+var pool_summary_label: Label
+var deck_summary_label: Label
 var status_label: Label
 var start_button: Button
 var selected_deck: Array = []
@@ -65,6 +67,10 @@ func _build_ui() -> void:
 	pool_title.text = "Cartas desbloqueadas disponiveis"
 	pool_box.add_child(pool_title)
 
+	pool_summary_label = Label.new()
+	pool_summary_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	pool_box.add_child(pool_summary_label)
+
 	var scroll: ScrollContainer = ScrollContainer.new()
 	scroll.custom_minimum_size = Vector2(0, 320)
 	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -92,6 +98,10 @@ func _build_ui() -> void:
 	var deck_title: Label = Label.new()
 	deck_title.text = "Deck selecionado"
 	deck_box.add_child(deck_title)
+
+	deck_summary_label = Label.new()
+	deck_summary_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	deck_box.add_child(deck_summary_label)
 
 	var deck_scroll: ScrollContainer = ScrollContainer.new()
 	deck_scroll.custom_minimum_size = Vector2(0, 320)
@@ -125,6 +135,18 @@ func _build_ui() -> void:
 	back_button.pressed.connect(func() -> void: get_tree().change_scene_to_file("res://modes/world/world.tscn"))
 	actions.add_child(back_button)
 
+	var clear_button: Button = Button.new()
+	clear_button.text = "Limpar deck"
+	clear_button.custom_minimum_size = Vector2(140, 40)
+	clear_button.pressed.connect(_clear_deck)
+	actions.add_child(clear_button)
+
+	var auto_fill_button: Button = Button.new()
+	auto_fill_button.text = "Auto preencher"
+	auto_fill_button.custom_minimum_size = Vector2(150, 40)
+	auto_fill_button.pressed.connect(_auto_fill_deck)
+	actions.add_child(auto_fill_button)
+
 	start_button = Button.new()
 	start_button.text = "Iniciar batalha"
 	start_button.custom_minimum_size = Vector2(160, 40)
@@ -140,7 +162,8 @@ func _refresh() -> void:
 	for child: Node in pool_container.get_children():
 		pool_container.remove_child(child)
 		child.free()
-	for entry: Dictionary in _available_pool_entries():
+	var available_entries: Array = _available_pool_entries()
+	for entry: Dictionary in available_entries:
 		var entry_box: VBoxContainer = VBoxContainer.new()
 		entry_box.custom_minimum_size = Vector2(168, 0)
 		entry_box.add_theme_constant_override("separation", 6)
@@ -155,11 +178,25 @@ func _refresh() -> void:
 		add_button.pressed.connect(_add_pool_card_to_first_open.bind(str(entry.get("card_id", ""))))
 		entry_box.add_child(add_button)
 
+	if available_entries.is_empty():
+		var empty_label: Label = Label.new()
+		empty_label.text = "Todas as cartas desbloqueadas ja estao no deck."
+		empty_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		pool_container.add_child(empty_label)
+
+	var selected_count: int = _compact_deck().size()
 	var valid: bool = GameSession.is_deck_valid(_compact_deck())
 	start_button.disabled = not valid
-	status_label.text = "Escolha exatamente 10 cartas. Arraste cartas disponiveis para os slots; remova ou arraste cartas do deck de volta para a lista."
+	pool_summary_label.text = "Disponiveis fora do deck: %d." % available_entries.size()
+	deck_summary_label.text = "Selecionadas: %d/%d. O deck precisa estar completo para iniciar." % [
+		selected_count,
+		GameSession.REQUIRED_DECK_SIZE
+	]
+	status_label.text = "Arraste cartas, use Adicionar, ou ajuste com Limpar deck e Auto preencher."
 	if not valid:
-		status_label.text += " Deck atual: %d/10." % _compact_deck().size()
+		status_label.text += " Deck atual: %d/10." % selected_count
+	else:
+		status_label.text += " Deck valido para batalha."
 
 func _available_pool_entries() -> Array:
 	var remaining: Array = GameSession.unlocked_card_ids.duplicate()
@@ -204,6 +241,24 @@ func _add_pool_card_to_first_open(card_id: String) -> void:
 			selected_deck[index] = card_id
 			_refresh()
 			return
+
+func _clear_deck() -> void:
+	selected_deck.clear()
+	for _index: int in range(GameSession.REQUIRED_DECK_SIZE):
+		selected_deck.append("")
+	_refresh()
+
+func _auto_fill_deck() -> void:
+	while selected_deck.size() < GameSession.REQUIRED_DECK_SIZE:
+		selected_deck.append("")
+	var available: Array = _available_pool_entries()
+	for index: int in range(selected_deck.size()):
+		if str(selected_deck[index]) != "":
+			continue
+		if available.is_empty():
+			break
+		selected_deck[index] = str(available.pop_front().get("card_id", ""))
+	_refresh()
 
 func _on_start_pressed() -> void:
 	var compact: Array = _compact_deck()

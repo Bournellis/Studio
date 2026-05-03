@@ -17,10 +17,12 @@ func _rebuild() -> void:
 	for child: Node in get_children():
 		remove_child(child)
 		child.free()
-	custom_minimum_size = Vector2(172, 112)
+	custom_minimum_size = Vector2(172, 76)
+	size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	add_theme_stylebox_override("panel", _panel_style())
 
 	var box: VBoxContainer = VBoxContainer.new()
+	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	add_child(box)
 
 	var label: Label = Label.new()
@@ -72,7 +74,7 @@ func _panel_style() -> StyleBoxFlat:
 	style.corner_radius_bottom_left = 6
 	style.corner_radius_bottom_right = 6
 	style.content_margin_left = 8
-	style.content_margin_top = 8
+	style.content_margin_top = 6
 	style.content_margin_right = 8
-	style.content_margin_bottom = 8
+	style.content_margin_bottom = 6
 	return style

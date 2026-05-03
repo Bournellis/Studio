@@ -45,6 +45,25 @@ func test_setup_screen_populates_available_cards_and_deck_slots() -> void:
 	assert_eq(root.slot_grid.get_child_count(), GameSession.REQUIRED_DECK_SIZE)
 	assert_gt(root.pool_container.get_child_count(), 0)
 	assert_eq(root.slot_grid.get_parent().custom_minimum_size.y, 320.0)
+	assert_true(root.deck_summary_label.text.contains("10/10"))
+	assert_true(root.pool_summary_label.text.contains("Disponiveis"))
+	root.free()
+
+func test_setup_screen_supports_clear_and_auto_fill_buttons() -> void:
+	GameSession.start_new_game()
+	GameSession.claim_npc_reward()
+
+	var root = DeckSetupRootScript.new()
+	add_child(root)
+	await get_tree().process_frame
+
+	root._clear_deck()
+	assert_eq(root._compact_deck().size(), 0)
+	assert_true(root.start_button.disabled)
+
+	root._auto_fill_deck()
+	assert_eq(root._compact_deck().size(), GameSession.REQUIRED_DECK_SIZE)
+	assert_false(root.start_button.disabled)
 	root.free()
 
 func _find_drop_enabled_card_token(node: Node):

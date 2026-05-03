@@ -1,8 +1,8 @@
 # Track 01 - Foundation Contracts And First Prototype
 
-- Status: `SLICE_01_PLAYABLE`
+- Status: `PHASE_03_COMBAT_PASS_01_DONE`
 - Last Updated: `2026-05-03`
-- Goal: `prove the first complete playable RPG-cardgame loop without committing final visual direction`
+- Goal: `prove and polish the first complete playable RPG-cardgame loop without committing final visual direction`
 
 ## Implemented Slice
 
@@ -20,6 +20,40 @@
 - Generated playable scenes.
 - GUT validation coverage.
 
+## Phase 2 Polish Scope
+
+- Improve deck setup clarity.
+- Add button alternatives for common deck and battle actions.
+- Show clearer player feedback for valid and invalid actions.
+- Keep UI refreshes safe during drag/drop.
+- Add UI-level regression tests for setup and battle.
+
+## Implemented Phase 2 Polish Pass 01
+
+- Setup counters for available and selected cards.
+- Setup quick actions: `Limpar deck` and `Auto preencher`.
+- Battle card action buttons for player slots, enemy slots, and enemy hero where valid.
+- Battle feedback label for action results.
+- GUT UI tests for deck setup and first battle play.
+
+## Implemented Phase 2 Polish Pass 02
+
+- Fixed top combat action bar with `Resolver turno`.
+- Improved board/log/hand presentation.
+- Compact battle cards and slots for the current debug viewport.
+- UI test for resolving the turn after energy reaches zero.
+
+## Implemented Phase 2 Polish Pass 03
+
+- Fixed the combat layout so the hand panel remains visible inside the current debug viewport.
+
+## Implemented Phase 3 Combat Pass 01
+
+- Added the basic hero power `Preparar`.
+- `Preparar` draws 1 card and can be used once per round.
+- Added top-bar `Poder heroico` action and feedback.
+- Added engine/UI regression tests.
+
 ## Validation
 
 ```powershell
@@ -28,7 +62,7 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 
 Current expected result:
 
-- `10` GUT tests passing.
+- `18` GUT tests passing.
 
 ## Next Decision Sessions
 

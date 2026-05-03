@@ -16,6 +16,7 @@ var player_slots: Array = []
 var enemy_slots: Array = []
 var log_lines: Array[String] = []
 var outcome: String = ""
+var hero_power_used: bool = false
 
 var _catalog
 
@@ -32,6 +33,7 @@ func start_battle(catalog, deck_ids: Array) -> void:
 	enemy_slots = [null, null, null]
 	log_lines = []
 	outcome = ""
+	hero_power_used = false
 	_draw_cards(HAND_SIZE)
 	_log("Duelo iniciado. Energia 1, mao inicial com 3 cartas.")
 
@@ -47,8 +49,22 @@ func get_state() -> Dictionary:
 		"player_slots": player_slots.duplicate(true),
 		"enemy_slots": enemy_slots.duplicate(true),
 		"log": log_lines.duplicate(),
-		"outcome": outcome
+		"outcome": outcome,
+		"hero_power_used": hero_power_used
 	}
+
+func use_player_hero_power() -> Dictionary:
+	if outcome != "":
+		return _fail("A batalha ja terminou.")
+	if hero_power_used:
+		return _fail("Poder heroico ja usado nesta rodada.")
+	if deck.is_empty():
+		return _fail("O deck esta vazio.")
+
+	hero_power_used = true
+	_draw_cards(1)
+	_log("Poder heroico: Preparar comprou 1 carta.")
+	return {"ok": true, "message": "Poder heroico comprou 1 carta."}
 
 func play_card_from_hand(hand_index: int, target: Dictionary) -> Dictionary:
 	if outcome != "":
@@ -81,6 +97,7 @@ func end_player_turn() -> Dictionary:
 	if outcome == "":
 		round_number += 1
 		energy = min(round_number, ENERGY_CAP)
+		hero_power_used = false
 		_draw_cards(1)
 		_log("Rodada %d. Energia %d." % [round_number, energy])
 	return {"ok": true, "message": "Turno encerrado."}

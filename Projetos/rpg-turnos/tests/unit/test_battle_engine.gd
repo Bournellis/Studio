@@ -74,3 +74,21 @@ func test_player_defeat_is_detected() -> void:
 	engine.force_player_health(0)
 
 	assert_eq(engine.outcome, "defeat")
+
+func test_player_hero_power_draws_once_per_round() -> void:
+	var engine = BattleEngineScript.new()
+	engine.start_battle(catalog, Array(catalog.starter_deck_ids))
+
+	var first_result: Dictionary = engine.use_player_hero_power()
+	assert_true(bool(first_result.get("ok", false)))
+	assert_true(engine.hero_power_used)
+	assert_eq(engine.hand.size(), 4)
+
+	var second_result: Dictionary = engine.use_player_hero_power()
+	assert_false(bool(second_result.get("ok", false)))
+	assert_eq(engine.hand.size(), 4)
+
+	engine.end_player_turn()
+
+	assert_false(engine.hero_power_used)
+	assert_eq(engine.round_number, 2)

@@ -129,7 +129,7 @@ script = ExtResource("2_aaqvb")
 id = "threshold_apprentice"
 display_name = "Aprendiz do Limiar"
 max_health = 25
-hero_power_text = "Poder heroico reservado para uma versao futura."
+hero_power_text = "Preparar: uma vez por rodada, compre 1 carta."
 
 [resource]
 script = ExtResource("3_xh3p2")
