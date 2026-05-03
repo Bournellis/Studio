@@ -6,7 +6,7 @@ This file governs agent behavior for the `D:\Estudio` workspace.
 
 - `canon/` is the shared source of truth for established product identity, lore context, gameplay contracts, progression, shared architecture, mode standard, and platform strategy.
 - `Projetos/rpg-isometrico/` is the active Godot implementation workspace for the campaign-first isometric action RPG.
-- `Projetos/rpg-turnos/` is the initial Godot implementation workspace for a provisional turn-based RPG that may share studio lore but owns separate mechanics.
+- `Projetos/rpg-turnos/` is the initial Godot implementation workspace for a provisional turn-based RPG-cardgame that may share studio lore but owns separate mechanics.
 - `migration/` is a historical archive for cutover, relocation, and legacy comparison context.
 
 ## Read Order

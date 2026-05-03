@@ -4,7 +4,7 @@ This file governs agent behavior for the Godot implementation of RPG Turnos.
 
 ## Project Role
 
-`Projetos/rpg-turnos/` is a new Godot project for a provisional turn-based RPG.
+`Projetos/rpg-turnos/` is a new Godot project for a provisional turn-based RPG-cardgame.
 
 The project is independent from `Projetos/rpg-isometrico/` at the mechanics and runtime level, but it may share the same broader lore and setting territory from the studio canon.
 
@@ -14,7 +14,7 @@ Current premise:
 - complete Godot project, started clean
 - RPG exploration with a freely moving map character
 - NPC conversations, route choices, items, stats, level, and progression are expected pillars
-- combat is turn-based and separated from exploration
+- combat is turn-based, card-driven, and separated from exploration
 - final visual stack is undecided between 2D, 3D, or a hybrid direction
 
 ## Read Order
@@ -24,10 +24,11 @@ Before substantial work:
 1. `../../canon/canon-brief.md`
 2. `../../canon/product/product-vision.md` for shared setting and lore context only
 3. `docs/project-brief.md`
-4. `docs/architecture.md`
-5. `implementation/current-status.md`
-6. this file
-7. touched files
+4. `docs/game-design-document.md`
+5. `docs/architecture.md`
+6. `implementation/current-status.md`
+7. this file
+8. touched files
 
 For bounded work:
 
@@ -62,9 +63,9 @@ Initial boundaries:
 
 - `core/`: identifiers, contracts, snapshots, results, and domain-neutral helpers
 - `systems/`: RPG rules such as character stats, inventory, dialogue, encounters, and save data
-- `modes/`: boot, exploration/world, and turn-based battle mode assembly
+- `modes/`: boot, exploration/world, and turn-based card-slot battle mode assembly
 - `world/`: exploration controllers and camera/presentation adapters; split into agnostic, 2D, and 3D lanes
-- `battle/`: turn order, action resolution, combatant state, rewards, and battle presentation contracts
+- `battle/`: card-slot combat rules, turn order, action resolution, combatant state, rewards, and battle presentation contracts
 - `ui/`: player-facing menus, dialogue UI, battle commands, inventory, and character sheets
 - `data/`: authored definitions and generated resources
 - `docs/`: local design and technical references

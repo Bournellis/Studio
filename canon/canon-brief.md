@@ -9,7 +9,7 @@ It summarizes the shared canon, but it does not replace the full read order in `
 Current project map:
 
 - `Projetos/rpg-isometrico/`: campaign-first isometric action RPG governed by the established product, design, progression, roadmap, and platform canon.
-- `Projetos/rpg-turnos/`: provisional turn-based RPG with independent mechanics, shared lore context, and local project docs as the source of truth for its early design.
+- `Projetos/rpg-turnos/`: provisional turn-based RPG-cardgame with independent mechanics, shared lore context, and local project docs as the source of truth for its early design.
 
 Treat RPG Isometrico as:
 
@@ -42,7 +42,8 @@ Treat RPG Turnos as:
 - mechanically independent from RPG Isometrico
 - allowed to share the same broader studio lore
 - an RPG with free map exploration, NPC conversations, route choice, items, stats, level, and progression
-- a turn-based RPG, not a real-time action RPG
+- a turn-based RPG-cardgame, not a real-time action RPG
+- a combat system built around fixed board slots, cards, hero abilities, encounter objectives, and confrontation lanes
 - undecided between 2D, 3D, or hybrid presentation
 - built from visual-agnostic systems before final camera and rendering decisions
 

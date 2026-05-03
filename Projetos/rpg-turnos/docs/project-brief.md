@@ -14,9 +14,11 @@ It is mechanically independent from RPG Isometrico, but it may share the same br
 
 ## Core Premise
 
-The player controls a character on an explorable map. The character can move freely, choose paths, talk to NPCs, discover encounters, and enter turn-based battles.
+The player controls a character on an explorable map. The character can move freely, choose paths, talk to NPCs, discover encounters, and enter turn-based card-slot battles.
 
-The project is not an action RPG. The map is a space for exploration, navigation, interaction, and encounter choice. Combat happens through a turn-based RPG mode.
+The project is not an action RPG. The map is a space for exploration, navigation, interaction, and encounter choice. Combat happens through a turn-based RPG-cardgame mode.
+
+In combat, the character is the hero/player of the battle. The hero does not move on the combat board. The player uses cards, hero abilities, equipment, stats, and campaign rewards to control fixed slots, lanes, terrain, and encounter objectives.
 
 ## Expected Pillars
 
@@ -24,7 +26,15 @@ The project is not an action RPG. The map is a space for exploration, navigation
 - Camera and character readability may be inspired by RPG Isometrico.
 - NPC conversations and player choices should matter.
 - Character state should include level, stats, items, and progression.
-- Battle should be turn-based and separated from exploration.
+- The game baseline is singleplayer; future co-op is possible but not an active requirement.
+- The deck evolves with RPG progression.
+- The player chooses the setup/deck loadout before entering each combat.
+- Energy starts at 1, scales by round, and may change through hero choice or abilities.
+- Defeat reloads the game to the pre-combat state with no negative consequence.
+- Battle should be turn-based, card-driven, and separated from exploration.
+- The battle board should be an arena of fixed slots, not a tactical movement grid.
+- Creatures, structures, and support permanents can occupy slots; spells and commands usually do not.
+- Encounters may use different board shapes, objectives, waves, enemy heroes, or boss parts.
 - Systems should be built cleanly before visual commitment.
 
 ## Open Decisions
@@ -35,6 +45,9 @@ The project is not an action RPG. The map is a space for exploration, navigation
 - Dialogue format and choice consequences.
 - Encounter transition style.
 - Turn order model, resource model, and ability vocabulary.
+- Exact deckbuilding constraints and card acquisition model.
+- Whether Command/Presence is promoted after the first prototype.
+- Exact hero stat names and progression rules.
 - How much existing RPG Isometrico code should be reused after review.
 
 ## Out Of Scope For The Initial Skeleton
@@ -45,4 +58,3 @@ The project is not an action RPG. The map is a space for exploration, navigation
 - No final content catalogs.
 - No 2D/3D commitment.
 - No direct copy of RPG Isometrico action combat systems.
-

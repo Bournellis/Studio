@@ -6,7 +6,7 @@ This workspace is the primary documentation and implementation home for the stud
 
 - `canon/`: shared product, design, architecture, roadmap, platform truth, and lore context.
 - `Projetos/rpg-isometrico/`: active Godot implementation for the campaign-first isometric action RPG.
-- `Projetos/rpg-turnos/`: initial Godot implementation for a provisional turn-based RPG sharing lore but owning separate mechanics.
+- `Projetos/rpg-turnos/`: initial Godot implementation for a provisional turn-based RPG-cardgame sharing lore but owning separate mechanics.
 - `migration/`: historical cutover archive, parity notes, and relocation records.
 - `materiais/`: supporting guides and non-canonical studio material.
 - `builds/`: generated build outputs and other disposable packages.

@@ -24,11 +24,13 @@ The first architecture rule is simple: data and game rules must not depend on No
 
 - character profile
 - level and stats
+- decks, hands, discard piles, and card ownership
 - inventory
 - items and equipment
 - dialogue state
 - narrative flags
 - encounter definitions
+- board definitions and slot definitions
 - save data
 
 ### World
@@ -45,9 +47,14 @@ The `world/agnostic/` lane should hold contracts that can be shared by future `w
 
 ### Battle
 
-`battle/` owns turn-based combat:
+`battle/` owns turn-based card-slot combat:
 
 - combatant state
+- hero state
+- card state
+- deck, hand, discard, and resource state
+- board slots and occupancy
+- attack routes
 - turn order
 - action selection
 - action resolution
@@ -84,12 +91,16 @@ UI must present state. It must not own RPG rules.
 `data/` owns authored definitions:
 
 - characters
+- cards
+- decks
 - items
 - equipment
 - NPCs
 - dialogue
 - encounters
 - enemies
+- boards
+- slots
 - battle actions
 
 Small hand-authored JSON definitions are preferred early. Generated Godot resources can be introduced once the catalogs stabilize.
@@ -99,6 +110,14 @@ Small hand-authored JSON definitions are preferred early. Generated Godot resour
 - `CharacterProfile`
 - `StatsBlock`
 - `InventoryState`
+- `HeroBattleState`
+- `CardDefinition`
+- `DeckDefinition`
+- `DeckState`
+- `HandState`
+- `BoardDefinition`
+- `SlotDefinition`
+- `AttackRouteDefinition`
 - `ItemDefinition`
 - `EquipmentDefinition`
 - `DialogueState`
@@ -106,6 +125,8 @@ Small hand-authored JSON definitions are preferred early. Generated Godot resour
 - `EncounterDefinition`
 - `BattleState`
 - `BattleActionDefinition`
+- `RoundPhase`
+- `ResourceState`
 - `WorldActor`
 - `SaveSnapshot`
 
@@ -127,4 +148,3 @@ Do not inherit:
 - RPG Isometrico loadout contract
 - Arena, Survival, Boss, or PvP mode assumptions
 - fixed action-progression rules
-
