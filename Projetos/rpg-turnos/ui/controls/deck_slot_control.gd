@@ -18,10 +18,12 @@ func _rebuild() -> void:
 	for child: Node in get_children():
 		remove_child(child)
 		child.free()
-	custom_minimum_size = Vector2(164, 128)
+	custom_minimum_size = Vector2(156, 124)
+	size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	add_theme_stylebox_override("panel", _panel_style())
 
 	var box: VBoxContainer = VBoxContainer.new()
+	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	add_child(box)
 
 	var header: Label = Label.new()
@@ -35,7 +37,8 @@ func _rebuild() -> void:
 		box.add_child(empty)
 	else:
 		var token = CardTokenScript.new()
-		token.setup(card_id, "deck", slot_index)
+		token.setup(card_id, "deck", slot_index, true)
+		token.card_dropped_on_token.connect(_on_card_dropped_on_token)
 		box.add_child(token)
 
 		var clear_button: Button = Button.new()
@@ -47,6 +50,9 @@ func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 	return typeof(data) == TYPE_DICTIONARY and str(data.get("kind", "")) == "card"
 
 func _drop_data(_at_position: Vector2, data: Variant) -> void:
+	card_dropped.emit(str(data.get("card_id", "")), slot_index, str(data.get("source", "")), int(data.get("source_index", -1)))
+
+func _on_card_dropped_on_token(data: Dictionary) -> void:
 	card_dropped.emit(str(data.get("card_id", "")), slot_index, str(data.get("source", "")), int(data.get("source_index", -1)))
 
 func _panel_style() -> StyleBoxFlat:

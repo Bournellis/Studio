@@ -136,11 +136,11 @@ func _on_card_dropped_on_slot(data: Dictionary, owner: String, slot_index: int) 
 	var result: Dictionary = engine.play_card_from_hand(int(data.get("hand_index", -1)), target)
 	if not bool(result.get("ok", false)):
 		pass
-	_refresh()
+	call_deferred("_refresh")
 
 func _on_card_dropped_on_enemy_hero(data: Dictionary) -> void:
 	engine.play_card_from_hand(int(data.get("hand_index", -1)), {"owner": "enemy", "slot": -1})
-	_refresh()
+	call_deferred("_refresh")
 
 func _on_end_turn_pressed() -> void:
 	engine.end_player_turn()

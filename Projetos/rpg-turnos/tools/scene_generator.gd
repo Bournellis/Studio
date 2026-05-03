@@ -13,10 +13,12 @@ func generate_all() -> Dictionary:
 	for scene_spec: Dictionary in SCENES:
 		var scene_path: String = str(scene_spec.get("path", ""))
 		var script_path: String = str(scene_spec.get("script", ""))
+		if ResourceLoader.exists(scene_path):
+			continue
 		var result: Error = _save_scene(scene_path, script_path, str(scene_spec.get("type", "control")))
 		if result != OK:
 			return {"ok": false, "message": "Failed to generate scene %s." % scene_path}
-	return {"ok": true, "message": "Playable slice scenes generated."}
+	return {"ok": true, "message": "Playable slice scenes exist or were generated."}
 
 func _save_scene(scene_path: String, script_path: String, node_type: String) -> Error:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(scene_path.get_base_dir()))

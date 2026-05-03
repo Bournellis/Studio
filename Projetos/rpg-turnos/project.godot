@@ -11,9 +11,9 @@ config_version=5
 [application]
 
 config/name="RPG Turnos"
+run/main_scene="res://modes/boot/boot.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
-run/main_scene="res://modes/boot/boot.tscn"
 
 [autoload]
 

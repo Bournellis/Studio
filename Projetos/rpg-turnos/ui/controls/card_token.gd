@@ -1,20 +1,24 @@
 class_name CardToken
 extends PanelContainer
 
+signal card_dropped_on_token(data: Dictionary)
+
 var card_id: String = ""
 var source: String = ""
 var source_index: int = -1
 var card
+var compact: bool = false
 
-func setup(new_card_id: String, new_source: String, new_source_index: int) -> void:
+func setup(new_card_id: String, new_source: String, new_source_index: int, is_compact: bool = false) -> void:
 	card_id = new_card_id
 	source = new_source
 	source_index = new_source_index
+	compact = is_compact
 	card = ContentLibrary.get_card(card_id)
 	_rebuild()
 
 func _rebuild() -> void:
-	custom_minimum_size = Vector2(148, 118)
+	custom_minimum_size = Vector2(132, 70) if compact else Vector2(148, 118)
 	add_theme_stylebox_override("panel", _panel_style(Color(0.14, 0.16, 0.18), Color(0.32, 0.42, 0.52)))
 
 	var box: VBoxContainer = VBoxContainer.new()
@@ -24,7 +28,7 @@ func _rebuild() -> void:
 	var title: Label = Label.new()
 	title.text = card.display_name if card != null else card_id
 	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	title.add_theme_font_size_override("font_size", 14)
+	title.add_theme_font_size_override("font_size", 13 if compact else 14)
 	box.add_child(title)
 
 	var stats: Label = Label.new()
@@ -34,11 +38,12 @@ func _rebuild() -> void:
 			stats.text += " | %d/%d" % [card.attack, card.health]
 	box.add_child(stats)
 
-	var body: Label = Label.new()
-	body.text = card.text if card != null else ""
-	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	body.add_theme_font_size_override("font_size", 11)
-	box.add_child(body)
+	if not compact:
+		var body: Label = Label.new()
+		body.text = card.text if card != null else ""
+		body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		body.add_theme_font_size_override("font_size", 11)
+		box.add_child(body)
 
 func _get_drag_data(_at_position: Vector2) -> Variant:
 	if card_id == "":
@@ -53,6 +58,12 @@ func _get_drag_data(_at_position: Vector2) -> Variant:
 		"source": source,
 		"source_index": source_index
 	}
+
+func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
+	return source == "deck" and typeof(data) == TYPE_DICTIONARY and str(data.get("kind", "")) == "card"
+
+func _drop_data(_at_position: Vector2, data: Variant) -> void:
+	card_dropped_on_token.emit(Dictionary(data))
 
 func _panel_style(fill: Color, border: Color) -> StyleBoxFlat:
 	var style: StyleBoxFlat = StyleBoxFlat.new()
