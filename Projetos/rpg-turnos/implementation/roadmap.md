@@ -1,8 +1,9 @@
 # RPG Turnos Roadmap
 
 - Last Updated: `2026-05-03`
-- Current Phase: `Fase 3 - Sistema De Combate Real`
+- Current Phase: `Fase 3 - Cardgame Core`
 - Current Baseline: `first playable slice with menu, 2D map, NPC card reward, deck setup, scripted duel, result flow, and GUT validation`
+- Current Product Focus: `prioritize the standalone cardgame combat loop before RPG progression, character stats, lore content, or campaign systems`
 
 ## Roadmap Formal
 
@@ -85,14 +86,19 @@ Nao faz parte desta fase:
 - conteudo narrativo final
 - decisao definitiva 2D/3D
 
-### Fase 3 - Sistema De Combate Real
+### Fase 3 - Cardgame Core
 
 Status: `PASS_01_DONE`
 
-Objetivo: evoluir o prototipo de batalha para um sistema com mais profundidade e regras mais claras.
+Objetivo: evoluir o prototipo de batalha como um cardgame primeiro, testando profundidade, clareza e variacao antes de investir em RPG, personagem, stats, lore ou campanha.
 
 Gates esperados:
 
+- reavaliar toda a regra de turno
+- testar turnos mais elaborados, com fases, janelas de decisao ou resolucoes separadas se isso melhorar o jogo
+- testar tabuleiros diferentes e mais complexos
+- testar posicoes com atributos proprios
+- definir como atributos de posicao afetam cartas, alvos, rotas, defesa, ataque ou efeitos
 - palavras-chave com regras formais
 - alvos e validacao de alvo melhores
 - hero power
@@ -111,7 +117,7 @@ Entregas ja implementadas no primeiro passe:
 
 ### Fase 4 - Progressao RPG
 
-Status: `NOT_STARTED`
+Status: `DEFERRED_AFTER_CARDGAME_CORE`
 
 Objetivo: fazer o personagem crescer fora do combate e alterar as opcoes de combate.
 
@@ -127,7 +133,7 @@ Gates esperados:
 
 ### Fase 5 - Conteudo De Campanha E Narrativa
 
-Status: `NOT_STARTED`
+Status: `DEFERRED_AFTER_CARDGAME_CORE`
 
 Objetivo: trocar placeholders por conteudo jogavel com intencao narrativa.
 
@@ -187,6 +193,6 @@ Gates esperados:
 
 ## Onde Estamos
 
-Estamos na `Fase 3`, com o primeiro passe do sistema de combate real implementado.
+Estamos na `Fase 3 - Cardgame Core`, com o primeiro passe de combate implementado.
 
-A `Fase 1` provou o loop completo, e a `Fase 2` deixou o slice mais confortavel para playtest. A prioridade agora e evoluir a batalha com regras pequenas, testaveis e compreensiveis antes de abrir progressao RPG ou conteudo narrativo.
+A `Fase 1` provou o loop completo, e a `Fase 2` deixou o slice mais confortavel para playtest. A prioridade agora e tratar o combate como o produto principal: reavaliar turno, testar formatos de tabuleiro, experimentar posicoes com atributos, ampliar cartas/encontros e balancear o cardgame antes de abrir progressao RPG, personagem, stats, lore ou conteudo narrativo.

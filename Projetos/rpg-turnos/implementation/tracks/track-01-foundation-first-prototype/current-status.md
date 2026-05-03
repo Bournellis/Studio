@@ -1,8 +1,8 @@
 # Track 01 - Foundation Contracts And First Prototype
 
-- Status: `PHASE_03_COMBAT_PASS_01_DONE`
+- Status: `PHASE_03_CARDGAME_CORE_PASS_01_DONE`
 - Last Updated: `2026-05-03`
-- Goal: `prove and polish the first complete playable RPG-cardgame loop without committing final visual direction`
+- Goal: `prove the standalone cardgame combat loop before expanding RPG progression, character stats, lore, or campaign systems`
 
 ## Implemented Slice
 
@@ -54,6 +54,16 @@
 - Added top-bar `Poder heroico` action and feedback.
 - Added engine/UI regression tests.
 
+## Cardgame-First Direction
+
+- The next implementation focus is the cardgame core.
+- RPG progression, character stats, lore-heavy content, inventory, and campaign structure remain deferred.
+- The complete turn structure must be re-evaluated before being locked.
+- Upcoming prototypes should test more elaborate turns if they improve decision density or pacing.
+- Upcoming prototypes should test different board shapes, including boards more complex than the current 3 direct routes.
+- Board positions may have attributes and should be explored as part of combat identity.
+- Position attributes may affect targeting, routes, defense, attack, card costs, hazards, control, deployment rules, or encounter-specific objectives.
+
 ## Validation
 
 ```powershell
@@ -62,7 +72,7 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 
 Current expected result:
 
-- `18` GUT tests passing.
+- `19` GUT tests passing.
 
 ## Next Decision Sessions
 
@@ -74,3 +84,5 @@ Open a design session before implementing any of these:
 - first real narrative content pass
 - RPG progression beyond card unlocks
 - expanded enemy AI beyond deterministic scripts
+- locked turn structure
+- board topology and position attribute rules

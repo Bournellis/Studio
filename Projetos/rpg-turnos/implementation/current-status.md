@@ -1,12 +1,12 @@
 # Current Status
 
 - Last Updated: `2026-05-03`
-- Active Surface: `first playable slice combat depth`
+- Active Surface: `cardgame-first combat core`
 - Active Project Name: `rpg-turnos`
 - Active Track: `Track 01 - Foundation Contracts And First Prototype`
-- Active Track Status: `PHASE_03_COMBAT_PASS_01_DONE`
+- Active Track Status: `PHASE_03_CARDGAME_CORE_PASS_01_DONE`
 - Current Operational Baseline: `playable Godot 4.6.2 first slice with menu, 2D top-down exploration, NPC card reward, polished 10-card deck setup, scripted enemy-hero duel with fixed turn-resolution action, improved combat presentation, basic hero power, result flow, generated scenes, JSON-driven catalog, and GUT validation`
-- Active Goal: `playtest the polished first loop and evolve combat through small tested rules before expanding RPG progression, content, persistence, or final visual direction`
+- Active Goal: `focus fully on the standalone cardgame combat loop before expanding RPG progression, character stats, lore content, persistence, or final visual direction`
 - Read Next:
   - `../AGENTS.md`
   - `../docs/project-brief.md`
@@ -22,7 +22,7 @@
 - Automated Validation: `run Godot headless with res://tools/validate.gd`
 - Manual Smoke: `../docs/first-playable-slice-smoke.md`
 - Reuse Posture: `GUT and validation pattern were reused narrowly from RPG Isometrico; no action-RPG runtime systems were imported`
-- Next Gate: `playtest Phase 3 combat pass 01, then choose the next combat-depth increment or open a design session for RPG progression, content authoring, or visual direction`
+- Next Gate: `reassess turn structure and prototype cardgame-first board variations, including more complex boards and position attributes`
 
 ## Initial Premises
 
@@ -31,7 +31,7 @@
 - It shares the broader studio lore direction.
 - The baseline play mode is singleplayer; future co-op is possible but not active scope.
 - Exploration uses a freely moving map character.
-- NPC conversations, route choices, encounters, items, stats, level, and inventory are expected pillars.
+- NPC conversations, route choices, encounters, items, stats, level, and inventory are expected future pillars, but they are deferred while the cardgame core is being proven.
 - The deck evolves with RPG progression, and the player chooses the setup/deck loadout before each combat.
 - Energy starts at 1, scales by round, and may be changed by hero choice or abilities.
 - Defeat reloads to the pre-combat state with no negative consequence.
@@ -41,6 +41,10 @@
 - Creatures, structures, and support permanents can occupy slots; spells and commands usually do not.
 - Encounters own board shape, special rules, enemy behavior, and victory conditions.
 - RPG systems should stay visual-agnostic until 2D/3D direction is chosen.
+- Current implementation priority is the cardgame itself, not RPG character progression, stats, lore, or campaign systems.
+- Turn rules are not final and must be re-evaluated through prototypes before being treated as combat canon.
+- Board shape is not final; upcoming passes should test different and more complex boards.
+- Board positions may have attributes, such as lane modifiers, terrain-like rules, targeting constraints, defense bonuses, attack bonuses, hazards, control effects, or encounter-specific behavior.
 
 ## Suggested First Track
 
@@ -100,6 +104,15 @@ The active project roadmap is tracked in `roadmap.md`.
 - `Preparar` draws 1 card once per round.
 - Added `Poder heroico` button to the fixed top combat bar.
 - Added engine and UI tests for hero power usage and round reset.
+
+## Cardgame-First Priority Update
+
+- Focus the next implementation passes on combat as a standalone cardgame.
+- Reevaluate the turn structure before expanding RPG systems.
+- Test more elaborate turns, potentially with phases, timing windows, queued resolutions, enemy intent windows, or separate play/resolve moments.
+- Test different board shapes instead of assuming the current 3 direct routes are final.
+- Test position attributes as first-class combat rules.
+- Keep map, NPC, stats, character progression, items, and lore as minimal placeholders until the cardgame loop is stronger.
 
 ## Validation Command
 
