@@ -28,9 +28,8 @@ Public turn flow:
 1. `manutencao`
 2. `compra`
 3. `fase_principal`
-4. `descarte`
 
-Cleanup exists only as internal technical resolution after the descarte phase.
+Cleanup exists only as internal technical resolution after the main phase.
 
 Priority rules:
 
@@ -53,10 +52,9 @@ MVP defaults:
 - energy recharges to current max on the controller's own upkeep
 - unspent energy is lost at end of turn (does not carry to next upkeep)
 - initial hand: 5 cards
-- hand limit: starts at 5 on turn 1, increases by 1 each subsequent turn, capped at 7; this is the carry-over limit enforced at the end of the descarte phase
-- temporary hand ceiling: 8 cards; a controller may hold up to 8 cards at any point during their turn
-- draw phase (`compra`): draw cards from the top of the deck until hand size equals the current hand limit; if already at or above the limit, draw nothing
-- immediate discard trigger: if hand size reaches 9 for any reason at any point during play, the controller must immediately discard cards to the bottom of the deck until hand size is 8; this does not wait for the descarte phase
+- hand limit: starts at 5 on turn 1, increases by 1 each subsequent turn, capped at 7
+- draw phase: draw cards from the top of the deck until hand size equals the current hand limit; if already at or above the limit, draw nothing
+- over-limit rule: if hand size exceeds 7 for any reason, the controller must discard cards to the bottom of the deck until hand size is 7
 - deck size: 20
 - deck command limit: 4 command cards
 - armor absorbs hero damage before health and persists until consumed
@@ -69,12 +67,11 @@ Deck cycling rules:
 - when a card is discarded from hand (by choice or over-limit), it goes to the bottom of the owner's deck
 - the deck never runs out; it cycles indefinitely
 
-Descarte phase:
+End-of-turn discard:
 
-- the fourth and final public phase of the turn, beginning automatically after the fase_principal ends
-- the player controller must discard cards from hand to the bottom of their deck until hand size equals 7; if already at 7 or fewer, no discard is required; the player may also voluntarily discard additional cards beyond the minimum
-- the player chooses which cards to discard
-- the enemy controller automatically discards the lowest-cost card(s) until hand size equals 7; if already at 7 or fewer, no action is taken
+- before a controller ends their turn (just before their second consecutive pass that closes the main phase), the player controller may optionally send any number of cards from their hand to the bottom of their deck
+- this happens after all actions are resolved, before the phase-end transition
+- the enemy controller skips this step; the AI always retains its full hand
 
 Hero power:
 
@@ -333,7 +330,23 @@ The current UI must support:
 - simple no-asset feedback for attack, damage, summon, armor, buff, and destruction
 - resilient layout at `960x540`, `1100x619`, and `1280x720`
 
-## 7. Card Catalog
+## 7. Current MVP Card Set
 
-The game has 30 cards total: 20 in the starter deck and 11 obtainable through progression.
+The starter deck has 20 cards:
 
+- 3x Escudeiro
+- 3x Guarda da Vila
+- 3x Lobo Faminto
+- 2x Soldado de Linha
+- 2x Arqueira de Penhasco
+- 1x Bruto Mercenario
+- 1x Javali de Guerra
+- 2x Barricada
+- 1x Balista
+- 2x Raio Curto
+
+The current reward card is `Golpe Preciso`.
+
+## 8. Historical Notes
+
+Previous notes that mention energy starting at 1, a 10-card deck, `Preparar` drawing a card, `Duelo antigo`, phase variants, a fixed hand limit of 8, or a draw of 1 per turn are historical. They do not describe the active runtime.

@@ -361,4 +361,278 @@ Implement the wave encounter mode. Requires Phase D (duelo) to be complete as it
 
 - The enemy side has no hero. Victory is achieved when all waves have been cleared.
 - Defeat occurs when the player hero reaches 0 HP at any point during any wave.
-- Between waves, nothing resets: hero HP, deck state, hand, and energ
+- Between waves, nothing resets: hero HP, deck state, hand, and energy ramp all persist exactly as they were when the last enemy permanent was removed.
+- Player permanents remain on the board between waves; only enemy permanents are removed.
+- The next wave spawns at the start of the enemy's upkeep after the previous wave is fully cleared.
+
+### G2. `ondas` encounter JSON structure
+
+Encounters using `"mode": "ondas"` use a `"waves"` array instead of `"starting_enemy_slots"`:
+
+```json
+{
+  "mode": "ondas",
+  "waves": [
+    {"wave_number": 1, "starting_enemy_slots": [{"slot": 0, "card_id": "..."}]},
+    {"wave_number": 2, "starting_enemy_slots": [{"slot": 0, "card_id": "..."}, ...]}
+  ]
+}
+```
+
+The engine reads the current wave index from the encounter state. When all enemy permanents are destroyed and `wave_index < waves.length - 1`, increment `wave_index` and spawn the next wave on the enemy's next upkeep. When the last wave is cleared, trigger victory.
+
+### G3. Optional encounter unlock
+
+`invasao_em_ondas` is an optional encounter that unlocks after `patrulha_avancada` is completed. It is not part of the main encounter chain. The world map marker system (Phase E) must support optional unlock conditions in addition to the linear chain.
+
+---
+
+## Phase H — Visual Layer
+
+Implement the full battle HUD and board feedback layer. Phase H does not depend on Phases B–G and may be developed in parallel. All visual elements read engine state; they do not own rules.
+
+### HUD Target Layout
+
+This is the reference wireframe for the enriched battle screen. All named nodes must exist and be reachable via their script properties (for test assertions).
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│  LIMPAR MESA   Turno 3   Fase: Fase principal   Prioridade: VOCÊ      │
+│  [Inimigo] sem herói                                                  │
+├──────────────────────────────────────────────────────────────────────┤
+│                                                                       │
+│  [E1 chão  Goblin 2/1  PRONTA]  [E2 chão  —]  [E3 ▲ALTO  Arq 1/3]   │
+│                                                                       │
+│  [P1 chão  Escu 2/2  ●PRONTA]   [P2 chão  —]  [P3 ●COB  Lobo 3/1 ✗] │
+│                                                                       │
+├──────────────────────────────────────────────────────────────────────┤
+│  ♥ HP 25   ■■□□ 2 arm    Energia: ■■■■□□□□ 4/8    Mão: 4  Baralho: 16│
+│  [Preparar Defesa — 1 energia]          [Passar prioridade]           │
+├──────────────────────────────────────────────────────────────────────┤
+│  [Escu 1  2/2]  [Lobo 1  3/1 rapido]  [Barricada 1  0/5]  [Raio 1]  │
+└──────────────────────────────────────────────────────────────────────┘
+```
+
+Legend: `●PRONTA` = green border, `✗EXAUSTA` = gray border, `~ENJOO` = amber border. `▲ALTO` = elevated slot badge. `●COB` = cobertura terrain badge. `QUEIM` = queimando terrain badge (also shown on slot when burning, even if empty).
+
+### H1. HUD enrichment
+
+Expand the existing battle header/footer to expose the following as discrete labeled UI nodes (each must be a named node the root script can reference):
+
+- `energy_label`: shows `"Energia: X / Y"` where X is current energy and Y is current max; updates after every action
+- `energy_bar`: a progress bar (or sequence of filled/empty pip icons) showing X out of Y; max visually reflects the ramp (not a fixed 8 pips until turn 6+)
+- `player_hp_label`: shows `"HP: X / 25"`
+- `player_armor_label`: shows `"Arm: X"` (hidden or shows 0 when armor is 0)
+- `hand_count_label`: shows `"Mão: X"`
+- `deck_count_label`: shows `"Baralho: X"`
+- `turn_label`: shows `"Turno X"`
+- `phase_label`: already exists — update to include `descarte` as a valid phase string (`"Fase: Descarte"`)
+- `priority_label`: already exists — keep behaviour
+
+All labels update immediately when the engine state changes (after each action, at phase transitions, and at start of turn).
+
+### H2. Slot state markers
+
+Each slot container (player and enemy) must display a visible state badge reflecting the current combat state of its occupant:
+
+- `pronta`: green-tinted border or badge reading `"PRONTA"` — shown when the occupant can legally attack this turn
+- `exausta`: gray-tinted border or badge reading `"EXAUSTA"` — shown after the occupant has attacked or used an exhausting action
+- `enjoo`: amber-tinted border or badge reading `"ENJOO"` — shown when the occupant entered this turn and cannot act yet
+- Empty slot: no state badge; show only terrain/elevation labels (H4)
+
+State must update immediately after each engine action without requiring a full re-render of the slot container.
+
+### H3. Attack route highlights
+
+When the player selects (clicks/focuses) a creature slot that is `pronta`:
+
+- Highlight each valid attack target slot with a colored overlay border (distinct from the selection color)
+- Use one color for melee targets and a second color for ranged targets (`ranged_targets` from the board JSON); if a slot appears in both lists, use the ranged color
+- Highlight the enemy hero target area (if the mode allows it) with the same melee color
+- Deselect and clear highlights when: the player clicks elsewhere, an action resolves, or priority changes
+
+If a `pronta` slot has zero valid targets (all routes blocked, mode prevents fallback), show the slot normally without highlighting anything — this is feedback that the creature is stuck.
+
+### H4. Slot terrain and elevation labels
+
+Each slot (player, enemy, and neutral) must display persistent small badges showing its terrain and elevation, even when empty:
+
+- `elevation: "alto"`: badge `"▲ ALTO"` (visible at all times)
+- `terrain: "cobertura"`: badge `"◆ COB"` (visible at all times)
+- `terrain: "queimando"`: badge `"● QUEIM"` with amber tint (visible at all times; badge animates or pulses when a creature is actively burning — i.e., when a creature occupies the slot and will take damage next upkeep)
+- `terrain: "normal"` and `elevation: "chao"`: no badges (default, uncluttered)
+- Badges must not obscure the creature name/stats when the slot is occupied; position at the top corner of the slot container
+
+### H5. Floating damage numbers
+
+When a slot occupant or hero takes damage, display a short-lived floating number over the target:
+
+- The number appears at the target's position, moves upward, and fades out over ~0.6 seconds (use a `Tween` or `AnimationPlayer`)
+- Color encodes damage type: `fisico_melee` = white/light gray, `fisico_alcance` = light blue, `magico` = light purple
+- Armor absorption: show damage absorbed by armor as a separate number in yellow with an `"ARM"` suffix (e.g., `"2 ARM"`) that appears alongside the HP damage number
+- If a creature is destroyed, add a brief `"X"` or destruction marker before the slot clears
+- Source: read from `eventos_visuais` emitted by the engine after each action
+
+### H6. Slot occupant card info
+
+When a slot is occupied, display the following inside the slot container (in addition to the creature name):
+
+- Current ATK and HP in `"ATK/HP"` format (e.g., `"2/1"` after taking 1 damage from a 2/2)
+- HP should reflect current health, not base health; color the HP number red if below 50% of base
+- Keyword badges as small pills, one per keyword: `rapido`, `voadora`, `alcance`, `atropelar`, `defensor`, `cobertura`
+- `voadora` creatures should be visually offset upward within their slot container (e.g., translated up by ~8px) to suggest elevation; their slot border may use a subtle blue tint
+- Structures (`estrutura`) should use a distinct container style from creatures (e.g., square corners vs rounded, or a small `"EST"` label)
+
+### H7. Descarte phase UI
+
+When the engine transitions to the `descarte` phase:
+
+- Display a dedicated panel or overlay section (non-blocking — it replaces the action area, not a full-screen modal)
+- Header reads `"Fase: Descarte — escolha cartas para devolver ao baralho"`
+- Each card in hand is shown with a toggle/checkbox; selected cards are marked for discard
+- A counter shows `"Mão: X → 7"` updating live as the player selects cards; if already at 7 or fewer, counter shows `"Mão: X (ok)"` and no selection is required
+- A `"Confirmar descarte"` button sends selected cards to the bottom of the deck and transitions to cleanup
+- If hand is already ≤ 7, an optional `"Descartar mesmo assim"` toggle lets the player discard voluntarily before confirming with no selection
+- The enemy descarte resolves automatically (no UI); a brief feedback line `"Inimigo descartou X carta(s)."` appears in `feedback_label`
+
+---
+
+## Phase I — Test Coverage
+
+Implement new GUT tests and fix stale tests. Phase I should be developed in parallel with Phases B and C — each new mechanic in B/C gets its test in I immediately, before moving to the next mechanic. All tests go in `tests/unit/`.
+
+Phase I does not add new test files; it adds test functions to the existing files or creates `test_mechanics.gd` for the new keyword and mechanic suites.
+
+### I1. Fix stale tests (do this first, before any other Phase I work)
+
+Two existing tests in `test_battle_engine.gd` will break when Phases A and B5 are implemented. Fix them before running the full suite:
+
+**`test_hand_limit_discards_extra_draws`** — currently tests that drawing beyond the hand limit sends cards to a `discard` array. Phase B5 removes the discard pile; cards go to the bottom of the deck instead. Rewrite this test to:
+- Set up a controller with a full hand (at current limit) and a small deck
+- Call the draw phase
+- Assert that `hand.size()` did not increase
+- Assert that the deck bottom now contains the would-be-drawn cards (i.e., deck length is unchanged because cards were attempted from a full hand — or adjust to test that draw-up stops at the limit)
+
+**`test_slot_restriction_rejects_large_card_on_bridge_slot`** — tests size limit logic removed in Phase A2. Delete this test entirely. Replace it with a neutral assertion confirming that any `criatura` can be played into any slot regardless of `size` (i.e., size is no longer a placement constraint).
+
+### I2. Voadora suite — add to `test_battle_engine.gd` or new `test_mechanics.gd`
+
+**`test_voadora_is_immune_to_fisico_melee`**
+- Place a `voadora` creature in a player slot
+- Have an enemy melee attacker target that slot
+- Assert the attack is rejected (`ok == false` or no damage applied)
+- Assert the voadora creature's health is unchanged
+
+**`test_voadora_is_transparent_to_melee_routing`**
+- Place a `voadora` creature in a front slot and a normal creature behind it (use `fallback_slots` or a multi-occupant route)
+- Have an enemy melee attacker target the front slot
+- Assert the attack resolves against the non-voadora creature, not the voadora
+- Assert the voadora is untouched
+
+**`test_voadora_without_alcance_can_attack_alto_slot`**
+- Place a voadora creature (without `alcance`) in a player slot
+- Place an enemy creature in an `alto` slot
+- Assert the voadora has the `alto` slot as a legal attack target
+- Execute the attack and assert damage is dealt (`fisico_melee` type)
+
+**`test_voadora_with_alcance_damage_reduced_by_cobertura`**
+- Place a `voadora+alcance` creature in a player slot with `ranged_targets` covering a `cobertura` slot
+- Place an enemy creature with some HP in that cobertura slot
+- Execute the attack and assert the damage dealt equals `ATK - 1` (cobertura reduction applied to `fisico_alcance`)
+
+### I3. Energy ramp — add to `test_battle_engine.gd`
+
+**`test_energy_ramp_increases_max_each_turn`**
+- Start engine at turn 1, assert `max_energy == 3` and `energy == 3`
+- Advance to turn 2 (pass both controllers' turns); assert `max_energy == 4` and `energy == 4` at start of player upkeep
+- Advance to turn 3; assert `max_energy == 5`
+
+**`test_energy_ramp_caps_at_8`**
+- Fast-forward through 8+ turns (or directly set `turno` and call `_resolve_upkeep`)
+- Assert `max_energy` never exceeds 8
+- Assert `energy` never exceeds 8 after recharge
+
+**`test_unspent_energy_is_lost_not_carried`**
+- Start turn 1 with energy 3; spend 0 energy
+- End the player's turn (pass twice to advance to turn 2)
+- At the start of the player's turn 2 upkeep, assert `energy == 4` (new max), not `energy == 3 + 4`
+
+### I4. Cyclic deck — add to `test_battle_engine.gd`
+
+**`test_spell_goes_to_bottom_of_deck_not_discard`**
+- Play a `magia` card from hand (e.g., `raio_curto`) targeting a valid slot
+- Assert the card is not in `hand`
+- Assert there is no `discard` pile (or it is empty / does not exist)
+- Assert the card ID appears at the bottom of the controller's `deck` array
+
+**`test_destroyed_permanent_goes_to_bottom_of_owner_deck`**
+- Place a creature in a player slot with 1 HP remaining
+- Deal 1 damage to destroy it
+- Assert the slot is now empty
+- Assert the creature's card ID appears at the bottom of the player's `deck`
+
+### I5. Hand progression and descarte phase — add to `test_battle_engine.gd`
+
+**`test_hand_max_size_increases_by_one_per_turn_capped_at_7`**
+- At turn 1: assert `max_hand_size == 5`
+- After player upkeep on turn 2: assert `max_hand_size == 6`
+- After player upkeep on turn 3: assert `max_hand_size == 7`
+- After player upkeep on turn 10 (or any turn >= 7): assert `max_hand_size == 7` (capped)
+
+**`test_compra_fills_hand_to_current_max_not_plus_one`**
+- Set hand to 2 cards and `max_hand_size` to 5
+- Run the `compra` phase
+- Assert `hand.size() == 5` (drew 3, not 1)
+
+**`test_descarte_phase_reduces_hand_to_7`**
+- Set hand to 8 cards
+- Trigger the descarte phase (engine side: call the discard resolution with a selection of 1 card)
+- Assert `hand.size() == 7`
+- Assert the discarded card is at the bottom of the deck
+
+**`test_immediate_discard_trigger_at_9_cards`**
+- Set hand to 8 cards and deck to have cards available
+- Trigger any effect that would add a 9th card to hand (or directly call the over-limit check with `hand.size() == 9`)
+- Assert the engine immediately requests a discard without waiting for the descarte phase
+- After discard resolves, assert `hand.size() == 8`
+
+### I6. Atropelar chaining — add to `test_battle_engine.gd`
+
+**`test_atropelar_overflow_hits_second_occupant_in_route`**
+- Use a board with `fallback_slots` (e.g., `muralha_desfiladeiro`): place a weak creature in E1 (front) and another creature in EB1 (back)
+- Play an `atropelar` attacker with ATK high enough to destroy E1 and still have excess
+- Execute the attack
+- Assert E1 is destroyed
+- Assert EB1 received the excess damage (and was not bypassed)
+
+**`test_atropelar_fisico_melee_excess_does_not_hit_voadora`**
+- Place a `voadora` creature in the second slot of an `atropelar` attacker's route, and a normal creature behind it (or hero fallback)
+- Use an `atropelar` attacker with enough ATK to destroy the first occupant and produce excess
+- Execute the attack
+- Assert the `voadora` is untouched
+- Assert the excess hits the next non-voadora occupant (or hero, if mode allows)
+
+### I7. Defensor routing — add to `test_battle_engine.gd`
+
+**`test_defensor_skipped_when_alternative_target_exists`**
+- Set up a board where a `defensor` creature occupies one of two valid targets in the attacker's route
+- Assert that `get_attack_options` returns both slots
+- Assert the player can choose to attack the non-defensor slot without restriction
+
+**`test_defensor_is_forced_when_it_is_the_only_target`**
+- Set up a board where only a `defensor` creature is in the attacker's route (no other valid targets)
+- Assert that `get_attack_options` returns only the defensor slot
+- Execute the attack against the defensor and assert it resolves normally
+
+### I8. Magia de tabuleiro — add to `test_battle_engine.gd`
+
+**`test_chuva_brasas_applies_queimando_to_all_enemy_slots`**
+- Play `chuva_brasas` from hand
+- Assert every enemy slot definition has `terrain == "queimando"` (or equivalent slot status flag)
+- Advance to enemy upkeep; assert an enemy creature currently occupying any slot takes 1 damage
+
+**`test_chamado_hostes_removes_enjoo_from_all_friendly_creatures`**
+- Place two friendly creatures in slots while they are in the `enjoo` state (just played, not rapido)
+- Play `chamado_hostes` from hand
+- Assert both creatures now have `state == "pronta"` (not `enjoo`)
+- Assert `get_attack_options` returns valid targets for both creatures
