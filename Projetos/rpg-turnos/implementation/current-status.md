@@ -110,3 +110,13 @@ The following changes were made to `data/definitions/slice_catalog.json` and `do
 2. Play the highest-cost card the AI can afford, prioritizing criaturas and estruturas.
 3. Attack with each ready permanent: prioritize the enemy slot with the highest ATK; if the route is empty in `duelo` mode, fall back to the player hero.
 4. Pass priority when no legal actions remain.
+
+### 0. Before anything else: delete git lock files
+
+The following stale lock files are blocking normal git operations on Windows. Delete them manually before running any git command:
+
+- `.git/index.lock`
+- `.git/HEAD.lock`
+- `.git/objects/maintenance.lock`
+
+These are zero-byte stale files left by a previous process. Safe to delete.
