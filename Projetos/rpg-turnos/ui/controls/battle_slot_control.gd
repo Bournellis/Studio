@@ -41,10 +41,17 @@ func _rebuild() -> void:
 		box.add_child(name_label)
 
 		var stats: Label = Label.new()
+		var state_text: String = "Pronta"
+		if bool(data.get("summoning_sick", false)):
+			state_text = "Enjoo"
+		elif bool(data.get("exhausted", false)):
+			state_text = "Exausta"
+		elif not bool(data.get("ready", false)):
+			state_text = "Preparando"
 		stats.text = "%d/%d %s" % [
 			int(data.get("attack", 0)),
 			int(data.get("health", 0)),
-			"Pronta" if bool(data.get("ready", false)) else "Preparando"
+			state_text
 		]
 		box.add_child(stats)
 

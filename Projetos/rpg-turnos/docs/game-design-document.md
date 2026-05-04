@@ -1,743 +1,186 @@
 # RPG Turnos Game Design Document
 
-- Version: `0.2`
-- Last Updated: `2026-05-03`
-- Status: `INITIAL DESIGN DRAFT - C1 SELECTED AS ACTIVE COMBAT DIRECTION`
-- Source Material: `C:/Users/Fabio/Downloads/sistema_base_combate_card_rpg.md`
+- Version: `0.3`
+- Last Updated: `2026-05-04`
+- Status: `C1_LOCKED_AS_CURRENT_CARDGAME_CORE`
+- Incorporated Source: `C:/Users/Fabio/Downloads/cardgame_slots_implementacao_codex_v0_1.md`
 
-## 1. Purpose
+## 1. Direction
 
-This document is the initial Game Design Document for `rpg-turnos`.
+`rpg-turnos` is currently focused on the cardgame combat. RPG progression, lore, dialogue depth, equipment, classes, and campaign systems remain future layers.
 
-It captures the first concrete combat direction for the project and turns it into a working design reference for future Codex sessions. It is not final canon. Many rules are expected to change during prototyping.
+C1 is no longer a variant. C1 is the current game:
 
-When this document marks something as `TBD`, agents must not silently decide it during implementation.
+- fixed slot board
+- cards as combat tools
+- heroes as mechanical battle identities
+- no tactical movement grid
+- no automatic confrontation phase
+- attacks are actions during the main phase
+- modes are encounter rules, not battle variants
 
-## 2. Project Identity
+The old phase-based duel and A/B alternatives are historical design notes only.
 
-`rpg-turnos` is a separate Godot RPG project that may share the broader studio lore with RPG Isometrico.
+## 2. Turn And Priority
 
-Mechanically, it is not RPG Isometrico. It is not a real-time action RPG.
+Public turn flow:
 
-The project combines:
+1. `manutencao`
+2. `compra`
+3. `fase_principal`
 
-- free exploration on a map
-- NPC conversations
-- route and encounter choices
-- character level, stats, items, equipment, passives, and progression
-- turn-based battles built around cards and fixed board slots
+Cleanup exists only as internal technical resolution after the main phase.
 
-The current combat identity is:
+Priority rules:
 
-> The player is an RPG hero inside a card battle. The hero does not move on the battle board. The player uses creatures, spells, permanents, hero abilities, equipment, and campaign stats to control fixed confrontation lanes, special slots, terrain, and encounter objectives.
+- the active controller starts the main phase with priority
+- normal actions resolve immediately and pass priority
+- instant actions resolve immediately and keep priority
+- passing priority gives priority to the opponent
+- two consecutive passes end the main phase
+- there is no stack, response window, counterspell, or "in response" action
 
-## 3. Current Design Commitments
+Both controllers may play legal cards and attack on either controller's turn if they have priority.
 
-These decisions are stable enough to guide the first design pass.
+## 3. Resources
 
-- Battles are turn-based.
-- Exploration and battle are separate modes.
-- The visible exploration character is not directly moved on the combat board.
-- In battle, the player character functions as the hero/player of the match.
-- The combat board is an arena of fixed slots, not a tactical movement grid.
-- Positioning matters through where cards and permanents are placed.
-- Cards are central combat tools.
-- Creatures, structures, and support permanents can occupy slots.
-- Spells and commands usually do not occupy slots.
-- Each encounter owns its board shape, enemy setup, special rules, and victory condition.
-- Boards do not need to be fair or symmetrical.
-- Some encounters may have an enemy hero/player; others may be scripted encounters without one.
-- Sidequests can make future encounters easier by giving options, information, cards, passives, equipment, or board advantages.
+MVP defaults:
 
-## 4. Explicit Non-Commitments
+- player hero: 25 HP
+- duel enemy hero: 20 HP
+- max energy: 3
+- energy recharges to max on the controller's own upkeep
+- unspent energy remains until the controller's next upkeep
+- initial hand: 4
+- draw: 1 on own draw phase after the initial hand
+- hand limit: 8
+- deck size: 20
+- deck command limit: 4 command cards
+- armor absorbs hero damage before health and persists until consumed
 
-These areas are not decided yet.
-
-- final project name
-- 2D, 3D, or hybrid presentation
-- exact camera model
-- exact exploration map structure
-- final party model, if any; the current play baseline is singleplayer, with possible future co-op
-- final card acquisition model
-- final command or presence resource, if promoted after the first prototype
-- exact hero stat list
-- exact first hero identity
-- exact first faction, enemy set, or campaign arc
-- exact save/load structure
-- exact UI layout
-- exact tuning values
-
-Any prototype may use temporary values, but those values must be documented as provisional.
-
-## 5. Core Player Loop
-
-The intended high-level loop is:
-
-1. explore the map freely
-2. talk to NPCs and inspect routes, threats, or opportunities
-3. accept or ignore sidequests
-4. gain cards, equipment, passives, information, or encounter advantages
-5. choose the combat setup/deck loadout for the next encounter
-6. choose an encounter or route
-7. resolve a card-slot battle
-8. reload to the pre-combat state on defeat, with no negative consequence
-9. gain rewards after victory and return to exploration with updated state
-
-## 6. Combat Overview
-
-Combat has four primary layers.
-
-### Hero
-
-The hero represents the player's campaign character.
-
-The hero may have:
-
-- max health
-- temporary armor
-- active hero power
-- passive hero ability
-- RPG stats
-- equipment
-- affinities with card types
-- bonuses from campaign choices
-
-If hero health reaches zero, the battle normally ends in defeat unless a specific encounter rule says otherwise.
-
-### Cards
-
-Cards are tools used during battle.
-
-Initial card categories:
-
-- creatures
-- structures
-- support permanents
-- spells
-- board spells
-- commands
-
-Equipment cards, techniques, and special effects are possible but not yet defined.
-
-### Board
-
-The board is a fixed slot arena.
-
-Slots are not free movement cells. A slot is a rule-bearing position where a valid card or encounter object may exist.
-
-### Encounter
-
-An encounter defines:
-
-- board layout
-- starting enemies or objects
-- victory condition
-- defeat condition
-- enemy behavior
-- waves or reinforcements
-- boss parts
-- special rules
-- rewards
-
-Not every encounter needs an enemy hero.
-
-## 7. Board And Slot Model
-
-The simplest board is:
+Hero power:
 
 ```text
-ENEMY
-[E1] [E2] [E3]
-
-[P1] [P2] [P3]
-PLAYER
+Preparar Defesa
+Custo: 1 energia
+Velocidade: normal
+Uso: uma vez no proprio turno
+Efeito: ganha 2 armadura
 ```
 
-Each player slot faces an enemy slot:
+## 4. Board, Cards, And Combat
 
-- P1 attacks E1
-- P2 attacks E2
-- P3 attacks E3
-
-If the facing enemy slot is empty, a ready creature may attack the enemy hero, objective, or boss target.
-
-More advanced boards may be asymmetrical:
-
-```text
-ENEMY
-      [E1 - High Shooter]
-[E2 - Front] [E3 - Portal] [E4 - Front]
-
-[P1 - Cover] [P2 - Front]
-      [P3 - High Support]
-PLAYER
-```
-
-## 8. Slot Definition
-
-Each slot may define:
-
-- owner: player, enemy, neutral, encounter
-- role: front, support, objective, structure, summon, ritual, boss part
-- terrain: normal, cover, fire, water, mud, ruin, sacred, corrupted, unstable, TBD
-- elevation: low, normal, high
-- restrictions: allowed card sizes, types, tags, or special occupancy rules
-- attack route: target slots or targets, in priority order
-- effect: local modifier applied to occupants, attacks, spells, or encounter rules
-
-Example slot:
-
-```text
-Slot: P2
-Owner: Player
-Role: Front
-Terrain: Cover
-Elevation: Normal
-Accepts: Creature or Structure
-Attack Route: E2 -> Enemy Hero
-Effect: Occupants take -1 damage from ranged attacks.
-```
-
-## 9. Round Structure
-
-The active combat direction is `C1 - Continuous Main Phase With Shared Priority And Attack Actions`.
-
-The round flow is:
-
-1. Round Start (automatic)
-2. Draw (automatic)
-3. Main Phase (interactive, shared priority)
-4. Turn End (automatic)
-
-There is **no dedicated combat phase**. Attacks are actions that happen inside the Main Phase. This direction is the active prototyping target. It is not final combat canon yet — it must be playtested before being locked.
-
-Alternative phase-based structures (with dedicated combat) and alternative priority models are documented in `cardgame-core-experiments.md` under "Preserved Design Ideas". They are not active implementation targets but remain available as fallback if C1 fails playtest.
-
-### Round Start
-
-Automatic phase.
-
-Likely responsibilities:
-
-- trigger start-of-round effects
-- refresh or adjust round state
-- prepare encounter timers or enemy intent if needed
-
-### Draw
-
-Automatic phase.
-
-Likely responsibilities:
-
-- draw cards
-- trigger effects that care about drawing
-- trigger effects that care about hand size or deck state
-
-### Main Phase
-
-Interactive phase with **alternating priority** between the active player and the opponent.
-
-Any player with priority may use any card type they can legally play. Available priority-spending actions include:
-
-- play a creature into a valid slot
-- play a structure or support permanent into a valid slot
-- attack with an eligible creature
-- cast a non-instant spell
-- cast a board spell
-- use a command
-- use a hero power
-- use a card ability
-- pass priority
-
-Non-priority-spending actions:
-
-- cast an instant-speed spell
-- trigger automatic effects
-
-When both players pass priority in succession, the Main Phase ends and the turn advances to Turn End.
-
-### Turn End
-
-Automatic phase.
-
-Likely responsibilities:
-
-- remove dead units
-- resolve terrain damage or healing
-- reduce durations
-- trigger end-of-turn effects
-- resolve encounter timers
-
-### Attack Rules Inside Main Phase
-
-- a creature without summoning sickness may attack when its controller has priority
-- each creature may attack once per turn by default
-- card effects may grant extra attacks or relax restrictions
-- attack choice and target choice happen at the moment of the attack action
-- attacking passes priority
-
-### Priority Rules
-
-- playing a creature passes priority
-- attacking passes priority
-- casting a non-instant spell passes priority
-- using a hero power passes priority
-- using a non-instant card ability passes priority
-- instant-speed spells do not spend priority
-- the response window for instant-speed spells must be explicit in implementation
-
-## 10. Creature Timing And Keywords
-
-Default creature timing:
-
-- newly placed creatures enter as `Preparing`
-- preparing creatures can block immediately
-- preparing creatures do not attack until a later Confrontation Phase or a legal attack action, depending on the tested turn structure
-
-Initial keyword candidates:
-
-- `Fast`: attacks on the same turn it enters
-- `Ambush`: attacks first when an enemy enters its facing route
-- `Defender`: blocks well but does not attack enemy heroes
-- `Trample`: excess damage can hit the next target in the route
-
-These names and exact rules are provisional.
-
-## 11. Card Types
-
-### Creatures
-
-Creatures occupy slots and participate in Confrontation.
-
-They usually have:
-
-- cost
-- attack
-- health
-- tags
-- size or occupancy category
-- optional keyword
-- optional effect
-
-### Structures
-
-Structures occupy slots but are not normal creatures.
-
-They may block, fire along routes, protect objectives, or modify the board.
-
-### Support Permanents
-
-Support permanents occupy slots and provide ongoing effects.
-
-They should compete for space with creatures rather than being free passive bonuses.
-
-### Spells
-
-Spells resolve and go to discard.
-
-They may target units, heroes, objectives, or slots.
-
-### Board Spells
-
-Board spells modify slots, terrain, routes, restrictions, or local effects.
-
-### Commands
-
-Commands are tactical non-mystical actions.
-
-They may buff units, coordinate attacks, prepare defense, draw cards, or manipulate timing.
-
-## 12. Range And Targeting
-
-Range is not measured as movement distance.
-
-Range defines which routes or targets a card can affect.
-
-Initial targeting categories:
-
-- melee: attacks the directly facing slot
-- reach/ranged: may target front or diagonal lanes depending on slot rules
-- shooter: may target support slots, with possible cover penalties
-- siege: prioritizes structures, objectives, or heroes
-- flying: may ignore some ground blockers unless countered by reach or anti-air
-- support: does not attack directly but strengthens other cards
-
-These categories are provisional and may be renamed.
-
-## 13. Terrain And Elevation
-
-Terrain is a slot modifier.
-
-Initial terrain candidates:
-
-- normal
-- cover
-- high
-- dangerous
-
-Later terrain candidates:
-
-- fire
-- water
-- mud
-- ruin
-- sacred
-- corrupted
-- unstable
-
-Early encounters should avoid stacking too many slot rules. Each early board should have one main spatial lesson.
-
-Elevation is also a slot property.
-
-High slots may:
-
-- expand targeting options
-- strengthen ranged cards
-- improve structures such as ballistae
-- restrict melee cards
-- interact with flying cards
-
-Exact effects are TBD.
-
-## 14. Encounter Types
-
-Initial encounter types:
-
-### Duel Against Enemy Hero
-
-The enemy has health, cards or scripted card access, energy, a hero power, and a strategy.
-
-Victory: reduce enemy hero health to zero.
-
-### Clear The Board
-
-There is no enemy hero.
-
-Victory: remove all enemies and finish all pending waves or objectives.
-
-### Survive Waves
-
-Enemies enter through marked slots or rules over time.
-
-Victory: survive a fixed number of rounds, protect something, or close the source.
-
-### Defend Objective
-
-The player protects an object, NPC, gate, wagon, crystal, ritual, bridge, or camp.
-
-Victory and defeat depend on the objective rules.
-
-### Multipart Boss
-
-The boss occupies or controls multiple slots.
-
-Victory may require destroying a main part, disabling supports, surviving phases, or solving board rules.
-
-### Puzzle Or Challenge
-
-The player enters with special constraints such as fixed hand, limited deck, strict timer, or required tactical solution.
-
-## 15. Player Resources
-
-Initial resources under consideration:
-
-### Energy
-
-Energy is used to play cards.
-
-Current direction:
-
-- combat starts with 1 energy
-- energy scales by round
-- hero choice, abilities, cards, equipment, or encounter rules may modify energy behavior
-
-The exact scaling curve and cap are TBD.
-
-### Hand
-
-Cards remain in hand between turns unless discarded, played, or affected by rules.
-
-### Command Or Presence
-
-Command/Presence may limit how many strong creatures and permanents can be active at once.
-
-This resource is optional and not required for prototype 0.1.
-
-### Command/Presence Decision
-
-`Command/Presence` would be a second strategic limiter beyond Energy and board slots.
-
-Energy limits what the player can do this round.
-
-Board slots limit where cards can be placed.
-
-Command/Presence would limit the total weight of active creatures, structures, and permanents. For example, a small creature might use 1 Presence, a large creature 3, and a powerful support permanent 2.
-
-Adding it in prototype 0.1 means:
-
-- the first prototype tests the intended pressure between many small cards, fewer large cards, and permanent board value
-- card definitions need a command/presence cost immediately
-- UI and tests must explain one more resource from the start
-- early balance has more variables, which can hide whether Energy plus slots are already enough
-
-Delaying it means:
-
-- the first prototype is faster and easier to read
-- the team can test whether slots, Energy, hand, and card costs already create enough tension
-- card definitions can reserve an optional field without enforcing it yet
-- later introduction may require retuning cards, UI, enemy behavior, and encounter balance
-
-Decision status: `DEFERRED`.
-
-Current decision:
-
-- do not require Command/Presence in prototype 0.1
-- keep it as a future design suggestion
-- do not add mandatory Command/Presence costs to first-pass card definitions
-- if useful, reserve optional data fields so the resource can be tested later without redefining every contract
-
-## 16. RPG Progression
-
-Progression should change options and battle style, not only raise numbers.
-
-Stat candidates:
-
-- Vigor: max health or initial armor
-- Discipline: energy, draw, consistency, or card flow
-- Leadership: command capacity or creature support
-- Technique: physical cards, commands, and hero attacks
-- Arcane: spells, magical terrain, and permanents
-- Instinct: first-round options, fast cards, ambush, reactions
-- Terrain Knowledge: bonuses tied to special slots or terrain
-
-These stats are candidates, not final names.
-
-Progression rewards may include:
-
-- new cards
-- card upgrades
-- alternate card upgrades
-- hero power upgrades
-- alternate hero powers
-- passives
-- equipment
-- command/presence improvements
-- encounter information
-- board advantages
-- enemy-specific counters
-
-Optional rewards should usually grant options or information before pure power.
-
-## 17. Sidequests And Difficulty
-
-The design direction supports optional sidequests that make hard encounters more manageable.
-
-Examples:
-
-- sabotage a fortress to remove enemy structures from a boss board
-- save allied archers to unlock a high player slot
-- find a secret map to reveal boss intent earlier
-- help a blacksmith to unlock a siege card
-
-The player may be allowed to rush main objectives with fewer resources for maximum difficulty.
-
-This direction is promising, but exact campaign structure is TBD.
-
-## 18. Complexity Progression
-
-Suggested teaching order:
-
-1. simple three-lane boards
-2. hero power and permanents
-3. terrain
-4. elevation, reach, support, and diagonal pressure
-5. asymmetrical encounters, portals, waves, and objectives
-6. multipart bosses with unique slot rules
-
-This is a suggested progression, not a locked campaign chapter list.
-
-## 19. Prototype 0.1 Target
-
-The first combat prototype should test the soul of the system with the smallest useful ruleset.
-
-Suggested baseline:
-
-- hero with 25 health
-- energy starts at 1 and scales by round
-- 1 hero power
-- initial hand of 4 cards
-- draw 1 card per round
-- deck of 20 cards
-- 3 player slots and 3 enemy slots
-- direct facing routes
-- creatures enter preparing
-- ready creatures attack in Confrontation
-- damage to creatures persists during battle
-- excess damage does not overflow unless a keyword allows it
-
-Initial card types:
-
-- simple creature
-- defensive creature
-- fast creature
-- ranged/reach creature
-- defensive structure
-- damage spell
-- heal or shield spell
-- terrain-changing spell
-- buff command
+Board slots define owner, terrain, elevation, accepted card types, size limits, and attack routes.
 
 Initial terrains:
 
-- normal
-- cover
-- high
-- dangerous
+- `normal`
+- `cobertura`: reduces ranged damage by 1
+- `alto`: used by boards to expose alternate routes for `alcance`
+- `queimando`: deals 1 damage to its occupant on that controller's upkeep
 
-Initial encounter tests:
+Initial card types:
 
-- clear the board
-- duel against enemy hero
-- portal that summons waves
-- simple boss with one main part and two support parts
+- `criatura`
+- `estrutura`
+- `permanente`
+- `magia`
+- `magia_de_tabuleiro`
+- `comando`
 
-All numbers and scaling details in this section are provisional test values.
+Initial creature states:
 
-## 20. Example Encounter
+- `enjoo`: can block but cannot attack
+- `pronta`: may attack if a legal target exists
+- `exausta`: has attacked or used an exhausting action
+- destroyed: removed after action resolution
+
+Attack rules:
+
+- attack is a normal action in `fase_principal`
+- the attacker must be ready, not exhausted, not sick unless `rapido`, have attack above 0, and have a legal route target
+- creature vs creature damage is simultaneous
+- damage on creatures persists
+- `limpar_mesa` uses no empty-lane hero fallback for player attacks
+- `duelo` allows empty-lane fallback to the enemy hero
+
+Initial keywords:
+
+- `rapido`
+- `defensor`
+- `atropelar`
+- `alcance`
+
+## 5. Battle Modes
+
+Current playable mode:
+
+### `limpar_mesa`
+
+The enemy side has slots, turns, upkeep, attacks, and triggers, but no enemy hero. Victory happens when relevant enemy permanents are gone.
+
+Current test encounter:
 
 ```text
-Encounter: Bridge Ambush
+Emboscada na Ponte
 
-ENEMY
-[E1: Goblin 2/2] [E2: Brute 4/5] [E3: Archer 1/3 - High]
+INIMIGO
+[E1: Goblin 2/2] [E2: Bruto 4/5] [E3: Arqueiro 1/3 - Alto]
 
-PLAYER
-[P1: Normal] [P2: Narrow Bridge] [P3: Cover]
+JOGADOR
+[P1: Normal] [P2: Ponte Estreita] [P3: Cobertura]
 ```
 
-Special rules:
+Next official mode:
 
-- P2 accepts only a small or medium creature.
-- E3 is high; the Archer may attack P2 or P3.
-- P3 has cover; it reduces ranged damage.
+### `duelo`
 
-Player decisions:
+The enemy side has an enemy hero, deck, hand, energy, and AI. Victory happens when the enemy hero reaches 0 HP.
 
-- place a defender in P2 to hold the Brute
-- use a spell to kill the Archer
-- use a reach creature in P3 to answer E3
-- ignore the Archer and race the front enemies
-- use hero power to gain armor and survive an open lane
+Future modes documented but not active:
 
-This encounter is not final content. It is a reference shape for prototype design.
+- `ondas`
+- `defesa`
+- `chefe_multiparte`
+- `quebra_cabeca`
 
-## 21. Design Risks
+## 6. Runtime Commitments
 
-### Open Lanes Deal Too Much Unavoidable Damage
+The runtime should remain data-driven:
 
-Mitigation candidates:
+- cards in JSON
+- boards in JSON
+- encounters in JSON
+- generated Godot resources from authored JSON
+- battle rules visual-agnostic
+- UI presents state and feedback, but does not own rules
 
-- basic armor hero power
-- weak barrier summon
-- small lane damage
-- card filtering
-- temporary lane damage reduction
+The current UI must support:
 
-### Board Gets Stalled
+- one official encounter entry button
+- no variant selector
+- automatic enemy decisions
+- pause whenever priority returns to the player
+- simple no-asset feedback for attack, damage, summon, armor, buff, and destruction
+- resilient layout at `960x540`, `1100x619`, and `1280x720`
 
-Mitigation candidates:
+## 7. Current MVP Card Set
 
-- removal spells
-- trample
-- area damage
-- dangerous terrain
-- sacrifice
-- permanent removal
-- timed creatures
+The starter deck has 20 cards:
 
-### Too Many Slot Rules
+- 3x Escudeiro
+- 3x Guarda da Vila
+- 3x Lobo Faminto
+- 2x Soldado de Linha
+- 2x Arqueira de Penhasco
+- 1x Bruto Mercenario
+- 1x Javali de Guerra
+- 2x Barricada
+- 1x Balista
+- 2x Raio Curto
 
-Mitigation:
+The current reward card is `Golpe Preciso`.
 
-- early boards should teach one spatial rule at a time
+## 8. Historical Notes
 
-### RPG Stats Break The Cardgame
-
-Mitigation:
-
-- optional progression should favor new options, alternate answers, or information over raw numbers
-
-## 22. Open Questions For The User
-
-Answered design decisions:
-
-- Player mode baseline: singleplayer.
-- Future co-op: possible, not a current implementation requirement.
-- Deck direction: the deck evolves as the RPG progresses.
-- Combat setup: the player chooses the setup/deck loadout before entering each combat.
-- Energy direction: starts at 1, scales by round, and may change through hero choice, abilities, cards, equipment, or encounter rules.
-- Defeat consequence: reload to the pre-combat state with no negative effect.
-- Command/Presence: optional future suggestion, not required for prototype 0.1.
-
-First playable slice decisions:
-
-- Presentation: 2D top-down placeholder map for the first slice; final 2D/3D/hybrid direction remains undecided.
-- Flow: Menu -> map -> NPC reward -> deck setup -> enemy-hero duel -> result -> map/retry.
-- NPC reward: one new card, `Balista Improvisada`.
-- Combat setup: full setup before combat.
-- Deck rule: choose a fixed 10-card deck from unlocked individual card entries.
-- Hand size: 3.
-- Enemy AI: scripted deterministic actions.
-- Persistence: session-only, no disk save/load.
-- Map scope: small free 2D area with NPC and encounter marker.
-- Post-battle: victory result returns to map; defeat result retries from the pre-combat snapshot with no penalty.
-- World controls: `WASD` movement and `E` interaction.
-- Card interaction: drag-and-drop in setup and battle.
-- Menu scope: `Novo jogo` and `Sair`.
-
-First combat-depth implementation decisions:
-
-- Player hero power: `Preparar`.
-- `Preparar` draws 1 card.
-- `Preparar` can be used once per round.
-- Hero power does not cost Energy in the current prototype pass.
-
-Cardgame Core Pass 02 implementation decisions:
-
-- Battle engine now tracks explicit phases.
-- Default implemented sequence is `round_start -> draw -> main_1 -> combat -> main_2 -> turn_end` (Pass 02 baseline; will be replaced as the C1 sequence below becomes the default in Pass 03).
-- `round_start`, `draw`, and `turn_end` are automatic in the current prototype.
-- `main_1`, `combat`, and `main_2` advance through player action.
-- Current UI blocks card play and hero power outside main phases until priority/combat experiments define broader timing.
-- Phase sequence is configurable, which lets the C1 variant register a `round_start -> draw -> main -> turn_end` sequence without removing the existing infrastructure.
-
-Cardgame-first direction decision (2026-05-03):
-
-- The project commits to `C1 - Continuous Main Phase With Shared Priority And Attack Actions` as the active combat direction.
-- Phase sequence under C1: `round_start -> draw -> main -> turn_end`.
-- `round_start`, `draw`, and `turn_end` are automatic.
-- `main` is interactive with alternating priority between active player and opponent.
-- All card types are available during `main` to whoever has priority.
-- Attacks are actions inside `main`, not a separate phase.
-- Each creature may attack once per turn by default; summoning sickness applies to newly placed creatures.
-- Priority-spending actions: play a creature, attack, cast a non-instant spell, use hero power, use a non-instant card ability, pass priority.
-- Instant-speed spells do not spend priority.
-- Both players passing priority in succession ends the active player's `main` phase.
-- The phase-based variants (Main Phase 1 / Combat / Main Phase 2) and the A1/A2/B1/B2 priority and combat-resolution variants are preserved as design ideas in `cardgame-core-experiments.md`. They are not active implementation targets and serve as documented fallbacks if C1 fails playtest.
-- Board topology is still not locked; complex boards and position attributes remain a separate experiment track regardless of which turn structure is active.
-
-Open questions before implementation locks systems:
-
-1. Is the playable combat hero always solo, or can singleplayer eventually control a party?
-2. Can exploration events temporarily modify the deck/setup for a specific combat?
-3. Should cards represent allies, summoned units, tactical commands, memories, equipment, magic, or all of these?
-4. Is the enemy always visible before battle, or can encounters surprise the player?
-5. Are card upgrades permanent, per-run, or both depending on source?
-6. How much deck randomness is desired compared with deterministic RPG planning?
-7. Should the first combat prototype be fully abstract UI, or already use placeholder board visuals?
-
-## 23. Rule For Using This Document
-
-Use this document when making design, architecture, data, or prototype decisions for `rpg-turnos`.
-
-If implementation needs a rule that this document marks as TBD, ask the user or create a clearly marked temporary prototype rule in the active implementation track.
+Previous notes that mention energy starting at 1, a 10-card deck, `Preparar` drawing a card, `Duelo antigo`, or phase variants are historical. They do not describe the active runtime.

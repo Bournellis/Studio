@@ -6,155 +6,478 @@
 
 [sub_resource type="Resource" id="Resource_tqsc8"]
 script = ExtResource("1_tqsc8")
-id = "line_guard"
-display_name = "Guarda da Linha"
-card_type = "unit"
+id = "escudeiro"
+display_name = "Escudeiro"
+card_type = "criatura"
 cost = 1
-attack = 1
-health = 4
-text = "Ocupa uma rota e segura dano melhor que uma unidade comum."
-keywords = PackedStringArray("defender")
+command_cost = 1
+attack = 2
+health = 2
+text = "Criatura simples 2/2."
+keywords = PackedStringArray()
+effect = {
+"size": "pequeno"
+}
 
 [sub_resource type="Resource" id="Resource_aaqvb"]
 script = ExtResource("1_tqsc8")
-id = "quick_scout"
-display_name = "Batedor Ligeiro"
-card_type = "unit"
+id = "guarda_vila"
+display_name = "Guarda da Vila"
+card_type = "criatura"
 cost = 1
-attack = 2
-health = 1
-text = "Rapido. Pode atacar no confronto do mesmo turno em que entra."
-keywords = PackedStringArray("fast")
+command_cost = 1
+attack = 1
+health = 4
+text = "Defensor. Bom para segurar uma rota."
+keywords = PackedStringArray("defensor")
+effect = {
+"size": "medio"
+}
 
 [sub_resource type="Resource" id="Resource_xh3p2"]
 script = ExtResource("1_tqsc8")
-id = "watch_archer"
-display_name = "Arqueira de Vigia"
-card_type = "unit"
-cost = 2
-attack = 2
-health = 2
-text = "Unidade simples para testar pressao de rota."
-keywords = PackedStringArray("reach")
+id = "lobo_faminto"
+display_name = "Lobo Faminto"
+card_type = "criatura"
+cost = 1
+command_cost = 1
+attack = 3
+health = 1
+text = "Rapido. Pode atacar no turno em que entra."
+keywords = PackedStringArray("rapido")
+effect = {
+"size": "pequeno"
+}
 
 [sub_resource type="Resource" id="Resource_ayi6x"]
 script = ExtResource("1_tqsc8")
-id = "short_spark"
-display_name = "Centelha Curta"
-card_type = "spell"
-cost = 1
-text = "Causa 2 de dano a um alvo inimigo."
+id = "soldado_linha"
+display_name = "Soldado de Linha"
+card_type = "criatura"
+cost = 2
+command_cost = 2
+attack = 2
+health = 3
+text = "Criatura media para disputar a frente."
 keywords = PackedStringArray()
 effect = {
-"action": "damage",
-"amount": 2.0
+"size": "medio"
 }
 
 [sub_resource type="Resource" id="Resource_b0i2p"]
 script = ExtResource("1_tqsc8")
-id = "field_barricade"
-display_name = "Barricada de Campo"
-card_type = "structure"
-cost = 1
-health = 5
-text = "Estrutura defensiva. Bloqueia a rota sem atacar."
-keywords = PackedStringArray("defender")
+id = "arqueira_penhasco"
+display_name = "Arqueira de Penhasco"
+card_type = "criatura"
+cost = 2
+command_cost = 1
+attack = 2
+health = 2
+text = "Alcance. Em espaco alto, pressiona rotas diagonais."
+keywords = PackedStringArray("alcance")
+effect = {
+"ranged": true,
+"size": "medio"
+}
 
 [sub_resource type="Resource" id="Resource_hvson"]
 script = ExtResource("1_tqsc8")
-id = "hold_the_line"
-display_name = "Manter a Linha"
-card_type = "command"
-cost = 1
-text = "Concede +2 de vida a uma unidade ou estrutura aliada."
+id = "bruto_mercenario"
+display_name = "Bruto Mercenario"
+card_type = "criatura"
+cost = 3
+command_cost = 2
+attack = 4
+health = 4
+text = "Corpo pesado para vencer uma linha."
 keywords = PackedStringArray()
+effect = {
+"size": "grande"
+}
+
+[sub_resource type="Resource" id="Resource_vopr6"]
+script = ExtResource("1_tqsc8")
+id = "javali_guerra"
+display_name = "Javali de Guerra"
+card_type = "criatura"
+cost = 3
+command_cost = 2
+attack = 4
+health = 2
+text = "Atropelar. Testa excesso de dano em versoes futuras."
+keywords = PackedStringArray("atropelar")
+effect = {
+"size": "medio"
+}
+
+[sub_resource type="Resource" id="Resource_2f5oc"]
+script = ExtResource("1_tqsc8")
+id = "barricada"
+display_name = "Barricada"
+card_type = "estrutura"
+cost = 1
+command_cost = 1
+health = 5
+text = "Estrutura defensiva. Bloqueia a rota sem atacar."
+keywords = PackedStringArray("defensor")
+effect = {
+"size": "medio"
+}
+
+[sub_resource type="Resource" id="Resource_q1xx6"]
+script = ExtResource("1_tqsc8")
+id = "balista"
+display_name = "Balista"
+card_type = "estrutura"
+cost = 3
+command_cost = 2
+attack = 2
+health = 3
+text = "Estrutura ofensiva para testar rotas e altura."
+keywords = PackedStringArray("alcance")
+effect = {
+"ranged": true,
+"size": "medio"
+}
+
+[sub_resource type="Resource" id="Resource_75iml"]
+script = ExtResource("1_tqsc8")
+id = "raio_curto"
+display_name = "Raio Curto"
+card_type = "magia"
+cost = 1
+speed = "instantanea"
+text = "Instantanea. Causa 1 de dano a um alvo."
+keywords = PackedStringArray("instantaneo")
+effect = {
+"action": "damage",
+"amount": 1.0,
+"ranged": true
+}
+
+[sub_resource type="Resource" id="Resource_xg15d"]
+script = ExtResource("1_tqsc8")
+id = "golpe_preciso"
+display_name = "Golpe Preciso"
+card_type = "magia"
+cost = 2
+text = "Causa 3 de dano a um alvo."
+keywords = PackedStringArray()
+effect = {
+"action": "damage",
+"amount": 3.0,
+"ranged": false
+}
+
+[sub_resource type="Resource" id="Resource_kobr5"]
+script = ExtResource("1_tqsc8")
+id = "manter_linha"
+display_name = "Manter Linha"
+card_type = "comando"
+cost = 1
+speed = "instantanea"
+text = "Instantanea. Uma carta aliada recebe +0/+2."
+keywords = PackedStringArray("instantaneo")
 effect = {
 "action": "buff_health",
 "amount": 2.0
 }
 
-[sub_resource type="Resource" id="Resource_vopr6"]
+[sub_resource type="Resource" id="Resource_js17r"]
 script = ExtResource("1_tqsc8")
-id = "improvised_ballista"
-display_name = "Balista Improvisada"
-card_type = "structure"
-cost = 3
-attack = 2
-health = 3
-text = "Recompensa do NPC. Ataca pela rota depois de ficar pronta."
-keywords = PackedStringArray("siege")
-
-[sub_resource type="Resource" id="Resource_2f5oc"]
-script = ExtResource("1_tqsc8")
-id = "enemy_recruit"
-display_name = "Recruta Rival"
-card_type = "unit"
+id = "goblin_ponte"
+display_name = "Goblin da Ponte"
+card_type = "criatura"
 cost = 1
-attack = 1
-health = 3
-text = "Carta de roteiro do inimigo."
-keywords = PackedStringArray()
-
-[sub_resource type="Resource" id="Resource_q1xx6"]
-script = ExtResource("1_tqsc8")
-id = "enemy_marksman"
-display_name = "Atirador Rival"
-card_type = "unit"
-cost = 2
+command_cost = 1
 attack = 2
 health = 2
-text = "Carta de roteiro do inimigo."
+text = "Inimigo inicial da ponte."
 keywords = PackedStringArray()
+effect = {
+"size": "pequeno"
+}
 
-[sub_resource type="Resource" id="Resource_75iml"]
+[sub_resource type="Resource" id="Resource_5405m"]
 script = ExtResource("1_tqsc8")
-id = "enemy_veteran"
-display_name = "Veterano Rival"
-card_type = "unit"
+id = "bruto_ponte"
+display_name = "Bruto da Ponte"
+card_type = "criatura"
 cost = 3
-attack = 3
-health = 4
-text = "Carta de roteiro do inimigo."
+command_cost = 2
+attack = 4
+health = 5
+text = "Inimigo pesado da ponte."
 keywords = PackedStringArray()
+effect = {
+"size": "grande"
+}
 
-[sub_resource type="Resource" id="Resource_xg15d"]
-script = ExtResource("2_aaqvb")
-id = "scripted_duelist"
-display_name = "Duelista do Marco"
-max_health = 18
-hero_power_text = "Age por roteiro fixo no primeiro slice."
+[sub_resource type="Resource" id="Resource_p3n0t"]
+script = ExtResource("1_tqsc8")
+id = "arqueiro_ponte"
+display_name = "Arqueiro da Ponte"
+card_type = "criatura"
+cost = 2
+command_cost = 1
+attack = 1
+health = 3
+text = "Inimigo em espaco alto."
+keywords = PackedStringArray("alcance")
+effect = {
+"ranged": true,
+"size": "medio"
+}
 
-[sub_resource type="Resource" id="Resource_kobr5"]
+[sub_resource type="Resource" id="Resource_pkhd5"]
+script = ExtResource("1_tqsc8")
+id = "ladrao_rapido"
+display_name = "Ladrao Rapido"
+card_type = "criatura"
+cost = 1
+command_cost = 1
+attack = 2
+health = 1
+text = "Carta do duelista bandido."
+keywords = PackedStringArray("rapido")
+effect = {
+"size": "pequeno"
+}
+
+[sub_resource type="Resource" id="Resource_haoox"]
+script = ExtResource("1_tqsc8")
+id = "faca_arremessada"
+display_name = "Faca Arremessada"
+card_type = "magia"
+cost = 1
+text = "Causa 1 de dano."
+keywords = PackedStringArray()
+effect = {
+"action": "damage",
+"amount": 1.0,
+"ranged": true
+}
+
+[sub_resource type="Resource" id="Resource_dqqtb"]
 script = ExtResource("2_aaqvb")
-id = "threshold_apprentice"
+id = "duelista_bandido"
+display_name = "Duelista Bandido"
+max_health = 20
+hero_power_text = "IA de duelo simples."
+
+[sub_resource type="Resource" id="Resource_0kq34"]
+script = ExtResource("2_aaqvb")
+id = "aprendiz_limiar"
 display_name = "Aprendiz do Limiar"
 max_health = 25
-hero_power_text = "Preparar: uma vez por rodada, compre 1 carta."
+hero_power_text = "Preparar Defesa: custo 1, ganhe 2 de armadura."
 
 [resource]
 script = ExtResource("3_xh3p2")
-player_hero = SubResource("Resource_kobr5")
-enemy_hero = SubResource("Resource_xg15d")
-cards = Array[Resource]([SubResource("Resource_tqsc8"), SubResource("Resource_aaqvb"), SubResource("Resource_xh3p2"), SubResource("Resource_ayi6x"), SubResource("Resource_b0i2p"), SubResource("Resource_hvson"), SubResource("Resource_vopr6"), SubResource("Resource_2f5oc"), SubResource("Resource_q1xx6"), SubResource("Resource_75iml")])
-starter_deck_ids = PackedStringArray("line_guard", "line_guard", "quick_scout", "quick_scout", "watch_archer", "watch_archer", "short_spark", "short_spark", "field_barricade", "hold_the_line")
-reward_card_id = "improvised_ballista"
-enemy_script = Array[Dictionary]([{
-"action": "play",
-"card_id": "enemy_recruit",
-"round": 1.0,
+player_hero = SubResource("Resource_0kq34")
+enemy_hero = SubResource("Resource_dqqtb")
+cards = Array[Resource]([SubResource("Resource_tqsc8"), SubResource("Resource_aaqvb"), SubResource("Resource_xh3p2"), SubResource("Resource_ayi6x"), SubResource("Resource_b0i2p"), SubResource("Resource_hvson"), SubResource("Resource_vopr6"), SubResource("Resource_2f5oc"), SubResource("Resource_q1xx6"), SubResource("Resource_75iml"), SubResource("Resource_xg15d"), SubResource("Resource_kobr5"), SubResource("Resource_js17r"), SubResource("Resource_5405m"), SubResource("Resource_p3n0t"), SubResource("Resource_pkhd5"), SubResource("Resource_haoox")])
+starter_deck_ids = PackedStringArray("escudeiro", "escudeiro", "escudeiro", "guarda_vila", "guarda_vila", "guarda_vila", "lobo_faminto", "lobo_faminto", "lobo_faminto", "soldado_linha", "soldado_linha", "arqueira_penhasco", "arqueira_penhasco", "bruto_mercenario", "javali_guerra", "barricada", "barricada", "balista", "raio_curto", "raio_curto")
+reward_card_id = "golpe_preciso"
+boards = Array[Dictionary]([{
+"display_name": "Ponte Estavel",
+"enemy_routes": {
+"0": {
+"fallback": "hero",
+"targets": [{
+"owner": "jogador",
+"slot": 0.0
+}]
+},
+"1": {
+"fallback": "hero",
+"targets": [{
+"owner": "jogador",
+"slot": 1.0
+}]
+},
+"2": {
+"fallback": "hero",
+"targets": [{
+"owner": "jogador",
 "slot": 1.0
 }, {
-"action": "play",
-"card_id": "enemy_marksman",
-"round": 2.0,
+"owner": "jogador",
 "slot": 2.0
+}]
+}
+},
+"enemy_slots": [{
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "normal",
+"id": "E1",
+"label": "E1",
+"terrain": "normal"
 }, {
-"action": "play",
-"card_id": "enemy_veteran",
-"round": 3.0,
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "normal",
+"id": "E2",
+"label": "E2",
+"terrain": "normal"
+}, {
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "alto",
+"id": "E3",
+"label": "E3",
+"terrain": "normal"
+}],
+"id": "ponte_estavel",
+"player_routes": {
+"0": {
+"fallback": "none",
+"targets": [{
+"owner": "inimigo",
+"slot": 0.0
+}]
+},
+"1": {
+"fallback": "none",
+"targets": [{
+"owner": "inimigo",
+"slot": 1.0
+}]
+},
+"2": {
+"fallback": "none",
+"targets": [{
+"owner": "inimigo",
+"slot": 2.0
+}]
+}
+},
+"player_slots": [{
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "normal",
+"id": "P1",
+"label": "P1",
+"terrain": "normal"
+}, {
+"accepts": ["criatura", "estrutura"],
+"elevation": "normal",
+"id": "P2",
+"label": "P2",
+"size_limit": "medio",
+"terrain": "normal"
+}, {
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "normal",
+"id": "P3",
+"label": "P3",
+"terrain": "cobertura"
+}]
+}, {
+"display_name": "Duelo de Tres Linhas",
+"enemy_routes": {
+"0": {
+"fallback": "hero",
+"targets": [{
+"owner": "jogador",
+"slot": 0.0
+}]
+},
+"1": {
+"fallback": "hero",
+"targets": [{
+"owner": "jogador",
+"slot": 1.0
+}]
+},
+"2": {
+"fallback": "hero",
+"targets": [{
+"owner": "jogador",
+"slot": 2.0
+}]
+}
+},
+"enemy_slots": [{
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "normal",
+"id": "E1",
+"label": "E1",
+"terrain": "normal"
+}, {
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "normal",
+"id": "E2",
+"label": "E2",
+"terrain": "normal"
+}, {
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "normal",
+"id": "E3",
+"label": "E3",
+"terrain": "normal"
+}],
+"id": "duelo_tres_linhas",
+"player_routes": {
+"0": {
+"fallback": "hero",
+"targets": [{
+"owner": "inimigo",
+"slot": 0.0
+}]
+},
+"1": {
+"fallback": "hero",
+"targets": [{
+"owner": "inimigo",
+"slot": 1.0
+}]
+},
+"2": {
+"fallback": "hero",
+"targets": [{
+"owner": "inimigo",
+"slot": 2.0
+}]
+}
+},
+"player_slots": [{
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "normal",
+"id": "P1",
+"label": "P1",
+"terrain": "normal"
+}, {
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "normal",
+"id": "P2",
+"label": "P2",
+"terrain": "normal"
+}, {
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "normal",
+"id": "P3",
+"label": "P3",
+"terrain": "normal"
+}]
+}])
+encounters = Array[Dictionary]([{
+"board_id": "ponte_estavel",
+"display_name": "Emboscada na Ponte",
+"id": "emboscada_na_ponte",
+"mode": "limpar_mesa",
+"starting_enemy_slots": [{
+"card_id": "goblin_ponte",
 "slot": 0.0
 }, {
-"action": "direct_damage",
-"amount": 2.0,
-"round": 4.0
+"card_id": "bruto_ponte",
+"slot": 1.0
+}, {
+"card_id": "arqueiro_ponte",
+"slot": 2.0
+}]
+}, {
+"board_id": "duelo_tres_linhas",
+"display_name": "Duelista Bandido",
+"enemy_deck": ["goblin_ponte", "goblin_ponte", "goblin_ponte", "goblin_ponte", "ladrao_rapido", "ladrao_rapido", "ladrao_rapido", "arqueiro_ponte", "arqueiro_ponte", "arqueiro_ponte", "bruto_mercenario", "bruto_mercenario", "faca_arremessada", "faca_arremessada", "faca_arremessada", "barricada", "barricada", "barricada", "escudeiro", "escudeiro"],
+"id": "duelista_bandido",
+"mode": "duelo",
+"starting_enemy_slots": []
 }])

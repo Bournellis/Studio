@@ -2,5 +2,4 @@
 
 Authoritative authored definitions and generated resources live here.
 
-Early work should prefer small JSON definitions for characters, items, NPCs, encounters, dialogue, and battle actions.
-
+The active cardgame catalog keeps heroes, cards, boards, encounters, and starter decks in JSON, then generates Godot resources for runtime use.

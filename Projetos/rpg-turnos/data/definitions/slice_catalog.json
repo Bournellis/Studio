@@ -1,145 +1,354 @@
 {
+  "default_encounter_id": "emboscada_na_ponte",
   "player_hero": {
-    "id": "threshold_apprentice",
+    "id": "aprendiz_limiar",
     "display_name": "Aprendiz do Limiar",
     "max_health": 25,
-    "hero_power_text": "Preparar: uma vez por rodada, compre 1 carta."
+    "hero_power_text": "Preparar Defesa: custo 1, ganhe 2 de armadura."
   },
   "enemy_hero": {
-    "id": "scripted_duelist",
-    "display_name": "Duelista do Marco",
-    "max_health": 18,
-    "hero_power_text": "Age por roteiro fixo no primeiro slice."
+    "id": "duelista_bandido",
+    "display_name": "Duelista Bandido",
+    "max_health": 20,
+    "hero_power_text": "IA de duelo simples."
   },
   "starter_deck": [
-    "line_guard",
-    "line_guard",
-    "quick_scout",
-    "quick_scout",
-    "watch_archer",
-    "watch_archer",
-    "short_spark",
-    "short_spark",
-    "field_barricade",
-    "hold_the_line"
+    "escudeiro",
+    "escudeiro",
+    "escudeiro",
+    "guarda_vila",
+    "guarda_vila",
+    "guarda_vila",
+    "lobo_faminto",
+    "lobo_faminto",
+    "lobo_faminto",
+    "soldado_linha",
+    "soldado_linha",
+    "arqueira_penhasco",
+    "arqueira_penhasco",
+    "bruto_mercenario",
+    "javali_guerra",
+    "barricada",
+    "barricada",
+    "balista",
+    "raio_curto",
+    "raio_curto"
   ],
-  "reward_card": "improvised_ballista",
+  "reward_card": "golpe_preciso",
   "cards": [
     {
-      "id": "line_guard",
-      "display_name": "Guarda da Linha",
-      "type": "unit",
+      "id": "escudeiro",
+      "display_name": "Escudeiro",
+      "type": "criatura",
       "cost": 1,
-      "attack": 1,
-      "health": 4,
-      "keywords": ["defender"],
-      "text": "Ocupa uma rota e segura dano melhor que uma unidade comum.",
-      "effect": {}
-    },
-    {
-      "id": "quick_scout",
-      "display_name": "Batedor Ligeiro",
-      "type": "unit",
-      "cost": 1,
-      "attack": 2,
-      "health": 1,
-      "keywords": ["fast"],
-      "text": "Rapido. Pode atacar no confronto do mesmo turno em que entra.",
-      "effect": {}
-    },
-    {
-      "id": "watch_archer",
-      "display_name": "Arqueira de Vigia",
-      "type": "unit",
-      "cost": 2,
+      "command_cost": 1,
+      "speed": "normal",
       "attack": 2,
       "health": 2,
-      "keywords": ["reach"],
-      "text": "Unidade simples para testar pressao de rota.",
-      "effect": {}
-    },
-    {
-      "id": "short_spark",
-      "display_name": "Centelha Curta",
-      "type": "spell",
-      "cost": 1,
-      "attack": 0,
-      "health": 0,
       "keywords": [],
-      "text": "Causa 2 de dano a um alvo inimigo.",
-      "effect": {"action": "damage", "amount": 2}
+      "text": "Criatura simples 2/2.",
+      "effect": {"size": "pequeno"}
     },
     {
-      "id": "field_barricade",
-      "display_name": "Barricada de Campo",
-      "type": "structure",
+      "id": "guarda_vila",
+      "display_name": "Guarda da Vila",
+      "type": "criatura",
       "cost": 1,
+      "command_cost": 1,
+      "speed": "normal",
+      "attack": 1,
+      "health": 4,
+      "keywords": ["defensor"],
+      "text": "Defensor. Bom para segurar uma rota.",
+      "effect": {"size": "medio"}
+    },
+    {
+      "id": "lobo_faminto",
+      "display_name": "Lobo Faminto",
+      "type": "criatura",
+      "cost": 1,
+      "command_cost": 1,
+      "speed": "normal",
+      "attack": 3,
+      "health": 1,
+      "keywords": ["rapido"],
+      "text": "Rapido. Pode atacar no turno em que entra.",
+      "effect": {"size": "pequeno"}
+    },
+    {
+      "id": "soldado_linha",
+      "display_name": "Soldado de Linha",
+      "type": "criatura",
+      "cost": 2,
+      "command_cost": 2,
+      "speed": "normal",
+      "attack": 2,
+      "health": 3,
+      "keywords": [],
+      "text": "Criatura media para disputar a frente.",
+      "effect": {"size": "medio"}
+    },
+    {
+      "id": "arqueira_penhasco",
+      "display_name": "Arqueira de Penhasco",
+      "type": "criatura",
+      "cost": 2,
+      "command_cost": 1,
+      "speed": "normal",
+      "attack": 2,
+      "health": 2,
+      "keywords": ["alcance"],
+      "text": "Alcance. Em espaco alto, pressiona rotas diagonais.",
+      "effect": {"size": "medio", "ranged": true}
+    },
+    {
+      "id": "bruto_mercenario",
+      "display_name": "Bruto Mercenario",
+      "type": "criatura",
+      "cost": 3,
+      "command_cost": 2,
+      "speed": "normal",
+      "attack": 4,
+      "health": 4,
+      "keywords": [],
+      "text": "Corpo pesado para vencer uma linha.",
+      "effect": {"size": "grande"}
+    },
+    {
+      "id": "javali_guerra",
+      "display_name": "Javali de Guerra",
+      "type": "criatura",
+      "cost": 3,
+      "command_cost": 2,
+      "speed": "normal",
+      "attack": 4,
+      "health": 2,
+      "keywords": ["atropelar"],
+      "text": "Atropelar. Testa excesso de dano em versoes futuras.",
+      "effect": {"size": "medio"}
+    },
+    {
+      "id": "barricada",
+      "display_name": "Barricada",
+      "type": "estrutura",
+      "cost": 1,
+      "command_cost": 1,
+      "speed": "normal",
       "attack": 0,
       "health": 5,
-      "keywords": ["defender"],
+      "keywords": ["defensor"],
       "text": "Estrutura defensiva. Bloqueia a rota sem atacar.",
-      "effect": {}
+      "effect": {"size": "medio"}
     },
     {
-      "id": "hold_the_line",
-      "display_name": "Manter a Linha",
-      "type": "command",
+      "id": "balista",
+      "display_name": "Balista",
+      "type": "estrutura",
+      "cost": 3,
+      "command_cost": 2,
+      "speed": "normal",
+      "attack": 2,
+      "health": 3,
+      "keywords": ["alcance"],
+      "text": "Estrutura ofensiva para testar rotas e altura.",
+      "effect": {"size": "medio", "ranged": true}
+    },
+    {
+      "id": "raio_curto",
+      "display_name": "Raio Curto",
+      "type": "magia",
       "cost": 1,
+      "command_cost": 0,
+      "speed": "instantanea",
+      "attack": 0,
+      "health": 0,
+      "keywords": ["instantaneo"],
+      "text": "Instantanea. Causa 1 de dano a um alvo.",
+      "effect": {"action": "damage", "amount": 1, "ranged": true}
+    },
+    {
+      "id": "golpe_preciso",
+      "display_name": "Golpe Preciso",
+      "type": "magia",
+      "cost": 2,
+      "command_cost": 0,
+      "speed": "normal",
       "attack": 0,
       "health": 0,
       "keywords": [],
-      "text": "Concede +2 de vida a uma unidade ou estrutura aliada.",
+      "text": "Causa 3 de dano a um alvo.",
+      "effect": {"action": "damage", "amount": 3, "ranged": false}
+    },
+    {
+      "id": "manter_linha",
+      "display_name": "Manter Linha",
+      "type": "comando",
+      "cost": 1,
+      "command_cost": 0,
+      "speed": "instantanea",
+      "attack": 0,
+      "health": 0,
+      "keywords": ["instantaneo"],
+      "text": "Instantanea. Uma carta aliada recebe +0/+2.",
       "effect": {"action": "buff_health", "amount": 2}
     },
     {
-      "id": "improvised_ballista",
-      "display_name": "Balista Improvisada",
-      "type": "structure",
-      "cost": 3,
-      "attack": 2,
-      "health": 3,
-      "keywords": ["siege"],
-      "text": "Recompensa do NPC. Ataca pela rota depois de ficar pronta.",
-      "effect": {}
-    },
-    {
-      "id": "enemy_recruit",
-      "display_name": "Recruta Rival",
-      "type": "unit",
+      "id": "goblin_ponte",
+      "display_name": "Goblin da Ponte",
+      "type": "criatura",
       "cost": 1,
-      "attack": 1,
-      "health": 3,
-      "keywords": [],
-      "text": "Carta de roteiro do inimigo.",
-      "effect": {}
-    },
-    {
-      "id": "enemy_marksman",
-      "display_name": "Atirador Rival",
-      "type": "unit",
-      "cost": 2,
+      "command_cost": 1,
+      "speed": "normal",
       "attack": 2,
       "health": 2,
       "keywords": [],
-      "text": "Carta de roteiro do inimigo.",
-      "effect": {}
+      "text": "Inimigo inicial da ponte.",
+      "effect": {"size": "pequeno"}
     },
     {
-      "id": "enemy_veteran",
-      "display_name": "Veterano Rival",
-      "type": "unit",
+      "id": "bruto_ponte",
+      "display_name": "Bruto da Ponte",
+      "type": "criatura",
       "cost": 3,
-      "attack": 3,
-      "health": 4,
+      "command_cost": 2,
+      "speed": "normal",
+      "attack": 4,
+      "health": 5,
       "keywords": [],
-      "text": "Carta de roteiro do inimigo.",
-      "effect": {}
+      "text": "Inimigo pesado da ponte.",
+      "effect": {"size": "grande"}
+    },
+    {
+      "id": "arqueiro_ponte",
+      "display_name": "Arqueiro da Ponte",
+      "type": "criatura",
+      "cost": 2,
+      "command_cost": 1,
+      "speed": "normal",
+      "attack": 1,
+      "health": 3,
+      "keywords": ["alcance"],
+      "text": "Inimigo em espaco alto.",
+      "effect": {"size": "medio", "ranged": true}
+    },
+    {
+      "id": "ladrao_rapido",
+      "display_name": "Ladrao Rapido",
+      "type": "criatura",
+      "cost": 1,
+      "command_cost": 1,
+      "speed": "normal",
+      "attack": 2,
+      "health": 1,
+      "keywords": ["rapido"],
+      "text": "Carta do duelista bandido.",
+      "effect": {"size": "pequeno"}
+    },
+    {
+      "id": "faca_arremessada",
+      "display_name": "Faca Arremessada",
+      "type": "magia",
+      "cost": 1,
+      "command_cost": 0,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Causa 1 de dano.",
+      "effect": {"action": "damage", "amount": 1, "ranged": true}
     }
   ],
-  "enemy_script": [
-    {"round": 1, "action": "play", "card_id": "enemy_recruit", "slot": 1},
-    {"round": 2, "action": "play", "card_id": "enemy_marksman", "slot": 2},
-    {"round": 3, "action": "play", "card_id": "enemy_veteran", "slot": 0},
-    {"round": 4, "action": "direct_damage", "amount": 2}
-  ]
+  "boards": [
+    {
+      "id": "ponte_estavel",
+      "display_name": "Ponte Estavel",
+      "player_slots": [
+        {"id": "P1", "label": "P1", "terrain": "normal", "elevation": "normal", "accepts": ["criatura", "estrutura", "permanente"]},
+        {"id": "P2", "label": "P2", "terrain": "normal", "elevation": "normal", "accepts": ["criatura", "estrutura"], "size_limit": "medio"},
+        {"id": "P3", "label": "P3", "terrain": "cobertura", "elevation": "normal", "accepts": ["criatura", "estrutura", "permanente"]}
+      ],
+      "enemy_slots": [
+        {"id": "E1", "label": "E1", "terrain": "normal", "elevation": "normal", "accepts": ["criatura", "estrutura", "permanente"]},
+        {"id": "E2", "label": "E2", "terrain": "normal", "elevation": "normal", "accepts": ["criatura", "estrutura", "permanente"]},
+        {"id": "E3", "label": "E3", "terrain": "normal", "elevation": "alto", "accepts": ["criatura", "estrutura", "permanente"]}
+      ],
+      "player_routes": {
+        "0": {"targets": [{"owner": "inimigo", "slot": 0}], "fallback": "none"},
+        "1": {"targets": [{"owner": "inimigo", "slot": 1}], "fallback": "none"},
+        "2": {"targets": [{"owner": "inimigo", "slot": 2}], "fallback": "none"}
+      },
+      "enemy_routes": {
+        "0": {"targets": [{"owner": "jogador", "slot": 0}], "fallback": "hero"},
+        "1": {"targets": [{"owner": "jogador", "slot": 1}], "fallback": "hero"},
+        "2": {"targets": [{"owner": "jogador", "slot": 1}, {"owner": "jogador", "slot": 2}], "fallback": "hero"}
+      }
+    },
+    {
+      "id": "duelo_tres_linhas",
+      "display_name": "Duelo de Tres Linhas",
+      "player_slots": [
+        {"id": "P1", "label": "P1", "terrain": "normal", "elevation": "normal", "accepts": ["criatura", "estrutura", "permanente"]},
+        {"id": "P2", "label": "P2", "terrain": "normal", "elevation": "normal", "accepts": ["criatura", "estrutura", "permanente"]},
+        {"id": "P3", "label": "P3", "terrain": "normal", "elevation": "normal", "accepts": ["criatura", "estrutura", "permanente"]}
+      ],
+      "enemy_slots": [
+        {"id": "E1", "label": "E1", "terrain": "normal", "elevation": "normal", "accepts": ["criatura", "estrutura", "permanente"]},
+        {"id": "E2", "label": "E2", "terrain": "normal", "elevation": "normal", "accepts": ["criatura", "estrutura", "permanente"]},
+        {"id": "E3", "label": "E3", "terrain": "normal", "elevation": "normal", "accepts": ["criatura", "estrutura", "permanente"]}
+      ],
+      "player_routes": {
+        "0": {"targets": [{"owner": "inimigo", "slot": 0}], "fallback": "hero"},
+        "1": {"targets": [{"owner": "inimigo", "slot": 1}], "fallback": "hero"},
+        "2": {"targets": [{"owner": "inimigo", "slot": 2}], "fallback": "hero"}
+      },
+      "enemy_routes": {
+        "0": {"targets": [{"owner": "jogador", "slot": 0}], "fallback": "hero"},
+        "1": {"targets": [{"owner": "jogador", "slot": 1}], "fallback": "hero"},
+        "2": {"targets": [{"owner": "jogador", "slot": 2}], "fallback": "hero"}
+      }
+    }
+  ],
+  "encounters": [
+    {
+      "id": "emboscada_na_ponte",
+      "display_name": "Emboscada na Ponte",
+      "mode": "limpar_mesa",
+      "board_id": "ponte_estavel",
+      "starting_enemy_slots": [
+        {"slot": 0, "card_id": "goblin_ponte"},
+        {"slot": 1, "card_id": "bruto_ponte"},
+        {"slot": 2, "card_id": "arqueiro_ponte"}
+      ]
+    },
+    {
+      "id": "duelista_bandido",
+      "display_name": "Duelista Bandido",
+      "mode": "duelo",
+      "board_id": "duelo_tres_linhas",
+      "enemy_deck": [
+        "goblin_ponte",
+        "goblin_ponte",
+        "goblin_ponte",
+        "goblin_ponte",
+        "ladrao_rapido",
+        "ladrao_rapido",
+        "ladrao_rapido",
+        "arqueiro_ponte",
+        "arqueiro_ponte",
+        "arqueiro_ponte",
+        "bruto_mercenario",
+        "bruto_mercenario",
+        "faca_arremessada",
+        "faca_arremessada",
+        "faca_arremessada",
+        "barricada",
+        "barricada",
+        "barricada",
+        "escudeiro",
+        "escudeiro"
+      ],
+      "starting_enemy_slots": []
+    }
+  ],
+  "enemy_script": []
 }

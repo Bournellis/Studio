@@ -1,162 +1,113 @@
 # RPG Turnos Architecture
 
+- Last Updated: `2026-05-04`
+- Active Surface: `C1 cardgame battle modes`
+
 ## Goal
 
-Start with separated systems so the project can choose 2D or 3D later without rewriting the RPG rules.
+Keep cardgame rules independent from presentation so the project can still choose final 2D, 3D, or hybrid visuals later.
 
-The first architecture rule is simple: data and game rules must not depend on Node2D, Node3D, camera specifics, collision shape choices, or final art direction.
+UI nodes may show state, route hints, buttons, and feedback animations. They must not own combat rules.
 
-## Layers
+## Runtime Layers
 
-### Core
+### `core/`
 
-`core/` owns low-level contracts and neutral data shapes:
+Session state, selected deck, active encounter, pre-combat snapshot, and battle result handoff.
 
-- stable identifiers
-- result objects
-- snapshots
-- domain-neutral helpers
-- shared base contracts
+### `battle/`
 
-### Systems
+The visual-agnostic C1 rules engine:
 
-`systems/` owns RPG rules that should survive any presentation choice:
-
-- character profile
-- level and stats
-- decks, hands, discard piles, and card ownership
-- inventory
-- items and equipment
-- dialogue state
-- narrative flags
-- encounter definitions
-- board definitions and slot definitions
-- save data
-
-### World
-
-`world/` owns exploration presentation and input adaptation:
-
-- map movement
-- camera behavior
-- NPC interaction zones
-- encounter triggers
-- map exits and route choices
-
-The `world/agnostic/` lane should hold contracts that can be shared by future `world_2d/` and `world_3d/` implementations.
-
-### Battle
-
-`battle/` owns turn-based card-slot combat:
-
-- combatant state
-- hero state
-- card state
-- deck, hand, discard, and resource state
-- board slots and occupancy
+- `controladores`
+- `modo_batalha`
+- `tabuleiro`
+- `turno`
+- `manutencao`
+- `compra`
+- `fase_principal`
+- `prioridade_de`
+- action validation and resolution
 - attack routes
-- turn order
-- action selection
-- action resolution
-- rewards
-- transition back to world state
+- damage, armor, death, victory, and defeat
+- visual event emission for presentation
 
-Battle logic should be mostly visual-agnostic. Presentation can be added through battle UI and scene adapters.
+### `data/`
 
-### Modes
+Authored JSON definitions and generated Godot resources:
 
-`modes/` owns composition:
-
-- `boot/`: project startup and handoff into the first mode
-- `world/`: exploration mode assembly
-- `battle/`: battle mode assembly
-
-Each playable mode should eventually define equivalents of launch context, bootstrap, session manager, game loop, simulation context, HUD presenter, and results presenter.
-
-### UI
-
-`ui/` owns player-facing surfaces:
-
-- character sheet
-- inventory
-- dialogue box
-- choice lists
-- battle command menu
-- battle result panel
-
-UI must present state. It must not own RPG rules.
-
-### Data
-
-`data/` owns authored definitions:
-
-- characters
-- cards
-- decks
-- items
-- equipment
-- NPCs
-- dialogue
-- encounters
-- enemies
+- hero definitions
+- card definitions
+- starter deck
 - boards
-- slots
-- battle actions
+- encounters
 
-Small hand-authored JSON definitions are preferred early. Generated Godot resources can be introduced once the catalogs stabilize.
+The authored source remains `data/definitions/slice_catalog.json`; generated `.tres` resources are rebuilt by validation.
 
-## Initial Contracts To Define Later
+### `modes/`
 
-- `CharacterProfile`
-- `StatsBlock`
-- `InventoryState`
-- `HeroBattleState`
-- `CardDefinition`
-- `DeckDefinition`
-- `DeckState`
-- `HandState`
-- `BoardDefinition`
-- `SlotDefinition`
-- `AttackRouteDefinition`
-- `ItemDefinition`
-- `EquipmentDefinition`
-- `DialogueState`
-- `DialogueDefinition`
-- `EncounterDefinition`
-- `BattleState`
-- `BattleActionDefinition`
-- `RoundPhase`
-- `ResourceState`
-- `WorldActor`
-- `SaveSnapshot`
+Scene composition and flow:
 
-## First Playable Slice Runtime
+- boot
+- exploration placeholder
+- deck setup
+- battle
+- result
 
-The first playable slice introduced a small runtime while keeping rules visual-agnostic:
+Battle entry now starts the active encounter directly. There is no runtime variant selector.
 
-- `data/definitions/slice_catalog.json` is the authored source for placeholder heroes, cards, starter deck, reward card, and enemy script.
-- `tools/content_generator.gd` generates `data/generated/slice_catalog.tres`.
-- `tools/scene_generator.gd` generates playable scenes; agents must not hand-edit generated `.tscn` files as raw text.
-- `data/content_library.gd` exposes the generated catalog as an autoload.
-- `core/game_session.gd` owns session-only progression, deck selection, pre-combat snapshot, and result state.
-- `battle/battle_engine.gd` owns card-slot rules without depending on 2D nodes.
-- `modes/world`, `modes/battle`, and `ui/controls` own presentation and input adaptation.
+### `ui/`
 
-## Reuse Policy
+Reusable controls for cards, slots, deck setup, battle hand, hero target zones, and player-facing feedback.
 
-Reusable code from RPG Isometrico may be considered only after checking it against turn-based RPG needs.
+## Current Contracts
 
-Likely reusable references:
+`BattleEngine.start_battle(catalog, deck_ids, config)` starts a C1 battle. `config.encontro` or `config.encounter_id` selects an encounter; the default is `emboscada_na_ponte`.
 
-- project organization
-- validation patterns
-- settings or persistence helpers
-- input naming conventions
-- content generation workflow
+Important state keys:
 
-Do not inherit:
+- `controladores`
+- `active_player_id`
+- `priority_owner_id`
+- `current_phase`
+- `modo_batalha`
+- `player_slots`
+- `enemy_slots`
+- `eventos_visuais`
+- `outcome`
 
-- real-time action combat
-- RPG Isometrico loadout contract
-- Arena, Survival, Boss, or PvP mode assumptions
-- fixed action-progression rules
+Important modes:
+
+- `limpar_mesa`
+- `duelo`
+
+Important phases:
+
+- `manutencao`
+- `compra`
+- `fase_principal`
+- `encerrada`
+
+## Data Rules
+
+Cards use Portuguese gameplay IDs and types:
+
+- `criatura`
+- `estrutura`
+- `permanente`
+- `magia`
+- `comando`
+
+Boards define slots and routes. Encounters define mode, board, starting enemy slots, and future AI/script data.
+
+The active deck rule is exactly 20 unlocked cards with at most 4 command cards.
+
+## Validation
+
+Run:
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\rpg-turnos -s res://tools/validate.gd
+```
+
+Validation generates content, repairs/generated scenes, checks the first-slice contract, and runs GUT.

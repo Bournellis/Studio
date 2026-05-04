@@ -6,6 +6,8 @@ This project brief captures the initial conversation for the provisional project
 
 The design is intentionally early. These notes are foundation constraints, not a full game design document.
 
+Current combat rules are now governed by `game-design-document.md` version `0.3`. Any older mention in this brief of energy starting at 1, a 10-card deck, or undecided C1 status is historical.
+
 ## Identity
 
 `rpg-turnos` is a new RPG project in Godot.

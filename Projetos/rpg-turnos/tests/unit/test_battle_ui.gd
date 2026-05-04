@@ -15,19 +15,20 @@ func test_playing_first_card_from_ui_refreshes_battle_without_locking() -> void:
 	var root = BattleRootScript.new()
 	add_child(root)
 	await get_tree().process_frame
+	root.engine._enemy_ai_enabled = false
 
-	assert_eq(root.engine.hand[0], "line_guard")
+	assert_eq(root.engine.hand[0], "escudeiro")
 	root._on_card_dropped_on_slot(
-		{"kind": "battle_card", "card_id": "line_guard", "hand_index": 0},
+		{"kind": "battle_card", "card_id": "escudeiro", "hand_index": 0},
 		"player",
 		0
 	)
 	await get_tree().process_frame
 
 	assert_true(root.engine.player_slots[0] != null)
-	assert_eq(root.engine.hand.size(), 2)
+	assert_eq(root.engine.hand.size(), 3)
 	assert_eq(root.engine.outcome, "")
-	assert_eq(root.hand_box.get_child_count(), 2)
+	assert_eq(root.hand_box.get_child_count(), 3)
 	assert_eq(root.player_slots_box.get_child_count(), 3)
 	root.free()
 
@@ -35,8 +36,9 @@ func test_battle_hand_exposes_button_actions_and_feedback() -> void:
 	var root = BattleRootScript.new()
 	add_child(root)
 	await get_tree().process_frame
+	root.engine._enemy_ai_enabled = false
 
-	assert_eq(root.hand_box.get_child_count(), 3)
+	assert_eq(root.hand_box.get_child_count(), 4)
 	var first_card_box: VBoxContainer = root.hand_box.get_child(0)
 	assert_gt(first_card_box.get_child_count(), 1)
 
@@ -45,74 +47,128 @@ func test_battle_hand_exposes_button_actions_and_feedback() -> void:
 
 	assert_eq(root.feedback_label.text, "Carta jogada.")
 	assert_true(root.engine.player_slots[0] != null)
-	assert_eq(root.hand_box.get_child_count(), 2)
+	assert_eq(root.hand_box.get_child_count(), 3)
 	root.free()
 
 func test_end_turn_button_stays_visible_and_advances_round() -> void:
 	var root = BattleRootScript.new()
 	add_child(root)
 	await get_tree().process_frame
+	root.engine._enemy_ai_enabled = false
 
-	assert_eq(root.phase_label.text, "Fase: Fase principal 1")
-	assert_eq(root.end_turn_button.text, "Ir para combate")
+	assert_eq(root.phase_label.text, "Fase: Fase principal")
+	assert_true(root.priority_label.text.contains("Prioridade: voce"))
+	assert_eq(root.end_turn_button.text, "Passar prioridade")
 	assert_false(root.end_turn_button.disabled)
 
-	root._play_hand_card_to_player_slot(0, 0)
+	root._on_end_turn_pressed()
 	await get_tree().process_frame
 
-	assert_eq(root.engine.energy, 0)
-	assert_false(root.end_turn_button.disabled)
-
-	root._on_end_turn_pressed()
-	assert_eq(root.engine.current_phase, "combat")
-	assert_eq(root.end_turn_button.text, "Resolver combate")
-
-	root._on_end_turn_pressed()
-	assert_eq(root.engine.current_phase, "main_2")
-	assert_eq(root.end_turn_button.text, "Encerrar turno")
-
-	root._on_end_turn_pressed()
-
-	assert_eq(root.engine.round_number, 2)
-	assert_eq(root.engine.energy, 2)
-	assert_eq(root.feedback_label.text, "Turno encerrado.")
+	assert_eq(root.engine.turno, 2)
+	assert_eq(root.engine.active_player_id, "inimigo")
+	assert_true(root.priority_label.text.contains("Prioridade: voce"))
+	assert_eq(root.end_turn_button.text, "Passar prioridade")
 	root.free()
 
 func test_hero_power_button_draws_and_disables_for_round() -> void:
 	var root = BattleRootScript.new()
 	add_child(root)
 	await get_tree().process_frame
+	root.engine._enemy_ai_enabled = false
 
 	assert_false(root.hero_power_button.disabled)
 
 	root._on_hero_power_pressed()
 	await get_tree().process_frame
 
-	assert_eq(root.feedback_label.text, "Poder heroico comprou 1 carta.")
+	assert_eq(root.feedback_label.text, "Preparar Defesa concedeu 2 de armadura.")
 	assert_true(root.hero_power_button.disabled)
+	assert_eq(root.engine.player_armor, 2)
 	assert_eq(root.engine.hand.size(), 4)
 
-	root._on_end_turn_pressed()
-	assert_true(root.hero_power_button.disabled)
 	root._on_end_turn_pressed()
 	assert_true(root.hero_power_button.disabled)
 	root._on_end_turn_pressed()
 	assert_false(root.hero_power_button.disabled)
 	root.free()
 
+func test_enemy_turn_is_automatic_and_visual_events_are_available() -> void:
+	var root = BattleRootScript.new()
+	add_child(root)
+	await get_tree().process_frame
+
+	root._on_hero_power_pressed()
+	await get_tree().process_frame
+
+	assert_eq(root.engine.priority_owner_id, "jogador")
+	assert_gt(root.engine.eventos_visuais.size(), 0)
+	assert_true(root.feedback_label.text.contains("Preparar Defesa"))
+	root.free()
+
+func test_generated_battle_scene_root_expands_to_viewport() -> void:
+	var packed_scene: PackedScene = load("res://modes/battle/battle.tscn")
+	var root = packed_scene.instantiate()
+	add_child(root)
+	await get_tree().process_frame
+
+	var viewport_size: Vector2 = root.get_viewport_rect().size
+	assert_gte(root.size.x, viewport_size.x - 1.0)
+	assert_gte(root.size.y, viewport_size.y - 1.0)
+	_assert_control_inside(root.hero_power_button, viewport_size)
+	_assert_control_inside(root.end_turn_button, viewport_size)
+	root.free()
+
 func test_battle_layout_keeps_hand_actions_inside_debug_viewport() -> void:
-	var debug_viewport_size: Vector2 = Vector2(1152, 648)
+	var debug_viewport_size: Vector2 = Vector2(1100, 619)
 	var root = BattleRootScript.new()
 	root.size = debug_viewport_size
 	add_child(root)
 	await get_tree().process_frame
+	root.engine._enemy_ai_enabled = false
 	root.size = debug_viewport_size
 	await get_tree().process_frame
 
-	var viewport_bottom: float = debug_viewport_size.y - 12.0
-	assert_lte(root.hand_box.get_global_rect().end.y, viewport_bottom)
+	_assert_control_inside(root.hero_power_button, debug_viewport_size)
+	_assert_control_inside(root.end_turn_button, debug_viewport_size)
+	_assert_control_inside(root.feedback_label, debug_viewport_size)
+	_assert_control_inside(root.hand_box, debug_viewport_size)
 	for card_box: Control in root.hand_box.get_children():
-		assert_lte(card_box.get_global_rect().end.y, viewport_bottom)
+		_assert_control_inside(card_box, debug_viewport_size)
 		for child: Control in card_box.get_children():
-			assert_lte(child.get_global_rect().end.y, viewport_bottom)
+			_assert_control_inside(child, debug_viewport_size)
 	root.free()
+
+func test_battle_layout_keeps_priority_action_visible_after_c1_state_changes() -> void:
+	var debug_viewport_size: Vector2 = Vector2(1100, 619)
+	var root = BattleRootScript.new()
+	root.size = debug_viewport_size
+	add_child(root)
+	await get_tree().process_frame
+	root.engine._enemy_ai_enabled = false
+	root.size = debug_viewport_size
+	await get_tree().process_frame
+
+	root._play_hand_card_to_player_slot(0, 1)
+	await get_tree().process_frame
+
+	assert_true(root.priority_label.text.contains("Prioridade: voce"))
+	assert_eq(root.end_turn_button.text, "Passar prioridade")
+	_assert_control_inside(root.hero_power_button, debug_viewport_size)
+	_assert_control_inside(root.end_turn_button, debug_viewport_size)
+	_assert_control_inside(root.priority_label, debug_viewport_size)
+
+	root._on_end_turn_pressed()
+	await get_tree().process_frame
+
+	assert_true(root.priority_label.text.contains("Prioridade: voce"))
+	assert_eq(root.end_turn_button.text, "Passar prioridade")
+	_assert_control_inside(root.hero_power_button, debug_viewport_size)
+	_assert_control_inside(root.end_turn_button, debug_viewport_size)
+	root.free()
+
+func _assert_control_inside(control: Control, viewport_size: Vector2) -> void:
+	var rect: Rect2 = control.get_global_rect()
+	assert_gte(rect.position.x, 0.0, "%s left edge" % control.name)
+	assert_gte(rect.position.y, 0.0, "%s top edge" % control.name)
+	assert_lte(rect.end.x, viewport_size.x, "%s right edge" % control.name)
+	assert_lte(rect.end.y, viewport_size.y, "%s bottom edge" % control.name)

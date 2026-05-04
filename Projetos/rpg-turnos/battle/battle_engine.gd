@@ -1,70 +1,98 @@
 class_name BattleEngine
 extends RefCounted
 
-const HAND_SIZE: int = 3
-const SLOT_COUNT: int = 3
-const ENERGY_CAP: int = 6
-const PHASE_ROUND_START: String = "round_start"
-const PHASE_DRAW: String = "draw"
-const PHASE_MAIN: String = "main"
-const PHASE_MAIN_1: String = "main_1"
-const PHASE_COMBAT: String = "combat"
-const PHASE_MAIN_2: String = "main_2"
-const PHASE_TURN_END: String = "turn_end"
-const DEFAULT_PHASE_SEQUENCE: Array = [
-	PHASE_ROUND_START,
-	PHASE_DRAW,
-	PHASE_MAIN_1,
-	PHASE_COMBAT,
-	PHASE_MAIN_2,
-	PHASE_TURN_END
-]
+const PLAYER_ID: String = "jogador"
+const ENEMY_ID: String = "inimigo"
 
+const MODE_CLEAR_BOARD: String = "limpar_mesa"
+const MODE_DUEL: String = "duelo"
+
+const PHASE_UPKEEP: String = "manutencao"
+const PHASE_DRAW: String = "compra"
+const PHASE_MAIN: String = "fase_principal"
+const PHASE_ENDED: String = "encerrada"
+
+const STARTING_HAND_SIZE: int = 4
+const HAND_LIMIT: int = 8
+const STARTING_ENERGY_MAX: int = 3
+const COMMAND_DECK_LIMIT: int = 4
+const DEFAULT_PLAYER_HEALTH: int = 25
+const DEFAULT_ENEMY_HEALTH: int = 20
+const MAX_LOG_LINES: int = 18
+const MAX_AUTO_STEPS: int = 24
+
+# Compatibility aliases kept while UI/tests migrate to Portuguese terms.
+const VARIANT_C1: String = "c1"
+const PHASE_MAIN_COMPAT: String = PHASE_MAIN
+
+var turno: int = 1
 var round_number: int = 1
-var player_health: int = 25
-var enemy_health: int = 18
-var energy: int = 1
+var player_health: int = DEFAULT_PLAYER_HEALTH
+var player_armor: int = 0
+var enemy_health: int = DEFAULT_ENEMY_HEALTH
+var enemy_armor: int = 0
+var energy: int = STARTING_ENERGY_MAX
 var deck: Array = []
 var hand: Array = []
 var discard: Array = []
 var player_slots: Array = []
 var enemy_slots: Array = []
 var log_lines: Array[String] = []
+var eventos_visuais: Array[Dictionary] = []
 var outcome: String = ""
 var hero_power_used: bool = false
-var phase_sequence: Array[String] = []
-var current_phase: String = PHASE_MAIN_1
+var current_phase: String = PHASE_MAIN
+var battle_variant_id: String = VARIANT_C1
+var modo_batalha: String = MODE_CLEAR_BOARD
+var encounter_id: String = ""
+var encounter_name: String = ""
+var active_player_id: String = PLAYER_ID
+var priority_owner_id: String = PLAYER_ID
+var consecutive_passes: int = 0
+var controladores: Dictionary = {}
+var tabuleiro: Dictionary = {}
 
 var _catalog
-var _phase_index: int = -1
-var _pending_draw_amount: int = HAND_SIZE
+var _player_slot_definitions: Array = []
+var _enemy_slot_definitions: Array = []
+var _player_slot_labels: Array[String] = []
+var _enemy_slot_labels: Array[String] = []
+var _attack_routes: Dictionary = {}
+var _enemy_ai_enabled: bool = true
+var _auto_depth: int = 0
 
 func start_battle(catalog, deck_ids: Array, config: Dictionary = {}) -> void:
 	_catalog = catalog
-	round_number = 1
-	player_health = catalog.player_hero.max_health
-	enemy_health = catalog.enemy_hero.max_health
-	energy = 1
-	deck = deck_ids.duplicate()
-	hand = []
-	discard = []
-	player_slots = [null, null, null]
-	enemy_slots = [null, null, null]
 	log_lines = []
+	eventos_visuais = []
 	outcome = ""
-	hero_power_used = false
-	phase_sequence = _phase_sequence_from_config(config)
-	current_phase = ""
-	_phase_index = -1
-	_pending_draw_amount = HAND_SIZE
-	_log("Duelo iniciado.")
-	_enter_next_phase()
+	battle_variant_id = VARIANT_C1
+	turno = 1
+	round_number = 1
+	active_player_id = PLAYER_ID
+	priority_owner_id = PLAYER_ID
+	consecutive_passes = 0
+	current_phase = PHASE_UPKEEP
+	_enemy_ai_enabled = bool(config.get("enemy_ai_enabled", config.get("enemy_script_enabled", true)))
+
+	var encounter: Dictionary = _encounter_from_config(config)
+	encounter_id = str(encounter.get("id", "emboscada_na_ponte"))
+	encounter_name = str(encounter.get("display_name", "Emboscada na Ponte"))
+	modo_batalha = str(encounter.get("mode", MODE_CLEAR_BOARD))
+	_configure_controllers(deck_ids, encounter)
+	_configure_board(encounter)
+
+	_log("Encontro iniciado: %s." % encounter_name)
+	_start_turn(PLAYER_ID)
 
 func get_state() -> Dictionary:
 	return {
+		"turno": turno,
 		"round": round_number,
 		"player_health": player_health,
+		"player_armor": player_armor,
 		"enemy_health": enemy_health,
+		"enemy_armor": enemy_armor,
 		"energy": energy,
 		"deck": deck.duplicate(),
 		"hand": hand.duplicate(),
@@ -72,361 +100,986 @@ func get_state() -> Dictionary:
 		"player_slots": player_slots.duplicate(true),
 		"enemy_slots": enemy_slots.duplicate(true),
 		"log": log_lines.duplicate(),
+		"eventos_visuais": eventos_visuais.duplicate(true),
 		"outcome": outcome,
 		"hero_power_used": hero_power_used,
 		"current_phase": current_phase,
-		"phase_sequence": phase_sequence.duplicate()
+		"battle_variant_id": battle_variant_id,
+		"modo_batalha": modo_batalha,
+		"encounter_id": encounter_id,
+		"active_player_id": active_player_id,
+		"priority_owner_id": priority_owner_id,
+		"consecutive_passes": consecutive_passes,
+		"controladores": controladores.duplicate(true)
 	}
+
+func is_c1_variant() -> bool:
+	return true
+
+func get_variant_label() -> String:
+	return "C1"
+
+func get_mode_label() -> String:
+	match modo_batalha:
+		MODE_CLEAR_BOARD:
+			return "Limpar mesa"
+		MODE_DUEL:
+			return "Duelo"
+		_:
+			return modo_batalha
+
+func get_priority_label() -> String:
+	if current_phase != PHASE_MAIN or outcome != "":
+		return "Prioridade: n/a"
+	if priority_owner_id == PLAYER_ID:
+		return "Prioridade: voce"
+	return "Prioridade: inimigo"
+
+func get_active_controller_label() -> String:
+	if active_player_id == PLAYER_ID:
+		return "Turno: jogador"
+	return "Turno: inimigo"
+
+func can_play_main_actions() -> bool:
+	return outcome == "" and current_phase == PHASE_MAIN and priority_owner_id == PLAYER_ID
+
+func can_play_card(card) -> bool:
+	if card == null or not can_play_main_actions():
+		return false
+	if int(card.cost) > _controller_energy(PLAYER_ID):
+		return false
+	return true
+
+func can_use_player_hero_power() -> bool:
+	if not can_play_main_actions() or active_player_id != PLAYER_ID:
+		return false
+	var controller: Dictionary = _controller(PLAYER_ID)
+	return not bool(controller.get("hero_power_used", false)) and int(controller.get("energy", 0)) >= 1
 
 func use_player_hero_power() -> Dictionary:
 	if outcome != "":
 		return _fail("A batalha ja terminou.")
 	if not can_play_main_actions():
-		return _fail("Poder heroico so pode ser usado em fase principal neste prototipo.")
-	if hero_power_used:
-		return _fail("Poder heroico ja usado nesta rodada.")
-	if deck.is_empty():
-		return _fail("O deck esta vazio.")
+		return _fail("Poder heroico so pode ser usado quando voce tem prioridade.")
+	if active_player_id != PLAYER_ID:
+		return _fail("Preparar Defesa so pode ser usado no seu proprio turno.")
+	var controller: Dictionary = _controller(PLAYER_ID)
+	if bool(controller.get("hero_power_used", false)):
+		return _fail("Poder heroico ja usado neste turno.")
+	if int(controller.get("energy", 0)) < 1:
+		return _fail("Energia insuficiente para Preparar Defesa.")
 
-	hero_power_used = true
-	_draw_cards(1)
-	_log("Poder heroico: Preparar comprou 1 carta.")
-	return {"ok": true, "message": "Poder heroico comprou 1 carta."}
+	controller["energy"] = int(controller.get("energy", 0)) - 1
+	controller["hero_power_used"] = true
+	var hero: Dictionary = Dictionary(controller.get("hero", {}))
+	hero["armor"] = int(hero.get("armor", 0)) + 2
+	controller["hero"] = hero
+	_set_controller(PLAYER_ID, controller)
+	_sync_public_fields()
+	_log("Preparar Defesa: jogador ganha 2 de armadura.")
+	_visual("armadura", PLAYER_ID, -1, "Armadura +2", Color(0.35, 0.75, 1.0))
+	_after_action_resolved(PLAYER_ID, false)
+	return {"ok": true, "message": "Preparar Defesa concedeu 2 de armadura."}
 
 func play_card_from_hand(hand_index: int, target: Dictionary) -> Dictionary:
 	if outcome != "":
 		return _fail("A batalha ja terminou.")
-	if not can_play_main_actions():
-		return _fail("Cartas so podem ser jogadas em fase principal neste prototipo.")
-	if hand_index < 0 or hand_index >= hand.size():
+	if current_phase != PHASE_MAIN:
+		return _fail("Cartas so podem ser jogadas na fase principal.")
+	if priority_owner_id != PLAYER_ID:
+		return _fail("A prioridade esta com o inimigo.")
+	var controller: Dictionary = _controller(PLAYER_ID)
+	var controller_hand: Array = Array(controller.get("hand", []))
+	if hand_index < 0 or hand_index >= controller_hand.size():
 		return _fail("Carta de mao invalida.")
 
-	var card_id: String = str(hand[hand_index])
+	var card_id: String = str(controller_hand[hand_index])
 	var card = _catalog.find_card(card_id)
 	if card == null:
 		return _fail("Carta inexistente: %s." % card_id)
-	if card.cost > energy:
+	if int(card.cost) > int(controller.get("energy", 0)):
 		return _fail("Energia insuficiente para %s." % card.display_name)
 
 	if card.occupies_slot():
-		return _play_permanent(hand_index, card, target)
+		return _play_permanent(PLAYER_ID, hand_index, card, target)
 	if card.is_damage_spell():
-		return _play_damage_spell(hand_index, card, target)
+		return _play_damage_spell(PLAYER_ID, hand_index, card, target)
 	if card.is_buff_command():
-		return _play_buff_command(hand_index, card, target)
-	return _fail("Tipo de carta ainda nao suportado neste slice.")
+		return _play_buff_command(PLAYER_ID, hand_index, card, target)
+	return _fail("Tipo de carta ainda nao suportado: %s." % str(card.card_type))
 
 func advance_phase() -> Dictionary:
 	if outcome != "":
 		return {"ok": false, "message": "A batalha ja terminou."}
-	if not _is_player_controlled_phase(current_phase):
-		return _fail("A fase atual resolve automaticamente.")
-
-	var previous_phase: String = current_phase
-	if current_phase == PHASE_COMBAT:
-		_resolve_combat_phase()
-		_check_outcome()
-		if outcome != "":
-			return {"ok": true, "message": "Combate resolvido."}
-
-	_enter_next_phase()
-	return {"ok": true, "message": _phase_advance_message(previous_phase)}
+	if current_phase != PHASE_MAIN:
+		return {"ok": false, "message": "A fase atual resolve automaticamente."}
+	if priority_owner_id == PLAYER_ID:
+		return pass_priority(PLAYER_ID)
+	_auto_enemy_until_player_priority()
+	return {"ok": true, "message": "Inimigo resolvido automaticamente."}
 
 func end_player_turn() -> Dictionary:
 	return advance_phase()
 
-func can_play_main_actions() -> bool:
-	return outcome == "" and current_phase in [PHASE_MAIN, PHASE_MAIN_1, PHASE_MAIN_2]
+func pass_priority(owner_id: String = PLAYER_ID) -> Dictionary:
+	owner_id = _normalize_owner_id(owner_id)
+	if outcome != "":
+		return {"ok": false, "message": "A batalha ja terminou."}
+	if current_phase != PHASE_MAIN:
+		return _fail("Prioridade so existe na fase principal.")
+	if priority_owner_id != owner_id:
+		return _fail("A prioridade esta com %s." % _owner_label(priority_owner_id))
+
+	consecutive_passes += 1
+	_log("%s passa prioridade." % _owner_label(owner_id))
+	if consecutive_passes >= 2:
+		_log("Dois passes encerram a fase principal.")
+		_end_main_phase()
+	else:
+		priority_owner_id = _opponent_id(owner_id)
+		_log("Prioridade: %s." % _owner_label(priority_owner_id))
+
+	if owner_id == PLAYER_ID:
+		_auto_enemy_until_player_priority()
+	return {"ok": true, "message": "Prioridade passada." if outcome == "" else "Batalha encerrada."}
+
+func resolve_enemy_priority() -> Dictionary:
+	if outcome != "":
+		return {"ok": false, "message": "A batalha ja terminou."}
+	if current_phase != PHASE_MAIN:
+		return _fail("A fase atual nao aceita prioridade.")
+	if priority_owner_id != ENEMY_ID:
+		return _fail("A prioridade nao esta com o inimigo.")
+	return _perform_enemy_action()
+
+func attack_with_unit(owner_id: String, slot_index: int, target: Dictionary) -> Dictionary:
+	owner_id = _normalize_owner_id(owner_id)
+	if outcome != "":
+		return _fail("A batalha ja terminou.")
+	if current_phase != PHASE_MAIN:
+		return _fail("Ataques so podem ser declarados na fase principal.")
+	if priority_owner_id != owner_id:
+		return _fail("A prioridade esta com %s." % _owner_label(priority_owner_id))
+	if not _can_attack_from_slot(owner_id, slot_index):
+		return _fail("Essa carta nao pode atacar agora.")
+
+	var legal_options: Array = get_attack_options(owner_id, slot_index)
+	if not _target_in_options(target, legal_options):
+		return _fail("Alvo de ataque invalido.")
+
+	var attacker_slots: Array = _slots_for_owner(owner_id)
+	var attacker: Dictionary = Dictionary(attacker_slots[slot_index])
+	var target_owner: String = _normalize_owner_id(str(target.get("owner", _opponent_id(owner_id))))
+	var target_slot: int = int(target.get("slot", -1))
+	var amount: int = int(attacker.get("attack", 0))
+
+	attacker["exhausted"] = true
+	attacker["ready"] = false
+	attacker_slots[slot_index] = attacker
+	_set_slots_for_owner(owner_id, attacker_slots)
+	_log("%s declara ataque contra %s." % [_slot_label(owner_id, slot_index), _target_label(target)])
+	_visual("ataque", owner_id, slot_index, "Ataque", Color(1.0, 0.82, 0.3))
+
+	if target_slot >= 0:
+		var target_slots: Array = _slots_for_owner(target_owner)
+		if target_slot >= target_slots.size() or target_slots[target_slot] == null:
+			return _fail("Alvo de ataque invalido.")
+		var defender: Dictionary = Dictionary(target_slots[target_slot])
+		var defender_damage: int = int(defender.get("attack", 0))
+		var defender_health_before: int = int(defender.get("health", 0))
+		_apply_unit_damage(target_owner, target_slot, amount, bool(attacker.get("ranged", false)))
+		_apply_unit_damage(owner_id, slot_index, defender_damage)
+		_log("%s causa %d e recebe %d de volta." % [_slot_label(owner_id, slot_index), amount, defender_damage])
+		var route: Dictionary = Dictionary(_attack_routes.get(_route_key(owner_id, slot_index), {}))
+		if _has_keyword(attacker, "atropelar") and amount > defender_health_before and str(route.get("fallback", "none")) == "hero":
+			var overflow: int = amount - defender_health_before
+			_apply_hero_damage(_opponent_id(owner_id), overflow)
+			_log("Atropelar causa %d de excesso ao heroi." % overflow)
+	else:
+		_apply_hero_damage(target_owner, amount)
+		_log("%s causa %d de dano direto." % [_slot_label(owner_id, slot_index), amount])
+
+	_remove_destroyed()
+	_check_outcome()
+	_after_action_resolved(owner_id, false)
+	return {"ok": true, "message": "Ataque resolvido."}
+
+func get_attack_options(owner_id: String, slot_index: int) -> Array:
+	owner_id = _normalize_owner_id(owner_id)
+	if not _can_attack_from_slot(owner_id, slot_index):
+		return []
+
+	var options: Array = []
+	var seen: Dictionary = {}
+	var route: Dictionary = Dictionary(_attack_routes.get(_route_key(owner_id, slot_index), {}))
+	var targets: Array = Array(route.get("targets", []))
+	for route_target: Variant in targets:
+		if typeof(route_target) != TYPE_DICTIONARY:
+			continue
+		var target: Dictionary = Dictionary(route_target)
+		var target_owner: String = _normalize_owner_id(str(target.get("owner", _opponent_id(owner_id))))
+		var target_slot: int = int(target.get("slot", -1))
+		if target_slot < 0:
+			continue
+		var target_slots: Array = _slots_for_owner(target_owner)
+		if target_slot >= 0 and target_slot < target_slots.size() and target_slots[target_slot] != null:
+			_add_attack_option(options, seen, {"owner": target_owner, "slot": target_slot})
+
+	var fallback: String = str(route.get("fallback", "hero"))
+	if options.is_empty() and fallback == "hero":
+		_add_attack_option(options, seen, {"owner": _opponent_id(owner_id), "slot": -1})
+	return options
+
+func get_slot_attack_status(owner_id: String, slot_index: int) -> String:
+	owner_id = _normalize_owner_id(owner_id)
+	var slots: Array = _slots_for_owner(owner_id)
+	if slot_index < 0 or slot_index >= slots.size() or slots[slot_index] == null:
+		return "Livre"
+	var occupant: Dictionary = Dictionary(slots[slot_index])
+	if int(occupant.get("attack", 0)) <= 0:
+		return "Sem ataque"
+	if bool(occupant.get("summoning_sick", false)) and not _has_keyword(occupant, "rapido"):
+		return "Enjoo"
+	if bool(occupant.get("exhausted", false)):
+		return "Exausta"
+	if priority_owner_id != owner_id:
+		return "Aguardando prioridade"
+	if get_attack_options(owner_id, slot_index).is_empty():
+		return "Sem alvo"
+	return "Pode atacar"
 
 func get_phase_label() -> String:
 	match current_phase:
-		PHASE_ROUND_START:
-			return "Inicio de round"
+		PHASE_UPKEEP:
+			return "Manutencao"
 		PHASE_DRAW:
 			return "Compra"
 		PHASE_MAIN:
 			return "Fase principal"
-		PHASE_MAIN_1:
-			return "Fase principal 1"
-		PHASE_COMBAT:
-			return "Combate"
-		PHASE_MAIN_2:
-			return "Pos-combate"
-		PHASE_TURN_END:
-			return "Fim do turno"
+		PHASE_ENDED:
+			return "Encerrada"
 		_:
-			return "Indefinida"
+			return current_phase
 
 func get_advance_phase_label() -> String:
-	match current_phase:
-		PHASE_MAIN:
-			return "Encerrar turno"
-		PHASE_MAIN_1:
-			return "Ir para combate"
-		PHASE_COMBAT:
-			return "Resolver combate"
-		PHASE_MAIN_2:
-			return "Encerrar turno"
-		_:
-			return "Aguarde"
+	if outcome != "":
+		return "Encerrado"
+	if current_phase != PHASE_MAIN:
+		return "Aguarde"
+	if priority_owner_id == PLAYER_ID:
+		return "Passar prioridade"
+	return "Inimigo automatico"
+
+func get_board_route_summary() -> String:
+	var parts: Array[String] = []
+	for index: int in range(player_slots.size()):
+		var route: Dictionary = Dictionary(_attack_routes.get(_route_key(PLAYER_ID, index), {}))
+		var labels: Array[String] = []
+		for target: Variant in Array(route.get("targets", [])):
+			if typeof(target) == TYPE_DICTIONARY:
+				labels.append(_target_label(Dictionary(target)))
+		var fallback: String = str(route.get("fallback", "none"))
+		if fallback == "hero":
+			labels.append("Heroi inimigo")
+		elif fallback == "none":
+			labels.append("sem alvo vazio")
+		parts.append("%s -> %s" % [_slot_label(PLAYER_ID, index), "/".join(labels)])
+	return "Rotas: %s" % " | ".join(parts)
+
+func get_slot_label(owner_id: String, slot_index: int) -> String:
+	return _slot_label(_normalize_owner_id(owner_id), slot_index)
 
 func force_player_health(value: int) -> void:
-	player_health = value
+	var controller: Dictionary = _controller(PLAYER_ID)
+	var hero: Dictionary = Dictionary(controller.get("hero", {}))
+	hero["health"] = value
+	controller["hero"] = hero
+	_set_controller(PLAYER_ID, controller)
+	_sync_public_fields()
 	_check_outcome()
 
-func _phase_sequence_from_config(config: Dictionary) -> Array[String]:
-	var configured: Array = Array(config.get("phase_sequence", DEFAULT_PHASE_SEQUENCE))
-	if configured.is_empty():
-		configured = DEFAULT_PHASE_SEQUENCE
-
-	var result: Array[String] = []
-	for phase: Variant in configured:
-		result.append(str(phase))
-	return result
-
-func _enter_next_phase() -> void:
-	if outcome != "":
+func force_enemy_health(value: int) -> void:
+	var controller: Dictionary = _controller(ENEMY_ID)
+	if not controller.has("hero"):
 		return
-	if phase_sequence.is_empty():
-		phase_sequence = _phase_sequence_from_config({})
-
-	_phase_index += 1
-	if _phase_index >= phase_sequence.size():
-		_phase_index = 0
-
-	current_phase = phase_sequence[_phase_index]
-	_log("Fase: %s." % get_phase_label())
-	_resolve_automatic_phase()
-
-	if outcome == "" and _is_automatic_phase(current_phase):
-		_enter_next_phase()
-
-func _resolve_automatic_phase() -> void:
-	match current_phase:
-		PHASE_ROUND_START:
-			energy = min(round_number, ENERGY_CAP)
-			hero_power_used = false
-			_log("Inicio da rodada %d. Energia %d." % [round_number, energy])
-		PHASE_DRAW:
-			var requested: int = _pending_draw_amount
-			var before_count: int = hand.size()
-			_draw_cards(requested)
-			var drawn: int = hand.size() - before_count
-			if round_number == 1 and before_count == 0:
-				_log("Mao inicial com %d cartas." % drawn)
-			else:
-				_log("Compra: %d carta(s)." % drawn)
-			_pending_draw_amount = 1
-		PHASE_TURN_END:
-			_log("Fim do turno.")
-			round_number += 1
-			_pending_draw_amount = 1
-
-func _is_automatic_phase(phase: String) -> bool:
-	return phase in [PHASE_ROUND_START, PHASE_DRAW, PHASE_TURN_END]
-
-func _is_player_controlled_phase(phase: String) -> bool:
-	return phase in [PHASE_MAIN, PHASE_MAIN_1, PHASE_COMBAT, PHASE_MAIN_2]
-
-func _phase_advance_message(previous_phase: String) -> String:
-	match previous_phase:
-		PHASE_MAIN:
-			return "Turno encerrado."
-		PHASE_MAIN_1:
-			return "Fase de combate."
-		PHASE_COMBAT:
-			return "Combate resolvido."
-		PHASE_MAIN_2:
-			return "Turno encerrado."
-		_:
-			return "Fase avancada."
-
-func _resolve_combat_phase() -> void:
-	_run_enemy_phase()
-	_resolve_confrontation()
-
-func _play_permanent(hand_index: int, card, target: Dictionary) -> Dictionary:
-	var slot_index: int = int(target.get("slot", -1))
-	if slot_index < 0 or slot_index >= SLOT_COUNT:
-		return _fail("Escolha um slot aliado valido.")
-	if player_slots[slot_index] != null:
-		return _fail("Esse slot aliado ja esta ocupado.")
-
-	player_slots[slot_index] = _build_occupant(card, "player")
-	_spend_card(hand_index, card)
-	_log("%s entrou no slot P%d." % [card.display_name, slot_index + 1])
-	_check_outcome()
-	return {"ok": true, "message": "Carta jogada."}
-
-func _play_damage_spell(hand_index: int, card, target: Dictionary) -> Dictionary:
-	var amount: int = int(card.effect.get("amount", 0))
-	var target_owner: String = str(target.get("owner", "enemy"))
-	if target_owner != "enemy":
-		return _fail("Centelha so mira alvos inimigos neste slice.")
-
-	var slot_index: int = int(target.get("slot", -1))
-	if slot_index >= 0 and slot_index < SLOT_COUNT and enemy_slots[slot_index] != null:
-		var occupant: Dictionary = enemy_slots[slot_index]
-		occupant["health"] = int(occupant.get("health", 0)) - amount
-		enemy_slots[slot_index] = occupant
-		_log("%s causou %d de dano em E%d." % [card.display_name, amount, slot_index + 1])
-		_remove_destroyed()
-	else:
-		enemy_health -= amount
-		_log("%s causou %d de dano ao heroi inimigo." % [card.display_name, amount])
-
-	_spend_card(hand_index, card)
-	_check_outcome()
-	return {"ok": true, "message": "Magia resolvida."}
-
-func _play_buff_command(hand_index: int, card, target: Dictionary) -> Dictionary:
-	var slot_index: int = int(target.get("slot", -1))
-	if slot_index < 0 or slot_index >= SLOT_COUNT:
-		return _fail("Escolha um slot aliado valido.")
-	if player_slots[slot_index] == null:
-		return _fail("Manter a Linha precisa de um alvo aliado.")
-
-	var amount: int = int(card.effect.get("amount", 0))
-	var occupant: Dictionary = player_slots[slot_index]
-	occupant["health"] = int(occupant.get("health", 0)) + amount
-	occupant["max_health"] = int(occupant.get("max_health", 0)) + amount
-	player_slots[slot_index] = occupant
-	_spend_card(hand_index, card)
-	_log("%s fortaleceu P%d em +%d vida." % [card.display_name, slot_index + 1, amount])
-	return {"ok": true, "message": "Comando resolvido."}
-
-func _run_enemy_phase() -> void:
-	var acted: bool = false
-	for script_entry: Dictionary in _catalog.enemy_script:
-		if int(script_entry.get("round", 0)) != round_number:
-			continue
-		var action: String = str(script_entry.get("action", ""))
-		if action == "play":
-			_enemy_play_card(str(script_entry.get("card_id", "")), int(script_entry.get("slot", 0)))
-			acted = true
-		elif action == "direct_damage":
-			var amount: int = int(script_entry.get("amount", 0))
-			player_health -= amount
-			_log("O inimigo causou %d de dano direto." % amount)
-			acted = true
-
-	if not acted and round_number > 4:
-		player_health -= 1
-		_log("O inimigo pressiona a rota e causa 1 de dano direto.")
-
-func _enemy_play_card(card_id: String, preferred_slot: int) -> void:
-	var card = _catalog.find_card(card_id)
-	if card == null:
-		return
-	var slot_index: int = _first_enemy_slot(preferred_slot)
-	if slot_index == -1:
-		_log("O inimigo nao encontrou slot livre para %s." % card.display_name)
-		return
-	enemy_slots[slot_index] = _build_occupant(card, "enemy")
-	_log("O inimigo jogou %s em E%d." % [card.display_name, slot_index + 1])
-
-func _resolve_confrontation() -> void:
-	_log("Confronto resolve as 3 rotas.")
-	for lane: int in range(SLOT_COUNT):
-		var player_unit: Variant = player_slots[lane]
-		var enemy_unit: Variant = enemy_slots[lane]
-
-		var player_ready: bool = _is_ready_attacker(player_unit)
-		var enemy_ready: bool = _is_ready_attacker(enemy_unit)
-
-		if player_ready and enemy_unit != null:
-			var enemy_dict: Dictionary = enemy_unit
-			enemy_dict["health"] = int(enemy_dict.get("health", 0)) - int(player_unit.get("attack", 0))
-			enemy_slots[lane] = enemy_dict
-			_log("P%d causa %d de dano em E%d." % [lane + 1, int(player_unit.get("attack", 0)), lane + 1])
-		elif player_ready:
-			enemy_health -= int(player_unit.get("attack", 0))
-			_log("P%d atinge o heroi inimigo por %d." % [lane + 1, int(player_unit.get("attack", 0))])
-
-		if enemy_ready and player_unit != null:
-			var player_dict: Dictionary = player_unit
-			player_dict["health"] = int(player_dict.get("health", 0)) - int(enemy_unit.get("attack", 0))
-			player_slots[lane] = player_dict
-			_log("E%d causa %d de dano em P%d." % [lane + 1, int(enemy_unit.get("attack", 0)), lane + 1])
-		elif enemy_ready:
-			player_health -= int(enemy_unit.get("attack", 0))
-			_log("E%d atinge o heroi do jogador por %d." % [lane + 1, int(enemy_unit.get("attack", 0))])
-
-	_remove_destroyed()
-	_ready_survivors()
+	var hero: Dictionary = Dictionary(controller.get("hero", {}))
+	hero["health"] = value
+	controller["hero"] = hero
+	_set_controller(ENEMY_ID, controller)
+	_sync_public_fields()
 	_check_outcome()
 
-func _build_occupant(card, owner: String) -> Dictionary:
+func _encounter_from_config(config: Dictionary) -> Dictionary:
+	var encounter_key: String = str(config.get("encontro", config.get("encounter_id", config.get("encounter", ""))))
+	if encounter_key == "":
+		encounter_key = str(_catalog.get("default_encounter_id")) if _catalog != null else ""
+	if encounter_key == "":
+		encounter_key = "emboscada_na_ponte"
+	if _catalog != null and _catalog.has_method("find_encounter"):
+		var found: Dictionary = _catalog.find_encounter(encounter_key)
+		if not found.is_empty():
+			return found
 	return {
-		"card_id": card.id,
-		"name": card.display_name,
-		"owner": owner,
-		"type": card.card_type,
-		"attack": card.attack,
-		"health": card.health,
-		"max_health": card.health,
-		"ready": card.has_keyword("fast"),
-		"keywords": Array(card.keywords)
+		"id": "emboscada_na_ponte",
+		"display_name": "Emboscada na Ponte",
+		"mode": MODE_CLEAR_BOARD,
+		"board_id": "ponte_estavel",
+		"starting_enemy_slots": []
 	}
 
-func _is_ready_attacker(occupant: Variant) -> bool:
-	if occupant == null:
-		return false
-	var data: Dictionary = occupant
-	return bool(data.get("ready", false)) and int(data.get("attack", 0)) > 0
+func _configure_controllers(deck_ids: Array, encounter: Dictionary) -> void:
+	controladores = {}
+	var player_hero_resource = _catalog.player_hero
+	var enemy_hero_resource = _catalog.enemy_hero
+	var player_controller: Dictionary = {
+		"id": PLAYER_ID,
+		"kind": "humano",
+		"hero": _hero_state(player_hero_resource, PLAYER_ID, DEFAULT_PLAYER_HEALTH),
+		"deck": deck_ids.duplicate(),
+		"hand": [],
+		"discard": [],
+		"energy": 0,
+		"energy_max": STARTING_ENERGY_MAX,
+		"hero_power_used": false,
+		"initial_hand_drawn": false
+	}
+	var enemy_controller: Dictionary = {
+		"id": ENEMY_ID,
+		"kind": "encontro" if str(encounter.get("mode", MODE_CLEAR_BOARD)) == MODE_CLEAR_BOARD else "inimigo_ia",
+		"deck": Array(encounter.get("enemy_deck", [])).duplicate(),
+		"hand": [],
+		"discard": [],
+		"energy": 0,
+		"energy_max": STARTING_ENERGY_MAX,
+		"hero_power_used": false,
+		"initial_hand_drawn": false
+	}
+	if str(encounter.get("mode", MODE_CLEAR_BOARD)) == MODE_DUEL:
+		enemy_controller["hero"] = _hero_state(enemy_hero_resource, ENEMY_ID, DEFAULT_ENEMY_HEALTH)
+	controladores[PLAYER_ID] = player_controller
+	controladores[ENEMY_ID] = enemy_controller
+	_sync_public_fields()
 
-func _ready_survivors() -> void:
-	for lane: int in range(SLOT_COUNT):
-		if player_slots[lane] != null:
-			var player_unit: Dictionary = player_slots[lane]
-			player_unit["ready"] = true
-			player_slots[lane] = player_unit
-		if enemy_slots[lane] != null:
-			var enemy_unit: Dictionary = enemy_slots[lane]
-			enemy_unit["ready"] = true
-			enemy_slots[lane] = enemy_unit
+func _configure_board(encounter: Dictionary) -> void:
+	var board: Dictionary = {}
+	if _catalog != null and _catalog.has_method("find_board"):
+		board = _catalog.find_board(str(encounter.get("board_id", "")))
+	tabuleiro = board
+	_player_slot_definitions = Array(board.get("player_slots", _default_slot_definitions(PLAYER_ID, 3)))
+	_enemy_slot_definitions = Array(board.get("enemy_slots", _default_slot_definitions(ENEMY_ID, 3)))
+	player_slots = _empty_slots(_player_slot_definitions.size())
+	enemy_slots = _empty_slots(_enemy_slot_definitions.size())
+	_player_slot_labels = _labels_from_slot_definitions(_player_slot_definitions, "P")
+	_enemy_slot_labels = _labels_from_slot_definitions(_enemy_slot_definitions, "E")
+	_attack_routes = {}
+	_register_routes(PLAYER_ID, Dictionary(board.get("player_routes", {})), _player_slot_definitions.size(), ENEMY_ID)
+	_register_routes(ENEMY_ID, Dictionary(board.get("enemy_routes", {})), _enemy_slot_definitions.size(), PLAYER_ID)
+
+	for setup: Variant in Array(encounter.get("starting_enemy_slots", [])):
+		if typeof(setup) != TYPE_DICTIONARY:
+			continue
+		var data: Dictionary = Dictionary(setup)
+		var slot_index: int = int(data.get("slot", -1))
+		var card = _catalog.find_card(str(data.get("card_id", "")))
+		if card == null or slot_index < 0 or slot_index >= enemy_slots.size():
+			continue
+		enemy_slots[slot_index] = _build_occupant(card, ENEMY_ID, false)
+
+func _start_turn(controller_id: String) -> void:
+	if outcome != "":
+		return
+	active_player_id = _normalize_owner_id(controller_id)
+	current_phase = PHASE_UPKEEP
+	_log("Turno %d: %s." % [turno, _owner_label(active_player_id)])
+	_resolve_upkeep(active_player_id)
+	_check_outcome()
+	if outcome != "":
+		return
+	current_phase = PHASE_DRAW
+	_resolve_draw(active_player_id)
+	_check_outcome()
+	if outcome != "":
+		return
+	current_phase = PHASE_MAIN
+	priority_owner_id = active_player_id
+	consecutive_passes = 0
+	_log("Fase principal. Prioridade: %s." % _owner_label(priority_owner_id))
+	_sync_public_fields()
+	if priority_owner_id == ENEMY_ID:
+		_auto_enemy_until_player_priority()
+
+func _resolve_upkeep(controller_id: String) -> void:
+	var controller: Dictionary = _controller(controller_id)
+	controller["energy"] = int(controller.get("energy_max", STARTING_ENERGY_MAX))
+	controller["hero_power_used"] = false
+	_set_controller(controller_id, controller)
+	_ready_controller_slots(controller_id)
+	_apply_burning_terrain(controller_id)
+	_log("Manutencao: %s recarrega energia para %d." % [_owner_label(controller_id), int(controller.get("energy", 0))])
+	_sync_public_fields()
+
+func _resolve_draw(controller_id: String) -> void:
+	var controller: Dictionary = _controller(controller_id)
+	if _is_encounter_controller(controller_id):
+		_log("Compra: controlador de encontro nao compra cartas.")
+		return
+	var draw_amount: int = STARTING_HAND_SIZE if not bool(controller.get("initial_hand_drawn", false)) else 1
+	controller["initial_hand_drawn"] = true
+	_set_controller(controller_id, controller)
+	var drawn: int = _draw_cards_for(controller_id, draw_amount)
+	if draw_amount == STARTING_HAND_SIZE:
+		_log("Mao inicial de %s: %d carta(s)." % [_owner_label(controller_id), drawn])
+	else:
+		_log("Compra de %s: %d carta(s)." % [_owner_label(controller_id), drawn])
+	_sync_public_fields()
+
+func _end_main_phase() -> void:
+	_cleanup_turn(active_player_id)
+	if outcome != "":
+		return
+	turno += 1
+	round_number = turno
+	_start_turn(_opponent_id(active_player_id))
+
+func _cleanup_turn(controller_id: String) -> void:
+	_log("Limpeza tecnica do turno de %s." % _owner_label(controller_id))
+	_remove_destroyed()
+	_check_outcome()
+
+func _perform_enemy_action() -> Dictionary:
+	if not _enemy_ai_enabled:
+		return pass_priority(ENEMY_ID)
+	if priority_owner_id != ENEMY_ID or current_phase != PHASE_MAIN:
+		return {"ok": false, "message": "Inimigo sem prioridade."}
+
+	for index: int in range(enemy_slots.size()):
+		var options: Array = get_attack_options(ENEMY_ID, index)
+		if not options.is_empty():
+			var result: Dictionary = attack_with_unit(ENEMY_ID, index, Dictionary(options[0]))
+			return result
+
+	if modo_batalha == MODE_DUEL:
+		var play_result: Dictionary = _enemy_play_best_card()
+		if bool(play_result.get("ok", false)):
+			return play_result
+
+	return pass_priority(ENEMY_ID)
+
+func _auto_enemy_until_player_priority() -> void:
+	if _auto_depth > 0:
+		return
+	_auto_depth += 1
+	var steps: int = 0
+	while outcome == "" and current_phase == PHASE_MAIN and priority_owner_id == ENEMY_ID and steps < MAX_AUTO_STEPS:
+		steps += 1
+		var result: Dictionary = _perform_enemy_action()
+		if not bool(result.get("ok", false)):
+			break
+	if steps >= MAX_AUTO_STEPS:
+		_log("Automacao inimiga interrompida por limite de seguranca.")
+		priority_owner_id = PLAYER_ID
+	_auto_depth -= 1
+	_sync_public_fields()
+
+func _enemy_play_best_card() -> Dictionary:
+	var controller: Dictionary = _controller(ENEMY_ID)
+	var controller_hand: Array = Array(controller.get("hand", []))
+	var best_index: int = -1
+	var best_cost: int = -1
+	for index: int in range(controller_hand.size()):
+		var card = _catalog.find_card(str(controller_hand[index]))
+		if card == null or not card.occupies_slot():
+			continue
+		if int(card.cost) > int(controller.get("energy", 0)):
+			continue
+		if _first_open_slot(ENEMY_ID) == -1:
+			continue
+		if int(card.cost) > best_cost:
+			best_cost = int(card.cost)
+			best_index = index
+	if best_index == -1:
+		return {"ok": false, "message": "Inimigo sem carta jogavel."}
+	var card = _catalog.find_card(str(controller_hand[best_index]))
+	return _play_permanent(ENEMY_ID, best_index, card, {"owner": ENEMY_ID, "slot": _first_open_slot(ENEMY_ID)})
+
+func _play_permanent(controller_id: String, hand_index: int, card, target: Dictionary) -> Dictionary:
+	var target_owner: String = _normalize_owner_id(str(target.get("owner", controller_id)))
+	if target_owner != controller_id:
+		return _fail("Permanentes precisam entrar em slot aliado.")
+	var slot_index: int = int(target.get("slot", -1))
+	var slots: Array = _slots_for_owner(controller_id)
+	if slot_index < 0 or slot_index >= slots.size():
+		return _fail("Escolha um slot aliado valido.")
+	if slots[slot_index] != null:
+		return _fail("Esse slot ja esta ocupado.")
+	if not _slot_accepts_card(controller_id, slot_index, card):
+		return _fail("%s nao pode entrar em %s." % [card.display_name, _slot_label(controller_id, slot_index)])
+
+	slots[slot_index] = _build_occupant(card, controller_id, not _has_card_keyword(card, "rapido"))
+	_set_slots_for_owner(controller_id, slots)
+	_spend_card(controller_id, hand_index, card)
+	_log("%s entra em %s." % [card.display_name, _slot_label(controller_id, slot_index)])
+	_visual("invocacao", controller_id, slot_index, "Entrada", Color(0.55, 1.0, 0.55))
+	_check_outcome()
+	_after_action_resolved(controller_id, _is_instant_speed_card(card))
+	return {"ok": true, "message": "Carta jogada."}
+
+func _play_damage_spell(controller_id: String, hand_index: int, card, target: Dictionary) -> Dictionary:
+	var target_owner: String = _normalize_owner_id(str(target.get("owner", _opponent_id(controller_id))))
+	var slot_index: int = int(target.get("slot", -1))
+	var amount: int = int(card.effect.get("amount", 0))
+	if slot_index >= 0:
+		var target_slots: Array = _slots_for_owner(target_owner)
+		if slot_index >= target_slots.size() or target_slots[slot_index] == null:
+			return _fail("Magia precisa de um alvo valido.")
+		_apply_unit_damage(target_owner, slot_index, amount, bool(card.effect.get("ranged", true)))
+		_log("%s causa %d de dano em %s." % [card.display_name, amount, _slot_label(target_owner, slot_index)])
+	else:
+		if not _controller_has_hero(target_owner):
+			return _fail("Este encontro nao possui heroi inimigo como alvo.")
+		_apply_hero_damage(target_owner, amount)
+		_log("%s causa %d de dano ao heroi." % [card.display_name, amount])
+
+	_spend_card(controller_id, hand_index, card)
+	_remove_destroyed()
+	_check_outcome()
+	_after_action_resolved(controller_id, _is_instant_speed_card(card))
+	return {"ok": true, "message": "Magia resolvida."}
+
+func _play_buff_command(controller_id: String, hand_index: int, card, target: Dictionary) -> Dictionary:
+	var target_owner: String = _normalize_owner_id(str(target.get("owner", controller_id)))
+	if target_owner != controller_id:
+		return _fail("Comando defensivo precisa de alvo aliado.")
+	var slot_index: int = int(target.get("slot", -1))
+	var slots: Array = _slots_for_owner(controller_id)
+	if slot_index < 0 or slot_index >= slots.size() or slots[slot_index] == null:
+		return _fail("Escolha um alvo aliado valido.")
+
+	var amount: int = int(card.effect.get("amount", 0))
+	var occupant: Dictionary = Dictionary(slots[slot_index])
+	occupant["health"] = int(occupant.get("health", 0)) + amount
+	occupant["max_health"] = int(occupant.get("max_health", 0)) + amount
+	slots[slot_index] = occupant
+	_set_slots_for_owner(controller_id, slots)
+	_spend_card(controller_id, hand_index, card)
+	_log("%s fortalece %s em +%d vida." % [card.display_name, _slot_label(controller_id, slot_index), amount])
+	_visual("buff", controller_id, slot_index, "+%d vida" % amount, Color(0.4, 0.9, 1.0))
+	_after_action_resolved(controller_id, _is_instant_speed_card(card))
+	return {"ok": true, "message": "Comando resolvido."}
+
+func _after_action_resolved(controller_id: String, instant: bool) -> void:
+	if outcome != "" or current_phase != PHASE_MAIN:
+		return
+	consecutive_passes = 0
+	if instant:
+		_log("Acao instantanea: prioridade permanece com %s." % _owner_label(controller_id))
+	else:
+		priority_owner_id = _opponent_id(controller_id)
+		_log("Prioridade: %s." % _owner_label(priority_owner_id))
+	if controller_id == PLAYER_ID:
+		_auto_enemy_until_player_priority()
+	_sync_public_fields()
+
+func _spend_card(controller_id: String, hand_index: int, card) -> void:
+	var controller: Dictionary = _controller(controller_id)
+	var controller_hand: Array = Array(controller.get("hand", []))
+	var controller_discard: Array = Array(controller.get("discard", []))
+	controller["energy"] = int(controller.get("energy", 0)) - int(card.cost)
+	controller_discard.append(controller_hand[hand_index])
+	controller_hand.remove_at(hand_index)
+	controller["hand"] = controller_hand
+	controller["discard"] = controller_discard
+	_set_controller(controller_id, controller)
+	_sync_public_fields()
+
+func _draw_cards_for(controller_id: String, amount: int) -> int:
+	var controller: Dictionary = _controller(controller_id)
+	var controller_deck: Array = Array(controller.get("deck", []))
+	var controller_hand: Array = Array(controller.get("hand", []))
+	var controller_discard: Array = Array(controller.get("discard", []))
+	var drawn: int = 0
+	for _i: int in range(amount):
+		if controller_deck.is_empty():
+			break
+		var card_id: String = str(controller_deck.pop_front())
+		if controller_hand.size() >= HAND_LIMIT:
+			controller_discard.append(card_id)
+			_log("Limite de mao: %s foi descartada automaticamente." % _card_name(card_id))
+		else:
+			controller_hand.append(card_id)
+			drawn += 1
+	controller["deck"] = controller_deck
+	controller["hand"] = controller_hand
+	controller["discard"] = controller_discard
+	_set_controller(controller_id, controller)
+	return drawn
+
+func _apply_unit_damage(owner_id: String, slot_index: int, amount: int, ranged: bool = false) -> void:
+	if amount <= 0:
+		return
+	var slots: Array = _slots_for_owner(owner_id)
+	if slot_index < 0 or slot_index >= slots.size() or slots[slot_index] == null:
+		return
+	var final_amount: int = amount
+	var slot_def: Dictionary = _slot_definition(owner_id, slot_index)
+	if ranged and str(slot_def.get("terrain", "")) == "cobertura":
+		final_amount = max(0, final_amount - 1)
+	var occupant: Dictionary = Dictionary(slots[slot_index])
+	occupant["health"] = int(occupant.get("health", 0)) - final_amount
+	slots[slot_index] = occupant
+	_set_slots_for_owner(owner_id, slots)
+	_visual("dano", owner_id, slot_index, "-%d" % final_amount, Color(1.0, 0.35, 0.25))
+
+func _apply_hero_damage(owner_id: String, amount: int) -> void:
+	if amount <= 0:
+		return
+	var controller: Dictionary = _controller(owner_id)
+	if not controller.has("hero"):
+		return
+	var hero: Dictionary = Dictionary(controller.get("hero", {}))
+	var armor: int = int(hero.get("armor", 0))
+	var absorbed: int = min(armor, amount)
+	armor -= absorbed
+	var remaining: int = amount - absorbed
+	hero["armor"] = armor
+	hero["health"] = int(hero.get("health", 0)) - remaining
+	controller["hero"] = hero
+	_set_controller(owner_id, controller)
+	_visual("dano_heroi", owner_id, -1, "-%d" % amount, Color(1.0, 0.28, 0.25))
+	_sync_public_fields()
+
+func _apply_burning_terrain(controller_id: String) -> void:
+	var slots: Array = _slots_for_owner(controller_id)
+	for index: int in range(slots.size()):
+		var slot_def: Dictionary = _slot_definition(controller_id, index)
+		if str(slot_def.get("terrain", "")) != "queimando":
+			continue
+		if slots[index] == null:
+			continue
+		_apply_unit_damage(controller_id, index, 1)
+		_log("Terreno queimando causa 1 em %s." % _slot_label(controller_id, index))
+	_remove_destroyed()
 
 func _remove_destroyed() -> void:
-	for lane: int in range(SLOT_COUNT):
+	for lane: int in range(player_slots.size()):
 		if player_slots[lane] != null and int(player_slots[lane].get("health", 0)) <= 0:
-			_log("%s foi removida de P%d." % [str(player_slots[lane].get("name", "Carta")), lane + 1])
+			_log("%s foi destruida em %s." % [str(player_slots[lane].get("name", "Carta")), _slot_label(PLAYER_ID, lane)])
+			_visual("morte", PLAYER_ID, lane, "Destruida", Color(1.0, 0.45, 0.45))
 			player_slots[lane] = null
+	for lane: int in range(enemy_slots.size()):
 		if enemy_slots[lane] != null and int(enemy_slots[lane].get("health", 0)) <= 0:
-			_log("%s foi removida de E%d." % [str(enemy_slots[lane].get("name", "Carta")), lane + 1])
+			_log("%s foi destruida em %s." % [str(enemy_slots[lane].get("name", "Carta")), _slot_label(ENEMY_ID, lane)])
+			_visual("morte", ENEMY_ID, lane, "Destruida", Color(1.0, 0.45, 0.45))
 			enemy_slots[lane] = null
 
 func _check_outcome() -> void:
 	if outcome != "":
 		return
-	if enemy_health <= 0:
-		outcome = "victory"
-		_log("Vitoria: o heroi inimigo chegou a 0 HP.")
-	elif player_health <= 0:
+	_sync_public_fields()
+	var player_dead: bool = player_health <= 0
+	var victory: bool = false
+	if modo_batalha == MODE_DUEL:
+		victory = _controller_has_hero(ENEMY_ID) and enemy_health <= 0
+	else:
+		victory = _enemy_board_is_clear()
+	if player_dead:
 		outcome = "defeat"
+		current_phase = PHASE_ENDED
 		_log("Derrota: o heroi do jogador chegou a 0 HP.")
+	elif victory:
+		outcome = "victory"
+		current_phase = PHASE_ENDED
+		_log("Vitoria: objetivo do encontro concluido.")
 
-func _spend_card(hand_index: int, card) -> void:
-	energy -= card.cost
-	discard.append(hand[hand_index])
-	hand.remove_at(hand_index)
+func _enemy_board_is_clear() -> bool:
+	for occupant: Variant in enemy_slots:
+		if occupant != null:
+			return false
+	return true
 
-func _draw_cards(amount: int) -> void:
-	for _i: int in range(amount):
-		if deck.is_empty():
-			return
-		hand.append(deck.pop_front())
+func _ready_controller_slots(controller_id: String) -> void:
+	var slots: Array = _slots_for_owner(controller_id)
+	for index: int in range(slots.size()):
+		if slots[index] == null:
+			continue
+		var occupant: Dictionary = Dictionary(slots[index])
+		occupant["ready"] = true
+		occupant["exhausted"] = false
+		occupant["summoning_sick"] = false
+		slots[index] = occupant
+	_set_slots_for_owner(controller_id, slots)
 
-func _first_enemy_slot(preferred_slot: int) -> int:
-	if preferred_slot >= 0 and preferred_slot < SLOT_COUNT and enemy_slots[preferred_slot] == null:
-		return preferred_slot
-	for index: int in range(SLOT_COUNT):
-		if enemy_slots[index] == null:
+func _build_occupant(card, owner_id: String, summoning_sick: bool) -> Dictionary:
+	var keywords: Array = Array(card.keywords)
+	if _has_card_keyword(card, "rapido"):
+		summoning_sick = false
+	return {
+		"card_id": card.id,
+		"name": card.display_name,
+		"owner": owner_id,
+		"type": card.card_type,
+		"attack": int(card.attack),
+		"health": int(card.health),
+		"max_health": int(card.health),
+		"ready": not summoning_sick,
+		"exhausted": false,
+		"summoning_sick": summoning_sick,
+		"keywords": keywords,
+		"command_cost": int(card.command_cost),
+		"ranged": bool(card.effect.get("ranged", false))
+	}
+
+func _can_attack_from_slot(owner_id: String, slot_index: int) -> bool:
+	if outcome != "" or current_phase != PHASE_MAIN or priority_owner_id != owner_id:
+		return false
+	var slots: Array = _slots_for_owner(owner_id)
+	if slot_index < 0 or slot_index >= slots.size() or slots[slot_index] == null:
+		return false
+	var occupant: Dictionary = Dictionary(slots[slot_index])
+	if int(occupant.get("attack", 0)) <= 0:
+		return false
+	if bool(occupant.get("exhausted", false)):
+		return false
+	if bool(occupant.get("summoning_sick", false)) and not _has_keyword(occupant, "rapido"):
+		return false
+	if _has_keyword(occupant, "defensor"):
+		var options: Array = _route_occupied_targets(owner_id, slot_index)
+		return not options.is_empty()
+	return true
+
+func _route_occupied_targets(owner_id: String, slot_index: int) -> Array:
+	var result: Array = []
+	var route: Dictionary = Dictionary(_attack_routes.get(_route_key(owner_id, slot_index), {}))
+	for target: Variant in Array(route.get("targets", [])):
+		if typeof(target) != TYPE_DICTIONARY:
+			continue
+		var data: Dictionary = Dictionary(target)
+		var target_owner: String = _normalize_owner_id(str(data.get("owner", _opponent_id(owner_id))))
+		var target_slot: int = int(data.get("slot", -1))
+		var slots: Array = _slots_for_owner(target_owner)
+		if target_slot >= 0 and target_slot < slots.size() and slots[target_slot] != null:
+			result.append({"owner": target_owner, "slot": target_slot})
+	return result
+
+func _slot_accepts_card(owner_id: String, slot_index: int, card) -> bool:
+	var slot_def: Dictionary = _slot_definition(owner_id, slot_index)
+	var accepts: Array = Array(slot_def.get("accepts", ["criatura", "estrutura", "permanente"]))
+	if not accepts.has(str(card.card_type)):
+		return false
+	var size_limit: String = str(slot_def.get("size_limit", ""))
+	if size_limit == "":
+		return true
+	var card_size: String = str(card.effect.get("size", "medio"))
+	if size_limit == "medio" and card_size == "grande":
+		return false
+	if size_limit == "pequeno" and card_size != "pequeno":
+		return false
+	return true
+
+func _register_routes(owner_id: String, configured_routes: Dictionary, source_count: int, target_owner_id: String) -> void:
+	for index: int in range(source_count):
+		var route_targets: Array = []
+		var fallback: String = "hero" if modo_batalha == MODE_DUEL or owner_id == ENEMY_ID else "none"
+		var raw: Variant = configured_routes.get(str(index), configured_routes.get(_slot_label(owner_id, index), null))
+		if typeof(raw) == TYPE_DICTIONARY:
+			var raw_dict: Dictionary = Dictionary(raw)
+			route_targets = Array(raw_dict.get("targets", []))
+			fallback = str(raw_dict.get("fallback", fallback))
+		elif typeof(raw) == TYPE_ARRAY:
+			route_targets = Array(raw)
+		if route_targets.is_empty():
+			route_targets.append({"owner": target_owner_id, "slot": index})
+		_attack_routes[_route_key(owner_id, index)] = {"targets": route_targets, "fallback": fallback}
+
+func _default_slot_definitions(owner_id: String, count: int) -> Array:
+	var result: Array = []
+	var prefix: String = "P" if owner_id == PLAYER_ID else "E"
+	for index: int in range(count):
+		result.append({
+			"id": "%s%d" % [prefix, index + 1],
+			"terrain": "normal",
+			"elevation": "normal",
+			"accepts": ["criatura", "estrutura", "permanente"]
+		})
+	return result
+
+func _labels_from_slot_definitions(definitions: Array, prefix: String) -> Array[String]:
+	var labels: Array[String] = []
+	for index: int in range(definitions.size()):
+		var definition: Dictionary = Dictionary(definitions[index])
+		labels.append(str(definition.get("label", definition.get("id", "%s%d" % [prefix, index + 1]))))
+	return labels
+
+func _empty_slots(count: int) -> Array:
+	var result: Array = []
+	for _index: int in range(count):
+		result.append(null)
+	return result
+
+func _slot_definition(owner_id: String, slot_index: int) -> Dictionary:
+	var definitions: Array = _enemy_slot_definitions if owner_id == ENEMY_ID else _player_slot_definitions
+	if slot_index < 0 or slot_index >= definitions.size():
+		return {}
+	return Dictionary(definitions[slot_index])
+
+func _first_open_slot(owner_id: String) -> int:
+	var slots: Array = _slots_for_owner(owner_id)
+	for index: int in range(slots.size()):
+		if slots[index] == null:
 			return index
 	return -1
 
+func _controller(controller_id: String) -> Dictionary:
+	controller_id = _normalize_owner_id(controller_id)
+	return Dictionary(controladores.get(controller_id, {}))
+
+func _set_controller(controller_id: String, controller: Dictionary) -> void:
+	controladores[_normalize_owner_id(controller_id)] = controller
+
+func _controller_energy(controller_id: String) -> int:
+	return int(_controller(controller_id).get("energy", 0))
+
+func _is_encounter_controller(controller_id: String) -> bool:
+	return controller_id == ENEMY_ID and str(_controller(controller_id).get("kind", "")) == "encontro"
+
+func _controller_has_hero(controller_id: String) -> bool:
+	return _controller(controller_id).has("hero")
+
+func _hero_state(hero_resource, owner_id: String, fallback_health: int) -> Dictionary:
+	var max_health: int = fallback_health
+	var hero_id: String = owner_id
+	var hero_name: String = _owner_label(owner_id)
+	if hero_resource != null:
+		max_health = int(hero_resource.max_health)
+		hero_id = str(hero_resource.id)
+		hero_name = str(hero_resource.display_name)
+	return {
+		"id": hero_id,
+		"name": hero_name,
+		"controller": owner_id,
+		"health": max_health,
+		"max_health": max_health,
+		"armor": 0
+	}
+
+func _sync_public_fields() -> void:
+	var player: Dictionary = _controller(PLAYER_ID)
+	var player_hero: Dictionary = Dictionary(player.get("hero", {}))
+	player_health = int(player_hero.get("health", player_health))
+	player_armor = int(player_hero.get("armor", 0))
+	energy = int(player.get("energy", energy))
+	deck = Array(player.get("deck", [])).duplicate()
+	hand = Array(player.get("hand", [])).duplicate()
+	discard = Array(player.get("discard", [])).duplicate()
+	hero_power_used = bool(player.get("hero_power_used", false))
+	var enemy: Dictionary = _controller(ENEMY_ID)
+	if enemy.has("hero"):
+		var enemy_hero: Dictionary = Dictionary(enemy.get("hero", {}))
+		enemy_health = int(enemy_hero.get("health", enemy_health))
+		enemy_armor = int(enemy_hero.get("armor", 0))
+	else:
+		enemy_health = 0
+		enemy_armor = 0
+
+func _slots_for_owner(owner_id: String) -> Array:
+	if _normalize_owner_id(owner_id) == ENEMY_ID:
+		return enemy_slots
+	return player_slots
+
+func _set_slots_for_owner(owner_id: String, slots: Array) -> void:
+	if _normalize_owner_id(owner_id) == ENEMY_ID:
+		enemy_slots = slots
+	else:
+		player_slots = slots
+
+func _opponent_id(owner_id: String) -> String:
+	return ENEMY_ID if _normalize_owner_id(owner_id) == PLAYER_ID else PLAYER_ID
+
+func _owner_label(owner_id: String) -> String:
+	return "jogador" if _normalize_owner_id(owner_id) == PLAYER_ID else "inimigo"
+
+func _normalize_owner_id(owner_id: String) -> String:
+	if owner_id in ["enemy", "inimigo", ENEMY_ID]:
+		return ENEMY_ID
+	return PLAYER_ID
+
+func _route_key(owner_id: String, slot_index: int) -> String:
+	return "%s:%d" % [_normalize_owner_id(owner_id), slot_index]
+
+func _slot_label(owner_id: String, slot_index: int) -> String:
+	owner_id = _normalize_owner_id(owner_id)
+	var labels: Array[String] = _enemy_slot_labels if owner_id == ENEMY_ID else _player_slot_labels
+	var prefix: String = "E" if owner_id == ENEMY_ID else "P"
+	if slot_index >= 0 and slot_index < labels.size():
+		return labels[slot_index]
+	return "%s%d" % [prefix, slot_index + 1]
+
+func _target_label(target: Dictionary) -> String:
+	var owner_id: String = _normalize_owner_id(str(target.get("owner", ENEMY_ID)))
+	var slot_index: int = int(target.get("slot", -1))
+	if slot_index >= 0:
+		return _slot_label(owner_id, slot_index)
+	if owner_id == ENEMY_ID:
+		return "Heroi inimigo"
+	return "Heroi do jogador"
+
+func _add_attack_option(options: Array, seen: Dictionary, target: Dictionary) -> void:
+	var key: String = "%s:%d" % [str(target.get("owner", "")), int(target.get("slot", -1))]
+	if seen.has(key):
+		return
+	seen[key] = true
+	target["label"] = _target_label(target)
+	options.append(target)
+
+func _target_in_options(target: Dictionary, options: Array) -> bool:
+	var target_owner: String = _normalize_owner_id(str(target.get("owner", "")))
+	var target_slot: int = int(target.get("slot", -99))
+	for option: Variant in options:
+		var option_dict: Dictionary = Dictionary(option)
+		if _normalize_owner_id(str(option_dict.get("owner", ""))) == target_owner and int(option_dict.get("slot", -99)) == target_slot:
+			return true
+	return false
+
+func _is_instant_speed_card(card) -> bool:
+	return card != null and (str(card.speed) == "instantanea" or _has_card_keyword(card, "instantaneo"))
+
+func _has_card_keyword(card, keyword: String) -> bool:
+	return card != null and card.has_method("has_keyword") and (card.has_keyword(keyword) or card.has_keyword(_keyword_alias(keyword)))
+
+func _has_keyword(occupant: Dictionary, keyword: String) -> bool:
+	var keywords: Array = Array(occupant.get("keywords", []))
+	return keywords.has(keyword) or keywords.has(_keyword_alias(keyword))
+
+func _keyword_alias(keyword: String) -> String:
+	match keyword:
+		"rapido":
+			return "fast"
+		"defensor":
+			return "defender"
+		"alcance":
+			return "reach"
+		"atropelar":
+			return "trample"
+		_:
+			return keyword
+
+func _card_name(card_id: String) -> String:
+	if _catalog == null:
+		return card_id
+	return _catalog.card_name(card_id)
+
+func _visual(kind: String, owner_id: String, slot_index: int, text: String, color: Color) -> void:
+	eventos_visuais.append({
+		"kind": kind,
+		"owner": _normalize_owner_id(owner_id),
+		"slot": slot_index,
+		"text": text,
+		"color": color
+	})
+
 func _log(line: String) -> void:
 	log_lines.append(line)
-	if log_lines.size() > 12:
+	if log_lines.size() > MAX_LOG_LINES:
 		log_lines.pop_front()
 
 func _fail(message: String) -> Dictionary:

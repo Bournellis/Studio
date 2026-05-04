@@ -8,7 +8,8 @@
 - RPG systems first, presentation second
 - exploration mode with a freely moving map character
 - NPC dialogue, route choice, encounters, stats, level, items, and inventory as expected pillars
-- combat as a separate turn-based card-slot mode
+- combat as a separate C1 card-slot mode with battle modes like `limpar_mesa`
+- 20-card deck setup and data-driven cards, boards, and encounters
 - 2D/3D direction intentionally undecided
 
 ## Directory Map
@@ -22,8 +23,8 @@
 - `data/`: authored definitions and generated resources
 - `docs/`: local design and technical documentation
 - `implementation/`: status, tracks, and execution handoffs
-- `tests/`: future GUT tests
-- `tools/`: future validation, generation, and import tools
+- `tests/`: GUT coverage for current runtime behavior
+- `tools/`: validation, generation, and import tools
 
 ## Start Here
 

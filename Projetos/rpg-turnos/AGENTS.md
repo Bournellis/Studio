@@ -17,6 +17,12 @@ Current premise:
 - combat is turn-based, card-driven, and separated from exploration
 - final visual stack is undecided between 2D, 3D, or a hybrid direction
 
+Current active combat rule:
+
+- C1 is the game, not a runtime variant
+- battle modes are encounter rules such as `limpar_mesa` and `duelo`
+- old A/B experiments and the phase-based duel are historical documentation only
+
 ## Read Order
 
 Before substantial work:

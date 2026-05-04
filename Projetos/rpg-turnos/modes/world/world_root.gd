@@ -106,9 +106,9 @@ func _try_interact() -> void:
 func _interact_npc() -> void:
 	if not GameSession.has_npc_reward_card:
 		var reward_id: String = GameSession.claim_npc_reward()
-		dialogue_text.text = "A viajante entrega uma carta para testar no duelo: %s." % ContentLibrary.get_card_name(reward_id)
+		dialogue_text.text = "A viajante entrega uma carta para testar no encontro: %s." % ContentLibrary.get_card_name(reward_id)
 	else:
-		dialogue_text.text = "A viajante observa o caminho. O duelo ja pode ser iniciado no marcador ao leste."
+		dialogue_text.text = "A viajante observa o caminho. O encontro ja pode ser iniciado no marcador ao leste."
 	dialogue_panel.visible = true
 	_update_prompt()
 	queue_redraw()
@@ -119,7 +119,7 @@ func _interact_encounter() -> void:
 		dialogue_panel.visible = true
 		return
 	if not GameSession.has_npc_reward_card:
-		dialogue_text.text = "O marcador ainda nao responde. Fale com a NPC antes de entrar no duelo."
+		dialogue_text.text = "O marcador ainda nao responde. Fale com a NPC antes de entrar no encontro."
 		dialogue_panel.visible = true
 		return
 	GameSession.capture_pre_combat_snapshot()

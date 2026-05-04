@@ -12,7 +12,7 @@ func before_all() -> void:
 func test_drop_over_occupied_deck_card_reaches_slot() -> void:
 	var slot = DeckSlotControlScript.new()
 	add_child(slot)
-	slot.setup(0, "line_guard")
+	slot.setup(0, "escudeiro")
 
 	var dropped: Array = []
 	slot.card_dropped.connect(func(card_id: String, slot_index: int, source: String, source_index: int) -> void:
@@ -24,14 +24,14 @@ func test_drop_over_occupied_deck_card_reaches_slot() -> void:
 
 	var payload: Dictionary = {
 		"kind": "card",
-		"card_id": "improvised_ballista",
+		"card_id": "golpe_preciso",
 		"source": "pool",
 		"source_index": 0
 	}
 	assert_true(bool(token._can_drop_data(Vector2.ZERO, payload)))
 	token._drop_data(Vector2.ZERO, payload)
 
-	assert_eq(dropped, [["improvised_ballista", 0, "pool", 0]])
+	assert_eq(dropped, [["golpe_preciso", 0, "pool", 0]])
 	slot.free()
 
 func test_setup_screen_populates_available_cards_and_deck_slots() -> void:
@@ -45,8 +45,9 @@ func test_setup_screen_populates_available_cards_and_deck_slots() -> void:
 	assert_eq(root.slot_grid.get_child_count(), GameSession.REQUIRED_DECK_SIZE)
 	assert_gt(root.pool_container.get_child_count(), 0)
 	assert_eq(root.slot_grid.get_parent().custom_minimum_size.y, 320.0)
-	assert_true(root.deck_summary_label.text.contains("10/10"))
+	assert_true(root.deck_summary_label.text.contains("20/20"))
 	assert_true(root.pool_summary_label.text.contains("Disponiveis"))
+	assert_eq(root.start_button.text, "Iniciar encontro")
 	root.free()
 
 func test_setup_screen_supports_clear_and_auto_fill_buttons() -> void:

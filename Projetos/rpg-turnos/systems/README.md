@@ -10,3 +10,4 @@ Initial lanes:
 - `encounters/`: encounter definitions and launch data
 - `save/`: save snapshots and persistence contracts
 
+The active deck rule is implemented under `deck/`: exactly 20 unlocked cards with at most 4 command cards.

@@ -1,66 +1,50 @@
 # First Playable Slice Smoke
 
-## Purpose
+- Last Updated: `2026-05-04`
+- Active Encounter: `emboscada_na_ponte`
+- Active Mode: `limpar_mesa`
 
-This smoke document verifies the first playable slice for `rpg-turnos`.
+## Goal
 
-The slice covers:
+Confirm the playable slice still works after C1 became the sole runtime combat model.
 
-- menu
-- 2D top-down exploration map
-- NPC interaction and one-time card reward
-- full 10-card deck setup
-- turn-based card-slot duel against an enemy hero with explicit phase advancement
-- victory/defeat result flow
-- return to map or retry from the pre-combat snapshot
+## Manual Flow
 
-## Setup
+1. Start the project.
+2. Choose `Novo jogo`.
+3. Move with `WASD`.
+4. Talk to the NPC with `E`.
+5. Confirm the NPC grants `Golpe Preciso`.
+6. Walk to the encounter marker.
+7. Press `E` to open deck setup.
+8. Confirm the setup shows 20 deck slots.
+9. Confirm there is no `Duelo antigo` or variant button.
+10. Remove and add cards, then use `Auto preencher`.
+11. Confirm `Iniciar encontro` is enabled only with a valid 20-card deck.
+12. Start the encounter.
+13. Confirm the battle header shows mode `Limpar mesa`.
+14. Confirm the enemy hero area says there is no enemy hero.
+15. Play a creature into a valid player slot.
+16. Confirm the enemy acts automatically when it receives priority.
+17. Confirm the game pauses when priority returns to the player.
+18. Use `Preparar Defesa` and confirm armor feedback appears.
+19. Attack an occupied route and confirm damage/destruction feedback appears.
+20. Try an empty player attack route in `limpar_mesa` and confirm no direct enemy hero target exists.
+21. Destroy all enemy units and confirm victory returns to result flow.
+22. In a separate run, lose the battle and confirm `Tentar novamente` restores the pre-combat setup.
+23. Resize near `960x540`, `1100x619`, and `1280x720`; confirm `Preparar Defesa`, `Passar prioridade`, hand cards, slot actions, and feedback stay visible.
 
-After a fresh checkout or after adding/updating GUT, run the one-time headless editor import so Godot registers global classes:
+## Automated Validation
 
-```powershell
-D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\rpg-turnos --editor --quit
-```
-
-Then run the project validation:
+Run:
 
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\rpg-turnos -s res://tools/validate.gd
 ```
 
-## Manual Smoke
+Expected:
 
-1. Launch the Godot project.
-2. Confirm the first screen is the menu.
-3. Press `Novo jogo`.
-4. Confirm the 2D map opens.
-5. Move with `WASD`.
-6. Approach the NPC and press `E`.
-7. Confirm the NPC grants `Balista Improvisada` once.
-8. Approach the encounter marker and press `E`.
-9. Confirm the deck setup opens.
-10. Remove one deck card and drag `Balista Improvisada` into a deck slot.
-11. Confirm `Iniciar batalha` is enabled only with exactly 10 selected cards.
-12. Start the battle.
-13. Drag unit or structure cards to player slots.
-14. Drag `Centelha Curta` to an enemy slot or enemy hero target.
-15. Press `Ir para combate`.
-16. Press `Resolver combate`.
-17. Confirm the battle advances to `Pos-combate`.
-18. Press `Encerrar turno`.
-19. Confirm the next round starts in `Fase principal 1`.
-20. Confirm victory shows a result screen and returns to the map.
-21. In a separate run, lose the duel and confirm `Tentar novamente` restores the pre-combat deck/setup state without penalty.
-
-## Expected Automated Coverage
-
-`tools/validate.gd` must:
-
-- generate the JSON-driven slice catalog
-- generate scenes without raw `.tscn` hand edits
-- validate the first-slice contract
-- run GUT tests for session, deck, reward, energy, timing, phase advancement, victory, and defeat
-
-Current expected result:
-
-- `22` GUT tests passing
+- generated catalog succeeds
+- generated scenes succeed
+- first-slice contract succeeds
+- GUT passes

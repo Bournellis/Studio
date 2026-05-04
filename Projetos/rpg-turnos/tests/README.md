@@ -1,6 +1,5 @@
 # Tests
 
-Future GUT tests live here.
+GUT tests live here.
 
-Testing should start with visual-agnostic systems such as stats, inventory, dialogue flags, encounter launch data, and turn resolution.
-
+Current coverage focuses on the C1 cardgame core: deck rules, controllers, battle modes, priority, resources, attack resolution, terrain, UI layout, and encounter flow.

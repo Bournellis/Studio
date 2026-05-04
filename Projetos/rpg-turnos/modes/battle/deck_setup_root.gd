@@ -148,8 +148,8 @@ func _build_ui() -> void:
 	actions.add_child(auto_fill_button)
 
 	start_button = Button.new()
-	start_button.text = "Iniciar batalha"
-	start_button.custom_minimum_size = Vector2(160, 40)
+	start_button.text = "Iniciar encontro"
+	start_button.custom_minimum_size = Vector2(180, 40)
 	start_button.pressed.connect(_on_start_pressed)
 	actions.add_child(start_button)
 
@@ -194,9 +194,9 @@ func _refresh() -> void:
 	]
 	status_label.text = "Arraste cartas, use Adicionar, ou ajuste com Limpar deck e Auto preencher."
 	if not valid:
-		status_label.text += " Deck atual: %d/10." % selected_count
+		status_label.text += " Deck atual: %d/%d." % [selected_count, GameSession.REQUIRED_DECK_SIZE]
 	else:
-		status_label.text += " Deck valido para batalha."
+		status_label.text += " Deck valido para o encontro ativo."
 
 func _available_pool_entries() -> Array:
 	var remaining: Array = GameSession.unlocked_card_ids.duplicate()

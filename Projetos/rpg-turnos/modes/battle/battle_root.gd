@@ -5,24 +5,45 @@ const BattleSlotControlScript = preload("res://ui/controls/battle_slot_control.g
 const BattleCardTokenScript = preload("res://ui/controls/battle_card_token.gd")
 const EnemyHeroDropZoneScript = preload("res://ui/controls/enemy_hero_drop_zone.gd")
 
+const PLAYER_OWNER: String = "jogador"
+const ENEMY_OWNER: String = "inimigo"
+const UI_MARGIN: float = 12.0
+const SLOT_CARD_WIDTH: float = 164.0
+const HAND_CARD_WIDTH: float = 160.0
+
 var engine
 var status_label: Label
+var variant_label: Label
 var phase_label: Label
+var priority_label: Label
 var feedback_label: Label
 var log_label: Label
+var route_label: Label
 var enemy_hero_zone
 var enemy_slots_box: HBoxContainer
 var player_slots_box: HBoxContainer
 var hand_box: HBoxContainer
 var end_turn_button: Button
 var hero_power_button: Button
+var visual_layer: Control
 var last_feedback: String = ""
+var _visual_event_cursor: int = 0
 
 func _ready() -> void:
+	_fit_to_viewport()
+	if not get_tree().root.size_changed.is_connected(_fit_to_viewport):
+		get_tree().root.size_changed.connect(_fit_to_viewport)
 	engine = BattleEngineScript.new()
-	engine.start_battle(ContentLibrary.get_catalog(), GameSession.selected_deck_ids)
+	engine.start_battle(ContentLibrary.get_catalog(), GameSession.selected_deck_ids, GameSession.get_battle_config())
 	_build_ui()
 	_refresh()
+
+func _exit_tree() -> void:
+	if get_tree().root.size_changed.is_connected(_fit_to_viewport):
+		get_tree().root.size_changed.disconnect(_fit_to_viewport)
+
+func _fit_to_viewport() -> void:
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
 func _build_ui() -> void:
 	var background: ColorRect = ColorRect.new()
@@ -32,113 +53,132 @@ func _build_ui() -> void:
 
 	var root: VBoxContainer = VBoxContainer.new()
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
-	root.offset_left = 16
-	root.offset_top = 12
-	root.offset_right = -16
-	root.offset_bottom = -12
+	root.offset_left = UI_MARGIN
+	root.offset_top = UI_MARGIN
+	root.offset_right = -UI_MARGIN
+	root.offset_bottom = -UI_MARGIN
 	root.add_theme_constant_override("separation", 6)
 	add_child(root)
 
-	var header_panel: PanelContainer = PanelContainer.new()
-	header_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.08, 0.09, 0.1)))
-	root.add_child(header_panel)
-
-	var header: HBoxContainer = HBoxContainer.new()
-	header.add_theme_constant_override("separation", 10)
-	header_panel.add_child(header)
-
-	status_label = Label.new()
-	status_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	status_label.add_theme_font_size_override("font_size", 19)
-	header.add_child(status_label)
-
-	phase_label = Label.new()
-	phase_label.custom_minimum_size = Vector2(150, 0)
-	phase_label.add_theme_font_size_override("font_size", 15)
-	header.add_child(phase_label)
-
-	hero_power_button = Button.new()
-	hero_power_button.text = "Poder heroico"
-	hero_power_button.custom_minimum_size = Vector2(150, 40)
-	hero_power_button.pressed.connect(_on_hero_power_pressed)
-	header.add_child(hero_power_button)
-
-	end_turn_button = Button.new()
-	end_turn_button.text = "Resolver turno"
-	end_turn_button.custom_minimum_size = Vector2(170, 40)
-	end_turn_button.pressed.connect(_on_end_turn_pressed)
-	header.add_child(end_turn_button)
+	_build_header(root)
 
 	feedback_label = Label.new()
 	feedback_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	feedback_label.clip_text = true
+	feedback_label.max_lines_visible = 2
 	root.add_child(feedback_label)
 
-	var main_area: HBoxContainer = HBoxContainer.new()
-	main_area.custom_minimum_size = Vector2(0, 300)
-	main_area.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	main_area.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-	main_area.add_theme_constant_override("separation", 10)
-	root.add_child(main_area)
+	_build_battlefield(root)
+	_build_hand(root)
 
+	visual_layer = Control.new()
+	visual_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	visual_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(visual_layer)
+
+func _build_header(root: VBoxContainer) -> void:
+	var header_panel: PanelContainer = PanelContainer.new()
+	header_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	header_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.08, 0.09, 0.1)))
+	root.add_child(header_panel)
+
+	var header_root: VBoxContainer = VBoxContainer.new()
+	header_root.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	header_root.add_theme_constant_override("separation", 6)
+	header_panel.add_child(header_root)
+
+	var info_grid: GridContainer = GridContainer.new()
+	info_grid.columns = 4
+	info_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	info_grid.add_theme_constant_override("h_separation", 8)
+	info_grid.add_theme_constant_override("v_separation", 2)
+	header_root.add_child(info_grid)
+
+	status_label = _header_info_label(18)
+	variant_label = _header_info_label(14)
+	phase_label = _header_info_label(14)
+	priority_label = _header_info_label(14)
+	info_grid.add_child(status_label)
+	info_grid.add_child(variant_label)
+	info_grid.add_child(phase_label)
+	info_grid.add_child(priority_label)
+
+	var actions: HBoxContainer = HBoxContainer.new()
+	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	actions.alignment = BoxContainer.ALIGNMENT_END
+	actions.add_theme_constant_override("separation", 8)
+	header_root.add_child(actions)
+
+	hero_power_button = Button.new()
+	hero_power_button.text = "Poder heroico"
+	hero_power_button.custom_minimum_size = Vector2(142, 36)
+	hero_power_button.size_flags_horizontal = Control.SIZE_SHRINK_END
+	hero_power_button.pressed.connect(_on_hero_power_pressed)
+	actions.add_child(hero_power_button)
+
+	end_turn_button = Button.new()
+	end_turn_button.text = "Resolver turno"
+	end_turn_button.custom_minimum_size = Vector2(188, 36)
+	end_turn_button.size_flags_horizontal = Control.SIZE_SHRINK_END
+	end_turn_button.pressed.connect(_on_end_turn_pressed)
+	actions.add_child(end_turn_button)
+
+func _build_battlefield(root: VBoxContainer) -> void:
 	var board_panel: PanelContainer = PanelContainer.new()
 	board_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	board_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	board_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.07, 0.08, 0.085)))
-	main_area.add_child(board_panel)
+	root.add_child(board_panel)
+
+	var board_scroll: ScrollContainer = ScrollContainer.new()
+	board_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	board_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	board_panel.add_child(board_scroll)
 
 	var board_root: VBoxContainer = VBoxContainer.new()
-	board_root.add_theme_constant_override("separation", 5)
-	board_panel.add_child(board_root)
+	board_root.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	board_root.add_theme_constant_override("separation", 6)
+	board_scroll.add_child(board_root)
 
-	var enemy_title: Label = Label.new()
-	enemy_title.text = "Campo inimigo"
-	enemy_title.add_theme_font_size_override("font_size", 15)
+	var enemy_title: Label = _section_label("Campo inimigo")
 	board_root.add_child(enemy_title)
 
 	enemy_hero_zone = EnemyHeroDropZoneScript.new()
-	enemy_hero_zone.custom_minimum_size = Vector2(0, 44)
+	enemy_hero_zone.custom_minimum_size = Vector2(0, 42)
 	enemy_hero_zone.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	enemy_hero_zone.add_theme_stylebox_override("panel", _panel_style(Color(0.16, 0.08, 0.09)))
 	enemy_hero_zone.card_dropped.connect(_on_card_dropped_on_enemy_hero)
 	board_root.add_child(enemy_hero_zone)
 
-	enemy_slots_box = HBoxContainer.new()
-	enemy_slots_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	enemy_slots_box.add_theme_constant_override("separation", 10)
-	board_root.add_child(enemy_slots_box)
+	enemy_slots_box = _build_slot_row(board_root)
 
-	var route_label: Label = Label.new()
-	route_label.text = "Rotas diretas: P1 x E1 | P2 x E2 | P3 x E3"
+	route_label = Label.new()
 	route_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	route_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	route_label.clip_text = true
+	route_label.max_lines_visible = 2
 	board_root.add_child(route_label)
 
-	var player_title: Label = Label.new()
-	player_title.text = "Campo do jogador"
-	player_title.add_theme_font_size_override("font_size", 15)
+	var player_title: Label = _section_label("Campo do jogador")
 	board_root.add_child(player_title)
 
-	player_slots_box = HBoxContainer.new()
-	player_slots_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	player_slots_box.add_theme_constant_override("separation", 10)
-	board_root.add_child(player_slots_box)
+	player_slots_box = _build_slot_row(board_root)
 
 	var log_panel: PanelContainer = PanelContainer.new()
-	log_panel.custom_minimum_size = Vector2(320, 0)
-	log_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	log_panel.custom_minimum_size = Vector2(0, 96)
+	log_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	log_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.08, 0.085, 0.09)))
-	main_area.add_child(log_panel)
+	board_root.add_child(log_panel)
 
 	var log_root: VBoxContainer = VBoxContainer.new()
-	log_root.add_theme_constant_override("separation", 5)
+	log_root.add_theme_constant_override("separation", 4)
 	log_panel.add_child(log_root)
 
-	var log_title: Label = Label.new()
-	log_title.text = "Log do turno"
-	log_title.add_theme_font_size_override("font_size", 15)
+	var log_title: Label = _section_label("Log do turno")
 	log_root.add_child(log_title)
 
 	var log_scroll: ScrollContainer = ScrollContainer.new()
-	log_scroll.custom_minimum_size = Vector2(0, 240)
+	log_scroll.custom_minimum_size = Vector2(0, 64)
 	log_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	log_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	log_root.add_child(log_scroll)
@@ -148,22 +188,30 @@ func _build_ui() -> void:
 	log_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	log_scroll.add_child(log_label)
 
+func _build_slot_row(parent: VBoxContainer) -> HBoxContainer:
+	var scroll: ScrollContainer = ScrollContainer.new()
+	scroll.custom_minimum_size = Vector2(0, 126)
+	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	parent.add_child(scroll)
+
+	var row: HBoxContainer = HBoxContainer.new()
+	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_theme_constant_override("separation", 8)
+	scroll.add_child(row)
+	return row
+
+func _build_hand(root: VBoxContainer) -> void:
 	var hand_panel: PanelContainer = PanelContainer.new()
-	hand_panel.custom_minimum_size = Vector2(0, 132)
+	hand_panel.custom_minimum_size = Vector2(0, 138)
 	hand_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	hand_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.08, 0.09, 0.1)))
 	root.add_child(hand_panel)
 
-	var hand_root: VBoxContainer = VBoxContainer.new()
-	hand_root.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	hand_root.add_theme_constant_override("separation", 0)
-	hand_panel.add_child(hand_root)
-
 	var hand_scroll: ScrollContainer = ScrollContainer.new()
-	hand_scroll.custom_minimum_size = Vector2(0, 112)
+	hand_scroll.custom_minimum_size = Vector2(0, 116)
 	hand_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	hand_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	hand_root.add_child(hand_scroll)
+	hand_panel.add_child(hand_scroll)
 
 	hand_box = HBoxContainer.new()
 	hand_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -171,16 +219,21 @@ func _build_ui() -> void:
 	hand_scroll.add_child(hand_box)
 
 func _refresh() -> void:
-	status_label.text = "Rodada %d | Energia %d | Jogador %d HP | Inimigo %d HP | Deck %d" % [
-		engine.round_number,
+	var enemy_text: String = "Sem heroi inimigo" if engine.modo_batalha == BattleEngineScript.MODE_CLEAR_BOARD else "Inimigo %d HP" % engine.enemy_health
+	status_label.text = "Turno %d | Energia %d | Armadura %d | Jogador %d HP | %s | Deck %d" % [
+		engine.turno,
 		engine.energy,
+		engine.player_armor,
 		engine.player_health,
-		engine.enemy_health,
+		enemy_text,
 		engine.deck.size()
 	]
+	variant_label.text = "Modo: %s" % engine.get_mode_label()
 	phase_label.text = "Fase: %s" % engine.get_phase_label()
+	priority_label.text = "%s | %s" % [engine.get_active_controller_label(), engine.get_priority_label()]
+	route_label.text = engine.get_board_route_summary()
 	if last_feedback == "":
-		feedback_label.text = "Jogue cartas nas fases principais ou avance a fase no topo."
+		feedback_label.text = "Use cartas, ataques, Preparar Defesa ou passe prioridade durante a fase principal."
 	else:
 		feedback_label.text = last_feedback
 
@@ -188,7 +241,10 @@ func _refresh() -> void:
 		enemy_hero_zone.remove_child(child)
 		child.free()
 	var enemy_hero_label: Label = Label.new()
-	enemy_hero_label.text = "Heroi inimigo: %d HP" % engine.enemy_health
+	if engine.modo_batalha == BattleEngineScript.MODE_DUEL:
+		enemy_hero_label.text = "Heroi inimigo: %d HP | Armadura %d" % [engine.enemy_health, engine.enemy_armor]
+	else:
+		enemy_hero_label.text = "Sem heroi inimigo | Objetivo: limpar a mesa"
 	enemy_hero_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	enemy_hero_zone.add_child(enemy_hero_label)
 
@@ -197,8 +253,9 @@ func _refresh() -> void:
 	_rebuild_hand()
 	log_label.text = "\n".join(engine.log_lines)
 	end_turn_button.text = engine.get_advance_phase_label()
-	end_turn_button.disabled = engine.outcome != ""
-	hero_power_button.disabled = not engine.can_play_main_actions() or engine.hero_power_used or engine.deck.is_empty()
+	end_turn_button.disabled = engine.outcome != "" or engine.priority_owner_id != PLAYER_OWNER
+	hero_power_button.disabled = not engine.can_use_player_hero_power()
+	call_deferred("_play_pending_visual_events")
 
 	if engine.outcome != "":
 		_finish_battle()
@@ -208,10 +265,16 @@ func _rebuild_slot_row(container: HBoxContainer, owner: String, slots: Array) ->
 		container.remove_child(child)
 		child.free()
 	for index: int in range(slots.size()):
+		var slot_box: VBoxContainer = VBoxContainer.new()
+		slot_box.custom_minimum_size = Vector2(SLOT_CARD_WIDTH, 0)
+		slot_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		slot_box.add_theme_constant_override("separation", 2)
 		var slot = BattleSlotControlScript.new()
 		slot.setup(owner, index, slots[index])
 		slot.card_dropped.connect(_on_card_dropped_on_slot)
-		container.add_child(slot)
+		slot_box.add_child(slot)
+		_add_slot_attack_controls(slot_box, owner, index)
+		container.add_child(slot_box)
 
 func _rebuild_hand() -> void:
 	for child: Node in hand_box.get_children():
@@ -223,7 +286,7 @@ func _rebuild_hand() -> void:
 		token.setup(card_id, index)
 
 		var card_box: VBoxContainer = VBoxContainer.new()
-		card_box.custom_minimum_size = Vector2(172, 0)
+		card_box.custom_minimum_size = Vector2(HAND_CARD_WIDTH, 0)
 		card_box.add_theme_constant_override("separation", 2)
 		card_box.add_child(token)
 		_add_hand_action_controls(card_box, ContentLibrary.get_card(card_id), index)
@@ -257,39 +320,81 @@ func _add_hand_action_controls(parent: VBoxContainer, card, hand_index: int) -> 
 	if card == null:
 		return
 
-	var row: HBoxContainer = HBoxContainer.new()
-	row.add_theme_constant_override("separation", 4)
-	parent.add_child(row)
+	var grid: GridContainer = GridContainer.new()
+	grid.columns = 3
+	grid.add_theme_constant_override("h_separation", 4)
+	grid.add_theme_constant_override("v_separation", 4)
+	parent.add_child(grid)
 
 	if card.occupies_slot():
-		for lane: int in range(3):
-			var button: Button = _small_action_button("P%d" % (lane + 1))
-			button.disabled = not engine.can_play_main_actions() or card.cost > engine.energy or engine.player_slots[lane] != null
+		for lane: int in range(engine.player_slots.size()):
+			var button: Button = _small_action_button(engine.get_slot_label(PLAYER_OWNER, lane))
+			button.disabled = not engine.can_play_card(card) or engine.player_slots[lane] != null
 			button.pressed.connect(_play_hand_card_to_player_slot.bind(hand_index, lane))
-			row.add_child(button)
+			grid.add_child(button)
 	elif card.is_damage_spell():
-		var hero_button: Button = _small_action_button("Heroi")
-		hero_button.disabled = not engine.can_play_main_actions() or card.cost > engine.energy
-		hero_button.pressed.connect(_play_hand_card_to_enemy_hero.bind(hand_index))
-		row.add_child(hero_button)
-		for lane: int in range(3):
-			var button: Button = _small_action_button("E%d" % (lane + 1))
-			button.disabled = not engine.can_play_main_actions() or card.cost > engine.energy or engine.enemy_slots[lane] == null
+		if engine.modo_batalha == BattleEngineScript.MODE_DUEL:
+			var hero_button: Button = _small_action_button("Heroi")
+			hero_button.disabled = not engine.can_play_card(card)
+			hero_button.pressed.connect(_play_hand_card_to_enemy_hero.bind(hand_index))
+			grid.add_child(hero_button)
+		for lane: int in range(engine.enemy_slots.size()):
+			var button: Button = _small_action_button(engine.get_slot_label(ENEMY_OWNER, lane))
+			button.disabled = not engine.can_play_card(card) or engine.enemy_slots[lane] == null
 			button.pressed.connect(_play_hand_card_to_enemy_slot.bind(hand_index, lane))
-			row.add_child(button)
+			grid.add_child(button)
 	elif card.is_buff_command():
-		for lane: int in range(3):
-			var button: Button = _small_action_button("P%d" % (lane + 1))
-			button.disabled = not engine.can_play_main_actions() or card.cost > engine.energy or engine.player_slots[lane] == null
+		for lane: int in range(engine.player_slots.size()):
+			var button: Button = _small_action_button(engine.get_slot_label(PLAYER_OWNER, lane))
+			button.disabled = not engine.can_play_card(card) or engine.player_slots[lane] == null
 			button.pressed.connect(_play_hand_card_to_player_slot.bind(hand_index, lane))
-			row.add_child(button)
+			grid.add_child(button)
+
+func _add_slot_attack_controls(parent: VBoxContainer, owner: String, slot_index: int) -> void:
+	var status: Label = Label.new()
+	status.text = engine.get_slot_attack_status(owner, slot_index)
+	status.clip_text = true
+	status.max_lines_visible = 1
+	status.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	status.add_theme_font_size_override("font_size", 11)
+	parent.add_child(status)
+	if owner != "player":
+		return
+	var options: Array = engine.get_attack_options(PLAYER_OWNER, slot_index)
+	if options.is_empty():
+		return
+	var grid: GridContainer = GridContainer.new()
+	grid.columns = 1
+	grid.add_theme_constant_override("v_separation", 3)
+	parent.add_child(grid)
+	for option: Variant in options:
+		var target: Dictionary = Dictionary(option)
+		var button: Button = _small_action_button("Atacar %s" % str(target.get("label", "")))
+		button.custom_minimum_size = Vector2(112, 24)
+		button.pressed.connect(_attack_from_player_slot.bind(slot_index, target))
+		grid.add_child(button)
 
 func _small_action_button(text: String) -> Button:
 	var button: Button = Button.new()
 	button.text = text
-	button.custom_minimum_size = Vector2(40, 24)
+	button.custom_minimum_size = Vector2(42, 24)
 	button.add_theme_font_size_override("font_size", 12)
 	return button
+
+func _header_info_label(font_size: int) -> Label:
+	var label: Label = Label.new()
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	label.clip_text = true
+	label.max_lines_visible = 1
+	label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	label.add_theme_font_size_override("font_size", font_size)
+	return label
+
+func _section_label(text: String) -> Label:
+	var label: Label = Label.new()
+	label.text = text
+	label.add_theme_font_size_override("font_size", 15)
+	return label
 
 func _play_hand_card_to_player_slot(hand_index: int, slot_index: int) -> void:
 	var result: Dictionary = engine.play_card_from_hand(hand_index, {"owner": "player", "slot": slot_index})
@@ -306,12 +411,60 @@ func _play_hand_card_to_enemy_hero(hand_index: int) -> void:
 	_record_action_feedback(result)
 	call_deferred("_refresh")
 
+func _attack_from_player_slot(slot_index: int, target: Dictionary) -> void:
+	var result: Dictionary = engine.attack_with_unit(PLAYER_OWNER, slot_index, target)
+	_record_action_feedback(result)
+	call_deferred("_refresh")
+
 func _record_action_feedback(result: Dictionary) -> void:
 	last_feedback = str(result.get("message", ""))
 
+func _play_pending_visual_events() -> void:
+	if visual_layer == null or engine == null:
+		return
+	while _visual_event_cursor < engine.eventos_visuais.size():
+		var event: Dictionary = Dictionary(engine.eventos_visuais[_visual_event_cursor])
+		_visual_event_cursor += 1
+		_spawn_feedback_label(event)
+
+func _spawn_feedback_label(event: Dictionary) -> void:
+	var label: Label = Label.new()
+	label.text = str(event.get("text", ""))
+	label.add_theme_font_size_override("font_size", 18)
+	label.add_theme_color_override("font_color", Color(event.get("color", Color.WHITE)))
+	label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.75))
+	label.add_theme_constant_override("shadow_offset_x", 1)
+	label.add_theme_constant_override("shadow_offset_y", 1)
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	visual_layer.add_child(label)
+	label.global_position = _visual_event_position(event)
+	label.scale = Vector2(0.8, 0.8)
+	var tween: Tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(label, "global_position", label.global_position + Vector2(0, -34), 0.65).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, "modulate:a", 0.0, 0.65).set_delay(0.15)
+	tween.tween_property(label, "scale", Vector2.ONE, 0.18)
+	tween.finished.connect(func() -> void:
+		if is_instance_valid(label):
+			label.queue_free()
+	)
+
+func _visual_event_position(event: Dictionary) -> Vector2:
+	var owner: String = str(event.get("owner", PLAYER_OWNER))
+	var slot_index: int = int(event.get("slot", -1))
+	if slot_index >= 0:
+		var container: HBoxContainer = enemy_slots_box if owner == ENEMY_OWNER else player_slots_box
+		if container != null and slot_index < container.get_child_count():
+			var slot_box: Control = container.get_child(slot_index)
+			var rect: Rect2 = slot_box.get_global_rect()
+			return rect.get_center() - Vector2(32, 18)
+	if owner == ENEMY_OWNER and enemy_hero_zone != null:
+		return enemy_hero_zone.get_global_rect().get_center() - Vector2(42, 18)
+	return status_label.get_global_rect().get_center() - Vector2(42, -18)
+
 func _finish_battle() -> void:
 	if engine.outcome == "victory":
-		GameSession.complete_encounter("O duelista foi vencido no primeiro encontro.")
+		GameSession.complete_encounter("A emboscada foi vencida no encontro de teste.")
 	else:
 		GameSession.record_defeat("O heroi caiu; o estado pre-combate sera restaurado.")
 	get_tree().change_scene_to_file("res://modes/battle/result.tscn")
@@ -328,8 +481,8 @@ func _panel_style(fill: Color) -> StyleBoxFlat:
 	style.corner_radius_top_right = 8
 	style.corner_radius_bottom_left = 8
 	style.corner_radius_bottom_right = 8
-	style.content_margin_left = 12
+	style.content_margin_left = 10
 	style.content_margin_top = 8
-	style.content_margin_right = 12
+	style.content_margin_right = 10
 	style.content_margin_bottom = 8
 	return style

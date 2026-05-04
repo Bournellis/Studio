@@ -1,6 +1,5 @@
 # Definitions
 
-Source definitions for authored RPG content will live here.
+Source definitions for authored RPG and cardgame content live here.
 
-Keep definitions small and explicit while the project is still discovering its first mechanics.
-
+Current active source: `slice_catalog.json`, covering the C1 MVP card set, 20-card starter deck, boards, and encounters.

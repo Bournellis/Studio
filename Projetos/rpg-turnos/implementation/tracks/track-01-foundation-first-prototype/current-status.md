@@ -1,122 +1,38 @@
-# Track 01 - Foundation Contracts And First Prototype
+# Track 01 Current Status
 
-- Status: `PHASE_03_CARDGAME_CORE_PASS_02_DONE`
-- Last Updated: `2026-05-03`
-- Goal: `prove the standalone cardgame combat loop before expanding RPG progression, character stats, lore, or campaign systems`
+- Last Updated: `2026-05-04`
+- Status: `C1_BATTLE_MODES_PASS_01_CLEAR_BOARD_IMPLEMENTED`
 
-## Implemented Slice
+## Implemented
 
-- Menu with `Novo jogo` and `Sair`.
-- Session-only game state.
-- Small 2D top-down map with player movement, NPC, and encounter marker.
-- NPC one-time card reward.
-- Encounter gate that requires NPC reward first.
-- Full 10-card deck setup with drag-and-drop.
-- Turn-based 3-lane enemy-hero duel.
-- Scripted enemy behavior.
-- Victory result returning to map.
-- Defeat result restoring the pre-combat snapshot with no penalty.
-- JSON-driven content catalog and generated Godot resource.
-- Generated playable scenes.
-- GUT validation coverage.
+- First playable slice flow remains available.
+- Deck setup now targets a 20-card deck.
+- The battle setup has one official action: `Iniciar encontro`.
+- C1 is the only runtime combat model.
+- `Duelo antigo` and variant buttons are removed.
+- `BattleEngine` now models controllers, battle mode, board, phases, priority, and visual events.
+- `limpar_mesa` is implemented through `Emboscada na Ponte`.
+- `duelo` is represented in data/engine for the next official pass.
+- Enemy priority resolves automatically until the player gets priority.
+- Battle feedback uses simple tweens and labels without new assets.
+- Validation passes with 34 GUT tests.
 
-## Phase 2 Polish Scope
+## Active Rules
 
-- Improve deck setup clarity.
-- Add button alternatives for common deck and battle actions.
-- Show clearer player feedback for valid and invalid actions.
-- Keep UI refreshes safe during drag/drop.
-- Add UI-level regression tests for setup and battle.
+- `manutencao -> compra -> fase_principal`
+- no stack
+- no response window
+- normal action passes priority
+- instant action keeps priority
+- two passes end the main phase
+- cleanup is internal
+- energy max starts at 3
+- initial hand is 4
+- deck size is 20
+- hand limit is 8
+- command card deck limit is 4
+- hero power is `Preparar Defesa`
 
-## Implemented Phase 2 Polish Pass 01
+## Next
 
-- Setup counters for available and selected cards.
-- Setup quick actions: `Limpar deck` and `Auto preencher`.
-- Battle card action buttons for player slots, enemy slots, and enemy hero where valid.
-- Battle feedback label for action results.
-- GUT UI tests for deck setup and first battle play.
-
-## Implemented Phase 2 Polish Pass 02
-
-- Fixed top combat action bar with `Resolver turno`.
-- Improved board/log/hand presentation.
-- Compact battle cards and slots for the current debug viewport.
-- UI test for resolving the turn after energy reaches zero.
-
-## Implemented Phase 2 Polish Pass 03
-
-- Fixed the combat layout so the hand panel remains visible inside the current debug viewport.
-
-## Implemented Phase 3 Combat Pass 01
-
-- Added the basic hero power `Preparar`.
-- `Preparar` draws 1 card and can be used once per round.
-- Added top-bar `Poder heroico` action and feedback.
-- Added engine/UI regression tests.
-
-## Implemented Cardgame Core Pass 02
-
-- Added explicit phase state to the battle engine.
-- Added configurable phase sequences for future experiment variants.
-- Added default phase flow: `round_start`, `draw`, `main_1`, `combat`, `main_2`, `turn_end`.
-- `round_start`, `draw`, and `turn_end` resolve automatically.
-- `main_1`, `combat`, and `main_2` advance through player action.
-- Battle UI shows the current phase.
-- The main combat button now changes label based on the current phase.
-- Main actions are blocked outside main phases in the current prototype.
-- Regression tests cover phase progression and UI state.
-
-## Cardgame-First Direction (2026-05-03)
-
-- The active combat direction is `C1 - Continuous Main Phase With Shared Priority And Attack Actions`.
-- A/B priority and combat-resolution variants and the phase-based Combat phase structure are preserved as design ideas in `../../../docs/cardgame-core-experiments.md` but are not active implementation targets.
-- The combat lab matrix has been collapsed to focus implementation on a single coherent variant.
-- RPG progression, character stats, lore-heavy content, inventory, and campaign structure remain deferred.
-- The complete turn structure must still be playtested in C1 before being locked as canon.
-- Upcoming prototypes should test different board shapes and position attributes regardless of which turn-structure variant is active.
-
-## Cardgame Core Experiment Plan
-
-Design reference:
-
-- `../../../docs/cardgame-core-experiments.md`
-
-Implementation reference:
-
-- `cardgame-core-implementation-plan.md`
-
-Immediate next pass:
-
-- `Pass 03 - C1 Variant: Continuous Main Phase With Shared Priority And Attack Actions`
-
-Variant status:
-
-- `C1`: shared priority, no combat phase, attacks as main-phase actions — **ACTIVE**
-- `A1_B1`: active player plus responses, automated combat — preserved as design idea
-- `A1_B2`: active player plus responses, interactive combat — preserved as design idea
-- `A2_B1`: shared initiative, automated combat — preserved as design idea
-- `A2_B2`: shared initiative, interactive combat — preserved as design idea
-
-## Validation
-
-```powershell
-D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\rpg-turnos -s res://tools/validate.gd
-```
-
-Current expected result:
-
-- `22` GUT tests passing.
-
-## Next Decision Sessions
-
-Open a design session before implementing any of these:
-
-- final 2D versus 3D/isometric presentation
-- real save/load
-- Command/Presence resource
-- first real narrative content pass
-- RPG progression beyond card unlocks
-- expanded enemy AI beyond deterministic scripts
-- locking C1 as canon (Pass 08 evaluation gate)
-- reviving any preserved A/B variant if C1 fails playtest
-- board topology and position attribute rules
+Promote `duelo` into a selectable or progression-driven official encounter once `limpar_mesa` playtesting is stable.

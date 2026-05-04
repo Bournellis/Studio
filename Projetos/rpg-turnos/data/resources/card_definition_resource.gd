@@ -5,6 +5,8 @@ extends Resource
 @export var display_name: String = ""
 @export var card_type: String = ""
 @export var cost: int = 0
+@export var command_cost: int = 0
+@export var speed: String = "normal"
 @export var attack: int = 0
 @export var health: int = 0
 @export var text: String = ""
@@ -12,13 +14,13 @@ extends Resource
 @export var effect: Dictionary = {}
 
 func occupies_slot() -> bool:
-	return card_type == "unit" or card_type == "structure" or card_type == "support"
+	return card_type in ["criatura", "estrutura", "permanente", "unit", "structure", "support"]
 
 func has_keyword(keyword: String) -> bool:
 	return keywords.has(keyword)
 
 func is_damage_spell() -> bool:
-	return card_type == "spell" and str(effect.get("action", "")) == "damage"
+	return card_type in ["magia", "spell"] and str(effect.get("action", "")) == "damage"
 
 func is_buff_command() -> bool:
-	return card_type == "command" and str(effect.get("action", "")) == "buff_health"
+	return card_type in ["comando", "command"] and str(effect.get("action", "")) == "buff_health"

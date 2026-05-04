@@ -19,6 +19,9 @@ func generate_all() -> Dictionary:
 	catalog.starter_deck_ids = PackedStringArray(definition.get("starter_deck", []))
 	catalog.reward_card_id = str(definition.get("reward_card", ""))
 	catalog.enemy_script = _typed_dictionary_array(definition.get("enemy_script", []))
+	catalog.default_encounter_id = str(definition.get("default_encounter_id", "emboscada_na_ponte"))
+	catalog.boards = _typed_dictionary_array(definition.get("boards", []))
+	catalog.encounters = _typed_dictionary_array(definition.get("encounters", []))
 
 	for card_data: Dictionary in _typed_dictionary_array(definition.get("cards", [])):
 		catalog.cards.append(_build_card(card_data))
@@ -52,6 +55,8 @@ func _build_card(data: Dictionary):
 	card.display_name = str(data.get("display_name", card.id))
 	card.card_type = str(data.get("type", ""))
 	card.cost = int(data.get("cost", 0))
+	card.command_cost = int(data.get("command_cost", 0))
+	card.speed = str(data.get("speed", "normal"))
 	card.attack = int(data.get("attack", 0))
 	card.health = int(data.get("health", 0))
 	card.text = str(data.get("text", ""))
