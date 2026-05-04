@@ -1275,7 +1275,8 @@
           "slot": 2,
           "card_id": "arqueiro_ponte"
         }
-      ]
+      ],
+      "reward_card_id": "lobo_alfa"
     },
     {
       "id": "duelista_bandido",
@@ -1304,7 +1305,8 @@
         "escudeiro",
         "escudeiro"
       ],
-      "starting_enemy_slots": []
+      "starting_enemy_slots": [],
+      "reward_card_id": "relampago"
     },
     {
       "id": "emboscada_no_cruzamento",
@@ -1325,7 +1327,8 @@
           "slot": 2,
           "card_id": "arqueiro_ponte"
         }
-      ]
+      ],
+      "reward_card_id": "arqueira_voante"
     },
     {
       "id": "fortaleza_do_desfiladeiro",
@@ -1350,7 +1353,8 @@
           "slot": 5,
           "card_id": "atirador_torre"
         }
-      ]
+      ],
+      "reward_card_id": "dragao_jovem"
     }
   ],
   "enemy_script": []

@@ -60,123 +60,224 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 
 Latest validation: `34/34` GUT tests passing.
 
-## Pending Engine Changes For Codex (design session 2026-05-04)
+## Pending Engine Changes For Codex
 
-The following changes were made to `data/definitions/slice_catalog.json` and `docs/game-design-document.md` during a design session. The engine must be updated to match before continuing Pass 02 implementation.
+All changes below were specified during design sessions on 2026-05-04. Implement phases in order — each phase is a prerequisite for the next. Phases D and E may be worked in parallel since they touch different systems. Phase F does not block any Pass 02 work.
 
-### 0. Before anything else: delete git lock files
+---
 
-The following stale lock files are blocking normal git operations on Windows. Delete them manually before running any git command:
+## Phase A — Cleanup And Prerequisites
+
+Run once before any other engine work. These are mechanical blockers.
+
+### A1. Delete stale git lock files
+
+The following zero-byte lock files left by a previous process block all git operations on Windows. Delete them manually before running any git command:
 
 - `.git/index.lock`
 - `.git/HEAD.lock`
 - `.git/objects/maintenance.lock`
 
-These are zero-byte stale files left by a previous process. Safe to delete.
+### A2. Remove size logic
 
-### 1. Remove size logic
-
-- `slice_catalog.json`: all `"size"` fields removed from card `effect` objects; `"size_limit"` removed from board slots. Size is no longer a game concept.
+- `slice_catalog.json`: all `"size"` fields removed from card `effect` objects; `"size_limit"` removed from board slots. Already done in data — remove the engine validation block.
 - `battle/battle_engine.gd` lines 869-875: remove the `size_limit` vs `card_size` validation block entirely.
 
-### 2. Elevation rename: "normal" -> "chao"
+### A3. Elevation rename: `"normal"` → `"chao"`
 
-- All board slots that previously used `"elevation": "normal"` now use `"elevation": "chao"`.
+- All board slots now use `"elevation": "chao"` instead of `"normal"`. Already done in data.
 - Update any engine constant or string comparison that checked for `"normal"` elevation to check for `"chao"`.
 - Elevation rules: `chao` is ground level. `alto` is elevated. Melee attacks cannot reach `alto` slots. `alcance` and `voadora` creatures can attack `alto` slots. Ranged spells can also target `alto` slots.
 
-### 3. Damage type system (new, required for all Pass 02 mechanics)
+---
 
-Implement three damage types. Every damage source must carry one:
+## Phase B — Engine Core
 
-- `fisico_melee`: creature attacks without `alcance`; blocked by intermediate occupants; cannot reach `alto`; not reduced by `cobertura`
-- `fisico_alcance`: attacks from creatures/structures with `alcance` keyword; ignores intermediate occupants; can reach `alto`; reduced by `cobertura` (terrain and/or keyword, stacking, minimum 0)
-- `magico`: spells (`magia`, `magia_de_tabuleiro`); ignores `cobertura`; ranged spells (`ranged: true`) target any slot including `alto`, ignoring intermediate occupants; non-ranged spells target slots reachable via the caster's melee routes
+Foundational rules that all other phases depend on. Must be complete before Phase C, D, or E.
 
-### 4. `voadora` keyword (new)
+### B1. Damage type system
 
-- Enters as `pronta` (same as `rapido`).
-- Can attack `alto` slots and any slot reachable via its defined routes.
-- Cannot be targeted by `fisico_melee` damage.
-- Does NOT count as a blocking occupant for melee routing: melee passes through it to the next occupied non-`voadora` slot or fallback.
-- Can be targeted by `fisico_alcance`, other `voadora`, and `magico` damage normally.
+Every damage source must carry one of three types:
 
-### 5. `rapido` clarification
+- `fisico_melee`: attacks from creatures/structures without `alcance`; blocked by intermediate occupants; cannot reach `alto` slots; not reduced by `cobertura`
+- `fisico_alcance`: attacks from creatures/structures with `alcance`; ignores intermediate occupants; can reach `alto` slots; reduced by `cobertura` (terrain and/or keyword stack, minimum 0)
+- `magico`: damage from spells (`magia`, `magia_de_tabuleiro`); ignores `cobertura`; ranged spells (`ranged: true`) target any slot including `alto`, ignoring intermediate occupants; non-ranged spells target slots reachable via the caster's melee routes
 
-- Enters as `pronta` (not `enjoo`). May attack the turn it enters after priority returns.
-- Update engine to set state to `pronta` on entry instead of `enjoo` for `rapido` creatures.
+### B2. Energy ramp system
 
-### 6. Route blocking with `voadora` (engine audit)
+Replace the fixed `max_energy = 3` constant with a per-controller ramping value:
 
-- When resolving a melee attack route, skip any `voadora` occupants.
-- The first non-`voadora` occupant is the legal target.
-- If the entire route has only `voadora` occupants or is empty, use the mode fallback.
+- On each controller's own upkeep, increment that controller's `max_energy` by 1 if it is below 8.
+- Turn 1: max 3. Turn 2: max 4. Turn 3: max 5. Turn 4: max 6. Turn 5: max 7. Turn 6+: max 8 (capped).
+- Energy recharges to current max on upkeep. Unspent energy is lost — it does not carry to the next upkeep.
+- Player and enemy controllers ramp independently on their own upkeeps.
 
-### 7. `atropelar` clarification
+### B3. `rapido` enters as `pronta`
 
-- Excess damage carries to the next occupied non-`voadora` slot in the route.
-- If no such slot, hits the enemy hero.
-- If no hero or fallback, excess is lost.
-- Excess inherits the original damage type: `fisico_melee` excess cannot hit `voadora`.
+- Creatures with the `rapido` keyword enter the board as `pronta`, not `enjoo`.
+- They may attack the turn they enter, as soon as priority returns to their controller.
+- Update the engine entry path to set state to `pronta` for `rapido` creatures instead of `enjoo`.
 
-### 8. `queimando` as slot status vs creature status
+### B4. `queimando` dual behavior
 
-- `queimando` on a slot: deals 1 damage to any creature occupying it on that controller's upkeep; creature can escape by moving to another slot.
-- `queimando` on a creature: deals 1 damage on that controller's upkeep; follows the creature when it moves to a new slot.
-- Both can coexist independently on the same slot+creature combination.
+`queimando` can exist independently as a slot status or a creature status:
 
-### 9. Movement (Pass 02)
+- `queimando` on a slot: on the occupying controller's upkeep, deals 1 damage to whichever creature occupies it; a creature can escape by moving to another slot.
+- `queimando` on a creature: on that controller's upkeep, deals 1 damage to the creature; follows the creature when it moves to a new slot.
+- Both can coexist simultaneously on the same slot and creature without interaction.
 
-- A `criatura` (not `estrutura`) may spend priority once per turn as a normal action to move to an empty slot in its own controller's area or a neutral area.
-- Movement does not exhaust the creature; it may still attack after receiving priority back in the same turn.
+---
 
-### 10. Neutral area slots (Pass 02)
+## Phase C — `voadora` Keyword (complete implementation)
 
-- Boards may define slots with `"owner": "neutral"` in JSON.
-- Either controller may play or move permanents into neutral slots if empty.
+Implement as a single coherent unit. All three sub-items are interdependent.
 
-### 11. Enemy hero power for `duelo` (Pass 02)
+### C1. `voadora` definition and damage type ruling
 
-- `Golpe Direto`: cost 0, normal speed, usable once per own turn, deals 1 `magico` damage to the player hero.
-- AI uses it at the start of its turn if available.
+Core behavior:
 
-### 12. Enemy AI for `duelo` (Pass 02, deterministic aggressive)
+- Enters as `pronta` (same as `rapido`). May attack the turn it enters after priority returns.
+- Can attack `alto` slots and any slot in its defined routes.
+- Cannot be targeted by `fisico_melee` damage from any source.
+
+Damage type ruling:
+
+- A `voadora` creature **without** `alcance` deals `fisico_melee` damage. The normal restriction that `fisico_melee` cannot reach `alto` slots does **not** apply to `voadora` creatures — they are airborne. `cobertura` does not reduce their attacks.
+- A `voadora` creature **with** `alcance` deals `fisico_alcance` damage normally. `cobertura` (terrain and/or keyword, stacking, minimum 0) reduces their attacks.
+
+### C2. `voadora` is transparent to melee routing
+
+When resolving a melee attack route:
+
+- Skip any `voadora` occupants in the route — they are not valid melee targets.
+- The first non-`voadora` occupied slot is the legal melee target.
+- If the entire route contains only `voadora` occupants or is empty, apply the mode fallback (`hero` or `none`).
+
+### C3. `atropelar` interaction with `voadora`
+
+- Excess damage from `atropelar` carries to the next occupied non-`voadora` slot in the route.
+- If no such slot exists, the excess hits the enemy hero (if the mode allows it).
+- If no hero or valid fallback, the excess is lost.
+- Excess damage inherits the original damage type: `fisico_melee` excess cannot hit `voadora` creatures.
+
+---
+
+## Phase D — Pass 02: `duelo` Mode
+
+Implement the official duel mode. Requires Phase A, B, and C to be complete.
+
+### D1. Enemy hero power
+
+`Golpe Direto`:
+
+- Cost: 0 energy
+- Speed: normal
+- Usage: once per own turn
+- Effect: deals 1 `magico` damage to the player hero
+- AI uses it at the start of its own turn if the power has not been used this turn.
+
+### D2. Enemy AI (deterministic, aggressive)
+
+AI decision sequence each time the enemy has priority:
 
 1. Use hero power if available, targeting the player hero.
-2. Play the highest-cost card the AI can afford, prioritizing criaturas and estruturas.
-3. Attack with each ready permanent: prioritize the enemy slot with the highest ATK; if the route is empty in `duelo` mode, fall back to the player hero.
+2. Play the highest-cost card the AI can afford, prioritizing `criatura` and `estrutura` types over spells.
+3. Attack with each ready permanent in descending ATK order; if the route is empty in `duelo` mode, fall back to the player hero.
 4. Pass priority when no legal actions remain.
 
-### 13. Enemy deck for `duelo`
+### D3. Enemy deck
 
 - Use the custom deck defined in `slice_catalog.json` under the `duelista_bandido` encounter.
-- Do not use the player starter deck.
+- Do not use the player starter deck for the enemy side.
 
-### 14. `fallback_slots` engine support (Pass 02)
+### D4. Creature movement
 
-- Route definitions in JSON may include a `fallback_slots` array (ordered list of slot refs) between `targets` and the mode `fallback`.
-- When all `targets` slots are empty (no non-`voadora` occupant found), the engine iterates `fallback_slots` in order, applying the same occupant-search logic.
-- Only after all `fallback_slots` are also exhausted does the mode `fallback` (`hero` or `none`) apply.
-- `muralha_desfiladeiro` board uses this to create a double defensive line: front slots (E1–E3) backed by rear slots (EB1–EB2).
+- A `criatura` (not `estrutura`) may spend priority once per turn as a normal action to move to any empty slot in its own controller's area or in a neutral area.
+- Movement does not exhaust the creature; it may still attack on the same turn after receiving priority back.
 
-### 15. `neutral_routes` engine support (Pass 02)
+### D5. Neutral area slots
 
-- Boards may define a `neutral_routes` object keyed by neutral slot index (string).
+- Boards may define slots with `"owner": "neutral"` in JSON.
+- Either controller may play or move a permanent into a neutral slot if it is empty.
+- A neutral slot occupied by one controller cannot be entered by the other.
+
+---
+
+## Phase E — Pass 02: World Progression
+
+Implement the encounter chain and card reward system. Touches different systems from Phase D and may be developed in parallel.
+
+### E1. Per-encounter reward cards in `slice_catalog.json`
+
+Each encounter object gains a `"reward_card_id"` field. The reward card is added to `unlocked_card_ids` once, on the first victory for that encounter. Current assignments:
+
+- `emboscada_na_ponte` → `"reward_card_id": "lobo_alfa"`
+- `duelista_bandido` → `"reward_card_id": "relampago"`
+- `emboscada_no_cruzamento` → `"reward_card_id": "arqueira_voante"`
+- `fortaleza_do_desfiladeiro` → `"reward_card_id": "dragao_jovem"`
+
+The global `"reward_card"` field at the catalog root remains — it is the card given by the NPC before the first encounter.
+
+### E2. `GameSession` multi-encounter tracking
+
+Replace the single `is_encounter_completed: bool` with a set-based structure:
+
+- Add `completed_encounter_ids: Array[String]` (replaces `is_encounter_completed`)
+- Add `claimed_encounter_reward_ids: Array[String]` to track which encounter rewards have already been added to `unlocked_card_ids`
+- `active_encounter_id` must be settable dynamically by the world when the player interacts with a specific marker (remove the hardcoded constant)
+- Update `complete_encounter()` to append to `completed_encounter_ids` instead of setting a bool
+- Add `has_completed_encounter(id: String) -> bool` helper
+- Add `claim_encounter_reward(encounter_id: String) -> String` that looks up the `reward_card_id` from `ContentLibrary`, adds it to `unlocked_card_ids` if not already present, and records it in `claimed_encounter_reward_ids`
+- Update `capture_pre_combat_snapshot()` and `restore_pre_combat_snapshot()` to include the new fields
+
+### E3. World map encounter chain
+
+Replace the single encounter marker in `world_root.gd` with a data-driven list of markers:
+
+- Markers are defined in order; the first is always available after the NPC reward card is claimed.
+- Each subsequent marker is locked until the previous encounter appears in `completed_encounter_ids`.
+- Each marker stores its `encounter_id` and a world position.
+- Locked markers: rendered in a muted color with no interaction prompt.
+- Available markers: rendered in the active color; pressing E sets `GameSession.active_encounter_id` to this marker's encounter ID and transitions to `deck_setup.tscn`.
+- Completed markers: rendered in the completed color; pressing E shows a dialogue ("Encontro concluído.") but allows re-entry for practice (no second reward).
+
+Starting marker positions (placeholder, adjust in editor):
+
+| Encounter | Position |
+|---|---|
+| `emboscada_na_ponte` | `Vector2(600, 330)` |
+| `duelista_bandido` | `Vector2(750, 330)` |
+| `emboscada_no_cruzamento` | `Vector2(900, 330)` |
+| `fortaleza_do_desfiladeiro` | `Vector2(900, 250)` |
+
+### E4. Result screen reward display
+
+In `result_root.gd`, on victory:
+
+1. Call `GameSession.claim_encounter_reward(active_encounter_id)`.
+2. If a new card is returned (first completion), display a "Carta desbloqueada: [display_name]" label in the result panel before the "Voltar ao mapa" button.
+3. If no new card (already claimed or encounter has no reward), show no unlock label.
+4. The "Voltar ao mapa" button remains; the player returns to `world.tscn` as before.
+
+---
+
+## Phase F — Pass 03+: Advanced Board Topology
+
+These features support the complex boards (`muralha_desfiladeiro`, `cruzamento_neutro`). They do not block Pass 02. Implement after `duelo` is stable.
+
+### F1. `fallback_slots` engine support
+
+Route definitions in JSON may include a `fallback_slots` array (ordered list of slot refs) positioned between `targets` and the mode's final `fallback` string:
+
+- After exhausting `targets` with no non-`voadora` occupant found, iterate `fallback_slots` in order with the same search logic.
+- Only after all `fallback_slots` are also empty does the mode `fallback` (`hero` or `none`) apply.
+- `muralha_desfiladeiro` uses this for a double defensive line: front slots E1–E3 backed by rear slots EB1–EB2.
+
+### F2. `neutral_routes` engine support
+
+Boards may define a `neutral_routes` object keyed by neutral slot index (as a string):
+
 - Each entry has `player_targets`, `enemy_targets`, and `fallback`.
-- When a permanent is in a neutral slot, the engine resolves its attack routes using `player_targets` if the permanent belongs to the player, or `enemy_targets` if it belongs to the enemy.
-- Route blocking rules (non-`voadora` first occupant, `alcance` ignores, etc.) apply identically to neutral routes.
-- `cruzamento_neutro` board uses this: N1 is a contested central zone where the occupying controller can attack the opposite front row.
-
-### 16. Energy ramp system (Pass 02)
-
-- Replace fixed `max_energy = 3` with a ramping system.
-- On each controller's upkeep, increment that controller's `max_energy` by 1 if below 8.
-- Turn 1: max 3. Turn 2: max 4. ... Turn 6+: max 8 (capped).
-- Energy recharges to current max on upkeep. Unspent energy is lost (not carried over).
-- Both player and enemy controllers ramp independently on their own upkeeps.
-
-### 17. `voadora` damage type ruling
-
-- A `voadora` creature **without** `alcance` deals `fisico_melee` damage. The normal restriction that `fisico_melee` cannot reach `alto` slots does NOT apply to `voadora` creatures (they are airborne). `cobertura` does not reduce their attacks.
-- A `voadora` creature **with** `alcance` deals `fisico_alcance` damage normally. `cobertura` (terrain and keyword, stacking) reduces their attacks.
-- This distinction matters for `cobertura` interaction and for `atropelar` excess damage type inheritance.
+- When resolving attacks from a permanent in a neutral slot, use `player_targets` if the permanent belongs to the player controller, or `enemy_targets` if it belongs to the enemy controller.
+- All standard route blocking rules apply (non-`voadora` first occupant for melee, `alcance` ignores intermediates, etc.).
+- `cruzamento_neutro` uses this: a permanent in N1 attacks the opposite front row depending on which controller owns it.
