@@ -53,7 +53,8 @@ func test_end_turn_button_stays_visible_and_advances_round() -> void:
 	add_child(root)
 	await get_tree().process_frame
 
-	assert_eq(root.end_turn_button.text, "Resolver turno")
+	assert_eq(root.phase_label.text, "Fase: Fase principal 1")
+	assert_eq(root.end_turn_button.text, "Ir para combate")
 	assert_false(root.end_turn_button.disabled)
 
 	root._play_hand_card_to_player_slot(0, 0)
@@ -61,6 +62,14 @@ func test_end_turn_button_stays_visible_and_advances_round() -> void:
 
 	assert_eq(root.engine.energy, 0)
 	assert_false(root.end_turn_button.disabled)
+
+	root._on_end_turn_pressed()
+	assert_eq(root.engine.current_phase, "combat")
+	assert_eq(root.end_turn_button.text, "Resolver combate")
+
+	root._on_end_turn_pressed()
+	assert_eq(root.engine.current_phase, "main_2")
+	assert_eq(root.end_turn_button.text, "Encerrar turno")
 
 	root._on_end_turn_pressed()
 
@@ -83,6 +92,10 @@ func test_hero_power_button_draws_and_disables_for_round() -> void:
 	assert_true(root.hero_power_button.disabled)
 	assert_eq(root.engine.hand.size(), 4)
 
+	root._on_end_turn_pressed()
+	assert_true(root.hero_power_button.disabled)
+	root._on_end_turn_pressed()
+	assert_true(root.hero_power_button.disabled)
 	root._on_end_turn_pressed()
 	assert_false(root.hero_power_button.disabled)
 	root.free()

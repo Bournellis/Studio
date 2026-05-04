@@ -4,6 +4,21 @@ extends RefCounted
 const HAND_SIZE: int = 3
 const SLOT_COUNT: int = 3
 const ENERGY_CAP: int = 6
+const PHASE_ROUND_START: String = "round_start"
+const PHASE_DRAW: String = "draw"
+const PHASE_MAIN: String = "main"
+const PHASE_MAIN_1: String = "main_1"
+const PHASE_COMBAT: String = "combat"
+const PHASE_MAIN_2: String = "main_2"
+const PHASE_TURN_END: String = "turn_end"
+const DEFAULT_PHASE_SEQUENCE: Array = [
+	PHASE_ROUND_START,
+	PHASE_DRAW,
+	PHASE_MAIN_1,
+	PHASE_COMBAT,
+	PHASE_MAIN_2,
+	PHASE_TURN_END
+]
 
 var round_number: int = 1
 var player_health: int = 25
@@ -17,10 +32,14 @@ var enemy_slots: Array = []
 var log_lines: Array[String] = []
 var outcome: String = ""
 var hero_power_used: bool = false
+var phase_sequence: Array[String] = []
+var current_phase: String = PHASE_MAIN_1
 
 var _catalog
+var _phase_index: int = -1
+var _pending_draw_amount: int = HAND_SIZE
 
-func start_battle(catalog, deck_ids: Array) -> void:
+func start_battle(catalog, deck_ids: Array, config: Dictionary = {}) -> void:
 	_catalog = catalog
 	round_number = 1
 	player_health = catalog.player_hero.max_health
@@ -34,8 +53,12 @@ func start_battle(catalog, deck_ids: Array) -> void:
 	log_lines = []
 	outcome = ""
 	hero_power_used = false
-	_draw_cards(HAND_SIZE)
-	_log("Duelo iniciado. Energia 1, mao inicial com 3 cartas.")
+	phase_sequence = _phase_sequence_from_config(config)
+	current_phase = ""
+	_phase_index = -1
+	_pending_draw_amount = HAND_SIZE
+	_log("Duelo iniciado.")
+	_enter_next_phase()
 
 func get_state() -> Dictionary:
 	return {
@@ -50,12 +73,16 @@ func get_state() -> Dictionary:
 		"enemy_slots": enemy_slots.duplicate(true),
 		"log": log_lines.duplicate(),
 		"outcome": outcome,
-		"hero_power_used": hero_power_used
+		"hero_power_used": hero_power_used,
+		"current_phase": current_phase,
+		"phase_sequence": phase_sequence.duplicate()
 	}
 
 func use_player_hero_power() -> Dictionary:
 	if outcome != "":
 		return _fail("A batalha ja terminou.")
+	if not can_play_main_actions():
+		return _fail("Poder heroico so pode ser usado em fase principal neste prototipo.")
 	if hero_power_used:
 		return _fail("Poder heroico ja usado nesta rodada.")
 	if deck.is_empty():
@@ -69,6 +96,8 @@ func use_player_hero_power() -> Dictionary:
 func play_card_from_hand(hand_index: int, target: Dictionary) -> Dictionary:
 	if outcome != "":
 		return _fail("A batalha ja terminou.")
+	if not can_play_main_actions():
+		return _fail("Cartas so podem ser jogadas em fase principal neste prototipo.")
 	if hand_index < 0 or hand_index >= hand.size():
 		return _fail("Carta de mao invalida.")
 
@@ -87,24 +116,134 @@ func play_card_from_hand(hand_index: int, target: Dictionary) -> Dictionary:
 		return _play_buff_command(hand_index, card, target)
 	return _fail("Tipo de carta ainda nao suportado neste slice.")
 
-func end_player_turn() -> Dictionary:
+func advance_phase() -> Dictionary:
 	if outcome != "":
 		return {"ok": false, "message": "A batalha ja terminou."}
+	if not _is_player_controlled_phase(current_phase):
+		return _fail("A fase atual resolve automaticamente.")
 
-	_run_enemy_phase()
-	_resolve_confrontation()
-	_check_outcome()
-	if outcome == "":
-		round_number += 1
-		energy = min(round_number, ENERGY_CAP)
-		hero_power_used = false
-		_draw_cards(1)
-		_log("Rodada %d. Energia %d." % [round_number, energy])
-	return {"ok": true, "message": "Turno encerrado."}
+	var previous_phase: String = current_phase
+	if current_phase == PHASE_COMBAT:
+		_resolve_combat_phase()
+		_check_outcome()
+		if outcome != "":
+			return {"ok": true, "message": "Combate resolvido."}
+
+	_enter_next_phase()
+	return {"ok": true, "message": _phase_advance_message(previous_phase)}
+
+func end_player_turn() -> Dictionary:
+	return advance_phase()
+
+func can_play_main_actions() -> bool:
+	return outcome == "" and current_phase in [PHASE_MAIN, PHASE_MAIN_1, PHASE_MAIN_2]
+
+func get_phase_label() -> String:
+	match current_phase:
+		PHASE_ROUND_START:
+			return "Inicio de round"
+		PHASE_DRAW:
+			return "Compra"
+		PHASE_MAIN:
+			return "Fase principal"
+		PHASE_MAIN_1:
+			return "Fase principal 1"
+		PHASE_COMBAT:
+			return "Combate"
+		PHASE_MAIN_2:
+			return "Pos-combate"
+		PHASE_TURN_END:
+			return "Fim do turno"
+		_:
+			return "Indefinida"
+
+func get_advance_phase_label() -> String:
+	match current_phase:
+		PHASE_MAIN:
+			return "Encerrar turno"
+		PHASE_MAIN_1:
+			return "Ir para combate"
+		PHASE_COMBAT:
+			return "Resolver combate"
+		PHASE_MAIN_2:
+			return "Encerrar turno"
+		_:
+			return "Aguarde"
 
 func force_player_health(value: int) -> void:
 	player_health = value
 	_check_outcome()
+
+func _phase_sequence_from_config(config: Dictionary) -> Array[String]:
+	var configured: Array = Array(config.get("phase_sequence", DEFAULT_PHASE_SEQUENCE))
+	if configured.is_empty():
+		configured = DEFAULT_PHASE_SEQUENCE
+
+	var result: Array[String] = []
+	for phase: Variant in configured:
+		result.append(str(phase))
+	return result
+
+func _enter_next_phase() -> void:
+	if outcome != "":
+		return
+	if phase_sequence.is_empty():
+		phase_sequence = _phase_sequence_from_config({})
+
+	_phase_index += 1
+	if _phase_index >= phase_sequence.size():
+		_phase_index = 0
+
+	current_phase = phase_sequence[_phase_index]
+	_log("Fase: %s." % get_phase_label())
+	_resolve_automatic_phase()
+
+	if outcome == "" and _is_automatic_phase(current_phase):
+		_enter_next_phase()
+
+func _resolve_automatic_phase() -> void:
+	match current_phase:
+		PHASE_ROUND_START:
+			energy = min(round_number, ENERGY_CAP)
+			hero_power_used = false
+			_log("Inicio da rodada %d. Energia %d." % [round_number, energy])
+		PHASE_DRAW:
+			var requested: int = _pending_draw_amount
+			var before_count: int = hand.size()
+			_draw_cards(requested)
+			var drawn: int = hand.size() - before_count
+			if round_number == 1 and before_count == 0:
+				_log("Mao inicial com %d cartas." % drawn)
+			else:
+				_log("Compra: %d carta(s)." % drawn)
+			_pending_draw_amount = 1
+		PHASE_TURN_END:
+			_log("Fim do turno.")
+			round_number += 1
+			_pending_draw_amount = 1
+
+func _is_automatic_phase(phase: String) -> bool:
+	return phase in [PHASE_ROUND_START, PHASE_DRAW, PHASE_TURN_END]
+
+func _is_player_controlled_phase(phase: String) -> bool:
+	return phase in [PHASE_MAIN, PHASE_MAIN_1, PHASE_COMBAT, PHASE_MAIN_2]
+
+func _phase_advance_message(previous_phase: String) -> String:
+	match previous_phase:
+		PHASE_MAIN:
+			return "Turno encerrado."
+		PHASE_MAIN_1:
+			return "Fase de combate."
+		PHASE_COMBAT:
+			return "Combate resolvido."
+		PHASE_MAIN_2:
+			return "Turno encerrado."
+		_:
+			return "Fase avancada."
+
+func _resolve_combat_phase() -> void:
+	_run_enemy_phase()
+	_resolve_confrontation()
 
 func _play_permanent(hand_index: int, card, target: Dictionary) -> Dictionary:
 	var slot_index: int = int(target.get("slot", -1))

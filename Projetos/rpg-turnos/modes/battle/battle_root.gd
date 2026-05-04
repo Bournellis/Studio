@@ -7,6 +7,7 @@ const EnemyHeroDropZoneScript = preload("res://ui/controls/enemy_hero_drop_zone.
 
 var engine
 var status_label: Label
+var phase_label: Label
 var feedback_label: Label
 var log_label: Label
 var enemy_hero_zone
@@ -50,6 +51,11 @@ func _build_ui() -> void:
 	status_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	status_label.add_theme_font_size_override("font_size", 19)
 	header.add_child(status_label)
+
+	phase_label = Label.new()
+	phase_label.custom_minimum_size = Vector2(150, 0)
+	phase_label.add_theme_font_size_override("font_size", 15)
+	header.add_child(phase_label)
 
 	hero_power_button = Button.new()
 	hero_power_button.text = "Poder heroico"
@@ -172,8 +178,9 @@ func _refresh() -> void:
 		engine.enemy_health,
 		engine.deck.size()
 	]
+	phase_label.text = "Fase: %s" % engine.get_phase_label()
 	if last_feedback == "":
-		feedback_label.text = "Jogue uma carta por drag-and-drop ou use os botoes abaixo de cada carta."
+		feedback_label.text = "Jogue cartas nas fases principais ou avance a fase no topo."
 	else:
 		feedback_label.text = last_feedback
 
@@ -189,8 +196,9 @@ func _refresh() -> void:
 	_rebuild_slot_row(player_slots_box, "player", engine.player_slots)
 	_rebuild_hand()
 	log_label.text = "\n".join(engine.log_lines)
+	end_turn_button.text = engine.get_advance_phase_label()
 	end_turn_button.disabled = engine.outcome != ""
-	hero_power_button.disabled = engine.outcome != "" or engine.hero_power_used or engine.deck.is_empty()
+	hero_power_button.disabled = not engine.can_play_main_actions() or engine.hero_power_used or engine.deck.is_empty()
 
 	if engine.outcome != "":
 		_finish_battle()
@@ -236,7 +244,7 @@ func _on_card_dropped_on_enemy_hero(data: Dictionary) -> void:
 	call_deferred("_refresh")
 
 func _on_end_turn_pressed() -> void:
-	var result: Dictionary = engine.end_player_turn()
+	var result: Dictionary = engine.advance_phase()
 	_record_action_feedback(result)
 	_refresh()
 
@@ -256,23 +264,23 @@ func _add_hand_action_controls(parent: VBoxContainer, card, hand_index: int) -> 
 	if card.occupies_slot():
 		for lane: int in range(3):
 			var button: Button = _small_action_button("P%d" % (lane + 1))
-			button.disabled = card.cost > engine.energy or engine.player_slots[lane] != null
+			button.disabled = not engine.can_play_main_actions() or card.cost > engine.energy or engine.player_slots[lane] != null
 			button.pressed.connect(_play_hand_card_to_player_slot.bind(hand_index, lane))
 			row.add_child(button)
 	elif card.is_damage_spell():
 		var hero_button: Button = _small_action_button("Heroi")
-		hero_button.disabled = card.cost > engine.energy
+		hero_button.disabled = not engine.can_play_main_actions() or card.cost > engine.energy
 		hero_button.pressed.connect(_play_hand_card_to_enemy_hero.bind(hand_index))
 		row.add_child(hero_button)
 		for lane: int in range(3):
 			var button: Button = _small_action_button("E%d" % (lane + 1))
-			button.disabled = card.cost > engine.energy or engine.enemy_slots[lane] == null
+			button.disabled = not engine.can_play_main_actions() or card.cost > engine.energy or engine.enemy_slots[lane] == null
 			button.pressed.connect(_play_hand_card_to_enemy_slot.bind(hand_index, lane))
 			row.add_child(button)
 	elif card.is_buff_command():
 		for lane: int in range(3):
 			var button: Button = _small_action_button("P%d" % (lane + 1))
-			button.disabled = card.cost > engine.energy or engine.player_slots[lane] == null
+			button.disabled = not engine.can_play_main_actions() or card.cost > engine.energy or engine.player_slots[lane] == null
 			button.pressed.connect(_play_hand_card_to_player_slot.bind(hand_index, lane))
 			row.add_child(button)
 

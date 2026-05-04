@@ -10,7 +10,7 @@ The slice covers:
 - 2D top-down exploration map
 - NPC interaction and one-time card reward
 - full 10-card deck setup
-- turn-based card-slot duel against an enemy hero
+- turn-based card-slot duel against an enemy hero with explicit phase advancement
 - victory/defeat result flow
 - return to map or retry from the pre-combat snapshot
 
@@ -44,9 +44,13 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 12. Start the battle.
 13. Drag unit or structure cards to player slots.
 14. Drag `Centelha Curta` to an enemy slot or enemy hero target.
-15. Press `Encerrar turno` to resolve the enemy phase and confrontation.
-16. Confirm victory shows a result screen and returns to the map.
-17. In a separate run, lose the duel and confirm `Tentar novamente` restores the pre-combat deck/setup state without penalty.
+15. Press `Ir para combate`.
+16. Press `Resolver combate`.
+17. Confirm the battle advances to `Pos-combate`.
+18. Press `Encerrar turno`.
+19. Confirm the next round starts in `Fase principal 1`.
+20. Confirm victory shows a result screen and returns to the map.
+21. In a separate run, lose the duel and confirm `Tentar novamente` restores the pre-combat deck/setup state without penalty.
 
 ## Expected Automated Coverage
 
@@ -55,8 +59,8 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 - generate the JSON-driven slice catalog
 - generate scenes without raw `.tscn` hand edits
 - validate the first-slice contract
-- run GUT tests for session, deck, reward, energy, timing, victory, and defeat
+- run GUT tests for session, deck, reward, energy, timing, phase advancement, victory, and defeat
 
 Current expected result:
 
-- `10` GUT tests passing
+- `22` GUT tests passing
