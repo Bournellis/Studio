@@ -1,20 +1,122 @@
 # Cardgame Core Experiments
 
 - Last Updated: `2026-05-03`
-- Status: `DESIGN_EXPERIMENTS_DEFINED`
+- Status: `C1_SELECTED_AS_PRIMARY_FOCUS`
 - Scope: `turn structure, priority model, combat resolution, continuous attack actions, board complexity, and position attributes`
 
-This document records the current cardgame-first design session.
+This document records the cardgame-first design session.
 
-These rules are not final combat canon. They are experiment targets for the next implementation passes.
+## Direction Decision (2026-05-03)
 
-## Design Goal
+The project will pursue `C1 - Continuous Main Phase With Shared Priority And Attack Actions` as the **primary combat direction**.
 
-The next project focus is to test whether the combat can stand as a strong cardgame before expanding RPG progression, character stats, lore, inventory, or campaign systems.
+The other A/B priority and combat-resolution variants are **preserved as design ideas** in this document for future reference, but they are **not active implementation targets**. The combat lab matrix has been collapsed to focus implementation effort on a single coherent variant: C1.
 
-## Candidate Turn Structure
+Reasons for the decision:
 
-The current candidate turn/round structure is:
+- C1 fits the studio's stated preferred direction better than phase-based combat: shared priority, continuous tactical exchange, all card types available whenever priority is held.
+- Implementing five lab variants in playable parity is expensive and risks diluting playtest signal.
+- C1 is the most structurally different variant; if it works, it defines the game's identity. If it does not, falling back to a more conventional A/B variant is cheaper than the reverse.
+- The Pass 02 phase state machine already supports configurable phase sequences, so C1 can use a shorter sequence (`round_start, draw, main, turn_end`) without removing the existing infrastructure.
+
+This decision is the active direction, not final canon. C1 still needs prototyping and playtest before being locked in the GDD.
+
+## Active Direction - C1 - Shared Priority With Attack Actions
+
+The candidate flow is:
+
+1. `Round Start` (automatic)
+2. `Draw` (automatic)
+3. `Main Phase` (interactive, shared priority)
+4. `Turn End` (automatic)
+
+### Round Start
+
+Automatic phase. Triggers start-of-round effects, refreshes round state, prepares encounter timers or enemy intent if needed.
+
+### Draw
+
+Automatic phase. Draws cards, triggers draw effects, applies effects that care about hand size or deck state.
+
+### Main Phase
+
+Interactive phase with alternating priority between active player and opponent.
+
+Any player may use any card type during the turn if they have priority and meet the card's requirements.
+
+Available priority-spending actions:
+
+- play a creature
+- attack with an eligible creature
+- cast a non-instant spell
+- use a hero power
+- use a card ability
+- pass priority
+
+Non-priority-spending actions:
+
+- cast an instant-speed spell
+- trigger automatic effects
+
+Both players passing priority in succession ends the active player's main phase and advances the turn to `Turn End`.
+
+### Turn End
+
+Automatic phase. Triggers end-of-turn effects, reduces durations, cleans temporary effects, resolves delayed damage, hazards, or encounter timers.
+
+### Attack Rules
+
+- there is no dedicated combat phase
+- a creature without summoning sickness may attack when its controller has priority
+- each creature may attack once per turn by default unless a card effect says otherwise
+- attack choice and target choice happen at the moment of the attack action
+
+### Priority Rules
+
+- playing a creature passes priority
+- attacking passes priority
+- casting a non-instant spell passes priority
+- using a hero power passes priority
+- using a non-instant card ability passes priority
+- instant-speed spells do not spend priority
+- the response window for instant-speed spells must be explicit in implementation
+
+### Why C1
+
+- may make turns feel more fluid than phase-based combat
+- removes the artificial separation between preparation and combat
+- makes attacking part of the main tactical exchange
+- gives both players access to all card types whenever they have priority
+- can create a stronger back-and-forth than a separate combat phase
+- makes position attributes matter moment-to-moment instead of only at combat resolution
+
+### Risks To Watch In Playtest
+
+- could become harder to read than phase-based combat
+- needs very clear UI for priority, active player, and available actions
+- instant-speed effects may create confusing chains if not constrained
+- attack availability must be visible per creature
+- shared priority can create long decision chains; the UI must keep them legible
+
+### Success Signals For C1
+
+A C1 prototype is promising if:
+
+- the player understands at a glance whose priority window is active
+- the player understands why they can or cannot act
+- passing priority is clear and low-friction
+- attacking does not feel hidden behind unrelated actions
+- board positions create meaningful decisions during attack and response
+- the same deck plays differently across board layouts
+- the log explains the result without becoming a wall of text
+
+## Preserved Design Ideas (Not Active)
+
+The following variants are intentionally **not being implemented**. They remain on record so that, if C1 fails playtest or generates issues we cannot resolve, we have a documented fallback set instead of starting from scratch.
+
+### Preserved Phase Structure
+
+The phase-based candidate flow:
 
 1. `Round Start`
 2. `Draw`
@@ -23,240 +125,61 @@ The current candidate turn/round structure is:
 5. `Main Phase 2`
 6. `Turn End`
 
-### Round Start
+Round Start, Draw, and Turn End would be automatic; Main Phase 1, Combat, and Main Phase 2 would be interactive. This is the structure the Pass 02 default sequence already supports and remains available as a fallback configuration if C1 needs to be replaced.
 
-Automatic phase.
+### Preserved Priority Model A1 - Active Player Plus Responses
 
-Expected responsibilities:
+The active player can play normal cards and abilities. The opponent can only play response-speed spells or abilities during response windows.
 
-- trigger start-of-round effects
-- refresh or adjust round state
-- prepare encounter timers or enemy intent if needed
+Strengths: easier to understand, easier to implement, easier to balance, gives a baseline against more ambitious interaction.
 
-### Draw
+Weaknesses: may feel too conventional, may make the non-active player too passive, may reduce tactical back-and-forth.
 
-Automatic phase.
+### Preserved Priority Model A2 - Shared Initiative
 
-Expected responsibilities:
+Both players can act more broadly during shared windows. The difference is who currently has initiative or priority.
 
-- draw cards
-- trigger effects that care about drawing
-- trigger effects that care about hand size or deck state
+Strengths: more tactical back-and-forth, every phase feels contested, stronger identity.
 
-### Main Phase 1
+Weaknesses: can become confusing without strong UI, can create long decision chains, requires strict pass and priority rules.
 
-Interactive phase.
+Note: C1 inherits A2's shared-priority spirit while removing the dedicated combat phase. In practice, C1 already covers most of what A2 would have tested.
 
-The active player, or players depending on the priority model being tested, may:
+### Preserved Combat Resolution B1 - Automated Combat
 
-- play cards
-- deploy permanents
-- cast spells
-- use hero powers
-- use card abilities
-- change board state before combat
-- choose when to pass the phase
+Players prepare positions, attack intent, and targets before combat. When combat starts, attacks resolve automatically.
 
-### Combat
+Strengths: faster turn rhythm, board setup matters more, easier to simulate and validate.
 
-Interactive or automatic depending on the combat resolution model being tested.
+Weaknesses: may make the most exciting phase feel passive, may hide too much strategy in pre-combat planning, may reduce dramatic response moments.
 
-This phase is the main unresolved design axis.
-
-### Main Phase 2
-
-Interactive phase after combat.
-
-This phase may allow:
-
-- rebuilding board position
-- playing post-combat spells
-- using abilities after damage has resolved
-- preparing for the opponent or next round
-- choosing when to pass the phase
-
-### Turn End
-
-Automatic phase.
-
-Expected responsibilities:
-
-- trigger end-of-turn effects
-- reduce durations
-- clean temporary effects
-- resolve delayed damage, hazards, or encounter timers
-
-## Experiment Axis A - Priority Model
-
-This axis tests how much each player can play during the other player's turn.
-
-### A1 - Active Player Plus Responses
-
-The active player can play normal cards and abilities.
-
-The opponent can only play response-speed spells or abilities during response windows.
-
-Why test it:
-
-- easier to understand
-- easier to implement
-- easier to balance
-- gives a baseline against more ambitious interaction
-
-Risks:
-
-- may feel too conventional
-- may make the non-active player too passive
-- may reduce tactical back-and-forth
-
-### A2 - Shared Initiative
-
-Both players can act more broadly during shared windows.
-
-The difference is who currently has initiative or priority. A player with priority can act, then the other player can respond, act, or pass depending on the phase rules.
-
-Why test it:
-
-- closer to the current preferred direction
-- creates more tactical back-and-forth
-- makes every phase feel contested
-- may create a stronger identity for the game
-
-Risks:
-
-- can become confusing without strong UI
-- can create long decision chains
-- requires strict pass and priority rules
-
-## Experiment Axis B - Combat Resolution
-
-This axis tests how much control players have during combat.
-
-### B1 - Automated Combat
-
-Players prepare positions, attack intent, and targets before combat.
-
-When combat starts, attacks resolve automatically.
-
-Why test it:
-
-- faster turn rhythm
-- board setup matters more
-- easier to simulate and validate
-- useful baseline for comparison
-
-Risks:
-
-- may make the most exciting phase feel passive
-- may hide too much strategy in pre-combat planning
-- may reduce dramatic response moments
-
-### B2 - Interactive Combat
+### Preserved Combat Resolution B2 - Interactive Combat
 
 During combat, players choose attacks, targets, spells, and abilities through priority windows.
 
-Why test it:
+Strengths: more control during the highest-stakes phase, supports bluffing, responses, and tactical play.
 
-- closer to the current preferred direction
-- gives more control during the highest-stakes phase
-- supports bluffing, responses, and tactical play
-- can make position attributes matter more moment-to-moment
+Weaknesses: can make rounds too long, may require substantial UI clarity, needs careful priority rules.
 
-Risks:
+### Preserved Lab Matrix
 
-- can make rounds too long
-- may require substantial UI clarity
-- needs careful priority rules to avoid confusion
+The original A/B/C lab matrix:
 
-## Prototype Matrix
-
-The next cardgame lab should test the four A/B combinations plus the C variant:
-
-| Prototype | Priority Model | Combat Resolution | Purpose |
+| Prototype | Priority Model | Combat Resolution | Status |
 | --- | --- | --- | --- |
-| `A1_B1` | Active plus responses | Automated combat | Simple baseline |
-| `A1_B2` | Active plus responses | Interactive combat | Traditional interactive comparison |
-| `A2_B1` | Shared initiative | Automated combat | Contested setup with fast combat |
-| `A2_B2` | Shared initiative | Interactive combat | Main candidate direction |
-| `C1` | Shared priority for all card types | No combat phase; attacks are main-phase actions | Different structural test |
+| `A1_B1` | Active plus responses | Automated combat | preserved as design idea |
+| `A1_B2` | Active plus responses | Interactive combat | preserved as design idea |
+| `A2_B1` | Shared initiative | Automated combat | preserved as design idea |
+| `A2_B2` | Shared initiative | Interactive combat | preserved as design idea |
+| `C1` | Shared priority for all card types | No combat phase; attacks are main-phase actions | **ACTIVE** |
 
-Current leaning:
-
-- priority model: `A2 - Shared Initiative`
-- combat resolution: `B2 - Interactive Combat`
-- structural wildcard: `C1 - Shared Priority With Attack Actions`
-
-This leaning should not be treated as final until the prototypes are playable.
-
-## Experiment Axis C - Continuous Main Phase
-
-This axis tests a substantially different turn structure.
-
-Instead of having a separate `Combat` phase, attacks happen as actions during a shared `Main Phase`.
-
-Candidate flow:
-
-1. `Round Start`
-2. `Draw`
-3. `Main Phase`
-4. `Turn End`
-
-### C1 - Shared Priority With Attack Actions
-
-`Round Start` is automatic and triggers start-of-round effects.
-
-`Draw` is automatic, draws cards, and triggers draw effects.
-
-`Main Phase` alternates priority between the active player and the other player.
-
-Any player may use any card type on any turn if they have priority and meet the card's requirements.
-
-Available priority-spending actions may include:
-
-- play a creature
-- attack with an eligible creature
-- cast a non-instant spell
-- use a character power
-- use a card ability
-- pass priority
-
-Attacking rules to test:
-
-- there is no dedicated combat phase
-- each creature without summoning sickness may attack when its controller has priority
-- each creature may attack once per turn by default
-- card effects may allow extra attacks or change attack restrictions
-- attack choice and target choice happen at the moment of the attack action
-
-Priority rules to test:
-
-- playing a creature passes priority
-- attacking passes priority
-- casting a normal spell passes priority
-- using a character power passes priority
-- instant-speed spells do not spend priority
-- the exact response window for instant-speed spells must be explicit in implementation
-
-Why test it:
-
-- may make turns feel more fluid
-- removes the separation between preparation and combat
-- makes attacking part of the main tactical exchange
-- gives both players access to all card types whenever they have priority
-- may create a stronger back-and-forth than a separate combat phase
-
-Risks:
-
-- could become harder to read than phase-based combat
-- needs very clear UI for priority, active player, and available actions
-- instant-speed effects may create confusing chains if not constrained
-- attack availability must be visible per creature
+If a future evaluation rejects C1, this matrix is the fallback exploration set.
 
 ## Board And Position Experiments
 
 The current 3-route board is not final.
 
-Upcoming prototypes should also test:
+Future prototypes should also test:
 
 - boards with more than 3 routes
 - asymmetrical boards
@@ -281,9 +204,11 @@ Positions may have attributes such as:
 
 Position attributes should be represented as combat rules, not only visual labels.
 
-## Terms To Define In Implementation
+These experiments are still planned regardless of which turn-structure variant is active. They live in `Pass 06 - Board Topology And Position Attributes` in the implementation plan.
 
-The implementation plan should establish explicit definitions for:
+## Terms To Define In C1 Implementation
+
+The implementation must establish explicit definitions for:
 
 - `phase`
 - `priority`
@@ -292,26 +217,14 @@ The implementation plan should establish explicit definitions for:
 - `passed_priority`
 - `both_players_passed`
 - `response_window`
-- `combat_action`
-- `attack_intent`
 - `attack_action`
 - `once_per_turn_attack`
+- `summoning_sickness` (or equivalent attack eligibility tracking)
 - `instant_speed`
 - `priority_spending_action`
 - `non_priority_spending_action`
 - `position_attribute`
 - `automatic_trigger`
-
-## Success Signals
-
-A prototype is promising if:
-
-- the player understands why they can or cannot act
-- passing priority is clear
-- combat does not feel like waiting through hidden rules
-- board positions create meaningful decisions
-- the same deck plays differently across board layouts
-- the log explains the result without becoming a wall of text
 
 ## Deferred
 

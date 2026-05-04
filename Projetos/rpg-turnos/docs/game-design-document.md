@@ -1,8 +1,8 @@
 # RPG Turnos Game Design Document
 
-- Version: `0.1`
+- Version: `0.2`
 - Last Updated: `2026-05-03`
-- Status: `INITIAL DESIGN DRAFT`
+- Status: `INITIAL DESIGN DRAFT - C1 SELECTED AS ACTIVE COMBAT DIRECTION`
 - Source Material: `C:/Users/Fabio/Downloads/sistema_base_combate_card_rpg.md`
 
 ## 1. Purpose
@@ -200,16 +200,18 @@ Effect: Occupants take -1 damage from ranged attacks.
 
 ## 9. Round Structure
 
-The current cardgame-first candidate round flow is:
+The active combat direction is `C1 - Continuous Main Phase With Shared Priority And Attack Actions`.
 
-1. Round Start
-2. Draw
-3. Main Phase 1
-4. Combat
-5. Main Phase 2
-6. Turn End
+The round flow is:
 
-This flow is not final combat canon yet. It is the next prototype target and is expanded in `cardgame-core-experiments.md`.
+1. Round Start (automatic)
+2. Draw (automatic)
+3. Main Phase (interactive, shared priority)
+4. Turn End (automatic)
+
+There is **no dedicated combat phase**. Attacks are actions that happen inside the Main Phase. This direction is the active prototyping target. It is not final combat canon yet — it must be playtested before being locked.
+
+Alternative phase-based structures (with dedicated combat) and alternative priority models are documented in `cardgame-core-experiments.md` under "Preserved Design Ideas". They are not active implementation targets but remain available as fallback if C1 fails playtest.
 
 ### Round Start
 
@@ -231,41 +233,28 @@ Likely responsibilities:
 - trigger effects that care about drawing
 - trigger effects that care about hand size or deck state
 
-### Main Phase 1
+### Main Phase
 
-Interactive phase.
+Interactive phase with **alternating priority** between the active player and the opponent.
 
-Depending on the priority model being tested, the active player or both players may:
+Any player with priority may use any card type they can legally play. Available priority-spending actions include:
 
-- play creatures into valid slots
-- play structures or support permanents into valid slots
-- cast spells
-- cast board spells
-- use commands
-- use hero power
-- use equipment effects
-- prepare defense
-- pass the phase
+- play a creature into a valid slot
+- play a structure or support permanent into a valid slot
+- attack with an eligible creature
+- cast a non-instant spell
+- cast a board spell
+- use a command
+- use a hero power
+- use a card ability
+- pass priority
 
-### Combat
+Non-priority-spending actions:
 
-Combat has two candidate resolution models:
+- cast an instant-speed spell
+- trigger automatic effects
 
-- automated combat, where players prepare positions or intent and the combat resolves at once
-- interactive combat, where players choose attacks, targets, spells, and abilities through priority windows
-
-The current leaning is toward interactive combat, but both models should be tested.
-
-### Main Phase 2
-
-Interactive phase after combat.
-
-Likely responsibilities:
-
-- rebuild board position after combat
-- use post-combat spells or abilities
-- prepare for the opponent, next turn, or next round
-- pass the phase
+When both players pass priority in succession, the Main Phase ends and the turn advances to Turn End.
 
 ### Turn End
 
@@ -279,38 +268,23 @@ Likely responsibilities:
 - trigger end-of-turn effects
 - resolve encounter timers
 
-### Priority Model Experiments
+### Attack Rules Inside Main Phase
 
-Two priority models should be tested before the turn rules are locked:
+- a creature without summoning sickness may attack when its controller has priority
+- each creature may attack once per turn by default
+- card effects may grant extra attacks or relax restrictions
+- attack choice and target choice happen at the moment of the attack action
+- attacking passes priority
 
-- active player plus responses, where the active player plays normal actions and the opponent mostly plays response-speed actions
-- shared initiative, where both sides can act more broadly through priority windows
+### Priority Rules
 
-The current leaning is toward shared initiative, but it is still an experiment.
-
-### No-Combat-Phase Experiment
-
-A third structure should be tested because it is meaningfully different from the phase-based combat models:
-
-1. Round Start
-2. Draw
-3. Main Phase
-4. Turn End
-
-In this variant:
-
-- Round Start is automatic and triggers start-of-round effects.
-- Draw is automatic, draws cards, and triggers draw effects.
-- Main Phase alternates priority between the active player and the other player.
-- There is no dedicated Combat phase.
-- Any player may use any card type on any turn if they have priority and meet the card's requirements.
-- A creature without summoning sickness may attack during Main Phase when its controller has priority.
-- Each creature may attack once per turn by default unless a card effect says otherwise.
-- Playing a creature, attacking, casting a non-instant spell, or using a character power passes priority.
-- Instant-speed spells do not spend priority.
-- Turn End is automatic and triggers end-of-turn effects.
-
-This variant is identified as `C1` in the implementation plan.
+- playing a creature passes priority
+- attacking passes priority
+- casting a non-instant spell passes priority
+- using a hero power passes priority
+- using a non-instant card ability passes priority
+- instant-speed spells do not spend priority
+- the response window for instant-speed spells must be explicit in implementation
 
 ## 10. Creature Timing And Keywords
 
@@ -728,16 +702,29 @@ First combat-depth implementation decisions:
 - `Preparar` can be used once per round.
 - Hero power does not cost Energy in the current prototype pass.
 
-Cardgame-first design experiment decisions:
+Cardgame Core Pass 02 implementation decisions:
 
-- Current candidate phase order: Round Start -> Draw -> Main Phase 1 -> Combat -> Main Phase 2 -> Turn End.
-- Round Start, Draw, and Turn End are automatic phases.
-- Main Phase 1 and Main Phase 2 are player-driven phases.
-- Priority model is not locked; test active-player-plus-responses against shared initiative.
-- Combat resolution is not locked; test automated combat against interactive combat.
-- Current leaning is shared initiative plus interactive combat, but this must be playtested before becoming canon.
-- Additional structural test: `C1`, with no combat phase, shared main-phase priority, attacks as actions, and instant-speed spells that do not spend priority.
-- Board topology is not locked; test more complex boards and position attributes.
+- Battle engine now tracks explicit phases.
+- Default implemented sequence is `round_start -> draw -> main_1 -> combat -> main_2 -> turn_end` (Pass 02 baseline; will be replaced as the C1 sequence below becomes the default in Pass 03).
+- `round_start`, `draw`, and `turn_end` are automatic in the current prototype.
+- `main_1`, `combat`, and `main_2` advance through player action.
+- Current UI blocks card play and hero power outside main phases until priority/combat experiments define broader timing.
+- Phase sequence is configurable, which lets the C1 variant register a `round_start -> draw -> main -> turn_end` sequence without removing the existing infrastructure.
+
+Cardgame-first direction decision (2026-05-03):
+
+- The project commits to `C1 - Continuous Main Phase With Shared Priority And Attack Actions` as the active combat direction.
+- Phase sequence under C1: `round_start -> draw -> main -> turn_end`.
+- `round_start`, `draw`, and `turn_end` are automatic.
+- `main` is interactive with alternating priority between active player and opponent.
+- All card types are available during `main` to whoever has priority.
+- Attacks are actions inside `main`, not a separate phase.
+- Each creature may attack once per turn by default; summoning sickness applies to newly placed creatures.
+- Priority-spending actions: play a creature, attack, cast a non-instant spell, use hero power, use a non-instant card ability, pass priority.
+- Instant-speed spells do not spend priority.
+- Both players passing priority in succession ends the active player's `main` phase.
+- The phase-based variants (Main Phase 1 / Combat / Main Phase 2) and the A1/A2/B1/B2 priority and combat-resolution variants are preserved as design ideas in `cardgame-core-experiments.md`. They are not active implementation targets and serve as documented fallbacks if C1 fails playtest.
+- Board topology is still not locked; complex boards and position attributes remain a separate experiment track regardless of which turn structure is active.
 
 Open questions before implementation locks systems:
 

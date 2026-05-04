@@ -1,6 +1,6 @@
 # Track 01 - Foundation Contracts And First Prototype
 
-- Status: `PHASE_03_CARDGAME_CORE_PASS_01_DONE`
+- Status: `PHASE_03_CARDGAME_CORE_PASS_02_DONE`
 - Last Updated: `2026-05-03`
 - Goal: `prove the standalone cardgame combat loop before expanding RPG progression, character stats, lore, or campaign systems`
 
@@ -54,17 +54,26 @@
 - Added top-bar `Poder heroico` action and feedback.
 - Added engine/UI regression tests.
 
-## Cardgame-First Direction
+## Implemented Cardgame Core Pass 02
 
-- The next implementation focus is the cardgame core.
+- Added explicit phase state to the battle engine.
+- Added configurable phase sequences for future experiment variants.
+- Added default phase flow: `round_start`, `draw`, `main_1`, `combat`, `main_2`, `turn_end`.
+- `round_start`, `draw`, and `turn_end` resolve automatically.
+- `main_1`, `combat`, and `main_2` advance through player action.
+- Battle UI shows the current phase.
+- The main combat button now changes label based on the current phase.
+- Main actions are blocked outside main phases in the current prototype.
+- Regression tests cover phase progression and UI state.
+
+## Cardgame-First Direction (2026-05-03)
+
+- The active combat direction is `C1 - Continuous Main Phase With Shared Priority And Attack Actions`.
+- A/B priority and combat-resolution variants and the phase-based Combat phase structure are preserved as design ideas in `../../../docs/cardgame-core-experiments.md` but are not active implementation targets.
+- The combat lab matrix has been collapsed to focus implementation on a single coherent variant.
 - RPG progression, character stats, lore-heavy content, inventory, and campaign structure remain deferred.
-- The complete turn structure must be re-evaluated before being locked.
-- Upcoming prototypes should test more elaborate turns if they improve decision density or pacing.
-- Upcoming prototypes should test different board shapes, including boards more complex than the current 3 direct routes.
-- Board positions may have attributes and should be explored as part of combat identity.
-- Position attributes may affect targeting, routes, defense, attack, card costs, hazards, control, deployment rules, or encounter-specific objectives.
-- A no-combat-phase variant should also be tested, where attacks happen as priority-spending actions during a shared main phase.
-- Instant-speed actions may be tested as actions that do not spend priority.
+- The complete turn structure must still be playtested in C1 before being locked as canon.
+- Upcoming prototypes should test different board shapes and position attributes regardless of which turn-structure variant is active.
 
 ## Cardgame Core Experiment Plan
 
@@ -78,15 +87,15 @@ Implementation reference:
 
 Immediate next pass:
 
-- `Pass 02 - Phase State Machine`
+- `Pass 03 - C1 Variant: Continuous Main Phase With Shared Priority And Attack Actions`
 
-Experiment matrix:
+Variant status:
 
-- `A1_B1`: active player plus responses, automated combat
-- `A1_B2`: active player plus responses, interactive combat
-- `A2_B1`: shared initiative, automated combat
-- `A2_B2`: shared initiative, interactive combat
-- `C1`: shared priority, no combat phase, attacks as main-phase actions
+- `C1`: shared priority, no combat phase, attacks as main-phase actions — **ACTIVE**
+- `A1_B1`: active player plus responses, automated combat — preserved as design idea
+- `A1_B2`: active player plus responses, interactive combat — preserved as design idea
+- `A2_B1`: shared initiative, automated combat — preserved as design idea
+- `A2_B2`: shared initiative, interactive combat — preserved as design idea
 
 ## Validation
 
@@ -96,7 +105,7 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 
 Current expected result:
 
-- `19` GUT tests passing.
+- `22` GUT tests passing.
 
 ## Next Decision Sessions
 
@@ -108,5 +117,6 @@ Open a design session before implementing any of these:
 - first real narrative content pass
 - RPG progression beyond card unlocks
 - expanded enemy AI beyond deterministic scripts
-- locked turn structure
+- locking C1 as canon (Pass 08 evaluation gate)
+- reviving any preserved A/B variant if C1 fails playtest
 - board topology and position attribute rules

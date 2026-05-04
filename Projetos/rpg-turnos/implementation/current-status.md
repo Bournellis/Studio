@@ -4,9 +4,11 @@
 - Active Surface: `cardgame-first combat core`
 - Active Project Name: `rpg-turnos`
 - Active Track: `Track 01 - Foundation Contracts And First Prototype`
-- Active Track Status: `PHASE_03_CARDGAME_CORE_PASS_01_DONE`
-- Current Operational Baseline: `playable Godot 4.6.2 first slice with menu, 2D top-down exploration, NPC card reward, polished 10-card deck setup, scripted enemy-hero duel with fixed turn-resolution action, improved combat presentation, basic hero power, result flow, generated scenes, JSON-driven catalog, and GUT validation`
-- Active Goal: `focus fully on the standalone cardgame combat loop before expanding RPG progression, character stats, lore content, persistence, or final visual direction`
+- Active Track Status: `PHASE_03_CARDGAME_CORE_PASS_02_DONE`
+- Current Operational Baseline: `playable Godot 4.6.2 first slice with menu, 2D top-down exploration, NPC card reward, polished 10-card deck setup, scripted enemy-hero duel with explicit phase state machine, improved combat presentation, basic hero power, result flow, generated scenes, JSON-driven catalog, and GUT validation`
+- Active Goal: `prototype the C1 combat variant (continuous main phase, shared priority, attacks as actions) as the active cardgame direction, before expanding RPG progression, character stats, lore content, persistence, or final visual direction`
+- Active Combat Direction: `C1 - Continuous Main Phase With Shared Priority And Attack Actions`
+- Preserved Combat Ideas: `A1, A2, B1, B2, and the phase-based Combat phase structure are preserved as design ideas in docs/cardgame-core-experiments.md but are not active implementation targets`
 - Read Next:
   - `../AGENTS.md`
   - `../docs/project-brief.md`
@@ -24,7 +26,7 @@
 - Automated Validation: `run Godot headless with res://tools/validate.gd`
 - Manual Smoke: `../docs/first-playable-slice-smoke.md`
 - Reuse Posture: `GUT and validation pattern were reused narrowly from RPG Isometrico; no action-RPG runtime systems were imported`
-- Next Gate: `implement Cardgame Core Pass 02 phase state machine, then prototype priority and combat-resolution variants`
+- Next Gate: `implement Cardgame Core Pass 03 - C1 Variant (continuous main phase, shared priority, attacks as actions)`
 
 ## Initial Premises
 
@@ -107,14 +109,23 @@ The active project roadmap is tracked in `roadmap.md`.
 - Added `Poder heroico` button to the fixed top combat bar.
 - Added engine and UI tests for hero power usage and round reset.
 
-## Cardgame-First Priority Update
+## Implemented Cardgame Core Pass 02
 
-- Focus the next implementation passes on combat as a standalone cardgame.
-- Reevaluate the turn structure before expanding RPG systems.
-- Test more elaborate turns, potentially with phases, timing windows, queued resolutions, enemy intent windows, or separate play/resolve moments.
-- Test different board shapes instead of assuming the current 3 direct routes are final.
-- Test position attributes as first-class combat rules.
-- Keep map, NPC, stats, character progression, items, and lore as minimal placeholders until the cardgame loop is stronger.
+- Added explicit battle phases: `round_start`, `draw`, `main_1`, `combat`, `main_2`, and `turn_end`.
+- Added phase sequence configuration support for future variants such as `C1`.
+- Automatic phases now resolve without player input and land on the next interactive phase.
+- Manual phase advancement now drives `main_1 -> combat -> main_2 -> next round`.
+- The combat UI now displays the current phase and changes the main action button by phase.
+- Main actions are currently restricted to main phases.
+- Engine and UI tests cover phase order, automatic phase resolution, UI phase labels, and action blocking outside main phases.
+
+## Cardgame-First Direction Update (2026-05-03)
+
+- The active combat direction is `C1 - Continuous Main Phase With Shared Priority And Attack Actions`.
+- The combat lab matrix has been collapsed: A1, A2, B1, B2, and the phase-based Combat phase structure are preserved as design ideas in `../docs/cardgame-core-experiments.md` but are not active implementation targets.
+- Implementation effort focuses on a single coherent variant (C1) instead of five.
+- If C1 fails playtest in Pass 08, the preserved ideas are the documented fallback set.
+- Map, NPC, stats, character progression, items, and lore remain minimal placeholders until the cardgame loop is stronger.
 - Current design session is registered in `../docs/cardgame-core-experiments.md`.
 - Current implementation plan is registered in `tracks/track-01-foundation-first-prototype/cardgame-core-implementation-plan.md`.
 
@@ -124,16 +135,15 @@ Use the cardgame lab plan instead of expanding RPG systems.
 
 Immediate next pass:
 
-- `Pass 02 - Phase State Machine`
+- `Pass 03 - C1 Variant: Continuous Main Phase With Shared Priority And Attack Actions`
 
 Planned follow-up passes:
 
-- priority model experiment: active player plus responses versus shared initiative
-- combat resolution experiment: automated combat versus interactive combat
-- continuous main phase experiment: no combat phase, attacks as priority-spending main-phase actions
-- board topology and position attributes
-- five combat lab variants: `A1_B1`, `A1_B2`, `A2_B1`, `A2_B2`, `C1`
-- evaluation pass before locking the main combat direction
+- `Pass 04`: combat resolution experiment (PRESERVED_AS_DESIGN_IDEA)
+- `Pass 05`: phase-based variant fallback (PRESERVED_AS_DESIGN_IDEA)
+- `Pass 06`: board topology and position attributes (PLANNED, runs regardless of variant)
+- `Pass 07`: combat lab encounters focused on C1 (PLANNED)
+- `Pass 08`: evaluation and decision to promote C1 to canon or revive a preserved variant (PLANNED)
 
 ## Validation Command
 

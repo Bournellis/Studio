@@ -2,8 +2,8 @@
 
 - Last Updated: `2026-05-03`
 - Current Phase: `Fase 3 - Cardgame Core`
-- Current Baseline: `first playable slice with menu, 2D map, NPC card reward, deck setup, scripted duel, result flow, and GUT validation`
-- Current Product Focus: `prioritize the standalone cardgame combat loop before RPG progression, character stats, lore content, or campaign systems`
+- Current Baseline: `first playable slice with menu, 2D map, NPC card reward, deck setup, scripted duel, explicit phase state machine, and GUT validation`
+- Current Product Focus: `prototype the C1 combat variant (continuous main phase, shared priority, attacks as actions) as the active cardgame direction, before expanding RPG progression, character stats, lore content, or campaign systems`
 
 ## Roadmap Formal
 
@@ -88,7 +88,7 @@ Nao faz parte desta fase:
 
 ### Fase 3 - Cardgame Core
 
-Status: `PASS_01_DONE`
+Status: `PASS_02_DONE`
 
 Objetivo: evoluir o prototipo de batalha como um cardgame primeiro, testando profundidade, clareza e variacao antes de investir em RPG, personagem, stats, lore ou campanha.
 
@@ -122,15 +122,32 @@ Entregas ja implementadas no primeiro passe:
 - botao `Poder heroico` no topo do combate
 - feedback textual e testes de motor/UI para o poder heroico
 
+Entregas ja implementadas no segundo passe:
+
+- maquina de fases explicita no motor de batalha
+- sequencia padrao `round_start -> draw -> main_1 -> combat -> main_2 -> turn_end`
+- fases automaticas resolvem sem input do jogador
+- fases interativas avancam por acao do jogador
+- UI de combate exibe a fase atual
+- botao principal muda entre ir para combate, resolver combate e encerrar turno
+- cartas e poder heroico ficam bloqueados fora das fases principais
+- testes de motor e UI cobrem ordem de fases, transicoes automaticas e bloqueio de acoes
+
+Decisao de direcao (2026-05-03):
+
+- A direcao de combate ativa e `C1 - Continuous Main Phase With Shared Priority And Attack Actions`.
+- As variantes A1/A2/B1/B2 e a estrutura phase-based com Combat dedicado ficam preservadas como ideias de design em `../docs/cardgame-core-experiments.md`, mas nao sao alvos de implementacao.
+- O lab de variantes foi colapsado para focar esforco em uma unica direcao coerente.
+
 Plano de implementacao atual:
 
-- `Pass 02`: maquina de fases explicita
-- `Pass 03`: experimento de prioridade
-- `Pass 04`: experimento de resolucao de combate
-- `Pass 05`: variante de fase principal continua sem fase de combate
-- `Pass 06`: topologia de tabuleiro e atributos de posicao
-- `Pass 07`: encontros de laboratorio para as cinco variacoes principais
-- `Pass 08`: avaliacao e escolha de uma direcao principal
+- `Pass 02`: maquina de fases explicita `DONE`
+- `Pass 03`: implementar variante C1 (continuous main phase, prioridade compartilhada, ataques como acoes) `NEXT`
+- `Pass 04`: experimento de resolucao de combate (B1 vs B2) `PRESERVED_AS_DESIGN_IDEA`
+- `Pass 05`: variante phase-based alternativa `PRESERVED_AS_DESIGN_IDEA`
+- `Pass 06`: topologia de tabuleiro e atributos de posicao `PLANNED`
+- `Pass 07`: encontros de laboratorio focados em C1 `PLANNED`
+- `Pass 08`: avaliacao e decisao de promover C1 a canon ou voltar para fallback `PLANNED`
 
 Documentos de referencia:
 
@@ -215,6 +232,6 @@ Gates esperados:
 
 ## Onde Estamos
 
-Estamos na `Fase 3 - Cardgame Core`, com o primeiro passe de combate implementado.
+Estamos na `Fase 3 - Cardgame Core`, com a maquina de fases da Pass 02 implementada e a direcao C1 escolhida como foco principal de prototipo.
 
-A `Fase 1` provou o loop completo, e a `Fase 2` deixou o slice mais confortavel para playtest. A prioridade agora e tratar o combate como o produto principal: reavaliar turno, testar formatos de tabuleiro, experimentar posicoes com atributos, ampliar cartas/encontros e balancear o cardgame antes de abrir progressao RPG, personagem, stats, lore ou conteudo narrativo.
+A `Fase 1` provou o loop completo, e a `Fase 2` deixou o slice mais confortavel para playtest. A `Fase 3 Pass 02` adicionou a maquina de fases configuravel que permite plugar variantes diferentes na mesma engine de batalha. A decisao de 2026-05-03 e perseguir C1 (sem fase de combate dedicada, prioridade compartilhada, ataques como acoes de Main Phase) como a direcao principal a ser prototipada e playtestada antes de abrir progressao RPG, personagem, stats, lore ou conteudo narrativo. As demais variantes seguem documentadas como ideias de design preservadas, prontas para servir de fallback.
