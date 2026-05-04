@@ -342,6 +342,165 @@
       "keywords": [],
       "text": "Criatura robusta para o centro.",
       "effect": {}
+    },
+    {
+      "id": "corvo_batedor",
+      "display_name": "Corvo Batedor",
+      "type": "criatura",
+      "cost": 2,
+      "command_cost": 2,
+      "speed": "normal",
+      "attack": 1,
+      "health": 2,
+      "keywords": [
+        "voadora",
+        "rapido"
+      ],
+      "text": "Voadora, Rapido. Entra pronta e pode atacar imediatamente, incluindo slots alto. Imune a fisico_melee.",
+      "effect": {}
+    },
+    {
+      "id": "lobo_alfa",
+      "display_name": "Lobo-Alfa",
+      "type": "criatura",
+      "cost": 3,
+      "command_cost": 3,
+      "speed": "normal",
+      "attack": 4,
+      "health": 2,
+      "keywords": [
+        "atropelar"
+      ],
+      "text": "Atropelar. Excesso de dano passa para o proximo slot ou heroi inimigo.",
+      "effect": {}
+    },
+    {
+      "id": "relampago",
+      "display_name": "Relampago",
+      "type": "magia",
+      "cost": 3,
+      "command_cost": 3,
+      "speed": "instantanea",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Instantanea. Causa 4 de dano magico a qualquer alvo, incluindo slots alto. Mantem prioridade.",
+      "effect": {
+        "damage": 4,
+        "damage_type": "magico",
+        "ranged": true
+      }
+    },
+    {
+      "id": "arqueira_voante",
+      "display_name": "Arqueira Voante",
+      "type": "criatura",
+      "cost": 4,
+      "command_cost": 4,
+      "speed": "normal",
+      "attack": 2,
+      "health": 4,
+      "keywords": [
+        "voadora",
+        "alcance"
+      ],
+      "text": "Voadora, Alcance. Ataca com fisico_alcance, pode atingir slots alto, ignorando intermediarios. Reduzida por cobertura. Imune a fisico_melee.",
+      "effect": {}
+    },
+    {
+      "id": "chuva_brasas",
+      "display_name": "Chuva de Brasas",
+      "type": "magia_de_tabuleiro",
+      "cost": 4,
+      "command_cost": 4,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Aplica queimando a todos os slots inimigos. Criaturas que permanecerem no slot tomam 1 de dano por turno no upkeep. Podem escapar movendo.",
+      "effect": {
+        "apply_status": "queimando",
+        "target": "all_enemy_slots"
+      }
+    },
+    {
+      "id": "campeao_guilda",
+      "display_name": "Campeao da Guilda",
+      "type": "criatura",
+      "cost": 5,
+      "command_cost": 5,
+      "speed": "normal",
+      "attack": 5,
+      "health": 5,
+      "keywords": [],
+      "text": "Criatura 5/5 sem keyword. Presenca dominante no mid-late game.",
+      "effect": {}
+    },
+    {
+      "id": "torre_blindada",
+      "display_name": "Torre Blindada",
+      "type": "estrutura",
+      "cost": 5,
+      "command_cost": 5,
+      "speed": "normal",
+      "attack": 3,
+      "health": 7,
+      "keywords": [
+        "alcance",
+        "cobertura"
+      ],
+      "text": "Alcance, Cobertura. Ataca com fisico_alcance. Reduz 1 de dano fisico_alcance recebido, empilhando com terreno cobertura. Nao pode mover.",
+      "effect": {}
+    },
+    {
+      "id": "chamado_hostes",
+      "display_name": "Chamado das Hostes",
+      "type": "magia_de_tabuleiro",
+      "cost": 5,
+      "command_cost": 5,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Remove enjoo de todas as criaturas amigas. Todas ficam pronta e podem atacar imediatamente apos retorno de prioridade.",
+      "effect": {
+        "remove_status": "enjoo",
+        "apply_status": "pronta",
+        "target": "all_friendly_creatures"
+      }
+    },
+    {
+      "id": "flagelo",
+      "display_name": "Flagelo",
+      "type": "magia",
+      "cost": 6,
+      "command_cost": 6,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Causa 6 de dano magico a qualquer alvo, incluindo slots alto. Passa prioridade apos resolucao.",
+      "effect": {
+        "damage": 6,
+        "damage_type": "magico",
+        "ranged": true
+      }
+    },
+    {
+      "id": "dragao_jovem",
+      "display_name": "Dragao Jovem",
+      "type": "criatura",
+      "cost": 6,
+      "command_cost": 6,
+      "speed": "normal",
+      "attack": 5,
+      "health": 6,
+      "keywords": [
+        "voadora",
+        "atropelar"
+      ],
+      "text": "Voadora, Atropelar. Ataca com fisico_melee mas pode atingir slots alto. Imune a fisico_melee. Excesso de dano passa para proximo slot nao-voadora ou heroi inimigo.",
+      "effect": {}
     }
   ],
   "boards": [

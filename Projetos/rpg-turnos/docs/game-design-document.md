@@ -48,9 +48,9 @@ MVP defaults:
 
 - player hero: 25 HP
 - duel enemy hero: 20 HP
-- max energy: 3
-- energy recharges to max on the controller's own upkeep
-- unspent energy remains until the controller's next upkeep
+- max energy: starts at 3 on turn 1, increases by 1 each subsequent turn, capped at 8
+- energy recharges to current max on the controller's own upkeep
+- unspent energy is lost at end of turn (does not carry to next upkeep)
 - initial hand: 4
 - draw: 1 on own draw phase after the initial hand
 - hand limit: 8
@@ -96,6 +96,8 @@ All damage has an origin type that determines what defenses apply:
 - `fisico_melee`: creature attacks without `alcance`; blocked by intermediate occupants; cannot reach `alto` slots; not reduced by `cobertura`
 - `fisico_alcance`: attacks from creatures or structures with the `alcance` keyword; ignores intermediate occupants; can reach `alto` slots; reduced by `cobertura` (terrain and/or keyword, stacking, minimum 0)
 - `magico`: damage from spells (`magia` and `magia_de_tabuleiro`); ignores `cobertura`; ranged spells (`ranged: true`) can target any slot including `alto` and ignore intermediate occupants; non-ranged spells target slots reachable via the caster's melee routes
+
+`voadora` creatures without `alcance` deal `fisico_melee` damage; the normal `fisico_melee` restriction on `alto` slots does not apply to them (they are airborne). `voadora` creatures that also have `alcance` deal `fisico_alcance` and are reduced by `cobertura` normally.
 
 ### Board Topology And Routes
 
@@ -218,7 +220,7 @@ A `criatura` (not `estrutura`) may spend priority once per turn as a normal acti
 - `atropelar`: excess damage carries to the next slot or enemy hero (see Attack Rules)
 - `alcance`: deals `fisico_alcance` damage; ignores intermediate occupants; can reach `ranged_targets` and `alto` slots
 - `cobertura`: reduces incoming `fisico_alcance` damage by 1; stacks with terrain `cobertura`
-- `voadora`: enters as `pronta`; can attack `alto` slots and any slot in its routes; cannot be targeted by `fisico_melee`; transparent to melee routing
+- `voadora`: enters as `pronta`; can attack `alto` slots and any slot in its routes; cannot be targeted by `fisico_melee`; transparent to melee routing; deals `fisico_melee` damage (elevation restriction does not apply); if also has `alcance`, deals `fisico_alcance` instead
 
 ## 5. Battle Modes
 

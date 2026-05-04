@@ -166,3 +166,17 @@ Implement three damage types. Every damage source must carry one:
 - When a permanent is in a neutral slot, the engine resolves its attack routes using `player_targets` if the permanent belongs to the player, or `enemy_targets` if it belongs to the enemy.
 - Route blocking rules (non-`voadora` first occupant, `alcance` ignores, etc.) apply identically to neutral routes.
 - `cruzamento_neutro` board uses this: N1 is a contested central zone where the occupying controller can attack the opposite front row.
+
+### 16. Energy ramp system (Pass 02)
+
+- Replace fixed `max_energy = 3` with a ramping system.
+- On each controller's upkeep, increment that controller's `max_energy` by 1 if below 8.
+- Turn 1: max 3. Turn 2: max 4. ... Turn 6+: max 8 (capped).
+- Energy recharges to current max on upkeep. Unspent energy is lost (not carried over).
+- Both player and enemy controllers ramp independently on their own upkeeps.
+
+### 17. `voadora` damage type ruling
+
+- A `voadora` creature **without** `alcance` deals `fisico_melee` damage. The normal restriction that `fisico_melee` cannot reach `alto` slots does NOT apply to `voadora` creatures (they are airborne). `cobertura` does not reduce their attacks.
+- A `voadora` creature **with** `alcance` deals `fisico_alcance` damage normally. `cobertura` (terrain and keyword, stacking) reduces their attacks.
+- This distinction matters for `cobertura` interaction and for `atropelar` excess damage type inheritance.
