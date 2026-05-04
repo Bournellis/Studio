@@ -29,15 +29,17 @@
 - The active mode is `limpar_mesa`.
 - The old `Duelo antigo` button has been removed.
 - The battle engine uses `controladores`, `modo_batalha`, `tabuleiro`, `turno`, `fase_principal`, and shared priority.
-- Public phases are `manutencao`, `compra`, and `fase_principal`.
+- Public phases are `manutencao`, `compra`, `fase_principal`, and `descarte`.
 - Cleanup is internal.
 - Player hero starts at 25 HP.
 - Duel enemy hero baseline is 20 HP, used by the next official mode.
 - Energy max starts at 3, increases by 1 per turn, capped at 8; refreshes to current max on the controller's upkeep.
 - Initial hand is 5 cards.
-- Hand limit starts at 5, increases by 1 per turn, capped at 7; draw phase fills hand to current limit.
+- Hand limit starts at 5, increases by 1 per turn, capped at 7 (carry-over limit, enforced at end of descarte phase); draw phase fills hand to current limit.
+- Temporary hand ceiling is 8; a controller may hold up to 8 cards at any point during their turn.
+- Immediate discard trigger: if hand reaches 9 at any point, discard immediately to 8; the descarte phase then handles the reduction to 7.
 - Deck is cyclic: played cards and destroyed permanents go to the bottom of the owner's deck. No discard pile.
-- End-of-turn discard: player may optionally cycle any cards back to the bottom of the deck before ending their turn.
+- Descarte phase (4th public phase): player must discard down to 7; enemy auto-discards lowest-cost card(s) if over 7; voluntary extra discards allowed for the player.
 - Hero power is `Preparar Defesa`: costs 1 energy and grants 2 persistent armor.
 - Enemy decisions resolve automatically until priority returns to the player.
 - UI emits simple no-asset feedback for attack, damage, summon, armor, buff, and destruction.
@@ -138,31 +140,33 @@ Replace the discard pile concept entirely:
 - The deck never runs out. There is no deck-out loss condition.
 - All code references to a discard pile (`pilha_descarte`, `discard`, etc.) must be replaced with bottom-of-deck insertion.
 
-### B6. Hand size progression and draw-up rule
+### B6. Hand size progression, draw-up rule, and temporary ceiling
 
 Replace the fixed hand limit and fixed draw-1 rule:
 
 - **Initial hand:** 5 cards (dealt at game start from the top of the deck).
-- **Hand limit progression:** starts at 5 on turn 1, increases by 1 on each of the controller's own upkeeps, capped at 7. Track as `max_hand_size` per controller.
+- **Hand limit progression:** starts at 5 on turn 1, increases by 1 on each of the controller's own upkeeps, capped at 7. Track as `max_hand_size` per controller. This is the carry-over limit enforced at the end of the descarte phase.
+- **Temporary ceiling:** 8 cards. A controller may hold up to 8 cards at any point during their turn.
 - **Draw phase (`compra`):** draw cards from the top of the deck until `hand.size() == max_hand_size`. If the hand is already at or above the limit, draw nothing.
-- **Over-limit rule:** if `hand.size() > 7` for any reason (e.g. a card effect), the controller must immediately send cards from hand to the bottom of the deck until `hand.size() == 7`.
-- The enemy controller uses the same draw-up rule and hand limit progression.
+- **Immediate discard trigger:** if `hand.size() >= 9` for any reason at any point during play, the controller must immediately send cards from hand to the bottom of the deck until `hand.size() == 8`. This does not wait for the descarte phase. Reaching 8 is normal and allowed; only 9 triggers immediate action.
+- The enemy controller uses the same draw-up rule, hand limit progression, and ceiling rules.
 
-### B7. End-of-turn discard step (player only)
+### B7. Descarte phase (4th public phase)
 
-Add an optional discard step at the end of the **player controller's** main phase:
+Add `descarte` as the fourth and final public phase of the turn, after `fase_principal`:
 
-- Triggered just before the second consecutive pass that closes the main phase.
-- The UI presents the player's current hand and allows selecting zero or more cards to cycle back to the bottom of the deck.
-- After the player confirms, the selected cards move to the bottom of the deck and the phase ends.
-- The **enemy controller skips this step** entirely; the AI always retains its full hand.
+- The `descarte` phase begins automatically after the `fase_principal` ends (after both consecutive passes).
+- **Player controller:** the UI presents the player's current hand; the player must select cards to send to the bottom of the deck until `hand.size() <= 7`; if already at 7 or fewer, no mandatory discard is required, but the player may voluntarily discard additional cards.
+- **Enemy controller:** the AI automatically discards the lowest-cost card(s) until `hand.size() <= 7`; if already at 7 or fewer, no action is taken.
+- After the descarte phase resolves for both controllers, cleanup runs internally and the turn ends.
 
-### B8. Over-limit discard enforcement
+### B8. Immediate over-limit enforcement
 
-If any game effect causes a controller's hand to exceed 7 cards at any point:
+If any game effect causes a controller's hand to reach 9 or more cards at any point during play (outside of the normal descarte phase):
 
-- For the player: trigger the same discard UI used in B7, restricted to sending cards until `hand.size() == 7`.
-- For the enemy AI: automatically discard the lowest-cost card(s) until `hand.size() == 7`.
+- For the player: trigger the same discard UI used in B7, restricted to sending cards until `hand.size() == 8`.
+- For the enemy AI: automatically discard the lowest-cost card(s) until `hand.size() == 8`.
+- Note: holding 8 cards is normal and allowed during the turn. Only reaching 9 triggers this immediate response. The descarte phase then handles the final reduction from 8 to 7 at end of turn.
 
 ---
 
@@ -357,26 +361,4 @@ Implement the wave encounter mode. Requires Phase D (duelo) to be complete as it
 
 - The enemy side has no hero. Victory is achieved when all waves have been cleared.
 - Defeat occurs when the player hero reaches 0 HP at any point during any wave.
-- Between waves, nothing resets: hero HP, deck state, hand, and energy ramp all persist exactly as they were when the last enemy permanent was removed.
-- Player permanents remain on the board between waves; only enemy permanents are removed.
-- The next wave spawns at the start of the enemy's upkeep after the previous wave is fully cleared.
-
-### G2. `ondas` encounter JSON structure
-
-Encounters using `"mode": "ondas"` use a `"waves"` array instead of `"starting_enemy_slots"`:
-
-```json
-{
-  "mode": "ondas",
-  "waves": [
-    {"wave_number": 1, "starting_enemy_slots": [{"slot": 0, "card_id": "..."}]},
-    {"wave_number": 2, "starting_enemy_slots": [{"slot": 0, "card_id": "..."}, ...]}
-  ]
-}
-```
-
-The engine reads the current wave index from the encounter state. When all enemy permanents are destroyed and `wave_index < waves.length - 1`, increment `wave_index` and spawn the next wave on the enemy's next upkeep. When the last wave is cleared, trigger victory.
-
-### G3. Optional encounter unlock
-
-`invasao_em_ondas` is an optional encounter that unlocks after `patrulha_avancada` is completed. It is not part of the main encounter chain. The world map marker system (Phase E) must support optional unlock conditions in addition to the linear chain.
+- Between waves, nothing resets: hero HP, deck state, hand, and energ
