@@ -4,13 +4,13 @@
     "id": "aprendiz_limiar",
     "display_name": "Aprendiz do Limiar",
     "max_health": 25,
-    "hero_power_text": "Preparar Defesa: custo 1, ganhe 2 de armadura."
+    "hero_power_text": "Preparar Defesa: custo 1, velocidade normal, uso 1x no proprio turno. Ganha 2 armadura."
   },
   "enemy_hero": {
     "id": "duelista_bandido",
     "display_name": "Duelista Bandido",
     "max_health": 20,
-    "hero_power_text": "IA de duelo simples."
+    "hero_power_text": "Golpe Direto: custo 0, velocidade normal, uso 1x no proprio turno. Causa 1 de dano no heroi inimigo."
   },
   "starter_deck": [
     "escudeiro",
@@ -47,7 +47,7 @@
       "health": 2,
       "keywords": [],
       "text": "Criatura simples 2/2.",
-      "effect": {"size": "pequeno"}
+      "effect": {}
     },
     {
       "id": "guarda_vila",
@@ -60,7 +60,7 @@
       "health": 4,
       "keywords": ["defensor"],
       "text": "Defensor. Bom para segurar uma rota.",
-      "effect": {"size": "medio"}
+      "effect": {}
     },
     {
       "id": "lobo_faminto",
@@ -73,7 +73,7 @@
       "health": 1,
       "keywords": ["rapido"],
       "text": "Rapido. Pode atacar no turno em que entra.",
-      "effect": {"size": "pequeno"}
+      "effect": {}
     },
     {
       "id": "soldado_linha",
@@ -86,7 +86,7 @@
       "health": 3,
       "keywords": [],
       "text": "Criatura media para disputar a frente.",
-      "effect": {"size": "medio"}
+      "effect": {}
     },
     {
       "id": "arqueira_penhasco",
@@ -99,7 +99,7 @@
       "health": 2,
       "keywords": ["alcance"],
       "text": "Alcance. Em espaco alto, pressiona rotas diagonais.",
-      "effect": {"size": "medio", "ranged": true}
+      "effect": {"ranged": true}
     },
     {
       "id": "bruto_mercenario",
@@ -112,7 +112,7 @@
       "health": 4,
       "keywords": [],
       "text": "Corpo pesado para vencer uma linha.",
-      "effect": {"size": "grande"}
+      "effect": {}
     },
     {
       "id": "javali_guerra",
@@ -124,8 +124,8 @@
       "attack": 4,
       "health": 2,
       "keywords": ["atropelar"],
-      "text": "Atropelar. Testa excesso de dano em versoes futuras.",
-      "effect": {"size": "medio"}
+      "text": "Atropelar. Excesso de dano vai ao proximo slot ou ao heroi inimigo.",
+      "effect": {}
     },
     {
       "id": "barricada",
@@ -138,7 +138,7 @@
       "health": 5,
       "keywords": ["defensor"],
       "text": "Estrutura defensiva. Bloqueia a rota sem atacar.",
-      "effect": {"size": "medio"}
+      "effect": {}
     },
     {
       "id": "balista",
@@ -150,8 +150,8 @@
       "attack": 2,
       "health": 3,
       "keywords": ["alcance"],
-      "text": "Estrutura ofensiva para testar rotas e altura.",
-      "effect": {"size": "medio", "ranged": true}
+      "text": "Estrutura ofensiva. Alcance. Nao pode se mover.",
+      "effect": {"ranged": true}
     },
     {
       "id": "raio_curto",
@@ -203,7 +203,7 @@
       "health": 2,
       "keywords": [],
       "text": "Inimigo inicial da ponte.",
-      "effect": {"size": "pequeno"}
+      "effect": {}
     },
     {
       "id": "bruto_ponte",
@@ -216,7 +216,7 @@
       "health": 5,
       "keywords": [],
       "text": "Inimigo pesado da ponte.",
-      "effect": {"size": "grande"}
+      "effect": {}
     },
     {
       "id": "arqueiro_ponte",
@@ -229,7 +229,7 @@
       "health": 3,
       "keywords": ["alcance"],
       "text": "Inimigo em espaco alto.",
-      "effect": {"size": "medio", "ranged": true}
+      "effect": {"ranged": true}
     },
     {
       "id": "ladrao_rapido",
@@ -242,7 +242,7 @@
       "health": 1,
       "keywords": ["rapido"],
       "text": "Carta do duelista bandido.",
-      "effect": {"size": "pequeno"}
+      "effect": {}
     },
     {
       "id": "faca_arremessada",
@@ -263,13 +263,13 @@
       "id": "ponte_estavel",
       "display_name": "Ponte Estavel",
       "player_slots": [
-        {"id": "P1", "label": "P1", "terrain": "normal", "elevation": "normal", "accepts": ["criatura", "estrutura", "permanente"]},
-        {"id": "P2", "label": "P2", "terrain": "normal", "elevation": "normal", "accepts": ["criatura", "estrutura"], "size_limit": "medio"},
-        {"id": "P3", "label": "P3", "terrain": "cobertura", "elevation": "normal", "accepts": ["criatura", "estrutura", "permanente"]}
+        {"id": "P1", "label": "P1", "terrain": "normal", "elevation": "chao", "accepts": ["criatura", "estrutura", "permanente"]},
+        {"id": "P2", "label": "P2", "terrain": "normal", "elevation": "chao", "accepts": ["criatura", "estrutura", "permanente"]},
+        {"id": "P3", "label": "P3", "terrain": "cobertura", "elevation": "chao", "accepts": ["criatura", "estrutura", "permanente"]}
       ],
       "enemy_slots": [
-        {"id": "E1", "label": "E1", "terrain": "normal", "elevation": "normal", "accepts": ["criatura", "estrutura", "permanente"]},
-        {"id": "E2", "label": "E2", "terrain": "normal", "elevation": "normal", "accepts": ["criatura", "estrutura", "permanente"]},
+        {"id": "E1", "label": "E1", "terrain": "normal", "elevation": "chao", "accepts": ["criatura", "estrutura", "permanente"]},
+        {"id": "E2", "label": "E2", "terrain": "normal", "elevation": "chao", "accepts": ["criatura", "estrutura", "permanente"]},
         {"id": "E3", "label": "E3", "terrain": "normal", "elevation": "alto", "accepts": ["criatura", "estrutura", "permanente"]}
       ],
       "player_routes": {
@@ -287,14 +287,14 @@
       "id": "duelo_tres_linhas",
       "display_name": "Duelo de Tres Linhas",
       "player_slots": [
-        {"id": "P1", "label": "P1", "terrain": "normal", "elevation": "normal", "accepts": ["criatura", "estrutura", "permanente"]},
-        {"id": "P2", "label": "P2", "terrain": "normal", "elevation": "normal", "accepts": ["criatura", "estrutura", "permanente"]},
-        {"id": "P3", "label": "P3", "terrain": "normal", "elevation": "normal", "accepts": ["criatura", "estrutura", "permanente"]}
+        {"id": "P1", "label": "P1", "terrain": "normal", "elevation": "chao", "accepts": ["criatura", "estrutura", "permanente"]},
+        {"id": "P2", "label": "P2", "terrain": "normal", "elevation": "chao", "accepts": ["criatura", "estrutura", "permanente"]},
+        {"id": "P3", "label": "P3", "terrain": "normal", "elevation": "chao", "accepts": ["criatura", "estrutura", "permanente"]}
       ],
       "enemy_slots": [
-        {"id": "E1", "label": "E1", "terrain": "normal", "elevation": "normal", "accepts": ["criatura", "estrutura", "permanente"]},
-        {"id": "E2", "label": "E2", "terrain": "normal", "elevation": "normal", "accepts": ["criatura", "estrutura", "permanente"]},
-        {"id": "E3", "label": "E3", "terrain": "normal", "elevation": "normal", "accepts": ["criatura", "estrutura", "permanente"]}
+        {"id": "E1", "label": "E1", "terrain": "normal", "elevation": "chao", "accepts": ["criatura", "estrutura", "permanente"]},
+        {"id": "E2", "label": "E2", "terrain": "normal", "elevation": "chao", "accepts": ["criatura", "estrutura", "permanente"]},
+        {"id": "E3", "label": "E3", "terrain": "normal", "elevation": "chao", "accepts": ["criatura", "estrutura", "permanente"]}
       ],
       "player_routes": {
         "0": {"targets": [{"owner": "inimigo", "slot": 0}], "fallback": "hero"},
@@ -352,3 +352,4 @@
   ],
   "enemy_script": []
 }
+                                                                                                         

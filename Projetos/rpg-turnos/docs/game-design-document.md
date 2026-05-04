@@ -1,6 +1,6 @@
 # RPG Turnos Game Design Document
 
-- Version: `0.3`
+- Version: `0.4`
 - Last Updated: `2026-05-04`
 - Status: `C1_LOCKED_AS_CURRENT_CARDGAME_CORE`
 - Incorporated Source: `C:/Users/Fabio/Downloads/cardgame_slots_implementacao_codex_v0_1.md`
@@ -70,117 +70,56 @@ Efeito: ganha 2 armadura
 
 ## 4. Board, Cards, And Combat
 
-Board slots define owner, terrain, elevation, accepted card types, size limits, and attack routes.
+Board slots define owner, terrain, elevation, accepted card types, and attack routes. There is no size limit system.
 
-Initial terrains:
+### Slot Ownership And Neutral Areas
 
-- `normal`
-- `cobertura`: reduces ranged damage by 1
-- `alto`: used by boards to expose alternate routes for `alcance`
+Each slot belongs to either the player side, the enemy side, or a neutral area. Neutral area slots may exist in some boards and can be occupied by either controller. A controller may play or move a permanent into a neutral slot if it is empty.
+
+### Terrains And Elevation
+
+Terrains:
+
+- `normal`: no special rules
+- `cobertura`: reduces incoming ranged damage by 1
 - `queimando`: deals 1 damage to its occupant on that controller's upkeep
 
-Initial card types:
+Elevation values:
 
-- `criatura`
-- `estrutura`
-- `permanente`
-- `magia`
-- `magia_de_tabuleiro`
-- `comando`
+- `chao`: default ground level; all melee attacks operate here
+- `alto`: elevated position; melee attacks cannot reach `alto` slots; `alcance` and `voadora` creatures can attack `alto` slots
 
-Initial creature states:
+### Board Topology And Routes
 
-- `enjoo`: can block but cannot attack
-- `pronta`: may attack if a legal target exists
-- `exausta`: has attacked or used an exhausting action
-- destroyed: removed after action resolution
+Attack routes are fully defined by the board in JSON. There is no default route formula. Boards are expected to grow in complexity and be frequently asymmetric.
 
-Attack rules:
+Example topology for a standard 3x2 board:
 
-- attack is a normal action in `fase_principal`
-- the attacker must be ready, not exhausted, not sick unless `rapido`, have attack above 0, and have a legal route target
-- creature vs creature damage is simultaneous
-- damage on creatures persists
-- `limpar_mesa` uses no empty-lane hero fallback for player attacks
-- `duelo` allows empty-lane fallback to the enemy hero
-
-Initial keywords:
-
-- `rapido`
-- `defensor`
-- `atropelar`
-- `alcance`
-
-## 5. Battle Modes
-
-Current playable mode:
-
-### `limpar_mesa`
-
-The enemy side has slots, turns, upkeep, attacks, and triggers, but no enemy hero. Victory happens when relevant enemy permanents are gone.
-
-Current test encounter:
-
-```text
-Emboscada na Ponte
-
-INIMIGO
-[E1: Goblin 2/2] [E2: Bruto 4/5] [E3: Arqueiro 1/3 - Alto]
-
-JOGADOR
-[P1: Normal] [P2: Ponte Estreita] [P3: Cobertura]
+```
+P1  P2  P3
+E1  E2  E3
 ```
 
-Next official mode:
+In this layout P2/E2 (center) would typically have routes to three opposite slots; P1/E1 and P3/E3 (corners) would have routes to two. The board definition controls this explicitly.
 
-### `duelo`
+Route blocking rules:
 
-The enemy side has an enemy hero, deck, hand, energy, and AI. Victory happens when the enemy hero reaches 0 HP.
+- a melee attacker can only hit the first occupied slot along its route; if an intermediate slot is occupied, that occupant must be attacked first
+- if the route target is empty, the attack continues to the fallback defined by the encounter mode (`hero` or `none`)
+- a disconnected slot (no route from the attacker) is not a legal melee target
+- `alcance` creatures and spells can target any slot listed in their routes, ignoring intermediate occupants; they can also target slots with no melee route if those slots appear in `ranged_targets` defined by the board
+- `voadora` creatures follow the same targeting rules as `alcance` for slot reachability
 
-Future modes documented but not active:
+### Card Types
 
-- `ondas`
-- `defesa`
-- `chefe_multiparte`
-- `quebra_cabeca`
+- `criatura`: occupies a slot; has states; can move once per turn; can attack
+- `estrutura`: occupies a slot; has states; cannot move; can attack if ATK > 0; otherwise behaves identically to `criatura`
+- `permanente`: generic type for any card that occupies a slot without fitting the criatura or estrutura definition; specific rules written on the card
+- `magia`: instant or normal speed spell; does not occupy a slot; resolves and goes to discard
+- `magia_de_tabuleiro`: spell that affects all slots globally, or all slots on one side (player or enemy); does not occupy a slot; specific scope written on the card
+- `comando`: special card counted against the 4-command-card deck limit; rules written on the card
 
-## 6. Runtime Commitments
+### Creature And Structure States
 
-The runtime should remain data-driven:
-
-- cards in JSON
-- boards in JSON
-- encounters in JSON
-- generated Godot resources from authored JSON
-- battle rules visual-agnostic
-- UI presents state and feedback, but does not own rules
-
-The current UI must support:
-
-- one official encounter entry button
-- no variant selector
-- automatic enemy decisions
-- pause whenever priority returns to the player
-- simple no-asset feedback for attack, damage, summon, armor, buff, and destruction
-- resilient layout at `960x540`, `1100x619`, and `1280x720`
-
-## 7. Current MVP Card Set
-
-The starter deck has 20 cards:
-
-- 3x Escudeiro
-- 3x Guarda da Vila
-- 3x Lobo Faminto
-- 2x Soldado de Linha
-- 2x Arqueira de Penhasco
-- 1x Bruto Mercenario
-- 1x Javali de Guerra
-- 2x Barricada
-- 1x Balista
-- 2x Raio Curto
-
-The current reward card is `Golpe Preciso`.
-
-## 8. Historical Notes
-
-Previous notes that mention energy starting at 1, a 10-card deck, `Preparar` drawing a card, `Duelo antigo`, or phase variants are historical. They do not describe the active runtime.
+- `enjoo`: cannot attack; can block an attacker targeting its slot
+- `pronta`: may attack if a legal
