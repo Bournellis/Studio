@@ -58,7 +58,9 @@
       "speed": "normal",
       "attack": 1,
       "health": 4,
-      "keywords": ["defensor"],
+      "keywords": [
+        "defensor"
+      ],
       "text": "Defensor. Bom para segurar uma rota.",
       "effect": {}
     },
@@ -71,7 +73,9 @@
       "speed": "normal",
       "attack": 3,
       "health": 1,
-      "keywords": ["rapido"],
+      "keywords": [
+        "rapido"
+      ],
       "text": "Rapido. Pode atacar no turno em que entra.",
       "effect": {}
     },
@@ -97,9 +101,13 @@
       "speed": "normal",
       "attack": 2,
       "health": 2,
-      "keywords": ["alcance"],
+      "keywords": [
+        "alcance"
+      ],
       "text": "Alcance. Em espaco alto, pressiona rotas diagonais.",
-      "effect": {"ranged": true}
+      "effect": {
+        "ranged": true
+      }
     },
     {
       "id": "bruto_mercenario",
@@ -123,7 +131,9 @@
       "speed": "normal",
       "attack": 4,
       "health": 2,
-      "keywords": ["atropelar"],
+      "keywords": [
+        "atropelar"
+      ],
       "text": "Atropelar. Excesso de dano vai ao proximo slot ou ao heroi inimigo.",
       "effect": {}
     },
@@ -136,7 +146,9 @@
       "speed": "normal",
       "attack": 0,
       "health": 5,
-      "keywords": ["defensor"],
+      "keywords": [
+        "defensor"
+      ],
       "text": "Estrutura defensiva. Bloqueia a rota sem atacar.",
       "effect": {}
     },
@@ -149,9 +161,13 @@
       "speed": "normal",
       "attack": 2,
       "health": 3,
-      "keywords": ["alcance"],
+      "keywords": [
+        "alcance"
+      ],
       "text": "Estrutura ofensiva. Alcance. Nao pode se mover.",
-      "effect": {"ranged": true}
+      "effect": {
+        "ranged": true
+      }
     },
     {
       "id": "raio_curto",
@@ -162,9 +178,15 @@
       "speed": "instantanea",
       "attack": 0,
       "health": 0,
-      "keywords": ["instantaneo"],
+      "keywords": [
+        "instantaneo"
+      ],
       "text": "Instantanea. Causa 1 de dano a um alvo.",
-      "effect": {"action": "damage", "amount": 1, "ranged": true}
+      "effect": {
+        "action": "damage",
+        "amount": 1,
+        "ranged": true
+      }
     },
     {
       "id": "golpe_preciso",
@@ -177,7 +199,11 @@
       "health": 0,
       "keywords": [],
       "text": "Causa 3 de dano a um alvo.",
-      "effect": {"action": "damage", "amount": 3, "ranged": false}
+      "effect": {
+        "action": "damage",
+        "amount": 3,
+        "ranged": false
+      }
     },
     {
       "id": "manter_linha",
@@ -188,9 +214,14 @@
       "speed": "instantanea",
       "attack": 0,
       "health": 0,
-      "keywords": ["instantaneo"],
+      "keywords": [
+        "instantaneo"
+      ],
       "text": "Instantanea. Uma carta aliada recebe +0/+2.",
-      "effect": {"action": "buff_health", "amount": 2}
+      "effect": {
+        "action": "buff_health",
+        "amount": 2
+      }
     },
     {
       "id": "goblin_ponte",
@@ -227,9 +258,13 @@
       "speed": "normal",
       "attack": 1,
       "health": 3,
-      "keywords": ["alcance"],
+      "keywords": [
+        "alcance"
+      ],
       "text": "Inimigo em espaco alto.",
-      "effect": {"ranged": true}
+      "effect": {
+        "ranged": true
+      }
     },
     {
       "id": "ladrao_rapido",
@@ -240,7 +275,9 @@
       "speed": "normal",
       "attack": 2,
       "health": 1,
-      "keywords": ["rapido"],
+      "keywords": [
+        "rapido"
+      ],
       "text": "Carta do duelista bandido.",
       "effect": {}
     },
@@ -255,7 +292,56 @@
       "health": 0,
       "keywords": [],
       "text": "Causa 1 de dano.",
-      "effect": {"action": "damage", "amount": 1, "ranged": true}
+      "effect": {
+        "action": "damage",
+        "amount": 1,
+        "ranged": true
+      }
+    },
+    {
+      "id": "guardiao_portal",
+      "display_name": "Guardiao do Portal",
+      "type": "criatura",
+      "cost": 2,
+      "command_cost": 1,
+      "speed": "normal",
+      "attack": 1,
+      "health": 5,
+      "keywords": [
+        "defensor"
+      ],
+      "text": "Defensor. Muro resistente para segurar a linha de frente.",
+      "effect": {}
+    },
+    {
+      "id": "atirador_torre",
+      "display_name": "Atirador da Torre",
+      "type": "criatura",
+      "cost": 3,
+      "command_cost": 2,
+      "speed": "normal",
+      "attack": 2,
+      "health": 4,
+      "keywords": [
+        "alcance"
+      ],
+      "text": "Alcance. Em posicao elevada, pressiona todo o lado inimigo.",
+      "effect": {
+        "ranged": true
+      }
+    },
+    {
+      "id": "soldado_central",
+      "display_name": "Soldado Central",
+      "type": "criatura",
+      "cost": 2,
+      "command_cost": 1,
+      "speed": "normal",
+      "attack": 2,
+      "health": 3,
+      "keywords": [],
+      "text": "Criatura robusta para o centro.",
+      "effect": {}
     }
   ],
   "boards": [
@@ -263,48 +349,751 @@
       "id": "ponte_estavel",
       "display_name": "Ponte Estavel",
       "player_slots": [
-        {"id": "P1", "label": "P1", "terrain": "normal", "elevation": "chao", "accepts": ["criatura", "estrutura", "permanente"]},
-        {"id": "P2", "label": "P2", "terrain": "normal", "elevation": "chao", "accepts": ["criatura", "estrutura", "permanente"]},
-        {"id": "P3", "label": "P3", "terrain": "cobertura", "elevation": "chao", "accepts": ["criatura", "estrutura", "permanente"]}
+        {
+          "id": "P1",
+          "label": "P1",
+          "terrain": "normal",
+          "elevation": "chao",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        },
+        {
+          "id": "P2",
+          "label": "P2",
+          "terrain": "normal",
+          "elevation": "chao",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        },
+        {
+          "id": "P3",
+          "label": "P3",
+          "terrain": "cobertura",
+          "elevation": "chao",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        }
       ],
       "enemy_slots": [
-        {"id": "E1", "label": "E1", "terrain": "normal", "elevation": "chao", "accepts": ["criatura", "estrutura", "permanente"]},
-        {"id": "E2", "label": "E2", "terrain": "normal", "elevation": "chao", "accepts": ["criatura", "estrutura", "permanente"]},
-        {"id": "E3", "label": "E3", "terrain": "normal", "elevation": "alto", "accepts": ["criatura", "estrutura", "permanente"]}
+        {
+          "id": "E1",
+          "label": "E1",
+          "terrain": "normal",
+          "elevation": "chao",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        },
+        {
+          "id": "E2",
+          "label": "E2",
+          "terrain": "normal",
+          "elevation": "chao",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        },
+        {
+          "id": "E3",
+          "label": "E3",
+          "terrain": "normal",
+          "elevation": "alto",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        }
       ],
       "player_routes": {
-        "0": {"targets": [{"owner": "inimigo", "slot": 0}], "fallback": "none"},
-        "1": {"targets": [{"owner": "inimigo", "slot": 1}], "fallback": "none"},
-        "2": {"targets": [{"owner": "inimigo", "slot": 2}], "fallback": "none"}
+        "0": {
+          "targets": [
+            {
+              "owner": "inimigo",
+              "slot": 0
+            }
+          ],
+          "fallback": "none"
+        },
+        "1": {
+          "targets": [
+            {
+              "owner": "inimigo",
+              "slot": 1
+            }
+          ],
+          "fallback": "none"
+        },
+        "2": {
+          "targets": [
+            {
+              "owner": "inimigo",
+              "slot": 2
+            }
+          ],
+          "fallback": "none"
+        }
       },
       "enemy_routes": {
-        "0": {"targets": [{"owner": "jogador", "slot": 0}], "fallback": "hero"},
-        "1": {"targets": [{"owner": "jogador", "slot": 1}], "fallback": "hero"},
-        "2": {"targets": [{"owner": "jogador", "slot": 1}, {"owner": "jogador", "slot": 2}], "fallback": "hero"}
+        "0": {
+          "targets": [
+            {
+              "owner": "jogador",
+              "slot": 0
+            }
+          ],
+          "fallback": "hero"
+        },
+        "1": {
+          "targets": [
+            {
+              "owner": "jogador",
+              "slot": 1
+            }
+          ],
+          "fallback": "hero"
+        },
+        "2": {
+          "targets": [
+            {
+              "owner": "jogador",
+              "slot": 1
+            },
+            {
+              "owner": "jogador",
+              "slot": 2
+            }
+          ],
+          "fallback": "hero"
+        }
       }
     },
     {
       "id": "duelo_tres_linhas",
       "display_name": "Duelo de Tres Linhas",
       "player_slots": [
-        {"id": "P1", "label": "P1", "terrain": "normal", "elevation": "chao", "accepts": ["criatura", "estrutura", "permanente"]},
-        {"id": "P2", "label": "P2", "terrain": "normal", "elevation": "chao", "accepts": ["criatura", "estrutura", "permanente"]},
-        {"id": "P3", "label": "P3", "terrain": "normal", "elevation": "chao", "accepts": ["criatura", "estrutura", "permanente"]}
+        {
+          "id": "P1",
+          "label": "P1",
+          "terrain": "normal",
+          "elevation": "chao",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        },
+        {
+          "id": "P2",
+          "label": "P2",
+          "terrain": "normal",
+          "elevation": "chao",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        },
+        {
+          "id": "P3",
+          "label": "P3",
+          "terrain": "normal",
+          "elevation": "chao",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        }
       ],
       "enemy_slots": [
-        {"id": "E1", "label": "E1", "terrain": "normal", "elevation": "chao", "accepts": ["criatura", "estrutura", "permanente"]},
-        {"id": "E2", "label": "E2", "terrain": "normal", "elevation": "chao", "accepts": ["criatura", "estrutura", "permanente"]},
-        {"id": "E3", "label": "E3", "terrain": "normal", "elevation": "chao", "accepts": ["criatura", "estrutura", "permanente"]}
+        {
+          "id": "E1",
+          "label": "E1",
+          "terrain": "normal",
+          "elevation": "chao",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        },
+        {
+          "id": "E2",
+          "label": "E2",
+          "terrain": "normal",
+          "elevation": "chao",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        },
+        {
+          "id": "E3",
+          "label": "E3",
+          "terrain": "normal",
+          "elevation": "chao",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        }
       ],
       "player_routes": {
-        "0": {"targets": [{"owner": "inimigo", "slot": 0}], "fallback": "hero"},
-        "1": {"targets": [{"owner": "inimigo", "slot": 1}], "fallback": "hero"},
-        "2": {"targets": [{"owner": "inimigo", "slot": 2}], "fallback": "hero"}
+        "0": {
+          "targets": [
+            {
+              "owner": "inimigo",
+              "slot": 0
+            }
+          ],
+          "fallback": "hero"
+        },
+        "1": {
+          "targets": [
+            {
+              "owner": "inimigo",
+              "slot": 1
+            }
+          ],
+          "fallback": "hero"
+        },
+        "2": {
+          "targets": [
+            {
+              "owner": "inimigo",
+              "slot": 2
+            }
+          ],
+          "fallback": "hero"
+        }
       },
       "enemy_routes": {
-        "0": {"targets": [{"owner": "jogador", "slot": 0}], "fallback": "hero"},
-        "1": {"targets": [{"owner": "jogador", "slot": 1}], "fallback": "hero"},
-        "2": {"targets": [{"owner": "jogador", "slot": 2}], "fallback": "hero"}
+        "0": {
+          "targets": [
+            {
+              "owner": "jogador",
+              "slot": 0
+            }
+          ],
+          "fallback": "hero"
+        },
+        "1": {
+          "targets": [
+            {
+              "owner": "jogador",
+              "slot": 1
+            }
+          ],
+          "fallback": "hero"
+        },
+        "2": {
+          "targets": [
+            {
+              "owner": "jogador",
+              "slot": 2
+            }
+          ],
+          "fallback": "hero"
+        }
+      }
+    },
+    {
+      "id": "cruzamento_neutro",
+      "display_name": "Cruzamento Neutro",
+      "notes": "P2 alto (arqueiros apenas). N1 neutro disputado. E3 queimando. Testa: zona neutra, posicao elevada, terreno queimando, adjacencia lateral.",
+      "player_slots": [
+        {
+          "id": "P1",
+          "label": "P1",
+          "terrain": "normal",
+          "elevation": "chao",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        },
+        {
+          "id": "P2",
+          "label": "P2",
+          "terrain": "normal",
+          "elevation": "alto",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        },
+        {
+          "id": "P3",
+          "label": "P3",
+          "terrain": "cobertura",
+          "elevation": "chao",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        }
+      ],
+      "neutral_slots": [
+        {
+          "id": "N1",
+          "label": "N1",
+          "terrain": "normal",
+          "elevation": "chao",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        }
+      ],
+      "enemy_slots": [
+        {
+          "id": "E1",
+          "label": "E1",
+          "terrain": "normal",
+          "elevation": "chao",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        },
+        {
+          "id": "E2",
+          "label": "E2",
+          "terrain": "normal",
+          "elevation": "chao",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        },
+        {
+          "id": "E3",
+          "label": "E3",
+          "terrain": "queimando",
+          "elevation": "chao",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        }
+      ],
+      "player_routes": {
+        "0": {
+          "targets": [
+            {
+              "owner": "inimigo",
+              "slot": 0
+            },
+            {
+              "owner": "inimigo",
+              "slot": 1
+            }
+          ],
+          "fallback": "none"
+        },
+        "1": {
+          "targets": [],
+          "ranged_targets": [
+            {
+              "owner": "inimigo",
+              "slot": 0
+            },
+            {
+              "owner": "inimigo",
+              "slot": 1
+            },
+            {
+              "owner": "inimigo",
+              "slot": 2
+            },
+            {
+              "owner": "neutro",
+              "slot": 0
+            }
+          ],
+          "fallback": "none"
+        },
+        "2": {
+          "targets": [
+            {
+              "owner": "inimigo",
+              "slot": 2
+            },
+            {
+              "owner": "inimigo",
+              "slot": 1
+            }
+          ],
+          "fallback": "none"
+        }
+      },
+      "enemy_routes": {
+        "0": {
+          "targets": [
+            {
+              "owner": "jogador",
+              "slot": 0
+            },
+            {
+              "owner": "jogador",
+              "slot": 1
+            }
+          ],
+          "fallback": "hero"
+        },
+        "1": {
+          "targets": [
+            {
+              "owner": "jogador",
+              "slot": 0
+            },
+            {
+              "owner": "jogador",
+              "slot": 1
+            },
+            {
+              "owner": "jogador",
+              "slot": 2
+            }
+          ],
+          "fallback": "hero"
+        },
+        "2": {
+          "targets": [
+            {
+              "owner": "jogador",
+              "slot": 2
+            },
+            {
+              "owner": "jogador",
+              "slot": 1
+            }
+          ],
+          "fallback": "hero"
+        }
+      },
+      "neutral_routes": {
+        "0": {
+          "player_targets": [
+            {
+              "owner": "inimigo",
+              "slot": 0
+            },
+            {
+              "owner": "inimigo",
+              "slot": 1
+            }
+          ],
+          "enemy_targets": [
+            {
+              "owner": "jogador",
+              "slot": 0
+            },
+            {
+              "owner": "jogador",
+              "slot": 1
+            }
+          ],
+          "fallback": "hero"
+        }
+      }
+    },
+    {
+      "id": "muralha_desfiladeiro",
+      "display_name": "Muralha do Desfiladeiro",
+      "notes": "P1/P3 cobertura. Inimigo: E1-E3 frente (chao), EB1-EB2 fundo (chao), ET torre (alto). fallback_slots conectam frente ao fundo. ET so acessivel por alcance/voadora/spells. Testa: linha dupla, torre desconectada, cobertura vs alcance.",
+      "player_slots": [
+        {
+          "id": "P1",
+          "label": "P1",
+          "terrain": "cobertura",
+          "elevation": "chao",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        },
+        {
+          "id": "P2",
+          "label": "P2",
+          "terrain": "normal",
+          "elevation": "chao",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        },
+        {
+          "id": "P3",
+          "label": "P3",
+          "terrain": "cobertura",
+          "elevation": "chao",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        }
+      ],
+      "neutral_slots": [],
+      "enemy_slots": [
+        {
+          "id": "E1",
+          "label": "E1",
+          "terrain": "normal",
+          "elevation": "chao",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        },
+        {
+          "id": "E2",
+          "label": "E2",
+          "terrain": "normal",
+          "elevation": "chao",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        },
+        {
+          "id": "E3",
+          "label": "E3",
+          "terrain": "normal",
+          "elevation": "chao",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        },
+        {
+          "id": "EB1",
+          "label": "EB1",
+          "terrain": "normal",
+          "elevation": "chao",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        },
+        {
+          "id": "EB2",
+          "label": "EB2",
+          "terrain": "normal",
+          "elevation": "chao",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        },
+        {
+          "id": "ET",
+          "label": "ET",
+          "terrain": "normal",
+          "elevation": "alto",
+          "accepts": [
+            "criatura",
+            "estrutura",
+            "permanente"
+          ]
+        }
+      ],
+      "player_routes": {
+        "0": {
+          "targets": [
+            {
+              "owner": "inimigo",
+              "slot": 0
+            }
+          ],
+          "fallback_slots": [
+            {
+              "owner": "inimigo",
+              "slot": 3
+            }
+          ],
+          "ranged_targets": [
+            {
+              "owner": "inimigo",
+              "slot": 5
+            }
+          ],
+          "fallback": "hero"
+        },
+        "1": {
+          "targets": [
+            {
+              "owner": "inimigo",
+              "slot": 0
+            },
+            {
+              "owner": "inimigo",
+              "slot": 1
+            },
+            {
+              "owner": "inimigo",
+              "slot": 2
+            }
+          ],
+          "fallback_slots": [
+            {
+              "owner": "inimigo",
+              "slot": 3
+            },
+            {
+              "owner": "inimigo",
+              "slot": 4
+            }
+          ],
+          "ranged_targets": [
+            {
+              "owner": "inimigo",
+              "slot": 5
+            }
+          ],
+          "fallback": "hero"
+        },
+        "2": {
+          "targets": [
+            {
+              "owner": "inimigo",
+              "slot": 2
+            }
+          ],
+          "fallback_slots": [
+            {
+              "owner": "inimigo",
+              "slot": 4
+            }
+          ],
+          "ranged_targets": [
+            {
+              "owner": "inimigo",
+              "slot": 5
+            }
+          ],
+          "fallback": "hero"
+        }
+      },
+      "enemy_routes": {
+        "0": {
+          "targets": [
+            {
+              "owner": "jogador",
+              "slot": 0
+            },
+            {
+              "owner": "jogador",
+              "slot": 1
+            }
+          ],
+          "fallback": "hero"
+        },
+        "1": {
+          "targets": [
+            {
+              "owner": "jogador",
+              "slot": 0
+            },
+            {
+              "owner": "jogador",
+              "slot": 1
+            },
+            {
+              "owner": "jogador",
+              "slot": 2
+            }
+          ],
+          "fallback": "hero"
+        },
+        "2": {
+          "targets": [
+            {
+              "owner": "jogador",
+              "slot": 1
+            },
+            {
+              "owner": "jogador",
+              "slot": 2
+            }
+          ],
+          "fallback": "hero"
+        },
+        "3": {
+          "targets": [
+            {
+              "owner": "jogador",
+              "slot": 0
+            },
+            {
+              "owner": "jogador",
+              "slot": 1
+            }
+          ],
+          "fallback": "hero"
+        },
+        "4": {
+          "targets": [
+            {
+              "owner": "jogador",
+              "slot": 1
+            },
+            {
+              "owner": "jogador",
+              "slot": 2
+            }
+          ],
+          "fallback": "hero"
+        },
+        "5": {
+          "targets": [],
+          "ranged_targets": [
+            {
+              "owner": "jogador",
+              "slot": 0
+            },
+            {
+              "owner": "jogador",
+              "slot": 1
+            },
+            {
+              "owner": "jogador",
+              "slot": 2
+            }
+          ],
+          "fallback": "hero"
+        }
       }
     }
   ],
@@ -315,9 +1104,18 @@
       "mode": "limpar_mesa",
       "board_id": "ponte_estavel",
       "starting_enemy_slots": [
-        {"slot": 0, "card_id": "goblin_ponte"},
-        {"slot": 1, "card_id": "bruto_ponte"},
-        {"slot": 2, "card_id": "arqueiro_ponte"}
+        {
+          "slot": 0,
+          "card_id": "goblin_ponte"
+        },
+        {
+          "slot": 1,
+          "card_id": "bruto_ponte"
+        },
+        {
+          "slot": 2,
+          "card_id": "arqueiro_ponte"
+        }
       ]
     },
     {
@@ -348,8 +1146,53 @@
         "escudeiro"
       ],
       "starting_enemy_slots": []
+    },
+    {
+      "id": "emboscada_no_cruzamento",
+      "display_name": "Emboscada no Cruzamento",
+      "mode": "limpar_mesa",
+      "board_id": "cruzamento_neutro",
+      "notes": "E3 começa em queimando: o arqueiro toma 1 dano por upkeep inimigo, criando urgencia. N1 vazio e contestado. P2 alto ideal para Arqueira de Penhasco ou Balista.",
+      "starting_enemy_slots": [
+        {
+          "slot": 0,
+          "card_id": "goblin_ponte"
+        },
+        {
+          "slot": 1,
+          "card_id": "soldado_central"
+        },
+        {
+          "slot": 2,
+          "card_id": "arqueiro_ponte"
+        }
+      ]
+    },
+    {
+      "id": "fortaleza_do_desfiladeiro",
+      "display_name": "Fortaleza do Desfiladeiro",
+      "mode": "limpar_mesa",
+      "board_id": "muralha_desfiladeiro",
+      "notes": "ET (torre, alto) atira em todo o lado do jogador via alcance. P1/P3 cobertura reduz dano de ET em 1. EB1/EB2 vazios. Jogador precisa furar a frente E1-E3 (fallback_slots) ou usar alcance/voadora para snipe direto em ET.",
+      "starting_enemy_slots": [
+        {
+          "slot": 0,
+          "card_id": "guardiao_portal"
+        },
+        {
+          "slot": 1,
+          "card_id": "bruto_ponte"
+        },
+        {
+          "slot": 2,
+          "card_id": "guardiao_portal"
+        },
+        {
+          "slot": 5,
+          "card_id": "atirador_torre"
+        }
+      ]
     }
   ],
   "enemy_script": []
 }
-                                                                                                         

@@ -119,6 +119,63 @@ Route blocking rules:
 - `voadora` creatures follow the same targeting rules as `alcance` for slot reachability
 - ranged spells (`ranged: true`) target any slot ignoring intermediate occupants
 
+### Route Fields: fallback_slots And neutral_routes
+
+Route definitions in JSON support two additional fields beyond `targets`:
+
+**`fallback_slots`** (optional, ordered list): slots to try as melee targets before the mode's final fallback. Used to model double defensive lines. When the primary `targets` list is fully exhausted (no occupant found), the engine tries each slot in `fallback_slots` in order, using the same non-`voadora` occupant rule. Only if all `fallback_slots` are also empty does the mode's `fallback` (`hero` or `none`) apply.
+
+Example (P1 lane in `muralha_desfiladeiro`):
+```json
+"0": {
+  "targets": [{"owner": "inimigo", "slot": 0}],
+  "fallback_slots": [{"owner": "inimigo", "slot": 3}],
+  "fallback": "hero"
+}
+```
+
+In this case, a melee attack from P1 hits E1 if occupied; if E1 is empty, hits EB1 if occupied; only if both are empty does the mode fallback (`hero`) apply.
+
+**`neutral_routes`** (per neutral slot, keyed by neutral slot index): defines the attack routes for permanents placed in neutral slots. Each entry has two target lists depending on which controller owns the permanent:
+
+- `player_targets`: slots the player's permanent in this neutral slot can attack (ordered; first non-`voadora` occupant applies)
+- `enemy_targets`: slots the enemy's permanent in this neutral slot can attack
+- `fallback`: mode fallback if all targets are empty
+
+Example (N1 in `cruzamento_neutro`):
+```json
+"neutral_routes": {
+  "0": {
+    "player_targets": [{"owner": "inimigo", "slot": 0}, {"owner": "inimigo", "slot": 1}],
+    "enemy_targets": [{"owner": "jogador", "slot": 0}, {"owner": "jogador", "slot": 1}],
+    "fallback": "hero"
+  }
+}
+```
+
+### Reference Board Layouts
+
+#### `cruzamento_neutro` — Neutral Zone With Alto And Queimando
+
+```
+P1(chao)   P2(alto)   P3(chao,cobertura)
+              N1(chao)                     ← neutral slot
+E1(chao)   E2(chao)   E3(chao,queimando)
+```
+
+Mechanics exercised: neutral zone contested by both controllers, `alto` elevation (P2 is a high-ground archer perch only reachable by `alcance`/`voadora`/spells), `queimando` terrain on E3, lateral asymmetric routes, `ranged_targets` on P2 covering all enemy slots plus N1.
+
+#### `muralha_desfiladeiro` — Double Defensive Line With Tower
+
+```
+P1(chao,cob)   P2(chao)   P3(chao,cob)
+E1(chao)       E2(chao)   E3(chao)        ← front enemy line
+EB1(chao)      EB2(chao)                  ← back enemy line
+               ET(alto)                   ← tower (alto)
+```
+
+Mechanics exercised: `fallback_slots` connecting front to back row (P1→E1→EB1, P2→E1/E2/E3→EB1/EB2, P3→E3→EB2), `alto` tower (ET) only reachable by `alcance`/`voadora`/spells via `ranged_targets`, double `cobertura` on player flanks, asymmetric depth.
+
 ### Card Types
 
 - `criatura`: occupies a slot; has states; can move once per turn; can attack

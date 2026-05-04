@@ -151,3 +151,18 @@ Implement three damage types. Every damage source must carry one:
 
 - Use the custom deck defined in `slice_catalog.json` under the `duelista_bandido` encounter.
 - Do not use the player starter deck.
+
+### 14. `fallback_slots` engine support (Pass 02)
+
+- Route definitions in JSON may include a `fallback_slots` array (ordered list of slot refs) between `targets` and the mode `fallback`.
+- When all `targets` slots are empty (no non-`voadora` occupant found), the engine iterates `fallback_slots` in order, applying the same occupant-search logic.
+- Only after all `fallback_slots` are also exhausted does the mode `fallback` (`hero` or `none`) apply.
+- `muralha_desfiladeiro` board uses this to create a double defensive line: front slots (E1–E3) backed by rear slots (EB1–EB2).
+
+### 15. `neutral_routes` engine support (Pass 02)
+
+- Boards may define a `neutral_routes` object keyed by neutral slot index (string).
+- Each entry has `player_targets`, `enemy_targets`, and `fallback`.
+- When a permanent is in a neutral slot, the engine resolves its attack routes using `player_targets` if the permanent belongs to the player, or `enemy_targets` if it belongs to the enemy.
+- Route blocking rules (non-`voadora` first occupant, `alcance` ignores, etc.) apply identically to neutral routes.
+- `cruzamento_neutro` board uses this: N1 is a contested central zone where the occupying controller can attack the opposite front row.
