@@ -207,16 +207,26 @@ AI decision sequence each time the enemy has priority:
 
 Implement the encounter chain and card reward system. Touches different systems from Phase D and may be developed in parallel.
 
-### E1. Per-encounter reward cards in `slice_catalog.json`
+### E1. Reward cards in `slice_catalog.json`
 
-Each encounter object gains a `"reward_card_id"` field. The reward card is added to `unlocked_card_ids` once, on the first victory for that encounter. Current assignments:
+**Per-encounter rewards** — each encounter uses a `"reward_cards"` array (one or two card IDs). All cards in the array are added to `unlocked_card_ids` on the first victory for that encounter. Current assignments:
 
-- `emboscada_na_ponte` → `"reward_card_id": "lobo_alfa"`
-- `duelista_bandido` → `"reward_card_id": "relampago"`
-- `emboscada_no_cruzamento` → `"reward_card_id": "arqueira_voante"`
-- `fortaleza_do_desfiladeiro` → `"reward_card_id": "dragao_jovem"`
+- `emboscada_na_ponte` → `["lobo_alfa"]`
+- `duelista_bandido` → `["relampago", "flagelo"]`
+- `emboscada_no_cruzamento` → `["arqueira_voante", "torre_blindada"]`
+- `fortaleza_do_desfiladeiro` → `["dragao_jovem", "chamado_hostes"]`
 
-The global `"reward_card"` field at the catalog root remains — it is the card given by the NPC before the first encounter.
+**NPC progressive rewards** — the catalog root has a `"npc_reward_choices"` array: `["corvo_batedor", "chuva_brasas", "campeao_guilda"]`. On each NPC interaction after the first, the engine gives the player the next unclaimed card from this list (one per visit). The global `"reward_card"` field (currently `"golpe_preciso"`) is still given on the very first NPC visit and is not part of this list.
+
+This ensures all 10 new cards are accessible across the full progression:
+- NPC visit 1: `golpe_preciso`
+- NPC visit 2 (post encounter 1): `corvo_batedor`
+- NPC visit 3 (post encounter 2): `chuva_brasas`
+- NPC visit 4 (post encounter 3): `campeao_guilda`
+- `emboscada_na_ponte` clear: `lobo_alfa`
+- `duelista_bandido` clear: `relampago` + `flagelo`
+- `emboscada_no_cruzamento` clear: `arqueira_voante` + `torre_blindada`
+- `fortaleza_do_desfiladeiro` clear: `dragao_jovem` + `chamado_hostes`
 
 ### E2. `GameSession` multi-encounter tracking
 
@@ -224,6 +234,8 @@ Replace the single `is_encounter_completed: bool` with a set-based structure:
 
 - Add `completed_encounter_ids: Array[String]` (replaces `is_encounter_completed`)
 - Add `claimed_encounter_reward_ids: Array[String]` to track which encounter rewards have already been added to `unlocked_card_ids`
+- Add `npc_reward_index: int` (default 0) to track how many NPC progressive rewards have been given; incremented each time a card from `npc_reward_choices` is claimed
+- Add `claim_npc_progressive_reward() -> String` that returns the next unclaimed card from `npc_reward_choices` (by `npc_reward_index`), adds it to `unlocked_card_ids`, increments the index, and returns the card ID (or `""` if all have been claimed)
 - `active_encounter_id` must be settable dynamically by the world when the player interacts with a specific marker (remove the hardcoded constant)
 - Update `complete_encounter()` to append to `completed_encounter_ids` instead of setting a bool
 - Add `has_completed_encounter(id: String) -> bool` helper
@@ -254,10 +266,16 @@ Starting marker positions (placeholder, adjust in editor):
 
 In `result_root.gd`, on victory:
 
-1. Call `GameSession.claim_encounter_reward(active_encounter_id)`.
-2. If a new card is returned (first completion), display a "Carta desbloqueada: [display_name]" label in the result panel before the "Voltar ao mapa" button.
-3. If no new card (already claimed or encounter has no reward), show no unlock label.
-4. The "Voltar ao mapa" button remains; the player returns to `world.tscn` as before.
+1. Call `GameSession.claim_encounter_reward(active_encounter_id)` — this returns an `Array[String]` of newly unlocked card IDs (empty if already claimed or no rewards).
+2. If the array is non-empty, display one "Carta desbloqueada: [display_name]" line per card before the "Voltar ao mapa" button.
+3. If empty (already claimed), show no unlock label.
+4. The "Voltar ao mapa" button remains.
+
+In `world_root.gd`, on NPC interaction after the first reward:
+
+1. Call `GameSession.claim_npc_progressive_reward()`.
+2. If a card ID is returned, show it in the dialogue: "A viajante entrega mais uma carta: [display_name]."
+3. If `""` is returned (all progressive rewards claimed), show the existing idle dialogue.
 
 ---
 

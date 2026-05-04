@@ -1276,7 +1276,9 @@
           "card_id": "arqueiro_ponte"
         }
       ],
-      "reward_card_id": "lobo_alfa"
+      "reward_cards": [
+        "lobo_alfa"
+      ]
     },
     {
       "id": "duelista_bandido",
@@ -1287,33 +1289,37 @@
         "goblin_ponte",
         "goblin_ponte",
         "goblin_ponte",
-        "goblin_ponte",
         "ladrao_rapido",
         "ladrao_rapido",
-        "ladrao_rapido",
+        "faca_arremessada",
+        "corvo_batedor",
+        "corvo_batedor",
         "arqueiro_ponte",
         "arqueiro_ponte",
         "arqueiro_ponte",
+        "barricada",
+        "lobo_alfa",
+        "lobo_alfa",
+        "relampago",
+        "relampago",
         "bruto_mercenario",
         "bruto_mercenario",
-        "faca_arremessada",
-        "faca_arremessada",
-        "faca_arremessada",
-        "barricada",
-        "barricada",
-        "barricada",
-        "escudeiro",
-        "escudeiro"
+        "campeao_guilda",
+        "dragao_jovem"
       ],
       "starting_enemy_slots": [],
-      "reward_card_id": "relampago"
+      "reward_cards": [
+        "relampago",
+        "flagelo"
+      ],
+      "notes": "Deck agressivo e escalavel. Curva: 1-2 early pressure, 3 mid threats (atropelar, alcance, voadora), 3-4 removal (relampago instant, faca), 5-6 late threats (campeao, dragao voador). Exercita: voadora (corvo_batedor), rapido (ladrao, corvo), alcance (arqueiro), atropelar (lobo_alfa, dragao_jovem), magia instant (relampago), fisico_melee e fisico_alcance."
     },
     {
       "id": "emboscada_no_cruzamento",
       "display_name": "Emboscada no Cruzamento",
       "mode": "limpar_mesa",
       "board_id": "cruzamento_neutro",
-      "notes": "E3 começa em queimando: o arqueiro toma 1 dano por upkeep inimigo, criando urgencia. N1 vazio e contestado. P2 alto ideal para Arqueira de Penhasco ou Balista.",
+      "notes": "E3 (queimando): arqueiro sofre 1 de dano por upkeep, criando urgencia para o inimigo atacar rapido. E2 (corvo_batedor, voadora): nao pode ser atingido por fisico_melee, transparente para routing. Jogador precisa usar alcance, voadora propria ou magia para remover E2. N1 vazio e contestado. P2 (alto) ideal para Arqueira de Penhasco ou Balista.",
       "starting_enemy_slots": [
         {
           "slot": 0,
@@ -1321,14 +1327,17 @@
         },
         {
           "slot": 1,
-          "card_id": "soldado_central"
+          "card_id": "corvo_batedor"
         },
         {
           "slot": 2,
           "card_id": "arqueiro_ponte"
         }
       ],
-      "reward_card_id": "arqueira_voante"
+      "reward_cards": [
+        "arqueira_voante",
+        "torre_blindada"
+      ]
     },
     {
       "id": "fortaleza_do_desfiladeiro",
@@ -1354,8 +1363,16 @@
           "card_id": "atirador_torre"
         }
       ],
-      "reward_card_id": "dragao_jovem"
+      "reward_cards": [
+        "dragao_jovem",
+        "chamado_hostes"
+      ]
     }
   ],
-  "enemy_script": []
+  "enemy_script": [],
+  "npc_reward_choices": [
+    "corvo_batedor",
+    "chuva_brasas",
+    "campeao_guilda"
+  ]
 }
