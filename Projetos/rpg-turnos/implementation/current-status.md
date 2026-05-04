@@ -282,23 +282,32 @@ Replace the single `is_encounter_completed: bool` with a set-based structure:
 
 ### E3. World map encounter chain
 
-Replace the single encounter marker in `world_root.gd` with a data-driven list of markers:
+Replace the single encounter marker in `world_root.gd` with a data-driven list of markers. Markers have two categories: **main chain** (linear unlock, each requires the previous) and **optional** (unlock when a specified encounter is completed, no further dependency).
 
-- Markers are defined in order; the first is always available after the NPC reward card is claimed.
-- Each subsequent marker is locked until the previous encounter appears in `completed_encounter_ids`.
-- Each marker stores its `encounter_id` and a world position.
-- Locked markers: rendered in a muted color with no interaction prompt.
-- Available markers: rendered in the active color; pressing E sets `GameSession.active_encounter_id` to this marker's encounter ID and transitions to `deck_setup.tscn`.
-- Completed markers: rendered in the completed color; pressing E shows a dialogue ("Encontro concluído.") but allows re-entry for practice (no second reward).
+Marker behavior:
+- Locked: muted color, no interaction.
+- Available: active color; pressing E sets `GameSession.active_encounter_id` and transitions to `deck_setup.tscn`.
+- Completed: completed color; re-entry allowed for practice (no second reward).
 
-Starting marker positions (placeholder, adjust in editor):
+**Main chain** (linear, each unlocks the next):
 
-| Encounter | Position |
-|---|---|
-| `emboscada_na_ponte` | `Vector2(600, 330)` |
-| `duelista_bandido` | `Vector2(750, 330)` |
-| `emboscada_no_cruzamento` | `Vector2(900, 330)` |
-| `fortaleza_do_desfiladeiro` | `Vector2(900, 250)` |
+| Order | Encounter | Position |
+|---|---|---|
+| 1 | `emboscada_na_ponte` | `Vector2(400, 330)` |
+| 2 | `duelista_bandido` | `Vector2(550, 330)` |
+| 3 | `patrulha_avancada` | `Vector2(700, 330)` |
+| 4 | `emboscada_no_cruzamento` | `Vector2(850, 330)` |
+| 5 | `fortaleza_do_desfiladeiro` | `Vector2(1000, 330)` |
+| 6 | `duelista_sombrio` | `Vector2(1000, 220)` |
+
+**Optional encounters** (appear when unlock condition met, not required for main chain):
+
+| Encounter | Unlocks after | Position |
+|---|---|---|
+| `emboscada_reforcos` | `emboscada_na_ponte` | `Vector2(400, 220)` |
+| `invasao_em_ondas` | `patrulha_avancada` | `Vector2(700, 220)` |
+
+NPC progressive rewards trigger: give the next card from `npc_reward_choices` when the player has completed N main-chain encounters, where N equals the current `npc_reward_index` + 1. (Complete 1 main encounter → get choice 0; complete 2 → get choice 1; complete 3 → get choice 2.)
 
 ### E4. Result screen reward display
 
@@ -337,3 +346,37 @@ Boards may define a `neutral_routes` object keyed by neutral slot index (as a st
 - When resolving attacks from a permanent in a neutral slot, use `player_targets` if the permanent belongs to the player controller, or `enemy_targets` if it belongs to the enemy controller.
 - All standard route blocking rules apply (non-`voadora` first occupant for melee, `alcance` ignores intermediates, etc.).
 - `cruzamento_neutro` uses this: a permanent in N1 attacks the opposite front row depending on which controller owns it.
+
+---
+
+## Phase G — Pass 03: `ondas` Mode
+
+Implement the wave encounter mode. Requires Phase D (duelo) to be complete as it shares hero, deck, and energy state management.
+
+### G1. `ondas` mode rules
+
+- The enemy side has no hero. Victory is achieved when all waves have been cleared.
+- Defeat occurs when the player hero reaches 0 HP at any point during any wave.
+- Between waves, nothing resets: hero HP, deck state, hand, and energy ramp all persist exactly as they were when the last enemy permanent was removed.
+- Player permanents remain on the board between waves; only enemy permanents are removed.
+- The next wave spawns at the start of the enemy's upkeep after the previous wave is fully cleared.
+
+### G2. `ondas` encounter JSON structure
+
+Encounters using `"mode": "ondas"` use a `"waves"` array instead of `"starting_enemy_slots"`:
+
+```json
+{
+  "mode": "ondas",
+  "waves": [
+    {"wave_number": 1, "starting_enemy_slots": [{"slot": 0, "card_id": "..."}]},
+    {"wave_number": 2, "starting_enemy_slots": [{"slot": 0, "card_id": "..."}, ...]}
+  ]
+}
+```
+
+The engine reads the current wave index from the encounter state. When all enemy permanents are destroyed and `wave_index < waves.length - 1`, increment `wave_index` and spawn the next wave on the enemy's next upkeep. When the last wave is cleared, trigger victory.
+
+### G3. Optional encounter unlock
+
+`invasao_em_ondas` is an optional encounter that unlocks after `patrulha_avancada` is completed. It is not part of the main encounter chain. The world map marker system (Phase E) must support optional unlock conditions in addition to the linear chain.

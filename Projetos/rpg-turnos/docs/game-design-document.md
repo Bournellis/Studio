@@ -282,9 +282,30 @@ Enemy AI (deterministic, aggressive priority):
 
 Enemy deck: defined per encounter in JSON (`duelista_bandido` uses a custom deck).
 
+### `ondas`
+
+The enemy side has no hero. The encounter is divided into sequential waves. The next wave spawns at the start of the enemy's turn after all current enemy permanents have been removed.
+
+Wave rules:
+
+- Hero HP persists across all waves without resetting.
+- The deck state (hand, deck order, positions of cards) persists across waves.
+- The energy ramp continues from where it was; there is no energy reset between waves.
+- The board is cleared of enemy permanents only; player permanents remain in their slots.
+- Victory when all waves have been cleared.
+- Defeat when the player hero reaches 0 HP at any point.
+
+The JSON encounter definition uses a `"waves"` array instead of `"starting_enemy_slots"`:
+
+```json
+"waves": [
+  {"wave_number": 1, "starting_enemy_slots": [...]},
+  {"wave_number": 2, "starting_enemy_slots": [...]}
+]
+```
+
 Future modes documented but not active:
 
-- `ondas`
 - `defesa`
 - `chefe_multiparte`
 - `quebra_cabeca`

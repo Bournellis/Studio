@@ -1367,6 +1367,129 @@
         "dragao_jovem",
         "chamado_hostes"
       ]
+    },
+    {
+      "id": "patrulha_avancada",
+      "display_name": "Patrulha Avancada",
+      "mode": "limpar_mesa",
+      "board_id": "ponte_estavel",
+      "notes": "E1 (lobo_alfa, atropelar 4/2): ameaca agressiva. E2 (corvo_batedor, voadora+rapido): imune a fisico_melee, entra pronto. E3 (arqueiro_ponte, alcance): pressao a distancia. Encontro de transicao entre duelo e boards complexos — tres keywords simultaneamente num board familiar.",
+      "starting_enemy_slots": [
+        {
+          "slot": 0,
+          "card_id": "lobo_alfa"
+        },
+        {
+          "slot": 1,
+          "card_id": "corvo_batedor"
+        },
+        {
+          "slot": 2,
+          "card_id": "arqueiro_ponte"
+        }
+      ],
+      "reward_cards": []
+    },
+    {
+      "id": "duelista_sombrio",
+      "display_name": "Duelista Sombrio",
+      "mode": "duelo",
+      "board_id": "cruzamento_neutro",
+      "notes": "Segundo duelo no cruzamento_neutro. N1 disputado: quem controlar o slot central tem rotas adicionais. P2 (alto) alvo de atirador_torre inimigo. E3 (queimando): inimigo precisa mover criaturas de la ou toma 1/turno. Deck mais pesado: 3x corvo_batedor, 2x atirador_torre, dragao_jovem como finalizador.",
+      "enemy_deck": [
+        "goblin_ponte",
+        "goblin_ponte",
+        "ladrao_rapido",
+        "ladrao_rapido",
+        "corvo_batedor",
+        "corvo_batedor",
+        "corvo_batedor",
+        "arqueiro_ponte",
+        "arqueiro_ponte",
+        "atirador_torre",
+        "atirador_torre",
+        "lobo_alfa",
+        "lobo_alfa",
+        "faca_arremessada",
+        "faca_arremessada",
+        "relampago",
+        "bruto_mercenario",
+        "bruto_mercenario",
+        "campeao_guilda",
+        "dragao_jovem"
+      ],
+      "starting_enemy_slots": [],
+      "reward_cards": [
+        "campeao_guilda"
+      ]
+    },
+    {
+      "id": "emboscada_reforcos",
+      "display_name": "Emboscada com Reforcos",
+      "mode": "limpar_mesa",
+      "board_id": "ponte_estavel",
+      "notes": "Variante dificil da emboscada_na_ponte. E1 (bruto_ponte 4/5): corpo grande, precisa de 2 ataques ou remocao. E2 (corvo_batedor, voadora): imune a melee. E3 (atirador_torre 2/4 alcance): pressiona qualquer slot do jogador. Sem heroi inimigo mas sem respiro.",
+      "starting_enemy_slots": [
+        {
+          "slot": 0,
+          "card_id": "bruto_ponte"
+        },
+        {
+          "slot": 1,
+          "card_id": "corvo_batedor"
+        },
+        {
+          "slot": 2,
+          "card_id": "atirador_torre"
+        }
+      ],
+      "reward_cards": []
+    },
+    {
+      "id": "invasao_em_ondas",
+      "display_name": "Invasao em Ondas",
+      "mode": "ondas",
+      "board_id": "ponte_estavel",
+      "notes": "Primeiro encontro do modo ondas. Duas ondas no board mais familiar. Onda 1: pressao leve, permite aquecer. Onda 2: composicao mais pesada com voadora e atropelar. HP do heroi, estado do deck e rampa de energia persistem entre ondas. Proximo turno apos limpar onda 1: spawn da onda 2. Desbloqueado apos patrulha_avancada (paralelo ao caminho principal).",
+      "waves": [
+        {
+          "wave_number": 1,
+          "starting_enemy_slots": [
+            {
+              "slot": 0,
+              "card_id": "goblin_ponte"
+            },
+            {
+              "slot": 1,
+              "card_id": "ladrao_rapido"
+            },
+            {
+              "slot": 2,
+              "card_id": "arqueiro_ponte"
+            }
+          ]
+        },
+        {
+          "wave_number": 2,
+          "starting_enemy_slots": [
+            {
+              "slot": 0,
+              "card_id": "lobo_alfa"
+            },
+            {
+              "slot": 1,
+              "card_id": "corvo_batedor"
+            },
+            {
+              "slot": 2,
+              "card_id": "bruto_ponte"
+            }
+          ]
+        }
+      ],
+      "reward_cards": [
+        "chuva_brasas"
+      ]
     }
   ],
   "enemy_script": [],
