@@ -51,12 +51,27 @@ MVP defaults:
 - max energy: starts at 3 on turn 1, increases by 1 each subsequent turn, capped at 8
 - energy recharges to current max on the controller's own upkeep
 - unspent energy is lost at end of turn (does not carry to next upkeep)
-- initial hand: 4
-- draw: 1 on own draw phase after the initial hand
-- hand limit: 8
+- initial hand: 5 cards
+- hand limit: starts at 5 on turn 1, increases by 1 each subsequent turn, capped at 7
+- draw phase: draw cards from the top of the deck until hand size equals the current hand limit; if already at or above the limit, draw nothing
+- over-limit rule: if hand size exceeds 7 for any reason, the controller must discard cards to the bottom of the deck until hand size is 7
 - deck size: 20
 - deck command limit: 4 command cards
 - armor absorbs hero damage before health and persists until consumed
+
+Deck cycling rules:
+
+- there is no discard pile; all cards that leave play go to the bottom of the deck
+- when a spell (`magia`, `magia_de_tabuleiro`) resolves, it goes to the bottom of the owner's deck
+- when a permanent is destroyed, it goes to the bottom of its owner's deck
+- when a card is discarded from hand (by choice or over-limit), it goes to the bottom of the owner's deck
+- the deck never runs out; it cycles indefinitely
+
+End-of-turn discard:
+
+- before a controller ends their turn (just before their second consecutive pass that closes the main phase), the player controller may optionally send any number of cards from their hand to the bottom of their deck
+- this happens after all actions are resolved, before the phase-end transition
+- the enemy controller skips this step; the AI always retains its full hand
 
 Hero power:
 
@@ -313,4 +328,4 @@ The current reward card is `Golpe Preciso`.
 
 ## 8. Historical Notes
 
-Previous notes that mention energy starting at 1, a 10-card deck, `Preparar` drawing a card, `Duelo antigo`, or phase variants are historical. They do not describe the active runtime.
+Previous notes that mention energy starting at 1, a 10-card deck, `Preparar` drawing a card, `Duelo antigo`, phase variants, a fixed hand limit of 8, or a draw of 1 per turn are historical. They do not describe the active runtime.

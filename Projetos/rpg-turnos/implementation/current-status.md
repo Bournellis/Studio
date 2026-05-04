@@ -33,9 +33,11 @@
 - Cleanup is internal.
 - Player hero starts at 25 HP.
 - Duel enemy hero baseline is 20 HP, used by the next official mode.
-- Energy max starts at 3 and refreshes on the controller's upkeep.
-- Initial hand is 4 cards; later own draws are 1 card.
-- Hand limit is 8.
+- Energy max starts at 3, increases by 1 per turn, capped at 8; refreshes to current max on the controller's upkeep.
+- Initial hand is 5 cards.
+- Hand limit starts at 5, increases by 1 per turn, capped at 7; draw phase fills hand to current limit.
+- Deck is cyclic: played cards and destroyed permanents go to the bottom of the owner's deck. No discard pile.
+- End-of-turn discard: player may optionally cycle any cards back to the bottom of the deck before ending their turn.
 - Hero power is `Preparar Defesa`: costs 1 energy and grants 2 persistent armor.
 - Enemy decisions resolve automatically until priority returns to the player.
 - UI emits simple no-asset feedback for attack, damage, summon, armor, buff, and destruction.
@@ -125,6 +127,42 @@ Replace the fixed `max_energy = 3` constant with a per-controller ramping value:
 - `queimando` on a slot: on the occupying controller's upkeep, deals 1 damage to whichever creature occupies it; a creature can escape by moving to another slot.
 - `queimando` on a creature: on that controller's upkeep, deals 1 damage to the creature; follows the creature when it moves to a new slot.
 - Both can coexist simultaneously on the same slot and creature without interaction.
+
+### B5. Cyclic deck — no discard pile
+
+Replace the discard pile concept entirely:
+
+- When a spell (`magia`, `magia_de_tabuleiro`) resolves, it goes to the **bottom** of the owner's deck.
+- When a permanent is destroyed, it goes to the **bottom** of its owner's deck.
+- When a card is discarded from hand (by choice or over-limit), it goes to the **bottom** of the owner's deck.
+- The deck never runs out. There is no deck-out loss condition.
+- All code references to a discard pile (`pilha_descarte`, `discard`, etc.) must be replaced with bottom-of-deck insertion.
+
+### B6. Hand size progression and draw-up rule
+
+Replace the fixed hand limit and fixed draw-1 rule:
+
+- **Initial hand:** 5 cards (dealt at game start from the top of the deck).
+- **Hand limit progression:** starts at 5 on turn 1, increases by 1 on each of the controller's own upkeeps, capped at 7. Track as `max_hand_size` per controller.
+- **Draw phase (`compra`):** draw cards from the top of the deck until `hand.size() == max_hand_size`. If the hand is already at or above the limit, draw nothing.
+- **Over-limit rule:** if `hand.size() > 7` for any reason (e.g. a card effect), the controller must immediately send cards from hand to the bottom of the deck until `hand.size() == 7`.
+- The enemy controller uses the same draw-up rule and hand limit progression.
+
+### B7. End-of-turn discard step (player only)
+
+Add an optional discard step at the end of the **player controller's** main phase:
+
+- Triggered just before the second consecutive pass that closes the main phase.
+- The UI presents the player's current hand and allows selecting zero or more cards to cycle back to the bottom of the deck.
+- After the player confirms, the selected cards move to the bottom of the deck and the phase ends.
+- The **enemy controller skips this step** entirely; the AI always retains its full hand.
+
+### B8. Over-limit discard enforcement
+
+If any game effect causes a controller's hand to exceed 7 cards at any point:
+
+- For the player: trigger the same discard UI used in B7, restricted to sending cards until `hand.size() == 7`.
+- For the enemy AI: automatically discard the lowest-cost card(s) until `hand.size() == 7`.
 
 ---
 
