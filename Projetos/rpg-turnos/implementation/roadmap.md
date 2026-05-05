@@ -34,11 +34,51 @@ Includes:
 - victory by clearing relevant enemy units
 - no empty-lane hero fallback for player attacks
 
+## Active Passes (parallel to Battle Modes)
+
+### Phase H — Visual Layer Improvements
+
+Goal: improve battle HUD readability and feedback without importing art assets.
+
+Planned:
+- Discrete HUD nodes (energy_label, hp_bar, phase_label, priority_dot)
+- HP bar and energy pip row (ProgressBar / PipRowComponent)
+- Card type left-stripe color in BattleCardToken
+- Route/lane visual markers with named panels
+- Slot visual states (empty, occupied, highlighted, attack target)
+- Styled damage number labels per event type
+- Descarte counter UI panel
+
+### Phase I — Test Coverage
+
+Goal: raise GUT coverage to include all core battle interactions.
+
+Planned:
+- Fix 2 stale tests
+- 20 new tests: voadora, energy ramp, cyclic deck, hand progression, atropelar, defensor, magia_de_tabuleiro, descarte phase, immediate discard trigger
+
+### Phase J — Art-Ready Placeholder Structure
+
+Goal: rebuild every screen so named nodes are ready for art import. No image files yet.
+
+Planned:
+- `UiTokens` autoload with color tokens and display name maps
+- Boot menu: `logo_container`, `bg_visual`, `ambiance_layer`
+- World map: named markers, `player_sprite`, `portrait_rect` in dialogue
+- CardToken: `art_rect`, `PipRowComponent`, `KeywordChipsComponent`
+- BattleCardToken: `type_stripe` color
+- Battle board: named lane panels, `player_portrait_rect`, `enemy_portrait_rect`
+- HUD: `hp_bar`, `energy_pips`, `priority_dot`, `discard_bar`
+- Result screen: victory/defeat color differentiation, `result_icon_rect`
+- `AssetIds` constants file mapping all art IDs to `res://` paths
+
+Reference: `../docs/art-direction.md`, `../docs/asset-request.md`
+
 ## Next Pass
 
 ### Battle Modes Pass 02 - `duelo`
 
-Goal: expose the official duel mode after `limpar_mesa` is stable.
+Goal: expose the official duel mode after `limpar_mesa` is stable and H/I/J are done.
 
 Planned:
 
@@ -57,6 +97,7 @@ Planned:
 - `defesa`.
 - `chefe_multiparte`.
 - `quebra_cabeca`.
+- Art asset import (follows asset-request.md priority list).
 - RPG progression and card acquisition.
 - Save/load.
 - Final 2D/3D/hybrid presentation decisions.

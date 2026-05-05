@@ -16,6 +16,9 @@
 - `../docs/game-design-document.md`
 - `../docs/architecture.md`
 - `../docs/cardgame-core-experiments.md`
+- `../docs/art-direction.md`
+- `../docs/asset-request.md`
+- `../docs/open-gaps.md`
 - `roadmap.md`
 - `tracks/track-01-foundation-first-prototype/cardgame-core-implementation-plan.md`
 - `../docs/first-playable-slice-smoke.md`
@@ -636,3 +639,290 @@ Two existing tests in `test_battle_engine.gd` will break when Phases A and B5 ar
 - Play `chamado_hostes` from hand
 - Assert both creatures now have `state == "pronta"` (not `enjoo`)
 - Assert `get_attack_options` returns valid targets for both creatures
+
+---
+
+## Phase J — Art-Ready Placeholder Structure
+
+Goal: rebuild every screen so placeholders carry the exact node structure that future art imports will slot into. No textures yet. Every `TextureRect`, `AnimatedSprite2D`, and `GPUParticles2D` that art will eventually populate is named, sized, and present — but invisible or filled with a typed color block. The Codex task is pure GDScript; no image files are imported in this phase.
+
+Reference for asset IDs: `docs/asset-request.md`.
+
+### J1. Design system foundation
+
+**Files to create:**
+- `core/ui_tokens.gd` — autoload singleton
+
+**`UiTokens` autoload:**
+
+```gdscript
+# core/ui_tokens.gd
+extends Node
+
+const BG_DEEP        := Color(0.043, 0.051, 0.059)
+const BG_PANEL       := Color(0.094, 0.110, 0.122)
+const BG_PANEL_ALT   := Color(0.078, 0.086, 0.094)
+const BORDER_DEFAULT := Color(0.239, 0.282, 0.310)
+const BORDER_ACTIVE  := Color(0.353, 0.439, 0.502)
+const TEXT_PRIMARY   := Color(0.878, 0.878, 0.847)
+const TEXT_SECONDARY := Color(0.541, 0.573, 0.596)
+const TEXT_PHASE     := Color(0.690, 0.753, 0.784)
+
+const TYPE_CRIATURA  := Color(0.290, 0.478, 0.353)
+const TYPE_ESTRUTURA := Color(0.353, 0.416, 0.478)
+const TYPE_PERMANENTE:= Color(0.478, 0.416, 0.227)
+const TYPE_MAGIA     := Color(0.416, 0.290, 0.478)
+const TYPE_COMANDO   := Color(0.478, 0.290, 0.290)
+const TYPE_DEFAULT   := Color(0.310, 0.349, 0.376)
+
+const PHASE_NAMES := {
+    "manutencao": "Manutencao", "compra": "Compra",
+    "fase_principal": "Principal", "descarte": "Descarte", "encerrada": "—",
+}
+const MODE_NAMES := {
+    "limpar_mesa": "Limpar Mesa", "duelo": "Duelo", "ondas": "Ondas",
+}
+
+static func type_color(card_type: String) -> Color:
+    match card_type:
+        "criatura":   return TYPE_CRIATURA
+        "estrutura":  return TYPE_ESTRUTURA
+        "permanente": return TYPE_PERMANENTE
+        "magia":      return TYPE_MAGIA
+        "comando":    return TYPE_COMANDO
+    return TYPE_DEFAULT
+
+static func phase_name(phase_id: String) -> String:
+    return PHASE_NAMES.get(phase_id, phase_id)
+
+static func mode_name(mode_id: String) -> String:
+    return MODE_NAMES.get(mode_id, mode_id)
+```
+
+Register `UiTokens` in `project.godot` autoloads. Replace all hardcoded `Color(...)` in screen files with `UiTokens.*`.
+
+### J2. Boot menu — art-ready structure
+
+**File:** `modes/boot/boot_root.gd`
+
+```
+CanvasLayer
+  bg_visual      — ColorRect(BG_DEEP) → future: TextureRect(asset: menu_background)
+  ambiance_layer — Node2D, empty      → future: GPUParticles2D
+  CenterContainer
+    panel — PanelContainer
+      VBoxContainer
+        logo_container — CenterContainer, min_size=(360,90)
+          logo_rect    — ColorRect(BG_PANEL, border BORDER_ACTIVE) → future: TextureRect(asset: ui_logo)
+          logo_label   — Label("RPG Turnos", 38px) hidden when logo_rect has texture
+        subtitle_label — Label("", TEXT_SECONDARY)
+        novo_jogo_button / sair_button
+```
+
+### J3. World map — art-ready structure
+
+**File:** `modes/world/world_root.gd`
+
+Split `_draw()` into named child nodes:
+
+```
+Node2D
+  map_bg           — ColorRect(MAP_RECT) → future: TextureRect(asset: map_environment)
+  env_overlay      — Node2D, empty       → future: decoration sprites
+  path_draw        — Node2D draws NPC→ENCOUNTER line
+  npc_marker       — Control at NPC_POSITION
+    npc_icon       — ColorRect(28x28, TYPE_ESTRUTURA) → future: TextureRect(asset: marker_npc)
+    npc_name       — Label("NPC", TEXT_SECONDARY, 14px)
+  encounter_marker — Control at ENCOUNTER_POSITION
+    enc_icon       — ColorRect(34x34, state color) → future: TextureRect(asset: marker_encounter_active/done)
+    enc_name       — Label("Encontro", TEXT_SECONDARY, 14px)
+  player_node      — Node2D (position updated in _process)
+    player_sprite  — ColorRect(22x22, TEXT_PRIMARY) → future: AnimatedSprite2D(asset: player_token)
+  CanvasLayer
+    top_bar        — PanelContainer (prompt_label)
+    dialogue_panel — PanelContainer (bottom)
+      HBoxContainer
+        portrait_rect — ColorRect(72x72, BG_PANEL_ALT) → future: TextureRect(asset: portrait_npc_viajante)
+        VBoxContainer
+          speaker_label — Label("", TEXT_SECONDARY, 12px)
+          dialogue_text — Label(autowrap)
+          close_button  — Button("Fechar")
+```
+
+### J4. CardToken redesign (deck setup)
+
+**File:** `ui/controls/card_token.gd` — target 148x180px full, 132x90px compact.
+
+```
+PanelContainer (border: type_color 2px)
+  VBoxContainer
+    top_bar    — HBoxContainer 24px: type_badge + cost_pips (PipRowComponent)
+    art_rect   — ColorRect(148x80, type_color*0.4) → future: TextureRect(asset: card_art_{card_id})
+    info_bar   — HBoxContainer 22px: name_label + stat_label
+    text_label — Label(10px, 2 lines)
+    keyword_row — KeywordChipsComponent
+```
+
+**`ui/controls/pip_row.gd`** (new component): renders filled/empty circles for energy cost (max 5 pips; "X+" if cost > 5).
+
+**`ui/controls/keyword_chips.gd`** (new component): one rounded chip per keyword. Display names: rapido→"Rapido", voadora→"Voadora", defensor→"Defensor", alcance→"Alcance", atropelar→"Atropelar", cobertura→"Cobertura". Hidden when keywords is empty.
+
+### J5. BattleCardToken redesign
+
+**File:** `ui/controls/battle_card_token.gd` — target 160x88px.
+
+```
+PanelContainer
+  HBoxContainer
+    type_stripe — ColorRect(4xfull_height, UiTokens.type_color(card.type))
+    VBoxContainer
+      name_label  — Label(13px, TEXT_PRIMARY)
+      HBoxContainer: cost_pips (PipRowComponent compact) + stat_label
+      keyword_row — KeywordChipsComponent
+      art_hint    — Label(type display name, 9px, type_color, right-aligned) — removed when art exists
+```
+
+### J6. Battle board — lane visual structure
+
+**File:** `modes/battle/battle_root.gd`
+
+Replace generic slot rows with named lane panels:
+
+```
+board_container — VBoxContainer
+  enemy_area — VBoxContainer
+    enemy_hero_bar — HBoxContainer
+      enemy_portrait_rect — ColorRect(48x48, BG_PANEL_ALT) → future: TextureRect(asset: portrait_hero_{id})
+    lane_grid_enemy — GridContainer(columns=route count)
+      lane_A_enemy_panel — VBoxContainer: Label("Rota A", TEXT_SECONDARY) + slots
+      lane_B_enemy_panel — VBoxContainer: Label("Rota B", TEXT_SECONDARY) + slots
+  divider — HSeparator(BORDER_DEFAULT)
+  lane_grid_player — GridContainer(columns=route count)
+      lane_A_player_panel / lane_B_player_panel
+  player_area — HBoxContainer
+    player_portrait_rect — ColorRect(48x48, BG_PANEL_ALT) → future: TextureRect(asset: portrait_hero_aprendiz)
+    player_stats_panel   — VBoxContainer (hp_bar, energy_pips, armor_label, deck_label)
+```
+
+Slot visual states via StyleBoxFlat swap:
+- Empty: BORDER_DEFAULT thin, BG_PANEL_ALT
+- Occupied: BORDER_ACTIVE solid, BG_PANEL
+- Highlighted (drop target): BORDER_ACTIVE bright + bg tint
+- Attack target: TYPE_COMANDO border Tween alpha 0.4→1.0→0.4, 0.6s loop
+
+### J7. HUD stats bar redesign
+
+**File:** `modes/battle/battle_root.gd` — replaces `status_label` string.
+
+Header bar:
+```
+turno_label   — Label("Turno 1", TEXT_PRIMARY, 13px)
+mode_label    — Label(UiTokens.mode_name(mode), TYPE_PERMANENTE, 13px)
+phase_label   — Label(UiTokens.phase_name(phase), TEXT_PHASE, 13px)
+priority_dot  — ColorRect(12x12, corner=6) green=player/red=enemy; Tween alpha 0.5→1.0→0.5, 1.2s loop
+```
+
+Player stats:
+```
+HBoxContainer: player_hp_label + hp_bar (ProgressBar, fill=TYPE_CRIATURA, 8px) + hp_value_label
+HBoxContainer: energy_label + energy_pips (PipRowComponent) + energy_value
+HBoxContainer: armor_label + deck_label + hand_label
+```
+
+Descarte bar (visible only during descarte phase):
+```
+discard_bar  — HBoxContainer
+  discard_label — Label("Descartar: X carta(s)", TYPE_COMANDO, 13px)
+  discard_count — Label("0/X", TEXT_PRIMARY, 13px)
+```
+
+### J8. Result screen — victory/defeat differentiation
+
+**File:** `modes/battle/result_root.gd`
+
+```
+bg_visual    — ColorRect(BG_DEEP) → future: TextureRect(result_bg_victory/defeat)
+glow_layer   — Node2D            → future: GPUParticles2D
+CenterContainer
+  panel (border: BORDER_ACTIVE victory / TYPE_COMANDO defeat)
+    result_icon_rect — ColorRect(64x64): TYPE_CRIATURA victory / TYPE_COMANDO defeat
+                       → future: TextureRect(icon_victory/defeat)
+    title_label      — 32px; victory: TEXT_PRIMARY / defeat: TYPE_COMANDO
+    summary_label
+    reward_panel     — VBoxContainer visible only on victory with reward
+      reward_title   — Label("Carta obtida:", TEXT_SECONDARY, 12px)
+      reward_token   — CardToken
+    action_button
+```
+
+### J9. Asset constants
+
+**File:** `core/asset_ids.gd`
+
+```gdscript
+# core/asset_ids.gd — card IDs match slice_catalog.json. See docs/asset-request.md.
+const ASSETS := {
+    "ui_logo": "", "menu_background": "",
+    "result_bg_victory": "", "result_bg_defeat": "",
+    "icon_victory": "", "icon_defeat": "",
+    "map_environment": "", "marker_npc": "",
+    "marker_encounter_active": "", "marker_encounter_done": "", "player_token": "",
+    "portrait_npc_viajante": "", "portrait_hero_aprendiz": "",
+    "portrait_hero_duelista_bandido": "",
+    "card_frame_criatura": "", "card_frame_estrutura": "", "card_frame_permanente": "",
+    "card_frame_magia": "", "card_frame_magia_de_tabuleiro": "", "card_frame_comando": "",
+    "card_back": "",
+    "card_art_escudeiro": "", "card_art_guarda_vila": "", "card_art_lobo_faminto": "",
+    "card_art_soldado_linha": "", "card_art_arqueira_penhasco": "",
+    "card_art_bruto_mercenario": "", "card_art_javali_guerra": "",
+    "card_art_barricada": "", "card_art_balista": "", "card_art_raio_curto": "",
+    "card_art_golpe_preciso": "", "card_art_corvo_batedor": "", "card_art_chuva_brasas": "",
+    "card_art_campeao_guilda": "", "card_art_lobo_alfa": "", "card_art_relampago": "",
+    "card_art_flagelo": "", "card_art_arqueira_voante": "", "card_art_torre_blindada": "",
+    "card_art_dragao_jovem": "", "card_art_chamado_hostes": "", "card_art_manter_linha": "",
+}
+static func path(asset_id: String) -> String: return ASSETS.get(asset_id, "")
+static func has_art(asset_id: String) -> bool:
+    var p := ASSETS.get(asset_id, "")
+    return p != "" and ResourceLoader.exists(p)
+```
+
+Usage: `if AssetIds.has_art("ui_logo"): logo_rect.texture = load(AssetIds.path("ui_logo"))`.
+
+### J10. Visual feedback polish
+
+**File:** `modes/battle/battle_root.gd` — `_spawn_feedback_label()` and `visual_layer`
+
+| Event | Color | Size | Duration |
+|---|---|---|---|
+| Damage fisico_melee | TYPE_COMANDO | 18px | 0.9s |
+| Damage fisico_alcance | TYPE_PERMANENTE | 16px | 0.9s |
+| Damage magico | TYPE_MAGIA | 18px | 1.0s |
+| Heal / armor | TYPE_CRIATURA | 16px | 0.8s |
+| Destroy | TEXT_PRIMARY bold | 22px | 1.1s |
+| Blocked | TYPE_ESTRUTURA | 14px | 0.7s |
+| Phase change | TEXT_PHASE italic | 14px | 0.6s |
+
+All labels: Tween `position.y -= 48`, `modulate.a` 1.0→0.0. `visual_layer` must be a dedicated `CanvasLayer` above all board nodes.
+
+---
+
+### Phase J acceptance criteria
+
+- `UiTokens` autoload resolves in any GDScript file with no null refs
+- No hardcoded `Color(...)` in any screen file
+- `AssetIds.has_art(id)` returns false for all entries
+- `logo_container` present in boot; `logo_label` visible when no art
+- `portrait_rect` present in world dialogue; 72x72; typed color block
+- `art_rect` present in every `CardToken`; 60% height; `type_color * 0.4`
+- `type_stripe` present in every `BattleCardToken`; 4px; correct type color
+- `PipRowComponent` renders correctly for costs 0–7
+- `KeywordChipsComponent` renders chips; hidden when empty
+- `player_portrait_rect` and `enemy_portrait_rect` present; 48x48
+- `hp_bar` is a ProgressBar, not a text label
+- `energy_pips` is a PipRowComponent row
+- `priority_dot` animates when priority owner is active
+- `discard_bar` visible only during `descarte` phase
+- Victory: TYPE_CRIATURA icon; Defeat: TYPE_COMANDO icon
+- Feedback labels use event-type color table
+- Smoke test passes after J is complete
