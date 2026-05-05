@@ -1,0 +1,6 @@
+# Versão esperada do Godot para este workspace.
+# O executável fica em .local-tools/godot/<versão>/ (gitignored).
+# Ao clonar/configurar o ambiente, instale esta versão.
+
+godot=4.6.2-stable
+gut=9.6.0

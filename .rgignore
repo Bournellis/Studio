@@ -1,5 +1,19 @@
+# Builds e artefatos gerados
 builds/
-migration/
+
+# Materiais pesados / referências
 materiais/references/discovery/
+
+# Ferramentas locais (executáveis, addons)
+.local-tools/
+.claude/
+
+# Godot cache e imports (todos os projetos)
+Projetos/**/.godot/
+Projetos/**/android/
+Projetos/**/addons/gut/
+
+# Histórico de implementação (fases encerradas — consulta pontual apenas)
 Projetos/rpg-isometrico/implementation/phase-g*/
 Projetos/rpg-isometrico/implementation/checkpoints/
+migration/

@@ -86,7 +86,6 @@ Important phases:
 - `manutencao`
 - `compra`
 - `fase_principal`
-- `descarte`
 - `encerrada`
 
 ## Data Rules

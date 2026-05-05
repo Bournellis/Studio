@@ -1,15 +1,23 @@
-# Workspace-local tools and caches
+# Workspace-local tools e caches
 .local-tools/
 
-# Generated builds and heavy temp exports
+# Builds e exports gerados
 builds/
 materiais/art-source/
 materiais/exports-temp/
 
-# Godot-generated files
-Projetos/rpg-isometrico/.godot/
-Projetos/rpg-isometrico/android/
+# Godot-generated files (todos os projetos sob Projetos/)
+Projetos/**/.godot/
+Projetos/**/android/
+Projetos/**/*.import
+Projetos/**/export_presets.cfg
 
-# OS/editor noise
+# Claude Code agent tooling
+.claude/
+
+# OS / editor ruído
 Thumbs.db
 Desktop.ini
+.DS_Store
+*.tmp
+*.log
