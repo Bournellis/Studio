@@ -104,7 +104,7 @@ Boards define slots and routes. Encounters define mode, board, starting enemy sl
 
 The active deck rule is exactly 20 unlocked cards with at most 4 command cards.
 
-Current implementation still lags behind the GDD for the accepted resource model, cyclic deck, and public `descarte` phase. Treat `implementation/current-status.md` as the operational split between implemented runtime and accepted pending design.
+Current implementation matches the GDD foundation resource model: energy/hand ramp, cyclic bottom-of-deck flow, and public `descarte` phase are implemented. Treat `implementation/current-status.md` as the operational split between implemented runtime and accepted pending design.
 
 ## Validation
 

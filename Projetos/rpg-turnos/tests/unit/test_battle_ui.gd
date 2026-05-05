@@ -26,9 +26,9 @@ func test_playing_first_card_from_ui_refreshes_battle_without_locking() -> void:
 	await get_tree().process_frame
 
 	assert_true(root.engine.player_slots[0] != null)
-	assert_eq(root.engine.hand.size(), 3)
+	assert_eq(root.engine.hand.size(), 4)
 	assert_eq(root.engine.outcome, "")
-	assert_eq(root.hand_box.get_child_count(), 3)
+	assert_eq(root.hand_box.get_child_count(), 4)
 	assert_eq(root.player_slots_box.get_child_count(), 3)
 	root.free()
 
@@ -38,7 +38,7 @@ func test_battle_hand_exposes_button_actions_and_feedback() -> void:
 	await get_tree().process_frame
 	root.engine._enemy_ai_enabled = false
 
-	assert_eq(root.hand_box.get_child_count(), 4)
+	assert_eq(root.hand_box.get_child_count(), 5)
 	var first_card_box: VBoxContainer = root.hand_box.get_child(0)
 	assert_gt(first_card_box.get_child_count(), 1)
 
@@ -47,7 +47,7 @@ func test_battle_hand_exposes_button_actions_and_feedback() -> void:
 
 	assert_eq(root.feedback_label.text, "Carta jogada.")
 	assert_true(root.engine.player_slots[0] != null)
-	assert_eq(root.hand_box.get_child_count(), 3)
+	assert_eq(root.hand_box.get_child_count(), 4)
 	root.free()
 
 func test_end_turn_button_stays_visible_and_advances_round() -> void:
@@ -60,6 +60,15 @@ func test_end_turn_button_stays_visible_and_advances_round() -> void:
 	assert_true(root.priority_label.text.contains("Prioridade: voce"))
 	assert_eq(root.end_turn_button.text, "Passar prioridade")
 	assert_false(root.end_turn_button.disabled)
+
+	root._on_end_turn_pressed()
+	await get_tree().process_frame
+
+	assert_eq(root.engine.turno, 1)
+	assert_eq(root.engine.current_phase, "descarte")
+	assert_eq(root.engine.active_player_id, "jogador")
+	assert_true(root.priority_label.text.contains("Descarte: voce"))
+	assert_eq(root.end_turn_button.text, "Encerrar descarte")
 
 	root._on_end_turn_pressed()
 	await get_tree().process_frame
@@ -84,8 +93,10 @@ func test_hero_power_button_draws_and_disables_for_round() -> void:
 	assert_eq(root.feedback_label.text, "Preparar Defesa concedeu 2 de armadura.")
 	assert_true(root.hero_power_button.disabled)
 	assert_eq(root.engine.player_armor, 2)
-	assert_eq(root.engine.hand.size(), 4)
+	assert_eq(root.engine.hand.size(), 5)
 
+	root._on_end_turn_pressed()
+	await get_tree().process_frame
 	root._on_end_turn_pressed()
 	assert_true(root.hero_power_button.disabled)
 	root._on_end_turn_pressed()
@@ -160,8 +171,8 @@ func test_battle_layout_keeps_priority_action_visible_after_c1_state_changes() -
 	root._on_end_turn_pressed()
 	await get_tree().process_frame
 
-	assert_true(root.priority_label.text.contains("Prioridade: voce"))
-	assert_eq(root.end_turn_button.text, "Passar prioridade")
+	assert_true(root.priority_label.text.contains("Descarte: voce"))
+	assert_eq(root.end_turn_button.text, "Encerrar descarte")
 	_assert_control_inside(root.hero_power_button, debug_viewport_size)
 	_assert_control_inside(root.end_turn_button, debug_viewport_size)
 	root.free()

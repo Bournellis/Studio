@@ -3,8 +3,13 @@ extends Node2D
 const PLAYER_SPEED: float = 220.0
 const MAP_RECT: Rect2 = Rect2(Vector2(80, 80), Vector2(1120, 600))
 const NPC_POSITION: Vector2 = Vector2(420, 330)
-const ENCOUNTER_POSITION: Vector2 = Vector2(850, 330)
 const INTERACTION_RADIUS: float = 86.0
+const ENCOUNTER_MARKERS: Array[Dictionary] = [
+	{"id": "emboscada_na_ponte", "label": "Ponte", "position": Vector2(720, 300), "requires": ""},
+	{"id": "duelista_bandido", "label": "Duelista", "position": Vector2(880, 330), "requires": "emboscada_na_ponte"},
+	{"id": "emboscada_no_cruzamento", "label": "Cruzamento", "position": Vector2(1020, 390), "requires": "duelista_bandido"},
+	{"id": "fortaleza_do_desfiladeiro", "label": "Fortaleza", "position": Vector2(1080, 230), "requires": "emboscada_no_cruzamento"},
+]
 
 var player_position: Vector2 = Vector2(180, 330)
 var prompt_label: Label
@@ -46,11 +51,16 @@ func _draw() -> void:
 	draw_circle(NPC_POSITION, 28.0, Color(0.3, 0.46, 0.78))
 	draw_string(ThemeDB.fallback_font, NPC_POSITION + Vector2(-48, -42), "NPC", HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color.WHITE)
 
-	var encounter_color: Color = Color(0.72, 0.42, 0.28)
-	if GameSession.is_encounter_completed:
-		encounter_color = Color(0.28, 0.42, 0.32)
-	draw_rect(Rect2(ENCOUNTER_POSITION - Vector2(34, 34), Vector2(68, 68)), encounter_color, true)
-	draw_string(ThemeDB.fallback_font, ENCOUNTER_POSITION + Vector2(-58, -48), "Encontro", HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color.WHITE)
+	for marker: Dictionary in ENCOUNTER_MARKERS:
+		var marker_position: Vector2 = Vector2(marker.get("position", Vector2.ZERO))
+		var encounter_id: String = str(marker.get("id", ""))
+		var encounter_color: Color = Color(0.24, 0.25, 0.26)
+		if _marker_available(marker):
+			encounter_color = Color(0.72, 0.42, 0.28)
+		if GameSession.has_completed_encounter(encounter_id):
+			encounter_color = Color(0.28, 0.42, 0.32)
+		draw_rect(Rect2(marker_position - Vector2(28, 28), Vector2(56, 56)), encounter_color, true)
+		draw_string(ThemeDB.fallback_font, marker_position + Vector2(-46, -38), str(marker.get("label", "Encontro")), HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color.WHITE)
 
 	draw_circle(player_position, 22.0, Color(0.86, 0.86, 0.72))
 	draw_string(ThemeDB.fallback_font, player_position + Vector2(-48, -34), "Jogador", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color.WHITE)
@@ -100,28 +110,36 @@ func _try_interact() -> void:
 	if player_position.distance_to(NPC_POSITION) <= INTERACTION_RADIUS:
 		_interact_npc()
 		return
-	if player_position.distance_to(ENCOUNTER_POSITION) <= INTERACTION_RADIUS:
-		_interact_encounter()
+	var marker: Dictionary = _nearest_encounter_marker()
+	if not marker.is_empty():
+		_interact_encounter(marker)
 
 func _interact_npc() -> void:
 	if not GameSession.has_npc_reward_card:
 		var reward_id: String = GameSession.claim_npc_reward()
 		dialogue_text.text = "A viajante entrega uma carta para testar no encontro: %s." % ContentLibrary.get_card_name(reward_id)
+	elif GameSession.completed_encounter_ids.size() > GameSession.npc_reward_index:
+		var progressive_reward_id: String = GameSession.claim_npc_progressive_reward()
+		if progressive_reward_id != "":
+			dialogue_text.text = "A viajante entrega uma nova carta pelo progresso: %s." % ContentLibrary.get_card_name(progressive_reward_id)
+		else:
+			dialogue_text.text = "A viajante observa o caminho. Nao ha novas cartas por enquanto."
 	else:
-		dialogue_text.text = "A viajante observa o caminho. O encontro ja pode ser iniciado no marcador ao leste."
+		dialogue_text.text = "A viajante observa o caminho. Novos encontros aparecem conforme voce vence."
 	dialogue_panel.visible = true
 	_update_prompt()
 	queue_redraw()
 
-func _interact_encounter() -> void:
-	if GameSession.is_encounter_completed:
-		dialogue_text.text = "O encontro deste slice ja foi concluido. O mapa permanece livre para revisitar."
-		dialogue_panel.visible = true
-		return
+func _interact_encounter(marker: Dictionary) -> void:
 	if not GameSession.has_npc_reward_card:
 		dialogue_text.text = "O marcador ainda nao responde. Fale com a NPC antes de entrar no encontro."
 		dialogue_panel.visible = true
 		return
+	if not _marker_available(marker):
+		dialogue_text.text = "O caminho ainda esta bloqueado. Conclua o encontro anterior."
+		dialogue_panel.visible = true
+		return
+	GameSession.set_active_encounter(str(marker.get("id", GameSession.ACTIVE_ENCOUNTER_ID)))
 	GameSession.capture_pre_combat_snapshot()
 	get_tree().change_scene_to_file("res://modes/battle/deck_setup.tscn")
 
@@ -130,10 +148,20 @@ func _update_prompt() -> void:
 		return
 	if player_position.distance_to(NPC_POSITION) <= INTERACTION_RADIUS:
 		prompt_label.text = "E: conversar com NPC | WASD: mover"
-	elif player_position.distance_to(ENCOUNTER_POSITION) <= INTERACTION_RADIUS:
+	elif not _nearest_encounter_marker().is_empty():
 		prompt_label.text = "E: abrir encontro | WASD: mover"
 	else:
 		prompt_label.text = "WASD: mover | E: interagir"
+
+func _nearest_encounter_marker() -> Dictionary:
+	for marker: Dictionary in ENCOUNTER_MARKERS:
+		if player_position.distance_to(Vector2(marker.get("position", Vector2.ZERO))) <= INTERACTION_RADIUS:
+			return marker
+	return {}
+
+func _marker_available(marker: Dictionary) -> bool:
+	var required_id: String = str(marker.get("requires", ""))
+	return required_id == "" or GameSession.has_completed_encounter(required_id)
 
 func _panel_style(fill: Color) -> StyleBoxFlat:
 	var style: StyleBoxFlat = StyleBoxFlat.new()

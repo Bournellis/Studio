@@ -148,20 +148,6 @@ effect = {
 
 [sub_resource type="Resource" id="Resource_kobr5"]
 script = ExtResource("1_tqsc8")
-id = "manter_linha"
-display_name = "Manter Linha"
-card_type = "comando"
-cost = 1
-speed = "instantanea"
-text = "Instantanea. Uma carta aliada recebe +0/+2."
-keywords = PackedStringArray("instantaneo")
-effect = {
-"action": "buff_health",
-"amount": 2.0
-}
-
-[sub_resource type="Resource" id="Resource_js17r"]
-script = ExtResource("1_tqsc8")
 id = "goblin_ponte"
 display_name = "Goblin da Ponte"
 card_type = "criatura"
@@ -172,7 +158,7 @@ health = 2
 text = "Inimigo inicial da ponte."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_5405m"]
+[sub_resource type="Resource" id="Resource_js17r"]
 script = ExtResource("1_tqsc8")
 id = "bruto_ponte"
 display_name = "Bruto da Ponte"
@@ -184,7 +170,7 @@ health = 5
 text = "Inimigo pesado da ponte."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_p3n0t"]
+[sub_resource type="Resource" id="Resource_5405m"]
 script = ExtResource("1_tqsc8")
 id = "arqueiro_ponte"
 display_name = "Arqueiro da Ponte"
@@ -199,7 +185,7 @@ effect = {
 "ranged": true
 }
 
-[sub_resource type="Resource" id="Resource_pkhd5"]
+[sub_resource type="Resource" id="Resource_p3n0t"]
 script = ExtResource("1_tqsc8")
 id = "ladrao_rapido"
 display_name = "Ladrao Rapido"
@@ -211,7 +197,7 @@ health = 1
 text = "Carta do duelista bandido."
 keywords = PackedStringArray("rapido")
 
-[sub_resource type="Resource" id="Resource_haoox"]
+[sub_resource type="Resource" id="Resource_pkhd5"]
 script = ExtResource("1_tqsc8")
 id = "faca_arremessada"
 display_name = "Faca Arremessada"
@@ -225,7 +211,7 @@ effect = {
 "ranged": true
 }
 
-[sub_resource type="Resource" id="Resource_dqqtb"]
+[sub_resource type="Resource" id="Resource_haoox"]
 script = ExtResource("1_tqsc8")
 id = "guardiao_portal"
 display_name = "Guardiao do Portal"
@@ -237,7 +223,7 @@ health = 5
 text = "Defensor. Muro resistente para segurar a linha de frente."
 keywords = PackedStringArray("defensor")
 
-[sub_resource type="Resource" id="Resource_0kq34"]
+[sub_resource type="Resource" id="Resource_dqqtb"]
 script = ExtResource("1_tqsc8")
 id = "atirador_torre"
 display_name = "Atirador da Torre"
@@ -252,7 +238,7 @@ effect = {
 "ranged": true
 }
 
-[sub_resource type="Resource" id="Resource_edoxb"]
+[sub_resource type="Resource" id="Resource_0kq34"]
 script = ExtResource("1_tqsc8")
 id = "soldado_central"
 display_name = "Soldado Central"
@@ -264,7 +250,7 @@ health = 3
 text = "Criatura robusta para o centro."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_q1muo"]
+[sub_resource type="Resource" id="Resource_edoxb"]
 script = ExtResource("1_tqsc8")
 id = "corvo_batedor"
 display_name = "Corvo Batedor"
@@ -276,7 +262,7 @@ health = 2
 text = "Voadora, Rapido. Entra pronta e pode atacar imediatamente, incluindo slots alto. Imune a fisico_melee."
 keywords = PackedStringArray("voadora", "rapido")
 
-[sub_resource type="Resource" id="Resource_w1flg"]
+[sub_resource type="Resource" id="Resource_q1muo"]
 script = ExtResource("1_tqsc8")
 id = "lobo_alfa"
 display_name = "Lobo-Alfa"
@@ -288,7 +274,7 @@ health = 2
 text = "Atropelar. Excesso de dano passa para o proximo slot ou heroi inimigo."
 keywords = PackedStringArray("atropelar")
 
-[sub_resource type="Resource" id="Resource_u525c"]
+[sub_resource type="Resource" id="Resource_w1flg"]
 script = ExtResource("1_tqsc8")
 id = "relampago"
 display_name = "Relampago"
@@ -304,7 +290,7 @@ effect = {
 "ranged": true
 }
 
-[sub_resource type="Resource" id="Resource_ba32m"]
+[sub_resource type="Resource" id="Resource_u525c"]
 script = ExtResource("1_tqsc8")
 id = "arqueira_voante"
 display_name = "Arqueira Voante"
@@ -316,7 +302,7 @@ health = 4
 text = "Voadora, Alcance. Ataca com fisico_alcance, pode atingir slots alto, ignorando intermediarios. Reduzida por cobertura. Imune a fisico_melee."
 keywords = PackedStringArray("voadora", "alcance")
 
-[sub_resource type="Resource" id="Resource_5njsx"]
+[sub_resource type="Resource" id="Resource_ba32m"]
 script = ExtResource("1_tqsc8")
 id = "chuva_brasas"
 display_name = "Chuva de Brasas"
@@ -330,7 +316,7 @@ effect = {
 "target": "all_enemy_slots"
 }
 
-[sub_resource type="Resource" id="Resource_igiro"]
+[sub_resource type="Resource" id="Resource_5njsx"]
 script = ExtResource("1_tqsc8")
 id = "campeao_guilda"
 display_name = "Campeao da Guilda"
@@ -342,7 +328,7 @@ health = 5
 text = "Criatura 5/5 sem keyword. Presenca dominante no mid-late game."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_kf03g"]
+[sub_resource type="Resource" id="Resource_igiro"]
 script = ExtResource("1_tqsc8")
 id = "torre_blindada"
 display_name = "Torre Blindada"
@@ -354,7 +340,7 @@ health = 7
 text = "Alcance, Cobertura. Ataca com fisico_alcance. Reduz 1 de dano fisico_alcance recebido, empilhando com terreno cobertura. Nao pode mover."
 keywords = PackedStringArray("alcance", "cobertura")
 
-[sub_resource type="Resource" id="Resource_7rtnj"]
+[sub_resource type="Resource" id="Resource_kf03g"]
 script = ExtResource("1_tqsc8")
 id = "chamado_hostes"
 display_name = "Chamado das Hostes"
@@ -369,7 +355,7 @@ effect = {
 "target": "all_friendly_creatures"
 }
 
-[sub_resource type="Resource" id="Resource_siawb"]
+[sub_resource type="Resource" id="Resource_7rtnj"]
 script = ExtResource("1_tqsc8")
 id = "flagelo"
 display_name = "Flagelo"
@@ -384,7 +370,7 @@ effect = {
 "ranged": true
 }
 
-[sub_resource type="Resource" id="Resource_vn8pn"]
+[sub_resource type="Resource" id="Resource_siawb"]
 script = ExtResource("1_tqsc8")
 id = "dragao_jovem"
 display_name = "Dragao Jovem"
@@ -396,14 +382,14 @@ health = 6
 text = "Voadora, Atropelar. Ataca com fisico_melee mas pode atingir slots alto. Imune a fisico_melee. Excesso de dano passa para proximo slot nao-voadora ou heroi inimigo."
 keywords = PackedStringArray("voadora", "atropelar")
 
-[sub_resource type="Resource" id="Resource_3vxjw"]
+[sub_resource type="Resource" id="Resource_vn8pn"]
 script = ExtResource("2_aaqvb")
 id = "duelista_bandido"
 display_name = "Duelista Bandido"
 max_health = 20
 hero_power_text = "Golpe Direto: custo 0, velocidade normal, uso 1x no proprio turno. Causa 1 de dano no heroi inimigo."
 
-[sub_resource type="Resource" id="Resource_8vwdf"]
+[sub_resource type="Resource" id="Resource_3vxjw"]
 script = ExtResource("2_aaqvb")
 id = "aprendiz_limiar"
 display_name = "Aprendiz do Limiar"
@@ -412,11 +398,13 @@ hero_power_text = "Preparar Defesa: custo 1, velocidade normal, uso 1x no propri
 
 [resource]
 script = ExtResource("3_xh3p2")
-player_hero = SubResource("Resource_8vwdf")
-enemy_hero = SubResource("Resource_3vxjw")
-cards = Array[Resource]([SubResource("Resource_tqsc8"), SubResource("Resource_aaqvb"), SubResource("Resource_xh3p2"), SubResource("Resource_ayi6x"), SubResource("Resource_b0i2p"), SubResource("Resource_hvson"), SubResource("Resource_vopr6"), SubResource("Resource_2f5oc"), SubResource("Resource_q1xx6"), SubResource("Resource_75iml"), SubResource("Resource_xg15d"), SubResource("Resource_kobr5"), SubResource("Resource_js17r"), SubResource("Resource_5405m"), SubResource("Resource_p3n0t"), SubResource("Resource_pkhd5"), SubResource("Resource_haoox"), SubResource("Resource_dqqtb"), SubResource("Resource_0kq34"), SubResource("Resource_edoxb"), SubResource("Resource_q1muo"), SubResource("Resource_w1flg"), SubResource("Resource_u525c"), SubResource("Resource_ba32m"), SubResource("Resource_5njsx"), SubResource("Resource_igiro"), SubResource("Resource_kf03g"), SubResource("Resource_7rtnj"), SubResource("Resource_siawb"), SubResource("Resource_vn8pn")])
+player_hero = SubResource("Resource_3vxjw")
+enemy_hero = SubResource("Resource_vn8pn")
+cards = Array[Resource]([SubResource("Resource_tqsc8"), SubResource("Resource_aaqvb"), SubResource("Resource_xh3p2"), SubResource("Resource_ayi6x"), SubResource("Resource_b0i2p"), SubResource("Resource_hvson"), SubResource("Resource_vopr6"), SubResource("Resource_2f5oc"), SubResource("Resource_q1xx6"), SubResource("Resource_75iml"), SubResource("Resource_xg15d"), SubResource("Resource_kobr5"), SubResource("Resource_js17r"), SubResource("Resource_5405m"), SubResource("Resource_p3n0t"), SubResource("Resource_pkhd5"), SubResource("Resource_haoox"), SubResource("Resource_dqqtb"), SubResource("Resource_0kq34"), SubResource("Resource_edoxb"), SubResource("Resource_q1muo"), SubResource("Resource_w1flg"), SubResource("Resource_u525c"), SubResource("Resource_ba32m"), SubResource("Resource_5njsx"), SubResource("Resource_igiro"), SubResource("Resource_kf03g"), SubResource("Resource_7rtnj"), SubResource("Resource_siawb")])
 starter_deck_ids = PackedStringArray("escudeiro", "escudeiro", "escudeiro", "guarda_vila", "guarda_vila", "guarda_vila", "lobo_faminto", "lobo_faminto", "lobo_faminto", "soldado_linha", "soldado_linha", "arqueira_penhasco", "arqueira_penhasco", "bruto_mercenario", "javali_guerra", "barricada", "barricada", "balista", "raio_curto", "raio_curto")
+first_npc_reward_card_id = "golpe_preciso"
 reward_card_id = "golpe_preciso"
+npc_reward_choices = PackedStringArray("corvo_batedor", "chuva_brasas", "campeao_guilda")
 boards = Array[Dictionary]([{
 "display_name": "Ponte Estavel",
 "enemy_routes": {

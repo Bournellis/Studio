@@ -1,7 +1,7 @@
 # RPG Turnos Roadmap
 
 - Last Updated: `2026-05-05`
-- Current Direction: `C1 battle modes`
+- Current Direction: `linear implementation after world progression/rewards`
 
 ## Done
 
@@ -16,14 +16,18 @@
 - `limpar_mesa` mode with `Emboscada na Ponte`.
 - Automatic enemy priority resolution.
 - Simple no-asset visual feedback for battle actions.
+- Foundation runtime alignment: public `descarte`, energy/hand ramp, cyclic deck, and `manter_linha` removal.
+- Battle rule completion: damage types, coverage, `voadora`, dual burning, `fallback_slots`, and board spells.
+- Official `duelo` mode with enemy hero, enemy deck/hand/energy, aggressive AI, and hero fallback.
+- Linear world encounter chain with one-time encounter rewards and progressive NPC rewards.
 
-## Current Coordination Pass
+## Completed Coordination Pass
 
 ### Documentation And Process Alignment
 
 Goal: align docs, Kanban/Decisions usage, and implementation order before changing runtime rules.
 
-Status: active.
+Status: done.
 
 Includes:
 
@@ -32,15 +36,15 @@ Includes:
 - mark `manter_linha` for deletion
 - keep voluntary discard as part of the public `descarte` phase
 - correct validation status and stale-test notes
-- define the next implementation pass before `duelo`, H/J, or content expansion
+- define the next implementation pass before broad visual work or content expansion
 
-## Current Runtime Pass
+## Completed Runtime Passes
 
 ### Battle Modes Pass 01 - `limpar_mesa`
 
 Goal: prove the core battle loop with no enemy hero.
 
-Status: implemented, but latest validation is not green because one stale `size_limit` test remains.
+Status: implemented and covered by current validation.
 
 Includes:
 
@@ -51,15 +55,17 @@ Includes:
 - victory by clearing relevant enemy units
 - no empty-lane hero fallback for player attacks
 
-## Active Passes (parallel to Battle Modes)
+## Active Passes
 
-These are planned surfaces. Do not start broad visual or content expansion before the foundation rule sync below is complete, unless the work is strictly documentation-only.
+These are planned surfaces. Continue linearly; do not expand content broadly before persistence and a small UX hardening pass.
 
-### Foundation Runtime Alignment — next implementation priority
+### Foundation Runtime Alignment
 
 Goal: make runtime match the accepted GDD rules before expanding modes.
 
-Planned:
+Status: done.
+
+Implemented:
 - remove `size` / `size_limit` logic and stale tests
 - delete `manter_linha`
 - implement energy ramp 3->8
@@ -67,6 +73,52 @@ Planned:
 - implement cyclic bottom-of-deck behavior with no discard pile
 - implement public `descarte` phase with mandatory and voluntary discard
 - update validation/GUT coverage for the above
+
+### Battle Rule Completion
+
+Goal: complete the battle rules that official `duelo` depends on.
+
+Status: done.
+
+Implemented:
+- damage types: `fisico_melee`, `fisico_alcance`, `magico`
+- coverage stack from terrain and keyword against `fisico_alcance`
+- `voadora` readiness, `alto` reach, melee transparency, and melee immunity
+- `queimando` as slot status and creature status
+- `fallback_slots` route continuation
+- board spells for `chuva_brasas` and `chamado_hostes`
+- GUT coverage for the above
+
+### Official Duel
+
+Goal: implement the first hero-vs-hero encounter mode.
+
+Status: done.
+
+Implemented:
+- `duelista_bandido` with 20 HP enemy hero
+- enemy deck, hand, draw, and energy
+- enemy hero power `Golpe Direto`
+- aggressive deterministic AI
+- empty-route fallback to enemy hero
+- creature movement as a normal action once per turn
+- neutral slot engine support
+- GUT coverage for the above
+
+### World Progression And Rewards
+
+Goal: turn the prototype into a linear playable slice with persistent-in-session progression.
+
+Status: done.
+
+Implemented:
+- encounter chain: `emboscada_na_ponte -> duelista_bandido -> emboscada_no_cruzamento -> fortaleza_do_desfiladeiro`
+- locked, available, completed, and re-entry marker states
+- encounter completion tracking
+- one-time encounter reward claims
+- progressive NPC rewards from `first_npc_reward_card` and `npc_reward_choices`
+- snapshot/restore support for progression fields
+- GUT coverage for the above
 
 ### Phase H — Visual Layer Improvements
 
@@ -86,8 +138,9 @@ Planned:
 Goal: raise GUT coverage to include all core battle interactions.
 
 Planned:
-- Fix 2 stale tests
-- 20 new tests: voadora, energy ramp, cyclic deck, hand progression, atropelar, defensor, magia_de_tabuleiro, descarte phase, immediate discard trigger
+- keep validation green as rules evolve
+- add focused tests only where the next implementation pass changes behavior
+- broaden coverage after save/load and UX surfaces exist
 
 ### Phase J — Art-Ready Placeholder Structure
 
@@ -108,17 +161,16 @@ Reference: `../docs/art-direction.md`, `../docs/asset-request.md`
 
 ## Next Pass
 
-### Battle Modes Pass 02 - `duelo`
+### Minimum Save/Load
 
-Goal: expose the official duel mode after Foundation Runtime Alignment is implemented and `limpar_mesa` is stable.
+Goal: persist the playable slice now that progression and rewards exist in memory.
 
 Planned:
-- encounter selection or progression-controlled entry
-- enemy hero at 20 HP
-- enemy deck, hand, energy, and draw
-- simple duel AI using cards and attacks
-- empty-lane fallback to enemy hero
-- victory by enemy hero HP reaching 0
+- choose the minimal local JSON/Godot save format
+- persist unlocked cards, selected deck, completed encounters, claimed rewards, NPC reward index, and current active encounter when needed
+- expose explicit session save/load helpers in `GameSession`
+- add validation coverage for save creation, load restore, and corrupt/missing save fallback
+- keep the first implementation small enough to support the current linear slice before expanding campaign content
 
 ## Later Passes
 
@@ -129,8 +181,8 @@ Planned:
 - `chefe_multiparte`.
 - `quebra_cabeca`.
 - Art asset import (follows asset-request.md priority list).
-- RPG progression and card acquisition.
-- Save/load.
+- Broader RPG progression and card acquisition beyond fixed slice rewards.
+- Expanded save/load for campaign state beyond the current slice.
 - Final 2D/3D/hybrid presentation decisions.
 
 ## Historical

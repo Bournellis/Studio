@@ -43,8 +43,31 @@ func get_starter_deck_ids() -> Array:
 		return []
 	return Array(catalog.starter_deck_ids)
 
-func get_reward_card_id() -> String:
+func get_first_npc_reward_card_id() -> String:
 	var catalog = ensure_loaded()
 	if catalog == null:
 		return ""
-	return catalog.reward_card_id
+	return catalog.first_npc_reward_card_id
+
+func get_reward_card_id() -> String:
+	return get_first_npc_reward_card_id()
+
+func get_npc_reward_choices() -> Array:
+	var catalog = ensure_loaded()
+	if catalog == null:
+		return []
+	return Array(catalog.npc_reward_choices)
+
+func get_encounter_reward_cards(encounter_id: String) -> Array:
+	var catalog = ensure_loaded()
+	if catalog == null:
+		return []
+	var encounter: Dictionary = catalog.find_encounter(encounter_id)
+	return Array(encounter.get("reward_cards", []))
+
+func get_encounter_display_name(encounter_id: String) -> String:
+	var catalog = ensure_loaded()
+	if catalog == null:
+		return encounter_id
+	var encounter: Dictionary = catalog.find_encounter(encounter_id)
+	return str(encounter.get("display_name", encounter_id))

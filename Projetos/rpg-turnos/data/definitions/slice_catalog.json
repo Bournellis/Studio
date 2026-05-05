@@ -34,7 +34,6 @@
     "raio_curto",
     "raio_curto"
   ],
-  "reward_card": "golpe_preciso",
   "cards": [
     {
       "id": "escudeiro",
@@ -203,24 +202,6 @@
         "action": "damage",
         "amount": 3,
         "ranged": false
-      }
-    },
-    {
-      "id": "manter_linha",
-      "display_name": "Manter Linha",
-      "type": "comando",
-      "cost": 1,
-      "command_cost": 0,
-      "speed": "instantanea",
-      "attack": 0,
-      "health": 0,
-      "keywords": [
-        "instantaneo"
-      ],
-      "text": "Instantanea. Uma carta aliada recebe +0/+2.",
-      "effect": {
-        "action": "buff_health",
-        "amount": 2
       }
     },
     {
@@ -1497,5 +1478,6 @@
     "corvo_batedor",
     "chuva_brasas",
     "campeao_guilda"
-  ]
+  ],
+  "first_npc_reward_card": "golpe_preciso"
 }

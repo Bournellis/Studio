@@ -27,9 +27,9 @@ O único NPC é "a viajante" com duas linhas de diálogo funcional ("aqui está 
 **Precisa:** nome, motivação, pelo menos 3-4 linhas de diálogo com variações por progresso.
 
 ### G-N4 — Estrutura de campanha e mapa
-**Status:** `aberto`
-O mapa atual tem 1 NPC e 1 encontro. O jogo tem 4 encontros definidos mas nenhuma estrutura narrativa os conectando. Não há noção de "onde estamos", "para onde vamos", ou "por que".
-**Precisa:** layout de mapa com zonas, ordem de desbloqueio de encontros, transições com contexto narrativo.
+**Status:** `em design`
+O slice agora possui uma cadeia linear jogavel com 4 encontros no mapa, estados de bloqueio/conclusao/reentrada e recompensas por encontro. Ainda falta a camada narrativa: onde estamos, por que os encontros acontecem, e como a progressao conversa com personagens e regioes.
+**Precisa:** contexto narrativo da rota, nomes de zonas, transicoes com texto/visual, e variacoes de dialogo por progresso.
 
 ### G-N5 — Título do jogo
 **Status:** `aberto`
@@ -89,19 +89,19 @@ As cartas ativas têm stats que parecem razoáveis mas nunca foram testadas. Nã
 **Precisa:** pelo menos uma sessão de playtest do deck inicial contra emboscada_na_ponte com registro do resultado.
 
 ### G-B2 — Carta `manter_linha` não catalogada no GDD
-**Status:** `decidido, pendente implementação`
-Decisão do usuário em 2026-05-05: `manter_linha` deve ser deletada. Ela ainda existe no `slice_catalog.json` e em referencias de teste/asset, mas nao faz parte do deck inicial, rewards, enemy-only cards, nem plano futuro.
-**Precisa:** remover do catálogo, recursos gerados, testes e asset planning ativo na proxima implementação.
+**Status:** `implementado`
+Decisão do usuário em 2026-05-05: `manter_linha` foi deletada do catálogo ativo e do recurso gerado. A cobertura GUT garante que a carta não existe no catálogo.
+**Precisa:** nada no momento.
 
 ### G-B3 — Contagem de cartas no GDD
-**Status:** `resolvido nos docs, pendente validação após limpeza`
+**Status:** `resolvido e validado após limpeza`
 O GDD agora separa copias de deck, designs únicos, reward unique cards, reward entries e enemy-only cards. `golpe_preciso` é recompensa introdutória da NPC e `manter_linha` foi marcada para remoção.
-**Precisa:** apos deletar `manter_linha`, validar a contagem real do catálogo gerado.
+**Precisa:** revisar de novo apenas quando novas cartas entrarem no catálogo.
 
 ### G-B4 — Encontros sem cards reward
-**Status:** `dados parciais, engine pendente`
-O catálogo JSON já possui `reward_cards` em encontros e `npc_reward_choices`, mas `GameSession`, `ContentLibrary`, result screen e mundo ainda usam o modelo legado de uma recompensa NPC global.
-**Precisa:** implementar `first_npc_reward_card`, `reward_cards`, `completed_encounter_ids`, `claimed_encounter_reward_ids` e retorno `Array[String]` em `claim_encounter_reward`.
+**Status:** `implementado`
+O catalogo JSON possui `reward_cards` por encontro e `npc_reward_choices`; `GameSession`, `ContentLibrary`, result screen e mundo usam recompensas por encontro com claim unico e recompensa NPC progressiva.
+**Precisa:** revisar apenas quando a economia de campanha ou escolhas de recompensa entrarem no escopo.
 
 ---
 
@@ -113,9 +113,9 @@ O brief tem banner histórico no topo e aviso na seção Status. O corpo permane
 **Precisa:** nao usar o brief para regra ativa.
 
 ### G-D2 — `architecture.md` não lista `descarte` como fase
-**Status:** `resolvido nos docs, engine pendente`
-`architecture.md` já lista `descarte` como fase importante. O runtime ainda nao implementa essa fase.
-**Precisa:** implementar fase `descarte` no engine/UI na proxima rodada de regras.
+**Status:** `implementado`
+`architecture.md` lista `descarte` como fase importante, e o runtime/UI agora implementam a fase pública.
+**Precisa:** nada no momento.
 
 ### G-D3 — GDD versão desatualizada
 **Status:** `resolvido`
@@ -141,13 +141,11 @@ Como o player entra em um encontro? O projeto-brief menciona "encounter transiti
 ## Prioridade de resolução
 
 **Resolver antes de qualquer conteúdo novo:**
-- implementar remoção de `manter_linha`
-- corrigir teste obsoleto de `size_limit`
-- separar runtime de design pendente em qualquer novo status
-- implementar ou manter explicitamente pendentes as regras de recursos: energia, mão, deck cíclico e `descarte`
+- implementar G-T1 (save/load minimo), porque a progressao e as recompensas ja existem em memoria
+- manter runtime e design pendente separados em qualquer novo status
 
 **Resolver antes de expandir para campanha:**
-- G-T1 (save/load), G-N4 (campanha e mapa), G-R1 (stats), G-R2 (progressão)
+- G-N4 (camada narrativa da campanha/mapa), G-R1 (stats), G-R2 (progressao)
 
 **Resolver quando o jogo tiver conteúdo estável:**
 - G-B1 (balanceamento), G-T2 (áudio), G-P1 (2D decision), G-P2 (transição)

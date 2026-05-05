@@ -20,7 +20,10 @@ func has_keyword(keyword: String) -> bool:
 	return keywords.has(keyword)
 
 func is_damage_spell() -> bool:
-	return card_type in ["magia", "spell"] and str(effect.get("action", "")) == "damage"
+	return card_type in ["magia", "spell"] and (str(effect.get("action", "")) == "damage" or effect.has("damage") or effect.has("amount"))
+
+func is_board_spell() -> bool:
+	return card_type == "magia_de_tabuleiro"
 
 func is_buff_command() -> bool:
 	return card_type in ["comando", "command"] and str(effect.get("action", "")) == "buff_health"

@@ -5,7 +5,9 @@ extends Resource
 @export var enemy_hero: Resource
 @export var cards: Array[Resource] = []
 @export var starter_deck_ids: PackedStringArray = PackedStringArray()
+@export var first_npc_reward_card_id: String = ""
 @export var reward_card_id: String = ""
+@export var npc_reward_choices: PackedStringArray = PackedStringArray()
 @export var enemy_script: Array[Dictionary] = []
 @export var default_encounter_id: String = "emboscada_na_ponte"
 @export var boards: Array[Dictionary] = []

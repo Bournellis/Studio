@@ -343,7 +343,7 @@ The active player-facing plan has:
 - `reward entries`: 13 reward entries, because `campeao_guilda` and `chuva_brasas` can come from more than one source
 - `enemy-only cards`: authored separately for encounters and not counted as player rewards
 
-Implementation note: the current data catalog still contains `manter_linha`, but the user decided on 2026-05-05 that it should be deleted. It is not part of the active starter deck, reward plan, enemy-only plan, or future card plan.
+Implementation note: `manter_linha` was deleted from the active data catalog on 2026-05-05. It is not part of the active starter deck, reward plan, enemy-only plan, or future card plan.
 
 ### Starter Deck (20 cards)
 

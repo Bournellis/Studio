@@ -13,12 +13,12 @@
 
 ## rpg-turnos
 
-- Status: **Ativo — alinhamento documental antes de sincronizar engine**
-- Track ativa: `Track 01 - Foundation Contracts And First Prototype` (DOCUMENTATION_ALIGNMENT_BEFORE_ENGINE_SYNC)
-- Baseline atual: slice Godot 4.6.2 jogavel — menu, exploracao 2D placeholder, deck de 20 cartas, C1 como unico runtime, `limpar_mesa` com `Emboscada na Ponte`; runtime ainda usa mao inicial 4, energia fixa 3, hand limit 8 e discard pile
-- Meta ativa: separar runtime implementado, design aceito pendente, historico e decisoes antes da proxima implementacao
+- Status: **Ativo — progressao e rewards iniciais completos**
+- Track ativa: `Track 01 - Foundation Contracts And First Prototype` (WORLD_PROGRESSION_REWARDS_COMPLETE)
+- Baseline atual: slice Godot 4.6.2 jogavel — C1 unico runtime, `limpar_mesa`, `duelo`, cadeia de encontros no mapa, rewards por encontro uma vez, NPC progressiva, `descarte`, energia/mao com ramp, deck ciclico, regras de batalha completas para o slice, validacao verde 51/51
+- Meta ativa: implementar save/load minimo antes de expandir conteudo novo
 - Ultima atualizacao do current-status: `2026-05-05`
-- Proximo passo: implementar Foundation Runtime Alignment (`size` cleanup, deletar `manter_linha`, energia/mao/deck ciclico/descarte) antes de `duelo`, H/J ou expansao de conteudo
+- Proximo passo: persistir cartas desbloqueadas, deck selecionado, encontros completos, rewards reclamadas e indice de recompensa NPC
 
 ## Kanban rápido
 

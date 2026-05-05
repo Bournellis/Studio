@@ -4,9 +4,9 @@
 - Active Surface: `cardgame-first C1 battle modes`
 - Active Project Name: `rpg-turnos`
 - Active Track: `Track 01 - Foundation Contracts And First Prototype`
-- Active Track Status: `DOCUMENTATION_ALIGNMENT_BEFORE_ENGINE_SYNC`
-- Current Operational Baseline: `playable Godot 4.6.2 slice with menu, 2D exploration placeholder, 20-card deck setup, C1 as the sole runtime combat model, limpar_mesa encounter mode, data-driven boards/encounters, automatic enemy priority, simple visual battle feedback, generated scenes, JSON-driven catalog, and partial GUT validation`
-- Active Goal: `align documentation and coordination before implementing the accepted cardgame rule sync`
+- Active Track Status: `WORLD_PROGRESSION_REWARDS_COMPLETE`
+- Current Operational Baseline: `playable Godot 4.6.2 slice with menu, 2D exploration placeholder, 20-card deck setup, C1 as the sole runtime combat model, limpar_mesa encounter mode, official duelo mode, linear world encounter chain, one-time encounter rewards, NPC progressive rewards, public descarte phase, energy/hand ramp, cyclic bottom-of-deck card flow, damage types, coverage, voadora, dual burning, fallback slots, creature movement, neutral slots in engine, data-driven boards/encounters, automatic enemy priority, simple visual battle feedback, generated scenes, JSON-driven catalog, and green GUT validation`
+- Active Goal: `implement minimum save/load before expanding content`
 - Active Combat Direction: `C1 - main game, not a variant`
 - Preserved Combat Ideas: `A/B priority variants and the phase-based duel are historical only in docs/cardgame-core-experiments.md`
 - Active Work Mode: `08_Coordenacao_Agentes Kanban / Decisoes / Handoffs is active for cross-agent coordination`
@@ -29,36 +29,53 @@
 - Deck setup requires exactly 20 unlocked cards.
 - Decks may include at most 4 command cards.
 - The setup screen has one entry button: `Iniciar encontro`.
-- The active encounter is `emboscada_na_ponte`.
-- The active mode is `limpar_mesa`.
+- The world map selects the active encounter through the linear marker chain.
+- Implemented encounter modes include `limpar_mesa` and `duelo`.
 - The old `Duelo antigo` button has been removed.
-- The battle engine uses `controladores`, `modo_batalha`, `tabuleiro`, `turno`, `fase_principal`, and shared priority.
-- Public phases implemented in runtime are `manutencao`, `compra`, and `fase_principal`; `descarte` is accepted design but not implemented yet.
-- Cleanup is internal after the main phase.
+- The battle engine uses `controladores`, `modo_batalha`, `tabuleiro`, `turno`, public phases, shared priority, and bottom-of-deck cycling.
+- Public phases implemented in runtime are `manutencao`, `compra`, `fase_principal`, and `descarte`.
+- Cleanup is internal after the public `descarte` phase.
 - Player hero starts at 25 HP.
-- Duel enemy hero baseline is 20 HP, used by the next official mode.
-- Energy max is currently fixed at 3 per controller.
-- Initial hand is currently 4 cards.
-- Current draw rule draws 4 cards on initial draw, then 1 card per draw phase.
-- Current hand limit is fixed at 8.
-- Current runtime still has a `discard` array; cyclic bottom-of-deck behavior is accepted design but not implemented yet.
+- Duel enemy hero baseline is 20 HP.
+- Energy ramps per controller from 3 to 8 on that controller's own upkeep.
+- Initial hand is 5 cards.
+- Draw phase draws up to the controller's current `max_hand_size`.
+- `max_hand_size` ramps from 5 to 7; temporary ceiling is 8; reaching 9 triggers immediate discard to 8.
+- There is no active discard pile rule; spells, destroyed permanents, and discarded hand cards go to the bottom of the owner's deck.
+- Damage types are implemented: `fisico_melee`, `fisico_alcance`, and `magico`.
+- `cobertura` reduces only `fisico_alcance`, stacking terrain and keyword.
+- `voadora` enters ready, can reach `alto`, is transparent to non-flying melee routing, and cannot be damaged by non-flying `fisico_melee`.
+- `queimando` works as slot status and creature status.
+- `fallback_slots` are implemented for melee route continuation.
+- `chuva_brasas` and `chamado_hostes` are supported as `magia_de_tabuleiro`.
+- `duelo` is implemented with enemy hero, enemy deck/hand/energy, `Golpe Direto`, aggressive AI, and empty-route hero fallback.
+- Creature movement is implemented as a normal action once per turn.
+- Boards may define neutral slots; engine can play/move permanents into them.
+- World map has a linear encounter chain: `emboscada_na_ponte -> duelista_bandido -> emboscada_no_cruzamento -> fortaleza_do_desfiladeiro`.
+- Encounter completion is tracked by `completed_encounter_ids`.
+- Encounter rewards are claimed once through `claimed_encounter_reward_ids`.
+- NPC rewards use `golpe_preciso` first, then `npc_reward_choices` in order.
 - Hero power is `Preparar Defesa`: costs 1 energy and grants 2 persistent armor.
 - Enemy decisions resolve automatically until priority returns to the player.
 - UI emits simple no-asset feedback for attack, damage, summon, armor, buff, and destruction.
 
-## Accepted Design, Pending Implementation
+## Accepted Design, Implemented In Foundation Runtime Alignment
 
-- Public phase flow becomes `manutencao -> compra -> fase_principal -> descarte`.
+- Public phase flow is `manutencao -> compra -> fase_principal -> descarte`.
 - Energy ramps per controller from 3 to 8 and refreshes to current max on that controller's upkeep.
-- Initial hand becomes 5.
+- Initial hand is 5.
 - `max_hand_size` starts at 5, ramps to 7, and is enforced as carry-over at the end of `descarte`.
 - Temporary hand ceiling is 8; reaching 9 triggers immediate discard to 8.
-- The `descarte` phase must support mandatory discard to 7 and voluntary extra discard by the player.
-- Decks become cyclic: spells, destroyed permanents, and discarded hand cards go to the bottom of the owner's deck. There is no discard pile.
-- `manter_linha` is not active content and must be removed in the next implementation pass.
-- `golpe_preciso` is the first NPC introductory reward, separate from `npc_reward_choices`.
-- `reward_card` should be replaced by `first_npc_reward_card`, with temporary compatibility only if needed.
-- Completed encounters may be re-entered for practice, but rewards are claimed once.
+- The `descarte` phase supports mandatory discard to 7 and voluntary extra discard by the player.
+- Decks are cyclic: spells, destroyed permanents, and discarded hand cards go to the bottom of the owner's deck. There is no discard pile in active rules.
+- `manter_linha` was removed from the active catalog and generated resource.
+- `golpe_preciso` is stored as `first_npc_reward_card`, with `reward_card_id` preserved as a temporary generated compatibility alias.
+
+## Accepted Design, Pending Implementation
+
+- Minimum save/load is not implemented yet; current progression survives scene changes but not closing the game.
+- Visual/UX hardening remains pending for battle HUD, world readability, and art-ready node structure.
+- Broader RPG progression, stats, equipment/items, narrative depth, audio, and transition polish remain future layers.
 
 ## Implemented Battle Mode Pass 01
 
@@ -70,21 +87,21 @@
 - `rapido`, `defensor`, `atropelar`, and `alcance` are represented in the rules/data.
 - `cobertura` reduces ranged damage.
 - `queimando` ticks on the occupant controller's upkeep.
-- `duelo` exists in the engine/data as the next official mode but is not the current entry flow.
+- `duelo` exists in the engine/data as the official hero-vs-hero mode.
 
 ## Consistency Matrix
 
 | Assunto | Regra ativa | Runtime | Testes | Fonte |
 |---|---|---:|---:|---|
-| Mao inicial | 5 | nao | nao | GDD |
-| Energia | ramp 3->8 | nao | nao | GDD |
-| Deck | ciclico, sem pilha de descarte | nao | nao | GDD |
-| Descarte | fase publica com voluntario | nao | nao | GDD + decisao 2026-05-05 |
-| `size` / `size_limit` | removidos | parcial | falhando por teste obsoleto | GDD + dados |
-| `manter_linha` | deletar | nao | nao | decisao 2026-05-05 |
-| `duelo` | proximo modo oficial | parcial/data | parcial | GDD |
-| Rewards por encontro | multiplas cartas, claim unico | dados parcial | nao | GDD |
-| `voadora` | keyword completa | nao | nao | GDD |
+| Mao inicial | 5 | sim | sim | GDD |
+| Energia | ramp 3->8 | sim | sim | GDD |
+| Deck | ciclico, sem pilha de descarte | sim | sim | GDD |
+| Descarte | fase publica com voluntario | sim | sim | GDD + decisao 2026-05-05 |
+| `size` / `size_limit` | removidos | sim | sim | GDD + dados |
+| `manter_linha` | deletada | sim | sim | decisao 2026-05-05 |
+| `duelo` | oficial | sim | sim | GDD |
+| Rewards por encontro | multiplas cartas, claim unico | sim | sim | GDD |
+| `voadora` | keyword completa | sim | sim | GDD |
 | UI tokens / assets | estrutura planejada | nao | nao | art-direction |
 
 ## Validation Command
@@ -93,17 +110,17 @@
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\rpg-turnos -s res://tools/validate.gd
 ```
 
-Latest validation run by Codex on `2026-05-05`: `33/34` GUT tests passing. Failing test: `test_slot_restriction_rejects_large_card_on_bridge_slot`, which still expects removed `size_limit` behavior and must be replaced during Phase I1.
+Latest validation run by Codex on `2026-05-05`: `51/51` GUT tests passing. `tools/validate.gd` succeeds.
 
 ## Pending Engine Changes For Codex
 
-All changes below were specified during design sessions on 2026-05-04 and user decisions on 2026-05-05. Implement phases in order. Phase A and Phase B are the next implementation priority before `duelo`, H/J visual work, or content expansion.
+All changes below were specified during design sessions on 2026-05-04 and user decisions on 2026-05-05. Foundation, battle-rule completion, official duel, and world progression/rewards are complete as of `2026-05-05`; continue linearly with minimum save/load.
 
 ---
 
-## Phase A — Cleanup And Prerequisites
+## Phase A — Cleanup And Prerequisites (complete 2026-05-05)
 
-Run once before any other engine work. These are mechanical blockers.
+Completed before the foundation runtime sync. Kept here as implementation record.
 
 ### A1. Check stale git lock files
 
@@ -136,9 +153,9 @@ User decision on 2026-05-05: `manter_linha` is not future, reward, enemy-only, o
 
 ---
 
-## Phase B — Engine Core
+## Phase B — Engine Core (complete 2026-05-05)
 
-Foundational rules that all other phases depend on. Must be complete before Phase C, D, or E.
+Foundational rules that all other phases depend on. Completed and validated before Phase C, D, or E.
 
 ### B1. Damage type system
 
@@ -173,7 +190,7 @@ Replace the fixed `max_energy = 3` constant with a per-controller ramping value:
 
 ### B5. Cyclic deck — no discard pile
 
-Replace the discard pile concept entirely:
+Implemented: the discard pile concept was replaced by bottom-of-deck cycling.
 
 - When a spell (`magia`, `magia_de_tabuleiro`) resolves, it goes to the **bottom** of the owner's deck.
 - When a permanent is destroyed, it goes to the **bottom** of its owner's deck.
@@ -183,7 +200,7 @@ Replace the discard pile concept entirely:
 
 ### B6. Hand size progression, draw-up rule, and temporary ceiling
 
-Replace the fixed hand limit and fixed draw-1 rule:
+Implemented: the fixed hand limit and fixed draw-1 rule were replaced.
 
 - **Initial hand:** 5 cards (dealt at game start from the top of the deck).
 - **Hand limit progression:** starts at 5 on turn 1, increases by 1 on each of the controller's own upkeeps, capped at 7. Track as `max_hand_size` per controller. This is the carry-over limit enforced at the end of the descarte phase.
@@ -194,7 +211,7 @@ Replace the fixed hand limit and fixed draw-1 rule:
 
 ### B7. Descarte phase (4th public phase)
 
-Add `descarte` as the fourth and final public phase of the turn, after `fase_principal`:
+Implemented: `descarte` is the fourth and final public phase of the turn, after `fase_principal`:
 
 - The `descarte` phase begins automatically after the `fase_principal` ends (after both consecutive passes).
 - **Player controller:** the UI presents the player's current hand; the player must select cards to send to the bottom of the deck until `hand.size() <= 7`; if already at 7 or fewer, no mandatory discard is required, but the player may voluntarily discard additional cards.
@@ -544,23 +561,17 @@ When the engine transitions to the `descarte` phase:
 
 ## Phase I — Test Coverage
 
-Implement new GUT tests and fix stale tests. Phase I should be developed in parallel with Phases B and C — each new mechanic in B/C gets its test in I immediately, before moving to the next mechanic. All tests go in `tests/unit/`.
+Implement new GUT tests and fix stale tests. Phase I is partially complete for Phase A/B foundation rules; remaining Phase C+ mechanics still need tests when implemented. All tests go in `tests/unit/`.
 
 Phase I does not add new test files; it adds test functions to the existing files or creates `test_mechanics.gd` for the new keyword and mechanic suites.
 
-### I1. Fix stale tests (do this first, before any other Phase I work)
+### I1. Fix stale tests (complete for Phase A/B)
 
-Two existing tests in `test_battle_engine.gd` will break when Phases A and B5 are implemented. Fix them before running the full suite:
+The stale Phase A/B tests were replaced on 2026-05-05:
 
-**`test_hand_limit_discards_extra_draws`** — currently tests that drawing beyond the hand limit sends cards to a `discard` array. Phase B5 removes the discard pile; cards go to the bottom of the deck instead. Rewrite this test to:
-- Set up a controller with a full hand (at current limit) and a small deck
-- Call the draw phase
-- Assert that `hand.size()` did not increase
-- Assert that the deck bottom now contains the would-be-drawn cards (i.e., deck length is unchanged because cards were attempted from a full hand — or adjust to test that draw-up stops at the limit)
-
-**`test_slot_restriction_rejects_large_card_on_bridge_slot`** — tests size limit logic removed in Phase A2. Delete this test entirely. Replace it with a neutral assertion confirming that any `criatura` can be played into any slot regardless of `size` (i.e., size is no longer a placement constraint).
-
-After Phase A4, replace tests that use `manter_linha` as a command-card stress fixture. If no active command card remains, add a validation case that the command limit path behaves correctly with an empty active command pool.
+- `test_hand_limit_discards_extra_draws` was replaced by cyclic deck / immediate discard coverage.
+- `test_slot_restriction_rejects_large_card_on_bridge_slot` was replaced by `test_size_no_longer_restricts_slot_placement`.
+- `manter_linha` stress fixtures were removed; content/session coverage now asserts the card is absent from the catalog.
 
 ### I2. Voadora suite — add to `test_battle_engine.gd` or new `test_mechanics.gd`
 

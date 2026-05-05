@@ -220,13 +220,14 @@ func _build_hand(root: VBoxContainer) -> void:
 
 func _refresh() -> void:
 	var enemy_text: String = "Sem heroi inimigo" if engine.modo_batalha == BattleEngineScript.MODE_CLEAR_BOARD else "Inimigo %d HP" % engine.enemy_health
-	status_label.text = "Turno %d | Energia %d | Armadura %d | Jogador %d HP | %s | Deck %d" % [
+	status_label.text = "Turno %d | Energia %d | Armadura %d | Jogador %d HP | %s | Deck %d | Mao %d" % [
 		engine.turno,
 		engine.energy,
 		engine.player_armor,
 		engine.player_health,
 		enemy_text,
-		engine.deck.size()
+		engine.deck.size(),
+		engine.hand.size()
 	]
 	variant_label.text = "Modo: %s" % engine.get_mode_label()
 	phase_label.text = "Fase: %s" % engine.get_phase_label()
@@ -253,7 +254,11 @@ func _refresh() -> void:
 	_rebuild_hand()
 	log_label.text = "\n".join(engine.log_lines)
 	end_turn_button.text = engine.get_advance_phase_label()
-	end_turn_button.disabled = engine.outcome != "" or engine.priority_owner_id != PLAYER_OWNER
+	end_turn_button.disabled = engine.outcome != "" or (
+		engine.current_phase == BattleEngineScript.PHASE_MAIN and engine.priority_owner_id != PLAYER_OWNER
+	) or (
+		engine.current_phase == BattleEngineScript.PHASE_DISCARD and not engine.can_finish_discard()
+	)
 	hero_power_button.disabled = not engine.can_use_player_hero_power()
 	call_deferred("_play_pending_visual_events")
 
@@ -326,6 +331,14 @@ func _add_hand_action_controls(parent: VBoxContainer, card, hand_index: int) -> 
 	grid.add_theme_constant_override("v_separation", 4)
 	parent.add_child(grid)
 
+	if engine.current_phase == BattleEngineScript.PHASE_DISCARD:
+		var discard_button: Button = _small_action_button("Descartar")
+		discard_button.disabled = not engine.can_discard_from_hand(hand_index)
+		discard_button.custom_minimum_size = Vector2(96, 24)
+		discard_button.pressed.connect(_discard_hand_card.bind(hand_index))
+		grid.add_child(discard_button)
+		return
+
 	if card.occupies_slot():
 		for lane: int in range(engine.player_slots.size()):
 			var button: Button = _small_action_button(engine.get_slot_label(PLAYER_OWNER, lane))
@@ -343,6 +356,12 @@ func _add_hand_action_controls(parent: VBoxContainer, card, hand_index: int) -> 
 			button.disabled = not engine.can_play_card(card) or engine.enemy_slots[lane] == null
 			button.pressed.connect(_play_hand_card_to_enemy_slot.bind(hand_index, lane))
 			grid.add_child(button)
+	elif card.is_board_spell():
+		var cast_button: Button = _small_action_button("Conjurar")
+		cast_button.custom_minimum_size = Vector2(92, 24)
+		cast_button.disabled = not engine.can_play_card(card)
+		cast_button.pressed.connect(_play_hand_card_as_board_spell.bind(hand_index))
+		grid.add_child(cast_button)
 	elif card.is_buff_command():
 		for lane: int in range(engine.player_slots.size()):
 			var button: Button = _small_action_button(engine.get_slot_label(PLAYER_OWNER, lane))
@@ -411,6 +430,16 @@ func _play_hand_card_to_enemy_hero(hand_index: int) -> void:
 	_record_action_feedback(result)
 	call_deferred("_refresh")
 
+func _play_hand_card_as_board_spell(hand_index: int) -> void:
+	var result: Dictionary = engine.play_card_from_hand(hand_index, {})
+	_record_action_feedback(result)
+	call_deferred("_refresh")
+
+func _discard_hand_card(hand_index: int) -> void:
+	var result: Dictionary = engine.discard_card_from_hand(hand_index)
+	_record_action_feedback(result)
+	call_deferred("_refresh")
+
 func _attack_from_player_slot(slot_index: int, target: Dictionary) -> void:
 	var result: Dictionary = engine.attack_with_unit(PLAYER_OWNER, slot_index, target)
 	_record_action_feedback(result)
@@ -464,7 +493,10 @@ func _visual_event_position(event: Dictionary) -> Vector2:
 
 func _finish_battle() -> void:
 	if engine.outcome == "victory":
-		GameSession.complete_encounter("A emboscada foi vencida no encontro de teste.")
+		var summary: String = "A emboscada foi vencida no encontro de teste."
+		if engine.encounter_id == "duelista_bandido":
+			summary = "O Duelista Bandido foi derrotado em duelo."
+		GameSession.complete_encounter(summary)
 	else:
 		GameSession.record_defeat("O heroi caiu; o estado pre-combate sera restaurado.")
 	get_tree().change_scene_to_file("res://modes/battle/result.tscn")

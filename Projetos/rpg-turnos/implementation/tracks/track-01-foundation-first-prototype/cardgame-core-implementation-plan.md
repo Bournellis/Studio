@@ -1,7 +1,7 @@
 # Cardgame Core Implementation Plan
 
 - Last Updated: `2026-05-05`
-- Status: `PASS_01_HISTORICAL_BASELINE__SUPERSEDED_RESOURCE_RULES`
+- Status: `WORLD_PROGRESSION_REWARDS_COMPLETE`
 
 ## Summary
 
@@ -38,9 +38,18 @@ Superseded by current GDD rules:
 - fixed max energy 3 -> energy ramp 3..8
 - no public `descarte` phase -> `descarte` as fourth public phase
 - `size` / `size_limit` placement -> removed
-- `manter_linha` present in catalog -> delete
+- `manter_linha` present in catalog -> deleted
 
-## Current Runtime Mode
+## Implemented Foundation Runtime Alignment
+
+Completed on `2026-05-05`:
+
+- stale `size` / `size_limit` runtime and tests removed
+- `manter_linha` deleted from active catalog and generated resource
+- energy ramp, hand progression, cyclic deck, and public `descarte` implemented
+- validation and GUT coverage updated
+
+## Current Runtime Modes
 
 `limpar_mesa`:
 
@@ -50,25 +59,35 @@ Superseded by current GDD rules:
 - victory when all relevant enemy permanents are removed
 - defeat when player hero reaches 0 HP
 
-## Next Pass - Foundation Runtime Alignment
+## Implemented Official `duelo`
 
-Implement before `duelo`:
+Implemented as the first hero-vs-hero runtime mode:
 
-- remove stale `size` / `size_limit` runtime and tests
-- delete `manter_linha`
-- implement energy ramp, hand progression, cyclic deck, and public `descarte`
-- update validation and GUT coverage
-
-## Later Pass - `duelo`
-
-Implement as official runtime mode after `limpar_mesa` testing:
-
-- entry selection or encounter progression
 - enemy hero at 20 HP
-- enemy deck, hand, draw, energy, and discard visible in engine state
-- simple duel AI
+- enemy deck, hand, draw, and energy visible in engine state
+- simple aggressive duel AI
 - empty-lane attacks can hit enemy hero
 - victory when enemy hero reaches 0 HP
+
+## Implemented World Progression And Rewards
+
+- linear encounter chain on the world map
+- completed encounters can be re-entered without duplicate rewards
+- encounter rewards are claimed once
+- NPC rewards progress from `first_npc_reward_card` into `npc_reward_choices`
+- progression fields are included in `GameSession` snapshot/restore
+
+## Next Candidate Pass - Minimum Save/Load
+
+Persist the linear slice before adding more content:
+
+- unlocked cards
+- selected deck
+- completed encounters
+- claimed rewards
+- NPC reward index
+- active encounter when needed
+- corrupt/missing save fallback
 
 ## Future Modes
 

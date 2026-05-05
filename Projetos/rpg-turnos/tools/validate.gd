@@ -54,8 +54,8 @@ func _validate_contract() -> Dictionary:
 		return {"ok": false, "message": "Emboscada na Ponte encounter must exist."}
 	if catalog.find_encounter("duelista_bandido").is_empty():
 		return {"ok": false, "message": "Duelista Bandido encounter must exist."}
-	if catalog.reward_card_id == "" or catalog.find_card(catalog.reward_card_id) == null:
-		return {"ok": false, "message": "Reward card must exist."}
+	if catalog.first_npc_reward_card_id == "" or catalog.find_card(catalog.first_npc_reward_card_id) == null:
+		return {"ok": false, "message": "First NPC reward card must exist."}
 	for path: String in [
 		"res://modes/boot/boot.tscn",
 		"res://modes/world/world.tscn",
