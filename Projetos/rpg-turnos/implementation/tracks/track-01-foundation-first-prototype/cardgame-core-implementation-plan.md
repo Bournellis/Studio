@@ -1,7 +1,7 @@
 # Cardgame Core Implementation Plan
 
 - Last Updated: `2026-05-05`
-- Status: `WORLD_PROGRESSION_REWARDS_COMPLETE`
+- Status: `MINIMUM_SAVE_LOAD_COMPLETE`
 
 ## Summary
 
@@ -77,9 +77,9 @@ Implemented as the first hero-vs-hero runtime mode:
 - NPC rewards progress from `first_npc_reward_card` into `npc_reward_choices`
 - progression fields are included in `GameSession` snapshot/restore
 
-## Next Candidate Pass - Minimum Save/Load
+## Implemented Minimum Save/Load
 
-Persist the linear slice before adding more content:
+The linear slice persists before adding more content:
 
 - unlocked cards
 - selected deck
@@ -88,6 +88,15 @@ Persist the linear slice before adding more content:
 - NPC reward index
 - active encounter when needed
 - corrupt/missing save fallback
+
+## Next Candidate Pass - Visual/UX Hardening
+
+Improve readability before content expansion:
+
+- battle HUD
+- slot and target states
+- world markers
+- reward/result feedback
 
 ## Future Modes
 

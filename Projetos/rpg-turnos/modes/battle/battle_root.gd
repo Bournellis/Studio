@@ -497,6 +497,7 @@ func _finish_battle() -> void:
 		if engine.encounter_id == "duelista_bandido":
 			summary = "O Duelista Bandido foi derrotado em duelo."
 		GameSession.complete_encounter(summary)
+		GameSession.save_game()
 	else:
 		GameSession.record_defeat("O heroi caiu; o estado pre-combate sera restaurado.")
 	get_tree().change_scene_to_file("res://modes/battle/result.tscn")

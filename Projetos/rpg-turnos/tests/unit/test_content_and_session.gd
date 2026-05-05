@@ -2,6 +2,8 @@ extends "res://addons/gut/test.gd"
 
 const ContentGeneratorScript = preload("res://tools/content_generator.gd")
 const DeckRulesScript = preload("res://systems/deck/deck_rules.gd")
+const TEST_SAVE_FILENAME: String = "rpg_turnos_session_test_save.json"
+const TEST_SAVE_PATH: String = "user://%s" % TEST_SAVE_FILENAME
 
 func before_all() -> void:
 	var result: Dictionary = ContentGeneratorScript.new().generate_all()
@@ -9,7 +11,11 @@ func before_all() -> void:
 	ContentLibrary.reload()
 
 func before_each() -> void:
+	_delete_test_save()
 	GameSession.start_new_game()
+
+func after_each() -> void:
+	_delete_test_save()
 
 func test_catalog_contains_starter_deck_and_reward() -> void:
 	var catalog = ContentLibrary.get_catalog()
@@ -91,3 +97,60 @@ func test_encounter_rewards_claim_once_and_allow_practice() -> void:
 
 	assert_true(repeat.is_empty())
 	assert_eq(GameSession.unlocked_card_ids.size(), unlocked_count)
+
+func test_save_game_writes_and_loads_progression_state() -> void:
+	GameSession.claim_npc_reward()
+	GameSession.set_active_encounter("emboscada_na_ponte")
+	GameSession.complete_encounter("Teste.")
+	var reversed_deck: Array = GameSession.selected_deck_ids.duplicate()
+	reversed_deck.reverse()
+	assert_true(GameSession.set_selected_deck(reversed_deck))
+
+	var expected_unlocked: Array = GameSession.unlocked_card_ids.duplicate()
+	var expected_deck: Array = GameSession.selected_deck_ids.duplicate()
+	var expected_completed: Array = GameSession.completed_encounter_ids.duplicate()
+	var expected_claimed: Array = GameSession.claimed_encounter_reward_ids.duplicate()
+
+	assert_true(GameSession.save_game(TEST_SAVE_PATH))
+	assert_true(FileAccess.file_exists(TEST_SAVE_PATH))
+
+	GameSession.start_new_game()
+	assert_false(GameSession.unlocked_card_ids.has("lobo_alfa"))
+
+	assert_true(GameSession.load_game(TEST_SAVE_PATH))
+	assert_eq(GameSession.unlocked_card_ids, expected_unlocked)
+	assert_eq(GameSession.selected_deck_ids, expected_deck)
+	assert_eq(GameSession.completed_encounter_ids, expected_completed)
+	assert_eq(GameSession.claimed_encounter_reward_ids, expected_claimed)
+	assert_eq(GameSession.active_encounter_id, "emboscada_na_ponte")
+	assert_true(GameSession.is_encounter_completed)
+	assert_eq(GameSession.last_battle_result, "")
+
+func test_missing_save_falls_back_to_new_game() -> void:
+	GameSession.claim_npc_reward()
+
+	assert_false(GameSession.load_game(TEST_SAVE_PATH))
+
+	assert_false(GameSession.has_npc_reward_card)
+	assert_eq(GameSession.unlocked_card_ids.size(), 20)
+	assert_eq(GameSession.selected_deck_ids.size(), 20)
+
+func test_corrupt_save_falls_back_to_new_game() -> void:
+	var file: FileAccess = FileAccess.open(TEST_SAVE_PATH, FileAccess.WRITE)
+	assert_not_null(file)
+	file.store_string("{not valid json")
+	file = null
+	GameSession.claim_npc_reward()
+
+	assert_false(GameSession.load_game(TEST_SAVE_PATH))
+
+	assert_false(GameSession.has_npc_reward_card)
+	assert_eq(GameSession.unlocked_card_ids.size(), 20)
+	assert_eq(GameSession.completed_encounter_ids.size(), 0)
+
+func _delete_test_save() -> void:
+	if not FileAccess.file_exists(TEST_SAVE_PATH):
+		return
+	var user_dir: DirAccess = DirAccess.open("user://")
+	if user_dir != null:
+		user_dir.remove(TEST_SAVE_FILENAME)

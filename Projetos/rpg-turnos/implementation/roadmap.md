@@ -120,6 +120,20 @@ Implemented:
 - snapshot/restore support for progression fields
 - GUT coverage for the above
 
+### Minimum Save/Load
+
+Goal: persist the playable slice now that progression and rewards exist in memory.
+
+Status: done.
+
+Implemented:
+- local JSON save at `user://rpg_turnos_save.json`
+- save data for unlocked cards, selected deck, active encounter, completed encounters, claimed rewards, and NPC reward state
+- boot `Continuar` flow when a save exists
+- runtime save points after new game, rewards, encounter selection, deck confirmation, and victory
+- missing/corrupt save fallback to new game
+- GUT coverage for save creation, load restore, and fallback behavior
+
 ### Phase H — Visual Layer Improvements
 
 Goal: improve battle HUD readability and feedback without importing art assets.
@@ -161,16 +175,16 @@ Reference: `../docs/art-direction.md`, `../docs/asset-request.md`
 
 ## Next Pass
 
-### Minimum Save/Load
+### Visual/UX Hardening
 
-Goal: persist the playable slice now that progression and rewards exist in memory.
+Goal: improve readability of the playable slice before adding more content.
 
 Planned:
-- choose the minimal local JSON/Godot save format
-- persist unlocked cards, selected deck, completed encounters, claimed rewards, NPC reward index, and current active encounter when needed
-- expose explicit session save/load helpers in `GameSession`
-- add validation coverage for save creation, load restore, and corrupt/missing save fallback
-- keep the first implementation small enough to support the current linear slice before expanding campaign content
+- battle HUD readability
+- slot and target state clarity
+- world marker readability
+- result/reward feedback clarity
+- keep changes no-asset and low-risk
 
 ## Later Passes
 

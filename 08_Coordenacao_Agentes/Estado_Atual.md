@@ -13,12 +13,12 @@
 
 ## rpg-turnos
 
-- Status: **Ativo — progressao e rewards iniciais completos**
-- Track ativa: `Track 01 - Foundation Contracts And First Prototype` (WORLD_PROGRESSION_REWARDS_COMPLETE)
-- Baseline atual: slice Godot 4.6.2 jogavel — C1 unico runtime, `limpar_mesa`, `duelo`, cadeia de encontros no mapa, rewards por encontro uma vez, NPC progressiva, `descarte`, energia/mao com ramp, deck ciclico, regras de batalha completas para o slice, validacao verde 51/51
-- Meta ativa: implementar save/load minimo antes de expandir conteudo novo
+- Status: **Ativo — save/load minimo completo**
+- Track ativa: `Track 01 - Foundation Contracts And First Prototype` (MINIMUM_SAVE_LOAD_COMPLETE)
+- Baseline atual: slice Godot 4.6.2 jogavel — C1 unico runtime, `limpar_mesa`, `duelo`, cadeia de encontros no mapa, rewards por encontro uma vez, NPC progressiva, save/load JSON local, `descarte`, energia/mao com ramp, deck ciclico, regras de batalha completas para o slice, validacao verde 54/54
+- Meta ativa: hardening visual/UX minimo antes de expandir conteudo novo
 - Ultima atualizacao do current-status: `2026-05-05`
-- Proximo passo: persistir cartas desbloqueadas, deck selecionado, encontros completos, rewards reclamadas e indice de recompensa NPC
+- Proximo passo: melhorar legibilidade do HUD/slots e feedback visual sem importar arte nova
 
 ## Kanban rápido
 

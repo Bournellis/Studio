@@ -5,6 +5,8 @@ signal encounter_completed()
 
 const REQUIRED_DECK_SIZE: int = 20
 const ACTIVE_ENCOUNTER_ID: String = "emboscada_na_ponte"
+const SAVE_VERSION: int = 1
+const DEFAULT_SAVE_PATH: String = "user://rpg_turnos_save.json"
 const DeckRulesScript = preload("res://systems/deck/deck_rules.gd")
 
 var unlocked_card_ids: Array = []
@@ -35,6 +37,68 @@ func start_new_game() -> void:
 	last_battle_result = ""
 	last_battle_summary = ""
 	_pre_combat_snapshot = {}
+
+func build_save_data() -> Dictionary:
+	return {
+		"version": SAVE_VERSION,
+		"unlocked_card_ids": _string_array(unlocked_card_ids),
+		"selected_deck_ids": _string_array(selected_deck_ids),
+		"active_encounter_id": active_encounter_id,
+		"has_npc_reward_card": has_npc_reward_card,
+		"completed_encounter_ids": _string_array(completed_encounter_ids),
+		"claimed_encounter_reward_ids": _string_array(claimed_encounter_reward_ids),
+		"npc_reward_index": npc_reward_index
+	}
+
+func apply_save_data(save_data: Dictionary) -> bool:
+	ContentLibrary.ensure_loaded()
+	if int(save_data.get("version", 0)) != SAVE_VERSION:
+		return false
+
+	var loaded_unlocked: Array = _ensure_starter_cards(_string_array(save_data.get("unlocked_card_ids", [])))
+	unlocked_card_ids = loaded_unlocked
+
+	selected_deck_ids = _string_array(save_data.get("selected_deck_ids", []))
+	if not is_deck_valid(selected_deck_ids):
+		selected_deck_ids = ContentLibrary.get_starter_deck_ids()
+
+	active_encounter_id = _valid_encounter_id(str(save_data.get("active_encounter_id", ACTIVE_ENCOUNTER_ID)))
+	has_npc_reward_card = bool(save_data.get("has_npc_reward_card", false))
+	completed_encounter_ids = _unique_string_array(save_data.get("completed_encounter_ids", []))
+	claimed_encounter_reward_ids = _unique_string_array(save_data.get("claimed_encounter_reward_ids", []))
+	npc_reward_index = max(0, int(save_data.get("npc_reward_index", 0)))
+	is_encounter_completed = has_completed_encounter(active_encounter_id)
+	last_reward_card_ids = []
+	last_battle_result = ""
+	last_battle_summary = ""
+	_pre_combat_snapshot = {}
+	return true
+
+func save_game(save_path: String = DEFAULT_SAVE_PATH) -> bool:
+	var file: FileAccess = FileAccess.open(save_path, FileAccess.WRITE)
+	if file == null:
+		push_error("Failed to open save file for writing: %s" % save_path)
+		return false
+	file.store_string(JSON.stringify(build_save_data(), "\t"))
+	return true
+
+func load_game(save_path: String = DEFAULT_SAVE_PATH) -> bool:
+	if not FileAccess.file_exists(save_path):
+		start_new_game()
+		return false
+	var file_text: String = FileAccess.get_file_as_string(save_path)
+	var parser: JSON = JSON.new()
+	if parser.parse(file_text) != OK:
+		start_new_game()
+		return false
+	var parsed: Variant = parser.data
+	if not parsed is Dictionary:
+		start_new_game()
+		return false
+	if not apply_save_data(Dictionary(parsed)):
+		start_new_game()
+		return false
+	return true
 
 func claim_first_npc_reward() -> String:
 	if has_npc_reward_card:
@@ -152,3 +216,38 @@ func _is_subset_of_unlocked(deck_ids: Array) -> bool:
 			return false
 		remaining.remove_at(index)
 	return true
+
+func _string_array(values: Variant) -> Array:
+	var result: Array = []
+	if not values is Array:
+		return result
+	for value: Variant in values:
+		var item: String = str(value)
+		if item != "":
+			result.append(item)
+	return result
+
+func _unique_string_array(values: Variant) -> Array:
+	var result: Array = []
+	for item: String in _string_array(values):
+		if not result.has(item):
+			result.append(item)
+	return result
+
+func _ensure_starter_cards(card_ids: Array) -> Array:
+	var result: Array = card_ids.duplicate()
+	var remaining: Array = result.duplicate()
+	for starter_card_id: Variant in ContentLibrary.get_starter_deck_ids():
+		var starter_id: String = str(starter_card_id)
+		var index: int = remaining.find(starter_id)
+		if index == -1:
+			result.append(starter_id)
+		else:
+			remaining.remove_at(index)
+	return result
+
+func _valid_encounter_id(encounter_id: String) -> String:
+	var catalog = ContentLibrary.get_catalog()
+	if catalog != null and not catalog.find_encounter(encounter_id).is_empty():
+		return encounter_id
+	return ACTIVE_ENCOUNTER_ID

@@ -1,7 +1,7 @@
 # Track 01 Current Status
 
 - Last Updated: `2026-05-05`
-- Status: `WORLD_PROGRESSION_REWARDS_COMPLETE`
+- Status: `MINIMUM_SAVE_LOAD_COMPLETE`
 
 ## Implemented
 
@@ -17,7 +17,8 @@
 - Battle feedback uses simple tweens and labels without new assets.
 - Battle Rule Completion is implemented: damage types, coverage, `voadora`, dual burning, `fallback_slots`, and board spells for `chuva_brasas` / `chamado_hostes`.
 - World progression/rewards are implemented: encounter completion IDs, one-time encounter rewards, NPC progressive rewards, and a linear world marker chain.
-- Latest validation passes cleanly: 51/51 GUT tests pass through `tools/validate.gd`.
+- Minimum save/load is implemented with local JSON, boot continuation, runtime save points, and missing/corrupt save fallback.
+- Latest validation passes cleanly: 54/54 GUT tests pass through `tools/validate.gd`.
 
 ## Implemented Runtime Rules
 
@@ -43,14 +44,14 @@
 - completed encounters are tracked by id
 - encounter rewards are claimed once and re-entry is allowed without duplicate rewards
 - NPC rewards use `first_npc_reward_card` first, then `npc_reward_choices`
+- local save/load persists unlocked cards, selected deck, active encounter, completed encounters, claimed rewards, NPC reward state, and falls back to new game on invalid save
 - command card deck limit is 4
 - hero power is `Preparar Defesa`
 
 ## Accepted GDD Rules Not Yet Implemented
 
-- Save/load remains pending before progress should persist between application runs.
 - Full visual hardening / art-ready placeholder structure remains pending.
 
 ## Next
 
-Implement save/load minimum or visual/UX hardening as the next linear pass.
+Implement visual/UX hardening as the next linear pass.

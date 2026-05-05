@@ -65,9 +65,9 @@ O brief diz "The deck evolves with RPG progression". Atualmente o deck só cresc
 ## Categoria: Sistemas Técnicos
 
 ### G-T1 — Save e load
-**Status:** `aberto`
-Não existe. O snapshot pré-combate está em memória e é perdido ao fechar o jogo. Qualquer progressão de campanha precisa de persistência.
-**Precisa:** definição do que persiste (cartas desbloqueadas, encontros completos, estado do mapa, HP do herói entre encontros), escolha de formato (JSON local, Godot save files).
+**Status:** `implementado minimo`
+O slice persiste estado em JSON local (`user://rpg_turnos_save.json`) e carrega pelo menu `Continuar`. O save cobre cartas desbloqueadas, deck selecionado, encontro ativo, encontros completos, rewards reclamadas, recompensa NPC inicial e indice de recompensa NPC. Save ausente, corrompido ou incompativel cai para novo jogo.
+**Precisa:** evoluir apenas quando houver multiplos slots, campanha maior, HP persistente entre encontros, configuracoes, ou cloud save.
 
 ### G-T2 — Áudio (categoria completa)
 **Status:** `aberto`
@@ -141,7 +141,7 @@ Como o player entra em um encontro? O projeto-brief menciona "encounter transiti
 ## Prioridade de resolução
 
 **Resolver antes de qualquer conteúdo novo:**
-- implementar G-T1 (save/load minimo), porque a progressao e as recompensas ja existem em memoria
+- executar hardening visual/UX minimo para HUD, slots, mapa e feedback de recompensa
 - manter runtime e design pendente separados em qualquer novo status
 
 **Resolver antes de expandir para campanha:**

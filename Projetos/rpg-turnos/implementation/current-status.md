@@ -4,9 +4,9 @@
 - Active Surface: `cardgame-first C1 battle modes`
 - Active Project Name: `rpg-turnos`
 - Active Track: `Track 01 - Foundation Contracts And First Prototype`
-- Active Track Status: `WORLD_PROGRESSION_REWARDS_COMPLETE`
-- Current Operational Baseline: `playable Godot 4.6.2 slice with menu, 2D exploration placeholder, 20-card deck setup, C1 as the sole runtime combat model, limpar_mesa encounter mode, official duelo mode, linear world encounter chain, one-time encounter rewards, NPC progressive rewards, public descarte phase, energy/hand ramp, cyclic bottom-of-deck card flow, damage types, coverage, voadora, dual burning, fallback slots, creature movement, neutral slots in engine, data-driven boards/encounters, automatic enemy priority, simple visual battle feedback, generated scenes, JSON-driven catalog, and green GUT validation`
-- Active Goal: `implement minimum save/load before expanding content`
+- Active Track Status: `MINIMUM_SAVE_LOAD_COMPLETE`
+- Current Operational Baseline: `playable Godot 4.6.2 slice with menu, local JSON save/load, 2D exploration placeholder, 20-card deck setup, C1 as the sole runtime combat model, limpar_mesa encounter mode, official duelo mode, linear world encounter chain, one-time encounter rewards, NPC progressive rewards, public descarte phase, energy/hand ramp, cyclic bottom-of-deck card flow, damage types, coverage, voadora, dual burning, fallback slots, creature movement, neutral slots in engine, data-driven boards/encounters, automatic enemy priority, simple visual battle feedback, generated scenes, JSON-driven catalog, and green GUT validation`
+- Active Goal: `minimum visual/UX hardening before expanding content`
 - Active Combat Direction: `C1 - main game, not a variant`
 - Preserved Combat Ideas: `A/B priority variants and the phase-based duel are historical only in docs/cardgame-core-experiments.md`
 - Active Work Mode: `08_Coordenacao_Agentes Kanban / Decisoes / Handoffs is active for cross-agent coordination`
@@ -58,6 +58,10 @@
 - Hero power is `Preparar Defesa`: costs 1 energy and grants 2 persistent armor.
 - Enemy decisions resolve automatically until priority returns to the player.
 - UI emits simple no-asset feedback for attack, damage, summon, armor, buff, and destruction.
+- Save/load uses local JSON at `user://rpg_turnos_save.json`.
+- The boot menu exposes `Continuar` when a save exists; `Novo jogo` overwrites the local save.
+- Runtime saves after new game, NPC rewards, encounter selection, deck confirmation, and victory rewards.
+- Loading falls back to a new game when the save is missing, corrupt, or version-incompatible.
 
 ## Accepted Design, Implemented In Foundation Runtime Alignment
 
@@ -73,7 +77,6 @@
 
 ## Accepted Design, Pending Implementation
 
-- Minimum save/load is not implemented yet; current progression survives scene changes but not closing the game.
 - Visual/UX hardening remains pending for battle HUD, world readability, and art-ready node structure.
 - Broader RPG progression, stats, equipment/items, narrative depth, audio, and transition polish remain future layers.
 
@@ -110,11 +113,11 @@
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\rpg-turnos -s res://tools/validate.gd
 ```
 
-Latest validation run by Codex on `2026-05-05`: `51/51` GUT tests passing. `tools/validate.gd` succeeds.
+Latest validation run by Codex on `2026-05-05`: `54/54` GUT tests passing. `tools/validate.gd` succeeds.
 
 ## Pending Engine Changes For Codex
 
-All changes below were specified during design sessions on 2026-05-04 and user decisions on 2026-05-05. Foundation, battle-rule completion, official duel, and world progression/rewards are complete as of `2026-05-05`; continue linearly with minimum save/load.
+All changes below were specified during design sessions on 2026-05-04 and user decisions on 2026-05-05. Foundation, battle-rule completion, official duel, world progression/rewards, and minimum save/load are complete as of `2026-05-05`; continue linearly with visual/UX hardening.
 
 ---
 

@@ -41,6 +41,13 @@ func _build_menu() -> void:
 	new_game.pressed.connect(_on_new_game_pressed)
 	box.add_child(new_game)
 
+	if FileAccess.file_exists(GameSession.DEFAULT_SAVE_PATH):
+		var continue_game: Button = Button.new()
+		continue_game.text = "Continuar"
+		continue_game.custom_minimum_size = Vector2(220, 44)
+		continue_game.pressed.connect(_on_continue_pressed)
+		box.add_child(continue_game)
+
 	var quit: Button = Button.new()
 	quit.text = "Sair"
 	quit.custom_minimum_size = Vector2(220, 44)
@@ -49,6 +56,11 @@ func _build_menu() -> void:
 
 func _on_new_game_pressed() -> void:
 	GameSession.start_new_game()
+	GameSession.save_game()
+	get_tree().change_scene_to_file("res://modes/world/world.tscn")
+
+func _on_continue_pressed() -> void:
+	GameSession.load_game()
 	get_tree().change_scene_to_file("res://modes/world/world.tscn")
 
 func _panel_style() -> StyleBoxFlat:

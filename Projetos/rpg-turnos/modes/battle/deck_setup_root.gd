@@ -265,6 +265,7 @@ func _on_start_pressed() -> void:
 	if not GameSession.set_selected_deck(compact):
 		_refresh()
 		return
+	GameSession.save_game()
 	get_tree().change_scene_to_file("res://modes/battle/battle.tscn")
 
 func _panel_style(fill: Color) -> StyleBoxFlat:

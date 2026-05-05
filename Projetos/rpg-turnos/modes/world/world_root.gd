@@ -118,10 +118,12 @@ func _interact_npc() -> void:
 	if not GameSession.has_npc_reward_card:
 		var reward_id: String = GameSession.claim_npc_reward()
 		dialogue_text.text = "A viajante entrega uma carta para testar no encontro: %s." % ContentLibrary.get_card_name(reward_id)
+		GameSession.save_game()
 	elif GameSession.completed_encounter_ids.size() > GameSession.npc_reward_index:
 		var progressive_reward_id: String = GameSession.claim_npc_progressive_reward()
 		if progressive_reward_id != "":
 			dialogue_text.text = "A viajante entrega uma nova carta pelo progresso: %s." % ContentLibrary.get_card_name(progressive_reward_id)
+			GameSession.save_game()
 		else:
 			dialogue_text.text = "A viajante observa o caminho. Nao ha novas cartas por enquanto."
 	else:
@@ -140,6 +142,7 @@ func _interact_encounter(marker: Dictionary) -> void:
 		dialogue_panel.visible = true
 		return
 	GameSession.set_active_encounter(str(marker.get("id", GameSession.ACTIVE_ENCOUNTER_ID)))
+	GameSession.save_game()
 	GameSession.capture_pre_combat_snapshot()
 	get_tree().change_scene_to_file("res://modes/battle/deck_setup.tscn")
 
