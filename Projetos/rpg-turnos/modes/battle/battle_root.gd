@@ -19,6 +19,11 @@ var priority_label: Label
 var feedback_label: Label
 var log_label: Label
 var route_label: Label
+var player_hp_bar: ProgressBar
+var enemy_hp_bar: ProgressBar
+var energy_pips_box: HBoxContainer
+var hand_limit_label: Label
+var discard_counter_label: Label
 var enemy_hero_zone
 var enemy_slots_box: HBoxContainer
 var player_slots_box: HBoxContainer
@@ -102,6 +107,31 @@ func _build_header(root: VBoxContainer) -> void:
 	info_grid.add_child(variant_label)
 	info_grid.add_child(phase_label)
 	info_grid.add_child(priority_label)
+
+	var vitals_row: HBoxContainer = HBoxContainer.new()
+	vitals_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	vitals_row.add_theme_constant_override("separation", 10)
+	header_root.add_child(vitals_row)
+
+	player_hp_bar = _stat_bar("player_hp_bar", "Jogador")
+	vitals_row.add_child(player_hp_bar)
+
+	enemy_hp_bar = _stat_bar("enemy_hp_bar", "Inimigo")
+	vitals_row.add_child(enemy_hp_bar)
+
+	energy_pips_box = HBoxContainer.new()
+	energy_pips_box.name = "energy_pips"
+	energy_pips_box.custom_minimum_size = Vector2(150, 22)
+	energy_pips_box.add_theme_constant_override("separation", 3)
+	vitals_row.add_child(energy_pips_box)
+
+	hand_limit_label = _header_info_label(12)
+	hand_limit_label.name = "hand_limit_label"
+	vitals_row.add_child(hand_limit_label)
+
+	discard_counter_label = _header_info_label(12)
+	discard_counter_label.name = "discard_counter_label"
+	vitals_row.add_child(discard_counter_label)
 
 	var actions: HBoxContainer = HBoxContainer.new()
 	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -233,6 +263,7 @@ func _refresh() -> void:
 	phase_label.text = "Fase: %s" % engine.get_phase_label()
 	priority_label.text = "%s | %s" % [engine.get_active_controller_label(), engine.get_priority_label()]
 	route_label.text = engine.get_board_route_summary()
+	_update_vitals()
 	if last_feedback == "":
 		feedback_label.text = "Use cartas, ataques, Preparar Defesa ou passe prioridade durante a fase principal."
 	else:
@@ -275,7 +306,7 @@ func _rebuild_slot_row(container: HBoxContainer, owner: String, slots: Array) ->
 		slot_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		slot_box.add_theme_constant_override("separation", 2)
 		var slot = BattleSlotControlScript.new()
-		slot.setup(owner, index, slots[index])
+		slot.setup(owner, index, slots[index], _slot_visual_state(owner, index, slots[index]))
 		slot.card_dropped.connect(_on_card_dropped_on_slot)
 		slot_box.add_child(slot)
 		_add_slot_attack_controls(slot_box, owner, index)
@@ -408,6 +439,79 @@ func _header_info_label(font_size: int) -> Label:
 	label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	label.add_theme_font_size_override("font_size", font_size)
 	return label
+
+func _stat_bar(node_name: String, label_text: String) -> ProgressBar:
+	var bar: ProgressBar = ProgressBar.new()
+	bar.name = node_name
+	bar.custom_minimum_size = Vector2(150, 20)
+	bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	bar.show_percentage = false
+	bar.max_value = 25
+	bar.value = 25
+	bar.tooltip_text = label_text
+	return bar
+
+func _update_vitals() -> void:
+	player_hp_bar.max_value = BattleEngineScript.DEFAULT_PLAYER_HEALTH
+	player_hp_bar.value = max(0, engine.player_health)
+	player_hp_bar.tooltip_text = "Jogador: %d HP, %d armadura" % [engine.player_health, engine.player_armor]
+	player_hp_bar.add_theme_stylebox_override("fill", _bar_fill(Color(0.36, 0.68, 0.52)))
+
+	if engine.modo_batalha == BattleEngineScript.MODE_DUEL:
+		enemy_hp_bar.visible = true
+		enemy_hp_bar.max_value = BattleEngineScript.DEFAULT_ENEMY_HEALTH
+		enemy_hp_bar.value = max(0, engine.enemy_health)
+		enemy_hp_bar.tooltip_text = "Inimigo: %d HP, %d armadura" % [engine.enemy_health, engine.enemy_armor]
+		enemy_hp_bar.add_theme_stylebox_override("fill", _bar_fill(Color(0.78, 0.32, 0.34)))
+	else:
+		enemy_hp_bar.visible = false
+
+	for child: Node in energy_pips_box.get_children():
+		energy_pips_box.remove_child(child)
+		child.free()
+	var player_controller: Dictionary = Dictionary(engine.controladores.get(PLAYER_OWNER, {}))
+	var max_energy: int = int(player_controller.get("energy_max", engine.energy))
+	for index: int in range(max_energy):
+		var pip: ColorRect = ColorRect.new()
+		pip.custom_minimum_size = Vector2(14, 18)
+		pip.color = Color(0.92, 0.74, 0.36) if index < engine.energy else Color(0.2, 0.22, 0.23)
+		energy_pips_box.add_child(pip)
+	energy_pips_box.tooltip_text = "Energia: %d/%d" % [engine.energy, max_energy]
+
+	var max_hand: int = int(player_controller.get("max_hand_size", engine.hand.size()))
+	hand_limit_label.text = "Mao %d/%d | Deck %d" % [engine.hand.size(), max_hand, engine.deck.size()]
+	if engine.current_phase == BattleEngineScript.PHASE_DISCARD:
+		var remaining_discards: int = max(0, engine.hand.size() - engine.discard_target_size)
+		discard_counter_label.text = "Descarte: %d restante(s)" % remaining_discards
+	else:
+		discard_counter_label.text = "Descarte: inativo"
+
+func _slot_visual_state(owner: String, slot_index: int, occupant: Variant) -> Dictionary:
+	var attack_status: String = engine.get_slot_attack_status(owner, slot_index)
+	return {
+		"label": engine.get_slot_label(owner, slot_index),
+		"attack_status": attack_status,
+		"is_attack_source": owner == PLAYER_OWNER and attack_status == "Pode atacar",
+		"is_attack_target": _is_slot_attack_target(owner, slot_index),
+		"is_empty": occupant == null
+	}
+
+func _is_slot_attack_target(owner: String, slot_index: int) -> bool:
+	for source_index: int in range(engine.player_slots.size()):
+		for option: Variant in engine.get_attack_options(PLAYER_OWNER, source_index):
+			var target: Dictionary = Dictionary(option)
+			if str(target.get("owner", "")) == owner and int(target.get("slot", -1)) == slot_index:
+				return true
+	return false
+
+func _bar_fill(fill: Color) -> StyleBoxFlat:
+	var style: StyleBoxFlat = StyleBoxFlat.new()
+	style.bg_color = fill
+	style.corner_radius_top_left = 4
+	style.corner_radius_top_right = 4
+	style.corner_radius_bottom_left = 4
+	style.corner_radius_bottom_right = 4
+	return style
 
 func _section_label(text: String) -> Label:
 	var label: Label = Label.new()

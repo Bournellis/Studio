@@ -138,14 +138,18 @@ Implemented:
 
 Goal: improve battle HUD readability and feedback without importing art assets.
 
-Planned:
+Status: done.
+
+Implemented:
 - Discrete HUD nodes (energy_label, hp_bar, phase_label, priority_dot)
-- HP bar and energy pip row (ProgressBar / PipRowComponent)
+- HP bar and energy pip row
 - Card type left-stripe color in BattleCardToken
-- Route/lane visual markers with named panels
+- Route/lane visual markers on the current battle board
 - Slot visual states (empty, occupied, highlighted, attack target)
-- Styled damage number labels per event type
+- Styled feedback labels per event type
 - Descarte counter UI panel
+- World marker progress/status readability
+- Result reward feedback
 
 ### Phase I — Test Coverage
 
@@ -175,16 +179,15 @@ Reference: `../docs/art-direction.md`, `../docs/asset-request.md`
 
 ## Next Pass
 
-### Visual/UX Hardening
+### Art-Ready Placeholder Structure
 
-Goal: improve readability of the playable slice before adding more content.
+Goal: prepare named nodes and asset ID hooks before importing art or expanding content.
 
 Planned:
-- battle HUD readability
-- slot and target state clarity
-- world marker readability
-- result/reward feedback clarity
-- keep changes no-asset and low-risk
+- `UiTokens` autoload with color tokens and display name maps
+- named art slots in boot, world, battle, card token, and result screens
+- `AssetIds` constants file mapping planned art IDs to `res://` paths
+- keep placeholders no-asset and low-risk
 
 ## Later Passes
 

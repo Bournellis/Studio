@@ -48,19 +48,33 @@ func _draw() -> void:
 	draw_rect(MAP_RECT, Color(0.12, 0.16, 0.14), true)
 	draw_rect(MAP_RECT, Color(0.34, 0.42, 0.36), false, 4.0)
 
+	for index: int in range(ENCOUNTER_MARKERS.size() - 1):
+		var from_marker: Dictionary = ENCOUNTER_MARKERS[index]
+		var to_marker: Dictionary = ENCOUNTER_MARKERS[index + 1]
+		var from_position: Vector2 = Vector2(from_marker.get("position", Vector2.ZERO))
+		var to_position: Vector2 = Vector2(to_marker.get("position", Vector2.ZERO))
+		var path_color: Color = Color(0.3, 0.34, 0.32)
+		if GameSession.has_completed_encounter(str(from_marker.get("id", ""))):
+			path_color = Color(0.42, 0.6, 0.44)
+		draw_line(from_position, to_position, path_color, 5.0)
+
 	draw_circle(NPC_POSITION, 28.0, Color(0.3, 0.46, 0.78))
 	draw_string(ThemeDB.fallback_font, NPC_POSITION + Vector2(-48, -42), "NPC", HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color.WHITE)
 
 	for marker: Dictionary in ENCOUNTER_MARKERS:
 		var marker_position: Vector2 = Vector2(marker.get("position", Vector2.ZERO))
 		var encounter_id: String = str(marker.get("id", ""))
+		var status_text: String = _marker_status_text(marker)
 		var encounter_color: Color = Color(0.24, 0.25, 0.26)
 		if _marker_available(marker):
 			encounter_color = Color(0.72, 0.42, 0.28)
 		if GameSession.has_completed_encounter(encounter_id):
 			encounter_color = Color(0.28, 0.42, 0.32)
 		draw_rect(Rect2(marker_position - Vector2(28, 28), Vector2(56, 56)), encounter_color, true)
+		if GameSession.active_encounter_id == encounter_id:
+			draw_rect(Rect2(marker_position - Vector2(34, 34), Vector2(68, 68)), Color(0.95, 0.82, 0.42), false, 3.0)
 		draw_string(ThemeDB.fallback_font, marker_position + Vector2(-46, -38), str(marker.get("label", "Encontro")), HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color.WHITE)
+		draw_string(ThemeDB.fallback_font, marker_position + Vector2(-48, 46), status_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(0.9, 0.92, 0.86))
 
 	draw_circle(player_position, 22.0, Color(0.86, 0.86, 0.72))
 	draw_string(ThemeDB.fallback_font, player_position + Vector2(-48, -34), "Jogador", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color.WHITE)
@@ -165,6 +179,14 @@ func _nearest_encounter_marker() -> Dictionary:
 func _marker_available(marker: Dictionary) -> bool:
 	var required_id: String = str(marker.get("requires", ""))
 	return required_id == "" or GameSession.has_completed_encounter(required_id)
+
+func _marker_status_text(marker: Dictionary) -> String:
+	var encounter_id: String = str(marker.get("id", ""))
+	if GameSession.has_completed_encounter(encounter_id):
+		return "Concluido"
+	if _marker_available(marker):
+		return "Disponivel"
+	return "Bloqueado"
 
 func _panel_style(fill: Color) -> StyleBoxFlat:
 	var style: StyleBoxFlat = StyleBoxFlat.new()

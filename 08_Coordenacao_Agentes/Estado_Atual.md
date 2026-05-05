@@ -13,12 +13,12 @@
 
 ## rpg-turnos
 
-- Status: **Ativo — save/load minimo completo**
-- Track ativa: `Track 01 - Foundation Contracts And First Prototype` (MINIMUM_SAVE_LOAD_COMPLETE)
-- Baseline atual: slice Godot 4.6.2 jogavel — C1 unico runtime, `limpar_mesa`, `duelo`, cadeia de encontros no mapa, rewards por encontro uma vez, NPC progressiva, save/load JSON local, `descarte`, energia/mao com ramp, deck ciclico, regras de batalha completas para o slice, validacao verde 54/54
-- Meta ativa: hardening visual/UX minimo antes de expandir conteudo novo
+- Status: **Ativo — visual/UX hardening minimo completo**
+- Track ativa: `Track 01 - Foundation Contracts And First Prototype` (VISUAL_UX_HARDENING_COMPLETE)
+- Baseline atual: slice Godot 4.6.2 jogavel — C1 unico runtime, `limpar_mesa`, `duelo`, cadeia de encontros no mapa, rewards por encontro uma vez, NPC progressiva, save/load JSON local, HUD/slots/mapa/rewards mais legiveis, `descarte`, energia/mao com ramp, deck ciclico, regras de batalha completas para o slice, validacao verde 56/56
+- Meta ativa: preparar estrutura art-ready antes de expandir conteudo novo
 - Ultima atualizacao do current-status: `2026-05-05`
-- Proximo passo: melhorar legibilidade do HUD/slots e feedback visual sem importar arte nova
+- Proximo passo: criar estrutura placeholder art-ready para telas e IDs de assets
 
 ## Kanban rápido
 

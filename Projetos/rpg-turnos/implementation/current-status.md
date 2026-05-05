@@ -4,9 +4,9 @@
 - Active Surface: `cardgame-first C1 battle modes`
 - Active Project Name: `rpg-turnos`
 - Active Track: `Track 01 - Foundation Contracts And First Prototype`
-- Active Track Status: `MINIMUM_SAVE_LOAD_COMPLETE`
-- Current Operational Baseline: `playable Godot 4.6.2 slice with menu, local JSON save/load, 2D exploration placeholder, 20-card deck setup, C1 as the sole runtime combat model, limpar_mesa encounter mode, official duelo mode, linear world encounter chain, one-time encounter rewards, NPC progressive rewards, public descarte phase, energy/hand ramp, cyclic bottom-of-deck card flow, damage types, coverage, voadora, dual burning, fallback slots, creature movement, neutral slots in engine, data-driven boards/encounters, automatic enemy priority, simple visual battle feedback, generated scenes, JSON-driven catalog, and green GUT validation`
-- Active Goal: `minimum visual/UX hardening before expanding content`
+- Active Track Status: `VISUAL_UX_HARDENING_COMPLETE`
+- Current Operational Baseline: `playable Godot 4.6.2 slice with menu, local JSON save/load, 2D exploration placeholder, 20-card deck setup, C1 as the sole runtime combat model, limpar_mesa encounter mode, official duelo mode, linear world encounter chain, one-time encounter rewards, NPC progressive rewards, public descarte phase, energy/hand ramp, cyclic bottom-of-deck card flow, damage types, coverage, voadora, dual burning, fallback slots, creature movement, neutral slots in engine, clearer HUD/slots/map/reward feedback, data-driven boards/encounters, automatic enemy priority, simple visual battle feedback, generated scenes, JSON-driven catalog, and green GUT validation`
+- Active Goal: `art-ready placeholder structure before expanding content`
 - Active Combat Direction: `C1 - main game, not a variant`
 - Preserved Combat Ideas: `A/B priority variants and the phase-based duel are historical only in docs/cardgame-core-experiments.md`
 - Active Work Mode: `08_Coordenacao_Agentes Kanban / Decisoes / Handoffs is active for cross-agent coordination`
@@ -62,6 +62,11 @@
 - The boot menu exposes `Continuar` when a save exists; `Novo jogo` overwrites the local save.
 - Runtime saves after new game, NPC rewards, encounter selection, deck confirmation, and victory rewards.
 - Loading falls back to a new game when the save is missing, corrupt, or version-incompatible.
+- Battle HUD has HP bars, energy pips, hand/deck count, and discard counter.
+- Hand cards show a type stripe.
+- Battle slots expose clearer empty/source/target/occupied visual states.
+- World markers show connected progress, status labels, and active encounter highlight.
+- Result screen shows reward feedback explicitly.
 
 ## Accepted Design, Implemented In Foundation Runtime Alignment
 
@@ -77,7 +82,7 @@
 
 ## Accepted Design, Pending Implementation
 
-- Visual/UX hardening remains pending for battle HUD, world readability, and art-ready node structure.
+- Art-ready placeholder structure remains pending for final asset import.
 - Broader RPG progression, stats, equipment/items, narrative depth, audio, and transition polish remain future layers.
 
 ## Implemented Battle Mode Pass 01
@@ -105,6 +110,7 @@
 | `duelo` | oficial | sim | sim | GDD |
 | Rewards por encontro | multiplas cartas, claim unico | sim | sim | GDD |
 | `voadora` | keyword completa | sim | sim | GDD |
+| Visual/UX minimo | HUD, slots, mapa e rewards legiveis | sim | sim | roadmap |
 | UI tokens / assets | estrutura planejada | nao | nao | art-direction |
 
 ## Validation Command
@@ -113,11 +119,11 @@
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\rpg-turnos -s res://tools/validate.gd
 ```
 
-Latest validation run by Codex on `2026-05-05`: `54/54` GUT tests passing. `tools/validate.gd` succeeds.
+Latest validation run by Codex on `2026-05-05`: `56/56` GUT tests passing. `tools/validate.gd` succeeds.
 
 ## Pending Engine Changes For Codex
 
-All changes below were specified during design sessions on 2026-05-04 and user decisions on 2026-05-05. Foundation, battle-rule completion, official duel, world progression/rewards, and minimum save/load are complete as of `2026-05-05`; continue linearly with visual/UX hardening.
+All changes below were specified during design sessions on 2026-05-04 and user decisions on 2026-05-05. Foundation, battle-rule completion, official duel, world progression/rewards, minimum save/load, and visual/UX hardening are complete as of `2026-05-05`; continue linearly with art-ready placeholder structure.
 
 ---
 

@@ -36,6 +36,13 @@ func _build_ui() -> void:
 	box.add_child(summary)
 
 	if GameSession.last_battle_result == "victory":
+		var reward_label: Label = Label.new()
+		reward_label.name = "reward_label"
+		reward_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		reward_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		reward_label.text = _reward_text()
+		box.add_child(reward_label)
+
 		var back: Button = Button.new()
 		back.text = "Voltar ao mapa"
 		back.custom_minimum_size = Vector2(220, 44)
@@ -69,3 +76,14 @@ func _panel_style() -> StyleBoxFlat:
 	style.content_margin_right = 28
 	style.content_margin_bottom = 28
 	return style
+
+func _reward_text() -> String:
+	return reward_text_for_card_ids(GameSession.last_reward_card_ids)
+
+static func reward_text_for_card_ids(card_ids: Array) -> String:
+	if card_ids.is_empty():
+		return "Recompensas: ja reclamadas neste encontro."
+	var names: Array[String] = []
+	for card_id: Variant in card_ids:
+		names.append(ContentLibrary.get_card_name(str(card_id)))
+	return "Recompensas: %s." % ", ".join(names)

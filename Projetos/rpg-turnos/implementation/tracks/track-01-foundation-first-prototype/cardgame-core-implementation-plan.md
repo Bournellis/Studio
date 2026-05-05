@@ -1,7 +1,7 @@
 # Cardgame Core Implementation Plan
 
 - Last Updated: `2026-05-05`
-- Status: `MINIMUM_SAVE_LOAD_COMPLETE`
+- Status: `VISUAL_UX_HARDENING_COMPLETE`
 
 ## Summary
 
@@ -89,14 +89,23 @@ The linear slice persists before adding more content:
 - active encounter when needed
 - corrupt/missing save fallback
 
-## Next Candidate Pass - Visual/UX Hardening
+## Implemented Visual/UX Hardening
 
-Improve readability before content expansion:
+Improved readability before content expansion:
 
 - battle HUD
 - slot and target states
 - world markers
 - reward/result feedback
+
+## Next Candidate Pass - Art-Ready Placeholder Structure
+
+Prepare screens for later asset import:
+
+- `UiTokens`
+- named art nodes
+- card and battle art placeholders
+- `AssetIds`
 
 ## Future Modes
 

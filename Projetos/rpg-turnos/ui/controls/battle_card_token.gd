@@ -4,6 +4,7 @@ extends PanelContainer
 var card_id: String = ""
 var hand_index: int = -1
 var card
+var type_stripe: ColorRect
 
 func setup(new_card_id: String, new_hand_index: int) -> void:
 	card_id = new_card_id
@@ -15,9 +16,23 @@ func _rebuild() -> void:
 	custom_minimum_size = Vector2(156, 82)
 	clip_contents = true
 	add_theme_stylebox_override("panel", _panel_style())
+
+	var row: HBoxContainer = HBoxContainer.new()
+	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_theme_constant_override("separation", 6)
+	add_child(row)
+
+	type_stripe = ColorRect.new()
+	type_stripe.name = "type_stripe"
+	type_stripe.custom_minimum_size = Vector2(6, 0)
+	type_stripe.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	type_stripe.color = _type_color()
+	row.add_child(type_stripe)
+
 	var box: VBoxContainer = VBoxContainer.new()
+	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	box.add_theme_constant_override("separation", 2)
-	add_child(box)
+	row.add_child(box)
 
 	var title: Label = Label.new()
 	title.text = card.display_name if card != null else card_id
@@ -74,3 +89,20 @@ func _panel_style() -> StyleBoxFlat:
 	style.content_margin_right = 7
 	style.content_margin_bottom = 6
 	return style
+
+func _type_color() -> Color:
+	if card == null:
+		return Color(0.45, 0.48, 0.5)
+	match str(card.card_type):
+		"criatura":
+			return Color(0.36, 0.68, 0.52)
+		"estrutura", "permanente":
+			return Color(0.62, 0.58, 0.42)
+		"magia":
+			return Color(0.42, 0.58, 0.86)
+		"magia_de_tabuleiro":
+			return Color(0.74, 0.44, 0.84)
+		"comando":
+			return Color(0.9, 0.68, 0.32)
+		_:
+			return Color(0.45, 0.48, 0.5)

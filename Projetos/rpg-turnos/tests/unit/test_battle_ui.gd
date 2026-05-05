@@ -2,6 +2,8 @@ extends "res://addons/gut/test.gd"
 
 const ContentGeneratorScript = preload("res://tools/content_generator.gd")
 const BattleRootScript = preload("res://modes/battle/battle_root.gd")
+const BattleSlotControlScript = preload("res://ui/controls/battle_slot_control.gd")
+const ResultRootScript = preload("res://modes/battle/result_root.gd")
 
 func before_all() -> void:
 	var result: Dictionary = ContentGeneratorScript.new().generate_all()
@@ -39,8 +41,14 @@ func test_battle_hand_exposes_button_actions_and_feedback() -> void:
 	root.engine._enemy_ai_enabled = false
 
 	assert_eq(root.hand_box.get_child_count(), 5)
+	assert_eq(root.energy_pips_box.get_child_count(), 3)
+	assert_true(root.hand_limit_label.text.contains("Mao 5/5"))
+	assert_true(root.discard_counter_label.text.contains("inativo"))
+	assert_eq(root.player_hp_bar.value, 25.0)
 	var first_card_box: VBoxContainer = root.hand_box.get_child(0)
 	assert_gt(first_card_box.get_child_count(), 1)
+	var first_token = first_card_box.get_child(0)
+	assert_not_null(first_token.type_stripe)
 
 	root._play_hand_card_to_player_slot(0, 0)
 	await get_tree().process_frame
@@ -49,6 +57,29 @@ func test_battle_hand_exposes_button_actions_and_feedback() -> void:
 	assert_true(root.engine.player_slots[0] != null)
 	assert_eq(root.hand_box.get_child_count(), 4)
 	root.free()
+
+func test_battle_slot_exposes_visual_state_chips() -> void:
+	var slot = BattleSlotControlScript.new()
+	add_child(slot)
+	slot.setup("player", 0, null, {
+		"label": "P1",
+		"attack_status": "Livre",
+		"is_attack_source": false,
+		"is_attack_target": true,
+		"is_empty": true
+	})
+	await get_tree().process_frame
+
+	assert_eq(slot.visual_state.get("is_attack_target"), true)
+	assert_true(slot.get_child_count() > 0)
+	slot.free()
+
+func test_result_screen_shows_reward_feedback() -> void:
+	GameSession.last_battle_result = "victory"
+	GameSession.last_battle_summary = "Teste."
+	GameSession.last_reward_card_ids = ["lobo_alfa"]
+
+	assert_true(ResultRootScript.reward_text_for_card_ids(GameSession.last_reward_card_ids).contains("Lobo-Alfa"))
 
 func test_end_turn_button_stays_visible_and_advances_round() -> void:
 	var root = BattleRootScript.new()
@@ -183,3 +214,12 @@ func _assert_control_inside(control: Control, viewport_size: Vector2) -> void:
 	assert_gte(rect.position.y, 0.0, "%s top edge" % control.name)
 	assert_lte(rect.end.x, viewport_size.x, "%s right edge" % control.name)
 	assert_lte(rect.end.y, viewport_size.y, "%s bottom edge" % control.name)
+
+func _find_node_by_name(node: Node, target_name: String):
+	if node.name == target_name:
+		return node
+	for child: Node in node.get_children():
+		var found = _find_node_by_name(child, target_name)
+		if found != null:
+			return found
+	return null

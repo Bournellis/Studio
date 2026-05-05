@@ -1,7 +1,7 @@
 # Track 01 Current Status
 
 - Last Updated: `2026-05-05`
-- Status: `MINIMUM_SAVE_LOAD_COMPLETE`
+- Status: `VISUAL_UX_HARDENING_COMPLETE`
 
 ## Implemented
 
@@ -18,7 +18,8 @@
 - Battle Rule Completion is implemented: damage types, coverage, `voadora`, dual burning, `fallback_slots`, and board spells for `chuva_brasas` / `chamado_hostes`.
 - World progression/rewards are implemented: encounter completion IDs, one-time encounter rewards, NPC progressive rewards, and a linear world marker chain.
 - Minimum save/load is implemented with local JSON, boot continuation, runtime save points, and missing/corrupt save fallback.
-- Latest validation passes cleanly: 54/54 GUT tests pass through `tools/validate.gd`.
+- Visual/UX hardening is implemented: HUD bars/pips, hand/deck/discard counter, card type stripes, clearer slot states, world marker status, and result reward feedback.
+- Latest validation passes cleanly: 56/56 GUT tests pass through `tools/validate.gd`.
 
 ## Implemented Runtime Rules
 
@@ -45,13 +46,14 @@
 - encounter rewards are claimed once and re-entry is allowed without duplicate rewards
 - NPC rewards use `first_npc_reward_card` first, then `npc_reward_choices`
 - local save/load persists unlocked cards, selected deck, active encounter, completed encounters, claimed rewards, NPC reward state, and falls back to new game on invalid save
+- HUD/slot/map/result feedback is legible enough for the current no-asset playable slice
 - command card deck limit is 4
 - hero power is `Preparar Defesa`
 
 ## Accepted GDD Rules Not Yet Implemented
 
-- Full visual hardening / art-ready placeholder structure remains pending.
+- Art-ready placeholder structure remains pending before final asset import.
 
 ## Next
 
-Implement visual/UX hardening as the next linear pass.
+Implement art-ready placeholder structure as the next linear pass.
