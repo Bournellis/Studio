@@ -1,12 +1,15 @@
 # RPG Turnos Project Brief
 
+> DOCUMENTO HISTORICO — NAO USAR PARA REGRAS ATIVAS.
+> Consulte `game-design-document.md` e `implementation/current-status.md` antes de qualquer implementacao.
+
 ## Status
 
 This project brief captures the initial conversation for the provisional project `rpg-turnos`.
 
 The design is intentionally early. These notes are foundation constraints, not a full game design document.
 
-Current combat rules are now governed by `game-design-document.md` version `0.3`. Any older mention in this brief of energy starting at 1, a 10-card deck, or undecided C1 status is historical.
+**Este documento é histórico.** As regras ativas são governadas por `game-design-document.md` (versão 0.6). Todo conteúdo deste brief sobre energia começando em 1, deck de 10 cartas, status indefinido do C1, ou "Open Decisions" listadas abaixo deve ser lido como ponto de partida, não como estado atual. Consulte o GDD para qualquer decisão de design.
 
 ## Identity
 

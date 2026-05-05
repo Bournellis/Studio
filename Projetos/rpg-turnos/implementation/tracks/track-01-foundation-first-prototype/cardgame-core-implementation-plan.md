@@ -1,7 +1,7 @@
 # Cardgame Core Implementation Plan
 
-- Last Updated: `2026-05-04`
-- Status: `C1_BATTLE_MODES_PASS_01_IMPLEMENTED`
+- Last Updated: `2026-05-05`
+- Status: `PASS_01_HISTORICAL_BASELINE__SUPERSEDED_RESOURCE_RULES`
 
 ## Summary
 
@@ -10,6 +10,8 @@ C1 is the current game. Implementation work now targets official battle modes ra
 The old phase-based duel and A/B alternatives are historical only and must not be exposed in runtime UI.
 
 ## Implemented Pass 01 - Core C1 And `limpar_mesa`
+
+This is a historical implementation baseline. It records what Pass 01 shipped, not the full active GDD target.
 
 Implemented:
 
@@ -27,6 +29,17 @@ Implemented:
 - enemy automatic decisions until priority returns to the player
 - simple visual events for attack, damage, summon, armor, buff, and destruction
 
+Superseded by current GDD rules:
+
+- initial hand `4` -> `5`
+- fixed hand limit `8` -> `max_hand_size` 5..7 plus temporary ceiling 8
+- draw 1 per turn -> draw up to current `max_hand_size`
+- discard pile -> bottom-of-deck cyclic model
+- fixed max energy 3 -> energy ramp 3..8
+- no public `descarte` phase -> `descarte` as fourth public phase
+- `size` / `size_limit` placement -> removed
+- `manter_linha` present in catalog -> delete
+
 ## Current Runtime Mode
 
 `limpar_mesa`:
@@ -37,7 +50,16 @@ Implemented:
 - victory when all relevant enemy permanents are removed
 - defeat when player hero reaches 0 HP
 
-## Next Pass - `duelo`
+## Next Pass - Foundation Runtime Alignment
+
+Implement before `duelo`:
+
+- remove stale `size` / `size_limit` runtime and tests
+- delete `manter_linha`
+- implement energy ramp, hand progression, cyclic deck, and public `descarte`
+- update validation and GUT coverage
+
+## Later Pass - `duelo`
 
 Implement as official runtime mode after `limpar_mesa` testing:
 

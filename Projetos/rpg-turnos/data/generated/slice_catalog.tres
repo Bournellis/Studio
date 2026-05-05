@@ -15,9 +15,6 @@ attack = 2
 health = 2
 text = "Criatura simples 2/2."
 keywords = PackedStringArray()
-effect = {
-"size": "pequeno"
-}
 
 [sub_resource type="Resource" id="Resource_aaqvb"]
 script = ExtResource("1_tqsc8")
@@ -30,9 +27,6 @@ attack = 1
 health = 4
 text = "Defensor. Bom para segurar uma rota."
 keywords = PackedStringArray("defensor")
-effect = {
-"size": "medio"
-}
 
 [sub_resource type="Resource" id="Resource_xh3p2"]
 script = ExtResource("1_tqsc8")
@@ -45,9 +39,6 @@ attack = 3
 health = 1
 text = "Rapido. Pode atacar no turno em que entra."
 keywords = PackedStringArray("rapido")
-effect = {
-"size": "pequeno"
-}
 
 [sub_resource type="Resource" id="Resource_ayi6x"]
 script = ExtResource("1_tqsc8")
@@ -60,9 +51,6 @@ attack = 2
 health = 3
 text = "Criatura media para disputar a frente."
 keywords = PackedStringArray()
-effect = {
-"size": "medio"
-}
 
 [sub_resource type="Resource" id="Resource_b0i2p"]
 script = ExtResource("1_tqsc8")
@@ -76,8 +64,7 @@ health = 2
 text = "Alcance. Em espaco alto, pressiona rotas diagonais."
 keywords = PackedStringArray("alcance")
 effect = {
-"ranged": true,
-"size": "medio"
+"ranged": true
 }
 
 [sub_resource type="Resource" id="Resource_hvson"]
@@ -91,9 +78,6 @@ attack = 4
 health = 4
 text = "Corpo pesado para vencer uma linha."
 keywords = PackedStringArray()
-effect = {
-"size": "grande"
-}
 
 [sub_resource type="Resource" id="Resource_vopr6"]
 script = ExtResource("1_tqsc8")
@@ -104,11 +88,8 @@ cost = 3
 command_cost = 2
 attack = 4
 health = 2
-text = "Atropelar. Testa excesso de dano em versoes futuras."
+text = "Atropelar. Excesso de dano vai ao proximo slot ou ao heroi inimigo."
 keywords = PackedStringArray("atropelar")
-effect = {
-"size": "medio"
-}
 
 [sub_resource type="Resource" id="Resource_2f5oc"]
 script = ExtResource("1_tqsc8")
@@ -120,9 +101,6 @@ command_cost = 1
 health = 5
 text = "Estrutura defensiva. Bloqueia a rota sem atacar."
 keywords = PackedStringArray("defensor")
-effect = {
-"size": "medio"
-}
 
 [sub_resource type="Resource" id="Resource_q1xx6"]
 script = ExtResource("1_tqsc8")
@@ -133,11 +111,10 @@ cost = 3
 command_cost = 2
 attack = 2
 health = 3
-text = "Estrutura ofensiva para testar rotas e altura."
+text = "Estrutura ofensiva. Alcance. Nao pode se mover."
 keywords = PackedStringArray("alcance")
 effect = {
-"ranged": true,
-"size": "medio"
+"ranged": true
 }
 
 [sub_resource type="Resource" id="Resource_75iml"]
@@ -194,9 +171,6 @@ attack = 2
 health = 2
 text = "Inimigo inicial da ponte."
 keywords = PackedStringArray()
-effect = {
-"size": "pequeno"
-}
 
 [sub_resource type="Resource" id="Resource_5405m"]
 script = ExtResource("1_tqsc8")
@@ -209,9 +183,6 @@ attack = 4
 health = 5
 text = "Inimigo pesado da ponte."
 keywords = PackedStringArray()
-effect = {
-"size": "grande"
-}
 
 [sub_resource type="Resource" id="Resource_p3n0t"]
 script = ExtResource("1_tqsc8")
@@ -225,8 +196,7 @@ health = 3
 text = "Inimigo em espaco alto."
 keywords = PackedStringArray("alcance")
 effect = {
-"ranged": true,
-"size": "medio"
+"ranged": true
 }
 
 [sub_resource type="Resource" id="Resource_pkhd5"]
@@ -240,9 +210,6 @@ attack = 2
 health = 1
 text = "Carta do duelista bandido."
 keywords = PackedStringArray("rapido")
-effect = {
-"size": "pequeno"
-}
 
 [sub_resource type="Resource" id="Resource_haoox"]
 script = ExtResource("1_tqsc8")
@@ -259,24 +226,195 @@ effect = {
 }
 
 [sub_resource type="Resource" id="Resource_dqqtb"]
+script = ExtResource("1_tqsc8")
+id = "guardiao_portal"
+display_name = "Guardiao do Portal"
+card_type = "criatura"
+cost = 2
+command_cost = 1
+attack = 1
+health = 5
+text = "Defensor. Muro resistente para segurar a linha de frente."
+keywords = PackedStringArray("defensor")
+
+[sub_resource type="Resource" id="Resource_0kq34"]
+script = ExtResource("1_tqsc8")
+id = "atirador_torre"
+display_name = "Atirador da Torre"
+card_type = "criatura"
+cost = 3
+command_cost = 2
+attack = 2
+health = 4
+text = "Alcance. Em posicao elevada, pressiona todo o lado inimigo."
+keywords = PackedStringArray("alcance")
+effect = {
+"ranged": true
+}
+
+[sub_resource type="Resource" id="Resource_edoxb"]
+script = ExtResource("1_tqsc8")
+id = "soldado_central"
+display_name = "Soldado Central"
+card_type = "criatura"
+cost = 2
+command_cost = 1
+attack = 2
+health = 3
+text = "Criatura robusta para o centro."
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_q1muo"]
+script = ExtResource("1_tqsc8")
+id = "corvo_batedor"
+display_name = "Corvo Batedor"
+card_type = "criatura"
+cost = 2
+command_cost = 2
+attack = 1
+health = 2
+text = "Voadora, Rapido. Entra pronta e pode atacar imediatamente, incluindo slots alto. Imune a fisico_melee."
+keywords = PackedStringArray("voadora", "rapido")
+
+[sub_resource type="Resource" id="Resource_w1flg"]
+script = ExtResource("1_tqsc8")
+id = "lobo_alfa"
+display_name = "Lobo-Alfa"
+card_type = "criatura"
+cost = 3
+command_cost = 3
+attack = 4
+health = 2
+text = "Atropelar. Excesso de dano passa para o proximo slot ou heroi inimigo."
+keywords = PackedStringArray("atropelar")
+
+[sub_resource type="Resource" id="Resource_u525c"]
+script = ExtResource("1_tqsc8")
+id = "relampago"
+display_name = "Relampago"
+card_type = "magia"
+cost = 3
+command_cost = 3
+speed = "instantanea"
+text = "Instantanea. Causa 4 de dano magico a qualquer alvo, incluindo slots alto. Mantem prioridade."
+keywords = PackedStringArray()
+effect = {
+"damage": 4.0,
+"damage_type": "magico",
+"ranged": true
+}
+
+[sub_resource type="Resource" id="Resource_ba32m"]
+script = ExtResource("1_tqsc8")
+id = "arqueira_voante"
+display_name = "Arqueira Voante"
+card_type = "criatura"
+cost = 4
+command_cost = 4
+attack = 2
+health = 4
+text = "Voadora, Alcance. Ataca com fisico_alcance, pode atingir slots alto, ignorando intermediarios. Reduzida por cobertura. Imune a fisico_melee."
+keywords = PackedStringArray("voadora", "alcance")
+
+[sub_resource type="Resource" id="Resource_5njsx"]
+script = ExtResource("1_tqsc8")
+id = "chuva_brasas"
+display_name = "Chuva de Brasas"
+card_type = "magia_de_tabuleiro"
+cost = 4
+command_cost = 4
+text = "Aplica queimando a todos os slots inimigos. Criaturas que permanecerem no slot tomam 1 de dano por turno no upkeep. Podem escapar movendo."
+keywords = PackedStringArray()
+effect = {
+"apply_status": "queimando",
+"target": "all_enemy_slots"
+}
+
+[sub_resource type="Resource" id="Resource_igiro"]
+script = ExtResource("1_tqsc8")
+id = "campeao_guilda"
+display_name = "Campeao da Guilda"
+card_type = "criatura"
+cost = 5
+command_cost = 5
+attack = 5
+health = 5
+text = "Criatura 5/5 sem keyword. Presenca dominante no mid-late game."
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_kf03g"]
+script = ExtResource("1_tqsc8")
+id = "torre_blindada"
+display_name = "Torre Blindada"
+card_type = "estrutura"
+cost = 5
+command_cost = 5
+attack = 3
+health = 7
+text = "Alcance, Cobertura. Ataca com fisico_alcance. Reduz 1 de dano fisico_alcance recebido, empilhando com terreno cobertura. Nao pode mover."
+keywords = PackedStringArray("alcance", "cobertura")
+
+[sub_resource type="Resource" id="Resource_7rtnj"]
+script = ExtResource("1_tqsc8")
+id = "chamado_hostes"
+display_name = "Chamado das Hostes"
+card_type = "magia_de_tabuleiro"
+cost = 5
+command_cost = 5
+text = "Remove enjoo de todas as criaturas amigas. Todas ficam pronta e podem atacar imediatamente apos retorno de prioridade."
+keywords = PackedStringArray()
+effect = {
+"apply_status": "pronta",
+"remove_status": "enjoo",
+"target": "all_friendly_creatures"
+}
+
+[sub_resource type="Resource" id="Resource_siawb"]
+script = ExtResource("1_tqsc8")
+id = "flagelo"
+display_name = "Flagelo"
+card_type = "magia"
+cost = 6
+command_cost = 6
+text = "Causa 6 de dano magico a qualquer alvo, incluindo slots alto. Passa prioridade apos resolucao."
+keywords = PackedStringArray()
+effect = {
+"damage": 6.0,
+"damage_type": "magico",
+"ranged": true
+}
+
+[sub_resource type="Resource" id="Resource_vn8pn"]
+script = ExtResource("1_tqsc8")
+id = "dragao_jovem"
+display_name = "Dragao Jovem"
+card_type = "criatura"
+cost = 6
+command_cost = 6
+attack = 5
+health = 6
+text = "Voadora, Atropelar. Ataca com fisico_melee mas pode atingir slots alto. Imune a fisico_melee. Excesso de dano passa para proximo slot nao-voadora ou heroi inimigo."
+keywords = PackedStringArray("voadora", "atropelar")
+
+[sub_resource type="Resource" id="Resource_3vxjw"]
 script = ExtResource("2_aaqvb")
 id = "duelista_bandido"
 display_name = "Duelista Bandido"
 max_health = 20
-hero_power_text = "IA de duelo simples."
+hero_power_text = "Golpe Direto: custo 0, velocidade normal, uso 1x no proprio turno. Causa 1 de dano no heroi inimigo."
 
-[sub_resource type="Resource" id="Resource_0kq34"]
+[sub_resource type="Resource" id="Resource_8vwdf"]
 script = ExtResource("2_aaqvb")
 id = "aprendiz_limiar"
 display_name = "Aprendiz do Limiar"
 max_health = 25
-hero_power_text = "Preparar Defesa: custo 1, ganhe 2 de armadura."
+hero_power_text = "Preparar Defesa: custo 1, velocidade normal, uso 1x no proprio turno. Ganha 2 armadura."
 
 [resource]
 script = ExtResource("3_xh3p2")
-player_hero = SubResource("Resource_0kq34")
-enemy_hero = SubResource("Resource_dqqtb")
-cards = Array[Resource]([SubResource("Resource_tqsc8"), SubResource("Resource_aaqvb"), SubResource("Resource_xh3p2"), SubResource("Resource_ayi6x"), SubResource("Resource_b0i2p"), SubResource("Resource_hvson"), SubResource("Resource_vopr6"), SubResource("Resource_2f5oc"), SubResource("Resource_q1xx6"), SubResource("Resource_75iml"), SubResource("Resource_xg15d"), SubResource("Resource_kobr5"), SubResource("Resource_js17r"), SubResource("Resource_5405m"), SubResource("Resource_p3n0t"), SubResource("Resource_pkhd5"), SubResource("Resource_haoox")])
+player_hero = SubResource("Resource_8vwdf")
+enemy_hero = SubResource("Resource_3vxjw")
+cards = Array[Resource]([SubResource("Resource_tqsc8"), SubResource("Resource_aaqvb"), SubResource("Resource_xh3p2"), SubResource("Resource_ayi6x"), SubResource("Resource_b0i2p"), SubResource("Resource_hvson"), SubResource("Resource_vopr6"), SubResource("Resource_2f5oc"), SubResource("Resource_q1xx6"), SubResource("Resource_75iml"), SubResource("Resource_xg15d"), SubResource("Resource_kobr5"), SubResource("Resource_js17r"), SubResource("Resource_5405m"), SubResource("Resource_p3n0t"), SubResource("Resource_pkhd5"), SubResource("Resource_haoox"), SubResource("Resource_dqqtb"), SubResource("Resource_0kq34"), SubResource("Resource_edoxb"), SubResource("Resource_q1muo"), SubResource("Resource_w1flg"), SubResource("Resource_u525c"), SubResource("Resource_ba32m"), SubResource("Resource_5njsx"), SubResource("Resource_igiro"), SubResource("Resource_kf03g"), SubResource("Resource_7rtnj"), SubResource("Resource_siawb"), SubResource("Resource_vn8pn")])
 starter_deck_ids = PackedStringArray("escudeiro", "escudeiro", "escudeiro", "guarda_vila", "guarda_vila", "guarda_vila", "lobo_faminto", "lobo_faminto", "lobo_faminto", "soldado_linha", "soldado_linha", "arqueira_penhasco", "arqueira_penhasco", "bruto_mercenario", "javali_guerra", "barricada", "barricada", "balista", "raio_curto", "raio_curto")
 reward_card_id = "golpe_preciso"
 boards = Array[Dictionary]([{
@@ -309,13 +447,13 @@ boards = Array[Dictionary]([{
 },
 "enemy_slots": [{
 "accepts": ["criatura", "estrutura", "permanente"],
-"elevation": "normal",
+"elevation": "chao",
 "id": "E1",
 "label": "E1",
 "terrain": "normal"
 }, {
 "accepts": ["criatura", "estrutura", "permanente"],
-"elevation": "normal",
+"elevation": "chao",
 "id": "E2",
 "label": "E2",
 "terrain": "normal"
@@ -352,20 +490,19 @@ boards = Array[Dictionary]([{
 },
 "player_slots": [{
 "accepts": ["criatura", "estrutura", "permanente"],
-"elevation": "normal",
+"elevation": "chao",
 "id": "P1",
 "label": "P1",
 "terrain": "normal"
 }, {
-"accepts": ["criatura", "estrutura"],
-"elevation": "normal",
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "chao",
 "id": "P2",
 "label": "P2",
-"size_limit": "medio",
 "terrain": "normal"
 }, {
 "accepts": ["criatura", "estrutura", "permanente"],
-"elevation": "normal",
+"elevation": "chao",
 "id": "P3",
 "label": "P3",
 "terrain": "cobertura"
@@ -397,19 +534,19 @@ boards = Array[Dictionary]([{
 },
 "enemy_slots": [{
 "accepts": ["criatura", "estrutura", "permanente"],
-"elevation": "normal",
+"elevation": "chao",
 "id": "E1",
 "label": "E1",
 "terrain": "normal"
 }, {
 "accepts": ["criatura", "estrutura", "permanente"],
-"elevation": "normal",
+"elevation": "chao",
 "id": "E2",
 "label": "E2",
 "terrain": "normal"
 }, {
 "accepts": ["criatura", "estrutura", "permanente"],
-"elevation": "normal",
+"elevation": "chao",
 "id": "E3",
 "label": "E3",
 "terrain": "normal"
@@ -440,22 +577,350 @@ boards = Array[Dictionary]([{
 },
 "player_slots": [{
 "accepts": ["criatura", "estrutura", "permanente"],
-"elevation": "normal",
+"elevation": "chao",
 "id": "P1",
 "label": "P1",
 "terrain": "normal"
 }, {
 "accepts": ["criatura", "estrutura", "permanente"],
-"elevation": "normal",
+"elevation": "chao",
 "id": "P2",
 "label": "P2",
 "terrain": "normal"
 }, {
 "accepts": ["criatura", "estrutura", "permanente"],
-"elevation": "normal",
+"elevation": "chao",
 "id": "P3",
 "label": "P3",
 "terrain": "normal"
+}]
+}, {
+"display_name": "Cruzamento Neutro",
+"enemy_routes": {
+"0": {
+"fallback": "hero",
+"targets": [{
+"owner": "jogador",
+"slot": 0.0
+}, {
+"owner": "jogador",
+"slot": 1.0
+}]
+},
+"1": {
+"fallback": "hero",
+"targets": [{
+"owner": "jogador",
+"slot": 0.0
+}, {
+"owner": "jogador",
+"slot": 1.0
+}, {
+"owner": "jogador",
+"slot": 2.0
+}]
+},
+"2": {
+"fallback": "hero",
+"targets": [{
+"owner": "jogador",
+"slot": 2.0
+}, {
+"owner": "jogador",
+"slot": 1.0
+}]
+}
+},
+"enemy_slots": [{
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "chao",
+"id": "E1",
+"label": "E1",
+"terrain": "normal"
+}, {
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "chao",
+"id": "E2",
+"label": "E2",
+"terrain": "normal"
+}, {
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "chao",
+"id": "E3",
+"label": "E3",
+"terrain": "queimando"
+}],
+"id": "cruzamento_neutro",
+"neutral_routes": {
+"0": {
+"enemy_targets": [{
+"owner": "jogador",
+"slot": 0.0
+}, {
+"owner": "jogador",
+"slot": 1.0
+}],
+"fallback": "hero",
+"player_targets": [{
+"owner": "inimigo",
+"slot": 0.0
+}, {
+"owner": "inimigo",
+"slot": 1.0
+}]
+}
+},
+"neutral_slots": [{
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "chao",
+"id": "N1",
+"label": "N1",
+"terrain": "normal"
+}],
+"notes": "P2 alto (arqueiros apenas). N1 neutro disputado. E3 queimando. Testa: zona neutra, posicao elevada, terreno queimando, adjacencia lateral.",
+"player_routes": {
+"0": {
+"fallback": "none",
+"targets": [{
+"owner": "inimigo",
+"slot": 0.0
+}, {
+"owner": "inimigo",
+"slot": 1.0
+}]
+},
+"1": {
+"fallback": "none",
+"ranged_targets": [{
+"owner": "inimigo",
+"slot": 0.0
+}, {
+"owner": "inimigo",
+"slot": 1.0
+}, {
+"owner": "inimigo",
+"slot": 2.0
+}, {
+"owner": "neutro",
+"slot": 0.0
+}],
+"targets": []
+},
+"2": {
+"fallback": "none",
+"targets": [{
+"owner": "inimigo",
+"slot": 2.0
+}, {
+"owner": "inimigo",
+"slot": 1.0
+}]
+}
+},
+"player_slots": [{
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "chao",
+"id": "P1",
+"label": "P1",
+"terrain": "normal"
+}, {
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "alto",
+"id": "P2",
+"label": "P2",
+"terrain": "normal"
+}, {
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "chao",
+"id": "P3",
+"label": "P3",
+"terrain": "cobertura"
+}]
+}, {
+"display_name": "Muralha do Desfiladeiro",
+"enemy_routes": {
+"0": {
+"fallback": "hero",
+"targets": [{
+"owner": "jogador",
+"slot": 0.0
+}, {
+"owner": "jogador",
+"slot": 1.0
+}]
+},
+"1": {
+"fallback": "hero",
+"targets": [{
+"owner": "jogador",
+"slot": 0.0
+}, {
+"owner": "jogador",
+"slot": 1.0
+}, {
+"owner": "jogador",
+"slot": 2.0
+}]
+},
+"2": {
+"fallback": "hero",
+"targets": [{
+"owner": "jogador",
+"slot": 1.0
+}, {
+"owner": "jogador",
+"slot": 2.0
+}]
+},
+"3": {
+"fallback": "hero",
+"targets": [{
+"owner": "jogador",
+"slot": 0.0
+}, {
+"owner": "jogador",
+"slot": 1.0
+}]
+},
+"4": {
+"fallback": "hero",
+"targets": [{
+"owner": "jogador",
+"slot": 1.0
+}, {
+"owner": "jogador",
+"slot": 2.0
+}]
+},
+"5": {
+"fallback": "hero",
+"ranged_targets": [{
+"owner": "jogador",
+"slot": 0.0
+}, {
+"owner": "jogador",
+"slot": 1.0
+}, {
+"owner": "jogador",
+"slot": 2.0
+}],
+"targets": []
+}
+},
+"enemy_slots": [{
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "chao",
+"id": "E1",
+"label": "E1",
+"terrain": "normal"
+}, {
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "chao",
+"id": "E2",
+"label": "E2",
+"terrain": "normal"
+}, {
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "chao",
+"id": "E3",
+"label": "E3",
+"terrain": "normal"
+}, {
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "chao",
+"id": "EB1",
+"label": "EB1",
+"terrain": "normal"
+}, {
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "chao",
+"id": "EB2",
+"label": "EB2",
+"terrain": "normal"
+}, {
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "alto",
+"id": "ET",
+"label": "ET",
+"terrain": "normal"
+}],
+"id": "muralha_desfiladeiro",
+"neutral_slots": [],
+"notes": "P1/P3 cobertura. Inimigo: E1-E3 frente (chao), EB1-EB2 fundo (chao), ET torre (alto). fallback_slots conectam frente ao fundo. ET so acessivel por alcance/voadora/spells. Testa: linha dupla, torre desconectada, cobertura vs alcance.",
+"player_routes": {
+"0": {
+"fallback": "hero",
+"fallback_slots": [{
+"owner": "inimigo",
+"slot": 3.0
+}],
+"ranged_targets": [{
+"owner": "inimigo",
+"slot": 5.0
+}],
+"targets": [{
+"owner": "inimigo",
+"slot": 0.0
+}]
+},
+"1": {
+"fallback": "hero",
+"fallback_slots": [{
+"owner": "inimigo",
+"slot": 3.0
+}, {
+"owner": "inimigo",
+"slot": 4.0
+}],
+"ranged_targets": [{
+"owner": "inimigo",
+"slot": 5.0
+}],
+"targets": [{
+"owner": "inimigo",
+"slot": 0.0
+}, {
+"owner": "inimigo",
+"slot": 1.0
+}, {
+"owner": "inimigo",
+"slot": 2.0
+}]
+},
+"2": {
+"fallback": "hero",
+"fallback_slots": [{
+"owner": "inimigo",
+"slot": 4.0
+}],
+"ranged_targets": [{
+"owner": "inimigo",
+"slot": 5.0
+}],
+"targets": [{
+"owner": "inimigo",
+"slot": 2.0
+}]
+}
+},
+"player_slots": [{
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "chao",
+"id": "P1",
+"label": "P1",
+"terrain": "cobertura"
+}, {
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "chao",
+"id": "P2",
+"label": "P2",
+"terrain": "normal"
+}, {
+"accepts": ["criatura", "estrutura", "permanente"],
+"elevation": "chao",
+"id": "P3",
+"label": "P3",
+"terrain": "cobertura"
 }]
 }])
 encounters = Array[Dictionary]([{
@@ -463,6 +928,7 @@ encounters = Array[Dictionary]([{
 "display_name": "Emboscada na Ponte",
 "id": "emboscada_na_ponte",
 "mode": "limpar_mesa",
+"reward_cards": ["lobo_alfa"],
 "starting_enemy_slots": [{
 "card_id": "goblin_ponte",
 "slot": 0.0
@@ -476,8 +942,122 @@ encounters = Array[Dictionary]([{
 }, {
 "board_id": "duelo_tres_linhas",
 "display_name": "Duelista Bandido",
-"enemy_deck": ["goblin_ponte", "goblin_ponte", "goblin_ponte", "goblin_ponte", "ladrao_rapido", "ladrao_rapido", "ladrao_rapido", "arqueiro_ponte", "arqueiro_ponte", "arqueiro_ponte", "bruto_mercenario", "bruto_mercenario", "faca_arremessada", "faca_arremessada", "faca_arremessada", "barricada", "barricada", "barricada", "escudeiro", "escudeiro"],
+"enemy_deck": ["goblin_ponte", "goblin_ponte", "goblin_ponte", "ladrao_rapido", "ladrao_rapido", "faca_arremessada", "corvo_batedor", "corvo_batedor", "arqueiro_ponte", "arqueiro_ponte", "arqueiro_ponte", "barricada", "lobo_alfa", "lobo_alfa", "relampago", "relampago", "bruto_mercenario", "bruto_mercenario", "campeao_guilda", "dragao_jovem"],
 "id": "duelista_bandido",
 "mode": "duelo",
+"notes": "Deck agressivo e escalavel. Curva: 1-2 early pressure, 3 mid threats (atropelar, alcance, voadora), 3-4 removal (relampago instant, faca), 5-6 late threats (campeao, dragao voador). Exercita: voadora (corvo_batedor), rapido (ladrao, corvo), alcance (arqueiro), atropelar (lobo_alfa, dragao_jovem), magia instant (relampago), fisico_melee e fisico_alcance.",
+"reward_cards": ["relampago", "flagelo"],
 "starting_enemy_slots": []
+}, {
+"board_id": "cruzamento_neutro",
+"display_name": "Emboscada no Cruzamento",
+"id": "emboscada_no_cruzamento",
+"mode": "limpar_mesa",
+"notes": "E3 (queimando): arqueiro sofre 1 de dano por upkeep, criando urgencia para o inimigo atacar rapido. E2 (corvo_batedor, voadora): nao pode ser atingido por fisico_melee, transparente para routing. Jogador precisa usar alcance, voadora propria ou magia para remover E2. N1 vazio e contestado. P2 (alto) ideal para Arqueira de Penhasco ou Balista.",
+"reward_cards": ["arqueira_voante", "torre_blindada"],
+"starting_enemy_slots": [{
+"card_id": "goblin_ponte",
+"slot": 0.0
+}, {
+"card_id": "corvo_batedor",
+"slot": 1.0
+}, {
+"card_id": "arqueiro_ponte",
+"slot": 2.0
+}]
+}, {
+"board_id": "muralha_desfiladeiro",
+"display_name": "Fortaleza do Desfiladeiro",
+"id": "fortaleza_do_desfiladeiro",
+"mode": "limpar_mesa",
+"notes": "ET (torre, alto) atira em todo o lado do jogador via alcance. P1/P3 cobertura reduz dano de ET em 1. EB1/EB2 vazios. Jogador precisa furar a frente E1-E3 (fallback_slots) ou usar alcance/voadora para snipe direto em ET.",
+"reward_cards": ["dragao_jovem", "chamado_hostes"],
+"starting_enemy_slots": [{
+"card_id": "guardiao_portal",
+"slot": 0.0
+}, {
+"card_id": "bruto_ponte",
+"slot": 1.0
+}, {
+"card_id": "guardiao_portal",
+"slot": 2.0
+}, {
+"card_id": "atirador_torre",
+"slot": 5.0
+}]
+}, {
+"board_id": "ponte_estavel",
+"display_name": "Patrulha Avancada",
+"id": "patrulha_avancada",
+"mode": "limpar_mesa",
+"notes": "E1 (lobo_alfa, atropelar 4/2): ameaca agressiva. E2 (corvo_batedor, voadora+rapido): imune a fisico_melee, entra pronto. E3 (arqueiro_ponte, alcance): pressao a distancia. Encontro de transicao entre duelo e boards complexos — tres keywords simultaneamente num board familiar.",
+"reward_cards": [],
+"starting_enemy_slots": [{
+"card_id": "lobo_alfa",
+"slot": 0.0
+}, {
+"card_id": "corvo_batedor",
+"slot": 1.0
+}, {
+"card_id": "arqueiro_ponte",
+"slot": 2.0
+}]
+}, {
+"board_id": "cruzamento_neutro",
+"display_name": "Duelista Sombrio",
+"enemy_deck": ["goblin_ponte", "goblin_ponte", "ladrao_rapido", "ladrao_rapido", "corvo_batedor", "corvo_batedor", "corvo_batedor", "arqueiro_ponte", "arqueiro_ponte", "atirador_torre", "atirador_torre", "lobo_alfa", "lobo_alfa", "faca_arremessada", "faca_arremessada", "relampago", "bruto_mercenario", "bruto_mercenario", "campeao_guilda", "dragao_jovem"],
+"id": "duelista_sombrio",
+"mode": "duelo",
+"notes": "Segundo duelo no cruzamento_neutro. N1 disputado: quem controlar o slot central tem rotas adicionais. P2 (alto) alvo de atirador_torre inimigo. E3 (queimando): inimigo precisa mover criaturas de la ou toma 1/turno. Deck mais pesado: 3x corvo_batedor, 2x atirador_torre, dragao_jovem como finalizador.",
+"reward_cards": ["campeao_guilda"],
+"starting_enemy_slots": []
+}, {
+"board_id": "ponte_estavel",
+"display_name": "Emboscada com Reforcos",
+"id": "emboscada_reforcos",
+"mode": "limpar_mesa",
+"notes": "Variante dificil da emboscada_na_ponte. E1 (bruto_ponte 4/5): corpo grande, precisa de 2 ataques ou remocao. E2 (corvo_batedor, voadora): imune a melee. E3 (atirador_torre 2/4 alcance): pressiona qualquer slot do jogador. Sem heroi inimigo mas sem respiro.",
+"reward_cards": [],
+"starting_enemy_slots": [{
+"card_id": "bruto_ponte",
+"slot": 0.0
+}, {
+"card_id": "corvo_batedor",
+"slot": 1.0
+}, {
+"card_id": "atirador_torre",
+"slot": 2.0
+}]
+}, {
+"board_id": "ponte_estavel",
+"display_name": "Invasao em Ondas",
+"id": "invasao_em_ondas",
+"mode": "ondas",
+"notes": "Primeiro encontro do modo ondas. Duas ondas no board mais familiar. Onda 1: pressao leve, permite aquecer. Onda 2: composicao mais pesada com voadora e atropelar. HP do heroi, estado do deck e rampa de energia persistem entre ondas. Proximo turno apos limpar onda 1: spawn da onda 2. Desbloqueado apos patrulha_avancada (paralelo ao caminho principal).",
+"reward_cards": ["chuva_brasas"],
+"waves": [{
+"starting_enemy_slots": [{
+"card_id": "goblin_ponte",
+"slot": 0.0
+}, {
+"card_id": "ladrao_rapido",
+"slot": 1.0
+}, {
+"card_id": "arqueiro_ponte",
+"slot": 2.0
+}],
+"wave_number": 1.0
+}, {
+"starting_enemy_slots": [{
+"card_id": "lobo_alfa",
+"slot": 0.0
+}, {
+"card_id": "corvo_batedor",
+"slot": 1.0
+}, {
+"card_id": "bruto_ponte",
+"slot": 2.0
+}],
+"wave_number": 2.0
+}]
 }])

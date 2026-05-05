@@ -1,6 +1,6 @@
 # RPG Turnos Architecture
 
-- Last Updated: `2026-05-04`
+- Last Updated: `2026-05-05`
 - Active Surface: `C1 cardgame battle modes`
 
 ## Goal
@@ -86,6 +86,7 @@ Important phases:
 - `manutencao`
 - `compra`
 - `fase_principal`
+- `descarte`
 - `encerrada`
 
 ## Data Rules
@@ -96,11 +97,14 @@ Cards use Portuguese gameplay IDs and types:
 - `estrutura`
 - `permanente`
 - `magia`
+- `magia_de_tabuleiro`
 - `comando`
 
 Boards define slots and routes. Encounters define mode, board, starting enemy slots, and future AI/script data.
 
 The active deck rule is exactly 20 unlocked cards with at most 4 command cards.
+
+Current implementation still lags behind the GDD for the accepted resource model, cyclic deck, and public `descarte` phase. Treat `implementation/current-status.md` as the operational split between implemented runtime and accepted pending design.
 
 ## Validation
 

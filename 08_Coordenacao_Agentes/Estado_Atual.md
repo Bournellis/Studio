@@ -1,6 +1,6 @@
 # Estado Atual — Estudio
 
-- Ultima atualizacao: `2026-05-04`
+- Ultima atualizacao: `2026-05-05`
 
 ## rpg-isometrico
 
@@ -13,12 +13,12 @@
 
 ## rpg-turnos
 
-- Status: **Ativo — provando battle modes do cardgame**
-- Track ativa: `Track 01 - Foundation Contracts And First Prototype` (C1_BATTLE_MODES_PASS_01_CLEAR_BOARD_IMPLEMENTED)
-- Baseline atual: slice Godot 4.6.2 jogavel — menu, exploracao 2D placeholder, deck de 20 cartas, modelo C1 como unico runtime de combate, modo `limpar_mesa` com `Emboscada na Ponte`, inimigos automaticos, catalogo JSON, validacao GUT
-- Meta ativa: provar os battle modes do cardgame antes de retornar a progressao RPG, lore, stats, persistencia ou direcao visual final
-- Ultima atualizacao do current-status: `2026-05-04`
-- Proximo passo: implementar proximo battle mode (`duelo`) ou expandir `limpar_mesa` conforme a track ativa
+- Status: **Ativo — alinhamento documental antes de sincronizar engine**
+- Track ativa: `Track 01 - Foundation Contracts And First Prototype` (DOCUMENTATION_ALIGNMENT_BEFORE_ENGINE_SYNC)
+- Baseline atual: slice Godot 4.6.2 jogavel — menu, exploracao 2D placeholder, deck de 20 cartas, C1 como unico runtime, `limpar_mesa` com `Emboscada na Ponte`; runtime ainda usa mao inicial 4, energia fixa 3, hand limit 8 e discard pile
+- Meta ativa: separar runtime implementado, design aceito pendente, historico e decisoes antes da proxima implementacao
+- Ultima atualizacao do current-status: `2026-05-05`
+- Proximo passo: implementar Foundation Runtime Alignment (`size` cleanup, deletar `manter_linha`, energia/mao/deck ciclico/descarte) antes de `duelo`, H/J ou expansao de conteudo
 
 ## Kanban rápido
 

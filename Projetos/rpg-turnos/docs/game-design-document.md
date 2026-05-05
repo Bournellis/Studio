@@ -1,7 +1,7 @@
 # RPG Turnos Game Design Document
 
-- Version: `0.5`
-- Last Updated: `2026-05-04`
+- Version: `0.6`
+- Last Updated: `2026-05-05`
 - Status: `C1_LOCKED_AS_CURRENT_CARDGAME_CORE`
 - Incorporated Source: `C:/Users/Fabio/Downloads/cardgame_slots_implementacao_codex_v0_1.md`
 
@@ -28,8 +28,9 @@ Public turn flow:
 1. `manutencao`
 2. `compra`
 3. `fase_principal`
+4. `descarte`
 
-Cleanup exists only as internal technical resolution after the main phase.
+Cleanup exists only as internal technical resolution after the descarte phase.
 
 Priority rules:
 
@@ -52,9 +53,10 @@ MVP defaults:
 - energy recharges to current max on the controller's own upkeep
 - unspent energy is lost at end of turn (does not carry to next upkeep)
 - initial hand: 5 cards
-- hand limit: starts at 5 on turn 1, increases by 1 each subsequent turn, capped at 7
-- draw phase: draw cards from the top of the deck until hand size equals the current hand limit; if already at or above the limit, draw nothing
-- over-limit rule: if hand size exceeds 7 for any reason, the controller must discard cards to the bottom of the deck until hand size is 7
+- hand limit: starts at 5 on turn 1, increases by 1 each subsequent turn, capped at 7; this is the carry-over limit enforced at the end of the descarte phase
+- temporary hand ceiling: 8 cards; a controller may hold up to 8 cards at any point during their turn
+- draw phase (`compra`): draw cards from the top of the deck until hand size equals the current hand limit; if already at or above the limit, draw nothing
+- immediate discard trigger: if hand size reaches 9 for any reason at any point during play, the controller must immediately discard cards to the bottom of the deck until hand size is 8; this does not wait for the descarte phase
 - deck size: 20
 - deck command limit: 4 command cards
 - armor absorbs hero damage before health and persists until consumed
@@ -67,11 +69,12 @@ Deck cycling rules:
 - when a card is discarded from hand (by choice or over-limit), it goes to the bottom of the owner's deck
 - the deck never runs out; it cycles indefinitely
 
-End-of-turn discard:
+Descarte phase:
 
-- before a controller ends their turn (just before their second consecutive pass that closes the main phase), the player controller may optionally send any number of cards from their hand to the bottom of their deck
-- this happens after all actions are resolved, before the phase-end transition
-- the enemy controller skips this step; the AI always retains its full hand
+- the fourth and final public phase of the turn, beginning automatically after the fase_principal ends
+- the player controller must discard cards from hand to the bottom of their deck until hand size equals 7; if already at 7 or fewer, no discard is required; the player may also voluntarily discard additional cards beyond the minimum
+- the player chooses which cards to discard
+- the enemy controller automatically discards the lowest-cost card(s) until hand size equals 7; if already at 7 or fewer, no action is taken
 
 Hero power:
 
@@ -198,7 +201,7 @@ Mechanics exercised: `fallback_slots` connecting front to back row (P1→E1→EB
 - `criatura`: occupies a slot; has states; can move once per turn; can attack
 - `estrutura`: occupies a slot; has states; cannot move; can attack if ATK > 0; otherwise behaves identically to `criatura`
 - `permanente`: generic type for any card that occupies a slot without fitting the `criatura` or `estrutura` definition; specific rules written on the card
-- `magia`: instant or normal speed spell; does not occupy a slot; resolves and goes to discard
+- `magia`: instant or normal speed spell; does not occupy a slot; resolves and goes to the bottom of the owner's deck
 - `magia_de_tabuleiro`: spell that affects all slots globally, or all slots on one side (player or enemy); does not occupy a slot; specific scope written on the card
 - `comando`: special card counted against the 4-command-card deck limit; rules written on the card
 
@@ -330,23 +333,73 @@ The current UI must support:
 - simple no-asset feedback for attack, damage, summon, armor, buff, and destruction
 - resilient layout at `960x540`, `1100x619`, and `1280x720`
 
-## 7. Current MVP Card Set
+## 7. Card Catalog
 
-The starter deck has 20 cards:
+The active player-facing plan has:
 
-- 3x Escudeiro
-- 3x Guarda da Vila
-- 3x Lobo Faminto
-- 2x Soldado de Linha
-- 2x Arqueira de Penhasco
-- 1x Bruto Mercenario
-- 1x Javali de Guerra
-- 2x Barricada
-- 1x Balista
-- 2x Raio Curto
+- `starter deck copies`: 20 cards in the fixed starter deck
+- `starter deck unique designs`: 10 unique starter cards
+- `unlockable reward unique cards`: 11 unique cards
+- `reward entries`: 13 reward entries, because `campeao_guilda` and `chuva_brasas` can come from more than one source
+- `enemy-only cards`: authored separately for encounters and not counted as player rewards
 
-The current reward card is `Golpe Preciso`.
+Implementation note: the current data catalog still contains `manter_linha`, but the user decided on 2026-05-05 that it should be deleted. It is not part of the active starter deck, reward plan, enemy-only plan, or future card plan.
+
+### Starter Deck (20 cards)
+
+The player begins every run with this fixed 20-card deck:
+
+| Card | Type | Cost | Stats | Keywords |
+|---|---|---|---|---|
+| Escudeiro ×3 | criatura | 1 | 2/2 | — |
+| Guarda da Vila ×3 | criatura | 1 | 1/4 | defensor |
+| Lobo Faminto ×3 | criatura | 1 | 3/1 | rapido |
+| Raio Curto ×2 | magia | 1 | — | instantaneo, 1 dano |
+| Barricada ×2 | estrutura | 1 | 0/5 | defensor |
+| Soldado de Linha ×2 | criatura | 2 | 2/3 | — |
+| Arqueira de Penhasco ×2 | criatura | 2 | 2/2 | alcance |
+| Bruto Mercenario ×1 | criatura | 3 | 4/4 | — |
+| Javali de Guerra ×1 | criatura | 3 | 4/2 | atropelar |
+| Balista ×1 | estrutura | 3 | 2/3 | alcance |
+
+### Unlockable Reward Cards (11 unique cards)
+
+Unlocked through the NPC and encounter progression. All rewards are additive — each new card expands the pool available for deckbuilding.
+
+**Introductory NPC reward:**
+
+| Trigger | Card | Type | Cost | Notes |
+|---|---|---|---|---|
+| First NPC visit | Golpe Preciso | magia | 2 | 3 dano a qualquer alvo |
+
+This is the first NPC reward and should be stored as `first_npc_reward_card`. The legacy `reward_card` field may remain only as a temporary compatibility alias during migration.
+
+**NPC progressive rewards:**
+
+| Visit | Card | Type | Cost | Notes |
+|---|---|---|---|---|
+| Após enc. 1 | Corvo Batedor | criatura | 2 | 1/2, voadora+rapido |
+| Após enc. 2 | Chuva de Brasas | magia_de_tabuleiro | 4 | queimando em todos os slots inimigos |
+| Após enc. 3 | Campeão da Guilda | criatura | 5 | 5/5 |
+
+**Encounter rewards (on first victory):**
+
+| Encounter | Reward(s) | Type | Cost | Notes |
+|---|---|---|---|---|
+| Emboscada na Ponte | Lobo-Alfa | criatura | 3 | 4/2, atropelar |
+| Duelista Bandido | Relâmpago | magia | 3 | 4 dano mágico, instantaneo |
+| Duelista Bandido | Flagelo | magia | 6 | 6 dano mágico |
+| Emboscada no Cruzamento | Arqueira Voante | criatura | 4 | 2/4, voadora+alcance |
+| Emboscada no Cruzamento | Torre Blindada | estrutura | 5 | 3/7, alcance+cobertura |
+| Fortaleza do Desfiladeiro | Dragão Jovem | criatura | 6 | 5/6, voadora+atropelar |
+| Fortaleza do Desfiladeiro | Chamado das Hostes | magia_de_tabuleiro | 5 | remove enjoo de todas as criaturas amigas |
+| Duelista Sombrio | Campeão da Guilda | criatura | 5 | 5/5 (duplicado: NPC ou enc.) |
+| Invasão em Ondas (opc.) | Chuva de Brasas | magia_de_tabuleiro | 4 | (duplicado: NPC ou enc.) |
+
+Campeão da Guilda and Chuva de Brasas appear in both the NPC list and an encounter reward. The player receives each from whichever source comes first; the second source gives nothing (already unlocked).
+
+Completed encounters may be re-entered for practice, but `claimed_encounter_reward_ids` prevents a second reward claim.
 
 ## 8. Historical Notes
 
-Previous notes that mention energy starting at 1, a 10-card deck, `Preparar` drawing a card, `Duelo antigo`, phase variants, a fixed hand limit of 8, or a draw of 1 per turn are historical. They do not describe the active runtime.
+Previous notes that mention energy starting at 1, a 10-card deck, `Preparar` drawing a card, `Duelo antigo`, phase variants, a fixed permanent carry-over hand limit of 8, an optional pre-pass discard step (now replaced by the mandatory descarte phase), or a draw of 1 per turn are historical. They do not describe the active runtime.
