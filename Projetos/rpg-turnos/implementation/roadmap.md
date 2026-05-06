@@ -1,6 +1,6 @@
 # RPG Turnos Roadmap
 
-- Last Updated: `2026-05-05`
+- Last Updated: `2026-05-06`
 - Current Direction: `linear implementation after world progression/rewards`
 
 ## Done
@@ -203,11 +203,21 @@ Delivered:
 - `Defesa X/Y` battle progress indicator
 - focused GUT coverage
 
+### `chefe_multiparte`
+
+Implemented the boss-parts objective mode using existing boards, cards, rewards, save/load, and HUD hooks.
+
+Delivered:
+- `boss_part_slots` encounter field
+- victory after all marked parts are destroyed
+- support enemies may remain alive
+- `Partes X/Y` battle progress indicator
+- focused GUT coverage
+
 ## Later Passes
 
 - More board topology tests.
 - More terrain and elevation rules.
-- `chefe_multiparte`.
 - `quebra_cabeca`.
 - Art asset import (follows asset-request.md priority list).
 - Broader RPG progression and card acquisition beyond fixed slice rewards.

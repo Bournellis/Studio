@@ -11,6 +11,7 @@ const ENCOUNTER_MARKERS: Array[Dictionary] = [
 	{"id": "fortaleza_do_desfiladeiro", "label": "Fortaleza", "position": Vector2(1080, 230), "requires": "emboscada_no_cruzamento"},
 	{"id": "invasao_em_ondas", "label": "Ondas", "position": Vector2(700, 220), "requires": "fortaleza_do_desfiladeiro"},
 	{"id": "defesa_do_portao", "label": "Defesa", "position": Vector2(520, 220), "requires": "invasao_em_ondas"},
+	{"id": "colosso_fragmentado", "label": "Colosso", "position": Vector2(360, 250), "requires": "defesa_do_portao"},
 ]
 
 var player_position: Vector2 = Vector2(180, 330)

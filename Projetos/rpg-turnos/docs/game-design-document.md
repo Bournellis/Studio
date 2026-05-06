@@ -1,6 +1,6 @@
 # RPG Turnos Game Design Document
 
-- Version: `0.8`
+- Version: `0.9`
 - Last Updated: `2026-05-06`
 - Status: `C1_LOCKED_AS_CURRENT_CARDGAME_CORE`
 - Incorporated Source: `C:/Users/Fabio/Downloads/cardgame_slots_implementacao_codex_v0_1.md`
@@ -317,9 +317,21 @@ Defense rules:
 - Defeat when the player hero reaches 0 HP at any point.
 - The player keeps the normal hand, deck, board, and energy rules during the defense window.
 
+### `chefe_multiparte`
+
+The enemy side has no hero. The boss is represented by specific enemy slots marked as boss parts.
+
+Boss part rules:
+
+- The JSON encounter definition uses `"mode": "chefe_multiparte"`.
+- `boss_part_slots` defines which enemy slot indexes are vital boss parts.
+- Victory happens when every listed boss part slot is empty.
+- Enemy support slots may remain alive; the encounter does not require clearing the full board.
+- Defeat when the player hero reaches 0 HP at any point.
+- The UI should present boss part progress as `Partes X/Y`.
+
 Future modes documented but not active:
 
-- `chefe_multiparte`
 - `quebra_cabeca`
 
 ## 6. Runtime Commitments

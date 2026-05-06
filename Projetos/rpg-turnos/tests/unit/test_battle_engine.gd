@@ -233,6 +233,49 @@ func test_defesa_wins_after_required_enemy_turns_survived() -> void:
 	assert_eq(engine.outcome, "victory")
 	assert_eq(engine.get_defense_label(), "Defesa 2/2")
 
+func test_chefe_multiparte_starts_without_enemy_hero_and_tracks_parts() -> void:
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "colosso_fragmentado", "enemy_ai_enabled": false})
+	var enemy: Dictionary = engine._controller("inimigo")
+
+	assert_eq(engine.modo_batalha, "chefe_multiparte")
+	assert_false(enemy.has("hero"))
+	assert_eq(engine.enemy_health, 0)
+	assert_eq(engine.boss_part_slots.size(), 3)
+	assert_eq(engine.boss_part_slots[0], 0)
+	assert_eq(engine.boss_part_slots[1], 2)
+	assert_eq(engine.boss_part_slots[2], 5)
+	assert_eq(engine.get_boss_label(), "Partes 0/3")
+	assert_eq(str(engine.enemy_slots[0].get("card_id", "")), "guardiao_portal")
+	assert_eq(str(engine.enemy_slots[1].get("card_id", "")), "bruto_ponte")
+	assert_eq(str(engine.enemy_slots[2].get("card_id", "")), "torre_blindada")
+	assert_eq(str(engine.enemy_slots[5].get("card_id", "")), "atirador_torre")
+
+func test_chefe_multiparte_ignores_non_part_support_for_victory() -> void:
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "colosso_fragmentado", "enemy_ai_enabled": false})
+	engine.enemy_slots[1] = null
+
+	engine._check_outcome()
+
+	assert_eq(engine.outcome, "")
+	assert_eq(engine.get_boss_label(), "Partes 0/3")
+
+	engine.enemy_slots[0] = null
+	engine._check_outcome()
+
+	assert_eq(engine.outcome, "")
+	assert_eq(engine.get_boss_label(), "Partes 1/3")
+
+func test_chefe_multiparte_wins_when_all_parts_are_destroyed_even_with_support_alive() -> void:
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "colosso_fragmentado", "enemy_ai_enabled": false})
+	engine.enemy_slots[0] = null
+	engine.enemy_slots[2] = null
+	engine.enemy_slots[5] = null
+
+	engine._check_outcome()
+
+	assert_true(engine.enemy_slots[1] != null)
+	assert_eq(engine.outcome, "victory")
+
 func test_enemy_hero_power_uses_golpe_direto_once() -> void:
 	var engine = _start_engine(_starter_deck(), {"encounter_id": "duelista_bandido", "enemy_ai_enabled": false})
 	engine.active_player_id = "inimigo"

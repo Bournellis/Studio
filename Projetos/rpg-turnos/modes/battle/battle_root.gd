@@ -311,6 +311,8 @@ func _refresh() -> void:
 		enemy_hero_label.text = "Sem heroi inimigo | Objetivo: vencer %s" % engine.get_wave_label()
 	elif engine.modo_batalha == BattleEngineScript.MODE_DEFENSE:
 		enemy_hero_label.text = "Sem heroi inimigo | Objetivo: sobreviver %s" % engine.get_defense_label()
+	elif engine.modo_batalha == BattleEngineScript.MODE_BOSS_PARTS:
+		enemy_hero_label.text = "Sem heroi inimigo | Objetivo: destruir %s" % engine.get_boss_label()
 	else:
 		enemy_hero_label.text = "Sem heroi inimigo | Objetivo: limpar a mesa"
 	enemy_hero_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -658,6 +660,8 @@ func _finish_battle() -> void:
 			summary = "A invasao em ondas foi repelida."
 		elif engine.encounter_id == "defesa_do_portao":
 			summary = "O portao resistiu ao ataque inimigo."
+		elif engine.encounter_id == "colosso_fragmentado":
+			summary = "O Colosso Fragmentado perdeu todas as partes vitais."
 		GameSession.complete_encounter(summary)
 		GameSession.save_game()
 	else:

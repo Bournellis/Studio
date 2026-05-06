@@ -1066,4 +1066,25 @@ encounters = Array[Dictionary]([{
 "card_id": "atirador_torre",
 "slot": 5.0
 }]
+}, {
+"board_id": "muralha_desfiladeiro",
+"boss_part_slots": [0.0, 2.0, 5.0],
+"display_name": "Colosso Fragmentado",
+"id": "colosso_fragmentado",
+"mode": "chefe_multiparte",
+"notes": "Primeiro encontro do modo chefe_multiparte. O objetivo e destruir as partes marcadas do chefe: E1, E3 e ET. Suportes inimigos podem permanecer vivos; a vitoria nao exige limpar toda a mesa.",
+"reward_cards": ["campeao_guilda"],
+"starting_enemy_slots": [{
+"card_id": "guardiao_portal",
+"slot": 0.0
+}, {
+"card_id": "bruto_ponte",
+"slot": 1.0
+}, {
+"card_id": "torre_blindada",
+"slot": 2.0
+}, {
+"card_id": "atirador_torre",
+"slot": 5.0
+}]
 }])

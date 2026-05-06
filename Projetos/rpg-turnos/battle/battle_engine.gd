@@ -9,6 +9,7 @@ const MODE_CLEAR_BOARD: String = "limpar_mesa"
 const MODE_DUEL: String = "duelo"
 const MODE_WAVES: String = "ondas"
 const MODE_DEFENSE: String = "defesa"
+const MODE_BOSS_PARTS: String = "chefe_multiparte"
 
 const DAMAGE_FISICO_MELEE: String = "fisico_melee"
 const DAMAGE_FISICO_ALCANCE: String = "fisico_alcance"
@@ -65,6 +66,7 @@ var wave_index: int = 0
 var wave_count: int = 0
 var defense_turn_limit: int = 0
 var defense_turns_survived: int = 0
+var boss_part_slots: Array[int] = []
 var active_player_id: String = PLAYER_ID
 var priority_owner_id: String = PLAYER_ID
 var consecutive_passes: int = 0
@@ -100,6 +102,7 @@ func start_battle(catalog, deck_ids: Array, config: Dictionary = {}) -> void:
 	wave_count = 0
 	defense_turn_limit = 0
 	defense_turns_survived = 0
+	boss_part_slots = []
 	_waves = []
 	active_player_id = PLAYER_ID
 	priority_owner_id = PLAYER_ID
@@ -145,6 +148,10 @@ func get_state() -> Dictionary:
 		"defense_turn_limit": defense_turn_limit,
 		"defense_turns_survived": defense_turns_survived,
 		"defense_label": get_defense_label(),
+		"boss_part_slots": boss_part_slots.duplicate(),
+		"boss_parts_destroyed": _boss_parts_destroyed_count(),
+		"boss_part_count": boss_part_slots.size(),
+		"boss_label": get_boss_label(),
 		"active_player_id": active_player_id,
 		"priority_owner_id": priority_owner_id,
 		"consecutive_passes": consecutive_passes,
@@ -169,6 +176,8 @@ func get_mode_label() -> String:
 			return "Ondas"
 		MODE_DEFENSE:
 			return "Defesa"
+		MODE_BOSS_PARTS:
+			return "Chefe multiparte"
 		_:
 			return modo_batalha
 
@@ -186,7 +195,15 @@ func get_mode_progress_label() -> String:
 	var wave_text: String = get_wave_label()
 	if wave_text != "":
 		return wave_text
-	return get_defense_label()
+	var defense_text: String = get_defense_label()
+	if defense_text != "":
+		return defense_text
+	return get_boss_label()
+
+func get_boss_label() -> String:
+	if modo_batalha != MODE_BOSS_PARTS or boss_part_slots.is_empty():
+		return ""
+	return "Partes %d/%d" % [_boss_parts_destroyed_count(), boss_part_slots.size()]
 
 func get_priority_label() -> String:
 	if outcome != "":
@@ -649,7 +666,7 @@ func _configure_controllers(deck_ids: Array, encounter: Dictionary) -> void:
 	var player_hero_resource = _catalog.player_hero
 	var enemy_hero_resource = _catalog.enemy_hero
 	var encounter_mode: String = str(encounter.get("mode", MODE_CLEAR_BOARD))
-	var enemy_is_encounter_controller: bool = encounter_mode == MODE_CLEAR_BOARD or encounter_mode == MODE_WAVES or encounter_mode == MODE_DEFENSE
+	var enemy_is_encounter_controller: bool = encounter_mode == MODE_CLEAR_BOARD or encounter_mode == MODE_WAVES or encounter_mode == MODE_DEFENSE or encounter_mode == MODE_BOSS_PARTS
 	var player_controller: Dictionary = {
 		"id": PLAYER_ID,
 		"kind": "humano",
@@ -704,10 +721,23 @@ func _configure_board(encounter: Dictionary) -> void:
 	wave_index = 0
 	defense_turn_limit = int(encounter.get("defense_turn_limit", 0)) if modo_batalha == MODE_DEFENSE else 0
 	defense_turns_survived = 0
+	_configure_boss_parts(encounter)
 	if modo_batalha == MODE_WAVES and wave_count > 0:
 		_spawn_wave(0)
 	else:
 		_spawn_enemy_setups(Array(encounter.get("starting_enemy_slots", [])))
+
+func _configure_boss_parts(encounter: Dictionary) -> void:
+	boss_part_slots = []
+	if modo_batalha != MODE_BOSS_PARTS:
+		return
+	for raw_slot: Variant in Array(encounter.get("boss_part_slots", [])):
+		var slot_index: int = int(raw_slot)
+		if slot_index < 0 or slot_index >= enemy_slots.size():
+			continue
+		if boss_part_slots.has(slot_index):
+			continue
+		boss_part_slots.append(slot_index)
 
 func _spawn_wave(index: int) -> void:
 	if index < 0 or index >= _waves.size():
@@ -1276,6 +1306,8 @@ func _check_outcome() -> void:
 		victory = wave_count > 0 and wave_index >= wave_count - 1 and _enemy_board_is_clear()
 	elif modo_batalha == MODE_DEFENSE:
 		victory = defense_turn_limit > 0 and defense_turns_survived >= defense_turn_limit
+	elif modo_batalha == MODE_BOSS_PARTS:
+		victory = _boss_parts_are_clear()
 	else:
 		victory = _enemy_board_is_clear()
 	if player_dead:
@@ -1292,6 +1324,16 @@ func _enemy_board_is_clear() -> bool:
 		if occupant != null:
 			return false
 	return true
+
+func _boss_parts_are_clear() -> bool:
+	return not boss_part_slots.is_empty() and _boss_parts_destroyed_count() >= boss_part_slots.size()
+
+func _boss_parts_destroyed_count() -> int:
+	var destroyed: int = 0
+	for slot_index: int in boss_part_slots:
+		if slot_index < 0 or slot_index >= enemy_slots.size() or enemy_slots[slot_index] == null:
+			destroyed += 1
+	return destroyed
 
 func _ready_controller_slots(controller_id: String) -> void:
 	for owner_id: String in [controller_id, NEUTRAL_ID]:

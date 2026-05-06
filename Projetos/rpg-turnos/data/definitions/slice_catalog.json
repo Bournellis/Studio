@@ -1496,6 +1496,39 @@
       "reward_cards": [
         "guardiao_portal"
       ]
+    },
+    {
+      "id": "colosso_fragmentado",
+      "display_name": "Colosso Fragmentado",
+      "mode": "chefe_multiparte",
+      "board_id": "muralha_desfiladeiro",
+      "boss_part_slots": [
+        0,
+        2,
+        5
+      ],
+      "notes": "Primeiro encontro do modo chefe_multiparte. O objetivo e destruir as partes marcadas do chefe: E1, E3 e ET. Suportes inimigos podem permanecer vivos; a vitoria nao exige limpar toda a mesa.",
+      "starting_enemy_slots": [
+        {
+          "slot": 0,
+          "card_id": "guardiao_portal"
+        },
+        {
+          "slot": 1,
+          "card_id": "bruto_ponte"
+        },
+        {
+          "slot": 2,
+          "card_id": "torre_blindada"
+        },
+        {
+          "slot": 5,
+          "card_id": "atirador_torre"
+        }
+      ],
+      "reward_cards": [
+        "campeao_guilda"
+      ]
     }
   ],
   "enemy_script": [],

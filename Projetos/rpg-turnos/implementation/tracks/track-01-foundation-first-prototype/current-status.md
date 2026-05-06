@@ -1,7 +1,7 @@
 # Track 01 Current Status
 
-- Last Updated: `2026-05-05`
-- Status: `DEFESA_MODE_COMPLETE`
+- Last Updated: `2026-05-06`
+- Status: `CHEFE_MULTIPARTE_MODE_COMPLETE`
 
 ## Implemented
 
@@ -15,6 +15,7 @@
 - `duelo` is implemented as the official second battle mode.
 - `ondas` is implemented as the official sequential wave battle mode.
 - `defesa` is implemented as the official survival objective battle mode.
+- `chefe_multiparte` is implemented as the official boss-parts objective battle mode.
 - Enemy priority resolves automatically until the player gets priority.
 - Battle feedback uses simple tweens and labels without new assets.
 - Battle Rule Completion is implemented: damage types, coverage, `voadora`, dual burning, `fallback_slots`, and board spells for `chuva_brasas` / `chamado_hostes`.
@@ -22,7 +23,7 @@
 - Minimum save/load is implemented with local JSON, boot continuation, runtime save points, and missing/corrupt save fallback.
 - Visual/UX hardening is implemented: HUD bars/pips, hand/deck/discard counter, card type stripes, clearer slot states, world marker status, and result reward feedback.
 - Art-ready placeholder structure is implemented: `UiTokens`, `AssetIds`, named art placeholders in boot/world/battle/cards/result, pip rows, keyword chips, and automatic asset lookup hooks.
-- Latest validation passes cleanly: 69/69 GUT tests pass through `tools/validate.gd`.
+- Latest validation passes cleanly: 73/73 GUT tests pass through `tools/validate.gd`.
 
 ## Implemented Runtime Rules
 
@@ -45,6 +46,7 @@
 - `duelo` has enemy hero at 20 HP, enemy deck/hand/energy, `Golpe Direto`, aggressive AI, and empty-lane hero fallback
 - `ondas` has no enemy hero, spawns sequential waves, preserves player HP/board/hand/deck/energy ramp, and only wins after the final wave is cleared
 - `defesa` has no enemy hero, tracks complete enemy turns survived, and does not win from clearing the enemy board
+- `chefe_multiparte` has no enemy hero, tracks marked boss part slots, and can win while non-part support enemies remain alive
 - creature movement works as a normal action once per turn
 - neutral slots exist in the engine when a board defines them
 - completed encounters are tracked by id
@@ -58,9 +60,9 @@
 
 ## Accepted GDD Rules Not Yet Implemented
 
-- `chefe_multiparte` and `quebra_cabeca` remain future battle modes.
+- `quebra_cabeca` remains a future battle mode.
 - Broader RPG progression remains pending.
 
 ## Next
 
-Implement the next small official battle mode, preferably `chefe_multiparte`.
+Implement the next small official battle mode, preferably `quebra_cabeca`.
