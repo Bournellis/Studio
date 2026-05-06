@@ -9,6 +9,7 @@ const ENCOUNTER_MARKERS: Array[Dictionary] = [
 	{"id": "duelista_bandido", "label": "Duelista", "position": Vector2(880, 330), "requires": "emboscada_na_ponte"},
 	{"id": "emboscada_no_cruzamento", "label": "Cruzamento", "position": Vector2(1020, 390), "requires": "duelista_bandido"},
 	{"id": "fortaleza_do_desfiladeiro", "label": "Fortaleza", "position": Vector2(1080, 230), "requires": "emboscada_no_cruzamento"},
+	{"id": "invasao_em_ondas", "label": "Ondas", "position": Vector2(700, 220), "requires": "fortaleza_do_desfiladeiro"},
 ]
 
 var player_position: Vector2 = Vector2(180, 330)

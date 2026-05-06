@@ -7,6 +7,7 @@ const NEUTRAL_ID: String = "neutro"
 
 const MODE_CLEAR_BOARD: String = "limpar_mesa"
 const MODE_DUEL: String = "duelo"
+const MODE_WAVES: String = "ondas"
 
 const DAMAGE_FISICO_MELEE: String = "fisico_melee"
 const DAMAGE_FISICO_ALCANCE: String = "fisico_alcance"
@@ -59,6 +60,8 @@ var battle_variant_id: String = VARIANT_C1
 var modo_batalha: String = MODE_CLEAR_BOARD
 var encounter_id: String = ""
 var encounter_name: String = ""
+var wave_index: int = 0
+var wave_count: int = 0
 var active_player_id: String = PLAYER_ID
 var priority_owner_id: String = PLAYER_ID
 var consecutive_passes: int = 0
@@ -78,6 +81,7 @@ var _player_slot_labels: Array[String] = []
 var _enemy_slot_labels: Array[String] = []
 var _neutral_slot_labels: Array[String] = []
 var _attack_routes: Dictionary = {}
+var _waves: Array = []
 var _enemy_ai_enabled: bool = true
 var _auto_depth: int = 0
 
@@ -89,6 +93,9 @@ func start_battle(catalog, deck_ids: Array, config: Dictionary = {}) -> void:
 	battle_variant_id = VARIANT_C1
 	turno = 1
 	round_number = 1
+	wave_index = 0
+	wave_count = 0
+	_waves = []
 	active_player_id = PLAYER_ID
 	priority_owner_id = PLAYER_ID
 	consecutive_passes = 0
@@ -127,6 +134,9 @@ func get_state() -> Dictionary:
 		"battle_variant_id": battle_variant_id,
 		"modo_batalha": modo_batalha,
 		"encounter_id": encounter_id,
+		"wave_index": wave_index,
+		"wave_count": wave_count,
+		"wave_label": get_wave_label(),
 		"active_player_id": active_player_id,
 		"priority_owner_id": priority_owner_id,
 		"consecutive_passes": consecutive_passes,
@@ -147,8 +157,15 @@ func get_mode_label() -> String:
 			return "Limpar mesa"
 		MODE_DUEL:
 			return "Duelo"
+		MODE_WAVES:
+			return "Ondas"
 		_:
 			return modo_batalha
+
+func get_wave_label() -> String:
+	if modo_batalha != MODE_WAVES or wave_count <= 0:
+		return ""
+	return "Onda %d/%d" % [wave_index + 1, wave_count]
 
 func get_priority_label() -> String:
 	if outcome != "":
@@ -610,6 +627,8 @@ func _configure_controllers(deck_ids: Array, encounter: Dictionary) -> void:
 	controladores = {}
 	var player_hero_resource = _catalog.player_hero
 	var enemy_hero_resource = _catalog.enemy_hero
+	var encounter_mode: String = str(encounter.get("mode", MODE_CLEAR_BOARD))
+	var enemy_is_encounter_controller: bool = encounter_mode == MODE_CLEAR_BOARD or encounter_mode == MODE_WAVES
 	var player_controller: Dictionary = {
 		"id": PLAYER_ID,
 		"kind": "humano",
@@ -625,7 +644,7 @@ func _configure_controllers(deck_ids: Array, encounter: Dictionary) -> void:
 	}
 	var enemy_controller: Dictionary = {
 		"id": ENEMY_ID,
-		"kind": "encontro" if str(encounter.get("mode", MODE_CLEAR_BOARD)) == MODE_CLEAR_BOARD else "inimigo_ia",
+		"kind": "encontro" if enemy_is_encounter_controller else "inimigo_ia",
 		"deck": Array(encounter.get("enemy_deck", [])).duplicate(),
 		"hand": [],
 		"energy": 0,
@@ -635,7 +654,7 @@ func _configure_controllers(deck_ids: Array, encounter: Dictionary) -> void:
 		"hero_power_used": false,
 		"initial_hand_drawn": false
 	}
-	if str(encounter.get("mode", MODE_CLEAR_BOARD)) == MODE_DUEL:
+	if encounter_mode == MODE_DUEL:
 		enemy_controller["hero"] = _hero_state(enemy_hero_resource, ENEMY_ID, DEFAULT_ENEMY_HEALTH)
 	controladores[PLAYER_ID] = player_controller
 	controladores[ENEMY_ID] = enemy_controller
@@ -659,7 +678,24 @@ func _configure_board(encounter: Dictionary) -> void:
 	_register_routes(PLAYER_ID, Dictionary(board.get("player_routes", {})), _player_slot_definitions.size(), ENEMY_ID)
 	_register_routes(ENEMY_ID, Dictionary(board.get("enemy_routes", {})), _enemy_slot_definitions.size(), PLAYER_ID)
 
-	for setup: Variant in Array(encounter.get("starting_enemy_slots", [])):
+	_waves = Array(encounter.get("waves", []))
+	wave_count = _waves.size() if modo_batalha == MODE_WAVES else 0
+	wave_index = 0
+	if modo_batalha == MODE_WAVES and wave_count > 0:
+		_spawn_wave(0)
+	else:
+		_spawn_enemy_setups(Array(encounter.get("starting_enemy_slots", [])))
+
+func _spawn_wave(index: int) -> void:
+	if index < 0 or index >= _waves.size():
+		return
+	var wave: Dictionary = Dictionary(_waves[index])
+	var wave_number: int = int(wave.get("wave_number", index + 1))
+	_spawn_enemy_setups(Array(wave.get("starting_enemy_slots", [])))
+	_log("Onda %d/%d chega ao campo." % [wave_number, wave_count])
+
+func _spawn_enemy_setups(setups: Array) -> void:
+	for setup: Variant in setups:
 		if typeof(setup) != TYPE_DICTIONARY:
 			continue
 		var data: Dictionary = Dictionary(setup)
@@ -699,6 +735,7 @@ func _start_turn(controller_id: String) -> void:
 
 func _resolve_upkeep(controller_id: String) -> void:
 	var controller: Dictionary = _controller(controller_id)
+	_maybe_spawn_next_wave(controller_id)
 	var turns_started: int = int(controller.get("turns_started", 0)) + 1
 	controller["turns_started"] = turns_started
 	if turns_started > 1:
@@ -710,6 +747,17 @@ func _resolve_upkeep(controller_id: String) -> void:
 	_ready_controller_slots(controller_id)
 	_apply_burning_terrain(controller_id)
 	_log("Manutencao: %s recarrega energia para %d." % [_owner_label(controller_id), int(controller.get("energy", 0))])
+	_sync_public_fields()
+
+func _maybe_spawn_next_wave(controller_id: String) -> void:
+	if modo_batalha != MODE_WAVES or controller_id != ENEMY_ID:
+		return
+	if wave_count <= 0 or wave_index >= wave_count - 1:
+		return
+	if not _enemy_board_is_clear():
+		return
+	wave_index += 1
+	_spawn_wave(wave_index)
 	_sync_public_fields()
 
 func _resolve_draw(controller_id: String) -> void:
@@ -1190,6 +1238,8 @@ func _check_outcome() -> void:
 	var victory: bool = false
 	if modo_batalha == MODE_DUEL:
 		victory = _controller_has_hero(ENEMY_ID) and enemy_health <= 0
+	elif modo_batalha == MODE_WAVES:
+		victory = wave_count > 0 and wave_index >= wave_count - 1 and _enemy_board_is_clear()
 	else:
 		victory = _enemy_board_is_clear()
 	if player_dead:

@@ -179,13 +179,13 @@ Implemented:
 
 Reference: `../docs/art-direction.md`, `../docs/asset-request.md`
 
-## Next Pass
+## Latest Pass
 
 ### `ondas`
 
-Goal: add the next small official battle mode using existing cards, boards, rewards, save/load, and art-ready UI hooks.
+Implemented the next small official battle mode using existing cards, boards, rewards, save/load, and art-ready UI hooks.
 
-Planned:
+Delivered:
 - data-driven wave definitions
 - runtime wave spawning after a wave is cleared
 - victory only after final wave
@@ -196,7 +196,6 @@ Planned:
 
 - More board topology tests.
 - More terrain and elevation rules.
-- `ondas`.
 - `defesa`.
 - `chefe_multiparte`.
 - `quebra_cabeca`.

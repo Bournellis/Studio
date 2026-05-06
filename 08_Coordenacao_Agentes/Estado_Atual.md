@@ -13,12 +13,12 @@
 
 ## rpg-turnos
 
-- Status: **Ativo — estrutura art-ready placeholder completa**
-- Track ativa: `Track 01 - Foundation Contracts And First Prototype` (ART_READY_PLACEHOLDER_COMPLETE)
-- Baseline atual: slice Godot 4.6.2 jogavel — C1 unico runtime, `limpar_mesa`, `duelo`, cadeia de encontros no mapa, rewards por encontro uma vez, NPC progressiva, save/load JSON local, HUD/slots/mapa/rewards mais legiveis, estrutura art-ready com `UiTokens`/`AssetIds`, `descarte`, energia/mao com ramp, deck ciclico, regras de batalha completas para o slice, validacao verde 61/61
+- Status: **Ativo — modo ondas completo**
+- Track ativa: `Track 01 - Foundation Contracts And First Prototype` (ONDAS_MODE_COMPLETE)
+- Baseline atual: slice Godot 4.6.2 jogavel — C1 unico runtime, `limpar_mesa`, `duelo`, `ondas`, cadeia de encontros no mapa, rewards por encontro uma vez, NPC progressiva, save/load JSON local, HUD/slots/mapa/rewards mais legiveis, estrutura art-ready com `UiTokens`/`AssetIds`, `descarte`, energia/mao com ramp, deck ciclico, regras de batalha completas para o slice, validacao verde 65/65
 - Meta ativa: iniciar expansao controlada de modo/conteudo
 - Ultima atualizacao do current-status: `2026-05-05`
-- Proximo passo: implementar o proximo modo oficial pequeno, preferencialmente `ondas`
+- Proximo passo: implementar o proximo modo oficial pequeno, preferencialmente `defesa`
 
 ## Kanban rápido
 

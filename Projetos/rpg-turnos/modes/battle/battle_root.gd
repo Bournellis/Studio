@@ -16,6 +16,7 @@ var status_label: Label
 var variant_label: Label
 var phase_label: Label
 var priority_label: Label
+var wave_label: Label
 var feedback_label: Label
 var log_label: Label
 var route_label: Label
@@ -97,7 +98,7 @@ func _build_header(root: VBoxContainer) -> void:
 	header_panel.add_child(header_root)
 
 	var info_grid: GridContainer = GridContainer.new()
-	info_grid.columns = 4
+	info_grid.columns = 5
 	info_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	info_grid.add_theme_constant_override("h_separation", 8)
 	info_grid.add_theme_constant_override("v_separation", 2)
@@ -107,10 +108,13 @@ func _build_header(root: VBoxContainer) -> void:
 	variant_label = _header_info_label(14)
 	phase_label = _header_info_label(14)
 	priority_label = _header_info_label(14)
+	wave_label = _header_info_label(14)
+	wave_label.name = "wave_label"
 	info_grid.add_child(status_label)
 	info_grid.add_child(variant_label)
 	info_grid.add_child(phase_label)
 	info_grid.add_child(priority_label)
+	info_grid.add_child(wave_label)
 
 	var vitals_row: HBoxContainer = HBoxContainer.new()
 	vitals_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -273,7 +277,9 @@ func _build_hand(root: VBoxContainer) -> void:
 	hand_scroll.add_child(hand_box)
 
 func _refresh() -> void:
-	var enemy_text: String = "Sem heroi inimigo" if engine.modo_batalha == BattleEngineScript.MODE_CLEAR_BOARD else "Inimigo %d HP" % engine.enemy_health
+	var enemy_text: String = "Inimigo %d HP" % engine.enemy_health
+	if not engine._controller_has_hero(ENEMY_OWNER):
+		enemy_text = "Sem heroi inimigo"
 	status_label.text = "Turno %d | Energia %d | Armadura %d | Jogador %d HP | %s | Deck %d | Mao %d" % [
 		engine.turno,
 		engine.energy,
@@ -286,6 +292,8 @@ func _refresh() -> void:
 	variant_label.text = "Modo: %s" % engine.get_mode_label()
 	phase_label.text = "Fase: %s" % engine.get_phase_label()
 	priority_label.text = "%s | %s" % [engine.get_active_controller_label(), engine.get_priority_label()]
+	wave_label.text = engine.get_wave_label()
+	wave_label.visible = wave_label.text != ""
 	route_label.text = engine.get_board_route_summary()
 	_update_vitals()
 	if last_feedback == "":
@@ -299,6 +307,8 @@ func _refresh() -> void:
 	var enemy_hero_label: Label = Label.new()
 	if engine.modo_batalha == BattleEngineScript.MODE_DUEL:
 		enemy_hero_label.text = "Heroi inimigo: %d HP | Armadura %d" % [engine.enemy_health, engine.enemy_armor]
+	elif engine.modo_batalha == BattleEngineScript.MODE_WAVES:
+		enemy_hero_label.text = "Sem heroi inimigo | Objetivo: vencer %s" % engine.get_wave_label()
 	else:
 		enemy_hero_label.text = "Sem heroi inimigo | Objetivo: limpar a mesa"
 	enemy_hero_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -642,6 +652,8 @@ func _finish_battle() -> void:
 		var summary: String = "A emboscada foi vencida no encontro de teste."
 		if engine.encounter_id == "duelista_bandido":
 			summary = "O Duelista Bandido foi derrotado em duelo."
+		elif engine.encounter_id == "invasao_em_ondas":
+			summary = "A invasao em ondas foi repelida."
 		GameSession.complete_encounter(summary)
 		GameSession.save_game()
 	else:

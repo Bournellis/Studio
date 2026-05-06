@@ -145,6 +145,56 @@ func test_duel_starts_with_enemy_hero_and_custom_deck() -> void:
 	assert_eq(str(Array(enemy.get("deck", []))[0]), "goblin_ponte")
 	assert_true(Array(enemy.get("deck", [])).has("dragao_jovem"))
 
+func test_ondas_starts_first_wave_without_enemy_hero() -> void:
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "invasao_em_ondas", "enemy_ai_enabled": false})
+	var enemy: Dictionary = engine._controller("inimigo")
+
+	assert_eq(engine.modo_batalha, "ondas")
+	assert_false(enemy.has("hero"))
+	assert_eq(engine.enemy_health, 0)
+	assert_eq(engine.wave_index, 0)
+	assert_eq(engine.wave_count, 2)
+	assert_eq(engine.get_wave_label(), "Onda 1/2")
+	assert_eq(str(engine.enemy_slots[0].get("card_id", "")), "goblin_ponte")
+	assert_eq(str(engine.enemy_slots[1].get("card_id", "")), "ladrao_rapido")
+	assert_eq(str(engine.enemy_slots[2].get("card_id", "")), "arqueiro_ponte")
+
+func test_ondas_spawns_next_wave_on_enemy_upkeep_after_clear() -> void:
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "invasao_em_ondas", "enemy_ai_enabled": false})
+	engine.player_slots[0] = engine._build_occupant(catalog.find_card("escudeiro"), "jogador", false)
+	var starting_player_health: int = engine.player_health
+	var starting_player_deck: Array = engine.deck.duplicate()
+	engine.enemy_slots = [null, null, null]
+
+	engine._check_outcome()
+
+	assert_eq(engine.outcome, "")
+
+	engine._resolve_upkeep("inimigo")
+
+	assert_eq(engine.wave_index, 1)
+	assert_eq(engine.get_wave_label(), "Onda 2/2")
+	assert_eq(engine.player_health, starting_player_health)
+	assert_eq(engine.deck, starting_player_deck)
+	assert_true(engine.player_slots[0] != null)
+	assert_eq(str(engine.enemy_slots[0].get("card_id", "")), "lobo_alfa")
+	assert_eq(str(engine.enemy_slots[1].get("card_id", "")), "corvo_batedor")
+	assert_eq(str(engine.enemy_slots[2].get("card_id", "")), "bruto_ponte")
+
+func test_ondas_victory_only_after_final_wave_clear() -> void:
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "invasao_em_ondas", "enemy_ai_enabled": false})
+	engine.enemy_slots = [null, null, null]
+
+	engine._check_outcome()
+
+	assert_eq(engine.outcome, "")
+
+	engine._resolve_upkeep("inimigo")
+	engine.enemy_slots = [null, null, null]
+	engine._check_outcome()
+
+	assert_eq(engine.outcome, "victory")
+
 func test_enemy_hero_power_uses_golpe_direto_once() -> void:
 	var engine = _start_engine(_starter_deck(), {"encounter_id": "duelista_bandido", "enemy_ai_enabled": false})
 	engine.active_player_id = "inimigo"

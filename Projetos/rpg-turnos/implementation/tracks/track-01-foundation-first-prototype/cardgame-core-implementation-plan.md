@@ -1,7 +1,7 @@
 # Cardgame Core Implementation Plan
 
 - Last Updated: `2026-05-05`
-- Status: `ART_READY_PLACEHOLDER_COMPLETE`
+- Status: `ONDAS_MODE_COMPLETE`
 
 ## Summary
 
@@ -107,9 +107,9 @@ Prepared screens for later asset import:
 - card and battle art placeholders
 - `AssetIds`
 
-## Next Candidate Pass - `ondas`
+## Implemented Candidate Pass - `ondas`
 
-Add the next small official mode through data and encounter rules:
+Added the next small official mode through data and encounter rules:
 
 - wave definitions
 - spawn next wave after clearing current wave
@@ -121,7 +121,6 @@ Add the next small official mode through data and encounter rules:
 
 Prepare through data and encounter rules, not variant branches:
 
-- `ondas`
 - `defesa`
 - `chefe_multiparte`
 - `quebra_cabeca`

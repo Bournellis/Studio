@@ -1,6 +1,6 @@
 # RPG Turnos Game Design Document
 
-- Version: `0.6`
+- Version: `0.7`
 - Last Updated: `2026-05-05`
 - Status: `C1_LOCKED_AS_CURRENT_CARDGAME_CORE`
 - Incorporated Source: `C:/Users/Fabio/Downloads/cardgame_slots_implementacao_codex_v0_1.md`
@@ -242,7 +242,7 @@ A `criatura` (not `estrutura`) may spend priority once per turn as a normal acti
 
 ## 5. Battle Modes
 
-Current playable mode:
+Current playable modes:
 
 ### `limpar_mesa`
 
@@ -259,8 +259,6 @@ INIMIGO
 JOGADOR
 [P1: Normal] [P2: Normal] [P3: Cobertura]
 ```
-
-Next official mode:
 
 ### `duelo`
 
