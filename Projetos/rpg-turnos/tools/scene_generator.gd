@@ -14,7 +14,7 @@ func generate_all() -> Dictionary:
 		var scene_path: String = str(scene_spec.get("path", ""))
 		var script_path: String = str(scene_spec.get("script", ""))
 		if ResourceLoader.exists(scene_path):
-			var repair_result: Error = _repair_scene(scene_path, str(scene_spec.get("type", "control")))
+			var repair_result: Error = _repair_scene(scene_path, script_path, str(scene_spec.get("type", "control")))
 			if repair_result != OK:
 				return {"ok": false, "message": "Failed to repair scene %s." % scene_path}
 			continue
@@ -23,7 +23,7 @@ func generate_all() -> Dictionary:
 			return {"ok": false, "message": "Failed to generate scene %s." % scene_path}
 	return {"ok": true, "message": "Playable slice scenes exist or were generated."}
 
-func _repair_scene(scene_path: String, node_type: String) -> Error:
+func _repair_scene(scene_path: String, script_path: String, node_type: String) -> Error:
 	if node_type != "control":
 		return OK
 	var packed_scene: PackedScene = load(scene_path)
@@ -34,6 +34,11 @@ func _repair_scene(scene_path: String, node_type: String) -> Error:
 		return ERR_CANT_CREATE
 	if root_node is Control:
 		_prepare_control_root(root_node)
+		var script_resource: Script = load(script_path)
+		if script_resource == null:
+			root_node.free()
+			return ERR_FILE_CANT_OPEN
+		root_node.set_script(script_resource)
 		var repacked_scene: PackedScene = PackedScene.new()
 		var pack_error: Error = repacked_scene.pack(root_node)
 		root_node.free()

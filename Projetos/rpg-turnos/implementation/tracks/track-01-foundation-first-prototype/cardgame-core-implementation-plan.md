@@ -1,7 +1,7 @@
 # Cardgame Core Implementation Plan
 
 - Last Updated: `2026-05-05`
-- Status: `VISUAL_UX_HARDENING_COMPLETE`
+- Status: `ART_READY_PLACEHOLDER_COMPLETE`
 
 ## Summary
 
@@ -98,14 +98,24 @@ Improved readability before content expansion:
 - world markers
 - reward/result feedback
 
-## Next Candidate Pass - Art-Ready Placeholder Structure
+## Implemented Art-Ready Placeholder Structure
 
-Prepare screens for later asset import:
+Prepared screens for later asset import:
 
 - `UiTokens`
 - named art nodes
 - card and battle art placeholders
 - `AssetIds`
+
+## Next Candidate Pass - `ondas`
+
+Add the next small official mode through data and encounter rules:
+
+- wave definitions
+- spawn next wave after clearing current wave
+- final-wave victory
+- wave indicator in battle UI
+- focused validation coverage
 
 ## Future Modes
 

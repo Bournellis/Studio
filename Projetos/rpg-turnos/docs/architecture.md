@@ -13,7 +13,7 @@ UI nodes may show state, route hints, buttons, and feedback animations. They mus
 
 ### `core/`
 
-Session state, selected deck, active encounter, pre-combat snapshot, local JSON save/load, and battle result handoff.
+Session state, selected deck, active encounter, pre-combat snapshot, local JSON save/load, UI tokens, asset IDs, and battle result handoff.
 
 ### `battle/`
 
@@ -57,6 +57,8 @@ Scene composition and flow:
 Battle entry now starts the active encounter directly. There is no runtime variant selector.
 
 The boot menu exposes `Continuar` when `user://rpg_turnos_save.json` exists. `Novo jogo` starts a fresh session and writes the save.
+
+Screens expose named art placeholders and resolve optional art through `AssetIds`; missing art keeps the no-asset placeholder presentation.
 
 ### `ui/`
 

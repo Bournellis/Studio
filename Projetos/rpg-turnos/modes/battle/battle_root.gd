@@ -21,9 +21,13 @@ var log_label: Label
 var route_label: Label
 var player_hp_bar: ProgressBar
 var enemy_hp_bar: ProgressBar
+var player_portrait_rect: TextureRect
+var enemy_portrait_rect: TextureRect
 var energy_pips_box: HBoxContainer
+var priority_dot: ColorRect
 var hand_limit_label: Label
 var discard_counter_label: Label
+var discard_bar: ProgressBar
 var enemy_hero_zone
 var enemy_slots_box: HBoxContainer
 var player_slots_box: HBoxContainer
@@ -113,11 +117,22 @@ func _build_header(root: VBoxContainer) -> void:
 	vitals_row.add_theme_constant_override("separation", 10)
 	header_root.add_child(vitals_row)
 
+	player_portrait_rect = _portrait_rect("player_portrait_rect", "portrait_hero_aprendiz")
+	vitals_row.add_child(player_portrait_rect)
+
 	player_hp_bar = _stat_bar("player_hp_bar", "Jogador")
 	vitals_row.add_child(player_hp_bar)
 
+	enemy_portrait_rect = _portrait_rect("enemy_portrait_rect", "portrait_hero_duelista_bandido")
+	vitals_row.add_child(enemy_portrait_rect)
+
 	enemy_hp_bar = _stat_bar("enemy_hp_bar", "Inimigo")
 	vitals_row.add_child(enemy_hp_bar)
+
+	priority_dot = ColorRect.new()
+	priority_dot.name = "priority_dot"
+	priority_dot.custom_minimum_size = Vector2(18, 18)
+	vitals_row.add_child(priority_dot)
 
 	energy_pips_box = HBoxContainer.new()
 	energy_pips_box.name = "energy_pips"
@@ -133,6 +148,12 @@ func _build_header(root: VBoxContainer) -> void:
 	discard_counter_label.name = "discard_counter_label"
 	vitals_row.add_child(discard_counter_label)
 
+	discard_bar = ProgressBar.new()
+	discard_bar.name = "discard_bar"
+	discard_bar.custom_minimum_size = Vector2(96, 18)
+	discard_bar.show_percentage = false
+	vitals_row.add_child(discard_bar)
+
 	var actions: HBoxContainer = HBoxContainer.new()
 	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	actions.alignment = BoxContainer.ALIGNMENT_END
@@ -140,6 +161,7 @@ func _build_header(root: VBoxContainer) -> void:
 	header_root.add_child(actions)
 
 	hero_power_button = Button.new()
+	hero_power_button.name = "hero_power_button"
 	hero_power_button.text = "Poder heroico"
 	hero_power_button.custom_minimum_size = Vector2(142, 36)
 	hero_power_button.size_flags_horizontal = Control.SIZE_SHRINK_END
@@ -147,6 +169,7 @@ func _build_header(root: VBoxContainer) -> void:
 	actions.add_child(hero_power_button)
 
 	end_turn_button = Button.new()
+	end_turn_button.name = "end_turn_button"
 	end_turn_button.text = "Resolver turno"
 	end_turn_button.custom_minimum_size = Vector2(188, 36)
 	end_turn_button.size_flags_horizontal = Control.SIZE_SHRINK_END
@@ -180,7 +203,7 @@ func _build_battlefield(root: VBoxContainer) -> void:
 	enemy_hero_zone.card_dropped.connect(_on_card_dropped_on_enemy_hero)
 	board_root.add_child(enemy_hero_zone)
 
-	enemy_slots_box = _build_slot_row(board_root)
+	enemy_slots_box = _build_slot_row(board_root, "enemy_lane_panel")
 
 	route_label = Label.new()
 	route_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -192,7 +215,7 @@ func _build_battlefield(root: VBoxContainer) -> void:
 	var player_title: Label = _section_label("Campo do jogador")
 	board_root.add_child(player_title)
 
-	player_slots_box = _build_slot_row(board_root)
+	player_slots_box = _build_slot_row(board_root, "player_lane_panel")
 
 	var log_panel: PanelContainer = PanelContainer.new()
 	log_panel.custom_minimum_size = Vector2(0, 96)
@@ -218,8 +241,9 @@ func _build_battlefield(root: VBoxContainer) -> void:
 	log_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	log_scroll.add_child(log_label)
 
-func _build_slot_row(parent: VBoxContainer) -> HBoxContainer:
+func _build_slot_row(parent: VBoxContainer, panel_name: String) -> HBoxContainer:
 	var scroll: ScrollContainer = ScrollContainer.new()
+	scroll.name = panel_name
 	scroll.custom_minimum_size = Vector2(0, 126)
 	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	parent.add_child(scroll)
@@ -459,12 +483,16 @@ func _update_vitals() -> void:
 
 	if engine.modo_batalha == BattleEngineScript.MODE_DUEL:
 		enemy_hp_bar.visible = true
+		enemy_portrait_rect.visible = true
 		enemy_hp_bar.max_value = BattleEngineScript.DEFAULT_ENEMY_HEALTH
 		enemy_hp_bar.value = max(0, engine.enemy_health)
 		enemy_hp_bar.tooltip_text = "Inimigo: %d HP, %d armadura" % [engine.enemy_health, engine.enemy_armor]
 		enemy_hp_bar.add_theme_stylebox_override("fill", _bar_fill(Color(0.78, 0.32, 0.34)))
 	else:
 		enemy_hp_bar.visible = false
+		enemy_portrait_rect.visible = false
+
+	priority_dot.color = UiTokens.color("energy") if engine.priority_owner_id == PLAYER_OWNER else UiTokens.color("hp_enemy")
 
 	for child: Node in energy_pips_box.get_children():
 		energy_pips_box.remove_child(child)
@@ -483,8 +511,12 @@ func _update_vitals() -> void:
 	if engine.current_phase == BattleEngineScript.PHASE_DISCARD:
 		var remaining_discards: int = max(0, engine.hand.size() - engine.discard_target_size)
 		discard_counter_label.text = "Descarte: %d restante(s)" % remaining_discards
+		discard_bar.max_value = max(1, engine.hand.size())
+		discard_bar.value = max(0, engine.hand.size() - remaining_discards)
+		discard_bar.visible = true
 	else:
 		discard_counter_label.text = "Descarte: inativo"
+		discard_bar.visible = false
 
 func _slot_visual_state(owner: String, slot_index: int, occupant: Variant) -> Dictionary:
 	var attack_status: String = engine.get_slot_attack_status(owner, slot_index)
@@ -512,6 +544,16 @@ func _bar_fill(fill: Color) -> StyleBoxFlat:
 	style.corner_radius_bottom_left = 4
 	style.corner_radius_bottom_right = 4
 	return style
+
+func _portrait_rect(node_name: String, asset_id: String) -> TextureRect:
+	var rect: TextureRect = TextureRect.new()
+	rect.name = node_name
+	rect.custom_minimum_size = Vector2(48, 48)
+	rect.texture = AssetIds.texture(asset_id)
+	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	rect.modulate = Color.WHITE if rect.texture != null else UiTokens.color("placeholder")
+	return rect
 
 func _section_label(text: String) -> Label:
 	var label: Label = Label.new()

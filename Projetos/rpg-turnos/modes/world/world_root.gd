@@ -15,10 +15,14 @@ var player_position: Vector2 = Vector2(180, 330)
 var prompt_label: Label
 var dialogue_panel: PanelContainer
 var dialogue_text: Label
+var portrait_rect: TextureRect
+var player_sprite: Sprite2D
+var marker_nodes: Node2D
 var close_dialogue_button: Button
 
 func _ready() -> void:
 	set_process(true)
+	_build_art_nodes()
 	_build_canvas()
 	queue_redraw()
 
@@ -36,6 +40,8 @@ func _process(delta: float) -> void:
 		player_position += input_vector.normalized() * PLAYER_SPEED * delta
 		player_position.x = clampf(player_position.x, MAP_RECT.position.x + 18.0, MAP_RECT.end.x - 18.0)
 		player_position.y = clampf(player_position.y, MAP_RECT.position.y + 18.0, MAP_RECT.end.y - 18.0)
+		if player_sprite != null:
+			player_sprite.position = player_position
 		queue_redraw()
 	_update_prompt()
 
@@ -110,9 +116,23 @@ func _build_canvas() -> void:
 	box.add_theme_constant_override("separation", 10)
 	dialogue_panel.add_child(box)
 
+	var dialogue_row: HBoxContainer = HBoxContainer.new()
+	dialogue_row.add_theme_constant_override("separation", 10)
+	box.add_child(dialogue_row)
+
+	portrait_rect = TextureRect.new()
+	portrait_rect.name = "portrait_rect"
+	portrait_rect.custom_minimum_size = Vector2(72, 72)
+	portrait_rect.texture = AssetIds.texture("portrait_npc_viajante")
+	portrait_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	portrait_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	portrait_rect.modulate = Color.WHITE if portrait_rect.texture != null else UiTokens.color("placeholder")
+	dialogue_row.add_child(portrait_rect)
+
 	dialogue_text = Label.new()
+	dialogue_text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	dialogue_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	box.add_child(dialogue_text)
+	dialogue_row.add_child(dialogue_text)
 
 	close_dialogue_button = Button.new()
 	close_dialogue_button.text = "Fechar"
@@ -205,3 +225,28 @@ func _panel_style(fill: Color) -> StyleBoxFlat:
 	style.content_margin_right = 16
 	style.content_margin_bottom = 12
 	return style
+
+func _build_art_nodes() -> void:
+	var map_environment_sprite: Sprite2D = Sprite2D.new()
+	map_environment_sprite.name = "map_environment"
+	map_environment_sprite.texture = AssetIds.texture("map_environment")
+	map_environment_sprite.position = MAP_RECT.get_center()
+	if map_environment_sprite.texture != null:
+		map_environment_sprite.scale = MAP_RECT.size / Vector2(map_environment_sprite.texture.get_size())
+	add_child(map_environment_sprite)
+
+	marker_nodes = Node2D.new()
+	marker_nodes.name = "marker_nodes"
+	add_child(marker_nodes)
+	for marker: Dictionary in ENCOUNTER_MARKERS:
+		var marker_node: Sprite2D = Sprite2D.new()
+		marker_node.name = str(marker.get("id", "marker"))
+		marker_node.texture = AssetIds.texture("marker_encounter_active")
+		marker_node.position = Vector2(marker.get("position", Vector2.ZERO))
+		marker_nodes.add_child(marker_node)
+
+	player_sprite = Sprite2D.new()
+	player_sprite.name = "player_sprite"
+	player_sprite.texture = AssetIds.texture("player_token")
+	player_sprite.position = player_position
+	add_child(player_sprite)

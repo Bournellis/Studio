@@ -4,8 +4,19 @@ func _ready() -> void:
 	_build_ui()
 
 func _build_ui() -> void:
+	var bg_asset_id: String = "result_bg_victory" if GameSession.last_battle_result == "victory" else "result_bg_defeat"
+	var bg_visual: TextureRect = TextureRect.new()
+	bg_visual.name = "bg_visual"
+	bg_visual.texture = AssetIds.texture(bg_asset_id)
+	bg_visual.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	bg_visual.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	bg_visual.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(bg_visual)
+
 	var background: ColorRect = ColorRect.new()
-	background.color = Color(0.045, 0.05, 0.055)
+	background.name = "ambiance_layer"
+	background.color = UiTokens.color("bg_deep", Color(0.045, 0.05, 0.055))
+	background.color.a = 0.8 if bg_visual.texture != null else 1.0
 	background.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(background)
 
@@ -28,6 +39,15 @@ func _build_ui() -> void:
 	title.add_theme_font_size_override("font_size", 30)
 	title.text = "Vitoria" if GameSession.last_battle_result == "victory" else "Derrota"
 	box.add_child(title)
+
+	var result_icon_rect: TextureRect = TextureRect.new()
+	result_icon_rect.name = "result_icon_rect"
+	result_icon_rect.custom_minimum_size = Vector2(64, 64)
+	result_icon_rect.texture = AssetIds.texture("icon_victory" if GameSession.last_battle_result == "victory" else "icon_defeat")
+	result_icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	result_icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	result_icon_rect.modulate = Color.WHITE if result_icon_rect.texture != null else _result_color()
+	box.add_child(result_icon_rect)
 
 	var summary: Label = Label.new()
 	summary.text = GameSession.last_battle_summary
@@ -61,8 +81,8 @@ func _retry() -> void:
 
 func _panel_style() -> StyleBoxFlat:
 	var style: StyleBoxFlat = StyleBoxFlat.new()
-	style.bg_color = Color(0.09, 0.1, 0.12)
-	style.border_color = Color(0.32, 0.36, 0.38)
+	style.bg_color = UiTokens.color("bg_panel", Color(0.09, 0.1, 0.12))
+	style.border_color = _result_color()
 	style.border_width_left = 2
 	style.border_width_top = 2
 	style.border_width_right = 2
@@ -76,6 +96,11 @@ func _panel_style() -> StyleBoxFlat:
 	style.content_margin_right = 28
 	style.content_margin_bottom = 28
 	return style
+
+func _result_color() -> Color:
+	if GameSession.last_battle_result == "victory":
+		return UiTokens.color("hp_player", Color(0.32, 0.52, 0.38))
+	return UiTokens.color("hp_enemy", Color(0.52, 0.32, 0.34))
 
 func _reward_text() -> String:
 	return reward_text_for_card_ids(GameSession.last_reward_card_ids)

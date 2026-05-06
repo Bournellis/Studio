@@ -1,7 +1,7 @@
 # Track 01 Current Status
 
 - Last Updated: `2026-05-05`
-- Status: `VISUAL_UX_HARDENING_COMPLETE`
+- Status: `ART_READY_PLACEHOLDER_COMPLETE`
 
 ## Implemented
 
@@ -19,7 +19,8 @@
 - World progression/rewards are implemented: encounter completion IDs, one-time encounter rewards, NPC progressive rewards, and a linear world marker chain.
 - Minimum save/load is implemented with local JSON, boot continuation, runtime save points, and missing/corrupt save fallback.
 - Visual/UX hardening is implemented: HUD bars/pips, hand/deck/discard counter, card type stripes, clearer slot states, world marker status, and result reward feedback.
-- Latest validation passes cleanly: 56/56 GUT tests pass through `tools/validate.gd`.
+- Art-ready placeholder structure is implemented: `UiTokens`, `AssetIds`, named art placeholders in boot/world/battle/cards/result, pip rows, keyword chips, and automatic asset lookup hooks.
+- Latest validation passes cleanly: 61/61 GUT tests pass through `tools/validate.gd`.
 
 ## Implemented Runtime Rules
 
@@ -47,13 +48,15 @@
 - NPC rewards use `first_npc_reward_card` first, then `npc_reward_choices`
 - local save/load persists unlocked cards, selected deck, active encounter, completed encounters, claimed rewards, NPC reward state, and falls back to new game on invalid save
 - HUD/slot/map/result feedback is legible enough for the current no-asset playable slice
+- art-ready placeholders expose stable node names and asset IDs without requiring imported art
 - command card deck limit is 4
 - hero power is `Preparar Defesa`
 
 ## Accepted GDD Rules Not Yet Implemented
 
-- Art-ready placeholder structure remains pending before final asset import.
+- `ondas`, `defesa`, `chefe_multiparte`, and `quebra_cabeca` remain future battle modes.
+- Broader RPG progression remains pending.
 
 ## Next
 
-Implement art-ready placeholder structure as the next linear pass.
+Implement the next small official battle mode, preferably `ondas`.

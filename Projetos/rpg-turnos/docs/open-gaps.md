@@ -141,7 +141,7 @@ Como o player entra em um encontro? O projeto-brief menciona "encounter transiti
 ## Prioridade de resolução
 
 **Resolver antes de qualquer conteúdo novo:**
-- preparar estrutura placeholder art-ready para telas e IDs de assets
+- implementar a proxima expansao pequena de modo/conteudo com escopo controlado
 - manter runtime e design pendente separados em qualquer novo status
 
 **Resolver antes de expandir para campanha:**

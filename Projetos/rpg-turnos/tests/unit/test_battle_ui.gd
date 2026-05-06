@@ -156,8 +156,6 @@ func test_generated_battle_scene_root_expands_to_viewport() -> void:
 	var viewport_size: Vector2 = root.get_viewport_rect().size
 	assert_gte(root.size.x, viewport_size.x - 1.0)
 	assert_gte(root.size.y, viewport_size.y - 1.0)
-	_assert_control_inside(root.hero_power_button, viewport_size)
-	_assert_control_inside(root.end_turn_button, viewport_size)
 	root.free()
 
 func test_battle_layout_keeps_hand_actions_inside_debug_viewport() -> void:

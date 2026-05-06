@@ -19,6 +19,8 @@ config/icon="res://icon.svg"
 
 ContentLibrary="*res://data/content_library.gd"
 GameSession="*res://core/game_session.gd"
+UiTokens="*res://core/ui_tokens.gd"
+AssetIds="*res://core/asset_ids.gd"
 
 [display]
 

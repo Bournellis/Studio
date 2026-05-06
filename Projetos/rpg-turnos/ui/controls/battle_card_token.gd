@@ -5,6 +5,8 @@ var card_id: String = ""
 var hand_index: int = -1
 var card
 var type_stripe: ColorRect
+var art_rect: TextureRect
+var keyword_chips: HBoxContainer
 
 func setup(new_card_id: String, new_hand_index: int) -> void:
 	card_id = new_card_id
@@ -34,6 +36,16 @@ func _rebuild() -> void:
 	box.add_theme_constant_override("separation", 2)
 	row.add_child(box)
 
+	art_rect = TextureRect.new()
+	art_rect.name = "art_rect"
+	art_rect.custom_minimum_size = Vector2(0, 20)
+	art_rect.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	art_rect.texture = AssetIds.card_art_texture(card_id)
+	art_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	art_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	art_rect.modulate = Color.WHITE if art_rect.texture != null else UiTokens.color("placeholder", Color(0.22, 0.25, 0.28))
+	box.add_child(art_rect)
+
 	var title: Label = Label.new()
 	title.text = card.display_name if card != null else card_id
 	title.clip_text = true
@@ -44,13 +56,16 @@ func _rebuild() -> void:
 
 	var stats: Label = Label.new()
 	if card != null:
-		stats.text = "Custo %d" % card.cost
+		stats.text = "%s | Custo %d" % [UiTokens.type_display_name(card.card_type), card.cost]
 		if card.occupies_slot():
 			stats.text += " | %d/%d" % [card.attack, card.health]
 	stats.clip_text = true
 	stats.max_lines_visible = 1
 	stats.add_theme_font_size_override("font_size", 13)
 	box.add_child(stats)
+
+	keyword_chips = _build_keyword_chips()
+	box.add_child(keyword_chips)
 
 	var text_label: Label = Label.new()
 	text_label.text = card.text if card != null else ""
@@ -92,17 +107,21 @@ func _panel_style() -> StyleBoxFlat:
 
 func _type_color() -> Color:
 	if card == null:
-		return Color(0.45, 0.48, 0.5)
-	match str(card.card_type):
-		"criatura":
-			return Color(0.36, 0.68, 0.52)
-		"estrutura", "permanente":
-			return Color(0.62, 0.58, 0.42)
-		"magia":
-			return Color(0.42, 0.58, 0.86)
-		"magia_de_tabuleiro":
-			return Color(0.74, 0.44, 0.84)
-		"comando":
-			return Color(0.9, 0.68, 0.32)
-		_:
-			return Color(0.45, 0.48, 0.5)
+		return UiTokens.color("border_default", Color(0.45, 0.48, 0.5))
+	return UiTokens.type_color(str(card.card_type))
+
+func _build_keyword_chips() -> HBoxContainer:
+	var row: HBoxContainer = HBoxContainer.new()
+	row.name = "KeywordChipsComponent"
+	row.add_theme_constant_override("separation", 3)
+	if card == null:
+		return row
+	for keyword: String in card.keywords:
+		var chip: Label = Label.new()
+		chip.text = keyword
+		chip.clip_text = true
+		chip.max_lines_visible = 1
+		chip.add_theme_font_size_override("font_size", 8)
+		chip.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+		row.add_child(chip)
+	return row

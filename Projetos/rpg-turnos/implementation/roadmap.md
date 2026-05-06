@@ -164,7 +164,9 @@ Planned:
 
 Goal: rebuild every screen so named nodes are ready for art import. No image files yet.
 
-Planned:
+Status: done.
+
+Implemented:
 - `UiTokens` autoload with color tokens and display name maps
 - Boot menu: `logo_container`, `bg_visual`, `ambiance_layer`
 - World map: named markers, `player_sprite`, `portrait_rect` in dialogue
@@ -173,21 +175,22 @@ Planned:
 - Battle board: named lane panels, `player_portrait_rect`, `enemy_portrait_rect`
 - HUD: `hp_bar`, `energy_pips`, `priority_dot`, `discard_bar`
 - Result screen: victory/defeat color differentiation, `result_icon_rect`
-- `AssetIds` constants file mapping all art IDs to `res://` paths
+- `AssetIds` autoload mapping all planned art IDs to `res://` paths
 
 Reference: `../docs/art-direction.md`, `../docs/asset-request.md`
 
 ## Next Pass
 
-### Art-Ready Placeholder Structure
+### `ondas`
 
-Goal: prepare named nodes and asset ID hooks before importing art or expanding content.
+Goal: add the next small official battle mode using existing cards, boards, rewards, save/load, and art-ready UI hooks.
 
 Planned:
-- `UiTokens` autoload with color tokens and display name maps
-- named art slots in boot, world, battle, card token, and result screens
-- `AssetIds` constants file mapping planned art IDs to `res://` paths
-- keep placeholders no-asset and low-risk
+- data-driven wave definitions
+- runtime wave spawning after a wave is cleared
+- victory only after final wave
+- basic UI wave indicator
+- focused GUT coverage
 
 ## Later Passes
 

@@ -8,6 +8,9 @@ var source: String = ""
 var source_index: int = -1
 var card
 var compact: bool = false
+var art_rect: TextureRect
+var keyword_chips: HBoxContainer
+var pip_row: HBoxContainer
 
 func setup(new_card_id: String, new_source: String, new_source_index: int, is_compact: bool = false) -> void:
 	card_id = new_card_id
@@ -25,6 +28,17 @@ func _rebuild() -> void:
 	box.add_theme_constant_override("separation", 4)
 	add_child(box)
 
+	if not compact:
+		art_rect = TextureRect.new()
+		art_rect.name = "art_rect"
+		art_rect.custom_minimum_size = Vector2(0, 38)
+		art_rect.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		art_rect.texture = AssetIds.card_art_texture(card_id)
+		art_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		art_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		art_rect.modulate = Color.WHITE if art_rect.texture != null else UiTokens.color("placeholder", Color(0.22, 0.25, 0.28))
+		box.add_child(art_rect)
+
 	var title: Label = Label.new()
 	title.text = card.display_name if card != null else card_id
 	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -33,10 +47,16 @@ func _rebuild() -> void:
 
 	var stats: Label = Label.new()
 	if card != null:
-		stats.text = "Custo %d" % card.cost
+		stats.text = UiTokens.type_display_name(card.card_type)
 		if card.occupies_slot():
 			stats.text += " | %d/%d" % [card.attack, card.health]
 	box.add_child(stats)
+
+	pip_row = _build_pip_row(card.cost if card != null else 0)
+	box.add_child(pip_row)
+
+	keyword_chips = _build_keyword_chips()
+	box.add_child(keyword_chips)
 
 	if not compact:
 		var body: Label = Label.new()
@@ -68,7 +88,7 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 func _panel_style(fill: Color, border: Color) -> StyleBoxFlat:
 	var style: StyleBoxFlat = StyleBoxFlat.new()
 	style.bg_color = fill
-	style.border_color = border
+	style.border_color = UiTokens.type_color(card.card_type) if card != null else border
 	style.border_width_left = 2
 	style.border_width_top = 2
 	style.border_width_right = 2
@@ -82,3 +102,30 @@ func _panel_style(fill: Color, border: Color) -> StyleBoxFlat:
 	style.content_margin_right = 8
 	style.content_margin_bottom = 8
 	return style
+
+func _build_pip_row(cost: int) -> HBoxContainer:
+	var row: HBoxContainer = HBoxContainer.new()
+	row.name = "PipRowComponent"
+	row.add_theme_constant_override("separation", 2)
+	for index: int in range(max(1, min(cost, 8))):
+		var pip: ColorRect = ColorRect.new()
+		pip.custom_minimum_size = Vector2(8, 8)
+		pip.color = UiTokens.color("energy", Color(0.9, 0.7, 0.32)) if index < cost else UiTokens.color("border_default")
+		row.add_child(pip)
+	return row
+
+func _build_keyword_chips() -> HBoxContainer:
+	var row: HBoxContainer = HBoxContainer.new()
+	row.name = "KeywordChipsComponent"
+	row.add_theme_constant_override("separation", 3)
+	if card == null:
+		return row
+	for keyword: String in card.keywords:
+		var chip: Label = Label.new()
+		chip.text = keyword
+		chip.clip_text = true
+		chip.max_lines_visible = 1
+		chip.add_theme_font_size_override("font_size", 9)
+		chip.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+		row.add_child(chip)
+	return row
