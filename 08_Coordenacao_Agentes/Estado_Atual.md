@@ -15,11 +15,11 @@
 ## rpg-turnos
 
 - Status: **Ativo — modos oficiais completos**
-- Track ativa: `Track 01 - Foundation Contracts And First Prototype` (QUEBRA_CABECA_MODE_COMPLETE)
+- Track ativa: `Track 02 - Draxos Lore And Progression Alignment` (PLANNED)
 - Baseline atual: slice Godot 4.6.2 jogavel — C1 unico runtime, `limpar_mesa`, `duelo`, `ondas`, `defesa`, `chefe_multiparte`, `quebra_cabeca`, cadeia de encontros no mapa, rewards por encontro uma vez, NPC progressiva, save/load JSON local, HUD/slots/mapa/rewards mais legiveis, estrutura art-ready com `UiTokens`/`AssetIds`, `descarte`, energia/mao com ramp, deck ciclico, regras de batalha completas para o slice, validacao verde 77/77
 - Meta ativa: campanha Draxos adotada como direcao ativa; proxima etapa e expandir conteudo/progressao sem renomear IDs mecanicos
 - Ultima atualizacao do current-status: `2026-05-06`
-- Proximo passo: definir primeira classe Draxos, papeis de comando e nomes finais de zonas/missoes quando narrativa entrar em foco
+- Proximo passo: executar Stage 1 da Track 02 como lore skin estreito em labels/dialogos/missoes, sem renomear IDs mecanicos
 
 ## Kanban rápido
 

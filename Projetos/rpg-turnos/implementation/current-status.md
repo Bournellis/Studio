@@ -3,8 +3,8 @@
 - Last Updated: `2026-05-06`
 - Active Project Name: `rpg-turnos`
 - Active Surface: `cardgame-first C1 battle modes`
-- Active Track: `Track 01 - Foundation Contracts And First Prototype`
-- Active Track Status: `QUEBRA_CABECA_MODE_COMPLETE`
+- Active Track: `Track 02 - Draxos Lore And Progression Alignment`
+- Active Track Status: `PLANNED`
 - Current Operational Baseline: `playable Godot 4.6.2 slice with menu, local JSON save/load, 2D exploration placeholder, C1 as the sole runtime combat model, official limpar_mesa/duelo/ondas/defesa/chefe_multiparte/quebra_cabeca encounter modes, linear world encounter chain, one-time encounter rewards, NPC progressive rewards, public descarte phase, energy/hand ramp, cyclic bottom-of-deck card flow, damage types, coverage, voadora, dual burning, fallback slots, creature movement, neutral slots in engine, clearer HUD/slots/map/reward feedback, art-ready placeholders with UiTokens and AssetIds, data-driven boards/encounters, automatic enemy priority, generated scenes, JSON-driven catalog, and green validation`
 - Active Goal: `Draxos lore alignment and controlled content/progression expansion`
 - Active Combat Direction: `C1 - main game, not a variant`
@@ -17,8 +17,9 @@
 - `../../../canon/canon-brief.md`
 - `../../../canon/lore/shared-lore.md` when lore context matters
 - `../../../canon/lore/draxos-invasion.md` when Draxos campaign direction matters
-- `tracks/track-01-foundation-first-prototype/current-status.md`
-- `tracks/track-01-foundation-first-prototype/cardgame-core-implementation-plan.md` when planning or implementing the next content/progression pass
+- `tracks/track-02-draxos-lore-progression/current-status.md`
+- `tracks/track-02-draxos-lore-progression/implementation-plan.md` when planning or implementing the next lore/progression pass
+- `tracks/track-01-foundation-first-prototype/current-status.md` for the completed runtime baseline
 - `../docs/lore-campaign.md` and `../docs/lore-content-migration.md` when migrating placeholder runtime names
 - touched files
 
@@ -40,4 +41,4 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 
 ## Next
 
-Choose the first controlled lore/content migration pass after the official battle mode set. Prioritize first Draxos class definition, command roles, and final zone/mission names when narrative enters focus.
+Implement Track 02 Stage 1 as a narrow runtime-facing lore skin: review hero/hub/mission labels and dialogue without renaming mechanical IDs or changing combat rules.
