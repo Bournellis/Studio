@@ -1048,4 +1048,22 @@ encounters = Array[Dictionary]([{
 }],
 "wave_number": 2.0
 }]
+}, {
+"board_id": "muralha_desfiladeiro",
+"defense_turn_limit": 2.0,
+"display_name": "Defesa do Portao",
+"id": "defesa_do_portao",
+"mode": "defesa",
+"notes": "Primeiro encontro do modo defesa. O objetivo e sobreviver a dois turnos inimigos completos, sem heroi inimigo e sem vitoria automatica por limpar a mesa. O jogador conserva o fluxo normal de mao, deck e energia enquanto segura a pressao inicial.",
+"reward_cards": ["guardiao_portal"],
+"starting_enemy_slots": [{
+"card_id": "goblin_ponte",
+"slot": 0.0
+}, {
+"card_id": "ladrao_rapido",
+"slot": 2.0
+}, {
+"card_id": "atirador_torre",
+"slot": 5.0
+}]
 }])

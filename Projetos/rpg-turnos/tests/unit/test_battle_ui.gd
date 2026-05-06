@@ -71,6 +71,19 @@ func test_battle_header_exposes_wave_progress_for_ondas() -> void:
 	assert_true(root.status_label.text.contains("Sem heroi inimigo"))
 	root.free()
 
+func test_battle_header_exposes_defense_progress_for_defesa() -> void:
+	GameSession.set_active_encounter("defesa_do_portao")
+	var root = BattleRootScript.new()
+	add_child(root)
+	await get_tree().process_frame
+	root.engine._enemy_ai_enabled = false
+
+	assert_eq(root.engine.modo_batalha, "defesa")
+	assert_true(root.wave_label.visible)
+	assert_eq(root.wave_label.text, "Defesa 0/2")
+	assert_true(root.status_label.text.contains("Sem heroi inimigo"))
+	root.free()
+
 func test_battle_slot_exposes_visual_state_chips() -> void:
 	var slot = BattleSlotControlScript.new()
 	add_child(slot)

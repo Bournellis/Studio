@@ -1471,6 +1471,31 @@
       "reward_cards": [
         "chuva_brasas"
       ]
+    },
+    {
+      "id": "defesa_do_portao",
+      "display_name": "Defesa do Portao",
+      "mode": "defesa",
+      "board_id": "muralha_desfiladeiro",
+      "defense_turn_limit": 2,
+      "notes": "Primeiro encontro do modo defesa. O objetivo e sobreviver a dois turnos inimigos completos, sem heroi inimigo e sem vitoria automatica por limpar a mesa. O jogador conserva o fluxo normal de mao, deck e energia enquanto segura a pressao inicial.",
+      "starting_enemy_slots": [
+        {
+          "slot": 0,
+          "card_id": "goblin_ponte"
+        },
+        {
+          "slot": 2,
+          "card_id": "ladrao_rapido"
+        },
+        {
+          "slot": 5,
+          "card_id": "atirador_torre"
+        }
+      ],
+      "reward_cards": [
+        "guardiao_portal"
+      ]
     }
   ],
   "enemy_script": [],

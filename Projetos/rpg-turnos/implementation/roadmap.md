@@ -179,7 +179,7 @@ Implemented:
 
 Reference: `../docs/art-direction.md`, `../docs/asset-request.md`
 
-## Latest Pass
+## Recent Pass
 
 ### `ondas`
 
@@ -192,11 +192,21 @@ Delivered:
 - basic UI wave indicator
 - focused GUT coverage
 
+### `defesa`
+
+Implemented the survival objective mode using existing boards, cards, rewards, save/load, and HUD hooks.
+
+Delivered:
+- `defense_turn_limit` encounter field
+- victory after surviving complete enemy turns
+- no automatic victory from clearing the enemy board
+- `Defesa X/Y` battle progress indicator
+- focused GUT coverage
+
 ## Later Passes
 
 - More board topology tests.
 - More terrain and elevation rules.
-- `defesa`.
 - `chefe_multiparte`.
 - `quebra_cabeca`.
 - Art asset import (follows asset-request.md priority list).

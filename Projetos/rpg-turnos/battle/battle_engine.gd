@@ -8,6 +8,7 @@ const NEUTRAL_ID: String = "neutro"
 const MODE_CLEAR_BOARD: String = "limpar_mesa"
 const MODE_DUEL: String = "duelo"
 const MODE_WAVES: String = "ondas"
+const MODE_DEFENSE: String = "defesa"
 
 const DAMAGE_FISICO_MELEE: String = "fisico_melee"
 const DAMAGE_FISICO_ALCANCE: String = "fisico_alcance"
@@ -62,6 +63,8 @@ var encounter_id: String = ""
 var encounter_name: String = ""
 var wave_index: int = 0
 var wave_count: int = 0
+var defense_turn_limit: int = 0
+var defense_turns_survived: int = 0
 var active_player_id: String = PLAYER_ID
 var priority_owner_id: String = PLAYER_ID
 var consecutive_passes: int = 0
@@ -95,6 +98,8 @@ func start_battle(catalog, deck_ids: Array, config: Dictionary = {}) -> void:
 	round_number = 1
 	wave_index = 0
 	wave_count = 0
+	defense_turn_limit = 0
+	defense_turns_survived = 0
 	_waves = []
 	active_player_id = PLAYER_ID
 	priority_owner_id = PLAYER_ID
@@ -137,6 +142,9 @@ func get_state() -> Dictionary:
 		"wave_index": wave_index,
 		"wave_count": wave_count,
 		"wave_label": get_wave_label(),
+		"defense_turn_limit": defense_turn_limit,
+		"defense_turns_survived": defense_turns_survived,
+		"defense_label": get_defense_label(),
 		"active_player_id": active_player_id,
 		"priority_owner_id": priority_owner_id,
 		"consecutive_passes": consecutive_passes,
@@ -159,6 +167,8 @@ func get_mode_label() -> String:
 			return "Duelo"
 		MODE_WAVES:
 			return "Ondas"
+		MODE_DEFENSE:
+			return "Defesa"
 		_:
 			return modo_batalha
 
@@ -166,6 +176,17 @@ func get_wave_label() -> String:
 	if modo_batalha != MODE_WAVES or wave_count <= 0:
 		return ""
 	return "Onda %d/%d" % [wave_index + 1, wave_count]
+
+func get_defense_label() -> String:
+	if modo_batalha != MODE_DEFENSE or defense_turn_limit <= 0:
+		return ""
+	return "Defesa %d/%d" % [defense_turns_survived, defense_turn_limit]
+
+func get_mode_progress_label() -> String:
+	var wave_text: String = get_wave_label()
+	if wave_text != "":
+		return wave_text
+	return get_defense_label()
 
 func get_priority_label() -> String:
 	if outcome != "":
@@ -628,7 +649,7 @@ func _configure_controllers(deck_ids: Array, encounter: Dictionary) -> void:
 	var player_hero_resource = _catalog.player_hero
 	var enemy_hero_resource = _catalog.enemy_hero
 	var encounter_mode: String = str(encounter.get("mode", MODE_CLEAR_BOARD))
-	var enemy_is_encounter_controller: bool = encounter_mode == MODE_CLEAR_BOARD or encounter_mode == MODE_WAVES
+	var enemy_is_encounter_controller: bool = encounter_mode == MODE_CLEAR_BOARD or encounter_mode == MODE_WAVES or encounter_mode == MODE_DEFENSE
 	var player_controller: Dictionary = {
 		"id": PLAYER_ID,
 		"kind": "humano",
@@ -681,6 +702,8 @@ func _configure_board(encounter: Dictionary) -> void:
 	_waves = Array(encounter.get("waves", []))
 	wave_count = _waves.size() if modo_batalha == MODE_WAVES else 0
 	wave_index = 0
+	defense_turn_limit = int(encounter.get("defense_turn_limit", 0)) if modo_batalha == MODE_DEFENSE else 0
+	defense_turns_survived = 0
 	if modo_batalha == MODE_WAVES and wave_count > 0:
 		_spawn_wave(0)
 	else:
@@ -793,6 +816,10 @@ func _finish_public_discard_phase() -> void:
 	_cleanup_turn(active_player_id)
 	if outcome != "":
 		return
+	_record_defense_turn_survived(active_player_id)
+	_check_outcome()
+	if outcome != "":
+		return
 	discard_controller_id = ""
 	discard_target_size = DISCARD_PHASE_TARGET
 	discard_voluntary_allowed = true
@@ -804,6 +831,13 @@ func _cleanup_turn(controller_id: String) -> void:
 	_log("Limpeza tecnica do turno de %s." % _owner_label(controller_id))
 	_remove_destroyed()
 	_check_outcome()
+
+func _record_defense_turn_survived(controller_id: String) -> void:
+	if modo_batalha != MODE_DEFENSE or controller_id != ENEMY_ID:
+		return
+	defense_turns_survived = min(defense_turn_limit, defense_turns_survived + 1)
+	_log("Defesa: %d/%d turno(s) inimigo(s) sobrevivido(s)." % [defense_turns_survived, defense_turn_limit])
+	_sync_public_fields()
 
 func _perform_enemy_action() -> Dictionary:
 	if not _enemy_ai_enabled:
@@ -1240,6 +1274,8 @@ func _check_outcome() -> void:
 		victory = _controller_has_hero(ENEMY_ID) and enemy_health <= 0
 	elif modo_batalha == MODE_WAVES:
 		victory = wave_count > 0 and wave_index >= wave_count - 1 and _enemy_board_is_clear()
+	elif modo_batalha == MODE_DEFENSE:
+		victory = defense_turn_limit > 0 and defense_turns_survived >= defense_turn_limit
 	else:
 		victory = _enemy_board_is_clear()
 	if player_dead:

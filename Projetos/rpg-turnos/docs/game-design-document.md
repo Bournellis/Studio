@@ -1,7 +1,7 @@
 # RPG Turnos Game Design Document
 
-- Version: `0.7`
-- Last Updated: `2026-05-05`
+- Version: `0.8`
+- Last Updated: `2026-05-06`
 - Status: `C1_LOCKED_AS_CURRENT_CARDGAME_CORE`
 - Incorporated Source: `C:/Users/Fabio/Downloads/cardgame_slots_implementacao_codex_v0_1.md`
 
@@ -305,9 +305,20 @@ The JSON encounter definition uses a `"waves"` array instead of `"starting_enemy
 ]
 ```
 
+### `defesa`
+
+The enemy side has no hero. The encounter is a survival objective: the player wins by surviving a configured number of complete enemy turns.
+
+Defense rules:
+
+- The JSON encounter definition uses `"mode": "defesa"`.
+- `defense_turn_limit` defines how many enemy turns must be survived.
+- Clearing the enemy board does not immediately win the encounter.
+- Defeat when the player hero reaches 0 HP at any point.
+- The player keeps the normal hand, deck, board, and energy rules during the defense window.
+
 Future modes documented but not active:
 
-- `defesa`
 - `chefe_multiparte`
 - `quebra_cabeca`
 

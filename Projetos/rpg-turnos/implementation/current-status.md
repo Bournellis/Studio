@@ -4,8 +4,8 @@
 - Active Surface: `cardgame-first C1 battle modes`
 - Active Project Name: `rpg-turnos`
 - Active Track: `Track 01 - Foundation Contracts And First Prototype`
-- Active Track Status: `ONDAS_MODE_COMPLETE`
-- Current Operational Baseline: `playable Godot 4.6.2 slice with menu, local JSON save/load, 2D exploration placeholder, 20-card deck setup, C1 as the sole runtime combat model, limpar_mesa encounter mode, official duelo mode, official ondas mode, linear world encounter chain, one-time encounter rewards, NPC progressive rewards, public descarte phase, energy/hand ramp, cyclic bottom-of-deck card flow, damage types, coverage, voadora, dual burning, fallback slots, creature movement, neutral slots in engine, clearer HUD/slots/map/reward feedback, art-ready placeholders with UiTokens and AssetIds, data-driven boards/encounters, automatic enemy priority, simple visual battle feedback, generated scenes, JSON-driven catalog, and green GUT validation`
+- Active Track Status: `DEFESA_MODE_COMPLETE`
+- Current Operational Baseline: `playable Godot 4.6.2 slice with menu, local JSON save/load, 2D exploration placeholder, 20-card deck setup, C1 as the sole runtime combat model, limpar_mesa encounter mode, official duelo mode, official ondas mode, official defesa mode, linear world encounter chain, one-time encounter rewards, NPC progressive rewards, public descarte phase, energy/hand ramp, cyclic bottom-of-deck card flow, damage types, coverage, voadora, dual burning, fallback slots, creature movement, neutral slots in engine, clearer HUD/slots/map/reward feedback, art-ready placeholders with UiTokens and AssetIds, data-driven boards/encounters, automatic enemy priority, simple visual battle feedback, generated scenes, JSON-driven catalog, and green GUT validation`
 - Active Goal: `controlled mode/content expansion`
 - Active Combat Direction: `C1 - main game, not a variant`
 - Preserved Combat Ideas: `A/B priority variants and the phase-based duel are historical only in docs/cardgame-core-experiments.md`
@@ -30,7 +30,7 @@
 - Decks may include at most 4 command cards.
 - The setup screen has one entry button: `Iniciar encontro`.
 - The world map selects the active encounter through the linear marker chain.
-- Implemented encounter modes include `limpar_mesa`, `duelo`, and `ondas`.
+- Implemented encounter modes include `limpar_mesa`, `duelo`, `ondas`, and `defesa`.
 - The old `Duelo antigo` button has been removed.
 - The battle engine uses `controladores`, `modo_batalha`, `tabuleiro`, `turno`, public phases, shared priority, and bottom-of-deck cycling.
 - Public phases implemented in runtime are `manutencao`, `compra`, `fase_principal`, and `descarte`.
@@ -50,9 +50,10 @@
 - `chuva_brasas` and `chamado_hostes` are supported as `magia_de_tabuleiro`.
 - `duelo` is implemented with enemy hero, enemy deck/hand/energy, `Golpe Direto`, aggressive AI, and empty-route hero fallback.
 - `ondas` is implemented with sequential wave spawning, no enemy hero, persistent player HP/board/hand/deck/energy ramp, and victory only after the final wave is cleared.
+- `defesa` is implemented with a survival turn limit, no enemy hero, and no automatic victory from clearing the enemy board.
 - Creature movement is implemented as a normal action once per turn.
 - Boards may define neutral slots; engine can play/move permanents into them.
-- World map has a linear encounter chain: `emboscada_na_ponte -> duelista_bandido -> emboscada_no_cruzamento -> fortaleza_do_desfiladeiro -> invasao_em_ondas`.
+- World map has a linear encounter chain: `emboscada_na_ponte -> duelista_bandido -> emboscada_no_cruzamento -> fortaleza_do_desfiladeiro -> invasao_em_ondas -> defesa_do_portao`.
 - Encounter completion is tracked by `completed_encounter_ids`.
 - Encounter rewards are claimed once through `claimed_encounter_reward_ids`.
 - NPC rewards use `golpe_preciso` first, then `npc_reward_choices` in order.
@@ -87,7 +88,7 @@
 
 ## Accepted Design, Pending Implementation
 
-- `defesa`, `chefe_multiparte`, and `quebra_cabeca` remain future battle modes.
+- `chefe_multiparte` and `quebra_cabeca` remain future battle modes.
 - Broader RPG progression, stats, equipment/items, narrative depth, audio, and transition polish remain future layers.
 
 ## Implemented Battle Mode Pass 01
@@ -102,6 +103,7 @@
 - `queimando` ticks on the occupant controller's upkeep.
 - `duelo` exists in the engine/data as the official hero-vs-hero mode.
 - `ondas` exists in the engine/data as the official sequential wave mode.
+- `defesa` exists in the engine/data as the official survival objective mode.
 
 ## Consistency Matrix
 
@@ -115,6 +117,7 @@
 | `manter_linha` | deletada | sim | sim | decisao 2026-05-05 |
 | `duelo` | oficial | sim | sim | GDD |
 | `ondas` | oficial | sim | sim | GDD |
+| `defesa` | oficial | sim | sim | GDD |
 | Rewards por encontro | multiplas cartas, claim unico | sim | sim | GDD |
 | `voadora` | keyword completa | sim | sim | GDD |
 | Visual/UX minimo | HUD, slots, mapa e rewards legiveis | sim | sim | roadmap |
@@ -126,11 +129,11 @@
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\rpg-turnos -s res://tools/validate.gd
 ```
 
-Latest validation run by Codex on `2026-05-05`: `65/65` GUT tests passing. `tools/validate.gd` succeeds.
+Latest validation run by Codex on `2026-05-06`: `69/69` GUT tests passing. `tools/validate.gd` succeeds.
 
 ## Pending Engine Changes For Codex
 
-All changes below were specified during design sessions on 2026-05-04 and user decisions on 2026-05-05. Foundation, battle-rule completion, official duel, world progression/rewards, minimum save/load, visual/UX hardening, art-ready placeholder structure, and official ondas mode are complete as of `2026-05-05`; continue linearly with controlled mode/content expansion.
+All changes below were specified during design sessions on 2026-05-04 and user decisions on 2026-05-05. Foundation, battle-rule completion, official duel, world progression/rewards, minimum save/load, visual/UX hardening, art-ready placeholder structure, official ondas mode, and official defesa mode are complete as of `2026-05-06`; continue linearly with controlled mode/content expansion.
 
 ---
 
@@ -386,7 +389,7 @@ Marker behavior:
 |---|---|---|
 | `emboscada_reforcos` | `emboscada_na_ponte` | `Vector2(400, 220)` |
 
-Current linear implementation adds `invasao_em_ondas` after `fortaleza_do_desfiladeiro` to keep Codex execution sequential.
+Current linear implementation adds `invasao_em_ondas` after `fortaleza_do_desfiladeiro` and `defesa_do_portao` after `invasao_em_ondas` to keep Codex execution sequential.
 
 NPC progressive rewards trigger: give the next card from `npc_reward_choices` when the player has completed N main-chain encounters, where N equals the current `npc_reward_index` + 1. (Complete 1 main encounter → get choice 0; complete 2 → get choice 1; complete 3 → get choice 2.)
 
@@ -463,6 +466,24 @@ The engine reads the current wave index from the encounter state. When all enemy
 ### G3. Encounter unlock
 
 `invasao_em_ondas` is currently part of the linear implementation chain and unlocks after `fortaleza_do_desfiladeiro`. This keeps the Codex implementation path sequential while optional branch support remains a later map feature.
+
+---
+
+## Phase G2 — Pass 04: `defesa` Mode
+
+Implemented the survival objective mode.
+
+### G2.1. `defesa` mode rules
+
+- The enemy side has no hero.
+- Victory is achieved by surviving the number of complete enemy turns defined by `defense_turn_limit`.
+- Clearing the enemy board does not immediately win the encounter.
+- Defeat occurs when the player hero reaches 0 HP at any point.
+- The normal hand, deck, board, discard, and energy rules remain active during the defense window.
+
+### G2.2. First `defesa` encounter
+
+`defesa_do_portao` uses `muralha_desfiladeiro`, starts with pressure on the front and tower lane, and unlocks after `invasao_em_ondas` in the current linear implementation chain.
 
 ---
 

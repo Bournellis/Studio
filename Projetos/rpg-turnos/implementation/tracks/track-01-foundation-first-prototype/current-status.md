@@ -1,7 +1,7 @@
 # Track 01 Current Status
 
 - Last Updated: `2026-05-05`
-- Status: `ONDAS_MODE_COMPLETE`
+- Status: `DEFESA_MODE_COMPLETE`
 
 ## Implemented
 
@@ -14,6 +14,7 @@
 - `limpar_mesa` is implemented through `Emboscada na Ponte`.
 - `duelo` is implemented as the official second battle mode.
 - `ondas` is implemented as the official sequential wave battle mode.
+- `defesa` is implemented as the official survival objective battle mode.
 - Enemy priority resolves automatically until the player gets priority.
 - Battle feedback uses simple tweens and labels without new assets.
 - Battle Rule Completion is implemented: damage types, coverage, `voadora`, dual burning, `fallback_slots`, and board spells for `chuva_brasas` / `chamado_hostes`.
@@ -21,7 +22,7 @@
 - Minimum save/load is implemented with local JSON, boot continuation, runtime save points, and missing/corrupt save fallback.
 - Visual/UX hardening is implemented: HUD bars/pips, hand/deck/discard counter, card type stripes, clearer slot states, world marker status, and result reward feedback.
 - Art-ready placeholder structure is implemented: `UiTokens`, `AssetIds`, named art placeholders in boot/world/battle/cards/result, pip rows, keyword chips, and automatic asset lookup hooks.
-- Latest validation passes cleanly: 65/65 GUT tests pass through `tools/validate.gd`.
+- Latest validation passes cleanly: 69/69 GUT tests pass through `tools/validate.gd`.
 
 ## Implemented Runtime Rules
 
@@ -43,6 +44,7 @@
 - `queimando` works as slot status and creature status
 - `duelo` has enemy hero at 20 HP, enemy deck/hand/energy, `Golpe Direto`, aggressive AI, and empty-lane hero fallback
 - `ondas` has no enemy hero, spawns sequential waves, preserves player HP/board/hand/deck/energy ramp, and only wins after the final wave is cleared
+- `defesa` has no enemy hero, tracks complete enemy turns survived, and does not win from clearing the enemy board
 - creature movement works as a normal action once per turn
 - neutral slots exist in the engine when a board defines them
 - completed encounters are tracked by id
@@ -56,9 +58,9 @@
 
 ## Accepted GDD Rules Not Yet Implemented
 
-- `defesa`, `chefe_multiparte`, and `quebra_cabeca` remain future battle modes.
+- `chefe_multiparte` and `quebra_cabeca` remain future battle modes.
 - Broader RPG progression remains pending.
 
 ## Next
 
-Implement the next small official battle mode, preferably `defesa`.
+Implement the next small official battle mode, preferably `chefe_multiparte`.

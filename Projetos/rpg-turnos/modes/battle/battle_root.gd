@@ -292,7 +292,7 @@ func _refresh() -> void:
 	variant_label.text = "Modo: %s" % engine.get_mode_label()
 	phase_label.text = "Fase: %s" % engine.get_phase_label()
 	priority_label.text = "%s | %s" % [engine.get_active_controller_label(), engine.get_priority_label()]
-	wave_label.text = engine.get_wave_label()
+	wave_label.text = engine.get_mode_progress_label()
 	wave_label.visible = wave_label.text != ""
 	route_label.text = engine.get_board_route_summary()
 	_update_vitals()
@@ -309,6 +309,8 @@ func _refresh() -> void:
 		enemy_hero_label.text = "Heroi inimigo: %d HP | Armadura %d" % [engine.enemy_health, engine.enemy_armor]
 	elif engine.modo_batalha == BattleEngineScript.MODE_WAVES:
 		enemy_hero_label.text = "Sem heroi inimigo | Objetivo: vencer %s" % engine.get_wave_label()
+	elif engine.modo_batalha == BattleEngineScript.MODE_DEFENSE:
+		enemy_hero_label.text = "Sem heroi inimigo | Objetivo: sobreviver %s" % engine.get_defense_label()
 	else:
 		enemy_hero_label.text = "Sem heroi inimigo | Objetivo: limpar a mesa"
 	enemy_hero_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -654,6 +656,8 @@ func _finish_battle() -> void:
 			summary = "O Duelista Bandido foi derrotado em duelo."
 		elif engine.encounter_id == "invasao_em_ondas":
 			summary = "A invasao em ondas foi repelida."
+		elif engine.encounter_id == "defesa_do_portao":
+			summary = "O portao resistiu ao ataque inimigo."
 		GameSession.complete_encounter(summary)
 		GameSession.save_game()
 	else:

@@ -1,7 +1,7 @@
 # Cardgame Core Implementation Plan
 
 - Last Updated: `2026-05-05`
-- Status: `ONDAS_MODE_COMPLETE`
+- Status: `DEFESA_MODE_COMPLETE`
 
 ## Summary
 
@@ -117,11 +117,21 @@ Added the next small official mode through data and encounter rules:
 - wave indicator in battle UI
 - focused validation coverage
 
+## Latest Candidate Pass - `defesa`
+
+Added the survival objective mode through data and encounter rules:
+
+- `defense_turn_limit` encounter field
+- no enemy hero
+- victory after surviving complete enemy turns
+- no automatic victory from clearing the enemy board
+- progress indicator in battle UI
+- focused validation coverage
+
 ## Future Modes
 
 Prepare through data and encounter rules, not variant branches:
 
-- `defesa`
 - `chefe_multiparte`
 - `quebra_cabeca`
 

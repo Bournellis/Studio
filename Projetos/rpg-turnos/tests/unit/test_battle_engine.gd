@@ -195,6 +195,44 @@ func test_ondas_victory_only_after_final_wave_clear() -> void:
 
 	assert_eq(engine.outcome, "victory")
 
+func test_defesa_starts_without_enemy_hero_and_tracks_turn_limit() -> void:
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "defesa_do_portao", "enemy_ai_enabled": false})
+	var enemy: Dictionary = engine._controller("inimigo")
+
+	assert_eq(engine.modo_batalha, "defesa")
+	assert_false(enemy.has("hero"))
+	assert_eq(engine.enemy_health, 0)
+	assert_eq(engine.defense_turn_limit, 2)
+	assert_eq(engine.defense_turns_survived, 0)
+	assert_eq(engine.get_defense_label(), "Defesa 0/2")
+	assert_eq(str(engine.enemy_slots[0].get("card_id", "")), "goblin_ponte")
+	assert_eq(str(engine.enemy_slots[2].get("card_id", "")), "ladrao_rapido")
+	assert_eq(str(engine.enemy_slots[5].get("card_id", "")), "atirador_torre")
+
+func test_defesa_does_not_win_when_enemy_board_is_clear() -> void:
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "defesa_do_portao", "enemy_ai_enabled": false})
+	engine.enemy_slots = [null, null, null, null, null, null]
+
+	engine._check_outcome()
+
+	assert_eq(engine.outcome, "")
+	assert_eq(engine.defense_turns_survived, 0)
+
+func test_defesa_wins_after_required_enemy_turns_survived() -> void:
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "defesa_do_portao", "enemy_ai_enabled": false})
+
+	engine._record_defense_turn_survived("inimigo")
+	engine._check_outcome()
+
+	assert_eq(engine.outcome, "")
+	assert_eq(engine.get_defense_label(), "Defesa 1/2")
+
+	engine._record_defense_turn_survived("inimigo")
+	engine._check_outcome()
+
+	assert_eq(engine.outcome, "victory")
+	assert_eq(engine.get_defense_label(), "Defesa 2/2")
+
 func test_enemy_hero_power_uses_golpe_direto_once() -> void:
 	var engine = _start_engine(_starter_deck(), {"encounter_id": "duelista_bandido", "enemy_ai_enabled": false})
 	engine.active_player_id = "inimigo"
