@@ -1087,4 +1087,23 @@ encounters = Array[Dictionary]([{
 "card_id": "atirador_torre",
 "slot": 5.0
 }]
+}, {
+"board_id": "ponte_estavel",
+"display_name": "Enigma da Ponte",
+"id": "enigma_da_ponte",
+"mode": "quebra_cabeca",
+"notes": "Primeiro encontro do modo quebra_cabeca. O objetivo e limpar os alvos E1 e E3 em ate dois turnos do jogador. O suporte em E2 pode permanecer vivo; a vitoria nao exige limpar toda a mesa.",
+"puzzle_target_slots": [0.0, 2.0],
+"puzzle_turn_limit": 2.0,
+"reward_cards": ["flagelo"],
+"starting_enemy_slots": [{
+"card_id": "barricada",
+"slot": 0.0
+}, {
+"card_id": "guardiao_portal",
+"slot": 1.0
+}, {
+"card_id": "atirador_torre",
+"slot": 2.0
+}]
 }])

@@ -214,11 +214,22 @@ Delivered:
 - `Partes X/Y` battle progress indicator
 - focused GUT coverage
 
+### `quebra_cabeca`
+
+Implemented the timed puzzle objective mode using existing boards, cards, rewards, save/load, and HUD hooks.
+
+Delivered:
+- `puzzle_target_slots` encounter field
+- `puzzle_turn_limit` encounter field
+- victory after all marked targets are cleared
+- defeat when the player turn limit expires unsolved
+- `Alvos X/Y | Turnos A/B` battle progress indicator
+- focused GUT coverage
+
 ## Later Passes
 
 - More board topology tests.
 - More terrain and elevation rules.
-- `quebra_cabeca`.
 - Art asset import (follows asset-request.md priority list).
 - Broader RPG progression and card acquisition beyond fixed slice rewards.
 - Expanded save/load for campaign state beyond the current slice.

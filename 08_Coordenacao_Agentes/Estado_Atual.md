@@ -13,12 +13,12 @@
 
 ## rpg-turnos
 
-- Status: **Ativo — modo chefe_multiparte completo**
-- Track ativa: `Track 01 - Foundation Contracts And First Prototype` (CHEFE_MULTIPARTE_MODE_COMPLETE)
-- Baseline atual: slice Godot 4.6.2 jogavel — C1 unico runtime, `limpar_mesa`, `duelo`, `ondas`, `defesa`, `chefe_multiparte`, cadeia de encontros no mapa, rewards por encontro uma vez, NPC progressiva, save/load JSON local, HUD/slots/mapa/rewards mais legiveis, estrutura art-ready com `UiTokens`/`AssetIds`, `descarte`, energia/mao com ramp, deck ciclico, regras de batalha completas para o slice, validacao verde 73/73
+- Status: **Ativo — modos oficiais completos**
+- Track ativa: `Track 01 - Foundation Contracts And First Prototype` (QUEBRA_CABECA_MODE_COMPLETE)
+- Baseline atual: slice Godot 4.6.2 jogavel — C1 unico runtime, `limpar_mesa`, `duelo`, `ondas`, `defesa`, `chefe_multiparte`, `quebra_cabeca`, cadeia de encontros no mapa, rewards por encontro uma vez, NPC progressiva, save/load JSON local, HUD/slots/mapa/rewards mais legiveis, estrutura art-ready com `UiTokens`/`AssetIds`, `descarte`, energia/mao com ramp, deck ciclico, regras de batalha completas para o slice, validacao verde 77/77
 - Meta ativa: iniciar expansao controlada de modo/conteudo
 - Ultima atualizacao do current-status: `2026-05-06`
-- Proximo passo: implementar o proximo modo oficial pequeno, preferencialmente `quebra_cabeca`
+- Proximo passo: escolher a proxima expansao controlada de conteudo/progressao
 
 ## Kanban rápido
 

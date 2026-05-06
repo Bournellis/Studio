@@ -1,6 +1,6 @@
 # RPG Turnos Game Design Document
 
-- Version: `0.9`
+- Version: `1.0`
 - Last Updated: `2026-05-06`
 - Status: `C1_LOCKED_AS_CURRENT_CARDGAME_CORE`
 - Incorporated Source: `C:/Users/Fabio/Downloads/cardgame_slots_implementacao_codex_v0_1.md`
@@ -330,9 +330,21 @@ Boss part rules:
 - Defeat when the player hero reaches 0 HP at any point.
 - The UI should present boss part progress as `Partes X/Y`.
 
-Future modes documented but not active:
+### `quebra_cabeca`
 
-- `quebra_cabeca`
+The enemy side has no hero. The encounter is a constrained combat puzzle: the player must clear specific target slots before the turn limit expires.
+
+Puzzle rules:
+
+- The JSON encounter definition uses `"mode": "quebra_cabeca"`.
+- `puzzle_target_slots` defines which enemy slot indexes are puzzle targets.
+- `puzzle_turn_limit` defines how many player turns may be used.
+- Victory happens when every listed puzzle target slot is empty.
+- Enemy support slots may remain alive; the encounter does not require clearing the full board.
+- Defeat happens if the player completes the allowed number of turns without clearing the targets, or if the player hero reaches 0 HP.
+- The UI should present puzzle progress as `Alvos X/Y | Turnos A/B`.
+
+All currently documented official battle modes are active in runtime.
 
 ## 6. Runtime Commitments
 

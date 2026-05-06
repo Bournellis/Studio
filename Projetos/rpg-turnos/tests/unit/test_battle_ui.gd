@@ -97,6 +97,19 @@ func test_battle_header_exposes_boss_part_progress_for_chefe_multiparte() -> voi
 	assert_true(root.status_label.text.contains("Sem heroi inimigo"))
 	root.free()
 
+func test_battle_header_exposes_puzzle_progress_for_quebra_cabeca() -> void:
+	GameSession.set_active_encounter("enigma_da_ponte")
+	var root = BattleRootScript.new()
+	add_child(root)
+	await get_tree().process_frame
+	root.engine._enemy_ai_enabled = false
+
+	assert_eq(root.engine.modo_batalha, "quebra_cabeca")
+	assert_true(root.wave_label.visible)
+	assert_eq(root.wave_label.text, "Alvos 0/2 | Turnos 0/2")
+	assert_true(root.status_label.text.contains("Sem heroi inimigo"))
+	root.free()
+
 func test_battle_slot_exposes_visual_state_chips() -> void:
 	var slot = BattleSlotControlScript.new()
 	add_child(slot)

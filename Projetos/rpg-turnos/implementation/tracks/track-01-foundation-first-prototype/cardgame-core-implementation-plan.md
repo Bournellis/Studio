@@ -1,7 +1,7 @@
 # Cardgame Core Implementation Plan
 
 - Last Updated: `2026-05-06`
-- Status: `CHEFE_MULTIPARTE_MODE_COMPLETE`
+- Status: `QUEBRA_CABECA_MODE_COMPLETE`
 
 ## Summary
 
@@ -139,11 +139,22 @@ Added the boss-parts objective mode through data and encounter rules:
 - progress indicator in battle UI
 - focused validation coverage
 
+## Latest Candidate Pass - `quebra_cabeca`
+
+Added the timed puzzle objective mode through data and encounter rules:
+
+- `puzzle_target_slots` encounter field
+- `puzzle_turn_limit` encounter field
+- no enemy hero
+- victory after all marked target slots are empty
+- defeat when the player turn limit expires unsolved
+- support enemies may remain alive
+- progress indicator in battle UI
+- focused validation coverage
+
 ## Future Modes
 
-Prepare through data and encounter rules, not variant branches:
-
-- `quebra_cabeca`
+All currently documented official battle modes are implemented. Continue with controlled content/progression expansion rather than variant branches.
 
 ## Acceptance
 

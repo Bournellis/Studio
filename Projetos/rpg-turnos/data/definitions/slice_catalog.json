@@ -1529,6 +1529,35 @@
       "reward_cards": [
         "campeao_guilda"
       ]
+    },
+    {
+      "id": "enigma_da_ponte",
+      "display_name": "Enigma da Ponte",
+      "mode": "quebra_cabeca",
+      "board_id": "ponte_estavel",
+      "puzzle_target_slots": [
+        0,
+        2
+      ],
+      "puzzle_turn_limit": 2,
+      "notes": "Primeiro encontro do modo quebra_cabeca. O objetivo e limpar os alvos E1 e E3 em ate dois turnos do jogador. O suporte em E2 pode permanecer vivo; a vitoria nao exige limpar toda a mesa.",
+      "starting_enemy_slots": [
+        {
+          "slot": 0,
+          "card_id": "barricada"
+        },
+        {
+          "slot": 1,
+          "card_id": "guardiao_portal"
+        },
+        {
+          "slot": 2,
+          "card_id": "atirador_torre"
+        }
+      ],
+      "reward_cards": [
+        "flagelo"
+      ]
     }
   ],
   "enemy_script": [],

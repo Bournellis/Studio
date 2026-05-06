@@ -276,6 +276,48 @@ func test_chefe_multiparte_wins_when_all_parts_are_destroyed_even_with_support_a
 	assert_true(engine.enemy_slots[1] != null)
 	assert_eq(engine.outcome, "victory")
 
+func test_quebra_cabeca_starts_without_enemy_hero_and_tracks_targets() -> void:
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "enigma_da_ponte", "enemy_ai_enabled": false})
+	var enemy: Dictionary = engine._controller("inimigo")
+
+	assert_eq(engine.modo_batalha, "quebra_cabeca")
+	assert_false(enemy.has("hero"))
+	assert_eq(engine.enemy_health, 0)
+	assert_eq(engine.puzzle_target_slots.size(), 2)
+	assert_eq(engine.puzzle_target_slots[0], 0)
+	assert_eq(engine.puzzle_target_slots[1], 2)
+	assert_eq(engine.puzzle_turn_limit, 2)
+	assert_eq(engine.puzzle_turns_used, 0)
+	assert_eq(engine.get_puzzle_label(), "Alvos 0/2 | Turnos 0/2")
+	assert_eq(str(engine.enemy_slots[0].get("card_id", "")), "barricada")
+	assert_eq(str(engine.enemy_slots[1].get("card_id", "")), "guardiao_portal")
+	assert_eq(str(engine.enemy_slots[2].get("card_id", "")), "atirador_torre")
+
+func test_quebra_cabeca_wins_when_targets_clear_even_with_support_alive() -> void:
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "enigma_da_ponte", "enemy_ai_enabled": false})
+	engine.enemy_slots[0] = null
+	engine.enemy_slots[2] = null
+
+	engine._check_outcome()
+
+	assert_true(engine.enemy_slots[1] != null)
+	assert_eq(engine.outcome, "victory")
+	assert_eq(engine.get_puzzle_label(), "Alvos 2/2 | Turnos 0/2")
+
+func test_quebra_cabeca_loses_when_turn_limit_expires_without_targets_clear() -> void:
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "enigma_da_ponte", "enemy_ai_enabled": false})
+	engine._record_puzzle_turn_used("jogador")
+	engine._check_outcome()
+
+	assert_eq(engine.outcome, "")
+	assert_eq(engine.get_puzzle_label(), "Alvos 0/2 | Turnos 1/2")
+
+	engine._record_puzzle_turn_used("jogador")
+	engine._check_outcome()
+
+	assert_eq(engine.outcome, "defeat")
+	assert_eq(engine.get_puzzle_label(), "Alvos 0/2 | Turnos 2/2")
+
 func test_enemy_hero_power_uses_golpe_direto_once() -> void:
 	var engine = _start_engine(_starter_deck(), {"encounter_id": "duelista_bandido", "enemy_ai_enabled": false})
 	engine.active_player_id = "inimigo"
