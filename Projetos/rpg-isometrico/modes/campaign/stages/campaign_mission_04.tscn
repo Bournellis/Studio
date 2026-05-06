@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://modes/campaign/campaign_stage_scene.gd" id="1_swbqk"]
 
-[node name="CampaignMission04" type="Node3D" unique_id=1651866735]
+[node name="CampaignMission04" type="Node3D" unique_id=1083524440]
 script = ExtResource("1_swbqk")
 stage_number = 4
 stage_id = "mission_04"

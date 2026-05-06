@@ -306,12 +306,12 @@ func use_player_hero_power() -> Dictionary:
 	if outcome != "":
 		return _fail("A batalha ja terminou.")
 	if not can_play_main_actions():
-		return _fail("Poder heroico so pode ser usado quando voce tem prioridade.")
+		return _fail("Defesa astral so pode ser usada quando voce tem prioridade.")
 	if active_player_id != PLAYER_ID:
 		return _fail("Preparar Defesa so pode ser usado no seu proprio turno.")
 	var controller: Dictionary = _controller(PLAYER_ID)
 	if bool(controller.get("hero_power_used", false)):
-		return _fail("Poder heroico ja usado neste turno.")
+		return _fail("Defesa astral ja usada neste turno.")
 	if int(controller.get("energy", 0)) < 1:
 		return _fail("Energia insuficiente para Preparar Defesa.")
 

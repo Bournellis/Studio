@@ -1,6 +1,6 @@
 # RPG Turnos
 
-`rpg-turnos` is a provisional Godot project for a turn-based RPG-cardgame that shares studio lore while remaining mechanically independent from RPG Isometrico.
+`rpg-turnos` is a provisional Godot project for a 2D RPG with turn-based card-and-board battles. It shares studio lore while remaining mechanically independent from RPG Isometrico.
 
 ## Current Shape
 
@@ -10,7 +10,9 @@
 - NPC dialogue, route choice, encounters, stats, level, items, and inventory as expected pillars
 - combat as a separate C1 card-slot mode with battle modes like `limpar_mesa`
 - 20-card deck setup and data-driven cards, boards, and encounters
-- 2D/3D direction intentionally undecided
+- initial narrative focus on a novice Draxos mage invading an elemental planet from an ether-plasm base
+- current runtime names are placeholders until migrated to the Draxos/elemental-planet lore
+- final visual direction is currently 2D for the slice, with broader product presentation decisions still open
 
 ## Directory Map
 
@@ -28,4 +30,4 @@
 
 ## Start Here
 
-Read `AGENTS.md`, `docs/project-brief.md`, `docs/game-design-document.md`, `docs/architecture.md`, and `implementation/current-status.md` before making meaningful changes.
+Read `AGENTS.md`, `../../canon/lore/shared-lore.md`, `docs/lore-campaign.md`, `docs/game-design-document.md`, `docs/architecture.md`, and `implementation/current-status.md` before making meaningful changes.

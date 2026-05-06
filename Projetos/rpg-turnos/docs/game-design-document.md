@@ -7,7 +7,9 @@
 
 ## 1. Direction
 
-`rpg-turnos` is currently focused on the cardgame combat. RPG progression, lore, dialogue depth, equipment, classes, and campaign systems remain future layers.
+`rpg-turnos` is currently focused on the cardgame combat. RPG progression, dialogue depth, equipment, classes, and larger campaign systems remain future layers.
+
+The active narrative direction is defined in `lore-campaign.md`: the first campaign follows a novice Draxos mage during the invasion of an elemental planet. Existing runtime names in the playable slice are placeholders until migrated by a dedicated content pass.
 
 C1 is no longer a variant. C1 is the current game:
 
@@ -18,6 +20,8 @@ C1 is no longer a variant. C1 is the current game:
 - no automatic confrontation phase
 - attacks are actions during the main phase
 - modes are encounter rules, not battle variants
+
+Story delivery must preserve this card-slot battle identity. Lore changes should rename, frame, and motivate encounters without importing real-time action RPG mechanics from RPG Isometrico.
 
 The old phase-based duel and A/B alternatives are historical design notes only.
 
@@ -251,10 +255,10 @@ The enemy side has slots, turns, upkeep, attacks, and triggers, but no enemy her
 Current test encounter:
 
 ```text
-Emboscada na Ponte
+Operacao de Pouso
 
 INIMIGO
-[E1: Goblin 2/2 - Normal] [E2: Bruto 4/5 - Normal] [E3: Arqueiro 1/3 - Alto]
+[E1: Elemental Menor 2/2 - Normal] [E2: Guardiao de Basalto 4/5 - Normal] [E3: Lanceiro de Cinzas 1/3 - Alto]
 
 JOGADOR
 [P1: Normal] [P2: Normal] [P3: Cobertura]
@@ -413,23 +417,23 @@ This is the first NPC reward and should be stored as `first_npc_reward_card`. Th
 |---|---|---|---|---|
 | Após enc. 1 | Corvo Batedor | criatura | 2 | 1/2, voadora+rapido |
 | Após enc. 2 | Chuva de Brasas | magia_de_tabuleiro | 4 | queimando em todos os slots inimigos |
-| Após enc. 3 | Campeão da Guilda | criatura | 5 | 5/5 |
+| Apos enc. 3 | Executor Veterano | criatura | 5 | 5/5 |
 
 **Encounter rewards (on first victory):**
 
 | Encounter | Reward(s) | Type | Cost | Notes |
 |---|---|---|---|---|
-| Emboscada na Ponte | Lobo-Alfa | criatura | 3 | 4/2, atropelar |
-| Duelista Bandido | Relâmpago | magia | 3 | 4 dano mágico, instantaneo |
-| Duelista Bandido | Flagelo | magia | 6 | 6 dano mágico |
-| Emboscada no Cruzamento | Arqueira Voante | criatura | 4 | 2/4, voadora+alcance |
-| Emboscada no Cruzamento | Torre Blindada | estrutura | 5 | 3/7, alcance+cobertura |
-| Fortaleza do Desfiladeiro | Dragão Jovem | criatura | 6 | 5/6, voadora+atropelar |
-| Fortaleza do Desfiladeiro | Chamado das Hostes | magia_de_tabuleiro | 5 | remove enjoo de todas as criaturas amigas |
-| Duelista Sombrio | Campeão da Guilda | criatura | 5 | 5/5 (duplicado: NPC ou enc.) |
+| Operacao de Pouso | Fera Alfa Subjugada | criatura | 3 | 4/2, atropelar |
+| Confronto com Guardiao | Descarga Astral | magia | 3 | 4 dano magico, instantaneo |
+| Confronto com Guardiao | Flagelo Astral | magia | 6 | 6 dano magico |
+| Tomada do Conduto | Sentinela Alada | criatura | 4 | 2/4, voadora+alcance |
+| Tomada do Conduto | Torre de Cristal | estrutura | 5 | 3/7, alcance+cobertura |
+| Avanco ao Bastiao | Manifestacao Vulcanica | criatura | 6 | 5/6, voadora+atropelar |
+| Avanco ao Bastiao | Comando de Dominio | magia_de_tabuleiro | 5 | remove enjoo de todas as criaturas amigas |
+| Guardiao do Conduto | Executor Veterano | criatura | 5 | 5/5 (duplicado: NPC ou enc.) |
 | Invasão em Ondas (opc.) | Chuva de Brasas | magia_de_tabuleiro | 4 | (duplicado: NPC ou enc.) |
 
-Campeão da Guilda and Chuva de Brasas appear in both the NPC list and an encounter reward. The player receives each from whichever source comes first; the second source gives nothing (already unlocked).
+Executor Veterano and Chuva de Fragmentos appear in both the NPC list and an encounter reward. The player receives each from whichever source comes first; the second source gives nothing (already unlocked).
 
 Completed encounters may be re-entered for practice, but `claimed_encounter_reward_ids` prevents a second reward claim.
 

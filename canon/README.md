@@ -2,12 +2,13 @@
 
 This directory is the shared engine-neutral source of truth for established studio canon.
 
-Most current product, gameplay, progression, roadmap, and platform documents describe RPG Isometrico. New projects may reuse shared lore context, but they must not treat RPG Isometrico mechanics as automatic canon.
+Most current product, gameplay, progression, roadmap, and platform documents describe RPG Isometrico. Shared lore lives under `lore/`. New projects may reuse shared lore context, but they must not treat RPG Isometrico mechanics as automatic canon.
 
 ## Authority
 
 For RPG Isometrico, this canon governs:
 
+- shared lore context
 - product identity
 - gameplay and loadout contracts
 - progression model
@@ -18,14 +19,17 @@ For RPG Isometrico, this canon governs:
 
 ## Read Order
 
-1. `product/product-vision.md`
-2. `design/game-design-document.md`
-3. `design/progression-design.md`
-4. `architecture/shared-architecture.md`
-5. `architecture/game-mode-standard.md`
-6. `roadmap/evolution-roadmap.md`
-7. `roadmap/release-horizons.md`
-8. `platform/steam-platform.md`
+1. `lore/shared-lore.md`
+2. `lore/draxos-invasion.md` when working on RPG Turnos lore/content
+3. `lore/immortals.md` when working on RPG Isometrico Imortais lore/content
+4. `product/product-vision.md`
+5. `design/game-design-document.md`
+6. `design/progression-design.md`
+7. `architecture/shared-architecture.md`
+8. `architecture/game-mode-standard.md`
+9. `roadmap/evolution-roadmap.md`
+10. `roadmap/release-horizons.md`
+11. `platform/steam-platform.md`
 
 ## Boundary
 

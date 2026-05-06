@@ -2,7 +2,7 @@
   "id": "heroic_rally",
   "race_id": "heroic",
   "weapon_id": "heroic_hammer",
-  "display_name": "Brado Heroico",
+  "display_name": "Brado dos Imortais",
   "description": "Amplifica o proximo ciclo ofensivo e melhora o deslocamento por alguns segundos.",
   "kind": "self_buff",
   "cooldown": 8.0,

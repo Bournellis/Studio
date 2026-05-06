@@ -47,9 +47,9 @@ Each race has:
 | Race | Identity | Weapon Examples | Resource Direction |
 | --- | --- | --- | --- |
 | Humans | Military combatants | Assault Rifle, Sniper, Desert Eagle, Machine Gun | Bullets, reload, disciplined ranged tempo |
-| Heroic | Mythic warriors with magical weapons | Hammer, Bow, Sword, Spear | Varies by weapon |
+| Imortais | Mythic warriors with magical weapons | Hammer, Bow, Sword, Spear | Varies by weapon; detailed lore pending |
 | Intelligent Aliens | Advanced technological civilization | Lasers, magnetic weapons, drone summons | To be defined |
-| Magic Beings | Arcane power users | Teleportation, magic attacks, mental manipulation | To be defined |
+| Draxos | Arcane intergalactic beings | Astral spells, ether constructs, domination tools | Astral energy, magical mobility, control, enslavement |
 
 These are product-level design territories, not a declaration of currently implemented content.
 
@@ -281,7 +281,7 @@ This mode needs dedicated design work and clear product traction before producti
 
 These designs are early combat-validation references. They are canonical combat vocabulary, not a declaration of current shipped content.
 
-### 5.1 Martelo (Hammer) — Heroic
+### 5.1 Martelo (Hammer) — Imortais
 
 **Combat identity:** close-range pressure, crowd control, commitment windows
 

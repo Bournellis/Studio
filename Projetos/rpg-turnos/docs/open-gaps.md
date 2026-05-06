@@ -11,30 +11,32 @@ Gaps marcados com ⚠️ têm inconsistências ativas em arquivos existentes.
 
 ## Categoria: Narrativa e Mundo
 
-### G-N1 — Premissa e setting do jogo
-**Status:** `aberto`
-O projeto é "fantasia genérica". Não há setting nomeado, não há civilizações, conflitos, ou razão para o jogador estar no mapa. A premissa do herói "Aprendiz do Limiar" sugere algo mas não tem definição.
-**Precisa:** nome do mundo, premissa de conflito, motivação do jogador, tom narrativo.
+> Atualizacao 2026-05-06: `../../canon/lore/shared-lore.md`, `../../canon/lore/draxos-invasion.md` e `lore-campaign.md` definem a direcao ativa: uma campanha Draxos em um planeta elemental. IDs mecanicos antigos continuam temporariamente por estabilidade.
 
-### G-N2 — Identidade do herói
-**Status:** `aberto`
-"Aprendiz do Limiar" tem nome mas zero desenvolvimento. Não há backstory, visual, personalidade, ou arco. O player não tem razão para se importar com ele.
-**Precisa:** backstory curto, traço de personalidade, motivação inicial, conexão com o conflict central.
-
-### G-N3 — NPCs com profundidade
-**Status:** `aberto`
-O único NPC é "a viajante" com duas linhas de diálogo funcional ("aqui está sua carta", "já pode ir"). Não tem nome, razão para estar ali, ou consequência na narrativa.
-**Precisa:** nome, motivação, pelo menos 3-4 linhas de diálogo com variações por progresso.
-
-### G-N4 — Estrutura de campanha e mapa
+### G-N1 - Premissa e setting do jogo
 **Status:** `em design`
-O slice agora possui uma cadeia linear jogavel com 4 encontros no mapa, estados de bloqueio/conclusao/reentrada e recompensas por encontro. Ainda falta a camada narrativa: onde estamos, por que os encontros acontecem, e como a progressao conversa com personagens e regioes.
-**Precisa:** contexto narrativo da rota, nomes de zonas, transicoes com texto/visual, e variacoes de dialogo por progresso.
+A premissa ativa e a invasao Draxos de um planeta elemental rico em energia astral. Ainda faltam nomes finais, cultura dos elementais, nome do planeta, nome do cristal vulcanico e estrutura completa da campanha.
+**Precisa:** consolidar planeta, conflito, motivacao do novato Draxos, regioes e tom narrativo.
 
-### G-N5 — Título do jogo
+### G-N2 - Identidade do heroi
+**Status:** `em design`
+O heroi player-facing atual e um Novato Draxos. O ID tecnico pode continuar antigo. Ainda faltam personalidade, nome, especialidade astral e arco de status dentro da equipe.
+**Precisa:** backstory curto, traco de personalidade, motivacao inicial, primeira classe e conexao com a equipe Draxos.
+
+### G-N3 - Comando e NPCs
+**Status:** `em design`
+A funcao ativa do NPC inicial e comando/mentor Draxos na base de ether. Identidade final, nome, retrato e variacoes de dialogo ainda sao TBD.
+**Precisa:** nome, funcao na hierarquia, motivacao, pelo menos 3-4 linhas de dialogo com variacoes por progresso.
+
+### G-N4 - Estrutura de campanha e mapa
+**Status:** `em design`
+O slice possui uma cadeia linear jogavel com encontros no mapa, estados de bloqueio/conclusao/reentrada e recompensas por encontro. Ainda falta a camada narrativa completa de regioes elementais, operacoes Draxos e escalada ate o vulcao.
+**Precisa:** contexto narrativo da rota, nomes de zonas, transicoes com texto/visual e variacoes de dialogo por progresso.
+
+### G-N5 - Titulo do jogo
 **Status:** `aberto`
-"RPG Turnos" é codename de desenvolvedor. O jogo não tem título, tagline, nem identidade de marca.
-**Precisa:** título definitivo, tagline curta, logo (coordenar com asset-request.md `ui_logo`).
+"RPG Turnos" e codename de desenvolvedor. O jogo nao tem titulo, tagline, nem identidade de marca.
+**Precisa:** titulo definitivo, tagline curta, logo (coordenar com asset-request.md `ui_logo`).
 
 ---
 

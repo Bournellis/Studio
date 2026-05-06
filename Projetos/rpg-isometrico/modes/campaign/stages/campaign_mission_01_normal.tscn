@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://modes/campaign/campaign_stage_scene.gd" id="1_ks6pf"]
 
-[node name="CampaignMission01Normal" type="Node3D" unique_id=917765775]
+[node name="CampaignMission01Normal" type="Node3D" unique_id=1068427473]
 script = ExtResource("1_ks6pf")
 stage_id = "mission_01"
 display_name = "Mapa 1 - Entrada Aquecida"

@@ -10,12 +10,12 @@ const LoadoutValidator = preload("res://gameplay/loadouts/loadout_validator.gd")
 func test_canonical_loadout_respects_shared_contract() -> void:
 	var race: RaceDefinitionResource = RaceDefinitionResource.new()
 	race.id = &"heroic"
-	race.display_name = "Heroico"
+	race.display_name = "Imortais"
 
 	var weapon: WeaponDefinitionResource = WeaponDefinitionResource.new()
 	weapon.id = &"heroic_hammer"
 	weapon.race_id = race.id
-	weapon.display_name = "Martelo Heroico"
+	weapon.display_name = "Martelo dos Imortais"
 
 	var skill_a: SkillDefinitionResource = SkillDefinitionResource.new()
 	skill_a.id = &"hammer_impact"

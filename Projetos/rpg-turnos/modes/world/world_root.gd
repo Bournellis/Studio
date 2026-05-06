@@ -5,14 +5,14 @@ const MAP_RECT: Rect2 = Rect2(Vector2(80, 80), Vector2(1120, 600))
 const NPC_POSITION: Vector2 = Vector2(420, 330)
 const INTERACTION_RADIUS: float = 86.0
 const ENCOUNTER_MARKERS: Array[Dictionary] = [
-	{"id": "emboscada_na_ponte", "label": "Ponte", "position": Vector2(720, 300), "requires": ""},
-	{"id": "duelista_bandido", "label": "Duelista", "position": Vector2(880, 330), "requires": "emboscada_na_ponte"},
-	{"id": "emboscada_no_cruzamento", "label": "Cruzamento", "position": Vector2(1020, 390), "requires": "duelista_bandido"},
-	{"id": "fortaleza_do_desfiladeiro", "label": "Fortaleza", "position": Vector2(1080, 230), "requires": "emboscada_no_cruzamento"},
+	{"id": "emboscada_na_ponte", "label": "Pouso", "position": Vector2(720, 300), "requires": ""},
+	{"id": "duelista_bandido", "label": "Guardiao", "position": Vector2(880, 330), "requires": "emboscada_na_ponte"},
+	{"id": "emboscada_no_cruzamento", "label": "Conduto", "position": Vector2(1020, 390), "requires": "duelista_bandido"},
+	{"id": "fortaleza_do_desfiladeiro", "label": "Bastiao", "position": Vector2(1080, 230), "requires": "emboscada_no_cruzamento"},
 	{"id": "invasao_em_ondas", "label": "Ondas", "position": Vector2(700, 220), "requires": "fortaleza_do_desfiladeiro"},
 	{"id": "defesa_do_portao", "label": "Defesa", "position": Vector2(520, 220), "requires": "invasao_em_ondas"},
-	{"id": "colosso_fragmentado", "label": "Colosso", "position": Vector2(360, 250), "requires": "defesa_do_portao"},
-	{"id": "enigma_da_ponte", "label": "Enigma", "position": Vector2(260, 360), "requires": "colosso_fragmentado"},
+	{"id": "colosso_fragmentado", "label": "Nucleo", "position": Vector2(360, 250), "requires": "defesa_do_portao"},
+	{"id": "enigma_da_ponte", "label": "Selos", "position": Vector2(260, 360), "requires": "colosso_fragmentado"},
 ]
 
 var player_position: Vector2 = Vector2(180, 330)
@@ -69,7 +69,7 @@ func _draw() -> void:
 		draw_line(from_position, to_position, path_color, 5.0)
 
 	draw_circle(NPC_POSITION, 28.0, Color(0.3, 0.46, 0.78))
-	draw_string(ThemeDB.fallback_font, NPC_POSITION + Vector2(-48, -42), "NPC", HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color.WHITE)
+	draw_string(ThemeDB.fallback_font, NPC_POSITION + Vector2(-48, -42), "Comando", HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color.WHITE)
 
 	for marker: Dictionary in ENCOUNTER_MARKERS:
 		var marker_position: Vector2 = Vector2(marker.get("position", Vector2.ZERO))
@@ -155,28 +155,28 @@ func _try_interact() -> void:
 func _interact_npc() -> void:
 	if not GameSession.has_npc_reward_card:
 		var reward_id: String = GameSession.claim_npc_reward()
-		dialogue_text.text = "A viajante entrega uma carta para testar no encontro: %s." % ContentLibrary.get_card_name(reward_id)
+		dialogue_text.text = "O comando Draxos autoriza uma tecnica para testar na missao: %s." % ContentLibrary.get_card_name(reward_id)
 		GameSession.save_game()
 	elif GameSession.completed_encounter_ids.size() > GameSession.npc_reward_index:
 		var progressive_reward_id: String = GameSession.claim_npc_progressive_reward()
 		if progressive_reward_id != "":
-			dialogue_text.text = "A viajante entrega uma nova carta pelo progresso: %s." % ContentLibrary.get_card_name(progressive_reward_id)
+			dialogue_text.text = "O comando Draxos libera uma nova opcao pelo progresso: %s." % ContentLibrary.get_card_name(progressive_reward_id)
 			GameSession.save_game()
 		else:
-			dialogue_text.text = "A viajante observa o caminho. Nao ha novas cartas por enquanto."
+			dialogue_text.text = "O comando observa a operacao. Nao ha novas tecnicas por enquanto."
 	else:
-		dialogue_text.text = "A viajante observa o caminho. Novos encontros aparecem conforme voce vence."
+		dialogue_text.text = "O comando observa a operacao. Novas missoes aparecem conforme voce vence."
 	dialogue_panel.visible = true
 	_update_prompt()
 	queue_redraw()
 
 func _interact_encounter(marker: Dictionary) -> void:
 	if not GameSession.has_npc_reward_card:
-		dialogue_text.text = "O marcador ainda nao responde. Fale com a NPC antes de entrar no encontro."
+		dialogue_text.text = "O marcador ainda nao responde. Fale com o comando antes de iniciar a missao."
 		dialogue_panel.visible = true
 		return
 	if not _marker_available(marker):
-		dialogue_text.text = "O caminho ainda esta bloqueado. Conclua o encontro anterior."
+		dialogue_text.text = "A rota ainda esta bloqueada. Conclua a missao anterior."
 		dialogue_panel.visible = true
 		return
 	GameSession.set_active_encounter(str(marker.get("id", GameSession.ACTIVE_ENCOUNTER_ID)))
@@ -188,9 +188,9 @@ func _update_prompt() -> void:
 	if prompt_label == null:
 		return
 	if player_position.distance_to(NPC_POSITION) <= INTERACTION_RADIUS:
-		prompt_label.text = "E: conversar com NPC | WASD: mover"
+		prompt_label.text = "E: falar com comando | WASD: mover"
 	elif not _nearest_encounter_marker().is_empty():
-		prompt_label.text = "E: abrir encontro | WASD: mover"
+		prompt_label.text = "E: abrir missao | WASD: mover"
 	else:
 		prompt_label.text = "WASD: mover | E: interagir"
 

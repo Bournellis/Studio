@@ -1,7 +1,7 @@
 {
   "id": "heroic_hammer",
   "race_id": "heroic",
-  "display_name": "Martelo Heroico",
+  "display_name": "Martelo dos Imortais",
   "description": "Martelo pesado para ataques curtos, dash forte e leitura frontal.",
   "basic_attack_damage": 22.0,
   "basic_attack_cooldown": 0.6,

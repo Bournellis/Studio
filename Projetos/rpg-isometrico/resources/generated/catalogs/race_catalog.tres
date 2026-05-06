@@ -6,8 +6,8 @@
 [sub_resource type="Resource" id="Resource_s217f"]
 script = ExtResource("1_s217f")
 id = &"heroic"
-display_name = "Heroico"
-description = "Linhagem base do slice G1, focada em combate direto e leitura clara."
+display_name = "Imortais"
+description = "Linhagem base do slice G1; lore dos Imortais pendente, com combate direto e leitura clara."
 weapon_ids = PackedStringArray("heroic_hammer")
 skill_ids = PackedStringArray("hammer_impact", "heroic_rally", "seismic_ring", "breaker_leap")
 potion_ids = PackedStringArray("vital_flask", "bastion_tonic")

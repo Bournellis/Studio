@@ -11,7 +11,7 @@ This document is the single source of truth for all visual production on rpg-tur
 
 ### Tone
 
-Dark tactical fantasy. The game should feel like a grimoire that also functions as a battlefield map — leather, stone, faint magical light. Not anime bright, not grimdark grimy. Think: low candlelight on stone, ink on vellum, magic that feels earned.
+Dark astral tactical science-fantasy. The game should feel like an ether-plasm command surface for a Draxos invasion of an elemental planet: readable, deliberate, alien, and charged with astral energy. Avoid the old generic-fantasy placeholder language as active visual direction.
 
 ### Reference keywords
 
@@ -201,9 +201,9 @@ This is a functional placeholder. No paths, no environment art, no character rep
 
 ### Medium-term (requires art assets)
 
-- Background: painted or illustrated map environment (forest path, stone bridge)
+- Background: painted or illustrated map environment (ether landing zone, ash field, crystal vents, elemental terrain)
 - NPC sprite or portrait icon
-- Encounter markers styled per encounter type (bridge = bridge icon)
+- Encounter markers styled per encounter type (landing zone, conduto, bastiao, nucleo, selos)
 - Player token with facing direction
 
 ### Long-term

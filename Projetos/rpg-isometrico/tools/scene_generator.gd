@@ -130,11 +130,11 @@ func _build_easy_campaign_stage_specs() -> Array[Dictionary]:
 			"stage_number": 1,
 			"stage_id": "mission_01",
 			"display_name": "Missao 1 - Tutorial",
-			"objective_text": "Defenda a entrada da forja e aprenda os primeiros recursos do kit Heroico.",
+			"objective_text": "Defenda a entrada da forja e aprenda os primeiros recursos do kit dos Imortais.",
 			"reward_title": "Missao 1 defendida",
 			"reward_summary_lines": PackedStringArray([
 				"Survival abriu como desafio extra de resistencia.",
-				"Brado Heroico agora faz parte do kit permanente aprendido na campanha."
+				"Brado dos Imortais agora faz parte do kit permanente aprendido na campanha."
 			]),
 			"reward_permanent_skill_unlock_ids": PackedStringArray(["heroic_rally"]),
 			"reward_menu_unlock_mode_ids": PackedStringArray(["survival"]),

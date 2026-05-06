@@ -110,7 +110,7 @@ static func build_campaign_stage_reward_payload(
 		1:
 			reward_payload.summary_lines = [
 				"Survival abriu como desafio extra de resistencia.",
-				"Brado Heroico agora faz parte do kit permanente aprendido na campanha."
+				"Brado dos Imortais agora faz parte do kit permanente aprendido na campanha."
 			]
 			reward_payload.permanent_skill_unlock_ids = [String(SECOND_SKILL_ID)]
 			reward_payload.menu_unlock_mode_ids = [SURVIVAL_MODE_ID_TEXT]

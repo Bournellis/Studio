@@ -38,7 +38,7 @@ Formato padrão: PNG, fundo transparente salvo onde indicado. Paleta de cores de
 
 | Asset ID | Dimensões | Prioridade | Descrição |
 |---|---|---|---|
-| `map_environment` | 1120 × 600 px | 🟢 | Arte de fundo da área de exploração. Floresta com trilha de terra. Retângulo sem borda — borda adicionada pelo engine. |
+| `map_environment` | 1120 x 600 px | baixa | Arte de fundo da area de exploracao. Zona elemental com base de ether, terreno mineral e sinais de energia astral. Retangulo sem borda; borda adicionada pelo engine. |
 | `marker_npc` | 56 × 56 px | 🟡 | Marcador de NPC no mapa. Silhueta de personagem, tom azul (`#4A6A78`). Fundo transparente. |
 | `marker_encounter_active` | 68 × 68 px | 🟡 | Marcador de encontro ativo. Ícone de espada cruzada ou bandeira. Tom laranja (`#B86A47`). |
 | `marker_encounter_done` | 68 × 68 px | 🟡 | Marcador de encontro concluído. Mesmo shape, tom verde (`#47A06A`). |
@@ -54,9 +54,9 @@ Retratos aparecem em painéis de diálogo (72 × 72 px) e na HUD da batalha (48 
 
 | Asset ID | Dimensões | Prioridade | Descrição |
 |---|---|---|---|
-| `portrait_npc_viajante` | 144 × 144 px | 🟡 | Retrato da NPC que entrega cartas. Mulher viajante, roupa neutra, expressão amigável. |
-| `portrait_hero_aprendiz` | 144 × 144 px | 🟡 | Retrato do herói do jogador: Aprendiz do Limiar. Jovem guerreiro, postura determinada. |
-| `portrait_hero_duelista_bandido` | 144 × 144 px | 🟡 | Retrato do inimigo do encontro duelo. Figura hostil com arma. |
+| `portrait_npc_viajante` | 144 x 144 px | media | ID tecnico legado. Direcao ativa: funcao de comando/mentor Draxos na base de ether; renomear asset depois que identidade estabilizar. |
+| `portrait_hero_aprendiz` | 144 × 144 px | 🟡 | Placeholder tecnico para o heroi. Direcao ativa: mago Draxos novato; renomear asset depois que o nome/player-facing identity estabilizar. |
+| `portrait_hero_duelista_bandido` | 144 x 144 px | media | ID tecnico legado. Direcao ativa: guardiao elemental hostil usado no encontro de duelo. |
 
 **Pasta destino:** `res://assets/portraits/`
 
@@ -91,16 +91,16 @@ Estilo: flat com sombras suaves, ou pintura digital simplificada. Sem borda pró
 
 | Asset ID | ID no catálogo | Tipo | Prioridade | Descrição da ilustração |
 |---|---|---|---|---|
-| `card_art_escudeiro` | `escudeiro` | criatura | 🔴 | Jovem combatente com escudo e espada curta, postura neutra. |
-| `card_art_guarda_vila` | `guarda_vila` | criatura | 🔴 | Guarda robusto com escudo erguido, expressão firme. |
-| `card_art_lobo_faminto` | `lobo_faminto` | criatura | 🔴 | Lobo magro e veloz em corrida rasante, olhos famintos. |
-| `card_art_soldado_linha` | `soldado_linha` | criatura | 🔴 | Soldado uniformizado em postura de combate na linha de frente. |
-| `card_art_arqueira_penhasco` | `arqueira_penhasco` | criatura | 🔴 | Arqueira em borda de penhasco, arco tensionado, vista do vale abaixo. |
-| `card_art_bruto_mercenario` | `bruto_mercenario` | criatura | 🟡 | Mercenário corpulento com arma pesada, expressão ameaçadora. |
-| `card_art_javali_guerra` | `javali_guerra` | criatura | 🟡 | Javali enorme com armadura leve, em carga frontal. |
-| `card_art_barricada` | `barricada` | estrutura | 🟡 | Barricada de troncos e sacos de terra bloqueando passagem. |
-| `card_art_balista` | `balista` | estrutura | 🟡 | Balista de madeira maciça montada em plataforma elevada. |
-| `card_art_raio_curto` | `raio_curto` | magia | 🟡 | Faísca elétrica curta, energia azul em forma de arco. |
+| `card_art_escudeiro` | `escudeiro` | criatura | 🔴 | Adepto Draxos em postura de treinamento astral, foco em disciplina e leitura clara. |
+| `card_art_guarda_vila` | `guarda_vila` | criatura | 🔴 | Custodio de ether sustentando uma barreira astral defensiva. |
+| `card_art_lobo_faminto` | `lobo_faminto` | criatura | 🔴 | Fera subjugada por energia astral, veloz e agressiva. |
+| `card_art_soldado_linha` | `soldado_linha` | criatura | 🔴 | Operador Draxos de linha avancando em formacao. |
+| `card_art_arqueira_penhasco` | `arqueira_penhasco` | criatura | 🔴 | Atiradora astral em ponto alto, disparo de energia sobre terreno elemental. |
+| `card_art_bruto_mercenario` | `bruto_mercenario` | criatura | 🟡 | Executor Draxos pesado, silhueta imponente e energia astral concentrada. |
+| `card_art_javali_guerra` | `javali_guerra` | criatura | 🟡 | Besta de impacto subjugada, corpo mineral ou etherizado em carga frontal. |
+| `card_art_barricada` | `barricada` | estrutura | 🟡 | Barreira de ether bloqueando passagem em terreno elemental. |
+| `card_art_balista` | `balista` | estrutura | 🟡 | Condutor astral fixo, estrutura de energia usada para disparos de alcance. |
+| `card_art_raio_curto` | `raio_curto` | magia | 🟡 | Pulso astral curto, energia violeta-azulada em arco de impacto. |
 
 ### 5b. Cartas de Recompensa (11 designs únicos)
 
@@ -108,17 +108,17 @@ Estilo: flat com sombras suaves, ou pintura digital simplificada. Sem borda pró
 
 | Asset ID | ID no catálogo | Tipo | Prioridade | Descrição da ilustração |
 |---|---|---|---|---|
-| `card_art_golpe_preciso` | `golpe_preciso` | magia | 🔴 | Espada brilhando com energia dourada, golpe certeiro em close. |
-| `card_art_corvo_batedor` | `corvo_batedor` | criatura | 🟡 | Corvo grande em voo rasante, asas abertas, olhos brilhantes. |
-| `card_art_chuva_brasas` | `chuva_brasas` | magia_de_tabuleiro | 🟡 | Brasas e fagulhas caindo do céu sobre campo de batalha. |
-| `card_art_campeao_guilda` | `campeao_guilda` | criatura | 🟡 | Guerreiro veterano com armadura de guilda, postura imponente. |
-| `card_art_lobo_alfa` | `lobo_alfa` | criatura | 🟡 | Lobo enorme liderando a matilha, cicatrizes de batalha. |
-| `card_art_relampago` | `relampago` | magia | 🟡 | Raio massivo descendo do céu em trajeto reto, clarão cegante. |
-| `card_art_flagelo` | `flagelo` | magia | 🟢 | Onda de energia escura varrendo tudo no caminho, escala épica. |
-| `card_art_arqueira_voante` | `arqueira_voante` | criatura | 🟡 | Arqueira com asas de grifo em voo, arco apontado para baixo. |
-| `card_art_torre_blindada` | `torre_blindada` | estrutura | 🟢 | Torre de pedra massiva com troneiras, inexpugnável. |
-| `card_art_dragao_jovem` | `dragao_jovem` | criatura | 🟢 | Dragão jovem em mergulho de ataque, asas abertas, fogo contido. |
-| `card_art_chamado_hostes` | `chamado_hostes` | magia_de_tabuleiro | 🟢 | Trompete soando, luz dourada ativando criaturas aliadas. |
+| `card_art_golpe_preciso` | `golpe_preciso` | magia | 🔴 | Ordem de supressao Draxos marcada por linha de energia precisa no alvo. |
+| `card_art_corvo_batedor` | `corvo_batedor` | criatura | 🟡 | Batedor de ether em voo rasante, forma semi-astral e olhos brilhantes. |
+| `card_art_chuva_brasas` | `chuva_brasas` | magia_de_tabuleiro | 🟡 | Fragmentos vulcanicos e astralizados caindo sobre campo elemental. |
+| `card_art_campeao_guilda` | `campeao_guilda` | criatura | 🟡 | Executor veterano Draxos, postura de autoridade e armadura arcana. |
+| `card_art_lobo_alfa` | `lobo_alfa` | criatura | 🟡 | Fera alfa subjugada, maior e marcada por energia de controle astral. |
+| `card_art_relampago` | `relampago` | magia | 🟡 | Descarga astral vertical rasgando o campo com brilho intenso. |
+| `card_art_flagelo` | `flagelo` | magia | 🟢 | Onda de energia astral destrutiva varrendo o alvo. |
+| `card_art_arqueira_voante` | `arqueira_voante` | criatura | 🟡 | Sentinela alada ou forma elemental voadora atacando de cima. |
+| `card_art_torre_blindada` | `torre_blindada` | estrutura | 🟢 | Torre de cristal elemental, massiva e defensiva. |
+| `card_art_dragao_jovem` (ID tecnico legado; Manifestacao Vulcanica) | `dragao_jovem` | criatura | 🟢 | Manifestacao vulcanica alada emergindo de calor, cinzas e cristal. |
+| `card_art_chamado_hostes` | `chamado_hostes` | magia_de_tabuleiro | 🟢 | Comando de dominio Draxos ativando unidades com sigilos astrais. |
 
 **Pasta destino:** `res://assets/cards/art/`
 
@@ -130,14 +130,14 @@ Estas cartas existem no catálogo mas são usadas apenas pelo inimigo. Arte não
 
 | ID no catálogo | Display name | Nota |
 |---|---|---|
-| `goblin_ponte` | Goblin da Ponte | Inimigo inicial: Emboscada na Ponte |
-| `bruto_ponte` | Bruto da Ponte | Inimigo pesado: Emboscada na Ponte |
-| `arqueiro_ponte` | Arqueiro da Ponte | Inimigo alcance alto: Emboscada na Ponte |
-| `ladrao_rapido` | Ladrão Rápido | Deck do Duelista Bandido |
-| `faca_arremessada` | Faca Arremessada | Deck do Duelista Bandido |
-| `guardiao_portal` | Guardião do Portal | Deck do Duelista Bandido |
-| `atirador_torre` | Atirador da Torre | Encontros futuros |
-| `soldado_central` | Soldado Central | Encontros futuros |
+| `goblin_ponte` | Elemental Menor | ID tecnico legado; resistencia elemental inicial |
+| `bruto_ponte` | Guardiao de Basalto | ID tecnico legado; defensor pesado elemental |
+| `arqueiro_ponte` | Lanceiro de Cinzas | ID tecnico legado; alcance em ponto alto |
+| `ladrao_rapido` | Centelha Predadora | ID tecnico legado; unidade elemental rapida |
+| `faca_arremessada` | Estilhaco Vulcanico | ID tecnico legado; dano de fragmento |
+| `guardiao_portal` | Guardiao do Nexo | Defensor elemental |
+| `atirador_torre` | Sentinela de Cristal | Alcance em posicao elevada |
+| `soldado_central` | Defensor Elemental | Presenca robusta no centro |
 
 ---
 
@@ -182,4 +182,4 @@ Estas cartas existem no catálogo mas são usadas apenas pelo inimigo. Arte não
 Frames restantes, todos os retratos, marcadores de mapa, `ui_logo`, `result_bg_*`, artes das 5 últimas cartas do deck inicial, artes das rewards
 
 **🟢 Polish:**
-`menu_background`, `map_environment`, `card_art_flagelo`, `card_art_torre_blindada`, `card_art_dragao_jovem`, `card_art_chamado_hostes`, VFX sheets
+`menu_background`, `map_environment`, `card_art_flagelo`, `card_art_torre_blindada`, `card_art_dragao_jovem` (ID tecnico legado; Manifestacao Vulcanica), `card_art_chamado_hostes`, VFX sheets

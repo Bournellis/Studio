@@ -1,7 +1,7 @@
 {
   "id": "heroic",
-  "display_name": "Heroico",
-  "description": "Linhagem base do slice G1, focada em combate direto e leitura clara.",
+  "display_name": "Imortais",
+  "description": "Linhagem base do slice G1; lore dos Imortais pendente, com combate direto e leitura clara.",
   "weapon_ids": [
     "heroic_hammer"
   ],

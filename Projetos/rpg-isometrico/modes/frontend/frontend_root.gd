@@ -835,7 +835,7 @@ func _build_campaign_mode_summary_text() -> String:
 	if _is_selected_campaign_free():
 		return "Campanha Livre e replay/buildcraft pos-Classic: usa o kit preparado com recursos aprendidos e nao substitui a rota principal de unlocks."
 	if _get_selected_campaign_difficulty_id() == &"normal":
-		return "Segunda rota da Campanha do Troll. Classic - Normal mantem 5 etapas, fecha no chefe e usa o mesmo kit Heroico / Martelo."
+		return "Segunda rota da Campanha do Troll. Classic - Normal mantem 5 etapas, fecha no chefe e usa o mesmo kit dos Imortais / Martelo."
 	return LocalModeCatalog.get_summary(selected_mode_id)
 
 func _build_campaign_save_state_text() -> String:

@@ -166,7 +166,7 @@ func _build_header(root: VBoxContainer) -> void:
 
 	hero_power_button = Button.new()
 	hero_power_button.name = "hero_power_button"
-	hero_power_button.text = "Poder heroico"
+	hero_power_button.text = "Defesa astral"
 	hero_power_button.custom_minimum_size = Vector2(142, 36)
 	hero_power_button.size_flags_horizontal = Control.SIZE_SHRINK_END
 	hero_power_button.pressed.connect(_on_hero_power_pressed)
@@ -657,7 +657,7 @@ func _finish_battle() -> void:
 	if engine.outcome == "victory":
 		var summary: String = "A emboscada foi vencida no encontro de teste."
 		if engine.encounter_id == "duelista_bandido":
-			summary = "O Duelista Bandido foi derrotado em duelo."
+			summary = "O Guardiao Elemental foi derrotado em confronto."
 		elif engine.encounter_id == "invasao_em_ondas":
 			summary = "A invasao em ondas foi repelida."
 		elif engine.encounter_id == "defesa_do_portao":
@@ -665,7 +665,7 @@ func _finish_battle() -> void:
 		elif engine.encounter_id == "colosso_fragmentado":
 			summary = "O Colosso Fragmentado perdeu todas as partes vitais."
 		elif engine.encounter_id == "enigma_da_ponte":
-			summary = "O enigma da ponte foi resolvido."
+			summary = "A ruptura de selos foi resolvida."
 		GameSession.complete_encounter(summary)
 		GameSession.save_game()
 	else:

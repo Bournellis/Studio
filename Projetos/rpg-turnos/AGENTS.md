@@ -4,7 +4,7 @@ This file governs agent behavior for the Godot implementation of RPG Turnos.
 
 ## Project Role
 
-`Projetos/rpg-turnos/` is a new Godot project for a provisional turn-based RPG-cardgame.
+`Projetos/rpg-turnos/` is a new Godot project for a 2D RPG with turn-based card-and-board battles.
 
 The project is independent from `Projetos/rpg-isometrico/` at the mechanics and runtime level, but it may share the same broader lore and setting territory from the studio canon.
 
@@ -12,10 +12,13 @@ Current premise:
 
 - provisional project name: `rpg-turnos`
 - complete Godot project, started clean
+- shared lore: far-future galaxy, post-nuclear Earth, human factions, celestial/intergalactic beings, and Draxos as arcane astral conquerors
+- initial story: a novice Draxos mage joins a respected strike team invading an elemental planet from an ether-plasm base
+- current runtime names are placeholders unless promoted by `docs/lore-campaign.md`
 - RPG exploration with a freely moving map character
 - NPC conversations, route choices, items, stats, level, and progression are expected pillars
 - combat is turn-based, card-driven, and separated from exploration
-- final visual stack is undecided between 2D, 3D, or a hybrid direction
+- current slice is 2D; broader final visual direction can remain open until explicitly decided
 
 Current active combat rule:
 
@@ -28,13 +31,15 @@ Current active combat rule:
 Before substantial work:
 
 1. `../../canon/canon-brief.md`
-2. `../../canon/product/product-vision.md` for shared setting and lore context only
-3. `docs/project-brief.md`
-4. `docs/game-design-document.md`
-5. `docs/architecture.md`
-6. `implementation/current-status.md`
-7. this file
-8. touched files
+2. `../../canon/lore/shared-lore.md`
+3. `../../canon/product/product-vision.md` for shared setting and lore context only
+4. `docs/lore-campaign.md`
+5. `docs/project-brief.md`
+6. `docs/game-design-document.md`
+7. `docs/architecture.md`
+8. `implementation/current-status.md`
+9. this file
+10. touched files
 
 For bounded work:
 

@@ -2,15 +2,15 @@
   "default_encounter_id": "emboscada_na_ponte",
   "player_hero": {
     "id": "aprendiz_limiar",
-    "display_name": "Aprendiz do Limiar",
+    "display_name": "Novato Draxos",
     "max_health": 25,
-    "hero_power_text": "Preparar Defesa: custo 1, velocidade normal, uso 1x no proprio turno. Ganha 2 armadura."
+    "hero_power_text": "Preparar Defesa Astral: custo 1, velocidade normal, uso 1x no proprio turno. Ganha 2 armadura."
   },
   "enemy_hero": {
     "id": "duelista_bandido",
-    "display_name": "Duelista Bandido",
+    "display_name": "Guardiao Elemental",
     "max_health": 20,
-    "hero_power_text": "Golpe Direto: custo 0, velocidade normal, uso 1x no proprio turno. Causa 1 de dano no heroi inimigo."
+    "hero_power_text": "Golpe Elemental: custo 0, velocidade normal, uso 1x no proprio turno. Causa 1 de dano no heroi inimigo."
   },
   "starter_deck": [
     "escudeiro",
@@ -37,7 +37,7 @@
   "cards": [
     {
       "id": "escudeiro",
-      "display_name": "Escudeiro",
+      "display_name": "Adepto Draxos",
       "type": "criatura",
       "cost": 1,
       "command_cost": 1,
@@ -45,12 +45,12 @@
       "attack": 2,
       "health": 2,
       "keywords": [],
-      "text": "Criatura simples 2/2.",
+      "text": "Operador Draxos simples 2/2.",
       "effect": {}
     },
     {
       "id": "guarda_vila",
-      "display_name": "Guarda da Vila",
+      "display_name": "Custodio de Ether",
       "type": "criatura",
       "cost": 1,
       "command_cost": 1,
@@ -60,12 +60,12 @@
       "keywords": [
         "defensor"
       ],
-      "text": "Defensor. Bom para segurar uma rota.",
+      "text": "Defensor. Mantem uma rota sob controle astral.",
       "effect": {}
     },
     {
       "id": "lobo_faminto",
-      "display_name": "Lobo Faminto",
+      "display_name": "Fera Subjugada",
       "type": "criatura",
       "cost": 1,
       "command_cost": 1,
@@ -75,12 +75,12 @@
       "keywords": [
         "rapido"
       ],
-      "text": "Rapido. Pode atacar no turno em que entra.",
+      "text": "Rapido. Criatura dominada que pode atacar no turno em que entra.",
       "effect": {}
     },
     {
       "id": "soldado_linha",
-      "display_name": "Soldado de Linha",
+      "display_name": "Operador de Linha",
       "type": "criatura",
       "cost": 2,
       "command_cost": 2,
@@ -88,12 +88,12 @@
       "attack": 2,
       "health": 3,
       "keywords": [],
-      "text": "Criatura media para disputar a frente.",
+      "text": "Unidade Draxos media para disputar a frente.",
       "effect": {}
     },
     {
       "id": "arqueira_penhasco",
-      "display_name": "Arqueira de Penhasco",
+      "display_name": "Atiradora Astral",
       "type": "criatura",
       "cost": 2,
       "command_cost": 1,
@@ -103,14 +103,14 @@
       "keywords": [
         "alcance"
       ],
-      "text": "Alcance. Em espaco alto, pressiona rotas diagonais.",
+      "text": "Alcance. Em espaco alto, pressiona rotas diagonais com energia astral.",
       "effect": {
         "ranged": true
       }
     },
     {
       "id": "bruto_mercenario",
-      "display_name": "Bruto Mercenario",
+      "display_name": "Executor Draxos",
       "type": "criatura",
       "cost": 3,
       "command_cost": 2,
@@ -123,7 +123,7 @@
     },
     {
       "id": "javali_guerra",
-      "display_name": "Javali de Guerra",
+      "display_name": "Besta de Impacto",
       "type": "criatura",
       "cost": 3,
       "command_cost": 2,
@@ -138,7 +138,7 @@
     },
     {
       "id": "barricada",
-      "display_name": "Barricada",
+      "display_name": "Barreira de Ether",
       "type": "estrutura",
       "cost": 1,
       "command_cost": 1,
@@ -153,7 +153,7 @@
     },
     {
       "id": "balista",
-      "display_name": "Balista",
+      "display_name": "Condutor Astral",
       "type": "estrutura",
       "cost": 3,
       "command_cost": 2,
@@ -170,7 +170,7 @@
     },
     {
       "id": "raio_curto",
-      "display_name": "Raio Curto",
+      "display_name": "Pulso Astral",
       "type": "magia",
       "cost": 1,
       "command_cost": 0,
@@ -189,7 +189,7 @@
     },
     {
       "id": "golpe_preciso",
-      "display_name": "Golpe Preciso",
+      "display_name": "Ordem de Supressao",
       "type": "magia",
       "cost": 2,
       "command_cost": 0,
@@ -206,7 +206,7 @@
     },
     {
       "id": "goblin_ponte",
-      "display_name": "Goblin da Ponte",
+      "display_name": "Elemental Menor",
       "type": "criatura",
       "cost": 1,
       "command_cost": 1,
@@ -214,12 +214,12 @@
       "attack": 2,
       "health": 2,
       "keywords": [],
-      "text": "Inimigo inicial da ponte.",
+      "text": "Resistencia elemental inicial.",
       "effect": {}
     },
     {
       "id": "bruto_ponte",
-      "display_name": "Bruto da Ponte",
+      "display_name": "Guardiao de Basalto",
       "type": "criatura",
       "cost": 3,
       "command_cost": 2,
@@ -227,12 +227,12 @@
       "attack": 4,
       "health": 5,
       "keywords": [],
-      "text": "Inimigo pesado da ponte.",
+      "text": "Defensor pesado do planeta elemental.",
       "effect": {}
     },
     {
       "id": "arqueiro_ponte",
-      "display_name": "Arqueiro da Ponte",
+      "display_name": "Lanceiro de Cinzas",
       "type": "criatura",
       "cost": 2,
       "command_cost": 1,
@@ -242,14 +242,14 @@
       "keywords": [
         "alcance"
       ],
-      "text": "Inimigo em espaco alto.",
+      "text": "Elemental em espaco alto.",
       "effect": {
         "ranged": true
       }
     },
     {
       "id": "ladrao_rapido",
-      "display_name": "Ladrao Rapido",
+      "display_name": "Centelha Predadora",
       "type": "criatura",
       "cost": 1,
       "command_cost": 1,
@@ -259,12 +259,12 @@
       "keywords": [
         "rapido"
       ],
-      "text": "Carta do duelista bandido.",
+      "text": "Unidade elemental rapida usada por guardioes locais.",
       "effect": {}
     },
     {
       "id": "faca_arremessada",
-      "display_name": "Faca Arremessada",
+      "display_name": "Estilhaco Vulcanico",
       "type": "magia",
       "cost": 1,
       "command_cost": 0,
@@ -281,7 +281,7 @@
     },
     {
       "id": "guardiao_portal",
-      "display_name": "Guardiao do Portal",
+      "display_name": "Guardiao do Nexo",
       "type": "criatura",
       "cost": 2,
       "command_cost": 1,
@@ -296,7 +296,7 @@
     },
     {
       "id": "atirador_torre",
-      "display_name": "Atirador da Torre",
+      "display_name": "Sentinela de Cristal",
       "type": "criatura",
       "cost": 3,
       "command_cost": 2,
@@ -313,7 +313,7 @@
     },
     {
       "id": "soldado_central",
-      "display_name": "Soldado Central",
+      "display_name": "Defensor Elemental",
       "type": "criatura",
       "cost": 2,
       "command_cost": 1,
@@ -326,7 +326,7 @@
     },
     {
       "id": "corvo_batedor",
-      "display_name": "Corvo Batedor",
+      "display_name": "Batedor de Ether",
       "type": "criatura",
       "cost": 2,
       "command_cost": 2,
@@ -342,7 +342,7 @@
     },
     {
       "id": "lobo_alfa",
-      "display_name": "Lobo-Alfa",
+      "display_name": "Fera Alfa Subjugada",
       "type": "criatura",
       "cost": 3,
       "command_cost": 3,
@@ -357,7 +357,7 @@
     },
     {
       "id": "relampago",
-      "display_name": "Relampago",
+      "display_name": "Descarga Astral",
       "type": "magia",
       "cost": 3,
       "command_cost": 3,
@@ -374,7 +374,7 @@
     },
     {
       "id": "arqueira_voante",
-      "display_name": "Arqueira Voante",
+      "display_name": "Sentinela Alada",
       "type": "criatura",
       "cost": 4,
       "command_cost": 4,
@@ -390,7 +390,7 @@
     },
     {
       "id": "chuva_brasas",
-      "display_name": "Chuva de Brasas",
+      "display_name": "Chuva de Fragmentos",
       "type": "magia_de_tabuleiro",
       "cost": 4,
       "command_cost": 4,
@@ -406,7 +406,7 @@
     },
     {
       "id": "campeao_guilda",
-      "display_name": "Campeao da Guilda",
+      "display_name": "Executor Veterano",
       "type": "criatura",
       "cost": 5,
       "command_cost": 5,
@@ -419,7 +419,7 @@
     },
     {
       "id": "torre_blindada",
-      "display_name": "Torre Blindada",
+      "display_name": "Torre de Cristal",
       "type": "estrutura",
       "cost": 5,
       "command_cost": 5,
@@ -435,7 +435,7 @@
     },
     {
       "id": "chamado_hostes",
-      "display_name": "Chamado das Hostes",
+      "display_name": "Comando de Dominio",
       "type": "magia_de_tabuleiro",
       "cost": 5,
       "command_cost": 5,
@@ -452,7 +452,7 @@
     },
     {
       "id": "flagelo",
-      "display_name": "Flagelo",
+      "display_name": "Flagelo Astral",
       "type": "magia",
       "cost": 6,
       "command_cost": 6,
@@ -469,7 +469,7 @@
     },
     {
       "id": "dragao_jovem",
-      "display_name": "Dragao Jovem",
+      "display_name": "Manifestacao Vulcanica",
       "type": "criatura",
       "cost": 6,
       "command_cost": 6,
@@ -487,7 +487,7 @@
   "boards": [
     {
       "id": "ponte_estavel",
-      "display_name": "Ponte Estavel",
+      "display_name": "Zona de Pouso de Ether",
       "player_slots": [
         {
           "id": "P1",
@@ -623,7 +623,7 @@
     },
     {
       "id": "duelo_tres_linhas",
-      "display_name": "Duelo de Tres Linhas",
+      "display_name": "Campo de Confronto",
       "player_slots": [
         {
           "id": "P1",
@@ -755,8 +755,8 @@
     },
     {
       "id": "cruzamento_neutro",
-      "display_name": "Cruzamento Neutro",
-      "notes": "P2 alto (arqueiros apenas). N1 neutro disputado. E3 queimando. Testa: zona neutra, posicao elevada, terreno queimando, adjacencia lateral.",
+      "display_name": "Conduto Elemental",
+      "notes": "P2 alto. N1 neutro disputado. E3 queimando. Testa: zona neutra, posicao elevada, terreno queimando, adjacencia lateral.",
       "player_slots": [
         {
           "id": "P1",
@@ -963,8 +963,8 @@
     },
     {
       "id": "muralha_desfiladeiro",
-      "display_name": "Muralha do Desfiladeiro",
-      "notes": "P1/P3 cobertura. Inimigo: E1-E3 frente (chao), EB1-EB2 fundo (chao), ET torre (alto). fallback_slots conectam frente ao fundo. ET so acessivel por alcance/voadora/spells. Testa: linha dupla, torre desconectada, cobertura vs alcance.",
+      "display_name": "Bastiao Vulcanico",
+      "notes": "P1/P3 cobertura. Inimigo: E1-E3 frente, EB1-EB2 fundo, ET alto. fallback_slots conectam frente ao fundo. ET so acessivel por alcance/voadora/spells. Testa: linha dupla, ponto alto desconectado, cobertura vs alcance.",
       "player_slots": [
         {
           "id": "P1",
@@ -1240,7 +1240,7 @@
   "encounters": [
     {
       "id": "emboscada_na_ponte",
-      "display_name": "Emboscada na Ponte",
+      "display_name": "Operacao de Pouso",
       "mode": "limpar_mesa",
       "board_id": "ponte_estavel",
       "starting_enemy_slots": [
@@ -1263,7 +1263,7 @@
     },
     {
       "id": "duelista_bandido",
-      "display_name": "Duelista Bandido",
+      "display_name": "Confronto com Guardiao",
       "mode": "duelo",
       "board_id": "duelo_tres_linhas",
       "enemy_deck": [
@@ -1293,14 +1293,14 @@
         "relampago",
         "flagelo"
       ],
-      "notes": "Deck agressivo e escalavel. Curva: 1-2 early pressure, 3 mid threats (atropelar, alcance, voadora), 3-4 removal (relampago instant, faca), 5-6 late threats (campeao, dragao voador). Exercita: voadora (corvo_batedor), rapido (ladrao, corvo), alcance (arqueiro), atropelar (lobo_alfa, dragao_jovem), magia instant (relampago), fisico_melee e fisico_alcance."
+      "notes": "Deck agressivo e escalavel. Curva: 1-2 early pressure, 3 mid threats (atropelar, alcance, voadora), 3-4 removal, 5-6 late threats. Exercita: voadora, rapido, alcance, atropelar, magia instant, fisico_melee e fisico_alcance."
     },
     {
       "id": "emboscada_no_cruzamento",
-      "display_name": "Emboscada no Cruzamento",
+      "display_name": "Tomada do Conduto",
       "mode": "limpar_mesa",
       "board_id": "cruzamento_neutro",
-      "notes": "E3 (queimando): arqueiro sofre 1 de dano por upkeep, criando urgencia para o inimigo atacar rapido. E2 (corvo_batedor, voadora): nao pode ser atingido por fisico_melee, transparente para routing. Jogador precisa usar alcance, voadora propria ou magia para remover E2. N1 vazio e contestado. P2 (alto) ideal para Arqueira de Penhasco ou Balista.",
+      "notes": "E3 (queimando): unidade sofre 1 de dano por upkeep, criando urgencia para atacar rapido. E2 (voadora): nao pode ser atingido por fisico_melee, transparente para routing. Jogador precisa usar alcance, voadora propria ou magia para remover E2. N1 vazio e contestado. P2 (alto) ideal para Atiradora Astral ou Condutor Astral.",
       "starting_enemy_slots": [
         {
           "slot": 0,
@@ -1322,10 +1322,10 @@
     },
     {
       "id": "fortaleza_do_desfiladeiro",
-      "display_name": "Fortaleza do Desfiladeiro",
+      "display_name": "Avanco ao Bastiao",
       "mode": "limpar_mesa",
       "board_id": "muralha_desfiladeiro",
-      "notes": "ET (torre, alto) atira em todo o lado do jogador via alcance. P1/P3 cobertura reduz dano de ET em 1. EB1/EB2 vazios. Jogador precisa furar a frente E1-E3 (fallback_slots) ou usar alcance/voadora para snipe direto em ET.",
+      "notes": "ET (alto) atira em todo o lado do jogador via alcance. P1/P3 cobertura reduz dano de ET em 1. EB1/EB2 vazios. Jogador precisa furar a frente E1-E3 (fallback_slots) ou usar alcance/voadora para atingir ET diretamente.",
       "starting_enemy_slots": [
         {
           "slot": 0,
@@ -1351,10 +1351,10 @@
     },
     {
       "id": "patrulha_avancada",
-      "display_name": "Patrulha Avancada",
+      "display_name": "Varredura Avancada",
       "mode": "limpar_mesa",
       "board_id": "ponte_estavel",
-      "notes": "E1 (lobo_alfa, atropelar 4/2): ameaca agressiva. E2 (corvo_batedor, voadora+rapido): imune a fisico_melee, entra pronto. E3 (arqueiro_ponte, alcance): pressao a distancia. Encontro de transicao entre duelo e boards complexos — tres keywords simultaneamente num board familiar.",
+      "notes": "E1 (atropelar 4/2): ameaca agressiva. E2 (voadora+rapido): imune a fisico_melee, entra pronto. E3 (alcance): pressao a distancia. Encontro de transicao entre duelo e boards complexos, com tres keywords simultaneamente num board familiar.",
       "starting_enemy_slots": [
         {
           "slot": 0,
@@ -1373,10 +1373,10 @@
     },
     {
       "id": "duelista_sombrio",
-      "display_name": "Duelista Sombrio",
+      "display_name": "Guardiao do Conduto",
       "mode": "duelo",
       "board_id": "cruzamento_neutro",
-      "notes": "Segundo duelo no cruzamento_neutro. N1 disputado: quem controlar o slot central tem rotas adicionais. P2 (alto) alvo de atirador_torre inimigo. E3 (queimando): inimigo precisa mover criaturas de la ou toma 1/turno. Deck mais pesado: 3x corvo_batedor, 2x atirador_torre, dragao_jovem como finalizador.",
+      "notes": "Segundo duelo no conduto. N1 disputado: quem controlar o slot central tem rotas adicionais. P2 (alto) alvo de sentinela inimiga. E3 (queimando): inimigo precisa mover criaturas de la ou toma 1/turno. Deck mais pesado com finalizador vulcanico.",
       "enemy_deck": [
         "goblin_ponte",
         "goblin_ponte",
@@ -1406,10 +1406,10 @@
     },
     {
       "id": "emboscada_reforcos",
-      "display_name": "Emboscada com Reforcos",
+      "display_name": "Contrataque Elemental",
       "mode": "limpar_mesa",
       "board_id": "ponte_estavel",
-      "notes": "Variante dificil da emboscada_na_ponte. E1 (bruto_ponte 4/5): corpo grande, precisa de 2 ataques ou remocao. E2 (corvo_batedor, voadora): imune a melee. E3 (atirador_torre 2/4 alcance): pressiona qualquer slot do jogador. Sem heroi inimigo mas sem respiro.",
+      "notes": "Variante dificil da operacao inicial. E1: corpo grande, precisa de 2 ataques ou remocao. E2 (voadora): imune a melee. E3 (alcance): pressiona qualquer slot do jogador. Sem heroi inimigo mas sem respiro.",
       "starting_enemy_slots": [
         {
           "slot": 0,
@@ -1428,10 +1428,10 @@
     },
     {
       "id": "invasao_em_ondas",
-      "display_name": "Invasao em Ondas",
+      "display_name": "Ondas de Resistencia",
       "mode": "ondas",
       "board_id": "ponte_estavel",
-      "notes": "Primeiro encontro do modo ondas. Duas ondas no board mais familiar. Onda 1: pressao leve, permite aquecer. Onda 2: composicao mais pesada com voadora e atropelar. HP do heroi, estado do deck e rampa de energia persistem entre ondas. Proximo turno apos limpar onda 1: spawn da onda 2. Desbloqueado apos patrulha_avancada (paralelo ao caminho principal).",
+      "notes": "Primeiro encontro do modo ondas. Duas ondas no board mais familiar. Onda 1: pressao leve, permite aquecer. Onda 2: composicao mais pesada com voadora e atropelar. HP do heroi, estado do deck e rampa de energia persistem entre ondas. Proximo turno apos limpar onda 1: spawn da onda 2.",
       "waves": [
         {
           "wave_number": 1,
@@ -1474,7 +1474,7 @@
     },
     {
       "id": "defesa_do_portao",
-      "display_name": "Defesa do Portao",
+      "display_name": "Defesa da Base de Ether",
       "mode": "defesa",
       "board_id": "muralha_desfiladeiro",
       "defense_turn_limit": 2,
@@ -1499,7 +1499,7 @@
     },
     {
       "id": "colosso_fragmentado",
-      "display_name": "Colosso Fragmentado",
+      "display_name": "Nucleo Fragmentado",
       "mode": "chefe_multiparte",
       "board_id": "muralha_desfiladeiro",
       "boss_part_slots": [
@@ -1532,7 +1532,7 @@
     },
     {
       "id": "enigma_da_ponte",
-      "display_name": "Enigma da Ponte",
+      "display_name": "Ruptura de Selos",
       "mode": "quebra_cabeca",
       "board_id": "ponte_estavel",
       "puzzle_target_slots": [

@@ -131,7 +131,7 @@ func test_result_screen_shows_reward_feedback() -> void:
 	GameSession.last_battle_summary = "Teste."
 	GameSession.last_reward_card_ids = ["lobo_alfa"]
 
-	assert_true(ResultRootScript.reward_text_for_card_ids(GameSession.last_reward_card_ids).contains("Lobo-Alfa"))
+	assert_true(ResultRootScript.reward_text_for_card_ids(GameSession.last_reward_card_ids).contains("Fera Alfa Subjugada"))
 
 func test_end_turn_button_stays_visible_and_advances_round() -> void:
 	var root = BattleRootScript.new()

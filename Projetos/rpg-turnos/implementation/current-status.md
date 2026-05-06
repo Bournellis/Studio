@@ -6,7 +6,7 @@
 - Active Track: `Track 01 - Foundation Contracts And First Prototype`
 - Active Track Status: `QUEBRA_CABECA_MODE_COMPLETE`
 - Current Operational Baseline: `playable Godot 4.6.2 slice with menu, local JSON save/load, 2D exploration placeholder, 20-card deck setup, C1 as the sole runtime combat model, limpar_mesa encounter mode, official duelo mode, official ondas mode, official defesa mode, official chefe_multiparte mode, official quebra_cabeca mode, linear world encounter chain, one-time encounter rewards, NPC progressive rewards, public descarte phase, energy/hand ramp, cyclic bottom-of-deck card flow, damage types, coverage, voadora, dual burning, fallback slots, creature movement, neutral slots in engine, clearer HUD/slots/map/reward feedback, art-ready placeholders with UiTokens and AssetIds, data-driven boards/encounters, automatic enemy priority, simple visual battle feedback, generated scenes, JSON-driven catalog, and green GUT validation`
-- Active Goal: `controlled mode/content expansion`
+- Active Goal: `Draxos lore alignment and controlled content/progression expansion`
 - Active Combat Direction: `C1 - main game, not a variant`
 - Preserved Combat Ideas: `A/B priority variants and the phase-based duel are historical only in docs/cardgame-core-experiments.md`
 - Active Work Mode: `08_Coordenacao_Agentes Kanban / Decisoes / Handoffs is active for cross-agent coordination`
@@ -14,6 +14,8 @@
 ## Read Next
 
 - `../AGENTS.md`
+- `../../../canon/lore/shared-lore.md`
+- `../../../canon/lore/draxos-invasion.md`
 - `../docs/game-design-document.md`
 - `../docs/architecture.md`
 - `../docs/cardgame-core-experiments.md`
@@ -92,10 +94,11 @@
 
 - All currently documented official battle modes are implemented.
 - Broader RPG progression, stats, equipment/items, narrative depth, audio, and transition polish remain future layers.
+- New lore direction is active in `docs/lore-campaign.md`: RPG Turnos begins with a novice Draxos mage invading an elemental planet from an ether-plasm base. Existing runtime names are placeholders until migrated in controlled content passes tracked by `docs/lore-content-migration.md`.
 
 ## Implemented Battle Mode Pass 01
 
-- `limpar_mesa` implemented with `Emboscada na Ponte`.
+- `limpar_mesa` implemented with the first Draxos-facing operation (`emboscada_na_ponte` ID, `Operacao de Pouso` display name).
 - Enemy side has turns, upkeep, priority, attacks, and starting units, but no enemy hero.
 - Player attacks in empty lanes have no hero fallback in `limpar_mesa`.
 - Creature-vs-creature damage is simultaneous.
@@ -411,7 +414,7 @@ In `result_root.gd`, on victory:
 In `world_root.gd`, on NPC interaction after the first reward:
 
 1. Call `GameSession.claim_npc_progressive_reward()`.
-2. If a card ID is returned, show it in the dialogue: "A viajante entrega mais uma carta: [display_name]."
+2. If a card ID is returned, show it in the dialogue through the Draxos command/mentor function: "O comando Draxos libera uma nova opcao pelo progresso: [display_name]."
 3. If `""` is returned (all progressive rewards claimed), show the existing idle dialogue.
 
 Save/load is not required in this documentation-alignment pass, but it must be implemented before progression is treated as durable campaign state.

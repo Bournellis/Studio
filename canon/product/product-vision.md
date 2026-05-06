@@ -54,9 +54,13 @@ Its identity is based on:
 
 ## 3. Setting
 
-The setting is spatial, atemporal, and multi-cultural. It blends futuristic, contemporary, and ancient aesthetics, with each race expressing a different philosophy of combat and world-building.
+The setting is a far-future galactic continuity where humanity has already left the Solar System and spread across the galaxy.
 
-Technology and magic coexist. A race may lean toward advanced technology, military craft, mythic weaponry, or arcane power, but every race must still read clearly inside the same combat language.
+Earth is post-nuclear-apocalypse, humans are divided into factions, and other celestial or intergalactic beings are part of the main conflict space.
+
+The world blends futuristic, contemporary, ancient, and arcane aesthetics, with each race or civilization expressing a different philosophy of combat and world-building.
+
+Technology and astral or magical power coexist. A race may lean toward advanced technology, military craft, mythic weaponry, astral domination, or arcane power, but every race must still read clearly inside the same combat language.
 
 Visual direction:
 
@@ -86,9 +90,9 @@ Each race should define:
 Placeholder race directions:
 
 - **Humans**: military identity, bullets, reloads, tactical ranged control
-- **Heroic**: mythic weapons with magical properties, melee pressure, direct combat expression
+- **Imortais**: mythic weapons with magical properties, melee pressure, direct combat expression; detailed lore pending
 - **Intelligent Aliens**: advanced technology, lasers, magnetism, drones, engineered battlefield control
-- **Magic Beings**: teleportation, arcane attacks, mental manipulation, magical mobility
+- **Draxos**: arcane intergalactic beings, astral energy, domination, enslavement, ether-plasm bases, magical mobility and control
 
 These race directions are canonical as identity territory, but not as a declaration of fully authored content.
 

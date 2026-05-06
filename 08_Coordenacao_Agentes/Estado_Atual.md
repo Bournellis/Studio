@@ -8,6 +8,7 @@
 - Track ativa: `Track 02 - Canonical Product Foundation` (OPEN)
 - Baseline atual: B0 interno — Arena / Survival / Boss jogaveis + frontend campaign-first (Campaign primario, Classic autorado, Campanha Livre pos-Easy, extras secundarios; Arena PvP / Private Duel fora da navegacao publica)
 - Meta ativa: F11 campaign-first runtime alignment completo; nenhuma gate de implementacao ativa ate que a Next Gate seja selecionada explicitamente
+- Lore: Imortais substitui Heroic/Heroico como nome player-facing; lore detalhado pendente
 - Ultima atualizacao do current-status: `2026-04-26`
 - Proximo passo: escolher Next Gate antes de expandir conteudo, co-op, PvP, Hard, corrida ou escopo de armas
 
@@ -16,9 +17,9 @@
 - Status: **Ativo — modos oficiais completos**
 - Track ativa: `Track 01 - Foundation Contracts And First Prototype` (QUEBRA_CABECA_MODE_COMPLETE)
 - Baseline atual: slice Godot 4.6.2 jogavel — C1 unico runtime, `limpar_mesa`, `duelo`, `ondas`, `defesa`, `chefe_multiparte`, `quebra_cabeca`, cadeia de encontros no mapa, rewards por encontro uma vez, NPC progressiva, save/load JSON local, HUD/slots/mapa/rewards mais legiveis, estrutura art-ready com `UiTokens`/`AssetIds`, `descarte`, energia/mao com ramp, deck ciclico, regras de batalha completas para o slice, validacao verde 77/77
-- Meta ativa: iniciar expansao controlada de modo/conteudo
+- Meta ativa: campanha Draxos adotada como direcao ativa; proxima etapa e expandir conteudo/progressao sem renomear IDs mecanicos
 - Ultima atualizacao do current-status: `2026-05-06`
-- Proximo passo: escolher a proxima expansao controlada de conteudo/progressao
+- Proximo passo: definir primeira classe Draxos, papeis de comando e nomes finais de zonas/missoes quando narrativa entrar em foco
 
 ## Kanban rápido
 

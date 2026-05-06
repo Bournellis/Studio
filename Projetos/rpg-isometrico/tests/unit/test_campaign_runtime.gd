@@ -103,7 +103,7 @@ func test_campaign_runtime_unlocks_progression_through_five_maps_and_finishes_wi
 	assert_not_null(footer_hint_label)
 	assert_eq(reward_eyebrow_label.text, "AVANCO DA CAMPANHA")
 	assert_string_contains(reward_body_label.text, "Nivel 2")
-	assert_string_contains(reward_body_label.text, "Brado Heroico")
+	assert_string_contains(reward_body_label.text, "Brado dos Imortais")
 	assert_string_contains(reward_body_label.text, "Survival")
 	assert_string_contains(footer_hint_label.text, "Continue")
 	assert_true(root.debug_continue_flow_overlay())
@@ -286,7 +286,7 @@ func test_campaign_reward_overlay_rebuilds_from_payload_on_resume() -> void:
 	assert_true(reward_overlay.visible)
 	assert_not_null(reward_body_label)
 	assert_string_contains(reward_body_label.text, "Nivel 2")
-	assert_string_contains(reward_body_label.text, "Brado Heroico")
+	assert_string_contains(reward_body_label.text, "Brado dos Imortais")
 	assert_string_contains(reward_body_label.text, "Survival")
 	assert_no_new_orphans()
 

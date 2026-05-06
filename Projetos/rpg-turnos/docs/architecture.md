@@ -110,6 +110,8 @@ The active deck rule is exactly 20 unlocked cards with at most 4 command cards.
 
 Current implementation matches the GDD foundation resource model: energy/hand ramp, cyclic bottom-of-deck flow, and public `descarte` phase are implemented. Treat `implementation/current-status.md` as the operational split between implemented runtime and accepted pending design.
 
+Narrative naming is now governed by `lore-campaign.md`. Existing IDs and display names in `slice_catalog.json` may be placeholders; migrate player-facing names in controlled passes and keep mechanical IDs temporarily when that reduces runtime risk.
+
 ## Validation
 
 Run:

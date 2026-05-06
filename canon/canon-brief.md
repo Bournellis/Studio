@@ -11,6 +11,18 @@ Current project map:
 - `Projetos/rpg-isometrico/`: campaign-first isometric action RPG governed by the established product, design, progression, roadmap, and platform canon.
 - `Projetos/rpg-turnos/`: provisional turn-based RPG-cardgame with independent mechanics, shared lore context, and local project docs as the source of truth for its early design.
 
+Shared lore snapshot:
+
+- the universe is a distant future where humanity has left the Solar System and spread across the galaxy
+- Earth is post-nuclear-apocalypse and humans are split into factions
+- other celestial/intergalactic beings are part of the main continuity
+- Draxos are arcane intergalactic beings of unclear origin who use astral energy for power, conquest, travel, and infrastructure
+- Draxos commonly dominate and enslave beings they consider inferior
+- Draxos bases may resemble spacecraft but are plasmated from ether, not built as conventional technology
+- Imortais is the player-facing name replacing the old `Heroic` / `Heroico` placeholder; detailed lore is pending
+- RPG Isometrico currently uses Imortais as the safe label for the direct-combat baseline while its detailed campaign lore remains TBD
+- RPG Turnos initially covers a Draxos mission that can succeed: invasion of an elemental planet, enslavement of elementals, and extraction of a powerful volcano crystal
+
 Treat RPG Isometrico as:
 
 - a campaign-first isometric action game
@@ -44,10 +56,14 @@ Treat RPG Turnos as:
 - an RPG with free map exploration, NPC conversations, route choice, items, stats, level, and progression
 - a turn-based RPG-cardgame, not a real-time action RPG
 - a combat system built around fixed board slots, cards, hero abilities, encounter objectives, and confrontation lanes
+- initially focused on a Draxos novice mage assigned to a respected strike team after that team lost a soldier
+- narratively centered on missions from an ether-plasm Draxos base into an elemental planet rich in astral energy
 - undecided between 2D, 3D, or hybrid presentation
 - built from visual-agnostic systems before final camera and rendering decisions
 
 Do not apply RPG Isometrico's action loadout, real-time combat assumptions, or mode roadmap to RPG Turnos unless RPG Turnos local docs explicitly adopt them.
+
+Treat existing RPG Turnos mechanical IDs as stable placeholders unless a dedicated migration explicitly renames them.
 
 ## Current Transition Direction
 

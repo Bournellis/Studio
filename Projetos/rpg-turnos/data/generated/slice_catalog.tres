@@ -7,61 +7,61 @@
 [sub_resource type="Resource" id="Resource_tqsc8"]
 script = ExtResource("1_tqsc8")
 id = "escudeiro"
-display_name = "Escudeiro"
+display_name = "Adepto Draxos"
 card_type = "criatura"
 cost = 1
 command_cost = 1
 attack = 2
 health = 2
-text = "Criatura simples 2/2."
+text = "Operador Draxos simples 2/2."
 keywords = PackedStringArray()
 
 [sub_resource type="Resource" id="Resource_aaqvb"]
 script = ExtResource("1_tqsc8")
 id = "guarda_vila"
-display_name = "Guarda da Vila"
+display_name = "Custodio de Ether"
 card_type = "criatura"
 cost = 1
 command_cost = 1
 attack = 1
 health = 4
-text = "Defensor. Bom para segurar uma rota."
+text = "Defensor. Mantem uma rota sob controle astral."
 keywords = PackedStringArray("defensor")
 
 [sub_resource type="Resource" id="Resource_xh3p2"]
 script = ExtResource("1_tqsc8")
 id = "lobo_faminto"
-display_name = "Lobo Faminto"
+display_name = "Fera Subjugada"
 card_type = "criatura"
 cost = 1
 command_cost = 1
 attack = 3
 health = 1
-text = "Rapido. Pode atacar no turno em que entra."
+text = "Rapido. Criatura dominada que pode atacar no turno em que entra."
 keywords = PackedStringArray("rapido")
 
 [sub_resource type="Resource" id="Resource_ayi6x"]
 script = ExtResource("1_tqsc8")
 id = "soldado_linha"
-display_name = "Soldado de Linha"
+display_name = "Operador de Linha"
 card_type = "criatura"
 cost = 2
 command_cost = 2
 attack = 2
 health = 3
-text = "Criatura media para disputar a frente."
+text = "Unidade Draxos media para disputar a frente."
 keywords = PackedStringArray()
 
 [sub_resource type="Resource" id="Resource_b0i2p"]
 script = ExtResource("1_tqsc8")
 id = "arqueira_penhasco"
-display_name = "Arqueira de Penhasco"
+display_name = "Atiradora Astral"
 card_type = "criatura"
 cost = 2
 command_cost = 1
 attack = 2
 health = 2
-text = "Alcance. Em espaco alto, pressiona rotas diagonais."
+text = "Alcance. Em espaco alto, pressiona rotas diagonais com energia astral."
 keywords = PackedStringArray("alcance")
 effect = {
 "ranged": true
@@ -70,7 +70,7 @@ effect = {
 [sub_resource type="Resource" id="Resource_hvson"]
 script = ExtResource("1_tqsc8")
 id = "bruto_mercenario"
-display_name = "Bruto Mercenario"
+display_name = "Executor Draxos"
 card_type = "criatura"
 cost = 3
 command_cost = 2
@@ -82,7 +82,7 @@ keywords = PackedStringArray()
 [sub_resource type="Resource" id="Resource_vopr6"]
 script = ExtResource("1_tqsc8")
 id = "javali_guerra"
-display_name = "Javali de Guerra"
+display_name = "Besta de Impacto"
 card_type = "criatura"
 cost = 3
 command_cost = 2
@@ -94,7 +94,7 @@ keywords = PackedStringArray("atropelar")
 [sub_resource type="Resource" id="Resource_2f5oc"]
 script = ExtResource("1_tqsc8")
 id = "barricada"
-display_name = "Barricada"
+display_name = "Barreira de Ether"
 card_type = "estrutura"
 cost = 1
 command_cost = 1
@@ -105,7 +105,7 @@ keywords = PackedStringArray("defensor")
 [sub_resource type="Resource" id="Resource_q1xx6"]
 script = ExtResource("1_tqsc8")
 id = "balista"
-display_name = "Balista"
+display_name = "Condutor Astral"
 card_type = "estrutura"
 cost = 3
 command_cost = 2
@@ -120,7 +120,7 @@ effect = {
 [sub_resource type="Resource" id="Resource_75iml"]
 script = ExtResource("1_tqsc8")
 id = "raio_curto"
-display_name = "Raio Curto"
+display_name = "Pulso Astral"
 card_type = "magia"
 cost = 1
 speed = "instantanea"
@@ -135,7 +135,7 @@ effect = {
 [sub_resource type="Resource" id="Resource_xg15d"]
 script = ExtResource("1_tqsc8")
 id = "golpe_preciso"
-display_name = "Golpe Preciso"
+display_name = "Ordem de Supressao"
 card_type = "magia"
 cost = 2
 text = "Causa 3 de dano a um alvo."
@@ -149,37 +149,37 @@ effect = {
 [sub_resource type="Resource" id="Resource_kobr5"]
 script = ExtResource("1_tqsc8")
 id = "goblin_ponte"
-display_name = "Goblin da Ponte"
+display_name = "Elemental Menor"
 card_type = "criatura"
 cost = 1
 command_cost = 1
 attack = 2
 health = 2
-text = "Inimigo inicial da ponte."
+text = "Resistencia elemental inicial."
 keywords = PackedStringArray()
 
 [sub_resource type="Resource" id="Resource_js17r"]
 script = ExtResource("1_tqsc8")
 id = "bruto_ponte"
-display_name = "Bruto da Ponte"
+display_name = "Guardiao de Basalto"
 card_type = "criatura"
 cost = 3
 command_cost = 2
 attack = 4
 health = 5
-text = "Inimigo pesado da ponte."
+text = "Defensor pesado do planeta elemental."
 keywords = PackedStringArray()
 
 [sub_resource type="Resource" id="Resource_5405m"]
 script = ExtResource("1_tqsc8")
 id = "arqueiro_ponte"
-display_name = "Arqueiro da Ponte"
+display_name = "Lanceiro de Cinzas"
 card_type = "criatura"
 cost = 2
 command_cost = 1
 attack = 1
 health = 3
-text = "Inimigo em espaco alto."
+text = "Elemental em espaco alto."
 keywords = PackedStringArray("alcance")
 effect = {
 "ranged": true
@@ -188,19 +188,19 @@ effect = {
 [sub_resource type="Resource" id="Resource_p3n0t"]
 script = ExtResource("1_tqsc8")
 id = "ladrao_rapido"
-display_name = "Ladrao Rapido"
+display_name = "Centelha Predadora"
 card_type = "criatura"
 cost = 1
 command_cost = 1
 attack = 2
 health = 1
-text = "Carta do duelista bandido."
+text = "Unidade elemental rapida usada por guardioes locais."
 keywords = PackedStringArray("rapido")
 
 [sub_resource type="Resource" id="Resource_pkhd5"]
 script = ExtResource("1_tqsc8")
 id = "faca_arremessada"
-display_name = "Faca Arremessada"
+display_name = "Estilhaco Vulcanico"
 card_type = "magia"
 cost = 1
 text = "Causa 1 de dano."
@@ -214,7 +214,7 @@ effect = {
 [sub_resource type="Resource" id="Resource_haoox"]
 script = ExtResource("1_tqsc8")
 id = "guardiao_portal"
-display_name = "Guardiao do Portal"
+display_name = "Guardiao do Nexo"
 card_type = "criatura"
 cost = 2
 command_cost = 1
@@ -226,7 +226,7 @@ keywords = PackedStringArray("defensor")
 [sub_resource type="Resource" id="Resource_dqqtb"]
 script = ExtResource("1_tqsc8")
 id = "atirador_torre"
-display_name = "Atirador da Torre"
+display_name = "Sentinela de Cristal"
 card_type = "criatura"
 cost = 3
 command_cost = 2
@@ -241,7 +241,7 @@ effect = {
 [sub_resource type="Resource" id="Resource_0kq34"]
 script = ExtResource("1_tqsc8")
 id = "soldado_central"
-display_name = "Soldado Central"
+display_name = "Defensor Elemental"
 card_type = "criatura"
 cost = 2
 command_cost = 1
@@ -253,7 +253,7 @@ keywords = PackedStringArray()
 [sub_resource type="Resource" id="Resource_edoxb"]
 script = ExtResource("1_tqsc8")
 id = "corvo_batedor"
-display_name = "Corvo Batedor"
+display_name = "Batedor de Ether"
 card_type = "criatura"
 cost = 2
 command_cost = 2
@@ -265,7 +265,7 @@ keywords = PackedStringArray("voadora", "rapido")
 [sub_resource type="Resource" id="Resource_q1muo"]
 script = ExtResource("1_tqsc8")
 id = "lobo_alfa"
-display_name = "Lobo-Alfa"
+display_name = "Fera Alfa Subjugada"
 card_type = "criatura"
 cost = 3
 command_cost = 3
@@ -277,7 +277,7 @@ keywords = PackedStringArray("atropelar")
 [sub_resource type="Resource" id="Resource_w1flg"]
 script = ExtResource("1_tqsc8")
 id = "relampago"
-display_name = "Relampago"
+display_name = "Descarga Astral"
 card_type = "magia"
 cost = 3
 command_cost = 3
@@ -293,7 +293,7 @@ effect = {
 [sub_resource type="Resource" id="Resource_u525c"]
 script = ExtResource("1_tqsc8")
 id = "arqueira_voante"
-display_name = "Arqueira Voante"
+display_name = "Sentinela Alada"
 card_type = "criatura"
 cost = 4
 command_cost = 4
@@ -305,7 +305,7 @@ keywords = PackedStringArray("voadora", "alcance")
 [sub_resource type="Resource" id="Resource_ba32m"]
 script = ExtResource("1_tqsc8")
 id = "chuva_brasas"
-display_name = "Chuva de Brasas"
+display_name = "Chuva de Fragmentos"
 card_type = "magia_de_tabuleiro"
 cost = 4
 command_cost = 4
@@ -319,7 +319,7 @@ effect = {
 [sub_resource type="Resource" id="Resource_5njsx"]
 script = ExtResource("1_tqsc8")
 id = "campeao_guilda"
-display_name = "Campeao da Guilda"
+display_name = "Executor Veterano"
 card_type = "criatura"
 cost = 5
 command_cost = 5
@@ -331,7 +331,7 @@ keywords = PackedStringArray()
 [sub_resource type="Resource" id="Resource_igiro"]
 script = ExtResource("1_tqsc8")
 id = "torre_blindada"
-display_name = "Torre Blindada"
+display_name = "Torre de Cristal"
 card_type = "estrutura"
 cost = 5
 command_cost = 5
@@ -343,7 +343,7 @@ keywords = PackedStringArray("alcance", "cobertura")
 [sub_resource type="Resource" id="Resource_kf03g"]
 script = ExtResource("1_tqsc8")
 id = "chamado_hostes"
-display_name = "Chamado das Hostes"
+display_name = "Comando de Dominio"
 card_type = "magia_de_tabuleiro"
 cost = 5
 command_cost = 5
@@ -358,7 +358,7 @@ effect = {
 [sub_resource type="Resource" id="Resource_7rtnj"]
 script = ExtResource("1_tqsc8")
 id = "flagelo"
-display_name = "Flagelo"
+display_name = "Flagelo Astral"
 card_type = "magia"
 cost = 6
 command_cost = 6
@@ -373,7 +373,7 @@ effect = {
 [sub_resource type="Resource" id="Resource_siawb"]
 script = ExtResource("1_tqsc8")
 id = "dragao_jovem"
-display_name = "Dragao Jovem"
+display_name = "Manifestacao Vulcanica"
 card_type = "criatura"
 cost = 6
 command_cost = 6
@@ -385,16 +385,16 @@ keywords = PackedStringArray("voadora", "atropelar")
 [sub_resource type="Resource" id="Resource_vn8pn"]
 script = ExtResource("2_aaqvb")
 id = "duelista_bandido"
-display_name = "Duelista Bandido"
+display_name = "Guardiao Elemental"
 max_health = 20
-hero_power_text = "Golpe Direto: custo 0, velocidade normal, uso 1x no proprio turno. Causa 1 de dano no heroi inimigo."
+hero_power_text = "Golpe Elemental: custo 0, velocidade normal, uso 1x no proprio turno. Causa 1 de dano no heroi inimigo."
 
 [sub_resource type="Resource" id="Resource_3vxjw"]
 script = ExtResource("2_aaqvb")
 id = "aprendiz_limiar"
-display_name = "Aprendiz do Limiar"
+display_name = "Novato Draxos"
 max_health = 25
-hero_power_text = "Preparar Defesa: custo 1, velocidade normal, uso 1x no proprio turno. Ganha 2 armadura."
+hero_power_text = "Preparar Defesa Astral: custo 1, velocidade normal, uso 1x no proprio turno. Ganha 2 armadura."
 
 [resource]
 script = ExtResource("3_xh3p2")
@@ -406,7 +406,7 @@ first_npc_reward_card_id = "golpe_preciso"
 reward_card_id = "golpe_preciso"
 npc_reward_choices = PackedStringArray("corvo_batedor", "chuva_brasas", "campeao_guilda")
 boards = Array[Dictionary]([{
-"display_name": "Ponte Estavel",
+"display_name": "Zona de Pouso de Ether",
 "enemy_routes": {
 "0": {
 "fallback": "hero",
@@ -496,7 +496,7 @@ boards = Array[Dictionary]([{
 "terrain": "cobertura"
 }]
 }, {
-"display_name": "Duelo de Tres Linhas",
+"display_name": "Campo de Confronto",
 "enemy_routes": {
 "0": {
 "fallback": "hero",
@@ -583,7 +583,7 @@ boards = Array[Dictionary]([{
 "terrain": "normal"
 }]
 }, {
-"display_name": "Cruzamento Neutro",
+"display_name": "Conduto Elemental",
 "enemy_routes": {
 "0": {
 "fallback": "hero",
@@ -665,7 +665,7 @@ boards = Array[Dictionary]([{
 "label": "N1",
 "terrain": "normal"
 }],
-"notes": "P2 alto (arqueiros apenas). N1 neutro disputado. E3 queimando. Testa: zona neutra, posicao elevada, terreno queimando, adjacencia lateral.",
+"notes": "P2 alto. N1 neutro disputado. E3 queimando. Testa: zona neutra, posicao elevada, terreno queimando, adjacencia lateral.",
 "player_routes": {
 "0": {
 "fallback": "none",
@@ -725,7 +725,7 @@ boards = Array[Dictionary]([{
 "terrain": "cobertura"
 }]
 }, {
-"display_name": "Muralha do Desfiladeiro",
+"display_name": "Bastiao Vulcanico",
 "enemy_routes": {
 "0": {
 "fallback": "hero",
@@ -834,7 +834,7 @@ boards = Array[Dictionary]([{
 }],
 "id": "muralha_desfiladeiro",
 "neutral_slots": [],
-"notes": "P1/P3 cobertura. Inimigo: E1-E3 frente (chao), EB1-EB2 fundo (chao), ET torre (alto). fallback_slots conectam frente ao fundo. ET so acessivel por alcance/voadora/spells. Testa: linha dupla, torre desconectada, cobertura vs alcance.",
+"notes": "P1/P3 cobertura. Inimigo: E1-E3 frente, EB1-EB2 fundo, ET alto. fallback_slots conectam frente ao fundo. ET so acessivel por alcance/voadora/spells. Testa: linha dupla, ponto alto desconectado, cobertura vs alcance.",
 "player_routes": {
 "0": {
 "fallback": "hero",
@@ -913,7 +913,7 @@ boards = Array[Dictionary]([{
 }])
 encounters = Array[Dictionary]([{
 "board_id": "ponte_estavel",
-"display_name": "Emboscada na Ponte",
+"display_name": "Operacao de Pouso",
 "id": "emboscada_na_ponte",
 "mode": "limpar_mesa",
 "reward_cards": ["lobo_alfa"],
@@ -929,19 +929,19 @@ encounters = Array[Dictionary]([{
 }]
 }, {
 "board_id": "duelo_tres_linhas",
-"display_name": "Duelista Bandido",
+"display_name": "Confronto com Guardiao",
 "enemy_deck": ["goblin_ponte", "goblin_ponte", "goblin_ponte", "ladrao_rapido", "ladrao_rapido", "faca_arremessada", "corvo_batedor", "corvo_batedor", "arqueiro_ponte", "arqueiro_ponte", "arqueiro_ponte", "barricada", "lobo_alfa", "lobo_alfa", "relampago", "relampago", "bruto_mercenario", "bruto_mercenario", "campeao_guilda", "dragao_jovem"],
 "id": "duelista_bandido",
 "mode": "duelo",
-"notes": "Deck agressivo e escalavel. Curva: 1-2 early pressure, 3 mid threats (atropelar, alcance, voadora), 3-4 removal (relampago instant, faca), 5-6 late threats (campeao, dragao voador). Exercita: voadora (corvo_batedor), rapido (ladrao, corvo), alcance (arqueiro), atropelar (lobo_alfa, dragao_jovem), magia instant (relampago), fisico_melee e fisico_alcance.",
+"notes": "Deck agressivo e escalavel. Curva: 1-2 early pressure, 3 mid threats (atropelar, alcance, voadora), 3-4 removal, 5-6 late threats. Exercita: voadora, rapido, alcance, atropelar, magia instant, fisico_melee e fisico_alcance.",
 "reward_cards": ["relampago", "flagelo"],
 "starting_enemy_slots": []
 }, {
 "board_id": "cruzamento_neutro",
-"display_name": "Emboscada no Cruzamento",
+"display_name": "Tomada do Conduto",
 "id": "emboscada_no_cruzamento",
 "mode": "limpar_mesa",
-"notes": "E3 (queimando): arqueiro sofre 1 de dano por upkeep, criando urgencia para o inimigo atacar rapido. E2 (corvo_batedor, voadora): nao pode ser atingido por fisico_melee, transparente para routing. Jogador precisa usar alcance, voadora propria ou magia para remover E2. N1 vazio e contestado. P2 (alto) ideal para Arqueira de Penhasco ou Balista.",
+"notes": "E3 (queimando): unidade sofre 1 de dano por upkeep, criando urgencia para atacar rapido. E2 (voadora): nao pode ser atingido por fisico_melee, transparente para routing. Jogador precisa usar alcance, voadora propria ou magia para remover E2. N1 vazio e contestado. P2 (alto) ideal para Atiradora Astral ou Condutor Astral.",
 "reward_cards": ["arqueira_voante", "torre_blindada"],
 "starting_enemy_slots": [{
 "card_id": "goblin_ponte",
@@ -955,10 +955,10 @@ encounters = Array[Dictionary]([{
 }]
 }, {
 "board_id": "muralha_desfiladeiro",
-"display_name": "Fortaleza do Desfiladeiro",
+"display_name": "Avanco ao Bastiao",
 "id": "fortaleza_do_desfiladeiro",
 "mode": "limpar_mesa",
-"notes": "ET (torre, alto) atira em todo o lado do jogador via alcance. P1/P3 cobertura reduz dano de ET em 1. EB1/EB2 vazios. Jogador precisa furar a frente E1-E3 (fallback_slots) ou usar alcance/voadora para snipe direto em ET.",
+"notes": "ET (alto) atira em todo o lado do jogador via alcance. P1/P3 cobertura reduz dano de ET em 1. EB1/EB2 vazios. Jogador precisa furar a frente E1-E3 (fallback_slots) ou usar alcance/voadora para atingir ET diretamente.",
 "reward_cards": ["dragao_jovem", "chamado_hostes"],
 "starting_enemy_slots": [{
 "card_id": "guardiao_portal",
@@ -975,10 +975,10 @@ encounters = Array[Dictionary]([{
 }]
 }, {
 "board_id": "ponte_estavel",
-"display_name": "Patrulha Avancada",
+"display_name": "Varredura Avancada",
 "id": "patrulha_avancada",
 "mode": "limpar_mesa",
-"notes": "E1 (lobo_alfa, atropelar 4/2): ameaca agressiva. E2 (corvo_batedor, voadora+rapido): imune a fisico_melee, entra pronto. E3 (arqueiro_ponte, alcance): pressao a distancia. Encontro de transicao entre duelo e boards complexos — tres keywords simultaneamente num board familiar.",
+"notes": "E1 (atropelar 4/2): ameaca agressiva. E2 (voadora+rapido): imune a fisico_melee, entra pronto. E3 (alcance): pressao a distancia. Encontro de transicao entre duelo e boards complexos, com tres keywords simultaneamente num board familiar.",
 "reward_cards": [],
 "starting_enemy_slots": [{
 "card_id": "lobo_alfa",
@@ -992,19 +992,19 @@ encounters = Array[Dictionary]([{
 }]
 }, {
 "board_id": "cruzamento_neutro",
-"display_name": "Duelista Sombrio",
+"display_name": "Guardiao do Conduto",
 "enemy_deck": ["goblin_ponte", "goblin_ponte", "ladrao_rapido", "ladrao_rapido", "corvo_batedor", "corvo_batedor", "corvo_batedor", "arqueiro_ponte", "arqueiro_ponte", "atirador_torre", "atirador_torre", "lobo_alfa", "lobo_alfa", "faca_arremessada", "faca_arremessada", "relampago", "bruto_mercenario", "bruto_mercenario", "campeao_guilda", "dragao_jovem"],
 "id": "duelista_sombrio",
 "mode": "duelo",
-"notes": "Segundo duelo no cruzamento_neutro. N1 disputado: quem controlar o slot central tem rotas adicionais. P2 (alto) alvo de atirador_torre inimigo. E3 (queimando): inimigo precisa mover criaturas de la ou toma 1/turno. Deck mais pesado: 3x corvo_batedor, 2x atirador_torre, dragao_jovem como finalizador.",
+"notes": "Segundo duelo no conduto. N1 disputado: quem controlar o slot central tem rotas adicionais. P2 (alto) alvo de sentinela inimiga. E3 (queimando): inimigo precisa mover criaturas de la ou toma 1/turno. Deck mais pesado com finalizador vulcanico.",
 "reward_cards": ["campeao_guilda"],
 "starting_enemy_slots": []
 }, {
 "board_id": "ponte_estavel",
-"display_name": "Emboscada com Reforcos",
+"display_name": "Contrataque Elemental",
 "id": "emboscada_reforcos",
 "mode": "limpar_mesa",
-"notes": "Variante dificil da emboscada_na_ponte. E1 (bruto_ponte 4/5): corpo grande, precisa de 2 ataques ou remocao. E2 (corvo_batedor, voadora): imune a melee. E3 (atirador_torre 2/4 alcance): pressiona qualquer slot do jogador. Sem heroi inimigo mas sem respiro.",
+"notes": "Variante dificil da operacao inicial. E1: corpo grande, precisa de 2 ataques ou remocao. E2 (voadora): imune a melee. E3 (alcance): pressiona qualquer slot do jogador. Sem heroi inimigo mas sem respiro.",
 "reward_cards": [],
 "starting_enemy_slots": [{
 "card_id": "bruto_ponte",
@@ -1018,10 +1018,10 @@ encounters = Array[Dictionary]([{
 }]
 }, {
 "board_id": "ponte_estavel",
-"display_name": "Invasao em Ondas",
+"display_name": "Ondas de Resistencia",
 "id": "invasao_em_ondas",
 "mode": "ondas",
-"notes": "Primeiro encontro do modo ondas. Duas ondas no board mais familiar. Onda 1: pressao leve, permite aquecer. Onda 2: composicao mais pesada com voadora e atropelar. HP do heroi, estado do deck e rampa de energia persistem entre ondas. Proximo turno apos limpar onda 1: spawn da onda 2. Desbloqueado apos patrulha_avancada (paralelo ao caminho principal).",
+"notes": "Primeiro encontro do modo ondas. Duas ondas no board mais familiar. Onda 1: pressao leve, permite aquecer. Onda 2: composicao mais pesada com voadora e atropelar. HP do heroi, estado do deck e rampa de energia persistem entre ondas. Proximo turno apos limpar onda 1: spawn da onda 2.",
 "reward_cards": ["chuva_brasas"],
 "waves": [{
 "starting_enemy_slots": [{
@@ -1051,7 +1051,7 @@ encounters = Array[Dictionary]([{
 }, {
 "board_id": "muralha_desfiladeiro",
 "defense_turn_limit": 2.0,
-"display_name": "Defesa do Portao",
+"display_name": "Defesa da Base de Ether",
 "id": "defesa_do_portao",
 "mode": "defesa",
 "notes": "Primeiro encontro do modo defesa. O objetivo e sobreviver a dois turnos inimigos completos, sem heroi inimigo e sem vitoria automatica por limpar a mesa. O jogador conserva o fluxo normal de mao, deck e energia enquanto segura a pressao inicial.",
@@ -1069,7 +1069,7 @@ encounters = Array[Dictionary]([{
 }, {
 "board_id": "muralha_desfiladeiro",
 "boss_part_slots": [0.0, 2.0, 5.0],
-"display_name": "Colosso Fragmentado",
+"display_name": "Nucleo Fragmentado",
 "id": "colosso_fragmentado",
 "mode": "chefe_multiparte",
 "notes": "Primeiro encontro do modo chefe_multiparte. O objetivo e destruir as partes marcadas do chefe: E1, E3 e ET. Suportes inimigos podem permanecer vivos; a vitoria nao exige limpar toda a mesa.",
@@ -1089,7 +1089,7 @@ encounters = Array[Dictionary]([{
 }]
 }, {
 "board_id": "ponte_estavel",
-"display_name": "Enigma da Ponte",
+"display_name": "Ruptura de Selos",
 "id": "enigma_da_ponte",
 "mode": "quebra_cabeca",
 "notes": "Primeiro encontro do modo quebra_cabeca. O objetivo e limpar os alvos E1 e E3 em ate dois turnos do jogador. O suporte em E2 pode permanecer vivo; a vitoria nao exige limpar toda a mesa.",

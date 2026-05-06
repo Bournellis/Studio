@@ -64,7 +64,8 @@
 
 - All currently documented official battle modes are implemented.
 - Broader RPG progression remains pending.
+- Draxos lore alignment is documented, but runtime content names still need controlled migration from placeholders.
 
 ## Next
 
-Choose the next controlled content/progression expansion after the official battle mode set.
+Choose the first controlled lore/content migration pass after the official battle mode set.

@@ -20,4 +20,5 @@
 - Historical Validation Cycle: `phase-g1/` through `phase-g4/` are closed validation records, not the active workstream
 - Historical Archive: `../../migration/` preserves cutover and comparison context only
 - Product Direction Note: `Release direction is campaign PvE first; Classic is the main authored progression path; Free is replay/buildcraft after Classic; co-op is optional for Release 1 only if it preserves the solo baseline; Private Duel / Arena PvP is experimental or development-only until a future gate promotes or removes it`
+- Lore Note: `Imortais is the player-facing replacement for the old Heroic/Heroico placeholder; detailed Imortais campaign lore is pending and must be sourced from canon/lore/immortals.md before expansion`
 - Next Gate: `TBD - choose an explicit next gate before implementation`
