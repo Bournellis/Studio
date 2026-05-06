@@ -1,157 +1,97 @@
 # Thread Cheat Sheet
 
-This is the short version of the Codex workflow guide for day-to-day thread opening.
+Versao curta para abrir threads em `D:\Estudio`.
 
-Use this file when you want the fastest way to choose the right thread format and opening prompt.
+## Starter Padrao
 
-For the full explanation, see `materiais/guides/codex-workflow-guide.md`.
+```text
+Projeto: {rpg-isometrico | rpg-turnos | estudio}
+Tipo: {Quick | Implementation | Review | Planning | Gate | Canon | Historical}
+Objetivo: {uma frase}
+Rota: {Fast Lane | Deep Route}
+Escopo: {arquivos/pastas ou "a definir pela rota"}
+Regra: {sem canon changes | pode atualizar docs | review only}
+Validacao: {validate.gd/GUT conforme risco | docs only}
+```
 
 ## Quick
 
-Use when:
-- small bugfix
-- local adjustment
-- short follow-up on the same problem
-
-Thread rule:
-- usually keep the same thread if the goal and touched files are still the same
-
-Prompt:
+Use para bugfix pequeno ou ajuste local.
 
 ```text
+Projeto: rpg-turnos
 Tipo: Quick
 Objetivo: corrigir {bug curto}
-Rota: bounded read order; sem mudancas de canon
+Rota: Fast Lane; sem mudancas de canon
+Escopo: Projetos/rpg-turnos/{pasta}
+Validacao: docs only ou validate.gd conforme risco
 ```
 
 ## Review
 
-Use when:
-- you want risk and regression analysis only
-- you do not want code changes yet
-
-Thread rule:
-- usually open a new thread if you are switching from implementation to review
-
-Prompt:
+Use quando quiser analise de risco sem implementacao.
 
 ```text
+Projeto: rpg-isometrico
 Tipo: Review
 Objetivo: revisar {arquivos/tema}
-Rota: bounded read order; nao implemente nada ainda
+Rota: Fast Lane
+Regra: nao implemente nada ainda
 ```
 
 ## Implementation
 
-Use when:
-- bounded implementation
-- local feature or fix
-- the task still fits inside the active surface without redefining canon
-
-Thread rule:
-- keep the same thread if it is still the same package of work
-
-Prompt:
+Use para feature ou fix local.
 
 ```text
+Projeto: {rpg-isometrico | rpg-turnos}
 Tipo: Implementation
 Objetivo: implementar {feature/fix}
-Rota: bounded read order se seguro; sem canon change sem me avisar
-Validacao: validate.gd + GUT conforme o risco
+Rota: Fast Lane se seguro; sem canon change sem avisar
+Escopo: Projetos/{projeto}/{pasta}
+Validacao: validate.gd/GUT conforme risco
 ```
 
-## Gate
+## Planning Ou Gate
 
-Use when:
-- gate planning
-- active slice execution
-- operational status or next implementation package
-
-Thread rule:
-- usually open a new thread
-
-Prompt:
+Use para planejar proxima fatia de trabalho, track ou gate.
 
 ```text
-Tipo: Gate
-Objetivo: planejar/executar {gate ou slice}
-Rota: deep route + active track/gate
+Projeto: {rpg-isometrico | rpg-turnos}
+Tipo: Planning
+Objetivo: planejar {gate/slice/proxima etapa}
+Rota: Deep Route do projeto + status da track ativa
+Regra: atualizar docs operacionais se o estado mudar
 ```
 
 ## Canon
 
-Use when:
-- product rule changes
-- architecture changes
-- networking or persistence rule changes
-- platform or workflow changes
-
-Thread rule:
-- always open a new thread
-
-Prompt:
+Use para produto, arquitetura, plataforma, progressao ou lore compartilhada.
 
 ```text
+Projeto: estudio
 Tipo: Canon
-Objetivo: atualizar/decidir {regra}
-Rota: leia a rota canonica completa; pode atualizar docs
+Objetivo: atualizar/decidir {regra compartilhada}
+Rota: Deep Route conforme AGENTS.md
+Regra: pode atualizar canon e snapshots afetados
 ```
 
 ## Historical
 
-Use when:
-- historical lookup
-- closed phase research
-- comparing old behavior without treating it as active canon
-
-Thread rule:
-- usually open a new thread unless the active task explicitly depends on the lookup
-
-Prompt:
+Use para pesquisar historico sem tratar como verdade atual.
 
 ```text
+Projeto: {rpg-isometrico | rpg-turnos | estudio}
 Tipo: Historical
 Objetivo: consultar {tema historico}
-Rota: bounded read order + caminhos historicos explicitos; nao tratar como canon atual
+Rota: Fast Lane + caminhos historicos explicitos
+Regra: nao tratar historico como canon atual
 ```
 
-## The 5-Line Starter
+## Regras Rapidas
 
-This is the default opening structure for almost every new thread:
-
-```text
-Tipo: {Quick/Review/Implementation/Gate/Canon/Historical}
-Objetivo: {uma frase}
-Rota: {bounded read order / deep route}
-Escopo: {arquivos ou pastas}
-Regra: {sem canon changes / pode atualizar canon} + {validacao esperada}
-```
-
-## Execution Rule
-
-For active implementation threads on the Godot surface:
-
-- read `D:\Estudio\AGENTS.md`
-- read `D:\Estudio\Projetos\rpg-isometrico\AGENTS.md`
-- read `D:\Estudio\Projetos\rpg-isometrico\implementation\current-status.md`
-- read the active track status, implementation map, and active gate only when `implementation/current-status.md` names one
-- update active operational docs and `implementation/execution-log.md` when state or handoff context changes
-- do not treat the thread as finished until validation status and operational state are clear
-
-## Good Example
-
-```text
-Tipo: Implementation
-Objetivo: ajustar copy e resultado do slice ativo selecionado
-Rota: bounded read order se seguro
-Escopo: Projetos/rpg-isometrico/modes/frontend/ e Projetos/rpg-isometrico/presentation/results/
-Regra: sem mudancas de canon; valide com validate.gd + GUT se tocar runtime/testes
-```
-
-## Quick Rule Of Thumb
-
-- If you can describe the task in one sentence and point to a small file set, use the bounded route.
-- If you need to redefine the problem before coding, open a new thread and use the deep route.
-- If the work changes nature, open a new thread instead of dragging the old one.
-- If you are unsure, start from `D:\Estudio\AGENTS.md` and `implementation/current-status.md`.
-- Use normal `rg` for active-surface searches; use explicit paths or `rg --no-ignore` only when historical material is intentionally needed.
+- Escolha o projeto antes de ler fundo.
+- Use `Estado_Atual.md` como snapshot do estudio.
+- Use `implementation/current-status.md` como snapshot do projeto.
+- Nao misture mecanicas entre projetos sem adocao local explicita.
+- Se a pergunta muda de projeto ou de natureza, abra uma nova thread.

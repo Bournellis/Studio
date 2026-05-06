@@ -1,10 +1,12 @@
 # Unity Legacy Surface
 
-This guide records Unity paths that are still important to the project but no longer reflect current naming canon.
+This guide records Unity paths that are still important to RPG Isometrico history but no longer reflect current naming canon.
 
 ## Purpose
 
-The active project now lives in `D:\Estudio\Projetos\rpg-isometrico` as a Godot implementation. Track 02 is the active operational line unless `implementation/current-status.md` says otherwise, and the canonical loadout has no passives.
+For RPG Isometrico, the active project now lives in `D:\Estudio\Projetos\rpg-isometrico` as a Godot implementation. Track 02 is the active operational line unless `implementation/current-status.md` says otherwise, and the canonical loadout has no passives.
+
+This is not a studio-wide routing guide. For general `D:\Estudio` work, start with `AGENTS.md`, `Projetos/README.md`, and `08_Coordenacao_Agentes/Estado_Atual.md`.
 
 Some Unity paths still carry older names because they are referenced by:
 - `Resources.Load(...)`

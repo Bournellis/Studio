@@ -9,15 +9,17 @@ This file governs agent behavior for the `D:\Estudio` workspace.
 - `Projetos/rpg-turnos/` is the initial Godot implementation workspace for a provisional turn-based RPG-cardgame that may share studio lore but owns separate mechanics.
 - `migration/` is a historical archive for cutover, relocation, and legacy comparison context.
 - `08_Coordenacao_Agentes/` is the coordination hub: Kanban, Handoffs, Decisoes, and the Estado_Atual.
+- `Projetos/README.md` is the lightweight project registry for active and emerging projects.
 
 ## Read Order — Fast Lane (trabalho delimitado)
 
 Para tarefas localizadas num unico projeto ou area (ex: corrigir bug, implementar feature isolada, ajustar documento), comece com:
 
 1. `canon/canon-brief.md`
-2. `08_Coordenacao_Agentes/Estado_Atual.md` (secao do projeto relevante)
-3. A tarefa ativa em `08_Coordenacao_Agentes/Kanban/Doing/`, se existir
-4. O `AGENTS.md` local do projeto Godot, se entrar no codigo
+2. `Projetos/README.md` (registro leve dos projetos)
+3. `08_Coordenacao_Agentes/Estado_Atual.md` (secao do projeto relevante)
+4. A tarefa ativa em `08_Coordenacao_Agentes/Kanban/Doing/`, se existir
+5. O `AGENTS.md` local do projeto Godot, se entrar no codigo
 
 Escale para a ordem completa imediatamente se:
 - a tarefa afetar mais de um projeto ou a direcao do canon;
@@ -56,9 +58,12 @@ Projetos Godot ativos:
 
 Ao entrar num projeto Godot:
 1. Consulte o canon compartilhado primeiro
-2. Consulte `implementation/current-status.md` do projeto
-3. Consulte o `AGENTS.md` local do projeto Godot e a track ativa em `implementation/tracks/`
-4. Consulte docs de validacao historica apenas quando responderem uma pergunta especifica
+2. Consulte `Projetos/README.md` para confirmar o registro do projeto
+3. Consulte `implementation/current-status.md` do projeto
+4. Consulte o `AGENTS.md` local do projeto Godot e a track ativa em `implementation/tracks/`
+5. Consulte docs de validacao historica apenas quando responderem uma pergunta especifica
+
+Um projeto futuro em `Projetos/` so deve ser tratado como oficial quando tiver `AGENTS.md`, `implementation/current-status.md`, entrada em `Projetos/README.md`, e entrada resumida em `08_Coordenacao_Agentes/Estado_Atual.md`.
 
 Use caminhos relativos ao referenciar o canon compartilhado de dentro de um projeto Godot.
 Versao esperada do Godot: ver `.godot-version` na raiz deste workspace.

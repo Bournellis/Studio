@@ -1,88 +1,137 @@
 # Direct Thread Templates
 
-This file is the most direct copy-paste set for opening new Codex threads on the active Godot surface.
+Templates diretos para abrir threads em `D:\Estudio`.
 
-Use this when you already know the active track or gate and want the shortest prompt that still preserves execution discipline.
+## Regra Global
 
-## Global Rule For Active Godot Threads
+Toda thread deve declarar:
 
-Every active implementation thread should:
+- `Projeto`
+- `Tipo`
+- `Objetivo`
+- `Rota`
+- `Escopo`
+- `Regra`
+- `Validacao`
 
-- read `D:\Estudio\AGENTS.md`
-- read `D:\Estudio\Projetos\rpg-isometrico\AGENTS.md`
-- read `D:\Estudio\Projetos\rpg-isometrico\implementation\current-status.md`
-- read the active track status and implementation map
-- read the active gate named by `implementation/current-status.md` only when one is explicitly selected
-- implement end-to-end when the request is implementation work
-- update `implementation/current-status.md`, active track docs, relevant gate docs, and `implementation/execution-log.md` when operational state changes
-- run or preserve `validate.gd + GUT` when code changes
+Comece por `D:\Estudio\AGENTS.md`, `D:\Estudio\Projetos\README.md` e a secao relevante de `D:\Estudio\08_Coordenacao_Agentes\Estado_Atual.md`.
 
-## Generic Direct Template
+## Implementacao Em RPG Isometrico
 
 ```text
-Execute {TASK_OR_GATE_SLICE} em D:\Estudio\Projetos\rpg-isometrico.
+Projeto: rpg-isometrico
+Tipo: Implementation
+Objetivo: executar {TASK_OR_GATE_SLICE}.
+Rota: Fast Lane se seguro; use Deep Route se tocar canon, gate, arquitetura ou plataforma.
+Escopo:
+- D:\Estudio\Projetos\rpg-isometrico\{pasta}
+Regra:
+- sem canon changes sem avisar
+- nao consultar fases historicas salvo necessidade explicita
+Validacao:
+- rode ou preserve D:\Estudio\Projetos\rpg-isometrico\tools\validate.gd + GUT conforme risco
 
 Leia e siga:
 - D:\Estudio\AGENTS.md
+- D:\Estudio\Projetos\README.md
+- D:\Estudio\08_Coordenacao_Agentes\Estado_Atual.md
 - D:\Estudio\Projetos\rpg-isometrico\AGENTS.md
 - D:\Estudio\Projetos\rpg-isometrico\implementation\current-status.md
-- D:\Estudio\Projetos\rpg-isometrico\implementation\tracks\track-02-canonical-product-foundation\current-status.md
-- D:\Estudio\Projetos\rpg-isometrico\implementation\tracks\track-02-canonical-product-foundation\implementation-map.md
-- o gate ativo indicado por implementation/current-status.md, se houver um gate explicitamente selecionado
-- D:\Estudio\Projetos\rpg-isometrico\docs\validation.md
-
-Implemente end-to-end agora.
-Nada de so planejar.
-Atualize os arquivos operacionais se o estado mudar.
-Rode validate.gd + GUT quando tocar runtime/testes.
-No final: mudancas, validacao, pendencias.
+- track ativa e gate ativo somente se o status nomear um
 ```
 
-## F11-E Extra Mode Framing (Completed Reference)
-
-F11-E is complete. Use this block only for historical review or regression context, not as a current implementation template.
+## Implementacao Em RPG Turnos
 
 ```text
-Revise a slice F11-E concluida em D:\Estudio\Projetos\rpg-isometrico:
-D:\Estudio\Projetos\rpg-isometrico\implementation\tracks\track-02-canonical-product-foundation\gates\gate-f11-campaign-first-runtime-alignment.md
+Projeto: rpg-turnos
+Tipo: Implementation
+Objetivo: executar {TASK_OR_CONTENT_SLICE}.
+Rota: Fast Lane se seguro; use Deep Route se tocar lore ampla, arquitetura ou progressao.
+Escopo:
+- D:\Estudio\Projetos\rpg-turnos\{pasta}
+Regra:
+- nao importar mecanicas do RPG Isometrico sem doc local adotando
+- sem canon changes sem avisar
+Validacao:
+- rode ou preserve D:\Estudio\Projetos\rpg-turnos\tools\validate.gd conforme risco
 
 Leia e siga:
 - D:\Estudio\AGENTS.md
-- D:\Estudio\Projetos\rpg-isometrico\AGENTS.md
-- D:\Estudio\Projetos\rpg-isometrico\implementation\current-status.md
-- D:\Estudio\Projetos\rpg-isometrico\implementation\tracks\track-02-canonical-product-foundation\current-status.md
-- D:\Estudio\Projetos\rpg-isometrico\implementation\tracks\track-02-canonical-product-foundation\implementation-map.md
-- D:\Estudio\Projetos\rpg-isometrico\implementation\tracks\track-02-canonical-product-foundation\gates\gate-f11-campaign-first-runtime-alignment.md
-- D:\Estudio\Projetos\rpg-isometrico\docs\validation.md
-
-Foque em Survival como desafio de resistencia, Boss como pratica de dominio/execucao, e Arena Bot como treino/teste de kit.
-Nao promova PvP, matchmaking, ranked, co-op, Steam lobby, nova raca, nova arma ou Hard route.
-Nao implemente runtime a partir deste template historico.
-Use para revisar regressao ou entender contexto F11-E ja concluido.
-No final: observacoes, riscos e arquivos que precisariam de novo gate se houver mudanca futura.
+- D:\Estudio\Projetos\README.md
+- D:\Estudio\08_Coordenacao_Agentes\Estado_Atual.md
+- D:\Estudio\Projetos\rpg-turnos\AGENTS.md
+- D:\Estudio\Projetos\rpg-turnos\implementation\current-status.md
+- track ativa e arquivos tocados
 ```
 
-## Canon / Operational Alignment Audit
+## Review
 
 ```text
-Tipo: Canon + Operational audit
-Objetivo: revisar skill, AGENTS.md, guias de thread e docs operacionais para remover contradicoes com o projeto atual.
+Projeto: {rpg-isometrico | rpg-turnos}
+Tipo: Review
+Objetivo: revisar {tema/arquivos} procurando regressao, risco e testes faltantes.
+Rota: Fast Lane.
+Escopo:
+- D:\Estudio\Projetos\{projeto}\{pasta}
+Regra:
+- nao implemente ainda
+- reporte findings primeiro
+Validacao:
+- leitura e analise; nao rode runtime salvo necessidade clara
+```
 
-Leia e siga:
+## Canon / Estudio
+
+```text
+Projeto: estudio
+Tipo: Canon
+Objetivo: decidir ou atualizar {regra compartilhada}.
+Rota: Deep Route conforme D:\Estudio\AGENTS.md.
+Escopo:
+- D:\Estudio\canon\
+- D:\Estudio\08_Coordenacao_Agentes\
+- projetos afetados explicitamente
+Regra:
+- canon compartilhado vence historico
+- atualize snapshots operacionais afetados
+Validacao:
+- auditoria por rg e revisao de consistencia documental
+```
+
+## Historical
+
+```text
+Projeto: {rpg-isometrico | rpg-turnos | estudio}
+Tipo: Historical
+Objetivo: consultar {tema historico}.
+Rota: Fast Lane + caminhos historicos explicitos.
+Escopo:
+- D:\Estudio\migration\
+- outros caminhos historicos necessarios
+Regra:
+- nao tratar historico como canon atual
+- nao alterar runtime a partir de registro historico
+Validacao:
+- resumo com fontes consultadas
+```
+
+## Auditoria Operacional
+
+```text
+Projeto: estudio
+Tipo: Operational audit
+Objetivo: revisar skills, AGENTS.md, CLAUDE.md, guias e status para evitar leitura excessiva e contradicoes entre projetos.
+Rota: Deep Route documental.
+Escopo:
 - D:\Estudio\AGENTS.md
-- D:\Estudio\canon\product\product-vision.md
-- D:\Estudio\canon\design\game-design-document.md
-- D:\Estudio\canon\design\progression-design.md
-- D:\Estudio\canon\architecture\shared-architecture.md
-- D:\Estudio\canon\architecture\game-mode-standard.md
-- D:\Estudio\canon\roadmap\evolution-roadmap.md
-- D:\Estudio\canon\roadmap\release-horizons.md
-- D:\Estudio\canon\platform\steam-platform.md
-- D:\Estudio\Projetos\rpg-isometrico\AGENTS.md
-- D:\Estudio\Projetos\rpg-isometrico\implementation\current-status.md
-
-Verifique referencias antigas a Unity, D:\RPG Isometrico, Phase 1, Phase 7, Assets/Game, Execution Script, passives, weapon swap, PvP publico, ranked, matchmaking e dedicated servers.
-Corrija docs ativos; preserve arquivos historicos apenas quando estiverem claramente marcados como historicos.
-Use rg normal para a superficie ativa; use caminhos explicitos ou rg --no-ignore somente quando a auditoria precisar incluir historico.
-No final: arquivos alterados, contradicoes encontradas, pendencias.
+- D:\Estudio\CLAUDE.md
+- D:\Estudio\Projetos\README.md
+- D:\Estudio\08_Coordenacao_Agentes\Estado_Atual.md
+- C:\Users\Fabio\.codex\skills\
+Regra:
+- nao tocar runtime Godot
+- preservar fronteiras entre projetos
+Validacao:
+- quick_validate.py nas skills afetadas
+- rg para referencias antigas ou contraditorias
 ```

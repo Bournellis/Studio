@@ -1,179 +1,138 @@
 # Codex Workflow Guide
 
-This guide explains how to work with Codex efficiently in the `D:\Estudio` workspace, with special attention to thread hygiene and keeping the active Godot project aligned with shared canon.
+Este guia explica como abrir e conduzir threads do Codex em `D:\Estudio` sem ler contexto demais. O workspace agora e multi-projeto: escolha o projeto antes de seguir docs profundas.
 
-## Core Model
+## Modelo Central
 
-- Codex is the primary implementation and canon-maintenance agent.
-- `canon/` is the shared source of truth for product identity, gameplay contracts, architecture, roadmap, and platform direction.
-- `Projetos/rpg-isometrico/` is the active Godot implementation surface.
-- Track 02 is the active operational line unless `Projetos/rpg-isometrico/implementation/current-status.md` says otherwise.
-- The current gate is whichever gate is named by `implementation/current-status.md`; if it says `TBD`, no implementation gate is active yet.
-- `phase-g1/` through `phase-g4/` are closed Godot validation history, not the active workstream.
-- `migration/` and external Unity material are historical context only.
+- `AGENTS.md` na raiz governa o workspace.
+- `Projetos/README.md` e o registro leve de projetos.
+- `08_Coordenacao_Agentes/Estado_Atual.md` e o snapshot vivo do estudio.
+- `canon/` e a fonte compartilhada de produto, arquitetura, plataforma, progressao e lore.
+- Cada projeto oficial em `Projetos/` precisa ter `AGENTS.md` e `implementation/current-status.md`.
 
-## When To Keep The Same Thread
+Projetos ativos:
 
-Keep the same thread when:
-- you are continuing the same bounded task
-- the same files or module slice are still in play
-- you are fixing regressions discovered from the work that just happened
-- the current thread still reflects the same active track goal and validation context
-- the follow-up depends heavily on the conversation that already happened
+- `Projetos/rpg-isometrico/`: RPG de acao isometrico campaign-first.
+- `Projetos/rpg-turnos/`: RPG-cardgame por turnos, independente em mecanicas, com lore compartilhada quando adotada.
 
-Good examples:
-- "The same loadout bug still exists in one more screen. Continue."
-- "The validation failed after this runtime change. Fix it."
-- "Keep going on the currently selected gate slice."
+## Entrada Padrao
 
-## When To Open A New Thread
+Use esta ordem para quase toda thread:
 
-Open a new thread when:
-- the goal changes materially
-- you switch from implementation to review or planning
-- you move from local code work to canon or architecture work
-- the current thread has become noisy, stale, or mixed with unrelated concerns
-- you want a historical investigation that should not pollute active-track context
-- a previous task is complete and you are starting a new bounded unit of work
+1. `D:\Estudio\AGENTS.md`
+2. `D:\Estudio\Projetos\README.md`
+3. secao relevante de `D:\Estudio\08_Coordenacao_Agentes\Estado_Atual.md`
+4. `AGENTS.md` do projeto alvo, se houver projeto alvo
+5. `implementation/current-status.md` do projeto alvo
+6. track ativa e arquivos tocados
 
-Good examples:
-- finish a bugfix thread, then open a new thread for a design review
-- finish a runtime slice, then open a new thread to review the next gate
-- open a separate thread for historical G3/G4 research
+Nao abra docs de outro projeto para uma tarefa local, salvo quando a pergunta pedir comparacao ou reuso explicito.
 
-## Best Way To Start A Thread
+## Quando Usar Fast Lane
 
-The best opening message is short, explicit, and scoped.
+Use Fast Lane quando:
 
-Always try to include:
-- the goal
-- whether this is implementation, review, planning, canon, or historical work
-- whether Codex may use the bounded read order if safe
-- files or folders already known to matter
-- validation expectations
-- whether canon changes are allowed
+- a tarefa e local a um projeto ou area;
+- nao muda canon;
+- nao decide arquitetura, plataforma, produto ou progressao compartilhada;
+- os arquivos tocados sao previsiveis.
 
-## Recommended Opening Patterns
-
-### 1. Bounded implementation
+Prompt base:
 
 ```text
+Projeto: {rpg-isometrico | rpg-turnos | estudio}
+Tipo: {Quick | Implementation | Review}
+Objetivo: {uma frase}
+Rota: Fast Lane se seguro; sem mudancas de canon
+Escopo: {arquivos ou pastas}
+Validacao: {validate.gd/GUT conforme risco | docs only}
+```
+
+## Quando Usar Deep Route
+
+Use Deep Route quando:
+
+- a tarefa afeta mais de um projeto;
+- muda canon, arquitetura, plataforma, produto, progressao ou lore compartilhada;
+- define track, gate, roadmap ou padrao futuro;
+- depende de contexto historico amplo.
+
+Prompt base:
+
+```text
+Projeto: {estudio | projeto alvo}
+Tipo: {Canon | Architecture | Gate | Planning | Historical}
+Objetivo: {decisao ou investigacao}
+Rota: Deep Route conforme AGENTS.md
+Regra: pode atualizar docs operacionais; canon apenas se necessario e explicito
+```
+
+## Exemplos Por Projeto
+
+### RPG Isometrico
+
+```text
+Projeto: rpg-isometrico
 Tipo: Implementation
-Objetivo: corrigir {bug curto} na superficie ativa de Godot.
-Rota: bounded read order se seguro; sem canon changes.
-Escopo:
-- Projetos/rpg-isometrico/modes/frontend/
-- Projetos/rpg-isometrico/presentation/results/
-Validacao: rode ou preserve validate.gd + GUT conforme o risco da mudanca.
+Objetivo: corrigir {bug} na superficie ativa.
+Rota: Fast Lane se seguro; sem canon changes.
+Escopo: Projetos/rpg-isometrico/{pasta}
+Validacao: preserve ou rode tools/validate.gd + GUT conforme risco.
 ```
 
-### 2. Review
+### RPG Turnos
 
 ```text
-Tipo: Review
-Objetivo: revisar regressao e risco em {arquivos/tema}.
-Rota: bounded read order.
-Regra: nao implemente ainda.
-Escopo:
-- Projetos/rpg-isometrico/modes/campaign/
-- Projetos/rpg-isometrico/tests/unit/
+Projeto: rpg-turnos
+Tipo: Implementation
+Objetivo: implementar {feature/fix} no cardgame.
+Rota: Fast Lane se seguro; nao importar mecanicas do isometrico.
+Escopo: Projetos/rpg-turnos/{pasta}
+Validacao: preserve ou rode tools/validate.gd conforme risco.
 ```
 
-### 3. Canon or architecture update
+### Estudio / Canon
 
 ```text
+Projeto: estudio
 Tipo: Canon
-Objetivo: atualizar/decidir {regra de produto, arquitetura, progressao ou plataforma}.
-Rota: leia a rota canonica completa.
-Regra: pode atualizar canon e os arquivos operacionais necessarios.
+Objetivo: decidir {regra compartilhada}.
+Rota: Deep Route conforme AGENTS.md.
+Regra: atualizar canon e snapshots operacionais afetados.
 ```
 
-### 4. Track or gate planning
+## Thread Hygiene
 
-```text
-Tipo: Gate
-Objetivo: planejar ou revisar {gate/slice} da Track 02.
-Rota: leia canon, implementation/current-status.md, current-status da track, implementation-map e o gate ativo se houver um nomeado.
-Regra: atualize docs operacionais se o estado mudar.
-```
+Mantenha a mesma thread quando:
 
-### 5. Historical lookup
+- e a mesma tarefa delimitada;
+- os mesmos arquivos seguem em jogo;
+- voce esta corrigindo falha da validacao da mudanca atual.
 
-```text
-Tipo: Historical
-Objetivo: consultar {tema historico}.
-Rota: bounded read order + caminhos historicos explicitos.
-Regra: nao tratar historico como canon atual.
-Paths:
-- migration/
-- Projetos/rpg-isometrico/implementation/phase-g4/
-```
+Abra nova thread quando:
 
-## Bounded Route Vs Deep Route
+- mudar de projeto;
+- mudar de implementation para review/planning/canon;
+- a thread ficou misturada com assuntos sem relacao;
+- a pergunta for historica e nao deve poluir uma tarefa ativa.
 
-Use the bounded route when the task is local, clear, and not changing canon.
+## Como Manter Baixo O Custo De Contexto
 
-Use the deep route when the task involves:
-- product identity
-- architecture boundaries
-- shared contracts
-- progression
-- networking or persistence rules
-- platform rules
-- track or gate planning
-- ambiguous multi-system changes
+- Diga o projeto alvo no inicio.
+- Diga `Fast Lane` quando a tarefa for local.
+- Diga `sem canon changes` quando for implementacao.
+- Aponte arquivos ou pastas quando souber.
+- Use `historical` e caminhos explicitos quando quiser historia.
+- Nao peça analise do workspace inteiro se a tarefa cabe em um projeto.
 
-## Canonical Read Routes
+## Sidecar Agents
 
-For substantial work, follow `D:\Estudio\AGENTS.md`.
+Claude ou outro agente deve ser consultivo e delimitado:
 
-For bounded work, start with:
+- entregue projeto, tipo, objetivo e escopo;
+- mantenha decisoes de canon, status operacional e validacao centralizadas;
+- integre conclusoes aceitas de volta nos arquivos do workspace.
 
-1. `canon/canon-brief.md`
-2. `Projetos/rpg-isometrico/AGENTS.md`
-3. `Projetos/rpg-isometrico/implementation/current-status.md`
-4. the touched files
+## Atualizacao De Estado
 
-For active Track 02 work, also read:
-
-1. `Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/current-status.md`
-2. `Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/implementation-map.md`
-3. the active gate named by `implementation/current-status.md`, only when one is explicitly selected
-4. `Projetos/rpg-isometrico/docs/validation.md`
-
-## How To Keep Token Cost Low
-
-- Ask for one main goal per thread.
-- Point to exact files or folders whenever you already know them.
-- Say "no canon changes" when the task is implementation-only.
-- Say "review only" when you do not want code changes yet.
-- Do not ask for whole-project analysis unless you really want whole-project analysis.
-- Use the bounded route for local work.
-- Use historical paths explicitly instead of letting searches wander through closed phases.
-- Rely on `.rgignore` for normal active-surface searches, and use explicit paths or `rg --no-ignore` only when you intentionally need history.
-
-## Working With Sidecar Agents
-
-If you want another model or agent to help, keep it advisory and bounded.
-
-Best practice:
-- let Codex remain the main execution thread
-- give the sidecar only the specific files and question needed
-- keep canon, active track scope, and validation decisions in Codex
-- integrate accepted conclusions back into repo files through Codex
-
-## Operational Reminders
-
-- `canon/` is shared canon.
-- `Projetos/rpg-isometrico/implementation/current-status.md` is the active operational hub.
-- `implementation/tracks/` is the active work area.
-- `implementation/phase-g1/` through `phase-g4/` are historical validation records.
-- `tools/validate.gd` plus GUT are the Godot validation baseline.
-- If operational state changes, update the active status, active track, relevant gate, and execution log as appropriate.
-- If canon changes, update the canonical docs explicitly.
-
-## Practical Rule Of Thumb
-
-If you can describe the task in one sentence and point to a small file set, keep the thread and use the bounded route.
-
-If you need to redefine the problem before coding, open a new thread and use the deep route.
+Atualize `Estado_Atual.md` ou `implementation/current-status.md` somente quando mudar status observavel, track ativa, baseline ou proximo passo. Detalhes longos devem ir para Kanban Done, Handoffs, Decisoes ou registros de track.
