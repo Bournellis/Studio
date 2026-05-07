@@ -1,10 +1,10 @@
 {
   "default_encounter_id": "pouso_elemental",
   "player_hero": {
-    "id": "novato_draxos",
-    "display_name": "Novato Draxos",
+    "id": "comandante_draxos",
+    "display_name": "Comandante Draxos",
     "max_health": 30,
-    "hero_power_text": "Poder heroico pendente: sera recalibrado para o novo cardgame."
+    "hero_power_text": "Comando de classe pendente: sera definido em sessao de design."
   },
   "enemy_hero": {
     "id": "guardiao_elemental",
@@ -57,25 +57,57 @@
       "id": "pouso_elemental",
       "display_name": "Pouso Elemental",
       "mode": "limpar_mesa",
+      "tier": "small",
+      "enemy_director": "prefilled_board",
       "player_slots_count": 3,
       "enemy_slots_count": 3,
-      "duration_target": "short"
+      "duration_target": "short",
+      "soul_reward": {
+        "min": 4,
+        "max": 6
+      }
+    },
+    {
+      "id": "incursao_lateral",
+      "display_name": "Incursao Lateral",
+      "mode": "ondas",
+      "tier": "elite_optional",
+      "enemy_director": "waves",
+      "player_slots_count": 4,
+      "enemy_slots_count": 4,
+      "duration_target": "optional",
+      "soul_reward": {
+        "min": 11,
+        "max": 16
+      }
     },
     {
       "id": "guardiao_do_conduto",
       "display_name": "Guardiao do Conduto",
       "mode": "duelo",
+      "tier": "medium",
+      "enemy_director": "player_like",
       "player_slots_count": 4,
       "enemy_slots_count": 4,
-      "duration_target": "major"
+      "duration_target": "major",
+      "soul_reward": {
+        "min": 7,
+        "max": 10
+      }
     },
     {
       "id": "chefe_invocador",
       "display_name": "Chefe Invocador",
       "mode": "chefe_summoner",
+      "tier": "boss",
+      "enemy_director": "scripted_boss",
       "player_slots_count": 5,
       "enemy_slots_count": 5,
-      "duration_target": "boss"
+      "duration_target": "boss",
+      "soul_reward": {
+        "min": 18,
+        "max": 25
+      }
     }
   ],
   "run_map": {
@@ -88,6 +120,47 @@
       "evento",
       "descanso",
       "chefe"
+    ],
+    "nodes": [
+      {
+        "id": "n01_pouso_elemental",
+        "kind": "mainline",
+        "encounter_id": "pouso_elemental",
+        "available_after": [],
+        "unlocks": [
+          "s01_incursao_lateral",
+          "n02_guardiao_do_conduto"
+        ]
+      },
+      {
+        "id": "s01_incursao_lateral",
+        "kind": "sidequest",
+        "encounter_id": "incursao_lateral",
+        "available_after": [
+          "n01_pouso_elemental"
+        ],
+        "unlocks": []
+      },
+      {
+        "id": "n02_guardiao_do_conduto",
+        "kind": "mainline",
+        "encounter_id": "guardiao_do_conduto",
+        "available_after": [
+          "n01_pouso_elemental"
+        ],
+        "unlocks": [
+          "n03_chefe_invocador"
+        ]
+      },
+      {
+        "id": "n03_chefe_invocador",
+        "kind": "mainline",
+        "encounter_id": "chefe_invocador",
+        "available_after": [
+          "n02_guardiao_do_conduto"
+        ],
+        "unlocks": []
+      }
     ]
   }
 }

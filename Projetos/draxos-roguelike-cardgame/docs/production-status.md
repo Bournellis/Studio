@@ -5,7 +5,9 @@
 
 ## Current Reality
 
-The project is official in the Estudio workspace and has a Godot scaffold, local docs, green local validation, a reduced placeholder catalog, and copied reusable systems.
+The project is official in the Estudio workspace and has a Godot scaffold, local docs, green local validation, a reduced local catalog, and copied reusable systems.
+
+P01 has locked the first local design contract: the player is a Draxos commander, gameplay identity is class-based, runs have no meta-progression, souls are ship currency, and initial catalog contracts cover encounter tiers, enemy directors, soul bands, and a minimal mainline/sidequest map placeholder.
 
 It is not yet a playable roguelike cardgame.
 
@@ -14,9 +16,9 @@ It is not yet a playable roguelike cardgame.
 - Godot project configuration.
 - Boot scene script.
 - `RunSession` placeholder.
-- Local content catalog with placeholder cards and encounters.
+- Local content catalog with placeholder cards, encounter contracts, soul reward bands, and map nodes.
 - Local validation script.
-- Bootstrap validation green with 5/5 GUT tests on 2026-05-07.
+- P01 validation green with 7/7 GUT tests on 2026-05-07.
 - Copied UI support systems.
 - Forked RPG Turnos battle engine marked for simplification.
 
@@ -25,11 +27,13 @@ It is not yet a playable roguelike cardgame.
 - ShipHub screen.
 - RunMap screen.
 - Real roguelike node flow.
-- Final deck, mana/resource, draw, discard, reward, and upgrade rules.
+- Final class list and class mechanics.
+- Final map chain and enemy scripts.
+- Final deck size, upgrade, and removal rules.
 - Simplified local battle engine.
 - First playable encounter.
 - Boss summoner behavior.
 
 ## Next Production Step
 
-Execute Track 00 in order, starting with validation of the bootstrap and then catalog cleanup / ShipHub placeholder.
+Execute `P02 - ShipHub Placeholder`.

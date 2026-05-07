@@ -1,7 +1,7 @@
 # Track 00 Current Status
 
 - Last Updated: `2026-05-07`
-- Status: `BOOTSTRAP_VALIDATED`
+- Status: `P01_CONTRACT_VALIDATED`
 - Scope: `Create official project scaffold, local docs, validation, and first execution plan`
 
 ## Completed
@@ -14,6 +14,9 @@
 - Boot scene script created.
 - Validation adapted to bootstrap contract.
 - Bootstrap validation green with 5/5 GUT tests.
+- P01 local design contract recorded: Draxos commander, class-first gameplay identity, stable 5-card hand, soul reward bands, no meta-progression, and mainline/sidequest map placeholder.
+- Catalog contracts now include encounter tier, enemy director, soul reward range, and run-map nodes.
+- P01 validation green with 7/7 GUT tests.
 
 ## Current Risk
 
@@ -21,4 +24,4 @@ The forked battle engine still contains RPG Turnos assumptions. It must be simpl
 
 ## Next
 
-Continue with `P01 - Catalog cleanup for local roguelike contracts`.
+Continue with `P02 - ShipHub Placeholder`.

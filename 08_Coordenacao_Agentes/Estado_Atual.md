@@ -23,12 +23,12 @@
 
 ## draxos-roguelike-cardgame
 
-- Status: **Ativo - bootstrap oficial validado**
-- Track ativa: `Track 00 - Project Bootstrap` (BOOTSTRAP_VALIDATED)
-- Baseline atual: scaffold Godot 4.6.2 com base tecnica estreita reaproveitada de RPG Turnos, `RunSession` placeholder, catalogo local reduzido, boot scene, validacao verde 5/5, docs iniciais e fork do `BattleEngine` marcado para simplificacao
+- Status: **Ativo - contrato local P01 validado**
+- Track ativa: `Track 00 - Project Bootstrap` (P01_CONTRACT_VALIDATED)
+- Baseline atual: scaffold Godot 4.6.2 com contrato local de comandante Draxos, escolha por Classe, sem meta-progressao, faixas de alma por tier, nodes mainline/sidequest, contratos de encontro tier/director/slots, boot scene, validacao verde 7/7 e fork do `BattleEngine` marcado para simplificacao
 - Meta ativa: transformar o scaffold em primeiro slice roguelike cardgame com ShipHub, RunMap, batalha simplificada, primeiro `limpar_mesa` e primeiro `chefe_summoner`
 - Ultima atualizacao do current-status: `2026-05-07`
-- Proximo passo: executar `P01 - Catalog cleanup for local roguelike contracts`
+- Proximo passo: executar `P02 - ShipHub Placeholder`
 
 ## Kanban rápido
 

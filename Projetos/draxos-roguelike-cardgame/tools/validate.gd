@@ -45,6 +45,8 @@ func _validate_contract() -> Dictionary:
 		return {"ok": false, "message": "Missing generated slice catalog."}
 	if catalog.player_hero == null or catalog.player_hero.max_health <= 0:
 		return {"ok": false, "message": "Player hero must exist for the bootstrap catalog."}
+	if catalog.player_hero.id != "comandante_draxos":
+		return {"ok": false, "message": "Player hero must be the Draxos commander."}
 	if catalog.starter_deck_ids.size() < 1:
 		return {"ok": false, "message": "Starter deck must have placeholder cards."}
 	for card_id: String in Array(catalog.starter_deck_ids):
@@ -59,6 +61,9 @@ func _validate_contract() -> Dictionary:
 			return {"ok": false, "message": "Encounter %s needs player_slots_count." % str(encounter.get("id", ""))}
 		if int(encounter.get("enemy_slots_count", 0)) <= 0:
 			return {"ok": false, "message": "Encounter %s needs enemy_slots_count." % str(encounter.get("id", ""))}
+		var encounter_contract_result: Dictionary = _validate_encounter_contract(encounter)
+		if not bool(encounter_contract_result.get("ok", false)):
+			return encounter_contract_result
 	for path: String in [
 		"res://modes/boot/boot.tscn"
 	]:
@@ -66,7 +71,62 @@ func _validate_contract() -> Dictionary:
 			return {"ok": false, "message": "Missing generated scene %s." % path}
 	if str(catalog.run_map.get("id", "")) == "":
 		return {"ok": false, "message": "Run map placeholder must exist."}
+	var run_map_result: Dictionary = _validate_run_map_contract(Dictionary(catalog.run_map))
+	if not bool(run_map_result.get("ok", false)):
+		return run_map_result
 	return {"ok": true, "message": "Bootstrap contract is valid."}
+
+func _validate_encounter_contract(encounter: Dictionary) -> Dictionary:
+	var encounter_id: String = str(encounter.get("id", ""))
+	var tier: String = str(encounter.get("tier", ""))
+	if not ["small", "medium", "elite_optional", "boss"].has(tier):
+		return {"ok": false, "message": "Encounter %s has invalid tier." % encounter_id}
+	if not ["prefilled_board", "waves", "scripted_boss", "player_like"].has(str(encounter.get("enemy_director", ""))):
+		return {"ok": false, "message": "Encounter %s has invalid enemy_director." % encounter_id}
+	var reward: Dictionary = Dictionary(encounter.get("soul_reward", {}))
+	var min_reward: int = int(reward.get("min", 0))
+	var max_reward: int = int(reward.get("max", 0))
+	var expected: Dictionary = _soul_reward_band(tier)
+	if min_reward != int(expected.get("min", -1)) or max_reward != int(expected.get("max", -1)):
+		return {"ok": false, "message": "Encounter %s has invalid soul_reward for tier %s." % [encounter_id, tier]}
+	return {"ok": true, "message": "Encounter contract is valid."}
+
+func _validate_run_map_contract(run_map: Dictionary) -> Dictionary:
+	var nodes: Array = Array(run_map.get("nodes", []))
+	if nodes.size() < 1:
+		return {"ok": false, "message": "Run map needs placeholder nodes."}
+	var has_mainline: bool = false
+	var has_sidequest: bool = false
+	for node: Variant in nodes:
+		if typeof(node) != TYPE_DICTIONARY:
+			return {"ok": false, "message": "Run map nodes must be dictionaries."}
+		var node_data: Dictionary = Dictionary(node)
+		var kind: String = str(node_data.get("kind", ""))
+		if not ["mainline", "sidequest"].has(kind):
+			return {"ok": false, "message": "Run map node %s has invalid kind." % str(node_data.get("id", ""))}
+		if str(node_data.get("id", "")) == "":
+			return {"ok": false, "message": "Run map node needs id."}
+		if str(node_data.get("encounter_id", "")) == "":
+			return {"ok": false, "message": "Run map node %s needs encounter_id." % str(node_data.get("id", ""))}
+		if kind == "mainline":
+			has_mainline = true
+		if kind == "sidequest":
+			has_sidequest = true
+	if not has_mainline or not has_sidequest:
+		return {"ok": false, "message": "Run map must include mainline and sidequest nodes."}
+	return {"ok": true, "message": "Run map contract is valid."}
+
+func _soul_reward_band(tier: String) -> Dictionary:
+	match tier:
+		"small":
+			return {"min": 4, "max": 6}
+		"medium":
+			return {"min": 7, "max": 10}
+		"elite_optional":
+			return {"min": 11, "max": 16}
+		"boss":
+			return {"min": 18, "max": 25}
+	return {}
 
 func _run_gut() -> int:
 	var gut_config_script: Script = load("res://addons/gut/gut_config.gd")

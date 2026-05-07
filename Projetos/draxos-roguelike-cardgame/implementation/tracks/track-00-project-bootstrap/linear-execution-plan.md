@@ -20,14 +20,14 @@ Turn the official scaffold into the first local roguelike cardgame slice without
 
 ## Current Execution Cursor
 
-Next prompt: `P01 - Catalog cleanup for local roguelike contracts`.
+Next prompt: `P02 - ShipHub Placeholder`.
 
 ## Linear Prompt Sequence
 
 | Prompt | Status | Goal | Validation |
 |---|---|---|---|
 | P00 | complete | Create official project scaffold, docs, local catalog, validation, and records. | Green 5/5 |
-| P01 | pending | Clean catalog schema around local card, encounter, run map, and slot-count contracts. | Run validation |
+| P01 | complete | Clean catalog schema around local card, encounter, run map, and slot-count contracts. | Green 7/7 |
 | P02 | pending | Create ShipHub placeholder screen with clickable captain/member/system regions. | Run validation |
 | P03 | pending | Create RunMap placeholder with linear route and optional nodes. | Run validation |
 | P04 | pending | Simplify BattleEngine to local slot-count board assumptions. | Run validation |
@@ -52,6 +52,9 @@ Exit criteria:
 
 - Catalog is local, small, and validates.
 - No RPG Turnos encounter IDs are required by validation.
+- Player-facing catalog uses `Comandante Draxos`, not the RPG Turnos protagonist premise.
+- Encounter contracts include tier, enemy director, soul reward band, and slot counts.
+- Run-map placeholder includes mainline and optional sidequest nodes.
 
 ### P02 - ShipHub Placeholder
 

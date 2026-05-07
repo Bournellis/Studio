@@ -11,6 +11,8 @@ It is not a variant of `rpg-turnos`. It shares Draxos lore, broad campaign premi
 Current identity:
 
 - menu-first roguelike cardgame
+- player is always a Draxos commander
+- gameplay identity is selected through `Classe`, not race
 - Draxos ship / ether-plasm base as the main hub
 - mission map with linear progress and optional steps
 - card battles presented as a simple board with player and enemy facing each other
@@ -72,6 +74,7 @@ Required divergence:
 
 - remove RPG Turnos route, terrain, elevation, neutral-slot, RPG exploration, campaign reward, and deck economy assumptions before treating combat as final
 - define new deck, mana/resource, draw, run, and reward rules locally
+- do not use the RPG Turnos protagonist premise; this project uses a Draxos commander obeying the Grande Mestre
 
 ## Active Track
 

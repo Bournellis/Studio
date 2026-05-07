@@ -49,10 +49,10 @@ hero_power_text = "Poder inimigo pendente."
 
 [sub_resource type="Resource" id="Resource_b0i2p"]
 script = ExtResource("2_aaqvb")
-id = "novato_draxos"
-display_name = "Novato Draxos"
+id = "comandante_draxos"
+display_name = "Comandante Draxos"
 max_health = 30
-hero_power_text = "Poder heroico pendente: sera recalibrado para o novo cardgame."
+hero_power_text = "Comando de classe pendente: sera definido em sessao de design."
 
 [resource]
 script = ExtResource("3_xh3p2")
@@ -64,28 +64,84 @@ npc_reward_choices = PackedStringArray()
 encounters = Array[Dictionary]([{
 "display_name": "Pouso Elemental",
 "duration_target": "short",
+"enemy_director": "prefilled_board",
 "enemy_slots_count": 3.0,
 "id": "pouso_elemental",
 "mode": "limpar_mesa",
-"player_slots_count": 3.0
+"player_slots_count": 3.0,
+"soul_reward": {
+"max": 6.0,
+"min": 4.0
+},
+"tier": "small"
+}, {
+"display_name": "Incursao Lateral",
+"duration_target": "optional",
+"enemy_director": "waves",
+"enemy_slots_count": 4.0,
+"id": "incursao_lateral",
+"mode": "ondas",
+"player_slots_count": 4.0,
+"soul_reward": {
+"max": 16.0,
+"min": 11.0
+},
+"tier": "elite_optional"
 }, {
 "display_name": "Guardiao do Conduto",
 "duration_target": "major",
+"enemy_director": "player_like",
 "enemy_slots_count": 4.0,
 "id": "guardiao_do_conduto",
 "mode": "duelo",
-"player_slots_count": 4.0
+"player_slots_count": 4.0,
+"soul_reward": {
+"max": 10.0,
+"min": 7.0
+},
+"tier": "medium"
 }, {
 "display_name": "Chefe Invocador",
 "duration_target": "boss",
+"enemy_director": "scripted_boss",
 "enemy_slots_count": 5.0,
 "id": "chefe_invocador",
 "mode": "chefe_summoner",
-"player_slots_count": 5.0
+"player_slots_count": 5.0,
+"soul_reward": {
+"max": 25.0,
+"min": 18.0
+},
+"tier": "boss"
 }])
 run_map = {
 "display_name": "Invasao Inicial",
 "id": "invasao_inicial",
 "linear": true,
-"node_types": ["pequeno_encontro", "grande_encontro", "evento", "descanso", "chefe"]
+"node_types": ["pequeno_encontro", "grande_encontro", "evento", "descanso", "chefe"],
+"nodes": [{
+"available_after": [],
+"encounter_id": "pouso_elemental",
+"id": "n01_pouso_elemental",
+"kind": "mainline",
+"unlocks": ["s01_incursao_lateral", "n02_guardiao_do_conduto"]
+}, {
+"available_after": ["n01_pouso_elemental"],
+"encounter_id": "incursao_lateral",
+"id": "s01_incursao_lateral",
+"kind": "sidequest",
+"unlocks": []
+}, {
+"available_after": ["n01_pouso_elemental"],
+"encounter_id": "guardiao_do_conduto",
+"id": "n02_guardiao_do_conduto",
+"kind": "mainline",
+"unlocks": ["n03_chefe_invocador"]
+}, {
+"available_after": ["n02_guardiao_do_conduto"],
+"encounter_id": "chefe_invocador",
+"id": "n03_chefe_invocador",
+"kind": "mainline",
+"unlocks": []
+}]
 }
