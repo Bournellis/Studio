@@ -2,12 +2,12 @@
 
 - Last Updated: `2026-05-07`
 - Active Project Name: `draxos-roguelike-cardgame`
-- Active Surface: `local roguelike contract scaffold`
+- Active Surface: `local battle baseline scaffold`
 - Active Track: `Track 00 - Project Bootstrap`
-- Active Track Status: `P01_CONTRACT_VALIDATED`
-- Current Operational Baseline: `Godot 4.6.2 scaffold with local Draxos commander design contract, class-first pre-run identity, no meta-progression, soul reward bands, minimal mainline/sidequest run-map nodes, encounter tier/director contracts, boot scene, local validation green 7/7, and forked RPG Turnos battle engine still marked for simplification`
+- Active Track Status: `P04_BATTLE_BASELINE_VALIDATED`
+- Current Operational Baseline: `Godot 4.6.2 scaffold with local Draxos commander design contract, generated boot/ShipHub/RunMap scenes, RunSession node tracking, and simplified local BattleEngine using slot counts, stable 5-card hand, draw-on-play, discard recycle, sacrifice replacement, and automatic front/fallback attacks; validation green 15/15`
 - Active Goal: `turn scaffold into first local roguelike cardgame slice: ShipHub placeholder, RunMap placeholder, simplified battle, first limpar_mesa encounter, first chefe_summoner encounter`
-- Validation: `2026-05-07 P01 contract validation green; 7/7 GUT tests passing`
+- Validation: `2026-05-07 P04 BattleEngine validation green; 15/15 GUT tests passing`
 
 ## Read Next
 
@@ -28,4 +28,4 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 
 ## Next
 
-Execute `P02 - ShipHub Placeholder`.
+Execute `P05 - First Limpar Mesa`.

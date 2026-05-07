@@ -1,7 +1,14 @@
 # Battle
 
-Turn-based C1 combat logic and presentation contracts live here.
+Local roguelike card battle logic lives here.
 
-Battle should be independent from exploration movement. A world encounter should launch battle state, and battle results should return cleanly to world state.
+Current runtime is intentionally narrow:
 
-Current runtime: controller-based C1 with battle modes such as `limpar_mesa` and `duelo`.
+- per-encounter `player_slots_count`
+- per-encounter `enemy_slots_count`
+- stable 5-card hand with draw-on-play
+- discard shuffles back into the deck when the deck is empty
+- creature replacement sacrifices the previous occupant
+- automatic attacks choose the opposing front slot, then the first occupied opposing slot from left to right
+
+The battle baseline must not depend on RPG Turnos movement lanes, terrain, elevation, neutral slots, or route tables.

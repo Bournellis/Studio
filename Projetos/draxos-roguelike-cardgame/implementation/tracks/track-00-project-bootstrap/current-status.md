@@ -1,7 +1,7 @@
 # Track 00 Current Status
 
 - Last Updated: `2026-05-07`
-- Status: `P01_CONTRACT_VALIDATED`
+- Status: `P04_BATTLE_BASELINE_VALIDATED`
 - Scope: `Create official project scaffold, local docs, validation, and first execution plan`
 
 ## Completed
@@ -17,6 +17,19 @@
 - P01 local design contract recorded: Draxos commander, class-first gameplay identity, stable 5-card hand, soul reward bands, no meta-progression, and mainline/sidequest map placeholder.
 - Catalog contracts now include encounter tier, enemy director, soul reward range, and run-map nodes.
 - P01 validation green with 7/7 GUT tests.
+- Generated ShipHub placeholder scene created.
+- Boot scene can enter the ShipHub.
+- ShipHub exposes clickable placeholder regions for command station, Grande Mestre, subordinados, map console, deck system, and soul engine.
+- P02 validation green with 9/9 GUT tests.
+- Generated RunMap placeholder scene created.
+- ShipHub can open the RunMap and RunMap can return to ShipHub.
+- RunMap displays catalog mainline/sidequest nodes and can select the first available node.
+- RunSession tracks current node and completed node ids for placeholder unlocks.
+- P03 validation green with 11/11 GUT tests.
+- BattleEngine simplified to local slot-count board construction.
+- RPG Turnos route, terrain, elevation, and neutral-slot assumptions removed from BattleEngine.
+- Battle baseline supports draw-on-play, discard recycle, sacrifice replacement, and automatic front/fallback attacks.
+- P04 validation green with 15/15 GUT tests.
 
 ## Current Risk
 
@@ -24,4 +37,4 @@ The forked battle engine still contains RPG Turnos assumptions. It must be simpl
 
 ## Next
 
-Continue with `P02 - ShipHub Placeholder`.
+Continue with `P05 - First Limpar Mesa`.

@@ -20,7 +20,7 @@ Turn the official scaffold into the first local roguelike cardgame slice without
 
 ## Current Execution Cursor
 
-Next prompt: `P02 - ShipHub Placeholder`.
+Next prompt: `P05 - First Limpar Mesa`.
 
 ## Linear Prompt Sequence
 
@@ -28,9 +28,9 @@ Next prompt: `P02 - ShipHub Placeholder`.
 |---|---|---|---|
 | P00 | complete | Create official project scaffold, docs, local catalog, validation, and records. | Green 5/5 |
 | P01 | complete | Clean catalog schema around local card, encounter, run map, and slot-count contracts. | Green 7/7 |
-| P02 | pending | Create ShipHub placeholder screen with clickable captain/member/system regions. | Run validation |
-| P03 | pending | Create RunMap placeholder with linear route and optional nodes. | Run validation |
-| P04 | pending | Simplify BattleEngine to local slot-count board assumptions. | Run validation |
+| P02 | complete | Create ShipHub placeholder screen with clickable captain/member/system regions. | Green 9/9 |
+| P03 | complete | Create RunMap placeholder with linear route and optional nodes. | Green 11/11 |
+| P04 | complete | Simplify BattleEngine to local slot-count board assumptions. | Green 15/15 |
 | P05 | pending | Implement first `limpar_mesa` encounter using local battle rules. | Run validation |
 | P06 | pending | Implement first `chefe_summoner` encounter. | Run validation |
 | P07 | pending | First playable checkpoint docs, status, and validation record. | Run validation |
@@ -70,6 +70,7 @@ Exit criteria:
 
 - Boot can enter ShipHub.
 - Hub communicates the ship/base premise.
+- ShipHub exposes clickable placeholder regions for command station, Grande Mestre, subordinados, map console, deck system, and soul engine.
 
 ### P03 - RunMap Placeholder
 
@@ -84,6 +85,8 @@ Expected work:
 Exit criteria:
 
 - Player can inspect a placeholder route and choose an available node.
+- RunSession tracks current node selection and completed node ids for placeholder unlocks.
+- ShipHub can open the RunMap and RunMap can return to ShipHub.
 
 ### P04 - Simplify BattleEngine
 
@@ -98,6 +101,8 @@ Expected work:
 Exit criteria:
 
 - Combat engine no longer depends on RPG Turnos board routes for basic play.
+- BattleEngine uses only `player_slots_count` and `enemy_slots_count` for board construction.
+- BattleEngine supports stable 5-card hand, draw-on-play, discard recycle, slot replacement sacrifice, and automatic front/fallback attacks.
 
 ### P05 - First Limpar Mesa
 

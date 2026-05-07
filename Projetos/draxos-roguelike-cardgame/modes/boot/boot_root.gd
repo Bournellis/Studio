@@ -56,6 +56,13 @@ func _build_ui() -> void:
 	)
 	box.add_child(run_button)
 
+	var hub_button: Button = Button.new()
+	hub_button.text = "Entrar na Ponte de Comando"
+	hub_button.pressed.connect(func() -> void:
+		get_tree().change_scene_to_file("res://modes/ship_hub/ship_hub.tscn")
+	)
+	box.add_child(hub_button)
+
 func _panel_style() -> StyleBoxFlat:
 	var style: StyleBoxFlat = StyleBoxFlat.new()
 	style.bg_color = UiTokens.color("bg_panel", Color(0.1, 0.11, 0.12))

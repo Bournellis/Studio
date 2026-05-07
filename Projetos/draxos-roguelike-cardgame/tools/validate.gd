@@ -65,7 +65,9 @@ func _validate_contract() -> Dictionary:
 		if not bool(encounter_contract_result.get("ok", false)):
 			return encounter_contract_result
 	for path: String in [
-		"res://modes/boot/boot.tscn"
+		"res://modes/boot/boot.tscn",
+		"res://modes/ship_hub/ship_hub.tscn",
+		"res://modes/run_map/run_map.tscn"
 	]:
 		if load(path) == null:
 			return {"ok": false, "message": "Missing generated scene %s." % path}
