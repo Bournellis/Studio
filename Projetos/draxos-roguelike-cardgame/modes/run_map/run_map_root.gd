@@ -81,9 +81,12 @@ func _build_ui() -> void:
 
 	var future_battle_button: Button = Button.new()
 	future_battle_button.name = "RunMapFutureBattleButton"
-	future_battle_button.text = "Preparar Encontro"
+	future_battle_button.text = "Iniciar Encontro"
 	future_battle_button.pressed.connect(func() -> void:
-		status_label.text = "Encontro '%s' selecionado. P04/P05 conectarao este node ao combate." % RunSession.current_node_id
+		if RunSession.current_node_id == "":
+			status_label.text = "Selecione um node disponivel antes de iniciar o encontro."
+			return
+		get_tree().change_scene_to_file("res://modes/battle/battle.tscn")
 	)
 	side_box.add_child(future_battle_button)
 

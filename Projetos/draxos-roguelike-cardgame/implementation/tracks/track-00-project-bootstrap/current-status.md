@@ -1,7 +1,7 @@
 # Track 00 Current Status
 
 - Last Updated: `2026-05-07`
-- Status: `P04_BATTLE_BASELINE_VALIDATED`
+- Status: `P06_SUMMONER_BOSS_VALIDATED`
 - Scope: `Create official project scaffold, local docs, validation, and first execution plan`
 
 ## Completed
@@ -30,6 +30,15 @@
 - RPG Turnos route, terrain, elevation, and neutral-slot assumptions removed from BattleEngine.
 - Battle baseline supports draw-on-play, discard recycle, sacrifice replacement, and automatic front/fallback attacks.
 - P04 validation green with 15/15 GUT tests.
+- Generated Battle scene created.
+- RunMap can launch the selected encounter into Battle.
+- `pouso_elemental` starts with an enemy creature and can be won by clearing the board.
+- Victory marks the selected run-map node completed.
+- P05 validation green with 17/17 GUT tests.
+- `chefe_invocador` now has boss health and scripted summon list.
+- BattleEngine supports boss summoning over time and boss defeat through direct damage when the board is open.
+- Battle scene can load the summoner boss from the RunMap node.
+- P06 validation green with 21/21 GUT tests.
 
 ## Current Risk
 
@@ -37,4 +46,4 @@ The forked battle engine still contains RPG Turnos assumptions. It must be simpl
 
 ## Next
 
-Continue with `P05 - First Limpar Mesa`.
+Continue with `P07 - First Playable Checkpoint`.

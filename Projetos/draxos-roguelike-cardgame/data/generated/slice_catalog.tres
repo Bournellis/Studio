@@ -73,6 +73,10 @@ encounters = Array[Dictionary]([{
 "max": 6.0,
 "min": 4.0
 },
+"starting_enemy_slots": [{
+"card_id": "adepto_vazio",
+"slot": 0.0
+}],
 "tier": "small"
 }, {
 "display_name": "Incursao Lateral",
@@ -101,6 +105,12 @@ encounters = Array[Dictionary]([{
 },
 "tier": "medium"
 }, {
+"boss_health": 6.0,
+"boss_summons": [{
+"card_id": "adepto_vazio"
+}, {
+"card_id": "sentinela_eter"
+}],
 "display_name": "Chefe Invocador",
 "duration_target": "boss",
 "enemy_director": "scripted_boss",

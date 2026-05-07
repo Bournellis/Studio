@@ -35,7 +35,7 @@ func _run_validation() -> int:
 		printerr("[validate] GUT failed with exit code %d." % gut_exit_code)
 		return gut_exit_code
 
-	print("[validate] bootstrap scaffold is not a playable slice yet")
+	print("[validate] first placeholder encounter is playable; full slice still in progress")
 	print("[validate] success")
 	return 0
 
@@ -67,7 +67,8 @@ func _validate_contract() -> Dictionary:
 	for path: String in [
 		"res://modes/boot/boot.tscn",
 		"res://modes/ship_hub/ship_hub.tscn",
-		"res://modes/run_map/run_map.tscn"
+		"res://modes/run_map/run_map.tscn",
+		"res://modes/battle/battle.tscn"
 	]:
 		if load(path) == null:
 			return {"ok": false, "message": "Missing generated scene %s." % path}
@@ -91,6 +92,8 @@ func _validate_encounter_contract(encounter: Dictionary) -> Dictionary:
 	var expected: Dictionary = _soul_reward_band(tier)
 	if min_reward != int(expected.get("min", -1)) or max_reward != int(expected.get("max", -1)):
 		return {"ok": false, "message": "Encounter %s has invalid soul_reward for tier %s." % [encounter_id, tier]}
+	if str(encounter.get("mode", "")) == "chefe_summoner" and Array(encounter.get("boss_summons", [])).is_empty():
+		return {"ok": false, "message": "Summoner boss %s needs boss_summons." % encounter_id}
 	return {"ok": true, "message": "Encounter contract is valid."}
 
 func _validate_run_map_contract(run_map: Dictionary) -> Dictionary:

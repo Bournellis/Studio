@@ -106,6 +106,23 @@ func test_run_map_scene_exposes_nodes_and_selects_available_node() -> void:
 	run_map.queue_free()
 	await get_tree().process_frame
 
+func test_first_clear_board_encounter_has_starting_enemy() -> void:
+	var encounter: Dictionary = ContentLibrary.get_catalog().find_encounter("pouso_elemental")
+	assert_eq(str(encounter.get("mode", "")), "limpar_mesa")
+	var starting_slots: Array = Array(encounter.get("starting_enemy_slots", []))
+	assert_gt(starting_slots.size(), 0)
+	assert_eq(int(Dictionary(starting_slots[0]).get("slot", -1)), 0)
+	assert_eq(str(Dictionary(starting_slots[0]).get("card_id", "")), "adepto_vazio")
+
+func test_summoner_boss_contract_has_scripted_summons() -> void:
+	var encounter: Dictionary = ContentLibrary.get_catalog().find_encounter("chefe_invocador")
+	assert_eq(str(encounter.get("mode", "")), "chefe_summoner")
+	assert_eq(str(encounter.get("enemy_director", "")), "scripted_boss")
+	assert_gt(int(encounter.get("boss_health", 0)), 0)
+	var summons: Array = Array(encounter.get("boss_summons", []))
+	assert_gt(summons.size(), 1)
+	assert_eq(str(Dictionary(summons[0]).get("card_id", "")), "adepto_vazio")
+
 func test_run_session_unlocks_nodes_after_completion_placeholder() -> void:
 	RunSession.start_empty_run()
 	var nodes: Array = Array(ContentLibrary.get_run_map().get("nodes", []))
@@ -177,6 +194,81 @@ func test_battle_engine_attack_priority_uses_front_then_left_to_right() -> void:
 	assert_true(bool(turn_result.get("ok", false)), str(turn_result.get("message", "")))
 	assert_eq(engine.enemy_slots[1], null)
 	assert_eq(engine.outcome, "vitoria")
+
+func test_battle_engine_summoner_boss_invokes_over_time() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), ContentLibrary.get_starter_deck_ids(), {"encounter_id": "chefe_invocador"})
+	assert_eq(engine.enemy_slots.size(), 5)
+	assert_eq(engine.enemy_slots[0], null)
+	assert_eq(engine.enemy_health, 6)
+	var first_turn: Dictionary = engine.end_player_turn()
+	assert_true(bool(first_turn.get("ok", false)), str(first_turn.get("message", "")))
+	assert_not_null(engine.enemy_slots[0])
+	assert_eq(str(Dictionary(engine.enemy_slots[0]).get("card_id", "")), "adepto_vazio")
+	var second_turn: Dictionary = engine.end_player_turn()
+	assert_true(bool(second_turn.get("ok", false)), str(second_turn.get("message", "")))
+	assert_not_null(engine.enemy_slots[1])
+	assert_eq(str(Dictionary(engine.enemy_slots[1]).get("card_id", "")), "sentinela_eter")
+
+func test_battle_engine_summoner_boss_can_be_defeated_when_board_is_open() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), [
+		"pulso_astral",
+		"pulso_astral",
+		"pulso_astral",
+		"pulso_astral",
+		"pulso_astral",
+		"pulso_astral"
+	], {"encounter_id": "chefe_invocador"})
+	for _index: int in range(3):
+		var result: Dictionary = engine.play_card_from_hand(0, {"owner": BattleEngine.ENEMY_ID, "hero": true})
+		assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
+	assert_eq(engine.enemy_health, 0)
+	assert_eq(engine.outcome, "vitoria")
+
+func test_battle_scene_plays_first_clear_board_encounter_to_victory() -> void:
+	RunSession.start_empty_run()
+	RunSession.select_node("n01_pouso_elemental")
+	var packed_scene: PackedScene = load("res://modes/battle/battle.tscn")
+	assert_not_null(packed_scene)
+	var battle = packed_scene.instantiate()
+	assert_not_null(battle)
+	add_child(battle)
+	await get_tree().process_frame
+	assert_not_null(battle.find_child("BattleHandCard0", true, false))
+	assert_not_null(battle.find_child("BattleEndTurnButton", true, false))
+	var first_card = battle.find_child("BattleHandCard0", true, false)
+	first_card.pressed.emit()
+	await get_tree().process_frame
+	var end_turn = battle.find_child("BattleEndTurnButton", true, false)
+	end_turn.pressed.emit()
+	await get_tree().process_frame
+	assert_eq(battle.engine.outcome, "vitoria")
+	assert_true(RunSession.completed_node_ids.has("n01_pouso_elemental"))
+	assert_not_null(battle.find_child("BattleBackToRunMapButton", true, false))
+	battle.queue_free()
+	await get_tree().process_frame
+
+func test_battle_scene_loads_summoner_boss_from_run_map_node() -> void:
+	RunSession.start_empty_run()
+	RunSession.mark_node_completed("n01_pouso_elemental")
+	RunSession.mark_node_completed("n02_guardiao_do_conduto")
+	RunSession.select_node("n03_chefe_invocador")
+	var packed_scene: PackedScene = load("res://modes/battle/battle.tscn")
+	assert_not_null(packed_scene)
+	var battle = packed_scene.instantiate()
+	assert_not_null(battle)
+	add_child(battle)
+	await get_tree().process_frame
+	assert_eq(battle.engine.encounter_id, "chefe_invocador")
+	assert_eq(battle.engine.mode, BattleEngine.MODE_SUMMONER_BOSS)
+	var end_turn = battle.find_child("BattleEndTurnButton", true, false)
+	assert_not_null(end_turn)
+	end_turn.pressed.emit()
+	await get_tree().process_frame
+	assert_not_null(battle.engine.enemy_slots[0])
+	battle.queue_free()
+	await get_tree().process_frame
 
 func test_boot_scene_exposes_entry_to_ship_hub() -> void:
 	var packed_scene: PackedScene = load("res://modes/boot/boot.tscn")

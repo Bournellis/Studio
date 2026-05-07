@@ -20,7 +20,7 @@ Turn the official scaffold into the first local roguelike cardgame slice without
 
 ## Current Execution Cursor
 
-Next prompt: `P05 - First Limpar Mesa`.
+Next prompt: `P07 - First Playable Checkpoint`.
 
 ## Linear Prompt Sequence
 
@@ -31,8 +31,8 @@ Next prompt: `P05 - First Limpar Mesa`.
 | P02 | complete | Create ShipHub placeholder screen with clickable captain/member/system regions. | Green 9/9 |
 | P03 | complete | Create RunMap placeholder with linear route and optional nodes. | Green 11/11 |
 | P04 | complete | Simplify BattleEngine to local slot-count board assumptions. | Green 15/15 |
-| P05 | pending | Implement first `limpar_mesa` encounter using local battle rules. | Run validation |
-| P06 | pending | Implement first `chefe_summoner` encounter. | Run validation |
+| P05 | complete | Implement first `limpar_mesa` encounter using local battle rules. | Green 17/17 |
+| P06 | complete | Implement first `chefe_summoner` encounter. | Green 21/21 |
 | P07 | pending | First playable checkpoint docs, status, and validation record. | Run validation |
 
 ## Prompt Details
@@ -117,6 +117,8 @@ Expected work:
 Exit criteria:
 
 - First encounter is playable through local flow.
+- `pouso_elemental` starts with an enemy on the board.
+- RunMap can launch Battle and Battle can complete `limpar_mesa`, marking the node completed.
 
 ### P06 - First Chefe Summoner
 
@@ -131,6 +133,9 @@ Expected work:
 Exit criteria:
 
 - Boss summoner behavior is testable and documented.
+- `chefe_invocador` has boss health and scripted summon list.
+- BattleEngine summons boss creatures over time and supports boss defeat through direct hero damage when the board is open.
+- Battle scene can load the boss encounter from the RunMap node.
 
 ### P07 - First Playable Checkpoint
 

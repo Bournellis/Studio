@@ -62,6 +62,12 @@
       "player_slots_count": 3,
       "enemy_slots_count": 3,
       "duration_target": "short",
+      "starting_enemy_slots": [
+        {
+          "slot": 0,
+          "card_id": "adepto_vazio"
+        }
+      ],
       "soul_reward": {
         "min": 4,
         "max": 6
@@ -104,6 +110,15 @@
       "player_slots_count": 5,
       "enemy_slots_count": 5,
       "duration_target": "boss",
+      "boss_health": 6,
+      "boss_summons": [
+        {
+          "card_id": "adepto_vazio"
+        },
+        {
+          "card_id": "sentinela_eter"
+        }
+      ],
       "soul_reward": {
         "min": 18,
         "max": 25

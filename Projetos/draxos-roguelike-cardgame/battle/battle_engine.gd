@@ -37,6 +37,8 @@ var mode: String = MODE_CLEAR_BOARD
 var encounter_id: String = ""
 var encounter_name: String = ""
 var enemy_director: String = ""
+var boss_summon_index: int = 0
+var boss_summons: Array[Dictionary] = []
 
 var _catalog
 
@@ -50,6 +52,8 @@ func start_battle(catalog, deck_ids: Array, config: Dictionary = {}) -> void:
 	mana_per_turn = int(config.get("mana_per_turn", encounter.get("mana_per_turn", DEFAULT_MANA_PER_TURN)))
 	mana = mana_per_turn
 	turn_number = 1
+	boss_summon_index = 0
+	boss_summons = _typed_dictionary_array(encounter.get("boss_summons", []))
 	outcome = ""
 	current_phase = PHASE_MAIN
 	log_lines = []
@@ -60,7 +64,7 @@ func start_battle(catalog, deck_ids: Array, config: Dictionary = {}) -> void:
 	if deck.is_empty() and catalog != null:
 		deck = _typed_string_array(Array(catalog.starter_deck_ids))
 	player_health = _hero_health(catalog.player_hero if catalog != null else null, 30)
-	enemy_health = _hero_health(catalog.enemy_hero if catalog != null else null, DEFAULT_ENEMY_HEALTH)
+	enemy_health = int(encounter.get("boss_health", _hero_health(catalog.enemy_hero if catalog != null else null, DEFAULT_ENEMY_HEALTH)))
 	player_slots = _empty_slots(int(encounter.get("player_slots_count", 3)))
 	enemy_slots = _empty_slots(int(encounter.get("enemy_slots_count", 3)))
 	_draw_to_hand_size()
@@ -87,7 +91,9 @@ func get_state() -> Dictionary:
 		"mode": mode,
 		"modo_batalha": mode,
 		"encounter_id": encounter_id,
-		"enemy_director": enemy_director
+		"enemy_director": enemy_director,
+		"boss_summon_index": boss_summon_index,
+		"boss_summons": boss_summons.duplicate(true)
 	}
 
 func get_mode_label() -> String:
@@ -147,6 +153,9 @@ func end_player_turn() -> Dictionary:
 	_log("Fim do turno %d." % turn_number)
 	_auto_attack_side(PLAYER_ID)
 	_check_outcome()
+	if outcome == "":
+		_resolve_boss_summon()
+		_check_outcome()
 	if outcome == "":
 		_auto_attack_side(ENEMY_ID)
 		_check_outcome()
@@ -215,6 +224,22 @@ func _spawn_starting_enemies(setups: Array) -> void:
 		if card == null or slot_index < 0 or slot_index >= enemy_slots.size():
 			continue
 		enemy_slots[slot_index] = _build_occupant(card, ENEMY_ID, true)
+
+func _resolve_boss_summon() -> void:
+	if mode != MODE_SUMMONER_BOSS or boss_summons.is_empty():
+		return
+	var open_slot: int = _first_strict_open_slot(enemy_slots)
+	if open_slot < 0:
+		_log("Chefe Invocador tentou invocar, mas a mesa inimiga esta cheia.")
+		return
+	var summon: Dictionary = boss_summons[boss_summon_index % boss_summons.size()]
+	boss_summon_index += 1
+	var card = _card(str(summon.get("card_id", "")))
+	if card == null:
+		_log("Chefe Invocador falhou ao invocar uma criatura ausente.")
+		return
+	enemy_slots[open_slot] = _build_occupant(card, ENEMY_ID, true)
+	_log("Chefe Invocador invocou %s no slot %d." % [card.display_name, open_slot + 1])
 
 func _resolve_spell(card, target: Dictionary) -> void:
 	if card.is_damage_spell():
@@ -325,6 +350,12 @@ func _first_open_slot(slots: Array) -> int:
 			return index
 	return 0 if not slots.is_empty() else -1
 
+func _first_strict_open_slot(slots: Array) -> int:
+	for index: int in range(slots.size()):
+		if slots[index] == null:
+			return index
+	return -1
+
 func _empty_slots(count: int) -> Array:
 	var result: Array = []
 	for _index: int in range(max(0, count)):
@@ -363,6 +394,15 @@ func _typed_string_array(source: Array) -> Array[String]:
 	var result: Array[String] = []
 	for item: Variant in source:
 		result.append(str(item))
+	return result
+
+func _typed_dictionary_array(source: Variant) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	if typeof(source) != TYPE_ARRAY:
+		return result
+	for item: Variant in source:
+		if typeof(item) == TYPE_DICTIONARY:
+			result.append(Dictionary(item))
 	return result
 
 func _log(line: String) -> void:

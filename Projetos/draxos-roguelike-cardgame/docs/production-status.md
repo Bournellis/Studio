@@ -15,7 +15,11 @@ P03 adds a generated RunMap placeholder. The ShipHub can open the map, the map d
 
 P04 replaces the inherited RPG Turnos battle fork with a narrow local BattleEngine. The local baseline now uses encounter slot counts, stable 5-card hand, draw-on-play, discard recycle, sacrifice replacement, and automatic front/fallback attacks.
 
-It is not yet a playable roguelike cardgame.
+P05 adds the first playable placeholder encounter. The RunMap can launch `pouso_elemental`, the Battle scene can play cards and end turns, clearing the enemy board wins the encounter, and victory marks the selected node completed.
+
+P06 adds the first boss-summoner placeholder. `chefe_invocador` has boss health and scripted summons; the BattleEngine summons creatures over time and supports defeating the boss when the board is open.
+
+It is not yet a full playable roguelike cardgame.
 
 ## Present In Code
 
@@ -24,10 +28,11 @@ It is not yet a playable roguelike cardgame.
 - `RunSession` placeholder.
 - ShipHub placeholder scene and script.
 - RunMap placeholder scene and script.
+- Battle placeholder scene and script.
 - Simplified local BattleEngine baseline.
 - Local content catalog with placeholder cards, encounter contracts, soul reward bands, and map nodes.
 - Local validation script.
-- P04 validation green with 15/15 GUT tests on 2026-05-07.
+- P06 validation green with 21/21 GUT tests on 2026-05-07.
 - Copied UI support systems.
 
 ## Not Yet Present
@@ -36,9 +41,7 @@ It is not yet a playable roguelike cardgame.
 - Final class list and class mechanics.
 - Final map chain and enemy scripts.
 - Final deck size, upgrade, and removal rules.
-- First playable encounter.
-- Boss summoner behavior.
 
 ## Next Production Step
 
-Execute `P05 - First Limpar Mesa`.
+Execute `P07 - First Playable Checkpoint`.
