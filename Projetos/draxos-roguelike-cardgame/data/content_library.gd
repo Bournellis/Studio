@@ -43,6 +43,18 @@ func get_starter_deck_ids() -> Array:
 		return []
 	return Array(catalog.starter_deck_ids)
 
+func get_class_options() -> Array:
+	var catalog = ensure_loaded()
+	if catalog == null:
+		return []
+	return Array(catalog.class_options)
+
+func find_class_option(class_id: String) -> Dictionary:
+	var catalog = ensure_loaded()
+	if catalog == null:
+		return {}
+	return catalog.find_class_option(class_id)
+
 func get_default_encounter_id() -> String:
 	var catalog = ensure_loaded()
 	if catalog == null:

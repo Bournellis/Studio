@@ -25,6 +25,15 @@ func test_catalog_minimum_is_local_and_valid() -> void:
 	assert_false(catalog.find_encounter("pouso_elemental").is_empty())
 	assert_true(catalog.find_encounter("emboscada_na_ponte").is_empty())
 
+func test_catalog_has_three_placeholder_classes() -> void:
+	var catalog = ContentLibrary.get_catalog()
+	assert_eq(catalog.class_options.size(), 3)
+	for class_option: Dictionary in catalog.class_options:
+		assert_true(str(class_option.get("id", "")).begins_with("classe_placeholder_"))
+		assert_false(str(class_option.get("display_name", "")).is_empty())
+		assert_true(str(class_option.get("mechanic_status", "")).contains("pendente"))
+		assert_gt(Array(class_option.get("starter_deck", [])).size(), 0)
+
 func test_encounters_use_simple_slot_count_contract() -> void:
 	for encounter: Dictionary in ContentLibrary.get_all_encounters():
 		assert_gt(int(encounter.get("player_slots_count", 0)), 0)
@@ -78,11 +87,25 @@ func test_ship_hub_scene_exists_and_exposes_placeholder_regions() -> void:
 	assert_not_null(hub.find_child("ShipHubStartRunButton", true, false))
 	assert_not_null(hub.find_child("ShipHubOpenRunMapButton", true, false))
 	assert_not_null(hub.find_child("ShipHubBackToBootButton", true, false))
+	var class_button = hub.find_child("ShipHubClass_classe_placeholder_alpha", true, false)
+	var start_button = hub.find_child("ShipHubStartRunButton", true, false)
+	var map_button = hub.find_child("ShipHubOpenRunMapButton", true, false)
+	assert_not_null(class_button)
+	assert_true(start_button.disabled)
+	assert_true(map_button.disabled)
+	class_button.pressed.emit()
+	await get_tree().process_frame
+	assert_false(start_button.disabled)
+	start_button.pressed.emit()
+	await get_tree().process_frame
+	assert_true(RunSession.active)
+	assert_eq(RunSession.selected_class_id, "classe_placeholder_alpha")
+	assert_false(map_button.disabled)
 	hub.queue_free()
 	await get_tree().process_frame
 
 func test_run_map_scene_exposes_nodes_and_selects_available_node() -> void:
-	RunSession.start_empty_run(99)
+	_start_placeholder_run(99)
 	var packed_scene: PackedScene = load("res://modes/run_map/run_map.tscn")
 	assert_not_null(packed_scene)
 	var run_map = packed_scene.instantiate()
@@ -124,7 +147,7 @@ func test_summoner_boss_contract_has_scripted_summons() -> void:
 	assert_eq(str(Dictionary(summons[0]).get("card_id", "")), "adepto_vazio")
 
 func test_run_session_unlocks_nodes_after_completion_placeholder() -> void:
-	RunSession.start_empty_run()
+	_start_placeholder_run()
 	var nodes: Array = Array(ContentLibrary.get_run_map().get("nodes", []))
 	var first_node: Dictionary = _find_run_node(nodes, "n01_pouso_elemental")
 	var sidequest: Dictionary = _find_run_node(nodes, "s01_incursao_lateral")
@@ -227,7 +250,7 @@ func test_battle_engine_summoner_boss_can_be_defeated_when_board_is_open() -> vo
 	assert_eq(engine.outcome, "vitoria")
 
 func test_battle_scene_plays_first_clear_board_encounter_to_victory() -> void:
-	RunSession.start_empty_run()
+	_start_placeholder_run()
 	RunSession.select_node("n01_pouso_elemental")
 	var packed_scene: PackedScene = load("res://modes/battle/battle.tscn")
 	assert_not_null(packed_scene)
@@ -250,7 +273,7 @@ func test_battle_scene_plays_first_clear_board_encounter_to_victory() -> void:
 	await get_tree().process_frame
 
 func test_battle_scene_loads_summoner_boss_from_run_map_node() -> void:
-	RunSession.start_empty_run()
+	_start_placeholder_run()
 	RunSession.mark_node_completed("n01_pouso_elemental")
 	RunSession.mark_node_completed("n02_guardiao_do_conduto")
 	RunSession.select_node("n03_chefe_invocador")
@@ -294,6 +317,7 @@ func test_runtime_contract_does_not_use_old_novice_id() -> void:
 func test_run_session_starts_empty() -> void:
 	var snapshot: Dictionary = RunSession.snapshot()
 	assert_false(bool(snapshot.get("active", true)))
+	assert_eq(str(snapshot.get("selected_class_id", "x")), "")
 	assert_eq(Array(snapshot.get("current_deck_ids", [])).size(), 0)
 	assert_eq(str(snapshot.get("current_node_id", "x")), "")
 	assert_eq(int(snapshot.get("current_health", -1)), 0)
@@ -303,13 +327,42 @@ func test_run_session_can_start_empty_run() -> void:
 	var snapshot: Dictionary = RunSession.snapshot()
 	assert_true(bool(snapshot.get("active", false)))
 	assert_eq(int(snapshot.get("run_seed", 0)), 42)
+	assert_eq(str(snapshot.get("selected_class_id", "x")), "")
 	assert_eq(Array(snapshot.get("rewards_pending", [])).size(), 0)
+
+func test_run_session_can_start_placeholder_class_run() -> void:
+	var result: Dictionary = RunSession.start_class_run("classe_placeholder_alpha", 77)
+	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
+	var snapshot: Dictionary = RunSession.snapshot()
+	assert_true(bool(snapshot.get("active", false)))
+	assert_eq(int(snapshot.get("run_seed", 0)), 77)
+	assert_eq(str(snapshot.get("selected_class_id", "")), "classe_placeholder_alpha")
+	assert_eq(str(snapshot.get("selected_class_display_name", "")), "Classe Placeholder I")
+	assert_gt(Array(snapshot.get("current_deck_ids", [])).size(), 0)
+	assert_gt(int(snapshot.get("current_health", 0)), 0)
+
+func test_run_map_blocks_nodes_without_explicit_run_start() -> void:
+	var packed_scene: PackedScene = load("res://modes/run_map/run_map.tscn")
+	assert_not_null(packed_scene)
+	var run_map = packed_scene.instantiate()
+	assert_not_null(run_map)
+	add_child(run_map)
+	await get_tree().process_frame
+	var first_node = run_map.find_child("RunMapNode_n01_pouso_elemental", true, false)
+	assert_not_null(first_node)
+	assert_true(first_node.disabled)
+	run_map.queue_free()
+	await get_tree().process_frame
 
 func test_project_does_not_reference_rpg_turnos_world_root() -> void:
 	var root_path: String = ProjectSettings.globalize_path("res://")
 	var offenders: Array[String] = []
 	_collect_text_references(root_path, "res://modes/world/world_root.gd", offenders)
 	assert_eq(offenders, [])
+
+func _start_placeholder_run(seed: int = 0) -> void:
+	var result: Dictionary = RunSession.start_class_run("classe_placeholder_alpha", seed)
+	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
 
 func _find_run_node(nodes: Array, node_id: String) -> Dictionary:
 	for node: Variant in nodes:

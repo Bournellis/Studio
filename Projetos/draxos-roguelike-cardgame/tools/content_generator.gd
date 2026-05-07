@@ -17,6 +17,7 @@ func generate_all() -> Dictionary:
 	catalog.player_hero = _build_hero(definition.get("player_hero", {}))
 	catalog.enemy_hero = _build_hero(definition.get("enemy_hero", {}))
 	catalog.starter_deck_ids = PackedStringArray(definition.get("starter_deck", []))
+	catalog.class_options = _typed_dictionary_array(definition.get("class_options", []))
 	catalog.first_npc_reward_card_id = str(definition.get("first_npc_reward_card", definition.get("reward_card", "")))
 	catalog.reward_card_id = catalog.first_npc_reward_card_id
 	catalog.npc_reward_choices = PackedStringArray(definition.get("npc_reward_choices", []))

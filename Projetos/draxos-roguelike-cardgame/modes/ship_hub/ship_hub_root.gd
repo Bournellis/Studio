@@ -40,9 +40,13 @@ const REGION_SPECS: Array[Dictionary] = [
 ]
 
 var status_label: Label
+var selected_class_id: String = ""
+var start_run_button: Button
+var map_button: Button
 
 func _ready() -> void:
 	ContentLibrary.ensure_loaded()
+	selected_class_id = RunSession.selected_class_id
 	_build_ui()
 
 func get_region_ids() -> Array[String]:
@@ -131,18 +135,29 @@ func _build_ui() -> void:
 	status_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	side_box.add_child(status_label)
 
-	var run_button: Button = Button.new()
-	run_button.name = "ShipHubStartRunButton"
-	run_button.text = "Iniciar Run Vazia"
-	run_button.pressed.connect(_on_start_run_pressed)
-	side_box.add_child(run_button)
+	var class_title: Label = Label.new()
+	class_title.text = "Classe"
+	class_title.add_theme_font_size_override("font_size", 18)
+	class_title.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+	side_box.add_child(class_title)
 
-	var map_button: Button = Button.new()
+	for class_option: Dictionary in ContentLibrary.get_class_options():
+		side_box.add_child(_build_class_button(class_option))
+
+	start_run_button = Button.new()
+	start_run_button.name = "ShipHubStartRunButton"
+	start_run_button.text = "Iniciar Run Placeholder"
+	start_run_button.pressed.connect(_on_start_run_pressed)
+	side_box.add_child(start_run_button)
+
+	map_button = Button.new()
 	map_button.name = "ShipHubOpenRunMapButton"
 	map_button.text = "Abrir Mapa de Missao"
 	map_button.pressed.connect(func() -> void:
 		if not RunSession.active:
-			RunSession.start_empty_run()
+			status_label.text = "Escolha uma Classe placeholder e inicie a run antes de abrir o mapa."
+			_refresh_run_controls()
+			return
 		get_tree().change_scene_to_file("res://modes/run_map/run_map.tscn")
 	)
 	side_box.add_child(map_button)
@@ -154,6 +169,7 @@ func _build_ui() -> void:
 		get_tree().change_scene_to_file("res://modes/boot/boot.tscn")
 	)
 	side_box.add_child(back_button)
+	_refresh_run_controls()
 
 func _build_region_button(spec: Dictionary) -> Button:
 	var button: Button = Button.new()
@@ -175,8 +191,39 @@ func _select_region(spec: Dictionary) -> void:
 	status_label.text = "%s\n\n%s" % [str(spec.get("body", "")), str(spec.get("status", ""))]
 
 func _on_start_run_pressed() -> void:
-	RunSession.start_empty_run()
-	status_label.text = "RunSession vazia criada pela ponte de comando. Abra o mapa de missao para selecionar o primeiro node."
+	if selected_class_id == "":
+		status_label.text = "Escolha uma Classe placeholder antes de iniciar a run."
+		_refresh_run_controls()
+		return
+	var result: Dictionary = RunSession.start_class_run(selected_class_id)
+	status_label.text = str(result.get("message", "Run placeholder iniciada."))
+	_refresh_run_controls()
+
+func _build_class_button(class_option: Dictionary) -> Button:
+	var button: Button = Button.new()
+	var class_id: String = str(class_option.get("id", ""))
+	button.name = "ShipHubClass_%s" % class_id
+	button.text = "%s\n%s" % [
+		str(class_option.get("display_name", class_id)),
+		str(class_option.get("mechanic_status", "Mecanica pendente."))
+	]
+	button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	button.pressed.connect(func() -> void:
+		selected_class_id = class_id
+		status_label.text = "%s\n\n%s" % [
+			str(class_option.get("role_text", "")),
+			str(class_option.get("mechanic_status", ""))
+		]
+		_refresh_run_controls()
+	)
+	return button
+
+func _refresh_run_controls() -> void:
+	if start_run_button != null:
+		start_run_button.disabled = selected_class_id == ""
+	if map_button != null:
+		map_button.disabled = not RunSession.active
 
 func _panel_style(color_token: String) -> StyleBoxFlat:
 	var style: StyleBoxFlat = StyleBoxFlat.new()

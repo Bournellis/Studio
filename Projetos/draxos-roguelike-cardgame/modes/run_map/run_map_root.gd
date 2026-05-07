@@ -5,8 +5,6 @@ var nodes_box: VBoxContainer
 
 func _ready() -> void:
 	ContentLibrary.ensure_loaded()
-	if not RunSession.active:
-		RunSession.start_empty_run()
 	_build_ui()
 
 func _build_ui() -> void:
@@ -83,6 +81,9 @@ func _build_ui() -> void:
 	future_battle_button.name = "RunMapFutureBattleButton"
 	future_battle_button.text = "Iniciar Encontro"
 	future_battle_button.pressed.connect(func() -> void:
+		if not RunSession.active:
+			status_label.text = "Volte para a nave e inicie uma run antes de entrar em combate."
+			return
 		if RunSession.current_node_id == "":
 			status_label.text = "Selecione um node disponivel antes de iniciar o encontro."
 			return
@@ -147,9 +148,14 @@ func _node_button_text(node: Dictionary, encounter: Dictionary) -> String:
 	]
 
 func _status_text() -> String:
+	if not RunSession.active:
+		return "Nenhuma run ativa. Volte para a nave, escolha uma Classe placeholder e inicie a run."
 	if RunSession.current_node_id == "":
-		return "Nenhum node selecionado. Escolha o primeiro encontro disponivel para preparar a rota."
-	return "Node selecionado: %s\n\nA batalha ainda e placeholder; esta etapa prova selecao e navegacao do mapa." % RunSession.current_node_id
+		return "Classe: %s\n\nNenhum node selecionado. Escolha o primeiro encontro disponivel para preparar a rota." % RunSession.selected_class_display_name
+	return "Classe: %s\nNode selecionado: %s\n\nA batalha ainda e placeholder; esta etapa prova selecao e navegacao do mapa." % [
+		RunSession.selected_class_display_name,
+		RunSession.current_node_id
+	]
 
 func _panel_style(color_token: String) -> StyleBoxFlat:
 	var style: StyleBoxFlat = StyleBoxFlat.new()

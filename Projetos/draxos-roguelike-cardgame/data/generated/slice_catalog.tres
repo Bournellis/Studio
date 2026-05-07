@@ -60,6 +60,31 @@ player_hero = SubResource("Resource_b0i2p")
 enemy_hero = SubResource("Resource_ayi6x")
 cards = Array[Resource]([SubResource("Resource_tqsc8"), SubResource("Resource_aaqvb"), SubResource("Resource_xh3p2")])
 starter_deck_ids = PackedStringArray("adepto_vazio", "adepto_vazio", "sentinela_eter", "sentinela_eter", "pulso_astral", "pulso_astral")
+class_options = Array[Dictionary]([{
+"display_name": "Classe Placeholder I",
+"id": "classe_placeholder_alpha",
+"mechanic_status": "Mecanica propria pendente de sessao de design.",
+"role_text": "Opcao temporaria para validar escolha pre-run.",
+"starter_deck": ["adepto_vazio", "adepto_vazio", "sentinela_eter", "sentinela_eter", "pulso_astral", "pulso_astral"],
+"starting_health": 30.0,
+"starting_mana": 1.0
+}, {
+"display_name": "Classe Placeholder II",
+"id": "classe_placeholder_beta",
+"mechanic_status": "Mecanica propria pendente de sessao de design.",
+"role_text": "Opcao temporaria para validar variacao de Classe.",
+"starter_deck": ["adepto_vazio", "sentinela_eter", "sentinela_eter", "pulso_astral", "pulso_astral", "adepto_vazio"],
+"starting_health": 30.0,
+"starting_mana": 1.0
+}, {
+"display_name": "Classe Placeholder III",
+"id": "classe_placeholder_gamma",
+"mechanic_status": "Mecanica propria pendente de sessao de design.",
+"role_text": "Opcao temporaria para validar terceiro slot inicial.",
+"starter_deck": ["sentinela_eter", "adepto_vazio", "adepto_vazio", "pulso_astral", "pulso_astral", "sentinela_eter"],
+"starting_health": 30.0,
+"starting_mana": 1.0
+}])
 npc_reward_choices = PackedStringArray()
 encounters = Array[Dictionary]([{
 "display_name": "Pouso Elemental",

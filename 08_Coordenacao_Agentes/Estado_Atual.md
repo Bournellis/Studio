@@ -23,12 +23,12 @@
 
 ## draxos-roguelike-cardgame
 
-- Status: **Ativo - Track 00 checkpoint completo**
-- Track ativa: `Track 01 - Playable Run Loop` (NEXT)
-- Baseline atual: checkpoint Godot 4.6.2 com contrato local de comandante Draxos, cenas boot/ShipHub/RunMap/Battle, selecao de node em `RunSession`, `BattleEngine` local simplificado, primeiro `limpar_mesa`, primeiro `chefe_summoner`, registro P07 e validacao verde 21/21
+- Status: **Ativo - Track 01 P01 validada**
+- Track ativa: `Track 01 - Playable Run Loop` (P01_RUN_START_CLASS_PLACEHOLDER_VALIDATED)
+- Baseline atual: checkpoint Godot 4.6.2 com contrato local de comandante Draxos, cenas boot/ShipHub/RunMap/Battle, 3 classes placeholder, inicio explicito de run no ShipHub, classe/deck/vida em `RunSession`, RunMap bloqueado ate run ativa e validacao verde 24/24
 - Meta ativa: evoluir o placeholder para primeiro loop jogavel coerente com escolha de classe, inicio de run, retorno de batalha, recompensa e estado visivel
 - Ultima atualizacao do current-status: `2026-05-07`
-- Proximo passo: executar `Track 01 / P01 - Run Start And Class Placeholder`
+- Proximo passo: executar `P02 - Battle Return And Visible Run State`
 
 ## Kanban rápido
 

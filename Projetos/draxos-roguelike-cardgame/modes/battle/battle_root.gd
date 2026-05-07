@@ -17,7 +17,8 @@ func _ready() -> void:
 		RunSession.select_node(_first_available_node_id())
 	current_node = _current_node()
 	current_encounter = ContentLibrary.get_catalog().find_encounter(str(current_node.get("encounter_id", ContentLibrary.get_default_encounter_id())))
-	engine.start_battle(ContentLibrary.get_catalog(), ContentLibrary.get_starter_deck_ids(), {"encounter": current_encounter})
+	var deck_ids: Array = RunSession.current_deck_ids if not RunSession.current_deck_ids.is_empty() else ContentLibrary.get_starter_deck_ids()
+	engine.start_battle(ContentLibrary.get_catalog(), deck_ids, {"encounter": current_encounter})
 	_build_ui()
 	_refresh()
 

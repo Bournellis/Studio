@@ -20,6 +20,56 @@
     "pulso_astral",
     "pulso_astral"
   ],
+  "class_options": [
+    {
+      "id": "classe_placeholder_alpha",
+      "display_name": "Classe Placeholder I",
+      "role_text": "Opcao temporaria para validar escolha pre-run.",
+      "mechanic_status": "Mecanica propria pendente de sessao de design.",
+      "starting_mana": 1,
+      "starting_health": 30,
+      "starter_deck": [
+        "adepto_vazio",
+        "adepto_vazio",
+        "sentinela_eter",
+        "sentinela_eter",
+        "pulso_astral",
+        "pulso_astral"
+      ]
+    },
+    {
+      "id": "classe_placeholder_beta",
+      "display_name": "Classe Placeholder II",
+      "role_text": "Opcao temporaria para validar variacao de Classe.",
+      "mechanic_status": "Mecanica propria pendente de sessao de design.",
+      "starting_mana": 1,
+      "starting_health": 30,
+      "starter_deck": [
+        "adepto_vazio",
+        "sentinela_eter",
+        "sentinela_eter",
+        "pulso_astral",
+        "pulso_astral",
+        "adepto_vazio"
+      ]
+    },
+    {
+      "id": "classe_placeholder_gamma",
+      "display_name": "Classe Placeholder III",
+      "role_text": "Opcao temporaria para validar terceiro slot inicial.",
+      "mechanic_status": "Mecanica propria pendente de sessao de design.",
+      "starting_mana": 1,
+      "starting_health": 30,
+      "starter_deck": [
+        "sentinela_eter",
+        "adepto_vazio",
+        "adepto_vazio",
+        "pulso_astral",
+        "pulso_astral",
+        "sentinela_eter"
+      ]
+    }
+  ],
   "cards": [
     {
       "id": "adepto_vazio",

@@ -1,7 +1,7 @@
 # Track 01 Linear Execution Plan
 
 - Last Updated: `2026-05-07`
-- Status: `NEXT`
+- Status: `ACTIVE_LINEAR_PLAN`
 - Execution Owner: `Codex`
 - Scope: `First coherent playable run loop after Track 00 checkpoint`
 - Validation Command: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd`
@@ -20,13 +20,13 @@ Turn the Track 00 placeholder checkpoint into a playable loop that starts a run,
 
 ## Current Execution Cursor
 
-Next prompt: `P01 - Run Start And Class Placeholder`.
+Next prompt: `P02 - Battle Return And Visible Run State`.
 
 ## Linear Prompt Sequence
 
 | Prompt | Status | Goal | Validation |
 |---|---|---|---|
-| P01 | pending | Add a class placeholder selection and explicit run start state before entering the map. | Run validation |
+| P01 | complete | Add a class placeholder selection and explicit run start state before entering the map. | Green 24/24 |
 | P02 | pending | Return from battle to ShipHub/RunMap with visible completed-node and commander health state. | Run validation |
 | P03 | pending | Add placeholder post-combat reward choice that changes the current run immediately. | Run validation |
 | P04 | pending | Add soul currency visibility and paid healing placeholder in ShipHub. | Run validation |
@@ -48,3 +48,20 @@ Exit criteria:
 - Player can choose a placeholder class before the run.
 - RunSession records selected class and active run state.
 - ShipHub can enter RunMap only through the explicit placeholder run flow.
+
+### P02 - Battle Return And Visible Run State
+
+Goal: make battle completion feel connected to the run instead of only mutating hidden state.
+
+Expected work:
+
+- Return from Battle to the appropriate map/hub surface after victory.
+- Show completed nodes and selected class in the map/hub status areas.
+- Keep commander health visible as placeholder run state.
+- Do not implement final rewards yet.
+
+Exit criteria:
+
+- Victory state is visible outside Battle.
+- Player can continue the map flow after a completed battle.
+- RunSession remains the single source of placeholder run state.

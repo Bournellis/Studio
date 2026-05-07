@@ -49,6 +49,15 @@ func _validate_contract() -> Dictionary:
 		return {"ok": false, "message": "Player hero must be the Draxos commander."}
 	if catalog.starter_deck_ids.size() < 1:
 		return {"ok": false, "message": "Starter deck must have placeholder cards."}
+	if catalog.class_options.size() != 3:
+		return {"ok": false, "message": "Catalog must expose exactly 3 placeholder class options for Track 01."}
+	for class_option: Dictionary in catalog.class_options:
+		if str(class_option.get("id", "")) == "":
+			return {"ok": false, "message": "Class placeholder needs id."}
+		if Array(class_option.get("starter_deck", [])).is_empty():
+			return {"ok": false, "message": "Class placeholder %s needs starter_deck." % str(class_option.get("id", ""))}
+		if not str(class_option.get("mechanic_status", "")).contains("pendente"):
+			return {"ok": false, "message": "Class placeholder %s must remain marked as pending design." % str(class_option.get("id", ""))}
 	for card_id: String in Array(catalog.starter_deck_ids):
 		if catalog.find_card(card_id) == null:
 			return {"ok": false, "message": "Starter deck references missing card %s." % card_id}
