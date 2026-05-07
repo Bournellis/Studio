@@ -129,7 +129,7 @@ func _build_ui() -> void:
 
 	status_label = Label.new()
 	status_label.name = "ShipHubStatus"
-	status_label.text = "Selecione uma regiao da nave."
+	status_label.text = _run_state_text()
 	status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	status_label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
 	status_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -188,7 +188,7 @@ func _build_region_button(spec: Dictionary) -> Button:
 	return button
 
 func _select_region(spec: Dictionary) -> void:
-	status_label.text = "%s\n\n%s" % [str(spec.get("body", "")), str(spec.get("status", ""))]
+	status_label.text = "%s\n\n%s\n\n%s" % [str(spec.get("body", "")), str(spec.get("status", "")), _run_state_text()]
 
 func _on_start_run_pressed() -> void:
 	if selected_class_id == "":
@@ -224,6 +224,25 @@ func _refresh_run_controls() -> void:
 		start_run_button.disabled = selected_class_id == ""
 	if map_button != null:
 		map_button.disabled = not RunSession.active
+
+func _run_state_text() -> String:
+	if not RunSession.active:
+		return "Run: inativa. Escolha uma Classe placeholder para iniciar."
+	var completed_text: String = "nenhum"
+	if not RunSession.completed_node_ids.is_empty():
+		completed_text = ", ".join(RunSession.completed_node_ids)
+	var last_text: String = ""
+	if RunSession.last_completed_node_id != "":
+		last_text = "\nUltimo encontro: %s" % RunSession.last_completed_node_id
+	return "Run: ativa\nClasse: %s\nVida: %d/%d\nNodes concluidos: %s\nRecompensas pendentes: %d\nRecompensas aplicadas: %d%s" % [
+		RunSession.selected_class_display_name,
+		RunSession.current_health,
+		RunSession.max_health,
+		completed_text,
+		RunSession.rewards_pending.size(),
+		RunSession.applied_reward_ids.size(),
+		last_text
+	]
 
 func _panel_style(color_token: String) -> StyleBoxFlat:
 	var style: StyleBoxFlat = StyleBoxFlat.new()

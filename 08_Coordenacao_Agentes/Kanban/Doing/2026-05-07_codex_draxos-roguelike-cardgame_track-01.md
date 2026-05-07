@@ -25,8 +25,8 @@ Evoluir o checkpoint da Track 00 para o primeiro loop jogavel coerente: iniciar 
 - [x] P01: escolha de 3 Classes placeholder antes da run.
 - [x] P01: `RunSession` registra classe, deck, vida e run ativa.
 - [x] P01: RunMap fica bloqueado ate inicio explicito de run.
-- [ ] P02: retorno e estado visivel depois da batalha.
-- [ ] P03: recompensa placeholder pos-combate.
+- [x] P02: retorno e estado visivel depois da batalha.
+- [x] P03: recompensa placeholder pos-combate.
 - [ ] P04: almas e cura placeholder no ShipHub.
 - [ ] P05: checkpoint do loop jogavel endurecido.
 

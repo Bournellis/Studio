@@ -268,8 +268,85 @@ func test_battle_scene_plays_first_clear_board_encounter_to_victory() -> void:
 	await get_tree().process_frame
 	assert_eq(battle.engine.outcome, "vitoria")
 	assert_true(RunSession.completed_node_ids.has("n01_pouso_elemental"))
+	assert_eq(RunSession.last_completed_node_id, "n01_pouso_elemental")
+	assert_eq(RunSession.current_node_id, "")
+	assert_eq(RunSession.current_health, battle.engine.player_health)
 	assert_not_null(battle.find_child("BattleBackToRunMapButton", true, false))
+	assert_eq(battle.find_child("BattleBackToRunMapButton", true, false).text, "Continuar no Mapa")
 	battle.queue_free()
+	await get_tree().process_frame
+
+func test_run_map_shows_visible_state_after_battle_victory() -> void:
+	_start_placeholder_run()
+	RunSession.record_battle_result("n01_pouso_elemental", "vitoria", 26)
+	var packed_scene: PackedScene = load("res://modes/run_map/run_map.tscn")
+	assert_not_null(packed_scene)
+	var run_map = packed_scene.instantiate()
+	assert_not_null(run_map)
+	add_child(run_map)
+	await get_tree().process_frame
+	var first_node = run_map.find_child("RunMapNode_n01_pouso_elemental", true, false)
+	var sidequest_node = run_map.find_child("RunMapNode_s01_incursao_lateral", true, false)
+	var next_mainline_node = run_map.find_child("RunMapNode_n02_guardiao_do_conduto", true, false)
+	var status = run_map.find_child("RunMapStatus", true, false)
+	assert_not_null(first_node)
+	assert_not_null(sidequest_node)
+	assert_not_null(next_mainline_node)
+	assert_not_null(status)
+	assert_true(first_node.disabled)
+	assert_true(String(first_node.text).contains("concluido"))
+	assert_false(sidequest_node.disabled)
+	assert_false(next_mainline_node.disabled)
+	assert_true(String(status.text).contains("Classe Placeholder I"))
+	assert_true(String(status.text).contains("Vida: 26/30"))
+	assert_true(String(status.text).contains("n01_pouso_elemental"))
+	assert_true(String(status.text).contains("Recompensas pendentes: 1"))
+	assert_not_null(run_map.find_child("RunMapRewardAddPulsoAstralButton", true, false))
+	assert_not_null(run_map.find_child("RunMapRewardReinforceHealthButton", true, false))
+	run_map.queue_free()
+	await get_tree().process_frame
+
+func test_run_map_applies_placeholder_reward_immediately() -> void:
+	_start_placeholder_run()
+	RunSession.record_battle_result("n01_pouso_elemental", "vitoria", 26)
+	var starting_deck_size: int = RunSession.current_deck_ids.size()
+	var packed_scene: PackedScene = load("res://modes/run_map/run_map.tscn")
+	assert_not_null(packed_scene)
+	var run_map = packed_scene.instantiate()
+	assert_not_null(run_map)
+	add_child(run_map)
+	await get_tree().process_frame
+	var reward_button = run_map.find_child("RunMapRewardAddPulsoAstralButton", true, false)
+	assert_not_null(reward_button)
+	reward_button.pressed.emit()
+	await get_tree().process_frame
+	var status = run_map.find_child("RunMapStatus", true, false)
+	assert_eq(RunSession.rewards_pending.size(), 0)
+	assert_eq(RunSession.applied_reward_ids.size(), 1)
+	assert_eq(RunSession.current_deck_ids.size(), starting_deck_size + 1)
+	assert_eq(RunSession.current_deck_ids[RunSession.current_deck_ids.size() - 1], "pulso_astral")
+	assert_true(String(status.text).contains("Pulso Astral adicionado"))
+	assert_not_null(run_map.find_child("RunMapNoPendingReward", true, false))
+	run_map.queue_free()
+	await get_tree().process_frame
+
+func test_ship_hub_shows_visible_run_state_after_battle_victory() -> void:
+	_start_placeholder_run()
+	RunSession.record_battle_result("n01_pouso_elemental", "vitoria", 25)
+	var packed_scene: PackedScene = load("res://modes/ship_hub/ship_hub.tscn")
+	assert_not_null(packed_scene)
+	var hub = packed_scene.instantiate()
+	assert_not_null(hub)
+	add_child(hub)
+	await get_tree().process_frame
+	var status = hub.find_child("ShipHubStatus", true, false)
+	assert_not_null(status)
+	assert_true(String(status.text).contains("Run: ativa"))
+	assert_true(String(status.text).contains("Classe Placeholder I"))
+	assert_true(String(status.text).contains("Vida: 25/30"))
+	assert_true(String(status.text).contains("n01_pouso_elemental"))
+	assert_true(String(status.text).contains("Recompensas pendentes: 1"))
+	hub.queue_free()
 	await get_tree().process_frame
 
 func test_battle_scene_loads_summoner_boss_from_run_map_node() -> void:
@@ -340,6 +417,29 @@ func test_run_session_can_start_placeholder_class_run() -> void:
 	assert_eq(str(snapshot.get("selected_class_display_name", "")), "Classe Placeholder I")
 	assert_gt(Array(snapshot.get("current_deck_ids", [])).size(), 0)
 	assert_gt(int(snapshot.get("current_health", 0)), 0)
+
+func test_run_session_records_battle_result_as_visible_run_state() -> void:
+	_start_placeholder_run()
+	RunSession.select_node("n01_pouso_elemental")
+	RunSession.record_battle_result("n01_pouso_elemental", "vitoria", 24)
+	var snapshot: Dictionary = RunSession.snapshot()
+	assert_eq(str(snapshot.get("last_battle_outcome", "")), "vitoria")
+	assert_eq(str(snapshot.get("last_completed_node_id", "")), "n01_pouso_elemental")
+	assert_eq(str(snapshot.get("current_node_id", "x")), "")
+	assert_eq(int(snapshot.get("current_health", 0)), 24)
+	assert_eq(Array(snapshot.get("rewards_pending", [])).size(), 1)
+	assert_true(Array(snapshot.get("completed_node_ids", [])).has("n01_pouso_elemental"))
+
+func test_run_session_applies_placeholder_health_reward() -> void:
+	_start_placeholder_run()
+	RunSession.record_battle_result("n01_pouso_elemental", "vitoria", 24)
+	var result: Dictionary = RunSession.apply_placeholder_reward(RunSession.REWARD_REINFORCE_HEALTH)
+	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
+	var snapshot: Dictionary = RunSession.snapshot()
+	assert_eq(Array(snapshot.get("rewards_pending", [])).size(), 0)
+	assert_eq(Array(snapshot.get("applied_reward_ids", [])).size(), 1)
+	assert_eq(int(snapshot.get("max_health", 0)), 32)
+	assert_eq(int(snapshot.get("current_health", 0)), 26)
 
 func test_run_map_blocks_nodes_without_explicit_run_start() -> void:
 	var packed_scene: PackedScene = load("res://modes/run_map/run_map.tscn")

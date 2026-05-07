@@ -1,6 +1,8 @@
 extends Node
 
 const DEFAULT_RUN_SEED: int = 0
+const REWARD_ADD_PULSO_ASTRAL: String = "add_pulso_astral"
+const REWARD_REINFORCE_HEALTH: String = "reinforce_health"
 
 var active: bool = false
 var run_seed: int = DEFAULT_RUN_SEED
@@ -12,6 +14,9 @@ var current_deck_ids: Array[String] = []
 var current_health: int = 0
 var max_health: int = 0
 var rewards_pending: Array[String] = []
+var applied_reward_ids: Array[String] = []
+var last_completed_node_id: String = ""
+var last_battle_outcome: String = ""
 
 func start_empty_run(seed: int = DEFAULT_RUN_SEED) -> void:
 	active = true
@@ -24,6 +29,9 @@ func start_empty_run(seed: int = DEFAULT_RUN_SEED) -> void:
 	current_health = 0
 	max_health = 0
 	rewards_pending = []
+	applied_reward_ids = []
+	last_completed_node_id = ""
+	last_battle_outcome = ""
 
 func start_class_run(class_id: String, seed: int = DEFAULT_RUN_SEED) -> Dictionary:
 	var class_option: Dictionary = ContentLibrary.find_class_option(class_id)
@@ -43,6 +51,9 @@ func start_class_run(class_id: String, seed: int = DEFAULT_RUN_SEED) -> Dictiona
 	max_health = int(class_option.get("starting_health", fallback_health))
 	current_health = max_health
 	rewards_pending = []
+	applied_reward_ids = []
+	last_completed_node_id = ""
+	last_battle_outcome = ""
 	return {"ok": true, "message": "Run placeholder iniciada com %s." % selected_class_display_name}
 
 func reset() -> void:
@@ -56,6 +67,9 @@ func reset() -> void:
 	current_health = 0
 	max_health = 0
 	rewards_pending = []
+	applied_reward_ids = []
+	last_completed_node_id = ""
+	last_battle_outcome = ""
 
 func select_node(node_id: String) -> void:
 	if not active:
@@ -67,6 +81,36 @@ func mark_node_completed(node_id: String) -> void:
 		return
 	if not completed_node_ids.has(node_id):
 		completed_node_ids.append(node_id)
+
+func record_battle_result(node_id: String, outcome: String, remaining_health: int) -> void:
+	last_battle_outcome = outcome
+	current_health = clampi(remaining_health, 0, max_health)
+	if outcome != "vitoria":
+		return
+	mark_node_completed(node_id)
+	last_completed_node_id = node_id
+	_queue_placeholder_reward(node_id)
+	if current_node_id == node_id:
+		current_node_id = ""
+
+func apply_placeholder_reward(reward_id: String) -> Dictionary:
+	if rewards_pending.is_empty():
+		return {"ok": false, "message": "Nenhuma recompensa pendente."}
+	var pending_id: String = rewards_pending[0]
+	match reward_id:
+		REWARD_ADD_PULSO_ASTRAL:
+			current_deck_ids.append("pulso_astral")
+		REWARD_REINFORCE_HEALTH:
+			max_health += 2
+			current_health = mini(max_health, current_health + 2)
+		_:
+			return {"ok": false, "message": "Recompensa placeholder invalida: %s" % reward_id}
+	rewards_pending.remove_at(0)
+	applied_reward_ids.append("%s:%s" % [pending_id, reward_id])
+	return {"ok": true, "message": _reward_message(reward_id)}
+
+func has_pending_reward() -> bool:
+	return not rewards_pending.is_empty()
 
 func is_node_available(node: Dictionary) -> bool:
 	if not active:
@@ -90,8 +134,28 @@ func snapshot() -> Dictionary:
 		"current_deck_ids": current_deck_ids.duplicate(),
 		"current_health": current_health,
 		"max_health": max_health,
-		"rewards_pending": rewards_pending.duplicate()
+		"rewards_pending": rewards_pending.duplicate(),
+		"applied_reward_ids": applied_reward_ids.duplicate(),
+		"last_completed_node_id": last_completed_node_id,
+		"last_battle_outcome": last_battle_outcome
 	}
+
+func _queue_placeholder_reward(node_id: String) -> void:
+	var pending_id: String = "placeholder_reward:%s" % node_id
+	if rewards_pending.has(pending_id):
+		return
+	for applied_id: String in applied_reward_ids:
+		if applied_id.begins_with("%s:" % pending_id):
+			return
+	rewards_pending.append(pending_id)
+
+func _reward_message(reward_id: String) -> String:
+	match reward_id:
+		REWARD_ADD_PULSO_ASTRAL:
+			return "Recompensa aplicada: Pulso Astral adicionado ao deck da run."
+		REWARD_REINFORCE_HEALTH:
+			return "Recompensa aplicada: vida maxima e atual reforcadas em +2."
+	return "Recompensa aplicada."
 
 func _string_array(source: Variant) -> Array[String]:
 	var result: Array[String] = []

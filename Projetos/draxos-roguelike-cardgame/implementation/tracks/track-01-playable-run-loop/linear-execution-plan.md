@@ -20,15 +20,15 @@ Turn the Track 00 placeholder checkpoint into a playable loop that starts a run,
 
 ## Current Execution Cursor
 
-Next prompt: `P02 - Battle Return And Visible Run State`.
+Next prompt: `P04 - Soul Currency And Paid Healing Placeholder`.
 
 ## Linear Prompt Sequence
 
 | Prompt | Status | Goal | Validation |
 |---|---|---|---|
 | P01 | complete | Add a class placeholder selection and explicit run start state before entering the map. | Green 24/24 |
-| P02 | pending | Return from battle to ShipHub/RunMap with visible completed-node and commander health state. | Run validation |
-| P03 | pending | Add placeholder post-combat reward choice that changes the current run immediately. | Run validation |
+| P02 | complete | Return from battle to ShipHub/RunMap with visible completed-node and commander health state. | Green 27/27 |
+| P03 | complete | Add placeholder post-combat reward choice that changes the current run immediately. | Green 29/29 |
 | P04 | pending | Add soul currency visibility and paid healing placeholder in ShipHub. | Run validation |
 | P05 | pending | Harden full-loop checkpoint documentation and status. | Run validation |
 
@@ -65,3 +65,37 @@ Exit criteria:
 - Victory state is visible outside Battle.
 - Player can continue the map flow after a completed battle.
 - RunSession remains the single source of placeholder run state.
+
+### P03 - Placeholder Post-Combat Reward
+
+Goal: prove that post-combat rewards can change the current run immediately without defining the final reward economy yet.
+
+Expected work:
+
+- Add a placeholder reward-pending state after victory.
+- Present a simple reward choice surface after combat or on return.
+- Apply at least one immediate run change.
+- Keep soul payouts and final reward tables for later prompts/design.
+
+Exit criteria:
+
+- A completed battle can create a pending reward.
+- Player can choose a placeholder reward.
+- RunSession records the applied change.
+
+### P04 - Soul Currency And Paid Healing Placeholder
+
+Goal: make souls visible as ship currency without implementing final soul formulas or economy tuning.
+
+Expected work:
+
+- Add a placeholder soul total to `RunSession`.
+- Award placeholder souls from completed encounter reward bands.
+- Show souls in ShipHub.
+- Add paid healing placeholder in ShipHub.
+
+Exit criteria:
+
+- Souls are visible as run/ship currency.
+- Completed encounters can add souls through the current encounter baseline.
+- Player can spend souls to heal through a placeholder ShipHub action.

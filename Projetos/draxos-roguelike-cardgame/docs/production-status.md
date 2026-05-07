@@ -19,7 +19,7 @@ P05 adds the first playable placeholder encounter. The RunMap can launch `pouso_
 
 P06 adds the first boss-summoner placeholder. `chefe_invocador` has boss health and scripted summons; the BattleEngine summons creatures over time and supports defeating the boss when the board is open.
 
-P07 closes Track 00 as the first playable checkpoint. Track 01 P01 adds explicit class-placeholder run start from ShipHub. It is not yet a full playable roguelike cardgame.
+P07 closes Track 00 as the first playable checkpoint. Track 01 P01 adds explicit class-placeholder run start from ShipHub. Track 01 P02 makes battle victory visible outside combat through RunSession, RunMap, and ShipHub state. Track 01 P03 adds a placeholder post-combat reward choice that mutates the current run immediately. It is not yet a full playable roguelike cardgame.
 
 ## Present In Code
 
@@ -32,10 +32,13 @@ P07 closes Track 00 as the first playable checkpoint. Track 01 P01 adds explicit
 - Simplified local BattleEngine baseline.
 - 3 placeholder class options.
 - Explicit ShipHub run start that records selected class, deck, and health in `RunSession`.
+- Visible post-battle placeholder state: completed node, last battle result, current health, and newly available map nodes.
+- Pending placeholder reward after battle victory.
+- RunMap reward choices that can add `Pulso Astral` to the run deck or reinforce health by +2.
 - Local content catalog with placeholder cards, encounter contracts, soul reward bands, and map nodes.
 - Local validation script.
 - Track 00 validation record.
-- Track 01 P01 validation green with 24/24 GUT tests and 185 asserts on 2026-05-07.
+- Track 01 P03 validation green with 29/29 GUT tests and 238 asserts on 2026-05-07.
 - Copied UI support systems.
 
 ## Not Yet Present
@@ -47,4 +50,4 @@ P07 closes Track 00 as the first playable checkpoint. Track 01 P01 adds explicit
 
 ## Next Production Step
 
-Execute `P02 - Battle Return And Visible Run State`.
+Execute `P04 - Soul Currency And Paid Healing Placeholder`.

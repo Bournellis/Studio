@@ -6,6 +6,7 @@ var enemy_slots_box: HBoxContainer
 var player_slots_box: HBoxContainer
 var hand_box: HBoxContainer
 var log_label: Label
+var map_button: Button
 var current_node: Dictionary = {}
 var current_encounter: Dictionary = {}
 
@@ -78,7 +79,7 @@ func _build_ui() -> void:
 	)
 	actions.add_child(end_turn_button)
 
-	var map_button: Button = Button.new()
+	map_button = Button.new()
 	map_button.name = "BattleBackToRunMapButton"
 	map_button.text = "Voltar ao Mapa"
 	map_button.pressed.connect(func() -> void:
@@ -94,9 +95,10 @@ func _build_ui() -> void:
 
 func _refresh() -> void:
 	var state: Dictionary = engine.get_state()
-	status_label.text = "%s | %s | Mana %d/%d | Vida %d | Inimigo %d | Resultado: %s" % [
+	status_label.text = "%s | %s | Classe %s | Mana %d/%d | Vida %d | Inimigo %d | Resultado: %s" % [
 		str(current_encounter.get("display_name", "Encontro")),
 		engine.get_mode_label(),
+		RunSession.selected_class_display_name,
 		int(state.get("mana", 0)),
 		int(state.get("mana_per_turn", 0)),
 		int(state.get("player_health", 0)),
@@ -107,6 +109,8 @@ func _refresh() -> void:
 	_rebuild_slots(player_slots_box, Array(state.get("player_slots", [])), "Jogador")
 	_rebuild_hand(Array(state.get("hand", [])))
 	log_label.text = "\n".join(Array(state.get("log", [])))
+	if map_button != null and engine.outcome == "vitoria":
+		map_button.text = "Continuar no Mapa"
 
 func _rebuild_slots(container: HBoxContainer, slots: Array, label_prefix: String) -> void:
 	for child: Node in container.get_children():
@@ -159,7 +163,7 @@ func _play_hand_card(hand_index: int) -> void:
 
 func _after_battle_action() -> void:
 	if engine.outcome == "vitoria":
-		RunSession.mark_node_completed(RunSession.current_node_id)
+		RunSession.record_battle_result(RunSession.current_node_id, engine.outcome, engine.player_health)
 	_refresh()
 
 func _first_open_player_slot() -> int:
