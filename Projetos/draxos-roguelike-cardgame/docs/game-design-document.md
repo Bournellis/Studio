@@ -5,103 +5,166 @@
 
 ## Direction
 
-This is a roguelike cardgame with Draxos lore and a simple board battle presentation.
+Este é um roguelike de cartas com lore Draxos e uma apresentação de batalha em tabuleiro simples.
 
-Combat should feel like two sides facing each other across a table. The board currently defines only how many creatures or permanents fit on each side for a given encounter.
+O combate deve parecer dois lados se enfrentando através de uma mesa. O tabuleiro define quantas criaturas ou permanentes cabem em cada lado por encontro.
 
-The player character is always a Draxos commander. Gameplay identity is selected through `Classe`, not race. The first release direction expects 3 initial classes, each with its own starter deck, class mechanic, and possible mana profile. Class details require a dedicated design session before implementation.
+O jogador é sempre um Comandante Draxos. A identidade de gameplay é selecionada através da `Classe`, não da raça. O primeiro release tem 3 classes, cada uma com deck inicial próprio, passiva inicial, spell de classe e possível perfil de mana. Ver `classes/README.md` e os docs individuais de classe.
 
 ## Core Loop
 
-1. Start in the Draxos ship hub.
-2. Choose a class before the run.
-3. Enter the mission map.
-4. Choose the next available node.
-5. Resolve encounter, event, rest, upgrade, reward, or boss.
-6. Return to the ship after battles to spend souls or continue the campaign route.
-7. Continue until the run succeeds or fails.
+1. Iniciar no hub da nave Draxos.
+2. Escolher uma classe antes da run.
+3. Entrar no mapa de missão.
+4. Escolher o próximo nó disponível.
+5. Resolver encontro, evento, descanso, upgrade, recompensa ou boss.
+6. Retornar à nave após batalhas para gastar almas ou continuar a rota de campanha.
+7. Continuar até a run ser vencida ou o Comandante ser derrotado.
 
-There is no meta-progression for now. Defeat resets the full run.
+Não há meta-progressão por enquanto. Derrota reinicia a run completa.
 
 ## Battle Board
 
-The initial board contract is intentionally simple:
+O contrato de tabuleiro inicial é intencionalmente simples:
 
 - `player_slots_count`
 - `enemy_slots_count`
 
-Early battles should start with about 3 player slots, a small deck, and low mana. As the campaign advances, boards, deck size, enemy scale, and mana budget can grow until late fights support large cards and long card sequences.
+Batalhas iniciais começam com cerca de 3 slots de jogador, deck pequeno e mana baixo. Conforme a campanha avança, tabuleiros, tamanho de deck, escala de inimigos e orçamento de mana crescem até que lutas tardias suportem cartas grandes e longas sequências.
 
-No active contract exists yet for:
+Sem contrato ativo para: rotas, terreno, elevação, slots neutros ou grid de movimento tático. Esses sistemas do RPG Turnos permanecem apenas como dívida técnica no engine forkado temporário.
 
-- routes
-- terrain
-- elevation
-- neutral slots
-- tactical movement grid
+## Classes
 
-Those RPG Turnos systems may remain in the temporary forked engine only as technical debt.
+O jogo tem 3 classes. Cada uma define o estilo de combate do Comandante para aquela run.
+
+Ver `classes/README.md` para o índice e `classes/arcano.md`, `classes/invocador.md`, `classes/necromante.md` para os docs individuais.
+
+Resumo de filosofia:
+
+- **Arcano**: spells de dano, combos de spells, ciclagem rápida de cartas.
+- **Invocador**: controle de mesa, melhoria de criaturas, criaturas gigantes no late-game.
+- **Necromante**: controle por volume de criaturas pequenas, ciclo de mortes para ganhos, disrupção de criaturas inimigas.
+
+## Spell de Classe
+
+Cada classe tem acesso a uma spell exclusiva usável **uma vez por turno**.
+
+- O custo de mana da spell é TBD por classe.
+- A spell pode ser melhorada durante a run através de recompensas específicas.
+- A spell de classe é parte da identidade de combate — não é uma habilidade passiva.
+
+Detalhes por classe estão nos docs individuais de classe, marcados como TBD pending sessão de design dedicada.
+
+## Passiva Inicial de Classe
+
+Cada classe começa a run com uma **habilidade passiva própria** que faz parte da sua mecânica central. A passiva inicial é permanente desde o início e molda como o deck inicial deve ser jogado.
+
+- Não é uma recompensa — o jogador não escolhe. Ela vem com a classe.
+- Diferentemente das passivas de boss, não é selecionada entre opções.
+
+Detalhes por classe estão nos docs individuais de classe, marcados como TBD.
 
 ## Encounter Types
 
-Initial encounter type vocabulary:
+Vocabulário inicial de tipos de encontro:
 
-- `limpar_mesa`: win by clearing relevant enemy board presence.
-- `duelo`: win by defeating an opposing character.
-- `ondas`: fight sequential creature waves.
-- `defesa_posicao`: protect a position or object.
-- `sobreviver_turnos`: survive a configured number of turns.
-- `chefe_summoner`: defeat a boss that summons multiple creatures.
+- `limpar_mesa`: vencer limpando a presença inimiga relevante no tabuleiro.
+- `duelo`: vencer derrotando um personagem oponente.
+- `ondas`: lutar contra ondas sequenciais de criaturas.
+- `defesa_posicao`: proteger uma posição ou objeto.
+- `sobreviver_turnos`: sobreviver um número configurado de turnos.
+- `chefe_summoner`: derrotar um boss que invoca múltiplas criaturas.
 
-Initial enemy director vocabulary:
+Vocabulário inicial de diretores inimigos:
 
-- `prefilled_board`: enemy creatures start on the board and attack until cleared.
-- `waves`: enemy creatures appear through scripted waves.
-- `scripted_boss`: a boss executes scripted summoning or pressure patterns.
-- `player_like`: an opposing character has life, deck behavior, and player-like presence.
+- `prefilled_board`: criaturas inimigas começam no tabuleiro e atacam até serem eliminadas.
+- `waves`: criaturas inimigas aparecem em ondas roteirizadas.
+- `scripted_boss`: um boss executa padrões roteirizados de invocação ou pressão.
+- `player_like`: um personagem oponente com vida, comportamento de deck e presença similar ao jogador.
 
-The final encounter chain and enemy definitions require a dedicated map/enemy design session.
+A cadeia final de encontros e as definições de inimigos requerem uma sessão dedicada de design de mapa/inimigos.
 
 ## Battle Economy
 
-- Starting hand is 5 cards.
-- Playing a card draws 1 card, keeping the hand stable when possible.
-- Played cards go to discard.
-- When the deck is empty, shuffle the discard back into the deck.
-- Mana does not increase during an encounter.
-- Mana can increase between encounters through rare upgrades, mainline milestones, class effects, or soul purchases.
-- Other resources may exist, but they are class-specific.
-- The active player's creatures attack automatically at end of turn.
-- During the enemy turn, player creatures only receive damage.
-- All classes may replace a creature by summoning into an occupied friendly slot, sacrificing the previous creature. Specific cards or classes may benefit from sacrifice.
+- Mão inicial com 5 cartas.
+- Jogar uma carta puxa 1 carta, mantendo a mão estável quando possível.
+- Cartas jogadas vão para o descarte.
+- Quando o deck esvazia, o descarte é embaralhado de volta.
+- Mana não aumenta durante um encontro.
+- Mana pode aumentar entre encontros através de recompensas de run, marcos principais ou compras com almas (ver seção Run Rewards).
+- Outros recursos podem existir, mas são específicos de classe.
+- Criaturas do jogador atacam automaticamente no fim do turno.
+- Durante o turno inimigo, criaturas do jogador apenas recebem dano.
+- Todas as classes podem substituir uma criatura invocando num slot amigo ocupado, sacrificando a anterior. Cartas ou classes específicas podem se beneficiar do sacrifício.
 
 ## Run Rewards
 
-- Post-combat rewards alter the current run immediately.
-- Key mainline combats can grant special upgrades.
-- Souls are ship currency, not per-mob accounting.
-- Healing is difficult and currently costs souls.
-- Optional encounters are risk/reward: they can grant more souls and upgrades, but can leave the commander injured or dead.
+Recompensas de run alteram a run atual imediatamente. Nenhuma recompensa persiste após o fim da run.
 
-Initial soul reward bands:
+### Tipos de Recompensa
 
-- `small`: 4-6
-- `medium`: 7-10
-- `elite_optional`: 11-16
-- `boss`: 18-25
+| Tipo | Efeito |
+|---|---|
+| Nova carta | Adiciona uma carta ao deck atual da run. |
+| Buff de carta | Melhora permanentemente uma carta existente no deck desta run. |
+| Buff de spell de classe | Melhora a spell de classe do Comandante para o restante da run. |
+| Almas extras | Adiciona almas ao total atual (ver Soul Economy). |
+| +1 mana | Aumenta o mana máximo do Comandante em 1 para o restante da run. |
+
+O aumento de mana é a recompensa de maior impacto — escala o poder do jogador significativamente de early para late game.
+
+### Soul Reward Bands
+
+Recompensas de almas por tipo de encontro:
+
+- `small`: 4–6
+- `medium`: 7–10
+- `elite_optional`: 11–16
+- `boss`: 18–25
+
+### Post-Boss Passive
+
+Após derrotar um boss, o jogador escolhe **1 em 3 habilidades passivas** para o Comandante. Cada passiva é um buff significativo que afeta o restante da campanha.
+
+- As opções são sempre 3 e a escolha é permanente para a run.
+- Passivas de boss são distintas da passiva inicial de classe.
+- O catálogo de passivas de boss requer uma sessão dedicada de design.
+
+Encontros opcionais (elite) oferecem risco e recompensa: podem gerar mais almas e upgrades, mas podem deixar o Comandante ferido ou morto.
+
+## Soul Economy
+
+Almas são a moeda da nave — acumuladas durante a run e gastas no ShipHub.
+
+### Fontes de Almas
+
+- Recompensas de encontro (bands acima).
+- Recompensas de run do tipo "almas extras".
+
+### Usos de Almas
+
+| Uso | Custo em Almas |
+|---|---|
+| Cura paga | TBD |
+| Buff de carta | TBD |
+| +1 mana | TBD |
+
+Os custos exatos requerem uma sessão de balanceamento dedicada. A cura é difícil por design — o Comandante não deve recuperar vida facilmente.
 
 ## Mission Map
 
-The map represents ship navigation and mission execution focused on the elemental planet. It should support a mainline sequence where completing one node unlocks another, plus sidequests that can open from mainline progress without blocking the main route.
+O mapa representa a navegação da nave e a execução da missão no planeta elemental. Suporta uma sequência principal onde completar um nó desbloqueia o próximo, além de sidequests que podem abrir a partir do progresso principal sem bloquear a rota principal.
 
 ## Pending Rule Decisions
 
-These rules are intentionally not inherited from `rpg-turnos`:
+Decisões intencionalmente não herdadas do `rpg-turnos` e pendentes de sessão de design local:
 
-- deck size
-- exact class list and class mechanics
-- exact map chain and encounter roster
-- exact enemy scripts
-- card upgrade/removal
-
-They must be designed locally before being treated as final content.
+- tamanho exato do deck
+- mecânicas finais de cada classe (passiva, spell, deck)
+- passivas de boss (catálogo completo)
+- custos exatos de almas no ShipHub
+- cadeia exata do mapa e roster de encontros
+- scripts de inimigos
+- regras de upgrade e remoção de cartas
+- vocabulário de debuffs disponíveis para o Necromante
