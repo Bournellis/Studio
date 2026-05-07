@@ -1,0 +1,91 @@
+[gd_resource type="Resource" script_class="SliceCatalogResource" format=3]
+
+[ext_resource type="Script" path="res://data/resources/card_definition_resource.gd" id="1_tqsc8"]
+[ext_resource type="Script" path="res://data/resources/hero_definition_resource.gd" id="2_aaqvb"]
+[ext_resource type="Script" path="res://data/resources/slice_catalog_resource.gd" id="3_xh3p2"]
+
+[sub_resource type="Resource" id="Resource_tqsc8"]
+script = ExtResource("1_tqsc8")
+id = "adepto_vazio"
+display_name = "Adepto de Vazio"
+card_type = "criatura"
+cost = 1
+attack = 2
+health = 2
+text = "Criatura inicial placeholder para validar o novo projeto."
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_aaqvb"]
+script = ExtResource("1_tqsc8")
+id = "sentinela_eter"
+display_name = "Sentinela de Eter"
+card_type = "criatura"
+cost = 2
+attack = 1
+health = 4
+text = "Defesa inicial placeholder para encontros de mesa simples."
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_xh3p2"]
+script = ExtResource("1_tqsc8")
+id = "pulso_astral"
+display_name = "Pulso Astral"
+card_type = "magia"
+cost = 1
+text = "Causa dano placeholder. Regras finais de mana, compra e efeitos serao recalibradas."
+keywords = PackedStringArray()
+effect = {
+"action": "damage",
+"amount": 2.0,
+"target": "enemy"
+}
+
+[sub_resource type="Resource" id="Resource_ayi6x"]
+script = ExtResource("2_aaqvb")
+id = "guardiao_elemental"
+display_name = "Guardiao Elemental"
+max_health = 24
+hero_power_text = "Poder inimigo pendente."
+
+[sub_resource type="Resource" id="Resource_b0i2p"]
+script = ExtResource("2_aaqvb")
+id = "novato_draxos"
+display_name = "Novato Draxos"
+max_health = 30
+hero_power_text = "Poder heroico pendente: sera recalibrado para o novo cardgame."
+
+[resource]
+script = ExtResource("3_xh3p2")
+player_hero = SubResource("Resource_b0i2p")
+enemy_hero = SubResource("Resource_ayi6x")
+cards = Array[Resource]([SubResource("Resource_tqsc8"), SubResource("Resource_aaqvb"), SubResource("Resource_xh3p2")])
+starter_deck_ids = PackedStringArray("adepto_vazio", "adepto_vazio", "sentinela_eter", "sentinela_eter", "pulso_astral", "pulso_astral")
+npc_reward_choices = PackedStringArray()
+encounters = Array[Dictionary]([{
+"display_name": "Pouso Elemental",
+"duration_target": "short",
+"enemy_slots_count": 3.0,
+"id": "pouso_elemental",
+"mode": "limpar_mesa",
+"player_slots_count": 3.0
+}, {
+"display_name": "Guardiao do Conduto",
+"duration_target": "major",
+"enemy_slots_count": 4.0,
+"id": "guardiao_do_conduto",
+"mode": "duelo",
+"player_slots_count": 4.0
+}, {
+"display_name": "Chefe Invocador",
+"duration_target": "boss",
+"enemy_slots_count": 5.0,
+"id": "chefe_invocador",
+"mode": "chefe_summoner",
+"player_slots_count": 5.0
+}])
+run_map = {
+"display_name": "Invasao Inicial",
+"id": "invasao_inicial",
+"linear": true,
+"node_types": ["pequeno_encontro", "grande_encontro", "evento", "descanso", "chefe"]
+}

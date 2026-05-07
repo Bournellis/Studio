@@ -1,6 +1,6 @@
 # Estado Atual — Estudio
 
-- Ultima atualizacao: `2026-05-06`
+- Ultima atualizacao: `2026-05-07`
 
 ## rpg-isometrico
 
@@ -14,12 +14,21 @@
 
 ## rpg-turnos
 
-- Status: **Ativo — modos oficiais completos**
-- Track ativa: `Track 02 - Draxos Lore And Progression Alignment` (PLANNED)
+- Status: **Ativo — execucao linear da Track 02 pronta**
+- Track ativa: `Track 02 - Draxos Lore And Progression Alignment` (ACTIVE_LINEAR_PLAN)
 - Baseline atual: slice Godot 4.6.2 jogavel — C1 unico runtime, `limpar_mesa`, `duelo`, `ondas`, `defesa`, `chefe_multiparte`, `quebra_cabeca`, cadeia de encontros no mapa, rewards por encontro uma vez, NPC progressiva, save/load JSON local, HUD/slots/mapa/rewards mais legiveis, estrutura art-ready com `UiTokens`/`AssetIds`, `descarte`, energia/mao com ramp, deck ciclico, regras de batalha completas para o slice, validacao verde 77/77
-- Meta ativa: campanha Draxos adotada como direcao ativa; proxima etapa e expandir conteudo/progressao sem renomear IDs mecanicos
-- Ultima atualizacao do current-status: `2026-05-06`
-- Proximo passo: executar Stage 1 da Track 02 como lore skin estreito em labels/dialogos/missoes, sem renomear IDs mecanicos
+- Meta ativa: seguir plano linear Codex da Track 02: classes primeiro, depois apresentacao, campanha/progressao, encounters, conteudo e migracao tecnica
+- Ultima atualizacao do current-status: `2026-05-07`
+- Proximo passo: executar `P01 - Catalog class resource plumbing` em `Projetos/rpg-turnos/implementation/tracks/track-02-draxos-lore-progression/linear-execution-plan.md`
+
+## draxos-roguelike-cardgame
+
+- Status: **Ativo - bootstrap oficial validado**
+- Track ativa: `Track 00 - Project Bootstrap` (BOOTSTRAP_VALIDATED)
+- Baseline atual: scaffold Godot 4.6.2 com base tecnica estreita reaproveitada de RPG Turnos, `RunSession` placeholder, catalogo local reduzido, boot scene, validacao verde 5/5, docs iniciais e fork do `BattleEngine` marcado para simplificacao
+- Meta ativa: transformar o scaffold em primeiro slice roguelike cardgame com ShipHub, RunMap, batalha simplificada, primeiro `limpar_mesa` e primeiro `chefe_summoner`
+- Ultima atualizacao do current-status: `2026-05-07`
+- Proximo passo: executar `P01 - Catalog cleanup for local roguelike contracts`
 
 ## Kanban rápido
 

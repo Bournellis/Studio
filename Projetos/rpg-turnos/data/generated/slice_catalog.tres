@@ -383,13 +383,844 @@ text = "Voadora, Atropelar. Ataca com fisico_melee mas pode atingir slots alto. 
 keywords = PackedStringArray("voadora", "atropelar")
 
 [sub_resource type="Resource" id="Resource_vn8pn"]
+script = ExtResource("1_tqsc8")
+id = "incursor_vazio"
+display_name = "Incursor de Vazio"
+card_type = "criatura"
+cost = 1
+command_cost = 1
+attack = 2
+health = 1
+text = "Rapido."
+keywords = PackedStringArray("rapido")
+
+[sub_resource type="Resource" id="Resource_3vxjw"]
+script = ExtResource("1_tqsc8")
+id = "lamina_choque"
+display_name = "Lâmina de Choque"
+card_type = "criatura"
+cost = 1
+command_cost = 1
+attack = 3
+health = 1
+text = "Rapido."
+keywords = PackedStringArray("rapido")
+
+[sub_resource type="Resource" id="Resource_8vwdf"]
+script = ExtResource("1_tqsc8")
+id = "fenda_astral"
+display_name = "Fenda Astral"
+card_type = "magia"
+cost = 1
+command_cost = 1
+text = "Causa 2 de dano mágico a qualquer permanente inimigo."
+keywords = PackedStringArray("instantaneo")
+effect = {
+"action": "damage",
+"amount": 2.0,
+"damage_type": "magico",
+"target": "any_enemy_permanent"
+}
+
+[sub_resource type="Resource" id="Resource_12fis"]
+script = ExtResource("1_tqsc8")
+id = "pilhador_implacavel"
+display_name = "Pilhador Implacável"
+card_type = "criatura"
+cost = 2
+command_cost = 2
+attack = 2
+health = 2
+text = "Rapido. Quando destrói um permanente em combate: compre 1 carta."
+keywords = PackedStringArray("rapido")
+effect = {
+"on_combat_kill": {
+"action": "draw",
+"amount": 1.0
+}
+}
+
+[sub_resource type="Resource" id="Resource_wbbs5"]
+script = ExtResource("1_tqsc8")
+id = "cacador_alado"
+display_name = "Caçador Alado"
+card_type = "criatura"
+cost = 2
+command_cost = 2
+attack = 3
+health = 2
+text = "Voadora. Rapido."
+keywords = PackedStringArray("voadora", "rapido")
+
+[sub_resource type="Resource" id="Resource_hx6qf"]
+script = ExtResource("1_tqsc8")
+id = "atirador_frente"
+display_name = "Atirador de Frente"
+card_type = "criatura"
+cost = 2
+command_cost = 2
+attack = 2
+health = 3
+text = "Alcance."
+keywords = PackedStringArray("alcance")
+
+[sub_resource type="Resource" id="Resource_46hy0"]
+script = ExtResource("1_tqsc8")
+id = "garra_vazio"
+display_name = "Garra do Vazio"
+card_type = "magia"
+cost = 2
+command_cost = 2
+text = "Causa 3 de dano mágico a um permanente inimigo. Se destruído por este efeito: causa 2 de dano mágico a um segundo permanente inimigo à escolha."
+keywords = PackedStringArray()
+effect = {
+"action": "damage",
+"amount": 3.0,
+"damage_type": "magico",
+"on_destroy": {
+"action": "damage",
+"amount": 2.0,
+"damage_type": "magico",
+"target": "any_enemy_permanent"
+},
+"target": "any_enemy_permanent"
+}
+
+[sub_resource type="Resource" id="Resource_6lf1p"]
+script = ExtResource("1_tqsc8")
+id = "devastador_linha"
+display_name = "Devastador de Linha"
+card_type = "criatura"
+cost = 3
+command_cost = 3
+attack = 5
+health = 2
+text = "Rapido. Atropelar."
+keywords = PackedStringArray("rapido", "atropelar")
+
+[sub_resource type="Resource" id="Resource_rxdp8"]
+script = ExtResource("1_tqsc8")
+id = "interceptor_alado"
+display_name = "Interceptor Alado"
+card_type = "criatura"
+cost = 3
+command_cost = 3
+attack = 3
+health = 4
+text = "Voadora."
+keywords = PackedStringArray("voadora")
+
+[sub_resource type="Resource" id="Resource_f75cl"]
+script = ExtResource("1_tqsc8")
+id = "descarga_impacto"
+display_name = "Descarga de Impacto"
+card_type = "magia"
+cost = 3
+command_cost = 3
+text = "Causa 5 de dano mágico a qualquer permanente ou herói inimigo."
+keywords = PackedStringArray()
+effect = {
+"action": "damage",
+"amount": 5.0,
+"damage_type": "magico",
+"target": "any_permanent_or_hero"
+}
+
+[sub_resource type="Resource" id="Resource_kskod"]
+script = ExtResource("1_tqsc8")
+id = "muro_eter"
+display_name = "Muro de Éter"
+card_type = "estrutura"
+cost = 1
+command_cost = 1
+health = 5
+text = "Defensor."
+keywords = PackedStringArray("defensor")
+
+[sub_resource type="Resource" id="Resource_ytdv0"]
+script = ExtResource("1_tqsc8")
+id = "reforco_estrutural"
+display_name = "Reforço Estrutural"
+card_type = "magia"
+cost = 1
+command_cost = 1
+text = "Uma estrutura sua ganha +0/+3 de HP máximo permanentemente."
+keywords = PackedStringArray()
+effect = {
+"action": "increase_max_health",
+"amount": 3.0,
+"target": "any_own_structure"
+}
+
+[sub_resource type="Resource" id="Resource_ee0xk"]
+script = ExtResource("1_tqsc8")
+id = "torre_vigilancia"
+display_name = "Torre de Vigilância"
+card_type = "estrutura"
+cost = 2
+command_cost = 2
+attack = 2
+health = 5
+text = "Alcance."
+keywords = PackedStringArray("alcance")
+
+[sub_resource type="Resource" id="Resource_g44pg"]
+script = ExtResource("1_tqsc8")
+id = "bastiao_arcano"
+display_name = "Bastião Arcano"
+card_type = "estrutura"
+cost = 2
+command_cost = 2
+attack = 1
+health = 7
+text = "Defensor. Upkeep: ganha 1 armadura."
+keywords = PackedStringArray("defensor")
+effect = {
+"upkeep_trigger": {
+"action": "gain_armor",
+"amount": 1.0
+}
+}
+
+[sub_resource type="Resource" id="Resource_6juw6"]
+script = ExtResource("1_tqsc8")
+id = "pulso_eter"
+display_name = "Pulso de Éter"
+card_type = "magia"
+cost = 2
+command_cost = 2
+text = "Causa 2 de dano mágico a todos os permanentes inimigos."
+keywords = PackedStringArray()
+effect = {
+"action": "damage",
+"amount": 2.0,
+"damage_type": "magico",
+"target": "all_enemy_permanents"
+}
+
+[sub_resource type="Resource" id="Resource_p0w4t"]
+script = ExtResource("1_tqsc8")
+id = "nucleo_eter"
+display_name = "Núcleo de Éter"
+card_type = "estrutura"
+cost = 3
+command_cost = 3
+health = 8
+text = "Upkeep: ganha 1 de energia."
+keywords = PackedStringArray()
+effect = {
+"upkeep_trigger": {
+"action": "gain_energy",
+"amount": 1.0
+}
+}
+
+[sub_resource type="Resource" id="Resource_r6yjh"]
+script = ExtResource("1_tqsc8")
+id = "guardiao_cristal"
+display_name = "Guardião de Cristal"
+card_type = "estrutura"
+cost = 3
+command_cost = 3
+attack = 3
+health = 7
+text = "Quando destrói um permanente em combate: ganha 3 armadura."
+keywords = PackedStringArray()
+effect = {
+"on_combat_kill": {
+"action": "gain_armor",
+"amount": 3.0
+}
+}
+
+[sub_resource type="Resource" id="Resource_o3iu5"]
+script = ExtResource("1_tqsc8")
+id = "elo_eter"
+display_name = "Elo de Éter"
+card_type = "comando"
+cost = 3
+command_cost = 3
+text = "Todas as suas estruturas com ATK > 0 ficam prontas neste turno, mesmo que já tenham atacado."
+keywords = PackedStringArray()
+effect = {
+"action": "set_state",
+"filter": "own_structures_with_attack",
+"state": "pronta"
+}
+
+[sub_resource type="Resource" id="Resource_u7yyh"]
+script = ExtResource("1_tqsc8")
+id = "sobrecarga_construto"
+display_name = "Sobrecarga de Construto"
+card_type = "magia"
+cost = 3
+command_cost = 3
+text = "Causa X de dano mágico distribuído entre permanentes inimigos, onde X é o número de estruturas que você controla."
+keywords = PackedStringArray()
+effect = {
+"action": "damage_distributed",
+"amount": "count_own_tag",
+"damage_type": "magico",
+"tag": "estrutura",
+"target": "choose_enemy_permanents"
+}
+
+[sub_resource type="Resource" id="Resource_m54cl"]
+script = ExtResource("1_tqsc8")
+id = "colosso_eter"
+display_name = "Colosso de Éter"
+card_type = "estrutura"
+cost = 5
+command_cost = 5
+attack = 6
+health = 12
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_xljuu"]
+script = ExtResource("1_tqsc8")
+id = "sentinela_supressao"
+display_name = "Sentinela de Supressão"
+card_type = "criatura"
+cost = 2
+command_cost = 2
+attack = 1
+health = 4
+text = "Defensor. Quando bloqueia um ataque: o atacante ganha enjoo após o combate."
+keywords = PackedStringArray("defensor")
+effect = {
+"on_block": {
+"action": "apply_status",
+"status": "enjoo",
+"target": "attacker"
+}
+}
+
+[sub_resource type="Resource" id="Resource_xj7j7"]
+script = ExtResource("1_tqsc8")
+id = "pulso_disruptivo"
+display_name = "Pulso Disruptivo"
+card_type = "magia"
+cost = 1
+command_cost = 1
+text = "Instantâneo. Aplica enjoo a uma criatura inimiga pronta."
+keywords = PackedStringArray("instantaneo")
+effect = {
+"action": "apply_status",
+"status": "enjoo",
+"target": "any_ready_enemy_creature"
+}
+
+[sub_resource type="Resource" id="Resource_u1e06"]
+script = ExtResource("1_tqsc8")
+id = "correntes_eter"
+display_name = "Correntes de Éter"
+card_type = "magia"
+cost = 2
+command_cost = 2
+text = "Aplica queimando ao slot de um permanente inimigo."
+keywords = PackedStringArray()
+effect = {
+"action": "apply_slot_status",
+"status": "queimando",
+"target": "any_enemy_permanent"
+}
+
+[sub_resource type="Resource" id="Resource_m1ldt"]
+script = ExtResource("1_tqsc8")
+id = "extrator_astral"
+display_name = "Extrator Astral"
+card_type = "criatura"
+cost = 2
+command_cost = 2
+attack = 2
+health = 3
+text = "Upkeep: se pelo menos uma criatura inimiga tem enjoo, ganha +1/+0 permanentemente."
+keywords = PackedStringArray()
+effect = {
+"upkeep_trigger": {
+"action": "gain_stats",
+"attack": 1.0,
+"condition": "if_any_enemy_enjoo",
+"health": 0.0,
+"permanent": true
+}
+}
+
+[sub_resource type="Resource" id="Resource_orpcd"]
+script = ExtResource("1_tqsc8")
+id = "condutor_dominio"
+display_name = "Condutor de Domínio"
+card_type = "criatura"
+cost = 3
+command_cost = 3
+attack = 2
+health = 5
+text = "Quando causa dano em combate: o alvo ganha enjoo."
+keywords = PackedStringArray()
+effect = {
+"on_combat_damage": {
+"action": "apply_status",
+"status": "enjoo",
+"target": "defender"
+}
+}
+
+[sub_resource type="Resource" id="Resource_r1h11"]
+script = ExtResource("1_tqsc8")
+id = "drenagem_forca"
+display_name = "Drenagem de Força"
+card_type = "magia"
+cost = 2
+command_cost = 2
+text = "Causa 2 de dano mágico a um permanente inimigo e aplica enjoo a ele."
+keywords = PackedStringArray()
+effect = {
+"action": "damage",
+"also": {
+"action": "apply_status",
+"status": "enjoo",
+"target": "same"
+},
+"amount": 2.0,
+"damage_type": "magico",
+"target": "any_enemy_permanent"
+}
+
+[sub_resource type="Resource" id="Resource_8hhqx"]
+script = ExtResource("1_tqsc8")
+id = "nevoa_astral"
+display_name = "Névoa Astral"
+card_type = "magia_de_tabuleiro"
+cost = 3
+command_cost = 3
+text = "Todas as criaturas inimigas prontas ganham enjoo."
+keywords = PackedStringArray()
+effect = {
+"action": "apply_status",
+"status": "enjoo",
+"target": "all_ready_enemy_creatures"
+}
+
+[sub_resource type="Resource" id="Resource_tdxwi"]
+script = ExtResource("1_tqsc8")
+id = "drenar_vitalidade"
+display_name = "Drenar Vitalidade"
+card_type = "magia"
+cost = 3
+command_cost = 3
+text = "Causa 4 de dano mágico a um permanente inimigo. Você ganha armadura igual ao dano causado."
+keywords = PackedStringArray()
+effect = {
+"action": "damage",
+"amount": 4.0,
+"damage_type": "magico",
+"lifesteal": "armor",
+"target": "any_enemy_permanent"
+}
+
+[sub_resource type="Resource" id="Resource_t1it5"]
+script = ExtResource("1_tqsc8")
+id = "senhor_supressao"
+display_name = "Senhor da Supressão"
+card_type = "criatura"
+cost = 5
+command_cost = 5
+attack = 4
+health = 7
+text = "Upkeep: aplica enjoo a uma criatura inimiga pronta à sua escolha."
+keywords = PackedStringArray()
+effect = {
+"upkeep_trigger": {
+"action": "apply_status",
+"status": "enjoo",
+"target": "any_ready_enemy_creature"
+}
+}
+
+[sub_resource type="Resource" id="Resource_1m5m3"]
+script = ExtResource("1_tqsc8")
+id = "supressao_massa"
+display_name = "Supressão em Massa"
+card_type = "magia_de_tabuleiro"
+cost = 4
+command_cost = 4
+text = "Todas as criaturas inimigas ganham enjoo. Este enjoo persiste até o início do próximo upkeep delas."
+keywords = PackedStringArray()
+effect = {
+"action": "apply_status",
+"duration": "extended",
+"status": "enjoo",
+"target": "all_enemy_creatures"
+}
+
+[sub_resource type="Resource" id="Resource_k85o3"]
+script = ExtResource("1_tqsc8")
+id = "centelha_astral"
+display_name = "Centelha Astral"
+card_type = "magia"
+cost = 1
+command_cost = 1
+text = "Instantâneo. Causa dano mágico a um permanente inimigo igual à Ressonância atual (mínimo 1)."
+keywords = PackedStringArray("instantaneo")
+effect = {
+"action": "damage",
+"amount": "resonance",
+"damage_type": "magico",
+"min_amount": 1.0,
+"target": "any_enemy_permanent"
+}
+
+[sub_resource type="Resource" id="Resource_ty5ik"]
+script = ExtResource("1_tqsc8")
+id = "flecha_vinculo"
+display_name = "Flecha de Vínculo"
+card_type = "magia"
+cost = 1
+command_cost = 1
+text = "Instantâneo. Causa 2 de dano mágico a um permanente inimigo. Compre 1 carta."
+keywords = PackedStringArray("instantaneo")
+effect = {
+"action": "damage",
+"also": {
+"action": "draw",
+"amount": 1.0
+},
+"amount": 2.0,
+"damage_type": "magico",
+"target": "any_enemy_permanent"
+}
+
+[sub_resource type="Resource" id="Resource_8i1rs"]
+script = ExtResource("1_tqsc8")
+id = "pulso_ressonante"
+display_name = "Pulso Ressonante"
+card_type = "magia"
+cost = 1
+command_cost = 1
+text = "Causa 2 de dano mágico a um permanente. Se Ressonância ≥ 3: causa 4 de dano em vez disso."
+keywords = PackedStringArray()
+effect = {
+"action": "damage",
+"amount": 2.0,
+"damage_type": "magico",
+"resonance_override": {
+"amount": 4.0,
+"threshold": 3.0
+},
+"target": "any_permanent"
+}
+
+[sub_resource type="Resource" id="Resource_japkk"]
+script = ExtResource("1_tqsc8")
+id = "custodio_fio"
+display_name = "Custódio do Fio"
+card_type = "criatura"
+cost = 2
+command_cost = 2
+attack = 2
+health = 4
+text = "Quando você lança um feitiço enquanto este permanente está em jogo: ganha 1 armadura."
+keywords = PackedStringArray()
+effect = {
+"on_spell_cast": {
+"action": "gain_armor",
+"amount": 1.0
+}
+}
+
+[sub_resource type="Resource" id="Resource_jen30"]
+script = ExtResource("1_tqsc8")
+id = "eco_arcano"
+display_name = "Eco Arcano"
+card_type = "magia"
+cost = 2
+command_cost = 2
+text = "Causa dano mágico a um permanente inimigo igual a Ressonância × 2."
+keywords = PackedStringArray()
+effect = {
+"action": "damage",
+"amount": "resonance_x2",
+"damage_type": "magico",
+"target": "any_enemy_permanent"
+}
+
+[sub_resource type="Resource" id="Resource_5ojvm"]
+script = ExtResource("1_tqsc8")
+id = "barreira_ressonante"
+display_name = "Barreira Ressonante"
+card_type = "magia"
+cost = 2
+command_cost = 2
+text = "Você ganha armadura igual à Ressonância atual."
+keywords = PackedStringArray()
+effect = {
+"action": "gain_armor",
+"amount": "resonance"
+}
+
+[sub_resource type="Resource" id="Resource_b1trl"]
+script = ExtResource("1_tqsc8")
+id = "conduit_astral"
+display_name = "Conduit Astral"
+card_type = "criatura"
+cost = 3
+command_cost = 3
+attack = 1
+health = 5
+text = "Quando Ressonância atinge 3 pela primeira vez no turno: compre 1 carta."
+keywords = PackedStringArray()
+effect = {
+"on_spell_cast": {
+"action": "draw",
+"amount": 1.0,
+"once_per_turn": true,
+"resonance_milestone": 3.0
+}
+}
+
+[sub_resource type="Resource" id="Resource_u333r"]
+script = ExtResource("1_tqsc8")
+id = "onda_eter"
+display_name = "Onda de Éter"
+card_type = "magia_de_tabuleiro"
+cost = 2
+command_cost = 2
+text = "Causa 2 de dano mágico a todos os permanentes inimigos. Se Ressonância ≥ 4: causa 3 de dano em vez disso."
+keywords = PackedStringArray()
+effect = {
+"action": "damage",
+"amount": 2.0,
+"damage_type": "magico",
+"resonance_override": {
+"amount": 3.0,
+"threshold": 4.0
+},
+"target": "all_enemy_permanents"
+}
+
+[sub_resource type="Resource" id="Resource_ga80n"]
+script = ExtResource("1_tqsc8")
+id = "tempestade_ressonancia"
+display_name = "Tempestade de Ressonância"
+card_type = "magia_de_tabuleiro"
+cost = 4
+command_cost = 4
+text = "Causa dano mágico a todos os permanentes inimigos igual à Ressonância atual."
+keywords = PackedStringArray()
+effect = {
+"action": "damage",
+"amount": "resonance",
+"damage_type": "magico",
+"target": "all_enemy_permanents"
+}
+
+[sub_resource type="Resource" id="Resource_dqax3"]
+script = ExtResource("1_tqsc8")
+id = "apoteose_astral"
+display_name = "Apoteose Astral"
+card_type = "magia"
+cost = 5
+command_cost = 5
+text = "Causa 5 + (Ressonância × 2) de dano mágico a um alvo."
+keywords = PackedStringArray()
+effect = {
+"action": "damage",
+"amount": 5.0,
+"damage_type": "magico",
+"resonance_bonus": {
+"multiplier": 2.0
+},
+"target": "any_permanent_or_hero"
+}
+
+[sub_resource type="Resource" id="Resource_prsww"]
+script = ExtResource("1_tqsc8")
+id = "batedor_eter"
+display_name = "Batedor de Éter"
+card_type = "criatura"
+cost = 1
+command_cost = 1
+attack = 1
+health = 2
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_hhqfi"]
+script = ExtResource("1_tqsc8")
+id = "ferida_astral"
+display_name = "Ferida Astral"
+card_type = "magia"
+cost = 1
+command_cost = 1
+text = "Instantâneo. Causa 2 de dano mágico a um permanente inimigo. Este dano não pode ser letal — se reduziria HP a 0 ou menos, HP fica em 1."
+keywords = PackedStringArray("instantaneo")
+effect = {
+"action": "damage",
+"amount": 2.0,
+"damage_type": "magico",
+"non_lethal": true,
+"target": "any_enemy_permanent"
+}
+
+[sub_resource type="Resource" id="Resource_ogvcp"]
+script = ExtResource("1_tqsc8")
+id = "lacador_vinculo"
+display_name = "Laçador de Vínculo"
+card_type = "criatura"
+cost = 2
+command_cost = 2
+attack = 2
+health = 3
+text = "Quando destrói um permanente em combate: ganha +1/+1 permanentemente."
+keywords = PackedStringArray()
+effect = {
+"on_combat_kill": {
+"action": "gain_stats",
+"attack": 1.0,
+"health": 1.0,
+"permanent": true
+}
+}
+
+[sub_resource type="Resource" id="Resource_vs84p"]
+script = ExtResource("1_tqsc8")
+id = "lanca_captura"
+display_name = "Lança de Captura"
+card_type = "magia"
+cost = 2
+command_cost = 2
+text = "Causa 4 de dano mágico a um permanente inimigo. Se destruído: spawna uma Forma Vinculada 2/2 em um slot vazio seu."
+keywords = PackedStringArray()
+effect = {
+"action": "damage",
+"amount": 4.0,
+"damage_type": "magico",
+"on_destroy": {
+"action": "spawn_vinculada",
+"spawn_attack": 2.0,
+"spawn_health": 2.0
+},
+"target": "any_enemy_permanent"
+}
+
+[sub_resource type="Resource" id="Resource_eibmv"]
+script = ExtResource("1_tqsc8")
+id = "fluxo_vinculo"
+display_name = "Fluxo de Vínculo"
+card_type = "magia"
+cost = 2
+command_cost = 2
+text = "Compre 1 carta para cada Forma Vinculada que você controla (máximo 3)."
+keywords = PackedStringArray()
+effect = {
+"action": "draw",
+"amount": "count_own_tag",
+"max_amount": 3.0,
+"tag": "vinculado"
+}
+
+[sub_resource type="Resource" id="Resource_3bh5q"]
+script = ExtResource("1_tqsc8")
+id = "espectro_coletor"
+display_name = "Espectro Coletor"
+card_type = "criatura"
+cost = 3
+command_cost = 3
+attack = 1
+health = 4
+text = "Quando qualquer criatura inimiga é destruída enquanto este permanente está em jogo: spawna uma Forma Vinculada 1/1 em um slot vazio seu."
+keywords = PackedStringArray()
+effect = {
+"on_any_enemy_destroyed": {
+"action": "spawn_vinculada",
+"spawn_attack": 1.0,
+"spawn_health": 1.0
+}
+}
+
+[sub_resource type="Resource" id="Resource_dcefk"]
+script = ExtResource("1_tqsc8")
+id = "dominacao_forcada"
+display_name = "Dominação Forçada"
+card_type = "magia"
+cost = 3
+command_cost = 3
+text = "Escolha uma criatura inimiga. Ela ataca outra criatura inimiga à sua escolha neste turno."
+keywords = PackedStringArray()
+effect = {
+"action": "force_combat",
+"attacker": "choose_enemy_permanent",
+"defender": "choose_enemy_permanent"
+}
+
+[sub_resource type="Resource" id="Resource_dv6wr"]
+script = ExtResource("1_tqsc8")
+id = "mestre_vinculador"
+display_name = "Mestre Vinculador"
+card_type = "criatura"
+cost = 4
+command_cost = 4
+attack = 3
+health = 5
+text = "Quando destrói um permanente em combate: spawna uma Forma Vinculada 2/2 em um slot vazio seu."
+keywords = PackedStringArray()
+effect = {
+"on_combat_kill": {
+"action": "spawn_vinculada",
+"spawn_attack": 2.0,
+"spawn_health": 2.0
+}
+}
+
+[sub_resource type="Resource" id="Resource_2i8af"]
+script = ExtResource("1_tqsc8")
+id = "ritual_colheita"
+display_name = "Ritual de Colheita"
+card_type = "magia_de_tabuleiro"
+cost = 3
+command_cost = 3
+text = "Causa 2 de dano mágico a todos os permanentes inimigos. Para cada permanente destruído por este efeito: spawna uma Forma Vinculada 1/1 em um slot vazio seu."
+keywords = PackedStringArray()
+effect = {
+"action": "damage",
+"amount": 2.0,
+"damage_type": "magico",
+"on_each_destroy": {
+"action": "spawn_vinculada",
+"spawn_attack": 1.0,
+"spawn_health": 1.0
+},
+"target": "all_enemy_permanents"
+}
+
+[sub_resource type="Resource" id="Resource_2booa"]
+script = ExtResource("1_tqsc8")
+id = "exodia_vinculada"
+display_name = "Exodia Vinculada"
+card_type = "criatura"
+cost = 5
+command_cost = 5
+attack = 4
+health = 6
+text = "Upkeep: ganha +1/+1 para cada Forma Vinculada que você controla."
+keywords = PackedStringArray()
+effect = {
+"upkeep_trigger": {
+"action": "gain_stats_per_tag",
+"attack": 1.0,
+"health": 1.0,
+"permanent": true,
+"tag": "vinculado"
+}
+}
+
+[sub_resource type="Resource" id="Resource_x14up"]
 script = ExtResource("2_aaqvb")
 id = "duelista_bandido"
 display_name = "Guardiao Elemental"
 max_health = 20
 hero_power_text = "Golpe Elemental: custo 0, velocidade normal, uso 1x no proprio turno. Causa 1 de dano no heroi inimigo."
 
-[sub_resource type="Resource" id="Resource_3vxjw"]
+[sub_resource type="Resource" id="Resource_jtbwh"]
 script = ExtResource("2_aaqvb")
 id = "aprendiz_limiar"
 display_name = "Novato Draxos"
@@ -398,9 +1229,9 @@ hero_power_text = "Preparar Defesa Astral: custo 1, velocidade normal, uso 1x no
 
 [resource]
 script = ExtResource("3_xh3p2")
-player_hero = SubResource("Resource_3vxjw")
-enemy_hero = SubResource("Resource_vn8pn")
-cards = Array[Resource]([SubResource("Resource_tqsc8"), SubResource("Resource_aaqvb"), SubResource("Resource_xh3p2"), SubResource("Resource_ayi6x"), SubResource("Resource_b0i2p"), SubResource("Resource_hvson"), SubResource("Resource_vopr6"), SubResource("Resource_2f5oc"), SubResource("Resource_q1xx6"), SubResource("Resource_75iml"), SubResource("Resource_xg15d"), SubResource("Resource_kobr5"), SubResource("Resource_js17r"), SubResource("Resource_5405m"), SubResource("Resource_p3n0t"), SubResource("Resource_pkhd5"), SubResource("Resource_haoox"), SubResource("Resource_dqqtb"), SubResource("Resource_0kq34"), SubResource("Resource_edoxb"), SubResource("Resource_q1muo"), SubResource("Resource_w1flg"), SubResource("Resource_u525c"), SubResource("Resource_ba32m"), SubResource("Resource_5njsx"), SubResource("Resource_igiro"), SubResource("Resource_kf03g"), SubResource("Resource_7rtnj"), SubResource("Resource_siawb")])
+player_hero = SubResource("Resource_jtbwh")
+enemy_hero = SubResource("Resource_x14up")
+cards = Array[Resource]([SubResource("Resource_tqsc8"), SubResource("Resource_aaqvb"), SubResource("Resource_xh3p2"), SubResource("Resource_ayi6x"), SubResource("Resource_b0i2p"), SubResource("Resource_hvson"), SubResource("Resource_vopr6"), SubResource("Resource_2f5oc"), SubResource("Resource_q1xx6"), SubResource("Resource_75iml"), SubResource("Resource_xg15d"), SubResource("Resource_kobr5"), SubResource("Resource_js17r"), SubResource("Resource_5405m"), SubResource("Resource_p3n0t"), SubResource("Resource_pkhd5"), SubResource("Resource_haoox"), SubResource("Resource_dqqtb"), SubResource("Resource_0kq34"), SubResource("Resource_edoxb"), SubResource("Resource_q1muo"), SubResource("Resource_w1flg"), SubResource("Resource_u525c"), SubResource("Resource_ba32m"), SubResource("Resource_5njsx"), SubResource("Resource_igiro"), SubResource("Resource_kf03g"), SubResource("Resource_7rtnj"), SubResource("Resource_siawb"), SubResource("Resource_vn8pn"), SubResource("Resource_3vxjw"), SubResource("Resource_8vwdf"), SubResource("Resource_12fis"), SubResource("Resource_wbbs5"), SubResource("Resource_hx6qf"), SubResource("Resource_46hy0"), SubResource("Resource_6lf1p"), SubResource("Resource_rxdp8"), SubResource("Resource_f75cl"), SubResource("Resource_kskod"), SubResource("Resource_ytdv0"), SubResource("Resource_ee0xk"), SubResource("Resource_g44pg"), SubResource("Resource_6juw6"), SubResource("Resource_p0w4t"), SubResource("Resource_r6yjh"), SubResource("Resource_o3iu5"), SubResource("Resource_u7yyh"), SubResource("Resource_m54cl"), SubResource("Resource_xljuu"), SubResource("Resource_xj7j7"), SubResource("Resource_u1e06"), SubResource("Resource_m1ldt"), SubResource("Resource_orpcd"), SubResource("Resource_r1h11"), SubResource("Resource_8hhqx"), SubResource("Resource_tdxwi"), SubResource("Resource_t1it5"), SubResource("Resource_1m5m3"), SubResource("Resource_k85o3"), SubResource("Resource_ty5ik"), SubResource("Resource_8i1rs"), SubResource("Resource_japkk"), SubResource("Resource_jen30"), SubResource("Resource_5ojvm"), SubResource("Resource_b1trl"), SubResource("Resource_u333r"), SubResource("Resource_ga80n"), SubResource("Resource_dqax3"), SubResource("Resource_prsww"), SubResource("Resource_hhqfi"), SubResource("Resource_ogvcp"), SubResource("Resource_vs84p"), SubResource("Resource_eibmv"), SubResource("Resource_3bh5q"), SubResource("Resource_dcefk"), SubResource("Resource_dv6wr"), SubResource("Resource_2i8af"), SubResource("Resource_2booa")])
 starter_deck_ids = PackedStringArray("escudeiro", "escudeiro", "escudeiro", "guarda_vila", "guarda_vila", "guarda_vila", "lobo_faminto", "lobo_faminto", "lobo_faminto", "soldado_linha", "soldado_linha", "arqueira_penhasco", "arqueira_penhasco", "bruto_mercenario", "javali_guerra", "barricada", "barricada", "balista", "raio_curto", "raio_curto")
 first_npc_reward_card_id = "golpe_preciso"
 reward_card_id = "golpe_preciso"

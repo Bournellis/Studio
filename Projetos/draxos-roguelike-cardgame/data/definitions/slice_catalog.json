@@ -1,0 +1,93 @@
+{
+  "default_encounter_id": "pouso_elemental",
+  "player_hero": {
+    "id": "novato_draxos",
+    "display_name": "Novato Draxos",
+    "max_health": 30,
+    "hero_power_text": "Poder heroico pendente: sera recalibrado para o novo cardgame."
+  },
+  "enemy_hero": {
+    "id": "guardiao_elemental",
+    "display_name": "Guardiao Elemental",
+    "max_health": 24,
+    "hero_power_text": "Poder inimigo pendente."
+  },
+  "starter_deck": [
+    "adepto_vazio",
+    "adepto_vazio",
+    "sentinela_eter",
+    "sentinela_eter",
+    "pulso_astral",
+    "pulso_astral"
+  ],
+  "cards": [
+    {
+      "id": "adepto_vazio",
+      "display_name": "Adepto de Vazio",
+      "type": "criatura",
+      "cost": 1,
+      "attack": 2,
+      "health": 2,
+      "text": "Criatura inicial placeholder para validar o novo projeto."
+    },
+    {
+      "id": "sentinela_eter",
+      "display_name": "Sentinela de Eter",
+      "type": "criatura",
+      "cost": 2,
+      "attack": 1,
+      "health": 4,
+      "text": "Defesa inicial placeholder para encontros de mesa simples."
+    },
+    {
+      "id": "pulso_astral",
+      "display_name": "Pulso Astral",
+      "type": "magia",
+      "cost": 1,
+      "text": "Causa dano placeholder. Regras finais de mana, compra e efeitos serao recalibradas.",
+      "effect": {
+        "action": "damage",
+        "amount": 2,
+        "target": "enemy"
+      }
+    }
+  ],
+  "encounters": [
+    {
+      "id": "pouso_elemental",
+      "display_name": "Pouso Elemental",
+      "mode": "limpar_mesa",
+      "player_slots_count": 3,
+      "enemy_slots_count": 3,
+      "duration_target": "short"
+    },
+    {
+      "id": "guardiao_do_conduto",
+      "display_name": "Guardiao do Conduto",
+      "mode": "duelo",
+      "player_slots_count": 4,
+      "enemy_slots_count": 4,
+      "duration_target": "major"
+    },
+    {
+      "id": "chefe_invocador",
+      "display_name": "Chefe Invocador",
+      "mode": "chefe_summoner",
+      "player_slots_count": 5,
+      "enemy_slots_count": 5,
+      "duration_target": "boss"
+    }
+  ],
+  "run_map": {
+    "id": "invasao_inicial",
+    "display_name": "Invasao Inicial",
+    "linear": true,
+    "node_types": [
+      "pequeno_encontro",
+      "grande_encontro",
+      "evento",
+      "descanso",
+      "chefe"
+    ]
+  }
+}

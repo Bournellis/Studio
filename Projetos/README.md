@@ -14,6 +14,11 @@ This directory contains active and emerging Godot projects for the studio.
   - Operational status: `rpg-turnos/implementation/current-status.md`
   - Studio snapshot: `../08_Coordenacao_Agentes/Estado_Atual.md`
   - Validation command: `rpg-turnos/tools/validate.gd`
+- `draxos-roguelike-cardgame/`: menu-first Draxos roguelike cardgame with ship hub, mission map, simple board card battles, and independent mechanics.
+  - Local agent guide: `draxos-roguelike-cardgame/AGENTS.md`
+  - Operational status: `draxos-roguelike-cardgame/implementation/current-status.md`
+  - Studio snapshot: `../08_Coordenacao_Agentes/Estado_Atual.md`
+  - Validation command: `draxos-roguelike-cardgame/tools/validate.gd`
 
 ## Agent Rule
 

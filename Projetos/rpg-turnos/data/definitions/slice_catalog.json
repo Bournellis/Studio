@@ -482,6 +482,937 @@
       ],
       "text": "Voadora, Atropelar. Ataca com fisico_melee mas pode atingir slots alto. Imune a fisico_melee. Excesso de dano passa para proximo slot nao-voadora ou heroi inimigo.",
       "effect": {}
+    },
+    {
+      "id": "incursor_vazio",
+      "display_name": "Incursor de Vazio",
+      "type": "criatura",
+      "cost": 1,
+      "command_cost": 1,
+      "speed": "normal",
+      "attack": 2,
+      "health": 1,
+      "keywords": [
+        "rapido"
+      ],
+      "text": "Rapido.",
+      "effect": {}
+    },
+    {
+      "id": "lamina_choque",
+      "display_name": "Lâmina de Choque",
+      "type": "criatura",
+      "cost": 1,
+      "command_cost": 1,
+      "speed": "normal",
+      "attack": 3,
+      "health": 1,
+      "keywords": [
+        "rapido"
+      ],
+      "text": "Rapido.",
+      "effect": {}
+    },
+    {
+      "id": "fenda_astral",
+      "display_name": "Fenda Astral",
+      "type": "magia",
+      "cost": 1,
+      "command_cost": 1,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [
+        "instantaneo"
+      ],
+      "text": "Causa 2 de dano mágico a qualquer permanente inimigo.",
+      "effect": {
+        "action": "damage",
+        "amount": 2,
+        "damage_type": "magico",
+        "target": "any_enemy_permanent"
+      }
+    },
+    {
+      "id": "pilhador_implacavel",
+      "display_name": "Pilhador Implacável",
+      "type": "criatura",
+      "cost": 2,
+      "command_cost": 2,
+      "speed": "normal",
+      "attack": 2,
+      "health": 2,
+      "keywords": [
+        "rapido"
+      ],
+      "text": "Rapido. Quando destrói um permanente em combate: compre 1 carta.",
+      "effect": {
+        "on_combat_kill": {
+          "action": "draw",
+          "amount": 1
+        }
+      }
+    },
+    {
+      "id": "cacador_alado",
+      "display_name": "Caçador Alado",
+      "type": "criatura",
+      "cost": 2,
+      "command_cost": 2,
+      "speed": "normal",
+      "attack": 3,
+      "health": 2,
+      "keywords": [
+        "voadora",
+        "rapido"
+      ],
+      "text": "Voadora. Rapido.",
+      "effect": {}
+    },
+    {
+      "id": "atirador_frente",
+      "display_name": "Atirador de Frente",
+      "type": "criatura",
+      "cost": 2,
+      "command_cost": 2,
+      "speed": "normal",
+      "attack": 2,
+      "health": 3,
+      "keywords": [
+        "alcance"
+      ],
+      "text": "Alcance.",
+      "effect": {}
+    },
+    {
+      "id": "garra_vazio",
+      "display_name": "Garra do Vazio",
+      "type": "magia",
+      "cost": 2,
+      "command_cost": 2,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Causa 3 de dano mágico a um permanente inimigo. Se destruído por este efeito: causa 2 de dano mágico a um segundo permanente inimigo à escolha.",
+      "effect": {
+        "action": "damage",
+        "amount": 3,
+        "damage_type": "magico",
+        "target": "any_enemy_permanent",
+        "on_destroy": {
+          "action": "damage",
+          "amount": 2,
+          "damage_type": "magico",
+          "target": "any_enemy_permanent"
+        }
+      }
+    },
+    {
+      "id": "devastador_linha",
+      "display_name": "Devastador de Linha",
+      "type": "criatura",
+      "cost": 3,
+      "command_cost": 3,
+      "speed": "normal",
+      "attack": 5,
+      "health": 2,
+      "keywords": [
+        "rapido",
+        "atropelar"
+      ],
+      "text": "Rapido. Atropelar.",
+      "effect": {}
+    },
+    {
+      "id": "interceptor_alado",
+      "display_name": "Interceptor Alado",
+      "type": "criatura",
+      "cost": 3,
+      "command_cost": 3,
+      "speed": "normal",
+      "attack": 3,
+      "health": 4,
+      "keywords": [
+        "voadora"
+      ],
+      "text": "Voadora.",
+      "effect": {}
+    },
+    {
+      "id": "descarga_impacto",
+      "display_name": "Descarga de Impacto",
+      "type": "magia",
+      "cost": 3,
+      "command_cost": 3,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Causa 5 de dano mágico a qualquer permanente ou herói inimigo.",
+      "effect": {
+        "action": "damage",
+        "amount": 5,
+        "damage_type": "magico",
+        "target": "any_permanent_or_hero"
+      }
+    },
+    {
+      "id": "muro_eter",
+      "display_name": "Muro de Éter",
+      "type": "estrutura",
+      "cost": 1,
+      "command_cost": 1,
+      "speed": "normal",
+      "attack": 0,
+      "health": 5,
+      "keywords": [
+        "defensor"
+      ],
+      "text": "Defensor.",
+      "effect": {}
+    },
+    {
+      "id": "reforco_estrutural",
+      "display_name": "Reforço Estrutural",
+      "type": "magia",
+      "cost": 1,
+      "command_cost": 1,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Uma estrutura sua ganha +0/+3 de HP máximo permanentemente.",
+      "effect": {
+        "action": "increase_max_health",
+        "amount": 3,
+        "target": "any_own_structure"
+      }
+    },
+    {
+      "id": "torre_vigilancia",
+      "display_name": "Torre de Vigilância",
+      "type": "estrutura",
+      "cost": 2,
+      "command_cost": 2,
+      "speed": "normal",
+      "attack": 2,
+      "health": 5,
+      "keywords": [
+        "alcance"
+      ],
+      "text": "Alcance.",
+      "effect": {}
+    },
+    {
+      "id": "bastiao_arcano",
+      "display_name": "Bastião Arcano",
+      "type": "estrutura",
+      "cost": 2,
+      "command_cost": 2,
+      "speed": "normal",
+      "attack": 1,
+      "health": 7,
+      "keywords": [
+        "defensor"
+      ],
+      "text": "Defensor. Upkeep: ganha 1 armadura.",
+      "effect": {
+        "upkeep_trigger": {
+          "action": "gain_armor",
+          "amount": 1
+        }
+      }
+    },
+    {
+      "id": "pulso_eter",
+      "display_name": "Pulso de Éter",
+      "type": "magia",
+      "cost": 2,
+      "command_cost": 2,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Causa 2 de dano mágico a todos os permanentes inimigos.",
+      "effect": {
+        "action": "damage",
+        "amount": 2,
+        "damage_type": "magico",
+        "target": "all_enemy_permanents"
+      }
+    },
+    {
+      "id": "nucleo_eter",
+      "display_name": "Núcleo de Éter",
+      "type": "estrutura",
+      "cost": 3,
+      "command_cost": 3,
+      "speed": "normal",
+      "attack": 0,
+      "health": 8,
+      "keywords": [],
+      "text": "Upkeep: ganha 1 de energia.",
+      "effect": {
+        "upkeep_trigger": {
+          "action": "gain_energy",
+          "amount": 1
+        }
+      }
+    },
+    {
+      "id": "guardiao_cristal",
+      "display_name": "Guardião de Cristal",
+      "type": "estrutura",
+      "cost": 3,
+      "command_cost": 3,
+      "speed": "normal",
+      "attack": 3,
+      "health": 7,
+      "keywords": [],
+      "text": "Quando destrói um permanente em combate: ganha 3 armadura.",
+      "effect": {
+        "on_combat_kill": {
+          "action": "gain_armor",
+          "amount": 3
+        }
+      }
+    },
+    {
+      "id": "elo_eter",
+      "display_name": "Elo de Éter",
+      "type": "comando",
+      "cost": 3,
+      "command_cost": 3,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Todas as suas estruturas com ATK > 0 ficam prontas neste turno, mesmo que já tenham atacado.",
+      "effect": {
+        "action": "set_state",
+        "state": "pronta",
+        "filter": "own_structures_with_attack"
+      }
+    },
+    {
+      "id": "sobrecarga_construto",
+      "display_name": "Sobrecarga de Construto",
+      "type": "magia",
+      "cost": 3,
+      "command_cost": 3,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Causa X de dano mágico distribuído entre permanentes inimigos, onde X é o número de estruturas que você controla.",
+      "effect": {
+        "action": "damage_distributed",
+        "damage_type": "magico",
+        "amount": "count_own_tag",
+        "tag": "estrutura",
+        "target": "choose_enemy_permanents"
+      }
+    },
+    {
+      "id": "colosso_eter",
+      "display_name": "Colosso de Éter",
+      "type": "estrutura",
+      "cost": 5,
+      "command_cost": 5,
+      "speed": "normal",
+      "attack": 6,
+      "health": 12,
+      "keywords": [],
+      "text": "",
+      "effect": {}
+    },
+    {
+      "id": "sentinela_supressao",
+      "display_name": "Sentinela de Supressão",
+      "type": "criatura",
+      "cost": 2,
+      "command_cost": 2,
+      "speed": "normal",
+      "attack": 1,
+      "health": 4,
+      "keywords": [
+        "defensor"
+      ],
+      "text": "Defensor. Quando bloqueia um ataque: o atacante ganha enjoo após o combate.",
+      "effect": {
+        "on_block": {
+          "action": "apply_status",
+          "status": "enjoo",
+          "target": "attacker"
+        }
+      }
+    },
+    {
+      "id": "pulso_disruptivo",
+      "display_name": "Pulso Disruptivo",
+      "type": "magia",
+      "cost": 1,
+      "command_cost": 1,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [
+        "instantaneo"
+      ],
+      "text": "Instantâneo. Aplica enjoo a uma criatura inimiga pronta.",
+      "effect": {
+        "action": "apply_status",
+        "status": "enjoo",
+        "target": "any_ready_enemy_creature"
+      }
+    },
+    {
+      "id": "correntes_eter",
+      "display_name": "Correntes de Éter",
+      "type": "magia",
+      "cost": 2,
+      "command_cost": 2,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Aplica queimando ao slot de um permanente inimigo.",
+      "effect": {
+        "action": "apply_slot_status",
+        "status": "queimando",
+        "target": "any_enemy_permanent"
+      }
+    },
+    {
+      "id": "extrator_astral",
+      "display_name": "Extrator Astral",
+      "type": "criatura",
+      "cost": 2,
+      "command_cost": 2,
+      "speed": "normal",
+      "attack": 2,
+      "health": 3,
+      "keywords": [],
+      "text": "Upkeep: se pelo menos uma criatura inimiga tem enjoo, ganha +1/+0 permanentemente.",
+      "effect": {
+        "upkeep_trigger": {
+          "condition": "if_any_enemy_enjoo",
+          "action": "gain_stats",
+          "attack": 1,
+          "health": 0,
+          "permanent": true
+        }
+      }
+    },
+    {
+      "id": "condutor_dominio",
+      "display_name": "Condutor de Domínio",
+      "type": "criatura",
+      "cost": 3,
+      "command_cost": 3,
+      "speed": "normal",
+      "attack": 2,
+      "health": 5,
+      "keywords": [],
+      "text": "Quando causa dano em combate: o alvo ganha enjoo.",
+      "effect": {
+        "on_combat_damage": {
+          "action": "apply_status",
+          "status": "enjoo",
+          "target": "defender"
+        }
+      }
+    },
+    {
+      "id": "drenagem_forca",
+      "display_name": "Drenagem de Força",
+      "type": "magia",
+      "cost": 2,
+      "command_cost": 2,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Causa 2 de dano mágico a um permanente inimigo e aplica enjoo a ele.",
+      "effect": {
+        "action": "damage",
+        "amount": 2,
+        "damage_type": "magico",
+        "target": "any_enemy_permanent",
+        "also": {
+          "action": "apply_status",
+          "status": "enjoo",
+          "target": "same"
+        }
+      }
+    },
+    {
+      "id": "nevoa_astral",
+      "display_name": "Névoa Astral",
+      "type": "magia_de_tabuleiro",
+      "cost": 3,
+      "command_cost": 3,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Todas as criaturas inimigas prontas ganham enjoo.",
+      "effect": {
+        "action": "apply_status",
+        "status": "enjoo",
+        "target": "all_ready_enemy_creatures"
+      }
+    },
+    {
+      "id": "drenar_vitalidade",
+      "display_name": "Drenar Vitalidade",
+      "type": "magia",
+      "cost": 3,
+      "command_cost": 3,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Causa 4 de dano mágico a um permanente inimigo. Você ganha armadura igual ao dano causado.",
+      "effect": {
+        "action": "damage",
+        "amount": 4,
+        "damage_type": "magico",
+        "target": "any_enemy_permanent",
+        "lifesteal": "armor"
+      }
+    },
+    {
+      "id": "senhor_supressao",
+      "display_name": "Senhor da Supressão",
+      "type": "criatura",
+      "cost": 5,
+      "command_cost": 5,
+      "speed": "normal",
+      "attack": 4,
+      "health": 7,
+      "keywords": [],
+      "text": "Upkeep: aplica enjoo a uma criatura inimiga pronta à sua escolha.",
+      "effect": {
+        "upkeep_trigger": {
+          "action": "apply_status",
+          "status": "enjoo",
+          "target": "any_ready_enemy_creature"
+        }
+      }
+    },
+    {
+      "id": "supressao_massa",
+      "display_name": "Supressão em Massa",
+      "type": "magia_de_tabuleiro",
+      "cost": 4,
+      "command_cost": 4,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Todas as criaturas inimigas ganham enjoo. Este enjoo persiste até o início do próximo upkeep delas.",
+      "effect": {
+        "action": "apply_status",
+        "status": "enjoo",
+        "target": "all_enemy_creatures",
+        "duration": "extended"
+      }
+    },
+    {
+      "id": "centelha_astral",
+      "display_name": "Centelha Astral",
+      "type": "magia",
+      "cost": 1,
+      "command_cost": 1,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [
+        "instantaneo"
+      ],
+      "text": "Instantâneo. Causa dano mágico a um permanente inimigo igual à Ressonância atual (mínimo 1).",
+      "effect": {
+        "action": "damage",
+        "damage_type": "magico",
+        "target": "any_enemy_permanent",
+        "amount": "resonance",
+        "min_amount": 1
+      }
+    },
+    {
+      "id": "flecha_vinculo",
+      "display_name": "Flecha de Vínculo",
+      "type": "magia",
+      "cost": 1,
+      "command_cost": 1,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [
+        "instantaneo"
+      ],
+      "text": "Instantâneo. Causa 2 de dano mágico a um permanente inimigo. Compre 1 carta.",
+      "effect": {
+        "action": "damage",
+        "amount": 2,
+        "damage_type": "magico",
+        "target": "any_enemy_permanent",
+        "also": {
+          "action": "draw",
+          "amount": 1
+        }
+      }
+    },
+    {
+      "id": "pulso_ressonante",
+      "display_name": "Pulso Ressonante",
+      "type": "magia",
+      "cost": 1,
+      "command_cost": 1,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Causa 2 de dano mágico a um permanente. Se Ressonância ≥ 3: causa 4 de dano em vez disso.",
+      "effect": {
+        "action": "damage",
+        "damage_type": "magico",
+        "target": "any_permanent",
+        "amount": 2,
+        "resonance_override": {
+          "threshold": 3,
+          "amount": 4
+        }
+      }
+    },
+    {
+      "id": "custodio_fio",
+      "display_name": "Custódio do Fio",
+      "type": "criatura",
+      "cost": 2,
+      "command_cost": 2,
+      "speed": "normal",
+      "attack": 2,
+      "health": 4,
+      "keywords": [],
+      "text": "Quando você lança um feitiço enquanto este permanente está em jogo: ganha 1 armadura.",
+      "effect": {
+        "on_spell_cast": {
+          "action": "gain_armor",
+          "amount": 1
+        }
+      }
+    },
+    {
+      "id": "eco_arcano",
+      "display_name": "Eco Arcano",
+      "type": "magia",
+      "cost": 2,
+      "command_cost": 2,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Causa dano mágico a um permanente inimigo igual a Ressonância × 2.",
+      "effect": {
+        "action": "damage",
+        "damage_type": "magico",
+        "target": "any_enemy_permanent",
+        "amount": "resonance_x2"
+      }
+    },
+    {
+      "id": "barreira_ressonante",
+      "display_name": "Barreira Ressonante",
+      "type": "magia",
+      "cost": 2,
+      "command_cost": 2,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Você ganha armadura igual à Ressonância atual.",
+      "effect": {
+        "action": "gain_armor",
+        "amount": "resonance"
+      }
+    },
+    {
+      "id": "conduit_astral",
+      "display_name": "Conduit Astral",
+      "type": "criatura",
+      "cost": 3,
+      "command_cost": 3,
+      "speed": "normal",
+      "attack": 1,
+      "health": 5,
+      "keywords": [],
+      "text": "Quando Ressonância atinge 3 pela primeira vez no turno: compre 1 carta.",
+      "effect": {
+        "on_spell_cast": {
+          "resonance_milestone": 3,
+          "once_per_turn": true,
+          "action": "draw",
+          "amount": 1
+        }
+      }
+    },
+    {
+      "id": "onda_eter",
+      "display_name": "Onda de Éter",
+      "type": "magia_de_tabuleiro",
+      "cost": 2,
+      "command_cost": 2,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Causa 2 de dano mágico a todos os permanentes inimigos. Se Ressonância ≥ 4: causa 3 de dano em vez disso.",
+      "effect": {
+        "action": "damage",
+        "damage_type": "magico",
+        "target": "all_enemy_permanents",
+        "amount": 2,
+        "resonance_override": {
+          "threshold": 4,
+          "amount": 3
+        }
+      }
+    },
+    {
+      "id": "tempestade_ressonancia",
+      "display_name": "Tempestade de Ressonância",
+      "type": "magia_de_tabuleiro",
+      "cost": 4,
+      "command_cost": 4,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Causa dano mágico a todos os permanentes inimigos igual à Ressonância atual.",
+      "effect": {
+        "action": "damage",
+        "damage_type": "magico",
+        "target": "all_enemy_permanents",
+        "amount": "resonance"
+      }
+    },
+    {
+      "id": "apoteose_astral",
+      "display_name": "Apoteose Astral",
+      "type": "magia",
+      "cost": 5,
+      "command_cost": 5,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Causa 5 + (Ressonância × 2) de dano mágico a um alvo.",
+      "effect": {
+        "action": "damage",
+        "damage_type": "magico",
+        "target": "any_permanent_or_hero",
+        "amount": 5,
+        "resonance_bonus": {
+          "multiplier": 2
+        }
+      }
+    },
+    {
+      "id": "batedor_eter",
+      "display_name": "Batedor de Éter",
+      "type": "criatura",
+      "cost": 1,
+      "command_cost": 1,
+      "speed": "normal",
+      "attack": 1,
+      "health": 2,
+      "keywords": [],
+      "text": "",
+      "effect": {}
+    },
+    {
+      "id": "ferida_astral",
+      "display_name": "Ferida Astral",
+      "type": "magia",
+      "cost": 1,
+      "command_cost": 1,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [
+        "instantaneo"
+      ],
+      "text": "Instantâneo. Causa 2 de dano mágico a um permanente inimigo. Este dano não pode ser letal — se reduziria HP a 0 ou menos, HP fica em 1.",
+      "effect": {
+        "action": "damage",
+        "amount": 2,
+        "damage_type": "magico",
+        "target": "any_enemy_permanent",
+        "non_lethal": true
+      }
+    },
+    {
+      "id": "lacador_vinculo",
+      "display_name": "Laçador de Vínculo",
+      "type": "criatura",
+      "cost": 2,
+      "command_cost": 2,
+      "speed": "normal",
+      "attack": 2,
+      "health": 3,
+      "keywords": [],
+      "text": "Quando destrói um permanente em combate: ganha +1/+1 permanentemente.",
+      "effect": {
+        "on_combat_kill": {
+          "action": "gain_stats",
+          "attack": 1,
+          "health": 1,
+          "permanent": true
+        }
+      }
+    },
+    {
+      "id": "lanca_captura",
+      "display_name": "Lança de Captura",
+      "type": "magia",
+      "cost": 2,
+      "command_cost": 2,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Causa 4 de dano mágico a um permanente inimigo. Se destruído: spawna uma Forma Vinculada 2/2 em um slot vazio seu.",
+      "effect": {
+        "action": "damage",
+        "amount": 4,
+        "damage_type": "magico",
+        "target": "any_enemy_permanent",
+        "on_destroy": {
+          "action": "spawn_vinculada",
+          "spawn_attack": 2,
+          "spawn_health": 2
+        }
+      }
+    },
+    {
+      "id": "fluxo_vinculo",
+      "display_name": "Fluxo de Vínculo",
+      "type": "magia",
+      "cost": 2,
+      "command_cost": 2,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Compre 1 carta para cada Forma Vinculada que você controla (máximo 3).",
+      "effect": {
+        "action": "draw",
+        "amount": "count_own_tag",
+        "tag": "vinculado",
+        "max_amount": 3
+      }
+    },
+    {
+      "id": "espectro_coletor",
+      "display_name": "Espectro Coletor",
+      "type": "criatura",
+      "cost": 3,
+      "command_cost": 3,
+      "speed": "normal",
+      "attack": 1,
+      "health": 4,
+      "keywords": [],
+      "text": "Quando qualquer criatura inimiga é destruída enquanto este permanente está em jogo: spawna uma Forma Vinculada 1/1 em um slot vazio seu.",
+      "effect": {
+        "on_any_enemy_destroyed": {
+          "action": "spawn_vinculada",
+          "spawn_attack": 1,
+          "spawn_health": 1
+        }
+      }
+    },
+    {
+      "id": "dominacao_forcada",
+      "display_name": "Dominação Forçada",
+      "type": "magia",
+      "cost": 3,
+      "command_cost": 3,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Escolha uma criatura inimiga. Ela ataca outra criatura inimiga à sua escolha neste turno.",
+      "effect": {
+        "action": "force_combat",
+        "attacker": "choose_enemy_permanent",
+        "defender": "choose_enemy_permanent"
+      }
+    },
+    {
+      "id": "mestre_vinculador",
+      "display_name": "Mestre Vinculador",
+      "type": "criatura",
+      "cost": 4,
+      "command_cost": 4,
+      "speed": "normal",
+      "attack": 3,
+      "health": 5,
+      "keywords": [],
+      "text": "Quando destrói um permanente em combate: spawna uma Forma Vinculada 2/2 em um slot vazio seu.",
+      "effect": {
+        "on_combat_kill": {
+          "action": "spawn_vinculada",
+          "spawn_attack": 2,
+          "spawn_health": 2
+        }
+      }
+    },
+    {
+      "id": "ritual_colheita",
+      "display_name": "Ritual de Colheita",
+      "type": "magia_de_tabuleiro",
+      "cost": 3,
+      "command_cost": 3,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Causa 2 de dano mágico a todos os permanentes inimigos. Para cada permanente destruído por este efeito: spawna uma Forma Vinculada 1/1 em um slot vazio seu.",
+      "effect": {
+        "action": "damage",
+        "amount": 2,
+        "damage_type": "magico",
+        "target": "all_enemy_permanents",
+        "on_each_destroy": {
+          "action": "spawn_vinculada",
+          "spawn_attack": 1,
+          "spawn_health": 1
+        }
+      }
+    },
+    {
+      "id": "exodia_vinculada",
+      "display_name": "Exodia Vinculada",
+      "type": "criatura",
+      "cost": 5,
+      "command_cost": 5,
+      "speed": "normal",
+      "attack": 4,
+      "health": 6,
+      "keywords": [],
+      "text": "Upkeep: ganha +1/+1 para cada Forma Vinculada que você controla.",
+      "effect": {
+        "upkeep_trigger": {
+          "action": "gain_stats_per_tag",
+          "tag": "vinculado",
+          "attack": 1,
+          "health": 1,
+          "permanent": true
+        }
+      }
     }
   ],
   "boards": [
@@ -1566,5 +2497,235 @@
     "chuva_brasas",
     "campeao_guilda"
   ],
-  "first_npc_reward_card": "golpe_preciso"
+  "first_npc_reward_card": "golpe_preciso",
+  "classes": [
+    {
+      "id": "assaltante",
+      "display_name": "Assaltante de Vazio",
+      "tagline": "Pressão imediata. Fechar antes do turno 7.",
+      "hero": {
+        "id": "assaltante_heroi",
+        "display_name": "Novato Draxos",
+        "max_health": 25,
+        "hero_power": {
+          "id": "disparo_choque",
+          "display_name": "Disparo de Choque",
+          "cost": 1,
+          "speed": "normal",
+          "once_per_own_turn": true,
+          "text": "Causa 2 de dano mágico a qualquer permanente inimigo.",
+          "effect": {
+            "action": "damage",
+            "amount": 2,
+            "damage_type": "magico",
+            "target": "any_enemy_permanent"
+          }
+        }
+      },
+      "starter_deck": [
+        "incursor_vazio",
+        "incursor_vazio",
+        "incursor_vazio",
+        "lamina_choque",
+        "lamina_choque",
+        "lamina_choque",
+        "fenda_astral",
+        "fenda_astral",
+        "fenda_astral",
+        "pilhador_implacavel",
+        "pilhador_implacavel",
+        "cacador_alado",
+        "cacador_alado",
+        "atirador_frente",
+        "atirador_frente",
+        "garra_vazio",
+        "garra_vazio",
+        "devastador_linha",
+        "interceptor_alado",
+        "descarga_impacto"
+      ]
+    },
+    {
+      "id": "arquiteto",
+      "display_name": "Arquiteto de Éter",
+      "tagline": "Instalar. Acumular. Dominar passivamente.",
+      "hero": {
+        "id": "arquiteto_heroi",
+        "display_name": "Novato Draxos",
+        "max_health": 25,
+        "hero_power": {
+          "id": "reparacao_eter",
+          "display_name": "Reparação de Éter",
+          "cost": 1,
+          "speed": "normal",
+          "once_per_own_turn": true,
+          "text": "Regenera 4 HP de uma estrutura sua danificada.",
+          "effect": {
+            "action": "heal_permanent",
+            "amount": 4,
+            "target": "any_own_damaged_structure"
+          }
+        }
+      },
+      "starter_deck": [
+        "muro_eter",
+        "muro_eter",
+        "muro_eter",
+        "reforco_estrutural",
+        "reforco_estrutural",
+        "reforco_estrutural",
+        "torre_vigilancia",
+        "torre_vigilancia",
+        "torre_vigilancia",
+        "bastiao_arcano",
+        "bastiao_arcano",
+        "pulso_eter",
+        "pulso_eter",
+        "nucleo_eter",
+        "nucleo_eter",
+        "guardiao_cristal",
+        "guardiao_cristal",
+        "elo_eter",
+        "sobrecarga_construto",
+        "colosso_eter"
+      ]
+    },
+    {
+      "id": "dominador",
+      "display_name": "Dominador Astral",
+      "tagline": "Paralisia do tabuleiro. O inimigo tem peças — não consegue usá-las.",
+      "hero": {
+        "id": "dominador_heroi",
+        "display_name": "Novato Draxos",
+        "max_health": 25,
+        "hero_power": {
+          "id": "dominancia_astral",
+          "display_name": "Dominância Astral",
+          "cost": 2,
+          "speed": "normal",
+          "once_per_own_turn": true,
+          "text": "Aplica enjoo a um permanente inimigo.",
+          "effect": {
+            "action": "apply_status",
+            "status": "enjoo",
+            "target": "any_enemy_permanent"
+          }
+        }
+      },
+      "starter_deck": [
+        "sentinela_supressao",
+        "sentinela_supressao",
+        "sentinela_supressao",
+        "pulso_disruptivo",
+        "pulso_disruptivo",
+        "pulso_disruptivo",
+        "correntes_eter",
+        "correntes_eter",
+        "correntes_eter",
+        "extrator_astral",
+        "extrator_astral",
+        "condutor_dominio",
+        "condutor_dominio",
+        "drenagem_forca",
+        "drenagem_forca",
+        "nevoa_astral",
+        "nevoa_astral",
+        "drenar_vitalidade",
+        "senhor_supressao",
+        "supressao_massa"
+      ]
+    },
+    {
+      "id": "tecelao",
+      "display_name": "Tecelão Astral",
+      "tagline": "Sequenciar feitiços. Explodir no turno certo.",
+      "hero": {
+        "id": "tecelao_heroi",
+        "display_name": "Novato Draxos",
+        "max_health": 25,
+        "hero_power": {
+          "id": "foco_astral",
+          "display_name": "Foco Astral",
+          "cost": 0,
+          "speed": "normal",
+          "once_per_own_turn": true,
+          "text": "Adiciona 1 de Ressonância.",
+          "effect": {
+            "action": "add_resonance",
+            "amount": 1
+          }
+        }
+      },
+      "starter_deck": [
+        "centelha_astral",
+        "centelha_astral",
+        "centelha_astral",
+        "flecha_vinculo",
+        "flecha_vinculo",
+        "flecha_vinculo",
+        "pulso_ressonante",
+        "pulso_ressonante",
+        "pulso_ressonante",
+        "custodio_fio",
+        "custodio_fio",
+        "eco_arcano",
+        "eco_arcano",
+        "barreira_ressonante",
+        "barreira_ressonante",
+        "conduit_astral",
+        "conduit_astral",
+        "onda_eter",
+        "tempestade_ressonancia",
+        "apoteose_astral"
+      ]
+    },
+    {
+      "id": "vinculador",
+      "display_name": "Vinculador",
+      "tagline": "Capturar e converter o exército inimigo.",
+      "hero": {
+        "id": "vinculador_heroi",
+        "display_name": "Novato Draxos",
+        "max_health": 25,
+        "hero_power": {
+          "id": "captura_forcada",
+          "display_name": "Captura Forçada",
+          "cost": 2,
+          "speed": "normal",
+          "once_per_own_turn": true,
+          "text": "Destrói um permanente inimigo com HP ≤ 3. Spawna uma Forma Vinculada com os stats originais (máx 4/4) em um slot vazio seu.",
+          "effect": {
+            "action": "capture",
+            "hp_threshold": 3,
+            "spawn_vinculada": true,
+            "max_attack": 4,
+            "max_health": 4,
+            "target": "any_enemy_permanent_hp_lte"
+          }
+        }
+      },
+      "starter_deck": [
+        "batedor_eter",
+        "batedor_eter",
+        "batedor_eter",
+        "ferida_astral",
+        "ferida_astral",
+        "ferida_astral",
+        "lacador_vinculo",
+        "lacador_vinculo",
+        "lacador_vinculo",
+        "lanca_captura",
+        "lanca_captura",
+        "fluxo_vinculo",
+        "fluxo_vinculo",
+        "espectro_coletor",
+        "espectro_coletor",
+        "dominacao_forcada",
+        "dominacao_forcada",
+        "mestre_vinculador",
+        "ritual_colheita",
+        "exodia_vinculada"
+      ]
+    }
+  ]
 }

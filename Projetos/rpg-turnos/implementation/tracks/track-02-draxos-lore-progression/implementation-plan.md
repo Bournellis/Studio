@@ -1,12 +1,13 @@
 # Track 02 Implementation Plan - Draxos Lore And Progression Alignment
 
-- Last Updated: `2026-05-06`
-- Status: `stage 1 praticamente completo; stage 2 design concluído; stage 3 aguarda sessão de design; stages 4-7 planejados`
+- Last Updated: `2026-05-07`
+- Status: `linear execution registered; stage 1 practically complete; stage 2 catalog populated and now entering engine/session/UI integration via Codex prompts`
 - Depends On:
   - `../../../docs/lore-campaign.md`
   - `../../../docs/lore-content-migration.md`
   - `../../../docs/game-design-document.md`
   - `../../../docs/classes/README.md`
+  - `linear-execution-plan.md`
   - `../track-01-foundation-first-prototype/current-status.md`
 
 ## Analysis Snapshot
@@ -28,6 +29,7 @@ O design das 5 classes está completo. Os specs estão em `docs/classes/`. Todo 
 - Manter cada passagem validável e reversível.
 - Não importar regras de loadout, combate ou campanha do RPG Isométrico.
 - Nenhuma carta deve depender da existência de um herói inimigo — apenas o modo `duelo` tem um.
+- A implementação agora segue obrigatoriamente a ordem linear em `linear-execution-plan.md`; não dividir tarefas em paralelo.
 
 ## Stage 0 - Baseline Audit
 
@@ -61,7 +63,7 @@ Exit criteria:
 
 ## Stage 2 - Class Identity (Design Completo)
 
-Status: `design completo — aguarda implementação`
+Status: `catálogo populado — aguarda implementação de engine`
 
 Purpose: definir as classes jogáveis antes de qualquer renomeação profunda de cartas ou sistemas de progressão.
 
@@ -80,9 +82,13 @@ O design está inteiramente documentado em `docs/classes/`. As 5 classes são:
 - Todo o conteúdo de cartas atual é placeholder — redesign completo autorizado.
 - Nenhuma carta ou poder de herói depende de herói inimigo existir.
 
+### O que está no catálogo
+
+As 50 cartas das 5 classes estão em `data/definitions/slice_catalog.json`, junto com a seção `classes` com hero powers e starter decks completos. O schema completo está em `docs/class-catalog-schema.md`.
+
 ### Próxima ação em Stage 2
 
-Implementar o conteúdo das classes (cartas, hero powers) no sistema de dados. Ordem sugerida por complexidade de engine:
+Implementar os sistemas de engine necessários para jogar cada classe. Ordem sugerida por complexidade:
 
 1. Assaltante (zero sistemas novos obrigatórios além de hooks menores)
 2. Arquiteto (upkeep triggers — base para o Dominador)
@@ -257,18 +263,12 @@ Exit criteria:
 
 ## Recommended Immediate Next Task
 
-Duas tarefas em paralelo para o Codex, ambas necessárias antes de qualquer teste real:
+Executar `P01 - Catalog class resource plumbing` em `linear-execution-plan.md`.
 
-**Tarefa A — Implementar Assaltante de Vazio:**
-1. Substituir as cartas placeholder pelo deck do Assaltante (spec em `docs/classes/assaltante.md`).
-2. Implementar o hero power "Disparo de Choque".
-3. Implementar os dois hooks de engine: quando-destrói-em-combate, se-destruído-por-efeito.
-4. Regenerar recursos e rodar validação.
+Resumo:
+1. Expor `classes` no recurso gerado do catalogo.
+2. Adicionar helpers de classe em `ContentLibrary`.
+3. Cobrir as 5 classes e seus starter decks em testes.
+4. Regenerar recursos e rodar validacao.
 
-**Tarefa B — Implementar tela de seleção de classe:**
-1. Criar a tela entre o hub e o início da campanha.
-2. Apresentar as 5 classes (nome + identidade em uma linha).
-3. Confirmar a escolha e persistir no save.
-4. Carregar o deck da classe selecionada ao entrar no primeiro encontro.
-
-A **Tarefa B depende de Tarefa A** estar pelo menos parcialmente completa (a classe precisa existir para ser selecionável). No mínimo, o Assaltante deve estar funcional antes de a tela ser útil.
+Depois disso, seguir estritamente o cursor do plano linear. A tela de selecao de classe nao deve comecar antes dos prompts de plumbing, sessao, hero power e deck do Assaltante.

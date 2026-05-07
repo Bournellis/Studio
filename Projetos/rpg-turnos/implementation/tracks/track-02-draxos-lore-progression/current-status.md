@@ -1,7 +1,7 @@
 # Track 02 Current Status
 
-- Last Updated: `2026-05-06`
-- Status: `PLANNED`
+- Last Updated: `2026-05-07`
+- Status: `ACTIVE_LINEAR_PLAN`
 - Track Name: `Track 02 - Draxos Lore And Progression Alignment`
 
 ## Goal
@@ -21,7 +21,16 @@ The track must preserve the validated card-slot runtime while migrating player-f
 
 ## Active Planning Rule
 
-Each pass should change one player-facing layer at a time:
+Track 02 now executes through `linear-execution-plan.md`.
+
+Each prompt must:
+
+- execute only the next pending prompt in the linear plan
+- keep mechanical IDs stable unless explicitly in the ID migration prompt
+- update records at the end of the prompt
+- run validation after runtime, generated-resource, scene, data, or test changes
+
+Each pass should still change one player-facing or runtime layer at a time:
 
 1. story labels and dialogue
 2. class fantasy
@@ -31,23 +40,22 @@ Each pass should change one player-facing layer at a time:
 6. new content volume
 7. technical ID and asset migration
 
-## First Implementation Candidate
+## Next Implementation Candidate
 
-Start with Pass 01 from `implementation-plan.md`: a narrow runtime-facing lore pass.
+Start with `P01 - Catalog class resource plumbing` from `linear-execution-plan.md`.
 
 Expected scope:
 
-- hero and enemy display labels if any placeholders remain
-- hub NPC/command briefing text
-- first mission chain labels and short mission notes
+- expose the authored `classes` array from JSON into generated catalog resources
+- add `ContentLibrary` class helpers
+- add tests proving the 5 classes and their 20-card starter decks are available
 - no mechanical ID renames
-- no new cards
 - no battle rule changes
 - regenerate resources and run validation
 
 ## Do Not Start Yet
 
-- multiple playable classes
+- later class engine systems beyond P01
 - final planet/crystal naming as hard canon
 - broad card economy
 - equipment/items
