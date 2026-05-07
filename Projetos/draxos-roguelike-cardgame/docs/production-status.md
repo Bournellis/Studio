@@ -1,11 +1,11 @@
 # Production Status
 
 - Last Updated: `2026-05-07`
-- Status: `bootstrap scaffold`
+- Status: `first playable checkpoint`
 
 ## Current Reality
 
-The project is official in the Estudio workspace and has a Godot scaffold, local docs, green local validation, a reduced local catalog, and copied reusable systems.
+The project is official in the Estudio workspace and has a Godot scaffold, local docs, green local validation, a reduced local catalog, copied reusable systems, and a first placeholder playable flow.
 
 P01 has locked the first local design contract: the player is a Draxos commander, gameplay identity is class-based, runs have no meta-progression, souls are ship currency, and initial catalog contracts cover encounter tiers, enemy directors, soul bands, and a minimal mainline/sidequest map placeholder.
 
@@ -19,7 +19,7 @@ P05 adds the first playable placeholder encounter. The RunMap can launch `pouso_
 
 P06 adds the first boss-summoner placeholder. `chefe_invocador` has boss health and scripted summons; the BattleEngine summons creatures over time and supports defeating the boss when the board is open.
 
-It is not yet a full playable roguelike cardgame.
+P07 closes Track 00 as the first playable checkpoint. It is not yet a full playable roguelike cardgame.
 
 ## Present In Code
 
@@ -32,7 +32,8 @@ It is not yet a full playable roguelike cardgame.
 - Simplified local BattleEngine baseline.
 - Local content catalog with placeholder cards, encounter contracts, soul reward bands, and map nodes.
 - Local validation script.
-- P06 validation green with 21/21 GUT tests on 2026-05-07.
+- Track 00 validation record.
+- P07 validation green with 21/21 GUT tests and 148 asserts on 2026-05-07.
 - Copied UI support systems.
 
 ## Not Yet Present
@@ -44,4 +45,4 @@ It is not yet a full playable roguelike cardgame.
 
 ## Next Production Step
 
-Execute `P07 - First Playable Checkpoint`.
+Execute `Track 01 - Playable Run Loop`, starting with `P01 - Run Start And Class Placeholder`.

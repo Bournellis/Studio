@@ -23,12 +23,12 @@
 
 ## draxos-roguelike-cardgame
 
-- Status: **Ativo - chefe summoner placeholder validado**
-- Track ativa: `Track 00 - Project Bootstrap` (P06_SUMMONER_BOSS_VALIDATED)
-- Baseline atual: scaffold Godot 4.6.2 com contrato local de comandante Draxos, cenas boot/ShipHub/RunMap/Battle, selecao de node em `RunSession`, `BattleEngine` local simplificado, primeiro `limpar_mesa` jogavel, primeiro `chefe_summoner` com invocacoes scriptadas, derrota do boss quando a mesa abre e validacao verde 21/21
-- Meta ativa: transformar o scaffold em primeiro slice roguelike cardgame com ShipHub, RunMap, batalha simplificada, primeiro `limpar_mesa` e primeiro `chefe_summoner`
+- Status: **Ativo - Track 00 checkpoint completo**
+- Track ativa: `Track 01 - Playable Run Loop` (NEXT)
+- Baseline atual: checkpoint Godot 4.6.2 com contrato local de comandante Draxos, cenas boot/ShipHub/RunMap/Battle, selecao de node em `RunSession`, `BattleEngine` local simplificado, primeiro `limpar_mesa`, primeiro `chefe_summoner`, registro P07 e validacao verde 21/21
+- Meta ativa: evoluir o placeholder para primeiro loop jogavel coerente com escolha de classe, inicio de run, retorno de batalha, recompensa e estado visivel
 - Ultima atualizacao do current-status: `2026-05-07`
-- Proximo passo: executar `P07 - First Playable Checkpoint`
+- Proximo passo: executar `Track 01 / P01 - Run Start And Class Placeholder`
 
 ## Kanban rápido
 

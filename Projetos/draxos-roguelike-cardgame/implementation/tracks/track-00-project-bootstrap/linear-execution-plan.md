@@ -1,7 +1,7 @@
 # Track 00 Linear Execution Plan
 
 - Last Updated: `2026-05-07`
-- Status: `ACTIVE_LINEAR_PLAN`
+- Status: `COMPLETE`
 - Execution Owner: `Codex`
 - Scope: `Draxos Roguelike Cardgame project bootstrap`
 - Validation Command: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd`
@@ -20,7 +20,9 @@ Turn the official scaffold into the first local roguelike cardgame slice without
 
 ## Current Execution Cursor
 
-Next prompt: `P07 - First Playable Checkpoint`.
+Next track: `Track 01 - Playable Run Loop`.
+
+Next prompt: `Track 01 / P01 - Run Start And Class Placeholder`.
 
 ## Linear Prompt Sequence
 
@@ -33,7 +35,7 @@ Next prompt: `P07 - First Playable Checkpoint`.
 | P04 | complete | Simplify BattleEngine to local slot-count board assumptions. | Green 15/15 |
 | P05 | complete | Implement first `limpar_mesa` encounter using local battle rules. | Green 17/17 |
 | P06 | complete | Implement first `chefe_summoner` encounter. | Green 21/21 |
-| P07 | pending | First playable checkpoint docs, status, and validation record. | Run validation |
+| P07 | complete | First playable checkpoint docs, status, and validation record. | Green 21/21 |
 
 ## Prompt Details
 
@@ -149,3 +151,6 @@ Expected work:
 Exit criteria:
 
 - Agents can continue without reading RPG Turnos history.
+- Track 00 status records point to the local Draxos Roguelike checkpoint instead of RPG Turnos history.
+- Validation record captures the P07 green run.
+- Next operational track is explicit.

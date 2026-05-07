@@ -1,7 +1,7 @@
 # Track 00 Current Status
 
 - Last Updated: `2026-05-07`
-- Status: `P06_SUMMONER_BOSS_VALIDATED`
+- Status: `COMPLETE_FIRST_PLAYABLE_CHECKPOINT`
 - Scope: `Create official project scaffold, local docs, validation, and first execution plan`
 
 ## Completed
@@ -39,11 +39,13 @@
 - BattleEngine supports boss summoning over time and boss defeat through direct damage when the board is open.
 - Battle scene can load the summoner boss from the RunMap node.
 - P06 validation green with 21/21 GUT tests.
+- P07 checkpoint record created with validation green 21/21 and 148 asserts.
+- Track 00 closed with next operational track identified.
 
 ## Current Risk
 
-The forked battle engine still contains RPG Turnos assumptions. It must be simplified before becoming the combat baseline.
+The current playable flow is still a placeholder checkpoint. Classes, rewards, map encounter design, final enemy scripts, and ShipHub systems remain future work.
 
 ## Next
 
-Continue with `P07 - First Playable Checkpoint`.
+Continue with `Track 01 - Playable Run Loop`, starting at `P01 - Run Start And Class Placeholder`.

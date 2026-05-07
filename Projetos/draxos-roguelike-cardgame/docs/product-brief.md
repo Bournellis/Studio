@@ -35,6 +35,6 @@ From the hub, the player opens a mission map, chooses a path through encounters,
 
 ## First Checkpoint
 
-The first checkpoint is official project bootstrap: copied technical base, local docs, local validation, and clear production records.
+The first checkpoint is official project bootstrap plus a placeholder playable flow: Boot, ShipHub, RunMap, Battle, first clear-board encounter, and first boss-summoner encounter.
 
-It is not expected to be a finished playable slice.
+It is not expected to be a finished roguelike slice.

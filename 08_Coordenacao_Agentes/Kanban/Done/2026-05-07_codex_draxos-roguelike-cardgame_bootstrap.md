@@ -4,7 +4,7 @@
 
 - id: `2026-05-07_codex_draxos-roguelike-cardgame_bootstrap`
 - owner: `Codex`
-- status: `Doing`
+- status: `Done`
 - projeto: `draxos-roguelike-cardgame`
 
 ## Goal
@@ -45,6 +45,7 @@ Criar o novo projeto oficial `draxos-roguelike-cardgame` com scaffold Godot, doc
 - [x] Validacao headless do novo projeto passa.
 - [x] Docs deixam claro que e novo jogo, nao variante do RPG Turnos.
 - [x] Reuso do RPG Turnos esta documentado e limitado.
+- [x] Track 00 fechada com P07, validacao verde 21/21 e proximo track explicito.
 
 ## Handoff Needed
 
@@ -52,4 +53,4 @@ Criar o novo projeto oficial `draxos-roguelike-cardgame` com scaffold Godot, doc
 
 ## Notes
 
-Primeiro checkpoint e scaffold oficial, nao slice jogavel completo.
+Primeiro checkpoint entregue como scaffold oficial com placeholder jogavel Boot -> ShipHub -> RunMap -> Battle. Proxima etapa: `Track 01 - Playable Run Loop`.

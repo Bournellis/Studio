@@ -78,4 +78,4 @@ Required divergence:
 
 ## Active Track
 
-Start with `implementation/tracks/track-00-project-bootstrap/linear-execution-plan.md`.
+Start with `implementation/current-status.md`, then follow the active or next track named there.

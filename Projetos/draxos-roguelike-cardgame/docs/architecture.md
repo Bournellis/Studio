@@ -78,6 +78,6 @@ Responsibilities:
 - run map components
 - result/reward presentation
 
-## Current Bootstrap
+## Current Checkpoint
 
-The current codebase still contains a fork of the RPG Turnos battle engine. Treat it as scaffolding until Track 00 simplifies it.
+The current codebase has a simplified local BattleEngine baseline created from the temporary RPG Turnos fork. It is valid for placeholder flow work, but final class mechanics, rewards, map pacing, and encounter scripts remain local design work.

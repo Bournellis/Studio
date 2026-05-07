@@ -20,11 +20,11 @@
 - RPG Turnos mana/energy, hand, draw, and discard commitments.
 - RPG Turnos route, terrain, elevation, neutral-slot, and movement board model.
 
-## Required Cleanup
+## Cleanup Status
 
-Track 00 must simplify the forked battle engine before combat is treated as a local baseline.
+Track 00 simplified the forked battle engine into a local placeholder baseline before treating it as the first combat checkpoint.
 
-Target local battle model:
+Current local battle model:
 
 - per-encounter `player_slots_count`
 - per-encounter `enemy_slots_count`
