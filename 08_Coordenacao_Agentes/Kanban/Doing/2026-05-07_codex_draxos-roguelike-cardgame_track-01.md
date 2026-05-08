@@ -9,7 +9,7 @@
 
 ## Goal
 
-Evoluir o checkpoint da Track 00 para o primeiro loop jogavel coerente: iniciar run, escolher Classe placeholder, navegar no mapa, resolver batalha, retornar com estado visivel e preparar recompensas/cura placeholder.
+Evoluir o checkpoint da Track 00 para o primeiro slice jogavel coerente: iniciar run, escolher Classe real do slice, navegar no mapa, resolver batalha, retornar com estado visivel, usar almas/cura e validar decks mockup contra encontros iniciais.
 
 ## Technical Scope
 
@@ -22,13 +22,17 @@ Evoluir o checkpoint da Track 00 para o primeiro loop jogavel coerente: iniciar 
 
 ## Acceptance Criteria
 
-- [x] P01: escolha de 3 Classes placeholder antes da run.
+- [x] P01: escolha de 3 Classes antes da run.
 - [x] P01: `RunSession` registra classe, deck, vida e run ativa.
 - [x] P01: RunMap fica bloqueado ate inicio explicito de run.
 - [x] P02: retorno e estado visivel depois da batalha.
 - [x] P03: recompensa placeholder pos-combate.
-- [ ] P04: almas e cura placeholder no ShipHub.
-- [ ] P05: checkpoint do loop jogavel endurecido.
+- [x] P04: almas e cura no ShipHub.
+- [x] P04: classes `arcano`, `invocador`, `necromante` substituem placeholders.
+- [x] P04: decks mockup de 15 cartas e encontros `limpar_mesa`/`ondas` entram no slice.
+- [x] P04: passivas/spells iniciais implementadas em versao mecanica.
+- [x] P04: decks sao embaralhados no inicio da batalha e ao reciclar descarte.
+- [ ] P05: playtest e tuning do slice mecanico.
 
 ## Handoff Needed
 
@@ -36,4 +40,4 @@ Evoluir o checkpoint da Track 00 para o primeiro loop jogavel coerente: iniciar 
 
 ## Notes
 
-Classes seguem como placeholders ate sessao de design dedicada.
+Classes deixaram de ser placeholders; mecanicas atuais sao slice de teste e ainda precisam de playtest/tuning.

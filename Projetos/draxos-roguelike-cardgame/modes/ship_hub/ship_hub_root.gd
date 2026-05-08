@@ -5,7 +5,7 @@ const REGION_SPECS: Array[Dictionary] = [
 		"id": "command_station",
 		"title": "Comando",
 		"body": "Comandante Draxos: escolha de Classe e estado da run.",
-		"status": "Classes pendentes de sessao de design."
+		"status": "Classes Arcano, Invocador e Necromante disponiveis para teste."
 	},
 	{
 		"id": "grand_master_channel",
@@ -23,19 +23,19 @@ const REGION_SPECS: Array[Dictionary] = [
 		"id": "mission_map_console",
 		"title": "Mapa",
 		"body": "Mapa de navegacao focado no planeta elemental.",
-		"status": "Proximo passo: RunMap placeholder."
+		"status": "Encontros de limpar board e ondas disponiveis."
 	},
 	{
 		"id": "deck_system",
 		"title": "Deck",
 		"body": "Preparacao de cartas, upgrades e recompensas da run.",
-		"status": "Regras finais ainda pendentes."
+		"status": "Decks iniciais mockup carregados por Classe."
 	},
 	{
 		"id": "soul_engine",
 		"title": "Almas",
 		"body": "Moeda da nave para cura e upgrades entre missoes.",
-		"status": "Economia placeholder."
+		"status": "Cura paga de teste disponivel durante a run."
 	}
 ]
 
@@ -43,6 +43,7 @@ var status_label: Label
 var selected_class_id: String = ""
 var start_run_button: Button
 var map_button: Button
+var heal_button: Button
 
 func _ready() -> void:
 	ContentLibrary.ensure_loaded()
@@ -65,14 +66,14 @@ func _build_ui() -> void:
 	var root_margin: MarginContainer = MarginContainer.new()
 	root_margin.name = "ShipHubLayout"
 	root_margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	root_margin.add_theme_constant_override("margin_left", 36)
-	root_margin.add_theme_constant_override("margin_top", 28)
-	root_margin.add_theme_constant_override("margin_right", 36)
-	root_margin.add_theme_constant_override("margin_bottom", 28)
+	root_margin.add_theme_constant_override("margin_left", 28)
+	root_margin.add_theme_constant_override("margin_top", 22)
+	root_margin.add_theme_constant_override("margin_right", 28)
+	root_margin.add_theme_constant_override("margin_bottom", 22)
 	add_child(root_margin)
 
 	var main_box: VBoxContainer = VBoxContainer.new()
-	main_box.add_theme_constant_override("separation", 20)
+	main_box.add_theme_constant_override("separation", 14)
 	root_margin.add_child(main_box)
 
 	var header: VBoxContainer = VBoxContainer.new()
@@ -83,7 +84,7 @@ func _build_ui() -> void:
 	var title: Label = Label.new()
 	title.name = "ShipHubTitle"
 	title.text = "Nave Draxos - Ponte de Comando"
-	title.add_theme_font_size_override("font_size", 34)
+	title.add_theme_font_size_override("font_size", 30)
 	title.add_theme_color_override("font_color", UiTokens.color("text_primary"))
 	header.add_child(title)
 
@@ -96,14 +97,14 @@ func _build_ui() -> void:
 	var content: HBoxContainer = HBoxContainer.new()
 	content.name = "ShipHubContent"
 	content.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	content.add_theme_constant_override("separation", 18)
+	content.add_theme_constant_override("separation", 14)
 	main_box.add_child(content)
 
 	var grid: GridContainer = GridContainer.new()
 	grid.name = "ShipHubRegions"
 	grid.columns = 3
 	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	grid.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	grid.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	grid.add_theme_constant_override("h_separation", 14)
 	grid.add_theme_constant_override("v_separation", 14)
 	content.add_child(grid)
@@ -113,13 +114,22 @@ func _build_ui() -> void:
 
 	var side_panel: PanelContainer = PanelContainer.new()
 	side_panel.name = "ShipHubStatusPanel"
-	side_panel.custom_minimum_size = Vector2(320, 0)
+	side_panel.custom_minimum_size = Vector2(330, 0)
+	side_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	side_panel.add_theme_stylebox_override("panel", _panel_style("bg_panel"))
 	content.add_child(side_panel)
 
+	var side_scroll: ScrollContainer = ScrollContainer.new()
+	side_scroll.name = "ShipHubStatusScroll"
+	side_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	side_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	side_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	side_panel.add_child(side_scroll)
+
 	var side_box: VBoxContainer = VBoxContainer.new()
-	side_box.add_theme_constant_override("separation", 14)
-	side_panel.add_child(side_box)
+	side_box.add_theme_constant_override("separation", 10)
+	side_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	side_scroll.add_child(side_box)
 
 	var side_title: Label = Label.new()
 	side_title.text = "Estado da Nave"
@@ -132,7 +142,6 @@ func _build_ui() -> void:
 	status_label.text = _run_state_text()
 	status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	status_label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
-	status_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	side_box.add_child(status_label)
 
 	var class_title: Label = Label.new()
@@ -146,7 +155,7 @@ func _build_ui() -> void:
 
 	start_run_button = Button.new()
 	start_run_button.name = "ShipHubStartRunButton"
-	start_run_button.text = "Iniciar Run Placeholder"
+	start_run_button.text = "Iniciar Run"
 	start_run_button.pressed.connect(_on_start_run_pressed)
 	side_box.add_child(start_run_button)
 
@@ -155,12 +164,22 @@ func _build_ui() -> void:
 	map_button.text = "Abrir Mapa de Missao"
 	map_button.pressed.connect(func() -> void:
 		if not RunSession.active:
-			status_label.text = "Escolha uma Classe placeholder e inicie a run antes de abrir o mapa."
+			status_label.text = "Escolha uma Classe e inicie a run antes de abrir o mapa."
 			_refresh_run_controls()
 			return
 		get_tree().change_scene_to_file("res://modes/run_map/run_map.tscn")
 	)
 	side_box.add_child(map_button)
+
+	heal_button = Button.new()
+	heal_button.name = "ShipHubPaidHealButton"
+	heal_button.text = "Cura paga"
+	heal_button.pressed.connect(func() -> void:
+		var result: Dictionary = RunSession.buy_paid_heal()
+		status_label.text = "%s\n\n%s" % [str(result.get("message", "")), _run_state_text()]
+		_refresh_run_controls()
+	)
+	side_box.add_child(heal_button)
 
 	var back_button: Button = Button.new()
 	back_button.name = "ShipHubBackToBootButton"
@@ -178,8 +197,8 @@ func _build_region_button(spec: Dictionary) -> Button:
 	button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	button.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	button.custom_minimum_size = Vector2(210, 130)
+	button.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	button.custom_minimum_size = Vector2(190, 150)
 	button.add_theme_stylebox_override("normal", _panel_style("bg_panel_alt"))
 	button.add_theme_stylebox_override("hover", _panel_style("placeholder"))
 	button.pressed.connect(func() -> void:
@@ -192,11 +211,11 @@ func _select_region(spec: Dictionary) -> void:
 
 func _on_start_run_pressed() -> void:
 	if selected_class_id == "":
-		status_label.text = "Escolha uma Classe placeholder antes de iniciar a run."
+		status_label.text = "Escolha uma Classe antes de iniciar a run."
 		_refresh_run_controls()
 		return
 	var result: Dictionary = RunSession.start_class_run(selected_class_id)
-	status_label.text = str(result.get("message", "Run placeholder iniciada."))
+	status_label.text = str(result.get("message", "Run iniciada."))
 	_refresh_run_controls()
 
 func _build_class_button(class_option: Dictionary) -> Button:
@@ -209,11 +228,13 @@ func _build_class_button(class_option: Dictionary) -> Button:
 	]
 	button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	button.custom_minimum_size = Vector2(0, 76)
 	button.pressed.connect(func() -> void:
 		selected_class_id = class_id
-		status_label.text = "%s\n\n%s" % [
+		status_label.text = "%s\n\n%s\n\n%s" % [
 			str(class_option.get("role_text", "")),
-			str(class_option.get("mechanic_status", ""))
+			str(class_option.get("mechanic_status", "")),
+			str(class_option.get("active_text", ""))
 		]
 		_refresh_run_controls()
 	)
@@ -224,20 +245,26 @@ func _refresh_run_controls() -> void:
 		start_run_button.disabled = selected_class_id == ""
 	if map_button != null:
 		map_button.disabled = not RunSession.active
+	if heal_button != null:
+		heal_button.disabled = not RunSession.can_buy_heal()
+		heal_button.text = "Curar %d por %d almas" % [RunSession.PAID_HEAL_AMOUNT, RunSession.PAID_HEAL_COST]
 
 func _run_state_text() -> String:
 	if not RunSession.active:
-		return "Run: inativa. Escolha uma Classe placeholder para iniciar."
+		return "Run: inativa. Escolha uma Classe para iniciar."
 	var completed_text: String = "nenhum"
 	if not RunSession.completed_node_ids.is_empty():
 		completed_text = ", ".join(RunSession.completed_node_ids)
 	var last_text: String = ""
 	if RunSession.last_completed_node_id != "":
 		last_text = "\nUltimo encontro: %s" % RunSession.last_completed_node_id
-	return "Run: ativa\nClasse: %s\nVida: %d/%d\nNodes concluidos: %s\nRecompensas pendentes: %d\nRecompensas aplicadas: %d%s" % [
+	return "Run: ativa\nClasse: %s\nVida: %d/%d\nMana: %d\nAlmas: %d\nSpell: %s\nNodes concluidos: %s\nRecompensas pendentes: %d\nRecompensas aplicadas: %d%s" % [
 		RunSession.selected_class_display_name,
 		RunSession.current_health,
 		RunSession.max_health,
+		RunSession.max_mana,
+		RunSession.soul_total,
+		RunSession.selected_class_active_text,
 		completed_text,
 		RunSession.rewards_pending.size(),
 		RunSession.applied_reward_ids.size(),

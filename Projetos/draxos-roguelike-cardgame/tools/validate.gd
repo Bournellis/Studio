@@ -35,7 +35,7 @@ func _run_validation() -> int:
 		printerr("[validate] GUT failed with exit code %d." % gut_exit_code)
 		return gut_exit_code
 
-	print("[validate] first placeholder encounter is playable; full slice still in progress")
+	print("[validate] first mechanical class slice is playable; balance still in progress")
 	print("[validate] success")
 	return 0
 
@@ -47,22 +47,30 @@ func _validate_contract() -> Dictionary:
 		return {"ok": false, "message": "Player hero must exist for the bootstrap catalog."}
 	if catalog.player_hero.id != "comandante_draxos":
 		return {"ok": false, "message": "Player hero must be the Draxos commander."}
-	if catalog.starter_deck_ids.size() < 1:
-		return {"ok": false, "message": "Starter deck must have placeholder cards."}
+	if catalog.starter_deck_ids.size() < 15:
+		return {"ok": false, "message": "Starter deck must have the 15-card Arcano slice deck."}
 	if catalog.class_options.size() != 3:
-		return {"ok": false, "message": "Catalog must expose exactly 3 placeholder class options for Track 01."}
+		return {"ok": false, "message": "Catalog must expose exactly 3 playable class options for Track 01."}
+	var expected_classes: Array[String] = ["arcano", "invocador", "necromante"]
 	for class_option: Dictionary in catalog.class_options:
-		if str(class_option.get("id", "")) == "":
-			return {"ok": false, "message": "Class placeholder needs id."}
-		if Array(class_option.get("starter_deck", [])).is_empty():
-			return {"ok": false, "message": "Class placeholder %s needs starter_deck." % str(class_option.get("id", ""))}
-		if not str(class_option.get("mechanic_status", "")).contains("pendente"):
-			return {"ok": false, "message": "Class placeholder %s must remain marked as pending design." % str(class_option.get("id", ""))}
+		var class_id: String = str(class_option.get("id", ""))
+		if not expected_classes.has(class_id):
+			return {"ok": false, "message": "Unexpected class option %s." % class_id}
+		if Array(class_option.get("starter_deck", [])).size() != 15:
+			return {"ok": false, "message": "Class %s needs a 15-card starter_deck." % class_id}
+		if int(class_option.get("starting_mana", 0)) != 3:
+			return {"ok": false, "message": "Class %s needs starting_mana 3 for the test slice." % class_id}
+		if int(class_option.get("starting_health", 0)) != 20:
+			return {"ok": false, "message": "Class %s needs starting_health 20 for the test slice." % class_id}
+		if str(class_option.get("passive_id", "")) == "" or str(class_option.get("active_id", "")) == "":
+			return {"ok": false, "message": "Class %s needs passive_id and active_id." % class_id}
 	for card_id: String in Array(catalog.starter_deck_ids):
 		if catalog.find_card(card_id) == null:
 			return {"ok": false, "message": "Starter deck references missing card %s." % card_id}
 	if catalog.find_encounter("pouso_elemental").is_empty():
 		return {"ok": false, "message": "Pouso Elemental encounter must exist."}
+	if catalog.find_encounter("ondas_iniciais").is_empty():
+		return {"ok": false, "message": "Ondas Iniciais encounter must exist."}
 	if catalog.find_encounter("chefe_invocador").is_empty():
 		return {"ok": false, "message": "Chefe Invocador encounter must exist."}
 	for encounter: Dictionary in catalog.encounters:

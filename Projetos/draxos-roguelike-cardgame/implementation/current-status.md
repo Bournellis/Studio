@@ -2,12 +2,12 @@
 
 - Last Updated: `2026-05-07`
 - Active Project Name: `draxos-roguelike-cardgame`
-- Active Surface: `placeholder post-combat reward`
+- Active Surface: `mechanical class slice`
 - Active Track: `Track 01 - Playable Run Loop`
-- Active Track Status: `P03_PLACEHOLDER_REWARD_VALIDATED`
-- Current Operational Baseline: `Godot 4.6.2 first playable checkpoint plus Track 01 loop state: 3 placeholder class options, explicit ShipHub run start, RunSession selected class/deck/health state, RunMap blocked until active run, battle victory records node completion/health/last result and pending reward, RunMap and ShipHub show visible run state, RunMap can apply placeholder reward immediately, and validation green 29/29`
-- Active Goal: `advance from placeholder checkpoint into the first coherent playable run loop`
-- Validation: `2026-05-07 Track 01 P03 validation green; 29/29 GUT tests passing; 238 asserts`
+- Active Track Status: `P04_MECHANICAL_CLASS_SLICE_VALIDATED`
+- Current Operational Baseline: `Godot 4.6.2 mechanical slice with Arcano, Invocador, and Necromante class options; 15-card mockup decks; deterministic deck shuffle on battle start and discard recycle; RunSession mana, health, souls, pending rewards and paid healing; clear-board and waves encounters from docs; class active button in Battle; initial Fluxo, permanent buffs, Protecao/Voadora/Regeneracao, Cinzas, death hooks, debuffs, reanimation, waves, boss summons, and validation green 22/22`
+- Active Goal: `iterate balance and UX on the first playable class/encounter slice`
+- Validation: `2026-05-08 Track 01 mechanical slice validation green; 22/22 GUT tests passing; 165 asserts`
 
 ## Read Next
 
@@ -30,4 +30,4 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 
 ## Next
 
-Execute `P04 - Soul Currency And Paid Healing Placeholder`.
+Playtest Arcano, Invocador, and Necromante against `pouso_elemental` and `ondas_iniciais`; tune class decks, targeting UX, and encounter numbers.

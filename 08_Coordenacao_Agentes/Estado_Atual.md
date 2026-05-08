@@ -23,12 +23,12 @@
 
 ## draxos-roguelike-cardgame
 
-- Status: **Ativo - Track 01 P03 validada**
-- Track ativa: `Track 01 - Playable Run Loop` (P03_PLACEHOLDER_REWARD_VALIDATED)
-- Baseline atual: checkpoint Godot 4.6.2 com contrato local de comandante Draxos, cenas boot/ShipHub/RunMap/Battle, 3 classes placeholder, inicio explicito de run no ShipHub, classe/deck/vida em `RunSession`, RunMap bloqueado ate run ativa, vitoria registra node/vida/resultado/recompensa pendente, RunMap aplica recompensa placeholder imediata e validacao verde 29/29
-- Meta ativa: evoluir o placeholder para primeiro loop jogavel coerente com escolha de classe, inicio de run, retorno de batalha, recompensa e estado visivel
+- Status: **Ativo - Track 01 slice mecanico validado**
+- Track ativa: `Track 01 - Playable Run Loop` (P04_MECHANICAL_CLASS_SLICE_VALIDATED)
+- Baseline atual: checkpoint Godot 4.6.2 com Arcano/Invocador/Necromante, decks mockup de 15 cartas embaralhados por seed, encontros `limpar_mesa` e `ondas`, mana/vida/almas/cura em `RunSession`, passivas/spells iniciais, waves, recompensas imediatas e validacao verde 22/22
+- Meta ativa: playtestar e tunar o primeiro slice jogavel de classes/encontros antes de expandir conteudo
 - Ultima atualizacao do current-status: `2026-05-07`
-- Proximo passo: executar `P04 - Soul Currency And Paid Healing Placeholder`
+- Proximo passo: playtest/tuning do slice mecanico contra `pouso_elemental` e `ondas_iniciais`
 
 ## Kanban rápido
 

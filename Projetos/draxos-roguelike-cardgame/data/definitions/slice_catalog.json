@@ -3,8 +3,8 @@
   "player_hero": {
     "id": "comandante_draxos",
     "display_name": "Comandante Draxos",
-    "max_health": 30,
-    "hero_power_text": "Comando de classe pendente: sera definido em sessao de design."
+    "max_health": 20,
+    "hero_power_text": "A spell ativa depende da classe escolhida."
   },
   "enemy_hero": {
     "id": "guardiao_elemental",
@@ -13,143 +13,430 @@
     "hero_power_text": "Poder inimigo pendente."
   },
   "starter_deck": [
-    "adepto_vazio",
-    "adepto_vazio",
-    "sentinela_eter",
-    "sentinela_eter",
-    "pulso_astral",
-    "pulso_astral"
+    "arcano_construtor_fluxo",
+    "arcano_construtor_fluxo",
+    "arcano_construtor_fluxo",
+    "arcano_spell_dano",
+    "arcano_spell_dano",
+    "arcano_spell_dano",
+    "arcano_spell_dano",
+    "arcano_spell_dano",
+    "arcano_protetor",
+    "arcano_protetor",
+    "arcano_gerador_entrada",
+    "arcano_spell_dano_maior",
+    "arcano_spell_dano_maior",
+    "arcano_gerador_continuo",
+    "arcano_amplificador"
   ],
   "class_options": [
     {
-      "id": "classe_placeholder_alpha",
-      "display_name": "Classe Placeholder I",
-      "role_text": "Opcao temporaria para validar escolha pre-run.",
-      "mechanic_status": "Mecanica propria pendente de sessao de design.",
-      "starting_mana": 1,
-      "starting_health": 30,
+      "id": "arcano",
+      "display_name": "Arcano",
+      "role_text": "Spells de dano, Fluxo Continuo e sequencias rapidas.",
+      "mechanic_status": "Slice mecanico: Fluxo Continuo e spell ativa implementados em versao inicial.",
+      "passive_id": "fluxo_continuo",
+      "active_id": "rajada_arcana",
+      "active_text": "1 mana: causa 1 de dano + Fluxo a qualquer alvo. Uma vez por turno.",
+      "starting_mana": 3,
+      "starting_health": 20,
       "starter_deck": [
-        "adepto_vazio",
-        "adepto_vazio",
-        "sentinela_eter",
-        "sentinela_eter",
-        "pulso_astral",
-        "pulso_astral"
+        "arcano_construtor_fluxo",
+        "arcano_construtor_fluxo",
+        "arcano_construtor_fluxo",
+        "arcano_spell_dano",
+        "arcano_spell_dano",
+        "arcano_spell_dano",
+        "arcano_spell_dano",
+        "arcano_spell_dano",
+        "arcano_protetor",
+        "arcano_protetor",
+        "arcano_gerador_entrada",
+        "arcano_spell_dano_maior",
+        "arcano_spell_dano_maior",
+        "arcano_gerador_continuo",
+        "arcano_amplificador"
       ]
     },
     {
-      "id": "classe_placeholder_beta",
-      "display_name": "Classe Placeholder II",
-      "role_text": "Opcao temporaria para validar variacao de Classe.",
-      "mechanic_status": "Mecanica propria pendente de sessao de design.",
-      "starting_mana": 1,
-      "starting_health": 30,
+      "id": "invocador",
+      "display_name": "Invocador",
+      "role_text": "Controle de mesa, criaturas singulares e buffs permanentes.",
+      "mechanic_status": "Slice mecanico: buffs permanentes, Protecao e Voadora implementados em versao inicial.",
+      "passive_id": "comandante_de_campo",
+      "active_id": "ordem_de_guerra",
+      "active_text": "1 mana: uma criatura aliada ganha +2/+0 permanente. Uma vez por turno.",
+      "starting_mana": 3,
+      "starting_health": 20,
       "starter_deck": [
-        "adepto_vazio",
-        "sentinela_eter",
-        "sentinela_eter",
-        "pulso_astral",
-        "pulso_astral",
-        "adepto_vazio"
+        "invocador_protecao",
+        "invocador_protecao",
+        "invocador_protecao",
+        "invocador_voadora",
+        "invocador_voadora",
+        "invocador_buff_unico",
+        "invocador_buff_unico",
+        "invocador_buff_unico",
+        "invocador_buff_unico",
+        "invocador_buff_temporario",
+        "invocador_buff_temporario",
+        "invocador_regeneracao",
+        "invocador_regeneracao",
+        "invocador_buff_area",
+        "invocador_colosso"
       ]
     },
     {
-      "id": "classe_placeholder_gamma",
-      "display_name": "Classe Placeholder III",
-      "role_text": "Opcao temporaria para validar terceiro slot inicial.",
-      "mechanic_status": "Mecanica propria pendente de sessao de design.",
-      "starting_mana": 1,
-      "starting_health": 30,
+      "id": "necromante",
+      "display_name": "Necromante",
+      "role_text": "Cinzas, morte como recurso, debuffs e reanimacao.",
+      "mechanic_status": "Slice mecanico: Cinzas, efeitos de morte e Ritual das Sombras em versao inicial.",
+      "passive_id": "colheita_sombria",
+      "active_id": "ritual_das_sombras",
+      "active_text": "0 mana + Cinzas: 2 debuff, 4 reanima 1/1, 6 reanima com stats originais. Uma vez por turno.",
+      "starting_mana": 3,
+      "starting_health": 20,
       "starter_deck": [
-        "sentinela_eter",
-        "adepto_vazio",
-        "adepto_vazio",
-        "pulso_astral",
-        "pulso_astral",
-        "sentinela_eter"
+        "necro_sacrificio_zero",
+        "necro_sacrificio_zero",
+        "necro_sacrificio_dano",
+        "necro_sacrificio_dano",
+        "necro_sacrificio_dano",
+        "necro_sacrificio_lento",
+        "necro_sacrificio_lento",
+        "necro_sacrificio_lento",
+        "necro_spell_lentidao",
+        "necro_spell_lentidao",
+        "necro_spell_podridao",
+        "necro_spell_podridao",
+        "necro_reanimavel",
+        "necro_reanimavel",
+        "necro_spell_confusao"
       ]
     }
   ],
   "cards": [
     {
-      "id": "adepto_vazio",
-      "display_name": "Adepto de Vazio",
+      "id": "arcano_construtor_fluxo",
+      "display_name": "Construtor de Fluxo",
+      "type": "magia",
+      "cost": 0,
+      "text": "Aplica Lentidao a uma criatura inimiga. Conta para Fluxo.",
+      "effect": {"action": "debuff", "debuff": "slow", "amount": 1}
+    },
+    {
+      "id": "arcano_spell_dano",
+      "display_name": "Pulso de Fluxo",
+      "type": "magia",
+      "cost": 1,
+      "text": "Causa 1 de dano a qualquer alvo. Arcano soma Fluxo.",
+      "effect": {"action": "damage", "amount": 1}
+    },
+    {
+      "id": "arcano_protetor",
+      "display_name": "Escudo de Eter",
+      "type": "criatura",
+      "cost": 1,
+      "attack": 0,
+      "health": 3,
+      "keywords": ["protecao"],
+      "text": "Criatura protetora."
+    },
+    {
+      "id": "arcano_gerador_entrada",
+      "display_name": "Condutor Instavel",
+      "type": "criatura",
+      "cost": 1,
+      "attack": 1,
+      "health": 2,
+      "text": "Ao entrar: ganhe 1 de mana neste turno.",
+      "effect": {"on_enter": {"action": "gain_mana", "amount": 1}}
+    },
+    {
+      "id": "arcano_spell_dano_maior",
+      "display_name": "Raio Astral",
+      "type": "magia",
+      "cost": 2,
+      "text": "Causa 2 de dano a qualquer alvo. Arcano soma Fluxo.",
+      "effect": {"action": "damage", "amount": 2}
+    },
+    {
+      "id": "arcano_gerador_continuo",
+      "display_name": "Nucleo de Eter",
+      "type": "criatura",
+      "cost": 2,
+      "attack": 1,
+      "health": 3,
+      "text": "Enquanto em campo: +1 de mana por turno.",
+      "effect": {"aura": "mana_per_turn", "amount": 1}
+    },
+    {
+      "id": "arcano_amplificador",
+      "display_name": "Amplificador Astral",
+      "type": "criatura",
+      "cost": 3,
+      "attack": 1,
+      "health": 4,
+      "text": "Enquanto em campo: spells causam +1 de dano.",
+      "effect": {"aura": "spell_damage", "amount": 1}
+    },
+    {
+      "id": "invocador_protecao",
+      "display_name": "Guarda Vinculado",
+      "type": "criatura",
+      "cost": 1,
+      "attack": 1,
+      "health": 4,
+      "keywords": ["protecao"],
+      "text": "Protecao: inimigos priorizam esta criatura."
+    },
+    {
+      "id": "invocador_voadora",
+      "display_name": "Fera Alada",
+      "type": "criatura",
+      "cost": 1,
+      "attack": 3,
+      "health": 2,
+      "keywords": ["voadora"],
+      "text": "Voadora: pode atacar o heroi inimigo diretamente."
+    },
+    {
+      "id": "invocador_buff_unico",
+      "display_name": "Marca Permanente",
+      "type": "magia",
+      "cost": 1,
+      "text": "Criatura aliada ganha +1/+1 permanente.",
+      "effect": {"action": "buff_ally", "attack": 1, "health": 1, "temporary": false}
+    },
+    {
+      "id": "invocador_buff_temporario",
+      "display_name": "Impulso Predatorio",
+      "type": "magia",
+      "cost": 1,
+      "text": "Criatura aliada ganha +3/+0 ate o fim do turno.",
+      "effect": {"action": "buff_ally", "attack": 3, "health": 0, "temporary": true}
+    },
+    {
+      "id": "invocador_regeneracao",
+      "display_name": "Guardiao Regenerante",
+      "type": "criatura",
+      "cost": 2,
+      "attack": 2,
+      "health": 3,
+      "keywords": ["regeneracao"],
+      "text": "Regeneracao: recupera 1 HP no inicio do turno do jogador."
+    },
+    {
+      "id": "invocador_buff_area",
+      "display_name": "Comando de Campo",
+      "type": "magia",
+      "cost": 2,
+      "text": "Todas as criaturas aliadas ganham +1/+1 permanente.",
+      "effect": {"action": "buff_all_allies", "attack": 1, "health": 1, "temporary": false}
+    },
+    {
+      "id": "invocador_colosso",
+      "display_name": "Colosso Vinculado",
+      "type": "criatura",
+      "cost": 3,
+      "attack": 5,
+      "health": 5,
+      "text": "Criatura grande para validar escala de buffs."
+    },
+    {
+      "id": "necro_sacrificio_zero",
+      "display_name": "Cinza Faminta",
+      "type": "criatura",
+      "cost": 0,
+      "attack": 1,
+      "health": 1,
+      "text": "Ao morrer: gera 2 Cinzas em vez de 1.",
+      "effect": {"on_death": {"action": "gain_ashes", "amount": 2}}
+    },
+    {
+      "id": "necro_sacrificio_dano",
+      "display_name": "Lamina Morta",
+      "type": "criatura",
+      "cost": 1,
+      "attack": 2,
+      "health": 1,
+      "text": "Ao morrer: causa 1 de dano a um inimigo.",
+      "effect": {"on_death": {"action": "damage", "amount": 1}}
+    },
+    {
+      "id": "necro_sacrificio_lento",
+      "display_name": "Acolito Ruinoso",
+      "type": "criatura",
+      "cost": 1,
+      "attack": 1,
+      "health": 2,
+      "text": "Ao morrer: aplica Lentidao a uma criatura inimiga.",
+      "effect": {"on_death": {"action": "debuff", "debuff": "slow", "amount": 1}}
+    },
+    {
+      "id": "necro_spell_lentidao",
+      "display_name": "Lentidao Sombria",
+      "type": "magia",
+      "cost": 1,
+      "text": "Uma criatura inimiga nao ataca neste turno.",
+      "effect": {"action": "debuff", "debuff": "slow", "amount": 1}
+    },
+    {
+      "id": "necro_spell_podridao",
+      "display_name": "Podridao Astral",
+      "type": "magia",
+      "cost": 1,
+      "text": "Uma criatura inimiga perde 1/1 permanente.",
+      "effect": {"action": "debuff", "debuff": "rot", "amount": 1}
+    },
+    {
+      "id": "necro_reanimavel",
+      "display_name": "Servo Reanimavel",
+      "type": "criatura",
+      "cost": 2,
+      "attack": 3,
+      "health": 3,
+      "text": "Alvo simples para Ritual das Sombras."
+    },
+    {
+      "id": "necro_spell_confusao",
+      "display_name": "Confusao Sepulcral",
+      "type": "magia",
+      "cost": 2,
+      "text": "Uma criatura inimiga ataca o proprio lado neste turno.",
+      "effect": {"action": "debuff", "debuff": "confusion", "amount": 1}
+    },
+    {
+      "id": "elemental_agil",
+      "display_name": "Elemental Agil",
       "type": "criatura",
       "cost": 1,
       "attack": 2,
       "health": 2,
-      "text": "Criatura inicial placeholder para validar o novo projeto."
+      "text": "Ameaca rapida do primeiro encontro."
     },
     {
-      "id": "sentinela_eter",
-      "display_name": "Sentinela de Eter",
+      "id": "elemental_bruto",
+      "display_name": "Elemental Bruto",
+      "type": "criatura",
+      "cost": 2,
+      "attack": 3,
+      "health": 3,
+      "text": "Maior ameaca de dano inicial."
+    },
+    {
+      "id": "elemental_solido",
+      "display_name": "Elemental Solido",
       "type": "criatura",
       "cost": 2,
       "attack": 1,
-      "health": 4,
-      "text": "Defesa inicial placeholder para encontros de mesa simples."
+      "health": 5,
+      "text": "Criatura resistente de baixo dano."
     },
     {
-      "id": "pulso_astral",
-      "display_name": "Pulso Astral",
-      "type": "magia",
+      "id": "elemental_menor",
+      "display_name": "Elemental Menor",
+      "type": "criatura",
       "cost": 1,
-      "text": "Causa dano placeholder. Regras finais de mana, compra e efeitos serao recalibradas.",
-      "effect": {
-        "action": "damage",
-        "amount": 2,
-        "target": "enemy"
-      }
+      "attack": 1,
+      "health": 2,
+      "text": "Onda inicial."
+    },
+    {
+      "id": "elemental_medio",
+      "display_name": "Elemental Medio",
+      "type": "criatura",
+      "cost": 2,
+      "attack": 2,
+      "health": 3,
+      "text": "Pressao intermediaria."
+    },
+    {
+      "id": "elemental_pesado_a",
+      "display_name": "Elemental Pesado",
+      "type": "criatura",
+      "cost": 3,
+      "attack": 3,
+      "health": 4,
+      "text": "Pressao final de ondas."
+    },
+    {
+      "id": "elemental_pesado_b",
+      "display_name": "Elemental Pesado",
+      "type": "criatura",
+      "cost": 3,
+      "attack": 2,
+      "health": 4,
+      "text": "Pressao final de ondas."
+    },
+    {
+      "id": "elemental_pesado_c",
+      "display_name": "Elemental Pesado",
+      "type": "criatura",
+      "cost": 3,
+      "attack": 1,
+      "health": 4,
+      "text": "Pressao final de ondas."
     }
   ],
   "encounters": [
     {
       "id": "pouso_elemental",
-      "display_name": "Pouso Elemental",
+      "display_name": "Encontro 01 - Limpar Board",
       "mode": "limpar_mesa",
       "tier": "small",
       "enemy_director": "prefilled_board",
       "player_slots_count": 3,
       "enemy_slots_count": 3,
-      "duration_target": "short",
+      "duration_target": "2-4_turns",
       "starting_enemy_slots": [
-        {
-          "slot": 0,
-          "card_id": "adepto_vazio"
-        }
+        {"slot": 0, "card_id": "elemental_agil"},
+        {"slot": 1, "card_id": "elemental_bruto"},
+        {"slot": 2, "card_id": "elemental_solido"}
       ],
-      "soul_reward": {
-        "min": 4,
-        "max": 6
-      }
+      "soul_reward": {"min": 4, "max": 6}
+    },
+    {
+      "id": "ondas_iniciais",
+      "display_name": "Encontro 02 - Ondas",
+      "mode": "ondas",
+      "tier": "medium",
+      "enemy_director": "waves",
+      "player_slots_count": 3,
+      "enemy_slots_count": 3,
+      "duration_target": "test_wave_pacing",
+      "waves": [
+        [
+          {"slot": 0, "card_id": "elemental_menor"},
+          {"slot": 1, "card_id": "elemental_menor"}
+        ],
+        [
+          {"slot": 0, "card_id": "elemental_medio"},
+          {"slot": 1, "card_id": "elemental_medio"}
+        ],
+        [
+          {"slot": 0, "card_id": "elemental_pesado_a"},
+          {"slot": 1, "card_id": "elemental_pesado_b"},
+          {"slot": 2, "card_id": "elemental_pesado_c"}
+        ]
+      ],
+      "soul_reward": {"min": 7, "max": 10}
     },
     {
       "id": "incursao_lateral",
       "display_name": "Incursao Lateral",
-      "mode": "ondas",
+      "mode": "limpar_mesa",
       "tier": "elite_optional",
-      "enemy_director": "waves",
-      "player_slots_count": 4,
-      "enemy_slots_count": 4,
+      "enemy_director": "prefilled_board",
+      "player_slots_count": 3,
+      "enemy_slots_count": 3,
       "duration_target": "optional",
-      "soul_reward": {
-        "min": 11,
-        "max": 16
-      }
-    },
-    {
-      "id": "guardiao_do_conduto",
-      "display_name": "Guardiao do Conduto",
-      "mode": "duelo",
-      "tier": "medium",
-      "enemy_director": "player_like",
-      "player_slots_count": 4,
-      "enemy_slots_count": 4,
-      "duration_target": "major",
-      "soul_reward": {
-        "min": 7,
-        "max": 10
-      }
+      "starting_enemy_slots": [
+        {"slot": 0, "card_id": "elemental_bruto"},
+        {"slot": 1, "card_id": "elemental_solido"},
+        {"slot": 2, "card_id": "elemental_pesado_b"}
+      ],
+      "soul_reward": {"min": 11, "max": 16}
     },
     {
       "id": "chefe_invocador",
@@ -160,19 +447,13 @@
       "player_slots_count": 5,
       "enemy_slots_count": 5,
       "duration_target": "boss",
-      "boss_health": 6,
+      "boss_health": 12,
       "boss_summons": [
-        {
-          "card_id": "adepto_vazio"
-        },
-        {
-          "card_id": "sentinela_eter"
-        }
+        {"card_id": "elemental_menor"},
+        {"card_id": "elemental_medio"},
+        {"card_id": "elemental_bruto"}
       ],
-      "soul_reward": {
-        "min": 18,
-        "max": 25
-      }
+      "soul_reward": {"min": 18, "max": 25}
     }
   ],
   "run_map": {
@@ -181,9 +462,8 @@
     "linear": true,
     "node_types": [
       "pequeno_encontro",
-      "grande_encontro",
-      "evento",
-      "descanso",
+      "ondas",
+      "elite_opcional",
       "chefe"
     ],
     "nodes": [
@@ -192,38 +472,27 @@
         "kind": "mainline",
         "encounter_id": "pouso_elemental",
         "available_after": [],
-        "unlocks": [
-          "s01_incursao_lateral",
-          "n02_guardiao_do_conduto"
-        ]
+        "unlocks": ["s01_incursao_lateral", "n02_ondas_iniciais"]
       },
       {
         "id": "s01_incursao_lateral",
         "kind": "sidequest",
         "encounter_id": "incursao_lateral",
-        "available_after": [
-          "n01_pouso_elemental"
-        ],
+        "available_after": ["n01_pouso_elemental"],
         "unlocks": []
       },
       {
-        "id": "n02_guardiao_do_conduto",
+        "id": "n02_ondas_iniciais",
         "kind": "mainline",
-        "encounter_id": "guardiao_do_conduto",
-        "available_after": [
-          "n01_pouso_elemental"
-        ],
-        "unlocks": [
-          "n03_chefe_invocador"
-        ]
+        "encounter_id": "ondas_iniciais",
+        "available_after": ["n01_pouso_elemental"],
+        "unlocks": ["n03_chefe_invocador"]
       },
       {
         "id": "n03_chefe_invocador",
         "kind": "mainline",
         "encounter_id": "chefe_invocador",
-        "available_after": [
-          "n02_guardiao_do_conduto"
-        ],
+        "available_after": ["n02_ondas_iniciais"],
         "unlocks": []
       }
     ]

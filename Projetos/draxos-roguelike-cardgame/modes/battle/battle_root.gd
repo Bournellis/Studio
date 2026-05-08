@@ -7,6 +7,7 @@ var player_slots_box: HBoxContainer
 var hand_box: HBoxContainer
 var log_label: Label
 var map_button: Button
+var class_active_button: Button
 var current_node: Dictionary = {}
 var current_encounter: Dictionary = {}
 
@@ -19,7 +20,13 @@ func _ready() -> void:
 	current_node = _current_node()
 	current_encounter = ContentLibrary.get_catalog().find_encounter(str(current_node.get("encounter_id", ContentLibrary.get_default_encounter_id())))
 	var deck_ids: Array = RunSession.current_deck_ids if not RunSession.current_deck_ids.is_empty() else ContentLibrary.get_starter_deck_ids()
-	engine.start_battle(ContentLibrary.get_catalog(), deck_ids, {"encounter": current_encounter})
+	engine.start_battle(ContentLibrary.get_catalog(), deck_ids, {
+		"encounter": current_encounter,
+		"class_id": RunSession.selected_class_id,
+		"mana_per_turn": RunSession.max_mana if RunSession.max_mana > 0 else 3,
+		"player_health": RunSession.current_health if RunSession.current_health > 0 else 20,
+		"shuffle_seed": RunSession.run_seed
+	})
 	_build_ui()
 	_refresh()
 
@@ -33,19 +40,19 @@ func _build_ui() -> void:
 	var root_margin: MarginContainer = MarginContainer.new()
 	root_margin.name = "BattleLayout"
 	root_margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	root_margin.add_theme_constant_override("margin_left", 28)
-	root_margin.add_theme_constant_override("margin_top", 24)
-	root_margin.add_theme_constant_override("margin_right", 28)
-	root_margin.add_theme_constant_override("margin_bottom", 24)
+	root_margin.add_theme_constant_override("margin_left", 18)
+	root_margin.add_theme_constant_override("margin_top", 16)
+	root_margin.add_theme_constant_override("margin_right", 18)
+	root_margin.add_theme_constant_override("margin_bottom", 16)
 	add_child(root_margin)
 
 	var main_box: VBoxContainer = VBoxContainer.new()
-	main_box.add_theme_constant_override("separation", 14)
+	main_box.add_theme_constant_override("separation", 8)
 	root_margin.add_child(main_box)
 
 	status_label = Label.new()
 	status_label.name = "BattleStatus"
-	status_label.add_theme_font_size_override("font_size", 24)
+	status_label.add_theme_font_size_override("font_size", 18)
 	status_label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
 	status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	main_box.add_child(status_label)
@@ -79,6 +86,15 @@ func _build_ui() -> void:
 	)
 	actions.add_child(end_turn_button)
 
+	class_active_button = Button.new()
+	class_active_button.name = "BattleClassActiveButton"
+	class_active_button.text = "Spell de Classe"
+	class_active_button.pressed.connect(func() -> void:
+		engine.use_class_active()
+		_after_battle_action()
+	)
+	actions.add_child(class_active_button)
+
 	map_button = Button.new()
 	map_button.name = "BattleBackToRunMapButton"
 	map_button.text = "Voltar ao Mapa"
@@ -87,15 +103,24 @@ func _build_ui() -> void:
 	)
 	actions.add_child(map_button)
 
+	var log_scroll: ScrollContainer = ScrollContainer.new()
+	log_scroll.name = "BattleLogScroll"
+	log_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	log_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	log_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	log_scroll.custom_minimum_size = Vector2(0, 86)
+	main_box.add_child(log_scroll)
+
 	log_label = Label.new()
 	log_label.name = "BattleLog"
 	log_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	log_label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
-	main_box.add_child(log_label)
+	log_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	log_scroll.add_child(log_label)
 
 func _refresh() -> void:
 	var state: Dictionary = engine.get_state()
-	status_label.text = "%s | %s | Classe %s | Mana %d/%d | Vida %d | Inimigo %d | Resultado: %s" % [
+	status_label.text = "%s | %s\nClasse %s | Mana %d/%d | Vida %d | Inimigo %d\nFluxo %d | Cinzas %d | Onda %d/%d | Resultado: %s" % [
 		str(current_encounter.get("display_name", "Encontro")),
 		engine.get_mode_label(),
 		RunSession.selected_class_display_name,
@@ -103,6 +128,10 @@ func _refresh() -> void:
 		int(state.get("mana_per_turn", 0)),
 		int(state.get("player_health", 0)),
 		int(state.get("enemy_health", 0)),
+		int(state.get("flow", 0)),
+		int(state.get("ashes", 0)),
+		int(state.get("wave_index", 0)),
+		int(state.get("waves_total", 0)),
 		str(state.get("outcome", ""))
 	]
 	_rebuild_slots(enemy_slots_box, Array(state.get("enemy_slots", [])), "Inimigo")
@@ -111,6 +140,9 @@ func _refresh() -> void:
 	log_label.text = "\n".join(Array(state.get("log", [])))
 	if map_button != null and engine.outcome == "vitoria":
 		map_button.text = "Continuar no Mapa"
+	if class_active_button != null:
+		class_active_button.disabled = not engine.can_use_class_active()
+		class_active_button.text = _class_active_button_text()
 
 func _rebuild_slots(container: HBoxContainer, slots: Array, label_prefix: String) -> void:
 	for child: Node in container.get_children():
@@ -118,7 +150,7 @@ func _rebuild_slots(container: HBoxContainer, slots: Array, label_prefix: String
 	for index: int in range(slots.size()):
 		var slot_label: Label = Label.new()
 		slot_label.name = "%sSlot%d" % [label_prefix, index]
-		slot_label.custom_minimum_size = Vector2(170, 82)
+		slot_label.custom_minimum_size = Vector2(148, 64)
 		slot_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		slot_label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
 		if slots[index] == null:
@@ -143,7 +175,7 @@ func _rebuild_hand(hand: Array) -> void:
 		var button: Button = Button.new()
 		button.name = "BattleHandCard%d" % index
 		button.text = "%s\nCusto %d" % [ContentLibrary.get_card_name(card_id), int(card.cost if card != null else 0)]
-		button.custom_minimum_size = Vector2(150, 92)
+		button.custom_minimum_size = Vector2(136, 72)
 		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		button.disabled = card == null or int(card.cost) > engine.mana or engine.outcome != ""
 		button.pressed.connect(func() -> void:
@@ -160,6 +192,16 @@ func _play_hand_card(hand_index: int) -> void:
 		target = _first_enemy_target()
 	engine.play_card_from_hand(hand_index, target)
 	_after_battle_action()
+
+func _class_active_button_text() -> String:
+	match RunSession.selected_class_id:
+		"arcano":
+			return "Ativa Arcano"
+		"invocador":
+			return "Ativa Invocador"
+		"necromante":
+			return "Ritual das Sombras"
+	return "Spell de Classe"
 
 func _after_battle_action() -> void:
 	if engine.outcome == "vitoria":

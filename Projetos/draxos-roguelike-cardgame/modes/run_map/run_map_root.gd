@@ -158,24 +158,27 @@ func _node_button_text(node: Dictionary, encounter: Dictionary) -> String:
 
 func _status_text() -> String:
 	if not RunSession.active:
-		return "Nenhuma run ativa. Volte para a nave, escolha uma Classe placeholder e inicie a run."
+		return "Nenhuma run ativa. Volte para a nave, escolha uma Classe e inicie a run."
 	var completed_text: String = _completed_nodes_text()
 	var health_text: String = "Vida: %d/%d" % [RunSession.current_health, RunSession.max_health]
+	var economy_text: String = "\nMana: %d\nAlmas: %d" % [RunSession.max_mana, RunSession.soul_total]
 	var last_result_text: String = ""
 	if RunSession.last_completed_node_id != "":
 		last_result_text = "\nUltimo encontro concluido: %s" % RunSession.last_completed_node_id
 	var reward_text: String = "\nRecompensas pendentes: %d" % RunSession.rewards_pending.size()
 	if RunSession.current_node_id == "":
-		return "Classe: %s\n%s%s%s\nConcluidos: %s\n\nNenhum node selecionado. Escolha o proximo encontro disponivel." % [
+		return "Classe: %s\n%s%s%s%s\nConcluidos: %s\n\nNenhum node selecionado. Escolha o proximo encontro disponivel." % [
 			RunSession.selected_class_display_name,
 			health_text,
+			economy_text,
 			last_result_text,
 			reward_text,
 			completed_text
 		]
-	return "Classe: %s\n%s%s%s\nConcluidos: %s\nNode selecionado: %s\n\nA batalha ainda e placeholder; esta etapa prova selecao e navegacao do mapa." % [
+	return "Classe: %s\n%s%s%s%s\nConcluidos: %s\nNode selecionado: %s\n\nSlice mecanico: a batalha usa deck, passiva e spell ativa da Classe." % [
 		RunSession.selected_class_display_name,
 		health_text,
+		economy_text,
 		last_result_text,
 		reward_text,
 		completed_text,
@@ -208,7 +211,7 @@ func _rebuild_reward_choices() -> void:
 
 	var add_card_button: Button = Button.new()
 	add_card_button.name = "RunMapRewardAddPulsoAstralButton"
-	add_card_button.text = "Adicionar Pulso Astral ao deck"
+	add_card_button.text = "Adicionar carta de Classe ao deck"
 	add_card_button.pressed.connect(func() -> void:
 		_apply_placeholder_reward(RunSession.REWARD_ADD_PULSO_ASTRAL)
 	)

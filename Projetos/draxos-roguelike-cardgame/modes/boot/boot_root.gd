@@ -33,14 +33,14 @@ func _build_ui() -> void:
 	box.add_child(title)
 
 	var status: Label = Label.new()
-	status.text = "Bootstrap oficial: hub, mapa de run e combate simplificado ainda pendentes."
+	status.text = "Slice mecanico: hub, mapa de run e combate de classes em teste."
 	status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	status.add_theme_color_override("font_color", UiTokens.color("text_secondary", Color(0.7, 0.72, 0.74)))
 	box.add_child(status)
 
 	var catalog_label: Label = Label.new()
-	catalog_label.text = "Catalogo local: %d cartas placeholder, %d encontros iniciais." % [
+	catalog_label.text = "Catalogo local: %d cartas no deck inicial, %d encontros iniciais." % [
 		ContentLibrary.get_starter_deck_ids().size(),
 		ContentLibrary.get_all_encounters().size()
 	]
@@ -52,7 +52,7 @@ func _build_ui() -> void:
 	run_button.text = "Criar RunSession Vazia"
 	run_button.pressed.connect(func() -> void:
 		RunSession.start_empty_run()
-		status.text = "RunSession vazia criada. Proximo passo: ShipHub placeholder."
+		status.text = "RunSession vazia criada. Entre na ponte para escolher Classe."
 	)
 	box.add_child(run_button)
 

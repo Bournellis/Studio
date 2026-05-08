@@ -1,26 +1,26 @@
 # Track 01 Linear Execution Plan
 
 - Last Updated: `2026-05-07`
-- Status: `ACTIVE_LINEAR_PLAN`
+- Status: `MECHANICAL_SLICE_VALIDATED`
 - Execution Owner: `Codex`
 - Scope: `First coherent playable run loop after Track 00 checkpoint`
 - Validation Command: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd`
 
 ## Purpose
 
-Turn the Track 00 placeholder checkpoint into a playable loop that starts a run, chooses a class placeholder, travels through map nodes, resolves battles, and returns to the ship with visible run state.
+Turn the Track 00 placeholder checkpoint into a playable loop that starts a run, chooses a class, travels through map nodes, resolves battles, and returns to the ship with visible run state.
 
 ## Execution Rules
 
-- Keep classes as placeholders until the dedicated class design session defines final mechanics.
-- Do not implement final reward formulas, final map chain, or final enemy scripts before their design sessions.
+- Use the class and encounter docs as the active source for the first mechanical slice.
+- Keep balance numbers provisional until playtest confirms them.
 - Prefer small visible loop improvements backed by GUT tests.
 - Run validation after code, scene, data, generated resource, or test changes.
 - Update `../../current-status.md`, this track, and the studio snapshot when observable status changes.
 
 ## Current Execution Cursor
 
-Next prompt: `P04 - Soul Currency And Paid Healing Placeholder`.
+Next prompt: `Playtest/tune mechanical class slice`.
 
 ## Linear Prompt Sequence
 
@@ -29,8 +29,8 @@ Next prompt: `P04 - Soul Currency And Paid Healing Placeholder`.
 | P01 | complete | Add a class placeholder selection and explicit run start state before entering the map. | Green 24/24 |
 | P02 | complete | Return from battle to ShipHub/RunMap with visible completed-node and commander health state. | Green 27/27 |
 | P03 | complete | Add placeholder post-combat reward choice that changes the current run immediately. | Green 29/29 |
-| P04 | pending | Add soul currency visibility and paid healing placeholder in ShipHub. | Run validation |
-| P05 | pending | Harden full-loop checkpoint documentation and status. | Run validation |
+| P04 | complete | Replace placeholders with first mechanical class slice, including souls and paid healing. | Green 21/21 |
+| P05 | pending | Playtest and tune class decks, target UX, rewards, and encounter pressure. | Run validation |
 
 ## P01 - Run Start And Class Placeholder
 

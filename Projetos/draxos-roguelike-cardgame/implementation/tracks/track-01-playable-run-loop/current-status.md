@@ -1,34 +1,29 @@
 # Track 01 Current Status
 
 - Last Updated: `2026-05-07`
-- Status: `P03_PLACEHOLDER_REWARD_VALIDATED`
-- Scope: `First coherent playable run loop after Track 00 checkpoint`
+- Status: `P04_MECHANICAL_CLASS_SLICE_VALIDATED`
+- Scope: `First playable class and encounter slice after Track 00 checkpoint`
 
 ## Completed
 
 - Track 00 checkpoint committed and closed.
-- Catalog exposes exactly 3 placeholder class options.
-- ShipHub shows class placeholder buttons before starting a run.
-- RunSession records selected class id, display name, deck, health, and active run state.
-- RunMap no longer auto-starts an empty run.
-- RunMap nodes remain blocked until the player starts a run from ShipHub.
-- Battle uses the current run deck when available.
-- P01 validation green with 24/24 GUT tests and 185 asserts.
-- Battle victory records node completion, last result, and remaining commander health in `RunSession`.
-- Battle return button becomes `Continuar no Mapa` after victory.
-- RunMap shows selected class, health, completed nodes, last completed node, and newly available nodes.
-- ShipHub shows active run state, selected class, health, completed nodes, and last completed node.
-- P02 validation green with 27/27 GUT tests and 217 asserts.
-- Battle victory creates a pending placeholder reward in `RunSession`.
-- RunMap exposes reward choices for adding `Pulso Astral` to the current deck or reinforcing health by +2.
-- Applying a reward mutates the current run immediately and records the applied reward id.
-- ShipHub shows pending/applied reward counts.
-- P03 validation green with 29/29 GUT tests and 238 asserts.
+- P01-P03 placeholder loop validated previously: class selection, explicit run start, map selection, battle return, visible state, and immediate reward mutation.
+- Catalog now exposes the three real slice classes: `arcano`, `invocador`, and `necromante`.
+- Each class has a 15-card mockup starter deck, starting health 20, and starting mana 3.
+- RunSession records class, deck, health, mana, souls, pending rewards, applied rewards, completed nodes, and last battle state.
+- ShipHub exposes the real class choices and paid healing with souls.
+- RunMap exposes the clear-board first encounter, the waves second encounter, and an optional elite side node.
+- Battle receives current run class, deck, health, and mana.
+- Battle exposes a class active button.
+- BattleEngine implements first-pass Arcano `Fluxo Continuo`, Invocador permanent buffs and keywords, Necromante `Cinzas`, death hooks, debuffs, and reanimation.
+- BattleEngine implements sequential waves and keeps scripted boss summons.
+- BattleEngine shuffles the run deck deterministically on battle start and when discard recycles into the deck.
+- Validation green with 22/22 GUT tests and 165 asserts.
 
 ## Current Risk
 
-Soul currency and paid healing are not implemented yet. P04 owns the first placeholder version of that ship economy.
+The slice is mechanically playable but not balanced. Targeting is still automated for speed of testing, class active names are still provisional, and class/debuff keyword vocabulary needs a dedicated schema pass before content grows.
 
 ## Next
 
-Continue with `P04 - Soul Currency And Paid Healing Placeholder`.
+Playtest the three classes against `pouso_elemental` and `ondas_iniciais`, then tune card numbers, encounter pressure, target selection UX, and reward options.
