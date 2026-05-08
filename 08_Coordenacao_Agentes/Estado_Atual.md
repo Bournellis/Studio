@@ -1,6 +1,6 @@
 # Estado Atual — Estudio
 
-- Ultima atualizacao: `2026-05-07`
+- Ultima atualizacao: `2026-05-08`
 
 ## rpg-isometrico
 
@@ -23,12 +23,12 @@
 
 ## draxos-roguelike-cardgame
 
-- Status: **Ativo - Track 01 slice mecanico validado**
-- Track ativa: `Track 01 - Playable Run Loop` (P04_MECHANICAL_CLASS_SLICE_VALIDATED)
-- Baseline atual: checkpoint Godot 4.6.2 com Arcano/Invocador/Necromante, decks mockup de 15 cartas embaralhados por seed, encontros `limpar_mesa` e `ondas`, mana/vida/almas/cura em `RunSession`, passivas/spells iniciais, waves, recompensas imediatas e validacao verde 22/22
-- Meta ativa: playtestar e tunar o primeiro slice jogavel de classes/encontros antes de expandir conteudo
-- Ultima atualizacao do current-status: `2026-05-07`
-- Proximo passo: playtest/tuning do slice mecanico contra `pouso_elemental` e `ondas_iniciais`
+- Status: **Ativo - Track 01 target UX validado**
+- Track ativa: `Track 01 - Playable Run Loop` (P05_TARGETING_UX_VALIDATED)
+- Baseline atual: checkpoint Godot 4.6.2 com Arcano/Invocador/Necromante, decks mockup de 15 cartas embaralhados por seed, encontros `limpar_mesa` e `ondas`, mana/vida/almas/cura em `RunSession`, drag-and-drop para cartas/spells, preview de cartas, modal do Ritual do Necromante, passivas/spells iniciais, waves, recompensas imediatas e validacao verde 28/28
+- Meta ativa: playtestar e tunar o primeiro slice jogavel de classes/encontros com target UX implementado
+- Ultima atualizacao do current-status: `2026-05-08`
+- Proximo passo: playtest/tuning contra `pouso_elemental` e `ondas_iniciais`
 
 ## Kanban rápido
 

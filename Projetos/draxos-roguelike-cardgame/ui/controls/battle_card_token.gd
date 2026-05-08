@@ -7,14 +7,25 @@ var card
 var type_stripe: ColorRect
 var art_rect: TextureRect
 var keyword_chips: HBoxContainer
+var drag_enabled: bool = true
+var selected: bool = false
 
-func setup(new_card_id: String, new_hand_index: int) -> void:
+func setup(new_card_id: String, new_hand_index: int, enabled: bool = true, is_selected: bool = false) -> void:
 	card_id = new_card_id
 	hand_index = new_hand_index
 	card = ContentLibrary.get_card(card_id)
+	drag_enabled = enabled
+	selected = is_selected
 	_rebuild()
 
+func set_selected(is_selected: bool) -> void:
+	selected = is_selected
+	add_theme_stylebox_override("panel", _panel_style())
+
 func _rebuild() -> void:
+	for child: Node in get_children():
+		remove_child(child)
+		child.free()
 	custom_minimum_size = Vector2(156, 82)
 	clip_contents = true
 	add_theme_stylebox_override("panel", _panel_style())
@@ -76,7 +87,7 @@ func _rebuild() -> void:
 	box.add_child(text_label)
 
 func _get_drag_data(_at_position: Vector2) -> Variant:
-	if card_id == "":
+	if card_id == "" or not drag_enabled:
 		return null
 	var preview: Label = Label.new()
 	preview.text = card.display_name if card != null else card_id
@@ -89,12 +100,13 @@ func _get_drag_data(_at_position: Vector2) -> Variant:
 
 func _panel_style() -> StyleBoxFlat:
 	var style: StyleBoxFlat = StyleBoxFlat.new()
-	style.bg_color = Color(0.13, 0.15, 0.17)
-	style.border_color = Color(0.45, 0.48, 0.5)
-	style.border_width_left = 2
-	style.border_width_top = 2
-	style.border_width_right = 2
-	style.border_width_bottom = 2
+	style.bg_color = Color(0.13, 0.15, 0.17) if drag_enabled else Color(0.08, 0.085, 0.09)
+	style.border_color = Color(0.95, 0.72, 0.26) if selected else Color(0.45, 0.48, 0.5)
+	var border_width: int = 3 if selected else 2
+	style.border_width_left = border_width
+	style.border_width_top = border_width
+	style.border_width_right = border_width
+	style.border_width_bottom = border_width
 	style.corner_radius_top_left = 6
 	style.corner_radius_top_right = 6
 	style.corner_radius_bottom_left = 6

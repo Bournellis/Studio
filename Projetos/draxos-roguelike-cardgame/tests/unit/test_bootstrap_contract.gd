@@ -148,6 +148,39 @@ func test_battle_engine_arcano_active_uses_flow_once_per_turn() -> void:
 	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
 	assert_false(engine.can_use_class_active())
 
+func test_battle_engine_target_helpers_hide_heroes_in_board_modes() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), ["invocador_protecao", "arcano_spell_dano", "arcano_spell_dano", "arcano_spell_dano", "arcano_spell_dano"], {
+		"encounter_id": "pouso_elemental",
+		"class_id": "arcano",
+		"mana_per_turn": 3,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	var summon_result: Dictionary = engine.play_card_from_hand(0, {"owner": BattleEngine.PLAYER_ID, "slot": 2})
+	assert_true(bool(summon_result.get("ok", false)), str(summon_result.get("message", "")))
+	var targets: Array[Dictionary] = engine.get_valid_card_targets(0)
+	assert_true(_has_target(targets, {"owner": BattleEngine.PLAYER_ID, "slot": 2}))
+	assert_true(_has_target(targets, {"owner": BattleEngine.ENEMY_ID, "slot": 0}))
+	assert_false(_has_target(targets, {"owner": BattleEngine.ENEMY_ID, "hero": true}))
+	assert_false(_has_target(engine.get_valid_class_active_targets(""), {"owner": BattleEngine.ENEMY_ID, "hero": true}))
+
+func test_battle_engine_drag_summon_uses_chosen_slot_and_replaces_occupant() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), ["invocador_protecao", "invocador_voadora", "arcano_spell_dano", "arcano_spell_dano", "arcano_spell_dano"], {
+		"encounter_id": "pouso_elemental",
+		"class_id": "invocador",
+		"mana_per_turn": 3,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	var first_result: Dictionary = engine.play_card_from_hand(0, {"owner": BattleEngine.PLAYER_ID, "slot": 2})
+	assert_true(bool(first_result.get("ok", false)), str(first_result.get("message", "")))
+	assert_eq(str(Dictionary(engine.player_slots[2]).get("card_id", "")), "invocador_protecao")
+	var replace_result: Dictionary = engine.play_card_from_hand(0, {"owner": BattleEngine.PLAYER_ID, "slot": 2})
+	assert_true(bool(replace_result.get("ok", false)), str(replace_result.get("message", "")))
+	assert_eq(str(Dictionary(engine.player_slots[2]).get("card_id", "")), "invocador_voadora")
+
 func test_battle_engine_invocador_passive_and_active_buff_units() -> void:
 	var engine: BattleEngine = BattleEngine.new()
 	engine.start_battle(ContentLibrary.get_catalog(), ["invocador_voadora", "invocador_protecao", "invocador_buff_unico", "invocador_buff_unico", "invocador_buff_unico"], {
@@ -178,6 +211,40 @@ func test_battle_engine_necromante_gains_ashes_from_death() -> void:
 	engine.end_player_turn()
 	assert_gte(engine.ashes, 2)
 	assert_true(engine.can_use_class_active())
+
+func test_battle_engine_necromancer_choices_target_debuffs_and_reanimation_slots() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), ["necro_spell_lentidao", "necro_spell_lentidao", "necro_spell_lentidao", "necro_spell_lentidao", "necro_spell_lentidao"], {
+		"encounter_id": "pouso_elemental",
+		"class_id": "necromante",
+		"mana_per_turn": 3,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	engine.ashes = 2
+	var choices: Array[Dictionary] = engine.get_necromancer_active_choices()
+	assert_true(_choice_enabled(choices, BattleEngine.NECRO_CHOICE_SLOW))
+	assert_true(_choice_enabled(choices, BattleEngine.NECRO_CHOICE_ROT))
+	assert_true(_choice_enabled(choices, BattleEngine.NECRO_CHOICE_CONFUSION))
+	var confusion_result: Dictionary = engine.use_class_active({"owner": BattleEngine.ENEMY_ID, "slot": 0}, BattleEngine.NECRO_CHOICE_CONFUSION)
+	assert_true(bool(confusion_result.get("ok", false)), str(confusion_result.get("message", "")))
+	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("confusion_turns", 0)), 1)
+	assert_eq(engine.ashes, 0)
+
+	engine.start_battle(ContentLibrary.get_catalog(), ["necro_spell_lentidao", "necro_spell_lentidao", "necro_spell_lentidao", "necro_spell_lentidao", "necro_spell_lentidao"], {
+		"encounter_id": "pouso_elemental",
+		"class_id": "necromante",
+		"mana_per_turn": 3,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	engine.ashes = 4
+	engine.discard.append("necro_reanimavel")
+	assert_true(_choice_enabled(engine.get_necromancer_active_choices(), BattleEngine.NECRO_CHOICE_REVIVE_ONE_ONE))
+	var revive_result: Dictionary = engine.use_class_active({"owner": BattleEngine.PLAYER_ID, "slot": 1}, BattleEngine.NECRO_CHOICE_REVIVE_ONE_ONE)
+	assert_true(bool(revive_result.get("ok", false)), str(revive_result.get("message", "")))
+	assert_eq(str(Dictionary(engine.player_slots[1]).get("card_id", "")), "necro_reanimavel")
+	assert_eq(int(Dictionary(engine.player_slots[1]).get("attack", 0)), 1)
 
 func test_battle_engine_waves_spawn_sequentially() -> void:
 	var engine: BattleEngine = BattleEngine.new()
@@ -252,8 +319,59 @@ func test_battle_scene_passes_run_class_to_engine() -> void:
 	assert_eq(battle.engine.selected_class_id, "arcano")
 	assert_eq(battle.engine.mana_per_turn, 3)
 	assert_eq(battle.engine.player_health, 20)
-	assert_not_null(battle.find_child("BattleClassActiveButton", true, false))
+	assert_not_null(battle.find_child("BattleClassActiveTile", true, false))
+	assert_not_null(battle.find_child("BattleHandCard0", true, false))
+	assert_not_null(battle.find_child("PlayerSlot0", true, false))
+	assert_not_null(battle.find_child("EnemySlot0", true, false))
+	assert_not_null(battle.find_child("BattleCardPreview", true, false))
 	assert_not_null(battle.find_child("BattleLogScroll", true, false))
+	battle.queue_free()
+	await get_tree().process_frame
+
+func test_battle_scene_drop_plays_cards_on_explicit_slots() -> void:
+	_start_run()
+	RunSession.select_node("n01_pouso_elemental")
+	var battle = await _instantiate_scene("res://modes/battle/battle.tscn")
+	battle.engine.start_battle(ContentLibrary.get_catalog(), ["invocador_protecao", "invocador_voadora", "arcano_spell_dano", "arcano_spell_dano", "arcano_spell_dano"], {
+		"encounter_id": "pouso_elemental",
+		"class_id": "invocador",
+		"mana_per_turn": 3,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	battle._refresh()
+	battle._on_slot_target_dropped({"kind": "battle_card", "hand_index": 0, "card_id": "invocador_protecao"}, BattleEngine.PLAYER_ID, 2)
+	assert_eq(str(Dictionary(battle.engine.player_slots[2]).get("card_id", "")), "invocador_protecao")
+	battle._on_slot_target_dropped({"kind": "battle_card", "hand_index": 0, "card_id": "invocador_voadora"}, BattleEngine.PLAYER_ID, 2)
+	assert_eq(str(Dictionary(battle.engine.player_slots[2]).get("card_id", "")), "invocador_voadora")
+	battle.queue_free()
+	await get_tree().process_frame
+
+func test_battle_scene_necromancer_modal_exposes_ritual_choices() -> void:
+	_start_class_run("necromante")
+	RunSession.select_node("n01_pouso_elemental")
+	var battle = await _instantiate_scene("res://modes/battle/battle.tscn")
+	battle.engine.ashes = 6
+	battle.engine.discard.append("necro_reanimavel")
+	battle._refresh()
+	battle._open_necromancer_modal()
+	assert_true(battle.find_child("NecromancerChoiceModal", true, false).visible)
+	assert_not_null(battle.find_child("NecroChoice_%s" % BattleEngine.NECRO_CHOICE_SLOW, true, false))
+	assert_not_null(battle.find_child("NecroChoice_%s" % BattleEngine.NECRO_CHOICE_ROT, true, false))
+	assert_not_null(battle.find_child("NecroChoice_%s" % BattleEngine.NECRO_CHOICE_CONFUSION, true, false))
+	assert_not_null(battle.find_child("NecroChoice_%s" % BattleEngine.NECRO_CHOICE_REVIVE_ONE_ONE, true, false))
+	assert_not_null(battle.find_child("NecroChoice_%s" % BattleEngine.NECRO_CHOICE_REVIVE_FULL, true, false))
+	battle.queue_free()
+	await get_tree().process_frame
+
+func test_battle_scene_preview_receives_full_card_data() -> void:
+	_start_run()
+	RunSession.select_node("n01_pouso_elemental")
+	var battle = await _instantiate_scene("res://modes/battle/battle.tscn")
+	battle._show_preview_now(battle._card_preview_data("arcano_spell_dano", {}))
+	assert_true(battle.find_child("BattleCardPreview", true, false).visible)
+	assert_eq(battle.find_child("BattleCardPreviewTitle", true, false).text, "Pulso de Fluxo")
+	assert_string_contains(battle.find_child("BattleCardPreviewBody", true, false).text, "Causa 1 de dano")
 	battle.queue_free()
 	await get_tree().process_frame
 
@@ -283,6 +401,10 @@ func _start_run(seed: int = 0) -> void:
 	var result: Dictionary = RunSession.start_class_run("arcano", seed)
 	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
 
+func _start_class_run(class_id: String, seed: int = 0) -> void:
+	var result: Dictionary = RunSession.start_class_run(class_id, seed)
+	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
+
 func _instantiate_scene(path: String):
 	var packed_scene: PackedScene = load(path)
 	assert_not_null(packed_scene)
@@ -297,6 +419,18 @@ func _find_run_node(nodes: Array, node_id: String) -> Dictionary:
 		if typeof(node) == TYPE_DICTIONARY and str(Dictionary(node).get("id", "")) == node_id:
 			return Dictionary(node)
 	return {}
+
+func _has_target(targets: Array[Dictionary], target: Dictionary) -> bool:
+	for option: Dictionary in targets:
+		if str(option.get("owner", "")) == str(target.get("owner", "")) and int(option.get("slot", -999)) == int(target.get("slot", -999)) and bool(option.get("hero", false)) == bool(target.get("hero", false)):
+			return true
+	return false
+
+func _choice_enabled(choices: Array[Dictionary], choice_id: String) -> bool:
+	for choice: Dictionary in choices:
+		if str(choice.get("id", "")) == choice_id:
+			return bool(choice.get("enabled", false))
+	return false
 
 func _collect_descendants(root: Node) -> Array[Node]:
 	var result: Array[Node] = []

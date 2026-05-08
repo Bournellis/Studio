@@ -72,14 +72,15 @@ func _rebuild() -> void:
 		box.add_child(stats)
 
 func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
-	if typeof(data) != TYPE_DICTIONARY or str(data.get("kind", "")) != "battle_card":
+	if typeof(data) != TYPE_DICTIONARY:
 		return false
-	var card = ContentLibrary.get_card(str(data.get("card_id", "")))
-	if card == null:
-		return false
-	if slot_owner == "player":
-		return card.occupies_slot() or card.is_buff_command()
-	return card.is_damage_spell()
+	var payload: Dictionary = Dictionary(data)
+	match str(payload.get("kind", "")):
+		"battle_card":
+			return Array(visual_state.get("accepted_card_indices", [])).has(int(payload.get("hand_index", -1)))
+		"class_active":
+			return Array(visual_state.get("accepted_class_choices", [])).has(str(payload.get("choice_id", "")))
+	return false
 
 func _drop_data(_at_position: Vector2, data: Variant) -> void:
 	card_dropped.emit(Dictionary(data), slot_owner, slot_index)
@@ -108,6 +109,8 @@ func _chip_text() -> String:
 		return "Fonte de ataque"
 	if bool(visual_state.get("is_attack_target", false)):
 		return "Alvo possivel"
+	if bool(visual_state.get("is_drop_target", false)):
+		return "Solte aqui"
 	return str(visual_state.get("attack_status", "Livre"))
 
 func _chip_color() -> Color:
@@ -115,6 +118,8 @@ func _chip_color() -> Color:
 		return Color(1.0, 0.82, 0.32)
 	if bool(visual_state.get("is_attack_target", false)):
 		return Color(0.95, 0.55, 0.42)
+	if bool(visual_state.get("is_drop_target", false)):
+		return Color(0.9, 0.78, 0.42)
 	return Color(0.7, 0.78, 0.82)
 
 func _slot_fill() -> Color:
@@ -122,6 +127,8 @@ func _slot_fill() -> Color:
 		return Color(0.18, 0.17, 0.09)
 	if bool(visual_state.get("is_attack_target", false)):
 		return Color(0.2, 0.1, 0.09)
+	if bool(visual_state.get("is_drop_target", false)):
+		return Color(0.16, 0.14, 0.08)
 	if bool(visual_state.get("is_empty", false)):
 		return Color(0.07, 0.085, 0.09) if slot_owner == "player" else Color(0.1, 0.075, 0.08)
 	return Color(0.1, 0.12, 0.13) if slot_owner == "player" else Color(0.15, 0.1, 0.11)
@@ -131,4 +138,6 @@ func _slot_border() -> Color:
 		return Color(0.95, 0.72, 0.26)
 	if bool(visual_state.get("is_attack_target", false)):
 		return Color(0.95, 0.44, 0.34)
+	if bool(visual_state.get("is_drop_target", false)):
+		return Color(0.9, 0.68, 0.3)
 	return Color(0.32, 0.5, 0.48) if slot_owner == "player" else Color(0.56, 0.32, 0.34)
