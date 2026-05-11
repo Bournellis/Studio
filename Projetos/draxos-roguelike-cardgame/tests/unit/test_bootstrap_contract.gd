@@ -9,6 +9,7 @@ func before_all() -> void:
 	var scene_result: Dictionary = SceneGeneratorScript.new().generate_all()
 	assert_true(bool(scene_result.get("ok", false)), str(scene_result.get("message", "")))
 	ContentLibrary.reload()
+	VisualAssets.reload()
 
 func before_each() -> void:
 	RunSession.reset()
@@ -57,6 +58,32 @@ func test_run_map_exposes_mainline_waves_and_optional_sidequest() -> void:
 	assert_eq(str(waves_node.get("kind", "")), "mainline")
 	assert_eq(str(waves_node.get("encounter_id", "")), "ondas_iniciais")
 	assert_true(Array(waves_node.get("available_after", [])).has("n01_pouso_elemental"))
+
+func test_visual_asset_manifest_covers_current_slice_without_requiring_pngs() -> void:
+	var result: Dictionary = VisualAssets.validate_manifest(ContentLibrary.get_catalog())
+	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
+	var missing_assets: Array = Array(result.get("missing_assets", []))
+	assert_true(missing_assets.size() > 0, "The V1 manifest should report missing PNGs without failing.")
+	assert_false(VisualAssets.surface_entry("ship_hub_background").is_empty())
+	assert_false(VisualAssets.frame_entry("frame_arcano").is_empty())
+	assert_false(VisualAssets.card_entry("arcano_spell_dano").is_empty())
+
+func test_visual_asset_fallback_background_builds_without_png() -> void:
+	var background: Control = VisualAssets.build_surface_background("ship_hub_background")
+	assert_not_null(background)
+	assert_eq(background.name, "VisualSurface_ship_hub_background")
+	if VisualAssets.surface_texture("ship_hub_background") == null:
+		assert_not_null(background.find_child("VisualSurfaceFallbackFill", true, false))
+		assert_not_null(background.find_child("VisualSurfaceFallbackLabel", true, false))
+	background.free()
+
+func test_visual_card_template_uses_mechanical_values() -> void:
+	var small_damage = ContentLibrary.get_card("arcano_spell_dano")
+	var large_damage = ContentLibrary.get_card("arcano_spell_dano_maior")
+	var buff = ContentLibrary.get_card("invocador_buff_unico")
+	assert_string_contains(VisualAssets.card_display_text(small_damage), "Causa 1 de dano")
+	assert_string_contains(VisualAssets.card_display_text(large_damage), "Causa 2 de dano")
+	assert_string_contains(VisualAssets.card_display_text(buff), "+1/+1")
 
 func test_run_session_starts_arcano_run_with_slice_stats() -> void:
 	var result: Dictionary = RunSession.start_class_run("arcano", 77)
@@ -279,6 +306,7 @@ func test_battle_engine_uses_local_slot_count_contract_without_legacy_board_term
 
 func test_ship_hub_scene_exposes_classes_and_paid_heal() -> void:
 	var hub = await _instantiate_scene("res://modes/ship_hub/ship_hub.tscn")
+	assert_not_null(hub.find_child("ShipHubVisualBackground", true, false))
 	assert_not_null(hub.find_child("ShipHubStatusScroll", true, false))
 	assert_not_null(hub.find_child("ShipHubClass_arcano", true, false))
 	assert_not_null(hub.find_child("ShipHubClass_invocador", true, false))
@@ -300,6 +328,8 @@ func test_run_map_scene_selects_available_wave_path_after_first_win() -> void:
 	_start_run()
 	RunSession.record_battle_result("n01_pouso_elemental", "vitoria", 14)
 	var run_map = await _instantiate_scene("res://modes/run_map/run_map.tscn")
+	assert_not_null(run_map.find_child("RunMapVisualBackground", true, false))
+	assert_not_null(run_map.find_child("RunMapNodes", true, false))
 	var waves_node = run_map.find_child("RunMapNode_n02_ondas_iniciais", true, false)
 	var side_node = run_map.find_child("RunMapNode_s01_incursao_lateral", true, false)
 	assert_not_null(waves_node)
@@ -320,12 +350,27 @@ func test_battle_scene_passes_run_class_to_engine() -> void:
 	assert_eq(battle.engine.mana_per_turn, 3)
 	assert_eq(battle.engine.player_health, 20)
 	assert_not_null(battle.find_child("BattleClassActiveTile", true, false))
+	assert_not_null(battle.find_child("BattleVisualBackground", true, false))
+	assert_not_null(battle.find_child("BattleBoardPanel", true, false))
 	assert_not_null(battle.find_child("BattleHandCard0", true, false))
 	assert_not_null(battle.find_child("PlayerSlot0", true, false))
 	assert_not_null(battle.find_child("EnemySlot0", true, false))
 	assert_not_null(battle.find_child("BattleCardPreview", true, false))
 	assert_not_null(battle.find_child("BattleLogScroll", true, false))
 	battle.queue_free()
+	await get_tree().process_frame
+
+func test_battle_card_token_uses_portrait_visual_contract() -> void:
+	var token: BattleCardToken = BattleCardToken.new()
+	token.setup("arcano_spell_dano", 0, true, false)
+	add_child(token)
+	await get_tree().process_frame
+	assert_eq(token.custom_minimum_size, Vector2(150, 220))
+	assert_not_null(token.find_child("BattleCardArtArea", true, false))
+	assert_not_null(token.find_child("BattleCardCost", true, false))
+	assert_not_null(token.find_child("BattleCardRulesText", true, false))
+	assert_string_contains(token.find_child("BattleCardRulesText", true, false).text, "Causa 1 de dano")
+	token.queue_free()
 	await get_tree().process_frame
 
 func test_battle_scene_drop_plays_cards_on_explicit_slots() -> void:

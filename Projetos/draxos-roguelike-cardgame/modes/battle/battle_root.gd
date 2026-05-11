@@ -46,11 +46,16 @@ func _ready() -> void:
 	_refresh()
 
 func _build_ui() -> void:
-	var background: ColorRect = ColorRect.new()
-	background.name = "BattleBackground"
-	background.color = UiTokens.color("bg_deep", Color(0.045, 0.05, 0.055))
-	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var background: Control = VisualAssets.build_surface_background("battle_board_background")
+	background.name = "BattleVisualBackground"
 	add_child(background)
+
+	var scrim: ColorRect = ColorRect.new()
+	scrim.name = "BattleVisualScrim"
+	scrim.color = Color(0.0, 0.0, 0.0, 0.34)
+	scrim.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	scrim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(scrim)
 
 	var root_margin: MarginContainer = MarginContainer.new()
 	root_margin.name = "BattleLayout"
@@ -75,21 +80,50 @@ func _build_ui() -> void:
 	hero_targets_box = HBoxContainer.new()
 	hero_targets_box.name = "BattleHeroTargets"
 	hero_targets_box.add_theme_constant_override("separation", 10)
-	main_box.add_child(hero_targets_box)
 
 	enemy_slots_box = HBoxContainer.new()
 	enemy_slots_box.name = "BattleEnemySlots"
 	enemy_slots_box.add_theme_constant_override("separation", 10)
-	main_box.add_child(enemy_slots_box)
+	enemy_slots_box.alignment = BoxContainer.ALIGNMENT_CENTER
 
 	player_slots_box = HBoxContainer.new()
 	player_slots_box.name = "BattlePlayerSlots"
 	player_slots_box.add_theme_constant_override("separation", 10)
-	main_box.add_child(player_slots_box)
+	player_slots_box.alignment = BoxContainer.ALIGNMENT_CENTER
+
+	var board_panel: PanelContainer = PanelContainer.new()
+	board_panel.name = "BattleBoardPanel"
+	board_panel.custom_minimum_size = Vector2(0, 230)
+	board_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	board_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.06, 0.065, 0.065, 0.64), VisualAssets.surface_accent_color("battle_board_background")))
+	main_box.add_child(board_panel)
+
+	var board_margin: MarginContainer = MarginContainer.new()
+	board_margin.add_theme_constant_override("margin_left", 14)
+	board_margin.add_theme_constant_override("margin_top", 12)
+	board_margin.add_theme_constant_override("margin_right", 14)
+	board_margin.add_theme_constant_override("margin_bottom", 12)
+	board_panel.add_child(board_margin)
+
+	var board_box: VBoxContainer = VBoxContainer.new()
+	board_box.name = "BattleBoardRows"
+	board_box.add_theme_constant_override("separation", 12)
+	board_box.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	board_margin.add_child(board_box)
+
+	board_box.add_child(hero_targets_box)
+	board_box.add_child(enemy_slots_box)
+	var board_spacer: Control = Control.new()
+	board_spacer.name = "BattleBoardCenterSpace"
+	board_spacer.custom_minimum_size = Vector2(0, 18)
+	board_spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	board_box.add_child(board_spacer)
+	board_box.add_child(player_slots_box)
 
 	hand_box = HBoxContainer.new()
 	hand_box.name = "BattleHand"
 	hand_box.add_theme_constant_override("separation", 10)
+	hand_box.alignment = BoxContainer.ALIGNMENT_CENTER
 	main_box.add_child(hand_box)
 
 	var actions: HBoxContainer = HBoxContainer.new()
@@ -466,7 +500,7 @@ func _card_preview_data(card_id: String, occupant: Dictionary) -> Dictionary:
 	var subtitle: String = "%s | Custo %d" % [UiTokens.type_display_name(str(card.card_type)), int(card.cost)]
 	if card.occupies_slot():
 		subtitle += " | %d/%d" % [int(card.attack), int(card.health)]
-	var body: String = str(card.text)
+	var body: String = VisualAssets.card_display_text(card)
 	var keyword_text: String = _keyword_text(Array(card.keywords))
 	if keyword_text != "":
 		body += "\n\n%s" % keyword_text

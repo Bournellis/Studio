@@ -57,11 +57,16 @@ func get_region_ids() -> Array[String]:
 	return ids
 
 func _build_ui() -> void:
-	var background: ColorRect = ColorRect.new()
-	background.name = "EtherShipBackground"
-	background.color = UiTokens.color("bg_deep", Color(0.045, 0.05, 0.055))
-	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var background: Control = VisualAssets.build_surface_background("ship_hub_background")
+	background.name = "ShipHubVisualBackground"
 	add_child(background)
+
+	var scrim: ColorRect = ColorRect.new()
+	scrim.name = "ShipHubVisualScrim"
+	scrim.color = Color(0.0, 0.0, 0.0, 0.28)
+	scrim.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	scrim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(scrim)
 
 	var root_margin: MarginContainer = MarginContainer.new()
 	root_margin.name = "ShipHubLayout"
@@ -273,8 +278,10 @@ func _run_state_text() -> String:
 
 func _panel_style(color_token: String) -> StyleBoxFlat:
 	var style: StyleBoxFlat = StyleBoxFlat.new()
-	style.bg_color = UiTokens.color(color_token, Color(0.1, 0.11, 0.12))
-	style.border_color = UiTokens.color("border_default", Color(0.25, 0.3, 0.34))
+	var bg_color: Color = UiTokens.color(color_token, Color(0.1, 0.11, 0.12))
+	style.bg_color = Color(bg_color.r, bg_color.g, bg_color.b, 0.82)
+	var border_color: Color = UiTokens.color("border_default", Color(0.25, 0.3, 0.34))
+	style.border_color = Color(border_color.r, border_color.g, border_color.b, 0.9)
 	style.set_border_width_all(2)
 	style.set_corner_radius_all(8)
 	style.content_margin_left = 18

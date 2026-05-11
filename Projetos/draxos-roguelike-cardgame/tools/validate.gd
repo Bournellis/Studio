@@ -2,6 +2,7 @@ extends SceneTree
 
 const ContentGeneratorScript = preload("res://tools/content_generator.gd")
 const SceneGeneratorScript = preload("res://tools/scene_generator.gd")
+const VisualAssetsScript = preload("res://core/visual_assets.gd")
 
 func _initialize() -> void:
 	call_deferred("_run")
@@ -28,6 +29,15 @@ func _run_validation() -> int:
 	if not bool(contract_result.get("ok", false)):
 		printerr("[validate] %s" % str(contract_result.get("message", "Contract validation failed.")))
 		return 1
+
+	print("[validate] checking visual asset manifest")
+	var visual_result: Dictionary = _validate_visual_assets()
+	if not bool(visual_result.get("ok", false)):
+		printerr("[validate] %s" % str(visual_result.get("message", "Visual asset manifest validation failed.")))
+		return 1
+	var missing_assets: Array = Array(visual_result.get("missing_assets", []))
+	if not missing_assets.is_empty():
+		print("[validate] visual assets missing but optional in V1: %d" % missing_assets.size())
 
 	print("[validate] running GUT")
 	var gut_exit_code: int = await _run_gut()
@@ -95,6 +105,15 @@ func _validate_contract() -> Dictionary:
 	if not bool(run_map_result.get("ok", false)):
 		return run_map_result
 	return {"ok": true, "message": "Bootstrap contract is valid."}
+
+func _validate_visual_assets() -> Dictionary:
+	var catalog = load("res://data/generated/slice_catalog.tres")
+	if catalog == null:
+		return {"ok": false, "message": "Missing generated slice catalog before visual validation."}
+	var visual_assets = VisualAssetsScript.new()
+	var result: Dictionary = visual_assets.validate_manifest(catalog)
+	visual_assets.free()
+	return result
 
 func _validate_encounter_contract(encounter: Dictionary) -> Dictionary:
 	var encounter_id: String = str(encounter.get("id", ""))

@@ -1,6 +1,6 @@
 # Estado Atual — Estudio
 
-- Ultima atualizacao: `2026-05-08`
+- Ultima atualizacao: `2026-05-11`
 
 ## rpg-isometrico
 
@@ -23,12 +23,12 @@
 
 ## draxos-roguelike-cardgame
 
-- Status: **Ativo - Track 01 target UX validado**
-- Track ativa: `Track 01 - Playable Run Loop` (P05_TARGETING_UX_VALIDATED)
-- Baseline atual: checkpoint Godot 4.6.2 com Arcano/Invocador/Necromante, decks mockup de 15 cartas embaralhados por seed, encontros `limpar_mesa` e `ondas`, mana/vida/almas/cura em `RunSession`, drag-and-drop para cartas/spells, preview de cartas, modal do Ritual do Necromante, passivas/spells iniciais, waves, recompensas imediatas e validacao verde 28/28
-- Meta ativa: playtestar e tunar o primeiro slice jogavel de classes/encontros com target UX implementado
-- Ultima atualizacao do current-status: `2026-05-08`
-- Proximo passo: playtest/tuning contra `pouso_elemental` e `ondas_iniciais`
+- Status: **Ativo - Track 01 suporte visual V1 validado**
+- Track ativa: `Track 01 - Playable Run Loop` (P05_VISUAL_SUPPORT_V1_VALIDATED)
+- Baseline atual: checkpoint Godot 4.6.2 com Arcano/Invocador/Necromante, decks mockup de 15 cartas, encontros `limpar_mesa` e `ondas`, mana/vida/almas/cura em `RunSession`, drag-and-drop para cartas/spells, preview, modal do Ritual do Necromante, VisualAssets manifest/autoload, fundos/rota/tabuleiro/cartas preparados para PNGs opcionais e validacao verde 32/32
+- Meta ativa: adicionar PNGs provisorios de AI no contrato VisualAssets e playtestar/tunar o slice de classes/encontros
+- Ultima atualizacao do current-status: `2026-05-11`
+- Proximo passo: gerar e inserir PNGs provisorios para nave, mapa, tabuleiro, frames e cartas prioritarias; depois playtest/tuning contra `pouso_elemental` e `ondas_iniciais`
 
 ## Kanban rápido
 

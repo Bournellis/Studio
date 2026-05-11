@@ -1,13 +1,13 @@
 # Current Status
 
-- Last Updated: `2026-05-08`
+- Last Updated: `2026-05-11`
 - Active Project Name: `draxos-roguelike-cardgame`
-- Active Surface: `mechanical class slice`
+- Active Surface: `visual-ready mechanical class slice`
 - Active Track: `Track 01 - Playable Run Loop`
-- Active Track Status: `P05_TARGETING_UX_VALIDATED`
-- Current Operational Baseline: `Godot 4.6.2 mechanical slice with Arcano, Invocador, and Necromante class options; 15-card mockup decks; deterministic deck shuffle and discard recycle; RunSession mana, health, souls, pending rewards and paid healing; clear-board and waves encounters; drag-and-drop battle targeting for hand cards and class spells; hover card preview; Necromante ritual choice modal; initial Fluxo, buffs, Protecao/Voadora/Regeneracao, Cinzas, death hooks, debuffs, reanimation, waves, boss summons, and validation green 28/28`
-- Active Goal: `playtest and tune balance now that target selection and card readability are implemented`
-- Validation: `2026-05-08 Track 01 targeting UX validation green; 28/28 GUT tests passing; 208 asserts`
+- Active Track Status: `P05_VISUAL_SUPPORT_V1_VALIDATED`
+- Current Operational Baseline: `Godot 4.6.2 mechanical slice with Arcano, Invocador, and Necromante class options; 15-card mockup decks; deterministic deck shuffle and discard recycle; RunSession mana, health, souls, pending rewards and paid healing; clear-board and waves encounters; drag-and-drop battle targeting for hand cards and class spells; hover card preview; Necromante ritual choice modal; initial Fluxo, buffs, Protecao/Voadora/Regeneracao, Cinzas, death hooks, debuffs, reanimation, waves, boss summons, VisualAssets manifest/autoload, optional asset fallback reporting, visual-ready ShipHub/RunMap/Battle backgrounds, route markers, portrait battle cards with frame slots, and validation green 32/32`
+- Active Goal: `add provisional AI PNGs into the VisualAssets paths, then playtest and tune balance/readability`
+- Validation: `2026-05-11 Track 01 visual support V1 validation green; 32/32 GUT tests passing; 230 asserts; 37 optional PNGs reported missing by design`
 
 ## Read Next
 
@@ -30,4 +30,4 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 
 ## Next
 
-Playtest Arcano, Invocador, and Necromante against `pouso_elemental` and `ondas_iniciais`; tune class decks, encounter pressure, rewards, and readability details.
+Add the first provisional AI PNGs for `ship_hub_background`, `mission_map_background`, `battle_board_background`, class frames, and priority card arts; then playtest Arcano, Invocador, and Necromante against `pouso_elemental` and `ondas_iniciais`.

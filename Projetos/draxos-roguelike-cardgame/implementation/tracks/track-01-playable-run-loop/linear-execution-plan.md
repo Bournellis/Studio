@@ -1,7 +1,7 @@
 # Track 01 Linear Execution Plan
 
-- Last Updated: `2026-05-08`
-- Status: `TARGETING_UX_VALIDATED`
+- Last Updated: `2026-05-11`
+- Status: `VISUAL_SUPPORT_V1_VALIDATED`
 - Execution Owner: `Codex`
 - Scope: `First coherent playable run loop after Track 00 checkpoint`
 - Validation Command: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd`
@@ -20,7 +20,7 @@ Turn the Track 00 placeholder checkpoint into a playable loop that starts a run,
 
 ## Current Execution Cursor
 
-Next prompt: `Playtest/tune mechanical class slice after targeting UX`.
+Next prompt: `Add provisional AI PNGs, then playtest/tune visual-ready class slice`.
 
 ## Linear Prompt Sequence
 
@@ -30,7 +30,7 @@ Next prompt: `Playtest/tune mechanical class slice after targeting UX`.
 | P02 | complete | Return from battle to ShipHub/RunMap with visible completed-node and commander health state. | Green 27/27 |
 | P03 | complete | Add placeholder post-combat reward choice that changes the current run immediately. | Green 29/29 |
 | P04 | complete | Replace placeholders with first mechanical class slice, including souls and paid healing. | Green 21/21 |
-| P05 | in progress | Playtest and tune class decks, target UX, rewards, and encounter pressure. | Target UX green 28/28 |
+| P05 | in progress | Playtest and tune class decks, target UX, rewards, visuals, and encounter pressure. | Visual support V1 green 32/32 |
 
 ## P01 - Run Start And Class Placeholder
 

@@ -1,7 +1,7 @@
 extends Control
 
 var status_label: Label
-var nodes_box: VBoxContainer
+var nodes_box: Control
 var reward_box: VBoxContainer
 
 func _ready() -> void:
@@ -9,11 +9,16 @@ func _ready() -> void:
 	_build_ui()
 
 func _build_ui() -> void:
-	var background: ColorRect = ColorRect.new()
-	background.name = "RunMapBackground"
-	background.color = UiTokens.color("bg_deep", Color(0.045, 0.05, 0.055))
-	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var background: Control = VisualAssets.build_surface_background("mission_map_background")
+	background.name = "RunMapVisualBackground"
 	add_child(background)
+
+	var scrim: ColorRect = ColorRect.new()
+	scrim.name = "RunMapVisualScrim"
+	scrim.color = Color(0.0, 0.0, 0.0, 0.32)
+	scrim.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	scrim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(scrim)
 
 	var root_margin: MarginContainer = MarginContainer.new()
 	root_margin.name = "RunMapLayout"
@@ -48,9 +53,10 @@ func _build_ui() -> void:
 	route_panel.add_theme_stylebox_override("panel", _panel_style("bg_panel"))
 	content.add_child(route_panel)
 
-	nodes_box = VBoxContainer.new()
+	nodes_box = Control.new()
 	nodes_box.name = "RunMapNodes"
-	nodes_box.add_theme_constant_override("separation", 10)
+	nodes_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	nodes_box.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	route_panel.add_child(nodes_box)
 	_rebuild_nodes()
 
@@ -119,9 +125,17 @@ func _build_node_button(node: Dictionary) -> Button:
 	button.name = "RunMapNode_%s" % str(node.get("id", "unknown"))
 	button.text = _node_button_text(node, encounter)
 	button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	button.custom_minimum_size = Vector2(0, 84)
-	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	button.alignment = HORIZONTAL_ALIGNMENT_CENTER
+	button.custom_minimum_size = Vector2(172, 68)
+	var position: Vector2 = VisualAssets.node_position(str(node.get("id", "")))
+	button.anchor_left = position.x
+	button.anchor_top = position.y
+	button.anchor_right = position.x
+	button.anchor_bottom = position.y
+	button.offset_left = -86.0
+	button.offset_top = -34.0
+	button.offset_right = 86.0
+	button.offset_bottom = 34.0
 	button.disabled = RunSession.completed_node_ids.has(str(node.get("id", ""))) or not RunSession.is_node_available(node)
 	button.add_theme_stylebox_override("normal", _panel_style("bg_panel_alt"))
 	button.add_theme_stylebox_override("hover", _panel_style("placeholder"))
@@ -137,24 +151,13 @@ func _select_node(node: Dictionary) -> void:
 
 func _node_button_text(node: Dictionary, encounter: Dictionary) -> String:
 	var node_id: String = str(node.get("id", ""))
-	var kind: String = str(node.get("kind", ""))
 	var encounter_name: String = str(encounter.get("display_name", node.get("encounter_id", "")))
-	var tier: String = str(encounter.get("tier", ""))
-	var reward: Dictionary = Dictionary(encounter.get("soul_reward", {}))
 	var availability: String = "disponivel" if RunSession.is_node_available(node) else "bloqueado"
 	if RunSession.completed_node_ids.has(node_id):
 		availability = "concluido"
 	elif RunSession.current_node_id == node_id:
 		availability = "selecionado"
-	return "%s [%s]\n%s - tier %s - almas %d-%d - %s" % [
-		encounter_name,
-		kind,
-		node_id,
-		tier,
-		int(reward.get("min", 0)),
-		int(reward.get("max", 0)),
-		availability
-	]
+	return "%s\n%s\n%s" % [VisualAssets.node_label(node_id), encounter_name, availability]
 
 func _status_text() -> String:
 	if not RunSession.active:
@@ -232,8 +235,10 @@ func _apply_placeholder_reward(reward_id: String) -> void:
 
 func _panel_style(color_token: String) -> StyleBoxFlat:
 	var style: StyleBoxFlat = StyleBoxFlat.new()
-	style.bg_color = UiTokens.color(color_token, Color(0.1, 0.11, 0.12))
-	style.border_color = UiTokens.color("border_default", Color(0.25, 0.3, 0.34))
+	var bg_color: Color = UiTokens.color(color_token, Color(0.1, 0.11, 0.12))
+	style.bg_color = Color(bg_color.r, bg_color.g, bg_color.b, 0.78)
+	var border_color: Color = UiTokens.color("border_default", Color(0.25, 0.3, 0.34))
+	style.border_color = Color(border_color.r, border_color.g, border_color.b, 0.9)
 	style.set_border_width_all(2)
 	style.set_corner_radius_all(8)
 	style.content_margin_left = 18

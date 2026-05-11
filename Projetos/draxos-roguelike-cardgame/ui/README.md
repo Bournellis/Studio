@@ -14,3 +14,5 @@ Expected surfaces:
 UI presents game state; it does not own rules.
 
 Current battle UI must preserve responsive HUD layout and simple no-asset feedback for C1 actions.
+
+Visual support V1 uses `VisualAssets` for optional backgrounds, map marker positions, card art, and class/faction card frames. PNGs may be absent while the prototype uses themed fallbacks.

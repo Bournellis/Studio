@@ -33,7 +33,7 @@ func _rebuild() -> void:
 		art_rect.name = "art_rect"
 		art_rect.custom_minimum_size = Vector2(0, 38)
 		art_rect.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		art_rect.texture = AssetIds.card_art_texture(card_id)
+		art_rect.texture = VisualAssets.card_art_texture(card_id)
 		art_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		art_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 		art_rect.modulate = Color.WHITE if art_rect.texture != null else UiTokens.color("placeholder", Color(0.22, 0.25, 0.28))
@@ -60,7 +60,7 @@ func _rebuild() -> void:
 
 	if not compact:
 		var body: Label = Label.new()
-		body.text = card.text if card != null else ""
+		body.text = VisualAssets.card_display_text(card) if card != null else ""
 		body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		body.add_theme_font_size_override("font_size", 11)
 		box.add_child(body)

@@ -21,6 +21,7 @@ ContentLibrary="*res://data/content_library.gd"
 RunSession="*res://core/run_session.gd"
 UiTokens="*res://core/ui_tokens.gd"
 AssetIds="*res://core/asset_ids.gd"
+VisualAssets="*res://core/visual_assets.gd"
 
 [display]
 
