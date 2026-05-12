@@ -19,7 +19,7 @@ func _rebuild() -> void:
 	for child: Node in get_children():
 		remove_child(child)
 		child.free()
-	custom_minimum_size = Vector2(176, 64)
+	custom_minimum_size = Vector2(150, 54)
 	add_theme_stylebox_override("panel", _panel_style())
 
 	var box: VBoxContainer = VBoxContainer.new()
@@ -31,18 +31,18 @@ func _rebuild() -> void:
 	label.clip_text = true
 	label.max_lines_visible = 1
 	label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	label.add_theme_font_size_override("font_size", 14)
+	label.add_theme_font_size_override("font_size", 12)
 	box.add_child(label)
 
 	var health_label: Label = Label.new()
 	health_label.text = "Vida %d" % health
-	health_label.add_theme_font_size_override("font_size", 12)
+	health_label.add_theme_font_size_override("font_size", 10)
 	health_label.add_theme_color_override("font_color", Color(0.88, 0.92, 0.96))
 	box.add_child(health_label)
 
 	var chip: Label = Label.new()
 	chip.text = "Solte aqui" if bool(visual_state.get("is_drop_target", false)) else "Heroi"
-	chip.add_theme_font_size_override("font_size", 10)
+	chip.add_theme_font_size_override("font_size", 9)
 	chip.add_theme_color_override("font_color", Color(0.95, 0.72, 0.36) if bool(visual_state.get("is_drop_target", false)) else Color(0.7, 0.78, 0.82))
 	box.add_child(chip)
 

@@ -23,12 +23,12 @@
 
 ## draxos-roguelike-cardgame
 
-- Status: **Ativo - Track 01 suporte visual V1 validado**
-- Track ativa: `Track 01 - Playable Run Loop` (P05_VISUAL_SUPPORT_V1_VALIDATED)
-- Baseline atual: checkpoint Godot 4.6.2 com Arcano/Invocador/Necromante, decks mockup de 15 cartas, encontros `limpar_mesa` e `ondas`, mana/vida/almas/cura em `RunSession`, drag-and-drop para cartas/spells, preview, modal do Ritual do Necromante, VisualAssets manifest/autoload, fundos/rota/tabuleiro/cartas preparados para PNGs opcionais e validacao verde 32/32
-- Meta ativa: adicionar PNGs provisorios de AI no contrato VisualAssets e playtestar/tunar o slice de classes/encontros
-- Ultima atualizacao do current-status: `2026-05-11`
-- Proximo passo: gerar e inserir PNGs provisorios para nave, mapa, tabuleiro, frames e cartas prioritarias; depois playtest/tuning contra `pouso_elemental` e `ondas_iniciais`
+- Status: **Ativo - Track 01 menu/HUD visual reform validado**
+- Track ativa: `Track 01 - Playable Run Loop` (P05_MENU_HUD_REFORM_VALIDATED)
+- Baseline atual: checkpoint Godot 4.6.2 com Arcano/Invocador/Necromante, decks mockup de 15 cartas, encontros `limpar_mesa` e `ondas`, mana/vida/almas/cura em `RunSession`, drag-and-drop para cartas/spells, preview, modal do Ritual do Necromante, VisualAssets manifest/autoload, fundos provisorios 16:9, ShipHub com 4 hotspots, RunMap com rota sobre o planeta, Battle HUD cardgame classico com ticker compacto, cards com overlay seguro de frame, screenshots 1280x720/960x540 e validacao verde 32/32
+- Meta ativa: adicionar artes prioritarias das cartas, normalizar fundos/frames provisorios e playtestar/tunar o slice de classes/encontros
+- Ultima atualizacao do current-status: `2026-05-12`
+- Proximo passo: inserir artes prioritarias de cartas e substituir/normalizar frames inseguros; depois playtest/tuning contra `pouso_elemental` e `ondas_iniciais`
 
 ## Kanban rápido
 

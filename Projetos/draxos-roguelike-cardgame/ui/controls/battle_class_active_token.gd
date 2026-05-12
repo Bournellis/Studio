@@ -23,7 +23,7 @@ func _rebuild() -> void:
 	for child: Node in get_children():
 		remove_child(child)
 		child.free()
-	custom_minimum_size = Vector2(184, 78)
+	custom_minimum_size = Vector2(172, 64)
 	clip_contents = true
 	add_theme_stylebox_override("panel", _panel_style())
 
@@ -34,7 +34,7 @@ func _rebuild() -> void:
 
 	var eyebrow: Label = Label.new()
 	eyebrow.text = "SPELL DE CLASSE"
-	eyebrow.add_theme_font_size_override("font_size", 9)
+	eyebrow.add_theme_font_size_override("font_size", 8)
 	eyebrow.add_theme_color_override("font_color", Color(0.98, 0.78, 0.48))
 	box.add_child(eyebrow)
 
@@ -43,15 +43,15 @@ func _rebuild() -> void:
 	title.clip_text = true
 	title.max_lines_visible = 1
 	title.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	title.add_theme_font_size_override("font_size", 14)
+	title.add_theme_font_size_override("font_size", 13)
 	box.add_child(title)
 
 	var detail: Label = Label.new()
 	detail.text = detail_text
 	detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	detail.clip_text = true
-	detail.max_lines_visible = 2
-	detail.add_theme_font_size_override("font_size", 10)
+	detail.max_lines_visible = 1
+	detail.add_theme_font_size_override("font_size", 9)
 	detail.add_theme_color_override("font_color", Color(0.82, 0.88, 0.94))
 	box.add_child(detail)
 

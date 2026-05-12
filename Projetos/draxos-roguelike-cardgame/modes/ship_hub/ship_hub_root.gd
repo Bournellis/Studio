@@ -1,41 +1,37 @@
 extends Control
 
-const REGION_SPECS: Array[Dictionary] = [
+const HOTSPOT_SPECS: Array[Dictionary] = [
 	{
 		"id": "command_station",
 		"title": "Comando",
-		"body": "Comandante Draxos: escolha de Classe e estado da run.",
-		"status": "Classes Arcano, Invocador e Necromante disponiveis para teste."
-	},
-	{
-		"id": "grand_master_channel",
-		"title": "Grande Mestre",
-		"body": "Canal ancestral: ordens estrategicas para a invasao.",
-		"status": "Comunicacao placeholder ativa."
-	},
-	{
-		"id": "subordinate_station",
-		"title": "Subordinados",
-		"body": "Equipe da nave: ofertas podem variar por Classe.",
-		"status": "NPCs fixos, ofertas futuras."
+		"body": "Classe e estado da run",
+		"status": "Classes Arcano, Invocador e Necromante disponiveis para teste.",
+		"position": Vector2(0.50, 0.56),
+		"size": Vector2(238, 58)
 	},
 	{
 		"id": "mission_map_console",
 		"title": "Mapa",
-		"body": "Mapa de navegacao focado no planeta elemental.",
-		"status": "Encontros de limpar board e ondas disponiveis."
+		"body": "Rota de invasao",
+		"status": "Encontros de limpar board e ondas disponiveis.",
+		"position": Vector2(0.75, 0.46),
+		"size": Vector2(210, 54)
 	},
 	{
 		"id": "deck_system",
 		"title": "Deck",
-		"body": "Preparacao de cartas, upgrades e recompensas da run.",
-		"status": "Decks iniciais mockup carregados por Classe."
+		"body": "Cartas e upgrades",
+		"status": "Decks iniciais mockup carregados por Classe.",
+		"position": Vector2(0.25, 0.58),
+		"size": Vector2(216, 54)
 	},
 	{
 		"id": "soul_engine",
 		"title": "Almas",
-		"body": "Moeda da nave para cura e upgrades entre missoes.",
-		"status": "Cura paga de teste disponivel durante a run."
+		"body": "Cura e recursos",
+		"status": "Cura paga de teste disponivel durante a run.",
+		"position": Vector2(0.86, 0.39),
+		"size": Vector2(194, 54)
 	}
 ]
 
@@ -52,7 +48,7 @@ func _ready() -> void:
 
 func get_region_ids() -> Array[String]:
 	var ids: Array[String] = []
-	for spec: Dictionary in REGION_SPECS:
+	for spec: Dictionary in HOTSPOT_SPECS:
 		ids.append(str(spec.get("id", "")))
 	return ids
 
@@ -63,106 +59,140 @@ func _build_ui() -> void:
 
 	var scrim: ColorRect = ColorRect.new()
 	scrim.name = "ShipHubVisualScrim"
-	scrim.color = Color(0.0, 0.0, 0.0, 0.28)
+	scrim.color = Color(0.0, 0.0, 0.0, 0.16)
 	scrim.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	scrim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(scrim)
 
-	var root_margin: MarginContainer = MarginContainer.new()
-	root_margin.name = "ShipHubLayout"
-	root_margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	root_margin.add_theme_constant_override("margin_left", 28)
-	root_margin.add_theme_constant_override("margin_top", 22)
-	root_margin.add_theme_constant_override("margin_right", 28)
-	root_margin.add_theme_constant_override("margin_bottom", 22)
-	add_child(root_margin)
+	var title_panel: PanelContainer = PanelContainer.new()
+	title_panel.name = "ShipHubTitlePanel"
+	title_panel.anchor_left = 0.02
+	title_panel.anchor_top = 0.03
+	title_panel.anchor_right = 0.40
+	title_panel.anchor_bottom = 0.03
+	title_panel.offset_right = 0.0
+	title_panel.offset_bottom = 86.0
+	title_panel.add_theme_stylebox_override("panel", _panel_style("bg_panel", 0.50))
+	add_child(title_panel)
 
-	var main_box: VBoxContainer = VBoxContainer.new()
-	main_box.add_theme_constant_override("separation", 14)
-	root_margin.add_child(main_box)
-
-	var header: VBoxContainer = VBoxContainer.new()
-	header.name = "ShipHubHeader"
-	header.add_theme_constant_override("separation", 6)
-	main_box.add_child(header)
+	var title_box: VBoxContainer = VBoxContainer.new()
+	title_box.add_theme_constant_override("separation", 3)
+	title_panel.add_child(title_box)
 
 	var title: Label = Label.new()
 	title.name = "ShipHubTitle"
-	title.text = "Nave Draxos - Ponte de Comando"
+	title.text = "Nave Draxos"
 	title.add_theme_font_size_override("font_size", 30)
 	title.add_theme_color_override("font_color", UiTokens.color("text_primary"))
-	header.add_child(title)
+	title_box.add_child(title)
 
 	var subtitle: Label = Label.new()
 	subtitle.name = "ShipHubSubtitle"
-	subtitle.text = "Comandante Draxos em campanha no planeta elemental"
-	subtitle.add_theme_color_override("font_color", UiTokens.color("text_primary"))
-	header.add_child(subtitle)
+	subtitle.text = "Ponte de comando da invasao elemental"
+	subtitle.add_theme_font_size_override("font_size", 13)
+	subtitle.add_theme_color_override("font_color", UiTokens.color("text_secondary", Color(0.74, 0.78, 0.8)))
+	title_box.add_child(subtitle)
 
-	var content: HBoxContainer = HBoxContainer.new()
-	content.name = "ShipHubContent"
-	content.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	content.add_theme_constant_override("separation", 14)
-	main_box.add_child(content)
+	var hotspot_layer: Control = Control.new()
+	hotspot_layer.name = "ShipHubHotspots"
+	hotspot_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(hotspot_layer)
 
-	var grid: GridContainer = GridContainer.new()
-	grid.name = "ShipHubRegions"
-	grid.columns = 3
-	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	grid.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-	grid.add_theme_constant_override("h_separation", 14)
-	grid.add_theme_constant_override("v_separation", 14)
-	content.add_child(grid)
+	for spec: Dictionary in HOTSPOT_SPECS:
+		hotspot_layer.add_child(_build_hotspot_button(spec))
 
-	for spec: Dictionary in REGION_SPECS:
-		grid.add_child(_build_region_button(spec))
+	_build_class_panel()
+	_build_action_panel()
+	_refresh_run_controls()
 
-	var side_panel: PanelContainer = PanelContainer.new()
-	side_panel.name = "ShipHubStatusPanel"
-	side_panel.custom_minimum_size = Vector2(330, 0)
-	side_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	side_panel.add_theme_stylebox_override("panel", _panel_style("bg_panel"))
-	content.add_child(side_panel)
+func _build_class_panel() -> void:
+	var panel: PanelContainer = PanelContainer.new()
+	panel.name = "ShipHubCommandPanel"
+	panel.anchor_left = 0.02
+	panel.anchor_top = 1.0
+	panel.anchor_right = 0.60
+	panel.anchor_bottom = 1.0
+	panel.offset_top = -202.0
+	panel.offset_bottom = -20.0
+	panel.add_theme_stylebox_override("panel", _panel_style("bg_panel", 0.66))
+	add_child(panel)
 
-	var side_scroll: ScrollContainer = ScrollContainer.new()
-	side_scroll.name = "ShipHubStatusScroll"
-	side_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	side_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
-	side_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	side_panel.add_child(side_scroll)
+	var box: VBoxContainer = VBoxContainer.new()
+	box.add_theme_constant_override("separation", 9)
+	panel.add_child(box)
 
-	var side_box: VBoxContainer = VBoxContainer.new()
-	side_box.add_theme_constant_override("separation", 10)
-	side_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	side_scroll.add_child(side_box)
+	var header: HBoxContainer = HBoxContainer.new()
+	header.add_theme_constant_override("separation", 10)
+	box.add_child(header)
 
-	var side_title: Label = Label.new()
-	side_title.text = "Estado da Nave"
-	side_title.add_theme_font_size_override("font_size", 22)
-	side_title.add_theme_color_override("font_color", UiTokens.color("text_primary"))
-	side_box.add_child(side_title)
+	var class_title: Label = Label.new()
+	class_title.text = "Classe do Comandante"
+	class_title.add_theme_font_size_override("font_size", 18)
+	class_title.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+	class_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	header.add_child(class_title)
+
+	var run_summary: Label = Label.new()
+	run_summary.text = _compact_run_summary()
+	run_summary.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	run_summary.add_theme_font_size_override("font_size", 12)
+	run_summary.add_theme_color_override("font_color", Color(0.86, 0.92, 0.94))
+	header.add_child(run_summary)
+
+	var class_row: HBoxContainer = HBoxContainer.new()
+	class_row.name = "ShipHubClassRow"
+	class_row.add_theme_constant_override("separation", 8)
+	box.add_child(class_row)
+
+	for class_option: Dictionary in ContentLibrary.get_class_options():
+		class_row.add_child(_build_class_button(class_option))
+
+	var scroll: ScrollContainer = ScrollContainer.new()
+	scroll.name = "ShipHubStatusScroll"
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	scroll.custom_minimum_size = Vector2(0, 44)
+	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	box.add_child(scroll)
 
 	status_label = Label.new()
 	status_label.name = "ShipHubStatus"
 	status_label.text = _run_state_text()
 	status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	status_label.add_theme_font_size_override("font_size", 12)
 	status_label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
-	side_box.add_child(status_label)
+	status_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(status_label)
 
-	var class_title: Label = Label.new()
-	class_title.text = "Classe"
-	class_title.add_theme_font_size_override("font_size", 18)
-	class_title.add_theme_color_override("font_color", UiTokens.color("text_primary"))
-	side_box.add_child(class_title)
+func _build_action_panel() -> void:
+	var panel: PanelContainer = PanelContainer.new()
+	panel.name = "ShipHubActionPanel"
+	panel.anchor_left = 1.0
+	panel.anchor_top = 1.0
+	panel.anchor_right = 1.0
+	panel.anchor_bottom = 1.0
+	panel.offset_left = -286.0
+	panel.offset_top = -248.0
+	panel.offset_right = -20.0
+	panel.offset_bottom = -20.0
+	panel.add_theme_stylebox_override("panel", _panel_style("bg_panel_alt", 0.70))
+	add_child(panel)
 
-	for class_option: Dictionary in ContentLibrary.get_class_options():
-		side_box.add_child(_build_class_button(class_option))
+	var box: VBoxContainer = VBoxContainer.new()
+	box.add_theme_constant_override("separation", 9)
+	panel.add_child(box)
+
+	var title: Label = Label.new()
+	title.text = "Acoes"
+	title.add_theme_font_size_override("font_size", 18)
+	title.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+	box.add_child(title)
 
 	start_run_button = Button.new()
 	start_run_button.name = "ShipHubStartRunButton"
 	start_run_button.text = "Iniciar Run"
 	start_run_button.pressed.connect(_on_start_run_pressed)
-	side_box.add_child(start_run_button)
+	box.add_child(start_run_button)
 
 	map_button = Button.new()
 	map_button.name = "ShipHubOpenRunMapButton"
@@ -174,7 +204,7 @@ func _build_ui() -> void:
 			return
 		get_tree().change_scene_to_file("res://modes/run_map/run_map.tscn")
 	)
-	side_box.add_child(map_button)
+	box.add_child(map_button)
 
 	heal_button = Button.new()
 	heal_button.name = "ShipHubPaidHealButton"
@@ -184,7 +214,7 @@ func _build_ui() -> void:
 		status_label.text = "%s\n\n%s" % [str(result.get("message", "")), _run_state_text()]
 		_refresh_run_controls()
 	)
-	side_box.add_child(heal_button)
+	box.add_child(heal_button)
 
 	var back_button: Button = Button.new()
 	back_button.name = "ShipHubBackToBootButton"
@@ -192,27 +222,40 @@ func _build_ui() -> void:
 	back_button.pressed.connect(func() -> void:
 		get_tree().change_scene_to_file("res://modes/boot/boot.tscn")
 	)
-	side_box.add_child(back_button)
-	_refresh_run_controls()
+	box.add_child(back_button)
 
-func _build_region_button(spec: Dictionary) -> Button:
+func _build_hotspot_button(spec: Dictionary) -> Button:
 	var button: Button = Button.new()
-	button.name = "Region_%s" % str(spec.get("id", "unknown"))
+	button.name = "ShipHubHotspot_%s" % str(spec.get("id", "unknown"))
 	button.text = "%s\n%s" % [str(spec.get("title", "")), str(spec.get("body", ""))]
+	button.tooltip_text = str(spec.get("status", ""))
 	button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	button.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-	button.custom_minimum_size = Vector2(190, 150)
-	button.add_theme_stylebox_override("normal", _panel_style("bg_panel_alt"))
-	button.add_theme_stylebox_override("hover", _panel_style("placeholder"))
+	button.alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var size: Vector2 = spec.get("size", Vector2(200, 54))
+	var position: Vector2 = spec.get("position", Vector2(0.5, 0.5))
+	button.anchor_left = position.x
+	button.anchor_top = position.y
+	button.anchor_right = position.x
+	button.anchor_bottom = position.y
+	button.offset_left = -size.x * 0.5
+	button.offset_top = -size.y * 0.5
+	button.offset_right = size.x * 0.5
+	button.offset_bottom = size.y * 0.5
+	button.add_theme_font_size_override("font_size", 12)
+	button.add_theme_stylebox_override("normal", _hotspot_style(false))
+	button.add_theme_stylebox_override("hover", _hotspot_style(true))
+	button.add_theme_stylebox_override("pressed", _hotspot_style(true))
 	button.pressed.connect(func() -> void:
 		_select_region(spec)
 	)
 	return button
 
 func _select_region(spec: Dictionary) -> void:
-	status_label.text = "%s\n\n%s\n\n%s" % [str(spec.get("body", "")), str(spec.get("status", "")), _run_state_text()]
+	status_label.text = "%s\n%s\n\n%s" % [
+		str(spec.get("body", "")),
+		str(spec.get("status", "")),
+		_run_state_text()
+	]
 
 func _on_start_run_pressed() -> void:
 	if selected_class_id == "":
@@ -229,14 +272,20 @@ func _build_class_button(class_option: Dictionary) -> Button:
 	button.name = "ShipHubClass_%s" % class_id
 	button.text = "%s\n%s" % [
 		str(class_option.get("display_name", class_id)),
-		str(class_option.get("mechanic_status", "Mecanica pendente."))
+		str(class_option.get("role_text", ""))
+	]
+	button.tooltip_text = "%s\n%s" % [
+		str(class_option.get("mechanic_status", "")),
+		str(class_option.get("active_text", ""))
 	]
 	button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	button.custom_minimum_size = Vector2(0, 76)
+	button.alignment = HORIZONTAL_ALIGNMENT_CENTER
+	button.custom_minimum_size = Vector2(0, 66)
+	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	button.add_theme_font_size_override("font_size", 11)
 	button.pressed.connect(func() -> void:
 		selected_class_id = class_id
-		status_label.text = "%s\n\n%s\n\n%s" % [
+		status_label.text = "%s\n%s\n%s" % [
 			str(class_option.get("role_text", "")),
 			str(class_option.get("mechanic_status", "")),
 			str(class_option.get("active_text", ""))
@@ -254,6 +303,17 @@ func _refresh_run_controls() -> void:
 		heal_button.disabled = not RunSession.can_buy_heal()
 		heal_button.text = "Curar %d por %d almas" % [RunSession.PAID_HEAL_AMOUNT, RunSession.PAID_HEAL_COST]
 
+func _compact_run_summary() -> String:
+	if not RunSession.active:
+		return "Run inativa"
+	return "%s | Vida %d/%d | Mana %d | Almas %d" % [
+		RunSession.selected_class_display_name,
+		RunSession.current_health,
+		RunSession.max_health,
+		RunSession.max_mana,
+		RunSession.soul_total
+	]
+
 func _run_state_text() -> String:
 	if not RunSession.active:
 		return "Run: inativa. Escolha uma Classe para iniciar."
@@ -263,7 +323,7 @@ func _run_state_text() -> String:
 	var last_text: String = ""
 	if RunSession.last_completed_node_id != "":
 		last_text = "\nUltimo encontro: %s" % RunSession.last_completed_node_id
-	return "Run: ativa\nClasse: %s\nVida: %d/%d\nMana: %d\nAlmas: %d\nSpell: %s\nNodes concluidos: %s\nRecompensas pendentes: %d\nRecompensas aplicadas: %d%s" % [
+	return "Run: ativa | Classe: %s | Vida: %d/%d | Mana: %d | Almas: %d\nSpell: %s\nNodes concluidos: %s | Recompensas pendentes: %d | Aplicadas: %d%s" % [
 		RunSession.selected_class_display_name,
 		RunSession.current_health,
 		RunSession.max_health,
@@ -276,16 +336,28 @@ func _run_state_text() -> String:
 		last_text
 	]
 
-func _panel_style(color_token: String) -> StyleBoxFlat:
+func _panel_style(color_token: String, alpha: float = 0.72) -> StyleBoxFlat:
 	var style: StyleBoxFlat = StyleBoxFlat.new()
 	var bg_color: Color = UiTokens.color(color_token, Color(0.1, 0.11, 0.12))
-	style.bg_color = Color(bg_color.r, bg_color.g, bg_color.b, 0.82)
+	style.bg_color = Color(bg_color.r, bg_color.g, bg_color.b, alpha)
 	var border_color: Color = UiTokens.color("border_default", Color(0.25, 0.3, 0.34))
-	style.border_color = Color(border_color.r, border_color.g, border_color.b, 0.9)
-	style.set_border_width_all(2)
+	style.border_color = Color(border_color.r, border_color.g, border_color.b, 0.72)
+	style.set_border_width_all(1)
 	style.set_corner_radius_all(8)
-	style.content_margin_left = 18
-	style.content_margin_top = 18
-	style.content_margin_right = 18
-	style.content_margin_bottom = 18
+	style.content_margin_left = 14
+	style.content_margin_top = 12
+	style.content_margin_right = 14
+	style.content_margin_bottom = 12
+	return style
+
+func _hotspot_style(is_hover: bool) -> StyleBoxFlat:
+	var style: StyleBoxFlat = StyleBoxFlat.new()
+	style.bg_color = Color(0.04, 0.055, 0.065, 0.42 if not is_hover else 0.64)
+	style.border_color = Color(0.55, 0.86, 0.96, 0.60 if not is_hover else 0.95)
+	style.set_border_width_all(1 if not is_hover else 2)
+	style.set_corner_radius_all(8)
+	style.content_margin_left = 10
+	style.content_margin_top = 7
+	style.content_margin_right = 10
+	style.content_margin_bottom = 7
 	return style

@@ -26,14 +26,14 @@ func _rebuild() -> void:
 	for child: Node in get_children():
 		remove_child(child)
 		child.free()
-	custom_minimum_size = Vector2(150, 220)
+	custom_minimum_size = Vector2(126, 188)
 	clip_contents = true
 	add_theme_stylebox_override("panel", _panel_style())
 
 	var box: VBoxContainer = VBoxContainer.new()
 	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	box.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	box.add_theme_constant_override("separation", 4)
+	box.add_theme_constant_override("separation", 3)
 	add_child(box)
 
 	var header: HBoxContainer = HBoxContainer.new()
@@ -48,7 +48,7 @@ func _rebuild() -> void:
 	title.max_lines_visible = 1
 	title.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	title.add_theme_font_size_override("font_size", 13)
+	title.add_theme_font_size_override("font_size", 11)
 	header.add_child(title)
 
 	var cost_badge: Label = _stat_badge("C%d" % (card.cost if card != null else 0), UiTokens.color("energy", Color(0.9, 0.7, 0.32)))
@@ -65,9 +65,9 @@ func _rebuild() -> void:
 	text_label.text = VisualAssets.card_display_text(card) if card != null else ""
 	text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	text_label.clip_text = true
-	text_label.max_lines_visible = 3
+	text_label.max_lines_visible = 2
 	text_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	text_label.add_theme_font_size_override("font_size", 10)
+	text_label.add_theme_font_size_override("font_size", 8)
 	box.add_child(text_label)
 
 	var footer: HBoxContainer = HBoxContainer.new()
@@ -91,7 +91,7 @@ func _rebuild() -> void:
 		type_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		footer.add_child(type_label)
 
-	var frame_texture: Texture2D = VisualAssets.card_frame_texture(card_id)
+	var frame_texture: Texture2D = VisualAssets.card_frame_overlay_texture(card_id)
 	if frame_texture != null:
 		var frame_rect: TextureRect = TextureRect.new()
 		frame_rect.name = "BattleCardFrameOverlay"
@@ -116,7 +116,7 @@ func _get_drag_data(_at_position: Vector2) -> Variant:
 
 func _panel_style() -> StyleBoxFlat:
 	var style: StyleBoxFlat = StyleBoxFlat.new()
-	style.bg_color = Color(0.1, 0.11, 0.12) if drag_enabled else Color(0.07, 0.075, 0.08)
+	style.bg_color = Color(0.055, 0.065, 0.075, 0.88) if drag_enabled else Color(0.045, 0.048, 0.052, 0.82)
 	style.border_color = Color(0.95, 0.72, 0.26) if selected else VisualAssets.card_frame_color(card_id)
 	var border_width: int = 3 if selected else 2
 	style.border_width_left = border_width
@@ -127,16 +127,16 @@ func _panel_style() -> StyleBoxFlat:
 	style.corner_radius_top_right = 6
 	style.corner_radius_bottom_left = 6
 	style.corner_radius_bottom_right = 6
-	style.content_margin_left = 7
+	style.content_margin_left = 6
 	style.content_margin_top = 6
-	style.content_margin_right = 7
+	style.content_margin_right = 6
 	style.content_margin_bottom = 6
 	return style
 
 func _build_art_area() -> Control:
 	var art_area: Control = Control.new()
 	art_area.name = "BattleCardArtArea"
-	art_area.custom_minimum_size = Vector2(0, 86)
+	art_area.custom_minimum_size = Vector2(0, 70)
 	art_area.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	art_area.clip_contents = true
 
@@ -173,6 +173,7 @@ func _stat_badge(text: String, color: Color) -> Label:
 	badge.text = text
 	badge.clip_text = true
 	badge.max_lines_visible = 1
+	badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	badge.add_theme_font_size_override("font_size", 10)
 	badge.add_theme_color_override("font_color", color)
 	return badge

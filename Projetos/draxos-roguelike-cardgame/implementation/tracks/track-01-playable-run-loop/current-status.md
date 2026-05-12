@@ -1,7 +1,7 @@
 # Track 01 Current Status
 
-- Last Updated: `2026-05-11`
-- Status: `P05_VISUAL_SUPPORT_V1_VALIDATED`
+- Last Updated: `2026-05-12`
+- Status: `P05_MENU_HUD_REFORM_VALIDATED`
 - Scope: `First playable class and encounter slice after Track 00 checkpoint`
 
 ## Completed
@@ -25,12 +25,17 @@
 - RunMap now presents the route as visual markers positioned by the visual manifest.
 - Battle cards now use a portrait visual contract with image area, frame slot, text area, cost, ATK, and HP rendered by UI.
 - Card text supports simple visual templates backed by mechanical values for obvious current cards.
-- Validation green with 32/32 GUT tests and 230 asserts; 37 PNGs are reported missing by design.
+- ShipHub now uses 4 primary scene hotspots for Comando, Mapa, Deck, and Almas instead of the previous large grid.
+- RunMap now draws route connections directly over the planet background with compact node labels.
+- Battle now uses a classic cardgame table layout with compact top status, fixed hand area, hover/click detail previews, and a ticker-style combat log.
+- VisualAssets now records provisional background/frame debt and only uses frame overlays when `overlay_safe` is true.
+- Screenshot capture tool generates ShipHub/RunMap/Battle screenshots at 1280x720 and 960x540 under `builds/`.
+- Validation green with 32/32 GUT tests and 245 asserts; 31 PNGs are reported missing by design.
 
 ## Current Risk
 
-The slice is mechanically playable but not balanced. Targeting UX and visual support V1 are implemented, but PNGs are still absent/provisional, class active names are still provisional, and class/debuff keyword vocabulary needs a dedicated schema pass before content grows.
+The slice is mechanically playable but not balanced. Menu/HUD readability is improved around the provisional backgrounds, but most card art is still absent, Invocador/Necromante frames are not alpha-safe overlays, backgrounds are accepted as provisional 16:9 `1456x816`, class active names are still provisional, and class/debuff keyword vocabulary needs a dedicated schema pass before content grows.
 
 ## Next
 
-Add provisional AI PNGs to the manifest paths, then playtest the three classes against `pouso_elemental` and `ondas_iniciais`; tune card numbers, encounter pressure, readability details, and reward options.
+Add priority card arts, replace or normalize unsafe/provisional visual assets, then playtest the three classes against `pouso_elemental` and `ondas_iniciais`; tune card numbers, encounter pressure, readability details, and reward options.

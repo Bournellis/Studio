@@ -67,6 +67,10 @@ func test_visual_asset_manifest_covers_current_slice_without_requiring_pngs() ->
 	assert_false(VisualAssets.surface_entry("ship_hub_background").is_empty())
 	assert_false(VisualAssets.frame_entry("frame_arcano").is_empty())
 	assert_false(VisualAssets.card_entry("arcano_spell_dano").is_empty())
+	assert_eq(str(VisualAssets.surface_entry("ship_hub_background").get("actual_resolution", "")), "1456x816")
+	assert_true(VisualAssets.card_frame_overlay_safe("arcano_spell_dano"))
+	assert_false(VisualAssets.card_frame_overlay_safe("invocador_protecao"))
+	assert_null(VisualAssets.card_frame_overlay_texture("invocador_protecao"))
 
 func test_visual_asset_fallback_background_builds_without_png() -> void:
 	var background: Control = VisualAssets.build_surface_background("ship_hub_background")
@@ -307,6 +311,11 @@ func test_battle_engine_uses_local_slot_count_contract_without_legacy_board_term
 func test_ship_hub_scene_exposes_classes_and_paid_heal() -> void:
 	var hub = await _instantiate_scene("res://modes/ship_hub/ship_hub.tscn")
 	assert_not_null(hub.find_child("ShipHubVisualBackground", true, false))
+	assert_not_null(hub.find_child("ShipHubHotspots", true, false))
+	assert_not_null(hub.find_child("ShipHubHotspot_command_station", true, false))
+	assert_not_null(hub.find_child("ShipHubHotspot_mission_map_console", true, false))
+	assert_not_null(hub.find_child("ShipHubHotspot_deck_system", true, false))
+	assert_not_null(hub.find_child("ShipHubHotspot_soul_engine", true, false))
 	assert_not_null(hub.find_child("ShipHubStatusScroll", true, false))
 	assert_not_null(hub.find_child("ShipHubClass_arcano", true, false))
 	assert_not_null(hub.find_child("ShipHubClass_invocador", true, false))
@@ -329,6 +338,8 @@ func test_run_map_scene_selects_available_wave_path_after_first_win() -> void:
 	RunSession.record_battle_result("n01_pouso_elemental", "vitoria", 14)
 	var run_map = await _instantiate_scene("res://modes/run_map/run_map.tscn")
 	assert_not_null(run_map.find_child("RunMapVisualBackground", true, false))
+	assert_not_null(run_map.find_child("RunMapRouteArea", true, false))
+	assert_not_null(run_map.find_child("RunMapRouteLines", true, false))
 	assert_not_null(run_map.find_child("RunMapNodes", true, false))
 	var waves_node = run_map.find_child("RunMapNode_n02_ondas_iniciais", true, false)
 	var side_node = run_map.find_child("RunMapNode_s01_incursao_lateral", true, false)
@@ -351,11 +362,15 @@ func test_battle_scene_passes_run_class_to_engine() -> void:
 	assert_eq(battle.engine.player_health, 20)
 	assert_not_null(battle.find_child("BattleClassActiveTile", true, false))
 	assert_not_null(battle.find_child("BattleVisualBackground", true, false))
+	assert_not_null(battle.find_child("BattleTopStatusBar", true, false))
 	assert_not_null(battle.find_child("BattleBoardPanel", true, false))
+	assert_not_null(battle.find_child("BattleHandPanel", true, false))
 	assert_not_null(battle.find_child("BattleHandCard0", true, false))
 	assert_not_null(battle.find_child("PlayerSlot0", true, false))
 	assert_not_null(battle.find_child("EnemySlot0", true, false))
 	assert_not_null(battle.find_child("BattleCardPreview", true, false))
+	assert_not_null(battle.find_child("BattleLogTicker", true, false))
+	assert_not_null(battle.find_child("BattleLogHistoryButton", true, false))
 	assert_not_null(battle.find_child("BattleLogScroll", true, false))
 	battle.queue_free()
 	await get_tree().process_frame
@@ -365,12 +380,21 @@ func test_battle_card_token_uses_portrait_visual_contract() -> void:
 	token.setup("arcano_spell_dano", 0, true, false)
 	add_child(token)
 	await get_tree().process_frame
-	assert_eq(token.custom_minimum_size, Vector2(150, 220))
+	assert_eq(token.custom_minimum_size, Vector2(126, 188))
 	assert_not_null(token.find_child("BattleCardArtArea", true, false))
 	assert_not_null(token.find_child("BattleCardCost", true, false))
 	assert_not_null(token.find_child("BattleCardRulesText", true, false))
+	assert_not_null(token.find_child("BattleCardFrameOverlay", true, false))
 	assert_string_contains(token.find_child("BattleCardRulesText", true, false).text, "Causa 1 de dano")
 	token.queue_free()
+	await get_tree().process_frame
+
+	var unsafe_token: BattleCardToken = BattleCardToken.new()
+	unsafe_token.setup("invocador_protecao", 0, true, false)
+	add_child(unsafe_token)
+	await get_tree().process_frame
+	assert_null(unsafe_token.find_child("BattleCardFrameOverlay", true, false))
+	unsafe_token.queue_free()
 	await get_tree().process_frame
 
 func test_battle_scene_drop_plays_cards_on_explicit_slots() -> void:

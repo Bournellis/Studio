@@ -63,6 +63,18 @@ func card_frame_texture(card_id: String) -> Texture2D:
 	var frame_id: String = card_frame_id(card_id)
 	return _load_texture(str(frame_entry(frame_id).get("path", "")))
 
+func card_frame_overlay_texture(card_id: String) -> Texture2D:
+	if not card_frame_overlay_safe(card_id):
+		return null
+	return card_frame_texture(card_id)
+
+func card_frame_overlay_safe(card_id: String) -> bool:
+	return frame_overlay_safe(card_frame_id(card_id))
+
+func frame_overlay_safe(frame_id: String) -> bool:
+	var entry: Dictionary = frame_entry(frame_id)
+	return bool(entry.get("overlay_safe", false))
+
 func card_frame_id(card_id: String) -> String:
 	var entry: Dictionary = card_entry(card_id)
 	var frame_id: String = str(entry.get("frame_id", ""))

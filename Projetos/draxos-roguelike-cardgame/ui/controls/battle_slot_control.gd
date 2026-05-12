@@ -19,7 +19,7 @@ func _rebuild() -> void:
 	for child: Node in get_children():
 		remove_child(child)
 		child.free()
-	custom_minimum_size = Vector2(172, 76)
+	custom_minimum_size = Vector2(150, 70)
 	size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	add_theme_stylebox_override("panel", _panel_style())
 
@@ -30,7 +30,7 @@ func _rebuild() -> void:
 
 	var label: Label = Label.new()
 	label.text = str(visual_state.get("label", "%s%d" % ["P" if slot_owner == "player" else "E", slot_index + 1]))
-	label.add_theme_font_size_override("font_size", 13)
+	label.add_theme_font_size_override("font_size", 12)
 	box.add_child(label)
 
 	var chip: Label = Label.new()
@@ -38,7 +38,7 @@ func _rebuild() -> void:
 	chip.clip_text = true
 	chip.max_lines_visible = 1
 	chip.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	chip.add_theme_font_size_override("font_size", 10)
+	chip.add_theme_font_size_override("font_size", 9)
 	chip.add_theme_color_override("font_color", _chip_color())
 	box.add_child(chip)
 

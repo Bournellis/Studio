@@ -10,6 +10,8 @@ var enemy_slots_box: HBoxContainer
 var player_slots_box: HBoxContainer
 var hand_box: HBoxContainer
 var log_label: Label
+var history_log_label: Label
+var history_panel: PanelContainer
 var map_button: Button
 var class_active_tile
 var necromancer_modal: PanelContainer
@@ -52,7 +54,7 @@ func _build_ui() -> void:
 
 	var scrim: ColorRect = ColorRect.new()
 	scrim.name = "BattleVisualScrim"
-	scrim.color = Color(0.0, 0.0, 0.0, 0.34)
+	scrim.color = Color(0.0, 0.0, 0.0, 0.16)
 	scrim.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	scrim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(scrim)
@@ -60,54 +62,67 @@ func _build_ui() -> void:
 	var root_margin: MarginContainer = MarginContainer.new()
 	root_margin.name = "BattleLayout"
 	root_margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	root_margin.add_theme_constant_override("margin_left", 18)
-	root_margin.add_theme_constant_override("margin_top", 16)
-	root_margin.add_theme_constant_override("margin_right", 18)
-	root_margin.add_theme_constant_override("margin_bottom", 16)
+	root_margin.add_theme_constant_override("margin_left", 14)
+	root_margin.add_theme_constant_override("margin_top", 12)
+	root_margin.add_theme_constant_override("margin_right", 14)
+	root_margin.add_theme_constant_override("margin_bottom", 12)
 	add_child(root_margin)
 
 	var main_box: VBoxContainer = VBoxContainer.new()
-	main_box.add_theme_constant_override("separation", 8)
+	main_box.add_theme_constant_override("separation", 7)
 	root_margin.add_child(main_box)
+
+	var status_panel: PanelContainer = PanelContainer.new()
+	status_panel.name = "BattleTopStatusBar"
+	status_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.045, 0.055, 0.065, 0.62), VisualAssets.surface_accent_color("battle_board_background")))
+	main_box.add_child(status_panel)
+
+	var status_margin: MarginContainer = MarginContainer.new()
+	status_margin.add_theme_constant_override("margin_left", 10)
+	status_margin.add_theme_constant_override("margin_top", 6)
+	status_margin.add_theme_constant_override("margin_right", 10)
+	status_margin.add_theme_constant_override("margin_bottom", 6)
+	status_panel.add_child(status_margin)
 
 	status_label = Label.new()
 	status_label.name = "BattleStatus"
-	status_label.add_theme_font_size_override("font_size", 18)
+	status_label.add_theme_font_size_override("font_size", 13)
 	status_label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
 	status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	main_box.add_child(status_label)
+	status_margin.add_child(status_label)
 
 	hero_targets_box = HBoxContainer.new()
 	hero_targets_box.name = "BattleHeroTargets"
-	hero_targets_box.add_theme_constant_override("separation", 10)
+	hero_targets_box.add_theme_constant_override("separation", 8)
+	hero_targets_box.alignment = BoxContainer.ALIGNMENT_CENTER
 
 	enemy_slots_box = HBoxContainer.new()
 	enemy_slots_box.name = "BattleEnemySlots"
-	enemy_slots_box.add_theme_constant_override("separation", 10)
+	enemy_slots_box.add_theme_constant_override("separation", 8)
 	enemy_slots_box.alignment = BoxContainer.ALIGNMENT_CENTER
 
 	player_slots_box = HBoxContainer.new()
 	player_slots_box.name = "BattlePlayerSlots"
-	player_slots_box.add_theme_constant_override("separation", 10)
+	player_slots_box.add_theme_constant_override("separation", 8)
 	player_slots_box.alignment = BoxContainer.ALIGNMENT_CENTER
 
 	var board_panel: PanelContainer = PanelContainer.new()
 	board_panel.name = "BattleBoardPanel"
-	board_panel.custom_minimum_size = Vector2(0, 230)
+	board_panel.custom_minimum_size = Vector2(0, 180)
 	board_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	board_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.06, 0.065, 0.065, 0.64), VisualAssets.surface_accent_color("battle_board_background")))
+	board_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.04, 0.045, 0.05, 0.34), VisualAssets.surface_accent_color("battle_board_background")))
 	main_box.add_child(board_panel)
 
 	var board_margin: MarginContainer = MarginContainer.new()
-	board_margin.add_theme_constant_override("margin_left", 14)
-	board_margin.add_theme_constant_override("margin_top", 12)
-	board_margin.add_theme_constant_override("margin_right", 14)
-	board_margin.add_theme_constant_override("margin_bottom", 12)
+	board_margin.add_theme_constant_override("margin_left", 12)
+	board_margin.add_theme_constant_override("margin_top", 10)
+	board_margin.add_theme_constant_override("margin_right", 12)
+	board_margin.add_theme_constant_override("margin_bottom", 10)
 	board_panel.add_child(board_margin)
 
 	var board_box: VBoxContainer = VBoxContainer.new()
 	board_box.name = "BattleBoardRows"
-	board_box.add_theme_constant_override("separation", 12)
+	board_box.add_theme_constant_override("separation", 8)
 	board_box.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	board_margin.add_child(board_box)
 
@@ -115,20 +130,33 @@ func _build_ui() -> void:
 	board_box.add_child(enemy_slots_box)
 	var board_spacer: Control = Control.new()
 	board_spacer.name = "BattleBoardCenterSpace"
-	board_spacer.custom_minimum_size = Vector2(0, 18)
+	board_spacer.custom_minimum_size = Vector2(0, 12)
 	board_spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	board_box.add_child(board_spacer)
 	board_box.add_child(player_slots_box)
 
+	var hand_panel: PanelContainer = PanelContainer.new()
+	hand_panel.name = "BattleHandPanel"
+	hand_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.035, 0.04, 0.045, 0.60), Color(0.30, 0.38, 0.42, 0.75)))
+	main_box.add_child(hand_panel)
+
+	var hand_margin: MarginContainer = MarginContainer.new()
+	hand_margin.add_theme_constant_override("margin_left", 8)
+	hand_margin.add_theme_constant_override("margin_top", 6)
+	hand_margin.add_theme_constant_override("margin_right", 8)
+	hand_margin.add_theme_constant_override("margin_bottom", 6)
+	hand_panel.add_child(hand_margin)
+
 	hand_box = HBoxContainer.new()
 	hand_box.name = "BattleHand"
-	hand_box.add_theme_constant_override("separation", 10)
+	hand_box.add_theme_constant_override("separation", 8)
 	hand_box.alignment = BoxContainer.ALIGNMENT_CENTER
-	main_box.add_child(hand_box)
+	hand_margin.add_child(hand_box)
 
 	var actions: HBoxContainer = HBoxContainer.new()
 	actions.name = "BattleActions"
-	actions.add_theme_constant_override("separation", 10)
+	actions.add_theme_constant_override("separation", 8)
+	actions.custom_minimum_size = Vector2(0, 64)
 	main_box.add_child(actions)
 
 	class_active_tile = BattleClassActiveTokenScript.new()
@@ -158,20 +186,74 @@ func _build_ui() -> void:
 	)
 	actions.add_child(map_button)
 
+	var ticker_panel: PanelContainer = PanelContainer.new()
+	ticker_panel.name = "BattleLogTickerPanel"
+	ticker_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	ticker_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	ticker_panel.custom_minimum_size = Vector2(220, 58)
+	ticker_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.04, 0.045, 0.05, 0.58), Color(0.38, 0.45, 0.48, 0.72)))
+	actions.add_child(ticker_panel)
+
+	var ticker_margin: MarginContainer = MarginContainer.new()
+	ticker_margin.add_theme_constant_override("margin_left", 10)
+	ticker_margin.add_theme_constant_override("margin_top", 6)
+	ticker_margin.add_theme_constant_override("margin_right", 10)
+	ticker_margin.add_theme_constant_override("margin_bottom", 6)
+	ticker_margin.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	ticker_panel.add_child(ticker_margin)
+
+	log_label = Label.new()
+	log_label.name = "BattleLogTicker"
+	log_label.text = "Aguardando acao do comandante."
+	log_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	log_label.max_lines_visible = 2
+	log_label.clip_text = true
+	log_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	log_label.add_theme_font_size_override("font_size", 12)
+	log_label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+	log_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	log_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	ticker_margin.add_child(log_label)
+
+	var history_button: Button = Button.new()
+	history_button.name = "BattleLogHistoryButton"
+	history_button.text = "Log"
+	history_button.pressed.connect(_toggle_history_log)
+	actions.add_child(history_button)
+
+	history_panel = PanelContainer.new()
+	history_panel.name = "BattleLogHistoryPanel"
+	history_panel.visible = false
+	history_panel.anchor_left = 1.0
+	history_panel.anchor_top = 0.13
+	history_panel.anchor_right = 1.0
+	history_panel.anchor_bottom = 0.13
+	history_panel.offset_left = -336.0
+	history_panel.offset_top = 0.0
+	history_panel.offset_right = -18.0
+	history_panel.offset_bottom = 250.0
+	history_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.05, 0.055, 0.06, 0.88), Color(0.42, 0.48, 0.52, 0.90)))
+	add_child(history_panel)
+
+	var history_margin: MarginContainer = MarginContainer.new()
+	history_margin.add_theme_constant_override("margin_left", 10)
+	history_margin.add_theme_constant_override("margin_top", 10)
+	history_margin.add_theme_constant_override("margin_right", 10)
+	history_margin.add_theme_constant_override("margin_bottom", 10)
+	history_panel.add_child(history_margin)
+
 	var log_scroll: ScrollContainer = ScrollContainer.new()
 	log_scroll.name = "BattleLogScroll"
 	log_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	log_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
-	log_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	log_scroll.custom_minimum_size = Vector2(0, 86)
-	main_box.add_child(log_scroll)
+	history_margin.add_child(log_scroll)
 
-	log_label = Label.new()
-	log_label.name = "BattleLog"
-	log_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	log_label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
-	log_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	log_scroll.add_child(log_label)
+	history_log_label = Label.new()
+	history_log_label.name = "BattleLog"
+	history_log_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	history_log_label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+	history_log_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	log_scroll.add_child(history_log_label)
 
 	_build_preview_panel()
 	_build_necromancer_modal()
@@ -256,7 +338,7 @@ func _build_necromancer_modal() -> void:
 
 func _refresh() -> void:
 	var state: Dictionary = engine.get_state()
-	status_label.text = "%s | %s\nClasse %s | Mana %d/%d | Vida %d | Inimigo %d\nFluxo %d | Cinzas %d | Onda %d/%d | Resultado: %s" % [
+	status_label.text = "%s | %s | Classe %s | Mana %d/%d | Vida %d | Inimigo %d | Fluxo %d | Cinzas %d | Onda %d/%d | Resultado: %s" % [
 		str(current_encounter.get("display_name", "Encontro")),
 		engine.get_mode_label(),
 		RunSession.selected_class_display_name,
@@ -276,9 +358,25 @@ func _refresh() -> void:
 	_rebuild_hand(Array(state.get("hand", [])))
 	_refresh_class_active_tile()
 	_refresh_necromancer_modal()
-	log_label.text = "\n".join(Array(state.get("log", [])))
+	var log_entries: Array = Array(state.get("log", []))
+	log_label.text = _latest_log_text(log_entries)
+	if history_log_label != null:
+		history_log_label.text = "\n".join(log_entries)
 	if map_button != null and engine.outcome == "vitoria":
 		map_button.text = "Continuar no Mapa"
+
+func _latest_log_text(log_entries: Array) -> String:
+	if log_entries.is_empty():
+		return "Aguardando acao do comandante."
+	for index: int in range(log_entries.size() - 1, -1, -1):
+		var entry: String = str(log_entries[index]).strip_edges()
+		if entry != "":
+			return entry
+	return "Aguardando acao do comandante."
+
+func _toggle_history_log() -> void:
+	if history_panel != null:
+		history_panel.visible = not history_panel.visible
 
 func _rebuild_hero_targets(state: Dictionary) -> void:
 	for child: Node in hero_targets_box.get_children():

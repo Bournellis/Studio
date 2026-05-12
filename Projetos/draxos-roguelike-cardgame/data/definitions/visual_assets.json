@@ -4,6 +4,9 @@
     "ship_hub_background": {
       "path": "res://assets/ui/backgrounds/ship_hub_background.png",
       "resolution": "1920x1080",
+      "actual_resolution": "1456x816",
+      "asset_status": "provisional_16_9_source",
+      "asset_debt": "Current PNG is accepted for V1 because it is 16:9; reexport to 1920x1080 if the final contract remains 1920x1080.",
       "scale_mode": "cover_crop",
       "fallback_label": "Nave Draxos",
       "fallback_color": "#0B0D0F",
@@ -12,6 +15,9 @@
     "mission_map_background": {
       "path": "res://assets/ui/backgrounds/mission_map_background.png",
       "resolution": "1920x1080",
+      "actual_resolution": "1456x816",
+      "asset_status": "provisional_16_9_source",
+      "asset_debt": "Current PNG is accepted for V1 because it is 16:9; reexport to 1920x1080 if the final contract remains 1920x1080.",
       "scale_mode": "cover_crop",
       "fallback_label": "Mapa de Missao",
       "fallback_color": "#101318",
@@ -20,6 +26,9 @@
     "battle_board_background": {
       "path": "res://assets/ui/backgrounds/battle_board_background.png",
       "resolution": "1920x1080",
+      "actual_resolution": "1456x816",
+      "asset_status": "provisional_16_9_source",
+      "asset_debt": "Current PNG is accepted for V1 because it is 16:9; reexport to 1920x1080 if the final contract remains 1920x1080.",
       "scale_mode": "cover_crop",
       "fallback_label": "Mesa de Batalha",
       "fallback_color": "#0D1012",
@@ -30,30 +39,48 @@
     "frame_arcano": {
       "path": "res://assets/cards/frames/frame_arcano.png",
       "resolution": "512x768",
+      "actual_resolution": "896x1344",
+      "overlay_safe": true,
+      "asset_status": "provisional_transparent_overlay",
+      "asset_debt": "Normalize to 512x768 transparent PNG before final card art pass.",
       "fallback_label": "Arcano",
       "fallback_color": "#5D4FA3"
     },
     "frame_invocador": {
       "path": "res://assets/cards/frames/frame_invocador.png",
       "resolution": "512x768",
+      "actual_resolution": "1024x1535",
+      "overlay_safe": false,
+      "asset_status": "provisional_not_alpha_safe",
+      "asset_debt": "Current file has no reliable alpha channel; replace with 512x768 transparent PNG before enabling overlay.",
       "fallback_label": "Invocador",
       "fallback_color": "#4E7A58"
     },
     "frame_necromante": {
       "path": "res://assets/cards/frames/frame_necromante.png",
       "resolution": "512x768",
+      "actual_resolution": "1024x1536",
+      "overlay_safe": false,
+      "asset_status": "provisional_not_alpha_safe",
+      "asset_debt": "Current file has no reliable alpha channel; replace with 512x768 transparent PNG before enabling overlay.",
       "fallback_label": "Necromante",
       "fallback_color": "#6A3E71"
     },
     "frame_elemental": {
       "path": "res://assets/cards/frames/frame_elemental.png",
       "resolution": "512x768",
+      "overlay_safe": false,
+      "asset_status": "missing_provisional",
+      "asset_debt": "Add a 512x768 transparent PNG before enabling overlay.",
       "fallback_label": "Elemental",
       "fallback_color": "#9A6A34"
     },
     "frame_neutral": {
       "path": "res://assets/cards/frames/frame_neutral.png",
       "resolution": "512x768",
+      "overlay_safe": false,
+      "asset_status": "missing_provisional",
+      "asset_debt": "Add a 512x768 transparent PNG before enabling overlay.",
       "fallback_label": "Neutro",
       "fallback_color": "#56616A"
     }
