@@ -83,6 +83,7 @@ var _discard_return_phase: String = ""
 var _discard_return_priority_owner_id: String = ""
 
 var active_class_id: String = ""
+var fluxo: int = 0
 
 var _catalog
 var _player_slot_definitions: Array = []
@@ -119,6 +120,7 @@ func start_battle(catalog, deck_ids: Array, config: Dictionary = {}) -> void:
 	current_phase = PHASE_UPKEEP
 	_enemy_ai_enabled = bool(config.get("enemy_ai_enabled", config.get("enemy_script_enabled", true)))
 	active_class_id = str(config.get("class_id", ""))
+	fluxo = 0
 
 	var encounter: Dictionary = _encounter_from_config(config)
 	encounter_id = str(encounter.get("id", "emboscada_na_ponte"))
@@ -368,6 +370,18 @@ func _use_hero_power_gain_stats(effect: Dictionary, target: Dictionary, controll
 		return {"ok": true, "message": "Amplificar aplicado."}
 	return _fail("Hero power gain_stats: alvo nao suportado: %s." % hp_target)
 
+func _player_fluxo_bonus(controller_id: String) -> int:
+	if controller_id != PLAYER_ID or active_class_id != "arcano":
+		return 0
+	return fluxo
+
+func _try_trigger_fluxo(controller_id: String) -> void:
+	if controller_id != PLAYER_ID or active_class_id != "arcano":
+		return
+	fluxo += 1
+	_log("Fluxo: %d." % fluxo)
+	_visual("buff", PLAYER_ID, -1, "Fluxo +1", Color(0.55, 0.78, 1.0))
+
 func play_card_from_hand(hand_index: int, target: Dictionary) -> Dictionary:
 	if outcome != "":
 		return _fail("A batalha ja terminou.")
@@ -390,9 +404,15 @@ func play_card_from_hand(hand_index: int, target: Dictionary) -> Dictionary:
 	if card.occupies_slot():
 		return _play_permanent(PLAYER_ID, hand_index, card, target)
 	if card.is_damage_spell():
-		return _play_damage_spell(PLAYER_ID, hand_index, card, target)
+		var r: Dictionary = _play_damage_spell(PLAYER_ID, hand_index, card, target)
+		if bool(r.get("ok", false)):
+			_try_trigger_fluxo(PLAYER_ID)
+		return r
 	if card.is_board_spell():
-		return _play_board_spell(PLAYER_ID, hand_index, card)
+		var r: Dictionary = _play_board_spell(PLAYER_ID, hand_index, card)
+		if bool(r.get("ok", false)):
+			_try_trigger_fluxo(PLAYER_ID)
+		return r
 	if card.is_buff_command():
 		return _play_buff_command(PLAYER_ID, hand_index, card, target)
 	if card.is_stat_buff_spell():
@@ -874,6 +894,8 @@ func _start_turn(controller_id: String) -> void:
 		_auto_enemy_until_player_priority()
 
 func _resolve_upkeep(controller_id: String) -> void:
+	if controller_id == PLAYER_ID and active_class_id == "arcano":
+		fluxo = 0
 	var controller: Dictionary = _controller(controller_id)
 	_maybe_spawn_next_wave(controller_id)
 	var turns_started: int = int(controller.get("turns_started", 0)) + 1
@@ -1092,7 +1114,7 @@ func _play_permanent(controller_id: String, hand_index: int, card, target: Dicti
 func _play_damage_spell(controller_id: String, hand_index: int, card, target: Dictionary) -> Dictionary:
 	var target_owner: String = _normalize_owner_id(str(target.get("owner", _opponent_id(controller_id))))
 	var slot_index: int = int(target.get("slot", -1))
-	var amount: int = int(card.effect.get("amount", card.effect.get("damage", 0)))
+	var amount: int = int(card.effect.get("amount", card.effect.get("damage", 0))) + _player_fluxo_bonus(controller_id)
 	if slot_index >= 0:
 		var target_slots: Array = _slots_for_owner(target_owner)
 		if slot_index >= target_slots.size() or target_slots[slot_index] == null:
@@ -1794,34 +1816,4 @@ func _keyword_alias(keyword: String) -> String:
 	match keyword:
 		"rapido":
 			return "fast"
-		"defensor":
-			return "defender"
-		"alcance":
-			return "reach"
-		"atropelar":
-			return "trample"
-		_:
-			return keyword
-
-func _card_name(card_id: String) -> String:
-	if _catalog == null:
-		return card_id
-	return _catalog.card_name(card_id)
-
-func _visual(kind: String, owner_id: String, slot_index: int, text: String, color: Color) -> void:
-	eventos_visuais.append({
-		"kind": kind,
-		"owner": _normalize_owner_id(owner_id),
-		"slot": slot_index,
-		"text": text,
-		"color": color
-	})
-
-func _log(line: String) -> void:
-	log_lines.append(line)
-	if log_lines.size() > MAX_LOG_LINES:
-		log_lines.pop_front()
-
-func _fail(message: String) -> Dictionary:
-	_log(message)
-	return {"ok": false, "message": message}
+		"defe

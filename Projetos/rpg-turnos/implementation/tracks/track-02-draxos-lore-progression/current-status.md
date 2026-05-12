@@ -1,6 +1,6 @@
 # Track 02 Current Status
 
-- Last Updated: `2026-05-12` (P06 complete)
+- Last Updated: `2026-05-12` (P07 complete)
 - Status: `ACTIVE_LINEAR_PLAN`
 - Track Name: `Track 02 - Draxos Lore And Progression Alignment`
 
@@ -15,7 +15,7 @@ The track must preserve the validated card-slot runtime while migrating player-f
 - C1 is the sole combat runtime.
 - Official battle modes are implemented: `limpar_mesa`, `duelo`, `ondas`, `defesa`, `chefe_multiparte`, and `quebra_cabeca`.
 - World progression, one-time encounter rewards, progressive NPC rewards, save/load, and art-ready placeholders exist.
-- Runtime validation is green at the latest known baseline: `78/78` (P04–P06 validation pending local run).
+- Runtime validation is green at the latest known baseline: `78/78` (P04–P07 validation pending local run).
 - Several player-facing catalog names already use Draxos/elemental language.
 - The generated catalog now exposes the 3 new classes (Invocador, Arcano, Necromante) with `passiva`, `hero`, `hero_power`, and 20-card placeholder starter decks through `ContentLibrary`. Old 5 classes removed.
 - Two new card definitions added: `reforco_aliado` (Invocador buff) and `amplificacao_campo` (Invocador area buff).

@@ -37,9 +37,9 @@ It defines execution order only.
 
 ## Current Execution Cursor
 
-Next prompt: `P07 - Arcano: Fluxo Counter and Damage Amplification`.
+Next prompt: `P08 - Arcano: Pulso Astral Hero Power and Deck Activation`.
 
-Current focus: implement Arcano's core engine systems — volatile per-turn `fluxo` counter and magic damage amplification pipeline.
+Current focus: complete Arcano — wire Pulso Astral hero power (action: damage, fluxo-amplified) and activate the Arcano starter deck end-to-end.
 
 ## Linear Prompt Sequence
 
@@ -52,7 +52,7 @@ Current focus: implement Arcano's core engine systems — volatile per-turn `flu
 | P04 | complete | Implement Invocador: Comandante de Campo passive trigger and Amplificar hero power. | Run validation |
 | P05 | complete | Activate Invocador starter deck; add class selection screen MVP. | Run validation |
 | P06 | complete | Invocador integration checkpoint: labels, tests, docs, records. | Run validation |
-| P07 | pending | Implement Arcano: Fluxo counter and magic damage amplification pipeline. | Run validation |
+| P07 | complete | Implement Arcano: Fluxo counter and magic damage amplification pipeline. | Run validation |
 | P08 | pending | Implement Arcano: Pulso Astral hero power and activate Arcano starter deck. | Run validation |
 | P09 | pending | Arcano integration checkpoint: labels, tests, docs, records. | Run validation |
 | P10 | pending | Implement Necromante: Cinzas counter and Memorial de Batalha per encounter. | Run validation |
@@ -420,4 +420,4 @@ Known future dependencies:
 - P08-P13 depend on the class selection and class starter deck plumbing.
 - P16 should wait until at least P14, because reward/card meaning depends on the playable class baseline.
 - P20 must wait until player-facing naming stabilizes.
-                      
+  
