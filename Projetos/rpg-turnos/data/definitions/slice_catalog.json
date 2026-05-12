@@ -1413,6 +1413,44 @@
           "permanent": true
         }
       }
+    },
+    {
+      "id": "reforco_aliado",
+      "display_name": "Reforço Aliado",
+      "type": "magia",
+      "cost": 1,
+      "command_cost": 1,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Criatura aliada à escolha ganha +2/+0 permanentemente.",
+      "effect": {
+        "action": "gain_stats",
+        "attack": 2,
+        "health": 0,
+        "permanent": true,
+        "target": "any_own_creature"
+      }
+    },
+    {
+      "id": "amplificacao_campo",
+      "display_name": "Amplificação de Campo",
+      "type": "magia_de_tabuleiro",
+      "cost": 3,
+      "command_cost": 3,
+      "speed": "normal",
+      "attack": 0,
+      "health": 0,
+      "keywords": [],
+      "text": "Todas as criaturas aliadas em campo ganham +1/+0 permanentemente.",
+      "effect": {
+        "action": "gain_stats",
+        "attack": 1,
+        "health": 0,
+        "permanent": true,
+        "target": "all_own_creatures"
+      }
     }
   ],
   "boards": [
@@ -2500,231 +2538,169 @@
   "first_npc_reward_card": "golpe_preciso",
   "classes": [
     {
-      "id": "assaltante",
-      "display_name": "Assaltante de Vazio",
-      "tagline": "Pressão imediata. Fechar antes do turno 7.",
+      "id": "invocador",
+      "display_name": "Invocador",
+      "tagline": "Buffs permanentes. Cada invocação fortalece o campo.",
+      "passiva": {
+        "id": "comandante_de_campo",
+        "display_name": "Comandante de Campo",
+        "text": "Ao invocar criatura aliada, a aliada com maior ATK em campo ganha +1/+0 permanente. Em empate, o jogador escolhe."
+      },
       "hero": {
-        "id": "assaltante_heroi",
-        "display_name": "Novato Draxos",
+        "id": "invocador_heroi",
+        "display_name": "Comandante Draxos",
         "max_health": 25,
         "hero_power": {
-          "id": "disparo_choque",
-          "display_name": "Disparo de Choque",
+          "id": "amplificar",
+          "display_name": "Amplificar",
           "cost": 1,
           "speed": "normal",
           "once_per_own_turn": true,
-          "text": "Causa 2 de dano mágico a qualquer permanente inimigo.",
+          "text": "Criatura aliada à escolha ganha +2/+0 permanente.",
           "effect": {
-            "action": "damage",
-            "amount": 2,
-            "damage_type": "magico",
-            "target": "any_enemy_permanent"
+            "action": "gain_stats",
+            "attack": 2,
+            "health": 0,
+            "permanent": true,
+            "target": "any_own_creature"
           }
         }
       },
       "starter_deck": [
-        "incursor_vazio",
-        "incursor_vazio",
-        "incursor_vazio",
-        "lamina_choque",
-        "lamina_choque",
-        "lamina_choque",
-        "fenda_astral",
-        "fenda_astral",
-        "fenda_astral",
-        "pilhador_implacavel",
-        "pilhador_implacavel",
-        "cacador_alado",
-        "cacador_alado",
-        "atirador_frente",
-        "atirador_frente",
-        "garra_vazio",
-        "garra_vazio",
-        "devastador_linha",
+        "escudeiro",
+        "escudeiro",
+        "escudeiro",
+        "guarda_vila",
+        "guarda_vila",
+        "guarda_vila",
+        "arqueira_penhasco",
+        "arqueira_penhasco",
+        "arqueira_penhasco",
+        "soldado_linha",
+        "soldado_linha",
         "interceptor_alado",
+        "interceptor_alado",
+        "bruto_mercenario",
+        "bruto_mercenario",
+        "reforco_aliado",
+        "reforco_aliado",
+        "reforco_aliado",
+        "amplificacao_campo",
+        "amplificacao_campo"
+      ]
+    },
+    {
+      "id": "arcano",
+      "display_name": "Arcano",
+      "tagline": "Sequenciar magias para amplificar o golpe final.",
+      "passiva": {
+        "id": "fluxo_continuo",
+        "display_name": "Fluxo Contínuo",
+        "text": "Cada magia ou magia_de_tabuleiro resolvida pelo jogador neste turno gera 1 Fluxo. Cada Fluxo concede +1 de dano mágico às fontes de dano mágico do jogador neste turno. Fluxo reseta no início do próximo turno do jogador."
+      },
+      "hero": {
+        "id": "arcano_heroi",
+        "display_name": "Comandante Draxos",
+        "max_health": 25,
+        "hero_power": {
+          "id": "pulso_astral_arcano",
+          "display_name": "Pulso Astral",
+          "cost": 1,
+          "speed": "normal",
+          "once_per_own_turn": true,
+          "text": "Causa 1 de dano mágico (+Fluxo) a qualquer permanente ou herói.",
+          "effect": {
+            "action": "damage",
+            "amount": 1,
+            "damage_type": "magico",
+            "target": "any_permanent_or_hero",
+            "fluxo_bonus": true
+          }
+        }
+      },
+      "starter_deck": [
+        "raio_curto",
+        "raio_curto",
+        "raio_curto",
+        "fenda_astral",
+        "fenda_astral",
+        "fenda_astral",
+        "guarda_vila",
+        "guarda_vila",
+        "guarda_vila",
+        "barricada",
+        "barricada",
+        "golpe_preciso",
+        "golpe_preciso",
+        "golpe_preciso",
+        "custodio_fio",
+        "custodio_fio",
+        "conduit_astral",
+        "conduit_astral",
+        "descarga_impacto",
         "descarga_impacto"
       ]
     },
     {
-      "id": "arquiteto",
-      "display_name": "Arquiteto de Éter",
-      "tagline": "Instalar. Acumular. Dominar passivamente.",
-      "hero": {
-        "id": "arquiteto_heroi",
-        "display_name": "Novato Draxos",
-        "max_health": 25,
-        "hero_power": {
-          "id": "reparacao_eter",
-          "display_name": "Reparação de Éter",
-          "cost": 1,
-          "speed": "normal",
-          "once_per_own_turn": true,
-          "text": "Regenera 4 HP de uma estrutura sua danificada.",
-          "effect": {
-            "action": "heal_permanent",
-            "amount": 4,
-            "target": "any_own_damaged_structure"
-          }
-        }
+      "id": "necromante",
+      "display_name": "Necromante",
+      "tagline": "Transformar morte em recurso. Cinzas financiam o Ritual.",
+      "passiva": {
+        "id": "colheita_sombria",
+        "display_name": "Colheita Sombria",
+        "text": "Sempre que qualquer criatura for destruída em campo — aliada ou inimiga, em qualquer turno — o Necromante gera 1 Cinza. Cinzas acumulam entre turnos e não resetam durante o encontro."
       },
-      "starter_deck": [
-        "muro_eter",
-        "muro_eter",
-        "muro_eter",
-        "reforco_estrutural",
-        "reforco_estrutural",
-        "reforco_estrutural",
-        "torre_vigilancia",
-        "torre_vigilancia",
-        "torre_vigilancia",
-        "bastiao_arcano",
-        "bastiao_arcano",
-        "pulso_eter",
-        "pulso_eter",
-        "nucleo_eter",
-        "nucleo_eter",
-        "guardiao_cristal",
-        "guardiao_cristal",
-        "elo_eter",
-        "sobrecarga_construto",
-        "colosso_eter"
-      ]
-    },
-    {
-      "id": "dominador",
-      "display_name": "Dominador Astral",
-      "tagline": "Paralisia do tabuleiro. O inimigo tem peças — não consegue usá-las.",
       "hero": {
-        "id": "dominador_heroi",
-        "display_name": "Novato Draxos",
+        "id": "necromante_heroi",
+        "display_name": "Comandante Draxos",
         "max_health": 25,
         "hero_power": {
-          "id": "dominancia_astral",
-          "display_name": "Dominância Astral",
-          "cost": 2,
-          "speed": "normal",
-          "once_per_own_turn": true,
-          "text": "Aplica enjoo a um permanente inimigo.",
-          "effect": {
-            "action": "apply_status",
-            "status": "enjoo",
-            "target": "any_enemy_permanent"
-          }
-        }
-      },
-      "starter_deck": [
-        "sentinela_supressao",
-        "sentinela_supressao",
-        "sentinela_supressao",
-        "pulso_disruptivo",
-        "pulso_disruptivo",
-        "pulso_disruptivo",
-        "correntes_eter",
-        "correntes_eter",
-        "correntes_eter",
-        "extrator_astral",
-        "extrator_astral",
-        "condutor_dominio",
-        "condutor_dominio",
-        "drenagem_forca",
-        "drenagem_forca",
-        "nevoa_astral",
-        "nevoa_astral",
-        "drenar_vitalidade",
-        "senhor_supressao",
-        "supressao_massa"
-      ]
-    },
-    {
-      "id": "tecelao",
-      "display_name": "Tecelão Astral",
-      "tagline": "Sequenciar feitiços. Explodir no turno certo.",
-      "hero": {
-        "id": "tecelao_heroi",
-        "display_name": "Novato Draxos",
-        "max_health": 25,
-        "hero_power": {
-          "id": "foco_astral",
-          "display_name": "Foco Astral",
+          "id": "ritual_das_sombras",
+          "display_name": "Ritual das Sombras",
           "cost": 0,
           "speed": "normal",
           "once_per_own_turn": true,
-          "text": "Adiciona 1 de Ressonância.",
+          "text": "0 energia + Cinzas. Degrau I (2): debuff em criatura inimiga. Degrau II (4): invoca 1/1 do Memorial de Batalha. Degrau III (6): invoca com stats originais.",
           "effect": {
-            "action": "add_resonance",
-            "amount": 1
+            "action": "ritual_das_sombras",
+            "tiers": [
+              {
+                "cinzas_cost": 2,
+                "effect": "debuff_enemy_creature"
+              },
+              {
+                "cinzas_cost": 4,
+                "effect": "spawn_from_memorial_1_1"
+              },
+              {
+                "cinzas_cost": 6,
+                "effect": "spawn_from_memorial_full_stats"
+              }
+            ]
           }
         }
       },
       "starter_deck": [
-        "centelha_astral",
-        "centelha_astral",
-        "centelha_astral",
-        "flecha_vinculo",
-        "flecha_vinculo",
-        "flecha_vinculo",
-        "pulso_ressonante",
-        "pulso_ressonante",
-        "pulso_ressonante",
-        "custodio_fio",
-        "custodio_fio",
-        "eco_arcano",
-        "eco_arcano",
-        "barreira_ressonante",
-        "barreira_ressonante",
-        "conduit_astral",
-        "conduit_astral",
-        "onda_eter",
-        "tempestade_ressonancia",
-        "apoteose_astral"
-      ]
-    },
-    {
-      "id": "vinculador",
-      "display_name": "Vinculador",
-      "tagline": "Capturar e converter o exército inimigo.",
-      "hero": {
-        "id": "vinculador_heroi",
-        "display_name": "Novato Draxos",
-        "max_health": 25,
-        "hero_power": {
-          "id": "captura_forcada",
-          "display_name": "Captura Forçada",
-          "cost": 2,
-          "speed": "normal",
-          "once_per_own_turn": true,
-          "text": "Destrói um permanente inimigo com HP ≤ 3. Spawna uma Forma Vinculada com os stats originais (máx 4/4) em um slot vazio seu.",
-          "effect": {
-            "action": "capture",
-            "hp_threshold": 3,
-            "spawn_vinculada": true,
-            "max_attack": 4,
-            "max_health": 4,
-            "target": "any_enemy_permanent_hp_lte"
-          }
-        }
-      },
-      "starter_deck": [
+        "incursor_vazio",
+        "incursor_vazio",
+        "incursor_vazio",
         "batedor_eter",
         "batedor_eter",
         "batedor_eter",
-        "ferida_astral",
-        "ferida_astral",
-        "ferida_astral",
-        "lacador_vinculo",
-        "lacador_vinculo",
-        "lacador_vinculo",
-        "lanca_captura",
-        "lanca_captura",
-        "fluxo_vinculo",
-        "fluxo_vinculo",
-        "espectro_coletor",
-        "espectro_coletor",
-        "dominacao_forcada",
-        "dominacao_forcada",
-        "mestre_vinculador",
-        "ritual_colheita",
-        "exodia_vinculada"
+        "lamina_choque",
+        "lamina_choque",
+        "bruto_mercenario",
+        "bruto_mercenario",
+        "pulso_disruptivo",
+        "pulso_disruptivo",
+        "pulso_disruptivo",
+        "correntes_eter",
+        "correntes_eter",
+        "correntes_eter",
+        "drenagem_forca",
+        "drenagem_forca",
+        "nevoa_astral",
+        "nevoa_astral"
       ]
     }
   ]

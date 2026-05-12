@@ -1,6 +1,6 @@
 # Shared Lore
 
-- Last Updated: `2026-05-06`
+- Last Updated: `2026-05-12`
 - Status: `active shared lore canon`
 
 ## Purpose
@@ -38,7 +38,7 @@ Draxos are arcane intergalactic beings of unclear origin. They use astral energy
 
 Their culture is expansionist and hierarchical. They commonly treat other beings as inferior, and they seek to dominate, exploit, and enslave them when useful.
 
-The active RPG Turnos campaign direction is documented in `draxos-invasion.md`.
+The active campaign direction is documented in `draxos-invasion.md`. The authoritative narrative source is `Projetos/draxos-roguelike-cardgame/docs/lore-campaign.md`, shared by all projects using this setting.
 
 ## Imortais
 
@@ -54,7 +54,7 @@ The RPG Isometrico and RPG Turnos projects share this lore universe, but they te
 
 RPG Isometrico currently uses Imortais as its safe player-facing race label for the existing direct-combat baseline, while the detailed Imortais campaign lore is pending.
 
-RPG Turnos currently focuses on one Draxos mission that can succeed if the player completes it.
+RPG Turnos and draxos-roguelike-cardgame share the same Draxos lore. The authoritative source is `Projetos/draxos-roguelike-cardgame/docs/lore-campaign.md`. Both projects cover the same Draxos invasion of an elemental planet.
 
 Other Draxos encounters elsewhere in the galaxy may exist in the broader continuity, including failed missions where the Draxos were surprised, blocked, or robbed by other beings. Those stories are not authored here yet.
 

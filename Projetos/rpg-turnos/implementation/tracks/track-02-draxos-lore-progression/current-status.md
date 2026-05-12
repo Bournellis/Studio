@@ -1,6 +1,6 @@
 # Track 02 Current Status
 
-- Last Updated: `2026-05-12`
+- Last Updated: `2026-05-12` (P03 complete)
 - Status: `ACTIVE_LINEAR_PLAN`
 - Track Name: `Track 02 - Draxos Lore And Progression Alignment`
 
@@ -17,7 +17,10 @@ The track must preserve the validated card-slot runtime while migrating player-f
 - World progression, one-time encounter rewards, progressive NPC rewards, save/load, and art-ready placeholders exist.
 - Runtime validation is green at the latest known baseline: `78/78`.
 - Several player-facing catalog names already use Draxos/elemental language.
-- The generated catalog now exposes the 5 authored classes and their 20-card starter decks through `ContentLibrary`.
+- The generated catalog now exposes the 3 new classes (Invocador, Arcano, Necromante) with `passiva`, `hero`, `hero_power`, and 20-card placeholder starter decks through `ContentLibrary`. Old 5 classes removed.
+- Two new card definitions added: `reforco_aliado` (Invocador buff) and `amplificacao_campo` (Invocador area buff).
+- `docs/class-catalog-schema.md` updated with `passiva` field and 3-class hero power reference.
+- `GameSession` holds `selected_class` with full save/load compatibility and class deck helpers.
 - Mechanical IDs remain legacy-compatible and should not be renamed opportunistically.
 
 ## Active Planning Rule
@@ -43,25 +46,10 @@ Each pass should still change one player-facing or runtime layer at a time:
 
 ## Next Implementation Candidate
 
-Continue with `P02 - Selected Class Session State` from `linear-execution-plan.md`.
+Continue with `P04 - Invocador Core: Passive and Hero Power` from `linear-execution-plan.md`.
 
 Expected scope:
 
-- add `selected_class` to `core/game_session.gd`
-- keep save/load compatible with saves missing `selected_class`
-- add selection/query helpers and class deck initialization helpers
-- keep old starter deck fallback behavior until class selection is active
-- no mechanical ID renames
-- no battle rule changes
-- run validation after runtime/save/test changes
-
-## Do Not Start Yet
-
-- later class engine systems beyond P02
-- final planet/crystal naming as hard canon
-- broad card economy
-- equipment/items
-- save-breaking technical ID rename
-- final art import
-
-Those depend on decisions or later passes in `implementation-plan.md`.
+- Replace hardcoded `Preparar Defesa` hero power fallback with data-driven loading from class data
+- Implement `Amplificar` hero power: permanent +2/+0 to a chosen ally (cost 1, once per own turn)
+- I

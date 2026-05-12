@@ -1,6 +1,6 @@
 # Class Catalog Schema
 
-- Last Updated: `2026-05-06`
+- Last Updated: `2026-05-12`
 - Status: `autoridade — Codex deve seguir este documento para qualquer dado de classe`
 - Referências: `classes/README.md`, `game-design-document.md`, `class-selection-flow.md`
 
@@ -38,8 +38,33 @@ Campos obrigatórios por entrada:
 | `id` | string | chave técnica; também usada em `GameSession.selected_class` |
 | `display_name` | string | exibido na tela de seleção |
 | `tagline` | string | identidade em uma linha; exibida na tela de seleção |
+| `passiva` | object | passiva permanente da classe (ver seção 1.1) |
 | `hero` | object | definição completa do herói (ver seção 2) |
 | `starter_deck` | array de string | 20 IDs de cartas na ordem do deck inicial |
+
+### 1.1 Campo `passiva`
+
+```json
+"passiva": {
+  "id": "comandante_de_campo",
+  "display_name": "Comandante de Campo",
+  "text": "Ao invocar criatura aliada, a aliada com maior ATK em campo ganha +1/+0 permanente. Em empate, o jogador escolhe."
+}
+```
+
+| Campo | Tipo | Uso |
+|---|---|---|
+| `id` | string | chave técnica; usada pelo engine para identificar o trigger |
+| `display_name` | string | exibido no HUD e na tela de seleção |
+| `text` | string | texto descritivo completo para a UI |
+
+IDs de passiva das 3 classes ativas:
+
+| Classe | `passiva.id` | Mecanismo |
+|---|---|---|
+| `invocador` | `comandante_de_campo` | Trigger ao invocar criatura → +1/+0 na aliada com maior ATK |
+| `arcano` | `fluxo_continuo` | Contador `fluxo` volátil por turno; cada magia resolvida gera 1 Fluxo; Fluxo amplifica dano mágico do jogador neste turno |
+| `necromante` | `colheita_sombria` | Cada criatura destruída em campo gera 1 Cinza; Cinzas acumulam entre turnos durante o encontro |
 
 ---
 
@@ -76,49 +101,42 @@ Campos obrigatórios:
 | `text` | string | texto descritivo para a UI |
 | `effect` | object | efeito estruturado (ver seção 3) |
 
-### Hero Powers das 5 Classes
+### Hero Powers das 3 Classes Ativas
 
 ```json
-// Assaltante
+// Invocador
 "hero_power": {
-  "id": "disparo_choque", "display_name": "Disparo de Choque",
+  "id": "amplificar", "display_name": "Amplificar",
   "cost": 1, "speed": "normal", "once_per_own_turn": true,
-  "text": "Causa 2 de dano mágico a qualquer permanente inimigo.",
-  "effect": { "action": "damage", "amount": 2, "damage_type": "magico", "target": "any_enemy_permanent" }
+  "text": "Criatura aliada à escolha ganha +2/+0 permanente.",
+  "effect": { "action": "gain_stats", "attack": 2, "health": 0, "permanent": true, "target": "any_own_creature" }
 }
 
-// Arquiteto
+// Arcano
 "hero_power": {
-  "id": "reparacao_eter", "display_name": "Reparação de Éter",
+  "id": "pulso_astral_arcano", "display_name": "Pulso Astral",
   "cost": 1, "speed": "normal", "once_per_own_turn": true,
-  "text": "Regenera 4 HP de uma estrutura sua danificada.",
-  "effect": { "action": "heal_permanent", "amount": 4, "target": "any_own_damaged_structure" }
+  "text": "Causa 1 de dano mágico (+Fluxo) a qualquer permanente ou herói.",
+  "effect": { "action": "damage", "amount": 1, "damage_type": "magico", "target": "any_permanent_or_hero", "fluxo_bonus": true }
 }
 
-// Dominador
+// Necromante
 "hero_power": {
-  "id": "dominancia_astral", "display_name": "Dominância Astral",
-  "cost": 2, "speed": "normal", "once_per_own_turn": true,
-  "text": "Aplica enjoo a um permanente inimigo.",
-  "effect": { "action": "apply_status", "status": "enjoo", "target": "any_enemy_permanent" }
-}
-
-// Vinculador
-"hero_power": {
-  "id": "captura_forcada", "display_name": "Captura Forçada",
-  "cost": 2, "speed": "normal", "once_per_own_turn": true,
-  "text": "Destrói permanente inimigo com HP ≤ 3. Spawna Forma Vinculada com seus stats (máx 4/4) em slot vazio.",
-  "effect": { "action": "capture", "hp_threshold": 3, "spawn_vinculada": true, "max_attack": 4, "max_health": 4, "target": "any_enemy_permanent_hp_lte" }
-}
-
-// Tecelão
-"hero_power": {
-  "id": "foco_astral", "display_name": "Foco Astral",
+  "id": "ritual_das_sombras", "display_name": "Ritual das Sombras",
   "cost": 0, "speed": "normal", "once_per_own_turn": true,
-  "text": "Adiciona 1 de Ressonância.",
-  "effect": { "action": "add_resonance", "amount": 1 }
+  "text": "0 energia + Cinzas. Degrau I (2): debuff em criatura inimiga. Degrau II (4): invoca 1/1 do Memorial de Batalha. Degrau III (6): invoca com stats originais.",
+  "effect": {
+    "action": "ritual_das_sombras",
+    "tiers": [
+      { "cinzas_cost": 2, "effect": "debuff_enemy_creature" },
+      { "cinzas_cost": 4, "effect": "spawn_from_memorial_1_1" },
+      { "cinzas_cost": 6, "effect": "spawn_from_memorial_full_stats" }
+    ]
+  }
 }
 ```
+
+> Nota: o fallback sem classe é `preparar_defesa_astral` no herói genérico definido em `player_hero` — não é hero power de nenhuma das 3 classes.
 
 ---
 
@@ -546,14 +564,4 @@ O engine representa Formas Vinculadas como permanentes runtime sem `card_id` no 
 | `duration: extended` em enjoo | Supressão em Massa | Média | Dominador |
 | `lifesteal: armor` | Drenar Vitalidade | Baixa | Dominador |
 | `gain_stats` permanente condicional | Extrator | Baixa (usa upkeep system) | Dominador |
-| Ressonância counter | Todas as cartas do Tecelão | Baixa | Tecelão |
-| `resonance_override` condicional | Pulso Ressonante, Onda de Éter | Baixa | Tecelão |
-| `amount: resonance` | Centelha, Eco, Barreira, Tempestade, Apoteose | Trivial (lê variável) | Tecelão |
-| `on_spell_cast` trigger | Custódio, Conduit | Média | Tecelão |
-| `resonance_milestone` once_per_turn | Conduit Astral | Média | Tecelão |
-| Spawn token runtime | Captura Forçada, Espectro, Lança, Mestre, Ritual | Alta | Vinculador |
-| `non_lethal` dano | Ferida Astral | Baixa | Vinculador |
-| `force_combat` inimigo vs inimigo | Dominação Forçada | Média | Vinculador |
-| `count_own_tag` | Fluxo de Vínculo, Sobrecarga, Exodia | Baixa | Vinculador |
-| `on_any_enemy_destroyed` trigger | Espectro Coletor | Média | Vinculador |
-| `capture` hero power | Captura Forçada | Alta (depende de spawn) | Vinculador |
+| Ressonâ

@@ -13,7 +13,7 @@ Executar a Track 02 em ordem linear, prompt a prompt, mantendo todos os registro
 
 ## Cursor Atual
 
-Proximo prompt: `P02 - Selected Class Session State`.
+Proximo prompt: `P04 - Invocador Core: Passive and Hero Power`.
 
 ## Progresso
 
@@ -21,6 +21,16 @@ Proximo prompt: `P02 - Selected Class Session State`.
 - [x] P01: `ContentLibrary` expoe helpers de classe, heroi, hero power e starter deck.
 - [x] P01: testes cobrem 5 starter decks de 20 cartas e validam que cada carta existe.
 - [x] P01: validacao Godot verde em 2026-05-12 com 78/78 testes e 592 asserts.
+- [x] P02: `GameSession.selected_class` adicionado com save/load retrocompativel.
+- [x] P02: `select_class()`, `has_selected_class()`, `get_class_deck_ids()`, `initialize_deck_for_class()` implementados.
+- [x] P02: snapshot pre-combate preserva e restaura `selected_class`.
+- [x] P02: 8 novos testes cobrem new game, selecao valida/invalida, fallback de deck, save/load, save antigo sem campo, valor corrompido e snapshot.
+- [ ] P02+P03: validacao Godot pendente (rodar localmente; `.tres` regenera automaticamente no `before_all` do GUT).
+- [x] P03: 5 classes antigas removidas de `slice_catalog.json`.
+- [x] P03: 3 novas classes (Invocador, Arcano, Necromante) com `passiva`, `hero_power` e starter decks de 20 cartas validados.
+- [x] P03: 2 novas cartas adicionadas: `reforco_aliado` e `amplificacao_campo` (Invocador).
+- [x] P03: `docs/class-catalog-schema.md` atualizado com campo `passiva` e hero powers das 3 classes.
+- [x] P03: teste `test_catalog_exposes_class_definitions_and_starter_decks` atualizado para 3 classes com verificacao de `passiva`.
 
 ## Regras De Registro
 
@@ -32,10 +42,11 @@ Proximo prompt: `P02 - Selected Class Session State`.
 
 ## Proximo Passo
 
-Executar P02:
+Executar P04:
 
-1. Adicionar `selected_class` em `core/game_session.gd`.
-2. Preservar compatibilidade de save/load para saves sem `selected_class`.
-3. Adicionar helpers de selecao, consulta e inicializacao de deck por classe.
-4. Manter fallback do starter deck antigo ate a selecao de classe ficar ativa.
-5. Rodar validacao apos mudancas de runtime, save e testes.
+1. Substituir hero power hardcoded `Preparar Defesa` por carregamento data-driven da classe ativa.
+2. Implementar hero power `Amplificar`: +2/+0 permanente em criatura aliada escolhida, custo 1, 1x/turno.
+3. Implementar passiva `Comandante de Campo`: ao invocar criatura aliada, aliada com maior ATK ganha +1/+0 permanente; empate → jogador escolhe.
+4. Manter `Preparar Defesa` como fallback sem classe.
+5. Adicionar testes: passiva dispara ao invocar, buff eh permanente, hero power aplica buff, sem trigger se campo vazio, fallback legacy intacto.
+6. Rodar validacao.

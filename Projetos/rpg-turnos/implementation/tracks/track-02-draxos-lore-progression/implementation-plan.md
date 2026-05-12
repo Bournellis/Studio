@@ -61,78 +61,66 @@ Exit criteria:
 - Um novo jogador entende: base de comando → primeira operação → resistência elemental crescente.
 - Nenhum save quebrou.
 
-## Stage 2 - Class Identity (Design Completo)
+## Stage 2 - Class Identity
 
-Status: `catálogo exposto ao runtime — aguarda estado de sessão e implementação de engine`
+Status: `redesign completo em 2026-05-12 — catálogo pendente de regeneração`
 
-Purpose: definir as classes jogáveis antes de qualquer renomeação profunda de cartas ou sistemas de progressão.
+Purpose: implementar as 3 classes jogáveis antes de qualquer renomeação profunda de cartas ou sistemas de progressão.
 
-O design está inteiramente documentado em `docs/classes/`. As 5 classes são:
+O design está inteiramente documentado em `docs/classes/`. As 3 classes são:
 
-- **Assaltante de Vazio** — pressão imediata, rapido, abertura de rotas
-- **Arquiteto de Éter** — instalação permanente, upkeep triggers, estruturas
-- **Dominador Astral** — paralisia do tabuleiro, enjoo aplicado, Extrator crescente
-- **Vinculador** — capturar e converter criaturas inimigas, spawn de tokens
-- **Tecelão Astral** — sequenciar feitiços, escalonamento por Ressonância
+- **Invocador** — buffs permanentes em criaturas, Comandante de Campo passivo, Amplificar hero power
+- **Arcano** — sequência de magias amplifica dano mágico via Fluxo Contínuo, Pulso Astral hero power
+- **Necromante** — Cinzas por mortes em campo, Memorial de Batalha, Ritual das Sombras em 3 degraus
+
+As 5 classes anteriores (Assaltante, Arquiteto, Dominador, Vinculador, Tecelão) foram removidas. Seus designs não têm mais status de canon.
 
 ### Decisões tomadas
 
 - O jogador escolhe uma classe no início da campanha e mantém toda a jornada.
 - Recompensas são dos encontros, não específicas por classe.
-- Todo o conteúdo de cartas atual é placeholder — redesign completo autorizado.
-- Nenhuma carta ou poder de herói depende de herói inimigo existir.
+- Todo o conteúdo de cartas atual é placeholder — regeneração completa do catálogo necessária.
+- Nenhuma carta ou hero power depende de herói inimigo existir.
+- Lore e identidade das classes são compartilhados com o Draxos Roguelike. Mecânicas são completamente independentes.
 
-### O que está no catálogo
+### Pré-requisito: regeneração do catálogo
 
-As 50 cartas das 5 classes estão em `data/definitions/slice_catalog.json`, junto com a seção `classes` com hero powers e starter decks completos. O schema completo está em `docs/class-catalog-schema.md`.
+`data/definitions/slice_catalog.json` ainda contém as 5 classes antigas. **Antes de implementar qualquer classe, o catálogo deve ser regenerado por Codex** para refletir as 3 novas classes com seus hero powers, passivas e direções de deck conforme `docs/classes/`.
 
-### Próxima ação em Stage 2
-
-Implementar os sistemas de engine necessários para jogar cada classe. Ordem sugerida por complexidade:
-
-1. Assaltante (zero sistemas novos obrigatórios além de hooks menores)
-2. Arquiteto (upkeep triggers — base para o Dominador)
-3. Dominador (reusa upkeep do Arquiteto)
-4. Tecelão (Ressonância é simples mas central)
-5. Vinculador (spawn de tokens é o sistema mais complexo)
+O schema de referência está em `docs/class-catalog-schema.md` — atualizar se necessário para comportar os novos campos (Cinzas, Fluxo, Memorial).
 
 ### Novos sistemas de engine necessários (resumo)
 
-| Sistema | Classes | Complexidade |
+| Sistema | Classe | Complexidade |
 |---|---|---|
-| Ressonância counter por turno | Tecelão | Baixa |
-| "Quando destrói em combate" hook | Assaltante, Arquiteto, Vinculador | Média |
-| Upkeep triggers em permanentes | Arquiteto, Dominador | Média (compartilhado) |
-| HP máximo crescente | Arquiteto | Baixa |
-| Reset de estado em massa | Arquiteto | Baixa |
-| Enjoo aplicado por feitiço | Dominador | Baixa |
-| Enjoo com duração estendida | Dominador | Média |
-| ATK crescente condicional | Dominador, Vinculador | Baixa |
-| Armadura proporcional ao dano | Dominador | Baixa |
-| Spawn de criatura token em runtime | Vinculador | Alta |
-| Dano não-letal condicional | Vinculador | Baixa |
-| Forçar combate inimigo vs inimigo | Vinculador | Média |
-| Milestone trigger (contador) | Tecelão | Média |
+| Trigger de invocação → buff ATK da maior criatura | Invocador | Baixa |
+| Buff ATK permanente em criatura | Invocador | Baixa |
+| Contador de Fluxo por turno (volátil, reseta no início do turno) | Arcano | Baixa |
+| Amplificação de dano `magico` pelo Fluxo | Arcano | Baixa |
+| Contador de Cinzas por encontro (persistente entre turnos) | Necromante | Baixa |
+| Memorial de Batalha (lista de criaturas destruídas no encontro) | Necromante | Média |
+| Hero power condicional com 3 degraus de custo em Cinzas | Necromante | Média |
+| Spawn de criatura-token a partir do Memorial | Necromante | Média |
+| `enjoo_estendido` com contador de duração (2 turnos) | Necromante | Baixa |
+| Trigger "ao morrer" em criaturas | Necromante | Média — reutilizável |
 
 ### Tela de Seleção de Classe
 
-A escolha de classe acontece **antes de iniciar a campanha**, não dentro do primeiro encontro. É uma tela dedicada, não um diálogo inline.
+A escolha de classe acontece **antes de iniciar a campanha**. É uma tela dedicada, não um diálogo inline.
 
-Requisitos mínimos da tela:
-- Apresentar as 5 classes disponíveis.
+Requisitos mínimos:
+- Apresentar as 3 classes disponíveis.
 - Para cada classe: nome, identidade em uma linha, ponto de virada em uma linha.
-- Confirmação explícita antes de iniciar — a escolha é permanente para aquela run.
-- A classe selecionada determina qual deck starter é carregado ao entrar no primeiro encontro.
+- Confirmação explícita antes de iniciar — escolha permanente para aquela campanha.
+- Classe selecionada determina qual deck starter é carregado no primeiro encontro.
 - Save/load deve persistir a classe escolhida na sessão.
 
-Esta tela é bloqueante: sem ela, o sistema de classes não é jogável. Deve ser implementada junto com a primeira classe, não depois.
-
-O design visual e de UX desta tela faz parte do **Stage 3 - UI e Apresentação**.
+Esta tela é bloqueante: deve ser implementada junto com a primeira classe jogável.
 
 Exit criteria:
-- Uma classe está implementada com deck funcional, hero power funcional e validação verde.
+- As 3 classes estão implementadas com deck funcional, hero power funcional e validação verde.
 - A tela de seleção de classe está funcional e carrega o deck correto.
-- As demais classes seguem em iterações separadas.
+- Cada classe é implementada em iteração separada, na ordem: Invocador → Arcano → Necromante.
 
 ## Stage 3 - UI e Apresentação
 
@@ -192,7 +180,7 @@ Status: `pending`
 Purpose: adicionar a primeira camada real de progressão RPG após a shell de lore estar estável.
 
 Decisões necessárias:
-- Progressão é rank, nível, status dentro do time, ou uma combinação?
+- Progressão é rank, autoridade de missão, acesso a recursos da base, ou uma combinação?
 - Crescimento do herói muda HP, hero power, slots de deck, card pool, acesso a missões ou diálogos?
 - Progressão é linear ou baseada em escolha neste slice?
 
@@ -203,7 +191,7 @@ Implementation candidate:
 - Cobertura save/load para novos campos de progressão.
 
 Exit criteria:
-- Crescimento do jogador mapeia para status de novato subindo dentro do time Draxos.
+- Crescimento do jogador mapeia para o arco do comandante Draxos expandindo sua autoridade e acesso durante a operação.
 - Save/load permanece compatível.
 
 ## Stage 6 - Encounter Design Pass
@@ -273,3 +261,4 @@ Resumo:
 5. Rodar validação.
 
 Depois disso, seguir estritamente o cursor do plano linear. A tela de selecao de classe nao deve comecar antes dos prompts de sessao, hero power e deck do Assaltante.
+                                                                                                                                                           

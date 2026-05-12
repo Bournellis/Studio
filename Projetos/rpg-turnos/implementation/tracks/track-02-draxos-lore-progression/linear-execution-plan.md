@@ -37,9 +37,9 @@ It defines execution order only.
 
 ## Current Execution Cursor
 
-Next prompt: `P02 - Selected Class Session State`.
+Next prompt: `P04 - Invocador Core: Passive and Hero Power`.
 
-Current focus: persist selected class state before adding class behavior or UI.
+Current focus: implement Invocador mechanics — replace hardcoded hero power fallback with data-driven loading, implement Amplificar and Comandante de Campo passive.
 
 ## Linear Prompt Sequence
 
@@ -47,20 +47,20 @@ Current focus: persist selected class state before adding class behavior or UI.
 |---|---|---|---|
 | P00 | complete | Create this linear execution plan and align records. | Documentation-only |
 | P01 | complete | Expose `classes` from JSON into generated catalog resources and `ContentLibrary`. | Green 78/78 |
-| P02 | pending | Add `selected_class` session/save state and class deck helpers without UI. | Run validation |
-| P03 | pending | Implement data-driven hero metadata and hero power kernel for `Assaltante de Vazio`. | Run validation |
-| P04 | pending | Implement Assaltante-only effect hooks: `on_destroy` and `on_combat_kill`. | Run validation |
-| P05 | pending | Activate Assaltante starter deck through session/deck setup flow. | Run validation |
-| P06 | pending | Add class selection screen MVP and route new games through it. | Run validation |
-| P07 | pending | Assaltante integration checkpoint: polish labels, tests, docs, and records. | Run validation |
-| P08 | pending | Implement Arquiteto core: upkeep triggers and structure repair hero power. | Run validation |
-| P09 | pending | Complete Arquiteto support effects and playable starter deck. | Run validation |
-| P10 | pending | Implement Dominador core: applied `enjoo`, extended duration, conditional growth. | Run validation |
-| P11 | pending | Implement Tecelao core: resonance counter, formula amounts, spell-cast hooks. | Run validation |
-| P12 | pending | Implement Vinculador token core: runtime token spawn, tags, non-lethal damage. | Run validation |
-| P13 | pending | Complete Vinculador: capture, tag scaling, forced enemy combat. | Run validation |
-| P14 | pending | Multi-class regression checkpoint: all five classes selectable and playable. | Run validation |
-| P15 | pending | UI/readability design pass: define and implement the minimum playable presentation improvement. | Run validation |
+| P02 | complete | Add `selected_class` session/save state and class deck helpers without UI. | Run validation |
+| P03 | complete | Regenerate catalog with 3 new classes (Invocador, Arcano, Necromante); remove old 5. | Run validation |
+| P04 | pending | Implement Invocador: Comandante de Campo passive trigger and Amplificar hero power. | Run validation |
+| P05 | pending | Activate Invocador starter deck; add class selection screen MVP. | Run validation |
+| P06 | pending | Invocador integration checkpoint: labels, tests, docs, records. | Run validation |
+| P07 | pending | Implement Arcano: Fluxo counter and magic damage amplification pipeline. | Run validation |
+| P08 | pending | Implement Arcano: Pulso Astral hero power and activate Arcano starter deck. | Run validation |
+| P09 | pending | Arcano integration checkpoint: labels, tests, docs, records. | Run validation |
+| P10 | pending | Implement Necromante: Cinzas counter and Memorial de Batalha per encounter. | Run validation |
+| P11 | pending | Implement Necromante: Ritual das Sombras hero power with 3-tier Cinzas cost. | Run validation |
+| P12 | pending | Implement Necromante: token spawn from Memorial, `enjoo_estendido`, "ao morrer" triggers. | Run validation |
+| P13 | pending | Activate Necromante starter deck and integration checkpoint. | Run validation |
+| P14 | pending | Multi-class regression checkpoint: all three classes selectable and playable. | Run validation |
+| P15 | pending | UI/readability design pass: define and implement minimum playable presentation improvement. | Run validation |
 | P16 | pending | Campaign content alignment: mission chain, rewards meaning, class-facing text. | Run validation |
 | P17 | pending | RPG progression slice: rank/status state and gated dialogue/mission access. | Run validation |
 | P18 | pending | Encounter design pass: one pressure test per class weakness. | Run validation |
@@ -104,197 +104,211 @@ Exit criteria:
 - Existing saves do not crash or lose baseline fallback behavior.
 - Validation is green.
 
-### P03 - Assaltante Hero Power Kernel
+### P03 - Catalog Regeneration: 3 New Classes
 
-Goal: replace the hardcoded player hero power path with a data-driven kernel sufficient for Assaltante.
+Goal: replace the 5 old classes in the catalog with the 3 new classes before any class engine work begins.
 
 Expected work:
 
-- Pass selected class/hero power config into `BattleEngine.start_battle`.
-- Load player hero display name, max health, hero power name, cost, speed, and structured effect from class data.
-- Implement `damage` hero power targeting `any_enemy_permanent`.
-- Update UI button text and enable/disable rules from active hero power data.
-- Add tests for `Disparo de Choque`: cost 1, once per own turn, requires priority, damages an enemy permanent, cannot target missing heroes in non-duel modes.
+- Remove the 5 old class definitions (Assaltante, Arquiteto, Dominador, Vinculador, Tecelão) from `data/definitions/slice_catalog.json`.
+- Add the 3 new class definitions: Invocador, Arcano, Necromante — with hero power data, passiva data, and placeholder starter decks aligned with `docs/classes/`.
+- Update `docs/class-catalog-schema.md` if new fields are needed for Fluxo, Cinzas, Memorial, or passiva type.
+- Regenerate `.tres` catalog resources via `tools/content_generator.gd`.
+- Add/update tests confirming 3 classes exist with correct structure, hero powers, and 20-card starter decks.
+- Remove any test that references the old 5 classes by name.
 
 Exit criteria:
 
-- Assaltante hero power is playable in battle tests.
-- Legacy `Preparar Defesa` fallback remains available only when no class is selected.
+- Generated catalog exposes exactly 3 classes.
+- Each class starter deck has exactly 20 cards and every listed card exists.
+- No test references old class names.
 - Validation is green.
 
-### P04 - Assaltante Effect Hooks
+### P04 - Invocador Core: Passive and Hero Power
 
-Goal: support the two Assaltante card effects that need engine hooks.
-
-Expected work:
-
-- Implement spell `on_destroy` for `Garra do Vazio`.
-- Implement permanent `on_combat_kill` for `Pilhador Implacavel`.
-- Ensure hooks work in modes without enemy heroes.
-- Add tests covering target destruction, no-trigger cases, draw behavior, bottom-of-deck rules, and outcome checks.
-
-Exit criteria:
-
-- Assaltante's special card effects work in isolation.
-- Existing battle tests remain green.
-
-### P05 - Assaltante Deck Activation
-
-Goal: make the Assaltante starter deck the playable selected-class deck.
+Goal: implement Invocador mechanics — the simplest class, zero new system complexity.
 
 Expected work:
 
-- Use selected class starter deck as the initial unlocked/selected deck after class selection state is set.
-- Ensure deck setup screen can display and validate the Assaltante deck.
-- Keep encounter rewards additive and class-agnostic.
-- Add tests for class starter deck validation and deck setup population.
+- Replace hardcoded `Preparar Defesa` fallback with data-driven hero power loading from class data.
+- Implement `Amplificar` hero power: permanent +2/+0 to a chosen ally. Cost 1, once per own turn.
+- Implement `Comandante de Campo` passive: on any creature summon by player, identify ally with highest ATK in field and apply permanent +1/+0.
+- Handle tie-breaking (player chooses) in modes where priority is available.
+- Add tests: passive triggers on summon, buff is permanent through turns, hero power buff is permanent, no trigger when field is empty, legacy `Preparar Defesa` remains as no-class fallback only.
 
 Exit criteria:
 
-- Assaltante can enter battle with its real 20-card starter deck.
+- Invocador hero power is playable and passive triggers correctly.
+- Legacy fallback untouched for saves without class.
 - Validation is green.
 
-### P06 - Class Selection Screen MVP
+### P05 - Invocador Deck Activation and Class Selection Screen
 
-Goal: add the blocking class choice before the campaign begins.
+Goal: make Invocador fully playable end-to-end and add the class selection screen.
 
 Expected work:
 
-- Create a class selection scene through script/tool generation, not raw `.tscn` hand edits.
+- Activate Invocador starter deck through session/deck setup flow.
+- Create class selection scene (script/tool generation, not raw `.tscn`).
 - Route `Novo jogo` to class selection when no class is selected.
-- Display all 5 classes with name, tagline, and one short commitment line.
-- Confirm selection, persist it, initialize the class deck, save, and enter the world.
-- Add tests for scene layout and session mutation.
+- Display 3 classes with name, tagline, and one commitment line each.
+- Confirm selection, persist to save, initialize class deck, enter world.
+- Add tests for scene routing, session mutation, deck loading, and save/load round-trip.
 
 Exit criteria:
 
-- New game cannot proceed into the campaign without choosing a class.
-- The selected class persists through save/load.
+- New game routes through class selection.
+- Invocador is selectable and enters battle with its 20-card starter deck.
+- Save/load persists selected class.
 - Validation is green.
 
-### P07 - Assaltante Integration Checkpoint
+### P06 - Invocador Integration Checkpoint
 
-Goal: close the first playable class slice cleanly.
+Goal: close the Invocador slice cleanly before moving to Arcano.
 
 Expected work:
 
-- Review labels, button text, battle logs, result summaries, and deck setup names.
+- Review battle labels, hero power button text, result summaries, and deck setup names for Invocador.
 - Update `implementation/current-status.md`, Track 02 status, and Kanban.
-- Record Assaltante as first playable class.
-- Keep open systems for other classes explicitly pending.
+- Record Invocador as first complete playable class.
 
 Exit criteria:
 
-- Assaltante is a coherent playable class from new game to battle result.
-- Documentation and studio snapshots point to the next class prompt.
+- Invocador is coherent from class selection through battle result.
+- Docs and snapshots point to P07.
 
-### P08 - Arquiteto Core
+### P07 - Arcano: Fluxo Counter and Damage Amplification
 
-Goal: implement shared upkeep trigger infrastructure and the Arquiteto repair hero power.
+Goal: implement the Arcano's core engine systems.
 
 Expected work:
 
-- Add permanent upkeep trigger processing.
-- Implement `heal_permanent` for own damaged structures.
-- Add tests for trigger timing, repair legality, and structure-only targeting.
+- Add volatile per-turn `fluxo` counter to battle state; increments on each `magia` or `magia_de_tabuleiro` resolved by the player; resets at start of player's next turn.
+- Modify magic damage resolution pipeline: when damage type is `magico` and source is player (spell or hero power), add current `fluxo` value to base damage.
+- Does not affect `fisico_melee`, `fisico_alcance`, or creature ATK.
+- Add tests: Fluxo increments per spell resolved, resets on turn boundary, amplification applies correctly to spell damage and hero power, does not affect physical damage or creature attacks.
 
 Exit criteria:
 
-- Arquiteto's core identity can be tested without implementing every support card.
+- Fluxo counter works correctly across a multi-spell turn.
+- Damage amplification is isolated to `magico` player sources.
+- Validation is green.
 
-### P09 - Arquiteto Completion
+### P08 - Arcano Hero Power and Deck Activation
 
-Goal: finish the remaining Arquiteto effects required by its starter deck.
+Goal: complete Arcano and make it fully playable.
 
 Expected work:
 
-- Implement `increase_max_health`.
-- Implement `set_state` for own structures with attack.
-- Implement `damage_distributed`.
-- Add tests around structure deck play patterns.
+- Implement `Pulso Astral` hero power: 1 magic damage (+Fluxo) to any permanent or hero; cost 1, once per own turn.
+- Ensure hero power damage uses the same Fluxo-amplified magic damage pipeline.
+- Activate Arcano starter deck through session/deck setup flow.
+- Add tests: hero power damages correct targets, Fluxo amplification applies, cannot target absent heroes outside `duelo`.
 
 Exit criteria:
 
-- Arquiteto is selectable and playable with a functioning starter deck.
+- Arcano is selectable and fully playable with Fluxo system and Pulso Astral.
+- Validation is green.
 
-### P10 - Dominador Core
+### P09 - Arcano Integration Checkpoint
 
-Goal: implement the Dominador's board-control systems.
+Goal: close the Arcano slice cleanly before moving to Necromante.
 
 Expected work:
 
-- Implement targeted `apply_status`.
-- Implement extended `enjoo` duration.
-- Implement conditional gain stats if enemies have `enjoo`.
-- Implement armor lifesteal from damage.
-- Add tests covering creatures, structures, mode independence, and duration boundaries.
+- Review battle labels, Fluxo display in HUD, hero power text, and deck setup names.
+- Update records and snapshots.
+- Confirm Invocador regression still green.
 
 Exit criteria:
 
-- Dominador is selectable and playable with a functioning starter deck.
+- Arcano is coherent from class selection through battle result.
+- Both Invocador and Arcano pass regression.
+- Docs point to P10.
 
-### P11 - Tecelao Core
+### P10 - Necromante: Cinzas and Memorial de Batalha
 
-Goal: implement resonance and spell sequencing.
+Goal: implement the two foundational Necromante resources.
 
 Expected work:
 
-- Add volatile battle `resonance` state.
-- Increment resonance on resolved spell casts.
-- Reset resonance at discard/end-of-turn boundary.
-- Implement `amount: resonance`, `resonance_x2`, `resonance_override`, and `resonance_bonus`.
-- Implement `on_spell_cast` and milestone once-per-turn behavior.
-- Add tests for sequencing and reset behavior.
+- Add `cinzas` counter to battle state: persists between turns, does not reset during encounter.
+- Increment `cinzas` by 1 whenever any creature is destroyed in field (player or enemy side, any turn).
+- Add `memorial_de_batalha`: a per-encounter list of destroyed creature definitions (both sides).
+- Append to memorial on every creature destruction event.
+- Add tests: Cinzas increment on ally death, enemy death, multi-death in one turn; Memorial records correct creature data; Cinzas persist across turns; both reset on new encounter.
 
 Exit criteria:
 
-- Tecelao is selectable and playable with a functioning starter deck.
+- Cinzas and Memorial are correctly tracked through a multi-turn encounter.
+- Validation is green.
 
-### P12 - Vinculador Token Core
+### P11 - Necromante: Ritual das Sombras Hero Power
 
-Goal: implement runtime linked-token support before capture mechanics.
+Goal: implement the conditional 3-tier hero power.
 
 Expected work:
 
-- Represent runtime tokens that do not return to deck.
-- Add `vinculado` tags.
-- Implement `spawn_vinculada`.
-- Implement non-lethal damage.
-- Add tests for destruction, slot placement, and deck cycling exclusions.
+- Implement `Ritual das Sombras`: cost 0 energy + Cinzas; once per own turn; player chooses tier:
+  - Degrau I (2 Cinzas): apply chosen debuff to enemy creature (`enjoo_estendido`, `queimando`, or −2/−0 permanent).
+  - Degrau II (4 Cinzas): spawn a 1/1 token copy of a player-chosen creature from Memorial into empty ally slot, keeping original keywords.
+  - Degrau III (6 Cinzas): spawn with original stats and all keywords.
+- Implement `enjoo_estendido`: 2-turn duration counter on the `enjoo` state; UI must distinguish from normal `enjoo`.
+- Hero power UI must show available tiers based on current Cinzas.
+- Add tests: each degrau resolves correctly; insufficient Cinzas blocks activation; spawned token generates Cinzas on destruction; `enjoo_estendido` expires correctly.
 
 Exit criteria:
 
-- Vinculador token effects can be tested safely.
+- Ritual das Sombras is playable with all three tiers.
+- `enjoo_estendido` duration is correctly tracked.
+- Validation is green.
 
-### P13 - Vinculador Completion
+### P12 - Necromante: "Ao Morrer" Triggers and Deck Activation
 
-Goal: finish Vinculador-specific capture and control effects.
+Goal: support creature death triggers and activate the Necromante starter deck.
 
 Expected work:
 
-- Implement `capture` hero power.
-- Implement `count_own_tag` scaling.
-- Implement `on_any_enemy_destroyed`.
-- Implement `force_combat` between enemy permanents.
-- Add tests across objective modes.
+- Implement `on_death` trigger hook in the creature destruction pipeline.
+- Support effects: deal magic damage to any target; apply `enjoo` to enemy creature; generate +1 extra Cinza (total 2 instead of 1).
+- Ensure hook fires for both player and enemy creatures (enemy death triggers also feed Cinzas via passive).
+- Activate Necromante starter deck through session/deck setup flow.
+- Add tests: `on_death` fires correctly for each effect type; does not fire for non-death removals; Necromante deck loads and is selectable.
 
 Exit criteria:
 
-- Vinculador is selectable and playable with a functioning starter deck.
+- Necromante is selectable and fully playable with all systems active.
+- Validation is green.
+
+### P13 - Necromante Integration Checkpoint
+
+Goal: close the Necromante slice cleanly.
+
+Expected work:
+
+- Review HUD Cinzas display, Ritual das Sombras tier indicator, Memorial readability.
+- Update records and snapshots.
+- Confirm Invocador and Arcano regression still green.
+
+Exit criteria:
+
+- Necromante is coherent from class selection through battle result.
+- All three classes pass regression.
+- Docs point to P14.
 
 ### P14 - Multi-Class Regression Checkpoint
 
-Goal: lock the class system as the new baseline.
+Goal: lock the 3-class system as the new baseline.
 
 Expected work:
 
-- Add or update regression tests that start battles with each class.
-- Confirm no class card depends on enemy hero presence.
+- Add or update regression tests that start battles with each of the 3 classes.
+- Confirm no class card or hero power depends on enemy hero presence outside `duelo`.
 - Update docs and snapshots to mark Stage 2 class implementation complete.
 
 Exit criteria:
 
-- All 5 classes are playable.
+- All 3 classes are playable.
 - Validation is green.
 - Next work moves to presentation and campaign alignment.
 
@@ -319,90 +333,4 @@ Goal: align mission chain, rewards, and text around Draxos operation logic.
 
 Expected work:
 
-- Assign mission purpose to each existing encounter.
-- Review rewards meaning after classes are playable.
-- Keep technical IDs stable.
-- Update content docs and generated resources.
-
-Exit criteria:
-
-- The existing map reads as a coherent Draxos operation arc.
-
-### P17 - RPG Progression Slice
-
-Goal: add the first explicit RPG progression layer.
-
-Expected work:
-
-- Define the minimal progression unit: rank, status, level, or hybrid.
-- Add session/save state.
-- Gate dialogue or mission access through progression.
-- Add tests for persistence and progression unlocks.
-
-Exit criteria:
-
-- Player growth maps to the novice Draxos rising in team status.
-
-### P18 - Encounter Design Pass
-
-Goal: make encounters pressure the five class identities.
-
-Expected work:
-
-- Add or adjust at least one encounter pressure point per class weakness.
-- Use existing modes before adding new rules.
-- Add tests for new objective/data assumptions.
-
-Exit criteria:
-
-- Each class has at least one encounter that stresses its weakness.
-
-### P19 - New Content Expansion Cluster
-
-Goal: add a small campaign content cluster only after systems are stable.
-
-Expected work:
-
-- Add a small set of encounters, boards, rewards, and mission text.
-- Keep every new piece tied to an operational purpose.
-- Validate generated resources and tests.
-
-Exit criteria:
-
-- New content expands the campaign without changing core rules unnecessarily.
-
-### P20 - Technical ID And Asset Migration
-
-Goal: clean legacy IDs after player-facing naming has stabilized.
-
-Expected work:
-
-- Plan and implement save migration.
-- Rename technical IDs in data, generated resources, tests, scenes, and `AssetIds`.
-- Keep compatibility for existing saves where needed.
-
-Exit criteria:
-
-- Technical IDs match stable terminology without breaking saves or generated content.
-
-## Required End-Of-Prompt Record Updates
-
-Every implementation prompt must leave the following record trail:
-
-- This file: prompt status and `Current Execution Cursor`.
-- `../../current-status.md`: latest baseline, validation, and next prompt when observable status changes.
-- `current-status.md`: Track 02 local status and next action.
-- `implementation-plan.md`: only if the stage-level plan changes.
-- `../../../../../08_Coordenacao_Agentes/Estado_Atual.md`: only if studio snapshot changes.
-- Kanban: update the active Doing card or move it when a larger milestone closes.
-
-## Current Blockers
-
-- None for P02.
-
-Known future dependencies:
-
-- P06 depends on P01-P05.
-- P08-P13 depend on the class selection and class starter deck plumbing.
-- P16 should wait until at least P14, because reward/card meaning depends on the playable class baseline.
-- P20 must wait until player-facing naming stabilizes.
+- Assign mission purpose to each existing enc

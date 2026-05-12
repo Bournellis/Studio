@@ -1,6 +1,6 @@
 # Open Gaps
 
-- Last Updated: `2026-05-05`
+- Last Updated: `2026-05-12`
 - Purpose: rastrear lacunas de design e implementação que estão fora do escopo atual mas precisam ser resolvidas antes do jogo estar completo.
 
 Cada gap tem um status: `aberto` (não iniciado), `em design` (sendo pensado), `especificado` (pronto para implementar), `implementado`.
@@ -16,17 +16,17 @@ Gaps marcados com ⚠️ têm inconsistências ativas em arquivos existentes.
 ### G-N1 - Premissa e setting do jogo
 **Status:** `em design`
 A premissa ativa e a invasao Draxos de um planeta elemental rico em energia astral. Ainda faltam nomes finais, cultura dos elementais, nome do planeta, nome do cristal vulcanico e estrutura completa da campanha.
-**Precisa:** consolidar planeta, conflito, motivacao do novato Draxos, regioes e tom narrativo.
+**Precisa:** consolidar planeta, conflito, motivacao do comandante Draxos, regioes e tom narrativo. Fonte autoritativa: `Projetos/draxos-roguelike-cardgame/docs/lore-campaign.md`.
 
 ### G-N2 - Identidade do heroi
 **Status:** `em design`
-O heroi player-facing atual e um Novato Draxos. O ID tecnico pode continuar antigo. Ainda faltam personalidade, nome, especialidade astral e arco de status dentro da equipe.
-**Precisa:** backstory curto, traco de personalidade, motivacao inicial, primeira classe e conexao com a equipe Draxos.
+O heroi player-facing e o comandante Draxos da expedicao. O ID tecnico pode continuar antigo. Ainda faltam personalidade, nome do comandante, especialidade astral e arco narrativo como lider da operacao sob ordens do Grande Mestre.
+**Precisa:** backstory curto, traco de personalidade, motivacao inicial e primeira classe — consistentes com o lore do roguelike.
 
-### G-N3 - Comando e NPCs
+### G-N3 - NPCs da base
 **Status:** `em design`
-A funcao ativa do NPC inicial e comando/mentor Draxos na base de ether. Identidade final, nome, retrato e variacoes de dialogo ainda sao TBD.
-**Precisa:** nome, funcao na hierarquia, motivacao, pelo menos 3-4 linhas de dialogo com variacoes por progresso.
+Os NPCs da base sao subordinados e membros da expedicao Draxos. O canal de comunicacao com o Grande Mestre tambem e esperado no hub. Identidades finais, nomes, retratos e variacoes de dialogo sao TBD.
+**Precisa:** nome e funcao de pelo menos o NPC inicial, motivacao, pelo menos 3-4 linhas de dialogo com variacoes por progresso — derivados do lore compartilhado com o roguelike.
 
 ### G-N4 - Estrutura de campanha e mapa
 **Status:** `em design`

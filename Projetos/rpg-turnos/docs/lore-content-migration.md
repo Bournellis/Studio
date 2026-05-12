@@ -1,14 +1,15 @@
 # Lore Content Migration
 
-- Last Updated: `2026-05-06`
+- Last Updated: `2026-05-12`
 - Status: `planning`
-- Depends On: `lore-campaign.md`
+- Lore Authority: `../../Projetos/draxos-roguelike-cardgame/docs/lore-campaign.md`
+- Depends On: `lore-campaign.md`, `../../canon/lore/draxos-invasion.md`
 
 ## Purpose
 
-This document tracks how current placeholder content should migrate into the Draxos and elemental-planet campaign.
+This document tracks how current placeholder content in RPG Turnos should migrate into the Draxos invasion setting.
 
-Do not treat this as final naming. It is the bridge between the playable slice and the new lore.
+The naming source of truth is the Draxos roguelike lore. Do not invent names or story details here — wait for them to be defined in the shared lore first, then apply them to RPG Turnos.
 
 ## Migration Principles
 
@@ -36,8 +37,8 @@ Do not rename them opportunistically. A future ID migration must be planned as a
 
 | Current Placeholder Area | New Lore Role |
 |---|---|
-| player hero placeholder | novice Draxos mage, first playable class TBD |
-| single NPC / traveler | Draxos commander or first specialist mentor in the ether-plasm base |
+| player hero placeholder | Draxos commander — first playable class TBD |
+| single NPC / traveler | Draxos subordinate or specialist in the ether-plasm base |
 | world map | mission hub from the Draxos ether-plasm base into elemental-planet regions |
 | bridge encounters | early strategic-area operations on the elemental planet |
 | bandit duel | direct confrontation with an elemental champion, guardian, or rival operator |
@@ -51,17 +52,17 @@ Do not rename them opportunistically. A future ID migration must be planned as a
 
 The first runtime-facing pass should be intentionally narrow:
 
-1. Update hero display name from the old placeholder to a generic Draxos novice label.
-2. Update the NPC dialogue from "traveler gives a card" to a Draxos command/mentor briefing.
+1. Update hero display name to a Draxos commander label consistent with the roguelike.
+2. Update the NPC dialogue from "traveler gives a card" to a Draxos command or subordinate briefing.
 3. Update the first encounter chain display names to mission-style labels.
 4. Keep card mechanics and card IDs unchanged.
 5. Run validation after JSON/resource regeneration.
 
-This gives the build the new story skin without forcing final card naming before the class design is ready.
-
 ## Decisions Needed Before Card Renaming
 
-- first playable class name
+These decisions must come from the shared lore or the roguelike first:
+
+- first playable class name and its Draxos identity
 - whether the starter deck represents personal spells, squad commands, ether constructs, enslaved elementals, or a mix
 - whether enemy cards represent elementals, defenders, the unknown helper race, or Draxos rivals
 - how dark the Draxos perspective should feel in direct UI text

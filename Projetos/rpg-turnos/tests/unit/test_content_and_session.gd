@@ -32,20 +32,22 @@ func test_catalog_contains_starter_deck_and_reward() -> void:
 func test_catalog_exposes_class_definitions_and_starter_decks() -> void:
 	var catalog = ContentLibrary.get_catalog()
 	assert_not_null(catalog)
-	assert_eq(catalog.classes.size(), 5)
-	assert_eq(ContentLibrary.get_all_classes().size(), 5)
+	assert_eq(catalog.classes.size(), 3)
+	assert_eq(ContentLibrary.get_all_classes().size(), 3)
 
 	var expected_class_ids: Array[String] = [
-		"assaltante",
-		"arquiteto",
-		"dominador",
-		"tecelao",
-		"vinculador"
+		"invocador",
+		"arcano",
+		"necromante"
 	]
 	for class_id: String in expected_class_ids:
 		var class_data: Dictionary = ContentLibrary.get_class_definition(class_id)
 		assert_false(class_data.is_empty(), "Class %s should exist." % class_id)
 		assert_eq(str(class_data.get("id", "")), class_id)
+
+		var passiva: Dictionary = class_data.get("passiva", {}) as Dictionary
+		assert_false(passiva.is_empty(), "Class %s should expose passiva." % class_id)
+		assert_false(str(passiva.get("id", "")) == "", "Class %s passiva should have an id." % class_id)
 
 		var hero: Dictionary = ContentLibrary.get_class_hero(class_id)
 		assert_false(hero.is_empty(), "Class %s should expose hero metadata." % class_id)
@@ -183,6 +185,138 @@ func test_corrupt_save_falls_back_to_new_game() -> void:
 	assert_false(GameSession.has_npc_reward_card)
 	assert_eq(GameSession.unlocked_card_ids.size(), 20)
 	assert_eq(GameSession.completed_encounter_ids.size(), 0)
+
+# --- P02: selected_class session state ---
+
+func test_new_game_has_no_selected_class() -> void:
+	assert_eq(GameSession.selected_class, "")
+	assert_false(GameSession.has_selected_class())
+
+func test_select_class_valid_sets_state() -> void:
+	var all_classes: Array = ContentLibrary.get_all_classes()
+	assert_true(all_classes.size() > 0, "Catalog must expose at least one class.")
+	var first_class_id: String = str(all_classes[0].get("id", ""))
+	assert_ne(first_class_id, "")
+
+	var ok: bool = GameSession.select_class(first_class_id)
+	assert_true(ok)
+	assert_eq(GameSession.selected_class, first_class_id)
+	assert_true(GameSession.has_selected_class())
+
+func test_select_invalid_class_returns_false() -> void:
+	assert_false(GameSession.select_class("classe_inexistente"))
+	assert_false(GameSession.select_class(""))
+	assert_eq(GameSession.selected_class, "")
+	assert_false(GameSession.has_selected_class())
+
+func test_get_class_deck_ids_returns_class_deck_when_selected() -> void:
+	var all_classes: Array = ContentLibrary.get_all_classes()
+	assert_true(all_classes.size() > 0, "Catalog must expose at least one class.")
+	var first_class_id: String = str(all_classes[0].get("id", ""))
+
+	GameSession.select_class(first_class_id)
+	var deck: Array = GameSession.get_class_deck_ids()
+	var expected: Array = ContentLibrary.get_class_starter_deck_ids(first_class_id)
+	assert_eq(deck, expected)
+	assert_eq(deck.size(), 20)
+
+func test_get_class_deck_ids_falls_back_when_no_class_selected() -> void:
+	# No class selected — should return the generic starter deck
+	assert_false(GameSession.has_selected_class())
+	var deck: Array = GameSession.get_class_deck_ids()
+	var fallback: Array = ContentLibrary.get_starter_deck_ids()
+	assert_eq(deck, fallback)
+
+func test_initialize_deck_for_class_sets_unlocked_and_selected() -> void:
+	var all_classes: Array = ContentLibrary.get_all_classes()
+	assert_true(all_classes.size() > 0, "Catalog must expose at least one class.")
+	var first_class_id: String = str(all_classes[0].get("id", ""))
+
+	GameSession.select_class(first_class_id)
+	GameSession.initialize_deck_for_class()
+	var expected: Array = ContentLibrary.get_class_starter_deck_ids(first_class_id)
+	assert_eq(GameSession.unlocked_card_ids, expected)
+	assert_eq(GameSession.selected_deck_ids, expected)
+
+func test_initialize_deck_for_class_does_nothing_without_class() -> void:
+	var original_unlocked: Array = GameSession.unlocked_card_ids.duplicate()
+	GameSession.initialize_deck_for_class()
+	assert_eq(GameSession.unlocked_card_ids, original_unlocked)
+
+func test_save_load_persists_selected_class() -> void:
+	var all_classes: Array = ContentLibrary.get_all_classes()
+	assert_true(all_classes.size() > 0)
+	var first_class_id: String = str(all_classes[0].get("id", ""))
+
+	GameSession.select_class(first_class_id)
+	assert_true(GameSession.save_game(TEST_SAVE_PATH))
+
+	GameSession.start_new_game()
+	assert_eq(GameSession.selected_class, "")
+
+	assert_true(GameSession.load_game(TEST_SAVE_PATH))
+	assert_eq(GameSession.selected_class, first_class_id)
+	assert_true(GameSession.has_selected_class())
+
+func test_old_save_without_selected_class_loads_with_empty_fallback() -> void:
+	# Simulate an old save that has no selected_class key
+	var old_save: Dictionary = {
+		"version": GameSession.SAVE_VERSION,
+		"unlocked_card_ids": ContentLibrary.get_starter_deck_ids(),
+		"selected_deck_ids": ContentLibrary.get_starter_deck_ids(),
+		"active_encounter_id": "emboscada_na_ponte",
+		"has_npc_reward_card": false,
+		"completed_encounter_ids": [],
+		"claimed_encounter_reward_ids": [],
+		"npc_reward_index": 0
+		# intentionally no "selected_class" key
+	}
+	var file: FileAccess = FileAccess.open(TEST_SAVE_PATH, FileAccess.WRITE)
+	assert_not_null(file)
+	file.store_string(JSON.stringify(old_save))
+	file = null
+
+	assert_true(GameSession.load_game(TEST_SAVE_PATH))
+	assert_eq(GameSession.selected_class, "")
+	assert_false(GameSession.has_selected_class())
+	# Existing session state should still be valid
+	assert_eq(GameSession.unlocked_card_ids.size(), 20)
+
+func test_corrupt_save_selected_class_does_not_crash() -> void:
+	# Save with a garbage selected_class value — should load with empty fallback
+	var bad_save: Dictionary = {
+		"version": GameSession.SAVE_VERSION,
+		"unlocked_card_ids": ContentLibrary.get_starter_deck_ids(),
+		"selected_deck_ids": ContentLibrary.get_starter_deck_ids(),
+		"active_encounter_id": "emboscada_na_ponte",
+		"has_npc_reward_card": false,
+		"completed_encounter_ids": [],
+		"claimed_encounter_reward_ids": [],
+		"npc_reward_index": 0,
+		"selected_class": "classe_que_nao_existe_jamais"
+	}
+	var file: FileAccess = FileAccess.open(TEST_SAVE_PATH, FileAccess.WRITE)
+	assert_not_null(file)
+	file.store_string(JSON.stringify(bad_save))
+	file = null
+
+	assert_true(GameSession.load_game(TEST_SAVE_PATH))
+	assert_eq(GameSession.selected_class, "")
+	assert_false(GameSession.has_selected_class())
+
+func test_snapshot_preserves_and_restores_selected_class() -> void:
+	var all_classes: Array = ContentLibrary.get_all_classes()
+	assert_true(all_classes.size() > 0)
+	var first_class_id: String = str(all_classes[0].get("id", ""))
+
+	GameSession.select_class(first_class_id)
+	GameSession.capture_pre_combat_snapshot()
+
+	# Mutate class during "battle"
+	GameSession.selected_class = ""
+
+	GameSession.restore_pre_combat_snapshot()
+	assert_eq(GameSession.selected_class, first_class_id)
 
 func _delete_test_save() -> void:
 	if not FileAccess.file_exists(TEST_SAVE_PATH):

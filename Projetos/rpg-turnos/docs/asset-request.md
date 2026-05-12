@@ -55,7 +55,7 @@ Retratos aparecem em painéis de diálogo (72 × 72 px) e na HUD da batalha (48 
 | Asset ID | Dimensões | Prioridade | Descrição |
 |---|---|---|---|
 | `portrait_npc_viajante` | 144 x 144 px | media | ID tecnico legado. Direcao ativa: funcao de comando/mentor Draxos na base de ether; renomear asset depois que identidade estabilizar. |
-| `portrait_hero_aprendiz` | 144 × 144 px | 🟡 | Placeholder tecnico para o heroi. Direcao ativa: mago Draxos novato; renomear asset depois que o nome/player-facing identity estabilizar. |
+| `portrait_hero_aprendiz` | 144 × 144 px | 🟡 | Placeholder tecnico para o heroi. Direcao ativa: comandante Draxos da expedicao; renomear asset depois que o nome/player-facing identity estabilizar. |
 | `portrait_hero_duelista_bandido` | 144 x 144 px | media | ID tecnico legado. Direcao ativa: guardiao elemental hostil usado no encontro de duelo. |
 
 **Pasta destino:** `res://assets/portraits/`
@@ -182,4 +182,4 @@ Estas cartas existem no catálogo mas são usadas apenas pelo inimigo. Arte não
 Frames restantes, todos os retratos, marcadores de mapa, `ui_logo`, `result_bg_*`, artes das 5 últimas cartas do deck inicial, artes das rewards
 
 **🟢 Polish:**
-`menu_background`, `map_environment`, `card_art_flagelo`, `card_art_torre_blindada`, `card_art_dragao_jovem` (ID tecnico legado; Manifestacao Vulcanica), `card_art_chamado_hostes`, VFX sheets
+`menu_background`, `map_environment`, `card_art_flagelo`, `card_art_torre_blindada`, `card_art_dragao_jovem` (ID tecnico legado; Manifestacao Vulcanica), `card_art_chamado_hostes`,

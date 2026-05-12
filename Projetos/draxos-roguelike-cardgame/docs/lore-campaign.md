@@ -40,8 +40,8 @@ The Draxos want to:
 
 ## Relationship To RPG Turnos
 
-This project may use the same Draxos operation, characters, classes, and final objective.
+RPG Turnos shares all Draxos lore from this document.
 
-It does not inherit RPG exploration, campaign progression, combat economy, or board complexity from `rpg-turnos`.
+RPG Turnos does not inherit exploration movement, campaign progression, combat economy, or board complexity from this project. Those are independent mechanics.
 
-It also does not inherit the `rpg-turnos` protagonist premise. This project's player-facing protagonist is a Draxos commander.
+The shared lore anchor is `../../canon/lore/draxos-invasion.md`.

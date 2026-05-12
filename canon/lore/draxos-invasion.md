@@ -1,17 +1,19 @@
 # Draxos Invasion
 
-- Last Updated: `2026-05-06`
-- Status: `active RPG Turnos lore direction`
+- Last Updated: `2026-05-12`
+- Status: `active shared lore — authority: draxos-roguelike-cardgame`
 
 ## Purpose
 
-This document defines the current active story direction for `Projetos/rpg-turnos`.
+This document defines the active story direction for the Draxos invasion campaign.
+
+It is the shared canon for all studio projects using this setting. The authoritative lore source is `Projetos/draxos-roguelike-cardgame/docs/lore-campaign.md`.
 
 It does not finalize names for NPCs, cards, missions, classes, the elemental planet, the volcano crystal, or the race helping the elementals. Those remain placeholders until explicitly authored.
 
 ## Campaign Premise
 
-RPG Turnos initially follows a Draxos mission on an elemental planet.
+The campaign follows a Draxos expedition invading an elemental planet rich in astral energy.
 
 The Draxos are arcane intergalactic beings of unclear origin. They use astral energy for combat, travel, construction, control, and status. Their expansionist culture treats many other beings as inferior and seeks to dominate or enslave them.
 
@@ -35,39 +37,43 @@ The Draxos operate from a base that resembles a spacecraft, but it is not a tech
 
 The base is plasmated from ether. It should read as arcane infrastructure capable of travel, command, staging, recovery, and mission deployment.
 
-The player starts in this base and meets the commander or command function, plus members of the Draxos team.
+The player starts in this base. The hub should read as one full ship location, not as a list of abstract menus.
+
+Expected hub elements:
+
+- commander presence and command station
+- subordinate expedition members
+- communication channel with the Grande Mestre
+- class and training systems
+- mission map
+- deck and run preparation systems
+- archives or narrative systems
 
 ## Player Character
 
-The player character is a novice Draxos mage.
+The player character is the commander of the Draxos expedition.
 
-They have just finished training and are assigned to a respected Draxos strike team because the team lost a soldier in its previous battle.
+The commander obeys the Grande Mestre, an ancient Draxos authority who communicates with the ship and directs the invasion's strategic priorities.
 
-The initial active player class is one Draxos mage style. Future classes may represent different Draxos specialties with different starting decks, upgrades, and evolution paths.
+Player classes may represent different Draxos mage specialties with different starting decks, upgrades, and evolution paths. NPCs in the hub remain broadly the same between classes, but their emphasis may shift based on the selected class.
 
-## The Strike Team
+## Grande Mestre
 
-The Draxos team is extremely respected inside Draxos society.
+The Grande Mestre is an ancient Draxos authority above the commander.
 
-Only the team currently knows that recent missions have gone badly. In previous encounters in the galaxy, they were surprised, blocked, or robbed by other beings while trying to conquer or retrieve strategic targets.
-
-The team is trying to return home with a major victory before those failures become public.
-
-Each team member may be a mage-like specialist with a distinct ability profile. Names and complete roles are TBD.
+They communicate with the ship directly. Their name, appearance, full role, and internal Draxos rank are still TBD.
 
 ## Campaign Shape
 
-The novice begins with simpler missions on the elemental planet, such as fighting elementals and securing strategic zones.
-
-As other team members run into difficulties, the player is forced to solve increasingly important problems. This raises the novice's status inside the team and gives the gameplay layer room to unlock stronger abilities, more cards, and more options.
+The campaign starts with early operations on the elemental planet and grows toward the final push for the volcano crystal.
 
 Near the final test, another race appears openly to help the elementals. That race was already helping secretly before the reveal. Its identity remains TBD.
 
 ## Content Migration Rule
 
-Existing RPG Turnos names are placeholders unless this document promotes them.
+Existing placeholder names in any project using this setting are not active lore.
 
-Use Draxos and elemental-planet language for player-facing replacements:
+Use Draxos and elemental-planet language for player-facing content:
 
 - Draxos roles instead of medieval fantasy roles
 - astral energy instead of generic magic
@@ -75,4 +81,4 @@ Use Draxos and elemental-planet language for player-facing replacements:
 - elemental resistance instead of bandits or bridge ambushes
 - volcano crystal and strategic zones instead of generic fantasy objectives
 
-Do not rename mechanical IDs, files, resources, scenes, or paths in this pass.
+Do not rename mechanical IDs, files, resources, scenes, or paths as part of a lore pass. Rename only player-facing display text and dialogue until a dedicated compatibility pass covers IDs.
