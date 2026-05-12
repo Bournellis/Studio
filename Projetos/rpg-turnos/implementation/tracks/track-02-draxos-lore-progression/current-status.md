@@ -1,6 +1,6 @@
 # Track 02 Current Status
 
-- Last Updated: `2026-05-12` (P03 complete)
+- Last Updated: `2026-05-12` (P04 complete)
 - Status: `ACTIVE_LINEAR_PLAN`
 - Track Name: `Track 02 - Draxos Lore And Progression Alignment`
 
@@ -15,12 +15,17 @@ The track must preserve the validated card-slot runtime while migrating player-f
 - C1 is the sole combat runtime.
 - Official battle modes are implemented: `limpar_mesa`, `duelo`, `ondas`, `defesa`, `chefe_multiparte`, and `quebra_cabeca`.
 - World progression, one-time encounter rewards, progressive NPC rewards, save/load, and art-ready placeholders exist.
-- Runtime validation is green at the latest known baseline: `78/78`.
+- Runtime validation is green at the latest known baseline: `78/78` (P04 validation pending local run).
 - Several player-facing catalog names already use Draxos/elemental language.
 - The generated catalog now exposes the 3 new classes (Invocador, Arcano, Necromante) with `passiva`, `hero`, `hero_power`, and 20-card placeholder starter decks through `ContentLibrary`. Old 5 classes removed.
 - Two new card definitions added: `reforco_aliado` (Invocador buff) and `amplificacao_campo` (Invocador area buff).
 - `docs/class-catalog-schema.md` updated with `passiva` field and 3-class hero power reference.
 - `GameSession` holds `selected_class` with full save/load compatibility and class deck helpers.
+- `BattleEngine` now loads hero power from active class data via `ContentLibrary`; `use_player_hero_power(target)` dispatches data-driven; Preparar Defesa remains no-class fallback.
+- `Amplificar` hero power implemented: permanent +2/+0 to chosen ally, cost 1, once per own turn.
+- `Comandante de Campo` passive implemented: on player creature summon, highest-ATK ally gains +1/+0 permanent.
+- `_apply_permanent_stat_buff` and `_play_stat_buff_spell` infrastructure added; `reforco_aliado` and `amplificacao_campo` are now playable cards.
+- `test_class_invocador.gd` added with 14 tests covering passive, hero power, legacy fallback, and buff cards.
 - Mechanical IDs remain legacy-compatible and should not be renamed opportunistically.
 
 ## Active Planning Rule
@@ -46,16 +51,16 @@ Each pass should still change one player-facing or runtime layer at a time:
 
 ## Next Implementation Candidate
 
-Continue with `P04 - Invocador Core: Passive and Hero Power` from `linear-execution-plan.md`.
+Continue with `P05 - Invocador Deck Activation and Class Selection Screen` from `linear-execution-plan.md`.
 
 Expected scope:
 
-- Replace hardcoded `Preparar Defesa` hero power fallback with data-driven loading from class data
-- Implement `Amplificar` hero power: permanent +2/+0 to a chosen ally (cost 1, once per own turn)
-- Implement `Comandante de Campo` passive: on any creature summon by player, buff highest-ATK ally +1/+0 permanent
-- Handle tie-breaking (player chooses) in modes where priority is available
-- Add tests: passive triggers on summon, buff is permanent through turns, hero power buff is permanent, no trigger when field is empty, legacy `Preparar Defesa` remains as no-class fallback
-- Run validation
+- Activate Invocador starter deck through session/deck setup flow
+- Create class selection scene (script/tool generation, not raw `.tscn`)
+- Route `Novo jogo` to class selection when no class is selected
+- Display 3 classes with name, tagline, and one commitment line each
+- Confirm selection, persist to save, initialize class deck, enter world
+- Add tests for scene routing, session mutation, deck loading, and save/load round-trip
 
 ## Do Not Start Yet
 

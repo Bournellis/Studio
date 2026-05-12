@@ -37,9 +37,9 @@ It defines execution order only.
 
 ## Current Execution Cursor
 
-Next prompt: `P04 - Invocador Core: Passive and Hero Power`.
+Next prompt: `P05 - Invocador Deck Activation and Class Selection Screen`.
 
-Current focus: implement Invocador mechanics — replace hardcoded hero power fallback with data-driven loading, implement Amplificar and Comandante de Campo passive.
+Current focus: activate Invocador starter deck through session/deck setup flow; create class selection scene; route Novo jogo through class selection.
 
 ## Linear Prompt Sequence
 
@@ -49,7 +49,7 @@ Current focus: implement Invocador mechanics — replace hardcoded hero power fa
 | P01 | complete | Expose `classes` from JSON into generated catalog resources and `ContentLibrary`. | Green 78/78 |
 | P02 | complete | Add `selected_class` session/save state and class deck helpers without UI. | Run validation |
 | P03 | complete | Regenerate catalog with 3 new classes (Invocador, Arcano, Necromante); remove old 5. | Run validation |
-| P04 | pending | Implement Invocador: Comandante de Campo passive trigger and Amplificar hero power. | Run validation |
+| P04 | complete | Implement Invocador: Comandante de Campo passive trigger and Amplificar hero power. | Run validation |
 | P05 | pending | Activate Invocador starter deck; add class selection screen MVP. | Run validation |
 | P06 | pending | Invocador integration checkpoint: labels, tests, docs, records. | Run validation |
 | P07 | pending | Implement Arcano: Fluxo counter and magic damage amplification pipeline. | Run validation |

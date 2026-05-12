@@ -27,3 +27,6 @@ func is_board_spell() -> bool:
 
 func is_buff_command() -> bool:
 	return card_type in ["comando", "command"] and str(effect.get("action", "")) == "buff_health"
+
+func is_stat_buff_spell() -> bool:
+	return card_type in ["magia", "spell"] and str(effect.get("action", "")) == "gain_stats"

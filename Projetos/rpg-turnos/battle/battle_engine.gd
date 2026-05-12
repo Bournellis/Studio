@@ -82,6 +82,8 @@ var discard_voluntary_allowed: bool = true
 var _discard_return_phase: String = ""
 var _discard_return_priority_owner_id: String = ""
 
+var active_class_id: String = ""
+
 var _catalog
 var _player_slot_definitions: Array = []
 var _enemy_slot_definitions: Array = []
@@ -116,6 +118,7 @@ func start_battle(catalog, deck_ids: Array, config: Dictionary = {}) -> void:
 	consecutive_passes = 0
 	current_phase = PHASE_UPKEEP
 	_enemy_ai_enabled = bool(config.get("enemy_ai_enabled", config.get("enemy_script_enabled", true)))
+	active_class_id = str(config.get("class_id", ""))
 
 	var encounter: Dictionary = _encounter_from_config(config)
 	encounter_id = str(encounter.get("id", "emboscada_na_ponte"))
@@ -302,19 +305,37 @@ func finish_discard_phase() -> Dictionary:
 	_finish_public_discard_phase()
 	return {"ok": true, "message": "Descarte encerrado."}
 
-func use_player_hero_power() -> Dictionary:
+func use_player_hero_power(target: Dictionary = {}) -> Dictionary:
 	if outcome != "":
 		return _fail("A batalha ja terminou.")
 	if not can_play_main_actions():
-		return _fail("Defesa astral so pode ser usada quando voce tem prioridade.")
+		return _fail("Hero power so pode ser usado quando voce tem prioridade.")
 	if active_player_id != PLAYER_ID:
-		return _fail("Preparar Defesa so pode ser usado no seu proprio turno.")
+		return _fail("Hero power so pode ser usado no seu proprio turno.")
 	var controller: Dictionary = _controller(PLAYER_ID)
 	if bool(controller.get("hero_power_used", false)):
-		return _fail("Defesa astral ja usada neste turno.")
+		return _fail("Hero power ja usado neste turno.")
 	if int(controller.get("energy", 0)) < 1:
-		return _fail("Energia insuficiente para Preparar Defesa.")
+		return _fail("Energia insuficiente para o hero power.")
 
+	var hp_effect: Dictionary = _get_active_hero_power_effect()
+	var action: String = str(hp_effect.get("action", ""))
+	if action == "gain_stats":
+		return _use_hero_power_gain_stats(hp_effect, target, controller)
+	return _use_hero_power_preparar_defesa(controller)
+
+func _get_active_hero_power_effect() -> Dictionary:
+	if active_class_id == "":
+		return {}
+	ContentLibrary.ensure_loaded()
+	var class_def: Dictionary = ContentLibrary.get_class_definition(active_class_id)
+	if class_def.is_empty():
+		return {}
+	var hero: Dictionary = Dictionary(class_def.get("hero", {}))
+	var hp: Dictionary = Dictionary(hero.get("hero_power", {}))
+	return Dictionary(hp.get("effect", {}))
+
+func _use_hero_power_preparar_defesa(controller: Dictionary) -> Dictionary:
 	controller["energy"] = int(controller.get("energy", 0)) - 1
 	controller["hero_power_used"] = true
 	var hero: Dictionary = Dictionary(controller.get("hero", {}))
@@ -326,6 +347,26 @@ func use_player_hero_power() -> Dictionary:
 	_visual("armadura", PLAYER_ID, -1, "Armadura +2", Color(0.35, 0.75, 1.0))
 	_after_action_resolved(PLAYER_ID, false)
 	return {"ok": true, "message": "Preparar Defesa concedeu 2 de armadura."}
+
+func _use_hero_power_gain_stats(effect: Dictionary, target: Dictionary, controller: Dictionary) -> Dictionary:
+	var hp_target: String = str(effect.get("target", ""))
+	if hp_target == "any_own_creature":
+		var slot_index: int = int(target.get("slot", -1))
+		var slots: Array = _slots_for_owner(PLAYER_ID)
+		if slot_index < 0 or slot_index >= slots.size() or slots[slot_index] == null:
+			return _fail("Hero power requer um slot aliado valido como alvo.")
+		var atk_bonus: int = int(effect.get("attack", 0))
+		var hp_bonus: int = int(effect.get("health", 0))
+		controller["energy"] = int(controller.get("energy", 0)) - 1
+		controller["hero_power_used"] = true
+		_set_controller(PLAYER_ID, controller)
+		_apply_permanent_stat_buff(PLAYER_ID, slot_index, atk_bonus, hp_bonus)
+		_sync_public_fields()
+		_log("Amplificar: %s ganha +%d/+%d permanente." % [_slot_label(PLAYER_ID, slot_index), atk_bonus, hp_bonus])
+		_visual("buff", PLAYER_ID, slot_index, "+%d ATK" % atk_bonus, Color(1.0, 0.85, 0.2))
+		_after_action_resolved(PLAYER_ID, false)
+		return {"ok": true, "message": "Amplificar aplicado."}
+	return _fail("Hero power gain_stats: alvo nao suportado: %s." % hp_target)
 
 func play_card_from_hand(hand_index: int, target: Dictionary) -> Dictionary:
 	if outcome != "":
@@ -354,6 +395,8 @@ func play_card_from_hand(hand_index: int, target: Dictionary) -> Dictionary:
 		return _play_board_spell(PLAYER_ID, hand_index, card)
 	if card.is_buff_command():
 		return _play_buff_command(PLAYER_ID, hand_index, card, target)
+	if card.is_stat_buff_spell():
+		return _play_stat_buff_spell(PLAYER_ID, hand_index, card, target)
 	return _fail("Tipo de carta ainda nao suportado: %s." % str(card.card_type))
 
 func advance_phase() -> Dictionary:
@@ -1040,6 +1083,8 @@ func _play_permanent(controller_id: String, hand_index: int, card, target: Dicti
 	_spend_card(controller_id, hand_index, card)
 	_log("%s entra em %s." % [card.display_name, _slot_label(target_owner, slot_index)])
 	_visual("invocacao", target_owner, slot_index, "Entrada", Color(0.55, 1.0, 0.55))
+	if controller_id == PLAYER_ID and active_class_id == "invocador":
+		_trigger_comandante_de_campo()
 	_check_outcome()
 	_after_action_resolved(controller_id, _is_instant_speed_card(card))
 	return {"ok": true, "message": "Carta jogada."}
@@ -1102,6 +1147,19 @@ func _play_board_spell(controller_id: String, hand_index: int, card) -> Dictiona
 		_visual("buff", controller_id, -1, "Prontas", Color(0.4, 0.9, 1.0))
 		_after_action_resolved(controller_id, _is_instant_speed_card(card))
 		return {"ok": true, "message": "Magia de tabuleiro resolvida."}
+	if str(card.effect.get("action", "")) == "gain_stats" and str(card.effect.get("target", "")) == "all_own_creatures":
+		var atk_bonus: int = int(card.effect.get("attack", 0))
+		var hp_bonus: int = int(card.effect.get("health", 0))
+		var slots: Array = _slots_for_owner(controller_id)
+		for i: int in range(slots.size()):
+			if slots[i] == null:
+				continue
+			_apply_permanent_stat_buff(controller_id, i, atk_bonus, hp_bonus)
+		_spend_card(controller_id, hand_index, card)
+		_log("%s: todas as criaturas aliadas ganham +%d/+%d permanente." % [card.display_name, atk_bonus, hp_bonus])
+		_visual("buff", controller_id, -1, "+%d/+%d todas" % [atk_bonus, hp_bonus], Color(1.0, 0.85, 0.2))
+		_after_action_resolved(controller_id, _is_instant_speed_card(card))
+		return {"ok": true, "message": "Magia de tabuleiro resolvida."}
 	return _fail("Magia de tabuleiro ainda nao suportada: %s." % card.display_name)
 
 func _play_buff_command(controller_id: String, hand_index: int, card, target: Dictionary) -> Dictionary:
@@ -1124,6 +1182,54 @@ func _play_buff_command(controller_id: String, hand_index: int, card, target: Di
 	_visual("buff", controller_id, slot_index, "+%d vida" % amount, Color(0.4, 0.9, 1.0))
 	_after_action_resolved(controller_id, _is_instant_speed_card(card))
 	return {"ok": true, "message": "Comando resolvido."}
+
+func _play_stat_buff_spell(controller_id: String, hand_index: int, card, target: Dictionary) -> Dictionary:
+	var target_owner: String = _normalize_owner_id(str(target.get("owner", controller_id)))
+	if target_owner != controller_id:
+		return _fail("Buff de stats precisa de alvo aliado.")
+	var slot_index: int = int(target.get("slot", -1))
+	var slots: Array = _slots_for_owner(controller_id)
+	if slot_index < 0 or slot_index >= slots.size() or slots[slot_index] == null:
+		return _fail("Escolha um aliado valido para o buff.")
+	var atk_bonus: int = int(card.effect.get("attack", 0))
+	var hp_bonus: int = int(card.effect.get("health", 0))
+	_apply_permanent_stat_buff(controller_id, slot_index, atk_bonus, hp_bonus)
+	_spend_card(controller_id, hand_index, card)
+	_log("%s: %s ganha +%d/+%d permanente." % [card.display_name, _slot_label(controller_id, slot_index), atk_bonus, hp_bonus])
+	_visual("buff", controller_id, slot_index, "+%d/+%d" % [atk_bonus, hp_bonus], Color(1.0, 0.85, 0.2))
+	_after_action_resolved(controller_id, _is_instant_speed_card(card))
+	return {"ok": true, "message": "Buff de stats aplicado."}
+
+func _apply_permanent_stat_buff(owner_id: String, slot_index: int, atk_bonus: int, hp_bonus: int) -> void:
+	var slots: Array = _slots_for_owner(owner_id)
+	if slot_index < 0 or slot_index >= slots.size() or slots[slot_index] == null:
+		return
+	var occupant: Dictionary = Dictionary(slots[slot_index])
+	if atk_bonus != 0:
+		occupant["attack"] = int(occupant.get("attack", 0)) + atk_bonus
+	if hp_bonus != 0:
+		occupant["health"] = int(occupant.get("health", 0)) + hp_bonus
+		occupant["max_health"] = int(occupant.get("max_health", 0)) + hp_bonus
+	slots[slot_index] = occupant
+	_set_slots_for_owner(owner_id, slots)
+
+func _trigger_comandante_de_campo() -> void:
+	var slots: Array = _slots_for_owner(PLAYER_ID)
+	var best_index: int = -1
+	var best_atk: int = -1
+	for i: int in range(slots.size()):
+		if slots[i] == null:
+			continue
+		var atk: int = int(Dictionary(slots[i]).get("attack", 0))
+		if atk > best_atk:
+			best_atk = atk
+			best_index = i
+	if best_index < 0:
+		return
+	var occ_name: String = str(Dictionary(slots[best_index]).get("name", "criatura"))
+	_apply_permanent_stat_buff(PLAYER_ID, best_index, 1, 0)
+	_log("Comandante de Campo: %s ganha +1/+0." % occ_name)
+	_visual("buff", PLAYER_ID, best_index, "+1 ATK", Color(1.0, 0.85, 0.2))
 
 func _after_action_resolved(controller_id: String, instant: bool) -> void:
 	if outcome != "" or current_phase != PHASE_MAIN:

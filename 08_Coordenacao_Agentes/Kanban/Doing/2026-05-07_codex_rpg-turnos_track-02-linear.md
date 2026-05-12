@@ -13,7 +13,7 @@ Executar a Track 02 em ordem linear, prompt a prompt, mantendo todos os registro
 
 ## Cursor Atual
 
-Proximo prompt: `P04 - Invocador Core: Passive and Hero Power`.
+Proximo prompt: `P05 - Invocador Deck Activation and Class Selection Screen`.
 
 ## Progresso
 
@@ -31,6 +31,13 @@ Proximo prompt: `P04 - Invocador Core: Passive and Hero Power`.
 - [x] P03: 2 novas cartas adicionadas: `reforco_aliado` e `amplificacao_campo` (Invocador).
 - [x] P03: `docs/class-catalog-schema.md` atualizado com campo `passiva` e hero powers das 3 classes.
 - [x] P03: teste `test_catalog_exposes_class_definitions_and_starter_decks` atualizado para 3 classes com verificacao de `passiva`.
+- [x] P04: `BattleEngine.use_player_hero_power(target)` refatorado para dispatch data-driven via `ContentLibrary`.
+- [x] P04: `Amplificar` hero power implementado: +2/+0 permanente em criatura aliada escolhida, custo 1, 1x/turno.
+- [x] P04: `Comandante de Campo` passiva implementada: ao invocar criatura aliada, aliada com maior ATK ganha +1/+0 permanente.
+- [x] P04: `Preparar Defesa` mantido como fallback sem classe ativa.
+- [x] P04: `_apply_permanent_stat_buff` helper adicionado; `reforco_aliado` e `amplificacao_campo` sao cartas jogaveis.
+- [x] P04: `test_class_invocador.gd` com 14 testes cobrindo passiva, hero power, fallback legacy e cartas de buff.
+- [ ] P04: validacao Godot pendente (rodar localmente).
 
 ## Regras De Registro
 
@@ -42,11 +49,12 @@ Proximo prompt: `P04 - Invocador Core: Passive and Hero Power`.
 
 ## Proximo Passo
 
-Executar P04:
+Executar P05:
 
-1. Substituir hero power hardcoded `Preparar Defesa` por carregamento data-driven da classe ativa.
-2. Implementar hero power `Amplificar`: +2/+0 permanente em criatura aliada escolhida, custo 1, 1x/turno.
-3. Implementar passiva `Comandante de Campo`: ao invocar criatura aliada, aliada com maior ATK ganha +1/+0 permanente; empate → jogador escolhe.
-4. Manter `Preparar Defesa` como fallback sem classe.
-5. Adicionar testes: passiva dispara ao invocar, buff eh permanente, hero power aplica buff, sem trigger se campo vazio, fallback legacy intacto.
-6. Rodar validacao.
+1. Ativar starter deck do Invocador no fluxo de setup de sessao/deck.
+2. Criar cena de selecao de classe (via script/tool, nao `.tscn` manual).
+3. Rotear `Novo jogo` para selecao de classe quando nenhuma classe estiver selecionada.
+4. Exibir 3 classes com nome, tagline e uma linha de comprometimento cada.
+5. Confirmar selecao, persistir no save, inicializar deck de classe, entrar no mundo.
+6. Adicionar testes para roteamento de cena, mutacao de sessao, carregamento de deck e round-trip save/load.
+7. Rodar validacao.
