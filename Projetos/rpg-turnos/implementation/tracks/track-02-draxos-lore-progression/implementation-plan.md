@@ -1,7 +1,7 @@
 # Track 02 Implementation Plan - Draxos Lore And Progression Alignment
 
-- Last Updated: `2026-05-07`
-- Status: `linear execution registered; stage 1 practically complete; stage 2 catalog populated and now entering engine/session/UI integration via Codex prompts`
+- Last Updated: `2026-05-12`
+- Status: `linear execution active; stage 1 practically complete; stage 2 catalog exposed to runtime and entering session/save integration via Codex prompts`
 - Depends On:
   - `../../../docs/lore-campaign.md`
   - `../../../docs/lore-content-migration.md`
@@ -63,7 +63,7 @@ Exit criteria:
 
 ## Stage 2 - Class Identity (Design Completo)
 
-Status: `catálogo populado — aguarda implementação de engine`
+Status: `catálogo exposto ao runtime — aguarda estado de sessão e implementação de engine`
 
 Purpose: definir as classes jogáveis antes de qualquer renomeação profunda de cartas ou sistemas de progressão.
 
@@ -263,12 +263,13 @@ Exit criteria:
 
 ## Recommended Immediate Next Task
 
-Executar `P01 - Catalog class resource plumbing` em `linear-execution-plan.md`.
+Executar `P02 - Selected Class Session State` em `linear-execution-plan.md`.
 
 Resumo:
-1. Expor `classes` no recurso gerado do catalogo.
-2. Adicionar helpers de classe em `ContentLibrary`.
-3. Cobrir as 5 classes e seus starter decks em testes.
-4. Regenerar recursos e rodar validacao.
+1. Adicionar `selected_class` ao estado de sessão.
+2. Preservar compatibilidade de save/load para saves antigos sem classe selecionada.
+3. Adicionar helpers de seleção e inicialização de deck por classe.
+4. Manter fallback do starter deck antigo até a tela de seleção ficar ativa.
+5. Rodar validação.
 
-Depois disso, seguir estritamente o cursor do plano linear. A tela de selecao de classe nao deve comecar antes dos prompts de plumbing, sessao, hero power e deck do Assaltante.
+Depois disso, seguir estritamente o cursor do plano linear. A tela de selecao de classe nao deve comecar antes dos prompts de sessao, hero power e deck do Assaltante.

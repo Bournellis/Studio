@@ -1938,3 +1938,122 @@ encounters = Array[Dictionary]([{
 "slot": 2.0
 }]
 }])
+classes = Array[Dictionary]([{
+"display_name": "Assaltante de Vazio",
+"hero": {
+"display_name": "Novato Draxos",
+"hero_power": {
+"cost": 1.0,
+"display_name": "Disparo de Choque",
+"effect": {
+"action": "damage",
+"amount": 2.0,
+"damage_type": "magico",
+"target": "any_enemy_permanent"
+},
+"id": "disparo_choque",
+"once_per_own_turn": true,
+"speed": "normal",
+"text": "Causa 2 de dano mágico a qualquer permanente inimigo."
+},
+"id": "assaltante_heroi",
+"max_health": 25.0
+},
+"id": "assaltante",
+"starter_deck": ["incursor_vazio", "incursor_vazio", "incursor_vazio", "lamina_choque", "lamina_choque", "lamina_choque", "fenda_astral", "fenda_astral", "fenda_astral", "pilhador_implacavel", "pilhador_implacavel", "cacador_alado", "cacador_alado", "atirador_frente", "atirador_frente", "garra_vazio", "garra_vazio", "devastador_linha", "interceptor_alado", "descarga_impacto"],
+"tagline": "Pressão imediata. Fechar antes do turno 7."
+}, {
+"display_name": "Arquiteto de Éter",
+"hero": {
+"display_name": "Novato Draxos",
+"hero_power": {
+"cost": 1.0,
+"display_name": "Reparação de Éter",
+"effect": {
+"action": "heal_permanent",
+"amount": 4.0,
+"target": "any_own_damaged_structure"
+},
+"id": "reparacao_eter",
+"once_per_own_turn": true,
+"speed": "normal",
+"text": "Regenera 4 HP de uma estrutura sua danificada."
+},
+"id": "arquiteto_heroi",
+"max_health": 25.0
+},
+"id": "arquiteto",
+"starter_deck": ["muro_eter", "muro_eter", "muro_eter", "reforco_estrutural", "reforco_estrutural", "reforco_estrutural", "torre_vigilancia", "torre_vigilancia", "torre_vigilancia", "bastiao_arcano", "bastiao_arcano", "pulso_eter", "pulso_eter", "nucleo_eter", "nucleo_eter", "guardiao_cristal", "guardiao_cristal", "elo_eter", "sobrecarga_construto", "colosso_eter"],
+"tagline": "Instalar. Acumular. Dominar passivamente."
+}, {
+"display_name": "Dominador Astral",
+"hero": {
+"display_name": "Novato Draxos",
+"hero_power": {
+"cost": 2.0,
+"display_name": "Dominância Astral",
+"effect": {
+"action": "apply_status",
+"status": "enjoo",
+"target": "any_enemy_permanent"
+},
+"id": "dominancia_astral",
+"once_per_own_turn": true,
+"speed": "normal",
+"text": "Aplica enjoo a um permanente inimigo."
+},
+"id": "dominador_heroi",
+"max_health": 25.0
+},
+"id": "dominador",
+"starter_deck": ["sentinela_supressao", "sentinela_supressao", "sentinela_supressao", "pulso_disruptivo", "pulso_disruptivo", "pulso_disruptivo", "correntes_eter", "correntes_eter", "correntes_eter", "extrator_astral", "extrator_astral", "condutor_dominio", "condutor_dominio", "drenagem_forca", "drenagem_forca", "nevoa_astral", "nevoa_astral", "drenar_vitalidade", "senhor_supressao", "supressao_massa"],
+"tagline": "Paralisia do tabuleiro. O inimigo tem peças — não consegue usá-las."
+}, {
+"display_name": "Tecelão Astral",
+"hero": {
+"display_name": "Novato Draxos",
+"hero_power": {
+"cost": 0.0,
+"display_name": "Foco Astral",
+"effect": {
+"action": "add_resonance",
+"amount": 1.0
+},
+"id": "foco_astral",
+"once_per_own_turn": true,
+"speed": "normal",
+"text": "Adiciona 1 de Ressonância."
+},
+"id": "tecelao_heroi",
+"max_health": 25.0
+},
+"id": "tecelao",
+"starter_deck": ["centelha_astral", "centelha_astral", "centelha_astral", "flecha_vinculo", "flecha_vinculo", "flecha_vinculo", "pulso_ressonante", "pulso_ressonante", "pulso_ressonante", "custodio_fio", "custodio_fio", "eco_arcano", "eco_arcano", "barreira_ressonante", "barreira_ressonante", "conduit_astral", "conduit_astral", "onda_eter", "tempestade_ressonancia", "apoteose_astral"],
+"tagline": "Sequenciar feitiços. Explodir no turno certo."
+}, {
+"display_name": "Vinculador",
+"hero": {
+"display_name": "Novato Draxos",
+"hero_power": {
+"cost": 2.0,
+"display_name": "Captura Forçada",
+"effect": {
+"action": "capture",
+"hp_threshold": 3.0,
+"max_attack": 4.0,
+"max_health": 4.0,
+"spawn_vinculada": true,
+"target": "any_enemy_permanent_hp_lte"
+},
+"id": "captura_forcada",
+"once_per_own_turn": true,
+"speed": "normal",
+"text": "Destrói um permanente inimigo com HP ≤ 3. Spawna uma Forma Vinculada com os stats originais (máx 4/4) em um slot vazio seu."
+},
+"id": "vinculador_heroi",
+"max_health": 25.0
+},
+"id": "vinculador",
+"starter_deck": ["batedor_eter", "batedor_eter", "batedor_eter", "ferida_astral", "ferida_astral", "ferida_astral", "lacador_vinculo", "lacador_vinculo", "lacador_vinculo", "lanca_captura", "lanca_captura", "fluxo_vinculo", "fluxo_vinculo", "espectro_coletor", "espectro_coletor", "dominacao_forcada", "dominacao_forcada", "mestre_vinculador", "ritual_colheita", "exodia_vinculada"],
+"tagline": "Capturar e converter o exército inimigo."
+}])

@@ -29,6 +29,42 @@ func test_catalog_contains_starter_deck_and_reward() -> void:
 	assert_false(catalog.find_encounter("emboscada_na_ponte").is_empty())
 	assert_false(catalog.find_encounter("duelista_bandido").is_empty())
 
+func test_catalog_exposes_class_definitions_and_starter_decks() -> void:
+	var catalog = ContentLibrary.get_catalog()
+	assert_not_null(catalog)
+	assert_eq(catalog.classes.size(), 5)
+	assert_eq(ContentLibrary.get_all_classes().size(), 5)
+
+	var expected_class_ids: Array[String] = [
+		"assaltante",
+		"arquiteto",
+		"dominador",
+		"tecelao",
+		"vinculador"
+	]
+	for class_id: String in expected_class_ids:
+		var class_data: Dictionary = ContentLibrary.get_class_definition(class_id)
+		assert_false(class_data.is_empty(), "Class %s should exist." % class_id)
+		assert_eq(str(class_data.get("id", "")), class_id)
+
+		var hero: Dictionary = ContentLibrary.get_class_hero(class_id)
+		assert_false(hero.is_empty(), "Class %s should expose hero metadata." % class_id)
+		assert_false(str(hero.get("id", "")) == "", "Class %s should expose a hero id." % class_id)
+
+		var hero_power: Dictionary = ContentLibrary.get_class_hero_power(class_id)
+		assert_false(hero_power.is_empty(), "Class %s should expose hero power metadata." % class_id)
+		assert_false(str(hero_power.get("id", "")) == "", "Class %s should expose a hero power id." % class_id)
+
+		var starter_deck: Array = ContentLibrary.get_class_starter_deck_ids(class_id)
+		assert_eq(starter_deck.size(), 20, "Class %s should have a 20-card starter deck." % class_id)
+		for card_id: Variant in starter_deck:
+			assert_not_null(catalog.find_card(str(card_id)), "Class %s starter card %s should exist." % [class_id, str(card_id)])
+
+	assert_true(ContentLibrary.get_class_definition("classe_inexistente").is_empty())
+	assert_true(ContentLibrary.get_class_hero("classe_inexistente").is_empty())
+	assert_true(ContentLibrary.get_class_hero_power("classe_inexistente").is_empty())
+	assert_true(ContentLibrary.get_class_starter_deck_ids("classe_inexistente").is_empty())
+
 func test_npc_reward_unlocks_one_extra_card_once() -> void:
 	assert_false(GameSession.has_npc_reward_card)
 	assert_eq(GameSession.unlocked_card_ids.size(), 20)

@@ -1,6 +1,6 @@
 # Track 02 Current Status
 
-- Last Updated: `2026-05-07`
+- Last Updated: `2026-05-12`
 - Status: `ACTIVE_LINEAR_PLAN`
 - Track Name: `Track 02 - Draxos Lore And Progression Alignment`
 
@@ -15,8 +15,9 @@ The track must preserve the validated card-slot runtime while migrating player-f
 - C1 is the sole combat runtime.
 - Official battle modes are implemented: `limpar_mesa`, `duelo`, `ondas`, `defesa`, `chefe_multiparte`, and `quebra_cabeca`.
 - World progression, one-time encounter rewards, progressive NPC rewards, save/load, and art-ready placeholders exist.
-- Runtime validation is green at the latest known baseline: `77/77`.
+- Runtime validation is green at the latest known baseline: `78/78`.
 - Several player-facing catalog names already use Draxos/elemental language.
+- The generated catalog now exposes the 5 authored classes and their 20-card starter decks through `ContentLibrary`.
 - Mechanical IDs remain legacy-compatible and should not be renamed opportunistically.
 
 ## Active Planning Rule
@@ -42,20 +43,21 @@ Each pass should still change one player-facing or runtime layer at a time:
 
 ## Next Implementation Candidate
 
-Start with `P01 - Catalog class resource plumbing` from `linear-execution-plan.md`.
+Continue with `P02 - Selected Class Session State` from `linear-execution-plan.md`.
 
 Expected scope:
 
-- expose the authored `classes` array from JSON into generated catalog resources
-- add `ContentLibrary` class helpers
-- add tests proving the 5 classes and their 20-card starter decks are available
+- add `selected_class` to `core/game_session.gd`
+- keep save/load compatible with saves missing `selected_class`
+- add selection/query helpers and class deck initialization helpers
+- keep old starter deck fallback behavior until class selection is active
 - no mechanical ID renames
 - no battle rule changes
-- regenerate resources and run validation
+- run validation after runtime/save/test changes
 
 ## Do Not Start Yet
 
-- later class engine systems beyond P01
+- later class engine systems beyond P02
 - final planet/crystal naming as hard canon
 - broad card economy
 - equipment/items

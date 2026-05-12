@@ -12,6 +12,7 @@ extends Resource
 @export var default_encounter_id: String = "emboscada_na_ponte"
 @export var boards: Array[Dictionary] = []
 @export var encounters: Array[Dictionary] = []
+@export var classes: Array[Dictionary] = []
 
 func find_card(card_id: String):
 	for card in cards:
@@ -35,4 +36,10 @@ func find_encounter(encounter_id: String) -> Dictionary:
 	for encounter: Dictionary in encounters:
 		if str(encounter.get("id", "")) == encounter_id:
 			return encounter
+	return {}
+
+func find_class(class_id: String) -> Dictionary:
+	for class_data: Dictionary in classes:
+		if str(class_data.get("id", "")) == class_id:
+			return class_data
 	return {}

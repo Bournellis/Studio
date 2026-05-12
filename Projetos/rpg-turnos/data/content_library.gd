@@ -71,3 +71,41 @@ func get_encounter_display_name(encounter_id: String) -> String:
 		return encounter_id
 	var encounter: Dictionary = catalog.find_encounter(encounter_id)
 	return str(encounter.get("display_name", encounter_id))
+
+func get_all_classes() -> Array:
+	var catalog = ensure_loaded()
+	if catalog == null:
+		return []
+	return Array(catalog.classes).duplicate(true)
+
+func get_class_definition(class_id: String) -> Dictionary:
+	var catalog = ensure_loaded()
+	if catalog == null:
+		return {}
+	return catalog.find_class(class_id).duplicate(true)
+
+func get_class_hero(class_id: String) -> Dictionary:
+	var class_data: Dictionary = get_class_definition(class_id)
+	var hero: Variant = class_data.get("hero", {})
+	if not hero is Dictionary:
+		return {}
+	return Dictionary(hero).duplicate(true)
+
+func get_class_hero_power(class_id: String) -> Dictionary:
+	var hero: Dictionary = get_class_hero(class_id)
+	var hero_power: Variant = hero.get("hero_power", {})
+	if not hero_power is Dictionary:
+		return {}
+	return Dictionary(hero_power).duplicate(true)
+
+func get_class_starter_deck_ids(class_id: String) -> Array:
+	var class_data: Dictionary = get_class_definition(class_id)
+	var starter_deck: Variant = class_data.get("starter_deck", [])
+	if not starter_deck is Array:
+		return []
+	var result: Array = []
+	for card_id: Variant in starter_deck:
+		var normalized_id: String = str(card_id)
+		if normalized_id != "":
+			result.append(normalized_id)
+	return result

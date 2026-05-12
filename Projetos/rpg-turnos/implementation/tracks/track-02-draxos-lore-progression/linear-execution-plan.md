@@ -1,6 +1,6 @@
 # Track 02 Linear Execution Plan
 
-- Last Updated: `2026-05-07`
+- Last Updated: `2026-05-12`
 - Status: `ACTIVE_LINEAR_PLAN`
 - Execution Owner: `Codex`
 - Scope: `RPG Turnos Track 02 - Draxos Lore And Progression Alignment`
@@ -37,16 +37,16 @@ It defines execution order only.
 
 ## Current Execution Cursor
 
-Next prompt: `P01 - Catalog class resource plumbing`.
+Next prompt: `P02 - Selected Class Session State`.
 
-Current focus: make the class catalog available to runtime before implementing class behavior.
+Current focus: persist selected class state before adding class behavior or UI.
 
 ## Linear Prompt Sequence
 
 | Prompt | Status | Goal | Validation |
 |---|---|---|---|
 | P00 | complete | Create this linear execution plan and align records. | Documentation-only |
-| P01 | pending | Expose `classes` from JSON into generated catalog resources and `ContentLibrary`. | Run validation |
+| P01 | complete | Expose `classes` from JSON into generated catalog resources and `ContentLibrary`. | Green 78/78 |
 | P02 | pending | Add `selected_class` session/save state and class deck helpers without UI. | Run validation |
 | P03 | pending | Implement data-driven hero metadata and hero power kernel for `Assaltante de Vazio`. | Run validation |
 | P04 | pending | Implement Assaltante-only effect hooks: `on_destroy` and `on_combat_kill`. | Run validation |
@@ -398,7 +398,7 @@ Every implementation prompt must leave the following record trail:
 
 ## Current Blockers
 
-- None for P01.
+- None for P02.
 
 Known future dependencies:
 

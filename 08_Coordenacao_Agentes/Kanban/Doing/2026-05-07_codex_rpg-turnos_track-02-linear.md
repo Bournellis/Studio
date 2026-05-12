@@ -13,7 +13,14 @@ Executar a Track 02 em ordem linear, prompt a prompt, mantendo todos os registro
 
 ## Cursor Atual
 
-Proximo prompt: `P01 - Catalog class resource plumbing`.
+Proximo prompt: `P02 - Selected Class Session State`.
+
+## Progresso
+
+- [x] P01: catalogo gerado expoe 5 classes autoradas.
+- [x] P01: `ContentLibrary` expoe helpers de classe, heroi, hero power e starter deck.
+- [x] P01: testes cobrem 5 starter decks de 20 cartas e validam que cada carta existe.
+- [x] P01: validacao Godot verde em 2026-05-12 com 78/78 testes e 592 asserts.
 
 ## Regras De Registro
 
@@ -25,9 +32,10 @@ Proximo prompt: `P01 - Catalog class resource plumbing`.
 
 ## Proximo Passo
 
-Executar P01:
+Executar P02:
 
-1. Expor `classes` no recurso gerado do catalogo.
-2. Adicionar helpers de classe em `ContentLibrary`.
-3. Cobrir as 5 classes e seus starter decks em testes.
-4. Regenerar recursos e rodar validacao.
+1. Adicionar `selected_class` em `core/game_session.gd`.
+2. Preservar compatibilidade de save/load para saves sem `selected_class`.
+3. Adicionar helpers de selecao, consulta e inicializacao de deck por classe.
+4. Manter fallback do starter deck antigo ate a selecao de classe ficar ativa.
+5. Rodar validacao apos mudancas de runtime, save e testes.
