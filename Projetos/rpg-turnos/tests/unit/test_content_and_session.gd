@@ -324,3 +324,83 @@ func test_get_battle_config_includes_class_id_when_class_selected() -> void:
 	var ok: bool = GameSession.select_class("invocador")
 	assert_true(ok)
 
+	var config: Dictionary = GameSession.get_battle_config()
+
+	assert_true(config.has("class_id"), "Battle config must include class_id when a class is selected.")
+	assert_eq(str(config.get("class_id", "")), "invocador")
+
+func test_get_battle_config_omits_class_id_when_no_class_selected() -> void:
+	assert_false(GameSession.has_selected_class())
+
+	var config: Dictionary = GameSession.get_battle_config()
+
+	assert_false(config.has("class_id"), "Battle config must not include class_id when no class is selected.")
+
+func test_invocador_selection_flow_sets_deck_to_invocador_starter() -> void:
+	var ok: bool = GameSession.select_class("invocador")
+	assert_true(ok, "select_class should succeed for invocador.")
+	assert_eq(GameSession.selected_class, "invocador")
+
+	GameSession.initialize_deck_for_class()
+
+	var expected_deck: Array = ContentLibrary.get_class_starter_deck_ids("invocador")
+	assert_eq(expected_deck.size(), 20, "Invocador starter deck must have 20 cards.")
+	assert_eq(GameSession.unlocked_card_ids, expected_deck, "unlocked_card_ids must match Invocador deck after initialization.")
+	assert_eq(GameSession.selected_deck_ids, expected_deck, "selected_deck_ids must match Invocador deck after initialization.")
+
+func test_invocador_deck_is_valid_and_ready_for_battle() -> void:
+	GameSession.select_class("invocador")
+	GameSession.initialize_deck_for_class()
+
+	assert_true(GameSession.is_deck_valid(GameSession.selected_deck_ids), "Invocador deck must pass deck validation after initialization.")
+
+func test_invocador_selection_and_save_load_round_trip() -> void:
+	GameSession.select_class("invocador")
+	GameSession.initialize_deck_for_class()
+	var saved_deck: Array = GameSession.selected_deck_ids.duplicate()
+
+	assert_true(GameSession.save_game(TEST_SAVE_PATH))
+	GameSession.start_new_game()
+	assert_eq(GameSession.selected_class, "")
+	assert_ne(GameSession.selected_deck_ids, saved_deck)
+
+	assert_true(GameSession.load_game(TEST_SAVE_PATH))
+	assert_eq(GameSession.selected_class, "invocador")
+	assert_eq(GameSession.selected_deck_ids, saved_deck, "Invocador deck must survive save/load round-trip.")
+
+func test_get_battle_config_includes_class_id_after_save_load() -> void:
+	GameSession.select_class("invocador")
+	GameSession.initialize_deck_for_class()
+	assert_true(GameSession.save_game(TEST_SAVE_PATH))
+
+	GameSession.start_new_game()
+	assert_true(GameSession.load_game(TEST_SAVE_PATH))
+
+	var config: Dictionary = GameSession.get_battle_config()
+	assert_true(config.has("class_id"), "Battle config must include class_id after a save/load cycle.")
+	assert_eq(str(config.get("class_id", "")), "invocador")
+
+# --- P06: Invocador integration checkpoint — hero power label data ---
+
+func test_invocador_hero_power_display_name_is_amplificar() -> void:
+	var hp: Dictionary = ContentLibrary.get_class_hero_power("invocador")
+	assert_false(hp.is_empty(), "get_class_hero_power must return data for invocador.")
+	assert_eq(str(hp.get("display_name", "")), "Amplificar", "Invocador hero power display_name must be 'Amplificar'.")
+
+func test_invocador_hero_power_effect_target_is_any_own_creature() -> void:
+	var hp: Dictionary = ContentLibrary.get_class_hero_power("invocador")
+	var effect: Dictionary = Dictionary(hp.get("effect", {}))
+	assert_eq(str(effect.get("target", "")), "any_own_creature",
+		"Invocador hero power must target any_own_creature so UI shows per-slot buttons.")
+
+func test_no_class_hero_power_returns_empty() -> void:
+	var hp: Dictionary = ContentLibrary.get_class_hero_power("")
+	assert_true(hp.is_empty(), "get_class_hero_power with empty class_id must return empty dict (Preparar Defesa fallback).")
+
+func _delete_test_save() -> void:
+	if not FileAccess.file_exists(TEST_SAVE_PATH):
+		return
+	var user_dir: DirAccess = DirAccess.open("user://")
+	if user_dir != null:
+		user_dir.remove(TEST_SAVE_FILENAME)
+

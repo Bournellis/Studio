@@ -112,7 +112,7 @@ func _build_class_card(class_def: Dictionary) -> PanelContainer:
 
 	if hero_power_text != "":
 		var hp_header: Label = Label.new()
-		hp_header.text = "Hero Power:"
+		hp_header.text = "Poder de heroi:"
 		hp_header.modulate = Color(0.82, 0.78, 0.62)
 		hp_header.add_theme_font_size_override("font_size", 13)
 		box.add_child(hp_header)
@@ -169,4 +169,4 @@ func _card_style(selected: bool) -> StyleBoxFlat:
 	style.content_margin_top = 18
 	style.content_margin_right = 18
 	style.content_margin_bottom = 18
-	return style
+	return st

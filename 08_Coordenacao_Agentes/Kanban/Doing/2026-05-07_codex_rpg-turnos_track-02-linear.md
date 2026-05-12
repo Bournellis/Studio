@@ -13,7 +13,7 @@ Executar a Track 02 em ordem linear, prompt a prompt, mantendo todos os registro
 
 ## Cursor Atual
 
-Proximo prompt: `P06 - Invocador Integration Checkpoint`.
+Proximo prompt: `P07 - Arcano: Fluxo Counter and Damage Amplification`.
 
 ## Progresso
 
@@ -44,11 +44,8 @@ Proximo prompt: `P06 - Invocador Integration Checkpoint`.
 - [x] P05: `GameSession.get_battle_config()` passa `class_id` ao `BattleEngine` quando classe selecionada.
 - [x] P05: 6 novos testes em `test_content_and_session.gd` cobrindo battle config, selecao end-to-end, validade do deck e round-trip save/load.
 - [ ] P05: validacao Godot pendente (rodar localmente).
-
-## Regras De Registro
-
-- Atualizar o cursor e status do prompt em `linear-execution-plan.md`.
-- Atualizar `Projetos/rpg-turnos/implementation/current-status.md` quando o baseline, proximo passo ou validacao mudarem.
-- Atualizar `Projetos/rpg-turnos/implementation/tracks/track-02-draxos-lore-progression/current-status.md` quando o status da track mudar.
-- Atualizar `08_Coordenacao_Agentes/Estado_Atual.md` quando o snapshot observavel do projeto mudar.
-- Rodar validacao Godot apo
+- [x] P06: botao de hero power le `display_name` do catalogo (`"Amplificar"` para Invocador).
+- [x] P06: `battle_root.gd` exibe botoes de alvo por slot (`"Amplificar → Slot X"`) quando `effect.target == "any_own_creature"`.
+- [x] P06: label "Hero Power:" no class select corrigido para portugues ("Poder de heroi:").
+- [x] P06: hint de feedback de batalha desacoplada do nome "Preparar Defesa".
+- [x] P06: 3 novos testes em `test_content_and_session.gd` cobrindo disp

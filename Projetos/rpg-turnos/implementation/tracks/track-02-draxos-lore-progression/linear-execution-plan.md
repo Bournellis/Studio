@@ -37,9 +37,9 @@ It defines execution order only.
 
 ## Current Execution Cursor
 
-Next prompt: `P06 - Invocador Integration Checkpoint`.
+Next prompt: `P07 - Arcano: Fluxo Counter and Damage Amplification`.
 
-Current focus: review battle labels, hero power button text, and result summaries for Invocador; close Invocador slice cleanly before Arcano.
+Current focus: implement Arcano's core engine systems — volatile per-turn `fluxo` counter and magic damage amplification pipeline.
 
 ## Linear Prompt Sequence
 
@@ -51,7 +51,7 @@ Current focus: review battle labels, hero power button text, and result summarie
 | P03 | complete | Regenerate catalog with 3 new classes (Invocador, Arcano, Necromante); remove old 5. | Run validation |
 | P04 | complete | Implement Invocador: Comandante de Campo passive trigger and Amplificar hero power. | Run validation |
 | P05 | complete | Activate Invocador starter deck; add class selection screen MVP. | Run validation |
-| P06 | pending | Invocador integration checkpoint: labels, tests, docs, records. | Run validation |
+| P06 | complete | Invocador integration checkpoint: labels, tests, docs, records. | Run validation |
 | P07 | pending | Implement Arcano: Fluxo counter and magic damage amplification pipeline. | Run validation |
 | P08 | pending | Implement Arcano: Pulso Astral hero power and activate Arcano starter deck. | Run validation |
 | P09 | pending | Arcano integration checkpoint: labels, tests, docs, records. | Run validation |
@@ -412,7 +412,7 @@ Every implementation prompt must leave the following record trail:
 
 ## Current Blockers
 
-- None for P04.
+- None for P07.
 
 Known future dependencies:
 
@@ -420,4 +420,4 @@ Known future dependencies:
 - P08-P13 depend on the class selection and class starter deck plumbing.
 - P16 should wait until at least P14, because reward/card meaning depends on the playable class baseline.
 - P20 must wait until player-facing naming stabilizes.
-                            
+                      
