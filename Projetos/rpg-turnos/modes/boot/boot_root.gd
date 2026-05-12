@@ -111,4 +111,4 @@ func _build_logo_container() -> Control:
 		title.set_anchors_preset(Control.PRESET_FULL_RECT)
 		logo_container.add_child(title)
 
-	return l
+	return logo_container

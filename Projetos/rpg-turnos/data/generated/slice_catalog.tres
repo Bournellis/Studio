@@ -1214,13 +1214,47 @@ effect = {
 }
 
 [sub_resource type="Resource" id="Resource_x14up"]
+script = ExtResource("1_tqsc8")
+id = "reforco_aliado"
+display_name = "Reforço Aliado"
+card_type = "magia"
+cost = 1
+command_cost = 1
+text = "Criatura aliada à escolha ganha +2/+0 permanentemente."
+keywords = PackedStringArray()
+effect = {
+"action": "gain_stats",
+"attack": 2.0,
+"health": 0.0,
+"permanent": true,
+"target": "any_own_creature"
+}
+
+[sub_resource type="Resource" id="Resource_jtbwh"]
+script = ExtResource("1_tqsc8")
+id = "amplificacao_campo"
+display_name = "Amplificação de Campo"
+card_type = "magia_de_tabuleiro"
+cost = 3
+command_cost = 3
+text = "Todas as criaturas aliadas em campo ganham +1/+0 permanentemente."
+keywords = PackedStringArray()
+effect = {
+"action": "gain_stats",
+"attack": 1.0,
+"health": 0.0,
+"permanent": true,
+"target": "all_own_creatures"
+}
+
+[sub_resource type="Resource" id="Resource_gac4l"]
 script = ExtResource("2_aaqvb")
 id = "duelista_bandido"
 display_name = "Guardiao Elemental"
 max_health = 20
 hero_power_text = "Golpe Elemental: custo 0, velocidade normal, uso 1x no proprio turno. Causa 1 de dano no heroi inimigo."
 
-[sub_resource type="Resource" id="Resource_jtbwh"]
+[sub_resource type="Resource" id="Resource_kionc"]
 script = ExtResource("2_aaqvb")
 id = "aprendiz_limiar"
 display_name = "Novato Draxos"
@@ -1229,9 +1263,9 @@ hero_power_text = "Preparar Defesa Astral: custo 1, velocidade normal, uso 1x no
 
 [resource]
 script = ExtResource("3_xh3p2")
-player_hero = SubResource("Resource_jtbwh")
-enemy_hero = SubResource("Resource_x14up")
-cards = Array[Resource]([SubResource("Resource_tqsc8"), SubResource("Resource_aaqvb"), SubResource("Resource_xh3p2"), SubResource("Resource_ayi6x"), SubResource("Resource_b0i2p"), SubResource("Resource_hvson"), SubResource("Resource_vopr6"), SubResource("Resource_2f5oc"), SubResource("Resource_q1xx6"), SubResource("Resource_75iml"), SubResource("Resource_xg15d"), SubResource("Resource_kobr5"), SubResource("Resource_js17r"), SubResource("Resource_5405m"), SubResource("Resource_p3n0t"), SubResource("Resource_pkhd5"), SubResource("Resource_haoox"), SubResource("Resource_dqqtb"), SubResource("Resource_0kq34"), SubResource("Resource_edoxb"), SubResource("Resource_q1muo"), SubResource("Resource_w1flg"), SubResource("Resource_u525c"), SubResource("Resource_ba32m"), SubResource("Resource_5njsx"), SubResource("Resource_igiro"), SubResource("Resource_kf03g"), SubResource("Resource_7rtnj"), SubResource("Resource_siawb"), SubResource("Resource_vn8pn"), SubResource("Resource_3vxjw"), SubResource("Resource_8vwdf"), SubResource("Resource_12fis"), SubResource("Resource_wbbs5"), SubResource("Resource_hx6qf"), SubResource("Resource_46hy0"), SubResource("Resource_6lf1p"), SubResource("Resource_rxdp8"), SubResource("Resource_f75cl"), SubResource("Resource_kskod"), SubResource("Resource_ytdv0"), SubResource("Resource_ee0xk"), SubResource("Resource_g44pg"), SubResource("Resource_6juw6"), SubResource("Resource_p0w4t"), SubResource("Resource_r6yjh"), SubResource("Resource_o3iu5"), SubResource("Resource_u7yyh"), SubResource("Resource_m54cl"), SubResource("Resource_xljuu"), SubResource("Resource_xj7j7"), SubResource("Resource_u1e06"), SubResource("Resource_m1ldt"), SubResource("Resource_orpcd"), SubResource("Resource_r1h11"), SubResource("Resource_8hhqx"), SubResource("Resource_tdxwi"), SubResource("Resource_t1it5"), SubResource("Resource_1m5m3"), SubResource("Resource_k85o3"), SubResource("Resource_ty5ik"), SubResource("Resource_8i1rs"), SubResource("Resource_japkk"), SubResource("Resource_jen30"), SubResource("Resource_5ojvm"), SubResource("Resource_b1trl"), SubResource("Resource_u333r"), SubResource("Resource_ga80n"), SubResource("Resource_dqax3"), SubResource("Resource_prsww"), SubResource("Resource_hhqfi"), SubResource("Resource_ogvcp"), SubResource("Resource_vs84p"), SubResource("Resource_eibmv"), SubResource("Resource_3bh5q"), SubResource("Resource_dcefk"), SubResource("Resource_dv6wr"), SubResource("Resource_2i8af"), SubResource("Resource_2booa")])
+player_hero = SubResource("Resource_kionc")
+enemy_hero = SubResource("Resource_gac4l")
+cards = Array[Resource]([SubResource("Resource_tqsc8"), SubResource("Resource_aaqvb"), SubResource("Resource_xh3p2"), SubResource("Resource_ayi6x"), SubResource("Resource_b0i2p"), SubResource("Resource_hvson"), SubResource("Resource_vopr6"), SubResource("Resource_2f5oc"), SubResource("Resource_q1xx6"), SubResource("Resource_75iml"), SubResource("Resource_xg15d"), SubResource("Resource_kobr5"), SubResource("Resource_js17r"), SubResource("Resource_5405m"), SubResource("Resource_p3n0t"), SubResource("Resource_pkhd5"), SubResource("Resource_haoox"), SubResource("Resource_dqqtb"), SubResource("Resource_0kq34"), SubResource("Resource_edoxb"), SubResource("Resource_q1muo"), SubResource("Resource_w1flg"), SubResource("Resource_u525c"), SubResource("Resource_ba32m"), SubResource("Resource_5njsx"), SubResource("Resource_igiro"), SubResource("Resource_kf03g"), SubResource("Resource_7rtnj"), SubResource("Resource_siawb"), SubResource("Resource_vn8pn"), SubResource("Resource_3vxjw"), SubResource("Resource_8vwdf"), SubResource("Resource_12fis"), SubResource("Resource_wbbs5"), SubResource("Resource_hx6qf"), SubResource("Resource_46hy0"), SubResource("Resource_6lf1p"), SubResource("Resource_rxdp8"), SubResource("Resource_f75cl"), SubResource("Resource_kskod"), SubResource("Resource_ytdv0"), SubResource("Resource_ee0xk"), SubResource("Resource_g44pg"), SubResource("Resource_6juw6"), SubResource("Resource_p0w4t"), SubResource("Resource_r6yjh"), SubResource("Resource_o3iu5"), SubResource("Resource_u7yyh"), SubResource("Resource_m54cl"), SubResource("Resource_xljuu"), SubResource("Resource_xj7j7"), SubResource("Resource_u1e06"), SubResource("Resource_m1ldt"), SubResource("Resource_orpcd"), SubResource("Resource_r1h11"), SubResource("Resource_8hhqx"), SubResource("Resource_tdxwi"), SubResource("Resource_t1it5"), SubResource("Resource_1m5m3"), SubResource("Resource_k85o3"), SubResource("Resource_ty5ik"), SubResource("Resource_8i1rs"), SubResource("Resource_japkk"), SubResource("Resource_jen30"), SubResource("Resource_5ojvm"), SubResource("Resource_b1trl"), SubResource("Resource_u333r"), SubResource("Resource_ga80n"), SubResource("Resource_dqax3"), SubResource("Resource_prsww"), SubResource("Resource_hhqfi"), SubResource("Resource_ogvcp"), SubResource("Resource_vs84p"), SubResource("Resource_eibmv"), SubResource("Resource_3bh5q"), SubResource("Resource_dcefk"), SubResource("Resource_dv6wr"), SubResource("Resource_2i8af"), SubResource("Resource_2booa"), SubResource("Resource_x14up"), SubResource("Resource_jtbwh")])
 starter_deck_ids = PackedStringArray("escudeiro", "escudeiro", "escudeiro", "guarda_vila", "guarda_vila", "guarda_vila", "lobo_faminto", "lobo_faminto", "lobo_faminto", "soldado_linha", "soldado_linha", "arqueira_penhasco", "arqueira_penhasco", "bruto_mercenario", "javali_guerra", "barricada", "barricada", "balista", "raio_curto", "raio_curto")
 first_npc_reward_card_id = "golpe_preciso"
 reward_card_id = "golpe_preciso"
@@ -1939,121 +1973,99 @@ encounters = Array[Dictionary]([{
 }]
 }])
 classes = Array[Dictionary]([{
-"display_name": "Assaltante de Vazio",
+"display_name": "Invocador",
 "hero": {
-"display_name": "Novato Draxos",
+"display_name": "Comandante Draxos",
 "hero_power": {
 "cost": 1.0,
-"display_name": "Disparo de Choque",
+"display_name": "Amplificar",
+"effect": {
+"action": "gain_stats",
+"attack": 2.0,
+"health": 0.0,
+"permanent": true,
+"target": "any_own_creature"
+},
+"id": "amplificar",
+"once_per_own_turn": true,
+"speed": "normal",
+"text": "Criatura aliada à escolha ganha +2/+0 permanente."
+},
+"id": "invocador_heroi",
+"max_health": 25.0
+},
+"id": "invocador",
+"passiva": {
+"display_name": "Comandante de Campo",
+"id": "comandante_de_campo",
+"text": "Ao invocar criatura aliada, a aliada com maior ATK em campo ganha +1/+0 permanente. Em empate, o jogador escolhe."
+},
+"starter_deck": ["escudeiro", "escudeiro", "escudeiro", "guarda_vila", "guarda_vila", "guarda_vila", "arqueira_penhasco", "arqueira_penhasco", "arqueira_penhasco", "soldado_linha", "soldado_linha", "interceptor_alado", "interceptor_alado", "bruto_mercenario", "bruto_mercenario", "reforco_aliado", "reforco_aliado", "reforco_aliado", "amplificacao_campo", "amplificacao_campo"],
+"tagline": "Buffs permanentes. Cada invocação fortalece o campo."
+}, {
+"display_name": "Arcano",
+"hero": {
+"display_name": "Comandante Draxos",
+"hero_power": {
+"cost": 1.0,
+"display_name": "Pulso Astral",
 "effect": {
 "action": "damage",
-"amount": 2.0,
+"amount": 1.0,
 "damage_type": "magico",
-"target": "any_enemy_permanent"
+"fluxo_bonus": true,
+"target": "any_permanent_or_hero"
 },
-"id": "disparo_choque",
+"id": "pulso_astral_arcano",
 "once_per_own_turn": true,
 "speed": "normal",
-"text": "Causa 2 de dano mágico a qualquer permanente inimigo."
+"text": "Causa 1 de dano mágico (+Fluxo) a qualquer permanente ou herói."
 },
-"id": "assaltante_heroi",
+"id": "arcano_heroi",
 "max_health": 25.0
 },
-"id": "assaltante",
-"starter_deck": ["incursor_vazio", "incursor_vazio", "incursor_vazio", "lamina_choque", "lamina_choque", "lamina_choque", "fenda_astral", "fenda_astral", "fenda_astral", "pilhador_implacavel", "pilhador_implacavel", "cacador_alado", "cacador_alado", "atirador_frente", "atirador_frente", "garra_vazio", "garra_vazio", "devastador_linha", "interceptor_alado", "descarga_impacto"],
-"tagline": "Pressão imediata. Fechar antes do turno 7."
+"id": "arcano",
+"passiva": {
+"display_name": "Fluxo Contínuo",
+"id": "fluxo_continuo",
+"text": "Cada magia ou magia_de_tabuleiro resolvida pelo jogador neste turno gera 1 Fluxo. Cada Fluxo concede +1 de dano mágico às fontes de dano mágico do jogador neste turno. Fluxo reseta no início do próximo turno do jogador."
+},
+"starter_deck": ["raio_curto", "raio_curto", "raio_curto", "fenda_astral", "fenda_astral", "fenda_astral", "guarda_vila", "guarda_vila", "guarda_vila", "barricada", "barricada", "golpe_preciso", "golpe_preciso", "golpe_preciso", "custodio_fio", "custodio_fio", "conduit_astral", "conduit_astral", "descarga_impacto", "descarga_impacto"],
+"tagline": "Sequenciar magias para amplificar o golpe final."
 }, {
-"display_name": "Arquiteto de Éter",
+"display_name": "Necromante",
 "hero": {
-"display_name": "Novato Draxos",
-"hero_power": {
-"cost": 1.0,
-"display_name": "Reparação de Éter",
-"effect": {
-"action": "heal_permanent",
-"amount": 4.0,
-"target": "any_own_damaged_structure"
-},
-"id": "reparacao_eter",
-"once_per_own_turn": true,
-"speed": "normal",
-"text": "Regenera 4 HP de uma estrutura sua danificada."
-},
-"id": "arquiteto_heroi",
-"max_health": 25.0
-},
-"id": "arquiteto",
-"starter_deck": ["muro_eter", "muro_eter", "muro_eter", "reforco_estrutural", "reforco_estrutural", "reforco_estrutural", "torre_vigilancia", "torre_vigilancia", "torre_vigilancia", "bastiao_arcano", "bastiao_arcano", "pulso_eter", "pulso_eter", "nucleo_eter", "nucleo_eter", "guardiao_cristal", "guardiao_cristal", "elo_eter", "sobrecarga_construto", "colosso_eter"],
-"tagline": "Instalar. Acumular. Dominar passivamente."
-}, {
-"display_name": "Dominador Astral",
-"hero": {
-"display_name": "Novato Draxos",
-"hero_power": {
-"cost": 2.0,
-"display_name": "Dominância Astral",
-"effect": {
-"action": "apply_status",
-"status": "enjoo",
-"target": "any_enemy_permanent"
-},
-"id": "dominancia_astral",
-"once_per_own_turn": true,
-"speed": "normal",
-"text": "Aplica enjoo a um permanente inimigo."
-},
-"id": "dominador_heroi",
-"max_health": 25.0
-},
-"id": "dominador",
-"starter_deck": ["sentinela_supressao", "sentinela_supressao", "sentinela_supressao", "pulso_disruptivo", "pulso_disruptivo", "pulso_disruptivo", "correntes_eter", "correntes_eter", "correntes_eter", "extrator_astral", "extrator_astral", "condutor_dominio", "condutor_dominio", "drenagem_forca", "drenagem_forca", "nevoa_astral", "nevoa_astral", "drenar_vitalidade", "senhor_supressao", "supressao_massa"],
-"tagline": "Paralisia do tabuleiro. O inimigo tem peças — não consegue usá-las."
-}, {
-"display_name": "Tecelão Astral",
-"hero": {
-"display_name": "Novato Draxos",
+"display_name": "Comandante Draxos",
 "hero_power": {
 "cost": 0.0,
-"display_name": "Foco Astral",
+"display_name": "Ritual das Sombras",
 "effect": {
-"action": "add_resonance",
-"amount": 1.0
-},
-"id": "foco_astral",
-"once_per_own_turn": true,
-"speed": "normal",
-"text": "Adiciona 1 de Ressonância."
-},
-"id": "tecelao_heroi",
-"max_health": 25.0
-},
-"id": "tecelao",
-"starter_deck": ["centelha_astral", "centelha_astral", "centelha_astral", "flecha_vinculo", "flecha_vinculo", "flecha_vinculo", "pulso_ressonante", "pulso_ressonante", "pulso_ressonante", "custodio_fio", "custodio_fio", "eco_arcano", "eco_arcano", "barreira_ressonante", "barreira_ressonante", "conduit_astral", "conduit_astral", "onda_eter", "tempestade_ressonancia", "apoteose_astral"],
-"tagline": "Sequenciar feitiços. Explodir no turno certo."
+"action": "ritual_das_sombras",
+"tiers": [{
+"cinzas_cost": 2.0,
+"effect": "debuff_enemy_creature"
 }, {
-"display_name": "Vinculador",
-"hero": {
-"display_name": "Novato Draxos",
-"hero_power": {
-"cost": 2.0,
-"display_name": "Captura Forçada",
-"effect": {
-"action": "capture",
-"hp_threshold": 3.0,
-"max_attack": 4.0,
-"max_health": 4.0,
-"spawn_vinculada": true,
-"target": "any_enemy_permanent_hp_lte"
+"cinzas_cost": 4.0,
+"effect": "spawn_from_memorial_1_1"
+}, {
+"cinzas_cost": 6.0,
+"effect": "spawn_from_memorial_full_stats"
+}]
 },
-"id": "captura_forcada",
+"id": "ritual_das_sombras",
 "once_per_own_turn": true,
 "speed": "normal",
-"text": "Destrói um permanente inimigo com HP ≤ 3. Spawna uma Forma Vinculada com os stats originais (máx 4/4) em um slot vazio seu."
+"text": "0 energia + Cinzas. Degrau I (2): debuff em criatura inimiga. Degrau II (4): invoca 1/1 do Memorial de Batalha. Degrau III (6): invoca com stats originais."
 },
-"id": "vinculador_heroi",
+"id": "necromante_heroi",
 "max_health": 25.0
 },
-"id": "vinculador",
-"starter_deck": ["batedor_eter", "batedor_eter", "batedor_eter", "ferida_astral", "ferida_astral", "ferida_astral", "lacador_vinculo", "lacador_vinculo", "lacador_vinculo", "lanca_captura", "lanca_captura", "fluxo_vinculo", "fluxo_vinculo", "espectro_coletor", "espectro_coletor", "dominacao_forcada", "dominacao_forcada", "mestre_vinculador", "ritual_colheita", "exodia_vinculada"],
-"tagline": "Capturar e converter o exército inimigo."
+"id": "necromante",
+"passiva": {
+"display_name": "Colheita Sombria",
+"id": "colheita_sombria",
+"text": "Sempre que qualquer criatura for destruída em campo — aliada ou inimiga, em qualquer turno — o Necromante gera 1 Cinza. Cinzas acumulam entre turnos e não resetam durante o encontro."
+},
+"starter_deck": ["incursor_vazio", "incursor_vazio", "incursor_vazio", "batedor_eter", "batedor_eter", "batedor_eter", "lamina_choque", "lamina_choque", "bruto_mercenario", "bruto_mercenario", "pulso_disruptivo", "pulso_disruptivo", "pulso_disruptivo", "correntes_eter", "correntes_eter", "correntes_eter", "drenagem_forca", "drenagem_forca", "nevoa_astral", "nevoa_astral"],
+"tagline": "Transformar morte em recurso. Cinzas financiam o Ritual."
 }])

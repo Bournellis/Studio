@@ -104,9 +104,10 @@ func test_fluxo_resets_at_start_of_next_player_turn() -> void:
 	engine.play_card_from_hand(0, {"owner": "inimigo", "slot": 0})
 	assert_eq(engine.fluxo, 1, "Fluxo must be 1 after one spell.")
 
-	# End player turn: pass priority -> discard phase -> enemy turn (auto-pass) -> player upkeep.
+	# End player turn, then pass during the enemy turn so the next player upkeep resolves.
 	engine.pass_priority("jogador")
 	engine.finish_discard_phase()
+	engine.pass_priority("jogador")
 
 	assert_eq(engine.fluxo, 0, "Fluxo must reset to 0 in player upkeep at start of next turn.")
 

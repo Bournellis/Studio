@@ -15,7 +15,7 @@ The track must preserve the validated card-slot runtime while migrating player-f
 - C1 is the sole combat runtime.
 - Official battle modes are implemented: `limpar_mesa`, `duelo`, `ondas`, `defesa`, `chefe_multiparte`, and `quebra_cabeca`.
 - World progression, one-time encounter rewards, progressive NPC rewards, save/load, and art-ready placeholders exist.
-- Runtime validation is green at the latest known baseline: `78/78` (P04–P07 validation pending local run).
+- Runtime validation is green at the latest known baseline: `125/125` GUT tests, 653 asserts, through `tools/validate.gd`.
 - Several player-facing catalog names already use Draxos/elemental language.
 - The generated catalog now exposes the 3 new classes (Invocador, Arcano, Necromante) with `passiva`, `hero`, `hero_power`, and 20-card placeholder starter decks through `ContentLibrary`. Old 5 classes removed.
 - Two new card definitions added: `reforco_aliado` (Invocador buff) and `amplificacao_campo` (Invocador area buff).
@@ -42,4 +42,41 @@ Each prompt must:
 - execute only the next pending prompt in the linear plan
 - keep mechanical IDs stable unless explicitly in the ID migration prompt
 - update records at the end of the prompt
-- run validation after runtime, generated-reso
+- run validation after runtime, generated-resource, scene, data, or test changes
+
+Each pass should still change one player-facing or runtime layer at a time:
+
+1. story labels and dialogue
+2. class fantasy
+3. mission chain framing
+4. card text and reward meaning
+5. RPG progression systems
+6. new content volume
+7. technical ID and asset migration
+
+## Completed in P07
+
+- `BattleEngine` now tracks volatile per-turn `fluxo: int`; increments after each `magia` or `magia_de_tabuleiro` resolved by the player; resets at player upkeep start.
+- `_play_damage_spell` adds `_player_fluxo_bonus()` to base damage amount (Arcano only).
+- `_try_trigger_fluxo` and `_player_fluxo_bonus` helpers isolate the logic; both guard on `active_class_id != "arcano"`.
+- `test_arcano_fluxo.gd` added with 13 tests: counter init, increment per spell type, stacking, turn reset, damage amplification on 2nd/3rd spell, no-class isolation, and creature attack isolation.
+
+## Next Implementation Candidate
+
+Continue with `P08 - Arcano: Pulso Astral Hero Power and Deck Activation` from `linear-execution-plan.md`.
+
+Expected scope:
+
+- Implement Pulso Astral hero power: `action: damage`, cost 1, once per own turn, targets any permanent or hero, damage uses fluxo pipeline
+- Activate Arcano starter deck end-to-end
+
+## Do Not Start Yet
+
+- later class engine systems beyond P02
+- final planet/crystal naming as hard canon
+- broad card economy
+- equipment/items
+- save-breaking technical ID rename
+- final art import
+
+Those depend on decisions or later passes in `implementation-plan.md`.

@@ -25,7 +25,7 @@ Proximo prompt: `P08 - Arcano: Pulso Astral Hero Power and Deck Activation`.
 - [x] P02: `select_class()`, `has_selected_class()`, `get_class_deck_ids()`, `initialize_deck_for_class()` implementados.
 - [x] P02: snapshot pre-combate preserva e restaura `selected_class`.
 - [x] P02: 8 novos testes cobrem new game, selecao valida/invalida, fallback de deck, save/load, save antigo sem campo, valor corrompido e snapshot.
-- [ ] P02+P03: validacao Godot pendente (rodar localmente; `.tres` regenera automaticamente no `before_all` do GUT).
+- [x] P02+P03: validacao Godot coberta em 2026-05-12 com 125/125 testes e 653 asserts.
 - [x] P03: 5 classes antigas removidas de `slice_catalog.json`.
 - [x] P03: 3 novas classes (Invocador, Arcano, Necromante) com `passiva`, `hero_power` e starter decks de 20 cartas validados.
 - [x] P03: 2 novas cartas adicionadas: `reforco_aliado` e `amplificacao_campo` (Invocador).
@@ -37,15 +37,40 @@ Proximo prompt: `P08 - Arcano: Pulso Astral Hero Power and Deck Activation`.
 - [x] P04: `Preparar Defesa` mantido como fallback sem classe ativa.
 - [x] P04: `_apply_permanent_stat_buff` helper adicionado; `reforco_aliado` e `amplificacao_campo` sao cartas jogaveis.
 - [x] P04: `test_class_invocador.gd` com 14 testes cobrindo passiva, hero power, fallback legacy e cartas de buff.
-- [ ] P04: validacao Godot pendente (rodar localmente).
+- [x] P04: validacao Godot coberta em 2026-05-12 com 125/125 testes e 653 asserts.
 - [x] P05: starter deck do Invocador ativado via `GameSession.initialize_deck_for_class()`.
 - [x] P05: `modes/class_select/class_select.tscn` e `class_select_root.gd` criados; exibe 3 classes com nome, tagline, passiva e hero power.
 - [x] P05: `boot_root.gd` roteado — Novo jogo vai para `class_select.tscn` em vez de `world.tscn`.
 - [x] P05: `GameSession.get_battle_config()` passa `class_id` ao `BattleEngine` quando classe selecionada.
 - [x] P05: 6 novos testes em `test_content_and_session.gd` cobrindo battle config, selecao end-to-end, validade do deck e round-trip save/load.
-- [ ] P05: validacao Godot pendente (rodar localmente).
+- [x] P05: validacao Godot coberta em 2026-05-12 com 125/125 testes e 653 asserts.
 - [x] P06: botao de hero power le `display_name` do catalogo (`"Amplificar"` para Invocador).
 - [x] P06: `battle_root.gd` exibe botoes de alvo por slot (`"Amplificar → Slot X"`) quando `effect.target == "any_own_creature"`.
 - [x] P06: label "Hero Power:" no class select corrigido para portugues ("Poder de heroi:").
 - [x] P06: hint de feedback de batalha desacoplada do nome "Preparar Defesa".
-- [x] P06: 3 novos testes em `test_content_and_session.gd` cobrindo
+- [x] P06: 3 novos testes em `test_content_and_session.gd` cobrindo display_name, target e fallback.
+- [x] P06: Invocador registrado como primeira classe jogavel completa.
+- [x] P06: validacao Godot coberta em 2026-05-12 com 125/125 testes e 653 asserts.
+- [x] P07: contador `fluxo` volatil adicionado ao `BattleEngine` (var fluxo, reset no upkeep, incrementa por magia/magia_de_tabuleiro).
+- [x] P07: `_player_fluxo_bonus` e `_try_trigger_fluxo` helpers adicionados; ambos guardam por `active_class_id != "arcano"`.
+- [x] P07: `_play_damage_spell` adiciona fluxo ao `amount`; `play_card_from_hand` chama `_try_trigger_fluxo` apos damage/board spells.
+- [x] P07: `test_arcano_fluxo.gd` com 13 testes: init, incremento por tipo de spell, stacking, reset por turno, amplificacao no 2o e 3o spell, isolamento sem classe, isolamento em ataques de criatura.
+- [x] P07: validacao Godot verde em 2026-05-12 com 125/125 testes e 653 asserts.
+
+## Regras De Registro
+
+- Atualizar o cursor e status do prompt em `linear-execution-plan.md`.
+- Atualizar `Projetos/rpg-turnos/implementation/current-status.md` quando o baseline, proximo passo ou validacao mudarem.
+- Atualizar `Projetos/rpg-turnos/implementation/tracks/track-02-draxos-lore-progression/current-status.md` quando o status da track mudar.
+- Atualizar `08_Coordenacao_Agentes/Estado_Atual.md` quando o snapshot observavel do projeto mudar.
+- Rodar validacao Godot apos mudancas de runtime, dados, cenas, recursos gerados ou testes.
+
+## Proximo Passo
+
+Executar P08 - Arcano: Pulso Astral Hero Power and Deck Activation:
+
+1. Adicionar handler `action: damage` em `use_player_hero_power` para Arcano (Pulso Astral): dano 1 magico + fluxo, custo 1, 1x/turno, alvo any_permanent_or_hero.
+2. Ativar starter deck do Arcano via `GameSession.initialize_deck_for_class("arcano")`.
+3. Adicionar Arcano como opcao selecionavel na class_select.tscn.
+4. Testes: hero power inflige dano correto, fluxo amplifica hero power, fallback sem classe nao usa hero power do Arcano.
+5. Rodar validacao.

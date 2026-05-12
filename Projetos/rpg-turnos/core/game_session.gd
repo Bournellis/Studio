@@ -292,4 +292,7 @@ func initialize_deck_for_class() -> void:
 	if not has_selected_class():
 		return
 	var deck: Array = ContentLibrary.get_class_starter_deck_ids(selected_class)
-	if deck.
+	if deck.is_empty():
+		return
+	unlocked_card_ids = deck.duplicate()
+	selected_deck_ids = deck.duplicate()

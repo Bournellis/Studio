@@ -403,4 +403,3 @@ func _delete_test_save() -> void:
 	var user_dir: DirAccess = DirAccess.open("user://")
 	if user_dir != null:
 		user_dir.remove(TEST_SAVE_FILENAME)
-

@@ -420,4 +420,3 @@ Known future dependencies:
 - P08-P13 depend on the class selection and class starter deck plumbing.
 - P16 should wait until at least P14, because reward/card meaning depends on the playable class baseline.
 - P20 must wait until player-facing naming stabilizes.
-  

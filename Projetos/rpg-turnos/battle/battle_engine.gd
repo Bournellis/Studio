@@ -1816,4 +1816,34 @@ func _keyword_alias(keyword: String) -> String:
 	match keyword:
 		"rapido":
 			return "fast"
-		"defe
+		"defensor":
+			return "defender"
+		"alcance":
+			return "reach"
+		"atropelar":
+			return "trample"
+		_:
+			return keyword
+
+func _card_name(card_id: String) -> String:
+	if _catalog == null:
+		return card_id
+	return _catalog.card_name(card_id)
+
+func _visual(kind: String, owner_id: String, slot_index: int, text: String, color: Color) -> void:
+	eventos_visuais.append({
+		"kind": kind,
+		"owner": _normalize_owner_id(owner_id),
+		"slot": slot_index,
+		"text": text,
+		"color": color
+	})
+
+func _log(line: String) -> void:
+	log_lines.append(line)
+	if log_lines.size() > MAX_LOG_LINES:
+		log_lines.pop_front()
+
+func _fail(message: String) -> Dictionary:
+	_log(message)
+	return {"ok": false, "message": message}

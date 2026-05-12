@@ -169,4 +169,4 @@ func _card_style(selected: bool) -> StyleBoxFlat:
 	style.content_margin_top = 18
 	style.content_margin_right = 18
 	style.content_margin_bottom = 18
-	return st
+	return style

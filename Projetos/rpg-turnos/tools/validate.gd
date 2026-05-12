@@ -56,8 +56,8 @@ func _validate_contract() -> Dictionary:
 		return {"ok": false, "message": "Duelista Bandido encounter must exist."}
 	if catalog.first_npc_reward_card_id == "" or catalog.find_card(catalog.first_npc_reward_card_id) == null:
 		return {"ok": false, "message": "First NPC reward card must exist."}
-	if catalog.classes.size() != 5:
-		return {"ok": false, "message": "Generated class catalog must expose 5 classes."}
+	if catalog.classes.size() != 3:
+		return {"ok": false, "message": "Generated class catalog must expose 3 classes."}
 	for class_data: Dictionary in catalog.classes:
 		var class_id: String = str(class_data.get("id", ""))
 		var starter_deck: Array = Array(class_data.get("starter_deck", []))
