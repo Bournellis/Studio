@@ -37,9 +37,9 @@ It defines execution order only.
 
 ## Current Execution Cursor
 
-Next prompt: `P05 - Invocador Deck Activation and Class Selection Screen`.
+Next prompt: `P06 - Invocador Integration Checkpoint`.
 
-Current focus: activate Invocador starter deck through session/deck setup flow; create class selection scene; route Novo jogo through class selection.
+Current focus: review battle labels, hero power button text, and result summaries for Invocador; close Invocador slice cleanly before Arcano.
 
 ## Linear Prompt Sequence
 
@@ -50,7 +50,7 @@ Current focus: activate Invocador starter deck through session/deck setup flow; 
 | P02 | complete | Add `selected_class` session/save state and class deck helpers without UI. | Run validation |
 | P03 | complete | Regenerate catalog with 3 new classes (Invocador, Arcano, Necromante); remove old 5. | Run validation |
 | P04 | complete | Implement Invocador: Comandante de Campo passive trigger and Amplificar hero power. | Run validation |
-| P05 | pending | Activate Invocador starter deck; add class selection screen MVP. | Run validation |
+| P05 | complete | Activate Invocador starter deck; add class selection screen MVP. | Run validation |
 | P06 | pending | Invocador integration checkpoint: labels, tests, docs, records. | Run validation |
 | P07 | pending | Implement Arcano: Fluxo counter and magic damage amplification pipeline. | Run validation |
 | P08 | pending | Implement Arcano: Pulso Astral hero power and activate Arcano starter deck. | Run validation |
@@ -420,3 +420,4 @@ Known future dependencies:
 - P08-P13 depend on the class selection and class starter deck plumbing.
 - P16 should wait until at least P14, because reward/card meaning depends on the playable class baseline.
 - P20 must wait until player-facing naming stabilizes.
+                            

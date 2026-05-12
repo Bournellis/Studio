@@ -1,6 +1,6 @@
 # Track 02 Current Status
 
-- Last Updated: `2026-05-12` (P04 complete)
+- Last Updated: `2026-05-12` (P05 complete)
 - Status: `ACTIVE_LINEAR_PLAN`
 - Track Name: `Track 02 - Draxos Lore And Progression Alignment`
 
@@ -26,6 +26,10 @@ The track must preserve the validated card-slot runtime while migrating player-f
 - `Comandante de Campo` passive implemented: on player creature summon, highest-ATK ally gains +1/+0 permanent.
 - `_apply_permanent_stat_buff` and `_play_stat_buff_spell` infrastructure added; `reforco_aliado` and `amplificacao_campo` are now playable cards.
 - `test_class_invocador.gd` added with 14 tests covering passive, hero power, legacy fallback, and buff cards.
+- `modes/class_select/class_select.tscn` + `class_select_root.gd` created: displays 3 classes (name, tagline, passiva, hero power); player selects one; session and deck initialized; save written; routes to world.
+- `boot_root.gd` updated: Novo jogo routes to `class_select.tscn` instead of `world.tscn`.
+- `GameSession.get_battle_config()` now includes `class_id` when a class is selected, wiring P04 hero power dispatch into live battles.
+- 6 new P05 tests added to `test_content_and_session.gd`: battle config with/without class, full Invocador selection flow, deck validity, save/load round-trip, battle config persistence.
 - Mechanical IDs remain legacy-compatible and should not be renamed opportunistically.
 
 ## Active Planning Rule
@@ -51,24 +55,8 @@ Each pass should still change one player-facing or runtime layer at a time:
 
 ## Next Implementation Candidate
 
-Continue with `P05 - Invocador Deck Activation and Class Selection Screen` from `linear-execution-plan.md`.
+Continue with `P06 - Invocador Integration Checkpoint` from `linear-execution-plan.md`.
 
 Expected scope:
 
-- Activate Invocador starter deck through session/deck setup flow
-- Create class selection scene (script/tool generation, not raw `.tscn`)
-- Route `Novo jogo` to class selection when no class is selected
-- Display 3 classes with name, tagline, and one commitment line each
-- Confirm selection, persist to save, initialize class deck, enter world
-- Add tests for scene routing, session mutation, deck loading, and save/load round-trip
-
-## Do Not Start Yet
-
-- later class engine systems beyond P02
-- final planet/crystal naming as hard canon
-- broad card economy
-- equipment/items
-- save-breaking technical ID rename
-- final art import
-
-Those depend on decisions or later passes in `implementation-plan.md`.
+- Review battle labels, hero power button text, result summaries, and deck setup names for Invocado

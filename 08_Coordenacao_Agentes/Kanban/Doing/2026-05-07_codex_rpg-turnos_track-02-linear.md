@@ -13,7 +13,7 @@ Executar a Track 02 em ordem linear, prompt a prompt, mantendo todos os registro
 
 ## Cursor Atual
 
-Proximo prompt: `P05 - Invocador Deck Activation and Class Selection Screen`.
+Proximo prompt: `P06 - Invocador Integration Checkpoint`.
 
 ## Progresso
 
@@ -38,6 +38,12 @@ Proximo prompt: `P05 - Invocador Deck Activation and Class Selection Screen`.
 - [x] P04: `_apply_permanent_stat_buff` helper adicionado; `reforco_aliado` e `amplificacao_campo` sao cartas jogaveis.
 - [x] P04: `test_class_invocador.gd` com 14 testes cobrindo passiva, hero power, fallback legacy e cartas de buff.
 - [ ] P04: validacao Godot pendente (rodar localmente).
+- [x] P05: starter deck do Invocador ativado via `GameSession.initialize_deck_for_class()`.
+- [x] P05: `modes/class_select/class_select.tscn` e `class_select_root.gd` criados; exibe 3 classes com nome, tagline, passiva e hero power.
+- [x] P05: `boot_root.gd` roteado — Novo jogo vai para `class_select.tscn` em vez de `world.tscn`.
+- [x] P05: `GameSession.get_battle_config()` passa `class_id` ao `BattleEngine` quando classe selecionada.
+- [x] P05: 6 novos testes em `test_content_and_session.gd` cobrindo battle config, selecao end-to-end, validade do deck e round-trip save/load.
+- [ ] P05: validacao Godot pendente (rodar localmente).
 
 ## Regras De Registro
 
@@ -45,16 +51,4 @@ Proximo prompt: `P05 - Invocador Deck Activation and Class Selection Screen`.
 - Atualizar `Projetos/rpg-turnos/implementation/current-status.md` quando o baseline, proximo passo ou validacao mudarem.
 - Atualizar `Projetos/rpg-turnos/implementation/tracks/track-02-draxos-lore-progression/current-status.md` quando o status da track mudar.
 - Atualizar `08_Coordenacao_Agentes/Estado_Atual.md` quando o snapshot observavel do projeto mudar.
-- Rodar validacao Godot apos mudancas de runtime, dados, cenas, recursos gerados ou testes.
-
-## Proximo Passo
-
-Executar P05:
-
-1. Ativar starter deck do Invocador no fluxo de setup de sessao/deck.
-2. Criar cena de selecao de classe (via script/tool, nao `.tscn` manual).
-3. Rotear `Novo jogo` para selecao de classe quando nenhuma classe estiver selecionada.
-4. Exibir 3 classes com nome, tagline e uma linha de comprometimento cada.
-5. Confirmar selecao, persistir no save, inicializar deck de classe, entrar no mundo.
-6. Adicionar testes para roteamento de cena, mutacao de sessao, carregamento de deck e round-trip save/load.
-7. Rodar validacao.
+- Rodar validacao Godot apo

@@ -64,7 +64,7 @@ func _build_menu() -> void:
 func _on_new_game_pressed() -> void:
 	GameSession.start_new_game()
 	GameSession.save_game()
-	get_tree().change_scene_to_file("res://modes/world/world.tscn")
+	get_tree().change_scene_to_file("res://modes/class_select/class_select.tscn")
 
 func _on_continue_pressed() -> void:
 	GameSession.load_game()
@@ -111,4 +111,4 @@ func _build_logo_container() -> Control:
 		title.set_anchors_preset(Control.PRESET_FULL_RECT)
 		logo_container.add_child(title)
 
-	return logo_container
+	return l

@@ -318,9 +318,9 @@ func test_snapshot_preserves_and_restores_selected_class() -> void:
 	GameSession.restore_pre_combat_snapshot()
 	assert_eq(GameSession.selected_class, first_class_id)
 
-func _delete_test_save() -> void:
-	if not FileAccess.file_exists(TEST_SAVE_PATH):
-		return
-	var user_dir: DirAccess = DirAccess.open("user://")
-	if user_dir != null:
-		user_dir.remove(TEST_SAVE_FILENAME)
+# --- P05: class selection flow and battle config ---
+
+func test_get_battle_config_includes_class_id_when_class_selected() -> void:
+	var ok: bool = GameSession.select_class("invocador")
+	assert_true(ok)
+

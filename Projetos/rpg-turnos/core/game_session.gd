@@ -147,7 +147,10 @@ func set_selected_deck(deck_ids: Array) -> bool:
 	return true
 
 func get_battle_config() -> Dictionary:
-	return {"encontro": active_encounter_id}
+	var config: Dictionary = {"encontro": active_encounter_id}
+	if has_selected_class():
+		config["class_id"] = selected_class
+	return config
 
 func set_active_encounter(encounter_id: String) -> void:
 	active_encounter_id = encounter_id
@@ -289,7 +292,4 @@ func initialize_deck_for_class() -> void:
 	if not has_selected_class():
 		return
 	var deck: Array = ContentLibrary.get_class_starter_deck_ids(selected_class)
-	if deck.is_empty():
-		return
-	unlocked_card_ids = deck.duplicate()
-	selected_deck_ids = deck.duplicate()
+	if deck.
