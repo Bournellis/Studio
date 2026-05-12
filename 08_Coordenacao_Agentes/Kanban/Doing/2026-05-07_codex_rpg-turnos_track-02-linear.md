@@ -13,7 +13,7 @@ Executar a Track 02 em ordem linear, prompt a prompt, mantendo todos os registro
 
 ## Cursor Atual
 
-Proximo prompt: `P09 - Arcano Integration Checkpoint`.
+Proximo prompt: `P10 - Necromante: Cinzas and Memorial de Batalha`.
 
 ## Progresso
 
@@ -48,4 +48,4 @@ Proximo prompt: `P09 - Arcano Integration Checkpoint`.
 - [x] P06: `battle_root.gd` exibe botoes de alvo por slot (`"Amplificar → Slot X"`) quando `effect.target == "any_own_creature"`.
 - [x] P06: label "Hero Power:" no class select corrigido para portugues ("Poder de heroi:").
 - [x] P06: hint de feedback de batalha desacoplada do nome "Preparar Defesa".
-- [x] P06: 3 novos testes em `test_content_and_session.gd` cobrin
+- [x] P06: 3 novos testes em `test_content_and_sessi

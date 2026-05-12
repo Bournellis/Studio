@@ -37,9 +37,9 @@ It defines execution order only.
 
 ## Current Execution Cursor
 
-Next prompt: `P09 - Arcano Integration Checkpoint`.
+Next prompt: `P10 - Necromante: Cinzas and Memorial de Batalha`.
 
-Current focus: Arcano checkpoint — confirm end-to-end class select labels, Pulso Astral button text in battle_root, and add any missing integration tests.
+Current focus: Necromante foundational counters — cinzas per-turn-persistent counter and memorial_de_batalha per-encounter list of destroyed creatures.
 
 ## Linear Prompt Sequence
 
@@ -54,7 +54,7 @@ Current focus: Arcano checkpoint — confirm end-to-end class select labels, Pul
 | P06 | complete | Invocador integration checkpoint: labels, tests, docs, records. | Run validation |
 | P07 | complete | Implement Arcano: Fluxo counter and magic damage amplification pipeline. | Run validation |
 | P08 | complete | Implement Arcano: Pulso Astral hero power and activate Arcano starter deck. | Run validation |
-| P09 | pending | Arcano integration checkpoint: labels, tests, docs, records. | Run validation |
+| P09 | complete | Arcano integration checkpoint: labels, tests, docs, records. | Run validation |
 | P10 | pending | Implement Necromante: Cinzas counter and Memorial de Batalha per encounter. | Run validation |
 | P11 | pending | Implement Necromante: Ritual das Sombras hero power with 3-tier Cinzas cost. | Run validation |
 | P12 | pending | Implement Necromante: token spawn from Memorial, `enjoo_estendido`, "ao morrer" triggers. | Run validation |
@@ -412,7 +412,7 @@ Every implementation prompt must leave the following record trail:
 
 ## Current Blockers
 
-- None for P07.
+- None for P10.
 
 Known future dependencies:
 
@@ -420,4 +420,4 @@ Known future dependencies:
 - P08-P13 depend on the class selection and class starter deck plumbing.
 - P16 should wait until at least P14, because reward/card meaning depends on the playable class baseline.
 - P20 must wait until player-facing naming stabilizes.
-             
+  

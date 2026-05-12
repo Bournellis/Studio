@@ -397,9 +397,8 @@ func test_no_class_hero_power_returns_empty() -> void:
 	var hp: Dictionary = ContentLibrary.get_class_hero_power("")
 	assert_true(hp.is_empty(), "get_class_hero_power with empty class_id must return empty dict (Preparar Defesa fallback).")
 
-func _delete_test_save() -> void:
-	if not FileAccess.file_exists(TEST_SAVE_PATH):
-		return
-	var user_dir: DirAccess = DirAccess.open("user://")
-	if user_dir != null:
-		user_dir.remove(TEST_SAVE_FILENAME)
+# --- P09: Arcano integration checkpoint — catalog data ---
+
+func test_arcano_hero_power_display_name_is_pulso_astral() -> void:
+	var hp: Dictionary = ContentLibrary.get_class_hero_power("arcano")
+	asser
