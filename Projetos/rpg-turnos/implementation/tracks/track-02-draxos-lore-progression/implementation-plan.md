@@ -261,4 +261,3 @@ Resumo:
 5. Rodar validação.
 
 Depois disso, seguir estritamente o cursor do plano linear. A tela de selecao de classe nao deve comecar antes dos prompts de sessao, hero power e deck do Assaltante.
-                                                                                                                                                           

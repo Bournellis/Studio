@@ -564,4 +564,14 @@ O engine representa Formas Vinculadas como permanentes runtime sem `card_id` no 
 | `duration: extended` em enjoo | Supressão em Massa | Média | Dominador |
 | `lifesteal: armor` | Drenar Vitalidade | Baixa | Dominador |
 | `gain_stats` permanente condicional | Extrator | Baixa (usa upkeep system) | Dominador |
-| Ressonâ
+| Ressonância counter | Todas as cartas do Tecelão | Baixa | Tecelão |
+| `resonance_override` condicional | Pulso Ressonante, Onda de Éter | Baixa | Tecelão |
+| `amount: resonance` | Centelha, Eco, Barreira, Tempestade, Apoteose | Trivial (lê variável) | Tecelão |
+| `on_spell_cast` trigger | Custódio, Conduit | Média | Tecelão |
+| `resonance_milestone` once_per_turn | Conduit Astral | Média | Tecelão |
+| Spawn token runtime | Captura Forçada, Espectro, Lança, Mestre, Ritual | Alta | Vinculador |
+| `non_lethal` dano | Ferida Astral | Baixa | Vinculador |
+| `force_combat` inimigo vs inimigo | Dominação Forçada | Média | Vinculador |
+| `count_own_tag` | Fluxo de Vínculo, Sobrecarga, Exodia | Baixa | Vinculador |
+| `on_any_enemy_destroyed` trigger | Espectro Coletor | Média | Vinculador |
+| `capture` hero power | Captura Forçada | Alta (depende de spawn) | Vinculador |

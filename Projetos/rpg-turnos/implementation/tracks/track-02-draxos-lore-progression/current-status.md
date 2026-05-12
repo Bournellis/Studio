@@ -52,4 +52,18 @@ Expected scope:
 
 - Replace hardcoded `Preparar Defesa` hero power fallback with data-driven loading from class data
 - Implement `Amplificar` hero power: permanent +2/+0 to a chosen ally (cost 1, once per own turn)
-- I
+- Implement `Comandante de Campo` passive: on any creature summon by player, buff highest-ATK ally +1/+0 permanent
+- Handle tie-breaking (player chooses) in modes where priority is available
+- Add tests: passive triggers on summon, buff is permanent through turns, hero power buff is permanent, no trigger when field is empty, legacy `Preparar Defesa` remains as no-class fallback
+- Run validation
+
+## Do Not Start Yet
+
+- later class engine systems beyond P02
+- final planet/crystal naming as hard canon
+- broad card economy
+- equipment/items
+- save-breaking technical ID rename
+- final art import
+
+Those depend on decisions or later passes in `implementation-plan.md`.

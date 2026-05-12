@@ -428,4 +428,19 @@ This is the first NPC reward and should be stored as `first_npc_reward_card`. Th
 | Encounter | Reward(s) | Type | Cost | Notes |
 |---|---|---|---|---|
 | Operacao de Pouso | Fera Alfa Subjugada | criatura | 3 | 4/2, atropelar |
-| Confronto com Gua
+| Confronto com Guardiao | Descarga Astral | magia | 3 | 4 dano magico, instantaneo |
+| Confronto com Guardiao | Flagelo Astral | magia | 6 | 6 dano magico |
+| Tomada do Conduto | Sentinela Alada | criatura | 4 | 2/4, voadora+alcance |
+| Tomada do Conduto | Torre de Cristal | estrutura | 5 | 3/7, alcance+cobertura |
+| Avanco ao Bastiao | Manifestacao Vulcanica | criatura | 6 | 5/6, voadora+atropelar |
+| Avanco ao Bastiao | Comando de Dominio | magia_de_tabuleiro | 5 | remove enjoo de todas as criaturas amigas |
+| Guardiao do Conduto | Executor Veterano | criatura | 5 | 5/5 (duplicado: NPC ou enc.) |
+| Invasão em Ondas (opc.) | Chuva de Brasas | magia_de_tabuleiro | 4 | (duplicado: NPC ou enc.) |
+
+Executor Veterano and Chuva de Fragmentos appear in both the NPC list and an encounter reward. The player receives each from whichever source comes first; the second source gives nothing (already unlocked).
+
+Completed encounters may be re-entered for practice, but `claimed_encounter_reward_ids` prevents a second reward claim.
+
+## 8. Historical Notes
+
+Previous notes that mention energy starting at 1, a 10-card deck, `Preparar` drawing a card, `Duelo antigo`, phase variants, a fixed permanent carry-over hand limit of 8, an optional pre-pass discard step (now replaced by the mandatory descarte phase), or a draw of 1 per turn are historical. They do not describe the active runtime.

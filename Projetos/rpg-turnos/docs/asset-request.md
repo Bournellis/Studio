@@ -182,4 +182,4 @@ Estas cartas existem no catálogo mas são usadas apenas pelo inimigo. Arte não
 Frames restantes, todos os retratos, marcadores de mapa, `ui_logo`, `result_bg_*`, artes das 5 últimas cartas do deck inicial, artes das rewards
 
 **🟢 Polish:**
-`menu_background`, `map_environment`, `card_art_flagelo`, `card_art_torre_blindada`, `card_art_dragao_jovem` (ID tecnico legado; Manifestacao Vulcanica), `card_art_chamado_hostes`,
+`menu_background`, `map_environment`, `card_art_flagelo`, `card_art_torre_blindada`, `card_art_dragao_jovem` (ID tecnico legado; Manifestacao Vulcanica), `card_art_chamado_hostes`, VFX sheets

@@ -333,4 +333,90 @@ Goal: align mission chain, rewards, and text around Draxos operation logic.
 
 Expected work:
 
-- Assign mission purpose to each existing enc
+- Assign mission purpose to each existing encounter.
+- Review rewards meaning after classes are playable.
+- Keep technical IDs stable.
+- Update content docs and generated resources.
+
+Exit criteria:
+
+- The existing map reads as a coherent Draxos operation arc.
+
+### P17 - RPG Progression Slice
+
+Goal: add the first explicit RPG progression layer.
+
+Expected work:
+
+- Define the minimal progression unit: rank, status, level, or hybrid.
+- Add session/save state.
+- Gate dialogue or mission access through progression.
+- Add tests for persistence and progression unlocks.
+
+Exit criteria:
+
+- Player growth maps to the Draxos commander expanding authority and mission access during the invasion.
+
+### P18 - Encounter Design Pass
+
+Goal: make encounters pressure the five class identities.
+
+Expected work:
+
+- Add or adjust at least one encounter pressure point per class weakness.
+- Use existing modes before adding new rules.
+- Add tests for new objective/data assumptions.
+
+Exit criteria:
+
+- Each class has at least one encounter that stresses its weakness.
+
+### P19 - New Content Expansion Cluster
+
+Goal: add a small campaign content cluster only after systems are stable.
+
+Expected work:
+
+- Add a small set of encounters, boards, rewards, and mission text.
+- Keep every new piece tied to an operational purpose.
+- Validate generated resources and tests.
+
+Exit criteria:
+
+- New content expands the campaign without changing core rules unnecessarily.
+
+### P20 - Technical ID And Asset Migration
+
+Goal: clean legacy IDs after player-facing naming has stabilized.
+
+Expected work:
+
+- Plan and implement save migration.
+- Rename technical IDs in data, generated resources, tests, scenes, and `AssetIds`.
+- Keep compatibility for existing saves where needed.
+
+Exit criteria:
+
+- Technical IDs match stable terminology without breaking saves or generated content.
+
+## Required End-Of-Prompt Record Updates
+
+Every implementation prompt must leave the following record trail:
+
+- This file: prompt status and `Current Execution Cursor`.
+- `../../current-status.md`: latest baseline, validation, and next prompt when observable status changes.
+- `current-status.md`: Track 02 local status and next action.
+- `implementation-plan.md`: only if the stage-level plan changes.
+- `../../../../../08_Coordenacao_Agentes/Estado_Atual.md`: only if studio snapshot changes.
+- Kanban: update the active Doing card or move it when a larger milestone closes.
+
+## Current Blockers
+
+- None for P04.
+
+Known future dependencies:
+
+- P06 depends on P01-P05.
+- P08-P13 depend on the class selection and class starter deck plumbing.
+- P16 should wait until at least P14, because reward/card meaning depends on the playable class baseline.
+- P20 must wait until player-facing naming stabilizes.
