@@ -252,7 +252,7 @@ func _status_text() -> String:
 	var last_result_text: String = ""
 	if RunSession.last_completed_node_id != "":
 		last_result_text = "\nUltimo encontro concluido: %s" % RunSession.last_completed_node_id
-	var reward_text: String = "\nRecompensas pendentes: %d" % RunSession.rewards_pending.size()
+	var reward_text: String = "\nRecompensas automaticas aplicadas: %d" % RunSession.automatic_reward_ids.size()
 	if RunSession.current_node_id == "":
 		return "Classe: %s\n%s%s%s%s\nConcluidos: %s\n\nSelecione o proximo encontro disponivel no planeta." % [
 			RunSession.selected_class_display_name,
@@ -280,37 +280,12 @@ func _completed_nodes_text() -> String:
 func _rebuild_reward_choices() -> void:
 	for child: Node in reward_box.get_children():
 		child.queue_free()
-	if not RunSession.has_pending_reward():
-		var empty_label: Label = Label.new()
-		empty_label.name = "RunMapNoPendingReward"
-		empty_label.text = "Sem recompensa pendente."
-		empty_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		empty_label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
-		reward_box.add_child(empty_label)
-		return
-
-	var title: Label = Label.new()
-	title.name = "RunMapPendingRewardLabel"
-	title.text = "Recompensa pendente"
-	title.add_theme_font_size_override("font_size", 17)
-	title.add_theme_color_override("font_color", UiTokens.color("text_primary"))
-	reward_box.add_child(title)
-
-	var add_card_button: Button = Button.new()
-	add_card_button.name = "RunMapRewardAddPulsoAstralButton"
-	add_card_button.text = "Adicionar carta de Classe ao deck"
-	add_card_button.pressed.connect(func() -> void:
-		_apply_placeholder_reward(RunSession.REWARD_ADD_PULSO_ASTRAL)
-	)
-	reward_box.add_child(add_card_button)
-
-	var health_button: Button = Button.new()
-	health_button.name = "RunMapRewardReinforceHealthButton"
-	health_button.text = "Reforcar vida +2"
-	health_button.pressed.connect(func() -> void:
-		_apply_placeholder_reward(RunSession.REWARD_REINFORCE_HEALTH)
-	)
-	reward_box.add_child(health_button)
+	var label: Label = Label.new()
+	label.name = "RunMapAutomaticRewards"
+	label.text = "Recompensas fixas sao aplicadas automaticamente ao vencer mapas 2, 3, 5 e 7."
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+	reward_box.add_child(label)
 
 func _apply_placeholder_reward(reward_id: String) -> void:
 	var result: Dictionary = RunSession.apply_placeholder_reward(reward_id)

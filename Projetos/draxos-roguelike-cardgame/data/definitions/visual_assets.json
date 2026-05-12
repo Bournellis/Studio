@@ -212,24 +212,72 @@
     "elemental_pesado_c": {
       "art_path": "res://assets/cards/art/elemental_pesado_c.png",
       "frame_id": "frame_elemental"
+    },
+    "elemental_duelista": {
+      "art_path": "res://assets/cards/art/elemental_duelista.png",
+      "frame_id": "frame_elemental"
+    },
+    "elemental_assaltante": {
+      "art_path": "res://assets/cards/art/elemental_assaltante.png",
+      "frame_id": "frame_elemental"
+    },
+    "elemental_guardiao": {
+      "art_path": "res://assets/cards/art/elemental_guardiao.png",
+      "frame_id": "frame_elemental"
+    },
+    "elemental_elite_agil": {
+      "art_path": "res://assets/cards/art/elemental_elite_agil.png",
+      "frame_id": "frame_elemental"
+    },
+    "elemental_elite_bruto": {
+      "art_path": "res://assets/cards/art/elemental_elite_bruto.png",
+      "frame_id": "frame_elemental"
+    },
+    "elemental_tita": {
+      "art_path": "res://assets/cards/art/elemental_tita.png",
+      "frame_id": "frame_elemental"
     }
   },
   "run_map_nodes": {
     "n01_pouso_elemental": {
-      "position": {"x": 0.18, "y": 0.60},
-      "label": "Pouso"
-    },
-    "s01_incursao_lateral": {
-      "position": {"x": 0.42, "y": 0.36},
-      "label": "Incursao"
+      "position": {"x": 0.10, "y": 0.63},
+      "label": "01 Limpar"
     },
     "n02_ondas_iniciais": {
-      "position": {"x": 0.52, "y": 0.62},
-      "label": "Ondas"
+      "position": {"x": 0.20, "y": 0.52},
+      "label": "02 Ondas"
     },
-    "n03_chefe_invocador": {
-      "position": {"x": 0.80, "y": 0.50},
-      "label": "Chefe"
+    "n03_duelo_inicial": {
+      "position": {"x": 0.30, "y": 0.62},
+      "label": "03 Duelo"
+    },
+    "n04_defesa_posicao": {
+      "position": {"x": 0.40, "y": 0.48},
+      "label": "04 Defesa"
+    },
+    "n05_chefe_invocador": {
+      "position": {"x": 0.50, "y": 0.58},
+      "label": "05 Chefe"
+    },
+    "n06_sobreviver_turnos": {
+      "position": {"x": 0.60, "y": 0.45},
+      "label": "06 Sobreviver"
+    },
+    "n07_limpeza_elite": {
+      "position": {"x": 0.68, "y": 0.58},
+      "label": "07 Elite"
+    },
+    "n08_ondas_avancadas": {
+      "position": {"x": 0.76, "y": 0.44},
+      "label": "08 Ondas"
+    },
+    "n09_duelo_elite": {
+      "position": {"x": 0.84, "y": 0.54},
+      "label": "09 Duelo"
+    },
+    "n10_chefe_final": {
+      "position": {"x": 0.92, "y": 0.42},
+      "label": "10 Final"
     }
   }
 }

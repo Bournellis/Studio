@@ -1,170 +1,100 @@
 # Game Design Document
 
-- Last Updated: `2026-05-07`
-- Status: `bootstrap design`
+- Last Updated: `2026-05-12`
+- Status: `Track 01 linear 10-encounter slice validated`
 
 ## Direction
 
-Este é um roguelike de cartas com lore Draxos e uma apresentação de batalha em tabuleiro simples.
+Este e um roguelike de cartas com lore Draxos e apresentacao de batalha em lanes frontais. O jogador e sempre o Comandante Draxos; a identidade de gameplay vem da `Classe`.
 
-O combate deve parecer dois lados se enfrentando através de uma mesa. O tabuleiro define quantas criaturas ou permanentes cabem em cada lado por encontro.
-
-O jogador é sempre um Comandante Draxos. A identidade de gameplay é selecionada através da `Classe`, não da raça. O primeiro release tem 3 classes, cada uma com deck inicial próprio, passiva inicial, spell de classe e possível perfil de mana. Ver `classes/README.md` e os docs individuais de classe.
+O slice atual tem 3 classes fixas: `arcano`, `invocador` e `necromante`. A classe define deck inicial, passiva fixa e habilidade ativa fixa, mas a passiva so desbloqueia no mapa 5 e a ativa so aparece/funciona a partir do mapa 7.
 
 ## Core Loop
 
 1. Iniciar no hub da nave Draxos.
 2. Escolher uma classe antes da run.
-3. Entrar no mapa de missão.
-4. Escolher o próximo nó disponível.
-5. Resolver encontro, evento, descanso, upgrade, recompensa ou boss.
-6. Retornar à nave após batalhas para gastar almas ou continuar a rota de campanha.
-7. Continuar até a run ser vencida ou o Comandante ser derrotado.
+3. Entrar no mapa de missao linear.
+4. Resolver o proximo no disponivel.
+5. Receber recompensas automaticas do no.
+6. Retornar a nave para ver estado da run, curar com Almas ou continuar.
+7. Vencer os 10 encontros ou perder se o Comandante cair.
 
-Não há meta-progressão por enquanto. Derrota reinicia a run completa.
+Nao ha meta-progressao por enquanto. Derrota reinicia a run completa.
 
 ## Battle Board
 
-O contrato de tabuleiro inicial é intencionalmente simples:
+O tabuleiro usa slots alinhados por indice: slot 1 contra slot 1, slot 2 contra slot 2, e assim por diante.
 
-- `player_slots_count`
-- `enemy_slots_count`
+- Cada slot ataca apenas o slot diretamente a frente.
+- Se houver criaturas dos dois lados da lane, o dano e simultaneo.
+- Se uma lane nao tiver defensor, o dano passa ao alvo daquele lado quando esse alvo existir.
+- O Comandante sempre pode receber dano direto de inimigos sem defensor.
+- O heroi inimigo so recebe dano direto nos modos `duelo` e `chefe_summoner`.
+- `regeneracao` continua funcionando no inicio do turno do jogador.
 
-Batalhas iniciais começam com cerca de 3 slots de jogador, deck pequeno e mana baixo. Conforme a campanha avança, tabuleiros, tamanho de deck, escala de inimigos e orçamento de mana crescem até que lutas tardias suportem cartas grandes e longas sequências.
+### Iniciativa
 
-Sem contrato ativo para: rotas, terreno, elevação, slots neutros ou grid de movimento tático. Esses sistemas do RPG Turnos permanecem apenas como dívida técnica no engine forkado temporário.
+`iniciativa` substitui as antigas keywords `protecao` e `voadora`.
+
+- Se apenas uma criatura na lane tem `iniciativa`, ela causa dano primeiro.
+- Se matar o alvo, nao recebe dano de volta.
+- Se nao matar, recebe o dano de retorno.
+- Se ambas tem `iniciativa`, ambas causam dano simultaneo na etapa de iniciativa e nao atacam de novo.
 
 ## Classes
 
-O jogo tem 3 classes. Cada uma define o estilo de combate do Comandante para aquela run.
+Ver `classes/README.md` e os docs individuais.
 
-Ver `classes/README.md` para o índice e `classes/arcano.md`, `classes/invocador.md`, `classes/necromante.md` para os docs individuais.
+- **Arcano:** Fluxo aumenta dano de spells quando a passiva esta desbloqueada.
+- **Invocador:** buffs permanentes e crescimento de criaturas quando a passiva esta desbloqueada.
+- **Necromante:** Cinzas por mortes em campo quando a passiva esta desbloqueada.
 
-Resumo de filosofia:
-
-- **Arcano**: spells de dano, combos de spells, ciclagem rápida de cartas.
-- **Invocador**: controle de mesa, melhoria de criaturas, criaturas gigantes no late-game.
-- **Necromante**: controle por volume de criaturas pequenas, ciclo de mortes para ganhos, disrupção de criaturas inimigas.
-
-## Spell de Classe
-
-Cada classe tem acesso a uma spell exclusiva usável **uma vez por turno**.
-
-- O custo de mana da spell é TBD por classe.
-- A spell pode ser melhorada durante a run através de recompensas específicas.
-- A spell de classe é parte da identidade de combate — não é uma habilidade passiva.
-
-Detalhes por classe estão nos docs individuais de classe, marcados como TBD pending sessão de design dedicada.
-
-## Passiva Inicial de Classe
-
-Cada classe começa a run com uma **habilidade passiva própria** que faz parte da sua mecânica central. A passiva inicial é permanente desde o início e molda como o deck inicial deve ser jogado.
-
-- Não é uma recompensa — o jogador não escolhe. Ela vem com a classe.
-- Diferentemente das passivas de boss, não é selecionada entre opções.
-
-Detalhes por classe estão nos docs individuais de classe, marcados como TBD.
+Habilidades ativas sao fixas por classe, uma vez por turno, e ficam ocultas/bloqueadas ate o mapa 7.
 
 ## Encounter Types
 
-Vocabulário inicial de tipos de encontro:
+Modos presentes no contrato do slice:
 
-- `limpar_mesa`: vencer limpando a presença inimiga relevante no tabuleiro.
-- `duelo`: vencer derrotando um personagem oponente.
-- `ondas`: lutar contra ondas sequenciais de criaturas.
-- `defesa_posicao`: proteger uma posição ou objeto.
-- `sobreviver_turnos`: sobreviver um número configurado de turnos.
-- `chefe_summoner`: derrotar um boss que invoca múltiplas criaturas.
-
-Vocabulário inicial de diretores inimigos:
-
-- `prefilled_board`: criaturas inimigas começam no tabuleiro e atacam até serem eliminadas.
-- `waves`: criaturas inimigas aparecem em ondas roteirizadas.
-- `scripted_boss`: um boss executa padrões roteirizados de invocação ou pressão.
-- `player_like`: um personagem oponente com vida, comportamento de deck e presença similar ao jogador.
-
-A cadeia final de encontros e as definições de inimigos requerem uma sessão dedicada de design de mapa/inimigos.
+- `limpar_mesa`: vencer limpando a presenca inimiga relevante no tabuleiro.
+- `ondas`: vencer todas as ondas sequenciais.
+- `duelo`: vencer reduzindo o heroi inimigo a 0.
+- `defesa_posicao`: proteger um objetivo 0 ATK / 10 HP no slot central aliado por 3 turnos.
+- `sobreviver_turnos`: sobreviver 3 turnos com o Comandante vivo.
+- `chefe_summoner`: derrotar um boss com vida propria e summons roteirizados.
 
 ## Battle Economy
 
-- Mão inicial com 5 cartas.
-- Jogar uma carta puxa 1 carta, mantendo a mão estável quando possível.
-- Cartas jogadas vão para o descarte.
-- Quando o deck esvazia, o descarte é embaralhado de volta.
-- Mana não aumenta durante um encontro.
-- Mana pode aumentar entre encontros através de recompensas de run, marcos principais ou compras com almas (ver seção Run Rewards).
-- Outros recursos podem existir, mas são específicos de classe.
-- Criaturas do jogador atacam automaticamente no fim do turno.
-- Durante o turno inimigo, criaturas do jogador apenas recebem dano.
-- Todas as classes podem substituir uma criatura invocando num slot amigo ocupado, sacrificando a anterior. Cartas ou classes específicas podem se beneficiar do sacrifício.
+- Mao inicial com 5 cartas.
+- Jogar uma carta puxa 1 carta quando possivel.
+- Cartas jogadas vao para o descarte.
+- Quando o deck esvazia, o descarte e embaralhado de volta.
+- Mana inicial de todas as classes: `2`.
+- Decks iniciais podem ter menos de 15 cartas.
+- Cartas de custo 3 nao entram nos decks iniciais.
+- No mapa 3, a run recebe 1 copia de cada carta jogavel custo 3 atualmente disponivel.
 
-## Run Rewards
+## Linear Mission Map
 
-Recompensas de run alteram a run atual imediatamente. Nenhuma recompensa persiste após o fim da run.
+Track 01 usa 10 encontros lineares, sem sidequests por enquanto.
 
-### Tipos de Recompensa
+| Mapa | No | Modo | Tier | Almas | Recompensa automatica |
+|---|---|---|---|---:|---|
+| 1 | `n01_pouso_elemental` | `limpar_mesa` | small | 4 | - |
+| 2 | `n02_ondas_iniciais` | `ondas` | medium | 7 | +1 max mana |
+| 3 | `n03_duelo_inicial` | `duelo` | medium | 7 | adiciona cartas custo 3 |
+| 4 | `n04_defesa_posicao` | `defesa_posicao` | medium | 7 | - |
+| 5 | `n05_chefe_invocador` | `chefe_summoner` | boss | 18 | desbloqueia passiva |
+| 6 | `n06_sobreviver_turnos` | `sobreviver_turnos` | medium | 7 | - |
+| 7 | `n07_limpeza_elite` | `limpar_mesa` | elite_optional | 11 | desbloqueia ativa |
+| 8 | `n08_ondas_avancadas` | `ondas` | elite_optional | 11 | - |
+| 9 | `n09_duelo_elite` | `duelo` | elite_optional | 11 | - |
+| 10 | `n10_chefe_final` | `chefe_summoner` | boss | 18 | - |
 
-| Tipo | Efeito |
-|---|---|
-| Nova carta | Adiciona uma carta ao deck atual da run. |
-| Buff de carta | Melhora permanentemente uma carta existente no deck desta run. |
-| Buff de spell de classe | Melhora a spell de classe do Comandante para o restante da run. |
-| Almas extras | Adiciona almas ao total atual (ver Soul Economy). |
-| +1 mana | Aumenta o mana máximo do Comandante em 1 para o restante da run. |
+Todo mapa concede Almas usando o minimo da banda do tier.
 
-O aumento de mana é a recompensa de maior impacto — escala o poder do jogador significativamente de early para late game.
+## Pending Design
 
-### Soul Reward Bands
-
-Recompensas de almas por tipo de encontro:
-
-- `small`: 4–6
-- `medium`: 7–10
-- `elite_optional`: 11–16
-- `boss`: 18–25
-
-### Post-Boss Passive
-
-Após derrotar um boss, o jogador escolhe **1 em 3 habilidades passivas** para o Comandante. Cada passiva é um buff significativo que afeta o restante da campanha.
-
-- As opções são sempre 3 e a escolha é permanente para a run.
-- Passivas de boss são distintas da passiva inicial de classe.
-- O catálogo de passivas de boss requer uma sessão dedicada de design.
-
-Encontros opcionais (elite) oferecem risco e recompensa: podem gerar mais almas e upgrades, mas podem deixar o Comandante ferido ou morto.
-
-## Soul Economy
-
-Almas são a moeda da nave — acumuladas durante a run e gastas no ShipHub.
-
-### Fontes de Almas
-
-- Recompensas de encontro (bands acima).
-- Recompensas de run do tipo "almas extras".
-
-### Usos de Almas
-
-| Uso | Custo em Almas |
-|---|---|
-| Cura paga | TBD |
-| Buff de carta | TBD |
-| +1 mana | TBD |
-
-Os custos exatos requerem uma sessão de balanceamento dedicada. A cura é difícil por design — o Comandante não deve recuperar vida facilmente.
-
-## Mission Map
-
-O mapa representa a navegação da nave e a execução da missão no planeta elemental. Suporta uma sequência principal onde completar um nó desbloqueia o próximo, além de sidequests que podem abrir a partir do progresso principal sem bloquear a rota principal.
-
-## Pending Rule Decisions
-
-Decisões intencionalmente não herdadas do `rpg-turnos` e pendentes de sessão de design local:
-
-- tamanho exato do deck
-- mecânicas finais de cada classe (passiva, spell, deck)
-- passivas de boss (catálogo completo)
-- custos exatos de almas no ShipHub
-- cadeia exata do mapa e roster de encontros
-- scripts de inimigos
-- regras de upgrade e remoção de cartas
-- vocabulário de debuffs disponíveis para o Necromante
+- Nomes finais de cartas, passivas e habilidades.
+- Recompensas dos mapas ainda sem marco fixo.
+- Upgrades, remocao de cartas e lojas.
+- Balanceamento de inimigos e decks depois que as cartas forem refeitas.

@@ -40,7 +40,9 @@ func _ready() -> void:
 	engine.start_battle(ContentLibrary.get_catalog(), deck_ids, {
 		"encounter": current_encounter,
 		"class_id": RunSession.selected_class_id,
-		"mana_per_turn": RunSession.max_mana if RunSession.max_mana > 0 else 3,
+		"class_passive_unlocked": RunSession.class_passive_unlocked,
+		"class_active_unlocked": RunSession.class_active_unlocked,
+		"mana_per_turn": RunSession.max_mana if RunSession.max_mana > 0 else 2,
 		"player_health": RunSession.current_health if RunSession.current_health > 0 else 20,
 		"shuffle_seed": RunSession.run_seed
 	})
@@ -460,6 +462,9 @@ func _update_hand_selection_visuals() -> void:
 			token.set_selected(token.hand_index == selected_hand_index)
 
 func _refresh_class_active_tile() -> void:
+	class_active_tile.visible = RunSession.class_active_unlocked
+	if not RunSession.class_active_unlocked:
+		return
 	if selected_necromancer_choice_id != "" and not _choice_is_enabled(selected_necromancer_choice_id):
 		selected_necromancer_choice_id = ""
 	var requires_choice: bool = RunSession.selected_class_id == "necromante"
@@ -508,7 +513,7 @@ func _refresh_necromancer_modal() -> void:
 	necromancer_choices_box.add_child(close_button)
 
 func _open_necromancer_modal() -> void:
-	if RunSession.selected_class_id != "necromante":
+	if RunSession.selected_class_id != "necromante" or not RunSession.class_active_unlocked:
 		return
 	necromancer_modal.visible = true
 	_refresh_necromancer_modal()
@@ -631,6 +636,8 @@ func _hero_preview_data(owner_id: String, display_name: String, health: int) -> 
 	}
 
 func _class_active_preview_data() -> Dictionary:
+	if not RunSession.class_active_unlocked:
+		return {}
 	return {
 		"title": _class_active_display_name(selected_necromancer_choice_id),
 		"subtitle": "Spell de classe",
@@ -668,10 +675,8 @@ func _keyword_text(keywords: Array) -> String:
 	var parts: Array[String] = []
 	for keyword: Variant in keywords:
 		match str(keyword):
-			"protecao":
-				parts.append("Protecao: inimigos priorizam esta criatura.")
-			"voadora":
-				parts.append("Voadora: pode atacar o heroi inimigo diretamente quando o modo permite.")
+			"iniciativa":
+				parts.append("Iniciativa: causa dano primeiro na lane; se destruir o alvo, nao recebe retorno.")
 			"regeneracao":
 				parts.append("Regeneracao: recupera 1 HP no inicio do turno do jogador.")
 	return "\n".join(parts)

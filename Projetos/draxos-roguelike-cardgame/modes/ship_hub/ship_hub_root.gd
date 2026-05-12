@@ -13,7 +13,7 @@ const HOTSPOT_SPECS: Array[Dictionary] = [
 		"id": "mission_map_console",
 		"title": "Mapa",
 		"body": "Rota de invasao",
-		"status": "Encontros de limpar board e ondas disponiveis.",
+		"status": "Rota linear de 10 encontros disponivel.",
 		"position": Vector2(0.75, 0.46),
 		"size": Vector2(210, 54)
 	},
@@ -21,7 +21,7 @@ const HOTSPOT_SPECS: Array[Dictionary] = [
 		"id": "deck_system",
 		"title": "Deck",
 		"body": "Cartas e upgrades",
-		"status": "Decks iniciais mockup carregados por Classe.",
+		"status": "Decks iniciais sem custo 3; custo 3 entra apos o mapa 3.",
 		"position": Vector2(0.25, 0.58),
 		"size": Vector2(216, 54)
 	},
@@ -323,16 +323,16 @@ func _run_state_text() -> String:
 	var last_text: String = ""
 	if RunSession.last_completed_node_id != "":
 		last_text = "\nUltimo encontro: %s" % RunSession.last_completed_node_id
-	return "Run: ativa | Classe: %s | Vida: %d/%d | Mana: %d | Almas: %d\nSpell: %s\nNodes concluidos: %s | Recompensas pendentes: %d | Aplicadas: %d%s" % [
+	return "Run: ativa | Classe: %s | Vida: %d/%d | Mana: %d | Almas: %d\nPassiva desbloqueada: %s | Spell desbloqueada: %s\nNodes concluidos: %s | Recompensas automaticas: %d%s" % [
 		RunSession.selected_class_display_name,
 		RunSession.current_health,
 		RunSession.max_health,
 		RunSession.max_mana,
 		RunSession.soul_total,
-		RunSession.selected_class_active_text,
+		"sim" if RunSession.class_passive_unlocked else "nao",
+		"sim" if RunSession.class_active_unlocked else "nao",
 		completed_text,
-		RunSession.rewards_pending.size(),
-		RunSession.applied_reward_ids.size(),
+		RunSession.automatic_reward_ids.size(),
 		last_text
 	]
 

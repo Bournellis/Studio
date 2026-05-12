@@ -26,19 +26,18 @@
     "arcano_gerador_entrada",
     "arcano_spell_dano_maior",
     "arcano_spell_dano_maior",
-    "arcano_gerador_continuo",
-    "arcano_amplificador"
+    "arcano_gerador_continuo"
   ],
   "class_options": [
     {
       "id": "arcano",
       "display_name": "Arcano",
       "role_text": "Spells de dano, Fluxo Continuo e sequencias rapidas.",
-      "mechanic_status": "Slice mecanico: Fluxo Continuo e spell ativa implementados em versao inicial.",
+      "mechanic_status": "Passiva desbloqueia no mapa 5; spell de classe desbloqueia no mapa 7.",
       "passive_id": "fluxo_continuo",
       "active_id": "rajada_arcana",
       "active_text": "1 mana: causa 1 de dano + Fluxo a qualquer alvo. Uma vez por turno.",
-      "starting_mana": 3,
+      "starting_mana": 2,
       "starting_health": 20,
       "starter_deck": [
         "arcano_construtor_fluxo",
@@ -54,19 +53,18 @@
         "arcano_gerador_entrada",
         "arcano_spell_dano_maior",
         "arcano_spell_dano_maior",
-        "arcano_gerador_continuo",
-        "arcano_amplificador"
+        "arcano_gerador_continuo"
       ]
     },
     {
       "id": "invocador",
       "display_name": "Invocador",
       "role_text": "Controle de mesa, criaturas singulares e buffs permanentes.",
-      "mechanic_status": "Slice mecanico: buffs permanentes, Protecao e Voadora implementados em versao inicial.",
+      "mechanic_status": "Passiva desbloqueia no mapa 5; spell de classe desbloqueia no mapa 7.",
       "passive_id": "comandante_de_campo",
       "active_id": "ordem_de_guerra",
       "active_text": "1 mana: uma criatura aliada ganha +2/+0 permanente. Uma vez por turno.",
-      "starting_mana": 3,
+      "starting_mana": 2,
       "starting_health": 20,
       "starter_deck": [
         "invocador_protecao",
@@ -82,19 +80,18 @@
         "invocador_buff_temporario",
         "invocador_regeneracao",
         "invocador_regeneracao",
-        "invocador_buff_area",
-        "invocador_colosso"
+        "invocador_buff_area"
       ]
     },
     {
       "id": "necromante",
       "display_name": "Necromante",
       "role_text": "Cinzas, morte como recurso, debuffs e reanimacao.",
-      "mechanic_status": "Slice mecanico: Cinzas, efeitos de morte e Ritual das Sombras em versao inicial.",
+      "mechanic_status": "Passiva desbloqueia no mapa 5; spell de classe desbloqueia no mapa 7.",
       "passive_id": "colheita_sombria",
       "active_id": "ritual_das_sombras",
       "active_text": "0 mana + Cinzas: 2 debuff, 4 reanima 1/1, 6 reanima com stats originais. Uma vez por turno.",
-      "starting_mana": 3,
+      "starting_mana": 2,
       "starting_health": 20,
       "starter_deck": [
         "necro_sacrificio_zero",
@@ -121,7 +118,7 @@
       "display_name": "Construtor de Fluxo",
       "type": "magia",
       "cost": 0,
-      "text": "Aplica Lentidao a uma criatura inimiga. Conta para Fluxo.",
+      "text": "Aplica Lentidao a uma criatura inimiga. Conta para Fluxo quando a passiva estiver desbloqueada.",
       "effect": {"action": "debuff", "debuff": "slow", "amount": 1}
     },
     {
@@ -129,7 +126,7 @@
       "display_name": "Pulso de Fluxo",
       "type": "magia",
       "cost": 1,
-      "text": "Causa 1 de dano a qualquer alvo. Arcano soma Fluxo.",
+      "text": "Causa 1 de dano a qualquer alvo. Arcano soma Fluxo quando a passiva estiver desbloqueada.",
       "effect": {"action": "damage", "amount": 1}
     },
     {
@@ -139,8 +136,8 @@
       "cost": 1,
       "attack": 0,
       "health": 3,
-      "keywords": ["protecao"],
-      "text": "Criatura protetora."
+      "keywords": ["iniciativa"],
+      "text": "Iniciativa: causa dano primeiro na lane."
     },
     {
       "id": "arcano_gerador_entrada",
@@ -157,7 +154,7 @@
       "display_name": "Raio Astral",
       "type": "magia",
       "cost": 2,
-      "text": "Causa 2 de dano a qualquer alvo. Arcano soma Fluxo.",
+      "text": "Causa 2 de dano a qualquer alvo. Arcano soma Fluxo quando a passiva estiver desbloqueada.",
       "effect": {"action": "damage", "amount": 2}
     },
     {
@@ -187,8 +184,8 @@
       "cost": 1,
       "attack": 1,
       "health": 4,
-      "keywords": ["protecao"],
-      "text": "Protecao: inimigos priorizam esta criatura."
+      "keywords": ["iniciativa"],
+      "text": "Iniciativa: causa dano primeiro na lane."
     },
     {
       "id": "invocador_voadora",
@@ -197,8 +194,8 @@
       "cost": 1,
       "attack": 3,
       "health": 2,
-      "keywords": ["voadora"],
-      "text": "Voadora: pode atacar o heroi inimigo diretamente."
+      "keywords": ["iniciativa"],
+      "text": "Iniciativa: causa dano primeiro na lane."
     },
     {
       "id": "invocador_buff_unico",
@@ -250,7 +247,7 @@
       "cost": 0,
       "attack": 1,
       "health": 1,
-      "text": "Ao morrer: gera 2 Cinzas em vez de 1.",
+      "text": "Ao morrer: gera 2 Cinzas em vez de 1 quando a passiva estiver desbloqueada.",
       "effect": {"on_death": {"action": "gain_ashes", "amount": 2}}
     },
     {
@@ -260,7 +257,7 @@
       "cost": 1,
       "attack": 2,
       "health": 1,
-      "text": "Ao morrer: causa 1 de dano a um inimigo.",
+      "text": "Ao morrer: causa 1 de dano a um inimigo quando a passiva estiver desbloqueada.",
       "effect": {"on_death": {"action": "damage", "amount": 1}}
     },
     {
@@ -270,7 +267,7 @@
       "cost": 1,
       "attack": 1,
       "health": 2,
-      "text": "Ao morrer: aplica Lentidao a uma criatura inimiga.",
+      "text": "Ao morrer: aplica Lentidao a uma criatura inimiga quando a passiva estiver desbloqueada.",
       "effect": {"on_death": {"action": "debuff", "debuff": "slow", "amount": 1}}
     },
     {
@@ -353,7 +350,7 @@
     },
     {
       "id": "elemental_pesado_a",
-      "display_name": "Elemental Pesado",
+      "display_name": "Elemental Pesado A",
       "type": "criatura",
       "cost": 3,
       "attack": 3,
@@ -362,7 +359,7 @@
     },
     {
       "id": "elemental_pesado_b",
-      "display_name": "Elemental Pesado",
+      "display_name": "Elemental Pesado B",
       "type": "criatura",
       "cost": 3,
       "attack": 2,
@@ -371,18 +368,73 @@
     },
     {
       "id": "elemental_pesado_c",
-      "display_name": "Elemental Pesado",
+      "display_name": "Elemental Pesado C",
       "type": "criatura",
       "cost": 3,
       "attack": 1,
       "health": 4,
       "text": "Pressao final de ondas."
+    },
+    {
+      "id": "elemental_duelista",
+      "display_name": "Elemental Duelista",
+      "type": "criatura",
+      "cost": 2,
+      "attack": 2,
+      "health": 4,
+      "text": "Mockup de pressao para duelo."
+    },
+    {
+      "id": "elemental_assaltante",
+      "display_name": "Elemental Assaltante",
+      "type": "criatura",
+      "cost": 2,
+      "attack": 3,
+      "health": 2,
+      "text": "Mockup ofensivo para lanes."
+    },
+    {
+      "id": "elemental_guardiao",
+      "display_name": "Elemental Guardiao",
+      "type": "criatura",
+      "cost": 3,
+      "attack": 2,
+      "health": 6,
+      "text": "Mockup defensivo escalado."
+    },
+    {
+      "id": "elemental_elite_agil",
+      "display_name": "Elemental Elite Agil",
+      "type": "criatura",
+      "cost": 3,
+      "attack": 4,
+      "health": 3,
+      "keywords": ["iniciativa"],
+      "text": "Iniciativa: causa dano primeiro na lane."
+    },
+    {
+      "id": "elemental_elite_bruto",
+      "display_name": "Elemental Elite Bruto",
+      "type": "criatura",
+      "cost": 4,
+      "attack": 4,
+      "health": 5,
+      "text": "Mockup elite de alto dano."
+    },
+    {
+      "id": "elemental_tita",
+      "display_name": "Elemental Tita",
+      "type": "criatura",
+      "cost": 5,
+      "attack": 5,
+      "health": 6,
+      "text": "Mockup pesado de fim de run."
     }
   ],
   "encounters": [
     {
       "id": "pouso_elemental",
-      "display_name": "Encontro 01 - Limpar Board",
+      "display_name": "Mapa 01 - Limpar Mesa",
       "mode": "limpar_mesa",
       "tier": "small",
       "enemy_director": "prefilled_board",
@@ -398,7 +450,7 @@
     },
     {
       "id": "ondas_iniciais",
-      "display_name": "Encontro 02 - Ondas",
+      "display_name": "Mapa 02 - Ondas",
       "mode": "ondas",
       "tier": "medium",
       "enemy_director": "waves",
@@ -423,35 +475,143 @@
       "soul_reward": {"min": 7, "max": 10}
     },
     {
-      "id": "incursao_lateral",
-      "display_name": "Incursao Lateral",
-      "mode": "limpar_mesa",
-      "tier": "elite_optional",
+      "id": "duelo_inicial",
+      "display_name": "Mapa 03 - Duelo",
+      "mode": "duelo",
+      "tier": "medium",
+      "enemy_director": "player_like",
+      "player_slots_count": 3,
+      "enemy_slots_count": 3,
+      "enemy_health": 16,
+      "starting_enemy_slots": [
+        {"slot": 1, "card_id": "elemental_duelista"}
+      ],
+      "soul_reward": {"min": 7, "max": 10}
+    },
+    {
+      "id": "defesa_posicao_inicial",
+      "display_name": "Mapa 04 - Defesa de Posicao",
+      "mode": "defesa_posicao",
+      "tier": "medium",
       "enemy_director": "prefilled_board",
       "player_slots_count": 3,
       "enemy_slots_count": 3,
-      "duration_target": "optional",
+      "defense_turns": 3,
+      "defense_slot": 1,
+      "defense_health": 10,
       "starting_enemy_slots": [
-        {"slot": 0, "card_id": "elemental_bruto"},
-        {"slot": 1, "card_id": "elemental_solido"},
-        {"slot": 2, "card_id": "elemental_pesado_b"}
+        {"slot": 0, "card_id": "elemental_menor"},
+        {"slot": 1, "card_id": "elemental_assaltante"},
+        {"slot": 2, "card_id": "elemental_menor"}
       ],
-      "soul_reward": {"min": 11, "max": 16}
+      "soul_reward": {"min": 7, "max": 10}
     },
     {
       "id": "chefe_invocador",
-      "display_name": "Chefe Invocador",
+      "display_name": "Mapa 05 - Chefe Summoner",
       "mode": "chefe_summoner",
       "tier": "boss",
       "enemy_director": "scripted_boss",
       "player_slots_count": 5,
       "enemy_slots_count": 5,
       "duration_target": "boss",
-      "boss_health": 12,
+      "boss_health": 14,
       "boss_summons": [
         {"card_id": "elemental_menor"},
         {"card_id": "elemental_medio"},
         {"card_id": "elemental_bruto"}
+      ],
+      "soul_reward": {"min": 18, "max": 25}
+    },
+    {
+      "id": "sobreviver_turnos_inicial",
+      "display_name": "Mapa 06 - Sobreviver Turnos",
+      "mode": "sobreviver_turnos",
+      "tier": "medium",
+      "enemy_director": "prefilled_board",
+      "player_slots_count": 3,
+      "enemy_slots_count": 3,
+      "survive_turns": 3,
+      "starting_enemy_slots": [
+        {"slot": 0, "card_id": "elemental_assaltante"},
+        {"slot": 1, "card_id": "elemental_medio"},
+        {"slot": 2, "card_id": "elemental_assaltante"}
+      ],
+      "soul_reward": {"min": 7, "max": 10}
+    },
+    {
+      "id": "limpeza_elite",
+      "display_name": "Mapa 07 - Limpar Mesa Elite",
+      "mode": "limpar_mesa",
+      "tier": "elite_optional",
+      "enemy_director": "prefilled_board",
+      "player_slots_count": 4,
+      "enemy_slots_count": 4,
+      "starting_enemy_slots": [
+        {"slot": 0, "card_id": "elemental_elite_agil"},
+        {"slot": 1, "card_id": "elemental_guardiao"},
+        {"slot": 2, "card_id": "elemental_elite_bruto"},
+        {"slot": 3, "card_id": "elemental_medio"}
+      ],
+      "soul_reward": {"min": 11, "max": 16}
+    },
+    {
+      "id": "ondas_avancadas",
+      "display_name": "Mapa 08 - Ondas Avancadas",
+      "mode": "ondas",
+      "tier": "elite_optional",
+      "enemy_director": "waves",
+      "player_slots_count": 4,
+      "enemy_slots_count": 4,
+      "waves": [
+        [
+          {"slot": 0, "card_id": "elemental_medio"},
+          {"slot": 1, "card_id": "elemental_medio"}
+        ],
+        [
+          {"slot": 0, "card_id": "elemental_elite_agil"},
+          {"slot": 1, "card_id": "elemental_guardiao"},
+          {"slot": 2, "card_id": "elemental_assaltante"}
+        ],
+        [
+          {"slot": 0, "card_id": "elemental_pesado_a"},
+          {"slot": 1, "card_id": "elemental_elite_bruto"},
+          {"slot": 2, "card_id": "elemental_pesado_b"},
+          {"slot": 3, "card_id": "elemental_pesado_c"}
+        ]
+      ],
+      "soul_reward": {"min": 11, "max": 16}
+    },
+    {
+      "id": "duelo_elite",
+      "display_name": "Mapa 09 - Duelo Elite",
+      "mode": "duelo",
+      "tier": "elite_optional",
+      "enemy_director": "player_like",
+      "player_slots_count": 4,
+      "enemy_slots_count": 4,
+      "enemy_health": 24,
+      "starting_enemy_slots": [
+        {"slot": 1, "card_id": "elemental_elite_agil"},
+        {"slot": 2, "card_id": "elemental_guardiao"}
+      ],
+      "soul_reward": {"min": 11, "max": 16}
+    },
+    {
+      "id": "chefe_summoner_final",
+      "display_name": "Mapa 10 - Chefe Summoner Final",
+      "mode": "chefe_summoner",
+      "tier": "boss",
+      "enemy_director": "scripted_boss",
+      "player_slots_count": 5,
+      "enemy_slots_count": 5,
+      "duration_target": "final_boss",
+      "boss_health": 28,
+      "boss_summons": [
+        {"card_id": "elemental_medio"},
+        {"card_id": "elemental_elite_agil"},
+        {"card_id": "elemental_guardiao"},
+        {"card_id": "elemental_tita"}
       ],
       "soul_reward": {"min": 18, "max": 25}
     }
@@ -461,10 +621,12 @@
     "display_name": "Invasao Inicial",
     "linear": true,
     "node_types": [
-      "pequeno_encontro",
+      "limpar_mesa",
       "ondas",
-      "elite_opcional",
-      "chefe"
+      "duelo",
+      "defesa_posicao",
+      "chefe_summoner",
+      "sobreviver_turnos"
     ],
     "nodes": [
       {
@@ -472,27 +634,73 @@
         "kind": "mainline",
         "encounter_id": "pouso_elemental",
         "available_after": [],
-        "unlocks": ["s01_incursao_lateral", "n02_ondas_iniciais"]
-      },
-      {
-        "id": "s01_incursao_lateral",
-        "kind": "sidequest",
-        "encounter_id": "incursao_lateral",
-        "available_after": ["n01_pouso_elemental"],
-        "unlocks": []
+        "unlocks": ["n02_ondas_iniciais"]
       },
       {
         "id": "n02_ondas_iniciais",
         "kind": "mainline",
         "encounter_id": "ondas_iniciais",
         "available_after": ["n01_pouso_elemental"],
-        "unlocks": ["n03_chefe_invocador"]
+        "unlocks": ["n03_duelo_inicial"],
+        "rewards": ["max_mana_1"]
       },
       {
-        "id": "n03_chefe_invocador",
+        "id": "n03_duelo_inicial",
+        "kind": "mainline",
+        "encounter_id": "duelo_inicial",
+        "available_after": ["n02_ondas_iniciais"],
+        "unlocks": ["n04_defesa_posicao"],
+        "rewards": ["add_cost3_cards"]
+      },
+      {
+        "id": "n04_defesa_posicao",
+        "kind": "mainline",
+        "encounter_id": "defesa_posicao_inicial",
+        "available_after": ["n03_duelo_inicial"],
+        "unlocks": ["n05_chefe_invocador"]
+      },
+      {
+        "id": "n05_chefe_invocador",
         "kind": "mainline",
         "encounter_id": "chefe_invocador",
-        "available_after": ["n02_ondas_iniciais"],
+        "available_after": ["n04_defesa_posicao"],
+        "unlocks": ["n06_sobreviver_turnos"],
+        "rewards": ["unlock_class_passive"]
+      },
+      {
+        "id": "n06_sobreviver_turnos",
+        "kind": "mainline",
+        "encounter_id": "sobreviver_turnos_inicial",
+        "available_after": ["n05_chefe_invocador"],
+        "unlocks": ["n07_limpeza_elite"]
+      },
+      {
+        "id": "n07_limpeza_elite",
+        "kind": "mainline",
+        "encounter_id": "limpeza_elite",
+        "available_after": ["n06_sobreviver_turnos"],
+        "unlocks": ["n08_ondas_avancadas"],
+        "rewards": ["unlock_class_active"]
+      },
+      {
+        "id": "n08_ondas_avancadas",
+        "kind": "mainline",
+        "encounter_id": "ondas_avancadas",
+        "available_after": ["n07_limpeza_elite"],
+        "unlocks": ["n09_duelo_elite"]
+      },
+      {
+        "id": "n09_duelo_elite",
+        "kind": "mainline",
+        "encounter_id": "duelo_elite",
+        "available_after": ["n08_ondas_avancadas"],
+        "unlocks": ["n10_chefe_final"]
+      },
+      {
+        "id": "n10_chefe_final",
+        "kind": "mainline",
+        "encounter_id": "chefe_summoner_final",
+        "available_after": ["n09_duelo_elite"],
         "unlocks": []
       }
     ]

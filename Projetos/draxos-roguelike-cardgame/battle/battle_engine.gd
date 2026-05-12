@@ -15,8 +15,10 @@ const PHASE_MAIN: String = "fase_principal"
 const PHASE_ENDED: String = "encerrada"
 
 const STARTING_HAND_SIZE: int = 5
-const DEFAULT_MANA_PER_TURN: int = 3
+const DEFAULT_MANA_PER_TURN: int = 2
 const DEFAULT_ENEMY_HEALTH: int = 20
+const DEFAULT_DEFENSE_HEALTH: int = 10
+const DEFAULT_OBJECTIVE_TURNS: int = 3
 const MAX_LOG_LINES: int = 18
 const NECRO_CHOICE_SLOW: String = "necro_slow"
 const NECRO_CHOICE_ROT: String = "necro_rot"
@@ -45,11 +47,18 @@ var enemy_director: String = ""
 var boss_summon_index: int = 0
 var boss_summons: Array[Dictionary] = []
 var selected_class_id: String = ""
+var class_passive_unlocked: bool = false
+var class_active_unlocked: bool = false
 var class_active_used: bool = false
 var flow: int = 0
 var ashes: int = 0
 var wave_index: int = 0
 var waves: Array[Array] = []
+var survived_turns: int = 0
+var required_survive_turns: int = DEFAULT_OBJECTIVE_TURNS
+var required_defense_turns: int = DEFAULT_OBJECTIVE_TURNS
+var defense_slot_index: int = 1
+var defense_objective_health: int = DEFAULT_DEFENSE_HEALTH
 var shuffle_enabled: bool = true
 
 var _catalog
@@ -66,6 +75,8 @@ func start_battle(catalog, deck_ids: Array, config: Dictionary = {}) -> void:
 	mana = mana_per_turn
 	player_health = int(config.get("player_health", _hero_health(catalog.player_hero if catalog != null else null, 20)))
 	selected_class_id = str(config.get("class_id", ""))
+	class_passive_unlocked = bool(config.get("class_passive_unlocked", false))
+	class_active_unlocked = bool(config.get("class_active_unlocked", false))
 	class_active_used = false
 	flow = 0
 	ashes = 0
@@ -74,6 +85,11 @@ func start_battle(catalog, deck_ids: Array, config: Dictionary = {}) -> void:
 	boss_summons = _typed_dictionary_array(encounter.get("boss_summons", []))
 	wave_index = 0
 	waves = _typed_wave_array(encounter.get("waves", []))
+	survived_turns = 0
+	required_survive_turns = int(encounter.get("survive_turns", DEFAULT_OBJECTIVE_TURNS))
+	required_defense_turns = int(encounter.get("defense_turns", DEFAULT_OBJECTIVE_TURNS))
+	defense_slot_index = int(encounter.get("defense_slot", 1))
+	defense_objective_health = int(encounter.get("defense_health", DEFAULT_DEFENSE_HEALTH))
 	shuffle_enabled = bool(config.get("shuffle_deck", true))
 	_setup_shuffle(int(config.get("shuffle_seed", 0)), encounter_id)
 	outcome = ""
@@ -86,9 +102,11 @@ func start_battle(catalog, deck_ids: Array, config: Dictionary = {}) -> void:
 	if deck.is_empty() and catalog != null:
 		deck = _typed_string_array(Array(catalog.starter_deck_ids))
 	_shuffle_deck(deck)
-	enemy_health = int(encounter.get("boss_health", _hero_health(catalog.enemy_hero if catalog != null else null, DEFAULT_ENEMY_HEALTH)))
+	enemy_health = int(encounter.get("enemy_health", encounter.get("boss_health", _hero_health(catalog.enemy_hero if catalog != null else null, DEFAULT_ENEMY_HEALTH))))
 	player_slots = _empty_slots(int(encounter.get("player_slots_count", 3)))
 	enemy_slots = _empty_slots(int(encounter.get("enemy_slots_count", 3)))
+	if mode == MODE_DEFENSE_POSITION:
+		_setup_defense_objective()
 	_draw_to_hand_size()
 	if mode == MODE_WAVES and not waves.is_empty():
 		_spawn_next_wave()
@@ -120,11 +138,16 @@ func get_state() -> Dictionary:
 		"boss_summon_index": boss_summon_index,
 		"boss_summons": boss_summons.duplicate(true),
 		"selected_class_id": selected_class_id,
+		"class_passive_unlocked": class_passive_unlocked,
+		"class_active_unlocked": class_active_unlocked,
 		"class_active_used": class_active_used,
 		"flow": flow,
 		"ashes": ashes,
 		"wave_index": wave_index,
 		"waves_total": waves.size(),
+		"survived_turns": survived_turns,
+		"required_survive_turns": required_survive_turns,
+		"required_defense_turns": required_defense_turns,
 		"shuffle_enabled": shuffle_enabled
 	}
 
@@ -194,6 +217,8 @@ func play_card_from_hand(hand_index: int, target: Dictionary = {}) -> Dictionary
 		var slot_index: int = int(target.get("slot", _first_open_slot(player_slots)))
 		if slot_index < 0 or slot_index >= player_slots.size():
 			return _fail("Slot invalido.")
+		if player_slots[slot_index] != null and bool(Dictionary(player_slots[slot_index]).get("objective", false)):
+			return _fail("Objetivo de defesa nao pode ser substituido.")
 		_spend_card(hand_index, card)
 		_after_card_played()
 		if player_slots[slot_index] != null:
@@ -220,40 +245,40 @@ func get_necromancer_active_choices() -> Array[Dictionary]:
 			"display_name": "Lentidao Sombria",
 			"cost_ashes": 2,
 			"text": "Uma criatura inimiga nao ataca neste turno.",
-			"enabled": selected_class_id == "necromante" and ashes >= 2 and not _occupied_slot_targets(ENEMY_ID).is_empty()
+			"enabled": selected_class_id == "necromante" and class_active_unlocked and ashes >= 2 and not _occupied_slot_targets(ENEMY_ID).is_empty()
 		},
 		{
 			"id": NECRO_CHOICE_ROT,
 			"display_name": "Podridao Astral",
 			"cost_ashes": 2,
 			"text": "Uma criatura inimiga perde 1/1 permanente.",
-			"enabled": selected_class_id == "necromante" and ashes >= 2 and not _occupied_slot_targets(ENEMY_ID).is_empty()
+			"enabled": selected_class_id == "necromante" and class_active_unlocked and ashes >= 2 and not _occupied_slot_targets(ENEMY_ID).is_empty()
 		},
 		{
 			"id": NECRO_CHOICE_CONFUSION,
 			"display_name": "Confusao Sepulcral",
 			"cost_ashes": 2,
 			"text": "Uma criatura inimiga ataca o proprio lado neste turno.",
-			"enabled": selected_class_id == "necromante" and ashes >= 2 and not _occupied_slot_targets(ENEMY_ID).is_empty()
+			"enabled": selected_class_id == "necromante" and class_active_unlocked and ashes >= 2 and not _occupied_slot_targets(ENEMY_ID).is_empty()
 		},
 		{
 			"id": NECRO_CHOICE_REVIVE_ONE_ONE,
 			"display_name": "Reanimar 1/1",
 			"cost_ashes": 4,
 			"text": "Reanima a ultima criatura do descarte como 1/1.",
-			"enabled": selected_class_id == "necromante" and ashes >= 4 and _has_discard_creature() and not _strict_open_slot_targets(PLAYER_ID).is_empty()
+			"enabled": selected_class_id == "necromante" and class_active_unlocked and ashes >= 4 and _has_discard_creature() and not _strict_open_slot_targets(PLAYER_ID).is_empty()
 		},
 		{
 			"id": NECRO_CHOICE_REVIVE_FULL,
 			"display_name": "Reanimar original",
 			"cost_ashes": 6,
 			"text": "Reanima a ultima criatura do descarte com stats originais.",
-			"enabled": selected_class_id == "necromante" and ashes >= 6 and _has_discard_creature() and not _strict_open_slot_targets(PLAYER_ID).is_empty()
+			"enabled": selected_class_id == "necromante" and class_active_unlocked and ashes >= 6 and _has_discard_creature() and not _strict_open_slot_targets(PLAYER_ID).is_empty()
 		}
 	]
 
 func can_use_class_active() -> bool:
-	if outcome != "" or class_active_used:
+	if outcome != "" or class_active_used or not class_active_unlocked:
 		return false
 	match selected_class_id:
 		"arcano":
@@ -329,8 +354,6 @@ func end_player_turn() -> Dictionary:
 	if outcome != "":
 		return _fail("A batalha ja terminou.")
 	_log("Fim do turno %d." % turn_number)
-	_auto_attack_side(PLAYER_ID)
-	_check_outcome()
 	if outcome == "" and mode == MODE_WAVES and _board_is_clear(ENEMY_ID) and _has_next_wave():
 		_spawn_next_wave()
 		_check_outcome()
@@ -338,7 +361,11 @@ func end_player_turn() -> Dictionary:
 		_resolve_boss_summon()
 		_check_outcome()
 	if outcome == "":
-		_auto_attack_side(ENEMY_ID)
+		_resolve_lane_combat_step()
+		_check_outcome()
+	if outcome == "" and mode in [MODE_DEFENSE_POSITION, MODE_SURVIVE_TURNS]:
+		survived_turns += 1
+		_log("Turnos de objetivo sobrevividos: %d/%d." % [survived_turns, _required_objective_turns()])
 		_check_outcome()
 	turn_number += 1
 	class_active_used = false
@@ -355,18 +382,9 @@ func get_attack_options(owner_id: String, slot_index: int) -> Array[Dictionary]:
 		return []
 	var opponent_id: String = _opponent_id(owner_id)
 	var opposing_slots: Array = _slots_for_owner(opponent_id)
-	var protected_slot: int = _first_protected_slot(opponent_id)
-	if protected_slot >= 0:
-		return [{"owner": opponent_id, "slot": protected_slot}]
-	var attacker: Dictionary = Dictionary(slots[slot_index])
-	if owner_id == PLAYER_ID and bool(attacker.get("voadora", false)) and _can_attack_hero(opponent_id):
-		return [{"owner": opponent_id, "hero": true}]
 	if slot_index < opposing_slots.size() and opposing_slots[slot_index] != null:
 		return [{"owner": opponent_id, "slot": slot_index}]
-	for index: int in range(opposing_slots.size()):
-		if opposing_slots[index] != null:
-			return [{"owner": opponent_id, "slot": index}]
-	if _can_attack_hero(opponent_id):
+	if _can_receive_direct_damage(opponent_id):
 		return [{"owner": opponent_id, "hero": true}]
 	return []
 
@@ -448,7 +466,7 @@ func _resolve_spell(card, target: Dictionary) -> void:
 	match str(effect.get("action", "")):
 		"damage":
 			var amount: int = int(effect.get("amount", effect.get("damage", 0))) + _spell_damage_bonus()
-			if selected_class_id == "arcano":
+			if selected_class_id == "arcano" and class_passive_unlocked:
 				amount += flow
 			var target_data: Dictionary = target if not target.is_empty() else _first_enemy_target()
 			var target_owner: String = str(target_data.get("owner", ENEMY_ID))
@@ -503,34 +521,104 @@ func _shuffle_deck(target_deck: Array[String]) -> void:
 		target_deck[index] = target_deck[swap_index]
 		target_deck[swap_index] = card_id
 
-func _auto_attack_side(owner_id: String) -> void:
-	var slots: Array = _slots_for_owner(owner_id)
-	for index: int in range(slots.size()):
-		if slots[index] == null:
-			continue
-		var occupant: Dictionary = Dictionary(slots[index])
-		if int(occupant.get("slow_turns", 0)) > 0:
-			occupant["slow_turns"] = int(occupant.get("slow_turns", 0)) - 1
-			slots[index] = occupant
-			_set_slots_for_owner(owner_id, slots)
-			_log("%s perdeu o ataque por Lentidao." % str(occupant.get("name", "Criatura")))
-			continue
-		if int(occupant.get("confusion_turns", 0)) > 0:
-			occupant["confusion_turns"] = int(occupant.get("confusion_turns", 0)) - 1
-			slots[index] = occupant
-			_set_slots_for_owner(owner_id, slots)
-			var confused_target: Dictionary = _first_same_side_target(owner_id, index)
-			if not confused_target.is_empty():
-				_resolve_attack(owner_id, index, confused_target)
-				_log("%s atacou em Confusao." % str(occupant.get("name", "Criatura")))
-				if outcome != "":
-					return
-				continue
-		var result: Dictionary = attack_with_unit(owner_id, index)
-		if not bool(result.get("ok", false)):
-			continue
+func _resolve_lane_combat_step() -> void:
+	var lane_count: int = max(player_slots.size(), enemy_slots.size())
+	for index: int in range(lane_count):
 		if outcome != "":
 			return
+		_resolve_lane(index)
+
+func _resolve_lane(index: int) -> void:
+	var player_can_attack: bool = _prepare_lane_attacker(PLAYER_ID, index)
+	var enemy_can_attack: bool = _prepare_lane_attacker(ENEMY_ID, index)
+	var player_unit: Dictionary = _slot_occupant(PLAYER_ID, index)
+	var enemy_unit: Dictionary = _slot_occupant(ENEMY_ID, index)
+	if player_unit.is_empty() and enemy_unit.is_empty():
+		return
+	if not player_unit.is_empty() and not enemy_unit.is_empty():
+		_resolve_opposed_lane(index, player_can_attack, enemy_can_attack)
+		return
+	if not player_unit.is_empty() and player_can_attack and _can_receive_direct_damage(ENEMY_ID):
+		_damage_hero(ENEMY_ID, int(player_unit.get("attack", 0)))
+		_log("%s passou dano direto pela lane %d." % [str(player_unit.get("name", "Criatura")), index + 1])
+	elif not enemy_unit.is_empty() and enemy_can_attack and _can_receive_direct_damage(PLAYER_ID):
+		_damage_hero(PLAYER_ID, int(enemy_unit.get("attack", 0)))
+		_log("%s atingiu o Comandante pela lane %d." % [str(enemy_unit.get("name", "Criatura")), index + 1])
+
+func _resolve_opposed_lane(index: int, player_can_attack: bool, enemy_can_attack: bool) -> void:
+	var player_unit: Dictionary = _slot_occupant(PLAYER_ID, index)
+	var enemy_unit: Dictionary = _slot_occupant(ENEMY_ID, index)
+	if player_unit.is_empty() or enemy_unit.is_empty():
+		return
+	var player_damage: int = int(player_unit.get("attack", 0)) if player_can_attack else 0
+	var enemy_damage: int = int(enemy_unit.get("attack", 0)) if enemy_can_attack else 0
+	var player_initiative: bool = bool(player_unit.get("iniciativa", false)) and player_can_attack
+	var enemy_initiative: bool = bool(enemy_unit.get("iniciativa", false)) and enemy_can_attack
+	if player_initiative and not enemy_initiative:
+		_damage_slot(ENEMY_ID, index, player_damage)
+		if _slot_occupant(ENEMY_ID, index).is_empty():
+			_log("%s usou Iniciativa na lane %d." % [str(player_unit.get("name", "Criatura")), index + 1])
+			return
+		_damage_slot(PLAYER_ID, index, enemy_damage)
+		_log("Lane %d trocou dano com Iniciativa aliada." % [index + 1])
+		return
+	if enemy_initiative and not player_initiative:
+		_damage_slot(PLAYER_ID, index, enemy_damage)
+		if _slot_occupant(PLAYER_ID, index).is_empty():
+			_log("%s usou Iniciativa na lane %d." % [str(enemy_unit.get("name", "Criatura")), index + 1])
+			return
+		_damage_slot(ENEMY_ID, index, player_damage)
+		_log("Lane %d trocou dano com Iniciativa inimiga." % [index + 1])
+		return
+	_deal_simultaneous_slot_damage(index, player_damage, enemy_damage)
+	_log("Lane %d resolveu dano simultaneo." % [index + 1])
+
+func _prepare_lane_attacker(owner_id: String, slot_index: int) -> bool:
+	var slots: Array = _slots_for_owner(owner_id)
+	if slot_index < 0 or slot_index >= slots.size() or slots[slot_index] == null:
+		return false
+	var occupant: Dictionary = Dictionary(slots[slot_index])
+	if bool(occupant.get("objective", false)):
+		return false
+	if int(occupant.get("slow_turns", 0)) > 0:
+		occupant["slow_turns"] = int(occupant.get("slow_turns", 0)) - 1
+		slots[slot_index] = occupant
+		_set_slots_for_owner(owner_id, slots)
+		_log("%s perdeu o ataque por Lentidao." % str(occupant.get("name", "Criatura")))
+		return false
+	if int(occupant.get("confusion_turns", 0)) > 0:
+		occupant["confusion_turns"] = int(occupant.get("confusion_turns", 0)) - 1
+		slots[slot_index] = occupant
+		_set_slots_for_owner(owner_id, slots)
+		var confused_target: Dictionary = _first_same_side_target(owner_id, slot_index)
+		if not confused_target.is_empty():
+			_resolve_attack(owner_id, slot_index, confused_target)
+			_log("%s atacou em Confusao." % str(occupant.get("name", "Criatura")))
+		return false
+	return true
+
+func _deal_simultaneous_slot_damage(lane_index: int, player_damage: int, enemy_damage: int) -> void:
+	var player_unit: Dictionary = _slot_occupant(PLAYER_ID, lane_index)
+	var enemy_unit: Dictionary = _slot_occupant(ENEMY_ID, lane_index)
+	if player_unit.is_empty() or enemy_unit.is_empty():
+		return
+	player_unit["health"] = int(player_unit.get("health", 0)) - enemy_damage
+	enemy_unit["health"] = int(enemy_unit.get("health", 0)) - player_damage
+	_store_or_destroy_lane_unit(PLAYER_ID, lane_index, player_unit)
+	_store_or_destroy_lane_unit(ENEMY_ID, lane_index, enemy_unit)
+
+func _store_or_destroy_lane_unit(owner_id: String, slot_index: int, occupant: Dictionary) -> void:
+	var slots: Array = _slots_for_owner(owner_id)
+	if int(occupant.get("health", 0)) <= 0:
+		_log("%s foi destruido." % str(occupant.get("name", "Criatura")))
+		var card_id: String = str(occupant.get("card_id", ""))
+		if owner_id == PLAYER_ID and card_id != "":
+			discard.append(card_id)
+		_handle_unit_death(owner_id, occupant)
+		slots[slot_index] = null
+	else:
+		slots[slot_index] = occupant
+	_set_slots_for_owner(owner_id, slots)
 
 func _resolve_attack(owner_id: String, slot_index: int, target: Dictionary) -> void:
 	var slots: Array = _slots_for_owner(owner_id)
@@ -553,8 +641,9 @@ func _damage_slot(owner_id: String, slot_index: int, amount: int) -> void:
 	occupant["health"] = int(occupant.get("health", 0)) - amount
 	if int(occupant.get("health", 0)) <= 0:
 		_log("%s foi destruido." % str(occupant.get("name", "Criatura")))
-		if owner_id == PLAYER_ID:
-			discard.append(str(occupant.get("card_id", "")))
+		var card_id: String = str(occupant.get("card_id", ""))
+		if owner_id == PLAYER_ID and card_id != "":
+			discard.append(card_id)
 		_handle_unit_death(owner_id, occupant)
 		slots[slot_index] = null
 	else:
@@ -572,7 +661,11 @@ func _check_outcome() -> void:
 		outcome = "derrota"
 		current_phase = PHASE_ENDED
 		return
-	if _can_attack_hero(ENEMY_ID) and enemy_health <= 0:
+	if mode == MODE_DEFENSE_POSITION and not _defense_objective_alive():
+		outcome = "derrota"
+		current_phase = PHASE_ENDED
+		return
+	if _enemy_hero_is_objective() and enemy_health <= 0:
 		outcome = "vitoria"
 		current_phase = PHASE_ENDED
 		return
@@ -582,6 +675,12 @@ func _check_outcome() -> void:
 	if mode == MODE_WAVES and _board_is_clear(ENEMY_ID) and not _has_next_wave():
 		outcome = "vitoria"
 		current_phase = PHASE_ENDED
+	if mode == MODE_DEFENSE_POSITION and _defense_objective_alive() and survived_turns >= required_defense_turns:
+		outcome = "vitoria"
+		current_phase = PHASE_ENDED
+	if mode == MODE_SURVIVE_TURNS and survived_turns >= required_survive_turns:
+		outcome = "vitoria"
+		current_phase = PHASE_ENDED
 
 func _board_is_clear(owner_id: String) -> bool:
 	for occupant: Variant in _slots_for_owner(owner_id):
@@ -589,8 +688,42 @@ func _board_is_clear(owner_id: String) -> bool:
 			return false
 	return true
 
-func _can_attack_hero(owner_id: String) -> bool:
-	return owner_id == PLAYER_ID or mode in [MODE_DUEL, MODE_SUMMONER_BOSS]
+func _setup_defense_objective() -> void:
+	if player_slots.is_empty():
+		return
+	var safe_slot: int = clampi(defense_slot_index, 0, player_slots.size() - 1)
+	defense_slot_index = safe_slot
+	player_slots[safe_slot] = {
+		"owner": PLAYER_ID,
+		"card_id": "",
+		"name": "Objetivo de Defesa",
+		"attack": 0,
+		"health": defense_objective_health,
+		"max_health": defense_objective_health,
+		"ready": false,
+		"keywords": [],
+		"iniciativa": false,
+		"regeneracao": false,
+		"objective": true,
+		"slow_turns": 0,
+		"curse_turns": 0,
+		"confusion_turns": 0,
+		"temporary_attack_bonus": 0
+	}
+
+func _defense_objective_alive() -> bool:
+	if defense_slot_index < 0 or defense_slot_index >= player_slots.size() or player_slots[defense_slot_index] == null:
+		return false
+	return bool(Dictionary(player_slots[defense_slot_index]).get("objective", false))
+
+func _required_objective_turns() -> int:
+	return required_defense_turns if mode == MODE_DEFENSE_POSITION else required_survive_turns
+
+func _can_receive_direct_damage(owner_id: String) -> bool:
+	return owner_id == PLAYER_ID or _enemy_hero_is_objective()
+
+func _enemy_hero_is_objective() -> bool:
+	return mode in [MODE_DUEL, MODE_SUMMONER_BOSS]
 
 func _build_occupant(card, owner_id: String, ready: bool) -> Dictionary:
 	return {
@@ -602,8 +735,7 @@ func _build_occupant(card, owner_id: String, ready: bool) -> Dictionary:
 		"max_health": int(card.health),
 		"ready": ready,
 		"keywords": Array(card.keywords),
-		"protecao": card.has_keyword("protecao"),
-		"voadora": card.has_keyword("voadora"),
+		"iniciativa": card.has_keyword("iniciativa"),
 		"regeneracao": card.has_keyword("regeneracao"),
 		"slow_turns": 0,
 		"curse_turns": 0,
@@ -612,7 +744,7 @@ func _build_occupant(card, owner_id: String, ready: bool) -> Dictionary:
 	}
 
 func _after_card_played() -> void:
-	if selected_class_id == "arcano":
+	if selected_class_id == "arcano" and class_passive_unlocked:
 		flow += 1
 
 func _resolve_on_enter(card) -> void:
@@ -624,7 +756,7 @@ func _resolve_on_enter(card) -> void:
 			_log("%s gerou %d de mana neste turno." % [card.display_name, int(on_enter.get("amount", 0))])
 
 func _apply_summon_passive(_slot_index: int) -> void:
-	if selected_class_id != "invocador":
+	if selected_class_id != "invocador" or not class_passive_unlocked:
 		return
 	var target_slot: int = _strongest_ally_slot()
 	if target_slot >= 0:
@@ -685,7 +817,9 @@ func _revive_from_discard_into_slot(as_one_one: bool, slot_index: int) -> bool:
 	return false
 
 func _handle_unit_death(owner_id: String, occupant: Dictionary) -> void:
-	if selected_class_id == "necromante":
+	if bool(occupant.get("objective", false)):
+		return
+	if selected_class_id == "necromante" and class_passive_unlocked:
 		var gained: int = 1
 		var card = _card(str(occupant.get("card_id", "")))
 		if card != null:
@@ -852,13 +986,6 @@ func _damage_first_enemy(amount: int) -> void:
 	else:
 		_damage_hero(str(target.get("owner", ENEMY_ID)), amount)
 
-func _first_protected_slot(owner_id: String) -> int:
-	var slots: Array = _slots_for_owner(owner_id)
-	for index: int in range(slots.size()):
-		if slots[index] != null and bool(Dictionary(slots[index]).get("protecao", false)):
-			return index
-	return -1
-
 func _first_same_side_target(owner_id: String, attacker_index: int) -> Dictionary:
 	var slots: Array = _slots_for_owner(owner_id)
 	for index: int in range(slots.size()):
@@ -886,6 +1013,12 @@ func _empty_slots(count: int) -> Array:
 
 func _slots_for_owner(owner_id: String) -> Array:
 	return enemy_slots if owner_id == ENEMY_ID else player_slots
+
+func _slot_occupant(owner_id: String, slot_index: int) -> Dictionary:
+	var slots: Array = _slots_for_owner(owner_id)
+	if slot_index < 0 or slot_index >= slots.size() or slots[slot_index] == null:
+		return {}
+	return Dictionary(slots[slot_index])
 
 func _set_slots_for_owner(owner_id: String, slots: Array) -> void:
 	if owner_id == ENEMY_ID:

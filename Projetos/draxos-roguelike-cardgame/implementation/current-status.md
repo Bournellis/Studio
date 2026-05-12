@@ -2,12 +2,12 @@
 
 - Last Updated: `2026-05-12`
 - Active Project Name: `draxos-roguelike-cardgame`
-- Active Surface: `visual-led menu and HUD class slice`
+- Active Surface: `linear 10-encounter roguelike cardgame slice`
 - Active Track: `Track 01 - Playable Run Loop`
-- Active Track Status: `P05_MENU_HUD_REFORM_VALIDATED`
-- Current Operational Baseline: `Godot 4.6.2 mechanical slice with Arcano, Invocador, and Necromante class options; 15-card mockup decks; deterministic deck shuffle and discard recycle; RunSession mana, health, souls, pending rewards and paid healing; clear-board and waves encounters; drag-and-drop battle targeting for hand cards and class spells; hover card preview; Necromante ritual choice modal; initial Fluxo, buffs, Protecao/Voadora/Regeneracao, Cinzas, death hooks, debuffs, reanimation, waves, boss summons, VisualAssets manifest/autoload, optional asset fallback reporting, provisional 16:9 backgrounds, ShipHub 4-hotspot visual menu, RunMap route lines over the planet, Battle classic cardgame HUD with compact ticker, safe frame overlay metadata, portrait battle cards, screenshot capture tool, and validation green 32/32`
-- Active Goal: `add priority card art PNGs, normalize provisional background/frame assets, then playtest and tune balance/readability`
-- Validation: `2026-05-12 Track 01 menu/HUD reform validation green; 32/32 GUT tests passing; 245 asserts; screenshots captured for ShipHub/RunMap/Battle at 1280x720 and 960x540; 31 optional PNGs reported missing by design`
+- Active Track Status: `P05_LINEAR_10_MAP_SLICE_VALIDATED`
+- Current Operational Baseline: `Godot 4.6.2 Track 01 slice with Arcano, Invocador, and Necromante; mana inicial 2; starter decks without cost 3 cards; RunSession health, max mana, souls, completed nodes, automatic rewards, passive unlock and active unlock state; 10 linear RunMap nodes covering limpar_mesa, ondas, duelo, defesa_posicao, sobreviver_turnos, and chefe_summoner; automatic rewards on maps 2/3/5/7; front-lane combat with simultaneous damage, direct lane damage, iniciativa, regeneracao, waves, defense objective, survive turns, duel hero kill, boss health and scripted summons; class passives locked until map 5 and class actives hidden/locked until map 7; VisualAssets manifest/autoload, provisional 16:9 backgrounds, ShipHub 4-hotspot visual menu, RunMap route lines over the planet, Battle classic cardgame HUD with compact ticker, portrait battle cards, screenshot capture tool, and validation green 41/41`
+- Active Goal: `playtest full 10-map route, then redesign cards/enemies and distribute remaining rewards`
+- Validation: `2026-05-12 Track 01 linear 10-map validation green; 41/41 GUT tests passing; 351 asserts; 37 optional PNGs reported missing by design`
 
 ## Read Next
 
@@ -30,4 +30,4 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 
 ## Next
 
-Add priority card arts, replace/normalize provisional frames and backgrounds where needed, then playtest Arcano, Invocador, and Necromante against `pouso_elemental` and `ondas_iniciais`.
+Playtest the full 10-map route, then redesign cards/enemies and define the remaining non-soul rewards.

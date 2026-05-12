@@ -33,6 +33,7 @@ Evoluir o checkpoint da Track 00 para o primeiro slice jogavel coerente: iniciar
 - [x] P04: passivas/spells iniciais implementadas em versao mecanica.
 - [x] P04: decks sao embaralhados no inicio da batalha e ao reciclar descarte.
 - [x] P05: target UX implementado com drag-and-drop, preview de cartas e modal do Necromante.
+- [x] P05: run linear de 10 mapas, recompensas automaticas e combate frontal validados.
 - [ ] P05: playtest e tuning do slice mecanico.
 
 ## Handoff Needed
@@ -41,4 +42,4 @@ Evoluir o checkpoint da Track 00 para o primeiro slice jogavel coerente: iniciar
 
 ## Notes
 
-Target UX validado em 2026-05-08 com 28/28 testes. Classes deixaram de ser placeholders; mecanicas atuais sao slice de teste e ainda precisam de playtest/tuning.
+Target UX validado em 2026-05-08 com 28/28 testes. Em 2026-05-12, a run linear de 10 mapas foi validada com 41/41 testes: mana inicial 2, starter decks sem custo 3, recompensas automaticas nos mapas 2/3/5/7, combate frontal por lanes, `iniciativa`, passiva no mapa 5 e ativa no mapa 7. O slice ainda precisa de playtest/tuning e redesign completo das cartas.

@@ -3,6 +3,10 @@ extends Node
 const DEFAULT_RUN_SEED: int = 0
 const REWARD_ADD_PULSO_ASTRAL: String = "add_pulso_astral"
 const REWARD_REINFORCE_HEALTH: String = "reinforce_health"
+const REWARD_MAX_MANA_1: String = "max_mana_1"
+const REWARD_ADD_COST3_CARDS: String = "add_cost3_cards"
+const REWARD_UNLOCK_CLASS_PASSIVE: String = "unlock_class_passive"
+const REWARD_UNLOCK_CLASS_ACTIVE: String = "unlock_class_active"
 const PAID_HEAL_COST: int = 5
 const PAID_HEAL_AMOUNT: int = 5
 
@@ -18,8 +22,11 @@ var current_health: int = 0
 var max_health: int = 0
 var max_mana: int = 0
 var soul_total: int = 0
+var class_passive_unlocked: bool = false
+var class_active_unlocked: bool = false
 var rewards_pending: Array[String] = []
 var applied_reward_ids: Array[String] = []
+var automatic_reward_ids: Array[String] = []
 var last_completed_node_id: String = ""
 var last_battle_outcome: String = ""
 
@@ -36,8 +43,11 @@ func start_empty_run(seed: int = DEFAULT_RUN_SEED) -> void:
 	max_health = 0
 	max_mana = 0
 	soul_total = 0
+	class_passive_unlocked = false
+	class_active_unlocked = false
 	rewards_pending = []
 	applied_reward_ids = []
+	automatic_reward_ids = []
 	last_completed_node_id = ""
 	last_battle_outcome = ""
 
@@ -59,10 +69,13 @@ func start_class_run(class_id: String, seed: int = DEFAULT_RUN_SEED) -> Dictiona
 		fallback_health = int(catalog.player_hero.max_health)
 	max_health = int(class_option.get("starting_health", fallback_health))
 	current_health = max_health
-	max_mana = int(class_option.get("starting_mana", 3))
+	max_mana = int(class_option.get("starting_mana", 2))
 	soul_total = 0
+	class_passive_unlocked = false
+	class_active_unlocked = false
 	rewards_pending = []
 	applied_reward_ids = []
+	automatic_reward_ids = []
 	last_completed_node_id = ""
 	last_battle_outcome = ""
 	return {"ok": true, "message": "Run iniciada com %s." % selected_class_display_name}
@@ -80,8 +93,11 @@ func reset() -> void:
 	max_health = 0
 	max_mana = 0
 	soul_total = 0
+	class_passive_unlocked = false
+	class_active_unlocked = false
 	rewards_pending = []
 	applied_reward_ids = []
+	automatic_reward_ids = []
 	last_completed_node_id = ""
 	last_battle_outcome = ""
 
@@ -101,10 +117,12 @@ func record_battle_result(node_id: String, outcome: String, remaining_health: in
 	current_health = clampi(remaining_health, 0, max_health)
 	if outcome != "vitoria":
 		return
+	var already_completed: bool = completed_node_ids.has(node_id)
 	mark_node_completed(node_id)
 	last_completed_node_id = node_id
-	soul_total += _soul_reward_for_node(node_id)
-	_queue_placeholder_reward(node_id)
+	if not already_completed:
+		soul_total += _soul_reward_for_node(node_id)
+		_apply_automatic_rewards_for_node(node_id)
 	if current_node_id == node_id:
 		current_node_id = ""
 
@@ -166,8 +184,11 @@ func snapshot() -> Dictionary:
 		"max_health": max_health,
 		"max_mana": max_mana,
 		"soul_total": soul_total,
+		"class_passive_unlocked": class_passive_unlocked,
+		"class_active_unlocked": class_active_unlocked,
 		"rewards_pending": rewards_pending.duplicate(),
 		"applied_reward_ids": applied_reward_ids.duplicate(),
+		"automatic_reward_ids": automatic_reward_ids.duplicate(),
 		"last_completed_node_id": last_completed_node_id,
 		"last_battle_outcome": last_battle_outcome
 	}
@@ -180,14 +201,49 @@ func _soul_reward_for_node(node_id: String) -> int:
 	return int(reward.get("min", 0))
 
 func _encounter_for_node(node_id: String) -> Dictionary:
+	var node: Dictionary = _run_node(node_id)
+	if node.is_empty():
+		return {}
+	var catalog = ContentLibrary.get_catalog()
+	if catalog == null:
+		return {}
+	return catalog.find_encounter(str(node.get("encounter_id", "")))
+
+func _run_node(node_id: String) -> Dictionary:
 	var catalog = ContentLibrary.get_catalog()
 	if catalog == null:
 		return {}
 	for node: Dictionary in Array(ContentLibrary.get_run_map().get("nodes", [])):
 		if str(node.get("id", "")) != node_id:
 			continue
-		return catalog.find_encounter(str(node.get("encounter_id", "")))
+		return node
 	return {}
+
+func _apply_automatic_rewards_for_node(node_id: String) -> void:
+	var node: Dictionary = _run_node(node_id)
+	for reward_id: String in _string_array(node.get("rewards", [])):
+		var applied_id: String = "%s:%s" % [node_id, reward_id]
+		if automatic_reward_ids.has(applied_id):
+			continue
+		match reward_id:
+			REWARD_MAX_MANA_1:
+				max_mana += 1
+			REWARD_ADD_COST3_CARDS:
+				for card_id: String in _cost_three_reward_card_ids():
+					current_deck_ids.append(card_id)
+			REWARD_UNLOCK_CLASS_PASSIVE:
+				class_passive_unlocked = true
+			REWARD_UNLOCK_CLASS_ACTIVE:
+				class_active_unlocked = true
+			_:
+				continue
+		automatic_reward_ids.append(applied_id)
+
+func _cost_three_reward_card_ids() -> Array[String]:
+	return [
+		"arcano_amplificador",
+		"invocador_colosso"
+	]
 
 func _queue_placeholder_reward(node_id: String) -> void:
 	var pending_id: String = "placeholder_reward:%s" % node_id

@@ -1,55 +1,41 @@
-# Encontro 01 — Limpar o Board
+# Encontro 01 - Limpar Mesa
 
-- Last Updated: `2026-05-07`
-- Status: `mockup de teste`
+- Last Updated: `2026-05-12`
+- Status: `mockup validado na rota linear`
 - Tipo: `limpar_mesa`
 - Diretor: `prefilled_board`
 
 ## Objetivo
 
-Eliminar as 3 criaturas inimigas em campo. Todas começam em campo desde o turno 1.
+Eliminar as criaturas inimigas em campo. Todas comecam posicionadas desde o turno 1.
 
-## Configuração
+## Configuracao
 
-- Slots do jogador: **3**
-- Slots do inimigo: **3**
-- Criaturas inimigas: pré-posicionadas no início do encontro
+- Slots do jogador: 3.
+- Slots do inimigo: 3.
+- Tier: `small`.
+- Almas: 4.
+- Recompensa extra: nenhuma.
 
-## Criaturas Inimigas — Mockup
+## Combate
 
-> Sem nome, arte ou lore definitivos. Existem para validar os números dos decks de classe.
+Este encontro usa o combate frontal padrao:
+
+- cada criatura ataca apenas a lane diretamente a frente;
+- dano entre duas criaturas opostas e simultaneo;
+- inimigo sem defensor na frente causa dano direto ao Comandante;
+- heroi inimigo nao e alvo direto neste modo.
+
+## Criaturas Inimigas - Mockup
 
 | Criatura | ATK | HP | Perfil |
-|---|---|---|---|
-| Elemental Ágil | 2 | 2 | Alta prioridade: pouco HP mas dói. Fácil de matar, urgente remover. |
-| Elemental Bruto | 3 | 3 | Maior ameaça de dano. Lentidão resolve por um turno. |
-| Elemental Sólido | 1 | 5 | Difícil de matar, baixo dano. Pode ser deixado por último. |
-
-## Resumo Numérico
-
-- HP total inimigo: **10**
-- Dano inimigo por turno (sem resposta): **6**
-- HP do Comandante: 20 → situação crítica em ~3 turnos sem resposta
-
-## Decisão Central
-
-Priorizar o Bruto (maior ATK, para reduzir dano recebido) ou o Ágil (menor HP, para limpar o board mais rápido)? Ambas as escolhas têm custo.
-
-## Comportamento Esperado por Classe
-
-**Arcano:** usar Construtor de Fluxo (Lentidão) no Bruto no turno 1. Spells eliminam o Ágil rapidamente. Bruto e Sólido são gerenciados nos turnos seguintes com Fluxo acumulado.
-
-**Invocador:** estabelecer Criatura Proteção para absorver ataques do Bruto. Criatura Voadora voa sobre o Sólido para acumular dano direto. Buffs permanentes tornam as criaturas resistentes a trocas.
-
-**Necromante:** criaturas sacrificiais trocam com o Ágil gerando Cinzas. Lentidão trava o Bruto. Podridão enfraquece o Sólido antes de mandá-lo para o descarte. Cinzas acumuladas habilitam Degrau I ou II.
-
-## Duração Esperada
-
-2–4 turnos dependendo da classe e das cartas na mão inicial.
+|---|---:|---:|---|
+| Elemental Agil | 2 | 2 | Baixo HP e pressao imediata. |
+| Elemental Bruto | 3 | 3 | Maior ameaca de dano. |
+| Elemental Solido | 1 | 5 | Baixo dano, mais dificil de remover. |
 
 ## O Que Validar
 
-- O Arcano consegue causar dano suficiente para limpar antes de morrer de pressão?
-- O Invocador consegue estabelecer criaturas resilientes a tempo?
-- O Necromante acumula Cinzas suficientes para usar a ativa antes do fim do encontro?
-- O encontro é difícil o suficiente para ser interessante mas não punitivo para um primeiro encontro?
+- Se a primeira luta apresenta bem o ritmo de lanes frontais.
+- Se o dano direto pune lanes vazias sem encerrar a run cedo demais.
+- Se Arcano, Invocador e Necromante conseguem estabilizar com mana inicial 2.

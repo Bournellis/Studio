@@ -1,29 +1,48 @@
-# Encontros — Índice
+# Encontros - Indice
 
-- Last Updated: `2026-05-07`
-- Status: `mockup de teste — encontros iniciais`
-- Referência: `../game-design-document.md`
+- Last Updated: `2026-05-12`
+- Status: `10 encontros lineares validados`
+- Referencia: `../game-design-document.md`
 
-## Propósito
+## Proposito
 
-Este diretório contém os encontros do jogo. Encontros iniciais são mockups para validar os números dos decks de classe antes de definir lore, arte e scripts definitivos.
+Este diretorio registra o contrato de encontros do slice. Os nomes, inimigos e numeros ainda sao mockups funcionais; servem para validar modos, recompensas automaticas e escalada da run antes do redesign completo das cartas.
 
-## Estado Atual
+## Ordem Linear Atual
 
-| Encontro | Tipo | Status |
-|---|---|---|
-| [encontro-01-limpar-board.md](encontro-01-limpar-board.md) | `limpar_mesa` | mockup de teste |
-| [encontro-02-ondas.md](encontro-02-ondas.md) | `ondas` | mockup de teste |
+| Mapa | Encounter | Modo | Tier | Almas | Recompensa |
+|---|---|---|---|---:|---|
+| 1 | `pouso_elemental` | `limpar_mesa` | small | 4 | - |
+| 2 | `ondas_iniciais` | `ondas` | medium | 7 | +1 max mana |
+| 3 | `duelo_inicial` | `duelo` | medium | 7 | todas as cartas custo 3 jogaveis atuais |
+| 4 | `defesa_posicao_inicial` | `defesa_posicao` | medium | 7 | - |
+| 5 | `chefe_invocador` | `chefe_summoner` | boss | 18 | passiva da classe |
+| 6 | `sobreviver_turnos_inicial` | `sobreviver_turnos` | medium | 7 | - |
+| 7 | `limpeza_elite` | `limpar_mesa` | elite_optional | 11 | habilidade ativa da classe |
+| 8 | `ondas_avancadas` | `ondas` | elite_optional | 11 | - |
+| 9 | `duelo_elite` | `duelo` | elite_optional | 11 | - |
+| 10 | `chefe_summoner_final` | `chefe_summoner` | boss | 18 | - |
 
-## Vocabulário de Tipos
+## Vocabulario De Tipos
 
-- `limpar_mesa`: vencer limpando a presença inimiga relevante no tabuleiro.
-- `duelo`: vencer derrotando um personagem oponente.
-- `ondas`: lutar contra ondas sequenciais de criaturas.
-- `defesa_posicao`: proteger uma posição ou objeto.
-- `sobreviver_turnos`: sobreviver um número configurado de turnos.
-- `chefe_summoner`: derrotar um boss que invoca múltiplas criaturas.
+- `limpar_mesa`: vencer limpando a presenca inimiga relevante no tabuleiro.
+- `ondas`: vencer todas as ondas sequenciais.
+- `duelo`: vencer reduzindo o heroi inimigo a 0.
+- `defesa_posicao`: proteger objetivo 0 ATK / 10 HP no slot central aliado por 3 turnos.
+- `sobreviver_turnos`: vencer apos 3 turnos com o Comandante vivo.
+- `chefe_summoner`: boss com vida propria e summons roteirizados.
 
-## Próximo Passo
+## Regras De Combate Relevantes
 
-Validar números dos decks mockup contra estes dois encontros. Ajustar stats de criaturas ou decks conforme o resultado do teste antes de criar novos encontros.
+Todos os modos usam o mesmo combate frontal:
+
+- slot ataca apenas a lane da frente;
+- criaturas opostas causam dano simultaneo;
+- lane vazia passa dano direto quando ha alvo valido;
+- `duelo` e `chefe_summoner` permitem dano direto no heroi inimigo;
+- `defesa_posicao` cria um objetivo aliado no slot central;
+- `sobreviver_turnos` usa apenas sobrevivencia do Comandante como objetivo.
+
+## Proximo Passo
+
+Reescrever cartas e inimigos definitivos, depois redistribuir recompensas dos mapas que hoje ainda nao tem marco fixo.
