@@ -1,6 +1,6 @@
 # Track 02 Current Status
 
-- Last Updated: `2026-05-12` (P07 complete)
+- Last Updated: `2026-05-12` (P08 complete)
 - Status: `ACTIVE_LINEAR_PLAN`
 - Track Name: `Track 02 - Draxos Lore And Progression Alignment`
 
@@ -42,41 +42,4 @@ Each prompt must:
 - execute only the next pending prompt in the linear plan
 - keep mechanical IDs stable unless explicitly in the ID migration prompt
 - update records at the end of the prompt
-- run validation after runtime, generated-resource, scene, data, or test changes
-
-Each pass should still change one player-facing or runtime layer at a time:
-
-1. story labels and dialogue
-2. class fantasy
-3. mission chain framing
-4. card text and reward meaning
-5. RPG progression systems
-6. new content volume
-7. technical ID and asset migration
-
-## Completed in P07
-
-- `BattleEngine` now tracks volatile per-turn `fluxo: int`; increments after each `magia` or `magia_de_tabuleiro` resolved by the player; resets at player upkeep start.
-- `_play_damage_spell` adds `_player_fluxo_bonus()` to base damage amount (Arcano only).
-- `_try_trigger_fluxo` and `_player_fluxo_bonus` helpers isolate the logic; both guard on `active_class_id != "arcano"`.
-- `test_arcano_fluxo.gd` added with 13 tests: counter init, increment per spell type, stacking, turn reset, damage amplification on 2nd/3rd spell, no-class isolation, and creature attack isolation.
-
-## Next Implementation Candidate
-
-Continue with `P08 - Arcano: Pulso Astral Hero Power and Deck Activation` from `linear-execution-plan.md`.
-
-Expected scope:
-
-- Implement Pulso Astral hero power: `action: damage`, cost 1, once per own turn, targets any permanent or hero, damage uses fluxo pipeline
-- Activate Arcano starter deck end-to-end
-
-## Do Not Start Yet
-
-- later class engine systems beyond P02
-- final planet/crystal naming as hard canon
-- broad card economy
-- equipment/items
-- save-breaking technical ID rename
-- final art import
-
-Those depend on decisions or later passes in `implementation-plan.md`.
+- run validation after runtime, g

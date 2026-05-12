@@ -667,77 +667,23 @@ func _get_hero_power_display_name() -> String:
 		return "Preparar Defesa"
 	return str(hp.get("display_name", "Poder do heroi"))
 
-func _hero_power_needs_ally_target() -> bool:
+func _hero_power_needs_targeting() -> bool:
 	var hp: Dictionary = ContentLibrary.get_class_hero_power(GameSession.selected_class)
 	if hp.is_empty():
 		return false
 	var effect: Dictionary = Dictionary(hp.get("effect", {}))
-	return str(effect.get("target", "")) == "any_own_creature"
+	var target: String = str(effect.get("target", ""))
+	return target == "any_own_creature" or target == "any_permanent_or_hero"
 
 func _rebuild_hero_power_targets() -> void:
 	for child: Node in hero_power_targets_row.get_children():
 		hero_power_targets_row.remove_child(child)
 		child.free()
-	var needs_target: bool = _hero_power_needs_ally_target()
+	var needs_target: bool = _hero_power_needs_targeting()
 	hero_power_button.visible = not needs_target
 	hero_power_targets_row.visible = needs_target
 	if not needs_target:
 		return
-	var hp_name: String = _get_hero_power_display_name()
-	var can_use: bool = engine.can_use_player_hero_power()
-	for slot_index: int in range(engine.player_slots.size()):
-		if engine.player_slots[slot_index] == null:
-			continue
-		var btn: Button = Button.new()
-		btn.text = "%s → %s" % [hp_name, engine.get_slot_label(PLAYER_OWNER, slot_index)]
-		btn.custom_minimum_size = Vector2(0, 36)
-		btn.add_theme_font_size_override("font_size", 12)
-		btn.disabled = not can_use
-		btn.pressed.connect(_on_hero_power_target_pressed.bind(slot_index))
-		hero_power_targets_row.add_child(btn)
-	if hero_power_targets_row.get_child_count() == 0:
-		hero_power_button.visible = true
-		hero_power_button.disabled = true
-		hero_power_targets_row.visible = false
-
-func _on_hero_power_target_pressed(slot_index: int) -> void:
-	var result: Dictionary = engine.use_player_hero_power({"owner": "player", "slot": slot_index})
-	_record_action_feedback(result)
-	call_deferred("_refresh")
-
-func _finish_battle() -> void:
-	if engine.outcome == "victory":
-		var summary: String = "A emboscada foi vencida no encontro de teste."
-		if engine.encounter_id == "duelista_bandido":
-			summary = "O Guardiao Elemental foi derrotado em confronto."
-		elif engine.encounter_id == "invasao_em_ondas":
-			summary = "A invasao em ondas foi repelida."
-		elif engine.encounter_id == "defesa_do_portao":
-			summary = "O portao resistiu ao ataque inimigo."
-		elif engine.encounter_id == "colosso_fragmentado":
-			summary = "O Colosso Fragmentado perdeu todas as partes vitais."
-		elif engine.encounter_id == "enigma_da_ponte":
-			summary = "A ruptura de selos foi resolvida."
-		GameSession.complete_encounter(summary)
-		GameSession.save_game()
-	else:
-		GameSession.record_defeat("O heroi caiu; o estado pre-combate sera restaurado.")
-	get_tree().change_scene_to_file("res://modes/battle/result.tscn")
-
-func _panel_style(fill: Color) -> StyleBoxFlat:
-	var style: StyleBoxFlat = StyleBoxFlat.new()
-	style.bg_color = fill
-	style.border_color = Color(0.26, 0.3, 0.32)
-	style.border_width_left = 2
-	style.border_width_top = 2
-	style.border_width_right = 2
-	style.border_width_bottom = 2
-	style.corner_radius_top_left = 8
-	style.corner_radius_top_right = 8
-	style.corner_radius_bottom_left = 8
-	style.corner_radius_bottom_right = 8
-	style.content_margin_left = 10
-	style.content_margin_top = 8
-	style.content_margin_right = 10
-	style.content_margin_bottom = 8
-	return style
+	var hp: Dictionary = ContentLibrary.get_class_hero_power(GameSession.selected_class)
+	var effect: Dictionary = Dictionary(hp.get("effect", {}))
+	var target_mode: String = str(effect.get("target

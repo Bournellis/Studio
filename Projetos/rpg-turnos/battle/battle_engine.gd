@@ -324,6 +324,8 @@ func use_player_hero_power(target: Dictionary = {}) -> Dictionary:
 	var action: String = str(hp_effect.get("action", ""))
 	if action == "gain_stats":
 		return _use_hero_power_gain_stats(hp_effect, target, controller)
+	if action == "damage":
+		return _use_hero_power_damage(hp_effect, target, controller)
 	return _use_hero_power_preparar_defesa(controller)
 
 func _get_active_hero_power_effect() -> Dictionary:
@@ -369,6 +371,42 @@ func _use_hero_power_gain_stats(effect: Dictionary, target: Dictionary, controll
 		_after_action_resolved(PLAYER_ID, false)
 		return {"ok": true, "message": "Amplificar aplicado."}
 	return _fail("Hero power gain_stats: alvo nao suportado: %s." % hp_target)
+
+func _use_hero_power_damage(effect: Dictionary, target: Dictionary, controller: Dictionary) -> Dictionary:
+	var base_amount: int = int(effect.get("amount", 0))
+	var uses_fluxo: bool = bool(effect.get("fluxo_bonus", false))
+	var amount: int = base_amount + (_player_fluxo_bonus(PLAYER_ID) if uses_fluxo else 0)
+
+	var target_owner: String = _normalize_owner_id(str(target.get("owner", _opponent_id(PLAYER_ID))))
+	var slot_index: int = int(target.get("slot", -1))
+
+	# Validate target before spending resources.
+	if slot_index >= 0:
+		var target_slots: Array = _slots_for_owner(target_owner)
+		if slot_index >= target_slots.size() or target_slots[slot_index] == null:
+			return _fail("Hero power precisa de um alvo valido.")
+	else:
+		if not _controller_has_hero(target_owner):
+			return _fail("Hero power: este encontro nao possui heroi alvo.")
+
+	controller["energy"] = int(controller.get("energy", 0)) - 1
+	controller["hero_power_used"] = true
+	_set_controller(PLAYER_ID, controller)
+
+	if slot_index >= 0:
+		_apply_unit_damage(target_owner, slot_index, amount, DAMAGE_MAGICO)
+		_log("Pulso Astral causa %d de dano magico em %s." % [amount, _slot_label(target_owner, slot_index)])
+		_visual("magia", target_owner, slot_index, "-%d" % amount, Color(0.55, 0.78, 1.0))
+	else:
+		_apply_hero_damage(target_owner, amount)
+		_log("Pulso Astral causa %d de dano magico ao heroi." % amount)
+		_visual("magia", target_owner, -1, "-%d" % amount, Color(0.55, 0.78, 1.0))
+
+	_sync_public_fields()
+	_remove_destroyed()
+	_check_outcome()
+	_after_action_resolved(PLAYER_ID, false)
+	return {"ok": true, "message": "Pulso Astral: %d de dano magico." % amount}
 
 func _player_fluxo_bonus(controller_id: String) -> int:
 	if controller_id != PLAYER_ID or active_class_id != "arcano":
@@ -1774,76 +1812,4 @@ func _slot_label(owner_id: String, slot_index: int) -> String:
 		prefix = "N"
 	if slot_index >= 0 and slot_index < labels.size():
 		return labels[slot_index]
-	return "%s%d" % [prefix, slot_index + 1]
-
-func _target_label(target: Dictionary) -> String:
-	var owner_id: String = _normalize_owner_id(str(target.get("owner", ENEMY_ID)))
-	var slot_index: int = int(target.get("slot", -1))
-	if slot_index >= 0:
-		return _slot_label(owner_id, slot_index)
-	if owner_id == ENEMY_ID:
-		return "Heroi inimigo"
-	return "Heroi do jogador"
-
-func _add_attack_option(options: Array, seen: Dictionary, target: Dictionary) -> void:
-	var key: String = "%s:%d" % [str(target.get("owner", "")), int(target.get("slot", -1))]
-	if seen.has(key):
-		return
-	seen[key] = true
-	target["label"] = _target_label(target)
-	options.append(target)
-
-func _target_in_options(target: Dictionary, options: Array) -> bool:
-	var target_owner: String = _normalize_owner_id(str(target.get("owner", "")))
-	var target_slot: int = int(target.get("slot", -99))
-	for option: Variant in options:
-		var option_dict: Dictionary = Dictionary(option)
-		if _normalize_owner_id(str(option_dict.get("owner", ""))) == target_owner and int(option_dict.get("slot", -99)) == target_slot:
-			return true
-	return false
-
-func _is_instant_speed_card(card) -> bool:
-	return card != null and (str(card.speed) == "instantanea" or _has_card_keyword(card, "instantaneo"))
-
-func _has_card_keyword(card, keyword: String) -> bool:
-	return card != null and card.has_method("has_keyword") and (card.has_keyword(keyword) or card.has_keyword(_keyword_alias(keyword)))
-
-func _has_keyword(occupant: Dictionary, keyword: String) -> bool:
-	var keywords: Array = Array(occupant.get("keywords", []))
-	return keywords.has(keyword) or keywords.has(_keyword_alias(keyword))
-
-func _keyword_alias(keyword: String) -> String:
-	match keyword:
-		"rapido":
-			return "fast"
-		"defensor":
-			return "defender"
-		"alcance":
-			return "reach"
-		"atropelar":
-			return "trample"
-		_:
-			return keyword
-
-func _card_name(card_id: String) -> String:
-	if _catalog == null:
-		return card_id
-	return _catalog.card_name(card_id)
-
-func _visual(kind: String, owner_id: String, slot_index: int, text: String, color: Color) -> void:
-	eventos_visuais.append({
-		"kind": kind,
-		"owner": _normalize_owner_id(owner_id),
-		"slot": slot_index,
-		"text": text,
-		"color": color
-	})
-
-func _log(line: String) -> void:
-	log_lines.append(line)
-	if log_lines.size() > MAX_LOG_LINES:
-		log_lines.pop_front()
-
-func _fail(message: String) -> Dictionary:
-	_log(message)
-	return {"ok": false, "message": message}
+	retur
