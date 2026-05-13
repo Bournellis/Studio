@@ -491,9 +491,6 @@ func resolve_combat_cycle() -> Dictionary:
 	visual_events = []
 	_log("Combate do ciclo %d." % turn_number)
 	if outcome == "":
-		_resolve_enemy_turn_actions()
-		_check_outcome()
-	if outcome == "":
 		_resolve_staged_combat_step()
 		_check_outcome()
 	if outcome == "" and not pending_choices.is_empty():
@@ -505,6 +502,7 @@ func resolve_combat_cycle() -> Dictionary:
 	if outcome == "" and not pending_choices.is_empty():
 		current_phase = PHASE_PENDING_MAINTENANCE_CHOICE
 		return {"ok": true, "message": "Manutencao resolvida; escolha pendente."}
+	_resolve_enemy_preparation_step()
 	_finish_cycle()
 	return {"ok": true, "message": "Ciclo resolvido."}
 
@@ -518,7 +516,14 @@ func _resume_after_pending_choice() -> void:
 	if current_phase == PHASE_PENDING_MAINTENANCE_CHOICE and not pending_choices.is_empty():
 		return
 	if outcome == "":
+		_resolve_enemy_preparation_step()
 		_finish_cycle()
+
+func _resolve_enemy_preparation_step() -> void:
+	if outcome != "":
+		return
+	_resolve_enemy_turn_actions()
+	_check_outcome()
 
 func _finish_cycle() -> void:
 	if outcome == "" and mode in [MODE_DEFENSE_POSITION, MODE_SURVIVE_TURNS]:
@@ -853,35 +858,64 @@ func _resolve_staged_combat_step() -> void:
 	_resolve_combat_stage(COMBAT_STAGE_NORMAL_OVERFLOW, false, false, attacked_sources)
 
 func _resolve_combat_stage(stage_name: String, initiative_stage: bool, front_stage: bool, attacked_sources: Dictionary) -> void:
+	if front_stage:
+		_resolve_batched_combat_stage(stage_name, initiative_stage, attacked_sources)
+	else:
+		_resolve_sequential_combat_stage(stage_name, initiative_stage, attacked_sources)
+
+func _resolve_batched_combat_stage(stage_name: String, initiative_stage: bool, attacked_sources: Dictionary) -> void:
 	if outcome != "":
 		return
 	var attacks: Array[Dictionary] = []
 	var lane_count: int = max(player_slots.size(), enemy_slots.size())
 	for owner_id: String in [PLAYER_ID, ENEMY_ID]:
 		for slot_index: int in range(lane_count):
-			var attacker: Dictionary = _slot_occupant(owner_id, slot_index)
-			if attacker.is_empty() or bool(attacker.get("objective", false)):
-				continue
-			if bool(attacker.get("iniciativa", false)) != initiative_stage:
-				continue
-			var source_key: String = _source_key(owner_id, slot_index)
-			if attacked_sources.has(source_key):
-				continue
-			var target: Dictionary = _front_attack_target(owner_id, slot_index) if front_stage else _overflow_attack_target(owner_id, slot_index)
-			if front_stage and target.is_empty():
-				continue
-			var preparation: Dictionary = _prepare_staged_attacker(owner_id, slot_index)
-			if bool(preparation.get("consumed", false)):
-				attacked_sources[source_key] = true
-				var forced_target: Dictionary = Dictionary(preparation.get("target", {}))
-				if not forced_target.is_empty():
-					attacks.append(_build_attack_event(stage_name, owner_id, slot_index, forced_target))
-				continue
-			if target.is_empty():
-				continue
-			attacked_sources[source_key] = true
-			attacks.append(_build_attack_event(stage_name, owner_id, slot_index, target))
+			var attack: Dictionary = _build_staged_attack_if_valid(stage_name, initiative_stage, true, attacked_sources, owner_id, slot_index)
+			if not attack.is_empty():
+				attacks.append(attack)
 	_apply_stage_attacks(stage_name, attacks)
+
+func _resolve_sequential_combat_stage(stage_name: String, initiative_stage: bool, attacked_sources: Dictionary) -> void:
+	if outcome != "":
+		return
+	var lane_count: int = max(player_slots.size(), enemy_slots.size())
+	var stage_started: bool = false
+	for slot_index: int in range(lane_count):
+		for owner_id: String in [PLAYER_ID, ENEMY_ID]:
+			if outcome != "":
+				return
+			var attack: Dictionary = _build_staged_attack_if_valid(stage_name, initiative_stage, false, attacked_sources, owner_id, slot_index)
+			if attack.is_empty():
+				continue
+			if not stage_started:
+				stage_started = true
+				_log("%s: ataques sequenciais." % stage_name)
+				visual_events.append({"type": "stage", "stage": stage_name, "label": stage_name})
+			_apply_stage_attacks(stage_name, [attack], false)
+
+func _build_staged_attack_if_valid(stage_name: String, initiative_stage: bool, front_stage: bool, attacked_sources: Dictionary, owner_id: String, slot_index: int) -> Dictionary:
+	var attacker: Dictionary = _slot_occupant(owner_id, slot_index)
+	if attacker.is_empty() or bool(attacker.get("objective", false)):
+		return {}
+	if bool(attacker.get("iniciativa", false)) != initiative_stage:
+		return {}
+	var source_key: String = _source_key(owner_id, slot_index)
+	if attacked_sources.has(source_key):
+		return {}
+	var target: Dictionary = _front_attack_target(owner_id, slot_index) if front_stage else _overflow_attack_target(owner_id, slot_index)
+	if front_stage and target.is_empty():
+		return {}
+	var preparation: Dictionary = _prepare_staged_attacker(owner_id, slot_index)
+	if bool(preparation.get("consumed", false)):
+		attacked_sources[source_key] = true
+		var forced_target: Dictionary = Dictionary(preparation.get("target", {}))
+		if not forced_target.is_empty():
+			return _build_attack_event(stage_name, owner_id, slot_index, forced_target)
+		return {}
+	if target.is_empty():
+		return {}
+	attacked_sources[source_key] = true
+	return _build_attack_event(stage_name, owner_id, slot_index, target)
 
 func _prepare_staged_attacker(owner_id: String, slot_index: int) -> Dictionary:
 	var slots: Array = _slots_for_owner(owner_id)
@@ -905,11 +939,12 @@ func _prepare_staged_attacker(owner_id: String, slot_index: int) -> Dictionary:
 		return {"can_attack": false, "consumed": true}
 	return {"can_attack": true}
 
-func _apply_stage_attacks(stage_name: String, attacks: Array[Dictionary]) -> void:
+func _apply_stage_attacks(stage_name: String, attacks: Array[Dictionary], announce_stage: bool = true) -> void:
 	if attacks.is_empty():
 		return
-	_log("%s: %d ataque(s)." % [stage_name, attacks.size()])
-	visual_events.append({"type": "stage", "stage": stage_name, "label": stage_name})
+	if announce_stage:
+		_log("%s: %d ataque(s)." % [stage_name, attacks.size()])
+		visual_events.append({"type": "stage", "stage": stage_name, "label": stage_name})
 	var slot_damage: Dictionary = {}
 	var hero_damage: Dictionary = {}
 	for attack: Dictionary in attacks:
@@ -930,7 +965,7 @@ func _apply_stage_attacks(stage_name: String, attacks: Array[Dictionary]) -> voi
 			continue
 		_damage_hero(owner_id, amount)
 		_log("%s recebeu %d de dano." % [_hero_log_name(owner_id), amount])
-		visual_events.append({"type": "damage", "stage": stage_name, "target_owner": owner_id, "target_hero": true, "amount": amount})
+		visual_events.append({"type": "damage", "stage": stage_name, "target_owner": owner_id, "target_hero": true, "amount": amount, "health_after": player_health if owner_id == PLAYER_ID else enemy_health})
 	var damaged_slots: Array[Dictionary] = []
 	for key_variant: Variant in slot_damage.keys():
 		var key: String = str(key_variant)
@@ -947,16 +982,34 @@ func _apply_stage_attacks(stage_name: String, attacks: Array[Dictionary]) -> voi
 		occupant["health"] = int(occupant.get("health", 0)) - amount
 		slots[slot_index] = occupant
 		_set_slots_for_owner(owner_id, slots)
-		damaged_slots.append({"owner": owner_id, "slot": slot_index})
+		var damage_event: Dictionary = {
+			"type": "damage",
+			"stage": stage_name,
+			"target_owner": owner_id,
+			"target_slot": slot_index,
+			"target_card_id": str(occupant.get("card_id", "")),
+			"amount": amount,
+			"health_after": int(occupant.get("health", 0))
+		}
+		var event_index: int = visual_events.size()
+		visual_events.append(damage_event)
+		damaged_slots.append({"owner": owner_id, "slot": slot_index, "event_index": event_index})
 		_log("%s recebeu %d de dano." % [str(occupant.get("name", "Criatura")), amount])
-		visual_events.append({"type": "damage", "stage": stage_name, "target_owner": owner_id, "target_slot": slot_index, "amount": amount})
 	for damaged: Dictionary in damaged_slots:
 		var owner_id: String = str(damaged.get("owner", ""))
 		var slot_index: int = int(damaged.get("slot", -1))
+		var event_index: int = int(damaged.get("event_index", -1))
 		var current: Dictionary = _slot_occupant(owner_id, slot_index)
 		if current.is_empty():
 			continue
-		_store_or_destroy_lane_unit(owner_id, slot_index, current)
+		var result: Dictionary = _store_or_destroy_lane_unit(owner_id, slot_index, current)
+		if event_index >= 0 and event_index < visual_events.size():
+			var event: Dictionary = Dictionary(visual_events[event_index])
+			event["destroyed"] = bool(result.get("destroyed", false))
+			event["removed"] = bool(result.get("removed", false))
+			if bool(result.get("revived", false)):
+				event["replacement_occupant"] = Dictionary(result.get("occupant", {})).duplicate(true)
+			visual_events[event_index] = event
 	_check_outcome()
 
 func _build_attack_event(stage_name: String, owner_id: String, slot_index: int, target: Dictionary) -> Dictionary:
@@ -977,8 +1030,14 @@ func _build_attack_event(stage_name: String, owner_id: String, slot_index: int, 
 		event["target_slot"] = int(target.get("slot", -1))
 	return event
 
-func _store_or_destroy_lane_unit(owner_id: String, slot_index: int, occupant: Dictionary) -> void:
+func _store_or_destroy_lane_unit(owner_id: String, slot_index: int, occupant: Dictionary) -> Dictionary:
 	var slots: Array = _slots_for_owner(owner_id)
+	var result: Dictionary = {
+		"destroyed": false,
+		"removed": false,
+		"revived": false,
+		"occupant": occupant.duplicate(true)
+	}
 	if int(occupant.get("health", 0)) <= 0:
 		_log("%s foi destruido." % str(occupant.get("name", "Criatura")))
 		var card_id: String = str(occupant.get("card_id", ""))
@@ -986,9 +1045,15 @@ func _store_or_destroy_lane_unit(owner_id: String, slot_index: int, occupant: Di
 		if revived.is_empty() and owner_id == PLAYER_ID and card_id != "":
 			discard.append(card_id)
 		slots[slot_index] = revived if not revived.is_empty() else null
+		result["destroyed"] = true
+		result["removed"] = revived.is_empty()
+		result["revived"] = not revived.is_empty()
+		result["occupant"] = revived.duplicate(true) if not revived.is_empty() else {}
 	else:
 		slots[slot_index] = occupant
+		result["occupant"] = occupant.duplicate(true)
 	_set_slots_for_owner(owner_id, slots)
+	return result
 
 func _resolve_attack(owner_id: String, slot_index: int, target: Dictionary) -> void:
 	var slots: Array = _slots_for_owner(owner_id)

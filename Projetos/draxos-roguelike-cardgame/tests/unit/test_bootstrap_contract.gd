@@ -106,9 +106,15 @@ func test_main_menu_defaults_to_slot_one_and_button_states() -> void:
 	var continue_button: Button = menu.find_child("MainMenuContinueButton", true, false)
 	var delete_button: Button = menu.find_child("MainMenuDeleteButton", true, false)
 	assert_not_null(slot_one)
+	assert_string_contains(slot_one.text, "Save 1")
+	assert_eq(slot_one.text.find("Slot"), -1)
 	assert_false(new_button.disabled)
 	assert_true(continue_button.disabled)
 	assert_true(delete_button.disabled)
+	menu._open_delete_modal()
+	var delete_label: Label = menu.find_child("MainMenuDeleteConfirmText", true, false)
+	assert_not_null(delete_label)
+	assert_eq(delete_label.text, "Deletar Save 1?")
 	menu.queue_free()
 	await get_tree().process_frame
 
@@ -360,6 +366,28 @@ func test_battle_scene_exposes_enemy_board_area_drop_zone_for_tempest() -> void:
 	battle.queue_free()
 	await get_tree().process_frame
 
+func test_combat_fx_state_removes_dead_slot_only_on_damage_event() -> void:
+	_start_class_run("arcano", 44)
+	RunSession.select_node("n01_pouso_elemental")
+	var battle = await _instantiate_scene("res://modes/battle/battle.tscn")
+	battle.combat_fx_state = battle.engine.get_state().duplicate(true)
+	var attack_event: Dictionary = {"type": "attack", "target_owner": BattleEngine.ENEMY_ID, "target_slot": 0}
+	battle._apply_combat_fx_event_to_state(attack_event)
+	assert_not_null(Array(battle.combat_fx_state.get("enemy_slots", []))[0])
+	var damage_event: Dictionary = {
+		"type": "damage",
+		"target_owner": BattleEngine.ENEMY_ID,
+		"target_slot": 0,
+		"amount": 99,
+		"health_after": -97,
+		"destroyed": true,
+		"removed": true
+	}
+	battle._apply_combat_fx_event_to_state(damage_event)
+	assert_null(Array(battle.combat_fx_state.get("enemy_slots", []))[0])
+	battle.queue_free()
+	await get_tree().process_frame
+
 func test_ability_power_updates_class_active_values() -> void:
 	var engine: BattleEngine = BattleEngine.new()
 	engine.start_battle(ContentLibrary.get_catalog(), ["arcano_fagulha", "invocador_soldado", "invocador_soldado"], {
@@ -457,6 +485,53 @@ func test_defender_redirects_empty_lane_to_nearest_defender() -> void:
 	engine.resolve_combat_cycle()
 	assert_eq(engine.enemy_health, 20)
 	assert_eq(int(Dictionary(engine.enemy_slots[2]).get("health", 0)), 2)
+
+func test_overflow_rechecks_dead_defender_between_sequential_lanes() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), ["invocador_guardiao"], {
+		"encounter": {
+			"id": "test_dead_defender_overflow",
+			"display_name": "Teste Defensor Morto",
+			"mode": BattleEngine.MODE_CLEAR_BOARD,
+			"player_slots_count": 3,
+			"enemy_slots_count": 3,
+			"starting_enemy_slots": [
+				{"slot": 0, "card_id": "elemental_agil"},
+				{"slot": 1, "card_id": "elemental_bruto"},
+				{"slot": 2, "card_id": "elemental_solido"}
+			]
+		},
+		"mana_per_turn": 2,
+		"max_hand_size": 1,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	engine.play_card_from_hand(0, {"slot": 0})
+	engine.resolve_combat_cycle()
+	assert_null(engine.player_slots[0])
+	assert_null(engine.enemy_slots[0])
+	assert_eq(engine.player_health, 19)
+
+func test_sequential_overflow_skips_creature_killed_before_its_turn() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), [], {
+		"encounter": {
+			"id": "test_overflow_dead_attacker",
+			"display_name": "Teste Sobra Atacante Morto",
+			"mode": BattleEngine.MODE_CLEAR_BOARD,
+			"player_slots_count": 3,
+			"enemy_slots_count": 3,
+			"starting_enemy_slots": [{"slot": 1, "card_id": "elemental_bruto"}]
+		},
+		"mana_per_turn": 1,
+		"max_hand_size": 0,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	engine.player_slots[0] = engine._build_occupant(ContentLibrary.get_card("elemental_bruto"), BattleEngine.PLAYER_ID, false)
+	engine.resolve_combat_cycle()
+	assert_null(engine.enemy_slots[1])
+	assert_eq(engine.player_health, 20)
 
 func test_duel_overflow_hits_enemy_hero_when_no_front_or_defender() -> void:
 	var engine: BattleEngine = BattleEngine.new()
@@ -592,6 +667,34 @@ func test_overflow_attack_has_no_retaliation() -> void:
 	assert_eq(int(Dictionary(engine.player_slots[0]).get("health", 0)), 1)
 	assert_eq(int(Dictionary(engine.enemy_slots[2]).get("health", 0)), 1)
 
+func test_duel_enemy_commander_plays_after_combat_for_next_turn() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), ["invocador_soldado"], {
+		"encounter": {
+			"id": "test_duel_enemy_after_combat",
+			"display_name": "Teste Duelo Ordem IA",
+			"mode": BattleEngine.MODE_DUEL,
+			"enemy_commander_enabled": true,
+			"enemy_mana_per_turn": 2,
+			"enemy_hand_count": 1,
+			"enemy_deck": ["elemental_duelista"],
+			"enemy_health": 20,
+			"player_slots_count": 3,
+			"enemy_slots_count": 3,
+			"starting_enemy_slots": []
+		},
+		"mana_per_turn": 1,
+		"max_hand_size": 1,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	engine.play_card_from_hand(0, {"slot": 0})
+	engine.resolve_combat_cycle()
+	assert_not_null(engine.player_slots[0])
+	assert_eq(int(Dictionary(engine.player_slots[0]).get("health", 0)), 2)
+	assert_eq(engine.enemy_health, 18)
+	assert_eq(str(Dictionary(engine.enemy_slots[0]).get("card_id", "")), "elemental_duelista")
+
 func test_duel_encounters_enemy_commander_draws_and_plays_cards() -> void:
 	for encounter_id: String in ["duelo_inicial", "duelo_elite"]:
 		var engine: BattleEngine = BattleEngine.new()
@@ -629,6 +732,10 @@ func test_duel_battle_layout_uses_compact_hud_composition() -> void:
 	assert_not_null(enemy_target)
 	assert_not_null(hand_row)
 	assert_not_null(area_target)
+	assert_false(_has_label_text(player_target, "Heroi"))
+	assert_false(_has_label_text(enemy_target, "Heroi"))
+	assert_eq(player_target.custom_minimum_size, Vector2(118, 42))
+	assert_eq(enemy_target.custom_minimum_size, Vector2(118, 42))
 	assert_true(enemy_hud.get_parent() == battle)
 	assert_true(player_hud.get_parent() == hand_row)
 	assert_null(battle.find_child("BattlePlayerHpStat", true, false))
@@ -840,6 +947,14 @@ func _occupied_count(slots: Array) -> int:
 func _enemy_board_has_card(slots: Array, card_id: String) -> bool:
 	for occupant: Variant in slots:
 		if occupant != null and str(Dictionary(occupant).get("card_id", "")) == card_id:
+			return true
+	return false
+
+func _has_label_text(node: Node, text: String) -> bool:
+	if node is Label and str((node as Label).text) == text:
+		return true
+	for child: Node in node.get_children():
+		if _has_label_text(child, text):
 			return true
 	return false
 

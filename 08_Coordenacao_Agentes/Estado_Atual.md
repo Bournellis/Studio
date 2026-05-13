@@ -23,9 +23,9 @@
 
 ## draxos-roguelike-cardgame
 
-- Status: **Ativo - Track 01 HUD/nome/combate em etapas validado**
-- Track ativa: `Track 01 - Playable Run Loop` (P10_STAGED_COMBAT_HUD_NAME_VALIDATED)
-- Baseline atual: checkpoint Godot 4.6.2 com menu principal de 3 saves nomeados, SaveManager local, escolha obrigatoria de classe e nome de jogador na nave, ShipHub Deck/Mapa/Almas como overlays posicionados sem painel Estado da Run, telas Deck e Almas dedicadas, Deck com fallback para starter deck, ESC seguro em Mapa/Deck/Almas, RunMap com proximo encontro selecionado, recompensa de vitoria em modal, cura 5 por 10 almas, Arcano/Invocador/Necromante, 10 mapas lineares, combate `Resolver Combate` em 4 etapas visiveis, HUD de batalha estavel com alvo do jogador/inimigo fixo e tokens de passiva/ativa com hover, modais centralizados/scrollaveis, Tempestade Arcana com alvo de area, movimento de criaturas por drag, IA de duelo com deck/mao/mana, encontros survive/boss mais fortes, balanceamento Arcano aplicado e validacao verde 43/43
+- Status: **Ativo - Track 01 ordem de combate/HUD/save validada**
+- Track ativa: `Track 01 - Playable Run Loop` (P10_COMBAT_ORDER_HUD_SAVE_VALIDATED)
+- Baseline atual: checkpoint Godot 4.6.2 com menu principal de 3 saves nomeados, SaveManager local, escolha obrigatoria de classe e nome de jogador na nave, ShipHub Deck/Mapa/Almas como overlays posicionados sem painel Estado da Run, telas Deck e Almas dedicadas, Deck com fallback para starter deck, ESC seguro em Mapa/Deck/Almas, RunMap com proximo encontro selecionado, recompensa de vitoria em modal, cura 5 por 10 almas, Arcano/Invocador/Necromante, 10 mapas lineares, combate `Resolver Combate` em 4 etapas com frente simultanea e sobra sequencial, HUD de batalha estavel com alvos compactos do jogador/inimigo e tokens de passiva/ativa com hover, modais centralizados/scrollaveis, Tempestade Arcana com alvo de area, movimento de criaturas por drag, IA de duelo com deck/mao/mana jogando apos combate, encontros survive/boss mais fortes, balanceamento Arcano aplicado e validacao verde 47/47
 - Meta ativa: playtestar rota e pressao de batalha em etapas, substituir arte transparente dos overlays da nave e distribuir recompensas restantes
 - Ultima atualizacao do current-status: `2026-05-13`
 - Proximo passo: playtest da rota completa com a nova pressao de batalha em etapas, substituir Mapa/Deck/Almas por PNGs com alpha real e definir recompensas restantes

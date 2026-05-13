@@ -34,6 +34,7 @@ var combat_fx_timer: Timer
 var combat_fx_queue: Array[Dictionary] = []
 var combat_fx_index: int = 0
 var active_combat_fx_event: Dictionary = {}
+var combat_fx_state: Dictionary = {}
 var necromancer_modal: PanelContainer
 var necromancer_choices_box: VBoxContainer
 var pending_choice_modal: PanelContainer
@@ -431,10 +432,10 @@ func _build_floating_end_turn_button() -> void:
 	end_turn_button.offset_right = -10.0 if _is_compact_viewport() else -14.0
 	end_turn_button.offset_bottom = 30.0 if _is_compact_viewport() else 35.0
 	end_turn_button.pressed.connect(func() -> void:
+		var pre_combat_state: Dictionary = engine.get_state()
 		engine.resolve_combat_cycle()
 		selected_hand_index = -1
-		_after_battle_action()
-		_play_combat_fx_events(Array(engine.get_state().get("visual_events", [])))
+		_play_combat_fx_events(Array(engine.get_state().get("visual_events", [])), pre_combat_state)
 	)
 	add_child(end_turn_button)
 
@@ -709,7 +710,7 @@ func _build_reward_modal() -> void:
 	box.add_child(ok_button)
 
 func _refresh() -> void:
-	var state: Dictionary = engine.get_state()
+	var state: Dictionary = _display_state()
 	_refresh_player_hud(state)
 	_refresh_enemy_commander_hud(state)
 	_refresh_objective_chip(state)
@@ -726,7 +727,12 @@ func _refresh() -> void:
 	if history_log_label != null:
 		history_log_label.text = "\n".join(log_entries)
 	if end_turn_button != null:
-		end_turn_button.disabled = engine.outcome != "" or engine.has_pending_choice()
+		end_turn_button.disabled = engine.outcome != "" or engine.has_pending_choice() or _combat_fx_playing()
+
+func _display_state() -> Dictionary:
+	if not combat_fx_state.is_empty():
+		return combat_fx_state
+	return engine.get_state()
 
 func _refresh_player_hud(state: Dictionary) -> void:
 	if player_hp_value != null:
@@ -1034,6 +1040,8 @@ func _on_area_target_dropped(data: Dictionary, target: Dictionary) -> void:
 	_resolve_drop(data, target)
 
 func _resolve_drop(data: Dictionary, target: Dictionary) -> void:
+	if _combat_fx_playing():
+		return
 	match str(data.get("kind", "")):
 		"battle_card":
 			engine.play_card_from_hand(int(data.get("hand_index", -1)), target)
@@ -1083,6 +1091,8 @@ func _show_reward_modal(summary: Dictionary) -> void:
 
 func _accepted_card_indices_for_target(target: Dictionary) -> Array[int]:
 	var result: Array[int] = []
+	if _combat_fx_playing():
+		return result
 	for index: int in range(engine.hand.size()):
 		if engine.can_play_card_on_target(index, target):
 			result.append(index)
@@ -1090,6 +1100,8 @@ func _accepted_card_indices_for_target(target: Dictionary) -> Array[int]:
 
 func _accepted_class_choices_for_target(target: Dictionary) -> Array[String]:
 	var result: Array[String] = []
+	if _combat_fx_playing():
+		return result
 	if not engine.can_use_class_active():
 		return result
 	if RunSession.selected_class_id == "necromante":
@@ -1103,6 +1115,8 @@ func _accepted_class_choices_for_target(target: Dictionary) -> Array[String]:
 
 func _accepted_move_sources_for_target(owner_id: String, slot_index: int) -> Array[int]:
 	var result: Array[int] = []
+	if _combat_fx_playing():
+		return result
 	if owner_id != BattleEngine.PLAYER_ID:
 		return result
 	for source_index: int in range(engine.player_slots.size()):
@@ -1143,7 +1157,10 @@ func _active_event_targets_slot(owner_id: String, slot_index: int) -> bool:
 func _active_event_targets_hero(owner_id: String) -> bool:
 	return bool(active_combat_fx_event.get("target_hero", false)) and str(active_combat_fx_event.get("target_owner", "")) == owner_id
 
-func _play_combat_fx_events(events: Array) -> void:
+func _combat_fx_playing() -> bool:
+	return not combat_fx_state.is_empty()
+
+func _play_combat_fx_events(events: Array, initial_state: Dictionary = {}) -> void:
 	combat_fx_queue = []
 	for event: Variant in events:
 		if typeof(event) == TYPE_DICTIONARY and str(Dictionary(event).get("type", "")) in ["stage", "attack", "damage"]:
@@ -1151,24 +1168,64 @@ func _play_combat_fx_events(events: Array) -> void:
 	combat_fx_index = 0
 	if combat_fx_queue.is_empty() or combat_fx_panel == null:
 		active_combat_fx_event = {}
+		combat_fx_state = {}
+		_after_battle_action()
 		return
+	combat_fx_state = initial_state.duplicate(true) if not initial_state.is_empty() else engine.get_state()
 	_advance_combat_fx()
 
 func _advance_combat_fx() -> void:
 	if combat_fx_index >= combat_fx_queue.size():
 		active_combat_fx_event = {}
+		combat_fx_state = {}
 		if combat_fx_panel != null:
 			combat_fx_panel.visible = false
+		_after_battle_action()
 		_refresh()
 		return
 	active_combat_fx_event = combat_fx_queue[combat_fx_index]
 	combat_fx_index += 1
+	_apply_combat_fx_event_to_state(active_combat_fx_event)
 	if combat_fx_panel != null and combat_fx_label != null:
 		combat_fx_label.text = _combat_fx_text(active_combat_fx_event)
 		combat_fx_panel.visible = true
 	_refresh()
 	if combat_fx_timer != null:
 		combat_fx_timer.start(0.34)
+
+func _apply_combat_fx_event_to_state(event: Dictionary) -> void:
+	if combat_fx_state.is_empty() or str(event.get("type", "")) != "damage":
+		return
+	var owner_id: String = str(event.get("target_owner", ""))
+	if bool(event.get("target_hero", false)):
+		var health_key: String = "player_health" if owner_id == BattleEngine.PLAYER_ID else "enemy_health"
+		if event.has("health_after"):
+			combat_fx_state[health_key] = int(event.get("health_after", combat_fx_state.get(health_key, 0)))
+		else:
+			combat_fx_state[health_key] = max(0, int(combat_fx_state.get(health_key, 0)) - int(event.get("amount", 0)))
+		return
+	var slot_index: int = int(event.get("target_slot", -1))
+	var slots_key: String = _state_slots_key(owner_id)
+	if slots_key == "" or not combat_fx_state.has(slots_key):
+		return
+	var slots: Array = Array(combat_fx_state.get(slots_key, []))
+	if slot_index < 0 or slot_index >= slots.size() or slots[slot_index] == null:
+		return
+	var occupant: Dictionary = Dictionary(slots[slot_index])
+	occupant["health"] = int(event.get("health_after", int(occupant.get("health", 0)) - int(event.get("amount", 0))))
+	if bool(event.get("destroyed", false)):
+		var replacement: Dictionary = Dictionary(event.get("replacement_occupant", {}))
+		slots[slot_index] = replacement if not replacement.is_empty() else null
+	else:
+		slots[slot_index] = occupant
+	combat_fx_state[slots_key] = slots
+
+func _state_slots_key(owner_id: String) -> String:
+	if owner_id == BattleEngine.PLAYER_ID:
+		return "player_slots"
+	if owner_id == BattleEngine.ENEMY_ID:
+		return "enemy_slots"
+	return ""
 
 func _combat_fx_text(event: Dictionary) -> String:
 	match str(event.get("type", "")):
@@ -1357,7 +1414,7 @@ func _hero_display_name(owner_id: String) -> String:
 		return RunSession.player_display_name()
 	if owner_id == BattleEngine.ENEMY_ID and catalog != null and catalog.enemy_hero != null:
 		return str(catalog.enemy_hero.display_name)
-	return "Heroi"
+	return "Inimigo" if owner_id == BattleEngine.ENEMY_ID else "Player"
 
 func _hud_stat_style(accent: Color) -> StyleBoxFlat:
 	var style: StyleBoxFlat = StyleBoxFlat.new()

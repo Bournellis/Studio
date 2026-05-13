@@ -28,7 +28,9 @@ O tabuleiro usa slots alinhados por indice: slot 1 contra slot 1, slot 2 contra 
 - Cada slot ataca o slot diretamente a frente quando ele estiver ocupado.
 - O combate resolve em quatro etapas globais: `Iniciativa - Frente`, `Iniciativa - Sobra`, `Combate - Frente`, `Combate - Sobra`.
 - Cada criatura ataca no maximo uma vez por ciclo de combate.
-- O dano de cada etapa e contabilizado em lote; criaturas que atacam na mesma etapa ainda causam dano mesmo se morrerem naquela etapa.
+- As etapas de frente sao contabilizadas em lote; criaturas que atacam de frente ainda causam dano mesmo se morrerem naquela etapa.
+- As etapas de sobra resolvem 1 a 1 por lane, da esquerda para a direita, alternando jogador e inimigo em cada lane.
+- Criaturas mortas antes da sua vez de sobra nao atacam, nao atraem `defensor` e nao bloqueiam dano excedente.
 - Se uma lane inimiga estiver vazia, a criatura procura o `defensor` inimigo mais proximo da lane; em empate, usa o primeiro da esquerda.
 - Se nao houver `defensor`, a sobra aliada mira o heroi inimigo em `duelo`/`chefe_summoner`; nos demais modos mira a criatura inimiga mais proxima.
 - Criaturas inimigas sem alvo frontal nem defensor causam dano direto ao jogador.
@@ -85,7 +87,7 @@ Modos presentes no contrato do slice:
 - Deck inicial de cada classe tem 12 cartas: 4 tipos, 3 copias cada.
 - O catalogo antigo de cartas do jogador foi removido; cartas inimigas permanecem.
 - No mapa 3, a run recebe `+1 limite de cartas na mao`.
-- O ciclo de batalha e: jogadas do jogador, `Resolver Combate`, quatro etapas visuais de combate, escolhas pendentes, manutencao/script, escolhas pendentes, retorno automatico ao jogador.
+- O ciclo de batalha e: jogadas do jogador, `Resolver Combate`, quatro etapas visuais de combate, escolhas pendentes, manutencao/script, escolhas pendentes, jogadas novas da IA de duelo para o proximo turno, retorno automatico ao jogador.
 
 ## Linear Mission Map
 

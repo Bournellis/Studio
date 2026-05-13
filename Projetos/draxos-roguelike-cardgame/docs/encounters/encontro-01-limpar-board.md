@@ -1,6 +1,6 @@
 # Encontro 01 - Limpar Mesa
 
-- Last Updated: `2026-05-12`
+- Last Updated: `2026-05-13`
 - Status: `mockup validado na rota linear`
 - Tipo: `limpar_mesa`
 - Diretor: `prefilled_board`
@@ -22,7 +22,8 @@ Eliminar as criaturas inimigas em campo. Todas comecam posicionadas desde o turn
 Este encontro usa o combate frontal padrao:
 
 - cada criatura prioriza a lane diretamente a frente;
-- combate resolve em etapas globais, com dano da mesma etapa aplicado em lote;
+- dano frontal resolve em lote, mas sobras resolvem 1 a 1 por lane;
+- criatura morta antes da sua sobra nao ataca nem bloqueia outra sobra;
 - inimigo sem defensor na frente causa dano direto ao jogador;
 - heroi inimigo nao e alvo direto neste modo.
 

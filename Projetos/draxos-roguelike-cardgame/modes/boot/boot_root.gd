@@ -161,7 +161,7 @@ func _refresh() -> void:
 	for info: Dictionary in slots:
 		var index: int = int(info.get("index", 1))
 		var button: Button = slot_buttons[index - 1]
-		button.text = "Slot %d\n%s" % [index, str(info.get("summary", "Vazio"))]
+		button.text = "Save %d\n%s" % [index, str(info.get("summary", "Vazio"))]
 		var selected: bool = bool(info.get("selected", false))
 		button.add_theme_stylebox_override("normal", _slot_style(selected, false))
 		button.add_theme_stylebox_override("hover", _slot_style(selected, true))
@@ -189,7 +189,7 @@ func _on_continue_pressed() -> void:
 	get_tree().change_scene_to_file("res://modes/ship_hub/ship_hub.tscn")
 
 func _open_delete_modal() -> void:
-	delete_label.text = "Deletar Slot %d?" % SaveManager.current_slot_index
+	delete_label.text = "Deletar Save %d?" % SaveManager.current_slot_index
 	delete_modal.visible = true
 
 func _build_action_button(node_name: String, text: String) -> Button:

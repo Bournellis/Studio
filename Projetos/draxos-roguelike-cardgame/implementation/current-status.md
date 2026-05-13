@@ -4,10 +4,10 @@
 - Active Project Name: `draxos-roguelike-cardgame`
 - Active Surface: `linear 10-encounter roguelike cardgame slice`
 - Active Track: `Track 01 - Playable Run Loop`
-- Active Track Status: `P10_STAGED_COMBAT_HUD_NAME_VALIDATED`
-- Current Operational Baseline: `Godot 4.6.2 Track 01 slice with Arcano/Invocador/Necromante, 3-slot local save menu with player names, mandatory player-name modal after class choice, ShipHub Deck/Mapa/Almas positioned overlays, dedicated Deck and Almas screens, Deck starter fallback, RunMap next-node selection, ESC-safe secondary screens, centered/scrolling battle choice modals, stable battle HUD with fixed player/enemy hero targets, passive/active class tokens with hover details, four-stage combat resolution with staged mock FX/logs, area spell targeting for Tempestade Arcana, drag movement for allied creatures, enemy commander hand/deck/mana AI for duels, stronger survive/boss openings, Arcano balance pass, autosave outside battle, victory reward modal, paid healing at +5 HP for 10 souls, expanded VisualAssets for main menu/class portraits/ship overlays, and the validated 10-node card battle loop`
+- Active Track Status: `P10_COMBAT_ORDER_HUD_SAVE_VALIDATED`
+- Current Operational Baseline: `Godot 4.6.2 Track 01 slice with Arcano/Invocador/Necromante, 3-save local menu with player names, mandatory player-name modal after class choice, ShipHub Deck/Mapa/Almas positioned overlays, dedicated Deck and Almas screens, Deck starter fallback, RunMap next-node selection, ESC-safe secondary screens, centered/scrolling battle choice modals, compact battle HUD hero targets, passive/active class tokens with hover details, four-stage combat with simultaneous front damage, sequential overflow, staged FX/logs, death removal synced to damage FX, area spell targeting for Tempestade Arcana, drag movement for allied creatures, enemy commander hand/deck/mana AI that plays after combat in duels, stronger survive/boss openings, Arcano balance pass, autosave outside battle, victory reward modal, paid healing at +5 HP for 10 souls, expanded VisualAssets for main menu/class portraits/ship overlays, and the validated 10-node card battle loop`
 - Active Goal: `playtest the reformed route and staged battle pressure, replace alpha-debt ship overlay art, then distribute remaining rewards`
-- Validation: `2026-05-13 staged combat/HUD/name validation green; 43/43 GUT tests passing; 316 asserts; 33 optional PNGs reported missing by design; 4 non-fatal ship overlay alpha debts reported`
+- Validation: `2026-05-13 combat order/HUD/save validation green; 47/47 GUT tests passing; 337 asserts; 33 optional PNGs reported missing by design; 4 non-fatal ship overlay alpha debts reported`
 
 ## Read Next
 

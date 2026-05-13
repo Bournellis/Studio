@@ -4,7 +4,7 @@ extends PanelContainer
 signal target_dropped(data: Dictionary, owner: String)
 
 var hero_owner: String = "inimigo"
-var display_name: String = "Heroi"
+var display_name: String = "Alvo"
 var health: int = 0
 var visual_state: Dictionary = {}
 
@@ -19,11 +19,11 @@ func _rebuild() -> void:
 	for child: Node in get_children():
 		remove_child(child)
 		child.free()
-	custom_minimum_size = Vector2(150, 54)
+	custom_minimum_size = Vector2(118, 42)
 	add_theme_stylebox_override("panel", _panel_style())
 
 	var box: VBoxContainer = VBoxContainer.new()
-	box.add_theme_constant_override("separation", 3)
+	box.add_theme_constant_override("separation", 2)
 	add_child(box)
 
 	var label: Label = Label.new()
@@ -39,12 +39,6 @@ func _rebuild() -> void:
 	health_label.add_theme_font_size_override("font_size", 10)
 	health_label.add_theme_color_override("font_color", Color(0.88, 0.92, 0.96))
 	box.add_child(health_label)
-
-	var chip: Label = Label.new()
-	chip.text = "Alvo" if bool(visual_state.get("is_attack_target", false)) else ("Solte aqui" if bool(visual_state.get("is_drop_target", false)) else "Heroi")
-	chip.add_theme_font_size_override("font_size", 9)
-	chip.add_theme_color_override("font_color", Color(0.95, 0.55, 0.42) if bool(visual_state.get("is_attack_target", false)) else (Color(0.95, 0.72, 0.36) if bool(visual_state.get("is_drop_target", false)) else Color(0.7, 0.78, 0.82)))
-	box.add_child(chip)
 
 func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 	if typeof(data) != TYPE_DICTIONARY:
@@ -72,8 +66,8 @@ func _panel_style() -> StyleBoxFlat:
 	style.corner_radius_top_right = 6
 	style.corner_radius_bottom_left = 6
 	style.corner_radius_bottom_right = 6
-	style.content_margin_left = 8
-	style.content_margin_top = 6
-	style.content_margin_right = 8
-	style.content_margin_bottom = 6
+	style.content_margin_left = 7
+	style.content_margin_top = 5
+	style.content_margin_right = 7
+	style.content_margin_bottom = 5
 	return style

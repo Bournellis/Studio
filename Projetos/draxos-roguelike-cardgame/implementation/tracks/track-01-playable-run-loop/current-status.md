@@ -1,7 +1,7 @@
 # Track 01 Current Status
 
 - Last Updated: `2026-05-13`
-- Status: `P10_STAGED_COMBAT_HUD_NAME_VALIDATED`
+- Status: `P10_COMBAT_ORDER_HUD_SAVE_VALIDATED`
 - Scope: `First playable class and encounter slice after Track 00 checkpoint`
 
 ## Completed
@@ -18,8 +18,8 @@
 - Battle exposes drag-and-drop targeting for hand cards and unlocked class spells.
 - Battle exposes a hover preview for hand cards, field occupants, class spells, slots, and hero targets when present.
 - Necromante's class spell exposes a choice modal for Lentidao, Podridao, Confusao, and reanimation choices.
-- BattleEngine implements four-stage combat (`Iniciativa - Frente`, `Iniciativa - Sobra`, `Combate - Frente`, `Combate - Sobra`), simultaneous damage inside each stage, overflow targeting, direct lane damage, `iniciativa`, `defensor`, `reviver`, `enfraquecer`, `prender`, `promover`, dynamic `poder de habilidade`, and `regeneracao`.
-- Battle now uses `Resolver Combate`: player actions, combat, pending choices, maintenance/script, pending choices, automatic return to the player. There is no separate enemy combat turn and no summoning sickness.
+- BattleEngine implements four-stage combat (`Iniciativa - Frente`, `Iniciativa - Sobra`, `Combate - Frente`, `Combate - Sobra`), simultaneous front damage, sequential overflow targeting, direct lane damage, `iniciativa`, `defensor`, `reviver`, `enfraquecer`, `prender`, `promover`, dynamic `poder de habilidade`, and `regeneracao`.
+- Battle now uses `Resolver Combate`: player actions, combat, pending choices, maintenance/script, pending choices, duel enemy preparation for the next turn, automatic return to the player. There is no separate enemy combat turn and no summoning sickness.
 - BattleEngine implements first-pass Arcano `Fluxo Continuo`, Invocador permanent buffs, Necromante `Cinzas`, death hooks, debuffs, and reanimation with passives locked until map 5 and actives hidden/locked until map 7.
 - BattleEngine implements sequential waves, duel hero kill, defense position, survive turns, and scripted summoner bosses.
 - BattleEngine shuffles the run deck deterministically on battle start and when discard recycles into the deck.
@@ -36,7 +36,7 @@
 - Duel encounters now opt into `enemy_commander_enabled`, exposing enemy HP/mana HUD and partial mockup cardbacks while leaving enemy card AI out of scope.
 - VisualAssets now records provisional background/frame debt and only uses frame overlays when `overlay_safe` is true.
 - Screenshot capture tool generates ShipHub/RunMap/Battle screenshots at 1280x720 and 960x540 under `builds/`.
-- Main menu is now the player entry surface with 3 save slots, Novo Jogo/Continuar/Deletar gating, delete confirmation, and `Draxos: Invasão Elemental` title.
+- Main menu is now the player entry surface with 3 `Save` slots, Novo Jogo/Continuar/Deletar gating, delete confirmation, and `Draxos: Invasão Elemental` title.
 - `SaveManager` persists 3 local JSON slots under `user://`, with autosave outside battle and slot summaries showing class plus next map.
 - ShipHub now uses visual Deck/Mapa/Almas buttons, forced class-pick modal for new games, no run-state panel on the nave, and ESC menu for main menu/quit/cancel.
 - Deck and Almas are dedicated scenes; Deck shows grouped run cards plus upgrades, Almas offers paid healing at +5 HP for 10 souls, and both return to ShipHub on ESC.
@@ -49,15 +49,15 @@
 - Battle choice modals for `Promover`, `Enfraquecer`, and Necromante choices are centered and scrollable for long option lists.
 - `Tempestade Arcana` now targets the enemy board as an area spell through the `BattleEnemyBoardAreaTarget` drop zone.
 - Allied creatures can move by drag to an adjacent empty allied slot once per turn, excluding defense objectives.
-- Duel enemies now use real enemy deck/hand/discard/mana state and can play multiple cards before combat resolution.
+- Duel enemies now use real enemy deck/hand/discard/mana state and play new cards after combat/maintenance so they are visible for the next player turn.
 - Defense and survive objectives now end early on victory when the enemy board is cleared.
 - `sobreviver_turnos_inicial`, `chefe_invocador`, and `chefe_summoner_final` start with stronger enemy boards; initial and elite duels have enemy decks.
 - Battle HUD now uses a compact dense-encounter composition: enemy commander info floats at the top, player HUD lives inside the hand band, cards shrink for duel/boss/4+ lane layouts, and enemy-board area targeting no longer consumes its own vertical row.
 - Enemy-board area targeting now renders as a large table under the enemy cards/slots, so area spells can target the table without blocking individual card/slot interaction.
-- Battle HUD keeps the player hero target fixed at bottom center with name/HP, keeps enemy hero targets visible in duel/summoner boss fights, and exposes unlocked passive/active class abilities as constant hoverable tokens.
+- Battle HUD keeps compact player/enemy target icons with name/HP only, keeps enemy targets visible in duel/summoner boss fights, and exposes unlocked passive/active class abilities as constant hoverable tokens.
 - New runs require a 2-18 character player name after class choice; local save slots show player name, class, and map, with old saves falling back to `Comandante Draxos`.
 - Arcano balance pass applied: Barreira Arcana 1/5, Fagulha Arcana 1/2, Choque 2 damage, Tempestade Arcana 4 damage, and Prender cost 1.
-- Validation green with 43/43 GUT tests and 316 asserts; 33 optional PNGs and 4 non-fatal ship overlay alpha debts are reported by design.
+- Validation green with 47/47 GUT tests and 337 asserts; 33 optional PNGs and 4 non-fatal ship overlay alpha debts are reported by design.
 
 ## Current Risk
 
