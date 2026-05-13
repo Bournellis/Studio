@@ -216,7 +216,10 @@ func _upgrade_text() -> String:
 		return "-"
 	var parts: Array[String] = []
 	parts.append("Passiva: %s" % ("desbloqueada" if RunSession.class_passive_unlocked else "bloqueada"))
-	parts.append("Spell: %s" % ("desbloqueada" if RunSession.class_active_unlocked else "bloqueada"))
+	var spell_state: String = "desbloqueada" if RunSession.class_active_unlocked else "bloqueada"
+	if RunSession.selected_class_id == "necromante" and RunSession.class_active_unlocked:
+		spell_state = "nivel %d" % RunSession.class_active_level
+	parts.append("Spell: %s" % spell_state)
 	for applied_id: String in RunSession.automatic_reward_ids:
 		var reward_id: String = applied_id.get_slice(":", 1)
 		parts.append(RunSession.automatic_reward_display_name(reward_id))

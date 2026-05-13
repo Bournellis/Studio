@@ -30,6 +30,7 @@ var max_hand_size: int = 0
 var soul_total: int = 0
 var class_passive_unlocked: bool = false
 var class_active_unlocked: bool = false
+var class_active_level: int = 0
 var rewards_pending: Array[String] = []
 var applied_reward_ids: Array[String] = []
 var automatic_reward_ids: Array[String] = []
@@ -53,6 +54,7 @@ func start_empty_run(seed: int = DEFAULT_RUN_SEED) -> void:
 	soul_total = 0
 	class_passive_unlocked = false
 	class_active_unlocked = false
+	class_active_level = 0
 	rewards_pending = []
 	applied_reward_ids = []
 	automatic_reward_ids = []
@@ -85,6 +87,7 @@ func start_class_run(class_id: String, seed: int = DEFAULT_RUN_SEED, requested_p
 	soul_total = 0
 	class_passive_unlocked = false
 	class_active_unlocked = false
+	class_active_level = 0
 	rewards_pending = []
 	applied_reward_ids = []
 	automatic_reward_ids = []
@@ -110,6 +113,7 @@ func reset() -> void:
 	soul_total = 0
 	class_passive_unlocked = false
 	class_active_unlocked = false
+	class_active_level = 0
 	rewards_pending = []
 	applied_reward_ids = []
 	automatic_reward_ids = []
@@ -249,6 +253,7 @@ func snapshot() -> Dictionary:
 		"soul_total": soul_total,
 		"class_passive_unlocked": class_passive_unlocked,
 		"class_active_unlocked": class_active_unlocked,
+		"class_active_level": class_active_level,
 		"rewards_pending": rewards_pending.duplicate(),
 		"applied_reward_ids": applied_reward_ids.duplicate(),
 		"automatic_reward_ids": automatic_reward_ids.duplicate(),
@@ -275,6 +280,9 @@ func load_snapshot(data: Dictionary) -> Dictionary:
 	soul_total = int(data.get("soul_total", 0))
 	class_passive_unlocked = bool(data.get("class_passive_unlocked", false))
 	class_active_unlocked = bool(data.get("class_active_unlocked", false))
+	class_active_level = int(data.get("class_active_level", -1))
+	if class_active_level < 0:
+		class_active_level = 2 if selected_class_id == "necromante" and class_active_unlocked else 0
 	rewards_pending = _string_array(data.get("rewards_pending", []))
 	applied_reward_ids = _string_array(data.get("applied_reward_ids", []))
 	automatic_reward_ids = _string_array(data.get("automatic_reward_ids", []))
@@ -310,8 +318,12 @@ func automatic_reward_display_name(reward_id: String) -> String:
 		REWARD_MAX_HAND_SIZE_1:
 			return "+1 Limite de mao"
 		REWARD_UNLOCK_CLASS_PASSIVE:
+			if selected_class_id == "necromante":
+				return "Passiva + Ritual das Sombras I desbloqueados"
 			return "Passiva de classe desbloqueada"
 		REWARD_UNLOCK_CLASS_ACTIVE:
+			if selected_class_id == "necromante":
+				return "Ritual das Sombras II desbloqueado"
 			return "Spell de classe desbloqueada"
 	return reward_id
 
@@ -355,8 +367,12 @@ func _apply_automatic_rewards_for_node(node_id: String) -> Array[String]:
 				max_hand_size += 1
 			REWARD_UNLOCK_CLASS_PASSIVE:
 				class_passive_unlocked = true
+				if selected_class_id == "necromante":
+					class_active_unlocked = true
+					class_active_level = maxi(class_active_level, 1)
 			REWARD_UNLOCK_CLASS_ACTIVE:
 				class_active_unlocked = true
+				class_active_level = maxi(class_active_level, 2 if selected_class_id == "necromante" else 1)
 			_:
 				continue
 		automatic_reward_ids.append(applied_id)

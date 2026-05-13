@@ -39,6 +39,8 @@ var necromancer_modal: PanelContainer
 var necromancer_choices_box: VBoxContainer
 var pending_choice_modal: PanelContainer
 var pending_choice_box: VBoxContainer
+var sacrifice_modal: PanelContainer
+var sacrifice_text_label: Label
 var reward_modal: PanelContainer
 var reward_text_label: Label
 var preview_timer: Timer
@@ -51,6 +53,7 @@ var current_node: Dictionary = {}
 var current_encounter: Dictionary = {}
 var selected_hand_index: int = -1
 var selected_necromancer_choice_id: String = ""
+var pending_sacrifice_play: Dictionary = {}
 var pending_preview_data: Dictionary = {}
 var victory_recorded: bool = false
 
@@ -68,6 +71,7 @@ func _ready() -> void:
 		"class_id": RunSession.selected_class_id,
 		"class_passive_unlocked": RunSession.class_passive_unlocked,
 		"class_active_unlocked": RunSession.class_active_unlocked,
+		"class_active_level": RunSession.class_active_level,
 		"mana_per_turn": RunSession.max_mana if RunSession.max_mana > 0 else 2,
 		"max_hand_size": RunSession.max_hand_size if RunSession.max_hand_size > 0 else RunSession.DEFAULT_MAX_HAND_SIZE,
 		"player_health": RunSession.current_health if RunSession.current_health > 0 else 20,
@@ -268,6 +272,7 @@ func _build_ui() -> void:
 	_build_combat_fx_panel()
 	_build_necromancer_modal()
 	_build_pending_choice_modal()
+	_build_sacrifice_modal()
 	_build_reward_modal()
 	_build_esc_menu()
 
@@ -657,6 +662,63 @@ func _build_pending_choice_modal() -> void:
 	pending_choice_box.add_theme_constant_override("separation", 7)
 	scroll.add_child(pending_choice_box)
 
+func _build_sacrifice_modal() -> void:
+	sacrifice_modal = PanelContainer.new()
+	sacrifice_modal.name = "BattleSacrificeConfirmModal"
+	sacrifice_modal.visible = false
+	_apply_centered_modal_rect(sacrifice_modal, Vector2(420, 220))
+	sacrifice_modal.add_theme_stylebox_override("panel", _panel_style(Color(0.09, 0.055, 0.045, 0.96), Color(0.86, 0.46, 0.30, 0.95)))
+	add_child(sacrifice_modal)
+
+	var margin: MarginContainer = MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 16)
+	margin.add_theme_constant_override("margin_top", 14)
+	margin.add_theme_constant_override("margin_right", 16)
+	margin.add_theme_constant_override("margin_bottom", 14)
+	sacrifice_modal.add_child(margin)
+
+	var box: VBoxContainer = VBoxContainer.new()
+	box.add_theme_constant_override("separation", 10)
+	margin.add_child(box)
+
+	var title: Label = Label.new()
+	title.name = "BattleSacrificeConfirmTitle"
+	title.text = "Sacrificio"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 22)
+	title.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+	box.add_child(title)
+
+	sacrifice_text_label = Label.new()
+	sacrifice_text_label.name = "BattleSacrificeConfirmText"
+	sacrifice_text_label.text = ""
+	sacrifice_text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	sacrifice_text_label.add_theme_font_size_override("font_size", 14)
+	sacrifice_text_label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+	sacrifice_text_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	box.add_child(sacrifice_text_label)
+
+	var buttons: HBoxContainer = HBoxContainer.new()
+	buttons.name = "BattleSacrificeConfirmActions"
+	buttons.add_theme_constant_override("separation", 10)
+	box.add_child(buttons)
+
+	var confirm_button: Button = Button.new()
+	confirm_button.name = "BattleSacrificeConfirmButton"
+	confirm_button.text = "Sacrificar"
+	confirm_button.custom_minimum_size = Vector2(0, 40)
+	confirm_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	confirm_button.pressed.connect(_confirm_sacrifice)
+	buttons.add_child(confirm_button)
+
+	var cancel_button: Button = Button.new()
+	cancel_button.name = "BattleSacrificeCancelButton"
+	cancel_button.text = "Cancelar"
+	cancel_button.custom_minimum_size = Vector2(0, 40)
+	cancel_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	cancel_button.pressed.connect(_cancel_sacrifice)
+	buttons.add_child(cancel_button)
+
 func _build_reward_modal() -> void:
 	reward_modal = PanelContainer.new()
 	reward_modal.name = "BattleRewardModal"
@@ -727,7 +789,7 @@ func _refresh() -> void:
 	if history_log_label != null:
 		history_log_label.text = "\n".join(log_entries)
 	if end_turn_button != null:
-		end_turn_button.disabled = engine.outcome != "" or engine.has_pending_choice() or _combat_fx_playing()
+		end_turn_button.disabled = engine.outcome != "" or engine.has_pending_choice() or _combat_fx_playing() or _sacrifice_confirmation_visible()
 
 func _display_state() -> Dictionary:
 	if not combat_fx_state.is_empty():
@@ -1040,11 +1102,17 @@ func _on_area_target_dropped(data: Dictionary, target: Dictionary) -> void:
 	_resolve_drop(data, target)
 
 func _resolve_drop(data: Dictionary, target: Dictionary) -> void:
-	if _combat_fx_playing():
+	if _combat_fx_playing() or _sacrifice_confirmation_visible():
 		return
 	match str(data.get("kind", "")):
 		"battle_card":
-			engine.play_card_from_hand(int(data.get("hand_index", -1)), target)
+			var result: Dictionary = engine.play_card_from_hand(int(data.get("hand_index", -1)), target)
+			if bool(result.get("requires_confirmation", false)):
+				_show_sacrifice_confirmation(result)
+				selected_hand_index = -1
+				_hide_preview()
+				_refresh()
+				return
 		"class_active":
 			engine.use_class_active(target, str(data.get("choice_id", "")))
 			selected_necromancer_choice_id = ""
@@ -1063,6 +1131,39 @@ func _slot_or_area_drop_target(data: Dictionary, owner: String, slot_index: int)
 	if engine.can_play_card_on_target(hand_index, area_target) and not engine.can_play_card_on_target(hand_index, slot_target):
 		return area_target
 	return slot_target
+
+func _show_sacrifice_confirmation(result: Dictionary) -> void:
+	pending_sacrifice_play = {
+		"hand_index": int(result.get("hand_index", -1)),
+		"target": Dictionary(result.get("target", {}))
+	}
+	if sacrifice_text_label != null:
+		sacrifice_text_label.text = "Este slot ja tem %s.\nSacrificar para invocar %s?" % [
+			str(result.get("sacrificed_name", "Criatura")),
+			str(result.get("summon_name", "Criatura"))
+		]
+	if sacrifice_modal != null:
+		sacrifice_modal.visible = true
+
+func _confirm_sacrifice() -> void:
+	if pending_sacrifice_play.is_empty():
+		_cancel_sacrifice()
+		return
+	var target: Dictionary = Dictionary(pending_sacrifice_play.get("target", {}))
+	target["confirm_sacrifice"] = true
+	engine.play_card_from_hand(int(pending_sacrifice_play.get("hand_index", -1)), target)
+	_cancel_sacrifice(false)
+	_after_battle_action()
+
+func _cancel_sacrifice(refresh_after: bool = true) -> void:
+	pending_sacrifice_play = {}
+	if sacrifice_modal != null:
+		sacrifice_modal.visible = false
+	if refresh_after:
+		_refresh()
+
+func _sacrifice_confirmation_visible() -> bool:
+	return sacrifice_modal != null and sacrifice_modal.visible
 
 func _after_battle_action() -> void:
 	if engine.outcome == "vitoria" and not victory_recorded:
@@ -1391,7 +1492,7 @@ func _class_active_detail_text(choice_id: String = "") -> String:
 			for choice: Dictionary in engine.get_necromancer_active_choices():
 				if str(choice.get("id", "")) == choice_id:
 					return "%d Cinzas. %s" % [int(choice.get("cost_ashes", 0)), str(choice.get("text", ""))]
-			return "Clique para escolher Lentidao, Podridao, Confusao ou uma reanimacao antes de arrastar."
+			return "Clique para escolher Podridao, Furia das Cinzas ou upgrades antes de arrastar."
 	return ""
 
 func _keyword_text(keywords: Array) -> String:

@@ -55,6 +55,7 @@ func test_catalog_removes_old_player_cards_and_keeps_enemies() -> void:
 	assert_eq(int(ContentLibrary.get_card("arcano_choque").effect.get("amount", 0)), 2)
 	assert_eq(int(ContentLibrary.get_card("arcano_fagulha").health), 2)
 	assert_eq(int(ContentLibrary.get_card("arcano_barreira").attack), 1)
+	assert_true(ContentLibrary.get_card("arcano_barreira").has_keyword("defensor"))
 	assert_eq(int(ContentLibrary.get_card("arcano_tempestade").effect.get("amount", 0)), 4)
 	assert_eq(int(ContentLibrary.get_card("necro_prender").cost), 1)
 
@@ -71,6 +72,36 @@ func test_run_session_tracks_hand_limit_reward() -> void:
 	assert_eq(RunSession.max_hand_size, 4)
 	assert_eq(RunSession.current_deck_ids.size(), 12)
 	assert_true(RunSession.automatic_reward_ids.has("n03_duelo_inicial:%s" % RunSession.REWARD_MAX_HAND_SIZE_1))
+
+func test_necromancer_passive_reward_unlocks_active_then_upgrade() -> void:
+	var result: Dictionary = RunSession.start_class_run("necromante", 77)
+	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
+	RunSession.record_battle_result("n05_chefe_invocador", "vitoria", 20)
+	assert_true(RunSession.class_passive_unlocked)
+	assert_true(RunSession.class_active_unlocked)
+	assert_eq(RunSession.class_active_level, 1)
+	RunSession.record_battle_result("n07_limpeza_elite", "vitoria", 20)
+	assert_eq(RunSession.class_active_level, 2)
+
+func test_arcano_and_invocador_keep_active_on_second_reward() -> void:
+	for class_id: String in ["arcano", "invocador"]:
+		var result: Dictionary = RunSession.start_class_run(class_id, 77)
+		assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
+		RunSession.record_battle_result("n05_chefe_invocador", "vitoria", 20)
+		assert_true(RunSession.class_passive_unlocked)
+		assert_false(RunSession.class_active_unlocked)
+		RunSession.record_battle_result("n07_limpeza_elite", "vitoria", 20)
+		assert_true(RunSession.class_active_unlocked)
+		RunSession.reset()
+
+func test_necromancer_save_migration_sets_old_unlocked_active_to_level_two() -> void:
+	RunSession.load_snapshot({
+		"active": true,
+		"selected_class_id": "necromante",
+		"class_active_unlocked": true,
+		"class_passive_unlocked": true
+	})
+	assert_eq(RunSession.class_active_level, 2)
 
 func test_run_session_rejects_invalid_player_names() -> void:
 	assert_false(bool(RunSession.validate_player_name("A").get("ok", false)))
@@ -366,6 +397,94 @@ func test_battle_scene_exposes_enemy_board_area_drop_zone_for_tempest() -> void:
 	battle.queue_free()
 	await get_tree().process_frame
 
+func test_summon_on_occupied_slot_requires_confirmation_without_spending() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), ["invocador_soldado", "invocador_batedor"], {
+		"encounter": {
+			"id": "test_sacrifice",
+			"display_name": "Teste Sacrificio",
+			"mode": BattleEngine.MODE_CLEAR_BOARD,
+			"player_slots_count": 3,
+			"enemy_slots_count": 3,
+			"starting_enemy_slots": [{"slot": 2, "card_id": "elemental_solido"}]
+		},
+		"mana_per_turn": 2,
+		"max_hand_size": 2,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	assert_true(bool(engine.play_card_from_hand(0, {"slot": 0}).get("ok", false)))
+	var before_mana: int = engine.mana
+	var before_hand: Array[String] = engine.hand.duplicate()
+	var result: Dictionary = engine.play_card_from_hand(0, {"slot": 0})
+	assert_false(bool(result.get("ok", false)))
+	assert_true(bool(result.get("requires_confirmation", false)))
+	assert_eq(engine.mana, before_mana)
+	assert_eq(engine.hand, before_hand)
+	assert_eq(str(Dictionary(engine.player_slots[0]).get("card_id", "")), "invocador_soldado")
+	var confirmed_target: Dictionary = Dictionary(result.get("target", {}))
+	confirmed_target["confirm_sacrifice"] = true
+	assert_true(bool(engine.play_card_from_hand(int(result.get("hand_index", -1)), confirmed_target).get("ok", false)))
+	assert_eq(str(Dictionary(engine.player_slots[0]).get("card_id", "")), "invocador_batedor")
+	assert_lt(engine.mana, before_mana)
+
+func test_summon_cannot_replace_defense_objective() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), ["invocador_soldado"], {
+		"encounter": {
+			"id": "test_objective_replace",
+			"display_name": "Teste Objetivo",
+			"mode": BattleEngine.MODE_DEFENSE_POSITION,
+			"player_slots_count": 3,
+			"enemy_slots_count": 3,
+			"defense_slot": 1,
+			"starting_enemy_slots": [{"slot": 0, "card_id": "elemental_menor"}]
+		},
+		"mana_per_turn": 2,
+		"max_hand_size": 1,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	assert_false(engine.can_play_card_on_target(0, {"owner": BattleEngine.PLAYER_ID, "slot": 1}))
+	var result: Dictionary = engine.play_card_from_hand(0, {"owner": BattleEngine.PLAYER_ID, "slot": 1})
+	assert_false(bool(result.get("ok", false)))
+	assert_false(bool(result.get("requires_confirmation", false)))
+
+func test_battle_scene_sacrifice_modal_cancel_and_confirm() -> void:
+	_start_class_run("invocador", 44)
+	RunSession.select_node("n01_pouso_elemental")
+	var battle = await _instantiate_scene("res://modes/battle/battle.tscn")
+	var manual_hand: Array[String] = ["invocador_soldado", "invocador_batedor"]
+	var empty_cards: Array[String] = []
+	battle.engine.hand = manual_hand
+	battle.engine.deck = empty_cards.duplicate()
+	battle.engine.discard = empty_cards.duplicate()
+	battle.engine.mana = 2
+	battle.engine.player_slots[0] = battle.engine._build_occupant(ContentLibrary.get_card("invocador_soldado"), BattleEngine.PLAYER_ID, false)
+	battle._refresh()
+	var before_mana: int = battle.engine.mana
+	battle._on_slot_target_dropped({"kind": "battle_card", "hand_index": 1, "card_id": "invocador_batedor"}, BattleEngine.PLAYER_ID, 0)
+	var modal: PanelContainer = battle.find_child("BattleSacrificeConfirmModal", true, false)
+	assert_not_null(modal)
+	assert_true(modal.visible)
+	assert_eq(battle.engine.mana, before_mana)
+	assert_eq(str(Dictionary(battle.engine.player_slots[0]).get("card_id", "")), "invocador_soldado")
+	var cancel_button: Button = battle.find_child("BattleSacrificeCancelButton", true, false)
+	cancel_button.pressed.emit()
+	await get_tree().process_frame
+	assert_false(modal.visible)
+	assert_eq(battle.engine.mana, before_mana)
+	assert_eq(battle.engine.hand.size(), 2)
+	battle._on_slot_target_dropped({"kind": "battle_card", "hand_index": 1, "card_id": "invocador_batedor"}, BattleEngine.PLAYER_ID, 0)
+	var confirm_button: Button = battle.find_child("BattleSacrificeConfirmButton", true, false)
+	confirm_button.pressed.emit()
+	await get_tree().process_frame
+	assert_false(modal.visible)
+	assert_eq(str(Dictionary(battle.engine.player_slots[0]).get("card_id", "")), "invocador_batedor")
+	assert_lt(battle.engine.mana, before_mana)
+	battle.queue_free()
+	await get_tree().process_frame
+
 func test_combat_fx_state_removes_dead_slot_only_on_damage_event() -> void:
 	_start_class_run("arcano", 44)
 	RunSession.select_node("n01_pouso_elemental")
@@ -429,7 +548,7 @@ func test_creature_moves_to_adjacent_empty_slot_once_per_turn() -> void:
 	assert_null(engine.player_slots[1])
 	assert_false(engine.can_move_unit(BattleEngine.PLAYER_ID, 0, 1))
 
-func test_creature_move_blocks_non_adjacent_occupied_and_objective_slots() -> void:
+func test_creature_move_swaps_adjacent_occupied_slots_and_blocks_objective() -> void:
 	var engine: BattleEngine = BattleEngine.new()
 	engine.start_battle(ContentLibrary.get_catalog(), ["invocador_soldado", "invocador_batedor"], {
 		"encounter": {
@@ -449,7 +568,14 @@ func test_creature_move_blocks_non_adjacent_occupied_and_objective_slots() -> vo
 	engine.play_card_from_hand(0, {"slot": 0})
 	engine.play_card_from_hand(0, {"slot": 1})
 	assert_false(engine.can_move_unit(BattleEngine.PLAYER_ID, 0, 2))
+	assert_true(engine.can_move_unit(BattleEngine.PLAYER_ID, 0, 1))
+	assert_true(bool(engine.move_unit(BattleEngine.PLAYER_ID, 0, 1).get("ok", false)))
+	assert_eq(str(Dictionary(engine.player_slots[0]).get("card_id", "")), "invocador_batedor")
+	assert_eq(str(Dictionary(engine.player_slots[1]).get("card_id", "")), "invocador_soldado")
+	assert_true(bool(Dictionary(engine.player_slots[0]).get("moved_this_turn", false)))
+	assert_true(bool(Dictionary(engine.player_slots[1]).get("moved_this_turn", false)))
 	assert_false(engine.can_move_unit(BattleEngine.PLAYER_ID, 0, 1))
+	assert_false(engine.can_move_unit(BattleEngine.PLAYER_ID, 1, 0))
 	assert_false(engine.can_move_unit(BattleEngine.PLAYER_ID, 3, 2))
 
 func test_field_unit_drop_moves_creature_in_battle_scene() -> void:
@@ -461,6 +587,21 @@ func test_field_unit_drop_moves_creature_in_battle_scene() -> void:
 	battle._on_slot_target_dropped({"kind": "field_unit", "owner": BattleEngine.PLAYER_ID, "slot": 1}, BattleEngine.PLAYER_ID, 0)
 	assert_not_null(battle.engine.player_slots[0])
 	assert_null(battle.engine.player_slots[1])
+	battle.queue_free()
+	await get_tree().process_frame
+
+func test_field_unit_drop_swaps_adjacent_creatures_in_battle_scene() -> void:
+	_start_class_run("invocador", 44)
+	RunSession.select_node("n01_pouso_elemental")
+	var battle = await _instantiate_scene("res://modes/battle/battle.tscn")
+	battle.engine.player_slots[0] = battle.engine._build_occupant(ContentLibrary.get_card("invocador_soldado"), BattleEngine.PLAYER_ID, false)
+	battle.engine.player_slots[1] = battle.engine._build_occupant(ContentLibrary.get_card("invocador_batedor"), BattleEngine.PLAYER_ID, false)
+	battle._refresh()
+	battle._on_slot_target_dropped({"kind": "field_unit", "owner": BattleEngine.PLAYER_ID, "slot": 0}, BattleEngine.PLAYER_ID, 1)
+	assert_eq(str(Dictionary(battle.engine.player_slots[0]).get("card_id", "")), "invocador_batedor")
+	assert_eq(str(Dictionary(battle.engine.player_slots[1]).get("card_id", "")), "invocador_soldado")
+	assert_true(bool(Dictionary(battle.engine.player_slots[0]).get("moved_this_turn", false)))
+	assert_true(bool(Dictionary(battle.engine.player_slots[1]).get("moved_this_turn", false)))
 	battle.queue_free()
 	await get_tree().process_frame
 
@@ -822,7 +963,11 @@ func test_reviver_returns_once_but_not_on_replacement() -> void:
 	engine.resolve_combat_cycle()
 	assert_not_null(engine.player_slots[0])
 	assert_true(bool(Dictionary(engine.player_slots[0]).get("revive_marker", false)))
-	engine.play_card_from_hand(0, {"slot": 0})
+	var sacrifice_result: Dictionary = engine.play_card_from_hand(0, {"slot": 0})
+	assert_true(bool(sacrifice_result.get("requires_confirmation", false)))
+	var confirmed_target: Dictionary = Dictionary(sacrifice_result.get("target", {}))
+	confirmed_target["confirm_sacrifice"] = true
+	engine.play_card_from_hand(int(sacrifice_result.get("hand_index", -1)), confirmed_target)
 	assert_eq(str(Dictionary(engine.player_slots[0]).get("card_id", "")), "invocador_soldado")
 	assert_false(bool(Dictionary(engine.player_slots[0]).get("revive_marker", false)))
 
@@ -853,6 +998,96 @@ func test_on_death_weaken_uses_pending_target_choice() -> void:
 	assert_eq(int(Dictionary(engine.enemy_slots[1]).get("attack", 0)), 2)
 	assert_eq(int(Dictionary(engine.enemy_slots[1]).get("health", 0)), 2)
 
+func test_necromancer_active_level_one_choices_use_exact_values() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), ["arcano_fagulha", "necro_esqueleto"], {
+		"encounter": {
+			"id": "test_necro_level_one",
+			"display_name": "Teste Necro I",
+			"mode": BattleEngine.MODE_SURVIVE_TURNS,
+			"survive_turns": 99,
+			"player_slots_count": 3,
+			"enemy_slots_count": 3,
+			"starting_enemy_slots": [{"slot": 0, "card_id": "elemental_bruto"}]
+		},
+		"class_id": "necromante",
+		"class_active_unlocked": true,
+		"class_active_level": 1,
+		"mana_per_turn": 2,
+		"max_hand_size": 2,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	engine.play_card_from_hand(0, {"slot": 1})
+	engine.ashes = 2
+	var choices: Array[Dictionary] = engine.get_necromancer_active_choices()
+	assert_eq(choices.size(), 2)
+	for choice: Dictionary in choices:
+		var choice_id: String = str(choice.get("id", ""))
+		assert_false(["necro_slow", "necro_confusion", "necro_revive_full"].has(choice_id))
+	assert_true(bool(engine.use_class_active({"owner": BattleEngine.ENEMY_ID, "slot": 0}, BattleEngine.NECRO_CHOICE_ROT).get("ok", false)))
+	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("attack", 0)), 2)
+	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("health", 0)), 2)
+
+func test_necromancer_active_level_two_adds_upgrades_and_temp_attack() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), ["necro_esqueleto", "invocador_soldado"], {
+		"encounter": {
+			"id": "test_necro_level_two",
+			"display_name": "Teste Necro II",
+			"mode": BattleEngine.MODE_SURVIVE_TURNS,
+			"survive_turns": 99,
+			"player_slots_count": 3,
+			"enemy_slots_count": 3,
+			"starting_enemy_slots": [{"slot": 0, "card_id": "elemental_bruto"}]
+		},
+		"class_id": "necromante",
+		"class_active_unlocked": true,
+		"class_active_level": 2,
+		"mana_per_turn": 2,
+		"max_hand_size": 2,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	engine.play_card_from_hand(0, {"slot": 0})
+	engine.discard.append("necro_esqueleto")
+	engine.ashes = 4
+	var choices: Array[Dictionary] = engine.get_necromancer_active_choices()
+	assert_eq(choices.size(), 5)
+	assert_true(engine.can_use_class_active_on_target({"owner": BattleEngine.PLAYER_ID, "slot": 1}, BattleEngine.NECRO_CHOICE_REVIVE_ONE_ONE))
+	assert_true(bool(engine.use_class_active({"owner": BattleEngine.PLAYER_ID, "slot": 0}, BattleEngine.NECRO_CHOICE_ATTACK_FOUR).get("ok", false)))
+	assert_eq(int(Dictionary(engine.player_slots[0]).get("attack", 0)), 5)
+	assert_eq(int(Dictionary(engine.player_slots[0]).get("temporary_attack_bonus", 0)), 4)
+
+func test_necromancer_reanimation_does_not_replace_occupied_slots() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), ["invocador_soldado"], {
+		"encounter": {
+			"id": "test_necro_no_auto_replace",
+			"display_name": "Teste Necro Sem Troca",
+			"mode": BattleEngine.MODE_SURVIVE_TURNS,
+			"survive_turns": 99,
+			"player_slots_count": 2,
+			"enemy_slots_count": 2,
+			"starting_enemy_slots": [{"slot": 0, "card_id": "elemental_menor"}]
+		},
+		"class_id": "necromante",
+		"class_active_unlocked": true,
+		"class_active_level": 2,
+		"mana_per_turn": 2,
+		"max_hand_size": 1,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	engine.play_card_from_hand(0, {"slot": 0})
+	engine.discard.append("necro_esqueleto")
+	engine.ashes = 4
+	assert_false(engine.can_use_class_active_on_target({"owner": BattleEngine.PLAYER_ID, "slot": 0}, BattleEngine.NECRO_CHOICE_REVIVE_ONE_ONE))
+	var result: Dictionary = engine.use_class_active({"owner": BattleEngine.PLAYER_ID, "slot": 0}, BattleEngine.NECRO_CHOICE_REVIVE_ONE_ONE)
+	assert_false(bool(result.get("ok", false)))
+	assert_eq(str(Dictionary(engine.player_slots[0]).get("card_id", "")), "invocador_soldado")
+	assert_eq(engine.ashes, 4)
+
 func test_combat_cycle_resolves_combat_before_maintenance() -> void:
 	var engine: BattleEngine = BattleEngine.new()
 	engine.start_battle(ContentLibrary.get_catalog(), ["arcano_choque", "arcano_choque", "arcano_choque"], {
@@ -869,20 +1104,39 @@ func test_combat_cycle_resolves_combat_before_maintenance() -> void:
 	engine.resolve_combat_cycle()
 	assert_eq(engine.wave_index, 2)
 
-func test_defense_and_survive_win_when_enemy_board_is_cleared() -> void:
-	for encounter_id: String in ["defesa_posicao_inicial", "sobreviver_turnos_inicial"]:
-		var engine: BattleEngine = BattleEngine.new()
-		engine.start_battle(ContentLibrary.get_catalog(), ["arcano_choque"], {
-			"encounter_id": encounter_id,
-			"mana_per_turn": 3,
-			"max_hand_size": 1,
-			"player_health": 20,
-			"shuffle_deck": false
-		})
-		for index: int in range(engine.enemy_slots.size()):
-			engine._damage_slot(BattleEngine.ENEMY_ID, index, 99)
-		engine._check_outcome()
-		assert_eq(engine.outcome, "vitoria")
+func test_defense_position_does_not_win_by_clearing_board_before_turn_goal() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), ["arcano_choque"], {
+		"encounter_id": "defesa_posicao_inicial",
+		"mana_per_turn": 3,
+		"max_hand_size": 1,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	assert_eq(engine.required_defense_turns, 4)
+	assert_eq(engine.wave_index, 1)
+	for index: int in range(engine.enemy_slots.size()):
+		engine._damage_slot(BattleEngine.ENEMY_ID, index, 99)
+	engine._check_outcome()
+	assert_eq(engine.outcome, "")
+	engine.survived_turns = engine.required_defense_turns
+	engine._check_outcome()
+	assert_eq(engine.outcome, "vitoria")
+
+func test_survive_still_wins_when_board_is_cleared_and_starts_buffed() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), ["arcano_choque"], {
+		"encounter_id": "sobreviver_turnos_inicial",
+		"mana_per_turn": 3,
+		"max_hand_size": 1,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	assert_eq(str(Dictionary(engine.enemy_slots[1]).get("card_id", "")), "elemental_bruto")
+	for index: int in range(engine.enemy_slots.size()):
+		engine._damage_slot(BattleEngine.ENEMY_ID, index, 99)
+	engine._check_outcome()
+	assert_eq(engine.outcome, "vitoria")
 
 func test_boss_encounters_start_with_stronger_boards() -> void:
 	var first_boss: BattleEngine = BattleEngine.new()

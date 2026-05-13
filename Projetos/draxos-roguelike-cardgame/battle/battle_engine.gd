@@ -25,11 +25,11 @@ const MAX_LOG_LINES: int = 18
 const PROMOTE_CHOICE_STATS: String = "promote_stats"
 const PROMOTE_CHOICE_INITIATIVE: String = "promote_initiative"
 const PROMOTE_CHOICE_DEFENDER: String = "promote_defender"
-const NECRO_CHOICE_SLOW: String = "necro_slow"
 const NECRO_CHOICE_ROT: String = "necro_rot"
-const NECRO_CHOICE_CONFUSION: String = "necro_confusion"
+const NECRO_CHOICE_ATTACK_TWO: String = "necro_attack_two"
 const NECRO_CHOICE_REVIVE_ONE_ONE: String = "necro_revive_one_one"
-const NECRO_CHOICE_REVIVE_FULL: String = "necro_revive_full"
+const NECRO_CHOICE_ROT_TWO: String = "necro_rot_two"
+const NECRO_CHOICE_ATTACK_FOUR: String = "necro_attack_four"
 const COMBAT_STAGE_INITIATIVE_FRONT: String = "Iniciativa - Frente"
 const COMBAT_STAGE_INITIATIVE_OVERFLOW: String = "Iniciativa - Sobra"
 const COMBAT_STAGE_NORMAL_FRONT: String = "Combate - Frente"
@@ -67,6 +67,7 @@ var boss_summons: Array[Dictionary] = []
 var selected_class_id: String = ""
 var class_passive_unlocked: bool = false
 var class_active_unlocked: bool = false
+var class_active_level: int = 0
 var class_active_used: bool = false
 var flow: int = 0
 var ashes: int = 0
@@ -100,6 +101,9 @@ func start_battle(catalog, deck_ids: Array, config: Dictionary = {}) -> void:
 	selected_class_id = str(config.get("class_id", ""))
 	class_passive_unlocked = bool(config.get("class_passive_unlocked", false))
 	class_active_unlocked = bool(config.get("class_active_unlocked", false))
+	class_active_level = int(config.get("class_active_level", 0))
+	if selected_class_id == "necromante" and class_active_unlocked and class_active_level <= 0:
+		class_active_level = 1
 	class_active_used = false
 	flow = 0
 	ashes = 0
@@ -140,7 +144,7 @@ func start_battle(catalog, deck_ids: Array, config: Dictionary = {}) -> void:
 	if mode == MODE_DEFENSE_POSITION:
 		_setup_defense_objective()
 	_draw_to_hand_size()
-	if mode == MODE_WAVES and not waves.is_empty():
+	if _uses_wave_director() and not waves.is_empty():
 		_spawn_next_wave()
 	else:
 		_spawn_starting_enemies(Array(config.get("starting_enemy_slots", encounter.get("starting_enemy_slots", []))))
@@ -185,6 +189,7 @@ func get_state() -> Dictionary:
 		"selected_class_id": selected_class_id,
 		"class_passive_unlocked": class_passive_unlocked,
 		"class_active_unlocked": class_active_unlocked,
+		"class_active_level": class_active_level,
 		"class_active_used": class_active_used,
 		"flow": flow,
 		"ashes": ashes,
@@ -250,7 +255,7 @@ func get_valid_card_targets(hand_index: int) -> Array[Dictionary]:
 	if not can_play_card(card):
 		return _empty_targets()
 	if card.occupies_slot():
-		return _slot_targets(PLAYER_ID, true)
+		return _summon_slot_targets()
 	var effect: Dictionary = Dictionary(card.effect)
 	match str(effect.get("action", "")):
 		"damage":
@@ -303,6 +308,18 @@ func play_card_from_hand(hand_index: int, target: Dictionary = {}) -> Dictionary
 			return _fail("Slot invalido.")
 		if player_slots[slot_index] != null and bool(Dictionary(player_slots[slot_index]).get("objective", false)):
 			return _fail("Objetivo de defesa nao pode ser substituido.")
+		if player_slots[slot_index] != null and not bool(target.get("confirm_sacrifice", false)):
+			var sacrificed_preview: Dictionary = Dictionary(player_slots[slot_index])
+			return {
+				"ok": false,
+				"requires_confirmation": true,
+				"confirmation": "sacrifice",
+				"message": "Sacrificar %s para invocar %s?" % [str(sacrificed_preview.get("name", "Criatura")), str(card.display_name)],
+				"hand_index": hand_index,
+				"target": {"owner": PLAYER_ID, "slot": slot_index},
+				"sacrificed_name": str(sacrificed_preview.get("name", "Criatura")),
+				"summon_name": str(card.display_name)
+			}
 		_spend_card(hand_index, card)
 		_after_card_played()
 		if player_slots[slot_index] != null:
@@ -366,43 +383,46 @@ func resolve_pending_choice(target: Dictionary = {}, option_id: String = "") -> 
 	return {"ok": true, "message": "Escolha resolvida."}
 
 func get_necromancer_active_choices() -> Array[Dictionary]:
-	return [
-		{
-			"id": NECRO_CHOICE_SLOW,
-			"display_name": "Lentidao Sombria",
-			"cost_ashes": 2,
-			"text": "Uma criatura inimiga nao ataca neste turno.",
-			"enabled": selected_class_id == "necromante" and class_active_unlocked and ashes >= 2 and not _occupied_slot_targets(ENEMY_ID).is_empty()
-		},
+	var active_ready: bool = selected_class_id == "necromante" and class_active_unlocked and class_active_level >= 1
+	var choices: Array[Dictionary] = [
 		{
 			"id": NECRO_CHOICE_ROT,
 			"display_name": "Podridao Astral",
 			"cost_ashes": 2,
 			"text": "Uma criatura inimiga perde 1/1 permanente.",
-			"enabled": selected_class_id == "necromante" and class_active_unlocked and ashes >= 2 and not _occupied_slot_targets(ENEMY_ID).is_empty()
+			"enabled": active_ready and ashes >= 2 and not _occupied_slot_targets(ENEMY_ID).is_empty()
 		},
 		{
-			"id": NECRO_CHOICE_CONFUSION,
-			"display_name": "Confusao Sepulcral",
+			"id": NECRO_CHOICE_ATTACK_TWO,
+			"display_name": "Furia das Cinzas",
 			"cost_ashes": 2,
-			"text": "Uma criatura inimiga ataca o proprio lado neste turno.",
-			"enabled": selected_class_id == "necromante" and class_active_unlocked and ashes >= 2 and not _occupied_slot_targets(ENEMY_ID).is_empty()
-		},
-		{
+			"text": "Uma criatura aliada ganha +2 ATK ate o final do turno.",
+			"enabled": active_ready and ashes >= 2 and not _occupied_slot_targets(PLAYER_ID).is_empty()
+		}
+	]
+	if class_active_level >= 2:
+		choices.append({
 			"id": NECRO_CHOICE_REVIVE_ONE_ONE,
 			"display_name": "Reanimar 1/1",
 			"cost_ashes": 4,
 			"text": "Reanima a ultima criatura do descarte como 1/1.",
-			"enabled": selected_class_id == "necromante" and class_active_unlocked and ashes >= 4 and _has_discard_creature() and not _strict_open_slot_targets(PLAYER_ID).is_empty()
-		},
-		{
-			"id": NECRO_CHOICE_REVIVE_FULL,
-			"display_name": "Reanimar original",
-			"cost_ashes": 6,
-			"text": "Reanima a ultima criatura do descarte com stats originais.",
-			"enabled": selected_class_id == "necromante" and class_active_unlocked and ashes >= 6 and _has_discard_creature() and not _strict_open_slot_targets(PLAYER_ID).is_empty()
-		}
-	]
+			"enabled": active_ready and ashes >= 4 and _has_discard_creature() and not _strict_open_slot_targets(PLAYER_ID).is_empty()
+		})
+		choices.append({
+			"id": NECRO_CHOICE_ROT_TWO,
+			"display_name": "Podridao Profunda",
+			"cost_ashes": 4,
+			"text": "Uma criatura inimiga perde 2/2 permanente.",
+			"enabled": active_ready and ashes >= 4 and not _occupied_slot_targets(ENEMY_ID).is_empty()
+		})
+		choices.append({
+			"id": NECRO_CHOICE_ATTACK_FOUR,
+			"display_name": "Furia das Cinzas Maior",
+			"cost_ashes": 4,
+			"text": "Uma criatura aliada ganha +4 ATK ate o final do turno.",
+			"enabled": active_ready and ashes >= 4 and not _occupied_slot_targets(PLAYER_ID).is_empty()
+		})
+	return choices
 
 func can_use_class_active() -> bool:
 	if outcome != "" or class_active_used or not class_active_unlocked:
@@ -413,7 +433,7 @@ func can_use_class_active() -> bool:
 		"invocador":
 			return mana >= 1 and _first_ally_slot() >= 0
 		"necromante":
-			return ashes >= 2
+			return class_active_level >= 1 and ashes >= 2
 	return false
 
 func get_valid_class_active_targets(choice_id: String = "") -> Array[Dictionary]:
@@ -430,23 +450,29 @@ func get_valid_class_active_targets(choice_id: String = "") -> Array[Dictionary]
 			return _occupied_slot_targets(PLAYER_ID)
 		"necromante":
 			match choice_id:
-				NECRO_CHOICE_SLOW, NECRO_CHOICE_ROT, NECRO_CHOICE_CONFUSION:
+				NECRO_CHOICE_ROT:
 					if ashes < 2:
 						return _empty_targets()
 					return _occupied_slot_targets(ENEMY_ID)
+				NECRO_CHOICE_ATTACK_TWO:
+					if ashes < 2:
+						return _empty_targets()
+					return _occupied_slot_targets(PLAYER_ID)
 				NECRO_CHOICE_REVIVE_ONE_ONE:
-					if ashes < 4 or not _has_discard_creature():
+					if class_active_level < 2 or ashes < 4 or not _has_discard_creature():
 						return _empty_targets()
 					return _strict_open_slot_targets(PLAYER_ID)
-				NECRO_CHOICE_REVIVE_FULL:
-					if ashes < 6 or not _has_discard_creature():
+				NECRO_CHOICE_ROT_TWO:
+					if class_active_level < 2 or ashes < 4:
 						return _empty_targets()
-					return _strict_open_slot_targets(PLAYER_ID)
+					return _occupied_slot_targets(ENEMY_ID)
+				NECRO_CHOICE_ATTACK_FOUR:
+					if class_active_level < 2 or ashes < 4:
+						return _empty_targets()
+					return _occupied_slot_targets(PLAYER_ID)
 	return _empty_targets()
 
 func can_use_class_active_on_target(target: Dictionary, choice_id: String = "") -> bool:
-	if target.is_empty() and selected_class_id == "necromante" and choice_id == "":
-		return can_use_class_active()
 	if target.is_empty():
 		return false
 	return _target_in_options(_normalized_target(target, PLAYER_ID), get_valid_class_active_targets(choice_id))
@@ -454,6 +480,8 @@ func can_use_class_active_on_target(target: Dictionary, choice_id: String = "") 
 func use_class_active(target: Dictionary = {}, choice_id: String = "") -> Dictionary:
 	if not can_use_class_active():
 		return _fail("Spell de classe indisponivel.")
+	if selected_class_id == "necromante" and (target.is_empty() or choice_id == ""):
+		return _fail("Escolha de Cinzas invalida.")
 	if not target.is_empty() and not can_use_class_active_on_target(target, choice_id):
 		return _fail("Alvo invalido.")
 	class_active_used = true
@@ -543,7 +571,7 @@ func _finish_cycle() -> void:
 
 func _resolve_maintenance_step() -> void:
 	_log("Manutencao da mesa.")
-	if mode == MODE_WAVES and _board_is_clear(ENEMY_ID) and _has_next_wave():
+	if _uses_wave_director() and _board_is_clear(ENEMY_ID) and _has_next_wave():
 		_spawn_next_wave()
 	if outcome == "":
 		_resolve_boss_summon()
@@ -585,8 +613,15 @@ func get_valid_move_targets(owner_id: String, from_slot: int) -> Array[Dictionar
 		return _empty_targets()
 	var targets: Array[Dictionary] = []
 	for target_slot: int in [from_slot - 1, from_slot + 1]:
-		if target_slot >= 0 and target_slot < slots.size() and slots[target_slot] == null:
+		if target_slot < 0 or target_slot >= slots.size():
+			continue
+		if slots[target_slot] == null:
 			targets.append({"owner": owner_id, "slot": target_slot})
+			continue
+		var target_occupant: Dictionary = Dictionary(slots[target_slot])
+		if bool(target_occupant.get("objective", false)) or bool(target_occupant.get("moved_this_turn", false)):
+			continue
+		targets.append({"owner": owner_id, "slot": target_slot})
 	return targets
 
 func can_move_unit(owner_id: String, from_slot: int, to_slot: int) -> bool:
@@ -598,10 +633,17 @@ func move_unit(owner_id: String, from_slot: int, to_slot: int) -> Dictionary:
 	var slots: Array = _slots_for_owner(owner_id)
 	var occupant: Dictionary = Dictionary(slots[from_slot])
 	occupant["moved_this_turn"] = true
-	slots[from_slot] = null
-	slots[to_slot] = occupant
+	if slots[to_slot] == null:
+		slots[from_slot] = null
+		slots[to_slot] = occupant
+		_log("%s moveu do slot %d para o slot %d." % [str(occupant.get("name", "Criatura")), from_slot + 1, to_slot + 1])
+	else:
+		var target_occupant: Dictionary = Dictionary(slots[to_slot])
+		target_occupant["moved_this_turn"] = true
+		slots[from_slot] = target_occupant
+		slots[to_slot] = occupant
+		_log("%s e %s trocaram os slots %d e %d." % [str(occupant.get("name", "Criatura")), str(target_occupant.get("name", "Criatura")), from_slot + 1, to_slot + 1])
 	_set_slots_for_owner(owner_id, slots)
-	_log("%s moveu do slot %d para o slot %d." % [str(occupant.get("name", "Criatura")), from_slot + 1, to_slot + 1])
 	return {"ok": true, "message": "Criatura movida."}
 
 func _encounter_from_config(config: Dictionary) -> Dictionary:
@@ -1110,9 +1152,6 @@ func _check_outcome() -> void:
 	if mode == MODE_WAVES and _board_is_clear(ENEMY_ID) and not _has_next_wave():
 		outcome = "vitoria"
 		current_phase = PHASE_ENDED
-	if mode == MODE_DEFENSE_POSITION and _defense_objective_alive() and _board_is_clear(ENEMY_ID):
-		outcome = "vitoria"
-		current_phase = PHASE_ENDED
 	if mode == MODE_SURVIVE_TURNS and _board_is_clear(ENEMY_ID):
 		outcome = "vitoria"
 		current_phase = PHASE_ENDED
@@ -1213,34 +1252,27 @@ func _apply_summon_passive(_slot_index: int) -> void:
 		_log("Comandante de Campo concedeu +1/+0 permanente.")
 
 func _resolve_necromancer_active(choice_id: String = "", target: Dictionary = {}) -> void:
-	if choice_id == NECRO_CHOICE_SLOW:
+	if choice_id == NECRO_CHOICE_ROT:
 		ashes -= 2
-		_apply_debuff_to_target({"debuff": "slow", "amount": 1 + _ability_power_bonus()}, target)
-		_log("Ritual das Sombras I aplicou Lentidao.")
-	elif choice_id == NECRO_CHOICE_ROT:
+		_apply_debuff_to_target({"debuff": "rot", "amount": 1}, target)
+		_log("Ritual das Sombras aplicou Podridao 1/1.")
+	elif choice_id == NECRO_CHOICE_ATTACK_TWO:
 		ashes -= 2
-		_apply_debuff_to_target({"debuff": "rot", "amount": 1 + _ability_power_bonus()}, target)
-		_log("Ritual das Sombras I aplicou Podridao.")
-	elif choice_id == NECRO_CHOICE_CONFUSION:
-		ashes -= 2
-		_apply_debuff_to_target({"debuff": "confusion", "amount": 1 + _ability_power_bonus()}, target)
-		_log("Ritual das Sombras I aplicou Confusao.")
+		_buff_slot(PLAYER_ID, int(target.get("slot", -1)), 2, 0, true)
+		_log("Ritual das Sombras concedeu +2 ATK temporario.")
 	elif choice_id == NECRO_CHOICE_REVIVE_ONE_ONE and _revive_from_discard_into_slot(true, int(target.get("slot", -1))):
 		ashes -= 4
-		_log("Ritual das Sombras II reanimou uma criatura 1/1.")
-	elif choice_id == NECRO_CHOICE_REVIVE_FULL and _revive_from_discard_into_slot(false, int(target.get("slot", -1))):
-		ashes -= 6
-		_log("Ritual das Sombras III reanimou uma criatura com stats originais.")
-	elif ashes >= 6 and _revive_from_discard(false):
-		ashes -= 6
-		_log("Ritual das Sombras III reanimou uma criatura com stats originais.")
-	elif ashes >= 4 and _revive_from_discard(true):
+		_log("Ritual das Sombras reanimou uma criatura 1/1.")
+	elif choice_id == NECRO_CHOICE_ROT_TWO:
 		ashes -= 4
-		_log("Ritual das Sombras II reanimou uma criatura 1/1.")
+		_apply_debuff_to_target({"debuff": "rot", "amount": 2}, target)
+		_log("Ritual das Sombras aplicou Podridao 2/2.")
+	elif choice_id == NECRO_CHOICE_ATTACK_FOUR:
+		ashes -= 4
+		_buff_slot(PLAYER_ID, int(target.get("slot", -1)), 4, 0, true)
+		_log("Ritual das Sombras concedeu +4 ATK temporario.")
 	else:
-		ashes -= 2
-		_apply_debuff_to_target({"debuff": "rot", "amount": 1 + _ability_power_bonus()}, _first_enemy_target())
-		_log("Ritual das Sombras I aplicou Podridao.")
+		_log("Ritual das Sombras perdeu efeito: escolha invalida.")
 
 func _revive_from_discard(as_one_one: bool) -> bool:
 	var open_slot: int = _first_strict_open_slot(player_slots)
@@ -1558,6 +1590,14 @@ func _slot_targets(owner_id: String, include_empty: bool) -> Array[Dictionary]:
 			result.append({"owner": owner_id, "slot": index})
 	return result
 
+func _summon_slot_targets() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for index: int in range(player_slots.size()):
+		if player_slots[index] != null and bool(Dictionary(player_slots[index]).get("objective", false)):
+			continue
+		result.append({"owner": PLAYER_ID, "slot": index})
+	return result
+
 func _occupied_slot_targets(owner_id: String) -> Array[Dictionary]:
 	return _slot_targets(owner_id, false)
 
@@ -1583,6 +1623,9 @@ func _empty_targets() -> Array[Dictionary]:
 
 func _board_area_target(owner_id: String) -> Dictionary:
 	return {"owner": owner_id, "area": "board"}
+
+func _uses_wave_director() -> bool:
+	return mode == MODE_WAVES or (mode == MODE_DEFENSE_POSITION and enemy_director == "waves")
 
 func _has_discard_creature() -> bool:
 	for card_id: String in discard:

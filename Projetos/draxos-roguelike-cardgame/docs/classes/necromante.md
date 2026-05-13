@@ -1,7 +1,7 @@
 # Necromante
 
 - Last Updated: `2026-05-13`
-- Status: `Track 01 redesigned class deck validated`
+- Status: `Track 01 Cinzas active-level rework validated`
 - Indice: `README.md`
 
 ## Identidade
@@ -18,19 +18,19 @@ Antes do mapa 5, mortes em campo nao geram Cinzas pela passiva.
 
 ## Habilidade Ativa - Ritual Das Sombras
 
-Desbloqueio: mapa 7.
+Desbloqueio: mapa 5 junto da passiva, no nivel 1. O mapa 7 aplica o upgrade para o nivel 2.
 
 **Custo:** 0 mana. Usavel uma vez por turno. Custa Cinzas.
 
 | Escolha | Custo em Cinzas | Efeito |
 |---|---:|---|
-| Lentidao Sombria | 2 | Uma criatura inimiga nao ataca neste turno. |
 | Podridao Astral | 2 | Uma criatura inimiga perde 1/1 permanente. |
-| Confusao Sepulcral | 2 | Uma criatura inimiga ataca o proprio lado neste turno, se houver alvo. |
+| Furia das Cinzas | 2 | Uma criatura aliada ganha +2 ATK ate o final do turno. |
 | Reanimar 1/1 | 4 | Reanima a ultima criatura do descarte como 1/1. |
-| Reanimar original | 6 | Reanima a ultima criatura do descarte com stats originais. |
+| Podridao Profunda | 4 | Uma criatura inimiga perde 2/2 permanente. |
+| Furia das Cinzas Maior | 4 | Uma criatura aliada ganha +4 ATK ate o final do turno. |
 
-Antes do mapa 7, o modal do Necromante nao abre e a habilidade nao pode ser usada.
+Antes do mapa 5, o modal do Necromante nao abre e a habilidade nao pode ser usada. No nivel 1, apenas as opcoes de 2 Cinzas estao disponiveis. No nivel 2, as opcoes de 2 e 4 Cinzas ficam disponiveis.
 
 ## Deck Atual
 

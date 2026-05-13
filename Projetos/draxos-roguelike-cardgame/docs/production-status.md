@@ -1,7 +1,7 @@
 # Production Status
 
 - Last Updated: `2026-05-13`
-- Status: `Track 01 combat order and HUD label validation green`
+- Status: `Track 01 sacrifice, movement, Cinzas and tuning validation green`
 
 ## Current Reality
 
@@ -16,20 +16,22 @@ Track 01 now validates the current roguelike cardgame direction:
 - automatic souls on every node;
 - map 2 grants +1 max mana;
 - map 3 grants +1 max hand size;
-- map 5 unlocks the fixed class passive;
-- map 7 unlocks the fixed class active;
+- map 5 unlocks the fixed class passive, and for Necromante also unlocks active level 1;
+- map 7 unlocks the fixed class active, and for Necromante upgrades the active to level 2;
 - `iniciativa`, `defensor`, `reviver`, `enfraquecer`, `prender`, `promover`, and dynamic `poder de habilidade` are active;
 - `Resolver Combate` runs combat before maintenance/script, with no separate enemy combat turn and no summoning sickness;
 - front attacks remain simultaneous, while overflow attacks resolve sequentially by lane and skip dead attackers/defenders;
 - duel enemy AI plays new cards after combat/maintenance for the next player turn;
-- combat order/HUD label validation is green with 47/47 GUT tests and 337 asserts.
+- summoning over allied creatures requires sacrifice confirmation, and adjacent occupied allied slots can swap if both creatures have movement;
+- defense map 4 is a real hold objective with wave pressure, while survive map 6 has a light enemy buff;
+- sacrifice/movement/Cinzas/tuning validation is green with 58/58 GUT tests and 409 asserts.
 
 ## Present In Code
 
 - Boot, ShipHub, RunMap, and Battle scenes.
 - Boot as main menu, dedicated Deck and Almas scenes, and ShipHub visual navigation.
 - `SaveManager` with 3 local JSON save slots under `user://`.
-- `RunSession` with class, deck, health, max mana, max hand size, souls, completed nodes, automatic rewards, passive unlock, and active unlock state.
+- `RunSession` with class, deck, health, max mana, max hand size, souls, completed nodes, automatic rewards, passive unlock, active unlock state, and Necromante active level.
 - Front-lane BattleEngine with simultaneous front damage, sequential overflow, direct lane damage, initiative, defender redirect, revive, weaken, snare, promote choices, ability power, waves, duel, defense position, survive turns, and summoner boss.
 - Arcano, Invocador, and Necromante first-pass class mechanics gated by map unlocks.
 - VisualAssets manifest and fallback reporting for missing optional PNGs.
@@ -44,4 +46,4 @@ Track 01 now validates the current roguelike cardgame direction:
 
 ## Next Production Step
 
-Playtest the reformed menu/save/hub flow with the redesigned 10-map route, then tune enemy pressure and distribute the remaining rewards.
+Playtest the sacrifice/movement/Cinzas tuning pass across the redesigned 10-map route, then replace alpha-debt ship overlays and distribute the remaining rewards.

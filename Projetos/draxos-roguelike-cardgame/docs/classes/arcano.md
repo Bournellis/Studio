@@ -34,7 +34,7 @@ Parametros do slice: mana inicial 2, HP do Comandante 20, mao base 3, deck inici
 |---|---:|---:|---|---|
 | Choque | 1 | 3 | - | Causa 2 de dano a criatura ou heroi inimigo valido. |
 | Fagulha Arcana | 1 | 3 | 1/2 | Enquanto em campo: +1 poder de habilidade. |
-| Barreira Arcana | 2 | 3 | 1/5 | Enquanto em campo: +1 poder de habilidade. |
+| Barreira Arcana | 2 | 3 | 1/5 | `defensor`. Enquanto em campo: +1 poder de habilidade. |
 | Tempestade Arcana | 2 | 3 | - | Causa 4 pontos de dano distribuidos aleatoriamente entre alvos inimigos validos. |
 
 ## Pendencias

@@ -1,7 +1,7 @@
 # Track 01 Linear Execution Plan
 
 - Last Updated: `2026-05-13`
-- Status: `P10_COMBAT_ORDER_HUD_SAVE_VALIDATED`
+- Status: `P11_SACRIFICE_MOVEMENT_NECRO_TUNING_VALIDATED`
 - Execution Owner: `Codex`
 - Scope: `First coherent playable run loop after Track 00 checkpoint`
 - Validation Command: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd`
@@ -20,7 +20,7 @@ Turn the Track 00 placeholder checkpoint into a playable loop that starts a run,
 
 ## Current Execution Cursor
 
-Next prompt: `Playtest the reformed route and staged battle pressure, replace alpha-debt overlay art, and assign remaining rewards`.
+Next prompt: `Playtest the sacrifice/movement/Cinzas tuning pass, replace alpha-debt overlay art, and assign remaining rewards`.
 
 ## Linear Prompt Sequence
 
@@ -30,7 +30,7 @@ Next prompt: `Playtest the reformed route and staged battle pressure, replace al
 | P02 | complete | Return from battle to ShipHub/RunMap with visible completed-node and commander health state. | Green 27/27 |
 | P03 | complete | Add placeholder post-combat reward choice that changes the current run immediately. | Green 29/29 |
 | P04 | complete | Replace placeholders with first mechanical class slice, including souls and paid healing. | Green 21/21 |
-| P05 | in progress | Playtest and tune class decks, target UX, rewards, visuals, menus, saves, and encounter pressure. | Combat order/HUD/save green 47/47 |
+| P05 | in progress | Playtest and tune class decks, target UX, rewards, visuals, menus, saves, and encounter pressure. | Sacrifice/movement/Cinzas/tuning green 58/58 |
 
 ### P05 Current Slice
 
@@ -49,12 +49,15 @@ Next prompt: `Playtest the reformed route and staged battle pressure, replace al
 - ShipHub no longer shows run-state outside Deck.
 - Battle choice modals are centered and scrollable.
 - `Tempestade Arcana` uses enemy-board area targeting.
-- Allied creatures can be moved by drag to an adjacent empty allied slot once per turn.
+- Allied creatures can be moved by drag to an adjacent empty allied slot once per turn, or swapped with an adjacent occupied allied slot if both creatures still have movement.
 - Duel enemies use real hand/deck/discard/mana AI and play new cards after combat/maintenance for the next player turn.
-- Defense and survive objectives can end early when the enemy board is cleared.
+- Survive objectives can end early when the enemy board is cleared; defense objectives require holding the objective through the configured turns.
 - Survive and boss encounters have stronger starting boards for current tuning.
 - Dense battle layouts keep HUD and board inside the viewport by keeping player/enemy hero targets fixed, embedding stable class ability tokens in the hand band, compacting duel/boss cards, and overlaying area-target UI.
 - Enemy-board area targeting is now a large table behind enemy cards/slots rather than a small strip above them.
+- Summoning a creature into an occupied allied slot now opens a floating sacrifice confirmation; cancelling preserves mana, hand, and board state.
+- Necromante unlocks passiva + active level 1 on map 5 and upgrades to active level 2 on map 7; old Lentidao/Confusao/Reanimar original choices are removed.
+- Defense map 4 is now a real hold objective with wave pressure and no early victory for clearing the board; Survive map 6 has a light enemy buff while preserving clear-board victory.
 
 ## P01 - Run Start And Class Placeholder
 

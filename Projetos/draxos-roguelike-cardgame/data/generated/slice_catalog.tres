@@ -40,8 +40,8 @@ card_type = "criatura"
 cost = 2
 attack = 1
 health = 5
-text = "Enquanto em campo: +1 Poder de habilidade."
-keywords = PackedStringArray()
+text = "Defensor. Enquanto em campo: +1 Poder de habilidade."
+keywords = PackedStringArray("defensor")
 effect = {
 "amount": 1.0,
 "aura": "ability_power"
@@ -368,7 +368,7 @@ class_options = Array[Dictionary]([{
 "starting_mana": 2.0
 }, {
 "active_id": "ritual_das_sombras",
-"active_text": "0 mana + Cinzas: 2 debuff, 4 reanima 1/1, 6 reanima com stats originais. Uma vez por turno.",
+"active_text": "0 mana + Cinzas: nivel 1 usa Podridao 1/1 ou +2 ATK temporario; nivel 2 adiciona reanimar 1/1, Podridao 2/2 e +4 ATK temporario. Uma vez por turno.",
 "display_name": "Necromante",
 "id": "necromante",
 "mechanic_status": "Passiva desbloqueia no mapa 5; spell de classe desbloqueia no mapa 7.",
@@ -462,9 +462,9 @@ encounters = Array[Dictionary]([{
 }, {
 "defense_health": 10.0,
 "defense_slot": 1.0,
-"defense_turns": 3.0,
+"defense_turns": 4.0,
 "display_name": "Mapa 04 - Defesa de Posicao",
-"enemy_director": "prefilled_board",
+"enemy_director": "waves",
 "enemy_slots_count": 3.0,
 "id": "defesa_posicao_inicial",
 "mode": "defesa_posicao",
@@ -473,17 +473,35 @@ encounters = Array[Dictionary]([{
 "max": 10.0,
 "min": 7.0
 },
-"starting_enemy_slots": [{
+"tier": "medium",
+"waves": [[{
+"card_id": "elemental_assaltante",
+"slot": 0.0
+}, {
+"card_id": "elemental_medio",
+"slot": 1.0
+}, {
+"card_id": "elemental_assaltante",
+"slot": 2.0
+}], [{
 "card_id": "elemental_menor",
 "slot": 0.0
 }, {
-"card_id": "elemental_assaltante",
+"card_id": "elemental_guardiao",
 "slot": 1.0
 }, {
 "card_id": "elemental_menor",
 "slot": 2.0
-}],
-"tier": "medium"
+}], [{
+"card_id": "elemental_assaltante",
+"slot": 0.0
+}, {
+"card_id": "elemental_bruto",
+"slot": 1.0
+}, {
+"card_id": "elemental_medio",
+"slot": 2.0
+}]]
 }, {
 "boss_health": 20.0,
 "boss_summons": [{
@@ -530,7 +548,7 @@ encounters = Array[Dictionary]([{
 "card_id": "elemental_assaltante",
 "slot": 0.0
 }, {
-"card_id": "elemental_medio",
+"card_id": "elemental_bruto",
 "slot": 1.0
 }, {
 "card_id": "elemental_guardiao",

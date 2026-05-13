@@ -1,13 +1,13 @@
 # Game Design Document
 
 - Last Updated: `2026-05-13`
-- Status: `Track 01 redesigned battle/card baseline validated`
+- Status: `Track 01 sacrifice, movement, Cinzas and encounter tuning validated`
 
 ## Direction
 
 Este e um roguelike de cartas com lore Draxos e apresentacao de batalha em lanes frontais. O jogador e sempre o Comandante Draxos; a identidade de gameplay vem da `Classe`.
 
-O slice atual tem 3 classes fixas: `arcano`, `invocador` e `necromante`. A classe define deck inicial, passiva fixa e habilidade ativa fixa, mas a passiva so desbloqueia no mapa 5 e a ativa so aparece/funciona a partir do mapa 7.
+O slice atual tem 3 classes fixas: `arcano`, `invocador` e `necromante`. A classe define deck inicial, passiva fixa e habilidade ativa fixa. Arcano e Invocador desbloqueiam passiva no mapa 5 e ativa no mapa 7; Necromante desbloqueia passiva + ativa nivel 1 no mapa 5 e recebe upgrade da ativa no mapa 7.
 
 ## Core Loop
 
@@ -39,6 +39,8 @@ O tabuleiro usa slots alinhados por indice: slot 1 contra slot 1, slot 2 contra 
 - O heroi inimigo so recebe dano direto nos modos `duelo` e `chefe_summoner`.
 - `regeneracao` continua funcionando no inicio do turno do jogador.
 - Nao existe enjoo: criaturas entram aptas para o proximo combate disponivel.
+- Invocar uma criatura em slot aliado ocupado exige confirmacao de sacrificio; cancelar nao gasta mana nem carta.
+- Arrastar uma criatura aliada para slot adjacente vazio move a criatura; arrastar para slot adjacente ocupado troca as duas criaturas de lugar e consome movimento das duas. Se qualquer uma ja moveu, a troca falha.
 
 ### Iniciativa
 
@@ -73,8 +75,8 @@ Modos presentes no contrato do slice:
 - `limpar_mesa`: vencer limpando a presenca inimiga relevante no tabuleiro.
 - `ondas`: vencer todas as ondas sequenciais.
 - `duelo`: vencer reduzindo o heroi inimigo a 0.
-- `defesa_posicao`: proteger um objetivo 0 ATK / 10 HP no slot central aliado por 3 turnos.
-- `sobreviver_turnos`: sobreviver 3 turnos com o Comandante vivo.
+- `defesa_posicao`: proteger um objetivo 0 ATK / 10 HP no slot central aliado por 4 turnos; limpar a mesa nao encerra o encontro antes do objetivo.
+- `sobreviver_turnos`: sobreviver 4 turnos com o Comandante vivo, ainda vencendo cedo se a mesa inimiga for limpa.
 - `chefe_summoner`: derrotar um boss com vida propria e summons roteirizados.
 
 ## Battle Economy
@@ -99,9 +101,9 @@ Track 01 usa 10 encontros lineares, sem sidequests por enquanto.
 | 2 | `n02_ondas_iniciais` | `ondas` | medium | 7 | +1 max mana |
 | 3 | `n03_duelo_inicial` | `duelo` | medium | 7 | +1 limite de mao |
 | 4 | `n04_defesa_posicao` | `defesa_posicao` | medium | 7 | - |
-| 5 | `n05_chefe_invocador` | `chefe_summoner` | boss | 18 | desbloqueia passiva |
+| 5 | `n05_chefe_invocador` | `chefe_summoner` | boss | 18 | desbloqueia passiva; Necromante tambem recebe ativa I |
 | 6 | `n06_sobreviver_turnos` | `sobreviver_turnos` | medium | 7 | - |
-| 7 | `n07_limpeza_elite` | `limpar_mesa` | elite_optional | 11 | desbloqueia ativa |
+| 7 | `n07_limpeza_elite` | `limpar_mesa` | elite_optional | 11 | desbloqueia ativa; Necromante recebe ativa II |
 | 8 | `n08_ondas_avancadas` | `ondas` | elite_optional | 11 | - |
 | 9 | `n09_duelo_elite` | `duelo` | elite_optional | 11 | - |
 | 10 | `n10_chefe_final` | `chefe_summoner` | boss | 18 | - |
