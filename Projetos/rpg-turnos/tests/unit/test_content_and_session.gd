@@ -427,4 +427,34 @@ func test_arcano_class_passiva_id_is_fluxo_continuo() -> void:
 # --- P13: Necromante integration checkpoint — catalog data ---
 
 func test_necromante_hero_power_display_name_is_ritual_das_sombras() -> void:
-	var hp: Dictionary = ContentLibrary.get_class_hero_power("
+	var hp: Dictionary = ContentLibrary.get_class_hero_power("necromante")
+	assert_false(hp.is_empty(), "get_class_hero_power must return data for necromante.")
+	assert_eq(str(hp.get("display_name", "")), "Ritual das Sombras",
+		"Necromante hero power display_name must be 'Ritual das Sombras'.")
+
+func test_necromante_hero_power_action_is_ritual_das_sombras() -> void:
+	var hp: Dictionary = ContentLibrary.get_class_hero_power("necromante")
+	var effect: Dictionary = Dictionary(hp.get("effect", {}))
+	assert_eq(str(effect.get("action", "")), "ritual_das_sombras",
+		"Necromante hero power action must be 'ritual_das_sombras' so BattleEngine bypasses energy check and dispatches to the 3-tier handler.")
+
+func test_necromante_hero_power_has_three_tiers() -> void:
+	var hp: Dictionary = ContentLibrary.get_class_hero_power("necromante")
+	var effect: Dictionary = Dictionary(hp.get("effect", {}))
+	var tiers: Array = Array(effect.get("tiers", []))
+	assert_eq(tiers.size(), 3,
+		"Necromante hero power must expose exactly 3 tiers (Degrau I/II/III).")
+
+func test_necromante_class_passiva_id_is_colheita_sombria() -> void:
+	var cls: Dictionary = ContentLibrary.get_class_definition("necromante")
+	assert_false(cls.is_empty(), "ContentLibrary must expose necromante class data.")
+	var passiva: Dictionary = Dictionary(cls.get("passiva", {}))
+	assert_eq(str(passiva.get("id", "")), "colheita_sombria",
+		"Necromante passiva id must be 'colheita_sombria'.")
+
+func _delete_test_save() -> void:
+	if not FileAccess.file_exists(TEST_SAVE_PATH):
+		return
+	var user_dir: DirAccess = DirAccess.open("user://")
+	if user_dir != null:
+		user_dir.remove(TEST_SAVE_FILENAME)

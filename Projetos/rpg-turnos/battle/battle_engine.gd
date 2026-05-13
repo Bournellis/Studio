@@ -1847,4 +1847,235 @@ func _register_routes(owner_id: String, configured_routes: Dictionary, source_co
 		var route_targets: Array = []
 		var fallback_slots: Array = []
 		var ranged_targets: Array = []
-		var fallback: St
+		var fallback: String = "hero" if modo_batalha == MODE_DUEL or owner_id == ENEMY_ID else "none"
+		var raw: Variant = configured_routes.get(str(index), configured_routes.get(_slot_label(owner_id, index), null))
+		if typeof(raw) == TYPE_DICTIONARY:
+			var raw_dict: Dictionary = Dictionary(raw)
+			route_targets = Array(raw_dict.get("targets", []))
+			fallback_slots = Array(raw_dict.get("fallback_slots", []))
+			ranged_targets = Array(raw_dict.get("ranged_targets", []))
+			fallback = str(raw_dict.get("fallback", fallback))
+		elif typeof(raw) == TYPE_ARRAY:
+			route_targets = Array(raw)
+		if route_targets.is_empty():
+			route_targets.append({"owner": target_owner_id, "slot": index})
+		_attack_routes[_route_key(owner_id, index)] = {
+			"targets": route_targets,
+			"fallback_slots": fallback_slots,
+			"ranged_targets": ranged_targets,
+			"fallback": fallback
+		}
+
+func _default_slot_definitions(owner_id: String, count: int) -> Array:
+	var result: Array = []
+	var prefix: String = "P" if owner_id == PLAYER_ID else "E"
+	for index: int in range(count):
+		result.append({
+			"id": "%s%d" % [prefix, index + 1],
+			"terrain": "normal",
+			"elevation": "chao",
+			"accepts": ["criatura", "estrutura", "permanente"]
+		})
+	return result
+
+func _labels_from_slot_definitions(definitions: Array, prefix: String) -> Array[String]:
+	var labels: Array[String] = []
+	for index: int in range(definitions.size()):
+		var definition: Dictionary = Dictionary(definitions[index])
+		labels.append(str(definition.get("label", definition.get("id", "%s%d" % [prefix, index + 1]))))
+	return labels
+
+func _empty_slots(count: int) -> Array:
+	var result: Array = []
+	for _index: int in range(count):
+		result.append(null)
+	return result
+
+func _slot_definition(owner_id: String, slot_index: int) -> Dictionary:
+	owner_id = _normalize_owner_id(owner_id)
+	var definitions: Array = _player_slot_definitions
+	if owner_id == ENEMY_ID:
+		definitions = _enemy_slot_definitions
+	elif owner_id == NEUTRAL_ID:
+		definitions = _neutral_slot_definitions
+	if slot_index < 0 or slot_index >= definitions.size():
+		return {}
+	return Dictionary(definitions[slot_index])
+
+func _first_open_slot(owner_id: String) -> int:
+	var slots: Array = _slots_for_owner(owner_id)
+	for index: int in range(slots.size()):
+		if slots[index] == null:
+			return index
+	return -1
+
+func _controller(controller_id: String) -> Dictionary:
+	controller_id = _normalize_owner_id(controller_id)
+	return Dictionary(controladores.get(controller_id, {}))
+
+func _set_controller(controller_id: String, controller: Dictionary) -> void:
+	controladores[_normalize_owner_id(controller_id)] = controller
+
+func _controller_energy(controller_id: String) -> int:
+	return int(_controller(controller_id).get("energy", 0))
+
+func _is_encounter_controller(controller_id: String) -> bool:
+	return controller_id == ENEMY_ID and str(_controller(controller_id).get("kind", "")) == "encontro"
+
+func _controller_has_hero(controller_id: String) -> bool:
+	return _controller(controller_id).has("hero")
+
+func _hero_state(hero_resource, owner_id: String, fallback_health: int) -> Dictionary:
+	var max_health: int = fallback_health
+	var hero_id: String = owner_id
+	var hero_name: String = _owner_label(owner_id)
+	if hero_resource != null:
+		max_health = int(hero_resource.max_health)
+		hero_id = str(hero_resource.id)
+		hero_name = str(hero_resource.display_name)
+	return {
+		"id": hero_id,
+		"name": hero_name,
+		"controller": owner_id,
+		"health": max_health,
+		"max_health": max_health,
+		"armor": 0
+	}
+
+func _sync_public_fields() -> void:
+	var player: Dictionary = _controller(PLAYER_ID)
+	var player_hero: Dictionary = Dictionary(player.get("hero", {}))
+	player_health = int(player_hero.get("health", player_health))
+	player_armor = int(player_hero.get("armor", 0))
+	energy = int(player.get("energy", energy))
+	deck = Array(player.get("deck", [])).duplicate()
+	hand = Array(player.get("hand", [])).duplicate()
+	discard = []
+	hero_power_used = bool(player.get("hero_power_used", false))
+	var enemy: Dictionary = _controller(ENEMY_ID)
+	if enemy.has("hero"):
+		var enemy_hero: Dictionary = Dictionary(enemy.get("hero", {}))
+		enemy_health = int(enemy_hero.get("health", enemy_health))
+		enemy_armor = int(enemy_hero.get("armor", 0))
+	else:
+		enemy_health = 0
+		enemy_armor = 0
+
+func _slots_for_owner(owner_id: String) -> Array:
+	var normalized: String = _normalize_owner_id(owner_id)
+	if normalized == ENEMY_ID:
+		return enemy_slots
+	if normalized == NEUTRAL_ID:
+		return neutral_slots
+	return player_slots
+
+func _set_slots_for_owner(owner_id: String, slots: Array) -> void:
+	var normalized: String = _normalize_owner_id(owner_id)
+	if normalized == ENEMY_ID:
+		enemy_slots = slots
+	elif normalized == NEUTRAL_ID:
+		neutral_slots = slots
+	else:
+		player_slots = slots
+
+func _opponent_id(owner_id: String) -> String:
+	return ENEMY_ID if _normalize_owner_id(owner_id) == PLAYER_ID else PLAYER_ID
+
+func _owner_label(owner_id: String) -> String:
+	return "jogador" if _normalize_owner_id(owner_id) == PLAYER_ID else "inimigo"
+
+func _normalize_owner_id(owner_id: String) -> String:
+	if owner_id in ["neutral", "neutro", NEUTRAL_ID]:
+		return NEUTRAL_ID
+	if owner_id in ["enemy", "inimigo", ENEMY_ID]:
+		return ENEMY_ID
+	return PLAYER_ID
+
+func _route_key(owner_id: String, slot_index: int) -> String:
+	return "%s:%d" % [_normalize_owner_id(owner_id), slot_index]
+
+func _slot_label(owner_id: String, slot_index: int) -> String:
+	owner_id = _normalize_owner_id(owner_id)
+	var labels: Array[String] = _player_slot_labels
+	var prefix: String = "P"
+	if owner_id == ENEMY_ID:
+		labels = _enemy_slot_labels
+		prefix = "E"
+	elif owner_id == NEUTRAL_ID:
+		labels = _neutral_slot_labels
+		prefix = "N"
+	if slot_index >= 0 and slot_index < labels.size():
+		return labels[slot_index]
+	return "%s%d" % [prefix, slot_index + 1]
+
+func _target_label(target: Dictionary) -> String:
+	var owner_id: String = _normalize_owner_id(str(target.get("owner", ENEMY_ID)))
+	var slot_index: int = int(target.get("slot", -1))
+	if slot_index >= 0:
+		return _slot_label(owner_id, slot_index)
+	if owner_id == ENEMY_ID:
+		return "Heroi inimigo"
+	return "Heroi do jogador"
+
+func _add_attack_option(options: Array, seen: Dictionary, target: Dictionary) -> void:
+	var key: String = "%s:%d" % [str(target.get("owner", "")), int(target.get("slot", -1))]
+	if seen.has(key):
+		return
+	seen[key] = true
+	target["label"] = _target_label(target)
+	options.append(target)
+
+func _target_in_options(target: Dictionary, options: Array) -> bool:
+	var target_owner: String = _normalize_owner_id(str(target.get("owner", "")))
+	var target_slot: int = int(target.get("slot", -99))
+	for option: Variant in options:
+		var option_dict: Dictionary = Dictionary(option)
+		if _normalize_owner_id(str(option_dict.get("owner", ""))) == target_owner and int(option_dict.get("slot", -99)) == target_slot:
+			return true
+	return false
+
+func _is_instant_speed_card(card) -> bool:
+	return card != null and (str(card.speed) == "instantanea" or _has_card_keyword(card, "instantaneo"))
+
+func _has_card_keyword(card, keyword: String) -> bool:
+	return card != null and card.has_method("has_keyword") and (card.has_keyword(keyword) or card.has_keyword(_keyword_alias(keyword)))
+
+func _has_keyword(occupant: Dictionary, keyword: String) -> bool:
+	var keywords: Array = Array(occupant.get("keywords", []))
+	return keywords.has(keyword) or keywords.has(_keyword_alias(keyword))
+
+func _keyword_alias(keyword: String) -> String:
+	match keyword:
+		"rapido":
+			return "fast"
+		"defensor":
+			return "defender"
+		"alcance":
+			return "reach"
+		"atropelar":
+			return "trample"
+		_:
+			return keyword
+
+func _card_name(card_id: String) -> String:
+	if _catalog == null:
+		return card_id
+	return _catalog.card_name(card_id)
+
+func _visual(kind: String, owner_id: String, slot_index: int, text: String, color: Color) -> void:
+	eventos_visuais.append({
+		"kind": kind,
+		"owner": _normalize_owner_id(owner_id),
+		"slot": slot_index,
+		"text": text,
+		"color": color
+	})
+
+func _log(line: String) -> void:
+	log_lines.append(line)
+	if log_lines.size() > MAX_LOG_LINES:
+		log_lines.pop_front()
+
+func _fail(message: String) -> Dictionary:
+	_log(message)
+	return {"ok": false, "message": message}

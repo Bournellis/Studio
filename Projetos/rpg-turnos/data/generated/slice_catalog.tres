@@ -391,8 +391,13 @@ cost = 1
 command_cost = 1
 attack = 2
 health = 1
-text = "Rapido."
+text = "Rapido. Ao morrer: gera 1 Cinza extra."
 keywords = PackedStringArray("rapido")
+effect = {
+"on_death": {
+"action": "extra_cinza"
+}
+}
 
 [sub_resource type="Resource" id="Resource_3vxjw"]
 script = ExtResource("1_tqsc8")
@@ -403,8 +408,16 @@ cost = 1
 command_cost = 1
 attack = 3
 health = 1
-text = "Rapido."
+text = "Rapido. Ao morrer: 1 dano magico a qualquer permanente inimigo."
 keywords = PackedStringArray("rapido")
+effect = {
+"on_death": {
+"action": "damage",
+"amount": 1.0,
+"damage_type": "magico",
+"target": "first_enemy_permanent"
+}
+}
 
 [sub_resource type="Resource" id="Resource_8vwdf"]
 script = ExtResource("1_tqsc8")
@@ -1042,7 +1055,15 @@ cost = 1
 command_cost = 1
 attack = 1
 health = 2
+text = "Ao morrer: aplica enjoo em criatura inimiga pronta."
 keywords = PackedStringArray()
+effect = {
+"on_death": {
+"action": "apply_status",
+"status": "enjoo",
+"target": "first_ready_enemy_creature"
+}
+}
 
 [sub_resource type="Resource" id="Resource_hhqfi"]
 script = ExtResource("1_tqsc8")
