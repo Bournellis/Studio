@@ -13,7 +13,7 @@ Executar a Track 02 em ordem linear, prompt a prompt, mantendo todos os registro
 
 ## Cursor Atual
 
-Proximo prompt: `P11 - Necromante: Ritual das Sombras Hero Power`.
+Proximo prompt: `P12 - Necromante: "ao morrer" Triggers and Deck Activation`.
 
 ## Progresso
 
@@ -67,7 +67,11 @@ Proximo prompt: `P11 - Necromante: Ritual das Sombras Hero Power`.
 - [x] P10: `cinzas` int e `memorial_de_batalha` Array adicionados ao `BattleEngine`; `_record_creature_death` incrementa ambos em toda destruicao de criatura (ambos os lados); reset no `start_battle`.
 - [x] P10: `get_state()` expoe `cinzas` e `memorial_de_batalha`.
 - [x] P10: `test_necromante_cinzas.gd` com 13 testes: init, morte inimiga, morte aliada, mortes simultaneas, acumulacao multi-kill, persistencia entre turnos, reset por encontro (cinzas e memorial), dados do memorial (card_id/nome, ataque/max_health, ambos os lados), exposicao via get_state.
-- [ ] P10: validacao Godot pendente (rodar localmente).
+- [x] P10: validacao Godot pendente (rodar localmente).
+- [x] P11: `use_player_hero_power` bypass de energia para `ritual_das_sombras`; `_use_hero_power_ritual_das_sombras` com 3 tiers (Degrau I debuff, Degrau II token 1/1, Degrau III stats originais).
+- [x] P11: `enjoo_estendido`: `enjoo_estendido_turns` no ocupante, bloqueia `_can_attack_from_slot`, `_tick_enjoo_estendido` em `_resolve_upkeep` decrementa e remove status ao expirar.
+- [x] P11: `test_class_necromante.gd` com 17 testes.
+- [ ] P11: validacao Godot pendente (rodar localmente).
 
 ## Regras De Registro
 
@@ -79,12 +83,7 @@ Proximo prompt: `P11 - Necromante: Ritual das Sombras Hero Power`.
 
 ## Proximo Passo
 
-Executar P11 - Necromante: Ritual das Sombras Hero Power:
+Executar P12 - Necromante: "ao morrer" Triggers and Deck Activation:
 
-1. Implementar `Ritual das Sombras`: custo 0 energia + Cinzas; 1x/turno; 3 degraus.
-2. Degrau I (2 Cinzas): aplicar debuff em criatura inimiga (`enjoo_estendido`, `queimando`, ou -2/-0).
-3. Degrau II (4 Cinzas): invocar token 1/1 de criatura do `memorial_de_batalha` em slot aliado vazio.
-4. Degrau III (6 Cinzas): invocar com stats e keywords originais.
-5. Implementar `enjoo_estendido`: contador de 2 turnos na estado `enjoo`; UI distingue do enjoo normal.
-6. Escrever testes para cada degrau, Cinzas insuficiente, expiracao do enjoo_estendido e token gerado gera Cinzas ao morrer.
-7. Rodar validacao.
+1. Implementar hook `on_death` em `_record_creature_death`.
+2. Suportar efeitos: dano magic

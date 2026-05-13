@@ -1,6 +1,6 @@
 # Track 02 Current Status
 
-- Last Updated: `2026-05-13` (P10 complete)
+- Last Updated: `2026-05-13` (P11 complete)
 - Status: `ACTIVE_LINEAR_PLAN`
 - Track Name: `Track 02 - Draxos Lore And Progression Alignment`
 
@@ -86,26 +86,11 @@ Each pass should still change one player-facing or runtime layer at a time:
 - `get_state()` now exposes `cinzas` and `memorial_de_batalha`.
 - `test_necromante_cinzas.gd` with 13 tests: init state, enemy death, ally death, simultaneous deaths, multi-kill accumulation, turn persistence, encounter reset for both counters, memorial data correctness (card_id/name, attack/max_health, both sides), and get_state exposure.
 
-## Next Implementation Candidate
+## Completed in P11
 
-Continue with `P11 - Necromante: Ritual das Sombras Hero Power` from `linear-execution-plan.md`.
-
-Expected scope:
-
-- `Ritual das Sombras`: cost 0 energy + Cinzas; once per own turn; 3 tiers
-- Degrau I (2 Cinzas): apply debuff to enemy creature (enjoo_estendido, queimando, or −2/−0)
-- Degrau II (4 Cinzas): spawn 1/1 token copy of player-chosen creature from Memorial into empty ally slot
-- Degrau III (6 Cinzas): spawn with original stats and all keywords
-- `enjoo_estendido`: 2-turn duration counter on the enjoo state
-- Tests for each degrau, insufficient Cinzas blocks, enjoo_estendido expiry, spawned token generates Cinzas on destruction
-
-## Do Not Start Yet
-
-- later class engine systems beyond P02
-- final planet/crystal naming as hard canon
-- broad card economy
-- equipment/items
-- save-breaking technical ID rename
-- final art import
-
-Those depend on decisions or later passes in `implementation-plan.md`.
+- `use_player_hero_power` dispatch extended: `action == "ritual_das_sombras"` bypasses energy check and routes to `_use_hero_power_ritual_das_sombras`.
+- `_use_hero_power_ritual_das_sombras`: validates tier (1–3), reads cinzas_cost from tiers array, fails if cinzas < cost, sets hero_power_used, deducts cinzas, dispatches to tier handler.
+- `_ritual_degrau_i`: applies debuff (`enjoo_estendido`, `queimando`, or `minus_atk` −2/+0) to enemy creature at target slot.
+- `_ritual_spawn_from_memorial(target, full_stats)`: spawns token from memorial entry into empty ally slot; Degrau II = 1/1 no keywords; Degrau III = original stats and keywords; token has `is_token: true`.
+- `enjoo_estendido`: stored as `enjoo_estendido_turns: 2` + "enjoo_estendido" in status array on occupant; blocks `_can_attack_from_slot`; `_tick_enjoo_estendido` decrements each upkeep of the affected controller, removes status at 0.
+- `_tick_enjoo_estend

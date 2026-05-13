@@ -37,9 +37,9 @@ It defines execution order only.
 
 ## Current Execution Cursor
 
-Next prompt: `P11 - Necromante: Ritual das Sombras Hero Power`.
+Next prompt: `P12 - Necromante: Token Spawn from Memorial, enjoo_estendido, "ao morrer" Triggers`.
 
-Current focus: Necromante 3-tier conditional hero power with Cinzas cost tiers and enjoo_estendido.
+Current focus: Necromante death triggers, on_death hook in creature destruction pipeline, Necromante starter deck activation.
 
 ## Linear Prompt Sequence
 
@@ -56,7 +56,7 @@ Current focus: Necromante 3-tier conditional hero power with Cinzas cost tiers a
 | P08 | complete | Implement Arcano: Pulso Astral hero power and activate Arcano starter deck. | Run validation |
 | P09 | complete | Arcano integration checkpoint: labels, tests, docs, records. | Run validation |
 | P10 | complete | Implement Necromante: Cinzas counter and Memorial de Batalha per encounter. | Run validation |
-| P11 | pending | Implement Necromante: Ritual das Sombras hero power with 3-tier Cinzas cost. | Run validation |
+| P11 | complete | Implement Necromante: Ritual das Sombras hero power with 3-tier Cinzas cost. | Run validation |
 | P12 | pending | Implement Necromante: token spawn from Memorial, `enjoo_estendido`, "ao morrer" triggers. | Run validation |
 | P13 | pending | Activate Necromante starter deck and integration checkpoint. | Run validation |
 | P14 | pending | Multi-class regression checkpoint: all three classes selectable and playable. | Run validation |
@@ -412,11 +412,10 @@ Every implementation prompt must leave the following record trail:
 
 ## Current Blockers
 
-- None for P11.
+- None for P12.
 
 Known future dependencies:
 
 - P06 depends on P01-P05.
 - P08-P13 depend on the class selection and class starter deck plumbing.
-- P16 should wait until at least P14, because reward/card meaning depends on the playable class baseline.
-- P20 must wait until player-facing naming stabilizes.
+- P16 should wait until at least P14, because reward/card meaning depends on the playable class bas

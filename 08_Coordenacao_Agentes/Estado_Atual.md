@@ -16,10 +16,10 @@
 
 - Status: **Ativo — execucao linear da Track 02 em andamento**
 - Track ativa: `Track 02 - Draxos Lore And Progression Alignment` (ACTIVE_LINEAR_PLAN)
-- Baseline atual: slice Godot 4.6.2 jogavel — C1 unico runtime, `limpar_mesa`, `duelo`, `ondas`, `defesa`, `chefe_multiparte`, `quebra_cabeca`, cadeia de encontros no mapa, rewards por encontro uma vez, NPC progressiva, save/load JSON local, HUD/slots/mapa/rewards mais legiveis, estrutura art-ready com `UiTokens`/`AssetIds`, `descarte`, energia/mao com ramp, deck ciclico, regras de batalha completas para o slice, catalogo gerado com 3 classes (Invocador/Arcano/Necromante) com passiva, hero power e starter decks de 20 cartas, `GameSession.selected_class` com save/load retrocompativel e helpers de classe, hero power data-driven em `BattleEngine` (Amplificar + Comandante de Campo para Invocador, Preparar Defesa como fallback), cartas `reforco_aliado` e `amplificacao_campo` jogaveis, `class_select.tscn` integrada ao fluxo Novo jogo, Invocador totalmente jogavel end-to-end como primeira classe completa, contador `fluxo` volatil por turno no `BattleEngine`, Pulso Astral hero power (1+fluxo dano magico a qualquer permanente ou heroi inimigo), Arcano totalmente jogavel end-to-end como segunda classe completa, `cinzas` int e `memorial_de_batalha` Array no `BattleEngine` (incrementa e registra snapshot a cada morte de criatura de qualquer lado, reset no start_battle), `test_necromante_cinzas.gd` com 13 testes, validacao pendente P10 local
+- Baseline atual: slice Godot 4.6.2 jogavel — C1 unico runtime, `limpar_mesa`, `duelo`, `ondas`, `defesa`, `chefe_multiparte`, `quebra_cabeca`, cadeia de encontros no mapa, rewards por encontro uma vez, NPC progressiva, save/load JSON local, HUD/slots/mapa/rewards mais legiveis, estrutura art-ready com `UiTokens`/`AssetIds`, `descarte`, energia/mao com ramp, deck ciclico, regras de batalha completas para o slice, catalogo gerado com 3 classes (Invocador/Arcano/Necromante) com passiva, hero power e starter decks de 20 cartas, `GameSession.selected_class` com save/load retrocompativel e helpers de classe, hero power data-driven em `BattleEngine` (Amplificar + Comandante de Campo para Invocador, Preparar Defesa como fallback), cartas `reforco_aliado` e `amplificacao_campo` jogaveis, `class_select.tscn` integrada ao fluxo Novo jogo, Invocador totalmente jogavel end-to-end como primeira classe completa, contador `fluxo` volatil por turno no `BattleEngine`, Pulso Astral hero power (1+fluxo dano magico), Arcano totalmente jogavel end-to-end como segunda classe completa, `cinzas` int e `memorial_de_batalha` Array no `BattleEngine`, Ritual das Sombras hero power implementado (0 energia + Cinzas; Degrau I debuff inimigo enjoo_estendido/queimando/minus_atk; Degrau II token 1/1 do memorial; Degrau III stats originais; `enjoo_estendido` bloqueia ataque e expira apos 2 upkeeps), `test_class_necromante.gd` com 17 testes, validacao pendente P11 local
 - Meta ativa: seguir plano linear Codex da Track 02: classes primeiro, depois apresentacao, campanha/progressao, encounters, conteudo e migracao tecnica
 - Ultima atualizacao do current-status: `2026-05-13`
-- Proximo passo: executar `P11 - Necromante: Ritual das Sombras Hero Power` em `Projetos/rpg-turnos/implementation/tracks/track-02-draxos-lore-progression/linear-execution-plan.md`
+- Proximo passo: executar `P12 - Necromante: "ao morrer" Triggers and Deck Activation` em `Projetos/rpg-turnos/implementation/tracks/track-02-draxos-lore-progression/linear-execution-plan.md`
 
 ## draxos-roguelike-cardgame
 
@@ -35,9 +35,4 @@
 - Backlog: `08_Coordenacao_Agentes/Kanban/Backlog/`
 - Doing: `08_Coordenacao_Agentes/Kanban/Doing/`
 - Review: `08_Coordenacao_Agentes/Kanban/Review/`
-- Done: `08_Coordenacao_Agentes/Kanban/Done/`
-
-## Canon
-
-- Fonte de verdade compartilhada: `canon/`
-- Brief rapido: `canon/canon-brief.md`
+- Done: `08_Coordena

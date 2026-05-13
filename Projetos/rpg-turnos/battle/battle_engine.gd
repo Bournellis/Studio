@@ -323,11 +323,16 @@ func use_player_hero_power(target: Dictionary = {}) -> Dictionary:
 	var controller: Dictionary = _controller(PLAYER_ID)
 	if bool(controller.get("hero_power_used", false)):
 		return _fail("Hero power ja usado neste turno.")
-	if int(controller.get("energy", 0)) < 1:
-		return _fail("Energia insuficiente para o hero power.")
 
 	var hp_effect: Dictionary = _get_active_hero_power_effect()
 	var action: String = str(hp_effect.get("action", ""))
+
+	# Ritual das Sombras costs 0 energy — skip the energy check.
+	if action == "ritual_das_sombras":
+		return _use_hero_power_ritual_das_sombras(hp_effect, target, controller)
+
+	if int(controller.get("energy", 0)) < 1:
+		return _fail("Energia insuficiente para o hero power.")
 	if action == "gain_stats":
 		return _use_hero_power_gain_stats(hp_effect, target, controller)
 	if action == "damage":
@@ -413,6 +418,103 @@ func _use_hero_power_damage(effect: Dictionary, target: Dictionary, controller: 
 	_check_outcome()
 	_after_action_resolved(PLAYER_ID, false)
 	return {"ok": true, "message": "Pulso Astral: %d de dano magico." % amount}
+
+func _use_hero_power_ritual_das_sombras(effect: Dictionary, target: Dictionary, controller: Dictionary) -> Dictionary:
+	var tier: int = int(target.get("tier", 0))
+	var tiers_data: Array = Array(effect.get("tiers", []))
+	if tier < 1 or tier > tiers_data.size():
+		return _fail("Ritual das Sombras: tier invalido (%d); esperado 1 a %d." % [tier, tiers_data.size()])
+	var tier_def: Dictionary = Dictionary(tiers_data[tier - 1])
+	var cinzas_cost: int = int(tier_def.get("cinzas_cost", 999))
+	var tier_effect: String = str(tier_def.get("effect", ""))
+	if cinzas < cinzas_cost:
+		return _fail("Ritual das Sombras: Cinzas insuficientes (precisa %d, tem %d)." % [cinzas_cost, cinzas])
+	controller["hero_power_used"] = true
+	_set_controller(PLAYER_ID, controller)
+	cinzas -= cinzas_cost
+	if tier_effect == "debuff_enemy_creature":
+		return _ritual_degrau_i(target)
+	if tier_effect == "spawn_from_memorial_1_1":
+		return _ritual_spawn_from_memorial(target, false)
+	if tier_effect == "spawn_from_memorial_full_stats":
+		return _ritual_spawn_from_memorial(target, true)
+	return _fail("Ritual das Sombras: efeito de tier desconhecido: %s." % tier_effect)
+
+func _ritual_degrau_i(target: Dictionary) -> Dictionary:
+	var slot_index: int = int(target.get("slot", -1))
+	var debuff: String = str(target.get("debuff", "enjoo_estendido"))
+	var slots: Array = _slots_for_owner(ENEMY_ID)
+	if slot_index < 0 or slot_index >= slots.size() or slots[slot_index] == null:
+		return _fail("Ritual Degrau I: precisa de criatura inimiga alvo valida.")
+	var occupant: Dictionary = Dictionary(slots[slot_index])
+	match debuff:
+		"enjoo_estendido":
+			occupant["enjoo_estendido_turns"] = 2
+			occupant["status"] = _append_status(Array(occupant.get("status", [])), "enjoo_estendido")
+			slots[slot_index] = occupant
+			_set_slots_for_owner(ENEMY_ID, slots)
+			_log("Ritual Degrau I: %s recebe enjoo estendido (2 turnos)." % _slot_label(ENEMY_ID, slot_index))
+			_visual("debuff", ENEMY_ID, slot_index, "Enjoo x2", Color(0.6, 0.35, 0.9))
+		"queimando":
+			occupant["status"] = _append_status(Array(occupant.get("status", [])), "queimando")
+			slots[slot_index] = occupant
+			_set_slots_for_owner(ENEMY_ID, slots)
+			_log("Ritual Degrau I: %s recebe queimando." % _slot_label(ENEMY_ID, slot_index))
+			_visual("debuff", ENEMY_ID, slot_index, "Queimando", Color(1.0, 0.5, 0.1))
+		"minus_atk":
+			_apply_permanent_stat_buff(ENEMY_ID, slot_index, -2, 0)
+			_log("Ritual Degrau I: %s perde -2 ATK permanente." % _slot_label(ENEMY_ID, slot_index))
+			_visual("debuff", ENEMY_ID, slot_index, "-2 ATK", Color(0.6, 0.35, 0.9))
+		_:
+			return _fail("Ritual Degrau I: debuff desconhecido: %s." % debuff)
+	_sync_public_fields()
+	_after_action_resolved(PLAYER_ID, false)
+	return {"ok": true, "message": "Ritual Degrau I: %s aplicado." % debuff}
+
+func _ritual_spawn_from_memorial(target: Dictionary, full_stats: bool) -> Dictionary:
+	if memorial_de_batalha.is_empty():
+		return _fail("Ritual das Sombras: Memorial de Batalha esta vazio.")
+	var memorial_index: int = int(target.get("memorial_index", 0))
+	if memorial_index < 0 or memorial_index >= memorial_de_batalha.size():
+		return _fail("Ritual das Sombras: indice do memorial invalido.")
+	var target_slot: int = int(target.get("slot", -1))
+	var player_slots_arr: Array = _slots_for_owner(PLAYER_ID)
+	if target_slot < 0:
+		for i: int in range(player_slots_arr.size()):
+			if player_slots_arr[i] == null:
+				target_slot = i
+				break
+	if target_slot < 0 or target_slot >= player_slots_arr.size() or player_slots_arr[target_slot] != null:
+		return _fail("Ritual das Sombras: nenhum slot aliado vazio disponivel.")
+	var entry: Dictionary = Dictionary(memorial_de_batalha[memorial_index])
+	var orig_atk: int = int(entry.get("attack", 1))
+	var orig_hp: int = int(entry.get("max_health", 1))
+	var token: Dictionary = {
+		"card_id": str(entry.get("card_id", "token")),
+		"name": str(entry.get("name", "Token")) + " (Token)",
+		"owner": PLAYER_ID,
+		"type": "criatura",
+		"attack": orig_atk if full_stats else 1,
+		"health": orig_hp if full_stats else 1,
+		"max_health": orig_hp if full_stats else 1,
+		"ready": false,
+		"exhausted": false,
+		"summoning_sick": true,
+		"moved_this_turn": false,
+		"keywords": Array(entry.get("keywords", [])).duplicate() if full_stats else [],
+		"status": [],
+		"command_cost": 0,
+		"ranged": false,
+		"is_token": true
+	}
+	player_slots_arr[target_slot] = token
+	_set_slots_for_owner(PLAYER_ID, player_slots_arr)
+	var tier_label: String = "Degrau III" if full_stats else "Degrau II"
+	_log("Ritual %s: '%s' invocado em %s." % [tier_label, token["name"], _slot_label(PLAYER_ID, target_slot)])
+	_visual("invocacao", PLAYER_ID, target_slot, "Token", Color(0.55, 0.78, 0.4))
+	_sync_public_fields()
+	_after_action_resolved(PLAYER_ID, false)
+	return {"ok": true, "message": "Ritual %s: token invocado em slot %d." % [tier_label, target_slot]}
 
 func _player_fluxo_bonus(controller_id: String) -> int:
 	if controller_id != PLAYER_ID or active_class_id != "arcano":
@@ -937,7 +1039,30 @@ func _start_turn(controller_id: String) -> void:
 	if priority_owner_id == ENEMY_ID:
 		_auto_enemy_until_player_priority()
 
+func _tick_enjoo_estendido(controller_id: String) -> void:
+	var slots: Array = _slots_for_owner(controller_id)
+	var changed: bool = false
+	for i: int in range(slots.size()):
+		if slots[i] == null:
+			continue
+		var occupant: Dictionary = Dictionary(slots[i])
+		var turns: int = int(occupant.get("enjoo_estendido_turns", 0))
+		if turns <= 0:
+			continue
+		turns -= 1
+		occupant["enjoo_estendido_turns"] = turns
+		if turns <= 0:
+			var statuses: Array = Array(occupant.get("status", []))
+			statuses.erase("enjoo_estendido")
+			occupant["status"] = statuses
+			_log("Enjoo estendido expirou em %s." % _slot_label(controller_id, i))
+		slots[i] = occupant
+		changed = true
+	if changed:
+		_set_slots_for_owner(controller_id, slots)
+
 func _resolve_upkeep(controller_id: String) -> void:
+	_tick_enjoo_estendido(controller_id)
 	if controller_id == PLAYER_ID and active_class_id == "arcano":
 		fluxo = 0
 	var controller: Dictionary = _controller(controller_id)
@@ -1642,6 +1767,8 @@ func _can_attack_from_slot(owner_id: String, slot_index: int) -> bool:
 		return false
 	if bool(occupant.get("summoning_sick", false)) and not (_has_keyword(occupant, "rapido") or _has_keyword(occupant, "voadora")):
 		return false
+	if int(occupant.get("enjoo_estendido_turns", 0)) > 0:
+		return false
 	if _has_keyword(occupant, "defensor"):
 		return false
 	return true
@@ -1734,173 +1861,4 @@ func _first_open_slot(owner_id: String) -> int:
 			return index
 	return -1
 
-func _controller(controller_id: String) -> Dictionary:
-	controller_id = _normalize_owner_id(controller_id)
-	return Dictionary(controladores.get(controller_id, {}))
-
-func _set_controller(controller_id: String, controller: Dictionary) -> void:
-	controladores[_normalize_owner_id(controller_id)] = controller
-
-func _controller_energy(controller_id: String) -> int:
-	return int(_controller(controller_id).get("energy", 0))
-
-func _is_encounter_controller(controller_id: String) -> bool:
-	return controller_id == ENEMY_ID and str(_controller(controller_id).get("kind", "")) == "encontro"
-
-func _controller_has_hero(controller_id: String) -> bool:
-	return _controller(controller_id).has("hero")
-
-func _hero_state(hero_resource, owner_id: String, fallback_health: int) -> Dictionary:
-	var max_health: int = fallback_health
-	var hero_id: String = owner_id
-	var hero_name: String = _owner_label(owner_id)
-	if hero_resource != null:
-		max_health = int(hero_resource.max_health)
-		hero_id = str(hero_resource.id)
-		hero_name = str(hero_resource.display_name)
-	return {
-		"id": hero_id,
-		"name": hero_name,
-		"controller": owner_id,
-		"health": max_health,
-		"max_health": max_health,
-		"armor": 0
-	}
-
-func _sync_public_fields() -> void:
-	var player: Dictionary = _controller(PLAYER_ID)
-	var player_hero: Dictionary = Dictionary(player.get("hero", {}))
-	player_health = int(player_hero.get("health", player_health))
-	player_armor = int(player_hero.get("armor", 0))
-	energy = int(player.get("energy", energy))
-	deck = Array(player.get("deck", [])).duplicate()
-	hand = Array(player.get("hand", [])).duplicate()
-	discard = []
-	hero_power_used = bool(player.get("hero_power_used", false))
-	var enemy: Dictionary = _controller(ENEMY_ID)
-	if enemy.has("hero"):
-		var enemy_hero: Dictionary = Dictionary(enemy.get("hero", {}))
-		enemy_health = int(enemy_hero.get("health", enemy_health))
-		enemy_armor = int(enemy_hero.get("armor", 0))
-	else:
-		enemy_health = 0
-		enemy_armor = 0
-
-func _slots_for_owner(owner_id: String) -> Array:
-	var normalized: String = _normalize_owner_id(owner_id)
-	if normalized == ENEMY_ID:
-		return enemy_slots
-	if normalized == NEUTRAL_ID:
-		return neutral_slots
-	return player_slots
-
-func _set_slots_for_owner(owner_id: String, slots: Array) -> void:
-	var normalized: String = _normalize_owner_id(owner_id)
-	if normalized == ENEMY_ID:
-		enemy_slots = slots
-	elif normalized == NEUTRAL_ID:
-		neutral_slots = slots
-	else:
-		player_slots = slots
-
-func _opponent_id(owner_id: String) -> String:
-	return ENEMY_ID if _normalize_owner_id(owner_id) == PLAYER_ID else PLAYER_ID
-
-func _owner_label(owner_id: String) -> String:
-	return "jogador" if _normalize_owner_id(owner_id) == PLAYER_ID else "inimigo"
-
-func _normalize_owner_id(owner_id: String) -> String:
-	if owner_id in ["neutral", "neutro", NEUTRAL_ID]:
-		return NEUTRAL_ID
-	if owner_id in ["enemy", "inimigo", ENEMY_ID]:
-		return ENEMY_ID
-	return PLAYER_ID
-
-func _route_key(owner_id: String, slot_index: int) -> String:
-	return "%s:%d" % [_normalize_owner_id(owner_id), slot_index]
-
-func _slot_label(owner_id: String, slot_index: int) -> String:
-	owner_id = _normalize_owner_id(owner_id)
-	var labels: Array[String] = _player_slot_labels
-	var prefix: String = "P"
-	if owner_id == ENEMY_ID:
-		labels = _enemy_slot_labels
-		prefix = "E"
-	elif owner_id == NEUTRAL_ID:
-		labels = _neutral_slot_labels
-		prefix = "N"
-	if slot_index >= 0 and slot_index < labels.size():
-		return labels[slot_index]
-	return "%s%d" % [prefix, slot_index + 1]
-
-func _target_label(target: Dictionary) -> String:
-	var owner_id: String = _normalize_owner_id(str(target.get("owner", ENEMY_ID)))
-	var slot_index: int = int(target.get("slot", -1))
-	if slot_index >= 0:
-		return _slot_label(owner_id, slot_index)
-	if owner_id == ENEMY_ID:
-		return "Heroi inimigo"
-	return "Heroi do jogador"
-
-func _add_attack_option(options: Array, seen: Dictionary, target: Dictionary) -> void:
-	var key: String = "%s:%d" % [str(target.get("owner", "")), int(target.get("slot", -1))]
-	if seen.has(key):
-		return
-	seen[key] = true
-	target["label"] = _target_label(target)
-	options.append(target)
-
-func _target_in_options(target: Dictionary, options: Array) -> bool:
-	var target_owner: String = _normalize_owner_id(str(target.get("owner", "")))
-	var target_slot: int = int(target.get("slot", -99))
-	for option: Variant in options:
-		var option_dict: Dictionary = Dictionary(option)
-		if _normalize_owner_id(str(option_dict.get("owner", ""))) == target_owner and int(option_dict.get("slot", -99)) == target_slot:
-			return true
-	return false
-
-func _is_instant_speed_card(card) -> bool:
-	return card != null and (str(card.speed) == "instantanea" or _has_card_keyword(card, "instantaneo"))
-
-func _has_card_keyword(card, keyword: String) -> bool:
-	return card != null and card.has_method("has_keyword") and (card.has_keyword(keyword) or card.has_keyword(_keyword_alias(keyword)))
-
-func _has_keyword(occupant: Dictionary, keyword: String) -> bool:
-	var keywords: Array = Array(occupant.get("keywords", []))
-	return keywords.has(keyword) or keywords.has(_keyword_alias(keyword))
-
-func _keyword_alias(keyword: String) -> String:
-	match keyword:
-		"rapido":
-			return "fast"
-		"defensor":
-			return "defender"
-		"alcance":
-			return "reach"
-		"atropelar":
-			return "trample"
-		_:
-			return keyword
-
-func _card_name(card_id: String) -> String:
-	if _catalog == null:
-		return card_id
-	return _catalog.card_name(card_id)
-
-func _visual(kind: String, owner_id: String, slot_index: int, text: String, color: Color) -> void:
-	eventos_visuais.append({
-		"kind": kind,
-		"owner": _normalize_owner_id(owner_id),
-		"slot": slot_index,
-		"text": text,
-		"color": color
-	})
-
-func _log(line: String) -> void:
-	log_lines.append(line)
-	if log_lines.size() > MAX_LOG_LINES:
-		log_lines.pop_front()
-
-func _fail(message: String) -> Dictionary:
-	_log(message)
-	return {"ok": false, "message": message}
+fun
