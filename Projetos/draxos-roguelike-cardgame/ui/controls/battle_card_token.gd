@@ -64,6 +64,15 @@ func _rebuild() -> void:
 	keyword_chips = _build_keyword_chips()
 	box.add_child(keyword_chips)
 
+	var text_margin: MarginContainer = MarginContainer.new()
+	text_margin.name = "BattleCardRulesTextMargin"
+	text_margin.add_theme_constant_override("margin_left", 4 if _is_compact_card() else 6)
+	text_margin.add_theme_constant_override("margin_top", 1)
+	text_margin.add_theme_constant_override("margin_right", 4 if _is_compact_card() else 6)
+	text_margin.add_theme_constant_override("margin_bottom", 1)
+	text_margin.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	box.add_child(text_margin)
+
 	var text_label: Label = Label.new()
 	text_label.name = "BattleCardRulesText"
 	text_label.text = VisualAssets.card_display_text(card) if card != null else ""
@@ -71,8 +80,10 @@ func _rebuild() -> void:
 	text_label.clip_text = true
 	text_label.max_lines_visible = 2
 	text_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	text_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	text_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	text_label.add_theme_font_size_override("font_size", 8)
-	box.add_child(text_label)
+	text_margin.add_child(text_label)
 
 	var footer: HBoxContainer = HBoxContainer.new()
 	footer.name = "BattleCardStats"
@@ -86,6 +97,7 @@ func _rebuild() -> void:
 
 	BattleCardVisualsScript.add_frame_overlay(self, card_id, "BattleCardFrameOverlay")
 	_add_floating_badges()
+	_make_children_mouse_transparent(self)
 
 func _get_drag_data(_at_position: Vector2) -> Variant:
 	if card_id == "" or not drag_enabled:
@@ -112,10 +124,10 @@ func _panel_style() -> StyleBoxFlat:
 	style.corner_radius_top_right = 6
 	style.corner_radius_bottom_left = 6
 	style.corner_radius_bottom_right = 6
-	style.content_margin_left = 6
-	style.content_margin_top = 6
-	style.content_margin_right = 6
-	style.content_margin_bottom = 6
+	style.content_margin_left = 9 if _is_compact_card() else 11
+	style.content_margin_top = 7 if _is_compact_card() else 9
+	style.content_margin_right = 9 if _is_compact_card() else 11
+	style.content_margin_bottom = 7 if _is_compact_card() else 9
 	return style
 
 func _build_art_area() -> Control:
@@ -166,6 +178,13 @@ func _floating_cost_size() -> Vector2:
 
 func _floating_stat_size() -> Vector2:
 	return Vector2(28, 25) if _is_compact_card() else Vector2(33, 28)
+
+func _make_children_mouse_transparent(root: Node) -> void:
+	for child: Node in root.get_children():
+		if child is Control:
+			var control: Control = child
+			control.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_make_children_mouse_transparent(child)
 
 func _type_color() -> Color:
 	if card == null:
