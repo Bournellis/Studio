@@ -154,3 +154,20 @@ Executar P19 - New Content Expansion Cluster:
 5. Usar modos existentes antes de adicionar novas regras.
 6. Adicionar testes para novas suposicoes de objetivo/dados.
 7. Atualizar records e cursor para P19.
+
+## P20 - Concluido
+
+- [x] 8 IDs de encontro da cadeia principal migrados para nomes de operacao Draxos estavel.
+- [x] ID do heroi inimigo: `duelista_bandido` → `guardiao_elemental`; asset portrait atualizado.
+- [x] 5 IDs de encontros laterais mantidos (decisoes de lore pendentes).
+- [x] `SAVE_VERSION` 1 → 2 em `game_session.gd`.
+- [x] `_migrate_save_v1_to_v2` implementado: migra `active_encounter_id`, `completed_encounter_ids`, `claimed_encounter_reward_ids`.
+- [x] Todos os arquivos de runtime atualizados: `battle_engine.gd`, `battle_root.gd`, `world_root.gd`, `asset_ids.gd`, `slice_catalog_resource.gd`, `content_generator.gd`, `validate.gd`.
+- [x] 6 arquivos de teste atualizados com novos IDs.
+- [x] 7 novos testes de migracao P20 adicionados a `test_content_and_session.gd`.
+- [x] Records atualizados (linear-execution-plan cursor completo, track current-status P20, current-status P20, Estado_Atual, Kanban).
+- [ ] Regenerar `.tres` e rodar validacao localmente (IDs de encontro mudaram no catalogo).
+
+## Track 02 Encerrada
+
+Todos os prompts P00-P20 concluidos. Proxima acao: regenerar `.tres` localmente, rodar validacao completa, selecionar proxima track ou gate.

@@ -221,3 +221,27 @@ Those depend on decisions or later passes in `implementation-plan.md`.
 ## Next Implementation Candidate
 
 Continue with `P20 - Technical ID And Asset Migration` from `linear-execution-plan.md`.
+
+## Completed in P20
+
+- **Technical ID migration**: 8 main chain encounter IDs renamed to match stable Draxos operation labels:
+  - `emboscada_na_ponte` → `operacao_pouso`
+  - `duelista_bandido` → `confronto_guardiao`
+  - `emboscada_no_cruzamento` → `tomada_conduto`
+  - `fortaleza_do_desfiladeiro` → `avanco_bastiao`
+  - `invasao_em_ondas` → `ondas_resistencia`
+  - `defesa_do_portao` → `defesa_base_ether`
+  - `colosso_fragmentado` → `nucleo_fragmentado`
+  - `enigma_da_ponte` → `ruptura_selos`
+- Enemy hero ID renamed: `duelista_bandido` → `guardiao_elemental`; portrait asset ID updated to match.
+- 5 side encounter IDs (`patrulha_avancada`, `duelista_sombrio`, `emboscada_reforcos`, `escolta_vulcanica`, `reduto_eter`) kept unchanged — pending lore decisions.
+- **Save migration**: `SAVE_VERSION` bumped 1 → 2; `apply_save_data` migrates v1 saves via `_migrate_save_v1_to_v2` (handles `active_encounter_id`, `completed_encounter_ids`, `claimed_encounter_reward_ids`).
+- All runtime files updated: `battle_engine.gd`, `battle_root.gd`, `world_root.gd`, `asset_ids.gd`, `slice_catalog_resource.gd`, `content_generator.gd`, `validate.gd`.
+- 7 new P20 migration tests added to `test_content_and_session.gd` covering v1→v2 migration, v2 direct load, version rejection, new ACTIVE_ENCOUNTER_ID, and catalog ID presence.
+- 6 test files updated with new IDs.
+- `.tres` regeneration required locally (encounter IDs changed in catalog).
+- Validation pending local run; expected ~242+ tests green after P20 additions.
+
+## Next Implementation Candidate
+
+Track 02 is complete (`P20` was the last prompt). Await selection of next track or gate.
