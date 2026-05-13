@@ -1,6 +1,6 @@
 # Current Status
 
-- Last Updated: `2026-05-13` (P15)
+- Last Updated: `2026-05-13` (P16)
 - Active Project Name: `rpg-turnos`
 - Active Surface: `cardgame-first C1 battle modes`
 - Active Track: `Track 02 - Draxos Lore And Progression Alignment`

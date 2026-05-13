@@ -497,7 +497,9 @@
       ],
       "text": "Rapido. Ao morrer: gera 1 Cinza extra.",
       "effect": {
-        "on_death": { "action": "extra_cinza" }
+        "on_death": {
+          "action": "extra_cinza"
+        }
       }
     },
     {
@@ -514,7 +516,12 @@
       ],
       "text": "Rapido. Ao morrer: 1 dano magico a qualquer permanente inimigo.",
       "effect": {
-        "on_death": { "action": "damage", "amount": 1, "damage_type": "magico", "target": "first_enemy_permanent" }
+        "on_death": {
+          "action": "damage",
+          "amount": 1,
+          "damage_type": "magico",
+          "target": "first_enemy_permanent"
+        }
       }
     },
     {
@@ -1236,7 +1243,11 @@
       "keywords": [],
       "text": "Ao morrer: aplica enjoo em criatura inimiga pronta.",
       "effect": {
-        "on_death": { "action": "apply_status", "status": "enjoo", "target": "first_ready_enemy_creature" }
+        "on_death": {
+          "action": "apply_status",
+          "status": "enjoo",
+          "target": "first_ready_enemy_creature"
+        }
       }
     },
     {
@@ -2216,6 +2227,7 @@
     {
       "id": "emboscada_na_ponte",
       "display_name": "Operacao de Pouso",
+      "mission": "Limpar a zona de pouso. Eliminar a patrulha elemental que defende a cabeceira da ponte de acesso.",
       "mode": "limpar_mesa",
       "board_id": "ponte_estavel",
       "starting_enemy_slots": [
@@ -2239,6 +2251,7 @@
     {
       "id": "duelista_bandido",
       "display_name": "Confronto com Guardiao",
+      "mission": "O guardiao elemental do setor desafia o comandante Draxos em combate direto. Derrota-lo estabelece dominancia sobre o conduto de entrada.",
       "mode": "duelo",
       "board_id": "duelo_tres_linhas",
       "enemy_deck": [
@@ -2273,6 +2286,7 @@
     {
       "id": "emboscada_no_cruzamento",
       "display_name": "Tomada do Conduto",
+      "mission": "Capturar o conduto astral no cruzamento. Controlar este ponto de distribuicao corta o fluxo de reforcamentos elementais para o interior.",
       "mode": "limpar_mesa",
       "board_id": "cruzamento_neutro",
       "notes": "E3 (queimando): unidade sofre 1 de dano por upkeep, criando urgencia para atacar rapido. E2 (voadora): nao pode ser atingido por fisico_melee, transparente para routing. Jogador precisa usar alcance, voadora propria ou magia para remover E2. N1 vazio e contestado. P2 (alto) ideal para Atiradora Astral ou Condutor Astral.",
@@ -2298,6 +2312,7 @@
     {
       "id": "fortaleza_do_desfiladeiro",
       "display_name": "Avanco ao Bastiao",
+      "mission": "Avançar pela fortaleza do desfiladeiro. A sentinela no alto cobre toda a aproximacao — neutraliza-la abre a rota para a zona interna.",
       "mode": "limpar_mesa",
       "board_id": "muralha_desfiladeiro",
       "notes": "ET (alto) atira em todo o lado do jogador via alcance. P1/P3 cobertura reduz dano de ET em 1. EB1/EB2 vazios. Jogador precisa furar a frente E1-E3 (fallback_slots) ou usar alcance/voadora para atingir ET diretamente.",
@@ -2327,6 +2342,7 @@
     {
       "id": "patrulha_avancada",
       "display_name": "Varredura Avancada",
+      "mission": "Patrulha de reconhecimento avancado. Tres palavras-chave simultaneas exigem respostas variadas antes de prosseguir a incursao.",
       "mode": "limpar_mesa",
       "board_id": "ponte_estavel",
       "notes": "E1 (atropelar 4/2): ameaca agressiva. E2 (voadora+rapido): imune a fisico_melee, entra pronto. E3 (alcance): pressao a distancia. Encontro de transicao entre duelo e boards complexos, com tres keywords simultaneamente num board familiar.",
@@ -2349,6 +2365,7 @@
     {
       "id": "duelista_sombrio",
       "display_name": "Guardiao do Conduto",
+      "mission": "Segundo guardiao elemental — mais experiente e com finalizador vulcanico. O slot central disputado e decisivo para controlar rotas de ataque.",
       "mode": "duelo",
       "board_id": "cruzamento_neutro",
       "notes": "Segundo duelo no conduto. N1 disputado: quem controlar o slot central tem rotas adicionais. P2 (alto) alvo de sentinela inimiga. E3 (queimando): inimigo precisa mover criaturas de la ou toma 1/turno. Deck mais pesado com finalizador vulcanico.",
@@ -2382,6 +2399,7 @@
     {
       "id": "emboscada_reforcos",
       "display_name": "Contrataque Elemental",
+      "mission": "Os elementais contra-atacam com composicao mais pesada. Variante de pressao elevada da operacao de pouso — sem margem para erros.",
       "mode": "limpar_mesa",
       "board_id": "ponte_estavel",
       "notes": "Variante dificil da operacao inicial. E1: corpo grande, precisa de 2 ataques ou remocao. E2 (voadora): imune a melee. E3 (alcance): pressiona qualquer slot do jogador. Sem heroi inimigo mas sem respiro.",
@@ -2404,6 +2422,7 @@
     {
       "id": "invasao_em_ondas",
       "display_name": "Ondas de Resistencia",
+      "mission": "Contra-ataque elemental em ondas coordenadas. Repelir os dois grupos de assalto consolida o avanco na zona intermediaria.",
       "mode": "ondas",
       "board_id": "ponte_estavel",
       "notes": "Primeiro encontro do modo ondas. Duas ondas no board mais familiar. Onda 1: pressao leve, permite aquecer. Onda 2: composicao mais pesada com voadora e atropelar. HP do heroi, estado do deck e rampa de energia persistem entre ondas. Proximo turno apos limpar onda 1: spawn da onda 2.",
@@ -2450,6 +2469,7 @@
     {
       "id": "defesa_do_portao",
       "display_name": "Defesa da Base de Ether",
+      "mission": "Os elementais avancam sobre a base de ether Draxos. Segurar o perimetro por dois turnos completos protege o ponto de preparo e suprimento.",
       "mode": "defesa",
       "board_id": "muralha_desfiladeiro",
       "defense_turn_limit": 2,
@@ -2475,6 +2495,7 @@
     {
       "id": "colosso_fragmentado",
       "display_name": "Nucleo Fragmentado",
+      "mission": "Destruir o nucleo elemental — constructo de multiplas partes que guarda a entrada da zona do vulcao. Eliminar os tres fragmentos colapsa a estrutura.",
       "mode": "chefe_multiparte",
       "board_id": "muralha_desfiladeiro",
       "boss_part_slots": [
@@ -2508,6 +2529,7 @@
     {
       "id": "enigma_da_ponte",
       "display_name": "Ruptura de Selos",
+      "mission": "O caminho ao cristal do vulcao esta selado por travas astrais elementais. Romper os dois selos em ate dois turnos antes que os reforcamentos cheguem.",
       "mode": "quebra_cabeca",
       "board_id": "ponte_estavel",
       "puzzle_target_slots": [

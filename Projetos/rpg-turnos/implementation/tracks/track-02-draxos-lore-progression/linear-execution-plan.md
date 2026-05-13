@@ -1,6 +1,6 @@
 # Track 02 Linear Execution Plan
 
-- Last Updated: `2026-05-12`
+- Last Updated: `2026-05-13`
 - Status: `ACTIVE_LINEAR_PLAN`
 - Execution Owner: `Codex`
 - Scope: `RPG Turnos Track 02 - Draxos Lore And Progression Alignment`
@@ -37,9 +37,9 @@ It defines execution order only.
 
 ## Current Execution Cursor
 
-Next prompt: `P16 - Campaign Content Alignment`.
+Next prompt: `P17 - RPG Progression Slice`.
 
-Current focus: Class resources and Necromante hero power now visible and functional. Next work is campaign content alignment.
+Current focus: Campaign arc aligned — all 11 encounters have mission fields, docs updated. Next work is the first RPG progression layer.
 
 ## Linear Prompt Sequence
 
@@ -61,7 +61,7 @@ Current focus: Class resources and Necromante hero power now visible and functio
 | P13 | complete | Activate Necromante starter deck and integration checkpoint. | Run validation |
 | P14 | complete | Multi-class regression checkpoint: all three classes selectable and playable. | Run validation |
 | P15 | complete | UI/readability design pass: define and implement minimum playable presentation improvement. | Run validation |
-| P16 | pending | Campaign content alignment: mission chain, rewards meaning, class-facing text. | Run validation |
+| P16 | complete | Campaign content alignment: mission chain, rewards meaning, class-facing text. | Documentation + data only |
 | P17 | pending | RPG progression slice: rank/status state and gated dialogue/mission access. | Run validation |
 | P18 | pending | Encounter design pass: one pressure test per class weakness. | Run validation |
 | P19 | pending | New content expansion cluster using existing modes. | Run validation |
@@ -412,11 +412,11 @@ Every implementation prompt must leave the following record trail:
 
 ## Current Blockers
 
-- None for P16.
+- None for P17.
 
 Known future dependencies:
 
 - P06 depends on P01-P05.
 - P08-P13 depend on the class selection and class starter deck plumbing.
 - P16 should wait until at least P14, because reward/card meaning depends on the playable class baseline.
-- P20 must wait until player-facing nam
+- P17 can start now

@@ -1,6 +1,6 @@
 # RPG Turnos Lore Campaign
 
-- Last Updated: `2026-05-12`
+- Last Updated: `2026-05-13`
 - Status: `pointer — lore authority delegated`
 - Shared Canon: `../../canon/lore/shared-lore.md`, `../../canon/lore/draxos-invasion.md`
 
@@ -22,6 +22,6 @@ It does not own a separate Draxos story. Setting, characters, world, and narrati
 
 ## Class Lore
 
-Classes in RPG Turnos (Assaltante de Vazio, Arquiteto de Éter, Dominador Astral, Vinculador, Tecelão Astral) are mechanical identities that still need narrative anchoring within the Draxos invasion setting.
+The three active classes are Invocador, Arcano, and Necromante. Each represents a Draxos mage specialty with its own combat doctrine, starter deck, passive ability, and hero power.
 
-Their names, in-universe roles, and how they fit within Draxos society are pending. That work should be done in coordination with the shared lore and the roguelike's character and NPC development.
+Their in-universe roles within the Draxos expedition hierarchy are still being defined. Narrative anchoring for each class — how they fit within Draxos society, what their training path looks like, and how NPCs refer to the
