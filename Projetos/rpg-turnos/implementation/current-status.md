@@ -1,6 +1,6 @@
 # Current Status
 
-- Last Updated: `2026-05-13` (P18)
+- Last Updated: `2026-05-13` (P19)
 - Active Project Name: `rpg-turnos`
 - Active Surface: `cardgame-first C1 battle modes`
 - Active Track: `Track 02 - Draxos Lore And Progression Alignment`
@@ -30,7 +30,7 @@
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\rpg-turnos -s res://tools/validate.gd
 ```
 
-- Latest known validation: `2026-05-12`, `125/125` GUT tests passing through `tools/validate.gd`; 653 asserts. P18 validation pending local run (.tres regeneration required for on_death from P12, mission from P16, class_pressure from P18; expected ~229+ tests green after P10–P18 additions).
+- Latest known validation: `2026-05-12`, `125/125` GUT tests passing through `tools/validate.gd`; 653 asserts. P19 validation pending local run (.tres regeneration required for class_pressure/P18, centelha_duplicada/espectro_veloz/P19; expected ~235+ tests green after P10-P19 additions).
 - For documentation-only changes, do not run Godot validation unless explicitly requested.
 
 ## Records
@@ -43,4 +43,4 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 
 ## Next
 
-Execute `P19 - New Content Expansion Cluster` from `tracks/track-02-draxos-lore-progression/linear-execution-plan.md`.
+Execute `P20 - Technical ID And Asset Migration` from `tracks/track-02-draxos-lore-progression/linear-execution-plan.md`.

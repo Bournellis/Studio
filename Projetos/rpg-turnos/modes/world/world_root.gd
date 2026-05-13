@@ -16,6 +16,8 @@ const ENCOUNTER_MARKERS: Array[Dictionary] = [
 	{"id": "patrulha_avancada", "label": "Varredura", "position": Vector2(900, 180), "requires": "", "min_rank": 1},
 	{"id": "duelista_sombrio", "label": "Conduto 2", "position": Vector2(1020, 290), "requires": "", "min_rank": 2},
 	{"id": "emboscada_reforcos", "label": "Reforcamento", "position": Vector2(820, 430), "requires": "", "min_rank": 3},
+	{"id": "escolta_vulcanica", "label": "Escolta", "position": Vector2(600, 160), "requires": "", "min_rank": 1},
+	{"id": "reduto_eter", "label": "Reduto", "position": Vector2(480, 340), "requires": "", "min_rank": 2},
 ]
 
 var player_position: Vector2 = Vector2(180, 330)
@@ -270,10 +272,4 @@ func _build_art_nodes() -> void:
 		marker_node.name = str(marker.get("id", "marker"))
 		marker_node.texture = AssetIds.texture("marker_encounter_active")
 		marker_node.position = Vector2(marker.get("position", Vector2.ZERO))
-		marker_nodes.add_child(marker_node)
-
-	player_sprite = Sprite2D.new()
-	player_sprite.name = "player_sprite"
-	player_sprite.texture = AssetIds.texture("player_token")
-	player_sprite.position = player_position
-	add_child(player_sprite)
+		marker_nodes.add

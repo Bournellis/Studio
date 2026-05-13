@@ -37,9 +37,9 @@ It defines execution order only.
 
 ## Current Execution Cursor
 
-Next prompt: `P19 - New Content Expansion Cluster`.
+Next prompt: `P20 - Technical ID And Asset Migration`.
 
-Current focus: Encounter design pass complete — `class_pressure` field added to 7 encounters covering all 3 class weaknesses; `lobo_alfa` placed in `defesa_do_portao` (Invocador atropelar pressure); double `ladrao_rapido` in `invasao_em_ondas` wave 1 (Arcano Fluxo sequencing pressure); `enigma_da_ponte` tagged for Necromante Cinzas accumulation. `ContentLibrary.get_all_encounters()` added. 6 new P18 catalog tests added. Next work is new content expansion using existing modes.
+Current focus: Content expansion complete — 2 new cards (centelha_duplicada, espectro_veloz), 2 new side encounters (reduto_eter defesa rank 2, escolta_vulcanica ondas rank 1), rewards assigned to patrulha_avancada/emboscada_reforcos, NPC pool expanded to 5, ENCOUNTER_MARKERS updated. Next work is technical ID migration.
 
 ## Linear Prompt Sequence
 
@@ -64,7 +64,7 @@ Current focus: Encounter design pass complete — `class_pressure` field added t
 | P16 | complete | Campaign content alignment: mission chain, rewards meaning, class-facing text. | Documentation + data only |
 | P17 | complete | RPG progression slice: rank/status state and gated dialogue/mission access. | Run validation |
 | P18 | complete | Encounter design pass: one pressure test per class weakness. | Run validation |
-| P19 | pending | New content expansion cluster using existing modes. | Run validation |
+| P19 | complete| New content expansion cluster using existing modes. | Run validation |
 | P20 | pending | Technical ID and asset migration, with save migration coverage. | Run validation |
 
 ## Prompt Details

@@ -1468,6 +1468,45 @@
         "permanent": true,
         "target": "all_own_creatures"
       }
+    },
+    {
+      "id": "centelha_duplicada",
+      "display_name": "Centelha Duplicada",
+      "type": "magia",
+      "cost": 2,
+      "command_cost": 2,
+      "attack": 0,
+      "health": 0,
+      "keywords": [
+        "instantaneo"
+      ],
+      "speed": "instantanea",
+      "text": "Instantanea. Causa 2 de dano magico a qualquer alvo, incluindo slots alto.",
+      "effect": {
+        "damage": 2,
+        "damage_type": "magico",
+        "target": "any",
+        "ranged": true
+      }
+    },
+    {
+      "id": "espectro_veloz",
+      "display_name": "Espectro Veloz",
+      "type": "criatura",
+      "cost": 2,
+      "command_cost": 2,
+      "attack": 3,
+      "health": 1,
+      "keywords": [
+        "rapido"
+      ],
+      "speed": "normal",
+      "text": "Rapido. Ao morrer: ganha +1 Cinza extra.",
+      "effect": {
+        "on_death": {
+          "action": "extra_cinza"
+        }
+      }
     }
   ],
   "boards": [
@@ -2363,7 +2402,9 @@
           "card_id": "arqueiro_ponte"
         }
       ],
-      "reward_cards": [],
+      "reward_cards": [
+        "lobo_alfa"
+      ],
       "class_pressure": [
         "invocador"
       ]
@@ -2426,7 +2467,9 @@
           "card_id": "atirador_torre"
         }
       ],
-      "reward_cards": []
+      "reward_cards": [
+        "chamado_hostes"
+      ]
     },
     {
       "id": "invasao_em_ondas",
@@ -2576,13 +2619,94 @@
       "class_pressure": [
         "necromante"
       ]
+    },
+    {
+      "id": "reduto_eter",
+      "display_name": "Reduto de Ether",
+      "mode": "defesa",
+      "board_id": "muralha_desfiladeiro",
+      "defense_turn_limit": 3,
+      "class_pressure": [
+        "necromante"
+      ],
+      "mission": "Segurar o reduto de ether por tres turnos para garantir a rota de retirada operacional Draxos.",
+      "notes": "Segundo encontro do modo defesa. Tres turnos em vez de dois; composicao mais variada. Pressao Necromante: turnos curtos limitam acumulacao de Cinzas antes que a missao encerre.",
+      "starting_enemy_slots": [
+        {
+          "slot": 0,
+          "card_id": "guardiao_portal"
+        },
+        {
+          "slot": 2,
+          "card_id": "ladrao_rapido"
+        },
+        {
+          "slot": 3,
+          "card_id": "arqueiro_ponte"
+        }
+      ],
+      "reward_cards": [
+        "espectro_veloz"
+      ]
+    },
+    {
+      "id": "escolta_vulcanica",
+      "display_name": "Escolta Vulcanica",
+      "mode": "ondas",
+      "board_id": "cruzamento_neutro",
+      "class_pressure": [
+        "arcano"
+      ],
+      "mission": "Interceptar a escolta elemental antes que os reforcamentos alcancem o conduto central Draxos.",
+      "notes": "Segundo encontro do modo ondas. Board com zona neutra contestada. Pressao Arcano: atirador_torre no fundo da onda 1 exige gasto de energia imediato, consumindo Fluxo antes da segunda onda.",
+      "waves": [
+        {
+          "wave_number": 1,
+          "starting_enemy_slots": [
+            {
+              "slot": 0,
+              "card_id": "goblin_ponte"
+            },
+            {
+              "slot": 1,
+              "card_id": "goblin_ponte"
+            },
+            {
+              "slot": 2,
+              "card_id": "atirador_torre"
+            }
+          ]
+        },
+        {
+          "wave_number": 2,
+          "starting_enemy_slots": [
+            {
+              "slot": 0,
+              "card_id": "bruto_ponte"
+            },
+            {
+              "slot": 1,
+              "card_id": "ladrao_rapido"
+            },
+            {
+              "slot": 2,
+              "card_id": "arqueiro_ponte"
+            }
+          ]
+        }
+      ],
+      "reward_cards": [
+        "centelha_duplicada"
+      ]
     }
   ],
   "enemy_script": [],
   "npc_reward_choices": [
     "corvo_batedor",
     "chuva_brasas",
-    "campeao_guilda"
+    "campeao_guilda",
+    "centelha_duplicada",
+    "espectro_veloz"
   ],
   "first_npc_reward_card": "golpe_preciso",
   "classes": [

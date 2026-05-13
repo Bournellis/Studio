@@ -13,7 +13,7 @@ Executar a Track 02 em ordem linear, prompt a prompt, mantendo todos os registro
 
 ## Cursor Atual
 
-Proximo prompt: `P19 - New Content Expansion Cluster`.
+Proximo prompt: `P20 - Technical ID And Asset Migration`.
 
 ## Progresso
 
@@ -117,6 +117,13 @@ Proximo prompt: `P19 - New Content Expansion Cluster`.
 - [x] P18: 6 novos testes de catalogo em `test_content_and_session.gd`.
 - [x] P18: records atualizados (linear-execution-plan cursor → P19, track current-status, current-status, Estado_Atual, Kanban).
 - [ ] P18: regenerar `.tres` e rodar validacao localmente.
+- [x] P19: 2 novos cards (centelha_duplicada, espectro_veloz) adicionados ao catalogo.
+- [x] P19: 2 novos encontros laterais (reduto_eter defesa rank 2, escolta_vulcanica ondas rank 1).
+- [x] P19: rewards atribuidos a patrulha_avancada e emboscada_reforcos.
+- [x] P19: pool NPC expandido de 3 para 5; ENCOUNTER_MARKERS atualizado.
+- [x] P19: 6 testes de catalogo adicionados em test_content_and_session.gd.
+- [x] P19: records atualizados (linear-execution-plan cursor -> P20, track current-status, current-status, Estado_Atual, Kanban).
+- [ ] P19: regenerar .tres e rodar validacao localmente.
 
 ## Regras De Registro
 

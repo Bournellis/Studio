@@ -202,3 +202,22 @@ Continue with `P19 - New Content Expansion Cluster` from `linear-execution-plan.
 - final art import
 
 Those depend on decisions or later passes in `implementation-plan.md`.
+
+## Completed in P19
+
+- 2 new cards added to `data/definitions/slice_catalog.json`:
+  - `centelha_duplicada`: magia, cost 2, instantanea, 2 magic damage to any target — Arcano reward card.
+  - `espectro_veloz`: criatura, cost 2, 3/1, rapido, on_death: extra_cinza — Necromante reward card.
+- 2 new side encounters added with mission text and class_pressure:
+  - `reduto_eter` [defesa, rank 2]: board muralha_desfiladeiro, 3-turn defense, pressures necromante, reward: espectro_veloz.
+  - `escolta_vulcanica` [ondas, rank 1]: board cruzamento_neutro, 2 waves, pressures arcano, reward: centelha_duplicada.
+- Rewards assigned to previously reward-less side encounters: `patrulha_avancada` → lobo_alfa; `emboscada_reforcos` → chamado_hostes.
+- NPC reward pool expanded from 3 → 5 (added centelha_duplicada, espectro_veloz).
+- `world_root.gd` ENCOUNTER_MARKERS updated: escolta_vulcanica (rank 1) and reduto_eter (rank 2) added to map.
+- `test_content_and_session.gd` updated: npc_reward_choices size assertion updated 3→5; 6 new P19 tests added.
+- `.tres` regeneration required locally.
+- Validation pending local run; expected ~235+ tests green.
+
+## Next Implementation Candidate
+
+Continue with `P20 - Technical ID And Asset Migration` from `linear-execution-plan.md`.

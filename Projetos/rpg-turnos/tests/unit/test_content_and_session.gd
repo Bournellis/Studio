@@ -23,7 +23,7 @@ func test_catalog_contains_starter_deck_and_reward() -> void:
 	assert_eq(catalog.starter_deck_ids.size(), 20)
 	assert_eq(catalog.first_npc_reward_card_id, "golpe_preciso")
 	assert_eq(catalog.reward_card_id, "golpe_preciso")
-	assert_eq(catalog.npc_reward_choices.size(), 3)
+	assert_eq(catalog.npc_reward_choices.size(), 5)
 	assert_not_null(catalog.find_card(catalog.first_npc_reward_card_id))
 	assert_null(catalog.find_card("manter_linha"))
 	assert_false(catalog.find_encounter("emboscada_na_ponte").is_empty())
@@ -536,6 +536,68 @@ func test_invasao_em_ondas_wave1_has_two_ladrao_rapido() -> void:
 			rapido_count += 1
 	assert_eq(rapido_count, 2,
 		"invasao_em_ondas wave 1 must have exactly 2 ladrao_rapido (Arcano Fluxo sequencing pressure).")
+
+
+## P19 — New Content Expansion Cluster: catalog tests
+
+func test_p19_card_centelha_duplicada_exists() -> void:
+	var catalog = ContentLibrary.get_catalog()
+	var card: Dictionary = catalog.find_card("centelha_duplicada")
+	assert_false(card.is_empty(), "centelha_duplicada must exist in catalog after P19 expansion.")
+	assert_eq(str(card.get("type", "")), "magia",
+		"centelha_duplicada must be of type magia.")
+
+func test_p19_card_espectro_veloz_exists() -> void:
+	var catalog = ContentLibrary.get_catalog()
+	var card: Dictionary = catalog.find_card("espectro_veloz")
+	assert_false(card.is_empty(), "espectro_veloz must exist in catalog after P19 expansion.")
+	assert_eq(str(card.get("type", "")), "criatura",
+		"espectro_veloz must be of type criatura.")
+	assert_true(Array(card.get("keywords", [])).has("rapido"),
+		"espectro_veloz must have the rapido keyword.")
+
+func test_p19_reduto_eter_encounter_exists() -> void:
+	var encounters: Array = ContentLibrary.get_all_encounters()
+	var enc: Dictionary = {}
+	for e in encounters:
+		if str(Dictionary(e).get("id", "")) == "reduto_eter":
+			enc = Dictionary(e)
+			break
+	assert_false(enc.is_empty(), "reduto_eter encounter must exist after P19 expansion.")
+	assert_eq(str(enc.get("mode", "")), "defesa",
+		"reduto_eter must use defesa mode.")
+	assert_true(Array(enc.get("class_pressure", [])).has("necromante"),
+		"reduto_eter must pressure necromante.")
+
+func test_p19_escolta_vulcanica_encounter_exists() -> void:
+	var encounters: Array = ContentLibrary.get_all_encounters()
+	var enc: Dictionary = {}
+	for e in encounters:
+		if str(Dictionary(e).get("id", "")) == "escolta_vulcanica":
+			enc = Dictionary(e)
+			break
+	assert_false(enc.is_empty(), "escolta_vulcanica encounter must exist after P19 expansion.")
+	assert_eq(str(enc.get("mode", "")), "ondas",
+		"escolta_vulcanica must use ondas mode.")
+	assert_true(Array(enc.get("class_pressure", [])).has("arcano"),
+		"escolta_vulcanica must pressure arcano.")
+
+func test_p19_patrulha_avancada_has_reward() -> void:
+	var encounters: Array = ContentLibrary.get_all_encounters()
+	var enc: Dictionary = {}
+	for e in encounters:
+		if str(Dictionary(e).get("id", "")) == "patrulha_avancada":
+			enc = Dictionary(e)
+			break
+	assert_false(enc.is_empty(), "patrulha_avancada must exist.")
+	var rewards: Array = Array(enc.get("reward_cards", []))
+	assert_true(rewards.size() > 0, "patrulha_avancada must have at least one reward card after P19.")
+
+func test_p19_npc_reward_pool_has_five_options() -> void:
+	var catalog = ContentLibrary.get_catalog()
+	var pool: Array = Array(catalog.npc_reward_choices)
+	assert_true(pool.size() >= 5,
+		"NPC reward pool must have at least 5 options after P19 expansion (was 3 before).")
 
 func _delete_test_save() -> void:
 	if not FileAccess.file_exists(TEST_SAVE_PATH):
