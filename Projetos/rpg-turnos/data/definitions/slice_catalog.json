@@ -1,5 +1,5 @@
 {
-  "default_encounter_id": "emboscada_na_ponte",
+  "default_encounter_id": "operacao_pouso",
   "player_hero": {
     "id": "aprendiz_limiar",
     "display_name": "Novato Draxos",
@@ -7,7 +7,7 @@
     "hero_power_text": "Preparar Defesa Astral: custo 1, velocidade normal, uso 1x no proprio turno. Ganha 2 armadura."
   },
   "enemy_hero": {
-    "id": "duelista_bandido",
+    "id": "guardiao_elemental",
     "display_name": "Guardiao Elemental",
     "max_health": 20,
     "hero_power_text": "Golpe Elemental: custo 0, velocidade normal, uso 1x no proprio turno. Causa 1 de dano no heroi inimigo."
@@ -2264,7 +2264,7 @@
   ],
   "encounters": [
     {
-      "id": "emboscada_na_ponte",
+      "id": "operacao_pouso",
       "display_name": "Operacao de Pouso",
       "mission": "Limpar a zona de pouso. Eliminar a patrulha elemental que defende a cabeceira da ponte de acesso.",
       "mode": "limpar_mesa",
@@ -2288,7 +2288,7 @@
       ]
     },
     {
-      "id": "duelista_bandido",
+      "id": "confronto_guardiao",
       "display_name": "Confronto com Guardiao",
       "mission": "O guardiao elemental do setor desafia o comandante Draxos em combate direto. Derrota-lo estabelece dominancia sobre o conduto de entrada.",
       "mode": "duelo",
@@ -2323,7 +2323,7 @@
       "notes": "Deck agressivo e escalavel. Curva: 1-2 early pressure, 3 mid threats (atropelar, alcance, voadora), 3-4 removal, 5-6 late threats. Exercita: voadora, rapido, alcance, atropelar, magia instant, fisico_melee e fisico_alcance."
     },
     {
-      "id": "emboscada_no_cruzamento",
+      "id": "tomada_conduto",
       "display_name": "Tomada do Conduto",
       "mission": "Capturar o conduto astral no cruzamento. Controlar este ponto de distribuicao corta o fluxo de reforcamentos elementais para o interior.",
       "mode": "limpar_mesa",
@@ -2349,7 +2349,7 @@
       ]
     },
     {
-      "id": "fortaleza_do_desfiladeiro",
+      "id": "avanco_bastiao",
       "display_name": "Avanco ao Bastiao",
       "mission": "Avançar pela fortaleza do desfiladeiro. A sentinela no alto cobre toda a aproximacao — neutraliza-la abre a rota para a zona interna.",
       "mode": "limpar_mesa",
@@ -2472,7 +2472,7 @@
       ]
     },
     {
-      "id": "invasao_em_ondas",
+      "id": "ondas_resistencia",
       "display_name": "Ondas de Resistencia",
       "mission": "Contra-ataque elemental em ondas coordenadas. Repelir os dois grupos de assalto consolida o avanco na zona intermediaria.",
       "mode": "ondas",
@@ -2522,7 +2522,7 @@
       ]
     },
     {
-      "id": "defesa_do_portao",
+      "id": "defesa_base_ether",
       "display_name": "Defesa da Base de Ether",
       "mission": "Os elementais avancam sobre a base de ether Draxos. Segurar o perimetro por dois turnos completos protege o ponto de preparo e suprimento.",
       "mode": "defesa",
@@ -2551,7 +2551,7 @@
       ]
     },
     {
-      "id": "colosso_fragmentado",
+      "id": "nucleo_fragmentado",
       "display_name": "Nucleo Fragmentado",
       "mission": "Destruir o nucleo elemental — constructo de multiplas partes que guarda a entrada da zona do vulcao. Eliminar os tres fragmentos colapsa a estrutura.",
       "mode": "chefe_multiparte",
@@ -2588,7 +2588,7 @@
       ]
     },
     {
-      "id": "enigma_da_ponte",
+      "id": "ruptura_selos",
       "display_name": "Ruptura de Selos",
       "mission": "O caminho ao cristal do vulcao esta selado por travas astrais elementais. Romper os dois selos em ate dois turnos antes que os reforcamentos cheguem.",
       "mode": "quebra_cabeca",

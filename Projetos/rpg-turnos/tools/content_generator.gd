@@ -21,7 +21,7 @@ func generate_all() -> Dictionary:
 	catalog.reward_card_id = catalog.first_npc_reward_card_id
 	catalog.npc_reward_choices = PackedStringArray(definition.get("npc_reward_choices", []))
 	catalog.enemy_script = _typed_dictionary_array(definition.get("enemy_script", []))
-	catalog.default_encounter_id = str(definition.get("default_encounter_id", "emboscada_na_ponte"))
+	catalog.default_encounter_id = str(definition.get("default_encounter_id", "operacao_pouso"))
 	catalog.boards = _typed_dictionary_array(definition.get("boards", []))
 	catalog.encounters = _typed_dictionary_array(definition.get("encounters", []))
 	catalog.classes = _typed_dictionary_array(definition.get("classes", []))

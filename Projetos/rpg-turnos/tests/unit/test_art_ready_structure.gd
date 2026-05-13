@@ -40,7 +40,7 @@ func test_world_exposes_named_art_placeholders() -> void:
 	assert_not_null(_find_node_by_name(root, "marker_nodes"))
 	assert_not_null(_find_node_by_name(root, "player_sprite"))
 	assert_not_null(_find_node_by_name(root, "portrait_rect"))
-	assert_not_null(_find_node_by_name(root, "emboscada_na_ponte"))
+	assert_not_null(_find_node_by_name(root, "operacao_pouso"))
 	root.free()
 
 func test_battle_exposes_named_art_ready_nodes() -> void:

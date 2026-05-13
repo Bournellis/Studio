@@ -26,8 +26,8 @@ func test_catalog_contains_starter_deck_and_reward() -> void:
 	assert_eq(catalog.npc_reward_choices.size(), 5)
 	assert_not_null(catalog.find_card(catalog.first_npc_reward_card_id))
 	assert_null(catalog.find_card("manter_linha"))
-	assert_false(catalog.find_encounter("emboscada_na_ponte").is_empty())
-	assert_false(catalog.find_encounter("duelista_bandido").is_empty())
+	assert_false(catalog.find_encounter("operacao_pouso").is_empty())
+	assert_false(catalog.find_encounter("confronto_guardiao").is_empty())
 
 func test_catalog_exposes_class_definitions_and_starter_decks() -> void:
 	var catalog = ContentLibrary.get_catalog()
@@ -81,7 +81,7 @@ func test_npc_reward_unlocks_one_extra_card_once() -> void:
 
 func test_npc_progressive_rewards_follow_completed_encounters() -> void:
 	GameSession.claim_npc_reward()
-	GameSession.completed_encounter_ids.append("emboscada_na_ponte")
+	GameSession.completed_encounter_ids.append("operacao_pouso")
 
 	var reward_id: String = GameSession.claim_npc_progressive_reward()
 
@@ -108,37 +108,37 @@ func test_defeat_restores_pre_combat_snapshot_without_penalty() -> void:
 	GameSession.capture_pre_combat_snapshot()
 	GameSession.record_defeat("Teste de derrota.")
 	GameSession.is_encounter_completed = true
-	GameSession.completed_encounter_ids.append("emboscada_na_ponte")
+	GameSession.completed_encounter_ids.append("operacao_pouso")
 	GameSession.unlocked_card_ids.clear()
 
 	GameSession.restore_pre_combat_snapshot()
 
 	assert_true(GameSession.has_npc_reward_card)
 	assert_false(GameSession.is_encounter_completed)
-	assert_false(GameSession.completed_encounter_ids.has("emboscada_na_ponte"))
+	assert_false(GameSession.completed_encounter_ids.has("operacao_pouso"))
 	assert_eq(GameSession.unlocked_card_ids.size(), 21)
 	assert_eq(GameSession.last_battle_result, "")
 
 func test_encounter_rewards_claim_once_and_allow_practice() -> void:
 	GameSession.claim_npc_reward()
-	GameSession.set_active_encounter("emboscada_na_ponte")
+	GameSession.set_active_encounter("operacao_pouso")
 
 	GameSession.complete_encounter("Teste.")
 
-	assert_true(GameSession.has_completed_encounter("emboscada_na_ponte"))
-	assert_true(GameSession.claimed_encounter_reward_ids.has("emboscada_na_ponte"))
+	assert_true(GameSession.has_completed_encounter("operacao_pouso"))
+	assert_true(GameSession.claimed_encounter_reward_ids.has("operacao_pouso"))
 	assert_true(GameSession.unlocked_card_ids.has("lobo_alfa"))
 	assert_eq(GameSession.last_reward_card_ids, ["lobo_alfa"])
 
 	var unlocked_count: int = GameSession.unlocked_card_ids.size()
-	var repeat: Array[String] = GameSession.claim_encounter_reward("emboscada_na_ponte")
+	var repeat: Array[String] = GameSession.claim_encounter_reward("operacao_pouso")
 
 	assert_true(repeat.is_empty())
 	assert_eq(GameSession.unlocked_card_ids.size(), unlocked_count)
 
 func test_save_game_writes_and_loads_progression_state() -> void:
 	GameSession.claim_npc_reward()
-	GameSession.set_active_encounter("emboscada_na_ponte")
+	GameSession.set_active_encounter("operacao_pouso")
 	GameSession.complete_encounter("Teste.")
 	var reversed_deck: Array = GameSession.selected_deck_ids.duplicate()
 	reversed_deck.reverse()
@@ -160,7 +160,7 @@ func test_save_game_writes_and_loads_progression_state() -> void:
 	assert_eq(GameSession.selected_deck_ids, expected_deck)
 	assert_eq(GameSession.completed_encounter_ids, expected_completed)
 	assert_eq(GameSession.claimed_encounter_reward_ids, expected_claimed)
-	assert_eq(GameSession.active_encounter_id, "emboscada_na_ponte")
+	assert_eq(GameSession.active_encounter_id, "operacao_pouso")
 	assert_true(GameSession.is_encounter_completed)
 	assert_eq(GameSession.last_battle_result, "")
 
@@ -264,7 +264,7 @@ func test_old_save_without_selected_class_loads_with_empty_fallback() -> void:
 		"version": GameSession.SAVE_VERSION,
 		"unlocked_card_ids": ContentLibrary.get_starter_deck_ids(),
 		"selected_deck_ids": ContentLibrary.get_starter_deck_ids(),
-		"active_encounter_id": "emboscada_na_ponte",
+		"active_encounter_id": "operacao_pouso",
 		"has_npc_reward_card": false,
 		"completed_encounter_ids": [],
 		"claimed_encounter_reward_ids": [],
@@ -288,7 +288,7 @@ func test_corrupt_save_selected_class_does_not_crash() -> void:
 		"version": GameSession.SAVE_VERSION,
 		"unlocked_card_ids": ContentLibrary.get_starter_deck_ids(),
 		"selected_deck_ids": ContentLibrary.get_starter_deck_ids(),
-		"active_encounter_id": "emboscada_na_ponte",
+		"active_encounter_id": "operacao_pouso",
 		"has_npc_reward_card": false,
 		"completed_encounter_ids": [],
 		"claimed_encounter_reward_ids": [],
@@ -500,34 +500,34 @@ func test_each_class_has_at_least_one_pressure_encounter() -> void:
 		assert_true(classes_found[cls_id],
 			"Class '%s' must have at least one encounter with matching class_pressure." % cls_id)
 
-func test_defesa_do_portao_has_lobo_alfa_in_starting_slots() -> void:
+func test_defesa_base_ether_has_lobo_alfa_in_starting_slots() -> void:
 	var encounters: Array = ContentLibrary.get_all_encounters()
 	var enc: Dictionary = {}
 	for e in encounters:
-		if str(Dictionary(e).get("id", "")) == "defesa_do_portao":
+		if str(Dictionary(e).get("id", "")) == "defesa_base_ether":
 			enc = Dictionary(e)
 			break
-	assert_false(enc.is_empty(), "defesa_do_portao encounter must exist in catalog.")
+	assert_false(enc.is_empty(), "defesa_base_ether encounter must exist in catalog.")
 	var slots: Array = Array(enc.get("starting_enemy_slots", []))
-	assert_true(slots.size() > 0, "defesa_do_portao must have starting_enemy_slots.")
+	assert_true(slots.size() > 0, "defesa_base_ether must have starting_enemy_slots.")
 	var found_lobo: bool = false
 	for s in slots:
 		if str(Dictionary(s).get("card_id", "")) == "lobo_alfa":
 			found_lobo = true
 			break
 	assert_true(found_lobo,
-		"defesa_do_portao starting_enemy_slots must include lobo_alfa (atropelar pressure on Invocador).")
+		"defesa_base_ether starting_enemy_slots must include lobo_alfa (atropelar pressure on Invocador).")
 
-func test_invasao_em_ondas_wave1_has_two_ladrao_rapido() -> void:
+func test_ondas_resistencia_wave1_has_two_ladrao_rapido() -> void:
 	var encounters: Array = ContentLibrary.get_all_encounters()
 	var enc: Dictionary = {}
 	for e in encounters:
-		if str(Dictionary(e).get("id", "")) == "invasao_em_ondas":
+		if str(Dictionary(e).get("id", "")) == "ondas_resistencia":
 			enc = Dictionary(e)
 			break
-	assert_false(enc.is_empty(), "invasao_em_ondas encounter must exist in catalog.")
+	assert_false(enc.is_empty(), "ondas_resistencia encounter must exist in catalog.")
 	var waves: Array = Array(enc.get("waves", []))
-	assert_true(waves.size() >= 1, "invasao_em_ondas must have at least one wave.")
+	assert_true(waves.size() >= 1, "ondas_resistencia must have at least one wave.")
 	var wave1: Dictionary = Dictionary(waves[0])
 	var wave1_slots: Array = Array(wave1.get("starting_enemy_slots", []))
 	var rapido_count: int = 0
@@ -535,7 +535,7 @@ func test_invasao_em_ondas_wave1_has_two_ladrao_rapido() -> void:
 		if str(Dictionary(slot).get("card_id", "")) == "ladrao_rapido":
 			rapido_count += 1
 	assert_eq(rapido_count, 2,
-		"invasao_em_ondas wave 1 must have exactly 2 ladrao_rapido (Arcano Fluxo sequencing pressure).")
+		"ondas_resistencia wave 1 must have exactly 2 ladrao_rapido (Arcano Fluxo sequencing pressure).")
 
 
 ## P19 — New Content Expansion Cluster: catalog tests
@@ -605,3 +605,109 @@ func _delete_test_save() -> void:
 	var user_dir: DirAccess = DirAccess.open("user://")
 	if user_dir != null:
 		user_dir.remove(TEST_SAVE_FILENAME)
+
+# --- P20: Save migration (v1 -> v2 encounter ID rename) ---
+
+func test_p20_save_migration_active_encounter_id_renamed() -> void:
+	var v1_save: Dictionary = {
+		"version": 1,
+		"unlocked_card_ids": [],
+		"selected_deck_ids": [],
+		"active_encounter_id": "emboscada_na_ponte",
+		"has_npc_reward_card": false,
+		"completed_encounter_ids": [],
+		"claimed_encounter_reward_ids": [],
+		"npc_reward_index": 0,
+		"selected_class": "",
+		"operacao_rank": 0
+	}
+	var ok: bool = GameSession.apply_save_data(v1_save)
+	assert_true(ok, "v1 save must load successfully via migration.")
+	assert_eq(GameSession.active_encounter_id, "operacao_pouso",
+		"active_encounter_id 'emboscada_na_ponte' must migrate to 'operacao_pouso'.")
+
+func test_p20_save_migration_completed_encounter_ids_renamed() -> void:
+	var v1_save: Dictionary = {
+		"version": 1,
+		"unlocked_card_ids": [],
+		"selected_deck_ids": [],
+		"active_encounter_id": "duelista_bandido",
+		"has_npc_reward_card": false,
+		"completed_encounter_ids": ["emboscada_na_ponte", "duelista_bandido"],
+		"claimed_encounter_reward_ids": [],
+		"npc_reward_index": 0,
+		"selected_class": "",
+		"operacao_rank": 0
+	}
+	var ok: bool = GameSession.apply_save_data(v1_save)
+	assert_true(ok, "v1 save must load successfully via migration.")
+	assert_true(GameSession.completed_encounter_ids.has("operacao_pouso"),
+		"'emboscada_na_ponte' in completed_encounter_ids must migrate to 'operacao_pouso'.")
+	assert_true(GameSession.completed_encounter_ids.has("confronto_guardiao"),
+		"'duelista_bandido' in completed_encounter_ids must migrate to 'confronto_guardiao'.")
+	assert_false(GameSession.completed_encounter_ids.has("emboscada_na_ponte"),
+		"Old ID 'emboscada_na_ponte' must not remain after migration.")
+
+func test_p20_save_migration_claimed_reward_ids_renamed() -> void:
+	var v1_save: Dictionary = {
+		"version": 1,
+		"unlocked_card_ids": [],
+		"selected_deck_ids": [],
+		"active_encounter_id": "invasao_em_ondas",
+		"has_npc_reward_card": false,
+		"completed_encounter_ids": [],
+		"claimed_encounter_reward_ids": ["invasao_em_ondas", "defesa_do_portao"],
+		"npc_reward_index": 0,
+		"selected_class": "",
+		"operacao_rank": 0
+	}
+	var ok: bool = GameSession.apply_save_data(v1_save)
+	assert_true(ok, "v1 save with claimed rewards must load successfully via migration.")
+	assert_true(GameSession.claimed_encounter_reward_ids.has("ondas_resistencia"),
+		"'invasao_em_ondas' in claimed_reward_ids must migrate to 'ondas_resistencia'.")
+	assert_true(GameSession.claimed_encounter_reward_ids.has("defesa_base_ether"),
+		"'defesa_do_portao' in claimed_reward_ids must migrate to 'defesa_base_ether'.")
+
+func test_p20_save_v2_loads_new_ids_directly() -> void:
+	var v2_save: Dictionary = {
+		"version": 2,
+		"unlocked_card_ids": [],
+		"selected_deck_ids": [],
+		"active_encounter_id": "operacao_pouso",
+		"has_npc_reward_card": false,
+		"completed_encounter_ids": ["operacao_pouso", "confronto_guardiao"],
+		"claimed_encounter_reward_ids": [],
+		"npc_reward_index": 0,
+		"selected_class": "",
+		"operacao_rank": 1
+	}
+	var ok: bool = GameSession.apply_save_data(v2_save)
+	assert_true(ok, "v2 save must load successfully without migration.")
+	assert_eq(GameSession.active_encounter_id, "operacao_pouso",
+		"v2 save active_encounter_id must load as-is.")
+	assert_eq(GameSession.operacao_rank, 1,
+		"v2 save operacao_rank must be preserved.")
+
+func test_p20_unknown_version_save_rejected() -> void:
+	var bad_save: Dictionary = {
+		"version": 99,
+		"active_encounter_id": "operacao_pouso",
+	}
+	var ok: bool = GameSession.apply_save_data(bad_save)
+	assert_false(ok, "Save with unknown version must be rejected.")
+
+func test_p20_new_active_encounter_id_is_operacao_pouso() -> void:
+	GameSession.start_new_game()
+	assert_eq(GameSession.active_encounter_id, "operacao_pouso",
+		"New game must start with active_encounter_id 'operacao_pouso'.")
+
+func test_p20_all_eight_chain_encounter_ids_exist_in_catalog() -> void:
+	var expected: Array = [
+		"operacao_pouso", "confronto_guardiao", "tomada_conduto", "avanco_bastiao",
+		"ondas_resistencia", "defesa_base_ether", "nucleo_fragmentado", "ruptura_selos"
+	]
+	var catalog = ContentLibrary.get_catalog()
+	for enc_id in expected:
+		var enc: Dictionary = catalog.find_encounter(enc_id)
+		assert_false(enc.is_empty(),
+			"Chain encounter '%s' must exist in catalog after P20 ID migration." % enc_id)

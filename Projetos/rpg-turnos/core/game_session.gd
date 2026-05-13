@@ -4,8 +4,8 @@ signal reward_claimed(card_id: String)
 signal encounter_completed()
 
 const REQUIRED_DECK_SIZE: int = 20
-const ACTIVE_ENCOUNTER_ID: String = "emboscada_na_ponte"
-const SAVE_VERSION: int = 1
+const ACTIVE_ENCOUNTER_ID: String = "operacao_pouso"
+const SAVE_VERSION: int = 2
 const DEFAULT_SAVE_PATH: String = "user://rpg_turnos_save.json"
 const DeckRulesScript = preload("res://systems/deck/deck_rules.gd")
 
@@ -58,8 +58,12 @@ func build_save_data() -> Dictionary:
 
 func apply_save_data(save_data: Dictionary) -> bool:
 	ContentLibrary.ensure_loaded()
-	if int(save_data.get("version", 0)) != SAVE_VERSION:
+	var file_version: int = int(save_data.get("version", 0))
+	if file_version != SAVE_VERSION and file_version != 1:
 		return false
+	# Migrate v1 saves: encounter IDs changed in P20 (technical ID migration)
+	if file_version == 1:
+		save_data = _migrate_save_v1_to_v2(save_data)
 
 	var loaded_unlocked: Array = _ensure_starter_cards(_string_array(save_data.get("unlocked_card_ids", [])))
 	unlocked_card_ids = loaded_unlocked
@@ -319,10 +323,4 @@ func get_class_deck_ids() -> Array:
 	return ContentLibrary.get_starter_deck_ids()
 
 func initialize_deck_for_class() -> void:
-	if not has_selected_class():
-		return
-	var deck: Array = ContentLibrary.get_class_starter_deck_ids(selected_class)
-	if deck.is_empty():
-		return
-	unlocked_card_ids = deck.duplicate()
-	selected_deck_ids = deck.duplicate()
+	if not has_selected

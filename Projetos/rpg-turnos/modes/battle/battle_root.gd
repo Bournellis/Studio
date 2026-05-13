@@ -129,7 +129,7 @@ func _build_header(root: VBoxContainer) -> void:
 	player_hp_bar = _stat_bar("player_hp_bar", "Jogador")
 	vitals_row.add_child(player_hp_bar)
 
-	enemy_portrait_rect = _portrait_rect("enemy_portrait_rect", "portrait_hero_duelista_bandido")
+	enemy_portrait_rect = _portrait_rect("enemy_portrait_rect", "portrait_hero_guardiao_elemental")
 	vitals_row.add_child(enemy_portrait_rect)
 
 	enemy_hp_bar = _stat_bar("enemy_hp_bar", "Inimigo")
@@ -856,15 +856,15 @@ func _on_hero_power_enemy_hero_pressed() -> void:
 func _finish_battle() -> void:
 	if engine.outcome == "victory":
 		var summary: String = "A emboscada foi vencida no encontro de teste."
-		if engine.encounter_id == "duelista_bandido":
+		if engine.encounter_id == "confronto_guardiao":
 			summary = "O Guardiao Elemental foi derrotado em confronto."
-		elif engine.encounter_id == "invasao_em_ondas":
+		elif engine.encounter_id == "ondas_resistencia":
 			summary = "A invasao em ondas foi repelida."
-		elif engine.encounter_id == "defesa_do_portao":
+		elif engine.encounter_id == "defesa_base_ether":
 			summary = "O portao resistiu ao ataque inimigo."
-		elif engine.encounter_id == "colosso_fragmentado":
+		elif engine.encounter_id == "nucleo_fragmentado":
 			summary = "O Colosso Fragmentado perdeu todas as partes vitais."
-		elif engine.encounter_id == "enigma_da_ponte":
+		elif engine.encounter_id == "ruptura_selos":
 			summary = "A ruptura de selos foi resolvida."
 		GameSession.complete_encounter(summary)
 		GameSession.save_game()

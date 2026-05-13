@@ -126,7 +126,7 @@ func test_clear_board_does_not_allow_empty_lane_attack_without_objective() -> vo
 func test_duel_allows_empty_lane_attack_against_enemy_hero() -> void:
 	var engine = _start_engine(
 		["lobo_faminto", "escudeiro", "escudeiro", "escudeiro"],
-		{"encounter_id": "duelista_bandido", "enemy_ai_enabled": false}
+		{"encounter_id": "confronto_guardiao", "enemy_ai_enabled": false}
 	)
 
 	engine.play_card_from_hand(0, {"owner": "jogador", "slot": 0})
@@ -136,7 +136,7 @@ func test_duel_allows_empty_lane_attack_against_enemy_hero() -> void:
 	assert_eq(engine.enemy_health, 17)
 
 func test_duel_starts_with_enemy_hero_and_custom_deck() -> void:
-	var engine = _start_engine(_starter_deck(), {"encounter_id": "duelista_bandido", "enemy_ai_enabled": false})
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "confronto_guardiao", "enemy_ai_enabled": false})
 	var enemy: Dictionary = engine._controller("inimigo")
 
 	assert_eq(engine.modo_batalha, "duelo")
@@ -146,7 +146,7 @@ func test_duel_starts_with_enemy_hero_and_custom_deck() -> void:
 	assert_true(Array(enemy.get("deck", [])).has("dragao_jovem"))
 
 func test_ondas_starts_first_wave_without_enemy_hero() -> void:
-	var engine = _start_engine(_starter_deck(), {"encounter_id": "invasao_em_ondas", "enemy_ai_enabled": false})
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "ondas_resistencia", "enemy_ai_enabled": false})
 	var enemy: Dictionary = engine._controller("inimigo")
 
 	assert_eq(engine.modo_batalha, "ondas")
@@ -160,7 +160,7 @@ func test_ondas_starts_first_wave_without_enemy_hero() -> void:
 	assert_eq(str(engine.enemy_slots[2].get("card_id", "")), "arqueiro_ponte")
 
 func test_ondas_spawns_next_wave_on_enemy_upkeep_after_clear() -> void:
-	var engine = _start_engine(_starter_deck(), {"encounter_id": "invasao_em_ondas", "enemy_ai_enabled": false})
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "ondas_resistencia", "enemy_ai_enabled": false})
 	engine.player_slots[0] = engine._build_occupant(catalog.find_card("escudeiro"), "jogador", false)
 	var starting_player_health: int = engine.player_health
 	var starting_player_deck: Array = engine.deck.duplicate()
@@ -182,7 +182,7 @@ func test_ondas_spawns_next_wave_on_enemy_upkeep_after_clear() -> void:
 	assert_eq(str(engine.enemy_slots[2].get("card_id", "")), "bruto_ponte")
 
 func test_ondas_victory_only_after_final_wave_clear() -> void:
-	var engine = _start_engine(_starter_deck(), {"encounter_id": "invasao_em_ondas", "enemy_ai_enabled": false})
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "ondas_resistencia", "enemy_ai_enabled": false})
 	engine.enemy_slots = [null, null, null]
 
 	engine._check_outcome()
@@ -196,7 +196,7 @@ func test_ondas_victory_only_after_final_wave_clear() -> void:
 	assert_eq(engine.outcome, "victory")
 
 func test_defesa_starts_without_enemy_hero_and_tracks_turn_limit() -> void:
-	var engine = _start_engine(_starter_deck(), {"encounter_id": "defesa_do_portao", "enemy_ai_enabled": false})
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "defesa_base_ether", "enemy_ai_enabled": false})
 	var enemy: Dictionary = engine._controller("inimigo")
 
 	assert_eq(engine.modo_batalha, "defesa")
@@ -210,7 +210,7 @@ func test_defesa_starts_without_enemy_hero_and_tracks_turn_limit() -> void:
 	assert_eq(str(engine.enemy_slots[5].get("card_id", "")), "atirador_torre")
 
 func test_defesa_does_not_win_when_enemy_board_is_clear() -> void:
-	var engine = _start_engine(_starter_deck(), {"encounter_id": "defesa_do_portao", "enemy_ai_enabled": false})
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "defesa_base_ether", "enemy_ai_enabled": false})
 	engine.enemy_slots = [null, null, null, null, null, null]
 
 	engine._check_outcome()
@@ -219,7 +219,7 @@ func test_defesa_does_not_win_when_enemy_board_is_clear() -> void:
 	assert_eq(engine.defense_turns_survived, 0)
 
 func test_defesa_wins_after_required_enemy_turns_survived() -> void:
-	var engine = _start_engine(_starter_deck(), {"encounter_id": "defesa_do_portao", "enemy_ai_enabled": false})
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "defesa_base_ether", "enemy_ai_enabled": false})
 
 	engine._record_defense_turn_survived("inimigo")
 	engine._check_outcome()
@@ -234,7 +234,7 @@ func test_defesa_wins_after_required_enemy_turns_survived() -> void:
 	assert_eq(engine.get_defense_label(), "Defesa 2/2")
 
 func test_chefe_multiparte_starts_without_enemy_hero_and_tracks_parts() -> void:
-	var engine = _start_engine(_starter_deck(), {"encounter_id": "colosso_fragmentado", "enemy_ai_enabled": false})
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "nucleo_fragmentado", "enemy_ai_enabled": false})
 	var enemy: Dictionary = engine._controller("inimigo")
 
 	assert_eq(engine.modo_batalha, "chefe_multiparte")
@@ -251,7 +251,7 @@ func test_chefe_multiparte_starts_without_enemy_hero_and_tracks_parts() -> void:
 	assert_eq(str(engine.enemy_slots[5].get("card_id", "")), "atirador_torre")
 
 func test_chefe_multiparte_ignores_non_part_support_for_victory() -> void:
-	var engine = _start_engine(_starter_deck(), {"encounter_id": "colosso_fragmentado", "enemy_ai_enabled": false})
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "nucleo_fragmentado", "enemy_ai_enabled": false})
 	engine.enemy_slots[1] = null
 
 	engine._check_outcome()
@@ -266,7 +266,7 @@ func test_chefe_multiparte_ignores_non_part_support_for_victory() -> void:
 	assert_eq(engine.get_boss_label(), "Partes 1/3")
 
 func test_chefe_multiparte_wins_when_all_parts_are_destroyed_even_with_support_alive() -> void:
-	var engine = _start_engine(_starter_deck(), {"encounter_id": "colosso_fragmentado", "enemy_ai_enabled": false})
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "nucleo_fragmentado", "enemy_ai_enabled": false})
 	engine.enemy_slots[0] = null
 	engine.enemy_slots[2] = null
 	engine.enemy_slots[5] = null
@@ -277,7 +277,7 @@ func test_chefe_multiparte_wins_when_all_parts_are_destroyed_even_with_support_a
 	assert_eq(engine.outcome, "victory")
 
 func test_quebra_cabeca_starts_without_enemy_hero_and_tracks_targets() -> void:
-	var engine = _start_engine(_starter_deck(), {"encounter_id": "enigma_da_ponte", "enemy_ai_enabled": false})
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "ruptura_selos", "enemy_ai_enabled": false})
 	var enemy: Dictionary = engine._controller("inimigo")
 
 	assert_eq(engine.modo_batalha, "quebra_cabeca")
@@ -294,7 +294,7 @@ func test_quebra_cabeca_starts_without_enemy_hero_and_tracks_targets() -> void:
 	assert_eq(str(engine.enemy_slots[2].get("card_id", "")), "atirador_torre")
 
 func test_quebra_cabeca_wins_when_targets_clear_even_with_support_alive() -> void:
-	var engine = _start_engine(_starter_deck(), {"encounter_id": "enigma_da_ponte", "enemy_ai_enabled": false})
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "ruptura_selos", "enemy_ai_enabled": false})
 	engine.enemy_slots[0] = null
 	engine.enemy_slots[2] = null
 
@@ -305,7 +305,7 @@ func test_quebra_cabeca_wins_when_targets_clear_even_with_support_alive() -> voi
 	assert_eq(engine.get_puzzle_label(), "Alvos 2/2 | Turnos 0/2")
 
 func test_quebra_cabeca_loses_when_turn_limit_expires_without_targets_clear() -> void:
-	var engine = _start_engine(_starter_deck(), {"encounter_id": "enigma_da_ponte", "enemy_ai_enabled": false})
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "ruptura_selos", "enemy_ai_enabled": false})
 	engine._record_puzzle_turn_used("jogador")
 	engine._check_outcome()
 
@@ -319,7 +319,7 @@ func test_quebra_cabeca_loses_when_turn_limit_expires_without_targets_clear() ->
 	assert_eq(engine.get_puzzle_label(), "Alvos 0/2 | Turnos 2/2")
 
 func test_enemy_hero_power_uses_golpe_direto_once() -> void:
-	var engine = _start_engine(_starter_deck(), {"encounter_id": "duelista_bandido", "enemy_ai_enabled": false})
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "confronto_guardiao", "enemy_ai_enabled": false})
 	engine.active_player_id = "inimigo"
 	engine.priority_owner_id = "inimigo"
 	engine.current_phase = "fase_principal"
@@ -335,7 +335,7 @@ func test_enemy_hero_power_uses_golpe_direto_once() -> void:
 	assert_false(bool(result.get("ok", false)))
 
 func test_enemy_ai_uses_power_before_playing_cards() -> void:
-	var engine = _start_engine(_starter_deck(), {"encounter_id": "duelista_bandido", "enemy_ai_enabled": true})
+	var engine = _start_engine(_starter_deck(), {"encounter_id": "confronto_guardiao", "enemy_ai_enabled": true})
 	var enemy: Dictionary = engine._controller("inimigo")
 	enemy["hand"] = ["goblin_ponte"]
 	enemy["energy"] = 3
@@ -358,7 +358,7 @@ func test_enemy_ai_uses_power_before_playing_cards() -> void:
 
 func test_creature_can_move_once_to_neutral_slot() -> void:
 	var engine = _start_engine(["escudeiro", "escudeiro", "escudeiro", "escudeiro"], {
-		"encounter_id": "emboscada_no_cruzamento",
+		"encounter_id": "tomada_conduto",
 		"enemy_ai_enabled": false
 	})
 	engine.play_card_from_hand(0, {"owner": "jogador", "slot": 0})
@@ -467,7 +467,7 @@ func test_magico_damage_can_hit_voadora() -> void:
 
 func test_fallback_slots_are_used_after_front_line_is_empty() -> void:
 	var engine = _start_engine(["lobo_faminto", "escudeiro", "escudeiro", "escudeiro"], {
-		"encounter_id": "fortaleza_do_desfiladeiro",
+		"encounter_id": "avanco_bastiao",
 		"enemy_ai_enabled": false
 	})
 	engine.enemy_slots[0] = null
@@ -482,7 +482,7 @@ func test_fallback_slots_are_used_after_front_line_is_empty() -> void:
 func test_atropelar_deals_overflow_to_hero_in_duel() -> void:
 	var engine = _start_engine(
 		["javali_guerra", "escudeiro", "escudeiro", "escudeiro"],
-		{"encounter_id": "duelista_bandido", "enemy_ai_enabled": false}
+		{"encounter_id": "confronto_guardiao", "enemy_ai_enabled": false}
 	)
 	engine.enemy_slots[0] = engine._build_occupant(catalog.find_card("goblin_ponte"), "inimigo", false)
 	engine.play_card_from_hand(0, {"owner": "jogador", "slot": 0})
@@ -609,7 +609,7 @@ func test_clear_board_victory_when_last_enemy_destroyed() -> void:
 func test_duel_victory_when_enemy_hero_reaches_zero() -> void:
 	var engine = _start_engine(
 		["golpe_preciso", "golpe_preciso", "golpe_preciso", "golpe_preciso"],
-		{"encounter_id": "duelista_bandido", "enemy_ai_enabled": false}
+		{"encounter_id": "confronto_guardiao", "enemy_ai_enabled": false}
 	)
 	engine.force_enemy_health(3)
 

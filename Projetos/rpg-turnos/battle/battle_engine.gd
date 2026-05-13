@@ -127,8 +127,8 @@ func start_battle(catalog, deck_ids: Array, config: Dictionary = {}) -> void:
 	memorial_de_batalha = []
 
 	var encounter: Dictionary = _encounter_from_config(config)
-	encounter_id = str(encounter.get("id", "emboscada_na_ponte"))
-	encounter_name = str(encounter.get("display_name", "Emboscada na Ponte"))
+	encounter_id = str(encounter.get("id", "operacao_pouso"))
+	encounter_name = str(encounter.get("display_name", "Operacao de Pouso"))
 	modo_batalha = str(encounter.get("mode", MODE_CLEAR_BOARD))
 	_configure_controllers(deck_ids, encounter)
 	_configure_board(encounter)
@@ -885,14 +885,14 @@ func _encounter_from_config(config: Dictionary) -> Dictionary:
 	if encounter_key == "":
 		encounter_key = str(_catalog.get("default_encounter_id")) if _catalog != null else ""
 	if encounter_key == "":
-		encounter_key = "emboscada_na_ponte"
+		encounter_key = "operacao_pouso"
 	if _catalog != null and _catalog.has_method("find_encounter"):
 		var found: Dictionary = _catalog.find_encounter(encounter_key)
 		if not found.is_empty():
 			return found
 	return {
-		"id": "emboscada_na_ponte",
-		"display_name": "Emboscada na Ponte",
+		"id": "operacao_pouso",
+		"display_name": "Operacao de Pouso",
 		"mode": MODE_CLEAR_BOARD,
 		"board_id": "ponte_estavel",
 		"starting_enemy_slots": []

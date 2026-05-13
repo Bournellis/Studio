@@ -14,7 +14,7 @@ const PATHS: Dictionary = {
 	"player_token": "res://assets/world/player_token.png",
 	"portrait_npc_viajante": "res://assets/portraits/portrait_npc_viajante.png",
 	"portrait_hero_aprendiz": "res://assets/portraits/portrait_hero_aprendiz.png",
-	"portrait_hero_duelista_bandido": "res://assets/portraits/portrait_hero_duelista_bandido.png",
+	"portrait_hero_guardiao_elemental": "res://assets/portraits/portrait_hero_guardiao_elemental.png",
 	"card_frame_criatura": "res://assets/cards/frames/card_frame_criatura.png",
 	"card_frame_magia": "res://assets/cards/frames/card_frame_magia.png",
 	"card_frame_magia_de_tabuleiro": "res://assets/cards/frames/card_frame_magia_de_tabuleiro.png",

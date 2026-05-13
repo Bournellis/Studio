@@ -28,7 +28,7 @@ func test_new_game_rank_display_is_recruta() -> void:
 # --- Rank thresholds ---
 
 func test_rank_advances_to_agente_after_one_completion() -> void:
-	GameSession.active_encounter_id = "emboscada_na_ponte"
+	GameSession.active_encounter_id = "operacao_pouso"
 	GameSession.complete_encounter("test")
 	assert_eq(GameSession.operacao_rank, 1)
 	assert_eq(GameSession.get_rank_display_name(), "Agente")

@@ -37,7 +37,7 @@ func _start_arcano_duelo_engine(deck: Array = []) -> BattleEngineScript:
 	var d: Array = deck if deck.size() > 0 else [
 		"fenda_astral", "fenda_astral", "fenda_astral", "fenda_astral", "fenda_astral"
 	]
-	return _start_arcano_engine(d, {"encounter_id": "duelista_bandido"})
+	return _start_arcano_engine(d, {"encounter_id": "confronto_guardiao"})
 
 func _place_enemy(engine: BattleEngineScript, card_id: String, slot: int, health_override: int = -1) -> void:
 	var occupant: Dictionary = engine._build_occupant(catalog.find_card(card_id), "inimigo", false)

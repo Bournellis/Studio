@@ -5,14 +5,14 @@ const MAP_RECT: Rect2 = Rect2(Vector2(80, 80), Vector2(1120, 600))
 const NPC_POSITION: Vector2 = Vector2(420, 330)
 const INTERACTION_RADIUS: float = 86.0
 const ENCOUNTER_MARKERS: Array[Dictionary] = [
-	{"id": "emboscada_na_ponte", "label": "Pouso", "position": Vector2(720, 300), "requires": "", "min_rank": 0},
-	{"id": "duelista_bandido", "label": "Guardiao", "position": Vector2(880, 330), "requires": "emboscada_na_ponte", "min_rank": 0},
-	{"id": "emboscada_no_cruzamento", "label": "Conduto", "position": Vector2(1020, 390), "requires": "duelista_bandido", "min_rank": 0},
-	{"id": "fortaleza_do_desfiladeiro", "label": "Bastiao", "position": Vector2(1080, 230), "requires": "emboscada_no_cruzamento", "min_rank": 0},
-	{"id": "invasao_em_ondas", "label": "Ondas", "position": Vector2(700, 220), "requires": "fortaleza_do_desfiladeiro", "min_rank": 0},
-	{"id": "defesa_do_portao", "label": "Defesa", "position": Vector2(520, 220), "requires": "invasao_em_ondas", "min_rank": 0},
-	{"id": "colosso_fragmentado", "label": "Nucleo", "position": Vector2(360, 250), "requires": "defesa_do_portao", "min_rank": 0},
-	{"id": "enigma_da_ponte", "label": "Selos", "position": Vector2(260, 360), "requires": "colosso_fragmentado", "min_rank": 0},
+	{"id": "operacao_pouso", "label": "Pouso", "position": Vector2(720, 300), "requires": "", "min_rank": 0},
+	{"id": "confronto_guardiao", "label": "Guardiao", "position": Vector2(880, 330), "requires": "operacao_pouso", "min_rank": 0},
+	{"id": "tomada_conduto", "label": "Conduto", "position": Vector2(1020, 390), "requires": "confronto_guardiao", "min_rank": 0},
+	{"id": "avanco_bastiao", "label": "Bastiao", "position": Vector2(1080, 230), "requires": "tomada_conduto", "min_rank": 0},
+	{"id": "ondas_resistencia", "label": "Ondas", "position": Vector2(700, 220), "requires": "avanco_bastiao", "min_rank": 0},
+	{"id": "defesa_base_ether", "label": "Defesa", "position": Vector2(520, 220), "requires": "ondas_resistencia", "min_rank": 0},
+	{"id": "nucleo_fragmentado", "label": "Nucleo", "position": Vector2(360, 250), "requires": "defesa_base_ether", "min_rank": 0},
+	{"id": "ruptura_selos", "label": "Selos", "position": Vector2(260, 360), "requires": "nucleo_fragmentado", "min_rank": 0},
 	{"id": "patrulha_avancada", "label": "Varredura", "position": Vector2(900, 180), "requires": "", "min_rank": 1},
 	{"id": "duelista_sombrio", "label": "Conduto 2", "position": Vector2(1020, 290), "requires": "", "min_rank": 2},
 	{"id": "emboscada_reforcos", "label": "Reforcamento", "position": Vector2(820, 430), "requires": "", "min_rank": 3},

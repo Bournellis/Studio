@@ -50,9 +50,9 @@ func _validate_contract() -> Dictionary:
 		return {"ok": false, "message": "Enemy hero must have 20 HP in this slice."}
 	if catalog.starter_deck_ids.size() != 20:
 		return {"ok": false, "message": "Starter deck must have 20 cards."}
-	if catalog.find_encounter("emboscada_na_ponte").is_empty():
+	if catalog.find_encounter("operacao_pouso").is_empty():
 		return {"ok": false, "message": "Emboscada na Ponte encounter must exist."}
-	if catalog.find_encounter("duelista_bandido").is_empty():
+	if catalog.find_encounter("confronto_guardiao").is_empty():
 		return {"ok": false, "message": "Duelista Bandido encounter must exist."}
 	if catalog.first_npc_reward_card_id == "" or catalog.find_card(catalog.first_npc_reward_card_id) == null:
 		return {"ok": false, "message": "First NPC reward card must exist."}

@@ -59,7 +59,7 @@ func test_battle_hand_exposes_button_actions_and_feedback() -> void:
 	root.free()
 
 func test_battle_header_exposes_wave_progress_for_ondas() -> void:
-	GameSession.set_active_encounter("invasao_em_ondas")
+	GameSession.set_active_encounter("ondas_resistencia")
 	var root = BattleRootScript.new()
 	add_child(root)
 	await get_tree().process_frame
@@ -72,7 +72,7 @@ func test_battle_header_exposes_wave_progress_for_ondas() -> void:
 	root.free()
 
 func test_battle_header_exposes_defense_progress_for_defesa() -> void:
-	GameSession.set_active_encounter("defesa_do_portao")
+	GameSession.set_active_encounter("defesa_base_ether")
 	var root = BattleRootScript.new()
 	add_child(root)
 	await get_tree().process_frame
@@ -85,7 +85,7 @@ func test_battle_header_exposes_defense_progress_for_defesa() -> void:
 	root.free()
 
 func test_battle_header_exposes_boss_part_progress_for_chefe_multiparte() -> void:
-	GameSession.set_active_encounter("colosso_fragmentado")
+	GameSession.set_active_encounter("nucleo_fragmentado")
 	var root = BattleRootScript.new()
 	add_child(root)
 	await get_tree().process_frame
@@ -98,7 +98,7 @@ func test_battle_header_exposes_boss_part_progress_for_chefe_multiparte() -> voi
 	root.free()
 
 func test_battle_header_exposes_puzzle_progress_for_quebra_cabeca() -> void:
-	GameSession.set_active_encounter("enigma_da_ponte")
+	GameSession.set_active_encounter("ruptura_selos")
 	var root = BattleRootScript.new()
 	add_child(root)
 	await get_tree().process_frame
