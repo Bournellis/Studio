@@ -40,6 +40,7 @@ func test_linear_catalog_exposes_10_maps_and_all_modes() -> void:
 	var catalog = ContentLibrary.get_catalog()
 	var clear_encounter: Dictionary = ContentLibrary.get_catalog().find_encounter("pouso_elemental")
 	assert_eq(str(clear_encounter.get("mode", "")), "limpar_mesa")
+	assert_false(bool(clear_encounter.get("enemy_commander_enabled", false)))
 	assert_eq(int(clear_encounter.get("player_slots_count", 0)), 3)
 	assert_eq(int(clear_encounter.get("enemy_slots_count", 0)), 3)
 	assert_eq(Array(clear_encounter.get("starting_enemy_slots", [])).size(), 3)
@@ -50,6 +51,9 @@ func test_linear_catalog_exposes_10_maps_and_all_modes() -> void:
 	assert_eq(str(waves_encounter.get("enemy_director", "")), "waves")
 	assert_eq(Array(waves_encounter.get("waves", [])).size(), 3)
 	assert_eq(Array(Array(waves_encounter.get("waves", []))[2]).size(), 3)
+	var duel_encounter: Dictionary = ContentLibrary.get_catalog().find_encounter("duelo_inicial")
+	assert_true(bool(duel_encounter.get("enemy_commander_enabled", false)))
+	assert_eq(int(duel_encounter.get("enemy_hand_count", 0)), 5)
 	var modes: Array[String] = []
 	for encounter: Dictionary in catalog.encounters:
 		var mode: String = str(encounter.get("mode", ""))
@@ -592,7 +596,14 @@ func test_battle_scene_passes_run_class_to_engine() -> void:
 	assert_not_null(battle.find_child("BattleClassActiveTile", true, false))
 	assert_false(battle.find_child("BattleClassActiveTile", true, false).visible)
 	assert_not_null(battle.find_child("BattleVisualBackground", true, false))
-	assert_not_null(battle.find_child("BattleTopStatusBar", true, false))
+	assert_null(battle.find_child("BattleTopStatusBar", true, false))
+	assert_not_null(battle.find_child("BattlePlayerHudDock", true, false))
+	assert_eq(battle.find_child("BattlePlayerHpValue", true, false).text, "20")
+	assert_eq(battle.find_child("BattlePlayerManaValue", true, false).text, "2/2")
+	assert_false(battle.find_child("BattleClassResourceChip", true, false).visible)
+	assert_false(battle.find_child("BattleEnemyCommanderHud", true, false).visible)
+	assert_null(battle.find_child("BattleEnemyCardback0", true, false))
+	assert_false(battle.find_child("BattleObjectiveChip", true, false).visible)
 	assert_not_null(battle.find_child("BattleBoardPanel", true, false))
 	assert_not_null(battle.find_child("BattleHandPanel", true, false))
 	assert_not_null(battle.find_child("BattleHandCard0", true, false))
@@ -603,9 +614,92 @@ func test_battle_scene_passes_run_class_to_engine() -> void:
 	assert_not_null(battle.find_child("FieldCardAttack", true, false))
 	assert_not_null(battle.find_child("FieldCardHealth", true, false))
 	assert_not_null(battle.find_child("BattleCardPreview", true, false))
-	assert_not_null(battle.find_child("BattleLogTicker", true, false))
+	assert_not_null(battle.find_child("BattleEndTurnFloatingButton", true, false))
+	assert_null(battle.find_child("BattleBackToRunMapButton", true, false))
+	assert_null(battle.find_child("BattleLogTicker", true, false))
 	assert_not_null(battle.find_child("BattleLogHistoryButton", true, false))
 	assert_not_null(battle.find_child("BattleLogScroll", true, false))
+	battle.queue_free()
+	await get_tree().process_frame
+
+func test_battle_hud_class_resource_visibility_follows_selected_class() -> void:
+	_start_class_run("arcano")
+	RunSession.select_node("n01_pouso_elemental")
+	var arcano_locked = await _instantiate_scene("res://modes/battle/battle.tscn")
+	assert_false(arcano_locked.find_child("BattleClassResourceChip", true, false).visible)
+	arcano_locked.queue_free()
+	await get_tree().process_frame
+
+	RunSession.reset()
+	_start_class_run("arcano")
+	RunSession.class_passive_unlocked = true
+	RunSession.select_node("n01_pouso_elemental")
+	var arcano_unlocked = await _instantiate_scene("res://modes/battle/battle.tscn")
+	assert_true(arcano_unlocked.find_child("BattleClassResourceChip", true, false).visible)
+	assert_eq(arcano_unlocked.find_child("BattleClassResourceLabel", true, false).text, "Fluxo")
+	assert_eq(arcano_unlocked.find_child("BattleClassResourceValue", true, false).text, "0")
+	arcano_unlocked.queue_free()
+	await get_tree().process_frame
+
+	RunSession.reset()
+	_start_class_run("necromante")
+	RunSession.class_passive_unlocked = true
+	RunSession.select_node("n01_pouso_elemental")
+	var necromante = await _instantiate_scene("res://modes/battle/battle.tscn")
+	assert_true(necromante.find_child("BattleClassResourceChip", true, false).visible)
+	assert_eq(necromante.find_child("BattleClassResourceLabel", true, false).text, "Cinzas")
+	necromante.queue_free()
+	await get_tree().process_frame
+
+	RunSession.reset()
+	_start_class_run("invocador")
+	RunSession.class_passive_unlocked = true
+	RunSession.class_active_unlocked = true
+	RunSession.select_node("n01_pouso_elemental")
+	var invocador = await _instantiate_scene("res://modes/battle/battle.tscn")
+	assert_false(invocador.find_child("BattleClassResourceChip", true, false).visible)
+	invocador.queue_free()
+	await get_tree().process_frame
+
+func test_battle_hud_enemy_commander_uses_explicit_encounter_flag() -> void:
+	_start_run()
+	RunSession.select_node("n03_duelo_inicial")
+	var duel = await _instantiate_scene("res://modes/battle/battle.tscn")
+	assert_true(duel.engine.enemy_commander_enabled)
+	assert_true(duel.find_child("BattleEnemyCommanderHud", true, false).visible)
+	assert_eq(duel.find_child("BattleEnemyHpValue", true, false).text, "16")
+	assert_eq(duel.find_child("BattleEnemyManaValue", true, false).text, "2/2")
+	assert_not_null(duel.find_child("BattleEnemyCardback0", true, false))
+	assert_not_null(duel.find_child("BattleEnemyCardback4", true, false))
+	assert_eq(duel.find_child("BattleObjectiveChip", true, false).text, "Derrote o Comandante")
+	duel.queue_free()
+	await get_tree().process_frame
+
+func test_battle_hud_objective_chip_only_shows_actionable_progress() -> void:
+	_start_run()
+	RunSession.select_node("n02_ondas_iniciais")
+	var waves = await _instantiate_scene("res://modes/battle/battle.tscn")
+	assert_true(waves.find_child("BattleObjectiveChip", true, false).visible)
+	assert_eq(waves.find_child("BattleObjectiveChip", true, false).text, "Onda 1/3")
+	assert_false(waves.find_child("BattleObjectiveChip", true, false).text.contains("Mapa"))
+	assert_false(waves.find_child("BattleObjectiveChip", true, false).text.contains("ondas_iniciais"))
+	waves.queue_free()
+	await get_tree().process_frame
+
+func test_battle_esc_menu_exposes_navigation_actions() -> void:
+	_start_run()
+	RunSession.select_node("n01_pouso_elemental")
+	var battle = await _instantiate_scene("res://modes/battle/battle.tscn")
+	assert_false(battle.find_child("BattleEscMenu", true, false).visible)
+	battle._toggle_esc_menu()
+	assert_true(battle.find_child("BattleEscMenu", true, false).visible)
+	assert_not_null(battle.find_child("BattleEscResumeButton", true, false))
+	assert_not_null(battle.find_child("BattleEscBackToRunMapButton", true, false))
+	assert_not_null(battle.find_child("BattleEscMainMenuButton", true, false))
+	assert_not_null(battle.find_child("BattleEscQuitButton", true, false))
+	battle.find_child("BattleEscResumeButton", true, false).pressed.emit()
+	await get_tree().process_frame
+	assert_false(battle.find_child("BattleEscMenu", true, false).visible)
 	battle.queue_free()
 	await get_tree().process_frame
 

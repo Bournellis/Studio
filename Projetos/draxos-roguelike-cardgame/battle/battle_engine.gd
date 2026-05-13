@@ -31,6 +31,10 @@ var player_health: int = 30
 var enemy_health: int = DEFAULT_ENEMY_HEALTH
 var mana: int = DEFAULT_MANA_PER_TURN
 var mana_per_turn: int = DEFAULT_MANA_PER_TURN
+var enemy_commander_enabled: bool = false
+var enemy_mana: int = 0
+var enemy_mana_per_turn: int = 0
+var enemy_hand_count: int = 0
 var deck: Array[String] = []
 var discard: Array[String] = []
 var hand: Array[String] = []
@@ -73,6 +77,10 @@ func start_battle(catalog, deck_ids: Array, config: Dictionary = {}) -> void:
 	enemy_director = str(encounter.get("enemy_director", "prefilled_board"))
 	mana_per_turn = int(config.get("mana_per_turn", encounter.get("mana_per_turn", DEFAULT_MANA_PER_TURN)))
 	mana = mana_per_turn
+	enemy_commander_enabled = bool(config.get("enemy_commander_enabled", encounter.get("enemy_commander_enabled", false)))
+	enemy_mana_per_turn = int(config.get("enemy_mana_per_turn", encounter.get("enemy_mana_per_turn", DEFAULT_MANA_PER_TURN))) if enemy_commander_enabled else 0
+	enemy_mana = int(config.get("enemy_mana", encounter.get("enemy_mana", enemy_mana_per_turn))) if enemy_commander_enabled else 0
+	enemy_hand_count = int(config.get("enemy_hand_count", encounter.get("enemy_hand_count", STARTING_HAND_SIZE))) if enemy_commander_enabled else 0
 	player_health = int(config.get("player_health", _hero_health(catalog.player_hero if catalog != null else null, 20)))
 	selected_class_id = str(config.get("class_id", ""))
 	class_passive_unlocked = bool(config.get("class_passive_unlocked", false))
@@ -122,6 +130,10 @@ func get_state() -> Dictionary:
 		"enemy_health": enemy_health,
 		"mana": mana,
 		"mana_per_turn": mana_per_turn,
+		"enemy_commander_enabled": enemy_commander_enabled,
+		"enemy_mana": enemy_mana,
+		"enemy_mana_per_turn": enemy_mana_per_turn,
+		"enemy_hand_count": enemy_hand_count,
 		"deck": deck.duplicate(),
 		"discard": discard.duplicate(),
 		"hand": hand.duplicate(),

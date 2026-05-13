@@ -562,8 +562,11 @@ encounters = Array[Dictionary]([{
 }]]
 }, {
 "display_name": "Mapa 03 - Duelo",
+"enemy_commander_enabled": true,
 "enemy_director": "player_like",
+"enemy_hand_count": 5.0,
 "enemy_health": 16.0,
+"enemy_mana_per_turn": 2.0,
 "enemy_slots_count": 3.0,
 "id": "duelo_inicial",
 "mode": "duelo",
@@ -713,8 +716,11 @@ encounters = Array[Dictionary]([{
 }]]
 }, {
 "display_name": "Mapa 09 - Duelo Elite",
+"enemy_commander_enabled": true,
 "enemy_director": "player_like",
+"enemy_hand_count": 5.0,
 "enemy_health": 24.0,
+"enemy_mana_per_turn": 3.0,
 "enemy_slots_count": 4.0,
 "id": "duelo_elite",
 "mode": "duelo",

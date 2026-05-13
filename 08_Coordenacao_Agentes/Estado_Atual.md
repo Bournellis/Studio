@@ -25,7 +25,7 @@
 
 - Status: **Ativo - Track 01 run linear de 10 mapas validada**
 - Track ativa: `Track 01 - Playable Run Loop` (P05_LINEAR_10_MAP_SLICE_VALIDATED)
-- Baseline atual: checkpoint Godot 4.6.2 com Arcano/Invocador/Necromante, mana inicial 2, decks iniciais sem custo 3, 10 mapas lineares com todos os 6 modos, recompensas automaticas nos mapas 2/3/5/7, combate frontal por lanes, `iniciativa` no lugar de `protecao`/`voadora`, passivas bloqueadas ate mapa 5, ativas bloqueadas ate mapa 7, VisualAssets/ShipHub/RunMap/Battle HUD mantidos, cartas da mao e slots de batalha com badges flutuantes de custo/ATK/HP conforme tipo/estado e validacao verde 44/44
+- Baseline atual: checkpoint Godot 4.6.2 com Arcano/Invocador/Necromante, mana inicial 2, decks iniciais sem custo 3, 10 mapas lineares com todos os 6 modos, recompensas automaticas nos mapas 2/3/5/7, combate frontal por lanes, `iniciativa` no lugar de `protecao`/`voadora`, passivas bloqueadas ate mapa 5, ativas bloqueadas ate mapa 7, VisualAssets/ShipHub/RunMap/Battle HUD mantidos, cartas/slots com badges flutuantes, Battle HUD refeita com HP/mana/recurso objetivo, menu ESC, comando inimigo por flag em duelos e validacao verde 48/48
 - Meta ativa: playtestar a rota completa de 10 mapas, refazer cartas/inimigos e distribuir recompensas restantes
 - Ultima atualizacao do current-status: `2026-05-12`
 - Proximo passo: playtest da rota completa e redesign do catalogo de cartas

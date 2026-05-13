@@ -31,14 +31,15 @@
 - Card text supports simple visual templates backed by mechanical values for obvious current cards.
 - ShipHub now uses 4 primary scene hotspots for Comando, Mapa, Deck, and Almas instead of the previous large grid.
 - RunMap now draws route connections directly over the planet background with compact node labels.
-- Battle now uses a classic cardgame table layout with compact top status, fixed hand area, hover/click detail previews, and a ticker-style combat log.
+- Battle now uses an objective-focused HUD: player HP/mana/resource dock, class-resource visibility by selected class, right-side end-turn button, ESC menu for map/menu/quit, compact log button, and no constant encounter text.
+- Duel encounters now opt into `enemy_commander_enabled`, exposing enemy HP/mana HUD and partial mockup cardbacks while leaving enemy card AI out of scope.
 - VisualAssets now records provisional background/frame debt and only uses frame overlays when `overlay_safe` is true.
 - Screenshot capture tool generates ShipHub/RunMap/Battle screenshots at 1280x720 and 960x540 under `builds/`.
-- Validation green with 44/44 GUT tests and 376 asserts; 37 PNGs are reported missing by design.
+- Validation green with 48/48 GUT tests and 434 asserts; 37 PNGs are reported missing by design.
 
 ## Current Risk
 
-The slice is mechanically playable but not balanced. The 10-map route uses functional enemy mockups, cost 3 cards are temporarily released all at once on map 3, several maps only grant souls, most card art is still absent, Invocador/Necromante frames are not alpha-safe overlays, backgrounds are accepted as provisional 16:9 `1456x816`, and final card/class naming still needs a dedicated content pass.
+The slice is mechanically playable but not balanced. The 10-map route uses functional enemy mockups, cost 3 cards are temporarily released all at once on map 3, several maps only grant souls, most card art is still absent, enemy cardback art is still pending, Invocador/Necromante frames are not alpha-safe overlays, backgrounds are accepted as provisional 16:9 `1456x816`, and final card/class naming still needs a dedicated content pass.
 
 ## Next
 
