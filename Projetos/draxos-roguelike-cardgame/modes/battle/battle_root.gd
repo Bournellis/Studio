@@ -4,15 +4,25 @@ const BattleClassActiveTokenScript = preload("res://ui/controls/battle_class_act
 const BattleHeroTargetControlScript = preload("res://ui/controls/battle_hero_target_control.gd")
 
 var engine: BattleEngine = BattleEngine.new()
-var status_label: Label
+var player_hud_dock: PanelContainer
+var enemy_commander_hud: PanelContainer
+var enemy_cardback_rail: Control
+var objective_chip: Label
+var player_hp_value: Label
+var player_mana_value: Label
+var class_resource_chip: PanelContainer
+var class_resource_label: Label
+var class_resource_value: Label
+var enemy_hp_value: Label
+var enemy_mana_value: Label
 var hero_targets_box: HBoxContainer
 var enemy_slots_box: HBoxContainer
 var player_slots_box: HBoxContainer
 var hand_box: HBoxContainer
-var log_label: Label
 var history_log_label: Label
 var history_panel: PanelContainer
-var map_button: Button
+var end_turn_button: Button
+var esc_menu: PanelContainer
 var class_active_tile
 var necromancer_modal: PanelContainer
 var necromancer_choices_box: VBoxContainer
@@ -49,6 +59,15 @@ func _ready() -> void:
 	_build_ui()
 	_refresh()
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel") or (event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE):
+		_toggle_esc_menu()
+		get_viewport().set_input_as_handled()
+
+func _toggle_esc_menu() -> void:
+	if esc_menu != null:
+		esc_menu.visible = not esc_menu.visible
+
 func _build_ui() -> void:
 	var background: Control = VisualAssets.build_surface_background("battle_board_background")
 	background.name = "BattleVisualBackground"
@@ -74,25 +93,8 @@ func _build_ui() -> void:
 	main_box.add_theme_constant_override("separation", 4 if _is_compact_viewport() else 7)
 	root_margin.add_child(main_box)
 
-	var status_panel: PanelContainer = PanelContainer.new()
-	status_panel.name = "BattleTopStatusBar"
-	status_panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	status_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.045, 0.055, 0.065, 0.62), VisualAssets.surface_accent_color("battle_board_background")))
-	main_box.add_child(status_panel)
-
-	var status_margin: MarginContainer = MarginContainer.new()
-	status_margin.add_theme_constant_override("margin_left", 10)
-	status_margin.add_theme_constant_override("margin_top", 4 if _is_compact_viewport() else 6)
-	status_margin.add_theme_constant_override("margin_right", 10)
-	status_margin.add_theme_constant_override("margin_bottom", 4 if _is_compact_viewport() else 6)
-	status_panel.add_child(status_margin)
-
-	status_label = Label.new()
-	status_label.name = "BattleStatus"
-	status_label.add_theme_font_size_override("font_size", 13)
-	status_label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
-	status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	status_margin.add_child(status_label)
+	enemy_commander_hud = _build_enemy_commander_hud()
+	main_box.add_child(enemy_commander_hud)
 
 	hero_targets_box = HBoxContainer.new()
 	hero_targets_box.name = "BattleHeroTargets"
@@ -129,6 +131,14 @@ func _build_ui() -> void:
 	board_box.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	board_margin.add_child(board_box)
 
+	objective_chip = Label.new()
+	objective_chip.name = "BattleObjectiveChip"
+	objective_chip.visible = false
+	objective_chip.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	objective_chip.add_theme_font_size_override("font_size", 11)
+	objective_chip.add_theme_color_override("font_color", Color(0.98, 0.86, 0.48))
+	objective_chip.add_theme_stylebox_override("normal", _label_chip_style(Color(0.07, 0.06, 0.045, 0.72), Color(0.86, 0.64, 0.22, 0.88)))
+	board_box.add_child(objective_chip)
 	board_box.add_child(hero_targets_box)
 	board_box.add_child(enemy_slots_box)
 	var board_spacer: Control = Control.new()
@@ -157,74 +167,10 @@ func _build_ui() -> void:
 	hand_box.alignment = BoxContainer.ALIGNMENT_CENTER
 	hand_margin.add_child(hand_box)
 
-	var actions: HBoxContainer = HBoxContainer.new()
-	actions.name = "BattleActions"
-	actions.add_theme_constant_override("separation", 8)
-	actions.custom_minimum_size = Vector2(0, _actions_min_height())
-	actions.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	main_box.add_child(actions)
+	player_hud_dock = _build_player_hud_dock()
+	main_box.add_child(player_hud_dock)
 
-	class_active_tile = BattleClassActiveTokenScript.new()
-	class_active_tile.name = "BattleClassActiveTile"
-	class_active_tile.choices_requested.connect(_open_necromancer_modal)
-	class_active_tile.mouse_entered.connect(func() -> void:
-		_schedule_preview(_class_active_preview_data())
-	)
-	class_active_tile.mouse_exited.connect(_hide_preview)
-	actions.add_child(class_active_tile)
-
-	var end_turn_button: Button = Button.new()
-	end_turn_button.name = "BattleEndTurnButton"
-	end_turn_button.text = "Encerrar Turno"
-	end_turn_button.pressed.connect(func() -> void:
-		engine.end_player_turn()
-		selected_hand_index = -1
-		_after_battle_action()
-	)
-	actions.add_child(end_turn_button)
-
-	map_button = Button.new()
-	map_button.name = "BattleBackToRunMapButton"
-	map_button.text = "Voltar ao Mapa"
-	map_button.pressed.connect(func() -> void:
-		get_tree().change_scene_to_file("res://modes/run_map/run_map.tscn")
-	)
-	actions.add_child(map_button)
-
-	var ticker_panel: PanelContainer = PanelContainer.new()
-	ticker_panel.name = "BattleLogTickerPanel"
-	ticker_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	ticker_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	ticker_panel.custom_minimum_size = Vector2(220, 58)
-	ticker_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.04, 0.045, 0.05, 0.58), Color(0.38, 0.45, 0.48, 0.72)))
-	actions.add_child(ticker_panel)
-
-	var ticker_margin: MarginContainer = MarginContainer.new()
-	ticker_margin.add_theme_constant_override("margin_left", 10)
-	ticker_margin.add_theme_constant_override("margin_top", 6)
-	ticker_margin.add_theme_constant_override("margin_right", 10)
-	ticker_margin.add_theme_constant_override("margin_bottom", 6)
-	ticker_margin.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	ticker_panel.add_child(ticker_margin)
-
-	log_label = Label.new()
-	log_label.name = "BattleLogTicker"
-	log_label.text = "Aguardando acao do comandante."
-	log_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	log_label.max_lines_visible = 2
-	log_label.clip_text = true
-	log_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	log_label.add_theme_font_size_override("font_size", 12)
-	log_label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
-	log_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	log_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	ticker_margin.add_child(log_label)
-
-	var history_button: Button = Button.new()
-	history_button.name = "BattleLogHistoryButton"
-	history_button.text = "Log"
-	history_button.pressed.connect(_toggle_history_log)
-	actions.add_child(history_button)
+	_build_floating_end_turn_button()
 
 	history_panel = PanelContainer.new()
 	history_panel.name = "BattleLogHistoryPanel"
@@ -262,6 +208,236 @@ func _build_ui() -> void:
 
 	_build_preview_panel()
 	_build_necromancer_modal()
+	_build_esc_menu()
+
+func _build_enemy_commander_hud() -> PanelContainer:
+	var panel: PanelContainer = PanelContainer.new()
+	panel.name = "BattleEnemyCommanderHud"
+	panel.visible = false
+	panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	panel.add_theme_stylebox_override("panel", _panel_style(Color(0.075, 0.035, 0.04, 0.70), Color(0.62, 0.28, 0.26, 0.82)))
+
+	var margin: MarginContainer = MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 10)
+	margin.add_theme_constant_override("margin_top", 4 if _is_compact_viewport() else 6)
+	margin.add_theme_constant_override("margin_right", 10)
+	margin.add_theme_constant_override("margin_bottom", 3 if _is_compact_viewport() else 5)
+	panel.add_child(margin)
+
+	var row: HBoxContainer = HBoxContainer.new()
+	row.name = "BattleEnemyCommanderRow"
+	row.add_theme_constant_override("separation", 8)
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	margin.add_child(row)
+
+	row.add_child(_build_hud_stat("BattleEnemyHpStat", "HP", "BattleEnemyHpValue", UiTokens.color("hp_enemy", Color(0.82, 0.32, 0.32))))
+	row.add_child(_build_hud_stat("BattleEnemyManaStat", "MANA", "BattleEnemyManaValue", UiTokens.color("energy")))
+
+	enemy_cardback_rail = Control.new()
+	enemy_cardback_rail.name = "BattleEnemyCardbackRail"
+	enemy_cardback_rail.clip_contents = true
+	enemy_cardback_rail.custom_minimum_size = Vector2(210, 32 if _is_compact_viewport() else 40)
+	enemy_cardback_rail.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	row.add_child(enemy_cardback_rail)
+	return panel
+
+func _build_player_hud_dock() -> PanelContainer:
+	var panel: PanelContainer = PanelContainer.new()
+	panel.name = "BattlePlayerHudDock"
+	panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	panel.add_theme_stylebox_override("panel", _panel_style(Color(0.035, 0.045, 0.055, 0.74), Color(0.32, 0.50, 0.54, 0.82)))
+
+	var margin: MarginContainer = MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 8)
+	margin.add_theme_constant_override("margin_top", 4 if _is_compact_viewport() else 6)
+	margin.add_theme_constant_override("margin_right", 8)
+	margin.add_theme_constant_override("margin_bottom", 4 if _is_compact_viewport() else 6)
+	panel.add_child(margin)
+
+	var row: HBoxContainer = HBoxContainer.new()
+	row.name = "BattlePlayerHudRow"
+	row.add_theme_constant_override("separation", 8)
+	margin.add_child(row)
+
+	row.add_child(_build_hud_stat("BattlePlayerHpStat", "HP", "BattlePlayerHpValue", UiTokens.color("hp_player", Color(0.42, 0.82, 0.48))))
+	row.add_child(_build_hud_stat("BattlePlayerManaStat", "MANA", "BattlePlayerManaValue", UiTokens.color("energy")))
+
+	class_resource_chip = _build_class_resource_chip()
+	row.add_child(class_resource_chip)
+
+	class_active_tile = BattleClassActiveTokenScript.new()
+	class_active_tile.name = "BattleClassActiveTile"
+	class_active_tile.choices_requested.connect(_open_necromancer_modal)
+	class_active_tile.mouse_entered.connect(func() -> void:
+		_schedule_preview(_class_active_preview_data())
+	)
+	class_active_tile.mouse_exited.connect(_hide_preview)
+	row.add_child(class_active_tile)
+
+	var spacer: Control = Control.new()
+	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(spacer)
+
+	var history_button: Button = Button.new()
+	history_button.name = "BattleLogHistoryButton"
+	history_button.text = "Log"
+	history_button.tooltip_text = "Abrir historico de combate"
+	history_button.custom_minimum_size = Vector2(54, 38)
+	history_button.pressed.connect(_toggle_history_log)
+	row.add_child(history_button)
+	return panel
+
+func _build_hud_stat(panel_name: String, caption: String, value_name: String, accent: Color) -> PanelContainer:
+	var panel: PanelContainer = PanelContainer.new()
+	panel.name = panel_name
+	panel.custom_minimum_size = Vector2(88 if _is_compact_viewport() else 104, 40 if _is_compact_viewport() else 48)
+	panel.add_theme_stylebox_override("panel", _hud_stat_style(accent))
+
+	var box: VBoxContainer = VBoxContainer.new()
+	box.alignment = BoxContainer.ALIGNMENT_CENTER
+	box.add_theme_constant_override("separation", 0)
+	panel.add_child(box)
+
+	var label: Label = Label.new()
+	label.text = caption
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 8)
+	label.add_theme_color_override("font_color", Color(0.72, 0.78, 0.80))
+	box.add_child(label)
+
+	var value: Label = Label.new()
+	value.name = value_name
+	value.text = "0"
+	value.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	value.add_theme_font_size_override("font_size", 18 if _is_compact_viewport() else 22)
+	value.add_theme_color_override("font_color", Color(0.98, 0.96, 0.88))
+	box.add_child(value)
+	if value_name == "BattlePlayerHpValue":
+		player_hp_value = value
+	elif value_name == "BattlePlayerManaValue":
+		player_mana_value = value
+	elif value_name == "BattleEnemyHpValue":
+		enemy_hp_value = value
+	elif value_name == "BattleEnemyManaValue":
+		enemy_mana_value = value
+	return panel
+
+func _build_class_resource_chip() -> PanelContainer:
+	var panel: PanelContainer = PanelContainer.new()
+	panel.name = "BattleClassResourceChip"
+	panel.visible = false
+	panel.custom_minimum_size = Vector2(92 if _is_compact_viewport() else 116, 40 if _is_compact_viewport() else 48)
+	panel.add_theme_stylebox_override("panel", _hud_stat_style(Color(0.64, 0.42, 0.86)))
+
+	var box: VBoxContainer = VBoxContainer.new()
+	box.alignment = BoxContainer.ALIGNMENT_CENTER
+	box.add_theme_constant_override("separation", 0)
+	panel.add_child(box)
+
+	class_resource_label = Label.new()
+	class_resource_label.name = "BattleClassResourceLabel"
+	class_resource_label.text = ""
+	class_resource_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	class_resource_label.add_theme_font_size_override("font_size", 8)
+	class_resource_label.add_theme_color_override("font_color", Color(0.84, 0.78, 0.92))
+	box.add_child(class_resource_label)
+
+	class_resource_value = Label.new()
+	class_resource_value.name = "BattleClassResourceValue"
+	class_resource_value.text = ""
+	class_resource_value.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	class_resource_value.add_theme_font_size_override("font_size", 18 if _is_compact_viewport() else 22)
+	class_resource_value.add_theme_color_override("font_color", Color(0.98, 0.96, 0.88))
+	box.add_child(class_resource_value)
+	return panel
+
+func _build_floating_end_turn_button() -> void:
+	end_turn_button = Button.new()
+	end_turn_button.name = "BattleEndTurnFloatingButton"
+	end_turn_button.text = "Encerrar\nTurno"
+	end_turn_button.tooltip_text = "Resolver o turno atual"
+	end_turn_button.custom_minimum_size = Vector2(104 if _is_compact_viewport() else 122, 58 if _is_compact_viewport() else 70)
+	end_turn_button.anchor_left = 1.0
+	end_turn_button.anchor_top = 0.5
+	end_turn_button.anchor_right = 1.0
+	end_turn_button.anchor_bottom = 0.5
+	end_turn_button.offset_left = -118.0 if _is_compact_viewport() else -140.0
+	end_turn_button.offset_top = -28.0 if _is_compact_viewport() else -35.0
+	end_turn_button.offset_right = -10.0 if _is_compact_viewport() else -14.0
+	end_turn_button.offset_bottom = 30.0 if _is_compact_viewport() else 35.0
+	end_turn_button.pressed.connect(func() -> void:
+		engine.end_player_turn()
+		selected_hand_index = -1
+		_after_battle_action()
+	)
+	add_child(end_turn_button)
+
+func _build_esc_menu() -> void:
+	esc_menu = PanelContainer.new()
+	esc_menu.name = "BattleEscMenu"
+	esc_menu.visible = false
+	esc_menu.anchor_left = 0.5
+	esc_menu.anchor_top = 0.5
+	esc_menu.anchor_right = 0.5
+	esc_menu.anchor_bottom = 0.5
+	esc_menu.offset_left = -160.0
+	esc_menu.offset_top = -128.0
+	esc_menu.offset_right = 160.0
+	esc_menu.offset_bottom = 128.0
+	esc_menu.custom_minimum_size = Vector2(320, 256)
+	esc_menu.add_theme_stylebox_override("panel", _panel_style(Color(0.045, 0.05, 0.06, 0.94), Color(0.68, 0.58, 0.38, 0.95)))
+	add_child(esc_menu)
+
+	var margin: MarginContainer = MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 14)
+	margin.add_theme_constant_override("margin_top", 12)
+	margin.add_theme_constant_override("margin_right", 14)
+	margin.add_theme_constant_override("margin_bottom", 12)
+	esc_menu.add_child(margin)
+
+	var box: VBoxContainer = VBoxContainer.new()
+	box.name = "BattleEscMenuActions"
+	box.add_theme_constant_override("separation", 8)
+	margin.add_child(box)
+
+	var title: Label = Label.new()
+	title.name = "BattleEscMenuTitle"
+	title.text = "Pausa"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 20)
+	title.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+	box.add_child(title)
+
+	var resume_button: Button = _build_esc_button("BattleEscResumeButton", "Retomar")
+	resume_button.pressed.connect(func() -> void:
+		esc_menu.visible = false
+	)
+	box.add_child(resume_button)
+
+	var map_button: Button = _build_esc_button("BattleEscBackToRunMapButton", "Voltar ao Mapa")
+	map_button.pressed.connect(func() -> void:
+		get_tree().change_scene_to_file("res://modes/run_map/run_map.tscn")
+	)
+	box.add_child(map_button)
+
+	var boot_button: Button = _build_esc_button("BattleEscMainMenuButton", "Menu Principal")
+	boot_button.pressed.connect(func() -> void:
+		get_tree().change_scene_to_file("res://modes/boot/boot.tscn")
+	)
+	box.add_child(boot_button)
+
+	var quit_button: Button = _build_esc_button("BattleEscQuitButton", "Fechar Jogo")
+	quit_button.pressed.connect(func() -> void:
+		get_tree().quit()
+	)
+	box.add_child(quit_button)
+
+func _build_esc_button(node_name: String, text: String) -> Button:
+	var button: Button = Button.new()
+	button.name = node_name
+	button.text = text
+	button.custom_minimum_size = Vector2(0, 38)
+	return button
 
 func _build_preview_panel() -> void:
 	preview_timer = Timer.new()
@@ -343,20 +519,9 @@ func _build_necromancer_modal() -> void:
 
 func _refresh() -> void:
 	var state: Dictionary = engine.get_state()
-	status_label.text = "%s | %s | Classe %s | Mana %d/%d | Vida %d | Inimigo %d | Fluxo %d | Cinzas %d | Onda %d/%d | Resultado: %s" % [
-		str(current_encounter.get("display_name", "Encontro")),
-		engine.get_mode_label(),
-		RunSession.selected_class_display_name,
-		int(state.get("mana", 0)),
-		int(state.get("mana_per_turn", 0)),
-		int(state.get("player_health", 0)),
-		int(state.get("enemy_health", 0)),
-		int(state.get("flow", 0)),
-		int(state.get("ashes", 0)),
-		int(state.get("wave_index", 0)),
-		int(state.get("waves_total", 0)),
-		str(state.get("outcome", ""))
-	]
+	_refresh_player_hud(state)
+	_refresh_enemy_commander_hud(state)
+	_refresh_objective_chip(state)
 	_rebuild_hero_targets(state)
 	_rebuild_slots(enemy_slots_box, Array(state.get("enemy_slots", [])), BattleEngine.ENEMY_ID)
 	_rebuild_slots(player_slots_box, Array(state.get("player_slots", [])), BattleEngine.PLAYER_ID)
@@ -364,20 +529,85 @@ func _refresh() -> void:
 	_refresh_class_active_tile()
 	_refresh_necromancer_modal()
 	var log_entries: Array = Array(state.get("log", []))
-	log_label.text = _latest_log_text(log_entries)
 	if history_log_label != null:
 		history_log_label.text = "\n".join(log_entries)
-	if map_button != null and engine.outcome == "vitoria":
-		map_button.text = "Continuar no Mapa"
+	if end_turn_button != null:
+		end_turn_button.disabled = engine.outcome != ""
 
-func _latest_log_text(log_entries: Array) -> String:
-	if log_entries.is_empty():
-		return "Aguardando acao do comandante."
-	for index: int in range(log_entries.size() - 1, -1, -1):
-		var entry: String = str(log_entries[index]).strip_edges()
-		if entry != "":
-			return entry
-	return "Aguardando acao do comandante."
+func _refresh_player_hud(state: Dictionary) -> void:
+	if player_hp_value != null:
+		player_hp_value.text = str(int(state.get("player_health", 0)))
+	if player_mana_value != null:
+		player_mana_value.text = "%d/%d" % [int(state.get("mana", 0)), int(state.get("mana_per_turn", 0))]
+	if class_resource_chip == null:
+		return
+	var resource: Dictionary = _class_resource_data(state)
+	class_resource_chip.visible = not resource.is_empty()
+	if resource.is_empty():
+		if class_resource_label != null:
+			class_resource_label.text = ""
+		if class_resource_value != null:
+			class_resource_value.text = ""
+		return
+	class_resource_label.text = str(resource.get("label", ""))
+	class_resource_value.text = str(resource.get("value", "0"))
+
+func _refresh_enemy_commander_hud(state: Dictionary) -> void:
+	var enabled: bool = bool(state.get("enemy_commander_enabled", false))
+	if enemy_commander_hud != null:
+		enemy_commander_hud.visible = enabled
+	if enemy_hp_value != null:
+		enemy_hp_value.text = str(int(state.get("enemy_health", 0)))
+	if enemy_mana_value != null:
+		enemy_mana_value.text = "%d/%d" % [int(state.get("enemy_mana", 0)), int(state.get("enemy_mana_per_turn", 0))]
+	_rebuild_enemy_cardbacks(int(state.get("enemy_hand_count", 0)) if enabled else 0)
+
+func _refresh_objective_chip(state: Dictionary) -> void:
+	if objective_chip == null:
+		return
+	var text: String = _objective_text(state)
+	objective_chip.text = text
+	objective_chip.visible = text != ""
+
+func _class_resource_data(state: Dictionary) -> Dictionary:
+	match RunSession.selected_class_id:
+		"arcano":
+			if RunSession.class_passive_unlocked:
+				return {"label": "Fluxo", "value": int(state.get("flow", 0))}
+		"necromante":
+			if RunSession.class_passive_unlocked or RunSession.class_active_unlocked or int(state.get("ashes", 0)) > 0:
+				return {"label": "Cinzas", "value": int(state.get("ashes", 0))}
+	return {}
+
+func _objective_text(state: Dictionary) -> String:
+	var mode: String = str(state.get("mode", ""))
+	match mode:
+		BattleEngine.MODE_WAVES:
+			var total_waves: int = int(state.get("waves_total", 0))
+			if total_waves > 0:
+				return "Onda %d/%d" % [int(state.get("wave_index", 0)), total_waves]
+		BattleEngine.MODE_DEFENSE_POSITION:
+			return "Defenda %d/%d" % [int(state.get("survived_turns", 0)), int(state.get("required_defense_turns", 0))]
+		BattleEngine.MODE_SURVIVE_TURNS:
+			return "Sobreviva %d/%d" % [int(state.get("survived_turns", 0)), int(state.get("required_survive_turns", 0))]
+		BattleEngine.MODE_SUMMONER_BOSS:
+			return "Chefe HP %d" % int(state.get("enemy_health", 0))
+	if bool(state.get("enemy_commander_enabled", false)):
+		return "Derrote o Comandante"
+	return ""
+
+func _rebuild_enemy_cardbacks(count: int) -> void:
+	if enemy_cardback_rail == null:
+		return
+	for child: Node in enemy_cardback_rail.get_children():
+		child.queue_free()
+	for index: int in range(count):
+		var cardback: PanelContainer = PanelContainer.new()
+		cardback.name = "BattleEnemyCardback%d" % index
+		cardback.custom_minimum_size = Vector2(42 if _is_compact_viewport() else 52, 64 if _is_compact_viewport() else 78)
+		cardback.position = Vector2(index * (28 if _is_compact_viewport() else 36), -32 if _is_compact_viewport() else -38)
+		cardback.add_theme_stylebox_override("panel", _cardback_style())
+		enemy_cardback_rail.add_child(cardback)
 
 func _toggle_history_log() -> void:
 	if history_panel != null:
@@ -717,6 +947,56 @@ func _hero_display_name(owner_id: String) -> String:
 		return str(catalog.enemy_hero.display_name)
 	return "Heroi"
 
+func _hud_stat_style(accent: Color) -> StyleBoxFlat:
+	var style: StyleBoxFlat = StyleBoxFlat.new()
+	style.bg_color = Color(0.02, 0.025, 0.032, 0.86)
+	style.border_color = Color(accent.r, accent.g, accent.b, 0.88)
+	style.border_width_left = 1
+	style.border_width_top = 1
+	style.border_width_right = 1
+	style.border_width_bottom = 1
+	style.corner_radius_top_left = 6
+	style.corner_radius_top_right = 6
+	style.corner_radius_bottom_left = 6
+	style.corner_radius_bottom_right = 6
+	style.content_margin_left = 8
+	style.content_margin_top = 4
+	style.content_margin_right = 8
+	style.content_margin_bottom = 4
+	return style
+
+func _label_chip_style(fill: Color, border: Color) -> StyleBoxFlat:
+	var style: StyleBoxFlat = StyleBoxFlat.new()
+	style.bg_color = fill
+	style.border_color = border
+	style.border_width_left = 1
+	style.border_width_top = 1
+	style.border_width_right = 1
+	style.border_width_bottom = 1
+	style.corner_radius_top_left = 6
+	style.corner_radius_top_right = 6
+	style.corner_radius_bottom_left = 6
+	style.corner_radius_bottom_right = 6
+	style.content_margin_left = 12
+	style.content_margin_top = 4
+	style.content_margin_right = 12
+	style.content_margin_bottom = 4
+	return style
+
+func _cardback_style() -> StyleBoxFlat:
+	var style: StyleBoxFlat = StyleBoxFlat.new()
+	style.bg_color = Color(0.035, 0.028, 0.055, 0.94)
+	style.border_color = Color(0.62, 0.46, 0.88, 0.92)
+	style.border_width_left = 2
+	style.border_width_top = 2
+	style.border_width_right = 2
+	style.border_width_bottom = 2
+	style.corner_radius_top_left = 6
+	style.corner_radius_top_right = 6
+	style.corner_radius_bottom_left = 6
+	style.corner_radius_bottom_right = 6
+	return style
+
 func _panel_style(fill: Color, border: Color) -> StyleBoxFlat:
 	var style: StyleBoxFlat = StyleBoxFlat.new()
 	style.bg_color = fill
@@ -753,9 +1033,6 @@ func _board_min_height() -> float:
 
 func _board_center_space() -> float:
 	return 4.0 if _is_compact_viewport() else 16.0
-
-func _actions_min_height() -> float:
-	return 46.0 if _is_compact_viewport() else 58.0
 
 func _first_available_node_id() -> String:
 	for node: Dictionary in Array(ContentLibrary.get_run_map().get("nodes", [])):
