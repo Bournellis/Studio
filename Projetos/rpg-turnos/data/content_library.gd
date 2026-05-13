@@ -110,4 +110,8 @@ func get_class_starter_deck_ids(class_id: String) -> Array:
 	if not starter_deck is Array:
 		return []
 	var result: Array = []
-	for
+	for card_id: Variant in starter_deck:
+		var normalized_id: String = str(card_id)
+		if normalized_id != "":
+			result.append(normalized_id)
+	return result

@@ -241,4 +241,39 @@ func _panel_style(fill: Color) -> StyleBoxFlat:
 	style.border_color = Color(0.24, 0.28, 0.3)
 	style.border_width_left = 2
 	style.border_width_top = 2
-	style.b
+	style.border_width_right = 2
+	style.border_width_bottom = 2
+	style.corner_radius_top_left = 8
+	style.corner_radius_top_right = 8
+	style.corner_radius_bottom_left = 8
+	style.corner_radius_bottom_right = 8
+	style.content_margin_left = 16
+	style.content_margin_top = 12
+	style.content_margin_right = 16
+	style.content_margin_bottom = 12
+	return style
+
+func _build_art_nodes() -> void:
+	var map_environment_sprite: Sprite2D = Sprite2D.new()
+	map_environment_sprite.name = "map_environment"
+	map_environment_sprite.texture = AssetIds.texture("map_environment")
+	map_environment_sprite.position = MAP_RECT.get_center()
+	if map_environment_sprite.texture != null:
+		map_environment_sprite.scale = MAP_RECT.size / Vector2(map_environment_sprite.texture.get_size())
+	add_child(map_environment_sprite)
+
+	marker_nodes = Node2D.new()
+	marker_nodes.name = "marker_nodes"
+	add_child(marker_nodes)
+	for marker: Dictionary in ENCOUNTER_MARKERS:
+		var marker_node: Sprite2D = Sprite2D.new()
+		marker_node.name = str(marker.get("id", "marker"))
+		marker_node.texture = AssetIds.texture("marker_encounter_active")
+		marker_node.position = Vector2(marker.get("position", Vector2.ZERO))
+		marker_nodes.add_child(marker_node)
+
+	player_sprite = Sprite2D.new()
+	player_sprite.name = "player_sprite"
+	player_sprite.texture = AssetIds.texture("player_token")
+	player_sprite.position = player_position
+	add_child(player_sprite)

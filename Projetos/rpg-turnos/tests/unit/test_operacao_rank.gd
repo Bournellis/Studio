@@ -161,10 +161,10 @@ func _complete_n_encounters(n: int) -> void:
 		"enc_a", "enc_b", "enc_c", "enc_d", "enc_e",
 		"enc_f", "enc_g", "enc_h", "enc_i", "enc_j"
 	]
+	var offset: int = GameSession.completed_encounter_ids.size()
 	for i: int in range(n):
-		GameSession.active_encounter_id = fake_ids[i % fake_ids.size()] + str(i)
-		# Avoid duplicate ids by appending index
-		var unique_id: String = fake_ids[i % fake_ids.size()] + str(i)
+		var unique_index: int = offset + i
+		var unique_id: String = fake_ids[unique_index % fake_ids.size()] + str(unique_index)
 		GameSession.active_encounter_id = unique_id
 		if not GameSession.completed_encounter_ids.has(unique_id):
 			GameSession.complete_encounter("test %d" % i)

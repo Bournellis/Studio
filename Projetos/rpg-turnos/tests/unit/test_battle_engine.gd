@@ -155,7 +155,7 @@ func test_ondas_starts_first_wave_without_enemy_hero() -> void:
 	assert_eq(engine.wave_index, 0)
 	assert_eq(engine.wave_count, 2)
 	assert_eq(engine.get_wave_label(), "Onda 1/2")
-	assert_eq(str(engine.enemy_slots[0].get("card_id", "")), "goblin_ponte")
+	assert_eq(str(engine.enemy_slots[0].get("card_id", "")), "ladrao_rapido")
 	assert_eq(str(engine.enemy_slots[1].get("card_id", "")), "ladrao_rapido")
 	assert_eq(str(engine.enemy_slots[2].get("card_id", "")), "arqueiro_ponte")
 
@@ -205,7 +205,7 @@ func test_defesa_starts_without_enemy_hero_and_tracks_turn_limit() -> void:
 	assert_eq(engine.defense_turn_limit, 2)
 	assert_eq(engine.defense_turns_survived, 0)
 	assert_eq(engine.get_defense_label(), "Defesa 0/2")
-	assert_eq(str(engine.enemy_slots[0].get("card_id", "")), "goblin_ponte")
+	assert_eq(str(engine.enemy_slots[0].get("card_id", "")), "lobo_alfa")
 	assert_eq(str(engine.enemy_slots[2].get("card_id", "")), "ladrao_rapido")
 	assert_eq(str(engine.enemy_slots[5].get("card_id", "")), "atirador_torre")
 

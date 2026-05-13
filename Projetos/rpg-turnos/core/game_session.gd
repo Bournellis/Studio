@@ -298,4 +298,31 @@ func get_rank_display_name() -> String:
 
 # --- Class selection ---
 
-func selec
+func select_class(class_id: String) -> bool:
+	ContentLibrary.ensure_loaded()
+	if class_id == "":
+		return false
+	if ContentLibrary.get_class_definition(class_id).is_empty():
+		return false
+	selected_class = class_id
+	return true
+
+func has_selected_class() -> bool:
+	return selected_class != ""
+
+func get_class_deck_ids() -> Array:
+	if has_selected_class():
+		var deck: Array = ContentLibrary.get_class_starter_deck_ids(selected_class)
+		if not deck.is_empty():
+			return deck
+	# Fallback: generic starter deck for saves without a selected class
+	return ContentLibrary.get_starter_deck_ids()
+
+func initialize_deck_for_class() -> void:
+	if not has_selected_class():
+		return
+	var deck: Array = ContentLibrary.get_class_starter_deck_ids(selected_class)
+	if deck.is_empty():
+		return
+	unlocked_card_ids = deck.duplicate()
+	selected_deck_ids = deck.duplicate()

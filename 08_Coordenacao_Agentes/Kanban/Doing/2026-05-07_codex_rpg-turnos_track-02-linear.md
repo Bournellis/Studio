@@ -78,4 +78,72 @@ Proximo prompt: `P19 - New Content Expansion Cluster`.
 - [x] P12: Necromante totalmente jogavel end-to-end como terceira classe completa.
 - [x] P12: `test_on_death_triggers.gd` com 13 testes.
 - [ ] P12: regenerar `.tres` e rodar validacao localmente.
-- [x] P13: 4 testes de integracao Necromante adicionados a `test_content_and_session.gd` (display_name Ritual das Sombras, action ritual_das_sombras, 3 tiers, p
+- [x] P13: 4 testes de integracao Necromante adicionados a `test_content_and_session.gd` (display_name Ritual das Sombras, action ritual_das_sombras, 3 tiers, passiva colheita_sombria).
+- [x] P13: todas as 3 classes (Invocador, Arcano, Necromante) com cobertura paralela de testes de integracao em `test_content_and_session.gd`.
+- [x] P13: records atualizados (linear-execution-plan, track current-status, current-status, Estado_Atual, Kanban).
+- [x] P13: validacao Godot pendente (rodar localmente).
+- [x] P14: `test_multi_class_regression.gd` criado com 21 testes de regressao:
+      startup correto para as 3 classes, ciclo de turno completo, fluxo reseta para Arcano,
+      cinzas persiste para Necromante, nenhum hero power requer heroi inimigo fora de duelo,
+      starter deck de 20 cartas com todas as cartas existentes no catalogo para as 3 classes.
+- [x] P14: Stage 2 de implementacao de classes bloqueado como novo baseline.
+- [x] P14: records atualizados (linear-execution-plan P14 complete cursor -> P15, track current-status, current-status, Estado_Atual, Kanban).
+- [ ] P14: validacao Godot pendente (rodar localmente com regeneracao de .tres).
+- [x] P15: Design decision — dois problemas mais bloqueantes para test play identificados e corrigidos juntos.
+- [x] P15: `battle_root.gd` — `class_state_label` adicionado ao header; `_update_class_state_display()` mostra "Fluxo: N" para Arcano e "Cinzas: N | Memorial: N carta(s)" para Necromante.
+- [x] P15: `battle_root.gd` — `_hero_power_needs_targeting()` atualizado para retornar true para `action == "ritual_das_sombras"`.
+- [x] P15: `battle_root.gd` — `_rebuild_hero_power_targets()` roteia ritual_das_sombras para `_build_ritual_tier_buttons()`; Ritual I/II/III com botoes por tier baseados em cinzas e memorial; callbacks `_on_ritual_i/ii/iii_pressed` adicionados.
+- [x] P15: `battle_slot_control.gd` — linha de stats do slot agora mostra "Enjoo xN" e "Queimando" quando presentes.
+- [ ] P15: validacao Godot pendente (UI-only, sem novos testes; rodar localmente).
+- [x] P16: campo `mission` adicionado a todos os 11 encontros em `slice_catalog.json` com proposito operacional Draxos.
+- [x] P16: `docs/lore-campaign.md` atualizado: nomes das 5 classes antigas removidos, Invocador/Arcano/Necromante documentados como classes ativas, secao Encounter Arc adicionada.
+- [x] P16: rewards existentes revisados — distribuicao adequada, sem alteracoes necessarias.
+- [x] P16: IDs tecnicos mantidos estaveis.
+- [x] P16: records atualizados (linear-execution-plan P16 complete cursor -> P17, track current-status, current-status, Estado_Atual, Kanban).
+- [ ] P16: regenerar `.tres` localmente para expor campo `mission` (tambem incorpora on_death do P12).
+- [x] P17: `operacao_rank: int` adicionado ao `GameSession` com save/load retrocompativel e clamp 0-3.
+- [x] P17: auto-avanco via `_check_rank_advancement()` em `complete_encounter()`: >=1 → Agente, >=3 → Operativo, >=6 → Comandante.
+- [x] P17: `get_rank_display_name()` expoe string do rank (Recruta/Agente/Operativo/Comandante).
+- [x] P17: rank preservado no snapshot pre-combate.
+- [x] P17: `world_root.gd` — 3 encontros laterais adicionados ao ENCOUNTER_MARKERS com gate de rank: `patrulha_avancada` (rank 1), `duelista_sombrio` (rank 2), `emboscada_reforcos` (rank 3).
+- [x] P17: `_marker_available()` extendido para verificar `min_rank`; status text mostra "Requer: Operativo" etc.
+- [x] P17: dialogo NPC prefixado com rank; `rank_label` no topo do mapa mostra rank atual.
+- [x] P17: `test_operacao_rank.gd` com 18 testes cobrindo todos os thresholds, save/load, retrocompat, snapshot e gates dos 3 encontros laterais.
+- [x] P17: records atualizados (linear-execution-plan P17 complete cursor -> P18, track current-status, current-status, Estado_Atual, Kanban).
+- [ ] P17: validacao Godot pendente (rodar localmente).
+- [x] P18: `class_pressure` adicionado a 7 encontros cobrindo todas as 3 classes.
+- [x] P18: `defesa_do_portao` slot 0 → lobo_alfa; `invasao_em_ondas` wave 1 slot 0 → ladrao_rapido.
+- [x] P18: `ContentLibrary.get_all_encounters()` adicionado.
+- [x] P18: 6 novos testes de catalogo em `test_content_and_session.gd`.
+- [x] P18: records atualizados (linear-execution-plan cursor → P19, track current-status, current-status, Estado_Atual, Kanban).
+- [ ] P18: regenerar `.tres` e rodar validacao localmente.
+
+## Regras De Registro
+
+- Atualizar o cursor e status do prompt em `linear-execution-plan.md`.
+- Atualizar `Projetos/rpg-turnos/implementation/current-status.md` quando o baseline, proximo passo ou validacao mudarem.
+- Atualizar `Projetos/rpg-turnos/implementation/tracks/track-02-draxos-lore-progression/current-status.md` quando o status da track mudar.
+- Atualizar `08_Coordenacao_Agentes/Estado_Atual.md` quando o snapshot observavel do projeto mudar.
+- Rodar validacao Godot apos mudancas de runtime, dados, cenas, recursos gerados ou testes.
+
+## P18 - Concluido
+
+- [x] `class_pressure` adicionado a 7 encontros em `slice_catalog.json` cobrindo Invocador/Arcano/Necromante.
+- [x] `defesa_do_portao` slot 0 alterado para `lobo_alfa` (pressao atropelar no Invocador).
+- [x] `invasao_em_ondas` wave 1 slot 0 alterado para `ladrao_rapido` (pressao dupla-rapido no Arcano).
+- [x] `ContentLibrary.get_all_encounters()` adicionado.
+- [x] 6 testes de catalogo P18 adicionados a `test_content_and_session.gd`.
+- [x] Records atualizados (linear-execution-plan P18 complete cursor → P19, track current-status, current-status, Estado_Atual, Kanban).
+- [ ] Regenerar `.tres` e rodar validacao localmente (incorpora on_death/P12, mission/P16, class_pressure/P18).
+
+## Proximo Passo
+
+Executar P19 - New Content Expansion Cluster:
+
+1. Regenerar `.tres` localmente (`tools/content_generator.gd`) para incorporar `mission` (P16) e `on_death` (P12).
+2. Rodar validacao completa — espera-se ~211 testes verdes (193 baseline + 18 novos P17).
+3. Identificar fraqueza de cada classe (Invocador, Arcano, Necromante).
+4. Adicionar ou ajustar pelo menos um encontro que pressione cada fraqueza.
+5. Usar modos existentes antes de adicionar novas regras.
+6. Adicionar testes para novas suposicoes de objetivo/dados.
+7. Atualizar records e cursor para P19.

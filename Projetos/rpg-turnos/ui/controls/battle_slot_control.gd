@@ -134,4 +134,15 @@ func _chip_color() -> Color:
 func _slot_fill() -> Color:
 	if bool(visual_state.get("is_attack_source", false)):
 		return Color(0.18, 0.17, 0.09)
-	if b
+	if bool(visual_state.get("is_attack_target", false)):
+		return Color(0.2, 0.1, 0.09)
+	if bool(visual_state.get("is_empty", false)):
+		return Color(0.07, 0.085, 0.09) if slot_owner == "player" else Color(0.1, 0.075, 0.08)
+	return Color(0.1, 0.12, 0.13) if slot_owner == "player" else Color(0.15, 0.1, 0.11)
+
+func _slot_border() -> Color:
+	if bool(visual_state.get("is_attack_source", false)):
+		return Color(0.95, 0.72, 0.26)
+	if bool(visual_state.get("is_attack_target", false)):
+		return Color(0.95, 0.44, 0.34)
+	return Color(0.32, 0.5, 0.48) if slot_owner == "player" else Color(0.56, 0.32, 0.34)

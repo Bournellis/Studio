@@ -79,7 +79,7 @@ func test_cinzas_increments_on_ally_creature_death() -> void:
 	_place_enemy(engine, "goblin_ponte", 0)          # 2 ATK / 2 HP
 
 	# Lobo attacks goblin: lobo takes 2 damage (dies), goblin takes 3 damage (also dies).
-	var result: Dictionary = engine.attack_with_unit(0)
+	var result: Dictionary = engine.attack_with_unit("jogador", 0, {"owner": "inimigo", "slot": 0})
 
 	assert_true(bool(result.get("ok", false)), "attack_with_unit should succeed.")
 	# Both died — cinzas should be 2.
@@ -174,7 +174,7 @@ func test_memorial_records_both_sides() -> void:
 	_place_ally(engine, "lobo_faminto", 0, true)  # 3/1 — dies from goblin 2 ATK
 	_place_enemy(engine, "goblin_ponte", 0)        # 2/2 — dies from lobo 3 ATK
 
-	engine.attack_with_unit(0)
+	engine.attack_with_unit("jogador", 0, {"owner": "inimigo", "slot": 0})
 
 	assert_eq(engine.memorial_de_batalha.size(), 2, "Memorial must record both the ally and enemy deaths.")
 

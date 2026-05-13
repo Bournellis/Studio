@@ -777,4 +777,115 @@ func _build_ritual_tier_buttons(can_use: bool) -> void:
 			btn.add_theme_font_size_override("font_size", 12)
 			btn.disabled = not can_use or cinzas_now < cost_i
 			btn.tooltip_text = "Custo: %d Cinzas | Enjoo estendido em %s" % [cost_i, slot_lbl]
-			btn.pressed.connect(_on_ri
+			btn.pressed.connect(_on_ritual_i_pressed.bind(slot_index))
+			hero_power_targets_row.add_child(btn)
+
+	# Degrau II (4 Cinzas): spawn 1/1 token from memorial, auto-slot.
+	if tiers_data.size() >= 2:
+		var cost_ii: int = int(Dictionary(tiers_data[1]).get("cinzas_cost", 4))
+		var btn_ii: Button = Button.new()
+		btn_ii.text = "Ritual II (1/1)"
+		btn_ii.custom_minimum_size = Vector2(0, 36)
+		btn_ii.add_theme_font_size_override("font_size", 12)
+		btn_ii.disabled = not can_use or cinzas_now < cost_ii or memorial_size == 0
+		btn_ii.tooltip_text = "Custo: %d Cinzas | Invoca 1/1 do Memorial (%d disponivel)" % [cost_ii, memorial_size]
+		btn_ii.pressed.connect(_on_ritual_ii_pressed)
+		hero_power_targets_row.add_child(btn_ii)
+
+	# Degrau III (6 Cinzas): spawn with original stats from memorial, auto-slot.
+	if tiers_data.size() >= 3:
+		var cost_iii: int = int(Dictionary(tiers_data[2]).get("cinzas_cost", 6))
+		var btn_iii: Button = Button.new()
+		btn_iii.text = "Ritual III (stats)"
+		btn_iii.custom_minimum_size = Vector2(0, 36)
+		btn_iii.add_theme_font_size_override("font_size", 12)
+		btn_iii.disabled = not can_use or cinzas_now < cost_iii or memorial_size == 0
+		btn_iii.tooltip_text = "Custo: %d Cinzas | Stats originais do Memorial (%d disponivel)" % [cost_iii, memorial_size]
+		btn_iii.pressed.connect(_on_ritual_iii_pressed)
+		hero_power_targets_row.add_child(btn_iii)
+
+	# Fall back to disabled hero_power_button when no tiers are reachable.
+	if hero_power_targets_row.get_child_count() == 0:
+		hero_power_button.visible = true
+		hero_power_button.disabled = true
+		hero_power_targets_row.visible = false
+
+func _on_ritual_i_pressed(slot_index: int) -> void:
+	var result: Dictionary = engine.use_player_hero_power({
+		"tier": 1,
+		"debuff": "enjoo_estendido",
+		"owner": "inimigo",
+		"slot": slot_index
+	})
+	_record_action_feedback(result)
+	call_deferred("_refresh")
+
+func _on_ritual_ii_pressed() -> void:
+	var result: Dictionary = engine.use_player_hero_power({
+		"tier": 2,
+		"memorial_index": 0,
+		"slot": -1
+	})
+	_record_action_feedback(result)
+	call_deferred("_refresh")
+
+func _on_ritual_iii_pressed() -> void:
+	var result: Dictionary = engine.use_player_hero_power({
+		"tier": 3,
+		"memorial_index": 0,
+		"slot": -1
+	})
+	_record_action_feedback(result)
+	call_deferred("_refresh")
+
+func _on_hero_power_own_slot_pressed(slot_index: int) -> void:
+	var result: Dictionary = engine.use_player_hero_power({"owner": "jogador", "slot": slot_index})
+	_record_action_feedback(result)
+	call_deferred("_refresh")
+
+func _on_hero_power_enemy_slot_pressed(slot_index: int) -> void:
+	var result: Dictionary = engine.use_player_hero_power({"owner": "inimigo", "slot": slot_index})
+	_record_action_feedback(result)
+	call_deferred("_refresh")
+
+func _on_hero_power_enemy_hero_pressed() -> void:
+	var result: Dictionary = engine.use_player_hero_power({"owner": "inimigo", "slot": -1})
+	_record_action_feedback(result)
+	call_deferred("_refresh")
+
+func _finish_battle() -> void:
+	if engine.outcome == "victory":
+		var summary: String = "A emboscada foi vencida no encontro de teste."
+		if engine.encounter_id == "duelista_bandido":
+			summary = "O Guardiao Elemental foi derrotado em confronto."
+		elif engine.encounter_id == "invasao_em_ondas":
+			summary = "A invasao em ondas foi repelida."
+		elif engine.encounter_id == "defesa_do_portao":
+			summary = "O portao resistiu ao ataque inimigo."
+		elif engine.encounter_id == "colosso_fragmentado":
+			summary = "O Colosso Fragmentado perdeu todas as partes vitais."
+		elif engine.encounter_id == "enigma_da_ponte":
+			summary = "A ruptura de selos foi resolvida."
+		GameSession.complete_encounter(summary)
+		GameSession.save_game()
+	else:
+		GameSession.record_defeat("O heroi caiu; o estado pre-combate sera restaurado.")
+	get_tree().change_scene_to_file("res://modes/battle/result.tscn")
+
+func _panel_style(fill: Color) -> StyleBoxFlat:
+	var style: StyleBoxFlat = StyleBoxFlat.new()
+	style.bg_color = fill
+	style.border_color = Color(0.26, 0.3, 0.32)
+	style.border_width_left = 2
+	style.border_width_top = 2
+	style.border_width_right = 2
+	style.border_width_bottom = 2
+	style.corner_radius_top_left = 8
+	style.corner_radius_top_right = 8
+	style.corner_radius_bottom_left = 8
+	style.corner_radius_bottom_right = 8
+	style.content_margin_left = 10
+	style.content_margin_top = 8
+	style.content_margin_right = 10
+	style.content_margin_bottom = 8
+	return style

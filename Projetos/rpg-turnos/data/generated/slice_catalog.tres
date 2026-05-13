@@ -1801,6 +1801,7 @@ encounters = Array[Dictionary]([{
 "board_id": "ponte_estavel",
 "display_name": "Operacao de Pouso",
 "id": "emboscada_na_ponte",
+"mission": "Limpar a zona de pouso. Eliminar a patrulha elemental que defende a cabeceira da ponte de acesso.",
 "mode": "limpar_mesa",
 "reward_cards": ["lobo_alfa"],
 "starting_enemy_slots": [{
@@ -1818,6 +1819,7 @@ encounters = Array[Dictionary]([{
 "display_name": "Confronto com Guardiao",
 "enemy_deck": ["goblin_ponte", "goblin_ponte", "goblin_ponte", "ladrao_rapido", "ladrao_rapido", "faca_arremessada", "corvo_batedor", "corvo_batedor", "arqueiro_ponte", "arqueiro_ponte", "arqueiro_ponte", "barricada", "lobo_alfa", "lobo_alfa", "relampago", "relampago", "bruto_mercenario", "bruto_mercenario", "campeao_guilda", "dragao_jovem"],
 "id": "duelista_bandido",
+"mission": "O guardiao elemental do setor desafia o comandante Draxos em combate direto. Derrota-lo estabelece dominancia sobre o conduto de entrada.",
 "mode": "duelo",
 "notes": "Deck agressivo e escalavel. Curva: 1-2 early pressure, 3 mid threats (atropelar, alcance, voadora), 3-4 removal, 5-6 late threats. Exercita: voadora, rapido, alcance, atropelar, magia instant, fisico_melee e fisico_alcance.",
 "reward_cards": ["relampago", "flagelo"],
@@ -1826,6 +1828,7 @@ encounters = Array[Dictionary]([{
 "board_id": "cruzamento_neutro",
 "display_name": "Tomada do Conduto",
 "id": "emboscada_no_cruzamento",
+"mission": "Capturar o conduto astral no cruzamento. Controlar este ponto de distribuicao corta o fluxo de reforcamentos elementais para o interior.",
 "mode": "limpar_mesa",
 "notes": "E3 (queimando): unidade sofre 1 de dano por upkeep, criando urgencia para atacar rapido. E2 (voadora): nao pode ser atingido por fisico_melee, transparente para routing. Jogador precisa usar alcance, voadora propria ou magia para remover E2. N1 vazio e contestado. P2 (alto) ideal para Atiradora Astral ou Condutor Astral.",
 "reward_cards": ["arqueira_voante", "torre_blindada"],
@@ -1841,10 +1844,12 @@ encounters = Array[Dictionary]([{
 }]
 }, {
 "board_id": "muralha_desfiladeiro",
+"class_pressure": ["invocador"],
 "display_name": "Avanco ao Bastiao",
 "id": "fortaleza_do_desfiladeiro",
+"mission": "Avançar pela fortaleza do desfiladeiro. A sentinela no alto cobre toda a aproximacao — neutraliza-la abre a rota para a zona interna.",
 "mode": "limpar_mesa",
-"notes": "ET (alto) atira em todo o lado do jogador via alcance. P1/P3 cobertura reduz dano de ET em 1. EB1/EB2 vazios. Jogador precisa furar a frente E1-E3 (fallback_slots) ou usar alcance/voadora para atingir ET diretamente.",
+"notes": "ET (alto) atira em todo o lado do jogador via alcance. P1/P3 cobertura reduz dano de ET em 1. EB1/EB2 vazios. Jogador precisa furar a frente E1-E3 (fallback_slots) ou usar alcance/voadora para atingir ET diretamente. Pressao Invocador: atirador_torre no slot alto aplica dano constante ao campo aliado a cada turno, destruindo criaturas buffadas antes de acumularem valor de ataque.",
 "reward_cards": ["dragao_jovem", "chamado_hostes"],
 "starting_enemy_slots": [{
 "card_id": "guardiao_portal",
@@ -1861,10 +1866,12 @@ encounters = Array[Dictionary]([{
 }]
 }, {
 "board_id": "ponte_estavel",
+"class_pressure": ["invocador"],
 "display_name": "Varredura Avancada",
 "id": "patrulha_avancada",
+"mission": "Patrulha de reconhecimento avancado. Tres palavras-chave simultaneas exigem respostas variadas antes de prosseguir a incursao.",
 "mode": "limpar_mesa",
-"notes": "E1 (atropelar 4/2): ameaca agressiva. E2 (voadora+rapido): imune a fisico_melee, entra pronto. E3 (alcance): pressao a distancia. Encontro de transicao entre duelo e boards complexos, com tres keywords simultaneamente num board familiar.",
+"notes": "E1 (atropelar 4/2): ameaca agressiva. E2 (voadora+rapido): imune a fisico_melee, entra pronto. E3 (alcance): pressao a distancia. Encontro de transicao entre duelo e boards complexos, com tres keywords simultaneamente num board familiar. Pressao Invocador: lobo_alfa com atropelar e corvo_batedor com voadora+rapido exigem resposta imediata antes que o Invocador estabeleca campo dominante.",
 "reward_cards": [],
 "starting_enemy_slots": [{
 "card_id": "lobo_alfa",
@@ -1878,17 +1885,20 @@ encounters = Array[Dictionary]([{
 }]
 }, {
 "board_id": "cruzamento_neutro",
+"class_pressure": ["arcano"],
 "display_name": "Guardiao do Conduto",
 "enemy_deck": ["goblin_ponte", "goblin_ponte", "ladrao_rapido", "ladrao_rapido", "corvo_batedor", "corvo_batedor", "corvo_batedor", "arqueiro_ponte", "arqueiro_ponte", "atirador_torre", "atirador_torre", "lobo_alfa", "lobo_alfa", "faca_arremessada", "faca_arremessada", "relampago", "bruto_mercenario", "bruto_mercenario", "campeao_guilda", "dragao_jovem"],
 "id": "duelista_sombrio",
+"mission": "Segundo guardiao elemental — mais experiente e com finalizador vulcanico. O slot central disputado e decisivo para controlar rotas de ataque.",
 "mode": "duelo",
-"notes": "Segundo duelo no conduto. N1 disputado: quem controlar o slot central tem rotas adicionais. P2 (alto) alvo de sentinela inimiga. E3 (queimando): inimigo precisa mover criaturas de la ou toma 1/turno. Deck mais pesado com finalizador vulcanico.",
+"notes": "Segundo duelo no conduto. N1 disputado: quem controlar o slot central tem rotas adicionais. P2 (alto) alvo de sentinela inimiga. E3 (queimando): inimigo precisa mover criaturas de la ou toma 1/turno. Deck mais pesado com finalizador vulcanico. Pressao Arcano: deck com multiplos corvo_batedor (voadora+rapido) e atirador_torre forca o Arcano a usar remocao em vez de construir sequencias de Fluxo.",
 "reward_cards": ["campeao_guilda"],
 "starting_enemy_slots": []
 }, {
 "board_id": "ponte_estavel",
 "display_name": "Contrataque Elemental",
 "id": "emboscada_reforcos",
+"mission": "Os elementais contra-atacam com composicao mais pesada. Variante de pressao elevada da operacao de pouso — sem margem para erros.",
 "mode": "limpar_mesa",
 "notes": "Variante dificil da operacao inicial. E1: corpo grande, precisa de 2 ataques ou remocao. E2 (voadora): imune a melee. E3 (alcance): pressiona qualquer slot do jogador. Sem heroi inimigo mas sem respiro.",
 "reward_cards": [],
@@ -1904,14 +1914,16 @@ encounters = Array[Dictionary]([{
 }]
 }, {
 "board_id": "ponte_estavel",
+"class_pressure": ["arcano"],
 "display_name": "Ondas de Resistencia",
 "id": "invasao_em_ondas",
+"mission": "Contra-ataque elemental em ondas coordenadas. Repelir os dois grupos de assalto consolida o avanco na zona intermediaria.",
 "mode": "ondas",
-"notes": "Primeiro encontro do modo ondas. Duas ondas no board mais familiar. Onda 1: pressao leve, permite aquecer. Onda 2: composicao mais pesada com voadora e atropelar. HP do heroi, estado do deck e rampa de energia persistem entre ondas. Proximo turno apos limpar onda 1: spawn da onda 2.",
+"notes": "Primeiro encontro do modo ondas. Duas ondas no board mais familiar. Onda 1: pressao leve, permite aquecer. Onda 2: composicao mais pesada com voadora e atropelar. HP do heroi, estado do deck e rampa de energia persistem entre ondas. Proximo turno apos limpar onda 1: spawn da onda 2. Pressao Arcano: dois ladrao_rapido na onda 1 forcam gasto de energia em respostas imediatas antes de qualquer sequencia de Fluxo.",
 "reward_cards": ["chuva_brasas"],
 "waves": [{
 "starting_enemy_slots": [{
-"card_id": "goblin_ponte",
+"card_id": "ladrao_rapido",
 "slot": 0.0
 }, {
 "card_id": "ladrao_rapido",
@@ -1936,14 +1948,16 @@ encounters = Array[Dictionary]([{
 }]
 }, {
 "board_id": "muralha_desfiladeiro",
+"class_pressure": ["invocador"],
 "defense_turn_limit": 2.0,
 "display_name": "Defesa da Base de Ether",
 "id": "defesa_do_portao",
+"mission": "Os elementais avancam sobre a base de ether Draxos. Segurar o perimetro por dois turnos completos protege o ponto de preparo e suprimento.",
 "mode": "defesa",
-"notes": "Primeiro encontro do modo defesa. O objetivo e sobreviver a dois turnos inimigos completos, sem heroi inimigo e sem vitoria automatica por limpar a mesa. O jogador conserva o fluxo normal de mao, deck e energia enquanto segura a pressao inicial.",
+"notes": "Primeiro encontro do modo defesa. O objetivo e sobreviver a dois turnos inimigos completos, sem heroi inimigo e sem vitoria automatica por limpar a mesa. O jogador conserva o fluxo normal de mao, deck e energia enquanto segura a pressao inicial. Pressao Invocador: lobo_alfa com atropelar destroi criaturas buffadas no campo e causa dano excedente ao heroi; o modo defesa impede o Invocador de construir campo antes de ser alcancado.",
 "reward_cards": ["guardiao_portal"],
 "starting_enemy_slots": [{
-"card_id": "goblin_ponte",
+"card_id": "lobo_alfa",
 "slot": 0.0
 }, {
 "card_id": "ladrao_rapido",
@@ -1955,10 +1969,12 @@ encounters = Array[Dictionary]([{
 }, {
 "board_id": "muralha_desfiladeiro",
 "boss_part_slots": [0.0, 2.0, 5.0],
+"class_pressure": ["necromante"],
 "display_name": "Nucleo Fragmentado",
 "id": "colosso_fragmentado",
+"mission": "Destruir o nucleo elemental — constructo de multiplas partes que guarda a entrada da zona do vulcao. Eliminar os tres fragmentos colapsa a estrutura.",
 "mode": "chefe_multiparte",
-"notes": "Primeiro encontro do modo chefe_multiparte. O objetivo e destruir as partes marcadas do chefe: E1, E3 e ET. Suportes inimigos podem permanecer vivos; a vitoria nao exige limpar toda a mesa.",
+"notes": "Primeiro encontro do modo chefe_multiparte. O objetivo e destruir as partes marcadas do chefe: E1, E3 e ET. Suportes inimigos podem permanecer vivos; a vitoria nao exige limpar toda a mesa. Pressao Necromante: partes do chefe precisam ser destruidas em ordem especifica; suportes de HP alto reduzem a eficiencia de geracao de Cinzas por combate.",
 "reward_cards": ["campeao_guilda"],
 "starting_enemy_slots": [{
 "card_id": "guardiao_portal",
@@ -1975,10 +1991,12 @@ encounters = Array[Dictionary]([{
 }]
 }, {
 "board_id": "ponte_estavel",
+"class_pressure": ["necromante"],
 "display_name": "Ruptura de Selos",
 "id": "enigma_da_ponte",
+"mission": "O caminho ao cristal do vulcao esta selado por travas astrais elementais. Romper os dois selos em ate dois turnos antes que os reforcamentos cheguem.",
 "mode": "quebra_cabeca",
-"notes": "Primeiro encontro do modo quebra_cabeca. O objetivo e limpar os alvos E1 e E3 em ate dois turnos do jogador. O suporte em E2 pode permanecer vivo; a vitoria nao exige limpar toda a mesa.",
+"notes": "Primeiro encontro do modo quebra_cabeca. O objetivo e limpar os alvos E1 e E3 em ate dois turnos do jogador. O suporte em E2 pode permanecer vivo; a vitoria nao exige limpar toda a mesa. Pressao Necromante: limite de 2 turnos impede acumulo de Cinzas para Degrau III; barricada e guardiao_portal tem HP alto com ataque baixo ou zero, reduzindo o fluxo de Cinzas geradas por combate.",
 "puzzle_target_slots": [0.0, 2.0],
 "puzzle_turn_limit": 2.0,
 "reward_cards": ["flagelo"],

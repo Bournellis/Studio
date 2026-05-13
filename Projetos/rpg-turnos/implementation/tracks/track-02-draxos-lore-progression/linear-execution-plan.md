@@ -408,4 +408,16 @@ Every implementation prompt must leave the following record trail:
 - `current-status.md`: Track 02 local status and next action.
 - `implementation-plan.md`: only if the stage-level plan changes.
 - `../../../../../08_Coordenacao_Agentes/Estado_Atual.md`: only if studio snapshot changes.
-- Kanban: update th
+- Kanban: update the active Doing card or move it when a larger milestone closes.
+
+## Current Blockers
+
+- None for P18.
+
+Known future dependencies:
+
+- P06 depends on P01-P05.
+- P08-P13 depend on the class selection and class starter deck plumbing.
+- P16 should wait until at least P14, because reward/card meaning depends on the playable class baseline.
+- P18 can start now that P17 progression layer is done.
+- P20 must wait until player-facing naming stabilizes.

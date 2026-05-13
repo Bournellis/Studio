@@ -164,14 +164,14 @@ func test_necromante_starter_deck_all_cards_exist_in_catalog() -> void:
 		assert_not_null(card, "Necromante deck card '%s' must exist in catalog." % str(card_id))
 
 func test_necromante_deck_activates_via_session() -> void:
-	GameSession.new_game()
+	GameSession.start_new_game()
 	GameSession.select_class("necromante")
 	GameSession.initialize_deck_for_class()
 	var deck: Array = GameSession.selected_deck_ids
 	assert_eq(deck.size(), 20, "After initialize_deck_for_class(), Necromante deck must have 20 cards.")
 
 func test_necromante_is_selectable_and_battle_config_includes_class_id() -> void:
-	GameSession.new_game()
+	GameSession.start_new_game()
 	GameSession.select_class("necromante")
 	GameSession.initialize_deck_for_class()
 	var config: Dictionary = GameSession.get_battle_config()
