@@ -6,294 +6,168 @@
 
 [sub_resource type="Resource" id="Resource_tqsc8"]
 script = ExtResource("1_tqsc8")
-id = "arcano_construtor_fluxo"
-display_name = "Construtor de Fluxo"
+id = "arcano_choque"
+display_name = "Choque"
 card_type = "magia"
-text = "Aplica Lentidao a uma criatura inimiga. Conta para Fluxo quando a passiva estiver desbloqueada."
+cost = 1
+text = "Causa 1 de dano a qualquer criatura ou heroi inimigo valido."
 keywords = PackedStringArray()
 effect = {
-"action": "debuff",
-"amount": 1.0,
-"debuff": "slow"
+"action": "damage",
+"amount": 1.0
 }
 
 [sub_resource type="Resource" id="Resource_aaqvb"]
 script = ExtResource("1_tqsc8")
-id = "arcano_spell_dano"
-display_name = "Pulso de Fluxo"
-card_type = "magia"
+id = "arcano_fagulha"
+display_name = "Fagulha Arcana"
+card_type = "criatura"
 cost = 1
-text = "Causa 1 de dano a qualquer alvo. Arcano soma Fluxo quando a passiva estiver desbloqueada."
+attack = 1
+health = 1
+text = "Enquanto em campo: +1 Poder de habilidade."
 keywords = PackedStringArray()
 effect = {
-"action": "damage",
-"amount": 1.0
+"amount": 1.0,
+"aura": "ability_power"
 }
 
 [sub_resource type="Resource" id="Resource_xh3p2"]
 script = ExtResource("1_tqsc8")
-id = "arcano_protetor"
-display_name = "Escudo de Eter"
+id = "arcano_barreira"
+display_name = "Barreira Arcana"
 card_type = "criatura"
-cost = 1
-health = 3
-text = "Iniciativa: causa dano primeiro na lane."
-keywords = PackedStringArray("iniciativa")
+cost = 2
+health = 5
+text = "Enquanto em campo: +1 Poder de habilidade."
+keywords = PackedStringArray()
+effect = {
+"amount": 1.0,
+"aura": "ability_power"
+}
 
 [sub_resource type="Resource" id="Resource_ayi6x"]
 script = ExtResource("1_tqsc8")
-id = "arcano_gerador_entrada"
-display_name = "Condutor Instavel"
-card_type = "criatura"
-cost = 1
-attack = 1
-health = 2
-text = "Ao entrar: ganhe 1 de mana neste turno."
+id = "arcano_tempestade"
+display_name = "Tempestade Arcana"
+card_type = "magia"
+cost = 2
+text = "Causa 3 pontos de dano distribuidos aleatoriamente entre alvos inimigos."
 keywords = PackedStringArray()
 effect = {
-"on_enter": {
-"action": "gain_mana",
-"amount": 1.0
-}
+"action": "random_damage",
+"amount": 3.0
 }
 
 [sub_resource type="Resource" id="Resource_b0i2p"]
 script = ExtResource("1_tqsc8")
-id = "arcano_spell_dano_maior"
-display_name = "Raio Astral"
-card_type = "magia"
-cost = 2
-text = "Causa 2 de dano a qualquer alvo. Arcano soma Fluxo quando a passiva estiver desbloqueada."
+id = "invocador_soldado"
+display_name = "Soldado Arcano"
+card_type = "criatura"
+cost = 1
+attack = 2
+health = 2
+text = "Criatura de linha arcana."
 keywords = PackedStringArray()
-effect = {
-"action": "damage",
-"amount": 2.0
-}
 
 [sub_resource type="Resource" id="Resource_hvson"]
 script = ExtResource("1_tqsc8")
-id = "arcano_gerador_continuo"
-display_name = "Nucleo de Eter"
+id = "invocador_batedor"
+display_name = "Batedor Arcano"
 card_type = "criatura"
-cost = 2
-attack = 1
-health = 3
-text = "Enquanto em campo: +1 de mana por turno."
-keywords = PackedStringArray()
-effect = {
-"amount": 1.0,
-"aura": "mana_per_turn"
-}
+cost = 1
+attack = 2
+health = 1
+text = "Iniciativa: causa dano primeiro na lane."
+keywords = PackedStringArray("iniciativa")
 
 [sub_resource type="Resource" id="Resource_vopr6"]
 script = ExtResource("1_tqsc8")
-id = "arcano_amplificador"
-display_name = "Amplificador Astral"
-card_type = "criatura"
-cost = 3
-attack = 1
-health = 4
-text = "Enquanto em campo: spells causam +1 de dano."
+id = "invocador_promover"
+display_name = "Promover"
+card_type = "magia"
+cost = 1
+text = "Escolha uma criatura aliada, depois escolha +1/+1, Iniciativa ou Defensor."
 keywords = PackedStringArray()
 effect = {
-"amount": 1.0,
-"aura": "spell_damage"
+"action": "promote",
+"attack": 1.0,
+"health": 1.0
 }
 
 [sub_resource type="Resource" id="Resource_2f5oc"]
 script = ExtResource("1_tqsc8")
-id = "invocador_protecao"
-display_name = "Guarda Vinculado"
+id = "invocador_guardiao"
+display_name = "Guardiao Arcano"
 card_type = "criatura"
-cost = 1
-attack = 1
+cost = 2
+attack = 2
 health = 4
-text = "Iniciativa: causa dano primeiro na lane."
-keywords = PackedStringArray("iniciativa")
+text = "Defensor: protege lanes vazias."
+keywords = PackedStringArray("defensor")
 
 [sub_resource type="Resource" id="Resource_q1xx6"]
 script = ExtResource("1_tqsc8")
-id = "invocador_voadora"
-display_name = "Fera Alada"
+id = "necro_esqueleto"
+display_name = "Esqueleto"
 card_type = "criatura"
 cost = 1
-attack = 3
-health = 2
-text = "Iniciativa: causa dano primeiro na lane."
-keywords = PackedStringArray("iniciativa")
+attack = 1
+health = 1
+text = "Reviver: volta uma vez no mesmo slot."
+keywords = PackedStringArray("reviver")
 
 [sub_resource type="Resource" id="Resource_75iml"]
 script = ExtResource("1_tqsc8")
-id = "invocador_buff_unico"
-display_name = "Marca Permanente"
-card_type = "magia"
+id = "necro_morto_vivo"
+display_name = "Morto vivo"
+card_type = "criatura"
 cost = 1
-text = "Criatura aliada ganha +1/+1 permanente."
+attack = 1
+health = 1
+text = "Ao morrer: Enfraquecer 1."
 keywords = PackedStringArray()
 effect = {
-"action": "buff_ally",
-"attack": 1.0,
-"health": 1.0,
-"temporary": false
+"on_death": {
+"action": "weaken",
+"amount": 1.0,
+"debuff": "weaken"
+}
 }
 
 [sub_resource type="Resource" id="Resource_xg15d"]
 script = ExtResource("1_tqsc8")
-id = "invocador_buff_temporario"
-display_name = "Impulso Predatorio"
+id = "necro_prender"
+display_name = "Prender"
 card_type = "magia"
-cost = 1
-text = "Criatura aliada ganha +3/+0 ate o fim do turno."
+cost = 2
+text = "A criatura inimiga alvo nao ataca no proximo combate."
 keywords = PackedStringArray()
 effect = {
-"action": "buff_ally",
-"attack": 3.0,
-"health": 0.0,
-"temporary": true
+"action": "snare",
+"amount": 1.0,
+"debuff": "snare"
 }
 
 [sub_resource type="Resource" id="Resource_kobr5"]
 script = ExtResource("1_tqsc8")
-id = "invocador_regeneracao"
-display_name = "Guardiao Regenerante"
+id = "necro_zumbi"
+display_name = "Zumbi"
 card_type = "criatura"
 cost = 2
 attack = 2
-health = 3
-text = "Regeneracao: recupera 1 HP no inicio do turno do jogador."
-keywords = PackedStringArray("regeneracao")
+health = 2
+text = "Ao morrer: Enfraquecer 1."
+keywords = PackedStringArray()
+effect = {
+"on_death": {
+"action": "weaken",
+"amount": 1.0,
+"debuff": "weaken"
+}
+}
 
 [sub_resource type="Resource" id="Resource_js17r"]
-script = ExtResource("1_tqsc8")
-id = "invocador_buff_area"
-display_name = "Comando de Campo"
-card_type = "magia"
-cost = 2
-text = "Todas as criaturas aliadas ganham +1/+1 permanente."
-keywords = PackedStringArray()
-effect = {
-"action": "buff_all_allies",
-"attack": 1.0,
-"health": 1.0,
-"temporary": false
-}
-
-[sub_resource type="Resource" id="Resource_5405m"]
-script = ExtResource("1_tqsc8")
-id = "invocador_colosso"
-display_name = "Colosso Vinculado"
-card_type = "criatura"
-cost = 3
-attack = 5
-health = 5
-text = "Criatura grande para validar escala de buffs."
-keywords = PackedStringArray()
-
-[sub_resource type="Resource" id="Resource_p3n0t"]
-script = ExtResource("1_tqsc8")
-id = "necro_sacrificio_zero"
-display_name = "Cinza Faminta"
-card_type = "criatura"
-attack = 1
-health = 1
-text = "Ao morrer: gera 2 Cinzas em vez de 1 quando a passiva estiver desbloqueada."
-keywords = PackedStringArray()
-effect = {
-"on_death": {
-"action": "gain_ashes",
-"amount": 2.0
-}
-}
-
-[sub_resource type="Resource" id="Resource_pkhd5"]
-script = ExtResource("1_tqsc8")
-id = "necro_sacrificio_dano"
-display_name = "Lamina Morta"
-card_type = "criatura"
-cost = 1
-attack = 2
-health = 1
-text = "Ao morrer: causa 1 de dano a um inimigo quando a passiva estiver desbloqueada."
-keywords = PackedStringArray()
-effect = {
-"on_death": {
-"action": "damage",
-"amount": 1.0
-}
-}
-
-[sub_resource type="Resource" id="Resource_haoox"]
-script = ExtResource("1_tqsc8")
-id = "necro_sacrificio_lento"
-display_name = "Acolito Ruinoso"
-card_type = "criatura"
-cost = 1
-attack = 1
-health = 2
-text = "Ao morrer: aplica Lentidao a uma criatura inimiga quando a passiva estiver desbloqueada."
-keywords = PackedStringArray()
-effect = {
-"on_death": {
-"action": "debuff",
-"amount": 1.0,
-"debuff": "slow"
-}
-}
-
-[sub_resource type="Resource" id="Resource_dqqtb"]
-script = ExtResource("1_tqsc8")
-id = "necro_spell_lentidao"
-display_name = "Lentidao Sombria"
-card_type = "magia"
-cost = 1
-text = "Uma criatura inimiga nao ataca neste turno."
-keywords = PackedStringArray()
-effect = {
-"action": "debuff",
-"amount": 1.0,
-"debuff": "slow"
-}
-
-[sub_resource type="Resource" id="Resource_0kq34"]
-script = ExtResource("1_tqsc8")
-id = "necro_spell_podridao"
-display_name = "Podridao Astral"
-card_type = "magia"
-cost = 1
-text = "Uma criatura inimiga perde 1/1 permanente."
-keywords = PackedStringArray()
-effect = {
-"action": "debuff",
-"amount": 1.0,
-"debuff": "rot"
-}
-
-[sub_resource type="Resource" id="Resource_edoxb"]
-script = ExtResource("1_tqsc8")
-id = "necro_reanimavel"
-display_name = "Servo Reanimavel"
-card_type = "criatura"
-cost = 2
-attack = 3
-health = 3
-text = "Alvo simples para Ritual das Sombras."
-keywords = PackedStringArray()
-
-[sub_resource type="Resource" id="Resource_q1muo"]
-script = ExtResource("1_tqsc8")
-id = "necro_spell_confusao"
-display_name = "Confusao Sepulcral"
-card_type = "magia"
-cost = 2
-text = "Uma criatura inimiga ataca o proprio lado neste turno."
-keywords = PackedStringArray()
-effect = {
-"action": "debuff",
-"amount": 1.0,
-"debuff": "confusion"
-}
-
-[sub_resource type="Resource" id="Resource_w1flg"]
 script = ExtResource("1_tqsc8")
 id = "elemental_agil"
 display_name = "Elemental Agil"
@@ -304,7 +178,7 @@ health = 2
 text = "Ameaca rapida do primeiro encontro."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_u525c"]
+[sub_resource type="Resource" id="Resource_5405m"]
 script = ExtResource("1_tqsc8")
 id = "elemental_bruto"
 display_name = "Elemental Bruto"
@@ -315,7 +189,7 @@ health = 3
 text = "Maior ameaca de dano inicial."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_ba32m"]
+[sub_resource type="Resource" id="Resource_p3n0t"]
 script = ExtResource("1_tqsc8")
 id = "elemental_solido"
 display_name = "Elemental Solido"
@@ -326,7 +200,7 @@ health = 5
 text = "Criatura resistente de baixo dano."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_5njsx"]
+[sub_resource type="Resource" id="Resource_pkhd5"]
 script = ExtResource("1_tqsc8")
 id = "elemental_menor"
 display_name = "Elemental Menor"
@@ -337,7 +211,7 @@ health = 2
 text = "Onda inicial."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_igiro"]
+[sub_resource type="Resource" id="Resource_haoox"]
 script = ExtResource("1_tqsc8")
 id = "elemental_medio"
 display_name = "Elemental Medio"
@@ -348,7 +222,7 @@ health = 3
 text = "Pressao intermediaria."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_kf03g"]
+[sub_resource type="Resource" id="Resource_dqqtb"]
 script = ExtResource("1_tqsc8")
 id = "elemental_pesado_a"
 display_name = "Elemental Pesado A"
@@ -359,7 +233,7 @@ health = 4
 text = "Pressao final de ondas."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_7rtnj"]
+[sub_resource type="Resource" id="Resource_0kq34"]
 script = ExtResource("1_tqsc8")
 id = "elemental_pesado_b"
 display_name = "Elemental Pesado B"
@@ -370,7 +244,7 @@ health = 4
 text = "Pressao final de ondas."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_siawb"]
+[sub_resource type="Resource" id="Resource_edoxb"]
 script = ExtResource("1_tqsc8")
 id = "elemental_pesado_c"
 display_name = "Elemental Pesado C"
@@ -381,7 +255,7 @@ health = 4
 text = "Pressao final de ondas."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_vn8pn"]
+[sub_resource type="Resource" id="Resource_q1muo"]
 script = ExtResource("1_tqsc8")
 id = "elemental_duelista"
 display_name = "Elemental Duelista"
@@ -392,7 +266,7 @@ health = 4
 text = "Mockup de pressao para duelo."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_3vxjw"]
+[sub_resource type="Resource" id="Resource_w1flg"]
 script = ExtResource("1_tqsc8")
 id = "elemental_assaltante"
 display_name = "Elemental Assaltante"
@@ -403,7 +277,7 @@ health = 2
 text = "Mockup ofensivo para lanes."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_8vwdf"]
+[sub_resource type="Resource" id="Resource_u525c"]
 script = ExtResource("1_tqsc8")
 id = "elemental_guardiao"
 display_name = "Elemental Guardiao"
@@ -414,7 +288,7 @@ health = 6
 text = "Mockup defensivo escalado."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_12fis"]
+[sub_resource type="Resource" id="Resource_ba32m"]
 script = ExtResource("1_tqsc8")
 id = "elemental_elite_agil"
 display_name = "Elemental Elite Agil"
@@ -425,7 +299,7 @@ health = 3
 text = "Iniciativa: causa dano primeiro na lane."
 keywords = PackedStringArray("iniciativa")
 
-[sub_resource type="Resource" id="Resource_wbbs5"]
+[sub_resource type="Resource" id="Resource_5njsx"]
 script = ExtResource("1_tqsc8")
 id = "elemental_elite_bruto"
 display_name = "Elemental Elite Bruto"
@@ -436,7 +310,7 @@ health = 5
 text = "Mockup elite de alto dano."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_hx6qf"]
+[sub_resource type="Resource" id="Resource_igiro"]
 script = ExtResource("1_tqsc8")
 id = "elemental_tita"
 display_name = "Elemental Tita"
@@ -447,14 +321,14 @@ health = 6
 text = "Mockup pesado de fim de run."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_46hy0"]
+[sub_resource type="Resource" id="Resource_kf03g"]
 script = ExtResource("2_aaqvb")
 id = "guardiao_elemental"
 display_name = "Guardiao Elemental"
 max_health = 24
 hero_power_text = "Poder inimigo pendente."
 
-[sub_resource type="Resource" id="Resource_6lf1p"]
+[sub_resource type="Resource" id="Resource_7rtnj"]
 script = ExtResource("2_aaqvb")
 id = "comandante_draxos"
 display_name = "Comandante Draxos"
@@ -463,10 +337,10 @@ hero_power_text = "A spell ativa depende da classe escolhida."
 
 [resource]
 script = ExtResource("3_xh3p2")
-player_hero = SubResource("Resource_6lf1p")
-enemy_hero = SubResource("Resource_46hy0")
-cards = Array[Resource]([SubResource("Resource_tqsc8"), SubResource("Resource_aaqvb"), SubResource("Resource_xh3p2"), SubResource("Resource_ayi6x"), SubResource("Resource_b0i2p"), SubResource("Resource_hvson"), SubResource("Resource_vopr6"), SubResource("Resource_2f5oc"), SubResource("Resource_q1xx6"), SubResource("Resource_75iml"), SubResource("Resource_xg15d"), SubResource("Resource_kobr5"), SubResource("Resource_js17r"), SubResource("Resource_5405m"), SubResource("Resource_p3n0t"), SubResource("Resource_pkhd5"), SubResource("Resource_haoox"), SubResource("Resource_dqqtb"), SubResource("Resource_0kq34"), SubResource("Resource_edoxb"), SubResource("Resource_q1muo"), SubResource("Resource_w1flg"), SubResource("Resource_u525c"), SubResource("Resource_ba32m"), SubResource("Resource_5njsx"), SubResource("Resource_igiro"), SubResource("Resource_kf03g"), SubResource("Resource_7rtnj"), SubResource("Resource_siawb"), SubResource("Resource_vn8pn"), SubResource("Resource_3vxjw"), SubResource("Resource_8vwdf"), SubResource("Resource_12fis"), SubResource("Resource_wbbs5"), SubResource("Resource_hx6qf")])
-starter_deck_ids = PackedStringArray("arcano_construtor_fluxo", "arcano_construtor_fluxo", "arcano_construtor_fluxo", "arcano_spell_dano", "arcano_spell_dano", "arcano_spell_dano", "arcano_spell_dano", "arcano_spell_dano", "arcano_protetor", "arcano_protetor", "arcano_gerador_entrada", "arcano_spell_dano_maior", "arcano_spell_dano_maior", "arcano_gerador_continuo")
+player_hero = SubResource("Resource_7rtnj")
+enemy_hero = SubResource("Resource_kf03g")
+cards = Array[Resource]([SubResource("Resource_tqsc8"), SubResource("Resource_aaqvb"), SubResource("Resource_xh3p2"), SubResource("Resource_ayi6x"), SubResource("Resource_b0i2p"), SubResource("Resource_hvson"), SubResource("Resource_vopr6"), SubResource("Resource_2f5oc"), SubResource("Resource_q1xx6"), SubResource("Resource_75iml"), SubResource("Resource_xg15d"), SubResource("Resource_kobr5"), SubResource("Resource_js17r"), SubResource("Resource_5405m"), SubResource("Resource_p3n0t"), SubResource("Resource_pkhd5"), SubResource("Resource_haoox"), SubResource("Resource_dqqtb"), SubResource("Resource_0kq34"), SubResource("Resource_edoxb"), SubResource("Resource_q1muo"), SubResource("Resource_w1flg"), SubResource("Resource_u525c"), SubResource("Resource_ba32m"), SubResource("Resource_5njsx"), SubResource("Resource_igiro")])
+starter_deck_ids = PackedStringArray("arcano_choque", "arcano_choque", "arcano_choque", "arcano_fagulha", "arcano_fagulha", "arcano_fagulha", "arcano_barreira", "arcano_barreira", "arcano_barreira", "arcano_tempestade", "arcano_tempestade", "arcano_tempestade")
 class_options = Array[Dictionary]([{
 "active_id": "rajada_arcana",
 "active_text": "1 mana: causa 1 de dano + Fluxo a qualquer alvo. Uma vez por turno.",
@@ -475,7 +349,8 @@ class_options = Array[Dictionary]([{
 "mechanic_status": "Passiva desbloqueia no mapa 5; spell de classe desbloqueia no mapa 7.",
 "passive_id": "fluxo_continuo",
 "role_text": "Spells de dano, Fluxo Continuo e sequencias rapidas.",
-"starter_deck": ["arcano_construtor_fluxo", "arcano_construtor_fluxo", "arcano_construtor_fluxo", "arcano_spell_dano", "arcano_spell_dano", "arcano_spell_dano", "arcano_spell_dano", "arcano_spell_dano", "arcano_protetor", "arcano_protetor", "arcano_gerador_entrada", "arcano_spell_dano_maior", "arcano_spell_dano_maior", "arcano_gerador_continuo"],
+"starter_deck": ["arcano_choque", "arcano_choque", "arcano_choque", "arcano_fagulha", "arcano_fagulha", "arcano_fagulha", "arcano_barreira", "arcano_barreira", "arcano_barreira", "arcano_tempestade", "arcano_tempestade", "arcano_tempestade"],
+"starting_hand_size": 3.0,
 "starting_health": 20.0,
 "starting_mana": 2.0
 }, {
@@ -486,7 +361,8 @@ class_options = Array[Dictionary]([{
 "mechanic_status": "Passiva desbloqueia no mapa 5; spell de classe desbloqueia no mapa 7.",
 "passive_id": "comandante_de_campo",
 "role_text": "Controle de mesa, criaturas singulares e buffs permanentes.",
-"starter_deck": ["invocador_protecao", "invocador_protecao", "invocador_protecao", "invocador_voadora", "invocador_voadora", "invocador_buff_unico", "invocador_buff_unico", "invocador_buff_unico", "invocador_buff_unico", "invocador_buff_temporario", "invocador_buff_temporario", "invocador_regeneracao", "invocador_regeneracao", "invocador_buff_area"],
+"starter_deck": ["invocador_soldado", "invocador_soldado", "invocador_soldado", "invocador_batedor", "invocador_batedor", "invocador_batedor", "invocador_promover", "invocador_promover", "invocador_promover", "invocador_guardiao", "invocador_guardiao", "invocador_guardiao"],
+"starting_hand_size": 3.0,
 "starting_health": 20.0,
 "starting_mana": 2.0
 }, {
@@ -497,7 +373,8 @@ class_options = Array[Dictionary]([{
 "mechanic_status": "Passiva desbloqueia no mapa 5; spell de classe desbloqueia no mapa 7.",
 "passive_id": "colheita_sombria",
 "role_text": "Cinzas, morte como recurso, debuffs e reanimacao.",
-"starter_deck": ["necro_sacrificio_zero", "necro_sacrificio_zero", "necro_sacrificio_dano", "necro_sacrificio_dano", "necro_sacrificio_dano", "necro_sacrificio_lento", "necro_sacrificio_lento", "necro_sacrificio_lento", "necro_spell_lentidao", "necro_spell_lentidao", "necro_spell_podridao", "necro_spell_podridao", "necro_reanimavel", "necro_reanimavel", "necro_spell_confusao"],
+"starter_deck": ["necro_esqueleto", "necro_esqueleto", "necro_esqueleto", "necro_morto_vivo", "necro_morto_vivo", "necro_morto_vivo", "necro_prender", "necro_prender", "necro_prender", "necro_zumbi", "necro_zumbi", "necro_zumbi"],
+"starting_hand_size": 3.0,
 "starting_health": 20.0,
 "starting_mana": 2.0
 }])
@@ -784,7 +661,7 @@ run_map = {
 "encounter_id": "duelo_inicial",
 "id": "n03_duelo_inicial",
 "kind": "mainline",
-"rewards": ["add_cost3_cards"],
+"rewards": ["max_hand_size_1"],
 "unlocks": ["n04_defesa_posicao"]
 }, {
 "available_after": ["n03_duelo_inicial"],

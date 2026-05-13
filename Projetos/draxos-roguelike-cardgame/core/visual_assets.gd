@@ -157,14 +157,14 @@ func node_label(node_id: String) -> String:
 	var entry: Dictionary = Dictionary(nodes.get(node_id, {}))
 	return str(entry.get("label", node_id))
 
-func card_display_text(card) -> String:
+func card_display_text(card, context: Dictionary = {}) -> String:
 	if card == null:
 		return ""
 	var entry: Dictionary = card_entry(str(card.id))
 	var template: String = str(entry.get("text_template", ""))
 	if template == "":
 		return str(card.text)
-	return _format_card_text(template, card)
+	return _format_card_text(template, card, context)
 
 func missing_asset_report() -> Array[String]:
 	var missing: Array[String] = []
@@ -263,31 +263,33 @@ func _warn_missing_path(path: String) -> void:
 	_warned_paths[path] = true
 	push_warning("Visual asset missing, using fallback: %s" % path)
 
-func _format_card_text(template: String, card) -> String:
-	var values: Dictionary = _card_template_values(card)
+func _format_card_text(template: String, card, context: Dictionary = {}) -> String:
+	var values: Dictionary = _card_template_values(card, context)
 	var result: String = template
 	for key: String in values.keys():
 		result = result.replace("{%s}" % key, str(values.get(key, "")))
 	return result
 
-func _card_template_values(card) -> Dictionary:
+func _card_template_values(card, context: Dictionary = {}) -> Dictionary:
 	var values: Dictionary = {
 		"cost": int(card.cost),
 		"attack": int(card.attack),
-		"health": int(card.health)
+		"health": int(card.health),
+		"ability_power": int(context.get("ability_power", 0)),
+		"flow": int(context.get("flow", 0))
 	}
 	var effect: Dictionary = Dictionary(card.effect)
 	if effect.has("amount"):
-		values["amount"] = int(effect.get("amount", 0))
+		values["amount"] = int(context.get("amount", int(effect.get("amount", 0))))
 	if effect.has("attack"):
-		values["effect_attack"] = int(effect.get("attack", 0))
+		values["effect_attack"] = int(context.get("effect_attack", int(effect.get("attack", 0))))
 	if effect.has("health"):
-		values["effect_health"] = int(effect.get("health", 0))
+		values["effect_health"] = int(context.get("effect_health", int(effect.get("health", 0))))
 	for nested_key: String in ["on_enter", "on_death"]:
 		if effect.has(nested_key) and typeof(effect.get(nested_key)) == TYPE_DICTIONARY:
 			var nested: Dictionary = Dictionary(effect.get(nested_key))
 			if nested.has("amount") and not values.has("amount"):
-				values["amount"] = int(nested.get("amount", 0))
+				values["amount"] = int(context.get("amount", int(nested.get("amount", 0))))
 	return values
 
 func _color_from_hex(hex: String, fallback: Color) -> Color:

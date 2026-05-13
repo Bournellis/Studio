@@ -1,7 +1,7 @@
 # Product Brief
 
-- Last Updated: `2026-05-07`
-- Status: `bootstrap direction`
+- Last Updated: `2026-05-13`
+- Status: `Track 01 redesigned battle/card baseline`
 
 ## Identity
 
@@ -30,7 +30,7 @@ From the hub, the player opens a mission map, chooses a path through encounters,
 - Small encounters around 1 minute and major encounters around 4-5 minutes.
 - Bosses that summon multiple creatures and create escalating board pressure.
 - Simple board combat with one player facing one opponent, similar in table presence to MTG.
-- Stable 5-card hand with draw-on-play, mana ramp between encounters, and escalating board/deck scale.
+- Compact 3-card base hand with draw-on-play, hand-limit rewards, mana ramp between encounters, and escalating board/deck scale.
 - Multiple encounter goals: clear board, duel, waves, protect position, survive turns, boss summoner.
 
 ## First Checkpoint

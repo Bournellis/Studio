@@ -1,7 +1,7 @@
 # Encontro 02 - Ondas
 
-- Last Updated: `2026-05-12`
-- Status: `mockup validado na rota linear`
+- Last Updated: `2026-05-13`
+- Status: `mockup validado na rota linear redesenhada`
 - Tipo: `ondas`
 - Diretor: `waves`
 
@@ -50,4 +50,4 @@ O encontro usa combate frontal por lane. Criaturas aliadas que sobrevivem contin
 
 - Se a recompensa de +1 max mana no mapa 2 muda o ritmo sem quebrar o mapa 3.
 - Se criaturas mantidas em campo entre ondas criam decisoes relevantes.
-- Se a pressao das ondas combina com decks iniciais sem cartas custo 3.
+- Se a pressao das ondas combina com decks iniciais de 12 cartas e mao base 3.

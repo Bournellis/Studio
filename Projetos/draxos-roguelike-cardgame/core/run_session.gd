@@ -4,9 +4,10 @@ const DEFAULT_RUN_SEED: int = 0
 const REWARD_ADD_PULSO_ASTRAL: String = "add_pulso_astral"
 const REWARD_REINFORCE_HEALTH: String = "reinforce_health"
 const REWARD_MAX_MANA_1: String = "max_mana_1"
-const REWARD_ADD_COST3_CARDS: String = "add_cost3_cards"
+const REWARD_MAX_HAND_SIZE_1: String = "max_hand_size_1"
 const REWARD_UNLOCK_CLASS_PASSIVE: String = "unlock_class_passive"
 const REWARD_UNLOCK_CLASS_ACTIVE: String = "unlock_class_active"
+const DEFAULT_MAX_HAND_SIZE: int = 3
 const PAID_HEAL_COST: int = 5
 const PAID_HEAL_AMOUNT: int = 5
 
@@ -21,6 +22,7 @@ var current_deck_ids: Array[String] = []
 var current_health: int = 0
 var max_health: int = 0
 var max_mana: int = 0
+var max_hand_size: int = 0
 var soul_total: int = 0
 var class_passive_unlocked: bool = false
 var class_active_unlocked: bool = false
@@ -42,6 +44,7 @@ func start_empty_run(seed: int = DEFAULT_RUN_SEED) -> void:
 	current_health = 0
 	max_health = 0
 	max_mana = 0
+	max_hand_size = 0
 	soul_total = 0
 	class_passive_unlocked = false
 	class_active_unlocked = false
@@ -70,6 +73,7 @@ func start_class_run(class_id: String, seed: int = DEFAULT_RUN_SEED) -> Dictiona
 	max_health = int(class_option.get("starting_health", fallback_health))
 	current_health = max_health
 	max_mana = int(class_option.get("starting_mana", 2))
+	max_hand_size = int(class_option.get("starting_hand_size", DEFAULT_MAX_HAND_SIZE))
 	soul_total = 0
 	class_passive_unlocked = false
 	class_active_unlocked = false
@@ -92,6 +96,7 @@ func reset() -> void:
 	current_health = 0
 	max_health = 0
 	max_mana = 0
+	max_hand_size = 0
 	soul_total = 0
 	class_passive_unlocked = false
 	class_active_unlocked = false
@@ -183,6 +188,7 @@ func snapshot() -> Dictionary:
 		"current_health": current_health,
 		"max_health": max_health,
 		"max_mana": max_mana,
+		"max_hand_size": max_hand_size,
 		"soul_total": soul_total,
 		"class_passive_unlocked": class_passive_unlocked,
 		"class_active_unlocked": class_active_unlocked,
@@ -228,9 +234,8 @@ func _apply_automatic_rewards_for_node(node_id: String) -> void:
 		match reward_id:
 			REWARD_MAX_MANA_1:
 				max_mana += 1
-			REWARD_ADD_COST3_CARDS:
-				for card_id: String in _cost_three_reward_card_ids():
-					current_deck_ids.append(card_id)
+			REWARD_MAX_HAND_SIZE_1:
+				max_hand_size += 1
 			REWARD_UNLOCK_CLASS_PASSIVE:
 				class_passive_unlocked = true
 			REWARD_UNLOCK_CLASS_ACTIVE:
@@ -238,12 +243,6 @@ func _apply_automatic_rewards_for_node(node_id: String) -> void:
 			_:
 				continue
 		automatic_reward_ids.append(applied_id)
-
-func _cost_three_reward_card_ids() -> Array[String]:
-	return [
-		"arcano_amplificador",
-		"invocador_colosso"
-	]
 
 func _queue_placeholder_reward(node_id: String) -> void:
 	var pending_id: String = "placeholder_reward:%s" % node_id
@@ -265,12 +264,12 @@ func _reward_message(reward_id: String) -> String:
 func _default_reward_card_id() -> String:
 	match selected_class_id:
 		"arcano":
-			return "arcano_spell_dano"
+			return "arcano_choque"
 		"invocador":
-			return "invocador_buff_unico"
+			return "invocador_promover"
 		"necromante":
-			return "necro_spell_lentidao"
-	return "arcano_spell_dano"
+			return "necro_prender"
+	return "arcano_choque"
 
 func _string_array(source: Variant) -> Array[String]:
 	var result: Array[String] = []

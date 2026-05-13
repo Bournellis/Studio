@@ -1,7 +1,7 @@
 # Arcano
 
-- Last Updated: `2026-05-12`
-- Status: `Track 01 linear slice validated`
+- Last Updated: `2026-05-13`
+- Status: `Track 01 redesigned class deck validated`
 - Indice: `README.md`
 
 ## Identidade
@@ -22,28 +22,23 @@ Desbloqueio: mapa 7.
 
 **Custo:** 1 mana. Usavel uma vez por turno.
 
-**Efeito:** causa 1 de dano a qualquer alvo valido, amplificado pelo Fluxo atual e por bonus de spell damage.
+**Efeito:** causa 1 de dano a qualquer alvo valido, amplificado pelo Fluxo atual e por poder de habilidade.
 
 Antes do mapa 7, a habilidade nao aparece na UI e nao pode ser usada.
 
-## Deck Mockup Atual
+## Deck Atual
 
-Parametros do slice: mana inicial 2, HP do Comandante 20.
+Parametros do slice: mana inicial 2, HP do Comandante 20, mao base 3, deck inicial 12 cartas.
 
-| Papel | Custo | Qty inicial | Stats | Efeito |
+| Carta | Custo | Qty inicial | Stats | Efeito |
 |---|---:|---:|---|---|
-| Construtor de Fluxo | 0 | 3 | - | Aplica Lentidao a uma criatura inimiga. |
-| Spell de dano | 1 | 5 | - | Causa 1 de dano a qualquer alvo. |
-| Criatura com Iniciativa | 1 | 2 | 0/3 | `iniciativa`. |
-| Criatura geradora de entrada | 1 | 1 | 1/2 | Ao entrar: ganhe 1 de mana neste turno. |
-| Spell de dano maior | 2 | 2 | - | Causa 2 de dano a qualquer alvo. |
-| Criatura geradora continua | 2 | 1 | 1/3 | Enquanto em campo: +1 mana por turno. |
-| Criatura amplificadora | 3 | 0 inicial / recompensa mapa 3 | 1/4 | Spells causam +1 dano adicional. |
-
-O deck inicial tem 14 cartas. `arcano_amplificador` entra na run apenas pelo marco automatico do mapa 3.
+| Choque | 1 | 3 | - | Causa 1 de dano a criatura ou heroi inimigo valido. |
+| Fagulha Arcana | 1 | 3 | 1/1 | Enquanto em campo: +1 poder de habilidade. |
+| Barreira Arcana | 2 | 3 | 0/5 | Enquanto em campo: +1 poder de habilidade. |
+| Tempestade Arcana | 2 | 3 | - | Causa 3 pontos de dano distribuidos aleatoriamente entre alvos inimigos validos. |
 
 ## Pendencias
 
 - Nome final da habilidade ativa.
 - Nomes, lore e arte definitivos das cartas.
-- Rebalancear o deck depois que todas as cartas forem refeitas.
+- Rebalancear o deck contra os inimigos atuais depois do playtest.

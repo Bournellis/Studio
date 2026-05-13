@@ -12,14 +12,16 @@ var keyword_chips: HBoxContainer
 var drag_enabled: bool = true
 var selected: bool = false
 var card_size: Vector2 = Vector2(126, 188)
+var text_context: Dictionary = {}
 
-func setup(new_card_id: String, new_hand_index: int, enabled: bool = true, is_selected: bool = false, new_card_size: Vector2 = Vector2(126, 188)) -> void:
+func setup(new_card_id: String, new_hand_index: int, enabled: bool = true, is_selected: bool = false, new_card_size: Vector2 = Vector2(126, 188), new_text_context: Dictionary = {}) -> void:
 	card_id = new_card_id
 	hand_index = new_hand_index
 	card = ContentLibrary.get_card(card_id)
 	drag_enabled = enabled
 	selected = is_selected
 	card_size = new_card_size
+	text_context = new_text_context
 	_rebuild()
 
 func set_selected(is_selected: bool) -> void:
@@ -75,7 +77,7 @@ func _rebuild() -> void:
 
 	var text_label: Label = Label.new()
 	text_label.name = "BattleCardRulesText"
-	text_label.text = VisualAssets.card_display_text(card) if card != null else ""
+	text_label.text = VisualAssets.card_display_text(card, text_context) if card != null else ""
 	text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	text_label.clip_text = true
 	text_label.max_lines_visible = 2

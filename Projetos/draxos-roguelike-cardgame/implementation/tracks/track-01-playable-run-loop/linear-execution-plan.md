@@ -1,7 +1,7 @@
 # Track 01 Linear Execution Plan
 
-- Last Updated: `2026-05-12`
-- Status: `P05_LINEAR_10_MAP_SLICE_VALIDATED`
+- Last Updated: `2026-05-13`
+- Status: `P05_REDRAWN_CARD_BATTLE_BASELINE_VALIDATED`
 - Execution Owner: `Codex`
 - Scope: `First coherent playable run loop after Track 00 checkpoint`
 - Validation Command: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd`
@@ -20,7 +20,7 @@ Turn the Track 00 placeholder checkpoint into a playable loop that starts a run,
 
 ## Current Execution Cursor
 
-Next prompt: `Playtest full 10-map route, then redesign cards/enemies and assign remaining rewards`.
+Next prompt: `Playtest redesigned 10-map route, tune enemies against the new decks/mechanics, and assign remaining rewards`.
 
 ## Linear Prompt Sequence
 
@@ -30,16 +30,18 @@ Next prompt: `Playtest full 10-map route, then redesign cards/enemies and assign
 | P02 | complete | Return from battle to ShipHub/RunMap with visible completed-node and commander health state. | Green 27/27 |
 | P03 | complete | Add placeholder post-combat reward choice that changes the current run immediately. | Green 29/29 |
 | P04 | complete | Replace placeholders with first mechanical class slice, including souls and paid healing. | Green 21/21 |
-| P05 | in progress | Playtest and tune class decks, target UX, rewards, visuals, and encounter pressure. | Linear 10-map slice green 41/41 |
+| P05 | in progress | Playtest and tune class decks, target UX, rewards, visuals, and encounter pressure. | Redesigned battle/card baseline green 12/12 |
 
 ### P05 Current Slice
 
 - 10 mainline maps are active and linear.
 - All 6 encounter modes are represented.
 - Mana initial is 2 for every class.
-- Cost 3 cards are removed from starter decks and added automatically on map 3.
+- Starter decks have 12 cards: 4 card types, 3 copies each.
+- Base hand limit is 3; map 3 grants +1 max hand size.
 - Passives unlock on map 5; class actives unlock on map 7.
-- Combat resolves through front-lane attacks, direct lane damage, and `iniciativa`.
+- Combat resolves through `Resolver Combate`, then maintenance/script without a separate enemy combat turn.
+- Combat supports front-lane attacks, direct lane damage, `iniciativa`, `defensor`, `reviver`, `enfraquecer`, `prender`, `promover`, and dynamic `poder de habilidade`.
 - `protecao` and `voadora` are removed from the active rules contract.
 
 ## P01 - Run Start And Class Placeholder

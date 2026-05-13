@@ -21,7 +21,7 @@ const HOTSPOT_SPECS: Array[Dictionary] = [
 		"id": "deck_system",
 		"title": "Deck",
 		"body": "Cartas e upgrades",
-		"status": "Decks iniciais sem custo 3; custo 3 entra apos o mapa 3.",
+		"status": "Decks iniciais de 12 cartas; mapa 3 aumenta o limite de mao.",
 		"position": Vector2(0.25, 0.58),
 		"size": Vector2(216, 54)
 	},
@@ -306,11 +306,12 @@ func _refresh_run_controls() -> void:
 func _compact_run_summary() -> String:
 	if not RunSession.active:
 		return "Run inativa"
-	return "%s | Vida %d/%d | Mana %d | Almas %d" % [
+	return "%s | Vida %d/%d | Mana %d | Mao %d | Almas %d" % [
 		RunSession.selected_class_display_name,
 		RunSession.current_health,
 		RunSession.max_health,
 		RunSession.max_mana,
+		RunSession.max_hand_size,
 		RunSession.soul_total
 	]
 
@@ -323,11 +324,12 @@ func _run_state_text() -> String:
 	var last_text: String = ""
 	if RunSession.last_completed_node_id != "":
 		last_text = "\nUltimo encontro: %s" % RunSession.last_completed_node_id
-	return "Run: ativa | Classe: %s | Vida: %d/%d | Mana: %d | Almas: %d\nPassiva desbloqueada: %s | Spell desbloqueada: %s\nNodes concluidos: %s | Recompensas automaticas: %d%s" % [
+	return "Run: ativa | Classe: %s | Vida: %d/%d | Mana: %d | Mao: %d | Almas: %d\nPassiva desbloqueada: %s | Spell desbloqueada: %s\nNodes concluidos: %s | Recompensas automaticas: %d%s" % [
 		RunSession.selected_class_display_name,
 		RunSession.current_health,
 		RunSession.max_health,
 		RunSession.max_mana,
+		RunSession.max_hand_size,
 		RunSession.soul_total,
 		"sim" if RunSession.class_passive_unlocked else "nao",
 		"sim" if RunSession.class_active_unlocked else "nao",

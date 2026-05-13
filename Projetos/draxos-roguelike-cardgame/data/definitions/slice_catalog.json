@@ -13,20 +13,18 @@
     "hero_power_text": "Poder inimigo pendente."
   },
   "starter_deck": [
-    "arcano_construtor_fluxo",
-    "arcano_construtor_fluxo",
-    "arcano_construtor_fluxo",
-    "arcano_spell_dano",
-    "arcano_spell_dano",
-    "arcano_spell_dano",
-    "arcano_spell_dano",
-    "arcano_spell_dano",
-    "arcano_protetor",
-    "arcano_protetor",
-    "arcano_gerador_entrada",
-    "arcano_spell_dano_maior",
-    "arcano_spell_dano_maior",
-    "arcano_gerador_continuo"
+    "arcano_choque",
+    "arcano_choque",
+    "arcano_choque",
+    "arcano_fagulha",
+    "arcano_fagulha",
+    "arcano_fagulha",
+    "arcano_barreira",
+    "arcano_barreira",
+    "arcano_barreira",
+    "arcano_tempestade",
+    "arcano_tempestade",
+    "arcano_tempestade"
   ],
   "class_options": [
     {
@@ -39,21 +37,20 @@
       "active_text": "1 mana: causa 1 de dano + Fluxo a qualquer alvo. Uma vez por turno.",
       "starting_mana": 2,
       "starting_health": 20,
+      "starting_hand_size": 3,
       "starter_deck": [
-        "arcano_construtor_fluxo",
-        "arcano_construtor_fluxo",
-        "arcano_construtor_fluxo",
-        "arcano_spell_dano",
-        "arcano_spell_dano",
-        "arcano_spell_dano",
-        "arcano_spell_dano",
-        "arcano_spell_dano",
-        "arcano_protetor",
-        "arcano_protetor",
-        "arcano_gerador_entrada",
-        "arcano_spell_dano_maior",
-        "arcano_spell_dano_maior",
-        "arcano_gerador_continuo"
+        "arcano_choque",
+        "arcano_choque",
+        "arcano_choque",
+        "arcano_fagulha",
+        "arcano_fagulha",
+        "arcano_fagulha",
+        "arcano_barreira",
+        "arcano_barreira",
+        "arcano_barreira",
+        "arcano_tempestade",
+        "arcano_tempestade",
+        "arcano_tempestade"
       ]
     },
     {
@@ -66,21 +63,20 @@
       "active_text": "1 mana: uma criatura aliada ganha +2/+0 permanente. Uma vez por turno.",
       "starting_mana": 2,
       "starting_health": 20,
+      "starting_hand_size": 3,
       "starter_deck": [
-        "invocador_protecao",
-        "invocador_protecao",
-        "invocador_protecao",
-        "invocador_voadora",
-        "invocador_voadora",
-        "invocador_buff_unico",
-        "invocador_buff_unico",
-        "invocador_buff_unico",
-        "invocador_buff_unico",
-        "invocador_buff_temporario",
-        "invocador_buff_temporario",
-        "invocador_regeneracao",
-        "invocador_regeneracao",
-        "invocador_buff_area"
+        "invocador_soldado",
+        "invocador_soldado",
+        "invocador_soldado",
+        "invocador_batedor",
+        "invocador_batedor",
+        "invocador_batedor",
+        "invocador_promover",
+        "invocador_promover",
+        "invocador_promover",
+        "invocador_guardiao",
+        "invocador_guardiao",
+        "invocador_guardiao"
       ]
     },
     {
@@ -93,215 +89,134 @@
       "active_text": "0 mana + Cinzas: 2 debuff, 4 reanima 1/1, 6 reanima com stats originais. Uma vez por turno.",
       "starting_mana": 2,
       "starting_health": 20,
+      "starting_hand_size": 3,
       "starter_deck": [
-        "necro_sacrificio_zero",
-        "necro_sacrificio_zero",
-        "necro_sacrificio_dano",
-        "necro_sacrificio_dano",
-        "necro_sacrificio_dano",
-        "necro_sacrificio_lento",
-        "necro_sacrificio_lento",
-        "necro_sacrificio_lento",
-        "necro_spell_lentidao",
-        "necro_spell_lentidao",
-        "necro_spell_podridao",
-        "necro_spell_podridao",
-        "necro_reanimavel",
-        "necro_reanimavel",
-        "necro_spell_confusao"
+        "necro_esqueleto",
+        "necro_esqueleto",
+        "necro_esqueleto",
+        "necro_morto_vivo",
+        "necro_morto_vivo",
+        "necro_morto_vivo",
+        "necro_prender",
+        "necro_prender",
+        "necro_prender",
+        "necro_zumbi",
+        "necro_zumbi",
+        "necro_zumbi"
       ]
     }
   ],
   "cards": [
     {
-      "id": "arcano_construtor_fluxo",
-      "display_name": "Construtor de Fluxo",
-      "type": "magia",
-      "cost": 0,
-      "text": "Aplica Lentidao a uma criatura inimiga. Conta para Fluxo quando a passiva estiver desbloqueada.",
-      "effect": {"action": "debuff", "debuff": "slow", "amount": 1}
-    },
-    {
-      "id": "arcano_spell_dano",
-      "display_name": "Pulso de Fluxo",
+      "id": "arcano_choque",
+      "display_name": "Choque",
       "type": "magia",
       "cost": 1,
-      "text": "Causa 1 de dano a qualquer alvo. Arcano soma Fluxo quando a passiva estiver desbloqueada.",
+      "text": "Causa 1 de dano a qualquer criatura ou heroi inimigo valido.",
       "effect": {"action": "damage", "amount": 1}
     },
     {
-      "id": "arcano_protetor",
-      "display_name": "Escudo de Eter",
+      "id": "arcano_fagulha",
+      "display_name": "Fagulha Arcana",
       "type": "criatura",
       "cost": 1,
+      "attack": 1,
+      "health": 1,
+      "text": "Enquanto em campo: +1 Poder de habilidade.",
+      "effect": {"aura": "ability_power", "amount": 1}
+    },
+    {
+      "id": "arcano_barreira",
+      "display_name": "Barreira Arcana",
+      "type": "criatura",
+      "cost": 2,
       "attack": 0,
-      "health": 3,
-      "keywords": ["iniciativa"],
-      "text": "Iniciativa: causa dano primeiro na lane."
-    },
-    {
-      "id": "arcano_gerador_entrada",
-      "display_name": "Condutor Instavel",
-      "type": "criatura",
-      "cost": 1,
-      "attack": 1,
-      "health": 2,
-      "text": "Ao entrar: ganhe 1 de mana neste turno.",
-      "effect": {"on_enter": {"action": "gain_mana", "amount": 1}}
-    },
-    {
-      "id": "arcano_spell_dano_maior",
-      "display_name": "Raio Astral",
-      "type": "magia",
-      "cost": 2,
-      "text": "Causa 2 de dano a qualquer alvo. Arcano soma Fluxo quando a passiva estiver desbloqueada.",
-      "effect": {"action": "damage", "amount": 2}
-    },
-    {
-      "id": "arcano_gerador_continuo",
-      "display_name": "Nucleo de Eter",
-      "type": "criatura",
-      "cost": 2,
-      "attack": 1,
-      "health": 3,
-      "text": "Enquanto em campo: +1 de mana por turno.",
-      "effect": {"aura": "mana_per_turn", "amount": 1}
-    },
-    {
-      "id": "arcano_amplificador",
-      "display_name": "Amplificador Astral",
-      "type": "criatura",
-      "cost": 3,
-      "attack": 1,
-      "health": 4,
-      "text": "Enquanto em campo: spells causam +1 de dano.",
-      "effect": {"aura": "spell_damage", "amount": 1}
-    },
-    {
-      "id": "invocador_protecao",
-      "display_name": "Guarda Vinculado",
-      "type": "criatura",
-      "cost": 1,
-      "attack": 1,
-      "health": 4,
-      "keywords": ["iniciativa"],
-      "text": "Iniciativa: causa dano primeiro na lane."
-    },
-    {
-      "id": "invocador_voadora",
-      "display_name": "Fera Alada",
-      "type": "criatura",
-      "cost": 1,
-      "attack": 3,
-      "health": 2,
-      "keywords": ["iniciativa"],
-      "text": "Iniciativa: causa dano primeiro na lane."
-    },
-    {
-      "id": "invocador_buff_unico",
-      "display_name": "Marca Permanente",
-      "type": "magia",
-      "cost": 1,
-      "text": "Criatura aliada ganha +1/+1 permanente.",
-      "effect": {"action": "buff_ally", "attack": 1, "health": 1, "temporary": false}
-    },
-    {
-      "id": "invocador_buff_temporario",
-      "display_name": "Impulso Predatorio",
-      "type": "magia",
-      "cost": 1,
-      "text": "Criatura aliada ganha +3/+0 ate o fim do turno.",
-      "effect": {"action": "buff_ally", "attack": 3, "health": 0, "temporary": true}
-    },
-    {
-      "id": "invocador_regeneracao",
-      "display_name": "Guardiao Regenerante",
-      "type": "criatura",
-      "cost": 2,
-      "attack": 2,
-      "health": 3,
-      "keywords": ["regeneracao"],
-      "text": "Regeneracao: recupera 1 HP no inicio do turno do jogador."
-    },
-    {
-      "id": "invocador_buff_area",
-      "display_name": "Comando de Campo",
-      "type": "magia",
-      "cost": 2,
-      "text": "Todas as criaturas aliadas ganham +1/+1 permanente.",
-      "effect": {"action": "buff_all_allies", "attack": 1, "health": 1, "temporary": false}
-    },
-    {
-      "id": "invocador_colosso",
-      "display_name": "Colosso Vinculado",
-      "type": "criatura",
-      "cost": 3,
-      "attack": 5,
       "health": 5,
-      "text": "Criatura grande para validar escala de buffs."
+      "text": "Enquanto em campo: +1 Poder de habilidade.",
+      "effect": {"aura": "ability_power", "amount": 1}
     },
     {
-      "id": "necro_sacrificio_zero",
-      "display_name": "Cinza Faminta",
+      "id": "arcano_tempestade",
+      "display_name": "Tempestade Arcana",
+      "type": "magia",
+      "cost": 2,
+      "text": "Causa 3 pontos de dano distribuidos aleatoriamente entre alvos inimigos.",
+      "effect": {"action": "random_damage", "amount": 3}
+    },
+    {
+      "id": "invocador_soldado",
+      "display_name": "Soldado Arcano",
       "type": "criatura",
-      "cost": 0,
-      "attack": 1,
-      "health": 1,
-      "text": "Ao morrer: gera 2 Cinzas em vez de 1 quando a passiva estiver desbloqueada.",
-      "effect": {"on_death": {"action": "gain_ashes", "amount": 2}}
+      "cost": 1,
+      "attack": 2,
+      "health": 2,
+      "text": "Criatura de linha arcana."
     },
     {
-      "id": "necro_sacrificio_dano",
-      "display_name": "Lamina Morta",
+      "id": "invocador_batedor",
+      "display_name": "Batedor Arcano",
       "type": "criatura",
       "cost": 1,
       "attack": 2,
       "health": 1,
-      "text": "Ao morrer: causa 1 de dano a um inimigo quando a passiva estiver desbloqueada.",
-      "effect": {"on_death": {"action": "damage", "amount": 1}}
+      "keywords": ["iniciativa"],
+      "text": "Iniciativa: causa dano primeiro na lane."
     },
     {
-      "id": "necro_sacrificio_lento",
-      "display_name": "Acolito Ruinoso",
+      "id": "invocador_promover",
+      "display_name": "Promover",
+      "type": "magia",
+      "cost": 1,
+      "text": "Escolha uma criatura aliada, depois escolha +1/+1, Iniciativa ou Defensor.",
+      "effect": {"action": "promote", "attack": 1, "health": 1}
+    },
+    {
+      "id": "invocador_guardiao",
+      "display_name": "Guardiao Arcano",
+      "type": "criatura",
+      "cost": 2,
+      "attack": 2,
+      "health": 4,
+      "keywords": ["defensor"],
+      "text": "Defensor: protege lanes vazias."
+    },
+    {
+      "id": "necro_esqueleto",
+      "display_name": "Esqueleto",
       "type": "criatura",
       "cost": 1,
       "attack": 1,
-      "health": 2,
-      "text": "Ao morrer: aplica Lentidao a uma criatura inimiga quando a passiva estiver desbloqueada.",
-      "effect": {"on_death": {"action": "debuff", "debuff": "slow", "amount": 1}}
+      "health": 1,
+      "keywords": ["reviver"],
+      "text": "Reviver: volta uma vez no mesmo slot."
     },
     {
-      "id": "necro_spell_lentidao",
-      "display_name": "Lentidao Sombria",
-      "type": "magia",
+      "id": "necro_morto_vivo",
+      "display_name": "Morto vivo",
+      "type": "criatura",
       "cost": 1,
-      "text": "Uma criatura inimiga nao ataca neste turno.",
-      "effect": {"action": "debuff", "debuff": "slow", "amount": 1}
+      "attack": 1,
+      "health": 1,
+      "text": "Ao morrer: Enfraquecer 1.",
+      "effect": {"on_death": {"action": "weaken", "debuff": "weaken", "amount": 1}}
     },
     {
-      "id": "necro_spell_podridao",
-      "display_name": "Podridao Astral",
+      "id": "necro_prender",
+      "display_name": "Prender",
       "type": "magia",
-      "cost": 1,
-      "text": "Uma criatura inimiga perde 1/1 permanente.",
-      "effect": {"action": "debuff", "debuff": "rot", "amount": 1}
+      "cost": 2,
+      "text": "A criatura inimiga alvo nao ataca no proximo combate.",
+      "effect": {"action": "snare", "debuff": "snare", "amount": 1}
     },
     {
-      "id": "necro_reanimavel",
-      "display_name": "Servo Reanimavel",
+      "id": "necro_zumbi",
+      "display_name": "Zumbi",
       "type": "criatura",
       "cost": 2,
-      "attack": 3,
-      "health": 3,
-      "text": "Alvo simples para Ritual das Sombras."
-    },
-    {
-      "id": "necro_spell_confusao",
-      "display_name": "Confusao Sepulcral",
-      "type": "magia",
-      "cost": 2,
-      "text": "Uma criatura inimiga ataca o proprio lado neste turno.",
-      "effect": {"action": "debuff", "debuff": "confusion", "amount": 1}
+      "attack": 2,
+      "health": 2,
+      "text": "Ao morrer: Enfraquecer 1.",
+      "effect": {"on_death": {"action": "weaken", "debuff": "weaken", "amount": 1}}
     },
     {
       "id": "elemental_agil",
@@ -656,7 +571,7 @@
         "encounter_id": "duelo_inicial",
         "available_after": ["n02_ondas_iniciais"],
         "unlocks": ["n04_defesa_posicao"],
-        "rewards": ["add_cost3_cards"]
+        "rewards": ["max_hand_size_1"]
       },
       {
         "id": "n04_defesa_posicao",

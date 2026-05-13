@@ -248,7 +248,7 @@ func _status_text() -> String:
 		return "Nenhuma run ativa. Volte para a nave, escolha uma Classe e inicie a run."
 	var completed_text: String = _completed_nodes_text()
 	var health_text: String = "Vida: %d/%d" % [RunSession.current_health, RunSession.max_health]
-	var economy_text: String = "\nMana: %d\nAlmas: %d" % [RunSession.max_mana, RunSession.soul_total]
+	var economy_text: String = "\nMana: %d\nMao: %d\nAlmas: %d" % [RunSession.max_mana, RunSession.max_hand_size, RunSession.soul_total]
 	var last_result_text: String = ""
 	if RunSession.last_completed_node_id != "":
 		last_result_text = "\nUltimo encontro concluido: %s" % RunSession.last_completed_node_id
@@ -282,7 +282,7 @@ func _rebuild_reward_choices() -> void:
 		child.queue_free()
 	var label: Label = Label.new()
 	label.name = "RunMapAutomaticRewards"
-	label.text = "Recompensas fixas sao aplicadas automaticamente ao vencer mapas 2, 3, 5 e 7."
+	label.text = "Recompensas fixas sao aplicadas automaticamente: mana, limite de mao, passiva e spell."
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
 	reward_box.add_child(label)

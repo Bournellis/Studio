@@ -57,8 +57,8 @@ func _validate_contract() -> Dictionary:
 		return {"ok": false, "message": "Player hero must exist for the bootstrap catalog."}
 	if catalog.player_hero.id != "comandante_draxos":
 		return {"ok": false, "message": "Player hero must be the Draxos commander."}
-	if catalog.starter_deck_ids.size() < 10:
-		return {"ok": false, "message": "Starter deck must keep a playable Arcano slice deck."}
+	if catalog.starter_deck_ids.size() != 12:
+		return {"ok": false, "message": "Starter deck must have 12 cards."}
 	if catalog.class_options.size() != 3:
 		return {"ok": false, "message": "Catalog must expose exactly 3 playable class options for Track 01."}
 	var expected_classes: Array[String] = ["arcano", "invocador", "necromante"]
@@ -66,30 +66,43 @@ func _validate_contract() -> Dictionary:
 		var class_id: String = str(class_option.get("id", ""))
 		if not expected_classes.has(class_id):
 			return {"ok": false, "message": "Unexpected class option %s." % class_id}
-		if Array(class_option.get("starter_deck", [])).size() < 10:
-			return {"ok": false, "message": "Class %s needs a playable starter_deck." % class_id}
+		var starter_deck: Array = Array(class_option.get("starter_deck", []))
+		if starter_deck.size() != 12:
+			return {"ok": false, "message": "Class %s needs exactly 12 starter cards." % class_id}
+		if int(class_option.get("starting_hand_size", 0)) != 3:
+			return {"ok": false, "message": "Class %s needs starting_hand_size 3." % class_id}
 		if int(class_option.get("starting_mana", 0)) != 2:
 			return {"ok": false, "message": "Class %s needs starting_mana 2 for the linear run slice." % class_id}
 		if int(class_option.get("starting_health", 0)) != 20:
 			return {"ok": false, "message": "Class %s needs starting_health 20 for the test slice." % class_id}
 		if str(class_option.get("passive_id", "")) == "" or str(class_option.get("active_id", "")) == "":
 			return {"ok": false, "message": "Class %s needs passive_id and active_id." % class_id}
-		for starter_card_id: String in Array(class_option.get("starter_deck", [])):
+		var unique_counts: Dictionary = {}
+		for starter_card_id: String in starter_deck:
 			var starter_card = catalog.find_card(starter_card_id)
 			if starter_card == null:
 				return {"ok": false, "message": "Class %s starter_deck references missing card %s." % [class_id, starter_card_id]}
 			if int(starter_card.cost) >= 3:
 				return {"ok": false, "message": "Class %s starter_deck still includes cost 3 card %s." % [class_id, starter_card_id]}
+			unique_counts[starter_card_id] = int(unique_counts.get(starter_card_id, 0)) + 1
+		if unique_counts.size() != 4:
+			return {"ok": false, "message": "Class %s needs 4 starter card types." % class_id}
+		for card_count: Variant in unique_counts.values():
+			if int(card_count) != 3:
+				return {"ok": false, "message": "Class %s needs 3 copies of each starter card." % class_id}
 	for card_id: String in Array(catalog.starter_deck_ids):
 		if catalog.find_card(card_id) == null:
 			return {"ok": false, "message": "Starter deck references missing card %s." % card_id}
 	for card in catalog.cards:
 		if card.has_keyword("protecao") or card.has_keyword("voadora"):
 			return {"ok": false, "message": "Card %s still uses removed keyword." % str(card.id)}
-	for migrated_id: String in ["arcano_protetor", "invocador_protecao", "invocador_voadora"]:
-		var migrated_card = catalog.find_card(migrated_id)
-		if migrated_card == null or not migrated_card.has_keyword("iniciativa"):
-			return {"ok": false, "message": "Migrated card %s needs iniciativa." % migrated_id}
+	for removed_player_id: String in ["arcano_spell_dano", "arcano_construtor_fluxo", "invocador_protecao", "invocador_buff_unico", "necro_spell_lentidao"]:
+		if catalog.find_card(removed_player_id) != null:
+			return {"ok": false, "message": "Removed player card still exists: %s." % removed_player_id}
+	var required_new_cards: Array[String] = ["arcano_choque", "arcano_fagulha", "arcano_barreira", "arcano_tempestade", "invocador_soldado", "invocador_batedor", "invocador_promover", "invocador_guardiao", "necro_esqueleto", "necro_morto_vivo", "necro_prender", "necro_zumbi"]
+	for new_card_id: String in required_new_cards:
+		if catalog.find_card(new_card_id) == null:
+			return {"ok": false, "message": "Missing redesigned player card %s." % new_card_id}
 	if catalog.find_encounter("pouso_elemental").is_empty():
 		return {"ok": false, "message": "Pouso Elemental encounter must exist."}
 	if catalog.find_encounter("ondas_iniciais").is_empty():
@@ -175,7 +188,7 @@ func _validate_run_map_contract(run_map: Dictionary) -> Dictionary:
 		return {"ok": false, "message": "Run map must include mainline nodes."}
 	var expected_rewards: Dictionary = {
 		"n02_ondas_iniciais": "max_mana_1",
-		"n03_duelo_inicial": "add_cost3_cards",
+		"n03_duelo_inicial": "max_hand_size_1",
 		"n05_chefe_invocador": "unlock_class_passive",
 		"n07_limpeza_elite": "unlock_class_active"
 	}

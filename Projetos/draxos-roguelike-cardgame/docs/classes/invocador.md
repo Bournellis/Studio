@@ -1,7 +1,7 @@
 # Invocador
 
-- Last Updated: `2026-05-12`
-- Status: `Track 01 linear slice validated`
+- Last Updated: `2026-05-13`
+- Status: `Track 01 redesigned class deck validated`
 - Indice: `README.md`
 
 ## Identidade
@@ -22,34 +22,29 @@ Desbloqueio: mapa 7.
 
 **Custo:** 1 mana. Usavel uma vez por turno.
 
-**Efeito:** uma criatura aliada escolhida ganha +2/+0 permanente.
+**Efeito:** uma criatura aliada escolhida ganha +2/+0 permanente, aumentado por poder de habilidade.
 
 Antes do mapa 7, a habilidade nao aparece na UI e nao pode ser usada.
 
 ## Keywords
 
-As antigas funcoes de `protecao` e `voadora` foram removidas. As criaturas que usavam essas keywords agora usam `iniciativa`.
+As antigas funcoes de `protecao` e `voadora` foram removidas.
 
-`regeneracao` continua ativa.
+`iniciativa`, `defensor` e `regeneracao` estao ativos.
 
-## Deck Mockup Atual
+## Deck Atual
 
-Parametros do slice: mana inicial 2, HP do Comandante 20.
+Parametros do slice: mana inicial 2, HP do Comandante 20, mao base 3, deck inicial 12 cartas.
 
-| Papel | Custo | Qty inicial | Stats | Efeito |
+| Carta | Custo | Qty inicial | Stats | Efeito |
 |---|---:|---:|---|---|
-| Criatura com Iniciativa A | 1 | 3 | 1/4 | `iniciativa`. |
-| Criatura com Iniciativa B | 1 | 2 | 3/2 | `iniciativa`. |
-| Buff permanente unico | 1 | 4 | - | Criatura aliada ganha +1/+1 permanente. |
-| Buff temporario unico | 1 | 2 | - | Criatura aliada ganha +3/+0 ate o fim do turno. |
-| Criatura Regeneracao | 2 | 2 | 2/3 | `regeneracao`. |
-| Buff permanente area | 2 | 1 | - | Todas as criaturas aliadas ganham +1/+1 permanente. |
-| Colosso | 3 | 0 inicial / recompensa mapa 3 | 5/5 | Sem habilidade. |
-
-O deck inicial tem 14 cartas. `invocador_colosso` entra na run apenas pelo marco automatico do mapa 3.
+| Soldado Arcano | 1 | 3 | 2/2 | Sem keyword. |
+| Batedor Arcano | 1 | 3 | 2/1 | `iniciativa`. |
+| Promover | 1 | 3 | - | Criatura aliada escolhe +1/+1, `iniciativa` ou `defensor`. |
+| Guardiao Arcano | 2 | 3 | 2/4 | `defensor`. |
 
 ## Pendencias
 
 - Nome final da habilidade ativa.
 - Nomes, lore e arte definitivos das cartas.
-- Rebalancear buffs e stats depois que todas as cartas forem refeitas.
+- Rebalancear buffs e stats contra os inimigos atuais depois do playtest.

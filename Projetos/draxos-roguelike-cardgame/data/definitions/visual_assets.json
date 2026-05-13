@@ -86,100 +86,61 @@
     }
   },
   "cards": {
-    "arcano_construtor_fluxo": {
-      "art_path": "res://assets/cards/art/arcano_construtor_fluxo.png",
-      "frame_id": "frame_arcano"
-    },
-    "arcano_spell_dano": {
-      "art_path": "res://assets/cards/art/arcano_spell_dano.png",
+    "arcano_choque": {
+      "art_path": "res://assets/cards/art/arcano_choque.png",
       "frame_id": "frame_arcano",
-      "text_template": "Causa {amount} de dano a qualquer alvo. Arcano soma Fluxo."
+      "text_template": "Causa {amount} de dano a qualquer criatura ou heroi inimigo valido."
     },
-    "arcano_protetor": {
-      "art_path": "res://assets/cards/art/arcano_protetor.png",
-      "frame_id": "frame_arcano"
-    },
-    "arcano_gerador_entrada": {
-      "art_path": "res://assets/cards/art/arcano_gerador_entrada.png",
+    "arcano_fagulha": {
+      "art_path": "res://assets/cards/art/arcano_fagulha.png",
       "frame_id": "frame_arcano",
-      "text_template": "Ao entrar: ganhe {amount} de mana neste turno."
+      "text_template": "Enquanto em campo: +{amount} Poder de habilidade."
     },
-    "arcano_spell_dano_maior": {
-      "art_path": "res://assets/cards/art/arcano_spell_dano_maior.png",
+    "arcano_barreira": {
+      "art_path": "res://assets/cards/art/arcano_barreira.png",
       "frame_id": "frame_arcano",
-      "text_template": "Causa {amount} de dano a qualquer alvo. Arcano soma Fluxo."
+      "text_template": "Enquanto em campo: +{amount} Poder de habilidade."
     },
-    "arcano_gerador_continuo": {
-      "art_path": "res://assets/cards/art/arcano_gerador_continuo.png",
+    "arcano_tempestade": {
+      "art_path": "res://assets/cards/art/arcano_tempestade.png",
       "frame_id": "frame_arcano",
-      "text_template": "Enquanto em campo: +{amount} de mana por turno."
+      "text_template": "Causa {amount} pontos de dano aleatorios entre alvos inimigos."
     },
-    "arcano_amplificador": {
-      "art_path": "res://assets/cards/art/arcano_amplificador.png",
-      "frame_id": "frame_arcano",
-      "text_template": "Enquanto em campo: spells causam +{amount} de dano."
-    },
-    "invocador_protecao": {
-      "art_path": "res://assets/cards/art/invocador_protecao.png",
+    "invocador_soldado": {
+      "art_path": "res://assets/cards/art/invocador_soldado.png",
       "frame_id": "frame_invocador"
     },
-    "invocador_voadora": {
-      "art_path": "res://assets/cards/art/invocador_voadora.png",
+    "invocador_batedor": {
+      "art_path": "res://assets/cards/art/invocador_batedor.png",
       "frame_id": "frame_invocador"
     },
-    "invocador_buff_unico": {
-      "art_path": "res://assets/cards/art/invocador_buff_unico.png",
+    "invocador_promover": {
+      "art_path": "res://assets/cards/art/invocador_promover.png",
       "frame_id": "frame_invocador",
-      "text_template": "Criatura aliada ganha +{effect_attack}/+{effect_health} permanente."
+      "text_template": "Criatura aliada recebe +{effect_attack}/+{effect_health}, Iniciativa ou Defensor."
     },
-    "invocador_buff_temporario": {
-      "art_path": "res://assets/cards/art/invocador_buff_temporario.png",
-      "frame_id": "frame_invocador",
-      "text_template": "Criatura aliada ganha +{effect_attack}/+{effect_health} ate o fim do turno."
-    },
-    "invocador_regeneracao": {
-      "art_path": "res://assets/cards/art/invocador_regeneracao.png",
+    "invocador_guardiao": {
+      "art_path": "res://assets/cards/art/invocador_guardiao.png",
       "frame_id": "frame_invocador"
     },
-    "invocador_buff_area": {
-      "art_path": "res://assets/cards/art/invocador_buff_area.png",
-      "frame_id": "frame_invocador",
-      "text_template": "Todas as criaturas aliadas ganham +{effect_attack}/+{effect_health} permanente."
+    "necro_esqueleto": {
+      "art_path": "res://assets/cards/art/necro_esqueleto.png",
+      "frame_id": "frame_necromante"
     },
-    "invocador_colosso": {
-      "art_path": "res://assets/cards/art/invocador_colosso.png",
-      "frame_id": "frame_invocador"
-    },
-    "necro_sacrificio_zero": {
-      "art_path": "res://assets/cards/art/necro_sacrificio_zero.png",
+    "necro_morto_vivo": {
+      "art_path": "res://assets/cards/art/necro_morto_vivo.png",
       "frame_id": "frame_necromante",
-      "text_template": "Ao morrer: gera {amount} Cinzas em vez de 1."
+      "text_template": "Ao morrer: Enfraquecer {amount}."
     },
-    "necro_sacrificio_dano": {
-      "art_path": "res://assets/cards/art/necro_sacrificio_dano.png",
+    "necro_prender": {
+      "art_path": "res://assets/cards/art/necro_prender.png",
       "frame_id": "frame_necromante",
-      "text_template": "Ao morrer: causa {amount} de dano a um inimigo."
+      "text_template": "Criatura inimiga nao ataca nos proximos {amount} combate(s)."
     },
-    "necro_sacrificio_lento": {
-      "art_path": "res://assets/cards/art/necro_sacrificio_lento.png",
-      "frame_id": "frame_necromante"
-    },
-    "necro_spell_lentidao": {
-      "art_path": "res://assets/cards/art/necro_spell_lentidao.png",
-      "frame_id": "frame_necromante"
-    },
-    "necro_spell_podridao": {
-      "art_path": "res://assets/cards/art/necro_spell_podridao.png",
+    "necro_zumbi": {
+      "art_path": "res://assets/cards/art/necro_zumbi.png",
       "frame_id": "frame_necromante",
-      "text_template": "Uma criatura inimiga perde {amount}/{amount} permanente."
-    },
-    "necro_reanimavel": {
-      "art_path": "res://assets/cards/art/necro_reanimavel.png",
-      "frame_id": "frame_necromante"
-    },
-    "necro_spell_confusao": {
-      "art_path": "res://assets/cards/art/necro_spell_confusao.png",
-      "frame_id": "frame_necromante"
+      "text_template": "Ao morrer: Enfraquecer {amount}."
     },
     "elemental_agil": {
       "art_path": "res://assets/cards/art/elemental_agil.png",

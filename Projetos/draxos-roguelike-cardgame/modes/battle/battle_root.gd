@@ -26,6 +26,8 @@ var esc_menu: PanelContainer
 var class_active_tile
 var necromancer_modal: PanelContainer
 var necromancer_choices_box: VBoxContainer
+var pending_choice_modal: PanelContainer
+var pending_choice_box: VBoxContainer
 var preview_timer: Timer
 var preview_panel: PanelContainer
 var preview_title_label: Label
@@ -53,6 +55,7 @@ func _ready() -> void:
 		"class_passive_unlocked": RunSession.class_passive_unlocked,
 		"class_active_unlocked": RunSession.class_active_unlocked,
 		"mana_per_turn": RunSession.max_mana if RunSession.max_mana > 0 else 2,
+		"max_hand_size": RunSession.max_hand_size if RunSession.max_hand_size > 0 else RunSession.DEFAULT_MAX_HAND_SIZE,
 		"player_health": RunSession.current_health if RunSession.current_health > 0 else 20,
 		"shuffle_seed": RunSession.run_seed
 	})
@@ -208,6 +211,7 @@ func _build_ui() -> void:
 
 	_build_preview_panel()
 	_build_necromancer_modal()
+	_build_pending_choice_modal()
 	_build_esc_menu()
 
 func _build_enemy_commander_hud() -> PanelContainer:
@@ -354,8 +358,8 @@ func _build_class_resource_chip() -> PanelContainer:
 func _build_floating_end_turn_button() -> void:
 	end_turn_button = Button.new()
 	end_turn_button.name = "BattleEndTurnFloatingButton"
-	end_turn_button.text = "Encerrar\nTurno"
-	end_turn_button.tooltip_text = "Resolver o turno atual"
+	end_turn_button.text = "Resolver\nCombate"
+	end_turn_button.tooltip_text = "Resolver combate e manutencao da mesa"
 	end_turn_button.custom_minimum_size = Vector2(104 if _is_compact_viewport() else 122, 58 if _is_compact_viewport() else 70)
 	end_turn_button.anchor_left = 1.0
 	end_turn_button.anchor_top = 0.5
@@ -366,7 +370,7 @@ func _build_floating_end_turn_button() -> void:
 	end_turn_button.offset_right = -10.0 if _is_compact_viewport() else -14.0
 	end_turn_button.offset_bottom = 30.0 if _is_compact_viewport() else 35.0
 	end_turn_button.pressed.connect(func() -> void:
-		engine.end_player_turn()
+		engine.resolve_combat_cycle()
 		selected_hand_index = -1
 		_after_battle_action()
 	)
@@ -517,6 +521,28 @@ func _build_necromancer_modal() -> void:
 	necromancer_choices_box.add_theme_constant_override("separation", 7)
 	margin.add_child(necromancer_choices_box)
 
+func _build_pending_choice_modal() -> void:
+	pending_choice_modal = PanelContainer.new()
+	pending_choice_modal.name = "PendingBattleChoiceModal"
+	pending_choice_modal.visible = false
+	pending_choice_modal.set_anchors_preset(Control.PRESET_CENTER)
+	pending_choice_modal.position = Vector2(300, 130)
+	pending_choice_modal.custom_minimum_size = Vector2(336, 0)
+	pending_choice_modal.add_theme_stylebox_override("panel", _panel_style(Color(0.08, 0.09, 0.1), Color(0.78, 0.62, 0.34)))
+	add_child(pending_choice_modal)
+
+	var margin: MarginContainer = MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 12)
+	margin.add_theme_constant_override("margin_top", 10)
+	margin.add_theme_constant_override("margin_right", 12)
+	margin.add_theme_constant_override("margin_bottom", 10)
+	pending_choice_modal.add_child(margin)
+
+	pending_choice_box = VBoxContainer.new()
+	pending_choice_box.name = "PendingBattleChoiceList"
+	pending_choice_box.add_theme_constant_override("separation", 7)
+	margin.add_child(pending_choice_box)
+
 func _refresh() -> void:
 	var state: Dictionary = engine.get_state()
 	_refresh_player_hud(state)
@@ -528,11 +554,12 @@ func _refresh() -> void:
 	_rebuild_hand(Array(state.get("hand", [])))
 	_refresh_class_active_tile()
 	_refresh_necromancer_modal()
+	_refresh_pending_choice_modal()
 	var log_entries: Array = Array(state.get("log", []))
 	if history_log_label != null:
 		history_log_label.text = "\n".join(log_entries)
 	if end_turn_button != null:
-		end_turn_button.disabled = engine.outcome != ""
+		end_turn_button.disabled = engine.outcome != "" or engine.has_pending_choice()
 
 func _refresh_player_hud(state: Dictionary) -> void:
 	if player_hp_value != null:
@@ -676,7 +703,7 @@ func _rebuild_hand(hand: Array) -> void:
 		var card = ContentLibrary.get_card(card_id)
 		var token: BattleCardToken = BattleCardToken.new()
 		token.name = "BattleHandCard%d" % index
-		token.setup(card_id, index, engine.can_play_card(card), selected_hand_index == index, _hand_card_size())
+		token.setup(card_id, index, engine.can_play_card(card), selected_hand_index == index, _hand_card_size(), engine.get_card_text_context(card_id))
 		token.mouse_entered.connect(func() -> void:
 			_schedule_preview(_card_preview_data(card_id, {}))
 		)
@@ -745,6 +772,56 @@ func _refresh_necromancer_modal() -> void:
 		necromancer_modal.visible = false
 	)
 	necromancer_choices_box.add_child(close_button)
+
+func _refresh_pending_choice_modal() -> void:
+	if pending_choice_modal == null or pending_choice_box == null:
+		return
+	for child: Node in pending_choice_box.get_children():
+		child.queue_free()
+	var choice: Dictionary = engine.get_pending_choice()
+	pending_choice_modal.visible = not choice.is_empty()
+	if choice.is_empty():
+		return
+	var title: Label = Label.new()
+	title.text = str(choice.get("source_name", "Escolha pendente"))
+	title.add_theme_font_size_override("font_size", 16)
+	title.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+	pending_choice_box.add_child(title)
+	match str(choice.get("action", "")):
+		"promote":
+			for option: Dictionary in Array(choice.get("options", [])):
+				var option_id: String = str(option.get("id", ""))
+				var button: Button = Button.new()
+				button.name = "PendingChoice_%s" % option_id
+				button.text = "%s\n%s" % [str(option.get("display_name", option_id)), str(option.get("text", ""))]
+				button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+				button.pressed.connect(func() -> void:
+					engine.resolve_pending_choice({}, option_id)
+					_after_battle_action()
+				)
+				pending_choice_box.add_child(button)
+		"weaken":
+			for target: Dictionary in engine.get_valid_pending_choice_targets():
+				var slot_index: int = int(target.get("slot", -1))
+				var occupant: Dictionary = Dictionary(engine.enemy_slots[slot_index])
+				var button: Button = Button.new()
+				button.name = "PendingWeakenTarget_%d" % slot_index
+				button.text = "Enfraquecer %s\nSlot inimigo %d" % [str(occupant.get("name", "Criatura")), slot_index + 1]
+				button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+				button.pressed.connect(func() -> void:
+					engine.resolve_pending_choice(target)
+					_after_battle_action()
+				)
+				pending_choice_box.add_child(button)
+			if engine.get_valid_pending_choice_targets().is_empty():
+				var button: Button = Button.new()
+				button.name = "PendingWeakenNoTarget"
+				button.text = "Resolver sem alvo valido"
+				button.pressed.connect(func() -> void:
+					engine.resolve_pending_choice()
+					_after_battle_action()
+				)
+				pending_choice_box.add_child(button)
 
 func _open_necromancer_modal() -> void:
 	if RunSession.selected_class_id != "necromante" or not RunSession.class_active_unlocked:
@@ -837,7 +914,7 @@ func _card_preview_data(card_id: String, occupant: Dictionary) -> Dictionary:
 	var subtitle: String = "%s | Custo %d" % [UiTokens.type_display_name(str(card.card_type)), int(card.cost)]
 	if card.occupies_slot():
 		subtitle += " | %d/%d" % [int(card.attack), int(card.health)]
-	var body: String = VisualAssets.card_display_text(card)
+	var body: String = VisualAssets.card_display_text(card, engine.get_card_text_context(card_id))
 	var keyword_text: String = _keyword_text(Array(card.keywords))
 	if keyword_text != "":
 		body += "\n\n%s" % keyword_text
@@ -864,6 +941,10 @@ func _card_preview_data(card_id: String, occupant: Dictionary) -> Dictionary:
 			state_parts.append("Confusao %d" % int(occupant.get("confusion_turns", 0)))
 		if bool(occupant.get("regeneracao", false)):
 			state_parts.append("Regeneracao")
+		if bool(occupant.get("defensor", false)):
+			state_parts.append("Defensor")
+		if bool(occupant.get("revive_marker", false)):
+			state_parts.append("Revive usado")
 		state = " | ".join(state_parts)
 	return {"title": str(card.display_name), "subtitle": subtitle, "body": body, "state": state}
 
@@ -937,6 +1018,10 @@ func _keyword_text(keywords: Array) -> String:
 				parts.append("Iniciativa: causa dano primeiro na lane; se destruir o alvo, nao recebe retorno.")
 			"regeneracao":
 				parts.append("Regeneracao: recupera 1 HP no inicio do turno do jogador.")
+			"defensor":
+				parts.append("Defensor: protege lanes vazias, atraindo ataques sem alvo frontal.")
+			"reviver":
+				parts.append("Reviver: volta uma vez com stats originais no mesmo slot.")
 	return "\n".join(parts)
 
 func _hero_display_name(owner_id: String) -> String:

@@ -1,7 +1,7 @@
 # Necromante
 
-- Last Updated: `2026-05-12`
-- Status: `Track 01 linear slice validated`
+- Last Updated: `2026-05-13`
+- Status: `Track 01 redesigned class deck validated`
 - Indice: `README.md`
 
 ## Identidade
@@ -32,22 +32,19 @@ Desbloqueio: mapa 7.
 
 Antes do mapa 7, o modal do Necromante nao abre e a habilidade nao pode ser usada.
 
-## Deck Mockup Atual
+## Deck Atual
 
-Parametros do slice: mana inicial 2, HP do Comandante 20. O deck inicial ja nao tem cartas custo 3.
+Parametros do slice: mana inicial 2, HP do Comandante 20, mao base 3, deck inicial 12 cartas.
 
-| Papel | Custo | Qty inicial | Stats | Efeito |
+| Carta | Custo | Qty inicial | Stats | Efeito |
 |---|---:|---:|---|---|
-| Criatura sacrificial zero | 0 | 2 | 1/1 | Ao morrer: gera 2 Cinzas quando a passiva esta ativa. |
-| Criatura sacrificial A | 1 | 3 | 2/1 | Ao morrer: causa 1 de dano. |
-| Criatura sacrificial B | 1 | 3 | 1/2 | Ao morrer: aplica Lentidao. |
-| Spell Lentidao | 1 | 2 | - | Uma criatura inimiga nao ataca neste turno. |
-| Spell Podridao | 1 | 2 | - | Uma criatura inimiga perde 1/1 permanente. |
-| Criatura alvo de reanimacao | 2 | 2 | 3/3 | Alvo para reanimacao. |
-| Spell Confusao | 2 | 1 | - | Aplica Confusao. |
+| Esqueleto | 1 | 3 | 1/1 | `reviver`. |
+| Morto vivo | 1 | 3 | 1/1 | Ao morrer: `Enfraquecer 1`. |
+| Prender | 2 | 3 | - | Criatura inimiga nao ataca no proximo combate. |
+| Zumbi | 2 | 3 | 2/2 | Ao morrer: `Enfraquecer 1`. |
 
 ## Pendencias
 
 - Nome final do Ritual, se o nome provisiorio nao ficar.
 - Nomes, lore e arte definitivos das cartas.
-- Rebalancear geracao de Cinzas depois que todas as cartas forem refeitas.
+- Rebalancear geracao de Cinzas e efeitos de morte contra os inimigos atuais depois do playtest.

@@ -1,7 +1,7 @@
 # Encontros - Indice
 
-- Last Updated: `2026-05-12`
-- Status: `10 encontros lineares validados`
+- Last Updated: `2026-05-13`
+- Status: `10 encontros lineares validados com baseline de combate redesenhada`
 - Referencia: `../game-design-document.md`
 
 ## Proposito
@@ -14,7 +14,7 @@ Este diretorio registra o contrato de encontros do slice. Os nomes, inimigos e n
 |---|---|---|---|---:|---|
 | 1 | `pouso_elemental` | `limpar_mesa` | small | 4 | - |
 | 2 | `ondas_iniciais` | `ondas` | medium | 7 | +1 max mana |
-| 3 | `duelo_inicial` | `duelo` | medium | 7 | todas as cartas custo 3 jogaveis atuais |
+| 3 | `duelo_inicial` | `duelo` | medium | 7 | +1 limite de mao |
 | 4 | `defesa_posicao_inicial` | `defesa_posicao` | medium | 7 | - |
 | 5 | `chefe_invocador` | `chefe_summoner` | boss | 18 | passiva da classe |
 | 6 | `sobreviver_turnos_inicial` | `sobreviver_turnos` | medium | 7 | - |
@@ -36,13 +36,14 @@ Este diretorio registra o contrato de encontros do slice. Os nomes, inimigos e n
 
 Todos os modos usam o mesmo combate frontal:
 
-- slot ataca apenas a lane da frente;
+- slot ataca a lane da frente quando ocupada;
 - criaturas opostas causam dano simultaneo;
-- lane vazia passa dano direto quando ha alvo valido;
+- lane vazia procura o `defensor` inimigo mais proximo antes de dano direto;
 - `duelo` e `chefe_summoner` permitem dano direto no heroi inimigo;
 - `defesa_posicao` cria um objetivo aliado no slot central;
 - `sobreviver_turnos` usa apenas sobrevivencia do Comandante como objetivo.
+- `Resolver Combate` executa combate antes da manutencao; manutencao nao executa um combate inimigo separado.
 
 ## Proximo Passo
 
-Reescrever cartas e inimigos definitivos, depois redistribuir recompensas dos mapas que hoje ainda nao tem marco fixo.
+Playtestar a pressao dos inimigos contra os novos decks e redistribuir recompensas dos mapas que hoje ainda nao tem marco fixo.

@@ -1,7 +1,7 @@
 # Game Design Document
 
-- Last Updated: `2026-05-12`
-- Status: `Track 01 linear 10-encounter slice validated`
+- Last Updated: `2026-05-13`
+- Status: `Track 01 redesigned battle/card baseline validated`
 
 ## Direction
 
@@ -25,12 +25,14 @@ Nao ha meta-progressao por enquanto. Derrota reinicia a run completa.
 
 O tabuleiro usa slots alinhados por indice: slot 1 contra slot 1, slot 2 contra slot 2, e assim por diante.
 
-- Cada slot ataca apenas o slot diretamente a frente.
+- Cada slot ataca o slot diretamente a frente quando ele estiver ocupado.
 - Se houver criaturas dos dois lados da lane, o dano e simultaneo.
-- Se uma lane nao tiver defensor, o dano passa ao alvo daquele lado quando esse alvo existir.
+- Se uma lane inimiga estiver vazia, a criatura procura o `defensor` inimigo mais proximo da lane; em empate, usa o primeiro da esquerda.
+- Se nao houver `defensor`, o dano passa ao alvo daquele lado quando esse alvo existir.
 - O Comandante sempre pode receber dano direto de inimigos sem defensor.
 - O heroi inimigo so recebe dano direto nos modos `duelo` e `chefe_summoner`.
 - `regeneracao` continua funcionando no inicio do turno do jogador.
+- Nao existe enjoo: criaturas entram aptas para o proximo combate disponivel.
 
 ### Iniciativa
 
@@ -40,6 +42,14 @@ O tabuleiro usa slots alinhados por indice: slot 1 contra slot 1, slot 2 contra 
 - Se matar o alvo, nao recebe dano de volta.
 - Se nao matar, recebe o dano de retorno.
 - Se ambas tem `iniciativa`, ambas causam dano simultaneo na etapa de iniciativa e nao atacam de novo.
+
+### Novas Keywords E Efeitos
+
+- `defensor`: atrai ataques de criaturas inimigas sem alvo na lane a frente.
+- `reviver`: a criatura morta volta uma vez no mesmo slot, com stats originais e marcador de reviver; se morrer com marcador, vai ao descarte.
+- `enfraquecer X`: criatura alvo recebe `-X/-X`.
+- `prender`: criatura alvo pula os proximos combates relevantes.
+- `poder de habilidade`: fontes em campo aumentam valores numericos de spells, habilidades de cartas e ativas de classe, sem alterar custos nem stats base.
 
 ## Classes
 
@@ -64,14 +74,15 @@ Modos presentes no contrato do slice:
 
 ## Battle Economy
 
-- Mao inicial com 5 cartas.
+- Mao inicial com limite base de 3 cartas.
 - Jogar uma carta puxa 1 carta quando possivel.
 - Cartas jogadas vao para o descarte.
 - Quando o deck esvazia, o descarte e embaralhado de volta.
 - Mana inicial de todas as classes: `2`.
-- Decks iniciais podem ter menos de 15 cartas.
-- Cartas de custo 3 nao entram nos decks iniciais.
-- No mapa 3, a run recebe 1 copia de cada carta jogavel custo 3 atualmente disponivel.
+- Deck inicial de cada classe tem 12 cartas: 4 tipos, 3 copias cada.
+- O catalogo antigo de cartas do jogador foi removido; cartas inimigas permanecem.
+- No mapa 3, a run recebe `+1 limite de cartas na mao`.
+- O ciclo de batalha e: jogadas do jogador, `Resolver Combate`, escolhas pendentes, manutencao/script, escolhas pendentes, retorno automatico ao jogador.
 
 ## Linear Mission Map
 
@@ -81,7 +92,7 @@ Track 01 usa 10 encontros lineares, sem sidequests por enquanto.
 |---|---|---|---|---:|---|
 | 1 | `n01_pouso_elemental` | `limpar_mesa` | small | 4 | - |
 | 2 | `n02_ondas_iniciais` | `ondas` | medium | 7 | +1 max mana |
-| 3 | `n03_duelo_inicial` | `duelo` | medium | 7 | adiciona cartas custo 3 |
+| 3 | `n03_duelo_inicial` | `duelo` | medium | 7 | +1 limite de mao |
 | 4 | `n04_defesa_posicao` | `defesa_posicao` | medium | 7 | - |
 | 5 | `n05_chefe_invocador` | `chefe_summoner` | boss | 18 | desbloqueia passiva |
 | 6 | `n06_sobreviver_turnos` | `sobreviver_turnos` | medium | 7 | - |
@@ -97,4 +108,4 @@ Todo mapa concede Almas usando o minimo da banda do tier.
 - Nomes finais de cartas, passivas e habilidades.
 - Recompensas dos mapas ainda sem marco fixo.
 - Upgrades, remocao de cartas e lojas.
-- Balanceamento de inimigos e decks depois que as cartas forem refeitas.
+- Balanceamento de inimigos contra os novos decks e mecanicas.
