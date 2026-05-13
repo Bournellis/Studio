@@ -37,9 +37,9 @@ It defines execution order only.
 
 ## Current Execution Cursor
 
-Next prompt: `P20 - Technical ID And Asset Migration`.
+All prompts complete. Track 02 is done.
 
-Current focus: Content expansion complete — 2 new cards (centelha_duplicada, espectro_veloz), 2 new side encounters (reduto_eter defesa rank 2, escolta_vulcanica ondas rank 1), rewards assigned to patrulha_avancada/emboscada_reforcos, NPC pool expanded to 5, ENCOUNTER_MARKERS updated. Next work is technical ID migration.
+Current focus: P20 complete — 8 chain encounter IDs migrated to stable Draxos operation names, SAVE_VERSION bumped to 2 with v1→v2 migration logic, all runtime files and tests updated. `.tres` regeneration and local validation pending.
 
 ## Linear Prompt Sequence
 
@@ -64,8 +64,8 @@ Current focus: Content expansion complete — 2 new cards (centelha_duplicada, e
 | P16 | complete | Campaign content alignment: mission chain, rewards meaning, class-facing text. | Documentation + data only |
 | P17 | complete | RPG progression slice: rank/status state and gated dialogue/mission access. | Run validation |
 | P18 | complete | Encounter design pass: one pressure test per class weakness. | Run validation |
-| P19 | complete| New content expansion cluster using existing modes. | Run validation |
-| P20 | pending | Technical ID and asset migration, with save migration coverage. | Run validation |
+| P19 | complete | New content expansion cluster using existing modes. | Run validation |
+| P20 | complete | Technical ID and asset migration, with save migration coverage. | Run validation (pending local) |
 
 ## Prompt Details
 
@@ -421,3 +421,4 @@ Known future dependencies:
 - P16 should wait until at least P14, because reward/card meaning depends on the playable class baseline.
 - P18 can start now that P17 progression layer is done.
 - P20 must wait until player-facing naming stabilizes.
+                                                                                  
