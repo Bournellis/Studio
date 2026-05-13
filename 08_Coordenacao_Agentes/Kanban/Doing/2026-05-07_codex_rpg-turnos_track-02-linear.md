@@ -13,7 +13,7 @@ Executar a Track 02 em ordem linear, prompt a prompt, mantendo todos os registro
 
 ## Cursor Atual
 
-Proximo prompt: `P10 - Necromante: Cinzas and Memorial de Batalha`.
+Proximo prompt: `P11 - Necromante: Ritual das Sombras Hero Power`.
 
 ## Progresso
 
@@ -63,7 +63,11 @@ Proximo prompt: `P10 - Necromante: Cinzas and Memorial de Batalha`.
 - [x] P08: validacao Godot pendente (rodar localmente).
 - [x] P09: 4 testes de integracao Arcano adicionados a `test_content_and_session.gd` (display_name Pulso Astral, target any_permanent_or_hero, fluxo_bonus flag, passiva fluxo_continuo).
 - [x] P09: records atualizados (linear-execution-plan, track current-status, current-status, Estado_Atual, Kanban).
-- [ ] P09: validacao Godot pendente (rodar localmente).
+- [x] P09: validacao Godot pendente (rodar localmente).
+- [x] P10: `cinzas` int e `memorial_de_batalha` Array adicionados ao `BattleEngine`; `_record_creature_death` incrementa ambos em toda destruicao de criatura (ambos os lados); reset no `start_battle`.
+- [x] P10: `get_state()` expoe `cinzas` e `memorial_de_batalha`.
+- [x] P10: `test_necromante_cinzas.gd` com 13 testes: init, morte inimiga, morte aliada, mortes simultaneas, acumulacao multi-kill, persistencia entre turnos, reset por encontro (cinzas e memorial), dados do memorial (card_id/nome, ataque/max_health, ambos os lados), exposicao via get_state.
+- [ ] P10: validacao Godot pendente (rodar localmente).
 
 ## Regras De Registro
 
@@ -75,10 +79,12 @@ Proximo prompt: `P10 - Necromante: Cinzas and Memorial de Batalha`.
 
 ## Proximo Passo
 
-Executar P10 - Necromante: Cinzas and Memorial de Batalha:
+Executar P11 - Necromante: Ritual das Sombras Hero Power:
 
-1. Adicionar `cinzas: int` ao `BattleEngine` (persiste entre turnos, reseta no novo encontro).
-2. Adicionar `memorial_de_batalha: Array` ao `BattleEngine` (lista de criaturas destruidas no encontro, reseta no novo encontro).
-3. Incrementar `cinzas` e adicionar a criatura ao `memorial_de_batalha` em cada destruicao de criatura (ambos os lados).
-4. Escrever `test_necromante_cinzas.gd` cobrindo incremento, persistencia entre turnos, reset por encontro e dados do memorial.
-5. Rodar validacao.
+1. Implementar `Ritual das Sombras`: custo 0 energia + Cinzas; 1x/turno; 3 degraus.
+2. Degrau I (2 Cinzas): aplicar debuff em criatura inimiga (`enjoo_estendido`, `queimando`, ou -2/-0).
+3. Degrau II (4 Cinzas): invocar token 1/1 de criatura do `memorial_de_batalha` em slot aliado vazio.
+4. Degrau III (6 Cinzas): invocar com stats e keywords originais.
+5. Implementar `enjoo_estendido`: contador de 2 turnos na estado `enjoo`; UI distingue do enjoo normal.
+6. Escrever testes para cada degrau, Cinzas insuficiente, expiracao do enjoo_estendido e token gerado gera Cinzas ao morrer.
+7. Rodar validacao.

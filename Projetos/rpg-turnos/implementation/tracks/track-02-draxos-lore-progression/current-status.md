@@ -1,6 +1,6 @@
 # Track 02 Current Status
 
-- Last Updated: `2026-05-12` (P09 complete)
+- Last Updated: `2026-05-13` (P10 complete)
 - Status: `ACTIVE_LINEAR_PLAN`
 - Track Name: `Track 02 - Draxos Lore And Progression Alignment`
 
@@ -78,16 +78,26 @@ Each pass should still change one player-facing or runtime layer at a time:
   - `test_arcano_class_passiva_id_is_fluxo_continuo`: class passiva id is `"fluxo_continuo"`.
 - Records updated. Validation pending local run.
 
+## Completed in P10
+
+- `cinzas: int` added to `BattleEngine`: volatile-free (persists across turns), resets to 0 on `start_battle`.
+- `memorial_de_batalha: Array` added to `BattleEngine`: per-encounter list, resets to `[]` on `start_battle`.
+- `_record_creature_death(occupant)` helper added: increments `cinzas` and appends snapshot `{card_id, name, attack, max_health, keywords}` to `memorial_de_batalha`; called from `_remove_destroyed` for player, enemy, and neutral slot deaths.
+- `get_state()` now exposes `cinzas` and `memorial_de_batalha`.
+- `test_necromante_cinzas.gd` with 13 tests: init state, enemy death, ally death, simultaneous deaths, multi-kill accumulation, turn persistence, encounter reset for both counters, memorial data correctness (card_id/name, attack/max_health, both sides), and get_state exposure.
+
 ## Next Implementation Candidate
 
-Continue with `P10 - Necromante: Cinzas and Memorial de Batalha` from `linear-execution-plan.md`.
+Continue with `P11 - Necromante: Ritual das Sombras Hero Power` from `linear-execution-plan.md`.
 
 Expected scope:
 
-- Add `cinzas` counter (persists between turns, resets on new encounter) to battle state
-- Add `memorial_de_batalha` per-encounter list of destroyed creature definitions
-- Increment both on every creature destruction (player and enemy side)
-- Tests: cinzas increment on ally/enemy death, multi-death, persistent across turns, both reset on new encounter
+- `Ritual das Sombras`: cost 0 energy + Cinzas; once per own turn; 3 tiers
+- Degrau I (2 Cinzas): apply debuff to enemy creature (enjoo_estendido, queimando, or −2/−0)
+- Degrau II (4 Cinzas): spawn 1/1 token copy of player-chosen creature from Memorial into empty ally slot
+- Degrau III (6 Cinzas): spawn with original stats and all keywords
+- `enjoo_estendido`: 2-turn duration counter on the enjoo state
+- Tests for each degrau, insufficient Cinzas blocks, enjoo_estendido expiry, spawned token generates Cinzas on destruction
 
 ## Do Not Start Yet
 

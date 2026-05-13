@@ -37,9 +37,9 @@ It defines execution order only.
 
 ## Current Execution Cursor
 
-Next prompt: `P10 - Necromante: Cinzas and Memorial de Batalha`.
+Next prompt: `P11 - Necromante: Ritual das Sombras Hero Power`.
 
-Current focus: Necromante foundational counters — cinzas per-turn-persistent counter and memorial_de_batalha per-encounter list of destroyed creatures.
+Current focus: Necromante 3-tier conditional hero power with Cinzas cost tiers and enjoo_estendido.
 
 ## Linear Prompt Sequence
 
@@ -55,7 +55,7 @@ Current focus: Necromante foundational counters — cinzas per-turn-persistent c
 | P07 | complete | Implement Arcano: Fluxo counter and magic damage amplification pipeline. | Run validation |
 | P08 | complete | Implement Arcano: Pulso Astral hero power and activate Arcano starter deck. | Run validation |
 | P09 | complete | Arcano integration checkpoint: labels, tests, docs, records. | Run validation |
-| P10 | pending | Implement Necromante: Cinzas counter and Memorial de Batalha per encounter. | Run validation |
+| P10 | complete | Implement Necromante: Cinzas counter and Memorial de Batalha per encounter. | Run validation |
 | P11 | pending | Implement Necromante: Ritual das Sombras hero power with 3-tier Cinzas cost. | Run validation |
 | P12 | pending | Implement Necromante: token spawn from Memorial, `enjoo_estendido`, "ao morrer" triggers. | Run validation |
 | P13 | pending | Activate Necromante starter deck and integration checkpoint. | Run validation |
@@ -412,7 +412,7 @@ Every implementation prompt must leave the following record trail:
 
 ## Current Blockers
 
-- None for P10.
+- None for P11.
 
 Known future dependencies:
 

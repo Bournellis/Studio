@@ -84,6 +84,8 @@ var _discard_return_priority_owner_id: String = ""
 
 var active_class_id: String = ""
 var fluxo: int = 0
+var cinzas: int = 0
+var memorial_de_batalha: Array = []
 
 var _catalog
 var _player_slot_definitions: Array = []
@@ -121,6 +123,8 @@ func start_battle(catalog, deck_ids: Array, config: Dictionary = {}) -> void:
 	_enemy_ai_enabled = bool(config.get("enemy_ai_enabled", config.get("enemy_script_enabled", true)))
 	active_class_id = str(config.get("class_id", ""))
 	fluxo = 0
+	cinzas = 0
+	memorial_de_batalha = []
 
 	var encounter: Dictionary = _encounter_from_config(config)
 	encounter_id = str(encounter.get("id", "emboscada_na_ponte"))
@@ -175,7 +179,9 @@ func get_state() -> Dictionary:
 		"consecutive_passes": consecutive_passes,
 		"discard_controller_id": discard_controller_id,
 		"discard_target_size": discard_target_size,
-		"controladores": controladores.duplicate(true)
+		"controladores": controladores.duplicate(true),
+		"cinzas": cinzas,
+		"memorial_de_batalha": memorial_de_batalha.duplicate(true)
 	}
 
 func is_c1_variant() -> bool:
@@ -1487,12 +1493,23 @@ func _apply_burning_terrain(controller_id: String) -> void:
 			_log("Criatura queimando causa 1 em %s." % _slot_label(controller_id, index))
 	_remove_destroyed()
 
+func _record_creature_death(occupant: Dictionary) -> void:
+	cinzas += 1
+	memorial_de_batalha.append({
+		"card_id": str(occupant.get("card_id", "")),
+		"name": str(occupant.get("name", "")),
+		"attack": int(occupant.get("attack", 0)),
+		"max_health": int(occupant.get("max_health", int(occupant.get("health", 0)))),
+		"keywords": occupant.get("keywords", []).duplicate()
+	})
+
 func _remove_destroyed() -> void:
 	for lane: int in range(player_slots.size()):
 		if player_slots[lane] != null and int(player_slots[lane].get("health", 0)) <= 0:
 			var player_card_id: String = str(player_slots[lane].get("card_id", ""))
 			_log("%s foi destruida em %s." % [str(player_slots[lane].get("name", "Carta")), _slot_label(PLAYER_ID, lane)])
 			_visual("morte", PLAYER_ID, lane, "Destruida", Color(1.0, 0.45, 0.45))
+			_record_creature_death(player_slots[lane])
 			player_slots[lane] = null
 			_move_card_to_bottom_of_deck(PLAYER_ID, player_card_id)
 	for lane: int in range(enemy_slots.size()):
@@ -1500,6 +1517,7 @@ func _remove_destroyed() -> void:
 			var enemy_card_id: String = str(enemy_slots[lane].get("card_id", ""))
 			_log("%s foi destruida em %s." % [str(enemy_slots[lane].get("name", "Carta")), _slot_label(ENEMY_ID, lane)])
 			_visual("morte", ENEMY_ID, lane, "Destruida", Color(1.0, 0.45, 0.45))
+			_record_creature_death(enemy_slots[lane])
 			enemy_slots[lane] = null
 			_move_card_to_bottom_of_deck(ENEMY_ID, enemy_card_id)
 	for lane: int in range(neutral_slots.size()):
@@ -1509,6 +1527,7 @@ func _remove_destroyed() -> void:
 			var owner_id: String = _normalize_owner_id(str(neutral_occupant.get("owner", PLAYER_ID)))
 			_log("%s foi destruida em %s." % [str(neutral_occupant.get("name", "Carta")), _slot_label(NEUTRAL_ID, lane)])
 			_visual("morte", NEUTRAL_ID, lane, "Destruida", Color(1.0, 0.45, 0.45))
+			_record_creature_death(neutral_occupant)
 			neutral_slots[lane] = null
 			_move_card_to_bottom_of_deck(owner_id, neutral_card_id)
 
