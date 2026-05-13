@@ -37,8 +37,9 @@ Este diretorio registra o contrato de encontros do slice. Os nomes, inimigos e n
 Todos os modos usam o mesmo combate frontal:
 
 - slot ataca a lane da frente quando ocupada;
-- criaturas opostas causam dano simultaneo;
-- lane vazia procura o `defensor` inimigo mais proximo antes de dano direto;
+- combate resolve em quatro etapas globais: iniciativa frente, iniciativa sobra, combate frente, combate sobra;
+- dano de uma mesma etapa e aplicado em lote;
+- lane vazia procura o `defensor` inimigo mais proximo antes de mirar heroi ou criatura mais proxima;
 - `duelo` e `chefe_summoner` permitem dano direto no heroi inimigo;
 - `defesa_posicao` cria um objetivo aliado no slot central;
 - `sobreviver_turnos` usa apenas sobrevivencia do Comandante como objetivo.

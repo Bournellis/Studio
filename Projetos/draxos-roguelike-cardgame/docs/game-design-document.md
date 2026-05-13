@@ -26,9 +26,13 @@ Nao ha meta-progressao por enquanto. Derrota reinicia a run completa.
 O tabuleiro usa slots alinhados por indice: slot 1 contra slot 1, slot 2 contra slot 2, e assim por diante.
 
 - Cada slot ataca o slot diretamente a frente quando ele estiver ocupado.
-- Se houver criaturas dos dois lados da lane, o dano e simultaneo.
+- O combate resolve em quatro etapas globais: `Iniciativa - Frente`, `Iniciativa - Sobra`, `Combate - Frente`, `Combate - Sobra`.
+- Cada criatura ataca no maximo uma vez por ciclo de combate.
+- O dano de cada etapa e contabilizado em lote; criaturas que atacam na mesma etapa ainda causam dano mesmo se morrerem naquela etapa.
 - Se uma lane inimiga estiver vazia, a criatura procura o `defensor` inimigo mais proximo da lane; em empate, usa o primeiro da esquerda.
-- Se nao houver `defensor`, o dano passa ao alvo daquele lado quando esse alvo existir.
+- Se nao houver `defensor`, a sobra aliada mira o heroi inimigo em `duelo`/`chefe_summoner`; nos demais modos mira a criatura inimiga mais proxima.
+- Criaturas inimigas sem alvo frontal nem defensor causam dano direto ao jogador.
+- Ataques de sobra nao recebem dano de volta.
 - O Comandante sempre pode receber dano direto de inimigos sem defensor.
 - O heroi inimigo so recebe dano direto nos modos `duelo` e `chefe_summoner`.
 - `regeneracao` continua funcionando no inicio do turno do jogador.
@@ -38,10 +42,9 @@ O tabuleiro usa slots alinhados por indice: slot 1 contra slot 1, slot 2 contra 
 
 `iniciativa` substitui as antigas keywords `protecao` e `voadora`.
 
-- Se apenas uma criatura na lane tem `iniciativa`, ela causa dano primeiro.
-- Se matar o alvo, nao recebe dano de volta.
-- Se nao matar, recebe o dano de retorno.
-- Se ambas tem `iniciativa`, ambas causam dano simultaneo na etapa de iniciativa e nao atacam de novo.
+- Criaturas com `iniciativa` atacam nas etapas de iniciativa e nao atacam de novo nas etapas normais.
+- Se a etapa de iniciativa destruir o alvo frontal, esse alvo nao responde na etapa normal.
+- Se ambas tem `iniciativa`, ambas causam dano na mesma etapa de iniciativa e nao atacam de novo.
 
 ### Novas Keywords E Efeitos
 
@@ -82,7 +85,7 @@ Modos presentes no contrato do slice:
 - Deck inicial de cada classe tem 12 cartas: 4 tipos, 3 copias cada.
 - O catalogo antigo de cartas do jogador foi removido; cartas inimigas permanecem.
 - No mapa 3, a run recebe `+1 limite de cartas na mao`.
-- O ciclo de batalha e: jogadas do jogador, `Resolver Combate`, escolhas pendentes, manutencao/script, escolhas pendentes, retorno automatico ao jogador.
+- O ciclo de batalha e: jogadas do jogador, `Resolver Combate`, quatro etapas visuais de combate, escolhas pendentes, manutencao/script, escolhas pendentes, retorno automatico ao jogador.
 
 ## Linear Mission Map
 

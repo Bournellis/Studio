@@ -1,7 +1,7 @@
 # Track 01 Current Status
 
 - Last Updated: `2026-05-13`
-- Status: `P09_BATTLE_HUD_LAYOUT_VALIDATED`
+- Status: `P10_STAGED_COMBAT_HUD_NAME_VALIDATED`
 - Scope: `First playable class and encounter slice after Track 00 checkpoint`
 
 ## Completed
@@ -18,7 +18,7 @@
 - Battle exposes drag-and-drop targeting for hand cards and unlocked class spells.
 - Battle exposes a hover preview for hand cards, field occupants, class spells, slots, and hero targets when present.
 - Necromante's class spell exposes a choice modal for Lentidao, Podridao, Confusao, and reanimation choices.
-- BattleEngine implements front-lane combat, simultaneous opposed-lane damage, direct lane damage, `iniciativa`, `defensor`, `reviver`, `enfraquecer`, `prender`, `promover`, dynamic `poder de habilidade`, and `regeneracao`.
+- BattleEngine implements four-stage combat (`Iniciativa - Frente`, `Iniciativa - Sobra`, `Combate - Frente`, `Combate - Sobra`), simultaneous damage inside each stage, overflow targeting, direct lane damage, `iniciativa`, `defensor`, `reviver`, `enfraquecer`, `prender`, `promover`, dynamic `poder de habilidade`, and `regeneracao`.
 - Battle now uses `Resolver Combate`: player actions, combat, pending choices, maintenance/script, pending choices, automatic return to the player. There is no separate enemy combat turn and no summoning sickness.
 - BattleEngine implements first-pass Arcano `Fluxo Continuo`, Invocador permanent buffs, Necromante `Cinzas`, death hooks, debuffs, and reanimation with passives locked until map 5 and actives hidden/locked until map 7.
 - BattleEngine implements sequential waves, duel hero kill, defense position, survive turns, and scripted summoner bosses.
@@ -54,12 +54,15 @@
 - `sobreviver_turnos_inicial`, `chefe_invocador`, and `chefe_summoner_final` start with stronger enemy boards; initial and elite duels have enemy decks.
 - Battle HUD now uses a compact dense-encounter composition: enemy commander info floats at the top, player HUD lives inside the hand band, cards shrink for duel/boss/4+ lane layouts, and enemy-board area targeting no longer consumes its own vertical row.
 - Enemy-board area targeting now renders as a large table under the enemy cards/slots, so area spells can target the table without blocking individual card/slot interaction.
-- Validation green with 35/35 GUT tests and 276 asserts; 33 optional PNGs and 4 non-fatal ship overlay alpha debts are reported by design.
+- Battle HUD keeps the player hero target fixed at bottom center with name/HP, keeps enemy hero targets visible in duel/summoner boss fights, and exposes unlocked passive/active class abilities as constant hoverable tokens.
+- New runs require a 2-18 character player name after class choice; local save slots show player name, class, and map, with old saves falling back to `Comandante Draxos`.
+- Arcano balance pass applied: Barreira Arcana 1/5, Fagulha Arcana 1/2, Choque 2 damage, Tempestade Arcana 4 damage, and Prender cost 1.
+- Validation green with 43/43 GUT tests and 316 asserts; 33 optional PNGs and 4 non-fatal ship overlay alpha debts are reported by design.
 
 ## Current Risk
 
-The slice is mechanically playable but not fully balanced. The 10-map route now has stronger duel/survive/boss pressure, but encounter numbers still need playtest, several maps only grant souls, most card art is still absent, enemy cardback art is still pending, `Mapa.png` still has fake checkerboard/no alpha, class ship overlays and `NpcAlmas.png` are pending, Invocador/Necromante frames are not alpha-safe overlays, backgrounds are accepted as provisional 16:9 `1456x816`, and final card/class naming still needs a dedicated content pass.
+The slice is mechanically playable but not fully balanced. The 10-map route now has staged combat and stronger duel/survive/boss pressure, but encounter numbers still need playtest, several maps only grant souls, most card art is still absent, enemy cardback art is still pending, `Mapa.png` still has fake checkerboard/no alpha, class ship overlays and `NpcAlmas.png` are pending, Invocador/Necromante frames are not alpha-safe overlays, backgrounds are accepted as provisional 16:9 `1456x816`, and final card/class naming still needs a dedicated content pass.
 
 ## Next
 
-Playtest the reformed route and battle pressure, replace transparent ship overlay art for Mapa/Deck/Almas, then distribute the remaining non-soul rewards.
+Playtest the reformed route and staged battle pressure, replace transparent ship overlay art for Mapa/Deck/Almas, then distribute the remaining non-soul rewards.

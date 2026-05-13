@@ -8,15 +8,19 @@ var display_name: String = ""
 var detail_text: String = ""
 var choice_id: String = ""
 var drag_enabled: bool = false
+var token_available: bool = false
 var needs_choice: bool = false
+var eyebrow_text: String = "SPELL DE CLASSE"
 
-func setup(new_class_id: String, new_display_name: String, new_detail_text: String, new_choice_id: String, enabled: bool, requires_choice: bool) -> void:
+func setup(new_class_id: String, new_display_name: String, new_detail_text: String, new_choice_id: String, enabled: bool, requires_choice: bool, new_eyebrow_text: String = "SPELL DE CLASSE", can_drag: bool = true) -> void:
 	class_id = new_class_id
 	display_name = new_display_name
 	detail_text = new_detail_text
 	choice_id = new_choice_id
-	drag_enabled = enabled
+	token_available = enabled
+	drag_enabled = enabled and can_drag
 	needs_choice = requires_choice
+	eyebrow_text = new_eyebrow_text
 	_rebuild()
 
 func _rebuild() -> void:
@@ -33,7 +37,7 @@ func _rebuild() -> void:
 	add_child(box)
 
 	var eyebrow: Label = Label.new()
-	eyebrow.text = "SPELL DE CLASSE"
+	eyebrow.text = eyebrow_text
 	eyebrow.add_theme_font_size_override("font_size", 8)
 	eyebrow.add_theme_color_override("font_color", Color(0.98, 0.78, 0.48))
 	box.add_child(eyebrow)
@@ -73,8 +77,8 @@ func _get_drag_data(_at_position: Vector2) -> Variant:
 
 func _panel_style() -> StyleBoxFlat:
 	var style: StyleBoxFlat = StyleBoxFlat.new()
-	style.bg_color = Color(0.14, 0.11, 0.17) if drag_enabled else Color(0.08, 0.075, 0.09)
-	style.border_color = Color(0.72, 0.46, 0.86) if drag_enabled else Color(0.35, 0.32, 0.38)
+	style.bg_color = Color(0.14, 0.11, 0.17) if token_available else Color(0.08, 0.075, 0.09)
+	style.border_color = Color(0.72, 0.46, 0.86) if token_available else Color(0.35, 0.32, 0.38)
 	style.border_width_left = 2
 	style.border_width_top = 2
 	style.border_width_right = 2

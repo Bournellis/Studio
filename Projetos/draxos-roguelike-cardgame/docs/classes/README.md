@@ -29,7 +29,7 @@ Nao ha escolha de passiva ou habilidade no inicio da run. Recompensas dos mapas 
 
 Keywords ativas no slice:
 
-- `iniciativa`: causa dano primeiro na lane; se matar, nao recebe retorno.
+- `iniciativa`: ataca nas etapas de iniciativa; se destruir o alvo antes da etapa normal, esse alvo nao responde.
 - `defensor`: atrai ataques de criaturas inimigas sem alvo na lane a frente.
 - `reviver`: volta uma vez ao morrer por dano/efeito, com marcador de reviver.
 - `regeneracao`: recupera HP no inicio do turno do jogador.

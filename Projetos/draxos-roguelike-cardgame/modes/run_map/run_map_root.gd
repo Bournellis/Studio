@@ -264,7 +264,8 @@ func _status_text() -> String:
 		last_result_text = "\nUltimo encontro concluido: %s" % RunSession.last_completed_node_id
 	var reward_text: String = "\nRecompensas automaticas aplicadas: %d" % RunSession.automatic_reward_ids.size()
 	if RunSession.current_node_id == "":
-		return "Classe: %s\n%s%s%s%s\nConcluidos: %s\n\nSelecione o proximo encontro disponivel no planeta." % [
+		return "Nome: %s\nClasse: %s\n%s%s%s%s\nConcluidos: %s\n\nSelecione o proximo encontro disponivel no planeta." % [
+			RunSession.player_display_name(),
 			RunSession.selected_class_display_name,
 			health_text,
 			economy_text,
@@ -272,7 +273,8 @@ func _status_text() -> String:
 			reward_text,
 			completed_text
 		]
-	return "Classe: %s\n%s%s%s%s\nConcluidos: %s\nNode selecionado: %s\n\nUse Iniciar Encontro para entrar na batalha atual." % [
+	return "Nome: %s\nClasse: %s\n%s%s%s%s\nConcluidos: %s\nNode selecionado: %s\n\nUse Iniciar Encontro para entrar na batalha atual." % [
+		RunSession.player_display_name(),
 		RunSession.selected_class_display_name,
 		health_text,
 		economy_text,

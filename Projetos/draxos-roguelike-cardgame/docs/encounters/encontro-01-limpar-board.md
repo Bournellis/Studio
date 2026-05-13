@@ -21,9 +21,9 @@ Eliminar as criaturas inimigas em campo. Todas comecam posicionadas desde o turn
 
 Este encontro usa o combate frontal padrao:
 
-- cada criatura ataca apenas a lane diretamente a frente;
-- dano entre duas criaturas opostas e simultaneo;
-- inimigo sem defensor na frente causa dano direto ao Comandante;
+- cada criatura prioriza a lane diretamente a frente;
+- combate resolve em etapas globais, com dano da mesma etapa aplicado em lote;
+- inimigo sem defensor na frente causa dano direto ao jogador;
 - heroi inimigo nao e alvo direto neste modo.
 
 ## Criaturas Inimigas - Mockup

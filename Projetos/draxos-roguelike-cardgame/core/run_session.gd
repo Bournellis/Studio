@@ -10,9 +10,13 @@ const REWARD_UNLOCK_CLASS_ACTIVE: String = "unlock_class_active"
 const DEFAULT_MAX_HAND_SIZE: int = 3
 const PAID_HEAL_COST: int = 10
 const PAID_HEAL_AMOUNT: int = 5
+const DEFAULT_PLAYER_NAME: String = "Comandante Draxos"
+const MIN_PLAYER_NAME_LENGTH: int = 2
+const MAX_PLAYER_NAME_LENGTH: int = 18
 
 var active: bool = false
 var run_seed: int = DEFAULT_RUN_SEED
+var player_name: String = DEFAULT_PLAYER_NAME
 var selected_class_id: String = ""
 var selected_class_display_name: String = ""
 var selected_class_active_text: String = ""
@@ -35,6 +39,7 @@ var last_battle_outcome: String = ""
 func start_empty_run(seed: int = DEFAULT_RUN_SEED) -> void:
 	active = true
 	run_seed = seed
+	player_name = DEFAULT_PLAYER_NAME
 	selected_class_id = ""
 	selected_class_display_name = ""
 	selected_class_active_text = ""
@@ -54,12 +59,16 @@ func start_empty_run(seed: int = DEFAULT_RUN_SEED) -> void:
 	last_completed_node_id = ""
 	last_battle_outcome = ""
 
-func start_class_run(class_id: String, seed: int = DEFAULT_RUN_SEED) -> Dictionary:
+func start_class_run(class_id: String, seed: int = DEFAULT_RUN_SEED, requested_player_name: String = DEFAULT_PLAYER_NAME) -> Dictionary:
 	var class_option: Dictionary = ContentLibrary.find_class_option(class_id)
 	if class_option.is_empty():
 		return {"ok": false, "message": "Classe placeholder invalida: %s" % class_id}
+	var name_result: Dictionary = validate_player_name(requested_player_name)
+	if not bool(name_result.get("ok", false)):
+		return name_result
 	active = true
 	run_seed = seed
+	player_name = str(name_result.get("name", DEFAULT_PLAYER_NAME))
 	selected_class_id = class_id
 	selected_class_display_name = str(class_option.get("display_name", class_id))
 	selected_class_active_text = str(class_option.get("active_text", ""))
@@ -87,6 +96,7 @@ func start_class_run(class_id: String, seed: int = DEFAULT_RUN_SEED) -> Dictiona
 func reset() -> void:
 	active = false
 	run_seed = DEFAULT_RUN_SEED
+	player_name = DEFAULT_PLAYER_NAME
 	selected_class_id = ""
 	selected_class_display_name = ""
 	selected_class_active_text = ""
@@ -185,7 +195,7 @@ func buy_paid_heal() -> Dictionary:
 	if not active:
 		return {"ok": false, "message": "Nenhuma run ativa."}
 	if current_health >= max_health:
-		return {"ok": false, "message": "O Comandante ja esta com vida cheia."}
+		return {"ok": false, "message": "%s ja esta com vida cheia." % player_display_name()}
 	if soul_total < PAID_HEAL_COST:
 		return {"ok": false, "message": "Almas insuficientes para cura."}
 	soul_total -= PAID_HEAL_COST
@@ -206,11 +216,26 @@ func is_node_available(node: Dictionary) -> bool:
 func has_selected_class() -> bool:
 	return selected_class_id != ""
 
+func player_display_name() -> String:
+	var normalized: String = _normalize_player_name(player_name)
+	return normalized if normalized != "" else DEFAULT_PLAYER_NAME
+
+func validate_player_name(requested_name: String) -> Dictionary:
+	var normalized: String = _normalize_player_name(requested_name)
+	if normalized.length() < MIN_PLAYER_NAME_LENGTH:
+		return {"ok": false, "message": "Nome precisa ter pelo menos %d caracteres." % MIN_PLAYER_NAME_LENGTH}
+	if normalized.length() > MAX_PLAYER_NAME_LENGTH:
+		return {"ok": false, "message": "Nome pode ter no maximo %d caracteres." % MAX_PLAYER_NAME_LENGTH}
+	if normalized.find("\n") >= 0 or normalized.find("\r") >= 0 or normalized.find("\t") >= 0:
+		return {"ok": false, "message": "Nome nao pode ter quebra de linha."}
+	return {"ok": true, "name": normalized}
+
 func snapshot() -> Dictionary:
 	return {
 		"version": 1,
 		"active": active,
 		"run_seed": run_seed,
+		"player_name": player_display_name(),
 		"selected_class_id": selected_class_id,
 		"selected_class_display_name": selected_class_display_name,
 		"selected_class_active_text": selected_class_active_text,
@@ -234,6 +259,9 @@ func snapshot() -> Dictionary:
 func load_snapshot(data: Dictionary) -> Dictionary:
 	active = bool(data.get("active", false))
 	run_seed = int(data.get("run_seed", DEFAULT_RUN_SEED))
+	player_name = _normalize_player_name(str(data.get("player_name", DEFAULT_PLAYER_NAME)))
+	if player_name == "":
+		player_name = DEFAULT_PLAYER_NAME
 	selected_class_id = str(data.get("selected_class_id", ""))
 	selected_class_display_name = str(data.get("selected_class_display_name", ""))
 	selected_class_active_text = str(data.get("selected_class_active_text", ""))
@@ -367,3 +395,9 @@ func _string_array(source: Variant) -> Array[String]:
 	for item: Variant in Array(source):
 		result.append(str(item))
 	return result
+
+func _normalize_player_name(requested_name: String) -> String:
+	var normalized: String = requested_name.strip_edges()
+	while normalized.find("  ") >= 0:
+		normalized = normalized.replace("  ", " ")
+	return normalized

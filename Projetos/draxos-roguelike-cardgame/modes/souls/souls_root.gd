@@ -140,8 +140,9 @@ func _refresh() -> void:
 
 func _state_text() -> String:
 	if not RunSession.active:
-		return "Classe: -\nMapa: -\nHP: -\nMana: -\nMão: -\nAlmas: -"
-	return "Classe: %s\nMapa: %s\nHP: %d/%d\nMana: %d\nMão: %d\nAlmas: %d" % [
+		return "Nome: -\nClasse: -\nMapa: -\nHP: -\nMana: -\nMão: -\nAlmas: -"
+	return "Nome: %s\nClasse: %s\nMapa: %s\nHP: %d/%d\nMana: %d\nMão: %d\nAlmas: %d" % [
+		RunSession.player_display_name(),
 		RunSession.selected_class_display_name,
 		RunSession.current_node_display_name(),
 		RunSession.current_health,

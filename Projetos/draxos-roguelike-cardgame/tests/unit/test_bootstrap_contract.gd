@@ -52,6 +52,11 @@ func test_catalog_removes_old_player_cards_and_keeps_enemies() -> void:
 		assert_not_null(catalog.find_card(enemy_id), "Enemy card should remain: %s" % enemy_id)
 	assert_true(ContentLibrary.get_card("invocador_guardiao").has_keyword("defensor"))
 	assert_true(ContentLibrary.get_card("necro_esqueleto").has_keyword("reviver"))
+	assert_eq(int(ContentLibrary.get_card("arcano_choque").effect.get("amount", 0)), 2)
+	assert_eq(int(ContentLibrary.get_card("arcano_fagulha").health), 2)
+	assert_eq(int(ContentLibrary.get_card("arcano_barreira").attack), 1)
+	assert_eq(int(ContentLibrary.get_card("arcano_tempestade").effect.get("amount", 0)), 4)
+	assert_eq(int(ContentLibrary.get_card("necro_prender").cost), 1)
 
 func test_run_session_tracks_hand_limit_reward() -> void:
 	var result: Dictionary = RunSession.start_class_run("arcano", 77)
@@ -67,10 +72,16 @@ func test_run_session_tracks_hand_limit_reward() -> void:
 	assert_eq(RunSession.current_deck_ids.size(), 12)
 	assert_true(RunSession.automatic_reward_ids.has("n03_duelo_inicial:%s" % RunSession.REWARD_MAX_HAND_SIZE_1))
 
-func test_save_manager_saves_loads_and_deletes_slots() -> void:
-	var result: Dictionary = RunSession.start_class_run("invocador", 123)
+func test_run_session_rejects_invalid_player_names() -> void:
+	assert_false(bool(RunSession.validate_player_name("A").get("ok", false)))
+	assert_false(bool(RunSession.validate_player_name("Nome Grande Demais X").get("ok", false)))
+	assert_true(bool(RunSession.validate_player_name("Nyx").get("ok", false)))
+
+func test_save_manager_saves_loads_names_and_deletes_slots() -> void:
+	var result: Dictionary = RunSession.start_class_run("invocador", 123, "Kael")
 	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
 	assert_eq(RunSession.current_node_id, "n01_pouso_elemental")
+	assert_eq(RunSession.player_display_name(), "Kael")
 	var save_result: Dictionary = SaveManager.save_current_run(1)
 	assert_true(bool(save_result.get("ok", false)), str(save_result.get("message", "")))
 	assert_true(SaveManager.has_save(1))
@@ -79,7 +90,9 @@ func test_save_manager_saves_loads_and_deletes_slots() -> void:
 	assert_true(bool(load_result.get("ok", false)), str(load_result.get("message", "")))
 	assert_eq(RunSession.selected_class_id, "invocador")
 	assert_eq(RunSession.current_node_id, "n01_pouso_elemental")
+	assert_eq(RunSession.player_display_name(), "Kael")
 	var slots: Array[Dictionary] = SaveManager.get_slots()
+	assert_string_contains(str(slots[0].get("summary", "")), "Kael")
 	assert_string_contains(str(slots[0].get("summary", "")), "Invocador")
 	var delete_result: Dictionary = SaveManager.delete_slot(1)
 	assert_true(bool(delete_result.get("ok", false)), str(delete_result.get("message", "")))
@@ -110,8 +123,18 @@ func test_new_game_ship_modal_requires_class_and_saves_choice() -> void:
 	assert_not_null(invocador_button)
 	invocador_button.pressed.emit()
 	await get_tree().process_frame
+	var name_modal: PanelContainer = ship.find_child("ShipHubPlayerNameModal", true, false)
+	var name_input: LineEdit = ship.find_child("ShipHubPlayerNameInput", true, false)
+	var confirm_button: Button = ship.find_child("ShipHubPlayerNameConfirm", true, false)
+	assert_not_null(name_modal)
+	assert_true(name_modal.visible)
+	name_input.text = "Nyth"
+	confirm_button.pressed.emit()
+	await get_tree().process_frame
 	assert_false(modal.visible)
+	assert_false(name_modal.visible)
 	assert_eq(RunSession.selected_class_id, "invocador")
+	assert_eq(RunSession.player_display_name(), "Nyth")
 	assert_true(SaveManager.has_save(1))
 	ship.queue_free()
 	await get_tree().process_frame
@@ -278,7 +301,7 @@ func test_ability_power_updates_spell_values_and_text() -> void:
 	engine.play_card_from_hand(0, {"owner": BattleEngine.PLAYER_ID, "slot": 1})
 	assert_eq(int(engine.get_state().get("ability_power", 0)), 2)
 	var text: String = VisualAssets.card_display_text(ContentLibrary.get_card("arcano_choque"), engine.get_card_text_context("arcano_choque"))
-	assert_string_contains(text, "Causa 5 de dano")
+	assert_string_contains(text, "Causa 6 de dano")
 	var result: Dictionary = engine.play_card_from_hand(0, {"owner": BattleEngine.ENEMY_ID, "slot": 2})
 	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
 	assert_null(engine.enemy_slots[2])
@@ -435,6 +458,140 @@ func test_defender_redirects_empty_lane_to_nearest_defender() -> void:
 	assert_eq(engine.enemy_health, 20)
 	assert_eq(int(Dictionary(engine.enemy_slots[2]).get("health", 0)), 2)
 
+func test_duel_overflow_hits_enemy_hero_when_no_front_or_defender() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), ["necro_esqueleto"], {
+		"encounter": {
+			"id": "test_duel_overflow",
+			"display_name": "Teste Duelo Sobra",
+			"mode": BattleEngine.MODE_DUEL,
+			"enemy_health": 16,
+			"player_slots_count": 3,
+			"enemy_slots_count": 3,
+			"starting_enemy_slots": []
+		},
+		"mana_per_turn": 1,
+		"max_hand_size": 1,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	engine.play_card_from_hand(0, {"slot": 0})
+	engine.resolve_combat_cycle()
+	assert_eq(engine.enemy_health, 15)
+
+func test_non_hero_overflow_hits_nearest_enemy_creature() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), ["necro_esqueleto"], {
+		"encounter": {
+			"id": "test_nearest_overflow",
+			"display_name": "Teste Sobra Proxima",
+			"mode": BattleEngine.MODE_CLEAR_BOARD,
+			"player_slots_count": 3,
+			"enemy_slots_count": 3,
+			"starting_enemy_slots": [{"slot": 2, "card_id": "elemental_guardiao"}]
+		},
+		"mana_per_turn": 1,
+		"max_hand_size": 1,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	engine.play_card_from_hand(0, {"slot": 0})
+	engine.resolve_combat_cycle()
+	assert_eq(int(Dictionary(engine.enemy_slots[2]).get("health", 0)), 5)
+
+func test_defender_does_not_intercept_front_target() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), ["invocador_soldado"], {
+		"encounter": {
+			"id": "test_defender_front",
+			"display_name": "Teste Defensor Frente",
+			"mode": BattleEngine.MODE_DUEL,
+			"enemy_health": 20,
+			"player_slots_count": 3,
+			"enemy_slots_count": 3,
+			"starting_enemy_slots": [
+				{"slot": 0, "card_id": "elemental_menor"},
+				{"slot": 2, "card_id": "invocador_guardiao"}
+			]
+		},
+		"mana_per_turn": 1,
+		"max_hand_size": 1,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	engine.play_card_from_hand(0, {"slot": 0})
+	engine.resolve_combat_cycle()
+	assert_null(engine.enemy_slots[0])
+	assert_eq(int(Dictionary(engine.enemy_slots[2]).get("health", 0)), 4)
+
+func test_initiative_kills_before_normal_response() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), ["invocador_batedor"], {
+		"encounter": {
+			"id": "test_initiative_order",
+			"display_name": "Teste Iniciativa",
+			"mode": BattleEngine.MODE_DUEL,
+			"enemy_health": 20,
+			"player_slots_count": 3,
+			"enemy_slots_count": 3,
+			"starting_enemy_slots": [{"slot": 0, "card_id": "elemental_menor"}]
+		},
+		"mana_per_turn": 1,
+		"max_hand_size": 1,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	engine.play_card_from_hand(0, {"slot": 0})
+	engine.resolve_combat_cycle()
+	assert_null(engine.enemy_slots[0])
+	assert_not_null(engine.player_slots[0])
+	assert_eq(int(Dictionary(engine.player_slots[0]).get("health", 0)), 1)
+
+func test_same_stage_attackers_deal_damage_before_death() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), ["necro_esqueleto"], {
+		"encounter": {
+			"id": "test_stage_batch",
+			"display_name": "Teste Etapa",
+			"mode": BattleEngine.MODE_SURVIVE_TURNS,
+			"survive_turns": 99,
+			"player_slots_count": 3,
+			"enemy_slots_count": 3,
+			"starting_enemy_slots": [{"slot": 0, "card_id": "elemental_menor"}]
+		},
+		"mana_per_turn": 1,
+		"max_hand_size": 1,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	engine.play_card_from_hand(0, {"slot": 0})
+	engine.resolve_combat_cycle()
+	assert_not_null(engine.player_slots[0])
+	assert_true(bool(Dictionary(engine.player_slots[0]).get("revive_marker", false)))
+	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("health", 0)), 1)
+
+func test_overflow_attack_has_no_retaliation() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), ["necro_esqueleto"], {
+		"encounter": {
+			"id": "test_overflow_no_retaliation",
+			"display_name": "Teste Sobra Sem Retorno",
+			"mode": BattleEngine.MODE_CLEAR_BOARD,
+			"player_slots_count": 3,
+			"enemy_slots_count": 3,
+			"starting_enemy_slots": [{"slot": 2, "card_id": "elemental_assaltante"}]
+		},
+		"mana_per_turn": 1,
+		"max_hand_size": 1,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	engine.play_card_from_hand(0, {"slot": 0})
+	engine.resolve_combat_cycle()
+	assert_not_null(engine.player_slots[0])
+	assert_eq(int(Dictionary(engine.player_slots[0]).get("health", 0)), 1)
+	assert_eq(int(Dictionary(engine.enemy_slots[2]).get("health", 0)), 1)
+
 func test_duel_encounters_enemy_commander_draws_and_plays_cards() -> void:
 	for encounter_id: String in ["duelo_inicial", "duelo_elite"]:
 		var engine: BattleEngine = BattleEngine.new()
@@ -461,15 +618,20 @@ func test_duel_battle_layout_uses_compact_hud_composition() -> void:
 	var main_stack: VBoxContainer = battle.find_child("BattleMainStack", true, false)
 	var enemy_hud: PanelContainer = battle.find_child("BattleEnemyCommanderHud", true, false)
 	var player_hud: PanelContainer = battle.find_child("BattlePlayerHudDock", true, false)
+	var player_target: PanelContainer = battle.find_child("BattlePlayerHeroTarget", true, false)
+	var enemy_target: PanelContainer = battle.find_child("BattleEnemyHeroTarget", true, false)
 	var hand_row: HBoxContainer = battle.find_child("BattleHandControlsRow", true, false)
 	var area_target = battle.find_child("BattleEnemyBoardAreaTarget", true, false)
 	assert_not_null(main_stack)
 	assert_not_null(enemy_hud)
 	assert_not_null(player_hud)
+	assert_not_null(player_target)
+	assert_not_null(enemy_target)
 	assert_not_null(hand_row)
 	assert_not_null(area_target)
 	assert_true(enemy_hud.get_parent() == battle)
 	assert_true(player_hud.get_parent() == hand_row)
+	assert_null(battle.find_child("BattlePlayerHpStat", true, false))
 	assert_eq(str(area_target.get_parent().name), "BattleBoardSurface")
 	assert_false(main_stack.is_ancestor_of(enemy_hud))
 	_assert_control_inside_viewport(battle.find_child("BattleHandPanel", true, false) as Control)
@@ -487,6 +649,26 @@ func test_map_nine_duel_scene_keeps_four_lane_hud() -> void:
 	assert_eq(battle.enemy_slots_box.get_child_count(), 4)
 	assert_eq(battle.player_slots_box.get_child_count(), 4)
 	assert_not_null(battle.find_child("BattlePlayerHudDock", true, false))
+	battle.queue_free()
+	await get_tree().process_frame
+
+func test_unlocked_passive_and_active_stay_visible_with_preview_data() -> void:
+	_start_class_run("arcano", 99)
+	RunSession.class_passive_unlocked = true
+	RunSession.class_active_unlocked = true
+	RunSession.select_node("n03_duelo_inicial")
+	var battle = await _instantiate_scene("res://modes/battle/battle.tscn")
+	var passive_tile = battle.find_child("BattleClassPassiveTile", true, false)
+	var active_tile = battle.find_child("BattleClassActiveTile", true, false)
+	assert_not_null(passive_tile)
+	assert_not_null(active_tile)
+	assert_true(passive_tile.visible)
+	assert_true(active_tile.visible)
+	assert_string_contains(str(battle._class_passive_preview_data().get("body", "")), "Fluxo")
+	assert_string_contains(str(battle._class_active_preview_data().get("body", "")), "Fluxo")
+	battle.engine.mana = 0
+	battle._refresh()
+	assert_true(active_tile.visible)
 	battle.queue_free()
 	await get_tree().process_frame
 

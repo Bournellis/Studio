@@ -17,6 +17,7 @@ var class_resource_value: Label
 var enemy_hp_value: Label
 var enemy_mana_value: Label
 var hero_targets_box: HBoxContainer
+var player_hero_target_box: HBoxContainer
 var enemy_board_area_target
 var enemy_slots_box: HBoxContainer
 var player_slots_box: HBoxContainer
@@ -25,7 +26,14 @@ var history_log_label: Label
 var history_panel: PanelContainer
 var end_turn_button: Button
 var esc_menu: PanelContainer
+var class_passive_tile
 var class_active_tile
+var combat_fx_panel: PanelContainer
+var combat_fx_label: Label
+var combat_fx_timer: Timer
+var combat_fx_queue: Array[Dictionary] = []
+var combat_fx_index: int = 0
+var active_combat_fx_event: Dictionary = {}
 var necromancer_modal: PanelContainer
 var necromancer_choices_box: VBoxContainer
 var pending_choice_modal: PanelContainer
@@ -128,6 +136,12 @@ func _build_ui() -> void:
 	player_slots_box.add_theme_constant_override("separation", 8)
 	player_slots_box.alignment = BoxContainer.ALIGNMENT_CENTER
 
+	player_hero_target_box = HBoxContainer.new()
+	player_hero_target_box.name = "BattlePlayerHeroTargets"
+	player_hero_target_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	player_hero_target_box.add_theme_constant_override("separation", 8)
+	player_hero_target_box.alignment = BoxContainer.ALIGNMENT_CENTER
+
 	var board_panel: PanelContainer = PanelContainer.new()
 	board_panel.name = "BattleBoardPanel"
 	board_panel.custom_minimum_size = Vector2(0, _board_min_height())
@@ -179,6 +193,7 @@ func _build_ui() -> void:
 	board_spacer.size_flags_vertical = Control.SIZE_SHRINK_CENTER if _is_compact_viewport() else Control.SIZE_EXPAND_FILL
 	board_box.add_child(board_spacer)
 	board_box.add_child(player_slots_box)
+	board_box.add_child(player_hero_target_box)
 
 	var hand_panel: PanelContainer = PanelContainer.new()
 	hand_panel.name = "BattleHandPanel"
@@ -249,6 +264,7 @@ func _build_ui() -> void:
 	log_scroll.add_child(history_log_label)
 
 	_build_preview_panel()
+	_build_combat_fx_panel()
 	_build_necromancer_modal()
 	_build_pending_choice_modal()
 	_build_reward_modal()
@@ -276,7 +292,6 @@ func _build_enemy_commander_hud() -> PanelContainer:
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	margin.add_child(row)
 
-	row.add_child(_build_hud_stat("BattleEnemyHpStat", "HP", "BattleEnemyHpValue", UiTokens.color("hp_enemy", Color(0.82, 0.32, 0.32))))
 	row.add_child(_build_hud_stat("BattleEnemyManaStat", "MANA", "BattleEnemyManaValue", UiTokens.color("energy")))
 
 	enemy_cardback_rail = Control.new()
@@ -306,11 +321,18 @@ func _build_player_hud_dock() -> PanelContainer:
 	row.add_theme_constant_override("separation", 5 if _is_compact_viewport() else 7)
 	margin.add_child(row)
 
-	row.add_child(_build_hud_stat("BattlePlayerHpStat", "HP", "BattlePlayerHpValue", UiTokens.color("hp_player", Color(0.42, 0.82, 0.48))))
 	row.add_child(_build_hud_stat("BattlePlayerManaStat", "MANA", "BattlePlayerManaValue", UiTokens.color("energy")))
 
 	class_resource_chip = _build_class_resource_chip()
 	row.add_child(class_resource_chip)
+
+	class_passive_tile = BattleClassActiveTokenScript.new()
+	class_passive_tile.name = "BattleClassPassiveTile"
+	class_passive_tile.mouse_entered.connect(func() -> void:
+		_schedule_preview(_class_passive_preview_data())
+	)
+	class_passive_tile.mouse_exited.connect(_hide_preview)
+	row.add_child(class_passive_tile)
 
 	class_active_tile = BattleClassActiveTokenScript.new()
 	class_active_tile.name = "BattleClassActiveTile"
@@ -412,8 +434,46 @@ func _build_floating_end_turn_button() -> void:
 		engine.resolve_combat_cycle()
 		selected_hand_index = -1
 		_after_battle_action()
+		_play_combat_fx_events(Array(engine.get_state().get("visual_events", [])))
 	)
 	add_child(end_turn_button)
+
+func _build_combat_fx_panel() -> void:
+	combat_fx_panel = PanelContainer.new()
+	combat_fx_panel.name = "BattleCombatFxPanel"
+	combat_fx_panel.visible = false
+	combat_fx_panel.anchor_left = 0.5
+	combat_fx_panel.anchor_top = 0.47
+	combat_fx_panel.anchor_right = 0.5
+	combat_fx_panel.anchor_bottom = 0.47
+	combat_fx_panel.offset_left = -190.0
+	combat_fx_panel.offset_top = -32.0
+	combat_fx_panel.offset_right = 190.0
+	combat_fx_panel.offset_bottom = 32.0
+	combat_fx_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.035, 0.028, 0.045, 0.88), Color(0.82, 0.58, 0.28, 0.92)))
+	add_child(combat_fx_panel)
+
+	var margin: MarginContainer = MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 12)
+	margin.add_theme_constant_override("margin_top", 8)
+	margin.add_theme_constant_override("margin_right", 12)
+	margin.add_theme_constant_override("margin_bottom", 8)
+	combat_fx_panel.add_child(margin)
+
+	combat_fx_label = Label.new()
+	combat_fx_label.name = "BattleCombatFxLabel"
+	combat_fx_label.text = ""
+	combat_fx_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	combat_fx_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	combat_fx_label.add_theme_font_size_override("font_size", 15)
+	combat_fx_label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+	margin.add_child(combat_fx_label)
+
+	combat_fx_timer = Timer.new()
+	combat_fx_timer.name = "BattleCombatFxTimer"
+	combat_fx_timer.one_shot = true
+	combat_fx_timer.timeout.connect(_advance_combat_fx)
+	add_child(combat_fx_timer)
 
 func _build_esc_menu() -> void:
 	esc_menu = PanelContainer.new()
@@ -658,6 +718,7 @@ func _refresh() -> void:
 	_rebuild_slots(enemy_slots_box, Array(state.get("enemy_slots", [])), BattleEngine.ENEMY_ID)
 	_rebuild_slots(player_slots_box, Array(state.get("player_slots", [])), BattleEngine.PLAYER_ID)
 	_rebuild_hand(Array(state.get("hand", [])))
+	_refresh_class_passive_tile()
 	_refresh_class_active_tile()
 	_refresh_necromancer_modal()
 	_refresh_pending_choice_modal()
@@ -726,7 +787,7 @@ func _objective_text(state: Dictionary) -> String:
 		BattleEngine.MODE_SUMMONER_BOSS:
 			return "Chefe HP %d" % int(state.get("enemy_health", 0))
 	if bool(state.get("enemy_commander_enabled", false)):
-		return "Derrote o Comandante"
+		return "Derrote %s" % _hero_display_name(BattleEngine.ENEMY_ID)
 	return ""
 
 func _rebuild_enemy_cardbacks(count: int) -> void:
@@ -751,23 +812,22 @@ func _toggle_history_log() -> void:
 func _rebuild_hero_targets(state: Dictionary) -> void:
 	for child: Node in hero_targets_box.get_children():
 		child.queue_free()
-	var hero_targets: Array[Dictionary] = engine.get_valid_class_active_targets("")
-	for hand_index: int in range(engine.hand.size()):
-		hero_targets.append_array(engine.get_valid_card_targets(hand_index))
-	if not _has_target(hero_targets, {"owner": BattleEngine.PLAYER_ID, "hero": true}) and not _has_target(hero_targets, {"owner": BattleEngine.ENEMY_ID, "hero": true}):
-		hero_targets_box.visible = false
-		return
-	hero_targets_box.visible = true
-	_add_hero_target(BattleEngine.PLAYER_ID, _hero_display_name(BattleEngine.PLAYER_ID), int(state.get("player_health", 0)))
-	_add_hero_target(BattleEngine.ENEMY_ID, _hero_display_name(BattleEngine.ENEMY_ID), int(state.get("enemy_health", 0)))
+	for child: Node in player_hero_target_box.get_children():
+		child.queue_free()
+	hero_targets_box.visible = _enemy_hero_visible(state)
+	player_hero_target_box.visible = true
+	if hero_targets_box.visible:
+		_add_hero_target(hero_targets_box, BattleEngine.ENEMY_ID, _hero_display_name(BattleEngine.ENEMY_ID), int(state.get("enemy_health", 0)))
+	_add_hero_target(player_hero_target_box, BattleEngine.PLAYER_ID, _hero_display_name(BattleEngine.PLAYER_ID), int(state.get("player_health", 0)))
 
-func _add_hero_target(owner_id: String, display_name: String, health: int) -> void:
+func _add_hero_target(container: HBoxContainer, owner_id: String, display_name: String, health: int) -> void:
 	var target: Dictionary = {"owner": owner_id, "hero": true}
 	var visual_state: Dictionary = {
 		"accepted_card_indices": _accepted_card_indices_for_target(target),
 		"accepted_class_choices": _accepted_class_choices_for_target(target)
 	}
 	visual_state["is_drop_target"] = not Array(visual_state.get("accepted_card_indices", [])).is_empty() or not Array(visual_state.get("accepted_class_choices", [])).is_empty()
+	visual_state["is_attack_target"] = _active_event_targets_hero(owner_id)
 	var hero_target = BattleHeroTargetControlScript.new()
 	hero_target.name = "Battle%sHeroTarget" % ("Player" if owner_id == BattleEngine.PLAYER_ID else "Enemy")
 	hero_target.setup(owner_id, display_name, health, visual_state)
@@ -776,7 +836,7 @@ func _add_hero_target(owner_id: String, display_name: String, health: int) -> vo
 		_schedule_preview(_hero_preview_data(owner_id, display_name, health))
 	)
 	hero_target.mouse_exited.connect(_hide_preview)
-	hero_targets_box.add_child(hero_target)
+	container.add_child(hero_target)
 
 func _refresh_area_targets() -> void:
 	if enemy_board_area_target == null:
@@ -786,7 +846,7 @@ func _refresh_area_targets() -> void:
 		"accepted_card_indices": _accepted_card_indices_for_target(target),
 		"board_table": true
 	}
-	var visible: bool = not Array(visual_state.get("accepted_card_indices", [])).is_empty()
+	var visible: bool = _has_enemy_board_area_card_in_hand() or not Array(visual_state.get("accepted_card_indices", [])).is_empty()
 	enemy_board_area_target.setup("Mesa inimiga", "Solte spells de area aqui", target, visual_state)
 	enemy_board_area_target.visible = visible
 
@@ -809,6 +869,8 @@ func _rebuild_slots(container: HBoxContainer, slots: Array, owner_id: String) ->
 			"accepted_card_indices": _accepted_card_indices_for_target(target),
 			"accepted_class_choices": _accepted_class_choices_for_target(target)
 		}
+		visual_state["is_attack_source"] = _active_event_sources_slot(owner_id, index)
+		visual_state["is_attack_target"] = _active_event_targets_slot(owner_id, index)
 		visual_state["is_drop_target"] = not Array(visual_state.get("accepted_card_indices", [])).is_empty() or not Array(visual_state.get("accepted_class_choices", [])).is_empty() or not Array(visual_state.get("accepted_move_sources", [])).is_empty() or not Array(visual_state.get("accepted_area_card_indices", [])).is_empty()
 		var slot_control: BattleSlotControl = BattleSlotControl.new()
 		slot_control.name = "%sSlot%d" % ["Player" if owner_id == BattleEngine.PLAYER_ID else "Enemy", index]
@@ -848,6 +910,12 @@ func _update_hand_selection_visuals() -> void:
 		if child is BattleCardToken:
 			var token: BattleCardToken = child
 			token.set_selected(token.hand_index == selected_hand_index)
+
+func _refresh_class_passive_tile() -> void:
+	class_passive_tile.visible = RunSession.class_passive_unlocked
+	if not RunSession.class_passive_unlocked:
+		return
+	class_passive_tile.setup(RunSession.selected_class_id, _class_passive_display_name(), _class_passive_detail_text(), "", true, false, "PASSIVA", false)
 
 func _refresh_class_active_tile() -> void:
 	class_active_tile.visible = RunSession.class_active_unlocked
@@ -1054,6 +1122,64 @@ func _choice_is_enabled(choice_id: String) -> bool:
 			return bool(choice.get("enabled", false))
 	return false
 
+func _enemy_hero_visible(state: Dictionary) -> bool:
+	return str(state.get("mode", "")) in [BattleEngine.MODE_DUEL, BattleEngine.MODE_SUMMONER_BOSS]
+
+func _has_enemy_board_area_card_in_hand() -> bool:
+	for card_id: String in engine.hand:
+		var card = ContentLibrary.get_card(card_id)
+		if card == null:
+			continue
+		if str(Dictionary(card.effect).get("action", "")) == "random_damage":
+			return true
+	return false
+
+func _active_event_sources_slot(owner_id: String, slot_index: int) -> bool:
+	return str(active_combat_fx_event.get("source_owner", "")) == owner_id and int(active_combat_fx_event.get("source_slot", -999)) == slot_index
+
+func _active_event_targets_slot(owner_id: String, slot_index: int) -> bool:
+	return not bool(active_combat_fx_event.get("target_hero", false)) and str(active_combat_fx_event.get("target_owner", "")) == owner_id and int(active_combat_fx_event.get("target_slot", -999)) == slot_index
+
+func _active_event_targets_hero(owner_id: String) -> bool:
+	return bool(active_combat_fx_event.get("target_hero", false)) and str(active_combat_fx_event.get("target_owner", "")) == owner_id
+
+func _play_combat_fx_events(events: Array) -> void:
+	combat_fx_queue = []
+	for event: Variant in events:
+		if typeof(event) == TYPE_DICTIONARY and str(Dictionary(event).get("type", "")) in ["stage", "attack", "damage"]:
+			combat_fx_queue.append(Dictionary(event))
+	combat_fx_index = 0
+	if combat_fx_queue.is_empty() or combat_fx_panel == null:
+		active_combat_fx_event = {}
+		return
+	_advance_combat_fx()
+
+func _advance_combat_fx() -> void:
+	if combat_fx_index >= combat_fx_queue.size():
+		active_combat_fx_event = {}
+		if combat_fx_panel != null:
+			combat_fx_panel.visible = false
+		_refresh()
+		return
+	active_combat_fx_event = combat_fx_queue[combat_fx_index]
+	combat_fx_index += 1
+	if combat_fx_panel != null and combat_fx_label != null:
+		combat_fx_label.text = _combat_fx_text(active_combat_fx_event)
+		combat_fx_panel.visible = true
+	_refresh()
+	if combat_fx_timer != null:
+		combat_fx_timer.start(0.34)
+
+func _combat_fx_text(event: Dictionary) -> String:
+	match str(event.get("type", "")):
+		"stage":
+			return str(event.get("label", event.get("stage", "Etapa")))
+		"attack":
+			return "%s -> %s | %d dano" % [str(event.get("source_name", "Criatura")), str(event.get("target_name", "Alvo")), int(event.get("damage", 0))]
+		"damage":
+			return "%s | dano %d" % [str(event.get("stage", "Combate")), int(event.get("amount", 0))]
+	return ""
+
 func _schedule_preview(data: Dictionary) -> void:
 	pending_preview_data = data
 	if preview_timer != null:
@@ -1141,8 +1267,18 @@ func _hero_preview_data(owner_id: String, display_name: String, health: int) -> 
 	return {
 		"title": display_name,
 		"subtitle": "Heroi %s" % ("aliado" if owner_id == BattleEngine.PLAYER_ID else "inimigo"),
-		"body": "Alvo disponivel somente em modos com heroi.",
+		"body": "Alvo visivel do combate. Criaturas inimigas sem frente nem defensor causam dano ao jogador; herois inimigos recebem dano direto nos modos apropriados.",
 		"state": "Vida %d" % health
+	}
+
+func _class_passive_preview_data() -> Dictionary:
+	if not RunSession.class_passive_unlocked:
+		return {}
+	return {
+		"title": _class_passive_display_name(),
+		"subtitle": "Passiva de classe",
+		"body": _class_passive_detail_text(),
+		"state": "Liberada"
 	}
 
 func _class_active_preview_data() -> Dictionary:
@@ -1154,6 +1290,26 @@ func _class_active_preview_data() -> Dictionary:
 		"body": _class_active_detail_text(selected_necromancer_choice_id),
 		"state": "Disponivel" if engine.can_use_class_active() else "Indisponivel neste turno"
 	}
+
+func _class_passive_display_name() -> String:
+	match RunSession.selected_class_id:
+		"arcano":
+			return "Fluxo Continuo"
+		"invocador":
+			return "Comandante de Campo"
+		"necromante":
+			return "Colheita Sombria"
+	return "Passiva"
+
+func _class_passive_detail_text() -> String:
+	match RunSession.selected_class_id:
+		"arcano":
+			return "Cada carta jogada neste turno gera 1 Fluxo. Fluxo aumenta dano direto de spells e da Rajada Arcana ate o inicio do proximo turno."
+		"invocador":
+			return "Sempre que uma criatura aliada entra em campo, a criatura aliada com maior ATK recebe +1/+0 permanente durante a batalha."
+		"necromante":
+			return "Sempre que qualquer criatura morre em campo, aliada ou inimiga, ganha 1 Cinza. Cinzas acumulam e alimentam o Ritual das Sombras."
+	return ""
 
 func _class_active_display_name(choice_id: String = "") -> String:
 	match RunSession.selected_class_id:
@@ -1197,8 +1353,8 @@ func _keyword_text(keywords: Array) -> String:
 
 func _hero_display_name(owner_id: String) -> String:
 	var catalog = ContentLibrary.get_catalog()
-	if owner_id == BattleEngine.PLAYER_ID and catalog != null and catalog.player_hero != null:
-		return str(catalog.player_hero.display_name)
+	if owner_id == BattleEngine.PLAYER_ID:
+		return RunSession.player_display_name()
 	if owner_id == BattleEngine.ENEMY_ID and catalog != null and catalog.enemy_hero != null:
 		return str(catalog.enemy_hero.display_name)
 	return "Heroi"

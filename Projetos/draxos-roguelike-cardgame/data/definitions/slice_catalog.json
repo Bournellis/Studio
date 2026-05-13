@@ -112,8 +112,8 @@
       "display_name": "Choque",
       "type": "magia",
       "cost": 1,
-      "text": "Causa 1 de dano a qualquer criatura ou heroi inimigo valido.",
-      "effect": {"action": "damage", "amount": 1}
+      "text": "Causa 2 de dano a qualquer criatura ou heroi inimigo valido.",
+      "effect": {"action": "damage", "amount": 2}
     },
     {
       "id": "arcano_fagulha",
@@ -121,7 +121,7 @@
       "type": "criatura",
       "cost": 1,
       "attack": 1,
-      "health": 1,
+      "health": 2,
       "text": "Enquanto em campo: +1 Poder de habilidade.",
       "effect": {"aura": "ability_power", "amount": 1}
     },
@@ -130,7 +130,7 @@
       "display_name": "Barreira Arcana",
       "type": "criatura",
       "cost": 2,
-      "attack": 0,
+      "attack": 1,
       "health": 5,
       "text": "Enquanto em campo: +1 Poder de habilidade.",
       "effect": {"aura": "ability_power", "amount": 1}
@@ -140,8 +140,8 @@
       "display_name": "Tempestade Arcana",
       "type": "magia",
       "cost": 2,
-      "text": "Causa 3 pontos de dano distribuidos aleatoriamente entre alvos inimigos.",
-      "effect": {"action": "random_damage", "amount": 3}
+      "text": "Causa 4 pontos de dano distribuidos aleatoriamente entre alvos inimigos.",
+      "effect": {"action": "random_damage", "amount": 4}
     },
     {
       "id": "invocador_soldado",
@@ -204,7 +204,7 @@
       "id": "necro_prender",
       "display_name": "Prender",
       "type": "magia",
-      "cost": 2,
+      "cost": 1,
       "text": "A criatura inimiga alvo nao ataca no proximo combate.",
       "effect": {"action": "snare", "debuff": "snare", "amount": 1}
     },

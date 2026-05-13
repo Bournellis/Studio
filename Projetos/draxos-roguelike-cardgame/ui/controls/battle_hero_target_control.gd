@@ -41,9 +41,9 @@ func _rebuild() -> void:
 	box.add_child(health_label)
 
 	var chip: Label = Label.new()
-	chip.text = "Solte aqui" if bool(visual_state.get("is_drop_target", false)) else "Heroi"
+	chip.text = "Alvo" if bool(visual_state.get("is_attack_target", false)) else ("Solte aqui" if bool(visual_state.get("is_drop_target", false)) else "Heroi")
 	chip.add_theme_font_size_override("font_size", 9)
-	chip.add_theme_color_override("font_color", Color(0.95, 0.72, 0.36) if bool(visual_state.get("is_drop_target", false)) else Color(0.7, 0.78, 0.82))
+	chip.add_theme_color_override("font_color", Color(0.95, 0.55, 0.42) if bool(visual_state.get("is_attack_target", false)) else (Color(0.95, 0.72, 0.36) if bool(visual_state.get("is_drop_target", false)) else Color(0.7, 0.78, 0.82)))
 	box.add_child(chip)
 
 func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
@@ -63,7 +63,7 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 func _panel_style() -> StyleBoxFlat:
 	var style: StyleBoxFlat = StyleBoxFlat.new()
 	style.bg_color = Color(0.16, 0.1, 0.1) if hero_owner == "inimigo" else Color(0.09, 0.12, 0.16)
-	style.border_color = Color(0.95, 0.62, 0.3) if bool(visual_state.get("is_drop_target", false)) else Color(0.44, 0.36, 0.38)
+	style.border_color = Color(0.95, 0.44, 0.34) if bool(visual_state.get("is_attack_target", false)) else (Color(0.95, 0.62, 0.3) if bool(visual_state.get("is_drop_target", false)) else Color(0.44, 0.36, 0.38))
 	style.border_width_left = 2
 	style.border_width_top = 2
 	style.border_width_right = 2

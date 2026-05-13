@@ -30,6 +30,10 @@ const NECRO_CHOICE_ROT: String = "necro_rot"
 const NECRO_CHOICE_CONFUSION: String = "necro_confusion"
 const NECRO_CHOICE_REVIVE_ONE_ONE: String = "necro_revive_one_one"
 const NECRO_CHOICE_REVIVE_FULL: String = "necro_revive_full"
+const COMBAT_STAGE_INITIATIVE_FRONT: String = "Iniciativa - Frente"
+const COMBAT_STAGE_INITIATIVE_OVERFLOW: String = "Iniciativa - Sobra"
+const COMBAT_STAGE_NORMAL_FRONT: String = "Combate - Frente"
+const COMBAT_STAGE_NORMAL_OVERFLOW: String = "Combate - Sobra"
 
 var turn_number: int = 1
 var player_health: int = 30
@@ -484,12 +488,13 @@ func resolve_combat_cycle() -> Dictionary:
 		return _fail("A batalha ja terminou.")
 	if not pending_choices.is_empty():
 		return _fail("Resolva as escolhas pendentes antes do combate.")
+	visual_events = []
 	_log("Combate do ciclo %d." % turn_number)
 	if outcome == "":
 		_resolve_enemy_turn_actions()
 		_check_outcome()
 	if outcome == "":
-		_resolve_lane_combat_step()
+		_resolve_staged_combat_step()
 		_check_outcome()
 	if outcome == "" and not pending_choices.is_empty():
 		current_phase = PHASE_PENDING_COMBAT_CHOICE
@@ -542,15 +547,12 @@ func get_attack_options(owner_id: String, slot_index: int) -> Array[Dictionary]:
 	var slots: Array = _slots_for_owner(owner_id)
 	if slot_index < 0 or slot_index >= slots.size() or slots[slot_index] == null:
 		return _empty_targets()
-	var opponent_id: String = _opponent_id(owner_id)
-	var opposing_slots: Array = _slots_for_owner(opponent_id)
-	if slot_index < opposing_slots.size() and opposing_slots[slot_index] != null:
-		return [{"owner": opponent_id, "slot": slot_index}]
-	var defender_target: Dictionary = _nearest_defender_target(opponent_id, slot_index)
-	if not defender_target.is_empty():
-		return [defender_target]
-	if _can_receive_direct_damage(opponent_id):
-		return [{"owner": opponent_id, "hero": true}]
+	var front_target: Dictionary = _front_attack_target(owner_id, slot_index)
+	if not front_target.is_empty():
+		return [front_target]
+	var overflow_target: Dictionary = _overflow_attack_target(owner_id, slot_index)
+	if not overflow_target.is_empty():
+		return [overflow_target]
 	return _empty_targets()
 
 func attack_with_unit(owner_id: String, slot_index: int, target: Dictionary = {}) -> Dictionary:
@@ -843,95 +845,137 @@ func _shuffle_deck(target_deck: Array[String]) -> void:
 		target_deck[index] = target_deck[swap_index]
 		target_deck[swap_index] = card_id
 
-func _resolve_lane_combat_step() -> void:
+func _resolve_staged_combat_step() -> void:
+	var attacked_sources: Dictionary = {}
+	_resolve_combat_stage(COMBAT_STAGE_INITIATIVE_FRONT, true, true, attacked_sources)
+	_resolve_combat_stage(COMBAT_STAGE_INITIATIVE_OVERFLOW, true, false, attacked_sources)
+	_resolve_combat_stage(COMBAT_STAGE_NORMAL_FRONT, false, true, attacked_sources)
+	_resolve_combat_stage(COMBAT_STAGE_NORMAL_OVERFLOW, false, false, attacked_sources)
+
+func _resolve_combat_stage(stage_name: String, initiative_stage: bool, front_stage: bool, attacked_sources: Dictionary) -> void:
+	if outcome != "":
+		return
+	var attacks: Array[Dictionary] = []
 	var lane_count: int = max(player_slots.size(), enemy_slots.size())
-	for index: int in range(lane_count):
-		if outcome != "":
-			return
-		_resolve_lane(index)
+	for owner_id: String in [PLAYER_ID, ENEMY_ID]:
+		for slot_index: int in range(lane_count):
+			var attacker: Dictionary = _slot_occupant(owner_id, slot_index)
+			if attacker.is_empty() or bool(attacker.get("objective", false)):
+				continue
+			if bool(attacker.get("iniciativa", false)) != initiative_stage:
+				continue
+			var source_key: String = _source_key(owner_id, slot_index)
+			if attacked_sources.has(source_key):
+				continue
+			var target: Dictionary = _front_attack_target(owner_id, slot_index) if front_stage else _overflow_attack_target(owner_id, slot_index)
+			if front_stage and target.is_empty():
+				continue
+			var preparation: Dictionary = _prepare_staged_attacker(owner_id, slot_index)
+			if bool(preparation.get("consumed", false)):
+				attacked_sources[source_key] = true
+				var forced_target: Dictionary = Dictionary(preparation.get("target", {}))
+				if not forced_target.is_empty():
+					attacks.append(_build_attack_event(stage_name, owner_id, slot_index, forced_target))
+				continue
+			if target.is_empty():
+				continue
+			attacked_sources[source_key] = true
+			attacks.append(_build_attack_event(stage_name, owner_id, slot_index, target))
+	_apply_stage_attacks(stage_name, attacks)
 
-func _resolve_lane(index: int) -> void:
-	var player_can_attack: bool = _prepare_lane_attacker(PLAYER_ID, index)
-	var enemy_can_attack: bool = _prepare_lane_attacker(ENEMY_ID, index)
-	var player_unit: Dictionary = _slot_occupant(PLAYER_ID, index)
-	var enemy_unit: Dictionary = _slot_occupant(ENEMY_ID, index)
-	if player_unit.is_empty() and enemy_unit.is_empty():
-		return
-	if not player_unit.is_empty() and not enemy_unit.is_empty():
-		_resolve_opposed_lane(index, player_can_attack, enemy_can_attack)
-		return
-	if not player_unit.is_empty() and player_can_attack:
-		_resolve_open_lane_attack(PLAYER_ID, index)
-	elif not enemy_unit.is_empty() and enemy_can_attack:
-		_resolve_open_lane_attack(ENEMY_ID, index)
-
-func _resolve_open_lane_attack(owner_id: String, slot_index: int) -> void:
-	var options: Array[Dictionary] = get_attack_options(owner_id, slot_index)
-	if options.is_empty():
-		return
-	_resolve_attack(owner_id, slot_index, options[0])
-
-func _resolve_opposed_lane(index: int, player_can_attack: bool, enemy_can_attack: bool) -> void:
-	var player_unit: Dictionary = _slot_occupant(PLAYER_ID, index)
-	var enemy_unit: Dictionary = _slot_occupant(ENEMY_ID, index)
-	if player_unit.is_empty() or enemy_unit.is_empty():
-		return
-	var player_damage: int = int(player_unit.get("attack", 0)) if player_can_attack else 0
-	var enemy_damage: int = int(enemy_unit.get("attack", 0)) if enemy_can_attack else 0
-	var player_initiative: bool = bool(player_unit.get("iniciativa", false)) and player_can_attack
-	var enemy_initiative: bool = bool(enemy_unit.get("iniciativa", false)) and enemy_can_attack
-	if player_initiative and not enemy_initiative:
-		_damage_slot(ENEMY_ID, index, player_damage)
-		if _slot_occupant(ENEMY_ID, index).is_empty():
-			_log("%s usou Iniciativa na lane %d." % [str(player_unit.get("name", "Criatura")), index + 1])
-			return
-		_damage_slot(PLAYER_ID, index, enemy_damage)
-		_log("Lane %d trocou dano com Iniciativa aliada." % [index + 1])
-		return
-	if enemy_initiative and not player_initiative:
-		_damage_slot(PLAYER_ID, index, enemy_damage)
-		if _slot_occupant(PLAYER_ID, index).is_empty():
-			_log("%s usou Iniciativa na lane %d." % [str(enemy_unit.get("name", "Criatura")), index + 1])
-			return
-		_damage_slot(ENEMY_ID, index, player_damage)
-		_log("Lane %d trocou dano com Iniciativa inimiga." % [index + 1])
-		return
-	_deal_simultaneous_slot_damage(index, player_damage, enemy_damage)
-	_log("Lane %d resolveu dano simultaneo." % [index + 1])
-
-func _prepare_lane_attacker(owner_id: String, slot_index: int) -> bool:
+func _prepare_staged_attacker(owner_id: String, slot_index: int) -> Dictionary:
 	var slots: Array = _slots_for_owner(owner_id)
 	if slot_index < 0 or slot_index >= slots.size() or slots[slot_index] == null:
-		return false
+		return {"can_attack": false}
 	var occupant: Dictionary = Dictionary(slots[slot_index])
-	if bool(occupant.get("objective", false)):
-		return false
 	if int(occupant.get("slow_turns", 0)) > 0:
 		occupant["slow_turns"] = int(occupant.get("slow_turns", 0)) - 1
 		slots[slot_index] = occupant
 		_set_slots_for_owner(owner_id, slots)
 		_log("%s perdeu o ataque por Lentidao." % str(occupant.get("name", "Criatura")))
-		return false
+		return {"can_attack": false, "consumed": true}
 	if int(occupant.get("confusion_turns", 0)) > 0:
 		occupant["confusion_turns"] = int(occupant.get("confusion_turns", 0)) - 1
 		slots[slot_index] = occupant
 		_set_slots_for_owner(owner_id, slots)
 		var confused_target: Dictionary = _first_same_side_target(owner_id, slot_index)
 		if not confused_target.is_empty():
-			_resolve_attack(owner_id, slot_index, confused_target)
 			_log("%s atacou em Confusao." % str(occupant.get("name", "Criatura")))
-		return false
-	return true
+			return {"can_attack": false, "consumed": true, "target": confused_target}
+		return {"can_attack": false, "consumed": true}
+	return {"can_attack": true}
 
-func _deal_simultaneous_slot_damage(lane_index: int, player_damage: int, enemy_damage: int) -> void:
-	var player_unit: Dictionary = _slot_occupant(PLAYER_ID, lane_index)
-	var enemy_unit: Dictionary = _slot_occupant(ENEMY_ID, lane_index)
-	if player_unit.is_empty() or enemy_unit.is_empty():
+func _apply_stage_attacks(stage_name: String, attacks: Array[Dictionary]) -> void:
+	if attacks.is_empty():
 		return
-	player_unit["health"] = int(player_unit.get("health", 0)) - enemy_damage
-	enemy_unit["health"] = int(enemy_unit.get("health", 0)) - player_damage
-	_store_or_destroy_lane_unit(PLAYER_ID, lane_index, player_unit)
-	_store_or_destroy_lane_unit(ENEMY_ID, lane_index, enemy_unit)
+	_log("%s: %d ataque(s)." % [stage_name, attacks.size()])
+	visual_events.append({"type": "stage", "stage": stage_name, "label": stage_name})
+	var slot_damage: Dictionary = {}
+	var hero_damage: Dictionary = {}
+	for attack: Dictionary in attacks:
+		var amount: int = int(attack.get("damage", 0))
+		visual_events.append(attack.duplicate(true))
+		if bool(attack.get("target_hero", false)):
+			var hero_owner: String = str(attack.get("target_owner", ENEMY_ID))
+			hero_damage[hero_owner] = int(hero_damage.get(hero_owner, 0)) + amount
+			continue
+		var target_owner: String = str(attack.get("target_owner", ENEMY_ID))
+		var target_slot: int = int(attack.get("target_slot", -1))
+		var key: String = _source_key(target_owner, target_slot)
+		slot_damage[key] = int(slot_damage.get(key, 0)) + amount
+	for owner_key: Variant in hero_damage.keys():
+		var owner_id: String = str(owner_key)
+		var amount: int = int(hero_damage.get(owner_id, 0))
+		if amount <= 0:
+			continue
+		_damage_hero(owner_id, amount)
+		_log("%s recebeu %d de dano." % [_hero_log_name(owner_id), amount])
+		visual_events.append({"type": "damage", "stage": stage_name, "target_owner": owner_id, "target_hero": true, "amount": amount})
+	var damaged_slots: Array[Dictionary] = []
+	for key_variant: Variant in slot_damage.keys():
+		var key: String = str(key_variant)
+		var parts: PackedStringArray = key.split(":")
+		if parts.size() != 2:
+			continue
+		var owner_id: String = parts[0]
+		var slot_index: int = int(parts[1])
+		var amount: int = int(slot_damage.get(key, 0))
+		var slots: Array = _slots_for_owner(owner_id)
+		if slot_index < 0 or slot_index >= slots.size() or slots[slot_index] == null:
+			continue
+		var occupant: Dictionary = Dictionary(slots[slot_index])
+		occupant["health"] = int(occupant.get("health", 0)) - amount
+		slots[slot_index] = occupant
+		_set_slots_for_owner(owner_id, slots)
+		damaged_slots.append({"owner": owner_id, "slot": slot_index})
+		_log("%s recebeu %d de dano." % [str(occupant.get("name", "Criatura")), amount])
+		visual_events.append({"type": "damage", "stage": stage_name, "target_owner": owner_id, "target_slot": slot_index, "amount": amount})
+	for damaged: Dictionary in damaged_slots:
+		var owner_id: String = str(damaged.get("owner", ""))
+		var slot_index: int = int(damaged.get("slot", -1))
+		var current: Dictionary = _slot_occupant(owner_id, slot_index)
+		if current.is_empty():
+			continue
+		_store_or_destroy_lane_unit(owner_id, slot_index, current)
+	_check_outcome()
+
+func _build_attack_event(stage_name: String, owner_id: String, slot_index: int, target: Dictionary) -> Dictionary:
+	var attacker: Dictionary = _slot_occupant(owner_id, slot_index)
+	var damage: int = int(attacker.get("attack", 0))
+	var event: Dictionary = {
+		"type": "attack",
+		"stage": stage_name,
+		"source_owner": owner_id,
+		"source_slot": slot_index,
+		"source_name": str(attacker.get("name", "Criatura")),
+		"target_owner": str(target.get("owner", _opponent_id(owner_id))),
+		"target_hero": bool(target.get("hero", false)),
+		"target_name": _target_display_name(target),
+		"damage": damage
+	}
+	if target.has("slot"):
+		event["target_slot"] = int(target.get("slot", -1))
+	return event
 
 func _store_or_destroy_lane_unit(owner_id: String, slot_index: int, occupant: Dictionary) -> void:
 	var slots: Array = _slots_for_owner(owner_id)
@@ -1364,6 +1408,39 @@ func _nearest_defender_target(owner_id: String, lane_index: int) -> Dictionary:
 		return {}
 	return {"owner": owner_id, "slot": best_index}
 
+func _front_attack_target(owner_id: String, slot_index: int) -> Dictionary:
+	var opponent_id: String = _opponent_id(owner_id)
+	var opposing_slots: Array = _slots_for_owner(opponent_id)
+	if slot_index >= 0 and slot_index < opposing_slots.size() and opposing_slots[slot_index] != null:
+		return {"owner": opponent_id, "slot": slot_index}
+	return {}
+
+func _overflow_attack_target(owner_id: String, slot_index: int) -> Dictionary:
+	var opponent_id: String = _opponent_id(owner_id)
+	var defender_target: Dictionary = _nearest_defender_target(opponent_id, slot_index)
+	if not defender_target.is_empty():
+		return defender_target
+	if owner_id == ENEMY_ID:
+		return {"owner": PLAYER_ID, "hero": true}
+	if _enemy_hero_is_objective():
+		return {"owner": ENEMY_ID, "hero": true}
+	return _nearest_occupied_slot_target(ENEMY_ID, slot_index)
+
+func _nearest_occupied_slot_target(owner_id: String, lane_index: int) -> Dictionary:
+	var slots: Array = _slots_for_owner(owner_id)
+	var best_index: int = -1
+	var best_distance: int = 99999
+	for index: int in range(slots.size()):
+		if slots[index] == null:
+			continue
+		var distance: int = absi(index - lane_index)
+		if distance < best_distance or (distance == best_distance and (best_index < 0 or index < best_index)):
+			best_distance = distance
+			best_index = index
+	if best_index < 0:
+		return {}
+	return {"owner": owner_id, "slot": best_index}
+
 func _first_ally_slot() -> int:
 	for index: int in range(player_slots.size()):
 		if player_slots[index] != null:
@@ -1500,6 +1577,22 @@ func _set_slots_for_owner(owner_id: String, slots: Array) -> void:
 
 func _opponent_id(owner_id: String) -> String:
 	return ENEMY_ID if owner_id == PLAYER_ID else PLAYER_ID
+
+func _source_key(owner_id: String, slot_index: int) -> String:
+	return "%s:%d" % [owner_id, slot_index]
+
+func _target_display_name(target: Dictionary) -> String:
+	if bool(target.get("hero", false)):
+		return _hero_log_name(str(target.get("owner", ENEMY_ID)))
+	var owner_id: String = str(target.get("owner", ENEMY_ID))
+	var slot_index: int = int(target.get("slot", -1))
+	var occupant: Dictionary = _slot_occupant(owner_id, slot_index)
+	return str(occupant.get("name", "Slot %d" % (slot_index + 1)))
+
+func _hero_log_name(owner_id: String) -> String:
+	if owner_id == PLAYER_ID:
+		return "Jogador"
+	return "Heroi inimigo"
 
 func _target_in_options(target: Dictionary, options: Array[Dictionary]) -> bool:
 	var normalized: Dictionary = _normalized_target(target, PLAYER_ID)

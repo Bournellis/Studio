@@ -40,7 +40,7 @@ Parametros do slice: mana inicial 2, HP do Comandante 20, mao base 3, deck inici
 |---|---:|---:|---|---|
 | Esqueleto | 1 | 3 | 1/1 | `reviver`. |
 | Morto vivo | 1 | 3 | 1/1 | Ao morrer: `Enfraquecer 1`. |
-| Prender | 2 | 3 | - | Criatura inimiga nao ataca no proximo combate. |
+| Prender | 1 | 3 | - | Criatura inimiga nao ataca no proximo combate. |
 | Zumbi | 2 | 3 | 2/2 | Ao morrer: `Enfraquecer 1`. |
 
 ## Pendencias

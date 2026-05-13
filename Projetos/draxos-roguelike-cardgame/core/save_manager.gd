@@ -91,19 +91,22 @@ func _slot_info(index: int) -> Dictionary:
 	var data: Dictionary = _load_slot_data(index)
 	var exists: bool = not data.is_empty()
 	var summary: String = "Vazio"
+	var player_label: String = ""
 	var class_label: String = ""
 	var map_name: String = ""
 	if exists:
 		var run_data: Dictionary = Dictionary(data.get("run", {}))
+		player_label = str(run_data.get("player_name", RunSession.DEFAULT_PLAYER_NAME))
 		class_label = str(run_data.get("selected_class_display_name", run_data.get("selected_class_id", "")))
 		map_name = _node_display_name(str(run_data.get("current_node_id", "")))
-		summary = "%s | %s" % [class_label if class_label != "" else "Classe desconhecida", map_name]
+		summary = "%s | %s | %s" % [player_label if player_label != "" else RunSession.DEFAULT_PLAYER_NAME, class_label if class_label != "" else "Classe desconhecida", map_name]
 	return {
 		"index": index,
 		"exists": exists,
 		"selected": current_slot_index == index,
 		"path": _slot_path(index),
 		"summary": summary,
+		"player_name": player_label,
 		"class_name": class_label,
 		"map_name": map_name,
 		"data": data
