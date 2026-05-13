@@ -13,7 +13,7 @@ Executar a Track 02 em ordem linear, prompt a prompt, mantendo todos os registro
 
 ## Cursor Atual
 
-Proximo prompt: `P15 - UI/Readability Pass`.
+Proximo prompt: `P16 - Campaign Content Alignment`.
 
 ## Progresso
 
@@ -78,33 +78,4 @@ Proximo prompt: `P15 - UI/Readability Pass`.
 - [x] P12: Necromante totalmente jogavel end-to-end como terceira classe completa.
 - [x] P12: `test_on_death_triggers.gd` com 13 testes.
 - [ ] P12: regenerar `.tres` e rodar validacao localmente.
-- [x] P13: 4 testes de integracao Necromante adicionados a `test_content_and_session.gd` (display_name Ritual das Sombras, action ritual_das_sombras, 3 tiers, passiva colheita_sombria).
-- [x] P13: todas as 3 classes (Invocador, Arcano, Necromante) com cobertura paralela de testes de integracao em `test_content_and_session.gd`.
-- [x] P13: records atualizados (linear-execution-plan, track current-status, current-status, Estado_Atual, Kanban).
-- [ ] P13: validacao Godot pendente (rodar localmente).
-- [x] P14: `test_multi_class_regression.gd` criado com 21 testes de regressao:
-      startup correto para as 3 classes, ciclo de turno completo, fluxo reseta para Arcano,
-      cinzas persiste para Necromante, nenhum hero power requer heroi inimigo fora de duelo,
-      starter deck de 20 cartas com todas as cartas existentes no catalogo para as 3 classes.
-- [x] P14: Stage 2 de implementacao de classes bloqueado como novo baseline.
-- [x] P14: records atualizados (linear-execution-plan P14 complete cursor -> P15, track current-status, current-status, Estado_Atual, Kanban).
-- [ ] P14: validacao Godot pendente (rodar localmente com regeneracao de .tres).
-
-## Regras De Registro
-
-- Atualizar o cursor e status do prompt em `linear-execution-plan.md`.
-- Atualizar `Projetos/rpg-turnos/implementation/current-status.md` quando o baseline, proximo passo ou validacao mudarem.
-- Atualizar `Projetos/rpg-turnos/implementation/tracks/track-02-draxos-lore-progression/current-status.md` quando o status da track mudar.
-- Atualizar `08_Coordenacao_Agentes/Estado_Atual.md` quando o snapshot observavel do projeto mudar.
-- Rodar validacao Godot apos mudancas de runtime, dados, cenas, recursos gerados ou testes.
-
-## Proximo Passo
-
-Executar P15 - UI/Readability Pass:
-
-1. Regenerar `.tres` localmente (`tools/content_generator.gd`) para incorporar os `on_death` do JSON (pendente de P12).
-2. Rodar validacao completa — espera-se ~168+ testes verdes (125 + 43 novos P10-P13 + 21 novos P14 - 21 = 125 + 68 = ~193 estimado).
-3. Identificar e corrigir o problema mais bloqueante de UI/legibilidade para test play.
-4. Preservar estrategia de placeholders sem arte final.
-5. Adicionar testes de layout se afetados.
-6. Atualizar records e cursor para P16.
+- [x] P13: 4 testes de integracao Necromante adicionados a `test_content_and_session.gd` (display_name Ritual das Sombras, action ritual_das_sombras, 3 tiers, pass

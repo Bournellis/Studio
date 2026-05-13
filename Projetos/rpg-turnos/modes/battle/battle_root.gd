@@ -37,6 +37,7 @@ var end_turn_button: Button
 var hero_power_button: Button
 var visual_layer: Control
 var hero_power_targets_row: HBoxContainer
+var class_state_label: Label
 var last_feedback: String = ""
 var _visual_event_cursor: int = 0
 
@@ -158,6 +159,13 @@ func _build_header(root: VBoxContainer) -> void:
 	discard_bar.custom_minimum_size = Vector2(96, 18)
 	discard_bar.show_percentage = false
 	vitals_row.add_child(discard_bar)
+
+	class_state_label = Label.new()
+	class_state_label.name = "class_state_label"
+	class_state_label.add_theme_font_size_override("font_size", 13)
+	class_state_label.add_theme_color_override("font_color", Color(0.75, 0.88, 1.0))
+	class_state_label.visible = false
+	header_root.add_child(class_state_label)
 
 	var actions: HBoxContainer = HBoxContainer.new()
 	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -530,6 +538,8 @@ func _update_vitals() -> void:
 		energy_pips_box.add_child(pip)
 	energy_pips_box.tooltip_text = "Energia: %d/%d" % [engine.energy, max_energy]
 
+	_update_class_state_display()
+
 	var max_hand: int = int(player_controller.get("max_hand_size", engine.hand.size()))
 	hand_limit_label.text = "Mao %d/%d | Deck %d" % [engine.hand.size(), max_hand, engine.deck.size()]
 	if engine.current_phase == BattleEngineScript.PHASE_DISCARD:
@@ -541,6 +551,19 @@ func _update_vitals() -> void:
 	else:
 		discard_counter_label.text = "Descarte: inativo"
 		discard_bar.visible = false
+
+func _update_class_state_display() -> void:
+	var class_id: String = str(GameSession.selected_class)
+	if class_id == "arcano":
+		class_state_label.text = "Fluxo: %d" % engine.fluxo
+		class_state_label.visible = true
+	elif class_id == "necromante":
+		class_state_label.text = "Cinzas: %d  |  Memorial: %d carta(s)" % [
+			engine.cinzas, engine.memorial_de_batalha.size()
+		]
+		class_state_label.visible = true
+	else:
+		class_state_label.visible = false
 
 func _slot_visual_state(owner: String, slot_index: int, occupant: Variant) -> Dictionary:
 	var attack_status: String = engine.get_slot_attack_status(owner, slot_index)
@@ -673,7 +696,8 @@ func _hero_power_needs_targeting() -> bool:
 		return false
 	var effect: Dictionary = Dictionary(hp.get("effect", {}))
 	var target: String = str(effect.get("target", ""))
-	return target == "any_own_creature" or target == "any_permanent_or_hero"
+	var action: String = str(effect.get("action", ""))
+	return target == "any_own_creature" or target == "any_permanent_or_hero" or action == "ritual_das_sombras"
 
 func _rebuild_hero_power_targets() -> void:
 	for child: Node in hero_power_targets_row.get_children():
@@ -687,10 +711,13 @@ func _rebuild_hero_power_targets() -> void:
 	var hp: Dictionary = ContentLibrary.get_class_hero_power(GameSession.selected_class)
 	var effect: Dictionary = Dictionary(hp.get("effect", {}))
 	var target_mode: String = str(effect.get("target", ""))
+	var action: String = str(effect.get("action", ""))
 	var hp_name: String = _get_hero_power_display_name()
 	var can_use: bool = engine.can_use_player_hero_power()
 
-	if target_mode == "any_own_creature":
+	if action == "ritual_das_sombras":
+		_build_ritual_tier_buttons(can_use)
+	elif target_mode == "any_own_creature":
 		for slot_index: int in range(engine.player_slots.size()):
 			if engine.player_slots[slot_index] == null:
 				continue
@@ -730,54 +757,24 @@ func _rebuild_hero_power_targets() -> void:
 			hero_power_button.disabled = true
 			hero_power_targets_row.visible = false
 
-func _on_hero_power_own_slot_pressed(slot_index: int) -> void:
-	var result: Dictionary = engine.use_player_hero_power({"owner": "jogador", "slot": slot_index})
-	_record_action_feedback(result)
-	call_deferred("_refresh")
+func _build_ritual_tier_buttons(can_use: bool) -> void:
+	var cinzas_now: int = engine.cinzas
+	var memorial_size: int = engine.memorial_de_batalha.size()
+	var hp: Dictionary = ContentLibrary.get_class_hero_power(GameSession.selected_class)
+	var tiers_data: Array = Array(Dictionary(hp.get("effect", {})).get("tiers", []))
 
-func _on_hero_power_enemy_slot_pressed(slot_index: int) -> void:
-	var result: Dictionary = engine.use_player_hero_power({"owner": "inimigo", "slot": slot_index})
-	_record_action_feedback(result)
-	call_deferred("_refresh")
-
-func _on_hero_power_enemy_hero_pressed() -> void:
-	var result: Dictionary = engine.use_player_hero_power({"owner": "inimigo", "slot": -1})
-	_record_action_feedback(result)
-	call_deferred("_refresh")
-
-func _finish_battle() -> void:
-	if engine.outcome == "victory":
-		var summary: String = "A emboscada foi vencida no encontro de teste."
-		if engine.encounter_id == "duelista_bandido":
-			summary = "O Guardiao Elemental foi derrotado em confronto."
-		elif engine.encounter_id == "invasao_em_ondas":
-			summary = "A invasao em ondas foi repelida."
-		elif engine.encounter_id == "defesa_do_portao":
-			summary = "O portao resistiu ao ataque inimigo."
-		elif engine.encounter_id == "colosso_fragmentado":
-			summary = "O Colosso Fragmentado perdeu todas as partes vitais."
-		elif engine.encounter_id == "enigma_da_ponte":
-			summary = "A ruptura de selos foi resolvida."
-		GameSession.complete_encounter(summary)
-		GameSession.save_game()
-	else:
-		GameSession.record_defeat("O heroi caiu; o estado pre-combate sera restaurado.")
-	get_tree().change_scene_to_file("res://modes/battle/result.tscn")
-
-func _panel_style(fill: Color) -> StyleBoxFlat:
-	var style: StyleBoxFlat = StyleBoxFlat.new()
-	style.bg_color = fill
-	style.border_color = Color(0.26, 0.3, 0.32)
-	style.border_width_left = 2
-	style.border_width_top = 2
-	style.border_width_right = 2
-	style.border_width_bottom = 2
-	style.corner_radius_top_left = 8
-	style.corner_radius_top_right = 8
-	style.corner_radius_bottom_left = 8
-	style.corner_radius_bottom_right = 8
-	style.content_margin_left = 10
-	style.content_margin_top = 8
-	style.content_margin_right = 10
-	style.content_margin_bottom = 8
-	return style
+	# Degrau I (2 Cinzas): one button per occupied enemy slot.
+	# Defaults to enjoo_estendido debuff for this UI pass.
+	if tiers_data.size() >= 1:
+		var cost_i: int = int(Dictionary(tiers_data[0]).get("cinzas_cost", 2))
+		for slot_index: int in range(engine.enemy_slots.size()):
+			if engine.enemy_slots[slot_index] == null:
+				continue
+			var slot_lbl: String = engine.get_slot_label(ENEMY_OWNER, slot_index)
+			var btn: Button = Button.new()
+			btn.text = "Ritual I → %s" % slot_lbl
+			btn.custom_minimum_size = Vector2(0, 36)
+			btn.add_theme_font_size_override("font_size", 12)
+			btn.disabled = not can_use or cinzas_now < cost_i
+			btn.tooltip_text = "Custo: %d Cinzas | Enjoo estendido em %s" % [cost_i, slot_lbl]
+			btn.pressed.connect(_on_ri

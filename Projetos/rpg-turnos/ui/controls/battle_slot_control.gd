@@ -64,11 +64,25 @@ func _rebuild() -> void:
 			state_text = "Exausta"
 		elif not bool(data.get("ready", false)):
 			state_text = "Preparando"
-		stats.text = "%d/%d %s" % [
+		var debuff_parts: Array = []
+		var enjoo_ext: int = int(data.get("enjoo_estendido_turns", 0))
+		if enjoo_ext > 0:
+			debuff_parts.append("Enjoo x%d" % enjoo_ext)
+		var statuses: Array = Array(data.get("status", []))
+		if statuses.has("queimando"):
+			debuff_parts.append("Queimando")
+		var full_state: String = state_text
+		if debuff_parts.size() > 0:
+			full_state = "%s | %s" % [state_text, ", ".join(debuff_parts)]
+		stats.text = "%d/%d  %s" % [
 			int(data.get("attack", 0)),
 			int(data.get("health", 0)),
-			state_text
+			full_state
 		]
+		stats.add_theme_font_size_override("font_size", 11)
+		stats.clip_text = true
+		stats.max_lines_visible = 1
+		stats.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		box.add_child(stats)
 
 func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
@@ -120,15 +134,4 @@ func _chip_color() -> Color:
 func _slot_fill() -> Color:
 	if bool(visual_state.get("is_attack_source", false)):
 		return Color(0.18, 0.17, 0.09)
-	if bool(visual_state.get("is_attack_target", false)):
-		return Color(0.2, 0.1, 0.09)
-	if bool(visual_state.get("is_empty", false)):
-		return Color(0.07, 0.085, 0.09) if slot_owner == "player" else Color(0.1, 0.075, 0.08)
-	return Color(0.1, 0.12, 0.13) if slot_owner == "player" else Color(0.15, 0.1, 0.11)
-
-func _slot_border() -> Color:
-	if bool(visual_state.get("is_attack_source", false)):
-		return Color(0.95, 0.72, 0.26)
-	if bool(visual_state.get("is_attack_target", false)):
-		return Color(0.95, 0.44, 0.34)
-	return Color(0.32, 0.5, 0.48) if slot_owner == "player" else Color(0.56, 0.32, 0.34)
+	if b
