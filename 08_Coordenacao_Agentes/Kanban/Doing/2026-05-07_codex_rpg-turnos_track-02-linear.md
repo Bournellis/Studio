@@ -48,4 +48,37 @@ Proximo prompt: `P10 - Necromante: Cinzas and Memorial de Batalha`.
 - [x] P06: `battle_root.gd` exibe botoes de alvo por slot (`"Amplificar → Slot X"`) quando `effect.target == "any_own_creature"`.
 - [x] P06: label "Hero Power:" no class select corrigido para portugues ("Poder de heroi:").
 - [x] P06: hint de feedback de batalha desacoplada do nome "Preparar Defesa".
-- [x] P06: 3 novos testes em `test_content_and_sessi
+- [x] P06: 3 novos testes em `test_content_and_session.gd` cobrindo display_name, target e fallback.
+- [x] P06: Invocador registrado como primeira classe jogavel completa.
+- [x] P06: validacao Godot coberta em 2026-05-12 com 125/125 testes e 653 asserts.
+- [x] P07: contador `fluxo` volatil adicionado ao `BattleEngine` (var fluxo, reset no upkeep, incrementa por magia/magia_de_tabuleiro).
+- [x] P07: `_player_fluxo_bonus` e `_try_trigger_fluxo` helpers adicionados; ambos guardam por `active_class_id != "arcano"`.
+- [x] P07: `_play_damage_spell` adiciona fluxo ao `amount`; `play_card_from_hand` chama `_try_trigger_fluxo` apos damage/board spells.
+- [x] P07: `test_arcano_fluxo.gd` com 13 testes: init, incremento por tipo de spell, stacking, reset por turno, amplificacao no 2o e 3o spell, isolamento sem classe, isolamento em ataques de criatura.
+- [x] P07: validacao Godot verde em 2026-05-12 com 125/125 testes e 653 asserts.
+- [x] P08: `_use_hero_power_damage` adicionado ao `BattleEngine`: Pulso Astral inflige 1+fluxo dano magico a permanente ou heroi inimigo.
+- [x] P08: dispatch em `use_player_hero_power` extendido: `action == "damage"` roteia para `_use_hero_power_damage`.
+- [x] P08: `battle_root.gd` atualizado: `_hero_power_needs_ally_target` substituido por `_hero_power_needs_targeting`; suporte a `any_permanent_or_hero` com botoes por slot inimigo e botao heroi no duelo.
+- [x] P08: `test_class_arcano.gd` com 12 testes: slot/heroi target, custo, flag used, falhas, amplificacao de fluxo, sem incremento de fluxo, reset entre turnos.
+- [x] P08: validacao Godot pendente (rodar localmente).
+- [x] P09: 4 testes de integracao Arcano adicionados a `test_content_and_session.gd` (display_name Pulso Astral, target any_permanent_or_hero, fluxo_bonus flag, passiva fluxo_continuo).
+- [x] P09: records atualizados (linear-execution-plan, track current-status, current-status, Estado_Atual, Kanban).
+- [ ] P09: validacao Godot pendente (rodar localmente).
+
+## Regras De Registro
+
+- Atualizar o cursor e status do prompt em `linear-execution-plan.md`.
+- Atualizar `Projetos/rpg-turnos/implementation/current-status.md` quando o baseline, proximo passo ou validacao mudarem.
+- Atualizar `Projetos/rpg-turnos/implementation/tracks/track-02-draxos-lore-progression/current-status.md` quando o status da track mudar.
+- Atualizar `08_Coordenacao_Agentes/Estado_Atual.md` quando o snapshot observavel do projeto mudar.
+- Rodar validacao Godot apos mudancas de runtime, dados, cenas, recursos gerados ou testes.
+
+## Proximo Passo
+
+Executar P10 - Necromante: Cinzas and Memorial de Batalha:
+
+1. Adicionar `cinzas: int` ao `BattleEngine` (persiste entre turnos, reseta no novo encontro).
+2. Adicionar `memorial_de_batalha: Array` ao `BattleEngine` (lista de criaturas destruidas no encontro, reseta no novo encontro).
+3. Incrementar `cinzas` e adicionar a criatura ao `memorial_de_batalha` em cada destruicao de criatura (ambos os lados).
+4. Escrever `test_necromante_cinzas.gd` cobrindo incremento, persistencia entre turnos, reset por encontro e dados do memorial.
+5. Rodar validacao.

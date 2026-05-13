@@ -686,4 +686,98 @@ func _rebuild_hero_power_targets() -> void:
 		return
 	var hp: Dictionary = ContentLibrary.get_class_hero_power(GameSession.selected_class)
 	var effect: Dictionary = Dictionary(hp.get("effect", {}))
-	var target_mode: String = str(effect.get("target
+	var target_mode: String = str(effect.get("target", ""))
+	var hp_name: String = _get_hero_power_display_name()
+	var can_use: bool = engine.can_use_player_hero_power()
+
+	if target_mode == "any_own_creature":
+		for slot_index: int in range(engine.player_slots.size()):
+			if engine.player_slots[slot_index] == null:
+				continue
+			var btn: Button = Button.new()
+			btn.text = "%s → %s" % [hp_name, engine.get_slot_label(PLAYER_OWNER, slot_index)]
+			btn.custom_minimum_size = Vector2(0, 36)
+			btn.add_theme_font_size_override("font_size", 12)
+			btn.disabled = not can_use
+			btn.pressed.connect(_on_hero_power_own_slot_pressed.bind(slot_index))
+			hero_power_targets_row.add_child(btn)
+		if hero_power_targets_row.get_child_count() == 0:
+			hero_power_button.visible = true
+			hero_power_button.disabled = true
+			hero_power_targets_row.visible = false
+
+	elif target_mode == "any_permanent_or_hero":
+		if engine._controller_has_hero(ENEMY_OWNER):
+			var btn: Button = Button.new()
+			btn.text = "%s → Heroi" % hp_name
+			btn.custom_minimum_size = Vector2(0, 36)
+			btn.add_theme_font_size_override("font_size", 12)
+			btn.disabled = not can_use
+			btn.pressed.connect(_on_hero_power_enemy_hero_pressed)
+			hero_power_targets_row.add_child(btn)
+		for slot_index: int in range(engine.enemy_slots.size()):
+			if engine.enemy_slots[slot_index] == null:
+				continue
+			var btn: Button = Button.new()
+			btn.text = "%s → %s" % [hp_name, engine.get_slot_label(ENEMY_OWNER, slot_index)]
+			btn.custom_minimum_size = Vector2(0, 36)
+			btn.add_theme_font_size_override("font_size", 12)
+			btn.disabled = not can_use
+			btn.pressed.connect(_on_hero_power_enemy_slot_pressed.bind(slot_index))
+			hero_power_targets_row.add_child(btn)
+		if hero_power_targets_row.get_child_count() == 0:
+			hero_power_button.visible = true
+			hero_power_button.disabled = true
+			hero_power_targets_row.visible = false
+
+func _on_hero_power_own_slot_pressed(slot_index: int) -> void:
+	var result: Dictionary = engine.use_player_hero_power({"owner": "jogador", "slot": slot_index})
+	_record_action_feedback(result)
+	call_deferred("_refresh")
+
+func _on_hero_power_enemy_slot_pressed(slot_index: int) -> void:
+	var result: Dictionary = engine.use_player_hero_power({"owner": "inimigo", "slot": slot_index})
+	_record_action_feedback(result)
+	call_deferred("_refresh")
+
+func _on_hero_power_enemy_hero_pressed() -> void:
+	var result: Dictionary = engine.use_player_hero_power({"owner": "inimigo", "slot": -1})
+	_record_action_feedback(result)
+	call_deferred("_refresh")
+
+func _finish_battle() -> void:
+	if engine.outcome == "victory":
+		var summary: String = "A emboscada foi vencida no encontro de teste."
+		if engine.encounter_id == "duelista_bandido":
+			summary = "O Guardiao Elemental foi derrotado em confronto."
+		elif engine.encounter_id == "invasao_em_ondas":
+			summary = "A invasao em ondas foi repelida."
+		elif engine.encounter_id == "defesa_do_portao":
+			summary = "O portao resistiu ao ataque inimigo."
+		elif engine.encounter_id == "colosso_fragmentado":
+			summary = "O Colosso Fragmentado perdeu todas as partes vitais."
+		elif engine.encounter_id == "enigma_da_ponte":
+			summary = "A ruptura de selos foi resolvida."
+		GameSession.complete_encounter(summary)
+		GameSession.save_game()
+	else:
+		GameSession.record_defeat("O heroi caiu; o estado pre-combate sera restaurado.")
+	get_tree().change_scene_to_file("res://modes/battle/result.tscn")
+
+func _panel_style(fill: Color) -> StyleBoxFlat:
+	var style: StyleBoxFlat = StyleBoxFlat.new()
+	style.bg_color = fill
+	style.border_color = Color(0.26, 0.3, 0.32)
+	style.border_width_left = 2
+	style.border_width_top = 2
+	style.border_width_right = 2
+	style.border_width_bottom = 2
+	style.corner_radius_top_left = 8
+	style.corner_radius_top_right = 8
+	style.corner_radius_bottom_left = 8
+	style.corner_radius_bottom_right = 8
+	style.content_margin_left = 10
+	style.content_margin_top = 8
+	style.content_margin_right = 10
+	style.content_margin_bottom = 8
+	return style

@@ -86,7 +86,7 @@ func test_pulso_astral_fails_if_already_used_this_turn() -> void:
 
 func test_pulso_astral_fails_with_no_valid_slot_target() -> void:
 	var engine = _start_arcano_engine()
-	# Slot 0 is empty.
+	engine.enemy_slots[0] = null
 	var result: Dictionary = engine.use_player_hero_power({"owner": "inimigo", "slot": 0})
 
 	assert_false(bool(result.get("ok", false)), "Pulso Astral must fail when the target slot is empty.")
@@ -94,10 +94,10 @@ func test_pulso_astral_fails_with_no_valid_slot_target() -> void:
 func test_pulso_astral_fails_with_insufficient_energy() -> void:
 	var engine = _start_arcano_engine()
 	_place_enemy(engine, "goblin_ponte", 0)
-	# Drain all energy via spells before using hero power.
-	engine.play_card_from_hand(0, {"owner": "inimigo", "slot": 0})
-	engine.play_card_from_hand(0, {"owner": "inimigo", "slot": 0})
-	engine.play_card_from_hand(0, {"owner": "inimigo", "slot": 0})
+	var controller: Dictionary = engine._controller("jogador")
+	controller["energy"] = 0
+	engine._set_controller("jogador", controller)
+	engine._sync_public_fields()
 	assert_eq(engine.energy, 0, "Precondition: energy exhausted after 3 spells.")
 
 	var result: Dictionary = engine.use_player_hero_power({"owner": "inimigo", "slot": 0})

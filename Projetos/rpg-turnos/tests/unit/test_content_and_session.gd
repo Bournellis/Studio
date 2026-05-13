@@ -401,4 +401,32 @@ func test_no_class_hero_power_returns_empty() -> void:
 
 func test_arcano_hero_power_display_name_is_pulso_astral() -> void:
 	var hp: Dictionary = ContentLibrary.get_class_hero_power("arcano")
-	asser
+	assert_false(hp.is_empty(), "get_class_hero_power must return data for arcano.")
+	assert_eq(str(hp.get("display_name", "")), "Pulso Astral",
+		"Arcano hero power display_name must be 'Pulso Astral'.")
+
+func test_arcano_hero_power_effect_target_is_any_permanent_or_hero() -> void:
+	var hp: Dictionary = ContentLibrary.get_class_hero_power("arcano")
+	var effect: Dictionary = Dictionary(hp.get("effect", {}))
+	assert_eq(str(effect.get("target", "")), "any_permanent_or_hero",
+		"Arcano hero power must target any_permanent_or_hero so UI shows enemy-slot and hero buttons.")
+
+func test_arcano_hero_power_has_fluxo_bonus_flag() -> void:
+	var hp: Dictionary = ContentLibrary.get_class_hero_power("arcano")
+	var effect: Dictionary = Dictionary(hp.get("effect", {}))
+	assert_true(bool(effect.get("fluxo_bonus", false)),
+		"Arcano hero power effect must carry fluxo_bonus: true so BattleEngine applies fluxo amplification.")
+
+func test_arcano_class_passiva_id_is_fluxo_continuo() -> void:
+	var cls: Dictionary = ContentLibrary.get_class_definition("arcano")
+	assert_false(cls.is_empty(), "ContentLibrary must expose arcano class data.")
+	var passiva: Dictionary = Dictionary(cls.get("passiva", {}))
+	assert_eq(str(passiva.get("id", "")), "fluxo_continuo",
+		"Arcano passiva id must be 'fluxo_continuo'.")
+
+func _delete_test_save() -> void:
+	if not FileAccess.file_exists(TEST_SAVE_PATH):
+		return
+	var user_dir: DirAccess = DirAccess.open("user://")
+	if user_dir != null:
+		user_dir.remove(TEST_SAVE_FILENAME)

@@ -1812,4 +1812,76 @@ func _slot_label(owner_id: String, slot_index: int) -> String:
 		prefix = "N"
 	if slot_index >= 0 and slot_index < labels.size():
 		return labels[slot_index]
-	retur
+	return "%s%d" % [prefix, slot_index + 1]
+
+func _target_label(target: Dictionary) -> String:
+	var owner_id: String = _normalize_owner_id(str(target.get("owner", ENEMY_ID)))
+	var slot_index: int = int(target.get("slot", -1))
+	if slot_index >= 0:
+		return _slot_label(owner_id, slot_index)
+	if owner_id == ENEMY_ID:
+		return "Heroi inimigo"
+	return "Heroi do jogador"
+
+func _add_attack_option(options: Array, seen: Dictionary, target: Dictionary) -> void:
+	var key: String = "%s:%d" % [str(target.get("owner", "")), int(target.get("slot", -1))]
+	if seen.has(key):
+		return
+	seen[key] = true
+	target["label"] = _target_label(target)
+	options.append(target)
+
+func _target_in_options(target: Dictionary, options: Array) -> bool:
+	var target_owner: String = _normalize_owner_id(str(target.get("owner", "")))
+	var target_slot: int = int(target.get("slot", -99))
+	for option: Variant in options:
+		var option_dict: Dictionary = Dictionary(option)
+		if _normalize_owner_id(str(option_dict.get("owner", ""))) == target_owner and int(option_dict.get("slot", -99)) == target_slot:
+			return true
+	return false
+
+func _is_instant_speed_card(card) -> bool:
+	return card != null and (str(card.speed) == "instantanea" or _has_card_keyword(card, "instantaneo"))
+
+func _has_card_keyword(card, keyword: String) -> bool:
+	return card != null and card.has_method("has_keyword") and (card.has_keyword(keyword) or card.has_keyword(_keyword_alias(keyword)))
+
+func _has_keyword(occupant: Dictionary, keyword: String) -> bool:
+	var keywords: Array = Array(occupant.get("keywords", []))
+	return keywords.has(keyword) or keywords.has(_keyword_alias(keyword))
+
+func _keyword_alias(keyword: String) -> String:
+	match keyword:
+		"rapido":
+			return "fast"
+		"defensor":
+			return "defender"
+		"alcance":
+			return "reach"
+		"atropelar":
+			return "trample"
+		_:
+			return keyword
+
+func _card_name(card_id: String) -> String:
+	if _catalog == null:
+		return card_id
+	return _catalog.card_name(card_id)
+
+func _visual(kind: String, owner_id: String, slot_index: int, text: String, color: Color) -> void:
+	eventos_visuais.append({
+		"kind": kind,
+		"owner": _normalize_owner_id(owner_id),
+		"slot": slot_index,
+		"text": text,
+		"color": color
+	})
+
+func _log(line: String) -> void:
+	log_lines.append(line)
+	if log_lines.size() > MAX_LOG_LINES:
+		log_lines.pop_front()
+
+func _fail(message: String) -> Dictionary:
+	_log(message)
+	return {"ok": false, "message": message}

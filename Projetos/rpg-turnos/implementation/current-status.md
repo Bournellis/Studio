@@ -20,4 +20,27 @@
 - `tracks/track-02-draxos-lore-progression/current-status.md`
 - `tracks/track-02-draxos-lore-progression/implementation-plan.md` when planning or implementing the next lore/progression pass
 - `tracks/track-02-draxos-lore-progression/linear-execution-plan.md` for the prompt-by-prompt execution order
-- `tr
+- `tracks/track-01-foundation-first-prototype/current-status.md` for the completed runtime baseline
+- `../docs/lore-campaign.md` and `../docs/lore-content-migration.md` when migrating placeholder runtime names
+- touched files
+
+## Validation
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\rpg-turnos -s res://tools/validate.gd
+```
+
+- Latest known validation: `2026-05-12`, `125/125` GUT tests passing through `tools/validate.gd`; 653 asserts. P09 validation pending local run (4 new tests added to test_content_and_session.gd).
+- For documentation-only changes, do not run Godot validation unless explicitly requested.
+
+## Records
+
+- Detailed foundation runtime record: `tracks/track-01-foundation-first-prototype/foundation-runtime-record.md`
+- Active track snapshot: `tracks/track-02-draxos-lore-progression/current-status.md`
+- Linear execution plan: `tracks/track-02-draxos-lore-progression/linear-execution-plan.md`
+- Historical combat experiments: `../docs/cardgame-core-experiments.md`
+- Cross-agent decisions: `../../../08_Coordenacao_Agentes/Decisoes/`
+
+## Next
+
+Execute `P10 - Necromante: Cinzas and Memorial de Batalha` from `tracks/track-02-draxos-lore-progression/linear-execution-plan.md`.

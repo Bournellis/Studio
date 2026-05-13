@@ -42,4 +42,60 @@ Each prompt must:
 - execute only the next pending prompt in the linear plan
 - keep mechanical IDs stable unless explicitly in the ID migration prompt
 - update records at the end of the prompt
-- run validation after runtime, g
+- run validation after runtime, generated-resource, scene, data, or test changes
+
+Each pass should still change one player-facing or runtime layer at a time:
+
+1. story labels and dialogue
+2. class fantasy
+3. mission chain framing
+4. card text and reward meaning
+5. RPG progression systems
+6. new content volume
+7. technical ID and asset migration
+
+## Completed in P07
+
+- `BattleEngine` now tracks volatile per-turn `fluxo: int`; increments after each `magia` or `magia_de_tabuleiro` resolved by the player; resets at player upkeep start.
+- `_play_damage_spell` adds `_player_fluxo_bonus()` to base damage amount (Arcano only).
+- `_try_trigger_fluxo` and `_player_fluxo_bonus` helpers isolate the logic; both guard on `active_class_id != "arcano"`.
+- `test_arcano_fluxo.gd` added with 13 tests: counter init, increment per spell type, stacking, turn reset, damage amplification on 2nd/3rd spell, no-class isolation, and creature attack isolation.
+
+## Completed in P08
+
+- `_use_hero_power_damage` added to `BattleEngine`: Pulso Astral deals 1+fluxo magic damage to any enemy permanent or hero; validates target before spending energy; cost 1, once per own turn.
+- `use_player_hero_power` dispatch extended: `action == "damage"` routes to `_use_hero_power_damage`.
+- `battle_root.gd` updated: `_hero_power_needs_ally_target` replaced by `_hero_power_needs_targeting` (supports `any_own_creature` and `any_permanent_or_hero`); `_rebuild_hero_power_targets` shows per-slot enemy buttons and hero button for Arcano; three callbacks added (`_on_hero_power_own_slot_pressed`, `_on_hero_power_enemy_slot_pressed`, `_on_hero_power_enemy_hero_pressed`).
+- Arcano fully playable end-to-end: class selectable in class_select.tscn, starter deck activates via `initialize_deck_for_class`, Pulso Astral functional with fluxo amplification.
+- `test_class_arcano.gd` added with 12 tests: slot/hero targeting, cost, used flag, failure cases, fluxo amplification, no fluxo increment, and hero_power_used reset on new turn.
+
+## Completed in P09
+
+- 4 integration tests added to `test_content_and_session.gd` for Arcano catalog data:
+  - `test_arcano_hero_power_display_name_is_pulso_astral`: `ContentLibrary.get_class_hero_power("arcano")` returns `display_name == "Pulso Astral"`.
+  - `test_arcano_hero_power_effect_target_is_any_permanent_or_hero`: effect target is `"any_permanent_or_hero"`, confirming UI shows enemy-slot and hero buttons.
+  - `test_arcano_hero_power_has_fluxo_bonus_flag`: effect carries `fluxo_bonus: true`, confirming BattleEngine applies fluxo amplification.
+  - `test_arcano_class_passiva_id_is_fluxo_continuo`: class passiva id is `"fluxo_continuo"`.
+- Records updated. Validation pending local run.
+
+## Next Implementation Candidate
+
+Continue with `P10 - Necromante: Cinzas and Memorial de Batalha` from `linear-execution-plan.md`.
+
+Expected scope:
+
+- Add `cinzas` counter (persists between turns, resets on new encounter) to battle state
+- Add `memorial_de_batalha` per-encounter list of destroyed creature definitions
+- Increment both on every creature destruction (player and enemy side)
+- Tests: cinzas increment on ally/enemy death, multi-death, persistent across turns, both reset on new encounter
+
+## Do Not Start Yet
+
+- later class engine systems beyond P02
+- final planet/crystal naming as hard canon
+- broad card economy
+- equipment/items
+- save-breaking technical ID rename
+- final art import
+
+Those depend on decisions or later passes in `implementation-plan.md`.
