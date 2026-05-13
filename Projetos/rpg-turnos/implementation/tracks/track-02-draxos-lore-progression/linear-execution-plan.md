@@ -37,9 +37,9 @@ It defines execution order only.
 
 ## Current Execution Cursor
 
-Next prompt: `P14 - Multi-Class Regression Checkpoint`.
+Next prompt: `P15 - UI/Readability Pass`.
 
-Current focus: Lock the 3-class system as the new baseline — regression tests for all 3 classes, docs updated to mark Stage 2 class implementation complete.
+Current focus: Stage 2 class implementation locked as new baseline. Next work is presentation and campaign alignment.
 
 ## Linear Prompt Sequence
 
@@ -59,7 +59,7 @@ Current focus: Lock the 3-class system as the new baseline — regression tests 
 | P11 | complete | Implement Necromante: Ritual das Sombras hero power with 3-tier Cinzas cost. | Run validation |
 | P12 | complete | Implement Necromante: token spawn from Memorial, `enjoo_estendido`, "ao morrer" triggers. | Run validation |
 | P13 | complete | Activate Necromante starter deck and integration checkpoint. | Run validation |
-| P14 | pending | Multi-class regression checkpoint: all three classes selectable and playable. | Run validation |
+| P14 | complete | Multi-class regression checkpoint: all three classes selectable and playable. | Run validation |
 | P15 | pending | UI/readability design pass: define and implement minimum playable presentation improvement. | Run validation |
 | P16 | pending | Campaign content alignment: mission chain, rewards meaning, class-facing text. | Run validation |
 | P17 | pending | RPG progression slice: rank/status state and gated dialogue/mission access. | Run validation |
@@ -412,11 +412,11 @@ Every implementation prompt must leave the following record trail:
 
 ## Current Blockers
 
-- None for P14.
+- None for P15.
 
 Known future dependencies:
 
 - P06 depends on P01-P05.
 - P08-P13 depend on the class selection and class starter deck plumbing.
 - P16 should wait until at least P14, because reward/card meaning depends on the playable class baseline.
--
+- P20 must wait until player-facing naming stabilizes.
