@@ -7,9 +7,20 @@ This file governs agent behavior for the `D:\Estudio` workspace.
 - `canon/` is the shared source of truth for established product identity, lore context, gameplay contracts, progression, shared architecture, mode standard, and platform strategy.
 - `Projetos/rpg-isometrico/` is the active Godot implementation workspace for the campaign-first isometric action RPG.
 - `Projetos/rpg-turnos/` is the initial Godot implementation workspace for a provisional turn-based RPG-cardgame that may share studio lore but owns separate mechanics.
+- `Projetos/draxos-roguelike-cardgame/` is the active Godot implementation workspace for the menu-first Draxos roguelike cardgame; it shares Draxos lore context but owns separate mechanics, run structure, hub flow, rewards, card rules, and encounter pacing.
 - `migration/` is a historical archive for cutover, relocation, and legacy comparison context.
 - `08_Coordenacao_Agentes/` is the coordination hub: Kanban, Handoffs, Decisoes, and the Estado_Atual.
 - `Projetos/README.md` is the lightweight project registry for active and emerging projects.
+
+## Project Selection Gate
+
+Antes de abrir documentacao profunda de qualquer projeto, escolha o projeto alvo usando o pedido do usuario, `Projetos/README.md` e `08_Coordenacao_Agentes/Estado_Atual.md`.
+
+- Se o usuario citar `draxos-roguelike-cardgame`, `Draxos roguelike`, `roguelike cardgame`, `ship hub`, `run map`, `mapa de run`, `10 mapas`, `almas`, `classe no hub`, ou `rota completa`, use `Projetos/draxos-roguelike-cardgame/`.
+- Se o usuario citar `rpg-turnos`, `RPG Turnos`, `exploracao 2D`, `NPC`, `mundo`, `class_select`, `Track 02 - Draxos Lore And Progression Alignment`, ou `P10 - Necromante`, use `Projetos/rpg-turnos/`.
+- Se o usuario citar `rpg-isometrico`, campanha isometrica, Arena, Survival, Boss, loadout de acao ou gates Fxx, use `Projetos/rpg-isometrico/`.
+- `Draxos` sozinho e contexto de lore compartilhada nao bastam para escolher `rpg-turnos`; confirme pelo projeto citado, pela track ativa ou pelos termos operacionais acima.
+- Depois de escolher o projeto alvo, leia apenas o `AGENTS.md`, `implementation/current-status.md` e track local desse projeto, salvo tarefa transversal.
 
 ## Read Order — Fast Lane (trabalho delimitado)
 
@@ -48,6 +59,8 @@ Se o canon compartilhado conflitar com qualquer nota historica de implementacao,
 
 Nao aplique silenciosamente a mecanica de um projeto em outro. `rpg-turnos` pode compartilhar lore com `rpg-isometrico`, mas os contratos de modo e loadout do RPG Isometrico nao sao canon do RPG Turnos a menos que um documento local do RPG Turnos os adote explicitamente.
 
+Nao trate `draxos-roguelike-cardgame` como variante de `rpg-turnos`. O projeto foi bootstrapped com reuso estreito, mas possui contratos locais proprios. Qualquer regra de combate, deck, mana, compra, recompensa, hub, mapa ou pacing de `rpg-turnos` so vale em Draxos se um documento local de `draxos-roguelike-cardgame` adotar explicitamente.
+
 ## Godot Rule
 
 Implementacoes Godot vivem sob `Projetos/`.
@@ -55,6 +68,7 @@ Implementacoes Godot vivem sob `Projetos/`.
 Projetos Godot ativos:
 - `Projetos/rpg-isometrico/`
 - `Projetos/rpg-turnos/`
+- `Projetos/draxos-roguelike-cardgame/`
 
 Ao entrar num projeto Godot:
 1. Consulte o canon compartilhado primeiro

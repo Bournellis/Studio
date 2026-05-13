@@ -19,8 +19,13 @@ Use Fast Lane por padrao. Escale para a leitura completa somente quando a tarefa
 - `canon/` e a fonte compartilhada de produto, arquitetura, plataforma, progressao e lore.
 - `Projetos/rpg-isometrico/` e o RPG de acao isometrico campaign-first.
 - `Projetos/rpg-turnos/` e o RPG-cardgame por turnos; ele pode compartilhar lore, mas possui mecanicas independentes.
+- `Projetos/draxos-roguelike-cardgame/` e o roguelike cardgame Draxos menu-first; use para ship hub, run map, rota de 10 mapas, almas/cura, batalhas por lanes e Track 01.
 - Nao importe mecanicas entre projetos sem documento local adotando a regra.
 - Nao use historico como canon atual.
+
+## Desambiguacao Rapida
+
+`Draxos` e `cardgame` aparecem em mais de um projeto. Se o pedido citar `draxos-roguelike-cardgame`, `Draxos roguelike`, `ship hub`, `run map`, `10 mapas`, `almas`, ou `rota completa`, escolha `Projetos/draxos-roguelike-cardgame/` antes de ler qualquer guia local de `rpg-turnos`.
 
 ## Estado Operacional
 

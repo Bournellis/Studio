@@ -20,6 +20,14 @@ This directory contains active and emerging Godot projects for the studio.
   - Studio snapshot: `../08_Coordenacao_Agentes/Estado_Atual.md`
   - Validation command: `draxos-roguelike-cardgame/tools/validate.gd`
 
+## Project Disambiguation
+
+- Use `rpg-isometrico/` for the campaign-first isometric action RPG, action loadouts, Arena, Survival, Boss, campaign gates, and real-time combat work.
+- Use `rpg-turnos/` for the provisional 2D RPG-cardgame with exploration/world flow, NPCs, class select, Track 02 lore/progression work, and the current `P10 - Necromante` path.
+- Use `draxos-roguelike-cardgame/` for the menu-first roguelike cardgame, Draxos ship hub, run map, 10-map route, souls/cure loop, lane battles, card/enemy redesign, and Track 01 playable run loop.
+
+`Draxos` and `cardgame` are shared vocabulary, not enough to pick a project by themselves. Prefer the explicitly named project or the operational surface above before reading a local project guide.
+
 ## Agent Rule
 
 Before working in a project, read the workspace `AGENTS.md`, this registry, the relevant section of `../08_Coordenacao_Agentes/Estado_Atual.md`, then that project's `AGENTS.md` and `implementation/current-status.md`.
