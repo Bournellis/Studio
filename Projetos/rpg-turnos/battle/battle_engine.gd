@@ -1627,6 +1627,53 @@ func _record_creature_death(occupant: Dictionary) -> void:
 		"max_health": int(occupant.get("max_health", int(occupant.get("health", 0)))),
 		"keywords": occupant.get("keywords", []).duplicate()
 	})
+	_trigger_on_death(occupant)
+
+func _trigger_on_death(occupant: Dictionary) -> void:
+	var on_death: Dictionary = Dictionary(occupant.get("on_death", {}))
+	if on_death.is_empty():
+		return
+	var action: String = str(on_death.get("action", ""))
+	match action:
+		"extra_cinza":
+			cinzas += 1
+			_log("Ao morrer: %s gera 1 Cinza extra (total agora: %d)." % [str(occupant.get("name", "Criatura")), cinzas])
+		"damage":
+			var amount: int = int(on_death.get("amount", 0))
+			var target_rule: String = str(on_death.get("target", ""))
+			var dmg_type: String = str(on_death.get("damage_type", DAMAGE_MAGICO))
+			var owner_id: String = str(occupant.get("owner", PLAYER_ID))
+			var enemy_of_owner: String = _opponent_id(owner_id)
+			var target_slot: int = _find_first_occupied_slot(enemy_of_owner)
+			if target_slot >= 0:
+				_apply_unit_damage(enemy_of_owner, target_slot, amount, dmg_type)
+				_log("Ao morrer: %s causa %d dano magico em %s." % [str(occupant.get("name", "Criatura")), amount, _slot_label(enemy_of_owner, target_slot)])
+		"apply_status":
+			var status: String = str(on_death.get("status", ""))
+			var owner_id: String = str(occupant.get("owner", PLAYER_ID))
+			var enemy_of_owner: String = _opponent_id(owner_id)
+			var target_slot: int = _find_first_ready_creature_slot(enemy_of_owner)
+			if target_slot >= 0 and not status.is_empty():
+				var slots: Array = _slots_for_owner(enemy_of_owner)
+				var target_occ: Dictionary = Dictionary(slots[target_slot])
+				target_occ["status"] = _append_status(Array(target_occ.get("status", [])), status)
+				slots[target_slot] = target_occ
+				_set_slots_for_owner(enemy_of_owner, slots)
+				_log("Ao morrer: %s aplica %s em %s." % [str(occupant.get("name", "Criatura")), status, _slot_label(enemy_of_owner, target_slot)])
+
+func _find_first_occupied_slot(owner_id: String) -> int:
+	var slots: Array = _slots_for_owner(owner_id)
+	for i: int in range(slots.size()):
+		if slots[i] != null:
+			return i
+	return -1
+
+func _find_first_ready_creature_slot(owner_id: String) -> int:
+	var slots: Array = _slots_for_owner(owner_id)
+	for i: int in range(slots.size()):
+		if slots[i] != null and not bool(slots[i].get("summoning_sick", false)) and not bool(slots[i].get("exhausted", false)):
+			return i
+	return -1
 
 func _remove_destroyed() -> void:
 	for lane: int in range(player_slots.size()):
@@ -1751,7 +1798,8 @@ func _build_occupant(card, owner_id: String, summoning_sick: bool) -> Dictionary
 		"keywords": keywords,
 		"status": [],
 		"command_cost": int(card.command_cost),
-		"ranged": bool(card.effect.get("ranged", false)) or _has_card_keyword(card, "alcance")
+		"ranged": bool(card.effect.get("ranged", false)) or _has_card_keyword(card, "alcance"),
+		"on_death": Dictionary(card.effect.get("on_death", {}))
 	}
 
 func _can_attack_from_slot(owner_id: String, slot_index: int) -> bool:
@@ -1799,66 +1847,4 @@ func _register_routes(owner_id: String, configured_routes: Dictionary, source_co
 		var route_targets: Array = []
 		var fallback_slots: Array = []
 		var ranged_targets: Array = []
-		var fallback: String = "hero" if modo_batalha == MODE_DUEL or owner_id == ENEMY_ID else "none"
-		var raw: Variant = configured_routes.get(str(index), configured_routes.get(_slot_label(owner_id, index), null))
-		if typeof(raw) == TYPE_DICTIONARY:
-			var raw_dict: Dictionary = Dictionary(raw)
-			route_targets = Array(raw_dict.get("targets", []))
-			fallback_slots = Array(raw_dict.get("fallback_slots", []))
-			ranged_targets = Array(raw_dict.get("ranged_targets", []))
-			fallback = str(raw_dict.get("fallback", fallback))
-		elif typeof(raw) == TYPE_ARRAY:
-			route_targets = Array(raw)
-		if route_targets.is_empty():
-			route_targets.append({"owner": target_owner_id, "slot": index})
-		_attack_routes[_route_key(owner_id, index)] = {
-			"targets": route_targets,
-			"fallback_slots": fallback_slots,
-			"ranged_targets": ranged_targets,
-			"fallback": fallback
-		}
-
-func _default_slot_definitions(owner_id: String, count: int) -> Array:
-	var result: Array = []
-	var prefix: String = "P" if owner_id == PLAYER_ID else "E"
-	for index: int in range(count):
-		result.append({
-			"id": "%s%d" % [prefix, index + 1],
-			"terrain": "normal",
-			"elevation": "chao",
-			"accepts": ["criatura", "estrutura", "permanente"]
-		})
-	return result
-
-func _labels_from_slot_definitions(definitions: Array, prefix: String) -> Array[String]:
-	var labels: Array[String] = []
-	for index: int in range(definitions.size()):
-		var definition: Dictionary = Dictionary(definitions[index])
-		labels.append(str(definition.get("label", definition.get("id", "%s%d" % [prefix, index + 1]))))
-	return labels
-
-func _empty_slots(count: int) -> Array:
-	var result: Array = []
-	for _index: int in range(count):
-		result.append(null)
-	return result
-
-func _slot_definition(owner_id: String, slot_index: int) -> Dictionary:
-	owner_id = _normalize_owner_id(owner_id)
-	var definitions: Array = _player_slot_definitions
-	if owner_id == ENEMY_ID:
-		definitions = _enemy_slot_definitions
-	elif owner_id == NEUTRAL_ID:
-		definitions = _neutral_slot_definitions
-	if slot_index < 0 or slot_index >= definitions.size():
-		return {}
-	return Dictionary(definitions[slot_index])
-
-func _first_open_slot(owner_id: String) -> int:
-	var slots: Array = _slots_for_owner(owner_id)
-	for index: int in range(slots.size()):
-		if slots[index] == null:
-			return index
-	return -1
-
-fun
+		var fallback: St

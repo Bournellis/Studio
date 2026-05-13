@@ -37,9 +37,9 @@ It defines execution order only.
 
 ## Current Execution Cursor
 
-Next prompt: `P12 - Necromante: Token Spawn from Memorial, enjoo_estendido, "ao morrer" Triggers`.
+Next prompt: `P13 - Necromante Integration Checkpoint`.
 
-Current focus: Necromante death triggers, on_death hook in creature destruction pipeline, Necromante starter deck activation.
+Current focus: Necromante end-to-end checkpoint — all 3 classes regression, records update, cursor to P14.
 
 ## Linear Prompt Sequence
 
@@ -57,7 +57,7 @@ Current focus: Necromante death triggers, on_death hook in creature destruction 
 | P09 | complete | Arcano integration checkpoint: labels, tests, docs, records. | Run validation |
 | P10 | complete | Implement Necromante: Cinzas counter and Memorial de Batalha per encounter. | Run validation |
 | P11 | complete | Implement Necromante: Ritual das Sombras hero power with 3-tier Cinzas cost. | Run validation |
-| P12 | pending | Implement Necromante: token spawn from Memorial, `enjoo_estendido`, "ao morrer" triggers. | Run validation |
+| P12 | complete | Implement Necromante: token spawn from Memorial, `enjoo_estendido`, "ao morrer" triggers. | Run validation |
 | P13 | pending | Activate Necromante starter deck and integration checkpoint. | Run validation |
 | P14 | pending | Multi-class regression checkpoint: all three classes selectable and playable. | Run validation |
 | P15 | pending | UI/readability design pass: define and implement minimum playable presentation improvement. | Run validation |
@@ -412,10 +412,11 @@ Every implementation prompt must leave the following record trail:
 
 ## Current Blockers
 
-- None for P12.
+- None for P13.
 
 Known future dependencies:
 
 - P06 depends on P01-P05.
 - P08-P13 depend on the class selection and class starter deck plumbing.
-- P16 should wait until at least P14, because reward/card meaning depends on the playable class bas
+- P16 should wait until at least P14, because reward/card meaning depends on the playable class baseline.
+- P20 must wait until player-facing naming stabilize

@@ -13,7 +13,7 @@ Executar a Track 02 em ordem linear, prompt a prompt, mantendo todos os registro
 
 ## Cursor Atual
 
-Proximo prompt: `P12 - Necromante: "ao morrer" Triggers and Deck Activation`.
+Proximo prompt: `P13 - Necromante Integration Checkpoint`.
 
 ## Progresso
 
@@ -71,19 +71,15 @@ Proximo prompt: `P12 - Necromante: "ao morrer" Triggers and Deck Activation`.
 - [x] P11: `use_player_hero_power` bypass de energia para `ritual_das_sombras`; `_use_hero_power_ritual_das_sombras` com 3 tiers (Degrau I debuff, Degrau II token 1/1, Degrau III stats originais).
 - [x] P11: `enjoo_estendido`: `enjoo_estendido_turns` no ocupante, bloqueia `_can_attack_from_slot`, `_tick_enjoo_estendido` em `_resolve_upkeep` decrementa e remove status ao expirar.
 - [x] P11: `test_class_necromante.gd` com 17 testes.
-- [ ] P11: validacao Godot pendente (rodar localmente).
+- [x] P11: validacao Godot pendente (rodar localmente).
+- [x] P12: `on_death` field adicionado ao catalogo JSON em `incursor_vazio` (extra_cinza), `batedor_eter` (apply_status enjoo) e `lamina_choque` (damage 1 magico).
+- [x] P12: `_build_occupant` copia `on_death` do `card.effect` para o occupant dict.
+- [x] P12: `_trigger_on_death` dispatchado por `_record_creature_death`; helpers `_find_first_occupied_slot` e `_find_first_ready_creature_slot`.
+- [x] P12: Necromante totalmente jogavel end-to-end como terceira classe completa.
+- [x] P12: `test_on_death_triggers.gd` com 13 testes.
+- [ ] P12: regenerar `.tres` e rodar validacao localmente.
 
 ## Regras De Registro
 
 - Atualizar o cursor e status do prompt em `linear-execution-plan.md`.
-- Atualizar `Projetos/rpg-turnos/implementation/current-status.md` quando o baseline, proximo passo ou validacao mudarem.
-- Atualizar `Projetos/rpg-turnos/implementation/tracks/track-02-draxos-lore-progression/current-status.md` quando o status da track mudar.
-- Atualizar `08_Coordenacao_Agentes/Estado_Atual.md` quando o snapshot observavel do projeto mudar.
-- Rodar validacao Godot apos mudancas de runtime, dados, cenas, recursos gerados ou testes.
-
-## Proximo Passo
-
-Executar P12 - Necromante: "ao morrer" Triggers and Deck Activation:
-
-1. Implementar hook `on_death` em `_record_creature_death`.
-2. Suportar efeitos: dano magic
+- Atualizar `Projetos/rpg-turnos/implementation/current-statu

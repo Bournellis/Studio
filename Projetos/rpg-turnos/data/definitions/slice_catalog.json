@@ -495,8 +495,10 @@
       "keywords": [
         "rapido"
       ],
-      "text": "Rapido.",
-      "effect": {}
+      "text": "Rapido. Ao morrer: gera 1 Cinza extra.",
+      "effect": {
+        "on_death": { "action": "extra_cinza" }
+      }
     },
     {
       "id": "lamina_choque",
@@ -510,8 +512,10 @@
       "keywords": [
         "rapido"
       ],
-      "text": "Rapido.",
-      "effect": {}
+      "text": "Rapido. Ao morrer: 1 dano magico a qualquer permanente inimigo.",
+      "effect": {
+        "on_death": { "action": "damage", "amount": 1, "damage_type": "magico", "target": "first_enemy_permanent" }
+      }
     },
     {
       "id": "fenda_astral",
@@ -1230,8 +1234,10 @@
       "attack": 1,
       "health": 2,
       "keywords": [],
-      "text": "",
-      "effect": {}
+      "text": "Ao morrer: aplica enjoo em criatura inimiga pronta.",
+      "effect": {
+        "on_death": { "action": "apply_status", "status": "enjoo", "target": "first_ready_enemy_creature" }
+      }
     },
     {
       "id": "ferida_astral",
@@ -2685,23 +2691,4 @@
         "incursor_vazio",
         "incursor_vazio",
         "batedor_eter",
-        "batedor_eter",
-        "batedor_eter",
-        "lamina_choque",
-        "lamina_choque",
-        "bruto_mercenario",
-        "bruto_mercenario",
-        "pulso_disruptivo",
-        "pulso_disruptivo",
-        "pulso_disruptivo",
-        "correntes_eter",
-        "correntes_eter",
-        "correntes_eter",
-        "drenagem_forca",
-        "drenagem_forca",
-        "nevoa_astral",
-        "nevoa_astral"
-      ]
-    }
-  ]
-}
+   
