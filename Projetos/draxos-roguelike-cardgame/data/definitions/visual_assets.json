@@ -1,6 +1,17 @@
 {
   "version": 1,
   "surfaces": {
+    "main_menu_background": {
+      "path": "res://assets/ui/backgrounds/main_menu_background.png",
+      "resolution": "1920x1080",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Add final 16:9 menu background art. Until then the runtime falls back to ship_hub_background.",
+      "fallback_surface": "ship_hub_background",
+      "scale_mode": "cover_crop",
+      "fallback_label": "Menu Principal",
+      "fallback_color": "#0B0D0F",
+      "accent_color": "#68459A"
+    },
     "ship_hub_background": {
       "path": "res://assets/ui/backgrounds/ship_hub_background.png",
       "resolution": "1920x1080",
@@ -33,6 +44,97 @@
       "fallback_label": "Mesa de Batalha",
       "fallback_color": "#0D1012",
       "accent_color": "#8A5B3A"
+    }
+  },
+  "class_portraits": {
+    "arcano": {
+      "path": "res://assets/ui/characters/Arcano.png",
+      "resolution": "768x1344",
+      "asset_status": "available_provisional",
+      "fallback_label": "Arcano",
+      "fallback_color": "#5D4FA3"
+    },
+    "invocador": {
+      "path": "res://assets/ui/characters/Invocador.png",
+      "resolution": "768x1344",
+      "asset_status": "available_provisional",
+      "fallback_label": "Invocador",
+      "fallback_color": "#4E7A58"
+    },
+    "necromante": {
+      "path": "res://assets/ui/characters/Necromante.png",
+      "resolution": "768x1344",
+      "asset_status": "available_provisional",
+      "fallback_label": "Necromante",
+      "fallback_color": "#6A3E71"
+    }
+  },
+  "ship_buttons": {
+    "deck": {
+      "path": "",
+      "asset_status": "mockup_until_character_transparent_art_arrives",
+      "fallback_label": "Deck",
+      "fallback_color": "#375C7A"
+    },
+    "map": {
+      "path": "res://assets/ui/battleship/Mapa.png",
+      "resolution": "1024x1024",
+      "asset_status": "available_provisional",
+      "fallback_label": "Mapa",
+      "fallback_color": "#4C7A86"
+    },
+    "souls": {
+      "path": "",
+      "asset_status": "mockup_until_souls_menu_art_arrives",
+      "fallback_label": "Almas",
+      "fallback_color": "#7A4A6A"
+    }
+  },
+  "ship_overlays": {
+    "deck": {
+      "path_by_class": {
+        "arcano": "res://assets/ui/characters/ship/Arcano_ship.png",
+        "invocador": "res://assets/ui/characters/ship/Invocador_ship.png",
+        "necromante": "res://assets/ui/characters/ship/Necromante_ship.png"
+      },
+      "fallback_path_by_class": {
+        "arcano": "res://assets/ui/characters/Arcano.png",
+        "invocador": "res://assets/ui/characters/Invocador.png",
+        "necromante": "res://assets/ui/characters/Necromante.png"
+      },
+      "position": { "x": 0.73, "y": 0.59 },
+      "size": { "x": 0.16, "y": 0.44 },
+      "requires_alpha": true,
+      "show_without_alpha": true,
+      "hover_label": "Deck",
+      "fallback_label": "Deck",
+      "fallback_color": "#375C7A",
+      "asset_status": "awaiting_ship_transparent_class_art",
+      "asset_debt": "Replace fallback portraits with transparent in-scene class PNGs for the ship overlay button."
+    },
+    "map": {
+      "path": "res://assets/ui/battleship/Mapa.png",
+      "position": { "x": 0.45, "y": 0.74 },
+      "size": { "x": 0.22, "y": 0.32 },
+      "requires_alpha": true,
+      "show_without_alpha": true,
+      "hover_label": "Mapa",
+      "fallback_label": "Mapa",
+      "fallback_color": "#4C7A86",
+      "asset_status": "available_provisional_no_real_alpha",
+      "asset_debt": "Current file contains a drawn checkerboard background and no transparent pixels; replace with real RGBA PNG."
+    },
+    "souls": {
+      "path": "res://assets/ui/battleship/NpcAlmas.png",
+      "position": { "x": 0.22, "y": 0.60 },
+      "size": { "x": 0.14, "y": 0.34 },
+      "requires_alpha": true,
+      "show_without_alpha": false,
+      "hover_label": "Almas",
+      "fallback_label": "Almas",
+      "fallback_color": "#7A4A6A",
+      "asset_status": "awaiting_souls_npc_transparent_art",
+      "asset_debt": "Add transparent NPC art for the souls shop overlay."
     }
   },
   "frames": {

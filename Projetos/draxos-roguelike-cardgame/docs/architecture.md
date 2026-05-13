@@ -15,10 +15,21 @@ Main Draxos ship surface.
 
 Responsibilities:
 
-- class/run start choices;
-- mission map access;
-- souls and paid healing;
-- visible current run state, including passive/active unlock status.
+- visual access to Deck, RunMap, and Souls screens;
+- forced class choice modal only when a new save starts;
+- visible floating run state, including class, next map, HP, mana, hand limit, and souls;
+- ESC menu for main menu, quit, or cancel.
+
+### `SaveManager`
+
+Local 3-slot persistence layer.
+
+Responsibilities:
+
+- slot selection and summaries for the main menu;
+- save/load/delete JSON files under `user://`;
+- autosave current `RunSession` outside battle;
+- pending new-game handoff into the ShipHub class modal.
 
 ### `RunMap`
 
@@ -30,6 +41,26 @@ Responsibilities:
 - current selected node;
 - route rendering from visual manifest;
 - automatic reward status presentation.
+
+### `Deck`
+
+Run deck inspection surface.
+
+Responsibilities:
+
+- grouped card list for the current run deck;
+- visible run state and unlocked upgrades;
+- ESC return to ShipHub.
+
+### `Souls`
+
+Run soul shop surface.
+
+Responsibilities:
+
+- paid healing action;
+- visible run state;
+- ESC return to ShipHub.
 
 ### `RunSession`
 

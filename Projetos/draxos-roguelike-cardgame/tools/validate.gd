@@ -38,6 +38,11 @@ func _run_validation() -> int:
 	var missing_assets: Array = Array(visual_result.get("missing_assets", []))
 	if not missing_assets.is_empty():
 		print("[validate] visual assets missing but optional in V1: %d" % missing_assets.size())
+	var alpha_warnings: Array = Array(visual_result.get("alpha_warnings", []))
+	if not alpha_warnings.is_empty():
+		print("[validate] ship overlay alpha debts, non-fatal: %d" % alpha_warnings.size())
+		for warning: String in alpha_warnings:
+			print("[validate] %s" % warning)
 
 	print("[validate] running GUT")
 	var gut_exit_code: int = await _run_gut()
@@ -128,6 +133,8 @@ func _validate_contract() -> Dictionary:
 	for path: String in [
 		"res://modes/boot/boot.tscn",
 		"res://modes/ship_hub/ship_hub.tscn",
+		"res://modes/deck/deck.tscn",
+		"res://modes/souls/souls.tscn",
 		"res://modes/run_map/run_map.tscn",
 		"res://modes/battle/battle.tscn"
 	]:

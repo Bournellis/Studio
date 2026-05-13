@@ -4,10 +4,10 @@
 - Active Project Name: `draxos-roguelike-cardgame`
 - Active Surface: `linear 10-encounter roguelike cardgame slice`
 - Active Track: `Track 01 - Playable Run Loop`
-- Active Track Status: `P05_REDRAWN_CARD_BATTLE_BASELINE_VALIDATED`
-- Current Operational Baseline: `Godot 4.6.2 Track 01 slice with Arcano, Invocador, and Necromante; mana inicial 2; redesigned 12-card starter decks with 4 card types x 3 copies and base hand limit 3; RunSession health, max mana, max hand size, souls, completed nodes, automatic rewards, passive unlock and active unlock state; 10 linear RunMap nodes covering limpar_mesa, ondas, duelo, defesa_posicao, sobreviver_turnos, and chefe_summoner; automatic rewards on maps 2/3/5/7 with map 3 granting +1 hand limit; combat cycle using Resolver Combate then maintenance/script, no summoning sickness and no separate enemy combat turn; front-lane combat with simultaneous damage, direct lane damage, iniciativa, defensor, reviver, enfraquecer, prender, promover, dynamic poder de habilidade, regeneracao, waves, defense objective, survive turns, duel hero kill, boss health and scripted summons; explicit enemy commander encounter flag with HP/mana/cardback HUD prep for duel maps; class passives locked until map 5 and class actives hidden/locked until map 7; VisualAssets manifest/autoload, state-aware card text, provisional 16:9 backgrounds, ShipHub 4-hotspot visual menu, RunMap route lines over the planet, Battle objective HUD with player HP/mana/resource dock, right-side Resolver Combate button, ESC pause menu, log button only, portrait battle cards, hand cards with floating base mana/ATK/HP badges and spell-only mana badges, field card slots with floating current ATK/HP and base mana cost, screenshot capture tool, and validation green 12/12`
-- Active Goal: `playtest the redesigned 10-map route, tune enemy pressure against the new decks/mechanics, and distribute remaining rewards`
-- Validation: `2026-05-13 Track 01 redesigned battle/card validation green; 12/12 GUT tests passing; 114 asserts; 28 optional PNGs reported missing by design`
+- Active Track Status: `P09_BATTLE_HUD_LAYOUT_VALIDATED`
+- Current Operational Baseline: `Godot 4.6.2 Track 01 slice with Arcano/Invocador/Necromante, 3-slot local save menu, forced class-pick modal on new game, ShipHub Deck/Mapa/Almas navigation as positioned scene overlays without run-state panel, dedicated Deck and Almas screens, Deck starter fallback, RunMap next-node selection, ESC-safe secondary screens, centered/scrolling battle choice modals, compact battle HUD composition for dense encounters, area spell targeting for Tempestade Arcana, drag movement for allied creatures, enemy commander hand/deck/mana AI for duels, stronger survive/boss openings, autosave outside battle, victory reward modal, paid healing at +5 HP for 10 souls, expanded VisualAssets for main menu/class portraits/ship overlays, and the validated 10-node card battle loop`
+- Active Goal: `playtest the reformed route and battle pressure, replace alpha-debt ship overlay art, then distribute remaining rewards`
+- Validation: `2026-05-13 battle HUD layout validation green; 35/35 GUT tests passing; 276 asserts; 33 optional PNGs reported missing by design; 4 non-fatal ship overlay alpha debts reported`
 
 ## Read Next
 
@@ -30,4 +30,4 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 
 ## Next
 
-Playtest the redesigned 10-map route, tune enemy pressure against the new decks/mechanics, and define the remaining non-soul rewards.
+Playtest the reformed route and battle pressure, replace transparent ship overlay art for Mapa/Deck/Almas, then define the remaining non-soul rewards.

@@ -398,6 +398,20 @@
       "enemy_commander_enabled": true,
       "enemy_mana_per_turn": 2,
       "enemy_hand_count": 5,
+      "enemy_deck": [
+        "elemental_menor",
+        "elemental_menor",
+        "elemental_menor",
+        "elemental_duelista",
+        "elemental_duelista",
+        "elemental_duelista",
+        "elemental_assaltante",
+        "elemental_assaltante",
+        "elemental_assaltante",
+        "elemental_medio",
+        "elemental_medio",
+        "elemental_medio"
+      ],
       "player_slots_count": 3,
       "enemy_slots_count": 3,
       "enemy_health": 16,
@@ -433,7 +447,12 @@
       "player_slots_count": 5,
       "enemy_slots_count": 5,
       "duration_target": "boss",
-      "boss_health": 14,
+      "boss_health": 20,
+      "starting_enemy_slots": [
+        {"slot": 1, "card_id": "elemental_menor"},
+        {"slot": 2, "card_id": "elemental_medio"},
+        {"slot": 3, "card_id": "elemental_bruto"}
+      ],
       "boss_summons": [
         {"card_id": "elemental_menor"},
         {"card_id": "elemental_medio"},
@@ -447,13 +466,14 @@
       "mode": "sobreviver_turnos",
       "tier": "medium",
       "enemy_director": "prefilled_board",
-      "player_slots_count": 3,
-      "enemy_slots_count": 3,
-      "survive_turns": 3,
+      "player_slots_count": 4,
+      "enemy_slots_count": 4,
+      "survive_turns": 4,
       "starting_enemy_slots": [
         {"slot": 0, "card_id": "elemental_assaltante"},
         {"slot": 1, "card_id": "elemental_medio"},
-        {"slot": 2, "card_id": "elemental_assaltante"}
+        {"slot": 2, "card_id": "elemental_guardiao"},
+        {"slot": 3, "card_id": "elemental_assaltante"}
       ],
       "soul_reward": {"min": 7, "max": 10}
     },
@@ -509,6 +529,20 @@
       "enemy_commander_enabled": true,
       "enemy_mana_per_turn": 3,
       "enemy_hand_count": 5,
+      "enemy_deck": [
+        "elemental_duelista",
+        "elemental_duelista",
+        "elemental_assaltante",
+        "elemental_assaltante",
+        "elemental_medio",
+        "elemental_medio",
+        "elemental_guardiao",
+        "elemental_guardiao",
+        "elemental_elite_agil",
+        "elemental_elite_agil",
+        "elemental_elite_bruto",
+        "elemental_elite_bruto"
+      ],
       "player_slots_count": 4,
       "enemy_slots_count": 4,
       "enemy_health": 24,
@@ -527,7 +561,13 @@
       "player_slots_count": 5,
       "enemy_slots_count": 5,
       "duration_target": "final_boss",
-      "boss_health": 28,
+      "boss_health": 34,
+      "starting_enemy_slots": [
+        {"slot": 0, "card_id": "elemental_medio"},
+        {"slot": 1, "card_id": "elemental_elite_agil"},
+        {"slot": 2, "card_id": "elemental_guardiao"},
+        {"slot": 3, "card_id": "elemental_elite_bruto"}
+      ],
       "boss_summons": [
         {"card_id": "elemental_medio"},
         {"card_id": "elemental_elite_agil"},

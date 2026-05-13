@@ -193,13 +193,32 @@ func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 	var payload: Dictionary = Dictionary(data)
 	match str(payload.get("kind", "")):
 		"battle_card":
-			return Array(visual_state.get("accepted_card_indices", [])).has(int(payload.get("hand_index", -1)))
+			var hand_index: int = int(payload.get("hand_index", -1))
+			return Array(visual_state.get("accepted_card_indices", [])).has(hand_index) or Array(visual_state.get("accepted_area_card_indices", [])).has(hand_index)
 		"class_active":
 			return Array(visual_state.get("accepted_class_choices", [])).has(str(payload.get("choice_id", "")))
+		"field_unit":
+			return str(payload.get("owner", "")) == slot_owner and Array(visual_state.get("accepted_move_sources", [])).has(int(payload.get("slot", -1)))
 	return false
 
 func _drop_data(_at_position: Vector2, data: Variant) -> void:
 	card_dropped.emit(Dictionary(data), slot_owner, slot_index)
+
+func _get_drag_data(_at_position: Vector2) -> Variant:
+	if occupant == null or not bool(visual_state.get("can_drag_unit", false)):
+		return null
+	var data: Dictionary = Dictionary(occupant)
+	if bool(data.get("objective", false)):
+		return null
+	var preview: Label = Label.new()
+	preview.text = str(data.get("name", "Criatura"))
+	set_drag_preview(preview)
+	return {
+		"kind": "field_unit",
+		"owner": slot_owner,
+		"slot": slot_index,
+		"card_id": str(data.get("card_id", ""))
+	}
 
 func _panel_style() -> StyleBoxFlat:
 	var style: StyleBoxFlat = StyleBoxFlat.new()

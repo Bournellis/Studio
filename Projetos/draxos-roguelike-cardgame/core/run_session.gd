@@ -8,7 +8,7 @@ const REWARD_MAX_HAND_SIZE_1: String = "max_hand_size_1"
 const REWARD_UNLOCK_CLASS_PASSIVE: String = "unlock_class_passive"
 const REWARD_UNLOCK_CLASS_ACTIVE: String = "unlock_class_active"
 const DEFAULT_MAX_HAND_SIZE: int = 3
-const PAID_HEAL_COST: int = 5
+const PAID_HEAL_COST: int = 10
 const PAID_HEAL_AMOUNT: int = 5
 
 var active: bool = false
@@ -63,7 +63,6 @@ func start_class_run(class_id: String, seed: int = DEFAULT_RUN_SEED) -> Dictiona
 	selected_class_id = class_id
 	selected_class_display_name = str(class_option.get("display_name", class_id))
 	selected_class_active_text = str(class_option.get("active_text", ""))
-	current_node_id = ""
 	completed_node_ids = []
 	current_deck_ids = _string_array(class_option.get("starter_deck", ContentLibrary.get_starter_deck_ids()))
 	var catalog = ContentLibrary.get_catalog()
@@ -82,6 +81,7 @@ func start_class_run(class_id: String, seed: int = DEFAULT_RUN_SEED) -> Dictiona
 	automatic_reward_ids = []
 	last_completed_node_id = ""
 	last_battle_outcome = ""
+	select_next_available_node()
 	return {"ok": true, "message": "Run iniciada com %s." % selected_class_display_name}
 
 func reset() -> void:
@@ -111,25 +111,56 @@ func select_node(node_id: String) -> void:
 		return
 	current_node_id = node_id
 
+func select_next_available_node() -> String:
+	if not active:
+		current_node_id = ""
+		return ""
+	for node: Dictionary in Array(ContentLibrary.get_run_map().get("nodes", [])):
+		var node_id: String = str(node.get("id", ""))
+		if completed_node_ids.has(node_id):
+			continue
+		if is_node_available(node):
+			current_node_id = node_id
+			return current_node_id
+	current_node_id = ""
+	return ""
+
 func mark_node_completed(node_id: String) -> void:
 	if node_id == "":
 		return
 	if not completed_node_ids.has(node_id):
 		completed_node_ids.append(node_id)
 
-func record_battle_result(node_id: String, outcome: String, remaining_health: int) -> void:
+func record_battle_result(node_id: String, outcome: String, remaining_health: int) -> Dictionary:
 	last_battle_outcome = outcome
 	current_health = clampi(remaining_health, 0, max_health)
 	if outcome != "vitoria":
-		return
+		return {
+			"ok": false,
+			"outcome": outcome,
+			"node_id": node_id,
+			"souls_gained": 0,
+			"automatic_rewards": [],
+			"next_node_id": current_node_id
+		}
 	var already_completed: bool = completed_node_ids.has(node_id)
+	var souls_gained: int = 0
+	var applied_rewards: Array[String] = []
 	mark_node_completed(node_id)
 	last_completed_node_id = node_id
 	if not already_completed:
-		soul_total += _soul_reward_for_node(node_id)
-		_apply_automatic_rewards_for_node(node_id)
-	if current_node_id == node_id:
-		current_node_id = ""
+		souls_gained = _soul_reward_for_node(node_id)
+		soul_total += souls_gained
+		applied_rewards = _apply_automatic_rewards_for_node(node_id)
+	select_next_available_node()
+	return {
+		"ok": true,
+		"outcome": outcome,
+		"node_id": node_id,
+		"souls_gained": souls_gained,
+		"automatic_rewards": applied_rewards,
+		"next_node_id": current_node_id
+	}
 
 func apply_placeholder_reward(reward_id: String) -> Dictionary:
 	if rewards_pending.is_empty():
@@ -177,6 +208,7 @@ func has_selected_class() -> bool:
 
 func snapshot() -> Dictionary:
 	return {
+		"version": 1,
 		"active": active,
 		"run_seed": run_seed,
 		"selected_class_id": selected_class_id,
@@ -198,6 +230,62 @@ func snapshot() -> Dictionary:
 		"last_completed_node_id": last_completed_node_id,
 		"last_battle_outcome": last_battle_outcome
 	}
+
+func load_snapshot(data: Dictionary) -> Dictionary:
+	active = bool(data.get("active", false))
+	run_seed = int(data.get("run_seed", DEFAULT_RUN_SEED))
+	selected_class_id = str(data.get("selected_class_id", ""))
+	selected_class_display_name = str(data.get("selected_class_display_name", ""))
+	selected_class_active_text = str(data.get("selected_class_active_text", ""))
+	current_node_id = str(data.get("current_node_id", ""))
+	completed_node_ids = _string_array(data.get("completed_node_ids", []))
+	current_deck_ids = _string_array(data.get("current_deck_ids", []))
+	current_health = int(data.get("current_health", 0))
+	max_health = int(data.get("max_health", 0))
+	max_mana = int(data.get("max_mana", 0))
+	max_hand_size = int(data.get("max_hand_size", DEFAULT_MAX_HAND_SIZE))
+	soul_total = int(data.get("soul_total", 0))
+	class_passive_unlocked = bool(data.get("class_passive_unlocked", false))
+	class_active_unlocked = bool(data.get("class_active_unlocked", false))
+	rewards_pending = _string_array(data.get("rewards_pending", []))
+	applied_reward_ids = _string_array(data.get("applied_reward_ids", []))
+	automatic_reward_ids = _string_array(data.get("automatic_reward_ids", []))
+	last_completed_node_id = str(data.get("last_completed_node_id", ""))
+	last_battle_outcome = str(data.get("last_battle_outcome", ""))
+	if active and selected_class_display_name == "" and selected_class_id != "":
+		var class_option: Dictionary = ContentLibrary.find_class_option(selected_class_id)
+		selected_class_display_name = str(class_option.get("display_name", selected_class_id))
+		selected_class_active_text = str(class_option.get("active_text", selected_class_active_text))
+	if active and current_node_id == "":
+		select_next_available_node()
+	return {"ok": true, "message": "Run carregada."}
+
+func current_node_display_name() -> String:
+	if current_node_id == "":
+		return "Rota concluida"
+	var node: Dictionary = _run_node(current_node_id)
+	if node.is_empty():
+		return current_node_id
+	var encounter_id: String = str(node.get("encounter_id", ""))
+	var catalog = ContentLibrary.get_catalog()
+	if catalog == null:
+		return current_node_id
+	var encounter: Dictionary = catalog.find_encounter(encounter_id)
+	if encounter.is_empty():
+		return current_node_id
+	return str(encounter.get("display_name", current_node_id))
+
+func automatic_reward_display_name(reward_id: String) -> String:
+	match reward_id:
+		REWARD_MAX_MANA_1:
+			return "+1 Mana maxima"
+		REWARD_MAX_HAND_SIZE_1:
+			return "+1 Limite de mao"
+		REWARD_UNLOCK_CLASS_PASSIVE:
+			return "Passiva de classe desbloqueada"
+		REWARD_UNLOCK_CLASS_ACTIVE:
+			return "Spell de classe desbloqueada"
+	return reward_id
 
 func _soul_reward_for_node(node_id: String) -> int:
 	var encounter: Dictionary = _encounter_for_node(node_id)
@@ -225,7 +313,8 @@ func _run_node(node_id: String) -> Dictionary:
 		return node
 	return {}
 
-func _apply_automatic_rewards_for_node(node_id: String) -> void:
+func _apply_automatic_rewards_for_node(node_id: String) -> Array[String]:
+	var applied: Array[String] = []
 	var node: Dictionary = _run_node(node_id)
 	for reward_id: String in _string_array(node.get("rewards", [])):
 		var applied_id: String = "%s:%s" % [node_id, reward_id]
@@ -243,6 +332,8 @@ func _apply_automatic_rewards_for_node(node_id: String) -> void:
 			_:
 				continue
 		automatic_reward_ids.append(applied_id)
+		applied.append(reward_id)
+	return applied
 
 func _queue_placeholder_reward(node_id: String) -> void:
 	var pending_id: String = "placeholder_reward:%s" % node_id

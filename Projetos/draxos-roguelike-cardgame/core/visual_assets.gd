@@ -2,6 +2,7 @@ extends Node
 
 const MANIFEST_PATH: String = "res://data/definitions/visual_assets.json"
 const REQUIRED_SURFACES: Array[String] = [
+	"main_menu_background",
 	"ship_hub_background",
 	"mission_map_background",
 	"battle_board_background"
@@ -53,8 +54,28 @@ func card_entry(card_id: String) -> Dictionary:
 	var cards: Dictionary = Dictionary(ensure_loaded().get("cards", {}))
 	return Dictionary(cards.get(card_id, {}))
 
+func class_portrait_entry(class_id: String) -> Dictionary:
+	var portraits: Dictionary = Dictionary(ensure_loaded().get("class_portraits", {}))
+	return Dictionary(portraits.get(class_id, {}))
+
+func ship_button_entry(button_id: String) -> Dictionary:
+	var buttons: Dictionary = Dictionary(ensure_loaded().get("ship_buttons", {}))
+	return Dictionary(buttons.get(button_id, {}))
+
+func ship_overlay_entry(overlay_id: String) -> Dictionary:
+	var overlays: Dictionary = Dictionary(ensure_loaded().get("ship_overlays", {}))
+	return Dictionary(overlays.get(overlay_id, {}))
+
 func surface_texture(surface_id: String) -> Texture2D:
-	return _load_texture(str(surface_entry(surface_id).get("path", "")))
+	var entry: Dictionary = surface_entry(surface_id)
+	var texture: Texture2D = _load_texture(str(entry.get("path", "")), false)
+	if texture != null:
+		return texture
+	var fallback_surface: String = str(entry.get("fallback_surface", ""))
+	if fallback_surface != "":
+		return surface_texture(fallback_surface)
+	_warn_missing_path(str(entry.get("path", "")))
+	return null
 
 func card_art_texture(card_id: String) -> Texture2D:
 	return _load_texture(str(card_entry(card_id).get("art_path", "")))
@@ -71,6 +92,27 @@ func card_frame_overlay_texture(card_id: String) -> Texture2D:
 func card_frame_overlay_safe(card_id: String) -> bool:
 	return frame_overlay_safe(card_frame_id(card_id))
 
+func class_portrait_texture(class_id: String) -> Texture2D:
+	return _load_texture(str(class_portrait_entry(class_id).get("path", "")))
+
+func ship_button_texture(button_id: String) -> Texture2D:
+	return _load_texture(str(ship_button_entry(button_id).get("path", "")), false)
+
+func ship_overlay_texture(overlay_id: String, class_id: String = "") -> Texture2D:
+	var path: String = ship_overlay_texture_path(overlay_id, class_id)
+	if path == "":
+		return null
+	if ship_overlay_requires_alpha(overlay_id) and not ship_overlay_show_without_alpha(overlay_id) and not _path_has_alpha(path):
+		return null
+	return _load_texture(path, false)
+
+func ship_overlay_texture_path(overlay_id: String, class_id: String = "") -> String:
+	var candidates: Array[String] = _ship_overlay_candidate_paths(ship_overlay_entry(overlay_id), class_id)
+	for path: String in candidates:
+		if path != "" and FileAccess.file_exists(path):
+			return path
+	return candidates[0] if not candidates.is_empty() else ""
+
 func frame_overlay_safe(frame_id: String) -> bool:
 	var entry: Dictionary = frame_entry(frame_id)
 	return bool(entry.get("overlay_safe", false))
@@ -85,6 +127,41 @@ func card_frame_id(card_id: String) -> String:
 func card_frame_color(card_id: String) -> Color:
 	var entry: Dictionary = frame_entry(card_frame_id(card_id))
 	return _color_from_hex(str(entry.get("fallback_color", "#56616A")), Color(0.34, 0.38, 0.42))
+
+func class_portrait_color(class_id: String) -> Color:
+	var entry: Dictionary = class_portrait_entry(class_id)
+	return _color_from_hex(str(entry.get("fallback_color", "#56616A")), Color(0.34, 0.38, 0.42))
+
+func ship_button_color(button_id: String) -> Color:
+	var entry: Dictionary = ship_button_entry(button_id)
+	return _color_from_hex(str(entry.get("fallback_color", "#263038")), Color(0.15, 0.19, 0.22))
+
+func ship_overlay_color(overlay_id: String) -> Color:
+	var entry: Dictionary = ship_overlay_entry(overlay_id)
+	return _color_from_hex(str(entry.get("fallback_color", "#33424A")), Color(0.20, 0.26, 0.29))
+
+func ship_overlay_position(overlay_id: String) -> Vector2:
+	var position: Dictionary = Dictionary(ship_overlay_entry(overlay_id).get("position", {}))
+	return Vector2(
+		clampf(float(position.get("x", 0.5)), 0.0, 1.0),
+		clampf(float(position.get("y", 0.5)), 0.0, 1.0)
+	)
+
+func ship_overlay_size(overlay_id: String) -> Vector2:
+	var size_entry: Dictionary = Dictionary(ship_overlay_entry(overlay_id).get("size", {}))
+	return Vector2(
+		clampf(float(size_entry.get("x", 0.16)), 0.02, 1.0),
+		clampf(float(size_entry.get("y", 0.28)), 0.02, 1.0)
+	)
+
+func ship_overlay_label(overlay_id: String) -> String:
+	return str(ship_overlay_entry(overlay_id).get("hover_label", overlay_id.capitalize()))
+
+func ship_overlay_requires_alpha(overlay_id: String) -> bool:
+	return bool(ship_overlay_entry(overlay_id).get("requires_alpha", false))
+
+func ship_overlay_show_without_alpha(overlay_id: String) -> bool:
+	return bool(ship_overlay_entry(overlay_id).get("show_without_alpha", true))
 
 func surface_fallback_color(surface_id: String) -> Color:
 	var entry: Dictionary = surface_entry(surface_id)
@@ -177,7 +254,32 @@ func missing_asset_report() -> Array[String]:
 	var cards: Dictionary = Dictionary(ensure_loaded().get("cards", {}))
 	for card_id: String in cards.keys():
 		_append_missing_path(missing, str(Dictionary(cards.get(card_id, {})).get("art_path", "")))
+	var portraits: Dictionary = Dictionary(ensure_loaded().get("class_portraits", {}))
+	for class_id: String in portraits.keys():
+		_append_missing_path(missing, str(Dictionary(portraits.get(class_id, {})).get("path", "")))
+	var buttons: Dictionary = Dictionary(ensure_loaded().get("ship_buttons", {}))
+	for button_id: String in buttons.keys():
+		_append_missing_path(missing, str(Dictionary(buttons.get(button_id, {})).get("path", "")))
+	var overlays: Dictionary = Dictionary(ensure_loaded().get("ship_overlays", {}))
+	for overlay_id: String in overlays.keys():
+		var overlay_entry: Dictionary = Dictionary(overlays.get(overlay_id, {}))
+		for path: String in _ship_overlay_all_declared_paths(overlay_entry):
+			_append_missing_path(missing, path)
 	return missing
+
+func ship_overlay_alpha_debt_report() -> Array[String]:
+	var warnings: Array[String] = []
+	var overlays: Dictionary = Dictionary(ensure_loaded().get("ship_overlays", {}))
+	for overlay_id: String in overlays.keys():
+		if not ship_overlay_requires_alpha(str(overlay_id)):
+			continue
+		var overlay_entry: Dictionary = Dictionary(overlays.get(overlay_id, {}))
+		for path: String in _ship_overlay_all_declared_paths(overlay_entry):
+			if path == "" or not FileAccess.file_exists(path):
+				continue
+			if not _path_has_alpha(path):
+				warnings.append("Ship overlay %s requires alpha, but %s has no transparent pixels." % [str(overlay_id), path])
+	return warnings
 
 func validate_manifest(catalog = null) -> Dictionary:
 	var errors: Array[String] = []
@@ -201,6 +303,12 @@ func validate_manifest(catalog = null) -> Dictionary:
 
 	var cards: Dictionary = Dictionary(manifest.get("cards", {}))
 	if catalog != null:
+		var portraits: Dictionary = Dictionary(manifest.get("class_portraits", {}))
+		for class_option: Dictionary in catalog.class_options:
+			var class_id: String = str(class_option.get("id", ""))
+			var portrait_entry: Dictionary = Dictionary(portraits.get(class_id, {}))
+			if portrait_entry.is_empty() or str(portrait_entry.get("path", "")) == "":
+				errors.append("Missing class portrait entry: %s." % class_id)
 		for card in catalog.cards:
 			var card_id: String = str(card.id)
 			var entry: Dictionary = Dictionary(cards.get(card_id, {}))
@@ -226,12 +334,38 @@ func validate_manifest(catalog = null) -> Dictionary:
 			if x < 0.0 or x > 1.0 or y < 0.0 or y > 1.0:
 				errors.append("Run map node %s position must be normalized." % node_id)
 
+	var ship_overlays: Dictionary = Dictionary(manifest.get("ship_overlays", {}))
+	for overlay_id: String in ["deck", "map", "souls"]:
+		var overlay_entry: Dictionary = Dictionary(ship_overlays.get(overlay_id, {}))
+		if overlay_entry.is_empty():
+			errors.append("Missing ship overlay entry: %s." % overlay_id)
+			continue
+		var declared_paths: Array[String] = _ship_overlay_all_declared_paths(overlay_entry)
+		if declared_paths.is_empty():
+			errors.append("Ship overlay %s needs a path or path_by_class entry." % overlay_id)
+		var overlay_position: Dictionary = Dictionary(overlay_entry.get("position", {}))
+		var overlay_size: Dictionary = Dictionary(overlay_entry.get("size", {}))
+		if overlay_position.is_empty():
+			errors.append("Ship overlay %s needs normalized position." % overlay_id)
+		if overlay_size.is_empty():
+			errors.append("Ship overlay %s needs normalized size." % overlay_id)
+		var px: float = float(overlay_position.get("x", -1.0))
+		var py: float = float(overlay_position.get("y", -1.0))
+		var sx: float = float(overlay_size.get("x", -1.0))
+		var sy: float = float(overlay_size.get("y", -1.0))
+		if px < 0.0 or px > 1.0 or py < 0.0 or py > 1.0:
+			errors.append("Ship overlay %s position must be normalized." % overlay_id)
+		if sx <= 0.0 or sx > 1.0 or sy <= 0.0 or sy > 1.0:
+			errors.append("Ship overlay %s size must be normalized and positive." % overlay_id)
+
 	var missing_assets: Array[String] = missing_asset_report()
+	var alpha_warnings: Array[String] = ship_overlay_alpha_debt_report()
 	return {
 		"ok": errors.is_empty(),
 		"message": "Visual asset manifest valid." if errors.is_empty() else "\n".join(errors),
 		"errors": errors,
-		"missing_assets": missing_assets
+		"missing_assets": missing_assets,
+		"alpha_warnings": alpha_warnings
 	}
 
 func _empty_manifest() -> Dictionary:
@@ -240,22 +374,75 @@ func _empty_manifest() -> Dictionary:
 		"surfaces": {},
 		"frames": {},
 		"cards": {},
+		"class_portraits": {},
+		"ship_buttons": {},
+		"ship_overlays": {},
 		"run_map_nodes": {}
 	}
 
-func _load_texture(path: String) -> Texture2D:
+func _load_texture(path: String, warn_missing: bool = true) -> Texture2D:
 	if path == "" or not FileAccess.file_exists(path):
-		_warn_missing_path(path)
+		if warn_missing:
+			_warn_missing_path(path)
 		return null
-	var loaded: Resource = load(path)
-	if loaded is Texture2D:
-		return loaded
-	_warn_missing_path(path)
+	if ResourceLoader.exists(path):
+		var loaded: Resource = load(path)
+		if loaded is Texture2D:
+			return loaded
+	if path.to_lower().ends_with(".png"):
+		var image: Image = Image.new()
+		var image_error: Error = image.load(ProjectSettings.globalize_path(path))
+		if image_error == OK:
+			return ImageTexture.create_from_image(image)
+	if warn_missing:
+		_warn_missing_path(path)
 	return null
 
 func _append_missing_path(missing: Array[String], path: String) -> void:
 	if path != "" and not FileAccess.file_exists(path):
 		missing.append(path)
+
+func _ship_overlay_candidate_paths(entry: Dictionary, class_id: String = "") -> Array[String]:
+	var candidates: Array[String] = []
+	if class_id != "":
+		var by_class: Dictionary = Dictionary(entry.get("path_by_class", {}))
+		var class_path: String = str(by_class.get(class_id, ""))
+		if class_path != "":
+			candidates.append(class_path)
+	var path: String = str(entry.get("path", ""))
+	if path != "":
+		candidates.append(path)
+	if class_id != "":
+		var fallback_by_class: Dictionary = Dictionary(entry.get("fallback_path_by_class", {}))
+		var fallback_class_path: String = str(fallback_by_class.get(class_id, ""))
+		if fallback_class_path != "":
+			candidates.append(fallback_class_path)
+	var fallback_path: String = str(entry.get("fallback_path", ""))
+	if fallback_path != "":
+		candidates.append(fallback_path)
+	return candidates
+
+func _ship_overlay_all_declared_paths(entry: Dictionary) -> Array[String]:
+	var paths: Array[String] = []
+	for path: String in _ship_overlay_candidate_paths(entry):
+		if path != "":
+			paths.append(path)
+	for dictionary_key: String in ["path_by_class", "fallback_path_by_class"]:
+		var by_class: Dictionary = Dictionary(entry.get(dictionary_key, {}))
+		for class_id: String in by_class.keys():
+			var path: String = str(by_class.get(class_id, ""))
+			if path != "" and not paths.has(path):
+				paths.append(path)
+	return paths
+
+func _path_has_alpha(path: String) -> bool:
+	if path == "" or not FileAccess.file_exists(path):
+		return false
+	var image: Image = Image.new()
+	var image_error: Error = image.load(ProjectSettings.globalize_path(path))
+	if image_error != OK:
+		return false
+	return image.detect_alpha() != Image.ALPHA_NONE
 
 func _warn_missing_path(path: String) -> void:
 	if path == "" or _warned_paths.has(path):

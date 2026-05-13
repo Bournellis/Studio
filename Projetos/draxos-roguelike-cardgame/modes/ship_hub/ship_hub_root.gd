@@ -1,56 +1,29 @@
 extends Control
 
-const HOTSPOT_SPECS: Array[Dictionary] = [
-	{
-		"id": "command_station",
-		"title": "Comando",
-		"body": "Classe e estado da run",
-		"status": "Classes Arcano, Invocador e Necromante disponiveis para teste.",
-		"position": Vector2(0.50, 0.56),
-		"size": Vector2(238, 58)
-	},
-	{
-		"id": "mission_map_console",
-		"title": "Mapa",
-		"body": "Rota de invasao",
-		"status": "Rota linear de 10 encontros disponivel.",
-		"position": Vector2(0.75, 0.46),
-		"size": Vector2(210, 54)
-	},
-	{
-		"id": "deck_system",
-		"title": "Deck",
-		"body": "Cartas e upgrades",
-		"status": "Decks iniciais de 12 cartas; mapa 3 aumenta o limite de mao.",
-		"position": Vector2(0.25, 0.58),
-		"size": Vector2(216, 54)
-	},
-	{
-		"id": "soul_engine",
-		"title": "Almas",
-		"body": "Cura e recursos",
-		"status": "Cura paga de teste disponivel durante a run.",
-		"position": Vector2(0.86, 0.39),
-		"size": Vector2(194, 54)
-	}
-]
+const CLASS_ORDER: Array[String] = ["invocador", "arcano", "necromante"]
+const ShipOverlayButtonScript = preload("res://ui/controls/ship_overlay_button.gd")
 
-var status_label: Label
-var selected_class_id: String = ""
-var start_run_button: Button
-var map_button: Button
-var heal_button: Button
+var state_label: Label
+var class_message_label: Label
+var class_modal: PanelContainer
+var esc_menu: PanelContainer
+var overlay_layer: Control
 
 func _ready() -> void:
 	ContentLibrary.ensure_loaded()
-	selected_class_id = RunSession.selected_class_id
+	VisualAssets.ensure_loaded()
 	_build_ui()
+	if SaveManager.pending_new_game or not RunSession.has_selected_class():
+		_open_class_modal()
 
-func get_region_ids() -> Array[String]:
-	var ids: Array[String] = []
-	for spec: Dictionary in HOTSPOT_SPECS:
-		ids.append(str(spec.get("id", "")))
-	return ids
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel") or (event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE):
+		var viewport: Viewport = get_viewport()
+		if viewport != null:
+			viewport.set_input_as_handled()
+		if class_modal != null and class_modal.visible:
+			return
+		_toggle_esc_menu()
 
 func _build_ui() -> void:
 	var background: Control = VisualAssets.build_surface_background("ship_hub_background")
@@ -59,255 +32,239 @@ func _build_ui() -> void:
 
 	var scrim: ColorRect = ColorRect.new()
 	scrim.name = "ShipHubVisualScrim"
-	scrim.color = Color(0.0, 0.0, 0.0, 0.16)
+	scrim.color = Color(0.0, 0.0, 0.0, 0.18)
 	scrim.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	scrim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(scrim)
-
-	var title_panel: PanelContainer = PanelContainer.new()
-	title_panel.name = "ShipHubTitlePanel"
-	title_panel.anchor_left = 0.02
-	title_panel.anchor_top = 0.03
-	title_panel.anchor_right = 0.40
-	title_panel.anchor_bottom = 0.03
-	title_panel.offset_right = 0.0
-	title_panel.offset_bottom = 86.0
-	title_panel.add_theme_stylebox_override("panel", _panel_style("bg_panel", 0.50))
-	add_child(title_panel)
-
-	var title_box: VBoxContainer = VBoxContainer.new()
-	title_box.add_theme_constant_override("separation", 3)
-	title_panel.add_child(title_box)
 
 	var title: Label = Label.new()
 	title.name = "ShipHubTitle"
 	title.text = "Nave Draxos"
 	title.add_theme_font_size_override("font_size", 30)
 	title.add_theme_color_override("font_color", UiTokens.color("text_primary"))
-	title_box.add_child(title)
+	title.anchor_left = 0.03
+	title.anchor_top = 0.04
+	title.anchor_right = 0.5
+	title.anchor_bottom = 0.04
+	title.offset_bottom = 42.0
+	add_child(title)
 
-	var subtitle: Label = Label.new()
-	subtitle.name = "ShipHubSubtitle"
-	subtitle.text = "Ponte de comando da invasao elemental"
-	subtitle.add_theme_font_size_override("font_size", 13)
-	subtitle.add_theme_color_override("font_color", UiTokens.color("text_secondary", Color(0.74, 0.78, 0.8)))
-	title_box.add_child(subtitle)
+	overlay_layer = Control.new()
+	overlay_layer.name = "ShipHubSceneOverlays"
+	overlay_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	overlay_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(overlay_layer)
+	_refresh_ship_overlays()
 
-	var hotspot_layer: Control = Control.new()
-	hotspot_layer.name = "ShipHubHotspots"
-	hotspot_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	add_child(hotspot_layer)
+	_build_class_modal()
+	_build_esc_menu()
 
-	for spec: Dictionary in HOTSPOT_SPECS:
-		hotspot_layer.add_child(_build_hotspot_button(spec))
+func _refresh_ship_overlays() -> void:
+	if overlay_layer == null:
+		return
+	for child: Node in overlay_layer.get_children():
+		overlay_layer.remove_child(child)
+		child.queue_free()
+	_add_ship_overlay("souls", _open_souls)
+	_add_ship_overlay("map", _open_map)
+	_add_ship_overlay("deck", _open_deck)
 
-	_build_class_panel()
-	_build_action_panel()
-	_refresh_run_controls()
+func _add_ship_overlay(overlay_id: String, callback: Callable) -> void:
+	var overlay = ShipOverlayButtonScript.new()
+	overlay.name = "ShipHubOverlay_%s" % overlay_id
+	_apply_ship_overlay_rect(overlay, overlay_id)
+	var texture: Texture2D = VisualAssets.ship_overlay_texture(overlay_id, RunSession.selected_class_id)
+	overlay.setup(
+		overlay_id,
+		texture,
+		VisualAssets.ship_overlay_label(overlay_id),
+		VisualAssets.ship_overlay_color(overlay_id)
+	)
+	overlay.pressed.connect(callback)
+	overlay_layer.add_child(overlay)
 
-func _build_class_panel() -> void:
-	var panel: PanelContainer = PanelContainer.new()
-	panel.name = "ShipHubCommandPanel"
-	panel.anchor_left = 0.02
-	panel.anchor_top = 1.0
-	panel.anchor_right = 0.60
-	panel.anchor_bottom = 1.0
-	panel.offset_top = -202.0
-	panel.offset_bottom = -20.0
-	panel.add_theme_stylebox_override("panel", _panel_style("bg_panel", 0.66))
-	add_child(panel)
+func _apply_ship_overlay_rect(control: Control, overlay_id: String) -> void:
+	var position: Vector2 = VisualAssets.ship_overlay_position(overlay_id)
+	var overlay_size: Vector2 = VisualAssets.ship_overlay_size(overlay_id)
+	control.anchor_left = clampf(position.x - overlay_size.x * 0.5, 0.0, 1.0)
+	control.anchor_top = clampf(position.y - overlay_size.y * 0.5, 0.0, 1.0)
+	control.anchor_right = clampf(position.x + overlay_size.x * 0.5, 0.0, 1.0)
+	control.anchor_bottom = clampf(position.y + overlay_size.y * 0.5, 0.0, 1.0)
+	control.offset_left = 0.0
+	control.offset_top = 0.0
+	control.offset_right = 0.0
+	control.offset_bottom = 0.0
 
-	var box: VBoxContainer = VBoxContainer.new()
-	box.add_theme_constant_override("separation", 9)
-	panel.add_child(box)
+func _build_class_modal() -> void:
+	class_modal = PanelContainer.new()
+	class_modal.name = "ShipHubClassChoiceModal"
+	class_modal.visible = false
+	class_modal.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	class_modal.add_theme_stylebox_override("panel", _panel_style(Color(0.015, 0.018, 0.024, 0.92), Color(0.68, 0.58, 0.38, 0.88)))
+	add_child(class_modal)
 
-	var header: HBoxContainer = HBoxContainer.new()
-	header.add_theme_constant_override("separation", 10)
-	box.add_child(header)
-
-	var class_title: Label = Label.new()
-	class_title.text = "Classe do Comandante"
-	class_title.add_theme_font_size_override("font_size", 18)
-	class_title.add_theme_color_override("font_color", UiTokens.color("text_primary"))
-	class_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	header.add_child(class_title)
-
-	var run_summary: Label = Label.new()
-	run_summary.text = _compact_run_summary()
-	run_summary.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	run_summary.add_theme_font_size_override("font_size", 12)
-	run_summary.add_theme_color_override("font_color", Color(0.86, 0.92, 0.94))
-	header.add_child(run_summary)
-
-	var class_row: HBoxContainer = HBoxContainer.new()
-	class_row.name = "ShipHubClassRow"
-	class_row.add_theme_constant_override("separation", 8)
-	box.add_child(class_row)
-
-	for class_option: Dictionary in ContentLibrary.get_class_options():
-		class_row.add_child(_build_class_button(class_option))
-
-	var scroll: ScrollContainer = ScrollContainer.new()
-	scroll.name = "ShipHubStatusScroll"
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
-	scroll.custom_minimum_size = Vector2(0, 44)
-	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	box.add_child(scroll)
-
-	status_label = Label.new()
-	status_label.name = "ShipHubStatus"
-	status_label.text = _run_state_text()
-	status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	status_label.add_theme_font_size_override("font_size", 12)
-	status_label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
-	status_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	scroll.add_child(status_label)
-
-func _build_action_panel() -> void:
-	var panel: PanelContainer = PanelContainer.new()
-	panel.name = "ShipHubActionPanel"
-	panel.anchor_left = 1.0
-	panel.anchor_top = 1.0
-	panel.anchor_right = 1.0
-	panel.anchor_bottom = 1.0
-	panel.offset_left = -286.0
-	panel.offset_top = -248.0
-	panel.offset_right = -20.0
-	panel.offset_bottom = -20.0
-	panel.add_theme_stylebox_override("panel", _panel_style("bg_panel_alt", 0.70))
-	add_child(panel)
+	var margin: MarginContainer = MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 46)
+	margin.add_theme_constant_override("margin_top", 44)
+	margin.add_theme_constant_override("margin_right", 46)
+	margin.add_theme_constant_override("margin_bottom", 42)
+	class_modal.add_child(margin)
 
 	var box: VBoxContainer = VBoxContainer.new()
-	box.add_theme_constant_override("separation", 9)
-	panel.add_child(box)
+	box.add_theme_constant_override("separation", 18)
+	margin.add_child(box)
 
 	var title: Label = Label.new()
-	title.text = "Acoes"
-	title.add_theme_font_size_override("font_size", 18)
+	title.name = "ShipHubClassChoiceTitle"
+	title.text = "Escolha a Classe"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 32)
 	title.add_theme_color_override("font_color", UiTokens.color("text_primary"))
 	box.add_child(title)
 
-	start_run_button = Button.new()
-	start_run_button.name = "ShipHubStartRunButton"
-	start_run_button.text = "Iniciar Run"
-	start_run_button.pressed.connect(_on_start_run_pressed)
-	box.add_child(start_run_button)
+	class_message_label = Label.new()
+	class_message_label.name = "ShipHubClassChoiceMessage"
+	class_message_label.text = ""
+	class_message_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	class_message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	class_message_label.add_theme_font_size_override("font_size", 14)
+	class_message_label.add_theme_color_override("font_color", Color(0.92, 0.78, 0.48, 0.95))
+	box.add_child(class_message_label)
 
-	map_button = Button.new()
-	map_button.name = "ShipHubOpenRunMapButton"
-	map_button.text = "Abrir Mapa de Missao"
-	map_button.pressed.connect(func() -> void:
-		if not RunSession.active:
-			status_label.text = "Escolha uma Classe e inicie a run antes de abrir o mapa."
-			_refresh_run_controls()
-			return
-		get_tree().change_scene_to_file("res://modes/run_map/run_map.tscn")
-	)
-	box.add_child(map_button)
+	var row: HBoxContainer = HBoxContainer.new()
+	row.name = "ShipHubClassChoiceRow"
+	row.add_theme_constant_override("separation", 18)
+	row.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	box.add_child(row)
 
-	heal_button = Button.new()
-	heal_button.name = "ShipHubPaidHealButton"
-	heal_button.text = "Cura paga"
-	heal_button.pressed.connect(func() -> void:
-		var result: Dictionary = RunSession.buy_paid_heal()
-		status_label.text = "%s\n\n%s" % [str(result.get("message", "")), _run_state_text()]
-		_refresh_run_controls()
-	)
-	box.add_child(heal_button)
-
-	var back_button: Button = Button.new()
-	back_button.name = "ShipHubBackToBootButton"
-	back_button.text = "Voltar ao Boot"
-	back_button.pressed.connect(func() -> void:
-		get_tree().change_scene_to_file("res://modes/boot/boot.tscn")
-	)
-	box.add_child(back_button)
-
-func _build_hotspot_button(spec: Dictionary) -> Button:
-	var button: Button = Button.new()
-	button.name = "ShipHubHotspot_%s" % str(spec.get("id", "unknown"))
-	button.text = "%s\n%s" % [str(spec.get("title", "")), str(spec.get("body", ""))]
-	button.tooltip_text = str(spec.get("status", ""))
-	button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	button.alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var size: Vector2 = spec.get("size", Vector2(200, 54))
-	var position: Vector2 = spec.get("position", Vector2(0.5, 0.5))
-	button.anchor_left = position.x
-	button.anchor_top = position.y
-	button.anchor_right = position.x
-	button.anchor_bottom = position.y
-	button.offset_left = -size.x * 0.5
-	button.offset_top = -size.y * 0.5
-	button.offset_right = size.x * 0.5
-	button.offset_bottom = size.y * 0.5
-	button.add_theme_font_size_override("font_size", 12)
-	button.add_theme_stylebox_override("normal", _hotspot_style(false))
-	button.add_theme_stylebox_override("hover", _hotspot_style(true))
-	button.add_theme_stylebox_override("pressed", _hotspot_style(true))
-	button.pressed.connect(func() -> void:
-		_select_region(spec)
-	)
-	return button
-
-func _select_region(spec: Dictionary) -> void:
-	status_label.text = "%s\n%s\n\n%s" % [
-		str(spec.get("body", "")),
-		str(spec.get("status", "")),
-		_run_state_text()
-	]
-
-func _on_start_run_pressed() -> void:
-	if selected_class_id == "":
-		status_label.text = "Escolha uma Classe antes de iniciar a run."
-		_refresh_run_controls()
-		return
-	var result: Dictionary = RunSession.start_class_run(selected_class_id)
-	status_label.text = str(result.get("message", "Run iniciada."))
-	_refresh_run_controls()
+	for class_id: String in CLASS_ORDER:
+		var class_option: Dictionary = ContentLibrary.find_class_option(class_id)
+		if class_option.is_empty():
+			continue
+		row.add_child(_build_class_button(class_option))
 
 func _build_class_button(class_option: Dictionary) -> Button:
-	var button: Button = Button.new()
 	var class_id: String = str(class_option.get("id", ""))
+	var button: Button = Button.new()
 	button.name = "ShipHubClass_%s" % class_id
-	button.text = "%s\n%s" % [
-		str(class_option.get("display_name", class_id)),
-		str(class_option.get("role_text", ""))
-	]
-	button.tooltip_text = "%s\n%s" % [
-		str(class_option.get("mechanic_status", "")),
-		str(class_option.get("active_text", ""))
-	]
-	button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	button.alignment = HORIZONTAL_ALIGNMENT_CENTER
-	button.custom_minimum_size = Vector2(0, 66)
+	button.text = str(class_option.get("display_name", class_id))
+	button.tooltip_text = "%s\n%s" % [str(class_option.get("role_text", "")), str(class_option.get("active_text", ""))]
+	button.custom_minimum_size = Vector2(260, 480)
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	button.add_theme_font_size_override("font_size", 11)
+	button.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	button.alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var texture: Texture2D = VisualAssets.class_portrait_texture(class_id)
+	if texture != null:
+		button.icon = texture
+		button.expand_icon = true
+	button.add_theme_font_size_override("font_size", 20)
+	button.add_theme_stylebox_override("normal", _button_style(VisualAssets.class_portrait_color(class_id), false))
+	button.add_theme_stylebox_override("hover", _button_style(VisualAssets.class_portrait_color(class_id), true))
+	button.add_theme_stylebox_override("pressed", _button_style(VisualAssets.class_portrait_color(class_id), true))
 	button.pressed.connect(func() -> void:
-		selected_class_id = class_id
-		status_label.text = "%s\n%s\n%s" % [
-			str(class_option.get("role_text", "")),
-			str(class_option.get("mechanic_status", "")),
-			str(class_option.get("active_text", ""))
-		]
-		_refresh_run_controls()
+		_start_class_run(class_id)
 	)
 	return button
 
-func _refresh_run_controls() -> void:
-	if start_run_button != null:
-		start_run_button.disabled = selected_class_id == ""
-	if map_button != null:
-		map_button.disabled = not RunSession.active
-	if heal_button != null:
-		heal_button.disabled = not RunSession.can_buy_heal()
-		heal_button.text = "Curar %d por %d almas" % [RunSession.PAID_HEAL_AMOUNT, RunSession.PAID_HEAL_COST]
+func _build_esc_menu() -> void:
+	esc_menu = PanelContainer.new()
+	esc_menu.name = "ShipHubEscMenu"
+	esc_menu.visible = false
+	esc_menu.anchor_left = 0.5
+	esc_menu.anchor_top = 0.5
+	esc_menu.anchor_right = 0.5
+	esc_menu.anchor_bottom = 0.5
+	esc_menu.offset_left = -170.0
+	esc_menu.offset_top = -114.0
+	esc_menu.offset_right = 170.0
+	esc_menu.offset_bottom = 114.0
+	esc_menu.add_theme_stylebox_override("panel", _panel_style(Color(0.04, 0.045, 0.052, 0.96), Color(0.68, 0.58, 0.38, 0.95)))
+	add_child(esc_menu)
 
-func _compact_run_summary() -> String:
+	var margin: MarginContainer = MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 14)
+	margin.add_theme_constant_override("margin_top", 12)
+	margin.add_theme_constant_override("margin_right", 14)
+	margin.add_theme_constant_override("margin_bottom", 12)
+	esc_menu.add_child(margin)
+
+	var box: VBoxContainer = VBoxContainer.new()
+	box.add_theme_constant_override("separation", 8)
+	margin.add_child(box)
+
+	var title: Label = Label.new()
+	title.text = "Pausa"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 20)
+	title.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+	box.add_child(title)
+
+	var menu_button: Button = _build_menu_button("ShipHubEscMainMenuButton", "Menu Principal")
+	menu_button.pressed.connect(func() -> void:
+		_autosave()
+		get_tree().change_scene_to_file("res://modes/boot/boot.tscn")
+	)
+	box.add_child(menu_button)
+
+	var quit_button: Button = _build_menu_button("ShipHubEscQuitButton", "Fechar Jogo")
+	quit_button.pressed.connect(func() -> void:
+		_autosave()
+		get_tree().quit()
+	)
+	box.add_child(quit_button)
+
+	var cancel_button: Button = _build_menu_button("ShipHubEscCancelButton", "Cancelar")
+	cancel_button.pressed.connect(func() -> void:
+		esc_menu.visible = false
+	)
+	box.add_child(cancel_button)
+
+func _open_class_modal() -> void:
+	if class_message_label != null:
+		class_message_label.text = ""
+	class_modal.visible = true
+
+func _start_class_run(class_id: String) -> void:
+	var result: Dictionary = RunSession.start_class_run(class_id, SaveManager.random_run_seed())
+	if not bool(result.get("ok", false)):
+		if class_message_label != null:
+			class_message_label.text = str(result.get("message", ""))
+		return
+	SaveManager.pending_new_game = false
+	var save_result: Dictionary = SaveManager.save_current_run()
+	if not bool(save_result.get("ok", false)):
+		if class_message_label != null:
+			class_message_label.text = str(save_result.get("message", ""))
+		return
+	class_modal.visible = false
+	_refresh_ship_overlays()
+
+func _open_deck() -> void:
+	_autosave()
+	get_tree().change_scene_to_file("res://modes/deck/deck.tscn")
+
+func _open_map() -> void:
+	if RunSession.active and RunSession.current_node_id == "":
+		RunSession.select_next_available_node()
+	_autosave()
+	get_tree().change_scene_to_file("res://modes/run_map/run_map.tscn")
+
+func _open_souls() -> void:
+	_autosave()
+	get_tree().change_scene_to_file("res://modes/souls/souls.tscn")
+
+func _toggle_esc_menu() -> void:
+	if esc_menu != null:
+		esc_menu.visible = not esc_menu.visible
+
+func _refresh_state() -> void:
+	return
 	if not RunSession.active:
-		return "Run inativa"
-	return "%s | Vida %d/%d | Mana %d | Mao %d | Almas %d" % [
+		state_label.text = "Classe: -\nMapa: -\nHP: -\nMana: -\nMão: -\nAlmas: -"
+		return
+	state_label.text = "Classe: %s\nMapa: %s\nHP: %d/%d\nMana: %d\nMão: %d\nAlmas: %d" % [
 		RunSession.selected_class_display_name,
+		RunSession.current_node_display_name(),
 		RunSession.current_health,
 		RunSession.max_health,
 		RunSession.max_mana,
@@ -315,51 +272,37 @@ func _compact_run_summary() -> String:
 		RunSession.soul_total
 	]
 
-func _run_state_text() -> String:
-	if not RunSession.active:
-		return "Run: inativa. Escolha uma Classe para iniciar."
-	var completed_text: String = "nenhum"
-	if not RunSession.completed_node_ids.is_empty():
-		completed_text = ", ".join(RunSession.completed_node_ids)
-	var last_text: String = ""
-	if RunSession.last_completed_node_id != "":
-		last_text = "\nUltimo encontro: %s" % RunSession.last_completed_node_id
-	return "Run: ativa | Classe: %s | Vida: %d/%d | Mana: %d | Mao: %d | Almas: %d\nPassiva desbloqueada: %s | Spell desbloqueada: %s\nNodes concluidos: %s | Recompensas automaticas: %d%s" % [
-		RunSession.selected_class_display_name,
-		RunSession.current_health,
-		RunSession.max_health,
-		RunSession.max_mana,
-		RunSession.max_hand_size,
-		RunSession.soul_total,
-		"sim" if RunSession.class_passive_unlocked else "nao",
-		"sim" if RunSession.class_active_unlocked else "nao",
-		completed_text,
-		RunSession.automatic_reward_ids.size(),
-		last_text
-	]
+func _autosave() -> void:
+	if RunSession.active and RunSession.has_selected_class():
+		SaveManager.save_current_run()
 
-func _panel_style(color_token: String, alpha: float = 0.72) -> StyleBoxFlat:
+func _build_menu_button(node_name: String, text: String) -> Button:
+	var button: Button = Button.new()
+	button.name = node_name
+	button.text = text
+	button.custom_minimum_size = Vector2(0, 40)
+	return button
+
+func _panel_style(fill: Color, border: Color) -> StyleBoxFlat:
 	var style: StyleBoxFlat = StyleBoxFlat.new()
-	var bg_color: Color = UiTokens.color(color_token, Color(0.1, 0.11, 0.12))
-	style.bg_color = Color(bg_color.r, bg_color.g, bg_color.b, alpha)
-	var border_color: Color = UiTokens.color("border_default", Color(0.25, 0.3, 0.34))
-	style.border_color = Color(border_color.r, border_color.g, border_color.b, 0.72)
+	style.bg_color = fill
+	style.border_color = border
 	style.set_border_width_all(1)
 	style.set_corner_radius_all(8)
-	style.content_margin_left = 14
-	style.content_margin_top = 12
-	style.content_margin_right = 14
-	style.content_margin_bottom = 12
+	style.content_margin_left = 10
+	style.content_margin_top = 10
+	style.content_margin_right = 10
+	style.content_margin_bottom = 10
 	return style
 
-func _hotspot_style(is_hover: bool) -> StyleBoxFlat:
+func _button_style(base: Color, hover: bool) -> StyleBoxFlat:
 	var style: StyleBoxFlat = StyleBoxFlat.new()
-	style.bg_color = Color(0.04, 0.055, 0.065, 0.42 if not is_hover else 0.64)
-	style.border_color = Color(0.55, 0.86, 0.96, 0.60 if not is_hover else 0.95)
-	style.set_border_width_all(1 if not is_hover else 2)
+	style.bg_color = Color(base.r * 0.35, base.g * 0.35, base.b * 0.35, 0.58 if not hover else 0.78)
+	style.border_color = Color(base.r, base.g, base.b, 0.78 if not hover else 1.0)
+	style.set_border_width_all(1 if not hover else 2)
 	style.set_corner_radius_all(8)
-	style.content_margin_left = 10
-	style.content_margin_top = 7
-	style.content_margin_right = 10
-	style.content_margin_bottom = 7
+	style.content_margin_left = 12
+	style.content_margin_top = 10
+	style.content_margin_right = 12
+	style.content_margin_bottom = 10
 	return style

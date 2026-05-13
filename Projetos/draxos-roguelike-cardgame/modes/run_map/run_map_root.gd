@@ -9,7 +9,16 @@ var route_layer
 
 func _ready() -> void:
 	ContentLibrary.ensure_loaded()
+	if RunSession.active and RunSession.current_node_id == "":
+		RunSession.select_next_available_node()
 	_build_ui()
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel") or (event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE):
+		var viewport: Viewport = get_viewport()
+		if viewport != null:
+			viewport.set_input_as_handled()
+		_return_to_ship()
 
 func _build_ui() -> void:
 	var background: Control = VisualAssets.build_surface_background("mission_map_background")
@@ -120,6 +129,7 @@ func _build_ui() -> void:
 		if RunSession.current_node_id == "":
 			status_label.text = "Selecione um node disponivel antes de iniciar o encontro."
 			return
+		SaveManager.save_current_run()
 		get_tree().change_scene_to_file("res://modes/battle/battle.tscn")
 	)
 	side_box.add_child(future_battle_button)
@@ -127,9 +137,7 @@ func _build_ui() -> void:
 	var back_button: Button = Button.new()
 	back_button.name = "RunMapBackToShipHubButton"
 	back_button.text = "Voltar para Nave"
-	back_button.pressed.connect(func() -> void:
-		get_tree().change_scene_to_file("res://modes/ship_hub/ship_hub.tscn")
-	)
+	back_button.pressed.connect(_return_to_ship)
 	side_box.add_child(back_button)
 
 func _rebuild_route_visuals() -> void:
@@ -208,6 +216,8 @@ func _build_node_button(node: Dictionary) -> Button:
 
 func _select_node(node: Dictionary) -> void:
 	RunSession.select_node(str(node.get("id", "")))
+	if RunSession.active and RunSession.has_selected_class():
+		SaveManager.save_current_run()
 	status_label.text = _status_text()
 	_rebuild_route_visuals()
 
@@ -291,6 +301,11 @@ func _apply_placeholder_reward(reward_id: String) -> void:
 	var result: Dictionary = RunSession.apply_placeholder_reward(reward_id)
 	status_label.text = "%s\n\n%s" % [str(result.get("message", "")), _status_text()]
 	_rebuild_reward_choices()
+
+func _return_to_ship() -> void:
+	if RunSession.active and RunSession.has_selected_class():
+		SaveManager.save_current_run()
+	get_tree().change_scene_to_file("res://modes/ship_hub/ship_hub.tscn")
 
 func _find_run_node(nodes: Array, node_id: String) -> Dictionary:
 	for node: Variant in nodes:

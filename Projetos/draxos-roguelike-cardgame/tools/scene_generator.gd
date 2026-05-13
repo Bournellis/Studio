@@ -4,6 +4,8 @@ extends RefCounted
 const SCENES: Array[Dictionary] = [
 	{"path": "res://modes/boot/boot.tscn", "script": "res://modes/boot/boot_root.gd", "type": "control"},
 	{"path": "res://modes/ship_hub/ship_hub.tscn", "script": "res://modes/ship_hub/ship_hub_root.gd", "type": "control"},
+	{"path": "res://modes/deck/deck.tscn", "script": "res://modes/deck/deck_root.gd", "type": "control"},
+	{"path": "res://modes/souls/souls.tscn", "script": "res://modes/souls/souls_root.gd", "type": "control"},
 	{"path": "res://modes/run_map/run_map.tscn", "script": "res://modes/run_map/run_map_root.gd", "type": "control"},
 	{"path": "res://modes/battle/battle.tscn", "script": "res://modes/battle/battle_root.gd", "type": "control"}
 ]

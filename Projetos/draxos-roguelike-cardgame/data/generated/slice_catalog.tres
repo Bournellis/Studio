@@ -440,6 +440,7 @@ encounters = Array[Dictionary]([{
 }, {
 "display_name": "Mapa 03 - Duelo",
 "enemy_commander_enabled": true,
+"enemy_deck": ["elemental_menor", "elemental_menor", "elemental_menor", "elemental_duelista", "elemental_duelista", "elemental_duelista", "elemental_assaltante", "elemental_assaltante", "elemental_assaltante", "elemental_medio", "elemental_medio", "elemental_medio"],
 "enemy_director": "player_like",
 "enemy_hand_count": 5.0,
 "enemy_health": 16.0,
@@ -483,7 +484,7 @@ encounters = Array[Dictionary]([{
 }],
 "tier": "medium"
 }, {
-"boss_health": 14.0,
+"boss_health": 20.0,
 "boss_summons": [{
 "card_id": "elemental_menor"
 }, {
@@ -502,14 +503,24 @@ encounters = Array[Dictionary]([{
 "max": 25.0,
 "min": 18.0
 },
+"starting_enemy_slots": [{
+"card_id": "elemental_menor",
+"slot": 1.0
+}, {
+"card_id": "elemental_medio",
+"slot": 2.0
+}, {
+"card_id": "elemental_bruto",
+"slot": 3.0
+}],
 "tier": "boss"
 }, {
 "display_name": "Mapa 06 - Sobreviver Turnos",
 "enemy_director": "prefilled_board",
-"enemy_slots_count": 3.0,
+"enemy_slots_count": 4.0,
 "id": "sobreviver_turnos_inicial",
 "mode": "sobreviver_turnos",
-"player_slots_count": 3.0,
+"player_slots_count": 4.0,
 "soul_reward": {
 "max": 10.0,
 "min": 7.0
@@ -521,10 +532,13 @@ encounters = Array[Dictionary]([{
 "card_id": "elemental_medio",
 "slot": 1.0
 }, {
-"card_id": "elemental_assaltante",
+"card_id": "elemental_guardiao",
 "slot": 2.0
+}, {
+"card_id": "elemental_assaltante",
+"slot": 3.0
 }],
-"survive_turns": 3.0,
+"survive_turns": 4.0,
 "tier": "medium"
 }, {
 "display_name": "Mapa 07 - Limpar Mesa Elite",
@@ -594,6 +608,7 @@ encounters = Array[Dictionary]([{
 }, {
 "display_name": "Mapa 09 - Duelo Elite",
 "enemy_commander_enabled": true,
+"enemy_deck": ["elemental_duelista", "elemental_duelista", "elemental_assaltante", "elemental_assaltante", "elemental_medio", "elemental_medio", "elemental_guardiao", "elemental_guardiao", "elemental_elite_agil", "elemental_elite_agil", "elemental_elite_bruto", "elemental_elite_bruto"],
 "enemy_director": "player_like",
 "enemy_hand_count": 5.0,
 "enemy_health": 24.0,
@@ -615,7 +630,7 @@ encounters = Array[Dictionary]([{
 }],
 "tier": "elite_optional"
 }, {
-"boss_health": 28.0,
+"boss_health": 34.0,
 "boss_summons": [{
 "card_id": "elemental_medio"
 }, {
@@ -636,6 +651,19 @@ encounters = Array[Dictionary]([{
 "max": 25.0,
 "min": 18.0
 },
+"starting_enemy_slots": [{
+"card_id": "elemental_medio",
+"slot": 0.0
+}, {
+"card_id": "elemental_elite_agil",
+"slot": 1.0
+}, {
+"card_id": "elemental_guardiao",
+"slot": 2.0
+}, {
+"card_id": "elemental_elite_bruto",
+"slot": 3.0
+}],
 "tier": "boss"
 }])
 run_map = {

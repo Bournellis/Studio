@@ -2,6 +2,7 @@ extends Control
 
 const BattleClassActiveTokenScript = preload("res://ui/controls/battle_class_active_token.gd")
 const BattleHeroTargetControlScript = preload("res://ui/controls/battle_hero_target_control.gd")
+const BattleBoardAreaTargetScript = preload("res://ui/controls/battle_board_area_target.gd")
 
 var engine: BattleEngine = BattleEngine.new()
 var player_hud_dock: PanelContainer
@@ -16,6 +17,7 @@ var class_resource_value: Label
 var enemy_hp_value: Label
 var enemy_mana_value: Label
 var hero_targets_box: HBoxContainer
+var enemy_board_area_target
 var enemy_slots_box: HBoxContainer
 var player_slots_box: HBoxContainer
 var hand_box: HBoxContainer
@@ -28,6 +30,8 @@ var necromancer_modal: PanelContainer
 var necromancer_choices_box: VBoxContainer
 var pending_choice_modal: PanelContainer
 var pending_choice_box: VBoxContainer
+var reward_modal: PanelContainer
+var reward_text_label: Label
 var preview_timer: Timer
 var preview_panel: PanelContainer
 var preview_title_label: Label
@@ -39,6 +43,7 @@ var current_encounter: Dictionary = {}
 var selected_hand_index: int = -1
 var selected_necromancer_choice_id: String = ""
 var pending_preview_data: Dictionary = {}
+var victory_recorded: bool = false
 
 func _ready() -> void:
 	ContentLibrary.ensure_loaded()
@@ -64,8 +69,10 @@ func _ready() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel") or (event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE):
+		var viewport: Viewport = get_viewport()
+		if viewport != null:
+			viewport.set_input_as_handled()
 		_toggle_esc_menu()
-		get_viewport().set_input_as_handled()
 
 func _toggle_esc_menu() -> void:
 	if esc_menu != null:
@@ -86,56 +93,77 @@ func _build_ui() -> void:
 	var root_margin: MarginContainer = MarginContainer.new()
 	root_margin.name = "BattleLayout"
 	root_margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	root_margin.add_theme_constant_override("margin_left", 10 if _is_compact_viewport() else 14)
-	root_margin.add_theme_constant_override("margin_top", 6 if _is_compact_viewport() else 12)
-	root_margin.add_theme_constant_override("margin_right", 10 if _is_compact_viewport() else 14)
-	root_margin.add_theme_constant_override("margin_bottom", 6 if _is_compact_viewport() else 12)
+	root_margin.add_theme_constant_override("margin_left", _battle_outer_margin_x())
+	root_margin.add_theme_constant_override("margin_top", _battle_outer_margin_top())
+	root_margin.add_theme_constant_override("margin_right", _battle_outer_margin_x())
+	root_margin.add_theme_constant_override("margin_bottom", _battle_outer_margin_bottom())
 	add_child(root_margin)
 
 	var main_box: VBoxContainer = VBoxContainer.new()
-	main_box.add_theme_constant_override("separation", 4 if _is_compact_viewport() else 7)
+	main_box.name = "BattleMainStack"
+	main_box.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	main_box.add_theme_constant_override("separation", 4 if _uses_dense_battle_layout() else 6)
 	root_margin.add_child(main_box)
-
-	enemy_commander_hud = _build_enemy_commander_hud()
-	main_box.add_child(enemy_commander_hud)
 
 	hero_targets_box = HBoxContainer.new()
 	hero_targets_box.name = "BattleHeroTargets"
+	hero_targets_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hero_targets_box.add_theme_constant_override("separation", 8)
 	hero_targets_box.alignment = BoxContainer.ALIGNMENT_CENTER
 
 	enemy_slots_box = HBoxContainer.new()
 	enemy_slots_box.name = "BattleEnemySlots"
+	enemy_slots_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	enemy_slots_box.add_theme_constant_override("separation", 8)
 	enemy_slots_box.alignment = BoxContainer.ALIGNMENT_CENTER
 
+	enemy_board_area_target = BattleBoardAreaTargetScript.new()
+	enemy_board_area_target.name = "BattleEnemyBoardAreaTarget"
+	enemy_board_area_target.visible = false
+	enemy_board_area_target.target_dropped.connect(_on_area_target_dropped)
+
 	player_slots_box = HBoxContainer.new()
 	player_slots_box.name = "BattlePlayerSlots"
+	player_slots_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	player_slots_box.add_theme_constant_override("separation", 8)
 	player_slots_box.alignment = BoxContainer.ALIGNMENT_CENTER
 
 	var board_panel: PanelContainer = PanelContainer.new()
 	board_panel.name = "BattleBoardPanel"
 	board_panel.custom_minimum_size = Vector2(0, _board_min_height())
-	board_panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	board_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	board_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.035, 0.04, 0.045, 0.18), Color(0.48, 0.40, 0.34, 0.70)))
 	main_box.add_child(board_panel)
 
+	var board_surface: Control = Control.new()
+	board_surface.name = "BattleBoardSurface"
+	board_surface.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	board_surface.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	board_panel.add_child(board_surface)
+
+	board_surface.add_child(enemy_board_area_target)
+	_apply_area_target_overlay_rect(enemy_board_area_target)
+
 	var board_margin: MarginContainer = MarginContainer.new()
-	board_margin.add_theme_constant_override("margin_left", 14)
-	board_margin.add_theme_constant_override("margin_top", 8)
-	board_margin.add_theme_constant_override("margin_right", 14)
-	board_margin.add_theme_constant_override("margin_bottom", 8)
-	board_panel.add_child(board_margin)
+	board_margin.name = "BattleBoardMargin"
+	board_margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	board_margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	board_margin.add_theme_constant_override("margin_left", 10 if _uses_dense_battle_layout() else 14)
+	board_margin.add_theme_constant_override("margin_top", 6 if _uses_dense_battle_layout() else 8)
+	board_margin.add_theme_constant_override("margin_right", 10 if _uses_dense_battle_layout() else 14)
+	board_margin.add_theme_constant_override("margin_bottom", 6 if _uses_dense_battle_layout() else 8)
+	board_surface.add_child(board_margin)
 
 	var board_box: VBoxContainer = VBoxContainer.new()
 	board_box.name = "BattleBoardRows"
-	board_box.add_theme_constant_override("separation", 6)
+	board_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	board_box.add_theme_constant_override("separation", 4 if _uses_dense_battle_layout() else 6)
 	board_box.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	board_margin.add_child(board_box)
 
 	objective_chip = Label.new()
 	objective_chip.name = "BattleObjectiveChip"
+	objective_chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	objective_chip.visible = false
 	objective_chip.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	objective_chip.add_theme_font_size_override("font_size", 11)
@@ -146,6 +174,7 @@ func _build_ui() -> void:
 	board_box.add_child(enemy_slots_box)
 	var board_spacer: Control = Control.new()
 	board_spacer.name = "BattleBoardCenterSpace"
+	board_spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	board_spacer.custom_minimum_size = Vector2(0, _board_center_space())
 	board_spacer.size_flags_vertical = Control.SIZE_SHRINK_CENTER if _is_compact_viewport() else Control.SIZE_EXPAND_FILL
 	board_box.add_child(board_spacer)
@@ -164,16 +193,26 @@ func _build_ui() -> void:
 	hand_margin.add_theme_constant_override("margin_bottom", 4 if _is_compact_viewport() else 6)
 	hand_panel.add_child(hand_margin)
 
+	var hand_row: HBoxContainer = HBoxContainer.new()
+	hand_row.name = "BattleHandControlsRow"
+	hand_row.add_theme_constant_override("separation", 8 if _is_compact_viewport() else 10)
+	hand_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	hand_margin.add_child(hand_row)
+
+	player_hud_dock = _build_player_hud_dock()
+	hand_row.add_child(player_hud_dock)
+
 	hand_box = HBoxContainer.new()
 	hand_box.name = "BattleHand"
 	hand_box.add_theme_constant_override("separation", 8)
 	hand_box.alignment = BoxContainer.ALIGNMENT_CENTER
-	hand_margin.add_child(hand_box)
-
-	player_hud_dock = _build_player_hud_dock()
-	main_box.add_child(player_hud_dock)
+	hand_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	hand_row.add_child(hand_box)
 
 	_build_floating_end_turn_button()
+	enemy_commander_hud = _build_enemy_commander_hud()
+	add_child(enemy_commander_hud)
+	_apply_enemy_commander_hud_rect(enemy_commander_hud)
 
 	history_panel = PanelContainer.new()
 	history_panel.name = "BattleLogHistoryPanel"
@@ -212,6 +251,7 @@ func _build_ui() -> void:
 	_build_preview_panel()
 	_build_necromancer_modal()
 	_build_pending_choice_modal()
+	_build_reward_modal()
 	_build_esc_menu()
 
 func _build_enemy_commander_hud() -> PanelContainer:
@@ -219,18 +259,20 @@ func _build_enemy_commander_hud() -> PanelContainer:
 	panel.name = "BattleEnemyCommanderHud"
 	panel.visible = false
 	panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	panel.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	panel.custom_minimum_size = _enemy_commander_hud_size()
 	panel.add_theme_stylebox_override("panel", _panel_style(Color(0.075, 0.035, 0.04, 0.70), Color(0.62, 0.28, 0.26, 0.82)))
 
 	var margin: MarginContainer = MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 10)
-	margin.add_theme_constant_override("margin_top", 4 if _is_compact_viewport() else 6)
-	margin.add_theme_constant_override("margin_right", 10)
-	margin.add_theme_constant_override("margin_bottom", 3 if _is_compact_viewport() else 5)
+	margin.add_theme_constant_override("margin_left", 8)
+	margin.add_theme_constant_override("margin_top", 4)
+	margin.add_theme_constant_override("margin_right", 8)
+	margin.add_theme_constant_override("margin_bottom", 4)
 	panel.add_child(margin)
 
 	var row: HBoxContainer = HBoxContainer.new()
 	row.name = "BattleEnemyCommanderRow"
-	row.add_theme_constant_override("separation", 8)
+	row.add_theme_constant_override("separation", 6 if _is_compact_viewport() else 8)
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	margin.add_child(row)
 
@@ -240,7 +282,7 @@ func _build_enemy_commander_hud() -> PanelContainer:
 	enemy_cardback_rail = Control.new()
 	enemy_cardback_rail.name = "BattleEnemyCardbackRail"
 	enemy_cardback_rail.clip_contents = true
-	enemy_cardback_rail.custom_minimum_size = Vector2(210, 32 if _is_compact_viewport() else 40)
+	enemy_cardback_rail.custom_minimum_size = Vector2(168 if _is_compact_viewport() else 196, 46 if _is_compact_viewport() else 56)
 	enemy_cardback_rail.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	row.add_child(enemy_cardback_rail)
 	return panel
@@ -249,6 +291,7 @@ func _build_player_hud_dock() -> PanelContainer:
 	var panel: PanelContainer = PanelContainer.new()
 	panel.name = "BattlePlayerHudDock"
 	panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	panel.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	panel.add_theme_stylebox_override("panel", _panel_style(Color(0.035, 0.045, 0.055, 0.74), Color(0.32, 0.50, 0.54, 0.82)))
 
 	var margin: MarginContainer = MarginContainer.new()
@@ -260,7 +303,7 @@ func _build_player_hud_dock() -> PanelContainer:
 
 	var row: HBoxContainer = HBoxContainer.new()
 	row.name = "BattlePlayerHudRow"
-	row.add_theme_constant_override("separation", 8)
+	row.add_theme_constant_override("separation", 5 if _is_compact_viewport() else 7)
 	margin.add_child(row)
 
 	row.add_child(_build_hud_stat("BattlePlayerHpStat", "HP", "BattlePlayerHpValue", UiTokens.color("hp_player", Color(0.42, 0.82, 0.48))))
@@ -278,15 +321,11 @@ func _build_player_hud_dock() -> PanelContainer:
 	class_active_tile.mouse_exited.connect(_hide_preview)
 	row.add_child(class_active_tile)
 
-	var spacer: Control = Control.new()
-	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(spacer)
-
 	var history_button: Button = Button.new()
 	history_button.name = "BattleLogHistoryButton"
 	history_button.text = "Log"
 	history_button.tooltip_text = "Abrir historico de combate"
-	history_button.custom_minimum_size = Vector2(54, 38)
+	history_button.custom_minimum_size = Vector2(48 if _is_compact_viewport() else 54, 36 if _is_compact_viewport() else 38)
 	history_button.pressed.connect(_toggle_history_log)
 	row.add_child(history_button)
 	return panel
@@ -294,7 +333,7 @@ func _build_player_hud_dock() -> PanelContainer:
 func _build_hud_stat(panel_name: String, caption: String, value_name: String, accent: Color) -> PanelContainer:
 	var panel: PanelContainer = PanelContainer.new()
 	panel.name = panel_name
-	panel.custom_minimum_size = Vector2(88 if _is_compact_viewport() else 104, 40 if _is_compact_viewport() else 48)
+	panel.custom_minimum_size = Vector2(76 if _is_compact_viewport() else 96, 38 if _is_compact_viewport() else 46)
 	panel.add_theme_stylebox_override("panel", _hud_stat_style(accent))
 
 	var box: VBoxContainer = VBoxContainer.new()
@@ -313,7 +352,7 @@ func _build_hud_stat(panel_name: String, caption: String, value_name: String, ac
 	value.name = value_name
 	value.text = "0"
 	value.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	value.add_theme_font_size_override("font_size", 18 if _is_compact_viewport() else 22)
+	value.add_theme_font_size_override("font_size", 17 if _is_compact_viewport() else 21)
 	value.add_theme_color_override("font_color", Color(0.98, 0.96, 0.88))
 	box.add_child(value)
 	if value_name == "BattlePlayerHpValue":
@@ -330,7 +369,7 @@ func _build_class_resource_chip() -> PanelContainer:
 	var panel: PanelContainer = PanelContainer.new()
 	panel.name = "BattleClassResourceChip"
 	panel.visible = false
-	panel.custom_minimum_size = Vector2(92 if _is_compact_viewport() else 116, 40 if _is_compact_viewport() else 48)
+	panel.custom_minimum_size = Vector2(82 if _is_compact_viewport() else 108, 38 if _is_compact_viewport() else 46)
 	panel.add_theme_stylebox_override("panel", _hud_stat_style(Color(0.64, 0.42, 0.86)))
 
 	var box: VBoxContainer = VBoxContainer.new()
@@ -350,7 +389,7 @@ func _build_class_resource_chip() -> PanelContainer:
 	class_resource_value.name = "BattleClassResourceValue"
 	class_resource_value.text = ""
 	class_resource_value.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	class_resource_value.add_theme_font_size_override("font_size", 18 if _is_compact_viewport() else 22)
+	class_resource_value.add_theme_font_size_override("font_size", 17 if _is_compact_viewport() else 21)
 	class_resource_value.add_theme_color_override("font_color", Color(0.98, 0.96, 0.88))
 	box.add_child(class_resource_value)
 	return panel
@@ -503,9 +542,7 @@ func _build_necromancer_modal() -> void:
 	necromancer_modal = PanelContainer.new()
 	necromancer_modal.name = "NecromancerChoiceModal"
 	necromancer_modal.visible = false
-	necromancer_modal.set_anchors_preset(Control.PRESET_CENTER)
-	necromancer_modal.position = Vector2(300, 130)
-	necromancer_modal.custom_minimum_size = Vector2(320, 0)
+	_apply_centered_modal_rect(necromancer_modal, _choice_modal_size())
 	necromancer_modal.add_theme_stylebox_override("panel", _panel_style(Color(0.1, 0.08, 0.12), Color(0.62, 0.42, 0.7)))
 	add_child(necromancer_modal)
 
@@ -516,18 +553,25 @@ func _build_necromancer_modal() -> void:
 	margin.add_theme_constant_override("margin_bottom", 10)
 	necromancer_modal.add_child(margin)
 
+	var scroll: ScrollContainer = ScrollContainer.new()
+	scroll.name = "NecromancerChoiceScroll"
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	margin.add_child(scroll)
+
 	necromancer_choices_box = VBoxContainer.new()
 	necromancer_choices_box.name = "NecromancerChoiceList"
+	necromancer_choices_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	necromancer_choices_box.add_theme_constant_override("separation", 7)
-	margin.add_child(necromancer_choices_box)
+	scroll.add_child(necromancer_choices_box)
 
 func _build_pending_choice_modal() -> void:
 	pending_choice_modal = PanelContainer.new()
 	pending_choice_modal.name = "PendingBattleChoiceModal"
 	pending_choice_modal.visible = false
-	pending_choice_modal.set_anchors_preset(Control.PRESET_CENTER)
-	pending_choice_modal.position = Vector2(300, 130)
-	pending_choice_modal.custom_minimum_size = Vector2(336, 0)
+	_apply_centered_modal_rect(pending_choice_modal, _choice_modal_size())
 	pending_choice_modal.add_theme_stylebox_override("panel", _panel_style(Color(0.08, 0.09, 0.1), Color(0.78, 0.62, 0.34)))
 	add_child(pending_choice_modal)
 
@@ -538,10 +582,71 @@ func _build_pending_choice_modal() -> void:
 	margin.add_theme_constant_override("margin_bottom", 10)
 	pending_choice_modal.add_child(margin)
 
+	var scroll: ScrollContainer = ScrollContainer.new()
+	scroll.name = "PendingBattleChoiceScroll"
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	margin.add_child(scroll)
+
 	pending_choice_box = VBoxContainer.new()
 	pending_choice_box.name = "PendingBattleChoiceList"
+	pending_choice_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	pending_choice_box.add_theme_constant_override("separation", 7)
-	margin.add_child(pending_choice_box)
+	scroll.add_child(pending_choice_box)
+
+func _build_reward_modal() -> void:
+	reward_modal = PanelContainer.new()
+	reward_modal.name = "BattleRewardModal"
+	reward_modal.visible = false
+	reward_modal.anchor_left = 0.5
+	reward_modal.anchor_top = 0.5
+	reward_modal.anchor_right = 0.5
+	reward_modal.anchor_bottom = 0.5
+	reward_modal.offset_left = -220.0
+	reward_modal.offset_top = -150.0
+	reward_modal.offset_right = 220.0
+	reward_modal.offset_bottom = 150.0
+	reward_modal.add_theme_stylebox_override("panel", _panel_style(Color(0.045, 0.052, 0.06, 0.96), Color(0.88, 0.70, 0.34, 0.95)))
+	add_child(reward_modal)
+
+	var margin: MarginContainer = MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 16)
+	margin.add_theme_constant_override("margin_top", 14)
+	margin.add_theme_constant_override("margin_right", 16)
+	margin.add_theme_constant_override("margin_bottom", 14)
+	reward_modal.add_child(margin)
+
+	var box: VBoxContainer = VBoxContainer.new()
+	box.add_theme_constant_override("separation", 10)
+	margin.add_child(box)
+
+	var title: Label = Label.new()
+	title.name = "BattleRewardTitle"
+	title.text = "Vitória"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 24)
+	title.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+	box.add_child(title)
+
+	reward_text_label = Label.new()
+	reward_text_label.name = "BattleRewardText"
+	reward_text_label.text = ""
+	reward_text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	reward_text_label.add_theme_font_size_override("font_size", 14)
+	reward_text_label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+	reward_text_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	box.add_child(reward_text_label)
+
+	var ok_button: Button = Button.new()
+	ok_button.name = "BattleRewardOkButton"
+	ok_button.text = "OK"
+	ok_button.custom_minimum_size = Vector2(0, 42)
+	ok_button.pressed.connect(func() -> void:
+		get_tree().change_scene_to_file("res://modes/run_map/run_map.tscn")
+	)
+	box.add_child(ok_button)
 
 func _refresh() -> void:
 	var state: Dictionary = engine.get_state()
@@ -549,6 +654,7 @@ func _refresh() -> void:
 	_refresh_enemy_commander_hud(state)
 	_refresh_objective_chip(state)
 	_rebuild_hero_targets(state)
+	_refresh_area_targets()
 	_rebuild_slots(enemy_slots_box, Array(state.get("enemy_slots", [])), BattleEngine.ENEMY_ID)
 	_rebuild_slots(player_slots_box, Array(state.get("player_slots", [])), BattleEngine.PLAYER_ID)
 	_rebuild_hand(Array(state.get("hand", [])))
@@ -628,11 +734,13 @@ func _rebuild_enemy_cardbacks(count: int) -> void:
 		return
 	for child: Node in enemy_cardback_rail.get_children():
 		child.queue_free()
+	var cardback_size: Vector2 = Vector2(30, 42) if _is_compact_viewport() else Vector2(36, 52)
+	var step_x: float = 22.0 if _is_compact_viewport() else 27.0
 	for index: int in range(count):
 		var cardback: PanelContainer = PanelContainer.new()
 		cardback.name = "BattleEnemyCardback%d" % index
-		cardback.custom_minimum_size = Vector2(42 if _is_compact_viewport() else 52, 64 if _is_compact_viewport() else 78)
-		cardback.position = Vector2(index * (28 if _is_compact_viewport() else 36), -32 if _is_compact_viewport() else -38)
+		cardback.custom_minimum_size = cardback_size
+		cardback.position = Vector2(index * step_x, 2.0)
 		cardback.add_theme_stylebox_override("panel", _cardback_style())
 		enemy_cardback_rail.add_child(cardback)
 
@@ -670,19 +778,38 @@ func _add_hero_target(owner_id: String, display_name: String, health: int) -> vo
 	hero_target.mouse_exited.connect(_hide_preview)
 	hero_targets_box.add_child(hero_target)
 
+func _refresh_area_targets() -> void:
+	if enemy_board_area_target == null:
+		return
+	var target: Dictionary = {"owner": BattleEngine.ENEMY_ID, "area": "board"}
+	var visual_state: Dictionary = {
+		"accepted_card_indices": _accepted_card_indices_for_target(target),
+		"board_table": true
+	}
+	var visible: bool = not Array(visual_state.get("accepted_card_indices", [])).is_empty()
+	enemy_board_area_target.setup("Mesa inimiga", "Solte spells de area aqui", target, visual_state)
+	enemy_board_area_target.visible = visible
+
 func _rebuild_slots(container: HBoxContainer, slots: Array, owner_id: String) -> void:
 	for child: Node in container.get_children():
 		child.queue_free()
+	var area_target: Dictionary = {"owner": BattleEngine.ENEMY_ID, "area": "board"}
+	var accepted_area_card_indices: Array[int] = []
+	if owner_id == BattleEngine.ENEMY_ID:
+		accepted_area_card_indices = _accepted_card_indices_for_target(area_target)
 	for index: int in range(slots.size()):
 		var target: Dictionary = {"owner": owner_id, "slot": index}
 		var visual_state: Dictionary = {
 			"label": "%s %d" % ["Jogador" if owner_id == BattleEngine.PLAYER_ID else "Inimigo", index + 1],
 			"is_empty": slots[index] == null,
 			"card_size": _field_card_size(),
+			"can_drag_unit": owner_id == BattleEngine.PLAYER_ID and slots[index] != null,
+			"accepted_move_sources": _accepted_move_sources_for_target(owner_id, index),
+			"accepted_area_card_indices": accepted_area_card_indices,
 			"accepted_card_indices": _accepted_card_indices_for_target(target),
 			"accepted_class_choices": _accepted_class_choices_for_target(target)
 		}
-		visual_state["is_drop_target"] = not Array(visual_state.get("accepted_card_indices", [])).is_empty() or not Array(visual_state.get("accepted_class_choices", [])).is_empty()
+		visual_state["is_drop_target"] = not Array(visual_state.get("accepted_card_indices", [])).is_empty() or not Array(visual_state.get("accepted_class_choices", [])).is_empty() or not Array(visual_state.get("accepted_move_sources", [])).is_empty() or not Array(visual_state.get("accepted_area_card_indices", [])).is_empty()
 		var slot_control: BattleSlotControl = BattleSlotControl.new()
 		slot_control.name = "%sSlot%d" % ["Player" if owner_id == BattleEngine.PLAYER_ID else "Enemy", index]
 		slot_control.setup(owner_id, index, slots[index], visual_state)
@@ -830,10 +957,13 @@ func _open_necromancer_modal() -> void:
 	_refresh_necromancer_modal()
 
 func _on_slot_target_dropped(data: Dictionary, owner: String, slot_index: int) -> void:
-	_resolve_drop(data, {"owner": owner, "slot": slot_index})
+	_resolve_drop(data, _slot_or_area_drop_target(data, owner, slot_index))
 
 func _on_hero_target_dropped(data: Dictionary, owner: String) -> void:
 	_resolve_drop(data, {"owner": owner, "hero": true})
+
+func _on_area_target_dropped(data: Dictionary, target: Dictionary) -> void:
+	_resolve_drop(data, target)
 
 func _resolve_drop(data: Dictionary, target: Dictionary) -> void:
 	match str(data.get("kind", "")):
@@ -842,14 +972,46 @@ func _resolve_drop(data: Dictionary, target: Dictionary) -> void:
 		"class_active":
 			engine.use_class_active(target, str(data.get("choice_id", "")))
 			selected_necromancer_choice_id = ""
+		"field_unit":
+			engine.move_unit(str(data.get("owner", BattleEngine.PLAYER_ID)), int(data.get("slot", -1)), int(target.get("slot", -1)))
 	selected_hand_index = -1
 	_hide_preview()
 	_after_battle_action()
 
+func _slot_or_area_drop_target(data: Dictionary, owner: String, slot_index: int) -> Dictionary:
+	var slot_target: Dictionary = {"owner": owner, "slot": slot_index}
+	if str(data.get("kind", "")) != "battle_card" or owner != BattleEngine.ENEMY_ID:
+		return slot_target
+	var hand_index: int = int(data.get("hand_index", -1))
+	var area_target: Dictionary = {"owner": BattleEngine.ENEMY_ID, "area": "board"}
+	if engine.can_play_card_on_target(hand_index, area_target) and not engine.can_play_card_on_target(hand_index, slot_target):
+		return area_target
+	return slot_target
+
 func _after_battle_action() -> void:
-	if engine.outcome == "vitoria":
-		RunSession.record_battle_result(RunSession.current_node_id, engine.outcome, engine.player_health)
+	if engine.outcome == "vitoria" and not victory_recorded:
+		victory_recorded = true
+		var reward_summary: Dictionary = RunSession.record_battle_result(RunSession.current_node_id, engine.outcome, engine.player_health)
+		SaveManager.save_current_run()
+		_show_reward_modal(reward_summary)
 	_refresh()
+
+func _show_reward_modal(summary: Dictionary) -> void:
+	if reward_modal == null or reward_text_label == null:
+		return
+	var lines: Array[String] = []
+	lines.append("Encontro concluído: %s" % str(summary.get("node_id", "")))
+	lines.append("Almas +%d" % int(summary.get("souls_gained", 0)))
+	var rewards: Array = Array(summary.get("automatic_rewards", []))
+	for reward_id: Variant in rewards:
+		lines.append(RunSession.automatic_reward_display_name(str(reward_id)))
+	var next_node_id: String = str(summary.get("next_node_id", ""))
+	if next_node_id == "":
+		lines.append("Rota concluída.")
+	else:
+		lines.append("Próximo: %s" % RunSession.current_node_display_name())
+	reward_text_label.text = "\n".join(lines)
+	reward_modal.visible = true
 
 func _accepted_card_indices_for_target(target: Dictionary) -> Array[int]:
 	var result: Array[int] = []
@@ -871,9 +1033,18 @@ func _accepted_class_choices_for_target(target: Dictionary) -> Array[String]:
 		result.append("")
 	return result
 
+func _accepted_move_sources_for_target(owner_id: String, slot_index: int) -> Array[int]:
+	var result: Array[int] = []
+	if owner_id != BattleEngine.PLAYER_ID:
+		return result
+	for source_index: int in range(engine.player_slots.size()):
+		if engine.can_move_unit(owner_id, source_index, slot_index):
+			result.append(source_index)
+	return result
+
 func _has_target(targets: Array[Dictionary], target: Dictionary) -> bool:
 	for option: Dictionary in targets:
-		if str(option.get("owner", "")) == str(target.get("owner", "")) and int(option.get("slot", -999)) == int(target.get("slot", -999)) and bool(option.get("hero", false)) == bool(target.get("hero", false)):
+		if str(option.get("owner", "")) == str(target.get("owner", "")) and int(option.get("slot", -999)) == int(target.get("slot", -999)) and bool(option.get("hero", false)) == bool(target.get("hero", false)) and str(option.get("area", "")) == str(target.get("area", "")):
 			return true
 	return false
 
@@ -1103,21 +1274,82 @@ func _panel_style(fill: Color, border: Color) -> StyleBoxFlat:
 func _is_compact_viewport() -> bool:
 	return get_viewport_rect().size.y <= 600.0
 
+func _uses_dense_battle_layout() -> bool:
+	var max_slots: int = maxi(engine.player_slots.size(), engine.enemy_slots.size())
+	var mode: String = str(engine.mode)
+	return _is_compact_viewport() \
+		or bool(engine.enemy_commander_enabled) \
+		or max_slots >= 4 \
+		or mode in [BattleEngine.MODE_DUEL, BattleEngine.MODE_SUMMONER_BOSS]
+
+func _battle_outer_margin_x() -> int:
+	return 8 if _is_compact_viewport() else 12
+
+func _battle_outer_margin_top() -> int:
+	if bool(engine.enemy_commander_enabled):
+		return 54 if _is_compact_viewport() else 66
+	return 6 if _is_compact_viewport() else 10
+
+func _battle_outer_margin_bottom() -> int:
+	return 5 if _is_compact_viewport() else 8
+
+func _enemy_commander_hud_size() -> Vector2:
+	return Vector2(390, 52) if _is_compact_viewport() else Vector2(450, 64)
+
+func _apply_enemy_commander_hud_rect(control: Control) -> void:
+	var hud_size: Vector2 = _enemy_commander_hud_size()
+	control.anchor_left = 0.5
+	control.anchor_top = 0.0
+	control.anchor_right = 0.5
+	control.anchor_bottom = 0.0
+	control.offset_left = -hud_size.x * 0.5
+	control.offset_top = 5.0 if _is_compact_viewport() else 8.0
+	control.offset_right = hud_size.x * 0.5
+	control.offset_bottom = control.offset_top + hud_size.y
+
+func _apply_area_target_overlay_rect(control: Control) -> void:
+	control.anchor_left = 0.09
+	control.anchor_top = 0.05
+	control.anchor_right = 0.91
+	control.anchor_bottom = 0.52
+	control.offset_left = 0.0
+	control.offset_top = 0.0
+	control.offset_right = 0.0
+	control.offset_bottom = 0.0
+
+func _choice_modal_size() -> Vector2:
+	return Vector2(380, 340) if _is_compact_viewport() else Vector2(480, 380)
+
+func _apply_centered_modal_rect(control: Control, modal_size: Vector2) -> void:
+	control.anchor_left = 0.5
+	control.anchor_top = 0.5
+	control.anchor_right = 0.5
+	control.anchor_bottom = 0.5
+	control.offset_left = -modal_size.x * 0.5
+	control.offset_top = -modal_size.y * 0.5
+	control.offset_right = modal_size.x * 0.5
+	control.offset_bottom = modal_size.y * 0.5
+	control.custom_minimum_size = modal_size
+
 func _field_card_size() -> Vector2:
 	if _is_compact_viewport():
-		return Vector2(76, 108)
-	return Vector2(112, 158)
+		return Vector2(70, 98) if _uses_dense_battle_layout() else Vector2(76, 108)
+	return Vector2(94, 132) if _uses_dense_battle_layout() else Vector2(112, 158)
 
 func _hand_card_size() -> Vector2:
 	if _is_compact_viewport():
-		return Vector2(94, 138)
-	return Vector2(126, 188)
+		return Vector2(82, 122) if _uses_dense_battle_layout() else Vector2(94, 138)
+	return Vector2(106, 156) if _uses_dense_battle_layout() else Vector2(126, 188)
 
 func _board_min_height() -> float:
-	return 230.0 if _is_compact_viewport() else 330.0
+	var card_height: float = _field_card_size().y
+	var chrome: float = 34.0 if _is_compact_viewport() else 42.0
+	return card_height * 2.0 + _board_center_space() + chrome
 
 func _board_center_space() -> float:
-	return 4.0 if _is_compact_viewport() else 16.0
+	if _is_compact_viewport():
+		return 2.0 if _uses_dense_battle_layout() else 4.0
+	return 6.0 if _uses_dense_battle_layout() else 16.0
 
 func _first_available_node_id() -> String:
 	for node: Dictionary in Array(ContentLibrary.get_run_map().get("nodes", [])):

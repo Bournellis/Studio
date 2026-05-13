@@ -1,7 +1,7 @@
 # Track 01 Current Status
 
 - Last Updated: `2026-05-13`
-- Status: `P05_REDRAWN_CARD_BATTLE_BASELINE_VALIDATED`
+- Status: `P09_BATTLE_HUD_LAYOUT_VALIDATED`
 - Scope: `First playable class and encounter slice after Track 00 checkpoint`
 
 ## Completed
@@ -36,12 +36,30 @@
 - Duel encounters now opt into `enemy_commander_enabled`, exposing enemy HP/mana HUD and partial mockup cardbacks while leaving enemy card AI out of scope.
 - VisualAssets now records provisional background/frame debt and only uses frame overlays when `overlay_safe` is true.
 - Screenshot capture tool generates ShipHub/RunMap/Battle screenshots at 1280x720 and 960x540 under `builds/`.
-- Validation green with 12/12 GUT tests and 114 asserts; 28 optional PNGs are reported missing by design.
+- Main menu is now the player entry surface with 3 save slots, Novo Jogo/Continuar/Deletar gating, delete confirmation, and `Draxos: Invasão Elemental` title.
+- `SaveManager` persists 3 local JSON slots under `user://`, with autosave outside battle and slot summaries showing class plus next map.
+- ShipHub now uses visual Deck/Mapa/Almas buttons, forced class-pick modal for new games, no run-state panel on the nave, and ESC menu for main menu/quit/cancel.
+- Deck and Almas are dedicated scenes; Deck shows grouped run cards plus upgrades, Almas offers paid healing at +5 HP for 10 souls, and both return to ShipHub on ESC.
+- RunMap keeps the current/next encounter selected, and Battle victory now shows a floating reward modal before returning to the map.
+- ESC handling in RunMap, Deck, Almas, ShipHub, and Battle now guards the viewport before marking input handled, preventing the null viewport crash seen in the map/deck/souls flows.
+- Deck now falls back to the selected class starter deck when the run snapshot has no `current_deck_ids`, and tests assert real `DeckCard_*` rows.
+- ShipHub now builds Deck/Mapa/Almas as transparent scene overlays positioned by `ship_overlays` in the visual manifest instead of framed UI buttons.
+- VisualAssets now reports non-fatal alpha debts for ship overlays that require real transparency.
+- ShipHub map and souls overlays have been repositioned toward the nave scene hotspots while deck remains class-driven on the right.
+- Battle choice modals for `Promover`, `Enfraquecer`, and Necromante choices are centered and scrollable for long option lists.
+- `Tempestade Arcana` now targets the enemy board as an area spell through the `BattleEnemyBoardAreaTarget` drop zone.
+- Allied creatures can move by drag to an adjacent empty allied slot once per turn, excluding defense objectives.
+- Duel enemies now use real enemy deck/hand/discard/mana state and can play multiple cards before combat resolution.
+- Defense and survive objectives now end early on victory when the enemy board is cleared.
+- `sobreviver_turnos_inicial`, `chefe_invocador`, and `chefe_summoner_final` start with stronger enemy boards; initial and elite duels have enemy decks.
+- Battle HUD now uses a compact dense-encounter composition: enemy commander info floats at the top, player HUD lives inside the hand band, cards shrink for duel/boss/4+ lane layouts, and enemy-board area targeting no longer consumes its own vertical row.
+- Enemy-board area targeting now renders as a large table under the enemy cards/slots, so area spells can target the table without blocking individual card/slot interaction.
+- Validation green with 35/35 GUT tests and 276 asserts; 33 optional PNGs and 4 non-fatal ship overlay alpha debts are reported by design.
 
 ## Current Risk
 
-The slice is mechanically playable but not balanced. The 10-map route still uses functional enemy mockups against newly redesigned player decks, several maps only grant souls, most card art is still absent, enemy cardback art is still pending, Invocador/Necromante frames are not alpha-safe overlays, backgrounds are accepted as provisional 16:9 `1456x816`, and final card/class naming still needs a dedicated content pass.
+The slice is mechanically playable but not fully balanced. The 10-map route now has stronger duel/survive/boss pressure, but encounter numbers still need playtest, several maps only grant souls, most card art is still absent, enemy cardback art is still pending, `Mapa.png` still has fake checkerboard/no alpha, class ship overlays and `NpcAlmas.png` are pending, Invocador/Necromante frames are not alpha-safe overlays, backgrounds are accepted as provisional 16:9 `1456x816`, and final card/class naming still needs a dedicated content pass.
 
 ## Next
 
-Playtest the redesigned 10-map route, tune enemy pressure against the new decks/mechanics, and distribute the remaining non-soul rewards.
+Playtest the reformed route and battle pressure, replace transparent ship overlay art for Mapa/Deck/Almas, then distribute the remaining non-soul rewards.
