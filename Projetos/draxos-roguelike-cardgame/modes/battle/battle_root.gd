@@ -64,26 +64,27 @@ func _build_ui() -> void:
 	var root_margin: MarginContainer = MarginContainer.new()
 	root_margin.name = "BattleLayout"
 	root_margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	root_margin.add_theme_constant_override("margin_left", 14)
-	root_margin.add_theme_constant_override("margin_top", 12)
-	root_margin.add_theme_constant_override("margin_right", 14)
-	root_margin.add_theme_constant_override("margin_bottom", 12)
+	root_margin.add_theme_constant_override("margin_left", 10 if _is_compact_viewport() else 14)
+	root_margin.add_theme_constant_override("margin_top", 6 if _is_compact_viewport() else 12)
+	root_margin.add_theme_constant_override("margin_right", 10 if _is_compact_viewport() else 14)
+	root_margin.add_theme_constant_override("margin_bottom", 6 if _is_compact_viewport() else 12)
 	add_child(root_margin)
 
 	var main_box: VBoxContainer = VBoxContainer.new()
-	main_box.add_theme_constant_override("separation", 7)
+	main_box.add_theme_constant_override("separation", 4 if _is_compact_viewport() else 7)
 	root_margin.add_child(main_box)
 
 	var status_panel: PanelContainer = PanelContainer.new()
 	status_panel.name = "BattleTopStatusBar"
+	status_panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	status_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.045, 0.055, 0.065, 0.62), VisualAssets.surface_accent_color("battle_board_background")))
 	main_box.add_child(status_panel)
 
 	var status_margin: MarginContainer = MarginContainer.new()
 	status_margin.add_theme_constant_override("margin_left", 10)
-	status_margin.add_theme_constant_override("margin_top", 6)
+	status_margin.add_theme_constant_override("margin_top", 4 if _is_compact_viewport() else 6)
 	status_margin.add_theme_constant_override("margin_right", 10)
-	status_margin.add_theme_constant_override("margin_bottom", 6)
+	status_margin.add_theme_constant_override("margin_bottom", 4 if _is_compact_viewport() else 6)
 	status_panel.add_child(status_margin)
 
 	status_label = Label.new()
@@ -110,21 +111,21 @@ func _build_ui() -> void:
 
 	var board_panel: PanelContainer = PanelContainer.new()
 	board_panel.name = "BattleBoardPanel"
-	board_panel.custom_minimum_size = Vector2(0, 180)
-	board_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	board_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.04, 0.045, 0.05, 0.34), VisualAssets.surface_accent_color("battle_board_background")))
+	board_panel.custom_minimum_size = Vector2(0, _board_min_height())
+	board_panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	board_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.035, 0.04, 0.045, 0.18), Color(0.48, 0.40, 0.34, 0.70)))
 	main_box.add_child(board_panel)
 
 	var board_margin: MarginContainer = MarginContainer.new()
-	board_margin.add_theme_constant_override("margin_left", 12)
-	board_margin.add_theme_constant_override("margin_top", 10)
-	board_margin.add_theme_constant_override("margin_right", 12)
-	board_margin.add_theme_constant_override("margin_bottom", 10)
+	board_margin.add_theme_constant_override("margin_left", 14)
+	board_margin.add_theme_constant_override("margin_top", 8)
+	board_margin.add_theme_constant_override("margin_right", 14)
+	board_margin.add_theme_constant_override("margin_bottom", 8)
 	board_panel.add_child(board_margin)
 
 	var board_box: VBoxContainer = VBoxContainer.new()
 	board_box.name = "BattleBoardRows"
-	board_box.add_theme_constant_override("separation", 8)
+	board_box.add_theme_constant_override("separation", 6)
 	board_box.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	board_margin.add_child(board_box)
 
@@ -132,21 +133,22 @@ func _build_ui() -> void:
 	board_box.add_child(enemy_slots_box)
 	var board_spacer: Control = Control.new()
 	board_spacer.name = "BattleBoardCenterSpace"
-	board_spacer.custom_minimum_size = Vector2(0, 12)
-	board_spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	board_spacer.custom_minimum_size = Vector2(0, _board_center_space())
+	board_spacer.size_flags_vertical = Control.SIZE_SHRINK_CENTER if _is_compact_viewport() else Control.SIZE_EXPAND_FILL
 	board_box.add_child(board_spacer)
 	board_box.add_child(player_slots_box)
 
 	var hand_panel: PanelContainer = PanelContainer.new()
 	hand_panel.name = "BattleHandPanel"
+	hand_panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	hand_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.035, 0.04, 0.045, 0.60), Color(0.30, 0.38, 0.42, 0.75)))
 	main_box.add_child(hand_panel)
 
 	var hand_margin: MarginContainer = MarginContainer.new()
 	hand_margin.add_theme_constant_override("margin_left", 8)
-	hand_margin.add_theme_constant_override("margin_top", 6)
+	hand_margin.add_theme_constant_override("margin_top", 4 if _is_compact_viewport() else 6)
 	hand_margin.add_theme_constant_override("margin_right", 8)
-	hand_margin.add_theme_constant_override("margin_bottom", 6)
+	hand_margin.add_theme_constant_override("margin_bottom", 4 if _is_compact_viewport() else 6)
 	hand_panel.add_child(hand_margin)
 
 	hand_box = HBoxContainer.new()
@@ -158,7 +160,8 @@ func _build_ui() -> void:
 	var actions: HBoxContainer = HBoxContainer.new()
 	actions.name = "BattleActions"
 	actions.add_theme_constant_override("separation", 8)
-	actions.custom_minimum_size = Vector2(0, 64)
+	actions.custom_minimum_size = Vector2(0, _actions_min_height())
+	actions.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	main_box.add_child(actions)
 
 	class_active_tile = BattleClassActiveTokenScript.new()
@@ -418,6 +421,7 @@ func _rebuild_slots(container: HBoxContainer, slots: Array, owner_id: String) ->
 		var visual_state: Dictionary = {
 			"label": "%s %d" % ["Jogador" if owner_id == BattleEngine.PLAYER_ID else "Inimigo", index + 1],
 			"is_empty": slots[index] == null,
+			"card_size": _field_card_size(),
 			"accepted_card_indices": _accepted_card_indices_for_target(target),
 			"accepted_class_choices": _accepted_class_choices_for_target(target)
 		}
@@ -442,7 +446,7 @@ func _rebuild_hand(hand: Array) -> void:
 		var card = ContentLibrary.get_card(card_id)
 		var token: BattleCardToken = BattleCardToken.new()
 		token.name = "BattleHandCard%d" % index
-		token.setup(card_id, index, engine.can_play_card(card), selected_hand_index == index)
+		token.setup(card_id, index, engine.can_play_card(card), selected_hand_index == index, _hand_card_size())
 		token.mouse_entered.connect(func() -> void:
 			_schedule_preview(_card_preview_data(card_id, {}))
 		)
@@ -609,11 +613,28 @@ func _card_preview_data(card_id: String, occupant: Dictionary) -> Dictionary:
 		body += "\n\n%s" % keyword_text
 	var state: String = ""
 	if not occupant.is_empty():
-		state = "Em campo: %d/%d" % [int(occupant.get("health", 0)), int(occupant.get("max_health", 0))]
+		var state_parts: Array[String] = []
+		var current_attack: int = int(occupant.get("attack", 0))
+		var current_health: int = int(occupant.get("health", 0))
+		var current_max_health: int = int(occupant.get("max_health", card.health))
+		if current_attack != int(card.attack):
+			state_parts.append("ATK atual %d (base %d)" % [current_attack, int(card.attack)])
+		else:
+			state_parts.append("ATK %d" % current_attack)
+		if current_health != int(card.health) or current_max_health != int(card.health):
+			state_parts.append("HP atual %d/%d (base %d)" % [current_health, current_max_health, int(card.health)])
+		else:
+			state_parts.append("HP %d/%d" % [current_health, current_max_health])
+		var temporary_attack: int = int(occupant.get("temporary_attack_bonus", 0))
+		if temporary_attack != 0:
+			state_parts.append("Bonus temporario +%d ATK" % temporary_attack)
 		if int(occupant.get("slow_turns", 0)) > 0:
-			state += " | Lentidao %d" % int(occupant.get("slow_turns", 0))
+			state_parts.append("Lentidao %d" % int(occupant.get("slow_turns", 0)))
 		if int(occupant.get("confusion_turns", 0)) > 0:
-			state += " | Confusao %d" % int(occupant.get("confusion_turns", 0))
+			state_parts.append("Confusao %d" % int(occupant.get("confusion_turns", 0)))
+		if bool(occupant.get("regeneracao", false)):
+			state_parts.append("Regeneracao")
+		state = " | ".join(state_parts)
 	return {"title": str(card.display_name), "subtitle": subtitle, "body": body, "state": state}
 
 func _slot_preview_data(owner_id: String, slot_index: int, occupant: Variant) -> Dictionary:
@@ -625,6 +646,13 @@ func _slot_preview_data(owner_id: String, slot_index: int, occupant: Variant) ->
 			"state": ""
 		}
 	var data: Dictionary = Dictionary(occupant)
+	if str(data.get("card_id", "")) == "" and bool(data.get("objective", false)):
+		return {
+			"title": str(data.get("name", "Objetivo de Defesa")),
+			"subtitle": "Objetivo de defesa",
+			"body": "Proteja este slot ate o objetivo do encontro ser concluido.",
+			"state": "ATK %d | HP %d/%d" % [int(data.get("attack", 0)), int(data.get("health", 0)), int(data.get("max_health", data.get("health", 0)))]
+		}
 	return _card_preview_data(str(data.get("card_id", "")), data)
 
 func _hero_preview_data(owner_id: String, display_name: String, health: int) -> Dictionary:
@@ -706,6 +734,28 @@ func _panel_style(fill: Color, border: Color) -> StyleBoxFlat:
 	style.content_margin_right = 6
 	style.content_margin_bottom = 6
 	return style
+
+func _is_compact_viewport() -> bool:
+	return get_viewport_rect().size.y <= 600.0
+
+func _field_card_size() -> Vector2:
+	if _is_compact_viewport():
+		return Vector2(76, 108)
+	return Vector2(112, 158)
+
+func _hand_card_size() -> Vector2:
+	if _is_compact_viewport():
+		return Vector2(94, 138)
+	return Vector2(126, 188)
+
+func _board_min_height() -> float:
+	return 230.0 if _is_compact_viewport() else 330.0
+
+func _board_center_space() -> float:
+	return 4.0 if _is_compact_viewport() else 16.0
+
+func _actions_min_height() -> float:
+	return 46.0 if _is_compact_viewport() else 58.0
 
 func _first_available_node_id() -> String:
 	for node: Dictionary in Array(ContentLibrary.get_run_map().get("nodes", [])):

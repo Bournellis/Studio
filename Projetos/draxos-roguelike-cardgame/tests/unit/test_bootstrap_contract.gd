@@ -598,6 +598,10 @@ func test_battle_scene_passes_run_class_to_engine() -> void:
 	assert_not_null(battle.find_child("BattleHandCard0", true, false))
 	assert_not_null(battle.find_child("PlayerSlot0", true, false))
 	assert_not_null(battle.find_child("EnemySlot0", true, false))
+	assert_not_null(battle.find_child("FieldCardArtArea", true, false))
+	assert_not_null(battle.find_child("FieldCardCost", true, false))
+	assert_not_null(battle.find_child("FieldCardAttack", true, false))
+	assert_not_null(battle.find_child("FieldCardHealth", true, false))
 	assert_not_null(battle.find_child("BattleCardPreview", true, false))
 	assert_not_null(battle.find_child("BattleLogTicker", true, false))
 	assert_not_null(battle.find_child("BattleLogHistoryButton", true, false))
@@ -613,6 +617,9 @@ func test_battle_card_token_uses_portrait_visual_contract() -> void:
 	assert_eq(token.custom_minimum_size, Vector2(126, 188))
 	assert_not_null(token.find_child("BattleCardArtArea", true, false))
 	assert_not_null(token.find_child("BattleCardCost", true, false))
+	assert_eq(token.find_child("BattleCardCost", true, false).text, "1")
+	assert_null(token.find_child("BattleCardAttack", true, false))
+	assert_null(token.find_child("BattleCardHealth", true, false))
 	assert_not_null(token.find_child("BattleCardRulesText", true, false))
 	assert_not_null(token.find_child("BattleCardFrameOverlay", true, false))
 	assert_string_contains(token.find_child("BattleCardRulesText", true, false).text, "Causa 1 de dano")
@@ -624,7 +631,58 @@ func test_battle_card_token_uses_portrait_visual_contract() -> void:
 	add_child(unsafe_token)
 	await get_tree().process_frame
 	assert_null(unsafe_token.find_child("BattleCardFrameOverlay", true, false))
+	assert_eq(unsafe_token.find_child("BattleCardCost", true, false).text, "1")
+	assert_eq(unsafe_token.find_child("BattleCardAttack", true, false).text, "1")
+	assert_eq(unsafe_token.find_child("BattleCardHealth", true, false).text, "4")
 	unsafe_token.queue_free()
+	await get_tree().process_frame
+
+func test_battle_slot_control_renders_field_card_with_current_floating_values() -> void:
+	var slot: BattleSlotControl = BattleSlotControl.new()
+	slot.setup(BattleEngine.PLAYER_ID, 0, {
+		"owner": BattleEngine.PLAYER_ID,
+		"card_id": "invocador_protecao",
+		"name": "Guarda Vinculado",
+		"attack": 5,
+		"health": 2,
+		"max_health": 5,
+		"ready": true,
+		"keywords": ["iniciativa"],
+		"iniciativa": true,
+		"regeneracao": false,
+		"slow_turns": 0,
+		"confusion_turns": 0,
+		"temporary_attack_bonus": 3
+	}, {"is_empty": false})
+	add_child(slot)
+	await get_tree().process_frame
+	assert_not_null(slot.find_child("FieldCardArtArea", true, false))
+	assert_eq(slot.find_child("FieldCardCost", true, false).text, "1")
+	assert_eq(slot.find_child("FieldCardAttack", true, false).text, "5")
+	assert_eq(slot.find_child("FieldCardHealth", true, false).text, "2")
+	slot.queue_free()
+	await get_tree().process_frame
+
+func test_battle_slot_control_renders_defense_objective_as_card_socket() -> void:
+	var slot: BattleSlotControl = BattleSlotControl.new()
+	slot.setup(BattleEngine.PLAYER_ID, 1, {
+		"owner": BattleEngine.PLAYER_ID,
+		"card_id": "",
+		"name": "Objetivo de Defesa",
+		"attack": 0,
+		"health": 7,
+		"max_health": 10,
+		"ready": false,
+		"keywords": [],
+		"objective": true
+	}, {"is_empty": false})
+	add_child(slot)
+	await get_tree().process_frame
+	assert_not_null(slot.find_child("FieldObjectiveLabel", true, false))
+	assert_eq(slot.find_child("FieldCardAttack", true, false).text, "0")
+	assert_eq(slot.find_child("FieldCardHealth", true, false).text, "7")
+	assert_null(slot.find_child("FieldCardCost", true, false))
+	slot.queue_free()
 	await get_tree().process_frame
 
 func test_battle_scene_drop_plays_cards_on_explicit_slots() -> void:
@@ -673,6 +731,27 @@ func test_battle_scene_preview_receives_full_card_data() -> void:
 	assert_true(battle.find_child("BattleCardPreview", true, false).visible)
 	assert_eq(battle.find_child("BattleCardPreviewTitle", true, false).text, "Pulso de Fluxo")
 	assert_string_contains(battle.find_child("BattleCardPreviewBody", true, false).text, "Causa 1 de dano")
+	battle.queue_free()
+	await get_tree().process_frame
+
+func test_battle_scene_field_preview_reports_current_stats_against_base() -> void:
+	_start_run()
+	RunSession.select_node("n01_pouso_elemental")
+	var battle = await _instantiate_scene("res://modes/battle/battle.tscn")
+	var preview: Dictionary = battle._card_preview_data("invocador_protecao", {
+		"card_id": "invocador_protecao",
+		"attack": 5,
+		"health": 2,
+		"max_health": 5,
+		"temporary_attack_bonus": 3,
+		"slow_turns": 1,
+		"confusion_turns": 0,
+		"regeneracao": false
+	})
+	assert_string_contains(str(preview.get("state", "")), "ATK atual 5 (base 1)")
+	assert_string_contains(str(preview.get("state", "")), "HP atual 2/5 (base 4)")
+	assert_string_contains(str(preview.get("state", "")), "Bonus temporario +3 ATK")
+	assert_string_contains(str(preview.get("state", "")), "Lentidao 1")
 	battle.queue_free()
 	await get_tree().process_frame
 

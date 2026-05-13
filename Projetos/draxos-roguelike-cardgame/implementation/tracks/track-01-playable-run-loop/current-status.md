@@ -25,14 +25,16 @@
 - Visual support V1 adds `VisualAssets`, `data/definitions/visual_assets.json`, optional PNG fallback reporting, asset READMEs, and an AI art guide.
 - ShipHub, RunMap, and Battle now have visual background slots with themed fallbacks.
 - RunMap now presents the route as visual markers positioned by the visual manifest.
-- Battle cards now use a portrait visual contract with image area, frame slot, text area, cost, ATK, and HP rendered by UI.
+- Battle cards now use a portrait visual contract with image area, frame slot, text area, and floating base mana/ATK/HP badges; spells show only the floating mana badge.
+- Battle field slots now render compact card-shaped sockets; occupied slots show card art/fallbacks with floating base mana cost, current ATK, and current HP from `BattleEngine`.
+- Battle field previews now call out current stats against base card stats when buffs, damage, debuffs, regeneration, or reanimation alter the occupant.
 - Card text supports simple visual templates backed by mechanical values for obvious current cards.
 - ShipHub now uses 4 primary scene hotspots for Comando, Mapa, Deck, and Almas instead of the previous large grid.
 - RunMap now draws route connections directly over the planet background with compact node labels.
 - Battle now uses a classic cardgame table layout with compact top status, fixed hand area, hover/click detail previews, and a ticker-style combat log.
 - VisualAssets now records provisional background/frame debt and only uses frame overlays when `overlay_safe` is true.
 - Screenshot capture tool generates ShipHub/RunMap/Battle screenshots at 1280x720 and 960x540 under `builds/`.
-- Validation green with 41/41 GUT tests and 351 asserts; 37 PNGs are reported missing by design.
+- Validation green with 44/44 GUT tests and 376 asserts; 37 PNGs are reported missing by design.
 
 ## Current Risk
 
