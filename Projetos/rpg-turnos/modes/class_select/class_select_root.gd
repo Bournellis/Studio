@@ -74,7 +74,7 @@ func _build_class_card(class_def: Dictionary) -> PanelContainer:
 	panel.add_theme_stylebox_override("panel", _card_style(false))
 
 	var box: VBoxContainer = VBoxContainer.new()
-	box.alignment = BoxContainer.ALIGNMENT_TOP
+	box.alignment = BoxContainer.ALIGNMENT_BEGIN
 	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	box.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	box.add_theme_constant_override("separation", 12)
@@ -169,4 +169,4 @@ func _card_style(selected: bool) -> StyleBoxFlat:
 	style.content_margin_top = 18
 	style.content_margin_right = 18
 	style.content_margin_bottom = 18
-	return style
+	return styl
