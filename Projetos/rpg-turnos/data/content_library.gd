@@ -98,14 +98,16 @@ func get_class_hero_power(class_id: String) -> Dictionary:
 		return {}
 	return Dictionary(hero_power).duplicate(true)
 
+func get_all_encounters() -> Array:
+	var catalog = ensure_loaded()
+	if catalog == null:
+		return []
+	return Array(catalog.encounters).duplicate(true)
+
 func get_class_starter_deck_ids(class_id: String) -> Array:
 	var class_data: Dictionary = get_class_definition(class_id)
 	var starter_deck: Variant = class_data.get("starter_deck", [])
 	if not starter_deck is Array:
 		return []
 	var result: Array = []
-	for card_id: Variant in starter_deck:
-		var normalized_id: String = str(card_id)
-		if normalized_id != "":
-			result.append(normalized_id)
-	return result
+	for

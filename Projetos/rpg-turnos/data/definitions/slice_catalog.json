@@ -2315,7 +2315,7 @@
       "mission": "Avançar pela fortaleza do desfiladeiro. A sentinela no alto cobre toda a aproximacao — neutraliza-la abre a rota para a zona interna.",
       "mode": "limpar_mesa",
       "board_id": "muralha_desfiladeiro",
-      "notes": "ET (alto) atira em todo o lado do jogador via alcance. P1/P3 cobertura reduz dano de ET em 1. EB1/EB2 vazios. Jogador precisa furar a frente E1-E3 (fallback_slots) ou usar alcance/voadora para atingir ET diretamente.",
+      "notes": "ET (alto) atira em todo o lado do jogador via alcance. P1/P3 cobertura reduz dano de ET em 1. EB1/EB2 vazios. Jogador precisa furar a frente E1-E3 (fallback_slots) ou usar alcance/voadora para atingir ET diretamente. Pressao Invocador: atirador_torre no slot alto aplica dano constante ao campo aliado a cada turno, destruindo criaturas buffadas antes de acumularem valor de ataque.",
       "starting_enemy_slots": [
         {
           "slot": 0,
@@ -2337,6 +2337,9 @@
       "reward_cards": [
         "dragao_jovem",
         "chamado_hostes"
+      ],
+      "class_pressure": [
+        "invocador"
       ]
     },
     {
@@ -2345,7 +2348,7 @@
       "mission": "Patrulha de reconhecimento avancado. Tres palavras-chave simultaneas exigem respostas variadas antes de prosseguir a incursao.",
       "mode": "limpar_mesa",
       "board_id": "ponte_estavel",
-      "notes": "E1 (atropelar 4/2): ameaca agressiva. E2 (voadora+rapido): imune a fisico_melee, entra pronto. E3 (alcance): pressao a distancia. Encontro de transicao entre duelo e boards complexos, com tres keywords simultaneamente num board familiar.",
+      "notes": "E1 (atropelar 4/2): ameaca agressiva. E2 (voadora+rapido): imune a fisico_melee, entra pronto. E3 (alcance): pressao a distancia. Encontro de transicao entre duelo e boards complexos, com tres keywords simultaneamente num board familiar. Pressao Invocador: lobo_alfa com atropelar e corvo_batedor com voadora+rapido exigem resposta imediata antes que o Invocador estabeleca campo dominante.",
       "starting_enemy_slots": [
         {
           "slot": 0,
@@ -2360,7 +2363,10 @@
           "card_id": "arqueiro_ponte"
         }
       ],
-      "reward_cards": []
+      "reward_cards": [],
+      "class_pressure": [
+        "invocador"
+      ]
     },
     {
       "id": "duelista_sombrio",
@@ -2368,7 +2374,7 @@
       "mission": "Segundo guardiao elemental — mais experiente e com finalizador vulcanico. O slot central disputado e decisivo para controlar rotas de ataque.",
       "mode": "duelo",
       "board_id": "cruzamento_neutro",
-      "notes": "Segundo duelo no conduto. N1 disputado: quem controlar o slot central tem rotas adicionais. P2 (alto) alvo de sentinela inimiga. E3 (queimando): inimigo precisa mover criaturas de la ou toma 1/turno. Deck mais pesado com finalizador vulcanico.",
+      "notes": "Segundo duelo no conduto. N1 disputado: quem controlar o slot central tem rotas adicionais. P2 (alto) alvo de sentinela inimiga. E3 (queimando): inimigo precisa mover criaturas de la ou toma 1/turno. Deck mais pesado com finalizador vulcanico. Pressao Arcano: deck com multiplos corvo_batedor (voadora+rapido) e atirador_torre forca o Arcano a usar remocao em vez de construir sequencias de Fluxo.",
       "enemy_deck": [
         "goblin_ponte",
         "goblin_ponte",
@@ -2394,6 +2400,9 @@
       "starting_enemy_slots": [],
       "reward_cards": [
         "campeao_guilda"
+      ],
+      "class_pressure": [
+        "arcano"
       ]
     },
     {
@@ -2425,14 +2434,14 @@
       "mission": "Contra-ataque elemental em ondas coordenadas. Repelir os dois grupos de assalto consolida o avanco na zona intermediaria.",
       "mode": "ondas",
       "board_id": "ponte_estavel",
-      "notes": "Primeiro encontro do modo ondas. Duas ondas no board mais familiar. Onda 1: pressao leve, permite aquecer. Onda 2: composicao mais pesada com voadora e atropelar. HP do heroi, estado do deck e rampa de energia persistem entre ondas. Proximo turno apos limpar onda 1: spawn da onda 2.",
+      "notes": "Primeiro encontro do modo ondas. Duas ondas no board mais familiar. Onda 1: pressao leve, permite aquecer. Onda 2: composicao mais pesada com voadora e atropelar. HP do heroi, estado do deck e rampa de energia persistem entre ondas. Proximo turno apos limpar onda 1: spawn da onda 2. Pressao Arcano: dois ladrao_rapido na onda 1 forcam gasto de energia em respostas imediatas antes de qualquer sequencia de Fluxo.",
       "waves": [
         {
           "wave_number": 1,
           "starting_enemy_slots": [
             {
               "slot": 0,
-              "card_id": "goblin_ponte"
+              "card_id": "ladrao_rapido"
             },
             {
               "slot": 1,
@@ -2464,6 +2473,9 @@
       ],
       "reward_cards": [
         "chuva_brasas"
+      ],
+      "class_pressure": [
+        "arcano"
       ]
     },
     {
@@ -2473,11 +2485,11 @@
       "mode": "defesa",
       "board_id": "muralha_desfiladeiro",
       "defense_turn_limit": 2,
-      "notes": "Primeiro encontro do modo defesa. O objetivo e sobreviver a dois turnos inimigos completos, sem heroi inimigo e sem vitoria automatica por limpar a mesa. O jogador conserva o fluxo normal de mao, deck e energia enquanto segura a pressao inicial.",
+      "notes": "Primeiro encontro do modo defesa. O objetivo e sobreviver a dois turnos inimigos completos, sem heroi inimigo e sem vitoria automatica por limpar a mesa. O jogador conserva o fluxo normal de mao, deck e energia enquanto segura a pressao inicial. Pressao Invocador: lobo_alfa com atropelar destroi criaturas buffadas no campo e causa dano excedente ao heroi; o modo defesa impede o Invocador de construir campo antes de ser alcancado.",
       "starting_enemy_slots": [
         {
           "slot": 0,
-          "card_id": "goblin_ponte"
+          "card_id": "lobo_alfa"
         },
         {
           "slot": 2,
@@ -2490,6 +2502,9 @@
       ],
       "reward_cards": [
         "guardiao_portal"
+      ],
+      "class_pressure": [
+        "invocador"
       ]
     },
     {
@@ -2503,7 +2518,7 @@
         2,
         5
       ],
-      "notes": "Primeiro encontro do modo chefe_multiparte. O objetivo e destruir as partes marcadas do chefe: E1, E3 e ET. Suportes inimigos podem permanecer vivos; a vitoria nao exige limpar toda a mesa.",
+      "notes": "Primeiro encontro do modo chefe_multiparte. O objetivo e destruir as partes marcadas do chefe: E1, E3 e ET. Suportes inimigos podem permanecer vivos; a vitoria nao exige limpar toda a mesa. Pressao Necromante: partes do chefe precisam ser destruidas em ordem especifica; suportes de HP alto reduzem a eficiencia de geracao de Cinzas por combate.",
       "starting_enemy_slots": [
         {
           "slot": 0,
@@ -2524,6 +2539,9 @@
       ],
       "reward_cards": [
         "campeao_guilda"
+      ],
+      "class_pressure": [
+        "necromante"
       ]
     },
     {
@@ -2537,7 +2555,7 @@
         2
       ],
       "puzzle_turn_limit": 2,
-      "notes": "Primeiro encontro do modo quebra_cabeca. O objetivo e limpar os alvos E1 e E3 em ate dois turnos do jogador. O suporte em E2 pode permanecer vivo; a vitoria nao exige limpar toda a mesa.",
+      "notes": "Primeiro encontro do modo quebra_cabeca. O objetivo e limpar os alvos E1 e E3 em ate dois turnos do jogador. O suporte em E2 pode permanecer vivo; a vitoria nao exige limpar toda a mesa. Pressao Necromante: limite de 2 turnos impede acumulo de Cinzas para Degrau III; barricada e guardiao_portal tem HP alto com ataque baixo ou zero, reduzindo o fluxo de Cinzas geradas por combate.",
       "starting_enemy_slots": [
         {
           "slot": 0,
@@ -2554,6 +2572,9 @@
       ],
       "reward_cards": [
         "flagelo"
+      ],
+      "class_pressure": [
+        "necromante"
       ]
     }
   ],

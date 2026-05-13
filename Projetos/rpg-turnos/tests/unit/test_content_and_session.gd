@@ -452,6 +452,91 @@ func test_necromante_class_passiva_id_is_colheita_sombria() -> void:
 	assert_eq(str(passiva.get("id", "")), "colheita_sombria",
 		"Necromante passiva id must be 'colheita_sombria'.")
 
+## P18 — Encounter Design Pass: class_pressure catalog tests
+
+func test_invocador_pressure_encounter_exists() -> void:
+	var encounters: Array = ContentLibrary.get_all_encounters()
+	var found: bool = false
+	for enc in encounters:
+		var d: Dictionary = Dictionary(enc)
+		var pressure: Array = Array(d.get("class_pressure", []))
+		if pressure.has("invocador"):
+			found = true
+			break
+	assert_true(found, "At least one encounter must have class_pressure containing 'invocador'.")
+
+func test_arcano_pressure_encounter_exists() -> void:
+	var encounters: Array = ContentLibrary.get_all_encounters()
+	var found: bool = false
+	for enc in encounters:
+		var d: Dictionary = Dictionary(enc)
+		var pressure: Array = Array(d.get("class_pressure", []))
+		if pressure.has("arcano"):
+			found = true
+			break
+	assert_true(found, "At least one encounter must have class_pressure containing 'arcano'.")
+
+func test_necromante_pressure_encounter_exists() -> void:
+	var encounters: Array = ContentLibrary.get_all_encounters()
+	var found: bool = false
+	for enc in encounters:
+		var d: Dictionary = Dictionary(enc)
+		var pressure: Array = Array(d.get("class_pressure", []))
+		if pressure.has("necromante"):
+			found = true
+			break
+	assert_true(found, "At least one encounter must have class_pressure containing 'necromante'.")
+
+func test_each_class_has_at_least_one_pressure_encounter() -> void:
+	var encounters: Array = ContentLibrary.get_all_encounters()
+	var classes_found: Dictionary = {"invocador": false, "arcano": false, "necromante": false}
+	for enc in encounters:
+		var d: Dictionary = Dictionary(enc)
+		var pressure: Array = Array(d.get("class_pressure", []))
+		for cls_id in classes_found.keys():
+			if pressure.has(cls_id):
+				classes_found[cls_id] = true
+	for cls_id in classes_found.keys():
+		assert_true(classes_found[cls_id],
+			"Class '%s' must have at least one encounter with matching class_pressure." % cls_id)
+
+func test_defesa_do_portao_has_lobo_alfa_in_starting_slots() -> void:
+	var encounters: Array = ContentLibrary.get_all_encounters()
+	var enc: Dictionary = {}
+	for e in encounters:
+		if str(Dictionary(e).get("id", "")) == "defesa_do_portao":
+			enc = Dictionary(e)
+			break
+	assert_false(enc.is_empty(), "defesa_do_portao encounter must exist in catalog.")
+	var slots: Array = Array(enc.get("starting_enemy_slots", []))
+	assert_true(slots.size() > 0, "defesa_do_portao must have starting_enemy_slots.")
+	var found_lobo: bool = false
+	for s in slots:
+		if str(Dictionary(s).get("card_id", "")) == "lobo_alfa":
+			found_lobo = true
+			break
+	assert_true(found_lobo,
+		"defesa_do_portao starting_enemy_slots must include lobo_alfa (atropelar pressure on Invocador).")
+
+func test_invasao_em_ondas_wave1_has_two_ladrao_rapido() -> void:
+	var encounters: Array = ContentLibrary.get_all_encounters()
+	var enc: Dictionary = {}
+	for e in encounters:
+		if str(Dictionary(e).get("id", "")) == "invasao_em_ondas":
+			enc = Dictionary(e)
+			break
+	assert_false(enc.is_empty(), "invasao_em_ondas encounter must exist in catalog.")
+	var waves: Array = Array(enc.get("waves", []))
+	assert_true(waves.size() >= 1, "invasao_em_ondas must have at least one wave.")
+	var wave1: Dictionary = Dictionary(waves[0])
+	var wave1_slots: Array = Array(wave1.get("starting_enemy_slots", []))
+	var rapido_count: int = 0
+	for slot in wave1_slots:
+		if str(Dictionary(slot).get("card_id", "")) == "ladrao_rapido":
+			rapido_count += 1
+	assert_eq(rapido_count, 2,
+		"invasao_em_ondas wave 1 must have exactly 2 ladrao_rapido (Arcano Fluxo sequencing pressure).")
+
 func _delete_test_save() -> void:
 	if not FileAccess.file_exists(TEST_SAVE_PATH):
 		return

@@ -37,9 +37,9 @@ It defines execution order only.
 
 ## Current Execution Cursor
 
-Next prompt: `P18 - Encounter Design Pass`.
+Next prompt: `P19 - New Content Expansion Cluster`.
 
-Current focus: RPG progression layer added — operacao_rank (Recruta/Agente/Operativo/Comandante) with save/load, 3 rank-gated side encounters on map, NPC dialogue references rank. Next work is encounter pressure per class weakness.
+Current focus: Encounter design pass complete — `class_pressure` field added to 7 encounters covering all 3 class weaknesses; `lobo_alfa` placed in `defesa_do_portao` (Invocador atropelar pressure); double `ladrao_rapido` in `invasao_em_ondas` wave 1 (Arcano Fluxo sequencing pressure); `enigma_da_ponte` tagged for Necromante Cinzas accumulation. `ContentLibrary.get_all_encounters()` added. 6 new P18 catalog tests added. Next work is new content expansion using existing modes.
 
 ## Linear Prompt Sequence
 
@@ -63,7 +63,7 @@ Current focus: RPG progression layer added — operacao_rank (Recruta/Agente/Ope
 | P15 | complete | UI/readability design pass: define and implement minimum playable presentation improvement. | Run validation |
 | P16 | complete | Campaign content alignment: mission chain, rewards meaning, class-facing text. | Documentation + data only |
 | P17 | complete | RPG progression slice: rank/status state and gated dialogue/mission access. | Run validation |
-| P18 | pending | Encounter design pass: one pressure test per class weakness. | Run validation |
+| P18 | complete | Encounter design pass: one pressure test per class weakness. | Run validation |
 | P19 | pending | New content expansion cluster using existing modes. | Run validation |
 | P20 | pending | Technical ID and asset migration, with save migration coverage. | Run validation |
 
@@ -408,14 +408,4 @@ Every implementation prompt must leave the following record trail:
 - `current-status.md`: Track 02 local status and next action.
 - `implementation-plan.md`: only if the stage-level plan changes.
 - `../../../../../08_Coordenacao_Agentes/Estado_Atual.md`: only if studio snapshot changes.
-- Kanban: update the active Doing card or move it when a larger milestone closes.
-
-## Current Blockers
-
-- None for P18.
-
-Known future dependencies:
-
-- P06 depends on P01-P05.
-- P08-P13 depend on the class selection and class starter deck plumbing.
-- P16 should wait until at le
+- Kanban: update th
