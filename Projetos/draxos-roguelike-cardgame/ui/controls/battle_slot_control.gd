@@ -39,6 +39,7 @@ func _rebuild() -> void:
 		_build_empty_socket(content)
 	else:
 		_build_field_card(content, Dictionary(occupant))
+	_make_children_mouse_transparent(self)
 
 func _build_empty_socket(parent: Control) -> void:
 	var center: VBoxContainer = VBoxContainer.new()
@@ -178,6 +179,13 @@ func _anchor_badge(badge: Control, anchor_x: float, anchor_y: float, top_left: V
 	badge.offset_top = top_left.y
 	badge.offset_right = bottom_right.x
 	badge.offset_bottom = bottom_right.y
+
+func _make_children_mouse_transparent(root: Node) -> void:
+	for child: Node in root.get_children():
+		if child is Control:
+			var control: Control = child
+			control.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_make_children_mouse_transparent(child)
 
 func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 	if typeof(data) != TYPE_DICTIONARY:
