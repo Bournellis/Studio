@@ -1,6 +1,6 @@
 # Track 02 Current Status
 
-- Last Updated: `2026-05-13` (P16 complete)
+- Last Updated: `2026-05-13` (P17 complete)
 - Status: `ACTIVE_LINEAR_PLAN`
 - Track Name: `Track 02 - Draxos Lore And Progression Alignment`
 

@@ -21,6 +21,7 @@ var last_reward_card_ids: Array = []
 var last_battle_result: String = ""
 var last_battle_summary: String = ""
 var selected_class: String = ""
+var operacao_rank: int = 0
 
 var _pre_combat_snapshot: Dictionary = {}
 
@@ -38,6 +39,7 @@ func start_new_game() -> void:
 	last_battle_result = ""
 	last_battle_summary = ""
 	selected_class = ""
+	operacao_rank = 0
 	_pre_combat_snapshot = {}
 
 func build_save_data() -> Dictionary:
@@ -50,7 +52,8 @@ func build_save_data() -> Dictionary:
 		"completed_encounter_ids": _string_array(completed_encounter_ids),
 		"claimed_encounter_reward_ids": _string_array(claimed_encounter_reward_ids),
 		"npc_reward_index": npc_reward_index,
-		"selected_class": selected_class
+		"selected_class": selected_class,
+		"operacao_rank": operacao_rank
 	}
 
 func apply_save_data(save_data: Dictionary) -> bool:
@@ -77,6 +80,9 @@ func apply_save_data(save_data: Dictionary) -> bool:
 		selected_class = raw_class
 	else:
 		selected_class = ""
+	# operacao_rank is optional — old saves without it default to 0 (Recruta)
+	var raw_rank: int = int(save_data.get("operacao_rank", 0))
+	operacao_rank = clampi(raw_rank, 0, 3)
 	last_reward_card_ids = []
 	last_battle_result = ""
 	last_battle_summary = ""
@@ -185,7 +191,8 @@ func capture_pre_combat_snapshot() -> void:
 		"claimed_encounter_reward_ids": claimed_encounter_reward_ids.duplicate(),
 		"npc_reward_index": npc_reward_index,
 		"last_reward_card_ids": last_reward_card_ids.duplicate(),
-		"selected_class": selected_class
+		"selected_class": selected_class,
+		"operacao_rank": operacao_rank
 	}
 
 func restore_pre_combat_snapshot() -> void:
@@ -201,6 +208,7 @@ func restore_pre_combat_snapshot() -> void:
 	npc_reward_index = int(_pre_combat_snapshot.get("npc_reward_index", 0))
 	last_reward_card_ids = Array(_pre_combat_snapshot.get("last_reward_card_ids", [])).duplicate()
 	selected_class = str(_pre_combat_snapshot.get("selected_class", ""))
+	operacao_rank = clampi(int(_pre_combat_snapshot.get("operacao_rank", 0)), 0, 3)
 	last_battle_result = ""
 	last_battle_summary = ""
 
@@ -208,6 +216,7 @@ func complete_encounter(summary: String) -> void:
 	if not completed_encounter_ids.has(active_encounter_id):
 		completed_encounter_ids.append(active_encounter_id)
 	is_encounter_completed = true
+	_check_rank_advancement()
 	var claimed: Array[String] = claim_encounter_reward(active_encounter_id)
 	last_battle_result = "victory"
 	last_battle_summary = summary
@@ -266,33 +275,27 @@ func _valid_encounter_id(encounter_id: String) -> String:
 		return encounter_id
 	return ACTIVE_ENCOUNTER_ID
 
+# --- Operacao rank ---
+
+func _check_rank_advancement() -> void:
+	var count: int = completed_encounter_ids.size()
+	var new_rank: int = 0
+	if count >= 6:
+		new_rank = 3
+	elif count >= 3:
+		new_rank = 2
+	elif count >= 1:
+		new_rank = 1
+	if new_rank > operacao_rank:
+		operacao_rank = new_rank
+
+func get_rank_display_name() -> String:
+	match operacao_rank:
+		1: return "Agente"
+		2: return "Operativo"
+		3: return "Comandante"
+		_: return "Recruta"
+
 # --- Class selection ---
 
-func select_class(class_id: String) -> bool:
-	ContentLibrary.ensure_loaded()
-	if class_id == "":
-		return false
-	if ContentLibrary.get_class_definition(class_id).is_empty():
-		return false
-	selected_class = class_id
-	return true
-
-func has_selected_class() -> bool:
-	return selected_class != ""
-
-func get_class_deck_ids() -> Array:
-	if has_selected_class():
-		var deck: Array = ContentLibrary.get_class_starter_deck_ids(selected_class)
-		if not deck.is_empty():
-			return deck
-	# Fallback: generic starter deck for saves without a selected class
-	return ContentLibrary.get_starter_deck_ids()
-
-func initialize_deck_for_class() -> void:
-	if not has_selected_class():
-		return
-	var deck: Array = ContentLibrary.get_class_starter_deck_ids(selected_class)
-	if deck.is_empty():
-		return
-	unlocked_card_ids = deck.duplicate()
-	selected_deck_ids = deck.duplicate()
+func selec

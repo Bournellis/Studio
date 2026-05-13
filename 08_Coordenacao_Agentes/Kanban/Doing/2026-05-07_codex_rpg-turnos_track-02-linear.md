@@ -13,7 +13,7 @@ Executar a Track 02 em ordem linear, prompt a prompt, mantendo todos os registro
 
 ## Cursor Atual
 
-Proximo prompt: `P17 - RPG Progression Slice`.
+Proximo prompt: `P18 - Encounter Design Pass`.
 
 ## Progresso
 

@@ -5,18 +5,22 @@ const MAP_RECT: Rect2 = Rect2(Vector2(80, 80), Vector2(1120, 600))
 const NPC_POSITION: Vector2 = Vector2(420, 330)
 const INTERACTION_RADIUS: float = 86.0
 const ENCOUNTER_MARKERS: Array[Dictionary] = [
-	{"id": "emboscada_na_ponte", "label": "Pouso", "position": Vector2(720, 300), "requires": ""},
-	{"id": "duelista_bandido", "label": "Guardiao", "position": Vector2(880, 330), "requires": "emboscada_na_ponte"},
-	{"id": "emboscada_no_cruzamento", "label": "Conduto", "position": Vector2(1020, 390), "requires": "duelista_bandido"},
-	{"id": "fortaleza_do_desfiladeiro", "label": "Bastiao", "position": Vector2(1080, 230), "requires": "emboscada_no_cruzamento"},
-	{"id": "invasao_em_ondas", "label": "Ondas", "position": Vector2(700, 220), "requires": "fortaleza_do_desfiladeiro"},
-	{"id": "defesa_do_portao", "label": "Defesa", "position": Vector2(520, 220), "requires": "invasao_em_ondas"},
-	{"id": "colosso_fragmentado", "label": "Nucleo", "position": Vector2(360, 250), "requires": "defesa_do_portao"},
-	{"id": "enigma_da_ponte", "label": "Selos", "position": Vector2(260, 360), "requires": "colosso_fragmentado"},
+	{"id": "emboscada_na_ponte", "label": "Pouso", "position": Vector2(720, 300), "requires": "", "min_rank": 0},
+	{"id": "duelista_bandido", "label": "Guardiao", "position": Vector2(880, 330), "requires": "emboscada_na_ponte", "min_rank": 0},
+	{"id": "emboscada_no_cruzamento", "label": "Conduto", "position": Vector2(1020, 390), "requires": "duelista_bandido", "min_rank": 0},
+	{"id": "fortaleza_do_desfiladeiro", "label": "Bastiao", "position": Vector2(1080, 230), "requires": "emboscada_no_cruzamento", "min_rank": 0},
+	{"id": "invasao_em_ondas", "label": "Ondas", "position": Vector2(700, 220), "requires": "fortaleza_do_desfiladeiro", "min_rank": 0},
+	{"id": "defesa_do_portao", "label": "Defesa", "position": Vector2(520, 220), "requires": "invasao_em_ondas", "min_rank": 0},
+	{"id": "colosso_fragmentado", "label": "Nucleo", "position": Vector2(360, 250), "requires": "defesa_do_portao", "min_rank": 0},
+	{"id": "enigma_da_ponte", "label": "Selos", "position": Vector2(260, 360), "requires": "colosso_fragmentado", "min_rank": 0},
+	{"id": "patrulha_avancada", "label": "Varredura", "position": Vector2(900, 180), "requires": "", "min_rank": 1},
+	{"id": "duelista_sombrio", "label": "Conduto 2", "position": Vector2(1020, 290), "requires": "", "min_rank": 2},
+	{"id": "emboscada_reforcos", "label": "Reforcamento", "position": Vector2(820, 430), "requires": "", "min_rank": 3},
 ]
 
 var player_position: Vector2 = Vector2(180, 330)
 var prompt_label: Label
+var rank_label: Label
 var dialogue_panel: PanelContainer
 var dialogue_text: Label
 var portrait_rect: TextureRect
@@ -102,9 +106,18 @@ func _build_canvas() -> void:
 	top_bar.add_theme_stylebox_override("panel", _panel_style(Color(0.08, 0.09, 0.1)))
 	layer.add_child(top_bar)
 
+	var top_row: HBoxContainer = HBoxContainer.new()
+	top_row.add_theme_constant_override("separation", 16)
+	top_bar.add_child(top_row)
+
+	rank_label = Label.new()
+	rank_label.add_theme_color_override("font_color", Color(0.75, 0.88, 1.0))
+	top_row.add_child(rank_label)
+
 	prompt_label = Label.new()
 	prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	top_bar.add_child(prompt_label)
+	prompt_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	top_row.add_child(prompt_label)
 
 	dialogue_panel = PanelContainer.new()
 	dialogue_panel.visible = false
@@ -153,19 +166,20 @@ func _try_interact() -> void:
 		_interact_encounter(marker)
 
 func _interact_npc() -> void:
+	var rank_name: String = GameSession.get_rank_display_name()
 	if not GameSession.has_npc_reward_card:
 		var reward_id: String = GameSession.claim_npc_reward()
-		dialogue_text.text = "O comando Draxos autoriza uma tecnica para testar na missao: %s." % ContentLibrary.get_card_name(reward_id)
+		dialogue_text.text = "%s — o comando Draxos autoriza uma tecnica para testar na missao: %s." % [rank_name, ContentLibrary.get_card_name(reward_id)]
 		GameSession.save_game()
 	elif GameSession.completed_encounter_ids.size() > GameSession.npc_reward_index:
 		var progressive_reward_id: String = GameSession.claim_npc_progressive_reward()
 		if progressive_reward_id != "":
-			dialogue_text.text = "O comando Draxos libera uma nova opcao pelo progresso: %s." % ContentLibrary.get_card_name(progressive_reward_id)
+			dialogue_text.text = "%s — o comando libera uma nova opcao pelo progresso: %s." % [rank_name, ContentLibrary.get_card_name(progressive_reward_id)]
 			GameSession.save_game()
 		else:
-			dialogue_text.text = "O comando observa a operacao. Nao ha novas tecnicas por enquanto."
+			dialogue_text.text = "%s — o comando observa a operacao. Nao ha novas tecnicas por enquanto." % rank_name
 	else:
-		dialogue_text.text = "O comando observa a operacao. Novas missoes aparecem conforme voce vence."
+		dialogue_text.text = "%s — o comando observa a operacao. Novas missoes aparecem conforme voce vence." % rank_name
 	dialogue_panel.visible = true
 	_update_prompt()
 	queue_redraw()
@@ -187,6 +201,8 @@ func _interact_encounter(marker: Dictionary) -> void:
 func _update_prompt() -> void:
 	if prompt_label == null:
 		return
+	if rank_label != null:
+		rank_label.text = "Rank: %s" % GameSession.get_rank_display_name()
 	if player_position.distance_to(NPC_POSITION) <= INTERACTION_RADIUS:
 		prompt_label.text = "E: falar com comando | WASD: mover"
 	elif not _nearest_encounter_marker().is_empty():
@@ -202,7 +218,10 @@ func _nearest_encounter_marker() -> Dictionary:
 
 func _marker_available(marker: Dictionary) -> bool:
 	var required_id: String = str(marker.get("requires", ""))
-	return required_id == "" or GameSession.has_completed_encounter(required_id)
+	if required_id != "" and not GameSession.has_completed_encounter(required_id):
+		return false
+	var min_rank: int = int(marker.get("min_rank", 0))
+	return GameSession.operacao_rank >= min_rank
 
 func _marker_status_text(marker: Dictionary) -> String:
 	var encounter_id: String = str(marker.get("id", ""))
@@ -210,6 +229,10 @@ func _marker_status_text(marker: Dictionary) -> String:
 		return "Concluido"
 	if _marker_available(marker):
 		return "Disponivel"
+	var min_rank: int = int(marker.get("min_rank", 0))
+	if GameSession.operacao_rank < min_rank:
+		var rank_names: Array[String] = ["Recruta", "Agente", "Operativo", "Comandante"]
+		return "Requer: %s" % rank_names[clampi(min_rank, 0, 3)]
 	return "Bloqueado"
 
 func _panel_style(fill: Color) -> StyleBoxFlat:
@@ -218,39 +241,4 @@ func _panel_style(fill: Color) -> StyleBoxFlat:
 	style.border_color = Color(0.24, 0.28, 0.3)
 	style.border_width_left = 2
 	style.border_width_top = 2
-	style.border_width_right = 2
-	style.border_width_bottom = 2
-	style.corner_radius_top_left = 8
-	style.corner_radius_top_right = 8
-	style.corner_radius_bottom_left = 8
-	style.corner_radius_bottom_right = 8
-	style.content_margin_left = 16
-	style.content_margin_top = 12
-	style.content_margin_right = 16
-	style.content_margin_bottom = 12
-	return style
-
-func _build_art_nodes() -> void:
-	var map_environment_sprite: Sprite2D = Sprite2D.new()
-	map_environment_sprite.name = "map_environment"
-	map_environment_sprite.texture = AssetIds.texture("map_environment")
-	map_environment_sprite.position = MAP_RECT.get_center()
-	if map_environment_sprite.texture != null:
-		map_environment_sprite.scale = MAP_RECT.size / Vector2(map_environment_sprite.texture.get_size())
-	add_child(map_environment_sprite)
-
-	marker_nodes = Node2D.new()
-	marker_nodes.name = "marker_nodes"
-	add_child(marker_nodes)
-	for marker: Dictionary in ENCOUNTER_MARKERS:
-		var marker_node: Sprite2D = Sprite2D.new()
-		marker_node.name = str(marker.get("id", "marker"))
-		marker_node.texture = AssetIds.texture("marker_encounter_active")
-		marker_node.position = Vector2(marker.get("position", Vector2.ZERO))
-		marker_nodes.add_child(marker_node)
-
-	player_sprite = Sprite2D.new()
-	player_sprite.name = "player_sprite"
-	player_sprite.texture = AssetIds.texture("player_token")
-	player_sprite.position = player_position
-	add_child(player_sprite)
+	style.b

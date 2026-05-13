@@ -37,9 +37,9 @@ It defines execution order only.
 
 ## Current Execution Cursor
 
-Next prompt: `P17 - RPG Progression Slice`.
+Next prompt: `P18 - Encounter Design Pass`.
 
-Current focus: Campaign arc aligned — all 11 encounters have mission fields, docs updated. Next work is the first RPG progression layer.
+Current focus: RPG progression layer added — operacao_rank (Recruta/Agente/Operativo/Comandante) with save/load, 3 rank-gated side encounters on map, NPC dialogue references rank. Next work is encounter pressure per class weakness.
 
 ## Linear Prompt Sequence
 
@@ -62,7 +62,7 @@ Current focus: Campaign arc aligned — all 11 encounters have mission fields, d
 | P14 | complete | Multi-class regression checkpoint: all three classes selectable and playable. | Run validation |
 | P15 | complete | UI/readability design pass: define and implement minimum playable presentation improvement. | Run validation |
 | P16 | complete | Campaign content alignment: mission chain, rewards meaning, class-facing text. | Documentation + data only |
-| P17 | pending | RPG progression slice: rank/status state and gated dialogue/mission access. | Run validation |
+| P17 | complete | RPG progression slice: rank/status state and gated dialogue/mission access. | Run validation |
 | P18 | pending | Encounter design pass: one pressure test per class weakness. | Run validation |
 | P19 | pending | New content expansion cluster using existing modes. | Run validation |
 | P20 | pending | Technical ID and asset migration, with save migration coverage. | Run validation |
@@ -412,11 +412,10 @@ Every implementation prompt must leave the following record trail:
 
 ## Current Blockers
 
-- None for P17.
+- None for P18.
 
 Known future dependencies:
 
 - P06 depends on P01-P05.
 - P08-P13 depend on the class selection and class starter deck plumbing.
-- P16 should wait until at least P14, because reward/card meaning depends on the playable class baseline.
-- P17 can start now
+- P16 should wait until at le
