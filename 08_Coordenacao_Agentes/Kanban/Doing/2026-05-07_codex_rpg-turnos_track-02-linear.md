@@ -13,7 +13,7 @@ Executar a Track 02 em ordem linear, prompt a prompt, mantendo todos os registro
 
 ## Cursor Atual
 
-Proximo prompt: `P13 - Necromante Integration Checkpoint`.
+Proximo prompt: `P14 - Multi-Class Regression Checkpoint`.
 
 ## Progresso
 
@@ -78,8 +78,4 @@ Proximo prompt: `P13 - Necromante Integration Checkpoint`.
 - [x] P12: Necromante totalmente jogavel end-to-end como terceira classe completa.
 - [x] P12: `test_on_death_triggers.gd` com 13 testes.
 - [ ] P12: regenerar `.tres` e rodar validacao localmente.
-
-## Regras De Registro
-
-- Atualizar o cursor e status do prompt em `linear-execution-plan.md`.
-- Atualizar `Projetos/rpg-turnos/implementation/current-statu
+- [x] P13: 4 testes de integracao Necromante adicionados a `test_content_and_session.gd` (display_name Ritual das Sombras, action ritual_das_sombras, 3 tier

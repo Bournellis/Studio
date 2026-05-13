@@ -424,9 +424,7 @@ func test_arcano_class_passiva_id_is_fluxo_continuo() -> void:
 	assert_eq(str(passiva.get("id", "")), "fluxo_continuo",
 		"Arcano passiva id must be 'fluxo_continuo'.")
 
-func _delete_test_save() -> void:
-	if not FileAccess.file_exists(TEST_SAVE_PATH):
-		return
-	var user_dir: DirAccess = DirAccess.open("user://")
-	if user_dir != null:
-		user_dir.remove(TEST_SAVE_FILENAME)
+# --- P13: Necromante integration checkpoint — catalog data ---
+
+func test_necromante_hero_power_display_name_is_ritual_das_sombras() -> void:
+	var hp: Dictionary = ContentLibrary.get_class_hero_power("
