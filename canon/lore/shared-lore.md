@@ -1,6 +1,6 @@
 # Shared Lore
 
-- Last Updated: `2026-05-12`
+- Last Updated: `2026-05-14`
 - Status: `active shared lore canon`
 
 ## Purpose
@@ -9,28 +9,59 @@ This document defines the shared lore context used by studio projects.
 
 It governs setting, major peoples, cross-project continuity, and the meaning of shared narrative terms. Local project documents own specific campaign delivery, characters, encounters, and implementation details when they do not conflict with canon.
 
+---
+
 ## Core Setting
 
-The shared universe is a distant future where humanity has already left the Solar System and spread across the galaxy.
+The shared universe is a distant future of the real world — not medieval fantasy, not abstract science fiction. The Milky Way is the same galaxy. Earth exists. Human history happened. What changed is that millennia have passed.
 
-Earth is in a post-nuclear-apocalypse state. Human groups are fragmented into different factions, and Earth is no longer the only relevant center of the story.
+The number of years is not extreme. It is enough for human civilization to have fragmented radically, spread across the galaxy, and largely forgotten what it once was — but not so far that humanity is unrecognizable at its roots.
 
-The galaxy also contains other celestial, intergalactic, technological, biological, and arcane beings. Some do not fit cleanly inside human categories.
+Technology, astral power, ancient forms, and futuristic civilization coexist in the same continuity. Different races and factions transit between the physical-technological plane and the astral plane in different degrees. These are not opposites — they are two dimensions of the same reality.
 
-Technology, astral power, ancient forms, and futuristic civilization may coexist in the same continuity. This is not medieval fantasy by default, and it is not clean hard sci-fi either.
+---
+
+## Earth and the Nuclear Apocalypse
+
+During the colonization of the Solar System, humanity was already divided into large factions. It was in this fragmented state that they reached the Moon, then Mars, then began mining asteroids and operating giant factories in space.
+
+The inevitable happened: a series of events led to a nuclear apocalypse on Earth. Many attempted to return, but Earth was no longer safe. For centuries, returning home was impossible for the survivors already in space.
+
+This apocalypse is distant past in the time of our stories — it happened millennia ago. Earth exists in some unknown state but is no longer the center of anything.
+
+---
 
 ## Human Context
 
-Humans are now a galactic species, but they are politically and culturally fractured.
+Without Earth as a center, the factions that survived in space became increasingly competitive. Over millennia, they learned to leave the Solar System and navigate the Milky Way.
 
-Known active human truth:
+The result is a deeply fragmented humanity:
 
-- humanity has left the Solar System
-- Earth suffered nuclear apocalypse
-- human factions exist and may disagree, compete, or survive under very different conditions
-- some stories may happen far from Earth while still being connected to human expansion and collapse
+- Human races and factions have diverged so much — in genetics, culture, technology, and spirituality — that many question whether they are still compatible with each other.
+- There is no standard human in this universe. There are peoples who share a common origin but have long since become very distinct.
+- Inter-faction relations are an active web of alliances, neutrality, and open wars that shifts over time.
 
-Specific human factions remain TBD.
+Specific human factions are defined in `human-factions.md`.
+
+---
+
+## The Other Beings — Two Layers
+
+### Layer One: Beings Who Always Coexisted With Humans
+
+Races such as Greys, reptilians, and insectoids already coexisted with humanity since the formation of the human species in the Solar System. Some incarnated on Earth alongside humans. Others never incarnated in physical form but were part of human history in ways only understood much later.
+
+Their existence is known and relatively familiar to most of humanity by the time of our stories. They are not strangers — they are old presences, with their own agendas, histories, and relationships to human factions.
+
+Detailed lore for each of these races is pending and will be authored per project as needed.
+
+### Layer Two: Intergalactic Beings of Another Scale
+
+The Draxos belong to a different category entirely. They are arcane intergalactic beings of unknown origin, with a form of life and level of power that clearly surpasses anything human factions know. Their very appearance is a rare event — and a deeply feared one.
+
+They are not aliens in the conventional sense. They do not negotiate with human factions as equals. They are another order of existence.
+
+---
 
 ## Draxos
 
@@ -38,7 +69,11 @@ Draxos are arcane intergalactic beings of unclear origin. They use astral energy
 
 Their culture is expansionist and hierarchical. They commonly treat other beings as inferior, and they seek to dominate, exploit, and enslave them when useful.
 
-The active campaign direction is documented in `draxos-invasion.md`. The authoritative narrative source is `Projetos/draxos-roguelike-cardgame/docs/lore-campaign.md`, shared by all projects using this setting.
+Draxos bases resemble spacecraft but are plasmated from ether, not built as conventional technology. They should read as arcane infrastructure capable of travel, command, staging, and mission deployment.
+
+The active campaign direction involving Draxos is documented in `draxos-invasion.md`. The authoritative narrative source for the active project is `Projetos/draxos-roguelike-cardgame/docs/lore-campaign.md`.
+
+---
 
 ## Imortais
 
@@ -48,33 +83,38 @@ Their detailed lore is pending and must not be invented from old placeholder fil
 
 The active pending lore note is documented in `immortals.md`.
 
+---
+
 ## Cross-Project Continuity
 
-The RPG Isometrico and RPG Turnos projects share this lore universe, but they tell different stories and keep separate mechanics.
+All studio projects share this lore universe but tell different stories and keep separate mechanics.
 
-RPG Isometrico currently uses Imortais as its safe player-facing race label for the existing direct-combat baseline, while the detailed Imortais campaign lore is pending.
+- RPG Isometrico uses Imortais as the player-facing race with detailed campaign lore pending.
+- RPG Turnos and draxos-roguelike-cardgame share the Draxos invasion lore. The authoritative source is `Projetos/draxos-roguelike-cardgame/docs/lore-campaign.md`.
+- RPGMobile is set in the broader human-faction layer of this universe. Its authoritative design source is `Projetos/_conceitos/RPGMobile/`.
+- BattleMobile shares this universe. Its concept is in `Projetos/_conceitos/BattleMobile/`.
 
-RPG Turnos and draxos-roguelike-cardgame share the same Draxos lore. The authoritative source is `Projetos/draxos-roguelike-cardgame/docs/lore-campaign.md`. Both projects cover the same Draxos invasion of an elemental planet.
+Other Draxos encounters elsewhere in the galaxy may exist in the broader continuity, including failed missions, blocked operations, or encounters with other powerful beings. Those stories are not yet authored.
 
-Other Draxos encounters elsewhere in the galaxy may exist in the broader continuity, including failed missions where the Draxos were surprised, blocked, or robbed by other beings. Those stories are not authored here yet.
+---
 
 ## Placeholder Rule
 
 Names and lore labels currently inside runtime content are placeholders unless promoted by a current lore document.
 
-Mechanical IDs may remain temporarily for runtime stability, but player-facing names and narrative meaning should migrate toward the relevant active lore:
+Mechanical IDs may remain temporarily for runtime stability, but player-facing names and narrative meaning should migrate toward the relevant active lore.
 
-- RPG Turnos: Draxos invasion of an elemental planet
-- RPG Isometrico: Imortais label with detailed lore pending
+---
 
 ## Open Lore Questions
 
-- final name of the shared universe
-- names and political shape of human factions
-- Earth's exact state after the nuclear apocalypse
+- Final name of the shared universe
+- Names and political shape of individual human factions
+- Earth's exact current state
 - Draxos origin and internal hierarchy
-- name and culture of the elemental planet
-- types of elementals and their societies
-- name and nature of the volcano crystal
-- identity of the race secretly helping the elementals
-- detailed Imortais lore and active campaign story
+- Detailed lore for Greys, reptilians, insectoids, and other Layer One beings
+- Name and culture of the elemental planet (Draxos invasion campaign)
+- Types of elementals and their societies
+- Name and nature of the volcano crystal
+- Identity of the race secretly helping the elementals
+- Detailed Imortais lore and active campaign story
