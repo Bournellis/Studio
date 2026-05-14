@@ -18,7 +18,7 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
 ## Conceitos em Incubacao
 
-- `_conceitos/RPGMobile/`: conceptual mobile RPG project.
+- `_conceitos/RPGMobile/`: conceptual mobile action RPG focused on open-world exploration, combat, loot, free weapon/spell loadouts, and mastery by use; lore deferred.
   - Priority/status: `P1_CONCEITO`
   - Concept status: `_conceitos/RPGMobile/README.md`
   - Allowed work: concept, pitch, design, references.

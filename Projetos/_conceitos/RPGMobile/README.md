@@ -2,61 +2,50 @@
 
 Status: `P1_CONCEITO`
 
-RPGMobile é um projeto em incubação conceitual do Estúdio. Jogo irmão de BattleMobile.
+RPGMobile e um projeto em incubacao conceitual do Estudio. A direcao atual prioriza gameplay, exploracao, combate, loot e progressao antes de qualquer lore definitivo.
 
-## Fantasia Central
+## Reset De Lore
 
-> Você é um membro jovem de uma facção humana numa galáxia milênios no futuro.
-> Começa no planeta natal da sua facção, atravessa o treinamento militar obrigatório,
-> e ao longo de uma primeira temporada completa cresce de aprendiz a operativo independente
-> — conquistando sua própria nave ao final.
+O lore anterior do RPGMobile foi removido.
 
-## Plataforma
+Qualquer historia, personagem, origem, ameaca, estrutura de mundo ou progressao narrativa citada antes deste reset deixa de ser direcao ativa.
 
-Android + iOS (multiplataforma desde o lançamento)
+O lore geral do Estudio permanece intacto em `../../../canon/`. Ele nao foi alterado por este reset.
 
-## Formato
+## Direcao Atual
 
-2D, câmera fixa, ação em tempo real com controles MOBA mobile.
-Single player com sensação de MMORPG solo — mundo aberto, não campanha linear.
+RPGMobile e um RPG mobile de acao em tempo real sobre explorar um mundo aberto expansivo, lutar com frequencia, coletar loot no campo e crescer pelo uso continuo de armas e spells.
 
-## Monetização
+Principios atuais:
 
-F2P com ads opcionais, upgrades pagos, battle pass sazonal e cosméticos. Sem pay-to-win.
-
-## Pilares
-
-1. **Mundo vivo** — quests, eventos, dungeons, facções com agendas próprias
-2. **Gameplay primeiro** — combate e exploração dominam o tempo de sessão
-3. **Facção como classe** — identidade narrativa e mecânica unificadas
-4. **Crescimento tangível** — a nave, os upgrades, as especializações têm peso real
-5. **Ameaça escalável** — os Draxos como horizonte crescente do late game
+- sem classe inicial ou pre-selecao que trave o jogador;
+- qualquer jogador pode usar qualquer arma e qualquer spell, salvo excecoes especificas futuras;
+- o loadout de acao e `1 arma + movimento da arma + 3 spells de combate`;
+- a arma define o ataque basico e a spell de movimentacao;
+- armas e spells evoluem por uso, com maestria propria;
+- trocar para arma ou spell pouco usada reduz poder temporariamente, mas nao bloqueia escolha;
+- mundo aberto com areas desbloqueadas por progressao, grind e exploracao;
+- baixo foco em historia mainline;
+- alto foco em explorar, lutar, se movimentar rapido e ganhar loot;
+- menus devem ser curtos, claros e subordinados a acao.
 
 ## Trabalho Permitido
 
 - Conceito
 - Pitch
 - Design
-- Referências
+- Referencias
 
-## Restrição Operacional
+## Restricao Operacional
 
-Não criar código, cenas, assets de implementação ou projeto Godot sem pedido explícito do usuário.
+Nao criar codigo, cenas, assets de implementacao ou projeto Godot sem pedido explicito do usuario.
 
 ## Documentos
 
-| Documento | Conteúdo |
+| Documento | Conteudo |
 |---|---|
-| `design/gdd.md` | Game Design Document detalhado |
-| `../jogos-irmaos-pitch.md` | Pitch conjunto com BattleMobile |
+| `design/gdd.md` | Definicao atual de core gameplay e progressao |
 
-## Canon Compartilhado
+## Proximo Passo
 
-| Documento | Relevância |
-|---|---|
-| `../../../../canon/lore/shared-lore.md` | Universo, Draxos, camadas de seres |
-| `../../../../canon/lore/human-factions.md` | Conceito e natureza das facções humanas |
-
-## Próximo Passo
-
-Definir a primeira facção jogável — lore básico, estrutura social, identidade de combate — e esboçar o planeta natal da Season 1.
+Detalhar o combate base, as armas iniciais, o modelo de spells, o loot e a progressao por maestria.

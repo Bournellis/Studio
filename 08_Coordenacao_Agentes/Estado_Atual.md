@@ -25,10 +25,10 @@
 - Status: **P1_CONCEITO - incubacao**
 - Fase: `Conceito`
 - Local: `Projetos/_conceitos/RPGMobile/`
-- Baseline atual: conceito nomeado, sem implementacao e sem estrutura Godot oficial.
+- Baseline atual: core gameplay conceitual definido: RPG mobile de acao em mundo aberto, sem classes/pre-selecao travante, loadout livre de 1 arma + movimento da arma + 3 spells, maestria por uso, loot no campo e lore adiado.
 - Trabalho permitido: conceito, pitch, design e referencias.
 - Restricao operacional: nao criar codigo, cenas, assets de implementacao ou projeto Godot sem pedido explicito.
-- Proximo passo: definir pitch, fantasia central, loop principal e pilares de produto.
+- Proximo passo: detalhar armas iniciais, spells, pocao, maestria, loot e primeira area conceitual.
 
 ## BattleMobile
 

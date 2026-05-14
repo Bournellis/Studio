@@ -1,241 +1,309 @@
-# RPGMobile — Game Design Document
+# RPGMobile - Game Design Document
 
 - Last Updated: `2026-05-14`
-- Status: `P1_CONCEITO — rascunho inicial`
-- Lore Canon: `../../../../canon/lore/shared-lore.md`, `../../../../canon/lore/human-factions.md`
+- Status: `P1_CONCEITO - core gameplay definido`
 
 ---
 
-## 1. Visão Geral
+## 1. Estado Atual
 
-RPGMobile é um RPG de ação 2D, multiplataforma (Android e iOS), single player com sensação de MMORPG. O jogador habita um mundo aberto vivo, cheio de quests, eventos, dungeons e outros personagens — não percorre uma campanha linear e isolada.
+RPGMobile esta em incubacao conceitual.
 
-O jogo se passa no universo compartilhado do estúdio: um futuro real da humanidade na Via Láctea, milênios após o apocalipse nuclear da Terra, onde facções humanas navegam o espaço e convivem com outros seres — alguns familiares, outros temidos.
+O projeto agora sera definido primeiro por gameplay, game feel, progressao, exploracao e loot. Lore, historia principal e mundo ficcional detalhado devem vir depois, quando o core jogavel estiver mais claro.
 
----
-
-## 2. Identidade do Jogo
-
-**O que é:**
-- RPG de ação 2D com câmera fixa
-- Mundo aberto com quests principais e secundárias, dungeons e eventos
-- Single player com sensação de MMORPG solo
-- F2P com monetização sustentável e updates constantes
-- Facção do jogador como identidade de classe
-
-**O que não é:**
-- Diablo ou action RPG no sentido de câmera dinâmica e câmaras procedurais
-- Jogo de menus — o tempo do jogador é de gameplay ativa
-- Pay-to-win
-- Campanha linear e sequencial
+O lore anterior do RPGMobile foi removido e nao deve ser tratado como base. O canon geral do Estudio permanece preservado fora deste projeto e nao e importado automaticamente.
 
 ---
 
-## 3. Plataforma e Controles
+## 2. Fantasia De Jogo
 
-**Plataformas:** Android e iOS, desde o lançamento.
+RPGMobile e um RPG mobile de acao em tempo real sobre entrar em um mundo aberto, explorar muito, lutar muito, se mover com velocidade, coletar loot no campo e sentir que o mapa cresce conforme o personagem fica mais forte.
 
-**Câmera:** Fixa, top-down ligeiramente inclinada. Lê bem o campo de batalha e o mundo ao redor.
+O jogo nao e sobre escolher uma classe antes de jogar e ficar preso a essa decisao. Tambem nao e sobre passar tempo em menus, timers, construcao de base, upgrades irrelevantes ou gerenciamento complexo de inventario.
 
-**Controles mobile:**
-- Polegar esquerdo: joystick virtual de movimento
-- Polegar direito: ataque básico, habilidade de movimento, habilidades ativas, itens de uso rápido
+O prazer central deve ser:
 
-Referências de controle: Brawl Stars, MOBAs mobile. O jogador tem controle direto sobre o personagem em tempo real — não é auto-battle nem clique para mover.
-
----
-
-## 4. Loop Principal
-
-```
-Entrar no mundo → Navegar zona ativa → Matar monstros / coletar loot
-→ Completar quests → Entrar em dungeons → Derrotar chefes
-→ Evoluir personagem → Acessar zona nova
+```text
+explorar -> encontrar inimigos e recursos -> lutar -> pegar loot -> ficar mais forte -> abrir areas novas
 ```
 
-O loop é deliberadamente direto. Sistemas de upgrade e progressão existem como camadas de profundidade, não como o foco principal da sessão. A regra é: **o jogador clica em menu o mínimo possível**.
+---
+
+## 3. Principios Centrais
+
+- Nao existe classe inicial.
+- Nao existe pre-selecao que bloqueie opcoes futuras de arma, spell ou estilo de jogo.
+- O jogador deve poder usar qualquer arma e qualquer spell, salvo excecoes especificas de design futuro.
+- A progressao deve incentivar investimento sem impedir experimentacao.
+- Trocar para uma arma ou spell pouco treinada reduz poder temporariamente, porque a maestria daquele item e menor.
+- O jogo deve tirar o jogador dos menus e coloca-lo em acao.
+- Ganhar coisas significa explorar, lutar, matar criaturas, abrir bau, coletar recursos e vencer desafios no mundo.
+- Missoes existem, algumas com historias proprias, mas a historia mainline nao e o foco.
+- O mundo deve parecer expansivo: quanto mais o jogador explora e progride, mais areas ficam disponiveis.
 
 ---
 
-## 5. Monetização
+## 4. Mundo Aberto E Exploracao
 
-O modelo F2P tem quatro camadas, ordenadas do menos intrusivo ao mais engajado:
+O jogo deve dar sensacao de mundo aberto em crescimento continuo.
 
-| Camada | Descrição | Regra |
-|---|---|---|
-| **Ads opcionais** | Mini prêmios por assistir anúncios | Nunca obrigatórios, sempre iniciados pelo jogador |
-| **Upgrades pagos** | Aceleração de progressão | Não concedem poder exclusivo — apenas velocidade |
-| **Battle Pass** | Conteúdo sazonal com recompensas por jogo | Jogadores free progridem também, porém mais devagar |
-| **Cosméticos** | Visuais de personagem, nave, efeitos | Sem impacto mecânico, sempre |
+O mapa nao precisa estar todo disponivel desde o inicio. Areas novas sao liberadas por progressao, grind, forca do personagem, descoberta, chaves, recursos, bosses ou requisitos similares.
 
-**Regra geral:** nenhuma camada de monetização deve dar vantagem de poder que não seja alcançável jogando. O jogo deve ser satisfatório sem gastar dinheiro.
+Cada area nova deve trazer:
 
-O Battle Pass e os updates constantes exigem que a arquitetura de conteúdo seja planejada desde o início para crescer sem acumular dívida de design. Ver Seção 10.
+- criaturas novas;
+- criaturas mais fortes;
+- mecanicas ou perigos novos;
+- recursos mais raros;
+- loot melhor;
+- quests locais;
+- pequenas historias ou conflitos proprios;
+- motivos para voltar depois, quando o personagem estiver mais forte.
 
----
-
-## 6. Facção como Classe
-
-A facção do jogador é sua identidade de classe. Ela define:
-
-- Estilo de combate e pool de habilidades
-- Pool de equipamentos e itens compatíveis
-- Perspectiva narrativa — de onde o jogador vê o mundo
-- Ponto de entrada na história — sua zona inicial, seu planeta natal
-
-Não existem classes genéricas separadas do lore. Escolher uma facção é escolher quem você é nesse universo.
-
-**Escopo inicial:** uma facção jogável. Cada nova facção adicionada no futuro é equivalente a uma nova classe, com seu próprio early game completo e posterior convergência para o late game compartilhado.
-
-**Especializações:** dentro de uma facção, especializações emergem pela progressão, não pela seleção inicial. O jogador descobre o tipo de combatente que quer ser ao jogar, não numa tela de criação de personagem.
+Exploracao e luta devem andar juntas. O jogador anda rapido, encontra inimigos com frequencia, luta, pega recompensas e continua se movendo.
 
 ---
 
-## 7. Season 1 — O Planeta Natal
+## 5. Foco Narrativo
 
-### Premissa
+Baixo foco em historia mainline.
 
-O jogador é um membro jovem de sua facção, no planeta natal dessa facção. A militarização é obrigatória na cultura dessa sociedade — ele é designado para o treinamento e começa sua vida como soldado.
+O jogo pode ter missoes, personagens, eventos e pequenas narrativas por area, mas eles servem para enriquecer o mundo, nao para transformar o jogo em campanha linear.
 
-### Estrutura do arco
+Regra de direcao:
 
-A Season 1 é o equivalente à zona inicial de raça de um MMORPG — mas com profundidade de arco completo.
-
-**Fase 1 — Treinamento e planeta**
-O jogador aprende o jogo fazendo o que o exército da facção faz em seu território: missões locais, patrulhas, garantia de recursos, gestão de ameaças internas e externas próximas. Ele conhece a própria facção de dentro — seus valores, suas contradições, seus personagens.
-
-**Fase 2 — Primeiras missões espaciais**
-Pontualmente, o jogador começa a ser designado para operações fora do planeta — missões espaciais de curto prazo que expandem o horizonte sem soltar o personagem do planeta natal ainda. O mundo começa a parecer maior.
-
-**Fase 3 — Saindo do planeta**
-Perto do fim da Season 1, o personagem começa a operar com mais frequência fora do planeta natal. O mundo abre. Ele encontra outras facções, outros seres, situações que vão além do que o planeta podia oferecer.
-
-**Conclusão — A nave**
-A grande conquista de terminar a Season 1 é obter a própria nave. Não como item — como evento narrativo e mecânico. O jogador agora tem sua base móvel, sua identidade no espaço. Isso é o que abre o late game.
-
-### Por que essa estrutura funciona
-
-- Onboarding orgânico: o mundo é apresentado pelo ponto de vista de quem também está descobrindo
-- A nave como recompensa é tangível e muda fundamentalmente a experiência de jogo
-- O arco é completo em si mesmo — um jogador que para após a Season 1 teve uma experiência satisfatória
-- Seasons futuras com novas facções replicam esse template com conteúdo completamente diferente
+- lore vem depois do core;
+- historia deve apoiar exploracao e combate;
+- quests devem mandar o jogador para o mundo, nao prende-lo em dialogos longos;
+- cada area pode ter sua propria pequena historia;
+- nenhuma historia deve bloquear a fantasia principal de explorar, lutar e crescer.
 
 ---
 
-## 8. Late Game Compartilhado
+## 6. Setup Mobile
 
-O late game é o espaço onde jogadores de qualquer facção convergem. Ele é projetado para ser neutro em relação à origem do jogador.
+### Camera
 
-### 8.1 A nave como hub
+- Tela travada com o personagem no centro.
+- Camera fixa/top-down ou levemente inclinada.
+- O mundo se move ao redor do jogador.
 
-A nave do jogador é o hub persistente do late game. É um espaço físico navegável — não um menu — com:
+### Lado Esquerdo
 
-- Tripulação recrutável (NPCs com quests e diálogos)
-- Representantes de facções aliadas ou neutras
-- Sistemas de upgrade da própria nave
-- Interface de navegação (objeto físico no mundo, não botão de UI)
-- Armazém, crafting, progressão
+- Joystick virtual de movimentacao.
 
-A nave tem sua própria curva de upgrade ao longo do tempo. Módulos novos desbloqueiam zonas mais distantes ou mais perigosas. O upgrade da nave é um dos eixos de grind do late game.
+### Lado Direito
 
-### 8.2 Território neutro
+O lado direito concentra todas as acoes de combate:
 
-O late game acontece em zonas que não pertencem a nenhuma facção: regiões contestadas, planetas sem dono, campos de asteroides ricos em recursos, estações abandonadas, fronteiras inexploradas.
+- ataque basico;
+- spell de movimentacao;
+- 3 spells de combate;
+- pocao, se nao for automatica.
 
-Isso garante que nenhuma facção tenha vantagem narrativa no late game. O jogador que veio de qualquer facção chega ao mesmo território sem que o mundo favoreça ninguém.
+Direcao preferida atual:
 
-### 8.3 A ameaça Draxos como espinha dorsal
+```text
+Ataque basico + Movimento da arma + 3 spells de combate
+```
 
-Os Draxos são a ameaça crescente que organiza a narrativa do late game e dá ao battle pass uma progressão temática clara por season.
-
-- **Early game:** os Draxos são rumores — algo que soldados experientes mencionam com respeito
-- **Mid game:** sinais, rastros, encontros indiretos, tensão crescente
-- **Late game:** presença direta e confronto real se torna possível
-
-Essa escalada funciona para qualquer facção porque os Draxos não distinguem. Eles ameaçam a todos. Isso cria uma razão compartilhada para o late game existir além de "mais loot".
-
-### 8.4 Sistema de reputação inter-facções
-
-O late game usa reputação como moeda de acesso horizontal.
-
-O jogador da Facção A pode construir reputação com a Facção B através de missões, comércio ou ajuda em crises. Isso abre equipamentos específicos, quests e fragmentos narrativos daquela facção.
-
-Benefícios do sistema:
-- Mantém todas as facções relevantes no late game
-- Cria engajamento de longo prazo sem forçar reroll
-- Dá sensação de mundo com atores vivos, não corredor de conteúdo
-- Adicionar uma nova facção no futuro automaticamente expande esse sistema
+A pocao esta em investigacao. Pode ser automatica para reduzir carga de botao e manter o foco em movimento e combate.
 
 ---
 
-## 9. Mundo Aberto — Estrutura
+## 7. Loadout De Acao
 
-O mundo não é um planeta único nem uma galáxia inteira disponível de início. Cresce em círculos concêntricos:
+O jogador equipa:
 
-**Season 1:** o planeta natal é o mundo. É grande o suficiente para ter regiões variadas, dungeons, eventos e quests sem que o jogador sinta que está num corredor.
+```text
+1 arma + 3 spells
+```
 
-**Pós-Season 1:** a nave abre o acesso a zonas adjacentes — outros planetas, estações, campos. Cada zona é um mundo aberto próprio, não um mapa linear.
+A arma define:
 
-**Seasons futuras:** cada season adiciona pelo menos uma zona nova acessível pela nave. O conteúdo antigo permanece relevante como fonte de materiais e missões contínuas.
+- ataque basico;
+- spell de movimentacao;
+- ritmo de combate;
+- alcance;
+- identidade de gameplay;
+- parte importante do game feel.
 
-O jogador nunca precisa ir a um menu de seleção de mundo. A transição acontece dentro do jogo: vai até a cabine de navegação da nave, escolhe o destino, viaja.
+As 3 spells de combate definem o complemento do estilo de jogo. Elas podem causar dano, controlar inimigos, proteger, aplicar status, invocar, curar, agrupar, explodir area ou ate incluir movimento secundario.
 
----
-
-## 10. Modelo de Seasons e Crescimento Sustentável
-
-O F2P com battle pass exige updates constantes. A arquitetura de conteúdo precisa crescer sem acumular bagunça de sistemas sobrepostos.
-
-**Cada season entrega exatamente:**
-
-| Elemento | Descrição |
-|---|---|
-| Uma zona nova | Planeta, estação ou campo de asteroides acessível pela nave |
-| Um arco narrativo | Contido na zona nova, com início, meio e fim |
-| Uma camada Draxos | Aprofunda a ameaça com novos eventos ou revelações |
-| Novos inimigos e chefes | Dentro da zona nova |
-| Novos itens e equipamentos | Relevantes para a zona nova e para progressão geral |
-| Conteúdo de battle pass | Cosméticos, missões sazonais, recompensas de engajamento |
-
-**Regra de crescimento:** conteúdo antigo nunca é descartado — permanece relevante como fonte de materiais de upgrade de nave, de reputação com facções ou de missões contínuas. Seasons expandem, não substituem.
-
-**Regra de sistemas:** nenhuma season cria um novo sistema de progressão maior sem arquivar ou integrar o anterior. O número de sistemas ativos e visíveis ao jogador deve permanecer legível.
+Nao existe uma divisao fundamental como classe. A build nasce da combinacao entre arma, movimento da arma e spells escolhidas.
 
 ---
 
-## 11. Pilares de Produto
+## 8. Armas E Movimento
 
-**Mundo vivo, não campanha**
-O jogador existe em um mundo com múltiplos atores — facções, raças, eventos. Não está sendo conduzido por um corredor de história.
+Movimentacao especial deve ser presa a arma.
 
-**Gameplay primeiro**
-O tempo de sessão é dominado por combate e exploração. Sistemas de progressão são profundidade, não o foco.
+Isso faz cada arma ter gameplay caracteristica. Trocar de arma nao troca apenas numeros: troca tambem como o jogador atravessa o combate.
 
-**Identidade de facção**
-Escolher uma facção é escolher quem você é. Isso tem peso narrativo e mecânico real.
+Exemplos de identidade possivel:
 
-**Crescimento tangível**
-A nave, o upgrade de equipamento, as especializações — o jogador vê e sente o crescimento. Não são apenas números.
+- espada rapida: dash curto agressivo;
+- martelo pesado: salto ou investida com impacto;
+- arco: recuo ou reposicionamento evasivo;
+- cajado: teleporte curto ou blink;
+- adagas: avanco duplo entre inimigos;
+- rifle: rolamento tatico.
 
-**Ameaça escalável**
-Os Draxos como horizonte sempre presente garantem que o late game tenha sentido de urgência e progressão narrativa além do grind.
-
----
-
-## 12. Restrições para Incubação
-
-- Não definir a facção inicial sem antes documentar seu lore básico em `canon/lore/human-factions.md`
-- Não começar implementação sem fechar o loop de sessão em protótipo
-- Não desenhar sistemas de monetização detalhados antes de validar o loop de combat
-- O late game compartilhado deve ser esboçado em design mesmo que não implementado na Season 1 — as decisões de Season 1 precisam apontar na direção certa
-- Não usar loadout ou sistemas de combat do RPG Isométrico sem adaptação explícita para mobile e para o contexto de facções
+Esses exemplos nao sao conteudo aprovado; apenas demonstram o principio.
 
 ---
 
-## 13. Próximos Passos
+## 9. Maestria Por Uso
 
-- [ ] Definir e documentar a primeira facção jogável (lore, estrutura social, identidade de combate)
-- [ ] Esboçar o planeta natal da Season 1 (zona, regiões, ameaças locais, tom)
-- [ ] Definir o sistema de combate base (habilidades, recursos, loop de batalha)
-- [ ] Prototipar o loop de sessão mínimo
-- [ ] Esboçar o late game compartilhado em nível de design suficiente para guiar decisões da Season 1
+Armas e spells devem ter progressao propria por uso.
+
+Usar uma arma aumenta a maestria dessa arma. Usar uma spell aumenta a maestria dessa spell.
+
+Maestria pode influenciar:
+
+- dano;
+- cooldown;
+- custo;
+- alcance;
+- tamanho de area;
+- efeitos adicionais;
+- chance de efeitos especiais;
+- desbloqueio de modificadores simples.
+
+O jogador pode trocar para qualquer arma ou spell disponivel, mas se ela estiver pouco treinada, ficara temporariamente mais fraco com ela. Isso cria compromisso sem bloquear liberdade.
+
+Regra de intencao:
+
+- escolha livre;
+- investimento recompensado;
+- troca possivel;
+- poder recuperado jogando, nao pagando menu.
+
+---
+
+## 10. Level, Stats, Itens E Loot
+
+O jogo pode ter:
+
+- level de personagem;
+- stats;
+- armas;
+- spells;
+- equipamentos;
+- itens consumiveis;
+- recursos;
+- raridade de loot;
+- upgrades simples;
+- craft ou melhoria, se nao roubar foco da acao.
+
+Mas a regra e manter tudo legivel.
+
+O jogador nao deve precisar ficar comparando dezenas de atributos complexos para decidir se pode continuar jogando. As escolhas devem ser rapidas, claras e com bom default.
+
+Direcao de UX:
+
+- loot aparece no campo;
+- recompensas vem de combate e exploracao;
+- menus existem para equipar, ver progresso e ajustar build;
+- menus nao devem virar o jogo;
+- evitar upgrades inuteis criados so para clique, timer ou rotina.
+
+---
+
+## 11. O Que O Jogo Nao Deve Ser
+
+RPGMobile nao deve ser:
+
+- jogo de classe fixa;
+- jogo em que a primeira escolha trava o futuro do personagem;
+- jogo de menu e timer;
+- jogo de cuidar de base/casinha como obrigacao central;
+- auto-battle;
+- campanha linear disfarcada de mundo aberto;
+- RPG onde o jogador passa mais tempo comparando item do que lutando;
+- sistema de upgrade cheio de passos irrelevantes;
+- progressao baseada em esperar tempo real para clicar de novo.
+
+---
+
+## 12. Loop Principal
+
+Loop atual:
+
+```text
+Entrar no mundo
+-> mover rapido pela area
+-> encontrar inimigos, recursos e eventos
+-> lutar usando ataque basico, movimento da arma e 3 spells
+-> pegar loot no campo
+-> ganhar XP, recursos, itens e maestria
+-> melhorar personagem e build
+-> desbloquear area nova
+-> repetir com inimigos, mecanicas e recompensas mais fortes
+```
+
+O loop precisa funcionar mesmo quando a quest atual nao importa. A luta e a exploracao devem sustentar a sessao por si mesmas.
+
+---
+
+## 13. Missoes E Areas
+
+Missoes existem para dar direcao, recompensas e pequenas historias.
+
+Tipos possiveis:
+
+- matar criatura especifica;
+- limpar ninho ou acampamento;
+- explorar area perigosa;
+- derrotar chefe local;
+- coletar recurso raro;
+- proteger NPC em deslocamento;
+- ativar ponto de mapa;
+- investigar evento;
+- liberar passagem para area nova.
+
+As missoes devem levar o jogador para combate e exploracao. Dialogo, cutscene e texto devem ser curtos no core mobile.
+
+---
+
+## 14. Progressao De Mundo
+
+O mundo cresce conforme o jogador joga.
+
+Formas possiveis de liberar areas:
+
+- level minimo recomendado;
+- derrotar chefe de area;
+- encontrar chave ou item de acesso;
+- acumular recurso raro;
+- completar conjunto curto de quests locais;
+- sobreviver a evento de fronteira;
+- melhorar ferramenta de travessia;
+- atingir poder suficiente para atravessar zona perigosa.
+
+O grind deve existir, mas precisa gerar jogo: matar monstros, explorar, dominar area, coletar materiais e melhorar build.
+
+---
+
+## 15. Questoes Em Aberto
+
+- O jogo tera 3 ou 4 spells de combate alem do ataque basico e movimento?
+- A pocao sera automatica, semi-automatica ou botao manual?
+- Como o loot sera coletado: auto-pickup, toque, magnetismo ou mistura?
+- Quantas armas iniciais sao necessarias para provar o core?
+- Quantas spells iniciais dao variedade sem explodir escopo?
+- Como evitar que troca de build seja punitiva demais?
+- Como apresentar item melhor sem exigir comparacao complexa?
+- O mundo principal sera cidade gigante, regiao selvagem, submundo, arquipelago, torre, planeta fechado ou outra estrutura?
+
+---
+
+## 16. Proximos Passos
+
+- [ ] Definir 3 armas iniciais e o movimento unico de cada uma.
+- [ ] Definir 8 a 12 spells iniciais.
+- [ ] Escolher entre 3 ou 4 spells de combate no layout final.
+- [ ] Decidir regra inicial de pocao automatica/manual.
+- [ ] Definir modelo simples de maestria por uso.
+- [ ] Definir modelo simples de loot no campo.
+- [ ] Definir primeira area jogavel conceitual com criaturas, recursos e desbloqueio de proxima area.
