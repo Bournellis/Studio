@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Painel Visual do Estudio</title>
+  <style>
+    :root {
+      --bg: #f7f8f5;
+      --panel: #ffffff;
+      --ink: #18201f;
+      --muted: #61706d;
+      --line: #d9dfdc;
+      --active: #2f7d57;
+      --active-bg: #dff2e7;
+      --concept: #b7791f;
+      --concept-bg: #fff0c7;
+      --paused: #6a737b;
+      --paused-bg: #eceff1;
+      --accent: #1f6f8b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Segoe UI", Arial, sans-serif;
+      line-height: 1.45;
+    }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 48px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 20px;
+      align-items: stretch;
+      margin-bottom: 24px;
+    }
+
+    .focus {
+      background: #14372d;
+      color: #f6fff9;
+      border-radius: 8px;
+      padding: 28px;
+      min-height: 190px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1px solid #0e2a22;
+    }
+
+    .focus small,
+    .summary small,
+    .section-label {
+      color: inherit;
+      opacity: 0.72;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      margin-top: 12px;
+      font-size: 34px;
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .focus p {
+      max-width: 760px;
+      color: #dceee6;
+      margin-top: 14px;
+      font-size: 16px;
+    }
+
+    .summary {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 22px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .metric {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 12px;
+    }
+
+    .metric:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .metric strong {
+      font-size: 22px;
+    }
+
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 0 0 24px;
+    }
+
+    .links a {
+      color: #12352d;
+      background: #e8efec;
+      border: 1px solid #cfd9d5;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 14px;
+      text-decoration: none;
+    }
+
+    section {
+      margin-top: 28px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .section-head h2 {
+      font-size: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      min-height: 220px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .card.featured {
+      grid-column: span 3;
+      border-color: #9bc8ad;
+      background: linear-gradient(180deg, #ffffff 0%, #f1faf4 100%);
+    }
+
+    .topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .badge.active {
+      color: #16442f;
+      background: var(--active-bg);
+      border: 1px solid #a7d6b7;
+    }
+
+    .badge.concept {
+      color: #60430a;
+      background: var(--concept-bg);
+      border: 1px solid #e8c76e;
+    }
+
+    .badge.paused {
+      color: #3f474d;
+      background: var(--paused-bg);
+      border: 1px solid #cfd5d9;
+    }
+
+    .card h3 {
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .next {
+      border-left: 3px solid var(--accent);
+      padding-left: 10px;
+      color: #22302e;
+      font-size: 15px;
+    }
+
+    .rule {
+      margin-top: auto;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .step {
+      min-height: 8px;
+      border-radius: 999px;
+      background: #d8dedb;
+    }
+
+    .step.on.active {
+      background: var(--active);
+    }
+
+    .step.on.concept {
+      background: var(--concept);
+    }
+
+    .step.on.paused {
+      background: var(--paused);
+    }
+
+    footer {
+      margin-top: 34px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 840px) {
+      main {
+        width: min(100% - 20px, 1180px);
+        padding-top: 16px;
+      }
+
+      .hero,
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card.featured {
+        grid-column: span 1;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+
+      .section-head {
+        align-items: start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="hero">
+      <div class="focus">
+        <div>
+          <small>Foco atual do estudio</small>
+          <h1>Draxos Roguelike Cardgame</h1>
+          <p>P0 - Implementacao ativa. Codigo, validacao, playtest e documentacao local devem convergir para este projeto por padrao.</p>
+        </div>
+        <p>Proximo passo: playtest da rota completa, overlays da nave com alpha real e recompensas restantes.</p>
+      </div>
+
+      <aside class="summary">
+        <div class="metric">
+          <div>
+            <small>Implementacao</small>
+            <p>Projeto ativo</p>
+          </div>
+          <strong>1</strong>
+        </div>
+        <div class="metric">
+          <div>
+            <small>Conceito</small>
+            <p>Incubacao</p>
+          </div>
+          <strong>2</strong>
+        </div>
+        <div class="metric">
+          <div>
+            <small>Pausados</small>
+            <p>Tempo indeterminado</p>
+          </div>
+          <strong>2</strong>
+        </div>
+      </aside>
+    </div>
+
+    <nav class="links" aria-label="Documentos principais">
+      <a href="Prioridades_Estudio.md">Prioridades do Estudio</a>
+      <a href="Estado_Atual.md">Estado Atual</a>
+      <a href="../Projetos/README.md">Projetos README</a>
+      <a href="Kanban/Doing/">Kanban Doing</a>
+    </nav>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <span class="section-label">P0</span>
+          <h2>Implementacao Ativa</h2>
+        </div>
+      </div>
+      <div class="grid">
+        <article class="card featured">
+          <div class="topline">
+            <span class="badge active">P0_IMPLEMENTACAO</span>
+            <span class="meta">Projetos/draxos-roguelike-cardgame/</span>
+          </div>
+          <h3>Draxos Roguelike Cardgame</h3>
+          <p class="meta">Menu-first roguelike cardgame com ShipHub, mapa de run, batalhas por lanes, classes, almas/cura e rota linear de 10 mapas.</p>
+          <p class="next">Playtestar rota completa com sacrificio/movimento/Cinzas/tuning, trocar overlays por PNGs com alpha real e definir recompensas restantes.</p>
+          <div class="timeline" aria-label="Fase implementacao ativa">
+            <span class="step"></span>
+            <span class="step on active"></span>
+            <span class="step on active"></span>
+            <span class="step"></span>
+          </div>
+          <p class="rule">Permitido: codigo, validacao, playtest e documentacao local.</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <span class="section-label">P1</span>
+          <h2>Conceitos em Incubacao</h2>
+        </div>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <div class="topline">
+            <span class="badge concept">P1_CONCEITO</span>
+            <span class="meta">Projetos/_conceitos/RPGMobile/</span>
+          </div>
+          <h3>RPGMobile</h3>
+          <p class="meta">Projeto nomeado em fase conceitual. Ainda nao e projeto Godot oficial.</p>
+          <p class="next">Definir pitch, fantasia central, loop principal e pilares de produto.</p>
+          <div class="timeline" aria-label="Fase conceito">
+            <span class="step on concept"></span>
+            <span class="step"></span>
+            <span class="step"></span>
+            <span class="step"></span>
+          </div>
+          <p class="rule">Permitido: conceito, pitch, design e referencias.</p>
+        </article>
+
+        <article class="card">
+          <div class="topline">
+            <span class="badge concept">P1_CONCEITO</span>
+            <span class="meta">Projetos/_conceitos/BattleMobile/</span>
+          </div>
+          <h3>BattleMobile</h3>
+          <p class="meta">Projeto nomeado em fase conceitual. Ainda nao e projeto Godot oficial.</p>
+          <p class="next">Definir pitch, fantasia central, loop principal e pilares de produto.</p>
+          <div class="timeline" aria-label="Fase conceito">
+            <span class="step on concept"></span>
+            <span class="step"></span>
+            <span class="step"></span>
+            <span class="step"></span>
+          </div>
+          <p class="rule">Permitido: conceito, pitch, design e referencias.</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <span class="section-label">Pausados</span>
+          <h2>Tempo Indeterminado</h2>
+        </div>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <div class="topline">
+            <span class="badge paused">PAUSADO_INDEFINIDO</span>
+            <span class="meta">Projetos/rpg-isometrico/</span>
+          </div>
+          <h3>RPG Isometrico</h3>
+          <p class="meta">Baseline B0 preservada com Arena, Survival, Boss e frontend campaign-first.</p>
+          <p class="next">Nenhum proximo passo enquanto pausado.</p>
+          <div class="timeline" aria-label="Fase pausado">
+            <span class="step"></span>
+            <span class="step"></span>
+            <span class="step"></span>
+            <span class="step on paused"></span>
+          </div>
+          <p class="rule">Permitido: consulta historica quando solicitado.</p>
+        </article>
+
+        <article class="card">
+          <div class="topline">
+            <span class="badge paused">PAUSADO_INDEFINIDO</span>
+            <span class="meta">Projetos/rpg-turnos/</span>
+          </div>
+          <h3>RPG Turnos</h3>
+          <p class="meta">Slice Godot 4.6.2 preservado com runtime C1, classes, encontros e save/load JSON v2.</p>
+          <p class="next">Nenhum proximo passo enquanto pausado.</p>
+          <div class="timeline" aria-label="Fase pausado">
+            <span class="step"></span>
+            <span class="step"></span>
+            <span class="step"></span>
+            <span class="step on paused"></span>
+          </div>
+          <p class="rule">Permitido: consulta historica quando solicitado.</p>
+        </article>
+      </div>
+    </section>
+
+    <footer>
+      Ultima atualizacao: 2026-05-14. Fonte operacional: Prioridades_Estudio.md.
+    </footer>
+  </main>
+</body>
+</html>

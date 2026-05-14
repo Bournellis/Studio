@@ -4,7 +4,8 @@
 
 - data: `<YYYY-MM-DD>`
 - decisor: `Usuario | Codex | Claude | Shared`
-- projeto: `rpg-isometrico | rpg-turnos | estudio`
+- projeto: `estudio | draxos-roguelike-cardgame | RPGMobile | BattleMobile | rpg-isometrico | rpg-turnos`
+- prioridade_portfolio: `P0_IMPLEMENTACAO | P1_CONCEITO | PAUSADO_INDEFINIDO | AGUARDANDO_DECISAO | ARQUIVO_HISTORICO`
 
 ## Contexto
 

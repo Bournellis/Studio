@@ -1,36 +1,66 @@
-# Estado Atual — Estudio
+# Estado Atual - Estudio
 
-- Ultima atualizacao: `2026-05-13`
+- Ultima atualizacao: `2026-05-14`
+- Fonte de verdade de portfolio: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
+- Painel visual local: `08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
-## rpg-isometrico
+## Prioridade do Estudio
 
-- Status: **Ativo — aguardando selecao de prox gate**
-- Track ativa: `Track 02 - Canonical Product Foundation` (OPEN)
-- Baseline atual: B0 interno — Arena / Survival / Boss jogaveis + frontend campaign-first (Campaign primario, Classic autorado, Campanha Livre pos-Easy, extras secundarios; Arena PvP / Private Duel fora da navegacao publica)
-- Meta ativa: F11 campaign-first runtime alignment completo; nenhuma gate de implementacao ativa ate que a Next Gate seja selecionada explicitamente
-- Lore: Imortais substitui Heroic/Heroico como nome player-facing; lore detalhado pendente
-- Ultima atualizacao do current-status: `2026-04-26`
-- Proximo passo: escolher Next Gate antes de expandir conteudo, co-op, PvP, Hard, corrida ou escopo de armas
-
-## rpg-turnos
-
-- Status: **Track 02 completa — aguardando proxima track ou gate**
-- Track ativa: `Track 02 - Draxos Lore And Progression Alignment` (COMPLETE)
-- Baseline atual: slice Godot 4.6.2 jogavel — C1 unico runtime, todos os modos de batalha, 3 classes jogaveis (Invocador/Arcano/Necromante), cadeia de 8 encontros + 5 side encounters, ranks de operacao, save/load JSON v2 com migracao v1→v2, IDs de encontro migrados para nomes de operacao Draxos (operacao_pouso, confronto_guardiao, tomada_conduto, avanco_bastiao, ondas_resistencia, defesa_base_ether, nucleo_fragmentado, ruptura_selos), 13 encontros totais no catalogo, NPC pool de 5 cartas, .tres regeneracao pendente local
-- Meta ativa: Track 02 encerrada; validacao local pendente (.tres regeneration necessaria para IDs migrados)
-- Ultima atualizacao do current-status: `2026-05-13`
-- Proximo passo: regenerar .tres localmente, rodar validacao, depois selecionar proxima track ou gate
+- Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
+- Conceitos P1 em incubacao: `Projetos/_conceitos/RPGMobile/`, `Projetos/_conceitos/BattleMobile/`
+- Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## draxos-roguelike-cardgame
 
-- Status: **Ativo - Track 01 sacrificio/movimento/Cinzas/tuning validado**
+- Status: **P0_IMPLEMENTACAO - ativo**
+- Fase: `Implementacao`
 - Track ativa: `Track 01 - Playable Run Loop` (P11_SACRIFICE_MOVEMENT_NECRO_TUNING_VALIDATED)
-- Baseline atual: checkpoint Godot 4.6.2 com menu principal de 3 saves nomeados, SaveManager local, escolha obrigatoria de classe e nome de jogador na nave, ShipHub Deck/Mapa/Almas como overlays posicionados sem painel Estado da Run, telas Deck e Almas dedicadas, Deck com fallback para starter deck, ESC seguro em Mapa/Deck/Almas, RunMap com proximo encontro selecionado, recompensa de vitoria em modal, cura 5 por 10 almas, Arcano/Invocador/Necromante, 10 mapas lineares, combate `Resolver Combate` em 4 etapas com frente simultanea e sobra sequencial, HUD de batalha estavel com alvos compactos do jogador/inimigo e tokens de passiva/ativa com hover, modais centralizados/scrollaveis incluindo sacrificio, Tempestade Arcana com alvo de area, movimento de criaturas por drag com troca adjacente, IA de duelo com deck/mao/mana jogando apos combate, Defesa 4 reworkada, Sobreviver 6 buffado, Necromante com ativa por niveis, Barreira Arcana Defensor e validacao verde 58/58
-- Meta ativa: playtestar rota completa com o novo sacrificio/movimento/Cinzas/tuning, substituir arte transparente dos overlays da nave e distribuir recompensas restantes
-- Ultima atualizacao do current-status: `2026-05-13`
-- Proximo passo: playtest da rota completa com o novo sacrificio/movimento/Cinzas/tuning, substituir Mapa/Deck/Almas por PNGs com alpha real e definir recompensas restantes
+- Baseline atual: Godot 4.6.2 com ShipHub, 3 saves, escolha de classe, deck/mapa/almas, run linear de 10 mapas, batalha por lanes, sacrificio, movimento, IA de duelo, Necromante por niveis e validacao verde 58/58.
+- Meta ativa: playtestar rota completa, substituir arte transparente dos overlays da nave e distribuir recompensas restantes.
+- Trabalho permitido: codigo, validacao, playtest e documentacao local.
+- Proximo passo: playtest da rota completa com sacrificio/movimento/Cinzas/tuning, PNGs com alpha real para Mapa/Deck/Almas e recompensas restantes.
 
-## Kanban rápido
+## RPGMobile
+
+- Status: **P1_CONCEITO - incubacao**
+- Fase: `Conceito`
+- Local: `Projetos/_conceitos/RPGMobile/`
+- Baseline atual: conceito nomeado, sem implementacao e sem estrutura Godot oficial.
+- Trabalho permitido: conceito, pitch, design e referencias.
+- Restricao operacional: nao criar codigo, cenas, assets de implementacao ou projeto Godot sem pedido explicito.
+- Proximo passo: definir pitch, fantasia central, loop principal e pilares de produto.
+
+## BattleMobile
+
+- Status: **P1_CONCEITO - incubacao**
+- Fase: `Conceito`
+- Local: `Projetos/_conceitos/BattleMobile/`
+- Baseline atual: conceito nomeado, sem implementacao e sem estrutura Godot oficial.
+- Trabalho permitido: conceito, pitch, design e referencias.
+- Restricao operacional: nao criar codigo, cenas, assets de implementacao ou projeto Godot sem pedido explicito.
+- Proximo passo: definir pitch, fantasia central, loop principal e pilares de produto.
+
+## rpg-isometrico
+
+- Status: **PAUSADO_INDEFINIDO**
+- Fase: `Pausado`
+- Baseline preservada: B0 interno com Arena / Survival / Boss jogaveis e frontend campaign-first.
+- Ultima atualizacao do current-status: `2026-04-26`
+- Trabalho permitido: consulta historica e leitura de contexto quando o usuario pedir explicitamente.
+- Restricao operacional: nao implementar, expandir gates, selecionar Next Gate ou alterar escopo sem pedido explicito.
+- Proximo passo: nenhum enquanto estiver pausado.
+
+## rpg-turnos
+
+- Status: **PAUSADO_INDEFINIDO**
+- Fase: `Pausado`
+- Baseline preservada: slice Godot 4.6.2 jogavel com runtime C1, modos de batalha, 3 classes, 13 encontros, ranks de operacao e save/load JSON v2.
+- Ultima atualizacao do current-status: `2026-05-13`
+- Trabalho permitido: consulta historica e leitura de contexto quando o usuario pedir explicitamente.
+- Restricao operacional: nao implementar, selecionar proxima track/gate, regenerar `.tres` ou alterar escopo sem pedido explicito.
+- Proximo passo: nenhum enquanto estiver pausado.
+
+## Kanban rapido
 
 - Backlog: `08_Coordenacao_Agentes/Kanban/Backlog/`
 - Doing: `08_Coordenacao_Agentes/Kanban/Doing/`

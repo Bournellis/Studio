@@ -4,54 +4,79 @@ This file governs agent behavior for the `D:\Estudio` workspace.
 
 ## Workspace Roles
 
+- `08_Coordenacao_Agentes/Prioridades_Estudio.md` is the portfolio source of truth for focus, priority, project status, and allowed work.
+- `08_Coordenacao_Agentes/Painel_Visual_Estudio.html` is the human-facing local dashboard for the same portfolio state.
 - `canon/` is the shared source of truth for established product identity, lore context, gameplay contracts, progression, shared architecture, mode standard, and platform strategy.
-- `Projetos/rpg-isometrico/` is the active Godot implementation workspace for the campaign-first isometric action RPG.
-- `Projetos/rpg-turnos/` is the initial Godot implementation workspace for a provisional turn-based RPG-cardgame that may share studio lore but owns separate mechanics.
-- `Projetos/draxos-roguelike-cardgame/` is the active Godot implementation workspace for the menu-first Draxos roguelike cardgame; it shares Draxos lore context but owns separate mechanics, run structure, hub flow, rewards, card rules, and encounter pacing.
+- `Projetos/draxos-roguelike-cardgame/` is the current P0 implementation workspace for the menu-first Draxos roguelike cardgame.
+- `Projetos/_conceitos/RPGMobile/` is a P1 concept workspace; it allows concept, pitch, design, and references only.
+- `Projetos/_conceitos/BattleMobile/` is a P1 concept workspace; it allows concept, pitch, design, and references only.
+- `Projetos/rpg-isometrico/` is paused indefinitely and preserved for historical/contextual consultation.
+- `Projetos/rpg-turnos/` is paused indefinitely and preserved for historical/contextual consultation.
 - `migration/` is a historical archive for cutover, relocation, and legacy comparison context.
-- `08_Coordenacao_Agentes/` is the coordination hub: Kanban, Handoffs, Decisoes, and the Estado_Atual.
-- `Projetos/README.md` is the lightweight project registry for active and emerging projects.
+- `08_Coordenacao_Agentes/` is the coordination hub: Kanban, Handoffs, Decisoes, Prioridades, Painel Visual, and Estado_Atual.
+- `Projetos/README.md` is the lightweight project registry for active, conceptual, and paused projects.
+
+## Portfolio Gate
+
+Antes de abrir documentacao profunda de qualquer projeto, consulte:
+
+1. `08_Coordenacao_Agentes/Prioridades_Estudio.md`
+2. `Projetos/README.md`
+3. `08_Coordenacao_Agentes/Estado_Atual.md`
+
+Use esses documentos para identificar se o pedido e sobre implementacao ativa, conceito, projeto pausado, canon compartilhado ou coordenacao do estudio.
+
+- Se o usuario nao citar projeto e pedir implementacao, validacao, playtest ou trabalho tecnico, assuma `Projetos/draxos-roguelike-cardgame/`.
+- Projetos com `P0_IMPLEMENTACAO` podem receber codigo, validacao, playtest e documentacao local por padrao.
+- Projetos com `P1_CONCEITO` permitem somente conceito, pitch, design, referencias e documentacao conceitual.
+- Projetos com `PAUSADO_INDEFINIDO` nao devem receber implementacao, expansao de escopo, novas gates ou selecao de track sem pedido explicito do usuario.
+- Ao concluir qualquer tarefa que mude status observavel, atualize `Prioridades_Estudio.md`, `Estado_Atual.md` e o registro relevante em `Projetos/README.md`.
 
 ## Project Selection Gate
 
-Antes de abrir documentacao profunda de qualquer projeto, escolha o projeto alvo usando o pedido do usuario, `Projetos/README.md` e `08_Coordenacao_Agentes/Estado_Atual.md`.
+Depois do Portfolio Gate, escolha o projeto alvo usando o pedido do usuario, `Prioridades_Estudio.md`, `Projetos/README.md` e `Estado_Atual.md`.
 
-- Se o usuario citar `draxos-roguelike-cardgame`, `Draxos roguelike`, `roguelike cardgame`, `ship hub`, `run map`, `mapa de run`, `10 mapas`, `almas`, `classe no hub`, ou `rota completa`, use `Projetos/draxos-roguelike-cardgame/`.
-- Se o usuario citar `rpg-turnos`, `RPG Turnos`, `exploracao 2D`, `NPC`, `mundo`, `class_select`, `Track 02 - Draxos Lore And Progression Alignment`, ou `P10 - Necromante`, use `Projetos/rpg-turnos/`.
-- Se o usuario citar `rpg-isometrico`, campanha isometrica, Arena, Survival, Boss, loadout de acao ou gates Fxx, use `Projetos/rpg-isometrico/`.
-- `Draxos` sozinho e contexto de lore compartilhada nao bastam para escolher `rpg-turnos`; confirme pelo projeto citado, pela track ativa ou pelos termos operacionais acima.
+- Se o usuario citar `draxos-roguelike-cardgame`, `Draxos roguelike`, `roguelike cardgame`, `ship hub`, `run map`, `mapa de run`, `10 mapas`, `almas`, `classe no hub`, `rota completa`, `sacrificio`, `Cinzas` ou `batalhas por lanes`, use `Projetos/draxos-roguelike-cardgame/`.
+- Se o usuario citar `RPGMobile`, use `Projetos/_conceitos/RPGMobile/` e mantenha o trabalho em conceito, pitch, design e referencias, salvo pedido explicito de implementacao.
+- Se o usuario citar `BattleMobile`, use `Projetos/_conceitos/BattleMobile/` e mantenha o trabalho em conceito, pitch, design e referencias, salvo pedido explicito de implementacao.
+- Se o usuario citar `rpg-turnos`, `RPG Turnos`, exploracao 2D, NPC, mundo, `class_select`, `Track 02 - Draxos Lore And Progression Alignment` ou `P10 - Necromante`, use `Projetos/rpg-turnos/` apenas para consulta historica, salvo pedido explicito de retomar trabalho.
+- Se o usuario citar `rpg-isometrico`, campanha isometrica, Arena, Survival, Boss, loadout de acao ou gates Fxx, use `Projetos/rpg-isometrico/` apenas para consulta historica, salvo pedido explicito de retomar trabalho.
+- `Draxos` sozinho e contexto de lore compartilhada nao bastam para escolher `rpg-turnos`; confirme pelo projeto citado, pela prioridade atual ou pelos termos operacionais acima.
 - Depois de escolher o projeto alvo, leia apenas o `AGENTS.md`, `implementation/current-status.md` e track local desse projeto, salvo tarefa transversal.
 
-## Read Order — Fast Lane (trabalho delimitado)
+## Read Order - Fast Lane
 
-Para tarefas localizadas num unico projeto ou area (ex: corrigir bug, implementar feature isolada, ajustar documento), comece com:
+Para tarefas localizadas num unico projeto ou area, comece com:
 
-1. `canon/canon-brief.md`
-2. `Projetos/README.md` (registro leve dos projetos)
-3. `08_Coordenacao_Agentes/Estado_Atual.md` (secao do projeto relevante)
-4. A tarefa ativa em `08_Coordenacao_Agentes/Kanban/Doing/`, se existir
-5. O `AGENTS.md` local do projeto Godot, se entrar no codigo
+1. `08_Coordenacao_Agentes/Prioridades_Estudio.md`
+2. `canon/canon-brief.md`
+3. `Projetos/README.md`
+4. `08_Coordenacao_Agentes/Estado_Atual.md`
+5. A tarefa ativa em `08_Coordenacao_Agentes/Kanban/Doing/`, se existir
+6. O `AGENTS.md` local do projeto Godot, se entrar no codigo
 
 Escale para a ordem completa imediatamente se:
+
 - a tarefa afetar mais de um projeto ou a direcao do canon;
 - houver decisao de produto, arquitetura ou plataforma;
 - o escopo se expandir alem dos arquivos tocados inicialmente.
 
-## Read Order — Full (trabalho transversal ou decisao importante)
+## Read Order - Full
 
 Antes de trabalho substancial que afete multiplos projetos ou o canon:
 
-1. `canon/product/product-vision.md`
-2. `canon/design/game-design-document.md`
-3. `canon/design/progression-design.md`
-4. `canon/architecture/shared-architecture.md`
-5. `canon/architecture/game-mode-standard.md`
-6. `canon/roadmap/evolution-roadmap.md`
-7. `canon/roadmap/release-horizons.md`
-8. `canon/platform/steam-platform.md`
-9. O `AGENTS.md` local do projeto Godot
-10. O `implementation/current-status.md` local do projeto
-11. Este arquivo
+1. `08_Coordenacao_Agentes/Prioridades_Estudio.md`
+2. `canon/product/product-vision.md`
+3. `canon/design/game-design-document.md`
+4. `canon/design/progression-design.md`
+5. `canon/architecture/shared-architecture.md`
+6. `canon/architecture/game-mode-standard.md`
+7. `canon/roadmap/evolution-roadmap.md`
+8. `canon/roadmap/release-horizons.md`
+9. `canon/platform/steam-platform.md`
+10. O `AGENTS.md` local do projeto, quando houver
+11. O `implementation/current-status.md` local do projeto, quando houver
+12. Este arquivo
 
 ## Canon Rule
 
@@ -61,21 +86,29 @@ Nao aplique silenciosamente a mecanica de um projeto em outro. `rpg-turnos` pode
 
 Nao trate `draxos-roguelike-cardgame` como variante de `rpg-turnos`. O projeto foi bootstrapped com reuso estreito, mas possui contratos locais proprios. Qualquer regra de combate, deck, mana, compra, recompensa, hub, mapa ou pacing de `rpg-turnos` so vale em Draxos se um documento local de `draxos-roguelike-cardgame` adotar explicitamente.
 
+Nao trate RPGMobile ou BattleMobile como projetos Godot oficiais ate que recebam `AGENTS.md`, `implementation/current-status.md`, entrada oficial em `Projetos/README.md` como projeto implementavel e entrada resumida em `Estado_Atual.md`.
+
 ## Godot Rule
 
 Implementacoes Godot vivem sob `Projetos/`.
 
-Projetos Godot ativos:
-- `Projetos/rpg-isometrico/`
-- `Projetos/rpg-turnos/`
+Projeto Godot ativo por padrao:
+
 - `Projetos/draxos-roguelike-cardgame/`
 
-Ao entrar num projeto Godot:
-1. Consulte o canon compartilhado primeiro
-2. Consulte `Projetos/README.md` para confirmar o registro do projeto
-3. Consulte `implementation/current-status.md` do projeto
-4. Consulte o `AGENTS.md` local do projeto Godot e a track ativa em `implementation/tracks/`
-5. Consulte docs de validacao historica apenas quando responderem uma pergunta especifica
+Projetos Godot pausados:
+
+- `Projetos/rpg-isometrico/`
+- `Projetos/rpg-turnos/`
+
+Ao entrar num projeto Godot ativo:
+
+1. Consulte `Prioridades_Estudio.md` primeiro
+2. Consulte o canon compartilhado
+3. Consulte `Projetos/README.md` para confirmar o registro do projeto
+4. Consulte `implementation/current-status.md` do projeto
+5. Consulte o `AGENTS.md` local do projeto Godot e a track ativa em `implementation/tracks/`
+6. Consulte docs de validacao historica apenas quando responderem uma pergunta especifica
 
 Um projeto futuro em `Projetos/` so deve ser tratado como oficial quando tiver `AGENTS.md`, `implementation/current-status.md`, entrada em `Projetos/README.md`, e entrada resumida em `08_Coordenacao_Agentes/Estado_Atual.md`.
 
@@ -94,13 +127,15 @@ Se contexto historico for necessario, consulte nesta ordem:
 
 `08_Coordenacao_Agentes/Estado_Atual.md` e o snapshot vivo dos projetos. Mantenha-o atual:
 
-- **Quando atualizar**: ao concluir qualquer tarefa que mude o status observavel de um projeto (nova track ativa, gate concluida, proximo passo alterado, baseline nova).
-- **O que atualizar**: somente as linhas que mudaram — status, track ativa, baseline, proximo passo.
+- **Quando atualizar**: ao concluir qualquer tarefa que mude o status observavel de um projeto, prioridade de portfolio, track ativa, baseline ou proximo passo.
+- **O que atualizar**: somente as linhas que mudaram - status, fase, prioridade, baseline curta, proximo passo e restricao operacional.
 - **O que nao colocar**: historico de gates, detalhes tecnicos de implementacao, listas longas de arquivos. Isso vai para Done do Kanban ou para `implementation/current-status.md` do projeto.
-- **Regra do tamanho**: se o arquivo passar de 60 linhas, esta crescendo demais.
+- **Regra do tamanho**: mantenha o arquivo compacto e orientado a decisao.
 
 ## Coordination Structure
 
+- Prioridades e foco do estudio: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
+- Painel visual local: `08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 - Estado atual dos projetos: `08_Coordenacao_Agentes/Estado_Atual.md`
 - Tarefas ativas: `08_Coordenacao_Agentes/Kanban/Doing/`
 - Backlog: `08_Coordenacao_Agentes/Kanban/Backlog/`
@@ -109,4 +144,4 @@ Se contexto historico for necessario, consulte nesta ordem:
 - Templates oficiais: `08_Coordenacao_Agentes/Templates/`
 
 **Nomenclatura de arquivos Kanban**: `YYYY-MM-DD_agente_slug.md`
-Exemplos: `2026-05-04_codex_rpg-turnos_duelo-mode.md`, `2026-05-04_claude_canon_update.md`
+Exemplos: `2026-05-04_codex_rpg-turnos_duelo-mode.md`, `2026-05-14_codex_estudio_portfolio.md`
