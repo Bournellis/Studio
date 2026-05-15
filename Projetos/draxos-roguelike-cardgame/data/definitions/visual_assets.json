@@ -226,6 +226,15 @@
       "frame_id": "frame_arcano",
       "text_template": "Causa {amount} pontos de dano aleatorios entre alvos inimigos."
     },
+    "arcano_bola_de_fogo": {
+      "art_path": "res://assets/cards/art/arcano_bola_de_fogo.png",
+      "frame_id": "frame_arcano",
+      "text_template": "Causa {primary_amount} de dano no alvo e {amount} nos slots adjacentes."
+    },
+    "arcano_acelerar": {
+      "art_path": "res://assets/cards/art/arcano_acelerar.png",
+      "frame_id": "frame_arcano"
+    },
     "invocador_soldado": {
       "art_path": "res://assets/cards/art/invocador_soldado.png",
       "frame_id": "frame_invocador"
@@ -241,6 +250,15 @@
     },
     "invocador_guardiao": {
       "art_path": "res://assets/cards/art/invocador_guardiao.png",
+      "frame_id": "frame_invocador"
+    },
+    "invocador_atacar": {
+      "art_path": "res://assets/cards/art/invocador_atacar.png",
+      "frame_id": "frame_invocador",
+      "text_template": "Todas as criaturas aliadas recebem +{effect_attack}/+{effect_health} ate o final do turno."
+    },
+    "invocador_golem": {
+      "art_path": "res://assets/cards/art/invocador_golem.png",
       "frame_id": "frame_invocador"
     },
     "necro_esqueleto": {
@@ -261,6 +279,15 @@
       "art_path": "res://assets/cards/art/necro_zumbi.png",
       "frame_id": "frame_necromante",
       "text_template": "Ao morrer: Enfraquecer {amount}."
+    },
+    "necro_carniceiro": {
+      "art_path": "res://assets/cards/art/necro_carniceiro.png",
+      "frame_id": "frame_necromante"
+    },
+    "necro_punir": {
+      "art_path": "res://assets/cards/art/necro_punir.png",
+      "frame_id": "frame_necromante",
+      "text_template": "Alvo recebe -{amount}/-{amount}; se estiver preso, -{snared_amount}/-{snared_amount}."
     },
     "elemental_agil": {
       "art_path": "res://assets/cards/art/elemental_agil.png",

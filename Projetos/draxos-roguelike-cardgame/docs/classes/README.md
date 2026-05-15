@@ -1,7 +1,7 @@
 # Classes - Indice
 
 - Last Updated: `2026-05-15`
-- Status: `Track 01 13-map reward update validated`
+- Status: `Track 01 real upgrades and reward cards validated`
 - Referencia: `../game-design-document.md`
 
 ## Decisao Atual
@@ -12,7 +12,8 @@ Cada classe tem:
 
 - deck inicial proprio com 9 cartas custo 1, 3 tipos e 3 copias de cada, com mana inicial 1;
 - carta custo 2 propria adicionada automaticamente no mapa 2;
-- pool placeholder de 6 cartas de recompensa custo 1-3;
+- 2 cartas novas reais de recompensa, desbloqueadas nos mapas 7 e 11;
+- upgrades reais Lvl 2 e Lvl 3 por tipo de carta;
 - passiva fixa desbloqueada automaticamente no mapa 8;
 - habilidade ativa fixa desbloqueada automaticamente no mapa 10;
 - habilidade ativa usavel uma vez por turno quando desbloqueada.
@@ -34,7 +35,8 @@ Keywords ativas no slice:
 - `iniciativa`: ataca nas etapas de iniciativa; se destruir o alvo antes da etapa normal, esse alvo nao responde.
 - `defensor`: atrai ataques de criaturas inimigas sem alvo na lane a frente.
 - `reviver`: volta uma vez ao morrer por dano/efeito, com marcador de reviver.
-- `regeneracao`: recupera HP no inicio do turno do jogador.
+- `regeneracao X`: recupera HP no fim de `Resolver Combate`.
+- `carnica X`: cresce +X/+X quando outra criatura morre.
 
 Keywords removidas:
 
@@ -52,3 +54,11 @@ Os decks iniciais foram redesenhados para 9 cartas por classe, com a carta custo
 - Necromante inicial: `Esqueleto`, `Morto vivo`, `Prender`; mapa 2 adiciona `Zumbi`.
 
 No mapa 6, a run recebe `+1 limite de cartas na mao`.
+
+## Recompensas E Upgrades
+
+- Mapas 3, 4, 9 e 12 oferecem upgrade de carta.
+- Mapa 7 oferece as 2 cartas novas da classe; mapa 11 oferece a carta restante.
+- Cada escolha de carta nova adiciona 3 copias ao deck da run.
+- Upgrades nao ramificam mais nesta revisao: Lvl 1 e base, primeiro upgrade vira Lvl 2, segundo upgrade vira Lvl 3.
+- As opcoes de upgrade sao sorteadas de forma estavel pelo seed da run/recompensa entre os tipos elegiveis do deck.

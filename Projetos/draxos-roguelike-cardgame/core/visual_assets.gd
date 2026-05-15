@@ -52,7 +52,18 @@ func frame_entry(frame_id: String) -> Dictionary:
 
 func card_entry(card_id: String) -> Dictionary:
 	var cards: Dictionary = Dictionary(ensure_loaded().get("cards", {}))
-	return Dictionary(cards.get(card_id, {}))
+	var entry: Dictionary = Dictionary(cards.get(card_id, {}))
+	if not entry.is_empty():
+		return entry
+	var base_id: String = _base_card_id(card_id)
+	if base_id != card_id:
+		return Dictionary(cards.get(base_id, {}))
+	return {}
+
+func _base_card_id(card_id: String) -> String:
+	if card_id.ends_with("_lvl2") or card_id.ends_with("_lvl3"):
+		return card_id.substr(0, card_id.length() - 5)
+	return card_id
 
 func class_portrait_entry(class_id: String) -> Dictionary:
 	var portraits: Dictionary = Dictionary(ensure_loaded().get("class_portraits", {}))
@@ -311,7 +322,7 @@ func validate_manifest(catalog = null) -> Dictionary:
 				errors.append("Missing class portrait entry: %s." % class_id)
 		for card in catalog.cards:
 			var card_id: String = str(card.id)
-			var entry: Dictionary = Dictionary(cards.get(card_id, {}))
+			var entry: Dictionary = card_entry(card_id)
 			if entry.is_empty():
 				errors.append("Missing visual card entry: %s." % card_id)
 				continue
@@ -468,6 +479,16 @@ func _card_template_values(card, context: Dictionary = {}) -> Dictionary:
 	var effect: Dictionary = Dictionary(card.effect)
 	if effect.has("amount"):
 		values["amount"] = int(context.get("amount", int(effect.get("amount", 0))))
+	if effect.has("primary_bonus"):
+		values["primary_amount"] = int(context.get("primary_amount", int(effect.get("amount", 0)) + int(effect.get("primary_bonus", 0))))
+	if effect.has("mana"):
+		values["mana"] = int(context.get("mana", int(effect.get("mana", 0))))
+	if effect.has("temporary_ability_power"):
+		values["temporary_ability_power"] = int(context.get("temporary_ability_power", int(effect.get("temporary_ability_power", 0))))
+	if effect.has("snared_amount"):
+		values["snared_amount"] = int(context.get("snared_amount", int(effect.get("snared_amount", 0))))
+	if effect.has("weaken_amount"):
+		values["weaken_amount"] = int(context.get("weaken_amount", int(effect.get("weaken_amount", 0))))
 	if effect.has("attack"):
 		values["effect_attack"] = int(context.get("effect_attack", int(effect.get("attack", 0))))
 	if effect.has("health"):

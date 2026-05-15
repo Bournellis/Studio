@@ -74,6 +74,8 @@ var class_active_used: bool = false
 var invocador_passive_triggered: bool = false
 var flow: int = 0
 var ashes: int = 0
+var temporary_ability_power_bonus: int = 0
+var card_upgrade_counts: Dictionary = {}
 var wave_index: int = 0
 var waves: Array[Array] = []
 var survived_turns: int = 0
@@ -110,6 +112,8 @@ func start_battle(catalog, deck_ids: Array, config: Dictionary = {}) -> void:
 	class_active_used = false
 	flow = 0
 	ashes = 0
+	temporary_ability_power_bonus = 0
+	card_upgrade_counts = Dictionary(config.get("card_upgrade_counts", {}))
 	turn_number = 1
 	boss_summon_index = 0
 	boss_summons = _typed_dictionary_array(encounter.get("boss_summons", []))
@@ -129,7 +133,7 @@ func start_battle(catalog, deck_ids: Array, config: Dictionary = {}) -> void:
 	pending_choices = []
 	discard = []
 	hand = []
-	deck = _typed_string_array(deck_ids)
+	deck = _effective_deck_ids(_typed_string_array(deck_ids))
 	if deck.is_empty() and catalog != null:
 		deck = _typed_string_array(Array(catalog.starter_deck_ids))
 	_shuffle_deck(deck)
@@ -165,6 +169,7 @@ func get_state() -> Dictionary:
 		"mana_per_turn": mana_per_turn,
 		"max_hand_size": max_hand_size,
 		"ability_power": _ability_power_bonus(),
+		"temporary_ability_power": temporary_ability_power_bonus,
 		"enemy_commander_enabled": enemy_commander_enabled,
 		"enemy_mana": enemy_mana,
 		"enemy_mana_per_turn": enemy_mana_per_turn,
@@ -235,9 +240,15 @@ func get_card_text_context(card_id: String) -> Dictionary:
 	var action: String = str(effect.get("action", ""))
 	if effect.has("amount"):
 		var amount: int = int(effect.get("amount", 0)) if str(effect.get("aura", "")) == "ability_power" else _effect_amount(effect)
-		if selected_class_id == "arcano" and class_passive_unlocked and action in ["damage", "random_damage"]:
+		if selected_class_id == "arcano" and class_passive_unlocked and action in ["damage", "random_damage", "adjacent_damage"]:
 			amount += flow
 		context["amount"] = amount
+	if effect.has("primary_bonus"):
+		context["primary_amount"] = int(context.get("amount", _effect_amount(effect))) + int(effect.get("primary_bonus", 0))
+	if effect.has("mana"):
+		context["mana"] = int(effect.get("mana", 0))
+	if effect.has("temporary_ability_power"):
+		context["temporary_ability_power"] = int(effect.get("temporary_ability_power", 0))
 	if effect.has("attack"):
 		context["effect_attack"] = _effect_number(effect, "attack")
 	if effect.has("health"):
@@ -250,6 +261,14 @@ func get_card_text_context(card_id: String) -> Dictionary:
 
 func can_play_card(card) -> bool:
 	return outcome == "" and pending_choices.is_empty() and card != null and int(card.cost) <= mana and not hand.is_empty()
+
+func can_play_card_without_target(hand_index: int) -> bool:
+	if hand_index < 0 or hand_index >= hand.size():
+		return false
+	var card = _card(hand[hand_index])
+	if not can_play_card(card) or card.occupies_slot():
+		return false
+	return _card_can_resolve_without_target(card)
 
 func get_valid_card_targets(hand_index: int) -> Array[Dictionary]:
 	if outcome != "" or hand_index < 0 or hand_index >= hand.size():
@@ -267,15 +286,19 @@ func get_valid_card_targets(hand_index: int) -> Array[Dictionary]:
 			targets.append_array(_occupied_slot_targets(ENEMY_ID))
 			targets.append_array(_hero_targets())
 			return targets
+		"adjacent_damage":
+			return _occupied_slot_targets(ENEMY_ID)
 		"random_damage":
 			var area_targets: Array[Dictionary] = []
 			if not _area_damage_targets(ENEMY_ID).is_empty():
 				area_targets.append(_board_area_target(ENEMY_ID))
 			return area_targets
-		"debuff", "weaken", "snare":
+		"debuff", "weaken", "snare", "multi_debuff", "punish_snared":
 			return _occupied_slot_targets(ENEMY_ID)
-		"buff_ally", "buff_all_allies", "promote":
+		"buff_ally", "promote":
 			return _occupied_slot_targets(PLAYER_ID)
+		"buff_all_allies", "gain_mana":
+			return [{}]
 	return _empty_targets()
 
 func can_play_card_on_target(hand_index: int, target: Dictionary) -> bool:
@@ -285,7 +308,7 @@ func can_play_card_on_target(hand_index: int, target: Dictionary) -> bool:
 		var card = _card(hand[hand_index])
 		if card == null:
 			return false
-		if str(Dictionary(card.effect).get("action", "")) == "random_damage":
+		if not _card_can_resolve_without_target(card):
 			return false
 		return can_play_card(card)
 	return _target_in_options(_normalized_target(target, PLAYER_ID), get_valid_card_targets(hand_index))
@@ -327,6 +350,7 @@ func play_card_from_hand(hand_index: int, target: Dictionary = {}) -> Dictionary
 		_after_card_played()
 		if player_slots[slot_index] != null:
 			var sacrificed: Dictionary = Dictionary(player_slots[slot_index])
+			player_slots[slot_index] = null
 			discard.append(str(sacrificed.get("card_id", "")))
 			_handle_unit_death(PLAYER_ID, sacrificed, false)
 			_log("%s foi sacrificado para abrir espaco." % str(sacrificed.get("name", "Criatura")))
@@ -373,6 +397,16 @@ func resolve_pending_choice(target: Dictionary = {}, option_id: String = "") -> 
 	match str(choice.get("action", "")):
 		"promote":
 			_resolve_promote_choice(choice, option_id)
+			var remaining_picks: int = int(choice.get("remaining_picks", 1)) - 1
+			if remaining_picks > 0:
+				var remaining_options: Array = []
+				for option: Dictionary in Array(choice.get("options", [])):
+					if str(option.get("id", "")) != option_id:
+						remaining_options.append(option)
+				if not remaining_options.is_empty():
+					choice["remaining_picks"] = remaining_picks
+					choice["options"] = remaining_options
+					pending_choices.push_front(choice)
 		"weaken":
 			var chosen_target: Dictionary = target if not target.is_empty() else (valid_targets[0] if not valid_targets.is_empty() else {})
 			if chosen_target.is_empty() or not _target_in_options(chosen_target, valid_targets):
@@ -545,6 +579,7 @@ func resolve_combat_cycle() -> Dictionary:
 	_log("Combate do ciclo %d." % turn_number)
 	if outcome == "":
 		_resolve_staged_combat_step()
+		_resolve_end_of_combat_regeneration()
 		_check_outcome()
 	if outcome == "" and not pending_choices.is_empty():
 		current_phase = PHASE_PENDING_COMBAT_CHOICE
@@ -587,6 +622,7 @@ func _finish_cycle() -> void:
 	class_active_used = false
 	invocador_passive_triggered = false
 	flow = 0
+	temporary_ability_power_bonus = 0
 	_clear_temporary_buffs()
 	_resolve_start_of_player_turn()
 	mana = mana_per_turn + _mana_aura_bonus()
@@ -748,6 +784,21 @@ func _resolve_spell(card, target: Dictionary) -> void:
 				var target_owner: String = str(target_data.get("owner", ENEMY_ID))
 				_damage_hero(target_owner, amount)
 			_log("%s causou %d de dano." % [card.display_name, amount])
+		"adjacent_damage":
+			var amount: int = _effect_amount(effect)
+			if selected_class_id == "arcano" and class_passive_unlocked:
+				amount += flow
+			var target_slot: int = int(target.get("slot", -1))
+			var target_owner: String = str(target.get("owner", ENEMY_ID))
+			if target_slot < 0:
+				_log("%s perdeu efeito: alvo invalido." % card.display_name)
+				return
+			for slot_index: int in [target_slot - 1, target_slot, target_slot + 1]:
+				if slot_index < 0 or slot_index >= _slots_for_owner(target_owner).size():
+					continue
+				var slot_damage: int = amount + (int(effect.get("primary_bonus", 0)) if slot_index == target_slot else 0)
+				_damage_slot(target_owner, slot_index, slot_damage)
+			_log("%s explodiu o slot %d e adjacentes." % [card.display_name, target_slot + 1])
 		"random_damage":
 			var total: int = _effect_amount(effect)
 			if selected_class_id == "arcano" and class_passive_unlocked:
@@ -762,6 +813,18 @@ func _resolve_spell(card, target: Dictionary) -> void:
 			debuff_effect["amount"] = _effect_amount(effect)
 			_apply_debuff_to_target(debuff_effect, target)
 			_log("%s aplicou %s." % [card.display_name, str(effect.get("debuff", "debuff"))])
+		"multi_debuff":
+			if bool(effect.get("snare", false)):
+				_apply_debuff_to_target({"debuff": "snare", "amount": int(effect.get("snare_amount", 1))}, target)
+			if int(effect.get("weaken_amount", 0)) > 0:
+				_apply_debuff_to_target({"debuff": "weaken", "amount": int(effect.get("weaken_amount", 0)) + _ability_power_bonus()}, target)
+			if bool(effect.get("remove_keywords", false)):
+				_remove_keywords_from_target(target)
+			_log("%s prendeu o alvo." % card.display_name)
+		"punish_snared":
+			var amount: int = int(effect.get("snared_amount", effect.get("amount", 1))) if _target_is_snared(target) else int(effect.get("amount", 1))
+			_apply_debuff_to_target({"debuff": "weaken", "amount": amount + _ability_power_bonus()}, target)
+			_log("%s puniu a criatura alvo." % card.display_name)
 		"buff_ally":
 			var ally_slot: int = int(target.get("slot", _strongest_ally_slot()))
 			_buff_slot(PLAYER_ID, ally_slot, _effect_number(effect, "attack"), _effect_number(effect, "health"), bool(effect.get("temporary", false)))
@@ -771,14 +834,26 @@ func _resolve_spell(card, target: Dictionary) -> void:
 				if player_slots[index] != null:
 					_buff_slot(PLAYER_ID, index, _effect_number(effect, "attack"), _effect_number(effect, "health"), bool(effect.get("temporary", false)))
 			_log("%s fortaleceu a mesa aliada." % card.display_name)
+		"gain_mana":
+			var mana_gained: int = int(effect.get("mana", effect.get("amount", 0)))
+			mana += mana_gained
+			temporary_ability_power_bonus += int(effect.get("temporary_ability_power", 0))
+			_log("%s gerou %d mana." % [card.display_name, mana_gained])
 		"promote":
-			pending_choices.append({
-				"action": "promote",
-				"source_name": card.display_name,
-				"target": target.duplicate(),
-				"options": get_promote_choices()
-			})
-			_log("%s aguarda escolha de promocao." % card.display_name)
+			if int(effect.get("picks", 1)) >= 3:
+				_resolve_promote_all(target, _effect_number(effect, "attack"), _effect_number(effect, "health"))
+				_log("%s concedeu todos os bonus." % card.display_name)
+			else:
+				pending_choices.append({
+					"action": "promote",
+					"source_name": card.display_name,
+					"target": target.duplicate(),
+					"attack": _effect_number(effect, "attack"),
+					"health": _effect_number(effect, "health"),
+					"remaining_picks": maxi(1, int(effect.get("picks", 1))),
+					"options": get_promote_choices()
+				})
+				_log("%s aguarda escolha de promocao." % card.display_name)
 		_:
 			_log("%s foi resolvida sem efeito especial." % card.display_name)
 
@@ -1218,7 +1293,10 @@ func _setup_defense_objective() -> void:
 		"slow_turns": 0,
 		"curse_turns": 0,
 		"confusion_turns": 0,
-		"temporary_attack_bonus": 0
+		"temporary_attack_bonus": 0,
+		"temporary_health_bonus": 0,
+		"regeneration_amount": 0,
+		"carrion_amount": 0
 	}
 
 func _defense_objective_alive() -> bool:
@@ -1236,6 +1314,11 @@ func _enemy_hero_is_objective() -> bool:
 	return mode in [MODE_DUEL, MODE_SUMMONER_BOSS]
 
 func _build_occupant(card, owner_id: String, ready: bool) -> Dictionary:
+	var effect: Dictionary = Dictionary(card.effect)
+	var regeneration: int = int(effect.get("regeneration", 0))
+	if regeneration <= 0 and card.has_keyword("regeneracao"):
+		regeneration = 1
+	var carrion: int = int(effect.get("carrion", 0))
 	return {
 		"owner": owner_id,
 		"card_id": card.id,
@@ -1246,7 +1329,7 @@ func _build_occupant(card, owner_id: String, ready: bool) -> Dictionary:
 		"ready": ready,
 		"keywords": Array(card.keywords),
 		"iniciativa": card.has_keyword("iniciativa"),
-		"regeneracao": card.has_keyword("regeneracao"),
+		"regeneracao": regeneration > 0,
 		"defensor": card.has_keyword("defensor"),
 		"reviver": card.has_keyword("reviver"),
 		"revive_marker": false,
@@ -1254,7 +1337,10 @@ func _build_occupant(card, owner_id: String, ready: bool) -> Dictionary:
 		"slow_turns": 0,
 		"curse_turns": 0,
 		"confusion_turns": 0,
-		"temporary_attack_bonus": 0
+		"temporary_attack_bonus": 0,
+		"temporary_health_bonus": 0,
+		"regeneration_amount": regeneration,
+		"carrion_amount": carrion
 	}
 
 func _after_card_played() -> void:
@@ -1337,6 +1423,7 @@ func _revive_from_discard_into_slot(as_one_one: bool, slot_index: int) -> bool:
 func _handle_unit_death(owner_id: String, occupant: Dictionary, allow_revive: bool = true) -> Dictionary:
 	if bool(occupant.get("objective", false)):
 		return {}
+	_trigger_carrion(owner_id, occupant)
 	var card = _card(str(occupant.get("card_id", "")))
 	if card != null:
 		var on_death: Dictionary = Dictionary(Dictionary(card.effect).get("on_death", {}))
@@ -1398,6 +1485,35 @@ func _apply_debuff_to_target(effect: Dictionary, target: Dictionary) -> void:
 	if int(occupant.get("health", 0)) <= 0:
 		_damage_slot(owner_id, slot_index, 0)
 
+func _remove_keywords_from_target(target: Dictionary) -> void:
+	if not target.has("slot"):
+		return
+	var owner_id: String = str(target.get("owner", ENEMY_ID))
+	var slot_index: int = int(target.get("slot", -1))
+	var slots: Array = _slots_for_owner(owner_id)
+	if slot_index < 0 or slot_index >= slots.size() or slots[slot_index] == null:
+		return
+	var occupant: Dictionary = Dictionary(slots[slot_index])
+	occupant["keywords"] = []
+	occupant["iniciativa"] = false
+	occupant["regeneracao"] = false
+	occupant["defensor"] = false
+	occupant["reviver"] = false
+	occupant["regeneration_amount"] = 0
+	occupant["carrion_amount"] = 0
+	slots[slot_index] = occupant
+	_set_slots_for_owner(owner_id, slots)
+
+func _target_is_snared(target: Dictionary) -> bool:
+	if not target.has("slot"):
+		return false
+	var owner_id: String = str(target.get("owner", ENEMY_ID))
+	var slot_index: int = int(target.get("slot", -1))
+	var slots: Array = _slots_for_owner(owner_id)
+	if slot_index < 0 or slot_index >= slots.size() or slots[slot_index] == null:
+		return false
+	return int(Dictionary(slots[slot_index]).get("slow_turns", 0)) > 0
+
 func _buff_slot(owner_id: String, slot_index: int, attack_bonus: int, health_bonus: int, temporary: bool) -> void:
 	var slots: Array = _slots_for_owner(owner_id)
 	if slot_index < 0 or slot_index >= slots.size() or slots[slot_index] == null:
@@ -1408,6 +1524,7 @@ func _buff_slot(owner_id: String, slot_index: int, attack_bonus: int, health_bon
 	occupant["max_health"] = int(occupant.get("max_health", 0)) + health_bonus
 	if temporary:
 		occupant["temporary_attack_bonus"] = int(occupant.get("temporary_attack_bonus", 0)) + attack_bonus
+		occupant["temporary_health_bonus"] = int(occupant.get("temporary_health_bonus", 0)) + health_bonus
 	slots[slot_index] = occupant
 	_set_slots_for_owner(owner_id, slots)
 
@@ -1420,7 +1537,32 @@ func _clear_temporary_buffs() -> void:
 		if temporary_attack != 0:
 			occupant["attack"] = max(0, int(occupant.get("attack", 0)) - temporary_attack)
 			occupant["temporary_attack_bonus"] = 0
-			player_slots[index] = occupant
+		var temporary_health: int = int(occupant.get("temporary_health_bonus", 0))
+		if temporary_health != 0:
+			occupant["max_health"] = max(1, int(occupant.get("max_health", 1)) - temporary_health)
+			occupant["health"] = mini(int(occupant.get("health", 0)), int(occupant.get("max_health", 1)))
+			occupant["temporary_health_bonus"] = 0
+		player_slots[index] = occupant
+
+func _resolve_end_of_combat_regeneration() -> void:
+	for owner_id: String in [PLAYER_ID, ENEMY_ID]:
+		var slots: Array = _slots_for_owner(owner_id)
+		var changed: bool = false
+		for index: int in range(slots.size()):
+			if slots[index] == null:
+				continue
+			var occupant: Dictionary = Dictionary(slots[index])
+			var regeneration: int = int(occupant.get("regeneration_amount", 0))
+			if regeneration <= 0:
+				continue
+			var before: int = int(occupant.get("health", 0))
+			occupant["health"] = mini(int(occupant.get("max_health", before)), before + regeneration)
+			if int(occupant.get("health", 0)) != before:
+				_log("%s regenerou %d." % [str(occupant.get("name", "Criatura")), regeneration])
+			slots[index] = occupant
+			changed = true
+		if changed:
+			_set_slots_for_owner(owner_id, slots)
 
 func _resolve_start_of_player_turn() -> void:
 	for index: int in range(player_slots.size()):
@@ -1428,8 +1570,6 @@ func _resolve_start_of_player_turn() -> void:
 			continue
 		var occupant: Dictionary = Dictionary(player_slots[index])
 		occupant["moved_this_turn"] = false
-		if bool(occupant.get("regeneracao", false)):
-			occupant["health"] = mini(int(occupant.get("max_health", 0)), int(occupant.get("health", 0)) + 1)
 		player_slots[index] = occupant
 
 func _mana_aura_bonus() -> int:
@@ -1449,7 +1589,7 @@ func _spell_damage_bonus() -> int:
 	return _ability_power_bonus()
 
 func _ability_power_bonus() -> int:
-	var bonus: int = 0
+	var bonus: int = temporary_ability_power_bonus
 	for occupant: Variant in player_slots:
 		if occupant == null:
 			continue
@@ -1501,9 +1641,10 @@ func _resolve_promote_choice(choice: Dictionary, option_id: String) -> void:
 			_add_keyword_to_slot(PLAYER_ID, slot_index, "defensor")
 			_log("Promover concedeu Defensor.")
 		_:
-			var amount: int = 1 + _ability_power_bonus()
-			_buff_slot(PLAYER_ID, slot_index, amount, amount, false)
-			_log("Promover concedeu +%d/+%d." % [amount, amount])
+			var attack_bonus: int = int(choice.get("attack", 1 + _ability_power_bonus()))
+			var health_bonus: int = int(choice.get("health", 1 + _ability_power_bonus()))
+			_buff_slot(PLAYER_ID, slot_index, attack_bonus, health_bonus, false)
+			_log("Promover concedeu +%d/+%d." % [attack_bonus, health_bonus])
 
 func _add_keyword_to_slot(owner_id: String, slot_index: int, keyword: String) -> void:
 	var slots: Array = _slots_for_owner(owner_id)
@@ -1521,8 +1662,40 @@ func _add_keyword_to_slot(owner_id: String, slot_index: int, keyword: String) ->
 			occupant["defensor"] = true
 		"reviver":
 			occupant["reviver"] = true
+		"regeneracao":
+			occupant["regeneracao"] = true
+			occupant["regeneration_amount"] = maxi(1, int(occupant.get("regeneration_amount", 0)))
 	slots[slot_index] = occupant
 	_set_slots_for_owner(owner_id, slots)
+
+func _resolve_promote_all(target: Dictionary, attack_bonus: int, health_bonus: int) -> void:
+	var slot_index: int = int(target.get("slot", -1))
+	if slot_index < 0 or slot_index >= player_slots.size() or player_slots[slot_index] == null:
+		_log("Promover perdeu efeito: alvo ausente.")
+		return
+	_buff_slot(PLAYER_ID, slot_index, attack_bonus, health_bonus, false)
+	_add_keyword_to_slot(PLAYER_ID, slot_index, "iniciativa")
+	_add_keyword_to_slot(PLAYER_ID, slot_index, "defensor")
+
+func _trigger_carrion(_dead_owner_id: String, _dead_occupant: Dictionary) -> void:
+	for owner_id: String in [PLAYER_ID, ENEMY_ID]:
+		var slots: Array = _slots_for_owner(owner_id)
+		var changed: bool = false
+		for index: int in range(slots.size()):
+			if slots[index] == null:
+				continue
+			var occupant: Dictionary = Dictionary(slots[index])
+			var carrion: int = int(occupant.get("carrion_amount", 0))
+			if carrion <= 0 or int(occupant.get("health", 0)) <= 0:
+				continue
+			occupant["attack"] = int(occupant.get("attack", 0)) + carrion
+			occupant["health"] = int(occupant.get("health", 0)) + carrion
+			occupant["max_health"] = int(occupant.get("max_health", 0)) + carrion
+			slots[index] = occupant
+			changed = true
+			_log("%s cresceu com Carnica %d." % [str(occupant.get("name", "Criatura")), carrion])
+		if changed:
+			_set_slots_for_owner(owner_id, slots)
 
 func _nearest_defender_target(owner_id: String, lane_index: int) -> Dictionary:
 	var slots: Array = _slots_for_owner(owner_id)
@@ -1752,10 +1925,29 @@ func _normalized_target(target: Dictionary, default_owner: String) -> Dictionary
 		result["owner"] = default_owner
 	return result
 
+func _card_can_resolve_without_target(card) -> bool:
+	if card == null:
+		return false
+	var action: String = str(Dictionary(card.effect).get("action", ""))
+	return action in ["buff_all_allies", "gain_mana"]
+
 func _card(card_id: String):
 	if _catalog == null:
 		return null
 	return _catalog.find_card(card_id)
+
+func _effective_deck_ids(deck_ids: Array[String]) -> Array[String]:
+	var result: Array[String] = []
+	for card_id: String in deck_ids:
+		result.append(_effective_card_id(card_id))
+	return result
+
+func _effective_card_id(card_id: String) -> String:
+	var upgrade_count: int = clampi(int(card_upgrade_counts.get(card_id, 0)), 0, 2)
+	if upgrade_count <= 0:
+		return card_id
+	var candidate: String = "%s_lvl%d" % [card_id, upgrade_count + 1]
+	return candidate if _catalog != null and _catalog.find_card(candidate) != null else card_id
 
 func _hero_health(hero, fallback: int) -> int:
 	if hero == null:

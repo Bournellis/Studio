@@ -183,7 +183,7 @@ func _populate_deck_list(list: VBoxContainer) -> void:
 
 func _display_deck_ids() -> Array[String]:
 	if not RunSession.current_deck_ids.is_empty():
-		return RunSession.current_deck_ids.duplicate()
+		return RunSession.effective_deck_ids()
 	if RunSession.selected_class_id == "":
 		return []
 	var class_option: Dictionary = ContentLibrary.find_class_option(RunSession.selected_class_id)

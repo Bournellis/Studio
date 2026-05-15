@@ -1,7 +1,7 @@
 # Track 01 Linear Execution Plan
 
 - Last Updated: `2026-05-15`
-- Status: `P12_EARLY_GAME_REWARD_UPDATE_VALIDATED`
+- Status: `P13_REAL_UPGRADES_REWARD_CARDS_VALIDATED`
 - Execution Owner: `Codex`
 - Scope: `First coherent playable run loop after Track 00 checkpoint`
 - Validation Command: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd`
@@ -20,7 +20,7 @@ Turn the Track 00 placeholder checkpoint into a playable loop that starts a run,
 
 ## Current Execution Cursor
 
-Next prompt: `Run a design session for exact upgrade branches and class reward cards, then playtest the full 13-map route`.
+Next prompt: `Playtest the full 13-map route with real upgrades, new cards, save v3, and stronger maps 7-13`.
 
 ## Linear Prompt Sequence
 
@@ -30,7 +30,7 @@ Next prompt: `Run a design session for exact upgrade branches and class reward c
 | P02 | complete | Return from battle to ShipHub/RunMap with visible completed-node and commander health state. | Green 27/27 |
 | P03 | complete | Add placeholder post-combat reward choice that changes the current run immediately. | Green 29/29 |
 | P04 | complete | Replace placeholders with first mechanical class slice, including souls and paid healing. | Green 21/21 |
-| P05 | in progress | Playtest and tune class decks, target UX, rewards, visuals, menus, saves, and encounter pressure. | Early-game reward update green 59/59 |
+| P05 | in progress | Playtest and tune class decks, target UX, rewards, visuals, menus, saves, and encounter pressure. | Real upgrades/reward cards green 65/65 |
 
 ### P05 Current Slice
 
@@ -41,16 +41,18 @@ Next prompt: `Run a design session for exact upgrade branches and class reward c
 - Map 2 adds 3 copies of the class cost-2 core card.
 - Base hand limit is 3; map 6 grants +1 max hand size.
 - Passives unlock on map 8; class actives unlock on map 10.
-- Maps 3/4/6/9/12 offer upgrade choices, 1 in 3, with placeholder upgrade tracking.
-- Maps 7/11 offer new-card choices, 1 in 3, adding 3 copies from placeholder class reward pools.
+- Maps 3/4/9/12 offer seeded upgrade choices that map base cards to Lvl 2/Lvl 3 variants.
+- Map 7 offers the 2 new class reward cards; map 11 offers the remaining card. Each new-card reward adds 3 copies.
 - Combat resolves through `Resolver Combate`, then maintenance/script without a separate enemy combat turn.
 - Combat uses four visible stages: `Iniciativa - Frente`, `Iniciativa - Sobra`, `Combate - Frente`, and `Combate - Sobra`.
 - Front stages resolve simultaneous damage; overflow stages resolve sequentially by lane, player then enemy, left to right.
-- Combat supports front-lane attacks, overflow attacks, direct lane damage, `iniciativa`, `defensor`, `reviver`, `enfraquecer`, `prender`, `promover`, and dynamic `poder de habilidade`.
+- Combat supports front-lane attacks, overflow attacks, direct lane damage, `iniciativa`, `defensor`, `reviver`, `regeneracao`, `carnica`, `enfraquecer`, `prender`, keyword removal, `punir` on snared targets, `promover`, temporary all-ally buffs, adjacent damage, temporary mana, temporary spell power, and dynamic `poder de habilidade`.
 - `protecao` and `voadora` are removed from the active rules contract.
 - Main menu, 3 named save slots, forced class-pick and player-name modals, positioned ShipHub Deck/Mapa/Almas overlays, Deck/Almas scenes, Deck starter fallback, RunMap next-node selection, autosave outside battle, ESC-safe secondary screens, and victory reward modal are active.
 - ShipHub no longer shows run-state outside Deck.
 - Battle choice modals are centered and scrollable.
+- Battle choice/reward modals are translucent at alpha target `0.72`.
+- Automatic choices generated during combat wait for combat FX stages before opening.
 - `Tempestade Arcana` uses enemy-board area targeting.
 - Allied creatures can be moved by drag to an adjacent empty allied slot once per turn, or swapped with an adjacent occupied allied slot if both creatures still have movement.
 - Duel enemies use real hand/deck/discard/mana AI and play new cards after combat/maintenance for the next player turn.
@@ -61,6 +63,9 @@ Next prompt: `Run a design session for exact upgrade branches and class reward c
 - Summoning a creature into an occupied allied slot now opens a floating sacrifice confirmation; cancelling preserves mana, hand, and board state.
 - Necromante unlocks passiva + active level 1 on map 8 and upgrades to active level 2 on map 10; old Lentidao/Confusao/Reanimar original choices are removed and Raio das Cinzas is active.
 - Defense map 7 is now a real hold objective with wave pressure and no early victory for clearing the board; Survive map 9 has a light enemy buff while preserving clear-board victory.
+- Save version is now 3; v2 saves are invalid/stale but remain deletable and overwritable.
+- Arcano reward cards are `Bola de Fogo` and `Acelerar`; Invocador reward cards are `Atacar` and `Golem`; Necromante reward cards are `Carniceiro` and `Punir`.
+- Maps 7-13 have stronger pressure for the new upgrade/card economy: denser waves, more elite/tita presence, higher boss HP, and stronger duel mana/hand.
 
 ## P01 - Run Start And Class Placeholder
 

@@ -14,11 +14,11 @@
 
 - Status: **P0_IMPLEMENTACAO - ativo**
 - Fase: `Implementacao`
-- Track ativa: `Track 01 - Playable Run Loop` (P12_EARLY_GAME_REWARD_UPDATE_VALIDATED)
-- Baseline atual: Godot 4.6.2 com ShipHub, 3 saves, escolha de classe, deck/mapa/almas, run linear de 13 mapas, 3 tutoriais, starter decks custo 1, recompensas fixas, escolhas 1-em-3 placeholder, batalha por lanes, sacrificio, movimento, IA de duelo, Necromante por niveis e validacao verde 59/59.
-- Meta ativa: definir upgrades/cartas de recompensa finais e playtestar rota completa de 13 mapas.
+- Track ativa: `Track 01 - Playable Run Loop` (P13_REAL_UPGRADES_REWARD_CARDS_VALIDATED)
+- Baseline atual: Godot 4.6.2 com ShipHub, 3 saves v3, escolha de classe, deck/mapa/almas, run linear de 13 mapas, 3 tutoriais, starter decks custo 1, recompensas fixas, upgrades reais Lvl 2/Lvl 3 nos mapas 3/4/9/12, 2 cartas novas reais por classe nos mapas 7/11, mapa 6 apenas +1 limite de mao, batalha por lanes, sacrificio, movimento, IA de duelo, Regeneracao/Carniça/Remover/Punir, menus translucidos, escolhas automaticas pos-combate adiadas, dificuldade 7-13 reforcada e validacao verde 65/65.
+- Meta ativa: playtestar rota completa de 13 mapas com upgrades reais, cartas novas e dificuldade 7-13 reforcada.
 - Trabalho permitido: codigo, validacao, playtest e documentacao local.
-- Proximo passo: sessao de design para upgrades e cartas novas por classe, depois playtest da rota completa de 13 mapas.
+- Proximo passo: playtest da rota completa de 13 mapas em save v3, depois tuning de dificuldade/recompensas.
 
 ## RPGMobile
 

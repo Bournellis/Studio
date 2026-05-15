@@ -12,7 +12,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 
 | Prioridade | Projeto | Caminho | Fase | Status | Trabalho permitido | Proximo passo | Restricao operacional |
 |---|---|---|---|---|---|---|---|
-| P0 | Draxos Roguelike Cardgame | `Projetos/draxos-roguelike-cardgame/` | Implementacao | `P0_IMPLEMENTACAO` | Codigo, validacao, playtest, documentacao local | Definir upgrades/cartas de recompensa finais e playtestar rota completa de 13 mapas | Pode receber trabalho de implementacao por padrao |
+| P0 | Draxos Roguelike Cardgame | `Projetos/draxos-roguelike-cardgame/` | Implementacao | `P0_IMPLEMENTACAO` | Codigo, validacao, playtest, documentacao local | Playtestar rota completa de 13 mapas com upgrades reais, cartas novas e dificuldade 7-13 reforcada | Pode receber trabalho de implementacao por padrao |
 | P1 | RPGMobile | `Projetos/_conceitos/RPGMobile/` | Conceito | `P1_CONCEITO` | Conceito, pitch, design, referencias | Detalhar armas iniciais, spells, pocao, maestria, loot e primeira area conceitual | Nao criar codigo, cenas, assets de implementacao ou projeto Godot sem pedido explicito |
 | P1 | BattleMobile | `Projetos/_conceitos/BattleMobile/` | Conceito | `P1_CONCEITO` | Conceito, pitch, design, referencias | Definir pitch, fantasia central, loop principal e pilares | Nao criar codigo, cenas, assets de implementacao ou projeto Godot sem pedido explicito |
 | Pausado | RPG Isometrico | `Projetos/rpg-isometrico/` | Pausado | `PAUSADO_INDEFINIDO` | Consulta historica quando solicitado | Nenhum enquanto pausado | Nao implementar, expandir gates ou selecionar Next Gate sem pedido explicito |

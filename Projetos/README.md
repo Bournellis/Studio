@@ -15,7 +15,7 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
   - Studio snapshot: `../08_Coordenacao_Agentes/Estado_Atual.md`
   - Validation command: `draxos-roguelike-cardgame/tools/validate.gd`
   - Allowed work: code, validation, playtest, local documentation.
-  - Current next step: define final upgrade branches and class reward cards, then playtest the 13-map route.
+  - Current next step: playtest the 13-map route with real upgrades, new class reward cards, save v3, and stronger maps 7-13.
 
 ## Conceitos em Incubacao
 

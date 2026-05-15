@@ -17,7 +17,7 @@ const PAID_HEAL_AMOUNT: int = 5
 const DEFAULT_PLAYER_NAME: String = "Comandante Draxos"
 const MIN_PLAYER_NAME_LENGTH: int = 2
 const MAX_PLAYER_NAME_LENGTH: int = 18
-const SNAPSHOT_VERSION: int = 2
+const SNAPSHOT_VERSION: int = 3
 
 var active: bool = false
 var run_seed: int = DEFAULT_RUN_SEED
@@ -250,6 +250,19 @@ func buy_paid_heal() -> Dictionary:
 func has_pending_reward() -> bool:
 	return not rewards_pending.is_empty()
 
+func effective_deck_ids() -> Array[String]:
+	var result: Array[String] = []
+	for card_id: String in current_deck_ids:
+		result.append(effective_card_id(card_id))
+	return result
+
+func effective_card_id(card_id: String) -> String:
+	var upgrade_count: int = clampi(int(card_upgrade_counts.get(card_id, 0)), 0, 2)
+	if upgrade_count <= 0:
+		return card_id
+	var candidate: String = "%s_lvl%d" % [card_id, upgrade_count + 1]
+	return candidate if ContentLibrary.get_card(candidate) != null else card_id
+
 func is_node_available(node: Dictionary) -> bool:
 	if not active:
 		return false
@@ -480,30 +493,36 @@ func _upgrade_reward_choices(_pending: Dictionary) -> Array[Dictionary]:
 		if seen.has(card_id):
 			continue
 		seen.append(card_id)
+	var candidates: Array[String] = []
+	for card_id: String in seen:
 		if int(card_upgrade_counts.get(card_id, 0)) >= 2:
 			continue
 		var card = ContentLibrary.get_card(card_id)
 		if card == null:
 			continue
+		candidates.append(card_id)
+	candidates = _stable_shuffled_strings(candidates, str(_pending.get("id", "")))
+	for card_id: String in candidates:
+		var card = ContentLibrary.get_card(card_id)
 		var upgrade_index: int = int(card_upgrade_counts.get(card_id, 0)) + 1
 		result.append({
 			"id": "upgrade:%s" % card_id,
 			"card_id": card_id,
-			"title": "%s - Upgrade %d" % [str(card.display_name), upgrade_index],
+			"title": "%s - Lvl %d" % [str(card.display_name), upgrade_index + 1],
 			"body": _upgrade_choice_body(card_id, upgrade_index)
 		})
 		if result.size() >= 3:
 			break
 	return result
 
-func _new_card_reward_choices(pending: Dictionary) -> Array[Dictionary]:
+func _new_card_reward_choices(_pending: Dictionary) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	var pool: Array[String] = _class_reward_pool()
 	if pool.is_empty():
 		return result
-	var offset: int = clampi(int(pending.get("pool_offset", 0)), 0, maxi(0, pool.size() - 1))
-	for index: int in range(pool.size()):
-		var card_id: String = pool[(offset + index) % pool.size()]
+	for card_id: String in pool:
+		if current_deck_ids.has(card_id):
+			continue
 		var card = ContentLibrary.get_card(card_id)
 		if card == null:
 			continue
@@ -511,10 +530,8 @@ func _new_card_reward_choices(pending: Dictionary) -> Array[Dictionary]:
 			"id": "new_card:%s" % card_id,
 			"card_id": card_id,
 			"title": str(card.display_name),
-			"body": "Adiciona %d copias ao deck. Carta placeholder; design final a definir." % REWARD_CARD_COPY_COUNT
+			"body": "Adiciona %d copias ao deck." % REWARD_CARD_COPY_COUNT
 		})
-		if result.size() >= 3:
-			break
 	return result
 
 func _class_reward_pool() -> Array[String]:
@@ -523,12 +540,12 @@ func _class_reward_pool() -> Array[String]:
 
 func _upgrade_choice_body(card_id: String, upgrade_index: int) -> String:
 	if upgrade_index <= 1:
-		return "Primeiro upgrade placeholder para %s. As duas opcoes finais de ramo serao definidas em sessao de design." % ContentLibrary.get_card_name(card_id)
-	return "Segundo upgrade placeholder para %s. Como a carta ja recebeu um ramo, esta escolha aplica a opcao restante." % ContentLibrary.get_card_name(card_id)
+		return "%s sobe para Lvl 2 em todas as copias da run." % ContentLibrary.get_card_name(card_id)
+	return "%s sobe para Lvl 3 em todas as copias da run." % ContentLibrary.get_card_name(card_id)
 
 func _reward_choice_message(choice: Dictionary) -> String:
 	if str(choice.get("id", "")).begins_with("upgrade:"):
-		return "Upgrade placeholder registrado: %s." % str(choice.get("title", ""))
+		return "Upgrade aplicado: %s." % str(choice.get("title", ""))
 	if str(choice.get("id", "")).begins_with("new_card:"):
 		return "Carta adicionada ao deck: %s x%d." % [str(choice.get("title", "")), REWARD_CARD_COPY_COUNT]
 	return "Recompensa aplicada."
@@ -544,6 +561,18 @@ func _pending_reward_array(source: Variant) -> Array[Dictionary]:
 	for item: Variant in Array(source):
 		if typeof(item) == TYPE_DICTIONARY:
 			result.append(Dictionary(item))
+	return result
+
+func _stable_shuffled_strings(source: Array[String], salt: String) -> Array[String]:
+	var result: Array[String] = source.duplicate()
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	var seed_text: String = "%d:%s:%s" % [run_seed, selected_class_id, salt]
+	rng.seed = absi(seed_text.hash())
+	for index: int in range(result.size() - 1, 0, -1):
+		var swap_index: int = rng.randi_range(0, index)
+		var value: String = result[index]
+		result[index] = result[swap_index]
+		result[swap_index] = value
 	return result
 
 func _normalize_player_name(requested_name: String) -> String:

@@ -1,6 +1,6 @@
 # Early Game Update - Rev 3
 
-- Status: `Implementado com placeholders de design`
+- Status: `Implementado com upgrades reais e 2 cartas novas por classe`
 - Last Updated: `2026-05-15`
 - Referencia: `game-design-document.md`
 
@@ -17,9 +17,10 @@
 - Upgrade de carta e carta nova nunca misturam na mesma recompensa.
 - Carta nova adiciona 3 copias ao deck.
 - Cada carta pode receber 2 upgrades por campanha.
-- O primeiro upgrade representa escolha futura entre dois ramos.
-- O segundo upgrade e opcao unica, porque aplica o ramo restante.
-- Cada classe tera 6-8 cartas de recompensa custo 1-3; o conteudo final fica A definir.
+- O primeiro upgrade transforma a carta em Lvl 2.
+- O segundo upgrade transforma a carta em Lvl 3.
+- Cada classe tem 2 cartas novas reais no pool atual; uma sessao futura pode decidir se o kit expande para 6-8 cartas.
+- Save version atual e 3; saves v2 ficam antigos/invalidos, deletaveis e sobrescreviveis.
 
 ## Rota De Recompensas
 
@@ -30,12 +31,12 @@
 | 3 | Primeira Onda | upgrade de carta, escolha 1 em 3 |
 | 4 | Limpar Mesa atual | upgrade de carta, escolha 1 em 3 |
 | 5 | Ondas atuais | +1 mana maxima |
-| 6 | Duelo atual | +1 limite de mao e upgrade de carta, escolha 1 em 3 |
-| 7 | Defesa atual | carta nova, escolha 1 em 3 |
+| 6 | Duelo atual | +1 limite de mao |
+| 7 | Defesa atual | carta nova, escolha 1 entre 2 |
 | 8 | Chefe Invocador atual | passiva; Necromante tambem ganha Ritual nivel 1 |
 | 9 | Sobreviver atual | upgrade de carta, escolha 1 em 3 |
 | 10 | Limpeza Elite atual | ativa; Necromante ganha Ritual nivel 2 |
-| 11 | Ondas Avancadas atuais | carta nova, escolha 1 em 3 |
+| 11 | Ondas Avancadas atuais | carta nova restante |
 | 12 | Duelo Elite atual | upgrade de carta, escolha 1 em 3 |
 | 13 | Chefe Final atual | vitoria da run |
 
@@ -44,22 +45,41 @@
 - Barreira Arcana: custo 1, 1/3, `defensor`, +1 Poder de Habilidade.
 - Invocador: `Comandante de Campo` dispara uma vez por turno e concede +2/+1 permanente.
 - Necromante: `Ritual das Sombras` ganha `Raio das Cinzas` no nivel 1 e `Raio das Cinzas Maior` no nivel 2.
-- Defesa de Posicao: objetivo com 7 HP e ondas com pressao inicial por `elemental_assaltante_veloz`.
+- Defesa de Posicao: objetivo com 8 HP, 5 turnos e ondas com pressao maior a partir do mapa 7.
+- Mapas 7-13 receberam reforco de dificuldade com mais elite/tita, mais slots iniciais, boss HP maior, duelos com mais mana/mao e ondas finais mais densas.
+- Menus de Necromante, escolhas pendentes e recompensa de vitoria usam transparencia alpha `0.72`.
+- Escolhas automaticas pos-morte, como `Enfraquecer`, so aparecem depois que as etapas visuais de combate terminam.
 
-## Placeholders Atuais
+## Upgrades E Cartas Reais
 
-O sistema de recompensa esta implementado, mas os conteudos finais ainda nao.
+### Arcano
 
-- Upgrades registram progresso por carta, mas nao alteram mecanica.
-- Cartas novas usam cards placeholder por classe.
-- Cada classe tem 6 placeholders no pool de recompensa.
-- Arte, nome final, efeito final e balanceamento dessas cartas ficam para sessao de design.
+- `Choque`: Lvl 2 causa 3 dano; Lvl 3 custa 0.
+- `Fagulha Arcana`: Lvl 2 vira 2/4; Lvl 3 concede +4 Poder de habilidade.
+- `Barreira Arcana`: Lvl 2 vira 1/6; Lvl 3 concede +4 Poder de habilidade.
+- `Tempestade Arcana`: Lvl 2 causa 6 dano aleatorio; Lvl 3 custa 1.
+- Novas: `Bola de Fogo` e `Acelerar`.
+
+### Invocador
+
+- `Soldado Arcano`: Lvl 2 vira 3/4; Lvl 3 vira 4/5 com Regeneracao 2.
+- `Batedor Arcano`: Lvl 2 vira 3/2; Lvl 3 vira 6/2.
+- `Promover`: Lvl 2 escolhe 2 opcoes; Lvl 3 recebe todas.
+- `Guardiao Arcano`: Lvl 2 vira 3/6; Lvl 3 vira 4/8 com Regeneracao 3.
+- Novas: `Atacar` e `Golem`.
+
+### Necromante
+
+- `Esqueleto`: Lvl 2 vira 2/2; Lvl 3 vira 4/4.
+- `Morto vivo`: Lvl 2 aplica Enfraquecer 2 ao morrer; Lvl 3 vira 2/2 e aplica Enfraquecer 3.
+- `Prender`: Lvl 2 tambem aplica Enfraquecer 1; Lvl 3 tambem remove keywords.
+- `Zumbi`: Lvl 2 vira 3/3 e aplica Enfraquecer 2; Lvl 3 vira 4/4 e aplica Enfraquecer 4.
+- Novas: `Carniceiro` e `Punir`.
 
 ## Proxima Sessao De Design
 
 Definir para cada classe:
 
-- 6-8 cartas de recompensa custo 1-3.
-- 2 ramos de upgrade para cada carta inicial e cada carta de recompensa.
-- Quais upgrades devem ser ofensivos, defensivos ou utilitarios.
+- Se o pool de recompensa expande alem das 2 cartas novas atuais.
+- Ajustes finos de custo/stats/dano dos Lvl 2 e Lvl 3 depois de playtest.
 - Se a loja de Almas compra upgrade, remove carta ou compra carta avulsa nesta mesma fase.

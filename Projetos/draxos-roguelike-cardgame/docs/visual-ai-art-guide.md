@@ -46,3 +46,11 @@ Frames esperados: `512x768`, PNG transparente.
 - Necromante: cinzas, morte ritual, tons roxos/pretos.
 - Elemental: rocha, fogo, cristal, tons laranja/ambar.
 - Neutral: metal escuro, eter neutro.
+
+Cartas novas do pool atual que ainda podem usar fallback ate a arte existir:
+
+- Arcano: `arcano_bola_de_fogo.png`, `arcano_acelerar.png`.
+- Invocador: `invocador_atacar.png`, `invocador_golem.png`.
+- Necromante: `necro_carniceiro.png`, `necro_punir.png`.
+
+As variantes `_lvl2` e `_lvl3` reutilizam a arte/manifesto da carta base.

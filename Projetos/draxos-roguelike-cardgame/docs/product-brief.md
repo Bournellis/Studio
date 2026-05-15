@@ -1,7 +1,7 @@
 # Product Brief
 
-- Last Updated: `2026-05-13`
-- Status: `Track 01 redesigned battle/card baseline`
+- Last Updated: `2026-05-15`
+- Status: `Track 01 real upgrade/reward-card slice`
 
 ## Identity
 
@@ -31,10 +31,11 @@ From the hub, the player opens a mission map, chooses a path through encounters,
 - Bosses that summon multiple creatures and create escalating board pressure.
 - Simple board combat with one player facing one opponent, similar in table presence to MTG.
 - Compact 3-card base hand with draw-on-play, hand-limit rewards, mana ramp between encounters, and escalating board/deck scale.
+- Run rewards with fixed milestones, real Lvl 2/Lvl 3 card upgrades, and class-specific new-card picks.
 - Multiple encounter goals: clear board, duel, waves, protect position, survive turns, boss summoner.
 
-## First Checkpoint
+## Current Checkpoint
 
-The first checkpoint is official project bootstrap plus a placeholder playable flow: Boot, ShipHub, RunMap, Battle, first clear-board encounter, and first boss-summoner encounter.
+The current checkpoint is a playable 13-map linear run slice with Boot, ShipHub, RunMap, Deck, Almas, Battle, 3 classes, local saves v3, fixed rewards, real upgrade rewards, 2 new reward cards per class, and stronger late-map encounters.
 
-It is not expected to be a finished roguelike slice.
+It is not expected to be a finished roguelike slice; balance, art coverage, encounter scripting, and final content density still need playtest/tuning.

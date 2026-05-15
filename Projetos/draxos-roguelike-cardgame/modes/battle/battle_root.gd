@@ -74,6 +74,7 @@ func _ready() -> void:
 		"class_passive_unlocked": RunSession.class_passive_unlocked,
 		"class_active_unlocked": RunSession.class_active_unlocked,
 		"class_active_level": RunSession.class_active_level,
+		"card_upgrade_counts": RunSession.card_upgrade_counts,
 		"mana_per_turn": RunSession.max_mana if RunSession.max_mana > 0 else 2,
 		"max_hand_size": RunSession.max_hand_size if RunSession.max_hand_size > 0 else RunSession.DEFAULT_MAX_HAND_SIZE,
 		"player_health": RunSession.current_health if RunSession.current_health > 0 else 20,
@@ -611,7 +612,7 @@ func _build_necromancer_modal() -> void:
 	necromancer_modal.name = "NecromancerChoiceModal"
 	necromancer_modal.visible = false
 	_apply_centered_modal_rect(necromancer_modal, _choice_modal_size())
-	necromancer_modal.add_theme_stylebox_override("panel", _panel_style(Color(0.1, 0.08, 0.12), Color(0.62, 0.42, 0.7)))
+	necromancer_modal.add_theme_stylebox_override("panel", _panel_style(Color(0.1, 0.08, 0.12, 0.72), Color(0.62, 0.42, 0.7)))
 	add_child(necromancer_modal)
 
 	var margin: MarginContainer = MarginContainer.new()
@@ -640,7 +641,7 @@ func _build_pending_choice_modal() -> void:
 	pending_choice_modal.name = "PendingBattleChoiceModal"
 	pending_choice_modal.visible = false
 	_apply_centered_modal_rect(pending_choice_modal, _choice_modal_size())
-	pending_choice_modal.add_theme_stylebox_override("panel", _panel_style(Color(0.08, 0.09, 0.1), Color(0.78, 0.62, 0.34)))
+	pending_choice_modal.add_theme_stylebox_override("panel", _panel_style(Color(0.08, 0.09, 0.1, 0.72), Color(0.78, 0.62, 0.34)))
 	add_child(pending_choice_modal)
 
 	var margin: MarginContainer = MarginContainer.new()
@@ -733,7 +734,7 @@ func _build_reward_modal() -> void:
 	reward_modal.offset_top = -210.0
 	reward_modal.offset_right = 260.0
 	reward_modal.offset_bottom = 210.0
-	reward_modal.add_theme_stylebox_override("panel", _panel_style(Color(0.045, 0.052, 0.06, 0.96), Color(0.88, 0.70, 0.34, 0.95)))
+	reward_modal.add_theme_stylebox_override("panel", _panel_style(Color(0.045, 0.052, 0.06, 0.72), Color(0.88, 0.70, 0.34, 0.95)))
 	add_child(reward_modal)
 
 	var margin: MarginContainer = MarginContainer.new()
@@ -974,6 +975,12 @@ func _rebuild_hand(hand: Array) -> void:
 		token.mouse_exited.connect(_hide_preview)
 		token.gui_input.connect(func(event: InputEvent) -> void:
 			if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+				if engine.can_play_card_without_target(index):
+					engine.play_card_from_hand(index)
+					selected_hand_index = -1
+					_hide_preview()
+					_after_battle_action()
+					return
 				selected_hand_index = index
 				_show_preview_now(_card_preview_data(card_id, {}))
 				_update_hand_selection_visuals()
@@ -1048,6 +1055,9 @@ func _refresh_pending_choice_modal() -> void:
 		return
 	for child: Node in pending_choice_box.get_children():
 		child.queue_free()
+	if _combat_fx_playing():
+		pending_choice_modal.visible = false
+		return
 	var choice: Dictionary = engine.get_pending_choice()
 	pending_choice_modal.visible = not choice.is_empty()
 	if choice.is_empty():
@@ -1241,9 +1251,9 @@ func _pending_reward_prompt() -> String:
 	var pending: Dictionary = RunSession.current_pending_reward()
 	match str(pending.get("type", "")):
 		RunSession.CHOICE_REWARD_UPGRADE_CARD:
-			return "Escolha 1 upgrade placeholder entre 3 cartas."
+			return "Escolha 1 upgrade de carta."
 		RunSession.CHOICE_REWARD_NEW_CARD:
-			return "Escolha 1 carta nova placeholder entre 3 opcoes."
+			return "Escolha 1 carta nova."
 	return "Escolha 1 recompensa."
 
 func _accepted_card_indices_for_target(target: Dictionary) -> Array[int]:
@@ -1451,7 +1461,9 @@ func _card_preview_data(card_id: String, occupant: Dictionary) -> Dictionary:
 		if int(occupant.get("confusion_turns", 0)) > 0:
 			state_parts.append("Confusao %d" % int(occupant.get("confusion_turns", 0)))
 		if bool(occupant.get("regeneracao", false)):
-			state_parts.append("Regeneracao")
+			state_parts.append("Regeneracao %d" % int(occupant.get("regeneration_amount", 1)))
+		if int(occupant.get("carrion_amount", 0)) > 0:
+			state_parts.append("Carnica %d" % int(occupant.get("carrion_amount", 0)))
 		if bool(occupant.get("defensor", false)):
 			state_parts.append("Defensor")
 		if bool(occupant.get("revive_marker", false)):
@@ -1558,7 +1570,9 @@ func _keyword_text(keywords: Array) -> String:
 			"iniciativa":
 				parts.append("Iniciativa: causa dano primeiro na lane; se destruir o alvo, nao recebe retorno.")
 			"regeneracao":
-				parts.append("Regeneracao: recupera 1 HP no inicio do turno do jogador.")
+				parts.append("Regeneracao: recupera HP no fim do Resolver Combate.")
+			"carnica":
+				parts.append("Carnica: cresce quando outra criatura morre.")
 			"defensor":
 				parts.append("Defensor: protege lanes vazias, atraindo ataques sem alvo frontal.")
 			"reviver":

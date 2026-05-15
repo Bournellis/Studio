@@ -83,8 +83,8 @@ func _validate_contract() -> Dictionary:
 		if str(class_option.get("passive_id", "")) == "" or str(class_option.get("active_id", "")) == "":
 			return {"ok": false, "message": "Class %s needs passive_id and active_id." % class_id}
 		var reward_pool: Array = Array(class_option.get("reward_pool", []))
-		if reward_pool.size() < 6 or reward_pool.size() > 8:
-			return {"ok": false, "message": "Class %s needs a reward_pool of 6-8 placeholder cards." % class_id}
+		if reward_pool.size() != 2:
+			return {"ok": false, "message": "Class %s needs exactly 2 real reward cards." % class_id}
 		for reward_card_id: String in reward_pool:
 			if catalog.find_card(reward_card_id) == null:
 				return {"ok": false, "message": "Class %s reward_pool references missing card %s." % [class_id, reward_card_id]}
@@ -110,7 +110,26 @@ func _validate_contract() -> Dictionary:
 	for removed_player_id: String in ["arcano_spell_dano", "arcano_construtor_fluxo", "invocador_protecao", "invocador_buff_unico", "necro_spell_lentidao"]:
 		if catalog.find_card(removed_player_id) != null:
 			return {"ok": false, "message": "Removed player card still exists: %s." % removed_player_id}
-	var required_new_cards: Array[String] = ["arcano_choque", "arcano_fagulha", "arcano_barreira", "arcano_tempestade", "invocador_soldado", "invocador_batedor", "invocador_promover", "invocador_guardiao", "necro_esqueleto", "necro_morto_vivo", "necro_prender", "necro_zumbi", "arcano_recompensa_1", "invocador_recompensa_1", "necro_recompensa_1"]
+	var required_new_cards: Array[String] = [
+		"arcano_choque", "arcano_choque_lvl2", "arcano_choque_lvl3",
+		"arcano_fagulha", "arcano_fagulha_lvl2", "arcano_fagulha_lvl3",
+		"arcano_barreira", "arcano_barreira_lvl2", "arcano_barreira_lvl3",
+		"arcano_tempestade", "arcano_tempestade_lvl2", "arcano_tempestade_lvl3",
+		"arcano_bola_de_fogo", "arcano_bola_de_fogo_lvl2", "arcano_bola_de_fogo_lvl3",
+		"arcano_acelerar", "arcano_acelerar_lvl2", "arcano_acelerar_lvl3",
+		"invocador_soldado", "invocador_soldado_lvl2", "invocador_soldado_lvl3",
+		"invocador_batedor", "invocador_batedor_lvl2", "invocador_batedor_lvl3",
+		"invocador_promover", "invocador_promover_lvl2", "invocador_promover_lvl3",
+		"invocador_guardiao", "invocador_guardiao_lvl2", "invocador_guardiao_lvl3",
+		"invocador_atacar", "invocador_atacar_lvl2", "invocador_atacar_lvl3",
+		"invocador_golem", "invocador_golem_lvl2", "invocador_golem_lvl3",
+		"necro_esqueleto", "necro_esqueleto_lvl2", "necro_esqueleto_lvl3",
+		"necro_morto_vivo", "necro_morto_vivo_lvl2", "necro_morto_vivo_lvl3",
+		"necro_prender", "necro_prender_lvl2", "necro_prender_lvl3",
+		"necro_zumbi", "necro_zumbi_lvl2", "necro_zumbi_lvl3",
+		"necro_carniceiro", "necro_carniceiro_lvl2", "necro_carniceiro_lvl3",
+		"necro_punir", "necro_punir_lvl2", "necro_punir_lvl3"
+	]
 	for new_card_id: String in required_new_cards:
 		if catalog.find_card(new_card_id) == null:
 			return {"ok": false, "message": "Missing redesigned player card %s." % new_card_id}
@@ -218,7 +237,6 @@ func _validate_run_map_contract(run_map: Dictionary) -> Dictionary:
 	var expected_choice_rewards: Dictionary = {
 		"n03_tutorial_primeira_onda": "upgrade_card",
 		"n04_pouso_elemental": "upgrade_card",
-		"n06_duelo_inicial": "upgrade_card",
 		"n07_defesa_posicao": "new_card",
 		"n09_sobreviver_turnos": "upgrade_card",
 		"n11_ondas_avancadas": "new_card",

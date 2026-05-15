@@ -1,13 +1,13 @@
 # Game Design Document
 
 - Last Updated: `2026-05-15`
-- Status: `Track 01 13-map early-game reward update validated`
+- Status: `Track 01 real upgrades, reward cards, and difficulty update validated`
 
 ## Direction
 
 Este e um roguelike de cartas com lore Draxos e batalha em lanes frontais. O jogador e sempre o Comandante Draxos; a identidade de gameplay vem da `Classe`.
 
-O slice atual tem 3 classes fixas: `arcano`, `invocador` e `necromante`. Cada classe define deck inicial, passiva fixa, habilidade ativa fixa, carta custo 2 de entrada e pool placeholder de cartas futuras.
+O slice atual tem 3 classes fixas: `arcano`, `invocador` e `necromante`. Cada classe define deck inicial, passiva fixa, habilidade ativa fixa, carta custo 2 de entrada, 2 cartas novas de recompensa e upgrades reais Lvl 2/Lvl 3 para as cartas atuais.
 
 ## Core Loop
 
@@ -15,7 +15,7 @@ O slice atual tem 3 classes fixas: `arcano`, `invocador` e `necromante`. Cada cl
 2. Escolher uma classe antes da run.
 3. Entrar no mapa de missao linear.
 4. Resolver o proximo no disponivel.
-5. Receber recompensas fixas e, quando houver, escolher 1 recompensa entre 3 opcoes.
+5. Receber recompensas fixas e, quando houver, escolher 1 recompensa entre as opcoes oferecidas.
 6. Retornar a nave para ver estado da run, curar com Almas ou continuar.
 7. Vencer os 13 encontros ou perder se o Comandante cair.
 
@@ -45,8 +45,11 @@ O tabuleiro usa slots alinhados por indice: slot 1 contra slot 1, slot 2 contra 
 - `iniciativa`: causa dano primeiro na lane; se destruir o alvo frontal, esse alvo nao responde na etapa normal.
 - `defensor`: atrai ataques de criaturas inimigas sem alvo na lane a frente.
 - `reviver`: a criatura morta volta uma vez no mesmo slot, com stats originais e marcador de reviver.
+- `regeneracao X`: cura ate X HP no fim de `Resolver Combate`.
+- `carnica X`: quando outra criatura aliada ou inimiga morre enquanto esta criatura sobrevive, ela recebe +X/+X permanente na batalha.
 - `enfraquecer X`: criatura alvo recebe `-X/-X`.
 - `prender`: criatura alvo pula os proximos combates relevantes.
+- `remover keywords`: remove keywords ativas da criatura alvo, incluindo `iniciativa`, `defensor`, `reviver`, `regeneracao` e `carnica`.
 - `poder de habilidade`: fontes em campo aumentam valores numericos de spells, habilidades de cartas e ativas de classe, sem alterar custos nem stats base.
 
 ## Classes
@@ -72,24 +75,41 @@ Arcano e Invocador desbloqueiam passiva no mapa 8 e ativa no mapa 10. Necromante
 - Mapa 5 concede +1 mana maxima.
 - Mapa 6 concede +1 limite de mao.
 - O catalogo antigo de cartas do jogador foi removido; cartas inimigas permanecem.
-- O ciclo de batalha e: jogadas do jogador, `Resolver Combate`, quatro etapas visuais de combate, escolhas pendentes, manutencao/script, escolhas pendentes, jogadas novas da IA de duelo para o proximo turno, retorno automatico ao jogador.
+- O ciclo de batalha e: jogadas do jogador, `Resolver Combate`, quatro etapas visuais de combate, escolhas pendentes, regeneracao de fim de combate, manutencao/script, escolhas pendentes, jogadas novas da IA de duelo para o proximo turno, retorno automatico ao jogador.
+- Escolhas automaticas geradas por mortes, como `Enfraquecer`, ficam adiadas ate as etapas visuais de combate terminarem. Cartas jogadas manualmente e `Promover` continuam resolvendo imediatamente.
+- Menus de Necromante, escolhas pendentes e recompensa de vitoria usam painel translucido com alpha alvo `0.72`.
+- Save version atual: `3`. Saves v2 aparecem como antigos/invalidos, podem ser deletados e podem ser sobrescritos por novo jogo.
 
 ## Reward System
 
 Existem dois tipos de recompensa:
 
 - **Recompensas fixas:** aplicadas automaticamente no fim do mapa.
-- **Recompensas escolhiveis:** o jogador escolhe 1 entre 3 opcoes no modal de vitoria.
+- **Recompensas escolhiveis:** o jogador escolhe 1 opcao no modal de vitoria.
 
-Upgrade de carta e carta nova nunca aparecem misturados na mesma recompensa. Quando uma recompensa e de upgrade, as 3 opcoes sao upgrades. Quando e carta nova, as 3 opcoes sao cartas novas.
+Upgrade de carta e carta nova nunca aparecem misturados na mesma recompensa. Quando uma recompensa e de upgrade, as opcoes sao upgrades. Quando e carta nova, as opcoes sao cartas novas.
 
-### Upgrades Placeholder
+### Upgrades Por Nivel
 
-Cada carta pode receber ate 2 upgrades durante a campanha. O primeiro upgrade representa a escolha de um entre dois ramos futuros. O segundo upgrade e uma opcao unica, pois aplica o ramo restante. Os efeitos finais dos ramos estao **A definir em sessao de design**; o sistema atual registra o upgrade sem alterar mecanica da carta.
+Cada tipo de carta pode receber ate 2 upgrades durante a campanha:
 
-### Cartas Novas Placeholder
+- base = Lvl 1;
+- primeiro upgrade = Lvl 2;
+- segundo upgrade = Lvl 3.
 
-Cada classe possui um pool placeholder de 6 cartas de recompensa, com custos 1-3. Quando o jogador escolhe uma carta nova, 3 copias entram no deck da run. Nomes, efeitos, arte e balanceamento finais dessas cartas estao **A definir em sessao de design**.
+`RunSession.card_upgrade_counts` e a fonte de verdade. O deck da run continua armazenando o ID base da carta; Battle e Deck convertem para a variante efetiva `_lvl2` ou `_lvl3` quando a batalha/tela e aberta. Opcoes de upgrade sao sorteadas de forma estavel pelo seed da run e pelo ID da recompensa entre os tipos elegiveis existentes no deck.
+
+Os mapas 3, 4, 9 e 12 oferecem upgrade. O mapa 6 nao oferece mais upgrade.
+
+### Cartas Novas
+
+Cada classe tem 2 cartas novas reais no pool de recompensa atual:
+
+- Arcano: `Bola de Fogo` e `Acelerar`.
+- Invocador: `Atacar` e `Golem`.
+- Necromante: `Carniceiro` e `Punir`.
+
+O mapa 7 oferece as 2 cartas novas da classe. O mapa 11 oferece a carta restante. Cada escolha adiciona 3 copias ao deck da run. As cartas novas tambem possuem Lvl 2 e Lvl 3.
 
 ## Linear Mission Map
 
@@ -102,12 +122,12 @@ Track 01 usa 13 encontros lineares, sem sidequests por enquanto.
 | 3 | `n03_tutorial_primeira_onda` | `ondas` | 2/2 | 2 | upgrade de carta, escolha 1 em 3 |
 | 4 | `n04_pouso_elemental` | `limpar_mesa` | 3/3 | 2 | upgrade de carta, escolha 1 em 3 |
 | 5 | `n05_ondas_iniciais` | `ondas` | 3/3 | 2 | +1 mana maxima |
-| 6 | `n06_duelo_inicial` | `duelo` | 3/3 | 3 | +1 limite de mao e upgrade de carta, escolha 1 em 3 |
-| 7 | `n07_defesa_posicao` | `defesa_posicao` | 3/3 | 3 | carta nova, escolha 1 em 3 |
+| 6 | `n06_duelo_inicial` | `duelo` | 3/3 | 3 | +1 limite de mao |
+| 7 | `n07_defesa_posicao` | `defesa_posicao` | 3/3 | 3 | carta nova, escolha 1 entre 2 |
 | 8 | `n08_chefe_invocador` | `chefe_summoner` | 5/5 | 3 | desbloqueia passiva; Necromante tambem recebe Ritual I |
 | 9 | `n09_sobreviver_turnos` | `sobreviver_turnos` | 4/4 | 3 | upgrade de carta, escolha 1 em 3 |
 | 10 | `n10_limpeza_elite` | `limpar_mesa` | 4/4 | 3 | desbloqueia ativa; Necromante recebe Ritual II |
-| 11 | `n11_ondas_avancadas` | `ondas` | 4/4 | 3 | carta nova, escolha 1 em 3 |
+| 11 | `n11_ondas_avancadas` | `ondas` | 4/4 | 3 | carta nova restante |
 | 12 | `n12_duelo_elite` | `duelo` | 4/4 | 3 | upgrade de carta, escolha 1 em 3 |
 | 13 | `n13_chefe_final` | `chefe_summoner` | 5/5 | 3 | vitoria da run |
 
@@ -115,7 +135,7 @@ Todo mapa concede Almas alem das recompensas acima.
 
 ## Pending Design
 
-- Definir nomes, efeitos, artes e balanceamento das 6-8 cartas de recompensa por classe.
-- Definir os dois ramos de upgrade de cada carta.
-- Playtestar a curva 1 mana -> 2 manas -> 3 manas.
-- Ajustar almas, cura e loja depois que cartas novas/upgrades finais existirem.
+- Playtestar a curva 1 mana -> 2 manas -> 3 manas com upgrades reais.
+- Ajustar dificuldade dos mapas 7-13 apos playtest.
+- Definir se cada classe ainda deve expandir de 2 cartas novas para um kit futuro de 6-8 cartas.
+- Ajustar almas, cura e loja depois que a curva de upgrades/cartas novas estabilizar.

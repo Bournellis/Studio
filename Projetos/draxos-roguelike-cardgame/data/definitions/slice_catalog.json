@@ -47,12 +47,8 @@
         "arcano_barreira"
       ],
       "reward_pool": [
-        "arcano_recompensa_1",
-        "arcano_recompensa_2",
-        "arcano_recompensa_3",
-        "arcano_recompensa_4",
-        "arcano_recompensa_5",
-        "arcano_recompensa_6"
+        "arcano_bola_de_fogo",
+        "arcano_acelerar"
       ]
     },
     {
@@ -78,12 +74,8 @@
         "invocador_promover"
       ],
       "reward_pool": [
-        "invocador_recompensa_1",
-        "invocador_recompensa_2",
-        "invocador_recompensa_3",
-        "invocador_recompensa_4",
-        "invocador_recompensa_5",
-        "invocador_recompensa_6"
+        "invocador_atacar",
+        "invocador_golem"
       ]
     },
     {
@@ -109,12 +101,8 @@
         "necro_prender"
       ],
       "reward_pool": [
-        "necro_recompensa_1",
-        "necro_recompensa_2",
-        "necro_recompensa_3",
-        "necro_recompensa_4",
-        "necro_recompensa_5",
-        "necro_recompensa_6"
+        "necro_carniceiro",
+        "necro_punir"
       ]
     }
   ],
@@ -131,6 +119,28 @@
       }
     },
     {
+      "id": "arcano_choque_lvl2",
+      "display_name": "Choque Lvl 2",
+      "type": "magia",
+      "cost": 1,
+      "text": "Causa 3 de dano a qualquer criatura ou heroi inimigo valido.",
+      "effect": {
+        "action": "damage",
+        "amount": 3
+      }
+    },
+    {
+      "id": "arcano_choque_lvl3",
+      "display_name": "Choque Lvl 3",
+      "type": "magia",
+      "cost": 0,
+      "text": "Causa 3 de dano a qualquer criatura ou heroi inimigo valido.",
+      "effect": {
+        "action": "damage",
+        "amount": 3
+      }
+    },
+    {
       "id": "arcano_fagulha",
       "display_name": "Fagulha Arcana",
       "type": "criatura",
@@ -141,6 +151,32 @@
       "effect": {
         "aura": "ability_power",
         "amount": 1
+      }
+    },
+    {
+      "id": "arcano_fagulha_lvl2",
+      "display_name": "Fagulha Arcana Lvl 2",
+      "type": "criatura",
+      "cost": 1,
+      "attack": 2,
+      "health": 4,
+      "text": "Enquanto em campo: +1 Poder de habilidade.",
+      "effect": {
+        "aura": "ability_power",
+        "amount": 1
+      }
+    },
+    {
+      "id": "arcano_fagulha_lvl3",
+      "display_name": "Fagulha Arcana Lvl 3",
+      "type": "criatura",
+      "cost": 1,
+      "attack": 2,
+      "health": 4,
+      "text": "Enquanto em campo: +4 Poder de habilidade.",
+      "effect": {
+        "aura": "ability_power",
+        "amount": 4
       }
     },
     {
@@ -160,6 +196,38 @@
       }
     },
     {
+      "id": "arcano_barreira_lvl2",
+      "display_name": "Barreira Arcana Lvl 2",
+      "type": "criatura",
+      "cost": 1,
+      "attack": 1,
+      "health": 6,
+      "keywords": [
+        "defensor"
+      ],
+      "text": "Defensor. Enquanto em campo: +1 Poder de habilidade.",
+      "effect": {
+        "aura": "ability_power",
+        "amount": 1
+      }
+    },
+    {
+      "id": "arcano_barreira_lvl3",
+      "display_name": "Barreira Arcana Lvl 3",
+      "type": "criatura",
+      "cost": 1,
+      "attack": 1,
+      "health": 6,
+      "keywords": [
+        "defensor"
+      ],
+      "text": "Defensor. Enquanto em campo: +4 Poder de habilidade.",
+      "effect": {
+        "aura": "ability_power",
+        "amount": 4
+      }
+    },
+    {
       "id": "arcano_tempestade",
       "display_name": "Tempestade Arcana",
       "type": "magia",
@@ -168,6 +236,99 @@
       "effect": {
         "action": "random_damage",
         "amount": 4
+      }
+    },
+    {
+      "id": "arcano_tempestade_lvl2",
+      "display_name": "Tempestade Arcana Lvl 2",
+      "type": "magia",
+      "cost": 2,
+      "text": "Causa 6 pontos de dano distribuidos aleatoriamente entre alvos inimigos.",
+      "effect": {
+        "action": "random_damage",
+        "amount": 6
+      }
+    },
+    {
+      "id": "arcano_tempestade_lvl3",
+      "display_name": "Tempestade Arcana Lvl 3",
+      "type": "magia",
+      "cost": 1,
+      "text": "Causa 6 pontos de dano distribuidos aleatoriamente entre alvos inimigos.",
+      "effect": {
+        "action": "random_damage",
+        "amount": 6
+      }
+    },
+    {
+      "id": "arcano_bola_de_fogo",
+      "display_name": "Bola de Fogo",
+      "type": "magia",
+      "cost": 2,
+      "text": "Causa 1 de dano no alvo e 1 nos slots adjacentes.",
+      "effect": {
+        "action": "adjacent_damage",
+        "amount": 1,
+        "primary_bonus": 0
+      }
+    },
+    {
+      "id": "arcano_bola_de_fogo_lvl2",
+      "display_name": "Bola de Fogo Lvl 2",
+      "type": "magia",
+      "cost": 2,
+      "text": "Causa 2 de dano no alvo e 2 nos slots adjacentes.",
+      "effect": {
+        "action": "adjacent_damage",
+        "amount": 2,
+        "primary_bonus": 0
+      }
+    },
+    {
+      "id": "arcano_bola_de_fogo_lvl3",
+      "display_name": "Bola de Fogo Lvl 3",
+      "type": "magia",
+      "cost": 2,
+      "text": "Causa 6 de dano no alvo e 2 nos slots adjacentes.",
+      "effect": {
+        "action": "adjacent_damage",
+        "amount": 2,
+        "primary_bonus": 4
+      }
+    },
+    {
+      "id": "arcano_acelerar",
+      "display_name": "Acelerar",
+      "type": "magia",
+      "cost": 0,
+      "text": "Ganha +1 mana ate o final do turno.",
+      "effect": {
+        "action": "gain_mana",
+        "mana": 1
+      }
+    },
+    {
+      "id": "arcano_acelerar_lvl2",
+      "display_name": "Acelerar Lvl 2",
+      "type": "magia",
+      "cost": 0,
+      "text": "Ganha +1 mana e +1 Poder de habilidade ate o final do turno.",
+      "effect": {
+        "action": "gain_mana",
+        "mana": 1,
+        "temporary_ability_power": 1
+      }
+    },
+    {
+      "id": "arcano_acelerar_lvl3",
+      "display_name": "Acelerar Lvl 3",
+      "type": "magia",
+      "cost": 0,
+      "text": "Ganha +2 mana e +1 Poder de habilidade ate o final do turno.",
+      "effect": {
+        "action": "gain_mana",
+        "mana": 2,
+        "temporary_ability_power": 1
       }
     },
     {
@@ -180,12 +341,60 @@
       "text": "Criatura de linha arcana."
     },
     {
+      "id": "invocador_soldado_lvl2",
+      "display_name": "Soldado Arcano Lvl 2",
+      "type": "criatura",
+      "cost": 1,
+      "attack": 3,
+      "health": 4,
+      "text": "Criatura de linha arcana."
+    },
+    {
+      "id": "invocador_soldado_lvl3",
+      "display_name": "Soldado Arcano Lvl 3",
+      "type": "criatura",
+      "cost": 1,
+      "attack": 4,
+      "health": 5,
+      "keywords": [
+        "regeneracao"
+      ],
+      "text": "Regeneracao 2.",
+      "effect": {
+        "regeneration": 2
+      }
+    },
+    {
       "id": "invocador_batedor",
       "display_name": "Batedor Arcano",
       "type": "criatura",
       "cost": 1,
       "attack": 2,
       "health": 1,
+      "keywords": [
+        "iniciativa"
+      ],
+      "text": "Iniciativa: causa dano primeiro na lane."
+    },
+    {
+      "id": "invocador_batedor_lvl2",
+      "display_name": "Batedor Arcano Lvl 2",
+      "type": "criatura",
+      "cost": 1,
+      "attack": 3,
+      "health": 2,
+      "keywords": [
+        "iniciativa"
+      ],
+      "text": "Iniciativa: causa dano primeiro na lane."
+    },
+    {
+      "id": "invocador_batedor_lvl3",
+      "display_name": "Batedor Arcano Lvl 3",
+      "type": "criatura",
+      "cost": 1,
+      "attack": 6,
+      "health": 2,
       "keywords": [
         "iniciativa"
       ],
@@ -204,6 +413,32 @@
       }
     },
     {
+      "id": "invocador_promover_lvl2",
+      "display_name": "Promover Lvl 2",
+      "type": "magia",
+      "cost": 1,
+      "text": "Escolha uma criatura aliada, depois escolha 2 entre +1/+1, Iniciativa ou Defensor.",
+      "effect": {
+        "action": "promote",
+        "attack": 1,
+        "health": 1,
+        "picks": 2
+      }
+    },
+    {
+      "id": "invocador_promover_lvl3",
+      "display_name": "Promover Lvl 3",
+      "type": "magia",
+      "cost": 1,
+      "text": "A criatura aliada recebe +1/+1, Iniciativa e Defensor.",
+      "effect": {
+        "action": "promote",
+        "attack": 1,
+        "health": 1,
+        "picks": 3
+      }
+    },
+    {
       "id": "invocador_guardiao",
       "display_name": "Guardiao Arcano",
       "type": "criatura",
@@ -216,12 +451,147 @@
       "text": "Defensor: protege lanes vazias."
     },
     {
+      "id": "invocador_guardiao_lvl2",
+      "display_name": "Guardiao Arcano Lvl 2",
+      "type": "criatura",
+      "cost": 2,
+      "attack": 3,
+      "health": 6,
+      "keywords": [
+        "defensor"
+      ],
+      "text": "Defensor: protege lanes vazias."
+    },
+    {
+      "id": "invocador_guardiao_lvl3",
+      "display_name": "Guardiao Arcano Lvl 3",
+      "type": "criatura",
+      "cost": 2,
+      "attack": 4,
+      "health": 8,
+      "keywords": [
+        "defensor",
+        "regeneracao"
+      ],
+      "text": "Defensor. Regeneracao 3.",
+      "effect": {
+        "regeneration": 3
+      }
+    },
+    {
+      "id": "invocador_atacar",
+      "display_name": "Atacar",
+      "type": "magia",
+      "cost": 2,
+      "text": "Todas as criaturas aliadas recebem +1/+1 ate o final do turno.",
+      "effect": {
+        "action": "buff_all_allies",
+        "attack": 1,
+        "health": 1,
+        "temporary": true
+      }
+    },
+    {
+      "id": "invocador_atacar_lvl2",
+      "display_name": "Atacar Lvl 2",
+      "type": "magia",
+      "cost": 2,
+      "text": "Todas as criaturas aliadas recebem +2/+2 ate o final do turno.",
+      "effect": {
+        "action": "buff_all_allies",
+        "attack": 2,
+        "health": 2,
+        "temporary": true
+      }
+    },
+    {
+      "id": "invocador_atacar_lvl3",
+      "display_name": "Atacar Lvl 3",
+      "type": "magia",
+      "cost": 2,
+      "text": "Todas as criaturas aliadas recebem +4/+4 ate o final do turno.",
+      "effect": {
+        "action": "buff_all_allies",
+        "attack": 4,
+        "health": 4,
+        "temporary": true
+      }
+    },
+    {
+      "id": "invocador_golem",
+      "display_name": "Golem",
+      "type": "criatura",
+      "cost": 3,
+      "attack": 4,
+      "health": 5,
+      "keywords": [
+        "defensor"
+      ],
+      "text": "Defensor."
+    },
+    {
+      "id": "invocador_golem_lvl2",
+      "display_name": "Golem Lvl 2",
+      "type": "criatura",
+      "cost": 3,
+      "attack": 5,
+      "health": 7,
+      "keywords": [
+        "defensor",
+        "regeneracao"
+      ],
+      "text": "Defensor. Regeneracao 2.",
+      "effect": {
+        "regeneration": 2
+      }
+    },
+    {
+      "id": "invocador_golem_lvl3",
+      "display_name": "Golem Lvl 3",
+      "type": "criatura",
+      "cost": 3,
+      "attack": 6,
+      "health": 10,
+      "keywords": [
+        "defensor",
+        "regeneracao"
+      ],
+      "text": "Defensor. Regeneracao 4.",
+      "effect": {
+        "regeneration": 4
+      }
+    },
+    {
       "id": "necro_esqueleto",
       "display_name": "Esqueleto",
       "type": "criatura",
       "cost": 1,
       "attack": 1,
       "health": 1,
+      "keywords": [
+        "reviver"
+      ],
+      "text": "Reviver: volta uma vez no mesmo slot."
+    },
+    {
+      "id": "necro_esqueleto_lvl2",
+      "display_name": "Esqueleto Lvl 2",
+      "type": "criatura",
+      "cost": 1,
+      "attack": 2,
+      "health": 2,
+      "keywords": [
+        "reviver"
+      ],
+      "text": "Reviver: volta uma vez no mesmo slot."
+    },
+    {
+      "id": "necro_esqueleto_lvl3",
+      "display_name": "Esqueleto Lvl 3",
+      "type": "criatura",
+      "cost": 1,
+      "attack": 4,
+      "health": 4,
       "keywords": [
         "reviver"
       ],
@@ -244,6 +614,38 @@
       }
     },
     {
+      "id": "necro_morto_vivo_lvl2",
+      "display_name": "Morto vivo Lvl 2",
+      "type": "criatura",
+      "cost": 1,
+      "attack": 1,
+      "health": 1,
+      "text": "Ao morrer: Enfraquecer 2.",
+      "effect": {
+        "on_death": {
+          "action": "weaken",
+          "debuff": "weaken",
+          "amount": 2
+        }
+      }
+    },
+    {
+      "id": "necro_morto_vivo_lvl3",
+      "display_name": "Morto vivo Lvl 3",
+      "type": "criatura",
+      "cost": 1,
+      "attack": 2,
+      "health": 2,
+      "text": "Ao morrer: Enfraquecer 3.",
+      "effect": {
+        "on_death": {
+          "action": "weaken",
+          "debuff": "weaken",
+          "amount": 3
+        }
+      }
+    },
+    {
       "id": "necro_prender",
       "display_name": "Prender",
       "type": "magia",
@@ -253,6 +655,33 @@
         "action": "snare",
         "debuff": "snare",
         "amount": 1
+      }
+    },
+    {
+      "id": "necro_prender_lvl2",
+      "display_name": "Prender Lvl 2",
+      "type": "magia",
+      "cost": 1,
+      "text": "A criatura inimiga alvo nao ataca no proximo combate e recebe Enfraquecer 1.",
+      "effect": {
+        "action": "multi_debuff",
+        "snare": true,
+        "snare_amount": 1,
+        "weaken_amount": 1
+      }
+    },
+    {
+      "id": "necro_prender_lvl3",
+      "display_name": "Prender Lvl 3",
+      "type": "magia",
+      "cost": 1,
+      "text": "A criatura inimiga alvo nao ataca no proximo combate, recebe Enfraquecer 1 e perde keywords.",
+      "effect": {
+        "action": "multi_debuff",
+        "snare": true,
+        "snare_amount": 1,
+        "weaken_amount": 1,
+        "remove_keywords": true
       }
     },
     {
@@ -269,6 +698,119 @@
           "debuff": "weaken",
           "amount": 1
         }
+      }
+    },
+    {
+      "id": "necro_zumbi_lvl2",
+      "display_name": "Zumbi Lvl 2",
+      "type": "criatura",
+      "cost": 2,
+      "attack": 3,
+      "health": 3,
+      "text": "Ao morrer: Enfraquecer 2.",
+      "effect": {
+        "on_death": {
+          "action": "weaken",
+          "debuff": "weaken",
+          "amount": 2
+        }
+      }
+    },
+    {
+      "id": "necro_zumbi_lvl3",
+      "display_name": "Zumbi Lvl 3",
+      "type": "criatura",
+      "cost": 2,
+      "attack": 4,
+      "health": 4,
+      "text": "Ao morrer: Enfraquecer 4.",
+      "effect": {
+        "on_death": {
+          "action": "weaken",
+          "debuff": "weaken",
+          "amount": 4
+        }
+      }
+    },
+    {
+      "id": "necro_carniceiro",
+      "display_name": "Carniceiro",
+      "type": "criatura",
+      "cost": 3,
+      "attack": 2,
+      "health": 2,
+      "keywords": [
+        "carnica"
+      ],
+      "text": "Carnica 1: quando outra criatura morre, recebe +1/+1 permanente.",
+      "effect": {
+        "carrion": 1
+      }
+    },
+    {
+      "id": "necro_carniceiro_lvl2",
+      "display_name": "Carniceiro Lvl 2",
+      "type": "criatura",
+      "cost": 3,
+      "attack": 4,
+      "health": 4,
+      "keywords": [
+        "carnica"
+      ],
+      "text": "Carnica 1: quando outra criatura morre, recebe +1/+1 permanente.",
+      "effect": {
+        "carrion": 1
+      }
+    },
+    {
+      "id": "necro_carniceiro_lvl3",
+      "display_name": "Carniceiro Lvl 3",
+      "type": "criatura",
+      "cost": 3,
+      "attack": 4,
+      "health": 4,
+      "keywords": [
+        "carnica"
+      ],
+      "text": "Carnica 2: quando outra criatura morre, recebe +2/+2 permanente.",
+      "effect": {
+        "carrion": 2
+      }
+    },
+    {
+      "id": "necro_punir",
+      "display_name": "Punir",
+      "type": "magia",
+      "cost": 1,
+      "text": "A criatura alvo recebe -1/-1 permanente; se estiver presa, recebe -3/-3.",
+      "effect": {
+        "action": "punish_snared",
+        "amount": 1,
+        "snared_amount": 3
+      }
+    },
+    {
+      "id": "necro_punir_lvl2",
+      "display_name": "Punir Lvl 2",
+      "type": "magia",
+      "cost": 1,
+      "text": "A criatura alvo recebe -2/-2 permanente; se estiver presa, recebe -5/-5.",
+      "effect": {
+        "action": "punish_snared",
+        "amount": 2,
+        "snared_amount": 5
+      }
+    },
+    {
+      "id": "necro_punir_lvl3",
+      "display_name": "Punir Lvl 3",
+      "type": "magia",
+      "cost": 0,
+      "text": "A criatura alvo recebe -2/-2 permanente; se estiver presa, recebe -5/-5.",
+      "effect": {
+        "action": "punish_snared",
+        "amount": 2,
+        "snared_amount": 5
       }
     },
     {
@@ -794,9 +1336,9 @@
       "enemy_director": "waves",
       "player_slots_count": 3,
       "enemy_slots_count": 3,
-      "defense_turns": 4,
+      "defense_turns": 5,
       "defense_slot": 1,
-      "defense_health": 7,
+      "defense_health": 8,
       "waves": [
         [
           {
@@ -809,13 +1351,13 @@
           },
           {
             "slot": 2,
-            "card_id": "elemental_menor"
+            "card_id": "elemental_medio"
           }
         ],
         [
           {
             "slot": 0,
-            "card_id": "elemental_medio"
+            "card_id": "elemental_assaltante_veloz"
           },
           {
             "slot": 1,
@@ -823,13 +1365,13 @@
           },
           {
             "slot": 2,
-            "card_id": "elemental_medio"
+            "card_id": "elemental_assaltante"
           }
         ],
         [
           {
             "slot": 0,
-            "card_id": "elemental_assaltante"
+            "card_id": "elemental_elite_agil"
           },
           {
             "slot": 1,
@@ -837,7 +1379,7 @@
           },
           {
             "slot": 2,
-            "card_id": "elemental_assaltante"
+            "card_id": "elemental_guardiao"
           }
         ]
       ],
@@ -855,15 +1397,19 @@
       "player_slots_count": 5,
       "enemy_slots_count": 5,
       "duration_target": "boss",
-      "boss_health": 20,
+      "boss_health": 28,
       "starting_enemy_slots": [
         {
+          "slot": 0,
+          "card_id": "elemental_medio"
+        },
+        {
           "slot": 1,
-          "card_id": "elemental_menor"
+          "card_id": "elemental_assaltante_veloz"
         },
         {
           "slot": 2,
-          "card_id": "elemental_medio"
+          "card_id": "elemental_guardiao"
         },
         {
           "slot": 3,
@@ -878,7 +1424,16 @@
           "card_id": "elemental_medio"
         },
         {
-          "card_id": "elemental_bruto"
+          "card_id": "elemental_assaltante"
+        },
+        {
+          "card_id": "elemental_guardiao"
+        },
+        {
+          "card_id": "elemental_elite_bruto"
+        },
+        {
+          "card_id": "elemental_elite_agil"
         }
       ],
       "soul_reward": {
@@ -894,15 +1449,15 @@
       "enemy_director": "prefilled_board",
       "player_slots_count": 4,
       "enemy_slots_count": 4,
-      "survive_turns": 4,
+      "survive_turns": 5,
       "starting_enemy_slots": [
         {
           "slot": 0,
-          "card_id": "elemental_assaltante"
+          "card_id": "elemental_assaltante_veloz"
         },
         {
           "slot": 1,
-          "card_id": "elemental_bruto"
+          "card_id": "elemental_elite_bruto"
         },
         {
           "slot": 2,
@@ -941,7 +1496,7 @@
         },
         {
           "slot": 3,
-          "card_id": "elemental_medio"
+          "card_id": "elemental_tita"
         }
       ],
       "soul_reward": {
@@ -961,10 +1516,14 @@
         [
           {
             "slot": 0,
-            "card_id": "elemental_medio"
+            "card_id": "elemental_assaltante_veloz"
           },
           {
             "slot": 1,
+            "card_id": "elemental_medio"
+          },
+          {
+            "slot": 2,
             "card_id": "elemental_medio"
           }
         ],
@@ -980,6 +1539,10 @@
           {
             "slot": 2,
             "card_id": "elemental_assaltante"
+          },
+          {
+            "slot": 3,
+            "card_id": "elemental_elite_bruto"
           }
         ],
         [
@@ -993,7 +1556,7 @@
           },
           {
             "slot": 2,
-            "card_id": "elemental_pesado_b"
+            "card_id": "elemental_tita"
           },
           {
             "slot": 3,
@@ -1013,8 +1576,8 @@
       "tier": "elite_optional",
       "enemy_director": "player_like",
       "enemy_commander_enabled": true,
-      "enemy_mana_per_turn": 3,
-      "enemy_hand_count": 5,
+      "enemy_mana_per_turn": 4,
+      "enemy_hand_count": 6,
       "enemy_deck": [
         "elemental_duelista",
         "elemental_duelista",
@@ -1027,19 +1590,25 @@
         "elemental_elite_agil",
         "elemental_elite_agil",
         "elemental_elite_bruto",
-        "elemental_elite_bruto"
+        "elemental_elite_bruto",
+        "elemental_tita",
+        "elemental_assaltante_veloz"
       ],
       "player_slots_count": 4,
       "enemy_slots_count": 4,
-      "enemy_health": 24,
+      "enemy_health": 30,
       "starting_enemy_slots": [
         {
-          "slot": 1,
+          "slot": 0,
           "card_id": "elemental_elite_agil"
         },
         {
-          "slot": 2,
+          "slot": 1,
           "card_id": "elemental_guardiao"
+        },
+        {
+          "slot": 2,
+          "card_id": "elemental_elite_bruto"
         }
       ],
       "soul_reward": {
@@ -1056,23 +1625,27 @@
       "player_slots_count": 5,
       "enemy_slots_count": 5,
       "duration_target": "final_boss",
-      "boss_health": 34,
+      "boss_health": 46,
       "starting_enemy_slots": [
         {
           "slot": 0,
-          "card_id": "elemental_medio"
-        },
-        {
-          "slot": 1,
           "card_id": "elemental_elite_agil"
         },
         {
-          "slot": 2,
+          "slot": 1,
           "card_id": "elemental_guardiao"
         },
         {
-          "slot": 3,
+          "slot": 2,
           "card_id": "elemental_elite_bruto"
+        },
+        {
+          "slot": 3,
+          "card_id": "elemental_tita"
+        },
+        {
+          "slot": 4,
+          "card_id": "elemental_assaltante_veloz"
         }
       ],
       "boss_summons": [
@@ -1086,7 +1659,13 @@
           "card_id": "elemental_guardiao"
         },
         {
+          "card_id": "elemental_elite_bruto"
+        },
+        {
           "card_id": "elemental_tita"
+        },
+        {
+          "card_id": "elemental_assaltante_veloz"
         }
       ],
       "soul_reward": {
@@ -1188,10 +1767,7 @@
         ],
         "rewards": [
           "max_hand_size_1"
-        ],
-        "choice_reward": {
-          "type": "upgrade_card"
-        }
+        ]
       },
       {
         "id": "n07_defesa_posicao",
@@ -1261,8 +1837,7 @@
           "n12_duelo_elite"
         ],
         "choice_reward": {
-          "type": "new_card",
-          "pool_offset": 3
+          "type": "new_card"
         }
       },
       {

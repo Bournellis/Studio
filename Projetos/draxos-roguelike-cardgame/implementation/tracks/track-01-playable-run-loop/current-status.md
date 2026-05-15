@@ -1,7 +1,7 @@
 # Track 01 Current Status
 
 - Last Updated: `2026-05-15`
-- Status: `P12_EARLY_GAME_REWARD_UPDATE_VALIDATED`
+- Status: `P13_REAL_UPGRADES_REWARD_CARDS_VALIDATED`
 - Scope: `First playable class and encounter slice after Track 00 checkpoint`
 
 ## Completed
@@ -9,17 +9,17 @@
 - Track 00 checkpoint committed and closed.
 - P01-P03 placeholder loop validated previously: class selection, explicit run start, map selection, battle return, visible state, and immediate reward mutation.
 - Catalog now exposes the three real slice classes: `arcano`, `invocador`, and `necromante`.
-- Each class has a 9-card cost-1 starter deck, starting health 20, starting mana 1, base hand limit 3, a fixed map 2 cost-2 card reward, and a 6-card placeholder reward pool.
+- Each class has a 9-card cost-1 starter deck, starting health 20, starting mana 1, base hand limit 3, a fixed map 2 cost-2 card reward, and a 2-card real reward pool.
 - RunSession records class, deck, health, max mana, max hand size, souls, completed nodes, automatic rewards, passive unlock, active unlock, and last battle state.
 - ShipHub exposes the real class choices and paid healing with souls.
 - RunMap exposes 13 linear mainline nodes with no sidequests for this slice.
 - Fixed rewards are active: map 1 grants +1 max mana, map 2 adds 3 copies of the class cost-2 core card, map 5 grants +1 max mana, map 6 grants +1 max hand size, map 8 unlocks the class passive, and map 10 unlocks the class active.
-- Choice rewards are active: maps 3/4/6/9/12 offer 1-in-3 upgrade placeholders; maps 7/11 offer 1-in-3 new-card placeholders that add 3 copies.
+- Choice rewards are active: maps 3/4/9/12 offer seeded upgrade choices; map 7 offers the 2 new class cards; map 11 offers the remaining new class card. New-card choices add 3 copies.
 - Battle receives current run class, deck, health, and mana.
 - Battle exposes drag-and-drop targeting for hand cards and unlocked class spells.
 - Battle exposes a hover preview for hand cards, field occupants, class spells, slots, and hero targets when present.
 - Necromante's class spell exposes a choice modal for Podridao, temporary attack buffs, and level 2 reanimation choices.
-- BattleEngine implements four-stage combat (`Iniciativa - Frente`, `Iniciativa - Sobra`, `Combate - Frente`, `Combate - Sobra`), simultaneous front damage, sequential overflow targeting, direct lane damage, `iniciativa`, `defensor`, `reviver`, `enfraquecer`, `prender`, `promover`, dynamic `poder de habilidade`, and `regeneracao`.
+- BattleEngine implements four-stage combat (`Iniciativa - Frente`, `Iniciativa - Sobra`, `Combate - Frente`, `Combate - Sobra`), simultaneous front damage, sequential overflow targeting, direct lane damage, `iniciativa`, `defensor`, `reviver`, `enfraquecer`, `prender`, `promover`, dynamic `poder de habilidade`, `regeneracao`, `carnica`, keyword removal, adjacent damage, temporary mana, temporary spell power, temporary all-ally buffs, and Punir against snared targets.
 - Battle now uses `Resolver Combate`: player actions, combat, pending choices, maintenance/script, pending choices, duel enemy preparation for the next turn, automatic return to the player. There is no separate enemy combat turn and no summoning sickness.
 - BattleEngine implements first-pass Arcano `Fluxo Continuo`, Invocador once-per-turn +2/+1 permanent passive, Necromante `Cinzas`, death hooks, debuffs, Raio das Cinzas, and reanimation with passives locked until map 8 and actives hidden/locked until map 10.
 - BattleEngine implements sequential waves, duel hero kill, defense position, survive turns, and scripted summoner bosses.
@@ -48,6 +48,8 @@
 - VisualAssets now reports non-fatal alpha debts for ship overlays that require real transparency.
 - ShipHub map and souls overlays have been repositioned toward the nave scene hotspots while deck remains class-driven on the right.
 - Battle choice modals for `Promover`, `Enfraquecer`, and Necromante choices are centered and scrollable for long option lists.
+- Necromante choices, pending battle choices, and reward choices now use translucent panels with alpha target `0.72`.
+- Automatic target choices generated during combat, such as on-death `Enfraquecer`, wait until combat FX stages finish before showing the menu.
 - `Tempestade Arcana` now targets the enemy board as an area spell through the `BattleEnemyBoardAreaTarget` drop zone.
 - Allied creatures can move by drag to an adjacent empty allied slot once per turn, excluding defense objectives.
 - Allied creatures can swap by drag with an adjacent occupied allied slot; both creatures spend movement and the swap fails if either already moved.
@@ -61,11 +63,13 @@
 - Arcano balance pass applied: Barreira Arcana 1/5, Fagulha Arcana 1/2, Choque 2 damage, Tempestade Arcana 4 damage, and Prender cost 1.
 - Sacrifice/tuning pass applied: summoning over an allied creature now requires a Sacrificar/Cancelar modal before mana/card spend, Barreira Arcana has Defensor, defense map is a real hold objective with waves and no early clear-board victory, survive map has a light enemy buff, and Necromante unlocks active level 1 with the passive reward before upgrading to level 2 on the active reward.
 - Early-game reward update validation green with 59/59 GUT tests and 442 asserts; 40 optional PNGs and 4 non-fatal ship overlay alpha debts are reported by design.
+- Real upgrade/reward-card update applied: upgrades now map base cards to Lvl 2/Lvl 3 variants, Arcano gained `Bola de Fogo`/`Acelerar`, Invocador gained `Atacar`/`Golem`, Necromante gained `Carniceiro`/`Punir`, map 6 no longer grants upgrade choice, maps 7-13 received stronger pressure, and save version 3 invalidates v2 while keeping stale saves deletable/overwritable.
+- Real upgrade/reward-card validation green with 65/65 GUT tests and 511 asserts; 46 optional PNGs and 4 non-fatal ship overlay alpha debts are reported by design.
 
 ## Current Risk
 
-The slice is mechanically playable but not fully balanced. The 13-map route now has staged combat, tutorial maps, fixed rewards, and placeholder choice rewards, but exact upgrade branches and class reward cards still need design, most card art is still absent, enemy cardback art is still pending, `Mapa.png` still has fake checkerboard/no alpha, class ship overlays and `NpcAlmas.png` are pending, Invocador/Necromante frames are not alpha-safe overlays, backgrounds are accepted as provisional 16:9 `1456x816`, and final card/class naming still needs a dedicated content pass.
+The slice is mechanically playable but not fully balanced. The 13-map route now has staged combat, tutorial maps, fixed rewards, real upgrade choices, real new-card choices, save v3, and stronger maps 7-13, but the new difficulty curve needs playtest, most card art is still absent, enemy cardback art is still pending, `Mapa.png` still has fake checkerboard/no alpha, class ship overlays and `NpcAlmas.png` are pending, Invocador/Necromante frames are not alpha-safe overlays, backgrounds are accepted as provisional 16:9 `1456x816`, and final card/class naming still needs a dedicated content pass.
 
 ## Next
 
-Run a design session for exact upgrade branches and class reward cards, then playtest the full 13-map route.
+Playtest the full 13-map route with real upgrades, new cards, save v3, and stronger maps 7-13; then tune difficulty/reward cadence.
