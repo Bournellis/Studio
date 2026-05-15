@@ -168,9 +168,10 @@ func _refresh() -> void:
 		button.add_theme_stylebox_override("pressed", _slot_style(true, true))
 	var selected_info: Dictionary = slots[SaveManager.current_slot_index - 1]
 	var has_save: bool = bool(selected_info.get("exists", false))
+	var has_save_file: bool = bool(selected_info.get("has_file", has_save))
 	new_game_button.disabled = has_save
 	continue_button.disabled = not has_save
-	delete_button.disabled = not has_save
+	delete_button.disabled = not has_save_file
 
 func _on_new_game_pressed() -> void:
 	var result: Dictionary = SaveManager.begin_new_game(SaveManager.current_slot_index)

@@ -69,7 +69,7 @@ func load_slot(index: int) -> Dictionary:
 func delete_slot(index: int) -> Dictionary:
 	if not _valid_slot(index):
 		return {"ok": false, "message": "Slot invalido."}
-	if has_save(index):
+	if has_save_file(index):
 		var remove_result: Error = DirAccess.remove_absolute(ProjectSettings.globalize_path(_slot_path(index)))
 		if remove_result != OK:
 			return {"ok": false, "message": "Nao foi possivel deletar o Slot %d." % index}
@@ -78,6 +78,9 @@ func delete_slot(index: int) -> Dictionary:
 	return {"ok": true, "message": "Slot %d deletado." % index}
 
 func has_save(index: int) -> bool:
+	return not _load_slot_data(index).is_empty()
+
+func has_save_file(index: int) -> bool:
 	return _valid_slot(index) and FileAccess.file_exists(_slot_path(index))
 
 func slot_summary(index: int) -> String:
@@ -88,8 +91,10 @@ func random_run_seed() -> int:
 	return int((Time.get_unix_time_from_system() * 1000.0) + Time.get_ticks_msec()) % 2147483647
 
 func _slot_info(index: int) -> Dictionary:
+	var has_file: bool = has_save_file(index)
 	var data: Dictionary = _load_slot_data(index)
 	var exists: bool = not data.is_empty()
+	var invalid: bool = has_file and not exists
 	var summary: String = "Vazio"
 	var player_label: String = ""
 	var class_label: String = ""
@@ -100,9 +105,13 @@ func _slot_info(index: int) -> Dictionary:
 		class_label = str(run_data.get("selected_class_display_name", run_data.get("selected_class_id", "")))
 		map_name = _node_display_name(str(run_data.get("current_node_id", "")))
 		summary = "%s | %s | %s" % [player_label if player_label != "" else RunSession.DEFAULT_PLAYER_NAME, class_label if class_label != "" else "Classe desconhecida", map_name]
+	elif invalid:
+		summary = "Save antigo ou invalido"
 	return {
 		"index": index,
 		"exists": exists,
+		"has_file": has_file,
+		"invalid": invalid,
 		"selected": current_slot_index == index,
 		"path": _slot_path(index),
 		"summary": summary,

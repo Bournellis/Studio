@@ -157,6 +157,21 @@ func test_save_manager_saves_loads_names_and_deletes_slots() -> void:
 	assert_true(bool(delete_result.get("ok", false)), str(delete_result.get("message", "")))
 	assert_false(SaveManager.has_save(1))
 
+func test_save_manager_allows_deleting_or_overwriting_stale_save_files() -> void:
+	_write_test_save_file(1, {"version": SaveManager.SAVE_VERSION - 1, "run": {"selected_class_id": "arcano"}})
+	assert_false(SaveManager.has_save(1))
+	assert_true(SaveManager.has_save_file(1))
+	var slots: Array[Dictionary] = SaveManager.get_slots()
+	assert_false(bool(slots[0].get("exists", true)))
+	assert_true(bool(slots[0].get("has_file", false)))
+	assert_true(bool(slots[0].get("invalid", false)))
+	assert_string_contains(str(slots[0].get("summary", "")), "antigo")
+	var begin_result: Dictionary = SaveManager.begin_new_game(1)
+	assert_true(bool(begin_result.get("ok", false)), str(begin_result.get("message", "")))
+	var delete_result: Dictionary = SaveManager.delete_slot(1)
+	assert_true(bool(delete_result.get("ok", false)), str(delete_result.get("message", "")))
+	assert_false(SaveManager.has_save_file(1))
+
 func test_main_menu_defaults_to_slot_one_and_button_states() -> void:
 	var menu = await _instantiate_scene("res://modes/boot/boot.tscn")
 	assert_eq(SaveManager.current_slot_index, 1)
@@ -174,6 +189,20 @@ func test_main_menu_defaults_to_slot_one_and_button_states() -> void:
 	var delete_label: Label = menu.find_child("MainMenuDeleteConfirmText", true, false)
 	assert_not_null(delete_label)
 	assert_eq(delete_label.text, "Deletar Save 1?")
+	menu.queue_free()
+	await get_tree().process_frame
+
+func test_main_menu_can_delete_stale_save_file_without_blocking_new_game() -> void:
+	_write_test_save_file(1, {"version": SaveManager.SAVE_VERSION - 1, "run": {"selected_class_id": "arcano"}})
+	var menu = await _instantiate_scene("res://modes/boot/boot.tscn")
+	var slot_one: Button = menu.find_child("MainMenuSlot1", true, false)
+	var new_button: Button = menu.find_child("MainMenuNewGameButton", true, false)
+	var continue_button: Button = menu.find_child("MainMenuContinueButton", true, false)
+	var delete_button: Button = menu.find_child("MainMenuDeleteButton", true, false)
+	assert_string_contains(slot_one.text, "antigo")
+	assert_false(new_button.disabled)
+	assert_true(continue_button.disabled)
+	assert_false(delete_button.disabled)
 	menu.queue_free()
 	await get_tree().process_frame
 
@@ -1260,3 +1289,11 @@ func _clear_test_saves() -> void:
 		var path: String = "%s%d.json" % [TEST_SAVE_PREFIX, index]
 		if FileAccess.file_exists(path):
 			DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+
+func _write_test_save_file(index: int, payload: Dictionary) -> void:
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("user://"))
+	var path: String = "%s%d.json" % [TEST_SAVE_PREFIX, index]
+	var file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
+	assert_not_null(file)
+	file.store_string(JSON.stringify(payload, "\t"))
+	file.close()
