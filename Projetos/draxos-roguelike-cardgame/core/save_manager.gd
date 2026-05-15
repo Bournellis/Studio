@@ -1,6 +1,6 @@
 extends Node
 
-const SAVE_VERSION: int = 1
+const SAVE_VERSION: int = 2
 const SLOT_COUNT: int = 3
 
 var current_slot_index: int = 1

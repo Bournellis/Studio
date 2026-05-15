@@ -27,9 +27,11 @@ const PROMOTE_CHOICE_INITIATIVE: String = "promote_initiative"
 const PROMOTE_CHOICE_DEFENDER: String = "promote_defender"
 const NECRO_CHOICE_ROT: String = "necro_rot"
 const NECRO_CHOICE_ATTACK_TWO: String = "necro_attack_two"
+const NECRO_CHOICE_LIGHTNING: String = "necro_lightning"
 const NECRO_CHOICE_REVIVE_ONE_ONE: String = "necro_revive_one_one"
 const NECRO_CHOICE_ROT_TWO: String = "necro_rot_two"
 const NECRO_CHOICE_ATTACK_FOUR: String = "necro_attack_four"
+const NECRO_CHOICE_LIGHTNING_MAJOR: String = "necro_lightning_major"
 const COMBAT_STAGE_INITIATIVE_FRONT: String = "Iniciativa - Frente"
 const COMBAT_STAGE_INITIATIVE_OVERFLOW: String = "Iniciativa - Sobra"
 const COMBAT_STAGE_NORMAL_FRONT: String = "Combate - Frente"
@@ -69,6 +71,7 @@ var class_passive_unlocked: bool = false
 var class_active_unlocked: bool = false
 var class_active_level: int = 0
 var class_active_used: bool = false
+var invocador_passive_triggered: bool = false
 var flow: int = 0
 var ashes: int = 0
 var wave_index: int = 0
@@ -398,6 +401,13 @@ func get_necromancer_active_choices() -> Array[Dictionary]:
 			"cost_ashes": 2,
 			"text": "Uma criatura aliada ganha +2 ATK ate o final do turno.",
 			"enabled": active_ready and ashes >= 2 and not _occupied_slot_targets(PLAYER_ID).is_empty()
+		},
+		{
+			"id": NECRO_CHOICE_LIGHTNING,
+			"display_name": "Raio das Cinzas",
+			"cost_ashes": 2,
+			"text": "Causa 2 de dano diretamente ao heroi inimigo.",
+			"enabled": active_ready and ashes >= 2 and _enemy_hero_is_objective()
 		}
 	]
 	if class_active_level >= 2:
@@ -421,6 +431,13 @@ func get_necromancer_active_choices() -> Array[Dictionary]:
 			"cost_ashes": 4,
 			"text": "Uma criatura aliada ganha +4 ATK ate o final do turno.",
 			"enabled": active_ready and ashes >= 4 and not _occupied_slot_targets(PLAYER_ID).is_empty()
+		})
+		choices.append({
+			"id": NECRO_CHOICE_LIGHTNING_MAJOR,
+			"display_name": "Raio das Cinzas Maior",
+			"cost_ashes": 4,
+			"text": "Causa 4 de dano diretamente ao heroi inimigo.",
+			"enabled": active_ready and ashes >= 4 and _enemy_hero_is_objective()
 		})
 	return choices
 
@@ -470,6 +487,14 @@ func get_valid_class_active_targets(choice_id: String = "") -> Array[Dictionary]
 					if class_active_level < 2 or ashes < 4:
 						return _empty_targets()
 					return _occupied_slot_targets(PLAYER_ID)
+				NECRO_CHOICE_LIGHTNING:
+					if ashes < 2 or not _enemy_hero_is_objective():
+						return _empty_targets()
+					return [{"owner": ENEMY_ID, "hero": true}]
+				NECRO_CHOICE_LIGHTNING_MAJOR:
+					if class_active_level < 2 or ashes < 4 or not _enemy_hero_is_objective():
+						return _empty_targets()
+					return [{"owner": ENEMY_ID, "hero": true}]
 	return _empty_targets()
 
 func can_use_class_active_on_target(target: Dictionary, choice_id: String = "") -> bool:
@@ -560,6 +585,7 @@ func _finish_cycle() -> void:
 		_check_outcome()
 	turn_number += 1
 	class_active_used = false
+	invocador_passive_triggered = false
 	flow = 0
 	_clear_temporary_buffs()
 	_resolve_start_of_player_turn()
@@ -1246,10 +1272,13 @@ func _resolve_on_enter(card) -> void:
 func _apply_summon_passive(_slot_index: int) -> void:
 	if selected_class_id != "invocador" or not class_passive_unlocked:
 		return
+	if invocador_passive_triggered:
+		return
 	var target_slot: int = _strongest_ally_slot()
 	if target_slot >= 0:
-		_buff_slot(PLAYER_ID, target_slot, 1, 0, false)
-		_log("Comandante de Campo concedeu +1/+0 permanente.")
+		invocador_passive_triggered = true
+		_buff_slot(PLAYER_ID, target_slot, 2, 1, false)
+		_log("Comandante de Campo concedeu +2/+1 permanente.")
 
 func _resolve_necromancer_active(choice_id: String = "", target: Dictionary = {}) -> void:
 	if choice_id == NECRO_CHOICE_ROT:
@@ -1271,6 +1300,14 @@ func _resolve_necromancer_active(choice_id: String = "", target: Dictionary = {}
 		ashes -= 4
 		_buff_slot(PLAYER_ID, int(target.get("slot", -1)), 4, 0, true)
 		_log("Ritual das Sombras concedeu +4 ATK temporario.")
+	elif choice_id == NECRO_CHOICE_LIGHTNING:
+		ashes -= 2
+		_damage_hero(ENEMY_ID, 2)
+		_log("Ritual das Sombras causou 2 de dano ao heroi inimigo.")
+	elif choice_id == NECRO_CHOICE_LIGHTNING_MAJOR:
+		ashes -= 4
+		_damage_hero(ENEMY_ID, 4)
+		_log("Ritual das Sombras causou 4 de dano ao heroi inimigo.")
 	else:
 		_log("Ritual das Sombras perdeu efeito: escolha invalida.")
 

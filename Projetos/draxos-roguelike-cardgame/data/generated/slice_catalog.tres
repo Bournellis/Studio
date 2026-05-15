@@ -37,9 +37,9 @@ script = ExtResource("1_tqsc8")
 id = "arcano_barreira"
 display_name = "Barreira Arcana"
 card_type = "criatura"
-cost = 2
+cost = 1
 attack = 1
-health = 5
+health = 3
 text = "Defensor. Enquanto em campo: +1 Poder de habilidade."
 keywords = PackedStringArray("defensor")
 effect = {
@@ -280,6 +280,17 @@ keywords = PackedStringArray()
 
 [sub_resource type="Resource" id="Resource_u525c"]
 script = ExtResource("1_tqsc8")
+id = "elemental_assaltante_veloz"
+display_name = "Elemental Assaltante Veloz"
+card_type = "criatura"
+cost = 2
+attack = 3
+health = 2
+text = "Iniciativa: causa dano primeiro na lane."
+keywords = PackedStringArray("iniciativa")
+
+[sub_resource type="Resource" id="Resource_ba32m"]
+script = ExtResource("1_tqsc8")
 id = "elemental_guardiao"
 display_name = "Elemental Guardiao"
 card_type = "criatura"
@@ -289,7 +300,7 @@ health = 6
 text = "Mockup defensivo escalado."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_ba32m"]
+[sub_resource type="Resource" id="Resource_5njsx"]
 script = ExtResource("1_tqsc8")
 id = "elemental_elite_agil"
 display_name = "Elemental Elite Agil"
@@ -300,7 +311,7 @@ health = 3
 text = "Iniciativa: causa dano primeiro na lane."
 keywords = PackedStringArray("iniciativa")
 
-[sub_resource type="Resource" id="Resource_5njsx"]
+[sub_resource type="Resource" id="Resource_igiro"]
 script = ExtResource("1_tqsc8")
 id = "elemental_elite_bruto"
 display_name = "Elemental Elite Bruto"
@@ -311,7 +322,7 @@ health = 5
 text = "Mockup elite de alto dano."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_igiro"]
+[sub_resource type="Resource" id="Resource_kf03g"]
 script = ExtResource("1_tqsc8")
 id = "elemental_tita"
 display_name = "Elemental Tita"
@@ -322,14 +333,212 @@ health = 6
 text = "Mockup pesado de fim de run."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_kf03g"]
+[sub_resource type="Resource" id="Resource_7rtnj"]
+script = ExtResource("1_tqsc8")
+id = "arcano_recompensa_1"
+display_name = "Arcano A Definir 1"
+card_type = "criatura"
+cost = 1
+attack = 1
+health = 2
+text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_siawb"]
+script = ExtResource("1_tqsc8")
+id = "arcano_recompensa_2"
+display_name = "Arcano A Definir 2"
+card_type = "criatura"
+cost = 1
+attack = 2
+health = 2
+text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_vn8pn"]
+script = ExtResource("1_tqsc8")
+id = "arcano_recompensa_3"
+display_name = "Arcano A Definir 3"
+card_type = "criatura"
+cost = 2
+attack = 2
+health = 3
+text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_3vxjw"]
+script = ExtResource("1_tqsc8")
+id = "arcano_recompensa_4"
+display_name = "Arcano A Definir 4"
+card_type = "criatura"
+cost = 2
+attack = 3
+health = 3
+text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_8vwdf"]
+script = ExtResource("1_tqsc8")
+id = "arcano_recompensa_5"
+display_name = "Arcano A Definir 5"
+card_type = "criatura"
+cost = 3
+attack = 3
+health = 4
+text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_12fis"]
+script = ExtResource("1_tqsc8")
+id = "arcano_recompensa_6"
+display_name = "Arcano A Definir 6"
+card_type = "criatura"
+cost = 3
+attack = 4
+health = 4
+text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_wbbs5"]
+script = ExtResource("1_tqsc8")
+id = "invocador_recompensa_1"
+display_name = "Invocador A Definir 1"
+card_type = "criatura"
+cost = 1
+attack = 1
+health = 2
+text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_hx6qf"]
+script = ExtResource("1_tqsc8")
+id = "invocador_recompensa_2"
+display_name = "Invocador A Definir 2"
+card_type = "criatura"
+cost = 1
+attack = 2
+health = 2
+text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_46hy0"]
+script = ExtResource("1_tqsc8")
+id = "invocador_recompensa_3"
+display_name = "Invocador A Definir 3"
+card_type = "criatura"
+cost = 2
+attack = 2
+health = 3
+text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_6lf1p"]
+script = ExtResource("1_tqsc8")
+id = "invocador_recompensa_4"
+display_name = "Invocador A Definir 4"
+card_type = "criatura"
+cost = 2
+attack = 3
+health = 3
+text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_rxdp8"]
+script = ExtResource("1_tqsc8")
+id = "invocador_recompensa_5"
+display_name = "Invocador A Definir 5"
+card_type = "criatura"
+cost = 3
+attack = 3
+health = 4
+text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_f75cl"]
+script = ExtResource("1_tqsc8")
+id = "invocador_recompensa_6"
+display_name = "Invocador A Definir 6"
+card_type = "criatura"
+cost = 3
+attack = 4
+health = 4
+text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_kskod"]
+script = ExtResource("1_tqsc8")
+id = "necro_recompensa_1"
+display_name = "Necromante A Definir 1"
+card_type = "criatura"
+cost = 1
+attack = 1
+health = 2
+text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_ytdv0"]
+script = ExtResource("1_tqsc8")
+id = "necro_recompensa_2"
+display_name = "Necromante A Definir 2"
+card_type = "criatura"
+cost = 1
+attack = 2
+health = 2
+text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_ee0xk"]
+script = ExtResource("1_tqsc8")
+id = "necro_recompensa_3"
+display_name = "Necromante A Definir 3"
+card_type = "criatura"
+cost = 2
+attack = 2
+health = 3
+text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_g44pg"]
+script = ExtResource("1_tqsc8")
+id = "necro_recompensa_4"
+display_name = "Necromante A Definir 4"
+card_type = "criatura"
+cost = 2
+attack = 3
+health = 3
+text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_6juw6"]
+script = ExtResource("1_tqsc8")
+id = "necro_recompensa_5"
+display_name = "Necromante A Definir 5"
+card_type = "criatura"
+cost = 3
+attack = 3
+health = 4
+text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_p0w4t"]
+script = ExtResource("1_tqsc8")
+id = "necro_recompensa_6"
+display_name = "Necromante A Definir 6"
+card_type = "criatura"
+cost = 3
+attack = 4
+health = 4
+text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_r6yjh"]
 script = ExtResource("2_aaqvb")
 id = "guardiao_elemental"
 display_name = "Guardiao Elemental"
 max_health = 24
 hero_power_text = "Poder inimigo pendente."
 
-[sub_resource type="Resource" id="Resource_7rtnj"]
+[sub_resource type="Resource" id="Resource_o3iu5"]
 script = ExtResource("2_aaqvb")
 id = "comandante_draxos"
 display_name = "Comandante Draxos"
@@ -338,50 +547,113 @@ hero_power_text = "A spell ativa depende da classe escolhida."
 
 [resource]
 script = ExtResource("3_xh3p2")
-player_hero = SubResource("Resource_7rtnj")
-enemy_hero = SubResource("Resource_kf03g")
-cards = Array[Resource]([SubResource("Resource_tqsc8"), SubResource("Resource_aaqvb"), SubResource("Resource_xh3p2"), SubResource("Resource_ayi6x"), SubResource("Resource_b0i2p"), SubResource("Resource_hvson"), SubResource("Resource_vopr6"), SubResource("Resource_2f5oc"), SubResource("Resource_q1xx6"), SubResource("Resource_75iml"), SubResource("Resource_xg15d"), SubResource("Resource_kobr5"), SubResource("Resource_js17r"), SubResource("Resource_5405m"), SubResource("Resource_p3n0t"), SubResource("Resource_pkhd5"), SubResource("Resource_haoox"), SubResource("Resource_dqqtb"), SubResource("Resource_0kq34"), SubResource("Resource_edoxb"), SubResource("Resource_q1muo"), SubResource("Resource_w1flg"), SubResource("Resource_u525c"), SubResource("Resource_ba32m"), SubResource("Resource_5njsx"), SubResource("Resource_igiro")])
-starter_deck_ids = PackedStringArray("arcano_choque", "arcano_choque", "arcano_choque", "arcano_fagulha", "arcano_fagulha", "arcano_fagulha", "arcano_barreira", "arcano_barreira", "arcano_barreira", "arcano_tempestade", "arcano_tempestade", "arcano_tempestade")
+player_hero = SubResource("Resource_o3iu5")
+enemy_hero = SubResource("Resource_r6yjh")
+cards = Array[Resource]([SubResource("Resource_tqsc8"), SubResource("Resource_aaqvb"), SubResource("Resource_xh3p2"), SubResource("Resource_ayi6x"), SubResource("Resource_b0i2p"), SubResource("Resource_hvson"), SubResource("Resource_vopr6"), SubResource("Resource_2f5oc"), SubResource("Resource_q1xx6"), SubResource("Resource_75iml"), SubResource("Resource_xg15d"), SubResource("Resource_kobr5"), SubResource("Resource_js17r"), SubResource("Resource_5405m"), SubResource("Resource_p3n0t"), SubResource("Resource_pkhd5"), SubResource("Resource_haoox"), SubResource("Resource_dqqtb"), SubResource("Resource_0kq34"), SubResource("Resource_edoxb"), SubResource("Resource_q1muo"), SubResource("Resource_w1flg"), SubResource("Resource_u525c"), SubResource("Resource_ba32m"), SubResource("Resource_5njsx"), SubResource("Resource_igiro"), SubResource("Resource_kf03g"), SubResource("Resource_7rtnj"), SubResource("Resource_siawb"), SubResource("Resource_vn8pn"), SubResource("Resource_3vxjw"), SubResource("Resource_8vwdf"), SubResource("Resource_12fis"), SubResource("Resource_wbbs5"), SubResource("Resource_hx6qf"), SubResource("Resource_46hy0"), SubResource("Resource_6lf1p"), SubResource("Resource_rxdp8"), SubResource("Resource_f75cl"), SubResource("Resource_kskod"), SubResource("Resource_ytdv0"), SubResource("Resource_ee0xk"), SubResource("Resource_g44pg"), SubResource("Resource_6juw6"), SubResource("Resource_p0w4t")])
+starter_deck_ids = PackedStringArray("arcano_choque", "arcano_choque", "arcano_choque", "arcano_fagulha", "arcano_fagulha", "arcano_fagulha", "arcano_barreira", "arcano_barreira", "arcano_barreira")
 class_options = Array[Dictionary]([{
 "active_id": "rajada_arcana",
 "active_text": "1 mana: causa 1 de dano + Fluxo a qualquer alvo. Uma vez por turno.",
 "display_name": "Arcano",
 "id": "arcano",
-"mechanic_status": "Passiva desbloqueia no mapa 5; spell de classe desbloqueia no mapa 7.",
+"mechanic_status": "Comeca com 9 cartas custo 1; mapa 2 adiciona Tempestade Arcana; passiva desbloqueia no mapa 8; spell no mapa 10.",
 "passive_id": "fluxo_continuo",
+"reward_pool": ["arcano_recompensa_1", "arcano_recompensa_2", "arcano_recompensa_3", "arcano_recompensa_4", "arcano_recompensa_5", "arcano_recompensa_6"],
 "role_text": "Spells de dano, Fluxo Continuo e sequencias rapidas.",
-"starter_deck": ["arcano_choque", "arcano_choque", "arcano_choque", "arcano_fagulha", "arcano_fagulha", "arcano_fagulha", "arcano_barreira", "arcano_barreira", "arcano_barreira", "arcano_tempestade", "arcano_tempestade", "arcano_tempestade"],
+"starter_deck": ["arcano_choque", "arcano_choque", "arcano_choque", "arcano_fagulha", "arcano_fagulha", "arcano_fagulha", "arcano_barreira", "arcano_barreira", "arcano_barreira"],
 "starting_hand_size": 3.0,
 "starting_health": 20.0,
-"starting_mana": 2.0
+"starting_mana": 1.0
 }, {
 "active_id": "ordem_de_guerra",
 "active_text": "1 mana: uma criatura aliada ganha +2/+0 permanente. Uma vez por turno.",
 "display_name": "Invocador",
 "id": "invocador",
-"mechanic_status": "Passiva desbloqueia no mapa 5; spell de classe desbloqueia no mapa 7.",
+"mechanic_status": "Comeca com 9 cartas custo 1; mapa 2 adiciona Guardiao Arcano; passiva desbloqueia no mapa 8; spell no mapa 10.",
 "passive_id": "comandante_de_campo",
+"reward_pool": ["invocador_recompensa_1", "invocador_recompensa_2", "invocador_recompensa_3", "invocador_recompensa_4", "invocador_recompensa_5", "invocador_recompensa_6"],
 "role_text": "Controle de mesa, criaturas singulares e buffs permanentes.",
-"starter_deck": ["invocador_soldado", "invocador_soldado", "invocador_soldado", "invocador_batedor", "invocador_batedor", "invocador_batedor", "invocador_promover", "invocador_promover", "invocador_promover", "invocador_guardiao", "invocador_guardiao", "invocador_guardiao"],
+"starter_deck": ["invocador_soldado", "invocador_soldado", "invocador_soldado", "invocador_batedor", "invocador_batedor", "invocador_batedor", "invocador_promover", "invocador_promover", "invocador_promover"],
 "starting_hand_size": 3.0,
 "starting_health": 20.0,
-"starting_mana": 2.0
+"starting_mana": 1.0
 }, {
 "active_id": "ritual_das_sombras",
-"active_text": "0 mana + Cinzas: nivel 1 usa Podridao 1/1 ou +2 ATK temporario; nivel 2 adiciona reanimar 1/1, Podridao 2/2 e +4 ATK temporario. Uma vez por turno.",
+"active_text": "0 mana + Cinzas: Ritual nivel 1 usa Podridao 1/1, +2 ATK temporario ou Raio 2; nivel 2 adiciona reanimar 1/1, Podridao 2/2, +4 ATK temporario e Raio 4.",
 "display_name": "Necromante",
 "id": "necromante",
-"mechanic_status": "Passiva desbloqueia no mapa 5; spell de classe desbloqueia no mapa 7.",
+"mechanic_status": "Comeca com 9 cartas custo 1; mapa 2 adiciona Zumbi; passiva e Ritual I desbloqueiam no mapa 8; Ritual II no mapa 10.",
 "passive_id": "colheita_sombria",
+"reward_pool": ["necro_recompensa_1", "necro_recompensa_2", "necro_recompensa_3", "necro_recompensa_4", "necro_recompensa_5", "necro_recompensa_6"],
 "role_text": "Cinzas, morte como recurso, debuffs e reanimacao.",
-"starter_deck": ["necro_esqueleto", "necro_esqueleto", "necro_esqueleto", "necro_morto_vivo", "necro_morto_vivo", "necro_morto_vivo", "necro_prender", "necro_prender", "necro_prender", "necro_zumbi", "necro_zumbi", "necro_zumbi"],
+"starter_deck": ["necro_esqueleto", "necro_esqueleto", "necro_esqueleto", "necro_morto_vivo", "necro_morto_vivo", "necro_morto_vivo", "necro_prender", "necro_prender", "necro_prender"],
 "starting_hand_size": 3.0,
 "starting_health": 20.0,
-"starting_mana": 2.0
+"starting_mana": 1.0
 }])
 npc_reward_choices = PackedStringArray()
 encounters = Array[Dictionary]([{
-"display_name": "Mapa 01 - Limpar Mesa",
+"display_name": "Mapa 01 - Primeiro Contato",
+"enemy_director": "prefilled_board",
+"enemy_slots_count": 1.0,
+"id": "tutorial_primeiro_contato",
+"mode": "limpar_mesa",
+"player_slots_count": 1.0,
+"soul_reward": {
+"max": 2.0,
+"min": 2.0
+},
+"starting_enemy_slots": [{
+"card_id": "elemental_menor",
+"slot": 0.0
+}],
+"tier": "tutorial"
+}, {
+"display_name": "Mapa 02 - Dois Fronts",
+"enemy_director": "prefilled_board",
+"enemy_slots_count": 2.0,
+"id": "tutorial_dois_fronts",
+"mode": "limpar_mesa",
+"player_slots_count": 2.0,
+"soul_reward": {
+"max": 3.0,
+"min": 3.0
+},
+"starting_enemy_slots": [{
+"card_id": "elemental_menor",
+"slot": 0.0
+}, {
+"card_id": "elemental_agil",
+"slot": 1.0
+}],
+"tier": "tutorial"
+}, {
+"display_name": "Mapa 03 - Primeira Onda",
+"enemy_director": "waves",
+"enemy_slots_count": 2.0,
+"id": "tutorial_primeira_onda",
+"mode": "ondas",
+"player_slots_count": 2.0,
+"soul_reward": {
+"max": 4.0,
+"min": 4.0
+},
+"tier": "tutorial",
+"waves": [[{
+"card_id": "elemental_menor",
+"slot": 0.0
+}, {
+"card_id": "elemental_menor",
+"slot": 1.0
+}], [{
+"card_id": "elemental_agil",
+"slot": 0.0
+}, {
+"card_id": "elemental_medio",
+"slot": 1.0
+}]]
+}, {
+"display_name": "Mapa 04 - Limpar Mesa",
 "duration_target": "2-4_turns",
 "enemy_director": "prefilled_board",
 "enemy_slots_count": 3.0,
@@ -404,7 +676,7 @@ encounters = Array[Dictionary]([{
 }],
 "tier": "small"
 }, {
-"display_name": "Mapa 02 - Ondas",
+"display_name": "Mapa 05 - Ondas Iniciais",
 "duration_target": "test_wave_pacing",
 "enemy_director": "waves",
 "enemy_slots_count": 3.0,
@@ -439,7 +711,7 @@ encounters = Array[Dictionary]([{
 "slot": 2.0
 }]]
 }, {
-"display_name": "Mapa 03 - Duelo",
+"display_name": "Mapa 06 - Duelo Inicial",
 "enemy_commander_enabled": true,
 "enemy_deck": ["elemental_menor", "elemental_menor", "elemental_menor", "elemental_duelista", "elemental_duelista", "elemental_duelista", "elemental_assaltante", "elemental_assaltante", "elemental_assaltante", "elemental_medio", "elemental_medio", "elemental_medio"],
 "enemy_director": "player_like",
@@ -460,10 +732,10 @@ encounters = Array[Dictionary]([{
 }],
 "tier": "medium"
 }, {
-"defense_health": 10.0,
+"defense_health": 7.0,
 "defense_slot": 1.0,
 "defense_turns": 4.0,
-"display_name": "Mapa 04 - Defesa de Posicao",
+"display_name": "Mapa 07 - Defesa de Posicao",
 "enemy_director": "waves",
 "enemy_slots_count": 3.0,
 "id": "defesa_posicao_inicial",
@@ -475,31 +747,31 @@ encounters = Array[Dictionary]([{
 },
 "tier": "medium",
 "waves": [[{
-"card_id": "elemental_assaltante",
+"card_id": "elemental_assaltante_veloz",
 "slot": 0.0
 }, {
-"card_id": "elemental_medio",
+"card_id": "elemental_assaltante",
 "slot": 1.0
 }, {
-"card_id": "elemental_assaltante",
+"card_id": "elemental_menor",
 "slot": 2.0
 }], [{
-"card_id": "elemental_menor",
+"card_id": "elemental_medio",
 "slot": 0.0
 }, {
 "card_id": "elemental_guardiao",
 "slot": 1.0
 }, {
-"card_id": "elemental_menor",
+"card_id": "elemental_medio",
 "slot": 2.0
 }], [{
 "card_id": "elemental_assaltante",
 "slot": 0.0
 }, {
-"card_id": "elemental_bruto",
+"card_id": "elemental_elite_bruto",
 "slot": 1.0
 }, {
-"card_id": "elemental_medio",
+"card_id": "elemental_assaltante",
 "slot": 2.0
 }]]
 }, {
@@ -511,7 +783,7 @@ encounters = Array[Dictionary]([{
 }, {
 "card_id": "elemental_bruto"
 }],
-"display_name": "Mapa 05 - Chefe Summoner",
+"display_name": "Mapa 08 - Chefe Summoner",
 "duration_target": "boss",
 "enemy_director": "scripted_boss",
 "enemy_slots_count": 5.0,
@@ -534,7 +806,7 @@ encounters = Array[Dictionary]([{
 }],
 "tier": "boss"
 }, {
-"display_name": "Mapa 06 - Sobreviver Turnos",
+"display_name": "Mapa 09 - Sobreviver Turnos",
 "enemy_director": "prefilled_board",
 "enemy_slots_count": 4.0,
 "id": "sobreviver_turnos_inicial",
@@ -560,7 +832,7 @@ encounters = Array[Dictionary]([{
 "survive_turns": 4.0,
 "tier": "medium"
 }, {
-"display_name": "Mapa 07 - Limpar Mesa Elite",
+"display_name": "Mapa 10 - Limpeza Elite",
 "enemy_director": "prefilled_board",
 "enemy_slots_count": 4.0,
 "id": "limpeza_elite",
@@ -585,7 +857,7 @@ encounters = Array[Dictionary]([{
 }],
 "tier": "elite_optional"
 }, {
-"display_name": "Mapa 08 - Ondas Avancadas",
+"display_name": "Mapa 11 - Ondas Avancadas",
 "enemy_director": "waves",
 "enemy_slots_count": 4.0,
 "id": "ondas_avancadas",
@@ -625,7 +897,7 @@ encounters = Array[Dictionary]([{
 "slot": 3.0
 }]]
 }, {
-"display_name": "Mapa 09 - Duelo Elite",
+"display_name": "Mapa 12 - Duelo Elite",
 "enemy_commander_enabled": true,
 "enemy_deck": ["elemental_duelista", "elemental_duelista", "elemental_assaltante", "elemental_assaltante", "elemental_medio", "elemental_medio", "elemental_guardiao", "elemental_guardiao", "elemental_elite_agil", "elemental_elite_agil", "elemental_elite_bruto", "elemental_elite_bruto"],
 "enemy_director": "player_like",
@@ -659,7 +931,7 @@ encounters = Array[Dictionary]([{
 }, {
 "card_id": "elemental_tita"
 }],
-"display_name": "Mapa 10 - Chefe Summoner Final",
+"display_name": "Mapa 13 - Chefe Final",
 "duration_target": "final_boss",
 "enemy_director": "scripted_boss",
 "enemy_slots_count": 5.0,
@@ -692,66 +964,109 @@ run_map = {
 "node_types": ["limpar_mesa", "ondas", "duelo", "defesa_posicao", "chefe_summoner", "sobreviver_turnos"],
 "nodes": [{
 "available_after": [],
-"encounter_id": "pouso_elemental",
-"id": "n01_pouso_elemental",
-"kind": "mainline",
-"unlocks": ["n02_ondas_iniciais"]
-}, {
-"available_after": ["n01_pouso_elemental"],
-"encounter_id": "ondas_iniciais",
-"id": "n02_ondas_iniciais",
+"encounter_id": "tutorial_primeiro_contato",
+"id": "n01_tutorial_primeiro_contato",
 "kind": "mainline",
 "rewards": ["max_mana_1"],
-"unlocks": ["n03_duelo_inicial"]
+"unlocks": ["n02_tutorial_dois_fronts"]
 }, {
-"available_after": ["n02_ondas_iniciais"],
+"available_after": ["n01_tutorial_primeiro_contato"],
+"encounter_id": "tutorial_dois_fronts",
+"id": "n02_tutorial_dois_fronts",
+"kind": "mainline",
+"rewards": ["add_class_cost2_core"],
+"unlocks": ["n03_tutorial_primeira_onda"]
+}, {
+"available_after": ["n02_tutorial_dois_fronts"],
+"choice_reward": {
+"type": "upgrade_card"
+},
+"encounter_id": "tutorial_primeira_onda",
+"id": "n03_tutorial_primeira_onda",
+"kind": "mainline",
+"unlocks": ["n04_pouso_elemental"]
+}, {
+"available_after": ["n03_tutorial_primeira_onda"],
+"choice_reward": {
+"type": "upgrade_card"
+},
+"encounter_id": "pouso_elemental",
+"id": "n04_pouso_elemental",
+"kind": "mainline",
+"unlocks": ["n05_ondas_iniciais"]
+}, {
+"available_after": ["n04_pouso_elemental"],
+"encounter_id": "ondas_iniciais",
+"id": "n05_ondas_iniciais",
+"kind": "mainline",
+"rewards": ["max_mana_1"],
+"unlocks": ["n06_duelo_inicial"]
+}, {
+"available_after": ["n05_ondas_iniciais"],
+"choice_reward": {
+"type": "upgrade_card"
+},
 "encounter_id": "duelo_inicial",
-"id": "n03_duelo_inicial",
+"id": "n06_duelo_inicial",
 "kind": "mainline",
 "rewards": ["max_hand_size_1"],
-"unlocks": ["n04_defesa_posicao"]
+"unlocks": ["n07_defesa_posicao"]
 }, {
-"available_after": ["n03_duelo_inicial"],
+"available_after": ["n06_duelo_inicial"],
+"choice_reward": {
+"pool_offset": 0.0,
+"type": "new_card"
+},
 "encounter_id": "defesa_posicao_inicial",
-"id": "n04_defesa_posicao",
+"id": "n07_defesa_posicao",
 "kind": "mainline",
-"unlocks": ["n05_chefe_invocador"]
+"unlocks": ["n08_chefe_invocador"]
 }, {
-"available_after": ["n04_defesa_posicao"],
+"available_after": ["n07_defesa_posicao"],
 "encounter_id": "chefe_invocador",
-"id": "n05_chefe_invocador",
+"id": "n08_chefe_invocador",
 "kind": "mainline",
 "rewards": ["unlock_class_passive"],
-"unlocks": ["n06_sobreviver_turnos"]
+"unlocks": ["n09_sobreviver_turnos"]
 }, {
-"available_after": ["n05_chefe_invocador"],
+"available_after": ["n08_chefe_invocador"],
+"choice_reward": {
+"type": "upgrade_card"
+},
 "encounter_id": "sobreviver_turnos_inicial",
-"id": "n06_sobreviver_turnos",
+"id": "n09_sobreviver_turnos",
 "kind": "mainline",
-"unlocks": ["n07_limpeza_elite"]
+"unlocks": ["n10_limpeza_elite"]
 }, {
-"available_after": ["n06_sobreviver_turnos"],
+"available_after": ["n09_sobreviver_turnos"],
 "encounter_id": "limpeza_elite",
-"id": "n07_limpeza_elite",
+"id": "n10_limpeza_elite",
 "kind": "mainline",
 "rewards": ["unlock_class_active"],
-"unlocks": ["n08_ondas_avancadas"]
+"unlocks": ["n11_ondas_avancadas"]
 }, {
-"available_after": ["n07_limpeza_elite"],
+"available_after": ["n10_limpeza_elite"],
+"choice_reward": {
+"pool_offset": 3.0,
+"type": "new_card"
+},
 "encounter_id": "ondas_avancadas",
-"id": "n08_ondas_avancadas",
+"id": "n11_ondas_avancadas",
 "kind": "mainline",
-"unlocks": ["n09_duelo_elite"]
+"unlocks": ["n12_duelo_elite"]
 }, {
-"available_after": ["n08_ondas_avancadas"],
+"available_after": ["n11_ondas_avancadas"],
+"choice_reward": {
+"type": "upgrade_card"
+},
 "encounter_id": "duelo_elite",
-"id": "n09_duelo_elite",
+"id": "n12_duelo_elite",
 "kind": "mainline",
-"unlocks": ["n10_chefe_final"]
+"unlocks": ["n13_chefe_final"]
 }, {
-"available_after": ["n09_duelo_elite"],
+"available_after": ["n12_duelo_elite"],
 "encounter_id": "chefe_summoner_final",
-"id": "n10_chefe_final",
+"id": "n13_chefe_final",
 "kind": "mainline",
 "unlocks": []
 }]

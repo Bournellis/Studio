@@ -86,7 +86,7 @@ func _prepare_session(setup_id: String) -> void:
 			session.selected_class_id = "arcano"
 		"map":
 			session.start_class_run("arcano", 77)
-			session.record_battle_result("n01_pouso_elemental", "vitoria", 14)
+			session.record_battle_result("n04_pouso_elemental", "vitoria", 14)
 		"battle":
 			session.start_class_run("arcano", 77)
-			session.select_node("n01_pouso_elemental")
+			session.select_node("n04_pouso_elemental")

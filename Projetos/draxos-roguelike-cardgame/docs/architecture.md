@@ -1,7 +1,7 @@
 # Architecture
 
-- Last Updated: `2026-05-12`
-- Status: `Track 01 linear slice architecture`
+- Last Updated: `2026-05-15`
+- Status: `Track 01 13-map reward slice architecture`
 
 ## Goal
 
@@ -33,14 +33,15 @@ Responsibilities:
 
 ### `RunMap`
 
-Linear 10-node route.
+Linear 13-node route.
 
 Responsibilities:
 
 - node availability;
 - current selected node;
 - route rendering from visual manifest;
-- automatic reward status presentation.
+- automatic reward status presentation;
+- pending 1-in-3 reward choice presentation when a reward is not resolved in battle.
 
 ### `Deck`
 
@@ -72,11 +73,13 @@ Responsibilities:
 - selected class;
 - current node and completed nodes;
 - current deck;
+- placeholder card upgrade counts;
 - current/max health;
 - max mana;
 - soul total;
 - passive and active unlock flags;
-- automatic reward ids.
+- automatic reward ids;
+- pending reward choices for upgrade/card rewards.
 
 ### `Battle`
 
@@ -98,8 +101,9 @@ Responsibilities:
 
 - cards and keywords;
 - classes and starter decks;
+- placeholder class reward pools;
 - encounters and soul reward bands;
-- run map nodes and automatic rewards;
+- run map nodes, automatic rewards, and choice reward declarations;
 - visual manifest references.
 
 ### `UI`
@@ -112,7 +116,7 @@ Responsibilities:
 - battle slots and hero targets;
 - hub/menu components;
 - run map node presentation;
-- reward/estado text for the automatic reward slice.
+- reward/estado text for fixed rewards and 1-in-3 reward choices.
 
 ## Current Checkpoint
 

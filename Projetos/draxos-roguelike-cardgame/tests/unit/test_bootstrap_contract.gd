@@ -31,16 +31,19 @@ func test_catalog_uses_redesigned_class_decks() -> void:
 	for class_id: String in ["arcano", "invocador", "necromante"]:
 		var class_option: Dictionary = catalog.find_class_option(class_id)
 		assert_false(class_option.is_empty(), "Missing class %s" % class_id)
-		assert_eq(int(class_option.get("starting_mana", 0)), 2)
+		assert_eq(int(class_option.get("starting_mana", 0)), 1)
 		assert_eq(int(class_option.get("starting_health", 0)), 20)
 		assert_eq(int(class_option.get("starting_hand_size", 0)), 3)
 		var deck: Array = Array(class_option.get("starter_deck", []))
-		assert_eq(deck.size(), 12)
+		assert_eq(deck.size(), 9)
+		var reward_pool_size: int = Array(class_option.get("reward_pool", [])).size()
+		assert_true(reward_pool_size >= 6 and reward_pool_size <= 8)
 		var counts: Dictionary = {}
 		for card_id: String in deck:
 			assert_not_null(catalog.find_card(card_id), "Missing card %s" % card_id)
+			assert_eq(int(catalog.find_card(card_id).cost), 1)
 			counts[card_id] = int(counts.get(card_id, 0)) + 1
-		assert_eq(counts.size(), 4)
+		assert_eq(counts.size(), 3)
 		for count: Variant in counts.values():
 			assert_eq(int(count), 3)
 
@@ -62,46 +65,71 @@ func test_catalog_removes_old_player_cards_and_keeps_enemies() -> void:
 func test_run_session_tracks_hand_limit_reward() -> void:
 	var result: Dictionary = RunSession.start_class_run("arcano", 77)
 	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
-	assert_eq(RunSession.max_mana, 2)
+	assert_eq(RunSession.max_mana, 1)
 	assert_eq(RunSession.max_hand_size, 3)
+	assert_eq(RunSession.current_deck_ids.size(), 9)
+	assert_eq(RunSession.current_node_id, "n01_tutorial_primeiro_contato")
+	RunSession.record_battle_result("n01_tutorial_primeiro_contato", "vitoria", 20)
+	assert_eq(RunSession.max_mana, 2)
+	RunSession.record_battle_result("n02_tutorial_dois_fronts", "vitoria", 20)
 	assert_eq(RunSession.current_deck_ids.size(), 12)
-	assert_eq(RunSession.current_node_id, "n01_pouso_elemental")
-	RunSession.record_battle_result("n02_ondas_iniciais", "vitoria", 20)
+	assert_eq(RunSession.current_deck_ids.count("arcano_tempestade"), 3)
+	RunSession.record_battle_result("n05_ondas_iniciais", "vitoria", 20)
 	assert_eq(RunSession.max_mana, 3)
-	RunSession.record_battle_result("n03_duelo_inicial", "vitoria", 20)
+	RunSession.record_battle_result("n06_duelo_inicial", "vitoria", 20)
 	assert_eq(RunSession.max_hand_size, 4)
 	assert_eq(RunSession.current_deck_ids.size(), 12)
-	assert_true(RunSession.automatic_reward_ids.has("n03_duelo_inicial:%s" % RunSession.REWARD_MAX_HAND_SIZE_1))
+	assert_true(RunSession.automatic_reward_ids.has("n06_duelo_inicial:%s" % RunSession.REWARD_MAX_HAND_SIZE_1))
+	assert_true(RunSession.has_pending_reward())
+
+func test_reward_choices_apply_upgrade_and_new_card_placeholders() -> void:
+	var result: Dictionary = RunSession.start_class_run("invocador", 77)
+	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
+	RunSession.record_battle_result("n02_tutorial_dois_fronts", "vitoria", 20)
+	RunSession.record_battle_result("n03_tutorial_primeira_onda", "vitoria", 20)
+	var upgrade_choices: Array[Dictionary] = RunSession.pending_reward_choices()
+	assert_eq(upgrade_choices.size(), 3)
+	var upgrade_result: Dictionary = RunSession.apply_reward_choice(str(upgrade_choices[0].get("id", "")))
+	assert_true(bool(upgrade_result.get("ok", false)), str(upgrade_result.get("message", "")))
+	assert_eq(int(RunSession.card_upgrade_counts.get(str(upgrade_choices[0].get("card_id", "")), 0)), 1)
+	RunSession.record_battle_result("n07_defesa_posicao", "vitoria", 20)
+	var new_card_choices: Array[Dictionary] = RunSession.pending_reward_choices()
+	assert_eq(new_card_choices.size(), 3)
+	var before_count: int = RunSession.current_deck_ids.size()
+	var card_id: String = str(new_card_choices[0].get("card_id", ""))
+	var card_result: Dictionary = RunSession.apply_reward_choice(str(new_card_choices[0].get("id", "")))
+	assert_true(bool(card_result.get("ok", false)), str(card_result.get("message", "")))
+	assert_eq(RunSession.current_deck_ids.size(), before_count + 3)
+	assert_eq(RunSession.current_deck_ids.count(card_id), 3)
 
 func test_necromancer_passive_reward_unlocks_active_then_upgrade() -> void:
 	var result: Dictionary = RunSession.start_class_run("necromante", 77)
 	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
-	RunSession.record_battle_result("n05_chefe_invocador", "vitoria", 20)
+	RunSession.record_battle_result("n08_chefe_invocador", "vitoria", 20)
 	assert_true(RunSession.class_passive_unlocked)
 	assert_true(RunSession.class_active_unlocked)
 	assert_eq(RunSession.class_active_level, 1)
-	RunSession.record_battle_result("n07_limpeza_elite", "vitoria", 20)
+	RunSession.record_battle_result("n10_limpeza_elite", "vitoria", 20)
 	assert_eq(RunSession.class_active_level, 2)
 
 func test_arcano_and_invocador_keep_active_on_second_reward() -> void:
 	for class_id: String in ["arcano", "invocador"]:
 		var result: Dictionary = RunSession.start_class_run(class_id, 77)
 		assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
-		RunSession.record_battle_result("n05_chefe_invocador", "vitoria", 20)
+		RunSession.record_battle_result("n08_chefe_invocador", "vitoria", 20)
 		assert_true(RunSession.class_passive_unlocked)
 		assert_false(RunSession.class_active_unlocked)
-		RunSession.record_battle_result("n07_limpeza_elite", "vitoria", 20)
+		RunSession.record_battle_result("n10_limpeza_elite", "vitoria", 20)
 		assert_true(RunSession.class_active_unlocked)
 		RunSession.reset()
 
-func test_necromancer_save_migration_sets_old_unlocked_active_to_level_two() -> void:
-	RunSession.load_snapshot({
-		"active": true,
-		"selected_class_id": "necromante",
-		"class_active_unlocked": true,
-		"class_passive_unlocked": true
-	})
-	assert_eq(RunSession.class_active_level, 2)
+func test_run_session_snapshot_tracks_reward_choice_state() -> void:
+	var result: Dictionary = RunSession.start_class_run("arcano", 77)
+	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
+	RunSession.record_battle_result("n03_tutorial_primeira_onda", "vitoria", 20)
+	var snapshot: Dictionary = RunSession.snapshot()
+	assert_eq(int(snapshot.get("version", 0)), RunSession.SNAPSHOT_VERSION)
+	assert_eq(Array(snapshot.get("rewards_pending", [])).size(), 1)
 
 func test_run_session_rejects_invalid_player_names() -> void:
 	assert_false(bool(RunSession.validate_player_name("A").get("ok", false)))
@@ -111,7 +139,7 @@ func test_run_session_rejects_invalid_player_names() -> void:
 func test_save_manager_saves_loads_names_and_deletes_slots() -> void:
 	var result: Dictionary = RunSession.start_class_run("invocador", 123, "Kael")
 	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
-	assert_eq(RunSession.current_node_id, "n01_pouso_elemental")
+	assert_eq(RunSession.current_node_id, "n01_tutorial_primeiro_contato")
 	assert_eq(RunSession.player_display_name(), "Kael")
 	var save_result: Dictionary = SaveManager.save_current_run(1)
 	assert_true(bool(save_result.get("ok", false)), str(save_result.get("message", "")))
@@ -120,7 +148,7 @@ func test_save_manager_saves_loads_names_and_deletes_slots() -> void:
 	var load_result: Dictionary = SaveManager.load_slot(1)
 	assert_true(bool(load_result.get("ok", false)), str(load_result.get("message", "")))
 	assert_eq(RunSession.selected_class_id, "invocador")
-	assert_eq(RunSession.current_node_id, "n01_pouso_elemental")
+	assert_eq(RunSession.current_node_id, "n01_tutorial_primeiro_contato")
 	assert_eq(RunSession.player_display_name(), "Kael")
 	var slots: Array[Dictionary] = SaveManager.get_slots()
 	assert_string_contains(str(slots[0].get("summary", "")), "Kael")
@@ -206,7 +234,10 @@ func test_ship_overlay_manifest_positions_map_and_souls() -> void:
 
 func test_victory_reward_modal_records_reward_and_selects_next_map() -> void:
 	_start_class_run("arcano", 77)
-	RunSession.select_node("n01_pouso_elemental")
+	RunSession.mark_node_completed("n01_tutorial_primeiro_contato")
+	RunSession.mark_node_completed("n02_tutorial_dois_fronts")
+	RunSession.mark_node_completed("n03_tutorial_primeira_onda")
+	RunSession.select_node("n04_pouso_elemental")
 	var battle = await _instantiate_scene("res://modes/battle/battle.tscn")
 	battle.engine.outcome = "vitoria"
 	battle.engine.player_health = 17
@@ -217,7 +248,7 @@ func test_victory_reward_modal_records_reward_and_selects_next_map() -> void:
 	assert_true(modal.visible)
 	assert_eq(RunSession.soul_total, 4)
 	assert_eq(RunSession.current_health, 17)
-	assert_eq(RunSession.current_node_id, "n02_ondas_iniciais")
+	assert_eq(RunSession.current_node_id, "n05_ondas_iniciais")
 	assert_true(SaveManager.has_save(1))
 	battle.queue_free()
 	await get_tree().process_frame
@@ -240,7 +271,8 @@ func test_souls_screen_heals_five_for_ten_souls() -> void:
 
 func test_deck_screen_lists_grouped_cards_and_upgrades() -> void:
 	_start_class_run("arcano", 44)
-	RunSession.record_battle_result("n02_ondas_iniciais", "vitoria", 20)
+	RunSession.record_battle_result("n01_tutorial_primeiro_contato", "vitoria", 20)
+	RunSession.record_battle_result("n02_tutorial_dois_fronts", "vitoria", 20)
 	var deck = await _instantiate_scene("res://modes/deck/deck.tscn")
 	var list: VBoxContainer = deck.find_child("DeckGroupedCards", true, false)
 	assert_not_null(list)
@@ -257,7 +289,7 @@ func test_deck_screen_falls_back_to_class_starter_deck_when_run_deck_empty() -> 
 	var deck = await _instantiate_scene("res://modes/deck/deck.tscn")
 	var list: VBoxContainer = deck.find_child("DeckGroupedCards", true, false)
 	assert_not_null(list)
-	assert_gt(_count_children_with_prefix(list, "DeckCard_"), 3)
+	assert_eq(_count_children_with_prefix(list, "DeckCard_"), 3)
 	assert_null(deck.find_child("DeckEmptyMessage", true, false))
 	deck.queue_free()
 	await get_tree().process_frame
@@ -376,7 +408,7 @@ func test_battle_scene_exposes_enemy_board_area_drop_zone_for_tempest() -> void:
 	RunSession.current_deck_ids = ["arcano_tempestade"]
 	RunSession.max_hand_size = 1
 	RunSession.max_mana = 2
-	RunSession.select_node("n01_pouso_elemental")
+	RunSession.select_node("n04_pouso_elemental")
 	var battle = await _instantiate_scene("res://modes/battle/battle.tscn")
 	var area_target = battle.find_child("BattleEnemyBoardAreaTarget", true, false)
 	var board_margin = battle.find_child("BattleBoardMargin", true, false)
@@ -452,7 +484,7 @@ func test_summon_cannot_replace_defense_objective() -> void:
 
 func test_battle_scene_sacrifice_modal_cancel_and_confirm() -> void:
 	_start_class_run("invocador", 44)
-	RunSession.select_node("n01_pouso_elemental")
+	RunSession.select_node("n04_pouso_elemental")
 	var battle = await _instantiate_scene("res://modes/battle/battle.tscn")
 	var manual_hand: Array[String] = ["invocador_soldado", "invocador_batedor"]
 	var empty_cards: Array[String] = []
@@ -487,7 +519,7 @@ func test_battle_scene_sacrifice_modal_cancel_and_confirm() -> void:
 
 func test_combat_fx_state_removes_dead_slot_only_on_damage_event() -> void:
 	_start_class_run("arcano", 44)
-	RunSession.select_node("n01_pouso_elemental")
+	RunSession.select_node("n04_pouso_elemental")
 	var battle = await _instantiate_scene("res://modes/battle/battle.tscn")
 	battle.combat_fx_state = battle.engine.get_state().duplicate(true)
 	var attack_event: Dictionary = {"type": "attack", "target_owner": BattleEngine.ENEMY_ID, "target_slot": 0}
@@ -580,7 +612,7 @@ func test_creature_move_swaps_adjacent_occupied_slots_and_blocks_objective() -> 
 
 func test_field_unit_drop_moves_creature_in_battle_scene() -> void:
 	_start_class_run("invocador", 44)
-	RunSession.select_node("n01_pouso_elemental")
+	RunSession.select_node("n04_pouso_elemental")
 	var battle = await _instantiate_scene("res://modes/battle/battle.tscn")
 	battle.engine.player_slots[1] = battle.engine._build_occupant(ContentLibrary.get_card("invocador_soldado"), BattleEngine.PLAYER_ID, false)
 	battle._refresh()
@@ -592,7 +624,7 @@ func test_field_unit_drop_moves_creature_in_battle_scene() -> void:
 
 func test_field_unit_drop_swaps_adjacent_creatures_in_battle_scene() -> void:
 	_start_class_run("invocador", 44)
-	RunSession.select_node("n01_pouso_elemental")
+	RunSession.select_node("n04_pouso_elemental")
 	var battle = await _instantiate_scene("res://modes/battle/battle.tscn")
 	battle.engine.player_slots[0] = battle.engine._build_occupant(ContentLibrary.get_card("invocador_soldado"), BattleEngine.PLAYER_ID, false)
 	battle.engine.player_slots[1] = battle.engine._build_occupant(ContentLibrary.get_card("invocador_batedor"), BattleEngine.PLAYER_ID, false)
@@ -856,7 +888,7 @@ func test_duel_encounters_enemy_commander_draws_and_plays_cards() -> void:
 
 func test_duel_battle_layout_uses_compact_hud_composition() -> void:
 	_start_class_run("arcano", 101)
-	RunSession.select_node("n03_duelo_inicial")
+	RunSession.select_node("n06_duelo_inicial")
 	var battle = await _instantiate_scene("res://modes/battle/battle.tscn")
 	await get_tree().process_frame
 	var main_stack: VBoxContainer = battle.find_child("BattleMainStack", true, false)
@@ -889,7 +921,7 @@ func test_duel_battle_layout_uses_compact_hud_composition() -> void:
 
 func test_map_nine_duel_scene_keeps_four_lane_hud() -> void:
 	_start_class_run("arcano", 99)
-	RunSession.select_node("n09_duelo_elite")
+	RunSession.select_node("n12_duelo_elite")
 	var battle = await _instantiate_scene("res://modes/battle/battle.tscn")
 	var enemy_hud: PanelContainer = battle.find_child("BattleEnemyCommanderHud", true, false)
 	assert_not_null(enemy_hud)
@@ -904,7 +936,7 @@ func test_unlocked_passive_and_active_stay_visible_with_preview_data() -> void:
 	_start_class_run("arcano", 99)
 	RunSession.class_passive_unlocked = true
 	RunSession.class_active_unlocked = true
-	RunSession.select_node("n03_duelo_inicial")
+	RunSession.select_node("n06_duelo_inicial")
 	var battle = await _instantiate_scene("res://modes/battle/battle.tscn")
 	var passive_tile = battle.find_child("BattleClassPassiveTile", true, false)
 	var active_tile = battle.find_child("BattleClassActiveTile", true, false)
@@ -1021,7 +1053,7 @@ func test_necromancer_active_level_one_choices_use_exact_values() -> void:
 	engine.play_card_from_hand(0, {"slot": 1})
 	engine.ashes = 2
 	var choices: Array[Dictionary] = engine.get_necromancer_active_choices()
-	assert_eq(choices.size(), 2)
+	assert_eq(choices.size(), 3)
 	for choice: Dictionary in choices:
 		var choice_id: String = str(choice.get("id", ""))
 		assert_false(["necro_slow", "necro_confusion", "necro_revive_full"].has(choice_id))
@@ -1053,7 +1085,7 @@ func test_necromancer_active_level_two_adds_upgrades_and_temp_attack() -> void:
 	engine.discard.append("necro_esqueleto")
 	engine.ashes = 4
 	var choices: Array[Dictionary] = engine.get_necromancer_active_choices()
-	assert_eq(choices.size(), 5)
+	assert_eq(choices.size(), 7)
 	assert_true(engine.can_use_class_active_on_target({"owner": BattleEngine.PLAYER_ID, "slot": 1}, BattleEngine.NECRO_CHOICE_REVIVE_ONE_ONE))
 	assert_true(bool(engine.use_class_active({"owner": BattleEngine.PLAYER_ID, "slot": 0}, BattleEngine.NECRO_CHOICE_ATTACK_FOUR).get("ok", false)))
 	assert_eq(int(Dictionary(engine.player_slots[0]).get("attack", 0)), 5)
@@ -1164,7 +1196,7 @@ func test_boss_encounters_start_with_stronger_boards() -> void:
 
 func test_battle_scene_uses_resolve_combat_button() -> void:
 	_start_class_run("arcano")
-	RunSession.select_node("n01_pouso_elemental")
+	RunSession.select_node("n04_pouso_elemental")
 	var battle = await _instantiate_scene("res://modes/battle/battle.tscn")
 	var button: Button = battle.find_child("BattleEndTurnFloatingButton", true, false)
 	assert_not_null(button)

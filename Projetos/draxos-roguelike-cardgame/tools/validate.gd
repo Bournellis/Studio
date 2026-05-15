@@ -62,8 +62,8 @@ func _validate_contract() -> Dictionary:
 		return {"ok": false, "message": "Player hero must exist for the bootstrap catalog."}
 	if catalog.player_hero.id != "comandante_draxos":
 		return {"ok": false, "message": "Player hero must be the Draxos commander."}
-	if catalog.starter_deck_ids.size() != 12:
-		return {"ok": false, "message": "Starter deck must have 12 cards."}
+	if catalog.starter_deck_ids.size() != 9:
+		return {"ok": false, "message": "Starter deck must have 9 cost-1 cards before the map 2 cost-2 reward."}
 	if catalog.class_options.size() != 3:
 		return {"ok": false, "message": "Catalog must expose exactly 3 playable class options for Track 01."}
 	var expected_classes: Array[String] = ["arcano", "invocador", "necromante"]
@@ -72,26 +72,32 @@ func _validate_contract() -> Dictionary:
 		if not expected_classes.has(class_id):
 			return {"ok": false, "message": "Unexpected class option %s." % class_id}
 		var starter_deck: Array = Array(class_option.get("starter_deck", []))
-		if starter_deck.size() != 12:
-			return {"ok": false, "message": "Class %s needs exactly 12 starter cards." % class_id}
+		if starter_deck.size() != 9:
+			return {"ok": false, "message": "Class %s needs exactly 9 starter cards." % class_id}
 		if int(class_option.get("starting_hand_size", 0)) != 3:
 			return {"ok": false, "message": "Class %s needs starting_hand_size 3." % class_id}
-		if int(class_option.get("starting_mana", 0)) != 2:
-			return {"ok": false, "message": "Class %s needs starting_mana 2 for the linear run slice." % class_id}
+		if int(class_option.get("starting_mana", 0)) != 1:
+			return {"ok": false, "message": "Class %s needs starting_mana 1 for map 1." % class_id}
 		if int(class_option.get("starting_health", 0)) != 20:
 			return {"ok": false, "message": "Class %s needs starting_health 20 for the test slice." % class_id}
 		if str(class_option.get("passive_id", "")) == "" or str(class_option.get("active_id", "")) == "":
 			return {"ok": false, "message": "Class %s needs passive_id and active_id." % class_id}
+		var reward_pool: Array = Array(class_option.get("reward_pool", []))
+		if reward_pool.size() < 6 or reward_pool.size() > 8:
+			return {"ok": false, "message": "Class %s needs a reward_pool of 6-8 placeholder cards." % class_id}
+		for reward_card_id: String in reward_pool:
+			if catalog.find_card(reward_card_id) == null:
+				return {"ok": false, "message": "Class %s reward_pool references missing card %s." % [class_id, reward_card_id]}
 		var unique_counts: Dictionary = {}
 		for starter_card_id: String in starter_deck:
 			var starter_card = catalog.find_card(starter_card_id)
 			if starter_card == null:
 				return {"ok": false, "message": "Class %s starter_deck references missing card %s." % [class_id, starter_card_id]}
-			if int(starter_card.cost) >= 3:
-				return {"ok": false, "message": "Class %s starter_deck still includes cost 3 card %s." % [class_id, starter_card_id]}
+			if int(starter_card.cost) != 1:
+				return {"ok": false, "message": "Class %s starter_deck must only include cost 1 cards before map 2: %s." % [class_id, starter_card_id]}
 			unique_counts[starter_card_id] = int(unique_counts.get(starter_card_id, 0)) + 1
-		if unique_counts.size() != 4:
-			return {"ok": false, "message": "Class %s needs 4 starter card types." % class_id}
+		if unique_counts.size() != 3:
+			return {"ok": false, "message": "Class %s needs 3 starter card types before the cost-2 reward." % class_id}
 		for card_count: Variant in unique_counts.values():
 			if int(card_count) != 3:
 				return {"ok": false, "message": "Class %s needs 3 copies of each starter card." % class_id}
@@ -104,7 +110,7 @@ func _validate_contract() -> Dictionary:
 	for removed_player_id: String in ["arcano_spell_dano", "arcano_construtor_fluxo", "invocador_protecao", "invocador_buff_unico", "necro_spell_lentidao"]:
 		if catalog.find_card(removed_player_id) != null:
 			return {"ok": false, "message": "Removed player card still exists: %s." % removed_player_id}
-	var required_new_cards: Array[String] = ["arcano_choque", "arcano_fagulha", "arcano_barreira", "arcano_tempestade", "invocador_soldado", "invocador_batedor", "invocador_promover", "invocador_guardiao", "necro_esqueleto", "necro_morto_vivo", "necro_prender", "necro_zumbi"]
+	var required_new_cards: Array[String] = ["arcano_choque", "arcano_fagulha", "arcano_barreira", "arcano_tempestade", "invocador_soldado", "invocador_batedor", "invocador_promover", "invocador_guardiao", "necro_esqueleto", "necro_morto_vivo", "necro_prender", "necro_zumbi", "arcano_recompensa_1", "invocador_recompensa_1", "necro_recompensa_1"]
 	for new_card_id: String in required_new_cards:
 		if catalog.find_card(new_card_id) == null:
 			return {"ok": false, "message": "Missing redesigned player card %s." % new_card_id}
@@ -159,7 +165,7 @@ func _validate_visual_assets() -> Dictionary:
 func _validate_encounter_contract(encounter: Dictionary) -> Dictionary:
 	var encounter_id: String = str(encounter.get("id", ""))
 	var tier: String = str(encounter.get("tier", ""))
-	if not ["small", "medium", "elite_optional", "boss"].has(tier):
+	if not ["tutorial", "small", "medium", "elite_optional", "boss"].has(tier):
 		return {"ok": false, "message": "Encounter %s has invalid tier." % encounter_id}
 	if not ["prefilled_board", "waves", "scripted_boss", "player_like"].has(str(encounter.get("enemy_director", ""))):
 		return {"ok": false, "message": "Encounter %s has invalid enemy_director." % encounter_id}
@@ -167,7 +173,9 @@ func _validate_encounter_contract(encounter: Dictionary) -> Dictionary:
 	var min_reward: int = int(reward.get("min", 0))
 	var max_reward: int = int(reward.get("max", 0))
 	var expected: Dictionary = _soul_reward_band(tier)
-	if min_reward != int(expected.get("min", -1)) or max_reward != int(expected.get("max", -1)):
+	if tier == "tutorial" and (min_reward < int(expected.get("min", 0)) or max_reward > int(expected.get("max", 4)) or min_reward > max_reward):
+		return {"ok": false, "message": "Encounter %s has invalid tutorial soul_reward." % encounter_id}
+	if tier != "tutorial" and (min_reward != int(expected.get("min", -1)) or max_reward != int(expected.get("max", -1))):
 		return {"ok": false, "message": "Encounter %s has invalid soul_reward for tier %s." % [encounter_id, tier]}
 	if str(encounter.get("mode", "")) == "chefe_summoner" and Array(encounter.get("boss_summons", [])).is_empty():
 		return {"ok": false, "message": "Summoner boss %s needs boss_summons." % encounter_id}
@@ -175,8 +183,8 @@ func _validate_encounter_contract(encounter: Dictionary) -> Dictionary:
 
 func _validate_run_map_contract(run_map: Dictionary) -> Dictionary:
 	var nodes: Array = Array(run_map.get("nodes", []))
-	if nodes.size() != 10:
-		return {"ok": false, "message": "Run map needs exactly 10 linear nodes."}
+	if nodes.size() != 13:
+		return {"ok": false, "message": "Run map needs exactly 13 linear nodes."}
 	var has_mainline: bool = false
 	for node: Variant in nodes:
 		if typeof(node) != TYPE_DICTIONARY:
@@ -194,10 +202,12 @@ func _validate_run_map_contract(run_map: Dictionary) -> Dictionary:
 	if not has_mainline:
 		return {"ok": false, "message": "Run map must include mainline nodes."}
 	var expected_rewards: Dictionary = {
-		"n02_ondas_iniciais": "max_mana_1",
-		"n03_duelo_inicial": "max_hand_size_1",
-		"n05_chefe_invocador": "unlock_class_passive",
-		"n07_limpeza_elite": "unlock_class_active"
+		"n01_tutorial_primeiro_contato": "max_mana_1",
+		"n02_tutorial_dois_fronts": "add_class_cost2_core",
+		"n05_ondas_iniciais": "max_mana_1",
+		"n06_duelo_inicial": "max_hand_size_1",
+		"n08_chefe_invocador": "unlock_class_passive",
+		"n10_limpeza_elite": "unlock_class_active"
 	}
 	for expected_node_id: String in expected_rewards.keys():
 		var node_data: Dictionary = _find_run_node(nodes, expected_node_id)
@@ -205,6 +215,22 @@ func _validate_run_map_contract(run_map: Dictionary) -> Dictionary:
 			return {"ok": false, "message": "Run map missing reward node %s." % expected_node_id}
 		if not Array(node_data.get("rewards", [])).has(str(expected_rewards.get(expected_node_id, ""))):
 			return {"ok": false, "message": "Run map node %s missing automatic reward." % expected_node_id}
+	var expected_choice_rewards: Dictionary = {
+		"n03_tutorial_primeira_onda": "upgrade_card",
+		"n04_pouso_elemental": "upgrade_card",
+		"n06_duelo_inicial": "upgrade_card",
+		"n07_defesa_posicao": "new_card",
+		"n09_sobreviver_turnos": "upgrade_card",
+		"n11_ondas_avancadas": "new_card",
+		"n12_duelo_elite": "upgrade_card"
+	}
+	for choice_node_id: String in expected_choice_rewards.keys():
+		var choice_node: Dictionary = _find_run_node(nodes, choice_node_id)
+		if choice_node.is_empty():
+			return {"ok": false, "message": "Run map missing choice reward node %s." % choice_node_id}
+		var choice_reward: Dictionary = Dictionary(choice_node.get("choice_reward", {}))
+		if str(choice_reward.get("type", "")) != str(expected_choice_rewards.get(choice_node_id, "")):
+			return {"ok": false, "message": "Run map node %s has invalid choice reward." % choice_node_id}
 	return {"ok": true, "message": "Run map contract is valid."}
 
 func _find_run_node(nodes: Array, node_id: String) -> Dictionary:
@@ -215,6 +241,8 @@ func _find_run_node(nodes: Array, node_id: String) -> Dictionary:
 
 func _soul_reward_band(tier: String) -> Dictionary:
 	match tier:
+		"tutorial":
+			return {"min": 0, "max": 4}
 		"small":
 			return {"min": 4, "max": 6}
 		"medium":

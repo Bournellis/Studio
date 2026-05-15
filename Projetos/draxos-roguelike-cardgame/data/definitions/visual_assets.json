@@ -102,8 +102,14 @@
         "invocador": "res://assets/ui/characters/Invocador.png",
         "necromante": "res://assets/ui/characters/Necromante.png"
       },
-      "position": { "x": 0.73, "y": 0.59 },
-      "size": { "x": 0.16, "y": 0.44 },
+      "position": {
+        "x": 0.73,
+        "y": 0.59
+      },
+      "size": {
+        "x": 0.16,
+        "y": 0.44
+      },
       "requires_alpha": true,
       "show_without_alpha": true,
       "hover_label": "Deck",
@@ -114,8 +120,14 @@
     },
     "map": {
       "path": "res://assets/ui/battleship/Mapa.png",
-      "position": { "x": 0.45, "y": 0.74 },
-      "size": { "x": 0.22, "y": 0.32 },
+      "position": {
+        "x": 0.45,
+        "y": 0.74
+      },
+      "size": {
+        "x": 0.22,
+        "y": 0.32
+      },
       "requires_alpha": true,
       "show_without_alpha": true,
       "hover_label": "Mapa",
@@ -126,8 +138,14 @@
     },
     "souls": {
       "path": "res://assets/ui/battleship/NpcAlmas.png",
-      "position": { "x": 0.22, "y": 0.60 },
-      "size": { "x": 0.14, "y": 0.34 },
+      "position": {
+        "x": 0.22,
+        "y": 0.6
+      },
+      "size": {
+        "x": 0.14,
+        "y": 0.34
+      },
       "requires_alpha": true,
       "show_without_alpha": false,
       "hover_label": "Almas",
@@ -299,48 +317,193 @@
     "elemental_tita": {
       "art_path": "res://assets/cards/art/elemental_tita.png",
       "frame_id": "frame_elemental"
+    },
+    "arcano_recompensa_1": {
+      "art_path": "res://assets/cards/art/arcano_recompensa_1.png",
+      "frame_id": "frame_arcano",
+      "text_template": "Carta de recompensa placeholder. Design final a definir."
+    },
+    "arcano_recompensa_2": {
+      "art_path": "res://assets/cards/art/arcano_recompensa_2.png",
+      "frame_id": "frame_arcano",
+      "text_template": "Carta de recompensa placeholder. Design final a definir."
+    },
+    "arcano_recompensa_3": {
+      "art_path": "res://assets/cards/art/arcano_recompensa_3.png",
+      "frame_id": "frame_arcano",
+      "text_template": "Carta de recompensa placeholder. Design final a definir."
+    },
+    "arcano_recompensa_4": {
+      "art_path": "res://assets/cards/art/arcano_recompensa_4.png",
+      "frame_id": "frame_arcano",
+      "text_template": "Carta de recompensa placeholder. Design final a definir."
+    },
+    "arcano_recompensa_5": {
+      "art_path": "res://assets/cards/art/arcano_recompensa_5.png",
+      "frame_id": "frame_arcano",
+      "text_template": "Carta de recompensa placeholder. Design final a definir."
+    },
+    "arcano_recompensa_6": {
+      "art_path": "res://assets/cards/art/arcano_recompensa_6.png",
+      "frame_id": "frame_arcano",
+      "text_template": "Carta de recompensa placeholder. Design final a definir."
+    },
+    "invocador_recompensa_1": {
+      "art_path": "res://assets/cards/art/invocador_recompensa_1.png",
+      "frame_id": "frame_invocador",
+      "text_template": "Carta de recompensa placeholder. Design final a definir."
+    },
+    "invocador_recompensa_2": {
+      "art_path": "res://assets/cards/art/invocador_recompensa_2.png",
+      "frame_id": "frame_invocador",
+      "text_template": "Carta de recompensa placeholder. Design final a definir."
+    },
+    "invocador_recompensa_3": {
+      "art_path": "res://assets/cards/art/invocador_recompensa_3.png",
+      "frame_id": "frame_invocador",
+      "text_template": "Carta de recompensa placeholder. Design final a definir."
+    },
+    "invocador_recompensa_4": {
+      "art_path": "res://assets/cards/art/invocador_recompensa_4.png",
+      "frame_id": "frame_invocador",
+      "text_template": "Carta de recompensa placeholder. Design final a definir."
+    },
+    "invocador_recompensa_5": {
+      "art_path": "res://assets/cards/art/invocador_recompensa_5.png",
+      "frame_id": "frame_invocador",
+      "text_template": "Carta de recompensa placeholder. Design final a definir."
+    },
+    "invocador_recompensa_6": {
+      "art_path": "res://assets/cards/art/invocador_recompensa_6.png",
+      "frame_id": "frame_invocador",
+      "text_template": "Carta de recompensa placeholder. Design final a definir."
+    },
+    "necro_recompensa_1": {
+      "art_path": "res://assets/cards/art/necro_recompensa_1.png",
+      "frame_id": "frame_necromante",
+      "text_template": "Carta de recompensa placeholder. Design final a definir."
+    },
+    "necro_recompensa_2": {
+      "art_path": "res://assets/cards/art/necro_recompensa_2.png",
+      "frame_id": "frame_necromante",
+      "text_template": "Carta de recompensa placeholder. Design final a definir."
+    },
+    "necro_recompensa_3": {
+      "art_path": "res://assets/cards/art/necro_recompensa_3.png",
+      "frame_id": "frame_necromante",
+      "text_template": "Carta de recompensa placeholder. Design final a definir."
+    },
+    "necro_recompensa_4": {
+      "art_path": "res://assets/cards/art/necro_recompensa_4.png",
+      "frame_id": "frame_necromante",
+      "text_template": "Carta de recompensa placeholder. Design final a definir."
+    },
+    "necro_recompensa_5": {
+      "art_path": "res://assets/cards/art/necro_recompensa_5.png",
+      "frame_id": "frame_necromante",
+      "text_template": "Carta de recompensa placeholder. Design final a definir."
+    },
+    "necro_recompensa_6": {
+      "art_path": "res://assets/cards/art/necro_recompensa_6.png",
+      "frame_id": "frame_necromante",
+      "text_template": "Carta de recompensa placeholder. Design final a definir."
+    },
+    "elemental_assaltante_veloz": {
+      "art_path": "res://assets/cards/art/elemental_assaltante_veloz.png",
+      "frame_id": "frame_elemental"
     }
   },
   "run_map_nodes": {
-    "n01_pouso_elemental": {
-      "position": {"x": 0.10, "y": 0.63},
-      "label": "01 Limpar"
+    "n01_tutorial_primeiro_contato": {
+      "position": {
+        "x": 0.08,
+        "y": 0.66
+      },
+      "label": "01 T1"
     },
-    "n02_ondas_iniciais": {
-      "position": {"x": 0.20, "y": 0.52},
-      "label": "02 Ondas"
+    "n02_tutorial_dois_fronts": {
+      "position": {
+        "x": 0.15,
+        "y": 0.48
+      },
+      "label": "02 T2"
     },
-    "n03_duelo_inicial": {
-      "position": {"x": 0.30, "y": 0.62},
-      "label": "03 Duelo"
+    "n03_tutorial_primeira_onda": {
+      "position": {
+        "x": 0.22,
+        "y": 0.64
+      },
+      "label": "03 T3"
     },
-    "n04_defesa_posicao": {
-      "position": {"x": 0.40, "y": 0.48},
-      "label": "04 Defesa"
+    "n04_pouso_elemental": {
+      "position": {
+        "x": 0.3,
+        "y": 0.48
+      },
+      "label": "04 Limpar"
     },
-    "n05_chefe_invocador": {
-      "position": {"x": 0.50, "y": 0.58},
-      "label": "05 Chefe"
+    "n05_ondas_iniciais": {
+      "position": {
+        "x": 0.38,
+        "y": 0.66
+      },
+      "label": "05 Ondas"
     },
-    "n06_sobreviver_turnos": {
-      "position": {"x": 0.60, "y": 0.45},
-      "label": "06 Sobreviver"
+    "n06_duelo_inicial": {
+      "position": {
+        "x": 0.46,
+        "y": 0.48
+      },
+      "label": "06 Duelo"
     },
-    "n07_limpeza_elite": {
-      "position": {"x": 0.68, "y": 0.58},
-      "label": "07 Elite"
+    "n07_defesa_posicao": {
+      "position": {
+        "x": 0.54,
+        "y": 0.66
+      },
+      "label": "07 Defesa"
     },
-    "n08_ondas_avancadas": {
-      "position": {"x": 0.76, "y": 0.44},
-      "label": "08 Ondas"
+    "n08_chefe_invocador": {
+      "position": {
+        "x": 0.62,
+        "y": 0.44
+      },
+      "label": "08 Chefe"
     },
-    "n09_duelo_elite": {
-      "position": {"x": 0.84, "y": 0.54},
-      "label": "09 Duelo"
+    "n09_sobreviver_turnos": {
+      "position": {
+        "x": 0.69,
+        "y": 0.62
+      },
+      "label": "09 Sobrev"
     },
-    "n10_chefe_final": {
-      "position": {"x": 0.92, "y": 0.42},
-      "label": "10 Final"
+    "n10_limpeza_elite": {
+      "position": {
+        "x": 0.76,
+        "y": 0.46
+      },
+      "label": "10 Elite"
+    },
+    "n11_ondas_avancadas": {
+      "position": {
+        "x": 0.82,
+        "y": 0.64
+      },
+      "label": "11 Ondas"
+    },
+    "n12_duelo_elite": {
+      "position": {
+        "x": 0.88,
+        "y": 0.46
+      },
+      "label": "12 Duelo"
+    },
+    "n13_chefe_final": {
+      "position": {
+        "x": 0.93,
+        "y": 0.3
+      },
+      "label": "13 Final"
     }
   }
 }

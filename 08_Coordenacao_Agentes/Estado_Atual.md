@@ -1,6 +1,6 @@
 # Estado Atual - Estudio
 
-- Ultima atualizacao: `2026-05-14`
+- Ultima atualizacao: `2026-05-15`
 - Fonte de verdade de portfolio: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Painel visual local: `08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
@@ -14,11 +14,11 @@
 
 - Status: **P0_IMPLEMENTACAO - ativo**
 - Fase: `Implementacao`
-- Track ativa: `Track 01 - Playable Run Loop` (P11_SACRIFICE_MOVEMENT_NECRO_TUNING_VALIDATED)
-- Baseline atual: Godot 4.6.2 com ShipHub, 3 saves, escolha de classe, deck/mapa/almas, run linear de 10 mapas, batalha por lanes, sacrificio, movimento, IA de duelo, Necromante por niveis e validacao verde 58/58.
-- Meta ativa: playtestar rota completa, substituir arte transparente dos overlays da nave e distribuir recompensas restantes.
+- Track ativa: `Track 01 - Playable Run Loop` (P12_EARLY_GAME_REWARD_UPDATE_VALIDATED)
+- Baseline atual: Godot 4.6.2 com ShipHub, 3 saves, escolha de classe, deck/mapa/almas, run linear de 13 mapas, 3 tutoriais, starter decks custo 1, recompensas fixas, escolhas 1-em-3 placeholder, batalha por lanes, sacrificio, movimento, IA de duelo, Necromante por niveis e validacao verde 59/59.
+- Meta ativa: definir upgrades/cartas de recompensa finais e playtestar rota completa de 13 mapas.
 - Trabalho permitido: codigo, validacao, playtest e documentacao local.
-- Proximo passo: playtest da rota completa com sacrificio/movimento/Cinzas/tuning, PNGs com alpha real para Mapa/Deck/Almas e recompensas restantes.
+- Proximo passo: sessao de design para upgrades e cartas novas por classe, depois playtest da rota completa de 13 mapas.
 
 ## RPGMobile
 

@@ -7,12 +7,17 @@ const REWARD_MAX_MANA_1: String = "max_mana_1"
 const REWARD_MAX_HAND_SIZE_1: String = "max_hand_size_1"
 const REWARD_UNLOCK_CLASS_PASSIVE: String = "unlock_class_passive"
 const REWARD_UNLOCK_CLASS_ACTIVE: String = "unlock_class_active"
+const REWARD_ADD_CLASS_COST2_CORE: String = "add_class_cost2_core"
+const CHOICE_REWARD_UPGRADE_CARD: String = "upgrade_card"
+const CHOICE_REWARD_NEW_CARD: String = "new_card"
+const REWARD_CARD_COPY_COUNT: int = 3
 const DEFAULT_MAX_HAND_SIZE: int = 3
 const PAID_HEAL_COST: int = 10
 const PAID_HEAL_AMOUNT: int = 5
 const DEFAULT_PLAYER_NAME: String = "Comandante Draxos"
 const MIN_PLAYER_NAME_LENGTH: int = 2
 const MAX_PLAYER_NAME_LENGTH: int = 18
+const SNAPSHOT_VERSION: int = 2
 
 var active: bool = false
 var run_seed: int = DEFAULT_RUN_SEED
@@ -31,9 +36,10 @@ var soul_total: int = 0
 var class_passive_unlocked: bool = false
 var class_active_unlocked: bool = false
 var class_active_level: int = 0
-var rewards_pending: Array[String] = []
+var rewards_pending: Array[Dictionary] = []
 var applied_reward_ids: Array[String] = []
 var automatic_reward_ids: Array[String] = []
+var card_upgrade_counts: Dictionary = {}
 var last_completed_node_id: String = ""
 var last_battle_outcome: String = ""
 
@@ -58,6 +64,7 @@ func start_empty_run(seed: int = DEFAULT_RUN_SEED) -> void:
 	rewards_pending = []
 	applied_reward_ids = []
 	automatic_reward_ids = []
+	card_upgrade_counts = {}
 	last_completed_node_id = ""
 	last_battle_outcome = ""
 
@@ -91,6 +98,7 @@ func start_class_run(class_id: String, seed: int = DEFAULT_RUN_SEED, requested_p
 	rewards_pending = []
 	applied_reward_ids = []
 	automatic_reward_ids = []
+	card_upgrade_counts = {}
 	last_completed_node_id = ""
 	last_battle_outcome = ""
 	select_next_available_node()
@@ -117,6 +125,7 @@ func reset() -> void:
 	rewards_pending = []
 	applied_reward_ids = []
 	automatic_reward_ids = []
+	card_upgrade_counts = {}
 	last_completed_node_id = ""
 	last_battle_outcome = ""
 
@@ -155,6 +164,7 @@ func record_battle_result(node_id: String, outcome: String, remaining_health: in
 			"node_id": node_id,
 			"souls_gained": 0,
 			"automatic_rewards": [],
+			"choice_rewards": [],
 			"next_node_id": current_node_id
 		}
 	var already_completed: bool = completed_node_ids.has(node_id)
@@ -166,6 +176,7 @@ func record_battle_result(node_id: String, outcome: String, remaining_health: in
 		souls_gained = _soul_reward_for_node(node_id)
 		soul_total += souls_gained
 		applied_rewards = _apply_automatic_rewards_for_node(node_id)
+		_queue_choice_rewards_for_node(node_id)
 	select_next_available_node()
 	return {
 		"ok": true,
@@ -173,24 +184,54 @@ func record_battle_result(node_id: String, outcome: String, remaining_health: in
 		"node_id": node_id,
 		"souls_gained": souls_gained,
 		"automatic_rewards": applied_rewards,
+		"choice_rewards": rewards_pending.duplicate(true),
 		"next_node_id": current_node_id
 	}
 
 func apply_placeholder_reward(reward_id: String) -> Dictionary:
+	return apply_reward_choice(reward_id)
+
+func current_pending_reward() -> Dictionary:
+	if rewards_pending.is_empty():
+		return {}
+	return rewards_pending[0].duplicate(true)
+
+func pending_reward_choices() -> Array[Dictionary]:
+	var pending: Dictionary = current_pending_reward()
+	if pending.is_empty():
+		return []
+	match str(pending.get("type", "")):
+		CHOICE_REWARD_UPGRADE_CARD:
+			return _upgrade_reward_choices(pending)
+		CHOICE_REWARD_NEW_CARD:
+			return _new_card_reward_choices(pending)
+	return []
+
+func apply_reward_choice(choice_id: String) -> Dictionary:
 	if rewards_pending.is_empty():
 		return {"ok": false, "message": "Nenhuma recompensa pendente."}
-	var pending_id: String = rewards_pending[0]
-	match reward_id:
-		REWARD_ADD_PULSO_ASTRAL:
-			current_deck_ids.append(_default_reward_card_id())
-		REWARD_REINFORCE_HEALTH:
-			max_health += 2
-			current_health = mini(max_health, current_health + 2)
+	var pending: Dictionary = rewards_pending[0]
+	var choices: Array[Dictionary] = pending_reward_choices()
+	var selected: Dictionary = {}
+	for choice: Dictionary in choices:
+		if str(choice.get("id", "")) == choice_id:
+			selected = choice
+			break
+	if selected.is_empty():
+		return {"ok": false, "message": "Escolha de recompensa invalida: %s" % choice_id}
+	match str(pending.get("type", "")):
+		CHOICE_REWARD_UPGRADE_CARD:
+			var card_id: String = str(selected.get("card_id", ""))
+			card_upgrade_counts[card_id] = mini(2, int(card_upgrade_counts.get(card_id, 0)) + 1)
+		CHOICE_REWARD_NEW_CARD:
+			var new_card_id: String = str(selected.get("card_id", ""))
+			for _copy_index: int in range(REWARD_CARD_COPY_COUNT):
+				current_deck_ids.append(new_card_id)
 		_:
-			return {"ok": false, "message": "Recompensa placeholder invalida: %s" % reward_id}
+			return {"ok": false, "message": "Tipo de recompensa invalido: %s" % str(pending.get("type", ""))}
 	rewards_pending.remove_at(0)
-	applied_reward_ids.append("%s:%s" % [pending_id, reward_id])
-	return {"ok": true, "message": _reward_message(reward_id)}
+	applied_reward_ids.append("%s:%s" % [str(pending.get("id", "")), choice_id])
+	return {"ok": true, "message": _reward_choice_message(selected)}
 
 func can_buy_heal() -> bool:
 	return active and soul_total >= PAID_HEAL_COST and current_health < max_health
@@ -236,7 +277,7 @@ func validate_player_name(requested_name: String) -> Dictionary:
 
 func snapshot() -> Dictionary:
 	return {
-		"version": 1,
+		"version": SNAPSHOT_VERSION,
 		"active": active,
 		"run_seed": run_seed,
 		"player_name": player_display_name(),
@@ -257,6 +298,7 @@ func snapshot() -> Dictionary:
 		"rewards_pending": rewards_pending.duplicate(),
 		"applied_reward_ids": applied_reward_ids.duplicate(),
 		"automatic_reward_ids": automatic_reward_ids.duplicate(),
+		"card_upgrade_counts": card_upgrade_counts.duplicate(),
 		"last_completed_node_id": last_completed_node_id,
 		"last_battle_outcome": last_battle_outcome
 	}
@@ -283,9 +325,10 @@ func load_snapshot(data: Dictionary) -> Dictionary:
 	class_active_level = int(data.get("class_active_level", -1))
 	if class_active_level < 0:
 		class_active_level = 2 if selected_class_id == "necromante" and class_active_unlocked else 0
-	rewards_pending = _string_array(data.get("rewards_pending", []))
+	rewards_pending = _pending_reward_array(data.get("rewards_pending", []))
 	applied_reward_ids = _string_array(data.get("applied_reward_ids", []))
 	automatic_reward_ids = _string_array(data.get("automatic_reward_ids", []))
+	card_upgrade_counts = Dictionary(data.get("card_upgrade_counts", {}))
 	last_completed_node_id = str(data.get("last_completed_node_id", ""))
 	last_battle_outcome = str(data.get("last_battle_outcome", ""))
 	if active and selected_class_display_name == "" and selected_class_id != "":
@@ -325,6 +368,8 @@ func automatic_reward_display_name(reward_id: String) -> String:
 			if selected_class_id == "necromante":
 				return "Ritual das Sombras II desbloqueado"
 			return "Spell de classe desbloqueada"
+		REWARD_ADD_CLASS_COST2_CORE:
+			return "%s adicionada ao deck" % ContentLibrary.get_card_name(_class_core_cost2_card_id())
 	return reward_id
 
 func _soul_reward_for_node(node_id: String) -> int:
@@ -373,20 +418,32 @@ func _apply_automatic_rewards_for_node(node_id: String) -> Array[String]:
 			REWARD_UNLOCK_CLASS_ACTIVE:
 				class_active_unlocked = true
 				class_active_level = maxi(class_active_level, 2 if selected_class_id == "necromante" else 1)
+			REWARD_ADD_CLASS_COST2_CORE:
+				var card_id: String = _class_core_cost2_card_id()
+				for _copy_index: int in range(REWARD_CARD_COPY_COUNT):
+					current_deck_ids.append(card_id)
 			_:
 				continue
 		automatic_reward_ids.append(applied_id)
 		applied.append(reward_id)
 	return applied
 
-func _queue_placeholder_reward(node_id: String) -> void:
-	var pending_id: String = "placeholder_reward:%s" % node_id
-	if rewards_pending.has(pending_id):
+func _queue_choice_rewards_for_node(node_id: String) -> void:
+	var node: Dictionary = _run_node(node_id)
+	var reward: Dictionary = Dictionary(node.get("choice_reward", {}))
+	if reward.is_empty():
 		return
+	var pending_id: String = "%s:%s" % [node_id, str(reward.get("type", ""))]
+	for pending: Dictionary in rewards_pending:
+		if str(pending.get("id", "")) == pending_id:
+			return
 	for applied_id: String in applied_reward_ids:
 		if applied_id.begins_with("%s:" % pending_id):
 			return
-	rewards_pending.append(pending_id)
+	var pending: Dictionary = reward.duplicate(true)
+	pending["id"] = pending_id
+	pending["node_id"] = node_id
+	rewards_pending.append(pending)
 
 func _reward_message(reward_id: String) -> String:
 	match reward_id:
@@ -406,10 +463,87 @@ func _default_reward_card_id() -> String:
 			return "necro_prender"
 	return "arcano_choque"
 
+func _class_core_cost2_card_id() -> String:
+	match selected_class_id:
+		"arcano":
+			return "arcano_tempestade"
+		"invocador":
+			return "invocador_guardiao"
+		"necromante":
+			return "necro_zumbi"
+	return "arcano_tempestade"
+
+func _upgrade_reward_choices(_pending: Dictionary) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	var seen: Array[String] = []
+	for card_id: String in current_deck_ids:
+		if seen.has(card_id):
+			continue
+		seen.append(card_id)
+		if int(card_upgrade_counts.get(card_id, 0)) >= 2:
+			continue
+		var card = ContentLibrary.get_card(card_id)
+		if card == null:
+			continue
+		var upgrade_index: int = int(card_upgrade_counts.get(card_id, 0)) + 1
+		result.append({
+			"id": "upgrade:%s" % card_id,
+			"card_id": card_id,
+			"title": "%s - Upgrade %d" % [str(card.display_name), upgrade_index],
+			"body": _upgrade_choice_body(card_id, upgrade_index)
+		})
+		if result.size() >= 3:
+			break
+	return result
+
+func _new_card_reward_choices(pending: Dictionary) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	var pool: Array[String] = _class_reward_pool()
+	if pool.is_empty():
+		return result
+	var offset: int = clampi(int(pending.get("pool_offset", 0)), 0, maxi(0, pool.size() - 1))
+	for index: int in range(pool.size()):
+		var card_id: String = pool[(offset + index) % pool.size()]
+		var card = ContentLibrary.get_card(card_id)
+		if card == null:
+			continue
+		result.append({
+			"id": "new_card:%s" % card_id,
+			"card_id": card_id,
+			"title": str(card.display_name),
+			"body": "Adiciona %d copias ao deck. Carta placeholder; design final a definir." % REWARD_CARD_COPY_COUNT
+		})
+		if result.size() >= 3:
+			break
+	return result
+
+func _class_reward_pool() -> Array[String]:
+	var class_option: Dictionary = ContentLibrary.find_class_option(selected_class_id)
+	return _string_array(class_option.get("reward_pool", []))
+
+func _upgrade_choice_body(card_id: String, upgrade_index: int) -> String:
+	if upgrade_index <= 1:
+		return "Primeiro upgrade placeholder para %s. As duas opcoes finais de ramo serao definidas em sessao de design." % ContentLibrary.get_card_name(card_id)
+	return "Segundo upgrade placeholder para %s. Como a carta ja recebeu um ramo, esta escolha aplica a opcao restante." % ContentLibrary.get_card_name(card_id)
+
+func _reward_choice_message(choice: Dictionary) -> String:
+	if str(choice.get("id", "")).begins_with("upgrade:"):
+		return "Upgrade placeholder registrado: %s." % str(choice.get("title", ""))
+	if str(choice.get("id", "")).begins_with("new_card:"):
+		return "Carta adicionada ao deck: %s x%d." % [str(choice.get("title", "")), REWARD_CARD_COPY_COUNT]
+	return "Recompensa aplicada."
+
 func _string_array(source: Variant) -> Array[String]:
 	var result: Array[String] = []
 	for item: Variant in Array(source):
 		result.append(str(item))
+	return result
+
+func _pending_reward_array(source: Variant) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for item: Variant in Array(source):
+		if typeof(item) == TYPE_DICTIONARY:
+			result.append(Dictionary(item))
 	return result
 
 func _normalize_player_name(requested_name: String) -> String:

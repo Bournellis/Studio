@@ -1,7 +1,7 @@
 # Track 01 Linear Execution Plan
 
-- Last Updated: `2026-05-13`
-- Status: `P11_SACRIFICE_MOVEMENT_NECRO_TUNING_VALIDATED`
+- Last Updated: `2026-05-15`
+- Status: `P12_EARLY_GAME_REWARD_UPDATE_VALIDATED`
 - Execution Owner: `Codex`
 - Scope: `First coherent playable run loop after Track 00 checkpoint`
 - Validation Command: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd`
@@ -20,7 +20,7 @@ Turn the Track 00 placeholder checkpoint into a playable loop that starts a run,
 
 ## Current Execution Cursor
 
-Next prompt: `Playtest the sacrifice/movement/Cinzas tuning pass, replace alpha-debt overlay art, and assign remaining rewards`.
+Next prompt: `Run a design session for exact upgrade branches and class reward cards, then playtest the full 13-map route`.
 
 ## Linear Prompt Sequence
 
@@ -30,16 +30,19 @@ Next prompt: `Playtest the sacrifice/movement/Cinzas tuning pass, replace alpha-
 | P02 | complete | Return from battle to ShipHub/RunMap with visible completed-node and commander health state. | Green 27/27 |
 | P03 | complete | Add placeholder post-combat reward choice that changes the current run immediately. | Green 29/29 |
 | P04 | complete | Replace placeholders with first mechanical class slice, including souls and paid healing. | Green 21/21 |
-| P05 | in progress | Playtest and tune class decks, target UX, rewards, visuals, menus, saves, and encounter pressure. | Sacrifice/movement/Cinzas/tuning green 58/58 |
+| P05 | in progress | Playtest and tune class decks, target UX, rewards, visuals, menus, saves, and encounter pressure. | Early-game reward update green 59/59 |
 
 ### P05 Current Slice
 
-- 10 mainline maps are active and linear.
+- 13 mainline maps are active and linear.
 - All 6 encounter modes are represented.
-- Mana initial is 2 for every class.
-- Starter decks have 12 cards: 4 card types, 3 copies each.
-- Base hand limit is 3; map 3 grants +1 max hand size.
-- Passives unlock on map 5; class actives unlock on map 7.
+- Mana initial is 1 for every class.
+- Starter decks have 9 cost-1 cards: 3 card types, 3 copies each.
+- Map 2 adds 3 copies of the class cost-2 core card.
+- Base hand limit is 3; map 6 grants +1 max hand size.
+- Passives unlock on map 8; class actives unlock on map 10.
+- Maps 3/4/6/9/12 offer upgrade choices, 1 in 3, with placeholder upgrade tracking.
+- Maps 7/11 offer new-card choices, 1 in 3, adding 3 copies from placeholder class reward pools.
 - Combat resolves through `Resolver Combate`, then maintenance/script without a separate enemy combat turn.
 - Combat uses four visible stages: `Iniciativa - Frente`, `Iniciativa - Sobra`, `Combate - Frente`, and `Combate - Sobra`.
 - Front stages resolve simultaneous damage; overflow stages resolve sequentially by lane, player then enemy, left to right.
@@ -56,8 +59,8 @@ Next prompt: `Playtest the sacrifice/movement/Cinzas tuning pass, replace alpha-
 - Dense battle layouts keep HUD and board inside the viewport by keeping player/enemy hero targets fixed, embedding stable class ability tokens in the hand band, compacting duel/boss cards, and overlaying area-target UI.
 - Enemy-board area targeting is now a large table behind enemy cards/slots rather than a small strip above them.
 - Summoning a creature into an occupied allied slot now opens a floating sacrifice confirmation; cancelling preserves mana, hand, and board state.
-- Necromante unlocks passiva + active level 1 on map 5 and upgrades to active level 2 on map 7; old Lentidao/Confusao/Reanimar original choices are removed.
-- Defense map 4 is now a real hold objective with wave pressure and no early victory for clearing the board; Survive map 6 has a light enemy buff while preserving clear-board victory.
+- Necromante unlocks passiva + active level 1 on map 8 and upgrades to active level 2 on map 10; old Lentidao/Confusao/Reanimar original choices are removed and Raio das Cinzas is active.
+- Defense map 7 is now a real hold objective with wave pressure and no early victory for clearing the board; Survive map 9 has a light enemy buff while preserving clear-board victory.
 
 ## P01 - Run Start And Class Placeholder
 

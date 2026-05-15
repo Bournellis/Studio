@@ -8,13 +8,14 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
 ## Implementacao Ativa
 
-- `draxos-roguelike-cardgame/`: menu-first Draxos roguelike cardgame with ship hub, mission map, simple board card battles, and independent mechanics.
+- `draxos-roguelike-cardgame/`: menu-first Draxos roguelike cardgame with ship hub, 13-map mission route, simple board card battles, fixed/choice rewards, and independent mechanics.
   - Priority/status: `P0_IMPLEMENTACAO`
   - Local agent guide: `draxos-roguelike-cardgame/AGENTS.md`
   - Operational status: `draxos-roguelike-cardgame/implementation/current-status.md`
   - Studio snapshot: `../08_Coordenacao_Agentes/Estado_Atual.md`
   - Validation command: `draxos-roguelike-cardgame/tools/validate.gd`
   - Allowed work: code, validation, playtest, local documentation.
+  - Current next step: define final upgrade branches and class reward cards, then playtest the 13-map route.
 
 ## Conceitos em Incubacao
 
@@ -46,7 +47,7 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
 ## Project Disambiguation
 
-- Use `draxos-roguelike-cardgame/` for the current implementation focus: Draxos roguelike, ship hub, run map, 10-map route, souls/cure loop, lane battles, card/enemy redesign, sacrifice/movement/Cinzas tuning, and Track 01 playable run loop.
+- Use `draxos-roguelike-cardgame/` for the current implementation focus: Draxos roguelike, ship hub, run map, 13-map route, souls/cure loop, lane battles, card/enemy redesign, reward choices, sacrifice/movement/Cinzas tuning, and Track 01 playable run loop.
 - Use `_conceitos/RPGMobile/` for RPGMobile concept work only.
 - Use `_conceitos/BattleMobile/` for BattleMobile concept work only.
 - Use `rpg-isometrico/` only for explicit historical/contextual consultation about the campaign-first isometric action RPG, action loadouts, Arena, Survival, Boss, campaign gates, and real-time combat work.

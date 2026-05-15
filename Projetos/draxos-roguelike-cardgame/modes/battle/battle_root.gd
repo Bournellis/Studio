@@ -43,6 +43,8 @@ var sacrifice_modal: PanelContainer
 var sacrifice_text_label: Label
 var reward_modal: PanelContainer
 var reward_text_label: Label
+var reward_choices_box: VBoxContainer
+var reward_continue_button: Button
 var preview_timer: Timer
 var preview_panel: PanelContainer
 var preview_title_label: Label
@@ -727,10 +729,10 @@ func _build_reward_modal() -> void:
 	reward_modal.anchor_top = 0.5
 	reward_modal.anchor_right = 0.5
 	reward_modal.anchor_bottom = 0.5
-	reward_modal.offset_left = -220.0
-	reward_modal.offset_top = -150.0
-	reward_modal.offset_right = 220.0
-	reward_modal.offset_bottom = 150.0
+	reward_modal.offset_left = -260.0
+	reward_modal.offset_top = -210.0
+	reward_modal.offset_right = 260.0
+	reward_modal.offset_bottom = 210.0
 	reward_modal.add_theme_stylebox_override("panel", _panel_style(Color(0.045, 0.052, 0.06, 0.96), Color(0.88, 0.70, 0.34, 0.95)))
 	add_child(reward_modal)
 
@@ -762,14 +764,19 @@ func _build_reward_modal() -> void:
 	reward_text_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	box.add_child(reward_text_label)
 
-	var ok_button: Button = Button.new()
-	ok_button.name = "BattleRewardOkButton"
-	ok_button.text = "OK"
-	ok_button.custom_minimum_size = Vector2(0, 42)
-	ok_button.pressed.connect(func() -> void:
+	reward_choices_box = VBoxContainer.new()
+	reward_choices_box.name = "BattleRewardChoices"
+	reward_choices_box.add_theme_constant_override("separation", 8)
+	box.add_child(reward_choices_box)
+
+	reward_continue_button = Button.new()
+	reward_continue_button.name = "BattleRewardOkButton"
+	reward_continue_button.text = "Continuar"
+	reward_continue_button.custom_minimum_size = Vector2(0, 42)
+	reward_continue_button.pressed.connect(func() -> void:
 		get_tree().change_scene_to_file("res://modes/run_map/run_map.tscn")
 	)
-	box.add_child(ok_button)
+	box.add_child(reward_continue_button)
 
 func _refresh() -> void:
 	var state: Dictionary = _display_state()
@@ -1188,7 +1195,56 @@ func _show_reward_modal(summary: Dictionary) -> void:
 	else:
 		lines.append("Próximo: %s" % RunSession.current_node_display_name())
 	reward_text_label.text = "\n".join(lines)
+	_rebuild_reward_choice_buttons()
 	reward_modal.visible = true
+
+func _rebuild_reward_choice_buttons() -> void:
+	if reward_choices_box == null:
+		return
+	for child: Node in reward_choices_box.get_children():
+		child.queue_free()
+	var choices: Array[Dictionary] = RunSession.pending_reward_choices()
+	if reward_continue_button != null:
+		reward_continue_button.visible = choices.is_empty()
+	if choices.is_empty():
+		return
+	var label: Label = Label.new()
+	label.name = "BattleRewardChoicePrompt"
+	label.text = _pending_reward_prompt()
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+	reward_choices_box.add_child(label)
+	for choice: Dictionary in choices:
+		var button: Button = Button.new()
+		button.name = "BattleRewardChoice_%s" % str(choice.get("id", "")).replace(":", "_")
+		button.text = str(choice.get("title", ""))
+		button.tooltip_text = str(choice.get("body", ""))
+		button.custom_minimum_size = Vector2(0, 42)
+		button.pressed.connect(func() -> void:
+			_apply_reward_choice(str(choice.get("id", "")))
+		)
+		reward_choices_box.add_child(button)
+
+func _apply_reward_choice(choice_id: String) -> void:
+	var result: Dictionary = RunSession.apply_reward_choice(choice_id)
+	SaveManager.save_current_run()
+	if not bool(result.get("ok", false)):
+		reward_text_label.text = "%s\n\n%s" % [str(result.get("message", "")), reward_text_label.text]
+		return
+	if RunSession.has_pending_reward():
+		reward_text_label.text = "%s\n\n%s" % [str(result.get("message", "")), reward_text_label.text]
+		_rebuild_reward_choice_buttons()
+		return
+	get_tree().change_scene_to_file("res://modes/run_map/run_map.tscn")
+
+func _pending_reward_prompt() -> String:
+	var pending: Dictionary = RunSession.current_pending_reward()
+	match str(pending.get("type", "")):
+		RunSession.CHOICE_REWARD_UPGRADE_CARD:
+			return "Escolha 1 upgrade placeholder entre 3 cartas."
+		RunSession.CHOICE_REWARD_NEW_CARD:
+			return "Escolha 1 carta nova placeholder entre 3 opcoes."
+	return "Escolha 1 recompensa."
 
 func _accepted_card_indices_for_target(target: Dictionary) -> Array[int]:
 	var result: Array[int] = []
@@ -1464,7 +1520,7 @@ func _class_passive_detail_text() -> String:
 		"arcano":
 			return "Cada carta jogada neste turno gera 1 Fluxo. Fluxo aumenta dano direto de spells e da Rajada Arcana ate o inicio do proximo turno."
 		"invocador":
-			return "Sempre que uma criatura aliada entra em campo, a criatura aliada com maior ATK recebe +1/+0 permanente durante a batalha."
+			return "A primeira criatura aliada invocada a cada turno faz a criatura aliada com maior ATK receber +2/+1 permanente durante a batalha."
 		"necromante":
 			return "Sempre que qualquer criatura morre em campo, aliada ou inimiga, ganha 1 Cinza. Cinzas acumulam e alimentam o Ritual das Sombras."
 	return ""
@@ -1492,7 +1548,7 @@ func _class_active_detail_text(choice_id: String = "") -> String:
 			for choice: Dictionary in engine.get_necromancer_active_choices():
 				if str(choice.get("id", "")) == choice_id:
 					return "%d Cinzas. %s" % [int(choice.get("cost_ashes", 0)), str(choice.get("text", ""))]
-			return "Clique para escolher Podridao, Furia das Cinzas ou upgrades antes de arrastar."
+			return "Clique para escolher Podridao, Furia, Raio das Cinzas ou upgrades antes de arrastar."
 	return ""
 
 func _keyword_text(keywords: Array) -> String:

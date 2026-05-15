@@ -192,16 +192,16 @@ func _build_node_button(node: Dictionary) -> Button:
 	button.text = "%s %s" % [_node_icon(node, state), VisualAssets.node_label(node_id)]
 	button.tooltip_text = "%s\n%s" % [str(encounter.get("display_name", node.get("encounter_id", ""))), _node_status_text(node, state)]
 	button.alignment = HORIZONTAL_ALIGNMENT_CENTER
-	button.custom_minimum_size = Vector2(132, 44)
+	button.custom_minimum_size = Vector2(106, 42)
 	var position: Vector2 = VisualAssets.node_position(node_id)
 	button.anchor_left = position.x
 	button.anchor_top = position.y
 	button.anchor_right = position.x
 	button.anchor_bottom = position.y
-	button.offset_left = -66.0
-	button.offset_top = -22.0
-	button.offset_right = 66.0
-	button.offset_bottom = 22.0
+	button.offset_left = -53.0
+	button.offset_top = -21.0
+	button.offset_right = 53.0
+	button.offset_bottom = 21.0
 	button.disabled = state == "completed" or state == "locked"
 	button.add_theme_font_size_override("font_size", 12)
 	button.add_theme_color_override("font_disabled_color", Color(0.82, 0.88, 0.84, 0.82))
@@ -236,11 +236,28 @@ func _node_icon(node: Dictionary, state: String) -> String:
 		return "OK"
 	if state == "selected":
 		return ">>"
-	match str(node.get("kind", "")):
-		"sidequest":
-			return "+"
-		"mainline":
-			return "*"
+	var encounter: Dictionary = ContentLibrary.get_catalog().find_encounter(str(node.get("encounter_id", "")))
+	if str(encounter.get("tier", "")) == "tutorial":
+		match str(node.get("id", "")):
+			"n01_tutorial_primeiro_contato":
+				return "T1"
+			"n02_tutorial_dois_fronts":
+				return "T2"
+			"n03_tutorial_primeira_onda":
+				return "T3"
+	match str(encounter.get("mode", "")):
+		"ondas":
+			return "ON"
+		"duelo":
+			return "DL"
+		"defesa_posicao":
+			return "DF"
+		"sobreviver_turnos":
+			return "SV"
+		"chefe_summoner":
+			return "CH"
+		"limpar_mesa":
+			return "LM"
 	return "-"
 
 func _node_status_text(node: Dictionary, state: String) -> String:
@@ -294,13 +311,32 @@ func _rebuild_reward_choices() -> void:
 		child.queue_free()
 	var label: Label = Label.new()
 	label.name = "RunMapAutomaticRewards"
-	label.text = "Recompensas fixas sao aplicadas automaticamente: mana, limite de mao, passiva e spell."
+	label.text = "Recompensas fixas sao aplicadas automaticamente. Recompensas de upgrade/carta nova usam escolha 1 em 3."
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
 	reward_box.add_child(label)
+	var choices: Array[Dictionary] = RunSession.pending_reward_choices()
+	if choices.is_empty():
+		return
+	var pending_label: Label = Label.new()
+	pending_label.name = "RunMapPendingRewardLabel"
+	pending_label.text = "Recompensa pendente:"
+	pending_label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+	reward_box.add_child(pending_label)
+	for choice: Dictionary in choices:
+		var button: Button = Button.new()
+		button.name = "RunMapRewardChoice_%s" % str(choice.get("id", "")).replace(":", "_")
+		button.text = str(choice.get("title", ""))
+		button.tooltip_text = str(choice.get("body", ""))
+		button.pressed.connect(func() -> void:
+			_apply_placeholder_reward(str(choice.get("id", "")))
+		)
+		reward_box.add_child(button)
 
 func _apply_placeholder_reward(reward_id: String) -> void:
 	var result: Dictionary = RunSession.apply_placeholder_reward(reward_id)
+	if bool(result.get("ok", false)):
+		SaveManager.save_current_run()
 	status_label.text = "%s\n\n%s" % [str(result.get("message", "")), _status_text()]
 	_rebuild_reward_choices()
 

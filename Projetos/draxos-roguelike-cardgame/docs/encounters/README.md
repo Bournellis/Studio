@@ -1,35 +1,38 @@
 # Encontros - Indice
 
-- Last Updated: `2026-05-13`
-- Status: `10 encontros lineares validados com baseline de combate redesenhada`
+- Last Updated: `2026-05-15`
+- Status: `13 encontros lineares validados com recompensas fixas e escolhas placeholder`
 - Referencia: `../game-design-document.md`
 
 ## Proposito
 
-Este diretorio registra o contrato de encontros do slice. Os nomes, inimigos e numeros ainda sao mockups funcionais; servem para validar modos, recompensas automaticas e escalada da run antes do redesign completo das cartas.
+Este diretorio registra o contrato de encontros do slice. Os nomes, inimigos e numeros ainda sao mockups funcionais; servem para validar modos, recompensas fixas, escolhas 1-em-3 e escalada da run antes do redesign completo das cartas.
 
 ## Ordem Linear Atual
 
 | Mapa | Encounter | Modo | Tier | Almas | Recompensa |
 |---|---|---|---|---:|---|
-| 1 | `pouso_elemental` | `limpar_mesa` | small | 4 | - |
-| 2 | `ondas_iniciais` | `ondas` | medium | 7 | +1 max mana |
-| 3 | `duelo_inicial` | `duelo` | medium | 7 | +1 limite de mao |
-| 4 | `defesa_posicao_inicial` | `defesa_posicao` | medium | 7 | - |
-| 5 | `chefe_invocador` | `chefe_summoner` | boss | 18 | passiva da classe |
-| 6 | `sobreviver_turnos_inicial` | `sobreviver_turnos` | medium | 7 | - |
-| 7 | `limpeza_elite` | `limpar_mesa` | elite_optional | 11 | habilidade ativa da classe |
-| 8 | `ondas_avancadas` | `ondas` | elite_optional | 11 | - |
-| 9 | `duelo_elite` | `duelo` | elite_optional | 11 | - |
-| 10 | `chefe_summoner_final` | `chefe_summoner` | boss | 18 | - |
+| 1 | `tutorial_primeiro_contato` | `limpar_mesa` | tutorial | 2 | +1 max mana |
+| 2 | `tutorial_dois_fronts` | `limpar_mesa` | tutorial | 3 | carta custo 2 da classe |
+| 3 | `tutorial_primeira_onda` | `ondas` | tutorial | 4 | upgrade 1 em 3 |
+| 4 | `pouso_elemental` | `limpar_mesa` | small | 4 | upgrade 1 em 3 |
+| 5 | `ondas_iniciais` | `ondas` | medium | 7 | +1 max mana |
+| 6 | `duelo_inicial` | `duelo` | medium | 7 | +1 limite de mao + upgrade 1 em 3 |
+| 7 | `defesa_posicao_inicial` | `defesa_posicao` | medium | 7 | carta nova 1 em 3 |
+| 8 | `chefe_invocador` | `chefe_summoner` | boss | 18 | passiva da classe |
+| 9 | `sobreviver_turnos_inicial` | `sobreviver_turnos` | medium | 7 | upgrade 1 em 3 |
+| 10 | `limpeza_elite` | `limpar_mesa` | elite_optional | 11 | habilidade ativa da classe |
+| 11 | `ondas_avancadas` | `ondas` | elite_optional | 11 | carta nova 1 em 3 |
+| 12 | `duelo_elite` | `duelo` | elite_optional | 11 | upgrade 1 em 3 |
+| 13 | `chefe_summoner_final` | `chefe_summoner` | boss | 18 | vitoria |
 
 ## Vocabulario De Tipos
 
 - `limpar_mesa`: vencer limpando a presenca inimiga relevante no tabuleiro.
 - `ondas`: vencer todas as ondas sequenciais.
 - `duelo`: vencer reduzindo o heroi inimigo a 0.
-- `defesa_posicao`: proteger objetivo 0 ATK / 10 HP no slot central aliado por 3 turnos.
-- `sobreviver_turnos`: vencer apos 3 turnos com o Comandante vivo.
+- `defesa_posicao`: proteger objetivo 0 ATK / 7 HP no slot central aliado pelos turnos configurados.
+- `sobreviver_turnos`: vencer apos os turnos configurados com o Comandante vivo.
 - `chefe_summoner`: boss com vida propria e summons roteirizados.
 
 ## Regras De Combate Relevantes
@@ -49,4 +52,4 @@ Todos os modos usam o mesmo combate frontal:
 
 ## Proximo Passo
 
-Playtestar a pressao dos inimigos contra os novos decks e redistribuir recompensas dos mapas que hoje ainda nao tem marco fixo.
+Definir upgrades e cartas novas finais em sessao de design, depois playtestar a pressao dos inimigos contra a rota de 13 mapas.

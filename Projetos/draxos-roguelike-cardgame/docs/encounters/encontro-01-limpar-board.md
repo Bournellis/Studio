@@ -39,4 +39,4 @@ Este encontro usa o combate frontal padrao:
 
 - Se a primeira luta apresenta bem o ritmo de lanes frontais.
 - Se o dano direto pune lanes vazias sem encerrar a run cedo demais.
-- Se Arcano, Invocador e Necromante conseguem estabilizar com mana inicial 2.
+- Se Arcano, Invocador e Necromante conseguem estabilizar quando este encontro aparece como mapa 4, depois dos tutoriais e da carta custo 2 da classe.

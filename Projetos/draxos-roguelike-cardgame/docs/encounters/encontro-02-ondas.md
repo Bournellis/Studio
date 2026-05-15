@@ -15,7 +15,7 @@ Sobreviver e limpar 3 ondas de criaturas inimigas.
 - Slots do inimigo: 3.
 - Tier: `medium`.
 - Almas: 7.
-- Recompensa extra: +1 max mana.
+- Recompensa extra: +1 max mana quando aparece como mapa 5 da rota de 13 mapas.
 - A proxima onda entra quando a onda atual for eliminada e ainda houver ondas pendentes.
 
 ## Combate
@@ -48,6 +48,6 @@ O encontro usa combate frontal por lane. Criaturas aliadas que sobrevivem contin
 
 ## O Que Validar
 
-- Se a recompensa de +1 max mana no mapa 2 muda o ritmo sem quebrar o mapa 3.
+- Se a recompensa de +1 max mana no mapa 5 muda o ritmo sem quebrar o duelo do mapa 6.
 - Se criaturas mantidas em campo entre ondas criam decisoes relevantes.
-- Se a pressao das ondas combina com decks iniciais de 12 cartas e mao base 3.
+- Se a pressao das ondas combina com deck ja acrescido da carta custo 2 e mao base 3.

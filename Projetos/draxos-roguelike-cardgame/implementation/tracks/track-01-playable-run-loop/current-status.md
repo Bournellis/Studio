@@ -1,7 +1,7 @@
 # Track 01 Current Status
 
-- Last Updated: `2026-05-13`
-- Status: `P11_SACRIFICE_MOVEMENT_NECRO_TUNING_VALIDATED`
+- Last Updated: `2026-05-15`
+- Status: `P12_EARLY_GAME_REWARD_UPDATE_VALIDATED`
 - Scope: `First playable class and encounter slice after Track 00 checkpoint`
 
 ## Completed
@@ -9,18 +9,19 @@
 - Track 00 checkpoint committed and closed.
 - P01-P03 placeholder loop validated previously: class selection, explicit run start, map selection, battle return, visible state, and immediate reward mutation.
 - Catalog now exposes the three real slice classes: `arcano`, `invocador`, and `necromante`.
-- Each class has a redesigned 12-card starter deck, starting health 20, starting mana 2, and base hand limit 3.
+- Each class has a 9-card cost-1 starter deck, starting health 20, starting mana 1, base hand limit 3, a fixed map 2 cost-2 card reward, and a 6-card placeholder reward pool.
 - RunSession records class, deck, health, max mana, max hand size, souls, completed nodes, automatic rewards, passive unlock, active unlock, and last battle state.
 - ShipHub exposes the real class choices and paid healing with souls.
-- RunMap exposes 10 linear mainline nodes with no sidequests for this slice.
-- Automatic rewards are active: map 2 grants +1 max mana, map 3 grants +1 max hand size, map 5 unlocks the class passive, and map 7 unlocks the class active.
+- RunMap exposes 13 linear mainline nodes with no sidequests for this slice.
+- Fixed rewards are active: map 1 grants +1 max mana, map 2 adds 3 copies of the class cost-2 core card, map 5 grants +1 max mana, map 6 grants +1 max hand size, map 8 unlocks the class passive, and map 10 unlocks the class active.
+- Choice rewards are active: maps 3/4/6/9/12 offer 1-in-3 upgrade placeholders; maps 7/11 offer 1-in-3 new-card placeholders that add 3 copies.
 - Battle receives current run class, deck, health, and mana.
 - Battle exposes drag-and-drop targeting for hand cards and unlocked class spells.
 - Battle exposes a hover preview for hand cards, field occupants, class spells, slots, and hero targets when present.
 - Necromante's class spell exposes a choice modal for Podridao, temporary attack buffs, and level 2 reanimation choices.
 - BattleEngine implements four-stage combat (`Iniciativa - Frente`, `Iniciativa - Sobra`, `Combate - Frente`, `Combate - Sobra`), simultaneous front damage, sequential overflow targeting, direct lane damage, `iniciativa`, `defensor`, `reviver`, `enfraquecer`, `prender`, `promover`, dynamic `poder de habilidade`, and `regeneracao`.
 - Battle now uses `Resolver Combate`: player actions, combat, pending choices, maintenance/script, pending choices, duel enemy preparation for the next turn, automatic return to the player. There is no separate enemy combat turn and no summoning sickness.
-- BattleEngine implements first-pass Arcano `Fluxo Continuo`, Invocador permanent buffs, Necromante `Cinzas`, death hooks, debuffs, and reanimation with passives locked until map 5 and actives hidden/locked until map 7.
+- BattleEngine implements first-pass Arcano `Fluxo Continuo`, Invocador once-per-turn +2/+1 permanent passive, Necromante `Cinzas`, death hooks, debuffs, Raio das Cinzas, and reanimation with passives locked until map 8 and actives hidden/locked until map 10.
 - BattleEngine implements sequential waves, duel hero kill, defense position, survive turns, and scripted summoner bosses.
 - BattleEngine shuffles the run deck deterministically on battle start and when discard recycles into the deck.
 - Visual support V1 adds `VisualAssets`, `data/definitions/visual_assets.json`, optional PNG fallback reporting, asset READMEs, and an AI art guide.
@@ -59,12 +60,12 @@
 - New runs require a 2-18 character player name after class choice; local save slots show player name, class, and map, with old saves falling back to `Comandante Draxos`.
 - Arcano balance pass applied: Barreira Arcana 1/5, Fagulha Arcana 1/2, Choque 2 damage, Tempestade Arcana 4 damage, and Prender cost 1.
 - Sacrifice/tuning pass applied: summoning over an allied creature now requires a Sacrificar/Cancelar modal before mana/card spend, Barreira Arcana has Defensor, defense map is a real hold objective with waves and no early clear-board victory, survive map has a light enemy buff, and Necromante unlocks active level 1 with the passive reward before upgrading to level 2 on the active reward.
-- Validation green with 58/58 GUT tests and 409 asserts; 33 optional PNGs and 4 non-fatal ship overlay alpha debts are reported by design.
+- Early-game reward update validation green with 59/59 GUT tests and 442 asserts; 40 optional PNGs and 4 non-fatal ship overlay alpha debts are reported by design.
 
 ## Current Risk
 
-The slice is mechanically playable but not fully balanced. The 10-map route now has staged combat and stronger duel/survive/boss pressure, but encounter numbers still need playtest, several maps only grant souls, most card art is still absent, enemy cardback art is still pending, `Mapa.png` still has fake checkerboard/no alpha, class ship overlays and `NpcAlmas.png` are pending, Invocador/Necromante frames are not alpha-safe overlays, backgrounds are accepted as provisional 16:9 `1456x816`, and final card/class naming still needs a dedicated content pass.
+The slice is mechanically playable but not fully balanced. The 13-map route now has staged combat, tutorial maps, fixed rewards, and placeholder choice rewards, but exact upgrade branches and class reward cards still need design, most card art is still absent, enemy cardback art is still pending, `Mapa.png` still has fake checkerboard/no alpha, class ship overlays and `NpcAlmas.png` are pending, Invocador/Necromante frames are not alpha-safe overlays, backgrounds are accepted as provisional 16:9 `1456x816`, and final card/class naming still needs a dedicated content pass.
 
 ## Next
 
-Playtest the sacrifice/movement/Cinzas tuning pass across the full route, replace transparent ship overlay art for Mapa/Deck/Almas, then distribute the remaining non-soul rewards.
+Run a design session for exact upgrade branches and class reward cards, then playtest the full 13-map route.

@@ -8,11 +8,10 @@ var _catalog
 func ensure_loaded():
 	if _catalog != null:
 		return _catalog
-	if not ResourceLoader.exists(CATALOG_PATH):
-		var result: Dictionary = ContentGeneratorScript.new().generate_all()
-		if not bool(result.get("ok", false)):
-			push_error(str(result.get("message", "Content generation failed.")))
-			return null
+	var result: Dictionary = ContentGeneratorScript.new().generate_all()
+	if not bool(result.get("ok", false)):
+		push_error(str(result.get("message", "Content generation failed.")))
+		return null
 	_catalog = load(CATALOG_PATH)
 	if _catalog == null:
 		push_error("Failed to load generated slice catalog.")
