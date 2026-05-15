@@ -2,118 +2,795 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Estúdio — Visual</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estúdio — Dashboard</title>
 <style>
-:root { color-scheme: light; }
+:root {
+  --bg: #f4f3ef;
+  --panel: #ffffff;
+  --ink: #1a1f1e;
+  --muted: #5c6460;
+  --line: #dddbd5;
+  --line2: #eae8e3;
+
+  --p0: #1a5c3a;
+  --p0-bg: #dff2e7;
+  --p0-panel: #f0faf4;
+  --p0-border: #a8d5bc;
+
+  --p1: #8a5a0a;
+  --p1-bg: #fff3d4;
+  --p1-panel: #fffbf0;
+  --p1-border: #e0c97a;
+
+  --paused: #5c6460;
+  --paused-bg: #eceeeb;
+  --paused-panel: #f4f3ef;
+  --paused-border: #c4c8c2;
+
+  --draxos: #6b21a8;
+  --draxos-bg: #f3e8ff;
+  --draxos-border: #c4b5fd;
+  --draxos-panel: #faf5ff;
+
+  --accent: #1f5c8a;
+}
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: #f7f6f2;
-  color: #1f2329;
-  padding: 40px 24px;
+  background: var(--bg);
+  color: var(--ink);
   line-height: 1.5;
-  max-width: 1000px;
+  padding: 28px 24px 60px;
+  max-width: 1200px;
   margin: 0 auto;
-  min-height: 100vh;
 }
+
+/* ── HEADER ─────────────────────────────────────── */
 .header {
-  border-bottom: 2px solid #1f2329;
+  border-bottom: 2px solid var(--ink);
   padding-bottom: 16px;
-  margin-bottom: 32px;
+  margin-bottom: 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
 }
-.header h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.5px; }
-.header .meta { color: #6b6f76; font-size: 14px; margin-top: 8px; }
-.cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
-}
-a.card {
-  display: block;
-  background: white;
-  border: 1px solid #e3e0d8;
-  border-radius: 8px;
-  padding: 24px;
-  text-decoration: none;
-  color: inherit;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-}
-a.card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-  border-color: #4a5470;
-}
-a.card .num {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: #8a8a8a;
-  font-weight: 600;
-}
-a.card h2 {
-  font-size: 20px;
+.header h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
+.header .meta { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.header .date { font-size: 12px; color: var(--muted); text-align: right; }
+
+/* ── STATUS PILLS ────────────────────────────────── */
+.pill {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 99px;
+  font-size: 10px;
   font-weight: 700;
-  margin-top: 6px;
-  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  vertical-align: middle;
 }
-a.card p {
+.pill-p0     { background: var(--p0-bg);     color: var(--p0); }
+.pill-p1     { background: var(--p1-bg);     color: var(--p1); }
+.pill-paused { background: var(--paused-bg); color: var(--paused); }
+.pill-ok     { background: #dff2e7; color: #1a5c3a; }
+.pill-warn   { background: #fff3d4; color: #8a5a0a; }
+
+/* ── PORTFOLIO BAR ───────────────────────────────── */
+.portfolio-bar {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.2fr 1.2fr;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+.pbar-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  overflow: hidden;
+}
+.pbar-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.pbar-card.p0::before  { background: var(--p0); }
+.pbar-card.p1::before  { background: var(--p1); }
+.pbar-card.pausado::before { background: var(--paused); }
+.pbar-card .pname { font-weight: 700; font-size: 13px; }
+.pbar-card .pstatus { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.pbar-card .pnext { font-size: 11px; color: var(--muted); margin-top: 4px; border-top: 1px solid var(--line2); padding-top: 6px; }
+
+/* ── MAIN GRID ───────────────────────────────────── */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* ── SECTION CARD ────────────────────────────────── */
+.section-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 22px;
+  margin-bottom: 16px;
+}
+.section-card h2 {
   font-size: 14px;
-  color: #6b6f76;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-card h2 .htag { color: var(--ink); font-size: 16px; text-transform: none; letter-spacing: 0; }
+
+/* ── P0 PANEL (DRAXOS) ───────────────────────────── */
+.p0-panel {
+  background: #160a28;
+  border: 1px solid #3b1a6b;
+  border-radius: 10px;
+  padding: 24px;
+  color: #f0e8ff;
+  grid-column: 1;
+}
+.p0-panel .p0-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #a78bfa;
+  margin-bottom: 8px;
+}
+.p0-panel h2 {
+  font-size: 22px;
+  font-weight: 800;
+  color: #f0e8ff;
+  margin-bottom: 4px;
+}
+.p0-panel .p0-sub {
+  font-size: 13px;
+  color: #c4b5fd;
+  margin-bottom: 20px;
+}
+.p0-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.p0-stat {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(167,139,250,0.2);
+  border-radius: 7px;
+  padding: 12px 14px;
+}
+.p0-stat .label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: #a78bfa; font-weight: 600; }
+.p0-stat .value { font-size: 14px; font-weight: 700; color: #f0e8ff; margin-top: 4px; }
+.p0-stat .value.green { color: #86efac; }
+.p0-stat .value.yellow { color: #fde68a; }
+.p0-validation {
+  background: rgba(134,239,172,0.08);
+  border: 1px solid rgba(134,239,172,0.2);
+  border-radius: 7px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: #86efac;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.p0-next {
+  background: rgba(255,255,255,0.04);
+  border-left: 3px solid #7c3aed;
+  padding: 10px 12px;
+  border-radius: 0 6px 6px 0;
+  font-size: 13px;
+  color: #d8b4fe;
+}
+.p0-next strong { color: #a78bfa; display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+
+/* ── SIDE STACK ──────────────────────────────────── */
+.side-stack {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── CONCEPT CARD ────────────────────────────────── */
+.concept-card {
+  background: var(--p1-panel);
+  border: 1px solid var(--p1-border);
+  border-radius: 8px;
+  padding: 16px;
+}
+.concept-card .clabel {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--p1);
+  margin-bottom: 6px;
+}
+.concept-card h3 { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.concept-card .csub { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+.concept-card .cnext {
+  font-size: 11px;
+  color: var(--p1);
+  background: var(--p1-bg);
+  border-radius: 4px;
+  padding: 6px 8px;
+}
+.concept-card .cnext strong { display: block; font-size: 9px; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; opacity: 0.7; }
+
+/* ── PAUSED CARD ─────────────────────────────────── */
+.paused-card {
+  background: var(--paused-panel);
+  border: 1px solid var(--paused-border);
+  border-radius: 8px;
+  padding: 16px;
+  opacity: 0.7;
+}
+.paused-card .plabel {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--paused);
+  margin-bottom: 6px;
+}
+.paused-card h3 { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.paused-card .psub { font-size: 11px; color: var(--muted); }
+.paused-card .pbase { font-size: 11px; color: var(--muted); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line2); }
+
+/* ── BOTTOM GRID ─────────────────────────────────── */
+.bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* ── TRACK PROGRESS ──────────────────────────────── */
+.track-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 14px;
 }
-a.card .source {
-  font-size: 11px;
-  font-family: ui-monospace, "SF Mono", monospace;
-  color: #4a5470;
-  background: #faf9f5;
-  padding: 4px 8px;
-  border-radius: 4px;
-  display: inline-block;
+.track-name { font-size: 16px; font-weight: 700; }
+.checkpoint-list { display: flex; flex-direction: column; gap: 6px; }
+.checkpoint {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: var(--bg);
+  font-size: 12px;
 }
+.checkpoint.done  { background: #e8f4ec; }
+.checkpoint.active { background: #dff2e7; border: 1px solid #a8d5bc; }
+.checkpoint .cp-id { font-family: monospace; font-weight: 700; font-size: 11px; min-width: 90px; color: var(--p0); }
+.checkpoint .cp-name { flex: 1; font-size: 12px; }
+.checkpoint.done .cp-id  { color: var(--muted); }
+.check-icon { font-size: 12px; }
+
+/* ── CARDS IN PLAY ───────────────────────────────── */
+.class-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.class-chip {
+  border-radius: 7px;
+  padding: 14px;
+  border: 1px solid var(--line);
+}
+.class-chip .cname { font-weight: 700; font-size: 14px; margin-bottom: 6px; }
+.class-chip .crow  { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 3px; }
+.class-chip .cnum  { font-weight: 700; color: var(--ink); }
+.class-chip.arcano    { background: #f5f3ff; border-color: #c4b5fd; }
+.class-chip.invocador { background: #f0fdf4; border-color: #a8d5bc; }
+.class-chip.necro     { background: #f8f8f8; border-color: #c4c8c2; }
+
+/* ── MAP PROGRESS ────────────────────────────────── */
+.map-strip {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.map-node {
+  width: 38px;
+  height: 38px;
+  border-radius: 7px;
+  border: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--muted);
+  background: var(--bg);
+  line-height: 1.2;
+  text-align: center;
+  padding: 2px;
+}
+.map-node.tutorial { background: #e8f4ec; color: var(--p0); border-color: var(--p0-border); }
+.map-node.normal   { background: #f0e8ff; color: #6b21a8; border-color: #c4b5fd; }
+.map-node.elite    { background: #fff3d4; color: var(--p1); border-color: var(--p1-border); }
+.map-node.boss     { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+.map-node .tier { font-size: 8px; font-weight: 400; opacity: 0.7; }
+
+/* ── FOLDER MAP ──────────────────────────────────── */
+.folder-tree {
+  font-family: "SF Mono", "Consolas", "Menlo", monospace;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.folder-tree details summary {
+  cursor: pointer;
+  list-style: none;
+  outline: none;
+}
+.folder-tree details summary::-webkit-details-marker { display: none; }
+.folder-tree details summary::before {
+  content: "▶";
+  color: #8a8a8a;
+  display: inline-block;
+  margin-right: 5px;
+  transition: transform 0.12s;
+  font-size: 9px;
+}
+.folder-tree details[open] > summary::before { transform: rotate(90deg); }
+.folder-tree details details, .folder-tree details > div.leaf { margin-left: 16px; }
+.ft-dir  { color: #1f5c8a; font-weight: 700; }
+.ft-file { color: var(--muted); }
+.ft-note { color: #8a6a1a; font-style: italic; font-family: sans-serif; font-size: 11px; margin-left: 5px; }
+.role-tag {
+  display: inline-block;
+  font-family: sans-serif;
+  padding: 0 6px;
+  font-size: 9px;
+  border-radius: 99px;
+  margin-left: 5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  vertical-align: middle;
+}
+.rt-canon  { background: #e6e9f0; color: #4a5470; }
+.rt-active { background: #dff2e7; color: #1a5c3a; }
+.rt-paused { background: #fee2e2; color: #991b1b; }
+.rt-coord  { background: #fff3d4; color: #8a5a0a; }
+.rt-arch   { background: #f0e6e0; color: #8a5a3a; }
+.rt-concept { background: #e0f2fe; color: #0369a1; }
+
+/* ── TOOLS SECTION ───────────────────────────────── */
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+.tool-link {
+  display: block;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 14px;
+  text-decoration: none;
+  color: var(--ink);
+  transition: border-color 0.12s, background 0.12s;
+}
+.tool-link:hover { border-color: #4a5470; background: white; }
+.tool-link .tnum { font-size: 10px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+.tool-link .tname { font-size: 14px; font-weight: 700; margin-top: 4px; margin-bottom: 6px; }
+.tool-link .tdesc { font-size: 11px; color: var(--muted); }
+.tool-link .tstale { font-size: 10px; color: #991b1b; margin-top: 4px; background: #fee2e2; padding: 2px 6px; border-radius: 3px; display: inline-block; }
+.tool-link .tactive { font-size: 10px; color: #1a5c3a; margin-top: 4px; background: #dff2e7; padding: 2px 6px; border-radius: 3px; display: inline-block; }
+.tool-link .tarchive { font-size: 10px; color: #8a5a0a; margin-top: 4px; background: #fff3d4; padding: 2px 6px; border-radius: 3px; display: inline-block; }
+
+/* ── ALERT BOX ───────────────────────────────────── */
+.alert {
+  background: #fff3d4;
+  border: 1px solid var(--p1-border);
+  border-radius: 7px;
+  padding: 14px 16px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+.alert strong { color: var(--p1); }
+
+/* ── FOOTER ──────────────────────────────────────── */
 .footer {
   margin-top: 32px;
-  padding-top: 20px;
-  border-top: 1px solid #e3e0d8;
-  font-size: 12px;
-  color: #6b6f76;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 11px;
+  color: var(--muted);
 }
 </style>
 </head>
 <body>
+
 <div class="header">
-  <h1>Estúdio — Visual</h1>
-  <div class="meta">Visualizações do projeto RPG Isométrico · D:\Estudio\Visual</div>
+  <div>
+    <div style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; font-weight:600; margin-bottom:4px;">D:\Estudio</div>
+    <h1>Dashboard do Estúdio</h1>
+    <div class="meta">Portfolio overview · 5 projetos · Godot 4.6.2</div>
+  </div>
+  <div class="date">
+    Atualizado<br><strong>2026-05-15</strong>
+  </div>
 </div>
 
-<div class="cards">
-  <a class="card" href="01-status-dashboard.html">
-    <div class="num">01</div>
-    <h2>Status do Projeto</h2>
-    <p>Track ativo, F-gates concluídos, modos disponíveis, contrato de loadout, conteúdo autorado, próximos passos.</p>
-    <span class="source">implementation/current-status.md</span>
-  </a>
-  <a class="card" href="02-architecture-map.html">
-    <div class="num">02</div>
-    <h2>Mapa de Arquitetura</h2>
-    <p>5 boundaries (Foundation, Gameplay, Presentation, Composition, Online), 7-layer game mode standard, contrato de loadout, modelo de persistência.</p>
-    <span class="source">canon/architecture/</span>
-  </a>
-  <a class="card" href="03-roadmap.html">
-    <div class="num">03</div>
-    <h2>Roadmap</h2>
-    <p>Phases G1-G4 históricas, Track 02 atual, F-gates, release horizons (R1 → next → later → long), princípios de evolução.</p>
-    <span class="source">canon/roadmap/</span>
-  </a>
-  <a class="card" href="04-folder-map.html">
-    <div class="num">04</div>
-    <h2>Mapa de Pastas</h2>
-    <p>Árvore navegável de canon/, Projetos/, migration/, materiais/. Read order canônico e papéis de cada pasta.</p>
-    <span class="source">D:\Estudio (raiz)</span>
-  </a>
+<!-- ── PORTFOLIO BAR ──────────────────────────────────── -->
+<div class="portfolio-bar">
+
+  <div class="pbar-card p0">
+    <div class="pname">⚔ Draxos Roguelike Cardgame</div>
+    <div><span class="pill pill-p0">P0 · Ativo</span> <span style="font-size:11px; color:var(--muted);">draxos-roguelike-cardgame/</span></div>
+    <div class="pnext">🎯 Playtestar rota 13 mapas com upgrades reais</div>
+  </div>
+
+  <div class="pbar-card p1">
+    <div class="pname">📱 RPGMobile</div>
+    <div><span class="pill pill-p1">P1 · Conceito</span></div>
+    <div class="pnext">Detalhar armas, spells, maestria</div>
+  </div>
+
+  <div class="pbar-card p1">
+    <div class="pname">⚡ BattleMobile</div>
+    <div><span class="pill pill-p1">P1 · Conceito</span></div>
+    <div class="pnext">Definir pitch e loop central</div>
+  </div>
+
+  <div class="pbar-card pausado">
+    <div class="pname">🏛 RPG Isométrico</div>
+    <div><span class="pill pill-paused">Pausado</span></div>
+    <div class="pnext">B0: Arena/Survival/Boss validados</div>
+  </div>
+
+  <div class="pbar-card pausado">
+    <div class="pname">🃏 RPG Turnos</div>
+    <div><span class="pill pill-paused">Pausado</span></div>
+    <div class="pnext">Slice 13 encontros, 3 classes</div>
+  </div>
+
+</div>
+
+<!-- ── MAIN GRID ──────────────────────────────────────── -->
+<div class="main-grid">
+
+  <!-- P0 PANEL -->
+  <div class="p0-panel">
+    <div class="p0-label">P0 · Implementação Ativa</div>
+    <h2>Draxos Roguelike Cardgame</h2>
+    <div class="p0-sub">Menu-first roguelike cardgame · Godot 4.6.2 · GDScript</div>
+
+    <div class="p0-grid">
+      <div class="p0-stat">
+        <div class="label">Track Ativa</div>
+        <div class="value">Track 01</div>
+        <div style="font-size:11px; color:#c4b5fd; margin-top:3px;">Playable Run Loop</div>
+      </div>
+      <div class="p0-stat">
+        <div class="label">Status do Track</div>
+        <div class="value yellow">P13 · Real Upgrades</div>
+        <div style="font-size:11px; color:#c4b5fd; margin-top:3px;">Reward Cards Validated</div>
+      </div>
+      <div class="p0-stat">
+        <div class="label">Saves</div>
+        <div class="value green">v3 · 3 slots</div>
+        <div style="font-size:11px; color:#c4b5fd; margin-top:3px;">v2 invalidado / deletável</div>
+      </div>
+      <div class="p0-stat">
+        <div class="label">Rota de Mapas</div>
+        <div class="value green">13 mapas</div>
+        <div style="font-size:11px; color:#c4b5fd; margin-top:3px;">3 tutoriais + 10 principais</div>
+      </div>
+    </div>
+
+    <div class="p0-validation">
+      <span style="font-size:18px;">✅</span>
+      <div>
+        <div style="font-weight:700; font-size:13px;">Validação: 65/65 testes verdes · 511 asserts</div>
+        <div style="font-size:11px; opacity:0.8; margin-top:2px;">46 PNGs opcionais ausentes (by design) · 4 alpha debts não-fatais no overlay do ship</div>
+      </div>
+    </div>
+
+    <div class="p0-next">
+      <strong>Próximo passo</strong>
+      Playtestar a rota completa de 13 mapas em save v3. Depois: tuning de dificuldade e cadência de recompensas.
+    </div>
+  </div>
+
+  <!-- SIDE STACK -->
+  <div class="side-stack">
+
+    <!-- RPGMOBILE -->
+    <div class="concept-card">
+      <div class="clabel">P1 · Conceito</div>
+      <h3>📱 RPGMobile</h3>
+      <div class="csub">RPG mobile de ação em mundo aberto. Sem classes travantes. Loadout livre: 1 arma + 3 spells. Maestria por uso. Lore adiado.</div>
+      <div class="cnext">
+        <strong>Próximo passo</strong>
+        Detalhar armas iniciais, spells, poção, maestria, loot e primeira área conceitual.
+      </div>
+    </div>
+
+    <!-- BATTLEMOBILE -->
+    <div class="concept-card">
+      <div class="clabel">P1 · Conceito</div>
+      <h3>⚡ BattleMobile</h3>
+      <div class="csub">Conceito nomeado. Sem implementação Godot. Pitch, fantasia central e loop principal a definir.</div>
+      <div class="cnext">
+        <strong>Próximo passo</strong>
+        Definir pitch, fantasia central, loop principal e pilares de produto.
+      </div>
+    </div>
+
+    <!-- RPG ISOMETRICO -->
+    <div class="paused-card">
+      <div class="plabel">⏸ Pausado Indefinidamente</div>
+      <h3>RPG Isométrico</h3>
+      <div class="psub">Campaign-first action RPG isométrico. Parado desde 2026-04-26.</div>
+      <div class="pbase">B0: Arena / Survival / Boss jogáveis + frontend campaign-first. F-gates F01→F11 concluídos.</div>
+    </div>
+
+    <!-- RPG TURNOS -->
+    <div class="paused-card">
+      <div class="plabel">⏸ Pausado Indefinidamente</div>
+      <h3>RPG Turnos</h3>
+      <div class="psub">RPG-cardgame por turnos. Lore compartilhada com Draxos mas mecânicas independentes.</div>
+      <div class="pbase">Slice jogável: runtime C1, 3 classes, 13 encontros, ranks, save/load v2. Parado em 2026-05-13.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── BOTTOM GRID ─────────────────────────────────────── -->
+<div class="bottom-grid">
+
+  <!-- TRACK 01 CHECKPOINTS -->
+  <div class="section-card">
+    <h2>TRACK 01 — Checkpoints</h2>
+    <div class="checkpoint-list">
+      <div class="checkpoint done"><span class="check-icon">✓</span><span class="cp-id">P01 Bootstrap</span><span class="cp-name">Projeto Godot, estrutura, validate.gd verde</span></div>
+      <div class="checkpoint done"><span class="check-icon">✓</span><span class="cp-id">P02 Batalha</span><span class="cp-name">Battle engine, lanes, combat loop</span></div>
+      <div class="checkpoint done"><span class="check-icon">✓</span><span class="cp-id">P03 Classes</span><span class="cp-name">Arcano / Invocador / Necromante jogáveis</span></div>
+      <div class="checkpoint done"><span class="check-icon">✓</span><span class="cp-id">P04 ShipHub</span><span class="cp-name">Hub, overlays Deck/Mapa/Almas</span></div>
+      <div class="checkpoint done"><span class="check-icon">✓</span><span class="cp-id">P05 RunMap</span><span class="cp-name">Rota linear 13 nós, 3 tutoriais</span></div>
+      <div class="checkpoint done"><span class="check-icon">✓</span><span class="cp-id">P06 Saves</span><span class="cp-name">Save v3, 3 slots, nomes de jogador</span></div>
+      <div class="checkpoint done"><span class="check-icon">✓</span><span class="cp-id">P07 Rewards</span><span class="cp-name">Recompensas fixas, escolhas, mana/mão</span></div>
+      <div class="checkpoint done"><span class="check-icon">✓</span><span class="cp-id">P08 Mecânicas</span><span class="cp-name">Sacrifício, movimento, IA duelo, Defesa</span></div>
+      <div class="checkpoint done"><span class="check-icon">✓</span><span class="cp-id">P09 Keywords</span><span class="cp-name">Regeneração, Carniça, Remover, Punir, Ritual</span></div>
+      <div class="checkpoint done"><span class="check-icon">✓</span><span class="cp-id">P10 UX Polish</span><span class="cp-name">Modais translúcidos, HUD compacto, adiamentos</span></div>
+      <div class="checkpoint done"><span class="check-icon">✓</span><span class="cp-id">P11 Dificuldade</span><span class="cp-name">Mapas 7-13 reforçados, markers de rota</span></div>
+      <div class="checkpoint done"><span class="check-icon">✓</span><span class="cp-id">P12 Upgrades</span><span class="cp-name">Cartas Lvl 2/Lvl 3 reais nos mapas 3/4/9/12</span></div>
+      <div class="checkpoint active"><span class="check-icon">▶</span><span class="cp-id">P13 Novas Cartas</span><span class="cp-name">2 cartas novas reais por classe em mapas 7/11 · <strong>VALIDADO</strong></span></div>
+      <div class="checkpoint"><span class="check-icon">○</span><span class="cp-id">P14 Playtest</span><span class="cp-name">Rota completa de 13 mapas · tuning dificuldade</span></div>
+    </div>
+  </div>
+
+  <!-- CLASSES + MAPAS -->
+  <div style="display:flex; flex-direction:column; gap:16px;">
+
+    <!-- CLASSES -->
+    <div class="section-card" style="flex:0">
+      <h2>CARTAS POR CLASSE</h2>
+      <div class="class-grid">
+        <div class="class-chip arcano">
+          <div class="cname">🔮 Arcano</div>
+          <div class="crow"><span>Cartas únicas</span><span class="cnum">6</span></div>
+          <div class="crow"><span>Com níveis</span><span class="cnum">18</span></div>
+          <div class="crow"><span>Starter deck</span><span class="cnum">9</span></div>
+          <div style="font-size:10px; color:#7c3aed; margin-top:6px;">Passiva: Fluxo Contínuo<br>Ativa: Rajada Arcana</div>
+        </div>
+        <div class="class-chip invocador">
+          <div class="cname">⚔️ Invocador</div>
+          <div class="crow"><span>Cartas únicas</span><span class="cnum">6</span></div>
+          <div class="crow"><span>Com níveis</span><span class="cnum">18</span></div>
+          <div class="crow"><span>Starter deck</span><span class="cnum">9</span></div>
+          <div style="font-size:10px; color:#1a5c3a; margin-top:6px;">Passiva: Comandante<br>Ativa: Ordem de Guerra</div>
+        </div>
+        <div class="class-chip necro">
+          <div class="cname">💀 Necromante</div>
+          <div class="crow"><span>Cartas únicas</span><span class="cnum">6</span></div>
+          <div class="crow"><span>Com níveis</span><span class="cnum">18</span></div>
+          <div class="crow"><span>Starter deck</span><span class="cnum">9</span></div>
+          <div style="font-size:10px; color:#374151; margin-top:6px;">Passiva: Colheita Sombria<br>Ativa: Ritual das Sombras</div>
+        </div>
+      </div>
+      <div style="margin-top:12px; padding-top:10px; border-top:1px solid var(--line2); display:flex; gap:16px; font-size:12px; color:var(--muted);">
+        <span>+ 15 cartas inimigas (Elementais)</span>
+        <span>+ 18 placeholders de recompensa</span>
+        <span>= <strong>87 cartas total</strong></span>
+      </div>
+    </div>
+
+    <!-- ROTA DE 13 MAPAS -->
+    <div class="section-card" style="flex:1">
+      <h2>ROTA — 13 MAPAS</h2>
+      <div class="map-strip">
+        <div class="map-node tutorial"><div>M01</div><div class="tier">Tutorial</div></div>
+        <div class="map-node tutorial"><div>M02</div><div class="tier">Tutorial</div></div>
+        <div class="map-node tutorial"><div>M03</div><div class="tier">Tutorial</div></div>
+        <div class="map-node normal"><div>M04</div><div class="tier">Limpar</div></div>
+        <div class="map-node normal"><div>M05</div><div class="tier">Ondas</div></div>
+        <div class="map-node normal"><div>M06</div><div class="tier">Duelo</div></div>
+        <div class="map-node normal"><div>M07</div><div class="tier">Defesa</div></div>
+        <div class="map-node boss"><div>M08</div><div class="tier">Chefe 1</div></div>
+        <div class="map-node elite"><div>M09</div><div class="tier">Surviv.</div></div>
+        <div class="map-node elite"><div>M10</div><div class="tier">Elite</div></div>
+        <div class="map-node elite"><div>M11</div><div class="tier">Ondas</div></div>
+        <div class="map-node elite"><div>M12</div><div class="tier">Duelo E.</div></div>
+        <div class="map-node boss"><div>M13</div><div class="tier">Final</div></div>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
+        <span style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--muted);"><span style="width:10px;height:10px;border-radius:2px;background:#e8f4ec;display:inline-block;border:1px solid #a8d5bc"></span>Tutorial</span>
+        <span style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--muted);"><span style="width:10px;height:10px;border-radius:2px;background:#f0e8ff;display:inline-block;border:1px solid #c4b5fd"></span>Normal</span>
+        <span style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--muted);"><span style="width:10px;height:10px;border-radius:2px;background:#fff3d4;display:inline-block;border:1px solid #e0c97a"></span>Elite opcional</span>
+        <span style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--muted);"><span style="width:10px;height:10px;border-radius:2px;background:#fee2e2;display:inline-block;border:1px solid #fca5a5"></span>Boss</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── ESTRUTURA DO WORKSPACE ──────────────────────────── -->
+<div class="section-card">
+  <h2>ESTRUTURA DO WORKSPACE — D:\Estudio</h2>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+    <div class="folder-tree">
+
+<details open>
+<summary><span class="ft-dir">D:\Estudio\</span></summary>
+
+  <div class="leaf" style="margin-left:16px"><span class="ft-file">AGENTS.md</span><span class="ft-note">— governança de agentes (autoridade máxima)</span></div>
+  <div class="leaf" style="margin-left:16px"><span class="ft-file">CLAUDE.md</span><span class="ft-note">— instruções para o Cowork</span></div>
+
+  <details style="margin-left:16px">
+    <summary><span class="ft-dir">canon/</span><span class="role-tag rt-canon">truth compartilhada</span></summary>
+    <div class="leaf" style="margin-left:16px"><span class="ft-dir">product/</span><span class="ft-note">product-vision.md</span></div>
+    <div class="leaf" style="margin-left:16px"><span class="ft-dir">design/</span><span class="ft-note">GDD, progression</span></div>
+    <div class="leaf" style="margin-left:16px"><span class="ft-dir">architecture/</span><span class="ft-note">5 boundaries, 7-layer standard</span></div>
+    <div class="leaf" style="margin-left:16px"><span class="ft-dir">lore/</span><span class="ft-note">shared-lore, draxos-invasion</span></div>
+    <div class="leaf" style="margin-left:16px"><span class="ft-dir">roadmap/</span><span class="ft-note">evolution, release-horizons</span></div>
+    <div class="leaf" style="margin-left:16px"><span class="ft-dir">platform/</span><span class="ft-note">steam-platform</span></div>
+    <div class="leaf" style="margin-left:16px"><span class="ft-file">canon-brief.md</span><span class="ft-note">— leitura rápida de contexto</span></div>
+  </details>
+
+  <details style="margin-left:16px" open>
+    <summary><span class="ft-dir">Projetos/</span></summary>
+
+    <details style="margin-left:16px" open>
+      <summary><span class="ft-dir">draxos-roguelike-cardgame/</span><span class="role-tag rt-active">P0 · ativo</span></summary>
+      <div class="leaf" style="margin-left:16px"><span class="ft-file">AGENTS.md</span><span class="ft-note">— governança local</span></div>
+      <div class="leaf" style="margin-left:16px"><span class="ft-dir">data/definitions/</span><span class="ft-note">slice_catalog.json, visual_assets.json</span></div>
+      <div class="leaf" style="margin-left:16px"><span class="ft-dir">modes/</span><span class="ft-note">battle, boot, deck, run_map, ship_hub, souls</span></div>
+      <div class="leaf" style="margin-left:16px"><span class="ft-dir">core/</span><span class="ft-note">run_session, save_manager, ui_tokens</span></div>
+      <div class="leaf" style="margin-left:16px"><span class="ft-dir">battle/</span><span class="ft-note">battle_engine.gd</span></div>
+      <div class="leaf" style="margin-left:16px"><span class="ft-dir">assets/cards/</span><span class="ft-note">art/, frames/</span></div>
+      <div class="leaf" style="margin-left:16px"><span class="ft-dir">tools/</span><span class="ft-note">validate.gd, content_generator.gd</span></div>
+      <div class="leaf" style="margin-left:16px"><span class="ft-dir">implementation/</span><span class="ft-note">current-status.md, tracks/</span></div>
+    </details>
+
+    <details style="margin-left:16px">
+      <summary><span class="ft-dir">_conceitos/</span></summary>
+      <div class="leaf" style="margin-left:16px"><span class="ft-dir">RPGMobile/</span><span class="role-tag rt-concept">P1 · conceito</span></div>
+      <div class="leaf" style="margin-left:16px"><span class="ft-dir">BattleMobile/</span><span class="role-tag rt-concept">P1 · conceito</span></div>
+    </details>
+
+    <div class="leaf" style="margin-left:16px"><span class="ft-dir">rpg-isometrico/</span><span class="role-tag rt-paused">pausado</span></div>
+    <div class="leaf" style="margin-left:16px"><span class="ft-dir">rpg-turnos/</span><span class="role-tag rt-paused">pausado</span></div>
+  </details>
+
+</details>
+    </div>
+
+    <div class="folder-tree">
+<details open>
+<summary><span class="ft-dir">D:\Estudio\ (cont.)</span></summary>
+
+  <details style="margin-left:16px" open>
+    <summary><span class="ft-dir">08_Coordenacao_Agentes/</span><span class="role-tag rt-coord">hub de coordenação</span></summary>
+    <div class="leaf" style="margin-left:16px"><span class="ft-file">Prioridades_Estudio.md</span><span class="ft-note">— portfolio truth</span></div>
+    <div class="leaf" style="margin-left:16px"><span class="ft-file">Estado_Atual.md</span><span class="ft-note">— snapshot vivo</span></div>
+    <div class="leaf" style="margin-left:16px"><span class="ft-file">Painel_Visual_Estudio.html</span><span class="ft-note">— painel alternativo</span></div>
+    <div class="leaf" style="margin-left:16px"><span class="ft-dir">Kanban/</span><span class="ft-note">Backlog, Doing, Review, Done</span></div>
+    <div class="leaf" style="margin-left:16px"><span class="ft-dir">Decisoes/</span><span class="ft-note">decisões de produto/arquitetura</span></div>
+    <div class="leaf" style="margin-left:16px"><span class="ft-dir">Handoffs/</span><span class="ft-note">handoffs entre agentes</span></div>
+  </details>
+
+  <details style="margin-left:16px">
+    <summary><span class="ft-dir">Visual/</span><span class="ft-note">— esta pasta</span></summary>
+    <div class="leaf" style="margin-left:16px"><span class="ft-file">index.html</span><span class="ft-note">— este dashboard ✓</span></div>
+    <div class="leaf" style="margin-left:16px"><span class="ft-file">draxos-card-browser.html</span><span class="ft-note">— browser de cartas ✓</span></div>
+    <div class="leaf" style="margin-left:16px"><span class="ft-file" style="opacity:0.5">01-status-dashboard.html</span><span class="ft-note" style="color:#991b1b">— obsoleto (rpg-isometrico)</span></div>
+    <div class="leaf" style="margin-left:16px"><span class="ft-file" style="opacity:0.5">02-architecture-map.html</span><span class="ft-note" style="color:#8a5a0a">— valor histórico (arquitetura canon)</span></div>
+    <div class="leaf" style="margin-left:16px"><span class="ft-file" style="opacity:0.5">03-roadmap.html</span><span class="ft-note" style="color:#991b1b">— obsoleto (roadmap rpg-isometrico)</span></div>
+    <div class="leaf" style="margin-left:16px"><span class="ft-file" style="opacity:0.5">04-folder-map.html</span><span class="ft-note" style="color:#8a5a0a">— desatualizado (só mostrava rpg-isometrico)</span></div>
+  </details>
+
+  <details style="margin-left:16px">
+    <summary><span class="ft-dir">migration/</span><span class="role-tag rt-arch">arquivo histórico</span></summary>
+    <div class="leaf" style="margin-left:16px"><span class="ft-note">Cutover, parity, mapping — consulta histórica</span></div>
+  </details>
+
+  <div class="leaf" style="margin-left:16px"><span class="ft-dir">.local-tools/</span><span class="ft-note">godot/4.6.2/, gut-9.6.0/</span></div>
+
+</details>
+    </div>
+  </div>
+</div>
+
+<!-- ── FERRAMENTAS & LINKS ─────────────────────────────── -->
+<div class="section-card">
+  <h2>FERRAMENTAS & VISUALIZAÇÕES</h2>
+  <div class="tools-grid">
+
+    <a class="tool-link" href="draxos-card-browser.html">
+      <div class="tnum">⚔ Draxos</div>
+      <div class="tname">Card Browser</div>
+      <div class="tdesc">87 cartas · 3 classes · visualização por família com 3 níveis lado a lado</div>
+      <span class="tactive">Atualizado · 2026-05-15</span>
+    </a>
+
+    <a class="tool-link" href="../08_Coordenacao_Agentes/Painel_Visual_Estudio.html">
+      <div class="tnum">📊 Coordenação</div>
+      <div class="tname">Painel Visual do Estúdio</div>
+      <div class="tdesc">Portfolio overview em 08_Coordenacao_Agentes/</div>
+      <span class="tactive">Painel alternativo</span>
+    </a>
+
+    <a class="tool-link" href="02-architecture-map.html">
+      <div class="tnum">🏗 Canon</div>
+      <div class="tname">Mapa de Arquitetura</div>
+      <div class="tdesc">5 boundaries + 7-layer mode standard (arquitetura compartilhada do canon)</div>
+      <span class="tarchive">Referência histórica</span>
+    </a>
+
+    <a class="tool-link" href="01-status-dashboard.html" style="opacity:0.5">
+      <div class="tnum">⚠ Obsoleto</div>
+      <div class="tname">Status RPG Isométrico</div>
+      <div class="tdesc">Track 02, F-gates F01–F11. Projeto está pausado.</div>
+      <span class="tstale">Obsoleto — pode deletar</span>
+    </a>
+
+    <a class="tool-link" href="03-roadmap.html" style="opacity:0.5">
+      <div class="tnum">⚠ Obsoleto</div>
+      <div class="tname">Roadmap RPG Isométrico</div>
+      <div class="tdesc">G1-G4, F-gates, release horizons do rpg-isometrico.</div>
+      <span class="tstale">Obsoleto — pode deletar</span>
+    </a>
+
+    <a class="tool-link" href="04-folder-map.html" style="opacity:0.5">
+      <div class="tnum">⚠ Desatualizado</div>
+      <div class="tname">Mapa de Pastas (antigo)</div>
+      <div class="tdesc">Só mostrava rpg-isometrico. Substituído pela seção acima.</div>
+      <span class="tstale">Desatualizado — pode deletar</span>
+    </a>
+
+  </div>
 </div>
 
 <div class="footer">
-  Como atualizar: peça pra mim "atualiza os visuais do Estúdio" depois de mudanças importantes em <code>canon/</code> ou <code>implementation/current-status.md</code>.
+  Para atualizar este dashboard: peça "atualiza o dashboard do estúdio" após mudanças em <code>Estado_Atual.md</code> ou <code>Prioridades_Estudio.md</code>.
+  Fontes: <code>08_Coordenacao_Agentes/Estado_Atual.md</code> · <code>08_Coordenacao_Agentes/Prioridades_Estudio.md</code> · <code>Projetos/draxos-roguelike-cardgame/implementation/current-status.md</code>
 </div>
+
 </body>
 </html>

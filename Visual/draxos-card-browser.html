@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Draxos — Card Browser</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0f172a;
+      color: #e2e8f0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 14px;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header h1 { font-size: 18px; font-weight: 700; color: #f8fafc; }
+    header .subtitle { color: #64748b; font-size: 12px; margin-top: 2px; }
+
+    .controls {
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      padding: 10px 24px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 53px;
+      z-index: 9;
+    }
+
+    .tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+
+    .tab-btn {
+      padding: 6px 14px;
+      border-radius: 6px;
+      border: 1px solid #334155;
+      background: transparent;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .tab-btn:hover { background: #334155; color: #e2e8f0; }
+    .tab-btn.active { color: white; border-color: transparent; }
+
+    .divider { width: 1px; height: 22px; background: #334155; margin: 0 2px; flex-shrink: 0; }
+
+    .filter-group { display: flex; gap: 5px; align-items: center; }
+    .filter-label { color: #475569; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
+
+    .filter-btn {
+      padding: 4px 10px;
+      border-radius: 4px;
+      border: 1px solid #334155;
+      background: transparent;
+      color: #64748b;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 500;
+      transition: all 0.12s;
+      white-space: nowrap;
+    }
+    .filter-btn:hover { background: #334155; color: #cbd5e1; }
+    .filter-btn.active { background: #334155; color: #e2e8f0; border-color: #475569; }
+
+    .toggle-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      color: #64748b;
+      font-size: 12px;
+      user-select: none;
+    }
+    .toggle-label input { accent-color: #94a3b8; }
+
+    main { padding: 20px 24px; }
+
+    .class-section { display: none; }
+    .class-section.visible { display: block; }
+
+    .family-row { margin-bottom: 24px; }
+
+    .family-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .family-name { font-size: 14px; font-weight: 600; color: #f1f5f9; }
+
+    .type-pill {
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .pill-magia  { background: #1e3a5f; color: #60a5fa; }
+    .pill-criatura { background: #1a3329; color: #34d399; }
+
+    .kw-chip {
+      padding: 2px 7px;
+      border-radius: 3px;
+      font-size: 10px;
+      font-weight: 600;
+      background: rgba(255,255,255,0.07);
+      color: #94a3b8;
+      text-transform: capitalize;
+    }
+
+    .cards-row { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-start; }
+
+    .card-wrapper { display: flex; flex-direction: column; gap: 5px; }
+
+    .level-label {
+      text-align: center;
+      font-size: 10px;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      font-weight: 700;
+    }
+
+    .card {
+      width: 158px;
+      border-radius: 10px;
+      border: 1px solid #334155;
+      background: #1e293b;
+      overflow: hidden;
+      transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+      position: relative;
+      cursor: default;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      border-color: rgba(255,255,255,0.2) !important;
+    }
+    .card.is-placeholder { opacity: 0.45; }
+
+    .card-top {
+      padding: 9px 9px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .card-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: #f1f5f9;
+      line-height: 1.35;
+      flex: 1;
+    }
+
+    .cost-gem {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,0.15);
+    }
+
+    .card-art {
+      width: 100%;
+      height: 88px;
+      margin-top: 8px;
+      overflow: hidden;
+      background: #0a0f1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-art img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+    }
+    .card-art-icon { font-size: 32px; opacity: 0.25; }
+
+    .card-body { padding: 7px 9px 9px; }
+
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+
+    .card-stats { display: flex; gap: 8px; }
+    .stat { display: flex; align-items: center; gap: 2px; font-size: 12px; font-weight: 700; }
+    .stat-atk { color: #f87171; }
+    .stat-hp  { color: #4ade80; }
+    .stat-icon { font-size: 9px; opacity: 0.6; }
+
+    .card-keywords { display: flex; flex-wrap: wrap; gap: 3px; margin-bottom: 5px; }
+
+    .card-text { font-size: 10.5px; color: #94a3b8; line-height: 1.5; }
+
+    .placeholder-tag {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: #7f1d1d;
+      color: #fca5a5;
+      font-size: 8px;
+      font-weight: 700;
+      padding: 2px 5px;
+      border-radius: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .no-results {
+      padding: 40px 24px;
+      text-align: center;
+      color: #334155;
+      font-size: 14px;
+    }
+
+    .stats-bar {
+      background: #1e293b;
+      border-top: 1px solid #1e293b;
+      padding: 8px 24px;
+      display: flex;
+      gap: 20px;
+      font-size: 11px;
+      color: #475569;
+      position: sticky;
+      bottom: 0;
+    }
+    .stats-bar strong { color: #64748b; }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+
+    /* ── DESIGNER ──────────────────────────────────────────────────── */
+    .designer-panel { display: none; gap: 24px; flex-wrap: wrap; max-width: 900px; }
+    .designer-panel.visible { display: flex; }
+
+    .designer-form {
+      flex: 0 0 310px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 20px;
+      align-self: flex-start;
+    }
+    .designer-form h2 { font-size: 14px; font-weight: 700; color: #f1f5f9; margin-bottom: 16px; }
+
+    .form-field { margin-bottom: 12px; }
+    .form-field label {
+      display: block;
+      font-size: 11px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+    .form-field input,
+    .form-field select,
+    .form-field textarea {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      color: #e2e8f0;
+      font-size: 13px;
+      padding: 7px 10px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .form-field input:focus,
+    .form-field select:focus,
+    .form-field textarea:focus { border-color: #8b5cf6; }
+    .form-field textarea { resize: vertical; min-height: 100px; line-height: 1.5; }
+    .form-field select option { background: #1e293b; }
+
+    .form-row { display: flex; gap: 8px; }
+    .form-row .form-field { flex: 1; }
+
+    .btn-add {
+      width: 100%;
+      padding: 9px;
+      background: #8b5cf6;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: background 0.15s;
+    }
+    .btn-add:hover { background: #7c3aed; }
+
+    .designer-list { flex: 1; min-width: 260px; }
+    .designer-list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .designer-list-header h2 { font-size: 14px; font-weight: 700; color: #f1f5f9; }
+
+    .pending-empty { color: #334155; font-size: 13px; padding: 20px 0; }
+
+    .pending-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .pending-card-info { flex: 1; min-width: 0; }
+    .pending-card-name { font-size: 13px; font-weight: 700; color: #f1f5f9; margin-bottom: 3px; }
+    .pending-card-meta { font-size: 11px; color: #475569; margin-bottom: 5px; }
+    .pending-card-msg {
+      font-size: 11px;
+      color: #94a3b8;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .btn-done {
+      padding: 4px 10px;
+      background: #14532d;
+      border: 1px solid #166534;
+      border-radius: 5px;
+      color: #4ade80;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.12s;
+    }
+    .btn-done:hover { background: #166534; }
+
+    .btn-export {
+      margin-top: 12px;
+      width: 100%;
+      padding: 9px;
+      background: transparent;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-export:hover { border-color: #475569; color: #e2e8f0; }
+    .btn-export:disabled { opacity: 0.3; cursor: default; pointer-events: none; }
+
+    .pending-count-badge {
+      background: #334155;
+      color: #94a3b8;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 99px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="subtitle" style="font-size:11px; color:#334155; letter-spacing:0.08em; text-transform:uppercase; font-weight:600;">DRAXOS ROGUELIKE</div>
+    <h1>Card Browser</h1>
+    <div class="subtitle">Track 01 · slice_catalog.json</div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="tabs" id="tabs"></div>
+  <div class="divider"></div>
+  <div class="filter-group">
+    <span class="filter-label">Tipo</span>
+    <button class="filter-btn active" data-filter="type" data-value="all">Todos</button>
+    <button class="filter-btn" data-filter="type" data-value="magia">Magia</button>
+    <button class="filter-btn" data-filter="type" data-value="criatura">Criatura</button>
+  </div>
+  <div class="divider"></div>
+  <div class="filter-group">
+    <span class="filter-label">Keyword</span>
+    <button class="filter-btn active" data-filter="kw" data-value="all">Todos</button>
+    <button class="filter-btn" data-filter="kw" data-value="defensor">Defensor</button>
+    <button class="filter-btn" data-filter="kw" data-value="iniciativa">Iniciativa</button>
+    <button class="filter-btn" data-filter="kw" data-value="reviver">Reviver</button>
+    <button class="filter-btn" data-filter="kw" data-value="regeneracao">Regeneração</button>
+    <button class="filter-btn" data-filter="kw" data-value="carnica">Carniça</button>
+  </div>
+  <div class="divider"></div>
+  <label class="toggle-label">
+    <input type="checkbox" id="hidePlaceholders" checked>
+    Ocultar placeholders
+  </label>
+</div>
+
+<main id="main"></main>
+
+<div class="stats-bar" id="statsBar"></div>
+
+<script>
+// ─── DATA (embedded from slice_catalog.json) ─────────────────────────────────
+
+const ART_BASE = '../Projetos/draxos-roguelike-cardgame/assets/cards/art/';
+
+const CARDS = [
+  // ── ARCANO ──────────────────────────────────────────────────────────────
+  { id:"arcano_choque",           display_name:"Choque",               type:"magia",   cost:1,                      text:"Causa 2 de dano a qualquer criatura ou herói inimigo válido." },
+  { id:"arcano_choque_lvl2",      display_name:"Choque",               type:"magia",   cost:1,                      text:"Causa 3 de dano a qualquer criatura ou herói inimigo válido." },
+  { id:"arcano_choque_lvl3",      display_name:"Choque",               type:"magia",   cost:0,                      text:"Causa 3 de dano. Custo reduzido a 0." },
+  { id:"arcano_fagulha",          display_name:"Fagulha Arcana",        type:"criatura",cost:1, attack:1, health:2,  text:"Enquanto em campo: +1 Poder de habilidade." },
+  { id:"arcano_fagulha_lvl2",     display_name:"Fagulha Arcana",        type:"criatura",cost:1, attack:2, health:4,  text:"Enquanto em campo: +1 Poder de habilidade." },
+  { id:"arcano_fagulha_lvl3",     display_name:"Fagulha Arcana",        type:"criatura",cost:1, attack:2, health:4,  text:"Enquanto em campo: +4 Poder de habilidade." },
+  { id:"arcano_barreira",         display_name:"Barreira Arcana",       type:"criatura",cost:1, attack:1, health:3,  keywords:["defensor"], text:"Defensor. Enquanto em campo: +1 Poder de habilidade." },
+  { id:"arcano_barreira_lvl2",    display_name:"Barreira Arcana",       type:"criatura",cost:1, attack:1, health:6,  keywords:["defensor"], text:"Defensor. Enquanto em campo: +1 Poder de habilidade." },
+  { id:"arcano_barreira_lvl3",    display_name:"Barreira Arcana",       type:"criatura",cost:1, attack:1, health:6,  keywords:["defensor"], text:"Defensor. Enquanto em campo: +4 Poder de habilidade." },
+  { id:"arcano_tempestade",       display_name:"Tempestade Arcana",     type:"magia",   cost:2,                      text:"Causa 4 pontos de dano distribuídos aleatoriamente entre alvos inimigos." },
+  { id:"arcano_tempestade_lvl2",  display_name:"Tempestade Arcana",     type:"magia",   cost:2,                      text:"Causa 6 pontos de dano distribuídos aleatoriamente entre alvos inimigos." },
+  { id:"arcano_tempestade_lvl3",  display_name:"Tempestade Arcana",     type:"magia",   cost:1,                      text:"Causa 6 pontos de dano. Custo reduzido a 1." },
+  { id:"arcano_bola_de_fogo",     display_name:"Bola de Fogo",          type:"magia",   cost:2,                      text:"Causa 1 de dano no alvo e 1 nos slots adjacentes." },
+  { id:"arcano_bola_de_fogo_lvl2",display_name:"Bola de Fogo",          type:"magia",   cost:2,                      text:"Causa 2 de dano no alvo e 2 nos slots adjacentes." },
+  { id:"arcano_bola_de_fogo_lvl3",display_name:"Bola de Fogo",          type:"magia",   cost:2,                      text:"Causa 6 de dano no alvo e 2 nos slots adjacentes." },
+  { id:"arcano_acelerar",         display_name:"Acelerar",              type:"magia",   cost:0,                      text:"Ganha +1 mana até o final do turno." },
+  { id:"arcano_acelerar_lvl2",    display_name:"Acelerar",              type:"magia",   cost:0,                      text:"Ganha +1 mana e +1 Poder de habilidade até o final do turno." },
+  { id:"arcano_acelerar_lvl3",    display_name:"Acelerar",              type:"magia",   cost:0,                      text:"Ganha +2 mana e +1 Poder de habilidade até o final do turno." },
+
+  // ── INVOCADOR ────────────────────────────────────────────────────────────
+  { id:"invocador_soldado",       display_name:"Soldado Arcano",        type:"criatura",cost:1, attack:2, health:2,  text:"Criatura de linha arcana." },
+  { id:"invocador_soldado_lvl2",  display_name:"Soldado Arcano",        type:"criatura",cost:1, attack:3, health:4,  text:"Criatura de linha arcana." },
+  { id:"invocador_soldado_lvl3",  display_name:"Soldado Arcano",        type:"criatura",cost:1, attack:4, health:5,  keywords:["regeneracao"], text:"Regeneração 2." },
+  { id:"invocador_batedor",       display_name:"Batedor Arcano",        type:"criatura",cost:1, attack:2, health:1,  keywords:["iniciativa"], text:"Iniciativa: causa dano primeiro na lane." },
+  { id:"invocador_batedor_lvl2",  display_name:"Batedor Arcano",        type:"criatura",cost:1, attack:3, health:2,  keywords:["iniciativa"], text:"Iniciativa: causa dano primeiro na lane." },
+  { id:"invocador_batedor_lvl3",  display_name:"Batedor Arcano",        type:"criatura",cost:1, attack:6, health:2,  keywords:["iniciativa"], text:"Iniciativa: causa dano primeiro na lane." },
+  { id:"invocador_promover",      display_name:"Promover",              type:"magia",   cost:1,                      text:"Escolha uma criatura aliada, depois escolha +1/+1, Iniciativa ou Defensor." },
+  { id:"invocador_promover_lvl2", display_name:"Promover",              type:"magia",   cost:1,                      text:"Escolha uma criatura aliada, depois escolha 2 entre +1/+1, Iniciativa ou Defensor." },
+  { id:"invocador_promover_lvl3", display_name:"Promover",              type:"magia",   cost:1,                      text:"A criatura aliada recebe +1/+1, Iniciativa e Defensor." },
+  { id:"invocador_guardiao",      display_name:"Guardião Arcano",       type:"criatura",cost:2, attack:2, health:4,  keywords:["defensor"], text:"Defensor: protege lanes vazias." },
+  { id:"invocador_guardiao_lvl2", display_name:"Guardião Arcano",       type:"criatura",cost:2, attack:3, health:6,  keywords:["defensor"], text:"Defensor: protege lanes vazias." },
+  { id:"invocador_guardiao_lvl3", display_name:"Guardião Arcano",       type:"criatura",cost:2, attack:4, health:8,  keywords:["defensor","regeneracao"], text:"Defensor. Regeneração 3." },
+  { id:"invocador_atacar",        display_name:"Atacar",                type:"magia",   cost:2,                      text:"Todas as criaturas aliadas recebem +1/+1 até o final do turno." },
+  { id:"invocador_atacar_lvl2",   display_name:"Atacar",                type:"magia",   cost:2,                      text:"Todas as criaturas aliadas recebem +2/+2 até o final do turno." },
+  { id:"invocador_atacar_lvl3",   display_name:"Atacar",                type:"magia",   cost:2,                      text:"Todas as criaturas aliadas recebem +4/+4 até o final do turno." },
+  { id:"invocador_golem",         display_name:"Golem",                 type:"criatura",cost:3, attack:4, health:5,  keywords:["defensor"], text:"Defensor." },
+  { id:"invocador_golem_lvl2",    display_name:"Golem",                 type:"criatura",cost:3, attack:5, health:7,  keywords:["defensor","regeneracao"], text:"Defensor. Regeneração 2." },
+  { id:"invocador_golem_lvl3",    display_name:"Golem",                 type:"criatura",cost:3, attack:6, health:10, keywords:["defensor","regeneracao"], text:"Defensor. Regeneração 4." },
+
+  // ── NECROMANTE ───────────────────────────────────────────────────────────
+  { id:"necro_esqueleto",         display_name:"Esqueleto",             type:"criatura",cost:1, attack:1, health:1,  keywords:["reviver"], text:"Reviver: volta uma vez no mesmo slot." },
+  { id:"necro_esqueleto_lvl2",    display_name:"Esqueleto",             type:"criatura",cost:1, attack:2, health:2,  keywords:["reviver"], text:"Reviver: volta uma vez no mesmo slot." },
+  { id:"necro_esqueleto_lvl3",    display_name:"Esqueleto",             type:"criatura",cost:1, attack:4, health:4,  keywords:["reviver"], text:"Reviver: volta uma vez no mesmo slot." },
+  { id:"necro_morto_vivo",        display_name:"Morto Vivo",            type:"criatura",cost:1, attack:1, health:1,  text:"Ao morrer: Enfraquecer 1." },
+  { id:"necro_morto_vivo_lvl2",   display_name:"Morto Vivo",            type:"criatura",cost:1, attack:1, health:1,  text:"Ao morrer: Enfraquecer 2." },
+  { id:"necro_morto_vivo_lvl3",   display_name:"Morto Vivo",            type:"criatura",cost:1, attack:2, health:2,  text:"Ao morrer: Enfraquecer 3." },
+  { id:"necro_prender",           display_name:"Prender",               type:"magia",   cost:1,                      text:"A criatura inimiga alvo não ataca no próximo combate." },
+  { id:"necro_prender_lvl2",      display_name:"Prender",               type:"magia",   cost:1,                      text:"A criatura inimiga alvo não ataca no próximo combate e recebe Enfraquecer 1." },
+  { id:"necro_prender_lvl3",      display_name:"Prender",               type:"magia",   cost:1,                      text:"Não ataca no próximo combate, recebe Enfraquecer 1 e perde keywords." },
+  { id:"necro_zumbi",             display_name:"Zumbi",                 type:"criatura",cost:2, attack:2, health:2,  text:"Ao morrer: Enfraquecer 1." },
+  { id:"necro_zumbi_lvl2",        display_name:"Zumbi",                 type:"criatura",cost:2, attack:3, health:3,  text:"Ao morrer: Enfraquecer 2." },
+  { id:"necro_zumbi_lvl3",        display_name:"Zumbi",                 type:"criatura",cost:2, attack:4, health:4,  text:"Ao morrer: Enfraquecer 4." },
+  { id:"necro_carniceiro",        display_name:"Carniceiro",            type:"criatura",cost:3, attack:2, health:2,  keywords:["carnica"], text:"Carniça 1: quando outra criatura morre, recebe +1/+1 permanente." },
+  { id:"necro_carniceiro_lvl2",   display_name:"Carniceiro",            type:"criatura",cost:3, attack:4, health:4,  keywords:["carnica"], text:"Carniça 1: quando outra criatura morre, recebe +1/+1 permanente." },
+  { id:"necro_carniceiro_lvl3",   display_name:"Carniceiro",            type:"criatura",cost:3, attack:4, health:4,  keywords:["carnica"], text:"Carniça 2: quando outra criatura morre, recebe +2/+2 permanente." },
+  { id:"necro_punir",             display_name:"Punir",                 type:"magia",   cost:1,                      text:"A criatura alvo recebe -1/-1 permanente; se estiver presa, recebe -3/-3." },
+  { id:"necro_punir_lvl2",        display_name:"Punir",                 type:"magia",   cost:1,                      text:"A criatura alvo recebe -2/-2 permanente; se estiver presa, recebe -5/-5." },
+  { id:"necro_punir_lvl3",        display_name:"Punir",                 type:"magia",   cost:0,                      text:"A criatura alvo recebe -2/-2 permanente; se estiver presa, recebe -5/-5. Custo: 0." },
+
+  // ── ELEMENTAIS ───────────────────────────────────────────────────────────
+  { id:"elemental_menor",              display_name:"Elemental Menor",             type:"criatura",cost:1, attack:1, health:2,  text:"Onda inicial." },
+  { id:"elemental_agil",               display_name:"Elemental Ágil",              type:"criatura",cost:1, attack:2, health:2,  text:"Ameaça rápida." },
+  { id:"elemental_bruto",              display_name:"Elemental Bruto",             type:"criatura",cost:2, attack:3, health:3,  text:"Maior ameaça de dano inicial." },
+  { id:"elemental_solido",             display_name:"Elemental Sólido",            type:"criatura",cost:2, attack:1, health:5,  text:"Criatura resistente de baixo dano." },
+  { id:"elemental_medio",              display_name:"Elemental Médio",             type:"criatura",cost:2, attack:2, health:3,  text:"Pressão intermediária." },
+  { id:"elemental_duelista",           display_name:"Elemental Duelista",          type:"criatura",cost:2, attack:2, health:4,  text:"Pressão para duelo." },
+  { id:"elemental_assaltante",         display_name:"Elemental Assaltante",        type:"criatura",cost:2, attack:3, health:2,  text:"Mockup ofensivo para lanes." },
+  { id:"elemental_assaltante_veloz",   display_name:"Elemental Assaltante Veloz",  type:"criatura",cost:2, attack:3, health:2,  keywords:["iniciativa"], text:"Iniciativa: causa dano primeiro na lane." },
+  { id:"elemental_pesado_a",           display_name:"Elemental Pesado A",          type:"criatura",cost:3, attack:3, health:4,  text:"Pressão final de ondas." },
+  { id:"elemental_pesado_b",           display_name:"Elemental Pesado B",          type:"criatura",cost:3, attack:2, health:4,  text:"Pressão final de ondas." },
+  { id:"elemental_pesado_c",           display_name:"Elemental Pesado C",          type:"criatura",cost:3, attack:1, health:4,  text:"Pressão final de ondas." },
+  { id:"elemental_guardiao",           display_name:"Elemental Guardião",          type:"criatura",cost:3, attack:2, health:6,  text:"Mockup defensivo escalado." },
+  { id:"elemental_elite_agil",         display_name:"Elemental Elite Ágil",        type:"criatura",cost:3, attack:4, health:3,  keywords:["iniciativa"], text:"Iniciativa: causa dano primeiro na lane." },
+  { id:"elemental_elite_bruto",        display_name:"Elemental Elite Bruto",       type:"criatura",cost:4, attack:4, health:5,  text:"Mockup elite de alto dano." },
+  { id:"elemental_tita",               display_name:"Elemental Titã",              type:"criatura",cost:5, attack:5, health:6,  text:"Mockup pesado de fim de run." },
+
+  // ── PLACEHOLDERS ─────────────────────────────────────────────────────────
+  { id:"arcano_recompensa_1",    display_name:"Arcano A Definir 1",     type:"criatura",cost:1, attack:1, health:2, text:"Recompensa placeholder.", placeholder_design:true },
+  { id:"arcano_recompensa_2",    display_name:"Arcano A Definir 2",     type:"criatura",cost:1, attack:2, health:2, text:"Recompensa placeholder.", placeholder_design:true },
+  { id:"arcano_recompensa_3",    display_name:"Arcano A Definir 3",     type:"criatura",cost:2, attack:2, health:3, text:"Recompensa placeholder.", placeholder_design:true },
+  { id:"arcano_recompensa_4",    display_name:"Arcano A Definir 4",     type:"criatura",cost:2, attack:3, health:3, text:"Recompensa placeholder.", placeholder_design:true },
+  { id:"arcano_recompensa_5",    display_name:"Arcano A Definir 5",     type:"criatura",cost:3, attack:3, health:4, text:"Recompensa placeholder.", placeholder_design:true },
+  { id:"arcano_recompensa_6",    display_name:"Arcano A Definir 6",     type:"criatura",cost:3, attack:4, health:4, text:"Recompensa placeholder.", placeholder_design:true },
+  { id:"invocador_recompensa_1", display_name:"Invocador A Definir 1",  type:"criatura",cost:1, attack:1, health:2, text:"Recompensa placeholder.", placeholder_design:true },
+  { id:"invocador_recompensa_2", display_name:"Invocador A Definir 2",  type:"criatura",cost:1, attack:2, health:2, text:"Recompensa placeholder.", placeholder_design:true },
+  { id:"invocador_recompensa_3", display_name:"Invocador A Definir 3",  type:"criatura",cost:2, attack:2, health:3, text:"Recompensa placeholder.", placeholder_design:true },
+  { id:"invocador_recompensa_4", display_name:"Invocador A Definir 4",  type:"criatura",cost:2, attack:3, health:3, text:"Recompensa placeholder.", placeholder_design:true },
+  { id:"invocador_recompensa_5", display_name:"Invocador A Definir 5",  type:"criatura",cost:3, attack:3, health:4, text:"Recompensa placeholder.", placeholder_design:true },
+  { id:"invocador_recompensa_6", display_name:"Invocador A Definir 6",  type:"criatura",cost:3, attack:4, health:4, text:"Recompensa placeholder.", placeholder_design:true },
+  { id:"necro_recompensa_1",     display_name:"Necromante A Definir 1", type:"criatura",cost:1, attack:1, health:2, text:"Recompensa placeholder.", placeholder_design:true },
+  { id:"necro_recompensa_2",     display_name:"Necromante A Definir 2", type:"criatura",cost:1, attack:2, health:2, text:"Recompensa placeholder.", placeholder_design:true },
+  { id:"necro_recompensa_3",     display_name:"Necromante A Definir 3", type:"criatura",cost:2, attack:2, health:3, text:"Recompensa placeholder.", placeholder_design:true },
+  { id:"necro_recompensa_4",     display_name:"Necromante A Definir 4", type:"criatura",cost:2, attack:3, health:3, text:"Recompensa placeholder.", placeholder_design:true },
+  { id:"necro_recompensa_5",     display_name:"Necromante A Definir 5", type:"criatura",cost:3, attack:3, health:4, text:"Recompensa placeholder.", placeholder_design:true },
+  { id:"necro_recompensa_6",     display_name:"Necromante A Definir 6", type:"criatura",cost:3, attack:4, health:4, text:"Recompensa placeholder.", placeholder_design:true },
+];
+
+// ─── CLASS CONFIG ─────────────────────────────────────────────────────────────
+
+const CLASSES = [
+  { id:'arcano',      name:'Arcano',      prefix:'arcano_',      color:'#8b5cf6', bg:'#13082a', emoji:'🔮' },
+  { id:'invocador',   name:'Invocador',   prefix:'invocador_',   color:'#10b981', bg:'#061a10', emoji:'⚔️' },
+  { id:'necromante',  name:'Necromante',  prefix:'necro_',       color:'#94a3b8', bg:'#0e1117', emoji:'💀' },
+  { id:'elemental',   name:'Elementais',  prefix:'elemental_',   color:'#f59e0b', bg:'#1a0e00', emoji:'🔥' },
+  { id:'placeholder', name:'Placeholders',prefix:null,           color:'#475569', bg:'#0f172a', emoji:'📋' },
+];
+
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+
+function getFamilyId(id)  { return id.replace(/_lvl[23]$/, ''); }
+function getLevel(id)     { return id.endsWith('_lvl3') ? 'Nível 3' : id.endsWith('_lvl2') ? 'Nível 2' : 'Base'; }
+
+function getClass(card) {
+  for (const cls of CLASSES) {
+    if (cls.prefix && card.id.startsWith(cls.prefix)) return cls;
+  }
+  return CLASSES.find(c => c.id === 'placeholder');
+}
+
+// Cards that have art files
+const ART_IDS = new Set([
+  'arcano_barreira','arcano_choque','arcano_fagulha','arcano_tempestade',
+  'invocador_batedor','invocador_guardiao','invocador_promover','invocador_soldado',
+  'necro_esqueleto','necro_morto_vivo','necro_prender','necro_zumbi'
+]);
+
+function hasArt(familyId) { return ART_IDS.has(familyId); }
+
+// ─── GROUP ────────────────────────────────────────────────────────────────────
+
+function buildGroups() {
+  const groups = {};
+  CLASSES.forEach(cls => { groups[cls.id] = {}; });
+
+  for (const card of CARDS) {
+    const cls = getClass(card);
+    const fid = getFamilyId(card.id);
+    if (!groups[cls.id][fid]) groups[cls.id][fid] = [];
+    groups[cls.id][fid].push(card);
+  }
+
+  // Sort levels within each family
+  for (const clsId of Object.keys(groups)) {
+    for (const fid of Object.keys(groups[clsId])) {
+      groups[clsId][fid].sort((a, b) => {
+        const n = id => id.endsWith('_lvl3') ? 3 : id.endsWith('_lvl2') ? 2 : 1;
+        return n(a.id) - n(b.id);
+      });
+    }
+  }
+
+  return groups;
+}
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+
+function cardHTML(card, cls) {
+  const fid        = getFamilyId(card.id);
+  const isPlaceh   = !!card.placeholder_design;
+  const keywords   = card.keywords || [];
+  const hasStats   = card.type === 'criatura' && card.attack !== undefined;
+  const artPath    = hasArt(fid) ? (ART_BASE + fid + '.png') : null;
+  const costAlpha  = `${cls.color}33`;
+  const borderAlpha= `${cls.color}44`;
+
+  const artBlock = artPath
+    ? `<img src="${artPath}" alt="" loading="lazy" onerror="this.parentNode.innerHTML='<div class=\\'card-art-icon\\'>${card.type === 'magia' ? '✨' : '🐉'}</div>'">`
+    : `<div class="card-art-icon">${card.type === 'magia' ? '✨' : '🐉'}</div>`;
+
+  const statsBlock = hasStats
+    ? `<div class="card-stats">
+         <div class="stat stat-atk"><span class="stat-icon">⚔</span>${card.attack}</div>
+         <div class="stat stat-hp"><span class="stat-icon">❤</span>${card.health}</div>
+       </div>`
+    : '';
+
+  const kwBlock = keywords.length
+    ? `<div class="card-keywords">${keywords.map(k => `<span class="kw-chip">${k}</span>`).join('')}</div>`
+    : '';
+
+  return `
+    <div class="card ${isPlaceh ? 'is-placeholder' : ''}"
+         style="background:${cls.bg}; border-color:${borderAlpha};">
+      ${isPlaceh ? '<div class="placeholder-tag">A definir</div>' : ''}
+      <div class="card-top">
+        <div class="card-name">${card.display_name}</div>
+        <div class="cost-gem" style="background:${costAlpha}; color:${cls.color}; border-color:${cls.color}55;">${card.cost}</div>
+      </div>
+      <div class="card-art">${artBlock}</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="type-pill ${card.type === 'magia' ? 'pill-magia' : 'pill-criatura'}">${card.type}</span>
+          ${statsBlock}
+        </div>
+        ${kwBlock}
+        <div class="card-text">${card.text}</div>
+      </div>
+    </div>`;
+}
+
+function sectionHTML(cls, families) {
+  const entries = Object.entries(families);
+  if (!entries.length) return '';
+
+  const rows = entries.map(([fid, fCards]) => {
+    const base     = fCards[0];
+    const multi    = fCards.length > 1;
+    const kws      = (base.keywords || []).join(',');
+    const baseName = base.display_name.replace(/ Lvl \d$/, '');
+
+    const cardsInRow = fCards.map(c => `
+      <div class="card-wrapper">
+        ${multi ? `<div class="level-label">${getLevel(c.id)}</div>` : ''}
+        ${cardHTML(c, cls)}
+      </div>`).join('');
+
+    return `
+      <div class="family-row"
+           data-type="${base.type}"
+           data-kw="${kws}"
+           data-placeholder="${base.placeholder_design ? '1' : '0'}">
+        <div class="family-header">
+          <span class="family-name">${baseName}</span>
+          <span class="type-pill ${base.type === 'magia' ? 'pill-magia' : 'pill-criatura'}">${base.type}</span>
+          ${(base.keywords||[]).map(k => `<span class="kw-chip">${k}</span>`).join('')}
+          <span style="margin-left:auto; font-size:11px; color:#334155;">${fCards.length} carta${fCards.length > 1 ? 's' : ''}</span>
+        </div>
+        <div class="cards-row">${cardsInRow}</div>
+      </div>`;
+  });
+
+  return `<div class="class-section" id="section-${cls.id}">${rows.join('')}</div>`;
+}
+
+// ─── DESIGNER ────────────────────────────────────────────────────────────────
+
+const LS_KEY = 'draxos_pending_cards';
+
+function loadPending() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); }
+  catch { return []; }
+}
+function savePending(list) { localStorage.setItem(LS_KEY, JSON.stringify(list)); }
+
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderDesigner() {
+  const pending = loadPending();
+  const listEl  = document.getElementById('pending-list');
+  const badge   = document.getElementById('pending-badge');
+  const expBtn  = document.getElementById('btn-export');
+  if (badge) badge.textContent = pending.length;
+  if (expBtn) expBtn.disabled = pending.length === 0;
+
+  if (!listEl) return;
+
+  if (pending.length === 0) {
+    listEl.innerHTML = '<div class="pending-empty">Nenhum card pendente. Use o formulário ao lado.</div>';
+    return;
+  }
+
+  listEl.innerHTML = pending.map((c, i) => `
+    <div class="pending-card">
+      <div class="pending-card-info">
+        <div class="pending-card-name">${escHtml(c.name)}</div>
+        <div class="pending-card-meta">
+          ${escHtml(c.classe)} · ${escHtml(c.tipo)} · custo ${c.custo}
+          <span style="margin-left:6px; color:#334155;">· ${escHtml(c.date)}</span>
+        </div>
+        <div class="pending-card-msg">${escHtml(c.message)}</div>
+      </div>
+      <button class="btn-done" onclick="markDone(${i})">✓ Implementado</button>
+    </div>`).join('');
+}
+
+function addCard() {
+  const name    = document.getElementById('d-name').value.trim();
+  const classe  = document.getElementById('d-classe').value;
+  const tipo    = document.getElementById('d-tipo').value;
+  const custo   = parseInt(document.getElementById('d-custo').value) || 0;
+  const message = document.getElementById('d-message').value.trim();
+
+  if (!name || !message) {
+    alert('Preencha pelo menos o nome e a mensagem para o Codex.');
+    return;
+  }
+
+  const pending = loadPending();
+  pending.push({
+    name, classe, tipo, custo, message,
+    date: new Date().toLocaleDateString('pt-BR')
+  });
+  savePending(pending);
+
+  document.getElementById('d-name').value    = '';
+  document.getElementById('d-message').value = '';
+  renderDesigner();
+}
+
+function markDone(index) {
+  const pending = loadPending();
+  pending.splice(index, 1);
+  savePending(pending);
+  renderDesigner();
+}
+
+function exportCards() {
+  const pending = loadPending();
+  if (!pending.length) return;
+
+  const today = new Date().toLocaleDateString('pt-BR');
+  const lines = [
+    '# Draxos — Cards Pendentes de Implementação',
+    '',
+    `> Gerado em ${today} pelo Card Browser  `,
+    `> Total: ${pending.length} card${pending.length > 1 ? 's' : ''}`,
+    '',
+    '---',
+    '',
+  ];
+
+  pending.forEach((c, i) => {
+    lines.push(`## ${i + 1}. ${c.name}`);
+    lines.push('');
+    lines.push(`- **Classe:** ${c.classe}`);
+    lines.push(`- **Tipo:** ${c.tipo}`);
+    lines.push(`- **Custo de mana:** ${c.custo}`);
+    lines.push('');
+    lines.push('**Mensagem para o Codex:**');
+    lines.push('');
+    lines.push(c.message);
+    lines.push('');
+    lines.push('---');
+    lines.push('');
+  });
+
+  lines.push('## Próximos Passos');
+  lines.push('');
+  lines.push('Veja `codex-card-workflow.md` para o processo completo de implementação.');
+
+  const blob = new Blob([lines.join('\n')], { type: 'text/markdown; charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `draxos-cards-pendentes-${new Date().toISOString().slice(0,10)}.md`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function buildDesignerPanel() {
+  return `
+    <div id="section-designer" class="class-section designer-panel">
+      <div class="designer-form">
+        <h2>🎨 Novo Card</h2>
+        <div class="form-field">
+          <label>Nome do card</label>
+          <input id="d-name" type="text" placeholder="Ex: Raio Arcano">
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label>Classe</label>
+            <select id="d-classe">
+              <option>Arcano</option>
+              <option>Invocador</option>
+              <option>Necromante</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Tipo</label>
+            <select id="d-tipo">
+              <option>magia</option>
+              <option>criatura</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-field" style="max-width:100px;">
+          <label>Custo de mana</label>
+          <input id="d-custo" type="number" min="0" max="9" value="1">
+        </div>
+        <div class="form-field">
+          <label>Mensagem para o Codex</label>
+          <textarea id="d-message" placeholder="Descreva o que a carta faz, mecânicas, efeitos esperados…"></textarea>
+        </div>
+        <button class="btn-add" onclick="addCard()">＋ Adicionar à Lista</button>
+      </div>
+
+      <div class="designer-list">
+        <div class="designer-list-header">
+          <h2>📋 Pendentes <span class="pending-count-badge" id="pending-badge">0</span></h2>
+        </div>
+        <div id="pending-list"></div>
+        <button class="btn-export" id="btn-export" onclick="exportCards()" disabled>
+          📥 Exportar para Codex (.md)
+        </button>
+      </div>
+    </div>`;
+}
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+
+let activeTab       = 'arcano';
+let typeFilter      = 'all';
+let kwFilter        = 'all';
+let hidePlaceholders= true;
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+
+function init() {
+  const groups = buildGroups();
+
+  // Count cards per class
+  const counts = {};
+  CLASSES.forEach(cls => {
+    counts[cls.id] = Object.values(groups[cls.id]).flat().length;
+  });
+
+  // Render tabs
+  const tabsEl = document.getElementById('tabs');
+  tabsEl.innerHTML = CLASSES.map(cls => `
+    <button class="tab-btn ${cls.id === activeTab ? 'active' : ''}"
+            data-tab="${cls.id}"
+            style="${cls.id === activeTab ? `background:${cls.color}; border-color:${cls.color};` : ''}">
+      ${cls.emoji} ${cls.name}
+      <span style="opacity:0.55; font-size:10px; margin-left:3px;">${counts[cls.id]}</span>
+    </button>`).join('') +
+    `<button class="tab-btn" data-tab="designer" id="tab-designer">🎨 Designer</button>`;
+
+  // Render sections (card classes + designer panel)
+  document.getElementById('main').innerHTML =
+    CLASSES.map(cls => sectionHTML(cls, groups[cls.id])).join('') +
+    buildDesignerPanel();
+
+  showSection(activeTab);
+  updateStats();
+
+  // Tab clicks
+  tabsEl.addEventListener('click', e => {
+    const btn = e.target.closest('.tab-btn');
+    if (!btn) return;
+    activeTab = btn.dataset.tab;
+    tabsEl.querySelectorAll('.tab-btn').forEach(b => {
+      const cls = CLASSES.find(c => c.id === b.dataset.tab);
+      const isActive = b.dataset.tab === activeTab;
+      b.classList.toggle('active', isActive);
+      if (cls) {
+        b.style.background  = isActive ? cls.color : '';
+        b.style.borderColor = isActive ? cls.color : '';
+      } else {
+        // Designer tab
+        b.style.background  = isActive ? '#8b5cf6' : '';
+        b.style.borderColor = isActive ? '#8b5cf6' : '';
+      }
+    });
+    showSection(activeTab);
+    updateStats();
+  });
+
+  // Filter buttons
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const grp = btn.dataset.filter;
+      document.querySelectorAll(`.filter-btn[data-filter="${grp}"]`).forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (grp === 'type') typeFilter = btn.dataset.value;
+      if (grp === 'kw')   kwFilter   = btn.dataset.value;
+      applyFilters();
+      updateStats();
+    });
+  });
+
+  // Placeholder toggle
+  document.getElementById('hidePlaceholders').addEventListener('change', e => {
+    hidePlaceholders = e.target.checked;
+    applyFilters();
+    updateStats();
+  });
+}
+
+function showSection(tabId) {
+  document.querySelectorAll('.class-section').forEach(s =>
+    s.classList.toggle('visible', s.id === 'section-' + tabId));
+  if (tabId === 'designer') {
+    renderDesigner();
+  } else {
+    applyFilters();
+  }
+}
+
+function applyFilters() {
+  const section = document.getElementById('section-' + activeTab);
+  if (!section) return;
+  let visible = 0;
+
+  section.querySelectorAll('.family-row').forEach(row => {
+    const type      = row.dataset.type;
+    const kw        = row.dataset.kw;
+    const isPlaceh  = row.dataset.placeholder === '1';
+
+    let show = true;
+    if (hidePlaceholders && isPlaceh)                   show = false;
+    if (typeFilter !== 'all' && type !== typeFilter)     show = false;
+    if (kwFilter   !== 'all' && !kw.includes(kwFilter)) show = false;
+
+    row.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+
+  let noRes = section.querySelector('.no-results');
+  if (visible === 0) {
+    if (!noRes) { noRes = document.createElement('div'); noRes.className = 'no-results'; section.appendChild(noRes); }
+    noRes.textContent = 'Nenhuma família encontrada com esses filtros.';
+    noRes.style.display = '';
+  } else if (noRes) {
+    noRes.style.display = 'none';
+  }
+}
+
+function updateStats() {
+  if (activeTab === 'designer') {
+    const pending = loadPending();
+    document.getElementById('statsBar').innerHTML =
+      `<strong style="color:#8b5cf6">🎨 Designer</strong> <span>·</span> <strong>${pending.length}</strong> card${pending.length !== 1 ? 's' : ''} pendente${pending.length !== 1 ? 's' : ''}`;
+    return;
+  }
+  const section = document.getElementById('section-' + activeTab);
+  if (!section) return;
+
+  let families = 0, total = 0, magias = 0, criaturas = 0;
+  section.querySelectorAll('.family-row').forEach(row => {
+    if (row.style.display === 'none') return;
+    families++;
+    const cnt = row.querySelectorAll('.card').length;
+    total += cnt;
+    if (row.dataset.type === 'magia') magias += cnt;
+    else criaturas += cnt;
+  });
+
+  const cls = CLASSES.find(c => c.id === activeTab);
+  document.getElementById('statsBar').innerHTML = `
+    <strong style="color:${cls.color}">${cls.emoji} ${cls.name}</strong>
+    <span>·</span>
+    <strong>${families}</strong> famílias
+    <span>·</span>
+    <strong>${total}</strong> cartas
+    <span>·</span>
+    <span><strong>${magias}</strong> magias</span>
+    <span>·</span>
+    <span><strong>${criaturas}</strong> criaturas</span>`;
+}
+
+init();
+</script>
+</body>
+</html>
