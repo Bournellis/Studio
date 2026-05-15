@@ -102,7 +102,7 @@
       ],
       "reward_pool": [
         "necro_carniceiro",
-        "necro_punir"
+        "necro_diabrete"
       ]
     }
   ],
@@ -184,7 +184,7 @@
       "display_name": "Barreira Arcana",
       "type": "criatura",
       "cost": 1,
-      "attack": 1,
+      "attack": 0,
       "health": 3,
       "keywords": [
         "defensor"
@@ -216,15 +216,15 @@
       "display_name": "Barreira Arcana Lvl 3",
       "type": "criatura",
       "cost": 1,
-      "attack": 1,
-      "health": 6,
+      "attack": 2,
+      "health": 9,
       "keywords": [
         "defensor"
       ],
-      "text": "Defensor. Enquanto em campo: +4 Poder de habilidade.",
+      "text": "Defensor. Enquanto em campo: +2 Poder de habilidade.",
       "effect": {
         "aura": "ability_power",
-        "amount": 4
+        "amount": 2
       }
     },
     {
@@ -301,10 +301,11 @@
       "display_name": "Acelerar",
       "type": "magia",
       "cost": 0,
-      "text": "Ganha +1 mana ate o final do turno.",
+      "text": "Mesa aliada alvo. Ganha +1 Poder de habilidade ate o final do turno.",
       "effect": {
         "action": "gain_mana",
-        "mana": 1
+        "mana": 0,
+        "temporary_ability_power": 1
       }
     },
     {
@@ -312,11 +313,11 @@
       "display_name": "Acelerar Lvl 2",
       "type": "magia",
       "cost": 0,
-      "text": "Ganha +1 mana e +1 Poder de habilidade ate o final do turno.",
+      "text": "Mesa aliada alvo. Ganha +3 Poder de habilidade ate o final do turno.",
       "effect": {
         "action": "gain_mana",
-        "mana": 1,
-        "temporary_ability_power": 1
+        "mana": 0,
+        "temporary_ability_power": 3
       }
     },
     {
@@ -324,11 +325,11 @@
       "display_name": "Acelerar Lvl 3",
       "type": "magia",
       "cost": 0,
-      "text": "Ganha +2 mana e +1 Poder de habilidade ate o final do turno.",
+      "text": "Mesa aliada alvo. Ganha +3 Poder de habilidade e +1 mana ate o final do turno.",
       "effect": {
         "action": "gain_mana",
-        "mana": 2,
-        "temporary_ability_power": 1
+        "mana": 1,
+        "temporary_ability_power": 3
       }
     },
     {
@@ -483,7 +484,7 @@
       "display_name": "Atacar",
       "type": "magia",
       "cost": 2,
-      "text": "Todas as criaturas aliadas recebem +1/+1 ate o final do turno.",
+      "text": "Mesa aliada alvo. Todas as criaturas aliadas recebem +1/+1 ate o final do turno.",
       "effect": {
         "action": "buff_all_allies",
         "attack": 1,
@@ -496,7 +497,7 @@
       "display_name": "Atacar Lvl 2",
       "type": "magia",
       "cost": 2,
-      "text": "Todas as criaturas aliadas recebem +2/+2 ate o final do turno.",
+      "text": "Mesa aliada alvo. Todas as criaturas aliadas recebem +2/+2 ate o final do turno.",
       "effect": {
         "action": "buff_all_allies",
         "attack": 2,
@@ -509,7 +510,7 @@
       "display_name": "Atacar Lvl 3",
       "type": "magia",
       "cost": 2,
-      "text": "Todas as criaturas aliadas recebem +4/+4 ate o final do turno.",
+      "text": "Mesa aliada alvo. Todas as criaturas aliadas recebem +4/+4 ate o final do turno.",
       "effect": {
         "action": "buff_all_allies",
         "attack": 4,
@@ -736,7 +737,7 @@
       "id": "necro_carniceiro",
       "display_name": "Carniceiro",
       "type": "criatura",
-      "cost": 3,
+      "cost": 2,
       "attack": 2,
       "health": 2,
       "keywords": [
@@ -751,7 +752,7 @@
       "id": "necro_carniceiro_lvl2",
       "display_name": "Carniceiro Lvl 2",
       "type": "criatura",
-      "cost": 3,
+      "cost": 2,
       "attack": 4,
       "health": 4,
       "keywords": [
@@ -766,7 +767,7 @@
       "id": "necro_carniceiro_lvl3",
       "display_name": "Carniceiro Lvl 3",
       "type": "criatura",
-      "cost": 3,
+      "cost": 2,
       "attack": 4,
       "health": 4,
       "keywords": [
@@ -778,39 +779,57 @@
       }
     },
     {
-      "id": "necro_punir",
-      "display_name": "Punir",
-      "type": "magia",
+      "id": "necro_diabrete",
+      "display_name": "Diabrete",
+      "type": "criatura",
       "cost": 1,
-      "text": "A criatura alvo recebe -1/-1 permanente; se estiver presa, recebe -3/-3.",
+      "attack": 2,
+      "health": 1,
+      "keywords": [
+        "suicida"
+      ],
+      "text": "Suicida 1: quando morre, causa 1 de dano a um inimigo aleatorio.",
       "effect": {
-        "action": "punish_snared",
-        "amount": 1,
-        "snared_amount": 3
+        "on_death": {
+          "action": "random_enemy_damage",
+          "amount": 1
+        }
       }
     },
     {
-      "id": "necro_punir_lvl2",
-      "display_name": "Punir Lvl 2",
-      "type": "magia",
+      "id": "necro_diabrete_lvl2",
+      "display_name": "Diabrete Lvl 2",
+      "type": "criatura",
       "cost": 1,
-      "text": "A criatura alvo recebe -2/-2 permanente; se estiver presa, recebe -5/-5.",
+      "attack": 4,
+      "health": 1,
+      "keywords": [
+        "suicida"
+      ],
+      "text": "Suicida 2: quando morre, causa 2 de dano a um inimigo aleatorio.",
       "effect": {
-        "action": "punish_snared",
-        "amount": 2,
-        "snared_amount": 5
+        "on_death": {
+          "action": "random_enemy_damage",
+          "amount": 2
+        }
       }
     },
     {
-      "id": "necro_punir_lvl3",
-      "display_name": "Punir Lvl 3",
-      "type": "magia",
-      "cost": 0,
-      "text": "A criatura alvo recebe -2/-2 permanente; se estiver presa, recebe -5/-5.",
+      "id": "necro_diabrete_lvl3",
+      "display_name": "Diabrete Lvl 3",
+      "type": "criatura",
+      "cost": 1,
+      "attack": 6,
+      "health": 1,
+      "keywords": [
+        "suicida"
+      ],
+      "text": "Suicida 4: quando morre, causa 4 de dano a um inimigo aleatorio.",
       "effect": {
-        "action": "punish_snared",
-        "amount": 2,
-        "snared_amount": 5
+        "on_death": {
+          "action": "random_enemy_damage",
+          "amount": 4
+        }
       }
     },
     {
@@ -819,7 +838,7 @@
       "type": "criatura",
       "cost": 1,
       "attack": 2,
-      "health": 2,
+      "health": 3,
       "text": "Ameaca rapida do primeiro encontro."
     },
     {
@@ -827,8 +846,8 @@
       "display_name": "Elemental Bruto",
       "type": "criatura",
       "cost": 2,
-      "attack": 3,
-      "health": 3,
+      "attack": 4,
+      "health": 4,
       "text": "Maior ameaca de dano inicial."
     },
     {
@@ -837,7 +856,7 @@
       "type": "criatura",
       "cost": 2,
       "attack": 1,
-      "health": 5,
+      "health": 6,
       "text": "Criatura resistente de baixo dano."
     },
     {
@@ -846,7 +865,7 @@
       "type": "criatura",
       "cost": 1,
       "attack": 1,
-      "health": 2,
+      "health": 3,
       "text": "Onda inicial."
     },
     {
@@ -855,7 +874,7 @@
       "type": "criatura",
       "cost": 2,
       "attack": 2,
-      "health": 3,
+      "health": 4,
       "text": "Pressao intermediaria."
     },
     {
@@ -863,8 +882,8 @@
       "display_name": "Elemental Pesado A",
       "type": "criatura",
       "cost": 3,
-      "attack": 3,
-      "health": 4,
+      "attack": 4,
+      "health": 5,
       "text": "Pressao final de ondas."
     },
     {
@@ -873,7 +892,7 @@
       "type": "criatura",
       "cost": 3,
       "attack": 2,
-      "health": 4,
+      "health": 5,
       "text": "Pressao final de ondas."
     },
     {
@@ -882,7 +901,7 @@
       "type": "criatura",
       "cost": 3,
       "attack": 1,
-      "health": 4,
+      "health": 5,
       "text": "Pressao final de ondas."
     },
     {
@@ -891,7 +910,7 @@
       "type": "criatura",
       "cost": 2,
       "attack": 2,
-      "health": 4,
+      "health": 5,
       "text": "Mockup de pressao para duelo."
     },
     {
@@ -899,8 +918,8 @@
       "display_name": "Elemental Assaltante",
       "type": "criatura",
       "cost": 2,
-      "attack": 3,
-      "health": 2,
+      "attack": 4,
+      "health": 3,
       "text": "Mockup ofensivo para lanes."
     },
     {
@@ -908,8 +927,8 @@
       "display_name": "Elemental Assaltante Veloz",
       "type": "criatura",
       "cost": 2,
-      "attack": 3,
-      "health": 2,
+      "attack": 4,
+      "health": 3,
       "keywords": [
         "iniciativa"
       ],
@@ -921,7 +940,7 @@
       "type": "criatura",
       "cost": 3,
       "attack": 2,
-      "health": 6,
+      "health": 7,
       "text": "Mockup defensivo escalado."
     },
     {
@@ -929,8 +948,8 @@
       "display_name": "Elemental Elite Agil",
       "type": "criatura",
       "cost": 3,
-      "attack": 4,
-      "health": 3,
+      "attack": 5,
+      "health": 4,
       "keywords": [
         "iniciativa"
       ],
@@ -941,8 +960,8 @@
       "display_name": "Elemental Elite Bruto",
       "type": "criatura",
       "cost": 4,
-      "attack": 4,
-      "health": 5,
+      "attack": 5,
+      "health": 6,
       "text": "Mockup elite de alto dano."
     },
     {
@@ -950,8 +969,8 @@
       "display_name": "Elemental Tita",
       "type": "criatura",
       "cost": 5,
-      "attack": 5,
-      "health": 6,
+      "attack": 6,
+      "health": 7,
       "text": "Mockup pesado de fim de run."
     },
     {
@@ -1347,25 +1366,25 @@
           },
           {
             "slot": 1,
-            "card_id": "elemental_assaltante"
+            "card_id": "elemental_menor"
           },
           {
             "slot": 2,
-            "card_id": "elemental_medio"
+            "card_id": "elemental_assaltante"
           }
         ],
         [
           {
             "slot": 0,
-            "card_id": "elemental_assaltante_veloz"
-          },
-          {
-            "slot": 1,
             "card_id": "elemental_guardiao"
           },
           {
+            "slot": 1,
+            "card_id": "elemental_medio"
+          },
+          {
             "slot": 2,
-            "card_id": "elemental_assaltante"
+            "card_id": "elemental_assaltante_veloz"
           }
         ],
         [
@@ -1375,11 +1394,11 @@
           },
           {
             "slot": 1,
-            "card_id": "elemental_elite_bruto"
+            "card_id": "elemental_guardiao"
           },
           {
             "slot": 2,
-            "card_id": "elemental_guardiao"
+            "card_id": "elemental_elite_bruto"
           }
         ]
       ],

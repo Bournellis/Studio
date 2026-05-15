@@ -128,7 +128,7 @@ func _validate_contract() -> Dictionary:
 		"necro_prender", "necro_prender_lvl2", "necro_prender_lvl3",
 		"necro_zumbi", "necro_zumbi_lvl2", "necro_zumbi_lvl3",
 		"necro_carniceiro", "necro_carniceiro_lvl2", "necro_carniceiro_lvl3",
-		"necro_punir", "necro_punir_lvl2", "necro_punir_lvl3"
+		"necro_diabrete", "necro_diabrete_lvl2", "necro_diabrete_lvl3"
 	]
 	for new_card_id: String in required_new_cards:
 		if catalog.find_card(new_card_id) == null:

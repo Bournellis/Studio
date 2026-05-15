@@ -57,11 +57,12 @@ func test_catalog_removes_old_player_cards_and_keeps_enemies() -> void:
 	assert_true(ContentLibrary.get_card("necro_esqueleto").has_keyword("reviver"))
 	assert_eq(int(ContentLibrary.get_card("arcano_choque").effect.get("amount", 0)), 2)
 	assert_eq(int(ContentLibrary.get_card("arcano_fagulha").health), 2)
-	assert_eq(int(ContentLibrary.get_card("arcano_barreira").attack), 1)
+	assert_eq(int(ContentLibrary.get_card("arcano_barreira").attack), 0)
 	assert_true(ContentLibrary.get_card("arcano_barreira").has_keyword("defensor"))
 	assert_eq(int(ContentLibrary.get_card("arcano_tempestade").effect.get("amount", 0)), 4)
 	assert_eq(int(ContentLibrary.get_card("necro_prender").cost), 1)
-	for card_id: String in ["arcano_bola_de_fogo", "arcano_acelerar", "invocador_atacar", "invocador_golem", "necro_carniceiro", "necro_punir"]:
+	assert_null(catalog.find_card("necro_punir"), "Punir should be removed from the active catalog.")
+	for card_id: String in ["arcano_bola_de_fogo", "arcano_acelerar", "invocador_atacar", "invocador_golem", "necro_carniceiro", "necro_diabrete"]:
 		assert_not_null(ContentLibrary.get_card(card_id), "Missing real reward card %s" % card_id)
 		assert_not_null(ContentLibrary.get_card("%s_lvl2" % card_id), "Missing level 2 card %s" % card_id)
 		assert_not_null(ContentLibrary.get_card("%s_lvl3" % card_id), "Missing level 3 card %s" % card_id)
@@ -104,10 +105,11 @@ func test_reward_choices_apply_levels_and_two_step_new_cards() -> void:
 	assert_eq(new_card_choices.size(), 2)
 	var before_count: int = RunSession.current_deck_ids.size()
 	var card_id: String = str(new_card_choices[0].get("card_id", ""))
+	var added_copies: int = _new_card_copies_for_rarity(str(new_card_choices[0].get("rarity", "")))
 	var card_result: Dictionary = RunSession.apply_reward_choice(str(new_card_choices[0].get("id", "")))
 	assert_true(bool(card_result.get("ok", false)), str(card_result.get("message", "")))
-	assert_eq(RunSession.current_deck_ids.size(), before_count + 3)
-	assert_eq(RunSession.current_deck_ids.count(card_id), 3)
+	assert_eq(RunSession.current_deck_ids.size(), before_count + added_copies)
+	assert_eq(RunSession.current_deck_ids.count(card_id), added_copies)
 	RunSession.record_battle_result("n11_ondas_avancadas", "vitoria", 20)
 	var second_card_choices: Array[Dictionary] = RunSession.pending_reward_choices()
 	assert_eq(second_card_choices.size(), 1)
@@ -141,6 +143,27 @@ func test_run_session_snapshot_tracks_reward_choice_state() -> void:
 	var snapshot: Dictionary = RunSession.snapshot()
 	assert_eq(int(snapshot.get("version", 0)), RunSession.SNAPSHOT_VERSION)
 	assert_eq(Array(snapshot.get("rewards_pending", [])).size(), 1)
+	var pending: Dictionary = Dictionary(Array(snapshot.get("rewards_pending", []))[0])
+	assert_false(Dictionary(pending.get("rarity_by_card_id", {})).is_empty())
+
+func test_soul_shop_card_upgrade_offers_and_purchase_limit() -> void:
+	var result: Dictionary = RunSession.start_class_run("arcano", 77)
+	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
+	RunSession.soul_total = 20
+	RunSession.record_battle_result("n01_tutorial_primeiro_contato", "vitoria", 20)
+	var choices: Array[Dictionary] = RunSession.shop_upgrade_choices()
+	assert_eq(choices.size(), 3)
+	var card_id: String = str(choices[0].get("card_id", ""))
+	assert_true(RunSession.can_buy_shop_upgrade(card_id))
+	var before_buy_souls: int = RunSession.soul_total
+	var buy_result: Dictionary = RunSession.buy_shop_card_upgrade(card_id)
+	assert_true(bool(buy_result.get("ok", false)), str(buy_result.get("message", "")))
+	assert_eq(RunSession.soul_total, before_buy_souls - RunSession.SHOP_CARD_UPGRADE_COST)
+	assert_eq(int(RunSession.card_upgrade_counts.get(card_id, 0)), 1)
+	for choice: Dictionary in RunSession.shop_upgrade_choices():
+		assert_false(bool(choice.get("can_buy", true)))
+	RunSession.soul_total = 20
+	assert_false(bool(RunSession.buy_shop_card_upgrade(str(choices[1].get("card_id", ""))).get("ok", true)))
 
 func test_run_session_rejects_invalid_player_names() -> void:
 	assert_false(bool(RunSession.validate_player_name("A").get("ok", false)))
@@ -406,6 +429,37 @@ func test_battle_engine_draws_to_dynamic_hand_limit() -> void:
 	engine.play_card_from_hand(0, {"owner": BattleEngine.ENEMY_ID, "slot": 0})
 	assert_eq(engine.hand.size(), 4)
 
+func test_precombat_discard_marks_confirms_and_redraws_hand() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), [
+		"invocador_promover",
+		"invocador_promover",
+		"invocador_promover",
+		"invocador_soldado",
+		"invocador_soldado",
+		"invocador_soldado"
+	], {
+		"encounter_id": "pouso_elemental",
+		"class_id": "invocador",
+		"mana_per_turn": 1,
+		"max_hand_size": 3,
+		"player_health": 20,
+		"shuffle_deck": false,
+		"precombat_enabled": true
+	})
+	assert_true(engine.is_precombat_phase())
+	assert_eq(engine.hand.count("invocador_promover"), 3)
+	for hand_index: int in range(3):
+		assert_true(bool(engine.toggle_precombat_discard(hand_index).get("ok", false)))
+	assert_eq(Array(engine.get_state().get("precombat_discard_indices", [])).size(), 3)
+	var confirm_result: Dictionary = engine.confirm_precombat_discard()
+	assert_true(bool(confirm_result.get("ok", false)), str(confirm_result.get("message", "")))
+	assert_false(engine.is_precombat_phase())
+	assert_eq(engine.hand.size(), 3)
+	assert_eq(engine.hand.count("invocador_soldado"), 3)
+	assert_eq(engine.discard.count("invocador_promover"), 3)
+	assert_false(bool(engine.toggle_precombat_discard(0).get("ok", true)))
+
 func test_ability_power_updates_spell_values_and_text() -> void:
 	var engine: BattleEngine = BattleEngine.new()
 	engine.start_battle(ContentLibrary.get_catalog(), ["arcano_fagulha", "arcano_barreira", "arcano_choque", "arcano_tempestade"], {
@@ -466,9 +520,9 @@ func test_new_arcano_cards_resolve_area_damage_and_accelerate() -> void:
 	})
 	var fireball_result: Dictionary = engine.play_card_from_hand(0, {"owner": BattleEngine.ENEMY_ID, "slot": 1})
 	assert_true(bool(fireball_result.get("ok", false)), str(fireball_result.get("message", "")))
-	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("health", 0)), 1)
-	assert_null(engine.enemy_slots[1])
-	assert_eq(int(Dictionary(engine.enemy_slots[2]).get("health", 0)), 1)
+	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("health", 0)), 2)
+	assert_eq(int(Dictionary(engine.enemy_slots[1]).get("health", 0)), 1)
+	assert_eq(int(Dictionary(engine.enemy_slots[2]).get("health", 0)), 2)
 
 	engine = BattleEngine.new()
 	engine.start_battle(ContentLibrary.get_catalog(), ["arcano_acelerar_lvl3", "arcano_choque"], {
@@ -487,10 +541,11 @@ func test_new_arcano_cards_resolve_area_damage_and_accelerate() -> void:
 		"player_health": 20,
 		"shuffle_deck": false
 	})
-	assert_true(engine.can_play_card_without_target(0))
-	assert_true(bool(engine.play_card_from_hand(0).get("ok", false)))
-	assert_eq(engine.mana, 3)
-	assert_eq(int(engine.get_state().get("temporary_ability_power", 0)), 1)
+	engine.player_slots[0] = engine._build_occupant(ContentLibrary.get_card("arcano_fagulha"), BattleEngine.PLAYER_ID, false)
+	assert_false(engine.can_play_card_without_target(0))
+	assert_true(bool(engine.play_card_from_hand(0, {"owner": BattleEngine.PLAYER_ID, "area": "board"}).get("ok", false)))
+	assert_eq(engine.mana, 2)
+	assert_eq(int(engine.get_state().get("temporary_ability_power", 0)), 3)
 	assert_true(bool(engine.play_card_from_hand(0, {"owner": BattleEngine.ENEMY_ID, "slot": 0}).get("ok", false)))
 	assert_null(engine.enemy_slots[0])
 
@@ -513,7 +568,8 @@ func test_invocador_new_cards_apply_temporary_buff_and_regeneration() -> void:
 		"shuffle_deck": false
 	})
 	assert_true(bool(engine.play_card_from_hand(0, {"owner": BattleEngine.PLAYER_ID, "slot": 0}).get("ok", false)))
-	assert_true(bool(engine.play_card_from_hand(0).get("ok", false)))
+	assert_false(bool(engine.play_card_from_hand(0).get("ok", false)))
+	assert_true(bool(engine.play_card_from_hand(0, {"owner": BattleEngine.PLAYER_ID, "area": "board"}).get("ok", false)))
 	assert_eq(int(Dictionary(engine.player_slots[0]).get("attack", 0)), 7)
 	assert_eq(int(Dictionary(engine.player_slots[0]).get("temporary_health_bonus", 0)), 2)
 	var occupant: Dictionary = Dictionary(engine.player_slots[0])
@@ -541,31 +597,30 @@ func test_necromante_new_cards_carrion_remove_and_punish_snared() -> void:
 		"shuffle_deck": false
 	})
 	assert_true(bool(engine.play_card_from_hand(0, {"owner": BattleEngine.PLAYER_ID, "slot": 0}).get("ok", false)))
-	engine._damage_slot(BattleEngine.ENEMY_ID, 1, 2)
+	engine._damage_slot(BattleEngine.ENEMY_ID, 1, 3)
 	assert_eq(int(Dictionary(engine.player_slots[0]).get("attack", 0)), 3)
 	assert_eq(int(Dictionary(engine.player_slots[0]).get("health", 0)), 3)
 
 	engine = BattleEngine.new()
-	engine.start_battle(ContentLibrary.get_catalog(), ["necro_prender_lvl3", "necro_punir_lvl2"], {
+	engine.start_battle(ContentLibrary.get_catalog(), ["necro_diabrete_lvl3"], {
 		"encounter": {
-			"id": "test_punish",
-			"display_name": "Teste Punir",
+			"id": "test_imp",
+			"display_name": "Teste Diabrete",
 			"mode": BattleEngine.MODE_SURVIVE_TURNS,
 			"survive_turns": 99,
 			"player_slots_count": 1,
 			"enemy_slots_count": 1,
-			"starting_enemy_slots": [{"slot": 0, "card_id": "elemental_guardiao"}]
+			"starting_enemy_slots": [{"slot": 0, "card_id": "elemental_menor"}]
 		},
 		"class_id": "necromante",
-		"mana_per_turn": 2,
-		"max_hand_size": 2,
+		"mana_per_turn": 1,
+		"max_hand_size": 1,
 		"player_health": 20,
 		"shuffle_deck": false
 	})
-	assert_true(bool(engine.play_card_from_hand(0, {"owner": BattleEngine.ENEMY_ID, "slot": 0}).get("ok", false)))
-	assert_false(bool(Dictionary(engine.enemy_slots[0]).get("defensor", true)))
-	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("slow_turns", 0)), 1)
-	assert_true(bool(engine.play_card_from_hand(0, {"owner": BattleEngine.ENEMY_ID, "slot": 0}).get("ok", false)))
+	assert_true(bool(engine.play_card_from_hand(0, {"owner": BattleEngine.PLAYER_ID, "slot": 0}).get("ok", false)))
+	engine._damage_slot(BattleEngine.PLAYER_ID, 0, 1)
+	assert_null(engine.player_slots[0])
 	assert_null(engine.enemy_slots[0])
 
 func test_arcane_tempest_requires_enemy_board_area_target() -> void:
@@ -606,6 +661,8 @@ func test_battle_scene_exposes_enemy_board_area_drop_zone_for_tempest() -> void:
 	var area_target = battle.find_child("BattleEnemyBoardAreaTarget", true, false)
 	var board_margin = battle.find_child("BattleBoardMargin", true, false)
 	var enemy_slot = battle.find_child("EnemySlot0", true, false)
+	battle.engine.confirm_precombat_discard()
+	battle._refresh()
 	assert_not_null(area_target)
 	assert_not_null(board_margin)
 	assert_not_null(enemy_slot)
@@ -615,9 +672,10 @@ func test_battle_scene_exposes_enemy_board_area_drop_zone_for_tempest() -> void:
 	assert_gt(area_target.get_global_rect().size.x, enemy_slot.get_global_rect().size.x * 2.0)
 	assert_true(area_target.get_global_rect().intersects(enemy_slot.get_global_rect()))
 	var tempest_payload: Dictionary = {"kind": "battle_card", "card_id": "arcano_tempestade", "hand_index": 0}
-	assert_true(enemy_slot._can_drop_data(Vector2.ZERO, tempest_payload))
+	assert_false(enemy_slot._can_drop_data(Vector2.ZERO, tempest_payload))
+	assert_true(area_target._can_drop_data(Vector2.ZERO, tempest_payload))
 	var before_mana: int = battle.engine.mana
-	battle._on_slot_target_dropped(tempest_payload, BattleEngine.ENEMY_ID, 0)
+	battle._on_area_target_dropped(tempest_payload, {"owner": BattleEngine.ENEMY_ID, "area": "board"})
 	assert_lt(battle.engine.mana, before_mana)
 	battle.queue_free()
 	await get_tree().process_frame
@@ -681,6 +739,7 @@ func test_battle_scene_sacrifice_modal_cancel_and_confirm() -> void:
 	var battle = await _instantiate_scene("res://modes/battle/battle.tscn")
 	var manual_hand: Array[String] = ["invocador_soldado", "invocador_batedor"]
 	var empty_cards: Array[String] = []
+	battle.engine.confirm_precombat_discard()
 	battle.engine.hand = manual_hand
 	battle.engine.deck = empty_cards.duplicate()
 	battle.engine.discard = empty_cards.duplicate()
@@ -746,7 +805,7 @@ func test_ability_power_updates_class_active_values() -> void:
 	engine.play_card_from_hand(0, {"slot": 1})
 	engine.play_card_from_hand(0, {"slot": 0})
 	assert_eq(int(engine.get_state().get("ability_power", 0)), 1)
-	var result: Dictionary = engine.use_class_active({"owner": BattleEngine.PLAYER_ID, "slot": 0})
+	var result: Dictionary = engine.use_class_active({"owner": BattleEngine.PLAYER_ID, "area": "board"})
 	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
 	assert_eq(int(Dictionary(engine.player_slots[0]).get("attack", 0)), 5)
 
@@ -875,7 +934,7 @@ func test_overflow_rechecks_dead_defender_between_sequential_lanes() -> void:
 	engine.play_card_from_hand(0, {"slot": 0})
 	engine.resolve_combat_cycle()
 	assert_null(engine.player_slots[0])
-	assert_null(engine.enemy_slots[0])
+	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("health", 0)), 1)
 	assert_eq(engine.player_health, 19)
 
 func test_sequential_overflow_skips_creature_killed_before_its_turn() -> void:
@@ -938,7 +997,7 @@ func test_non_hero_overflow_hits_nearest_enemy_creature() -> void:
 	})
 	engine.play_card_from_hand(0, {"slot": 0})
 	engine.resolve_combat_cycle()
-	assert_eq(int(Dictionary(engine.enemy_slots[2]).get("health", 0)), 5)
+	assert_eq(int(Dictionary(engine.enemy_slots[2]).get("health", 0)), 6)
 
 func test_defender_does_not_intercept_front_target() -> void:
 	var engine: BattleEngine = BattleEngine.new()
@@ -962,7 +1021,7 @@ func test_defender_does_not_intercept_front_target() -> void:
 	})
 	engine.play_card_from_hand(0, {"slot": 0})
 	engine.resolve_combat_cycle()
-	assert_null(engine.enemy_slots[0])
+	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("health", 0)), 1)
 	assert_eq(int(Dictionary(engine.enemy_slots[2]).get("health", 0)), 4)
 
 func test_initiative_kills_before_normal_response() -> void:
@@ -975,7 +1034,7 @@ func test_initiative_kills_before_normal_response() -> void:
 			"enemy_health": 20,
 			"player_slots_count": 3,
 			"enemy_slots_count": 3,
-			"starting_enemy_slots": [{"slot": 0, "card_id": "elemental_menor"}]
+			"starting_enemy_slots": [{"slot": 0, "card_id": "arcano_fagulha"}]
 		},
 		"mana_per_turn": 1,
 		"max_hand_size": 1,
@@ -1009,7 +1068,7 @@ func test_same_stage_attackers_deal_damage_before_death() -> void:
 	engine.resolve_combat_cycle()
 	assert_not_null(engine.player_slots[0])
 	assert_true(bool(Dictionary(engine.player_slots[0]).get("revive_marker", false)))
-	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("health", 0)), 1)
+	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("health", 0)), 2)
 
 func test_overflow_attack_has_no_retaliation() -> void:
 	var engine: BattleEngine = BattleEngine.new()
@@ -1031,7 +1090,7 @@ func test_overflow_attack_has_no_retaliation() -> void:
 	engine.resolve_combat_cycle()
 	assert_not_null(engine.player_slots[0])
 	assert_eq(int(Dictionary(engine.player_slots[0]).get("health", 0)), 1)
-	assert_eq(int(Dictionary(engine.enemy_slots[2]).get("health", 0)), 1)
+	assert_eq(int(Dictionary(engine.enemy_slots[2]).get("health", 0)), 2)
 
 func test_duel_enemy_commander_plays_after_combat_for_next_turn() -> void:
 	var engine: BattleEngine = BattleEngine.new()
@@ -1220,8 +1279,8 @@ func test_on_death_weaken_uses_pending_target_choice() -> void:
 	engine.resolve_combat_cycle()
 	assert_true(engine.has_pending_choice())
 	engine.resolve_pending_choice({"owner": BattleEngine.ENEMY_ID, "slot": 1})
-	assert_eq(int(Dictionary(engine.enemy_slots[1]).get("attack", 0)), 2)
-	assert_eq(int(Dictionary(engine.enemy_slots[1]).get("health", 0)), 2)
+	assert_eq(int(Dictionary(engine.enemy_slots[1]).get("attack", 0)), 3)
+	assert_eq(int(Dictionary(engine.enemy_slots[1]).get("health", 0)), 3)
 
 func test_necromancer_active_level_one_choices_use_exact_values() -> void:
 	var engine: BattleEngine = BattleEngine.new()
@@ -1251,8 +1310,8 @@ func test_necromancer_active_level_one_choices_use_exact_values() -> void:
 		var choice_id: String = str(choice.get("id", ""))
 		assert_false(["necro_slow", "necro_confusion", "necro_revive_full"].has(choice_id))
 	assert_true(bool(engine.use_class_active({"owner": BattleEngine.ENEMY_ID, "slot": 0}, BattleEngine.NECRO_CHOICE_ROT).get("ok", false)))
-	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("attack", 0)), 2)
-	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("health", 0)), 2)
+	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("attack", 0)), 3)
+	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("health", 0)), 3)
 
 func test_necromancer_active_level_two_adds_upgrades_and_temp_attack() -> void:
 	var engine: BattleEngine = BattleEngine.new()
@@ -1393,6 +1452,9 @@ func test_battle_scene_uses_resolve_combat_button() -> void:
 	var battle = await _instantiate_scene("res://modes/battle/battle.tscn")
 	var button: Button = battle.find_child("BattleEndTurnFloatingButton", true, false)
 	assert_not_null(button)
+	assert_string_contains(button.text, "Iniciar")
+	button.pressed.emit()
+	await get_tree().process_frame
 	assert_string_contains(button.text, "Resolver")
 	battle.queue_free()
 	await get_tree().process_frame
@@ -1428,6 +1490,15 @@ func _enemy_board_has_card(slots: Array, card_id: String) -> bool:
 		if occupant != null and str(Dictionary(occupant).get("card_id", "")) == card_id:
 			return true
 	return false
+
+func _new_card_copies_for_rarity(rarity: String) -> int:
+	match rarity:
+		RunSession.REWARD_RARITY_RARE:
+			return 4
+		RunSession.REWARD_RARITY_ULTRA:
+			return 5
+		_:
+			return 3
 
 func _has_label_text(node: Node, text: String) -> bool:
 	if node is Label and str((node as Label).text) == text:

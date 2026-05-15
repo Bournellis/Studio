@@ -1,7 +1,7 @@
 # Classes - Indice
 
 - Last Updated: `2026-05-15`
-- Status: `Track 01 real upgrades and reward cards validated`
+- Status: `Track 01 P05 playtest tuning pass validated`
 - Referencia: `../game-design-document.md`
 
 ## Decisao Atual
@@ -37,6 +37,7 @@ Keywords ativas no slice:
 - `reviver`: volta uma vez ao morrer por dano/efeito, com marcador de reviver.
 - `regeneracao X`: recupera HP no fim de `Resolver Combate`.
 - `carnica X`: cresce +X/+X quando outra criatura morre.
+- `suicida X`: causa X de dano a um alvo inimigo aleatorio valido quando morre.
 
 Keywords removidas:
 
@@ -59,6 +60,6 @@ No mapa 6, a run recebe `+1 limite de cartas na mao`.
 
 - Mapas 3, 4, 9 e 12 oferecem upgrade de carta.
 - Mapa 7 oferece as 2 cartas novas da classe; mapa 11 oferece a carta restante.
-- Cada escolha de carta nova adiciona 3 copias ao deck da run.
+- Cada escolha de carta nova adiciona 3, 4 ou 5 copias ao deck da run conforme raridade comum/rara/ultra rara.
 - Upgrades nao ramificam mais nesta revisao: Lvl 1 e base, primeiro upgrade vira Lvl 2, segundo upgrade vira Lvl 3.
-- As opcoes de upgrade sao sorteadas de forma estavel pelo seed da run/recompensa entre os tipos elegiveis do deck.
+- As opcoes de upgrade sao sorteadas de forma estavel pelo seed da run/recompensa entre os tipos elegiveis do deck. A loja de Almas tambem oferece 3 upgrades elegiveis do deck por 20 Almas, limitada a 1 compra por combate.

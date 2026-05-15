@@ -1,7 +1,7 @@
 # Encontros - Indice
 
 - Last Updated: `2026-05-15`
-- Status: `13 encontros lineares validados com upgrades reais, cartas novas e dificuldade 7-13 reforcada`
+- Status: `13 encontros lineares validados com tuning inimigo +20% e defesa side-lane`
 - Referencia: `../game-design-document.md`
 
 ## Proposito
@@ -52,13 +52,13 @@ Todos os modos usam o mesmo combate frontal:
 
 ## Pressao De Dificuldade
 
-Mapas 1-6 preservam a curva inicial quase intacta, exceto pela remocao do upgrade do mapa 6. A partir do mapa 7 a pressao sobe para acompanhar upgrades e cartas novas:
+Todos os encontros receberam reforco aproximado de 20% em ATK/HP de cartas inimigas, com arredondamento cuidadoso nos tutoriais para manter a entrada jogavel. A partir do mapa 7 a pressao segue mais alta para acompanhar upgrades, raridades e loja:
 
-- mapa 7 segura 5 turnos com objetivo 8 HP e ondas mais densas;
+- mapa 7 segura 5 turnos com objetivo 8 HP no centro, mas a pressao extra foi deslocada para side lanes;
 - mapa 8 tem boss HP maior, mais inimigos iniciais e summons mais fortes;
 - mapa 9 exige 5 turnos e comeca com elite;
 - mapas 10-13 introduzem mais `elemental_tita`, elite/bruto/agil, boss HP maior e duelos com mais mana/mao.
 
 ## Proximo Passo
 
-Playtestar a pressao dos inimigos contra a rota de 13 mapas com upgrades reais, cartas novas e save v3.
+Playtestar a pressao dos inimigos contra a rota de 13 mapas com upgrades reais, raridades, loja de upgrades, descarte pre-combate e save v4.

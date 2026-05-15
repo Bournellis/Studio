@@ -1,7 +1,7 @@
 # Track 01 Linear Execution Plan
 
 - Last Updated: `2026-05-15`
-- Status: `P13_REAL_UPGRADES_REWARD_CARDS_VALIDATED`
+- Status: `P14_PLAYTEST_TUNING_PASS_VALIDATED`
 - Execution Owner: `Codex`
 - Scope: `First coherent playable run loop after Track 00 checkpoint`
 - Validation Command: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd`
@@ -20,7 +20,7 @@ Turn the Track 00 placeholder checkpoint into a playable loop that starts a run,
 
 ## Current Execution Cursor
 
-Next prompt: `Playtest the full 13-map route with real upgrades, new cards, save v3, and stronger maps 7-13`.
+Next prompt: `Playtest the full 13-map route with save v4, pre-combat discard, rarity rewards, Souls upgrade shop, Diabrete, and globally stronger encounters`.
 
 ## Linear Prompt Sequence
 
@@ -30,7 +30,7 @@ Next prompt: `Playtest the full 13-map route with real upgrades, new cards, save
 | P02 | complete | Return from battle to ShipHub/RunMap with visible completed-node and commander health state. | Green 27/27 |
 | P03 | complete | Add placeholder post-combat reward choice that changes the current run immediately. | Green 29/29 |
 | P04 | complete | Replace placeholders with first mechanical class slice, including souls and paid healing. | Green 21/21 |
-| P05 | in progress | Playtest and tune class decks, target UX, rewards, visuals, menus, saves, and encounter pressure. | Real upgrades/reward cards green 65/65 |
+| P05 | in progress | Playtest and tune class decks, target UX, rewards, visuals, menus, saves, and encounter pressure. | P05 tuning green 67/67 |
 
 ### P05 Current Slice
 
@@ -42,11 +42,11 @@ Next prompt: `Playtest the full 13-map route with real upgrades, new cards, save
 - Base hand limit is 3; map 6 grants +1 max hand size.
 - Passives unlock on map 8; class actives unlock on map 10.
 - Maps 3/4/9/12 offer seeded upgrade choices that map base cards to Lvl 2/Lvl 3 variants.
-- Map 7 offers the 2 new class reward cards; map 11 offers the remaining card. Each new-card reward adds 3 copies.
+- Map 7 offers the 2 new class reward cards; map 11 offers the remaining card. New-card rewards add 3/4/5 copies by common/rare/ultra rare roll.
 - Combat resolves through `Resolver Combate`, then maintenance/script without a separate enemy combat turn.
 - Combat uses four visible stages: `Iniciativa - Frente`, `Iniciativa - Sobra`, `Combate - Frente`, and `Combate - Sobra`.
 - Front stages resolve simultaneous damage; overflow stages resolve sequentially by lane, player then enemy, left to right.
-- Combat supports front-lane attacks, overflow attacks, direct lane damage, `iniciativa`, `defensor`, `reviver`, `regeneracao`, `carnica`, `enfraquecer`, `prender`, keyword removal, `punir` on snared targets, `promover`, temporary all-ally buffs, adjacent damage, temporary mana, temporary spell power, and dynamic `poder de habilidade`.
+- Combat supports pre-combat discard/rebuy, front-lane attacks, overflow attacks, direct lane damage, `iniciativa`, `defensor`, `reviver`, `regeneracao`, `carnica`, `suicida`, `enfraquecer`, `prender`, keyword removal, `promover`, temporary all-ally buffs, adjacent damage, temporary mana, temporary spell power, and dynamic `poder de habilidade`.
 - `protecao` and `voadora` are removed from the active rules contract.
 - Main menu, 3 named save slots, forced class-pick and player-name modals, positioned ShipHub Deck/Mapa/Almas overlays, Deck/Almas scenes, Deck starter fallback, RunMap next-node selection, autosave outside battle, ESC-safe secondary screens, and victory reward modal are active.
 - ShipHub no longer shows run-state outside Deck.
@@ -63,9 +63,10 @@ Next prompt: `Playtest the full 13-map route with real upgrades, new cards, save
 - Summoning a creature into an occupied allied slot now opens a floating sacrifice confirmation; cancelling preserves mana, hand, and board state.
 - Necromante unlocks passiva + active level 1 on map 8 and upgrades to active level 2 on map 10; old Lentidao/Confusao/Reanimar original choices are removed and Raio das Cinzas is active.
 - Defense map 7 is now a real hold objective with wave pressure and no early victory for clearing the board; Survive map 9 has a light enemy buff while preserving clear-board victory.
-- Save version is now 3; v2 saves are invalid/stale but remain deletable and overwritable.
-- Arcano reward cards are `Bola de Fogo` and `Acelerar`; Invocador reward cards are `Atacar` and `Golem`; Necromante reward cards are `Carniceiro` and `Punir`.
-- Maps 7-13 have stronger pressure for the new upgrade/card economy: denser waves, more elite/tita presence, higher boss HP, and stronger duel mana/hand.
+- Save version is now 4; v3 and older saves are invalid/stale but remain deletable and overwritable.
+- Arcano reward cards are `Bola de Fogo` and `Acelerar`; Invocador reward cards are `Atacar` and `Golem`; Necromante reward cards are `Carniceiro` and `Diabrete`.
+- The Souls shop offers 3 eligible card upgrades for 20 souls and allows 1 upgrade purchase per combat.
+- All encounters have roughly +20% enemy stat tuning, with defense pressure shifted toward side lanes instead of making the center objective harsher.
 
 ## P01 - Run Start And Class Placeholder
 

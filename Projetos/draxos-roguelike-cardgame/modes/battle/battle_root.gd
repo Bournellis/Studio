@@ -19,6 +19,7 @@ var enemy_mana_value: Label
 var hero_targets_box: HBoxContainer
 var player_hero_target_box: HBoxContainer
 var enemy_board_area_target
+var player_board_area_target
 var enemy_slots_box: HBoxContainer
 var player_slots_box: HBoxContainer
 var hand_box: HBoxContainer
@@ -78,7 +79,8 @@ func _ready() -> void:
 		"mana_per_turn": RunSession.max_mana if RunSession.max_mana > 0 else 2,
 		"max_hand_size": RunSession.max_hand_size if RunSession.max_hand_size > 0 else RunSession.DEFAULT_MAX_HAND_SIZE,
 		"player_health": RunSession.current_health if RunSession.current_health > 0 else 20,
-		"shuffle_seed": RunSession.run_seed
+		"shuffle_seed": RunSession.run_seed,
+		"precombat_enabled": true
 	})
 	_build_ui()
 	_refresh()
@@ -138,6 +140,11 @@ func _build_ui() -> void:
 	enemy_board_area_target.visible = false
 	enemy_board_area_target.target_dropped.connect(_on_area_target_dropped)
 
+	player_board_area_target = BattleBoardAreaTargetScript.new()
+	player_board_area_target.name = "BattlePlayerBoardAreaTarget"
+	player_board_area_target.visible = false
+	player_board_area_target.target_dropped.connect(_on_area_target_dropped)
+
 	player_slots_box = HBoxContainer.new()
 	player_slots_box.name = "BattlePlayerSlots"
 	player_slots_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -165,6 +172,8 @@ func _build_ui() -> void:
 
 	board_surface.add_child(enemy_board_area_target)
 	_apply_area_target_overlay_rect(enemy_board_area_target)
+	board_surface.add_child(player_board_area_target)
+	_apply_player_area_target_overlay_rect(player_board_area_target)
 
 	var board_margin: MarginContainer = MarginContainer.new()
 	board_margin.name = "BattleBoardMargin"
@@ -440,6 +449,12 @@ func _build_floating_end_turn_button() -> void:
 	end_turn_button.offset_right = -10.0 if _is_compact_viewport() else -14.0
 	end_turn_button.offset_bottom = 30.0 if _is_compact_viewport() else 35.0
 	end_turn_button.pressed.connect(func() -> void:
+		if engine.is_precombat_phase():
+			engine.confirm_precombat_discard()
+			selected_hand_index = -1
+			_hide_preview()
+			_refresh()
+			return
 		var pre_combat_state: Dictionary = engine.get_state()
 		engine.resolve_combat_cycle()
 		selected_hand_index = -1
@@ -564,6 +579,7 @@ func _build_preview_panel() -> void:
 	preview_panel = PanelContainer.new()
 	preview_panel.name = "BattleCardPreview"
 	preview_panel.visible = false
+	preview_panel.z_index = 100
 	preview_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	preview_panel.custom_minimum_size = Vector2(278, 0)
 	preview_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.08, 0.09, 0.1), Color(0.62, 0.55, 0.42)))
@@ -797,7 +813,14 @@ func _refresh() -> void:
 	if history_log_label != null:
 		history_log_label.text = "\n".join(log_entries)
 	if end_turn_button != null:
-		end_turn_button.disabled = engine.outcome != "" or engine.has_pending_choice() or _combat_fx_playing() or _sacrifice_confirmation_visible()
+		if engine.is_precombat_phase():
+			end_turn_button.text = "Iniciar\nCombate"
+			end_turn_button.tooltip_text = "Confirma descartes marcados com botao direito e compra ate o limite da mao"
+			end_turn_button.disabled = engine.outcome != "" or _combat_fx_playing() or _sacrifice_confirmation_visible()
+		else:
+			end_turn_button.text = "Resolver\nCombate"
+			end_turn_button.tooltip_text = "Resolver combate e manutencao da mesa"
+			end_turn_button.disabled = engine.outcome != "" or engine.has_pending_choice() or _combat_fx_playing() or _sacrifice_confirmation_visible()
 
 func _display_state() -> Dictionary:
 	if not combat_fx_state.is_empty():
@@ -915,24 +938,34 @@ func _add_hero_target(container: HBoxContainer, owner_id: String, display_name: 
 	container.add_child(hero_target)
 
 func _refresh_area_targets() -> void:
-	if enemy_board_area_target == null:
+	if enemy_board_area_target == null or player_board_area_target == null:
 		return
-	var target: Dictionary = {"owner": BattleEngine.ENEMY_ID, "area": "board"}
-	var visual_state: Dictionary = {
-		"accepted_card_indices": _accepted_card_indices_for_target(target),
+	var enemy_target: Dictionary = {"owner": BattleEngine.ENEMY_ID, "area": "board"}
+	var enemy_visual_state: Dictionary = {
+		"accepted_card_indices": _accepted_card_indices_for_target(enemy_target),
 		"board_table": true
 	}
-	var visible: bool = _has_enemy_board_area_card_in_hand() or not Array(visual_state.get("accepted_card_indices", [])).is_empty()
-	enemy_board_area_target.setup("Mesa inimiga", "Solte spells de area aqui", target, visual_state)
-	enemy_board_area_target.visible = visible
+	var enemy_visible: bool = _has_enemy_board_area_card_in_hand() or not Array(enemy_visual_state.get("accepted_card_indices", [])).is_empty()
+	enemy_board_area_target.setup("Mesa inimiga", "Solte spells de area aqui", enemy_target, enemy_visual_state)
+	enemy_board_area_target.visible = enemy_visible
+	var player_target: Dictionary = {"owner": BattleEngine.PLAYER_ID, "area": "board"}
+	var player_visual_state: Dictionary = {
+		"accepted_card_indices": _accepted_card_indices_for_target(player_target),
+		"accepted_class_choices": _accepted_class_choices_for_target(player_target),
+		"board_table": true
+	}
+	var player_visible: bool = _has_player_board_area_card_in_hand() \
+		or not Array(player_visual_state.get("accepted_card_indices", [])).is_empty() \
+		or not Array(player_visual_state.get("accepted_class_choices", [])).is_empty()
+	player_board_area_target.setup("Mesa aliada", "Solte buffs e aceleracao aqui", player_target, player_visual_state)
+	player_board_area_target.visible = player_visible
 
 func _rebuild_slots(container: HBoxContainer, slots: Array, owner_id: String) -> void:
 	for child: Node in container.get_children():
 		child.queue_free()
-	var area_target: Dictionary = {"owner": BattleEngine.ENEMY_ID, "area": "board"}
+	var area_target: Dictionary = {"owner": owner_id, "area": "board"}
 	var accepted_area_card_indices: Array[int] = []
-	if owner_id == BattleEngine.ENEMY_ID:
-		accepted_area_card_indices = _accepted_card_indices_for_target(area_target)
+	accepted_area_card_indices = _accepted_card_indices_for_target(area_target)
 	for index: int in range(slots.size()):
 		var target: Dictionary = {"owner": owner_id, "slot": index}
 		var visual_state: Dictionary = {
@@ -968,13 +1001,19 @@ func _rebuild_hand(hand: Array) -> void:
 		var card = ContentLibrary.get_card(card_id)
 		var token: BattleCardToken = BattleCardToken.new()
 		token.name = "BattleHandCard%d" % index
-		token.setup(card_id, index, engine.can_play_card(card), selected_hand_index == index, _hand_card_size(), engine.get_card_text_context(card_id))
+		var precombat_marked: bool = Array(engine.precombat_discard_indices).has(index)
+		token.setup(card_id, index, engine.can_play_card(card), selected_hand_index == index or precombat_marked, _hand_card_size(), engine.get_card_text_context(card_id))
 		token.mouse_entered.connect(func() -> void:
 			_schedule_preview(_card_preview_data(card_id, {}))
 		)
 		token.mouse_exited.connect(_hide_preview)
 		token.gui_input.connect(func(event: InputEvent) -> void:
 			if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+				if engine.is_precombat_phase():
+					selected_hand_index = index
+					_show_preview_now(_card_preview_data(card_id, {}))
+					_update_hand_selection_visuals()
+					return
 				if engine.can_play_card_without_target(index):
 					engine.play_card_from_hand(index)
 					selected_hand_index = -1
@@ -984,6 +1023,11 @@ func _rebuild_hand(hand: Array) -> void:
 				selected_hand_index = index
 				_show_preview_now(_card_preview_data(card_id, {}))
 				_update_hand_selection_visuals()
+			if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
+				if engine.is_precombat_phase():
+					engine.toggle_precombat_discard(index)
+					selected_hand_index = -1
+					_refresh()
 		)
 		hand_box.add_child(token)
 
@@ -991,7 +1035,8 @@ func _update_hand_selection_visuals() -> void:
 	for child: Node in hand_box.get_children():
 		if child is BattleCardToken:
 			var token: BattleCardToken = child
-			token.set_selected(token.hand_index == selected_hand_index)
+			var precombat_marked: bool = Array(engine.precombat_discard_indices).has(token.hand_index)
+			token.set_selected(token.hand_index == selected_hand_index or precombat_marked)
 
 func _refresh_class_passive_tile() -> void:
 	class_passive_tile.visible = RunSession.class_passive_unlocked
@@ -1141,10 +1186,10 @@ func _resolve_drop(data: Dictionary, target: Dictionary) -> void:
 
 func _slot_or_area_drop_target(data: Dictionary, owner: String, slot_index: int) -> Dictionary:
 	var slot_target: Dictionary = {"owner": owner, "slot": slot_index}
-	if str(data.get("kind", "")) != "battle_card" or owner != BattleEngine.ENEMY_ID:
+	if str(data.get("kind", "")) != "battle_card":
 		return slot_target
 	var hand_index: int = int(data.get("hand_index", -1))
-	var area_target: Dictionary = {"owner": BattleEngine.ENEMY_ID, "area": "board"}
+	var area_target: Dictionary = {"owner": owner, "area": "board"}
 	if engine.can_play_card_on_target(hand_index, area_target) and not engine.can_play_card_on_target(hand_index, slot_target):
 		return area_target
 	return slot_target
@@ -1312,6 +1357,15 @@ func _has_enemy_board_area_card_in_hand() -> bool:
 		if card == null:
 			continue
 		if str(Dictionary(card.effect).get("action", "")) == "random_damage":
+			return true
+	return false
+
+func _has_player_board_area_card_in_hand() -> bool:
+	for card_id: String in engine.hand:
+		var card = ContentLibrary.get_card(card_id)
+		if card == null:
+			continue
+		if str(Dictionary(card.effect).get("action", "")) in ["buff_all_allies", "gain_mana"]:
 			return true
 	return false
 
@@ -1555,7 +1609,7 @@ func _class_active_detail_text(choice_id: String = "") -> String:
 		"arcano":
 			return "1 mana. Arraste para uma criatura ou heroi valido; causa 1 + Fluxo de dano."
 		"invocador":
-			return "1 mana. Arraste para uma criatura aliada; concede +2/+0 permanente."
+			return "0 mana. Arraste para a mesa aliada; concede +2/+0 permanente a aliada com maior ATK."
 		"necromante":
 			for choice: Dictionary in engine.get_necromancer_active_choices():
 				if str(choice.get("id", "")) == choice_id:
@@ -1696,6 +1750,16 @@ func _apply_area_target_overlay_rect(control: Control) -> void:
 	control.anchor_top = 0.05
 	control.anchor_right = 0.91
 	control.anchor_bottom = 0.52
+	control.offset_left = 0.0
+	control.offset_top = 0.0
+	control.offset_right = 0.0
+	control.offset_bottom = 0.0
+
+func _apply_player_area_target_overlay_rect(control: Control) -> void:
+	control.anchor_left = 0.09
+	control.anchor_top = 0.52
+	control.anchor_right = 0.91
+	control.anchor_bottom = 0.92
 	control.offset_left = 0.0
 	control.offset_top = 0.0
 	control.offset_right = 0.0

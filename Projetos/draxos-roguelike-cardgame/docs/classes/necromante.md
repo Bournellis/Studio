@@ -1,7 +1,7 @@
 # Necromante
 
 - Last Updated: `2026-05-15`
-- Status: `Track 01 real upgrades and reward cards validated`
+- Status: `Track 01 P05 playtest tuning pass validated`
 - Indice: `README.md`
 
 ## Identidade
@@ -56,13 +56,13 @@ Parametros do slice: mana inicial 1, HP do Comandante 20, mao base 3, deck inici
 | Prender | Tambem aplica Enfraquecer 1. | Tambem remove keywords da criatura alvo. |
 | Zumbi | Vira 3/3 e ao morrer aplica Enfraquecer 2. | Vira 4/4 e ao morrer aplica Enfraquecer 4. |
 | Carniceiro | Vira 4/4 com Carnica 1. | Mantem 4/4 e sobe para Carnica 2. |
-| Punir | Aplica -2/-2, ou -5/-5 se o alvo estiver preso. | Custa 0 e mantem o efeito Lvl 2. |
+| Diabrete | Vira 4/1 com Suicida 2. | Vira 6/1 com Suicida 4. |
 
 ## Cartas Novas
 
 | Carta | Custo | Tipo | Lvl 1 |
 |---|---:|---|---|
-| Carniceiro | 3 | Criatura | 2/2 com Carnica 1. |
-| Punir | 1 | Magia | A criatura alvo recebe -1/-1 permanente; se estiver presa, recebe -3/-3. |
+| Carniceiro | 2 | Criatura | 2/2 com Carnica 1. |
+| Diabrete | 1 | Criatura | 2/1 com Suicida 1. |
 
-`Punir` considera preso qualquer alvo com o estado de `Prender`/lentidao ativo e nao consome esse estado. O mapa 7 oferece `Carniceiro` e `Punir`; o mapa 11 oferece a carta que nao foi escolhida.
+`Suicida X` causa X de dano a um alvo inimigo aleatorio valido quando a criatura morre. `Punir` saiu do pool ativo do Necromante. O mapa 7 oferece `Carniceiro` e `Diabrete`; o mapa 11 oferece a carta que nao foi escolhida.

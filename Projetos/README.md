@@ -15,7 +15,7 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
   - Studio snapshot: `../08_Coordenacao_Agentes/Estado_Atual.md`
   - Validation command: `draxos-roguelike-cardgame/tools/validate.gd`
   - Allowed work: code, validation, playtest, local documentation.
-  - Current next step: playtest the 13-map route with real upgrades, new class reward cards, save v3, and stronger maps 7-13.
+  - Current next step: playtest the 13-map route with save v4, pre-combat discard, rarity rewards, Souls upgrade shop, Diabrete, and globally stronger encounters.
 
 ## Conceitos em Incubacao
 

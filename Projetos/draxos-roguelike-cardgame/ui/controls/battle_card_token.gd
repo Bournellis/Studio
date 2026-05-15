@@ -33,7 +33,7 @@ func _rebuild() -> void:
 		remove_child(child)
 		child.free()
 	custom_minimum_size = card_size
-	clip_contents = true
+	clip_contents = false
 	add_theme_stylebox_override("panel", _panel_style())
 
 	var box: VBoxContainer = VBoxContainer.new()
@@ -143,23 +143,24 @@ func _stat_badge(label_name: String, text: String, color: Color) -> Label:
 func _add_floating_badges() -> void:
 	var overlay: Control = Control.new()
 	overlay.name = "BattleCardFloatingStats"
+	overlay.z_index = 20
 	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(overlay)
 
 	var cost_badge: PanelContainer = BattleCardVisualsScript.build_floating_badge("BattleCardCost", str(int(card.cost if card != null else 0)), UiTokens.color("energy"), _floating_cost_size(), 11 if _is_compact_card() else 13)
-	_anchor_badge(cost_badge, 1.0, 0.0, Vector2(-31, 4) if _is_compact_card() else Vector2(-36, 5), Vector2(-4, 29) if _is_compact_card() else Vector2(-6, 33))
+	_anchor_badge(cost_badge, 1.0, 0.0, Vector2(-33, 7) if _is_compact_card() else Vector2(-39, 8), Vector2(-7, 31) if _is_compact_card() else Vector2(-9, 35))
 	overlay.add_child(cost_badge)
 
 	if card == null or not card.occupies_slot():
 		return
 
 	var attack_badge: PanelContainer = BattleCardVisualsScript.build_floating_badge("BattleCardAttack", str(int(card.attack)), Color(0.95, 0.58, 0.30), _floating_stat_size(), 12 if _is_compact_card() else 15)
-	_anchor_badge(attack_badge, 0.0, 1.0, Vector2(4, -29) if _is_compact_card() else Vector2(6, -34), Vector2(32, -4) if _is_compact_card() else Vector2(39, -6))
+	_anchor_badge(attack_badge, 0.0, 1.0, Vector2(7, -31) if _is_compact_card() else Vector2(9, -36), Vector2(34, -7) if _is_compact_card() else Vector2(41, -9))
 	overlay.add_child(attack_badge)
 
 	var health_badge: PanelContainer = BattleCardVisualsScript.build_floating_badge("BattleCardHealth", str(int(card.health)), Color(0.40, 0.86, 0.58), _floating_stat_size(), 12 if _is_compact_card() else 15)
-	_anchor_badge(health_badge, 1.0, 1.0, Vector2(-32, -29) if _is_compact_card() else Vector2(-39, -34), Vector2(-4, -4) if _is_compact_card() else Vector2(-6, -6))
+	_anchor_badge(health_badge, 1.0, 1.0, Vector2(-34, -31) if _is_compact_card() else Vector2(-41, -36), Vector2(-7, -7) if _is_compact_card() else Vector2(-9, -9))
 	overlay.add_child(health_badge)
 
 func _anchor_badge(badge: Control, anchor_x: float, anchor_y: float, top_left: Vector2, bottom_right: Vector2) -> void:

@@ -1,7 +1,7 @@
 # Arcano
 
 - Last Updated: `2026-05-15`
-- Status: `Track 01 real upgrades and reward cards validated`
+- Status: `Track 01 P05 playtest tuning pass validated`
 - Indice: `README.md`
 
 ## Identidade
@@ -34,7 +34,7 @@ Parametros do slice: mana inicial 1, HP do Comandante 20, mao base 3, deck inici
 |---|---:|---:|---|---|
 | Choque | 1 | 3 inicial | - | Causa 2 de dano a criatura ou heroi inimigo valido. |
 | Fagulha Arcana | 1 | 3 inicial | 1/2 | Enquanto em campo: +1 poder de habilidade. |
-| Barreira Arcana | 1 | 3 inicial | 1/3 | `defensor`. Enquanto em campo: +1 poder de habilidade. |
+| Barreira Arcana | 1 | 3 inicial | 0/3 | `defensor`. Enquanto em campo: +1 poder de habilidade. |
 | Tempestade Arcana | 2 | 3 no mapa 2 | - | Causa 4 pontos de dano distribuidos aleatoriamente entre alvos inimigos validos. |
 
 ## Upgrades
@@ -43,16 +43,16 @@ Parametros do slice: mana inicial 1, HP do Comandante 20, mao base 3, deck inici
 |---|---|---|
 | Choque | +1 dano, total 3. | Custa 0. |
 | Fagulha Arcana | Vira 2/4 e mantem +1 poder de habilidade. | Mantem 2/4 e aumenta aura para +4 poder de habilidade. |
-| Barreira Arcana | Vira 1/6 e mantem `defensor` +1 poder de habilidade. | Mantem 1/6 e aumenta aura para +4 poder de habilidade. |
+| Barreira Arcana | Vira 1/6 e mantem `defensor` +1 poder de habilidade. | Vira 2/9 e aumenta aura para +2 poder de habilidade total. |
 | Tempestade Arcana | Causa 6 dano aleatorio. | Custa 1 e causa 6 dano aleatorio. |
 | Bola de Fogo | Causa 2 dano no alvo e 2 nos adjacentes. | Causa 6 dano no alvo principal e 2 nos adjacentes. |
-| Acelerar | +1 mana e +1 poder de habilidade temporario. | +2 mana e +1 poder de habilidade temporario. |
+| Acelerar | +3 poder de habilidade temporario. | +3 poder de habilidade temporario e +1 mana. |
 
 ## Cartas Novas
 
 | Carta | Custo | Tipo | Lvl 1 |
 |---|---:|---|---|
 | Bola de Fogo | 2 | Magia | Causa 1 dano no alvo e 1 dano em cada slot adjacente. Poder de habilidade e Fluxo amplificam todos os alvos. |
-| Acelerar | 0 | Magia | Ganha +1 mana ate o final do turno. |
+| Acelerar | 0 | Magia | Mesa aliada alvo recebe +1 poder de habilidade temporario ate o final do turno. |
 
 O mapa 7 oferece `Bola de Fogo` e `Acelerar`; o mapa 11 oferece a carta que nao foi escolhida.

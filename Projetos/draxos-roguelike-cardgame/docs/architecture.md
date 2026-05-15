@@ -1,7 +1,7 @@
 # Architecture
 
 - Last Updated: `2026-05-15`
-- Status: `Track 01 real upgrades/reward cards architecture`
+- Status: `Track 01 P05 playtest tuning architecture`
 
 ## Goal
 
@@ -28,7 +28,7 @@ Responsibilities:
 
 - slot selection and summaries for the main menu;
 - save/load/delete JSON files under `user://`;
-- save version `3`, with older versions reported as invalid/stale but deletable and overwritable;
+- save version `4`, with older versions reported as invalid/stale but deletable and overwritable;
 - autosave current `RunSession` outside battle;
 - pending new-game handoff into the ShipHub class modal.
 
@@ -61,6 +61,8 @@ Run soul shop surface.
 Responsibilities:
 
 - paid healing action;
+- 3 card-upgrade offers from run-deck cards below Lvl 3, refreshed after victory;
+- 20-soul upgrade purchases limited to 1 per combat;
 - visible run state;
 - ESC return to ShipHub.
 
@@ -75,12 +77,13 @@ Responsibilities:
 - current node and completed nodes;
 - current deck;
 - card upgrade counts by base card id, mapped to effective Lvl 2/Lvl 3 card ids at display/battle time;
+- shop upgrade offer state and one-purchase-per-combat tracking;
 - current/max health;
 - max mana;
 - soul total;
 - passive and active unlock flags;
 - automatic reward ids;
-- stable seeded pending reward choices for upgrade/card rewards.
+- stable seeded pending reward choices for upgrade/card rewards, including stored rarity data.
 
 ### `Battle`
 
@@ -89,7 +92,9 @@ Card battle rules and encounter objectives.
 Responsibilities:
 
 - front-lane combat;
+- pre-combat discard/rebuy phase before the first player action;
 - `iniciativa`, `regeneracao`, `carnica`, keyword removal, adjacent damage, temporary mana, temporary spell power, and temporary all-ally buffs;
+- `suicida` death hooks;
 - class passive/active gating;
 - delayed pending-choice presentation after combat FX for automatic death triggers;
 - waves, duel, defense position, survive turns, and summoner boss;
@@ -105,6 +110,7 @@ Responsibilities:
 - classes and starter decks;
 - class reward pools with 2 real cards per class for the current slice;
 - encounters and soul reward bands;
+- reward rarity rules and shop offer state;
 - run map nodes, automatic rewards, and choice reward declarations;
 - visual manifest references.
 

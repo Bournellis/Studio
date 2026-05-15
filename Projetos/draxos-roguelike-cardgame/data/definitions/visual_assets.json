@@ -284,10 +284,10 @@
       "art_path": "res://assets/cards/art/necro_carniceiro.png",
       "frame_id": "frame_necromante"
     },
-    "necro_punir": {
-      "art_path": "res://assets/cards/art/necro_punir.png",
+    "necro_diabrete": {
+      "art_path": "res://assets/cards/art/necro_diabrete.png",
       "frame_id": "frame_necromante",
-      "text_template": "Alvo recebe -{amount}/-{amount}; se estiver preso, -{snared_amount}/-{snared_amount}."
+      "text_template": "Suicida {amount}: ao morrer, causa {amount} de dano a um inimigo aleatorio."
     },
     "elemental_agil": {
       "art_path": "res://assets/cards/art/elemental_agil.png",

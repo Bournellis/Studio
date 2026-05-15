@@ -1,7 +1,7 @@
 # Invocador
 
 - Last Updated: `2026-05-15`
-- Status: `Track 01 real upgrades and reward cards validated`
+- Status: `Track 01 P05 playtest tuning pass validated`
 - Indice: `README.md`
 
 ## Identidade
@@ -20,9 +20,9 @@ Antes do mapa 8, invocar criaturas nao dispara esse buff.
 
 Desbloqueio: mapa 10.
 
-**Custo:** 1 mana. Usavel uma vez por turno.
+**Custo:** 0 mana. Usavel uma vez por turno.
 
-**Efeito:** uma criatura aliada escolhida ganha +2/+0 permanente, aumentado por poder de habilidade.
+**Efeito:** a mesa aliada alvo escolhe automaticamente a criatura aliada de maior ATK para receber +2/+0 permanente, aumentado por poder de habilidade.
 
 Antes do mapa 10, a habilidade nao aparece na UI e nao pode ser usada.
 
@@ -51,14 +51,14 @@ Parametros do slice: mana inicial 1, HP do Comandante 20, mao base 3, deck inici
 | Batedor Arcano | Vira 3/2 com `iniciativa`. | Vira 6/2 com `iniciativa`. |
 | Promover | Escolhe 2 opcoes entre +1/+1, `iniciativa` e `defensor`. | Aplica +1/+1, `iniciativa` e `defensor`. |
 | Guardiao Arcano | Vira 3/6 com `defensor`. | Vira 4/8 com `defensor` e Regeneracao 3. |
-| Atacar | Todas as aliadas recebem +2/+2 temporario. | Todas as aliadas recebem +4/+4 temporario. |
+| Atacar | Mesa aliada alvo recebe +2/+2 temporario. | Mesa aliada alvo recebe +4/+4 temporario. |
 | Golem | Vira 5/7 com `defensor` e Regeneracao 2. | Vira 6/10 com `defensor` e Regeneracao 4. |
 
 ## Cartas Novas
 
 | Carta | Custo | Tipo | Lvl 1 |
 |---|---:|---|---|
-| Atacar | 2 | Magia | Todas as criaturas aliadas recebem +1/+1 ate o final do turno. |
+| Atacar | 2 | Magia | Mesa aliada alvo recebe +1/+1 ate o final do turno. |
 | Golem | 3 | Criatura | 4/5 com `defensor`. |
 
 O mapa 7 oferece `Atacar` e `Golem`; o mapa 11 oferece a carta que nao foi escolhida.

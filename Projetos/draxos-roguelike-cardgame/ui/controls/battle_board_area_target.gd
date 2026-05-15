@@ -68,14 +68,19 @@ func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 	if typeof(data) != TYPE_DICTIONARY:
 		return false
 	var payload: Dictionary = Dictionary(data)
-	return str(payload.get("kind", "")) == "battle_card" and Array(visual_state.get("accepted_card_indices", [])).has(int(payload.get("hand_index", -1)))
+	match str(payload.get("kind", "")):
+		"battle_card":
+			return Array(visual_state.get("accepted_card_indices", [])).has(int(payload.get("hand_index", -1)))
+		"class_active":
+			return Array(visual_state.get("accepted_class_choices", [])).has(str(payload.get("choice_id", "")))
+	return false
 
 func _drop_data(_at_position: Vector2, data: Variant) -> void:
 	target_dropped.emit(Dictionary(data), target.duplicate())
 
 func _panel_style() -> StyleBoxFlat:
 	var style: StyleBoxFlat = StyleBoxFlat.new()
-	var active: bool = not Array(visual_state.get("accepted_card_indices", [])).is_empty()
+	var active: bool = not Array(visual_state.get("accepted_card_indices", [])).is_empty() or not Array(visual_state.get("accepted_class_choices", [])).is_empty()
 	var board_table: bool = bool(visual_state.get("board_table", false))
 	if board_table:
 		style.bg_color = Color(0.035, 0.095, 0.105, 0.62 if active else 0.36)

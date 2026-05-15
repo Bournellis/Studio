@@ -1,7 +1,7 @@
 # Game Design Document
 
 - Last Updated: `2026-05-15`
-- Status: `Track 01 real upgrades, reward cards, and difficulty update validated`
+- Status: `Track 01 P05 playtest tuning pass validated`
 
 ## Direction
 
@@ -14,9 +14,9 @@ O slice atual tem 3 classes fixas: `arcano`, `invocador` e `necromante`. Cada cl
 1. Iniciar no hub da nave Draxos.
 2. Escolher uma classe antes da run.
 3. Entrar no mapa de missao linear.
-4. Resolver o proximo no disponivel.
+4. Resolver o proximo no disponivel, com fase pre-combate para descartar/recomprar cartas da mao inicial.
 5. Receber recompensas fixas e, quando houver, escolher 1 recompensa entre as opcoes oferecidas.
-6. Retornar a nave para ver estado da run, curar com Almas ou continuar.
+6. Retornar a nave para ver estado da run, curar com Almas, comprar 1 upgrade de carta por combate ou continuar.
 7. Vencer os 13 encontros ou perder se o Comandante cair.
 
 Nao ha meta-progressao por enquanto. Derrota reinicia a run completa.
@@ -47,6 +47,7 @@ O tabuleiro usa slots alinhados por indice: slot 1 contra slot 1, slot 2 contra 
 - `reviver`: a criatura morta volta uma vez no mesmo slot, com stats originais e marcador de reviver.
 - `regeneracao X`: cura ate X HP no fim de `Resolver Combate`.
 - `carnica X`: quando outra criatura aliada ou inimiga morre enquanto esta criatura sobrevive, ela recebe +X/+X permanente na batalha.
+- `suicida X`: quando esta criatura morre, causa X de dano a um alvo inimigo aleatorio valido.
 - `enfraquecer X`: criatura alvo recebe `-X/-X`.
 - `prender`: criatura alvo pula os proximos combates relevantes.
 - `remover keywords`: remove keywords ativas da criatura alvo, incluindo `iniciativa`, `defensor`, `reviver`, `regeneracao` e `carnica`.
@@ -65,6 +66,7 @@ Arcano e Invocador desbloqueiam passiva no mapa 8 e ativa no mapa 10. Necromante
 ## Battle Economy
 
 - Mao inicial com limite base de 3 cartas.
+- Antes do primeiro turno de cada combate, o jogador pode marcar cartas da mao com botao direito; ao iniciar o combate, as marcadas sao descartadas e a mao recompra ate o limite.
 - Jogar uma carta puxa 1 carta quando possivel.
 - Cartas jogadas vao para o descarte.
 - Quando o deck esvazia, o descarte e embaralhado de volta.
@@ -78,7 +80,7 @@ Arcano e Invocador desbloqueiam passiva no mapa 8 e ativa no mapa 10. Necromante
 - O ciclo de batalha e: jogadas do jogador, `Resolver Combate`, quatro etapas visuais de combate, escolhas pendentes, regeneracao de fim de combate, manutencao/script, escolhas pendentes, jogadas novas da IA de duelo para o proximo turno, retorno automatico ao jogador.
 - Escolhas automaticas geradas por mortes, como `Enfraquecer`, ficam adiadas ate as etapas visuais de combate terminarem. Cartas jogadas manualmente e `Promover` continuam resolvendo imediatamente.
 - Menus de Necromante, escolhas pendentes e recompensa de vitoria usam painel translucido com alpha alvo `0.72`.
-- Save version atual: `3`. Saves v2 aparecem como antigos/invalidos, podem ser deletados e podem ser sobrescritos por novo jogo.
+- Save version atual: `4`. Saves v3 ou anteriores aparecem como antigos/invalidos, podem ser deletados e podem ser sobrescritos por novo jogo.
 
 ## Reward System
 
@@ -87,7 +89,7 @@ Existem dois tipos de recompensa:
 - **Recompensas fixas:** aplicadas automaticamente no fim do mapa.
 - **Recompensas escolhiveis:** o jogador escolhe 1 opcao no modal de vitoria.
 
-Upgrade de carta e carta nova nunca aparecem misturados na mesma recompensa. Quando uma recompensa e de upgrade, as opcoes sao upgrades. Quando e carta nova, as opcoes sao cartas novas.
+Upgrade de carta e carta nova nunca aparecem misturados na mesma recompensa. Quando uma recompensa e de upgrade, as opcoes sao upgrades. Quando e carta nova, as opcoes sao cartas novas. Cada opcao rola raridade de forma estavel: `70% comum`, `25% rara`, `5% ultra rara`.
 
 ### Upgrades Por Nivel
 
@@ -99,7 +101,7 @@ Cada tipo de carta pode receber ate 2 upgrades durante a campanha:
 
 `RunSession.card_upgrade_counts` e a fonte de verdade. O deck da run continua armazenando o ID base da carta; Battle e Deck convertem para a variante efetiva `_lvl2` ou `_lvl3` quando a batalha/tela e aberta. Opcoes de upgrade sao sorteadas de forma estavel pelo seed da run e pelo ID da recompensa entre os tipos elegiveis existentes no deck.
 
-Os mapas 3, 4, 9 e 12 oferecem upgrade. O mapa 6 nao oferece mais upgrade.
+Os mapas 3, 4, 9 e 12 oferecem upgrade. O mapa 6 nao oferece mais upgrade. Upgrades raros adicionam +1 copia da carta ao deck alem do upgrade; upgrades ultra raros adicionam +2 copias.
 
 ### Cartas Novas
 
@@ -107,9 +109,13 @@ Cada classe tem 2 cartas novas reais no pool de recompensa atual:
 
 - Arcano: `Bola de Fogo` e `Acelerar`.
 - Invocador: `Atacar` e `Golem`.
-- Necromante: `Carniceiro` e `Punir`.
+- Necromante: `Carniceiro` e `Diabrete`.
 
-O mapa 7 oferece as 2 cartas novas da classe. O mapa 11 oferece a carta restante. Cada escolha adiciona 3 copias ao deck da run. As cartas novas tambem possuem Lvl 2 e Lvl 3.
+O mapa 7 oferece as 2 cartas novas da classe. O mapa 11 oferece a carta restante. Cartas novas comuns adicionam 3 copias ao deck, raras adicionam 4 copias e ultra raras adicionam 5 copias. As cartas novas tambem possuem Lvl 2 e Lvl 3.
+
+### Loja De Almas
+
+A tela de Almas oferece cura e 3 opcoes de upgrade de cartas presentes no deck da run que ainda estejam abaixo do Lvl 3. Cada upgrade custa 20 Almas, a compra e limitada a 1 upgrade por combate, e as ofertas atualizam depois de cada vitoria usando o deck pos-recompensa.
 
 ## Linear Mission Map
 
@@ -135,7 +141,7 @@ Todo mapa concede Almas alem das recompensas acima.
 
 ## Pending Design
 
-- Playtestar a curva 1 mana -> 2 manas -> 3 manas com upgrades reais.
-- Ajustar dificuldade dos mapas 7-13 apos playtest.
+- Playtestar a curva 1 mana -> 2 manas -> 3 manas com descarte pre-combate, loja de upgrades, raridades e inimigos +20%.
+- Ajustar dificuldade dos mapas 1-13 apos playtest do novo tuning.
 - Definir se cada classe ainda deve expandir de 2 cartas novas para um kit futuro de 6-8 cartas.
-- Ajustar almas, cura e loja depois que a curva de upgrades/cartas novas estabilizar.
+- Ajustar custo de Almas, cura e loja depois que a curva de upgrades/cartas novas estabilizar.

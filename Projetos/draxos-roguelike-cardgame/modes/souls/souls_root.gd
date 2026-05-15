@@ -3,6 +3,7 @@ extends Control
 var state_label: Label
 var message_label: Label
 var heal_button: Button
+var upgrade_options_box: VBoxContainer
 
 func _ready() -> void:
 	ContentLibrary.ensure_loaded()
@@ -74,6 +75,18 @@ func _build_ui() -> void:
 	heal_button.pressed.connect(_buy_heal)
 	box.add_child(heal_button)
 
+	var upgrade_title: Label = Label.new()
+	upgrade_title.name = "SoulsUpgradeTitle"
+	upgrade_title.text = "Upgrade de Carta | %d almas" % RunSession.SHOP_CARD_UPGRADE_COST
+	upgrade_title.add_theme_font_size_override("font_size", 16)
+	upgrade_title.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+	box.add_child(upgrade_title)
+
+	upgrade_options_box = VBoxContainer.new()
+	upgrade_options_box.name = "SoulsUpgradeOptions"
+	upgrade_options_box.add_theme_constant_override("separation", 6)
+	box.add_child(upgrade_options_box)
+
 	message_label = Label.new()
 	message_label.name = "SoulsMessage"
 	message_label.text = ""
@@ -132,11 +145,48 @@ func _buy_heal() -> void:
 		SaveManager.save_current_run()
 	_refresh()
 
+func _buy_card_upgrade(card_id: String) -> void:
+	var result: Dictionary = RunSession.buy_shop_card_upgrade(card_id)
+	message_label.text = str(result.get("message", ""))
+	if bool(result.get("ok", false)):
+		SaveManager.save_current_run()
+	_refresh()
+
 func _refresh() -> void:
 	if heal_button != null:
 		heal_button.disabled = not RunSession.can_buy_heal()
 	if state_label != null:
 		state_label.text = _state_text()
+	_refresh_upgrade_options()
+
+func _refresh_upgrade_options() -> void:
+	if upgrade_options_box == null:
+		return
+	for child: Node in upgrade_options_box.get_children():
+		child.queue_free()
+	var choices: Array[Dictionary] = RunSession.shop_upgrade_choices()
+	if choices.is_empty():
+		var empty_label: Label = Label.new()
+		empty_label.name = "SoulsNoUpgradeOptions"
+		empty_label.text = "Sem upgrades disponiveis depois do ultimo combate."
+		empty_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		empty_label.add_theme_font_size_override("font_size", 12)
+		empty_label.add_theme_color_override("font_color", UiTokens.color("text_secondary", Color(0.72, 0.78, 0.82)))
+		upgrade_options_box.add_child(empty_label)
+		return
+	for choice: Dictionary in choices:
+		var card_id: String = str(choice.get("card_id", ""))
+		var button: Button = Button.new()
+		button.name = "SoulsUpgrade_%s" % card_id
+		button.text = "%s\n%d almas" % [str(choice.get("title", card_id)), int(choice.get("cost", RunSession.SHOP_CARD_UPGRADE_COST))]
+		button.tooltip_text = str(choice.get("body", ""))
+		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		button.custom_minimum_size = Vector2(0, 46)
+		button.disabled = not bool(choice.get("can_buy", false))
+		button.pressed.connect(func() -> void:
+			_buy_card_upgrade(card_id)
+		)
+		upgrade_options_box.add_child(button)
 
 func _state_text() -> String:
 	if not RunSession.active:

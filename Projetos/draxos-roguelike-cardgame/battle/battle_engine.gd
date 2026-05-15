@@ -11,6 +11,7 @@ const MODE_DEFENSE_POSITION: String = "defesa_posicao"
 const MODE_SURVIVE_TURNS: String = "sobreviver_turnos"
 const MODE_SUMMONER_BOSS: String = "chefe_summoner"
 
+const PHASE_PRECOMBAT: String = "preparo_pre_combate"
 const PHASE_MAIN: String = "fase_principal"
 const PHASE_PENDING_COMBAT_CHOICE: String = "escolha_pos_combate"
 const PHASE_PENDING_MAINTENANCE_CHOICE: String = "escolha_pos_manutencao"
@@ -53,6 +54,7 @@ var enemy_hand: Array[String] = []
 var deck: Array[String] = []
 var discard: Array[String] = []
 var hand: Array[String] = []
+var precombat_discard_indices: Array[int] = []
 var pending_choices: Array[Dictionary] = []
 var player_slots: Array = []
 var enemy_slots: Array = []
@@ -127,12 +129,13 @@ func start_battle(catalog, deck_ids: Array, config: Dictionary = {}) -> void:
 	shuffle_enabled = bool(config.get("shuffle_deck", true))
 	_setup_shuffle(int(config.get("shuffle_seed", 0)), encounter_id)
 	outcome = ""
-	current_phase = PHASE_MAIN
+	current_phase = PHASE_PRECOMBAT if bool(config.get("precombat_enabled", false)) else PHASE_MAIN
 	log_lines = []
 	visual_events = []
 	pending_choices = []
 	discard = []
 	hand = []
+	precombat_discard_indices = []
 	deck = _effective_deck_ids(_typed_string_array(deck_ids))
 	if deck.is_empty() and catalog != null:
 		deck = _typed_string_array(Array(catalog.starter_deck_ids))
@@ -181,6 +184,7 @@ func get_state() -> Dictionary:
 		"deck": deck.duplicate(),
 		"discard": discard.duplicate(),
 		"hand": hand.duplicate(),
+		"precombat_discard_indices": precombat_discard_indices.duplicate(),
 		"pending_choices": pending_choices.duplicate(true),
 		"player_slots": player_slots.duplicate(true),
 		"enemy_slots": enemy_slots.duplicate(true),
@@ -260,7 +264,7 @@ func get_card_text_context(card_id: String) -> Dictionary:
 	return context
 
 func can_play_card(card) -> bool:
-	return outcome == "" and pending_choices.is_empty() and card != null and int(card.cost) <= mana and not hand.is_empty()
+	return current_phase == PHASE_MAIN and outcome == "" and pending_choices.is_empty() and card != null and int(card.cost) <= mana and not hand.is_empty()
 
 func can_play_card_without_target(hand_index: int) -> bool:
 	if hand_index < 0 or hand_index >= hand.size():
@@ -298,7 +302,9 @@ func get_valid_card_targets(hand_index: int) -> Array[Dictionary]:
 		"buff_ally", "promote":
 			return _occupied_slot_targets(PLAYER_ID)
 		"buff_all_allies", "gain_mana":
-			return [{}]
+			if not _occupied_slot_targets(PLAYER_ID).is_empty():
+				return [_board_area_target(PLAYER_ID)]
+			return _empty_targets()
 	return _empty_targets()
 
 func can_play_card_on_target(hand_index: int, target: Dictionary) -> bool:
@@ -324,7 +330,9 @@ func play_card_from_hand(hand_index: int, target: Dictionary = {}) -> Dictionary
 		return _fail("Carta nao encontrada: %s." % card_id)
 	if int(card.cost) > mana:
 		return _fail("Mana insuficiente.")
-	if target.is_empty() and str(Dictionary(card.effect).get("action", "")) == "random_damage":
+	if current_phase != PHASE_MAIN:
+		return _fail("Finalize o preparo antes de jogar cartas.")
+	if target.is_empty() and str(Dictionary(card.effect).get("action", "")) in ["random_damage", "buff_all_allies", "gain_mana"]:
 		return _fail("Alvo invalido.")
 	if not target.is_empty() and not can_play_card_on_target(hand_index, target):
 		return _fail("Alvo invalido.")
@@ -368,6 +376,42 @@ func play_card_from_hand(hand_index: int, target: Dictionary = {}) -> Dictionary
 
 func has_pending_choice() -> bool:
 	return not pending_choices.is_empty()
+
+func is_precombat_phase() -> bool:
+	return current_phase == PHASE_PRECOMBAT and outcome == ""
+
+func toggle_precombat_discard(hand_index: int) -> Dictionary:
+	if not is_precombat_phase():
+		return _fail("Descarte de preparo indisponivel.")
+	if hand_index < 0 or hand_index >= hand.size():
+		return _fail("Indice de carta invalido.")
+	if precombat_discard_indices.has(hand_index):
+		precombat_discard_indices.erase(hand_index)
+		return {"ok": true, "message": "Carta mantida na mao."}
+	precombat_discard_indices.append(hand_index)
+	precombat_discard_indices.sort()
+	return {"ok": true, "message": "Carta marcada para descarte."}
+
+func confirm_precombat_discard() -> Dictionary:
+	if not is_precombat_phase():
+		return _fail("Preparo indisponivel.")
+	precombat_discard_indices.sort()
+	precombat_discard_indices.reverse()
+	var discarded_count: int = 0
+	for hand_index: int in precombat_discard_indices:
+		if hand_index < 0 or hand_index >= hand.size():
+			continue
+		discard.append(hand[hand_index])
+		hand.remove_at(hand_index)
+		discarded_count += 1
+	precombat_discard_indices = []
+	_draw_to_hand_size()
+	current_phase = PHASE_MAIN
+	if discarded_count > 0:
+		_log("Preparo descartou %d carta(s) e recomprou ate o limite da mao." % discarded_count)
+	else:
+		_log("Preparo concluido sem descarte.")
+	return {"ok": true, "message": "Preparo concluido."}
 
 func get_pending_choice() -> Dictionary:
 	return pending_choices[0].duplicate(true) if not pending_choices.is_empty() else {}
@@ -476,13 +520,13 @@ func get_necromancer_active_choices() -> Array[Dictionary]:
 	return choices
 
 func can_use_class_active() -> bool:
-	if outcome != "" or class_active_used or not class_active_unlocked:
+	if current_phase != PHASE_MAIN or outcome != "" or class_active_used or not class_active_unlocked:
 		return false
 	match selected_class_id:
 		"arcano":
 			return mana >= 1
 		"invocador":
-			return mana >= 1 and _first_ally_slot() >= 0
+			return _first_ally_slot() >= 0
 		"necromante":
 			return class_active_level >= 1 and ashes >= 2
 	return false
@@ -498,7 +542,10 @@ func get_valid_class_active_targets(choice_id: String = "") -> Array[Dictionary]
 			targets.append_array(_hero_targets())
 			return targets
 		"invocador":
-			return _occupied_slot_targets(PLAYER_ID)
+			var targets: Array[Dictionary] = []
+			if not _occupied_slot_targets(PLAYER_ID).is_empty():
+				targets.append(_board_area_target(PLAYER_ID))
+			return targets
 		"necromante":
 			match choice_id:
 				NECRO_CHOICE_ROT:
@@ -557,9 +604,10 @@ func use_class_active(target: Dictionary = {}, choice_id: String = "") -> Dictio
 				_damage_hero(str(arcane_target.get("owner", ENEMY_ID)), amount)
 			_log("Spell de classe Arcano causou %d de dano." % amount)
 		"invocador":
-			mana -= 1
 			var ally_slot: int = int(target.get("slot", _strongest_ally_slot()))
 			var attack_bonus: int = 2 + _ability_power_bonus()
+			if str(target.get("area", "")) == "board":
+				ally_slot = _strongest_ally_slot()
 			_buff_slot(PLAYER_ID, ally_slot, attack_bonus, 0, false)
 			_log("Spell de classe Invocador concedeu +%d/+0 permanente." % attack_bonus)
 		"necromante":
@@ -573,6 +621,8 @@ func end_player_turn() -> Dictionary:
 func resolve_combat_cycle() -> Dictionary:
 	if outcome != "":
 		return _fail("A batalha ja terminou.")
+	if is_precombat_phase():
+		return _fail("Finalize o preparo antes do combate.")
 	if not pending_choices.is_empty():
 		return _fail("Resolva as escolhas pendentes antes do combate.")
 	visual_events = []
@@ -830,11 +880,17 @@ func _resolve_spell(card, target: Dictionary) -> void:
 			_buff_slot(PLAYER_ID, ally_slot, _effect_number(effect, "attack"), _effect_number(effect, "health"), bool(effect.get("temporary", false)))
 			_log("%s fortaleceu uma criatura aliada." % card.display_name)
 		"buff_all_allies":
+			if str(target.get("owner", PLAYER_ID)) != PLAYER_ID or str(target.get("area", "")) != "board":
+				_log("%s perdeu efeito: alvo aliado invalido." % card.display_name)
+				return
 			for index: int in range(player_slots.size()):
 				if player_slots[index] != null:
 					_buff_slot(PLAYER_ID, index, _effect_number(effect, "attack"), _effect_number(effect, "health"), bool(effect.get("temporary", false)))
 			_log("%s fortaleceu a mesa aliada." % card.display_name)
 		"gain_mana":
+			if str(target.get("owner", PLAYER_ID)) != PLAYER_ID or str(target.get("area", "")) != "board":
+				_log("%s perdeu efeito: alvo aliado invalido." % card.display_name)
+				return
 			var mana_gained: int = int(effect.get("mana", effect.get("amount", 0)))
 			mana += mana_gained
 			temporary_ability_power_bonus += int(effect.get("temporary_ability_power", 0))
@@ -1429,6 +1485,8 @@ func _handle_unit_death(owner_id: String, occupant: Dictionary, allow_revive: bo
 		var on_death: Dictionary = Dictionary(Dictionary(card.effect).get("on_death", {}))
 		if str(on_death.get("action", "")) == "damage":
 			_damage_first_enemy(int(on_death.get("amount", 0)) + _ability_power_bonus())
+		elif str(on_death.get("action", "")) == "random_enemy_damage":
+			_damage_random_enemy(int(on_death.get("amount", 0)) + _ability_power_bonus())
 		elif str(on_death.get("action", "")) in ["debuff", "weaken"]:
 			_queue_on_death_debuff(card.display_name, on_death)
 	if selected_class_id == "necromante" and class_passive_unlocked:
@@ -1853,6 +1911,18 @@ func _damage_first_enemy(amount: int) -> void:
 	else:
 		_damage_hero(str(target.get("owner", ENEMY_ID)), amount)
 
+func _damage_random_enemy(amount: int) -> void:
+	if amount <= 0:
+		return
+	var targets: Array[Dictionary] = _area_damage_targets(ENEMY_ID)
+	if targets.is_empty():
+		return
+	var target: Dictionary = targets[_rng.randi_range(0, targets.size() - 1)]
+	if target.has("slot"):
+		_damage_slot(str(target.get("owner", ENEMY_ID)), int(target.get("slot", -1)), amount)
+	else:
+		_damage_hero(str(target.get("owner", ENEMY_ID)), amount)
+
 func _first_same_side_target(owner_id: String, attacker_index: int) -> Dictionary:
 	var slots: Array = _slots_for_owner(owner_id)
 	for index: int in range(slots.size()):
@@ -1929,7 +1999,7 @@ func _card_can_resolve_without_target(card) -> bool:
 	if card == null:
 		return false
 	var action: String = str(Dictionary(card.effect).get("action", ""))
-	return action in ["buff_all_allies", "gain_mana"]
+	return action == ""
 
 func _card(card_id: String):
 	if _catalog == null:

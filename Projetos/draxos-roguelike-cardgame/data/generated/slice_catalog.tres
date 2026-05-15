@@ -93,7 +93,6 @@ id = "arcano_barreira"
 display_name = "Barreira Arcana"
 card_type = "criatura"
 cost = 1
-attack = 1
 health = 3
 text = "Defensor. Enquanto em campo: +1 Poder de habilidade."
 keywords = PackedStringArray("defensor")
@@ -123,12 +122,12 @@ id = "arcano_barreira_lvl3"
 display_name = "Barreira Arcana Lvl 3"
 card_type = "criatura"
 cost = 1
-attack = 1
-health = 6
-text = "Defensor. Enquanto em campo: +4 Poder de habilidade."
+attack = 2
+health = 9
+text = "Defensor. Enquanto em campo: +2 Poder de habilidade."
 keywords = PackedStringArray("defensor")
 effect = {
-"amount": 4.0,
+"amount": 2.0,
 "aura": "ability_power"
 }
 
@@ -218,11 +217,12 @@ script = ExtResource("1_tqsc8")
 id = "arcano_acelerar"
 display_name = "Acelerar"
 card_type = "magia"
-text = "Ganha +1 mana ate o final do turno."
+text = "Mesa aliada alvo. Ganha +1 Poder de habilidade ate o final do turno."
 keywords = PackedStringArray()
 effect = {
 "action": "gain_mana",
-"mana": 1.0
+"mana": 0.0,
+"temporary_ability_power": 1.0
 }
 
 [sub_resource type="Resource" id="Resource_haoox"]
@@ -230,12 +230,12 @@ script = ExtResource("1_tqsc8")
 id = "arcano_acelerar_lvl2"
 display_name = "Acelerar Lvl 2"
 card_type = "magia"
-text = "Ganha +1 mana e +1 Poder de habilidade ate o final do turno."
+text = "Mesa aliada alvo. Ganha +3 Poder de habilidade ate o final do turno."
 keywords = PackedStringArray()
 effect = {
 "action": "gain_mana",
-"mana": 1.0,
-"temporary_ability_power": 1.0
+"mana": 0.0,
+"temporary_ability_power": 3.0
 }
 
 [sub_resource type="Resource" id="Resource_dqqtb"]
@@ -243,12 +243,12 @@ script = ExtResource("1_tqsc8")
 id = "arcano_acelerar_lvl3"
 display_name = "Acelerar Lvl 3"
 card_type = "magia"
-text = "Ganha +2 mana e +1 Poder de habilidade ate o final do turno."
+text = "Mesa aliada alvo. Ganha +3 Poder de habilidade e +1 mana ate o final do turno."
 keywords = PackedStringArray()
 effect = {
 "action": "gain_mana",
-"mana": 2.0,
-"temporary_ability_power": 1.0
+"mana": 1.0,
+"temporary_ability_power": 3.0
 }
 
 [sub_resource type="Resource" id="Resource_0kq34"]
@@ -406,7 +406,7 @@ id = "invocador_atacar"
 display_name = "Atacar"
 card_type = "magia"
 cost = 2
-text = "Todas as criaturas aliadas recebem +1/+1 ate o final do turno."
+text = "Mesa aliada alvo. Todas as criaturas aliadas recebem +1/+1 ate o final do turno."
 keywords = PackedStringArray()
 effect = {
 "action": "buff_all_allies",
@@ -421,7 +421,7 @@ id = "invocador_atacar_lvl2"
 display_name = "Atacar Lvl 2"
 card_type = "magia"
 cost = 2
-text = "Todas as criaturas aliadas recebem +2/+2 ate o final do turno."
+text = "Mesa aliada alvo. Todas as criaturas aliadas recebem +2/+2 ate o final do turno."
 keywords = PackedStringArray()
 effect = {
 "action": "buff_all_allies",
@@ -436,7 +436,7 @@ id = "invocador_atacar_lvl3"
 display_name = "Atacar Lvl 3"
 card_type = "magia"
 cost = 2
-text = "Todas as criaturas aliadas recebem +4/+4 ate o final do turno."
+text = "Mesa aliada alvo. Todas as criaturas aliadas recebem +4/+4 ate o final do turno."
 keywords = PackedStringArray()
 effect = {
 "action": "buff_all_allies",
@@ -675,7 +675,7 @@ script = ExtResource("1_tqsc8")
 id = "necro_carniceiro"
 display_name = "Carniceiro"
 card_type = "criatura"
-cost = 3
+cost = 2
 attack = 2
 health = 2
 text = "Carnica 1: quando outra criatura morre, recebe +1/+1 permanente."
@@ -689,7 +689,7 @@ script = ExtResource("1_tqsc8")
 id = "necro_carniceiro_lvl2"
 display_name = "Carniceiro Lvl 2"
 card_type = "criatura"
-cost = 3
+cost = 2
 attack = 4
 health = 4
 text = "Carnica 1: quando outra criatura morre, recebe +1/+1 permanente."
@@ -703,7 +703,7 @@ script = ExtResource("1_tqsc8")
 id = "necro_carniceiro_lvl3"
 display_name = "Carniceiro Lvl 3"
 card_type = "criatura"
-cost = 3
+cost = 2
 attack = 4
 health = 4
 text = "Carnica 2: quando outra criatura morre, recebe +2/+2 permanente."
@@ -714,43 +714,53 @@ effect = {
 
 [sub_resource type="Resource" id="Resource_u1e06"]
 script = ExtResource("1_tqsc8")
-id = "necro_punir"
-display_name = "Punir"
-card_type = "magia"
+id = "necro_diabrete"
+display_name = "Diabrete"
+card_type = "criatura"
 cost = 1
-text = "A criatura alvo recebe -1/-1 permanente; se estiver presa, recebe -3/-3."
-keywords = PackedStringArray()
+attack = 2
+health = 1
+text = "Suicida 1: quando morre, causa 1 de dano a um inimigo aleatorio."
+keywords = PackedStringArray("suicida")
 effect = {
-"action": "punish_snared",
-"amount": 1.0,
-"snared_amount": 3.0
+"on_death": {
+"action": "random_enemy_damage",
+"amount": 1.0
+}
 }
 
 [sub_resource type="Resource" id="Resource_m1ldt"]
 script = ExtResource("1_tqsc8")
-id = "necro_punir_lvl2"
-display_name = "Punir Lvl 2"
-card_type = "magia"
+id = "necro_diabrete_lvl2"
+display_name = "Diabrete Lvl 2"
+card_type = "criatura"
 cost = 1
-text = "A criatura alvo recebe -2/-2 permanente; se estiver presa, recebe -5/-5."
-keywords = PackedStringArray()
+attack = 4
+health = 1
+text = "Suicida 2: quando morre, causa 2 de dano a um inimigo aleatorio."
+keywords = PackedStringArray("suicida")
 effect = {
-"action": "punish_snared",
-"amount": 2.0,
-"snared_amount": 5.0
+"on_death": {
+"action": "random_enemy_damage",
+"amount": 2.0
+}
 }
 
 [sub_resource type="Resource" id="Resource_orpcd"]
 script = ExtResource("1_tqsc8")
-id = "necro_punir_lvl3"
-display_name = "Punir Lvl 3"
-card_type = "magia"
-text = "A criatura alvo recebe -2/-2 permanente; se estiver presa, recebe -5/-5."
-keywords = PackedStringArray()
+id = "necro_diabrete_lvl3"
+display_name = "Diabrete Lvl 3"
+card_type = "criatura"
+cost = 1
+attack = 6
+health = 1
+text = "Suicida 4: quando morre, causa 4 de dano a um inimigo aleatorio."
+keywords = PackedStringArray("suicida")
 effect = {
-"action": "punish_snared",
-"amount": 2.0,
-"snared_amount": 5.0
+"on_death": {
+"action": "random_enemy_damage",
+"amount": 4.0
+}
 }
 
 [sub_resource type="Resource" id="Resource_r1h11"]
@@ -760,7 +770,7 @@ display_name = "Elemental Agil"
 card_type = "criatura"
 cost = 1
 attack = 2
-health = 2
+health = 3
 text = "Ameaca rapida do primeiro encontro."
 keywords = PackedStringArray()
 
@@ -770,8 +780,8 @@ id = "elemental_bruto"
 display_name = "Elemental Bruto"
 card_type = "criatura"
 cost = 2
-attack = 3
-health = 3
+attack = 4
+health = 4
 text = "Maior ameaca de dano inicial."
 keywords = PackedStringArray()
 
@@ -782,7 +792,7 @@ display_name = "Elemental Solido"
 card_type = "criatura"
 cost = 2
 attack = 1
-health = 5
+health = 6
 text = "Criatura resistente de baixo dano."
 keywords = PackedStringArray()
 
@@ -793,7 +803,7 @@ display_name = "Elemental Menor"
 card_type = "criatura"
 cost = 1
 attack = 1
-health = 2
+health = 3
 text = "Onda inicial."
 keywords = PackedStringArray()
 
@@ -804,7 +814,7 @@ display_name = "Elemental Medio"
 card_type = "criatura"
 cost = 2
 attack = 2
-health = 3
+health = 4
 text = "Pressao intermediaria."
 keywords = PackedStringArray()
 
@@ -814,8 +824,8 @@ id = "elemental_pesado_a"
 display_name = "Elemental Pesado A"
 card_type = "criatura"
 cost = 3
-attack = 3
-health = 4
+attack = 4
+health = 5
 text = "Pressao final de ondas."
 keywords = PackedStringArray()
 
@@ -826,7 +836,7 @@ display_name = "Elemental Pesado B"
 card_type = "criatura"
 cost = 3
 attack = 2
-health = 4
+health = 5
 text = "Pressao final de ondas."
 keywords = PackedStringArray()
 
@@ -837,7 +847,7 @@ display_name = "Elemental Pesado C"
 card_type = "criatura"
 cost = 3
 attack = 1
-health = 4
+health = 5
 text = "Pressao final de ondas."
 keywords = PackedStringArray()
 
@@ -848,7 +858,7 @@ display_name = "Elemental Duelista"
 card_type = "criatura"
 cost = 2
 attack = 2
-health = 4
+health = 5
 text = "Mockup de pressao para duelo."
 keywords = PackedStringArray()
 
@@ -858,8 +868,8 @@ id = "elemental_assaltante"
 display_name = "Elemental Assaltante"
 card_type = "criatura"
 cost = 2
-attack = 3
-health = 2
+attack = 4
+health = 3
 text = "Mockup ofensivo para lanes."
 keywords = PackedStringArray()
 
@@ -869,8 +879,8 @@ id = "elemental_assaltante_veloz"
 display_name = "Elemental Assaltante Veloz"
 card_type = "criatura"
 cost = 2
-attack = 3
-health = 2
+attack = 4
+health = 3
 text = "Iniciativa: causa dano primeiro na lane."
 keywords = PackedStringArray("iniciativa")
 
@@ -881,7 +891,7 @@ display_name = "Elemental Guardiao"
 card_type = "criatura"
 cost = 3
 attack = 2
-health = 6
+health = 7
 text = "Mockup defensivo escalado."
 keywords = PackedStringArray()
 
@@ -891,8 +901,8 @@ id = "elemental_elite_agil"
 display_name = "Elemental Elite Agil"
 card_type = "criatura"
 cost = 3
-attack = 4
-health = 3
+attack = 5
+health = 4
 text = "Iniciativa: causa dano primeiro na lane."
 keywords = PackedStringArray("iniciativa")
 
@@ -902,8 +912,8 @@ id = "elemental_elite_bruto"
 display_name = "Elemental Elite Bruto"
 card_type = "criatura"
 cost = 4
-attack = 4
-health = 5
+attack = 5
+health = 6
 text = "Mockup elite de alto dano."
 keywords = PackedStringArray()
 
@@ -913,8 +923,8 @@ id = "elemental_tita"
 display_name = "Elemental Tita"
 card_type = "criatura"
 cost = 5
-attack = 5
-health = 6
+attack = 6
+health = 7
 text = "Mockup pesado de fim de run."
 keywords = PackedStringArray()
 
@@ -1169,7 +1179,7 @@ class_options = Array[Dictionary]([{
 "id": "necromante",
 "mechanic_status": "Comeca com 9 cartas custo 1; mapa 2 adiciona Zumbi; passiva e Ritual I desbloqueiam no mapa 8; Ritual II no mapa 10.",
 "passive_id": "colheita_sombria",
-"reward_pool": ["necro_carniceiro", "necro_punir"],
+"reward_pool": ["necro_carniceiro", "necro_diabrete"],
 "role_text": "Cinzas, morte como recurso, debuffs e reanimacao.",
 "starter_deck": ["necro_esqueleto", "necro_esqueleto", "necro_esqueleto", "necro_morto_vivo", "necro_morto_vivo", "necro_morto_vivo", "necro_prender", "necro_prender", "necro_prender"],
 "starting_hand_size": 3.0,
@@ -1335,28 +1345,28 @@ encounters = Array[Dictionary]([{
 "card_id": "elemental_assaltante_veloz",
 "slot": 0.0
 }, {
-"card_id": "elemental_assaltante",
+"card_id": "elemental_menor",
 "slot": 1.0
 }, {
-"card_id": "elemental_medio",
+"card_id": "elemental_assaltante",
 "slot": 2.0
 }], [{
-"card_id": "elemental_assaltante_veloz",
+"card_id": "elemental_guardiao",
 "slot": 0.0
 }, {
-"card_id": "elemental_guardiao",
+"card_id": "elemental_medio",
 "slot": 1.0
 }, {
-"card_id": "elemental_assaltante",
+"card_id": "elemental_assaltante_veloz",
 "slot": 2.0
 }], [{
 "card_id": "elemental_elite_agil",
 "slot": 0.0
 }, {
-"card_id": "elemental_elite_bruto",
+"card_id": "elemental_guardiao",
 "slot": 1.0
 }, {
-"card_id": "elemental_guardiao",
+"card_id": "elemental_elite_bruto",
 "slot": 2.0
 }]]
 }, {

@@ -51,6 +51,6 @@ Cartas novas do pool atual que ainda podem usar fallback ate a arte existir:
 
 - Arcano: `arcano_bola_de_fogo.png`, `arcano_acelerar.png`.
 - Invocador: `invocador_atacar.png`, `invocador_golem.png`.
-- Necromante: `necro_carniceiro.png`, `necro_punir.png`.
+- Necromante: `necro_carniceiro.png`, `necro_diabrete.png`.
 
 As variantes `_lvl2` e `_lvl3` reutilizam a arte/manifesto da carta base.

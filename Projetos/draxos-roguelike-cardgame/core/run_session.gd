@@ -11,13 +11,18 @@ const REWARD_ADD_CLASS_COST2_CORE: String = "add_class_cost2_core"
 const CHOICE_REWARD_UPGRADE_CARD: String = "upgrade_card"
 const CHOICE_REWARD_NEW_CARD: String = "new_card"
 const REWARD_CARD_COPY_COUNT: int = 3
+const REWARD_RARITY_COMMON: String = "comum"
+const REWARD_RARITY_RARE: String = "rara"
+const REWARD_RARITY_ULTRA: String = "ultra_rara"
+const SHOP_CARD_UPGRADE_COST: int = 20
+const SHOP_UPGRADE_OFFER_COUNT: int = 3
 const DEFAULT_MAX_HAND_SIZE: int = 3
 const PAID_HEAL_COST: int = 10
 const PAID_HEAL_AMOUNT: int = 5
 const DEFAULT_PLAYER_NAME: String = "Comandante Draxos"
 const MIN_PLAYER_NAME_LENGTH: int = 2
 const MAX_PLAYER_NAME_LENGTH: int = 18
-const SNAPSHOT_VERSION: int = 3
+const SNAPSHOT_VERSION: int = 4
 
 var active: bool = false
 var run_seed: int = DEFAULT_RUN_SEED
@@ -40,6 +45,9 @@ var rewards_pending: Array[Dictionary] = []
 var applied_reward_ids: Array[String] = []
 var automatic_reward_ids: Array[String] = []
 var card_upgrade_counts: Dictionary = {}
+var shop_upgrade_offer_card_ids: Array[String] = []
+var shop_upgrade_refresh_node_id: String = ""
+var shop_upgrade_purchase_node_id: String = ""
 var last_completed_node_id: String = ""
 var last_battle_outcome: String = ""
 
@@ -65,6 +73,9 @@ func start_empty_run(seed: int = DEFAULT_RUN_SEED) -> void:
 	applied_reward_ids = []
 	automatic_reward_ids = []
 	card_upgrade_counts = {}
+	shop_upgrade_offer_card_ids = []
+	shop_upgrade_refresh_node_id = ""
+	shop_upgrade_purchase_node_id = ""
 	last_completed_node_id = ""
 	last_battle_outcome = ""
 
@@ -99,6 +110,9 @@ func start_class_run(class_id: String, seed: int = DEFAULT_RUN_SEED, requested_p
 	applied_reward_ids = []
 	automatic_reward_ids = []
 	card_upgrade_counts = {}
+	shop_upgrade_offer_card_ids = []
+	shop_upgrade_refresh_node_id = ""
+	shop_upgrade_purchase_node_id = ""
 	last_completed_node_id = ""
 	last_battle_outcome = ""
 	select_next_available_node()
@@ -126,6 +140,9 @@ func reset() -> void:
 	applied_reward_ids = []
 	automatic_reward_ids = []
 	card_upgrade_counts = {}
+	shop_upgrade_offer_card_ids = []
+	shop_upgrade_refresh_node_id = ""
+	shop_upgrade_purchase_node_id = ""
 	last_completed_node_id = ""
 	last_battle_outcome = ""
 
@@ -177,6 +194,8 @@ func record_battle_result(node_id: String, outcome: String, remaining_health: in
 		soul_total += souls_gained
 		applied_rewards = _apply_automatic_rewards_for_node(node_id)
 		_queue_choice_rewards_for_node(node_id)
+		if rewards_pending.is_empty():
+			refresh_shop_upgrade_offers()
 	select_next_available_node()
 	return {
 		"ok": true,
@@ -223,15 +242,78 @@ func apply_reward_choice(choice_id: String) -> Dictionary:
 		CHOICE_REWARD_UPGRADE_CARD:
 			var card_id: String = str(selected.get("card_id", ""))
 			card_upgrade_counts[card_id] = mini(2, int(card_upgrade_counts.get(card_id, 0)) + 1)
+			for _copy_index: int in range(_extra_upgrade_copies_for_rarity(str(selected.get("rarity", REWARD_RARITY_COMMON)))):
+				current_deck_ids.append(card_id)
 		CHOICE_REWARD_NEW_CARD:
 			var new_card_id: String = str(selected.get("card_id", ""))
-			for _copy_index: int in range(REWARD_CARD_COPY_COUNT):
+			for _copy_index: int in range(_new_card_copies_for_rarity(str(selected.get("rarity", REWARD_RARITY_COMMON)))):
 				current_deck_ids.append(new_card_id)
 		_:
 			return {"ok": false, "message": "Tipo de recompensa invalido: %s" % str(pending.get("type", ""))}
 	rewards_pending.remove_at(0)
 	applied_reward_ids.append("%s:%s" % [str(pending.get("id", "")), choice_id])
+	if rewards_pending.is_empty():
+		refresh_shop_upgrade_offers()
 	return {"ok": true, "message": _reward_choice_message(selected)}
+
+func refresh_shop_upgrade_offers() -> void:
+	if not active:
+		return
+	var refresh_id: String = last_completed_node_id
+	if refresh_id == "":
+		return
+	var candidates: Array[String] = _shop_upgrade_candidates()
+	candidates = _stable_shuffled_strings(candidates, "shop:%s:%d" % [refresh_id, completed_node_ids.size()])
+	shop_upgrade_offer_card_ids = []
+	for card_id: String in candidates:
+		shop_upgrade_offer_card_ids.append(card_id)
+		if shop_upgrade_offer_card_ids.size() >= SHOP_UPGRADE_OFFER_COUNT:
+			break
+	shop_upgrade_refresh_node_id = refresh_id
+	shop_upgrade_purchase_node_id = ""
+
+func shop_upgrade_choices() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for card_id: String in shop_upgrade_offer_card_ids:
+		if int(card_upgrade_counts.get(card_id, 0)) >= 2:
+			continue
+		var card = ContentLibrary.get_card(card_id)
+		if card == null:
+			continue
+		var upgrade_index: int = int(card_upgrade_counts.get(card_id, 0)) + 1
+		result.append({
+			"id": "shop_upgrade:%s" % card_id,
+			"card_id": card_id,
+			"title": "%s - Lvl %d" % [str(card.display_name), upgrade_index + 1],
+			"body": _upgrade_choice_body(card_id, upgrade_index),
+			"cost": SHOP_CARD_UPGRADE_COST,
+			"can_buy": can_buy_shop_upgrade(card_id)
+		})
+	return result
+
+func can_buy_shop_upgrade(card_id: String) -> bool:
+	return active \
+		and soul_total >= SHOP_CARD_UPGRADE_COST \
+		and shop_upgrade_refresh_node_id != "" \
+		and shop_upgrade_purchase_node_id != shop_upgrade_refresh_node_id \
+		and shop_upgrade_offer_card_ids.has(card_id) \
+		and int(card_upgrade_counts.get(card_id, 0)) < 2
+
+func buy_shop_card_upgrade(card_id: String) -> Dictionary:
+	if not active:
+		return {"ok": false, "message": "Nenhuma run ativa."}
+	if shop_upgrade_purchase_node_id == shop_upgrade_refresh_node_id and shop_upgrade_refresh_node_id != "":
+		return {"ok": false, "message": "Upgrade da loja ja comprado neste combate."}
+	if not shop_upgrade_offer_card_ids.has(card_id):
+		return {"ok": false, "message": "Carta nao esta nas ofertas da loja."}
+	if int(card_upgrade_counts.get(card_id, 0)) >= 2:
+		return {"ok": false, "message": "Carta ja esta no nivel maximo."}
+	if soul_total < SHOP_CARD_UPGRADE_COST:
+		return {"ok": false, "message": "Almas insuficientes para upgrade."}
+	soul_total -= SHOP_CARD_UPGRADE_COST
+	card_upgrade_counts[card_id] = mini(2, int(card_upgrade_counts.get(card_id, 0)) + 1)
+	shop_upgrade_purchase_node_id = shop_upgrade_refresh_node_id
+	return {"ok": true, "message": "Upgrade comprado: %s." % ContentLibrary.get_card_name(card_id)}
 
 func can_buy_heal() -> bool:
 	return active and soul_total >= PAID_HEAL_COST and current_health < max_health
@@ -312,6 +394,9 @@ func snapshot() -> Dictionary:
 		"applied_reward_ids": applied_reward_ids.duplicate(),
 		"automatic_reward_ids": automatic_reward_ids.duplicate(),
 		"card_upgrade_counts": card_upgrade_counts.duplicate(),
+		"shop_upgrade_offer_card_ids": shop_upgrade_offer_card_ids.duplicate(),
+		"shop_upgrade_refresh_node_id": shop_upgrade_refresh_node_id,
+		"shop_upgrade_purchase_node_id": shop_upgrade_purchase_node_id,
 		"last_completed_node_id": last_completed_node_id,
 		"last_battle_outcome": last_battle_outcome
 	}
@@ -342,6 +427,9 @@ func load_snapshot(data: Dictionary) -> Dictionary:
 	applied_reward_ids = _string_array(data.get("applied_reward_ids", []))
 	automatic_reward_ids = _string_array(data.get("automatic_reward_ids", []))
 	card_upgrade_counts = Dictionary(data.get("card_upgrade_counts", {}))
+	shop_upgrade_offer_card_ids = _string_array(data.get("shop_upgrade_offer_card_ids", []))
+	shop_upgrade_refresh_node_id = str(data.get("shop_upgrade_refresh_node_id", ""))
+	shop_upgrade_purchase_node_id = str(data.get("shop_upgrade_purchase_node_id", ""))
 	last_completed_node_id = str(data.get("last_completed_node_id", ""))
 	last_battle_outcome = str(data.get("last_battle_outcome", ""))
 	if active and selected_class_display_name == "" and selected_class_id != "":
@@ -456,6 +544,7 @@ func _queue_choice_rewards_for_node(node_id: String) -> void:
 	var pending: Dictionary = reward.duplicate(true)
 	pending["id"] = pending_id
 	pending["node_id"] = node_id
+	pending["rarity_by_card_id"] = _rarity_map_for_pending(pending)
 	rewards_pending.append(pending)
 
 func _reward_message(reward_id: String) -> String:
@@ -508,8 +597,9 @@ func _upgrade_reward_choices(_pending: Dictionary) -> Array[Dictionary]:
 		result.append({
 			"id": "upgrade:%s" % card_id,
 			"card_id": card_id,
-			"title": "%s - Lvl %d" % [str(card.display_name), upgrade_index + 1],
-			"body": _upgrade_choice_body(card_id, upgrade_index)
+			"rarity": _rarity_for_card(_pending, card_id),
+			"title": "%s%s - Lvl %d" % [_rarity_title_prefix(_rarity_for_card(_pending, card_id)), str(card.display_name), upgrade_index + 1],
+			"body": _upgrade_choice_body(card_id, upgrade_index, _rarity_for_card(_pending, card_id))
 		})
 		if result.size() >= 3:
 			break
@@ -526,11 +616,13 @@ func _new_card_reward_choices(_pending: Dictionary) -> Array[Dictionary]:
 		var card = ContentLibrary.get_card(card_id)
 		if card == null:
 			continue
+		var rarity: String = _rarity_for_card(_pending, card_id)
 		result.append({
 			"id": "new_card:%s" % card_id,
 			"card_id": card_id,
-			"title": str(card.display_name),
-			"body": "Adiciona %d copias ao deck." % REWARD_CARD_COPY_COUNT
+			"rarity": rarity,
+			"title": "%s%s" % [_rarity_title_prefix(rarity), str(card.display_name)],
+			"body": "Adiciona %d copias ao deck." % _new_card_copies_for_rarity(rarity)
 		})
 	return result
 
@@ -538,17 +630,84 @@ func _class_reward_pool() -> Array[String]:
 	var class_option: Dictionary = ContentLibrary.find_class_option(selected_class_id)
 	return _string_array(class_option.get("reward_pool", []))
 
-func _upgrade_choice_body(card_id: String, upgrade_index: int) -> String:
+func _upgrade_choice_body(card_id: String, upgrade_index: int, rarity: String = REWARD_RARITY_COMMON) -> String:
+	var extra_copies: int = _extra_upgrade_copies_for_rarity(rarity)
+	var suffix: String = "" if extra_copies <= 0 else " Adiciona +%d copia(s) da carta base." % extra_copies
 	if upgrade_index <= 1:
-		return "%s sobe para Lvl 2 em todas as copias da run." % ContentLibrary.get_card_name(card_id)
-	return "%s sobe para Lvl 3 em todas as copias da run." % ContentLibrary.get_card_name(card_id)
+		return "%s sobe para Lvl 2 em todas as copias da run.%s" % [ContentLibrary.get_card_name(card_id), suffix]
+	return "%s sobe para Lvl 3 em todas as copias da run.%s" % [ContentLibrary.get_card_name(card_id), suffix]
 
 func _reward_choice_message(choice: Dictionary) -> String:
 	if str(choice.get("id", "")).begins_with("upgrade:"):
 		return "Upgrade aplicado: %s." % str(choice.get("title", ""))
 	if str(choice.get("id", "")).begins_with("new_card:"):
-		return "Carta adicionada ao deck: %s x%d." % [str(choice.get("title", "")), REWARD_CARD_COPY_COUNT]
+		return "Carta adicionada ao deck: %s x%d." % [str(choice.get("title", "")), _new_card_copies_for_rarity(str(choice.get("rarity", REWARD_RARITY_COMMON)))]
 	return "Recompensa aplicada."
+
+func _rarity_map_for_pending(pending: Dictionary) -> Dictionary:
+	var result: Dictionary = {}
+	var type: String = str(pending.get("type", ""))
+	var card_ids: Array[String] = []
+	if type == CHOICE_REWARD_NEW_CARD:
+		card_ids = _class_reward_pool()
+	elif type == CHOICE_REWARD_UPGRADE_CARD:
+		card_ids = _shop_upgrade_candidates()
+	for card_id: String in card_ids:
+		result[card_id] = _roll_rarity(str(pending.get("id", "")), card_id)
+	return result
+
+func _rarity_for_card(pending: Dictionary, card_id: String) -> String:
+	var rarity_by_card_id: Dictionary = Dictionary(pending.get("rarity_by_card_id", {}))
+	return str(rarity_by_card_id.get(card_id, REWARD_RARITY_COMMON))
+
+func _roll_rarity(pending_id: String, card_id: String) -> String:
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	var seed_text: String = "%d:%s:%s:%s:rarity" % [run_seed, selected_class_id, pending_id, card_id]
+	rng.seed = absi(seed_text.hash())
+	var roll: int = rng.randi_range(1, 100)
+	if roll <= 5:
+		return REWARD_RARITY_ULTRA
+	if roll <= 30:
+		return REWARD_RARITY_RARE
+	return REWARD_RARITY_COMMON
+
+func _rarity_title_prefix(rarity: String) -> String:
+	match rarity:
+		REWARD_RARITY_RARE:
+			return "[Rara] "
+		REWARD_RARITY_ULTRA:
+			return "[Ultra rara] "
+	return ""
+
+func _new_card_copies_for_rarity(rarity: String) -> int:
+	match rarity:
+		REWARD_RARITY_RARE:
+			return REWARD_CARD_COPY_COUNT + 1
+		REWARD_RARITY_ULTRA:
+			return REWARD_CARD_COPY_COUNT + 2
+	return REWARD_CARD_COPY_COUNT
+
+func _extra_upgrade_copies_for_rarity(rarity: String) -> int:
+	match rarity:
+		REWARD_RARITY_RARE:
+			return 1
+		REWARD_RARITY_ULTRA:
+			return 2
+	return 0
+
+func _shop_upgrade_candidates() -> Array[String]:
+	var result: Array[String] = []
+	var seen: Array[String] = []
+	for card_id: String in current_deck_ids:
+		if seen.has(card_id):
+			continue
+		seen.append(card_id)
+		if int(card_upgrade_counts.get(card_id, 0)) >= 2:
+			continue
+		if ContentLibrary.get_card(card_id) == null:
+			continue
+		result.append(card_id)
+	return result
 
 func _string_array(source: Variant) -> Array[String]:
 	var result: Array[String] = []
