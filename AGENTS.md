@@ -8,8 +8,8 @@ This file governs agent behavior for the `D:\Estudio` workspace.
 - `08_Coordenacao_Agentes/Painel_Visual_Estudio.html` is the human-facing local dashboard for the same portfolio state.
 - `canon/` is the shared source of truth for established product identity, lore context, gameplay contracts, progression, shared architecture, mode standard, and platform strategy.
 - `Projetos/draxos-roguelike-cardgame/` is the current P0 implementation workspace for the menu-first Draxos roguelike cardgame.
-- `Projetos/_conceitos/RPGMobile/` is a P1 concept workspace; it allows concept, pitch, design, and references only.
-- `Projetos/_conceitos/BattleMobile/` is a P1 concept workspace; it allows concept, pitch, design, and references only.
+- `Projetos/draxos-mobile/` is the P2 implementation workspace for DraxosMobile — async PVP autobattler, base manager, social; Godot 4.x + Supabase; Android + PC + PC browser.
+- `Projetos/_conceitos/mobile-universe/` is a design archive; it was promoted to `draxos-mobile/` on 2026-05-18 and is now read-only design reference.
 - `Projetos/rpg-isometrico/` is paused indefinitely and preserved for historical/contextual consultation.
 - `Projetos/rpg-turnos/` is paused indefinitely and preserved for historical/contextual consultation.
 - `migration/` is a historical archive for cutover, relocation, and legacy comparison context.
@@ -28,7 +28,9 @@ Use esses documentos para identificar se o pedido e sobre implementacao ativa, c
 
 - Se o usuario nao citar projeto e pedir implementacao, validacao, playtest ou trabalho tecnico, assuma `Projetos/draxos-roguelike-cardgame/`.
 - Projetos com `P0_IMPLEMENTACAO` podem receber codigo, validacao, playtest e documentacao local por padrao.
+- Projetos com `P2_IMPLEMENTACAO` podem receber codigo, design, documentacao local e configuracao de infraestrutura por padrao.
 - Projetos com `P1_CONCEITO` permitem somente conceito, pitch, design, referencias e documentacao conceitual.
+- Projetos com `ARQUIVO_DESIGN` permitem apenas leitura e referencia de design — nao criar codigo, cenas ou assets.
 - Projetos com `PAUSADO_INDEFINIDO` nao devem receber implementacao, expansao de escopo, novas gates ou selecao de track sem pedido explicito do usuario.
 - Ao concluir qualquer tarefa que mude status observavel, atualize `Prioridades_Estudio.md`, `Estado_Atual.md` e o registro relevante em `Projetos/README.md`.
 
@@ -37,11 +39,11 @@ Use esses documentos para identificar se o pedido e sobre implementacao ativa, c
 Depois do Portfolio Gate, escolha o projeto alvo usando o pedido do usuario, `Prioridades_Estudio.md`, `Projetos/README.md` e `Estado_Atual.md`.
 
 - Se o usuario citar `draxos-roguelike-cardgame`, `Draxos roguelike`, `roguelike cardgame`, `ship hub`, `run map`, `mapa de run`, `10 mapas`, `almas`, `classe no hub`, `rota completa`, `sacrificio`, `Cinzas` ou `batalhas por lanes`, use `Projetos/draxos-roguelike-cardgame/`.
-- Se o usuario citar `RPGMobile`, use `Projetos/_conceitos/RPGMobile/` e mantenha o trabalho em conceito, pitch, design e referencias, salvo pedido explicito de implementacao.
-- Se o usuario citar `BattleMobile`, use `Projetos/_conceitos/BattleMobile/` e mantenha o trabalho em conceito, pitch, design e referencias, salvo pedido explicito de implementacao.
+- Se o usuario citar `draxos-mobile`, `DraxosMobile`, `Draxos mobile`, `autobattler`, `base manager`, `PVP assincrono`, `Supabase`, `Track 00`, `primeiro slice mobile`, `guilda`, `conta guest`, `matchmaking por poder` ou `simulacao no servidor`, use `Projetos/draxos-mobile/`.
+- Se o usuario citar `mobile-universe` ou `_conceitos/mobile-universe`, use `Projetos/_conceitos/mobile-universe/` apenas para leitura e referencia de design — nao criar codigo, cenas ou assets a partir dali.
 - Se o usuario citar `rpg-turnos`, `RPG Turnos`, exploracao 2D, NPC, mundo, `class_select`, `Track 02 - Draxos Lore And Progression Alignment` ou `P10 - Necromante`, use `Projetos/rpg-turnos/` apenas para consulta historica, salvo pedido explicito de retomar trabalho.
 - Se o usuario citar `rpg-isometrico`, campanha isometrica, Arena, Survival, Boss, loadout de acao ou gates Fxx, use `Projetos/rpg-isometrico/` apenas para consulta historica, salvo pedido explicito de retomar trabalho.
-- `Draxos` sozinho e contexto de lore compartilhada nao bastam para escolher `rpg-turnos`; confirme pelo projeto citado, pela prioridade atual ou pelos termos operacionais acima.
+- `Draxos` sozinho e contexto de lore compartilhada nao bastam para escolher `rpg-turnos` ou `draxos-mobile`; confirme pelo projeto citado, pela prioridade atual ou pelos termos operacionais acima.
 - Depois de escolher o projeto alvo, leia apenas o `AGENTS.md`, `implementation/current-status.md` e track local desse projeto, salvo tarefa transversal.
 
 ## Read Order - Fast Lane
@@ -92,9 +94,10 @@ Nao trate RPGMobile ou BattleMobile como projetos Godot oficiais ate que recebam
 
 Implementacoes Godot vivem sob `Projetos/`.
 
-Projeto Godot ativo por padrao:
+Projetos Godot ativos:
 
-- `Projetos/draxos-roguelike-cardgame/`
+- `Projetos/draxos-roguelike-cardgame/` — P0, Steam, roguelike cardgame
+- `Projetos/draxos-mobile/` — P2, mobile + PC + browser, Godot 4.x + Supabase (projeto ainda nao inicializado — Track 00 pendente)
 
 Projetos Godot pausados:
 

@@ -1,8 +1,9 @@
 # DraxosMobile — Game Design Document
 
 - Ultima atualizacao: `2026-05-18`
-- Status: `P1_CONCEITO`
+- Status: `ARQUIVO_DESIGN` — promovido para `Projetos/draxos-mobile/` em 2026-05-18
 - Substitui: `RPGMobile`, `BattleMobile`
+- Projeto ativo: `Projetos/draxos-mobile/` — este arquivo e somente leitura e referencia de design
 
 ---
 

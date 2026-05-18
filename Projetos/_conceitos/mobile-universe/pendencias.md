@@ -1,8 +1,8 @@
 # DraxosMobile — Pendencias De Design
 
 - Ultima atualizacao: `2026-05-18`
-- Status: `P1_CONCEITO`
-- Objetivo: organizar as decisoes abertas para resolver uma por uma antes de transformar o conceito em producao.
+- Status: `ARQUIVO_DESIGN` — promovido para `Projetos/draxos-mobile/` em 2026-05-18
+- Objetivo: registro historico das decisoes de design tomadas durante a fase de conceito. Somente leitura.
 
 ---
 
