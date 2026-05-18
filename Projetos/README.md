@@ -8,14 +8,14 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
 ## Implementacao Ativa
 
-- `draxos-roguelike-cardgame/`: menu-first Draxos roguelike cardgame with ship hub, validated 13-map slice baseline, Track 02 data contract/save v5 complete, 29-map reward schedule and reward progression implemented, initial universal relics, expanded Souls shop, canonical keyword/status tooltip presentation, full keyword engine mechanics, promoted class reward cards, elemental enemy card galleries, hybrid enemy AI profiles, and visible enemy intent panel complete, with active Track 02 production plan for the first complete fixed 29-map run.
+- `draxos-roguelike-cardgame/`: menu-first Draxos roguelike cardgame with Track 02 complete for user playtest: fixed 29-map route, save v5, reward schedule/progression, universal relics, expanded Souls shop, canonical keyword/status tooltips, full keyword engine, promoted class reward cards, elemental enemy galleries, hybrid enemy AI, visible enemy intent, encounter modes, board formats, field effects, boss hooks, UI readability polish, full-route pacing telemetry, and validation green.
   - Priority/status: `P0_IMPLEMENTACAO`
   - Local agent guide: `draxos-roguelike-cardgame/AGENTS.md`
   - Operational status: `draxos-roguelike-cardgame/implementation/current-status.md`
   - Studio snapshot: `../08_Coordenacao_Agentes/Estado_Atual.md`
   - Validation command: `draxos-roguelike-cardgame/tools/validate.gd`
   - Allowed work: code, validation, playtest, local documentation.
-  - Current next step: continue with `T02-P08` from `draxos-roguelike-cardgame/implementation/tracks/track-02-complete-run-evolution/implementation-prompts.md`.
+  - Current next step: user playtest of the Track 02 complete-run build.
 
 ## Implementacao — Bootstrap
 

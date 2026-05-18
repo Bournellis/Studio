@@ -10,6 +10,36 @@ const MODE_WAVES: String = "ondas"
 const MODE_DEFENSE_POSITION: String = "defesa_posicao"
 const MODE_SURVIVE_TURNS: String = "sobreviver_turnos"
 const MODE_SUMMONER_BOSS: String = "chefe_summoner"
+const MODE_AMBUSH: String = "emboscada"
+const MODE_ESCORT: String = "escolta"
+const MODE_INVASION: String = "invasao"
+
+const BOARD_FORMAT_STANDARD: String = "padrao"
+const BOARD_FORMAT_ASYMMETRIC: String = "assimetrico"
+const BOARD_FORMAT_CENTRAL_CORE: String = "nucleo_central"
+const BOARD_FORMAT_FLANK: String = "flanco"
+const BOARD_FORMAT_FRONT_REAR: String = "frente_retaguarda"
+const BOARD_FORMAT_ABYSS: String = "abismo"
+
+const FIELD_TERRENO_ROCHOSO: String = "terreno_rochoso"
+const FIELD_CHAO_VIVO: String = "chao_vivo"
+const FIELD_GEADA: String = "geada"
+const FIELD_CORRENTE_SUBMERSA: String = "corrente_submersa"
+const FIELD_TABULEIRO_INSTAVEL: String = "tabuleiro_instavel"
+const FIELD_FRIO_INTENSO: String = "frio_intenso"
+const FIELD_NEVASCA: String = "nevasca"
+const FIELD_VENTANIA: String = "ventania"
+const FIELD_SLOT_CENTRAL_AMPLIFICADO: String = "slot_central_amplificado"
+const FIELD_RELAMPAGO: String = "relampago"
+const FIELD_TURBULENCIA: String = "turbulencia"
+const FIELD_OLHO_TEMPESTADE: String = "olho_tempestade"
+const FIELD_BRASA_VIVA: String = "brasa_viva"
+const FIELD_INFERNO: String = "inferno"
+const FIELD_PISO_LAVA: String = "piso_lava"
+const FIELD_FURIA_ABISMO: String = "furia_abismo"
+const FIELD_CINZAS_VIVAS: String = "cinzas_vivas"
+const FIELD_PORTAL_ABERTO: String = "portal_aberto"
+const FIELD_INFERNO_TOTAL: String = "inferno_total"
 
 const PHASE_PRECOMBAT: String = "preparo_pre_combate"
 const PHASE_MAIN: String = "fase_principal"
@@ -141,9 +171,13 @@ var encounter_id: String = ""
 var encounter_name: String = ""
 var enemy_director: String = ""
 var enemy_ai_profile_id: String = ENEMY_AI_TERRA
+var board_format: String = BOARD_FORMAT_STANDARD
+var field_effects: Array[String] = []
+var field_effect_state: Dictionary = {}
 var boss_summon_index: int = 0
 var boss_summons: Array[Dictionary] = []
 var boss_phase_hooks: Array[Dictionary] = []
+var boss_phase_hook_state: Dictionary = {}
 var selected_class_id: String = ""
 var class_passive_unlocked: bool = false
 var class_active_unlocked: bool = false
@@ -180,9 +214,14 @@ func start_battle(catalog, deck_ids: Array, config: Dictionary = {}) -> void:
 	mode = str(encounter.get("mode", MODE_CLEAR_BOARD))
 	enemy_director = str(encounter.get("enemy_director", "prefilled_board"))
 	enemy_ai_profile_id = _resolve_enemy_ai_profile_id(encounter, config)
+	board_format = str(config.get("board_format", encounter.get("board_format", BOARD_FORMAT_STANDARD)))
+	field_effects = _typed_string_array(Array(config.get("field_effects", encounter.get("field_effects", []))))
+	field_effect_state = {}
 	mana_per_turn = int(config.get("mana_per_turn", encounter.get("mana_per_turn", DEFAULT_MANA_PER_TURN)))
 	mana = mana_per_turn
 	max_hand_size = int(config.get("max_hand_size", encounter.get("max_hand_size", DEFAULT_MAX_HAND_SIZE)))
+	if _field_effect_active(FIELD_NEVASCA):
+		max_hand_size = maxi(1, max_hand_size - 1)
 	enemy_commander_enabled = bool(config.get("enemy_commander_enabled", encounter.get("enemy_commander_enabled", false)))
 	enemy_mana_per_turn = int(config.get("enemy_mana_per_turn", encounter.get("enemy_mana_per_turn", DEFAULT_MANA_PER_TURN))) if enemy_commander_enabled else 0
 	enemy_mana = int(config.get("enemy_mana", encounter.get("enemy_mana", enemy_mana_per_turn))) if enemy_commander_enabled else 0
@@ -203,10 +242,13 @@ func start_battle(catalog, deck_ids: Array, config: Dictionary = {}) -> void:
 	relic_ids = _typed_string_array(Array(config.get("relic_ids", [])))
 	if _has_relic(RELIC_CORACAO_DE_ETER):
 		mana += 1
+	if mode == MODE_AMBUSH:
+		mana = 0
 	turn_number = 1
 	boss_summon_index = 0
 	boss_summons = _typed_dictionary_array(encounter.get("boss_summons", []))
 	boss_phase_hooks = _typed_dictionary_array(config.get("boss_phase_hooks", encounter.get("boss_phase_hooks", [])))
+	boss_phase_hook_state = {}
 	wave_index = 0
 	waves = _typed_wave_array(encounter.get("waves", []))
 	survived_turns = 0
@@ -248,6 +290,8 @@ func start_battle(catalog, deck_ids: Array, config: Dictionary = {}) -> void:
 	enemy_slots = _empty_slots(int(encounter.get("enemy_slots_count", 3)))
 	if mode == MODE_DEFENSE_POSITION:
 		_setup_defense_objective()
+	elif mode == MODE_ESCORT:
+		_setup_escort_objective()
 	_draw_to_hand_size()
 	if _uses_wave_director() and not waves.is_empty():
 		_spawn_next_wave()
@@ -295,6 +339,9 @@ func get_state() -> Dictionary:
 		"encounter_id": encounter_id,
 		"enemy_director": enemy_director,
 		"enemy_ai_profile_id": enemy_ai_profile_id,
+		"board_format": board_format,
+		"field_effects": field_effects.duplicate(),
+		"field_effect_state": field_effect_state.duplicate(true),
 		"enemy_intent": get_enemy_intent(),
 		"boss_summon_index": boss_summon_index,
 		"boss_summons": boss_summons.duplicate(true),
@@ -330,6 +377,12 @@ func get_mode_label() -> String:
 			return "Sobreviver turnos"
 		MODE_SUMMONER_BOSS:
 			return "Chefe summoner"
+		MODE_AMBUSH:
+			return "Emboscada"
+		MODE_ESCORT:
+			return "Escolta"
+		MODE_INVASION:
+			return "Invasao"
 	return mode
 
 func get_mode_progress_label() -> String:
@@ -483,6 +536,7 @@ func play_card_from_hand(hand_index: int, target: Dictionary = {}) -> Dictionary
 			_handle_unit_death(PLAYER_ID, sacrificed, false)
 			_log("%s foi sacrificado para abrir espaco." % str(sacrificed.get("name", "Criatura")))
 		player_slots[slot_index] = _build_occupant(card, PLAYER_ID, false)
+		_apply_summon_field_effect(PLAYER_ID, slot_index)
 		_recalculate_pact_bonuses(PLAYER_ID)
 		_resolve_on_enter(card, PLAYER_ID, slot_index)
 		_apply_relic_summon_bonuses(slot_index)
@@ -754,6 +808,7 @@ func resolve_combat_cycle() -> Dictionary:
 		_resolve_staged_combat_step()
 		_resolve_end_of_combat_regeneration()
 		_resolve_end_of_combat_keyword_triggers()
+		_resolve_end_of_combat_field_effects()
 		_check_outcome()
 	if outcome == "" and not pending_choices.is_empty():
 		current_phase = PHASE_PENDING_COMBAT_CHOICE
@@ -784,6 +839,10 @@ func _resume_after_pending_choice() -> void:
 func _resolve_enemy_preparation_step() -> void:
 	if outcome != "":
 		return
+	_resolve_enemy_start_field_effects()
+	_check_outcome()
+	if outcome != "":
+		return
 	_resolve_enemy_turn_actions()
 	_check_outcome()
 
@@ -791,6 +850,9 @@ func _finish_cycle() -> void:
 	if outcome == "" and mode in [MODE_DEFENSE_POSITION, MODE_SURVIVE_TURNS]:
 		survived_turns += 1
 		_log("Turnos de objetivo sobrevividos: %d/%d." % [survived_turns, _required_objective_turns()])
+		_check_outcome()
+	if outcome == "" and mode == MODE_ESCORT:
+		_advance_escort_objective()
 		_check_outcome()
 	turn_number += 1
 	class_active_used = false
@@ -810,10 +872,13 @@ func _finish_cycle() -> void:
 func _resolve_maintenance_step() -> void:
 	_log("Manutencao da mesa.")
 	_resolve_poison_ticks()
+	_resolve_maintenance_field_effects()
 	if _uses_wave_director() and _board_is_clear(ENEMY_ID) and _has_next_wave():
 		_spawn_next_wave()
 	if outcome == "":
 		_resolve_boss_summon()
+	if outcome == "":
+		_resolve_boss_phase_hooks()
 
 func get_attack_options(owner_id: String, slot_index: int) -> Array[Dictionary]:
 	var slots: Array = _slots_for_owner(owner_id)
@@ -843,6 +908,8 @@ func attack_with_unit(owner_id: String, slot_index: int, target: Dictionary = {}
 
 func get_valid_move_targets(owner_id: String, from_slot: int) -> Array[Dictionary]:
 	if outcome != "" or not pending_choices.is_empty() or owner_id != PLAYER_ID:
+		return _empty_targets()
+	if _field_effect_active(FIELD_CORRENTE_SUBMERSA):
 		return _empty_targets()
 	var slots: Array = _slots_for_owner(owner_id)
 	if from_slot < 0 or from_slot >= slots.size() or slots[from_slot] == null:
@@ -916,6 +983,7 @@ func _spawn_starting_enemies(setups: Array) -> void:
 		if card == null or slot_index < 0 or slot_index >= enemy_slots.size():
 			continue
 		enemy_slots[slot_index] = _build_occupant(card, ENEMY_ID, true)
+		_apply_summon_field_effect(ENEMY_ID, slot_index)
 		_recalculate_pact_bonuses(ENEMY_ID)
 
 func _spawn_next_wave() -> void:
@@ -943,6 +1011,7 @@ func _resolve_boss_summon() -> void:
 		_log("Chefe Invocador falhou ao invocar uma criatura ausente.")
 		return
 	enemy_slots[open_slot] = _build_occupant(card, ENEMY_ID, true)
+	_apply_summon_field_effect(ENEMY_ID, open_slot)
 	_resolve_on_enter(card, ENEMY_ID, open_slot)
 	_log("Chefe Invocador invocou %s no slot %d." % [card.display_name, open_slot + 1])
 
@@ -1193,6 +1262,7 @@ func _play_enemy_card_from_hand(hand_index: int, target: Dictionary) -> bool:
 		if slot_index < 0 or slot_index >= enemy_slots.size() or enemy_slots[slot_index] != null:
 			return false
 		enemy_slots[slot_index] = _build_occupant(card, ENEMY_ID, true)
+		_apply_summon_field_effect(ENEMY_ID, slot_index)
 		_resolve_on_enter(card, ENEMY_ID, slot_index)
 		_log("Comandante inimigo invocou %s no slot %d." % [card.display_name, slot_index + 1])
 	else:
@@ -1497,7 +1567,7 @@ func _boss_piece_protection_score(slot_index: int) -> float:
 	return score
 
 func _intent_should_be_visible() -> bool:
-	return enemy_commander_enabled or not _board_is_clear(ENEMY_ID) or mode in [MODE_WAVES, MODE_DEFENSE_POSITION, MODE_SURVIVE_TURNS, MODE_SUMMONER_BOSS]
+	return enemy_commander_enabled or not _board_is_clear(ENEMY_ID) or mode in [MODE_WAVES, MODE_DEFENSE_POSITION, MODE_SURVIVE_TURNS, MODE_SUMMONER_BOSS, MODE_AMBUSH, MODE_ESCORT, MODE_INVASION]
 
 func _profile_priority_lines(profile_name: String) -> Array[String]:
 	match enemy_ai_profile_id:
@@ -1511,6 +1581,9 @@ func _profile_priority_lines(profile_name: String) -> Array[String]:
 			return ["Perfil %s: estabiliza a mesa." % profile_name, "Prioriza Defensor, Espinhos, Resistencia e Crescer."]
 
 func _profile_field_effect_hint(profile_id: String) -> String:
+	var active_hint: String = _active_field_effect_hint()
+	if active_hint != "":
+		return active_hint
 	match profile_id:
 		ENEMY_AI_GELO:
 			return "Controle/atrito provavel: Congelar, Veneno ou atraso no alvo forte."
@@ -1550,7 +1623,7 @@ func _estimate_enemy_incoming_pressure() -> Dictionary:
 			target = _overflow_attack_target(ENEMY_ID, slot_index)
 		if target.is_empty():
 			continue
-		var damage: int = int(attacker.get("attack", 0)) + _inspire_bonus_for(ENEMY_ID, slot_index)
+		var damage: int = int(attacker.get("attack", 0)) + _inspire_bonus_for(ENEMY_ID, slot_index) + _board_attack_bonus(ENEMY_ID, slot_index)
 		if bool(target.get("hero", false)):
 			hero_damage += damage
 		else:
@@ -1572,6 +1645,18 @@ func _intent_next_play_line(play: Dictionary) -> String:
 		return "Sem carta clara para jogar."
 	return "%s em %s" % [card.display_name, _target_display_name(Dictionary(play.get("target", {})))]
 
+func _active_field_effect_hint() -> String:
+	if field_effects.is_empty():
+		return ""
+	var labels: Array[String] = []
+	for effect_id: String in field_effects:
+		var tooltip: String = ContentLibrary.board_effect_tooltip_text(effect_id)
+		if tooltip == "":
+			labels.append(effect_id)
+			continue
+		labels.append(tooltip.split(":")[0])
+	return "Efeito de campo ativo: %s." % ", ".join(labels)
+
 func _boss_phase_state() -> Dictionary:
 	var ratio: float = 1.0 if enemy_max_health <= 0 else float(enemy_health) / float(enemy_max_health)
 	if ratio > 0.66:
@@ -1582,10 +1667,14 @@ func _boss_phase_state() -> Dictionary:
 
 func _next_boss_special_action() -> String:
 	if not boss_phase_hooks.is_empty():
-		var hook: Dictionary = boss_phase_hooks[mini(boss_summon_index, boss_phase_hooks.size() - 1)]
-		var description: String = str(hook.get("description", hook.get("action", "")))
-		if description != "":
-			return description
+		for index: int in range(boss_phase_hooks.size()):
+			var hook: Dictionary = boss_phase_hooks[index]
+			var hook_id: String = str(hook.get("id", "hook_%d" % index))
+			if bool(boss_phase_hook_state.get(hook_id, false)):
+				continue
+			var description: String = str(hook.get("description", hook.get("action", "")))
+			if description != "":
+				return description
 	if boss_summons.is_empty():
 		return "Sem especial roteirizado neste encontro."
 	var summon: Dictionary = boss_summons[boss_summon_index % boss_summons.size()]
@@ -1656,6 +1745,11 @@ func _build_staged_attack_if_valid(stage_name: String, initiative_stage: bool, f
 	var attacker: Dictionary = _slot_occupant(owner_id, slot_index)
 	if attacker.is_empty() or bool(attacker.get("objective", false)):
 		return {}
+	if board_format == BOARD_FORMAT_FRONT_REAR and slot_index >= 3:
+		var own_slots: Array = _slots_for_owner(owner_id)
+		var front_index: int = slot_index - 3
+		if front_index >= 0 and front_index < own_slots.size() and own_slots[front_index] != null:
+			return {}
 	if bool(attacker.get("iniciativa", false)) != initiative_stage:
 		return {}
 	var source_key: String = _source_key(owner_id, slot_index)
@@ -1880,7 +1974,7 @@ func _apply_echo_damage(attack: Dictionary, damage: int, damaged_slots: Array[Di
 
 func _build_attack_event(stage_name: String, owner_id: String, slot_index: int, target: Dictionary) -> Dictionary:
 	var attacker: Dictionary = _slot_occupant(owner_id, slot_index)
-	var damage: int = int(attacker.get("attack", 0)) + _inspire_bonus_for(owner_id, slot_index)
+	var damage: int = int(attacker.get("attack", 0)) + _inspire_bonus_for(owner_id, slot_index) + _board_attack_bonus(owner_id, slot_index)
 	var event: Dictionary = {
 		"type": "attack",
 		"stage": stage_name,
@@ -1926,7 +2020,7 @@ func _store_or_destroy_lane_unit(owner_id: String, slot_index: int, occupant: Di
 func _resolve_attack(owner_id: String, slot_index: int, target: Dictionary) -> void:
 	var slots: Array = _slots_for_owner(owner_id)
 	var attacker: Dictionary = Dictionary(slots[slot_index])
-	var damage: int = int(attacker.get("attack", 0)) + _inspire_bonus_for(owner_id, slot_index)
+	var damage: int = int(attacker.get("attack", 0)) + _inspire_bonus_for(owner_id, slot_index) + _board_attack_bonus(owner_id, slot_index)
 	if bool(target.get("hero", false)):
 		_damage_hero(str(target.get("owner", _opponent_id(owner_id))), damage)
 		_log("%s atacou diretamente." % str(attacker.get("name", "Criatura")))
@@ -2015,11 +2109,15 @@ func _check_outcome() -> void:
 		outcome = "derrota"
 		current_phase = PHASE_ENDED
 		return
+	if mode == MODE_ESCORT and not _escort_objective_alive():
+		outcome = "derrota"
+		current_phase = PHASE_ENDED
+		return
 	if _enemy_hero_is_objective() and enemy_health <= 0:
 		outcome = "vitoria"
 		current_phase = PHASE_ENDED
 		return
-	if mode == MODE_CLEAR_BOARD and _board_is_clear(ENEMY_ID):
+	if mode in [MODE_CLEAR_BOARD, MODE_AMBUSH, MODE_INVASION] and _board_is_clear(ENEMY_ID):
 		outcome = "vitoria"
 		current_phase = PHASE_ENDED
 	if mode == MODE_WAVES and _board_is_clear(ENEMY_ID) and not _has_next_wave():
@@ -2032,6 +2130,9 @@ func _check_outcome() -> void:
 		outcome = "vitoria"
 		current_phase = PHASE_ENDED
 	if mode == MODE_SURVIVE_TURNS and survived_turns >= required_survive_turns:
+		outcome = "vitoria"
+		current_phase = PHASE_ENDED
+	if mode == MODE_ESCORT and _escort_objective_reached_goal():
 		outcome = "vitoria"
 		current_phase = PHASE_ENDED
 
@@ -2071,10 +2172,73 @@ func _setup_defense_objective() -> void:
 		"carrion_amount": 0
 	}
 
+func _setup_escort_objective() -> void:
+	if player_slots.is_empty():
+		return
+	player_slots[0] = {
+		"owner": PLAYER_ID,
+		"card_id": "",
+		"name": "Cargo de Escolta",
+		"attack": 0,
+		"health": int(field_effect_state.get("escort_health", 6)) if field_effect_state.has("escort_health") else 6,
+		"max_health": int(field_effect_state.get("escort_health", 6)) if field_effect_state.has("escort_health") else 6,
+		"base_attack": 0,
+		"base_health": 6,
+		"ready": false,
+		"keywords": [],
+		"iniciativa": false,
+		"regeneracao": false,
+		"defensor": false,
+		"reviver": false,
+		"revive_marker": false,
+		"objective": true,
+		"escort": true,
+		"moved_this_turn": false,
+		"slow_turns": 0,
+		"frozen_turns": 0,
+		"curse_turns": 0,
+		"confusion_turns": 0,
+		"temporary_attack_bonus": 0,
+		"temporary_health_bonus": 0,
+		"regeneration_amount": 0,
+		"carrion_amount": 0
+	}
+
 func _defense_objective_alive() -> bool:
 	if defense_slot_index < 0 or defense_slot_index >= player_slots.size() or player_slots[defense_slot_index] == null:
 		return false
 	return bool(Dictionary(player_slots[defense_slot_index]).get("objective", false))
+
+func _escort_objective_target() -> Dictionary:
+	for index: int in range(player_slots.size()):
+		if player_slots[index] == null:
+			continue
+		var occupant: Dictionary = Dictionary(player_slots[index])
+		if bool(occupant.get("escort", false)):
+			return {"owner": PLAYER_ID, "slot": index}
+	return {}
+
+func _escort_objective_alive() -> bool:
+	return not _escort_objective_target().is_empty()
+
+func _escort_objective_reached_goal() -> bool:
+	var target: Dictionary = _escort_objective_target()
+	return not target.is_empty() and int(target.get("slot", -1)) >= player_slots.size() - 1
+
+func _advance_escort_objective() -> void:
+	var target: Dictionary = _escort_objective_target()
+	if target.is_empty():
+		return
+	var slot_index: int = int(target.get("slot", -1))
+	if slot_index >= player_slots.size() - 1:
+		return
+	var next_slot: int = slot_index + 1
+	if player_slots[next_slot] != null:
+		_log("Cargo de Escolta aguardou caminho livre.")
+		return
+	player_slots[next_slot] = player_slots[slot_index]
+	player_slots[slot_index] = null
+	_log("Cargo de Escolta avancou para o slot %d." % (next_slot + 1))
 
 func _required_objective_turns() -> int:
 	return required_defense_turns if mode == MODE_DEFENSE_POSITION else required_survive_turns
@@ -2294,6 +2458,12 @@ func _revive_from_discard_into_slot(as_one_one: bool, slot_index: int) -> bool:
 func _handle_unit_death(owner_id: String, occupant: Dictionary, allow_revive: bool = true) -> Dictionary:
 	if bool(occupant.get("objective", false)):
 		return {}
+	if owner_id == ENEMY_ID and _field_effect_active(FIELD_FURIA_ABISMO):
+		_summon_token(ENEMY_ID, 3, 1, "Fragmento Enfurecido")
+		_log("Furia do Abismo fortaleceu o proximo reforco.")
+	if _field_effect_active(FIELD_FRIO_INTENSO):
+		_log("Frio Intenso anulou efeitos de morte.")
+		return _death_field_replacement(owner_id, occupant)
 	_trigger_carrion(owner_id, occupant)
 	if bool(occupant.get("profanar", false)):
 		_remove_keywords_from_random_enemy(owner_id)
@@ -2312,6 +2482,8 @@ func _handle_unit_death(owner_id: String, occupant: Dictionary, allow_revive: bo
 			for _index: int in range(maxi(1, int(on_death.get("count", 1)))):
 				if not _summon_token(owner_id, int(on_death.get("attack", 1)), int(on_death.get("health", 1)), str(on_death.get("name", "Token"))):
 					break
+		elif str(on_death.get("action", "")) == "adjacent_enemy_damage":
+			_damage_random_target(_opponent_id(owner_id), int(on_death.get("amount", 1)), "on_death")
 		elif str(on_death.get("action", "")) in ["debuff", "weaken"]:
 			_queue_on_death_debuff(card.display_name, on_death)
 	if selected_class_id == "necromante" and class_passive_unlocked:
@@ -2334,7 +2506,19 @@ func _handle_unit_death(owner_id: String, occupant: Dictionary, allow_revive: bo
 			_apply_debuff_to_target({"debuff": "weaken", "amount": int(on_ressurgir.get("amount", 1))}, _nearest_occupied_slot_target(_opponent_id(owner_id), 0))
 		_log("%s ressurgiu enfraquecido." % str(occupant.get("name", "Criatura")))
 		return revived_weak
-	return {}
+	return _death_field_replacement(owner_id, occupant)
+
+func _death_field_replacement(owner_id: String, occupant: Dictionary) -> Dictionary:
+	var base_health: int = int(occupant.get("base_health", occupant.get("max_health", 0)))
+	var threshold: int = 99999
+	if _field_effect_active(FIELD_CINZAS_VIVAS):
+		threshold = 3
+	if _field_effect_active(FIELD_INFERNO_TOTAL):
+		threshold = mini(threshold, 4)
+	if base_health < threshold:
+		return {}
+	_log("Cinzas Vivas deixaram uma Brasa no slot.")
+	return _build_token_occupant(owner_id, 1, 1, "Brasa")
 
 func _queue_on_death_debuff(source_name: String, effect: Dictionary) -> void:
 	var debuff_name: String = str(effect.get("debuff", ""))
@@ -2521,6 +2705,7 @@ func _resolve_start_of_player_turn() -> void:
 				_log("%s cresceu +%d ATK." % [str(occupant.get("name", "Criatura")), grow_amount])
 			slots[index] = occupant
 		_set_slots_for_owner(owner_id, slots)
+	_resolve_start_of_player_field_effects()
 
 func _reset_resistance_for_cycle() -> void:
 	for owner_id: String in [PLAYER_ID, ENEMY_ID]:
@@ -2572,6 +2757,125 @@ func _resolve_poison_ticks() -> void:
 			_queue_damaged_slot(damaged_slots, owner_id, index, -1)
 			_log("%s sofreu %d de Veneno." % [str(Dictionary(slots[index]).get("name", "Criatura")), poison])
 	_destroy_queued_damaged_slots(damaged_slots)
+
+func _resolve_enemy_start_field_effects() -> void:
+	if _field_effect_active(FIELD_CHAO_VIVO):
+		var enemy_target: Dictionary = _random_occupied_target(ENEMY_ID)
+		if not enemy_target.is_empty():
+			_buff_slot(ENEMY_ID, int(enemy_target.get("slot", -1)), 0, 1, false)
+			_log("Chao Vivo fortaleceu uma criatura inimiga.")
+	if _field_effect_active(FIELD_VENTANIA) or _field_effect_active(FIELD_OLHO_TEMPESTADE):
+		_swap_random_adjacent_enemy()
+	if _field_effect_active(FIELD_INFERNO) or _field_effect_active(FIELD_INFERNO_TOTAL):
+		_apply_poison_to_random(PLAYER_ID, 1)
+		_log("Inferno aplicou Veneno 1 em uma criatura aliada.")
+	if _field_effect_active(FIELD_PISO_LAVA):
+		_damage_rear_player_slots(1, "Piso de Lava")
+	if _field_effect_active(FIELD_SLOT_CENTRAL_AMPLIFICADO) and enemy_slots.size() > 2 and enemy_slots[2] != null:
+		_damage_hero(PLAYER_ID, 1)
+		_log("Slot Central Amplificado causou 1 dano ao comandante.")
+
+func _resolve_end_of_combat_field_effects() -> void:
+	var threshold: int = 0
+	if _field_effect_active(FIELD_BRASA_VIVA):
+		threshold = 1
+	if _field_effect_active(FIELD_INFERNO_TOTAL):
+		threshold = maxi(threshold, 2)
+	if threshold <= 0:
+		return
+	var damaged_slots: Array[Dictionary] = []
+	for owner_id: String in [PLAYER_ID, ENEMY_ID]:
+		var slots: Array = _slots_for_owner(owner_id)
+		for index: int in range(slots.size()):
+			if slots[index] == null:
+				continue
+			var occupant: Dictionary = Dictionary(slots[index])
+			if int(occupant.get("health", 0)) > threshold:
+				continue
+			_deal_slot_damage(owner_id, index, 1, {"source_kind": "field_effect", "defer_death": true, "bypass_resistance": true})
+			_queue_damaged_slot(damaged_slots, owner_id, index, -1)
+	if not damaged_slots.is_empty():
+		_log("Brasa Viva queimou criaturas feridas.")
+	_destroy_queued_damaged_slots(damaged_slots)
+
+func _resolve_maintenance_field_effects() -> void:
+	if _field_effect_active(FIELD_PORTAL_ABERTO) or mode == MODE_INVASION:
+		_resolve_invasion_portal()
+
+func _resolve_start_of_player_field_effects() -> void:
+	if _field_effect_active(FIELD_GEADA):
+		if _freeze_random_enemies(false, 1, 1, PLAYER_ID) > 0:
+			_log("Geada congelou uma criatura aliada.")
+	if _field_effect_active(FIELD_TABULEIRO_INSTAVEL) and turn_number % 2 == 0:
+		var target: Dictionary = _random_occupied_target("any")
+		if not target.is_empty():
+			_apply_freeze_to_slot(str(target.get("owner", PLAYER_ID)), int(target.get("slot", -1)), 1)
+			_log("Tabuleiro Instavel congelou um slot por um turno.")
+	if _field_effect_active(FIELD_RELAMPAGO) or _field_effect_active(FIELD_OLHO_TEMPESTADE):
+		var lightning_target: Dictionary = _random_occupied_target("any")
+		if not lightning_target.is_empty():
+			_damage_slot(str(lightning_target.get("owner", ENEMY_ID)), int(lightning_target.get("slot", -1)), 2, "field_effect")
+			_log("Relampago atingiu uma criatura em campo.")
+
+func _apply_summon_field_effect(owner_id: String, slot_index: int) -> void:
+	var slots: Array = _slots_for_owner(owner_id)
+	if slot_index < 0 or slot_index >= slots.size() or slots[slot_index] == null:
+		return
+	var occupant: Dictionary = Dictionary(slots[slot_index])
+	if _field_effect_active(FIELD_TURBULENCIA) and int(occupant.get("health", 0)) > 1:
+		occupant["health"] = maxi(1, int(occupant.get("health", 0)) - 1)
+		occupant["max_health"] = maxi(1, int(occupant.get("max_health", 1)) - 1)
+		_log("Turbulencia reduziu a vida da criatura invocada.")
+	if _field_effect_active(FIELD_TERRENO_ROCHOSO) and owner_id == PLAYER_ID and (slot_index == 0 or slot_index == slots.size() - 1) and int(occupant.get("health", 0)) <= 2:
+		occupant["attack"] = maxi(0, int(occupant.get("attack", 0)) - 1)
+		_log("Terreno Rochoso reduziu o ATK na borda.")
+	slots[slot_index] = occupant
+	_set_slots_for_owner(owner_id, slots)
+
+func _resolve_boss_phase_hooks() -> void:
+	if mode != MODE_SUMMONER_BOSS or boss_phase_hooks.is_empty():
+		return
+	for index: int in range(boss_phase_hooks.size()):
+		var hook: Dictionary = boss_phase_hooks[index]
+		var hook_id: String = str(hook.get("id", "hook_%d" % index))
+		if bool(boss_phase_hook_state.get(hook_id, false)):
+			continue
+		if not _boss_phase_hook_triggered(hook):
+			continue
+		_apply_boss_phase_hook(hook)
+		boss_phase_hook_state[hook_id] = true
+
+func _boss_phase_hook_triggered(hook: Dictionary) -> bool:
+	match str(hook.get("trigger", "")):
+		"turn":
+			return turn_number >= int(hook.get("turn", 1))
+		"hp_below":
+			return enemy_health <= int(hook.get("hp_below", enemy_max_health))
+		"board_empty":
+			return _board_is_clear(ENEMY_ID)
+	return false
+
+func _apply_boss_phase_hook(hook: Dictionary) -> void:
+	match str(hook.get("action", "")):
+		"summon_card":
+			_spawn_enemy_card(str(hook.get("card_id", "")), int(hook.get("attack_bonus", 0)), int(hook.get("health_bonus", 0)))
+		"buff_all_enemies":
+			_buff_all_slots(ENEMY_ID, int(hook.get("attack", 0)), int(hook.get("health", 0)), false)
+		"add_keyword_all_enemies":
+			for index: int in range(enemy_slots.size()):
+				_add_keyword_to_slot(ENEMY_ID, index, str(hook.get("keyword", "")))
+		"damage_player":
+			_damage_hero(PLAYER_ID, int(hook.get("amount", 0)))
+		"poison_all_player":
+			for index: int in range(player_slots.size()):
+				_apply_poison_to_slot(PLAYER_ID, index, int(hook.get("amount", 1)))
+		"set_field_effect":
+			var effect_id: String = str(hook.get("effect", ""))
+			if effect_id != "" and not field_effects.has(effect_id):
+				field_effects.append(effect_id)
+	var description: String = str(hook.get("description", "Fase de chefe resolvida."))
+	if description != "":
+		_log(description)
 
 func _apply_drain(owner_id: String, amount: int) -> void:
 	if amount <= 0:
@@ -2648,6 +2952,13 @@ func _inspire_bonus_for(owner_id: String, slot_index: int) -> int:
 			bonus += int(occupant.get("inspire_amount", 0))
 	return bonus
 
+func _board_attack_bonus(owner_id: String, slot_index: int) -> int:
+	if board_format == BOARD_FORMAT_CENTRAL_CORE and slot_index == 2:
+		return 1
+	if _field_effect_active(FIELD_SLOT_CENTRAL_AMPLIFICADO) and slot_index == 2:
+		return 1
+	return 0
+
 func _trample_overflow_target(owner_id: String, lane_index: int, blocked_owner: String, blocked_slot: int) -> Dictionary:
 	var opponent_id: String = _opponent_id(owner_id)
 	if owner_id == ENEMY_ID:
@@ -2678,6 +2989,7 @@ func _summon_token(owner_id: String, attack: int, health: int, display_name: Str
 		return false
 	slots[open_slot] = _build_token_occupant(owner_id, attack, health, display_name)
 	_set_slots_for_owner(owner_id, slots)
+	_apply_summon_field_effect(owner_id, open_slot)
 	_recalculate_pact_bonuses(owner_id)
 	_log("%s surgiu no slot %d." % [display_name, open_slot + 1])
 	return true
@@ -2926,6 +3238,11 @@ func _nearest_defender_target(owner_id: String, lane_index: int) -> Dictionary:
 	return {"owner": owner_id, "slot": best_index}
 
 func _front_attack_target(owner_id: String, slot_index: int) -> Dictionary:
+	if board_format == BOARD_FORMAT_FRONT_REAR and slot_index >= 3:
+		var own_slots: Array = _slots_for_owner(owner_id)
+		var front_index: int = slot_index - 3
+		if front_index >= 0 and front_index < own_slots.size() and own_slots[front_index] != null:
+			return {}
 	var opponent_id: String = _opponent_id(owner_id)
 	var opposing_slots: Array = _slots_for_owner(opponent_id)
 	if slot_index >= 0 and slot_index < opposing_slots.size() and opposing_slots[slot_index] != null:
@@ -2934,6 +3251,12 @@ func _front_attack_target(owner_id: String, slot_index: int) -> Dictionary:
 
 func _overflow_attack_target(owner_id: String, slot_index: int) -> Dictionary:
 	var opponent_id: String = _opponent_id(owner_id)
+	if owner_id == ENEMY_ID and mode == MODE_ESCORT:
+		var escort_target: Dictionary = _escort_objective_target()
+		if not escort_target.is_empty():
+			return escort_target
+	if owner_id == ENEMY_ID and board_format == BOARD_FORMAT_FLANK and (slot_index == 0 or slot_index == enemy_slots.size() - 1):
+		return {"owner": PLAYER_ID, "hero": true}
 	var defender_target: Dictionary = _nearest_defender_target(opponent_id, slot_index)
 	if not defender_target.is_empty():
 		return defender_target
@@ -3098,6 +3421,103 @@ func _damage_random_target(owner_id: String, amount: int, source_kind: String = 
 	else:
 		_damage_hero(str(target.get("owner", owner_id)), amount)
 
+func _random_occupied_target(owner_id: String) -> Dictionary:
+	var targets: Array[Dictionary] = []
+	if owner_id == "any":
+		targets.append_array(_targetable_occupied_slot_targets(PLAYER_ID, false))
+		targets.append_array(_targetable_occupied_slot_targets(ENEMY_ID, false))
+	else:
+		targets.append_array(_targetable_occupied_slot_targets(owner_id, false))
+	if targets.is_empty():
+		return {}
+	return targets[_rng.randi_range(0, targets.size() - 1)]
+
+func _swap_random_adjacent_enemy() -> void:
+	if enemy_slots.size() < 2:
+		return
+	var candidates: Array[int] = []
+	for index: int in range(enemy_slots.size() - 1):
+		if enemy_slots[index] != null or enemy_slots[index + 1] != null:
+			candidates.append(index)
+	if candidates.is_empty():
+		return
+	var left_index: int = candidates[_rng.randi_range(0, candidates.size() - 1)]
+	var right_index: int = left_index + 1
+	var left_value: Variant = enemy_slots[left_index]
+	enemy_slots[left_index] = enemy_slots[right_index]
+	enemy_slots[right_index] = left_value
+	_log("Ventania trocou as lanes inimigas %d e %d." % [left_index + 1, right_index + 1])
+
+func _damage_rear_player_slots(amount: int, label: String) -> void:
+	var damaged_slots: Array[Dictionary] = []
+	for index: int in range(3, player_slots.size()):
+		if player_slots[index] == null:
+			continue
+		_deal_slot_damage(PLAYER_ID, index, amount, {"source_kind": "field_effect", "defer_death": true, "bypass_resistance": true})
+		_queue_damaged_slot(damaged_slots, PLAYER_ID, index, -1)
+	if not damaged_slots.is_empty():
+		_log("%s feriu a retaguarda aliada." % label)
+	_destroy_queued_damaged_slots(damaged_slots)
+
+func _resolve_invasion_portal() -> void:
+	if not [3, 5].has(turn_number):
+		return
+	var key: String = "portal_turn_%d" % turn_number
+	if bool(field_effect_state.get(key, false)):
+		return
+	field_effect_state[key] = true
+	var left_count: int = _occupied_count_in_range(enemy_slots, 0, mini(2, enemy_slots.size() - 1))
+	var right_count: int = _occupied_count_in_range(enemy_slots, 3, enemy_slots.size() - 1)
+	var preferred_slots: Array = [0, 1, 2] if left_count <= right_count else [3, 4, 5]
+	var spawned: int = 0
+	for slot_index: int in preferred_slots:
+		if slot_index < 0 or slot_index >= enemy_slots.size() or enemy_slots[slot_index] != null:
+			continue
+		if _spawn_enemy_card_in_slot("enemy_fogo_fragmento_de_chama", slot_index, 0, 0):
+			spawned += 1
+		if spawned >= 2:
+			break
+	if spawned < 2:
+		for _i: int in range(2 - spawned):
+			if _spawn_enemy_card("enemy_fogo_fragmento_de_chama", 0, 0):
+				spawned += 1
+	if spawned > 0:
+		_log("Portal Aberto invocou %d reforco(s)." % spawned)
+
+func _occupied_count_in_range(slots: Array, first_index: int, last_index: int) -> int:
+	var total: int = 0
+	for index: int in range(maxi(0, first_index), mini(last_index, slots.size() - 1) + 1):
+		if slots[index] != null:
+			total += 1
+	return total
+
+func _spawn_enemy_card(card_id: String, attack_bonus: int = 0, health_bonus: int = 0) -> bool:
+	var open_slot: int = _first_strict_open_slot(enemy_slots)
+	if open_slot < 0:
+		return false
+	return _spawn_enemy_card_in_slot(card_id, open_slot, attack_bonus, health_bonus)
+
+func _spawn_enemy_card_in_slot(card_id: String, slot_index: int, attack_bonus: int = 0, health_bonus: int = 0) -> bool:
+	var card = _card(card_id)
+	if card == null or slot_index < 0 or slot_index >= enemy_slots.size() or enemy_slots[slot_index] != null:
+		return false
+	var occupant: Dictionary = _build_occupant(card, ENEMY_ID, true)
+	if attack_bonus != 0:
+		occupant["attack"] = int(occupant.get("attack", 0)) + attack_bonus
+	if health_bonus != 0:
+		occupant["health"] = int(occupant.get("health", 0)) + health_bonus
+		occupant["max_health"] = int(occupant.get("max_health", 0)) + health_bonus
+	enemy_slots[slot_index] = occupant
+	_apply_summon_field_effect(ENEMY_ID, slot_index)
+	_recalculate_pact_bonuses(ENEMY_ID)
+	return true
+
+func _buff_all_slots(owner_id: String, attack_bonus: int, health_bonus: int, temporary: bool) -> void:
+	for index: int in range(_slots_for_owner(owner_id).size()):
+		if _slot_occupant(owner_id, index).is_empty():
+			continue
+		_buff_slot(owner_id, index, attack_bonus, health_bonus, temporary)
+
 func _first_same_side_target(owner_id: String, attacker_index: int) -> Dictionary:
 	var slots: Array = _slots_for_owner(owner_id)
 	for index: int in range(slots.size()):
@@ -3213,6 +3633,21 @@ func _is_spell_card(card) -> bool:
 
 func _has_relic(relic_id: String) -> bool:
 	return relic_ids.has(relic_id)
+
+func _field_effect_active(effect_id: String) -> bool:
+	if field_effects.has(effect_id):
+		return true
+	if effect_id == FIELD_VENTANIA and field_effects.has(FIELD_OLHO_TEMPESTADE) and turn_number >= 4:
+		return true
+	if effect_id == FIELD_RELAMPAGO and field_effects.has(FIELD_OLHO_TEMPESTADE) and turn_number >= 4:
+		return true
+	if effect_id == FIELD_BRASA_VIVA and field_effects.has(FIELD_INFERNO_TOTAL):
+		return true
+	if effect_id == FIELD_INFERNO and field_effects.has(FIELD_INFERNO_TOTAL):
+		return true
+	if effect_id == FIELD_CINZAS_VIVAS and field_effects.has(FIELD_INFERNO_TOTAL):
+		return true
+	return false
 
 func _card(card_id: String):
 	if _catalog == null:

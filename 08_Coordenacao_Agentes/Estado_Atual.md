@@ -14,11 +14,11 @@
 
 - Status: **P0_IMPLEMENTACAO - ativo**
 - Fase: `Implementacao`
-- Track ativa: `Track 02 - Complete Run Evolution` (T02-P07_COMPLETE)
-- Baseline atual: Track 01 validada em Godot 4.6.2 com ShipHub, 3 saves v5, escolha de classe, deck/mapa/almas, run linear de 13 mapas, starter decks custo 1, recompensas fixas/escolhiveis, upgrades reais Lvl 2/Lvl 3, raridade 70/25/5, descarte pre-combate, 8 cartas reais de recompensa por classe, galerias inimigas Terra/Gelo/Ar/Fogo, Diabrete/Suicida no Necromante, alvo de mesa aliada, batalha por lanes, sacrificio, movimento, IA hibrida por perfis Terra/Gelo/Ar/Fogo, painel de intencao inimiga, intent de chefe e validacao verde 89/89. Track 02 agora tem contrato de dados/runtime, agenda de recompensas de 29 mapas, caps de mana/mao, progressao fixa de HP, reliquias universais iniciais, loja expandida de Almas, carta restante, escolha utilitaria, reroll, vocabulario/tooltips canonicos de keywords/status, engine completo de keywords, validacao de conteudo de cartas e validacao de AI/intent; rota 29 jogavel ainda pendente.
-- Meta ativa: executar os prompts lineares da Track 02 com handoff por thread, continuando por `T02-P08`.
+- Track ativa: `Track 02 - Complete Run Evolution` (T02-P09_COMPLETE)
+- Baseline atual: Track 02 completa para playtest de usuario em Godot 4.6.2 com rota fixa de 29 mapas, recompensas/reliquias/loja expandida, keywords completas, AI/intent, modos e formatos de encontro, field effects, boss hooks, UI polida para mapa/batalha/recompensa/loja/tooltips, validacao verde 93/93, telemetria de rota completa e screenshots obrigatorias capturadas.
+- Meta ativa: playtest manual da Track 02 completa e coleta de feedback de balanceamento.
 - Trabalho permitido: codigo, validacao, playtest e documentacao local.
-- Proximo passo: iniciar `T02-P08 - Route, Encounter Modes, Board Formats, Field Effects, Boss Phases`.
+- Proximo passo: executar playtest de usuario da Track 02 completa.
 
 ## DraxosMobile
 

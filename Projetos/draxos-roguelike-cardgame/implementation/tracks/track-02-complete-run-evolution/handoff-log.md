@@ -90,3 +90,21 @@ Each entry should include:
 - validation result: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd` passed with 89/89 GUT tests and 928 asserts; 76 optional PNGs and 4 non-fatal ship overlay alpha debts remain as known asset debt. Screenshot workflow must run without `--headless`; it saved `battle_1280x720.png` and `battle_960x540.png` with the intent panel visible.
 - blockers: none.
 - next prompt id: `T02-P08`
+
+### 2026-05-18 - Route, Encounter Modes, Board Formats, Field Effects, Boss Phases
+
+- prompt id: `T02-P08`
+- summary: Implemented the complete fixed 29-map linear route, Track 02 encounter modes, board formats, elemental field effects, representative boss phase hooks for maps 8/15/22/29, production reward overrides, route validation, encounter coverage validation, and representative tests for modes, formats, effects, and boss hooks.
+- changed files: `battle/battle_engine.gd`, `core/run_session.gd`, `data/definitions/slice_catalog.json`, `data/definitions/visual_assets.json`, `data/generated/slice_catalog.tres`, `modes/battle/battle_root.gd`, `modes/run_map/run_map_root.gd`, `tests/unit/test_bootstrap_contract.gd`, `tools/capture_visual_screenshots.gd`, `tools/validate.gd`, `implementation/current-status.md`, `implementation/tracks/track-02-complete-run-evolution/current-status.md`, `implementation/tracks/track-02-complete-run-evolution/handoff-log.md`, and studio coordination snapshots.
+- validation result: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd` passed with 92/92 GUT tests and 1053 asserts; 76 optional PNGs and 4 non-fatal ship overlay alpha debts remain as known asset debt. Screenshot workflow must run without `--headless`; it saved RunMap and representative Battle screenshots at 1280x720 and 960x540.
+- blockers: none. Known visual debt remains final-art/alpha polish outside this prompt.
+- next prompt id: `T02-P09`
+
+### 2026-05-18 - UI Polish, Telemetry, Full-Route Validation, And Tuning
+
+- prompt id: `T02-P09`
+- summary: Polished reward, RunMap, Souls shop/relic, keyword preview, enemy intent, and dense Battle readability; added validation telemetry for full-route pacing; added 5/5, 6/6, and 7/7 layout regression coverage; tuned Track 02 upgrades to remain level-only so the full-route smoke ends inside the target deck-size range; expanded screenshot workflow to required P09 surfaces.
+- changed files: `core/run_session.gd`, `modes/battle/battle_root.gd`, `modes/run_map/run_map_root.gd`, `modes/souls/souls_root.gd`, `tests/unit/test_bootstrap_contract.gd`, `tools/capture_visual_screenshots.gd`, `tools/validate.gd`, `implementation/current-status.md`, `implementation/tracks/track-02-complete-run-evolution/current-status.md`, `implementation/tracks/track-02-complete-run-evolution/linear-execution-plan.md`, `implementation/tracks/track-02-complete-run-evolution/validation-and-tuning-notes.md`, and studio coordination snapshots.
+- validation result: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd` passed with 93/93 GUT tests and 1119 asserts. Full-route pacing smoke completed 29/29 maps with 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 shop actions. Screenshot workflow saved RunMap, reward screen, shop/relic, keyword tooltip, enemy intent, and late-board Battle screenshots at 1280x720 and 960x540.
+- blockers: none. Remaining known debt: optional missing final PNG art and 4 non-fatal ship overlay alpha warnings.
+- next prompt id: none; Track 02 ready for user playtest.

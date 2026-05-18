@@ -1,7 +1,7 @@
 # Track 02 Linear Execution Plan
 
 - Last Updated: `2026-05-18`
-- Status: `READY_FOR_IMPLEMENTATION`
+- Status: `TRACK_02_COMPLETE_READY_FOR_USER_PLAYTEST`
 - Execution Owner: `Codex`
 - Scope: `Complete 29-map run evolution`
 - Validation Command: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd`
@@ -24,15 +24,15 @@
 | T02-P02 | complete | Implement reward categories, map reward schedule, max mana/hand/HP progression. | Green 73/73 |
 | T02-P03 | complete | Implement relic system and expanded Souls shop. | Green 79/79 + screenshots |
 | T02-P04 | complete | Implement keyword vocabulary, tooltip system, and status presentation. | Green 81/81 + screenshots |
-| T02-P05 | complete | Implement full keyword engine behavior. | Godot validate |
+| T02-P05 | complete | Implement full keyword engine behavior. | Green 87/87 |
 | T02-P06 | complete | Promote placeholder cards into real class cards and add enemy card content. | Green 87/87 |
 | T02-P07 | complete | Implement enemy AI profiles and enemy intent panel. | Green 89/89 + screenshots |
-| T02-P08 | pending | Implement 29-map route, new encounter modes, board formats, field effects, boss phases. | Godot validate + screenshots |
-| T02-P09 | pending | Polish UI/visuals, add telemetry, run full-route validation, and tune. | Godot validate + screenshots/playtest notes |
+| T02-P08 | complete | Implement 29-map route, new encounter modes, board formats, field effects, boss phases. | Green 92/92 + screenshots |
+| T02-P09 | complete | Polish UI/visuals, add telemetry, run full-route validation, and tune. | Green 93/93 + screenshots + smoke notes |
 
 ## Current Execution Cursor
 
-Next prompt: `T02-P08 - Route, Encounter Modes, Board Formats, Field Effects, Boss Phases`.
+Next prompt: none. Track 02 is ready for user playtest.
 
 ## Acceptance For Track 02
 

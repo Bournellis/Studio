@@ -837,13 +837,23 @@ func _build_reward_modal() -> void:
 	reward_text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	reward_text_label.add_theme_font_size_override("font_size", 14)
 	reward_text_label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
-	reward_text_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	reward_text_label.max_lines_visible = 7 if _is_compact_viewport() else 9
+	reward_text_label.clip_text = true
+	reward_text_label.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	box.add_child(reward_text_label)
+
+	var reward_scroll: ScrollContainer = ScrollContainer.new()
+	reward_scroll.name = "BattleRewardChoiceScroll"
+	reward_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	reward_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	reward_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	box.add_child(reward_scroll)
 
 	reward_choices_box = VBoxContainer.new()
 	reward_choices_box.name = "BattleRewardChoices"
 	reward_choices_box.add_theme_constant_override("separation", 8)
-	box.add_child(reward_choices_box)
+	reward_choices_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	reward_scroll.add_child(reward_choices_box)
 
 	reward_continue_button = Button.new()
 	reward_continue_button.name = "BattleRewardOkButton"
@@ -982,6 +992,12 @@ func _objective_text(state: Dictionary) -> String:
 			return "Sobreviva %d/%d" % [int(state.get("survived_turns", 0)), int(state.get("required_survive_turns", 0))]
 		BattleEngine.MODE_SUMMONER_BOSS:
 			return "Chefe HP %d" % int(state.get("enemy_health", 0))
+		BattleEngine.MODE_AMBUSH:
+			return "Emboscada | mana inicial 0"
+		BattleEngine.MODE_ESCORT:
+			return "Escolte o Cargo ate o ultimo slot"
+		BattleEngine.MODE_INVASION:
+			return "Invasao | portais no 3 e 5"
 	if bool(state.get("enemy_commander_enabled", false)):
 		return "Derrote %s" % _hero_display_name(BattleEngine.ENEMY_ID)
 	return ""
@@ -1337,7 +1353,7 @@ func _show_reward_modal(summary: Dictionary) -> void:
 		return
 	var lines: Array[String] = []
 	lines.append("Encontro concluído: %s" % str(summary.get("node_id", "")))
-	lines.append("Almas +%d" % int(summary.get("souls_gained", 0)))
+	lines.append("Almas +%d | Deck %d | Reliquias %d" % [int(summary.get("souls_gained", 0)), RunSession.current_deck_ids.size(), RunSession.relic_ids.size()])
 	var rewards: Array = Array(summary.get("automatic_rewards", []))
 	for reward_id: Variant in rewards:
 		lines.append(RunSession.automatic_reward_display_name(str(reward_id)))
@@ -1822,7 +1838,7 @@ func _enemy_commander_hud_size() -> Vector2:
 	return Vector2(390, 52) if _is_compact_viewport() else Vector2(450, 64)
 
 func _enemy_intent_panel_size() -> Vector2:
-	return Vector2(292, 112) if _is_compact_viewport() else Vector2(330, 138)
+	return Vector2(274, 112) if _is_compact_viewport() else Vector2(330, 138)
 
 func _apply_enemy_commander_hud_rect(control: Control) -> void:
 	var hud_size: Vector2 = _enemy_commander_hud_size()
@@ -1842,7 +1858,7 @@ func _apply_enemy_intent_panel_rect(control: Control) -> void:
 	control.anchor_right = 0.0
 	control.anchor_bottom = 0.0
 	control.offset_left = 8.0 if _is_compact_viewport() else 12.0
-	control.offset_top = 5.0 if _is_compact_viewport() else 8.0
+	control.offset_top = 62.0 if _is_compact_viewport() and bool(engine.enemy_commander_enabled) else (5.0 if _is_compact_viewport() else 8.0)
 	control.offset_right = control.offset_left + panel_size.x
 	control.offset_bottom = control.offset_top + panel_size.y
 

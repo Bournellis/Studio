@@ -49,14 +49,14 @@ Evoluir o slice validado de 13 mapas para a primeira versao completa do jogo: ru
 - [x] `T02-P05` conclui engine completo de keywords.
 - [x] `T02-P06` conclui cartas novas e inimigos.
 - [x] `T02-P07` conclui AI inimiga e painel de intencao.
-- [ ] `T02-P08` conclui rota 29 mapas, novos encontros, formatos, field effects e bosses.
-- [ ] `T02-P09` conclui polish, telemetria, validacao de rota e tuning inicial.
-- [ ] Cada thread atualiza `handoff-log.md`.
-- [ ] Validacao Godot fica verde apos cada prompt de implementacao.
+- [x] `T02-P08` conclui rota 29 mapas, novos encontros, formatos, field effects e bosses.
+- [x] `T02-P09` conclui polish, telemetria, validacao de rota e tuning inicial.
+- [x] Cada thread atualiza `handoff-log.md`.
+- [x] Validacao Godot fica verde apos cada prompt de implementacao.
 
 ## Handoff Needed
 
-`Yes - to Codex`
+`No - Track 02 ready for user playtest`
 
 ## Notes
 

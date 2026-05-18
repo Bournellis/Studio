@@ -650,94 +650,206 @@
   "run_map_nodes": {
     "n01_tutorial_primeiro_contato": {
       "position": {
-        "x": 0.08,
-        "y": 0.66
+        "x": 0.06,
+        "y": 0.82
       },
-      "label": "01 T1"
+      "label": "01"
     },
     "n02_tutorial_dois_fronts": {
       "position": {
-        "x": 0.15,
-        "y": 0.48
+        "x": 0.18,
+        "y": 0.82
       },
-      "label": "02 T2"
+      "label": "02"
     },
     "n03_tutorial_primeira_onda": {
       "position": {
-        "x": 0.22,
-        "y": 0.64
+        "x": 0.3,
+        "y": 0.82
       },
-      "label": "03 T3"
+      "label": "03"
     },
     "n04_pouso_elemental": {
       "position": {
-        "x": 0.3,
-        "y": 0.48
+        "x": 0.42,
+        "y": 0.82
       },
-      "label": "04 Limpar"
+      "label": "04"
     },
     "n05_ondas_iniciais": {
       "position": {
-        "x": 0.38,
-        "y": 0.66
+        "x": 0.54,
+        "y": 0.82
       },
-      "label": "05 Ondas"
+      "label": "05"
     },
     "n06_duelo_inicial": {
       "position": {
-        "x": 0.46,
-        "y": 0.48
+        "x": 0.66,
+        "y": 0.82
       },
-      "label": "06 Duelo"
+      "label": "06"
     },
     "n07_defesa_posicao": {
       "position": {
-        "x": 0.54,
-        "y": 0.66
+        "x": 0.78,
+        "y": 0.82
       },
-      "label": "07 Defesa"
+      "label": "07"
     },
     "n08_chefe_invocador": {
       "position": {
-        "x": 0.62,
-        "y": 0.44
+        "x": 0.9,
+        "y": 0.82
       },
-      "label": "08 Chefe"
+      "label": "08"
     },
     "n09_sobreviver_turnos": {
       "position": {
-        "x": 0.69,
-        "y": 0.62
+        "x": 0.9,
+        "y": 0.58
       },
-      "label": "09 Sobrev"
+      "label": "09"
     },
     "n10_limpeza_elite": {
       "position": {
-        "x": 0.76,
-        "y": 0.46
+        "x": 0.78,
+        "y": 0.58
       },
-      "label": "10 Elite"
+      "label": "10"
     },
     "n11_ondas_avancadas": {
       "position": {
-        "x": 0.82,
-        "y": 0.64
+        "x": 0.66,
+        "y": 0.58
       },
-      "label": "11 Ondas"
+      "label": "11"
     },
     "n12_duelo_elite": {
       "position": {
-        "x": 0.88,
-        "y": 0.46
+        "x": 0.54,
+        "y": 0.58
       },
-      "label": "12 Duelo"
+      "label": "12"
     },
-    "n13_chefe_final": {
+    "n13_labirinto_gelo": {
       "position": {
-        "x": 0.93,
-        "y": 0.3
+        "x": 0.42,
+        "y": 0.58
       },
-      "label": "13 Final"
+      "label": "13"
+    },
+    "n14_vanguarda_glacial": {
+      "position": {
+        "x": 0.3,
+        "y": 0.58
+      },
+      "label": "14"
+    },
+    "n15_anciao_gelo": {
+      "position": {
+        "x": 0.18,
+        "y": 0.58
+      },
+      "label": "15"
+    },
+    "n16_planicies_vento": {
+      "position": {
+        "x": 0.18,
+        "y": 0.34
+      },
+      "label": "16"
+    },
+    "n17_rajadas": {
+      "position": {
+        "x": 0.3,
+        "y": 0.34
+      },
+      "label": "17"
+    },
+    "n18_nucleo_ciclone": {
+      "position": {
+        "x": 0.42,
+        "y": 0.34
+      },
+      "label": "18"
+    },
+    "n19_camara_trovao": {
+      "position": {
+        "x": 0.54,
+        "y": 0.34
+      },
+      "label": "19"
+    },
+    "n20_emboscada_nuvens": {
+      "position": {
+        "x": 0.66,
+        "y": 0.34
+      },
+      "label": "20"
+    },
+    "n21_tempestade_eterna": {
+      "position": {
+        "x": 0.78,
+        "y": 0.34
+      },
+      "label": "21"
+    },
+    "n22_soberano_tempestades": {
+      "position": {
+        "x": 0.9,
+        "y": 0.34
+      },
+      "label": "22"
+    },
+    "n23_campos_chamas": {
+      "position": {
+        "x": 0.9,
+        "y": 0.1
+      },
+      "label": "23"
+    },
+    "n24_fornalha": {
+      "position": {
+        "x": 0.78,
+        "y": 0.1
+      },
+      "label": "24"
+    },
+    "n25_rio_lava": {
+      "position": {
+        "x": 0.66,
+        "y": 0.1
+      },
+      "label": "25"
+    },
+    "n26_duelo_demonio": {
+      "position": {
+        "x": 0.54,
+        "y": 0.1
+      },
+      "label": "26"
+    },
+    "n27_renascimento": {
+      "position": {
+        "x": 0.42,
+        "y": 0.1
+      },
+      "label": "27"
+    },
+    "n28_portal_caos": {
+      "position": {
+        "x": 0.3,
+        "y": 0.1
+      },
+      "label": "28"
+    },
+    "n29_dragao_primordial": {
+      "position": {
+        "x": 0.18,
+        "y": 0.1
+      },
+      "label": "29"
     }
   }
 }

@@ -4,10 +4,10 @@
 - Active Project Name: `draxos-roguelike-cardgame`
 - Active Surface: `linear 29-map complete-run roguelike cardgame production plan`
 - Active Track: `Track 02 - Complete Run Evolution`
-- Active Track Status: `T02-P07_COMPLETE`
-- Current Operational Baseline: `Godot 4.6.2 Track 01 playable 13-map slice preserved, now with Track 02 save/snapshot version 5, 29-map reward schedule contract, real initial 18 universal relic definitions, relic ownership in run state, expanded Souls shop, safe relic effects, canonical keyword/status tooltip vocabulary, BattleEngine mechanics for all Track 02 keywords, 8 real reward cards per class with Lvl 2/Lvl 3 variants, Track 02 Terra/Gelo/Ar/Fogo enemy card galleries, deterministic hybrid enemy AI profiles for Terra/Gelo/Ar/Fogo, boss intent phase hooks, visible battle intent panel, visual manifest placeholders for new cards/enemies, and validation for card ids, upgrade ids, reward pools, keyword references, placeholder removal, deterministic AI decisions, and intent output. Playable 29-map route remains pending for later prompts.`
-- Active Goal: `execute Track 02 prompts from T02-P08 onward to evolve the validated 13-map slice into the first complete 29-map run with route encounters, encounter modes, boss phases, field effects, and UI/visual upgrades`
-- Validation: `2026-05-18 T02-P07 validation green; 89/89 GUT tests passing; 928 asserts; 76 optional PNGs reported missing by design; 4 non-fatal ship overlay alpha debts reported. Battle screenshots with the intent panel captured at 1280x720 and 960x540.`
+- Active Track Status: `T02-P09_COMPLETE`
+- Current Operational Baseline: `Godot 4.6.2 Track 02 complete-run build: fixed 29-map route, save/snapshot version 5, production reward schedule, universal relics, expanded Souls shop, keyword tooltip vocabulary, all Track 02 keyword mechanics, 8 reward cards per class with upgrades, Terra/Gelo/Ar/Fogo enemy galleries, deterministic hybrid enemy AI, visible enemy intent, encounter modes, board formats, elemental field effects, boss hooks for maps 8/15/22/29, polished reward/map/shop/relic/keyword/intent/battle readability, 5/5, 6/6, and 7/7 layout coverage, validation telemetry for full-route pacing, and first tuning pass keeping upgrade rewards level-only to hit final deck-size targets.`
+- Active Goal: `user playtest of Track 02 complete-run build`
+- Validation: `2026-05-18 T02-P09 validation green; 93/93 GUT tests passing; 1119 asserts; full-route pacing smoke completed 29/29 maps with 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 shop actions. Required screenshots captured at 1280x720 and 960x540.`
 
 ## Read Next
 
@@ -34,4 +34,4 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 
 ## Next
 
-Continue with `T02-P08 - Route, Encounter Modes, Board Formats, Field Effects, Boss Phases` from `tracks/track-02-complete-run-evolution/implementation-prompts.md`.
+Track 02 is ready for user playtest. Use `tracks/track-02-complete-run-evolution/validation-and-tuning-notes.md` for final P09 metrics and known debt.

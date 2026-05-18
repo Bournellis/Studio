@@ -1,10 +1,10 @@
 # Track 02 Current Status
 
 - Last Updated: `2026-05-18`
-- Status: `T02-P07_COMPLETE`
+- Status: `T02-P09_COMPLETE`
 - Scope: `First complete 29-map version of the Draxos roguelike cardgame`
 - Baseline Dependency: `Track 01 - Playable Run Loop`
-- Validation Baseline: `T02-P07 validation green: 89/89 GUT tests, 928 asserts`
+- Validation Baseline: `T02-P09 validation green: 93/93 GUT tests, 1119 asserts, full-route pacing smoke green`
 
 ## Purpose
 
@@ -36,18 +36,19 @@ The target is a fixed, linear 29-map run with all planned encounter types, all p
 - `linear-execution-plan.md`
 - `implementation-prompts.md`
 - `handoff-log.md`
+- `validation-and-tuning-notes.md`
 
 ## Current Execution Cursor
 
-Completed prompt: `T02-P07 - Enemy AI Profiles And Intent Panel`.
+Completed prompt: `T02-P09 - UI Polish, Telemetry, Full-Route Validation, And Tuning`.
 
-Next implementation prompt: `T02-P08 - Route, Encounter Modes, Board Formats, Field Effects, Boss Phases`.
+Next implementation prompt: none. Track 02 is ready for user playtest.
 
 ## Implemented Baseline
 
 - SaveManager save version and RunSession snapshot version are now `5`; v4 and older files follow the existing stale-save pattern.
 - Runtime state now persists Track 02 contract fields for stat caps, relic ids, expanded shop state, reward category state, reroll count, and route metadata.
-- Track 02 data metadata exposes the 29-map reward schedule while the active route remains the Track 01 13-map baseline.
+- Track 02 data metadata exposes the 29-map reward schedule and the active route now uses the fixed 29-map sequence.
 - Reward application now supports max mana, max hand size, max HP, new-card choice, remaining-card grant, card upgrade, real relic rewards, utility choice, and victory metadata.
 - Fixed HP progression starts at `20` and applies `+5` at map 10 and map 15; first-test caps remain max mana `6` and max hand size `5`.
 - Map 27 utility choice supports remove card, duplicate card, or upgrade card.
@@ -71,7 +72,19 @@ Next implementation prompt: `T02-P08 - Route, Encounter Modes, Board Formats, Fi
 - Battle UI now shows a visible `BattleEnemyIntentPanel` with tooltip-backed intent categories, and the screenshot workflow captures duel battle screenshots with the panel visible.
 - Visual asset manifest placeholders now cover all new class reward cards and enemy gallery cards.
 - Validation now checks reward card ids, upgrade ids, reward pool order, enemy gallery card ids, keyword references, placeholder removal, deterministic enemy AI decisions, intent output, and intent panel presence.
-- Playable 29-map encounters are still pending.
+- The active run route now contains the complete fixed 29-map linear sequence with exact unlock chaining and compact visual node positions.
+- Track 02 encounter coverage now includes Tutorial, Ondas, Duelo, Chefe Invocador, Sobreviver Turnos, Emboscada, Escolta, and Invasao.
+- BattleEngine now supports the planned board formats: Padrao, Assimetrico, Nucleo Central, Flanco, Frente e Retaguarda, and Abismo.
+- Elemental field effects are implemented for Terra, Gelo, Ar, Fogo, and final-chaos encounters, including effects that influence movement, summons, attack lanes, damage, poison, freeze, and death hooks.
+- Boss maps 8, 15, 22, and 29 now have representative scripted phase hooks and intent data.
+- Production reward overrides are active: map 14 grants a Gelo remaining card, map 15 grants HP plus boss relic, map 23 raises max mana to 6, and map 28 grants rare/ultra relic choice.
+- Validation now checks the 29-map route, linear unlock chain, reward schedule, mode/format/effect coverage, and boss hook coverage; representative tests exercise new modes, board formats, and field effects.
+- Screenshot workflow captures RunMap and representative Battle surfaces for the complete-route state.
+- T02-P09 added full-route pacing telemetry to validation, with map count, estimated turns, HP loss, Souls, deck size, relic count, shop usage, and deaths.
+- Reward screen, RunMap, Souls shop/relic state, keyword preview, enemy intent, and dense Battle layouts received readability polish.
+- 5/5, 6/6, and 7/7 battle layouts now have regression coverage.
+- First tuning pass keeps the approved reward schedule and shop costs unchanged, but makes Track 02 upgrade rewards level-only instead of adding extra rarity copies; the full-route smoke now ends at `38` cards.
+- Screenshot workflow now captures RunMap, reward screen, shop/relic, keyword tooltip, enemy intent, and late-board Battle surfaces at `1280x720` and `960x540`.
 
 ## Handoff Rule
 
@@ -86,4 +99,4 @@ Every future Track 02 implementation thread must:
 
 ## Current Risk
 
-Relics, expanded shop, keyword/status presentation, full keyword mechanics, promoted class cards, enemy card galleries, enemy AI profiles, and battle intent panel are implemented on the active 13-map baseline. The next risk is `T02-P08`: implement the 29-map route, encounter modes, board formats, field effects, and representative boss phase behavior without retuning the whole game globally.
+Track 02 is ready for user playtest. Remaining risk is human balance feedback: the deterministic full-route smoke validates structure and pacing telemetry, but it is not a substitute for a manual run.

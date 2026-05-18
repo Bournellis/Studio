@@ -11,9 +11,11 @@ const VIEWPORTS: Array[Dictionary] = [
 const SURFACES: Array[Dictionary] = [
 	{"id": "ship_hub", "scene": "res://modes/ship_hub/ship_hub.tscn", "setup": "ship"},
 	{"id": "run_map", "scene": "res://modes/run_map/run_map.tscn", "setup": "map"},
-	{"id": "souls", "scene": "res://modes/souls/souls.tscn", "setup": "souls"},
-	{"id": "battle", "scene": "res://modes/battle/battle.tscn", "setup": "battle"},
-	{"id": "battle_card_tooltip", "scene": "res://modes/battle/battle.tscn", "setup": "battle", "preview": "card"},
+	{"id": "shop_relic", "scene": "res://modes/souls/souls.tscn", "setup": "souls", "preview": "shop"},
+	{"id": "enemy_intent", "scene": "res://modes/battle/battle.tscn", "setup": "battle"},
+	{"id": "late_board_battle", "scene": "res://modes/battle/battle.tscn", "setup": "battle_late"},
+	{"id": "keyword_tooltip", "scene": "res://modes/battle/battle.tscn", "setup": "battle", "preview": "card"},
+	{"id": "reward_screen", "scene": "res://modes/battle/battle.tscn", "setup": "battle_reward", "preview": "reward_screen"},
 	{"id": "reward_tooltip", "scene": "res://modes/battle/battle.tscn", "setup": "battle", "preview": "reward"},
 	{"id": "souls_shop_tooltip", "scene": "res://modes/souls/souls.tscn", "setup": "souls", "preview": "shop"}
 ]
@@ -98,9 +100,32 @@ func _prepare_session(setup_id: String) -> void:
 			session.soul_total = 120
 			session.current_health = 12
 			session.record_battle_result("n01_tutorial_primeiro_contato", "vitoria", 12)
+			session.add_relic_id("bolsa_de_cinzas")
 		"battle":
 			session.start_class_run("arcano", 77)
-			session.select_node("n06_duelo_inicial")
+			session.max_mana = 4
+			session.max_hand_size = 5
+			session.current_health = session.max_health
+			session.current_deck_ids.append_array(["arcano_barreira", "arcano_tempestade", "arcano_vortice", "arcano_acelerar"])
+			session.select_node("n20_emboscada_nuvens")
+		"battle_late":
+			session.start_class_run("arcano", 77)
+			session.max_mana = 6
+			session.max_hand_size = 5
+			session.max_health = 36
+			session.current_health = 24
+			session.soul_total = 84
+			session.current_deck_ids.append_array(["arcano_barreira", "arcano_tempestade", "arcano_vortice", "arcano_acelerar", "arcano_bola_de_fogo", "arcano_espelho_arcano", "arcano_descarga"])
+			session.relic_ids.clear()
+			session.relic_ids.append_array(["bolsa_de_cinzas", "couro_astral", "forja_negra", "coracao_de_eter", "pacto_das_ruinas"])
+			session.select_node("n29_dragao_primordial")
+		"battle_reward":
+			session.start_class_run("arcano", 77)
+			session.max_mana = 4
+			session.max_hand_size = 5
+			session.soul_total = 42
+			session.current_deck_ids.append_array(["arcano_barreira", "arcano_tempestade", "arcano_vortice"])
+			session.select_node("n21_olho_da_tempestade")
 
 func _prepare_preview(instance: Node, preview_id: String) -> void:
 	match preview_id:
@@ -118,6 +143,15 @@ func _prepare_preview(instance: Node, preview_id: String) -> void:
 						"body": "Adiciona 3 copias ao deck."
 					}),
 					"state": "Tooltip de recompensa"
+				})
+		"reward_screen":
+			if instance.has_method("_show_reward_modal"):
+				instance.call("_show_reward_modal", {
+					"node_id": "n21_olho_da_tempestade",
+					"souls_gained": 11,
+					"automatic_rewards": [],
+					"choice_rewards": [],
+					"next_node_id": "n22_primordial_ar"
 				})
 		"shop":
 			if instance.has_method("_show_shop_preview"):

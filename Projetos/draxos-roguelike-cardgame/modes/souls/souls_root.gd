@@ -322,6 +322,25 @@ func _rebuild_choice_buttons(options_box: VBoxContainer, choices: Array[Dictiona
 		options_box.add_child(button)
 
 func _state_text() -> String:
+	if RunSession.active:
+		return "Nome: %s\nClasse: %s\nMapa: %s\nHP: %d/%d\nMana: %d/%d\nMao: %d/%d\nAlmas: %d\nDeck: %d cartas\nReliquias: %d%s\nLoja: reroll %d | HP max %d/%d" % [
+			RunSession.player_display_name(),
+			RunSession.selected_class_display_name,
+			RunSession.current_node_display_name(),
+			RunSession.current_health,
+			RunSession.max_health,
+			RunSession.max_mana,
+			RunSession.max_mana_cap,
+			RunSession.max_hand_size,
+			RunSession.max_hand_size_cap,
+			RunSession.soul_total,
+			RunSession.current_deck_ids.size(),
+			RunSession.relic_ids.size(),
+			_owned_relic_summary(),
+			RunSession.reroll_count,
+			RunSession._shop_max_health_purchase_count(),
+			RunSession.SHOP_MAX_HEALTH_PURCHASE_LIMIT
+		]
 	if not RunSession.active:
 		return "Nome: -\nClasse: -\nMapa: -\nHP: -\nMana: -\nMão: -\nAlmas: -"
 	return "Nome: %s\nClasse: %s\nMapa: %s\nHP: %d/%d\nMana: %d\nMão: %d\nAlmas: %d" % [
@@ -339,6 +358,15 @@ func _return_to_ship() -> void:
 	if RunSession.active and RunSession.has_selected_class():
 		SaveManager.save_current_run()
 	get_tree().change_scene_to_file("res://modes/ship_hub/ship_hub.tscn")
+
+func _owned_relic_summary() -> String:
+	if RunSession.relic_ids.is_empty():
+		return ""
+	var names: Array[String] = []
+	for relic_id: String in RunSession.relic_ids.slice(0, mini(3, RunSession.relic_ids.size())):
+		names.append(ContentLibrary.get_relic_display_name(relic_id))
+	var suffix: String = "" if RunSession.relic_ids.size() <= 3 else " +%d" % (RunSession.relic_ids.size() - 3)
+	return " (%s%s)" % [", ".join(names), suffix]
 
 func _build_shop_preview_panel() -> void:
 	preview_panel = PanelContainer.new()

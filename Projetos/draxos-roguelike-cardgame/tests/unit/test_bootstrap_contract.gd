@@ -315,6 +315,105 @@ func test_track02_reward_schedule_matches_progression_contract() -> void:
 	assert_eq(str(map_27_choice.get("type", "")), RunSession.CHOICE_REWARD_UTILITY)
 	for option: String in [RunSession.UTILITY_REWARD_REMOVE_CARD, RunSession.UTILITY_REWARD_DUPLICATE_CARD, RunSession.UTILITY_REWARD_UPGRADE_CARD]:
 		assert_true(Array(map_27_choice.get("options", [])).has(option))
+	var map_28: Dictionary = Dictionary(schedule[27])
+	assert_eq(str(map_28.get("category", "")), "relic")
+	assert_eq(str(Dictionary(map_28.get("relic_reward", {})).get("rarity", "")), "rare_ultra")
+
+func test_track02_route_has_29_fixed_linear_maps_and_production_rewards() -> void:
+	var run_map: Dictionary = ContentLibrary.get_run_map()
+	var nodes: Array = Array(run_map.get("nodes", []))
+	assert_eq(nodes.size(), 29)
+	for index: int in range(nodes.size()):
+		var node: Dictionary = Dictionary(nodes[index])
+		assert_eq(int(node.get("map_index", 0)), index + 1)
+		if index == 0:
+			assert_true(Array(node.get("available_after", [])).is_empty())
+		else:
+			assert_true(Array(node.get("available_after", [])).has(str(Dictionary(nodes[index - 1]).get("id", ""))))
+		if index < nodes.size() - 1:
+			assert_true(Array(node.get("unlocks", [])).has(str(Dictionary(nodes[index + 1]).get("id", ""))))
+	assert_eq(str(Dictionary(nodes[13]).get("encounter_id", "")), "sobreviver_turnos_inicial")
+	assert_true(Array(Dictionary(nodes[13]).get("rewards", [])).has(RunSession.REWARD_GRANT_REMAINING_CARD))
+	assert_true(Array(Dictionary(nodes[14]).get("rewards", [])).has(RunSession.REWARD_MAX_HEALTH_5))
+	assert_false(Dictionary(Dictionary(nodes[14]).get("relic_reward", {})).is_empty())
+	assert_true(Array(Dictionary(nodes[22]).get("rewards", [])).has(RunSession.REWARD_MAX_MANA_1))
+	assert_eq(str(Dictionary(Dictionary(nodes[27]).get("relic_reward", {})).get("rarity", "")), "rare_ultra")
+
+func test_track02_route_covers_modes_formats_effects_and_boss_hooks() -> void:
+	var modes: Array[String] = []
+	var formats: Array[String] = []
+	var effects: Array[String] = []
+	var boss_maps: Array[int] = []
+	for node: Dictionary in Array(ContentLibrary.get_run_map().get("nodes", [])):
+		var encounter: Dictionary = ContentLibrary.get_catalog().find_encounter(str(node.get("encounter_id", "")))
+		var mode: String = str(encounter.get("mode", ""))
+		var board_format: String = str(encounter.get("board_format", "padrao"))
+		if not modes.has(mode):
+			modes.append(mode)
+		if not formats.has(board_format):
+			formats.append(board_format)
+		for effect_id: Variant in Array(encounter.get("field_effects", [])):
+			if not effects.has(str(effect_id)):
+				effects.append(str(effect_id))
+		if mode == BattleEngine.MODE_SUMMONER_BOSS:
+			boss_maps.append(int(node.get("map_index", 0)))
+			assert_false(Array(encounter.get("boss_phase_hooks", [])).is_empty())
+	for required_mode: String in [BattleEngine.MODE_AMBUSH, BattleEngine.MODE_ESCORT, BattleEngine.MODE_INVASION]:
+		assert_true(modes.has(required_mode), "Missing mode %s" % required_mode)
+	for required_format: String in [BattleEngine.BOARD_FORMAT_ASYMMETRIC, BattleEngine.BOARD_FORMAT_CENTRAL_CORE, BattleEngine.BOARD_FORMAT_FLANK, BattleEngine.BOARD_FORMAT_FRONT_REAR, BattleEngine.BOARD_FORMAT_ABYSS]:
+		assert_true(formats.has(required_format), "Missing board format %s" % required_format)
+	for required_effect: String in [BattleEngine.FIELD_GEADA, BattleEngine.FIELD_CHAO_VIVO, BattleEngine.FIELD_OLHO_TEMPESTADE, BattleEngine.FIELD_PORTAL_ABERTO, BattleEngine.FIELD_INFERNO_TOTAL]:
+		assert_true(effects.has(required_effect), "Missing field effect %s" % required_effect)
+	assert_eq(boss_maps, [8, 15, 22, 29])
+
+func test_track02_representative_modes_formats_and_field_effects_resolve() -> void:
+	var ambush: BattleEngine = BattleEngine.new()
+	ambush.start_battle(ContentLibrary.get_catalog(), ["arcano_choque"], {
+		"encounter_id": "emboscada_nuvens",
+		"shuffle_deck": false
+	})
+	assert_eq(ambush.mode, BattleEngine.MODE_AMBUSH)
+	assert_eq(ambush.mana, 0)
+	assert_eq(ambush.board_format, BattleEngine.BOARD_FORMAT_FLANK)
+	assert_eq(ambush.enemy_slots.size(), 6)
+
+	var escort: BattleEngine = BattleEngine.new()
+	escort.start_battle(ContentLibrary.get_catalog(), ["arcano_choque"], {
+		"encounter_id": "rio_lava",
+		"shuffle_deck": false
+	})
+	assert_eq(escort.mode, BattleEngine.MODE_ESCORT)
+	assert_eq(escort.board_format, BattleEngine.BOARD_FORMAT_FRONT_REAR)
+	assert_true(bool(Dictionary(escort.player_slots[0]).get("escort", false)))
+
+	var invasion: BattleEngine = BattleEngine.new()
+	invasion.start_battle(ContentLibrary.get_catalog(), ["arcano_choque"], {
+		"encounter_id": "portal_caos",
+		"shuffle_deck": false
+	})
+	invasion.turn_number = 3
+	var before_portal: int = _occupied_count(invasion.enemy_slots)
+	invasion._resolve_maintenance_field_effects()
+	assert_true(_occupied_count(invasion.enemy_slots) >= before_portal)
+	assert_true(bool(invasion.field_effect_state.get("portal_turn_3", false)))
+
+	var core: BattleEngine = BattleEngine.new()
+	core.start_battle(ContentLibrary.get_catalog(), ["arcano_choque"], {
+		"encounter_id": "nucleo_ciclone",
+		"shuffle_deck": false
+	})
+	var attack: Dictionary = core._build_attack_event("test", BattleEngine.ENEMY_ID, 2, {"owner": BattleEngine.PLAYER_ID, "hero": true})
+	assert_eq(int(attack.get("damage", 0)), int(Dictionary(core.enemy_slots[2]).get("attack", 0)) + 1)
+
+	var frost: BattleEngine = BattleEngine.new()
+	frost.start_battle(ContentLibrary.get_catalog(), ["arcano_choque"], {
+		"encounter_id": "blizzard",
+		"shuffle_deck": false
+	})
+	frost.player_slots[0] = frost._build_occupant(ContentLibrary.get_card("arcano_fagulha"), BattleEngine.PLAYER_ID, false)
+	frost.turn_number = 2
+	frost._resolve_start_of_player_field_effects()
+	assert_true(int(Dictionary(frost.player_slots[0]).get("frozen_turns", 0)) >= 1)
 
 func test_run_session_snapshot_tracks_track02_state() -> void:
 	var result: Dictionary = RunSession.start_class_run("arcano", 77)
@@ -564,10 +663,10 @@ func test_battle_engine_applies_safe_relic_hooks() -> void:
 		]
 	})
 	assert_eq(engine.mana, 2)
-	var enemy_before: int = int(Dictionary(engine.enemy_slots[1]).get("health", 0))
-	assert_true(bool(engine.play_card_from_hand(0, {"owner": BattleEngine.ENEMY_ID, "slot": 1}).get("ok", false)))
+	var enemy_before: int = int(Dictionary(engine.enemy_slots[2]).get("health", 0))
+	assert_true(bool(engine.play_card_from_hand(0, {"owner": BattleEngine.ENEMY_ID, "slot": 2}).get("ok", false)))
 	assert_eq(engine.mana, 2)
-	assert_eq(int(Dictionary(engine.enemy_slots[1]).get("health", 0)), enemy_before - 3)
+	assert_eq(int(Dictionary(engine.enemy_slots[2]).get("health", 0)), enemy_before - 3)
 	assert_true(bool(engine.play_card_from_hand(0, {"owner": BattleEngine.PLAYER_ID, "slot": 0}).get("ok", false)))
 	var ally: Dictionary = Dictionary(engine.player_slots[0])
 	assert_eq(int(ally.get("health", 0)), int(ally.get("max_health", 0)))
@@ -1701,6 +1800,31 @@ func test_map_nine_duel_scene_keeps_four_lane_hud() -> void:
 	battle.queue_free()
 	await get_tree().process_frame
 
+func test_track02_dense_board_layouts_remain_readable_for_5_6_7_slots() -> void:
+	var cases: Array[Dictionary] = [
+		{"node_id": "n22_soberano_tempestades", "slots": 6},
+		{"node_id": "n28_portal_caos", "slots": 6},
+		{"node_id": "n29_dragao_primordial", "slots": 7}
+	]
+	for test_case: Dictionary in cases:
+		_start_class_run("arcano", 202)
+		RunSession.max_mana = 6
+		RunSession.max_hand_size = 5
+		RunSession.current_deck_ids.append_array(["arcano_barreira", "arcano_tempestade", "arcano_vortice", "arcano_acelerar"])
+		RunSession.select_node(str(test_case.get("node_id", "")))
+		var battle = await _instantiate_scene("res://modes/battle/battle.tscn")
+		await get_tree().process_frame
+		assert_eq(battle.player_slots_box.get_child_count(), int(test_case.get("slots", 0)))
+		assert_eq(battle.enemy_slots_box.get_child_count(), int(test_case.get("slots", 0)))
+		assert_true(battle._uses_dense_battle_layout())
+		assert_true(battle._field_card_size().x >= 70.0)
+		assert_true(battle._hand_card_size().x >= 82.0)
+		_assert_control_inside_viewport(battle.find_child("BattleHandPanel", true, false) as Control)
+		_assert_control_inside_viewport(battle.find_child("BattleEnemyIntentPanel", true, false) as Control)
+		_assert_control_inside_viewport(battle.find_child("BattleEndTurnFloatingButton", true, false) as Control)
+		battle.queue_free()
+		await get_tree().process_frame
+
 func test_unlocked_passive_and_active_stay_visible_with_preview_data() -> void:
 	_start_class_run("arcano", 99)
 	RunSession.class_passive_unlocked = true
@@ -1933,7 +2057,7 @@ func test_survive_still_wins_when_board_is_cleared_and_starts_buffed() -> void:
 		"player_health": 20,
 		"shuffle_deck": false
 	})
-	assert_eq(str(Dictionary(engine.enemy_slots[1]).get("card_id", "")), "elemental_elite_bruto")
+	assert_eq(str(Dictionary(engine.enemy_slots[1]).get("card_id", "")), "enemy_gelo_djinn_do_frio")
 	for index: int in range(engine.enemy_slots.size()):
 		engine._damage_slot(BattleEngine.ENEMY_ID, index, 99)
 	engine._check_outcome()
@@ -1948,20 +2072,21 @@ func test_boss_encounters_start_with_stronger_boards() -> void:
 		"player_health": 20,
 		"shuffle_deck": false
 	})
-	assert_eq(first_boss.enemy_health, 28)
+	assert_eq(first_boss.enemy_health, 30)
 	assert_true(_occupied_count(first_boss.enemy_slots) >= 4)
 
 	var final_boss: BattleEngine = BattleEngine.new()
 	final_boss.start_battle(ContentLibrary.get_catalog(), ["arcano_choque"], {
 		"encounter_id": "chefe_summoner_final",
-		"mana_per_turn": 3,
+		"mana_per_turn": 5,
 		"max_hand_size": 1,
 		"player_health": 20,
 		"shuffle_deck": false
 	})
-	assert_eq(final_boss.enemy_health, 46)
-	assert_true(_occupied_count(final_boss.enemy_slots) >= 5)
-	assert_true(_enemy_board_has_card(final_boss.enemy_slots, "elemental_tita"))
+	assert_eq(final_boss.enemy_health, 50)
+	assert_eq(final_boss.board_format, BattleEngine.BOARD_FORMAT_ABYSS)
+	assert_true(_occupied_count(final_boss.enemy_slots) >= 7)
+	assert_true(_enemy_board_has_card(final_boss.enemy_slots, "enemy_fogo_fenix"))
 
 func test_battle_scene_uses_resolve_combat_button() -> void:
 	_start_class_run("arcano")

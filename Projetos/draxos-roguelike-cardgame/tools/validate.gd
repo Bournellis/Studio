@@ -4,10 +4,10 @@ const ContentGeneratorScript = preload("res://tools/content_generator.gd")
 const SceneGeneratorScript = preload("res://tools/scene_generator.gd")
 const VisualAssetsScript = preload("res://core/visual_assets.gd")
 const TRACK_02_CONTRACT_ID: String = "track_02_complete_run_evolution"
-const TRACK_02_ROUTE_STATUS_CONTRACT_ONLY: String = "contract_only"
+const TRACK_02_ROUTE_STATUS_CONTRACT_ONLY: String = "implemented"
 const TRACK_02_SAVE_VERSION: int = 5
 const TRACK_02_SNAPSHOT_VERSION: int = 5
-const TRACK_02_CURRENT_ROUTE_MAP_COUNT: int = 13
+const TRACK_02_CURRENT_ROUTE_MAP_COUNT: int = 29
 const TRACK_02_TARGET_MAP_COUNT: int = 29
 const TRACK_02_MAX_MANA_CAP: int = 6
 const TRACK_02_MAX_HAND_SIZE_CAP: int = 5
@@ -52,13 +52,20 @@ func _run_validation() -> int:
 		for warning: String in alpha_warnings:
 			print("[validate] %s" % warning)
 
+	print("[validate] checking Track 02 full-route pacing telemetry")
+	var pacing_result: Dictionary = _validate_track_02_full_route_pacing(load("res://data/generated/slice_catalog.tres"))
+	if not bool(pacing_result.get("ok", false)):
+		printerr("[validate] %s" % str(pacing_result.get("message", "Track 02 pacing validation failed.")))
+		return 1
+	print("[validate] %s" % _format_pacing_metrics(Dictionary(pacing_result.get("metrics", {}))))
+
 	print("[validate] running GUT")
 	var gut_exit_code: int = await _run_gut()
 	if gut_exit_code != 0:
 		printerr("[validate] GUT failed with exit code %d." % gut_exit_code)
 		return gut_exit_code
 
-	print("[validate] first mechanical class slice is playable; balance still in progress")
+	print("[validate] Track 02 complete-run build is ready for user playtest; human balance feedback still pending")
 	print("[validate] success")
 	return 0
 
@@ -155,7 +162,7 @@ func _validate_contract() -> Dictionary:
 		return {"ok": false, "message": "Ondas Iniciais encounter must exist."}
 	if catalog.find_encounter("chefe_invocador").is_empty():
 		return {"ok": false, "message": "Chefe Invocador encounter must exist."}
-	var required_modes: Array[String] = ["limpar_mesa", "duelo", "ondas", "defesa_posicao", "sobreviver_turnos", "chefe_summoner"]
+	var required_modes: Array[String] = ["limpar_mesa", "duelo", "ondas", "defesa_posicao", "sobreviver_turnos", "chefe_summoner", "emboscada", "escolta", "invasao"]
 	var found_modes: Array[String] = []
 	for encounter: Dictionary in catalog.encounters:
 		var encounter_mode: String = str(encounter.get("mode", ""))
@@ -261,8 +268,13 @@ func _validate_encounter_contract(encounter: Dictionary) -> Dictionary:
 	var tier: String = str(encounter.get("tier", ""))
 	if not ["tutorial", "small", "medium", "elite_optional", "boss"].has(tier):
 		return {"ok": false, "message": "Encounter %s has invalid tier." % encounter_id}
+	if not ["limpar_mesa", "duelo", "ondas", "defesa_posicao", "sobreviver_turnos", "chefe_summoner", "emboscada", "escolta", "invasao"].has(str(encounter.get("mode", ""))):
+		return {"ok": false, "message": "Encounter %s has invalid mode." % encounter_id}
 	if not ["prefilled_board", "waves", "scripted_boss", "player_like"].has(str(encounter.get("enemy_director", ""))):
 		return {"ok": false, "message": "Encounter %s has invalid enemy_director." % encounter_id}
+	var board_format: String = str(encounter.get("board_format", "padrao"))
+	if not ["padrao", "assimetrico", "nucleo_central", "flanco", "frente_retaguarda", "abismo"].has(board_format):
+		return {"ok": false, "message": "Encounter %s has invalid board_format." % encounter_id}
 	var reward: Dictionary = Dictionary(encounter.get("soul_reward", {}))
 	var min_reward: int = int(reward.get("min", 0))
 	var max_reward: int = int(reward.get("max", 0))
@@ -273,14 +285,17 @@ func _validate_encounter_contract(encounter: Dictionary) -> Dictionary:
 		return {"ok": false, "message": "Encounter %s has invalid soul_reward for tier %s." % [encounter_id, tier]}
 	if str(encounter.get("mode", "")) == "chefe_summoner" and Array(encounter.get("boss_summons", [])).is_empty():
 		return {"ok": false, "message": "Summoner boss %s needs boss_summons." % encounter_id}
+	if str(encounter.get("mode", "")) == "chefe_summoner" and Array(encounter.get("boss_phase_hooks", [])).is_empty():
+		return {"ok": false, "message": "Summoner boss %s needs boss_phase_hooks." % encounter_id}
 	return {"ok": true, "message": "Encounter contract is valid."}
 
 func _validate_run_map_contract(run_map: Dictionary) -> Dictionary:
 	var nodes: Array = Array(run_map.get("nodes", []))
-	if nodes.size() != 13:
-		return {"ok": false, "message": "Run map needs exactly 13 linear nodes."}
+	if nodes.size() != TRACK_02_TARGET_MAP_COUNT:
+		return {"ok": false, "message": "Run map needs exactly 29 linear nodes."}
 	var has_mainline: bool = false
-	for node: Variant in nodes:
+	for index: int in range(nodes.size()):
+		var node: Variant = nodes[index]
 		if typeof(node) != TYPE_DICTIONARY:
 			return {"ok": false, "message": "Run map nodes must be dictionaries."}
 		var node_data: Dictionary = Dictionary(node)
@@ -291,48 +306,52 @@ func _validate_run_map_contract(run_map: Dictionary) -> Dictionary:
 			return {"ok": false, "message": "Run map node needs id."}
 		if str(node_data.get("encounter_id", "")) == "":
 			return {"ok": false, "message": "Run map node %s needs encounter_id." % str(node_data.get("id", ""))}
-		if int(node_data.get("map_index", 0)) <= 0:
+		if int(node_data.get("map_index", 0)) != index + 1:
 			return {"ok": false, "message": "Run map node %s needs map_index." % str(node_data.get("id", ""))}
+		if index == 0 and not Array(node_data.get("available_after", [])).is_empty():
+			return {"ok": false, "message": "First run map node must not require a previous node."}
+		if index > 0:
+			var previous_id: String = str(Dictionary(nodes[index - 1]).get("id", ""))
+			if not Array(node_data.get("available_after", [])).has(previous_id):
+				return {"ok": false, "message": "Run map node %s must unlock after previous node." % str(node_data.get("id", ""))}
+		if index < nodes.size() - 1:
+			var next_id: String = str(Dictionary(nodes[index + 1]).get("id", ""))
+			if not Array(node_data.get("unlocks", [])).has(next_id):
+				return {"ok": false, "message": "Run map node %s must unlock next node." % str(node_data.get("id", ""))}
 		if kind == "mainline":
 			has_mainline = true
 	if not has_mainline:
 		return {"ok": false, "message": "Run map must include mainline nodes."}
-	var expected_rewards: Dictionary = {
-		"n01_tutorial_primeiro_contato": "max_mana_1",
-		"n02_tutorial_dois_fronts": "add_class_cost2_core",
-		"n04_pouso_elemental": "add_relic_placeholder",
-		"n05_ondas_iniciais": "max_mana_1",
-		"n06_duelo_inicial": "max_hand_size_1",
-		"n08_chefe_invocador": "unlock_class_passive",
-		"n10_limpeza_elite": "max_health_5",
-		"n11_ondas_avancadas": "grant_remaining_card"
-	}
-	for expected_node_id: String in expected_rewards.keys():
-		var node_data: Dictionary = _find_run_node(nodes, expected_node_id)
-		if node_data.is_empty():
-			return {"ok": false, "message": "Run map missing reward node %s." % expected_node_id}
-		if not Array(node_data.get("rewards", [])).has(str(expected_rewards.get(expected_node_id, ""))):
-			return {"ok": false, "message": "Run map node %s missing automatic reward." % expected_node_id}
-	var expected_choice_rewards: Dictionary = {
-		"n03_tutorial_primeira_onda": "upgrade_card",
-		"n07_defesa_posicao": "new_card",
-		"n09_sobreviver_turnos": "upgrade_card",
-		"n12_duelo_elite": "upgrade_card",
-		"n13_chefe_final": "new_card"
-	}
-	for choice_node_id: String in expected_choice_rewards.keys():
-		var choice_node: Dictionary = _find_run_node(nodes, choice_node_id)
-		if choice_node.is_empty():
-			return {"ok": false, "message": "Run map missing choice reward node %s." % choice_node_id}
-		var choice_reward: Dictionary = Dictionary(choice_node.get("choice_reward", {}))
-		if str(choice_reward.get("type", "")) != str(expected_choice_rewards.get(choice_node_id, "")):
-			return {"ok": false, "message": "Run map node %s has invalid choice reward." % choice_node_id}
+	for node: Variant in nodes:
+		var node_data: Dictionary = Dictionary(node)
+		var schedule_entry: Dictionary = _find_reward_schedule_entry(int(node_data.get("map_index", 0)))
+		if schedule_entry.is_empty():
+			return {"ok": false, "message": "Run map node %s has no reward schedule entry." % str(node_data.get("id", ""))}
+		var automatic_rewards: Array = Array(schedule_entry.get("automatic_rewards", []))
+		for reward_id: Variant in automatic_rewards:
+			if not Array(node_data.get("rewards", [])).has(str(reward_id)):
+				return {"ok": false, "message": "Run map node %s missing automatic reward %s." % [str(node_data.get("id", "")), str(reward_id)]}
+		var choice_reward: Dictionary = Dictionary(schedule_entry.get("choice_reward", {}))
+		if not choice_reward.is_empty() and str(Dictionary(node_data.get("choice_reward", {})).get("type", "")) != str(choice_reward.get("type", "")):
+			return {"ok": false, "message": "Run map node %s has invalid choice reward." % str(node_data.get("id", ""))}
+		var relic_reward: Dictionary = Dictionary(schedule_entry.get("relic_reward", {}))
+		if not relic_reward.is_empty() and Dictionary(node_data.get("relic_reward", {})).is_empty():
+			return {"ok": false, "message": "Run map node %s missing relic reward data." % str(node_data.get("id", ""))}
 	return {"ok": true, "message": "Run map contract is valid."}
 
 func _find_run_node(nodes: Array, node_id: String) -> Dictionary:
 	for node: Variant in nodes:
 		if typeof(node) == TYPE_DICTIONARY and str(Dictionary(node).get("id", "")) == node_id:
 			return Dictionary(node)
+	return {}
+
+func _find_reward_schedule_entry(map_index: int) -> Dictionary:
+	var catalog = load("res://data/generated/slice_catalog.tres")
+	if catalog == null:
+		return {}
+	for entry: Variant in Array(Dictionary(catalog.track_contract).get("reward_schedule", [])):
+		if typeof(entry) == TYPE_DICTIONARY and int(Dictionary(entry).get("map", 0)) == map_index:
+			return Dictionary(entry)
 	return {}
 
 func _validate_track_02_contract(catalog) -> Dictionary:
@@ -357,11 +376,11 @@ func _validate_track_02_contract(catalog) -> Dictionary:
 		return {"ok": false, "message": "Track 02 fixed max health target must be 30."}
 	var route: Dictionary = Dictionary(contract.get("route", {}))
 	if int(route.get("active_map_count", 0)) != TRACK_02_CURRENT_ROUTE_MAP_COUNT:
-		return {"ok": false, "message": "Track 02 active route metadata must preserve the 13-map baseline."}
+		return {"ok": false, "message": "Track 02 active route metadata must expose the 29-map route."}
 	if int(route.get("target_map_count", 0)) != TRACK_02_TARGET_MAP_COUNT:
 		return {"ok": false, "message": "Track 02 target route metadata must be 29 maps."}
 	if str(route.get("status", "")) != TRACK_02_ROUTE_STATUS_CONTRACT_ONLY:
-		return {"ok": false, "message": "Track 02 route metadata should remain contract-only in T02-P01."}
+		return {"ok": false, "message": "Track 02 route metadata must be implemented for T02-P08."}
 	if Array(route.get("element_order", [])).size() != 4:
 		return {"ok": false, "message": "Track 02 route metadata needs the four element blocks."}
 	var reward_categories: Array = Array(contract.get("reward_categories", []))
@@ -389,7 +408,264 @@ func _validate_track_02_contract(catalog) -> Dictionary:
 	var tooltip_result: Dictionary = _validate_track_02_tooltips(contract, catalog)
 	if not bool(tooltip_result.get("ok", false)):
 		return tooltip_result
+	var route_result: Dictionary = _validate_track_02_route_structure(catalog)
+	if not bool(route_result.get("ok", false)):
+		return route_result
 	return {"ok": true, "message": "Track 02 contract is valid."}
+
+func _validate_track_02_route_structure(catalog) -> Dictionary:
+	var nodes: Array = Array(catalog.run_map.get("nodes", []))
+	if nodes.size() != TRACK_02_TARGET_MAP_COUNT:
+		return {"ok": false, "message": "Track 02 run map must expose 29 nodes."}
+	var modes: Array[String] = []
+	var formats: Array[String] = []
+	var effects: Array[String] = []
+	var boss_maps: Dictionary = {}
+	for node: Dictionary in nodes:
+		var encounter: Dictionary = catalog.find_encounter(str(node.get("encounter_id", "")))
+		if encounter.is_empty():
+			return {"ok": false, "message": "Route node %s references missing encounter." % str(node.get("id", ""))}
+		var mode: String = str(encounter.get("mode", ""))
+		if not modes.has(mode):
+			modes.append(mode)
+		var format: String = str(encounter.get("board_format", "padrao"))
+		if not formats.has(format):
+			formats.append(format)
+		for effect_id: Variant in Array(encounter.get("field_effects", [])):
+			var effect_text: String = str(effect_id)
+			if not effects.has(effect_text):
+				effects.append(effect_text)
+		if mode == "chefe_summoner":
+			boss_maps[int(node.get("map_index", 0))] = encounter
+	for required_mode: String in ["emboscada", "escolta", "invasao"]:
+		if not modes.has(required_mode):
+			return {"ok": false, "message": "Track 02 route missing mode %s." % required_mode}
+	for required_format: String in ["assimetrico", "nucleo_central", "flanco", "frente_retaguarda", "abismo"]:
+		if not formats.has(required_format):
+			return {"ok": false, "message": "Track 02 route missing board format %s." % required_format}
+	for required_effect: String in ["terreno_rochoso", "chao_vivo", "geada", "corrente_submersa", "tabuleiro_instavel", "frio_intenso", "nevasca", "ventania", "slot_central_amplificado", "relampago", "turbulencia", "olho_tempestade", "brasa_viva", "inferno", "piso_lava", "furia_abismo", "cinzas_vivas", "portal_aberto", "inferno_total"]:
+		if not effects.has(required_effect):
+			return {"ok": false, "message": "Track 02 route missing field effect %s." % required_effect}
+	for boss_map: int in [8, 15, 22, 29]:
+		if not boss_maps.has(boss_map):
+			return {"ok": false, "message": "Track 02 map %d must be a scripted boss." % boss_map}
+		if Array(Dictionary(boss_maps.get(boss_map, {})).get("boss_phase_hooks", [])).is_empty():
+			return {"ok": false, "message": "Track 02 boss map %d needs phase hooks." % boss_map}
+	return {"ok": true, "message": "Track 02 route structure is valid."}
+
+func _validate_track_02_full_route_pacing(catalog) -> Dictionary:
+	if catalog == null:
+		return {"ok": false, "message": "Missing generated slice catalog for pacing validation."}
+	var session = root.get_node_or_null("RunSession")
+	if session == null:
+		return {"ok": false, "message": "RunSession autoload is missing for pacing validation."}
+	session.reset()
+	var start_result: Dictionary = session.start_class_run("arcano", 20260518, "Comandante Draxos")
+	if not bool(start_result.get("ok", false)):
+		return {"ok": false, "message": "Pacing smoke could not start Arcano run: %s" % str(start_result.get("message", ""))}
+	var nodes: Array = Array(catalog.run_map.get("nodes", []))
+	var metrics: Dictionary = {
+		"map_count": nodes.size(),
+		"completed_maps": 0,
+		"estimated_turns": 0,
+		"hp_loss": 0,
+		"souls_earned": 0,
+		"souls_spent": 0,
+		"souls_left": 0,
+		"deck_size": 0,
+		"relic_count": 0,
+		"shop_usage": 0,
+		"deaths": 0,
+		"shop_actions": []
+	}
+	for node: Dictionary in nodes:
+		var node_id: String = str(node.get("id", ""))
+		var map_index: int = int(node.get("map_index", 0))
+		if session.current_node_id != node_id:
+			if not session.is_node_available(node):
+				session.reset()
+				return {"ok": false, "message": "Pacing smoke route blocked before map %d (%s)." % [map_index, node_id]}
+			session.select_node(node_id)
+		var encounter: Dictionary = catalog.find_encounter(str(node.get("encounter_id", "")))
+		if encounter.is_empty():
+			session.reset()
+			return {"ok": false, "message": "Pacing smoke node %s references a missing encounter." % node_id}
+		_apply_pacing_pre_battle_shop(session, metrics, map_index)
+		var estimated_turns: int = _estimated_turns_for_encounter(encounter)
+		metrics["estimated_turns"] = int(metrics.get("estimated_turns", 0)) + estimated_turns
+		var hp_loss: int = _estimated_hp_loss_for_encounter(encounter, map_index)
+		var remaining_health: int = session.current_health - hp_loss
+		if remaining_health <= 0:
+			metrics["deaths"] = int(metrics.get("deaths", 0)) + 1
+			remaining_health = 1
+		metrics["hp_loss"] = int(metrics.get("hp_loss", 0)) + maxi(0, session.current_health - remaining_health)
+		var summary: Dictionary = session.record_battle_result(node_id, "vitoria", remaining_health)
+		if not bool(summary.get("ok", false)):
+			session.reset()
+			return {"ok": false, "message": "Pacing smoke failed to record map %d (%s)." % [map_index, node_id]}
+		metrics["souls_earned"] = int(metrics.get("souls_earned", 0)) + int(summary.get("souls_gained", 0))
+		if not _apply_all_pending_pacing_rewards(session):
+			session.reset()
+			return {"ok": false, "message": "Pacing smoke could not resolve reward choices after map %d." % map_index}
+		_apply_pacing_post_reward_shop(session, metrics, map_index)
+		metrics["completed_maps"] = int(metrics.get("completed_maps", 0)) + 1
+	metrics["souls_left"] = session.soul_total
+	metrics["deck_size"] = session.current_deck_ids.size()
+	metrics["relic_count"] = session.relic_ids.size()
+	var result: Dictionary = _pacing_metrics_acceptance(metrics)
+	session.reset()
+	return result
+
+func _apply_all_pending_pacing_rewards(session) -> bool:
+	var guard: int = 0
+	while session.has_pending_reward():
+		guard += 1
+		if guard > 12:
+			return false
+		var choices: Array[Dictionary] = session.pending_reward_choices()
+		if choices.is_empty():
+			return false
+		var selected: Dictionary = _preferred_pacing_reward_choice(choices)
+		if selected.is_empty():
+			selected = choices[0]
+		var result: Dictionary = session.apply_reward_choice(str(selected.get("id", "")))
+		if not bool(result.get("ok", false)):
+			return false
+	return true
+
+func _preferred_pacing_reward_choice(choices: Array[Dictionary]) -> Dictionary:
+	for choice: Dictionary in choices:
+		if str(choice.get("utility", "")) == "remove_card":
+			return choice
+	for choice: Dictionary in choices:
+		if str(choice.get("rarity", "")) in ["ultra_rara", "ultra_rare"]:
+			return choice
+	for choice: Dictionary in choices:
+		if str(choice.get("rarity", "")) in ["rara", "rare"]:
+			return choice
+	return choices[0] if not choices.is_empty() else {}
+
+func _apply_pacing_pre_battle_shop(session, metrics: Dictionary, _map_index: int) -> void:
+	while session.can_buy_heal() and session.current_health <= maxi(8, int(session.max_health * 0.45)):
+		var souls_before: int = session.soul_total
+		_record_shop_purchase(session, metrics, "heal", session.buy_paid_heal(), souls_before)
+
+func _apply_pacing_post_reward_shop(session, metrics: Dictionary, map_index: int) -> void:
+	var souls_before: int = 0
+	if map_index == 10 or map_index == 16:
+		souls_before = session.soul_total
+		_record_shop_purchase(session, metrics, "max_hp", session.buy_shop_max_health(), souls_before)
+	if map_index == 12 or map_index == 20:
+		var remove_choices: Array[Dictionary] = session.shop_remove_card_choices()
+		if not remove_choices.is_empty():
+			souls_before = session.soul_total
+			_record_shop_purchase(session, metrics, "remove", session.buy_shop_remove_card(str(remove_choices[0].get("card_id", ""))), souls_before)
+	if map_index == 18:
+		var duplicate_choices: Array[Dictionary] = session.shop_duplicate_card_choices()
+		if not duplicate_choices.is_empty():
+			souls_before = session.soul_total
+			_record_shop_purchase(session, metrics, "duplicate", session.buy_shop_duplicate_card(str(duplicate_choices[0].get("card_id", ""))), souls_before)
+	if map_index == 21 or map_index == 28:
+		var relic_choices: Array[Dictionary] = session.shop_relic_choices()
+		if not relic_choices.is_empty():
+			souls_before = session.soul_total
+			_record_shop_purchase(session, metrics, "relic", session.buy_shop_relic(str(relic_choices[0].get("relic_id", ""))), souls_before)
+
+func _record_shop_purchase(session, metrics: Dictionary, action_id: String, result: Dictionary, souls_before: int) -> void:
+	if not bool(result.get("ok", false)):
+		return
+	metrics["shop_usage"] = int(metrics.get("shop_usage", 0)) + 1
+	var actions: Array = Array(metrics.get("shop_actions", []))
+	actions.append(action_id)
+	metrics["shop_actions"] = actions
+	metrics["souls_spent"] = int(metrics.get("souls_spent", 0)) + maxi(0, souls_before - session.soul_total)
+
+func _estimated_turns_for_encounter(encounter: Dictionary) -> int:
+	var turns: int = 4
+	match str(encounter.get("tier", "")):
+		"tutorial":
+			turns = 3
+		"small":
+			turns = 4
+		"medium":
+			turns = 5
+		"elite_optional":
+			turns = 7
+		"boss":
+			turns = 10
+	match str(encounter.get("mode", "")):
+		"ondas":
+			turns += 2
+		"defesa_posicao":
+			turns = maxi(turns, int(encounter.get("defense_turns", 5)))
+		"sobreviver_turnos":
+			turns = maxi(turns, int(encounter.get("survive_turns", 5)))
+		"chefe_summoner":
+			turns += 2
+		"emboscada", "escolta", "invasao":
+			turns += 1
+	if maxi(int(encounter.get("player_slots_count", 0)), int(encounter.get("enemy_slots_count", 0))) >= 6:
+		turns += 1
+	return turns
+
+func _estimated_hp_loss_for_encounter(encounter: Dictionary, map_index: int) -> int:
+	var loss: int = 0
+	match str(encounter.get("tier", "")):
+		"tutorial":
+			loss = 0 if map_index == 1 else 1
+		"small":
+			loss = 1
+		"medium":
+			loss = 2
+		"elite_optional":
+			loss = 3
+		"boss":
+			loss = 4
+	match str(encounter.get("element", "")):
+		"gelo":
+			loss += 1
+		"ar":
+			loss += 1
+		"fogo":
+			loss += 2
+	if str(encounter.get("mode", "")) in ["duelo", "invasao", "chefe_summoner"]:
+		loss += 1
+	if map_index >= 28:
+		loss += 1
+	return loss
+
+func _pacing_metrics_acceptance(metrics: Dictionary) -> Dictionary:
+	if int(metrics.get("completed_maps", 0)) != TRACK_02_TARGET_MAP_COUNT:
+		return {"ok": false, "message": "Pacing smoke completed %d/%d maps." % [int(metrics.get("completed_maps", 0)), TRACK_02_TARGET_MAP_COUNT], "metrics": metrics}
+	if int(metrics.get("deaths", 0)) != 0:
+		return {"ok": false, "message": "Pacing smoke recorded deaths: %d." % int(metrics.get("deaths", 0)), "metrics": metrics}
+	var turns: int = int(metrics.get("estimated_turns", 0))
+	if turns < 110 or turns > 230:
+		return {"ok": false, "message": "Pacing smoke estimated turns outside first-test range: %d." % turns, "metrics": metrics}
+	var deck_size: int = int(metrics.get("deck_size", 0))
+	if deck_size < 30 or deck_size > 42:
+		return {"ok": false, "message": "Pacing smoke final deck size outside first-test range: %d." % deck_size, "metrics": metrics}
+	if int(metrics.get("relic_count", 0)) < 5:
+		return {"ok": false, "message": "Pacing smoke expected at least 5 relics, got %d." % int(metrics.get("relic_count", 0)), "metrics": metrics}
+	if int(metrics.get("shop_usage", 0)) < 2:
+		return {"ok": false, "message": "Pacing smoke expected at least 2 practical shop actions, got %d." % int(metrics.get("shop_usage", 0)), "metrics": metrics}
+	return {"ok": true, "message": "Track 02 full-route pacing smoke passed.", "metrics": metrics}
+
+func _format_pacing_metrics(metrics: Dictionary) -> String:
+	return "full-route pacing: maps=%d/%d turns_est=%d hp_loss_est=%d deaths=%d souls_earned=%d souls_spent_est=%d souls_left=%d deck_size=%d relic_count=%d shop_usage=%d actions=%s" % [
+		int(metrics.get("completed_maps", 0)),
+		int(metrics.get("map_count", TRACK_02_TARGET_MAP_COUNT)),
+		int(metrics.get("estimated_turns", 0)),
+		int(metrics.get("hp_loss", 0)),
+		int(metrics.get("deaths", 0)),
+		int(metrics.get("souls_earned", 0)),
+		int(metrics.get("souls_spent", 0)),
+		int(metrics.get("souls_left", 0)),
+		int(metrics.get("deck_size", 0)),
+		int(metrics.get("relic_count", 0)),
+		int(metrics.get("shop_usage", 0)),
+		", ".join(Array(metrics.get("shop_actions", [])))
+	]
 
 func _validate_track_02_tooltips(contract: Dictionary, catalog) -> Dictionary:
 	var expected_keyword_ids: Array[String] = [

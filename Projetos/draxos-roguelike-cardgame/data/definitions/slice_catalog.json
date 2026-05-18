@@ -2,13 +2,13 @@
   "default_encounter_id": "pouso_elemental",
   "track_contract": {
     "id": "track_02_complete_run_evolution",
-    "status": "contract_only",
+    "status": "implemented",
     "save_version": 5,
     "snapshot_version": 5,
     "route": {
       "metadata_version": 1,
-      "status": "contract_only",
-      "active_map_count": 13,
+      "status": "implemented",
+      "active_map_count": 29,
       "target_map_count": 29,
       "element_order": [
         "terra",
@@ -408,29 +408,99 @@
     ],
     "board_effect_definitions": [
       {
-        "id": "geada",
-        "display_name": "Geada",
-        "tooltip": "Efeito de campo futuro de Gelo. Reservado para reduzir ritmo ou aplicar controle por encontro."
-      },
-      {
         "id": "terreno_rochoso",
         "display_name": "Terreno Rochoso",
-        "tooltip": "Efeito de campo futuro de Terra. Reservado para favorecer resistencia, bloqueio ou lanes pesadas."
+        "tooltip": "Criaturas aliadas pequenas invocadas nas bordas perdem 1 ATK."
+      },
+      {
+        "id": "chao_vivo",
+        "display_name": "Chao Vivo",
+        "tooltip": "No inicio da preparacao inimiga, uma criatura inimiga ganha +0/+1."
+      },
+      {
+        "id": "geada",
+        "display_name": "Geada",
+        "tooltip": "No inicio do turno do jogador, uma criatura aliada aleatoria fica Congelada."
+      },
+      {
+        "id": "corrente_submersa",
+        "display_name": "Corrente Submersa",
+        "tooltip": "Movimento e troca de slots aliados ficam bloqueados."
+      },
+      {
+        "id": "tabuleiro_instavel",
+        "display_name": "Tabuleiro Instavel",
+        "tooltip": "A cada dois turnos, uma criatura aleatoria fica Congelada por um ataque."
+      },
+      {
+        "id": "frio_intenso",
+        "display_name": "Frio Intenso",
+        "tooltip": "Efeitos de morte e ressurgimento sao anulados enquanto ativo."
+      },
+      {
+        "id": "nevasca",
+        "display_name": "Nevasca",
+        "tooltip": "O limite de mao do jogador e reduzido em 1 durante o encontro."
       },
       {
         "id": "ventania",
         "display_name": "Ventania",
-        "tooltip": "Efeito de campo futuro de Ar. Reservado para deslocamento, flancos ou instabilidade de alvo."
+        "tooltip": "No inicio da preparacao inimiga, duas lanes inimigas adjacentes podem trocar."
       },
       {
-        "id": "brasas",
-        "display_name": "Brasas",
-        "tooltip": "Efeito de campo futuro de Fogo. Reservado para dano recorrente ou punicao por mesa cheia."
+        "id": "slot_central_amplificado",
+        "display_name": "Slot Central Amplificado",
+        "tooltip": "Criaturas no slot central recebem +1 ATK; inimigo no centro causa pressao direta."
       },
       {
-        "id": "abismo",
-        "display_name": "Abismo",
-        "tooltip": "Formato/efeito futuro em que algumas lanes podem ficar indisponiveis ou perigosas."
+        "id": "relampago",
+        "display_name": "Relampago",
+        "tooltip": "No inicio do turno do jogador, uma criatura aleatoria recebe 2 de dano."
+      },
+      {
+        "id": "turbulencia",
+        "display_name": "Turbulencia",
+        "tooltip": "Criaturas invocadas entram com -1 HP, minimo 1."
+      },
+      {
+        "id": "olho_tempestade",
+        "display_name": "Olho da Tempestade",
+        "tooltip": "A partir do turno 4, combina Ventania e Relampago."
+      },
+      {
+        "id": "brasa_viva",
+        "display_name": "Brasa Viva",
+        "tooltip": "Ao fim do combate, criaturas com 1 HP sofrem 1 dano."
+      },
+      {
+        "id": "inferno",
+        "display_name": "Inferno",
+        "tooltip": "No inicio da preparacao inimiga, uma criatura aliada recebe Veneno 1."
+      },
+      {
+        "id": "piso_lava",
+        "display_name": "Piso de Lava",
+        "tooltip": "A retaguarda aliada sofre 1 dano por turno."
+      },
+      {
+        "id": "furia_abismo",
+        "display_name": "Furia do Abismo",
+        "tooltip": "Mortes inimigas chamam fragmentos enfurecidos quando ha espaco."
+      },
+      {
+        "id": "cinzas_vivas",
+        "display_name": "Cinzas Vivas",
+        "tooltip": "Criaturas com base HP 3+ deixam uma Brasa 1/1 ao morrer."
+      },
+      {
+        "id": "portal_aberto",
+        "display_name": "Portal Aberto",
+        "tooltip": "Nos turnos 3 e 5, o portal invoca reforcos no grupo menor."
+      },
+      {
+        "id": "inferno_total",
+        "display_name": "Inferno Total",
+        "tooltip": "Combina Brasa Viva reforcada, Veneno aleatorio e Brasas de criaturas grandes."
       }
     ],
     "enemy_intent_definitions": [
@@ -3288,654 +3358,1536 @@
   "encounters": [
     {
       "id": "tutorial_primeiro_contato",
-      "display_name": "Mapa 01 - Primeiro Contato",
+      "display_name": "Mapa 01 - Primeira Queda",
+      "element": "terra",
       "mode": "limpar_mesa",
       "tier": "tutorial",
       "enemy_director": "prefilled_board",
+      "board_format": "padrao",
       "player_slots_count": 1,
       "enemy_slots_count": 1,
+      "mana_per_turn": 1,
+      "duration_target": "limpar_mesa",
+      "soul_reward": {
+        "min": 0,
+        "max": 4
+      },
+      "enemy_ai_profile": "terra",
       "starting_enemy_slots": [
         {
           "slot": 0,
-          "card_id": "elemental_menor"
+          "card_id": "enemy_terra_elemental_areia"
         }
       ],
-      "soul_reward": {
-        "min": 2,
-        "max": 2
-      }
+      "enemy_commander_enabled": false
     },
     {
       "id": "tutorial_dois_fronts",
       "display_name": "Mapa 02 - Dois Fronts",
+      "element": "terra",
       "mode": "limpar_mesa",
       "tier": "tutorial",
       "enemy_director": "prefilled_board",
+      "board_format": "padrao",
       "player_slots_count": 2,
       "enemy_slots_count": 2,
+      "mana_per_turn": 2,
+      "duration_target": "limpar_mesa",
+      "soul_reward": {
+        "min": 0,
+        "max": 4
+      },
+      "enemy_ai_profile": "terra",
       "starting_enemy_slots": [
         {
           "slot": 0,
-          "card_id": "elemental_menor"
+          "card_id": "enemy_terra_elemental_areia"
         },
         {
           "slot": 1,
-          "card_id": "elemental_agil"
+          "card_id": "enemy_terra_elemental_pedra"
         }
       ],
-      "soul_reward": {
-        "min": 3,
-        "max": 3
-      }
+      "enemy_commander_enabled": false
     },
     {
       "id": "tutorial_primeira_onda",
       "display_name": "Mapa 03 - Primeira Onda",
+      "element": "terra",
       "mode": "ondas",
       "tier": "tutorial",
       "enemy_director": "waves",
+      "board_format": "padrao",
       "player_slots_count": 2,
       "enemy_slots_count": 2,
+      "mana_per_turn": 2,
+      "duration_target": "ondas",
+      "soul_reward": {
+        "min": 0,
+        "max": 4
+      },
+      "enemy_ai_profile": "terra",
       "waves": [
         [
           {
             "slot": 0,
-            "card_id": "elemental_menor"
+            "card_id": "enemy_terra_elemental_areia"
           },
           {
             "slot": 1,
-            "card_id": "elemental_menor"
+            "card_id": "enemy_terra_elemental_areia"
           }
         ],
         [
           {
             "slot": 0,
-            "card_id": "elemental_agil"
+            "card_id": "enemy_terra_elemental_pedra"
           },
           {
             "slot": 1,
-            "card_id": "elemental_medio"
+            "card_id": "enemy_terra_verme_terra"
+          }
+        ],
+        [
+          {
+            "slot": 0,
+            "card_id": "enemy_terra_elemental_tita"
+          },
+          {
+            "slot": 1,
+            "card_id": "enemy_terra_elemental_bruto"
           }
         ]
       ],
-      "soul_reward": {
-        "min": 4,
-        "max": 4
-      }
+      "enemy_commander_enabled": false
     },
     {
       "id": "pouso_elemental",
-      "display_name": "Mapa 04 - Limpar Mesa",
+      "display_name": "Mapa 04 - Pouso Elemental",
+      "element": "terra",
       "mode": "limpar_mesa",
       "tier": "small",
       "enemy_director": "prefilled_board",
+      "board_format": "padrao",
       "player_slots_count": 3,
       "enemy_slots_count": 3,
-      "duration_target": "2-4_turns",
-      "starting_enemy_slots": [
-        {
-          "slot": 0,
-          "card_id": "elemental_agil"
-        },
-        {
-          "slot": 1,
-          "card_id": "elemental_bruto"
-        },
-        {
-          "slot": 2,
-          "card_id": "elemental_solido"
-        }
-      ],
+      "mana_per_turn": 2,
+      "duration_target": "limpar_mesa",
       "soul_reward": {
         "min": 4,
         "max": 6
-      }
+      },
+      "enemy_ai_profile": "terra",
+      "starting_enemy_slots": [
+        {
+          "slot": 0,
+          "card_id": "enemy_terra_elemental_agil"
+        },
+        {
+          "slot": 1,
+          "card_id": "enemy_terra_elemental_bruto"
+        },
+        {
+          "slot": 2,
+          "card_id": "enemy_terra_golem_terra"
+        }
+      ],
+      "enemy_commander_enabled": false
     },
     {
       "id": "ondas_iniciais",
-      "display_name": "Mapa 05 - Ondas Iniciais",
+      "display_name": "Mapa 05 - Ondas da Terra",
+      "element": "terra",
       "mode": "ondas",
       "tier": "medium",
       "enemy_director": "waves",
+      "board_format": "padrao",
       "player_slots_count": 3,
       "enemy_slots_count": 3,
-      "duration_target": "test_wave_pacing",
+      "mana_per_turn": 2,
+      "duration_target": "ondas",
+      "soul_reward": {
+        "min": 7,
+        "max": 10
+      },
+      "enemy_ai_profile": "terra",
       "waves": [
         [
           {
             "slot": 0,
-            "card_id": "elemental_menor"
+            "card_id": "enemy_terra_elemental_areia"
           },
           {
             "slot": 1,
-            "card_id": "elemental_menor"
+            "card_id": "enemy_terra_elemental_areia"
           }
         ],
         [
           {
             "slot": 0,
-            "card_id": "elemental_medio"
+            "card_id": "enemy_terra_elemental_pedra"
           },
           {
             "slot": 1,
-            "card_id": "elemental_medio"
+            "card_id": "enemy_terra_elemental_agil"
           }
         ],
         [
           {
             "slot": 0,
-            "card_id": "elemental_pesado_a"
+            "card_id": "enemy_terra_elemental_tita"
           },
           {
             "slot": 1,
-            "card_id": "elemental_pesado_b"
+            "card_id": "enemy_terra_verme_terra"
           },
           {
             "slot": 2,
-            "card_id": "elemental_pesado_c"
+            "card_id": "enemy_terra_elemental_bruto"
           }
         ]
       ],
-      "soul_reward": {
-        "min": 7,
-        "max": 10
-      }
+      "enemy_commander_enabled": false
     },
     {
       "id": "duelo_inicial",
-      "display_name": "Mapa 06 - Duelo Inicial",
+      "display_name": "Mapa 06 - Senhor da Terra",
+      "element": "terra",
       "mode": "duelo",
       "tier": "medium",
       "enemy_director": "player_like",
-      "enemy_commander_enabled": true,
-      "enemy_mana_per_turn": 2,
-      "enemy_hand_count": 5,
-      "enemy_deck": [
-        "elemental_menor",
-        "elemental_menor",
-        "elemental_menor",
-        "elemental_duelista",
-        "elemental_duelista",
-        "elemental_duelista",
-        "elemental_assaltante",
-        "elemental_assaltante",
-        "elemental_assaltante",
-        "elemental_medio",
-        "elemental_medio",
-        "elemental_medio"
-      ],
+      "board_format": "padrao",
       "player_slots_count": 3,
       "enemy_slots_count": 3,
-      "enemy_health": 16,
-      "starting_enemy_slots": [
-        {
-          "slot": 1,
-          "card_id": "elemental_duelista"
-        }
-      ],
+      "mana_per_turn": 3,
+      "duration_target": "duelo",
       "soul_reward": {
         "min": 7,
         "max": 10
-      }
+      },
+      "enemy_ai_profile": "terra",
+      "starting_enemy_slots": [
+        {
+          "slot": 0,
+          "card_id": "enemy_terra_elemental_pedra"
+        },
+        {
+          "slot": 1,
+          "card_id": "enemy_terra_golem_terra"
+        }
+      ],
+      "enemy_commander_enabled": true,
+      "enemy_health": 15,
+      "enemy_mana_per_turn": 3,
+      "enemy_hand_count": 3,
+      "enemy_deck": [
+        "enemy_terra_elemental_pedra",
+        "enemy_terra_golem_terra",
+        "enemy_terra_elemental_bruto",
+        "enemy_terra_rocha_viva",
+        "enemy_terra_verme_terra",
+        "enemy_terra_elemental_areia",
+        "enemy_terra_guerreiro_terra",
+        "enemy_terra_elemental_agil"
+      ]
     },
     {
       "id": "defesa_posicao_inicial",
-      "display_name": "Mapa 07 - Defesa de Posicao",
+      "display_name": "Mapa 07 - Fortim de Pedra",
+      "element": "terra",
       "mode": "defesa_posicao",
       "tier": "medium",
       "enemy_director": "waves",
+      "board_format": "padrao",
+      "field_effects": [
+        "terreno_rochoso"
+      ],
       "player_slots_count": 3,
       "enemy_slots_count": 3,
-      "defense_turns": 5,
-      "defense_slot": 1,
-      "defense_health": 8,
+      "mana_per_turn": 3,
+      "duration_target": "defesa_posicao",
+      "soul_reward": {
+        "min": 7,
+        "max": 10
+      },
+      "enemy_ai_profile": "terra",
       "waves": [
         [
           {
             "slot": 0,
-            "card_id": "elemental_assaltante_veloz"
+            "card_id": "enemy_terra_elemental_agil"
           },
           {
             "slot": 1,
-            "card_id": "elemental_menor"
-          },
-          {
-            "slot": 2,
-            "card_id": "elemental_assaltante"
+            "card_id": "enemy_terra_verme_terra"
           }
         ],
         [
           {
             "slot": 0,
-            "card_id": "elemental_guardiao"
+            "card_id": "enemy_terra_rocha_viva"
           },
           {
             "slot": 1,
-            "card_id": "elemental_medio"
-          },
-          {
-            "slot": 2,
-            "card_id": "elemental_assaltante_veloz"
+            "card_id": "enemy_terra_golem_terra"
           }
         ],
         [
           {
             "slot": 0,
-            "card_id": "elemental_elite_agil"
+            "card_id": "enemy_terra_elemental_granito"
           },
           {
             "slot": 1,
-            "card_id": "elemental_guardiao"
-          },
-          {
-            "slot": 2,
-            "card_id": "elemental_elite_bruto"
+            "card_id": "enemy_terra_elemental_bruto"
           }
         ]
       ],
-      "soul_reward": {
-        "min": 7,
-        "max": 10
-      }
+      "defense_turns": 5,
+      "defense_slot": 1,
+      "defense_health": 10,
+      "enemy_commander_enabled": false
     },
     {
       "id": "chefe_invocador",
-      "display_name": "Mapa 08 - Chefe Summoner",
+      "display_name": "Mapa 08 - Primordial de Terra",
+      "element": "terra",
       "mode": "chefe_summoner",
       "tier": "boss",
       "enemy_director": "scripted_boss",
+      "board_format": "padrao",
+      "field_effects": [
+        "chao_vivo"
+      ],
       "player_slots_count": 5,
       "enemy_slots_count": 5,
-      "duration_target": "boss",
-      "boss_health": 28,
-      "starting_enemy_slots": [
-        {
-          "slot": 0,
-          "card_id": "elemental_medio"
-        },
-        {
-          "slot": 1,
-          "card_id": "elemental_assaltante_veloz"
-        },
-        {
-          "slot": 2,
-          "card_id": "elemental_guardiao"
-        },
-        {
-          "slot": 3,
-          "card_id": "elemental_bruto"
-        }
-      ],
-      "boss_summons": [
-        {
-          "card_id": "elemental_menor"
-        },
-        {
-          "card_id": "elemental_medio"
-        },
-        {
-          "card_id": "elemental_assaltante"
-        },
-        {
-          "card_id": "elemental_guardiao"
-        },
-        {
-          "card_id": "elemental_elite_bruto"
-        },
-        {
-          "card_id": "elemental_elite_agil"
-        }
-      ],
+      "mana_per_turn": 3,
+      "duration_target": "chefe_summoner",
       "soul_reward": {
         "min": 18,
         "max": 25
-      }
-    },
-    {
-      "id": "sobreviver_turnos_inicial",
-      "display_name": "Mapa 09 - Sobreviver Turnos",
-      "mode": "sobreviver_turnos",
-      "tier": "medium",
-      "enemy_director": "prefilled_board",
-      "player_slots_count": 4,
-      "enemy_slots_count": 4,
-      "survive_turns": 5,
+      },
+      "enemy_ai_profile": "terra",
       "starting_enemy_slots": [
         {
           "slot": 0,
-          "card_id": "elemental_assaltante_veloz"
+          "card_id": "enemy_terra_guerreiro_terra"
         },
         {
           "slot": 1,
-          "card_id": "elemental_elite_bruto"
+          "card_id": "enemy_terra_golem_terra"
         },
         {
           "slot": 2,
-          "card_id": "elemental_guardiao"
+          "card_id": "enemy_terra_rocha_viva"
         },
         {
           "slot": 3,
-          "card_id": "elemental_assaltante"
+          "card_id": "enemy_terra_elemental_pedra"
         }
       ],
+      "enemy_commander_enabled": false,
+      "boss_health": 30,
+      "boss_summons": [
+        {
+          "card_id": "enemy_terra_elemental_tita"
+        },
+        {
+          "card_id": "enemy_terra_elemental_granito"
+        },
+        {
+          "card_id": "enemy_terra_verme_terra"
+        }
+      ],
+      "boss_phase_hooks": [
+        {
+          "id": "terra_hp20",
+          "trigger": "hp_below",
+          "hp_below": 20,
+          "action": "buff_all_enemies",
+          "health": 1,
+          "description": "Fase 2: Chao Vivo engrossa a linha inimiga."
+        },
+        {
+          "id": "terra_turn5",
+          "trigger": "turn",
+          "turn": 5,
+          "action": "summon_card",
+          "card_id": "enemy_terra_elemental_granito",
+          "description": "Fase 3: o Primordial ergue um Granito resistente."
+        }
+      ]
+    },
+    {
+      "id": "tundra",
+      "display_name": "Mapa 09 - Tundra",
+      "element": "gelo",
+      "mode": "limpar_mesa",
+      "tier": "medium",
+      "enemy_director": "prefilled_board",
+      "board_format": "padrao",
+      "player_slots_count": 4,
+      "enemy_slots_count": 4,
+      "mana_per_turn": 3,
+      "duration_target": "limpar_mesa",
       "soul_reward": {
         "min": 7,
         "max": 10
-      }
-    },
-    {
-      "id": "limpeza_elite",
-      "display_name": "Mapa 10 - Limpeza Elite",
-      "mode": "limpar_mesa",
-      "tier": "elite_optional",
-      "enemy_director": "prefilled_board",
-      "player_slots_count": 4,
-      "enemy_slots_count": 4,
+      },
+      "enemy_ai_profile": "gelo",
       "starting_enemy_slots": [
         {
           "slot": 0,
-          "card_id": "elemental_elite_agil"
+          "card_id": "enemy_gelo_cristal_de_gelo"
         },
         {
           "slot": 1,
-          "card_id": "elemental_guardiao"
+          "card_id": "enemy_gelo_elemental_de_gelo"
         },
         {
           "slot": 2,
-          "card_id": "elemental_elite_bruto"
+          "card_id": "enemy_gelo_elemental_de_gelo"
         },
         {
           "slot": 3,
-          "card_id": "elemental_tita"
+          "card_id": "enemy_gelo_golem_de_gelo"
         }
       ],
+      "enemy_commander_enabled": false
+    },
+    {
+      "id": "camara_glacial",
+      "display_name": "Mapa 10 - Camara Glacial",
+      "element": "gelo",
+      "mode": "limpar_mesa",
+      "tier": "elite_optional",
+      "enemy_director": "prefilled_board",
+      "board_format": "padrao",
+      "player_slots_count": 4,
+      "enemy_slots_count": 4,
+      "mana_per_turn": 3,
+      "duration_target": "limpar_mesa",
       "soul_reward": {
         "min": 11,
         "max": 16
-      }
+      },
+      "enemy_ai_profile": "gelo",
+      "starting_enemy_slots": [
+        {
+          "slot": 0,
+          "card_id": "enemy_gelo_elemental_de_gelo"
+        },
+        {
+          "slot": 1,
+          "card_id": "enemy_gelo_djinn_do_frio"
+        },
+        {
+          "slot": 2,
+          "card_id": "enemy_gelo_golem_de_gelo"
+        },
+        {
+          "slot": 3,
+          "card_id": "enemy_gelo_cristal_de_gelo"
+        }
+      ],
+      "enemy_commander_enabled": false
     },
     {
-      "id": "ondas_avancadas",
-      "display_name": "Mapa 11 - Ondas Avancadas",
+      "id": "blizzard",
+      "display_name": "Mapa 11 - Blizzard",
+      "element": "gelo",
       "mode": "ondas",
       "tier": "elite_optional",
       "enemy_director": "waves",
+      "board_format": "padrao",
+      "field_effects": [
+        "geada"
+      ],
       "player_slots_count": 4,
       "enemy_slots_count": 4,
+      "mana_per_turn": 3,
+      "duration_target": "ondas",
+      "soul_reward": {
+        "min": 11,
+        "max": 16
+      },
+      "enemy_ai_profile": "gelo",
       "waves": [
         [
           {
             "slot": 0,
-            "card_id": "elemental_assaltante_veloz"
+            "card_id": "enemy_gelo_elemental_de_gelo"
           },
           {
             "slot": 1,
-            "card_id": "elemental_medio"
+            "card_id": "enemy_gelo_elemental_de_gelo"
           },
           {
             "slot": 2,
-            "card_id": "elemental_medio"
+            "card_id": "enemy_gelo_elemental_de_gelo"
           }
         ],
         [
           {
             "slot": 0,
-            "card_id": "elemental_elite_agil"
+            "card_id": "enemy_gelo_cristal_de_gelo"
           },
           {
             "slot": 1,
-            "card_id": "elemental_guardiao"
-          },
-          {
-            "slot": 2,
-            "card_id": "elemental_assaltante"
-          },
-          {
-            "slot": 3,
-            "card_id": "elemental_elite_bruto"
+            "card_id": "enemy_gelo_djinn_do_frio"
           }
         ],
         [
           {
             "slot": 0,
-            "card_id": "elemental_pesado_a"
+            "card_id": "enemy_gelo_espirito_da_geada"
           },
           {
             "slot": 1,
-            "card_id": "elemental_elite_bruto"
+            "card_id": "enemy_gelo_golem_de_gelo"
           },
           {
             "slot": 2,
-            "card_id": "elemental_tita"
-          },
-          {
-            "slot": 3,
-            "card_id": "elemental_pesado_c"
+            "card_id": "enemy_gelo_elemental_de_gelo"
           }
         ]
       ],
-      "soul_reward": {
-        "min": 11,
-        "max": 16
-      }
+      "enemy_commander_enabled": false
     },
     {
       "id": "duelo_elite",
-      "display_name": "Mapa 12 - Duelo Elite",
+      "display_name": "Mapa 12 - Duelo do Djinn",
+      "element": "gelo",
       "mode": "duelo",
       "tier": "elite_optional",
       "enemy_director": "player_like",
-      "enemy_commander_enabled": true,
-      "enemy_mana_per_turn": 4,
-      "enemy_hand_count": 6,
-      "enemy_deck": [
-        "elemental_duelista",
-        "elemental_duelista",
-        "elemental_assaltante",
-        "elemental_assaltante",
-        "elemental_medio",
-        "elemental_medio",
-        "elemental_guardiao",
-        "elemental_guardiao",
-        "elemental_elite_agil",
-        "elemental_elite_agil",
-        "elemental_elite_bruto",
-        "elemental_elite_bruto",
-        "elemental_tita",
-        "elemental_assaltante_veloz"
+      "board_format": "padrao",
+      "field_effects": [
+        "corrente_submersa"
       ],
       "player_slots_count": 4,
       "enemy_slots_count": 4,
-      "enemy_health": 30,
-      "starting_enemy_slots": [
-        {
-          "slot": 0,
-          "card_id": "elemental_elite_agil"
-        },
-        {
-          "slot": 1,
-          "card_id": "elemental_guardiao"
-        },
-        {
-          "slot": 2,
-          "card_id": "elemental_elite_bruto"
-        }
-      ],
+      "mana_per_turn": 3,
+      "duration_target": "duelo",
       "soul_reward": {
         "min": 11,
         "max": 16
-      }
-    },
-    {
-      "id": "chefe_summoner_final",
-      "display_name": "Mapa 13 - Chefe Final",
-      "mode": "chefe_summoner",
-      "tier": "boss",
-      "enemy_director": "scripted_boss",
-      "player_slots_count": 5,
-      "enemy_slots_count": 5,
-      "duration_target": "final_boss",
-      "boss_health": 46,
+      },
+      "enemy_ai_profile": "gelo",
       "starting_enemy_slots": [
         {
           "slot": 0,
-          "card_id": "elemental_elite_agil"
+          "card_id": "enemy_gelo_cristal_de_gelo"
         },
         {
           "slot": 1,
-          "card_id": "elemental_guardiao"
+          "card_id": "enemy_gelo_djinn_do_frio"
+        }
+      ],
+      "enemy_commander_enabled": true,
+      "enemy_health": 20,
+      "enemy_mana_per_turn": 3,
+      "enemy_hand_count": 4,
+      "enemy_deck": [
+        "enemy_gelo_cristal_de_gelo",
+        "enemy_gelo_djinn_do_frio",
+        "enemy_gelo_espirito_da_geada",
+        "enemy_gelo_elemental_de_gelo",
+        "enemy_gelo_golem_de_gelo",
+        "enemy_gelo_fenix_de_gelo",
+        "enemy_gelo_coluna_de_gelo",
+        "enemy_gelo_elemental_de_gelo"
+      ]
+    },
+    {
+      "id": "labirinto_gelo",
+      "display_name": "Mapa 13 - Labirinto de Gelo",
+      "element": "gelo",
+      "mode": "defesa_posicao",
+      "tier": "elite_optional",
+      "enemy_director": "waves",
+      "board_format": "assimetrico",
+      "field_effects": [
+        "tabuleiro_instavel"
+      ],
+      "player_slots_count": 4,
+      "enemy_slots_count": 5,
+      "mana_per_turn": 3,
+      "duration_target": "defesa_posicao",
+      "soul_reward": {
+        "min": 11,
+        "max": 16
+      },
+      "enemy_ai_profile": "gelo",
+      "waves": [
+        [
+          {
+            "slot": 0,
+            "card_id": "enemy_gelo_coluna_de_gelo"
+          },
+          {
+            "slot": 1,
+            "card_id": "enemy_gelo_cristal_de_gelo"
+          },
+          {
+            "slot": 2,
+            "card_id": "enemy_gelo_djinn_do_frio"
+          },
+          {
+            "slot": 3,
+            "card_id": "enemy_gelo_elemental_de_gelo"
+          },
+          {
+            "slot": 4,
+            "card_id": "enemy_gelo_golem_de_gelo"
+          }
+        ],
+        [
+          {
+            "slot": 0,
+            "card_id": "enemy_gelo_fenix_de_gelo"
+          },
+          {
+            "slot": 1,
+            "card_id": "enemy_gelo_espirito_da_geada"
+          },
+          {
+            "slot": 2,
+            "card_id": "enemy_gelo_golem_de_gelo"
+          }
+        ]
+      ],
+      "defense_turns": 3,
+      "defense_slot": 1,
+      "defense_health": 10,
+      "enemy_commander_enabled": false
+    },
+    {
+      "id": "sobreviver_turnos_inicial",
+      "display_name": "Mapa 14 - Vanguarda Glacial",
+      "element": "gelo",
+      "mode": "sobreviver_turnos",
+      "tier": "elite_optional",
+      "enemy_director": "prefilled_board",
+      "board_format": "padrao",
+      "field_effects": [
+        "frio_intenso"
+      ],
+      "player_slots_count": 4,
+      "enemy_slots_count": 4,
+      "mana_per_turn": 3,
+      "duration_target": "sobreviver_turnos",
+      "soul_reward": {
+        "min": 11,
+        "max": 16
+      },
+      "enemy_ai_profile": "gelo",
+      "starting_enemy_slots": [
+        {
+          "slot": 0,
+          "card_id": "enemy_gelo_fenix_de_gelo"
+        },
+        {
+          "slot": 1,
+          "card_id": "enemy_gelo_djinn_do_frio"
         },
         {
           "slot": 2,
-          "card_id": "elemental_elite_bruto"
-        },
-        {
-          "slot": 3,
-          "card_id": "elemental_tita"
-        },
-        {
-          "slot": 4,
-          "card_id": "elemental_assaltante_veloz"
+          "card_id": "enemy_gelo_elemental_de_gelo"
         }
       ],
-      "boss_summons": [
-        {
-          "card_id": "elemental_medio"
-        },
-        {
-          "card_id": "elemental_elite_agil"
-        },
-        {
-          "card_id": "elemental_guardiao"
-        },
-        {
-          "card_id": "elemental_elite_bruto"
-        },
-        {
-          "card_id": "elemental_tita"
-        },
-        {
-          "card_id": "elemental_assaltante_veloz"
-        }
+      "survive_turns": 5,
+      "enemy_commander_enabled": false
+    },
+    {
+      "id": "anciao_gelo",
+      "display_name": "Mapa 15 - Anciao do Gelo",
+      "element": "gelo",
+      "mode": "chefe_summoner",
+      "tier": "boss",
+      "enemy_director": "scripted_boss",
+      "board_format": "padrao",
+      "field_effects": [
+        "nevasca"
       ],
+      "player_slots_count": 5,
+      "enemy_slots_count": 5,
+      "mana_per_turn": 3,
+      "duration_target": "chefe_summoner",
       "soul_reward": {
         "min": 18,
         "max": 25
-      }
+      },
+      "enemy_ai_profile": "gelo",
+      "starting_enemy_slots": [
+        {
+          "slot": 0,
+          "card_id": "enemy_gelo_cristal_de_gelo"
+        },
+        {
+          "slot": 1,
+          "card_id": "enemy_gelo_cristal_de_gelo"
+        },
+        {
+          "slot": 2,
+          "card_id": "enemy_gelo_golem_de_gelo"
+        }
+      ],
+      "enemy_commander_enabled": false,
+      "boss_health": 35,
+      "boss_summons": [
+        {
+          "card_id": "enemy_gelo_coluna_de_gelo"
+        },
+        {
+          "card_id": "enemy_gelo_espirito_da_geada"
+        },
+        {
+          "card_id": "enemy_gelo_fenix_de_gelo"
+        }
+      ],
+      "boss_phase_hooks": [
+        {
+          "id": "gelo_turn4",
+          "trigger": "turn",
+          "turn": 4,
+          "action": "poison_all_player",
+          "amount": 1,
+          "description": "Fase 2: Veneno Global atravessa a nevasca."
+        },
+        {
+          "id": "gelo_turn5",
+          "trigger": "turn",
+          "turn": 5,
+          "action": "summon_card",
+          "card_id": "enemy_gelo_fenix_de_gelo",
+          "description": "Fase 3: o Anciao convoca uma Fenix de Gelo."
+        }
+      ]
+    },
+    {
+      "id": "planicies_vento",
+      "display_name": "Mapa 16 - Planicies do Vento",
+      "element": "ar",
+      "mode": "limpar_mesa",
+      "tier": "medium",
+      "enemy_director": "prefilled_board",
+      "board_format": "padrao",
+      "player_slots_count": 4,
+      "enemy_slots_count": 4,
+      "mana_per_turn": 4,
+      "duration_target": "limpar_mesa",
+      "soul_reward": {
+        "min": 7,
+        "max": 10
+      },
+      "enemy_ai_profile": "ar",
+      "starting_enemy_slots": [
+        {
+          "slot": 0,
+          "card_id": "enemy_ar_elemental_de_vento"
+        },
+        {
+          "slot": 1,
+          "card_id": "enemy_ar_silfo"
+        },
+        {
+          "slot": 2,
+          "card_id": "enemy_ar_brisa_mortal"
+        }
+      ],
+      "enemy_commander_enabled": false
+    },
+    {
+      "id": "rajadas",
+      "display_name": "Mapa 17 - Rajadas",
+      "element": "ar",
+      "mode": "ondas",
+      "tier": "elite_optional",
+      "enemy_director": "waves",
+      "board_format": "padrao",
+      "field_effects": [
+        "ventania"
+      ],
+      "player_slots_count": 4,
+      "enemy_slots_count": 4,
+      "mana_per_turn": 4,
+      "duration_target": "ondas",
+      "soul_reward": {
+        "min": 11,
+        "max": 16
+      },
+      "enemy_ai_profile": "ar",
+      "waves": [
+        [
+          {
+            "slot": 0,
+            "card_id": "enemy_ar_brisa_mortal"
+          },
+          {
+            "slot": 1,
+            "card_id": "enemy_ar_brisa_mortal"
+          },
+          {
+            "slot": 2,
+            "card_id": "enemy_ar_brisa_mortal"
+          }
+        ],
+        [
+          {
+            "slot": 0,
+            "card_id": "enemy_ar_silfo"
+          },
+          {
+            "slot": 1,
+            "card_id": "enemy_ar_elemental_de_vento"
+          }
+        ],
+        [
+          {
+            "slot": 0,
+            "card_id": "enemy_ar_tempestade_vivente"
+          },
+          {
+            "slot": 1,
+            "card_id": "enemy_ar_silfo"
+          },
+          {
+            "slot": 2,
+            "card_id": "enemy_ar_elemental_de_vento"
+          }
+        ]
+      ],
+      "enemy_commander_enabled": false
+    },
+    {
+      "id": "nucleo_ciclone",
+      "display_name": "Mapa 18 - Nucleo do Ciclone",
+      "element": "ar",
+      "mode": "limpar_mesa",
+      "tier": "elite_optional",
+      "enemy_director": "prefilled_board",
+      "board_format": "nucleo_central",
+      "field_effects": [
+        "slot_central_amplificado"
+      ],
+      "player_slots_count": 5,
+      "enemy_slots_count": 5,
+      "mana_per_turn": 4,
+      "duration_target": "limpar_mesa",
+      "soul_reward": {
+        "min": 11,
+        "max": 16
+      },
+      "enemy_ai_profile": "ar",
+      "starting_enemy_slots": [
+        {
+          "slot": 0,
+          "card_id": "enemy_ar_corvo_da_tormenta"
+        },
+        {
+          "slot": 1,
+          "card_id": "enemy_ar_corvo_da_tormenta"
+        },
+        {
+          "slot": 2,
+          "card_id": "enemy_ar_tempestade_vivente"
+        },
+        {
+          "slot": 3,
+          "card_id": "enemy_ar_corvo_da_tormenta"
+        },
+        {
+          "slot": 4,
+          "card_id": "enemy_ar_corvo_da_tormenta"
+        }
+      ],
+      "enemy_commander_enabled": false
+    },
+    {
+      "id": "camara_trovao",
+      "display_name": "Mapa 19 - Camara do Trovao",
+      "element": "ar",
+      "mode": "duelo",
+      "tier": "elite_optional",
+      "enemy_director": "player_like",
+      "board_format": "padrao",
+      "field_effects": [
+        "relampago"
+      ],
+      "player_slots_count": 5,
+      "enemy_slots_count": 5,
+      "mana_per_turn": 4,
+      "duration_target": "duelo",
+      "soul_reward": {
+        "min": 11,
+        "max": 16
+      },
+      "enemy_ai_profile": "ar",
+      "starting_enemy_slots": [
+        {
+          "slot": 0,
+          "card_id": "enemy_ar_elemental_de_vento"
+        },
+        {
+          "slot": 2,
+          "card_id": "enemy_ar_elemental_do_raio"
+        }
+      ],
+      "enemy_commander_enabled": true,
+      "enemy_health": 22,
+      "enemy_mana_per_turn": 4,
+      "enemy_hand_count": 4,
+      "enemy_deck": [
+        "enemy_ar_elemental_do_raio",
+        "enemy_ar_silfo",
+        "enemy_ar_tempestade_vivente",
+        "enemy_ar_rajada",
+        "enemy_ar_elemental_de_vento",
+        "enemy_ar_brisa_mortal",
+        "enemy_ar_corvo_da_tormenta",
+        "enemy_ar_silfo"
+      ]
+    },
+    {
+      "id": "emboscada_nuvens",
+      "display_name": "Mapa 20 - Emboscada das Nuvens",
+      "element": "ar",
+      "mode": "emboscada",
+      "tier": "elite_optional",
+      "enemy_director": "prefilled_board",
+      "board_format": "flanco",
+      "player_slots_count": 4,
+      "enemy_slots_count": 6,
+      "mana_per_turn": 4,
+      "duration_target": "emboscada",
+      "soul_reward": {
+        "min": 11,
+        "max": 16
+      },
+      "enemy_ai_profile": "ar",
+      "starting_enemy_slots": [
+        {
+          "slot": 0,
+          "card_id": "enemy_ar_rajada"
+        },
+        {
+          "slot": 1,
+          "card_id": "enemy_ar_brisa_mortal"
+        },
+        {
+          "slot": 2,
+          "card_id": "enemy_ar_brisa_mortal"
+        },
+        {
+          "slot": 3,
+          "card_id": "enemy_ar_brisa_mortal"
+        },
+        {
+          "slot": 4,
+          "card_id": "enemy_ar_brisa_mortal"
+        },
+        {
+          "slot": 5,
+          "card_id": "enemy_ar_rajada"
+        }
+      ],
+      "enemy_commander_enabled": false
+    },
+    {
+      "id": "tempestade_eterna",
+      "display_name": "Mapa 21 - Tempestade Eterna",
+      "element": "ar",
+      "mode": "sobreviver_turnos",
+      "tier": "elite_optional",
+      "enemy_director": "prefilled_board",
+      "board_format": "padrao",
+      "field_effects": [
+        "turbulencia"
+      ],
+      "player_slots_count": 5,
+      "enemy_slots_count": 5,
+      "mana_per_turn": 4,
+      "duration_target": "sobreviver_turnos",
+      "soul_reward": {
+        "min": 11,
+        "max": 16
+      },
+      "enemy_ai_profile": "ar",
+      "starting_enemy_slots": [
+        {
+          "slot": 0,
+          "card_id": "enemy_ar_silfo"
+        },
+        {
+          "slot": 1,
+          "card_id": "enemy_ar_tempestade_vivente"
+        },
+        {
+          "slot": 2,
+          "card_id": "enemy_ar_elemental_do_raio"
+        }
+      ],
+      "survive_turns": 6,
+      "enemy_commander_enabled": false
+    },
+    {
+      "id": "soberano_tempestades",
+      "display_name": "Mapa 22 - Soberano das Tempestades",
+      "element": "ar",
+      "mode": "chefe_summoner",
+      "tier": "boss",
+      "enemy_director": "scripted_boss",
+      "board_format": "padrao",
+      "field_effects": [
+        "olho_tempestade"
+      ],
+      "player_slots_count": 6,
+      "enemy_slots_count": 6,
+      "mana_per_turn": 4,
+      "duration_target": "chefe_summoner",
+      "soul_reward": {
+        "min": 18,
+        "max": 25
+      },
+      "enemy_ai_profile": "ar",
+      "starting_enemy_slots": [
+        {
+          "slot": 0,
+          "card_id": "enemy_ar_elemental_de_vento"
+        },
+        {
+          "slot": 1,
+          "card_id": "enemy_ar_elemental_de_vento"
+        },
+        {
+          "slot": 2,
+          "card_id": "enemy_ar_elemental_de_vento"
+        }
+      ],
+      "enemy_commander_enabled": false,
+      "boss_health": 40,
+      "boss_summons": [
+        {
+          "card_id": "enemy_ar_silfo"
+        },
+        {
+          "card_id": "enemy_ar_tempestade_vivente"
+        },
+        {
+          "card_id": "enemy_ar_elemental_do_raio"
+        }
+      ],
+      "boss_phase_hooks": [
+        {
+          "id": "ar_turn4",
+          "trigger": "turn",
+          "turn": 4,
+          "action": "set_field_effect",
+          "effect": "relampago",
+          "description": "Fase 2: o Olho da Tempestade libera Relampago junto da Ventania."
+        },
+        {
+          "id": "ar_turn6",
+          "trigger": "turn",
+          "turn": 6,
+          "action": "summon_card",
+          "card_id": "enemy_ar_tempestade_vivente",
+          "attack_bonus": 2,
+          "health_bonus": 7,
+          "description": "Fase 3: Forma Final entra como uma Tempestade 5/10."
+        }
+      ]
+    },
+    {
+      "id": "campos_chamas",
+      "display_name": "Mapa 23 - Campos em Chamas",
+      "element": "fogo",
+      "mode": "limpar_mesa",
+      "tier": "elite_optional",
+      "enemy_director": "prefilled_board",
+      "board_format": "padrao",
+      "field_effects": [
+        "brasa_viva"
+      ],
+      "player_slots_count": 5,
+      "enemy_slots_count": 5,
+      "mana_per_turn": 5,
+      "duration_target": "limpar_mesa",
+      "soul_reward": {
+        "min": 11,
+        "max": 16
+      },
+      "enemy_ai_profile": "fogo",
+      "starting_enemy_slots": [
+        {
+          "slot": 0,
+          "card_id": "enemy_fogo_salamandra"
+        },
+        {
+          "slot": 1,
+          "card_id": "enemy_fogo_elemental_de_chama"
+        },
+        {
+          "slot": 2,
+          "card_id": "enemy_fogo_golem_de_lava"
+        }
+      ],
+      "enemy_commander_enabled": false
+    },
+    {
+      "id": "fornalha",
+      "display_name": "Mapa 24 - A Fornalha",
+      "element": "fogo",
+      "mode": "ondas",
+      "tier": "elite_optional",
+      "enemy_director": "waves",
+      "board_format": "padrao",
+      "field_effects": [
+        "inferno"
+      ],
+      "player_slots_count": 5,
+      "enemy_slots_count": 5,
+      "mana_per_turn": 5,
+      "duration_target": "ondas",
+      "soul_reward": {
+        "min": 11,
+        "max": 16
+      },
+      "enemy_ai_profile": "fogo",
+      "waves": [
+        [
+          {
+            "slot": 0,
+            "card_id": "enemy_fogo_elemental_de_chama"
+          },
+          {
+            "slot": 1,
+            "card_id": "enemy_fogo_elemental_de_chama"
+          },
+          {
+            "slot": 2,
+            "card_id": "enemy_fogo_elemental_de_chama"
+          }
+        ],
+        [
+          {
+            "slot": 0,
+            "card_id": "enemy_fogo_salamandra"
+          },
+          {
+            "slot": 1,
+            "card_id": "enemy_fogo_golem_de_lava"
+          }
+        ],
+        [
+          {
+            "slot": 0,
+            "card_id": "enemy_fogo_demonio_de_chama"
+          },
+          {
+            "slot": 1,
+            "card_id": "enemy_fogo_elemental_de_chama"
+          },
+          {
+            "slot": 2,
+            "card_id": "enemy_fogo_salamandra"
+          }
+        ]
+      ],
+      "enemy_commander_enabled": false
+    },
+    {
+      "id": "rio_lava",
+      "display_name": "Mapa 25 - Rio de Lava",
+      "element": "fogo",
+      "mode": "escolta",
+      "tier": "elite_optional",
+      "enemy_director": "prefilled_board",
+      "board_format": "frente_retaguarda",
+      "field_effects": [
+        "piso_lava"
+      ],
+      "player_slots_count": 5,
+      "enemy_slots_count": 5,
+      "mana_per_turn": 5,
+      "duration_target": "escolta",
+      "soul_reward": {
+        "min": 11,
+        "max": 16
+      },
+      "enemy_ai_profile": "fogo",
+      "starting_enemy_slots": [
+        {
+          "slot": 0,
+          "card_id": "enemy_fogo_elemental_de_chama"
+        },
+        {
+          "slot": 1,
+          "card_id": "enemy_fogo_elemental_de_chama"
+        },
+        {
+          "slot": 2,
+          "card_id": "enemy_fogo_elemental_de_chama"
+        },
+        {
+          "slot": 3,
+          "card_id": "enemy_fogo_salamandra"
+        },
+        {
+          "slot": 4,
+          "card_id": "enemy_fogo_salamandra"
+        }
+      ],
+      "enemy_commander_enabled": false
+    },
+    {
+      "id": "duelo_demonio",
+      "display_name": "Mapa 26 - Duelo do Demonio",
+      "element": "fogo",
+      "mode": "duelo",
+      "tier": "elite_optional",
+      "enemy_director": "player_like",
+      "board_format": "padrao",
+      "field_effects": [
+        "furia_abismo"
+      ],
+      "player_slots_count": 5,
+      "enemy_slots_count": 5,
+      "mana_per_turn": 5,
+      "duration_target": "duelo",
+      "soul_reward": {
+        "min": 11,
+        "max": 16
+      },
+      "enemy_ai_profile": "fogo",
+      "starting_enemy_slots": [
+        {
+          "slot": 0,
+          "card_id": "enemy_fogo_demonio_de_chama"
+        },
+        {
+          "slot": 2,
+          "card_id": "enemy_fogo_golem_de_lava"
+        }
+      ],
+      "enemy_commander_enabled": true,
+      "enemy_health": 25,
+      "enemy_mana_per_turn": 5,
+      "enemy_hand_count": 5,
+      "enemy_deck": [
+        "enemy_fogo_demonio_de_chama",
+        "enemy_fogo_fragmento_de_chama",
+        "enemy_fogo_elemental_de_chama",
+        "enemy_fogo_golem_de_lava",
+        "enemy_fogo_salamandra",
+        "enemy_fogo_fenix",
+        "enemy_fogo_elemental_de_chama",
+        "enemy_fogo_fragmento_de_chama"
+      ]
+    },
+    {
+      "id": "renascimento",
+      "display_name": "Mapa 27 - Renascimento",
+      "element": "fogo",
+      "mode": "ondas",
+      "tier": "elite_optional",
+      "enemy_director": "waves",
+      "board_format": "padrao",
+      "field_effects": [
+        "cinzas_vivas"
+      ],
+      "player_slots_count": 5,
+      "enemy_slots_count": 5,
+      "mana_per_turn": 5,
+      "duration_target": "ondas",
+      "soul_reward": {
+        "min": 11,
+        "max": 16
+      },
+      "enemy_ai_profile": "fogo",
+      "waves": [
+        [
+          {
+            "slot": 0,
+            "card_id": "enemy_fogo_elemental_de_chama"
+          },
+          {
+            "slot": 1,
+            "card_id": "enemy_fogo_elemental_de_chama"
+          },
+          {
+            "slot": 2,
+            "card_id": "enemy_fogo_salamandra"
+          }
+        ],
+        [
+          {
+            "slot": 0,
+            "card_id": "enemy_fogo_golem_de_lava"
+          },
+          {
+            "slot": 1,
+            "card_id": "enemy_fogo_demonio_de_chama"
+          }
+        ],
+        [
+          {
+            "slot": 0,
+            "card_id": "enemy_fogo_fenix"
+          },
+          {
+            "slot": 1,
+            "card_id": "enemy_fogo_demonio_de_chama"
+          },
+          {
+            "slot": 2,
+            "card_id": "enemy_fogo_elemental_de_chama"
+          }
+        ]
+      ],
+      "enemy_commander_enabled": false
+    },
+    {
+      "id": "portal_caos",
+      "display_name": "Mapa 28 - Portal do Caos",
+      "element": "fogo",
+      "mode": "invasao",
+      "tier": "elite_optional",
+      "enemy_director": "prefilled_board",
+      "board_format": "padrao",
+      "field_effects": [
+        "portal_aberto"
+      ],
+      "player_slots_count": 6,
+      "enemy_slots_count": 6,
+      "mana_per_turn": 5,
+      "duration_target": "invasao",
+      "soul_reward": {
+        "min": 11,
+        "max": 16
+      },
+      "enemy_ai_profile": "fogo",
+      "starting_enemy_slots": [
+        {
+          "slot": 0,
+          "card_id": "enemy_fogo_golem_de_lava"
+        },
+        {
+          "slot": 1,
+          "card_id": "enemy_fogo_elemental_de_chama"
+        },
+        {
+          "slot": 2,
+          "card_id": "enemy_fogo_elemental_de_chama"
+        },
+        {
+          "slot": 3,
+          "card_id": "enemy_fogo_fenix"
+        },
+        {
+          "slot": 4,
+          "card_id": "enemy_fogo_salamandra"
+        },
+        {
+          "slot": 5,
+          "card_id": "enemy_fogo_demonio_de_chama"
+        }
+      ],
+      "enemy_commander_enabled": false
+    },
+    {
+      "id": "chefe_summoner_final",
+      "display_name": "Mapa 29 - Dragao Primordial",
+      "element": "fogo",
+      "mode": "chefe_summoner",
+      "tier": "boss",
+      "enemy_director": "scripted_boss",
+      "board_format": "abismo",
+      "field_effects": [
+        "inferno_total"
+      ],
+      "player_slots_count": 7,
+      "enemy_slots_count": 7,
+      "mana_per_turn": 5,
+      "duration_target": "chefe_summoner",
+      "soul_reward": {
+        "min": 18,
+        "max": 25
+      },
+      "enemy_ai_profile": "fogo",
+      "starting_enemy_slots": [
+        {
+          "slot": 0,
+          "card_id": "enemy_fogo_golem_de_lava"
+        },
+        {
+          "slot": 1,
+          "card_id": "enemy_fogo_fenix"
+        },
+        {
+          "slot": 2,
+          "card_id": "enemy_fogo_demonio_de_chama"
+        },
+        {
+          "slot": 3,
+          "card_id": "enemy_fogo_salamandra"
+        },
+        {
+          "slot": 4,
+          "card_id": "enemy_fogo_elemental_de_chama"
+        },
+        {
+          "slot": 5,
+          "card_id": "enemy_fogo_fragmento_de_chama"
+        },
+        {
+          "slot": 6,
+          "card_id": "enemy_fogo_elemental_de_chama"
+        }
+      ],
+      "enemy_commander_enabled": false,
+      "boss_health": 50,
+      "boss_summons": [
+        {
+          "card_id": "enemy_fogo_elemental_de_chama"
+        },
+        {
+          "card_id": "enemy_fogo_salamandra"
+        },
+        {
+          "card_id": "enemy_fogo_demonio_de_chama"
+        },
+        {
+          "card_id": "enemy_fogo_fenix"
+        }
+      ],
+      "boss_phase_hooks": [
+        {
+          "id": "dragao_hp35",
+          "trigger": "hp_below",
+          "hp_below": 35,
+          "action": "add_keyword_all_enemies",
+          "keyword": "atropelar",
+          "description": "Fase 2: o Dragao concede Atropelar as criaturas inimigas."
+        },
+        {
+          "id": "dragao_turn8",
+          "trigger": "turn",
+          "turn": 8,
+          "action": "add_keyword_all_enemies",
+          "keyword": "furia",
+          "description": "Fase 3: todas as criaturas inimigas recebem Furia."
+        }
+      ]
     }
   ],
   "run_map": {
-    "id": "invasao_inicial",
-    "display_name": "Invasao Inicial",
+    "id": "invasao_elemental_29_mapas",
+    "display_name": "Rota Completa de 29 Mapas",
     "linear": true,
-    "node_types": [
-      "limpar_mesa",
-      "ondas",
-      "duelo",
-      "defesa_posicao",
-      "chefe_summoner",
-      "sobreviver_turnos"
-    ],
     "nodes": [
       {
         "id": "n01_tutorial_primeiro_contato",
+        "map_index": 1,
         "kind": "mainline",
         "encounter_id": "tutorial_primeiro_contato",
-        "available_after": [],
         "unlocks": [
           "n02_tutorial_dois_fronts"
         ],
-        "map_index": 1,
+        "available_after": [],
         "rewards": [
           "max_mana_1"
         ]
       },
       {
         "id": "n02_tutorial_dois_fronts",
+        "map_index": 2,
         "kind": "mainline",
         "encounter_id": "tutorial_dois_fronts",
-        "available_after": [
-          "n01_tutorial_primeiro_contato"
-        ],
         "unlocks": [
           "n03_tutorial_primeira_onda"
         ],
-        "map_index": 2,
+        "available_after": [
+          "n01_tutorial_primeiro_contato"
+        ],
         "rewards": [
           "add_class_cost2_core"
         ]
       },
       {
         "id": "n03_tutorial_primeira_onda",
+        "map_index": 3,
         "kind": "mainline",
         "encounter_id": "tutorial_primeira_onda",
-        "available_after": [
-          "n02_tutorial_dois_fronts"
-        ],
         "unlocks": [
           "n04_pouso_elemental"
         ],
-        "map_index": 3,
+        "available_after": [
+          "n02_tutorial_dois_fronts"
+        ],
         "choice_reward": {
           "type": "upgrade_card"
         }
       },
       {
         "id": "n04_pouso_elemental",
+        "map_index": 4,
         "kind": "mainline",
         "encounter_id": "pouso_elemental",
-        "available_after": [
-          "n03_tutorial_primeira_onda"
-        ],
         "unlocks": [
           "n05_ondas_iniciais"
         ],
-        "map_index": 4,
-        "rewards": [
-          "add_relic_placeholder"
-        ]
+        "available_after": [
+          "n03_tutorial_primeira_onda"
+        ],
+        "relic_reward": {
+          "mode": "grant",
+          "rarity": "common",
+          "id": "bolsa_de_cinzas"
+        }
       },
       {
         "id": "n05_ondas_iniciais",
+        "map_index": 5,
         "kind": "mainline",
         "encounter_id": "ondas_iniciais",
-        "available_after": [
-          "n04_pouso_elemental"
-        ],
         "unlocks": [
           "n06_duelo_inicial"
         ],
-        "map_index": 5,
+        "available_after": [
+          "n04_pouso_elemental"
+        ],
         "rewards": [
           "max_mana_1"
         ]
       },
       {
         "id": "n06_duelo_inicial",
+        "map_index": 6,
         "kind": "mainline",
         "encounter_id": "duelo_inicial",
-        "available_after": [
-          "n05_ondas_iniciais"
-        ],
         "unlocks": [
           "n07_defesa_posicao"
         ],
-        "map_index": 6,
+        "available_after": [
+          "n05_ondas_iniciais"
+        ],
         "rewards": [
           "max_hand_size_1"
         ]
       },
       {
         "id": "n07_defesa_posicao",
+        "map_index": 7,
         "kind": "mainline",
         "encounter_id": "defesa_posicao_inicial",
-        "available_after": [
-          "n06_duelo_inicial"
-        ],
         "unlocks": [
           "n08_chefe_invocador"
         ],
-        "map_index": 7,
+        "available_after": [
+          "n06_duelo_inicial"
+        ],
         "choice_reward": {
           "type": "new_card",
           "element": "terra",
@@ -3944,46 +4896,50 @@
       },
       {
         "id": "n08_chefe_invocador",
+        "map_index": 8,
         "kind": "mainline",
         "encounter_id": "chefe_invocador",
-        "available_after": [
-          "n07_defesa_posicao"
-        ],
         "unlocks": [
           "n09_sobreviver_turnos"
         ],
-        "map_index": 8,
+        "available_after": [
+          "n07_defesa_posicao"
+        ],
         "rewards": [
-          "unlock_class_passive",
-          "add_relic_placeholder"
-        ]
+          "unlock_class_passive"
+        ],
+        "relic_reward": {
+          "mode": "grant",
+          "rarity": "rare",
+          "id": "catalisador_arcano"
+        }
       },
       {
         "id": "n09_sobreviver_turnos",
+        "map_index": 9,
         "kind": "mainline",
-        "encounter_id": "sobreviver_turnos_inicial",
-        "available_after": [
-          "n08_chefe_invocador"
-        ],
+        "encounter_id": "tundra",
         "unlocks": [
           "n10_limpeza_elite"
         ],
-        "map_index": 9,
+        "available_after": [
+          "n08_chefe_invocador"
+        ],
         "choice_reward": {
           "type": "upgrade_card"
         }
       },
       {
         "id": "n10_limpeza_elite",
+        "map_index": 10,
         "kind": "mainline",
-        "encounter_id": "limpeza_elite",
-        "available_after": [
-          "n09_sobreviver_turnos"
-        ],
+        "encounter_id": "camara_glacial",
         "unlocks": [
           "n11_ondas_avancadas"
         ],
-        "map_index": 10,
+        "available_after": [
+          "n09_sobreviver_turnos"
+        ],
         "rewards": [
           "unlock_class_active",
           "max_health_5"
@@ -3991,49 +4947,350 @@
       },
       {
         "id": "n11_ondas_avancadas",
+        "map_index": 11,
         "kind": "mainline",
-        "encounter_id": "ondas_avancadas",
-        "available_after": [
-          "n10_limpeza_elite"
-        ],
+        "encounter_id": "blizzard",
         "unlocks": [
           "n12_duelo_elite"
         ],
-        "map_index": 11,
+        "available_after": [
+          "n10_limpeza_elite"
+        ],
         "rewards": [
           "grant_remaining_card"
         ]
       },
       {
         "id": "n12_duelo_elite",
+        "map_index": 12,
         "kind": "mainline",
         "encounter_id": "duelo_elite",
+        "unlocks": [
+          "n13_labirinto_gelo"
+        ],
         "available_after": [
           "n11_ondas_avancadas"
         ],
-        "unlocks": [
-          "n13_chefe_final"
-        ],
-        "map_index": 12,
         "choice_reward": {
           "type": "upgrade_card"
         }
       },
       {
-        "id": "n13_chefe_final",
+        "id": "n13_labirinto_gelo",
+        "map_index": 13,
         "kind": "mainline",
-        "encounter_id": "chefe_summoner_final",
+        "encounter_id": "labirinto_gelo",
+        "unlocks": [
+          "n14_vanguarda_glacial"
+        ],
         "available_after": [
           "n12_duelo_elite"
         ],
-        "unlocks": [],
-        "map_index": 13,
         "choice_reward": {
           "type": "new_card",
           "element": "gelo",
           "pool_offset": 2
         }
+      },
+      {
+        "id": "n14_vanguarda_glacial",
+        "map_index": 14,
+        "kind": "mainline",
+        "encounter_id": "sobreviver_turnos_inicial",
+        "unlocks": [
+          "n15_anciao_gelo"
+        ],
+        "available_after": [
+          "n13_labirinto_gelo"
+        ],
+        "rewards": [
+          "grant_remaining_card"
+        ]
+      },
+      {
+        "id": "n15_anciao_gelo",
+        "map_index": 15,
+        "kind": "mainline",
+        "encounter_id": "anciao_gelo",
+        "unlocks": [
+          "n16_planicies_vento"
+        ],
+        "available_after": [
+          "n14_vanguarda_glacial"
+        ],
+        "rewards": [
+          "max_health_5"
+        ],
+        "relic_reward": {
+          "mode": "grant",
+          "rarity": "ultra_rare",
+          "id": "forja_negra"
+        }
+      },
+      {
+        "id": "n16_planicies_vento",
+        "map_index": 16,
+        "kind": "mainline",
+        "encounter_id": "planicies_vento",
+        "unlocks": [
+          "n17_rajadas"
+        ],
+        "available_after": [
+          "n15_anciao_gelo"
+        ],
+        "rewards": [
+          "max_mana_1"
+        ]
+      },
+      {
+        "id": "n17_rajadas",
+        "map_index": 17,
+        "kind": "mainline",
+        "encounter_id": "rajadas",
+        "unlocks": [
+          "n18_nucleo_ciclone"
+        ],
+        "available_after": [
+          "n16_planicies_vento"
+        ],
+        "choice_reward": {
+          "type": "new_card",
+          "element": "ar",
+          "pool_offset": 4
+        }
+      },
+      {
+        "id": "n18_nucleo_ciclone",
+        "map_index": 18,
+        "kind": "mainline",
+        "encounter_id": "nucleo_ciclone",
+        "unlocks": [
+          "n19_camara_trovao"
+        ],
+        "available_after": [
+          "n17_rajadas"
+        ],
+        "choice_reward": {
+          "type": "upgrade_card"
+        }
+      },
+      {
+        "id": "n19_camara_trovao",
+        "map_index": 19,
+        "kind": "mainline",
+        "encounter_id": "camara_trovao",
+        "unlocks": [
+          "n20_emboscada_nuvens"
+        ],
+        "available_after": [
+          "n18_nucleo_ciclone"
+        ],
+        "rewards": [
+          "max_mana_1"
+        ]
+      },
+      {
+        "id": "n20_emboscada_nuvens",
+        "map_index": 20,
+        "kind": "mainline",
+        "encounter_id": "emboscada_nuvens",
+        "unlocks": [
+          "n21_tempestade_eterna"
+        ],
+        "available_after": [
+          "n19_camara_trovao"
+        ],
+        "rewards": [
+          "grant_remaining_card"
+        ]
+      },
+      {
+        "id": "n21_tempestade_eterna",
+        "map_index": 21,
+        "kind": "mainline",
+        "encounter_id": "tempestade_eterna",
+        "unlocks": [
+          "n22_soberano_tempestades"
+        ],
+        "available_after": [
+          "n20_emboscada_nuvens"
+        ],
+        "choice_reward": {
+          "type": "relic",
+          "rarity": "standard"
+        }
+      },
+      {
+        "id": "n22_soberano_tempestades",
+        "map_index": 22,
+        "kind": "mainline",
+        "encounter_id": "soberano_tempestades",
+        "unlocks": [
+          "n23_campos_chamas"
+        ],
+        "available_after": [
+          "n21_tempestade_eterna"
+        ],
+        "rewards": [
+          "max_hand_size_1"
+        ]
+      },
+      {
+        "id": "n23_campos_chamas",
+        "map_index": 23,
+        "kind": "mainline",
+        "encounter_id": "campos_chamas",
+        "unlocks": [
+          "n24_fornalha"
+        ],
+        "available_after": [
+          "n22_soberano_tempestades"
+        ],
+        "rewards": [
+          "max_mana_1"
+        ]
+      },
+      {
+        "id": "n24_fornalha",
+        "map_index": 24,
+        "kind": "mainline",
+        "encounter_id": "fornalha",
+        "unlocks": [
+          "n25_rio_lava"
+        ],
+        "available_after": [
+          "n23_campos_chamas"
+        ],
+        "choice_reward": {
+          "type": "new_card",
+          "element": "fogo",
+          "pool_offset": 6
+        }
+      },
+      {
+        "id": "n25_rio_lava",
+        "map_index": 25,
+        "kind": "mainline",
+        "encounter_id": "rio_lava",
+        "unlocks": [
+          "n26_duelo_demonio"
+        ],
+        "available_after": [
+          "n24_fornalha"
+        ],
+        "choice_reward": {
+          "type": "upgrade_card"
+        }
+      },
+      {
+        "id": "n26_duelo_demonio",
+        "map_index": 26,
+        "kind": "mainline",
+        "encounter_id": "duelo_demonio",
+        "unlocks": [
+          "n27_renascimento"
+        ],
+        "available_after": [
+          "n25_rio_lava"
+        ],
+        "rewards": [
+          "grant_remaining_card"
+        ]
+      },
+      {
+        "id": "n27_renascimento",
+        "map_index": 27,
+        "kind": "mainline",
+        "encounter_id": "renascimento",
+        "unlocks": [
+          "n28_portal_caos"
+        ],
+        "available_after": [
+          "n26_duelo_demonio"
+        ],
+        "choice_reward": {
+          "type": "utility_choice",
+          "options": [
+            "remove_card",
+            "duplicate_card",
+            "upgrade_card"
+          ]
+        }
+      },
+      {
+        "id": "n28_portal_caos",
+        "map_index": 28,
+        "kind": "mainline",
+        "encounter_id": "portal_caos",
+        "unlocks": [
+          "n29_dragao_primordial"
+        ],
+        "available_after": [
+          "n27_renascimento"
+        ],
+        "relic_reward": {
+          "mode": "grant",
+          "rarity": "rare_ultra",
+          "id": "pacto_das_ruinas"
+        }
+      },
+      {
+        "id": "n29_dragao_primordial",
+        "map_index": 29,
+        "kind": "mainline",
+        "encounter_id": "chefe_summoner_final",
+        "unlocks": [],
+        "available_after": [
+          "n28_portal_caos"
+        ],
+        "rewards": [
+          "complete_run_victory"
+        ]
       }
     ]
-  }
+  },
+  "boards": [
+    {
+      "id": "padrao",
+      "display_name": "Padrao",
+      "player_slots_count": "N",
+      "enemy_slots_count": "N",
+      "rules": "Lanes frontais simetricas."
+    },
+    {
+      "id": "assimetrico",
+      "display_name": "Assimetrico",
+      "player_slots_count": "N",
+      "enemy_slots_count": "N+1",
+      "rules": "Lane extra inimiga pressiona direto se nao houver cobertura."
+    },
+    {
+      "id": "nucleo_central",
+      "display_name": "Nucleo Central",
+      "player_slots_count": 5,
+      "enemy_slots_count": 5,
+      "rules": "Slot 3 recebe +1 ATK; inimigo no nucleo pressiona o comandante."
+    },
+    {
+      "id": "flanco",
+      "display_name": "Flanco",
+      "player_slots_count": 4,
+      "enemy_slots_count": 6,
+      "rules": "Flancos inimigos sem frente causam dano direto."
+    },
+    {
+      "id": "frente_retaguarda",
+      "display_name": "Frente e Retaguarda",
+      "player_slots_count": 5,
+      "enemy_slots_count": 5,
+      "rules": "Slots 4-5 so atacam se a frente estiver livre."
+    },
+    {
+      "id": "abismo",
+      "display_name": "Abismo",
+      "player_slots_count": 7,
+      "enemy_slots_count": 7,
+      "rules": "Maior tabuleiro da run; usado no chefe final."
+    }
+  ]
 }

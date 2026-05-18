@@ -60,9 +60,9 @@ const MIN_PLAYER_NAME_LENGTH: int = 2
 const MAX_PLAYER_NAME_LENGTH: int = 18
 const SNAPSHOT_VERSION: int = 5
 const TRACK_02_CONTRACT_ID: String = "track_02_complete_run_evolution"
-const TRACK_02_ROUTE_STATUS_CONTRACT_ONLY: String = "contract_only"
+const TRACK_02_ROUTE_STATUS_CONTRACT_ONLY: String = "implemented"
 const TRACK_02_TARGET_MAP_COUNT: int = 29
-const TRACK_02_CURRENT_ROUTE_MAP_COUNT: int = 13
+const TRACK_02_CURRENT_ROUTE_MAP_COUNT: int = 29
 const TRACK_02_MAX_MANA_CAP: int = 6
 const TRACK_02_MAX_HAND_SIZE_CAP: int = 5
 const TRACK_02_SHOP_SCHEMA_VERSION: int = 1
@@ -1266,12 +1266,9 @@ func _new_card_copies_for_rarity(rarity: String) -> int:
 			return REWARD_CARD_COPY_COUNT + 2 + (1 if has_relic_id(RELIC_NUCLEO_INSTAVEL) else 0)
 	return REWARD_CARD_COPY_COUNT
 
-func _extra_upgrade_copies_for_rarity(rarity: String) -> int:
-	match rarity:
-		REWARD_RARITY_RARE:
-			return 1
-		REWARD_RARITY_ULTRA:
-			return 2
+func _extra_upgrade_copies_for_rarity(_rarity: String) -> int:
+	# Track 02 tuning keeps upgrade rewards as level improvements only so the
+	# 29-map route lands near the target final deck size.
 	return 0
 
 func _shop_upgrade_candidates() -> Array[String]:

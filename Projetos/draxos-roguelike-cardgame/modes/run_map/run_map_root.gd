@@ -54,7 +54,7 @@ func _build_ui() -> void:
 	title_box.add_child(title)
 
 	var subtitle: Label = Label.new()
-	subtitle.text = "Rota de invasao projetada sobre o planeta elemental"
+	subtitle.text = "29 mapas lineares por blocos: Terra, Gelo, Ar e Fogo"
 	subtitle.add_theme_font_size_override("font_size", 12)
 	subtitle.add_theme_color_override("font_color", Color(0.84, 0.9, 0.94, 0.84))
 	title_box.add_child(subtitle)
@@ -104,6 +104,19 @@ func _build_ui() -> void:
 	side_title.add_theme_color_override("font_color", UiTokens.color("text_primary"))
 	side_box.add_child(side_title)
 
+	var side_scroll: ScrollContainer = ScrollContainer.new()
+	side_scroll.name = "RunMapStatusScroll"
+	side_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	side_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	side_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	side_box.add_child(side_scroll)
+
+	var side_content: VBoxContainer = VBoxContainer.new()
+	side_content.name = "RunMapStatusContent"
+	side_content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	side_content.add_theme_constant_override("separation", 8)
+	side_scroll.add_child(side_content)
+
 	status_label = Label.new()
 	status_label.name = "RunMapStatus"
 	status_label.text = _status_text()
@@ -111,12 +124,12 @@ func _build_ui() -> void:
 	status_label.add_theme_font_size_override("font_size", 12)
 	status_label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
 	status_label.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-	side_box.add_child(status_label)
+	side_content.add_child(status_label)
 
 	reward_box = VBoxContainer.new()
 	reward_box.name = "RunMapRewardChoices"
 	reward_box.add_theme_constant_override("separation", 8)
-	side_box.add_child(reward_box)
+	side_content.add_child(reward_box)
 	_rebuild_reward_choices()
 
 	var future_battle_button: Button = Button.new()
@@ -187,23 +200,24 @@ func _build_node_button(node: Dictionary) -> Button:
 	var encounter: Dictionary = ContentLibrary.get_catalog().find_encounter(str(node.get("encounter_id", "")))
 	var node_id: String = str(node.get("id", "unknown"))
 	var state: String = _node_state(node)
+	var compact_route: bool = Array(ContentLibrary.get_run_map().get("nodes", [])).size() > 20
 	var button: Button = Button.new()
 	button.name = "RunMapNode_%s" % node_id
 	button.text = "%s %s" % [_node_icon(node, state), VisualAssets.node_label(node_id)]
-	button.tooltip_text = "%s\n%s" % [str(encounter.get("display_name", node.get("encounter_id", ""))), _node_status_text(node, state)]
+	button.tooltip_text = "%s\n%s\n%s" % [str(encounter.get("display_name", node.get("encounter_id", ""))), _node_status_text(node, state), _node_reward_text(node)]
 	button.alignment = HORIZONTAL_ALIGNMENT_CENTER
-	button.custom_minimum_size = Vector2(106, 42)
+	button.custom_minimum_size = Vector2(76, 34) if compact_route else Vector2(106, 42)
 	var position: Vector2 = VisualAssets.node_position(node_id)
 	button.anchor_left = position.x
 	button.anchor_top = position.y
 	button.anchor_right = position.x
 	button.anchor_bottom = position.y
-	button.offset_left = -53.0
-	button.offset_top = -21.0
-	button.offset_right = 53.0
-	button.offset_bottom = 21.0
+	button.offset_left = -38.0 if compact_route else -53.0
+	button.offset_top = -17.0 if compact_route else -21.0
+	button.offset_right = 38.0 if compact_route else 53.0
+	button.offset_bottom = 17.0 if compact_route else 21.0
 	button.disabled = state == "completed" or state == "locked"
-	button.add_theme_font_size_override("font_size", 12)
+	button.add_theme_font_size_override("font_size", 10 if compact_route else 12)
 	button.add_theme_color_override("font_disabled_color", Color(0.82, 0.88, 0.84, 0.82))
 	button.add_theme_stylebox_override("normal", _node_style(state, false))
 	button.add_theme_stylebox_override("hover", _node_style(state, true))
@@ -256,6 +270,12 @@ func _node_icon(node: Dictionary, state: String) -> String:
 			return "SV"
 		"chefe_summoner":
 			return "CH"
+		"emboscada":
+			return "EM"
+		"escolta":
+			return "ES"
+		"invasao":
+			return "IN"
 		"limpar_mesa":
 			return "LM"
 	return "-"
@@ -275,13 +295,22 @@ func _status_text() -> String:
 		return "Nenhuma run ativa. Volte para a nave, escolha uma Classe e inicie a run."
 	var completed_text: String = _completed_nodes_text()
 	var health_text: String = "Vida: %d/%d" % [RunSession.current_health, RunSession.max_health]
-	var economy_text: String = "\nMana: %d\nMao: %d\nAlmas: %d" % [RunSession.max_mana, RunSession.max_hand_size, RunSession.soul_total]
+	var economy_text: String = "\nMana: %d/%d\nMao: %d/%d\nAlmas: %d\nDeck: %d cartas\nReliquias: %d" % [
+		RunSession.max_mana,
+		RunSession.max_mana_cap,
+		RunSession.max_hand_size,
+		RunSession.max_hand_size_cap,
+		RunSession.soul_total,
+		RunSession.current_deck_ids.size(),
+		RunSession.relic_ids.size()
+	]
 	var last_result_text: String = ""
 	if RunSession.last_completed_node_id != "":
 		last_result_text = "\nUltimo encontro concluido: %s" % RunSession.last_completed_node_id
 	var reward_text: String = "\nRecompensas automaticas aplicadas: %d" % RunSession.automatic_reward_ids.size()
+	var selected_text: String = _selected_node_summary()
 	if RunSession.current_node_id == "":
-		return "Nome: %s\nClasse: %s\n%s%s%s%s\nConcluidos: %s\n\nSelecione o proximo encontro disponivel no planeta." % [
+		return "Nome: %s\nClasse: %s\n%s%s%s%s\nProgresso: %s\n\nSelecione o proximo encontro disponivel no planeta." % [
 			RunSession.player_display_name(),
 			RunSession.selected_class_display_name,
 			health_text,
@@ -290,7 +319,7 @@ func _status_text() -> String:
 			reward_text,
 			completed_text
 		]
-	return "Nome: %s\nClasse: %s\n%s%s%s%s\nConcluidos: %s\nNode selecionado: %s\n\nUse Iniciar Encontro para entrar na batalha atual." % [
+	return "Nome: %s\nClasse: %s\n%s%s%s%s\nProgresso: %s\n%s\n\nUse Iniciar Encontro para entrar na batalha atual." % [
 		RunSession.player_display_name(),
 		RunSession.selected_class_display_name,
 		health_text,
@@ -298,20 +327,50 @@ func _status_text() -> String:
 		last_result_text,
 		reward_text,
 		completed_text,
-		RunSession.current_node_id
+		selected_text
 	]
 
 func _completed_nodes_text() -> String:
 	if RunSession.completed_node_ids.is_empty():
-		return "nenhum"
-	return ", ".join(RunSession.completed_node_ids)
+		return "0/%d mapas" % Array(ContentLibrary.get_run_map().get("nodes", [])).size()
+	var total: int = Array(ContentLibrary.get_run_map().get("nodes", [])).size()
+	var count: int = RunSession.completed_node_ids.size()
+	var tail: Array[String] = []
+	for index: int in range(maxi(0, count - 3), count):
+		tail.append(RunSession.completed_node_ids[index])
+	return "%d/%d mapas (%s)" % [count, total, ", ".join(tail)]
+
+func _selected_node_summary() -> String:
+	if RunSession.current_node_id == "":
+		return "Rota concluida"
+	var node: Dictionary = _find_run_node(Array(ContentLibrary.get_run_map().get("nodes", [])), RunSession.current_node_id)
+	if node.is_empty():
+		return "Node selecionado: %s" % RunSession.current_node_id
+	var encounter: Dictionary = ContentLibrary.get_catalog().find_encounter(str(node.get("encounter_id", "")))
+	var map_index: int = int(node.get("map_index", 0))
+	var mode_text: String = str(encounter.get("mode", "")).replace("_", " ")
+	var element_text: String = str(encounter.get("element", "")).capitalize()
+	return "Selecionado: Mapa %02d | %s | %s\n%s" % [
+		map_index,
+		element_text,
+		mode_text,
+		_node_reward_text(node)
+	]
+
+func _node_reward_text(node: Dictionary) -> String:
+	var entry: Dictionary = ContentLibrary.find_reward_schedule_entry(int(node.get("map_index", 0)))
+	if entry.is_empty():
+		return "Recompensa: conferir apos combate"
+	var category: String = str(entry.get("category", "")).replace("_", " ")
+	var title: String = str(entry.get("title", category))
+	return "Recompensa: %s" % title
 
 func _rebuild_reward_choices() -> void:
 	for child: Node in reward_box.get_children():
 		child.queue_free()
 	var label: Label = Label.new()
 	label.name = "RunMapAutomaticRewards"
-	label.text = "Recompensas fixas sao aplicadas automaticamente. Recompensas de upgrade/carta nova usam escolha 1 em 3."
+	label.text = "Recompensas fixas aplicam automaticamente; escolhas aparecem aqui."
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
 	reward_box.add_child(label)
