@@ -14,11 +14,11 @@
 
 - Status: **P0_IMPLEMENTACAO - ativo**
 - Fase: `Implementacao`
-- Track ativa: `Track 01 - Playable Run Loop` (P14_PLAYTEST_TUNING_PASS_VALIDATED)
-- Baseline atual: Godot 4.6.2 com ShipHub, 3 saves v4, escolha de classe, deck/mapa/almas, run linear de 13 mapas, 3 tutoriais, starter decks custo 1, recompensas fixas, upgrades reais Lvl 2/Lvl 3, recompensas com raridade 70/25/5, loja de upgrades por 20 almas, descarte pre-combate, 2 cartas novas reais por classe, Diabrete/Suicida no Necromante, alvo de mesa aliada para Atacar/Acelerar, Ordem de Guerra custo 0, mapa 6 apenas +1 limite de mao, batalha por lanes, sacrificio, movimento, IA de duelo, defesa com pressao nas side lanes, inimigos +20% e validacao verde 67/67.
-- Meta ativa: playtestar rota completa de 13 mapas com save v4, descarte pre-combate, raridades, loja de upgrades e inimigos +20%.
+- Track ativa: `Track 02 - Complete Run Evolution` (READY_FOR_IMPLEMENTATION_PLANNING)
+- Baseline atual: Track 01 validada em Godot 4.6.2 com ShipHub, 3 saves v4, escolha de classe, deck/mapa/almas, run linear de 13 mapas, starter decks custo 1, recompensas fixas/escolhiveis, upgrades reais Lvl 2/Lvl 3, raridade 70/25/5, loja de upgrades por 20 almas, descarte pre-combate, 2 cartas novas reais por classe, Diabrete/Suicida no Necromante, alvo de mesa aliada, batalha por lanes, sacrificio, movimento, IA de duelo e validacao verde 67/67. Track 02 documentada para primeira run completa de 29 mapas com recompensas revisadas, reliquias universais, loja expandida, todas as keywords, AI inimiga melhorada, painel de intencao e melhorias visuais.
+- Meta ativa: executar os prompts lineares da Track 02 com handoff por thread, comecando por `T02-P01`.
 - Trabalho permitido: codigo, validacao, playtest e documentacao local.
-- Proximo passo: playtest da rota completa de 13 mapas em save v4, depois tuning de dificuldade/recompensas.
+- Proximo passo: iniciar `T02-P01 - Track 02 Data Contract, Save Version, And Validation Scaffolding`.
 
 ## Mobile Universe
 

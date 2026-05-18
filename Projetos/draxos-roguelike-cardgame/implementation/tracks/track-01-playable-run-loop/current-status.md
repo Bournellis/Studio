@@ -1,7 +1,7 @@
 # Track 01 Current Status
 
 - Last Updated: `2026-05-15`
-- Status: `P14_PLAYTEST_TUNING_PASS_VALIDATED`
+- Status: `P14_PLAYTEST_TUNING_PASS_VALIDATED_BASELINE_FOR_TRACK_02`
 - Scope: `First playable class and encounter slice after Track 00 checkpoint`
 
 ## Completed
@@ -74,4 +74,4 @@ The slice is mechanically playable but not fully balanced. The 13-map route now 
 
 ## Next
 
-Playtest the full 13-map route with save v4, pre-combat discard, rarity rewards, Souls upgrade shop, Diabrete, and globally stronger encounters; then tune difficulty/reward cadence.
+Continue through `../track-02-complete-run-evolution/`, starting with `T02-P01 - Track 02 Data Contract, Save Version, And Validation Scaffolding`.

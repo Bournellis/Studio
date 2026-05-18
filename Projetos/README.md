@@ -8,14 +8,14 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
 ## Implementacao Ativa
 
-- `draxos-roguelike-cardgame/`: menu-first Draxos roguelike cardgame with ship hub, 13-map mission route, simple board card battles, fixed/choice rewards, and independent mechanics.
+- `draxos-roguelike-cardgame/`: menu-first Draxos roguelike cardgame with ship hub, validated 13-map slice baseline, and active Track 02 production plan for the first complete fixed 29-map run.
   - Priority/status: `P0_IMPLEMENTACAO`
   - Local agent guide: `draxos-roguelike-cardgame/AGENTS.md`
   - Operational status: `draxos-roguelike-cardgame/implementation/current-status.md`
   - Studio snapshot: `../08_Coordenacao_Agentes/Estado_Atual.md`
   - Validation command: `draxos-roguelike-cardgame/tools/validate.gd`
   - Allowed work: code, validation, playtest, local documentation.
-  - Current next step: playtest the 13-map route with save v4, pre-combat discard, rarity rewards, Souls upgrade shop, Diabrete, and globally stronger encounters.
+  - Current next step: start `T02-P01` from `draxos-roguelike-cardgame/implementation/tracks/track-02-complete-run-evolution/implementation-prompts.md`.
 
 ## Conceitos em Incubacao
 
@@ -43,7 +43,7 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
 ## Project Disambiguation
 
-- Use `draxos-roguelike-cardgame/` for the current implementation focus: Draxos roguelike, ship hub, run map, 13-map route, souls/cure loop, lane battles, card/enemy redesign, reward choices, sacrifice/movement/Cinzas tuning, and Track 01 playable run loop.
+- Use `draxos-roguelike-cardgame/` for the current implementation focus: Draxos roguelike, ship hub, run map, 29-map complete-run evolution, reward/relic/shop systems, full keyword scope, enemy AI/intent, lane battles, card/enemy redesign, sacrifice/movement/Cinzas tuning, and Track 02 production prompts.
 - Use `_conceitos/mobile-universe/` for Mobile Universe concept work only.
 - Use `rpg-isometrico/` only for explicit historical/contextual consultation about the campaign-first isometric action RPG, action loadouts, Arena, Survival, Boss, campaign gates, and real-time combat work.
 - Use `rpg-turnos/` only for explicit historical/contextual consultation about the provisional 2D RPG-cardgame with exploration/world flow, NPCs, class select, Track 02 lore/progression work, and the P10 Necromante path.

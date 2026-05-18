@@ -1,7 +1,7 @@
 # Track 01 Linear Execution Plan
 
 - Last Updated: `2026-05-15`
-- Status: `P14_PLAYTEST_TUNING_PASS_VALIDATED`
+- Status: `P14_PLAYTEST_TUNING_PASS_VALIDATED_BASELINE_FOR_TRACK_02`
 - Execution Owner: `Codex`
 - Scope: `First coherent playable run loop after Track 00 checkpoint`
 - Validation Command: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd`
@@ -20,7 +20,7 @@ Turn the Track 00 placeholder checkpoint into a playable loop that starts a run,
 
 ## Current Execution Cursor
 
-Next prompt: `Playtest the full 13-map route with save v4, pre-combat discard, rarity rewards, Souls upgrade shop, Diabrete, and globally stronger encounters`.
+Next track: `Track 02 - Complete Run Evolution`, starting at `T02-P01`.
 
 ## Linear Prompt Sequence
 
