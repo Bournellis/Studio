@@ -62,3 +62,18 @@ Parametros do slice: mana inicial 1, HP do Comandante 20, mao base 3, deck inici
 | Golem | 3 | Criatura | 4/5 com `defensor`. |
 
 O mapa 7 oferece `Atacar` e `Golem`; o mapa 11 oferece a carta que nao foi escolhida.
+
+## Cartas em Proposta (nao implementadas)
+
+> As cartas abaixo sao sugestoes de design nao definitivas. Nenhuma esta no engine.
+> Detalhes completos (custos, stats, upgrades, quando aparecem na run) em:
+> `../design-proposals/sessao-b-cartas-novas.md`
+
+| Carta | Elemento | Custo | Tipo | Ideia central |
+|---|---|---:|---|---|
+| Capitão de Campo | Gelo | 2 | Criatura 2/4 | Inspirar +1: criaturas adjacentes ganham +1 ATK por ciclo. |
+| Parede de Escudos | Gelo | 2 | Magia | Todas aliadas em campo ganham Escudo até o próximo ciclo. |
+| Cavaleiro Arcano | Ar | 2 | Criatura 3/3 | Atropelar. |
+| Berserker | Ar | 1 | Criatura 3/1 | Atropelar. Fúria: +1 ATK ao sofrer dano e sobreviver. |
+| Arauto | Fogo | 1 | Criatura 1/2 | Entrar: cria token Recruta 1/1 em slot vazio. |
+| Titã Geminal | Fogo | 3 | Criatura 4/5 | Pacto: +2/+2 enquanto outro aliado com Pacto estiver em campo. |

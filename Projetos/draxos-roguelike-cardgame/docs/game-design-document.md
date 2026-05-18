@@ -143,5 +143,26 @@ Todo mapa concede Almas alem das recompensas acima.
 
 - Playtestar a curva 1 mana -> 2 manas -> 3 manas com descarte pre-combate, loja de upgrades, raridades e inimigos +20%.
 - Ajustar dificuldade dos mapas 1-13 apos playtest do novo tuning.
-- Definir se cada classe ainda deve expandir de 2 cartas novas para um kit futuro de 6-8 cartas.
 - Ajustar custo de Almas, cura e loja depois que a curva de upgrades/cartas novas estabilizar.
+
+## Propostas de Design (nao implementadas)
+
+Os documentos abaixo registram sessoes de design criativo. Nao sao canon nem
+estao no engine. Cada item requer validacao em playtest e decisao de produto
+antes de qualquer implementacao.
+
+- `docs/design-proposals/sessao-a-keywords.md` — 20 keywords propostas (Atropelar,
+  Escudo, Espinhos, Resistencia, Crescer, Brutal, Drenar, Ecoar, Furia, Congelar,
+  Veneno, Inspirar, Pacto, Ressurgir, Entrar, e outras). Inclui priorizacao e
+  custo estimado de implementacao.
+
+- `docs/design-proposals/sessao-b-cartas-novas.md` — 6 cartas novas propostas
+  por classe (18 cartas total), distribuidas em 4 elementos ao longo de uma rota
+  de 29 mapas. Inclui upgrades Lvl 2/Lvl 3, estrutura de recompensas e notas
+  de rebalanceamento das cartas existentes.
+
+- `docs/design-proposals/rota-29-mapas.md` — proposta de expansao da rota atual
+  de 13 mapas para 29 mapas divididos em 4 elementos (Terra 1-8, Gelo 9-15,
+  Ar 16-22, Fogo 23-29). Inclui novos tipos de encontro (Emboscada, Escolta,
+  Invasao), 6 formatos de tabuleiro, ~18 efeitos de campo e galeria completa
+  de criaturas inimigas por elemento.

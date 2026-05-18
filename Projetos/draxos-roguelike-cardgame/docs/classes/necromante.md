@@ -66,3 +66,18 @@ Parametros do slice: mana inicial 1, HP do Comandante 20, mao base 3, deck inici
 | Diabrete | 1 | Criatura | 2/1 com Suicida 1. |
 
 `Suicida X` causa X de dano a um alvo inimigo aleatorio valido quando a criatura morre. `Punir` saiu do pool ativo do Necromante. O mapa 7 oferece `Carniceiro` e `Diabrete`; o mapa 11 oferece a carta que nao foi escolhida.
+
+## Cartas em Proposta (nao implementadas)
+
+> As cartas abaixo sao sugestoes de design nao definitivas. Nenhuma esta no engine.
+> Detalhes completos (custos, stats, upgrades, quando aparecem na run) em:
+> `../design-proposals/sessao-b-cartas-novas.md`
+
+| Carta | Elemento | Custo | Tipo | Ideia central |
+|---|---|---:|---|---|
+| Revenant | Gelo | 2 | Criatura 2/4 | Ressurgir: ao morrer, retorna uma vez com 1/2 sem keywords. |
+| Flagelo | Gelo | 1 | Criatura 1/2 | Entrar e ao morrer: aplica Veneno 1 em criatura inimiga aleatória. |
+| Arauto das Sombras | Ar | 2 | Criatura 1/3 | Entrar: reanima última aliada morta na batalha com 1/1. |
+| Colheita das Almas | Ar | 0 | Magia | 2 Cinzas + 1 por cada morte na batalha atual. |
+| Lich | Fogo | 3 | Criatura 3/5 | Imune a controles. Crescer +1 ATK por turno. |
+| Praga | Fogo | 2 | Magia | Veneno 1 em todas criaturas inimigas em campo. Acumula. |

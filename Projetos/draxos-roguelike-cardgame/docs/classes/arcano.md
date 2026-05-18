@@ -56,3 +56,18 @@ Parametros do slice: mana inicial 1, HP do Comandante 20, mao base 3, deck inici
 | Acelerar | 0 | Magia | Mesa aliada alvo recebe +1 poder de habilidade temporario ate o final do turno. |
 
 O mapa 7 oferece `Bola de Fogo` e `Acelerar`; o mapa 11 oferece a carta que nao foi escolhida.
+
+## Cartas em Proposta (nao implementadas)
+
+> As cartas abaixo sao sugestoes de design nao definitivas. Nenhuma esta no engine.
+> Detalhes completos (custos, stats, upgrades, quando aparecem na run) em:
+> `../design-proposals/sessao-b-cartas-novas.md`
+
+| Carta | Elemento | Custo | Tipo | Ideia central |
+|---|---|---:|---|---|
+| Vórtice | Gelo | 2 | Magia | Congela criatura inimiga aleatória. Gera Fluxo. |
+| Sentinela Arcana | Gelo | 2 | Criatura 2/3 | Escudo. Spells jogadas restauram HP. |
+| Amplificador | Ar | 1 | Criatura 1/2 | Ecoar. +2 poder de habilidade passivo. |
+| Canalizar | Ar | 1 | Magia | Dano = Fluxo atual + 2. Gera Fluxo ao resolver. |
+| Espelho Arcano | Fogo | 2 | Criatura 0/4 | Espinhos 2. +1 poder de habilidade. |
+| Descarga | Fogo | 3 | Magia | 2 de dano a cada criatura inimiga. Amplificado por Fluxo. |

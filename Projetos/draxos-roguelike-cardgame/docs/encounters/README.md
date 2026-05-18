@@ -62,3 +62,14 @@ Todos os encontros receberam reforco aproximado de 20% em ATK/HP de cartas inimi
 ## Proximo Passo
 
 Playtestar a pressao dos inimigos contra a rota de 13 mapas com upgrades reais, raridades, loja de upgrades, descarte pre-combate e save v4.
+
+## Proposta de Expansao (nao implementada)
+
+Uma proposta de rota completa de 29 mapas divididos em 4 elementos foi elaborada
+em sessao de design. Inclui novos tipos de encontro (Emboscada, Escolta, Invasao),
+6 formatos de tabuleiro e ~18 efeitos de campo tematicos por elemento.
+
+Ver: `../design-proposals/rota-29-mapas.md`
+
+Esta proposta so deve ser avaliada apos playtest e tuning completos da rota
+atual de 13 mapas.
