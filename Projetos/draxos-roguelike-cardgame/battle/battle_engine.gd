@@ -264,7 +264,7 @@ func start_battle(catalog, deck_ids: Array, config: Dictionary = {}) -> void:
 	bonus_souls = 0
 	_setup_shuffle(int(config.get("shuffle_seed", 0)), encounter_id)
 	outcome = ""
-	current_phase = PHASE_PRECOMBAT if bool(config.get("precombat_enabled", false)) else PHASE_MAIN
+	current_phase = PHASE_MAIN
 	log_lines = []
 	visual_events = []
 	pending_choices = []
@@ -466,6 +466,8 @@ func get_valid_card_targets(hand_index: int) -> Array[Dictionary]:
 			if not _occupied_slot_targets(PLAYER_ID).is_empty():
 				return [_board_area_target(PLAYER_ID)]
 			return _empty_targets()
+		"gain_ashes":
+			return [_board_area_target(PLAYER_ID)]
 	return _empty_targets()
 
 func can_play_card_on_target(hand_index: int, target: Dictionary) -> bool:
@@ -557,8 +559,8 @@ func is_precombat_phase() -> bool:
 	return current_phase == PHASE_PRECOMBAT and outcome == ""
 
 func toggle_precombat_discard(hand_index: int) -> Dictionary:
-	if not is_precombat_phase():
-		return _fail("Descarte de preparo indisponivel.")
+	if not _can_mark_hand_discard():
+		return _fail("Descarte de fim de combate indisponivel.")
 	if hand_index < 0 or hand_index >= hand.size():
 		return _fail("Indice de carta invalido.")
 	if precombat_discard_indices.has(hand_index):
@@ -569,8 +571,11 @@ func toggle_precombat_discard(hand_index: int) -> Dictionary:
 	return {"ok": true, "message": "Carta marcada para descarte."}
 
 func confirm_precombat_discard() -> Dictionary:
-	if not is_precombat_phase():
-		return _fail("Preparo indisponivel.")
+	if not _can_mark_hand_discard():
+		return _fail("Descarte de fim de combate indisponivel.")
+	return _discard_marked_hand_cards()
+
+func _discard_marked_hand_cards() -> Dictionary:
 	precombat_discard_indices.sort()
 	precombat_discard_indices.reverse()
 	var discarded_count: int = 0
@@ -582,12 +587,12 @@ func confirm_precombat_discard() -> Dictionary:
 		discarded_count += 1
 	precombat_discard_indices = []
 	_draw_to_hand_size()
-	current_phase = PHASE_MAIN
 	if discarded_count > 0:
-		_log("Preparo descartou %d carta(s) e recomprou ate o limite da mao." % discarded_count)
-	else:
-		_log("Preparo concluido sem descarte.")
-	return {"ok": true, "message": "Preparo concluido."}
+		_log("Fim de combate descartou %d carta(s) marcada(s) e recomprou ate o limite da mao." % discarded_count)
+	return {"ok": true, "message": "Descarte de fim de combate concluido."}
+
+func _can_mark_hand_discard() -> bool:
+	return current_phase == PHASE_MAIN and outcome == "" and pending_choices.is_empty()
 
 func get_pending_choice() -> Dictionary:
 	return pending_choices[0].duplicate(true) if not pending_choices.is_empty() else {}
@@ -797,8 +802,6 @@ func end_player_turn() -> Dictionary:
 func resolve_combat_cycle() -> Dictionary:
 	if outcome != "":
 		return _fail("A batalha ja terminou.")
-	if is_precombat_phase():
-		return _fail("Finalize o preparo antes do combate.")
 	if not pending_choices.is_empty():
 		return _fail("Resolva as escolhas pendentes antes do combate.")
 	visual_events = []
@@ -810,6 +813,7 @@ func resolve_combat_cycle() -> Dictionary:
 		_resolve_end_of_combat_keyword_triggers()
 		_resolve_end_of_combat_field_effects()
 		_check_outcome()
+		_discard_marked_hand_cards()
 	if outcome == "" and not pending_choices.is_empty():
 		current_phase = PHASE_PENDING_COMBAT_CHOICE
 		return {"ok": true, "message": "Combate resolvido; escolha pendente."}
@@ -1172,7 +1176,16 @@ func _spend_card(hand_index: int, card, play_cost: int = -1) -> void:
 		first_spell_discount_used = true
 	var card_id: String = hand[hand_index]
 	hand.remove_at(hand_index)
+	_shift_marked_discards_after_hand_removed(hand_index)
 	discard.append(card_id)
+
+func _shift_marked_discards_after_hand_removed(hand_index: int) -> void:
+	var updated: Array[int] = []
+	for marked_index: int in precombat_discard_indices:
+		if marked_index == hand_index:
+			continue
+		updated.append(marked_index - 1 if marked_index > hand_index else marked_index)
+	precombat_discard_indices = updated
 
 func _draw_to_hand_size() -> void:
 	while hand.size() < max_hand_size:

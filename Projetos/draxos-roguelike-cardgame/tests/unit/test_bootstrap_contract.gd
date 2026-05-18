@@ -937,7 +937,7 @@ func test_battle_engine_draws_to_dynamic_hand_limit() -> void:
 	engine.play_card_from_hand(0, {"owner": BattleEngine.ENEMY_ID, "slot": 0})
 	assert_eq(engine.hand.size(), 4)
 
-func test_precombat_discard_marks_confirms_and_redraws_hand() -> void:
+func test_combat_discard_marks_during_main_phase_and_redraws_after_combat() -> void:
 	var engine: BattleEngine = BattleEngine.new()
 	engine.start_battle(ContentLibrary.get_catalog(), [
 		"invocador_promover",
@@ -955,18 +955,17 @@ func test_precombat_discard_marks_confirms_and_redraws_hand() -> void:
 		"shuffle_deck": false,
 		"precombat_enabled": true
 	})
-	assert_true(engine.is_precombat_phase())
+	assert_false(engine.is_precombat_phase())
+	assert_eq(engine.current_phase, BattleEngine.PHASE_MAIN)
 	assert_eq(engine.hand.count("invocador_promover"), 3)
 	for hand_index: int in range(3):
 		assert_true(bool(engine.toggle_precombat_discard(hand_index).get("ok", false)))
 	assert_eq(Array(engine.get_state().get("precombat_discard_indices", [])).size(), 3)
-	var confirm_result: Dictionary = engine.confirm_precombat_discard()
-	assert_true(bool(confirm_result.get("ok", false)), str(confirm_result.get("message", "")))
-	assert_false(engine.is_precombat_phase())
+	var combat_result: Dictionary = engine.resolve_combat_cycle()
+	assert_true(bool(combat_result.get("ok", false)), str(combat_result.get("message", "")))
 	assert_eq(engine.hand.size(), 3)
 	assert_eq(engine.hand.count("invocador_soldado"), 3)
 	assert_eq(engine.discard.count("invocador_promover"), 3)
-	assert_false(bool(engine.toggle_precombat_discard(0).get("ok", true)))
 
 func test_ability_power_updates_spell_values_and_text() -> void:
 	var engine: BattleEngine = BattleEngine.new()
@@ -1169,7 +1168,6 @@ func test_battle_scene_exposes_enemy_board_area_drop_zone_for_tempest() -> void:
 	var area_target = battle.find_child("BattleEnemyBoardAreaTarget", true, false)
 	var board_margin = battle.find_child("BattleBoardMargin", true, false)
 	var enemy_slot = battle.find_child("EnemySlot0", true, false)
-	battle.engine.confirm_precombat_discard()
 	battle._refresh()
 	assert_not_null(area_target)
 	assert_not_null(board_margin)
@@ -1180,7 +1178,8 @@ func test_battle_scene_exposes_enemy_board_area_drop_zone_for_tempest() -> void:
 	assert_gt(area_target.get_global_rect().size.x, enemy_slot.get_global_rect().size.x * 2.0)
 	assert_true(area_target.get_global_rect().intersects(enemy_slot.get_global_rect()))
 	var tempest_payload: Dictionary = {"kind": "battle_card", "card_id": "arcano_tempestade", "hand_index": 0}
-	assert_false(enemy_slot._can_drop_data(Vector2.ZERO, tempest_payload))
+	assert_true(enemy_slot._can_drop_data(Vector2.ZERO, tempest_payload))
+	assert_eq(str(battle._slot_or_area_drop_target(tempest_payload, BattleEngine.ENEMY_ID, 0).get("area", "")), "board")
 	assert_true(area_target._can_drop_data(Vector2.ZERO, tempest_payload))
 	var before_mana: int = battle.engine.mana
 	battle._on_area_target_dropped(tempest_payload, {"owner": BattleEngine.ENEMY_ID, "area": "board"})
@@ -1247,7 +1246,6 @@ func test_battle_scene_sacrifice_modal_cancel_and_confirm() -> void:
 	var battle = await _instantiate_scene("res://modes/battle/battle.tscn")
 	var manual_hand: Array[String] = ["invocador_soldado", "invocador_batedor"]
 	var empty_cards: Array[String] = []
-	battle.engine.confirm_precombat_discard()
 	battle.engine.hand = manual_hand
 	battle.engine.deck = empty_cards.duplicate()
 	battle.engine.discard = empty_cards.duplicate()
@@ -2094,10 +2092,24 @@ func test_battle_scene_uses_resolve_combat_button() -> void:
 	var battle = await _instantiate_scene("res://modes/battle/battle.tscn")
 	var button: Button = battle.find_child("BattleEndTurnFloatingButton", true, false)
 	assert_not_null(button)
-	assert_string_contains(button.text, "Iniciar")
+	assert_string_contains(button.text, "Resolver")
 	button.pressed.emit()
 	await get_tree().process_frame
 	assert_string_contains(button.text, "Resolver")
+	battle.queue_free()
+	await get_tree().process_frame
+
+func test_battle_scene_shows_discard_hint_badge_near_hand() -> void:
+	_start_class_run("arcano")
+	RunSession.select_node("n04_pouso_elemental")
+	var battle = await _instantiate_scene("res://modes/battle/battle.tscn")
+	var badge: PanelContainer = battle.find_child("BattleDiscardHintBadge", true, false)
+	var hand: HBoxContainer = battle.find_child("BattleHand", true, false)
+	assert_not_null(badge)
+	assert_not_null(hand)
+	assert_true(badge.visible)
+	assert_string_contains(str(badge.tooltip_text), "cartas selecionadas")
+	assert_true(badge.get_global_rect().intersects(hand.get_parent().get_global_rect()))
 	battle.queue_free()
 	await get_tree().process_frame
 

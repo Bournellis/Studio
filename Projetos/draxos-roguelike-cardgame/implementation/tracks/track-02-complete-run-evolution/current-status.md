@@ -4,7 +4,7 @@
 - Status: `T02-P09_COMPLETE`
 - Scope: `First complete 29-map version of the Draxos roguelike cardgame`
 - Baseline Dependency: `Track 01 - Playable Run Loop`
-- Validation Baseline: `T02-P09 validation green: 93/93 GUT tests, 1119 asserts, full-route pacing smoke green`
+- Validation Baseline: `T02-P09 validation green after discard-flow correction: 94/94 GUT tests, 1126 asserts, full-route pacing smoke green`
 
 ## Purpose
 
@@ -82,6 +82,7 @@ Next implementation prompt: none. Track 02 is ready for user playtest.
 - Screenshot workflow captures RunMap and representative Battle surfaces for the complete-route state.
 - T02-P09 added full-route pacing telemetry to validation, with map count, estimated turns, HP loss, Souls, deck size, relic count, shop usage, and deaths.
 - Reward screen, RunMap, Souls shop/relic state, keyword preview, enemy intent, and dense Battle layouts received readability polish.
+- Discard marking now happens in the main creature-play phase with right-click card selection, a visible hand hint, and marked-card discard/redraw on combat resolution instead of a separate pre-combat phase.
 - 5/5, 6/6, and 7/7 battle layouts now have regression coverage.
 - First tuning pass keeps the approved reward schedule and shop costs unchanged, but makes Track 02 upgrade rewards level-only instead of adding extra rarity copies; the full-route smoke now ends at `38` cards.
 - Screenshot workflow now captures RunMap, reward screen, shop/relic, keyword tooltip, enemy intent, and late-board Battle surfaces at `1280x720` and `960x540`.

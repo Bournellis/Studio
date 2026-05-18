@@ -7,7 +7,7 @@
 ## Validation Summary
 
 - Godot validation command: green.
-- GUT: `93/93` tests passing, `1119` asserts.
+- GUT: `94/94` tests passing, `1126` asserts.
 - Full-route pacing smoke: `29/29` maps completed.
 - Estimated route turns: `217`.
 - Estimated HP loss across route: `116`.

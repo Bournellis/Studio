@@ -19,6 +19,7 @@ var player_mana_value: Label
 var class_resource_chip: PanelContainer
 var class_resource_label: Label
 var class_resource_value: Label
+var discard_hint_badge: PanelContainer
 var enemy_hp_value: Label
 var enemy_mana_value: Label
 var hero_targets_box: HBoxContainer
@@ -246,6 +247,9 @@ func _build_ui() -> void:
 	hand_box.alignment = BoxContainer.ALIGNMENT_CENTER
 	hand_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	hand_row.add_child(hand_box)
+
+	discard_hint_badge = _build_discard_hint_badge()
+	hand_row.add_child(discard_hint_badge)
 
 	_build_floating_end_turn_button()
 	enemy_commander_hud = _build_enemy_commander_hud()
@@ -493,6 +497,24 @@ func _build_class_resource_chip() -> PanelContainer:
 	box.add_child(class_resource_value)
 	return panel
 
+func _build_discard_hint_badge() -> PanelContainer:
+	var panel: PanelContainer = PanelContainer.new()
+	panel.name = "BattleDiscardHintBadge"
+	panel.tooltip_text = "cartas selecionadas serao descartadas no final do combate"
+	panel.custom_minimum_size = Vector2(38 if _is_compact_viewport() else 44, 46 if _is_compact_viewport() else 54)
+	panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	panel.add_theme_stylebox_override("panel", _panel_style(Color(0.16, 0.09, 0.025, 0.94), Color(1.0, 0.72, 0.16, 1.0)))
+
+	var label: Label = Label.new()
+	label.name = "BattleDiscardHintIcon"
+	label.text = "!"
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 28 if _is_compact_viewport() else 34)
+	label.add_theme_color_override("font_color", Color(1.0, 0.88, 0.26))
+	panel.add_child(label)
+	return panel
+
 func _build_floating_end_turn_button() -> void:
 	end_turn_button = Button.new()
 	end_turn_button.name = "BattleEndTurnFloatingButton"
@@ -508,12 +530,6 @@ func _build_floating_end_turn_button() -> void:
 	end_turn_button.offset_right = -10.0 if _is_compact_viewport() else -14.0
 	end_turn_button.offset_bottom = 30.0 if _is_compact_viewport() else 35.0
 	end_turn_button.pressed.connect(func() -> void:
-		if engine.is_precombat_phase():
-			engine.confirm_precombat_discard()
-			selected_hand_index = -1
-			_hide_preview()
-			_refresh()
-			return
 		var pre_combat_state: Dictionary = engine.get_state()
 		engine.resolve_combat_cycle()
 		selected_hand_index = -1
@@ -883,14 +899,9 @@ func _refresh() -> void:
 	if history_log_label != null:
 		history_log_label.text = "\n".join(log_entries)
 	if end_turn_button != null:
-		if engine.is_precombat_phase():
-			end_turn_button.text = "Iniciar\nCombate"
-			end_turn_button.tooltip_text = "Confirma descartes marcados com botao direito e compra ate o limite da mao"
-			end_turn_button.disabled = engine.outcome != "" or _combat_fx_playing() or _sacrifice_confirmation_visible()
-		else:
-			end_turn_button.text = "Resolver\nCombate"
-			end_turn_button.tooltip_text = "Resolver combate e manutencao da mesa"
-			end_turn_button.disabled = engine.outcome != "" or engine.has_pending_choice() or _combat_fx_playing() or _sacrifice_confirmation_visible()
+		end_turn_button.text = "Resolver\nCombate"
+		end_turn_button.tooltip_text = "Resolver combate e manutencao da mesa"
+		end_turn_button.disabled = engine.outcome != "" or engine.has_pending_choice() or _combat_fx_playing() or _sacrifice_confirmation_visible()
 
 func _display_state() -> Dictionary:
 	if not combat_fx_state.is_empty():
@@ -1122,25 +1133,11 @@ func _rebuild_hand(hand: Array) -> void:
 		token.mouse_exited.connect(_hide_preview)
 		token.gui_input.connect(func(event: InputEvent) -> void:
 			if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-				if engine.is_precombat_phase():
-					selected_hand_index = index
-					_show_preview_now(_card_preview_data(card_id, {}))
-					_update_hand_selection_visuals()
-					return
-				if engine.can_play_card_without_target(index):
-					engine.play_card_from_hand(index)
-					selected_hand_index = -1
-					_hide_preview()
-					_after_battle_action()
-					return
-				selected_hand_index = index
-				_show_preview_now(_card_preview_data(card_id, {}))
-				_update_hand_selection_visuals()
+				return
 			if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
-				if engine.is_precombat_phase():
-					engine.toggle_precombat_discard(index)
-					selected_hand_index = -1
-					_refresh()
+				engine.toggle_precombat_discard(index)
+				selected_hand_index = -1
+				_refresh()
 		)
 		hand_box.add_child(token)
 

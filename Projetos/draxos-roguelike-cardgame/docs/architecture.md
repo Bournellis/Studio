@@ -92,7 +92,7 @@ Card battle rules and encounter objectives.
 Responsibilities:
 
 - front-lane combat;
-- pre-combat discard/rebuy phase before the first player action;
+- right-click discard marking during the main creature-play phase, with marked cards discarded/redrawn after combat resolution;
 - `iniciativa`, `regeneracao`, `carnica`, keyword removal, adjacent damage, temporary mana, temporary spell power, and temporary all-ally buffs;
 - `suicida` death hooks;
 - class passive/active gating;
