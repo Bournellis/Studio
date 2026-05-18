@@ -11,7 +11,11 @@ const VIEWPORTS: Array[Dictionary] = [
 const SURFACES: Array[Dictionary] = [
 	{"id": "ship_hub", "scene": "res://modes/ship_hub/ship_hub.tscn", "setup": "ship"},
 	{"id": "run_map", "scene": "res://modes/run_map/run_map.tscn", "setup": "map"},
-	{"id": "battle", "scene": "res://modes/battle/battle.tscn", "setup": "battle"}
+	{"id": "souls", "scene": "res://modes/souls/souls.tscn", "setup": "souls"},
+	{"id": "battle", "scene": "res://modes/battle/battle.tscn", "setup": "battle"},
+	{"id": "battle_card_tooltip", "scene": "res://modes/battle/battle.tscn", "setup": "battle", "preview": "card"},
+	{"id": "reward_tooltip", "scene": "res://modes/battle/battle.tscn", "setup": "battle", "preview": "reward"},
+	{"id": "souls_shop_tooltip", "scene": "res://modes/souls/souls.tscn", "setup": "souls", "preview": "shop"}
 ]
 
 func _initialize() -> void:
@@ -53,6 +57,8 @@ func _run() -> void:
 				control.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 			await process_frame
 			await process_frame
+			_prepare_preview(instance, str(surface.get("preview", "")))
+			await process_frame
 			var image: Image = root.get_texture().get_image()
 			if image.get_width() != viewport_size.x or image.get_height() != viewport_size.y:
 				image = _crop_image(image, viewport_size)
@@ -87,6 +93,43 @@ func _prepare_session(setup_id: String) -> void:
 		"map":
 			session.start_class_run("arcano", 77)
 			session.record_battle_result("n04_pouso_elemental", "vitoria", 14)
+		"souls":
+			session.start_class_run("arcano", 77)
+			session.soul_total = 120
+			session.current_health = 12
+			session.record_battle_result("n01_tutorial_primeiro_contato", "vitoria", 12)
 		"battle":
 			session.start_class_run("arcano", 77)
-			session.select_node("n04_pouso_elemental")
+			session.select_node("n06_duelo_inicial")
+
+func _prepare_preview(instance: Node, preview_id: String) -> void:
+	match preview_id:
+		"card":
+			if instance.has_method("_show_preview_now") and instance.has_method("_card_preview_data"):
+				instance.call("_show_preview_now", instance.call("_card_preview_data", "arcano_barreira", {}))
+		"reward":
+			if instance.has_method("_show_preview_now"):
+				instance.call("_show_preview_now", {
+					"title": "Recompensa: Barreira Arcana",
+					"subtitle": "Carta / keyword",
+					"body": _content_library().reward_choice_tooltip({
+						"id": "new_card:arcano_barreira",
+						"card_id": "arcano_barreira",
+						"body": "Adiciona 3 copias ao deck."
+					}),
+					"state": "Tooltip de recompensa"
+				})
+		"shop":
+			if instance.has_method("_show_shop_preview"):
+				instance.call("_show_shop_preview", "Bolsa de Cinzas", _content_library().shop_choice_tooltip({
+					"id": "shop_relic:bolsa_de_cinzas",
+					"relic_id": "bolsa_de_cinzas",
+					"cost": 30,
+					"body": "Compra esta reliquia."
+				}))
+
+func _content_library():
+	var library = root.get_node_or_null("ContentLibrary")
+	if library == null:
+		push_error("[screenshots] ContentLibrary autoload is missing.")
+	return library

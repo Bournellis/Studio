@@ -27,6 +27,7 @@ func _rebuild() -> void:
 	size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	clip_contents = true
+	tooltip_text = _slot_tooltip_text()
 	add_theme_stylebox_override("panel", _panel_style())
 
 	var content: Control = Control.new()
@@ -123,6 +124,7 @@ func _build_field_card(parent: Control, data: Dictionary) -> void:
 		var cost_badge: PanelContainer = BattleCardVisualsScript.build_floating_badge("FieldCardCost", str(int(card.cost)), UiTokens.color("energy"), _small_badge_size(), 11 if _is_compact_card() else 13)
 		_anchor_badge(cost_badge, 1.0, 0.0, Vector2(-27, 3) if _is_compact_card() else Vector2(-31, 4), Vector2(-3, 25) if _is_compact_card() else Vector2(-4, 28))
 		parent.add_child(cost_badge)
+		_build_field_keyword_chips(parent, card.keywords)
 
 	var state_label: Label = Label.new()
 	state_label.name = "FieldCardState"
@@ -295,6 +297,9 @@ func _short_slot_label() -> String:
 func _occupant_state_text(data: Dictionary) -> String:
 	if bool(data.get("objective", false)):
 		return "Defender"
+	var statuses: Array[String] = ContentLibrary.status_summary_parts(data)
+	if not statuses.is_empty():
+		return " | ".join(statuses.slice(0, 2))
 	if int(data.get("slow_turns", 0)) > 0:
 		return "Lento"
 	if int(data.get("confusion_turns", 0)) > 0:
@@ -302,3 +307,56 @@ func _occupant_state_text(data: Dictionary) -> String:
 	if bool(data.get("ready", false)):
 		return "Pronta"
 	return "Preparando"
+
+func _build_field_keyword_chips(parent: Control, keywords: PackedStringArray) -> void:
+	if keywords.is_empty():
+		return
+	var row: HBoxContainer = HBoxContainer.new()
+	row.name = "FieldKeywordChips"
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_theme_constant_override("separation", 2)
+	row.anchor_left = 0.0
+	row.anchor_top = 0.0
+	row.anchor_right = 1.0
+	row.anchor_bottom = 0.0
+	row.offset_left = 7.0
+	row.offset_top = 25.0 if _is_compact_card() else 30.0
+	row.offset_right = -7.0
+	row.offset_bottom = 42.0 if _is_compact_card() else 49.0
+	parent.add_child(row)
+	for keyword: String in keywords:
+		var chip: Label = Label.new()
+		chip.text = ContentLibrary.get_keyword_display_name(keyword)
+		chip.tooltip_text = ContentLibrary.keyword_tooltip_text(keyword)
+		chip.clip_text = true
+		chip.max_lines_visible = 1
+		chip.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		chip.add_theme_font_size_override("font_size", 7 if _is_compact_card() else 8)
+		chip.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+		chip.add_theme_stylebox_override("normal", _keyword_chip_style())
+		chip.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.add_child(chip)
+
+func _slot_tooltip_text() -> String:
+	if occupant == null:
+		return "Slot livre. Pode receber cartas ou efeitos validos."
+	var data: Dictionary = Dictionary(occupant)
+	if bool(data.get("objective", false)):
+		return "Objetivo de defesa.\nProteja este slot ate o encontro terminar.\n%s" % ContentLibrary.status_tooltip_text(data)
+	var card_text: String = ContentLibrary.card_tooltip_text(str(data.get("card_id", "")))
+	var status_text: String = ContentLibrary.status_tooltip_text(data)
+	if status_text == "":
+		return card_text
+	return "%s\n\nStatus:\n%s" % [card_text, status_text]
+
+func _keyword_chip_style() -> StyleBoxFlat:
+	var style: StyleBoxFlat = StyleBoxFlat.new()
+	style.bg_color = Color(0.025, 0.028, 0.032, 0.72)
+	style.border_color = Color(0.62, 0.55, 0.42, 0.82)
+	style.set_border_width_all(1)
+	style.set_corner_radius_all(4)
+	style.content_margin_left = 3
+	style.content_margin_top = 1
+	style.content_margin_right = 3
+	style.content_margin_bottom = 1
+	return style

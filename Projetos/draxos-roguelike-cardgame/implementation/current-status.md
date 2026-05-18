@@ -1,13 +1,13 @@
 # Current Status
 
-- Last Updated: `2026-05-15`
+- Last Updated: `2026-05-18`
 - Active Project Name: `draxos-roguelike-cardgame`
 - Active Surface: `linear 29-map complete-run roguelike cardgame production plan`
 - Active Track: `Track 02 - Complete Run Evolution`
-- Active Track Status: `READY_FOR_IMPLEMENTATION_PLANNING`
-- Current Operational Baseline: `Godot 4.6.2 Track 01 slice with Arcano/Invocador/Necromante, 3-save local menu with player names, ShipHub Deck/Mapa/Almas overlays, dedicated Deck and Almas screens, RunMap 13-node route, 3 tutorial maps, 9-card cost-1 starter decks, map 2 fixed cost-2 card reward, fixed mana/hand/passive/active rewards, map 6 hand-limit-only reward, real Lvl 2/Lvl 3 card upgrades on maps 3/4/9/12, rarity-aware reward choices, 2 real new reward cards per class on maps 7/11, save version 4 invalidating v3 and older while keeping stale saves deletable/overwritable, pre-combat discard/rebuy, Souls shop with 3 card-upgrade offers at 20 souls and 1 purchase per combat, translucent choice/reward modals, delayed post-combat automatic choices, compact battle HUD, four-stage combat, sacrifice confirmation, adjacent movement/swaps, allied board-area targets, duel enemy hand/deck/mana AI, Defense hold objective with side-lane pressure, Regeneracao/Carnica/Remover/Suicida mechanics, Necromante Diabrete replacing Punir, Necromante Ritual levels with Raio das Cinzas, Invocador once-per-turn +2/+1 passive, Ordem de Guerra at 0 mana, paid healing at +5 HP for 10 souls, enemy stat tuning around +20% across encounters, expanded VisualAssets map marker layout, and validated 13-map card battle loop`
-- Active Goal: `execute Track 02 prompts to evolve the validated 13-map slice into the first complete 29-map run with rewards, relics, full keyword scope, improved enemy AI, expanded shop, and UI/visual upgrades`
-- Validation: `2026-05-15 P05 playtest tuning validation green; 67/67 GUT tests passing; 536 asserts; 46 optional PNGs reported missing by design; 4 non-fatal ship overlay alpha debts reported`
+- Active Track Status: `T02-P07_COMPLETE`
+- Current Operational Baseline: `Godot 4.6.2 Track 01 playable 13-map slice preserved, now with Track 02 save/snapshot version 5, 29-map reward schedule contract, real initial 18 universal relic definitions, relic ownership in run state, expanded Souls shop, safe relic effects, canonical keyword/status tooltip vocabulary, BattleEngine mechanics for all Track 02 keywords, 8 real reward cards per class with Lvl 2/Lvl 3 variants, Track 02 Terra/Gelo/Ar/Fogo enemy card galleries, deterministic hybrid enemy AI profiles for Terra/Gelo/Ar/Fogo, boss intent phase hooks, visible battle intent panel, visual manifest placeholders for new cards/enemies, and validation for card ids, upgrade ids, reward pools, keyword references, placeholder removal, deterministic AI decisions, and intent output. Playable 29-map route remains pending for later prompts.`
+- Active Goal: `execute Track 02 prompts from T02-P08 onward to evolve the validated 13-map slice into the first complete 29-map run with route encounters, encounter modes, boss phases, field effects, and UI/visual upgrades`
+- Validation: `2026-05-18 T02-P07 validation green; 89/89 GUT tests passing; 928 asserts; 76 optional PNGs reported missing by design; 4 non-fatal ship overlay alpha debts reported. Battle screenshots with the intent panel captured at 1280x720 and 960x540.`
 
 ## Read Next
 
@@ -34,4 +34,4 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 
 ## Next
 
-Start `T02-P01 - Track 02 Data Contract, Save Version, And Validation Scaffolding` from `tracks/track-02-complete-run-evolution/implementation-prompts.md`.
+Continue with `T02-P08 - Route, Encounter Modes, Board Formats, Field Effects, Boss Phases` from `tracks/track-02-complete-run-evolution/implementation-prompts.md`.

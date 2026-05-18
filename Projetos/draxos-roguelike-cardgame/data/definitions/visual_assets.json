@@ -229,11 +229,14 @@
     "arcano_bola_de_fogo": {
       "art_path": "res://assets/cards/art/arcano_bola_de_fogo.png",
       "frame_id": "frame_arcano",
-      "text_template": "Causa {primary_amount} de dano no alvo e {amount} nos slots adjacentes."
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
     },
     "arcano_acelerar": {
       "art_path": "res://assets/cards/art/arcano_acelerar.png",
-      "frame_id": "frame_arcano"
+      "frame_id": "frame_arcano",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
     },
     "invocador_soldado": {
       "art_path": "res://assets/cards/art/invocador_soldado.png",
@@ -255,11 +258,14 @@
     "invocador_atacar": {
       "art_path": "res://assets/cards/art/invocador_atacar.png",
       "frame_id": "frame_invocador",
-      "text_template": "Todas as criaturas aliadas recebem +{effect_attack}/+{effect_health} ate o final do turno."
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
     },
     "invocador_golem": {
       "art_path": "res://assets/cards/art/invocador_golem.png",
-      "frame_id": "frame_invocador"
+      "frame_id": "frame_invocador",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
     },
     "necro_esqueleto": {
       "art_path": "res://assets/cards/art/necro_esqueleto.png",
@@ -282,12 +288,15 @@
     },
     "necro_carniceiro": {
       "art_path": "res://assets/cards/art/necro_carniceiro.png",
-      "frame_id": "frame_necromante"
+      "frame_id": "frame_necromante",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
     },
     "necro_diabrete": {
       "art_path": "res://assets/cards/art/necro_diabrete.png",
       "frame_id": "frame_necromante",
-      "text_template": "Suicida {amount}: ao morrer, causa {amount} de dano a um inimigo aleatorio."
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
     },
     "elemental_agil": {
       "art_path": "res://assets/cards/art/elemental_agil.png",
@@ -345,99 +354,297 @@
       "art_path": "res://assets/cards/art/elemental_tita.png",
       "frame_id": "frame_elemental"
     },
-    "arcano_recompensa_1": {
-      "art_path": "res://assets/cards/art/arcano_recompensa_1.png",
-      "frame_id": "frame_arcano",
-      "text_template": "Carta de recompensa placeholder. Design final a definir."
-    },
-    "arcano_recompensa_2": {
-      "art_path": "res://assets/cards/art/arcano_recompensa_2.png",
-      "frame_id": "frame_arcano",
-      "text_template": "Carta de recompensa placeholder. Design final a definir."
-    },
-    "arcano_recompensa_3": {
-      "art_path": "res://assets/cards/art/arcano_recompensa_3.png",
-      "frame_id": "frame_arcano",
-      "text_template": "Carta de recompensa placeholder. Design final a definir."
-    },
-    "arcano_recompensa_4": {
-      "art_path": "res://assets/cards/art/arcano_recompensa_4.png",
-      "frame_id": "frame_arcano",
-      "text_template": "Carta de recompensa placeholder. Design final a definir."
-    },
-    "arcano_recompensa_5": {
-      "art_path": "res://assets/cards/art/arcano_recompensa_5.png",
-      "frame_id": "frame_arcano",
-      "text_template": "Carta de recompensa placeholder. Design final a definir."
-    },
-    "arcano_recompensa_6": {
-      "art_path": "res://assets/cards/art/arcano_recompensa_6.png",
-      "frame_id": "frame_arcano",
-      "text_template": "Carta de recompensa placeholder. Design final a definir."
-    },
-    "invocador_recompensa_1": {
-      "art_path": "res://assets/cards/art/invocador_recompensa_1.png",
-      "frame_id": "frame_invocador",
-      "text_template": "Carta de recompensa placeholder. Design final a definir."
-    },
-    "invocador_recompensa_2": {
-      "art_path": "res://assets/cards/art/invocador_recompensa_2.png",
-      "frame_id": "frame_invocador",
-      "text_template": "Carta de recompensa placeholder. Design final a definir."
-    },
-    "invocador_recompensa_3": {
-      "art_path": "res://assets/cards/art/invocador_recompensa_3.png",
-      "frame_id": "frame_invocador",
-      "text_template": "Carta de recompensa placeholder. Design final a definir."
-    },
-    "invocador_recompensa_4": {
-      "art_path": "res://assets/cards/art/invocador_recompensa_4.png",
-      "frame_id": "frame_invocador",
-      "text_template": "Carta de recompensa placeholder. Design final a definir."
-    },
-    "invocador_recompensa_5": {
-      "art_path": "res://assets/cards/art/invocador_recompensa_5.png",
-      "frame_id": "frame_invocador",
-      "text_template": "Carta de recompensa placeholder. Design final a definir."
-    },
-    "invocador_recompensa_6": {
-      "art_path": "res://assets/cards/art/invocador_recompensa_6.png",
-      "frame_id": "frame_invocador",
-      "text_template": "Carta de recompensa placeholder. Design final a definir."
-    },
-    "necro_recompensa_1": {
-      "art_path": "res://assets/cards/art/necro_recompensa_1.png",
-      "frame_id": "frame_necromante",
-      "text_template": "Carta de recompensa placeholder. Design final a definir."
-    },
-    "necro_recompensa_2": {
-      "art_path": "res://assets/cards/art/necro_recompensa_2.png",
-      "frame_id": "frame_necromante",
-      "text_template": "Carta de recompensa placeholder. Design final a definir."
-    },
-    "necro_recompensa_3": {
-      "art_path": "res://assets/cards/art/necro_recompensa_3.png",
-      "frame_id": "frame_necromante",
-      "text_template": "Carta de recompensa placeholder. Design final a definir."
-    },
-    "necro_recompensa_4": {
-      "art_path": "res://assets/cards/art/necro_recompensa_4.png",
-      "frame_id": "frame_necromante",
-      "text_template": "Carta de recompensa placeholder. Design final a definir."
-    },
-    "necro_recompensa_5": {
-      "art_path": "res://assets/cards/art/necro_recompensa_5.png",
-      "frame_id": "frame_necromante",
-      "text_template": "Carta de recompensa placeholder. Design final a definir."
-    },
-    "necro_recompensa_6": {
-      "art_path": "res://assets/cards/art/necro_recompensa_6.png",
-      "frame_id": "frame_necromante",
-      "text_template": "Carta de recompensa placeholder. Design final a definir."
-    },
     "elemental_assaltante_veloz": {
       "art_path": "res://assets/cards/art/elemental_assaltante_veloz.png",
       "frame_id": "frame_elemental"
+    },
+    "arcano_vortice": {
+      "art_path": "res://assets/cards/art/arcano_vortice.png",
+      "frame_id": "frame_arcano",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "arcano_sentinela_arcana": {
+      "art_path": "res://assets/cards/art/arcano_sentinela_arcana.png",
+      "frame_id": "frame_arcano",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "arcano_amplificador": {
+      "art_path": "res://assets/cards/art/arcano_amplificador.png",
+      "frame_id": "frame_arcano",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "arcano_canalizar": {
+      "art_path": "res://assets/cards/art/arcano_canalizar.png",
+      "frame_id": "frame_arcano",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "arcano_espelho_arcano": {
+      "art_path": "res://assets/cards/art/arcano_espelho_arcano.png",
+      "frame_id": "frame_arcano",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "arcano_descarga": {
+      "art_path": "res://assets/cards/art/arcano_descarga.png",
+      "frame_id": "frame_arcano",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "invocador_capitao_de_campo": {
+      "art_path": "res://assets/cards/art/invocador_capitao_de_campo.png",
+      "frame_id": "frame_invocador",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "invocador_parede_de_escudos": {
+      "art_path": "res://assets/cards/art/invocador_parede_de_escudos.png",
+      "frame_id": "frame_invocador",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "invocador_cavaleiro_arcano": {
+      "art_path": "res://assets/cards/art/invocador_cavaleiro_arcano.png",
+      "frame_id": "frame_invocador",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "invocador_berserker": {
+      "art_path": "res://assets/cards/art/invocador_berserker.png",
+      "frame_id": "frame_invocador",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "invocador_arauto": {
+      "art_path": "res://assets/cards/art/invocador_arauto.png",
+      "frame_id": "frame_invocador",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "invocador_tita_geminal": {
+      "art_path": "res://assets/cards/art/invocador_tita_geminal.png",
+      "frame_id": "frame_invocador",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "necro_revenant": {
+      "art_path": "res://assets/cards/art/necro_revenant.png",
+      "frame_id": "frame_necromante",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "necro_flagelo": {
+      "art_path": "res://assets/cards/art/necro_flagelo.png",
+      "frame_id": "frame_necromante",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "necro_arauto_das_sombras": {
+      "art_path": "res://assets/cards/art/necro_arauto_das_sombras.png",
+      "frame_id": "frame_necromante",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "necro_colheita_das_almas": {
+      "art_path": "res://assets/cards/art/necro_colheita_das_almas.png",
+      "frame_id": "frame_necromante",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "necro_lich": {
+      "art_path": "res://assets/cards/art/necro_lich.png",
+      "frame_id": "frame_necromante",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "necro_praga": {
+      "art_path": "res://assets/cards/art/necro_praga.png",
+      "frame_id": "frame_necromante",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_terra_elemental_areia": {
+      "art_path": "res://assets/cards/art/enemy_terra_elemental_areia.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_terra_elemental_pedra": {
+      "art_path": "res://assets/cards/art/enemy_terra_elemental_pedra.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_terra_elemental_agil": {
+      "art_path": "res://assets/cards/art/enemy_terra_elemental_agil.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_terra_elemental_bruto": {
+      "art_path": "res://assets/cards/art/enemy_terra_elemental_bruto.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_terra_golem_terra": {
+      "art_path": "res://assets/cards/art/enemy_terra_golem_terra.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_terra_guerreiro_terra": {
+      "art_path": "res://assets/cards/art/enemy_terra_guerreiro_terra.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_terra_verme_terra": {
+      "art_path": "res://assets/cards/art/enemy_terra_verme_terra.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_terra_elemental_tita": {
+      "art_path": "res://assets/cards/art/enemy_terra_elemental_tita.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_terra_rocha_viva": {
+      "art_path": "res://assets/cards/art/enemy_terra_rocha_viva.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_terra_elemental_granito": {
+      "art_path": "res://assets/cards/art/enemy_terra_elemental_granito.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_gelo_cristal_de_gelo": {
+      "art_path": "res://assets/cards/art/enemy_gelo_cristal_de_gelo.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_gelo_elemental_de_gelo": {
+      "art_path": "res://assets/cards/art/enemy_gelo_elemental_de_gelo.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_gelo_golem_de_gelo": {
+      "art_path": "res://assets/cards/art/enemy_gelo_golem_de_gelo.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_gelo_djinn_do_frio": {
+      "art_path": "res://assets/cards/art/enemy_gelo_djinn_do_frio.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_gelo_espirito_da_geada": {
+      "art_path": "res://assets/cards/art/enemy_gelo_espirito_da_geada.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_gelo_fenix_de_gelo": {
+      "art_path": "res://assets/cards/art/enemy_gelo_fenix_de_gelo.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_gelo_coluna_de_gelo": {
+      "art_path": "res://assets/cards/art/enemy_gelo_coluna_de_gelo.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_ar_elemental_de_vento": {
+      "art_path": "res://assets/cards/art/enemy_ar_elemental_de_vento.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_ar_silfo": {
+      "art_path": "res://assets/cards/art/enemy_ar_silfo.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_ar_brisa_mortal": {
+      "art_path": "res://assets/cards/art/enemy_ar_brisa_mortal.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_ar_tempestade_vivente": {
+      "art_path": "res://assets/cards/art/enemy_ar_tempestade_vivente.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_ar_corvo_da_tormenta": {
+      "art_path": "res://assets/cards/art/enemy_ar_corvo_da_tormenta.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_ar_elemental_do_raio": {
+      "art_path": "res://assets/cards/art/enemy_ar_elemental_do_raio.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_ar_rajada": {
+      "art_path": "res://assets/cards/art/enemy_ar_rajada.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_fogo_elemental_de_chama": {
+      "art_path": "res://assets/cards/art/enemy_fogo_elemental_de_chama.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_fogo_salamandra": {
+      "art_path": "res://assets/cards/art/enemy_fogo_salamandra.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_fogo_golem_de_lava": {
+      "art_path": "res://assets/cards/art/enemy_fogo_golem_de_lava.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_fogo_demonio_de_chama": {
+      "art_path": "res://assets/cards/art/enemy_fogo_demonio_de_chama.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_fogo_fragmento_de_chama": {
+      "art_path": "res://assets/cards/art/enemy_fogo_fragmento_de_chama.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
+    },
+    "enemy_fogo_fenix": {
+      "art_path": "res://assets/cards/art/enemy_fogo_fenix.png",
+      "frame_id": "frame_elemental",
+      "asset_status": "pending_final_art",
+      "asset_debt": "Track 02 placeholder manifest entry; create final card illustration later."
     }
   },
   "run_map_nodes": {

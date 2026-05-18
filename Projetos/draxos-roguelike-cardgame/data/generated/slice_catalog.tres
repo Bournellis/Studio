@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://data/resources/hero_definition_resource.gd" id="2_aaqvb"]
 [ext_resource type="Script" path="res://data/resources/slice_catalog_resource.gd" id="3_xh3p2"]
 
-[sub_resource type="Resource" id="Resource_ayi6x"]
+[sub_resource type="Resource" id="Resource_tqsc8"]
 script = ExtResource("1_tqsc8")
 id = "arcano_choque"
 display_name = "Choque"
@@ -17,7 +17,7 @@ effect = {
 "amount": 2.0
 }
 
-[sub_resource type="Resource" id="Resource_b0i2p"]
+[sub_resource type="Resource" id="Resource_aaqvb"]
 script = ExtResource("1_tqsc8")
 id = "arcano_choque_lvl2"
 display_name = "Choque Lvl 2"
@@ -30,7 +30,7 @@ effect = {
 "amount": 3.0
 }
 
-[sub_resource type="Resource" id="Resource_hvson"]
+[sub_resource type="Resource" id="Resource_xh3p2"]
 script = ExtResource("1_tqsc8")
 id = "arcano_choque_lvl3"
 display_name = "Choque Lvl 3"
@@ -42,7 +42,7 @@ effect = {
 "amount": 3.0
 }
 
-[sub_resource type="Resource" id="Resource_vopr6"]
+[sub_resource type="Resource" id="Resource_ayi6x"]
 script = ExtResource("1_tqsc8")
 id = "arcano_fagulha"
 display_name = "Fagulha Arcana"
@@ -57,7 +57,7 @@ effect = {
 "aura": "ability_power"
 }
 
-[sub_resource type="Resource" id="Resource_2f5oc"]
+[sub_resource type="Resource" id="Resource_b0i2p"]
 script = ExtResource("1_tqsc8")
 id = "arcano_fagulha_lvl2"
 display_name = "Fagulha Arcana Lvl 2"
@@ -72,7 +72,7 @@ effect = {
 "aura": "ability_power"
 }
 
-[sub_resource type="Resource" id="Resource_q1xx6"]
+[sub_resource type="Resource" id="Resource_hvson"]
 script = ExtResource("1_tqsc8")
 id = "arcano_fagulha_lvl3"
 display_name = "Fagulha Arcana Lvl 3"
@@ -87,7 +87,7 @@ effect = {
 "aura": "ability_power"
 }
 
-[sub_resource type="Resource" id="Resource_75iml"]
+[sub_resource type="Resource" id="Resource_vopr6"]
 script = ExtResource("1_tqsc8")
 id = "arcano_barreira"
 display_name = "Barreira Arcana"
@@ -101,7 +101,7 @@ effect = {
 "aura": "ability_power"
 }
 
-[sub_resource type="Resource" id="Resource_xg15d"]
+[sub_resource type="Resource" id="Resource_2f5oc"]
 script = ExtResource("1_tqsc8")
 id = "arcano_barreira_lvl2"
 display_name = "Barreira Arcana Lvl 2"
@@ -116,7 +116,7 @@ effect = {
 "aura": "ability_power"
 }
 
-[sub_resource type="Resource" id="Resource_kobr5"]
+[sub_resource type="Resource" id="Resource_q1xx6"]
 script = ExtResource("1_tqsc8")
 id = "arcano_barreira_lvl3"
 display_name = "Barreira Arcana Lvl 3"
@@ -131,7 +131,7 @@ effect = {
 "aura": "ability_power"
 }
 
-[sub_resource type="Resource" id="Resource_js17r"]
+[sub_resource type="Resource" id="Resource_75iml"]
 script = ExtResource("1_tqsc8")
 id = "arcano_tempestade"
 display_name = "Tempestade Arcana"
@@ -144,7 +144,7 @@ effect = {
 "amount": 4.0
 }
 
-[sub_resource type="Resource" id="Resource_5405m"]
+[sub_resource type="Resource" id="Resource_xg15d"]
 script = ExtResource("1_tqsc8")
 id = "arcano_tempestade_lvl2"
 display_name = "Tempestade Arcana Lvl 2"
@@ -157,7 +157,7 @@ effect = {
 "amount": 6.0
 }
 
-[sub_resource type="Resource" id="Resource_p3n0t"]
+[sub_resource type="Resource" id="Resource_kobr5"]
 script = ExtResource("1_tqsc8")
 id = "arcano_tempestade_lvl3"
 display_name = "Tempestade Arcana Lvl 3"
@@ -170,7 +170,7 @@ effect = {
 "amount": 6.0
 }
 
-[sub_resource type="Resource" id="Resource_pkhd5"]
+[sub_resource type="Resource" id="Resource_js17r"]
 script = ExtResource("1_tqsc8")
 id = "arcano_bola_de_fogo"
 display_name = "Bola de Fogo"
@@ -184,7 +184,7 @@ effect = {
 "primary_bonus": 0.0
 }
 
-[sub_resource type="Resource" id="Resource_haoox"]
+[sub_resource type="Resource" id="Resource_5405m"]
 script = ExtResource("1_tqsc8")
 id = "arcano_bola_de_fogo_lvl2"
 display_name = "Bola de Fogo Lvl 2"
@@ -198,7 +198,7 @@ effect = {
 "primary_bonus": 0.0
 }
 
-[sub_resource type="Resource" id="Resource_dqqtb"]
+[sub_resource type="Resource" id="Resource_p3n0t"]
 script = ExtResource("1_tqsc8")
 id = "arcano_bola_de_fogo_lvl3"
 display_name = "Bola de Fogo Lvl 3"
@@ -212,7 +212,7 @@ effect = {
 "primary_bonus": 4.0
 }
 
-[sub_resource type="Resource" id="Resource_0kq34"]
+[sub_resource type="Resource" id="Resource_pkhd5"]
 script = ExtResource("1_tqsc8")
 id = "arcano_acelerar"
 display_name = "Acelerar"
@@ -225,7 +225,7 @@ effect = {
 "temporary_ability_power": 1.0
 }
 
-[sub_resource type="Resource" id="Resource_edoxb"]
+[sub_resource type="Resource" id="Resource_haoox"]
 script = ExtResource("1_tqsc8")
 id = "arcano_acelerar_lvl2"
 display_name = "Acelerar Lvl 2"
@@ -238,7 +238,7 @@ effect = {
 "temporary_ability_power": 3.0
 }
 
-[sub_resource type="Resource" id="Resource_q1muo"]
+[sub_resource type="Resource" id="Resource_dqqtb"]
 script = ExtResource("1_tqsc8")
 id = "arcano_acelerar_lvl3"
 display_name = "Acelerar Lvl 3"
@@ -251,7 +251,7 @@ effect = {
 "temporary_ability_power": 3.0
 }
 
-[sub_resource type="Resource" id="Resource_w1flg"]
+[sub_resource type="Resource" id="Resource_0kq34"]
 script = ExtResource("1_tqsc8")
 id = "invocador_soldado"
 display_name = "Soldado Arcano"
@@ -262,7 +262,7 @@ health = 2
 text = "Criatura de linha arcana."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_u525c"]
+[sub_resource type="Resource" id="Resource_edoxb"]
 script = ExtResource("1_tqsc8")
 id = "invocador_soldado_lvl2"
 display_name = "Soldado Arcano Lvl 2"
@@ -273,7 +273,7 @@ health = 4
 text = "Criatura de linha arcana."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_ba32m"]
+[sub_resource type="Resource" id="Resource_q1muo"]
 script = ExtResource("1_tqsc8")
 id = "invocador_soldado_lvl3"
 display_name = "Soldado Arcano Lvl 3"
@@ -287,7 +287,7 @@ effect = {
 "regeneration": 2.0
 }
 
-[sub_resource type="Resource" id="Resource_5njsx"]
+[sub_resource type="Resource" id="Resource_w1flg"]
 script = ExtResource("1_tqsc8")
 id = "invocador_batedor"
 display_name = "Batedor Arcano"
@@ -298,7 +298,7 @@ health = 1
 text = "Iniciativa: causa dano primeiro na lane."
 keywords = PackedStringArray("iniciativa")
 
-[sub_resource type="Resource" id="Resource_igiro"]
+[sub_resource type="Resource" id="Resource_u525c"]
 script = ExtResource("1_tqsc8")
 id = "invocador_batedor_lvl2"
 display_name = "Batedor Arcano Lvl 2"
@@ -309,7 +309,7 @@ health = 2
 text = "Iniciativa: causa dano primeiro na lane."
 keywords = PackedStringArray("iniciativa")
 
-[sub_resource type="Resource" id="Resource_kf03g"]
+[sub_resource type="Resource" id="Resource_ba32m"]
 script = ExtResource("1_tqsc8")
 id = "invocador_batedor_lvl3"
 display_name = "Batedor Arcano Lvl 3"
@@ -320,7 +320,7 @@ health = 2
 text = "Iniciativa: causa dano primeiro na lane."
 keywords = PackedStringArray("iniciativa")
 
-[sub_resource type="Resource" id="Resource_7rtnj"]
+[sub_resource type="Resource" id="Resource_5njsx"]
 script = ExtResource("1_tqsc8")
 id = "invocador_promover"
 display_name = "Promover"
@@ -334,7 +334,7 @@ effect = {
 "health": 1.0
 }
 
-[sub_resource type="Resource" id="Resource_siawb"]
+[sub_resource type="Resource" id="Resource_igiro"]
 script = ExtResource("1_tqsc8")
 id = "invocador_promover_lvl2"
 display_name = "Promover Lvl 2"
@@ -349,7 +349,7 @@ effect = {
 "picks": 2.0
 }
 
-[sub_resource type="Resource" id="Resource_vn8pn"]
+[sub_resource type="Resource" id="Resource_kf03g"]
 script = ExtResource("1_tqsc8")
 id = "invocador_promover_lvl3"
 display_name = "Promover Lvl 3"
@@ -364,7 +364,7 @@ effect = {
 "picks": 3.0
 }
 
-[sub_resource type="Resource" id="Resource_3vxjw"]
+[sub_resource type="Resource" id="Resource_7rtnj"]
 script = ExtResource("1_tqsc8")
 id = "invocador_guardiao"
 display_name = "Guardiao Arcano"
@@ -375,7 +375,7 @@ health = 4
 text = "Defensor: protege lanes vazias."
 keywords = PackedStringArray("defensor")
 
-[sub_resource type="Resource" id="Resource_8vwdf"]
+[sub_resource type="Resource" id="Resource_siawb"]
 script = ExtResource("1_tqsc8")
 id = "invocador_guardiao_lvl2"
 display_name = "Guardiao Arcano Lvl 2"
@@ -386,7 +386,7 @@ health = 6
 text = "Defensor: protege lanes vazias."
 keywords = PackedStringArray("defensor")
 
-[sub_resource type="Resource" id="Resource_12fis"]
+[sub_resource type="Resource" id="Resource_vn8pn"]
 script = ExtResource("1_tqsc8")
 id = "invocador_guardiao_lvl3"
 display_name = "Guardiao Arcano Lvl 3"
@@ -400,7 +400,7 @@ effect = {
 "regeneration": 3.0
 }
 
-[sub_resource type="Resource" id="Resource_wbbs5"]
+[sub_resource type="Resource" id="Resource_3vxjw"]
 script = ExtResource("1_tqsc8")
 id = "invocador_atacar"
 display_name = "Atacar"
@@ -415,7 +415,7 @@ effect = {
 "temporary": true
 }
 
-[sub_resource type="Resource" id="Resource_hx6qf"]
+[sub_resource type="Resource" id="Resource_8vwdf"]
 script = ExtResource("1_tqsc8")
 id = "invocador_atacar_lvl2"
 display_name = "Atacar Lvl 2"
@@ -430,7 +430,7 @@ effect = {
 "temporary": true
 }
 
-[sub_resource type="Resource" id="Resource_46hy0"]
+[sub_resource type="Resource" id="Resource_12fis"]
 script = ExtResource("1_tqsc8")
 id = "invocador_atacar_lvl3"
 display_name = "Atacar Lvl 3"
@@ -445,7 +445,7 @@ effect = {
 "temporary": true
 }
 
-[sub_resource type="Resource" id="Resource_6lf1p"]
+[sub_resource type="Resource" id="Resource_wbbs5"]
 script = ExtResource("1_tqsc8")
 id = "invocador_golem"
 display_name = "Golem"
@@ -456,7 +456,7 @@ health = 5
 text = "Defensor."
 keywords = PackedStringArray("defensor")
 
-[sub_resource type="Resource" id="Resource_rxdp8"]
+[sub_resource type="Resource" id="Resource_hx6qf"]
 script = ExtResource("1_tqsc8")
 id = "invocador_golem_lvl2"
 display_name = "Golem Lvl 2"
@@ -470,7 +470,7 @@ effect = {
 "regeneration": 2.0
 }
 
-[sub_resource type="Resource" id="Resource_f75cl"]
+[sub_resource type="Resource" id="Resource_46hy0"]
 script = ExtResource("1_tqsc8")
 id = "invocador_golem_lvl3"
 display_name = "Golem Lvl 3"
@@ -484,7 +484,7 @@ effect = {
 "regeneration": 4.0
 }
 
-[sub_resource type="Resource" id="Resource_kskod"]
+[sub_resource type="Resource" id="Resource_6lf1p"]
 script = ExtResource("1_tqsc8")
 id = "necro_esqueleto"
 display_name = "Esqueleto"
@@ -495,7 +495,7 @@ health = 1
 text = "Reviver: volta uma vez no mesmo slot."
 keywords = PackedStringArray("reviver")
 
-[sub_resource type="Resource" id="Resource_ytdv0"]
+[sub_resource type="Resource" id="Resource_rxdp8"]
 script = ExtResource("1_tqsc8")
 id = "necro_esqueleto_lvl2"
 display_name = "Esqueleto Lvl 2"
@@ -506,7 +506,7 @@ health = 2
 text = "Reviver: volta uma vez no mesmo slot."
 keywords = PackedStringArray("reviver")
 
-[sub_resource type="Resource" id="Resource_ee0xk"]
+[sub_resource type="Resource" id="Resource_f75cl"]
 script = ExtResource("1_tqsc8")
 id = "necro_esqueleto_lvl3"
 display_name = "Esqueleto Lvl 3"
@@ -517,7 +517,7 @@ health = 4
 text = "Reviver: volta uma vez no mesmo slot."
 keywords = PackedStringArray("reviver")
 
-[sub_resource type="Resource" id="Resource_g44pg"]
+[sub_resource type="Resource" id="Resource_kskod"]
 script = ExtResource("1_tqsc8")
 id = "necro_morto_vivo"
 display_name = "Morto vivo"
@@ -535,7 +535,7 @@ effect = {
 }
 }
 
-[sub_resource type="Resource" id="Resource_6juw6"]
+[sub_resource type="Resource" id="Resource_ytdv0"]
 script = ExtResource("1_tqsc8")
 id = "necro_morto_vivo_lvl2"
 display_name = "Morto vivo Lvl 2"
@@ -553,7 +553,7 @@ effect = {
 }
 }
 
-[sub_resource type="Resource" id="Resource_p0w4t"]
+[sub_resource type="Resource" id="Resource_ee0xk"]
 script = ExtResource("1_tqsc8")
 id = "necro_morto_vivo_lvl3"
 display_name = "Morto vivo Lvl 3"
@@ -571,7 +571,7 @@ effect = {
 }
 }
 
-[sub_resource type="Resource" id="Resource_r6yjh"]
+[sub_resource type="Resource" id="Resource_g44pg"]
 script = ExtResource("1_tqsc8")
 id = "necro_prender"
 display_name = "Prender"
@@ -585,7 +585,7 @@ effect = {
 "debuff": "snare"
 }
 
-[sub_resource type="Resource" id="Resource_o3iu5"]
+[sub_resource type="Resource" id="Resource_6juw6"]
 script = ExtResource("1_tqsc8")
 id = "necro_prender_lvl2"
 display_name = "Prender Lvl 2"
@@ -600,7 +600,7 @@ effect = {
 "weaken_amount": 1.0
 }
 
-[sub_resource type="Resource" id="Resource_u7yyh"]
+[sub_resource type="Resource" id="Resource_p0w4t"]
 script = ExtResource("1_tqsc8")
 id = "necro_prender_lvl3"
 display_name = "Prender Lvl 3"
@@ -616,7 +616,7 @@ effect = {
 "weaken_amount": 1.0
 }
 
-[sub_resource type="Resource" id="Resource_m54cl"]
+[sub_resource type="Resource" id="Resource_r6yjh"]
 script = ExtResource("1_tqsc8")
 id = "necro_zumbi"
 display_name = "Zumbi"
@@ -634,7 +634,7 @@ effect = {
 }
 }
 
-[sub_resource type="Resource" id="Resource_xljuu"]
+[sub_resource type="Resource" id="Resource_o3iu5"]
 script = ExtResource("1_tqsc8")
 id = "necro_zumbi_lvl2"
 display_name = "Zumbi Lvl 2"
@@ -652,7 +652,7 @@ effect = {
 }
 }
 
-[sub_resource type="Resource" id="Resource_xj7j7"]
+[sub_resource type="Resource" id="Resource_u7yyh"]
 script = ExtResource("1_tqsc8")
 id = "necro_zumbi_lvl3"
 display_name = "Zumbi Lvl 3"
@@ -670,7 +670,7 @@ effect = {
 }
 }
 
-[sub_resource type="Resource" id="Resource_u1e06"]
+[sub_resource type="Resource" id="Resource_m54cl"]
 script = ExtResource("1_tqsc8")
 id = "necro_carniceiro"
 display_name = "Carniceiro"
@@ -684,7 +684,7 @@ effect = {
 "carrion": 1.0
 }
 
-[sub_resource type="Resource" id="Resource_m1ldt"]
+[sub_resource type="Resource" id="Resource_xljuu"]
 script = ExtResource("1_tqsc8")
 id = "necro_carniceiro_lvl2"
 display_name = "Carniceiro Lvl 2"
@@ -698,7 +698,7 @@ effect = {
 "carrion": 1.0
 }
 
-[sub_resource type="Resource" id="Resource_orpcd"]
+[sub_resource type="Resource" id="Resource_xj7j7"]
 script = ExtResource("1_tqsc8")
 id = "necro_carniceiro_lvl3"
 display_name = "Carniceiro Lvl 3"
@@ -712,7 +712,7 @@ effect = {
 "carrion": 2.0
 }
 
-[sub_resource type="Resource" id="Resource_r1h11"]
+[sub_resource type="Resource" id="Resource_u1e06"]
 script = ExtResource("1_tqsc8")
 id = "necro_diabrete"
 display_name = "Diabrete"
@@ -729,7 +729,7 @@ effect = {
 }
 }
 
-[sub_resource type="Resource" id="Resource_8hhqx"]
+[sub_resource type="Resource" id="Resource_m1ldt"]
 script = ExtResource("1_tqsc8")
 id = "necro_diabrete_lvl2"
 display_name = "Diabrete Lvl 2"
@@ -746,7 +746,7 @@ effect = {
 }
 }
 
-[sub_resource type="Resource" id="Resource_tdxwi"]
+[sub_resource type="Resource" id="Resource_orpcd"]
 script = ExtResource("1_tqsc8")
 id = "necro_diabrete_lvl3"
 display_name = "Diabrete Lvl 3"
@@ -763,7 +763,7 @@ effect = {
 }
 }
 
-[sub_resource type="Resource" id="Resource_t1it5"]
+[sub_resource type="Resource" id="Resource_r1h11"]
 script = ExtResource("1_tqsc8")
 id = "elemental_agil"
 display_name = "Elemental Agil"
@@ -774,7 +774,7 @@ health = 3
 text = "Ameaca rapida do primeiro encontro."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_1m5m3"]
+[sub_resource type="Resource" id="Resource_8hhqx"]
 script = ExtResource("1_tqsc8")
 id = "elemental_bruto"
 display_name = "Elemental Bruto"
@@ -785,7 +785,7 @@ health = 4
 text = "Maior ameaca de dano inicial."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_k85o3"]
+[sub_resource type="Resource" id="Resource_tdxwi"]
 script = ExtResource("1_tqsc8")
 id = "elemental_solido"
 display_name = "Elemental Solido"
@@ -796,7 +796,7 @@ health = 6
 text = "Criatura resistente de baixo dano."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_ty5ik"]
+[sub_resource type="Resource" id="Resource_t1it5"]
 script = ExtResource("1_tqsc8")
 id = "elemental_menor"
 display_name = "Elemental Menor"
@@ -807,7 +807,7 @@ health = 3
 text = "Onda inicial."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_8i1rs"]
+[sub_resource type="Resource" id="Resource_1m5m3"]
 script = ExtResource("1_tqsc8")
 id = "elemental_medio"
 display_name = "Elemental Medio"
@@ -818,7 +818,7 @@ health = 4
 text = "Pressao intermediaria."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_japkk"]
+[sub_resource type="Resource" id="Resource_k85o3"]
 script = ExtResource("1_tqsc8")
 id = "elemental_pesado_a"
 display_name = "Elemental Pesado A"
@@ -829,7 +829,7 @@ health = 5
 text = "Pressao final de ondas."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_jen30"]
+[sub_resource type="Resource" id="Resource_ty5ik"]
 script = ExtResource("1_tqsc8")
 id = "elemental_pesado_b"
 display_name = "Elemental Pesado B"
@@ -840,7 +840,7 @@ health = 5
 text = "Pressao final de ondas."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_5ojvm"]
+[sub_resource type="Resource" id="Resource_8i1rs"]
 script = ExtResource("1_tqsc8")
 id = "elemental_pesado_c"
 display_name = "Elemental Pesado C"
@@ -851,7 +851,7 @@ health = 5
 text = "Pressao final de ondas."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_b1trl"]
+[sub_resource type="Resource" id="Resource_japkk"]
 script = ExtResource("1_tqsc8")
 id = "elemental_duelista"
 display_name = "Elemental Duelista"
@@ -862,7 +862,7 @@ health = 5
 text = "Mockup de pressao para duelo."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_u333r"]
+[sub_resource type="Resource" id="Resource_jen30"]
 script = ExtResource("1_tqsc8")
 id = "elemental_assaltante"
 display_name = "Elemental Assaltante"
@@ -873,7 +873,7 @@ health = 3
 text = "Mockup ofensivo para lanes."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_ga80n"]
+[sub_resource type="Resource" id="Resource_5ojvm"]
 script = ExtResource("1_tqsc8")
 id = "elemental_assaltante_veloz"
 display_name = "Elemental Assaltante Veloz"
@@ -884,7 +884,7 @@ health = 3
 text = "Iniciativa: causa dano primeiro na lane."
 keywords = PackedStringArray("iniciativa")
 
-[sub_resource type="Resource" id="Resource_dqax3"]
+[sub_resource type="Resource" id="Resource_b1trl"]
 script = ExtResource("1_tqsc8")
 id = "elemental_guardiao"
 display_name = "Elemental Guardiao"
@@ -895,7 +895,7 @@ health = 7
 text = "Mockup defensivo escalado."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_prsww"]
+[sub_resource type="Resource" id="Resource_u333r"]
 script = ExtResource("1_tqsc8")
 id = "elemental_elite_agil"
 display_name = "Elemental Elite Agil"
@@ -906,7 +906,7 @@ health = 4
 text = "Iniciativa: causa dano primeiro na lane."
 keywords = PackedStringArray("iniciativa")
 
-[sub_resource type="Resource" id="Resource_hhqfi"]
+[sub_resource type="Resource" id="Resource_ga80n"]
 script = ExtResource("1_tqsc8")
 id = "elemental_elite_bruto"
 display_name = "Elemental Elite Bruto"
@@ -917,7 +917,7 @@ health = 6
 text = "Mockup elite de alto dano."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_ogvcp"]
+[sub_resource type="Resource" id="Resource_dqax3"]
 script = ExtResource("1_tqsc8")
 id = "elemental_tita"
 display_name = "Elemental Tita"
@@ -928,212 +928,1218 @@ health = 7
 text = "Mockup pesado de fim de run."
 keywords = PackedStringArray()
 
+[sub_resource type="Resource" id="Resource_prsww"]
+script = ExtResource("1_tqsc8")
+id = "arcano_vortice"
+display_name = "Vortice"
+card_type = "magia"
+cost = 2
+text = "Congela 1 criatura inimiga aleatoria. Gera 1 Fluxo."
+keywords = PackedStringArray()
+effect = {
+"action": "freeze_random_enemy",
+"amount": 1.0,
+"count": 1.0,
+"gain_flow": 1.0
+}
+
+[sub_resource type="Resource" id="Resource_hhqfi"]
+script = ExtResource("1_tqsc8")
+id = "arcano_vortice_lvl2"
+display_name = "Vortice Lvl 2"
+card_type = "magia"
+cost = 2
+text = "Congela ate 2 criaturas inimigas aleatorias. Gera 1 Fluxo."
+keywords = PackedStringArray()
+effect = {
+"action": "freeze_random_enemy",
+"amount": 1.0,
+"count": 2.0,
+"gain_flow": 1.0
+}
+
+[sub_resource type="Resource" id="Resource_ogvcp"]
+script = ExtResource("1_tqsc8")
+id = "arcano_vortice_lvl3"
+display_name = "Vortice Lvl 3"
+card_type = "magia"
+cost = 3
+text = "Congela todas as criaturas inimigas em campo."
+keywords = PackedStringArray()
+effect = {
+"action": "freeze_random_enemy",
+"all": true,
+"amount": 1.0
+}
+
 [sub_resource type="Resource" id="Resource_vs84p"]
 script = ExtResource("1_tqsc8")
-id = "arcano_recompensa_1"
-display_name = "Arcano A Definir 1"
+id = "arcano_sentinela_arcana"
+display_name = "Sentinela Arcana"
 card_type = "criatura"
-cost = 1
-attack = 1
-health = 2
-text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
-keywords = PackedStringArray()
+cost = 2
+attack = 2
+health = 3
+text = "Escudo. Enquanto em campo: cada spell jogada neste turno restaura 1 HP nesta criatura."
+keywords = PackedStringArray("escudo")
+effect = {
+"shield_charges": 1.0,
+"spell_heal_self": 1.0
+}
 
 [sub_resource type="Resource" id="Resource_eibmv"]
 script = ExtResource("1_tqsc8")
-id = "arcano_recompensa_2"
-display_name = "Arcano A Definir 2"
+id = "arcano_sentinela_arcana_lvl2"
+display_name = "Sentinela Arcana Lvl 2"
 card_type = "criatura"
-cost = 1
-attack = 2
-health = 2
-text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
-keywords = PackedStringArray()
+cost = 2
+attack = 3
+health = 4
+text = "Escudo. Enquanto em campo: cada spell jogada neste turno restaura 1 HP nesta criatura."
+keywords = PackedStringArray("escudo")
+effect = {
+"shield_charges": 1.0,
+"spell_heal_self": 1.0
+}
 
 [sub_resource type="Resource" id="Resource_3bh5q"]
 script = ExtResource("1_tqsc8")
-id = "arcano_recompensa_3"
-display_name = "Arcano A Definir 3"
+id = "arcano_sentinela_arcana_lvl3"
+display_name = "Sentinela Arcana Lvl 3"
 card_type = "criatura"
 cost = 2
-attack = 2
-health = 3
-text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
-keywords = PackedStringArray()
+attack = 3
+health = 5
+text = "Escudo. Restaura 2 HP por spell; quando o Escudo absorve dano, gera 1 Fluxo."
+keywords = PackedStringArray("escudo")
+effect = {
+"shield_break_flow": 1.0,
+"shield_charges": 1.0,
+"spell_heal_self": 2.0
+}
 
 [sub_resource type="Resource" id="Resource_dcefk"]
 script = ExtResource("1_tqsc8")
-id = "arcano_recompensa_4"
-display_name = "Arcano A Definir 4"
+id = "arcano_amplificador"
+display_name = "Amplificador"
 card_type = "criatura"
-cost = 2
-attack = 3
-health = 3
-text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
-keywords = PackedStringArray()
+cost = 1
+attack = 1
+health = 2
+text = "Ecoar. Enquanto em campo: +2 Poder de habilidade."
+keywords = PackedStringArray("ecoar")
+effect = {
+"amount": 2.0,
+"aura": "ability_power"
+}
 
 [sub_resource type="Resource" id="Resource_dv6wr"]
 script = ExtResource("1_tqsc8")
-id = "arcano_recompensa_5"
-display_name = "Arcano A Definir 5"
+id = "arcano_amplificador_lvl2"
+display_name = "Amplificador Lvl 2"
 card_type = "criatura"
-cost = 3
-attack = 3
-health = 4
-text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
-keywords = PackedStringArray()
+cost = 1
+attack = 2
+health = 3
+text = "Ecoar. Enquanto em campo: +2 Poder de habilidade."
+keywords = PackedStringArray("ecoar")
+effect = {
+"amount": 2.0,
+"aura": "ability_power"
+}
 
 [sub_resource type="Resource" id="Resource_2i8af"]
 script = ExtResource("1_tqsc8")
-id = "arcano_recompensa_6"
-display_name = "Arcano A Definir 6"
+id = "arcano_amplificador_lvl3"
+display_name = "Amplificador Lvl 3"
 card_type = "criatura"
-cost = 3
-attack = 4
+cost = 1
+attack = 2
 health = 4
-text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
-keywords = PackedStringArray()
+text = "Ecoar. Enquanto em campo: +3 Poder de habilidade. Quando Ecoar dispara, gera 1 Fluxo."
+keywords = PackedStringArray("ecoar")
+effect = {
+"amount": 3.0,
+"aura": "ability_power",
+"echo_gain_flow": 1.0
+}
 
 [sub_resource type="Resource" id="Resource_2booa"]
 script = ExtResource("1_tqsc8")
-id = "invocador_recompensa_1"
-display_name = "Invocador A Definir 1"
-card_type = "criatura"
+id = "arcano_canalizar"
+display_name = "Canalizar"
+card_type = "magia"
 cost = 1
-attack = 1
-health = 2
-text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
+text = "Causa dano igual ao Fluxo atual + 2 a uma criatura ou heroi inimigo valido. Gera 1 Fluxo."
 keywords = PackedStringArray()
+effect = {
+"action": "flow_damage",
+"amount": 2.0,
+"gain_flow": 1.0
+}
 
 [sub_resource type="Resource" id="Resource_x14up"]
 script = ExtResource("1_tqsc8")
-id = "invocador_recompensa_2"
-display_name = "Invocador A Definir 2"
-card_type = "criatura"
+id = "arcano_canalizar_lvl2"
+display_name = "Canalizar Lvl 2"
+card_type = "magia"
 cost = 1
-attack = 2
-health = 2
-text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
+text = "Causa dano igual ao Fluxo atual + 4 a uma criatura ou heroi inimigo valido. Gera 1 Fluxo."
 keywords = PackedStringArray()
+effect = {
+"action": "flow_damage",
+"amount": 4.0,
+"gain_flow": 1.0
+}
 
 [sub_resource type="Resource" id="Resource_jtbwh"]
 script = ExtResource("1_tqsc8")
-id = "invocador_recompensa_3"
-display_name = "Invocador A Definir 3"
-card_type = "criatura"
-cost = 2
-attack = 2
-health = 3
-text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
+id = "arcano_canalizar_lvl3"
+display_name = "Canalizar Lvl 3"
+card_type = "magia"
+text = "Causa dano igual ao Fluxo atual + 4 a uma criatura ou heroi inimigo valido. Gera 1 Fluxo."
 keywords = PackedStringArray()
+effect = {
+"action": "flow_damage",
+"amount": 4.0,
+"gain_flow": 1.0
+}
 
 [sub_resource type="Resource" id="Resource_gac4l"]
 script = ExtResource("1_tqsc8")
-id = "invocador_recompensa_4"
-display_name = "Invocador A Definir 4"
+id = "arcano_espelho_arcano"
+display_name = "Espelho Arcano"
+card_type = "criatura"
+cost = 2
+health = 4
+text = "Espinhos 2. Enquanto em campo: +1 Poder de habilidade."
+keywords = PackedStringArray("espinhos")
+effect = {
+"amount": 1.0,
+"aura": "ability_power",
+"thorns_amount": 2.0
+}
+
+[sub_resource type="Resource" id="Resource_kionc"]
+script = ExtResource("1_tqsc8")
+id = "arcano_espelho_arcano_lvl2"
+display_name = "Espelho Arcano Lvl 2"
+card_type = "criatura"
+cost = 2
+health = 6
+text = "Espinhos 3. Enquanto em campo: +1 Poder de habilidade."
+keywords = PackedStringArray("espinhos")
+effect = {
+"amount": 1.0,
+"aura": "ability_power",
+"thorns_amount": 3.0
+}
+
+[sub_resource type="Resource" id="Resource_l626a"]
+script = ExtResource("1_tqsc8")
+id = "arcano_espelho_arcano_lvl3"
+display_name = "Espelho Arcano Lvl 3"
+card_type = "criatura"
+cost = 2
+health = 8
+text = "Espinhos 4. Enquanto em campo: +2 Poder de habilidade."
+keywords = PackedStringArray("espinhos")
+effect = {
+"amount": 2.0,
+"aura": "ability_power",
+"thorns_amount": 4.0
+}
+
+[sub_resource type="Resource" id="Resource_aibpw"]
+script = ExtResource("1_tqsc8")
+id = "arcano_descarga"
+display_name = "Descarga"
+card_type = "magia"
+cost = 3
+text = "Causa 2 de dano a cada criatura inimiga em campo. Fluxo e Poder de habilidade amplificam cada alvo."
+keywords = PackedStringArray()
+effect = {
+"action": "all_enemy_damage",
+"amount": 2.0,
+"scale_with_flow": true
+}
+
+[sub_resource type="Resource" id="Resource_qtgoy"]
+script = ExtResource("1_tqsc8")
+id = "arcano_descarga_lvl2"
+display_name = "Descarga Lvl 2"
+card_type = "magia"
+cost = 3
+text = "Causa 3 de dano a cada criatura inimiga em campo. Fluxo e Poder de habilidade amplificam cada alvo."
+keywords = PackedStringArray()
+effect = {
+"action": "all_enemy_damage",
+"amount": 3.0,
+"scale_with_flow": true
+}
+
+[sub_resource type="Resource" id="Resource_rlpw4"]
+script = ExtResource("1_tqsc8")
+id = "arcano_descarga_lvl3"
+display_name = "Descarga Lvl 3"
+card_type = "magia"
+cost = 2
+text = "Causa 3 de dano a cada criatura inimiga em campo. Fluxo e Poder de habilidade amplificam cada alvo."
+keywords = PackedStringArray()
+effect = {
+"action": "all_enemy_damage",
+"amount": 3.0,
+"scale_with_flow": true
+}
+
+[sub_resource type="Resource" id="Resource_v5hgr"]
+script = ExtResource("1_tqsc8")
+id = "invocador_capitao_de_campo"
+display_name = "Capitao de Campo"
+card_type = "criatura"
+cost = 2
+attack = 2
+health = 4
+text = "Inspirar +1: criaturas aliadas adjacentes ganham +1 ATK por ciclo de combate enquanto o Capitao estiver em campo."
+keywords = PackedStringArray("inspirar")
+effect = {
+"inspire_amount": 1.0
+}
+
+[sub_resource type="Resource" id="Resource_lm00s"]
+script = ExtResource("1_tqsc8")
+id = "invocador_capitao_de_campo_lvl2"
+display_name = "Capitao de Campo Lvl 2"
+card_type = "criatura"
+cost = 2
+attack = 3
+health = 4
+text = "Inspirar +1."
+keywords = PackedStringArray("inspirar")
+effect = {
+"inspire_amount": 1.0
+}
+
+[sub_resource type="Resource" id="Resource_ow35d"]
+script = ExtResource("1_tqsc8")
+id = "invocador_capitao_de_campo_lvl3"
+display_name = "Capitao de Campo Lvl 3"
+card_type = "criatura"
+cost = 2
+attack = 3
+health = 5
+text = "Inspirar +2."
+keywords = PackedStringArray("inspirar")
+effect = {
+"inspire_amount": 2.0
+}
+
+[sub_resource type="Resource" id="Resource_avkfa"]
+script = ExtResource("1_tqsc8")
+id = "invocador_parede_de_escudos"
+display_name = "Parede de Escudos"
+card_type = "magia"
+cost = 2
+text = "Todas as criaturas aliadas em campo ganham Escudo ate o fim do proximo ciclo de combate."
+keywords = PackedStringArray()
+effect = {
+"action": "shield_all_allies",
+"shield_charges": 1.0
+}
+
+[sub_resource type="Resource" id="Resource_30dh2"]
+script = ExtResource("1_tqsc8")
+id = "invocador_parede_de_escudos_lvl2"
+display_name = "Parede de Escudos Lvl 2"
+card_type = "magia"
+cost = 2
+text = "Todas as criaturas aliadas ganham Escudo. Criaturas com Escudo ativo ganham +1/+0."
+keywords = PackedStringArray()
+effect = {
+"action": "shield_all_allies",
+"attack": 1.0,
+"shield_charges": 1.0
+}
+
+[sub_resource type="Resource" id="Resource_bo80a"]
+script = ExtResource("1_tqsc8")
+id = "invocador_parede_de_escudos_lvl3"
+display_name = "Parede de Escudos Lvl 3"
+card_type = "magia"
+cost = 1
+text = "Todas as criaturas aliadas ganham Escudo. Criaturas com Escudo ativo ganham +1/+0."
+keywords = PackedStringArray()
+effect = {
+"action": "shield_all_allies",
+"attack": 1.0,
+"shield_charges": 1.0
+}
+
+[sub_resource type="Resource" id="Resource_334pn"]
+script = ExtResource("1_tqsc8")
+id = "invocador_cavaleiro_arcano"
+display_name = "Cavaleiro Arcano"
 card_type = "criatura"
 cost = 2
 attack = 3
 health = 3
-text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
-keywords = PackedStringArray()
+text = "Atropelar."
+keywords = PackedStringArray("atropelar")
 
-[sub_resource type="Resource" id="Resource_kionc"]
+[sub_resource type="Resource" id="Resource_qncfk"]
 script = ExtResource("1_tqsc8")
-id = "invocador_recompensa_5"
-display_name = "Invocador A Definir 5"
+id = "invocador_cavaleiro_arcano_lvl2"
+display_name = "Cavaleiro Arcano Lvl 2"
 card_type = "criatura"
-cost = 3
-attack = 3
-health = 4
-text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
-keywords = PackedStringArray()
-
-[sub_resource type="Resource" id="Resource_l626a"]
-script = ExtResource("1_tqsc8")
-id = "invocador_recompensa_6"
-display_name = "Invocador A Definir 6"
-card_type = "criatura"
-cost = 3
+cost = 2
 attack = 4
-health = 4
-text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
-keywords = PackedStringArray()
+health = 3
+text = "Atropelar."
+keywords = PackedStringArray("atropelar")
 
-[sub_resource type="Resource" id="Resource_aibpw"]
+[sub_resource type="Resource" id="Resource_xsywb"]
 script = ExtResource("1_tqsc8")
-id = "necro_recompensa_1"
-display_name = "Necromante A Definir 1"
+id = "invocador_cavaleiro_arcano_lvl3"
+display_name = "Cavaleiro Arcano Lvl 3"
+card_type = "criatura"
+cost = 2
+attack = 5
+health = 3
+text = "Atropelar. Ao causar dano excedente, a criatura aliada de maior ATK ganha +1/+0 permanente."
+keywords = PackedStringArray("atropelar")
+effect = {
+"trample_buff_strongest_ally": 1.0
+}
+
+[sub_resource type="Resource" id="Resource_fmr76"]
+script = ExtResource("1_tqsc8")
+id = "invocador_berserker"
+display_name = "Berserker"
+card_type = "criatura"
+cost = 1
+attack = 3
+health = 1
+text = "Atropelar. Furia: ganha +1 ATK permanente cada vez que sofre dano e sobrevive ao ciclo."
+keywords = PackedStringArray("atropelar", "furia")
+
+[sub_resource type="Resource" id="Resource_yetxa"]
+script = ExtResource("1_tqsc8")
+id = "invocador_berserker_lvl2"
+display_name = "Berserker Lvl 2"
+card_type = "criatura"
+cost = 1
+attack = 4
+health = 1
+text = "Atropelar. Furia."
+keywords = PackedStringArray("atropelar", "furia")
+
+[sub_resource type="Resource" id="Resource_r2gt1"]
+script = ExtResource("1_tqsc8")
+id = "invocador_berserker_lvl3"
+display_name = "Berserker Lvl 3"
+card_type = "criatura"
+cost = 1
+attack = 4
+health = 2
+text = "Atropelar. Furia. Ao matar uma criatura, o Cavaleiro aliado mais proximo ganha +1/+0 permanente."
+keywords = PackedStringArray("atropelar", "furia")
+effect = {
+"on_kill_buff_nearest_cavalier": 1.0
+}
+
+[sub_resource type="Resource" id="Resource_l7x8i"]
+script = ExtResource("1_tqsc8")
+id = "invocador_arauto"
+display_name = "Arauto"
 card_type = "criatura"
 cost = 1
 attack = 1
 health = 2
-text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
-keywords = PackedStringArray()
+text = "Entrar: cria um token Recruta 1/1 no slot aliado vazio mais proximo."
+keywords = PackedStringArray("entrar")
+effect = {
+"on_enter": {
+"action": "summon_token",
+"attack": 1.0,
+"count": 1.0,
+"health": 1.0,
+"name": "Recruta"
+}
+}
 
-[sub_resource type="Resource" id="Resource_qtgoy"]
+[sub_resource type="Resource" id="Resource_46w24"]
 script = ExtResource("1_tqsc8")
-id = "necro_recompensa_2"
-display_name = "Necromante A Definir 2"
+id = "invocador_arauto_lvl2"
+display_name = "Arauto Lvl 2"
 card_type = "criatura"
 cost = 1
 attack = 2
 health = 2
-text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
+text = "Entrar: cria um token Recruta 1/1 no slot aliado vazio mais proximo."
+keywords = PackedStringArray("entrar")
+effect = {
+"on_enter": {
+"action": "summon_token",
+"attack": 1.0,
+"count": 1.0,
+"health": 1.0,
+"name": "Recruta"
+}
+}
+
+[sub_resource type="Resource" id="Resource_m7kc1"]
+script = ExtResource("1_tqsc8")
+id = "invocador_arauto_lvl3"
+display_name = "Arauto Lvl 3"
+card_type = "criatura"
+cost = 1
+attack = 2
+health = 3
+text = "Entrar: cria 2 tokens Recruta 1/1 em slots aliados vazios."
+keywords = PackedStringArray("entrar")
+effect = {
+"on_enter": {
+"action": "summon_token",
+"attack": 1.0,
+"count": 2.0,
+"health": 1.0,
+"name": "Recruta"
+}
+}
+
+[sub_resource type="Resource" id="Resource_lutbd"]
+script = ExtResource("1_tqsc8")
+id = "invocador_tita_geminal"
+display_name = "Tita Geminal"
+card_type = "criatura"
+cost = 3
+attack = 4
+health = 5
+text = "Pacto: enquanto outro aliado com Pacto estiver em campo, ambos ganham +2/+2."
+keywords = PackedStringArray("pacto")
+effect = {
+"pact_amount": 2.0
+}
+
+[sub_resource type="Resource" id="Resource_n0yp2"]
+script = ExtResource("1_tqsc8")
+id = "invocador_tita_geminal_lvl2"
+display_name = "Tita Geminal Lvl 2"
+card_type = "criatura"
+cost = 3
+attack = 5
+health = 6
+text = "Pacto: enquanto outro aliado com Pacto estiver em campo, ambos ganham +2/+2."
+keywords = PackedStringArray("pacto")
+effect = {
+"pact_amount": 2.0
+}
+
+[sub_resource type="Resource" id="Resource_5fw5r"]
+script = ExtResource("1_tqsc8")
+id = "invocador_tita_geminal_lvl3"
+display_name = "Tita Geminal Lvl 3"
+card_type = "criatura"
+cost = 3
+attack = 5
+health = 6
+text = "Pacto +3/+3. Ao perder o parceiro Pacto, ganha Furia permanentemente."
+keywords = PackedStringArray("pacto")
+effect = {
+"pact_amount": 3.0,
+"pact_break_gain_fury": true
+}
+
+[sub_resource type="Resource" id="Resource_pnbt4"]
+script = ExtResource("1_tqsc8")
+id = "necro_revenant"
+display_name = "Revenant"
+card_type = "criatura"
+cost = 2
+attack = 2
+health = 4
+text = "Ressurgir: ao morrer, retorna uma vez com 1/2 e sem keywords."
+keywords = PackedStringArray("ressurgir")
+effect = {
+"ressurgir_attack": 1.0,
+"ressurgir_health": 2.0
+}
+
+[sub_resource type="Resource" id="Resource_tv42i"]
+script = ExtResource("1_tqsc8")
+id = "necro_revenant_lvl2"
+display_name = "Revenant Lvl 2"
+card_type = "criatura"
+cost = 2
+attack = 3
+health = 4
+text = "Ressurgir: ao morrer, retorna uma vez com 1/2 e sem keywords."
+keywords = PackedStringArray("ressurgir")
+effect = {
+"ressurgir_attack": 1.0,
+"ressurgir_health": 2.0
+}
+
+[sub_resource type="Resource" id="Resource_d0ii2"]
+script = ExtResource("1_tqsc8")
+id = "necro_revenant_lvl3"
+display_name = "Revenant Lvl 3"
+card_type = "criatura"
+cost = 2
+attack = 3
+health = 5
+text = "Ressurgir: ao morrer, retorna uma vez com 2/3 e aplica Enfraquecer 1 em criatura inimiga aleatoria."
+keywords = PackedStringArray("ressurgir")
+effect = {
+"on_ressurgir": {
+"action": "weaken_random_enemy",
+"amount": 1.0
+},
+"ressurgir_attack": 2.0,
+"ressurgir_health": 3.0
+}
+
+[sub_resource type="Resource" id="Resource_ik0qb"]
+script = ExtResource("1_tqsc8")
+id = "necro_flagelo"
+display_name = "Flagelo"
+card_type = "criatura"
+cost = 1
+attack = 1
+health = 2
+text = "Entrar: aplica Veneno 1 em criatura inimiga aleatoria. Ao morrer: aplica Veneno 1 em criatura inimiga aleatoria."
+keywords = PackedStringArray("entrar", "veneno")
+effect = {
+"on_death": {
+"action": "poison_random_enemy",
+"amount": 1.0
+},
+"on_enter": {
+"action": "poison_random_enemy",
+"amount": 1.0
+}
+}
+
+[sub_resource type="Resource" id="Resource_w6obv"]
+script = ExtResource("1_tqsc8")
+id = "necro_flagelo_lvl2"
+display_name = "Flagelo Lvl 2"
+card_type = "criatura"
+cost = 1
+attack = 2
+health = 2
+text = "Entrar e ao morrer: aplica Veneno 1 em criatura inimiga aleatoria."
+keywords = PackedStringArray("entrar", "veneno")
+effect = {
+"on_death": {
+"action": "poison_random_enemy",
+"amount": 1.0
+},
+"on_enter": {
+"action": "poison_random_enemy",
+"amount": 1.0
+}
+}
+
+[sub_resource type="Resource" id="Resource_m165o"]
+script = ExtResource("1_tqsc8")
+id = "necro_flagelo_lvl3"
+display_name = "Flagelo Lvl 3"
+card_type = "criatura"
+cost = 1
+attack = 2
+health = 3
+text = "Entrar: Veneno 2. Ao morrer: Veneno 2."
+keywords = PackedStringArray("entrar", "veneno")
+effect = {
+"on_death": {
+"action": "poison_random_enemy",
+"amount": 2.0
+},
+"on_enter": {
+"action": "poison_random_enemy",
+"amount": 2.0
+},
+"poison_apply_amount": 2.0
+}
+
+[sub_resource type="Resource" id="Resource_sx5sg"]
+script = ExtResource("1_tqsc8")
+id = "necro_arauto_das_sombras"
+display_name = "Arauto das Sombras"
+card_type = "criatura"
+cost = 2
+attack = 1
+health = 3
+text = "Entrar: reanima a ultima criatura aliada morta nesta batalha com 1/1 sem keywords."
+keywords = PackedStringArray("entrar")
+effect = {
+"on_enter": {
+"action": "revive_last_ally",
+"attack": 1.0,
+"health": 1.0
+}
+}
+
+[sub_resource type="Resource" id="Resource_ue8hb"]
+script = ExtResource("1_tqsc8")
+id = "necro_arauto_das_sombras_lvl2"
+display_name = "Arauto das Sombras Lvl 2"
+card_type = "criatura"
+cost = 2
+attack = 2
+health = 4
+text = "Entrar: reanima a ultima criatura aliada morta como 2/2."
+keywords = PackedStringArray("entrar")
+effect = {
+"on_enter": {
+"action": "revive_last_ally",
+"attack": 2.0,
+"health": 2.0
+}
+}
+
+[sub_resource type="Resource" id="Resource_tirfs"]
+script = ExtResource("1_tqsc8")
+id = "necro_arauto_das_sombras_lvl3"
+display_name = "Arauto das Sombras Lvl 3"
+card_type = "criatura"
+cost = 2
+attack = 2
+health = 5
+text = "Entrar: reanima a ultima criatura aliada morta como 2/2 com keywords originais intactas."
+keywords = PackedStringArray("entrar")
+effect = {
+"on_enter": {
+"action": "revive_last_ally",
+"attack": 2.0,
+"health": 2.0,
+"keep_keywords": true
+}
+}
+
+[sub_resource type="Resource" id="Resource_qllgm"]
+script = ExtResource("1_tqsc8")
+id = "necro_colheita_das_almas"
+display_name = "Colheita das Almas"
+card_type = "magia"
+text = "Gera 2 Cinzas, +1 para cada criatura morta nesta batalha."
+keywords = PackedStringArray()
+effect = {
+"action": "gain_ashes",
+"amount": 2.0,
+"per_dead_unit": true
+}
+
+[sub_resource type="Resource" id="Resource_ntbhu"]
+script = ExtResource("1_tqsc8")
+id = "necro_colheita_das_almas_lvl2"
+display_name = "Colheita das Almas Lvl 2"
+card_type = "magia"
+text = "Gera 2 Cinzas, +1 para cada criatura morta nesta batalha."
+keywords = PackedStringArray()
+effect = {
+"action": "gain_ashes",
+"amount": 2.0,
+"per_dead_unit": true
+}
+
+[sub_resource type="Resource" id="Resource_4uink"]
+script = ExtResource("1_tqsc8")
+id = "necro_colheita_das_almas_lvl3"
+display_name = "Colheita das Almas Lvl 3"
+card_type = "magia"
+text = "Gera 3 Cinzas, +1 por morte. Se gerar 6 ou mais, compra 1 carta."
+keywords = PackedStringArray()
+effect = {
+"action": "gain_ashes",
+"amount": 3.0,
+"draw_if_at_least": 6.0,
+"per_dead_unit": true
+}
+
+[sub_resource type="Resource" id="Resource_psj4f"]
+script = ExtResource("1_tqsc8")
+id = "necro_lich"
+display_name = "Lich"
+card_type = "criatura"
+cost = 3
+attack = 3
+health = 5
+text = "Imune. Crescer +1: ganha +1 ATK no inicio de cada turno."
+keywords = PackedStringArray("imune", "crescer")
+effect = {
+"grow_amount": 1.0
+}
+
+[sub_resource type="Resource" id="Resource_xykye"]
+script = ExtResource("1_tqsc8")
+id = "necro_lich_lvl2"
+display_name = "Lich Lvl 2"
+card_type = "criatura"
+cost = 3
+attack = 4
+health = 6
+text = "Imune. Crescer +1."
+keywords = PackedStringArray("imune", "crescer")
+effect = {
+"grow_amount": 1.0
+}
+
+[sub_resource type="Resource" id="Resource_78p7f"]
+script = ExtResource("1_tqsc8")
+id = "necro_lich_lvl3"
+display_name = "Lich Lvl 3"
+card_type = "criatura"
+cost = 3
+attack = 4
+health = 7
+text = "Imune. Crescer +2. Ao morrer: gera 3 Cinzas."
+keywords = PackedStringArray("imune", "crescer")
+effect = {
+"grow_amount": 2.0,
+"on_death": {
+"action": "gain_ashes",
+"amount": 3.0
+}
+}
+
+[sub_resource type="Resource" id="Resource_cmw0g"]
+script = ExtResource("1_tqsc8")
+id = "necro_praga"
+display_name = "Praga"
+card_type = "magia"
+cost = 2
+text = "Aplica Veneno 1 em todas as criaturas inimigas em campo."
+keywords = PackedStringArray()
+effect = {
+"action": "poison_all_enemies",
+"amount": 1.0
+}
+
+[sub_resource type="Resource" id="Resource_u7j4d"]
+script = ExtResource("1_tqsc8")
+id = "necro_praga_lvl2"
+display_name = "Praga Lvl 2"
+card_type = "magia"
+cost = 2
+text = "Aplica Veneno 2 em todas as criaturas inimigas em campo."
+keywords = PackedStringArray()
+effect = {
+"action": "poison_all_enemies",
+"amount": 2.0
+}
+
+[sub_resource type="Resource" id="Resource_4xmif"]
+script = ExtResource("1_tqsc8")
+id = "necro_praga_lvl3"
+display_name = "Praga Lvl 3"
+card_type = "magia"
+cost = 2
+text = "Aplica Veneno 2 em todas as criaturas inimigas em campo. Gera 1 Cinza por criatura que ja tinha Veneno."
+keywords = PackedStringArray()
+effect = {
+"action": "poison_all_enemies",
+"amount": 2.0,
+"gain_ashes_per_prepoisoned": 1.0
+}
+
+[sub_resource type="Resource" id="Resource_2scnw"]
+script = ExtResource("1_tqsc8")
+id = "enemy_terra_elemental_areia"
+display_name = "Elemental de Areia"
+card_type = "criatura"
+cost = 1
+attack = 2
+health = 2
+text = "Fodder basico de Terra."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_rlpw4"]
+[sub_resource type="Resource" id="Resource_25ku4"]
 script = ExtResource("1_tqsc8")
-id = "necro_recompensa_3"
-display_name = "Necromante A Definir 3"
+id = "enemy_terra_elemental_pedra"
+display_name = "Elemental de Pedra"
+card_type = "criatura"
+cost = 1
+attack = 1
+health = 4
+text = "Tanque passivo de Terra."
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_1y2v0"]
+script = ExtResource("1_tqsc8")
+id = "enemy_terra_elemental_agil"
+display_name = "Elemental Agil de Terra"
+card_type = "criatura"
+cost = 1
+attack = 2
+health = 2
+text = "Pressao de dano de Terra."
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_g5hm7"]
+script = ExtResource("1_tqsc8")
+id = "enemy_terra_elemental_bruto"
+display_name = "Elemental Bruto de Terra"
+card_type = "criatura"
+cost = 2
+attack = 3
+health = 3
+text = "Ameaca frontal de Terra."
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_beul8"]
+script = ExtResource("1_tqsc8")
+id = "enemy_terra_golem_terra"
+display_name = "Golem de Terra"
+card_type = "criatura"
+cost = 2
+attack = 1
+health = 5
+text = "Espinhos 1."
+keywords = PackedStringArray("espinhos")
+effect = {
+"thorns_amount": 1.0
+}
+
+[sub_resource type="Resource" id="Resource_1d4l4"]
+script = ExtResource("1_tqsc8")
+id = "enemy_terra_guerreiro_terra"
+display_name = "Guerreiro de Terra"
+card_type = "criatura"
+cost = 2
+attack = 3
+health = 3
+text = "Iniciativa."
+keywords = PackedStringArray("iniciativa")
+
+[sub_resource type="Resource" id="Resource_6uo17"]
+script = ExtResource("1_tqsc8")
+id = "enemy_terra_verme_terra"
+display_name = "Verme da Terra"
 card_type = "criatura"
 cost = 2
 attack = 2
 health = 3
-text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
+text = "Atropelar."
+keywords = PackedStringArray("atropelar")
+
+[sub_resource type="Resource" id="Resource_ryrqb"]
+script = ExtResource("1_tqsc8")
+id = "enemy_terra_elemental_tita"
+display_name = "Elemental Tita de Terra"
+card_type = "criatura"
+cost = 3
+attack = 3
+health = 5
+text = "Elite resistente de Terra."
 keywords = PackedStringArray()
 
-[sub_resource type="Resource" id="Resource_v5hgr"]
+[sub_resource type="Resource" id="Resource_mtuwy"]
 script = ExtResource("1_tqsc8")
-id = "necro_recompensa_4"
-display_name = "Necromante A Definir 4"
+id = "enemy_terra_rocha_viva"
+display_name = "Rocha Viva"
+card_type = "criatura"
+cost = 2
+attack = 1
+health = 3
+text = "Crescer +1."
+keywords = PackedStringArray("crescer")
+effect = {
+"grow_amount": 1.0
+}
+
+[sub_resource type="Resource" id="Resource_3hbr2"]
+script = ExtResource("1_tqsc8")
+id = "enemy_terra_elemental_granito"
+display_name = "Elemental de Granito"
+card_type = "criatura"
+cost = 3
+attack = 2
+health = 7
+text = "Resistencia 2."
+keywords = PackedStringArray("resistencia")
+effect = {
+"resistance_amount": 2.0
+}
+
+[sub_resource type="Resource" id="Resource_0r6vh"]
+script = ExtResource("1_tqsc8")
+id = "enemy_gelo_cristal_de_gelo"
+display_name = "Cristal de Gelo"
+card_type = "criatura"
+cost = 2
+attack = 1
+health = 4
+text = "Escudo."
+keywords = PackedStringArray("escudo")
+effect = {
+"shield_charges": 1.0
+}
+
+[sub_resource type="Resource" id="Resource_46bo8"]
+script = ExtResource("1_tqsc8")
+id = "enemy_gelo_elemental_de_gelo"
+display_name = "Elemental de Gelo"
+card_type = "criatura"
+cost = 2
+attack = 2
+health = 3
+text = "Congelar ao atacar."
+keywords = PackedStringArray("congelar")
+
+[sub_resource type="Resource" id="Resource_g7f6n"]
+script = ExtResource("1_tqsc8")
+id = "enemy_gelo_golem_de_gelo"
+display_name = "Golem de Gelo"
+card_type = "criatura"
+cost = 3
+attack = 2
+health = 5
+text = "Resistencia 1. Ao morrer, congela uma criatura inimiga aleatoria."
+keywords = PackedStringArray("resistencia")
+effect = {
+"on_death": {
+"action": "freeze_random_enemy",
+"amount": 1.0
+},
+"resistance_amount": 1.0
+}
+
+[sub_resource type="Resource" id="Resource_t3v4h"]
+script = ExtResource("1_tqsc8")
+id = "enemy_gelo_djinn_do_frio"
+display_name = "Djinn do Frio"
+card_type = "criatura"
+cost = 2
+attack = 2
+health = 3
+text = "Crescer +1."
+keywords = PackedStringArray("crescer")
+effect = {
+"grow_amount": 1.0
+}
+
+[sub_resource type="Resource" id="Resource_tqv6n"]
+script = ExtResource("1_tqsc8")
+id = "enemy_gelo_espirito_da_geada"
+display_name = "Espirito da Geada"
+card_type = "criatura"
+cost = 1
+attack = 1
+health = 2
+text = "Veneno 1."
+keywords = PackedStringArray("veneno")
+effect = {
+"poison_apply_amount": 1.0
+}
+
+[sub_resource type="Resource" id="Resource_ii6f5"]
+script = ExtResource("1_tqsc8")
+id = "enemy_gelo_fenix_de_gelo"
+display_name = "Fenix de Gelo"
+card_type = "criatura"
+cost = 3
+attack = 3
+health = 3
+text = "Ressurgir."
+keywords = PackedStringArray("ressurgir")
+effect = {
+"ressurgir_attack": 1.0,
+"ressurgir_health": 1.0
+}
+
+[sub_resource type="Resource" id="Resource_ft3c1"]
+script = ExtResource("1_tqsc8")
+id = "enemy_gelo_coluna_de_gelo"
+display_name = "Coluna de Gelo"
+card_type = "criatura"
+cost = 3
+health = 8
+text = "Resistencia 3."
+keywords = PackedStringArray("resistencia")
+effect = {
+"resistance_amount": 3.0
+}
+
+[sub_resource type="Resource" id="Resource_bjx03"]
+script = ExtResource("1_tqsc8")
+id = "enemy_ar_elemental_de_vento"
+display_name = "Elemental de Vento"
+card_type = "criatura"
+cost = 2
+attack = 3
+health = 2
+text = "Iniciativa; troca de lane por roteiro de encontro."
+keywords = PackedStringArray("iniciativa")
+effect = {
+"mobile_lane_swap": true
+}
+
+[sub_resource type="Resource" id="Resource_ubb2w"]
+script = ExtResource("1_tqsc8")
+id = "enemy_ar_silfo"
+display_name = "Silfo"
+card_type = "criatura"
+cost = 2
+attack = 2
+health = 2
+text = "Iniciativa. Ecoar."
+keywords = PackedStringArray("iniciativa", "ecoar")
+
+[sub_resource type="Resource" id="Resource_ieaww"]
+script = ExtResource("1_tqsc8")
+id = "enemy_ar_brisa_mortal"
+display_name = "Brisa Mortal"
+card_type = "criatura"
+cost = 1
+attack = 1
+health = 1
+text = "Ecoar."
+keywords = PackedStringArray("ecoar")
+
+[sub_resource type="Resource" id="Resource_g7e07"]
+script = ExtResource("1_tqsc8")
+id = "enemy_ar_tempestade_vivente"
+display_name = "Tempestade Vivente"
+card_type = "criatura"
+cost = 3
+attack = 3
+health = 3
+text = "Brutal."
+keywords = PackedStringArray("brutal")
+
+[sub_resource type="Resource" id="Resource_0tr48"]
+script = ExtResource("1_tqsc8")
+id = "enemy_ar_corvo_da_tormenta"
+display_name = "Corvo da Tormenta"
+card_type = "criatura"
+cost = 1
+attack = 1
+health = 1
+text = "Ecoar."
+keywords = PackedStringArray("ecoar")
+
+[sub_resource type="Resource" id="Resource_ywub0"]
+script = ExtResource("1_tqsc8")
+id = "enemy_ar_elemental_do_raio"
+display_name = "Elemental do Raio"
+card_type = "criatura"
+cost = 3
+attack = 4
+health = 2
+text = "Iniciativa. Atropelar."
+keywords = PackedStringArray("iniciativa", "atropelar")
+
+[sub_resource type="Resource" id="Resource_a12xk"]
+script = ExtResource("1_tqsc8")
+id = "enemy_ar_rajada"
+display_name = "Rajada"
+card_type = "criatura"
+cost = 3
+attack = 4
+health = 2
+text = "Iniciativa. Atropelar."
+keywords = PackedStringArray("iniciativa", "atropelar")
+
+[sub_resource type="Resource" id="Resource_j2xbn"]
+script = ExtResource("1_tqsc8")
+id = "enemy_fogo_elemental_de_chama"
+display_name = "Elemental de Chama"
 card_type = "criatura"
 cost = 2
 attack = 3
 health = 3
-text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
-keywords = PackedStringArray()
+text = "Brutal."
+keywords = PackedStringArray("brutal")
 
-[sub_resource type="Resource" id="Resource_lm00s"]
+[sub_resource type="Resource" id="Resource_mjgow"]
 script = ExtResource("1_tqsc8")
-id = "necro_recompensa_5"
-display_name = "Necromante A Definir 5"
+id = "enemy_fogo_salamandra"
+display_name = "Salamandra"
+card_type = "criatura"
+cost = 2
+attack = 2
+health = 2
+text = "Espinhos 2. Crescer +1."
+keywords = PackedStringArray("espinhos", "crescer")
+effect = {
+"grow_amount": 1.0,
+"thorns_amount": 2.0
+}
+
+[sub_resource type="Resource" id="Resource_7mg8i"]
+script = ExtResource("1_tqsc8")
+id = "enemy_fogo_golem_de_lava"
+display_name = "Golem de Lava"
 card_type = "criatura"
 cost = 3
-attack = 3
-health = 4
-text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
-keywords = PackedStringArray()
+attack = 2
+health = 6
+text = "Resistencia 2. Ao morrer, explode nos adjacentes."
+keywords = PackedStringArray("resistencia")
+effect = {
+"on_death": {
+"action": "adjacent_enemy_damage",
+"amount": 2.0
+},
+"resistance_amount": 2.0
+}
 
-[sub_resource type="Resource" id="Resource_ow35d"]
+[sub_resource type="Resource" id="Resource_v1q0d"]
 script = ExtResource("1_tqsc8")
-id = "necro_recompensa_6"
-display_name = "Necromante A Definir 6"
+id = "enemy_fogo_demonio_de_chama"
+display_name = "Demonio de Chama"
 card_type = "criatura"
 cost = 3
+attack = 5
+health = 3
+text = "Furia. Ao morrer: cria 2 Fragmentos 2/1."
+keywords = PackedStringArray("furia")
+effect = {
+"on_death": {
+"action": "summon_token",
+"attack": 2.0,
+"count": 2.0,
+"health": 1.0,
+"name": "Fragmento de Chama"
+}
+}
+
+[sub_resource type="Resource" id="Resource_5orkw"]
+script = ExtResource("1_tqsc8")
+id = "enemy_fogo_fragmento_de_chama"
+display_name = "Fragmento de Chama"
+card_type = "criatura"
+cost = 1
+attack = 2
+health = 1
+text = "Token de pressao de Fogo."
+keywords = PackedStringArray()
+
+[sub_resource type="Resource" id="Resource_s0rnw"]
+script = ExtResource("1_tqsc8")
+id = "enemy_fogo_fenix"
+display_name = "Fenix"
+card_type = "criatura"
+cost = 4
 attack = 4
 health = 4
-text = "Carta de recompensa placeholder. Nome, arte, efeito e balanceamento finais serao definidos em sessao de design."
-keywords = PackedStringArray()
+text = "Ressurgir. Furia."
+keywords = PackedStringArray("ressurgir", "furia")
+effect = {
+"ressurgir_attack": 2.0,
+"ressurgir_health": 2.0
+}
 
-[sub_resource type="Resource" id="Resource_avkfa"]
+[sub_resource type="Resource" id="Resource_4ur0t"]
 script = ExtResource("2_aaqvb")
 id = "guardiao_elemental"
 display_name = "Guardiao Elemental"
 max_health = 24
 hero_power_text = "Poder inimigo pendente."
 
-[sub_resource type="Resource" id="Resource_30dh2"]
+[sub_resource type="Resource" id="Resource_wwyru"]
 script = ExtResource("2_aaqvb")
 id = "comandante_draxos"
 display_name = "Comandante Draxos"
@@ -1142,9 +2148,9 @@ hero_power_text = "A spell ativa depende da classe escolhida."
 
 [resource]
 script = ExtResource("3_xh3p2")
-player_hero = SubResource("Resource_30dh2")
-enemy_hero = SubResource("Resource_avkfa")
-cards = Array[Resource]([SubResource("Resource_ayi6x"), SubResource("Resource_b0i2p"), SubResource("Resource_hvson"), SubResource("Resource_vopr6"), SubResource("Resource_2f5oc"), SubResource("Resource_q1xx6"), SubResource("Resource_75iml"), SubResource("Resource_xg15d"), SubResource("Resource_kobr5"), SubResource("Resource_js17r"), SubResource("Resource_5405m"), SubResource("Resource_p3n0t"), SubResource("Resource_pkhd5"), SubResource("Resource_haoox"), SubResource("Resource_dqqtb"), SubResource("Resource_0kq34"), SubResource("Resource_edoxb"), SubResource("Resource_q1muo"), SubResource("Resource_w1flg"), SubResource("Resource_u525c"), SubResource("Resource_ba32m"), SubResource("Resource_5njsx"), SubResource("Resource_igiro"), SubResource("Resource_kf03g"), SubResource("Resource_7rtnj"), SubResource("Resource_siawb"), SubResource("Resource_vn8pn"), SubResource("Resource_3vxjw"), SubResource("Resource_8vwdf"), SubResource("Resource_12fis"), SubResource("Resource_wbbs5"), SubResource("Resource_hx6qf"), SubResource("Resource_46hy0"), SubResource("Resource_6lf1p"), SubResource("Resource_rxdp8"), SubResource("Resource_f75cl"), SubResource("Resource_kskod"), SubResource("Resource_ytdv0"), SubResource("Resource_ee0xk"), SubResource("Resource_g44pg"), SubResource("Resource_6juw6"), SubResource("Resource_p0w4t"), SubResource("Resource_r6yjh"), SubResource("Resource_o3iu5"), SubResource("Resource_u7yyh"), SubResource("Resource_m54cl"), SubResource("Resource_xljuu"), SubResource("Resource_xj7j7"), SubResource("Resource_u1e06"), SubResource("Resource_m1ldt"), SubResource("Resource_orpcd"), SubResource("Resource_r1h11"), SubResource("Resource_8hhqx"), SubResource("Resource_tdxwi"), SubResource("Resource_t1it5"), SubResource("Resource_1m5m3"), SubResource("Resource_k85o3"), SubResource("Resource_ty5ik"), SubResource("Resource_8i1rs"), SubResource("Resource_japkk"), SubResource("Resource_jen30"), SubResource("Resource_5ojvm"), SubResource("Resource_b1trl"), SubResource("Resource_u333r"), SubResource("Resource_ga80n"), SubResource("Resource_dqax3"), SubResource("Resource_prsww"), SubResource("Resource_hhqfi"), SubResource("Resource_ogvcp"), SubResource("Resource_vs84p"), SubResource("Resource_eibmv"), SubResource("Resource_3bh5q"), SubResource("Resource_dcefk"), SubResource("Resource_dv6wr"), SubResource("Resource_2i8af"), SubResource("Resource_2booa"), SubResource("Resource_x14up"), SubResource("Resource_jtbwh"), SubResource("Resource_gac4l"), SubResource("Resource_kionc"), SubResource("Resource_l626a"), SubResource("Resource_aibpw"), SubResource("Resource_qtgoy"), SubResource("Resource_rlpw4"), SubResource("Resource_v5hgr"), SubResource("Resource_lm00s"), SubResource("Resource_ow35d")])
+player_hero = SubResource("Resource_wwyru")
+enemy_hero = SubResource("Resource_4ur0t")
+cards = Array[Resource]([SubResource("Resource_tqsc8"), SubResource("Resource_aaqvb"), SubResource("Resource_xh3p2"), SubResource("Resource_ayi6x"), SubResource("Resource_b0i2p"), SubResource("Resource_hvson"), SubResource("Resource_vopr6"), SubResource("Resource_2f5oc"), SubResource("Resource_q1xx6"), SubResource("Resource_75iml"), SubResource("Resource_xg15d"), SubResource("Resource_kobr5"), SubResource("Resource_js17r"), SubResource("Resource_5405m"), SubResource("Resource_p3n0t"), SubResource("Resource_pkhd5"), SubResource("Resource_haoox"), SubResource("Resource_dqqtb"), SubResource("Resource_0kq34"), SubResource("Resource_edoxb"), SubResource("Resource_q1muo"), SubResource("Resource_w1flg"), SubResource("Resource_u525c"), SubResource("Resource_ba32m"), SubResource("Resource_5njsx"), SubResource("Resource_igiro"), SubResource("Resource_kf03g"), SubResource("Resource_7rtnj"), SubResource("Resource_siawb"), SubResource("Resource_vn8pn"), SubResource("Resource_3vxjw"), SubResource("Resource_8vwdf"), SubResource("Resource_12fis"), SubResource("Resource_wbbs5"), SubResource("Resource_hx6qf"), SubResource("Resource_46hy0"), SubResource("Resource_6lf1p"), SubResource("Resource_rxdp8"), SubResource("Resource_f75cl"), SubResource("Resource_kskod"), SubResource("Resource_ytdv0"), SubResource("Resource_ee0xk"), SubResource("Resource_g44pg"), SubResource("Resource_6juw6"), SubResource("Resource_p0w4t"), SubResource("Resource_r6yjh"), SubResource("Resource_o3iu5"), SubResource("Resource_u7yyh"), SubResource("Resource_m54cl"), SubResource("Resource_xljuu"), SubResource("Resource_xj7j7"), SubResource("Resource_u1e06"), SubResource("Resource_m1ldt"), SubResource("Resource_orpcd"), SubResource("Resource_r1h11"), SubResource("Resource_8hhqx"), SubResource("Resource_tdxwi"), SubResource("Resource_t1it5"), SubResource("Resource_1m5m3"), SubResource("Resource_k85o3"), SubResource("Resource_ty5ik"), SubResource("Resource_8i1rs"), SubResource("Resource_japkk"), SubResource("Resource_jen30"), SubResource("Resource_5ojvm"), SubResource("Resource_b1trl"), SubResource("Resource_u333r"), SubResource("Resource_ga80n"), SubResource("Resource_dqax3"), SubResource("Resource_prsww"), SubResource("Resource_hhqfi"), SubResource("Resource_ogvcp"), SubResource("Resource_vs84p"), SubResource("Resource_eibmv"), SubResource("Resource_3bh5q"), SubResource("Resource_dcefk"), SubResource("Resource_dv6wr"), SubResource("Resource_2i8af"), SubResource("Resource_2booa"), SubResource("Resource_x14up"), SubResource("Resource_jtbwh"), SubResource("Resource_gac4l"), SubResource("Resource_kionc"), SubResource("Resource_l626a"), SubResource("Resource_aibpw"), SubResource("Resource_qtgoy"), SubResource("Resource_rlpw4"), SubResource("Resource_v5hgr"), SubResource("Resource_lm00s"), SubResource("Resource_ow35d"), SubResource("Resource_avkfa"), SubResource("Resource_30dh2"), SubResource("Resource_bo80a"), SubResource("Resource_334pn"), SubResource("Resource_qncfk"), SubResource("Resource_xsywb"), SubResource("Resource_fmr76"), SubResource("Resource_yetxa"), SubResource("Resource_r2gt1"), SubResource("Resource_l7x8i"), SubResource("Resource_46w24"), SubResource("Resource_m7kc1"), SubResource("Resource_lutbd"), SubResource("Resource_n0yp2"), SubResource("Resource_5fw5r"), SubResource("Resource_pnbt4"), SubResource("Resource_tv42i"), SubResource("Resource_d0ii2"), SubResource("Resource_ik0qb"), SubResource("Resource_w6obv"), SubResource("Resource_m165o"), SubResource("Resource_sx5sg"), SubResource("Resource_ue8hb"), SubResource("Resource_tirfs"), SubResource("Resource_qllgm"), SubResource("Resource_ntbhu"), SubResource("Resource_4uink"), SubResource("Resource_psj4f"), SubResource("Resource_xykye"), SubResource("Resource_78p7f"), SubResource("Resource_cmw0g"), SubResource("Resource_u7j4d"), SubResource("Resource_4xmif"), SubResource("Resource_2scnw"), SubResource("Resource_25ku4"), SubResource("Resource_1y2v0"), SubResource("Resource_g5hm7"), SubResource("Resource_beul8"), SubResource("Resource_1d4l4"), SubResource("Resource_6uo17"), SubResource("Resource_ryrqb"), SubResource("Resource_mtuwy"), SubResource("Resource_3hbr2"), SubResource("Resource_0r6vh"), SubResource("Resource_46bo8"), SubResource("Resource_g7f6n"), SubResource("Resource_t3v4h"), SubResource("Resource_tqv6n"), SubResource("Resource_ii6f5"), SubResource("Resource_ft3c1"), SubResource("Resource_bjx03"), SubResource("Resource_ubb2w"), SubResource("Resource_ieaww"), SubResource("Resource_g7e07"), SubResource("Resource_0tr48"), SubResource("Resource_ywub0"), SubResource("Resource_a12xk"), SubResource("Resource_j2xbn"), SubResource("Resource_mjgow"), SubResource("Resource_7mg8i"), SubResource("Resource_v1q0d"), SubResource("Resource_5orkw"), SubResource("Resource_s0rnw")])
 starter_deck_ids = PackedStringArray("arcano_choque", "arcano_choque", "arcano_choque", "arcano_fagulha", "arcano_fagulha", "arcano_fagulha", "arcano_barreira", "arcano_barreira", "arcano_barreira")
 class_options = Array[Dictionary]([{
 "active_id": "rajada_arcana",
@@ -1153,7 +2159,7 @@ class_options = Array[Dictionary]([{
 "id": "arcano",
 "mechanic_status": "Comeca com 9 cartas custo 1; mapa 2 adiciona Tempestade Arcana; passiva desbloqueia no mapa 8; spell no mapa 10.",
 "passive_id": "fluxo_continuo",
-"reward_pool": ["arcano_bola_de_fogo", "arcano_acelerar"],
+"reward_pool": ["arcano_bola_de_fogo", "arcano_acelerar", "arcano_vortice", "arcano_sentinela_arcana", "arcano_amplificador", "arcano_canalizar", "arcano_espelho_arcano", "arcano_descarga"],
 "role_text": "Spells de dano, Fluxo Continuo e sequencias rapidas.",
 "starter_deck": ["arcano_choque", "arcano_choque", "arcano_choque", "arcano_fagulha", "arcano_fagulha", "arcano_fagulha", "arcano_barreira", "arcano_barreira", "arcano_barreira"],
 "starting_hand_size": 3.0,
@@ -1166,7 +2172,7 @@ class_options = Array[Dictionary]([{
 "id": "invocador",
 "mechanic_status": "Comeca com 9 cartas custo 1; mapa 2 adiciona Guardiao Arcano; passiva desbloqueia no mapa 8; spell no mapa 10.",
 "passive_id": "comandante_de_campo",
-"reward_pool": ["invocador_atacar", "invocador_golem"],
+"reward_pool": ["invocador_atacar", "invocador_golem", "invocador_capitao_de_campo", "invocador_parede_de_escudos", "invocador_cavaleiro_arcano", "invocador_berserker", "invocador_arauto", "invocador_tita_geminal"],
 "role_text": "Controle de mesa, criaturas singulares e buffs permanentes.",
 "starter_deck": ["invocador_soldado", "invocador_soldado", "invocador_soldado", "invocador_batedor", "invocador_batedor", "invocador_batedor", "invocador_promover", "invocador_promover", "invocador_promover"],
 "starting_hand_size": 3.0,
@@ -1179,7 +2185,7 @@ class_options = Array[Dictionary]([{
 "id": "necromante",
 "mechanic_status": "Comeca com 9 cartas custo 1; mapa 2 adiciona Zumbi; passiva e Ritual I desbloqueiam no mapa 8; Ritual II no mapa 10.",
 "passive_id": "colheita_sombria",
-"reward_pool": ["necro_carniceiro", "necro_diabrete"],
+"reward_pool": ["necro_carniceiro", "necro_diabrete", "necro_revenant", "necro_flagelo", "necro_arauto_das_sombras", "necro_colheita_das_almas", "necro_lich", "necro_praga"],
 "role_text": "Cinzas, morte como recurso, debuffs e reanimacao.",
 "starter_deck": ["necro_esqueleto", "necro_esqueleto", "necro_esqueleto", "necro_morto_vivo", "necro_morto_vivo", "necro_morto_vivo", "necro_prender", "necro_prender", "necro_prender"],
 "starting_hand_size": 3.0,
@@ -1587,6 +2593,7 @@ run_map = {
 "encounter_id": "tutorial_primeiro_contato",
 "id": "n01_tutorial_primeiro_contato",
 "kind": "mainline",
+"map_index": 1.0,
 "rewards": ["max_mana_1"],
 "unlocks": ["n02_tutorial_dois_fronts"]
 }, {
@@ -1594,6 +2601,7 @@ run_map = {
 "encounter_id": "tutorial_dois_fronts",
 "id": "n02_tutorial_dois_fronts",
 "kind": "mainline",
+"map_index": 2.0,
 "rewards": ["add_class_cost2_core"],
 "unlocks": ["n03_tutorial_primeira_onda"]
 }, {
@@ -1604,21 +2612,22 @@ run_map = {
 "encounter_id": "tutorial_primeira_onda",
 "id": "n03_tutorial_primeira_onda",
 "kind": "mainline",
+"map_index": 3.0,
 "unlocks": ["n04_pouso_elemental"]
 }, {
 "available_after": ["n03_tutorial_primeira_onda"],
-"choice_reward": {
-"type": "upgrade_card"
-},
 "encounter_id": "pouso_elemental",
 "id": "n04_pouso_elemental",
 "kind": "mainline",
+"map_index": 4.0,
+"rewards": ["add_relic_placeholder"],
 "unlocks": ["n05_ondas_iniciais"]
 }, {
 "available_after": ["n04_pouso_elemental"],
 "encounter_id": "ondas_iniciais",
 "id": "n05_ondas_iniciais",
 "kind": "mainline",
+"map_index": 5.0,
 "rewards": ["max_mana_1"],
 "unlocks": ["n06_duelo_inicial"]
 }, {
@@ -1626,24 +2635,28 @@ run_map = {
 "encounter_id": "duelo_inicial",
 "id": "n06_duelo_inicial",
 "kind": "mainline",
+"map_index": 6.0,
 "rewards": ["max_hand_size_1"],
 "unlocks": ["n07_defesa_posicao"]
 }, {
 "available_after": ["n06_duelo_inicial"],
 "choice_reward": {
+"element": "terra",
 "pool_offset": 0.0,
 "type": "new_card"
 },
 "encounter_id": "defesa_posicao_inicial",
 "id": "n07_defesa_posicao",
 "kind": "mainline",
+"map_index": 7.0,
 "unlocks": ["n08_chefe_invocador"]
 }, {
 "available_after": ["n07_defesa_posicao"],
 "encounter_id": "chefe_invocador",
 "id": "n08_chefe_invocador",
 "kind": "mainline",
-"rewards": ["unlock_class_passive"],
+"map_index": 8.0,
+"rewards": ["unlock_class_passive", "add_relic_placeholder"],
 "unlocks": ["n09_sobreviver_turnos"]
 }, {
 "available_after": ["n08_chefe_invocador"],
@@ -1653,22 +2666,23 @@ run_map = {
 "encounter_id": "sobreviver_turnos_inicial",
 "id": "n09_sobreviver_turnos",
 "kind": "mainline",
+"map_index": 9.0,
 "unlocks": ["n10_limpeza_elite"]
 }, {
 "available_after": ["n09_sobreviver_turnos"],
 "encounter_id": "limpeza_elite",
 "id": "n10_limpeza_elite",
 "kind": "mainline",
-"rewards": ["unlock_class_active"],
+"map_index": 10.0,
+"rewards": ["unlock_class_active", "max_health_5"],
 "unlocks": ["n11_ondas_avancadas"]
 }, {
 "available_after": ["n10_limpeza_elite"],
-"choice_reward": {
-"type": "new_card"
-},
 "encounter_id": "ondas_avancadas",
 "id": "n11_ondas_avancadas",
 "kind": "mainline",
+"map_index": 11.0,
+"rewards": ["grant_remaining_card"],
 "unlocks": ["n12_duelo_elite"]
 }, {
 "available_after": ["n11_ondas_avancadas"],
@@ -1678,12 +2692,836 @@ run_map = {
 "encounter_id": "duelo_elite",
 "id": "n12_duelo_elite",
 "kind": "mainline",
+"map_index": 12.0,
 "unlocks": ["n13_chefe_final"]
 }, {
 "available_after": ["n12_duelo_elite"],
+"choice_reward": {
+"element": "gelo",
+"pool_offset": 2.0,
+"type": "new_card"
+},
 "encounter_id": "chefe_summoner_final",
 "id": "n13_chefe_final",
 "kind": "mainline",
+"map_index": 13.0,
 "unlocks": []
 }]
+}
+track_contract = {
+"board_effect_definitions": [{
+"display_name": "Geada",
+"id": "geada",
+"tooltip": "Efeito de campo futuro de Gelo. Reservado para reduzir ritmo ou aplicar controle por encontro."
+}, {
+"display_name": "Terreno Rochoso",
+"id": "terreno_rochoso",
+"tooltip": "Efeito de campo futuro de Terra. Reservado para favorecer resistencia, bloqueio ou lanes pesadas."
+}, {
+"display_name": "Ventania",
+"id": "ventania",
+"tooltip": "Efeito de campo futuro de Ar. Reservado para deslocamento, flancos ou instabilidade de alvo."
+}, {
+"display_name": "Brasas",
+"id": "brasas",
+"tooltip": "Efeito de campo futuro de Fogo. Reservado para dano recorrente ou punicao por mesa cheia."
+}, {
+"display_name": "Abismo",
+"id": "abismo",
+"tooltip": "Formato/efeito futuro em que algumas lanes podem ficar indisponiveis ou perigosas."
+}],
+"enemy_card_galleries": {
+"ar": ["enemy_ar_elemental_de_vento", "enemy_ar_silfo", "enemy_ar_brisa_mortal", "enemy_ar_tempestade_vivente", "enemy_ar_corvo_da_tormenta", "enemy_ar_elemental_do_raio", "enemy_ar_rajada"],
+"fogo": ["enemy_fogo_elemental_de_chama", "enemy_fogo_salamandra", "enemy_fogo_golem_de_lava", "enemy_fogo_demonio_de_chama", "enemy_fogo_fragmento_de_chama", "enemy_fogo_fenix"],
+"gelo": ["enemy_gelo_cristal_de_gelo", "enemy_gelo_elemental_de_gelo", "enemy_gelo_golem_de_gelo", "enemy_gelo_djinn_do_frio", "enemy_gelo_espirito_da_geada", "enemy_gelo_fenix_de_gelo", "enemy_gelo_coluna_de_gelo"],
+"terra": ["enemy_terra_elemental_areia", "enemy_terra_elemental_pedra", "enemy_terra_elemental_agil", "enemy_terra_elemental_bruto", "enemy_terra_golem_terra", "enemy_terra_guerreiro_terra", "enemy_terra_verme_terra", "enemy_terra_elemental_tita", "enemy_terra_rocha_viva", "enemy_terra_elemental_granito"]
+},
+"enemy_intent_definitions": [{
+"display_name": "Pressao de Lane",
+"id": "lane_pressure",
+"tooltip": "Intent: o inimigo tende a ocupar ou atacar lanes com melhor dano imediato."
+}, {
+"display_name": "Quebrar Defensor",
+"id": "defender_break",
+"tooltip": "Intent: o inimigo prioriza remover ou contornar criaturas com Defensor."
+}, {
+"display_name": "Controle",
+"id": "control_target",
+"tooltip": "Intent: o inimigo tende a aplicar controle no alvo de maior impacto."
+}, {
+"display_name": "Fase de Chefe",
+"id": "boss_phase",
+"tooltip": "Intent: mostra fase atual, gatilho e proxima acao especial prevista."
+}, {
+"display_name": "Dano Previsto",
+"id": "incoming_pressure",
+"tooltip": "Intent: resume a pressao ou dano provavel do proximo ciclo."
+}],
+"id": "track_02_complete_run_evolution",
+"keyword_definitions": [{
+"display_name": "Iniciativa",
+"id": "iniciativa",
+"status": "implemented",
+"summary": "Ataca antes do alvo frontal na lane.",
+"timing": "combate",
+"tooltip": "Causa dano primeiro na lane. Se destruir o alvo, nao recebe dano de retorno."
+}, {
+"display_name": "Defensor",
+"id": "defensor",
+"status": "implemented",
+"summary": "Protege lanes vazias.",
+"timing": "combate",
+"tooltip": "Atrai ataques de criaturas inimigas que nao tem alvo frontal, protegendo o Comandante."
+}, {
+"display_name": "Reviver",
+"id": "reviver",
+"status": "implemented",
+"summary": "Retorna uma vez com stats originais.",
+"timing": "morte",
+"tooltip": "Quando morre, volta uma vez no mesmo slot com ATK/HP originais e recebe um marcador de revive usado."
+}, {
+"display_name": "Regeneracao X",
+"id": "regeneracao",
+"status": "implemented",
+"summary": "Recupera HP apos o combate.",
+"timing": "manutencao",
+"tooltip": "No fim de cada Resolver Combate, recupera X HP enquanto estiver viva."
+}, {
+"display_name": "Carnica X",
+"id": "carnica",
+"status": "implemented",
+"summary": "Cresce quando outra criatura morre.",
+"timing": "morte",
+"tooltip": "Sempre que outra criatura morre em campo, ganha +X/+X permanente durante a batalha."
+}, {
+"display_name": "Suicida X",
+"id": "suicida",
+"status": "implemented",
+"summary": "Morre causando dano.",
+"timing": "combate",
+"tooltip": "Ao agir ou morrer pelo proprio efeito, causa X de dano conforme definido pela carta."
+}, {
+"display_name": "Enfraquecer X",
+"id": "enfraquecer",
+"status": "implemented",
+"summary": "Reduz ATK e HP.",
+"timing": "efeito",
+"tooltip": "Reduz ATK e HP maximo do alvo em X. Se o HP chegar a 0, o alvo morre."
+}, {
+"display_name": "Prender",
+"id": "prender",
+"status": "implemented",
+"summary": "Impede o proximo ataque.",
+"timing": "proximo_combate",
+"tooltip": "O alvo nao ataca no proximo Resolver Combate."
+}, {
+"display_name": "Remover Keywords",
+"id": "remover_keywords",
+"status": "implemented",
+"summary": "Apaga keywords do alvo.",
+"timing": "efeito",
+"tooltip": "Remove as keywords da criatura alvo e desliga seus marcadores derivados quando aplicavel."
+}, {
+"display_name": "Poder de Habilidade",
+"id": "poder_de_habilidade",
+"status": "implemented",
+"summary": "Aumenta dano de spells e poderes.",
+"timing": "enquanto_ativo",
+"tooltip": "Bonus temporario ou de aura usado por cartas e classe Arcano para aumentar dano de efeitos diretos."
+}, {
+"display_name": "Atropelar",
+"id": "atropelar",
+"status": "implemented",
+"summary": "Excesso de dano continua na lane.",
+"timing": "combate",
+"tooltip": "Quando causa mais dano que o HP do alvo frontal, o excesso segue para o proximo alvo valido na lane."
+}, {
+"display_name": "Brutal",
+"id": "brutal",
+"status": "implemented",
+"summary": "Dano lateral em lanes adjacentes.",
+"timing": "combate",
+"tooltip": "Ao atacar e causar dano ao alvo frontal, tambem causa 1 de dano a criaturas inimigas nas lanes adjacentes."
+}, {
+"display_name": "Drenar X",
+"id": "drenar",
+"status": "implemented",
+"summary": "Dano de combate cura o Comandante.",
+"timing": "dano_de_combate",
+"tooltip": "Quando esta criatura causa dano em combate, o Comandante aliado recupera X HP."
+}, {
+"display_name": "Espinhos X",
+"id": "espinhos",
+"status": "implemented",
+"summary": "Devolve dano ao atacante.",
+"timing": "ao_sofrer_dano",
+"tooltip": "Quando sofre dano de um ataque, causa X de dano de volta imediatamente a criatura atacante."
+}, {
+"display_name": "Escudo",
+"id": "escudo",
+"status": "implemented",
+"summary": "Ignora a primeira instancia de dano.",
+"timing": "ao_sofrer_dano",
+"tooltip": "A primeira instancia de dano recebida e ignorada; depois o Escudo e consumido."
+}, {
+"display_name": "Resistencia X",
+"id": "resistencia",
+"status": "implemented",
+"summary": "Reduz dano por ciclo.",
+"timing": "por_ciclo",
+"tooltip": "Ignora os primeiros X pontos de dano recebidos a cada ciclo de combate."
+}, {
+"display_name": "Imune",
+"id": "imune",
+"scope": "elite_or_boss_recommended",
+"status": "implemented",
+"summary": "Nao recebe efeitos negativos.",
+"timing": "continuo",
+"tooltip": "Nao pode ser alvo de spells, habilidades ativas ou efeitos negativos. Ainda pode ser atacada em combate de lane."
+}, {
+"display_name": "Crescer X",
+"id": "crescer",
+"status": "implemented",
+"summary": "Ganha ATK no inicio do turno.",
+"timing": "inicio_turno",
+"tooltip": "No inicio de cada turno do jogador, ganha +X ATK permanente enquanto estiver em campo."
+}, {
+"display_name": "Furia",
+"id": "furia",
+"status": "implemented",
+"summary": "Ganha ATK ao sobreviver dano.",
+"timing": "fim_combate",
+"tooltip": "Quando sofre dano e sobrevive ao ciclo de combate, ganha +1 ATK permanente."
+}, {
+"display_name": "Ecoar",
+"id": "ecoar",
+"status": "implemented",
+"summary": "Repete o primeiro dano uma vez.",
+"timing": "dano_de_combate",
+"tooltip": "Uma vez por batalha, quando causa dano, repete o mesmo dano no mesmo alvo imediatamente."
+}, {
+"display_name": "Veneno X",
+"id": "veneno",
+"status": "implemented",
+"summary": "Dano periodico acumulavel.",
+"timing": "fim_turno",
+"tooltip": "Ao causar dano, aplica Veneno X. No fim do turno do jogador, o alvo perde HP igual ao valor acumulado."
+}, {
+"display_name": "Congelar",
+"id": "congelar",
+"status": "implemented",
+"summary": "Faz o alvo pular o proximo ataque.",
+"timing": "proximo_combate",
+"tooltip": "Quando aplicado, a criatura atingida nao ataca no proximo ciclo de combate."
+}, {
+"display_name": "Profanar",
+"id": "profanar",
+"scope": "enemy_or_boss_recommended",
+"status": "implemented",
+"summary": "Remove keywords ao morrer.",
+"timing": "morte",
+"tooltip": "Quando esta criatura morre, remove todas as keywords de uma criatura inimiga aleatoria em campo."
+}, {
+"display_name": "Entrar",
+"id": "entrar",
+"status": "implemented",
+"summary": "Dispara efeito ao ser invocada.",
+"timing": "invocacao",
+"tooltip": "Ao ser invocada, dispara o efeito escrito na carta antes do proximo combate."
+}, {
+"display_name": "Proliferar",
+"id": "proliferar",
+"status": "implemented",
+"summary": "Cria token se sobreviver.",
+"timing": "fim_combate",
+"tooltip": "Se sobreviver ate o fim do ciclo de combate, cria um token 1/1 sem keywords em slot aliado vazio."
+}, {
+"display_name": "Sacrificio X",
+"id": "sacrificio",
+"status": "implemented",
+"summary": "Reduz custo sacrificando aliada.",
+"timing": "jogar_carta",
+"tooltip": "Ao jogar esta carta, voce pode sacrificar uma criatura aliada para reduzir o custo de mana em X."
+}, {
+"display_name": "Inspirar X",
+"id": "inspirar",
+"status": "implemented",
+"summary": "Aumenta ATK de adjacentes.",
+"timing": "combate",
+"tooltip": "Enquanto estiver em campo, criaturas aliadas adjacentes ganham +X ATK durante o ciclo de combate."
+}, {
+"display_name": "Pacto",
+"id": "pacto",
+"status": "implemented",
+"summary": "Par em campo ganha +2/+2.",
+"timing": "continuo",
+"tooltip": "Quando duas criaturas com Pacto estao no campo aliado, ambas ganham +2/+2 enquanto a outra existir."
+}, {
+"display_name": "Drenar Almas",
+"id": "drenar_almas",
+"scope": "elite_or_boss_recommended",
+"status": "implemented",
+"summary": "Kill gera Almas bonus.",
+"timing": "morte_inimiga",
+"tooltip": "Quando mata uma criatura inimiga, gera Almas bonus igual ao ATK da criatura morta."
+}, {
+"display_name": "Ressurgir",
+"id": "ressurgir",
+"status": "implemented",
+"summary": "Retorna uma vez enfraquecida.",
+"timing": "morte",
+"tooltip": "Quando morre, retorna uma vez com metade do ATK e HP originais, arredondado para baixo, sem keywords."
+}],
+"max_health": {
+"fixed_reward_target": 30.0,
+"shop_and_relic_growth_allowed": true,
+"starting": 20.0
+},
+"relic_state_schema": {
+"effects_pending": false,
+"stored_as": "relic_ids",
+"version": 1.0
+},
+"relics": [{
+"design_role": "Economy floor.",
+"display_name": "Bolsa de Cinzas",
+"effect_status": "implemented",
+"effect_text": "Ganha +3 Almas depois de cada combate.",
+"hook": "post_combat_souls",
+"id": "bolsa_de_cinzas",
+"rarity": "common"
+}, {
+"design_role": "Encourages deck shaping.",
+"display_name": "Lamina de Reserva",
+"effect_status": "implemented",
+"effect_text": "A primeira compra de duplicar carta na loja custa 50% menos.",
+"hook": "shop_duplicate_discount",
+"id": "lamina_de_reserva",
+"rarity": "common"
+}, {
+"design_role": "Improves opening quality without raising hand cap.",
+"display_name": "Mao Preparada",
+"effect_status": "pending_keyword_prompt",
+"effect_text": "No primeiro turno de cada combate, compre +1 carta e depois descarte 1.",
+"hook": "combat_opening_discard",
+"id": "mao_preparada",
+"rarity": "common"
+}, {
+"design_role": "Simple survival relic.",
+"display_name": "Couro Astral",
+"effect_status": "implemented",
+"effect_text": "Ganha +3 HP maximo quando escolhida.",
+"hook": "on_pickup_max_health",
+"id": "couro_astral",
+"rarity": "common"
+}, {
+"design_role": "Board stability.",
+"display_name": "Marca de Guerra",
+"effect_status": "implemented",
+"effect_text": "A primeira criatura aliada invocada em cada combate ganha +1 HP.",
+"hook": "combat_first_summon_health",
+"id": "marca_de_guerra",
+"rarity": "common"
+}, {
+"design_role": "Small spell payoff.",
+"display_name": "Eco Menor",
+"effect_status": "implemented",
+"effect_text": "A primeira spell que causa dano em cada combate causa +1 dano.",
+"hook": "combat_first_damage_spell",
+"id": "eco_menor",
+"rarity": "common"
+}, {
+"design_role": "Mana smoothing and spell build support.",
+"display_name": "Catalisador Arcano",
+"effect_status": "implemented",
+"effect_text": "A primeira spell jogada em cada turno custa 1 a menos, minimo 0.",
+"hook": "combat_first_spell_cost",
+"id": "catalisador_arcano",
+"rarity": "rare"
+}, {
+"design_role": "Flexible recovery/economy.",
+"display_name": "Contrato de Sangue",
+"effect_status": "pending_reward_prompt",
+"effect_text": "Depois de cada vitoria, escolha +5 Almas ou curar 3 HP.",
+"hook": "post_victory_choice",
+"id": "contrato_de_sangue",
+"rarity": "rare"
+}, {
+"design_role": "Strong deck thinning.",
+"display_name": "Ferramentas de Cirurgia",
+"effect_status": "implemented",
+"effect_text": "A primeira remocao de carta em cada loja custa 0.",
+"hook": "shop_first_remove_free",
+"id": "ferramentas_de_cirurgia",
+"rarity": "rare"
+}, {
+"design_role": "Creature tempo.",
+"display_name": "Estandarte Vivo",
+"effect_status": "implemented",
+"effect_text": "A primeira criatura aliada invocada a cada turno ganha +1 ATK ate o fim do turno.",
+"hook": "combat_first_summon_attack",
+"id": "estandarte_vivo",
+"rarity": "rare"
+}, {
+"design_role": "High-roll reward amplifier.",
+"display_name": "Nucleo Instavel",
+"effect_status": "implemented",
+"effect_text": "Quando uma recompensa de carta nova rolar ultra rara, ganha +1 copia extra.",
+"hook": "reward_ultra_card_copy",
+"id": "nucleo_instavel",
+"rarity": "rare"
+}, {
+"design_role": "Defensive planning.",
+"display_name": "Escudo de Marcha",
+"effect_status": "pending_keyword_prompt",
+"effect_text": "No inicio do combate, a criatura aliada mais a esquerda na mao ganha Escudo ao ser invocada neste combate.",
+"hook": "combat_keyword_escudo",
+"id": "escudo_de_marcha",
+"rarity": "rare"
+}, {
+"design_role": "Explosive openers.",
+"display_name": "Coracao de Eter",
+"effect_status": "implemented",
+"effect_text": "Ganha +1 mana temporaria no primeiro turno de cada combate.",
+"hook": "combat_first_turn_mana",
+"id": "coracao_de_eter",
+"rarity": "ultra_rare"
+}, {
+"design_role": "Choice expansion.",
+"display_name": "Biblioteca Proibida",
+"effect_status": "implemented",
+"effect_text": "Recompensas de carta nova mostram +1 opcao adicional quando possivel.",
+"hook": "reward_extra_card_option",
+"id": "biblioteca_proibida",
+"rarity": "ultra_rare"
+}, {
+"design_role": "Upgrade/recovery bridge.",
+"display_name": "Forja Negra",
+"effect_status": "implemented",
+"effect_text": "Recompensas de upgrade de carta tambem curam 4 HP.",
+"hook": "reward_upgrade_heal",
+"id": "forja_negra",
+"rarity": "ultra_rare"
+}, {
+"design_role": "Planning and boss clarity.",
+"display_name": "Olho do Grande Mestre",
+"effect_status": "pending_enemy_intent_prompt",
+"effect_text": "A intencao inimiga revela acoes especiais de chefe 1 turno antes.",
+"hook": "enemy_intent",
+"id": "olho_do_grande_mestre",
+"rarity": "ultra_rare"
+}, {
+"design_role": "Duel/boss pressure.",
+"display_name": "Selo de Dominacao",
+"effect_status": "pending_encounter_prompt",
+"effect_text": "Quando uma lane e limpa, causa 1 dano ao heroi inimigo se o encontro tiver um.",
+"hook": "lane_clear_damage",
+"id": "selo_de_dominacao",
+"rarity": "ultra_rare"
+}, {
+"design_role": "Risk/reward durability.",
+"display_name": "Pacto das Ruinas",
+"effect_status": "implemented",
+"effect_text": "Ganha +10 HP maximo; curas de recompensa e loja restauram 50% menos.",
+"hook": "max_health_and_healing_modifier",
+"id": "pacto_das_ruinas",
+"rarity": "ultra_rare"
+}],
+"reward_card_copy_rules": {
+"common": 3.0,
+"rare": 4.0,
+"ultra_rare": 5.0
+},
+"reward_categories": ["max_mana", "max_hand_size", "max_health", "new_card", "remaining_card", "card_upgrade", "relic", "utility", "victory"],
+"reward_category_state_schema": {
+"schedule_pending": false,
+"schedule_version": 1.0,
+"version": 1.0
+},
+"reward_rarity": {
+"common": 70.0,
+"rare": 25.0,
+"ultra_rare": 5.0
+},
+"reward_schedule": [{
+"automatic_rewards": ["max_mana_1"],
+"category": "max_mana",
+"map": 1.0,
+"notes": "Raises mana from 1 to 2.",
+"title": "+1 max mana"
+}, {
+"automatic_rewards": ["add_class_cost2_core"],
+"card_source": "class_cost2_core",
+"category": "new_card",
+"map": 2.0,
+"notes": "Adds the existing class core card.",
+"title": "Class cost-2 card"
+}, {
+"category": "card_upgrade",
+"choice_reward": {
+"type": "upgrade_card"
+},
+"map": 3.0,
+"notes": "Seeded upgrade choice.",
+"title": "Card upgrade choice"
+}, {
+"category": "relic",
+"map": 4.0,
+"notes": "First universal relic.",
+"relic_reward": {
+"id": "bolsa_de_cinzas",
+"mode": "grant",
+"rarity": "common"
+},
+"title": "Common relic"
+}, {
+"automatic_rewards": ["max_mana_1"],
+"category": "max_mana",
+"map": 5.0,
+"notes": "Raises mana from 2 to 3.",
+"title": "+1 max mana"
+}, {
+"automatic_rewards": ["max_hand_size_1"],
+"category": "max_hand_size",
+"map": 6.0,
+"notes": "Raises hand size from 3 to 4.",
+"title": "+1 max hand size"
+}, {
+"category": "new_card",
+"choice_reward": {
+"element": "terra",
+"pool_offset": 0.0,
+"type": "new_card"
+},
+"map": 7.0,
+"notes": "Existing Terra pair choice.",
+"title": "Terra new-card choice"
+}, {
+"automatic_rewards": ["unlock_class_passive"],
+"category": "relic",
+"map": 8.0,
+"notes": "Unlocks class passive and grants boss relic.",
+"relic_reward": {
+"id": "catalisador_arcano",
+"mode": "grant",
+"rarity": "rare"
+},
+"title": "Class passive + boss relic"
+}, {
+"category": "card_upgrade",
+"choice_reward": {
+"type": "upgrade_card"
+},
+"map": 9.0,
+"notes": "Seeded upgrade choice.",
+"title": "Card upgrade choice"
+}, {
+"automatic_rewards": ["unlock_class_active", "max_health_5"],
+"category": "max_health",
+"map": 10.0,
+"max_health_delta": 5.0,
+"notes": "Unlocks class active; HP max 20 to 25.",
+"title": "Class active + +5 max HP"
+}, {
+"automatic_rewards": ["grant_remaining_card"],
+"card_source": "remaining_reward_pool",
+"category": "remaining_card",
+"element": "terra",
+"map": 11.0,
+"notes": "Grants the unpicked Terra card.",
+"title": "Terra remaining card"
+}, {
+"category": "card_upgrade",
+"choice_reward": {
+"type": "upgrade_card"
+},
+"map": 12.0,
+"notes": "Seeded upgrade choice.",
+"title": "Card upgrade choice"
+}, {
+"category": "new_card",
+"choice_reward": {
+"element": "gelo",
+"pool_offset": 2.0,
+"type": "new_card"
+},
+"map": 13.0,
+"notes": "First Gelo pair choice; real cards arrive in T02-P06.",
+"title": "Gelo new-card choice"
+}, {
+"automatic_rewards": ["grant_remaining_card"],
+"card_source": "remaining_reward_pool",
+"category": "remaining_card",
+"element": "gelo",
+"map": 14.0,
+"notes": "Grants the unpicked Gelo card.",
+"title": "Gelo remaining card"
+}, {
+"automatic_rewards": ["max_health_5"],
+"category": "max_health",
+"map": 15.0,
+"max_health_delta": 5.0,
+"notes": "HP max 25 to 30; grants boss relic.",
+"relic_reward": {
+"id": "forja_negra",
+"mode": "grant",
+"rarity": "ultra_rare"
+},
+"title": "+5 max HP + boss relic"
+}, {
+"automatic_rewards": ["max_mana_1"],
+"category": "max_mana",
+"map": 16.0,
+"notes": "Raises mana from 3 to 4.",
+"title": "+1 max mana"
+}, {
+"category": "new_card",
+"choice_reward": {
+"element": "ar",
+"pool_offset": 4.0,
+"type": "new_card"
+},
+"map": 17.0,
+"notes": "First Ar pair choice; real cards arrive in T02-P06.",
+"title": "Ar new-card choice"
+}, {
+"category": "card_upgrade",
+"choice_reward": {
+"type": "upgrade_card"
+},
+"map": 18.0,
+"notes": "Seeded upgrade choice.",
+"title": "Card upgrade choice"
+}, {
+"automatic_rewards": ["max_mana_1"],
+"category": "max_mana",
+"map": 19.0,
+"notes": "Raises mana from 4 to 5.",
+"title": "+1 max mana"
+}, {
+"automatic_rewards": ["grant_remaining_card"],
+"card_source": "remaining_reward_pool",
+"category": "remaining_card",
+"element": "ar",
+"map": 20.0,
+"notes": "Grants the unpicked Ar card.",
+"title": "Ar remaining card"
+}, {
+"category": "relic",
+"choice_reward": {
+"rarity": "standard",
+"type": "relic"
+},
+"map": 21.0,
+"notes": "Standard relic placeholder choice.",
+"title": "Relic choice"
+}, {
+"automatic_rewards": ["max_hand_size_1"],
+"category": "max_hand_size",
+"map": 22.0,
+"notes": "Raises hand size from 4 to 5.",
+"title": "+1 max hand size"
+}, {
+"automatic_rewards": ["max_mana_1"],
+"category": "max_mana",
+"map": 23.0,
+"notes": "Raises mana from 5 to 6.",
+"title": "+1 max mana"
+}, {
+"category": "new_card",
+"choice_reward": {
+"element": "fogo",
+"pool_offset": 6.0,
+"type": "new_card"
+},
+"map": 24.0,
+"notes": "First Fogo pair choice; real cards arrive in T02-P06.",
+"title": "Fogo new-card choice"
+}, {
+"category": "card_upgrade",
+"choice_reward": {
+"type": "upgrade_card"
+},
+"map": 25.0,
+"notes": "Seeded upgrade choice.",
+"title": "Card upgrade choice"
+}, {
+"automatic_rewards": ["grant_remaining_card"],
+"card_source": "remaining_reward_pool",
+"category": "remaining_card",
+"element": "fogo",
+"map": 26.0,
+"notes": "Grants the unpicked Fogo card.",
+"title": "Fogo remaining card"
+}, {
+"category": "utility",
+"choice_reward": {
+"options": ["remove_card", "duplicate_card", "upgrade_card"],
+"type": "utility_choice"
+},
+"map": 27.0,
+"notes": "Remove card, duplicate card, or upgrade card.",
+"title": "Utility choice"
+}, {
+"category": "relic",
+"map": 28.0,
+"notes": "Late-run power spike.",
+"relic_reward": {
+"id": "pacto_das_ruinas",
+"mode": "grant",
+"rarity": "rare_ultra"
+},
+"title": "Rare/ultra relic"
+}, {
+"automatic_rewards": ["complete_run_victory"],
+"category": "victory",
+"map": 29.0,
+"notes": "End of complete run.",
+"title": "Victory"
+}],
+"route": {
+"active_map_count": 13.0,
+"element_order": ["terra", "gelo", "ar", "fogo"],
+"metadata_version": 1.0,
+"status": "contract_only",
+"target_map_count": 29.0
+},
+"save_version": 5.0,
+"shop_prices": {
+"buy_card": {
+"common": 12.0,
+"rare": 18.0,
+"ultra_rare": 25.0
+},
+"buy_relic": {
+"common": 30.0,
+"rare": 45.0,
+"ultra_rare": 70.0
+},
+"duplicate_card": 20.0,
+"heal": 10.0,
+"max_health": [18.0, 28.0],
+"remove_card": 15.0,
+"reroll_base": 8.0,
+"reroll_step": 4.0,
+"upgrade_card": 20.0
+},
+"shop_state_schema": {
+"expanded_shop_pending": false,
+"reroll_cost_base": 8.0,
+"reroll_cost_step": 4.0,
+"version": 1.0
+},
+"snapshot_version": 5.0,
+"stat_caps": {
+"max_hand_size": 5.0,
+"max_mana": 6.0
+},
+"status": "contract_only",
+"status_definitions": [{
+"display_name": "Lentidao",
+"format": "Lentidao {value}",
+"id": "slow_turns",
+"timing": "proximo_combate",
+"tooltip": "A criatura pula ataques enquanto houver turnos de Lentidao.",
+"value_key": "slow_turns"
+}, {
+"display_name": "Confusao",
+"format": "Confusao {value}",
+"id": "confusion_turns",
+"timing": "proximo_combate",
+"tooltip": "A criatura pode atacar alvo aleatorio enquanto o marcador estiver ativo.",
+"value_key": "confusion_turns"
+}, {
+"display_name": "Maldicao",
+"format": "Maldicao {value}",
+"id": "curse_turns",
+"timing": "manutencao",
+"tooltip": "Marcador negativo usado por efeitos necromantes.",
+"value_key": "curse_turns"
+}, {
+"display_name": "Regeneracao",
+"format": "Regeneracao {value}",
+"id": "regeneration_amount",
+"timing": "manutencao",
+"tooltip": "Cura HP no fim do Resolver Combate.",
+"value_key": "regeneration_amount"
+}, {
+"display_name": "Carnica",
+"format": "Carnica {value}",
+"id": "carrion_amount",
+"timing": "morte",
+"tooltip": "Ganha +X/+X quando outra criatura morre.",
+"value_key": "carrion_amount"
+}, {
+"display_name": "Revive usado",
+"format": "Revive usado",
+"id": "revive_marker",
+"timing": "morte",
+"tooltip": "Esta criatura ja consumiu seu retorno de Reviver.",
+"value_key": "revive_marker"
+}, {
+"display_name": "Bonus temporario de ATK",
+"format": "+{value} ATK temp.",
+"id": "temporary_attack_bonus",
+"timing": "temporario",
+"tooltip": "Bonus de ATK que expira na manutencao definida pelo efeito.",
+"value_key": "temporary_attack_bonus"
+}, {
+"display_name": "Bonus temporario de HP",
+"format": "+{value} HP temp.",
+"id": "temporary_health_bonus",
+"timing": "temporario",
+"tooltip": "Bonus de HP maximo que expira na manutencao definida pelo efeito.",
+"value_key": "temporary_health_bonus"
+}, {
+"display_name": "Escudo",
+"format": "Escudo {value}",
+"id": "shield_charges",
+"timing": "ao_sofrer_dano",
+"tooltip": "Quantidade de instancias de dano que ainda podem ser ignoradas.",
+"value_key": "shield_charges"
+}, {
+"display_name": "Resistencia",
+"format": "Resistencia {value}",
+"id": "resistance_amount",
+"timing": "por_ciclo",
+"tooltip": "Dano que ainda pode ser ignorado neste ciclo de combate.",
+"value_key": "resistance_amount"
+}, {
+"display_name": "Veneno",
+"format": "Veneno {value}",
+"id": "poison_amount",
+"timing": "fim_turno",
+"tooltip": "HP perdido no fim do turno do jogador.",
+"value_key": "poison_amount"
+}, {
+"display_name": "Congelado",
+"format": "Congelado {value}",
+"id": "frozen_turns",
+"timing": "proximo_combate",
+"tooltip": "A criatura nao ataca enquanto o marcador estiver ativo.",
+"value_key": "frozen_turns"
+}],
+"tooltip_surfaces": ["card", "occupant", "reward", "shop_item", "relic", "enemy_intent", "board_effect"],
+"track_02_player_card_rewards": {
+"arcano": {
+"ar": ["arcano_amplificador", "arcano_canalizar"],
+"fogo": ["arcano_espelho_arcano", "arcano_descarga"],
+"gelo": ["arcano_vortice", "arcano_sentinela_arcana"],
+"terra": ["arcano_bola_de_fogo", "arcano_acelerar"]
+},
+"invocador": {
+"ar": ["invocador_cavaleiro_arcano", "invocador_berserker"],
+"fogo": ["invocador_arauto", "invocador_tita_geminal"],
+"gelo": ["invocador_capitao_de_campo", "invocador_parede_de_escudos"],
+"terra": ["invocador_atacar", "invocador_golem"]
+},
+"necromante": {
+"ar": ["necro_arauto_das_sombras", "necro_colheita_das_almas"],
+"fogo": ["necro_lich", "necro_praga"],
+"gelo": ["necro_revenant", "necro_flagelo"],
+"terra": ["necro_carniceiro", "necro_diabrete"]
+}
+}
 }

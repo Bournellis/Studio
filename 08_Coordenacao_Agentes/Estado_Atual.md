@@ -14,11 +14,11 @@
 
 - Status: **P0_IMPLEMENTACAO - ativo**
 - Fase: `Implementacao`
-- Track ativa: `Track 02 - Complete Run Evolution` (READY_FOR_IMPLEMENTATION_PLANNING)
-- Baseline atual: Track 01 validada em Godot 4.6.2 com ShipHub, 3 saves v4, escolha de classe, deck/mapa/almas, run linear de 13 mapas, starter decks custo 1, recompensas fixas/escolhiveis, upgrades reais Lvl 2/Lvl 3, raridade 70/25/5, loja de upgrades por 20 almas, descarte pre-combate, 2 cartas novas reais por classe, Diabrete/Suicida no Necromante, alvo de mesa aliada, batalha por lanes, sacrificio, movimento, IA de duelo e validacao verde 67/67. Track 02 documentada para primeira run completa de 29 mapas com recompensas revisadas, reliquias universais, loja expandida, todas as keywords, AI inimiga melhorada, painel de intencao e melhorias visuais.
-- Meta ativa: executar os prompts lineares da Track 02 com handoff por thread, comecando por `T02-P01`.
+- Track ativa: `Track 02 - Complete Run Evolution` (T02-P07_COMPLETE)
+- Baseline atual: Track 01 validada em Godot 4.6.2 com ShipHub, 3 saves v5, escolha de classe, deck/mapa/almas, run linear de 13 mapas, starter decks custo 1, recompensas fixas/escolhiveis, upgrades reais Lvl 2/Lvl 3, raridade 70/25/5, descarte pre-combate, 8 cartas reais de recompensa por classe, galerias inimigas Terra/Gelo/Ar/Fogo, Diabrete/Suicida no Necromante, alvo de mesa aliada, batalha por lanes, sacrificio, movimento, IA hibrida por perfis Terra/Gelo/Ar/Fogo, painel de intencao inimiga, intent de chefe e validacao verde 89/89. Track 02 agora tem contrato de dados/runtime, agenda de recompensas de 29 mapas, caps de mana/mao, progressao fixa de HP, reliquias universais iniciais, loja expandida de Almas, carta restante, escolha utilitaria, reroll, vocabulario/tooltips canonicos de keywords/status, engine completo de keywords, validacao de conteudo de cartas e validacao de AI/intent; rota 29 jogavel ainda pendente.
+- Meta ativa: executar os prompts lineares da Track 02 com handoff por thread, continuando por `T02-P08`.
 - Trabalho permitido: codigo, validacao, playtest e documentacao local.
-- Proximo passo: iniciar `T02-P01 - Track 02 Data Contract, Save Version, And Validation Scaffolding`.
+- Proximo passo: iniciar `T02-P08 - Route, Encounter Modes, Board Formats, Field Effects, Boss Phases`.
 
 ## Mobile Universe
 

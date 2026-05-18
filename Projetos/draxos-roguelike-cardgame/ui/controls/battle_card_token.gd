@@ -34,6 +34,7 @@ func _rebuild() -> void:
 		child.free()
 	custom_minimum_size = card_size
 	clip_contents = false
+	tooltip_text = ContentLibrary.card_tooltip_text(card_id, text_context)
 	add_theme_stylebox_override("panel", _panel_style())
 
 	var box: VBoxContainer = VBoxContainer.new()
@@ -202,7 +203,8 @@ func _build_keyword_chips() -> HBoxContainer:
 		return row
 	for keyword: String in card.keywords:
 		var chip: Label = Label.new()
-		chip.text = keyword
+		chip.text = ContentLibrary.get_keyword_display_name(keyword)
+		chip.tooltip_text = ContentLibrary.keyword_tooltip_text(keyword)
 		chip.clip_text = true
 		chip.max_lines_visible = 1
 		chip.add_theme_font_size_override("font_size", 8)

@@ -42,13 +42,13 @@ Evoluir o slice validado de 13 mapas para a primeira versao completa do jogo: ru
 
 ## Acceptance Criteria
 
-- [ ] `T02-P01` conclui contrato de dados/save/validacao.
-- [ ] `T02-P02` conclui recompensas e progressao de mana/mao/HP.
-- [ ] `T02-P03` conclui reliquias e loja expandida.
-- [ ] `T02-P04` conclui vocabulario de keywords e tooltips.
-- [ ] `T02-P05` conclui engine completo de keywords.
-- [ ] `T02-P06` conclui cartas novas e inimigos.
-- [ ] `T02-P07` conclui AI inimiga e painel de intencao.
+- [x] `T02-P01` conclui contrato de dados/save/validacao.
+- [x] `T02-P02` conclui recompensas e progressao de mana/mao/HP.
+- [x] `T02-P03` conclui reliquias e loja expandida.
+- [x] `T02-P04` conclui vocabulario de keywords e tooltips.
+- [x] `T02-P05` conclui engine completo de keywords.
+- [x] `T02-P06` conclui cartas novas e inimigos.
+- [x] `T02-P07` conclui AI inimiga e painel de intencao.
 - [ ] `T02-P08` conclui rota 29 mapas, novos encontros, formatos, field effects e bosses.
 - [ ] `T02-P09` conclui polish, telemetria, validacao de rota e tuning inicial.
 - [ ] Cada thread atualiza `handoff-log.md`.

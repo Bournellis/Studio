@@ -12,7 +12,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 
 | Prioridade | Projeto | Caminho | Fase | Status | Trabalho permitido | Proximo passo | Restricao operacional |
 |---|---|---|---|---|---|---|---|
-| P0 | Draxos Roguelike Cardgame | `Projetos/draxos-roguelike-cardgame/` | Implementacao | `P0_IMPLEMENTACAO` | Codigo, validacao, playtest, documentacao local | Executar Track 02 - Complete Run Evolution em prompts lineares para chegar na primeira run completa de 29 mapas | Pode receber trabalho de implementacao por padrao |
+| P0 | Draxos Roguelike Cardgame | `Projetos/draxos-roguelike-cardgame/` | Implementacao | `P0_IMPLEMENTACAO` | Codigo, validacao, playtest, documentacao local | Continuar Track 02 em `T02-P08 - Route, Encounter Modes, Board Formats, Field Effects, Boss Phases` | Pode receber trabalho de implementacao por padrao |
 | P1 | Mobile Universe | `Projetos/_conceitos/mobile-universe/` | Conceito | `P1_CONCEITO` | Conceito, pitch, design, referencias | Definir curva de reducao de Almas e janela de tempo para recuperar recompensas PVP | Nao criar codigo, cenas, assets de implementacao ou projeto Godot sem pedido explicito |
 | Pausado | RPG Isometrico | `Projetos/rpg-isometrico/` | Pausado | `PAUSADO_INDEFINIDO` | Consulta historica quando solicitado | Nenhum enquanto pausado | Nao implementar, expandir gates ou selecionar Next Gate sem pedido explicito |
 | Pausado | RPG Turnos | `Projetos/rpg-turnos/` | Pausado | `PAUSADO_INDEFINIDO` | Consulta historica quando solicitado | Nenhum enquanto pausado | Nao implementar, selecionar track/gate, regenerar `.tres` ou alterar escopo sem pedido explicito |

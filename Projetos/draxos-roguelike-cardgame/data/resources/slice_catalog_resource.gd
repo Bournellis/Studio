@@ -14,6 +14,7 @@ extends Resource
 @export var boards: Array[Dictionary] = []
 @export var encounters: Array[Dictionary] = []
 @export var run_map: Dictionary = {}
+@export var track_contract: Dictionary = {}
 
 func find_card(card_id: String):
 	for card in cards:

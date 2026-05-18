@@ -8,6 +8,11 @@ var engine: BattleEngine = BattleEngine.new()
 var player_hud_dock: PanelContainer
 var enemy_commander_hud: PanelContainer
 var enemy_cardback_rail: Control
+var enemy_intent_panel: PanelContainer
+var enemy_intent_title_label: Label
+var enemy_intent_profile_label: Label
+var enemy_intent_body_label: Label
+var enemy_intent_pressure_label: Label
 var objective_chip: Label
 var player_hp_value: Label
 var player_mana_value: Label
@@ -76,6 +81,7 @@ func _ready() -> void:
 		"class_active_unlocked": RunSession.class_active_unlocked,
 		"class_active_level": RunSession.class_active_level,
 		"card_upgrade_counts": RunSession.card_upgrade_counts,
+		"relic_ids": RunSession.relic_ids,
 		"mana_per_turn": RunSession.max_mana if RunSession.max_mana > 0 else 2,
 		"max_hand_size": RunSession.max_hand_size if RunSession.max_hand_size > 0 else RunSession.DEFAULT_MAX_HAND_SIZE,
 		"player_health": RunSession.current_health if RunSession.current_health > 0 else 20,
@@ -245,6 +251,9 @@ func _build_ui() -> void:
 	enemy_commander_hud = _build_enemy_commander_hud()
 	add_child(enemy_commander_hud)
 	_apply_enemy_commander_hud_rect(enemy_commander_hud)
+	enemy_intent_panel = _build_enemy_intent_panel()
+	add_child(enemy_intent_panel)
+	_apply_enemy_intent_panel_rect(enemy_intent_panel)
 
 	history_panel = PanelContainer.new()
 	history_panel.name = "BattleLogHistoryPanel"
@@ -318,6 +327,56 @@ func _build_enemy_commander_hud() -> PanelContainer:
 	enemy_cardback_rail.custom_minimum_size = Vector2(168 if _is_compact_viewport() else 196, 46 if _is_compact_viewport() else 56)
 	enemy_cardback_rail.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	row.add_child(enemy_cardback_rail)
+	return panel
+
+func _build_enemy_intent_panel() -> PanelContainer:
+	var panel: PanelContainer = PanelContainer.new()
+	panel.name = "BattleEnemyIntentPanel"
+	panel.visible = false
+	panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	panel.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	panel.custom_minimum_size = _enemy_intent_panel_size()
+	panel.add_theme_stylebox_override("panel", _panel_style(Color(0.045, 0.038, 0.032, 0.78), Color(0.78, 0.52, 0.26, 0.86)))
+
+	var margin: MarginContainer = MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 8)
+	margin.add_theme_constant_override("margin_top", 6)
+	margin.add_theme_constant_override("margin_right", 8)
+	margin.add_theme_constant_override("margin_bottom", 6)
+	panel.add_child(margin)
+
+	var box: VBoxContainer = VBoxContainer.new()
+	box.name = "BattleEnemyIntentStack"
+	box.add_theme_constant_override("separation", 2)
+	margin.add_child(box)
+
+	enemy_intent_title_label = Label.new()
+	enemy_intent_title_label.name = "BattleEnemyIntentTitle"
+	enemy_intent_title_label.text = "Intencao inimiga"
+	enemy_intent_title_label.add_theme_font_size_override("font_size", 11)
+	enemy_intent_title_label.add_theme_color_override("font_color", Color(1.0, 0.83, 0.42))
+	box.add_child(enemy_intent_title_label)
+
+	enemy_intent_profile_label = Label.new()
+	enemy_intent_profile_label.name = "BattleEnemyIntentProfile"
+	enemy_intent_profile_label.add_theme_font_size_override("font_size", 10)
+	enemy_intent_profile_label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+	box.add_child(enemy_intent_profile_label)
+
+	enemy_intent_pressure_label = Label.new()
+	enemy_intent_pressure_label.name = "BattleEnemyIntentPressure"
+	enemy_intent_pressure_label.add_theme_font_size_override("font_size", 10)
+	enemy_intent_pressure_label.add_theme_color_override("font_color", Color(0.96, 0.68, 0.46))
+	enemy_intent_pressure_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	box.add_child(enemy_intent_pressure_label)
+
+	enemy_intent_body_label = Label.new()
+	enemy_intent_body_label.name = "BattleEnemyIntentBody"
+	enemy_intent_body_label.add_theme_font_size_override("font_size", 9)
+	enemy_intent_body_label.add_theme_color_override("font_color", UiTokens.color("text_secondary"))
+	enemy_intent_body_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	enemy_intent_body_label.max_lines_visible = 4 if _is_compact_viewport() else 5
+	box.add_child(enemy_intent_body_label)
 	return panel
 
 func _build_player_hud_dock() -> PanelContainer:
@@ -799,6 +858,7 @@ func _refresh() -> void:
 	var state: Dictionary = _display_state()
 	_refresh_player_hud(state)
 	_refresh_enemy_commander_hud(state)
+	_refresh_enemy_intent_panel(state)
 	_refresh_objective_chip(state)
 	_rebuild_hero_targets(state)
 	_refresh_area_targets()
@@ -854,6 +914,43 @@ func _refresh_enemy_commander_hud(state: Dictionary) -> void:
 	if enemy_mana_value != null:
 		enemy_mana_value.text = "%d/%d" % [int(state.get("enemy_mana", 0)), int(state.get("enemy_mana_per_turn", 0))]
 	_rebuild_enemy_cardbacks(int(state.get("enemy_hand_count", 0)) if enabled else 0)
+
+func _refresh_enemy_intent_panel(state: Dictionary) -> void:
+	if enemy_intent_panel == null:
+		return
+	var intent: Dictionary = Dictionary(state.get("enemy_intent", {}))
+	var visible: bool = bool(intent.get("visible", false))
+	enemy_intent_panel.visible = visible
+	if not visible:
+		return
+	if enemy_intent_title_label != null:
+		enemy_intent_title_label.text = str(intent.get("title", "Intencao inimiga"))
+	if enemy_intent_profile_label != null:
+		var profile_text: String = "%s: %s" % [str(intent.get("profile_name", "")), str(intent.get("profile_summary", ""))]
+		if str(intent.get("kind", "")) == "boss":
+			profile_text = "%s | %s" % [str(intent.get("current_phase", "")), profile_text]
+		enemy_intent_profile_label.text = profile_text
+	if enemy_intent_pressure_label != null:
+		enemy_intent_pressure_label.text = str(intent.get("incoming_pressure", ""))
+	if enemy_intent_body_label != null:
+		var lines: Array[String] = []
+		for priority: Variant in Array(intent.get("priorities", [])):
+			var text: String = str(priority)
+			if text != "":
+				lines.append(text)
+		var lanes: Array = Array(intent.get("lane_pressure", []))
+		if not lanes.is_empty():
+			lines.append(str(lanes[0]))
+		if str(intent.get("kind", "")) == "boss":
+			lines.append("Gatilho: %s" % str(intent.get("next_scripted_trigger", "")))
+			lines.append("Especial: %s" % str(intent.get("next_major_special_action", "")))
+		else:
+			var field_hint: String = str(intent.get("incoming_field_effect", ""))
+			if field_hint != "":
+				lines.append(field_hint)
+		var max_lines: int = 5 if _is_compact_viewport() else 6
+		enemy_intent_body_label.text = "\n".join(lines.slice(0, max_lines))
+	enemy_intent_panel.tooltip_text = _enemy_intent_tooltip(intent)
 
 func _refresh_objective_chip(state: Dictionary) -> void:
 	if objective_chip == null:
@@ -1230,7 +1327,7 @@ func _sacrifice_confirmation_visible() -> bool:
 func _after_battle_action() -> void:
 	if engine.outcome == "vitoria" and not victory_recorded:
 		victory_recorded = true
-		var reward_summary: Dictionary = RunSession.record_battle_result(RunSession.current_node_id, engine.outcome, engine.player_health)
+		var reward_summary: Dictionary = RunSession.record_battle_result(RunSession.current_node_id, engine.outcome, engine.player_health, int(engine.get_state().get("bonus_souls", 0)))
 		SaveManager.save_current_run()
 		_show_reward_modal(reward_summary)
 	_refresh()
@@ -1273,7 +1370,16 @@ func _rebuild_reward_choice_buttons() -> void:
 		var button: Button = Button.new()
 		button.name = "BattleRewardChoice_%s" % str(choice.get("id", "")).replace(":", "_")
 		button.text = str(choice.get("title", ""))
-		button.tooltip_text = str(choice.get("body", ""))
+		button.tooltip_text = ContentLibrary.reward_choice_tooltip(choice)
+		button.mouse_entered.connect(func() -> void:
+			_schedule_preview({
+				"title": str(choice.get("title", "")),
+				"subtitle": "Recompensa",
+				"body": ContentLibrary.reward_choice_tooltip(choice),
+				"state": ""
+			})
+		)
+		button.mouse_exited.connect(_hide_preview)
 		button.custom_minimum_size = Vector2(0, 42)
 		button.pressed.connect(func() -> void:
 			_apply_reward_choice(str(choice.get("id", "")))
@@ -1299,6 +1405,10 @@ func _pending_reward_prompt() -> String:
 			return "Escolha 1 upgrade de carta."
 		RunSession.CHOICE_REWARD_NEW_CARD:
 			return "Escolha 1 carta nova."
+		RunSession.CHOICE_REWARD_RELIC:
+			return "Escolha 1 reliquia."
+		RunSession.CHOICE_REWARD_UTILITY:
+			return "Escolha remover, duplicar ou aprimorar uma carta."
 	return "Escolha 1 recompensa."
 
 func _accepted_card_indices_for_target(target: Dictionary) -> Array[int]:
@@ -1473,7 +1583,7 @@ func _show_preview_now(data: Dictionary) -> void:
 	preview_body_label.text = str(data.get("body", ""))
 	preview_state_label.text = str(data.get("state", ""))
 	var target_position: Vector2 = get_local_mouse_position() + Vector2(18, 18)
-	preview_panel.position = Vector2(min(target_position.x, max(18.0, size.x - 320.0)), min(target_position.y, max(18.0, size.y - 240.0)))
+	preview_panel.position = Vector2(min(target_position.x, max(18.0, size.x - 320.0)), min(target_position.y, max(18.0, size.y - 380.0)))
 	preview_panel.visible = true
 
 func _hide_preview() -> void:
@@ -1490,7 +1600,7 @@ func _card_preview_data(card_id: String, occupant: Dictionary) -> Dictionary:
 	if card.occupies_slot():
 		subtitle += " | %d/%d" % [int(card.attack), int(card.health)]
 	var body: String = VisualAssets.card_display_text(card, engine.get_card_text_context(card_id))
-	var keyword_text: String = _keyword_text(Array(card.keywords))
+	var keyword_text: String = ContentLibrary.keywords_tooltip_text(Array(card.keywords))
 	if keyword_text != "":
 		body += "\n\n%s" % keyword_text
 	var state: String = ""
@@ -1510,14 +1620,7 @@ func _card_preview_data(card_id: String, occupant: Dictionary) -> Dictionary:
 		var temporary_attack: int = int(occupant.get("temporary_attack_bonus", 0))
 		if temporary_attack != 0:
 			state_parts.append("Bonus temporario +%d ATK" % temporary_attack)
-		if int(occupant.get("slow_turns", 0)) > 0:
-			state_parts.append("Lentidao %d" % int(occupant.get("slow_turns", 0)))
-		if int(occupant.get("confusion_turns", 0)) > 0:
-			state_parts.append("Confusao %d" % int(occupant.get("confusion_turns", 0)))
-		if bool(occupant.get("regeneracao", false)):
-			state_parts.append("Regeneracao %d" % int(occupant.get("regeneration_amount", 1)))
-		if int(occupant.get("carrion_amount", 0)) > 0:
-			state_parts.append("Carnica %d" % int(occupant.get("carrion_amount", 0)))
+		state_parts.append_array(ContentLibrary.status_summary_parts(occupant))
 		if bool(occupant.get("defensor", false)):
 			state_parts.append("Defensor")
 		if bool(occupant.get("revive_marker", false)):
@@ -1616,22 +1719,6 @@ func _class_active_detail_text(choice_id: String = "") -> String:
 					return "%d Cinzas. %s" % [int(choice.get("cost_ashes", 0)), str(choice.get("text", ""))]
 			return "Clique para escolher Podridao, Furia, Raio das Cinzas ou upgrades antes de arrastar."
 	return ""
-
-func _keyword_text(keywords: Array) -> String:
-	var parts: Array[String] = []
-	for keyword: Variant in keywords:
-		match str(keyword):
-			"iniciativa":
-				parts.append("Iniciativa: causa dano primeiro na lane; se destruir o alvo, nao recebe retorno.")
-			"regeneracao":
-				parts.append("Regeneracao: recupera HP no fim do Resolver Combate.")
-			"carnica":
-				parts.append("Carnica: cresce quando outra criatura morre.")
-			"defensor":
-				parts.append("Defensor: protege lanes vazias, atraindo ataques sem alvo frontal.")
-			"reviver":
-				parts.append("Reviver: volta uma vez com stats originais no mesmo slot.")
-	return "\n".join(parts)
 
 func _hero_display_name(owner_id: String) -> String:
 	var catalog = ContentLibrary.get_catalog()
@@ -1734,6 +1821,9 @@ func _battle_outer_margin_bottom() -> int:
 func _enemy_commander_hud_size() -> Vector2:
 	return Vector2(390, 52) if _is_compact_viewport() else Vector2(450, 64)
 
+func _enemy_intent_panel_size() -> Vector2:
+	return Vector2(292, 112) if _is_compact_viewport() else Vector2(330, 138)
+
 func _apply_enemy_commander_hud_rect(control: Control) -> void:
 	var hud_size: Vector2 = _enemy_commander_hud_size()
 	control.anchor_left = 0.5
@@ -1744,6 +1834,26 @@ func _apply_enemy_commander_hud_rect(control: Control) -> void:
 	control.offset_top = 5.0 if _is_compact_viewport() else 8.0
 	control.offset_right = hud_size.x * 0.5
 	control.offset_bottom = control.offset_top + hud_size.y
+
+func _apply_enemy_intent_panel_rect(control: Control) -> void:
+	var panel_size: Vector2 = _enemy_intent_panel_size()
+	control.anchor_left = 0.0
+	control.anchor_top = 0.0
+	control.anchor_right = 0.0
+	control.anchor_bottom = 0.0
+	control.offset_left = 8.0 if _is_compact_viewport() else 12.0
+	control.offset_top = 5.0 if _is_compact_viewport() else 8.0
+	control.offset_right = control.offset_left + panel_size.x
+	control.offset_bottom = control.offset_top + panel_size.y
+
+func _enemy_intent_tooltip(intent: Dictionary) -> String:
+	var ids: Array = Array(intent.get("tooltip_ids", []))
+	var lines: Array[String] = []
+	for intent_id: Variant in ids:
+		var tooltip: String = ContentLibrary.enemy_intent_tooltip_text(str(intent_id))
+		if tooltip != "":
+			lines.append(tooltip)
+	return "\n".join(lines)
 
 func _apply_area_target_overlay_rect(control: Control) -> void:
 	control.anchor_left = 0.09

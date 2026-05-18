@@ -26,6 +26,7 @@ func generate_all() -> Dictionary:
 	catalog.boards = _typed_dictionary_array(definition.get("boards", []))
 	catalog.encounters = _typed_dictionary_array(definition.get("encounters", []))
 	catalog.run_map = Dictionary(definition.get("run_map", {}))
+	catalog.track_contract = Dictionary(definition.get("track_contract", {}))
 
 	for card_data: Dictionary in _typed_dictionary_array(definition.get("cards", [])):
 		catalog.cards.append(_build_card(card_data))

@@ -20,19 +20,19 @@
 
 | Prompt | Status | Goal | Validation |
 |---|---|---|---|
-| T02-P01 | pending | Add Track 02 data contract, save version, and validation scaffolding. | Godot validate |
-| T02-P02 | pending | Implement reward categories, map reward schedule, max mana/hand/HP progression. | Godot validate |
-| T02-P03 | pending | Implement relic system and expanded Souls shop. | Godot validate |
-| T02-P04 | pending | Implement keyword vocabulary, tooltip system, and status presentation. | Godot validate + screenshots if UI changed |
-| T02-P05 | pending | Implement full keyword engine behavior. | Godot validate |
-| T02-P06 | pending | Promote placeholder cards into real class cards and add enemy card content. | Godot validate |
-| T02-P07 | pending | Implement enemy AI profiles and enemy intent panel. | Godot validate + screenshots |
+| T02-P01 | complete | Add Track 02 data contract, save version, and validation scaffolding. | Green 70/70 |
+| T02-P02 | complete | Implement reward categories, map reward schedule, max mana/hand/HP progression. | Green 73/73 |
+| T02-P03 | complete | Implement relic system and expanded Souls shop. | Green 79/79 + screenshots |
+| T02-P04 | complete | Implement keyword vocabulary, tooltip system, and status presentation. | Green 81/81 + screenshots |
+| T02-P05 | complete | Implement full keyword engine behavior. | Godot validate |
+| T02-P06 | complete | Promote placeholder cards into real class cards and add enemy card content. | Green 87/87 |
+| T02-P07 | complete | Implement enemy AI profiles and enemy intent panel. | Green 89/89 + screenshots |
 | T02-P08 | pending | Implement 29-map route, new encounter modes, board formats, field effects, boss phases. | Godot validate + screenshots |
 | T02-P09 | pending | Polish UI/visuals, add telemetry, run full-route validation, and tune. | Godot validate + screenshots/playtest notes |
 
 ## Current Execution Cursor
 
-Next prompt: `T02-P01 - Track 02 Data Contract, Save Version, And Validation Scaffolding`.
+Next prompt: `T02-P08 - Route, Encounter Modes, Board Formats, Field Effects, Boss Phases`.
 
 ## Acceptance For Track 02
 

@@ -2,6 +2,8 @@ extends "res://addons/gut/test.gd"
 
 const ContentGeneratorScript = preload("res://tools/content_generator.gd")
 const SceneGeneratorScript = preload("res://tools/scene_generator.gd")
+const BattleCardTokenScript = preload("res://ui/controls/battle_card_token.gd")
+const CardTokenScript = preload("res://ui/controls/card_token.gd")
 const TEST_SAVE_PREFIX: String = "user://gut_draxos_save_slot_"
 
 func before_all() -> void:
@@ -37,7 +39,7 @@ func test_catalog_uses_redesigned_class_decks() -> void:
 		var deck: Array = Array(class_option.get("starter_deck", []))
 		assert_eq(deck.size(), 9)
 		var reward_pool_size: int = Array(class_option.get("reward_pool", [])).size()
-		assert_eq(reward_pool_size, 2)
+		assert_eq(reward_pool_size, 8)
 		var counts: Dictionary = {}
 		for card_id: String in deck:
 			assert_not_null(catalog.find_card(card_id), "Missing card %s" % card_id)
@@ -62,10 +64,21 @@ func test_catalog_removes_old_player_cards_and_keeps_enemies() -> void:
 	assert_eq(int(ContentLibrary.get_card("arcano_tempestade").effect.get("amount", 0)), 4)
 	assert_eq(int(ContentLibrary.get_card("necro_prender").cost), 1)
 	assert_null(catalog.find_card("necro_punir"), "Punir should be removed from the active catalog.")
-	for card_id: String in ["arcano_bola_de_fogo", "arcano_acelerar", "invocador_atacar", "invocador_golem", "necro_carniceiro", "necro_diabrete"]:
+	for card_id: String in [
+		"arcano_bola_de_fogo", "arcano_acelerar", "arcano_vortice", "arcano_sentinela_arcana", "arcano_amplificador", "arcano_canalizar", "arcano_espelho_arcano", "arcano_descarga",
+		"invocador_atacar", "invocador_golem", "invocador_capitao_de_campo", "invocador_parede_de_escudos", "invocador_cavaleiro_arcano", "invocador_berserker", "invocador_arauto", "invocador_tita_geminal",
+		"necro_carniceiro", "necro_diabrete", "necro_revenant", "necro_flagelo", "necro_arauto_das_sombras", "necro_colheita_das_almas", "necro_lich", "necro_praga"
+	]:
 		assert_not_null(ContentLibrary.get_card(card_id), "Missing real reward card %s" % card_id)
 		assert_not_null(ContentLibrary.get_card("%s_lvl2" % card_id), "Missing level 2 card %s" % card_id)
 		assert_not_null(ContentLibrary.get_card("%s_lvl3" % card_id), "Missing level 3 card %s" % card_id)
+	for placeholder_id: String in ["arcano_recompensa_1", "invocador_recompensa_1", "necro_recompensa_1"]:
+		assert_null(catalog.find_card(placeholder_id), "Placeholder reward card should be removed: %s" % placeholder_id)
+	var galleries: Dictionary = Dictionary(ContentLibrary.get_track_contract().get("enemy_card_galleries", {}))
+	for element: String in ["terra", "gelo", "ar", "fogo"]:
+		assert_false(Array(galleries.get(element, [])).is_empty(), "Missing enemy gallery %s" % element)
+		for enemy_card_id: String in Array(galleries.get(element, [])):
+			assert_not_null(catalog.find_card(enemy_card_id), "Enemy gallery card missing: %s" % enemy_card_id)
 
 func test_run_session_tracks_hand_limit_reward() -> void:
 	var result: Dictionary = RunSession.start_class_run("arcano", 77)
@@ -110,10 +123,13 @@ func test_reward_choices_apply_levels_and_two_step_new_cards() -> void:
 	assert_true(bool(card_result.get("ok", false)), str(card_result.get("message", "")))
 	assert_eq(RunSession.current_deck_ids.size(), before_count + added_copies)
 	assert_eq(RunSession.current_deck_ids.count(card_id), added_copies)
+	var remaining_card_id: String = ""
+	for reward_card_id: String in ["invocador_atacar", "invocador_golem"]:
+		if reward_card_id != card_id:
+			remaining_card_id = reward_card_id
 	RunSession.record_battle_result("n11_ondas_avancadas", "vitoria", 20)
-	var second_card_choices: Array[Dictionary] = RunSession.pending_reward_choices()
-	assert_eq(second_card_choices.size(), 1)
-	assert_ne(str(second_card_choices[0].get("card_id", "")), card_id)
+	assert_false(RunSession.has_pending_reward())
+	assert_gt(RunSession.current_deck_ids.count(remaining_card_id), 0)
 
 func test_necromancer_passive_reward_unlocks_active_then_upgrade() -> void:
 	var result: Dictionary = RunSession.start_class_run("necromante", 77)
@@ -122,8 +138,11 @@ func test_necromancer_passive_reward_unlocks_active_then_upgrade() -> void:
 	assert_true(RunSession.class_passive_unlocked)
 	assert_true(RunSession.class_active_unlocked)
 	assert_eq(RunSession.class_active_level, 1)
+	assert_true(RunSession.has_relic_id(RunSession.RELIC_CATALISADOR_ARCANO))
 	RunSession.record_battle_result("n10_limpeza_elite", "vitoria", 20)
 	assert_eq(RunSession.class_active_level, 2)
+	assert_eq(RunSession.max_health, 25)
+	assert_eq(RunSession.current_health, 25)
 
 func test_arcano_and_invocador_keep_active_on_second_reward() -> void:
 	for class_id: String in ["arcano", "invocador"]:
@@ -134,6 +153,7 @@ func test_arcano_and_invocador_keep_active_on_second_reward() -> void:
 		assert_false(RunSession.class_active_unlocked)
 		RunSession.record_battle_result("n10_limpeza_elite", "vitoria", 20)
 		assert_true(RunSession.class_active_unlocked)
+		assert_eq(RunSession.max_health, 25)
 		RunSession.reset()
 
 func test_run_session_snapshot_tracks_reward_choice_state() -> void:
@@ -145,6 +165,231 @@ func test_run_session_snapshot_tracks_reward_choice_state() -> void:
 	assert_eq(Array(snapshot.get("rewards_pending", [])).size(), 1)
 	var pending: Dictionary = Dictionary(Array(snapshot.get("rewards_pending", []))[0])
 	assert_false(Dictionary(pending.get("rarity_by_card_id", {})).is_empty())
+
+func test_track02_data_contract_is_exposed_by_catalog() -> void:
+	var contract: Dictionary = ContentLibrary.get_track_contract()
+	assert_eq(str(contract.get("id", "")), RunSession.TRACK_02_CONTRACT_ID)
+	assert_eq(int(contract.get("save_version", 0)), SaveManager.SAVE_VERSION)
+	assert_eq(int(contract.get("snapshot_version", 0)), RunSession.SNAPSHOT_VERSION)
+	assert_eq(int(Dictionary(contract.get("stat_caps", {})).get("max_mana", 0)), RunSession.TRACK_02_MAX_MANA_CAP)
+	assert_eq(int(Dictionary(contract.get("stat_caps", {})).get("max_hand_size", 0)), RunSession.TRACK_02_MAX_HAND_SIZE_CAP)
+	assert_eq(int(Dictionary(contract.get("route", {})).get("active_map_count", 0)), RunSession.TRACK_02_CURRENT_ROUTE_MAP_COUNT)
+	assert_eq(int(Dictionary(contract.get("route", {})).get("target_map_count", 0)), RunSession.TRACK_02_TARGET_MAP_COUNT)
+	assert_eq(str(Dictionary(contract.get("relic_state_schema", {})).get("stored_as", "")), "relic_ids")
+	assert_eq(Array(contract.get("reward_schedule", [])).size(), 29)
+	assert_eq(int(Dictionary(contract.get("reward_rarity", {})).get("common", 0)), 70)
+	assert_eq(int(Dictionary(contract.get("reward_rarity", {})).get("rare", 0)), 25)
+	assert_eq(int(Dictionary(contract.get("reward_rarity", {})).get("ultra_rare", 0)), 5)
+
+func test_track02_relic_definitions_and_shop_prices_are_exposed() -> void:
+	var relics: Array = ContentLibrary.get_relic_definitions()
+	assert_eq(relics.size(), 18)
+	for relic_id: String in [
+		RunSession.RELIC_BOLSA_DE_CINZAS,
+		RunSession.RELIC_LAMINA_DE_RESERVA,
+		"mao_preparada",
+		RunSession.RELIC_COURO_ASTRAL,
+		"marca_de_guerra",
+		"eco_menor",
+		RunSession.RELIC_CATALISADOR_ARCANO,
+		"contrato_de_sangue",
+		RunSession.RELIC_FERRAMENTAS_DE_CIRURGIA,
+		"estandarte_vivo",
+		RunSession.RELIC_NUCLEO_INSTAVEL,
+		"escudo_de_marcha",
+		"coracao_de_eter",
+		RunSession.RELIC_BIBLIOTECA_PROIBIDA,
+		RunSession.RELIC_FORJA_NEGRA,
+		"olho_do_grande_mestre",
+		"selo_de_dominacao",
+		RunSession.RELIC_PACTO_DAS_RUINAS
+	]:
+		var relic: Dictionary = ContentLibrary.get_relic_definition(relic_id)
+		assert_false(relic.is_empty(), "Missing relic %s" % relic_id)
+		assert_true(str(relic.get("effect_text", "")) != "")
+	assert_eq(str(ContentLibrary.get_relic_definition("contrato_de_sangue").get("effect_status", "")), "pending_reward_prompt")
+	assert_eq(str(ContentLibrary.get_relic_definition("olho_do_grande_mestre").get("effect_status", "")), "pending_enemy_intent_prompt")
+	var prices: Dictionary = ContentLibrary.get_shop_prices()
+	assert_eq(int(prices.get("heal", 0)), RunSession.SHOP_HEAL_COST)
+	assert_eq(int(prices.get("remove_card", 0)), RunSession.SHOP_REMOVE_CARD_COST)
+	assert_eq(int(Dictionary(prices.get("buy_card", {})).get("ultra_rare", 0)), RunSession.SHOP_BUY_ULTRA_RARE_CARD_COST)
+	assert_eq(int(Dictionary(prices.get("buy_relic", {})).get("rare", 0)), RunSession.SHOP_BUY_RARE_RELIC_COST)
+	assert_eq(int(Array(prices.get("max_health", []))[0]), RunSession.SHOP_MAX_HEALTH_FIRST_COST)
+
+func test_track02_keyword_and_status_tooltip_contract_is_exposed() -> void:
+	for keyword_id: String in [
+		"iniciativa",
+		"defensor",
+		"reviver",
+		"regeneracao",
+		"carnica",
+		"suicida",
+		"enfraquecer",
+		"prender",
+		"remover_keywords",
+		"poder_de_habilidade",
+		"atropelar",
+		"brutal",
+		"drenar",
+		"espinhos",
+		"escudo",
+		"resistencia",
+		"imune",
+		"crescer",
+		"furia",
+		"ecoar",
+		"veneno",
+		"congelar",
+		"profanar",
+		"entrar",
+		"proliferar",
+		"sacrificio",
+		"inspirar",
+		"pacto",
+		"drenar_almas",
+		"ressurgir"
+	]:
+		var definition: Dictionary = ContentLibrary.get_keyword_definition(keyword_id)
+		assert_false(definition.is_empty(), "Missing keyword definition %s" % keyword_id)
+		assert_true(str(definition.get("tooltip", "")) != "", "Missing tooltip for %s" % keyword_id)
+	assert_string_contains(ContentLibrary.keyword_tooltip_text("defensor"), "Defensor")
+	assert_string_contains(ContentLibrary.keyword_tooltip_text("atropelar"), "Timing: combate")
+	assert_eq(ContentLibrary.missing_tooltip_report().size(), 0)
+	var status_text: String = ContentLibrary.status_tooltip_text({
+		"slow_turns": 1,
+		"poison_amount": 3,
+		"temporary_attack_bonus": 2
+	})
+	assert_string_contains(status_text, "Lentidao")
+	assert_string_contains(status_text, "Veneno")
+	assert_string_contains(" | ".join(ContentLibrary.status_summary_parts({"shield_charges": 1, "resistance_amount": 2})), "Escudo 1")
+
+func test_keyword_badges_and_choice_tooltips_have_floating_text() -> void:
+	var deck_token = CardTokenScript.new()
+	add_child(deck_token)
+	deck_token.setup("arcano_barreira", "deck", 0)
+	var deck_chip = deck_token.find_child("KeywordChipsComponent", true, false).get_child(0)
+	assert_string_contains(str(deck_chip.tooltip_text), "Defensor")
+	assert_string_contains(str(deck_token.tooltip_text), "Barreira Arcana")
+	deck_token.queue_free()
+
+	var battle_token = BattleCardTokenScript.new()
+	add_child(battle_token)
+	battle_token.setup("arcano_barreira", 0)
+	var battle_chip = battle_token.find_child("KeywordChipsComponent", true, false).get_child(0)
+	assert_string_contains(str(battle_chip.tooltip_text), "Defensor")
+	assert_string_contains(str(battle_token.tooltip_text), "Barreira Arcana")
+	battle_token.queue_free()
+
+	var reward_tooltip: String = ContentLibrary.reward_choice_tooltip({
+		"id": "new_card:arcano_barreira",
+		"card_id": "arcano_barreira",
+		"body": "Adiciona 3 copias ao deck."
+	})
+	assert_string_contains(reward_tooltip, "Adiciona 3")
+	assert_string_contains(reward_tooltip, "Defensor")
+	var shop_tooltip: String = ContentLibrary.shop_choice_tooltip({
+		"id": "shop_relic:bolsa_de_cinzas",
+		"relic_id": "bolsa_de_cinzas",
+		"cost": 30,
+		"body": "Compra esta reliquia."
+	})
+	assert_string_contains(shop_tooltip, "Custo: 30")
+	assert_string_contains(shop_tooltip, "Bolsa de Cinzas")
+	assert_string_contains(ContentLibrary.enemy_intent_tooltip_text("lane_pressure"), "Pressao")
+	assert_string_contains(ContentLibrary.board_effect_tooltip_text("geada"), "Geada")
+	await get_tree().process_frame
+
+func test_track02_reward_schedule_matches_progression_contract() -> void:
+	var schedule: Array = ContentLibrary.get_reward_schedule()
+	assert_eq(schedule.size(), 29)
+	assert_eq(str(Dictionary(schedule[0]).get("category", "")), "max_mana")
+	assert_eq(str(Dictionary(schedule[9]).get("category", "")), "max_health")
+	assert_eq(int(Dictionary(schedule[9]).get("max_health_delta", 0)), 5)
+	assert_eq(str(Dictionary(schedule[14]).get("category", "")), "max_health")
+	assert_eq(int(Dictionary(schedule[14]).get("max_health_delta", 0)), 5)
+	assert_eq(str(Dictionary(schedule[21]).get("category", "")), "max_hand_size")
+	assert_eq(str(Dictionary(schedule[22]).get("category", "")), "max_mana")
+	assert_eq(str(Dictionary(schedule[28]).get("category", "")), "victory")
+	var map_27_choice: Dictionary = Dictionary(Dictionary(schedule[26]).get("choice_reward", {}))
+	assert_eq(str(map_27_choice.get("type", "")), RunSession.CHOICE_REWARD_UTILITY)
+	for option: String in [RunSession.UTILITY_REWARD_REMOVE_CARD, RunSession.UTILITY_REWARD_DUPLICATE_CARD, RunSession.UTILITY_REWARD_UPGRADE_CARD]:
+		assert_true(Array(map_27_choice.get("options", [])).has(option))
+
+func test_run_session_snapshot_tracks_track02_state() -> void:
+	var result: Dictionary = RunSession.start_class_run("arcano", 77)
+	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
+	var relic_result: Dictionary = RunSession.add_relic_id("bolsa_de_cinzas")
+	assert_true(bool(relic_result.get("ok", false)), str(relic_result.get("message", "")))
+	RunSession.shop_state["expanded_offer_ids"] = ["future_shop_slot"]
+	RunSession.reward_category_state["pending_category"] = "relic"
+	RunSession.reroll_count = 2
+	RunSession.route_metadata["last_resolved_map_index"] = 4
+	var snapshot: Dictionary = RunSession.snapshot()
+	assert_eq(int(snapshot.get("version", 0)), RunSession.SNAPSHOT_VERSION)
+	assert_eq(int(snapshot.get("max_mana_cap", 0)), RunSession.TRACK_02_MAX_MANA_CAP)
+	assert_eq(int(snapshot.get("max_hand_size_cap", 0)), RunSession.TRACK_02_MAX_HAND_SIZE_CAP)
+	assert_true(Array(snapshot.get("relic_ids", [])).has("bolsa_de_cinzas"))
+	assert_eq(str(Dictionary(snapshot.get("reward_category_state", {})).get("pending_category", "")), "relic")
+	assert_eq(int(snapshot.get("reroll_count", 0)), 2)
+	assert_eq(int(Dictionary(snapshot.get("route_metadata", {})).get("target_map_count", 0)), RunSession.TRACK_02_TARGET_MAP_COUNT)
+	RunSession.reset()
+	var load_result: Dictionary = RunSession.load_snapshot(snapshot)
+	assert_true(bool(load_result.get("ok", false)), str(load_result.get("message", "")))
+	assert_true(RunSession.has_relic_id("bolsa_de_cinzas"))
+	assert_eq(str(RunSession.reward_category_state.get("pending_category", "")), "relic")
+	assert_eq(int(RunSession.reroll_count), 2)
+	assert_eq(int(RunSession.route_metadata.get("last_resolved_map_index", 0)), 4)
+
+func test_track01_rewards_respect_track02_stat_caps() -> void:
+	var result: Dictionary = RunSession.start_class_run("arcano", 77)
+	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
+	RunSession.max_mana = RunSession.TRACK_02_MAX_MANA_CAP
+	RunSession.max_hand_size = RunSession.TRACK_02_MAX_HAND_SIZE_CAP
+	RunSession.record_battle_result("n01_tutorial_primeiro_contato", "vitoria", 20)
+	RunSession.record_battle_result("n06_duelo_inicial", "vitoria", 20)
+	assert_eq(RunSession.max_mana, RunSession.TRACK_02_MAX_MANA_CAP)
+	assert_eq(RunSession.max_hand_size, RunSession.TRACK_02_MAX_HAND_SIZE_CAP)
+
+func test_track02_real_relic_reward_and_reward_category_state_apply() -> void:
+	var result: Dictionary = RunSession.start_class_run("arcano", 77)
+	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
+	RunSession.record_battle_result("n04_pouso_elemental", "vitoria", 18)
+	assert_true(RunSession.has_relic_id(RunSession.RELIC_BOLSA_DE_CINZAS))
+	assert_true(RunSession.automatic_reward_ids.has("n04_pouso_elemental:%s" % RunSession.REWARD_ADD_RELIC_PLACEHOLDER))
+	assert_eq(str(Dictionary(RunSession.reward_category_state.get("completed_categories_by_node", {})).get("n04_pouso_elemental", "")), "relic")
+
+func test_track02_utility_choice_can_remove_duplicate_or_upgrade_cards() -> void:
+	var result: Dictionary = RunSession.start_class_run("arcano", 77)
+	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
+	var card_id: String = "arcano_choque"
+	var initial_count: int = RunSession.current_deck_ids.count(card_id)
+	RunSession.rewards_pending = [{
+		"id": "n27:utility_choice",
+		"node_id": "n27_future",
+		"type": RunSession.CHOICE_REWARD_UTILITY,
+		"category": "utility"
+	}]
+	var choices: Array[Dictionary] = RunSession.pending_reward_choices()
+	assert_gt(choices.size(), 0)
+	assert_true(bool(RunSession.apply_reward_choice("utility_remove:%s" % card_id).get("ok", false)))
+	assert_eq(RunSession.current_deck_ids.count(card_id), initial_count - 1)
+	RunSession.rewards_pending = [{
+		"id": "n27:utility_choice",
+		"node_id": "n27_future",
+		"type": RunSession.CHOICE_REWARD_UTILITY,
+		"category": "utility"
+	}]
+	assert_true(bool(RunSession.apply_reward_choice("utility_duplicate:%s" % card_id).get("ok", false)))
+	assert_eq(RunSession.current_deck_ids.count(card_id), initial_count)
+	RunSession.rewards_pending = [{
+		"id": "n27:utility_choice",
+		"node_id": "n27_future",
+		"type": RunSession.CHOICE_REWARD_UTILITY,
+		"category": "utility"
+	}]
+	assert_true(bool(RunSession.apply_reward_choice("utility_upgrade:%s" % card_id).get("ok", false)))
+	assert_eq(int(RunSession.card_upgrade_counts.get(card_id, 0)), 1)
 
 func test_soul_shop_card_upgrade_offers_and_purchase_limit() -> void:
 	var result: Dictionary = RunSession.start_class_run("arcano", 77)
@@ -164,6 +409,170 @@ func test_soul_shop_card_upgrade_offers_and_purchase_limit() -> void:
 		assert_false(bool(choice.get("can_buy", true)))
 	RunSession.soul_total = 20
 	assert_false(bool(RunSession.buy_shop_card_upgrade(str(choices[1].get("card_id", ""))).get("ok", true)))
+
+func test_expanded_souls_shop_inventory_prices_and_purchases() -> void:
+	var result: Dictionary = RunSession.start_class_run("arcano", 77)
+	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
+	RunSession.soul_total = 220
+	RunSession.record_battle_result("n01_tutorial_primeiro_contato", "vitoria", 20)
+	var card_choices: Array[Dictionary] = RunSession.shop_card_choices()
+	var relic_choices: Array[Dictionary] = RunSession.shop_relic_choices()
+	var remove_choices: Array[Dictionary] = RunSession.shop_remove_card_choices()
+	var duplicate_choices: Array[Dictionary] = RunSession.shop_duplicate_card_choices()
+	assert_gt(card_choices.size(), 0)
+	assert_gt(relic_choices.size(), 0)
+	assert_gt(remove_choices.size(), 0)
+	assert_gt(duplicate_choices.size(), 0)
+	assert_eq(int(remove_choices[0].get("cost", 0)), RunSession.SHOP_REMOVE_CARD_COST)
+	assert_eq(int(duplicate_choices[0].get("cost", 0)), RunSession.SHOP_DUPLICATE_CARD_COST)
+	var card_id: String = str(card_choices[0].get("card_id", ""))
+	var card_cost: int = int(card_choices[0].get("cost", 0))
+	assert_true([RunSession.SHOP_BUY_COMMON_CARD_COST, RunSession.SHOP_BUY_RARE_CARD_COST, RunSession.SHOP_BUY_ULTRA_RARE_CARD_COST].has(card_cost))
+	var before_card_count: int = RunSession.current_deck_ids.count(card_id)
+	var before_souls: int = RunSession.soul_total
+	assert_true(bool(RunSession.buy_shop_card(card_id).get("ok", false)))
+	assert_eq(RunSession.current_deck_ids.count(card_id), before_card_count + 1)
+	assert_eq(RunSession.soul_total, before_souls - card_cost)
+	var remove_id: String = str(remove_choices[0].get("card_id", ""))
+	assert_true(bool(RunSession.buy_shop_remove_card(remove_id).get("ok", false)))
+	assert_false(RunSession.current_deck_ids.is_empty())
+	var duplicate_id: String = str(duplicate_choices[0].get("card_id", ""))
+	var duplicate_before: int = RunSession.current_deck_ids.count(duplicate_id)
+	assert_true(bool(RunSession.buy_shop_duplicate_card(duplicate_id).get("ok", false)))
+	assert_eq(RunSession.current_deck_ids.count(duplicate_id), duplicate_before + 1)
+	var relic_id: String = str(relic_choices[0].get("relic_id", ""))
+	var relic_cost: int = int(relic_choices[0].get("cost", 0))
+	assert_true([RunSession.SHOP_BUY_COMMON_RELIC_COST, RunSession.SHOP_BUY_RARE_RELIC_COST, RunSession.SHOP_BUY_ULTRA_RARE_RELIC_COST].has(relic_cost))
+	assert_true(bool(RunSession.buy_shop_relic(relic_id).get("ok", false)))
+	assert_true(RunSession.has_relic_id(relic_id))
+
+func test_relic_shop_discounts_pickup_effects_and_max_hp_limit() -> void:
+	var result: Dictionary = RunSession.start_class_run("arcano", 77)
+	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
+	RunSession.soul_total = 120
+	RunSession.record_battle_result("n01_tutorial_primeiro_contato", "vitoria", 20)
+	assert_true(bool(RunSession.add_relic_id(RunSession.RELIC_FERRAMENTAS_DE_CIRURGIA).get("ok", false)))
+	assert_eq(int(RunSession.shop_remove_card_choices()[0].get("cost", -1)), 0)
+	var remove_id: String = str(RunSession.shop_remove_card_choices()[0].get("card_id", ""))
+	assert_true(bool(RunSession.buy_shop_remove_card(remove_id).get("ok", false)))
+	assert_eq(int(RunSession.shop_remove_card_choices()[0].get("cost", -1)), RunSession.SHOP_REMOVE_CARD_COST)
+	assert_true(bool(RunSession.add_relic_id(RunSession.RELIC_LAMINA_DE_RESERVA).get("ok", false)))
+	assert_eq(int(RunSession.shop_duplicate_card_choices()[0].get("cost", -1)), int(RunSession.SHOP_DUPLICATE_CARD_COST / 2))
+	var duplicate_id: String = str(RunSession.shop_duplicate_card_choices()[0].get("card_id", ""))
+	assert_true(bool(RunSession.buy_shop_duplicate_card(duplicate_id).get("ok", false)))
+	assert_eq(int(RunSession.shop_duplicate_card_choices()[0].get("cost", -1)), RunSession.SHOP_DUPLICATE_CARD_COST)
+	var max_before: int = RunSession.max_health
+	assert_true(bool(RunSession.add_relic_id(RunSession.RELIC_COURO_ASTRAL).get("ok", false)))
+	assert_eq(RunSession.max_health, max_before + 3)
+	assert_true(bool(RunSession.add_relic_id(RunSession.RELIC_PACTO_DAS_RUINAS).get("ok", false)))
+	assert_eq(RunSession.max_health, max_before + 13)
+	RunSession.soul_total = 100
+	var shop_max_before: int = RunSession.max_health
+	assert_eq(RunSession._shop_max_health_cost(), RunSession.SHOP_MAX_HEALTH_FIRST_COST)
+	assert_true(bool(RunSession.buy_shop_max_health().get("ok", false)))
+	assert_eq(RunSession.max_health, shop_max_before + RunSession.SHOP_MAX_HEALTH_AMOUNT)
+	assert_eq(RunSession._shop_max_health_cost(), RunSession.SHOP_MAX_HEALTH_SECOND_COST)
+	assert_true(bool(RunSession.buy_shop_max_health().get("ok", false)))
+	assert_false(bool(RunSession.buy_shop_max_health().get("ok", true)))
+
+func test_shop_and_reward_reroll_cost_scaling() -> void:
+	var result: Dictionary = RunSession.start_class_run("arcano", 77)
+	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
+	RunSession.soul_total = 100
+	RunSession.record_battle_result("n01_tutorial_primeiro_contato", "vitoria", 20)
+	assert_eq(RunSession.current_reroll_cost(), 8)
+	var shop_result: Dictionary = RunSession.buy_shop_reroll()
+	assert_true(bool(shop_result.get("ok", false)), str(shop_result.get("message", "")))
+	assert_eq(RunSession.reroll_count, 1)
+	assert_eq(RunSession.current_reroll_cost(), 12)
+	RunSession.rewards_pending = [{
+		"id": "test:new_card",
+		"node_id": "test_node",
+		"type": RunSession.CHOICE_REWARD_NEW_CARD,
+		"category": "new_card",
+		"element": "terra",
+		"pool_offset": 0
+	}]
+	var reward_result: Dictionary = RunSession.buy_reward_reroll()
+	assert_true(bool(reward_result.get("ok", false)), str(reward_result.get("message", "")))
+	assert_eq(RunSession.reroll_count, 2)
+	assert_eq(RunSession.current_reroll_cost(), 16)
+	assert_eq(int(Dictionary(RunSession.rewards_pending[0]).get("reroll_index", 0)), 1)
+
+func test_relic_reward_choice_and_safe_mechanical_effects() -> void:
+	var result: Dictionary = RunSession.start_class_run("arcano", 77)
+	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
+	RunSession.rewards_pending = [{
+		"id": "n21:relic",
+		"node_id": "n21_future",
+		"type": RunSession.CHOICE_REWARD_RELIC,
+		"category": "relic",
+		"rarity": "standard"
+	}]
+	var relic_choices: Array[Dictionary] = RunSession.pending_reward_choices()
+	assert_eq(relic_choices.size(), 3)
+	assert_false(str(relic_choices[0].get("relic_id", "")).begins_with("placeholder_relic_"))
+	var choice_relic_id: String = str(relic_choices[0].get("relic_id", ""))
+	assert_true(bool(RunSession.apply_reward_choice(str(relic_choices[0].get("id", ""))).get("ok", false)))
+	assert_true(RunSession.has_relic_id(choice_relic_id))
+	RunSession.reset()
+	result = RunSession.start_class_run("arcano", 77)
+	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
+	assert_true(bool(RunSession.add_relic_id(RunSession.RELIC_BOLSA_DE_CINZAS).get("ok", false)))
+	var summary: Dictionary = RunSession.record_battle_result("n01_tutorial_primeiro_contato", "vitoria", 20)
+	assert_eq(int(summary.get("souls_gained", 0)), RunSession._soul_reward_for_node("n01_tutorial_primeiro_contato") + 3)
+	RunSession.current_health = 10
+	assert_true(bool(RunSession.add_relic_id(RunSession.RELIC_FORJA_NEGRA).get("ok", false)))
+	RunSession.rewards_pending = [{
+		"id": "test:upgrade",
+		"node_id": "test_node",
+		"type": RunSession.CHOICE_REWARD_UPGRADE_CARD,
+		"category": "card_upgrade",
+		"rarity_by_card_id": {"arcano_choque": RunSession.REWARD_RARITY_COMMON}
+	}]
+	assert_true(bool(RunSession.apply_reward_choice("upgrade:arcano_choque").get("ok", false)))
+	assert_eq(RunSession.current_health, 14)
+	assert_true(bool(RunSession.add_relic_id(RunSession.RELIC_NUCLEO_INSTAVEL).get("ok", false)))
+	var deck_before: int = RunSession.current_deck_ids.count("arcano_bola_de_fogo")
+	RunSession.rewards_pending = [{
+		"id": "test:new_card",
+		"node_id": "test_node",
+		"type": RunSession.CHOICE_REWARD_NEW_CARD,
+		"category": "new_card",
+		"element": "terra",
+		"pool_offset": 0,
+		"rarity_by_card_id": {"arcano_bola_de_fogo": RunSession.REWARD_RARITY_ULTRA}
+	}]
+	assert_true(bool(RunSession.apply_reward_choice("new_card:arcano_bola_de_fogo").get("ok", false)))
+	assert_eq(RunSession.current_deck_ids.count("arcano_bola_de_fogo"), deck_before + 6)
+
+func test_battle_engine_applies_safe_relic_hooks() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), ["arcano_choque", "arcano_fagulha", "arcano_fagulha"], {
+		"encounter_id": "pouso_elemental",
+		"class_id": "arcano",
+		"mana_per_turn": 1,
+		"max_hand_size": 3,
+		"player_health": 20,
+		"shuffle_deck": false,
+		"relic_ids": [
+			"eco_menor",
+			"catalisador_arcano",
+			"coracao_de_eter",
+			"marca_de_guerra",
+			"estandarte_vivo"
+		]
+	})
+	assert_eq(engine.mana, 2)
+	var enemy_before: int = int(Dictionary(engine.enemy_slots[1]).get("health", 0))
+	assert_true(bool(engine.play_card_from_hand(0, {"owner": BattleEngine.ENEMY_ID, "slot": 1}).get("ok", false)))
+	assert_eq(engine.mana, 2)
+	assert_eq(int(Dictionary(engine.enemy_slots[1]).get("health", 0)), enemy_before - 3)
+	assert_true(bool(engine.play_card_from_hand(0, {"owner": BattleEngine.PLAYER_ID, "slot": 0}).get("ok", false)))
+	var ally: Dictionary = Dictionary(engine.player_slots[0])
+	assert_eq(int(ally.get("health", 0)), int(ally.get("max_health", 0)))
+	assert_gt(int(ally.get("max_health", 0)), int(ContentLibrary.get_card("arcano_fagulha").health))
+	assert_eq(int(ally.get("temporary_attack_bonus", 0)), 1)
 
 func test_run_session_rejects_invalid_player_names() -> void:
 	assert_false(bool(RunSession.validate_player_name("A").get("ok", false)))
@@ -1138,6 +1547,109 @@ func test_duel_encounters_enemy_commander_draws_and_plays_cards() -> void:
 		assert_gt(_occupied_count(engine.enemy_slots), before_board)
 		assert_gt(engine.enemy_discard.size(), before_discard)
 
+func test_enemy_ai_profiles_make_deterministic_lane_decisions() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), ["invocador_soldado"], {
+		"encounter": {
+			"id": "test_ar_ai_empty_lane",
+			"display_name": "Teste AI Ar",
+			"mode": BattleEngine.MODE_DUEL,
+			"enemy_ai_profile": "ar",
+			"enemy_commander_enabled": true,
+			"enemy_mana_per_turn": 3,
+			"enemy_hand_count": 1,
+			"enemy_deck": ["enemy_ar_elemental_do_raio"],
+			"enemy_health": 20,
+			"player_slots_count": 3,
+			"enemy_slots_count": 3,
+			"starting_enemy_slots": []
+		},
+		"mana_per_turn": 1,
+		"max_hand_size": 1,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	engine.player_slots[0] = engine._build_occupant(ContentLibrary.get_card("invocador_soldado"), BattleEngine.PLAYER_ID, false)
+	engine._resolve_enemy_turn_actions()
+	assert_eq(str(Dictionary(engine.enemy_slots[1]).get("card_id", "")), "enemy_ar_elemental_do_raio")
+
+	engine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), ["arcano_fagulha"], {
+		"encounter": {
+			"id": "test_terra_ai_defender",
+			"display_name": "Teste AI Terra",
+			"mode": BattleEngine.MODE_DUEL,
+			"enemy_ai_profile": "terra",
+			"enemy_commander_enabled": true,
+			"enemy_mana_per_turn": 3,
+			"enemy_hand_count": 1,
+			"enemy_deck": ["enemy_terra_elemental_granito"],
+			"enemy_health": 20,
+			"player_slots_count": 3,
+			"enemy_slots_count": 3,
+			"starting_enemy_slots": []
+		},
+		"mana_per_turn": 1,
+		"max_hand_size": 1,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	engine.player_slots[0] = engine._build_occupant(ContentLibrary.get_card("arcano_barreira"), BattleEngine.PLAYER_ID, false)
+	engine._resolve_enemy_turn_actions()
+	assert_eq(str(Dictionary(engine.enemy_slots[0]).get("card_id", "")), "enemy_terra_elemental_granito")
+
+func test_enemy_intent_reports_common_priorities_and_boss_hooks() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), ["invocador_soldado"], {
+		"encounter": {
+			"id": "test_intent_ar",
+			"display_name": "Teste Intent Ar",
+			"mode": BattleEngine.MODE_DUEL,
+			"enemy_ai_profile": "ar",
+			"enemy_commander_enabled": true,
+			"enemy_mana_per_turn": 3,
+			"enemy_hand_count": 1,
+			"enemy_deck": ["enemy_ar_elemental_do_raio"],
+			"enemy_health": 20,
+			"player_slots_count": 3,
+			"enemy_slots_count": 3,
+			"starting_enemy_slots": []
+		},
+		"mana_per_turn": 1,
+		"max_hand_size": 1,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	var intent: Dictionary = engine.get_enemy_intent()
+	assert_true(bool(intent.get("visible", false)))
+	assert_eq(str(intent.get("profile_id", "")), "ar")
+	assert_string_contains(str(intent.get("next_action", "")), "Elemental do Raio")
+	assert_string_contains(str(intent.get("incoming_field_effect", "")), "posicional")
+
+	engine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), ["arcano_fagulha"], {
+		"encounter": {
+			"id": "test_boss_intent",
+			"display_name": "Teste Boss Intent",
+			"mode": BattleEngine.MODE_SUMMONER_BOSS,
+			"enemy_ai_profile": "fogo",
+			"boss_health": 30,
+			"player_slots_count": 3,
+			"enemy_slots_count": 3,
+			"starting_enemy_slots": [],
+			"boss_summons": [{"card_id": "enemy_fogo_elemental_de_chama"}]
+		},
+		"mana_per_turn": 1,
+		"max_hand_size": 1,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	intent = engine.get_enemy_intent()
+	assert_eq(str(intent.get("kind", "")), "boss")
+	assert_string_contains(str(intent.get("current_phase", "")), "Fase 1")
+	assert_string_contains(str(intent.get("next_scripted_trigger", "")), "66%")
+	assert_string_contains(str(intent.get("next_major_special_action", "")), "Elemental de Chama")
+
 func test_duel_battle_layout_uses_compact_hud_composition() -> void:
 	_start_class_run("arcano", 101)
 	RunSession.select_node("n06_duelo_inicial")
@@ -1145,6 +1657,7 @@ func test_duel_battle_layout_uses_compact_hud_composition() -> void:
 	await get_tree().process_frame
 	var main_stack: VBoxContainer = battle.find_child("BattleMainStack", true, false)
 	var enemy_hud: PanelContainer = battle.find_child("BattleEnemyCommanderHud", true, false)
+	var intent_panel: PanelContainer = battle.find_child("BattleEnemyIntentPanel", true, false)
 	var player_hud: PanelContainer = battle.find_child("BattlePlayerHudDock", true, false)
 	var player_target: PanelContainer = battle.find_child("BattlePlayerHeroTarget", true, false)
 	var enemy_target: PanelContainer = battle.find_child("BattleEnemyHeroTarget", true, false)
@@ -1152,6 +1665,7 @@ func test_duel_battle_layout_uses_compact_hud_composition() -> void:
 	var area_target = battle.find_child("BattleEnemyBoardAreaTarget", true, false)
 	assert_not_null(main_stack)
 	assert_not_null(enemy_hud)
+	assert_not_null(intent_panel)
 	assert_not_null(player_hud)
 	assert_not_null(player_target)
 	assert_not_null(enemy_target)
@@ -1162,12 +1676,15 @@ func test_duel_battle_layout_uses_compact_hud_composition() -> void:
 	assert_eq(player_target.custom_minimum_size, Vector2(118, 42))
 	assert_eq(enemy_target.custom_minimum_size, Vector2(118, 42))
 	assert_true(enemy_hud.get_parent() == battle)
+	assert_true(intent_panel.visible)
+	assert_true(_has_label_text(intent_panel, "Intencao inimiga"))
 	assert_true(player_hud.get_parent() == hand_row)
 	assert_null(battle.find_child("BattlePlayerHpStat", true, false))
 	assert_eq(str(area_target.get_parent().name), "BattleBoardSurface")
 	assert_false(main_stack.is_ancestor_of(enemy_hud))
 	_assert_control_inside_viewport(battle.find_child("BattleHandPanel", true, false) as Control)
 	_assert_control_inside_viewport(enemy_hud)
+	_assert_control_inside_viewport(intent_panel)
 	battle.queue_free()
 	await get_tree().process_frame
 
@@ -1459,6 +1976,139 @@ func test_battle_scene_uses_resolve_combat_button() -> void:
 	battle.queue_free()
 	await get_tree().process_frame
 
+func test_track02_atropelar_brutal_and_inspirar_resolve_in_combat_stage() -> void:
+	var engine: BattleEngine = _keyword_engine(BattleEngine.MODE_DUEL)
+	engine.enemy_health = 20
+	engine.enemy_max_health = 20
+	engine.player_slots[0] = engine._build_occupant(_keyword_card("trample", 5, 3, ["atropelar"]), BattleEngine.PLAYER_ID, false)
+	engine.player_slots[1] = engine._build_occupant(_keyword_card("captain", 0, 3, ["inspirar"], {"inspire_amount": 1}), BattleEngine.PLAYER_ID, false)
+	engine.enemy_slots[0] = engine._build_occupant(_keyword_card("blocker", 0, 2, []), BattleEngine.ENEMY_ID, true)
+	engine.resolve_combat_cycle()
+	assert_null(engine.enemy_slots[0])
+	assert_eq(engine.enemy_health, 16)
+
+	engine = _keyword_engine(BattleEngine.MODE_SURVIVE_TURNS)
+	engine.player_slots[1] = engine._build_occupant(_keyword_card("brutal", 2, 4, ["brutal"]), BattleEngine.PLAYER_ID, false)
+	engine.enemy_slots[0] = engine._build_occupant(_keyword_card("left", 0, 2, []), BattleEngine.ENEMY_ID, true)
+	engine.enemy_slots[1] = engine._build_occupant(_keyword_card("front", 0, 5, []), BattleEngine.ENEMY_ID, true)
+	engine.enemy_slots[2] = engine._build_occupant(_keyword_card("right", 0, 2, []), BattleEngine.ENEMY_ID, true)
+	engine.resolve_combat_cycle()
+	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("health", 0)), 1)
+	assert_eq(int(Dictionary(engine.enemy_slots[2]).get("health", 0)), 1)
+
+func test_track02_drenar_ecoar_veneno_congelar_and_drenar_almas_use_damage_hooks() -> void:
+	var engine: BattleEngine = _keyword_engine(BattleEngine.MODE_SURVIVE_TURNS)
+	engine.player_health = 10
+	engine.player_max_health = 12
+	engine.player_slots[0] = engine._build_occupant(_keyword_card("reaper", 2, 4, ["drenar", "ecoar", "veneno", "congelar", "drenar_almas"], {
+		"drain_amount": 2,
+		"poison_apply_amount": 2
+	}), BattleEngine.PLAYER_ID, false)
+	engine.enemy_slots[0] = engine._build_occupant(_keyword_card("victim", 3, 8, []), BattleEngine.ENEMY_ID, true)
+	engine.resolve_combat_cycle()
+	assert_eq(engine.player_health, 12)
+	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("health", 0)), 2)
+	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("poison_amount", 0)), 2)
+	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("frozen_turns", 0)), 1)
+	assert_true(bool(Dictionary(engine.player_slots[0]).get("echo_used", false)))
+	assert_eq(engine.bonus_souls, 0)
+	engine.resolve_combat_cycle()
+	assert_null(engine.enemy_slots[0])
+	assert_eq(engine.bonus_souls, 3)
+
+func test_track02_escudo_resistencia_espinhos_and_furia_modify_received_damage() -> void:
+	var engine: BattleEngine = _keyword_engine(BattleEngine.MODE_SURVIVE_TURNS)
+	engine.player_slots[0] = engine._build_occupant(_keyword_card("attacker", 3, 5, []), BattleEngine.PLAYER_ID, false)
+	engine.enemy_slots[0] = engine._build_occupant(_keyword_card("shield", 0, 4, ["escudo"]), BattleEngine.ENEMY_ID, true)
+	engine.resolve_combat_cycle()
+	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("health", 0)), 4)
+	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("shield_charges", 0)), 0)
+
+	engine = _keyword_engine(BattleEngine.MODE_SURVIVE_TURNS)
+	engine.player_slots[0] = engine._build_occupant(_keyword_card("attacker", 3, 5, []), BattleEngine.PLAYER_ID, false)
+	engine.enemy_slots[0] = engine._build_occupant(_keyword_card("stone", 0, 4, ["resistencia", "espinhos", "furia"], {
+		"resistance_amount": 2,
+		"thorns_amount": 2
+	}), BattleEngine.ENEMY_ID, true)
+	engine.resolve_combat_cycle()
+	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("health", 0)), 3)
+	assert_eq(int(Dictionary(engine.player_slots[0]).get("health", 0)), 3)
+	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("attack", 0)), 1)
+
+func test_track02_imune_blocks_spells_debuffs_and_keyword_removal() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), ["arcano_choque", "necro_prender"], {
+		"encounter": {
+			"id": "test_imune",
+			"display_name": "Teste Imune",
+			"mode": BattleEngine.MODE_SURVIVE_TURNS,
+			"survive_turns": 99,
+			"player_slots_count": 3,
+			"enemy_slots_count": 3,
+			"starting_enemy_slots": []
+		},
+		"mana_per_turn": 3,
+		"max_hand_size": 2,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	engine.enemy_slots[0] = engine._build_occupant(_keyword_card("lich", 3, 5, ["imune", "crescer"]), BattleEngine.ENEMY_ID, true)
+	assert_false(engine.can_play_card_on_target(0, {"owner": BattleEngine.ENEMY_ID, "slot": 0}))
+	engine._apply_debuff_to_target({"debuff": "freeze", "amount": 1}, {"owner": BattleEngine.ENEMY_ID, "slot": 0})
+	engine._remove_keywords_from_target({"owner": BattleEngine.ENEMY_ID, "slot": 0})
+	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("frozen_turns", 0)), 0)
+	assert_true(bool(Dictionary(engine.enemy_slots[0]).get("imune", false)))
+	assert_true(bool(Dictionary(engine.enemy_slots[0]).get("crescer", false)))
+
+func test_track02_crescer_proliferar_pacto_ressurgir_and_profanar_use_turn_death_and_end_combat_timing() -> void:
+	var engine: BattleEngine = _keyword_engine(BattleEngine.MODE_SURVIVE_TURNS)
+	engine.player_slots[0] = engine._build_occupant(_keyword_card("spawner", 0, 3, ["proliferar"]), BattleEngine.PLAYER_ID, false)
+	engine.enemy_slots[0] = engine._build_occupant(_keyword_card("grower", 0, 3, ["crescer"], {"grow_amount": 2}), BattleEngine.ENEMY_ID, true)
+	engine.resolve_combat_cycle()
+	assert_not_null(engine.player_slots[1])
+	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("attack", 0)), 2)
+
+	engine = _keyword_engine(BattleEngine.MODE_SURVIVE_TURNS)
+	engine.player_slots[0] = engine._build_occupant(_keyword_card("twin_a", 2, 3, ["pacto"]), BattleEngine.PLAYER_ID, false)
+	engine.player_slots[1] = engine._build_occupant(_keyword_card("twin_b", 2, 3, ["pacto"]), BattleEngine.PLAYER_ID, false)
+	engine._recalculate_pact_bonuses(BattleEngine.PLAYER_ID)
+	assert_eq(int(Dictionary(engine.player_slots[0]).get("attack", 0)), 4)
+	engine.player_slots[1] = null
+	engine._recalculate_pact_bonuses(BattleEngine.PLAYER_ID)
+	assert_eq(int(Dictionary(engine.player_slots[0]).get("attack", 0)), 2)
+
+	engine.enemy_slots[0] = engine._build_occupant(_keyword_card("phoenix", 4, 5, ["ressurgir"]), BattleEngine.ENEMY_ID, true)
+	engine._damage_slot(BattleEngine.ENEMY_ID, 0, 99)
+	assert_not_null(engine.enemy_slots[0])
+	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("attack", 0)), 2)
+	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("health", 0)), 2)
+	assert_true(Array(Dictionary(engine.enemy_slots[0]).get("keywords", [])).is_empty())
+
+	engine.enemy_slots[1] = engine._build_occupant(_keyword_card("profane", 0, 1, ["profanar"]), BattleEngine.ENEMY_ID, true)
+	engine.player_slots[0] = engine._build_occupant(_keyword_card("blessed", 1, 3, ["defensor", "escudo"]), BattleEngine.PLAYER_ID, false)
+	engine._damage_slot(BattleEngine.ENEMY_ID, 1, 99)
+	assert_false(bool(Dictionary(engine.player_slots[0]).get("defensor", false)))
+	assert_false(bool(Dictionary(engine.player_slots[0]).get("escudo", false)))
+
+func test_track02_entrar_sacrificio_and_poison_maintenance_are_available_to_card_effects() -> void:
+	var engine: BattleEngine = _keyword_engine(BattleEngine.MODE_SURVIVE_TURNS)
+	engine.player_slots[0] = engine._build_occupant(_keyword_card("ally", 1, 2, []), BattleEngine.PLAYER_ID, false)
+	var herald := _keyword_card("herald", 1, 2, ["entrar"], {"on_enter": {"action": "summon_token", "count": 1, "attack": 1, "health": 1, "name": "Recruta"}})
+	engine._resolve_on_enter(herald, BattleEngine.PLAYER_ID, 0)
+	assert_not_null(engine.player_slots[1])
+	assert_eq(str(Dictionary(engine.player_slots[1]).get("name", "")), "Recruta")
+
+	var sacrifice_card := _keyword_card("sacrifice", 2, 2, ["sacrificio"], {"sacrifice_discount": 2})
+	sacrifice_card.cost = 3
+	engine.mana = 1
+	assert_eq(engine._minimum_card_play_cost(sacrifice_card), 1)
+	assert_eq(engine._card_play_cost_for_target(sacrifice_card, {"owner": BattleEngine.PLAYER_ID, "slot": 0, "confirm_sacrifice": true}), 1)
+
+	engine.enemy_slots[0] = engine._build_occupant(_keyword_card("poisoned", 0, 4, []), BattleEngine.ENEMY_ID, true)
+	engine._apply_poison_to_slot(BattleEngine.ENEMY_ID, 0, 2)
+	engine._resolve_poison_ticks()
+	assert_eq(int(Dictionary(engine.enemy_slots[0]).get("health", 0)), 2)
+
 func _instantiate_scene(path: String):
 	var packed: PackedScene = load(path)
 	assert_not_null(packed)
@@ -1466,6 +2116,40 @@ func _instantiate_scene(path: String):
 	add_child(node)
 	await get_tree().process_frame
 	return node
+
+func _keyword_engine(mode: String = BattleEngine.MODE_SURVIVE_TURNS) -> BattleEngine:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), [], {
+		"encounter": {
+			"id": "test_keywords",
+			"display_name": "Teste Keywords",
+			"mode": mode,
+			"survive_turns": 99,
+			"enemy_health": 20,
+			"player_slots_count": 3,
+			"enemy_slots_count": 3,
+			"starting_enemy_slots": []
+		},
+		"mana_per_turn": 0,
+		"max_hand_size": 0,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	engine.outcome = ""
+	engine.current_phase = BattleEngine.PHASE_MAIN
+	return engine
+
+func _keyword_card(card_id: String, attack: int, health: int, keywords: Array[String], effect: Dictionary = {}) -> CardDefinitionResource:
+	var card: CardDefinitionResource = CardDefinitionResource.new()
+	card.id = "test_%s" % card_id
+	card.display_name = "Teste %s" % card_id
+	card.card_type = "criatura"
+	card.cost = 0
+	card.attack = attack
+	card.health = health
+	card.keywords = PackedStringArray(keywords)
+	card.effect = effect
+	return card
 
 func _start_class_run(class_id: String, seed: int = 0) -> void:
 	var result: Dictionary = RunSession.start_class_run(class_id, seed)
