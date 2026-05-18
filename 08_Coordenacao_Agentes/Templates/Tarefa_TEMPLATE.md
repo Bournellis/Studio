@@ -5,7 +5,7 @@
 - id: `<YYYY-MM-DD_slug>`
 - owner: `Codex | Claude | Usuario | Shared`
 - status: `Backlog | Doing | Review | Done`
-- projeto: `estudio | draxos-roguelike-cardgame | RPGMobile | BattleMobile | rpg-isometrico | rpg-turnos`
+- projeto: `estudio | draxos-roguelike-cardgame | mobile-universe | rpg-isometrico | rpg-turnos`
 - prioridade_portfolio: `P0_IMPLEMENTACAO | P1_CONCEITO | PAUSADO_INDEFINIDO | AGUARDANDO_DECISAO | ARQUIVO_HISTORICO`
 
 ## Goal

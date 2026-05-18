@@ -91,8 +91,7 @@ All studio projects share this lore universe but tell different stories and keep
 
 - RPG Isometrico uses Imortais as the player-facing race with detailed campaign lore pending.
 - RPG Turnos and draxos-roguelike-cardgame share the Draxos invasion lore. The authoritative source is `Projetos/draxos-roguelike-cardgame/docs/lore-campaign.md`.
-- RPGMobile is set in the broader human-faction layer of this universe. Its authoritative design source is `Projetos/_conceitos/RPGMobile/`.
-- BattleMobile shares this universe. Its concept is in `Projetos/_conceitos/BattleMobile/`.
+- Mobile Universe is the active mobile concept. Its authoritative design source is `Projetos/_conceitos/mobile-universe/`, replacing the prior RPGMobile and BattleMobile concepts.
 
 Other Draxos encounters elsewhere in the galaxy may exist in the broader continuity, including failed missions, blocked operations, or encounters with other powerful beings. Those stories are not yet authored.
 

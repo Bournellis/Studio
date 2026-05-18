@@ -1,13 +1,13 @@
 # Estado Atual - Estudio
 
-- Ultima atualizacao: `2026-05-15`
+- Ultima atualizacao: `2026-05-18`
 - Fonte de verdade de portfolio: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Painel visual local: `08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
 ## Prioridade do Estudio
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Conceitos P1 em incubacao: `Projetos/_conceitos/RPGMobile/`, `Projetos/_conceitos/BattleMobile/`
+- Conceitos P1 em incubacao: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## draxos-roguelike-cardgame
@@ -20,25 +20,15 @@
 - Trabalho permitido: codigo, validacao, playtest e documentacao local.
 - Proximo passo: playtest da rota completa de 13 mapas em save v4, depois tuning de dificuldade/recompensas.
 
-## RPGMobile
+## Mobile Universe
 
 - Status: **P1_CONCEITO - incubacao**
 - Fase: `Conceito`
-- Local: `Projetos/_conceitos/RPGMobile/`
-- Baseline atual: core gameplay conceitual definido: RPG mobile de acao em mundo aberto, sem classes/pre-selecao travante, loadout livre de 1 arma + movimento da arma + 3 spells, maestria por uso, loot no campo e lore adiado.
+- Local: `Projetos/_conceitos/mobile-universe/`
+- Baseline atual: GDD completo definido. Projeto mobile multi-partes, mago intergalatico maligno cartoon gore, com modos implementados ao longo do tempo e sem decisao de lancamento/temporadas/apps. Primeiro slice: Character Autobattler PVP simples + Base Manager + amigos + guilda, com infraestrutura seria de conta, persistencia, Arena Mobile Assincrona estilo Hero Wars, matchmaking e base social. Base/cidade em tela com botoes animados, nao grid de construcao; o plano de progressao complexo do PVP vira a primeira versao da economia/base. PVP: duelo simples contra jogador de poder semelhante, apresentacao sidescroller estilo Mortal Kombat classico, finalizacoes brutais inicialmente cosmeticas e desbloqueaveis; vitoria concede Almas, derrota nao perde recursos mas nao concede recompensa; batalhas infinitas com recompensa decrescente por janela de tempo ate zerar, sem bloquear novas batalhas. Upgrades iniciais: 1 arma, 3 spells e 2 passivas com level up simples; futuro pode ter mais armas/spells/passivas, pocoes, pets, itens, outros recursos e arvore mais elaborada. Amigos/guilda inicialmente dao uma "maozinha" leve na evolucao. PVE posterior: batalha automatica com ultimate/spells, conexao alta com Base Manager e primeiro arco narrativo de ascensao/rebeliao. Futuros PVP Cardgame Roguelike, Hero Defense e Open World RPG tem progressao propria e recebem beneficios leves de Level Global/base. Substitui RPGMobile e BattleMobile.
 - Trabalho permitido: conceito, pitch, design e referencias.
 - Restricao operacional: nao criar codigo, cenas, assets de implementacao ou projeto Godot sem pedido explicito.
-- Proximo passo: detalhar armas iniciais, spells, pocao, maestria, loot e primeira area conceitual.
-
-## BattleMobile
-
-- Status: **P1_CONCEITO - incubacao**
-- Fase: `Conceito`
-- Local: `Projetos/_conceitos/BattleMobile/`
-- Baseline atual: conceito nomeado, sem implementacao e sem estrutura Godot oficial.
-- Trabalho permitido: conceito, pitch, design e referencias.
-- Restricao operacional: nao criar codigo, cenas, assets de implementacao ou projeto Godot sem pedido explicito.
-- Proximo passo: definir pitch, fantasia central, loop principal e pilares de produto.
+- Proximo passo: definir curva de reducao de Almas e janela de tempo para recuperar recompensas PVP.
 
 ## rpg-isometrico
 

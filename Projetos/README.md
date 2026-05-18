@@ -19,14 +19,10 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
 ## Conceitos em Incubacao
 
-- `_conceitos/RPGMobile/`: conceptual mobile action RPG focused on open-world exploration, combat, loot, free weapon/spell loadouts, and mastery by use; lore deferred.
+- `_conceitos/mobile-universe/`: projeto mobile multi-partes — mago intergalatico maligno, cartoon gore, primeiro slice com Character Autobattler PVP simples, Base Manager, amigos e guilda; PVP assincrono estilo Hero Wars como duelo sidescroller com finalizacoes brutais, Almas por vitoria, derrota sem recompensa e batalhas infinitas com recompensa decrescente ate zerar; upgrades iniciais de 1 arma, 3 spells e 2 passivas; futuros itens/pocoes/pets/arvores mais elaboradas; modos futuros (PVE Autobattler narrativo com ultimate/spells, PVP Cardgame Roguelike, Hero Defense, Open World RPG) conectados por conta/base em intensidades diferentes. Substitui RPGMobile e BattleMobile.
   - Priority/status: `P1_CONCEITO`
-  - Concept status: `_conceitos/RPGMobile/README.md`
-  - Allowed work: concept, pitch, design, references.
-  - Restriction: do not create code, scenes, implementation assets, or a Godot project without explicit user request.
-- `_conceitos/BattleMobile/`: conceptual mobile battle project.
-  - Priority/status: `P1_CONCEITO`
-  - Concept status: `_conceitos/BattleMobile/README.md`
+  - Concept status: `_conceitos/mobile-universe/README.md`
+  - GDD: `_conceitos/mobile-universe/gdd.md`
   - Allowed work: concept, pitch, design, references.
   - Restriction: do not create code, scenes, implementation assets, or a Godot project without explicit user request.
 
@@ -48,8 +44,7 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 ## Project Disambiguation
 
 - Use `draxos-roguelike-cardgame/` for the current implementation focus: Draxos roguelike, ship hub, run map, 13-map route, souls/cure loop, lane battles, card/enemy redesign, reward choices, sacrifice/movement/Cinzas tuning, and Track 01 playable run loop.
-- Use `_conceitos/RPGMobile/` for RPGMobile concept work only.
-- Use `_conceitos/BattleMobile/` for BattleMobile concept work only.
+- Use `_conceitos/mobile-universe/` for Mobile Universe concept work only.
 - Use `rpg-isometrico/` only for explicit historical/contextual consultation about the campaign-first isometric action RPG, action loadouts, Arena, Survival, Boss, campaign gates, and real-time combat work.
 - Use `rpg-turnos/` only for explicit historical/contextual consultation about the provisional 2D RPG-cardgame with exploration/world flow, NPCs, class select, Track 02 lore/progression work, and the P10 Necromante path.
 
