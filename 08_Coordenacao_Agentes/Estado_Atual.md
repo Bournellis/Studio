@@ -20,15 +20,17 @@
 - Trabalho permitido: codigo, validacao, playtest e documentacao local.
 - Proximo passo: iniciar `T02-P08 - Route, Encounter Modes, Board Formats, Field Effects, Boss Phases`.
 
-## Mobile Universe
+## DraxosMobile
 
-- Status: **P1_CONCEITO - incubacao**
-- Fase: `Conceito`
-- Local: `Projetos/_conceitos/mobile-universe/`
-- Baseline atual: GDD completo definido. Projeto mobile multi-partes, mago intergalatico maligno cartoon gore, com modos implementados ao longo do tempo e sem decisao de lancamento/temporadas/apps. Primeiro slice: Character Autobattler PVP simples + Base Manager + amigos + guilda, com infraestrutura seria de conta, persistencia, Arena Mobile Assincrona estilo Hero Wars, matchmaking e base social. Base/cidade em tela com botoes animados, nao grid de construcao; o plano de progressao complexo do PVP vira a primeira versao da economia/base. PVP: duelo simples contra jogador de poder semelhante, apresentacao sidescroller estilo Mortal Kombat classico, finalizacoes brutais inicialmente cosmeticas e desbloqueaveis; vitoria concede Almas, derrota nao perde recursos mas nao concede recompensa; batalhas infinitas com recompensa decrescente por janela de tempo ate zerar, sem bloquear novas batalhas. Upgrades iniciais: 1 arma, 3 spells e 2 passivas com level up simples; futuro pode ter mais armas/spells/passivas, pocoes, pets, itens, outros recursos e arvore mais elaborada. Amigos/guilda inicialmente dao uma "maozinha" leve na evolucao. PVE posterior: batalha automatica com ultimate/spells, conexao alta com Base Manager e primeiro arco narrativo de ascensao/rebeliao. Futuros PVP Cardgame Roguelike, Hero Defense e Open World RPG tem progressao propria e recebem beneficios leves de Level Global/base. Substitui RPGMobile e BattleMobile.
-- Trabalho permitido: conceito, pitch, design e referencias.
-- Restricao operacional: nao criar codigo, cenas, assets de implementacao ou projeto Godot sem pedido explicito.
-- Proximo passo: definir curva de reducao de Almas e janela de tempo para recuperar recompensas PVP.
+- Status: **P2_IMPLEMENTACAO - bootstrap**
+- Fase: `Implementacao`
+- Local: `Projetos/draxos-mobile/`
+- Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
+- Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
+- Baseline atual: Design do primeiro slice completo — combate (7 tipos de dano, DoTs, anti-stall), personagem (varinha, 3 spells, passiva, pet), base manager (6 estruturas, economia de Energia), social (amigos, guilda com bonus passivos, chat), infraestrutura (Godot 4.x, Supabase, batalha 100% servidor, Android + PC + PC browser). Season de 4 meses, 2 Battle Passes. Godot project ainda nao inicializado.
+- Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
+- Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo.
+- Proximo passo: iniciar Track 00 — inicializar Godot project e configurar Supabase.
 
 ## rpg-isometrico
 

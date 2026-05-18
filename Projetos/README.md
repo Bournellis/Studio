@@ -8,23 +8,32 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
 ## Implementacao Ativa
 
-- `draxos-roguelike-cardgame/`: menu-first Draxos roguelike cardgame with ship hub, validated 13-map slice baseline, and active Track 02 production plan for the first complete fixed 29-map run.
+- `draxos-roguelike-cardgame/`: menu-first Draxos roguelike cardgame with ship hub, validated 13-map slice baseline, Track 02 data contract/save v5 complete, 29-map reward schedule and reward progression implemented, initial universal relics, expanded Souls shop, canonical keyword/status tooltip presentation, full keyword engine mechanics, promoted class reward cards, elemental enemy card galleries, hybrid enemy AI profiles, and visible enemy intent panel complete, with active Track 02 production plan for the first complete fixed 29-map run.
   - Priority/status: `P0_IMPLEMENTACAO`
   - Local agent guide: `draxos-roguelike-cardgame/AGENTS.md`
   - Operational status: `draxos-roguelike-cardgame/implementation/current-status.md`
   - Studio snapshot: `../08_Coordenacao_Agentes/Estado_Atual.md`
   - Validation command: `draxos-roguelike-cardgame/tools/validate.gd`
   - Allowed work: code, validation, playtest, local documentation.
-  - Current next step: start `T02-P01` from `draxos-roguelike-cardgame/implementation/tracks/track-02-complete-run-evolution/implementation-prompts.md`.
+  - Current next step: continue with `T02-P08` from `draxos-roguelike-cardgame/implementation/tracks/track-02-complete-run-evolution/implementation-prompts.md`.
+
+## Implementacao — Bootstrap
+
+- `draxos-mobile/`: jogo mobile multi-plataforma — mago Draxos (PVP assincrono, base manager, social). Plataformas: Android + PC executavel + PC browser. Backend: Supabase. Batalha 100% simulada no servidor. Design do primeiro slice completo; Godot project ainda nao inicializado.
+  - Priority/status: `P2_IMPLEMENTACAO — bootstrap`
+  - Local agent guide: `draxos-mobile/AGENTS.md`
+  - Operational status: `draxos-mobile/implementation/current-status.md`
+  - Design archive: `_conceitos/mobile-universe/gdd.md`
+  - Allowed work: code, design, documentation, infrastructure setup.
+  - Current next step: iniciar Track 00 — Godot project init + Supabase setup.
 
 ## Conceitos em Incubacao
 
-- `_conceitos/mobile-universe/`: projeto mobile multi-partes — mago intergalatico maligno, cartoon gore, primeiro slice com Character Autobattler PVP simples, Base Manager, amigos e guilda; PVP assincrono estilo Hero Wars como duelo sidescroller com finalizacoes brutais, Almas por vitoria, derrota sem recompensa e batalhas infinitas com recompensa decrescente ate zerar; upgrades iniciais de 1 arma, 3 spells e 2 passivas; futuros itens/pocoes/pets/arvores mais elaboradas; modos futuros (PVE Autobattler narrativo com ultimate/spells, PVP Cardgame Roguelike, Hero Defense, Open World RPG) conectados por conta/base em intensidades diferentes. Substitui RPGMobile e BattleMobile.
-  - Priority/status: `P1_CONCEITO`
-  - Concept status: `_conceitos/mobile-universe/README.md`
-  - GDD: `_conceitos/mobile-universe/gdd.md`
-  - Allowed work: concept, pitch, design, references.
-  - Restriction: do not create code, scenes, implementation assets, or a Godot project without explicit user request.
+- `_conceitos/mobile-universe/`: arquivo de design do DraxosMobile. Promovido para `draxos-mobile/` em 2026-05-18. Preservado como referencia de design — nao e o projeto ativo.
+  - Priority/status: `ARQUIVO_DESIGN`
+  - GDD completo: `_conceitos/mobile-universe/gdd.md`
+  - Decisoes abertas: `_conceitos/mobile-universe/pendencias.md`
+  - Allowed work: leitura e referencia de design apenas.
 
 ## Pausados por Tempo Indeterminado
 
@@ -44,7 +53,8 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 ## Project Disambiguation
 
 - Use `draxos-roguelike-cardgame/` for the current implementation focus: Draxos roguelike, ship hub, run map, 29-map complete-run evolution, reward/relic/shop systems, full keyword scope, enemy AI/intent, lane battles, card/enemy redesign, sacrifice/movement/Cinzas tuning, and Track 02 production prompts.
-- Use `_conceitos/mobile-universe/` for Mobile Universe concept work only.
+- Use `draxos-mobile/` for all DraxosMobile implementation work — Godot project, Supabase, first slice.
+- Use `_conceitos/mobile-universe/` for design reference only — not the active project.
 - Use `rpg-isometrico/` only for explicit historical/contextual consultation about the campaign-first isometric action RPG, action loadouts, Arena, Survival, Boss, campaign gates, and real-time combat work.
 - Use `rpg-turnos/` only for explicit historical/contextual consultation about the provisional 2D RPG-cardgame with exploration/world flow, NPCs, class select, Track 02 lore/progression work, and the P10 Necromante path.
 
