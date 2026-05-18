@@ -1,24 +1,22 @@
-# Mobile Universe
+# DraxosMobile
 
 Status: `P1_CONCEITO`
 
-Mobile Universe e um projeto mobile multi-partes em incubacao conceitual. Substitui os conceitos anteriores RPGMobile e BattleMobile.
+DraxosMobile e um projeto mobile multi-partes em incubacao conceitual. Substitui os conceitos anteriores RPGMobile e BattleMobile. Nao confundir com Draxos Roguelike Cardgame (projeto Steam separado).
 
 ## Direcao Atual
 
-Projeto mobile multi-partes com modos implementados ao longo do tempo, todos parte de um unico ecossistema com conta, personagem, base e progressao conectadas. Ainda nao existe decisao de lancamento, formato de temporadas, expansoes ou separacao por apps. O jogador e um mago intergalatico maligno que cresce em poder. Estilo cartoon gore.
+Projeto mobile multi-partes com modos implementados ao longo do tempo, todos parte de um unico ecossistema com conta, personagem, base e progressao conectadas. Ainda nao existe decisao de lancamento, formato de temporadas, expansoes ou separacao por apps.
 
-O primeiro slice sera um produto mobile com infraestrutura seria: conta, persistencia, Base Manager em formato de cidade/tela com botoes animados, Character Autobattler PVP assincrono no estilo Arena Mobile, matchmaking por poder semelhante, lista de amigos e guilda.
+O jogador e um Draxos — mago intergalactico malvado — que cresce em poder. Raca: Draxos. Nome do personagem: definido pelo jogador. Estilo cartoon gore. Sem classes — todos os jogadores tem acesso a todas as armas, spells, passivas e pets.
 
-No PVP, o jogador entra em um duelo simples contra outro jogador de poder semelhante. A apresentacao da batalha segue leitura de sidescroller classico, inspirada em Mortal Kombat. Ao vencer, o jogador assiste a uma finalizacao brutal escolhida entre as finalizacoes desbloqueadas.
+O primeiro slice sera um produto mobile com infraestrutura seria: conta, persistencia, Base Manager como Altar/Santuario pessoal com botoes animados, Character Autobattler PVP assincrono, matchmaking por poder semelhante, lista de amigos e guilda.
 
-Economia inicial do primeiro slice: vencer PVP concede Almas. Perder PVP nao remove recursos, mas tambem nao concede recompensa. O jogador pode batalhar indefinidamente, mas as recompensas reduzem conforme ele repete batalhas dentro de uma janela de tempo; em algum ponto, a recompensa chega a zero, mas ainda e possivel batalhar. Os upgrades iniciais sao 1 arma, 3 spells e 2 passivas, todos com level up simples. Amigos e guilda comecam como uma "maozinha" leve para evolucao.
+Sistema de combate: 7 tipos de dano (Magico, Fogo, Gelo, Veneno, Choque, Morte, Sangramento), resistencias globais e por tipo, barreiras Magica e Elemental, status effects (Lento, Congelado, Stun, Silenciado, Desarmado) e DoTs por tipo de dano.
 
-Inicialmente existe apenas um mago principal jogavel. A variedade inicial vem da arma, das spells, das passivas e das skins do mago. Itens, pocoes, pets e arvores mais elaboradas podem entrar no futuro. Classes de mago podem ser exploradas no futuro, mas ainda nao tem regra definida e nao fazem parte do escopo inicial.
+Arma do primeiro slice: Varinha Magica com dano Magico — 3 ataques normais + 4o raio com 3x dano. Progressao de 0 a 3 slots de spell, 1 slot de passiva (escolha entre 5), 1 slot de pet (escolha entre 7).
 
-O primeiro arco narrativo pertence ao Character Autobattler PVE posterior: batalha automatica com ultimate/spells acionaveis, ascensao do mago dentro de uma sociedade magica hierarquica, do inicio da carreira ate uma posicao equivalente a general, antes da rebeliao contra o mestre supremo e da aventura solo pelo espaco.
-
-Modos futuros incluem PVP Cardgame Roguelike, Hero Defense com o mesmo mago em defesa contra hordas/tower defense, e Open World RPG. PVP/PVE Autobattler tem conexao alta com a base. PVP Cardgame Roguelike, Hero Defense e Open World RPG tem progressao propria com pequenos beneficios de Level Global e de uma base bem evoluida.
+Modos futuros: Character Autobattler PVE com narrativa de ascensao hierarquica, PVP Cardgame Roguelike, Hero Defense e Open World RPG.
 
 ## Trabalho Permitido
 
@@ -35,9 +33,9 @@ Nao criar codigo, cenas, assets de implementacao ou projeto Godot sem pedido exp
 
 | Documento | Conteudo |
 |---|---|
-| `gdd.md` | Game Design Document completo — modos, progressao, fluxo de recursos, conexao entre modos e plano conceitual de producao |
+| `gdd.md` | Game Design Document completo — sistema de combate, personagem, modos, progressao, recursos e plano de producao |
 | `pendencias.md` | Lista priorizada de decisoes abertas para resolver antes de producao |
 
 ## Proximo Passo
 
-Definir a curva de reducao de Almas e a janela de tempo para recuperar recompensas PVP.
+Resolver P02 — Numeros e Formulas: valores base de stats, curvas de crescimento, custos de upgrade e formulas de combate para viabilizar prototipagem.
