@@ -404,7 +404,7 @@
   <div>
     <div class="subtitle" style="font-size:11px; color:#334155; letter-spacing:0.08em; text-transform:uppercase; font-weight:600;">DRAXOS ROGUELIKE</div>
     <h1>Card Browser</h1>
-    <div class="subtitle">Track 01 · slice_catalog.json</div>
+    <div class="subtitle">Track 02 · Sessão B</div>
   </div>
 </header>
 
@@ -426,6 +426,16 @@
     <button class="filter-btn" data-filter="kw" data-value="reviver">Reviver</button>
     <button class="filter-btn" data-filter="kw" data-value="regeneracao">Regeneração</button>
     <button class="filter-btn" data-filter="kw" data-value="carnica">Carniça</button>
+    <button class="filter-btn" data-filter="kw" data-value="escudo">Escudo</button>
+    <button class="filter-btn" data-filter="kw" data-value="ecoar">Ecoar</button>
+    <button class="filter-btn" data-filter="kw" data-value="espinhos">Espinhos</button>
+    <button class="filter-btn" data-filter="kw" data-value="atropelar">Atropelar</button>
+    <button class="filter-btn" data-filter="kw" data-value="furia">Fúria</button>
+    <button class="filter-btn" data-filter="kw" data-value="inspirar">Inspirar</button>
+    <button class="filter-btn" data-filter="kw" data-value="pacto">Pacto</button>
+    <button class="filter-btn" data-filter="kw" data-value="ressurgir">Ressurgir</button>
+    <button class="filter-btn" data-filter="kw" data-value="imune">Imune</button>
+    <button class="filter-btn" data-filter="kw" data-value="crescer">Crescer</button>
   </div>
   <div class="divider"></div>
   <label class="toggle-label">
@@ -521,25 +531,74 @@ const CARDS = [
   { id:"elemental_elite_bruto",        display_name:"Elemental Elite Bruto",       type:"criatura",cost:4, attack:4, health:5,  text:"Mockup elite de alto dano." },
   { id:"elemental_tita",               display_name:"Elemental Titã",              type:"criatura",cost:5, attack:5, health:6,  text:"Mockup pesado de fim de run." },
 
-  // ── PLACEHOLDERS ─────────────────────────────────────────────────────────
-  { id:"arcano_recompensa_1",    display_name:"Arcano A Definir 1",     type:"criatura",cost:1, attack:1, health:2, text:"Recompensa placeholder.", placeholder_design:true },
-  { id:"arcano_recompensa_2",    display_name:"Arcano A Definir 2",     type:"criatura",cost:1, attack:2, health:2, text:"Recompensa placeholder.", placeholder_design:true },
-  { id:"arcano_recompensa_3",    display_name:"Arcano A Definir 3",     type:"criatura",cost:2, attack:2, health:3, text:"Recompensa placeholder.", placeholder_design:true },
-  { id:"arcano_recompensa_4",    display_name:"Arcano A Definir 4",     type:"criatura",cost:2, attack:3, health:3, text:"Recompensa placeholder.", placeholder_design:true },
-  { id:"arcano_recompensa_5",    display_name:"Arcano A Definir 5",     type:"criatura",cost:3, attack:3, health:4, text:"Recompensa placeholder.", placeholder_design:true },
-  { id:"arcano_recompensa_6",    display_name:"Arcano A Definir 6",     type:"criatura",cost:3, attack:4, health:4, text:"Recompensa placeholder.", placeholder_design:true },
-  { id:"invocador_recompensa_1", display_name:"Invocador A Definir 1",  type:"criatura",cost:1, attack:1, health:2, text:"Recompensa placeholder.", placeholder_design:true },
-  { id:"invocador_recompensa_2", display_name:"Invocador A Definir 2",  type:"criatura",cost:1, attack:2, health:2, text:"Recompensa placeholder.", placeholder_design:true },
-  { id:"invocador_recompensa_3", display_name:"Invocador A Definir 3",  type:"criatura",cost:2, attack:2, health:3, text:"Recompensa placeholder.", placeholder_design:true },
-  { id:"invocador_recompensa_4", display_name:"Invocador A Definir 4",  type:"criatura",cost:2, attack:3, health:3, text:"Recompensa placeholder.", placeholder_design:true },
-  { id:"invocador_recompensa_5", display_name:"Invocador A Definir 5",  type:"criatura",cost:3, attack:3, health:4, text:"Recompensa placeholder.", placeholder_design:true },
-  { id:"invocador_recompensa_6", display_name:"Invocador A Definir 6",  type:"criatura",cost:3, attack:4, health:4, text:"Recompensa placeholder.", placeholder_design:true },
-  { id:"necro_recompensa_1",     display_name:"Necromante A Definir 1", type:"criatura",cost:1, attack:1, health:2, text:"Recompensa placeholder.", placeholder_design:true },
-  { id:"necro_recompensa_2",     display_name:"Necromante A Definir 2", type:"criatura",cost:1, attack:2, health:2, text:"Recompensa placeholder.", placeholder_design:true },
-  { id:"necro_recompensa_3",     display_name:"Necromante A Definir 3", type:"criatura",cost:2, attack:2, health:3, text:"Recompensa placeholder.", placeholder_design:true },
-  { id:"necro_recompensa_4",     display_name:"Necromante A Definir 4", type:"criatura",cost:2, attack:3, health:3, text:"Recompensa placeholder.", placeholder_design:true },
-  { id:"necro_recompensa_5",     display_name:"Necromante A Definir 5", type:"criatura",cost:3, attack:3, health:4, text:"Recompensa placeholder.", placeholder_design:true },
-  { id:"necro_recompensa_6",     display_name:"Necromante A Definir 6", type:"criatura",cost:3, attack:4, health:4, text:"Recompensa placeholder.", placeholder_design:true },
+  // ── ARCANO — RECOMPENSAS Sessão B (Gelo, Ar, Fogo) ──────────────────────
+  // Gelo
+  { id:"arcano_vortice",             display_name:"Vórtice",              type:"magia",   cost:2,                      text:"Aplica Congelar em 1 criatura inimiga aleatória (não ataca no próximo ciclo). Gera 1 Fluxo." },
+  { id:"arcano_vortice_lvl2",        display_name:"Vórtice",              type:"magia",   cost:2,                      text:"Congela até 2 criaturas inimigas aleatórias. Gera 1 Fluxo." },
+  { id:"arcano_vortice_lvl3",        display_name:"Vórtice",              type:"magia",   cost:3,                      text:"Congela todas as criaturas inimigas em campo." },
+  { id:"arcano_sentinela",           display_name:"Sentinela Arcana",     type:"criatura",cost:2, attack:2, health:3,  keywords:["escudo"], text:"Escudo. Enquanto em campo: cada spell jogada neste turno restaura 1 HP nesta criatura." },
+  { id:"arcano_sentinela_lvl2",      display_name:"Sentinela Arcana",     type:"criatura",cost:2, attack:3, health:4,  keywords:["escudo"], text:"Escudo. Restaura 1 HP por spell jogada no turno." },
+  { id:"arcano_sentinela_lvl3",      display_name:"Sentinela Arcana",     type:"criatura",cost:2, attack:3, health:5,  keywords:["escudo"], text:"Escudo. Restaura 2 HP por spell. Quando o Escudo absorve dano, gera 1 Fluxo." },
+  // Ar
+  { id:"arcano_amplificador",        display_name:"Amplificador",         type:"criatura",cost:1, attack:1, health:2,  keywords:["ecoar"], text:"Ecoar (ataca duas vezes por ciclo). Enquanto em campo: +2 poder de habilidade." },
+  { id:"arcano_amplificador_lvl2",   display_name:"Amplificador",         type:"criatura",cost:1, attack:2, health:3,  keywords:["ecoar"], text:"Ecoar. Enquanto em campo: +2 poder de habilidade." },
+  { id:"arcano_amplificador_lvl3",   display_name:"Amplificador",         type:"criatura",cost:1, attack:2, health:4,  keywords:["ecoar"], text:"Ecoar. +3 poder de habilidade. Quando o Ecoar dispara, gera 1 Fluxo." },
+  { id:"arcano_canalizar",           display_name:"Canalizar",            type:"magia",   cost:1,                      text:"Causa dano igual ao Fluxo atual + 2 a um alvo inimigo válido. Gera 1 Fluxo ao resolver." },
+  { id:"arcano_canalizar_lvl2",      display_name:"Canalizar",            type:"magia",   cost:1,                      text:"Causa Fluxo atual + 4 de dano a um alvo inimigo. Gera 1 Fluxo." },
+  { id:"arcano_canalizar_lvl3",      display_name:"Canalizar",            type:"magia",   cost:0,                      text:"Custa 0. Causa Fluxo atual + 4 de dano. Gera 1 Fluxo." },
+  // Fogo
+  { id:"arcano_espelho",             display_name:"Espelho Arcano",       type:"criatura",cost:2, attack:0, health:4,  keywords:["espinhos"], text:"Espinhos 2. Enquanto em campo: +1 poder de habilidade." },
+  { id:"arcano_espelho_lvl2",        display_name:"Espelho Arcano",       type:"criatura",cost:2, attack:0, health:6,  keywords:["espinhos"], text:"Espinhos 3. +1 poder de habilidade." },
+  { id:"arcano_espelho_lvl3",        display_name:"Espelho Arcano",       type:"criatura",cost:2, attack:0, health:8,  keywords:["espinhos"], text:"Espinhos 4. +2 poder de habilidade." },
+  { id:"arcano_descarga",            display_name:"Descarga",             type:"magia",   cost:3,                      text:"Causa 2 de dano a cada criatura inimiga em campo. Fluxo e poder de habilidade amplificam cada alvo." },
+  { id:"arcano_descarga_lvl2",       display_name:"Descarga",             type:"magia",   cost:3,                      text:"Causa 3 de dano a cada criatura inimiga. Amplificado por Fluxo e poder de habilidade." },
+  { id:"arcano_descarga_lvl3",       display_name:"Descarga",             type:"magia",   cost:2,                      text:"Causa 3 de dano a cada criatura inimiga. Custo reduzido para 2 mana." },
+
+  // ── INVOCADOR — RECOMPENSAS Sessão B (Gelo, Ar, Fogo) ────────────────────
+  // Gelo
+  { id:"invocador_capitao",          display_name:"Capitão de Campo",     type:"criatura",cost:2, attack:2, health:4,  keywords:["inspirar"], text:"Inspirar +1: criaturas aliadas adjacentes ganham +1 ATK por ciclo enquanto o Capitão estiver em campo." },
+  { id:"invocador_capitao_lvl2",     display_name:"Capitão de Campo",     type:"criatura",cost:2, attack:3, health:4,  keywords:["inspirar"], text:"Inspirar +1. Criaturas aliadas adjacentes +1 ATK por ciclo." },
+  { id:"invocador_capitao_lvl3",     display_name:"Capitão de Campo",     type:"criatura",cost:2, attack:3, health:5,  keywords:["inspirar"], text:"Inspirar +2. Criaturas aliadas adjacentes +2 ATK por ciclo." },
+  { id:"invocador_parede",           display_name:"Parede de Escudos",    type:"magia",   cost:2,                      text:"Todas as criaturas aliadas em campo ganham Escudo até o fim do próximo ciclo de combate." },
+  { id:"invocador_parede_lvl2",      display_name:"Parede de Escudos",    type:"magia",   cost:2,                      text:"Todas aliadas ganham Escudo. Criaturas com Escudo ativo ao entrar neste turno ganham +1/+0." },
+  { id:"invocador_parede_lvl3",      display_name:"Parede de Escudos",    type:"magia",   cost:1,                      text:"Todas aliadas ganham Escudo. +1/+0 por Escudo ativo. Custo reduzido para 1 mana." },
+  // Ar
+  { id:"invocador_cavaleiro",        display_name:"Cavaleiro Arcano",     type:"criatura",cost:2, attack:3, health:3,  keywords:["atropelar"], text:"Atropelar." },
+  { id:"invocador_cavaleiro_lvl2",   display_name:"Cavaleiro Arcano",     type:"criatura",cost:2, attack:4, health:3,  keywords:["atropelar"], text:"Atropelar." },
+  { id:"invocador_cavaleiro_lvl3",   display_name:"Cavaleiro Arcano",     type:"criatura",cost:2, attack:5, health:3,  keywords:["atropelar"], text:"Atropelar. Ao causar dano excedente, a aliada de maior ATK ganha +1/+0 permanente." },
+  { id:"invocador_berserker",        display_name:"Berserker",            type:"criatura",cost:1, attack:3, health:1,  keywords:["atropelar","furia"], text:"Atropelar. Fúria: ganha +1 ATK permanente cada vez que sofre dano e sobrevive ao ciclo." },
+  { id:"invocador_berserker_lvl2",   display_name:"Berserker",            type:"criatura",cost:1, attack:4, health:1,  keywords:["atropelar","furia"], text:"Atropelar. Fúria." },
+  { id:"invocador_berserker_lvl3",   display_name:"Berserker",            type:"criatura",cost:1, attack:4, health:2,  keywords:["atropelar","furia"], text:"Atropelar. Fúria. Ao matar uma criatura, o Cavaleiro aliado mais próximo ganha +1/+0 permanente." },
+  // Fogo
+  { id:"invocador_arauto",           display_name:"Arauto",               type:"criatura",cost:1, attack:1, health:2,  text:"Entrar: cria um token Recruta (1/1, sem keywords) no slot aliado vazio mais próximo." },
+  { id:"invocador_arauto_lvl2",      display_name:"Arauto",               type:"criatura",cost:1, attack:2, health:2,  text:"Entrar: cria 1 Recruta (1/1) em slot vazio." },
+  { id:"invocador_arauto_lvl3",      display_name:"Arauto",               type:"criatura",cost:1, attack:2, health:3,  text:"Entrar: cria 2 Recrutas (1/1) em slots vazios." },
+  { id:"invocador_tita",             display_name:"Titã Geminal",         type:"criatura",cost:3, attack:4, health:5,  keywords:["pacto"], text:"Pacto: enquanto outro aliado com Pacto estiver em campo, ambos ganham +2/+2. O bônus desaparece se o parceiro morrer." },
+  { id:"invocador_tita_lvl2",        display_name:"Titã Geminal",         type:"criatura",cost:3, attack:5, health:6,  keywords:["pacto"], text:"Pacto (+2/+2 enquanto o par vivo)." },
+  { id:"invocador_tita_lvl3",        display_name:"Titã Geminal",         type:"criatura",cost:3, attack:5, health:6,  keywords:["pacto","furia"], text:"Pacto (+3/+3). Ao perder o parceiro Pacto, ganha Fúria permanentemente." },
+
+  // ── NECROMANTE — RECOMPENSAS Sessão B (Gelo, Ar, Fogo) ───────────────────
+  // Gelo
+  { id:"necro_revenant",             display_name:"Revenant",             type:"criatura",cost:2, attack:2, health:4,  keywords:["ressurgir"], text:"Ressurgir: ao morrer, retorna uma vez com 1/2 e sem keywords." },
+  { id:"necro_revenant_lvl2",        display_name:"Revenant",             type:"criatura",cost:2, attack:3, health:4,  keywords:["ressurgir"], text:"Ressurgir: retorna como 1/2 sem keywords." },
+  { id:"necro_revenant_lvl3",        display_name:"Revenant",             type:"criatura",cost:2, attack:3, health:5,  keywords:["ressurgir"], text:"Ressurgir: retorna como 2/3 sem keywords. Ao retornar, aplica Enfraquecer 1 em criatura inimiga aleatória." },
+  { id:"necro_flagelo",              display_name:"Flagelo",              type:"criatura",cost:1, attack:1, health:2,  text:"Entrar: aplica Veneno 1 em criatura inimiga aleatória. Ao morrer: aplica Veneno 1." },
+  { id:"necro_flagelo_lvl2",         display_name:"Flagelo",              type:"criatura",cost:1, attack:2, health:2,  text:"Entrar e ao morrer: aplica Veneno 1 em criatura inimiga aleatória." },
+  { id:"necro_flagelo_lvl3",         display_name:"Flagelo",              type:"criatura",cost:1, attack:2, health:3,  text:"Entrar: Veneno 2. Ao morrer: Veneno 2." },
+  // Ar
+  { id:"necro_arauto_sombras",       display_name:"Arauto das Sombras",   type:"criatura",cost:2, attack:1, health:3,  text:"Entrar: reanima a última criatura aliada morta nesta batalha com 1/1 sem keywords." },
+  { id:"necro_arauto_sombras_lvl2",  display_name:"Arauto das Sombras",   type:"criatura",cost:2, attack:2, health:4,  text:"Entrar: reanima a última aliada morta como 2/2." },
+  { id:"necro_arauto_sombras_lvl3",  display_name:"Arauto das Sombras",   type:"criatura",cost:2, attack:2, health:5,  text:"Entrar: reanima a última aliada morta como 2/2 com keywords originais intactas." },
+  { id:"necro_colheita",             display_name:"Colheita das Almas",   type:"magia",   cost:0,                      text:"Gera 2 Cinzas + 1 adicional por cada criatura morta nesta batalha (aliada ou inimiga)." },
+  { id:"necro_colheita_lvl2",        display_name:"Colheita das Almas",   type:"magia",   cost:0,                      text:"Gera 2 Cinzas + 1 por cada morte na batalha." },
+  { id:"necro_colheita_lvl3",        display_name:"Colheita das Almas",   type:"magia",   cost:0,                      text:"Gera 3 Cinzas + 1 por cada morte. Se o total gerado for ≥ 6, compra 1 carta." },
+  // Fogo
+  { id:"necro_lich",                 display_name:"Lich",                 type:"criatura",cost:3, attack:3, health:5,  keywords:["imune","crescer"], text:"Imune (não pode ser alvo de Prender, Enfraquecer, Congelar ou Remover Keywords). Crescer +1: ganha +1 ATK no início de cada turno." },
+  { id:"necro_lich_lvl2",            display_name:"Lich",                 type:"criatura",cost:3, attack:4, health:6,  keywords:["imune","crescer"], text:"Imune. Crescer +1 ATK por turno." },
+  { id:"necro_lich_lvl3",            display_name:"Lich",                 type:"criatura",cost:3, attack:4, health:7,  keywords:["imune","crescer"], text:"Imune. Crescer +2 ATK por turno. Ao morrer: gera 3 Cinzas." },
+  { id:"necro_praga",                display_name:"Praga",                type:"magia",   cost:2,                      text:"Aplica Veneno 1 em todas as criaturas inimigas em campo. Segunda aplicação acumula +1." },
+  { id:"necro_praga_lvl2",           display_name:"Praga",                type:"magia",   cost:2,                      text:"Aplica Veneno 2 em todas as criaturas inimigas em campo." },
+  { id:"necro_praga_lvl3",           display_name:"Praga",                type:"magia",   cost:2,                      text:"Veneno 2 em todas inimigas. Gera 1 Cinzas por criatura que já tinha Veneno ao resolver." },
 ];
 
 // ─── CLASS CONFIG ─────────────────────────────────────────────────────────────
