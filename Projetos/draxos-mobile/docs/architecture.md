@@ -1,6 +1,6 @@
 # DraxosMobile — Architecture
 
-- Ultima atualizacao: `2026-05-18`
+- Ultima atualizacao: `2026-05-19`
 
 ---
 
@@ -87,7 +87,7 @@ O cliente **nunca** envia dados que alteram estado de jogo diretamente.
 
 | Dado | Onde vive |
 |---|---|
-| Recursos (Almas, Energia, Sangue, Cristais, Diamante) | Postgres — mutado so por Edge Functions |
+| Recursos (Almas, Energia, Sangue, Cristais, Ossos, Diamante) | Postgres — mutado so por Edge Functions |
 | Level, XP, build (arma/spells/passiva/pet) | Postgres |
 | Resultado de batalhas, ranking | Postgres — calculado no servidor |
 | Dados de guilda | Postgres |
@@ -175,8 +175,8 @@ draxos-mobile/
 | Tabela | Conteudo |
 |---|---|
 | `players` | id, username, tipo_conta, level, xp, poder |
-| `builds` | player_id, arma_level, spell_levels[], pet_level, passiva_levels[] |
-| `resources` | player_id, almas, energia, sangue, cristais, diamante |
+| `builds` | player_id, arma_tipo, arma_qualidade, arma_level, spells_unlocked[], spell_slot_1, spell_slot_2, spell_slot_3, pet_id, pet_level, passiva_id, passiva_level |
+| `resources` | player_id, almas, energia, sangue, cristais, ossos, diamante |
 | `base_structures` | player_id, estrutura_id, level, ultima_coleta |
 | `battles` | id, atacante_id, defensor_id, resultado, log, created_at |
 | `ranking` | player_id, season, pontos, posicao |
@@ -184,5 +184,9 @@ draxos-mobile/
 | `guild_structures` | guild_id, estrutura_id, level |
 | `chat_messages` | id, canal_id, autor_id, texto, created_at |
 | `bot_builds` | id, poder, build_data, faixa |
+
+**Cap de level:** o Level Global do jogador (tabela `players.level`) funciona como teto para arma, spells e construcoes. Nenhum upgrade pode ultrapassar o level atual do personagem — o servidor valida isso em toda mutacao de upgrade.
+
+**Nota de sincronia:** este schema e uma referencia inicial. O schema vivo e autoritativo esta em `server/schema/`. Ao tomar decisoes de design que afetam o banco, atualizar este arquivo e o `server/schema/` em conjunto.
 
 Schema detalhado em `server/schema/`.

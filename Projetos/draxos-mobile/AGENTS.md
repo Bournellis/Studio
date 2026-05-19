@@ -25,16 +25,33 @@ Este projeto foi promovido de `Projetos/_conceitos/mobile-universe/` em 2026-05-
 1. `../../canon/canon-brief.md`
 2. `docs/product-brief.md`
 3. `docs/game-design-document.md`
-4. `docs/architecture.md`
-5. `implementation/current-status.md`
-6. este arquivo
-7. arquivos tocados
+4. `docs/pre-implementation-decisions.md` — decisoes resolvidas e pendencias de design
+5. `docs/architecture.md`
+6. `implementation/current-status.md`
+7. este arquivo
+8. arquivos tocados
 
 ### Trabalho delimitado (UI, bug, feature isolada):
 
 1. `implementation/current-status.md`
 2. este arquivo
 3. arquivos tocados
+
+---
+
+## Mapa De Documentos
+
+| Pergunta | Documento |
+|---|---|
+| O que e o jogo, quais plataformas, escopo do slice | `docs/product-brief.md` |
+| Como um sistema funciona (spells, combate, economia, base) | `docs/game-design-document.md` |
+| Por que uma decisao foi tomada, o que ainda esta pendente | `docs/pre-implementation-decisions.md` |
+| Stack, schema do banco, fluxo de batalha, anti-cheat | `docs/architecture.md` |
+| O que foi implementado, qual track esta ativa, proximo passo | `implementation/current-status.md` |
+| Lore compartilhado e regras de plataforma do estudio | `../../canon/canon-brief.md` |
+| GDD historico completo com todas as formulas e tabelas | `../../_conceitos/mobile-universe/gdd.md` |
+
+**Regra de conflito:** se `docs/game-design-document.md` e `../../_conceitos/mobile-universe/gdd.md` divergirem, `game-design-document.md` e a referencia autoritativa para implementacao. O `gdd.md` e arquivo historico de design — nao modificar sem atualizar o `game-design-document.md` em conjunto.
 
 ---
 

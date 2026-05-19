@@ -1,6 +1,6 @@
 # DraxosMobile — Game Design Document
 
-- Ultima atualizacao: `2026-05-18`
+- Ultima atualizacao: `2026-05-19`
 - Status: `ARQUIVO_DESIGN` — promovido para `Projetos/draxos-mobile/` em 2026-05-18
 - Substitui: `RPGMobile`, `BattleMobile`
 - Projeto ativo: `Projetos/draxos-mobile/` — este arquivo e somente leitura e referencia de design
@@ -58,10 +58,12 @@ O Draxos e o personagem central em todos os modos. Nao existem classes — todos
 
 O personagem possui um Level Global que cresce via Experiencia. O Level afeta os stats base diretamente e e a referencia para desbloqueios gerais do jogo.
 
+**Cap universal de level:** o Level Global funciona como teto para arma, spells e construcoes da base. Nenhum desses sistemas pode ser upado para um level superior ao Level Global atual do personagem — mesmo que o jogador tenha recursos suficientes, o upgrade fica bloqueado ate o proximo level. Season 1: cap maximo de 40 para tudo. Seasons futuras expandem o cap, continuando a evolucao do jogo.
+
 Fontes de Experiencia:
 - Vencer batalhas PVP — recompensa completa
 - Perder batalhas PVP — 1/5 da recompensa de vitoria
-- Completar construcoes na base
+- Completar upgrades de construcao na base — XP livre (fixa por tipo e level da construcao; todos os predios geram XP ao completar um upgrade, incluindo a Estrutura de Stats)
 
 ### 3.3 Stats De Combate
 
@@ -161,9 +163,11 @@ A arma define o ataque basico e o ataque especial do personagem. Possui tres dim
 
 | Dimensao | Descricao | Recurso |
 |---|---|---|
-| Tipo | Classe da arma — define comportamento de ataque | Desbloqueio futuro |
-| Qualidade | Item especifico dentro do tipo — craftado | Ossos |
-| Level | Poder daquela qualidade — 40 levels por season | Almas |
+| Tipo | Classe da arma — define comportamento de ataque. **Primeiro slice: Varinha (dano Magico).** Outros tipos: desbloqueio futuro. | Desbloqueio futuro |
+| Qualidade | Item especifico dentro do tipo — craftado no Ossario | Ossos |
+| Level | Poder daquela qualidade — 40 levels por season (reseta a cada season) | Almas |
+
+**Crafting da varinha (primeiro slice):** o Ossario permite craftar upgrades de dano na varinha usando Ossos. Sem outras dimensoes ou efeitos adicionais por enquanto.
 
 **Maestria de Arma:**
 - Contador global permanente na conta para cada tipo de arma
@@ -178,6 +182,7 @@ A arma define o ataque basico e o ataque especial do personagem. Possui tres dim
 - Ataque basico: raios de dano magico direto no oponente
 - Ataque especial: a cada 3 ataques normais, o 4o dispara um raio maior com 3x o dano
 - Tipo de dano: Magico
+- Tipo de alvo (basico e especial): Direto — atinge o primeiro da fila inimiga. Outros tipos de arma no futuro podem ter tipos de alvo proprios.
 - Qualidade inicial: Varinha Simples (craftada com Ossos)
 - Exemplos de qualidades futuras: Varinha do Necromante, Varinha Dourada
 
@@ -187,32 +192,52 @@ A arma define o ataque basico e o ataque especial do personagem. Possui tres dim
 
 Spells sao habilidades ativas usadas em combate. Consomem Mana para serem castadas. Na batalha assincrona automatica, spells castam automaticamente quando ha Mana suficiente.
 
-Upgrades de spell custam **Almas**. Cada spell possui **40 levels por season** e sistema de **Maestria** identico ao da arma — acumula por dano causado com aquela spell, concede amplificacao passiva crescente **do dano daquela spell especificamente**, dificuldade crescente, permanente na conta. Futuro: expandir para lifesteal, critico e outros modificadores.
+Upgrades de spell custam **Almas**. Cada spell possui **40 levels por season** e sistema de **Maestria** permanente na conta, dificuldade crescente como no Tibia.
+
+**Calculo de Maestria por tipo de spell:**
+- **Spells de dano direto** (Raio Cosmico, Raio, Acender, Envenenar, Congelar, Odio, Dilacerar): acumula pelo dano total causado por aquela spell ao fim de cada batalha
+- **Spells de summon** (Invocar Demonio, Animar Morto): acumula pelo dano total causado pelos summons invocados por aquela spell
+- **Spells de utilidade/suporte** (Fortificar e futuras): calculo alternativo — Barreira acumula pela quantidade de dano mitigado pela barreira gerada. Outras spells sem dano: pendente de definicao caso a caso
+
+A Maestria concede amplificacao passiva crescente do efeito principal daquela spell especificamente. Futuro: expandir para lifesteal, critico e outros modificadores.
 
 Futuro: levels especiais com mais Almas e itens especificos, arvore de upgrades com escolhas em certos levels.
 
-**Progressao de slots — Primeiro Slice:**
+**Progressao de slots e spells — Primeiro Slice:**
 
-O jogador comeca sem nenhum slot de spell e os desbloqueia progressivamente via level durante o onboarding:
+O jogador comeca sem nenhum slot de spell e os desbloqueia progressivamente via level durante o onboarding. Nao e restricao de slot — e ordem de desbloqueio por level minimo. Uma vez desbloqueada, a spell pode ir em qualquer slot disponivel. Unlocks de slot e de spell custam **Almas** e sao feitos no **Altar das Almas**.
 
-| Slot | Momento de desbloqueio | Conteudo |
-|---|---|---|
-| Slot 1 | Early game — muito cedo (level 1–3) | Raio Cosmico (fixo) |
-| Slot 2 | Final do early game (level 10–15) | Escolha entre Raio/Acender/Envenenar/Congelar |
-| Slot 3 | Mid game (level 20–25) | Escolha livre da pool completa |
+| Level minimo | O que fica disponivel para unlock |
+|---|---|
+| 1–3 | Slot 1 + Raio Cosmico |
+| 10–15 | Slot 2 + Raio, Acender, Envenenar, Congelar |
+| 20–25 | Slot 3 + Odio, Dilacerar, Fortificar, Invocar Demonio, Animar Morto |
+
+**Tipos De Alvo Das Spells:**
+
+| Tipo de Alvo | Comportamento |
+|---|---|
+| Direto | Ataca o primeiro alvo da fila (Summon Frente → Summon Meio → Mago) |
+| Area | Ataca o primeiro alvo da fila e o alvo imediatamente atras dele |
+| Jogador | Ataca o mago diretamente, ignorando todos os summons na fila |
+| — | Sem alvo externo — buff proprio ou invocacao |
+
+Fila de alvos (frente para tras): **Summon Frente → Summon Meio → Mago → Summon Tras**. Spells do tipo Jogador ignoram toda a fila. Summon Tras so recebe dano de spells Area que alcancem sua posicao.
 
 **Pool completa de spells:**
 
-| Spell | Tipo | Efeito |
-|---|---|---|
-| Raio Cosmico | Magico | Dano magico direto |
-| Raio | Choque | Dano de choque + 1 marcador. Com 5 marcadores: consome todos, causa dano e breve stun |
-| Acender | Fogo | Dano de fogo + Queimando |
-| Envenenar | Veneno | Envenenado |
-| Congelar | Gelo | 1 stack de Lento. Com 3 stacks: grande dano + Congelado breve |
-| Odio | Morte | Grande dano de Morte |
-| Dilacerar | Sangramento | Dano + Sangrando |
-| Fortificar | — | Barreira Magica (X de dano) + Resistencia Global (X% por X tempo) |
+| Spell | Tipo | Tipo de Alvo | Efeito |
+|---|---|---|---|
+| Raio Cosmico | Magico | Direto | Dano magico direto no primeiro da fila |
+| Raio | Choque | Jogador | Dano de choque + 1 marcador no mago. Com 5 marcadores: consome todos, causa dano e breve stun |
+| Acender | Fogo | Area | Dano de fogo + Queimando no primeiro da fila e no alvo atras |
+| Envenenar | Veneno | Jogador | Envenenado direto no mago, ignora summons |
+| Congelar | Gelo | Area | 1 stack de Lento no primeiro da fila e no alvo atras. Cada alvo tem contador independente — burst (grande dano + Congelado breve) dispara individualmente quando o alvo atinge 3 stacks, sem se propagar para o outro alvo. |
+| Odio | Morte | Jogador | Grande dano de Morte direto no mago, ignora summons |
+| Dilacerar | Sangramento | Direto | Dano + Sangrando no primeiro da fila |
+| Fortificar | — | — | Barreira Magica (X de dano) + Resistencia Global (X% por X tempo) — buff proprio |
+| Invocar Demonio | Fogo | — | Invoca um Demonio na posicao Tras. Ataca causando dano de Fogo. Dura X segundos (a calibrar). Novo cast substitui o anterior. |
+| Animar Morto | Morte | — | Invoca aleatoriamente um Esqueleto (posicao Frente) ou um Morto-Vivo (posicao Meio), ambos causando dano de Morte. Se o slot alvo estiver ocupado, usa o outro — o cast nunca e desperdicado. Dura X segundos (a calibrar). |
 
 **Jogo completo:** pool expandida com novas spells.
 
@@ -243,6 +268,8 @@ O pet acompanha o personagem em batalha, causando dano e efeitos adicionais. Age
 Upgrades de pet custam **Sangue**. Cada pet possui **40 levels por season** — cada level aumenta dano e efeito. Futuro: escolhas e upgrades especiais em certos levels, arvore de evolucao.
 
 **Primeiro slice:** 1 slot de pet, escolha livre entre todos os 7 desde o inicio.
+
+**Tipo de alvo:** Direto — o pet ataca sempre o primeiro da fila inimiga. Tipos de ataque especificos por pet poderao ser definidos no futuro.
 
 **Pool de pets:**
 
@@ -275,6 +302,54 @@ Cosmeticos nao concedem vantagem de gameplay.
 - **Skins:** alteram a aparencia do mago. Versoes alternativas desbloqueadas por uso da skin.
 - **Finalizacoes:** animacoes brutais exibidas apos vitoria PVP. O jogador escolhe qual exibir entre as desbloqueadas.
 
+### 3.15 Sistema De Summons
+
+Summons sao criaturas invocadas por spells de summon que combatem ao lado do mago durante a batalha.
+
+**Comportamento:**
+- Atacam e usam habilidades automaticamente, da mesma forma que os pets
+- Diferente dos pets, summons podem receber dano e serem mortos
+- Possuem HP proprio e tempo de vida — ambos a calibrar durante prototipagem
+- Se o HP zerar, o summon e removido do campo imediatamente
+- Se o tempo de vida expirar, o summon e removido do campo
+- Invocar um novo summon que usa o mesmo slot substitui o anterior imediatamente
+
+**Posicoes:**
+
+| Posicao | Comportamento De Dano |
+|---|---|
+| Frente | Recebe todo dano direto antes do mago. O mago so e atingido se o summon da frente for morto. |
+| Meio | Divide o dano 50/50 com o mago — cada instancia de dano e repartida igualmente entre os dois. |
+| Tras | Recebe apenas dano de area. Protegido de ataques diretos enquanto o mago estiver na frente. |
+
+**Slots:** cada posicao (Frente, Meio, Tras) e um slot independente. Um summon ocupa o slot da sua posicao. Se o slot ja estiver ocupado, o novo summon substitui o anterior. Nao ha limite no numero de spells de summon na selecao de spells.
+
+**Relacao com pets:** summons e o slot de pet sao independentes — ter summons nao afeta o pet e vice-versa.
+
+**Tipo de alvo dos summons:** Direto — summons atacam o primeiro da fila inimiga. Tipos de ataque especificos por summon poderao ser definidos no futuro.
+
+**HP base de referencia (nivel 1 — revisao obrigatoria durante prototipagem):**
+
+| Summon | Posicao | HP base | Justificativa |
+|---|---|---|---|
+| Esqueleto | Frente | 60 | Absorve ataques diretos — aguenta ~4 ataques basicos nivel 1 |
+| Morto-Vivo | Meio | 40 | Divide dano 50/50 com o mago — efetivamente ~80 HP de protecao total |
+| Demonio | Tras | 50 | So recebe dano de area — HP menor pois raramente e o alvo direto |
+
+**Duracao de vida:** ligeiramente menor que o tempo de recarga da spell (Custo Mana / Regen Mana). Para o primeiro slice (20 Mana, Regen 2/s no nivel 1): recast a cada ~10s → duracao ~8s → gap de ~2s sem summon antes do proximo cast. Revisao obrigatoria durante prototipagem.
+
+**Comportamento de recast:**
+- **Invocar Demonio:** sempre substitui o summon anterior ao disparar (um unico slot — Tras)
+- **Animar Morto:** prioriza slots vazios. Se Frente estiver vazio invoca Esqueleto; se Meio estiver vazio invoca Morto-Vivo; se ambos estiverem ocupados, substitui o escolhido aleatoriamente. O cast nunca e desperdicado.
+
+**Tipo de dano dos summons por spell:**
+
+| Spell | Summon | Posicao | Tipo de dano |
+|---|---|---|---|
+| Invocar Demonio | Demonio | Tras | Fogo |
+| Animar Morto | Esqueleto | Frente | Morte |
+| Animar Morto | Morto-Vivo | Meio | Morte |
+
 ---
 
 ## 4. Os Modos
@@ -302,14 +377,16 @@ A base nao pode ser atacada por outros jogadores.
 
 #### 4.1.1 Estruturas Da Base
 
-| Estrutura | Recurso produzido | Uso do recurso |
+Toda construcao pode evoluir a si mesma ate level 40 (custo: Energia + tempo). Os levels das construcoes sao **permanentes entre seasons — a base nunca reseta**. Alem do self-upgrade, cada construcao abriga os upgrades que consomem seu proprio recurso:
+
+| Estrutura | Recurso produzido | Upgrades abrigados |
 |---|---|---|
-| Altar das Almas | Almas | Upgrade de arma e spells |
-| Nucleo de Energia | Energia | Evolucao de estruturas da base |
+| Altar das Almas | Almas | Unlock e upgrade de arma, slots de spell e spells individuais |
+| Nucleo de Energia | Energia | Apenas self-upgrade (Energia e gasta na evolucao das proprias construcoes) |
 | Pocos de Sangue | Sangue | Upgrade do pet |
 | Minas de Cristal | Cristais | Upgrade de passivas |
 | Estrutura de Stats | — | Upgrade de stats do personagem (consome tempo e Energia) |
-| (Futuro) Ossario | Ossos | Crafting de itens |
+| Ossario | Ossos | Crafting de arma (upgrade de dano) |
 
 #### 4.1.2 Recursos
 
@@ -320,7 +397,7 @@ A base nao pode ser atacada por outros jogadores.
 | Energia | Batalhas PVP | Producao da base | Evolucao de estruturas da base |
 | Sangue | Batalhas PVP | Producao da base | Upgrade do pet |
 | Cristais | Producao da base | — | Upgrade de passivas |
-| Ossos | Encontros especificos (futuro) | — | Crafting de itens (futuro) |
+| Ossos | Drops de batalha + quests iniciais | Producao do Ossario | Crafting de arma (upgrade de dano) |
 
 #### 4.1.3 Funcoes Sociais
 
@@ -354,6 +431,8 @@ A apresentacao e sidescroller classico, com os dois personagens em lados opostos
 | 36s+ | Letal |
 
 Batalhas de early game (7–20s): anti-stall nunca dispara. Batalhas de jogador estabelecido (28–30s): dispara, forca conclusao por volta de 32–34s. Build defensiva extrema: forcada a terminar antes de 40s.
+
+**Targeting do anti-stall:** AoE total — atinge o mago e todos os summons ativos no campo simultaneamente. Ignora resistencias e ignora a fila de posicionamento. Summons nao protegem o mago do anti-stall.
 
 #### 4.2.2 Recompensas
 
@@ -476,7 +555,8 @@ Todos os modos ──► Experiencia ──► Level Global ──► stats base
 | Level de arma 1–40 com Almas | Incluido |
 | Maestria de Varinha (amplificacao por dano causado) | Incluida |
 | Progressao de 0 a 3 slots de spell com selecao | Incluida |
-| Pool de 8 spells, level 1–40 por spell, maestria por spell | Incluida |
+| Pool de 10 spells (inclui Invocar Demonio e Animar Morto), level 1–40 por spell, maestria por spell | Incluida |
+| Sistema de summons (3 posicoes, HP proprio, tempo de vida) | Incluido |
 | 1 slot de passiva, 10 levels por passiva, desbloqueio pela base | Incluido |
 | Pet (1 slot, escolha livre entre 7, level 1–40) | Incluido |
 | Cosmeticos: skins e finalizacoes | Incluidos |
@@ -507,7 +587,7 @@ Todos os modos ──► Experiencia ──► Level Global ──► stats base
 
 ### 8.1 Level e Progressao
 
-- **Level maximo Season 1:** 40–50 (a definir no lancamento)
+- **Level maximo Season 1:** 40
 - **Level maximo primeiro slice:** 10
 - **Filosofia:** levels iniciais muito rapidos — level 10 representa menos de 10% do conteudo total
 - **Limite de level:** sempre temporario, expandido por updates e seasons
@@ -577,6 +657,8 @@ Exemplo: dano de Fogo 15, Resistencia Global 10%, Resistencia de Fogo 10% → 15
 | Odio | 16 | 40 direto | Dano puro alto, cadencia baixa |
 | Dilacerar | 8 | 12 + 5/tick (4 ticks) | Dano medio + DoT medio, 4s de duracao |
 | Fortificar | 12 | 0 | Defensiva pura — Barreira Magica + Resistencia Global |
+| Invocar Demonio | 20 | — | Summon — recast a cada ~10s (nivel 1). Duracao do summon ~8s. |
+| Animar Morto | 20 | — | Summon — recast a cada ~10s (nivel 1). Duracao do summon ~8s. |
 
 Frequencia estimada no nivel 1 (Mana 20, Regen 2/s): spells de custo 8 a cada ~4s, Congelar a cada ~5s, Odio a cada ~8s, Fortificar a cada ~6s.
 
@@ -614,7 +696,7 @@ Tabela completa de DoTs — todos os tipos definidos. Ver secao 3.4 para dano po
 
 Uma season tem **4 meses** de duracao. Cada season inclui **2 Battle Passes** — um por bimestre.
 
-Ao fim da season o Level Global e a progressao de Maestria permanecem. Systems com "40 levels por season" (arma, spells, pet) reiniciam — o jogador recomeça a progressao desses sistemas na proxima season.
+Ao fim da season o Level Global, a progressao de Maestria, os levels das construcoes da base e os levels de passivas permanecem. Systems com "40 levels por season" que reiniciam: arma (level), spells (level), pet (level) — o jogador recomeça a progressao desses sistemas na proxima season. A base nunca reseta.
 
 ### 9.1 Tipos De XP
 
@@ -705,31 +787,47 @@ O Battle Pass recompensa o jogador por jogar — quanto mais ele joga, mais reco
 
 ### 9.6 Sistema De Recompensas Diarias E Semanais
 
-Recompensas diarias e semanais disponíveis para todos os jogadores. Por padrao, cada recompensa esta travada por um anuncio.
+Recompensas diarias e semanais disponiveis para todos os jogadores. Por padrao, cada recompensa esta travada por um anuncio (rewarded ad).
 
-**Compra unica:** remove os anuncios de todas as recompensas diarias e semanais para sempre. Esse pacote pode conter beneficios adicionais no futuro.
+**Logica de cotas:** segue estrutura semelhante ao sistema de XP de batalha — faixas de disponibilidade diaria e semanal com limites para evitar que vire fonte infinita de recursos. O jogador ve claramente quantas recompensas ainda pode coletar no periodo.
 
-O sistema segue logica de cotas semelhante ao XP — limites diarios e semanais para evitar que vire fonte infinita de recursos.
+**Compra unica (dinheiro direto):** remove os anuncios de todas as recompensas diarias e semanais para sempre. Esse pacote pode conter beneficios adicionais no futuro.
+
+**Pendencia:** definir o conteudo exato das recompensas (quais recursos, quantidades, se inclui Diamante) e os limites diarios/semanais.
 
 ### 9.7 Moeda Premium — Diamante
 
-**Nome:** Diamante
+**Nome:** Diamante. Moeda premium obtida via compra direta ou em pequenas quantidades por Battle Pass e onboarding.
 
-O Diamante pode ser usado para acelerar ou substituir qualquer tipo de progressao do jogo. O custo varia por categoria:
-
-| Uso | Custo relativo |
-|---|---|
-| Acelerar construcoes da base | Baixo — acessivel para jogadores casuais |
-| Comprar recursos (Almas, Energia, Sangue, Cristais) | Medio |
-| Pular etapas de poder (XP direta, upgrades de arma/spell) | Alto — deve ser caro o suficiente para nao quebrar a progressao |
-
-O valor do Diamante deve ser cuidadosamente calibrado para que a aceleracao de construcoes seja acessivel e frequente, enquanto pular progressao de poder seja uma decisao significativa de gasto.
-
-Fontes de Diamante:
+**Fontes de Diamante:**
+- Compra direta com dinheiro real (fonte principal)
 - Battle Pass Free (quantidade moderada)
 - Battle Pass Premium (quantidade maior)
-- Recompensas diarias e semanais
-- Compra direta
+- Recompensas de onboarding (quests mainline — front-loaded no early game)
+- Recompensas diarias e semanais (quantidade pequena)
+
+**Escala de custo relativo** — serve como guia de design de preco; valores absolutos a calibrar:
+
+| Uso | Custo relativo | Observacao |
+|---|---|---|
+| Acelerar construcao da base | Normal → Caro | Escala com tempo restante |
+| Acelerar upgrade interno (spell, pet, passiva) | Normal → Caro | Escala com tempo restante |
+| Comprar recursos na loja (Almas, Sangue, etc.) | Muito Caro | Deve ser raro — nao deve substituir gameplay |
+| Expandir XP dobrada +1a meia hora (1x/dia) | Barato | Acessivel para jogadores casuais |
+| Expandir XP dobrada +2a meia hora (2x/dia) | Normal | — |
+| Expandir XP dobrada +3a meia hora (3x/dia, max) | Caro | Limite absoluto de 3 expansoes/dia |
+| Cosmeticos — skins comuns | Normal | — |
+| Cosmeticos — skins raras / finalizacoes | Caro → Muito Caro | — |
+
+**Acoes que requerem dinheiro direto (nao Diamante):**
+- Slot extra de fila de construcao (compra unica)
+- Battle Pass Premium
+- Remocao permanente de anuncios das recompensas diarias/semanais
+
+**Pendencias:**
+- Lista completa de usos do Diamante ainda a definir
+- Valores absolutos de Diamante por acao (calibrar no alpha)
+- Conteudo completo da loja
 
 ---
 
@@ -831,7 +929,7 @@ Tempo depende da taxa de producao da base (a definir).
 
 ### 11.2 Levels Das Estruturas
 
-Cada estrutura possui **40 levels independentes** por season. Todas as estruturas do primeiro slice:
+Cada estrutura possui **40 levels independentes permanentes** — os levels acumulam entre seasons e nunca resetam. Todas as estruturas do primeiro slice:
 
 - Altar das Almas (produz Almas)
 - Nucleo de Energia (produz Energia)
@@ -1204,6 +1302,11 @@ Sem necessidade de conta Google Play Developer ou Apple Developer para o alpha p
 - Formula de pontos de arena para ranking (ganho/perda por diferenca de poder)
 - Faixa de poder para matchmaking (±X pontos de poder)
 - Plano de lancamento, quando houver decisao
+- Sistema de summons — HP base e duracao de vida por tipo (Demonio, Esqueleto, Morto-Vivo)
+- Sistema de summons — custo de Mana e cadencia das spells Invocar Demonio e Animar Morto
+- Sistema de summons — tipo de dano dos summons de Animar Morto (Esqueleto e Morto-Vivo)
+- Sistema de summons — escala de HP e dano por level de spell
+- Sistema de summons — summons participam do sistema de maestria?
 
 ---
 

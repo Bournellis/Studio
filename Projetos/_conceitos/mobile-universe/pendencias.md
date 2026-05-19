@@ -332,3 +332,41 @@
 - Este arquivo (`_conceitos/mobile-universe/`) preservado como arquivo de design
 
 **Status:** projeto promovido. Trabalho de implementacao em `Projetos/draxos-mobile/`.
+
+---
+
+## P14 — Sistema De Summons
+
+**Prioridade:** Alta — necessario para implementar Invocar Demonio e Animar Morto
+
+**Decisoes tomadas:**
+- Summons sao criaturas invocadas por spells que combatem ao lado do mago
+- Atacam e usam habilidades automaticamente, como os pets
+- Diferente dos pets, summons recebem dano e possuem HP proprio
+- Possuem tempo de vida — expiracao e morte removem o summon do campo
+- 3 posicoes: Frente (absorve dano direto antes do mago), Meio (divide dano 50/50 com o mago), Tras (so recebe dano de area)
+- Posicao e fixa por tipo de summon — automatica em combate
+- Cada posicao e um slot; novo summon no mesmo slot substitui o anterior
+- Sem limite de spells de summon na selecao de spells do jogador
+- Summons e o slot de pet sao independentes entre si
+- **Invocar Demonio:** Demonio na posicao Tras, dano de Fogo, tempo de vida a calibrar
+- **Animar Morto:** invoca aleatoriamente Esqueleto (Frente, dano Morte) ou Morto-Vivo (Meio, dano Morte); se slot ocupado usa o outro — cast nunca desperdicado; tempo de vida a calibrar
+- **Tipos de alvo das spells:** Direto (primeiro da fila), Area (primeiro + segundo), Jogador (mago direto, ignora summons), — (buff/summon)
+- Raio Cosmico: Direto · Raio: Jogador · Acender: Area · Envenenar: Jogador · Congelar: Area · Odio: Jogador · Dilacerar: Direto · Fortificar: — · Invocar Demonio: — · Animar Morto: —
+
+**Resolvido adicionalmente:**
+- HP base: Esqueleto 60, Morto-Vivo 40, Demonio 50 (referencia nivel 1 — revisao durante prototipagem)
+- Duracao: ~8s (ligeiramente menor que o recast de 10s) — gap de ~2s entre expiracao e proximo cast
+- Custo de Mana: 20 para ambas as spells de summon
+- Tipo de alvo dos summons: Direto (primeiro da fila inimiga) — tipos especificos no futuro
+- Tipo de alvo do pet: Direto (primeiro da fila inimiga) — tipos especificos no futuro
+- Tipo de alvo da varinha: Direto (ataque basico e especial)
+- Anti-stall: AoE total — atinge mago e todos os summons simultaneamente, ignora fila e resistencias
+- Recast Invocar Demonio: sempre substitui ao disparar
+- Recast Animar Morto: prioriza slot vazio; so substitui se ambos os slots estiverem ocupados
+
+**Pendencias restantes:**
+- Escala de HP e dano dos summons por level de spell
+- Summons participam do sistema de maestria?
+
+**Resolvido quando:** escala de HP/dano por level definida e decisao sobre maestria tomada.

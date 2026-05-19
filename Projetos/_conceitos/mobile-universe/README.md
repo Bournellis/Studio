@@ -1,8 +1,10 @@
 # DraxosMobile
 
-Status: `P1_CONCEITO`
+Status: `ARQUIVO_DESIGN` — promovido para `Projetos/draxos-mobile/` em 2026-05-18. Somente leitura e referencia de design.
 
-DraxosMobile e um projeto mobile multi-partes em incubacao conceitual. Substitui os conceitos anteriores RPGMobile e BattleMobile. Nao confundir com Draxos Roguelike Cardgame (projeto Steam separado).
+DraxosMobile e um projeto mobile multi-partes. Substitui os conceitos anteriores RPGMobile e BattleMobile. Nao confundir com Draxos Roguelike Cardgame (projeto Steam separado).
+
+**Projeto ativo:** `Projetos/draxos-mobile/`
 
 ## Direcao Atual
 
@@ -20,22 +22,11 @@ Modos futuros: Character Autobattler PVE com narrativa de ascensao hierarquica, 
 
 ## Trabalho Permitido
 
-- Conceito
-- Pitch
-- Design
-- Referencias
-
-## Restricao Operacional
-
-Nao criar codigo, cenas, assets de implementacao ou projeto Godot sem pedido explicito do usuario.
+Leitura e referencia de design apenas. Nao criar codigo, cenas, assets ou projeto Godot a partir daqui.
 
 ## Documentos
 
 | Documento | Conteudo |
 |---|---|
 | `gdd.md` | Game Design Document completo — sistema de combate, personagem, modos, progressao, recursos e plano de producao |
-| `pendencias.md` | Lista priorizada de decisoes abertas para resolver antes de producao |
-
-## Proximo Passo
-
-Resolver P02 — Numeros e Formulas: valores base de stats, curvas de crescimento, custos de upgrade e formulas de combate para viabilizar prototipagem.
+| `pendencias.md` | Registro historico das decisoes de design — P01 e P06 resolvidos, P13 (transicao) resolvido em 2026-05-18 |

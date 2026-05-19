@@ -61,7 +61,7 @@ Todos os modos pertencem a um unico ecossistema com conta, personagem, base e pr
 | Autenticacao | Guest + username/senha + Google Sign-In |
 | Alpha | Convite por codigo, APK sideload + PC executavel |
 | Season | 4 meses, 2 Battle Passes por season |
-| Level maximo Season 1 | 40-50 |
+| Level maximo Season 1 | 40 |
 
 ---
 
@@ -69,7 +69,7 @@ Todos os modos pertencem a um unico ecossistema com conta, personagem, base e pr
 
 O design detalhado do jogo esta em:
 
-- `../../Projetos/_conceitos/mobile-universe/gdd.md` — GDD completo com todos os sistemas, formulas e valores
-- `../../Projetos/_conceitos/mobile-universe/pendencias.md` — decisoes abertas e historico de resolucoes
+- `../../_conceitos/mobile-universe/gdd.md` — GDD completo com todos os sistemas, formulas e valores
+- `../../_conceitos/mobile-universe/pendencias.md` — decisoes abertas e historico de resolucoes
 - `docs/game-design-document.md` — referencia de implementacao condensada
 - `docs/architecture.md` — arquitetura tecnica
