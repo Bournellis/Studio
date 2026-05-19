@@ -1,27 +1,27 @@
 # Content Definitions Contract
 
 - Ultima atualizacao: `2026-05-19`
-- Status: contrato antes dos JSONs reais
+- Status: contrato inicial implementado com fixtures `MVP_ONLY`
 
 Conteudo autorado vive em `../../data/definitions/`. Resources Godot gerados vivem em `../../data/generated/` e nao devem ser editados manualmente.
 
-## Arquivos Esperados
+Gerador vivo: `../../tools/content_generator.gd`.
 
-| Arquivo | Conteudo |
-|---|---|
-| `spells.json` | Spells, custos, alvo, tipo de dano, cooldown e efeitos |
-| `pets.json` | Pets, tipo de dano, cadencia e efeito |
-| `passives.json` | Passivas, bonus, escala e custo |
-| `weapons.json` | Tipos/qualidades de arma e custos de Ossos |
-| `base_structures.json` | Estruturas, producao, armazenamento, custos e duracoes |
-| `bot_builds.json` | Bots simulados por faixa de poder |
-| `power_bands.json` | Faixas de matchmaking |
-| `battle_fixtures.json` | Fixtures `MVP_ONLY` e testes deterministas |
-| `rewards.json` | Recompensas diarias, semanais, quests e battle pass |
+Catalogo gerado: `../../data/generated/draxos_mobile_catalog.tres`.
 
-## Campos Comuns
+## Formato Dos JSONs
 
-Todo item de conteudo deve ter:
+Cada arquivo usa este envelope:
+
+```json
+{
+  "schema_version": 1,
+  "collection": "spells",
+  "items": []
+}
+```
+
+Todo item deve ter:
 
 - `id`
 - `display_name`
@@ -32,9 +32,23 @@ Todo item de conteudo deve ter:
 
 IDs sao estaveis. Nao renomear ID para mudar texto player-facing.
 
-## Fixture MVP
+## Arquivos Esperados
 
-`battle_fixtures.json` deve conter:
+| Arquivo | Collection | Conteudo |
+|---|---|---|
+| `spells.json` | `spells` | Spells, custos, alvo, tipo de dano, cooldown e efeitos |
+| `pets.json` | `pets` | Pets, tipo de dano, cadencia e efeito |
+| `passives.json` | `passives` | Passivas, bonus, escala e custo |
+| `weapons.json` | `weapons` | Tipos/qualidades de arma e custos de Ossos |
+| `base_structures.json` | `base_structures` | Estruturas, producao, armazenamento, custos e duracoes |
+| `bot_builds.json` | `bot_builds` | Bots simulados por faixa de poder |
+| `power_bands.json` | `power_bands` | Faixas de matchmaking |
+| `battle_fixtures.json` | `battle_fixtures` | Fixtures `MVP_ONLY` e testes deterministas |
+| `rewards.json` | `rewards` | Recompensas diarias, semanais, quests e battle pass |
+
+## Fixture MVP Atual
+
+`battle_fixtures.json` contem `mvp_training_battle`:
 
 ```json
 {
@@ -52,16 +66,30 @@ IDs sao estaveis. Nao renomear ID para mudar texto player-facing.
 }
 ```
 
+Itens relacionados:
+
+- spell: `raio_cosmico`
+- weapon: `varinha_magica`
+- passive: `foco_astral`
+- pet: `familiar_cinzento`
+- bot: `mvp_training_bot`
+- power band: `mvp_training_band`
+- reward: `mvp_training_reward`
+
 ## Validacao
 
-- IDs unicos por arquivo.
-- Referencias cruzadas precisam existir.
-- Conteudo desativado (`enabled: false`) nao entra em matchmaking/recompensas.
-- Fixtures `MVP_ONLY` nao podem aparecer em economia final sem migracao explicita.
+`tools/validate.gd` executa:
+
+- geracao do catalogo a partir dos 9 JSONs esperados;
+- validacao de campos comuns;
+- validacao de IDs unicos por collection;
+- validacao de referencias entre fixture, bot, weapon, spells, passive e pet;
+- carga do resource gerado;
+- GUT client.
 
 ## Pendencias De Design
 
-Quando um campo depender de decisao em aberto, o JSON real deve aguardar a pendencia correspondente em `../design-pending.md`.
+Fixtures `MVP_ONLY` nao resolvem design final. Quando um campo depender de decisao em aberto, o JSON real deve aguardar a pendencia correspondente em `../design-pending.md`.
 
 Exemplos:
 

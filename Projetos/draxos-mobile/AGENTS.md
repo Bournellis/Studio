@@ -26,9 +26,10 @@ Este projeto foi promovido de `Projetos/_conceitos/mobile-universe/` em 2026-05-
 2. `implementation/tracks/track-00-first-slice-foundation/scope.md`
 3. `implementation/tracks/track-00-first-slice-foundation/mvp-technical-definition.md`
 4. `docs/design-pending.md`
-5. `docs/contracts/`
-6. este arquivo
-7. arquivos tocados
+5. `docs/reuse-map.md`
+6. `docs/contracts/`
+7. este arquivo
+8. arquivos tocados
 
 ### Trabalho substancial
 
@@ -63,6 +64,7 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 | O que ainda precisa de design | `docs/design-pending.md` |
 | Por que uma decisao foi tomada | `docs/pre-implementation-decisions.md` |
 | Stack e arquitetura tecnica | `docs/architecture.md` |
+| O que pode ser reutilizado de outros projetos | `docs/reuse-map.md` |
 | API, log de batalha, schema e conteudo | `docs/contracts/` |
 | Escopo da Track 00 | `implementation/tracks/track-00-first-slice-foundation/scope.md` |
 | MVP tecnico minimo | `implementation/tracks/track-00-first-slice-foundation/mvp-technical-definition.md` |
@@ -79,6 +81,7 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 
 - Lore compartilhado em `../../canon/` informa o projeto.
 - Nao importar mecanicas de outros projetos do estudio sem documento local adotando a regra.
+- Reuso tecnico permitido vive em `docs/reuse-map.md`; gameplay de outros projetos continua vetado por padrao.
 - Se design local conflita com lore compartilhado, lore prevalece ate o canon ser atualizado.
 
 ---

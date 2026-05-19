@@ -28,10 +28,10 @@
 - Local: `Projetos/draxos-mobile/`
 - Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
 - Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
-- Baseline atual: Track 00 preparada documentalmente com escopo de MVP tecnico minimo e primeiro slice completo, contratos iniciais (`Projetos/draxos-mobile/docs/contracts/`), registro vivo de design pendente (`Projetos/draxos-mobile/docs/design-pending.md`) e prompts atomicos. Design base preservado: combate (7 tipos de dano, DoTs, anti-stall), personagem (varinha, spells, passiva, pet), base manager (6 estruturas, economia de Energia), social (amigos, guilda, chat), infraestrutura (Godot 4.6.2, Supabase, batalha 100% servidor, Android + PC + PC browser). Godot project ainda nao inicializado.
+- Baseline atual: Track 00 em bootstrap com T00-P01, T00-P02A, T00-P02B, T00-P03, T00-P04 e T00-P05 concluidos. O cliente Godot 4.6.2 tem boot scene, `tools/validate.gd`, GUT 9.6.0, autoloads `UiTokens`/`AssetIds`/`ContentLibrary`, pipeline `data/definitions/*.json` -> `data/generated/draxos_mobile_catalog.tres`, fixture `mvp_training_battle` e testes client verdes (`8/8`, `33` asserts). Supabase runtime local esta configurado no layout oficial `supabase/` com Docker Desktop, Deno via `npx`, Auth anonimo, migrations MVP, healthcheck Edge Function, `account/guest`, `account/state`, `supabase db reset` verde, idempotencia por `request_id` e escrita direta do cliente bloqueada. Design base preservado: combate (7 tipos de dano, DoTs, anti-stall), personagem (varinha, spells, passiva, pet), base manager (6 estruturas, economia de Energia), social (amigos, guilda, chat), infraestrutura (Godot 4.6.2, Supabase, batalha 100% servidor, Android + PC + PC browser).
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
 - Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo.
-- Proximo passo: executar Track 00 P01 - inicializar Godot 4.6.2, boot minimo, `tools/validate.gd` e GUT 9.6.0.
+- Proximo passo: implementar `T00-P06 - Cliente Account/Session Shell`.
 
 ## rpg-isometrico
 

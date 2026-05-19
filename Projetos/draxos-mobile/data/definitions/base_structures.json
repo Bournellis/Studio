@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "collection": "base_structures",
+  "items": [
+    {
+      "id": "nucleo_etereo",
+      "display_name": "Nucleo Etereo",
+      "description": "Estrutura MVP_ONLY para validar base manager sem economia final.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["MVP_ONLY", "base", "core"],
+      "mode": "MVP_ONLY",
+      "max_level": 1,
+      "produces": [],
+      "storage": {}
+    }
+  ]
+}

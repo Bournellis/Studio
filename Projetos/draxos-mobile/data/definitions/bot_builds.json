@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "collection": "bot_builds",
+  "items": [
+    {
+      "id": "mvp_training_bot",
+      "display_name": "Bot de Treino MVP",
+      "description": "Oponente tecnico fixo para battle fixture server-authoritative.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["MVP_ONLY", "bot", "training"],
+      "mode": "MVP_ONLY",
+      "power_band_id": "mvp_training_band",
+      "level": 1,
+      "weapon_id": "varinha_magica",
+      "spell_ids": ["raio_cosmico"],
+      "passive_id": "foco_astral",
+      "pet_id": "familiar_cinzento",
+      "seed": 20260519
+    }
+  ]
+}

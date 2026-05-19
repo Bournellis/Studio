@@ -2,204 +2,154 @@
 
 - Ultima atualizacao: `2026-05-19`
 - Uso: um prompt por execucao de agente
+- Sequencia oficial: `T00-P00` a `T00-P13`, reorganizada apos o bootstrap inicial
 
 ## Regras Para Todos Os Prompts
 
 Os caminhos listados em `Arquivos permitidos` sao relativos a raiz do projeto `Projetos/draxos-mobile/`, salvo quando comecarem com `../../../`.
 
 - Voce nao esta sozinho no repositorio; nao reverta alteracoes de outros agentes.
-- Leia `../../../AGENTS.md`, `../../current-status.md`, `scope.md`, `mvp-technical-definition.md`, `../../../docs/design-pending.md` e contratos relevantes antes de editar.
+- Leia `../../../AGENTS.md`, `../../current-status.md`, `current-status.md`, `scope.md`, `mvp-technical-definition.md`, `../../../docs/design-pending.md`, `../../../docs/reuse-map.md` e contratos relevantes antes de editar.
 - Se faltar decisao de design, registre em `../../../docs/design-pending.md` e pare antes de inventar regra.
 - Toda mudanca de contrato deve atualizar `../../../docs/contracts/`.
-- Toda etapa concluida deve atualizar `../../current-status.md`.
+- Toda etapa concluida deve atualizar `../../current-status.md` e `current-status.md`.
+- Nunca copiar BattleEngine, regras de deck/mana/run map, campanha action ou save autoritativo local de outros projetos.
+- Cliente Godot envia intencoes e anima logs; resultado, recursos e progressao sao autoritativos no servidor.
 
 ## T00-P00 - Preparacao Documental
 
+Status: completo.
+
 Objetivo: preparar documentos de escopo, contratos, pendencias e prompts sem iniciar implementacao.
 
-Arquivos permitidos:
+Arquivos permitidos: `AGENTS.md`, `README.md`, `docs/**`, `implementation/**`, `../../../08_Coordenacao_Agentes/**`, `../../../Projetos/README.md`.
 
-- `AGENTS.md`
-- `README.md`
-- `docs/**`
-- `implementation/**`
-- `08_Coordenacao_Agentes/Prioridades_Estudio.md`
-- `08_Coordenacao_Agentes/Estado_Atual.md`
-- `08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
-- `Projetos/README.md`
-
-Validacao:
-
-- Links relativos resolvem.
-- Worktree nao contem codigo Godot/Supabase novo.
+Validacao: links relativos resolvem e status aponta para a Track 00.
 
 ## T00-P01 - Inicializacao Godot
 
+Status: completo.
+
 Objetivo: criar projeto Godot 4.6.2 minimo.
 
-Saida esperada:
+Saida esperada: `project.godot`, boot scene minima, `ProjectInfo`, `tools/validate.gd`, GUT e testes iniciais.
 
-- `project.godot`
-- cena boot minima
-- `tools/validate.gd`
-- GUT configurado
-- pastas reais preservadas
+Validacao: Godot headless abre o projeto e `tools/validate.gd` passa.
 
-Validacao:
+## T00-P02A - Supabase Base Standalone
 
-- Godot headless abre o projeto.
-- `tools/validate.gd` executa e reporta sucesso minimo.
+Status: completo.
 
-## T00-P02 - Supabase Base
+Objetivo: criar base Supabase local-first sem depender ainda do runtime CLI.
 
-Objetivo: criar base Supabase local-first.
+Saida esperada: migration MVP, healthcheck Edge Function, README de setup e env exemplo sem secrets.
 
-Saida esperada:
+Validacao: `npx -y deno task check`, `npx -y deno task lint` e healthcheck standalone passam.
 
-- `server/schema/` com migrations minimas do MVP.
-- `server/functions/healthcheck/`.
-- README de setup local/cloud.
-- Arquivo de exemplo de env sem secrets reais.
+## T00-P02B - Supabase Runtime Local
 
-Validacao:
+Status: completo.
 
-- Migration aplica em banco limpo.
-- Healthcheck responde localmente.
+Objetivo: resolver ambiente real Supabase.
 
-## T00-P03 - Conta Guest MVP
+Arquivos permitidos: `server/**`, `docs/architecture.md`, `docs/contracts/**`, `docs/design-pending.md`, `implementation/**`, coordenacao do estudio quando o status mudar.
+
+Saida esperada: layout oficial compativel com Supabase CLI, docs de Docker/Supabase CLI/Deno via `npx` e validacao de migrations/functions no runtime.
+
+Validacao: `supabase db reset` e `supabase functions serve` passam localmente quando Docker/Supabase CLI estiverem disponiveis.
+
+## T00-P03 - Fundacao Reutilizavel Do Cliente
+
+Status: completo.
+
+Objetivo: criar infraestrutura client reutilizavel sem importar gameplay de outros projetos.
+
+Saida esperada: `.gutconfig.json`, autoloads `UiTokens`, `AssetIds`, `ContentLibrary`, `tools/content_generator.gd`, `data/resources/draxos_mobile_catalog.gd`, validacao integrada.
+
+Validacao: `tools/validate.gd` gera catalogo, valida recursos/autoloads e roda GUT sem warnings.
+
+## T00-P04 - Fixtures MVP E Catalogo Gerado
+
+Status: completo.
+
+Objetivo: materializar fixtures tecnicas `MVP_ONLY`.
+
+Saida esperada: JSONs em `data/definitions/`, `mvp_training_battle`, `mvp_training_bot`, `mvp_training_reward` e `data/generated/draxos_mobile_catalog.tres`.
+
+Validacao: GUT cobre autoloads, tokens, asset ids, colecoes esperadas, fixture MVP e validacao do catalogo.
+
+## T00-P05 - Conta Guest MVP
+
+Status: completo.
 
 Objetivo: implementar convite e conta guest MVP.
 
-Saida esperada:
+Arquivos permitidos: `server/functions/account/**`, `server/schema/**`, `supabase/functions/account/**`, `supabase/migrations/**`, `docs/contracts/**`, `docs/design-pending.md`, `implementation/**`.
 
-- Edge Function de conta guest.
-- Estado inicial de player/resources/build fixture.
-- Cliente Godot salvando e validando sessao minima.
+Saida esperada: Edge Function de conta guest, estado inicial de player/resources/build fixture, `account/state` e idempotencia por `request_id`.
 
-Validacao:
+Validacao: convite valido cria conta; convite invalido falha; estado inicial e recuperado via `account/state`; repetir `request_id` retorna o mesmo player; nenhuma policy libera escrita autoritativa direta do cliente.
 
-- Convite valido cria conta.
-- Convite invalido falha.
-- Estado inicial e recuperado apos reabrir.
+## T00-P06 - Cliente Account/Session Shell
 
-## T00-P04 - Battle Request MVP
+Objetivo: fechar a camada de sessao do cliente.
+
+Saida esperada: HTTP client via HTTPRequest, Auth anonimo local, chamada a `account/guest`, chamada a `account/state`, `SessionStore`, validacao de token, estado offline controlado e tela minima de conta.
+
+Validacao: rede indisponivel mostra erro controlado; cache local nao altera recurso/progressao.
+
+## T00-P07 - Battle Request MVP
 
 Objetivo: implementar batalha fixture server-authoritative.
 
-Saida esperada:
+Saida esperada: `battle/request` com seed deterministica, bot `mvp_training_bot`, log `battle_log_v1`, resultado gravado e recompensa `MVP_ONLY` idempotente.
 
-- `battle/request` com seed deterministica.
-- Bot `mvp_training_bot`.
-- Log `battle_log_v1`.
-- Resultado gravado e recompensa `MVP_ONLY` idempotente.
+Validacao: mesmo seed gera mesmo log; cliente nao envia resultado; repetir `request_id` nao duplica recompensa.
 
-Validacao:
+## T00-P08 - Battle Replay Client MVP
 
-- Mesmo seed gera mesmo log.
-- Cliente nao envia resultado.
-- Repetir consulta nao duplica recompensa.
+Objetivo: exibir o log recebido sem calcular gameplay.
 
-## T00-P05 - Cliente MVP
+Saida esperada: tela de resultado/timeline placeholder, replay simples, skip e tratamento de eventos desconhecidos por versao.
 
-Objetivo: fechar loop tecnico no cliente Godot.
+Validacao: resultado exibido bate com servidor e cliente nao altera recursos.
 
-Saida esperada:
+## T00-P09 - Gate De Design Do Primeiro Slice
 
-- Tela minima com guest, solicitar batalha, ver resultado.
-- HTTPRequest para endpoints MVP.
-- Timeline placeholder ordenada por `t`.
+Objetivo: resolver bloqueios de design antes de conteudo real.
 
-Validacao:
+Saida esperada: pendencias de `PRIMEIRO_SLICE` classificadas como resolvidas, adiadas com justificativa ou mantidas como bloqueio explicito.
 
-- Fluxo completo funciona em ambiente local.
-- Falhas de rede/auth exibem erro controlado.
+Validacao: nenhum prompt posterior implementa regra sem documento destino atualizado.
 
-## T00-P06 - Conteudo Real Do Primeiro Slice
+## T00-P10 - Conteudo Real E Simulador Completo
 
-Objetivo: transformar fixtures em definicoes de conteudo versionadas.
+Objetivo: substituir fixtures por conteudo real versionado e simulador completo server-side.
 
-Saida esperada:
+Saida esperada: JSONs expandidos, validadores de schema e simulador deterministico com regras centrais.
 
-- JSONs para spells, pets, passivas, estruturas, bots e faixas de poder.
-- Validadores de schema.
-- Contratos atualizados.
+Validacao: testes server cobrem replay por seed, limite de duracao e eventos conforme contrato.
 
-Validacao:
-
-- Conteudo carrega sem erro.
-- IDs estaveis e unicos.
-
-## T00-P07 - Simulador Completo
-
-Objetivo: implementar regras completas do autobattler server-side.
-
-Saida esperada:
-
-- Simulador deterministico com varinha, spells, DoTs, resistencias, barreiras, status, pets, passivas, summons e anti-stall.
-- Testes server cobrindo regras principais.
-
-Validacao:
-
-- Replay por seed.
-- Limite de duracao respeitado.
-- Eventos gerados conforme contrato.
-
-## T00-P08 - Cliente De Batalha Completo
-
-Objetivo: animar o log completo sem calcular gameplay.
-
-Saida esperada:
-
-- Visualizador de batalha com replay, skip e velocidade.
-- Tratamento de eventos desconhecidos por versao.
-
-Validacao:
-
-- Resultado exibido bate com servidor.
-- Cliente nao altera recursos.
-
-## T00-P09 - Base Manager E Economia
+## T00-P11 - Base Manager E Economia
 
 Objetivo: implementar base e economia servidor-side.
 
-Saida esperada:
+Saida esperada: estruturas, upgrades, coleta offline, armazenamento, cotas, recompensas e ledger.
 
-- Estruturas, upgrades, coleta offline, armazenamento, cotas e recompensas.
-- Validacoes de cap universal e custos.
+Validacao: mutacoes sao idempotentes e coleta offline respeita armazenamento.
 
-Validacao:
-
-- Mutacoes sao idempotentes.
-- Coleta offline respeita armazenamento.
-
-## T00-P10 - Social, Matchmaking, Bots E Ranking
+## T00-P12 - Social, Matchmaking, Bots E Ranking
 
 Objetivo: completar sistemas sociais e competicao.
 
-Saida esperada:
+Saida esperada: amigos, guilda, ajudas, chat por polling, matchmaking real/bot e ranking de season.
 
-- Amigos, guilda, ajudas, chat por polling.
-- Matchmaking real/bot.
-- Ranking de season.
+Validacao: RLS impede acesso indevido e bots nao entram no ranking.
 
-Validacao:
-
-- RLS impede acesso indevido.
-- Bots nao entram no ranking.
-
-## T00-P11 - Monetizacao Funcional E Alpha
+## T00-P13 - Monetizacao Funcional E Alpha
 
 Objetivo: fechar sistemas de alpha e monetizacao funcional.
 
-Saida esperada:
+Saida esperada: Battle Pass, Diamante, recompensas diarias/semanais e smokes de export Android, PC e PC browser.
 
-- Battle Pass Free/Premium.
-- Diamante e usos aprovados.
-- Recompensas diarias/semanais.
-- Smokes de export PC, Android e PC browser.
-
-Validacao:
-
-- Fluxos free e premium testados.
-- Exports geram build smoke.
-- `../../current-status.md` marca pronto para playtest alpha.
+Validacao: fluxos free/premium testados, exports geram build smoke e `../../current-status.md` marca pronto para playtest alpha.

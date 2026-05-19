@@ -19,7 +19,7 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
 ## Implementacao - Bootstrap
 
-- `draxos-mobile/`: jogo mobile multi-plataforma - mago Draxos (PVP assincrono, base manager, social). Plataformas: Android + PC executavel + PC browser. Backend: Supabase. Batalha 100% simulada no servidor. Track 00 preparada documentalmente com MVP tecnico minimo, primeiro slice completo, contratos e pendencias de design; Godot project ainda nao inicializado.
+- `draxos-mobile/`: jogo mobile multi-plataforma - mago Draxos (PVP assincrono, base manager, social). Plataformas: Android + PC executavel + PC browser. Backend: Supabase. Batalha 100% simulada no servidor. Track 00 em bootstrap: T00-P01, T00-P02A, T00-P02B, T00-P03, T00-P04 e T00-P05 concluidos com Godot project minimo, autoloads de fundacao, validate integrado, GUT, catalogo `MVP_ONLY`, runtime Supabase local no layout oficial `supabase/`, migrations MVP, healthcheck e conta guest no gateway local.
   - Priority/status: `P2_IMPLEMENTACAO - bootstrap`
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Operational status: `draxos-mobile/implementation/current-status.md`
@@ -27,7 +27,7 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
   - Design pending: `draxos-mobile/docs/design-pending.md`
   - Design archive: `_conceitos/mobile-universe/gdd.md`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: executar Track 00 P01 - Godot 4.6.2 project init + validacao minima.
+  - Current next step: implementar `T00-P06 - Cliente Account/Session Shell`.
 
 ## Arquivo De Design
 

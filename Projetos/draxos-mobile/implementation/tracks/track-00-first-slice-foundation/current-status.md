@@ -1,7 +1,7 @@
 # Track 00 - First Slice Foundation
 
 - Last Updated: `2026-05-19`
-- Track Status: `OPEN - preparacao documental concluida`
+- Track Status: `OPEN - T00-P01, T00-P02A, T00-P02B, T00-P03, T00-P04 e T00-P05 concluidos`
 - Goal: montar o primeiro slice completo do DraxosMobile, iniciando pelo MVP tecnico minimo
 
 ---
@@ -21,8 +21,9 @@ Detalhes em `scope.md` e `mvp-technical-definition.md`.
 
 - `scope.md` - escopo, fora de escopo e criterios de aceite.
 - `mvp-technical-definition.md` - primeira entrega implementavel.
-- `implementation-plan.md` - sequencia completa T00-P00 a T00-P11.
+- `implementation-plan.md` - sequencia completa T00-P00 a T00-P13.
 - `implementation-prompts.md` - prompts atomicos para agentes.
+- `../../../docs/reuse-map.md` - mapa de reuso conservador entre projetos.
 
 ---
 
@@ -31,15 +32,43 @@ Detalhes em `scope.md` e `mvp-technical-definition.md`.
 | Passo | Status | Saida |
 |---|---|---|
 | T00-P00 - Preparacao Documental | Completo | Docs, contratos, design pending e prompts definidos |
-| T00-P01 - Inicializacao Godot | Pendente | `project.godot`, boot minimo, validate, GUT |
-| T00-P02 - Supabase Base | Pendente | migrations minimas e healthcheck |
-| T00-P03 - Conta Guest MVP | Pendente | convite + guest |
-| T00-P04 - Battle Request MVP | Pendente | battle fixture server-authoritative |
-| T00-P05 - Cliente MVP | Pendente | loop guest -> batalha -> resultado |
-| T00-P06 a T00-P11 | Pendente | primeiro slice completo |
+| T00-P01 - Inicializacao Godot | Completo | `project.godot`, boot minimo, validate, GUT |
+| T00-P02A - Supabase Base Standalone | Completo | migration MVP, healthcheck, Deno standalone verde |
+| T00-P02B - Supabase Runtime Local | Completo | Docker Desktop local, Supabase CLI via `npx` 2.100.1, Deno via `npx` 2.7.14 |
+| T00-P03 - Fundacao Reutilizavel Do Cliente | Completo | `.gutconfig`, autoloads, content generator, validate integrado |
+| T00-P04 - Fixtures MVP E Catalogo Gerado | Completo | `data/definitions/*.json`, `mvp_training_battle`, catalogo `.tres` |
+| T00-P05 - Conta Guest MVP | Completo | `account/guest`, `account/state`, convite `ALPHA-TEST`, RPC idempotente e estado inicial server-authoritative |
+| T00-P06 - Cliente Account/Session Shell | Pendente | HTTP client, `SessionStore`, token/cache local nao autoritativo |
+| T00-P07 - Battle Request MVP | Pendente | battle fixture server-authoritative |
+| T00-P08 - Battle Replay Client MVP | Pendente | loop guest -> batalha -> resultado |
+| T00-P09 - Gate De Design Do Primeiro Slice | Pendente | decisoes bloqueantes resolvidas ou adiadas |
+| T00-P10 - Conteudo Real E Simulador Completo | Pendente | conteudo real e simulador completo server-side |
+| T00-P11 - Base Manager E Economia | Pendente | estruturas, recursos, ledger e coleta offline |
+| T00-P12 - Social, Matchmaking, Bots E Ranking | Pendente | amigos, guilda, bots, matchmaking e ranking |
+| T00-P13 - Monetizacao Funcional E Alpha | Pendente | battle pass, diamante, rewards e exports smoke |
+
+---
+
+## Validacao Atual
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-mobile -s res://tools/validate.gd
+```
+
+Resultado local: passou com GUT integrado, `8/8` testes e `33` asserts.
+
+Server/Supabase local:
+
+- `npx -y deno task check`: passou em `supabase/functions` e `server/functions`.
+- `npx -y deno task lint`: passou em `supabase/functions` e `server/functions`.
+- `npx -y supabase db reset`: passou aplicando `202605190001_mvp_foundation.sql` e `202605190002_guest_account_mvp.sql`.
+- `GET /functions/v1/healthcheck`: passou.
+- `POST /functions/v1/account/guest`: convite invalido retorna `INVALID_INVITE`; convite valido cria conta; repeticao do mesmo `request_id` retorna o mesmo player.
+- `GET /functions/v1/account/state`: passou e recuperou player/resources/build.
+- Insert direto em `public.players` com JWT anonimo: bloqueado com `403`.
 
 ---
 
 ## Next
 
-Executar T00-P01 conforme `implementation-prompts.md`.
+Seguir para `T00-P06 - Cliente Account/Session Shell`.

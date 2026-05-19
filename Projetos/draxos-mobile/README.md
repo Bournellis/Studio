@@ -12,8 +12,10 @@ Status: `P2_IMPLEMENTACAO - bootstrap`
 
 - Projeto promovido de conceito para implementavel em 2026-05-18.
 - Preparacao documental da Track 00 definida em 2026-05-19.
-- Godot project ainda nao inicializado.
-- Supabase project ainda nao configurado.
+- Godot project inicializado com boot minimo, validate, GUT, autoloads de fundacao e catalogo de conteudo gerado.
+- Supabase runtime local configurado em `supabase/`: Docker Desktop, `npx supabase`, `npx deno`, migrations MVP, Auth anonimo, healthcheck e conta guest no gateway local.
+- Conta guest MVP implementada: `account/guest`, `account/state`, convite `ALPHA-TEST`, fixture inicial de player/resources/build e escrita direta do cliente bloqueada.
+- Reuso conservador documentado em `docs/reuse-map.md`; padroes tecnicos foram adotados sem importar gameplay de outros projetos.
 - Track 00 tem dois niveis: MVP tecnico minimo e primeiro slice completo.
 - Backend definido: Supabase Auth, Postgres, Edge Functions e Realtime.
 - Plataformas do primeiro slice: Android + PC executavel + PC browser.
@@ -37,8 +39,12 @@ Status: `P2_IMPLEMENTACAO - bootstrap`
 | Base Manager com estruturas de producao | Escopo definido; design pendente registrado |
 | Sistema social (amigos, guilda, chat) | Escopo definido; design pendente registrado |
 | Infraestrutura (Supabase, contas, matchmaking) | Contratos iniciais definidos |
-| Godot project inicializado | Pendente - Track 00 P01 |
-| Supabase project configurado | Pendente - Track 00 P02 |
+| Godot project inicializado | Completo - T00-P01 |
+| Supabase base standalone | Completo - T00-P02A |
+| Supabase runtime local | Completo - T00-P02B |
+| Fundacao client reutilizavel | Completo - T00-P03 |
+| Fixtures MVP e catalogo gerado | Completo - T00-P04 |
+| Conta Guest MVP | Completo - T00-P05 |
 
 ---
 
@@ -52,6 +58,7 @@ draxos-mobile/
 |   |-- product-brief.md
 |   |-- game-design-document.md
 |   |-- design-pending.md
+|   |-- reuse-map.md
 |   |-- pre-implementation-decisions.md
 |   |-- architecture.md
 |   `-- contracts/
@@ -69,6 +76,7 @@ draxos-mobile/
 |           |-- implementation-plan.md
 |           `-- implementation-prompts.md
 |-- server/
+|-- supabase/
 |-- core/
 |-- data/
 |-- ui/
@@ -85,6 +93,7 @@ draxos-mobile/
 
 1. `AGENTS.md`
 2. `implementation/current-status.md`
-3. `implementation/tracks/track-00-first-slice-foundation/scope.md`
-4. `docs/design-pending.md`
-5. `implementation/tracks/track-00-first-slice-foundation/implementation-prompts.md`
+3. `implementation/tracks/track-00-first-slice-foundation/current-status.md`
+4. `docs/reuse-map.md`
+5. `docs/design-pending.md`
+6. `implementation/tracks/track-00-first-slice-foundation/implementation-prompts.md`

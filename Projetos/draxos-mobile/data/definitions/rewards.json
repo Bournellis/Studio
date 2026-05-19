@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "collection": "rewards",
+  "items": [
+    {
+      "id": "mvp_training_reward",
+      "display_name": "Recompensa MVP de Treino",
+      "description": "Recompensa tecnica idempotente para validar contrato de battle/request.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["MVP_ONLY", "reward", "battle"],
+      "mode": "MVP_ONLY",
+      "resources": {"xp": 5, "bones": 1},
+      "idempotency_scope": "battle_result"
+    }
+  ]
+}

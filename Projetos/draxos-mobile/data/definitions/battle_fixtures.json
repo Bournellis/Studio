@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "collection": "battle_fixtures",
+  "items": [
+    {
+      "id": "mvp_training_battle",
+      "display_name": "Batalha MVP de Treino",
+      "description": "Fixture tecnica para provar request de batalha e log animavel.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["MVP_ONLY", "battle", "fixture"],
+      "mode": "MVP_ONLY",
+      "player_fixture": {
+        "level": 1,
+        "weapon_type": "varinha_magica",
+        "spell_ids": ["raio_cosmico"],
+        "passive_id": "foco_astral",
+        "pet_id": "familiar_cinzento"
+      },
+      "opponent_fixture": {
+        "id": "mvp_training_bot",
+        "level": 1
+      }
+    }
+  ]
+}

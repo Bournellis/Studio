@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "collection": "weapons",
+  "items": [
+    {
+      "id": "varinha_magica",
+      "display_name": "Varinha Magica",
+      "description": "Arma base do mago Draxos no MVP tecnico.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["MVP_ONLY", "weapon", "starter"],
+      "mode": "MVP_ONLY",
+      "quality": "starter",
+      "bone_cost": 0,
+      "basic_attack": {"damage_type": "astral", "damage": 3, "cadence_seconds": 2.0}
+    }
+  ]
+}

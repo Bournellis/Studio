@@ -8,8 +8,11 @@ It summarizes the shared canon, but it does not replace the full read order in `
 
 Current project map:
 
-- `Projetos/rpg-isometrico/`: campaign-first isometric action RPG governed by the established product, design, progression, roadmap, and platform canon.
-- `Projetos/rpg-turnos/`: provisional turn-based RPG-cardgame with independent mechanics, shared lore context, and local project docs as the source of truth for its early design.
+- `Projetos/draxos-roguelike-cardgame/`: P0 implementation project, menu-first Draxos roguelike cardgame for Steam/PC, governed by its local docs.
+- `Projetos/draxos-mobile/`: P2 implementation project, mobile/PC/browser Draxos async PVP autobattler with base manager, social systems, Supabase backend, and server-authoritative battles.
+- `Projetos/_conceitos/mobile-universe/`: read-only design archive promoted into `Projetos/draxos-mobile/` on 2026-05-18.
+- `Projetos/rpg-isometrico/`: paused campaign-first isometric action RPG, preserved for historical/contextual consultation.
+- `Projetos/rpg-turnos/`: paused provisional turn-based RPG-cardgame, preserved for historical/contextual consultation.
 
 Shared lore snapshot:
 
@@ -46,6 +49,20 @@ Treat RPG Isometrico as:
 - Steam (PC) is the primary platform
 - mobile is a future expansion, not the active primary target
 
+## DraxosMobile Initial Contract
+
+Treat DraxosMobile as:
+
+- an implementation project, not a concept archive
+- a multi-platform mobile-first product targeting Android native app, PC executable, and PC browser in the first slice
+- a shared-account ecosystem around one Draxos mage, base manager, async PVP autobattler, social systems, and progression
+- server-authoritative: Godot never simulates battle results or mutates resources directly
+- uses a conservative local reuse map for Godot tooling and content infrastructure; gameplay from other projects is not inherited
+- backed by Supabase Auth, Postgres, Edge Functions, and eventually Realtime
+- scoped for Track 00 as MVP technical foundation first, then first slice systems
+
+Do not import rules from Draxos Roguelike Cardgame, RPG Turnos, or RPG Isometrico unless DraxosMobile local docs explicitly adopt them in `Projetos/draxos-mobile/docs/reuse-map.md` and the affected local contract.
+
 ## RPG Turnos Initial Contract
 
 Treat RPG Turnos as:
@@ -68,10 +85,10 @@ Treat existing RPG Turnos mechanical IDs as stable placeholders unless a dedicat
 ## Current Transition Direction
 
 - shared canon lives in `D:\Estudio\canon`
-- active operational status lives in `D:\Estudio\Projetos\rpg-isometrico\implementation\current-status.md`
-- RPG Turnos operational status lives in `D:\Estudio\Projetos\rpg-turnos\implementation\current-status.md`
-- active work is organized under `D:\Estudio\Projetos\rpg-isometrico\implementation\tracks\`
-- RPG Turnos work will be organized under `D:\Estudio\Projetos\rpg-turnos\implementation\tracks\`
+- portfolio source of truth lives in `D:\Estudio\08_Coordenacao_Agentes\Prioridades_Estudio.md`
+- Draxos Roguelike Cardgame operational status lives in `D:\Estudio\Projetos\draxos-roguelike-cardgame\implementation\current-status.md`
+- DraxosMobile operational status lives in `D:\Estudio\Projetos\draxos-mobile\implementation\current-status.md`
+- DraxosMobile active work is organized under `D:\Estudio\Projetos\draxos-mobile\implementation\tracks\track-00-first-slice-foundation\`
 - historical validation and cutover records live under `D:\Estudio\Projetos\rpg-isometrico\implementation\phase-g1` through `phase-g4` and `D:\Estudio\migration\`
 
 ## Shared Architecture Snapshot

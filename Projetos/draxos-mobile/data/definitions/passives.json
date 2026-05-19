@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "collection": "passives",
+  "items": [
+    {
+      "id": "foco_astral",
+      "display_name": "Foco Astral",
+      "description": "Passiva MVP_ONLY usada como placeholder de contrato para builds.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["MVP_ONLY", "passive", "mana"],
+      "mode": "MVP_ONLY",
+      "effects": [
+        {"kind": "mana_regen_flat", "amount": 1}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "collection": "pets",
+  "items": [
+    {
+      "id": "familiar_cinzento",
+      "display_name": "Familiar Cinzento",
+      "description": "Pet MVP_ONLY para validar presenca de pet sem definir tuning final.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["MVP_ONLY", "pet", "astral"],
+      "mode": "MVP_ONLY",
+      "damage_type": "astral",
+      "cadence_seconds": 4.0,
+      "effects": [
+        {"kind": "damage", "amount": 4}
+      ]
+    }
+  ]
+}

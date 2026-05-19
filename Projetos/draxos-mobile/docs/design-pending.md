@@ -14,7 +14,7 @@ Campos obrigatorios:
 |---|---|
 | ID | Identificador estavel da pendencia |
 | Sistema | Area afetada |
-| Bloqueia | `MVP_TECNICO`, `PRIMEIRO_SLICE`, `PLAYTEST_ALPHA`, `CALIBRAVEL_ALPHA` ou `POS_SLICE` |
+| Bloqueia | `MVP_TECNICO`, `PRIMEIRO_SLICE`, `PLAYTEST_ALPHA`, `CALIBRAVEL_ALPHA`, `OPERACIONAL` ou `POS_SLICE` |
 | Pergunta | Decisao de design ainda em aberto |
 | Impacto | Risco se a decisao nao existir |
 | Documento destino | Documento que deve ser atualizado quando resolver |
@@ -27,13 +27,16 @@ Categorias:
 - `PRIMEIRO_SLICE`: bloqueia completar o primeiro slice funcional.
 - `PLAYTEST_ALPHA`: pode ser implementado com placeholder, mas precisa existir antes de playtest real.
 - `CALIBRAVEL_ALPHA`: pode nascer com valor inicial e ser ajustado com dados.
+- `OPERACIONAL`: nao altera game design, mas bloqueia validacao, ambiente, seguranca ou execucao tecnica confiavel.
 - `POS_SLICE`: fora da Track 00 completa.
 
 ## Estado Do MVP Tecnico
 
-Nao ha pendencia de game design bloqueando o MVP tecnico minimo enquanto ele usar fixtures tecnicas marcadas como `MVP_ONLY`.
+Nao ha pendencia de game design bloqueando a fundacao client e as fixtures tecnicas enquanto elas usarem conteudo marcado como `MVP_ONLY`.
 
-O MVP tecnico precisa apenas dos contratos documentados em `contracts/` e das definicoes de escopo em `../implementation/tracks/track-00-first-slice-foundation/mvp-technical-definition.md`.
+T00-P03 e T00-P04 foram implementados sem resolver balanceamento final: autoloads, pipeline de conteudo e `mvp_training_battle` existem apenas para validar arquitetura.
+
+O MVP tecnico ja implementou conta guest server-authoritative e `account/state` em T00-P05. Ainda faltam o cliente de sessao em T00-P06 e o battle request em T00-P07. As decisoes operacionais de runtime Supabase, guest auth e escrita service-role-only ja estao tomadas.
 
 ## Pendencias Ativas
 
@@ -78,6 +81,10 @@ O MVP tecnico precisa apenas dos contratos documentados em `contracts/` e das de
 | DMOB-D037 | Lore | POS_SLICE | Quais nomes e postos da hierarquia Draxos? | Fora do primeiro slice, mas afeta narrativa futura. | `product-brief.md` | ADIADO | - |
 | DMOB-D038 | Plataforma | POS_SLICE | Quando iOS ou mobile browser entram no roadmap? | Fora da Track 00. | `product-brief.md` | ADIADO | - |
 | DMOB-D039 | Chat Global | POS_SLICE | Quando reconsiderar chat global interno em vez de Discord externo? | Fora da Track 00. | `product-brief.md` | ADIADO | - |
+| DMOB-D040 | Supabase | OPERACIONAL | Qual layout oficial sera usado para Supabase CLI: manter `server/schema` e `server/functions`, criar espelho em `supabase/`, ou usar scripts de sincronizacao? | Sem essa decisao, `supabase db reset` e `supabase functions serve` nao ficam automatizados. | `architecture.md` | RESOLVIDO | 2026-05-19 |
+| DMOB-D041 | Ambiente Local | OPERACIONAL | Como o ambiente local deve prover Docker e Supabase CLI para validar migrations e Edge Functions no runtime Supabase? | P02 tem arquivos base e healthcheck validado via `npx deno`, mas nao consegue provar migration/healthcheck dentro do Supabase sem essas ferramentas. | `../implementation/tracks/track-00-first-slice-foundation/current-status.md` | RESOLVIDO | 2026-05-19 |
+| DMOB-D042 | Conta Guest | MVP_TECNICO | A criacao de guest no MVP sera feita por Edge Function criando usuario Supabase Auth anonimo/manual, por Auth nativo anonimo, ou por fluxo custom temporario? | Bloqueia T00-P05 porque define ownership entre Auth, `players.auth_user_id` e codigo de convite. | `contracts/api-endpoints.md` | RESOLVIDO | 2026-05-19 |
+| DMOB-D043 | Seguranca SQL | MVP_TECNICO | Quais policies de escrita ficam explicitamente ausentes por design e quais RPCs/Edge Functions usam service role para mutar dados no MVP? | Evita liberar insert/update direto pelo cliente durante a implementacao de conta e batalha. | `contracts/database-schema.md` | RESOLVIDO | 2026-05-19 |
 
 ## Regras De Atualizacao
 

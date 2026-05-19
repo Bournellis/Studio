@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "collection": "spells",
+  "items": [
+    {
+      "id": "raio_cosmico",
+      "display_name": "Raio Cosmico",
+      "description": "Spell MVP_ONLY usada para provar contrato de batalha sem balanceamento final.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["MVP_ONLY", "damage", "astral"],
+      "mode": "MVP_ONLY",
+      "damage_type": "astral",
+      "mana_cost": 1,
+      "cooldown_seconds": 3.0,
+      "target": "enemy",
+      "effects": [
+        {"kind": "damage", "amount": 12}
+      ]
+    }
+  ]
+}

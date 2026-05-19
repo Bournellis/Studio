@@ -11,6 +11,8 @@ Projetos/**/.godot/
 Projetos/**/android/
 Projetos/**/*.import
 Projetos/**/export_presets.cfg
+Projetos/**/supabase/.branches/
+Projetos/**/supabase/.temp/
 
 # Claude Code agent tooling
 .claude/

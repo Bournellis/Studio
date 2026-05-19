@@ -1,9 +1,14 @@
 # Database Schema Contract
 
 - Ultima atualizacao: `2026-05-19`
-- Status: contrato logico antes das migrations reais
+- Status: contrato logico com migrations MVP e conta guest criadas
 
-Este documento define o schema esperado. Quando `server/schema/` existir, migrations passam a ser a fonte tecnica viva, mas este contrato deve continuar explicando a intencao das tabelas.
+Este documento define o schema esperado. A fonte tecnica viva do runtime local e `../../supabase/migrations/`; `../../server/schema/migrations/` permanece como espelho backend durante o bootstrap.
+
+Migrations atuais:
+
+- `202605190001_mvp_foundation.sql`: tabelas MVP, RLS base, policies de leitura e bot fixture.
+- `202605190002_guest_account_mvp.sql`: convite alpha, RPC `create_guest_account` e estado inicial de conta guest.
 
 ## MVP Tecnico
 
@@ -103,6 +108,35 @@ Campos minimos:
 - `is_active`
 - `created_at`
 
+Seed MVP atual:
+
+- `ALPHA-TEST`: convite local de teste para `POST /account/guest`.
+
+### `idempotency_keys`
+
+Registro de respostas ja processadas por player, endpoint e `request_id`.
+
+Campos minimos:
+
+- `player_id`
+- `endpoint`
+- `request_id`
+- `response_payload`
+- `created_at`
+
+### `resource_transactions`
+
+Ledger de mutacoes economicas.
+
+Campos minimos:
+
+- `id`
+- `player_id`
+- `source`
+- `request_id`
+- `delta`
+- `created_at`
+
 ## Primeiro Slice Completo
 
 Adicionar ou detalhar:
@@ -124,7 +158,6 @@ Adicionar ou detalhar:
 - `battle_pass_progress`
 - `daily_rewards`
 - `reward_claims`
-- `idempotency_keys`
 - `telemetry_events`
 
 ## Regras De Seguranca
@@ -134,6 +167,25 @@ Adicionar ou detalhar:
 - Cliente nunca envia delta de recurso final; envia intencao.
 - Toda mutacao economica deve gravar ledger em `resource_transactions`.
 - Toda mutacao com efeito deve usar idempotencia por `request_id`.
+- `DMOB-D043` resolvido: no MVP, cliente nao recebe insert/update/delete policies para estado autoritativo.
+- Escritas em `players`, `resources`, `builds`, `battles`, `idempotency_keys` e `resource_transactions` sao feitas por Edge Functions com service role.
+- Policies client-side atuais sao de leitura propria, mais leitura de bots ativos.
+
+## RPCs MVP
+
+### `public.create_guest_account(p_auth_user_id, p_invite_code, p_request_id, p_device_label)`
+
+Responsabilidade: criar de forma idempotente a conta guest inicial para um usuario Supabase Auth anonimo.
+
+Implementado em: `202605190002_guest_account_mvp.sql`.
+
+Regras:
+
+- Exige usuario em `auth.users` com `is_anonymous = true`.
+- Valida convite ativo, nao expirado e com usos disponiveis.
+- Cria `players`, `resources` e `builds` com fixture `MVP_ONLY`.
+- Grava resposta em `idempotency_keys` para endpoint `account/guest`.
+- `GRANT EXECUTE` fica restrito a `service_role`; cliente usa Edge Function, nao RPC direto.
 
 ## Regras De Temporada
 

@@ -11,9 +11,20 @@
 | Client | Godot `4.6.2-stable` (GDScript) |
 | Backend | Supabase Auth, Postgres, Edge Functions, Realtime |
 | Comunicacao | REST via HTTPRequest do Godot |
-| Autenticacao | JWT Supabase + Google OAuth2 |
+| Autenticacao | JWT Supabase, Auth anonimo para guest MVP, Google OAuth2 futuro |
 | Testes client | GUT `9.6.0` |
 | Testes server | Deno/TypeScript tests para Edge Functions |
+
+---
+
+## Status Tecnico Atual
+
+- `T00-P01` completo: projeto Godot, boot scene, `ProjectInfo`, validate e GUT.
+- `T00-P02A` completo: migration MVP, tabelas iniciais, RLS base, seed tecnico e healthcheck standalone.
+- `T00-P02B` completo: layout oficial `supabase/`, Docker Desktop, Deno via `npx`, `supabase db reset` e healthcheck pelo gateway local.
+- `T00-P03` completo: autoloads `UiTokens`, `AssetIds`, `ContentLibrary`, `.gutconfig.json` e validate integrado.
+- `T00-P04` completo: fixtures `MVP_ONLY`, JSONs de conteudo e catalogo gerado.
+- `T00-P05` completo: conta guest MVP, convite `ALPHA-TEST`, `account/guest`, `account/state`, RPC idempotente e bloqueio de escrita direta do cliente.
 
 ---
 
@@ -25,8 +36,72 @@ Antes de criar codigo ou migrations, consulte:
 - `contracts/battle-event-log.md`
 - `contracts/database-schema.md`
 - `contracts/content-definitions.md`
+- `reuse-map.md`
 
-Quando `server/schema/` e `server/functions/` existirem, eles viram a fonte tecnica viva, mas os contratos continuam explicando intencao e compatibilidade.
+`supabase/` e a fonte de execucao local da Supabase CLI. `server/schema/` e `server/functions/` permanecem como espelho organizado do backend enquanto o bootstrap ainda esta pequeno.
+
+Deno e Supabase CLI sao validados via `npx -y deno` e `npx -y supabase` nesta maquina.
+
+Runtime local validado:
+
+- Studio: `http://127.0.0.1:54323`
+- Project URL: `http://127.0.0.1:54321`
+- Database: `postgresql://postgres:postgres@127.0.0.1:54322/postgres`
+- Edge Functions: `http://127.0.0.1:54321/functions/v1`
+
+---
+
+## Fundacao Client Godot
+
+Autoloads atuais:
+
+| Autoload | Arquivo | Responsabilidade |
+|---|---|---|
+| `UiTokens` | `core/ui_tokens.gd` | Cores, estilos e tokens semanticos de UI |
+| `AssetIds` | `core/asset_ids.gd` | Manifesto de ids visuais e fallback enquanto assets nao existem |
+| `ContentLibrary` | `data/content_library.gd` | Gerar/carregar catalogo de conteudo e expor consultas por collection/id |
+
+Regras:
+
+- Autoloads nao possuem autoridade economica ou de batalha.
+- `ContentLibrary` pode gerar catalogo local para UI, fixtures e testes.
+- `SessionStore` ainda nao existe; entra em `T00-P06` como cache local nao autoritativo.
+
+---
+
+## Pipeline De Conteudo
+
+```text
+data/definitions/*.json
+  -> tools/content_generator.gd
+  -> data/generated/draxos_mobile_catalog.tres
+  -> ContentLibrary
+  -> UI/tests/client
+```
+
+Arquivos esperados:
+
+- `spells.json`
+- `pets.json`
+- `passives.json`
+- `weapons.json`
+- `base_structures.json`
+- `bot_builds.json`
+- `power_bands.json`
+- `battle_fixtures.json`
+- `rewards.json`
+
+Fixtures `MVP_ONLY` provam arquitetura, nao balanceamento final.
+
+---
+
+## Politica De Reuso
+
+Referencia viva: `reuse-map.md`.
+
+- Reutilizar diretamente: configuracao GUT, padrao de validate, centralizacao de tokens e asset ids.
+- Adaptar: content generation multi-arquivo, ContentLibrary e padroes de session/cache local.
+- Vetar: BattleEngines, card/deck/mana/run map, campanha action, saves autoritativos e regras de gameplay de outros projetos.
 
 ---
 
@@ -34,7 +109,7 @@ Quando `server/schema/` e `server/functions/` existirem, eles viram a fonte tecn
 
 | Plataforma | Export Godot | Notas |
 |---|---|---|
-| Android | Android APK | App nativo - unico canal mobile |
+| Android | Android APK | App nativo, unico canal mobile |
 | PC Windows/Linux | Executavel nativo | `.zip` |
 | PC Browser | HTML5/WebAssembly | Godot web export |
 | Mobile browser | - | Fora do escopo |
@@ -61,6 +136,21 @@ Boot
 Guest pode migrar para conta registrada sem perder progresso.
 
 MVP tecnico implementa apenas guest com codigo de convite.
+
+Modelo escolhido em `DMOB-D042`:
+
+1. Cliente cria uma sessao via Supabase Auth anonimo nativo.
+2. Cliente chama `POST /account/guest` com `Authorization: Bearer <anonymous_jwt>`, `invite_code` e `request_id`.
+3. Edge Function valida convite e cria `players`, `resources` e `builds` usando service role.
+4. Progresso guest fica vinculado a `players.auth_user_id`.
+5. Conversao futura para conta registrada preserva `players.id`.
+
+Implementado em `T00-P05`:
+
+- `POST /account/guest`: valida JWT anonimo, `invite_code` e `request_id`, chama RPC `create_guest_account` e retorna player/resources/build inicial.
+- `GET /account/state`: recupera player/resources/build e `last_battle_id` para a sessao autenticada.
+- `create_guest_account`: RPC `SECURITY DEFINER` com execute restrito a `service_role`, seed `ALPHA-TEST` e idempotencia por `idempotency_keys`.
+- Cliente Godot ainda nao chama esses endpoints diretamente; HTTP client e `SessionStore` entram em `T00-P06`.
 
 ---
 
@@ -99,6 +189,8 @@ Contrato do log: `contracts/battle-event-log.md`.
 | Producao da base | Calculada no servidor na reconexao |
 
 RLS deve impedir acesso indevido. Mutacoes economicas devem usar idempotencia e ledger.
+
+Regra resolvida em `DMOB-D043`: cliente nao recebe policies de insert/update/delete para estado autoritativo no MVP. Escritas em `players`, `resources`, `builds`, `battles`, `idempotency_keys` e `resource_transactions` passam por Edge Functions com service role.
 
 ---
 
@@ -147,17 +239,21 @@ Formula final e faixa inicial estao registradas em `design-pending.md`.
 
 ```text
 draxos-mobile/
+|-- supabase/
+|   |-- config.toml
+|   |-- migrations/
+|   `-- functions/
+|       |-- account/
+|       |-- healthcheck/
+|       `-- _shared/
 |-- server/
 |   |-- schema/
 |   `-- functions/
-|       |-- battle/
-|       |-- account/
-|       |-- base/
-|       `-- social/
 |-- core/
 |-- data/
 |   |-- definitions/
-|   `-- generated/
+|   |-- generated/
+|   `-- resources/
 |-- modes/
 |-- ui/
 |-- social/
@@ -174,3 +270,10 @@ Pendencias vivas:
 - Chat: politica de retencao/delecao/moderacao (`DMOB-D023`).
 - Telemetria minima (`DMOB-D024`).
 - Schema de build para spells desbloqueadas/equipadas (`DMOB-D026`).
+
+Pendencias operacionais resolvidas em 2026-05-19:
+
+- Layout Supabase CLI (`DMOB-D040`): `supabase/`.
+- Ambiente local (`DMOB-D041`): Docker Desktop + Supabase CLI via `npx` + Deno via `npx`.
+- Modelo de conta guest (`DMOB-D042`): Supabase Auth anonimo nativo + Edge Function com convite.
+- Escrita SQL service-role-only (`DMOB-D043`): sem write policies client-side para estado autoritativo no MVP.

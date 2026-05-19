@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "collection": "power_bands",
+  "items": [
+    {
+      "id": "mvp_training_band",
+      "display_name": "Faixa MVP de Treino",
+      "description": "Faixa tecnica para matchmaking fixture enquanto poder real esta pendente.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["MVP_ONLY", "matchmaking", "training"],
+      "mode": "MVP_ONLY",
+      "min_power": 0,
+      "max_power": 999
+    }
+  ]
+}

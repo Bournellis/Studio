@@ -1,15 +1,17 @@
 # API Endpoints Contract
 
 - Ultima atualizacao: `2026-05-19`
-- Status: contrato inicial antes das Edge Functions reais
+- Status: contrato MVP com `account/guest` e `account/state` implementados localmente
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
 ## Regras Gerais
 
 - Transporte: HTTPS REST via HTTPRequest do Godot.
-- Autenticacao: JWT Supabase no header `Authorization: Bearer <token>`, exceto criacao inicial de guest.
+- Autenticacao: JWT Supabase no header `Authorization: Bearer <token>`.
+- Guest MVP: cliente primeiro cria sessao Supabase Auth anonima; depois chama `/account/guest` com o JWT anonimo e codigo de convite.
 - Correlation: cliente envia `request_id` em mutacoes para idempotencia.
+- Runtime local atual: `supabase/functions/account/index.ts`, espelhado em `server/functions/account/index.ts`.
 - Resposta de erro padrao:
 
 ```json
@@ -26,7 +28,16 @@ Este documento descreve a interface logica entre cliente Godot e Supabase Edge F
 
 ### `POST /account/guest`
 
-Cria conta guest com codigo de convite.
+Cria o estado de jogo para uma sessao guest anonima ja autenticada.
+
+Status: **implementado em T00-P05**.
+
+Headers:
+
+```http
+Authorization: Bearer <anonymous_jwt>
+apikey: <anon_or_publishable_key>
+```
 
 Request:
 
@@ -43,37 +54,89 @@ Response:
 ```json
 {
   "ok": true,
-  "session": {
-    "access_token": "jwt",
-    "refresh_token": "token",
-    "expires_at": "iso-8601"
-  },
   "player": {
     "id": "uuid",
+    "username": "guest_xxxxxxxx",
     "account_type": "guest",
     "level": 1,
-    "xp": 0
+    "xp": 0,
+    "power": 0
+  },
+  "resources": {
+    "almas": 0,
+    "energia": 0,
+    "sangue": 0,
+    "cristais": 0,
+    "ossos": 0,
+    "diamante": 0
+  },
+  "build": {
+    "weapon_type": "varinha_magica",
+    "weapon_quality": "starter",
+    "weapon_level": 1,
+    "spell_slots": ["raio_cosmico"],
+    "spells_unlocked": ["raio_cosmico"],
+    "pet_id": "familiar_cinzento",
+    "pet_level": 1,
+    "passive_id": "foco_astral",
+    "passive_level": 1
   }
 }
 ```
 
-Erros minimos: `INVALID_INVITE`, `INVITE_EXHAUSTED`, `ACCOUNT_CREATE_FAILED`.
+Erros minimos: `UNAUTHENTICATED`, `INVALID_INVITE`, `INVITE_EXHAUSTED`, `ACCOUNT_ALREADY_CREATED`, `ACCOUNT_CREATE_FAILED`.
+
+Idempotencia: repetir o mesmo `request_id` para a mesma sessao anonima retorna o mesmo payload sem consumir outro uso do convite.
 
 ### `GET /account/state`
 
 Retorna estado minimo do jogador autenticado.
+
+Status: **implementado em T00-P05**.
 
 Response MVP:
 
 ```json
 {
   "ok": true,
-  "player": {},
-  "resources": {},
-  "build": {},
-  "last_battle_id": "uuid-or-null"
+  "player": {
+    "id": "uuid",
+    "username": "guest_xxxxxxxx",
+    "account_type": "guest",
+    "level": 1,
+    "xp": 0,
+    "power": 0,
+    "created_at": "iso-date",
+    "updated_at": "iso-date"
+  },
+  "resources": {
+    "player_id": "uuid",
+    "almas": 0,
+    "energia": 0,
+    "sangue": 0,
+    "cristais": 0,
+    "ossos": 0,
+    "diamante": 0,
+    "updated_at": "iso-date"
+  },
+  "build": {
+    "player_id": "uuid",
+    "weapon_type": "varinha_magica",
+    "weapon_quality": "starter",
+    "weapon_level": 1,
+    "spell_slots": ["raio_cosmico"],
+    "spells_unlocked": ["raio_cosmico"],
+    "pet_id": "familiar_cinzento",
+    "pet_level": 1,
+    "passive_id": "foco_astral",
+    "passive_level": 1,
+    "updated_at": "iso-date"
+  },
+  "last_battle_id": null
 }
 ```
+
+Erros minimos: `UNAUTHENTICATED`, `PLAYER_NOT_FOUND`, `ACCOUNT_STATE_INCOMPLETE`, `STATE_READ_FAILED`.
 
 ### `POST /battle/request`
 
@@ -93,11 +156,21 @@ Response MVP:
 ```json
 {
   "ok": true,
-  "battle": {
-    "battle_id": "uuid",
+  "battle_log": {
     "schema_version": "battle_log_v1",
-    "result": "win",
-    "log": {}
+    "battle_id": "uuid",
+    "seed": "string",
+    "mode": "MVP_ONLY",
+    "duration": 4.2,
+    "participants": {
+      "player": { "id": "uuid", "display_name": "Draxos" },
+      "opponent": { "id": "mvp_training_bot", "display_name": "Bot de Treino", "is_bot": true }
+    },
+    "result": {
+      "winner": "player",
+      "reason": "opponent_defeated"
+    },
+    "events": []
   },
   "rewards": {
     "type": "MVP_ONLY"
@@ -116,7 +189,7 @@ Response:
 ```json
 {
   "ok": true,
-  "battle": {}
+  "battle_log": {}
 }
 ```
 
