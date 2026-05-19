@@ -1,7 +1,7 @@
 # DraxosMobile — Game Design Document (Referencia De Implementacao)
 
 - Ultima atualizacao: `2026-05-19`
-- Fonte completa: `../../_conceitos/mobile-universe/gdd.md`
+- Fonte historica completa: `../../_conceitos/mobile-universe/gdd.md`
 
 > Este documento e uma referencia condensada para implementacao. Para o design completo com todas as formulas, tabelas e decisoes detalhadas, consulte o GDD completo no caminho acima.
 
@@ -11,7 +11,7 @@
 
 - Raca: Draxos. Nome definido pelo jogador. Sem classes.
 - Visual: silhueta vultuosa, manto comprido, etereo e energetico
-- Level maximo Season 1: 40. Primeiro slice: level 10.
+- Level maximo Season 1: 40. O cap exato do primeiro slice completo ainda esta em aberto em `design-pending.md` (`DMOB-D001`). O MVP tecnico usa fixture level 1.
 - Formula de XP: `XP_total(n) = 3 × (n³ - 6n² + 17n - 12)`
 - **Cap universal:** Level Global e o teto de arma, spells e construcoes — nenhum sistema pode ser upado para um level maior que o personagem. Seasons futuras expandem o cap alem de 40.
 

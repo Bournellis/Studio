@@ -8,7 +8,7 @@ This file governs agent behavior for the `D:\Estudio` workspace.
 - `08_Coordenacao_Agentes/Painel_Visual_Estudio.html` is the human-facing local dashboard for the same portfolio state.
 - `canon/` is the shared source of truth for established product identity, lore context, gameplay contracts, progression, shared architecture, mode standard, and platform strategy.
 - `Projetos/draxos-roguelike-cardgame/` is the current P0 implementation workspace for the menu-first Draxos roguelike cardgame.
-- `Projetos/draxos-mobile/` is the P2 implementation workspace for DraxosMobile — async PVP autobattler, base manager, social; Godot 4.x + Supabase; Android + PC + PC browser.
+- `Projetos/draxos-mobile/` is the P2 implementation workspace for DraxosMobile — async PVP autobattler, base manager, social; Godot 4.6.2 + Supabase; Android + PC + PC browser.
 - `Projetos/_conceitos/mobile-universe/` is a design archive; it was promoted to `draxos-mobile/` on 2026-05-18 and is now read-only design reference.
 - `Projetos/rpg-isometrico/` is paused indefinitely and preserved for historical/contextual consultation.
 - `Projetos/rpg-turnos/` is paused indefinitely and preserved for historical/contextual consultation.
@@ -97,7 +97,7 @@ Implementacoes Godot vivem sob `Projetos/`.
 Projetos Godot ativos:
 
 - `Projetos/draxos-roguelike-cardgame/` — P0, Steam, roguelike cardgame
-- `Projetos/draxos-mobile/` — P2, mobile + PC + browser, Godot 4.x + Supabase (projeto ainda nao inicializado — Track 00 pendente)
+- `Projetos/draxos-mobile/` — P2, mobile + PC + browser, Godot 4.6.2 + Supabase (Track 00 preparada documentalmente; projeto Godot ainda nao inicializado)
 
 Projetos Godot pausados:
 

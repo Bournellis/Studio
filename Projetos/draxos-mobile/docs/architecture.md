@@ -1,4 +1,4 @@
-# DraxosMobile — Architecture
+# DraxosMobile - Architecture
 
 - Ultima atualizacao: `2026-05-19`
 
@@ -8,11 +8,25 @@
 
 | Camada | Tecnologia |
 |---|---|
-| Client | Godot 4.x (GDScript) |
-| Backend | Supabase (Auth, Postgres, Edge Functions, Realtime) |
+| Client | Godot `4.6.2-stable` (GDScript) |
+| Backend | Supabase Auth, Postgres, Edge Functions, Realtime |
 | Comunicacao | REST via HTTPRequest do Godot |
-| Autenticacao | JWT (Supabase Auth) + Google OAuth2 |
-| Testes | GUT 9.6.0 |
+| Autenticacao | JWT Supabase + Google OAuth2 |
+| Testes client | GUT `9.6.0` |
+| Testes server | Deno/TypeScript tests para Edge Functions |
+
+---
+
+## Contratos
+
+Antes de criar codigo ou migrations, consulte:
+
+- `contracts/api-endpoints.md`
+- `contracts/battle-event-log.md`
+- `contracts/database-schema.md`
+- `contracts/content-definitions.md`
+
+Quando `server/schema/` e `server/functions/` existirem, eles viram a fonte tecnica viva, mas os contratos continuam explicando intencao e compatibilidade.
 
 ---
 
@@ -20,106 +34,87 @@
 
 | Plataforma | Export Godot | Notas |
 |---|---|---|
-| Android | Android APK | App nativo — unico canal mobile |
-| PC Windows/Linux | Executavel nativo | .zip |
+| Android | Android APK | App nativo - unico canal mobile |
+| PC Windows/Linux | Executavel nativo | `.zip` |
 | PC Browser | HTML5/WebAssembly | Godot web export |
-| Mobile browser | — | Fora do escopo |
-| iOS | — | Futuro |
+| Mobile browser | - | Fora do escopo |
+| iOS | - | Futuro |
 
-Input adaptado por plataforma: `InputEventScreenTouch` (Android) / `InputEventMouseButton` (PC/Browser).
+Input adaptado por plataforma: `InputEventScreenTouch` para Android e `InputEventMouseButton` para PC/browser.
 
 ---
 
 ## Arquitetura De Conta
 
-```
-Boot
- └─► Tem token salvo?
-      ├─ Sim → validar token → entrar
-      └─ Nao → tela de entrada
-               ├─ Jogar como guest → criar conta anonima (Supabase anon)
-               ├─ Login email/senha
-               └─ Google Sign-In (OAuth2)
+Fluxo completo do primeiro slice:
 
-Guest pode migrar para conta registrada a qualquer momento — progresso preservado.
-Alpha: criacao de conta (inclusive guest) exige codigo de convite.
+```text
+Boot
+  -> Tem token salvo?
+       -> Sim: validar token e entrar
+       -> Nao: tela de entrada
+            -> Jogar como guest com codigo de convite
+            -> Login email/senha
+            -> Google Sign-In
 ```
+
+Guest pode migrar para conta registrada sem perder progresso.
+
+MVP tecnico implementa apenas guest com codigo de convite.
 
 ---
 
 ## Arquitetura De Batalha
 
-O cliente Godot **nunca simula batalha**. Fluxo completo:
+O cliente Godot nunca simula batalha.
 
-```
-Cliente                          Servidor (Edge Function)
-  │                                      │
-  ├─► POST /battle/request ─────────────►│
-  │                                      ├─ selecionar oponente (pool real + bots)
-  │                                      ├─ simular batalha completa
-  │                                      ├─ gravar resultado + atualizar recursos
-  │                                      ├─ atualizar ranking
-  │                                      └─ retornar { resultado, log_eventos }
-  │◄─────────────────────────────────────┤
-  └─► animar log_eventos na tela
-```
-
-**Log de eventos** e uma sequencia timestampada:
-```json
-[
-  { "t": 0.0,  "tipo": "ataque_arma",   "dano": 15 },
-  { "t": 0.8,  "tipo": "spell",         "spell": "Raio Cosmico", "dano": 25 },
-  { "t": 1.6,  "tipo": "dot_tick",      "status": "Queimando", "dano": 6 },
-  { "t": 30.2, "tipo": "anti_stall",    "dano": 103 },
-  { "t": 30.8, "tipo": "resultado",     "vencedor": "jogador" }
-]
+```text
+Cliente
+  -> POST /battle/request
+Servidor
+  -> seleciona oponente
+  -> simula batalha completa
+  -> grava resultado e recompensa
+  -> retorna battle_log_v1
+Cliente
+  -> anima log recebido
 ```
 
-O cliente interpola eventos na linha do tempo da animacao. Velocidade 1x/2x/skip sem afetar resultado.
+Desconexao durante batalha nao altera resultado, porque o resultado ja foi gravado antes do cliente animar.
 
-**Desconexao:** batalha ja esta resolvida no servidor. Cliente busca o log na reconexao.
+Contrato do log: `contracts/battle-event-log.md`.
 
 ---
 
 ## Dados Autoritativos No Servidor
 
-O cliente **nunca** envia dados que alteram estado de jogo diretamente.
-
 | Dado | Onde vive |
 |---|---|
-| Recursos (Almas, Energia, Sangue, Cristais, Ossos, Diamante) | Postgres — mutado so por Edge Functions |
-| Level, XP, build (arma/spells/passiva/pet) | Postgres |
-| Resultado de batalhas, ranking | Postgres — calculado no servidor |
-| Dados de guilda | Postgres |
-| Pool de oponentes | Postgres — selecionado pelo servidor |
-| Preferencias de UI, cache de animacao | Local — sem impacto em progressao |
-| Producao da base | Calculada no servidor na reconexao (delta × taxa) |
+| Recursos | Postgres, mutado so por Edge Functions |
+| Level, XP e build | Postgres |
+| Resultado de batalhas e ranking | Postgres, calculado no servidor |
+| Dados de guilda e social | Postgres |
+| Pool de oponentes | Postgres |
+| Preferencias de UI e cache visual | Local, sem impacto em progressao |
+| Producao da base | Calculada no servidor na reconexao |
 
-**Row Level Security (RLS):** cada jogador acessa apenas seus proprios dados.
-
----
-
-## Matchmaking
-
-```
-POST /battle/request
-  └─► calcular poder do solicitante
-  └─► filtrar pool por faixa de poder (±X — a calibrar)
-  └─► sortear oponente (real ou bot simulado)
-  └─► iniciar simulacao
-```
-
-**Builds simuladas:** contas-fantasma com builds aleatorias por faixa de poder. Populadas antes do alpha. Nao aparecem em rankings.
+RLS deve impedir acesso indevido. Mutacoes economicas devem usar idempotencia e ledger.
 
 ---
 
-## Ranking
+## Matchmaking E Ranking
 
-- Pontos de arena por season
-- Vitoria: +pontos (mais pontos contra oponentes mais fortes)
-- Derrota: -pontos (mais pontos perdidos contra oponentes mais fracos)
-- Snapshot do ranking ao fim de cada season
-- Formula exata: a calibrar com dados reais
+MVP tecnico usa bot fixture `mvp_training_bot`.
+
+Primeiro slice completo:
+
+- Calcula poder do solicitante.
+- Filtra pool por faixa de poder.
+- Sorteia oponente real ou bot simulado.
+- Bots simulados nao aparecem em ranking.
+- Ranking usa pontos de arena por season e snapshot no encerramento.
+
+Formula final e faixa inicial estao registradas em `design-pending.md`.
 
 ---
 
@@ -127,10 +122,10 @@ POST /battle/request
 
 | Situacao | Comportamento |
 |---|---|
-| Sem internet | Estado cacheado exibido, batalha desabilitada |
+| Sem internet | Estado cacheado exibido, batalha e chat desabilitados |
 | Producao da base offline | Servidor calcula delta na reconexao |
-| Desconexao durante batalha | Resultado ja gravado — cliente busca log |
-| Coleta offline | Servidor acumula (respeitando limite de armazenamento) |
+| Desconexao durante batalha | Cliente busca log gravado |
+| Coleta offline | Servidor acumula respeitando armazenamento |
 
 ---
 
@@ -143,50 +138,39 @@ POST /battle/request
 | Escolher oponente facil | Servidor controla matchmaking |
 | Farm abusivo | Rate limiting no endpoint de batalha |
 | Acesso a dados alheios | RLS do Supabase |
-| Engenharia reversa do oponente | Log retorna apenas eventos animaveis — nao o build completo |
+| Duplicar recompensa | Idempotencia por `request_id` e ledger |
+| Engenharia reversa do oponente | Log retorna eventos animaveis, nao build completa |
 
 ---
 
-## Estrutura De Pastas — Codigo
+## Estrutura De Pastas - Codigo
 
-```
+```text
 draxos-mobile/
-├── server/
-│   ├── schema/         — migrations Postgres (.sql)
-│   └── functions/      — Edge Functions (TypeScript/Deno)
-│       ├── battle/     — simulacao, matchmaking, resultado
-│       ├── account/    — guest, register, login, migration
-│       ├── base/       — upgrades, producao, coleta
-│       └── social/     — guild, amigos, ajudas, chat
-├── core/               — contratos GDScript, tipos, helpers HTTP
-├── data/
-│   └── definitions/    — JSON de conteudo (spells, passivas, pets, bots)
-├── modes/              — boot, base manager, batalha, social, menu
-├── ui/                 — componentes de interface
-├── social/             — guild UI, chat, amigos
-├── tools/              — validate.gd, geracao de bots, migracao de dados
-└── tests/              — GUT tests
+|-- server/
+|   |-- schema/
+|   `-- functions/
+|       |-- battle/
+|       |-- account/
+|       |-- base/
+|       `-- social/
+|-- core/
+|-- data/
+|   |-- definitions/
+|   `-- generated/
+|-- modes/
+|-- ui/
+|-- social/
+|-- tools/
+`-- tests/
 ```
 
 ---
 
-## Supabase — Tabelas Principais (Schema Inicial)
+## Pendencias Arquiteturais
 
-| Tabela | Conteudo |
-|---|---|
-| `players` | id, username, tipo_conta, level, xp, poder |
-| `builds` | player_id, arma_tipo, arma_qualidade, arma_level, spells_unlocked[], spell_slot_1, spell_slot_2, spell_slot_3, pet_id, pet_level, passiva_id, passiva_level |
-| `resources` | player_id, almas, energia, sangue, cristais, ossos, diamante |
-| `base_structures` | player_id, estrutura_id, level, ultima_coleta |
-| `battles` | id, atacante_id, defensor_id, resultado, log, created_at |
-| `ranking` | player_id, season, pontos, posicao |
-| `guilds` | id, nome, level, membros[] |
-| `guild_structures` | guild_id, estrutura_id, level |
-| `chat_messages` | id, canal_id, autor_id, texto, created_at |
-| `bot_builds` | id, poder, build_data, faixa |
+Pendencias vivas:
 
-**Cap de level:** o Level Global do jogador (tabela `players.level`) funciona como teto para arma, spells e construcoes. Nenhum upgrade pode ultrapassar o level atual do personagem — o servidor valida isso em toda mutacao de upgrade.
-
-**Nota de sincronia:** este schema e uma referencia inicial. O schema vivo e autoritativo esta em `server/schema/`. Ao tomar decisoes de design que afetam o banco, atualizar este arquivo e o `server/schema/` em conjunto.
-
-Schema detalhado em `server/schema/`.
+- Chat: politica de retencao/delecao/moderacao (`DMOB-D023`).
+- Telemetria minima (`DMOB-D024`).
+- Schema de build para spells desbloqueadas/equipadas (`DMOB-D026`).

@@ -1,13 +1,14 @@
 # Estado Atual - Estudio
 
-- Ultima atualizacao: `2026-05-18`
+- Ultima atualizacao: `2026-05-19`
 - Fonte de verdade de portfolio: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Painel visual local: `08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
 ## Prioridade do Estudio
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Conceitos P1 em incubacao: `Projetos/_conceitos/mobile-universe/`
+- Foco P2 de implementacao: `Projetos/draxos-mobile/`
+- Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## draxos-roguelike-cardgame
@@ -27,10 +28,10 @@
 - Local: `Projetos/draxos-mobile/`
 - Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
 - Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
-- Baseline atual: Design do primeiro slice completo — combate (7 tipos de dano, DoTs, anti-stall), personagem (varinha, 3 spells, passiva, pet), base manager (6 estruturas, economia de Energia), social (amigos, guilda com bonus passivos, chat), infraestrutura (Godot 4.x, Supabase, batalha 100% servidor, Android + PC + PC browser). Season de 4 meses, 2 Battle Passes. Godot project ainda nao inicializado.
+- Baseline atual: Track 00 preparada documentalmente com escopo de MVP tecnico minimo e primeiro slice completo, contratos iniciais (`Projetos/draxos-mobile/docs/contracts/`), registro vivo de design pendente (`Projetos/draxos-mobile/docs/design-pending.md`) e prompts atomicos. Design base preservado: combate (7 tipos de dano, DoTs, anti-stall), personagem (varinha, spells, passiva, pet), base manager (6 estruturas, economia de Energia), social (amigos, guilda, chat), infraestrutura (Godot 4.6.2, Supabase, batalha 100% servidor, Android + PC + PC browser). Godot project ainda nao inicializado.
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
 - Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo.
-- Proximo passo: iniciar Track 00 — inicializar Godot project e configurar Supabase.
+- Proximo passo: executar Track 00 P01 - inicializar Godot 4.6.2, boot minimo, `tools/validate.gd` e GUT 9.6.0.
 
 ## rpg-isometrico
 
@@ -40,7 +41,7 @@
 - Ultima atualizacao do current-status: `2026-04-26`
 - Trabalho permitido: consulta historica e leitura de contexto quando o usuario pedir explicitamente.
 - Restricao operacional: nao implementar, expandir gates, selecionar Next Gate ou alterar escopo sem pedido explicito.
-- Proximo passo: nenhum enquanto estiver pausado.
+- Proximo passo: nenhum enquanto pausado.
 
 ## rpg-turnos
 
@@ -50,7 +51,7 @@
 - Ultima atualizacao do current-status: `2026-05-13`
 - Trabalho permitido: consulta historica e leitura de contexto quando o usuario pedir explicitamente.
 - Restricao operacional: nao implementar, selecionar proxima track/gate, regenerar `.tres` ou alterar escopo sem pedido explicito.
-- Proximo passo: nenhum enquanto estiver pausado.
+- Proximo passo: nenhum enquanto pausado.
 
 ## Kanban rapido
 

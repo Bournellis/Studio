@@ -6,7 +6,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
 - Foco P2 de implementacao (bootstrap): `Projetos/draxos-mobile/`
-- Arquivo de design: `Projetos/_conceitos/mobile-universe/` (preservado como referencia — nao e o projeto ativo)
+- Arquivo de design: `Projetos/_conceitos/mobile-universe/` (preservado como referencia - nao e o projeto ativo)
 - Projetos pausados: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## Portfolio
@@ -14,8 +14,8 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 | Prioridade | Projeto | Caminho | Fase | Status | Trabalho permitido | Proximo passo | Restricao operacional |
 |---|---|---|---|---|---|---|---|
 | P0 | Draxos Roguelike Cardgame | `Projetos/draxos-roguelike-cardgame/` | Implementacao | `P0_IMPLEMENTACAO` | Codigo, validacao, playtest, documentacao local | Playtest de usuario da Track 02 completa | Pode receber trabalho de implementacao por padrao |
-| P2 | DraxosMobile | `Projetos/draxos-mobile/` | Implementacao — Bootstrap | `P2_IMPLEMENTACAO` | Codigo, design, documentacao local, configuracao de infraestrutura | Iniciar Track 00 — Godot project init + Supabase setup | iOS sem pedido explicito; mobile browser fora do escopo |
-| Arquivo | Mobile Universe (conceito) | `Projetos/_conceitos/mobile-universe/` | Arquivo de design | `ARQUIVO_DESIGN` | Leitura e referencia de design apenas | — | Nao criar codigo, cenas, assets ou projeto Godot a partir daqui |
+| P2 | DraxosMobile | `Projetos/draxos-mobile/` | Implementacao - Bootstrap | `P2_IMPLEMENTACAO` | Codigo, design, documentacao local, configuracao de infraestrutura | Executar Track 00 P01 - inicializar Godot 4.6.2 e validacao minima | iOS sem pedido explicito; mobile browser fora do escopo |
+| Arquivo | Mobile Universe (conceito) | `Projetos/_conceitos/mobile-universe/` | Arquivo de design | `ARQUIVO_DESIGN` | Leitura e referencia de design apenas | - | Nao criar codigo, cenas, assets ou projeto Godot a partir daqui |
 | Pausado | RPG Isometrico | `Projetos/rpg-isometrico/` | Pausado | `PAUSADO_INDEFINIDO` | Consulta historica quando solicitado | Nenhum enquanto pausado | Nao implementar, expandir gates ou selecionar Next Gate sem pedido explicito |
 | Pausado | RPG Turnos | `Projetos/rpg-turnos/` | Pausado | `PAUSADO_INDEFINIDO` | Consulta historica quando solicitado | Nenhum enquanto pausado | Nao implementar, selecionar track/gate, regenerar `.tres` ou alterar escopo sem pedido explicito |
 
@@ -26,7 +26,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 - `P2_IMPLEMENTACAO`: projeto ativo secundario; permite codigo, design, documentacao local e infraestrutura.
 - `PAUSADO_INDEFINIDO`: projeto preservado, sem trabalho ativo por padrao.
 - `AGUARDANDO_DECISAO`: projeto ou area sem proximo passo definido.
-- `ARQUIVO_DESIGN`: material de conceito promovido — preservado apenas para leitura e referencia de design.
+- `ARQUIVO_DESIGN`: material de conceito promovido - preservado apenas para leitura e referencia.
 - `ARQUIVO_HISTORICO`: material preservado apenas para consulta historica.
 
 ## Regras Para Agentes
@@ -34,6 +34,6 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 - Leia este arquivo antes de escolher projeto alvo.
 - Se o pedido nao citar projeto, assuma que trabalho de implementacao pertence ao Draxos Roguelike Cardgame (P0).
 - Nao mova mecanicas, decisoes ou escopo entre projetos sem documento local adotando a regra.
-- Em `_conceitos/mobile-universe/`, apenas leitura e referencia de design — o projeto ativo e `draxos-mobile/`.
+- Em `_conceitos/mobile-universe/`, apenas leitura e referencia de design - o projeto ativo e `draxos-mobile/`.
 - Em RPG Isometrico e RPG Turnos, nao implemente nem expanda escopo sem pedido explicito do usuario.
 - Ao concluir tarefa que mude status observavel, atualize este arquivo, `Estado_Atual.md` e o registro relevante em `Projetos/README.md`.

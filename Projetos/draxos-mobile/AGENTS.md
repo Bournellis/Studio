@@ -2,7 +2,7 @@
 
 This file governs agent behavior for `Projetos/draxos-mobile`.
 
-**Nao confundir com:** `Projetos/draxos-roguelike-cardgame/` — projeto Steam separado.
+**Nao confundir com:** `Projetos/draxos-roguelike-cardgame/` - projeto Steam separado.
 
 ---
 
@@ -10,28 +10,43 @@ This file governs agent behavior for `Projetos/draxos-mobile`.
 
 DraxosMobile e um jogo mobile multi-plataforma de PVP assincrono com base manager e sistema social. O jogador e um mago Draxos que cresce em poder ao longo do tempo.
 
-Plataformas do primeiro slice: Android (app nativo), PC executavel, PC browser (Godot web export).
+Plataformas do primeiro slice: Android app nativo, PC executavel, PC browser via Godot web export.
 
-Backend: Supabase (Auth, Postgres, Edge Functions, Realtime). Batalha 100% simulada no servidor — o cliente Godot apenas anima o log de eventos recebido.
+Backend: Supabase Auth, Postgres, Edge Functions e Realtime. Batalha 100% simulada no servidor; o cliente Godot apenas anima o log de eventos recebido.
 
-Este projeto foi promovido de `Projetos/_conceitos/mobile-universe/` em 2026-05-18. Os documentos de conceito originais permanecem em `_conceitos/mobile-universe/` como arquivo de design.
+Este projeto foi promovido de `Projetos/_conceitos/mobile-universe/` em 2026-05-18. Os documentos originais em `../_conceitos/mobile-universe/` sao arquivo historico de design.
 
 ---
 
 ## Read Order
 
-### Trabalho substancial (afeta arquitetura, progressao, economia, modos, backend):
+### Fast Lane Para Track 00
+
+1. `implementation/current-status.md`
+2. `implementation/tracks/track-00-first-slice-foundation/scope.md`
+3. `implementation/tracks/track-00-first-slice-foundation/mvp-technical-definition.md`
+4. `docs/design-pending.md`
+5. `docs/contracts/`
+6. este arquivo
+7. arquivos tocados
+
+### Trabalho substancial
+
+Use quando afetar arquitetura, progressao, economia, modos, backend, contratos ou escopo.
 
 1. `../../canon/canon-brief.md`
 2. `docs/product-brief.md`
 3. `docs/game-design-document.md`
-4. `docs/pre-implementation-decisions.md` — decisoes resolvidas e pendencias de design
-5. `docs/architecture.md`
-6. `implementation/current-status.md`
-7. este arquivo
-8. arquivos tocados
+4. `docs/design-pending.md`
+5. `docs/pre-implementation-decisions.md`
+6. `docs/architecture.md`
+7. `docs/contracts/`
+8. `implementation/current-status.md`
+9. `implementation/tracks/track-00-first-slice-foundation/`
+10. este arquivo
+11. arquivos tocados
 
-### Trabalho delimitado (UI, bug, feature isolada):
+### Trabalho delimitado
 
 1. `implementation/current-status.md`
 2. este arquivo
@@ -44,66 +59,73 @@ Este projeto foi promovido de `Projetos/_conceitos/mobile-universe/` em 2026-05-
 | Pergunta | Documento |
 |---|---|
 | O que e o jogo, quais plataformas, escopo do slice | `docs/product-brief.md` |
-| Como um sistema funciona (spells, combate, economia, base) | `docs/game-design-document.md` |
-| Por que uma decisao foi tomada, o que ainda esta pendente | `docs/pre-implementation-decisions.md` |
-| Stack, schema do banco, fluxo de batalha, anti-cheat | `docs/architecture.md` |
-| O que foi implementado, qual track esta ativa, proximo passo | `implementation/current-status.md` |
-| Lore compartilhado e regras de plataforma do estudio | `../../canon/canon-brief.md` |
-| GDD historico completo com todas as formulas e tabelas | `../../_conceitos/mobile-universe/gdd.md` |
+| Como um sistema funciona | `docs/game-design-document.md` |
+| O que ainda precisa de design | `docs/design-pending.md` |
+| Por que uma decisao foi tomada | `docs/pre-implementation-decisions.md` |
+| Stack e arquitetura tecnica | `docs/architecture.md` |
+| API, log de batalha, schema e conteudo | `docs/contracts/` |
+| Escopo da Track 00 | `implementation/tracks/track-00-first-slice-foundation/scope.md` |
+| MVP tecnico minimo | `implementation/tracks/track-00-first-slice-foundation/mvp-technical-definition.md` |
+| Sequencia de execucao | `implementation/tracks/track-00-first-slice-foundation/implementation-plan.md` |
+| Prompts atomicos para agentes | `implementation/tracks/track-00-first-slice-foundation/implementation-prompts.md` |
+| Status operacional | `implementation/current-status.md` |
+| GDD historico completo | `../_conceitos/mobile-universe/gdd.md` |
 
-**Regra de conflito:** se `docs/game-design-document.md` e `../../_conceitos/mobile-universe/gdd.md` divergirem, `game-design-document.md` e a referencia autoritativa para implementacao. O `gdd.md` e arquivo historico de design — nao modificar sem atualizar o `game-design-document.md` em conjunto.
+**Regra de conflito:** `docs/game-design-document.md` e a referencia autoritativa para implementacao. `../_conceitos/mobile-universe/gdd.md` e historico; consulte para contexto, nao para sobrepor documento local vivo.
 
 ---
 
 ## Regra De Canon
 
-- Lore compartilhado em `../../canon/` informa o projeto
-- Nao importar mecanicas de outros projetos do estudio sem documento local adotando a regra
-- Se design local conflita com lore compartilhado, lore ganha ate canon ser atualizado
-- Fonte de verdade de design: `docs/game-design-document.md` + `../../Projetos/_conceitos/mobile-universe/gdd.md`
+- Lore compartilhado em `../../canon/` informa o projeto.
+- Nao importar mecanicas de outros projetos do estudio sem documento local adotando a regra.
+- Se design local conflita com lore compartilhado, lore prevalece ate o canon ser atualizado.
 
 ---
 
 ## Regra Godot
 
-- Engine: Godot 4.x (versao a confirmar ao inicializar o projeto)
-- Language: GDScript only
-- Tests: GUT 9.6.0
-- Scenes sao editor-owned por padrao — agents nao editam `.tscn` como texto bruto
-- Content source: JSON em `data/definitions/`
-- Resources gerados em `data/generated/` produzidos por ferramentas locais
+- Engine: Godot `4.6.2-stable`.
+- Language: GDScript only.
+- Tests: GUT `9.6.0`.
+- Scenes sao editor-owned por padrao; agentes nao editam `.tscn` como texto bruto.
+- Content source: JSON em `data/definitions/`.
+- Resources gerados em `data/generated/` sao produzidos por ferramentas locais.
 
 ---
 
 ## Regra De Backend
 
-- Toda logica de jogo autoritativa roda em Supabase Edge Functions — nunca no cliente
-- Cliente Godot se comunica com Supabase via HTTPRequest (REST API)
-- Batalha: cliente envia "solicitar batalha", recebe log de eventos, anima. Nao executa simulacao
-- Recursos (Almas, Energia, Sangue, Cristais, Diamante): mutados apenas via Edge Functions
-- Row Level Security (RLS) do Supabase isola dados por jogador
-- Schema do banco em `server/schema/`
-- Edge Functions em `server/functions/`
+- Toda logica de jogo autoritativa roda em Supabase Edge Functions, nunca no cliente.
+- Cliente Godot se comunica com Supabase via HTTPRequest REST.
+- Batalha: cliente envia intencao, recebe log, anima. Nao executa simulacao.
+- Recursos sao mutados apenas via Edge Functions.
+- Row Level Security (RLS) isola dados por jogador.
+- Contratos vivem em `docs/contracts/`.
+- Schema vivo ficara em `server/schema/` quando migrations existirem.
+- Edge Functions ficam em `server/functions/`.
 
 ---
 
 ## Regra De Plataforma
 
-- Mobile (Android): app nativo — unico canal mobile
-- Mobile browser: fora do escopo
-- PC: executavel nativo + browser (Godot web export)
-- iOS: futuro — nao implementar sem decisao explicita
+- Android: app nativo, unico canal mobile do primeiro slice.
+- PC: executavel nativo + PC browser.
+- Mobile browser: fora do escopo.
+- iOS: futuro; nao implementar sem decisao explicita.
 
 ---
 
-## Regra De Seguranca
+## Regra De Design Pending
 
-- Tester de seguranca envolvido desde o alpha
-- Vetores prioritarios: autenticacao, integridade de recursos, manipulacao de batalha
-- Ver `docs/architecture.md` secao de anti-cheat
+- Nao inventar design durante implementacao.
+- Se faltar decisao, registrar em `docs/design-pending.md` com categoria de bloqueio.
+- Ao resolver uma pendencia, atualizar `docs/design-pending.md` e o documento destino no mesmo commit.
 
 ---
 
 ## Active Track
 
-Start com `implementation/current-status.md`, depois seguir o track ativo.
+Track ativa: `Track 00 - First Slice Foundation`.
+
+Comece por `implementation/current-status.md` e siga `implementation/tracks/track-00-first-slice-foundation/implementation-prompts.md`.

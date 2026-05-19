@@ -17,25 +17,27 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
   - Allowed work: code, validation, playtest, local documentation.
   - Current next step: user playtest of the Track 02 complete-run build.
 
-## Implementacao — Bootstrap
+## Implementacao - Bootstrap
 
-- `draxos-mobile/`: jogo mobile multi-plataforma — mago Draxos (PVP assincrono, base manager, social). Plataformas: Android + PC executavel + PC browser. Backend: Supabase. Batalha 100% simulada no servidor. Design do primeiro slice completo; Godot project ainda nao inicializado.
-  - Priority/status: `P2_IMPLEMENTACAO — bootstrap`
+- `draxos-mobile/`: jogo mobile multi-plataforma - mago Draxos (PVP assincrono, base manager, social). Plataformas: Android + PC executavel + PC browser. Backend: Supabase. Batalha 100% simulada no servidor. Track 00 preparada documentalmente com MVP tecnico minimo, primeiro slice completo, contratos e pendencias de design; Godot project ainda nao inicializado.
+  - Priority/status: `P2_IMPLEMENTACAO - bootstrap`
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Operational status: `draxos-mobile/implementation/current-status.md`
+  - Track 00 scope: `draxos-mobile/implementation/tracks/track-00-first-slice-foundation/scope.md`
+  - Design pending: `draxos-mobile/docs/design-pending.md`
   - Design archive: `_conceitos/mobile-universe/gdd.md`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: iniciar Track 00 — Godot project init + Supabase setup.
+  - Current next step: executar Track 00 P01 - Godot 4.6.2 project init + validacao minima.
 
-## Conceitos em Incubacao
+## Arquivo De Design
 
-- `_conceitos/mobile-universe/`: arquivo de design do DraxosMobile. Promovido para `draxos-mobile/` em 2026-05-18. Preservado como referencia de design — nao e o projeto ativo.
+- `_conceitos/mobile-universe/`: arquivo de design do DraxosMobile. Promovido para `draxos-mobile/` em 2026-05-18. Preservado como referencia de design - nao e o projeto ativo.
   - Priority/status: `ARQUIVO_DESIGN`
   - GDD completo: `_conceitos/mobile-universe/gdd.md`
-  - Decisoes abertas: `_conceitos/mobile-universe/pendencias.md`
+  - Decisoes historicas: `_conceitos/mobile-universe/pendencias.md`
   - Allowed work: leitura e referencia de design apenas.
 
-## Pausados por Tempo Indeterminado
+## Pausados Por Tempo Indeterminado
 
 - `rpg-isometrico/`: campaign-first isometric action RPG.
   - Priority/status: `PAUSADO_INDEFINIDO`
@@ -53,10 +55,10 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 ## Project Disambiguation
 
 - Use `draxos-roguelike-cardgame/` for the current implementation focus: Draxos roguelike, ship hub, run map, 29-map complete-run evolution, reward/relic/shop systems, full keyword scope, enemy AI/intent, lane battles, card/enemy redesign, sacrifice/movement/Cinzas tuning, and Track 02 production prompts.
-- Use `draxos-mobile/` for all DraxosMobile implementation work — Godot project, Supabase, first slice.
-- Use `_conceitos/mobile-universe/` for design reference only — not the active project.
-- Use `rpg-isometrico/` only for explicit historical/contextual consultation about the campaign-first isometric action RPG, action loadouts, Arena, Survival, Boss, campaign gates, and real-time combat work.
-- Use `rpg-turnos/` only for explicit historical/contextual consultation about the provisional 2D RPG-cardgame with exploration/world flow, NPCs, class select, Track 02 lore/progression work, and the P10 Necromante path.
+- Use `draxos-mobile/` for all DraxosMobile implementation work - Godot project, Supabase, MVP tecnico minimo, first slice and design pending.
+- Use `_conceitos/mobile-universe/` for design reference only - not the active project.
+- Use `rpg-isometrico/` only for explicit historical/contextual consultation about the campaign-first isometric action RPG.
+- Use `rpg-turnos/` only for explicit historical/contextual consultation about the provisional 2D RPG-cardgame.
 
 `Draxos` and `cardgame` are shared vocabulary, not enough to pick `rpg-turnos`. Prefer the portfolio priority, the explicitly named project, or the operational surface above before reading a local project guide.
 

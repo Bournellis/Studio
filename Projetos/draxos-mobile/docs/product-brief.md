@@ -1,12 +1,12 @@
-# DraxosMobile — Product Brief
+# DraxosMobile - Product Brief
 
-- Ultima atualizacao: `2026-05-18`
+- Ultima atualizacao: `2026-05-19`
 
 ---
 
 ## O Produto
 
-DraxosMobile e um jogo mobile multi-partes. O jogador e um Draxos — mago intergalactico — que comeca fraco e cresce em poder ate se tornar uma ameaca cosmica.
+DraxosMobile e um jogo mobile multi-partes. O jogador e um Draxos, mago intergalactico que comeca fraco e cresce em poder ate se tornar uma ameaca cosmica.
 
 O jogador nao e o heroi. O jogador e o vilao.
 
@@ -18,15 +18,26 @@ Todos os modos pertencem a um unico ecossistema com conta, personagem, base e pr
 
 | Plataforma | Status |
 |---|---|
-| Android | Primeiro slice — app nativo |
-| PC (Windows/Linux) | Primeiro slice — executavel |
-| PC Browser | Primeiro slice — Godot web export |
+| Android | Primeiro slice - app nativo |
+| PC Windows/Linux | Primeiro slice - executavel |
+| PC Browser | Primeiro slice - Godot web export |
 | iOS | Futuro |
 | Mobile browser | Fora do escopo |
 
 ---
 
-## Primeiro Slice — Escopo
+## Track 00
+
+Track 00 monta o primeiro slice completo. A primeira etapa e o MVP tecnico minimo.
+
+| Nivel | Inclui |
+|---|---|
+| MVP tecnico minimo | Godot 4.6.2 + Supabase, guest com convite, batalha fixture server-authoritative e log animavel placeholder |
+| Primeiro slice completo | PVP autobattler, base manager, social, ranking, bots, conta, economia, Battle Pass/Diamante, validacao e exports |
+
+---
+
+## Primeiro Slice - Escopo
 
 | Sistema | Incluido |
 |---|---|
@@ -55,9 +66,10 @@ Todos os modos pertencem a um unico ecossistema com conta, personagem, base e pr
 
 | Decisao | Valor |
 |---|---|
-| Engine | Godot 4.x |
-| Backend | Supabase (Auth, Postgres, Edge Functions, Realtime) |
-| Batalha | 100% servidor — cliente anima log de eventos |
+| Engine | Godot `4.6.2-stable` |
+| Testes client | GUT `9.6.0` |
+| Backend | Supabase Auth, Postgres, Edge Functions, Realtime |
+| Batalha | 100% servidor - cliente anima log de eventos |
 | Autenticacao | Guest + username/senha + Google Sign-In |
 | Alpha | Convite por codigo, APK sideload + PC executavel |
 | Season | 4 meses, 2 Battle Passes por season |
@@ -65,11 +77,11 @@ Todos os modos pertencem a um unico ecossistema com conta, personagem, base e pr
 
 ---
 
-## Documentos De Design Completos
+## Documentos Vivos
 
-O design detalhado do jogo esta em:
-
-- `../../_conceitos/mobile-universe/gdd.md` — GDD completo com todos os sistemas, formulas e valores
-- `../../_conceitos/mobile-universe/pendencias.md` — decisoes abertas e historico de resolucoes
-- `docs/game-design-document.md` — referencia de implementacao condensada
-- `docs/architecture.md` — arquitetura tecnica
+- `game-design-document.md` - design autoritativo para implementacao.
+- `design-pending.md` - pendencias de design e balanceamento.
+- `contracts/` - contratos tecnicos antes das migrations/codigo.
+- `../implementation/tracks/track-00-first-slice-foundation/scope.md` - escopo da Track 00.
+- `../../_conceitos/mobile-universe/gdd.md` - GDD historico completo.
+- `../../_conceitos/mobile-universe/pendencias.md` - historico de decisoes da fase conceitual.
