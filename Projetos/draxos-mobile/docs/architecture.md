@@ -29,6 +29,9 @@
 - `T00-P07` completo: `battle/request`, `battle/latest`, RPC `request_mvp_battle`, log `battle_log_v1`, recompensa `MVP_ONLY` e idempotencia server-side.
 - `T00-P08` completo: replay placeholder no Godot para `battle_log_v1`, timeline ordenada por `t`/`seq`, skip e tolerancia a eventos desconhecidos.
 - `T00-P10` completo: `FIRST_SLICE_SIM` server-authoritative com DoTs, status, resistencias, passivas, pets, summons, anti-stall, bots de variacao, smoke runtime Supabase e replay rico no cliente.
+- `T00-P11` completo: Base Manager v0 server-authoritative com `base/state`, `base/collect`, `base/upgrade`, estruturas permanentes, fila de construcao, coleta offline, ledger e idempotencia.
+- `T00-P12` completo: Social/Competicao v0 server-authoritative com `social/state`, guilda alpha, chat de guilda por polling, matchmaking preview com fallback de bot e ranking de season sem bots.
+- `T00-P13` completo: Monetizacao v0 server-authoritative com Battle Pass, Diamante alpha, recompensas diarias/semanais, claims free/premium, ledger, idempotencia e export smoke Android/PC/Web.
 
 ---
 
@@ -129,6 +132,14 @@ Referencia viva: `reuse-map.md`.
 
 Input adaptado por plataforma: `InputEventScreenTouch` para Android e `InputEventMouseButton` para PC/browser.
 
+Presets alpha em `export_presets.cfg`:
+
+- `Android Alpha`
+- `PC Windows Alpha`
+- `PC Browser Alpha`
+
+`tools/smoke_exports.gd` valida a existencia dos tres presets, plataformas e paths de saida sem exigir templates de export instalados.
+
 ---
 
 ## Arquitetura De Conta
@@ -215,6 +226,7 @@ MVP client implementado em `T00-P08`:
 | Level, XP e build | Postgres |
 | Resultado de batalhas e ranking | Postgres, calculado no servidor |
 | Dados de guilda e social | Postgres |
+| Battle Pass, claims e compras alpha | Postgres |
 | Pool de oponentes | Postgres |
 | Preferencias de UI e cache visual | Local, sem impacto em progressao |
 | Producao da base | Calculada no servidor na reconexao |
@@ -282,6 +294,26 @@ Politica de chat v0:
 - Filtro automatico v0: limite de tamanho, rate limit por usuario/canal e bloqueio de mensagens vazias ou repetidas.
 - Dados de chat nao concedem progresso economico direto.
 
+## Monetizacao E Recompensas Alpha
+
+Monetizacao do alpha e funcional para validar fluxo e contrato, mas nao usa gateway real de pagamento.
+
+Sistemas implementados em `T00-P13`:
+
+- Battle Pass ativo `bp_s1_01` com trilhas free e premium.
+- Progresso em `battle_pass_progress`, criado sob demanda.
+- Rewards diarias e semanais no Edge Function `monetization`.
+- Claims em `reward_claims`, unicos por periodo.
+- Compras alpha em `alpha_purchases`, idempotentes por `request_id`.
+- Produtos alpha: premium pass, 500 Diamantes e pacote pequeno de Energia.
+
+Regras:
+
+- Cliente envia apenas intencao (`reward_id` ou `product_id`), nunca delta final.
+- Toda mutacao economica passa por `resource_transactions`.
+- Premium required e periodo de claim sao validados no servidor.
+- Repetir o mesmo `request_id` retorna o mesmo payload; repetir reward no mesmo periodo com novo request nao duplica recurso.
+
 ## Telemetria E Simulacoes
 
 O primeiro slice deve coletar telemetria minima de combate e matchmaking para balanceamento.
@@ -330,6 +362,8 @@ Regras:
 | Farm abusivo | Rate limiting no endpoint de batalha |
 | Acesso a dados alheios | RLS do Supabase |
 | Duplicar recompensa | Idempotencia por `request_id` e ledger |
+| Duplicar reward diario/semanal | `reward_claims` unico por periodo |
+| Forjar compra alpha | Produto validado no servidor e registrado em `alpha_purchases` |
 | Engenharia reversa do oponente | Log retorna eventos animaveis, nao build completa |
 
 ---
@@ -343,7 +377,12 @@ draxos-mobile/
 |   |-- migrations/
 |   `-- functions/
 |       |-- account/
+|       |-- base/
+|       |-- battle/
+|       |-- competition/
 |       |-- healthcheck/
+|       |-- monetization/
+|       |-- social/
 |       `-- _shared/
 |-- server/
 |   |-- schema/

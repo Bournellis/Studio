@@ -13,5 +13,17 @@ static func boot_actions() -> PackedStringArray:
 	return PackedStringArray([
 		"Entrar como guest",
 		"Solicitar batalha",
-		"Ver resultado"
+		"Ver resultado",
+		"Ver base",
+		"Coletar base",
+		"Evoluir Nucleo",
+		"Ver social",
+		"Criar guilda",
+		"Chat guilda",
+		"Preview matchmaking",
+		"Ver ranking",
+		"Ver loja",
+		"Comprar premium alpha",
+		"Receber Diamante",
+		"Claim diario"
 	])

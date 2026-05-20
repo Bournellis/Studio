@@ -1,7 +1,7 @@
 # Track 00 - Implementation Plan
 
 - Ultima atualizacao: `2026-05-20`
-- Status: rebaselineado apos bootstrap Godot/Supabase e fundacao reutilizavel do cliente
+- Status: Track 00 completa e pronta para playtest alpha
 
 ## Sequencia Reorganizada
 
@@ -105,25 +105,31 @@ Aceite: servidor gera replay deterministico por seed e eventos conforme `battle-
 
 ### T00-P11 - Base Manager E Economia
 
-Status: **Proximo**.
+Status: **Completo**.
 
 Implementar estruturas, upgrades, coleta offline, recursos, armazenamento, cotas e recompensas.
+
+Saida T00-P11: migration `202605200003_base_manager_economy.sql`, tabelas `base_structures` e `construction_jobs`, RLS de leitura propria, Edge Function `base/state`/`base/collect`/`base/upgrade`, coleta offline com storage por estrutura, fila v0 de 1 slot, ledger em `resource_transactions`, idempotencia por `request_id`, smoke runtime e fluxo minimo no Godot para ver/coletar/evoluir base.
 
 Aceite: servidor valida caps/custos e mutacoes economicas sao idempotentes com ledger.
 
 ### T00-P12 - Social, Matchmaking, Bots E Ranking
 
-Status: **Pendente**.
+Status: **Completo**.
 
 Implementar amigos, guilda, ajudas, chat por polling, matchmaking real/bot e ranking de season.
+
+Saida T00-P12: migration `202605200004_social_matchmaking_ranking.sql`, season ativa, amizades, guildas, membros, estruturas de guilda, chat por polling, ranking, telemetria minima, Edge Functions `social/*` e `competition/*`, smoke runtime validando guilda/chat idempotentes, matchmaking com bot fora do ranking e ranking proprio sem bots, alem de fluxo minimo no Godot para Social/Matchmaking/Ranking.
 
 Aceite: RLS impede acesso indevido; bots nao entram em ranking.
 
 ### T00-P13 - Monetizacao Funcional E Alpha
 
-Status: **Pendente**.
+Status: **Completo**.
 
 Implementar Battle Pass, Diamante, recompensas diarias/semanais, fluxos alpha e smoke de export Android, PC e PC browser.
+
+Saida T00-P13: migration `202605200005_monetization_rewards_alpha.sql`, tabelas `battle_passes`, `battle_pass_progress`, `reward_claims` e `alpha_purchases`, seed `bp_s1_01`, Edge Function `monetization/state`/`monetization/rewards/claim`/`monetization/alpha-purchase`, Battle Pass free/premium, Diamante alpha, reward daily/weekly, ledger, idempotencia, fluxo minimo no Godot para Loja alpha e `tools/smoke_exports.gd` validando presets Android/PC/Web.
 
 Aceite: exports passam smoke e status muda para pronto para playtest alpha.
 

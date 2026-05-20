@@ -1,7 +1,7 @@
 # Database Schema Contract
 
 - Ultima atualizacao: `2026-05-20`
-- Status: contrato logico com migrations MVP, conta guest e battle request criadas
+- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao e rewards criadas
 
 Este documento define o schema esperado. A fonte tecnica viva do runtime local e `../../supabase/migrations/`; `../../server/schema/migrations/` permanece como espelho backend durante o bootstrap.
 
@@ -10,6 +10,9 @@ Migrations atuais:
 - `202605190001_mvp_foundation.sql`: tabelas MVP, RLS base, policies de leitura e bot fixture.
 - `202605190002_guest_account_mvp.sql`: convite alpha, RPC `create_guest_account` e estado inicial de conta guest.
 - `202605200001_battle_request_mvp.sql`: RPC `request_mvp_battle`, log `battle_log_v1`, recompensa fixture e idempotencia server-side.
+- `202605200003_base_manager_economy.sql`: estruturas permanentes, fila de construcao, RLS de leitura e bootstrap da Base v0.
+- `202605200004_social_matchmaking_ranking.sql`: season ativa, amizades, guilda, estruturas de guilda, chat, ranking e telemetria minima.
+- `202605200005_monetization_rewards_alpha.sql`: Battle Pass, progresso de passe, claims de reward, compras alpha, RLS de leitura e seed `bp_s1_01`.
 
 ## MVP Tecnico
 
@@ -170,8 +173,8 @@ Adicionar ou detalhar:
 - `chat_messages`
 - `battle_passes`
 - `battle_pass_progress`
-- `daily_rewards`
 - `reward_claims`
+- `alpha_purchases`
 - `telemetry_events`
 
 ### `telemetry_events`
@@ -204,6 +207,195 @@ Regras:
 - Telemetria nao concede recompensa, ranking ou progresso.
 - Payloads carregam snapshots compactos, nao dados secretos completos de outro jogador para o cliente.
 - Batalhas bot-vs-bot usam `player_id = null`, `source = simulation_job` e ficam fora do ranking.
+
+### `base_structures`
+
+Status: **implementado em T00-P11**.
+
+Estado permanente das seis estruturas pessoais da Base v0.
+
+Campos:
+
+- `player_id`
+- `structure_id`
+- `level`
+- `last_collected_at`
+- `updated_at`
+
+IDs validos:
+
+- `altar_das_almas`
+- `nucleo_energia`
+- `pocos_sangue`
+- `minas_cristal`
+- `estrutura_stats`
+- `ossario`
+
+Regras:
+
+- `level` vai de 0 a 40.
+- Estruturas level 0 produzem 0.
+- Producao offline e calculada por Edge Function a partir de `last_collected_at`.
+- Cliente possui apenas leitura propria via RLS.
+
+### `construction_jobs`
+
+Status: **implementado em T00-P11**.
+
+Fila de upgrades permanentes da base.
+
+Campos:
+
+- `id`
+- `player_id`
+- `structure_id`
+- `target_level`
+- `status`
+- `cost_payload`
+- `started_at`
+- `completes_at`
+- `completed_at`
+- `request_id`
+- `created_at`
+- `updated_at`
+
+Regras:
+
+- Base v0 usa 1 slot de construcao.
+- Segundo slot existe como contrato de design, mas compra/liberacao fica para monetizacao/alpha posterior.
+- Nao ha dois jobs ativos da mesma estrutura.
+- Jobs vencidos sao concluidos pelo servidor ao ler/coletar/evoluir base.
+- Gastos e coletas usam `resource_transactions` e `idempotency_keys`.
+
+### `seasons`
+
+Status: **implementado em T00-P12**.
+
+Seed atual: `season_001` / `Season 1 Alpha`, ativa.
+
+### `friendships`
+
+Status: **implementado em T00-P12**.
+
+Guarda relacoes sociais entre jogadores. No alpha, `friends/add` cria arestas aceitas nos dois sentidos por username.
+
+### `guilds`, `guild_members`, `guild_structures`
+
+Status: **implementado em T00-P12**.
+
+Guilda v0:
+
+- level 1-10;
+- jogador participa de 1 guilda por vez;
+- criador entra como `owner`;
+- quatro estruturas iniciais: `oficina_ritual`, `condensador_astral`, `arquivo_de_dominio`, `cofre_abissal`.
+
+### `chat_channels`, `chat_messages`
+
+Status: **implementado em T00-P12**.
+
+Chat v0 usa canal de guilda por polling. Mensagens tem limite de 280 caracteres, soft delete futuro via `deleted_at` e leitura restrita a membros da guilda.
+
+### `ranking`
+
+Status: **implementado em T00-P12**.
+
+Ranking da season ativa por jogador real. `competition/ranking/current` cria linha propria com 0 pontos quando necessario. Bots ficam fora desta tabela.
+
+### `guild_contributions`, `construction_helps`
+
+Status: **schema preparado em T00-P12**.
+
+Tabelas preparadas para contribuicoes e ajudas sociais. Endpoints completos de contribuicao/ajuda ficam para refinamento posterior se necessario durante alpha.
+
+### `battle_passes`
+
+Status: **implementado em T00-P13**.
+
+Seed atual: `bp_s1_01` / `Battle Pass Alpha 01`, vinculado a `season_001`, ativo de `2026-05-20` a `2026-07-19`.
+
+Campos:
+
+- `id`
+- `season_id`
+- `pass_index`
+- `display_name`
+- `starts_at`
+- `ends_at`
+- `free_rewards`
+- `premium_rewards`
+- `is_active`
+- `created_at`
+
+Regras:
+
+- Cliente possui leitura somente de passes ativos.
+- Rewards detalhadas ficam em JSON de contrato e no Edge Function `monetization`.
+- T00-P13 materializa tier 1 free/premium e os totais do baseline de economia.
+
+### `battle_pass_progress`
+
+Status: **implementado em T00-P13**.
+
+Progresso do jogador no Battle Pass ativo.
+
+Campos:
+
+- `player_id`
+- `pass_id`
+- `pass_xp`
+- `premium_unlocked`
+- `updated_at`
+
+Regras:
+
+- Row criada sob demanda por `GET /monetization/state`.
+- `pass_xp` aumenta com rewards diarias/semanais.
+- `premium_unlocked` muda apenas por `POST /monetization/alpha-purchase`.
+
+### `reward_claims`
+
+Status: **implementado em T00-P13**.
+
+Registro idempotente de claims diarios, semanais e de Battle Pass.
+
+Campos:
+
+- `id`
+- `player_id`
+- `source` (`daily`, `weekly`, `battle_pass`)
+- `reward_id`
+- `period_key`
+- `request_id`
+- `reward_payload`
+- `created_at`
+
+Regras:
+
+- Unico por `player_id + source + reward_id + period_key`.
+- Novo `request_id` para claim ja feita no mesmo periodo retorna `already_claimed=true`.
+- Cliente possui apenas leitura propria via RLS.
+
+### `alpha_purchases`
+
+Status: **implementado em T00-P13**.
+
+Registro de compras alpha simuladas.
+
+Campos:
+
+- `id`
+- `player_id`
+- `product_id`
+- `request_id`
+- `purchase_payload`
+- `created_at`
+
+Regras:
+
+- Unico por `player_id + request_id`.
+- Compras alpha nao integram gateway real de pagamento.
+- Diamante, premium e pacotes continuam mutando estado apenas via Edge Function e ledger.
 
 ## Regras De Seguranca
 

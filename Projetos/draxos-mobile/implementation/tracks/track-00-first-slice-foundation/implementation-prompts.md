@@ -138,6 +138,8 @@ Validacao: testes server cobrem replay por seed, limite de duracao e eventos con
 
 ## T00-P11 - Base Manager E Economia
 
+Status: completo.
+
 Objetivo: implementar base e economia servidor-side.
 
 Saida esperada: estruturas, upgrades, coleta offline, armazenamento, cotas, recompensas e ledger.
@@ -145,6 +147,8 @@ Saida esperada: estruturas, upgrades, coleta offline, armazenamento, cotas, reco
 Validacao: mutacoes sao idempotentes e coleta offline respeita armazenamento.
 
 ## T00-P12 - Social, Matchmaking, Bots E Ranking
+
+Status: completo.
 
 Objetivo: completar sistemas sociais e competicao.
 
@@ -154,8 +158,12 @@ Validacao: RLS impede acesso indevido e bots nao entram no ranking.
 
 ## T00-P13 - Monetizacao Funcional E Alpha
 
+Status: completo.
+
 Objetivo: fechar sistemas de alpha e monetizacao funcional.
 
 Saida esperada: Battle Pass, Diamante, recompensas diarias/semanais e smokes de export Android, PC e PC browser.
+
+Saida entregue: `monetization/state`, `monetization/rewards/claim`, `monetization/alpha-purchase`, migration de Battle Pass/reward claims/compras alpha, Loja alpha no boot Godot, smoke server de monetizacao e `tools/smoke_exports.gd`.
 
 Validacao: fluxos free/premium testados, exports geram build smoke e `../../current-status.md` marca pronto para playtest alpha.

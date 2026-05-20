@@ -60,7 +60,80 @@ func test_supabase_client_uses_local_contract_urls() -> void:
 	assert_eq(client.auth_anonymous_url(), "http://127.0.0.1:54321/auth/v1/signup")
 	assert_eq(client.function_url("account/guest"), "http://127.0.0.1:54321/functions/v1/account/guest")
 	assert_eq(client.function_url("battle/request"), "http://127.0.0.1:54321/functions/v1/battle/request")
+	assert_eq(client.function_url("base/state"), "http://127.0.0.1:54321/functions/v1/base/state")
+	assert_eq(client.function_url("social/state"), "http://127.0.0.1:54321/functions/v1/social/state")
+	assert_eq(client.function_url("competition/ranking/current"), "http://127.0.0.1:54321/functions/v1/competition/ranking/current")
+	assert_eq(client.function_url("monetization/state"), "http://127.0.0.1:54321/functions/v1/monetization/state")
 	client.free()
+
+func test_session_store_accepts_base_snapshot_without_local_mutation() -> void:
+	var store = SessionStoreScript.new()
+	store.resources = {"energia": 5}
+	var applied := store.apply_base_result({
+		"ok": true,
+		"resources": {"energia": 7},
+		"base": {
+			"construction_slots": 1,
+			"structures": [{"structure_id": "nucleo_energia", "level": 1}],
+			"jobs": [],
+		},
+	})
+	assert_true(applied)
+	assert_true(store.has_base_state())
+	assert_eq(int(store.resources.get("energia", 0)), 7)
+	var snapshot := store.snapshot()
+	Dictionary(snapshot["base_state"])["construction_slots"] = 99
+	assert_eq(int(store.base_state.get("construction_slots", 0)), 1)
+	store.free()
+
+func test_session_store_accepts_social_and_competition_snapshots() -> void:
+	var store = SessionStoreScript.new()
+	assert_true(store.apply_social_result({
+		"ok": true,
+		"social": {
+			"guild": {"name": "Conclave Alpha"},
+			"friends": [],
+			"guild_chat": [],
+		},
+	}))
+	assert_true(store.has_social_state())
+	assert_true(store.apply_competition_result({
+		"ok": true,
+		"matchmaking": {
+			"player_power": 50,
+			"selected_opponent": {"id": "bot_effect_trainer_01", "is_bot": true},
+		},
+	}))
+	assert_true(store.has_competition_state())
+	assert_eq(int(Dictionary(store.competition_state["matchmaking"]).get("player_power", 0)), 50)
+	store.free()
+
+func test_session_store_accepts_monetization_snapshot() -> void:
+	var store = SessionStoreScript.new()
+	store.resources = {"diamante": 0}
+	store.player = {"id": "player-1", "xp": 0}
+	var applied := store.apply_monetization_result({
+		"ok": true,
+		"player": {"id": "player-1", "xp": 25},
+		"resources": {"diamante": 500},
+		"monetization": {
+			"battle_pass": {
+				"pass": {"id": "bp_s1_01"},
+				"progress": {"pass_xp": 25, "premium_unlocked": true},
+			},
+			"daily_rewards": [],
+			"weekly_rewards": [],
+			"alpha_products": [],
+		},
+	})
+	assert_true(applied)
+	assert_true(store.has_monetization_state())
+	assert_eq(int(store.resources.get("diamante", 0)), 500)
+	assert_eq(int(store.player.get("xp", 0)), 25)
+	var snapshot := store.snapshot()
+	Dictionary(snapshot["monetization_state"])["alpha_products"] = [{"id": "mutated"}]
+	assert_eq(Array(store.monetization_state.get("alpha_products", [])).size(), 0)
+	store.free()
 
 func test_battle_log_presenter_sorts_formats_and_tolerates_unknown_events() -> void:
 	var battle_log := _battle_log_fixture()

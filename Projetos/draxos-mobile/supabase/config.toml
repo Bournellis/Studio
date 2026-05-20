@@ -386,6 +386,18 @@ verify_jwt = true
 [functions.battle]
 verify_jwt = true
 
+[functions.base]
+verify_jwt = true
+
+[functions.social]
+verify_jwt = true
+
+[functions.competition]
+verify_jwt = true
+
+[functions.monetization]
+verify_jwt = true
+
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"
 

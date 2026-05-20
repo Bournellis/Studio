@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
 - Ultima atualizacao: `2026-05-20`
-- Status: contrato com `account/guest`, `account/state`, `battle/request` e `battle/latest` implementados localmente; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`
+- Status: contrato com `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*` e `monetization/*` implementados localmente; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -11,7 +11,7 @@ Este documento descreve a interface logica entre cliente Godot e Supabase Edge F
 - Autenticacao: JWT Supabase no header `Authorization: Bearer <token>`.
 - Guest MVP: cliente primeiro cria sessao Supabase Auth anonima; depois chama `/account/guest` com o JWT anonimo e codigo de convite.
 - Correlation: cliente envia `request_id` em mutacoes para idempotencia.
-- Runtime local atual: `supabase/functions/account/index.ts` e `supabase/functions/battle/index.ts`, espelhados em `server/functions/`.
+- Runtime local atual: `supabase/functions/account`, `battle`, `base`, `social`, `competition` e `monetization`, espelhados em `server/functions/`.
 - Resposta de erro padrao:
 
 ```json
@@ -256,7 +256,9 @@ Response:
 | GET | `/player/profile` | Perfil, level, XP, poder e season |
 | POST | `/build/equip` | Equipar arma, spells, passiva e pet |
 | POST | `/upgrade/request` | Solicitar upgrade de arma, spell, pet, passiva, stats ou construcao |
-| POST | `/base/collect` | Coletar recursos acumulados |
+| GET | `/base/state` | Ler estruturas, fila, producao pendente e recursos |
+| POST | `/base/upgrade` | Iniciar upgrade de estrutura permanente |
+| POST | `/base/collect` | Coletar recursos acumulados offline |
 | POST | `/base/help/request` | Pedir ajuda em construcao |
 | POST | `/base/help/send` | Enviar ajuda a amigo/guilda |
 | GET | `/matchmaking/preview` | Exibir faixa e disponibilidade sem escolher oponente |
@@ -269,8 +271,9 @@ Response:
 | POST | `/guild/contribute` | Contribuir recursos para guilda |
 | GET | `/chat/poll` | Buscar mensagens por canal |
 | POST | `/chat/send` | Enviar mensagem direct/guilda |
-| GET | `/battle-pass/state` | Estado do passe atual |
-| POST | `/rewards/claim` | Coletar recompensa diaria/semanal/passe |
+| GET | `/monetization/state` | Estado do passe atual, recompensas, produtos alpha e claims |
+| POST | `/monetization/rewards/claim` | Coletar recompensa diaria/semanal/passe |
+| POST | `/monetization/alpha-purchase` | Compra alpha simulada de Premium/Diamante/pacotes |
 | POST | `/telemetry/client-event` | Registrar evento client-side nao autoritativo |
 
 ### `POST /build/equip`
@@ -298,6 +301,220 @@ Request logico:
   "pet_id": "familiar_cinzento"
 }
 ```
+
+### `GET /base/state`
+
+Status: **implementado em T00-P11**.
+
+Retorna o estado server-authoritative da Base v0. Ao carregar, o servidor conclui jobs vencidos antes de montar o payload.
+
+Response v0:
+
+```json
+{
+  "ok": true,
+  "resources": {},
+  "base": {
+    "construction_slots": 1,
+    "structures": [
+      {
+        "structure_id": "nucleo_energia",
+        "display_name": "Nucleo de Energia",
+        "level": 0,
+        "produces": "energia",
+        "daily_production": 0,
+        "storage_cap": 0,
+        "pending_collectable": 0
+      }
+    ],
+    "jobs": []
+  }
+}
+```
+
+### `POST /base/collect`
+
+Status: **implementado em T00-P11**.
+
+Coleta producao offline de todas as estruturas produtoras, respeitando storage por estrutura. O cliente envia somente a intencao e um `request_id`; deltas sao calculados no servidor e gravados em `resource_transactions`.
+
+Request:
+
+```json
+{
+  "request_id": "uuid"
+}
+```
+
+Erros minimos: `UNAUTHENTICATED`, `PLAYER_NOT_FOUND`, `INVALID_REQUEST_ID`, `BASE_COLLECT_FAILED`.
+
+Idempotencia: repetir o mesmo `request_id` retorna o mesmo payload e nao duplica recurso nem ledger.
+
+### `POST /base/upgrade`
+
+Status: **implementado em T00-P11**.
+
+Inicia upgrade de uma estrutura permanente da base. O servidor valida estrutura, fila, cap de level do jogador, custo em Energia e jobs ativos da mesma estrutura.
+
+Request:
+
+```json
+{
+  "request_id": "uuid",
+  "structure_id": "nucleo_energia"
+}
+```
+
+Erros minimos: `UNAUTHENTICATED`, `PLAYER_NOT_FOUND`, `INVALID_STRUCTURE`, `CONSTRUCTION_QUEUE_FULL`, `STRUCTURE_ALREADY_UPGRADING`, `LEVEL_CAP_REACHED`, `INSUFFICIENT_RESOURCES`, `BASE_UPGRADE_FAILED`.
+
+Idempotencia: repetir o mesmo `request_id` retorna o mesmo job/payload e nao gasta Energia novamente.
+
+### `GET /matchmaking/preview`
+
+Status: **implementado em T00-P12** como `GET /competition/matchmaking/preview`.
+
+Retorna a leitura server-authoritative da faixa de matchmaking e o fallback de bot do alpha. O cliente nao escolhe oponente nem envia poder final.
+
+Response v0:
+
+```json
+{
+  "ok": true,
+  "matchmaking": {
+    "player_power": 50,
+    "tolerances": [
+      { "after_seconds": 0, "max_difference_percent": 10 },
+      { "after_seconds": 5, "max_difference_percent": 20 },
+      { "after_seconds": 15, "max_difference_percent": 35 }
+    ],
+    "selected_opponent": {
+      "id": "mvp_training_bot",
+      "power": 50,
+      "power_band": "MVP_ONLY",
+      "is_bot": true,
+      "is_ranked": false
+    },
+    "fallback_reason": "BOT_ALPHA_POOL"
+  }
+}
+```
+
+### `GET /ranking/current`
+
+Status: **implementado em T00-P12** como `GET /competition/ranking/current`.
+
+Retorna ranking da season ativa e cria a linha do jogador com `0` pontos quando necessario. Bots nao entram no ranking.
+
+### `GET /social/state`
+
+Status: **implementado em T00-P12**.
+
+Retorna amigos, guilda, membros, estruturas de guilda e ultimas mensagens de chat de guilda visiveis ao jogador.
+
+### `POST /friends/add`
+
+Status: **implementado em T00-P12** como `POST /social/friends/add`.
+
+Adiciona amizade aceita por username no alpha. Mutacao idempotente por `request_id`.
+
+### `POST /guild/create`
+
+Status: **implementado em T00-P12** como `POST /social/guild/create`.
+
+Cria uma guilda alpha, adiciona o jogador como owner, cria as quatro estruturas de guilda v0 e canal de chat da guilda. Mutacao idempotente por `request_id`.
+
+### `POST /chat/send`
+
+Status: **implementado em T00-P12** como `POST /social/chat/send`.
+
+Envia mensagem para o chat de guilda por polling. Requer o jogador estar em guilda. Mutacao idempotente por `request_id`.
+
+### `GET /monetization/state`
+
+Status: **implementado em T00-P13**.
+
+Retorna estado server-authoritative da Loja alpha: Battle Pass ativo, progresso do jogador, recompensas diarias/semanais, rewards free/premium do passe, produtos alpha e claims recentes.
+
+Response v0:
+
+```json
+{
+  "ok": true,
+  "player": {},
+  "resources": {},
+  "monetization": {
+    "battle_pass": {
+      "pass": {
+        "id": "bp_s1_01",
+        "season_id": "season_001",
+        "display_name": "Battle Pass Alpha 01"
+      },
+      "progress": {
+        "pass_xp": 0,
+        "premium_unlocked": false
+      },
+      "rewards": []
+    },
+    "daily_rewards": [],
+    "weekly_rewards": [],
+    "alpha_products": [],
+    "claimed": [],
+    "period_keys": {
+      "daily": "2026-05-20",
+      "weekly": "2026-W21",
+      "battle_pass": "bp_s1_01"
+    }
+  }
+}
+```
+
+### `POST /monetization/rewards/claim`
+
+Status: **implementado em T00-P13**.
+
+Coleta recompensa diaria, semanal ou de Battle Pass. O cliente envia somente `reward_id` e `request_id`; XP, recursos, premium requirement, periodo e ledger sao decididos no servidor.
+
+Request:
+
+```json
+{
+  "request_id": "uuid",
+  "reward_id": "daily_collect_base"
+}
+```
+
+Reward IDs v0:
+
+- Daily: `daily_first_victory`, `daily_second_victory`, `daily_third_victory`, `daily_collect_base`, `daily_build_or_upgrade`.
+- Weekly: `weekly_arena_participation`, `weekly_arena_mastery`, `weekly_refuge_routine`.
+- Battle Pass: `bp_free_tier_1`, `bp_premium_tier_1`.
+
+Erros minimos: `UNAUTHENTICATED`, `PLAYER_NOT_FOUND`, `INVALID_REQUEST_ID`, `INVALID_REWARD`, `PREMIUM_REQUIRED`, `REWARD_CLAIM_FAILED`.
+
+Idempotencia: repetir o mesmo `request_id` retorna o mesmo payload. Novo `request_id` para reward ja resgatada no mesmo periodo retorna `already_claimed=true` sem duplicar recurso.
+
+### `POST /monetization/alpha-purchase`
+
+Status: **implementado em T00-P13**.
+
+Executa compra alpha simulada, sem gateway real de pagamento. Mutacoes continuam server-authoritative, com ledger e idempotencia.
+
+Request:
+
+```json
+{
+  "request_id": "uuid",
+  "product_id": "alpha_diamante_500"
+}
+```
+
+Product IDs v0:
+
+- `alpha_battle_pass_premium`: libera trilha premium do Battle Pass atual.
+- `alpha_diamante_500`: credita 500 Diamantes para teste alpha.
+- `alpha_energy_pack_small`: gasta 80 Diamantes e credita 80 Energia.
+
+Erros minimos: `UNAUTHENTICATED`, `PLAYER_NOT_FOUND`, `INVALID_REQUEST_ID`, `INVALID_PRODUCT`, `INSUFFICIENT_RESOURCES`, `ALPHA_PURCHASE_FAILED`.
 
 ### `POST /telemetry/client-event`
 

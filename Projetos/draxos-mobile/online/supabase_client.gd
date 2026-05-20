@@ -79,6 +79,109 @@ func fetch_latest_battle(access_token: String) -> Dictionary:
 		{}
 	)
 
+func fetch_base_state(access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("base/state"),
+		HTTPClient.METHOD_GET,
+		_auth_headers(access_token),
+		{}
+	)
+
+func collect_base(request_id: String, access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("base/collect"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		{"request_id": request_id}
+	)
+
+func upgrade_base_structure(request_id: String, structure_id: String, access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("base/upgrade"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		{
+			"request_id": request_id,
+			"structure_id": structure_id,
+		}
+	)
+
+func fetch_social_state(access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("social/state"),
+		HTTPClient.METHOD_GET,
+		_auth_headers(access_token),
+		{}
+	)
+
+func create_guild(request_id: String, guild_name: String, access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("social/guild/create"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		{
+			"request_id": request_id,
+			"name": guild_name,
+		}
+	)
+
+func send_guild_chat(request_id: String, content: String, access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("social/chat/send"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		{
+			"request_id": request_id,
+			"content": content,
+		}
+	)
+
+func fetch_matchmaking_preview(access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("competition/matchmaking/preview"),
+		HTTPClient.METHOD_GET,
+		_auth_headers(access_token),
+		{}
+	)
+
+func fetch_ranking_current(access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("competition/ranking/current"),
+		HTTPClient.METHOD_GET,
+		_auth_headers(access_token),
+		{}
+	)
+
+func fetch_monetization_state(access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("monetization/state"),
+		HTTPClient.METHOD_GET,
+		_auth_headers(access_token),
+		{}
+	)
+
+func claim_reward(request_id: String, reward_id: String, access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("monetization/rewards/claim"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		{
+			"request_id": request_id,
+			"reward_id": reward_id,
+		}
+	)
+
+func alpha_purchase(request_id: String, product_id: String, access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("monetization/alpha-purchase"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		{
+			"request_id": request_id,
+			"product_id": product_id,
+		}
+	)
+
 func _load_project_settings() -> void:
 	var configured_url := str(ProjectSettings.get_setting("draxos_mobile/supabase/url", DEFAULT_SUPABASE_URL))
 	var configured_key := str(ProjectSettings.get_setting("draxos_mobile/supabase/publishable_key", DEFAULT_PUBLISHABLE_KEY))
