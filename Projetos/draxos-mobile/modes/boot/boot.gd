@@ -421,7 +421,6 @@ func _execute_action(action_id: String) -> void:
 		var payload := _action_payload(action_id)
 		if _error_label.text != "":
 			payload["error_text"] = _error_label.text
-		}
 		_emit_client_event(event_type, payload)
 	_active_action_id = ""
 
