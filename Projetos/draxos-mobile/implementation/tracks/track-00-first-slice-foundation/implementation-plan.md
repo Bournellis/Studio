@@ -87,7 +87,7 @@ Aceite: cliente envia intencao, recebe `battle_log`, anima/exibe resultado e nun
 
 ### T00-P09 - Gate De Design Do Primeiro Slice
 
-Status: **Pendente**.
+Status: **Completo**.
 
 Resolver ou adiar explicitamente pendencias que bloqueiam conteudo real: level cap, unlocks, build schema, matchmaking, bots, recompensas, UX base, economia de seasons e telemetria.
 
@@ -95,9 +95,11 @@ Aceite: `docs/design-pending.md` nao possui pendencia `PRIMEIRO_SLICE` que bloqu
 
 ### T00-P10 - Conteudo Real E Simulador Completo
 
-Status: **Pendente**.
+Status: **Em andamento - v0 executavel**.
 
 Expandir JSONs e implementar simulador server-authoritative com varinha, spells, DoTs, barreiras, status, pets, passivas, summons e anti-stall.
+
+Progresso v0: conteudo real inicial versionado em `data/definitions/`, seeds de bots `FIRST_SLICE`, simulador TypeScript deterministico espelhado em `server/functions/_shared/` e `supabase/functions/_shared/`, `battle/request` aceita `FIRST_SLICE_SIM`, aplica recompensas de XP/Almas/Energia/Sangue/Ossos e preserva idempotencia por `request_id`.
 
 Aceite: servidor gera replay deterministico por seed e eventos conforme `battle-event-log.md`.
 

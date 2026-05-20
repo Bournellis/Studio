@@ -94,7 +94,7 @@ Fixtures `MVP_ONLY` nao resolvem design final. Quando um campo depender de decis
 Exemplos:
 
 - Custos de Ossos dependem de `DMOB-D021`.
-- Recompensas dependem de `DMOB-D008`, `DMOB-D011`, `DMOB-D027` e `DMOB-D028`.
+- Recompensas v0 vivem em `../game-design-document.md` e `../economy/README.md`; valores numericos continuam calibraveis no alpha.
 
 ## Bots E Faixas De Poder Do Primeiro Slice
 

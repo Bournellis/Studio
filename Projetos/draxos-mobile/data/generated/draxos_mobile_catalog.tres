@@ -7,15 +7,102 @@ script = ExtResource("1_55hau")
 generated_from = PackedStringArray("res://data/definitions/spells.json", "res://data/definitions/pets.json", "res://data/definitions/passives.json", "res://data/definitions/weapons.json", "res://data/definitions/base_structures.json", "res://data/definitions/bot_builds.json", "res://data/definitions/power_bands.json", "res://data/definitions/battle_fixtures.json", "res://data/definitions/rewards.json")
 collections = {
 "base_structures": [{
-"description": "Estrutura MVP_ONLY para validar base manager sem economia final.",
-"display_name": "Nucleo Etereo",
+"description": "Produz Almas e abriga upgrades de arma, slots de spell e spells.",
+"display_name": "Altar das Almas",
+"duration_formula": "max(0.033h, 0.1 * level^2 hours)",
 "enabled": true,
-"id": "nucleo_etereo",
-"max_level": 1.0,
-"mode": "MVP_ONLY",
+"id": "altar_das_almas",
+"max_level": 40.0,
+"mode": "FIRST_SLICE",
+"produces": [{
+"daily_at_level_40": 10.0,
+"resource": "almas"
+}],
+"storage_rule": "max(8, ceil(daily_production * 2))",
+"tags": ["FIRST_SLICE", "base", "almas"],
+"upgrade_cost_formula": "max(20, round(0.5 * level^2)) energia",
+"version": 1.0
+}, {
+"description": "Produz Energia, o gargalo principal das construcoes.",
+"display_name": "Nucleo de Energia",
+"duration_formula": "max(0.033h, 0.1 * level^2 hours)",
+"enabled": true,
+"id": "nucleo_energia",
+"max_level": 40.0,
+"mode": "FIRST_SLICE",
+"produces": [{
+"daily_at_level_40": 80.0,
+"resource": "energia"
+}],
+"storage_rule": "max(8, ceil(daily_production * 2))",
+"tags": ["FIRST_SLICE", "base", "energia"],
+"upgrade_cost_formula": "max(20, round(0.5 * level^2)) energia",
+"version": 1.0
+}, {
+"description": "Produz Sangue para progressao de pets.",
+"display_name": "Pocos de Sangue",
+"duration_formula": "max(0.033h, 0.1 * level^2 hours)",
+"enabled": true,
+"id": "pocos_sangue",
+"max_level": 40.0,
+"mode": "FIRST_SLICE",
+"produces": [{
+"daily_at_level_40": 8.0,
+"resource": "sangue"
+}],
+"storage_rule": "max(8, ceil(daily_production * 2))",
+"tags": ["FIRST_SLICE", "base", "sangue"],
+"upgrade_cost_formula": "max(20, round(0.5 * level^2)) energia",
+"version": 1.0
+}, {
+"description": "Produz Cristais para progressao de passivas.",
+"display_name": "Minas de Cristal",
+"duration_formula": "max(0.033h, 0.1 * level^2 hours)",
+"enabled": true,
+"id": "minas_cristal",
+"max_level": 40.0,
+"mode": "FIRST_SLICE",
+"produces": [{
+"daily_at_level_40": 5.0,
+"resource": "cristais"
+}],
+"storage_rule": "max(8, ceil(daily_production * 2))",
+"tags": ["FIRST_SLICE", "base", "cristais"],
+"upgrade_cost_formula": "max(20, round(0.5 * level^2)) energia",
+"version": 1.0
+}, {
+"description": "Abriga melhorias permanentes de Vida, dano base, Defesa, Mana e regen.",
+"display_name": "Estrutura de Stats",
+"duration_formula": "max(0.033h, 0.1 * level^2 hours)",
+"enabled": true,
+"id": "estrutura_stats",
+"max_level": 40.0,
+"mode": "FIRST_SLICE",
 "produces": [],
-"storage": {},
-"tags": ["MVP_ONLY", "base", "core"],
+"stat_bonus_per_level": {
+"ataque_base": 0.005,
+"defesa": 0.004,
+"mana_regen": 0.003,
+"vida_max": 0.008
+},
+"tags": ["FIRST_SLICE", "base", "stats"],
+"upgrade_cost_formula": "max(20, round(0.5 * level^2)) energia",
+"version": 1.0
+}, {
+"description": "Produz Ossos e abriga crafting de qualidade da Varinha.",
+"display_name": "Ossario",
+"duration_formula": "max(0.033h, 0.1 * level^2 hours)",
+"enabled": true,
+"id": "ossario",
+"max_level": 40.0,
+"mode": "FIRST_SLICE",
+"produces": [{
+"daily_at_level_40": 2.0,
+"resource": "ossos"
+}],
+"storage_rule": "max(8, ceil(daily_production * 2))",
+"tags": ["FIRST_SLICE", "base", "ossos"],
+"upgrade_cost_formula": "max(20, round(0.5 * level^2)) energia",
 "version": 1.0
 }],
 "battle_fixtures": [{
@@ -37,56 +124,391 @@ collections = {
 },
 "tags": ["MVP_ONLY", "battle", "fixture"],
 "version": 1.0
+}, {
+"description": "Fixture de leitura para validar conteudo real do primeiro slice.",
+"display_name": "Smoke Do Simulador Real",
+"enabled": true,
+"id": "first_slice_simulation_smoke",
+"mode": "FIRST_SLICE_SIM",
+"opponent_fixture": {
+"id": "bot_summoner_01",
+"level": 35.0
+},
+"player_fixture": {
+"level": 25.0,
+"passive_id": "foco_astral",
+"pet_id": "familiar_cinzento",
+"spell_ids": ["raio_cosmico", "acender", "invocar_demonio"],
+"weapon_level": 25.0,
+"weapon_quality": "ritual",
+"weapon_type": "varinha_magica"
+},
+"tags": ["FIRST_SLICE", "battle", "fixture", "smoke"],
+"version": 1.0
 }],
 "bot_builds": [{
+"archetype": "starter_wand",
 "description": "Oponente tecnico fixo para battle fixture server-authoritative.",
 "display_name": "Bot de Treino MVP",
 "enabled": true,
 "id": "mvp_training_bot",
+"is_ranked": false,
 "level": 1.0,
 "mode": "MVP_ONLY",
 "passive_id": "foco_astral",
+"passive_level": 1.0,
 "pet_id": "familiar_cinzento",
+"pet_level": 1.0,
+"power": 50.0,
 "power_band_id": "mvp_training_band",
-"seed": 20260519.0,
 "spell_ids": ["raio_cosmico"],
+"spell_levels": {
+"raio_cosmico": 1.0
+},
 "tags": ["MVP_ONLY", "bot", "training"],
+"variation_seed": 20260519.0,
 "version": 1.0,
-"weapon_id": "varinha_magica"
+"weapon_id": "varinha_magica",
+"weapon_level": 1.0,
+"weapon_quality": "inicial"
+}, {
+"archetype": "starter_wand",
+"description": "Bot inicial de varinha pura.",
+"display_name": "Aprendiz de Cinzas",
+"enabled": true,
+"id": "bot_starter_wand_01",
+"is_ranked": false,
+"level": 2.0,
+"mode": "FIRST_SLICE",
+"passive_id": "",
+"passive_level": 0.0,
+"pet_id": "",
+"pet_level": 0.0,
+"power": 85.0,
+"power_band_id": "band_001",
+"spell_ids": [],
+"spell_levels": {},
+"tags": ["FIRST_SLICE", "bot", "starter_wand"],
+"variation_seed": 101.0,
+"version": 1.0,
+"weapon_id": "varinha_magica",
+"weapon_level": 2.0,
+"weapon_quality": "inicial"
+}, {
+"archetype": "cosmic_apprentice",
+"description": "Bot com Raio Cosmico para testar primeiro slot de spell.",
+"display_name": "Aprendiz Cosmico",
+"enabled": true,
+"id": "bot_cosmic_apprentice_01",
+"is_ranked": false,
+"level": 5.0,
+"mode": "FIRST_SLICE",
+"passive_id": "",
+"passive_level": 0.0,
+"pet_id": "",
+"pet_level": 0.0,
+"power": 260.0,
+"power_band_id": "band_002",
+"spell_ids": ["raio_cosmico"],
+"spell_levels": {
+"raio_cosmico": 5.0
+},
+"tags": ["FIRST_SLICE", "bot", "cosmic_apprentice"],
+"variation_seed": 202.0,
+"version": 1.0,
+"weapon_id": "varinha_magica",
+"weapon_level": 5.0,
+"weapon_quality": "reforcada"
+}, {
+"archetype": "elemental_mixer",
+"description": "Bot de duas spells elementais para faixa intermediaria.",
+"display_name": "Misturador Elemental",
+"enabled": true,
+"id": "bot_elemental_mixer_01",
+"is_ranked": false,
+"level": 14.0,
+"mode": "FIRST_SLICE",
+"passive_id": "forca",
+"passive_level": 8.0,
+"pet_id": "",
+"pet_level": 0.0,
+"power": 720.0,
+"power_band_id": "band_003",
+"spell_ids": ["raio_cosmico", "acender"],
+"spell_levels": {
+"acender": 10.0,
+"raio_cosmico": 12.0
+},
+"tags": ["FIRST_SLICE", "bot", "elemental_mixer"],
+"variation_seed": 303.0,
+"version": 1.0,
+"weapon_id": "varinha_magica",
+"weapon_level": 12.0,
+"weapon_quality": "ritual"
+}, {
+"archetype": "pet_handler",
+"description": "Bot com pet e duas spells para validar slot de pet.",
+"display_name": "Condutor de Familiar",
+"enabled": true,
+"id": "bot_pet_handler_01",
+"is_ranked": false,
+"level": 22.0,
+"mode": "FIRST_SLICE",
+"passive_id": "resistencia",
+"passive_level": 15.0,
+"pet_id": "familiar_cinzento",
+"pet_level": 16.0,
+"power": 1320.0,
+"power_band_id": "band_004",
+"spell_ids": ["raio_cosmico", "congelar"],
+"spell_levels": {
+"congelar": 16.0,
+"raio_cosmico": 18.0
+},
+"tags": ["FIRST_SLICE", "bot", "pet_handler"],
+"variation_seed": 404.0,
+"version": 1.0,
+"weapon_id": "varinha_magica",
+"weapon_level": 20.0,
+"weapon_quality": "abissal"
+}, {
+"archetype": "summoner",
+"description": "Bot avancado com summons para validar o simulador completo.",
+"display_name": "Invocador Abissal",
+"enabled": true,
+"id": "bot_summoner_01",
+"is_ranked": false,
+"level": 35.0,
+"mode": "FIRST_SLICE",
+"passive_id": "foco_astral",
+"passive_level": 25.0,
+"pet_id": "brasido",
+"pet_level": 24.0,
+"power": 2450.0,
+"power_band_id": "band_005",
+"spell_ids": ["raio_cosmico", "invocar_demonio", "animar_morto"],
+"spell_levels": {
+"animar_morto": 28.0,
+"invocar_demonio": 28.0,
+"raio_cosmico": 30.0
+},
+"tags": ["FIRST_SLICE", "bot", "summoner"],
+"variation_seed": 505.0,
+"version": 1.0,
+"weapon_id": "varinha_magica",
+"weapon_level": 32.0,
+"weapon_quality": "cosmica"
 }],
 "passives": [{
-"description": "Passiva MVP_ONLY usada como placeholder de contrato para builds.",
+"base_bonus": 0.04,
+"bonus_per_level": 0.002,
+"description": "Passiva inicial que melhora regeneracao de mana.",
 "display_name": "Foco Astral",
 "effects": [{
-"amount": 1.0,
-"kind": "mana_regen_flat"
+"amount": 0.04,
+"kind": "mana_regen_percent"
 }],
 "enabled": true,
 "id": "foco_astral",
-"mode": "MVP_ONLY",
-"tags": ["MVP_ONLY", "passive", "mana"],
+"mode": "FIRST_SLICE",
+"stat": "mana_regen",
+"tags": ["FIRST_SLICE", "passive", "mana"],
+"unlock_level": 10.0,
+"version": 2.0
+}, {
+"base_bonus": 0.04,
+"bonus_per_level": 0.002,
+"description": "Aumenta dano base da Varinha e spells diretas.",
+"display_name": "Forca",
+"effects": [{
+"amount": 0.04,
+"kind": "damage_percent"
+}],
+"enabled": true,
+"id": "forca",
+"mode": "FIRST_SLICE",
+"stat": "damage",
+"tags": ["FIRST_SLICE", "passive", "damage"],
+"unlock_level": 10.0,
+"version": 1.0
+}, {
+"base_bonus": 0.03,
+"bonus_per_level": 0.0015,
+"description": "Reduz dano recebido durante batalhas.",
+"display_name": "Resistencia",
+"effects": [{
+"amount": 0.03,
+"kind": "damage_reduction_percent"
+}],
+"enabled": true,
+"id": "resistencia",
+"mode": "FIRST_SLICE",
+"stat": "damage_reduction",
+"tags": ["FIRST_SLICE", "passive", "defense"],
+"unlock_level": 10.0,
+"version": 1.0
+}, {
+"base_bonus": 12.0,
+"bonus_per_level": 1.0,
+"description": "Concede barreira inicial no comeco da batalha.",
+"display_name": "Escudo",
+"effects": [{
+"amount": 12.0,
+"kind": "starting_barrier"
+}],
+"enabled": true,
+"id": "escudo",
+"mode": "FIRST_SLICE",
+"stat": "starting_barrier",
+"tags": ["FIRST_SLICE", "passive", "barrier"],
+"unlock_level": 10.0,
+"version": 1.0
+}, {
+"base_bonus": 0.02,
+"bonus_per_level": 0.001,
+"description": "Converte pequena parte do dano em cura.",
+"display_name": "Vampirismo",
+"effects": [{
+"amount": 0.02,
+"kind": "lifesteal_percent"
+}],
+"enabled": true,
+"id": "vampirismo",
+"mode": "FIRST_SLICE",
+"stat": "lifesteal",
+"tags": ["FIRST_SLICE", "passive", "heal"],
+"unlock_level": 10.0,
+"version": 1.0
+}, {
+"base_bonus": 0.03,
+"bonus_per_level": 0.001,
+"description": "Reduz levemente cooldowns de spells.",
+"display_name": "Velocidade",
+"effects": [{
+"amount": 0.03,
+"kind": "cooldown_reduction_percent"
+}],
+"enabled": true,
+"id": "velocidade",
+"mode": "FIRST_SLICE",
+"stat": "cooldown_reduction",
+"tags": ["FIRST_SLICE", "passive", "haste"],
+"unlock_level": 10.0,
 "version": 1.0
 }],
 "pets": [{
+"base_damage": 8.0,
 "cadence_seconds": 4.0,
-"damage_type": "astral",
-"description": "Pet MVP_ONLY para validar presenca de pet sem definir tuning final.",
+"damage_per_level": 1.2,
+"damage_type": "magico",
+"description": "Pet inicial de dano magico para validar o slot de pet do primeiro slice.",
 "display_name": "Familiar Cinzento",
 "effects": [{
-"amount": 4.0,
+"amount": 8.0,
 "kind": "damage"
 }],
 "enabled": true,
 "id": "familiar_cinzento",
-"mode": "MVP_ONLY",
-"tags": ["MVP_ONLY", "pet", "astral"],
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "pet", "magico"],
+"unlock_level": 15.0,
+"version": 2.0
+}, {
+"base_damage": 7.0,
+"cadence_seconds": 3.5,
+"damage_per_level": 1.1,
+"damage_type": "fogo",
+"description": "Pet de Fogo focado em dano sustentado.",
+"display_name": "Brasido",
+"effects": [{
+"amount": 7.0,
+"kind": "damage"
+}],
+"enabled": true,
+"id": "brasido",
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "pet", "fogo"],
+"unlock_level": 15.0,
+"version": 1.0
+}, {
+"base_damage": 10.0,
+"cadence_seconds": 4.8,
+"damage_per_level": 1.3,
+"damage_type": "gelo",
+"description": "Pet de Gelo com cadencia lenta e impacto maior.",
+"display_name": "Gelum",
+"effects": [{
+"amount": 10.0,
+"kind": "damage"
+}],
+"enabled": true,
+"id": "gelum",
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "pet", "gelo"],
+"unlock_level": 15.0,
 "version": 1.0
 }],
 "power_bands": [{
-"description": "Faixa tecnica para matchmaking fixture enquanto poder real esta pendente.",
+"description": "Faixa inicial para Draxos sem spells ou com primeiro unlock.",
+"display_name": "Banda 001",
+"enabled": true,
+"id": "band_001",
+"initial_tolerance_percent": 10.0,
+"max_power": 250.0,
+"min_power": 0.0,
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "matchmaking"],
+"version": 1.0
+}, {
+"description": "Faixa baixa para builds elementais iniciais.",
+"display_name": "Banda 002",
+"enabled": true,
+"id": "band_002",
+"initial_tolerance_percent": 10.0,
+"max_power": 600.0,
+"min_power": 251.0,
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "matchmaking"],
+"version": 1.0
+}, {
+"description": "Faixa media para builds com pet e duas spells.",
+"display_name": "Banda 003",
+"enabled": true,
+"id": "band_003",
+"initial_tolerance_percent": 15.0,
+"max_power": 1200.0,
+"min_power": 601.0,
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "matchmaking"],
+"version": 1.0
+}, {
+"description": "Faixa avancada para builds com summons e passiva.",
+"display_name": "Banda 004",
+"enabled": true,
+"id": "band_004",
+"initial_tolerance_percent": 20.0,
+"max_power": 2200.0,
+"min_power": 1201.0,
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "matchmaking"],
+"version": 1.0
+}, {
+"description": "Faixa alta do primeiro slice.",
+"display_name": "Banda 005",
+"enabled": true,
+"id": "band_005",
+"initial_tolerance_percent": 25.0,
+"max_power": 999999.0,
+"min_power": 2201.0,
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "matchmaking"],
+"version": 1.0
+}, {
+"description": "Faixa tecnica preservada para smokes MVP_ONLY.",
 "display_name": "Faixa MVP de Treino",
 "enabled": true,
 "id": "mvp_training_band",
+"initial_tolerance_percent": 10.0,
 "max_power": 999.0,
 "min_power": 0.0,
 "mode": "MVP_ONLY",
@@ -101,43 +523,350 @@ collections = {
 "idempotency_scope": "battle_result",
 "mode": "MVP_ONLY",
 "resources": {
-"bones": 1.0,
+"ossos": 1.0,
 "xp": 5.0
 },
 "tags": ["MVP_ONLY", "reward", "battle"],
 "version": 1.0
+}, {
+"description": "Recompensa base calibravel para vitoria no primeiro slice.",
+"display_name": "Vitoria de Arena",
+"enabled": true,
+"id": "first_slice_battle_win",
+"idempotency_scope": "battle_result",
+"mode": "FIRST_SLICE",
+"resources": {
+"almas": 4.0,
+"energia": 2.0,
+"ossos": 0.2,
+"sangue": 1.0,
+"xp": 50.0
+},
+"tags": ["FIRST_SLICE", "reward", "battle", "win"],
+"version": 1.0
+}, {
+"description": "Recompensa reduzida para derrota no primeiro slice.",
+"display_name": "Derrota de Arena",
+"enabled": true,
+"id": "first_slice_battle_loss",
+"idempotency_scope": "battle_result",
+"mode": "FIRST_SLICE",
+"resources": {
+"almas": 0.8,
+"energia": 0.4,
+"ossos": 0.04,
+"sangue": 0.2,
+"xp": 10.0
+},
+"tags": ["FIRST_SLICE", "reward", "battle", "loss"],
+"version": 1.0
+}, {
+"description": "Missao diaria fixa para a primeira vitoria.",
+"display_name": "Primeira Vitoria Do Dia",
+"enabled": true,
+"id": "daily_first_win",
+"idempotency_scope": "daily_reward",
+"mode": "FIRST_SLICE",
+"resources": {
+"almas": 8.0,
+"energia": 4.0,
+"ossos": 1.0,
+"sangue": 2.0,
+"xp": 120.0
+},
+"tags": ["FIRST_SLICE", "reward", "daily"],
+"version": 1.0
+}, {
+"description": "Total agregado calibravel por passe Free de 60 dias.",
+"display_name": "Battle Pass Free Total",
+"enabled": true,
+"id": "battle_pass_free_tier_total",
+"idempotency_scope": "battle_pass",
+"mode": "FIRST_SLICE",
+"resources": {
+"almas": 480.0,
+"cristais": 120.0,
+"diamante": 15.0,
+"energia": 480.0,
+"ossos": 60.0,
+"sangue": 180.0,
+"xp": 4800.0
+},
+"tags": ["FIRST_SLICE", "reward", "battle_pass", "free"],
+"version": 1.0
+}, {
+"description": "Total adicional calibravel por passe Premium de 60 dias.",
+"display_name": "Battle Pass Premium Total",
+"enabled": true,
+"id": "battle_pass_premium_tier_total",
+"idempotency_scope": "battle_pass",
+"mode": "FIRST_SLICE",
+"resources": {
+"almas": 900.0,
+"cristais": 240.0,
+"diamante": 30.0,
+"energia": 900.0,
+"ossos": 120.0,
+"sangue": 420.0,
+"xp": 9000.0
+},
+"tags": ["FIRST_SLICE", "reward", "battle_pass", "premium"],
+"version": 1.0
 }],
 "spells": [{
-"cooldown_seconds": 3.0,
-"damage_type": "astral",
-"description": "Spell MVP_ONLY usada para provar contrato de batalha sem balanceamento final.",
+"base_damage": 18.0,
+"cooldown_seconds": 4.0,
+"damage_per_level": 2.4,
+"damage_type": "magico",
+"description": "Dano magico direto no primeiro alvo da fila.",
 "display_name": "Raio Cosmico",
 "effects": [{
-"amount": 12.0,
+"amount": 18.0,
 "kind": "damage"
 }],
 "enabled": true,
 "id": "raio_cosmico",
-"mana_cost": 1.0,
-"mode": "MVP_ONLY",
-"tags": ["MVP_ONLY", "damage", "astral"],
-"target": "enemy",
+"mana_cost": 8.0,
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "damage", "magico", "starter"],
+"target": "direct",
+"unlock_level": 3.0,
+"version": 2.0
+}, {
+"base_damage": 16.0,
+"cooldown_seconds": 6.0,
+"damage_per_level": 2.1,
+"damage_type": "choque",
+"description": "Dano de choque direto no mago inimigo e aplica marcadores de choque.",
+"display_name": "Raio",
+"effects": [{
+"amount": 16.0,
+"kind": "damage"
+}, {
+"kind": "status",
+"stacks": 1.0,
+"status_id": "choque_marcado"
+}],
+"enabled": true,
+"id": "raio",
+"mana_cost": 12.0,
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "damage", "choque", "elemental"],
+"target": "player",
+"unlock_level": 7.0,
+"version": 1.0
+}, {
+"base_damage": 12.0,
+"cooldown_seconds": 7.0,
+"damage_per_level": 1.7,
+"damage_type": "fogo",
+"description": "Dano de fogo em area curta e aplica Queimando.",
+"display_name": "Acender",
+"effects": [{
+"amount": 12.0,
+"kind": "damage"
+}, {
+"duration_seconds": 5.0,
+"kind": "dot",
+"status_id": "queimando",
+"tick_damage": 3.0
+}],
+"enabled": true,
+"id": "acender",
+"mana_cost": 14.0,
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "damage", "fogo", "dot"],
+"target": "area",
+"unlock_level": 7.0,
+"version": 1.0
+}, {
+"base_damage": 6.0,
+"cooldown_seconds": 8.0,
+"damage_per_level": 0.8,
+"damage_type": "veneno",
+"description": "Aplica veneno diretamente no mago inimigo.",
+"display_name": "Envenenar",
+"effects": [{
+"duration_seconds": 6.0,
+"kind": "dot",
+"status_id": "envenenado",
+"tick_damage": 4.0
+}],
+"enabled": true,
+"id": "envenenar",
+"mana_cost": 10.0,
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "veneno", "dot"],
+"target": "player",
+"unlock_level": 7.0,
+"version": 1.0
+}, {
+"base_damage": 11.0,
+"cooldown_seconds": 7.5,
+"damage_per_level": 1.6,
+"damage_type": "gelo",
+"description": "Dano de gelo em area curta e aplica Lento.",
+"display_name": "Congelar",
+"effects": [{
+"amount": 11.0,
+"kind": "damage"
+}, {
+"kind": "status",
+"stacks": 1.0,
+"status_id": "lento"
+}],
+"enabled": true,
+"id": "congelar",
+"mana_cost": 13.0,
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "damage", "gelo", "status"],
+"target": "area",
+"unlock_level": 7.0,
+"version": 1.0
+}, {
+"base_damage": 34.0,
+"cooldown_seconds": 9.0,
+"damage_per_level": 3.2,
+"damage_type": "morte",
+"description": "Grande dano de Morte diretamente no mago inimigo.",
+"display_name": "Odio",
+"effects": [{
+"amount": 34.0,
+"kind": "damage"
+}],
+"enabled": true,
+"id": "odio",
+"mana_cost": 22.0,
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "damage", "morte", "advanced"],
+"target": "player",
+"unlock_level": 25.0,
+"version": 1.0
+}, {
+"base_damage": 20.0,
+"cooldown_seconds": 7.5,
+"damage_per_level": 2.2,
+"damage_type": "sangramento",
+"description": "Dano direto e sangramento no primeiro alvo da fila.",
+"display_name": "Dilacerar",
+"effects": [{
+"amount": 20.0,
+"kind": "damage"
+}, {
+"duration_seconds": 5.0,
+"kind": "dot",
+"status_id": "sangrando",
+"tick_damage": 5.0
+}],
+"enabled": true,
+"id": "dilacerar",
+"mana_cost": 18.0,
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "damage", "sangramento", "dot", "advanced"],
+"target": "direct",
+"unlock_level": 25.0,
+"version": 1.0
+}, {
+"barrier_per_level": 3.0,
+"base_barrier": 30.0,
+"cooldown_seconds": 12.0,
+"damage_type": "none",
+"description": "Gera barreira magica e resistencia global temporaria.",
+"display_name": "Fortificar",
+"effects": [{
+"amount": 30.0,
+"kind": "barrier"
+}, {
+"amount": 0.08,
+"duration_seconds": 8.0,
+"kind": "resistance"
+}],
+"enabled": true,
+"id": "fortificar",
+"mana_cost": 16.0,
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "barrier", "defense", "advanced"],
+"target": "self",
+"unlock_level": 25.0,
+"version": 1.0
+}, {
+"cooldown_seconds": 10.0,
+"damage_type": "fogo",
+"description": "Invoca um demonio na posicao Tras para causar dano de Fogo.",
+"display_name": "Invocar Demonio",
+"effects": [{
+"kind": "summon",
+"summon_id": "demonio"
+}],
+"enabled": true,
+"id": "invocar_demonio",
+"mana_cost": 20.0,
+"mode": "FIRST_SLICE",
+"summon_id": "demonio",
+"tags": ["FIRST_SLICE", "summon", "fogo", "advanced"],
+"target": "self",
+"unlock_level": 25.0,
+"version": 1.0
+}, {
+"alternate_summon_id": "morto_vivo",
+"cooldown_seconds": 10.0,
+"damage_type": "morte",
+"description": "Invoca um morto-vivo na Frente ou Meio para proteger o mago.",
+"display_name": "Animar Morto",
+"effects": [{
+"kind": "summon",
+"summon_id": "esqueleto"
+}],
+"enabled": true,
+"id": "animar_morto",
+"mana_cost": 20.0,
+"mode": "FIRST_SLICE",
+"summon_id": "esqueleto",
+"tags": ["FIRST_SLICE", "summon", "morte", "advanced"],
+"target": "self",
+"unlock_level": 25.0,
 "version": 1.0
 }],
 "weapons": [{
-"basic_attack": {
-"cadence_seconds": 2.0,
-"damage": 3.0,
-"damage_type": "astral"
-},
-"bone_cost": 0.0,
-"description": "Arma base do mago Draxos no MVP tecnico.",
+"base_damage": 15.0,
+"cadence_seconds": 1.0,
+"damage_per_level": 1.8,
+"damage_type": "magico",
+"description": "Arma base do mago Draxos no primeiro slice.",
 "display_name": "Varinha Magica",
 "enabled": true,
 "id": "varinha_magica",
-"mode": "MVP_ONLY",
-"quality": "starter",
-"tags": ["MVP_ONLY", "weapon", "starter"],
-"version": 1.0
+"mode": "FIRST_SLICE",
+"qualities": [{
+"bone_cost": 0.0,
+"damage_multiplier": 1.0,
+"id": "inicial",
+"tier": 0.0
+}, {
+"bone_cost": 120.0,
+"damage_multiplier": 1.08,
+"id": "reforcada",
+"tier": 1.0
+}, {
+"bone_cost": 240.0,
+"damage_multiplier": 1.18,
+"id": "ritual",
+"tier": 2.0
+}, {
+"bone_cost": 360.0,
+"damage_multiplier": 1.3,
+"id": "abissal",
+"tier": 3.0
+}, {
+"bone_cost": 480.0,
+"damage_multiplier": 1.45,
+"id": "cosmica",
+"tier": 4.0
+}],
+"special_damage_multiplier": 3.0,
+"special_every_attacks": 4.0,
+"tags": ["FIRST_SLICE", "weapon", "starter"],
+"version": 2.0,
+"weapon_type": "wand"
 }]
 }

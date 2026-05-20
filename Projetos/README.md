@@ -19,7 +19,7 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
 ## Implementacao - Bootstrap
 
-- `draxos-mobile/`: jogo mobile multi-plataforma - mago Draxos (PVP assincrono, base manager, social). Plataformas: Android + PC executavel + PC browser. Backend: Supabase. Batalha 100% simulada no servidor. Track 00 em bootstrap: T00-P01, T00-P02A, T00-P02B, T00-P03, T00-P04, T00-P05, T00-P06, T00-P07 e T00-P08 concluidos com Godot project minimo, autoloads de fundacao, validate integrado, GUT, catalogo `MVP_ONLY`, runtime Supabase local no layout oficial `supabase/`, migrations MVP, healthcheck, conta guest no gateway local, cliente de sessao Godot com Auth anonimo + cache nao autoritativo, `battle/request` server-authoritative com log/recompensa idempotentes e replay placeholder no cliente. T00-P09 em andamento com cap 40, levels permanentes, unlocks de spell/passiva/pet, matchmaking por poder, bots iniciais, telemetria minima, schema de build, UX alpha com Refugio e baseline calibravel de economia/simulador de seasons.
+- `draxos-mobile/`: jogo mobile multi-plataforma - mago Draxos (PVP assincrono, base manager, social). Plataformas: Android + PC executavel + PC browser. Backend: Supabase. Batalha 100% simulada no servidor. Track 00 em bootstrap: T00-P01 a T00-P09 concluidos; T00-P10 em andamento com conteudo real inicial, catalogo ampliado, seeds de bots `FIRST_SLICE`, simulador server-authoritative v0, modo `FIRST_SLICE_SIM`, recompensas XP/Almas/Energia/Sangue/Ossos e teste deterministico verde. Godot project minimo tem autoloads de fundacao, validate integrado, GUT, runtime Supabase local no layout oficial `supabase/`, migrations MVP, healthcheck, conta guest no gateway local, cliente de sessao Godot com Auth anonimo + cache nao autoritativo, `battle/request` server-authoritative com log/recompensa idempotentes e replay placeholder no cliente. T00-P10 segue para DoTs/status/resistencias, smoke runtime do `FIRST_SLICE_SIM` e replay rico. Baseline de design inclui cap 40, levels permanentes, unlocks de spell/passiva/pet, base v0 implementavel, missoes/onboarding v0, monetizacao/recompensas v0, social/ranking/chat v0, combate real/simulador v0, matchmaking por poder, bots iniciais, telemetria minima, schema de build, UX alpha com Refugio, baseline calibravel de economia/simulador de seasons e guilda S1 com bonus ate 5%.
   - Priority/status: `P2_IMPLEMENTACAO - bootstrap`
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Operational status: `draxos-mobile/implementation/current-status.md`
@@ -28,7 +28,7 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
   - Economy model: `draxos-mobile/docs/economy/README.md`
   - Design archive: `_conceitos/mobile-universe/gdd.md`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: continuar `T00-P09 - Gate De Design Do Primeiro Slice`.
+  - Current next step: continuar `T00-P10 - Conteudo Real E Simulador Completo` com DoTs/status/resistencias, smoke `FIRST_SLICE_SIM` e replay rico.
 
 ## Arquivo De Design
 

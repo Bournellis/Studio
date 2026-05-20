@@ -3,16 +3,93 @@
   "collection": "base_structures",
   "items": [
     {
-      "id": "nucleo_etereo",
-      "display_name": "Nucleo Etereo",
-      "description": "Estrutura MVP_ONLY para validar base manager sem economia final.",
+      "id": "altar_das_almas",
+      "display_name": "Altar das Almas",
+      "description": "Produz Almas e abriga upgrades de arma, slots de spell e spells.",
       "version": 1,
       "enabled": true,
-      "tags": ["MVP_ONLY", "base", "core"],
-      "mode": "MVP_ONLY",
-      "max_level": 1,
+      "tags": ["FIRST_SLICE", "base", "almas"],
+      "mode": "FIRST_SLICE",
+      "max_level": 40,
+      "produces": [{"resource": "almas", "daily_at_level_40": 10}],
+      "storage_rule": "max(8, ceil(daily_production * 2))",
+      "upgrade_cost_formula": "max(20, round(0.5 * level^2)) energia",
+      "duration_formula": "max(0.033h, 0.1 * level^2 hours)"
+    },
+    {
+      "id": "nucleo_energia",
+      "display_name": "Nucleo de Energia",
+      "description": "Produz Energia, o gargalo principal das construcoes.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "base", "energia"],
+      "mode": "FIRST_SLICE",
+      "max_level": 40,
+      "produces": [{"resource": "energia", "daily_at_level_40": 80}],
+      "storage_rule": "max(8, ceil(daily_production * 2))",
+      "upgrade_cost_formula": "max(20, round(0.5 * level^2)) energia",
+      "duration_formula": "max(0.033h, 0.1 * level^2 hours)"
+    },
+    {
+      "id": "pocos_sangue",
+      "display_name": "Pocos de Sangue",
+      "description": "Produz Sangue para progressao de pets.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "base", "sangue"],
+      "mode": "FIRST_SLICE",
+      "max_level": 40,
+      "produces": [{"resource": "sangue", "daily_at_level_40": 8}],
+      "storage_rule": "max(8, ceil(daily_production * 2))",
+      "upgrade_cost_formula": "max(20, round(0.5 * level^2)) energia",
+      "duration_formula": "max(0.033h, 0.1 * level^2 hours)"
+    },
+    {
+      "id": "minas_cristal",
+      "display_name": "Minas de Cristal",
+      "description": "Produz Cristais para progressao de passivas.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "base", "cristais"],
+      "mode": "FIRST_SLICE",
+      "max_level": 40,
+      "produces": [{"resource": "cristais", "daily_at_level_40": 5}],
+      "storage_rule": "max(8, ceil(daily_production * 2))",
+      "upgrade_cost_formula": "max(20, round(0.5 * level^2)) energia",
+      "duration_formula": "max(0.033h, 0.1 * level^2 hours)"
+    },
+    {
+      "id": "estrutura_stats",
+      "display_name": "Estrutura de Stats",
+      "description": "Abriga melhorias permanentes de Vida, dano base, Defesa, Mana e regen.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "base", "stats"],
+      "mode": "FIRST_SLICE",
+      "max_level": 40,
       "produces": [],
-      "storage": {}
+      "stat_bonus_per_level": {
+        "vida_max": 0.008,
+        "ataque_base": 0.005,
+        "defesa": 0.004,
+        "mana_regen": 0.003
+      },
+      "upgrade_cost_formula": "max(20, round(0.5 * level^2)) energia",
+      "duration_formula": "max(0.033h, 0.1 * level^2 hours)"
+    },
+    {
+      "id": "ossario",
+      "display_name": "Ossario",
+      "description": "Produz Ossos e abriga crafting de qualidade da Varinha.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "base", "ossos"],
+      "mode": "FIRST_SLICE",
+      "max_level": 40,
+      "produces": [{"resource": "ossos", "daily_at_level_40": 2}],
+      "storage_rule": "max(8, ceil(daily_production * 2))",
+      "upgrade_cost_formula": "max(20, round(0.5 * level^2)) energia",
+      "duration_formula": "max(0.033h, 0.1 * level^2 hours)"
     }
   ]
 }

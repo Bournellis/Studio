@@ -3,15 +3,76 @@
   "collection": "power_bands",
   "items": [
     {
+      "id": "band_001",
+      "display_name": "Banda 001",
+      "description": "Faixa inicial para Draxos sem spells ou com primeiro unlock.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "matchmaking"],
+      "mode": "FIRST_SLICE",
+      "min_power": 0,
+      "max_power": 250,
+      "initial_tolerance_percent": 10
+    },
+    {
+      "id": "band_002",
+      "display_name": "Banda 002",
+      "description": "Faixa baixa para builds elementais iniciais.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "matchmaking"],
+      "mode": "FIRST_SLICE",
+      "min_power": 251,
+      "max_power": 600,
+      "initial_tolerance_percent": 10
+    },
+    {
+      "id": "band_003",
+      "display_name": "Banda 003",
+      "description": "Faixa media para builds com pet e duas spells.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "matchmaking"],
+      "mode": "FIRST_SLICE",
+      "min_power": 601,
+      "max_power": 1200,
+      "initial_tolerance_percent": 15
+    },
+    {
+      "id": "band_004",
+      "display_name": "Banda 004",
+      "description": "Faixa avancada para builds com summons e passiva.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "matchmaking"],
+      "mode": "FIRST_SLICE",
+      "min_power": 1201,
+      "max_power": 2200,
+      "initial_tolerance_percent": 20
+    },
+    {
+      "id": "band_005",
+      "display_name": "Banda 005",
+      "description": "Faixa alta do primeiro slice.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "matchmaking"],
+      "mode": "FIRST_SLICE",
+      "min_power": 2201,
+      "max_power": 999999,
+      "initial_tolerance_percent": 25
+    },
+    {
       "id": "mvp_training_band",
       "display_name": "Faixa MVP de Treino",
-      "description": "Faixa tecnica para matchmaking fixture enquanto poder real esta pendente.",
+      "description": "Faixa tecnica preservada para smokes MVP_ONLY.",
       "version": 1,
       "enabled": true,
       "tags": ["MVP_ONLY", "matchmaking", "training"],
       "mode": "MVP_ONLY",
       "min_power": 0,
-      "max_power": 999
+      "max_power": 999,
+      "initial_tolerance_percent": 10
     }
   ]
 }

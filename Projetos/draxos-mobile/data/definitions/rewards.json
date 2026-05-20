@@ -10,8 +10,63 @@
       "enabled": true,
       "tags": ["MVP_ONLY", "reward", "battle"],
       "mode": "MVP_ONLY",
-      "resources": {"xp": 5, "bones": 1},
+      "resources": {"xp": 5, "ossos": 1},
       "idempotency_scope": "battle_result"
+    },
+    {
+      "id": "first_slice_battle_win",
+      "display_name": "Vitoria de Arena",
+      "description": "Recompensa base calibravel para vitoria no primeiro slice.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "reward", "battle", "win"],
+      "mode": "FIRST_SLICE",
+      "resources": {"xp": 50, "almas": 4, "energia": 2, "sangue": 1, "ossos": 0.2},
+      "idempotency_scope": "battle_result"
+    },
+    {
+      "id": "first_slice_battle_loss",
+      "display_name": "Derrota de Arena",
+      "description": "Recompensa reduzida para derrota no primeiro slice.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "reward", "battle", "loss"],
+      "mode": "FIRST_SLICE",
+      "resources": {"xp": 10, "almas": 0.8, "energia": 0.4, "sangue": 0.2, "ossos": 0.04},
+      "idempotency_scope": "battle_result"
+    },
+    {
+      "id": "daily_first_win",
+      "display_name": "Primeira Vitoria Do Dia",
+      "description": "Missao diaria fixa para a primeira vitoria.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "reward", "daily"],
+      "mode": "FIRST_SLICE",
+      "resources": {"xp": 120, "almas": 8, "energia": 4, "sangue": 2, "ossos": 1},
+      "idempotency_scope": "daily_reward"
+    },
+    {
+      "id": "battle_pass_free_tier_total",
+      "display_name": "Battle Pass Free Total",
+      "description": "Total agregado calibravel por passe Free de 60 dias.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "reward", "battle_pass", "free"],
+      "mode": "FIRST_SLICE",
+      "resources": {"xp": 4800, "almas": 480, "energia": 480, "sangue": 180, "cristais": 120, "ossos": 60, "diamante": 15},
+      "idempotency_scope": "battle_pass"
+    },
+    {
+      "id": "battle_pass_premium_tier_total",
+      "display_name": "Battle Pass Premium Total",
+      "description": "Total adicional calibravel por passe Premium de 60 dias.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "reward", "battle_pass", "premium"],
+      "mode": "FIRST_SLICE",
+      "resources": {"xp": 9000, "almas": 900, "energia": 900, "sangue": 420, "cristais": 240, "ossos": 120, "diamante": 30},
+      "idempotency_scope": "battle_pass"
     }
   ]
 }

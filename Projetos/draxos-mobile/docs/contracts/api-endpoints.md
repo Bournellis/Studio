@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
 - Ultima atualizacao: `2026-05-20`
-- Status: contrato MVP com `account/guest`, `account/state`, `battle/request` e `battle/latest` implementados localmente
+- Status: contrato MVP com `account/guest`, `account/state`, `battle/request` e `battle/latest` implementados localmente; `battle/request` tambem aceita `FIRST_SLICE_SIM` em v0 server-authoritative
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -142,7 +142,7 @@ Erros minimos: `UNAUTHENTICATED`, `PLAYER_NOT_FOUND`, `ACCOUNT_STATE_INCOMPLETE`
 
 Solicita batalha server-authoritative.
 
-Status: **implementado em T00-P07**.
+Status: **implementado em T00-P07** para `MVP_ONLY`; **v0 implementado em T00-P10** para `FIRST_SLICE_SIM`.
 
 Request MVP:
 
@@ -150,6 +150,15 @@ Request MVP:
 {
   "request_id": "uuid",
   "mode": "MVP_ONLY"
+}
+```
+
+Request primeiro slice v0:
+
+```json
+{
+  "request_id": "uuid",
+  "mode": "FIRST_SLICE_SIM"
 }
 ```
 
@@ -180,9 +189,44 @@ Response MVP:
 }
 ```
 
+Response primeiro slice v0:
+
+```json
+{
+  "ok": true,
+  "battle_log": {
+    "schema_version": "battle_log_v1",
+    "battle_id": "uuid",
+    "seed": "first_slice:<player_id>:<request_id>",
+    "mode": "FIRST_SLICE_SIM",
+    "duration": 6.7,
+    "participants": {
+      "player": { "id": "uuid", "display_name": "Draxos" },
+      "opponent": { "id": "bot_summoner_01", "display_name": "Invocador Abissal", "is_bot": true }
+    },
+    "result": {
+      "winner": "player",
+      "reason": "combatant_defeated"
+    },
+    "events": []
+  },
+  "rewards": {
+    "type": "FIRST_SLICE_SIM",
+    "reward_id": "first_slice_battle_win",
+    "resources": {
+      "xp": 50,
+      "almas": 4,
+      "energia": 2,
+      "sangue": 1,
+      "ossos": 0.2
+    }
+  }
+}
+```
+
 Erros minimos: `UNAUTHENTICATED`, `PLAYER_NOT_FOUND`, `BATTLE_RATE_LIMITED`, `SIMULATION_FAILED`.
 
-Idempotencia: repetir o mesmo `request_id` retorna o mesmo `battle_id`, `seed`, log e recompensa, sem reaplicar XP/Ossos.
+Idempotencia: repetir o mesmo `request_id` retorna o mesmo `battle_id`, `seed`, log e recompensa, sem reaplicar XP/Ossos ou recursos do primeiro slice.
 
 ### `GET /battle/latest`
 

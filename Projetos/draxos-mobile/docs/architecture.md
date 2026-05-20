@@ -239,6 +239,48 @@ Primeiro slice completo:
 
 Formula inicial de poder: `(Level x 50) + (ArmaLevel x 30) + (SpellLevelsTotal x 20) + (PetLevel x 15) + (PassiveLevelsTotal x 10) + (WeaponQualityTier x 25)`.
 
+Formula inicial de ranking:
+
+- Vitoria base: `+20` pontos.
+- Derrota base: `-10` pontos.
+- Ajuste por diferenca de poder, limitado pela tolerancia maxima de matchmaking.
+- Vitoria contra mais forte pode chegar a `+30`; vitoria contra mais fraco pode cair ate `+12`.
+- Derrota contra mais forte pode cair ate `-5`; derrota contra mais fraco pode chegar a `-15`.
+- Bots ficam fora do ranking no alpha.
+- Pontos nao ficam abaixo de 0.
+- Encerramento de season gera snapshot de ranking.
+
+## Social, Guilda E Chat
+
+Social do primeiro slice usa polling simples, Postgres + RLS e Edge Functions para mutacoes.
+
+Regras de guilda:
+
+- Guilda desbloqueia no level 10.
+- Guilda tem level 1-10 e capacidade de 10 a 50 membros.
+- Jogador participa de 1 guilda por vez.
+- Sair de guilda aplica cooldown de 24h.
+- Contribuicoes e ajudas sao server-authoritative, idempotentes e registradas em ledger quando alteram recurso ou progresso.
+
+Regras de ajuda:
+
+- Jogador pode enviar ate 30 ajudas por dia.
+- Cada construcao pessoal pode receber ate 10 ajudas.
+- Cada ajuda reduz 1,5% do tempo restante da construcao, max 15%.
+- Ajuda e unica por `helper_id + construction_job_id`.
+
+Politica de chat v0:
+
+- Canais: guilda e direct entre amigos.
+- Chat global interno fica fora do primeiro slice.
+- Polling simples no alpha; Realtime fica para evolucao futura.
+- Retencao padrao: 30 dias para mensagens de guilda e direct.
+- Mensagem apagada usa soft delete: conteudo deixa de aparecer para usuarios, mas metadados minimos ficam para auditoria.
+- Usuario pode bloquear outro usuario; bloqueio oculta direct e impede novas mensagens diretas.
+- Denuncia cria registro de moderacao para revisao manual no alpha.
+- Filtro automatico v0: limite de tamanho, rate limit por usuario/canal e bloqueio de mensagens vazias ou repetidas.
+- Dados de chat nao concedem progresso economico direto.
+
 ## Telemetria E Simulacoes
 
 O primeiro slice deve coletar telemetria minima de combate e matchmaking para balanceamento.
@@ -323,7 +365,7 @@ draxos-mobile/
 
 Pendencias vivas:
 
-- Chat: politica de retencao/delecao/moderacao (`DMOB-D023`).
+- Nenhuma pendencia arquitetural bloqueante para o MVP tecnico atual.
 
 Pendencias operacionais resolvidas em 2026-05-19:
 

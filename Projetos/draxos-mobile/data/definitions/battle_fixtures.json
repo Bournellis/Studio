@@ -21,6 +21,28 @@
         "id": "mvp_training_bot",
         "level": 1
       }
+    },
+    {
+      "id": "first_slice_simulation_smoke",
+      "display_name": "Smoke Do Simulador Real",
+      "description": "Fixture de leitura para validar conteudo real do primeiro slice.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "battle", "fixture", "smoke"],
+      "mode": "FIRST_SLICE_SIM",
+      "player_fixture": {
+        "level": 25,
+        "weapon_type": "varinha_magica",
+        "weapon_level": 25,
+        "weapon_quality": "ritual",
+        "spell_ids": ["raio_cosmico", "acender", "invocar_demonio"],
+        "passive_id": "foco_astral",
+        "pet_id": "familiar_cinzento"
+      },
+      "opponent_fixture": {
+        "id": "bot_summoner_01",
+        "level": 35
+      }
     }
   ]
 }

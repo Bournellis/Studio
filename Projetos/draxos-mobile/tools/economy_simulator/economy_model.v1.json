@@ -5,7 +5,8 @@
   "notes": [
     "Valores iniciais para calibracao, nao balanceamento final.",
     "Todos os levels sao permanentes e compartilham o cap da season.",
-    "Season 1 usa cap 40 por padrao, mas o simulador permite testar 40, 50 e 60."
+    "Season 1 usa cap 40 por padrao, mas o simulador permite testar 40, 50 e 60.",
+    "Bonus de guilda da Season 1 chega a no maximo 5% com a guilda maximizada; seasons futuras podem aumentar esse teto."
   ],
   "season_defaults": {
     "selected_season_id": "S1",
@@ -17,6 +18,11 @@
       {"season_id": "S1", "cap": 40},
       {"season_id": "S2", "cap": 50},
       {"season_id": "S3", "cap": 60}
+    ],
+    "guild_bonus_caps": [
+      {"season_id": "S1", "max_bonus_percent": 5},
+      {"season_id": "S2", "max_bonus_percent": 7.5},
+      {"season_id": "S3", "max_bonus_percent": 10}
     ],
     "free_active_target_cap_day": 105
   },

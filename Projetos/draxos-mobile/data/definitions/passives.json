@@ -5,13 +5,97 @@
     {
       "id": "foco_astral",
       "display_name": "Foco Astral",
-      "description": "Passiva MVP_ONLY usada como placeholder de contrato para builds.",
+      "description": "Passiva inicial que melhora regeneracao de mana.",
+      "version": 2,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "passive", "mana"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 10,
+      "stat": "mana_regen",
+      "base_bonus": 0.04,
+      "bonus_per_level": 0.002,
+      "effects": [
+        {"kind": "mana_regen_percent", "amount": 0.04}
+      ]
+    },
+    {
+      "id": "forca",
+      "display_name": "Forca",
+      "description": "Aumenta dano base da Varinha e spells diretas.",
       "version": 1,
       "enabled": true,
-      "tags": ["MVP_ONLY", "passive", "mana"],
-      "mode": "MVP_ONLY",
+      "tags": ["FIRST_SLICE", "passive", "damage"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 10,
+      "stat": "damage",
+      "base_bonus": 0.04,
+      "bonus_per_level": 0.002,
       "effects": [
-        {"kind": "mana_regen_flat", "amount": 1}
+        {"kind": "damage_percent", "amount": 0.04}
+      ]
+    },
+    {
+      "id": "resistencia",
+      "display_name": "Resistencia",
+      "description": "Reduz dano recebido durante batalhas.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "passive", "defense"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 10,
+      "stat": "damage_reduction",
+      "base_bonus": 0.03,
+      "bonus_per_level": 0.0015,
+      "effects": [
+        {"kind": "damage_reduction_percent", "amount": 0.03}
+      ]
+    },
+    {
+      "id": "escudo",
+      "display_name": "Escudo",
+      "description": "Concede barreira inicial no comeco da batalha.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "passive", "barrier"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 10,
+      "stat": "starting_barrier",
+      "base_bonus": 12,
+      "bonus_per_level": 1,
+      "effects": [
+        {"kind": "starting_barrier", "amount": 12}
+      ]
+    },
+    {
+      "id": "vampirismo",
+      "display_name": "Vampirismo",
+      "description": "Converte pequena parte do dano em cura.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "passive", "heal"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 10,
+      "stat": "lifesteal",
+      "base_bonus": 0.02,
+      "bonus_per_level": 0.001,
+      "effects": [
+        {"kind": "lifesteal_percent", "amount": 0.02}
+      ]
+    },
+    {
+      "id": "velocidade",
+      "display_name": "Velocidade",
+      "description": "Reduz levemente cooldowns de spells.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "passive", "haste"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 10,
+      "stat": "cooldown_reduction",
+      "base_bonus": 0.03,
+      "bonus_per_level": 0.001,
+      "effects": [
+        {"kind": "cooldown_reduction_percent", "amount": 0.03}
       ]
     }
   ]

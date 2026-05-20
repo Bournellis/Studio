@@ -5,17 +5,195 @@
     {
       "id": "raio_cosmico",
       "display_name": "Raio Cosmico",
-      "description": "Spell MVP_ONLY usada para provar contrato de batalha sem balanceamento final.",
+      "description": "Dano magico direto no primeiro alvo da fila.",
+      "version": 2,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "damage", "magico", "starter"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 3,
+      "damage_type": "magico",
+      "mana_cost": 8,
+      "cooldown_seconds": 4.0,
+      "target": "direct",
+      "base_damage": 18,
+      "damage_per_level": 2.4,
+      "effects": [
+        {"kind": "damage", "amount": 18}
+      ]
+    },
+    {
+      "id": "raio",
+      "display_name": "Raio",
+      "description": "Dano de choque direto no mago inimigo e aplica marcadores de choque.",
       "version": 1,
       "enabled": true,
-      "tags": ["MVP_ONLY", "damage", "astral"],
-      "mode": "MVP_ONLY",
-      "damage_type": "astral",
-      "mana_cost": 1,
-      "cooldown_seconds": 3.0,
-      "target": "enemy",
+      "tags": ["FIRST_SLICE", "damage", "choque", "elemental"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 7,
+      "damage_type": "choque",
+      "mana_cost": 12,
+      "cooldown_seconds": 6.0,
+      "target": "player",
+      "base_damage": 16,
+      "damage_per_level": 2.1,
       "effects": [
-        {"kind": "damage", "amount": 12}
+        {"kind": "damage", "amount": 16},
+        {"kind": "status", "status_id": "choque_marcado", "stacks": 1}
+      ]
+    },
+    {
+      "id": "acender",
+      "display_name": "Acender",
+      "description": "Dano de fogo em area curta e aplica Queimando.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "damage", "fogo", "dot"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 7,
+      "damage_type": "fogo",
+      "mana_cost": 14,
+      "cooldown_seconds": 7.0,
+      "target": "area",
+      "base_damage": 12,
+      "damage_per_level": 1.7,
+      "effects": [
+        {"kind": "damage", "amount": 12},
+        {"kind": "dot", "status_id": "queimando", "tick_damage": 3, "duration_seconds": 5}
+      ]
+    },
+    {
+      "id": "envenenar",
+      "display_name": "Envenenar",
+      "description": "Aplica veneno diretamente no mago inimigo.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "veneno", "dot"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 7,
+      "damage_type": "veneno",
+      "mana_cost": 10,
+      "cooldown_seconds": 8.0,
+      "target": "player",
+      "base_damage": 6,
+      "damage_per_level": 0.8,
+      "effects": [
+        {"kind": "dot", "status_id": "envenenado", "tick_damage": 4, "duration_seconds": 6}
+      ]
+    },
+    {
+      "id": "congelar",
+      "display_name": "Congelar",
+      "description": "Dano de gelo em area curta e aplica Lento.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "damage", "gelo", "status"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 7,
+      "damage_type": "gelo",
+      "mana_cost": 13,
+      "cooldown_seconds": 7.5,
+      "target": "area",
+      "base_damage": 11,
+      "damage_per_level": 1.6,
+      "effects": [
+        {"kind": "damage", "amount": 11},
+        {"kind": "status", "status_id": "lento", "stacks": 1}
+      ]
+    },
+    {
+      "id": "odio",
+      "display_name": "Odio",
+      "description": "Grande dano de Morte diretamente no mago inimigo.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "damage", "morte", "advanced"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 25,
+      "damage_type": "morte",
+      "mana_cost": 22,
+      "cooldown_seconds": 9.0,
+      "target": "player",
+      "base_damage": 34,
+      "damage_per_level": 3.2,
+      "effects": [
+        {"kind": "damage", "amount": 34}
+      ]
+    },
+    {
+      "id": "dilacerar",
+      "display_name": "Dilacerar",
+      "description": "Dano direto e sangramento no primeiro alvo da fila.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "damage", "sangramento", "dot", "advanced"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 25,
+      "damage_type": "sangramento",
+      "mana_cost": 18,
+      "cooldown_seconds": 7.5,
+      "target": "direct",
+      "base_damage": 20,
+      "damage_per_level": 2.2,
+      "effects": [
+        {"kind": "damage", "amount": 20},
+        {"kind": "dot", "status_id": "sangrando", "tick_damage": 5, "duration_seconds": 5}
+      ]
+    },
+    {
+      "id": "fortificar",
+      "display_name": "Fortificar",
+      "description": "Gera barreira magica e resistencia global temporaria.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "barrier", "defense", "advanced"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 25,
+      "damage_type": "none",
+      "mana_cost": 16,
+      "cooldown_seconds": 12.0,
+      "target": "self",
+      "base_barrier": 30,
+      "barrier_per_level": 3,
+      "effects": [
+        {"kind": "barrier", "amount": 30},
+        {"kind": "resistance", "amount": 0.08, "duration_seconds": 8}
+      ]
+    },
+    {
+      "id": "invocar_demonio",
+      "display_name": "Invocar Demonio",
+      "description": "Invoca um demonio na posicao Tras para causar dano de Fogo.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "summon", "fogo", "advanced"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 25,
+      "damage_type": "fogo",
+      "mana_cost": 20,
+      "cooldown_seconds": 10.0,
+      "target": "self",
+      "summon_id": "demonio",
+      "effects": [
+        {"kind": "summon", "summon_id": "demonio"}
+      ]
+    },
+    {
+      "id": "animar_morto",
+      "display_name": "Animar Morto",
+      "description": "Invoca um morto-vivo na Frente ou Meio para proteger o mago.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "summon", "morte", "advanced"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 25,
+      "damage_type": "morte",
+      "mana_cost": 20,
+      "cooldown_seconds": 10.0,
+      "target": "self",
+      "summon_id": "esqueleto",
+      "alternate_summon_id": "morto_vivo",
+      "effects": [
+        {"kind": "summon", "summon_id": "esqueleto"}
       ]
     }
   ]

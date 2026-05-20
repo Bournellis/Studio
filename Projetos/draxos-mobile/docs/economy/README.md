@@ -22,6 +22,20 @@ Este documento organiza como a economia do DraxosMobile deve ser trabalhada daqu
 - Resetam por season: Battle Pass, ranking/eventos de arena, missoes sazonais e ofertas temporarias.
 - Catch-up futuro usa multiplicador suave de XP/recursos para jogadores abaixo do cap anterior.
 
+### Bonus De Guilda Por Season
+
+Bonus de guilda e parte do plano economico de longo prazo. Na Season 1, uma guilda maximizada deve chegar a **ate 5%** de bonus nas construcoes de guilda. Seasons futuras podem aumentar esse teto sem tornar guilda obrigatoria para competir.
+
+Teto inicial por season:
+
+| Season | Teto de bonus de guilda |
+|---|---:|
+| S1 | 5% |
+| S2 | 7,5% |
+| S3 | 10% |
+
+Esses tetos vivem tambem em `../../tools/economy_simulator/economy_model.v1.json` como `guild_bonus_caps`. O tuning social/economico continua `CALIBRAVEL_ALPHA`.
+
 ## Matriz De Recursos
 
 | Recurso | Funcao | Entradas | Saidas | Persistencia |
@@ -72,6 +86,79 @@ Nao permitido como baseline:
 - poder acima do cap;
 - bypass permanente de matchmaking;
 - recurso infinito sem limite de season/cap.
+
+### Monetizacao E Recompensas v0
+
+O primeiro slice usa monetizacao funcional de alpha: compras reais podem ser substituidas por fluxo de teste, mas os precos, limites e contratos ja seguem a direcao final. Premium acelera e amplia conforto, mas nao libera conteudo de combate exclusivo nem ultrapassa o cap.
+
+Battle Pass v0:
+
+- Cada passe dura 60 dias.
+- Cada season tem 2 passes.
+- Cada passe tem 30 tiers.
+- Trilha Free e Trilha Premium usam os mesmos tiers.
+- Premium adiciona recursos, cosmeticos e conforto; nao vende spell, pet, passiva, varinha exclusiva ou poder acima do cap.
+
+Total por passe de 60 dias:
+
+| Trilha | XP | Almas | Energia | Sangue | Cristais | Ossos | Diamante | Extras |
+|---|---:|---:|---:|---:|---:|---:|---:|---|
+| Free | 4800 | 480 | 480 | 180 | 120 | 60 | 15 | titulos simples e badges |
+| Premium adicional | 9000 | 900 | 900 | 420 | 240 | 120 | 30 | cosmeticos premium e conveniencia |
+
+Recompensas diarias v0:
+
+| Missao | XP | Almas | Energia | Sangue | Cristais | Ossos |
+|---|---:|---:|---:|---:|---:|---:|
+| Primeira vitoria | 120 | 8 | 4 | 2 | 0 | 1 |
+| Segunda vitoria | 100 | 7 | 4 | 2 | 1 | 1 |
+| Terceira vitoria | 80 | 5 | 4 | 2 | 1 | 1 |
+| Coletar base | 25 | 2 | 4 | 1 | 1 | 0 |
+| Construir ou evoluir | 25 | 3 | 4 | 1 | 1 | 0 |
+| **Total diario cheio** | **350** | **25** | **20** | **8** | **4** | **3** |
+
+Recompensas semanais v0:
+
+| Missao | XP | Almas | Energia | Sangue | Cristais | Ossos |
+|---|---:|---:|---:|---:|---:|---:|
+| Participacao de arena | 420 | 36 | 36 | 12 | 6 | 3 |
+| Dominio de arena | 360 | 36 | 24 | 8 | 4 | 2 |
+| Rotina do refugio | 200 | 12 | 24 | 8 | 4 | 2 |
+| **Total semanal cheio** | **980** | **84** | **84** | **28** | **14** | **7** |
+
+Diamante v0:
+
+| Uso | Preco |
+|---|---:|
+| Segundo slot de construcao | 500 Diamantes |
+| Aceleracao de construcao | 1 Diamante por 10 min restantes |
+| Pacote pequeno de Energia | 80 Diamantes |
+| Pacote pequeno de recursos mistos | 120 Diamantes |
+| Cosmetico simples | 150-300 Diamantes |
+| Cosmetico premium | 500-800 Diamantes |
+
+Rewarded ads v0:
+
+- Alpha nao usa anuncios reais.
+- Contrato fica preparado para beta com rewarded ads opcionais.
+- Sem anuncio forcado.
+- Limite futuro: 3 rewarded ads por dia.
+- Recompensas futuras permitidas por ad: Energia leve, bau leve de recurso comum ou pequena aceleracao.
+- Nao existe pacote de remover anuncios no alpha, pois nao ha anuncio obrigatorio.
+
+Cosmeticos v0:
+
+- Moldura de perfil.
+- Titulo.
+- Banner do Refugio.
+- Skin visual da Varinha.
+- Badge de chat.
+
+Conquistas v0:
+
+- Conquistas sao marcos unicos e permanentes.
+- Recompensas podem incluir titulo, moldura, pequenos Diamantes e recursos leves.
+- Marcos iniciais: primeira batalha, primeira vitoria, 10/50/100 vitorias, levels 3/7/10/15/25/40, primeira construcao, primeira estrutura level 10, entrar em guilda e enviar primeira ajuda.
 
 ## Como Ler O Simulador
 

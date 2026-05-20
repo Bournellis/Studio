@@ -5,7 +5,7 @@
 - Active Surface: `Track 00 - First Slice Foundation`
 - Active Track: `Track 00 - First Slice Foundation`
 - Active Track Status: `OPEN`
-- Current Operational Baseline: `T00-P01, T00-P02A, T00-P02B, T00-P03, T00-P04, T00-P05, T00-P06, T00-P07 e T00-P08 concluidos; T00-P09 em andamento. Projeto Godot 4.6.2 tem boot scene, GUT 9.6.0, validate integrado, autoloads UiTokens/AssetIds/ContentLibrary/SessionStore/SupabaseClient, pipeline data/definitions -> data/generated/draxos_mobile_catalog.tres, fixtures MVP_ONLY, cliente de sessao guest via HTTPRequest e replay placeholder de battle_log_v1. Supabase local esta configurado no layout oficial supabase/, db reset passa, healthcheck responde pelo gateway local, conta guest MVP cria/recupera estado server-authoritative, cliente valida Auth anonimo -> account/guest -> account/state, battle/request server-authoritative grava log/recompensa idempotente e Godot consome o log sem calcular resultado. Design do primeiro slice ja definiu cap 40, levels permanentes, unlocks de slots/pet/passiva, matchmaking por poder, bots iniciais, telemetria minima, schema de build, UX alpha com Refugio e baseline calibravel de economia/simulador de seasons.`
+- Current Operational Baseline: `T00-P01, T00-P02A, T00-P02B, T00-P03, T00-P04, T00-P05, T00-P06, T00-P07, T00-P08 e T00-P09 concluidos; T00-P10 em andamento com v0 executavel. Projeto Godot 4.6.2 tem boot scene, GUT 9.6.0, validate integrado, autoloads UiTokens/AssetIds/ContentLibrary/SessionStore/SupabaseClient, pipeline data/definitions -> data/generated/draxos_mobile_catalog.tres, conteudo real inicial, cliente de sessao guest via HTTPRequest e replay placeholder de battle_log_v1. Supabase local esta configurado no layout oficial supabase/, db reset passa, healthcheck responde pelo gateway local, conta guest MVP cria/recupera estado server-authoritative, battle/request server-authoritative grava log/recompensa idempotente, Godot consome o log sem calcular resultado e FIRST_SLICE_SIM gera replay deterministico v0 com varinha, mana, spells diretas, barreira, pet, summons, anti-stall e recompensa XP/Almas/Energia/Sangue/Ossos. Design do primeiro slice ja definiu cap 40, levels permanentes, unlocks de slots/pet/passiva, base v0 implementavel, missoes/onboarding v0, monetizacao/recompensas v0, social/ranking/chat v0, combate real/simulador v0, matchmaking por poder, bots iniciais, telemetria minima, schema de build, UX alpha com Refugio e baseline calibravel de economia/simulador de seasons.`
 
 ---
 
@@ -14,14 +14,14 @@
 | Area | Estado | Observacao |
 |---|---|---|
 | MVP tecnico minimo | Completo | Loop guest -> battle/request -> replay placeholder -> latest/state validado; cliente nao calcula resultado, recompensa ou progressao |
-| Primeiro slice completo | Escopo definido | Inclui PVP autobattler, base manager, social, ranking, bots, economia, Battle Pass/Diamante |
-| Design pendente | T00-P09 em andamento | DMOB-D001, D002, D016, D017, D024, D025 e D026 resolvidos; D006-D008, D011-D012 agora calibraveis via simulador |
+| Primeiro slice completo | Em implementacao | T00-P10 iniciado com conteudo real inicial e simulador server-authoritative v0 |
+| Design pendente | T00-P09 completo | DMOB-D001-D005, D008-D028 resolvidos; nao ha pendencia `PRIMEIRO_SLICE` bloqueando T00-P10. D006-D007 e D029-D032 seguem calibraveis via simulador/playtest |
 | Economia e seasons | Baseline calibravel | `../docs/economy/README.md`, JSON versionado e gerador Deno/TypeScript criados; outputs em `../docs/economy/generated/` |
 | Reuso entre projetos | Documentado | Fonte viva: `../docs/reuse-map.md`; estrategia conservadora |
 | Contratos tecnicos | Definidos | Fonte inicial: `../docs/contracts/` |
 | Godot project | MVP tecnico pronto | Boot minimo, autoloads, `.gutconfig.json`, content generator, catalogo gerado, `SessionStore`, `SupabaseClient`, `BattleLogPresenter` e GUT |
-| Supabase project | Conta guest + battle MVP prontos | Layout `supabase/`, migrations MVP, Auth anonimo, healthcheck, `account/*` e `battle/*` configurados |
-| Validacao | Verde para bootstrap + P08 | Godot validate + GUT passam; Deno check/lint passam; `supabase db reset` passa; healthcheck, conta guest, battle request, replay placeholder, idempotencia, bloqueio de escrita direta e smokes client-server passam no gateway local |
+| Supabase project | Conta guest + battle MVP + first-slice sim v0 prontos | Layout `supabase/`, migrations MVP, Auth anonimo, healthcheck, `account/*`, `battle/*`, seeds `FIRST_SLICE` e simulador compartilhado configurados |
+| Validacao | Verde para bootstrap + P10 v0 local | Godot validate + GUT passam; Deno check/lint passam; teste deterministico do simulador passa; smokes P06-P08 permanecem baseline runtime |
 
 ---
 
@@ -65,7 +65,7 @@
 ## Implementacao Atual
 
 - `project.godot` registra `UiTokens`, `AssetIds`, `ContentLibrary`, `SessionStore` e `SupabaseClient`.
-- `data/definitions/` contem os 9 arquivos esperados pelo contrato.
+- `data/definitions/` contem os 9 arquivos esperados pelo contrato com conteudo inicial de primeiro slice.
 - `tools/content_generator.gd` gera `data/generated/draxos_mobile_catalog.tres`.
 - `tools/validate.gd` gera conteudo, valida contrato client, valida recursos/autoloads e roda GUT.
 - `online/session_store.gd` guarda token/cache local nao autoritativo, valida expiracao e preserva snapshots de estado recebido do servidor.
@@ -76,8 +76,10 @@
 - `supabase/migrations/202605190001_mvp_foundation.sql` e `supabase/functions/healthcheck/` sao a fonte de execucao local da Supabase CLI.
 - `supabase/migrations/202605190002_guest_account_mvp.sql` cria convite `ALPHA-TEST`, RPC `create_guest_account` e fixture inicial de `players/resources/builds`.
 - `supabase/migrations/202605200001_battle_request_mvp.sql` cria RPC `request_mvp_battle`, aplica recompensa `MVP_ONLY` e grava `battle_log_v1`.
+- `supabase/migrations/202605200002_first_slice_simulator_seed.sql` cria seeds de bots `FIRST_SLICE` para matchmaking/simulacao v0.
 - `supabase/functions/account/` implementa `POST /account/guest` e `GET /account/state` com JWT anonimo, service role interno e idempotencia por `request_id`.
-- `supabase/functions/battle/` implementa `POST /battle/request` e `GET /battle/latest` com JWT anonimo, service role interno e idempotencia por `request_id`.
+- `supabase/functions/battle/` implementa `POST /battle/request` e `GET /battle/latest` com JWT anonimo, service role interno, idempotencia por `request_id`, modo `MVP_ONLY` via RPC e modo `FIRST_SLICE_SIM` via simulador TypeScript.
+- `supabase/functions/_shared/battle_simulator.ts` e `server/functions/_shared/battle_simulator.ts` simulam batalha v0 com varinha, mana, spells diretas, barreira, pet, summons, anti-stall e recompensa server-authoritative.
 - `server/schema/` e `server/functions/` preservam a organizacao backend espelhada/documental durante o bootstrap.
 
 ---
@@ -108,6 +110,7 @@ Ultimo resultado local:
 
 - `tools/validate.gd`: passou.
 - GUT integrado: `14/14` testes, `52` asserts.
+- `npx -y deno test server/tests/first_slice_simulator_test.ts`: passou.
 
 Server standalone:
 
@@ -117,6 +120,7 @@ npx -y deno task check
 npx -y deno task lint
 npx -y deno run --allow-net healthcheck/index.ts
 cd D:\Estudio\Projetos\draxos-mobile
+npx -y deno test server/tests/first_slice_simulator_test.ts
 npx -y deno run --allow-net --allow-env server/tests/battle_request_smoke.ts
 ```
 
@@ -140,7 +144,7 @@ Supabase runtime validado localmente:
 
 ## Next
 
-1. Continuar `T00-P09 - Gate De Design Do Primeiro Slice`.
-2. Resolver ou adiar explicitamente pendencias restantes que bloqueiam conteudo real: base/economia, missoes/onboarding, Battle Pass/Diamante, guilda/ajudas, ranking, summons/maestria/stats/varinha, cosmeticos, chat, anuncios e conquistas.
-3. Preparar a transicao do MVP tecnico para conteudo real/simulador completo.
-4. Usar `tools/economy_simulator/generate.ts` para calibrar os proximos valores de base/economia antes de implementar custos/recompensas reais.
+1. Continuar `T00-P10 - Conteudo Real E Simulador Completo`.
+2. Implementar DoTs, status/resistencias e passivas funcionais no simulador.
+3. Rodar smoke local de `battle/request` com `FIRST_SLICE_SIM` no Supabase runtime, validando idempotencia e aplicacao de recompensas.
+4. Atualizar replay visual do cliente para eventos ricos do primeiro slice.

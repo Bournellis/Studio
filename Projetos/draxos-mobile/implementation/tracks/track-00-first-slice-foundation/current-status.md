@@ -1,7 +1,7 @@
 # Track 00 - First Slice Foundation
 
 - Last Updated: `2026-05-20`
-- Track Status: `OPEN - T00-P01, T00-P02A, T00-P02B, T00-P03, T00-P04, T00-P05, T00-P06, T00-P07 e T00-P08 concluidos; T00-P09 em andamento`
+- Track Status: `OPEN - T00-P01 a T00-P09 concluidos; T00-P10 em andamento com v0 executavel`
 - Goal: montar o primeiro slice completo do DraxosMobile, iniciando pelo MVP tecnico minimo
 
 ---
@@ -41,8 +41,8 @@ Detalhes em `scope.md` e `mvp-technical-definition.md`.
 | T00-P06 - Cliente Account/Session Shell | Completo | HTTP client, `SessionStore`, token/cache local nao autoritativo e tela minima de conta |
 | T00-P07 - Battle Request MVP | Completo | battle fixture server-authoritative, `battle_log_v1`, recompensa e idempotencia |
 | T00-P08 - Battle Replay Client MVP | Completo | loop guest -> batalha -> resultado com replay placeholder e skip |
-| T00-P09 - Gate De Design Do Primeiro Slice | Em andamento | DMOB-D001, D002, D016, D017, D024, D025 e D026 resolvidos; economia/season baseline e simulador criados |
-| T00-P10 - Conteudo Real E Simulador Completo | Pendente | conteudo real e simulador completo server-side |
+| T00-P09 - Gate De Design Do Primeiro Slice | Completo | DMOB-D001-D005 e D008-D028 resolvidos; economia/season baseline, simulador, base v0, missoes/onboarding v0, monetizacao/recompensas v0, social/ranking/chat v0 e combate real/simulador v0 criados |
+| T00-P10 - Conteudo Real E Simulador Completo | Em andamento | conteudo real inicial, seeds de bots, simulador deterministic v0 e endpoint `FIRST_SLICE_SIM` |
 | T00-P11 - Base Manager E Economia | Pendente | estruturas, recursos, ledger e coleta offline |
 | T00-P12 - Social, Matchmaking, Bots E Ranking | Pendente | amigos, guilda, bots, matchmaking e ranking |
 | T00-P13 - Monetizacao Funcional E Alpha | Pendente | battle pass, diamante, rewards e exports smoke |
@@ -68,7 +68,8 @@ Server/Supabase local:
 
 - `npx -y deno task check`: passou em `supabase/functions` e `server/functions`.
 - `npx -y deno task lint`: passou em `supabase/functions` e `server/functions`.
-- `npx -y supabase db reset`: passou aplicando `202605190001_mvp_foundation.sql` e `202605190002_guest_account_mvp.sql`.
+- `npx -y deno test server/tests/first_slice_simulator_test.ts`: passou.
+- Ultimo `npx -y supabase db reset` registrado: passou ate as migrations MVP; a migration `202605200002_first_slice_simulator_seed.sql` ainda precisa de reset/smoke runtime para validacao integrada.
 - `GET /functions/v1/healthcheck`: passou.
 - `POST /functions/v1/account/guest`: convite invalido retorna `INVALID_INVITE`; convite valido cria conta; repeticao do mesmo `request_id` retorna o mesmo player.
 - `GET /functions/v1/account/state`: passou e recuperou player/resources/build.
@@ -78,7 +79,7 @@ Server/Supabase local:
 
 ## Next
 
-1. Continuar `T00-P09 - Gate De Design Do Primeiro Slice`.
-2. Usar `docs/economy/README.md` e `tools/economy_simulator/` para calibrar valores de base/economia, missoes/onboarding e monetizacao antes de implementar custos/recompensas reais.
-3. Resolver ou adiar as pendencias `PRIMEIRO_SLICE` restantes antes de iniciar `T00-P10`: guilda/ajudas, ranking, summons/maestria/stats/varinha, cosmeticos, chat, anuncios e conquistas.
-4. Quando nao houver pendencia `PRIMEIRO_SLICE` bloqueante, iniciar `T00-P10 - Conteudo Real E Simulador Completo`.
+1. Continuar `T00-P10 - Conteudo Real E Simulador Completo`.
+2. Adicionar DoTs, status/resistencias e passivas funcionais ao simulador.
+3. Rodar smoke local do endpoint `FIRST_SLICE_SIM` no Supabase runtime e validar idempotencia/recompensas.
+4. Atualizar replay visual do cliente para tratar eventos ricos alem do placeholder.

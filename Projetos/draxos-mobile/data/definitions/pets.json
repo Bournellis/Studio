@@ -5,15 +5,52 @@
     {
       "id": "familiar_cinzento",
       "display_name": "Familiar Cinzento",
-      "description": "Pet MVP_ONLY para validar presenca de pet sem definir tuning final.",
-      "version": 1,
+      "description": "Pet inicial de dano magico para validar o slot de pet do primeiro slice.",
+      "version": 2,
       "enabled": true,
-      "tags": ["MVP_ONLY", "pet", "astral"],
-      "mode": "MVP_ONLY",
-      "damage_type": "astral",
+      "tags": ["FIRST_SLICE", "pet", "magico"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 15,
+      "damage_type": "magico",
+      "base_damage": 8,
+      "damage_per_level": 1.2,
       "cadence_seconds": 4.0,
       "effects": [
-        {"kind": "damage", "amount": 4}
+        {"kind": "damage", "amount": 8}
+      ]
+    },
+    {
+      "id": "brasido",
+      "display_name": "Brasido",
+      "description": "Pet de Fogo focado em dano sustentado.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "pet", "fogo"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 15,
+      "damage_type": "fogo",
+      "base_damage": 7,
+      "damage_per_level": 1.1,
+      "cadence_seconds": 3.5,
+      "effects": [
+        {"kind": "damage", "amount": 7}
+      ]
+    },
+    {
+      "id": "gelum",
+      "display_name": "Gelum",
+      "description": "Pet de Gelo com cadencia lenta e impacto maior.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "pet", "gelo"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 15,
+      "damage_type": "gelo",
+      "base_damage": 10,
+      "damage_per_level": 1.3,
+      "cadence_seconds": 4.8,
+      "effects": [
+        {"kind": "damage", "amount": 10}
       ]
     }
   ]

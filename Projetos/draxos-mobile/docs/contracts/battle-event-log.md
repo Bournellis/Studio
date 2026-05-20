@@ -7,6 +7,8 @@ O log de batalha e a unica fonte que o cliente usa para animar uma batalha. O cl
 
 Status MVP: `battle/request` server-authoritative implementado em T00-P07 com bot `mvp_training_bot`, seed deterministica e eventos `battle_log_v1`.
 
+Status primeiro slice v0: `FIRST_SLICE_SIM` implementado em T00-P10 com simulador TypeScript deterministico, bot `bot_summoner_01`, varinha, mana, spells diretas, barreiras, pets, summons, anti-stall e recompensas `FIRST_SLICE_SIM`.
+
 ## Envelope
 
 ```json
@@ -106,15 +108,104 @@ Todo evento possui:
 }
 ```
 
-## Eventos Do Primeiro Slice
+## Eventos Do Primeiro Slice V0
 
-O contrato deve aceitar estes tipos quando o simulador completo entrar:
+### `mana_change`
+
+```json
+{
+  "t": 0.5,
+  "seq": 4,
+  "type": "mana_change",
+  "source": "player",
+  "target": "player",
+  "mana_after": 14
+}
+```
+
+### `summon_spawn`
+
+```json
+{
+  "t": 0.5,
+  "seq": 5,
+  "type": "summon_spawn",
+  "source": "player",
+  "target": "player_demonio",
+  "spell_id": "invocar_demonio",
+  "hp": 50,
+  "damage_type": "fogo"
+}
+```
+
+### `summon_attack`
+
+```json
+{
+  "t": 1.0,
+  "seq": 8,
+  "type": "summon_attack",
+  "source": "player_demonio",
+  "target": "opponent",
+  "damage": 7,
+  "damage_type": "fogo",
+  "hp_after": 150
+}
+```
+
+### `pet_attack`
+
+```json
+{
+  "t": 3.0,
+  "seq": 16,
+  "type": "pet_attack",
+  "source": "player",
+  "target": "opponent",
+  "pet_id": "familiar_cinzento",
+  "damage": 20,
+  "damage_type": "magico",
+  "hp_after": 93
+}
+```
+
+### `barrier_gain`
+
+```json
+{
+  "t": 2.0,
+  "seq": 12,
+  "type": "barrier_gain",
+  "source": "player",
+  "target": "player",
+  "spell_id": "fortificar",
+  "amount": 48,
+  "hp_after": 120
+}
+```
+
+### `anti_stall`
+
+```json
+{
+  "t": 30.0,
+  "seq": 44,
+  "type": "anti_stall",
+  "source": "system",
+  "target": "none",
+  "player_hp_after": 40,
+  "opponent_hp_after": 35
+}
+```
+
+## Eventos Do Primeiro Slice Futuro
+
+O contrato deve aceitar estes tipos quando o simulador completo expandir alem do v0:
 
 - `dot_apply`
 - `dot_tick`
 - `status_apply`
 - `status_expire`
-- `barrier_gain`
 - `barrier_absorb`
 - `resistance_apply`
 - `summon_spawn`
