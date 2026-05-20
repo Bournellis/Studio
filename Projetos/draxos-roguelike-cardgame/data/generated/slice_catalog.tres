@@ -2392,7 +2392,7 @@ encounters = Array[Dictionary]([{
 "enemy_deck": ["enemy_terra_elemental_pedra", "enemy_terra_golem_terra", "enemy_terra_elemental_bruto", "enemy_terra_rocha_viva", "enemy_terra_verme_terra", "enemy_terra_elemental_areia", "enemy_terra_guerreiro_terra", "enemy_terra_elemental_agil"],
 "enemy_director": "player_like",
 "enemy_hand_count": 3.0,
-"enemy_health": 15.0,
+"enemy_health": 20.0,
 "enemy_mana_per_turn": 3.0,
 "enemy_slots_count": 3.0,
 "id": "duelo_inicial",
@@ -2409,6 +2409,9 @@ encounters = Array[Dictionary]([{
 }, {
 "card_id": "enemy_terra_golem_terra",
 "slot": 1.0
+}, {
+"card_id": "enemy_terra_elemental_agil",
+"slot": 2.0
 }],
 "tier": "medium"
 }, {
@@ -2454,18 +2457,18 @@ encounters = Array[Dictionary]([{
 }]]
 }, {
 "board_format": "padrao",
-"boss_health": 30.0,
+"boss_health": 22.0,
 "boss_phase_hooks": [{
 "action": "buff_all_enemies",
 "description": "Fase 2: Chao Vivo engrossa a linha inimiga.",
 "health": 1.0,
-"hp_below": 20.0,
-"id": "terra_hp20",
+"hp_below": 14.0,
+"id": "terra_hp14",
 "trigger": "hp_below"
 }, {
 "action": "summon_card",
-"card_id": "enemy_terra_elemental_granito",
-"description": "Fase 3: o Primordial ergue um Granito resistente.",
+"card_id": "enemy_terra_elemental_tita",
+"description": "Fase 3: o Primordial ergue um Tita pesado.",
 "id": "terra_turn5",
 "trigger": "turn",
 "turn": 5.0
@@ -2473,7 +2476,7 @@ encounters = Array[Dictionary]([{
 "boss_summons": [{
 "card_id": "enemy_terra_elemental_tita"
 }, {
-"card_id": "enemy_terra_elemental_granito"
+"card_id": "enemy_terra_elemental_pedra"
 }, {
 "card_id": "enemy_terra_verme_terra"
 }],
@@ -2499,12 +2502,6 @@ encounters = Array[Dictionary]([{
 }, {
 "card_id": "enemy_terra_golem_terra",
 "slot": 1.0
-}, {
-"card_id": "enemy_terra_rocha_viva",
-"slot": 2.0
-}, {
-"card_id": "enemy_terra_elemental_pedra",
-"slot": 3.0
 }],
 "tier": "boss"
 }, {
