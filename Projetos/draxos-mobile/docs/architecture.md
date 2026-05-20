@@ -28,6 +28,7 @@
 - `T00-P06` completo: cliente Godot com `SessionStore`, `SupabaseClient`, Auth anonimo, `account/guest`, `account/state`, cache local nao autoritativo e erro offline controlado.
 - `T00-P07` completo: `battle/request`, `battle/latest`, RPC `request_mvp_battle`, log `battle_log_v1`, recompensa `MVP_ONLY` e idempotencia server-side.
 - `T00-P08` completo: replay placeholder no Godot para `battle_log_v1`, timeline ordenada por `t`/`seq`, skip e tolerancia a eventos desconhecidos.
+- `T00-P10` completo: `FIRST_SLICE_SIM` server-authoritative com DoTs, status, resistencias, passivas, pets, summons, anti-stall, bots de variacao, smoke runtime Supabase e replay rico no cliente.
 
 ---
 
@@ -201,7 +202,7 @@ MVP client implementado em `T00-P08`:
 
 - `Solicitar batalha`: envia intencao para `battle/request` e recebe `battle_log_v1`.
 - `Ver resultado`: busca `battle/latest` ou pula o replay atual.
-- Replay placeholder: lista eventos ordenados por `t`/`seq`; eventos desconhecidos viram linha de fallback.
+- Replay rico T00-P10: lista eventos ordenados por `t`/`seq`; DoTs, status, barreiras, resistencias, summons, pets, cooldowns, cura e anti-stall possuem linhas dedicadas; eventos desconhecidos continuam virando fallback.
 - Cliente nao recalcula dano, HP, vencedor, XP, Ossos ou recompensa.
 
 ---

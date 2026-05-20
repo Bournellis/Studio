@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
 - Ultima atualizacao: `2026-05-20`
-- Status: contrato MVP com `account/guest`, `account/state`, `battle/request` e `battle/latest` implementados localmente; `battle/request` tambem aceita `FIRST_SLICE_SIM` em v0 server-authoritative
+- Status: contrato com `account/guest`, `account/state`, `battle/request` e `battle/latest` implementados localmente; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -142,7 +142,7 @@ Erros minimos: `UNAUTHENTICATED`, `PLAYER_NOT_FOUND`, `ACCOUNT_STATE_INCOMPLETE`
 
 Solicita batalha server-authoritative.
 
-Status: **implementado em T00-P07** para `MVP_ONLY`; **v0 implementado em T00-P10** para `FIRST_SLICE_SIM`.
+Status: **implementado em T00-P07** para `MVP_ONLY`; **completo em T00-P10** para `FIRST_SLICE_SIM`.
 
 Request MVP:
 
@@ -158,9 +158,12 @@ Request primeiro slice v0:
 ```json
 {
   "request_id": "uuid",
-  "mode": "FIRST_SLICE_SIM"
+  "mode": "FIRST_SLICE_SIM",
+  "opponent_bot_id": "bot_effect_trainer_01"
 }
 ```
+
+`opponent_bot_id` e opcional. Quando ausente, o servidor usa `bot_effect_trainer_01` como bot default do primeiro slice para garantir replay rico contra conta guest inicial.
 
 Response MVP:
 
@@ -202,29 +205,29 @@ Response primeiro slice v0:
     "duration": 6.7,
     "participants": {
       "player": { "id": "uuid", "display_name": "Draxos" },
-      "opponent": { "id": "bot_summoner_01", "display_name": "Invocador Abissal", "is_bot": true }
+      "opponent": { "id": "bot_effect_trainer_01", "display_name": "Treinador de Efeitos", "is_bot": true }
     },
     "result": {
-      "winner": "player",
+      "winner": "opponent",
       "reason": "combatant_defeated"
     },
     "events": []
   },
   "rewards": {
     "type": "FIRST_SLICE_SIM",
-    "reward_id": "first_slice_battle_win",
+    "reward_id": "first_slice_battle_loss",
     "resources": {
-      "xp": 50,
-      "almas": 4,
-      "energia": 2,
-      "sangue": 1,
-      "ossos": 0.2
+      "xp": 10,
+      "almas": 0.8,
+      "energia": 0.4,
+      "sangue": 0.2,
+      "ossos": 0.04
     }
   }
 }
 ```
 
-Erros minimos: `UNAUTHENTICATED`, `PLAYER_NOT_FOUND`, `BATTLE_RATE_LIMITED`, `SIMULATION_FAILED`.
+Erros minimos: `UNAUTHENTICATED`, `PLAYER_NOT_FOUND`, `INVALID_BOT_ID`, `BATTLE_RATE_LIMITED`, `SIMULATION_FAILED`.
 
 Idempotencia: repetir o mesmo `request_id` retorna o mesmo `battle_id`, `seed`, log e recompensa, sem reaplicar XP/Ossos ou recursos do primeiro slice.
 

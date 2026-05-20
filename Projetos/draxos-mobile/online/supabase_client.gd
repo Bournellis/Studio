@@ -57,15 +57,18 @@ func fetch_account_state(access_token: String) -> Dictionary:
 		{}
 	)
 
-func request_battle(request_id: String, access_token: String, mode: String = ProjectInfo.MVP_MODE) -> Dictionary:
+func request_battle(request_id: String, access_token: String, mode: String = ProjectInfo.DEFAULT_BATTLE_MODE, opponent_bot_id: String = "") -> Dictionary:
+	var body := {
+		"request_id": request_id,
+		"mode": mode,
+	}
+	if opponent_bot_id.strip_edges() != "":
+		body["opponent_bot_id"] = opponent_bot_id.strip_edges()
 	return await _send_json(
 		function_url("battle/request"),
 		HTTPClient.METHOD_POST,
 		_auth_headers(access_token),
-		{
-			"request_id": request_id,
-			"mode": mode,
-		}
+		body
 	)
 
 func fetch_latest_battle(access_token: String) -> Dictionary:

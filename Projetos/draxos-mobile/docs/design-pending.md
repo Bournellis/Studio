@@ -36,7 +36,7 @@ Nao ha pendencia de game design bloqueando a fundacao client e as fixtures tecni
 
 T00-P03 e T00-P04 foram implementados sem resolver balanceamento final: autoloads, pipeline de conteudo e `mvp_training_battle` existem apenas para validar arquitetura.
 
-O MVP tecnico ja implementou conta guest server-authoritative, cliente de sessao, `battle/request`, `battle/latest` e replay placeholder ate T00-P08. As decisoes operacionais de runtime Supabase, guest auth e escrita service-role-only ja estao tomadas.
+O MVP tecnico ja implementou conta guest server-authoritative, cliente de sessao, `battle/request`, `battle/latest`, replay placeholder ate T00-P08 e replay rico `FIRST_SLICE_SIM` em T00-P10. As decisoes operacionais de runtime Supabase, guest auth e escrita service-role-only ja estao tomadas.
 
 ## Pendencias Ativas
 

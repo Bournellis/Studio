@@ -74,8 +74,9 @@ interface IdempotencyRow {
   response_payload: unknown;
 }
 
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{12}$/i;
-const FIRST_SLICE_BOT_ID = "bot_summoner_01";
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const DEFAULT_FIRST_SLICE_BOT_ID = "bot_effect_trainer_01";
+const BOT_ID_PATTERN = /^[a-z0-9_]+$/;
 
 Deno.serve(async (request: Request) => {
   if (request.method === "OPTIONS") {
@@ -146,7 +147,12 @@ async function handleRequest(
     return await handleMvpRequest(auth, config, requestId, mode);
   }
 
-  return await handleFirstSliceRequest(auth, config, requestId);
+  const opponentBotId = stringField(body, "opponent_bot_id") || DEFAULT_FIRST_SLICE_BOT_ID;
+  if (!BOT_ID_PATTERN.test(opponentBotId)) {
+    return errorResponse("INVALID_BOT_ID", "opponent_bot_id is invalid.", 400);
+  }
+
+  return await handleFirstSliceRequest(auth, config, requestId, opponentBotId);
 }
 
 async function handleMvpRequest(
@@ -176,6 +182,7 @@ async function handleFirstSliceRequest(
   auth: AuthContext,
   config: EdgeConfig,
   requestId: string,
+  opponentBotId: string,
 ): Promise<Response> {
   const playerState = await loadPlayerState(auth, config);
   if (playerState.error !== null) {
@@ -204,7 +211,9 @@ async function handleFirstSliceRequest(
 
   const botResult = await restRequest<BotBuildRow[]>(
     config,
-    `bot_builds?id=eq.${FIRST_SLICE_BOT_ID}&is_active=eq.true&select=id,power,power_band,build_data,is_active&limit=1`,
+    `bot_builds?id=eq.${
+      encodeURIComponent(opponentBotId)
+    }&is_active=eq.true&select=id,power,power_band,build_data,is_active&limit=1`,
     { method: "GET" },
   );
   if (botResult.error !== null) {

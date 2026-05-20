@@ -99,6 +99,44 @@ values
 	true
 ),
 (
+	'bot_effect_trainer_01',
+	180,
+	'band_002',
+	'{
+		"display_name": "Treinador de Efeitos",
+		"level": 6,
+		"weapon_id": "varinha_magica",
+		"weapon_level": 1,
+		"weapon_quality": "inicial",
+		"spell_ids": ["acender", "congelar"],
+		"spell_levels": {"acender": 1, "congelar": 1},
+		"passive_id": "escudo",
+		"passive_level": 1,
+		"pet_id": "familiar_cinzento",
+		"pet_level": 1
+	}'::jsonb,
+	true
+),
+(
+	'bot_summon_trainer_01',
+	210,
+	'band_002',
+	'{
+		"display_name": "Treinador de Invocacao",
+		"level": 6,
+		"weapon_id": "varinha_magica",
+		"weapon_level": 1,
+		"weapon_quality": "inicial",
+		"spell_ids": ["animar_morto", "congelar"],
+		"spell_levels": {"animar_morto": 1, "congelar": 1},
+		"passive_id": "",
+		"passive_level": 0,
+		"pet_id": "familiar_cinzento",
+		"pet_level": 1
+	}'::jsonb,
+	true
+),
+(
 	'bot_summoner_01',
 	2450,
 	'band_005',

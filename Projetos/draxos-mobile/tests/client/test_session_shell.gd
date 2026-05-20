@@ -75,6 +75,38 @@ func test_battle_log_presenter_sorts_formats_and_tolerates_unknown_events() -> v
 	assert_true(BattleLogPresenterScript.has_unknown_events(battle_log))
 	assert_string_contains(BattleLogPresenterScript.format_event(events[2]), "Evento desconhecido")
 
+func test_battle_log_presenter_formats_first_slice_rich_events() -> void:
+	var battle_log := _battle_log_fixture()
+	battle_log["mode"] = ProjectInfo.FIRST_SLICE_MODE
+	battle_log["events"] = [
+		{"t": 0.0, "seq": 1, "type": "passive_apply", "source": "player", "target": "player", "passive_id": "vampirismo", "passive_level": 10},
+		{"t": 0.5, "seq": 2, "type": "mana_change", "source": "player", "target": "player", "mana_after": 12},
+		{"t": 0.5, "seq": 3, "type": "cooldown_start", "source": "player", "target": "player", "spell_id": "acender", "ready_at": 7.5},
+		{"t": 0.5, "seq": 4, "type": "dot_apply", "source": "player", "target": "opponent", "status_id": "queimando", "stacks": 1},
+		{"t": 1.5, "seq": 5, "type": "dot_tick", "source": "player", "target": "opponent", "status_id": "queimando", "damage": 6, "damage_type": "fogo", "hp_after": 94},
+		{"t": 2.0, "seq": 6, "type": "status_apply", "source": "opponent", "target": "player", "status_id": "lento", "stacks": 1},
+		{"t": 2.5, "seq": 7, "type": "barrier_gain", "source": "player", "target": "player", "amount": 30, "barrier_after": 30},
+		{"t": 3.0, "seq": 8, "type": "barrier_absorb", "source": "opponent", "target": "player", "amount": 12, "damage_type": "gelo", "barrier_after": 18},
+		{"t": 3.5, "seq": 9, "type": "resistance_apply", "source": "player", "target": "player", "amount": 0.08},
+		{"t": 4.0, "seq": 10, "type": "summon_spawn", "source": "opponent", "target": "opponent_esqueleto", "hp": 60},
+		{"t": 4.5, "seq": 11, "type": "summon_attack", "source": "opponent_esqueleto", "target": "player", "damage": 5, "damage_type": "morte", "hp_after": 80},
+		{"t": 5.0, "seq": 12, "type": "pet_attack", "source": "player", "target": "opponent", "pet_id": "brasido", "damage": 10, "damage_type": "fogo", "hp_after": 84},
+		{"t": 5.5, "seq": 13, "type": "heal", "source": "player", "target": "player", "amount": 2, "hp_after": 82},
+		{"t": 6.0, "seq": 14, "type": "status_expire", "source": "player", "target": "opponent", "status_id": "queimando"},
+		{"t": 7.5, "seq": 15, "type": "cooldown_ready", "source": "player", "target": "player", "spell_id": "acender"},
+		{"t": 30.0, "seq": 16, "type": "anti_stall", "source": "system", "target": "none", "player_hp_after": 50, "opponent_hp_after": 48},
+	]
+	assert_false(BattleLogPresenterScript.has_unknown_events(battle_log))
+	var lines: PackedStringArray = PackedStringArray()
+	for event: Dictionary in BattleLogPresenterScript.sorted_events(battle_log):
+		lines.append(BattleLogPresenterScript.format_event(event))
+	var formatted := "\n".join(lines)
+	assert_string_contains(formatted, "aplicou queimando")
+	assert_string_contains(formatted, "Barreira")
+	assert_string_contains(formatted, "invocou")
+	assert_string_contains(formatted, "Anti-stall")
+	assert_string_contains(BattleLogPresenterScript.format_summary(battle_log, {"type": "FIRST_SLICE_SIM", "resources": {"xp": 50}}), "FIRST_SLICE_SIM")
+
 func _battle_log_fixture() -> Dictionary:
 	return {
 		"schema_version": "battle_log_v1",

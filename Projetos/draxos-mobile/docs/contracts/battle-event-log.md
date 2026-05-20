@@ -7,7 +7,7 @@ O log de batalha e a unica fonte que o cliente usa para animar uma batalha. O cl
 
 Status MVP: `battle/request` server-authoritative implementado em T00-P07 com bot `mvp_training_bot`, seed deterministica e eventos `battle_log_v1`.
 
-Status primeiro slice v0: `FIRST_SLICE_SIM` implementado em T00-P10 com simulador TypeScript deterministico, bot `bot_summoner_01`, varinha, mana, spells diretas, barreiras, pets, summons, anti-stall e recompensas `FIRST_SLICE_SIM`.
+Status primeiro slice: `FIRST_SLICE_SIM` completo em T00-P10 com simulador TypeScript deterministico, bots de variacao, varinha, mana, spells diretas, DoTs, status, resistencias, barreiras, pets, passivas, summons, cooldowns, anti-stall e recompensas `FIRST_SLICE_SIM`.
 
 ## Envelope
 
@@ -108,7 +108,21 @@ Todo evento possui:
 }
 ```
 
-## Eventos Do Primeiro Slice V0
+## Eventos Do Primeiro Slice
+
+### `passive_apply`
+
+```json
+{
+  "t": 0.0,
+  "seq": 2,
+  "type": "passive_apply",
+  "source": "player",
+  "target": "player",
+  "passive_id": "vampirismo",
+  "passive_level": 20
+}
+```
 
 ### `mana_change`
 
@@ -120,6 +134,89 @@ Todo evento possui:
   "source": "player",
   "target": "player",
   "mana_after": 14
+}
+```
+
+### `cooldown_start` / `cooldown_ready`
+
+```json
+{
+  "t": 0.5,
+  "seq": 5,
+  "type": "cooldown_start",
+  "source": "player",
+  "target": "player",
+  "spell_id": "acender",
+  "ready_at": 7.5
+}
+```
+
+```json
+{
+  "t": 7.5,
+  "seq": 30,
+  "type": "cooldown_ready",
+  "source": "player",
+  "target": "player",
+  "spell_id": "acender"
+}
+```
+
+### `dot_apply` / `dot_tick`
+
+```json
+{
+  "t": 0.5,
+  "seq": 8,
+  "type": "dot_apply",
+  "source": "opponent",
+  "target": "player",
+  "spell_id": "acender",
+  "status_id": "queimando",
+  "stacks": 1,
+  "tick_damage": 3,
+  "duration": 5
+}
+```
+
+```json
+{
+  "t": 1.5,
+  "seq": 12,
+  "type": "dot_tick",
+  "source": "opponent",
+  "target": "player",
+  "status_id": "queimando",
+  "damage": 3,
+  "damage_type": "fogo",
+  "hp_after": 82
+}
+```
+
+### `status_apply` / `status_expire`
+
+```json
+{
+  "t": 1.0,
+  "seq": 10,
+  "type": "status_apply",
+  "source": "opponent",
+  "target": "player",
+  "spell_id": "congelar",
+  "status_id": "lento",
+  "stacks": 1,
+  "duration": 5
+}
+```
+
+```json
+{
+  "t": 6.5,
+  "seq": 28,
+  "type": "status_expire",
+  "source": "opponent",
+  "target": "player",
+  "status_id": "lento"
 }
 ```
 
@@ -184,6 +281,51 @@ Todo evento possui:
 }
 ```
 
+### `barrier_absorb`
+
+```json
+{
+  "t": 0.5,
+  "seq": 4,
+  "type": "barrier_absorb",
+  "source": "player",
+  "target": "opponent",
+  "damage_type": "magico",
+  "amount": 12,
+  "barrier_after": 0
+}
+```
+
+### `resistance_apply`
+
+```json
+{
+  "t": 2.0,
+  "seq": 14,
+  "type": "resistance_apply",
+  "source": "player",
+  "target": "player",
+  "spell_id": "fortificar",
+  "status_id": "fortificado",
+  "amount": 0.08,
+  "duration": 8
+}
+```
+
+### `heal`
+
+```json
+{
+  "t": 3.5,
+  "seq": 20,
+  "type": "heal",
+  "source": "player",
+  "target": "player",
+  "amount": 2,
+  "hp_after": 84
+}
+```
+
 ### `anti_stall`
 
 ```json
@@ -198,26 +340,14 @@ Todo evento possui:
 }
 ```
 
-## Eventos Do Primeiro Slice Futuro
+## Eventos Futuros Possiveis
 
-O contrato deve aceitar estes tipos quando o simulador completo expandir alem do v0:
+O contrato ainda pode aceitar estes tipos quando o simulador expandir alem do T00-P10:
 
-- `dot_apply`
-- `dot_tick`
-- `status_apply`
-- `status_expire`
-- `barrier_absorb`
-- `resistance_apply`
-- `summon_spawn`
-- `summon_attack`
-- `summon_expire`
 - `summon_death`
-- `pet_attack`
-- `mana_change`
-- `heal`
-- `anti_stall`
-- `cooldown_start`
-- `cooldown_ready`
+- `barrier_break`
+- `cleanse`
+- `revive`
 
 Cada novo tipo deve documentar payload antes de ser usado pelo cliente.
 

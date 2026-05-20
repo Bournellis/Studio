@@ -26,11 +26,12 @@ func _run_smoke() -> int:
 		client.queue_free()
 		return exit_code
 
-	print("[smoke-replay] requesting MVP battle")
+	print("[smoke-replay] requesting first-slice battle")
 	var battle_result: Dictionary = await client.request_battle(
 		SessionStoreScript.create_request_id(),
 		store.access_token,
-		ProjectInfo.MVP_MODE
+		ProjectInfo.FIRST_SLICE_MODE,
+		"bot_effect_trainer_01"
 	)
 	if not bool(battle_result.get("ok", false)):
 		store.free()
@@ -50,6 +51,11 @@ func _run_smoke() -> int:
 
 	var first_line := BattleLogPresenterScript.format_event(events[0])
 	var summary := BattleLogPresenterScript.format_summary(store.last_battle_log, store.last_battle_rewards)
+	if BattleLogPresenterScript.has_unknown_events(store.last_battle_log):
+		printerr("[smoke-replay] first-slice replay produced unknown events")
+		store.free()
+		client.queue_free()
+		return 1
 	print("[smoke-replay] first event: %s" % first_line)
 	print("[smoke-replay] summary: %s" % summary)
 

@@ -16,7 +16,7 @@ var _skip_replay := false
 func _ready() -> void:
 	SessionStore.load_cache()
 	SessionStore.session_changed.connect(_sync_status_from_session)
-	status_label.text = "%s - MVP tecnico minimo" % ProjectInfoScript.PROJECT_NAME
+	status_label.text = "%s - primeiro slice" % ProjectInfoScript.PROJECT_NAME
 	_build_action_buttons()
 	_build_status_labels()
 	_sync_status_from_session()
@@ -119,7 +119,7 @@ func _request_battle() -> void:
 	var battle_result: Dictionary = await SupabaseClient.request_battle(
 		SessionStore.create_request_id(),
 		SessionStore.access_token,
-		ProjectInfoScript.MVP_MODE
+		ProjectInfoScript.DEFAULT_BATTLE_MODE
 	)
 	if not bool(battle_result.get("ok", false)):
 		_fail_with_error(battle_result)
@@ -175,12 +175,12 @@ func _fail_with_error(result: Dictionary) -> void:
 func _sync_status_from_session() -> void:
 	if SessionStore.has_account_state():
 		status_label.text = "Sessao guest pronta: %s" % SessionStore.player_display_name()
-		_detail_label.text = "Batalha MVP disponivel. O cliente apenas exibe o log recebido."
+		_detail_label.text = "Batalha do primeiro slice disponivel. O cliente apenas exibe o log recebido."
 	elif SessionStore.has_valid_access_token():
 		status_label.text = "Sessao anonima criada."
 		_detail_label.text = "Use Entrar como guest para criar ou recuperar a conta MVP."
 	else:
-		status_label.text = "%s - MVP tecnico minimo" % ProjectInfoScript.PROJECT_NAME
+		status_label.text = "%s - primeiro slice" % ProjectInfoScript.PROJECT_NAME
 		_detail_label.text = "Supabase local: %s" % SupabaseClient.supabase_url
 
 	if SessionStore.offline and not SessionStore.last_error.is_empty():
@@ -213,7 +213,7 @@ func _play_battle_log(battle_log: Dictionary, rewards: Dictionary) -> void:
 
 	_replay_running = true
 	_skip_replay = false
-	_set_busy(false, "Reproduzindo replay MVP...")
+	_set_busy(false, "Reproduzindo replay do primeiro slice...")
 	if _action_buttons.has("Ver resultado"):
 		var result_button: Button = _action_buttons["Ver resultado"]
 		result_button.text = "Pular replay"

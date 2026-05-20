@@ -44,7 +44,7 @@ Formulas:
 Fontes externas v0:
 
 - Estrutura de Stats aplica bonus percentual em Vida, Ataque/dano base, Defesa, Mana e regen de mana.
-- Passivas podem adicionar modificadores depois que o simulador real suportar passivas completas.
+- Passivas adicionam modificadores no simulador `FIRST_SLICE_SIM`: mana regen, dano, reducao de dano, barreira inicial, vampirismo e reducao de cooldown.
 - Buffs temporarios de batalha, como Fortificar, entram apenas durante a simulacao da batalha.
 - Equipamentos alem da Varinha nao entram no primeiro slice.
 
@@ -53,7 +53,7 @@ Fontes externas v0:
 7 tipos: Magico, Fogo, Gelo, Veneno, Choque, Morte, Sangramento.
 DoTs, resistencias, barreiras e status effects: ver GDD secao 3.4–3.8.
 
-**Regra de stacking de DoT:** cada instancia tem duracao independente — sem substituicao.
+**Regra de stacking de DoT implementada em T00-P10:** reaplicar o mesmo DoT pelo mesmo lado aumenta stacks ate 5 e renova a duracao; cada stack aumenta o tick.
 
 ### Arma — Varinha Magica (Primeiro Slice)
 

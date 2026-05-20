@@ -1,7 +1,7 @@
 # Track 00 - First Slice Foundation
 
 - Last Updated: `2026-05-20`
-- Track Status: `OPEN - T00-P01 a T00-P09 concluidos; T00-P10 em andamento com v0 executavel`
+- Track Status: `OPEN - T00-P01 a T00-P10 concluidos; pronto para T00-P11`
 - Goal: montar o primeiro slice completo do DraxosMobile, iniciando pelo MVP tecnico minimo
 
 ---
@@ -42,8 +42,8 @@ Detalhes em `scope.md` e `mvp-technical-definition.md`.
 | T00-P07 - Battle Request MVP | Completo | battle fixture server-authoritative, `battle_log_v1`, recompensa e idempotencia |
 | T00-P08 - Battle Replay Client MVP | Completo | loop guest -> batalha -> resultado com replay placeholder e skip |
 | T00-P09 - Gate De Design Do Primeiro Slice | Completo | DMOB-D001-D005 e D008-D028 resolvidos; economia/season baseline, simulador, base v0, missoes/onboarding v0, monetizacao/recompensas v0, social/ranking/chat v0 e combate real/simulador v0 criados |
-| T00-P10 - Conteudo Real E Simulador Completo | Em andamento | conteudo real inicial, seeds de bots, simulador deterministic v0 e endpoint `FIRST_SLICE_SIM` |
-| T00-P11 - Base Manager E Economia | Pendente | estruturas, recursos, ledger e coleta offline |
+| T00-P10 - Conteudo Real E Simulador Completo | Completo | conteudo real inicial, seeds de bots, simulador deterministico completo do slice, endpoint `FIRST_SLICE_SIM`, smoke runtime e replay rico |
+| T00-P11 - Base Manager E Economia | Proximo | estruturas, recursos, ledger e coleta offline |
 | T00-P12 - Social, Matchmaking, Bots E Ranking | Pendente | amigos, guilda, bots, matchmaking e ranking |
 | T00-P13 - Monetizacao Funcional E Alpha | Pendente | battle pass, diamante, rewards e exports smoke |
 
@@ -55,21 +55,23 @@ Detalhes em `scope.md` e `mvp-technical-definition.md`.
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-mobile -s res://tools/validate.gd
 ```
 
-Resultado local: passou com GUT integrado, `14/14` testes e `52` asserts.
+Resultado local: passou com GUT integrado, `15/15` testes e `61` asserts.
 
 Smoke client:
 
 - Boot scene carrega em headless.
 - Smoke P06 via Godot HTTPRequest: Auth anonimo -> `account/guest` -> `account/state` passou no Supabase local com player guest e build `varinha_magica`.
 - Smoke P07: `battle/request` exige auth, retorna `battle_log_v1`, `battle/latest` recupera o log e repetir `request_id` nao duplica XP/Ossos.
-- Smoke P08: Godot solicita batalha, formata timeline placeholder, recupera `battle/latest` e nao calcula resultado/recompensa no cliente.
+- Smoke P08/P10: Godot solicita `FIRST_SLICE_SIM`, formata timeline rica, recupera `battle/latest` e nao calcula resultado/recompensa no cliente.
 
 Server/Supabase local:
 
 - `npx -y deno task check`: passou em `supabase/functions` e `server/functions`.
 - `npx -y deno task lint`: passou em `supabase/functions` e `server/functions`.
 - `npx -y deno test server/tests/first_slice_simulator_test.ts`: passou.
-- Ultimo `npx -y supabase db reset` registrado: passou ate as migrations MVP; a migration `202605200002_first_slice_simulator_seed.sql` ainda precisa de reset/smoke runtime para validacao integrada.
+- `npx -y supabase db reset`: passou aplicando `202605200002_first_slice_simulator_seed.sql`.
+- `npx -y deno run --allow-net --allow-env server/tests/first_slice_battle_smoke.ts`: passou validando `FIRST_SLICE_SIM`, bots de variacao, idempotencia e recompensas.
+- `tools/smoke_battle_replay.gd`: passou com replay `FIRST_SLICE_SIM` de 30 eventos sem eventos desconhecidos.
 - `GET /functions/v1/healthcheck`: passou.
 - `POST /functions/v1/account/guest`: convite invalido retorna `INVALID_INVITE`; convite valido cria conta; repeticao do mesmo `request_id` retorna o mesmo player.
 - `GET /functions/v1/account/state`: passou e recuperou player/resources/build.
@@ -79,7 +81,7 @@ Server/Supabase local:
 
 ## Next
 
-1. Continuar `T00-P10 - Conteudo Real E Simulador Completo`.
-2. Adicionar DoTs, status/resistencias e passivas funcionais ao simulador.
-3. Rodar smoke local do endpoint `FIRST_SLICE_SIM` no Supabase runtime e validar idempotencia/recompensas.
-4. Atualizar replay visual do cliente para tratar eventos ricos alem do placeholder.
+1. Iniciar `T00-P11 - Base Manager E Economia`.
+2. Criar tabelas/contratos server-authoritative para estruturas, upgrades, coleta offline e ledger.
+3. Implementar endpoints idempotentes de upgrade/coleta.
+4. Conectar tela/fluxo minimo de Base no cliente sem mutacao local de recursos.

@@ -272,6 +272,58 @@ collections = {
 "weapon_level": 20.0,
 "weapon_quality": "abissal"
 }, {
+"archetype": "effect_trainer",
+"description": "Bot controlado para validar DoTs, status, barreiras e pet contra conta guest inicial.",
+"display_name": "Treinador de Efeitos",
+"enabled": true,
+"id": "bot_effect_trainer_01",
+"is_ranked": false,
+"level": 6.0,
+"mode": "FIRST_SLICE",
+"passive_id": "escudo",
+"passive_level": 1.0,
+"pet_id": "familiar_cinzento",
+"pet_level": 1.0,
+"power": 180.0,
+"power_band_id": "band_002",
+"spell_ids": ["acender", "congelar"],
+"spell_levels": {
+"acender": 1.0,
+"congelar": 1.0
+},
+"tags": ["FIRST_SLICE", "bot", "effect_trainer", "smoke"],
+"variation_seed": 450.0,
+"version": 1.0,
+"weapon_id": "varinha_magica",
+"weapon_level": 1.0,
+"weapon_quality": "inicial"
+}, {
+"archetype": "summon_trainer",
+"description": "Bot controlado para validar summons contra conta guest inicial.",
+"display_name": "Treinador de Invocacao",
+"enabled": true,
+"id": "bot_summon_trainer_01",
+"is_ranked": false,
+"level": 6.0,
+"mode": "FIRST_SLICE",
+"passive_id": "",
+"passive_level": 0.0,
+"pet_id": "familiar_cinzento",
+"pet_level": 1.0,
+"power": 210.0,
+"power_band_id": "band_002",
+"spell_ids": ["animar_morto", "congelar"],
+"spell_levels": {
+"animar_morto": 1.0,
+"congelar": 1.0
+},
+"tags": ["FIRST_SLICE", "bot", "summon_trainer", "smoke"],
+"variation_seed": 460.0,
+"version": 1.0,
+"weapon_id": "varinha_magica",
+"weapon_level": 1.0,
+"weapon_quality": "inicial"
+}, {
 "archetype": "summoner",
 "description": "Bot avancado com summons para validar o simulador completo.",
 "display_name": "Invocador Abissal",
