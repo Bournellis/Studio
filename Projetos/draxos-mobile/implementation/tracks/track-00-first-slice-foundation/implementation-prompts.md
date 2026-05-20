@@ -124,9 +124,9 @@ Validacao: resultado exibido bate com servidor e cliente nao altera recursos.
 
 Objetivo: resolver bloqueios de design antes de conteudo real.
 
-Saida esperada: pendencias de `PRIMEIRO_SLICE` classificadas como resolvidas, adiadas com justificativa ou mantidas como bloqueio explicito.
+Saida esperada: pendencias de `PRIMEIRO_SLICE` classificadas como resolvidas, adiadas com justificativa ou mantidas como bloqueio explicito; economia de seasons documentada e simulador calibravel disponivel quando valores numericos forem necessarios.
 
-Validacao: nenhum prompt posterior implementa regra sem documento destino atualizado.
+Validacao: nenhum prompt posterior implementa regra sem documento destino atualizado; valores de economia passam pelo simulador antes de virar custo/recompensa real.
 
 ## T00-P10 - Conteudo Real E Simulador Completo
 

@@ -1,0 +1,721 @@
+day,profile_id,profile_name,level,xp_total,almas,energia,sangue,cristais,ossos,diamante
+1,free_casual,Free casual,7,688.5,64.55,115.8,23.5,9,6.15,0.13
+2,free_casual,Free casual,9,1377,129.1,231.6,47,18,12.3,0.25
+3,free_casual,Free casual,10,2065.5,193.65,347.4,70.5,27,18.45,0.38
+4,free_casual,Free casual,11,2754,258.2,463.2,94,36,24.6,0.5
+5,free_casual,Free casual,12,3442.5,322.75,579,117.5,45,30.75,0.63
+6,free_casual,Free casual,12,4131,387.3,694.8,141,54,36.9,0.75
+7,free_casual,Free casual,13,4819.5,451.85,810.6,164.5,63,43.05,0.88
+8,free_casual,Free casual,14,5508,516.4,926.4,188,72,49.2,1
+9,free_casual,Free casual,14,6196.5,580.95,1042.2,211.5,81,55.35,1.13
+10,free_casual,Free casual,15,6885,645.5,1158,235,90,61.5,1.25
+11,free_casual,Free casual,15,7573.5,710.05,1273.8,258.5,99,67.65,1.38
+12,free_casual,Free casual,15,8262,774.6,1389.6,282,108,73.8,1.5
+13,free_casual,Free casual,16,8950.5,839.15,1505.4,305.5,117,79.95,1.63
+14,free_casual,Free casual,16,9639,903.7,1621.2,329,126,86.1,1.75
+15,free_casual,Free casual,16,10327.5,968.25,1737,352.5,135,92.25,1.88
+16,free_casual,Free casual,17,11016,1032.8,1852.8,376,144,98.4,2
+17,free_casual,Free casual,17,11704.5,1097.35,1968.6,399.5,153,104.55,2.13
+18,free_casual,Free casual,17,12393,1161.9,2084.4,423,162,110.7,2.25
+19,free_casual,Free casual,18,13081.5,1226.45,2200.2,446.5,171,116.85,2.38
+20,free_casual,Free casual,18,13770,1291,2316,470,180,123,2.5
+21,free_casual,Free casual,18,14458.5,1355.55,2431.8,493.5,189,129.15,2.63
+22,free_casual,Free casual,19,15147,1420.1,2547.6,517,198,135.3,2.75
+23,free_casual,Free casual,19,15835.5,1484.65,2663.4,540.5,207,141.45,2.88
+24,free_casual,Free casual,19,16524,1549.2,2779.2,564,216,147.6,3
+25,free_casual,Free casual,19,17212.5,1613.75,2895,587.5,225,153.75,3.13
+26,free_casual,Free casual,20,17901,1678.3,3010.8,611,234,159.9,3.25
+27,free_casual,Free casual,20,18589.5,1742.85,3126.6,634.5,243,166.05,3.38
+28,free_casual,Free casual,20,19278,1807.4,3242.4,658,252,172.2,3.5
+29,free_casual,Free casual,20,19966.5,1871.95,3358.2,681.5,261,178.35,3.63
+30,free_casual,Free casual,20,20655,1936.5,3474,705,270,184.5,3.75
+31,free_casual,Free casual,21,21343.5,2001.05,3589.8,728.5,279,190.65,3.88
+32,free_casual,Free casual,21,22032,2065.6,3705.6,752,288,196.8,4
+33,free_casual,Free casual,21,22720.5,2130.15,3821.4,775.5,297,202.95,4.13
+34,free_casual,Free casual,21,23409,2194.7,3937.2,799,306,209.1,4.25
+35,free_casual,Free casual,21,24097.5,2259.25,4053,822.5,315,215.25,4.38
+36,free_casual,Free casual,22,24786,2323.8,4168.8,846,324,221.4,4.5
+37,free_casual,Free casual,22,25474.5,2388.35,4284.6,869.5,333,227.55,4.63
+38,free_casual,Free casual,22,26163,2452.9,4400.4,893,342,233.7,4.75
+39,free_casual,Free casual,22,26851.5,2517.45,4516.2,916.5,351,239.85,4.88
+40,free_casual,Free casual,22,27540,2582,4632,940,360,246,5
+41,free_casual,Free casual,23,28228.5,2646.55,4747.8,963.5,369,252.15,5.13
+42,free_casual,Free casual,23,28917,2711.1,4863.6,987,378,258.3,5.25
+43,free_casual,Free casual,23,29605.5,2775.65,4979.4,1010.5,387,264.45,5.38
+44,free_casual,Free casual,23,30294,2840.2,5095.2,1034,396,270.6,5.5
+45,free_casual,Free casual,23,30982.5,2904.75,5211,1057.5,405,276.75,5.63
+46,free_casual,Free casual,23,31671,2969.3,5326.8,1081,414,282.9,5.75
+47,free_casual,Free casual,24,32359.5,3033.85,5442.6,1104.5,423,289.05,5.88
+48,free_casual,Free casual,24,33048,3098.4,5558.4,1128,432,295.2,6
+49,free_casual,Free casual,24,33736.5,3162.95,5674.2,1151.5,441,301.35,6.13
+50,free_casual,Free casual,24,34425,3227.5,5790,1175,450,307.5,6.25
+51,free_casual,Free casual,24,35113.5,3292.05,5905.8,1198.5,459,313.65,6.38
+52,free_casual,Free casual,24,35802,3356.6,6021.6,1222,468,319.8,6.5
+53,free_casual,Free casual,24,36490.5,3421.15,6137.4,1245.5,477,325.95,6.63
+54,free_casual,Free casual,25,37179,3485.7,6253.2,1269,486,332.1,6.75
+55,free_casual,Free casual,25,37867.5,3550.25,6369,1292.5,495,338.25,6.88
+56,free_casual,Free casual,25,38556,3614.8,6484.8,1316,504,344.4,7
+57,free_casual,Free casual,25,39244.5,3679.35,6600.6,1339.5,513,350.55,7.13
+58,free_casual,Free casual,25,39933,3743.9,6716.4,1363,522,356.7,7.25
+59,free_casual,Free casual,25,40621.5,3808.45,6832.2,1386.5,531,362.85,7.38
+60,free_casual,Free casual,25,41310,3873,6948,1410,540,369,7.5
+61,free_casual,Free casual,26,41998.5,3937.55,7063.8,1433.5,549,375.15,7.63
+62,free_casual,Free casual,26,42687,4002.1,7179.6,1457,558,381.3,7.75
+63,free_casual,Free casual,26,43375.5,4066.65,7295.4,1480.5,567,387.45,7.88
+64,free_casual,Free casual,26,44064,4131.2,7411.2,1504,576,393.6,8
+65,free_casual,Free casual,26,44752.5,4195.75,7527,1527.5,585,399.75,8.13
+66,free_casual,Free casual,26,45441,4260.3,7642.8,1551,594,405.9,8.25
+67,free_casual,Free casual,26,46129.5,4324.85,7758.6,1574.5,603,412.05,8.38
+68,free_casual,Free casual,26,46818,4389.4,7874.4,1598,612,418.2,8.5
+69,free_casual,Free casual,27,47506.5,4453.95,7990.2,1621.5,621,424.35,8.63
+70,free_casual,Free casual,27,48195,4518.5,8106,1645,630,430.5,8.75
+71,free_casual,Free casual,27,48883.5,4583.05,8221.8,1668.5,639,436.65,8.88
+72,free_casual,Free casual,27,49572,4647.6,8337.6,1692,648,442.8,9
+73,free_casual,Free casual,27,50260.5,4712.15,8453.4,1715.5,657,448.95,9.13
+74,free_casual,Free casual,27,50949,4776.7,8569.2,1739,666,455.1,9.25
+75,free_casual,Free casual,27,51637.5,4841.25,8685,1762.5,675,461.25,9.38
+76,free_casual,Free casual,27,52326,4905.8,8800.8,1786,684,467.4,9.5
+77,free_casual,Free casual,27,53014.5,4970.35,8916.6,1809.5,693,473.55,9.63
+78,free_casual,Free casual,28,53703,5034.9,9032.4,1833,702,479.7,9.75
+79,free_casual,Free casual,28,54391.5,5099.45,9148.2,1856.5,711,485.85,9.88
+80,free_casual,Free casual,28,55080,5164,9264,1880,720,492,10
+81,free_casual,Free casual,28,55768.5,5228.55,9379.8,1903.5,729,498.15,10.13
+82,free_casual,Free casual,28,56457,5293.1,9495.6,1927,738,504.3,10.25
+83,free_casual,Free casual,28,57145.5,5357.65,9611.4,1950.5,747,510.45,10.38
+84,free_casual,Free casual,28,57834,5422.2,9727.2,1974,756,516.6,10.5
+85,free_casual,Free casual,28,58522.5,5486.75,9843,1997.5,765,522.75,10.63
+86,free_casual,Free casual,28,59211,5551.3,9958.8,2021,774,528.9,10.75
+87,free_casual,Free casual,29,59899.5,5615.85,10074.6,2044.5,783,535.05,10.88
+88,free_casual,Free casual,29,60588,5680.4,10190.4,2068,792,541.2,11
+89,free_casual,Free casual,29,61276.5,5744.95,10306.2,2091.5,801,547.35,11.13
+90,free_casual,Free casual,29,61965,5809.5,10422,2115,810,553.5,11.25
+91,free_casual,Free casual,29,62653.5,5874.05,10537.8,2138.5,819,559.65,11.38
+92,free_casual,Free casual,29,63342,5938.6,10653.6,2162,828,565.8,11.5
+93,free_casual,Free casual,29,64030.5,6003.15,10769.4,2185.5,837,571.95,11.63
+94,free_casual,Free casual,29,64719,6067.7,10885.2,2209,846,578.1,11.75
+95,free_casual,Free casual,29,65407.5,6132.25,11001,2232.5,855,584.25,11.88
+96,free_casual,Free casual,29,66096,6196.8,11116.8,2256,864,590.4,12
+97,free_casual,Free casual,30,66784.5,6261.35,11232.6,2279.5,873,596.55,12.13
+98,free_casual,Free casual,30,67473,6325.9,11348.4,2303,882,602.7,12.25
+99,free_casual,Free casual,30,68161.5,6390.45,11464.2,2326.5,891,608.85,12.38
+100,free_casual,Free casual,30,68850,6455,11580,2350,900,615,12.5
+101,free_casual,Free casual,30,69538.5,6519.55,11695.8,2373.5,909,621.15,12.63
+102,free_casual,Free casual,30,70227,6584.1,11811.6,2397,918,627.3,12.75
+103,free_casual,Free casual,30,70915.5,6648.65,11927.4,2420.5,927,633.45,12.88
+104,free_casual,Free casual,30,71604,6713.2,12043.2,2444,936,639.6,13
+105,free_casual,Free casual,30,72292.5,6777.75,12159,2467.5,945,645.75,13.13
+106,free_casual,Free casual,30,72981,6842.3,12274.8,2491,954,651.9,13.25
+107,free_casual,Free casual,31,73669.5,6906.85,12390.6,2514.5,963,658.05,13.38
+108,free_casual,Free casual,31,74358,6971.4,12506.4,2538,972,664.2,13.5
+109,free_casual,Free casual,31,75046.5,7035.95,12622.2,2561.5,981,670.35,13.63
+110,free_casual,Free casual,31,75735,7100.5,12738,2585,990,676.5,13.75
+111,free_casual,Free casual,31,76423.5,7165.05,12853.8,2608.5,999,682.65,13.88
+112,free_casual,Free casual,31,77112,7229.6,12969.6,2632,1008,688.8,14
+113,free_casual,Free casual,31,77800.5,7294.15,13085.4,2655.5,1017,694.95,14.13
+114,free_casual,Free casual,31,78489,7358.7,13201.2,2679,1026,701.1,14.25
+115,free_casual,Free casual,31,79177.5,7423.25,13317,2702.5,1035,707.25,14.38
+116,free_casual,Free casual,31,79866,7487.8,13432.8,2726,1044,713.4,14.5
+117,free_casual,Free casual,31,80554.5,7552.35,13548.6,2749.5,1053,719.55,14.63
+118,free_casual,Free casual,31,81243,7616.9,13664.4,2773,1062,725.7,14.75
+119,free_casual,Free casual,32,81931.5,7681.45,13780.2,2796.5,1071,731.85,14.88
+120,free_casual,Free casual,32,82620,7746,13896,2820,1080,738,15
+1,free_active,Free ativo,9,1570,135,160,43,13,11,0.25
+2,free_active,Free ativo,11,3140,270,320,86,26,22,0.5
+3,free_active,Free ativo,13,4710,405,480,129,39,33,0.75
+4,free_active,Free ativo,14,6280,540,640,172,52,44,1
+5,free_active,Free ativo,15,7850,675,800,215,65,55,1.25
+6,free_active,Free ativo,16,9420,810,960,258,78,66,1.5
+7,free_active,Free ativo,17,10990,945,1120,301,91,77,1.75
+8,free_active,Free ativo,18,12560,1080,1280,344,104,88,2
+9,free_active,Free ativo,18,14130,1215,1440,387,117,99,2.25
+10,free_active,Free ativo,19,15700,1350,1600,430,130,110,2.5
+11,free_active,Free ativo,19,17270,1485,1760,473,143,121,2.75
+12,free_active,Free ativo,20,18840,1620,1920,516,156,132,3
+13,free_active,Free ativo,20,20410,1755,2080,559,169,143,3.25
+14,free_active,Free ativo,21,21980,1890,2240,602,182,154,3.5
+15,free_active,Free ativo,21,23550,2025,2400,645,195,165,3.75
+16,free_active,Free ativo,22,25120,2160,2560,688,208,176,4
+17,free_active,Free ativo,22,26690,2295,2720,731,221,187,4.25
+18,free_active,Free ativo,23,28260,2430,2880,774,234,198,4.5
+19,free_active,Free ativo,23,29830,2565,3040,817,247,209,4.75
+20,free_active,Free ativo,23,31400,2700,3200,860,260,220,5
+21,free_active,Free ativo,24,32970,2835,3360,903,273,231,5.25
+22,free_active,Free ativo,24,34540,2970,3520,946,286,242,5.5
+23,free_active,Free ativo,24,36110,3105,3680,989,299,253,5.75
+24,free_active,Free ativo,25,37680,3240,3840,1032,312,264,6
+25,free_active,Free ativo,25,39250,3375,4000,1075,325,275,6.25
+26,free_active,Free ativo,25,40820,3510,4160,1118,338,286,6.5
+27,free_active,Free ativo,26,42390,3645,4320,1161,351,297,6.75
+28,free_active,Free ativo,26,43960,3780,4480,1204,364,308,7
+29,free_active,Free ativo,26,45530,3915,4640,1247,377,319,7.25
+30,free_active,Free ativo,26,47100,4050,4800,1290,390,330,7.5
+31,free_active,Free ativo,27,48670,4185,4960,1333,403,341,7.75
+32,free_active,Free ativo,27,50240,4320,5120,1376,416,352,8
+33,free_active,Free ativo,27,51810,4455,5280,1419,429,363,8.25
+34,free_active,Free ativo,28,53380,4590,5440,1462,442,374,8.5
+35,free_active,Free ativo,28,54950,4725,5600,1505,455,385,8.75
+36,free_active,Free ativo,28,56520,4860,5760,1548,468,396,9
+37,free_active,Free ativo,28,58090,4995,5920,1591,481,407,9.25
+38,free_active,Free ativo,29,59660,5130,6080,1634,494,418,9.5
+39,free_active,Free ativo,29,61230,5265,6240,1677,507,429,9.75
+40,free_active,Free ativo,29,62800,5400,6400,1720,520,440,10
+41,free_active,Free ativo,29,64370,5535,6560,1763,533,451,10.25
+42,free_active,Free ativo,29,65940,5670,6720,1806,546,462,10.5
+43,free_active,Free ativo,30,67510,5805,6880,1849,559,473,10.75
+44,free_active,Free ativo,30,69080,5940,7040,1892,572,484,11
+45,free_active,Free ativo,30,70650,6075,7200,1935,585,495,11.25
+46,free_active,Free ativo,30,72220,6210,7360,1978,598,506,11.5
+47,free_active,Free ativo,31,73790,6345,7520,2021,611,517,11.75
+48,free_active,Free ativo,31,75360,6480,7680,2064,624,528,12
+49,free_active,Free ativo,31,76930,6615,7840,2107,637,539,12.25
+50,free_active,Free ativo,31,78500,6750,8000,2150,650,550,12.5
+51,free_active,Free ativo,31,80070,6885,8160,2193,663,561,12.75
+52,free_active,Free ativo,32,81640,7020,8320,2236,676,572,13
+53,free_active,Free ativo,32,83210,7155,8480,2279,689,583,13.25
+54,free_active,Free ativo,32,84780,7290,8640,2322,702,594,13.5
+55,free_active,Free ativo,32,86350,7425,8800,2365,715,605,13.75
+56,free_active,Free ativo,32,87920,7560,8960,2408,728,616,14
+57,free_active,Free ativo,32,89490,7695,9120,2451,741,627,14.25
+58,free_active,Free ativo,33,91060,7830,9280,2494,754,638,14.5
+59,free_active,Free ativo,33,92630,7965,9440,2537,767,649,14.75
+60,free_active,Free ativo,33,94200,8100,9600,2580,780,660,15
+61,free_active,Free ativo,33,95770,8235,9760,2623,793,671,15.25
+62,free_active,Free ativo,33,97340,8370,9920,2666,806,682,15.5
+63,free_active,Free ativo,34,98910,8505,10080,2709,819,693,15.75
+64,free_active,Free ativo,34,100480,8640,10240,2752,832,704,16
+65,free_active,Free ativo,34,102050,8775,10400,2795,845,715,16.25
+66,free_active,Free ativo,34,103620,8910,10560,2838,858,726,16.5
+67,free_active,Free ativo,34,105190,9045,10720,2881,871,737,16.75
+68,free_active,Free ativo,34,106760,9180,10880,2924,884,748,17
+69,free_active,Free ativo,35,108330,9315,11040,2967,897,759,17.25
+70,free_active,Free ativo,35,109900,9450,11200,3010,910,770,17.5
+71,free_active,Free ativo,35,111470,9585,11360,3053,923,781,17.75
+72,free_active,Free ativo,35,113040,9720,11520,3096,936,792,18
+73,free_active,Free ativo,35,114610,9855,11680,3139,949,803,18.25
+74,free_active,Free ativo,35,116180,9990,11840,3182,962,814,18.5
+75,free_active,Free ativo,35,117750,10125,12000,3225,975,825,18.75
+76,free_active,Free ativo,36,119320,10260,12160,3268,988,836,19
+77,free_active,Free ativo,36,120890,10395,12320,3311,1001,847,19.25
+78,free_active,Free ativo,36,122460,10530,12480,3354,1014,858,19.5
+79,free_active,Free ativo,36,124030,10665,12640,3397,1027,869,19.75
+80,free_active,Free ativo,36,125600,10800,12800,3440,1040,880,20
+81,free_active,Free ativo,36,127170,10935,12960,3483,1053,891,20.25
+82,free_active,Free ativo,36,128740,11070,13120,3526,1066,902,20.5
+83,free_active,Free ativo,37,130310,11205,13280,3569,1079,913,20.75
+84,free_active,Free ativo,37,131880,11340,13440,3612,1092,924,21
+85,free_active,Free ativo,37,133450,11475,13600,3655,1105,935,21.25
+86,free_active,Free ativo,37,135020,11610,13760,3698,1118,946,21.5
+87,free_active,Free ativo,37,136590,11745,13920,3741,1131,957,21.75
+88,free_active,Free ativo,37,138160,11880,14080,3784,1144,968,22
+89,free_active,Free ativo,37,139730,12015,14240,3827,1157,979,22.25
+90,free_active,Free ativo,38,141300,12150,14400,3870,1170,990,22.5
+91,free_active,Free ativo,38,142870,12285,14560,3913,1183,1001,22.75
+92,free_active,Free ativo,38,144440,12420,14720,3956,1196,1012,23
+93,free_active,Free ativo,38,146010,12555,14880,3999,1209,1023,23.25
+94,free_active,Free ativo,38,147580,12690,15040,4042,1222,1034,23.5
+95,free_active,Free ativo,38,149150,12825,15200,4085,1235,1045,23.75
+96,free_active,Free ativo,38,150720,12960,15360,4128,1248,1056,24
+97,free_active,Free ativo,38,152290,13095,15520,4171,1261,1067,24.25
+98,free_active,Free ativo,39,153860,13230,15680,4214,1274,1078,24.5
+99,free_active,Free ativo,39,155430,13365,15840,4257,1287,1089,24.75
+100,free_active,Free ativo,39,157000,13500,16000,4300,1300,1100,25
+101,free_active,Free ativo,39,158570,13635,16160,4343,1313,1111,25.25
+102,free_active,Free ativo,39,160140,13770,16320,4386,1326,1122,25.5
+103,free_active,Free ativo,39,161710,13905,16480,4429,1339,1133,25.75
+104,free_active,Free ativo,39,163280,14040,16640,4472,1352,1144,26
+105,free_active,Free ativo,39,164850,14175,16800,4515,1365,1155,26.25
+106,free_active,Free ativo,40,166420,14310,16960,4558,1378,1166,26.5
+107,free_active,Free ativo,40,167990,14445,17120,4601,1391,1177,26.75
+108,free_active,Free ativo,40,169560,14580,17280,4644,1404,1188,27
+109,free_active,Free ativo,40,171130,14715,17440,4687,1417,1199,27.25
+110,free_active,Free ativo,40,172700,14850,17600,4730,1430,1210,27.5
+111,free_active,Free ativo,40,174270,14985,17760,4773,1443,1221,27.75
+112,free_active,Free ativo,40,175840,15120,17920,4816,1456,1232,28
+113,free_active,Free ativo,40,177410,15255,18080,4859,1469,1243,28.25
+114,free_active,Free ativo,40,178980,15390,18240,4902,1482,1254,28.5
+115,free_active,Free ativo,40,180550,15525,18400,4945,1495,1265,28.75
+116,free_active,Free ativo,40,182120,15660,18560,4988,1508,1276,29
+117,free_active,Free ativo,40,183690,15795,18720,5031,1521,1287,29.25
+118,free_active,Free ativo,40,185260,15930,18880,5074,1534,1298,29.5
+119,free_active,Free ativo,40,186830,16065,19040,5117,1547,1309,29.75
+120,free_active,Free ativo,40,188400,16200,19200,5160,1560,1320,30
+1,efficient_buyer,Compra eficiente,10,1720,150,175,50,17,13,0.75
+2,efficient_buyer,Compra eficiente,12,3440,300,350,100,34,26,1.5
+3,efficient_buyer,Compra eficiente,13,5160,450,525,150,51,39,2.25
+4,efficient_buyer,Compra eficiente,15,6880,600,700,200,68,52,3
+5,efficient_buyer,Compra eficiente,16,8600,750,875,250,85,65,3.75
+6,efficient_buyer,Compra eficiente,16,10320,900,1050,300,102,78,4.5
+7,efficient_buyer,Compra eficiente,17,12040,1050,1225,350,119,91,5.25
+8,efficient_buyer,Compra eficiente,18,13760,1200,1400,400,136,104,6
+9,efficient_buyer,Compra eficiente,19,15480,1350,1575,450,153,117,6.75
+10,efficient_buyer,Compra eficiente,19,17200,1500,1750,500,170,130,7.5
+11,efficient_buyer,Compra eficiente,20,18920,1650,1925,550,187,143,8.25
+12,efficient_buyer,Compra eficiente,20,20640,1800,2100,600,204,156,9
+13,efficient_buyer,Compra eficiente,21,22360,1950,2275,650,221,169,9.75
+14,efficient_buyer,Compra eficiente,21,24080,2100,2450,700,238,182,10.5
+15,efficient_buyer,Compra eficiente,22,25800,2250,2625,750,255,195,11.25
+16,efficient_buyer,Compra eficiente,22,27520,2400,2800,800,272,208,12
+17,efficient_buyer,Compra eficiente,23,29240,2550,2975,850,289,221,12.75
+18,efficient_buyer,Compra eficiente,23,30960,2700,3150,900,306,234,13.5
+19,efficient_buyer,Compra eficiente,24,32680,2850,3325,950,323,247,14.25
+20,efficient_buyer,Compra eficiente,24,34400,3000,3500,1000,340,260,15
+21,efficient_buyer,Compra eficiente,24,36120,3150,3675,1050,357,273,15.75
+22,efficient_buyer,Compra eficiente,25,37840,3300,3850,1100,374,286,16.5
+23,efficient_buyer,Compra eficiente,25,39560,3450,4025,1150,391,299,17.25
+24,efficient_buyer,Compra eficiente,25,41280,3600,4200,1200,408,312,18
+25,efficient_buyer,Compra eficiente,26,43000,3750,4375,1250,425,325,18.75
+26,efficient_buyer,Compra eficiente,26,44720,3900,4550,1300,442,338,19.5
+27,efficient_buyer,Compra eficiente,26,46440,4050,4725,1350,459,351,20.25
+28,efficient_buyer,Compra eficiente,27,48160,4200,4900,1400,476,364,21
+29,efficient_buyer,Compra eficiente,27,49880,4350,5075,1450,493,377,21.75
+30,efficient_buyer,Compra eficiente,27,51600,4500,5250,1500,510,390,22.5
+31,efficient_buyer,Compra eficiente,28,53320,4650,5425,1550,527,403,23.25
+32,efficient_buyer,Compra eficiente,28,55040,4800,5600,1600,544,416,24
+33,efficient_buyer,Compra eficiente,28,56760,4950,5775,1650,561,429,24.75
+34,efficient_buyer,Compra eficiente,28,58480,5100,5950,1700,578,442,25.5
+35,efficient_buyer,Compra eficiente,29,60200,5250,6125,1750,595,455,26.25
+36,efficient_buyer,Compra eficiente,29,61920,5400,6300,1800,612,468,27
+37,efficient_buyer,Compra eficiente,29,63640,5550,6475,1850,629,481,27.75
+38,efficient_buyer,Compra eficiente,29,65360,5700,6650,1900,646,494,28.5
+39,efficient_buyer,Compra eficiente,30,67080,5850,6825,1950,663,507,29.25
+40,efficient_buyer,Compra eficiente,30,68800,6000,7000,2000,680,520,30
+41,efficient_buyer,Compra eficiente,30,70520,6150,7175,2050,697,533,30.75
+42,efficient_buyer,Compra eficiente,30,72240,6300,7350,2100,714,546,31.5
+43,efficient_buyer,Compra eficiente,31,73960,6450,7525,2150,731,559,32.25
+44,efficient_buyer,Compra eficiente,31,75680,6600,7700,2200,748,572,33
+45,efficient_buyer,Compra eficiente,31,77400,6750,7875,2250,765,585,33.75
+46,efficient_buyer,Compra eficiente,31,79120,6900,8050,2300,782,598,34.5
+47,efficient_buyer,Compra eficiente,31,80840,7050,8225,2350,799,611,35.25
+48,efficient_buyer,Compra eficiente,32,82560,7200,8400,2400,816,624,36
+49,efficient_buyer,Compra eficiente,32,84280,7350,8575,2450,833,637,36.75
+50,efficient_buyer,Compra eficiente,32,86000,7500,8750,2500,850,650,37.5
+51,efficient_buyer,Compra eficiente,32,87720,7650,8925,2550,867,663,38.25
+52,efficient_buyer,Compra eficiente,32,89440,7800,9100,2600,884,676,39
+53,efficient_buyer,Compra eficiente,33,91160,7950,9275,2650,901,689,39.75
+54,efficient_buyer,Compra eficiente,33,92880,8100,9450,2700,918,702,40.5
+55,efficient_buyer,Compra eficiente,33,94600,8250,9625,2750,935,715,41.25
+56,efficient_buyer,Compra eficiente,33,96320,8400,9800,2800,952,728,42
+57,efficient_buyer,Compra eficiente,33,98040,8550,9975,2850,969,741,42.75
+58,efficient_buyer,Compra eficiente,34,99760,8700,10150,2900,986,754,43.5
+59,efficient_buyer,Compra eficiente,34,101480,8850,10325,2950,1003,767,44.25
+60,efficient_buyer,Compra eficiente,34,103200,9000,10500,3000,1020,780,45
+61,efficient_buyer,Compra eficiente,34,104920,9150,10675,3050,1037,793,45.75
+62,efficient_buyer,Compra eficiente,34,106640,9300,10850,3100,1054,806,46.5
+63,efficient_buyer,Compra eficiente,35,108360,9450,11025,3150,1071,819,47.25
+64,efficient_buyer,Compra eficiente,35,110080,9600,11200,3200,1088,832,48
+65,efficient_buyer,Compra eficiente,35,111800,9750,11375,3250,1105,845,48.75
+66,efficient_buyer,Compra eficiente,35,113520,9900,11550,3300,1122,858,49.5
+67,efficient_buyer,Compra eficiente,35,115240,10050,11725,3350,1139,871,50.25
+68,efficient_buyer,Compra eficiente,35,116960,10200,11900,3400,1156,884,51
+69,efficient_buyer,Compra eficiente,36,118680,10350,12075,3450,1173,897,51.75
+70,efficient_buyer,Compra eficiente,36,120400,10500,12250,3500,1190,910,52.5
+71,efficient_buyer,Compra eficiente,36,122120,10650,12425,3550,1207,923,53.25
+72,efficient_buyer,Compra eficiente,36,123840,10800,12600,3600,1224,936,54
+73,efficient_buyer,Compra eficiente,36,125560,10950,12775,3650,1241,949,54.75
+74,efficient_buyer,Compra eficiente,36,127280,11100,12950,3700,1258,962,55.5
+75,efficient_buyer,Compra eficiente,36,129000,11250,13125,3750,1275,975,56.25
+76,efficient_buyer,Compra eficiente,37,130720,11400,13300,3800,1292,988,57
+77,efficient_buyer,Compra eficiente,37,132440,11550,13475,3850,1309,1001,57.75
+78,efficient_buyer,Compra eficiente,37,134160,11700,13650,3900,1326,1014,58.5
+79,efficient_buyer,Compra eficiente,37,135880,11850,13825,3950,1343,1027,59.25
+80,efficient_buyer,Compra eficiente,37,137600,12000,14000,4000,1360,1040,60
+81,efficient_buyer,Compra eficiente,37,139320,12150,14175,4050,1377,1053,60.75
+82,efficient_buyer,Compra eficiente,38,141040,12300,14350,4100,1394,1066,61.5
+83,efficient_buyer,Compra eficiente,38,142760,12450,14525,4150,1411,1079,62.25
+84,efficient_buyer,Compra eficiente,38,144480,12600,14700,4200,1428,1092,63
+85,efficient_buyer,Compra eficiente,38,146200,12750,14875,4250,1445,1105,63.75
+86,efficient_buyer,Compra eficiente,38,147920,12900,15050,4300,1462,1118,64.5
+87,efficient_buyer,Compra eficiente,38,149640,13050,15225,4350,1479,1131,65.25
+88,efficient_buyer,Compra eficiente,38,151360,13200,15400,4400,1496,1144,66
+89,efficient_buyer,Compra eficiente,39,153080,13350,15575,4450,1513,1157,66.75
+90,efficient_buyer,Compra eficiente,39,154800,13500,15750,4500,1530,1170,67.5
+91,efficient_buyer,Compra eficiente,39,156520,13650,15925,4550,1547,1183,68.25
+92,efficient_buyer,Compra eficiente,39,158240,13800,16100,4600,1564,1196,69
+93,efficient_buyer,Compra eficiente,39,159960,13950,16275,4650,1581,1209,69.75
+94,efficient_buyer,Compra eficiente,39,161680,14100,16450,4700,1598,1222,70.5
+95,efficient_buyer,Compra eficiente,39,163400,14250,16625,4750,1615,1235,71.25
+96,efficient_buyer,Compra eficiente,39,165120,14400,16800,4800,1632,1248,72
+97,efficient_buyer,Compra eficiente,40,166840,14550,16975,4850,1649,1261,72.75
+98,efficient_buyer,Compra eficiente,40,168560,14700,17150,4900,1666,1274,73.5
+99,efficient_buyer,Compra eficiente,40,170280,14850,17325,4950,1683,1287,74.25
+100,efficient_buyer,Compra eficiente,40,172000,15000,17500,5000,1700,1300,75
+101,efficient_buyer,Compra eficiente,40,173720,15150,17675,5050,1717,1313,75.75
+102,efficient_buyer,Compra eficiente,40,175440,15300,17850,5100,1734,1326,76.5
+103,efficient_buyer,Compra eficiente,40,177160,15450,18025,5150,1751,1339,77.25
+104,efficient_buyer,Compra eficiente,40,178880,15600,18200,5200,1768,1352,78
+105,efficient_buyer,Compra eficiente,40,180600,15750,18375,5250,1785,1365,78.75
+106,efficient_buyer,Compra eficiente,40,182320,15900,18550,5300,1802,1378,79.5
+107,efficient_buyer,Compra eficiente,40,184040,16050,18725,5350,1819,1391,80.25
+108,efficient_buyer,Compra eficiente,40,185760,16200,18900,5400,1836,1404,81
+109,efficient_buyer,Compra eficiente,40,187480,16350,19075,5450,1853,1417,81.75
+110,efficient_buyer,Compra eficiente,40,189200,16500,19250,5500,1870,1430,82.5
+111,efficient_buyer,Compra eficiente,40,190920,16650,19425,5550,1887,1443,83.25
+112,efficient_buyer,Compra eficiente,40,192640,16800,19600,5600,1904,1456,84
+113,efficient_buyer,Compra eficiente,40,194360,16950,19775,5650,1921,1469,84.75
+114,efficient_buyer,Compra eficiente,40,196080,17100,19950,5700,1938,1482,85.5
+115,efficient_buyer,Compra eficiente,40,197800,17250,20125,5750,1955,1495,86.25
+116,efficient_buyer,Compra eficiente,40,199520,17400,20300,5800,1972,1508,87
+117,efficient_buyer,Compra eficiente,40,201240,17550,20475,5850,1989,1521,87.75
+118,efficient_buyer,Compra eficiente,40,202960,17700,20650,5900,2006,1534,88.5
+119,efficient_buyer,Compra eficiente,40,204680,17850,20825,5950,2023,1547,89.25
+120,efficient_buyer,Compra eficiente,40,206400,18000,21000,6000,2040,1560,90
+1,premium_complete,Premium completo,10,1970,210,265,71,25,18,0.75
+2,premium_complete,Premium completo,12,3940,420,530,142,50,36,1.5
+3,premium_complete,Premium completo,14,5910,630,795,213,75,54,2.25
+4,premium_complete,Premium completo,15,7880,840,1060,284,100,72,3
+5,premium_complete,Premium completo,16,9850,1050,1325,355,125,90,3.75
+6,premium_complete,Premium completo,17,11820,1260,1590,426,150,108,4.5
+7,premium_complete,Premium completo,18,13790,1470,1855,497,175,126,5.25
+8,premium_complete,Premium completo,19,15760,1680,2120,568,200,144,6
+9,premium_complete,Premium completo,19,17730,1890,2385,639,225,162,6.75
+10,premium_complete,Premium completo,20,19700,2100,2650,710,250,180,7.5
+11,premium_complete,Premium completo,21,21670,2310,2915,781,275,198,8.25
+12,premium_complete,Premium completo,21,23640,2520,3180,852,300,216,9
+13,premium_complete,Premium completo,22,25610,2730,3445,923,325,234,9.75
+14,premium_complete,Premium completo,22,27580,2940,3710,994,350,252,10.5
+15,premium_complete,Premium completo,23,29550,3150,3975,1065,375,270,11.25
+16,premium_complete,Premium completo,23,31520,3360,4240,1136,400,288,12
+17,premium_complete,Premium completo,24,33490,3570,4505,1207,425,306,12.75
+18,premium_complete,Premium completo,24,35460,3780,4770,1278,450,324,13.5
+19,premium_complete,Premium completo,25,37430,3990,5035,1349,475,342,14.25
+20,premium_complete,Premium completo,25,39400,4200,5300,1420,500,360,15
+21,premium_complete,Premium completo,25,41370,4410,5565,1491,525,378,15.75
+22,premium_complete,Premium completo,26,43340,4620,5830,1562,550,396,16.5
+23,premium_complete,Premium completo,26,45310,4830,6095,1633,575,414,17.25
+24,premium_complete,Premium completo,27,47280,5040,6360,1704,600,432,18
+25,premium_complete,Premium completo,27,49250,5250,6625,1775,625,450,18.75
+26,premium_complete,Premium completo,27,51220,5460,6890,1846,650,468,19.5
+27,premium_complete,Premium completo,28,53190,5670,7155,1917,675,486,20.25
+28,premium_complete,Premium completo,28,55160,5880,7420,1988,700,504,21
+29,premium_complete,Premium completo,28,57130,6090,7685,2059,725,522,21.75
+30,premium_complete,Premium completo,28,59100,6300,7950,2130,750,540,22.5
+31,premium_complete,Premium completo,29,61070,6510,8215,2201,775,558,23.25
+32,premium_complete,Premium completo,29,63040,6720,8480,2272,800,576,24
+33,premium_complete,Premium completo,29,65010,6930,8745,2343,825,594,24.75
+34,premium_complete,Premium completo,30,66980,7140,9010,2414,850,612,25.5
+35,premium_complete,Premium completo,30,68950,7350,9275,2485,875,630,26.25
+36,premium_complete,Premium completo,30,70920,7560,9540,2556,900,648,27
+37,premium_complete,Premium completo,30,72890,7770,9805,2627,925,666,27.75
+38,premium_complete,Premium completo,31,74860,7980,10070,2698,950,684,28.5
+39,premium_complete,Premium completo,31,76830,8190,10335,2769,975,702,29.25
+40,premium_complete,Premium completo,31,78800,8400,10600,2840,1000,720,30
+41,premium_complete,Premium completo,31,80770,8610,10865,2911,1025,738,30.75
+42,premium_complete,Premium completo,32,82740,8820,11130,2982,1050,756,31.5
+43,premium_complete,Premium completo,32,84710,9030,11395,3053,1075,774,32.25
+44,premium_complete,Premium completo,32,86680,9240,11660,3124,1100,792,33
+45,premium_complete,Premium completo,32,88650,9450,11925,3195,1125,810,33.75
+46,premium_complete,Premium completo,33,90620,9660,12190,3266,1150,828,34.5
+47,premium_complete,Premium completo,33,92590,9870,12455,3337,1175,846,35.25
+48,premium_complete,Premium completo,33,94560,10080,12720,3408,1200,864,36
+49,premium_complete,Premium completo,33,96530,10290,12985,3479,1225,882,36.75
+50,premium_complete,Premium completo,33,98500,10500,13250,3550,1250,900,37.5
+51,premium_complete,Premium completo,34,100470,10710,13515,3621,1275,918,38.25
+52,premium_complete,Premium completo,34,102440,10920,13780,3692,1300,936,39
+53,premium_complete,Premium completo,34,104410,11130,14045,3763,1325,954,39.75
+54,premium_complete,Premium completo,34,106380,11340,14310,3834,1350,972,40.5
+55,premium_complete,Premium completo,35,108350,11550,14575,3905,1375,990,41.25
+56,premium_complete,Premium completo,35,110320,11760,14840,3976,1400,1008,42
+57,premium_complete,Premium completo,35,112290,11970,15105,4047,1425,1026,42.75
+58,premium_complete,Premium completo,35,114260,12180,15370,4118,1450,1044,43.5
+59,premium_complete,Premium completo,35,116230,12390,15635,4189,1475,1062,44.25
+60,premium_complete,Premium completo,35,118200,12600,15900,4260,1500,1080,45
+61,premium_complete,Premium completo,36,120170,12810,16165,4331,1525,1098,45.75
+62,premium_complete,Premium completo,36,122140,13020,16430,4402,1550,1116,46.5
+63,premium_complete,Premium completo,36,124110,13230,16695,4473,1575,1134,47.25
+64,premium_complete,Premium completo,36,126080,13440,16960,4544,1600,1152,48
+65,premium_complete,Premium completo,36,128050,13650,17225,4615,1625,1170,48.75
+66,premium_complete,Premium completo,37,130020,13860,17490,4686,1650,1188,49.5
+67,premium_complete,Premium completo,37,131990,14070,17755,4757,1675,1206,50.25
+68,premium_complete,Premium completo,37,133960,14280,18020,4828,1700,1224,51
+69,premium_complete,Premium completo,37,135930,14490,18285,4899,1725,1242,51.75
+70,premium_complete,Premium completo,37,137900,14700,18550,4970,1750,1260,52.5
+71,premium_complete,Premium completo,37,139870,14910,18815,5041,1775,1278,53.25
+72,premium_complete,Premium completo,38,141840,15120,19080,5112,1800,1296,54
+73,premium_complete,Premium completo,38,143810,15330,19345,5183,1825,1314,54.75
+74,premium_complete,Premium completo,38,145780,15540,19610,5254,1850,1332,55.5
+75,premium_complete,Premium completo,38,147750,15750,19875,5325,1875,1350,56.25
+76,premium_complete,Premium completo,38,149720,15960,20140,5396,1900,1368,57
+77,premium_complete,Premium completo,38,151690,16170,20405,5467,1925,1386,57.75
+78,premium_complete,Premium completo,39,153660,16380,20670,5538,1950,1404,58.5
+79,premium_complete,Premium completo,39,155630,16590,20935,5609,1975,1422,59.25
+80,premium_complete,Premium completo,39,157600,16800,21200,5680,2000,1440,60
+81,premium_complete,Premium completo,39,159570,17010,21465,5751,2025,1458,60.75
+82,premium_complete,Premium completo,39,161540,17220,21730,5822,2050,1476,61.5
+83,premium_complete,Premium completo,39,163510,17430,21995,5893,2075,1494,62.25
+84,premium_complete,Premium completo,40,165480,17640,22260,5964,2100,1512,63
+85,premium_complete,Premium completo,40,167450,17850,22525,6035,2125,1530,63.75
+86,premium_complete,Premium completo,40,169420,18060,22790,6106,2150,1548,64.5
+87,premium_complete,Premium completo,40,171390,18270,23055,6177,2175,1566,65.25
+88,premium_complete,Premium completo,40,173360,18480,23320,6248,2200,1584,66
+89,premium_complete,Premium completo,40,175330,18690,23585,6319,2225,1602,66.75
+90,premium_complete,Premium completo,40,177300,18900,23850,6390,2250,1620,67.5
+91,premium_complete,Premium completo,40,179270,19110,24115,6461,2275,1638,68.25
+92,premium_complete,Premium completo,40,181240,19320,24380,6532,2300,1656,69
+93,premium_complete,Premium completo,40,183210,19530,24645,6603,2325,1674,69.75
+94,premium_complete,Premium completo,40,185180,19740,24910,6674,2350,1692,70.5
+95,premium_complete,Premium completo,40,187150,19950,25175,6745,2375,1710,71.25
+96,premium_complete,Premium completo,40,189120,20160,25440,6816,2400,1728,72
+97,premium_complete,Premium completo,40,191090,20370,25705,6887,2425,1746,72.75
+98,premium_complete,Premium completo,40,193060,20580,25970,6958,2450,1764,73.5
+99,premium_complete,Premium completo,40,195030,20790,26235,7029,2475,1782,74.25
+100,premium_complete,Premium completo,40,197000,21000,26500,7100,2500,1800,75
+101,premium_complete,Premium completo,40,198970,21210,26765,7171,2525,1818,75.75
+102,premium_complete,Premium completo,40,200940,21420,27030,7242,2550,1836,76.5
+103,premium_complete,Premium completo,40,202910,21630,27295,7313,2575,1854,77.25
+104,premium_complete,Premium completo,40,204880,21840,27560,7384,2600,1872,78
+105,premium_complete,Premium completo,40,206850,22050,27825,7455,2625,1890,78.75
+106,premium_complete,Premium completo,40,208820,22260,28090,7526,2650,1908,79.5
+107,premium_complete,Premium completo,40,210790,22470,28355,7597,2675,1926,80.25
+108,premium_complete,Premium completo,40,212760,22680,28620,7668,2700,1944,81
+109,premium_complete,Premium completo,40,214730,22890,28885,7739,2725,1962,81.75
+110,premium_complete,Premium completo,40,216700,23100,29150,7810,2750,1980,82.5
+111,premium_complete,Premium completo,40,218670,23310,29415,7881,2775,1998,83.25
+112,premium_complete,Premium completo,40,220640,23520,29680,7952,2800,2016,84
+113,premium_complete,Premium completo,40,222610,23730,29945,8023,2825,2034,84.75
+114,premium_complete,Premium completo,40,224580,23940,30210,8094,2850,2052,85.5
+115,premium_complete,Premium completo,40,226550,24150,30475,8165,2875,2070,86.25
+116,premium_complete,Premium completo,40,228520,24360,30740,8236,2900,2088,87
+117,premium_complete,Premium completo,40,230490,24570,31005,8307,2925,2106,87.75
+118,premium_complete,Premium completo,40,232460,24780,31270,8378,2950,2124,88.5
+119,premium_complete,Premium completo,40,234430,24990,31535,8449,2975,2142,89.25
+120,premium_complete,Premium completo,40,236400,25200,31800,8520,3000,2160,90
+1,whale_accelerator,Whale/acelerador,11,2470,260,365,89,30,22,0.75
+2,whale_accelerator,Whale/acelerador,13,4940,520,730,178,60,44,1.5
+3,whale_accelerator,Whale/acelerador,15,7410,780,1095,267,90,66,2.25
+4,whale_accelerator,Whale/acelerador,16,9880,1040,1460,356,120,88,3
+5,whale_accelerator,Whale/acelerador,17,12350,1300,1825,445,150,110,3.75
+6,whale_accelerator,Whale/acelerador,18,14820,1560,2190,534,180,132,4.5
+7,whale_accelerator,Whale/acelerador,19,17290,1820,2555,623,210,154,5.25
+8,whale_accelerator,Whale/acelerador,20,19760,2080,2920,712,240,176,6
+9,whale_accelerator,Whale/acelerador,21,22230,2340,3285,801,270,198,6.75
+10,whale_accelerator,Whale/acelerador,22,24700,2600,3650,890,300,220,7.5
+11,whale_accelerator,Whale/acelerador,22,27170,2860,4015,979,330,242,8.25
+12,whale_accelerator,Whale/acelerador,23,29640,3120,4380,1068,360,264,9
+13,whale_accelerator,Whale/acelerador,23,32110,3380,4745,1157,390,286,9.75
+14,whale_accelerator,Whale/acelerador,24,34580,3640,5110,1246,420,308,10.5
+15,whale_accelerator,Whale/acelerador,25,37050,3900,5475,1335,450,330,11.25
+16,whale_accelerator,Whale/acelerador,25,39520,4160,5840,1424,480,352,12
+17,whale_accelerator,Whale/acelerador,26,41990,4420,6205,1513,510,374,12.75
+18,whale_accelerator,Whale/acelerador,26,44460,4680,6570,1602,540,396,13.5
+19,whale_accelerator,Whale/acelerador,26,46930,4940,6935,1691,570,418,14.25
+20,whale_accelerator,Whale/acelerador,27,49400,5200,7300,1780,600,440,15
+21,whale_accelerator,Whale/acelerador,27,51870,5460,7665,1869,630,462,15.75
+22,whale_accelerator,Whale/acelerador,28,54340,5720,8030,1958,660,484,16.5
+23,whale_accelerator,Whale/acelerador,28,56810,5980,8395,2047,690,506,17.25
+24,whale_accelerator,Whale/acelerador,28,59280,6240,8760,2136,720,528,18
+25,whale_accelerator,Whale/acelerador,29,61750,6500,9125,2225,750,550,18.75
+26,whale_accelerator,Whale/acelerador,29,64220,6760,9490,2314,780,572,19.5
+27,whale_accelerator,Whale/acelerador,30,66690,7020,9855,2403,810,594,20.25
+28,whale_accelerator,Whale/acelerador,30,69160,7280,10220,2492,840,616,21
+29,whale_accelerator,Whale/acelerador,30,71630,7540,10585,2581,870,638,21.75
+30,whale_accelerator,Whale/acelerador,31,74100,7800,10950,2670,900,660,22.5
+31,whale_accelerator,Whale/acelerador,31,76570,8060,11315,2759,930,682,23.25
+32,whale_accelerator,Whale/acelerador,31,79040,8320,11680,2848,960,704,24
+33,whale_accelerator,Whale/acelerador,32,81510,8580,12045,2937,990,726,24.75
+34,whale_accelerator,Whale/acelerador,32,83980,8840,12410,3026,1020,748,25.5
+35,whale_accelerator,Whale/acelerador,32,86450,9100,12775,3115,1050,770,26.25
+36,whale_accelerator,Whale/acelerador,32,88920,9360,13140,3204,1080,792,27
+37,whale_accelerator,Whale/acelerador,33,91390,9620,13505,3293,1110,814,27.75
+38,whale_accelerator,Whale/acelerador,33,93860,9880,13870,3382,1140,836,28.5
+39,whale_accelerator,Whale/acelerador,33,96330,10140,14235,3471,1170,858,29.25
+40,whale_accelerator,Whale/acelerador,33,98800,10400,14600,3560,1200,880,30
+41,whale_accelerator,Whale/acelerador,34,101270,10660,14965,3649,1230,902,30.75
+42,whale_accelerator,Whale/acelerador,34,103740,10920,15330,3738,1260,924,31.5
+43,whale_accelerator,Whale/acelerador,34,106210,11180,15695,3827,1290,946,32.25
+44,whale_accelerator,Whale/acelerador,35,108680,11440,16060,3916,1320,968,33
+45,whale_accelerator,Whale/acelerador,35,111150,11700,16425,4005,1350,990,33.75
+46,whale_accelerator,Whale/acelerador,35,113620,11960,16790,4094,1380,1012,34.5
+47,whale_accelerator,Whale/acelerador,35,116090,12220,17155,4183,1410,1034,35.25
+48,whale_accelerator,Whale/acelerador,36,118560,12480,17520,4272,1440,1056,36
+49,whale_accelerator,Whale/acelerador,36,121030,12740,17885,4361,1470,1078,36.75
+50,whale_accelerator,Whale/acelerador,36,123500,13000,18250,4450,1500,1100,37.5
+51,whale_accelerator,Whale/acelerador,36,125970,13260,18615,4539,1530,1122,38.25
+52,whale_accelerator,Whale/acelerador,36,128440,13520,18980,4628,1560,1144,39
+53,whale_accelerator,Whale/acelerador,37,130910,13780,19345,4717,1590,1166,39.75
+54,whale_accelerator,Whale/acelerador,37,133380,14040,19710,4806,1620,1188,40.5
+55,whale_accelerator,Whale/acelerador,37,135850,14300,20075,4895,1650,1210,41.25
+56,whale_accelerator,Whale/acelerador,37,138320,14560,20440,4984,1680,1232,42
+57,whale_accelerator,Whale/acelerador,38,140790,14820,20805,5073,1710,1254,42.75
+58,whale_accelerator,Whale/acelerador,38,143260,15080,21170,5162,1740,1276,43.5
+59,whale_accelerator,Whale/acelerador,38,145730,15340,21535,5251,1770,1298,44.25
+60,whale_accelerator,Whale/acelerador,38,148200,15600,21900,5340,1800,1320,45
+61,whale_accelerator,Whale/acelerador,38,150670,15860,22265,5429,1830,1342,45.75
+62,whale_accelerator,Whale/acelerador,39,153140,16120,22630,5518,1860,1364,46.5
+63,whale_accelerator,Whale/acelerador,39,155610,16380,22995,5607,1890,1386,47.25
+64,whale_accelerator,Whale/acelerador,39,158080,16640,23360,5696,1920,1408,48
+65,whale_accelerator,Whale/acelerador,39,160550,16900,23725,5785,1950,1430,48.75
+66,whale_accelerator,Whale/acelerador,39,163020,17160,24090,5874,1980,1452,49.5
+67,whale_accelerator,Whale/acelerador,40,165490,17420,24455,5963,2010,1474,50.25
+68,whale_accelerator,Whale/acelerador,40,167960,17680,24820,6052,2040,1496,51
+69,whale_accelerator,Whale/acelerador,40,170430,17940,25185,6141,2070,1518,51.75
+70,whale_accelerator,Whale/acelerador,40,172900,18200,25550,6230,2100,1540,52.5
+71,whale_accelerator,Whale/acelerador,40,175370,18460,25915,6319,2130,1562,53.25
+72,whale_accelerator,Whale/acelerador,40,177840,18720,26280,6408,2160,1584,54
+73,whale_accelerator,Whale/acelerador,40,180310,18980,26645,6497,2190,1606,54.75
+74,whale_accelerator,Whale/acelerador,40,182780,19240,27010,6586,2220,1628,55.5
+75,whale_accelerator,Whale/acelerador,40,185250,19500,27375,6675,2250,1650,56.25
+76,whale_accelerator,Whale/acelerador,40,187720,19760,27740,6764,2280,1672,57
+77,whale_accelerator,Whale/acelerador,40,190190,20020,28105,6853,2310,1694,57.75
+78,whale_accelerator,Whale/acelerador,40,192660,20280,28470,6942,2340,1716,58.5
+79,whale_accelerator,Whale/acelerador,40,195130,20540,28835,7031,2370,1738,59.25
+80,whale_accelerator,Whale/acelerador,40,197600,20800,29200,7120,2400,1760,60
+81,whale_accelerator,Whale/acelerador,40,200070,21060,29565,7209,2430,1782,60.75
+82,whale_accelerator,Whale/acelerador,40,202540,21320,29930,7298,2460,1804,61.5
+83,whale_accelerator,Whale/acelerador,40,205010,21580,30295,7387,2490,1826,62.25
+84,whale_accelerator,Whale/acelerador,40,207480,21840,30660,7476,2520,1848,63
+85,whale_accelerator,Whale/acelerador,40,209950,22100,31025,7565,2550,1870,63.75
+86,whale_accelerator,Whale/acelerador,40,212420,22360,31390,7654,2580,1892,64.5
+87,whale_accelerator,Whale/acelerador,40,214890,22620,31755,7743,2610,1914,65.25
+88,whale_accelerator,Whale/acelerador,40,217360,22880,32120,7832,2640,1936,66
+89,whale_accelerator,Whale/acelerador,40,219830,23140,32485,7921,2670,1958,66.75
+90,whale_accelerator,Whale/acelerador,40,222300,23400,32850,8010,2700,1980,67.5
+91,whale_accelerator,Whale/acelerador,40,224770,23660,33215,8099,2730,2002,68.25
+92,whale_accelerator,Whale/acelerador,40,227240,23920,33580,8188,2760,2024,69
+93,whale_accelerator,Whale/acelerador,40,229710,24180,33945,8277,2790,2046,69.75
+94,whale_accelerator,Whale/acelerador,40,232180,24440,34310,8366,2820,2068,70.5
+95,whale_accelerator,Whale/acelerador,40,234650,24700,34675,8455,2850,2090,71.25
+96,whale_accelerator,Whale/acelerador,40,237120,24960,35040,8544,2880,2112,72
+97,whale_accelerator,Whale/acelerador,40,239590,25220,35405,8633,2910,2134,72.75
+98,whale_accelerator,Whale/acelerador,40,242060,25480,35770,8722,2940,2156,73.5
+99,whale_accelerator,Whale/acelerador,40,244530,25740,36135,8811,2970,2178,74.25
+100,whale_accelerator,Whale/acelerador,40,247000,26000,36500,8900,3000,2200,75
+101,whale_accelerator,Whale/acelerador,40,249470,26260,36865,8989,3030,2222,75.75
+102,whale_accelerator,Whale/acelerador,40,251940,26520,37230,9078,3060,2244,76.5
+103,whale_accelerator,Whale/acelerador,40,254410,26780,37595,9167,3090,2266,77.25
+104,whale_accelerator,Whale/acelerador,40,256880,27040,37960,9256,3120,2288,78
+105,whale_accelerator,Whale/acelerador,40,259350,27300,38325,9345,3150,2310,78.75
+106,whale_accelerator,Whale/acelerador,40,261820,27560,38690,9434,3180,2332,79.5
+107,whale_accelerator,Whale/acelerador,40,264290,27820,39055,9523,3210,2354,80.25
+108,whale_accelerator,Whale/acelerador,40,266760,28080,39420,9612,3240,2376,81
+109,whale_accelerator,Whale/acelerador,40,269230,28340,39785,9701,3270,2398,81.75
+110,whale_accelerator,Whale/acelerador,40,271700,28600,40150,9790,3300,2420,82.5
+111,whale_accelerator,Whale/acelerador,40,274170,28860,40515,9879,3330,2442,83.25
+112,whale_accelerator,Whale/acelerador,40,276640,29120,40880,9968,3360,2464,84
+113,whale_accelerator,Whale/acelerador,40,279110,29380,41245,10057,3390,2486,84.75
+114,whale_accelerator,Whale/acelerador,40,281580,29640,41610,10146,3420,2508,85.5
+115,whale_accelerator,Whale/acelerador,40,284050,29900,41975,10235,3450,2530,86.25
+116,whale_accelerator,Whale/acelerador,40,286520,30160,42340,10324,3480,2552,87
+117,whale_accelerator,Whale/acelerador,40,288990,30420,42705,10413,3510,2574,87.75
+118,whale_accelerator,Whale/acelerador,40,291460,30680,43070,10502,3540,2596,88.5
+119,whale_accelerator,Whale/acelerador,40,293930,30940,43435,10591,3570,2618,89.25
+120,whale_accelerator,Whale/acelerador,40,296400,31200,43800,10680,3600,2640,90
+1,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+2,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+3,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+4,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+5,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+6,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+7,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+8,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+9,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+10,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+11,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+12,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+13,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+14,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+15,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+16,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+17,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+18,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+19,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+20,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+21,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+22,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+23,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+24,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+25,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+26,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+27,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+28,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+29,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+30,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+31,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+32,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+33,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+34,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+35,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+36,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+37,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+38,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+39,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+40,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+41,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+42,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+43,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+44,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+45,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+46,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+47,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+48,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+49,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+50,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+51,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+52,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+53,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+54,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+55,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+56,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+57,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+58,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+59,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+60,catchup_newcomer,Catch-up newcomer,1,0,0,0,0,0,0,0
+61,catchup_newcomer,Catch-up newcomer,11,2433.5,209.25,248,66.65,20.15,17.05,0.25
+62,catchup_newcomer,Catch-up newcomer,13,4867,418.5,496,133.3,40.3,34.1,0.5
+63,catchup_newcomer,Catch-up newcomer,15,7300.5,627.75,744,199.95,60.45,51.15,0.75
+64,catchup_newcomer,Catch-up newcomer,16,9734,837,992,266.6,80.6,68.2,1
+65,catchup_newcomer,Catch-up newcomer,17,12167.5,1046.25,1240,333.25,100.75,85.25,1.25
+66,catchup_newcomer,Catch-up newcomer,18,14601,1255.5,1488,399.9,120.9,102.3,1.5
+67,catchup_newcomer,Catch-up newcomer,19,17034.5,1464.75,1736,466.55,141.05,119.35,1.75
+68,catchup_newcomer,Catch-up newcomer,20,19468,1674,1984,533.2,161.2,136.4,2
+69,catchup_newcomer,Catch-up newcomer,21,21901.5,1883.25,2232,599.85,181.35,153.45,2.25
+70,catchup_newcomer,Catch-up newcomer,22,24335,2092.5,2480,666.5,201.5,170.5,2.5
+71,catchup_newcomer,Catch-up newcomer,22,26768.5,2301.75,2728,733.15,221.65,187.55,2.75
+72,catchup_newcomer,Catch-up newcomer,23,29202,2511,2976,799.8,241.8,204.6,3
+73,catchup_newcomer,Catch-up newcomer,23,31635.5,2720.25,3224,866.45,261.95,221.65,3.25
+74,catchup_newcomer,Catch-up newcomer,24,34069,2929.5,3472,933.1,282.1,238.7,3.5
+75,catchup_newcomer,Catch-up newcomer,24,36502.5,3138.75,3720,999.75,302.25,255.75,3.75
+76,catchup_newcomer,Catch-up newcomer,25,38936,3348,3968,1066.4,322.4,272.8,4
+77,catchup_newcomer,Catch-up newcomer,25,41369.5,3557.25,4216,1133.05,342.55,289.85,4.25
+78,catchup_newcomer,Catch-up newcomer,26,43803,3766.5,4464,1199.7,362.7,306.9,4.5
+79,catchup_newcomer,Catch-up newcomer,26,46236.5,3975.75,4712,1266.35,382.85,323.95,4.75
+80,catchup_newcomer,Catch-up newcomer,27,48670,4185,4960,1333,403,341,5
+81,catchup_newcomer,Catch-up newcomer,27,51103.5,4394.25,5208,1399.65,423.15,358.05,5.25
+82,catchup_newcomer,Catch-up newcomer,28,53537,4603.5,5456,1466.3,443.3,375.1,5.5
+83,catchup_newcomer,Catch-up newcomer,28,55970.5,4812.75,5704,1532.95,463.45,392.15,5.75
+84,catchup_newcomer,Catch-up newcomer,28,58404,5022,5952,1599.6,483.6,409.2,6
+85,catchup_newcomer,Catch-up newcomer,29,60837.5,5231.25,6200,1666.25,503.75,426.25,6.25
+86,catchup_newcomer,Catch-up newcomer,29,63271,5440.5,6448,1732.9,523.9,443.3,6.5
+87,catchup_newcomer,Catch-up newcomer,29,65704.5,5649.75,6696,1799.55,544.05,460.35,6.75
+88,catchup_newcomer,Catch-up newcomer,30,68138,5859,6944,1866.2,564.2,477.4,7
+89,catchup_newcomer,Catch-up newcomer,30,70571.5,6068.25,7192,1932.85,584.35,494.45,7.25
+90,catchup_newcomer,Catch-up newcomer,30,73005,6277.5,7440,1999.5,604.5,511.5,7.5
+91,catchup_newcomer,Catch-up newcomer,31,75438.5,6486.75,7688,2066.15,624.65,528.55,7.75
+92,catchup_newcomer,Catch-up newcomer,31,77872,6696,7936,2132.8,644.8,545.6,8
+93,catchup_newcomer,Catch-up newcomer,31,80305.5,6905.25,8184,2199.45,664.95,562.65,8.25
+94,catchup_newcomer,Catch-up newcomer,32,82739,7114.5,8432,2266.1,685.1,579.7,8.5
+95,catchup_newcomer,Catch-up newcomer,32,85172.5,7323.75,8680,2332.75,705.25,596.75,8.75
+96,catchup_newcomer,Catch-up newcomer,32,87606,7533,8928,2399.4,725.4,613.8,9
+97,catchup_newcomer,Catch-up newcomer,33,90039.5,7742.25,9176,2466.05,745.55,630.85,9.25
+98,catchup_newcomer,Catch-up newcomer,33,92473,7951.5,9424,2532.7,765.7,647.9,9.5
+99,catchup_newcomer,Catch-up newcomer,33,94906.5,8160.75,9672,2599.35,785.85,664.95,9.75
+100,catchup_newcomer,Catch-up newcomer,33,97340,8370,9920,2666,806,682,10
+101,catchup_newcomer,Catch-up newcomer,34,99773.5,8579.25,10168,2732.65,826.15,699.05,10.25
+102,catchup_newcomer,Catch-up newcomer,34,102207,8788.5,10416,2799.3,846.3,716.1,10.5
+103,catchup_newcomer,Catch-up newcomer,34,104640.5,8997.75,10664,2865.95,866.45,733.15,10.75
+104,catchup_newcomer,Catch-up newcomer,34,107074,9207,10912,2932.6,886.6,750.2,11
+105,catchup_newcomer,Catch-up newcomer,35,109507.5,9416.25,11160,2999.25,906.75,767.25,11.25
+106,catchup_newcomer,Catch-up newcomer,35,111941,9625.5,11408,3065.9,926.9,784.3,11.5
+107,catchup_newcomer,Catch-up newcomer,35,114374.5,9834.75,11656,3132.55,947.05,801.35,11.75
+108,catchup_newcomer,Catch-up newcomer,35,116808,10044,11904,3199.2,967.2,818.4,12
+109,catchup_newcomer,Catch-up newcomer,36,119241.5,10253.25,12152,3265.85,987.35,835.45,12.25
+110,catchup_newcomer,Catch-up newcomer,36,121675,10462.5,12400,3332.5,1007.5,852.5,12.5
+111,catchup_newcomer,Catch-up newcomer,36,124108.5,10671.75,12648,3399.15,1027.65,869.55,12.75
+112,catchup_newcomer,Catch-up newcomer,36,126542,10881,12896,3465.8,1047.8,886.6,13
+113,catchup_newcomer,Catch-up newcomer,36,128975.5,11090.25,13144,3532.45,1067.95,903.65,13.25
+114,catchup_newcomer,Catch-up newcomer,37,131409,11299.5,13392,3599.1,1088.1,920.7,13.5
+115,catchup_newcomer,Catch-up newcomer,37,133842.5,11508.75,13640,3665.75,1108.25,937.75,13.75
+116,catchup_newcomer,Catch-up newcomer,37,136276,11718,13888,3732.4,1128.4,954.8,14
+117,catchup_newcomer,Catch-up newcomer,37,138709.5,11927.25,14136,3799.05,1148.55,971.85,14.25
+118,catchup_newcomer,Catch-up newcomer,38,141143,12136.5,14384,3865.7,1168.7,988.9,14.5
+119,catchup_newcomer,Catch-up newcomer,38,143576.5,12345.75,14632,3932.35,1188.85,1005.95,14.75
+120,catchup_newcomer,Catch-up newcomer,38,146010,12555,14880,3999,1209,1023,15

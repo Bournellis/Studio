@@ -1,6 +1,6 @@
 # DraxosMobile — Game Design Document (Referencia De Implementacao)
 
-- Ultima atualizacao: `2026-05-19`
+- Ultima atualizacao: `2026-05-20`
 - Fonte historica completa: `../../_conceitos/mobile-universe/gdd.md`
 
 > Este documento e uma referencia condensada para implementacao. Para o design completo com todas as formulas, tabelas e decisoes detalhadas, consulte o GDD completo no caminho acima.
@@ -11,7 +11,7 @@
 
 - Raca: Draxos. Nome definido pelo jogador. Sem classes.
 - Visual: silhueta vultuosa, manto comprido, etereo e energetico
-- Level maximo Season 1: 40. O cap exato do primeiro slice completo ainda esta em aberto em `design-pending.md` (`DMOB-D001`). O MVP tecnico usa fixture level 1.
+- Level maximo do primeiro slice e da Season 1: 40. O MVP tecnico usa fixture level 1.
 - Formula de XP: `XP_total(n) = 3 × (n³ - 6n² + 17n - 12)`
 - **Cap universal:** Level Global e o teto de arma, spells e construcoes — nenhum sistema pode ser upado para um level maior que o personagem. Seasons futuras expandem o cap alem de 40.
 
@@ -41,7 +41,7 @@ DoTs, resistencias, barreiras e status effects: ver GDD secao 3.4–3.8.
 
 - Ataque basico: dano Magico direto
 - Ataque especial: 4o ataque = 3x dano
-- Tres dimensoes: Tipo / Qualidade (Ossos, craftado no Ossario) / Level (Almas, 40/season, reseta)
+- Tres dimensoes: Tipo / Qualidade (Ossos, craftado no Ossario) / Level (Almas, permanente, limitado pelo cap atual)
 - **Tipo atual (primeiro slice):** Varinha — dano Magico. Outros tipos: desbloqueio futuro.
 - Crafting (primeiro slice): upgrade de dano via Ossos — sem outras dimensoes por enquanto
 - Ossos: drops de batalha + quests iniciais + producao do Ossario
@@ -66,15 +66,25 @@ Fila de alvos: Summon Frente → Summon Meio → Mago → Summon Tras.
 | Invocar Demonio | Fogo | — | Summon — Demonio (Tras, dano Fogo). Tempo de vida a calibrar. |
 | Animar Morto | Morte | — | Summon — Esqueleto (Frente) ou Morto-Vivo (Meio), ambos dano Morte. Usa slot livre se ocupado. |
 
-**Unlock de slots e spells:**
+**Unlock de slots, spells, passiva e pet:**
 
-Nao e restricao de slot — e ordem de desbloqueio por level minimo. Uma vez desbloqueada, a spell pode ir em qualquer slot. Unlocks de slot e de spell custam Almas e sao feitos no Altar das Almas.
+O personagem comeca com 0 slots de spell. A Varinha Magica sustenta o combate inicial ate o primeiro unlock. Levels liberam disponibilidade; compra/equipamento continuam passando pelo Altar das Almas ou estrutura correspondente quando houver custo.
 
-| Level minimo | O que fica disponivel para unlock |
+| Level | Unlock |
 |---|---|
-| 1–3 | Slot 1 + Raio Cosmico |
-| 10–15 | Slot 2 + Raio, Acender, Envenenar, Congelar |
-| 20–25 | Slot 3 + Odio, Dilacerar, Fortificar, Invocar Demonio, Animar Morto |
+| 1 | Varinha Magica inicial, sem spell equipada |
+| 3 | Slot de spell 1 e Raio Cosmico |
+| 7 | Slot de spell 2 e primeiro pacote elemental: Raio, Acender, Envenenar, Congelar |
+| 10 | Slot de passiva |
+| 15 | Slot de pet |
+| 25 | Slot de spell 3 e pacote avancado: Odio, Dilacerar, Fortificar, Invocar Demonio, Animar Morto |
+
+Regras:
+
+- Uma spell desbloqueada pode ser equipada em qualquer slot de spell disponivel.
+- Slots bloqueados nao aceitam spell equipada nem placeholder autoritativo no servidor.
+- O servidor valida unlock por level antes de aceitar `build/equip`.
+- Passiva e pet podem existir como conteudo no catalogo antes do level minimo, mas nao podem ser equipados ate o unlock.
 
 ### Summons
 
@@ -118,20 +128,20 @@ Criaturas invocadas por spells de summon que combatem ao lado do mago.
 
 Para valores completos: `../../_conceitos/mobile-universe/gdd.md` secao 3.15 e P14 em pendencias.md.
 
-### Passivas (1 Slot, 5 Opcoes, 10 Levels)
+### Passivas (1 Slot, 5 Opcoes, 40 Levels)
 
 Forca / Resistencia / Escudo / Vampirismo / Velocidade.
 Desbloqueadas e upadas pelas Minas de Cristal. Recurso: Cristais. **Permanentes entre seasons.**
 
-### Pets (1 Slot, 7 Opcoes, 40 Levels/Season)
+### Pets (1 Slot, 7 Opcoes, 40 Levels)
 
-Um pet por tipo de dano. Recurso: Sangue.
+Um pet por tipo de dano. Recurso: Sangue. **Permanentes entre seasons.**
 
 ---
 
 ## Base Manager
 
-Visual: Altar/Santuario pessoal — sombrio, organico, energetico.
+Visual: Refugio pessoal — sombrio, organico, energetico.
 
 ### Estruturas
 
@@ -162,6 +172,20 @@ Toda construcao pode evoluir a si mesma ate level 40 (custo: Energia + tempo). O
 - Recompensa vitoria: XP + Almas + Energia + Sangue completos
 - Recompensa derrota: 1/5 de todos
 
+### Dados De Combate Para Balanceamento
+
+Toda batalha real e toda batalha simulada entre bots deve gravar dados suficientes para balancear combate, bots e matchmaking sem depender de log visual completo no cliente.
+
+Eventos minimos de telemetria por batalha:
+
+- `battle_requested`: power do jogador, faixa de matchmaking, modo, origem do oponente real/bot.
+- `match_selected`: power do jogador, power do oponente, diferenca absoluta e percentual, tempo de busca, motivo de fallback.
+- `battle_simulated`: seed, duracao, vencedor, motivo de fim, dano total por participante, dano por tipo, cura, barreira absorvida, mana gasta, summons criados, anti-stall acionado.
+- `reward_applied`: reward table, deltas economicos, vitoria/derrota, idempotency key.
+- `build_snapshot`: build compacta dos dois lados no momento da batalha.
+
+Batalhas bot-vs-bot podem ser executadas como jobs de simulacao para gerar dados de balanceamento. Elas nao concedem recompensa, nao entram em ranking e devem ser marcadas com `simulation_type = "bot_balance"`.
+
 ---
 
 ## Economia
@@ -182,14 +206,17 @@ Toda construcao pode evoluir a si mesma ate level 40 (custo: Energia + tempo). O
 ### Season
 
 - Duracao: 4 meses, 2 Battle Passes por season
-- Itens com reset por season: arma (level), spells (level), pet (level)
-- Permanentes: Level Global, Maestria, Passivas
+- Cap da Season 1: 40 para level global, arma, spells, pet, passivas e construcoes
+- Caps futuros sao configuraveis por season no simulador economico
+- Permanentes entre seasons: Level Global, arma, spells, pet, passivas, construcoes, qualidade da varinha e maestrias
+- Resetam por season: Battle Pass, ranking/eventos de arena, missoes sazonais e ofertas temporarias
+- Catch-up futuro: multiplicador suave de XP/recursos para jogadores abaixo do cap anterior, sem pular toda a jornada
 
 ### Curvas De Upgrade
 
 - Arma/Spell: `max(10, round(0.2 × n²))` Almas — total ~5.200/item
 - Pet: `max(5, round(0.15 × n²))` Sangue — total ~4.000
-- Passiva: total ~1.000 Cristais (10 levels)
+- Passiva: 40 levels, custo em Cristais calibravel no simulador economico
 
 ---
 
@@ -204,8 +231,41 @@ Toda construcao pode evoluir a si mesma ate level 40 (custo: Energia + tempo). O
 
 ## Matchmaking E Ranking
 
-- Poder: `(Level×50) + (Arma×30) + (Spells×20 cada) + (Pet×15) + (Passivas×10 cada) + (Qualidade×25)`
+- Poder inicial: `(Level x 50) + (ArmaLevel x 30) + (SpellLevelsTotal x 20) + (PetLevel x 15) + (PassiveLevelsTotal x 10) + (WeaponQualityTier x 25)`.
+- Componentes bloqueados por level contam como 0 ate o unlock.
+- Poder e recalculado no servidor em toda mudanca autoritativa de build, upgrade ou level.
+- Matchmaking tenta parear por diferenca maxima de poder, expandindo a tolerancia por tempo de busca.
+- Faixas iniciais: ate 10% de diferenca nos primeiros 5s; ate 20% ate 15s; ate 35% depois disso; se nao houver jogador real, usar bot da faixa.
+- Bots simulados cobrem faixas de poder com builds legais para o level correspondente.
 - Ranking: pontos de arena por season (vitoria=+pontos, derrota=-pontos, variavel por diferenca de poder)
+
+### Bots Iniciais
+
+O primeiro slice precisa popular testes com bots gerados por faixas de poder. Cada bot deve ter:
+
+- level, power, faixa de poder e archetype estavel;
+- build legal para os unlocks do level;
+- seed de variacao para dano/status sem criar build impossivel;
+- flag `is_ranked = false`.
+
+Archetypes iniciais sugeridos:
+
+- `starter_wand`: level 1-2, varinha pura, sem spells.
+- `cosmic_apprentice`: level 3-6, Raio Cosmico.
+- `elemental_mixer`: level 7-14, duas spells elementais.
+- `pet_handler`: level 15-24, duas spells + pet.
+- `summoner`: level 25-40, tres spells com summon.
+- `defensive_caster`: level 25-40, Fortificar + dano sustentado.
+
+### UX/Layout Do Primeiro Slice
+
+Primeira versao jogavel deve priorizar clareza operacional em vez de visual final. Layout base:
+
+- `Refugio`: hub principal com personagem, poder, recursos, fila de construcao e acessos para Batalha, Base, Social e Loja.
+- `Batalha`: preview de faixa de matchmaking, botao de iniciar, replay com velocidade/skip e resumo de dano/recompensa.
+- `Base`: seis estruturas em grade, estado de upgrade/coleta, pedido de ajuda e custos claros.
+- `Social`: abas Amigos, Guilda e Chat; polling simples no primeiro slice.
+- `Loja/Passe`: Battle Pass, Diamante e recompensas, com compras reais substituidas por fluxo de teste no alpha.
 
 ---
 

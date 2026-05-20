@@ -62,7 +62,20 @@ Campos MVP:
 - `passive_level`
 - `updated_at`
 
-Nota: a representacao final de spells desbloqueadas vs equipadas ainda e pendencia `DMOB-D026`.
+Schema do primeiro slice:
+
+- `builds` permanece como resumo de equipamento atual para leitura rapida: arma, qualidade, level da arma, passiva equipada, pet equipado, poder calculado, versao da formula de poder e `updated_at`.
+- `player_spell_state` guarda spells desbloqueadas e progresso: `player_id`, `spell_id`, `spell_level`, `is_unlocked`, `unlocked_at_level`, `updated_at`.
+- `player_spell_slots` guarda equipamento por slot: `player_id`, `slot_index` (`1..3`), `unlocked_at_level` (`3`, `7`, `25`), `equipped_spell_id`, `updated_at`.
+- `player_passive_state` guarda passivas desbloqueadas e levels. O slot de passiva abre no level 10.
+- `player_pet_state` guarda pets desbloqueados e levels. O slot de pet abre no level 15.
+
+Regras:
+
+- O personagem comeca com 0 slots de spell equipaveis.
+- `build/equip` deve rejeitar equipamento em slot bloqueado pelo level.
+- Spells desbloqueadas podem ser equipadas em qualquer slot desbloqueado.
+- O servidor recalcula `players.power` sempre que build, level ou upgrade mudar.
 
 ### `battles`
 
@@ -161,6 +174,37 @@ Adicionar ou detalhar:
 - `reward_claims`
 - `telemetry_events`
 
+### `telemetry_events`
+
+Eventos de telemetria para balanceamento, UX e matchmaking.
+
+Campos minimos:
+
+- `id`
+- `player_id` nullable para simulacoes bot-vs-bot
+- `battle_id` nullable
+- `session_id` nullable
+- `event_type`
+- `schema_version`
+- `source` (`client`, `server`, `simulation_job`)
+- `payload`
+- `created_at`
+
+Eventos minimos do primeiro slice:
+
+- `battle_requested`
+- `match_selected`
+- `battle_simulated`
+- `reward_applied`
+- `build_snapshot`
+- `bot_balance_simulated`
+
+Regras:
+
+- Telemetria nao concede recompensa, ranking ou progresso.
+- Payloads carregam snapshots compactos, nao dados secretos completos de outro jogador para o cliente.
+- Batalhas bot-vs-bot usam `player_id = null`, `source = simulation_job` e ficam fora do ranking.
+
 ## Regras De Seguranca
 
 - RLS: jogador acessa apenas seus dados.
@@ -206,6 +250,8 @@ Regras:
 
 ## Regras De Temporada
 
-- `players.level`, maestrias, passivas e base permanecem entre seasons.
-- Levels sazonais de arma, spells e pet resetam conforme design autoritativo.
+- `players.level`, arma, spells, pet, passivas, construcoes, qualidade da varinha e maestrias permanecem entre seasons.
+- O cap de todos os sistemas sobe por season conforme configuracao autoritativa de economia.
+- Catch-up aplica multiplicadores suaves de XP/recursos para jogadores abaixo do cap anterior, sem mutar levels diretamente.
+- Battle Pass, ranking/eventos de arena, missoes sazonais e ofertas temporarias resetam por season.
 - Snapshot de ranking deve preservar season encerrada.

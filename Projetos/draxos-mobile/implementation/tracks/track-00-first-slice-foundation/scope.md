@@ -1,6 +1,6 @@
 # Track 00 - Scope
 
-- Ultima atualizacao: `2026-05-19`
+- Ultima atualizacao: `2026-05-20`
 - Status: escopo definido para preparacao de implementacao
 - Projeto: `draxos-mobile`
 
@@ -39,12 +39,14 @@ Aceite:
 A Track 00 completa termina quando houver:
 
 - Conta guest, email/senha, Google Sign-In, migracao guest, convite de alpha e persistencia servidor-side.
-- PVP autobattler assincrono com varinha, spells do primeiro slice, pets, passivas, summons, anti-stall, recompensas, replay e skip/velocidade visual.
+- PVP autobattler assincrono ate level cap 40 na Season 1, com levels permanentes, varinha, 0-3 slots de spell por unlock de level, pet no level 15, passivas, summons, anti-stall, recompensas, replay e skip/velocidade visual.
 - Base Manager com 6 estruturas, fila de construcao, coleta offline, upgrades, armazenamento, ajudas sociais e custos validados.
-- Matchmaking por poder com jogadores reais e bots simulados.
+- Matchmaking por poder com tolerancia de diferenca, jogadores reais e bots simulados para popular testes.
 - Ranking por season com snapshot.
 - Social funcional: amigos, guilda, ajuda de construcao, chat de guilda e direct por polling.
 - Economia funcional: XP/cotas, Almas, Energia, Sangue, Cristais, Ossos, Diamante, recompensas diarias/semanais, Battle Pass Free/Premium.
+- Simulador de economia versionado para calibrar Season 1, caps futuros, perfis free/premium/whale e catch-up.
+- Telemetria minima de combate, matchmaking, build snapshot e simulacoes bot-vs-bot para informar balanceamento.
 - Validacao com GUT, testes Deno/TypeScript para Edge Functions, migrations verificaveis e smoke de export PC, Android e PC browser.
 
 ## Fora Da Track 00

@@ -230,13 +230,39 @@ MVP tecnico usa bot fixture `mvp_training_bot`.
 
 Primeiro slice completo:
 
-- Calcula poder do solicitante.
-- Filtra pool por faixa de poder.
-- Sorteia oponente real ou bot simulado.
+- Calcula poder do solicitante no servidor.
+- Filtra pool por faixa de poder e diferenca percentual.
+- Expande tolerancia por tempo de busca: 10% nos primeiros 5s, 20% ate 15s e 35% depois disso.
+- Sorteia oponente real ou bot simulado quando nao houver jogador compativel.
 - Bots simulados nao aparecem em ranking.
 - Ranking usa pontos de arena por season e snapshot no encerramento.
 
-Formula final e faixa inicial estao registradas em `design-pending.md`.
+Formula inicial de poder: `(Level x 50) + (ArmaLevel x 30) + (SpellLevelsTotal x 20) + (PetLevel x 15) + (PassiveLevelsTotal x 10) + (WeaponQualityTier x 25)`.
+
+## Telemetria E Simulacoes
+
+O primeiro slice deve coletar telemetria minima de combate e matchmaking para balanceamento.
+
+Fontes:
+
+- `server`: batalha real, matchmaking, recompensa e snapshot de build.
+- `client`: sessao, entrada/saida de telas, erros controlados e replay assistido/pulado.
+- `simulation_job`: batalhas bot-vs-bot para medir duracao, win rate por archetype, escalada de poder e frequencia de anti-stall.
+
+Eventos minimos:
+
+- `battle_requested`
+- `match_selected`
+- `battle_simulated`
+- `reward_applied`
+- `build_snapshot`
+- `bot_balance_simulated`
+
+Regras:
+
+- Bot-vs-bot nao concede recompensa nem altera ranking.
+- Dados de combate para balanceamento ficam no servidor; o cliente recebe apenas o log visual necessario.
+- Payloads de telemetria devem usar `schema_version` para permitir evolucao durante o alpha.
 
 ---
 
@@ -298,8 +324,6 @@ draxos-mobile/
 Pendencias vivas:
 
 - Chat: politica de retencao/delecao/moderacao (`DMOB-D023`).
-- Telemetria minima (`DMOB-D024`).
-- Schema de build para spells desbloqueadas/equipadas (`DMOB-D026`).
 
 Pendencias operacionais resolvidas em 2026-05-19:
 

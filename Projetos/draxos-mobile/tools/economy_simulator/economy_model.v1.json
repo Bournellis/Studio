@@ -1,0 +1,231 @@
+{
+  "schema_version": 1,
+  "model_id": "draxos_mobile_economy_s1_baseline",
+  "status": "CALIBRAVEL_ALPHA",
+  "notes": [
+    "Valores iniciais para calibracao, nao balanceamento final.",
+    "Todos os levels sao permanentes e compartilham o cap da season.",
+    "Season 1 usa cap 40 por padrao, mas o simulador permite testar 40, 50 e 60."
+  ],
+  "season_defaults": {
+    "selected_season_id": "S1",
+    "duration_days": 120,
+    "battle_pass_duration_days": 60,
+    "selected_cap": 40,
+    "initial_cap_options": [40, 50, 60],
+    "future_caps": [
+      {"season_id": "S1", "cap": 40},
+      {"season_id": "S2", "cap": 50},
+      {"season_id": "S3", "cap": 60}
+    ],
+    "free_active_target_cap_day": 105
+  },
+  "activity_minutes": {
+    "battle": 1.5,
+    "checkin": 5,
+    "daily_mission_admin": 3,
+    "weekly_mission_admin": 1,
+    "battle_pass_claim": 0.5,
+    "shop_admin": 1
+  },
+  "resources": [
+    {
+      "id": "xp",
+      "display_name": "XP",
+      "role": "Level global, unlocks e ritmo da season",
+      "primary_sources": ["battle", "daily_missions", "weekly_missions", "battle_pass", "catch_up"],
+      "primary_sinks": ["not_spent"],
+      "persistence": "permanent"
+    },
+    {
+      "id": "almas",
+      "display_name": "Almas",
+      "role": "Upgrade de varinha e spells",
+      "primary_sources": ["battle", "daily_missions", "weekly_missions", "battle_pass", "base", "limited_packs"],
+      "primary_sinks": ["weapon_level", "spell_level", "spell_unlocks"],
+      "persistence": "permanent"
+    },
+    {
+      "id": "energia",
+      "display_name": "Energia",
+      "role": "Gargalo da base e das construcoes",
+      "primary_sources": ["battle", "daily_missions", "weekly_missions", "battle_pass", "base", "limited_packs"],
+      "primary_sinks": ["base_structures", "construction_queue", "time_acceleration"],
+      "persistence": "permanent"
+    },
+    {
+      "id": "sangue",
+      "display_name": "Sangue",
+      "role": "Upgrade de pets",
+      "primary_sources": ["battle", "daily_missions", "weekly_missions", "battle_pass", "base"],
+      "primary_sinks": ["pet_level"],
+      "persistence": "permanent"
+    },
+    {
+      "id": "cristais",
+      "display_name": "Cristais",
+      "role": "Upgrade de passivas",
+      "primary_sources": ["daily_missions", "weekly_missions", "battle_pass", "base"],
+      "primary_sinks": ["passive_level"],
+      "persistence": "permanent"
+    },
+    {
+      "id": "ossos",
+      "display_name": "Ossos",
+      "role": "Qualidade e crafting da varinha",
+      "primary_sources": ["battle", "daily_missions", "weekly_missions", "battle_pass", "base"],
+      "primary_sinks": ["weapon_quality"],
+      "persistence": "permanent"
+    },
+    {
+      "id": "diamante",
+      "display_name": "Diamante",
+      "role": "Premium, tempo e conforto",
+      "primary_sources": ["purchase", "premium_pass", "rare_rewards"],
+      "primary_sinks": ["construction_speedup", "second_queue", "limited_packs", "cosmetics"],
+      "persistence": "permanent"
+    },
+    {
+      "id": "arena_points",
+      "display_name": "Pontos de Arena",
+      "role": "Ranking competitivo sazonal",
+      "primary_sources": ["pvp_wins"],
+      "primary_sinks": ["pvp_losses", "decay_if_enabled"],
+      "persistence": "seasonal"
+    },
+    {
+      "id": "maestria",
+      "display_name": "Maestria",
+      "role": "Progressao permanente por uso",
+      "primary_sources": ["damage_dealt"],
+      "primary_sinks": ["not_spent"],
+      "persistence": "permanent"
+    }
+  ],
+  "source_values": {
+    "battle": {"xp": 50, "almas": 4, "energia": 2, "sangue": 1, "cristais": 0, "ossos": 0.2, "diamante": 0},
+    "daily_missions_full": {"xp": 350, "almas": 25, "energia": 20, "sangue": 8, "cristais": 4, "ossos": 3, "diamante": 0},
+    "weekly_missions_daily_average": {"xp": 140, "almas": 12, "energia": 12, "sangue": 4, "cristais": 2, "ossos": 1, "diamante": 0},
+    "free_battle_pass_daily_average": {"xp": 80, "almas": 8, "energia": 8, "sangue": 3, "cristais": 2, "ossos": 1, "diamante": 0.25},
+    "premium_battle_pass_daily_average": {"xp": 150, "almas": 15, "energia": 15, "sangue": 7, "cristais": 4, "ossos": 2, "diamante": 0.5},
+    "base_checkin_daily_value": {"xp": 0, "almas": 10, "energia": 80, "sangue": 8, "cristais": 5, "ossos": 2, "diamante": 0},
+    "limited_premium_pack_daily_equivalent": {"xp": 0, "almas": 40, "energia": 80, "sangue": 16, "cristais": 8, "ossos": 4, "diamante": 0}
+  },
+  "upgrade_costs": {
+    "xp_total_formula": "3 * (level^3 - 6 * level^2 + 17 * level - 12)",
+    "weapon_almas": {"resource": "almas", "min": 10, "coefficient": 0.2, "formula": "max(min, round(coefficient * level^2))"},
+    "spell_almas": {"resource": "almas", "min": 10, "coefficient": 0.2, "formula": "max(min, round(coefficient * level^2))"},
+    "pet_sangue": {"resource": "sangue", "min": 5, "coefficient": 0.15, "formula": "max(min, round(coefficient * level^2))"},
+    "passive_cristais": {"resource": "cristais", "min": 5, "coefficient": 0.1, "formula": "max(min, round(coefficient * level^2))"},
+    "base_structure_energia": {"resource": "energia", "min": 20, "coefficient": 0.5, "formula": "max(min, round(coefficient * level^2))"},
+    "base_structure_duration_hours": {"min": 0.033, "coefficient": 0.1, "formula": "max(min, coefficient * level^2)"},
+    "weapon_quality_ossos_total": {"resource": "ossos", "formula": "30 * cap", "coefficient": 30}
+  },
+  "profile_defaults": [
+    {
+      "id": "free_casual",
+      "display_name": "Free casual",
+      "description": "Rotina leve, nao precisa chegar ao cap.",
+      "battles_per_day": 8,
+      "checkins_per_day": 1,
+      "daily_mission_completion": 0.55,
+      "weekly_mission_completion": 0.4,
+      "free_pass_completion": 0.5,
+      "premium_pass": false,
+      "second_construction_queue": false,
+      "limited_packs": false,
+      "speedup_multiplier": 1,
+      "catchup_multiplier": 1,
+      "start_day": 1
+    },
+    {
+      "id": "free_active",
+      "display_name": "Free ativo",
+      "description": "Referencia principal: 20 batalhas/dia, 1 check-in obrigatorio/dia, cap perto do dia 105.",
+      "battles_per_day": 20,
+      "checkins_per_day": 1,
+      "daily_mission_completion": 1,
+      "weekly_mission_completion": 1,
+      "free_pass_completion": 1,
+      "premium_pass": false,
+      "second_construction_queue": false,
+      "limited_packs": false,
+      "speedup_multiplier": 1,
+      "catchup_multiplier": 1,
+      "start_day": 1
+    },
+    {
+      "id": "efficient_buyer",
+      "display_name": "Compra eficiente",
+      "description": "Free ativo com segunda fila e Battle Pass Premium.",
+      "battles_per_day": 20,
+      "checkins_per_day": 1,
+      "daily_mission_completion": 1,
+      "weekly_mission_completion": 1,
+      "free_pass_completion": 1,
+      "premium_pass": true,
+      "second_construction_queue": true,
+      "limited_packs": false,
+      "speedup_multiplier": 1.1,
+      "catchup_multiplier": 1,
+      "start_day": 1
+    },
+    {
+      "id": "premium_complete",
+      "display_name": "Premium completo",
+      "description": "Compra passes e pacotes eficientes limitados.",
+      "battles_per_day": 25,
+      "checkins_per_day": 1,
+      "daily_mission_completion": 1,
+      "weekly_mission_completion": 1,
+      "free_pass_completion": 1,
+      "premium_pass": true,
+      "second_construction_queue": true,
+      "limited_packs": true,
+      "speedup_multiplier": 1.35,
+      "catchup_multiplier": 1,
+      "start_day": 1
+    },
+    {
+      "id": "whale_accelerator",
+      "display_name": "Whale/acelerador",
+      "description": "Acelera filas e compra conforto agressivamente, limitado pelo cap.",
+      "battles_per_day": 35,
+      "checkins_per_day": 2,
+      "daily_mission_completion": 1,
+      "weekly_mission_completion": 1,
+      "free_pass_completion": 1,
+      "premium_pass": true,
+      "second_construction_queue": true,
+      "limited_packs": true,
+      "speedup_multiplier": 2.5,
+      "catchup_multiplier": 1,
+      "start_day": 1
+    },
+    {
+      "id": "catchup_newcomer",
+      "display_name": "Catch-up newcomer",
+      "description": "Jogador que entra atrasado e recebe multiplicador suave sem ganhar level direto.",
+      "battles_per_day": 20,
+      "checkins_per_day": 1,
+      "daily_mission_completion": 1,
+      "weekly_mission_completion": 1,
+      "free_pass_completion": 1,
+      "premium_pass": false,
+      "second_construction_queue": false,
+      "limited_packs": false,
+      "speedup_multiplier": 1,
+      "catchup_multiplier": 1.55,
+      "start_day": 61
+    }
+  ],
+  "checks": {
+    "free_active_cap_day_min": 100,
+    "free_active_cap_day_max": 110,
+    "free_active_max_required_checkins": 1,
+    "free_active_main_build_coverage_min": 1,
+    "free_casual_should_reach_cap": false,
+    "catchup_newcomer_min_end_level": 35,
+    "premium_power_exclusive_allowed": false
+  }
+}

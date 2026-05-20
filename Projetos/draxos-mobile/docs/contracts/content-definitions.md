@@ -1,6 +1,6 @@
 # Content Definitions Contract
 
-- Ultima atualizacao: `2026-05-19`
+- Ultima atualizacao: `2026-05-20`
 - Status: contrato inicial implementado com fixtures `MVP_ONLY`
 
 Conteudo autorado vive em `../../data/definitions/`. Resources Godot gerados vivem em `../../data/generated/` e nao devem ser editados manualmente.
@@ -94,5 +94,47 @@ Fixtures `MVP_ONLY` nao resolvem design final. Quando um campo depender de decis
 Exemplos:
 
 - Custos de Ossos dependem de `DMOB-D021`.
-- Bot generation depende de `DMOB-D017`.
 - Recompensas dependem de `DMOB-D008`, `DMOB-D011`, `DMOB-D027` e `DMOB-D028`.
+
+## Bots E Faixas De Poder Do Primeiro Slice
+
+`bot_builds.json` deve popular testes iniciais com bots legais por level e poder. Bots nao entram em ranking e nao recebem recompensas.
+
+Campos recomendados por bot:
+
+- `id`
+- `display_name`
+- `archetype`
+- `level`
+- `power`
+- `power_band`
+- `weapon`
+- `equipped_spells`
+- `passive_id`
+- `pet_id`
+- `variation_seed`
+- `enabled`
+- `is_ranked`
+
+Archetypes iniciais:
+
+| Archetype | Level | Uso |
+|---|---|---|
+| `starter_wand` | 1-2 | Varinha pura, sem spell |
+| `cosmic_apprentice` | 3-6 | Primeira spell, baseline inicial |
+| `elemental_mixer` | 7-14 | Duas spells elementais |
+| `pet_handler` | 15-24 | Duas spells + pet |
+| `summoner` | 25-40 | Tres spells com summon |
+| `defensive_caster` | 25-40 | Fortificar + dano sustentado |
+
+`power_bands.json` deve definir bandas por poder calculado, nao por level cru. A sugestao inicial e gerar bandas estreitas no comeco e mais largas no fim:
+
+| Banda | Power alvo | Diferenca inicial |
+|---|---|---|
+| `band_001` | 0-250 | 10% |
+| `band_002` | 251-600 | 10% |
+| `band_003` | 601-1200 | 15% |
+| `band_004` | 1201-2200 | 20% |
+| `band_005` | 2201+ | 25% |
+
+O matchmaking pode expandir tolerancia por tempo de busca ate 35% antes de cair em bot.

@@ -19,15 +19,16 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
 ## Implementacao - Bootstrap
 
-- `draxos-mobile/`: jogo mobile multi-plataforma - mago Draxos (PVP assincrono, base manager, social). Plataformas: Android + PC executavel + PC browser. Backend: Supabase. Batalha 100% simulada no servidor. Track 00 em bootstrap: T00-P01, T00-P02A, T00-P02B, T00-P03, T00-P04, T00-P05, T00-P06, T00-P07 e T00-P08 concluidos com Godot project minimo, autoloads de fundacao, validate integrado, GUT, catalogo `MVP_ONLY`, runtime Supabase local no layout oficial `supabase/`, migrations MVP, healthcheck, conta guest no gateway local, cliente de sessao Godot com Auth anonimo + cache nao autoritativo, `battle/request` server-authoritative com log/recompensa idempotentes e replay placeholder no cliente.
+- `draxos-mobile/`: jogo mobile multi-plataforma - mago Draxos (PVP assincrono, base manager, social). Plataformas: Android + PC executavel + PC browser. Backend: Supabase. Batalha 100% simulada no servidor. Track 00 em bootstrap: T00-P01, T00-P02A, T00-P02B, T00-P03, T00-P04, T00-P05, T00-P06, T00-P07 e T00-P08 concluidos com Godot project minimo, autoloads de fundacao, validate integrado, GUT, catalogo `MVP_ONLY`, runtime Supabase local no layout oficial `supabase/`, migrations MVP, healthcheck, conta guest no gateway local, cliente de sessao Godot com Auth anonimo + cache nao autoritativo, `battle/request` server-authoritative com log/recompensa idempotentes e replay placeholder no cliente. T00-P09 em andamento com cap 40, levels permanentes, unlocks de spell/passiva/pet, matchmaking por poder, bots iniciais, telemetria minima, schema de build, UX alpha com Refugio e baseline calibravel de economia/simulador de seasons.
   - Priority/status: `P2_IMPLEMENTACAO - bootstrap`
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Operational status: `draxos-mobile/implementation/current-status.md`
   - Track 00 scope: `draxos-mobile/implementation/tracks/track-00-first-slice-foundation/scope.md`
   - Design pending: `draxos-mobile/docs/design-pending.md`
+  - Economy model: `draxos-mobile/docs/economy/README.md`
   - Design archive: `_conceitos/mobile-universe/gdd.md`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: implementar `T00-P09 - Gate De Design Do Primeiro Slice`.
+  - Current next step: continuar `T00-P09 - Gate De Design Do Primeiro Slice`.
 
 ## Arquivo De Design
 

@@ -5,7 +5,7 @@
 - Active Surface: `Track 00 - First Slice Foundation`
 - Active Track: `Track 00 - First Slice Foundation`
 - Active Track Status: `OPEN`
-- Current Operational Baseline: `T00-P01, T00-P02A, T00-P02B, T00-P03, T00-P04, T00-P05, T00-P06, T00-P07 e T00-P08 concluidos. Projeto Godot 4.6.2 tem boot scene, GUT 9.6.0, validate integrado, autoloads UiTokens/AssetIds/ContentLibrary/SessionStore/SupabaseClient, pipeline data/definitions -> data/generated/draxos_mobile_catalog.tres, fixtures MVP_ONLY, cliente de sessao guest via HTTPRequest e replay placeholder de battle_log_v1. Supabase local esta configurado no layout oficial supabase/, db reset passa, healthcheck responde pelo gateway local, conta guest MVP cria/recupera estado server-authoritative, cliente valida Auth anonimo -> account/guest -> account/state, battle/request server-authoritative grava log/recompensa idempotente e Godot consome o log sem calcular resultado.`
+- Current Operational Baseline: `T00-P01, T00-P02A, T00-P02B, T00-P03, T00-P04, T00-P05, T00-P06, T00-P07 e T00-P08 concluidos; T00-P09 em andamento. Projeto Godot 4.6.2 tem boot scene, GUT 9.6.0, validate integrado, autoloads UiTokens/AssetIds/ContentLibrary/SessionStore/SupabaseClient, pipeline data/definitions -> data/generated/draxos_mobile_catalog.tres, fixtures MVP_ONLY, cliente de sessao guest via HTTPRequest e replay placeholder de battle_log_v1. Supabase local esta configurado no layout oficial supabase/, db reset passa, healthcheck responde pelo gateway local, conta guest MVP cria/recupera estado server-authoritative, cliente valida Auth anonimo -> account/guest -> account/state, battle/request server-authoritative grava log/recompensa idempotente e Godot consome o log sem calcular resultado. Design do primeiro slice ja definiu cap 40, levels permanentes, unlocks de slots/pet/passiva, matchmaking por poder, bots iniciais, telemetria minima, schema de build, UX alpha com Refugio e baseline calibravel de economia/simulador de seasons.`
 
 ---
 
@@ -15,7 +15,8 @@
 |---|---|---|
 | MVP tecnico minimo | Completo | Loop guest -> battle/request -> replay placeholder -> latest/state validado; cliente nao calcula resultado, recompensa ou progressao |
 | Primeiro slice completo | Escopo definido | Inclui PVP autobattler, base manager, social, ranking, bots, economia, Battle Pass/Diamante |
-| Design pendente | Registrado | Fonte viva: `../docs/design-pending.md` |
+| Design pendente | T00-P09 em andamento | DMOB-D001, D002, D016, D017, D024, D025 e D026 resolvidos; D006-D008, D011-D012 agora calibraveis via simulador |
+| Economia e seasons | Baseline calibravel | `../docs/economy/README.md`, JSON versionado e gerador Deno/TypeScript criados; outputs em `../docs/economy/generated/` |
 | Reuso entre projetos | Documentado | Fonte viva: `../docs/reuse-map.md`; estrategia conservadora |
 | Contratos tecnicos | Definidos | Fonte inicial: `../docs/contracts/` |
 | Godot project | MVP tecnico pronto | Boot minimo, autoloads, `.gutconfig.json`, content generator, catalogo gerado, `SessionStore`, `SupabaseClient`, `BattleLogPresenter` e GUT |
@@ -43,6 +44,7 @@
 - Track 00 monta o primeiro slice completo.
 - MVP tecnico minimo e a primeira etapa da Track 00.
 - MVP tecnico usa fixtures `MVP_ONLY` e nao depende de balanceamento final.
+- Economia de Season 1 usa cap 40 por padrao, todos os levels sao permanentes e caps futuros ficam editaveis no simulador.
 - Reuso de outros projetos e conservador: padroes e infraestrutura, nao gameplay.
 - Tudo que exigir design ou tuning entra em `../docs/design-pending.md` antes de implementar.
 - iOS e mobile browser ficam fora da Track 00.
@@ -51,12 +53,12 @@
 
 ## Baseline De Conceito Preservada
 
-- Personagem: Draxos, sem classes, varinha magica, 0-3 spells, 1 passiva, 1 pet, summons.
+- Personagem: Draxos, sem classes, varinha magica, 0-3 spells por unlock de level, 1 passiva, 1 pet, summons.
 - Combate: 7 tipos de dano, DoTs, resistencias, barreiras, status effects, anti-stall.
 - Base Manager: 6 estruturas permanentes e Energia como gargalo.
 - Social: amigos, guilda, ajudas, chat de guilda e direct.
 - Infraestrutura: Godot 4.6.2, Supabase, batalha 100% servidor, Android + PC + PC browser.
-- Season: 4 meses, 2 Battle Passes, cap Season 1 = 40.
+- Season: 4 meses, 2 Battle Passes, cap Season 1 = 40, progressao permanente e catch-up suave futuro.
 
 ---
 
@@ -138,6 +140,7 @@ Supabase runtime validado localmente:
 
 ## Next
 
-1. Implementar `T00-P09 - Gate De Design Do Primeiro Slice`.
-2. Resolver ou adiar explicitamente pendencias que bloqueiam conteudo real: level cap, unlocks, build schema, matchmaking, bots, recompensas, UX base e telemetria.
+1. Continuar `T00-P09 - Gate De Design Do Primeiro Slice`.
+2. Resolver ou adiar explicitamente pendencias restantes que bloqueiam conteudo real: base/economia, missoes/onboarding, Battle Pass/Diamante, guilda/ajudas, ranking, summons/maestria/stats/varinha, cosmeticos, chat, anuncios e conquistas.
 3. Preparar a transicao do MVP tecnico para conteudo real/simulador completo.
+4. Usar `tools/economy_simulator/generate.ts` para calibrar os proximos valores de base/economia antes de implementar custos/recompensas reais.

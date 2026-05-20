@@ -1,6 +1,6 @@
 # DraxosMobile - Product Brief
 
-- Ultima atualizacao: `2026-05-19`
+- Ultima atualizacao: `2026-05-20`
 
 ---
 
@@ -42,7 +42,7 @@ Track 00 monta o primeiro slice completo. A primeira etapa e o MVP tecnico minim
 | Sistema | Incluido |
 |---|---|
 | Character Autobattler PVP assincrono | Sim |
-| Base Manager (Altar/Santuario) | Sim |
+| Base Manager (Refugio) | Sim |
 | Lista de amigos + guilda + ajudas | Sim |
 | Chat de guilda + mensagens diretas | Sim |
 | Ranking por pontos de arena | Sim |
@@ -62,6 +62,24 @@ Track 00 monta o primeiro slice completo. A primeira etapa e o MVP tecnico minim
 
 ---
 
+## UX/Layout Base Do Primeiro Slice
+
+O primeiro slice usa um layout funcional de alpha, com visual final de producao fora do escopo. A navegacao principal parte do `Refugio`, que concentra personagem, poder, recursos, fila de construcao e atalhos para os sistemas.
+
+Telas principais:
+
+| Tela | Funcao |
+|---|---|
+| Refugio | Hub principal, status do Draxos, poder, recursos, fila de construcao e proximas acoes |
+| Batalha | Preview de matchmaking, iniciar batalha, replay, skip/velocidade e resumo de recompensa |
+| Base | Seis estruturas, upgrades, coleta offline, armazenamento, pedir/enviar ajuda |
+| Social | Amigos, guilda, ajudas, chat de guilda e direct por polling |
+| Loja/Passe | Battle Pass, Diamante, recompensas diarias/semanais e fluxos de teste do alpha |
+
+Direcao visual: cartoon gore sombrio, arcano e legivel em mobile, sem depender de arte final para validar loop e balanceamento.
+
+---
+
 ## Decisoes Tecnicas Principais
 
 | Decisao | Valor |
@@ -73,7 +91,8 @@ Track 00 monta o primeiro slice completo. A primeira etapa e o MVP tecnico minim
 | Autenticacao | Guest + username/senha + Google Sign-In |
 | Alpha | Convite por codigo, APK sideload + PC executavel |
 | Season | 4 meses, 2 Battle Passes por season |
-| Level maximo Season 1 | 40 |
+| Level maximo Season 1 | 40 por padrao; simulador permite testar 40/50/60 |
+| Persistencia de levels | Todos os levels sao permanentes; seasons futuras aumentam o cap |
 
 ---
 

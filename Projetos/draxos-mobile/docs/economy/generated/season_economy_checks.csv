@@ -1,0 +1,9 @@
+id,status,observed,target,note
+free_active_cap_day,PASS,106,100-110,Free ativo deve chegar ao cap perto do dia 105.
+free_active_checkins,PASS,1,<= 1,Free ativo nao deve exigir mais que 1 check-in obrigatorio por dia.
+free_active_main_build,PASS,1.1,>= 1,"Free ativo deve fechar uma build principal, nao a conta inteira."
+free_casual_below_cap,PASS,32,< 40,Free casual nao e obrigado a chegar ao cap.
+efficient_buyer_faster_than_free,PASS,97,< 106,Compra eficiente deve comprar conforto/velocidade.
+whale_respects_cap,PASS,40,<= 40,Aceleracao extrema nao pode ultrapassar o cap.
+catchup_newcomer_approaches_cap,PASS,38,>= 35 and < 40,Catch-up aproxima sem pular toda a jornada.
+premium_no_exclusive_power,PASS,no exclusive power modeled,premium sells time/conforto only,Premium nao deve vender poder exclusivo.

@@ -1,0 +1,199 @@
+{
+  "model_id": "draxos_mobile_economy_s1_baseline",
+  "status": "CALIBRAVEL_ALPHA",
+  "generated_at": "deterministic-local",
+  "selected_cap": 40,
+  "duration_days": 120,
+  "costs": {
+    "xpToCap": 165204,
+    "weaponCost": 4460,
+    "spellCost": 4460,
+    "petCost": 3330,
+    "passiveCost": 2231,
+    "structureEnergyCost": 11133,
+    "structureHours": 2213.9,
+    "weaponQualityOssos": 1200,
+    "mainBuild": {
+      "almas": 13380,
+      "sangue": 3330,
+      "energia": 11133,
+      "ossos": 1200
+    },
+    "fullAccount": {
+      "almas": 17840,
+      "sangue": 3330,
+      "cristais": 2231,
+      "energia": 66798,
+      "ossos": 1200,
+      "hours": 13283.400000000001
+    }
+  },
+  "profiles": [
+    {
+      "id": "free_casual",
+      "name": "Free casual",
+      "end_level": 32,
+      "cap_day": null,
+      "estimated_minutes_per_day": 19.3,
+      "queue_count": 1,
+      "total_xp": 82620,
+      "total_almas": 7746,
+      "total_energia": 13896,
+      "total_sangue": 2820,
+      "total_cristais": 1080,
+      "total_ossos": 738,
+      "total_diamante": 15,
+      "main_build_coverage": 0.5789,
+      "full_account_coverage": 0.208,
+      "construction_time_coverage": 0.2168
+    },
+    {
+      "id": "free_active",
+      "name": "Free ativo",
+      "end_level": 40,
+      "cap_day": 106,
+      "estimated_minutes_per_day": 39.5,
+      "queue_count": 1,
+      "total_xp": 188400,
+      "total_almas": 16200,
+      "total_energia": 19200,
+      "total_sangue": 5160,
+      "total_cristais": 1560,
+      "total_ossos": 1320,
+      "total_diamante": 30,
+      "main_build_coverage": 1.1,
+      "full_account_coverage": 0.2168,
+      "construction_time_coverage": 0.2168
+    },
+    {
+      "id": "efficient_buyer",
+      "name": "Compra eficiente",
+      "end_level": 40,
+      "cap_day": 97,
+      "estimated_minutes_per_day": 39.5,
+      "queue_count": 2,
+      "total_xp": 206400,
+      "total_almas": 18000,
+      "total_energia": 21000,
+      "total_sangue": 6000,
+      "total_cristais": 2040,
+      "total_ossos": 1560,
+      "total_diamante": 90,
+      "main_build_coverage": 1.3,
+      "full_account_coverage": 0.3144,
+      "construction_time_coverage": 0.477
+    },
+    {
+      "id": "premium_complete",
+      "name": "Premium completo",
+      "end_level": 40,
+      "cap_day": 84,
+      "estimated_minutes_per_day": 48,
+      "queue_count": 2,
+      "total_xp": 236400,
+      "total_almas": 25200,
+      "total_energia": 31800,
+      "total_sangue": 8520,
+      "total_cristais": 3000,
+      "total_ossos": 2160,
+      "total_diamante": 90,
+      "main_build_coverage": 1.8,
+      "full_account_coverage": 0.4761,
+      "construction_time_coverage": 0.5854
+    },
+    {
+      "id": "whale_accelerator",
+      "name": "Whale/acelerador",
+      "end_level": 40,
+      "cap_day": 67,
+      "estimated_minutes_per_day": 68,
+      "queue_count": 2,
+      "total_xp": 296400,
+      "total_almas": 31200,
+      "total_energia": 43800,
+      "total_sangue": 10680,
+      "total_cristais": 3600,
+      "total_ossos": 2640,
+      "total_diamante": 90,
+      "main_build_coverage": 2.2,
+      "full_account_coverage": 0.6557,
+      "construction_time_coverage": 1.0841
+    },
+    {
+      "id": "catchup_newcomer",
+      "name": "Catch-up newcomer",
+      "end_level": 38,
+      "cap_day": null,
+      "estimated_minutes_per_day": 39.5,
+      "queue_count": 1,
+      "total_xp": 146010,
+      "total_almas": 12555,
+      "total_energia": 14880,
+      "total_sangue": 3999,
+      "total_cristais": 1209,
+      "total_ossos": 1023,
+      "total_diamante": 15,
+      "main_build_coverage": 0.8525,
+      "full_account_coverage": 0.2168,
+      "construction_time_coverage": 0.2168
+    }
+  ],
+  "checks": [
+    {
+      "id": "free_active_cap_day",
+      "status": "PASS",
+      "observed": 106,
+      "target": "100-110",
+      "note": "Free ativo deve chegar ao cap perto do dia 105."
+    },
+    {
+      "id": "free_active_checkins",
+      "status": "PASS",
+      "observed": 1,
+      "target": "<= 1",
+      "note": "Free ativo nao deve exigir mais que 1 check-in obrigatorio por dia."
+    },
+    {
+      "id": "free_active_main_build",
+      "status": "PASS",
+      "observed": 1.1,
+      "target": ">= 1",
+      "note": "Free ativo deve fechar uma build principal, nao a conta inteira."
+    },
+    {
+      "id": "free_casual_below_cap",
+      "status": "PASS",
+      "observed": 32,
+      "target": "< 40",
+      "note": "Free casual nao e obrigado a chegar ao cap."
+    },
+    {
+      "id": "efficient_buyer_faster_than_free",
+      "status": "PASS",
+      "observed": 97,
+      "target": "< 106",
+      "note": "Compra eficiente deve comprar conforto/velocidade."
+    },
+    {
+      "id": "whale_respects_cap",
+      "status": "PASS",
+      "observed": 40,
+      "target": "<= 40",
+      "note": "Aceleracao extrema nao pode ultrapassar o cap."
+    },
+    {
+      "id": "catchup_newcomer_approaches_cap",
+      "status": "PASS",
+      "observed": 38,
+      "target": ">= 35 and < 40",
+      "note": "Catch-up aproxima sem pular toda a jornada."
+    },
+    {
+      "id": "premium_no_exclusive_power",
+      "status": "PASS",
+      "observed": "no exclusive power modeled",
+      "target": "premium sells time/conforto only",
+      "note": "Premium nao deve vender poder exclusivo."
+    }
+  ]
+}

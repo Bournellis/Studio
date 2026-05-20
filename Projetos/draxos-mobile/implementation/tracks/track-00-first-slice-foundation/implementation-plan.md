@@ -89,9 +89,9 @@ Aceite: cliente envia intencao, recebe `battle_log`, anima/exibe resultado e nun
 
 Status: **Pendente**.
 
-Resolver ou adiar explicitamente pendencias que bloqueiam conteudo real: level cap, unlocks, build schema, matchmaking, bots, recompensas, UX base e telemetria.
+Resolver ou adiar explicitamente pendencias que bloqueiam conteudo real: level cap, unlocks, build schema, matchmaking, bots, recompensas, UX base, economia de seasons e telemetria.
 
-Aceite: `docs/design-pending.md` nao possui pendencia `PRIMEIRO_SLICE` que bloqueie a proxima implementacao sem decisao registrada.
+Aceite: `docs/design-pending.md` nao possui pendencia `PRIMEIRO_SLICE` que bloqueie a proxima implementacao sem decisao registrada; economia usa `docs/economy/README.md` e `tools/economy_simulator/` como baseline calibravel antes de custos/recompensas reais.
 
 ### T00-P10 - Conteudo Real E Simulador Completo
 

@@ -224,6 +224,48 @@ Response:
 | POST | `/chat/send` | Enviar mensagem direct/guilda |
 | GET | `/battle-pass/state` | Estado do passe atual |
 | POST | `/rewards/claim` | Coletar recompensa diaria/semanal/passe |
+| POST | `/telemetry/client-event` | Registrar evento client-side nao autoritativo |
+
+### `POST /build/equip`
+
+Regras do primeiro slice:
+
+- Cliente envia intencao de equipamento, nunca poder final.
+- Servidor valida level, unlock, posse do conteudo e slot disponivel.
+- Spell desbloqueada pode ser equipada em qualquer slot de spell liberado.
+- Slot de spell 1 abre no level 3, slot 2 no level 7 e slot 3 no level 25.
+- Slot de passiva abre no level 10.
+- Slot de pet abre no level 15.
+- Servidor recalcula `players.power` apos sucesso.
+
+Request logico:
+
+```json
+{
+  "request_id": "uuid",
+  "weapon": { "type": "varinha_magica", "quality": "starter" },
+  "spell_slots": [
+    { "slot_index": 1, "spell_id": "raio_cosmico" }
+  ],
+  "passive_id": "foco_astral",
+  "pet_id": "familiar_cinzento"
+}
+```
+
+### `POST /telemetry/client-event`
+
+Evento nao autoritativo para UX e diagnostico. Combate, matchmaking, recompensa e snapshots de build devem ser gravados server-side durante os endpoints autoritativos.
+
+Request logico:
+
+```json
+{
+  "schema_version": "telemetry_client_v1",
+  "event_type": "screen_opened",
+  "session_id": "uuid",
+  "payload": {}
+}
+```
 
 ## Idempotencia
 

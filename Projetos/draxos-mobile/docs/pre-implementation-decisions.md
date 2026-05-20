@@ -44,6 +44,9 @@ Todas as decisoes necessarias para o simulador inicial foram registradas.
 |---|---|
 | Levels das estruturas da base entre seasons | Permanentes - a base nunca reseta |
 | Levels de passivas entre seasons | Permanentes - igual ao Level Global e Maestria |
+| Levels de arma, spells e pet entre seasons | Permanentes - todos os sistemas sobem junto com o cap atual |
+| Reset sazonal | Battle Pass, ranking/eventos, missoes sazonais e ofertas temporarias |
+| Catch-up | Multiplicador suave de XP/recursos para jogadores abaixo do cap anterior |
 | Logica de desbloqueio de spells e slots | Ordem de unlock por level minimo; sem restricao de slot apos desbloqueado |
 | Local e custo de unlock de spells e slots | Altar das Almas, custo em Almas |
 | Upgrades de cada construcao | Cada construcao abriga upgrades que consomem seu proprio recurso |
@@ -53,6 +56,8 @@ Detalhes preservados:
 
 - Estruturas da base sao permanentes entre seasons.
 - Passivas sao permanentes.
+- Arma, spells e pet sao permanentes e nao resetam por season.
+- O cap de todos os sistemas e compartilhado por season; Season 1 usa cap 40 e caps futuros ficam editaveis no simulador economico.
 - Spells desbloqueadas podem ser equipadas em qualquer slot disponivel.
 - Construcoes abrigam upgrades especificos: Altar das Almas, Pocos de Sangue, Minas de Cristal, Ossario, Nucleo de Energia e Estrutura de Stats.
 
