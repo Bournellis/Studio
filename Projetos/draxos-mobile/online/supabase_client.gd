@@ -30,7 +30,7 @@ func sign_in_anonymously() -> Dictionary:
 	if not bool(result.get("ok", false)):
 		return result
 
-	var payload: Dictionary = Dictionary(result.get("body", {}))
+	var payload: Dictionary = _as_dictionary(result.get("body", {}))
 	var session := _session_from_auth_payload(payload)
 	if session.is_empty():
 		return _error("INVALID_AUTH_RESPONSE", "Supabase Auth did not return an anonymous session.")
@@ -235,7 +235,7 @@ func _send_json(url: String, method: HTTPClient.Method, headers: PackedStringArr
 	if not parsed is Dictionary:
 		return _error("INVALID_JSON", "Server response was not a JSON object.", response_code)
 
-	var payload := Dictionary(parsed)
+	var payload := _as_dictionary(parsed)
 	if response_code < 200 or response_code >= 300 or not bool(payload.get("ok", true)):
 		return _server_error(payload, response_code)
 
@@ -245,7 +245,7 @@ func _session_from_auth_payload(payload: Dictionary) -> Dictionary:
 	var access_token := str(payload.get("access_token", ""))
 	var refresh_token := str(payload.get("refresh_token", ""))
 	var expires_at := int(payload.get("expires_at", 0))
-	var user := Dictionary(payload.get("user", {}))
+	var user := _as_dictionary(payload.get("user", {}))
 	if access_token == "" or refresh_token == "" or expires_at <= 0:
 		return {}
 	if not bool(user.get("is_anonymous", false)):
@@ -260,7 +260,7 @@ func _session_from_auth_payload(payload: Dictionary) -> Dictionary:
 	}
 
 func _server_error(payload: Dictionary, response_code: int) -> Dictionary:
-	var error_payload := Dictionary(payload.get("error", {}))
+	var error_payload := _as_dictionary(payload.get("error", {}))
 	var code := str(error_payload.get("code", "HTTP_ERROR"))
 	var message := str(error_payload.get("message", "Request failed."))
 	return _error(code, message, response_code)
@@ -274,3 +274,8 @@ func _error(code: String, message: String, status: int = 0) -> Dictionary:
 			"message": message,
 		},
 	}
+
+static func _as_dictionary(value: Variant) -> Dictionary:
+	if value is Dictionary:
+		return Dictionary(value)
+	return {}

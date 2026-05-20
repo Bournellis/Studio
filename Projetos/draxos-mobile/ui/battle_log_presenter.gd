@@ -28,9 +28,9 @@ const KNOWN_EVENT_TYPES := {
 
 static func sorted_events(battle_log: Dictionary) -> Array[Dictionary]:
 	var events: Array[Dictionary] = []
-	for event: Variant in Array(battle_log.get("events", [])):
+	for event: Variant in _as_array(battle_log.get("events", [])):
 		if event is Dictionary:
-			events.append(Dictionary(event).duplicate(true))
+			events.append(_as_dictionary(event).duplicate(true))
 
 	events.sort_custom(func(left: Dictionary, right: Dictionary) -> bool:
 		var left_time := float(left.get("t", 0.0))
@@ -208,9 +208,9 @@ static func format_summary(battle_log: Dictionary, rewards: Dictionary = {}) -> 
 	if battle_log.is_empty():
 		return "Nenhuma batalha registrada."
 
-	var result := Dictionary(battle_log.get("result", {}))
-	var participants := Dictionary(battle_log.get("participants", {}))
-	var opponent := Dictionary(participants.get("opponent", {}))
+	var result := _as_dictionary(battle_log.get("result", {}))
+	var participants := _as_dictionary(battle_log.get("participants", {}))
+	var opponent := _as_dictionary(participants.get("opponent", {}))
 	var reward_type := str(rewards.get("type", "MVP_ONLY"))
 	return "Modo: %s | Resultado: %s contra %s | motivo: %s | recompensa: %s%s" % [
 		str(battle_log.get("mode", "MVP_ONLY")),
@@ -218,7 +218,7 @@ static func format_summary(battle_log: Dictionary, rewards: Dictionary = {}) -> 
 		str(opponent.get("display_name", "oponente")),
 		str(result.get("reason", "sem_motivo")),
 		reward_type,
-		_format_resource_suffix(Dictionary(rewards.get("resources", {}))),
+		_format_resource_suffix(_as_dictionary(rewards.get("resources", {}))),
 	]
 
 static func has_unknown_events(battle_log: Dictionary) -> bool:
@@ -260,3 +260,13 @@ static func _format_resource_suffix(resources: Dictionary) -> String:
 	if parts.is_empty():
 		return ""
 	return " [%s]" % ", ".join(parts)
+
+static func _as_dictionary(value: Variant) -> Dictionary:
+	if value is Dictionary:
+		return Dictionary(value)
+	return {}
+
+static func _as_array(value: Variant) -> Array:
+	if value is Array:
+		return Array(value)
+	return []

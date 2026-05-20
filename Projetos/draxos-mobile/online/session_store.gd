@@ -37,7 +37,7 @@ func load_cache() -> bool:
 	if not parsed is Dictionary:
 		return false
 
-	var cache := Dictionary(parsed)
+	var cache := _as_dictionary(parsed)
 	if int(cache.get("cache_version", 0)) != CACHE_VERSION:
 		return false
 
@@ -99,14 +99,14 @@ func apply_auth_session(session: Dictionary) -> bool:
 func apply_battle_result(payload: Dictionary) -> bool:
 	var body := _unwrap_body(payload)
 	if not bool(body.get("ok", false)):
-		last_error = Dictionary(body.get("error", {
+		last_error = _as_dictionary(body.get("error", {
 			"code": "BATTLE_NOT_OK",
 			"message": "Servidor recusou a batalha.",
 		}))
 		session_changed.emit()
 		return false
 
-	var battle_log := Dictionary(body.get("battle_log", {}))
+	var battle_log := _as_dictionary(body.get("battle_log", {}))
 	if battle_log.is_empty():
 		last_error = {
 			"code": "BATTLE_LOG_MISSING",
@@ -124,7 +124,7 @@ func apply_battle_result(payload: Dictionary) -> bool:
 		return false
 
 	last_battle_log = battle_log.duplicate(true)
-	last_battle_rewards = Dictionary(body.get("rewards", {})).duplicate(true)
+	last_battle_rewards = _as_dictionary(body.get("rewards", {})).duplicate(true)
 	last_battle_id = str(last_battle_log.get("battle_id", ""))
 	last_error = {}
 	offline = false
@@ -134,16 +134,16 @@ func apply_battle_result(payload: Dictionary) -> bool:
 func apply_server_state(payload: Dictionary) -> bool:
 	var body := _unwrap_body(payload)
 	if not bool(body.get("ok", false)):
-		last_error = Dictionary(body.get("error", {
+		last_error = _as_dictionary(body.get("error", {
 			"code": "STATE_NOT_OK",
 			"message": "Servidor recusou o estado de conta.",
 		}))
 		session_changed.emit()
 		return false
 
-	var server_player := Dictionary(body.get("player", {}))
-	var server_resources := Dictionary(body.get("resources", {}))
-	var server_build := Dictionary(body.get("build", {}))
+	var server_player := _as_dictionary(body.get("player", {}))
+	var server_resources := _as_dictionary(body.get("resources", {}))
+	var server_build := _as_dictionary(body.get("build", {}))
 	if server_player.is_empty() or server_resources.is_empty() or server_build.is_empty():
 		last_error = {
 			"code": "ACCOUNT_STATE_INCOMPLETE",
@@ -164,14 +164,14 @@ func apply_server_state(payload: Dictionary) -> bool:
 func apply_base_result(payload: Dictionary) -> bool:
 	var body := _unwrap_body(payload)
 	if not bool(body.get("ok", false)):
-		last_error = Dictionary(body.get("error", {
+		last_error = _as_dictionary(body.get("error", {
 			"code": "BASE_NOT_OK",
 			"message": "Servidor recusou o estado da base.",
 		}))
 		session_changed.emit()
 		return false
 
-	var server_base := Dictionary(body.get("base", {}))
+	var server_base := _as_dictionary(body.get("base", {}))
 	if server_base.is_empty():
 		last_error = {
 			"code": "BASE_STATE_INCOMPLETE",
@@ -181,7 +181,7 @@ func apply_base_result(payload: Dictionary) -> bool:
 		return false
 
 	if body.get("resources", null) is Dictionary:
-		resources = Dictionary(body.get("resources", {})).duplicate(true)
+		resources = _as_dictionary(body.get("resources", {})).duplicate(true)
 	base_state = server_base.duplicate(true)
 	last_error = {}
 	offline = false
@@ -191,14 +191,14 @@ func apply_base_result(payload: Dictionary) -> bool:
 func apply_social_result(payload: Dictionary) -> bool:
 	var body := _unwrap_body(payload)
 	if not bool(body.get("ok", false)):
-		last_error = Dictionary(body.get("error", {
+		last_error = _as_dictionary(body.get("error", {
 			"code": "SOCIAL_NOT_OK",
 			"message": "Servidor recusou o estado social.",
 		}))
 		session_changed.emit()
 		return false
 
-	var server_social := Dictionary(body.get("social", {}))
+	var server_social := _as_dictionary(body.get("social", {}))
 	if server_social.is_empty():
 		last_error = {
 			"code": "SOCIAL_STATE_INCOMPLETE",
@@ -216,7 +216,7 @@ func apply_social_result(payload: Dictionary) -> bool:
 func apply_competition_result(payload: Dictionary) -> bool:
 	var body := _unwrap_body(payload)
 	if not bool(body.get("ok", false)):
-		last_error = Dictionary(body.get("error", {
+		last_error = _as_dictionary(body.get("error", {
 			"code": "COMPETITION_NOT_OK",
 			"message": "Servidor recusou o estado competitivo.",
 		}))
@@ -225,9 +225,9 @@ func apply_competition_result(payload: Dictionary) -> bool:
 
 	var state := {}
 	if body.get("matchmaking", null) is Dictionary:
-		state["matchmaking"] = Dictionary(body.get("matchmaking", {})).duplicate(true)
+		state["matchmaking"] = _as_dictionary(body.get("matchmaking", {})).duplicate(true)
 	if body.get("ranking", null) is Dictionary:
-		state["ranking"] = Dictionary(body.get("ranking", {})).duplicate(true)
+		state["ranking"] = _as_dictionary(body.get("ranking", {})).duplicate(true)
 	if state.is_empty():
 		last_error = {
 			"code": "COMPETITION_STATE_INCOMPLETE",
@@ -246,14 +246,14 @@ func apply_competition_result(payload: Dictionary) -> bool:
 func apply_monetization_result(payload: Dictionary) -> bool:
 	var body := _unwrap_body(payload)
 	if not bool(body.get("ok", false)):
-		last_error = Dictionary(body.get("error", {
+		last_error = _as_dictionary(body.get("error", {
 			"code": "MONETIZATION_NOT_OK",
 			"message": "Servidor recusou o estado de monetizacao.",
 		}))
 		session_changed.emit()
 		return false
 
-	var state := Dictionary(body.get("monetization", {}))
+	var state := _as_dictionary(body.get("monetization", {}))
 	if state.is_empty():
 		last_error = {
 			"code": "MONETIZATION_STATE_INCOMPLETE",
@@ -263,9 +263,9 @@ func apply_monetization_result(payload: Dictionary) -> bool:
 		return false
 
 	if body.get("resources", null) is Dictionary:
-		resources = Dictionary(body.get("resources", {})).duplicate(true)
+		resources = _as_dictionary(body.get("resources", {})).duplicate(true)
 	if body.get("player", null) is Dictionary:
-		player = Dictionary(body.get("player", {})).duplicate(true)
+		player = _as_dictionary(body.get("player", {})).duplicate(true)
 	monetization_state = state.duplicate(true)
 	last_error = {}
 	offline = false
@@ -353,26 +353,31 @@ static func create_request_id() -> String:
 	]
 
 func _apply_cache(cache: Dictionary) -> void:
-	var auth := Dictionary(cache.get("auth", {}))
+	var auth := _as_dictionary(cache.get("auth", {}))
 	access_token = str(auth.get("access_token", ""))
 	refresh_token = str(auth.get("refresh_token", ""))
 	expires_at = int(auth.get("expires_at", 0))
 	auth_user_id = str(auth.get("user_id", ""))
 	guest_request_id = str(cache.get("guest_request_id", ""))
-	player = Dictionary(cache.get("player", {})).duplicate(true)
-	resources = Dictionary(cache.get("resources", {})).duplicate(true)
-	build = Dictionary(cache.get("build", {})).duplicate(true)
-	base_state = Dictionary(cache.get("base_state", {})).duplicate(true)
-	social_state = Dictionary(cache.get("social_state", {})).duplicate(true)
-	competition_state = Dictionary(cache.get("competition_state", {})).duplicate(true)
-	monetization_state = Dictionary(cache.get("monetization_state", {})).duplicate(true)
+	player = _as_dictionary(cache.get("player", {})).duplicate(true)
+	resources = _as_dictionary(cache.get("resources", {})).duplicate(true)
+	build = _as_dictionary(cache.get("build", {})).duplicate(true)
+	base_state = _as_dictionary(cache.get("base_state", {})).duplicate(true)
+	social_state = _as_dictionary(cache.get("social_state", {})).duplicate(true)
+	competition_state = _as_dictionary(cache.get("competition_state", {})).duplicate(true)
+	monetization_state = _as_dictionary(cache.get("monetization_state", {})).duplicate(true)
 	last_battle_id = cache.get("last_battle_id", null)
-	last_battle_log = Dictionary(cache.get("last_battle_log", {})).duplicate(true)
-	last_battle_rewards = Dictionary(cache.get("last_battle_rewards", {})).duplicate(true)
+	last_battle_log = _as_dictionary(cache.get("last_battle_log", {})).duplicate(true)
+	last_battle_rewards = _as_dictionary(cache.get("last_battle_rewards", {})).duplicate(true)
 	offline = bool(cache.get("offline", false))
-	last_error = Dictionary(cache.get("last_error", {})).duplicate(true)
+	last_error = _as_dictionary(cache.get("last_error", {})).duplicate(true)
 
 func _unwrap_body(payload: Dictionary) -> Dictionary:
 	if payload.has("body") and payload["body"] is Dictionary:
-		return Dictionary(payload["body"])
+		return _as_dictionary(payload["body"])
 	return payload
+
+static func _as_dictionary(value: Variant) -> Dictionary:
+	if value is Dictionary:
+		return Dictionary(value)
+	return {}

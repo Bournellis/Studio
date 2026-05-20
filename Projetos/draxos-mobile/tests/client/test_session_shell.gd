@@ -108,6 +108,41 @@ func test_session_store_accepts_social_and_competition_snapshots() -> void:
 	assert_eq(int(Dictionary(store.competition_state["matchmaking"]).get("player_power", 0)), 50)
 	store.free()
 
+func test_session_surfaces_tolerate_null_optional_payloads() -> void:
+	var store = SessionStoreScript.new()
+	assert_true(store.apply_social_result({
+		"ok": true,
+		"social": {
+			"guild": null,
+			"friends": null,
+			"guild_chat": null,
+		},
+	}))
+	assert_true(store.has_social_state())
+	assert_true(store.apply_competition_result({
+		"ok": true,
+		"ranking": {
+			"season": null,
+			"self": null,
+			"bots_included": false,
+		},
+	}))
+	assert_true(store.has_competition_state())
+	assert_true(store.apply_monetization_result({
+		"ok": true,
+		"monetization": {
+			"battle_pass": {
+				"pass": null,
+				"progress": null,
+			},
+			"daily_rewards": null,
+			"weekly_rewards": null,
+			"alpha_products": null,
+		},
+	}))
+	assert_true(store.has_monetization_state())
+	store.free()
+
 func test_session_store_accepts_monetization_snapshot() -> void:
 	var store = SessionStoreScript.new()
 	store.resources = {"diamante": 0}
@@ -179,6 +214,18 @@ func test_battle_log_presenter_formats_first_slice_rich_events() -> void:
 	assert_string_contains(formatted, "invocou")
 	assert_string_contains(formatted, "Anti-stall")
 	assert_string_contains(BattleLogPresenterScript.format_summary(battle_log, {"type": "FIRST_SLICE_SIM", "resources": {"xp": 50}}), "FIRST_SLICE_SIM")
+
+func test_battle_log_presenter_tolerates_null_optional_payloads() -> void:
+	var battle_log := {
+		"schema_version": "battle_log_v1",
+		"battle_id": "battle-null",
+		"mode": ProjectInfo.FIRST_SLICE_MODE,
+		"result": null,
+		"participants": null,
+		"events": null,
+	}
+	assert_eq(BattleLogPresenterScript.sorted_events(battle_log).size(), 0)
+	assert_string_contains(BattleLogPresenterScript.format_summary(battle_log, {"resources": null}), "Resultado")
 
 func _battle_log_fixture() -> Dictionary:
 	return {
