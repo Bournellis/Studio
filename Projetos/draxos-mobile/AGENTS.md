@@ -20,11 +20,11 @@ Este projeto foi promovido de `Projetos/_conceitos/mobile-universe/` em 2026-05-
 
 ## Read Order
 
-### Fast Lane Para Track 00
+### Fast Lane Para Track 01
 
 1. `implementation/current-status.md`
-2. `implementation/tracks/track-00-first-slice-foundation/scope.md`
-3. `implementation/tracks/track-00-first-slice-foundation/mvp-technical-definition.md`
+2. `implementation/tracks/track-01-alpha-playtest-hardening/current-status.md`
+3. `implementation/tracks/track-01-alpha-playtest-hardening/scope.md`
 4. `docs/design-pending.md`
 5. `docs/reuse-map.md`
 6. `docs/contracts/`
@@ -43,7 +43,7 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 6. `docs/architecture.md`
 7. `docs/contracts/`
 8. `implementation/current-status.md`
-9. `implementation/tracks/track-00-first-slice-foundation/`
+9. `implementation/tracks/track-01-alpha-playtest-hardening/`
 10. este arquivo
 11. arquivos tocados
 
@@ -67,6 +67,8 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 | O que pode ser reutilizado de outros projetos | `docs/reuse-map.md` |
 | API, log de batalha, schema e conteudo | `docs/contracts/` |
 | Escopo da Track 00 | `implementation/tracks/track-00-first-slice-foundation/scope.md` |
+| Escopo da Track 01 | `implementation/tracks/track-01-alpha-playtest-hardening/scope.md` |
+| Status da Track 01 | `implementation/tracks/track-01-alpha-playtest-hardening/current-status.md` |
 | MVP tecnico minimo | `implementation/tracks/track-00-first-slice-foundation/mvp-technical-definition.md` |
 | Sequencia de execucao | `implementation/tracks/track-00-first-slice-foundation/implementation-plan.md` |
 | Prompts atomicos para agentes | `implementation/tracks/track-00-first-slice-foundation/implementation-prompts.md` |
@@ -129,6 +131,6 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 
 ## Active Track
 
-Track ativa: `Track 00 - First Slice Foundation`.
+Track ativa: `Track 01 - Alpha Playtest Hardening`.
 
-Comece por `implementation/current-status.md` e siga `implementation/tracks/track-00-first-slice-foundation/implementation-prompts.md`.
+Comece por `implementation/current-status.md` e siga `implementation/tracks/track-01-alpha-playtest-hardening/current-status.md`.

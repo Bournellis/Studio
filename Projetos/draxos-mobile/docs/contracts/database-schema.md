@@ -1,9 +1,9 @@
 # Database Schema Contract
 
 - Ultima atualizacao: `2026-05-20`
-- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao e rewards criadas
+- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards e telemetria client implementadas
 
-Este documento define o schema esperado. A fonte tecnica viva do runtime local e `../../supabase/migrations/`; `../../server/schema/migrations/` permanece como espelho backend durante o bootstrap.
+Este documento define o schema esperado. A fonte tecnica viva do runtime local e `../../supabase/migrations/`; `../../server/schema/migrations/` permanece como espelho backend durante o alpha local.
 
 Migrations atuais:
 
@@ -207,6 +207,8 @@ Regras:
 - Telemetria nao concede recompensa, ranking ou progresso.
 - Payloads carregam snapshots compactos, nao dados secretos completos de outro jogador para o cliente.
 - Batalhas bot-vs-bot usam `player_id = null`, `source = simulation_job` e ficam fora do ranking.
+- Eventos client Track 01 usam `schema_version = telemetry_client_v1`, `source = client` e `session_id` local persistido pelo Godot.
+- Telemetria client pode usar `player_id = null` antes da criacao da conta guest, mas continua exigindo JWT valido.
 
 ### `base_structures`
 

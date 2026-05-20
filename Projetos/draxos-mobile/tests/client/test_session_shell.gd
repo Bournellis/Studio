@@ -64,7 +64,24 @@ func test_supabase_client_uses_local_contract_urls() -> void:
 	assert_eq(client.function_url("social/state"), "http://127.0.0.1:54321/functions/v1/social/state")
 	assert_eq(client.function_url("competition/ranking/current"), "http://127.0.0.1:54321/functions/v1/competition/ranking/current")
 	assert_eq(client.function_url("monetization/state"), "http://127.0.0.1:54321/functions/v1/monetization/state")
+	assert_eq(client.function_url("telemetry/client-event"), "http://127.0.0.1:54321/functions/v1/telemetry/client-event")
 	client.free()
+
+func test_session_store_persists_local_telemetry_session_id() -> void:
+	var store = SessionStoreScript.new()
+	var first_id := store.ensure_session_id()
+	assert_eq(first_id.length(), 36)
+	var snapshot := store.snapshot()
+	assert_eq(str(snapshot.get("session_id", "")), first_id)
+
+	var restored = SessionStoreScript.new()
+	restored._apply_cache(snapshot)
+	assert_eq(restored.ensure_session_id(), first_id)
+
+	store.clear_session()
+	assert_ne(store.ensure_session_id(), first_id)
+	store.free()
+	restored.free()
 
 func test_session_store_accepts_base_snapshot_without_local_mutation() -> void:
 	var store = SessionStoreScript.new()

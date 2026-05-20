@@ -11,6 +11,7 @@ var access_token := ""
 var refresh_token := ""
 var expires_at := 0
 var auth_user_id := ""
+var session_id := ""
 var guest_request_id := ""
 var player: Dictionary = {}
 var resources: Dictionary = {}
@@ -27,6 +28,7 @@ var offline := false
 
 func load_cache() -> bool:
 	if not FileAccess.file_exists(CACHE_PATH):
+		ensure_session_id()
 		return false
 
 	var file := FileAccess.open(CACHE_PATH, FileAccess.READ)
@@ -39,9 +41,11 @@ func load_cache() -> bool:
 
 	var cache := _as_dictionary(parsed)
 	if int(cache.get("cache_version", 0)) != CACHE_VERSION:
+		ensure_session_id()
 		return false
 
 	_apply_cache(cache)
+	ensure_session_id()
 	session_changed.emit()
 	return true
 
@@ -58,6 +62,7 @@ func clear_session() -> void:
 	refresh_token = ""
 	expires_at = 0
 	auth_user_id = ""
+	session_id = create_request_id()
 	guest_request_id = ""
 	player = {}
 	resources = {}
@@ -304,6 +309,11 @@ func ensure_guest_request_id() -> String:
 		save_cache()
 	return guest_request_id
 
+func ensure_session_id() -> String:
+	if session_id == "":
+		session_id = create_request_id()
+	return session_id
+
 func player_display_name() -> String:
 	return str(player.get("username", "Guest Draxos"))
 
@@ -316,6 +326,7 @@ func snapshot() -> Dictionary:
 			"expires_at": expires_at,
 			"user_id": auth_user_id,
 		},
+		"session_id": ensure_session_id(),
 		"guest_request_id": guest_request_id,
 		"player": player.duplicate(true),
 		"resources": resources.duplicate(true),
@@ -358,6 +369,7 @@ func _apply_cache(cache: Dictionary) -> void:
 	refresh_token = str(auth.get("refresh_token", ""))
 	expires_at = int(auth.get("expires_at", 0))
 	auth_user_id = str(auth.get("user_id", ""))
+	session_id = str(cache.get("session_id", ""))
 	guest_request_id = str(cache.get("guest_request_id", ""))
 	player = _as_dictionary(cache.get("player", {})).duplicate(true)
 	resources = _as_dictionary(cache.get("resources", {})).duplicate(true)

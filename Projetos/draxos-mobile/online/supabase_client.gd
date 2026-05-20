@@ -182,6 +182,19 @@ func alpha_purchase(request_id: String, product_id: String, access_token: String
 		}
 	)
 
+func send_client_telemetry(access_token: String, session_id: String, event_type: String, payload: Dictionary = {}) -> Dictionary:
+	return await _send_json(
+		function_url("telemetry/client-event"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		{
+			"schema_version": "telemetry_client_v1",
+			"event_type": event_type,
+			"session_id": session_id,
+			"payload": payload,
+		}
+	)
+
 func _load_project_settings() -> void:
 	var configured_url := str(ProjectSettings.get_setting("draxos_mobile/supabase/url", DEFAULT_SUPABASE_URL))
 	var configured_key := str(ProjectSettings.get_setting("draxos_mobile/supabase/publishable_key", DEFAULT_PUBLISHABLE_KEY))

@@ -17,18 +17,20 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
   - Allowed work: code, validation, playtest, local documentation.
   - Current next step: user playtest of the Track 02 complete-run build.
 
-## Implementacao - Bootstrap
+## Implementacao - Alpha Local
 
-- `draxos-mobile/`: jogo mobile multi-plataforma - mago Draxos (PVP assincrono, base manager, social). Plataformas: Android + PC executavel + PC browser. Backend: Supabase. Batalha 100% simulada no servidor. Track 00 completa: T00-P01 a T00-P13 concluidos; pronto para playtest alpha. T00-P13 entregou Monetizacao v0 server-authoritative com Battle Pass, Diamante alpha, rewards diarias/semanais, premium alpha, claims free/premium, ledger/idempotencia, fluxo minimo no Godot e export smoke Android/PC/Web. T00-P12 entregou Social/Competicao v0 server-authoritative com guilda alpha, chat por polling, matchmaking preview com fallback de bot, ranking de season sem bots, RLS e fluxo minimo no Godot. T00-P11 entregou Base Manager v0 server-authoritative com estruturas permanentes, fila de construcao, coleta offline, `base/state`, `base/collect`, `base/upgrade`, ledger, idempotencia e fluxo minimo no Godot. T00-P10 entregou conteudo real inicial, catalogo ampliado, seeds de bots `FIRST_SLICE`, simulador server-authoritative com DoTs/status/resistencias/passivas/pets/summons/anti-stall, modo `FIRST_SLICE_SIM`, recompensas XP/Almas/Energia/Sangue/Ossos, smoke runtime Supabase e replay rico no cliente. Godot project minimo tem boot hub alpha com abas/telas rolaveis, Voltar/Esc e confirmacoes simples, autoloads de fundacao, validate integrado, GUT, runtime Supabase local no layout oficial `supabase/`, migrations MVP/base/social/ranking/monetizacao, healthcheck, conta guest no gateway local, cliente de sessao Godot com Auth anonimo + cache nao autoritativo e endpoints server-authoritative idempotentes. Baseline de design inclui cap 40, levels permanentes, unlocks de spell/passiva/pet, base v0 implementavel, missoes/onboarding v0, monetizacao/recompensas v0, social/ranking/chat v0, combate real/simulador, matchmaking por poder, bots iniciais, telemetria minima, schema de build, UX alpha com Refugio, baseline calibravel de economia/simulador de seasons e guilda S1 com bonus ate 5%.
-  - Priority/status: `P2_IMPLEMENTACAO - alpha ready`
+- `draxos-mobile/`: jogo mobile multi-plataforma - mago Draxos (PVP assincrono, base manager, social). Plataformas: Android + PC executavel + PC browser. Backend: Supabase. Batalha 100% simulada no servidor. Track 00 completa: T00-P01 a T00-P13 concluidos; Track 01 completa com hardening do alpha PC local. T01 entregou UX de primeira sessao/refresh/offline/pre-condicoes, busy states, reset seguro de cache/sessao local, `session_id` local persistido, `telemetry/client-event` nao autoritativo, smoke server de telemetry, smoke Godot do loop guest -> state -> battle -> base -> social -> competition -> shop e checklist de playtest. T00-P13 entregou Monetizacao v0 server-authoritative com Battle Pass, Diamante alpha, rewards diarias/semanais, premium alpha, claims free/premium, ledger/idempotencia, fluxo minimo no Godot e export smoke Android/PC/Web. T00-P12 entregou Social/Competicao v0 server-authoritative com guilda alpha, chat por polling, matchmaking preview com fallback de bot, ranking de season sem bots, RLS e fluxo minimo no Godot. T00-P11 entregou Base Manager v0 server-authoritative com estruturas permanentes, fila de construcao, coleta offline, `base/state`, `base/collect`, `base/upgrade`, ledger, idempotencia e fluxo minimo no Godot. T00-P10 entregou conteudo real inicial, catalogo ampliado, seeds de bots `FIRST_SLICE`, simulador server-authoritative com DoTs/status/resistencias/passivas/pets/summons/anti-stall, modo `FIRST_SLICE_SIM`, recompensas XP/Almas/Energia/Sangue/Ossos, smoke runtime Supabase e replay rico no cliente. Godot project minimo tem boot hub alpha com abas/telas rolaveis, Voltar/Esc e confirmacoes simples, autoloads de fundacao, validate integrado, GUT, runtime Supabase local no layout oficial `supabase/`, migrations MVP/base/social/ranking/monetizacao, healthcheck, conta guest no gateway local, cliente de sessao Godot com Auth anonimo + cache nao autoritativo e endpoints server-authoritative idempotentes. Baseline de design inclui cap 40, levels permanentes, unlocks de spell/passiva/pet, base v0 implementavel, missoes/onboarding v0, monetizacao/recompensas v0, social/ranking/chat v0, combate real/simulador, matchmaking por poder, bots iniciais, telemetria minima, schema de build, UX alpha com Refugio, baseline calibravel de economia/simulador de seasons e guilda S1 com bonus ate 5%.
+  - Priority/status: `P2_IMPLEMENTACAO - alpha hardening complete`
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Operational status: `draxos-mobile/implementation/current-status.md`
   - Track 00 scope: `draxos-mobile/implementation/tracks/track-00-first-slice-foundation/scope.md`
+  - Track 01 scope: `draxos-mobile/implementation/tracks/track-01-alpha-playtest-hardening/scope.md`
+  - Playtest checklist: `draxos-mobile/docs/playtest-alpha.md`
   - Design pending: `draxos-mobile/docs/design-pending.md`
   - Economy model: `draxos-mobile/docs/economy/README.md`
   - Design archive: `_conceitos/mobile-universe/gdd.md`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: executar playtest alpha do primeiro slice.
+  - Current next step: executar playtest alpha PC local com checklist Track 01.
 
 ## Arquivo De Design
 
@@ -56,7 +58,7 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 ## Project Disambiguation
 
 - Use `draxos-roguelike-cardgame/` for the current implementation focus: Draxos roguelike, ship hub, run map, 29-map complete-run evolution, reward/relic/shop systems, full keyword scope, enemy AI/intent, lane battles, card/enemy redesign, sacrifice/movement/Cinzas tuning, and Track 02 production prompts.
-- Use `draxos-mobile/` for all DraxosMobile implementation work - Godot project, Supabase, MVP tecnico minimo, first slice and design pending.
+- Use `draxos-mobile/` for all DraxosMobile implementation work - Godot project, Supabase, first slice, alpha hardening and design pending.
 - Use `_conceitos/mobile-universe/` for design reference only - not the active project.
 - Use `rpg-isometrico/` only for explicit historical/contextual consultation about the campaign-first isometric action RPG.
 - Use `rpg-turnos/` only for explicit historical/contextual consultation about the provisional 2D RPG-cardgame.

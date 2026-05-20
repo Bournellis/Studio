@@ -26,6 +26,7 @@ var _nav_buttons: Dictionary = {}
 var _screen_history: Array[String] = []
 var _current_screen := SCREEN_HUB
 var _pending_confirmation_action := ""
+var _active_action_id := ""
 var _is_busy := false
 var _replay_running := false
 var _skip_replay := false
@@ -34,7 +35,10 @@ func _ready() -> void:
 	_clear_existing_scene()
 	_build_ui()
 	SessionStore.session_changed.connect(_sync_status_from_session)
-	SessionStore.load_cache()
+	var cache_loaded := SessionStore.load_cache()
+	SessionStore.ensure_session_id()
+	if not cache_loaded:
+		SessionStore.save_cache()
 	_show_screen(SCREEN_HUB, false)
 	_sync_status_from_session()
 	if SessionStore.has_valid_access_token():
@@ -207,6 +211,11 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 			_render_hub_screen()
 
 	_sync_status_from_session()
+	_emit_client_event("screen_opened", {
+		"screen": screen_id,
+		"has_account": SessionStore.has_account_state(),
+		"offline": SessionStore.offline,
+	})
 
 func _go_back() -> void:
 	if _is_busy:
@@ -223,9 +232,11 @@ func _clear_content_body() -> void:
 		child.queue_free()
 
 func _render_hub_screen() -> void:
-	_add_section_label("Alpha liberado")
-	_add_body_text("Todos os sistemas da Track 00 ficam disponiveis para teste. Se uma acao tiver pre-condicao, ela deve responder com erro claro em vez de parecer morta.")
+	_add_section_label("Alpha PC local")
+	_add_body_text("Track 01 endurece o playtest local: sessao recuperavel, reset seguro de cache, erros claros e telemetria nao autoritativa.")
 	_add_action_button("Entrar como guest", "enter_guest")
+	_add_action_button("Sincronizar sessao", "refresh_session")
+	_add_action_button("Resetar sessao local", "reset_session", "Limpar apenas token/cache local desta maquina? O estado salvo no servidor nao sera apagado.")
 
 	var account := "Conta: nao iniciada"
 	if SessionStore.has_account_state():
@@ -237,6 +248,10 @@ func _render_hub_screen() -> void:
 	elif SessionStore.has_valid_access_token():
 		account = "Conta: sessao anonima criada; falta recuperar/criar guest."
 	_add_output_label(account)
+	_add_output_label("Sessao local: %s | Offline: %s" % [
+		SessionStore.ensure_session_id(),
+		str(SessionStore.offline),
+	])
 
 	_add_section_label("Telas")
 	_add_screen_button("Abrir Batalha", SCREEN_BATTLE)
@@ -360,9 +375,16 @@ func _on_confirmation_confirmed() -> void:
 	await _execute_action(action_id)
 
 func _execute_action(action_id: String) -> void:
+	_active_action_id = action_id
+	_error_label.text = ""
+	_emit_client_event("action_start", _action_payload(action_id))
 	match action_id:
 		"enter_guest":
 			await _enter_guest()
+		"refresh_session":
+			await _refresh_session()
+		"reset_session":
+			await _reset_local_session()
 		"request_battle":
 			await _request_battle()
 		"show_latest_battle":
@@ -394,6 +416,14 @@ func _execute_action(action_id: String) -> void:
 			await _grant_diamond_alpha()
 		"claim_daily_reward":
 			await _claim_daily_reward()
+	if _active_action_id == action_id:
+		var event_type := "action_failure" if _error_label.text != "" else "action_success"
+		var payload := _action_payload(action_id)
+		if _error_label.text != "":
+			payload["error_text"] = _error_label.text
+		}
+		_emit_client_event(event_type, payload)
+	_active_action_id = ""
 
 func _enter_guest() -> void:
 	_set_busy(true, "Criando sessao guest...")
@@ -418,25 +448,54 @@ func _enter_guest() -> void:
 		return
 
 	SessionStore.apply_server_state(guest_result)
-	await _recover_session_state()
+	var recovered := await _recover_session_state()
+	if not recovered:
+		return
 	_show_notice("Sessao guest pronta. Todas as abas do alpha estao disponiveis.")
 	_show_screen(SCREEN_HUB, false)
 
-func _recover_session_state() -> void:
+func _refresh_session() -> void:
+	if not _require_session("Crie uma sessao guest antes de sincronizar."):
+		return
+	var recovered := await _recover_session_state()
+	if recovered:
+		_show_screen(_current_screen, false)
+
+func _reset_local_session() -> void:
+	var previous_player_id := str(SessionStore.player.get("id", ""))
+	var previous_session_id := SessionStore.ensure_session_id()
+	if SessionStore.has_valid_access_token():
+		await SupabaseClient.send_client_telemetry(
+			SessionStore.access_token,
+			previous_session_id,
+			"local_session_reset",
+			{
+				"player_id": previous_player_id,
+				"screen": _current_screen,
+			}
+		)
+	SessionStore.clear_session()
+	SessionStore.save_cache()
+	_screen_history.clear()
+	_set_busy(false, "Cache local limpo. Entre como guest para recuperar ou criar uma sessao de teste.")
+	_show_screen(SCREEN_HUB, false)
+
+func _recover_session_state() -> bool:
 	if not SessionStore.has_valid_access_token():
 		_sync_status_from_session()
-		return
+		return false
 
 	_set_busy(true, "Recuperando estado do servidor...")
 	var state_result: Dictionary = await SupabaseClient.fetch_account_state(SessionStore.access_token)
 	if not bool(state_result.get("ok", false)):
 		_fail_with_error(state_result)
-		return
+		return false
 
 	SessionStore.apply_server_state(state_result)
 	SessionStore.save_cache()
 	_set_busy(false, "Sessao sincronizada com o servidor.")
 	_sync_status_from_session()
+	return true
 
 func _request_battle() -> void:
 	if not _require_account("Crie uma sessao guest antes de solicitar batalha."):
@@ -458,7 +517,9 @@ func _request_battle() -> void:
 		return
 
 	SessionStore.save_cache()
-	await _recover_session_state()
+	var recovered := await _recover_session_state()
+	if not recovered:
+		return
 	await _play_battle_log(SessionStore.last_battle_log, SessionStore.last_battle_rewards)
 
 func _show_latest_battle() -> void:
@@ -767,6 +828,19 @@ func _fail_with_error(result: Dictionary) -> void:
 		SessionStore.session_changed.emit()
 	_set_busy(false, "Acao nao concluida.")
 	_error_label.text = _friendly_error_message(code, str(error_payload.get("message", "Falha na requisicao.")))
+	_emit_client_event("action_failure", {
+		"action_id": _active_action_id,
+		"screen": _current_screen,
+		"code": code,
+		"message": str(error_payload.get("message", "")),
+		"network": _is_network_error(code),
+	})
+	if _is_network_error(code):
+		_emit_client_event("network_failure", {
+			"action_id": _active_action_id,
+			"screen": _current_screen,
+			"code": code,
+		})
 
 func _sync_status_from_session() -> void:
 	if _status_label == null:
@@ -798,6 +872,11 @@ func _require_session(message: String) -> bool:
 		return true
 	_error_label.text = message
 	_detail_label.text = "Use Entrar como guest no Refugio."
+	_emit_client_event("precondition_failed", {
+		"action_id": _active_action_id,
+		"screen": _current_screen,
+		"reason": "missing_session",
+	})
 	return false
 
 func _require_account(message: String) -> bool:
@@ -805,6 +884,11 @@ func _require_account(message: String) -> bool:
 		return true
 	_error_label.text = message
 	_detail_label.text = "Use Entrar como guest no Refugio."
+	_emit_client_event("precondition_failed", {
+		"action_id": _active_action_id,
+		"screen": _current_screen,
+		"reason": "missing_account",
+	})
 	return false
 
 func _render_base_state(collected: Dictionary = {}) -> void:
@@ -965,6 +1049,10 @@ func _play_battle_log(battle_log: Dictionary, rewards: Dictionary) -> void:
 	_skip_replay = false
 	_set_busy(false, "Reproduzindo replay do primeiro slice...")
 	_sync_buttons()
+	_emit_client_event("replay_start", {
+		"battle_id": str(battle_log.get("battle_id", "")),
+		"mode": str(battle_log.get("mode", "")),
+	})
 
 	var lines: PackedStringArray = PackedStringArray()
 	lines.append(BattleLogPresenterScript.format_summary(battle_log, rewards))
@@ -982,6 +1070,10 @@ func _play_battle_log(battle_log: Dictionary, rewards: Dictionary) -> void:
 		await get_tree().create_timer(0.15).timeout
 
 	if _skip_replay:
+		_emit_client_event("replay_skip", {
+			"battle_id": str(battle_log.get("battle_id", "")),
+			"events": events.size(),
+		})
 		for event: Dictionary in events:
 			var formatted := BattleLogPresenterScript.format_event(event)
 			if not lines.has(formatted):
@@ -991,6 +1083,10 @@ func _play_battle_log(battle_log: Dictionary, rewards: Dictionary) -> void:
 	_replay_running = false
 	_skip_replay = false
 	_set_busy(false, "Replay concluido.")
+	_emit_client_event("replay_end", {
+		"battle_id": str(battle_log.get("battle_id", "")),
+		"events": events.size(),
+	})
 	_sync_buttons()
 
 func _screen_title(screen_id: String) -> String:
@@ -1069,6 +1165,12 @@ func _extract_error(result: Dictionary) -> Dictionary:
 
 func _friendly_error_message(code: String, message: String) -> String:
 	match code:
+		"NETWORK_UNAVAILABLE":
+			return "Supabase local indisponivel. Confirme Docker/Supabase local em http://127.0.0.1:54321 e tente sincronizar."
+		"REQUEST_NOT_STARTED":
+			return "Requisicao nao iniciou. Verifique URL/chave local do Supabase nas Project Settings."
+		"CLIENT_MISCONFIGURED":
+			return "Cliente Supabase sem chave publishable configurada."
 		"INSUFFICIENT_RESOURCES":
 			return "Energia insuficiente para iniciar evolucao do Nucleo."
 		"GUILD_REQUIRED":
@@ -1107,3 +1209,30 @@ static func _as_array(value: Variant) -> Array:
 	if value is Array:
 		return Array(value)
 	return []
+
+func _action_payload(action_id: String) -> Dictionary:
+	return {
+		"action_id": action_id,
+		"screen": _current_screen,
+		"has_account": SessionStore.has_account_state(),
+		"offline": SessionStore.offline,
+	}
+
+func _emit_client_event(event_type: String, payload: Dictionary) -> void:
+	if not SessionStore.has_valid_access_token():
+		return
+	call_deferred("_send_telemetry_deferred", event_type, payload.duplicate(true))
+
+func _send_telemetry_deferred(event_type: String, payload: Dictionary) -> void:
+	var result: Dictionary = await SupabaseClient.send_client_telemetry(
+		SessionStore.access_token,
+		SessionStore.ensure_session_id(),
+		event_type,
+		payload
+	)
+	if not bool(result.get("ok", false)):
+		var error_payload := _extract_error(result)
+		print("[telemetry] %s: %s" % [
+			str(error_payload.get("code", "TELEMETRY_FAILED")),
+			str(error_payload.get("message", "")),
+		])

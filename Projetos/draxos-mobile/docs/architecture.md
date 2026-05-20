@@ -32,6 +32,7 @@
 - `T00-P11` completo: Base Manager v0 server-authoritative com `base/state`, `base/collect`, `base/upgrade`, estruturas permanentes, fila de construcao, coleta offline, ledger e idempotencia.
 - `T00-P12` completo: Social/Competicao v0 server-authoritative com `social/state`, guilda alpha, chat de guilda por polling, matchmaking preview com fallback de bot e ranking de season sem bots.
 - `T00-P13` completo: Monetizacao v0 server-authoritative com Battle Pass, Diamante alpha, recompensas diarias/semanais, claims free/premium, ledger, idempotencia e export smoke Android/PC/Web.
+- `Track 01` completo: hardening do alpha PC local com fluxo de primeira sessao mais claro, estados ocupados/erros offline/pre-condicoes visiveis, reset seguro de sessao local, telemetria client nao autoritativa e smoke do loop alpha.
 
 ---
 
@@ -45,7 +46,7 @@ Antes de criar codigo ou migrations, consulte:
 - `contracts/content-definitions.md`
 - `reuse-map.md`
 
-`supabase/` e a fonte de execucao local da Supabase CLI. `server/schema/` e `server/functions/` permanecem como espelho organizado do backend enquanto o bootstrap ainda esta pequeno.
+`supabase/` e a fonte de execucao local da Supabase CLI. `server/schema/` e `server/functions/` permanecem como espelho organizado do backend durante o alpha local.
 
 Deno e Supabase CLI sao validados via `npx -y deno` e `npx -y supabase` nesta maquina.
 
@@ -332,12 +333,21 @@ Eventos minimos:
 - `reward_applied`
 - `build_snapshot`
 - `bot_balance_simulated`
+- `screen_opened`
+- `action_start`
+- `action_success`
+- `action_failure`
+- `replay_start`
+- `replay_skip`
+- `replay_end`
+- `network_failure`
 
 Regras:
 
 - Bot-vs-bot nao concede recompensa nem altera ranking.
 - Dados de combate para balanceamento ficam no servidor; o cliente recebe apenas o log visual necessario.
 - Payloads de telemetria devem usar `schema_version` para permitir evolucao durante o alpha.
+- `POST /telemetry/client-event` aceita apenas `telemetry_client_v1`, grava `source = client`, usa `session_id` local persistido e nao altera estado autoritativo.
 
 ---
 
@@ -383,6 +393,7 @@ draxos-mobile/
 |       |-- healthcheck/
 |       |-- monetization/
 |       |-- social/
+|       |-- telemetry/
 |       `-- _shared/
 |-- server/
 |   |-- schema/

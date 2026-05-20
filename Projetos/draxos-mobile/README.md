@@ -4,19 +4,17 @@ Jogo mobile multi-plataforma de PVP assincrono com base manager, progressao de p
 
 **Nao confundir com:** `draxos-roguelike-cardgame` - projeto Steam separado.
 
-Status: `P2_IMPLEMENTACAO - bootstrap`
+Status: `P2_IMPLEMENTACAO - alpha hardening complete`
 
 ---
 
 ## Current Shape
 
-- Projeto promovido de conceito para implementavel em 2026-05-18.
-- Preparacao documental da Track 00 definida em 2026-05-19.
-- Godot project inicializado com boot minimo, validate, GUT, autoloads de fundacao e catalogo de conteudo gerado.
-- Supabase runtime local configurado em `supabase/`: Docker Desktop, `npx supabase`, `npx deno`, migrations MVP, Auth anonimo, healthcheck e conta guest no gateway local.
-- Conta guest MVP implementada: `account/guest`, `account/state`, convite `ALPHA-TEST`, fixture inicial de player/resources/build e escrita direta do cliente bloqueada.
+- Track 00 completa: Godot client, Supabase local, auth guest, batalha server-authoritative, Base, Social/Competicao, Monetizacao, pipeline de conteudo, exports e testes.
+- Track 01 completa: hardening do alpha PC local, telemetria client nao autoritativa, reset seguro de sessao local, smokes de loop alpha e checklist de playtest.
+- Supabase runtime local configurado em `supabase/`: Docker Desktop, `npx supabase`, `npx deno`, migrations MVP/base/social/ranking/monetizacao, Auth anonimo, healthcheck e Edge Functions `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*` e `telemetry/*`.
+- Conta guest alpha implementada: `account/guest`, `account/state`, convite `ALPHA-TEST`, fixture inicial de player/resources/build, cache local nao autoritativo e escrita direta do cliente bloqueada.
 - Reuso conservador documentado em `docs/reuse-map.md`; padroes tecnicos foram adotados sem importar gameplay de outros projetos.
-- Track 00 tem dois niveis: MVP tecnico minimo e primeiro slice completo.
 - Backend definido: Supabase Auth, Postgres, Edge Functions e Realtime.
 - Plataformas do primeiro slice: Android + PC executavel + PC browser.
 
@@ -26,8 +24,17 @@ Status: `P2_IMPLEMENTACAO - bootstrap`
 
 | Nivel | Objetivo | Status |
 |---|---|---|
-| MVP tecnico minimo | Provar Godot 4.6.2 + Supabase com guest, battle fixture server-authoritative e log animavel placeholder | Definido em docs |
-| Primeiro slice completo | PVP autobattler, base manager, social, ranking, bots, conta, economia, Battle Pass/Diamante, validacao e exports | Escopo definido; design pendente registrado |
+| MVP tecnico minimo | Provar Godot 4.6.2 + Supabase com guest, battle fixture server-authoritative e log animavel placeholder | Completo |
+| Primeiro slice completo | PVP autobattler, base manager, social, ranking, bots, conta, economia, Battle Pass/Diamante, validacao e exports | Completo para alpha |
+
+## Track 01
+
+| Objetivo | Status |
+|---|---|
+| Hardening do alpha PC local sem expandir modos ou mecanicas | Completo |
+| Telemetria client nao autoritativa em `telemetry_events` | Completo |
+| Smoke guest -> state -> battle -> base -> social -> competition -> shop | Completo |
+| Checklist e template de feedback de playtest | Completo |
 
 ---
 
@@ -35,16 +42,18 @@ Status: `P2_IMPLEMENTACAO - bootstrap`
 
 | Sistema | Status |
 |---|---|
-| Character Autobattler PVP assincrono | Escopo definido |
-| Base Manager com estruturas de producao | Escopo definido; design pendente registrado |
-| Sistema social (amigos, guilda, chat) | Escopo definido; design pendente registrado |
-| Infraestrutura (Supabase, contas, matchmaking) | Contratos iniciais definidos |
+| Character Autobattler PVP assincrono | Alpha implementado |
+| Base Manager com estruturas de producao | Alpha implementado |
+| Sistema social (amigos, guilda, chat) | Alpha implementado |
+| Infraestrutura (Supabase, contas, matchmaking) | Alpha implementado |
 | Godot project inicializado | Completo - T00-P01 |
 | Supabase base standalone | Completo - T00-P02A |
 | Supabase runtime local | Completo - T00-P02B |
 | Fundacao client reutilizavel | Completo - T00-P03 |
 | Fixtures MVP e catalogo gerado | Completo - T00-P04 |
 | Conta Guest MVP | Completo - T00-P05 |
+| Batalha, replay, Base, Social, Competicao e Monetizacao | Completo - T00-P07 a T00-P13 |
+| Alpha Playtest Hardening | Completo - Track 01 |
 
 ---
 
@@ -75,6 +84,10 @@ draxos-mobile/
 |           |-- mvp-technical-definition.md
 |           |-- implementation-plan.md
 |           `-- implementation-prompts.md
+|       `-- track-01-alpha-playtest-hardening/
+|           |-- current-status.md
+|           |-- scope.md
+|           `-- implementation-plan.md
 |-- server/
 |-- supabase/
 |-- core/
@@ -93,7 +106,7 @@ draxos-mobile/
 
 1. `AGENTS.md`
 2. `implementation/current-status.md`
-3. `implementation/tracks/track-00-first-slice-foundation/current-status.md`
+3. `implementation/tracks/track-01-alpha-playtest-hardening/current-status.md`
 4. `docs/reuse-map.md`
 5. `docs/design-pending.md`
-6. `implementation/tracks/track-00-first-slice-foundation/implementation-prompts.md`
+6. `docs/playtest-alpha.md`

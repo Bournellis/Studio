@@ -38,6 +38,7 @@ func _run_validation() -> int:
 	_check_resource("res://ui/battle_log_presenter.gd")
 	_check_resource("res://tools/smoke_session_shell.gd")
 	_check_resource("res://tools/smoke_battle_replay.gd")
+	_check_resource("res://tools/smoke_alpha_loop.gd")
 	_check_resource("res://tools/smoke_exports.gd")
 	_check_resource("res://export_presets.cfg")
 	_check_resource("res://data/content_library.gd")

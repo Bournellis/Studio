@@ -97,7 +97,7 @@ Implementacoes Godot vivem sob `Projetos/`.
 Projetos Godot ativos:
 
 - `Projetos/draxos-roguelike-cardgame/` — P0, Steam, roguelike cardgame
-- `Projetos/draxos-mobile/` — P2, mobile + PC + browser, Godot 4.6.2 + Supabase (Track 00 preparada documentalmente; projeto Godot ainda nao inicializado)
+- `Projetos/draxos-mobile/` — P2, mobile + PC + browser, Godot 4.6.2 + Supabase (Track 00 completa; Track 01 alpha hardening completo)
 
 Projetos Godot pausados:
 

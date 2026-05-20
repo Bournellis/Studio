@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
 - Ultima atualizacao: `2026-05-20`
-- Status: contrato com `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*` e `monetization/*` implementados localmente; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`
+- Status: contrato com `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*` e `telemetry/*` implementados localmente; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -11,7 +11,7 @@ Este documento descreve a interface logica entre cliente Godot e Supabase Edge F
 - Autenticacao: JWT Supabase no header `Authorization: Bearer <token>`.
 - Guest MVP: cliente primeiro cria sessao Supabase Auth anonima; depois chama `/account/guest` com o JWT anonimo e codigo de convite.
 - Correlation: cliente envia `request_id` em mutacoes para idempotencia.
-- Runtime local atual: `supabase/functions/account`, `battle`, `base`, `social`, `competition` e `monetization`, espelhados em `server/functions/`.
+- Runtime local atual: `supabase/functions/account`, `battle`, `base`, `social`, `competition`, `monetization` e `telemetry`, espelhados em `server/functions/`.
 - Resposta de erro padrao:
 
 ```json
@@ -520,6 +520,8 @@ Erros minimos: `UNAUTHENTICATED`, `PLAYER_NOT_FOUND`, `INVALID_REQUEST_ID`, `INV
 
 Evento nao autoritativo para UX e diagnostico. Combate, matchmaking, recompensa e snapshots de build devem ser gravados server-side durante os endpoints autoritativos.
 
+Status: **implementado em Track 01**.
+
 Request logico:
 
 ```json
@@ -530,6 +532,14 @@ Request logico:
   "payload": {}
 }
 ```
+
+Regras:
+
+- Requer JWT Supabase no header `Authorization`.
+- Aceita `player_id = null` quando a sessao anonima ainda nao criou `players` via `account/guest`.
+- Grava sempre `source = "client"` em `telemetry_events`.
+- Escreve apenas telemetria; nunca muta recursos, ranking, recompensas, base, batalha ou estado social.
+- Rejeita schema desconhecido com `UNSUPPORTED_SCHEMA`.
 
 ## Idempotencia
 
