@@ -3574,10 +3574,14 @@
         {
           "slot": 1,
           "card_id": "enemy_terra_golem_terra"
+        },
+        {
+          "slot": 2,
+          "card_id": "enemy_terra_elemental_agil"
         }
       ],
       "enemy_commander_enabled": true,
-      "enemy_health": 15,
+      "enemy_health": 20,
       "enemy_mana_per_turn": 3,
       "enemy_hand_count": 3,
       "enemy_deck": [
@@ -3676,24 +3680,16 @@
         {
           "slot": 1,
           "card_id": "enemy_terra_golem_terra"
-        },
-        {
-          "slot": 2,
-          "card_id": "enemy_terra_rocha_viva"
-        },
-        {
-          "slot": 3,
-          "card_id": "enemy_terra_elemental_pedra"
         }
       ],
       "enemy_commander_enabled": false,
-      "boss_health": 30,
+      "boss_health": 22,
       "boss_summons": [
         {
           "card_id": "enemy_terra_elemental_tita"
         },
         {
-          "card_id": "enemy_terra_elemental_granito"
+          "card_id": "enemy_terra_elemental_pedra"
         },
         {
           "card_id": "enemy_terra_verme_terra"
@@ -3701,9 +3697,9 @@
       ],
       "boss_phase_hooks": [
         {
-          "id": "terra_hp20",
+          "id": "terra_hp14",
           "trigger": "hp_below",
-          "hp_below": 20,
+          "hp_below": 14,
           "action": "buff_all_enemies",
           "health": 1,
           "description": "Fase 2: Chao Vivo engrossa a linha inimiga."
@@ -3713,8 +3709,8 @@
           "trigger": "turn",
           "turn": 5,
           "action": "summon_card",
-          "card_id": "enemy_terra_elemental_granito",
-          "description": "Fase 3: o Primordial ergue um Granito resistente."
+          "card_id": "enemy_terra_elemental_tita",
+          "description": "Fase 3: o Primordial ergue um Tita pesado."
         }
       ]
     },
@@ -5294,3 +5290,4 @@
     }
   ]
 }
+                                                                                                     
