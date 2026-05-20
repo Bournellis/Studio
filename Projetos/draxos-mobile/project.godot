@@ -11,6 +11,13 @@ config/features=PackedStringArray("4.6", "Forward Plus")
 UiTokens="*res://core/ui_tokens.gd"
 AssetIds="*res://core/asset_ids.gd"
 ContentLibrary="*res://data/content_library.gd"
+SessionStore="*res://online/session_store.gd"
+SupabaseClient="*res://online/supabase_client.gd"
+
+[draxos_mobile]
+
+supabase/url="http://127.0.0.1:54321"
+supabase/publishable_key="sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH"
 
 [display]
 

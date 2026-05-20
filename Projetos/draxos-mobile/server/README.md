@@ -15,8 +15,9 @@ Fonte de execucao local da Supabase CLI: `../supabase/`.
 
 - Migration inicial: `schema/migrations/202605190001_mvp_foundation.sql`
 - Migration conta guest: `schema/migrations/202605190002_guest_account_mvp.sql`
-- Edge Functions: `functions/healthcheck/index.ts`, `functions/account/index.ts`
+- Edge Functions: `functions/healthcheck/index.ts`, `functions/account/index.ts`, `functions/battle/index.ts`
 - Conta guest MVP: Auth anonimo + `account/guest` + `account/state`, com escrita autoritativa via service role.
+- Battle request MVP: `battle/request` + `battle/latest`, com simulacao fixture server-authoritative e recompensa idempotente.
 
 ## Validacao Esperada
 
@@ -40,3 +41,9 @@ Invoke-RestMethod -Uri 'http://127.0.0.1:54321/functions/v1/healthcheck'
 
 `DMOB-D040` foi resolvido usando `supabase/` como layout oficial de runtime local.
 `DMOB-D042` e `DMOB-D043` foram resolvidos em T00-P05: guest usa Supabase Auth anonimo e o cliente nao recebe policies de escrita direta para estado autoritativo.
+
+Smoke P07:
+
+```powershell
+npx -y deno run --allow-net --allow-env server/tests/battle_request_smoke.ts
+```

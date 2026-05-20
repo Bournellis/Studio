@@ -1,6 +1,6 @@
 # Track 00 - Implementation Plan
 
-- Ultima atualizacao: `2026-05-19`
+- Ultima atualizacao: `2026-05-20`
 - Status: rebaselineado apos bootstrap Godot/Supabase e fundacao reutilizavel do cliente
 
 ## Sequencia Reorganizada
@@ -63,7 +63,7 @@ Aceite: convite valido cria conta e estado inicial; convite invalido falha sem c
 
 ### T00-P06 - Cliente Account/Session Shell
 
-Status: **Pendente**.
+Status: **Completo**.
 
 Adicionar HTTP client, `SessionStore`, validacao de token e tela minima para entrar, recuperar estado e lidar com erro controlado.
 
@@ -71,7 +71,7 @@ Aceite: fluxo Auth anonimo -> `account/guest` -> `account/state` funciona em amb
 
 ### T00-P07 - Battle Request MVP
 
-Status: **Pendente**.
+Status: **Completo**.
 
 Implementar `battle/request` com bot fixture, seed deterministica, log `battle_log_v1`, gravacao de resultado e recompensa `MVP_ONLY`.
 
@@ -79,7 +79,7 @@ Aceite: teste server cobre sucesso, auth ausente, replay deterministico e idempo
 
 ### T00-P08 - Battle Replay Client MVP
 
-Status: **Pendente**.
+Status: **Completo**.
 
 Conectar Godot ao endpoint de batalha e exibir timeline placeholder ordenada por `t`.
 

@@ -1,9 +1,11 @@
 # Battle Event Log Contract
 
-- Ultima atualizacao: `2026-05-19`
+- Ultima atualizacao: `2026-05-20`
 - Versao atual: `battle_log_v1`
 
 O log de batalha e a unica fonte que o cliente usa para animar uma batalha. O cliente nao recalcula dano, vida, vitoria, recompensa ou ranking.
+
+Status MVP: `battle/request` server-authoritative implementado em T00-P07 com bot `mvp_training_bot`, seed deterministica e eventos `battle_log_v1`.
 
 ## Envelope
 

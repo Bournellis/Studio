@@ -1,7 +1,7 @@
 # Database Schema Contract
 
-- Ultima atualizacao: `2026-05-19`
-- Status: contrato logico com migrations MVP e conta guest criadas
+- Ultima atualizacao: `2026-05-20`
+- Status: contrato logico com migrations MVP, conta guest e battle request criadas
 
 Este documento define o schema esperado. A fonte tecnica viva do runtime local e `../../supabase/migrations/`; `../../server/schema/migrations/` permanece como espelho backend durante o bootstrap.
 
@@ -9,6 +9,7 @@ Migrations atuais:
 
 - `202605190001_mvp_foundation.sql`: tabelas MVP, RLS base, policies de leitura e bot fixture.
 - `202605190002_guest_account_mvp.sql`: convite alpha, RPC `create_guest_account` e estado inicial de conta guest.
+- `202605200001_battle_request_mvp.sql`: RPC `request_mvp_battle`, log `battle_log_v1`, recompensa fixture e idempotencia server-side.
 
 ## MVP Tecnico
 
@@ -185,6 +186,22 @@ Regras:
 - Valida convite ativo, nao expirado e com usos disponiveis.
 - Cria `players`, `resources` e `builds` com fixture `MVP_ONLY`.
 - Grava resposta em `idempotency_keys` para endpoint `account/guest`.
+- `GRANT EXECUTE` fica restrito a `service_role`; cliente usa Edge Function, nao RPC direto.
+
+### `public.request_mvp_battle(p_auth_user_id, p_request_id, p_mode)`
+
+Responsabilidade: criar batalha fixture `MVP_ONLY` de forma idempotente para um jogador autenticado.
+
+Implementado em: `202605200001_battle_request_mvp.sql`.
+
+Regras:
+
+- Exige player existente para o `auth_user_id`.
+- Aceita apenas `p_mode = 'MVP_ONLY'` no MVP tecnico.
+- Usa bot ativo `mvp_training_bot`.
+- Gera seed deterministica a partir de player e `request_id`.
+- Grava `battles`, `resource_transactions` e `idempotency_keys`.
+- Aplica uma unica vez a recompensa tecnica `mvp_training_reward`: `xp +5`, `ossos +1`.
 - `GRANT EXECUTE` fica restrito a `service_role`; cliente usa Edge Function, nao RPC direto.
 
 ## Regras De Temporada

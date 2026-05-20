@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
-- Ultima atualizacao: `2026-05-19`
-- Status: contrato MVP com `account/guest` e `account/state` implementados localmente
+- Ultima atualizacao: `2026-05-20`
+- Status: contrato MVP com `account/guest`, `account/state`, `battle/request` e `battle/latest` implementados localmente
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -11,7 +11,7 @@ Este documento descreve a interface logica entre cliente Godot e Supabase Edge F
 - Autenticacao: JWT Supabase no header `Authorization: Bearer <token>`.
 - Guest MVP: cliente primeiro cria sessao Supabase Auth anonima; depois chama `/account/guest` com o JWT anonimo e codigo de convite.
 - Correlation: cliente envia `request_id` em mutacoes para idempotencia.
-- Runtime local atual: `supabase/functions/account/index.ts`, espelhado em `server/functions/account/index.ts`.
+- Runtime local atual: `supabase/functions/account/index.ts` e `supabase/functions/battle/index.ts`, espelhados em `server/functions/`.
 - Resposta de erro padrao:
 
 ```json
@@ -142,6 +142,8 @@ Erros minimos: `UNAUTHENTICATED`, `PLAYER_NOT_FOUND`, `ACCOUNT_STATE_INCOMPLETE`
 
 Solicita batalha server-authoritative.
 
+Status: **implementado em T00-P07**.
+
 Request MVP:
 
 ```json
@@ -180,9 +182,13 @@ Response MVP:
 
 Erros minimos: `UNAUTHENTICATED`, `PLAYER_NOT_FOUND`, `BATTLE_RATE_LIMITED`, `SIMULATION_FAILED`.
 
+Idempotencia: repetir o mesmo `request_id` retorna o mesmo `battle_id`, `seed`, log e recompensa, sem reaplicar XP/Ossos.
+
 ### `GET /battle/latest`
 
 Retorna a ultima batalha do jogador autenticado, sem reaplicar recompensa.
+
+Status: **implementado em T00-P07**.
 
 Response:
 

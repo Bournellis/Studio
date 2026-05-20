@@ -1,6 +1,6 @@
 # Track 00 - Implementation Prompts
 
-- Ultima atualizacao: `2026-05-19`
+- Ultima atualizacao: `2026-05-20`
 - Uso: um prompt por execucao de agente
 - Sequencia oficial: `T00-P00` a `T00-P13`, reorganizada apos o bootstrap inicial
 
@@ -92,6 +92,8 @@ Validacao: convite valido cria conta; convite invalido falha; estado inicial e r
 
 ## T00-P06 - Cliente Account/Session Shell
 
+Status: completo.
+
 Objetivo: fechar a camada de sessao do cliente.
 
 Saida esperada: HTTP client via HTTPRequest, Auth anonimo local, chamada a `account/guest`, chamada a `account/state`, `SessionStore`, validacao de token, estado offline controlado e tela minima de conta.
@@ -100,6 +102,8 @@ Validacao: rede indisponivel mostra erro controlado; cache local nao altera recu
 
 ## T00-P07 - Battle Request MVP
 
+Status: completo.
+
 Objetivo: implementar batalha fixture server-authoritative.
 
 Saida esperada: `battle/request` com seed deterministica, bot `mvp_training_bot`, log `battle_log_v1`, resultado gravado e recompensa `MVP_ONLY` idempotente.
@@ -107,6 +111,8 @@ Saida esperada: `battle/request` com seed deterministica, bot `mvp_training_bot`
 Validacao: mesmo seed gera mesmo log; cliente nao envia resultado; repetir `request_id` nao duplica recompensa.
 
 ## T00-P08 - Battle Replay Client MVP
+
+Status: completo.
 
 Objetivo: exibir o log recebido sem calcular gameplay.
 

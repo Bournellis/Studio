@@ -21,6 +21,7 @@ Layout oficial da Supabase CLI para o runtime local do DraxosMobile.
 - `migrations/202605190002_guest_account_mvp.sql`: convite `ALPHA-TEST`, RPC `create_guest_account` e estado inicial guest.
 - `functions/healthcheck/index.ts`: healthcheck sem JWT.
 - `functions/account/index.ts`: `POST /account/guest` e `GET /account/state` com JWT anonimo.
+- `functions/battle/index.ts`: `POST /battle/request` e `GET /battle/latest` com JWT anonimo.
 
 ## Comandos
 

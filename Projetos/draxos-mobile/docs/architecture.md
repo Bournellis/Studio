@@ -1,6 +1,6 @@
 # DraxosMobile - Architecture
 
-- Ultima atualizacao: `2026-05-19`
+- Ultima atualizacao: `2026-05-20`
 
 ---
 
@@ -25,6 +25,9 @@
 - `T00-P03` completo: autoloads `UiTokens`, `AssetIds`, `ContentLibrary`, `.gutconfig.json` e validate integrado.
 - `T00-P04` completo: fixtures `MVP_ONLY`, JSONs de conteudo e catalogo gerado.
 - `T00-P05` completo: conta guest MVP, convite `ALPHA-TEST`, `account/guest`, `account/state`, RPC idempotente e bloqueio de escrita direta do cliente.
+- `T00-P06` completo: cliente Godot com `SessionStore`, `SupabaseClient`, Auth anonimo, `account/guest`, `account/state`, cache local nao autoritativo e erro offline controlado.
+- `T00-P07` completo: `battle/request`, `battle/latest`, RPC `request_mvp_battle`, log `battle_log_v1`, recompensa `MVP_ONLY` e idempotencia server-side.
+- `T00-P08` completo: replay placeholder no Godot para `battle_log_v1`, timeline ordenada por `t`/`seq`, skip e tolerancia a eventos desconhecidos.
 
 ---
 
@@ -60,12 +63,20 @@ Autoloads atuais:
 | `UiTokens` | `core/ui_tokens.gd` | Cores, estilos e tokens semanticos de UI |
 | `AssetIds` | `core/asset_ids.gd` | Manifesto de ids visuais e fallback enquanto assets nao existem |
 | `ContentLibrary` | `data/content_library.gd` | Gerar/carregar catalogo de conteudo e expor consultas por collection/id |
+| `SessionStore` | `online/session_store.gd` | Token/cache local nao autoritativo, validacao de expiracao e snapshot de estado recebido do servidor |
+| `SupabaseClient` | `online/supabase_client.gd` | HTTPRequest para Auth anonimo e Edge Functions locais |
+
+Classes utilitarias:
+
+| Classe | Arquivo | Responsabilidade |
+|---|---|---|
+| `BattleLogPresenter` | `ui/battle_log_presenter.gd` | Ordenar e formatar eventos `battle_log_v1` sem calcular gameplay |
 
 Regras:
 
 - Autoloads nao possuem autoridade economica ou de batalha.
 - `ContentLibrary` pode gerar catalogo local para UI, fixtures e testes.
-- `SessionStore` ainda nao existe; entra em `T00-P06` como cache local nao autoritativo.
+- `SessionStore` nao possui metodos para mutar recursos/progressao; apenas aplica snapshots recebidos do servidor.
 
 ---
 
@@ -150,7 +161,12 @@ Implementado em `T00-P05`:
 - `POST /account/guest`: valida JWT anonimo, `invite_code` e `request_id`, chama RPC `create_guest_account` e retorna player/resources/build inicial.
 - `GET /account/state`: recupera player/resources/build e `last_battle_id` para a sessao autenticada.
 - `create_guest_account`: RPC `SECURITY DEFINER` com execute restrito a `service_role`, seed `ALPHA-TEST` e idempotencia por `idempotency_keys`.
-- Cliente Godot ainda nao chama esses endpoints diretamente; HTTP client e `SessionStore` entram em `T00-P06`.
+
+Implementado em `T00-P06`:
+
+- `SupabaseClient`: chama `POST /auth/v1/signup`, `POST /functions/v1/account/guest` e `GET /functions/v1/account/state`.
+- `SessionStore`: persiste token/cache local em `user://session_cache.json`, valida expiracao e guarda estado apenas como snapshot.
+- Boot scene: botao `Entrar como guest` executa o fluxo real e mostra erro controlado quando rede ou Supabase local estao indisponiveis.
 
 ---
 
@@ -173,6 +189,20 @@ Cliente
 Desconexao durante batalha nao altera resultado, porque o resultado ja foi gravado antes do cliente animar.
 
 Contrato do log: `contracts/battle-event-log.md`.
+
+MVP tecnico implementado em `T00-P07`:
+
+- `POST /battle/request`: cria batalha contra `mvp_training_bot`, grava resultado e aplica recompensa fixture.
+- `GET /battle/latest`: retorna o ultimo log gravado, sem reaplicar recompensa.
+- `request_mvp_battle`: RPC transacional com `idempotency_keys`, `battles` e `resource_transactions`.
+- Recompensa fixture atual: `xp +5`, `ossos +1`, aplicada uma unica vez por `request_id`.
+
+MVP client implementado em `T00-P08`:
+
+- `Solicitar batalha`: envia intencao para `battle/request` e recebe `battle_log_v1`.
+- `Ver resultado`: busca `battle/latest` ou pula o replay atual.
+- Replay placeholder: lista eventos ordenados por `t`/`seq`; eventos desconhecidos viram linha de fallback.
+- Cliente nao recalcula dano, HP, vencedor, XP, Ossos ou recompensa.
 
 ---
 

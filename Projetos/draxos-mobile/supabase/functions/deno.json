@@ -12,7 +12,7 @@
     }
   },
   "tasks": {
-    "check": "deno check healthcheck/index.ts account/index.ts",
+    "check": "deno check healthcheck/index.ts account/index.ts battle/index.ts",
     "fmt": "deno fmt",
     "lint": "deno lint"
   }
