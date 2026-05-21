@@ -1,6 +1,6 @@
 # DraxosMobile - Design Pending
 
-- Ultima atualizacao: `2026-05-20`
+- Ultima atualizacao: `2026-05-21`
 - Status: registro vivo de pendencias de design
 - Escopo: DraxosMobile, Track 00 e evolucoes futuras
 
@@ -71,7 +71,7 @@ O MVP tecnico ja implementou conta guest server-authoritative, cliente de sessao
 | DMOB-D027 | Anuncios | PRIMEIRO_SLICE | Quais recompensas usam rewarded ads e qual pacote remove anuncios? | Resolvido: alpha nao usa anuncios reais; beta pode ter rewarded ads opcionais, max 3/dia, sem anuncio forcado e sem pacote de remocao no alpha. | `game-design-document.md` | RESOLVIDO | 2026-05-20 |
 | DMOB-D028 | Conquistas | PRIMEIRO_SLICE | Quais conquistas entram no primeiro slice e quais recompensas entregam? | Resolvido: conquistas v0 cobrem primeira batalha/vitoria, vitorias acumuladas, milestones de level, construcao, guilda e ajuda; recompensas sao titulos, molduras, pequenos Diamantes e recursos leves. | `game-design-document.md` | RESOLVIDO | 2026-05-20 |
 | DMOB-D029 | Poder | CALIBRAVEL_ALPHA | Quais pesos finais da formula de poder apos incluir summons e todos os upgrades? | Pode iniciar com pesos atuais, mas precisa calibrar com dados. | `game-design-document.md` | CALIBRAR | - |
-| DMOB-D030 | Balanceamento | CALIBRAVEL_ALPHA | Quais valores finais de dano, cooldown, mana, DoT, pet, passiva e anti-stall? | Pode nascer com valores iniciais, mas precisa tuning no alpha. | `game-design-document.md` | CALIBRAR | - |
+| DMOB-D030 | Balanceamento | CALIBRAVEL_ALPHA | Quais valores finais de dano, cooldown, mana, DoT, pet, passiva e anti-stall? | Primeira rodada de pacing aplicada em 2026-05-21: Vida efetiva + regen de Vida alinharam a duracao media do Battle Lab de `3.22s` para `18.19s`; dominancia de `burst_caster`/`pet_handler` segue calibravel. | `game-design-document.md` | CALIBRAR | - |
 | DMOB-D031 | Guilda | CALIBRAVEL_ALPHA | Os bonus de guilda estao leves o suficiente para nao serem obrigatorios? | Tuning social/economico precisa dados reais. | `game-design-document.md` | CALIBRAR | - |
 | DMOB-D032 | Diamante | CALIBRAVEL_ALPHA | A economia de Diamante cobre o gap esperado sem substituir gameplay? | Requer observacao de progressao free vs paga. | `game-design-document.md` | CALIBRAR | - |
 | DMOB-D033 | PVE | POS_SLICE | Qual formato do Character Autobattler PVE? | Fora da Track 00, mas deve preservar compatibilidade futura. | `game-design-document.md` | ADIADO | - |

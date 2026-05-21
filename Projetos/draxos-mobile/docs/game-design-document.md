@@ -36,10 +36,19 @@ Para o simulador real do primeiro slice, os stats usam uma curva linear e calibr
 
 Formulas:
 
-- `vida_max = round(100 + 8 * (level - 1))`
+- `vida_base = round(100 + 8 * (level - 1))`
+- `multiplicador_pacing_alpha = 4.85 + 0.121 * (level - 1)`
+- `vida_max = round(vida_base * multiplicador_pacing_alpha)`
 - `mana_max = round(20 + 1.5 * (level - 1))`
 - `regen_vida = 1.0 + 0.08 * (level - 1)` por segundo
 - `regen_mana = 2.0 + 0.05 * (level - 1)` por segundo
+
+Tuning alpha 2026-05-21: o multiplicador de pacing acima foi introduzido apos o
+Battle Lab mostrar batalhas medias de `3.22s`. O objetivo nao e fechar
+balanceamento final, mas alinhar a duracao media do replay com a janela
+operacional `18s-28s` antes de mexer em dano, cooldowns, pet, DoT ou passivas.
+Apos o ajuste, o baseline offline ficou em `18.19s` de duracao media, `2.38%`
+de batalhas curtas e `0.12%` de anti-stall.
 
 Fontes externas v0:
 

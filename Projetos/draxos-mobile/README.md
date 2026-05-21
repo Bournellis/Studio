@@ -12,6 +12,7 @@ Status: `P2_IMPLEMENTACAO - alpha hardening complete`
 
 - Track 00 completa: Godot client, Supabase local, auth guest, batalha server-authoritative, Base, Social/Competicao, Monetizacao, pipeline de conteudo, exports e testes.
 - Track 01 completa: hardening do alpha PC local, telemetria client nao autoritativa, reset seguro de sessao local, smokes de loop alpha e checklist de playtest.
+- Battle Lab offline implementado: `tools/battle_lab/` gera HTML/CSV/JSON em `docs/battle-lab/generated/`; primeiro ajuste de pacing alpha levou a duracao media de combate de `3.22s` para `18.19s`.
 - Supabase runtime local configurado em `supabase/`: Docker Desktop, `npx supabase`, `npx deno`, migrations MVP/base/social/ranking/monetizacao, Auth anonimo, healthcheck e Edge Functions `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*` e `telemetry/*`.
 - Conta guest alpha implementada: `account/guest`, `account/state`, convite `ALPHA-TEST`, fixture inicial de player/resources/build, cache local nao autoritativo e escrita direta do cliente bloqueada.
 - Reuso conservador documentado em `docs/reuse-map.md`; padroes tecnicos foram adotados sem importar gameplay de outros projetos.
@@ -54,6 +55,7 @@ Status: `P2_IMPLEMENTACAO - alpha hardening complete`
 | Conta Guest MVP | Completo - T00-P05 |
 | Batalha, replay, Base, Social, Competicao e Monetizacao | Completo - T00-P07 a T00-P13 |
 | Alpha Playtest Hardening | Completo - Track 01 |
+| Battle Lab e primeiro pacing de combate | Completo - baseline 2026-05-21 |
 
 ---
 
@@ -64,6 +66,7 @@ draxos-mobile/
 |-- AGENTS.md
 |-- README.md
 |-- docs/
+|   |-- battle-lab/
 |   |-- product-brief.md
 |   |-- game-design-document.md
 |   |-- design-pending.md
@@ -96,6 +99,7 @@ draxos-mobile/
 |-- modes/
 |-- social/
 |-- tools/
+|   |-- battle_lab/
 |-- tests/
 `-- addons/
 ```

@@ -70,6 +70,7 @@ interface RuntimeCombatant {
   build: CombatantBuild;
   hp: number;
   maxHp: number;
+  hpRegen: number;
   barrier: number;
   mana: number;
   maxMana: number;
@@ -162,6 +163,8 @@ interface PassiveStats {
 const MAX_DURATION = 36;
 const TICK_SECONDS = 0.5;
 const DOT_TICK_SECONDS = 1;
+const COMBAT_PACE_HP_MULTIPLIER_BASE = 4.85;
+const COMBAT_PACE_HP_MULTIPLIER_PER_LEVEL = 0.121;
 
 const SPELLS: Record<string, SpellDefinition> = {
   raio_cosmico: {
@@ -395,7 +398,7 @@ export function simulateFirstSliceBattle(input: BattleSimulationInput): BattleSi
 
 function createCombatant(side: BattleSideId, build: CombatantBuild): RuntimeCombatant {
   const level = clamp(build.level, 1, 40);
-  const maxHp = Math.round(100 + 8 * (level - 1));
+  const maxHp = maxHpForLevel(level);
   const maxMana = Math.round(20 + 1.5 * (level - 1));
   const passive = passiveStats(build.passiveId, build.passiveLevel);
   return {
@@ -403,6 +406,7 @@ function createCombatant(side: BattleSideId, build: CombatantBuild): RuntimeComb
     build,
     hp: maxHp,
     maxHp,
+    hpRegen: hpRegenForLevel(level),
     barrier: passive.startingBarrier,
     mana: maxMana,
     maxMana,
@@ -452,6 +456,12 @@ function emitPassiveStart(
 
 function regenerate(combatant: RuntimeCombatant): void {
   const slow = slowMultiplier(combatant);
+  if (combatant.hp > 0) {
+    combatant.hp = Math.min(
+      combatant.maxHp,
+      combatant.hp + combatant.hpRegen * slow * TICK_SECONDS,
+    );
+  }
   combatant.mana = Math.min(
     combatant.maxMana,
     combatant.mana + combatant.manaRegen * slow * TICK_SECONDS,
@@ -1097,6 +1107,19 @@ function weaponDamage(build: CombatantBuild): number {
   const qualityMultipliers = [1, 1.08, 1.18, 1.3, 1.45];
   const tier = clamp(build.weaponQualityTier, 0, qualityMultipliers.length - 1);
   return (15 + 1.8 * Math.max(0, build.weaponLevel - 1)) * qualityMultipliers[tier];
+}
+
+function maxHpForLevel(level: number): number {
+  const normalizedLevel = clamp(level, 1, 40);
+  const baseHp = 100 + 8 * (normalizedLevel - 1);
+  const paceMultiplier = COMBAT_PACE_HP_MULTIPLIER_BASE +
+    COMBAT_PACE_HP_MULTIPLIER_PER_LEVEL * (normalizedLevel - 1);
+  return Math.round(baseHp * paceMultiplier);
+}
+
+function hpRegenForLevel(level: number): number {
+  const normalizedLevel = clamp(level, 1, 40);
+  return 1 + 0.08 * (normalizedLevel - 1);
 }
 
 function antiStallPercent(time: number): number {

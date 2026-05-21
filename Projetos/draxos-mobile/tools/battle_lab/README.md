@@ -57,3 +57,19 @@ Use nesta ordem:
 Nao ajuste numeros direto depois de uma unica luta manual. Primeiro gere
 baseline, revise outliers, escolha uma hipotese pequena, ajuste poucos
 parametros em outra tarefa, regenere o relatorio e compare antes/depois.
+
+## Baseline Atual
+
+O baseline gerado em `docs/battle-lab/generated/` ja inclui o primeiro ajuste de
+pacing de combate de `2026-05-21`.
+
+Resumo:
+
+- duracao media: `18.19s`;
+- batalhas curtas: `2.38%`;
+- batalhas longas: `0%`;
+- anti-stall: `0.12%`;
+- status geral: `CRITICAL` por dominancia de arquetipo, nao por pacing global.
+
+Proximo foco recomendado: investigar `burst_caster` e `pet_handler` em
+`battle_lab_archetypes.csv` e `battle_lab_outliers.csv`.

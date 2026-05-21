@@ -230,6 +230,8 @@ const DAMAGE_TYPE_KEYS = [
   "sangramento",
   "none",
 ];
+const COMBAT_PACE_HP_MULTIPLIER_BASE = 4.85;
+const COMBAT_PACE_HP_MULTIPLIER_PER_LEVEL = 0.121;
 
 export async function loadModel(
   modelUrl = new URL("model.v1.json", import.meta.url),
@@ -352,14 +354,10 @@ export function analyzeBattleLog(
   }
 
   const winner = simulation.battleLog.result.winner;
-  const winnerArchetypeId = winner === "player"
-    ? player.archetype_id
-    : opponent.archetype_id;
+  const winnerArchetypeId = winner === "player" ? player.archetype_id : opponent.archetype_id;
   const playerFinalHpPercent = percent(lastHp.player, maxHp.player);
   const opponentFinalHpPercent = percent(lastHp.opponent, maxHp.opponent);
-  const winnerHpPercent = winner === "player"
-    ? playerFinalHpPercent
-    : opponentFinalHpPercent;
+  const winnerHpPercent = winner === "player" ? playerFinalHpPercent : opponentFinalHpPercent;
   const alerts: string[] = [];
 
   if (simulation.battleLog.duration < model.thresholds.short_duration) {
@@ -425,8 +423,7 @@ async function main(): Promise<void> {
   );
   await writeOutputs(model, result, outputUrl);
 
-  const reviewCount =
-    result.checks.filter((check) => check.status !== "PASS").length;
+  const reviewCount = result.checks.filter((check) => check.status !== "PASS").length;
   console.log("[battle-lab] generated", {
     status: result.overall_status,
     battles: result.summary.total_battles,
@@ -545,8 +542,7 @@ function runSingleMatchup(
   opponent: LabBuild,
 ): LabMatchup {
   const battleId = `L${level}_M${String(index).padStart(4, "0")}`;
-  const seed =
-    `battle_lab:${model.model_id}:${battleId}:${player.seed}:${opponent.seed}`;
+  const seed = `battle_lab:${model.model_id}:${battleId}:${player.seed}:${opponent.seed}`;
   const simulation = simulateFirstSliceBattle({
     battleId,
     seed,
@@ -564,15 +560,10 @@ function summarize(
   const durations = matchups.map((matchup) => matchup.duration);
   const totalBattles = matchups.length;
   const shortCount =
-    matchups.filter((matchup) =>
-      matchup.duration < model.thresholds.short_duration
-    ).length;
+    matchups.filter((matchup) => matchup.duration < model.thresholds.short_duration).length;
   const longCount =
-    matchups.filter((matchup) =>
-      matchup.duration > model.thresholds.long_duration
-    ).length;
-  const antiStallCount =
-    matchups.filter((matchup) => matchup.anti_stall).length;
+    matchups.filter((matchup) => matchup.duration > model.thresholds.long_duration).length;
+  const antiStallCount = matchups.filter((matchup) => matchup.anti_stall).length;
   const damageBySource = sumMaps(
     matchups.map((matchup) => matchup.damage_by_source),
     DAMAGE_SOURCE_KEYS,
@@ -629,9 +620,7 @@ function aggregateArchetypes(
   matchups: LabMatchup[],
 ): AggregateRow[] {
   return model.archetypes.map((archetype) => {
-    const rows = matchups.filter((matchup) =>
-      matchup.player_archetype_id === archetype.id
-    );
+    const rows = matchups.filter((matchup) => matchup.player_archetype_id === archetype.id);
     return aggregateRows(archetype.id, archetype.display_name, rows, model);
   });
 }
@@ -648,9 +637,7 @@ function aggregateMatrix(
         matchup.opponent_archetype_id === opponent.id
       );
       if (filtered.length === 0) continue;
-      const wins = filtered.filter((matchup) =>
-        matchup.winner === "player"
-      ).length;
+      const wins = filtered.filter((matchup) => matchup.winner === "player").length;
       const winRate = rate(wins, filtered.length);
       rows.push({
         player_archetype_id: player.id,
@@ -707,12 +694,10 @@ function aggregateRows(
 ): AggregateRow {
   const wins = rows.filter((matchup) => matchup.winner === "player").length;
   const durations = rows.map((matchup) => matchup.duration);
-  const shortCount =
-    rows.filter((matchup) => matchup.duration < model.thresholds.short_duration)
-      .length;
-  const longCount =
-    rows.filter((matchup) => matchup.duration > model.thresholds.long_duration)
-      .length;
+  const shortCount = rows.filter((matchup) => matchup.duration < model.thresholds.short_duration)
+    .length;
+  const longCount = rows.filter((matchup) => matchup.duration > model.thresholds.long_duration)
+    .length;
   const antiStallCount = rows.filter((matchup) => matchup.anti_stall).length;
   const winRate = rate(wins, rows.length);
   return {
@@ -784,9 +769,7 @@ function buildOutliers(
     }
   }
 
-  return rows.sort((left, right) =>
-    statusRank(right.severity) - statusRank(left.severity)
-  );
+  return rows.sort((left, right) => statusRank(right.severity) - statusRank(left.severity));
 }
 
 function buildChecks(
@@ -816,35 +799,26 @@ function buildChecks(
         ? "PASS"
         : "REVIEW",
       observed: `${avgDuration}s`,
-      target:
-        `${model.thresholds.target_duration_min}-${model.thresholds.target_duration_max}s`,
-      note:
-        "Average battle duration should sit near the target playtest window.",
+      target: `${model.thresholds.target_duration_min}-${model.thresholds.target_duration_max}s`,
+      note: "Average battle duration should sit near the target playtest window.",
     },
     {
       id: "short_battle_rate",
-      status: shortRate <= model.thresholds.short_battle_rate_review_percent
-        ? "PASS"
-        : "REVIEW",
+      status: shortRate <= model.thresholds.short_battle_rate_review_percent ? "PASS" : "REVIEW",
       observed: `${shortRate}%`,
       target: `<= ${model.thresholds.short_battle_rate_review_percent}%`,
       note: "Too many short battles suggest burst or low HP scaling issues.",
     },
     {
       id: "long_battle_rate",
-      status: longRate <= model.thresholds.long_battle_rate_review_percent
-        ? "PASS"
-        : "REVIEW",
+      status: longRate <= model.thresholds.long_battle_rate_review_percent ? "PASS" : "REVIEW",
       observed: `${longRate}%`,
       target: `<= ${model.thresholds.long_battle_rate_review_percent}%`,
-      note:
-        "Too many long battles suggest defensive scaling or low damage pressure.",
+      note: "Too many long battles suggest defensive scaling or low damage pressure.",
     },
     {
       id: "anti_stall_rate",
-      status: antiStallRate <= model.thresholds.anti_stall_review_percent
-        ? "PASS"
-        : "REVIEW",
+      status: antiStallRate <= model.thresholds.anti_stall_review_percent ? "PASS" : "REVIEW",
       observed: `${antiStallRate}%`,
       target: `<= ${model.thresholds.anti_stall_review_percent}%`,
       note: "Anti-stall should be rare in normal same-level matchups.",
@@ -858,8 +832,7 @@ function buildChecks(
         : "PASS",
       observed: `${maxWinRate}% max / ${minWinRate}% min`,
       target: `max <= ${model.thresholds.dominance_review_percent}%`,
-      note:
-        "A dominant archetype should be reviewed before changing global numbers.",
+      note: "A dominant archetype should be reviewed before changing global numbers.",
     },
     {
       id: "level_coverage",
@@ -1067,29 +1040,23 @@ function renderHtml(model: BattleLabModel, result: BattleLabResult): string {
     .map((row) =>
       `<tr><td><span class="badge ${row.severity.toLowerCase()}">${row.severity}</span></td><td>${
         escapeHtml(row.type)
-      }</td><td>${escapeHtml(row.matchup_id)}</td><td>${
-        escapeHtml(row.level)
-      }</td><td>${escapeHtml(row.power)}</td><td>${
-        escapeHtml(row.duration)
-      }</td><td>${escapeHtml(row.winner)}</td><td>${
+      }</td><td>${escapeHtml(row.matchup_id)}</td><td>${escapeHtml(row.level)}</td><td>${
+        escapeHtml(row.power)
+      }</td><td>${escapeHtml(row.duration)}</td><td>${escapeHtml(row.winner)}</td><td>${
         escapeHtml(row.player_build_id)
-      }</td><td>${escapeHtml(row.opponent_build_id)}</td><td>${
-        escapeHtml(row.reason)
-      }</td></tr>`
+      }</td><td>${escapeHtml(row.opponent_build_id)}</td><td>${escapeHtml(row.reason)}</td></tr>`
     )
     .join("\n");
   const checkRows = result.checks
     .map((row) =>
       `<tr><td><span class="badge ${row.status.toLowerCase()}">${row.status}</span></td><td>${
         escapeHtml(row.id)
-      }</td><td>${escapeHtml(row.observed)}</td><td>${
-        escapeHtml(row.target)
-      }</td><td>${escapeHtml(row.note)}</td></tr>`
+      }</td><td>${escapeHtml(row.observed)}</td><td>${escapeHtml(row.target)}</td><td>${
+        escapeHtml(row.note)
+      }</td></tr>`
     )
     .join("\n");
-  const notes = result.summary.top_notes.map((note) =>
-    `<li>${escapeHtml(note)}</li>`
-  ).join("\n");
+  const notes = result.summary.top_notes.map((note) => `<li>${escapeHtml(note)}</li>`).join("\n");
 
   return `<!doctype html>
 <html lang="pt-BR">
@@ -1202,9 +1169,9 @@ function renderHtml(model: BattleLabModel, result: BattleLabResult): string {
       <h1>DraxosMobile Battle Lab</h1>
       <span class="badge ${statusClass}">${result.overall_status}</span>
     </div>
-    <p>Model: ${escapeHtml(model.model_id)} | Status: ${
-    escapeHtml(model.status)
-  } | Generated: ${escapeHtml(result.generated_at)}</p>
+    <p>Model: ${escapeHtml(model.model_id)} | Status: ${escapeHtml(model.status)} | Generated: ${
+    escapeHtml(result.generated_at)
+  }</p>
     <p>Offline FIRST_SLICE_SIM analysis. This report does not mutate Supabase, rewards, ranking or client state.</p>
   </header>
   <main>
@@ -1282,16 +1249,14 @@ function renderHtml(model: BattleLabModel, result: BattleLabResult): string {
 }
 
 function metricCard(label: string, value: string | number): string {
-  return `<div class="card"><div class="label">${
-    escapeHtml(label)
-  }</div><div class="value">${escapeHtml(String(value))}</div></div>`;
+  return `<div class="card"><div class="label">${escapeHtml(label)}</div><div class="value">${
+    escapeHtml(String(value))
+  }</div></div>`;
 }
 
 function mapRows(map: NumericMap): string {
   return Object.entries(map)
-    .map(([key, value]) =>
-      `<tr><td>${escapeHtml(key)}</td><td>${round(value, 2)}</td></tr>`
-    )
+    .map(([key, value]) => `<tr><td>${escapeHtml(key)}</td><td>${round(value, 2)}</td></tr>`)
     .join("\n");
 }
 
@@ -1303,9 +1268,7 @@ function buildTopNotes(checks: CheckRow[], outliers: OutlierRow[]): string[] {
       `${check.status}: ${check.id} observed ${check.observed}, target ${check.target}.`,
     );
   }
-  const criticalOutlier = outliers.find((outlier) =>
-    outlier.severity === "CRITICAL"
-  );
+  const criticalOutlier = outliers.find((outlier) => outlier.severity === "CRITICAL");
   if (criticalOutlier !== undefined) {
     notes.push(
       `Critical outlier: ${criticalOutlier.type} on ${
@@ -1313,9 +1276,7 @@ function buildTopNotes(checks: CheckRow[], outliers: OutlierRow[]): string[] {
       }.`,
     );
   }
-  const reviewOutlier = outliers.find((outlier) =>
-    outlier.severity === "REVIEW"
-  );
+  const reviewOutlier = outliers.find((outlier) => outlier.severity === "REVIEW");
   if (reviewOutlier !== undefined) {
     notes.push(
       `Review first matchup: ${reviewOutlier.type} ${reviewOutlier.matchup_id} (${reviewOutlier.player_build_id} vs ${reviewOutlier.opponent_build_id}).`,
@@ -1340,12 +1301,8 @@ function selectSpells(
     return [];
   }
   const legal = allowedSpellIds(level);
-  const preferred = archetype.spell_preferences.filter((spellId) =>
-    legal.includes(spellId)
-  );
-  const candidates = kind === "fixed"
-    ? preferred
-    : shuffle(unique([...preferred, ...legal]), rng);
+  const preferred = archetype.spell_preferences.filter((spellId) => legal.includes(spellId));
+  const candidates = kind === "fixed" ? preferred : shuffle(unique([...preferred, ...legal]), rng);
   const desiredCount = kind === "fixed" ? maxSlots : 1 + rng.nextInt(maxSlots);
   return candidates.slice(0, Math.min(maxSlots, desiredCount));
 }
@@ -1387,15 +1344,7 @@ function qualityTierForLevel(
   kind: BuildKind,
   rng: SeededRandom,
 ): number {
-  const base = level >= 35
-    ? 4
-    : level >= 25
-    ? 3
-    : level >= 14
-    ? 2
-    : level >= 5
-    ? 1
-    : 0;
+  const base = level >= 35 ? 4 : level >= 25 ? 3 : level >= 14 ? 2 : level >= 5 ? 1 : 0;
   const jitter = kind === "fixed" ? 0 : rng.nextInt(3) - 1;
   return clamp(base + bias + jitter, 0, 4);
 }
@@ -1408,7 +1357,11 @@ function maxSpellSlots(level: number): number {
 }
 
 function maxHpForLevel(level: number): number {
-  return Math.round(100 + 8 * (level - 1));
+  const normalizedLevel = clamp(level, 1, 40);
+  const baseHp = 100 + 8 * (normalizedLevel - 1);
+  const paceMultiplier = COMBAT_PACE_HP_MULTIPLIER_BASE +
+    COMBAT_PACE_HP_MULTIPLIER_PER_LEVEL * (normalizedLevel - 1);
+  return Math.round(baseHp * paceMultiplier);
 }
 
 function damageSourceForEvent(eventType: string): string {
@@ -1522,9 +1475,7 @@ function median(values: number[]): number {
   if (values.length === 0) return 0;
   const sorted = [...values].sort((left, right) => left - right);
   const middle = Math.floor(sorted.length / 2);
-  return sorted.length % 2 === 0
-    ? (sorted[middle - 1] + sorted[middle]) / 2
-    : sorted[middle];
+  return sorted.length % 2 === 0 ? (sorted[middle - 1] + sorted[middle]) / 2 : sorted[middle];
 }
 
 function rate(count: number, total: number): number {

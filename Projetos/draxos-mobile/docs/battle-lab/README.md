@@ -59,3 +59,41 @@ npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts
   dano antes de nerfar globalmente.
 - Se o problema aparece so em um level/power band, preferir ajuste de scaling em
   vez de alterar valor base.
+
+## Tuning Atual
+
+Ultima rodada: `2026-05-21`.
+
+Mudanca aplicada:
+
+- `FIRST_SLICE_SIM` passou a usar a regen de Vida ja definida no GDD.
+- A Vida efetiva do simulador recebeu um multiplicador de pacing alpha:
+  `4.85 + 0.121 * (level - 1)`.
+- Dano, cooldowns, mana, DoTs, pets, summons, passivas, recompensas, ranking,
+  anti-stall e economia nao foram alterados.
+
+Resultado Battle Lab:
+
+| Metrica | Antes | Depois |
+|---|---:|---:|
+| Duracao media | 3.22s | 18.19s |
+| Batalhas curtas | 100% | 2.38% |
+| Batalhas longas | 0% | 0% |
+| Anti-stall | 0% | 0.12% |
+| Checks em review/critical | 3 | 1 |
+
+Leitura:
+
+- O pacing global agora esta dentro da janela operacional `18s-28s`.
+- O status geral continua `CRITICAL` porque ainda existe dominancia de arquetipo:
+  `burst_caster` e `pet_handler` seguem acima do teto de win rate.
+- A proxima rodada deve tratar dominancia por fonte de dano/arquetipo, nao
+  aumentar HP global novamente.
+
+Validacoes rodadas:
+
+```powershell
+npx -y deno test server/tests/first_slice_simulator_test.ts
+npx -y deno test tools/battle_lab
+npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts
+```
