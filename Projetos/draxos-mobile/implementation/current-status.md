@@ -15,7 +15,7 @@
 |---|---|---|
 | MVP tecnico minimo | Completo | Loop guest -> battle/request -> replay placeholder -> latest/state validado; cliente nao calcula resultado, recompensa ou progressao |
 | Primeiro slice completo | Completo para alpha | T00-P13 completo; Track 01 hardening aplicado para PC local |
-| Design pendente | T00-P09 completo | DMOB-D001-D005, D008-D028 resolvidos; nao ha pendencia `PRIMEIRO_SLICE` bloqueando Track 00. D006-D007 e D029-D032 seguem calibraveis via simulador/playtest; D030 recebeu primeira rodada de pacing em 2026-05-21 |
+| Design pendente | T00-P09 completo | DMOB-D001-D005, D008-D028 resolvidos; nao ha pendencia `PRIMEIRO_SLICE` bloqueando Track 00. D006-D007 e D029-D032 seguem calibraveis via simulador/playtest; D030 recebeu pacing alpha e tuning v02 por fonte/arquetipo em 2026-05-21 |
 | Economia e seasons | Baseline calibravel | `../docs/economy/README.md`, JSON versionado e gerador Deno/TypeScript criados; outputs em `../docs/economy/generated/` |
 | Reuso entre projetos | Documentado | Fonte viva: `../docs/reuse-map.md`; estrategia conservadora |
 | Contratos tecnicos | Definidos | Fonte inicial: `../docs/contracts/` |
@@ -30,8 +30,11 @@
 - Ferramenta nova: `tools/battle_lab/` com geracao offline de relatorio HTML/CSV/JSON.
 - Baseline anterior do Battle Lab: `1680` batalhas, `112` builds, duracao media `3.22s`, batalhas curtas `100%`, anti-stall `0%`, status `CRITICAL`.
 - Ajuste aplicado: `FIRST_SLICE_SIM` agora aplica regen de Vida do GDD e multiplicador de pacing alpha na Vida efetiva.
-- Baseline atual: duracao media `18.19s`, batalhas curtas `2.38%`, batalhas longas `0%`, anti-stall `0.12%`.
-- Status geral continua `CRITICAL` por dominancia de `burst_caster` e `pet_handler`; proxima calibracao deve focar dano/arquetipo, nao HP global.
+- Battle Lab agora arquiva runs oficiais em `docs/battle-lab/runs/`, gera comparacao entre runs e separa dominancia bruta de dominancia em poder proximo (`<= 20%`, sem espelhos do mesmo arquetipo).
+- Ajuste v02 por fonte/arquetipo: `Raio` e `Odio` reduziram dano direto; DoTs de Fogo/Veneno/Sangramento subiram; pets reduziram dano base/escala; perfis de `burst_caster` e `pet_handler` no laboratorio tiveram ratios de arma/pet/qualidade normalizados.
+- Baseline atual v02: `1680` batalhas, `112` builds, duracao media `18.91s`, mediana `18.7s`, batalhas curtas `0%`, batalhas longas `0%`, anti-stall `0.12%`, status `REVIEW`.
+- Deltas v02 vs pacing v01: dominancia bruta maxima `88.1% -> 77.62%`, dominancia em poder proximo `79.37% -> 70.45%`, `burst_caster` em poder proximo `76.13% -> 60%`, `pet_handler` `79.37% -> 70.45%`.
+- Proxima calibracao deve mirar `pet_handler`, lacuna de `dot_pressure` e pesos de poder/matchmaking antes de qualquer novo ajuste global de HP.
 
 ---
 
@@ -103,8 +106,8 @@
 - `supabase/functions/competition/` implementa `GET /competition/matchmaking/preview` e `GET /competition/ranking/current` com fallback de bot e ranking de season sem bots.
 - `supabase/functions/monetization/` implementa `GET /monetization/state`, `POST /monetization/rewards/claim` e `POST /monetization/alpha-purchase` com Battle Pass, Diamante, recompensas diarias/semanais, premium alpha, ledger e idempotencia.
 - `supabase/functions/telemetry/` implementa `POST /telemetry/client-event` com JWT, schema `telemetry_client_v1`, `source = client`, `player_id` opcional antes da conta guest e escrita exclusiva em `telemetry_events`.
-- `supabase/functions/_shared/battle_simulator.ts` e `server/functions/_shared/battle_simulator.ts` simulam batalha com varinha, Vida/regen de Vida, mana, spells diretas, DoTs, status, resistencias, passivas, barreira, pet, summons, cooldowns, anti-stall e recompensa server-authoritative. Em 2026-05-21 receberam o primeiro pacing alpha: `vida_max = round((100 + 8 * (level - 1)) * (4.85 + 0.121 * (level - 1)))`.
-- `tools/battle_lab/` gera simulacoes offline bot-vs-bot com builds fixas/randomicas deterministicas, relatorio HTML, JSON e CSVs em `docs/battle-lab/generated/`.
+- `supabase/functions/_shared/battle_simulator.ts` e `server/functions/_shared/battle_simulator.ts` simulam batalha com varinha, Vida/regen de Vida, mana, spells diretas, DoTs, status, resistencias, passivas, barreira, pet, summons, cooldowns, anti-stall e recompensa server-authoritative. Em 2026-05-21 receberam pacing alpha (`vida_max = round((100 + 8 * (level - 1)) * (4.85 + 0.121 * (level - 1)))`) e tuning v02 de fontes: menos burst direto em `raio`/`odio`, DoTs mais relevantes e pets menos dominantes.
+- `tools/battle_lab/` gera simulacoes offline bot-vs-bot com builds fixas/randomicas deterministicas, relatorio HTML, JSON e CSVs em `docs/battle-lab/generated/`, mais historico versionado em `docs/battle-lab/runs/`.
 - `server/schema/` e `server/functions/` preservam a organizacao backend espelhada/documental durante o alpha local.
 
 ---

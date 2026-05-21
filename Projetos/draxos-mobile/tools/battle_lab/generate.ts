@@ -38,6 +38,11 @@ interface Thresholds {
   stomp_winner_hp_percent: number;
 }
 
+interface BattleLabOptions {
+  archiveRunId?: string;
+  compareWithRunId?: string;
+}
+
 interface PowerBand {
   id: string;
   display_name: string;
@@ -91,6 +96,10 @@ interface LabMatchup {
   anti_stall: boolean;
   damage_by_source: NumericMap;
   damage_by_type: NumericMap;
+  player_damage_by_source: NumericMap;
+  opponent_damage_by_source: NumericMap;
+  player_damage_by_type: NumericMap;
+  opponent_damage_by_type: NumericMap;
   barrier_absorbed: number;
   healing: number;
   summons_created: number;
@@ -114,6 +123,22 @@ interface AggregateRow {
   long_rate_percent: number;
   anti_stall_rate_percent: number;
   status: Status;
+}
+
+interface SourceByArchetypeRow {
+  archetype_id: string;
+  display_name: string;
+  total: number;
+  wins: number;
+  avg_duration: number;
+  weapon_damage: number;
+  spell_damage: number;
+  dot_damage: number;
+  pet_damage: number;
+  summon_damage: number;
+  system_damage: number;
+  total_damage: number;
+  dominant_source: string;
 }
 
 interface MatrixRow {
@@ -163,6 +188,32 @@ interface CheckRow {
   note: string;
 }
 
+interface CompareRow {
+  metric: string;
+  baseline: string;
+  current: string;
+  delta: string;
+}
+
+interface RunManifest {
+  run_id: string;
+  archived_at: string;
+  base_sha: string;
+  model_id: string;
+  seed: string;
+  hypothesis: string;
+  overall_status: Status;
+  avg_duration: number;
+  median_duration: number;
+  short_rate_percent: number;
+  long_rate_percent: number;
+  anti_stall_rate_percent: number;
+  raw_stress_dominance_max_percent: number;
+  near_power_dominance_max_percent: number;
+  critical_archetypes: string[];
+  files: string[];
+}
+
 interface BattleLabResult {
   model_id: string;
   generated_at: string;
@@ -170,8 +221,11 @@ interface BattleLabResult {
   builds: LabBuild[];
   matchups: LabMatchup[];
   archetypes: AggregateRow[];
+  near_power_archetypes: AggregateRow[];
   matrix: MatrixRow[];
+  near_power_matrix: MatrixRow[];
   power_bands: PowerBandRow[];
+  source_by_archetype: SourceByArchetypeRow[];
   outliers: OutlierRow[];
   checks: CheckRow[];
   summary: {
@@ -182,6 +236,8 @@ interface BattleLabResult {
     short_rate_percent: number;
     long_rate_percent: number;
     anti_stall_rate_percent: number;
+    raw_stress_dominance_max_percent: number;
+    near_power_dominance_max_percent: number;
     damage_by_source: NumericMap;
     damage_by_type: NumericMap;
     top_notes: string[];
@@ -232,6 +288,21 @@ const DAMAGE_TYPE_KEYS = [
 ];
 const COMBAT_PACE_HP_MULTIPLIER_BASE = 4.85;
 const COMBAT_PACE_HP_MULTIPLIER_PER_LEVEL = 0.121;
+const NEAR_POWER_MAX_DELTA_PERCENT = 20;
+const RUN_OUTPUT_FILES = [
+  "battle_lab_report.html",
+  "battle_lab_summary.json",
+  "battle_lab_matchups.csv",
+  "battle_lab_builds.csv",
+  "battle_lab_checks.csv",
+  "battle_lab_archetypes.csv",
+  "battle_lab_power_bands.csv",
+  "battle_lab_outliers.csv",
+  "battle_lab_source_by_archetype.csv",
+  "battle_lab_near_power_matrix.csv",
+  "battle_lab_history_index.csv",
+  "battle_lab_compare.csv",
+];
 
 export async function loadModel(
   modelUrl = new URL("model.v1.json", import.meta.url),
@@ -299,6 +370,10 @@ export function analyzeBattleLog(
 ): LabMatchup {
   const damageBySource = emptyDamageSourceMap();
   const damageByType = emptyDamageTypeMap();
+  const playerDamageBySource = emptyDamageSourceMap();
+  const opponentDamageBySource = emptyDamageSourceMap();
+  const playerDamageByType = emptyDamageTypeMap();
+  const opponentDamageByType = emptyDamageTypeMap();
   const spellCasts: NumericMap = {};
   const maxHp = {
     player: maxHpForLevel(player.build.level),
@@ -331,6 +406,18 @@ export function analyzeBattleLog(
       damageBySource[damageSource] += damage;
       const damageType = stringValue(event.damage_type, "none");
       damageByType[damageType in damageByType ? damageType : "none"] += damage;
+      const side = damageSideForEvent(event);
+      if (side === "player") {
+        playerDamageBySource[damageSource] += damage;
+        playerDamageByType[
+          damageType in playerDamageByType ? damageType : "none"
+        ] += damage;
+      } else if (side === "opponent") {
+        opponentDamageBySource[damageSource] += damage;
+        opponentDamageByType[
+          damageType in opponentDamageByType ? damageType : "none"
+        ] += damage;
+      }
     }
 
     if (eventType === "barrier_absorb") {
@@ -354,10 +441,14 @@ export function analyzeBattleLog(
   }
 
   const winner = simulation.battleLog.result.winner;
-  const winnerArchetypeId = winner === "player" ? player.archetype_id : opponent.archetype_id;
+  const winnerArchetypeId = winner === "player"
+    ? player.archetype_id
+    : opponent.archetype_id;
   const playerFinalHpPercent = percent(lastHp.player, maxHp.player);
   const opponentFinalHpPercent = percent(lastHp.opponent, maxHp.opponent);
-  const winnerHpPercent = winner === "player" ? playerFinalHpPercent : opponentFinalHpPercent;
+  const winnerHpPercent = winner === "player"
+    ? playerFinalHpPercent
+    : opponentFinalHpPercent;
   const alerts: string[] = [];
 
   if (simulation.battleLog.duration < model.thresholds.short_duration) {
@@ -394,6 +485,10 @@ export function analyzeBattleLog(
     anti_stall: antiStall,
     damage_by_source: roundMap(damageBySource),
     damage_by_type: roundMap(damageByType),
+    player_damage_by_source: roundMap(playerDamageBySource),
+    opponent_damage_by_source: roundMap(opponentDamageBySource),
+    player_damage_by_type: roundMap(playerDamageByType),
+    opponent_damage_by_type: roundMap(opponentDamageByType),
     barrier_absorbed: round(barrierAbsorbed, 2),
     healing: round(healing, 2),
     summons_created: summonsCreated,
@@ -414,6 +509,7 @@ export function buildSummaryForTest(model: BattleLabModel): BattleLabResult {
 }
 
 async function main(): Promise<void> {
+  const options = parseOptions(Deno.args);
   const model = await loadModel();
   const result = runBattleLab(model);
   const projectRoot = new URL("../../", import.meta.url);
@@ -421,16 +517,243 @@ async function main(): Promise<void> {
     `${model.output_dir.replace(/\/$/, "")}/`,
     projectRoot,
   );
-  await writeOutputs(model, result, outputUrl);
+  const runsUrl = new URL("docs/battle-lab/runs/", projectRoot);
+  const history = await loadHistoryIndex(runsUrl);
+  const compareRows = options.compareWithRunId === undefined
+    ? []
+    : await loadComparisonRows(runsUrl, options.compareWithRunId, result);
+  const manifest = options.archiveRunId === undefined
+    ? undefined
+    : await buildRunManifest(projectRoot, result, options.archiveRunId);
+  const historyWithPending = manifest === undefined
+    ? history
+    : upsertHistory(history, manifest);
 
-  const reviewCount = result.checks.filter((check) => check.status !== "PASS").length;
+  await writeOutputs(model, result, outputUrl, historyWithPending, compareRows);
+  if (manifest !== undefined) {
+    await archiveRun(outputUrl, runsUrl, manifest, historyWithPending);
+  }
+
+  const reviewCount =
+    result.checks.filter((check) => check.status !== "PASS").length;
   console.log("[battle-lab] generated", {
     status: result.overall_status,
     battles: result.summary.total_battles,
     builds: result.summary.total_builds,
     review_checks: reviewCount,
     report: new URL("battle_lab_report.html", outputUrl).pathname,
+    archived_run: options.archiveRunId ?? "",
+    compared_with: options.compareWithRunId ?? "",
   });
+}
+
+export function parseOptions(args: string[]): BattleLabOptions {
+  const options: BattleLabOptions = {};
+  for (let index = 0; index < args.length; index += 1) {
+    const arg = args[index];
+    if (arg === "--archive-run") {
+      const value = args[index + 1];
+      if (value === undefined || value.startsWith("--")) {
+        throw new Error("--archive-run requires a run id");
+      }
+      options.archiveRunId = value;
+      index += 1;
+    } else if (arg === "--compare-with") {
+      const value = args[index + 1];
+      if (value === undefined || value.startsWith("--")) {
+        throw new Error("--compare-with requires a run id");
+      }
+      options.compareWithRunId = value;
+      index += 1;
+    } else {
+      throw new Error(`Unknown Battle Lab argument: ${arg}`);
+    }
+  }
+  return options;
+}
+
+export async function loadHistoryIndex(runsUrl: URL): Promise<RunManifest[]> {
+  try {
+    const raw = await Deno.readTextFile(new URL("index.json", runsUrl));
+    const parsed = JSON.parse(raw) as { runs?: RunManifest[] };
+    return Array.isArray(parsed.runs) ? parsed.runs : [];
+  } catch (error) {
+    if (error instanceof Deno.errors.NotFound) {
+      return [];
+    }
+    throw error;
+  }
+}
+
+export async function loadComparisonRows(
+  runsUrl: URL,
+  baselineRunId: string,
+  current: BattleLabResult,
+): Promise<CompareRow[]> {
+  const baselineUrl = new URL(
+    `${baselineRunId}/battle_lab_summary.json`,
+    runsUrl,
+  );
+  const baseline = JSON.parse(
+    await Deno.readTextFile(baselineUrl),
+  ) as BattleLabResult;
+  return compareBattleLabResults(baselineRunId, baseline, current);
+}
+
+export function compareBattleLabResults(
+  baselineRunId: string,
+  baseline: BattleLabResult,
+  current: BattleLabResult,
+): CompareRow[] {
+  const rows: CompareRow[] = [
+    compareText("baseline_run", baselineRunId, current.model_id),
+    compareText(
+      "overall_status",
+      baseline.overall_status,
+      current.overall_status,
+    ),
+    compareNumber(
+      "avg_duration",
+      baseline.summary.avg_duration,
+      current.summary.avg_duration,
+      "s",
+    ),
+    compareNumber(
+      "median_duration",
+      baseline.summary.median_duration,
+      current.summary.median_duration,
+      "s",
+    ),
+    compareNumber(
+      "short_rate_percent",
+      baseline.summary.short_rate_percent,
+      current.summary.short_rate_percent,
+      "%",
+    ),
+    compareNumber(
+      "long_rate_percent",
+      baseline.summary.long_rate_percent,
+      current.summary.long_rate_percent,
+      "%",
+    ),
+    compareNumber(
+      "anti_stall_rate_percent",
+      baseline.summary.anti_stall_rate_percent,
+      current.summary.anti_stall_rate_percent,
+      "%",
+    ),
+    compareNumber(
+      "raw_stress_dominance_max_percent",
+      baseline.summary.raw_stress_dominance_max_percent ??
+        maxAggregateWinRate(baseline.archetypes),
+      current.summary.raw_stress_dominance_max_percent,
+      "%",
+    ),
+    compareNumber(
+      "near_power_dominance_max_percent",
+      baseline.summary.near_power_dominance_max_percent ??
+        maxAggregateWinRate(baseline.near_power_archetypes ?? []),
+      current.summary.near_power_dominance_max_percent,
+      "%",
+    ),
+  ];
+
+  for (const currentRow of current.near_power_archetypes) {
+    const baselineRow = (baseline.near_power_archetypes ?? []).find((row) =>
+      row.id === currentRow.id
+    );
+    if (baselineRow === undefined) continue;
+    rows.push(
+      compareNumber(
+        `near_power_win_rate:${currentRow.id}`,
+        baselineRow.win_rate_percent,
+        currentRow.win_rate_percent,
+        "%",
+      ),
+    );
+  }
+
+  return rows;
+}
+
+export async function buildRunManifest(
+  projectRoot: URL,
+  result: BattleLabResult,
+  runId: string,
+): Promise<RunManifest> {
+  return {
+    run_id: runId,
+    archived_at: new Date().toISOString(),
+    base_sha: await readGitHead(projectRoot),
+    model_id: result.model_id,
+    seed: result.builds[0]?.seed.split(":")[0] ?? "",
+    hypothesis: hypothesisForRunId(runId),
+    overall_status: result.overall_status,
+    avg_duration: result.summary.avg_duration,
+    median_duration: result.summary.median_duration,
+    short_rate_percent: result.summary.short_rate_percent,
+    long_rate_percent: result.summary.long_rate_percent,
+    anti_stall_rate_percent: result.summary.anti_stall_rate_percent,
+    raw_stress_dominance_max_percent:
+      result.summary.raw_stress_dominance_max_percent,
+    near_power_dominance_max_percent:
+      result.summary.near_power_dominance_max_percent,
+    critical_archetypes: result.near_power_archetypes
+      .filter((row) => row.status === "CRITICAL")
+      .map((row) => row.id),
+    files: RUN_OUTPUT_FILES,
+  };
+}
+
+export function upsertHistory(
+  history: RunManifest[],
+  manifest: RunManifest,
+): RunManifest[] {
+  return [
+    ...history.filter((entry) => entry.run_id !== manifest.run_id),
+    manifest,
+  ].sort((left, right) => left.run_id.localeCompare(right.run_id));
+}
+
+export async function archiveRun(
+  outputUrl: URL,
+  runsUrl: URL,
+  manifest: RunManifest,
+  historyRows: RunManifest[],
+): Promise<void> {
+  const runUrl = new URL(`${manifest.run_id}/`, runsUrl);
+  await Deno.mkdir(runUrl, { recursive: true });
+  for (const fileName of RUN_OUTPUT_FILES) {
+    try {
+      const content = await Deno.readTextFile(new URL(fileName, outputUrl));
+      await Deno.writeTextFile(new URL(fileName, runUrl), content);
+    } catch (error) {
+      if (!(error instanceof Deno.errors.NotFound)) {
+        throw error;
+      }
+    }
+  }
+  await Deno.writeTextFile(
+    new URL("run_manifest.json", runUrl),
+    JSON.stringify(manifest, null, 2) + "\n",
+  );
+  await Deno.mkdir(runsUrl, { recursive: true });
+  await Deno.writeTextFile(
+    new URL("index.json", runsUrl),
+    historyIndexDocument(historyRows),
+  );
+}
+
+export function historyIndexDocument(historyRows: RunManifest[]): string {
+  return JSON.stringify(
+    {
+      schema_version: 1,
+      updated_at: new Date().toISOString(),
+      runs: historyRows,
+    },
+    null,
+    2,
+  ) + "\n";
 }
 
 function createBuild(
@@ -542,7 +865,8 @@ function runSingleMatchup(
   opponent: LabBuild,
 ): LabMatchup {
   const battleId = `L${level}_M${String(index).padStart(4, "0")}`;
-  const seed = `battle_lab:${model.model_id}:${battleId}:${player.seed}:${opponent.seed}`;
+  const seed =
+    `battle_lab:${model.model_id}:${battleId}:${player.seed}:${opponent.seed}`;
   const simulation = simulateFirstSliceBattle({
     battleId,
     seed,
@@ -560,10 +884,15 @@ function summarize(
   const durations = matchups.map((matchup) => matchup.duration);
   const totalBattles = matchups.length;
   const shortCount =
-    matchups.filter((matchup) => matchup.duration < model.thresholds.short_duration).length;
+    matchups.filter((matchup) =>
+      matchup.duration < model.thresholds.short_duration
+    ).length;
   const longCount =
-    matchups.filter((matchup) => matchup.duration > model.thresholds.long_duration).length;
-  const antiStallCount = matchups.filter((matchup) => matchup.anti_stall).length;
+    matchups.filter((matchup) =>
+      matchup.duration > model.thresholds.long_duration
+    ).length;
+  const antiStallCount =
+    matchups.filter((matchup) => matchup.anti_stall).length;
   const damageBySource = sumMaps(
     matchups.map((matchup) => matchup.damage_by_source),
     DAMAGE_SOURCE_KEYS,
@@ -572,14 +901,31 @@ function summarize(
     matchups.map((matchup) => matchup.damage_by_type),
     DAMAGE_TYPE_KEYS,
   );
+  const nearPowerMatchups = matchups.filter((matchup) =>
+    nearPowerMatchup(matchup, NEAR_POWER_MAX_DELTA_PERCENT) &&
+    !sameArchetypeMatchup(matchup)
+  );
   const archetypes = aggregateArchetypes(model, matchups);
+  const nearPowerArchetypes = aggregateArchetypesAcrossSides(
+    model,
+    nearPowerMatchups,
+  );
   const matrix = aggregateMatrix(model, matchups);
+  const nearPowerMatrix = aggregateMatrix(model, nearPowerMatchups, {
+    excludeSelf: true,
+  });
   const powerBands = aggregatePowerBands(model, matchups);
-  const outliers = buildOutliers(model, matchups, archetypes);
-  const checks = buildChecks(
+  const sourceByArchetype = aggregateSourceByArchetype(model, matchups);
+  const outliers = buildOutliers(
     model,
     matchups,
     archetypes,
+    nearPowerArchetypes,
+  );
+  const checks = buildChecks(
+    model,
+    matchups,
+    nearPowerArchetypes,
     totalBattles,
     shortCount,
     longCount,
@@ -596,8 +942,11 @@ function summarize(
     builds,
     matchups,
     archetypes,
+    near_power_archetypes: nearPowerArchetypes,
     matrix,
+    near_power_matrix: nearPowerMatrix,
     power_bands: powerBands,
+    source_by_archetype: sourceByArchetype,
     outliers,
     checks,
     summary: {
@@ -608,6 +957,10 @@ function summarize(
       short_rate_percent: rate(shortCount, totalBattles),
       long_rate_percent: rate(longCount, totalBattles),
       anti_stall_rate_percent: rate(antiStallCount, totalBattles),
+      raw_stress_dominance_max_percent: maxAggregateWinRate(archetypes),
+      near_power_dominance_max_percent: maxAggregateWinRate(
+        nearPowerArchetypes,
+      ),
       damage_by_source: roundMap(damageBySource),
       damage_by_type: roundMap(damageByType),
       top_notes: topNotes,
@@ -620,24 +973,54 @@ function aggregateArchetypes(
   matchups: LabMatchup[],
 ): AggregateRow[] {
   return model.archetypes.map((archetype) => {
-    const rows = matchups.filter((matchup) => matchup.player_archetype_id === archetype.id);
+    const rows = matchups.filter((matchup) =>
+      matchup.player_archetype_id === archetype.id
+    );
     return aggregateRows(archetype.id, archetype.display_name, rows, model);
+  });
+}
+
+function aggregateArchetypesAcrossSides(
+  model: BattleLabModel,
+  matchups: LabMatchup[],
+): AggregateRow[] {
+  return model.archetypes.map((archetype) => {
+    const rows = matchups.filter((matchup) =>
+      matchup.player_archetype_id === archetype.id ||
+      matchup.opponent_archetype_id === archetype.id
+    );
+    const wins = rows.filter((matchup) =>
+      matchup.winner_archetype_id === archetype.id
+    ).length;
+    return aggregateRowsWithWins(
+      archetype.id,
+      archetype.display_name,
+      rows,
+      wins,
+      model,
+    );
   });
 }
 
 function aggregateMatrix(
   model: BattleLabModel,
   matchups: LabMatchup[],
+  options: { excludeSelf?: boolean } = {},
 ): MatrixRow[] {
   const rows: MatrixRow[] = [];
   for (const player of model.archetypes) {
     for (const opponent of model.archetypes) {
+      if (options.excludeSelf === true && player.id === opponent.id) {
+        continue;
+      }
       const filtered = matchups.filter((matchup) =>
         matchup.player_archetype_id === player.id &&
         matchup.opponent_archetype_id === opponent.id
       );
       if (filtered.length === 0) continue;
-      const wins = filtered.filter((matchup) => matchup.winner === "player").length;
+      const wins = filtered.filter((matchup) =>
+        matchup.winner === "player"
+      ).length;
       const winRate = rate(wins, filtered.length);
       rows.push({
         player_archetype_id: player.id,
@@ -693,11 +1076,23 @@ function aggregateRows(
   model: BattleLabModel,
 ): AggregateRow {
   const wins = rows.filter((matchup) => matchup.winner === "player").length;
+  return aggregateRowsWithWins(id, displayName, rows, wins, model);
+}
+
+function aggregateRowsWithWins(
+  id: string,
+  displayName: string,
+  rows: LabMatchup[],
+  wins: number,
+  model: BattleLabModel,
+): AggregateRow {
   const durations = rows.map((matchup) => matchup.duration);
-  const shortCount = rows.filter((matchup) => matchup.duration < model.thresholds.short_duration)
-    .length;
-  const longCount = rows.filter((matchup) => matchup.duration > model.thresholds.long_duration)
-    .length;
+  const shortCount =
+    rows.filter((matchup) => matchup.duration < model.thresholds.short_duration)
+      .length;
+  const longCount =
+    rows.filter((matchup) => matchup.duration > model.thresholds.long_duration)
+      .length;
   const antiStallCount = rows.filter((matchup) => matchup.anti_stall).length;
   const winRate = rate(wins, rows.length);
   return {
@@ -722,10 +1117,63 @@ function aggregateRows(
   };
 }
 
+function aggregateSourceByArchetype(
+  model: BattleLabModel,
+  matchups: LabMatchup[],
+): SourceByArchetypeRow[] {
+  return model.archetypes.map((archetype) => {
+    const damage = emptyDamageSourceMap();
+    const rows = matchups.filter((matchup) =>
+      matchup.player_archetype_id === archetype.id ||
+      matchup.opponent_archetype_id === archetype.id
+    );
+    let wins = 0;
+    for (const matchup of rows) {
+      if (matchup.winner_archetype_id === archetype.id) {
+        wins += 1;
+      }
+      if (matchup.player_archetype_id === archetype.id) {
+        addMap(damage, matchup.player_damage_by_source);
+      }
+      if (matchup.opponent_archetype_id === archetype.id) {
+        addMap(damage, matchup.opponent_damage_by_source);
+      }
+    }
+    const totalDamage = DAMAGE_SOURCE_KEYS.reduce(
+      (total, key) => total + (damage[key] ?? 0),
+      0,
+    );
+    const dominantSource = [...DAMAGE_SOURCE_KEYS].sort((left, right) =>
+      (damage[right] ?? 0) - (damage[left] ?? 0)
+    )[0] ?? "";
+    return {
+      archetype_id: archetype.id,
+      display_name: archetype.display_name,
+      total: rows.length,
+      wins,
+      avg_duration: round(
+        avg(rows.map((matchup) =>
+          matchup.duration
+        )),
+        2,
+      ),
+      weapon_damage: round(damage.weapon ?? 0, 2),
+      spell_damage: round(damage.spell ?? 0, 2),
+      dot_damage: round(damage.dot ?? 0, 2),
+      pet_damage: round(damage.pet ?? 0, 2),
+      summon_damage: round(damage.summon ?? 0, 2),
+      system_damage: round(damage.system ?? 0, 2),
+      total_damage: round(totalDamage, 2),
+      dominant_source: dominantSource,
+    };
+  });
+}
+
 function buildOutliers(
   model: BattleLabModel,
   matchups: LabMatchup[],
   archetypes: AggregateRow[],
+  nearPowerArchetypes: AggregateRow[],
 ): OutlierRow[] {
   const rows: OutlierRow[] = [];
   for (const matchup of matchups) {
@@ -751,7 +1199,7 @@ function buildOutliers(
       archetype.win_rate_percent > model.thresholds.dominance_review_percent
     ) {
       rows.push({
-        type: "DOMINANCE",
+        type: "RAW_STRESS_DOMINANCE",
         severity: archetype.win_rate_percent >
             model.thresholds.dominance_critical_percent
           ? "CRITICAL"
@@ -769,13 +1217,38 @@ function buildOutliers(
     }
   }
 
-  return rows.sort((left, right) => statusRank(right.severity) - statusRank(left.severity));
+  for (const archetype of nearPowerArchetypes) {
+    if (
+      archetype.win_rate_percent > model.thresholds.dominance_review_percent
+    ) {
+      rows.push({
+        type: "NEAR_POWER_DOMINANCE",
+        severity: archetype.win_rate_percent >
+            model.thresholds.dominance_critical_percent
+          ? "CRITICAL"
+          : "REVIEW",
+        matchup_id: "",
+        seed: "",
+        player_build_id: archetype.id,
+        opponent_build_id: `near_power_delta_${NEAR_POWER_MAX_DELTA_PERCENT}%`,
+        level: "all",
+        power: "near_power",
+        duration: String(archetype.avg_duration),
+        winner: archetype.id,
+        reason: `win_rate=${archetype.win_rate_percent}%`,
+      });
+    }
+  }
+
+  return rows.sort((left, right) =>
+    statusRank(right.severity) - statusRank(left.severity)
+  );
 }
 
 function buildChecks(
   model: BattleLabModel,
   matchups: LabMatchup[],
-  archetypes: AggregateRow[],
+  nearPowerArchetypes: AggregateRow[],
   totalBattles: number,
   shortCount: number,
   longCount: number,
@@ -786,8 +1259,8 @@ function buildChecks(
   const shortRate = rate(shortCount, totalBattles);
   const longRate = rate(longCount, totalBattles);
   const antiStallRate = rate(antiStallCount, totalBattles);
-  const maxWinRate = Math.max(...archetypes.map((row) => row.win_rate_percent));
-  const minWinRate = Math.min(...archetypes.map((row) => row.win_rate_percent));
+  const maxWinRate = maxAggregateWinRate(nearPowerArchetypes);
+  const minWinRate = minAggregateWinRate(nearPowerArchetypes);
   const levelsCovered = new Set(matchups.map((matchup) => matchup.level)).size;
   const expectedLevels = model.levels.length;
 
@@ -799,32 +1272,41 @@ function buildChecks(
         ? "PASS"
         : "REVIEW",
       observed: `${avgDuration}s`,
-      target: `${model.thresholds.target_duration_min}-${model.thresholds.target_duration_max}s`,
-      note: "Average battle duration should sit near the target playtest window.",
+      target:
+        `${model.thresholds.target_duration_min}-${model.thresholds.target_duration_max}s`,
+      note:
+        "Average battle duration should sit near the target playtest window.",
     },
     {
       id: "short_battle_rate",
-      status: shortRate <= model.thresholds.short_battle_rate_review_percent ? "PASS" : "REVIEW",
+      status: shortRate <= model.thresholds.short_battle_rate_review_percent
+        ? "PASS"
+        : "REVIEW",
       observed: `${shortRate}%`,
       target: `<= ${model.thresholds.short_battle_rate_review_percent}%`,
       note: "Too many short battles suggest burst or low HP scaling issues.",
     },
     {
       id: "long_battle_rate",
-      status: longRate <= model.thresholds.long_battle_rate_review_percent ? "PASS" : "REVIEW",
+      status: longRate <= model.thresholds.long_battle_rate_review_percent
+        ? "PASS"
+        : "REVIEW",
       observed: `${longRate}%`,
       target: `<= ${model.thresholds.long_battle_rate_review_percent}%`,
-      note: "Too many long battles suggest defensive scaling or low damage pressure.",
+      note:
+        "Too many long battles suggest defensive scaling or low damage pressure.",
     },
     {
       id: "anti_stall_rate",
-      status: antiStallRate <= model.thresholds.anti_stall_review_percent ? "PASS" : "REVIEW",
+      status: antiStallRate <= model.thresholds.anti_stall_review_percent
+        ? "PASS"
+        : "REVIEW",
       observed: `${antiStallRate}%`,
       target: `<= ${model.thresholds.anti_stall_review_percent}%`,
       note: "Anti-stall should be rare in normal same-level matchups.",
     },
     {
-      id: "archetype_dominance",
+      id: "near_power_dominance",
       status: maxWinRate > model.thresholds.dominance_critical_percent
         ? "CRITICAL"
         : maxWinRate > model.thresholds.dominance_review_percent
@@ -832,7 +1314,8 @@ function buildChecks(
         : "PASS",
       observed: `${maxWinRate}% max / ${minWinRate}% min`,
       target: `max <= ${model.thresholds.dominance_review_percent}%`,
-      note: "A dominant archetype should be reviewed before changing global numbers.",
+      note:
+        `Dominance uses <= ${NEAR_POWER_MAX_DELTA_PERCENT}% power delta and excludes same-archetype mirrors.`,
     },
     {
       id: "level_coverage",
@@ -844,10 +1327,12 @@ function buildChecks(
   ];
 }
 
-async function writeOutputs(
+export async function writeOutputs(
   model: BattleLabModel,
   result: BattleLabResult,
   outputUrl: URL,
+  historyRows: RunManifest[] = [],
+  compareRows: CompareRow[] = [],
 ): Promise<void> {
   await Deno.mkdir(outputUrl, { recursive: true });
   await Deno.writeTextFile(
@@ -897,6 +1382,10 @@ async function writeOutputs(
       "alerts",
       "damage_by_source",
       "damage_by_type",
+      "player_damage_by_source",
+      "opponent_damage_by_source",
+      "player_damage_by_type",
+      "opponent_damage_by_type",
       "spell_casts",
     ]),
   );
@@ -961,8 +1450,68 @@ async function writeOutputs(
     ]),
   );
   await Deno.writeTextFile(
+    new URL("battle_lab_source_by_archetype.csv", outputUrl),
+    toCsv(result.source_by_archetype, [
+      "archetype_id",
+      "display_name",
+      "total",
+      "wins",
+      "avg_duration",
+      "weapon_damage",
+      "spell_damage",
+      "dot_damage",
+      "pet_damage",
+      "summon_damage",
+      "system_damage",
+      "total_damage",
+      "dominant_source",
+    ]),
+  );
+  await Deno.writeTextFile(
+    new URL("battle_lab_near_power_matrix.csv", outputUrl),
+    toCsv(result.near_power_matrix, [
+      "player_archetype_id",
+      "opponent_archetype_id",
+      "total",
+      "wins",
+      "win_rate_percent",
+      "avg_duration",
+      "status",
+    ]),
+  );
+  await Deno.writeTextFile(
+    new URL("battle_lab_history_index.csv", outputUrl),
+    toCsv(historyRows, [
+      "run_id",
+      "archived_at",
+      "base_sha",
+      "model_id",
+      "seed",
+      "hypothesis",
+      "overall_status",
+      "avg_duration",
+      "median_duration",
+      "short_rate_percent",
+      "long_rate_percent",
+      "anti_stall_rate_percent",
+      "raw_stress_dominance_max_percent",
+      "near_power_dominance_max_percent",
+      "critical_archetypes",
+      "files",
+    ]),
+  );
+  await Deno.writeTextFile(
+    new URL("battle_lab_compare.csv", outputUrl),
+    toCsv(compareRows, [
+      "metric",
+      "baseline",
+      "current",
+      "delta",
+    ]),
+  );
+  await Deno.writeTextFile(
     new URL("battle_lab_report.html", outputUrl),
-    renderHtml(model, result),
+    renderHtml(model, result, historyRows, compareRows),
   );
 }
 
@@ -1008,14 +1557,37 @@ function matchupRows(matchups: LabMatchup[]): Array<Record<string, unknown>> {
     alerts: matchup.alerts.join("|"),
     damage_by_source: compactMap(matchup.damage_by_source),
     damage_by_type: compactMap(matchup.damage_by_type),
+    player_damage_by_source: compactMap(matchup.player_damage_by_source),
+    opponent_damage_by_source: compactMap(matchup.opponent_damage_by_source),
+    player_damage_by_type: compactMap(matchup.player_damage_by_type),
+    opponent_damage_by_type: compactMap(matchup.opponent_damage_by_type),
     spell_casts: compactMap(matchup.spell_casts),
   }));
 }
 
-function renderHtml(model: BattleLabModel, result: BattleLabResult): string {
+function renderHtml(
+  model: BattleLabModel,
+  result: BattleLabResult,
+  historyRows: RunManifest[] = [],
+  compareRows: CompareRow[] = [],
+): string {
   const statusClass = result.overall_status.toLowerCase();
   const outliers = result.outliers.slice(0, 80);
   const matrixRows = result.matrix
+    .map((row) =>
+      `<tr><td>${escapeHtml(row.player_archetype_id)}</td><td>${
+        escapeHtml(row.opponent_archetype_id)
+      }</td><td>${row.total}</td><td>${row.win_rate_percent}%</td><td>${row.avg_duration}s</td><td><span class="badge ${row.status.toLowerCase()}">${row.status}</span></td></tr>`
+    )
+    .join("\n");
+  const nearPowerRows = result.near_power_archetypes
+    .map((row) =>
+      `<tr><td>${
+        escapeHtml(row.display_name)
+      }</td><td>${row.total}</td><td>${row.win_rate_percent}%</td><td>${row.avg_duration}s</td><td>${row.short_rate_percent}%</td><td>${row.long_rate_percent}%</td><td>${row.anti_stall_rate_percent}%</td><td><span class="badge ${row.status.toLowerCase()}">${row.status}</span></td></tr>`
+    )
+    .join("\n");
+  const nearMatrixRows = result.near_power_matrix
     .map((row) =>
       `<tr><td>${escapeHtml(row.player_archetype_id)}</td><td>${
         escapeHtml(row.opponent_archetype_id)
@@ -1040,23 +1612,56 @@ function renderHtml(model: BattleLabModel, result: BattleLabResult): string {
     .map((row) =>
       `<tr><td><span class="badge ${row.severity.toLowerCase()}">${row.severity}</span></td><td>${
         escapeHtml(row.type)
-      }</td><td>${escapeHtml(row.matchup_id)}</td><td>${escapeHtml(row.level)}</td><td>${
-        escapeHtml(row.power)
-      }</td><td>${escapeHtml(row.duration)}</td><td>${escapeHtml(row.winner)}</td><td>${
+      }</td><td>${escapeHtml(row.matchup_id)}</td><td>${
+        escapeHtml(row.level)
+      }</td><td>${escapeHtml(row.power)}</td><td>${
+        escapeHtml(row.duration)
+      }</td><td>${escapeHtml(row.winner)}</td><td>${
         escapeHtml(row.player_build_id)
-      }</td><td>${escapeHtml(row.opponent_build_id)}</td><td>${escapeHtml(row.reason)}</td></tr>`
+      }</td><td>${escapeHtml(row.opponent_build_id)}</td><td>${
+        escapeHtml(row.reason)
+      }</td></tr>`
+    )
+    .join("\n");
+  const sourceRows = result.source_by_archetype
+    .map((row) =>
+      `<tr><td>${
+        escapeHtml(row.display_name)
+      }</td><td>${row.total}</td><td>${row.wins}</td><td>${row.avg_duration}s</td><td>${row.weapon_damage}</td><td>${row.spell_damage}</td><td>${row.dot_damage}</td><td>${row.pet_damage}</td><td>${row.summon_damage}</td><td>${row.system_damage}</td><td>${row.total_damage}</td><td>${
+        escapeHtml(row.dominant_source)
+      }</td></tr>`
+    )
+    .join("\n");
+  const compareTableRows = compareRows
+    .map((row) =>
+      `<tr><td>${escapeHtml(row.metric)}</td><td>${
+        escapeHtml(row.baseline)
+      }</td><td>${escapeHtml(row.current)}</td><td>${
+        escapeHtml(row.delta)
+      }</td></tr>`
+    )
+    .join("\n");
+  const historyTableRows = historyRows
+    .map((row) =>
+      `<tr><td>${escapeHtml(row.run_id)}</td><td>${
+        escapeHtml(row.archived_at)
+      }</td><td><span class="badge ${row.overall_status.toLowerCase()}">${row.overall_status}</span></td><td>${row.avg_duration}s</td><td>${row.short_rate_percent}%</td><td>${row.anti_stall_rate_percent}%</td><td>${row.raw_stress_dominance_max_percent}%</td><td>${row.near_power_dominance_max_percent}%</td><td>${
+        escapeHtml(row.critical_archetypes.join("|"))
+      }</td><td>${escapeHtml(row.hypothesis)}</td></tr>`
     )
     .join("\n");
   const checkRows = result.checks
     .map((row) =>
       `<tr><td><span class="badge ${row.status.toLowerCase()}">${row.status}</span></td><td>${
         escapeHtml(row.id)
-      }</td><td>${escapeHtml(row.observed)}</td><td>${escapeHtml(row.target)}</td><td>${
-        escapeHtml(row.note)
-      }</td></tr>`
+      }</td><td>${escapeHtml(row.observed)}</td><td>${
+        escapeHtml(row.target)
+      }</td><td>${escapeHtml(row.note)}</td></tr>`
     )
     .join("\n");
-  const notes = result.summary.top_notes.map((note) => `<li>${escapeHtml(note)}</li>`).join("\n");
+  const notes = result.summary.top_notes.map((note) =>
+    `<li>${escapeHtml(note)}</li>`
+  ).join("\n");
 
   return `<!doctype html>
 <html lang="pt-BR">
@@ -1169,9 +1774,9 @@ function renderHtml(model: BattleLabModel, result: BattleLabResult): string {
       <h1>DraxosMobile Battle Lab</h1>
       <span class="badge ${statusClass}">${result.overall_status}</span>
     </div>
-    <p>Model: ${escapeHtml(model.model_id)} | Status: ${escapeHtml(model.status)} | Generated: ${
-    escapeHtml(result.generated_at)
-  }</p>
+    <p>Model: ${escapeHtml(model.model_id)} | Status: ${
+    escapeHtml(model.status)
+  } | Generated: ${escapeHtml(result.generated_at)}</p>
     <p>Offline FIRST_SLICE_SIM analysis. This report does not mutate Supabase, rewards, ranking or client state.</p>
   </header>
   <main>
@@ -1183,6 +1788,18 @@ function renderHtml(model: BattleLabModel, result: BattleLabResult): string {
       ${metricCard("Short", `${result.summary.short_rate_percent}%`)}
       ${metricCard("Long", `${result.summary.long_rate_percent}%`)}
       ${metricCard("Anti-stall", `${result.summary.anti_stall_rate_percent}%`)}
+      ${
+    metricCard(
+      "Raw dominance",
+      `${result.summary.raw_stress_dominance_max_percent}%`,
+    )
+  }
+      ${
+    metricCard(
+      "Near power",
+      `${result.summary.near_power_dominance_max_percent}%`,
+    )
+  }
     </div>
 
     <div class="grid">
@@ -1200,7 +1817,15 @@ function renderHtml(model: BattleLabModel, result: BattleLabResult): string {
     </div>
 
     <section class="wide">
-      <h2>Archetypes</h2>
+      <h2>Near Power Archetypes</h2>
+      <table>
+        <thead><tr><th>Archetype</th><th>Total</th><th>Win rate</th><th>Avg duration</th><th>Short</th><th>Long</th><th>Anti-stall</th><th>Status</th></tr></thead>
+        <tbody>${nearPowerRows}</tbody>
+      </table>
+    </section>
+
+    <section class="wide">
+      <h2>Raw Stress Archetypes</h2>
       <table>
         <thead><tr><th>Archetype</th><th>Total</th><th>Win rate</th><th>Avg duration</th><th>Short</th><th>Long</th><th>Anti-stall</th><th>Status</th></tr></thead>
         <tbody>${archetypeRows}</tbody>
@@ -1216,7 +1841,15 @@ function renderHtml(model: BattleLabModel, result: BattleLabResult): string {
     </section>
 
     <section class="wide">
-      <h2>Archetype Matrix</h2>
+      <h2>Near Power Matrix</h2>
+      <table>
+        <thead><tr><th>Player archetype</th><th>Opponent archetype</th><th>Total</th><th>Player win rate</th><th>Avg duration</th><th>Status</th></tr></thead>
+        <tbody>${nearMatrixRows}</tbody>
+      </table>
+    </section>
+
+    <section class="wide">
+      <h2>Raw Stress Matrix</h2>
       <table>
         <thead><tr><th>Player archetype</th><th>Opponent archetype</th><th>Total</th><th>Player win rate</th><th>Avg duration</th><th>Status</th></tr></thead>
         <tbody>${matrixRows}</tbody>
@@ -1228,6 +1861,30 @@ function renderHtml(model: BattleLabModel, result: BattleLabResult): string {
       <table>
         <thead><tr><th>Severity</th><th>Type</th><th>Matchup</th><th>Level</th><th>Power</th><th>Duration</th><th>Winner</th><th>Player build</th><th>Opponent build</th><th>Reason</th></tr></thead>
         <tbody>${outlierRows}</tbody>
+      </table>
+    </section>
+
+    <section class="wide">
+      <h2>Source By Archetype</h2>
+      <table>
+        <thead><tr><th>Archetype</th><th>Total</th><th>Wins</th><th>Avg</th><th>Weapon</th><th>Spell</th><th>DoT</th><th>Pet</th><th>Summon</th><th>System</th><th>Total damage</th><th>Dominant</th></tr></thead>
+        <tbody>${sourceRows}</tbody>
+      </table>
+    </section>
+
+    <section class="wide">
+      <h2>Compare</h2>
+      <table>
+        <thead><tr><th>Metric</th><th>Baseline</th><th>Current</th><th>Delta</th></tr></thead>
+        <tbody>${compareTableRows}</tbody>
+      </table>
+    </section>
+
+    <section class="wide">
+      <h2>Run History</h2>
+      <table>
+        <thead><tr><th>Run</th><th>Archived</th><th>Status</th><th>Avg</th><th>Short</th><th>Anti-stall</th><th>Raw dominance</th><th>Near dominance</th><th>Critical archetypes</th><th>Hypothesis</th></tr></thead>
+        <tbody>${historyTableRows}</tbody>
       </table>
     </section>
 
@@ -1249,14 +1906,16 @@ function renderHtml(model: BattleLabModel, result: BattleLabResult): string {
 }
 
 function metricCard(label: string, value: string | number): string {
-  return `<div class="card"><div class="label">${escapeHtml(label)}</div><div class="value">${
-    escapeHtml(String(value))
-  }</div></div>`;
+  return `<div class="card"><div class="label">${
+    escapeHtml(label)
+  }</div><div class="value">${escapeHtml(String(value))}</div></div>`;
 }
 
 function mapRows(map: NumericMap): string {
   return Object.entries(map)
-    .map(([key, value]) => `<tr><td>${escapeHtml(key)}</td><td>${round(value, 2)}</td></tr>`)
+    .map(([key, value]) =>
+      `<tr><td>${escapeHtml(key)}</td><td>${round(value, 2)}</td></tr>`
+    )
     .join("\n");
 }
 
@@ -1268,7 +1927,9 @@ function buildTopNotes(checks: CheckRow[], outliers: OutlierRow[]): string[] {
       `${check.status}: ${check.id} observed ${check.observed}, target ${check.target}.`,
     );
   }
-  const criticalOutlier = outliers.find((outlier) => outlier.severity === "CRITICAL");
+  const criticalOutlier = outliers.find((outlier) =>
+    outlier.severity === "CRITICAL"
+  );
   if (criticalOutlier !== undefined) {
     notes.push(
       `Critical outlier: ${criticalOutlier.type} on ${
@@ -1276,7 +1937,9 @@ function buildTopNotes(checks: CheckRow[], outliers: OutlierRow[]): string[] {
       }.`,
     );
   }
-  const reviewOutlier = outliers.find((outlier) => outlier.severity === "REVIEW");
+  const reviewOutlier = outliers.find((outlier) =>
+    outlier.severity === "REVIEW"
+  );
   if (reviewOutlier !== undefined) {
     notes.push(
       `Review first matchup: ${reviewOutlier.type} ${reviewOutlier.matchup_id} (${reviewOutlier.player_build_id} vs ${reviewOutlier.opponent_build_id}).`,
@@ -1301,8 +1964,12 @@ function selectSpells(
     return [];
   }
   const legal = allowedSpellIds(level);
-  const preferred = archetype.spell_preferences.filter((spellId) => legal.includes(spellId));
-  const candidates = kind === "fixed" ? preferred : shuffle(unique([...preferred, ...legal]), rng);
+  const preferred = archetype.spell_preferences.filter((spellId) =>
+    legal.includes(spellId)
+  );
+  const candidates = kind === "fixed"
+    ? preferred
+    : shuffle(unique([...preferred, ...legal]), rng);
   const desiredCount = kind === "fixed" ? maxSlots : 1 + rng.nextInt(maxSlots);
   return candidates.slice(0, Math.min(maxSlots, desiredCount));
 }
@@ -1344,7 +2011,15 @@ function qualityTierForLevel(
   kind: BuildKind,
   rng: SeededRandom,
 ): number {
-  const base = level >= 35 ? 4 : level >= 25 ? 3 : level >= 14 ? 2 : level >= 5 ? 1 : 0;
+  const base = level >= 35
+    ? 4
+    : level >= 25
+    ? 3
+    : level >= 14
+    ? 2
+    : level >= 5
+    ? 1
+    : 0;
   const jitter = kind === "fixed" ? 0 : rng.nextInt(3) - 1;
   return clamp(base + bias + jitter, 0, 4);
 }
@@ -1364,6 +2039,22 @@ function maxHpForLevel(level: number): number {
   return Math.round(baseHp * paceMultiplier);
 }
 
+export function nearPowerMatchup(
+  matchup: Pick<LabMatchup, "player_power" | "opponent_power">,
+  maxDeltaPercent = NEAR_POWER_MAX_DELTA_PERCENT,
+): boolean {
+  const maxPower = Math.max(matchup.player_power, matchup.opponent_power);
+  if (maxPower <= 0) {
+    return true;
+  }
+  const delta = Math.abs(matchup.player_power - matchup.opponent_power);
+  return delta <= maxPower * (maxDeltaPercent / 100);
+}
+
+function sameArchetypeMatchup(matchup: LabMatchup): boolean {
+  return matchup.player_archetype_id === matchup.opponent_archetype_id;
+}
+
 function damageSourceForEvent(eventType: string): string {
   switch (eventType) {
     case "weapon_attack":
@@ -1381,6 +2072,21 @@ function damageSourceForEvent(eventType: string): string {
     default:
       return "";
   }
+}
+
+function damageSideForEvent(event: BattleEvent): BattleSide | "" {
+  const source = stringValue(event.source);
+  if (source === "player" || source === "opponent") {
+    return source;
+  }
+  const target = stringValue(event.target);
+  if (target === "player") {
+    return "opponent";
+  }
+  if (target === "opponent") {
+    return "player";
+  }
+  return "";
 }
 
 function statusForWinRate(model: BattleLabModel, winRate: number): Status {
@@ -1407,11 +2113,93 @@ function emptyDamageTypeMap(): NumericMap {
 function sumMaps(maps: NumericMap[], keys: string[]): NumericMap {
   const output = Object.fromEntries(keys.map((key) => [key, 0])) as NumericMap;
   for (const map of maps) {
-    for (const [key, value] of Object.entries(map)) {
-      output[key] = (output[key] ?? 0) + value;
-    }
+    addMap(output, map);
   }
   return output;
+}
+
+function addMap(target: NumericMap, source: NumericMap): void {
+  for (const [key, value] of Object.entries(source)) {
+    target[key] = (target[key] ?? 0) + value;
+  }
+}
+
+function maxAggregateWinRate(rows: AggregateRow[]): number {
+  return rows.length === 0
+    ? 0
+    : Math.max(...rows.map((row) => row.win_rate_percent));
+}
+
+function minAggregateWinRate(rows: AggregateRow[]): number {
+  return rows.length === 0
+    ? 0
+    : Math.min(...rows.map((row) => row.win_rate_percent));
+}
+
+function compareText(
+  metric: string,
+  baseline: string,
+  current: string,
+): CompareRow {
+  return {
+    metric,
+    baseline,
+    current,
+    delta: baseline === current ? "unchanged" : "changed",
+  };
+}
+
+function compareNumber(
+  metric: string,
+  baseline: number,
+  current: number,
+  suffix = "",
+): CompareRow {
+  const delta = round(current - baseline, 2);
+  const sign = delta > 0 ? "+" : "";
+  return {
+    metric,
+    baseline: `${round(baseline, 2)}${suffix}`,
+    current: `${round(current, 2)}${suffix}`,
+    delta: `${sign}${delta}${suffix}`,
+  };
+}
+
+async function readGitHead(projectRoot: URL): Promise<string> {
+  let current = projectRoot;
+  for (let depth = 0; depth < 8; depth += 1) {
+    try {
+      const head = (await Deno.readTextFile(new URL(".git/HEAD", current)))
+        .trim();
+      if (!head.startsWith("ref: ")) {
+        return head.slice(0, 12);
+      }
+      const refPath = head.slice(5);
+      const sha = (await Deno.readTextFile(new URL(`.git/${refPath}`, current)))
+        .trim();
+      return sha.slice(0, 12);
+    } catch (error) {
+      if (!(error instanceof Deno.errors.NotFound)) {
+        return "unknown";
+      }
+      const parent = new URL("../", current);
+      if (parent.href === current.href) {
+        break;
+      }
+      current = parent;
+    }
+  }
+  return "unknown";
+}
+
+function hypothesisForRunId(runId: string): string {
+  if (runId.includes("pacing_alpha_v01")) {
+    return "Baseline apos pacing alpha global de HP e antes do ajuste por fonte.";
+  }
+  if (runId.includes("archetype_source_tuning_v02")) {
+    return "Ajuste por arquetipo/fonte: reduzir burst/pet e medir dominancia por poder proximo.";
+  }
+  return runId.replaceAll("_", " ");
 }
 
 function toCsv<T extends object>(rows: T[], headers: string[]): string {
@@ -1475,7 +2263,9 @@ function median(values: number[]): number {
   if (values.length === 0) return 0;
   const sorted = [...values].sort((left, right) => left - right);
   const middle = Math.floor(sorted.length / 2);
-  return sorted.length % 2 === 0 ? (sorted[middle - 1] + sorted[middle]) / 2 : sorted[middle];
+  return sorted.length % 2 === 0
+    ? (sorted[middle - 1] + sorted[middle]) / 2
+    : sorted[middle];
 }
 
 function rate(count: number, total: number): number {

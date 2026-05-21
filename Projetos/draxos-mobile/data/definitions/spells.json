@@ -18,7 +18,7 @@
       "base_damage": 18,
       "damage_per_level": 2.4,
       "effects": [
-        {"kind": "damage", "amount": 18}
+        { "kind": "damage", "amount": 18 }
       ]
     },
     {
@@ -34,11 +34,11 @@
       "mana_cost": 12,
       "cooldown_seconds": 6.0,
       "target": "player",
-      "base_damage": 16,
-      "damage_per_level": 2.1,
+      "base_damage": 14,
+      "damage_per_level": 1.8,
       "effects": [
-        {"kind": "damage", "amount": 16},
-        {"kind": "status", "status_id": "choque_marcado", "stacks": 1}
+        { "kind": "damage", "amount": 14 },
+        { "kind": "status", "status_id": "choque_marcado", "stacks": 1 }
       ]
     },
     {
@@ -57,8 +57,8 @@
       "base_damage": 12,
       "damage_per_level": 1.7,
       "effects": [
-        {"kind": "damage", "amount": 12},
-        {"kind": "dot", "status_id": "queimando", "tick_damage": 3, "duration_seconds": 5}
+        { "kind": "damage", "amount": 12 },
+        { "kind": "dot", "status_id": "queimando", "tick_damage": 4, "duration_seconds": 5 }
       ]
     },
     {
@@ -77,7 +77,7 @@
       "base_damage": 6,
       "damage_per_level": 0.8,
       "effects": [
-        {"kind": "dot", "status_id": "envenenado", "tick_damage": 4, "duration_seconds": 6}
+        { "kind": "dot", "status_id": "envenenado", "tick_damage": 5, "duration_seconds": 6 }
       ]
     },
     {
@@ -96,8 +96,8 @@
       "base_damage": 11,
       "damage_per_level": 1.6,
       "effects": [
-        {"kind": "damage", "amount": 11},
-        {"kind": "status", "status_id": "lento", "stacks": 1}
+        { "kind": "damage", "amount": 11 },
+        { "kind": "status", "status_id": "lento", "stacks": 1 }
       ]
     },
     {
@@ -113,10 +113,10 @@
       "mana_cost": 22,
       "cooldown_seconds": 9.0,
       "target": "player",
-      "base_damage": 34,
-      "damage_per_level": 3.2,
+      "base_damage": 26,
+      "damage_per_level": 2.4,
       "effects": [
-        {"kind": "damage", "amount": 34}
+        { "kind": "damage", "amount": 26 }
       ]
     },
     {
@@ -135,8 +135,8 @@
       "base_damage": 20,
       "damage_per_level": 2.2,
       "effects": [
-        {"kind": "damage", "amount": 20},
-        {"kind": "dot", "status_id": "sangrando", "tick_damage": 5, "duration_seconds": 5}
+        { "kind": "damage", "amount": 20 },
+        { "kind": "dot", "status_id": "sangrando", "tick_damage": 6, "duration_seconds": 5 }
       ]
     },
     {
@@ -155,8 +155,8 @@
       "base_barrier": 30,
       "barrier_per_level": 3,
       "effects": [
-        {"kind": "barrier", "amount": 30},
-        {"kind": "resistance", "amount": 0.08, "duration_seconds": 8}
+        { "kind": "barrier", "amount": 30 },
+        { "kind": "resistance", "amount": 0.08, "duration_seconds": 8 }
       ]
     },
     {
@@ -174,7 +174,7 @@
       "target": "self",
       "summon_id": "demonio",
       "effects": [
-        {"kind": "summon", "summon_id": "demonio"}
+        { "kind": "summon", "summon_id": "demonio" }
       ]
     },
     {
@@ -193,7 +193,7 @@
       "summon_id": "esqueleto",
       "alternate_summon_id": "morto_vivo",
       "effects": [
-        {"kind": "summon", "summon_id": "esqueleto"}
+        { "kind": "summon", "summon_id": "esqueleto" }
       ]
     }
   ]

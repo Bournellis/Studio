@@ -4,8 +4,13 @@ import {
   analyzeBattleLog,
   calculatePower,
   classifyPowerBand,
+  compareBattleLabResults,
   createBuilds,
+  historyIndexDocument,
+  nearPowerMatchup,
+  parseOptions,
   runBattleLab,
+  upsertHistory,
 } from "./generate.ts";
 
 type BattleLabModel = Parameters<typeof createBuilds>[0];
@@ -133,6 +138,115 @@ Deno.test("battle lab can generate a minimal summary", () => {
   );
 });
 
+Deno.test("battle lab parses archive and compare options", () => {
+  const options = parseOptions([
+    "--archive-run",
+    "run_a",
+    "--compare-with",
+    "run_b",
+  ]);
+  assertEquals(options.archiveRunId, "run_a", "archive run id should parse");
+  assertEquals(
+    options.compareWithRunId,
+    "run_b",
+    "compare run id should parse",
+  );
+});
+
+Deno.test("battle lab classifies near-power matchups", () => {
+  assert(
+    nearPowerMatchup({ player_power: 1000, opponent_power: 820 }, 20),
+    "20% near-power should include 1000 vs 820",
+  );
+  assert(
+    !nearPowerMatchup({ player_power: 1000, opponent_power: 790 }, 20),
+    "20% near-power should exclude 1000 vs 790",
+  );
+});
+
+Deno.test("battle lab excludes same-archetype mirrors from near-power dominance", () => {
+  const result = runBattleLab(singleArchetypeModel());
+  assertEquals(
+    result.near_power_archetypes[0].total,
+    0,
+    "same-archetype mirrors should not feed near-power dominance",
+  );
+  const dominance = result.checks.find((check) =>
+    check.id === "near_power_dominance"
+  );
+  assertEquals(
+    dominance?.status,
+    "PASS",
+    "self mirrors should not fail dominance",
+  );
+});
+
+Deno.test("battle lab separates damage by side before aggregating sources", () => {
+  const model = testModel();
+  const builds = createBuilds(model).filter((build) => build.level === 25);
+  const player = builds.find((build) => build.archetype_id === "dot_pressure")!;
+  const opponent = builds.find((build) =>
+    build.archetype_id === "defensive_caster"
+  )!;
+  const simulation = simulateFirstSliceBattle({
+    battleId: "side_damage_test",
+    seed: "side_damage_test_seed",
+    player: player.build,
+    opponent: opponent.build,
+  });
+  const metrics = analyzeBattleLog(
+    model,
+    player,
+    opponent,
+    "side_damage_test",
+    "side_damage_test_seed",
+    simulation,
+  );
+
+  for (const source of ["weapon", "spell", "dot", "pet", "summon", "system"]) {
+    assertEquals(
+      metrics.player_damage_by_source[source] +
+        metrics.opponent_damage_by_source[source],
+      metrics.damage_by_source[source],
+      `${source} damage should equal player + opponent damage`,
+    );
+  }
+});
+
+Deno.test("battle lab compares current result against an archived baseline", () => {
+  const baseline = runBattleLab(minimalModel());
+  const current = structuredClone(baseline);
+  current.summary.avg_duration = baseline.summary.avg_duration + 2;
+  const rows = compareBattleLabResults("baseline_run", baseline, current);
+  const avgDuration = rows.find((row) => row.metric === "avg_duration");
+  assertEquals(
+    avgDuration?.delta,
+    "+2s",
+    "comparison should show numeric delta",
+  );
+});
+
+Deno.test("battle lab builds a run manifest entry and history index document", () => {
+  const manifest = testRunManifest("test_run");
+  const history = upsertHistory([], manifest);
+  const indexDocument = historyIndexDocument(history);
+
+  assert(
+    indexDocument.includes('"run_id": "test_run"'),
+    "history should keep run id",
+  );
+  assert(
+    indexDocument.includes('"schema_version": 1'),
+    "history should include schema version",
+  );
+  assertEquals(history.length, 1, "history index should include one run");
+  assertEquals(
+    history[0].run_id,
+    "test_run",
+    "history index should keep run id",
+  );
+});
+
 function testModel(): BattleLabModel {
   return {
     schema_version: 1,
@@ -238,6 +352,16 @@ function testModel(): BattleLabModel {
   };
 }
 
+function singleArchetypeModel(): BattleLabModel {
+  const model = testModel();
+  return {
+    ...model,
+    levels: [1],
+    random_builds_per_archetype_per_level: 1,
+    archetypes: model.archetypes.slice(0, 1),
+  };
+}
+
 function minimalModel(): BattleLabModel {
   const model = testModel();
   return {
@@ -253,6 +377,27 @@ function maxSpellSlotsForTest(level: number): number {
   if (level >= 7) return 2;
   if (level >= 3) return 1;
   return 0;
+}
+
+function testRunManifest(runId: string) {
+  return {
+    run_id: runId,
+    archived_at: "2026-05-21T00:00:00.000Z",
+    base_sha: "test",
+    model_id: "battle_lab_test",
+    seed: "test_seed",
+    hypothesis: "test",
+    overall_status: "PASS" as const,
+    avg_duration: 20,
+    median_duration: 20,
+    short_rate_percent: 0,
+    long_rate_percent: 0,
+    anti_stall_rate_percent: 0,
+    raw_stress_dominance_max_percent: 50,
+    near_power_dominance_max_percent: 50,
+    critical_archetypes: [],
+    files: ["battle_lab_summary.json"],
+  };
 }
 
 function assert(condition: boolean, message: string): asserts condition {

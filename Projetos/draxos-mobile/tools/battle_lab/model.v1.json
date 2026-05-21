@@ -109,11 +109,11 @@
       "spell_preferences": ["raio_cosmico", "congelar", "acender", "raio"],
       "passive_preferences": ["resistencia", "forca", "foco_astral"],
       "pet_preferences": ["familiar_cinzento", "brasido", "gelum"],
-      "weapon_level_ratio": 0.9,
+      "weapon_level_ratio": 0.85,
       "spell_level_ratio": 0.82,
       "passive_level_ratio": 0.75,
-      "pet_level_ratio": 0.9,
-      "quality_bias": 1
+      "pet_level_ratio": 0.8,
+      "quality_bias": 0
     },
     {
       "id": "summoner",
@@ -171,11 +171,11 @@
       "spell_preferences": ["odio", "raio", "raio_cosmico", "dilacerar"],
       "passive_preferences": ["forca", "velocidade", "foco_astral"],
       "pet_preferences": ["brasido", "familiar_cinzento"],
-      "weapon_level_ratio": 1.0,
-      "spell_level_ratio": 1.0,
+      "weapon_level_ratio": 0.9,
+      "spell_level_ratio": 0.95,
       "passive_level_ratio": 0.8,
-      "pet_level_ratio": 0.8,
-      "quality_bias": 1
+      "pet_level_ratio": 0.65,
+      "quality_bias": 0
     }
   ]
 }

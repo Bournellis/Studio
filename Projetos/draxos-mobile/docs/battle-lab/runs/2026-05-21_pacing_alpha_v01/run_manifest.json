@@ -1,0 +1,34 @@
+{
+  "run_id": "2026-05-21_pacing_alpha_v01",
+  "archived_at": "2026-05-21T03:40:47.495Z",
+  "base_sha": "5a9f42b15312",
+  "model_id": "draxos_mobile_battle_lab_v1",
+  "seed": "battle_lab_alpha_20260521",
+  "hypothesis": "Baseline apos pacing alpha global de HP e antes do ajuste por fonte.",
+  "overall_status": "CRITICAL",
+  "avg_duration": 18.19,
+  "median_duration": 17.7,
+  "short_rate_percent": 2.38,
+  "long_rate_percent": 0,
+  "anti_stall_rate_percent": 0.12,
+  "raw_stress_dominance_max_percent": 88.1,
+  "near_power_dominance_max_percent": 79.37,
+  "critical_archetypes": [
+    "pet_handler",
+    "burst_caster"
+  ],
+  "files": [
+    "battle_lab_report.html",
+    "battle_lab_summary.json",
+    "battle_lab_matchups.csv",
+    "battle_lab_builds.csv",
+    "battle_lab_checks.csv",
+    "battle_lab_archetypes.csv",
+    "battle_lab_power_bands.csv",
+    "battle_lab_outliers.csv",
+    "battle_lab_source_by_archetype.csv",
+    "battle_lab_near_power_matrix.csv",
+    "battle_lab_history_index.csv",
+    "battle_lab_compare.csv"
+  ]
+}

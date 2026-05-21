@@ -182,8 +182,8 @@ const SPELLS: Record<string, SpellDefinition> = {
     manaCost: 12,
     cooldown: 6,
     target: "player",
-    baseDamage: 16,
-    damagePerLevel: 2.1,
+    baseDamage: 14,
+    damagePerLevel: 1.8,
     status: { statusId: "choque_marcado", stacks: 1, duration: 6 },
   },
   acender: {
@@ -194,7 +194,7 @@ const SPELLS: Record<string, SpellDefinition> = {
     target: "area",
     baseDamage: 12,
     damagePerLevel: 1.7,
-    dot: { statusId: "queimando", tickDamage: 3, duration: 5 },
+    dot: { statusId: "queimando", tickDamage: 4, duration: 5 },
   },
   envenenar: {
     id: "envenenar",
@@ -204,7 +204,7 @@ const SPELLS: Record<string, SpellDefinition> = {
     target: "player",
     baseDamage: 6,
     damagePerLevel: 0.8,
-    dot: { statusId: "envenenado", tickDamage: 4, duration: 6 },
+    dot: { statusId: "envenenado", tickDamage: 5, duration: 6 },
   },
   congelar: {
     id: "congelar",
@@ -222,8 +222,8 @@ const SPELLS: Record<string, SpellDefinition> = {
     manaCost: 22,
     cooldown: 9,
     target: "player",
-    baseDamage: 34,
-    damagePerLevel: 3.2,
+    baseDamage: 26,
+    damagePerLevel: 2.4,
   },
   dilacerar: {
     id: "dilacerar",
@@ -233,7 +233,7 @@ const SPELLS: Record<string, SpellDefinition> = {
     target: "direct",
     baseDamage: 20,
     damagePerLevel: 2.2,
-    dot: { statusId: "sangrando", tickDamage: 5, duration: 5 },
+    dot: { statusId: "sangrando", tickDamage: 6, duration: 5 },
   },
   fortificar: {
     id: "fortificar",
@@ -272,20 +272,20 @@ const SPELLS: Record<string, SpellDefinition> = {
 const PETS: Record<string, PetDefinition> = {
   familiar_cinzento: {
     damageType: "magico",
-    baseDamage: 8,
-    damagePerLevel: 1.2,
+    baseDamage: 6,
+    damagePerLevel: 0.9,
     cadence: 4,
   },
   brasido: {
     damageType: "fogo",
-    baseDamage: 7,
-    damagePerLevel: 1.1,
+    baseDamage: 5,
+    damagePerLevel: 0.85,
     cadence: 3.5,
   },
   gelum: {
     damageType: "gelo",
-    baseDamage: 10,
-    damagePerLevel: 1.3,
+    baseDamage: 8,
+    damagePerLevel: 1,
     cadence: 4.8,
   },
 };

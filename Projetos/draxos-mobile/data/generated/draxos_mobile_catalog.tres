@@ -449,14 +449,14 @@ collections = {
 "version": 1.0
 }],
 "pets": [{
-"base_damage": 8.0,
+"base_damage": 6.0,
 "cadence_seconds": 4.0,
-"damage_per_level": 1.2,
+"damage_per_level": 0.9,
 "damage_type": "magico",
 "description": "Pet inicial de dano magico para validar o slot de pet do primeiro slice.",
 "display_name": "Familiar Cinzento",
 "effects": [{
-"amount": 8.0,
+"amount": 6.0,
 "kind": "damage"
 }],
 "enabled": true,
@@ -466,14 +466,14 @@ collections = {
 "unlock_level": 15.0,
 "version": 2.0
 }, {
-"base_damage": 7.0,
+"base_damage": 5.0,
 "cadence_seconds": 3.5,
-"damage_per_level": 1.1,
+"damage_per_level": 0.85,
 "damage_type": "fogo",
 "description": "Pet de Fogo focado em dano sustentado.",
 "display_name": "Brasido",
 "effects": [{
-"amount": 7.0,
+"amount": 5.0,
 "kind": "damage"
 }],
 "enabled": true,
@@ -483,14 +483,14 @@ collections = {
 "unlock_level": 15.0,
 "version": 1.0
 }, {
-"base_damage": 10.0,
+"base_damage": 8.0,
 "cadence_seconds": 4.8,
-"damage_per_level": 1.3,
+"damage_per_level": 1.0,
 "damage_type": "gelo",
 "description": "Pet de Gelo com cadencia lenta e impacto maior.",
 "display_name": "Gelum",
 "effects": [{
-"amount": 10.0,
+"amount": 8.0,
 "kind": "damage"
 }],
 "enabled": true,
@@ -685,14 +685,14 @@ collections = {
 "unlock_level": 3.0,
 "version": 2.0
 }, {
-"base_damage": 16.0,
+"base_damage": 14.0,
 "cooldown_seconds": 6.0,
-"damage_per_level": 2.1,
+"damage_per_level": 1.8,
 "damage_type": "choque",
 "description": "Dano de choque direto no mago inimigo e aplica marcadores de choque.",
 "display_name": "Raio",
 "effects": [{
-"amount": 16.0,
+"amount": 14.0,
 "kind": "damage"
 }, {
 "kind": "status",
@@ -721,7 +721,7 @@ collections = {
 "duration_seconds": 5.0,
 "kind": "dot",
 "status_id": "queimando",
-"tick_damage": 3.0
+"tick_damage": 4.0
 }],
 "enabled": true,
 "id": "acender",
@@ -742,7 +742,7 @@ collections = {
 "duration_seconds": 6.0,
 "kind": "dot",
 "status_id": "envenenado",
-"tick_damage": 4.0
+"tick_damage": 5.0
 }],
 "enabled": true,
 "id": "envenenar",
@@ -776,14 +776,14 @@ collections = {
 "unlock_level": 7.0,
 "version": 1.0
 }, {
-"base_damage": 34.0,
+"base_damage": 26.0,
 "cooldown_seconds": 9.0,
-"damage_per_level": 3.2,
+"damage_per_level": 2.4,
 "damage_type": "morte",
 "description": "Grande dano de Morte diretamente no mago inimigo.",
 "display_name": "Odio",
 "effects": [{
-"amount": 34.0,
+"amount": 26.0,
 "kind": "damage"
 }],
 "enabled": true,
@@ -808,7 +808,7 @@ collections = {
 "duration_seconds": 5.0,
 "kind": "dot",
 "status_id": "sangrando",
-"tick_damage": 5.0
+"tick_damage": 6.0
 }],
 "enabled": true,
 "id": "dilacerar",

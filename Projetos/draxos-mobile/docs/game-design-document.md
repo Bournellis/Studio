@@ -1,6 +1,6 @@
 # DraxosMobile — Game Design Document (Referencia De Implementacao)
 
-- Ultima atualizacao: `2026-05-20`
+- Ultima atualizacao: `2026-05-21`
 - Fonte historica completa: `../../_conceitos/mobile-universe/gdd.md`
 
 > Este documento e uma referencia condensada para implementacao. Para o design completo com todas as formulas, tabelas e decisoes detalhadas, consulte o GDD completo no caminho acima.
@@ -49,6 +49,15 @@ balanceamento final, mas alinhar a duracao media do replay com a janela
 operacional `18s-28s` antes de mexer em dano, cooldowns, pet, DoT ou passivas.
 Apos o ajuste, o baseline offline ficou em `18.19s` de duracao media, `2.38%`
 de batalhas curtas e `0.12%` de anti-stall.
+
+Tuning alpha 2026-05-21 v02: a segunda rodada manteve HP global intacto e
+ajustou fontes/arquetipos. `Raio` e `Odio` tiveram dano direto reduzido, DoTs de
+Fogo/Veneno/Sangramento receberam aumento leve de tick e pets tiveram dano
+base/escala reduzidos. O Battle Lab passou a avaliar dominancia principal em
+matchups de poder proximo (`<= 20%`, sem espelhos do mesmo arquetipo) e arquivar
+runs oficiais. Baseline v02: duracao media `18.91s`, batalhas curtas `0%`,
+anti-stall `0.12%`, status geral `REVIEW`; `burst_caster` caiu para `60%` em
+poder proximo e `pet_handler` caiu para `70.45%`, ainda acima do alvo de `65%`.
 
 Fontes externas v0:
 
