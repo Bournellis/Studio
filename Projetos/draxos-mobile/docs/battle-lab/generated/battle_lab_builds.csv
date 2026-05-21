@@ -1,0 +1,113 @@
+id,kind,archetype_id,archetype_name,level,power,power_band,seed,spell_ids,passive_id,pet_id,weapon_level,weapon_quality_tier
+L1_starter_wand_fixed,fixed,starter_wand,Starter Wand,1,80,band_001,battle_lab_alpha_20260521:starter_wand:L1:fixed:0,,,,1,0
+L1_starter_wand_r1,random,starter_wand,Starter Wand,1,80,band_001,battle_lab_alpha_20260521:starter_wand:L1:random:1,,,,1,0
+L1_cosmic_apprentice_fixed,fixed,cosmic_apprentice,Cosmic Apprentice,1,80,band_001,battle_lab_alpha_20260521:cosmic_apprentice:L1:fixed:0,,,,1,0
+L1_cosmic_apprentice_r1,random,cosmic_apprentice,Cosmic Apprentice,1,80,band_001,battle_lab_alpha_20260521:cosmic_apprentice:L1:random:1,,,,1,0
+L1_elemental_mixer_fixed,fixed,elemental_mixer,Elemental Mixer,1,80,band_001,battle_lab_alpha_20260521:elemental_mixer:L1:fixed:0,,,,1,0
+L1_elemental_mixer_r1,random,elemental_mixer,Elemental Mixer,1,105,band_001,battle_lab_alpha_20260521:elemental_mixer:L1:random:1,,,,1,1
+L1_pet_handler_fixed,fixed,pet_handler,Pet Handler,1,105,band_001,battle_lab_alpha_20260521:pet_handler:L1:fixed:0,,,,1,1
+L1_pet_handler_r1,random,pet_handler,Pet Handler,1,80,band_001,battle_lab_alpha_20260521:pet_handler:L1:random:1,,,,1,0
+L1_summoner_fixed,fixed,summoner,Summoner,1,105,band_001,battle_lab_alpha_20260521:summoner:L1:fixed:0,,,,1,1
+L1_summoner_r1,random,summoner,Summoner,1,130,band_001,battle_lab_alpha_20260521:summoner:L1:random:1,,,,1,2
+L1_defensive_caster_fixed,fixed,defensive_caster,Defensive Caster,1,80,band_001,battle_lab_alpha_20260521:defensive_caster:L1:fixed:0,,,,1,0
+L1_defensive_caster_r1,random,defensive_caster,Defensive Caster,1,105,band_001,battle_lab_alpha_20260521:defensive_caster:L1:random:1,,,,1,1
+L1_dot_pressure_fixed,fixed,dot_pressure,DoT Pressure,1,80,band_001,battle_lab_alpha_20260521:dot_pressure:L1:fixed:0,,,,1,0
+L1_dot_pressure_r1,random,dot_pressure,DoT Pressure,1,80,band_001,battle_lab_alpha_20260521:dot_pressure:L1:random:1,,,,1,0
+L1_burst_caster_fixed,fixed,burst_caster,Burst Caster,1,105,band_001,battle_lab_alpha_20260521:burst_caster:L1:fixed:0,,,,1,1
+L1_burst_caster_r1,random,burst_caster,Burst Caster,1,130,band_001,battle_lab_alpha_20260521:burst_caster:L1:random:1,,,,1,2
+L3_starter_wand_fixed,fixed,starter_wand,Starter Wand,3,210,band_001,battle_lab_alpha_20260521:starter_wand:L3:fixed:0,,,,2,0
+L3_starter_wand_r1,random,starter_wand,Starter Wand,3,240,band_001,battle_lab_alpha_20260521:starter_wand:L3:random:1,,,,3,0
+L3_cosmic_apprentice_fixed,fixed,cosmic_apprentice,Cosmic Apprentice,3,300,band_002,battle_lab_alpha_20260521:cosmic_apprentice:L3:fixed:0,raio_cosmico,,,3,0
+L3_cosmic_apprentice_r1,random,cosmic_apprentice,Cosmic Apprentice,3,270,band_002,battle_lab_alpha_20260521:cosmic_apprentice:L3:random:1,raio_cosmico,,,2,0
+L3_elemental_mixer_fixed,fixed,elemental_mixer,Elemental Mixer,3,280,band_002,battle_lab_alpha_20260521:elemental_mixer:L3:fixed:0,raio_cosmico,,,3,0
+L3_elemental_mixer_r1,random,elemental_mixer,Elemental Mixer,3,325,band_002,battle_lab_alpha_20260521:elemental_mixer:L3:random:1,raio_cosmico,,,3,1
+L3_pet_handler_fixed,fixed,pet_handler,Pet Handler,3,305,band_002,battle_lab_alpha_20260521:pet_handler:L3:fixed:0,raio_cosmico,,,3,1
+L3_pet_handler_r1,random,pet_handler,Pet Handler,3,280,band_002,battle_lab_alpha_20260521:pet_handler:L3:random:1,raio_cosmico,,,3,0
+L3_summoner_fixed,fixed,summoner,Summoner,3,295,band_002,battle_lab_alpha_20260521:summoner:L3:fixed:0,raio_cosmico,,,2,1
+L3_summoner_r1,random,summoner,Summoner,3,320,band_002,battle_lab_alpha_20260521:summoner:L3:random:1,raio_cosmico,,,2,2
+L3_defensive_caster_fixed,fixed,defensive_caster,Defensive Caster,3,250,band_001,battle_lab_alpha_20260521:defensive_caster:L3:fixed:0,raio_cosmico,,,2,0
+L3_defensive_caster_r1,random,defensive_caster,Defensive Caster,3,250,band_001,battle_lab_alpha_20260521:defensive_caster:L3:random:1,raio_cosmico,,,2,0
+L3_dot_pressure_fixed,fixed,dot_pressure,DoT Pressure,3,210,band_001,battle_lab_alpha_20260521:dot_pressure:L3:fixed:0,,,,2,0
+L3_dot_pressure_r1,random,dot_pressure,DoT Pressure,3,295,band_002,battle_lab_alpha_20260521:dot_pressure:L3:random:1,raio_cosmico,,,2,1
+L3_burst_caster_fixed,fixed,burst_caster,Burst Caster,3,325,band_002,battle_lab_alpha_20260521:burst_caster:L3:fixed:0,raio_cosmico,,,3,1
+L3_burst_caster_r1,random,burst_caster,Burst Caster,3,300,band_002,battle_lab_alpha_20260521:burst_caster:L3:random:1,raio_cosmico,,,3,0
+L7_starter_wand_fixed,fixed,starter_wand,Starter Wand,7,530,band_002,battle_lab_alpha_20260521:starter_wand:L7:fixed:0,,,,6,0
+L7_starter_wand_r1,random,starter_wand,Starter Wand,7,530,band_002,battle_lab_alpha_20260521:starter_wand:L7:random:1,,,,6,0
+L7_cosmic_apprentice_fixed,fixed,cosmic_apprentice,Cosmic Apprentice,7,675,band_003,battle_lab_alpha_20260521:cosmic_apprentice:L7:fixed:0,raio_cosmico,,,6,1
+L7_cosmic_apprentice_r1,random,cosmic_apprentice,Cosmic Apprentice,7,630,band_003,battle_lab_alpha_20260521:cosmic_apprentice:L7:random:1,acender,,,6,0
+L7_elemental_mixer_fixed,fixed,elemental_mixer,Elemental Mixer,7,795,band_003,battle_lab_alpha_20260521:elemental_mixer:L7:fixed:0,raio_cosmico|acender,,,6,1
+L7_elemental_mixer_r1,random,elemental_mixer,Elemental Mixer,7,620,band_003,battle_lab_alpha_20260521:elemental_mixer:L7:random:1,raio,,,5,0
+L7_pet_handler_fixed,fixed,pet_handler,Pet Handler,7,820,band_003,battle_lab_alpha_20260521:pet_handler:L7:fixed:0,raio_cosmico|congelar,,,6,2
+L7_pet_handler_r1,random,pet_handler,Pet Handler,7,675,band_003,battle_lab_alpha_20260521:pet_handler:L7:random:1,congelar,,,6,1
+L7_summoner_fixed,fixed,summoner,Summoner,7,700,band_003,battle_lab_alpha_20260521:summoner:L7:fixed:0,raio_cosmico,,,6,2
+L7_summoner_r1,random,summoner,Summoner,7,665,band_003,battle_lab_alpha_20260521:summoner:L7:random:1,envenenar,,,5,1
+L7_defensive_caster_fixed,fixed,defensive_caster,Defensive Caster,7,725,band_003,battle_lab_alpha_20260521:defensive_caster:L7:fixed:0,envenenar|congelar,,,5,1
+L7_defensive_caster_r1,random,defensive_caster,Defensive Caster,7,710,band_003,battle_lab_alpha_20260521:defensive_caster:L7:random:1,envenenar|raio,,,4,0
+L7_dot_pressure_fixed,fixed,dot_pressure,DoT Pressure,7,805,band_003,battle_lab_alpha_20260521:dot_pressure:L7:fixed:0,envenenar|acender,,,5,1
+L7_dot_pressure_r1,random,dot_pressure,DoT Pressure,7,620,band_003,battle_lab_alpha_20260521:dot_pressure:L7:random:1,envenenar,,,5,0
+L7_burst_caster_fixed,fixed,burst_caster,Burst Caster,7,890,band_003,battle_lab_alpha_20260521:burst_caster:L7:fixed:0,raio|raio_cosmico,,,7,2
+L7_burst_caster_r1,random,burst_caster,Burst Caster,7,750,band_003,battle_lab_alpha_20260521:burst_caster:L7:random:1,raio_cosmico,,,7,2
+L10_starter_wand_fixed,fixed,starter_wand,Starter Wand,10,740,band_003,battle_lab_alpha_20260521:starter_wand:L10:fixed:0,,,,8,0
+L10_starter_wand_r1,random,starter_wand,Starter Wand,10,740,band_003,battle_lab_alpha_20260521:starter_wand:L10:random:1,,,,8,0
+L10_cosmic_apprentice_fixed,fixed,cosmic_apprentice,Cosmic Apprentice,10,1045,band_003,battle_lab_alpha_20260521:cosmic_apprentice:L10:fixed:0,raio_cosmico,foco_astral,,9,1
+L10_cosmic_apprentice_r1,random,cosmic_apprentice,Cosmic Apprentice,10,1035,band_003,battle_lab_alpha_20260521:cosmic_apprentice:L10:random:1,envenenar,escudo,,9,1
+L10_elemental_mixer_fixed,fixed,elemental_mixer,Elemental Mixer,10,1185,band_003,battle_lab_alpha_20260521:elemental_mixer:L10:fixed:0,raio_cosmico|acender,forca,,9,1
+L10_elemental_mixer_r1,random,elemental_mixer,Elemental Mixer,10,1060,band_003,battle_lab_alpha_20260521:elemental_mixer:L10:random:1,raio|congelar,foco_astral,,7,0
+L10_pet_handler_fixed,fixed,pet_handler,Pet Handler,10,1220,band_004,battle_lab_alpha_20260521:pet_handler:L10:fixed:0,raio_cosmico|congelar,resistencia,,9,2
+L10_pet_handler_r1,random,pet_handler,Pet Handler,10,1250,band_004,battle_lab_alpha_20260521:pet_handler:L10:random:1,raio|raio_cosmico,velocidade,,9,2
+L10_summoner_fixed,fixed,summoner,Summoner,10,1050,band_003,battle_lab_alpha_20260521:summoner:L10:fixed:0,raio_cosmico,foco_astral,,8,2
+L10_summoner_r1,random,summoner,Summoner,10,1055,band_003,battle_lab_alpha_20260521:summoner:L10:random:1,acender,velocidade,,9,1
+L10_defensive_caster_fixed,fixed,defensive_caster,Defensive Caster,10,1155,band_003,battle_lab_alpha_20260521:defensive_caster:L10:fixed:0,envenenar|congelar,resistencia,,7,1
+L10_defensive_caster_r1,random,defensive_caster,Defensive Caster,10,1060,band_003,battle_lab_alpha_20260521:defensive_caster:L10:random:1,raio|acender,resistencia,,5,0
+L10_dot_pressure_fixed,fixed,dot_pressure,DoT Pressure,10,1245,band_004,battle_lab_alpha_20260521:dot_pressure:L10:fixed:0,envenenar|acender,velocidade,,8,1
+L10_dot_pressure_r1,random,dot_pressure,DoT Pressure,10,995,band_003,battle_lab_alpha_20260521:dot_pressure:L10:random:1,raio_cosmico,velocidade,,7,1
+L10_burst_caster_fixed,fixed,burst_caster,Burst Caster,10,1330,band_004,battle_lab_alpha_20260521:burst_caster:L10:fixed:0,raio|raio_cosmico,forca,,10,2
+L10_burst_caster_r1,random,burst_caster,Burst Caster,10,1365,band_004,battle_lab_alpha_20260521:burst_caster:L10:random:1,envenenar|raio,vampirismo,,10,3
+L15_starter_wand_fixed,fixed,starter_wand,Starter Wand,15,1135,band_003,battle_lab_alpha_20260521:starter_wand:L15:fixed:0,,,,12,1
+L15_starter_wand_r1,random,starter_wand,Starter Wand,15,1170,band_003,battle_lab_alpha_20260521:starter_wand:L15:random:1,,,,14,0
+L15_cosmic_apprentice_fixed,fixed,cosmic_apprentice,Cosmic Apprentice,15,1700,band_004,battle_lab_alpha_20260521:cosmic_apprentice:L15:fixed:0,raio_cosmico,foco_astral,familiar_cinzento,13,2
+L15_cosmic_apprentice_r1,random,cosmic_apprentice,Cosmic Apprentice,15,2015,band_004,battle_lab_alpha_20260521:cosmic_apprentice:L15:random:1,raio_cosmico|raio,forca,gelum,14,2
+L15_elemental_mixer_fixed,fixed,elemental_mixer,Elemental Mixer,15,1945,band_004,battle_lab_alpha_20260521:elemental_mixer:L15:fixed:0,raio_cosmico|acender,forca,familiar_cinzento,13,2
+L15_elemental_mixer_r1,random,elemental_mixer,Elemental Mixer,15,1685,band_004,battle_lab_alpha_20260521:elemental_mixer:L15:random:1,raio,foco_astral,brasido,15,1
+L15_pet_handler_fixed,fixed,pet_handler,Pet Handler,15,2045,band_004,battle_lab_alpha_20260521:pet_handler:L15:fixed:0,raio_cosmico|congelar,resistencia,familiar_cinzento,14,3
+L15_pet_handler_r1,random,pet_handler,Pet Handler,15,1840,band_004,battle_lab_alpha_20260521:pet_handler:L15:random:1,congelar,resistencia,familiar_cinzento,13,3
+L15_summoner_fixed,fixed,summoner,Summoner,15,1740,band_004,battle_lab_alpha_20260521:summoner:L15:fixed:0,raio_cosmico,foco_astral,brasido,12,3
+L15_summoner_r1,random,summoner,Summoner,15,1995,band_004,battle_lab_alpha_20260521:summoner:L15:random:1,congelar|raio,foco_astral,gelum,13,2
+L15_defensive_caster_fixed,fixed,defensive_caster,Defensive Caster,15,1875,band_004,battle_lab_alpha_20260521:defensive_caster:L15:fixed:0,envenenar|congelar,resistencia,gelum,11,2
+L15_defensive_caster_r1,random,defensive_caster,Defensive Caster,15,1655,band_004,battle_lab_alpha_20260521:defensive_caster:L15:random:1,raio_cosmico,foco_astral,brasido,12,2
+L15_dot_pressure_fixed,fixed,dot_pressure,DoT Pressure,15,1965,band_004,battle_lab_alpha_20260521:dot_pressure:L15:fixed:0,envenenar|acender,velocidade,brasido,11,2
+L15_dot_pressure_r1,random,dot_pressure,DoT Pressure,15,1755,band_004,battle_lab_alpha_20260521:dot_pressure:L15:random:1,acender,resistencia,gelum,10,3
+L15_burst_caster_fixed,fixed,burst_caster,Burst Caster,15,2175,band_004,battle_lab_alpha_20260521:burst_caster:L15:fixed:0,raio|raio_cosmico,forca,brasido,15,3
+L15_burst_caster_r1,random,burst_caster,Burst Caster,15,2000,band_004,battle_lab_alpha_20260521:burst_caster:L15:random:1,acender|raio,velocidade,gelum,14,2
+L25_starter_wand_fixed,fixed,starter_wand,Starter Wand,25,1900,band_004,battle_lab_alpha_20260521:starter_wand:L25:fixed:0,,,,20,2
+L25_starter_wand_r1,random,starter_wand,Starter Wand,25,1780,band_004,battle_lab_alpha_20260521:starter_wand:L25:random:1,,,,16,2
+L25_cosmic_apprentice_fixed,fixed,cosmic_apprentice,Cosmic Apprentice,25,2775,band_005,battle_lab_alpha_20260521:cosmic_apprentice:L25:fixed:0,raio_cosmico,foco_astral,familiar_cinzento,21,3
+L25_cosmic_apprentice_r1,random,cosmic_apprentice,Cosmic Apprentice,25,3305,band_005,battle_lab_alpha_20260521:cosmic_apprentice:L25:random:1,fortificar|raio_cosmico,velocidade,familiar_cinzento,21,4
+L25_elemental_mixer_fixed,fixed,elemental_mixer,Elemental Mixer,25,3605,band_005,battle_lab_alpha_20260521:elemental_mixer:L25:fixed:0,raio_cosmico|acender|congelar,forca,familiar_cinzento,21,3
+L25_elemental_mixer_r1,random,elemental_mixer,Elemental Mixer,25,2775,band_005,battle_lab_alpha_20260521:elemental_mixer:L25:random:1,odio,forca,familiar_cinzento,21,4
+L25_pet_handler_fixed,fixed,pet_handler,Pet Handler,25,3835,band_005,battle_lab_alpha_20260521:pet_handler:L25:fixed:0,raio_cosmico|congelar|acender,resistencia,familiar_cinzento,23,4
+L25_pet_handler_r1,random,pet_handler,Pet Handler,25,3235,band_005,battle_lab_alpha_20260521:pet_handler:L25:random:1,raio_cosmico|raio,resistencia,gelum,19,4
+L25_summoner_fixed,fixed,summoner,Summoner,25,3835,band_005,battle_lab_alpha_20260521:summoner:L25:fixed:0,raio_cosmico|invocar_demonio|animar_morto,foco_astral,brasido,21,4
+L25_summoner_r1,random,summoner,Summoner,25,3240,band_005,battle_lab_alpha_20260521:summoner:L25:random:1,invocar_demonio|raio,forca,brasido,21,3
+L25_defensive_caster_fixed,fixed,defensive_caster,Defensive Caster,25,3515,band_005,battle_lab_alpha_20260521:defensive_caster:L25:fixed:0,fortificar|envenenar|congelar,resistencia,gelum,18,3
+L25_defensive_caster_r1,random,defensive_caster,Defensive Caster,25,2755,band_005,battle_lab_alpha_20260521:defensive_caster:L25:random:1,animar_morto,forca,brasido,18,2
+L25_dot_pressure_fixed,fixed,dot_pressure,DoT Pressure,25,3810,band_005,battle_lab_alpha_20260521:dot_pressure:L25:fixed:0,envenenar|acender|dilacerar,velocidade,brasido,19,3
+L25_dot_pressure_r1,random,dot_pressure,DoT Pressure,25,2855,band_005,battle_lab_alpha_20260521:dot_pressure:L25:random:1,odio,vampirismo,brasido,19,3
+L25_burst_caster_fixed,fixed,burst_caster,Burst Caster,25,4100,band_005,battle_lab_alpha_20260521:burst_caster:L25:fixed:0,odio|raio|raio_cosmico,forca,brasido,25,4
+L25_burst_caster_r1,random,burst_caster,Burst Caster,25,3055,band_005,battle_lab_alpha_20260521:burst_caster:L25:random:1,dilacerar,forca,familiar_cinzento,25,4
+L40_starter_wand_fixed,fixed,starter_wand,Starter Wand,40,3035,band_005,battle_lab_alpha_20260521:starter_wand:L40:fixed:0,,,,32,3
+L40_starter_wand_r1,random,starter_wand,Starter Wand,40,2860,band_005,battle_lab_alpha_20260521:starter_wand:L40:random:1,,,,27,2
+L40_cosmic_apprentice_fixed,fixed,cosmic_apprentice,Cosmic Apprentice,40,4450,band_005,battle_lab_alpha_20260521:cosmic_apprentice:L40:fixed:0,raio_cosmico,foco_astral,familiar_cinzento,34,4
+L40_cosmic_apprentice_r1,random,cosmic_apprentice,Cosmic Apprentice,40,4990,band_005,battle_lab_alpha_20260521:cosmic_apprentice:L40:random:1,raio|animar_morto,escudo,familiar_cinzento,34,4
+L40_elemental_mixer_fixed,fixed,elemental_mixer,Elemental Mixer,40,5740,band_005,battle_lab_alpha_20260521:elemental_mixer:L40:fixed:0,raio_cosmico|acender|congelar,forca,familiar_cinzento,34,4
+L40_elemental_mixer_r1,random,elemental_mixer,Elemental Mixer,40,4275,band_005,battle_lab_alpha_20260521:elemental_mixer:L40:random:1,animar_morto,resistencia,brasido,28,3
+L40_pet_handler_fixed,fixed,pet_handler,Pet Handler,40,6000,band_005,battle_lab_alpha_20260521:pet_handler:L40:fixed:0,raio_cosmico|congelar|acender,resistencia,familiar_cinzento,36,4
+L40_pet_handler_r1,random,pet_handler,Pet Handler,40,5185,band_005,battle_lab_alpha_20260521:pet_handler:L40:random:1,raio_cosmico|acender,resistencia,brasido,40,4
+L40_summoner_fixed,fixed,summoner,Summoner,40,6000,band_005,battle_lab_alpha_20260521:summoner:L40:fixed:0,raio_cosmico|invocar_demonio|animar_morto,foco_astral,brasido,33,4
+L40_summoner_r1,random,summoner,Summoner,40,5895,band_005,battle_lab_alpha_20260521:summoner:L40:random:1,raio_cosmico|odio|raio,foco_astral,gelum,28,4
+L40_defensive_caster_fixed,fixed,defensive_caster,Defensive Caster,40,5540,band_005,battle_lab_alpha_20260521:defensive_caster:L40:fixed:0,fortificar|envenenar|congelar,resistencia,gelum,28,4
+L40_defensive_caster_r1,random,defensive_caster,Defensive Caster,40,5700,band_005,battle_lab_alpha_20260521:defensive_caster:L40:random:1,animar_morto|congelar|fortificar,velocidade,familiar_cinzento,25,4
+L40_dot_pressure_fixed,fixed,dot_pressure,DoT Pressure,40,6030,band_005,battle_lab_alpha_20260521:dot_pressure:L40:fixed:0,envenenar|acender|dilacerar,velocidade,brasido,30,4
+L40_dot_pressure_r1,random,dot_pressure,DoT Pressure,40,5795,band_005,battle_lab_alpha_20260521:dot_pressure:L40:random:1,dilacerar|invocar_demonio|animar_morto,foco_astral,familiar_cinzento,28,4
+L40_burst_caster_fixed,fixed,burst_caster,Burst Caster,40,6500,band_005,battle_lab_alpha_20260521:burst_caster:L40:fixed:0,odio|raio|raio_cosmico,forca,brasido,40,4
+L40_burst_caster_r1,random,burst_caster,Burst Caster,40,6265,band_005,battle_lab_alpha_20260521:burst_caster:L40:random:1,animar_morto|raio|acender,vampirismo,brasido,34,4

@@ -1,0 +1,7 @@
+id,status,observed,target,note
+average_duration_target,REVIEW,3.22s,18-28s,Average battle duration should sit near the target playtest window.
+short_battle_rate,REVIEW,100%,<= 20%,Too many short battles suggest burst or low HP scaling issues.
+long_battle_rate,PASS,0%,<= 20%,Too many long battles suggest defensive scaling or low damage pressure.
+anti_stall_rate,PASS,0%,<= 5%,Anti-stall should be rare in normal same-level matchups.
+archetype_dominance,CRITICAL,92.38% max / 20.48% min,max <= 65%,A dominant archetype should be reviewed before changing global numbers.
+level_coverage,PASS,7/7,7/7,Every configured level checkpoint should produce matchups.

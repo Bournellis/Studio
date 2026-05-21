@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DraxosMobile Battle Lab</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #181b20;
+      --muted: #5b6472;
+      --line: #d9dee7;
+      --pass: #147a3f;
+      --review: #9a6700;
+      --critical: #b42318;
+      --pass-bg: #dff7e9;
+      --review-bg: #fff1c7;
+      --critical-bg: #ffe1dd;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.35;
+    }
+    header {
+      padding: 24px 28px 16px;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel);
+    }
+    main { padding: 20px 28px 32px; }
+    h1 { margin: 0 0 8px; font-size: 28px; letter-spacing: 0; }
+    h2 { margin: 26px 0 10px; font-size: 18px; letter-spacing: 0; }
+    p { margin: 0 0 8px; color: var(--muted); }
+    .status-line { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .badge {
+      display: inline-block;
+      min-width: 64px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 12px;
+      border: 1px solid transparent;
+    }
+    .pass { color: var(--pass); background: var(--pass-bg); border-color: #a7dfbb; }
+    .review { color: var(--review); background: var(--review-bg); border-color: #e5c96f; }
+    .critical { color: var(--critical); background: var(--critical-bg); border-color: #f4aaa3; }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      margin: 16px 0 8px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .card .label { color: var(--muted); font-size: 12px; }
+    .card .value { font-size: 24px; font-weight: 700; margin-top: 2px; }
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.9fr) minmax(360px, 1.1fr);
+      gap: 14px;
+    }
+    section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      overflow: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      padding: 7px 8px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      white-space: nowrap;
+    }
+    th {
+      color: var(--muted);
+      font-weight: 700;
+      background: #f1f3f6;
+      position: sticky;
+      top: 0;
+    }
+    ul { margin: 8px 0 0 18px; padding: 0; }
+    li { margin: 4px 0; }
+    .wide { margin-top: 14px; }
+    @media (max-width: 920px) {
+      main, header { padding-left: 16px; padding-right: 16px; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="status-line">
+      <h1>DraxosMobile Battle Lab</h1>
+      <span class="badge critical">CRITICAL</span>
+    </div>
+    <p>Model: draxos_mobile_battle_lab_v1 | Status: BASELINE_ALPHA | Generated: deterministic-local</p>
+    <p>Offline FIRST_SLICE_SIM analysis. This report does not mutate Supabase, rewards, ranking or client state.</p>
+  </header>
+  <main>
+    <div class="cards">
+      <div class="card"><div class="label">Battles</div><div class="value">1680</div></div>
+      <div class="card"><div class="label">Builds</div><div class="value">112</div></div>
+      <div class="card"><div class="label">Avg duration</div><div class="value">3.22s</div></div>
+      <div class="card"><div class="label">Median</div><div class="value">3.7s</div></div>
+      <div class="card"><div class="label">Short</div><div class="value">100%</div></div>
+      <div class="card"><div class="label">Long</div><div class="value">0%</div></div>
+      <div class="card"><div class="label">Anti-stall</div><div class="value">0%</div></div>
+    </div>
+
+    <div class="grid">
+      <section>
+        <h2>O Que Olhar Primeiro</h2>
+        <ul><li>REVIEW: average_duration_target observed 3.22s, target 18-28s.</li>
+<li>REVIEW: short_battle_rate observed 100%, target &lt;= 20%.</li>
+<li>CRITICAL: archetype_dominance observed 92.38% max / 20.48% min, target max &lt;= 65%.</li>
+<li>Critical outlier: DOMINANCE on pet_handler.</li>
+<li>Review first matchup: SHORT L1_M0001 (L1_starter_wand_fixed vs L1_starter_wand_r1).</li></ul>
+      </section>
+      <section>
+        <h2>Checks</h2>
+        <table>
+          <thead><tr><th>Status</th><th>Check</th><th>Observed</th><th>Target</th><th>Note</th></tr></thead>
+          <tbody><tr><td><span class="badge review">REVIEW</span></td><td>average_duration_target</td><td>3.22s</td><td>18-28s</td><td>Average battle duration should sit near the target playtest window.</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>short_battle_rate</td><td>100%</td><td>&lt;= 20%</td><td>Too many short battles suggest burst or low HP scaling issues.</td></tr>
+<tr><td><span class="badge pass">PASS</span></td><td>long_battle_rate</td><td>0%</td><td>&lt;= 20%</td><td>Too many long battles suggest defensive scaling or low damage pressure.</td></tr>
+<tr><td><span class="badge pass">PASS</span></td><td>anti_stall_rate</td><td>0%</td><td>&lt;= 5%</td><td>Anti-stall should be rare in normal same-level matchups.</td></tr>
+<tr><td><span class="badge critical">CRITICAL</span></td><td>archetype_dominance</td><td>92.38% max / 20.48% min</td><td>max &lt;= 65%</td><td>A dominant archetype should be reviewed before changing global numbers.</td></tr>
+<tr><td><span class="badge pass">PASS</span></td><td>level_coverage</td><td>7/7</td><td>7/7</td><td>Every configured level checkpoint should produce matchups.</td></tr></tbody>
+        </table>
+      </section>
+    </div>
+
+    <section class="wide">
+      <h2>Archetypes</h2>
+      <table>
+        <thead><tr><th>Archetype</th><th>Total</th><th>Win rate</th><th>Avg duration</th><th>Short</th><th>Long</th><th>Anti-stall</th><th>Status</th></tr></thead>
+        <tbody><tr><td>Starter Wand</td><td>210</td><td>20.48%</td><td>3.39s</td><td>100%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>Cosmic Apprentice</td><td>210</td><td>62.86%</td><td>3.33s</td><td>100%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>Elemental Mixer</td><td>210</td><td>72.38%</td><td>3.16s</td><td>100%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>Pet Handler</td><td>210</td><td>82.86%</td><td>3.18s</td><td>100%</td><td>0%</td><td>0%</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>Summoner</td><td>210</td><td>72.86%</td><td>3.17s</td><td>100%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>Defensive Caster</td><td>210</td><td>69.52%</td><td>3.5s</td><td>100%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>DoT Pressure</td><td>210</td><td>56.67%</td><td>3.26s</td><td>100%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>Burst Caster</td><td>210</td><td>92.38%</td><td>2.77s</td><td>100%</td><td>0%</td><td>0%</td><td><span class="badge critical">CRITICAL</span></td></tr></tbody>
+      </table>
+    </section>
+
+    <section class="wide">
+      <h2>Level And Power Bands</h2>
+      <table>
+        <thead><tr><th>Level</th><th>Power band</th><th>Total</th><th>Win rate</th><th>Avg</th><th>Median</th><th>Short</th><th>Long</th><th>Anti-stall</th><th>Status</th></tr></thead>
+        <tbody><tr><td>1</td><td>band_001</td><td>240</td><td>73.75%</td><td>4s</td><td>3.7s</td><td>100%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>3</td><td>band_001</td><td>75</td><td>48%</td><td>3.78s</td><td>3.7s</td><td>100%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>3</td><td>band_002</td><td>165</td><td>100%</td><td>3.7s</td><td>3.7s</td><td>100%</td><td>0%</td><td>0%</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>7</td><td>band_002</td><td>30</td><td>6.67%</td><td>3.7s</td><td>3.7s</td><td>100%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>7</td><td>band_003</td><td>210</td><td>79.52%</td><td>3.61s</td><td>3.7s</td><td>100%</td><td>0%</td><td>0%</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>10</td><td>band_003</td><td>165</td><td>52.12%</td><td>3.5s</td><td>3.7s</td><td>100%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>10</td><td>band_004</td><td>75</td><td>85.33%</td><td>3.13s</td><td>2.7s</td><td>100%</td><td>0%</td><td>0%</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>15</td><td>band_003</td><td>30</td><td>40%</td><td>3.23s</td><td>3.7s</td><td>100%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>15</td><td>band_004</td><td>210</td><td>63.81%</td><td>2.98s</td><td>3.2s</td><td>100%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>25</td><td>band_004</td><td>30</td><td>13.33%</td><td>2.7s</td><td>2.7s</td><td>100%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>25</td><td>band_005</td><td>210</td><td>61.9%</td><td>2.46s</td><td>2.7s</td><td>100%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>40</td><td>band_005</td><td>240</td><td>56.67%</td><td>2.31s</td><td>1.7s</td><td>100%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr></tbody>
+      </table>
+    </section>
+
+    <section class="wide">
+      <h2>Archetype Matrix</h2>
+      <table>
+        <thead><tr><th>Player archetype</th><th>Opponent archetype</th><th>Total</th><th>Player win rate</th><th>Avg duration</th><th>Status</th></tr></thead>
+        <tbody><tr><td>starter_wand</td><td>starter_wand</td><td>14</td><td>100%</td><td>4.27s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>starter_wand</td><td>cosmic_apprentice</td><td>28</td><td>21.43%</td><td>3.52s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>starter_wand</td><td>elemental_mixer</td><td>28</td><td>17.86%</td><td>3.31s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>starter_wand</td><td>pet_handler</td><td>28</td><td>7.14%</td><td>3.2s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>starter_wand</td><td>summoner</td><td>28</td><td>7.14%</td><td>3.31s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>starter_wand</td><td>defensive_caster</td><td>28</td><td>21.43%</td><td>3.7s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>starter_wand</td><td>dot_pressure</td><td>28</td><td>28.57%</td><td>3.52s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>starter_wand</td><td>burst_caster</td><td>28</td><td>0%</td><td>2.74s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>cosmic_apprentice</td><td>starter_wand</td><td>28</td><td>100%</td><td>3.52s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>cosmic_apprentice</td><td>cosmic_apprentice</td><td>14</td><td>78.57%</td><td>3.41s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>cosmic_apprentice</td><td>elemental_mixer</td><td>28</td><td>64.29%</td><td>3.29s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>cosmic_apprentice</td><td>pet_handler</td><td>28</td><td>35.71%</td><td>3.29s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>cosmic_apprentice</td><td>summoner</td><td>28</td><td>67.86%</td><td>3.27s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>cosmic_apprentice</td><td>defensive_caster</td><td>28</td><td>53.57%</td><td>3.63s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>cosmic_apprentice</td><td>dot_pressure</td><td>28</td><td>82.14%</td><td>3.45s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>cosmic_apprentice</td><td>burst_caster</td><td>28</td><td>28.57%</td><td>2.79s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>elemental_mixer</td><td>starter_wand</td><td>28</td><td>100%</td><td>3.31s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>elemental_mixer</td><td>cosmic_apprentice</td><td>28</td><td>82.14%</td><td>3.29s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>elemental_mixer</td><td>elemental_mixer</td><td>14</td><td>64.29%</td><td>2.91s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>pet_handler</td><td>28</td><td>50%</td><td>3.13s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>summoner</td><td>28</td><td>78.57%</td><td>3.13s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>elemental_mixer</td><td>defensive_caster</td><td>28</td><td>71.43%</td><td>3.45s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>elemental_mixer</td><td>dot_pressure</td><td>28</td><td>85.71%</td><td>3.18s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>elemental_mixer</td><td>burst_caster</td><td>28</td><td>42.86%</td><td>2.79s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>pet_handler</td><td>starter_wand</td><td>28</td><td>100%</td><td>3.2s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>pet_handler</td><td>cosmic_apprentice</td><td>28</td><td>92.86%</td><td>3.29s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>pet_handler</td><td>elemental_mixer</td><td>28</td><td>82.14%</td><td>3.13s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>pet_handler</td><td>pet_handler</td><td>14</td><td>64.29%</td><td>3.13s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>pet_handler</td><td>summoner</td><td>28</td><td>85.71%</td><td>3.09s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>pet_handler</td><td>defensive_caster</td><td>28</td><td>89.29%</td><td>3.52s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>pet_handler</td><td>dot_pressure</td><td>28</td><td>89.29%</td><td>3.16s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>pet_handler</td><td>burst_caster</td><td>28</td><td>50%</td><td>2.86s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>summoner</td><td>starter_wand</td><td>28</td><td>100%</td><td>3.31s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>summoner</td><td>cosmic_apprentice</td><td>28</td><td>85.71%</td><td>3.27s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>summoner</td><td>elemental_mixer</td><td>28</td><td>67.86%</td><td>3.13s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>summoner</td><td>pet_handler</td><td>28</td><td>50%</td><td>3.09s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>summoner</td><td>summoner</td><td>14</td><td>85.71%</td><td>3.2s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>summoner</td><td>defensive_caster</td><td>28</td><td>67.86%</td><td>3.43s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>summoner</td><td>dot_pressure</td><td>28</td><td>85.71%</td><td>3.22s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>summoner</td><td>burst_caster</td><td>28</td><td>46.43%</td><td>2.75s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>defensive_caster</td><td>starter_wand</td><td>28</td><td>100%</td><td>3.7s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>defensive_caster</td><td>cosmic_apprentice</td><td>28</td><td>85.71%</td><td>3.63s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>defensive_caster</td><td>elemental_mixer</td><td>28</td><td>67.86%</td><td>3.5s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>defensive_caster</td><td>pet_handler</td><td>28</td><td>50%</td><td>3.58s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>defensive_caster</td><td>summoner</td><td>28</td><td>75%</td><td>3.45s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>defensive_caster</td><td>defensive_caster</td><td>14</td><td>57.14%</td><td>3.7s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>defensive_caster</td><td>dot_pressure</td><td>28</td><td>78.57%</td><td>3.59s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>defensive_caster</td><td>burst_caster</td><td>28</td><td>35.71%</td><td>2.95s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>dot_pressure</td><td>starter_wand</td><td>28</td><td>100%</td><td>3.52s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>dot_pressure</td><td>cosmic_apprentice</td><td>28</td><td>78.57%</td><td>3.45s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>dot_pressure</td><td>elemental_mixer</td><td>28</td><td>50%</td><td>3.18s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>dot_pressure</td><td>pet_handler</td><td>28</td><td>28.57%</td><td>3.16s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>dot_pressure</td><td>summoner</td><td>28</td><td>60.71%</td><td>3.22s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>dot_pressure</td><td>defensive_caster</td><td>28</td><td>53.57%</td><td>3.54s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>dot_pressure</td><td>dot_pressure</td><td>14</td><td>71.43%</td><td>3.31s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>dot_pressure</td><td>burst_caster</td><td>28</td><td>17.86%</td><td>2.72s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>burst_caster</td><td>starter_wand</td><td>28</td><td>100%</td><td>2.74s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>burst_caster</td><td>cosmic_apprentice</td><td>28</td><td>96.43%</td><td>2.79s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>burst_caster</td><td>elemental_mixer</td><td>28</td><td>96.43%</td><td>2.79s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>burst_caster</td><td>pet_handler</td><td>28</td><td>82.14%</td><td>2.86s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>burst_caster</td><td>summoner</td><td>28</td><td>96.43%</td><td>2.75s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>burst_caster</td><td>defensive_caster</td><td>28</td><td>89.29%</td><td>2.9s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>burst_caster</td><td>dot_pressure</td><td>28</td><td>96.43%</td><td>2.72s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>burst_caster</td><td>burst_caster</td><td>14</td><td>71.43%</td><td>2.49s</td><td><span class="badge review">REVIEW</span></td></tr></tbody>
+      </table>
+    </section>
+
+    <section class="wide">
+      <h2>Outliers</h2>
+      <table>
+        <thead><tr><th>Severity</th><th>Type</th><th>Matchup</th><th>Level</th><th>Power</th><th>Duration</th><th>Winner</th><th>Player build</th><th>Opponent build</th><th>Reason</th></tr></thead>
+        <tbody><tr><td><span class="badge critical">CRITICAL</span></td><td>DOMINANCE</td><td></td><td>all</td><td></td><td>3.18</td><td>pet_handler</td><td>pet_handler</td><td>all</td><td>win_rate=82.86%</td></tr>
+<tr><td><span class="badge critical">CRITICAL</span></td><td>DOMINANCE</td><td></td><td>all</td><td></td><td>2.77</td><td>burst_caster</td><td>burst_caster</td><td>all</td><td>win_rate=92.38%</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0001</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>starter_wand</td><td>L1_starter_wand_fixed</td><td>L1_starter_wand_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0002</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>starter_wand</td><td>L1_starter_wand_r1</td><td>L1_starter_wand_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0003</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>starter_wand</td><td>L1_starter_wand_fixed</td><td>L1_cosmic_apprentice_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0004</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>cosmic_apprentice</td><td>L1_cosmic_apprentice_fixed</td><td>L1_starter_wand_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0005</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>starter_wand</td><td>L1_starter_wand_fixed</td><td>L1_cosmic_apprentice_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0006</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>cosmic_apprentice</td><td>L1_cosmic_apprentice_r1</td><td>L1_starter_wand_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0007</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>starter_wand</td><td>L1_starter_wand_fixed</td><td>L1_elemental_mixer_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0008</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>elemental_mixer</td><td>L1_elemental_mixer_fixed</td><td>L1_starter_wand_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0009</td><td>1</td><td>80 vs 105</td><td>3.7</td><td>elemental_mixer</td><td>L1_starter_wand_fixed</td><td>L1_elemental_mixer_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0010</td><td>1</td><td>105 vs 80</td><td>3.7</td><td>elemental_mixer</td><td>L1_elemental_mixer_r1</td><td>L1_starter_wand_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0011</td><td>1</td><td>80 vs 105</td><td>3.7</td><td>pet_handler</td><td>L1_starter_wand_fixed</td><td>L1_pet_handler_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0012</td><td>1</td><td>105 vs 80</td><td>3.7</td><td>pet_handler</td><td>L1_pet_handler_fixed</td><td>L1_starter_wand_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0013</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>starter_wand</td><td>L1_starter_wand_fixed</td><td>L1_pet_handler_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0014</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>pet_handler</td><td>L1_pet_handler_r1</td><td>L1_starter_wand_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0015</td><td>1</td><td>80 vs 105</td><td>3.7</td><td>summoner</td><td>L1_starter_wand_fixed</td><td>L1_summoner_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0016</td><td>1</td><td>105 vs 80</td><td>3.7</td><td>summoner</td><td>L1_summoner_fixed</td><td>L1_starter_wand_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0017</td><td>1</td><td>80 vs 130</td><td>3.7</td><td>summoner</td><td>L1_starter_wand_fixed</td><td>L1_summoner_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0018</td><td>1</td><td>130 vs 80</td><td>3.7</td><td>summoner</td><td>L1_summoner_r1</td><td>L1_starter_wand_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0019</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>starter_wand</td><td>L1_starter_wand_fixed</td><td>L1_defensive_caster_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0020</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>defensive_caster</td><td>L1_defensive_caster_fixed</td><td>L1_starter_wand_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0021</td><td>1</td><td>80 vs 105</td><td>3.7</td><td>defensive_caster</td><td>L1_starter_wand_fixed</td><td>L1_defensive_caster_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0022</td><td>1</td><td>105 vs 80</td><td>3.7</td><td>defensive_caster</td><td>L1_defensive_caster_r1</td><td>L1_starter_wand_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0023</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>starter_wand</td><td>L1_starter_wand_fixed</td><td>L1_dot_pressure_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0024</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>dot_pressure</td><td>L1_dot_pressure_fixed</td><td>L1_starter_wand_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0025</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>starter_wand</td><td>L1_starter_wand_fixed</td><td>L1_dot_pressure_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0026</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>dot_pressure</td><td>L1_dot_pressure_r1</td><td>L1_starter_wand_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0027</td><td>1</td><td>80 vs 105</td><td>3.7</td><td>burst_caster</td><td>L1_starter_wand_fixed</td><td>L1_burst_caster_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0028</td><td>1</td><td>105 vs 80</td><td>3.7</td><td>burst_caster</td><td>L1_burst_caster_fixed</td><td>L1_starter_wand_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0029</td><td>1</td><td>80 vs 130</td><td>3.7</td><td>burst_caster</td><td>L1_starter_wand_fixed</td><td>L1_burst_caster_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0030</td><td>1</td><td>130 vs 80</td><td>3.7</td><td>burst_caster</td><td>L1_burst_caster_r1</td><td>L1_starter_wand_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0031</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>starter_wand</td><td>L1_starter_wand_r1</td><td>L1_cosmic_apprentice_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0032</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>cosmic_apprentice</td><td>L1_cosmic_apprentice_fixed</td><td>L1_starter_wand_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0033</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>starter_wand</td><td>L1_starter_wand_r1</td><td>L1_cosmic_apprentice_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0034</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>cosmic_apprentice</td><td>L1_cosmic_apprentice_r1</td><td>L1_starter_wand_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0035</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>starter_wand</td><td>L1_starter_wand_r1</td><td>L1_elemental_mixer_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0036</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>elemental_mixer</td><td>L1_elemental_mixer_fixed</td><td>L1_starter_wand_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0037</td><td>1</td><td>80 vs 105</td><td>3.7</td><td>elemental_mixer</td><td>L1_starter_wand_r1</td><td>L1_elemental_mixer_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0038</td><td>1</td><td>105 vs 80</td><td>3.7</td><td>elemental_mixer</td><td>L1_elemental_mixer_r1</td><td>L1_starter_wand_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0039</td><td>1</td><td>80 vs 105</td><td>3.7</td><td>pet_handler</td><td>L1_starter_wand_r1</td><td>L1_pet_handler_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0040</td><td>1</td><td>105 vs 80</td><td>3.7</td><td>pet_handler</td><td>L1_pet_handler_fixed</td><td>L1_starter_wand_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0041</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>starter_wand</td><td>L1_starter_wand_r1</td><td>L1_pet_handler_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0042</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>pet_handler</td><td>L1_pet_handler_r1</td><td>L1_starter_wand_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0043</td><td>1</td><td>80 vs 105</td><td>3.7</td><td>summoner</td><td>L1_starter_wand_r1</td><td>L1_summoner_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0044</td><td>1</td><td>105 vs 80</td><td>3.7</td><td>summoner</td><td>L1_summoner_fixed</td><td>L1_starter_wand_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0045</td><td>1</td><td>80 vs 130</td><td>3.7</td><td>summoner</td><td>L1_starter_wand_r1</td><td>L1_summoner_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0046</td><td>1</td><td>130 vs 80</td><td>3.7</td><td>summoner</td><td>L1_summoner_r1</td><td>L1_starter_wand_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0047</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>starter_wand</td><td>L1_starter_wand_r1</td><td>L1_defensive_caster_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0048</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>defensive_caster</td><td>L1_defensive_caster_fixed</td><td>L1_starter_wand_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0049</td><td>1</td><td>80 vs 105</td><td>3.7</td><td>defensive_caster</td><td>L1_starter_wand_r1</td><td>L1_defensive_caster_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0050</td><td>1</td><td>105 vs 80</td><td>3.7</td><td>defensive_caster</td><td>L1_defensive_caster_r1</td><td>L1_starter_wand_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0051</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>starter_wand</td><td>L1_starter_wand_r1</td><td>L1_dot_pressure_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0052</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>dot_pressure</td><td>L1_dot_pressure_fixed</td><td>L1_starter_wand_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0053</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>starter_wand</td><td>L1_starter_wand_r1</td><td>L1_dot_pressure_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0054</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>dot_pressure</td><td>L1_dot_pressure_r1</td><td>L1_starter_wand_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0055</td><td>1</td><td>80 vs 105</td><td>3.7</td><td>burst_caster</td><td>L1_starter_wand_r1</td><td>L1_burst_caster_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0056</td><td>1</td><td>105 vs 80</td><td>3.7</td><td>burst_caster</td><td>L1_burst_caster_fixed</td><td>L1_starter_wand_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0057</td><td>1</td><td>80 vs 130</td><td>3.7</td><td>burst_caster</td><td>L1_starter_wand_r1</td><td>L1_burst_caster_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0058</td><td>1</td><td>130 vs 80</td><td>3.7</td><td>burst_caster</td><td>L1_burst_caster_r1</td><td>L1_starter_wand_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0059</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>cosmic_apprentice</td><td>L1_cosmic_apprentice_fixed</td><td>L1_cosmic_apprentice_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0060</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>cosmic_apprentice</td><td>L1_cosmic_apprentice_r1</td><td>L1_cosmic_apprentice_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0061</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>cosmic_apprentice</td><td>L1_cosmic_apprentice_fixed</td><td>L1_elemental_mixer_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0062</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>elemental_mixer</td><td>L1_elemental_mixer_fixed</td><td>L1_cosmic_apprentice_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0063</td><td>1</td><td>80 vs 105</td><td>3.7</td><td>elemental_mixer</td><td>L1_cosmic_apprentice_fixed</td><td>L1_elemental_mixer_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0064</td><td>1</td><td>105 vs 80</td><td>3.7</td><td>elemental_mixer</td><td>L1_elemental_mixer_r1</td><td>L1_cosmic_apprentice_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0065</td><td>1</td><td>80 vs 105</td><td>3.7</td><td>pet_handler</td><td>L1_cosmic_apprentice_fixed</td><td>L1_pet_handler_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0066</td><td>1</td><td>105 vs 80</td><td>3.7</td><td>pet_handler</td><td>L1_pet_handler_fixed</td><td>L1_cosmic_apprentice_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0067</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>cosmic_apprentice</td><td>L1_cosmic_apprentice_fixed</td><td>L1_pet_handler_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0068</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>pet_handler</td><td>L1_pet_handler_r1</td><td>L1_cosmic_apprentice_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0069</td><td>1</td><td>80 vs 105</td><td>3.7</td><td>summoner</td><td>L1_cosmic_apprentice_fixed</td><td>L1_summoner_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0070</td><td>1</td><td>105 vs 80</td><td>3.7</td><td>summoner</td><td>L1_summoner_fixed</td><td>L1_cosmic_apprentice_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0071</td><td>1</td><td>80 vs 130</td><td>3.7</td><td>summoner</td><td>L1_cosmic_apprentice_fixed</td><td>L1_summoner_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0072</td><td>1</td><td>130 vs 80</td><td>3.7</td><td>summoner</td><td>L1_summoner_r1</td><td>L1_cosmic_apprentice_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0073</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>cosmic_apprentice</td><td>L1_cosmic_apprentice_fixed</td><td>L1_defensive_caster_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0074</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>defensive_caster</td><td>L1_defensive_caster_fixed</td><td>L1_cosmic_apprentice_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0075</td><td>1</td><td>80 vs 105</td><td>3.7</td><td>defensive_caster</td><td>L1_cosmic_apprentice_fixed</td><td>L1_defensive_caster_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0076</td><td>1</td><td>105 vs 80</td><td>3.7</td><td>defensive_caster</td><td>L1_defensive_caster_r1</td><td>L1_cosmic_apprentice_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0077</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>cosmic_apprentice</td><td>L1_cosmic_apprentice_fixed</td><td>L1_dot_pressure_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>SHORT</td><td>L1_M0078</td><td>1</td><td>80 vs 80</td><td>4.7</td><td>dot_pressure</td><td>L1_dot_pressure_fixed</td><td>L1_cosmic_apprentice_fixed</td><td>combatant_defeated</td></tr></tbody>
+      </table>
+    </section>
+
+    <section class="wide">
+      <h2>Damage Breakdown</h2>
+      <table>
+        <thead><tr><th>Source</th><th>Damage</th></tr></thead>
+        <tbody><tr><td>weapon</td><td>453564</td></tr>
+<tr><td>spell</td><td>161478</td></tr>
+<tr><td>dot</td><td>15687</td></tr>
+<tr><td>pet</td><td>8399</td></tr>
+<tr><td>summon</td><td>8224</td></tr>
+<tr><td>system</td><td>0</td></tr></tbody>
+      </table>
+      <h2>Damage Types</h2>
+      <table>
+        <thead><tr><th>Type</th><th>Damage</th></tr></thead>
+        <tbody><tr><td>magico</td><td>517126</td></tr>
+<tr><td>fogo</td><td>32657</td></tr>
+<tr><td>gelo</td><td>20637</td></tr>
+<tr><td>veneno</td><td>16018</td></tr>
+<tr><td>choque</td><td>27458</td></tr>
+<tr><td>morte</td><td>23111</td></tr>
+<tr><td>sangramento</td><td>10345</td></tr>
+<tr><td>none</td><td>0</td></tr></tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>

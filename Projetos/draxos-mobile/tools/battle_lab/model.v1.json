@@ -1,0 +1,181 @@
+{
+  "schema_version": 1,
+  "model_id": "draxos_mobile_battle_lab_v1",
+  "status": "BASELINE_ALPHA",
+  "notes": [
+    "Offline battle balance lab for FIRST_SLICE_SIM.",
+    "This model must not change combat numbers; it only generates builds, matchups and reports."
+  ],
+  "output_dir": "docs/battle-lab/generated",
+  "seed": "battle_lab_alpha_20260521",
+  "levels": [1, 3, 7, 10, 15, 25, 40],
+  "random_builds_per_archetype_per_level": 1,
+  "thresholds": {
+    "target_duration_min": 18,
+    "target_duration_max": 28,
+    "short_duration": 12,
+    "long_duration": 32,
+    "short_battle_rate_review_percent": 20,
+    "long_battle_rate_review_percent": 20,
+    "anti_stall_review_percent": 5,
+    "healthy_win_rate_min_percent": 45,
+    "healthy_win_rate_max_percent": 55,
+    "dominance_review_percent": 65,
+    "dominance_critical_percent": 75,
+    "stomp_winner_hp_percent": 65
+  },
+  "power_bands": [
+    {
+      "id": "band_001",
+      "display_name": "Banda 001",
+      "min_power": 0,
+      "max_power": 250
+    },
+    {
+      "id": "band_002",
+      "display_name": "Banda 002",
+      "min_power": 251,
+      "max_power": 600
+    },
+    {
+      "id": "band_003",
+      "display_name": "Banda 003",
+      "min_power": 601,
+      "max_power": 1200
+    },
+    {
+      "id": "band_004",
+      "display_name": "Banda 004",
+      "min_power": 1201,
+      "max_power": 2200
+    },
+    {
+      "id": "band_005",
+      "display_name": "Banda 005",
+      "min_power": 2201,
+      "max_power": 999999
+    }
+  ],
+  "archetypes": [
+    {
+      "id": "starter_wand",
+      "display_name": "Starter Wand",
+      "role": "Varinha pura para medir o baseline sem sistemas extras.",
+      "spell_preferences": [],
+      "passive_preferences": [],
+      "pet_preferences": [],
+      "weapon_level_ratio": 0.8,
+      "spell_level_ratio": 0.0,
+      "passive_level_ratio": 0.0,
+      "pet_level_ratio": 0.0,
+      "quality_bias": -1
+    },
+    {
+      "id": "cosmic_apprentice",
+      "display_name": "Cosmic Apprentice",
+      "role": "Primeiro slot de spell com Raio Cosmico.",
+      "spell_preferences": ["raio_cosmico"],
+      "passive_preferences": ["foco_astral"],
+      "pet_preferences": ["familiar_cinzento"],
+      "weapon_level_ratio": 0.85,
+      "spell_level_ratio": 0.85,
+      "passive_level_ratio": 0.65,
+      "pet_level_ratio": 0.65,
+      "quality_bias": 0
+    },
+    {
+      "id": "elemental_mixer",
+      "display_name": "Elemental Mixer",
+      "role": "Duas spells elementais para medir status e DoTs iniciais.",
+      "spell_preferences": [
+        "raio_cosmico",
+        "acender",
+        "congelar",
+        "raio",
+        "envenenar"
+      ],
+      "passive_preferences": ["forca", "foco_astral", "velocidade"],
+      "pet_preferences": ["familiar_cinzento", "brasido", "gelum"],
+      "weapon_level_ratio": 0.85,
+      "spell_level_ratio": 0.8,
+      "passive_level_ratio": 0.7,
+      "pet_level_ratio": 0.7,
+      "quality_bias": 0
+    },
+    {
+      "id": "pet_handler",
+      "display_name": "Pet Handler",
+      "role": "Duas spells e pet para medir pressao sustentada.",
+      "spell_preferences": ["raio_cosmico", "congelar", "acender", "raio"],
+      "passive_preferences": ["resistencia", "forca", "foco_astral"],
+      "pet_preferences": ["familiar_cinzento", "brasido", "gelum"],
+      "weapon_level_ratio": 0.9,
+      "spell_level_ratio": 0.82,
+      "passive_level_ratio": 0.75,
+      "pet_level_ratio": 0.9,
+      "quality_bias": 1
+    },
+    {
+      "id": "summoner",
+      "display_name": "Summoner",
+      "role": "Tres spells com summons para medir protecao e dano extra.",
+      "spell_preferences": [
+        "raio_cosmico",
+        "invocar_demonio",
+        "animar_morto",
+        "fortificar"
+      ],
+      "passive_preferences": ["foco_astral", "escudo", "velocidade"],
+      "pet_preferences": ["brasido", "familiar_cinzento"],
+      "weapon_level_ratio": 0.82,
+      "spell_level_ratio": 0.9,
+      "passive_level_ratio": 0.75,
+      "pet_level_ratio": 0.75,
+      "quality_bias": 1
+    },
+    {
+      "id": "defensive_caster",
+      "display_name": "Defensive Caster",
+      "role": "Fortificar e passivas defensivas para medir lutas longas.",
+      "spell_preferences": [
+        "fortificar",
+        "envenenar",
+        "congelar",
+        "raio_cosmico"
+      ],
+      "passive_preferences": ["resistencia", "escudo", "vampirismo"],
+      "pet_preferences": ["gelum", "familiar_cinzento"],
+      "weapon_level_ratio": 0.7,
+      "spell_level_ratio": 0.75,
+      "passive_level_ratio": 0.95,
+      "pet_level_ratio": 0.7,
+      "quality_bias": 0
+    },
+    {
+      "id": "dot_pressure",
+      "display_name": "DoT Pressure",
+      "role": "DoTs e status para medir dano por tempo.",
+      "spell_preferences": ["envenenar", "acender", "dilacerar", "congelar"],
+      "passive_preferences": ["velocidade", "foco_astral", "forca"],
+      "pet_preferences": ["brasido", "gelum"],
+      "weapon_level_ratio": 0.75,
+      "spell_level_ratio": 0.95,
+      "passive_level_ratio": 0.75,
+      "pet_level_ratio": 0.75,
+      "quality_bias": 0
+    },
+    {
+      "id": "burst_caster",
+      "display_name": "Burst Caster",
+      "role": "Dano direto alto para detectar stomps.",
+      "spell_preferences": ["odio", "raio", "raio_cosmico", "dilacerar"],
+      "passive_preferences": ["forca", "velocidade", "foco_astral"],
+      "pet_preferences": ["brasido", "familiar_cinzento"],
+      "weapon_level_ratio": 1.0,
+      "spell_level_ratio": 1.0,
+      "passive_level_ratio": 0.8,
+      "pet_level_ratio": 0.8,
+      "quality_bias": 1
+    }
+  ]
+}

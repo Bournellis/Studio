@@ -1,0 +1,9 @@
+id,display_name,total,wins,losses,win_rate_percent,avg_duration,median_duration,short_rate_percent,long_rate_percent,anti_stall_rate_percent,status
+starter_wand,Starter Wand,210,43,167,20.48,3.39,3.7,100,0,0,REVIEW
+cosmic_apprentice,Cosmic Apprentice,210,132,78,62.86,3.33,3.7,100,0,0,PASS
+elemental_mixer,Elemental Mixer,210,152,58,72.38,3.16,3.7,100,0,0,REVIEW
+pet_handler,Pet Handler,210,174,36,82.86,3.18,3.7,100,0,0,CRITICAL
+summoner,Summoner,210,153,57,72.86,3.17,3.7,100,0,0,REVIEW
+defensive_caster,Defensive Caster,210,146,64,69.52,3.5,3.7,100,0,0,REVIEW
+dot_pressure,DoT Pressure,210,119,91,56.67,3.26,3.7,100,0,0,PASS
+burst_caster,Burst Caster,210,194,16,92.38,2.77,2.7,100,0,0,CRITICAL
