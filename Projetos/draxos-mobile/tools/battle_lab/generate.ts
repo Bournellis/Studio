@@ -41,6 +41,9 @@ interface Thresholds {
 interface BattleLabOptions {
   archiveRunId?: string;
   compareWithRunId?: string;
+  scratchRunId?: string;
+  requestPath?: string;
+  responsePath?: string;
 }
 
 interface PowerBand {
@@ -211,7 +214,63 @@ interface RunManifest {
   raw_stress_dominance_max_percent: number;
   near_power_dominance_max_percent: number;
   critical_archetypes: string[];
+  compatibility?: CompatibilitySnapshot;
   files: string[];
+}
+
+interface CompatibilitySnapshot {
+  simulator_hash: string;
+  content_hash: string;
+  model_hash: string;
+  battle_log_schema: "battle_log_v1";
+  compatibility_status: "current" | "stale";
+}
+
+interface BattleReplaySample {
+  tag: string;
+  matchup_id: string;
+  seed: string;
+  level: number;
+  player_build_id: string;
+  opponent_build_id: string;
+  player_archetype_id: string;
+  opponent_archetype_id: string;
+  player_power: number;
+  opponent_power: number;
+  duration: number;
+  winner: BattleSide;
+  reason: string;
+  battle_log: BattleSimulationResult["battleLog"];
+  rewards: BattleSimulationResult["reward"];
+}
+
+interface BattleLabBridgeRequest {
+  schema_version?: "battle_lab_request_v1";
+  mode?: "run" | "replay";
+  run_id?: string;
+  archive_run_id?: string;
+  compare_with_run_id?: string;
+  scratch_run_id?: string;
+  seed?: string;
+  battle_id?: string;
+  player_build?: CombatantBuild;
+  opponent_build?: CombatantBuild;
+}
+
+interface BattleLabBridgeResponse {
+  schema_version: "battle_lab_response_v1";
+  ok: boolean;
+  mode: "run" | "replay";
+  status?: Status;
+  run_id?: string;
+  output_dir?: string;
+  report_path?: string;
+  summary?: BattleLabResult["summary"];
+  checks?: CheckRow[];
+  outliers?: OutlierRow[];
+  compare?: CompareRow[];
+  replay?: BattleReplaySample;
+  error?: { code: string; message: string };
 }
 
 interface BattleLabResult {
@@ -292,6 +351,8 @@ const NEAR_POWER_MAX_DELTA_PERCENT = 20;
 const RUN_OUTPUT_FILES = [
   "battle_lab_report.html",
   "battle_lab_summary.json",
+  "battle_lab_ui.json",
+  "battle_lab_replays.json",
   "battle_lab_matchups.csv",
   "battle_lab_builds.csv",
   "battle_lab_checks.csv",
@@ -510,21 +571,39 @@ export function buildSummaryForTest(model: BattleLabModel): BattleLabResult {
 
 async function main(): Promise<void> {
   const options = parseOptions(Deno.args);
-  const model = await loadModel();
-  const result = runBattleLab(model);
   const projectRoot = new URL("../../", import.meta.url);
-  const outputUrl = new URL(
-    `${model.output_dir.replace(/\/$/, "")}/`,
-    projectRoot,
-  );
+  if (options.requestPath !== undefined) {
+    await runBridgeRequest(projectRoot, options);
+    return;
+  }
+  const model = await loadModel();
+  await runStandardGeneration(projectRoot, model, options);
+}
+
+async function runStandardGeneration(
+  projectRoot: URL,
+  model: BattleLabModel,
+  options: BattleLabOptions,
+): Promise<BattleLabBridgeResponse> {
+  const result = runBattleLab(model);
+  const outputUrl = outputUrlForOptions(projectRoot, model, options);
   const runsUrl = new URL("docs/battle-lab/runs/", projectRoot);
-  const history = await loadHistoryIndex(runsUrl);
+  const compatibility = await buildCompatibilitySnapshot(projectRoot, model);
+  const history = markHistoryCompatibility(
+    await loadHistoryIndex(runsUrl),
+    compatibility,
+  );
   const compareRows = options.compareWithRunId === undefined
     ? []
     : await loadComparisonRows(runsUrl, options.compareWithRunId, result);
   const manifest = options.archiveRunId === undefined
     ? undefined
-    : await buildRunManifest(projectRoot, result, options.archiveRunId);
+    : await buildRunManifest(
+      projectRoot,
+      result,
+      options.archiveRunId,
+      compatibility,
+    );
   const historyWithPending = manifest === undefined
     ? history
     : upsertHistory(history, manifest);
@@ -541,10 +620,23 @@ async function main(): Promise<void> {
     battles: result.summary.total_battles,
     builds: result.summary.total_builds,
     review_checks: reviewCount,
-    report: new URL("battle_lab_report.html", outputUrl).pathname,
+    report: localPathFromUrl(new URL("battle_lab_report.html", outputUrl)),
     archived_run: options.archiveRunId ?? "",
     compared_with: options.compareWithRunId ?? "",
   });
+  return {
+    schema_version: "battle_lab_response_v1",
+    ok: true,
+    mode: "run",
+    status: result.overall_status,
+    run_id: options.archiveRunId ?? options.scratchRunId ?? "generated",
+    output_dir: localPathFromUrl(outputUrl),
+    report_path: localPathFromUrl(new URL("battle_lab_report.html", outputUrl)),
+    summary: result.summary,
+    checks: result.checks,
+    outliers: result.outliers.slice(0, 20),
+    compare: compareRows,
+  };
 }
 
 export function parseOptions(args: string[]): BattleLabOptions {
@@ -565,11 +657,161 @@ export function parseOptions(args: string[]): BattleLabOptions {
       }
       options.compareWithRunId = value;
       index += 1;
+    } else if (arg === "--scratch-run") {
+      const value = args[index + 1];
+      if (value === undefined || value.startsWith("--")) {
+        throw new Error("--scratch-run requires a run id");
+      }
+      options.scratchRunId = value;
+      index += 1;
+    } else if (arg === "--request") {
+      const value = args[index + 1];
+      if (value === undefined || value.startsWith("--")) {
+        throw new Error("--request requires a JSON path");
+      }
+      options.requestPath = value;
+      index += 1;
+    } else if (arg === "--response") {
+      const value = args[index + 1];
+      if (value === undefined || value.startsWith("--")) {
+        throw new Error("--response requires a JSON path");
+      }
+      options.responsePath = value;
+      index += 1;
     } else {
       throw new Error(`Unknown Battle Lab argument: ${arg}`);
     }
   }
+  if (options.requestPath === undefined && options.responsePath !== undefined) {
+    throw new Error("--response requires --request");
+  }
+  if (
+    options.archiveRunId !== undefined && options.scratchRunId !== undefined
+  ) {
+    throw new Error("--archive-run and --scratch-run are mutually exclusive");
+  }
   return options;
+}
+
+async function runBridgeRequest(
+  projectRoot: URL,
+  options: BattleLabOptions,
+): Promise<void> {
+  const requestUrl = fileUrlFromPath(options.requestPath!);
+  const request = JSON.parse(
+    await Deno.readTextFile(requestUrl),
+  ) as BattleLabBridgeRequest;
+  const response = await handleBridgeRequest(projectRoot, request);
+  const serialized = JSON.stringify(response, null, 2) + "\n";
+  if (options.responsePath !== undefined) {
+    await Deno.writeTextFile(fileUrlFromPath(options.responsePath), serialized);
+  }
+  console.log(serialized.trim());
+}
+
+export async function handleBridgeRequest(
+  projectRoot: URL,
+  request: BattleLabBridgeRequest,
+): Promise<BattleLabBridgeResponse> {
+  try {
+    if (
+      request.schema_version !== undefined &&
+      request.schema_version !== "battle_lab_request_v1"
+    ) {
+      throw new Error(`Unsupported request schema: ${request.schema_version}`);
+    }
+    const model = await loadModel();
+    if (request.seed !== undefined && request.seed.trim() !== "") {
+      model.seed = request.seed.trim();
+    }
+    const mode = request.mode ?? "run";
+    if (mode === "replay") {
+      return buildBridgeReplayResponse(model, request);
+    }
+    return await runStandardGeneration(projectRoot, model, {
+      archiveRunId: request.archive_run_id,
+      compareWithRunId: request.compare_with_run_id,
+      scratchRunId: request.archive_run_id === undefined
+        ? request.scratch_run_id ?? request.run_id
+        : undefined,
+    });
+  } catch (error) {
+    return {
+      schema_version: "battle_lab_response_v1",
+      ok: false,
+      mode: request.mode ?? "run",
+      error: {
+        code: "BATTLE_LAB_BRIDGE_FAILED",
+        message: error instanceof Error ? error.message : String(error),
+      },
+    };
+  }
+}
+
+export function buildBridgeReplayResponse(
+  model: BattleLabModel,
+  request: BattleLabBridgeRequest,
+): BattleLabBridgeResponse {
+  const player = validateBridgeBuild(request.player_build, "player_build");
+  const opponent = validateBridgeBuild(
+    request.opponent_build,
+    "opponent_build",
+  );
+  const battleId = sanitizeRunId(request.battle_id ?? "godot_custom_replay");
+  const seed = request.seed?.trim() || `battle_lab_bridge:${battleId}`;
+  const playerLab = customLabBuild(model, player, "custom_player");
+  const opponentLab = customLabBuild(model, opponent, "custom_opponent");
+  const simulation = simulateFirstSliceBattle({
+    battleId,
+    seed,
+    player,
+    opponent,
+  });
+  const metrics = analyzeBattleLog(
+    model,
+    playerLab,
+    opponentLab,
+    battleId,
+    seed,
+    simulation,
+  );
+  return {
+    schema_version: "battle_lab_response_v1",
+    ok: true,
+    mode: "replay",
+    status: metrics.severity,
+    replay: {
+      tag: "custom",
+      matchup_id: battleId,
+      seed,
+      level: Math.max(player.level, opponent.level),
+      player_build_id: playerLab.id,
+      opponent_build_id: opponentLab.id,
+      player_archetype_id: playerLab.archetype_id,
+      opponent_archetype_id: opponentLab.archetype_id,
+      player_power: playerLab.power,
+      opponent_power: opponentLab.power,
+      duration: metrics.duration,
+      winner: metrics.winner,
+      reason: metrics.reason,
+      battle_log: simulation.battleLog,
+      rewards: simulation.reward,
+    },
+  };
+}
+
+function outputUrlForOptions(
+  projectRoot: URL,
+  model: BattleLabModel,
+  options: BattleLabOptions,
+): URL {
+  if (options.scratchRunId !== undefined) {
+    return new URL(
+      `.battle_lab_scratch/${sanitizeRunId(options.scratchRunId)}/`,
+      projectRoot,
+    );
+  }
+  return new URL(`${model.output_dir.replace(/\/$/, "")}/`, projectRoot);
 }
 
 export async function loadHistoryIndex(runsUrl: URL): Promise<RunManifest[]> {
@@ -680,6 +922,7 @@ export async function buildRunManifest(
   projectRoot: URL,
   result: BattleLabResult,
   runId: string,
+  compatibility?: CompatibilitySnapshot,
 ): Promise<RunManifest> {
   return {
     run_id: runId,
@@ -701,6 +944,7 @@ export async function buildRunManifest(
     critical_archetypes: result.near_power_archetypes
       .filter((row) => row.status === "CRITICAL")
       .map((row) => row.id),
+    compatibility,
     files: RUN_OUTPUT_FILES,
   };
 }
@@ -713,6 +957,30 @@ export function upsertHistory(
     ...history.filter((entry) => entry.run_id !== manifest.run_id),
     manifest,
   ].sort((left, right) => left.run_id.localeCompare(right.run_id));
+}
+
+export function markHistoryCompatibility(
+  history: RunManifest[],
+  current: CompatibilitySnapshot,
+): RunManifest[] {
+  return history.map((entry) => {
+    const compatibility = entry.compatibility;
+    const isCurrent = compatibility !== undefined &&
+      compatibility.simulator_hash === current.simulator_hash &&
+      compatibility.content_hash === current.content_hash &&
+      compatibility.model_hash === current.model_hash &&
+      compatibility.battle_log_schema === current.battle_log_schema;
+    return {
+      ...entry,
+      compatibility: {
+        simulator_hash: compatibility?.simulator_hash ?? "unknown",
+        content_hash: compatibility?.content_hash ?? "unknown",
+        model_hash: compatibility?.model_hash ?? "unknown",
+        battle_log_schema: "battle_log_v1",
+        compatibility_status: isCurrent ? "current" : "stale",
+      },
+    };
+  });
 }
 
 export async function archiveRun(
@@ -1335,9 +1603,31 @@ export async function writeOutputs(
   compareRows: CompareRow[] = [],
 ): Promise<void> {
   await Deno.mkdir(outputUrl, { recursive: true });
+  const replaySamples = buildReplaySamples(model, result);
   await Deno.writeTextFile(
     new URL("battle_lab_summary.json", outputUrl),
     JSON.stringify(result, null, 2) + "\n",
+  );
+  await Deno.writeTextFile(
+    new URL("battle_lab_ui.json", outputUrl),
+    JSON.stringify(
+      buildUiDocument(result, historyRows, compareRows, replaySamples),
+      null,
+      2,
+    ) + "\n",
+  );
+  await Deno.writeTextFile(
+    new URL("battle_lab_replays.json", outputUrl),
+    JSON.stringify(
+      {
+        schema_version: "battle_lab_replays_v1",
+        generated_at: result.generated_at,
+        model_id: result.model_id,
+        replays: replaySamples,
+      },
+      null,
+      2,
+    ) + "\n",
   );
   await Deno.writeTextFile(
     new URL("battle_lab_builds.csv", outputUrl),
@@ -1481,7 +1771,7 @@ export async function writeOutputs(
   );
   await Deno.writeTextFile(
     new URL("battle_lab_history_index.csv", outputUrl),
-    toCsv(historyRows, [
+    toCsv(historyRowsForCsv(historyRows), [
       "run_id",
       "archived_at",
       "base_sha",
@@ -1497,6 +1787,10 @@ export async function writeOutputs(
       "raw_stress_dominance_max_percent",
       "near_power_dominance_max_percent",
       "critical_archetypes",
+      "compatibility_status",
+      "simulator_hash",
+      "content_hash",
+      "model_hash",
       "files",
     ]),
   );
@@ -1563,6 +1857,129 @@ function matchupRows(matchups: LabMatchup[]): Array<Record<string, unknown>> {
     opponent_damage_by_type: compactMap(matchup.opponent_damage_by_type),
     spell_casts: compactMap(matchup.spell_casts),
   }));
+}
+
+function historyRowsForCsv(
+  rows: RunManifest[],
+): Array<Record<string, unknown>> {
+  return rows.map((row) => ({
+    ...row,
+    compatibility_status: row.compatibility?.compatibility_status ?? "stale",
+    simulator_hash: row.compatibility?.simulator_hash ?? "unknown",
+    content_hash: row.compatibility?.content_hash ?? "unknown",
+    model_hash: row.compatibility?.model_hash ?? "unknown",
+  }));
+}
+
+function buildUiDocument(
+  result: BattleLabResult,
+  historyRows: RunManifest[],
+  compareRows: CompareRow[],
+  replaySamples: BattleReplaySample[],
+): Record<string, unknown> {
+  return {
+    schema_version: "battle_lab_ui_v1",
+    generated_at: result.generated_at,
+    model_id: result.model_id,
+    overall_status: result.overall_status,
+    summary: result.summary,
+    checks: result.checks,
+    outliers: result.outliers.slice(0, 40),
+    builds: result.builds.map((build) => ({
+      id: build.id,
+      kind: build.kind,
+      archetype_id: build.archetype_id,
+      archetype_name: build.archetype_name,
+      level: build.level,
+      power: build.power,
+      power_band: build.power_band,
+      build: build.build,
+    })),
+    near_power_archetypes: result.near_power_archetypes,
+    near_power_matrix: result.near_power_matrix,
+    source_by_archetype: result.source_by_archetype,
+    history: historyRows.map((row) => ({
+      run_id: row.run_id,
+      archived_at: row.archived_at,
+      overall_status: row.overall_status,
+      avg_duration: row.avg_duration,
+      short_rate_percent: row.short_rate_percent,
+      long_rate_percent: row.long_rate_percent,
+      anti_stall_rate_percent: row.anti_stall_rate_percent,
+      near_power_dominance_max_percent: row.near_power_dominance_max_percent,
+      compatibility_status: row.compatibility?.compatibility_status ?? "stale",
+    })),
+    compare: compareRows,
+    replay_index: replaySamples.map((sample) => ({
+      tag: sample.tag,
+      matchup_id: sample.matchup_id,
+      level: sample.level,
+      player_build_id: sample.player_build_id,
+      opponent_build_id: sample.opponent_build_id,
+      player_archetype_id: sample.player_archetype_id,
+      opponent_archetype_id: sample.opponent_archetype_id,
+      duration: sample.duration,
+      winner: sample.winner,
+      reason: sample.reason,
+    })),
+  };
+}
+
+function buildReplaySamples(
+  model: BattleLabModel,
+  result: BattleLabResult,
+  maxSamples = 24,
+): BattleReplaySample[] {
+  const selected = new Map<string, string>();
+  for (const outlier of result.outliers) {
+    if (selected.size >= maxSamples) break;
+    selected.set(outlier.matchup_id, outlier.type);
+  }
+  for (const level of model.levels) {
+    if (selected.size >= maxSamples) break;
+    const representative = result.matchups.find((matchup) =>
+      matchup.level === level && matchup.alerts.length === 0
+    ) ?? result.matchups.find((matchup) =>
+      matchup.level === level
+    );
+    if (representative !== undefined) {
+      selected.set(representative.id, `level_${level}_representative`);
+    }
+  }
+
+  const buildsById = new Map(result.builds.map((build) => [build.id, build]));
+  const samples: BattleReplaySample[] = [];
+  for (const [matchupId, tag] of selected.entries()) {
+    const matchup = result.matchups.find((row) => row.id === matchupId);
+    if (matchup === undefined) continue;
+    const player = buildsById.get(matchup.player_build_id);
+    const opponent = buildsById.get(matchup.opponent_build_id);
+    if (player === undefined || opponent === undefined) continue;
+    const simulation = simulateFirstSliceBattle({
+      battleId: matchup.id,
+      seed: matchup.seed,
+      player: player.build,
+      opponent: opponent.build,
+    });
+    samples.push({
+      tag,
+      matchup_id: matchup.id,
+      seed: matchup.seed,
+      level: matchup.level,
+      player_build_id: matchup.player_build_id,
+      opponent_build_id: matchup.opponent_build_id,
+      player_archetype_id: matchup.player_archetype_id,
+      opponent_archetype_id: matchup.opponent_archetype_id,
+      player_power: matchup.player_power,
+      opponent_power: matchup.opponent_power,
+      duration: matchup.duration,
+      winner: matchup.winner,
+      reason: matchup.reason,
+      battle_log: simulation.battleLog,
+      rewards: simulation.reward,
+    });
+  }
+  return samples;
 }
 
 function renderHtml(
@@ -2163,6 +2580,185 @@ function compareNumber(
     current: `${round(current, 2)}${suffix}`,
     delta: `${sign}${delta}${suffix}`,
   };
+}
+
+function validateBridgeBuild(
+  value: unknown,
+  fieldName: string,
+): CombatantBuild {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error(`${fieldName} must be an object`);
+  }
+  const build = value as CombatantBuild;
+  const errors: string[] = [];
+  const level = numberValue(build.level, 0);
+  const weaponLevel = numberValue(build.weaponLevel, 0);
+  const weaponQualityTier = numberValue(build.weaponQualityTier, -1);
+  if (stringValue(build.id) === "") errors.push("id is required");
+  if (stringValue(build.displayName) === "") {
+    errors.push("displayName is required");
+  }
+  if (level < 1 || level > 40) errors.push("level must be 1-40");
+  if (weaponLevel < 1 || weaponLevel > level) {
+    errors.push("weaponLevel must be 1..level");
+  }
+  if (weaponQualityTier < 0 || weaponQualityTier > 4) {
+    errors.push("weaponQualityTier must be 0-4");
+  }
+  if (!Array.isArray(build.spellIds)) {
+    errors.push("spellIds must be an array");
+  } else {
+    const allowed = allowedSpellIds(level);
+    const uniqueSpells = unique(
+      build.spellIds.map((spellId) => String(spellId)),
+    );
+    if (uniqueSpells.length !== build.spellIds.length) {
+      errors.push("spellIds must not include duplicates");
+    }
+    if (build.spellIds.length > maxSpellSlots(level)) {
+      errors.push("spellIds exceeds unlocked slots");
+    }
+    for (const spellId of build.spellIds) {
+      if (!allowed.includes(String(spellId))) {
+        errors.push(`spell ${spellId} is locked at level ${level}`);
+      }
+      const spellLevel = numberValue(build.spellLevels?.[spellId], 0);
+      if (spellLevel < 1 || spellLevel > level) {
+        errors.push(`spell ${spellId} level must be 1..level`);
+      }
+    }
+  }
+  if (build.passiveId !== undefined) {
+    if (level < 10) errors.push("passive is locked before level 10");
+    if (!PASSIVE_IDS.includes(String(build.passiveId))) {
+      errors.push(`unknown passive ${build.passiveId}`);
+    }
+    const passiveLevel = numberValue(build.passiveLevel, 0);
+    if (passiveLevel < 1 || passiveLevel > level) {
+      errors.push("passiveLevel must be 1..level");
+    }
+  }
+  if (build.petId !== undefined) {
+    if (level < 15) errors.push("pet is locked before level 15");
+    if (!PET_IDS.includes(String(build.petId))) {
+      errors.push(`unknown pet ${build.petId}`);
+    }
+    const petLevel = numberValue(build.petLevel, 0);
+    if (petLevel < 1 || petLevel > level) {
+      errors.push("petLevel must be 1..level");
+    }
+  }
+  if (errors.length > 0) {
+    throw new Error(`${fieldName} invalid: ${errors.join("; ")}`);
+  }
+  return {
+    id: String(build.id),
+    displayName: String(build.displayName),
+    level,
+    weaponLevel,
+    weaponQualityTier,
+    spellIds: build.spellIds.map((spellId) => String(spellId)),
+    spellLevels: Object.fromEntries(
+      build.spellIds.map((spellId) => [
+        String(spellId),
+        numberValue(build.spellLevels?.[spellId], level),
+      ]),
+    ),
+    passiveId: build.passiveId === undefined
+      ? undefined
+      : String(build.passiveId),
+    passiveLevel: build.passiveId === undefined
+      ? undefined
+      : numberValue(build.passiveLevel, level),
+    petId: build.petId === undefined ? undefined : String(build.petId),
+    petLevel: build.petId === undefined
+      ? undefined
+      : numberValue(build.petLevel, level),
+  };
+}
+
+function customLabBuild(
+  model: BattleLabModel,
+  build: CombatantBuild,
+  fallbackId: string,
+): LabBuild {
+  const power = calculatePower(build);
+  return {
+    id: build.id || fallbackId,
+    kind: "fixed",
+    archetype_id: "custom",
+    archetype_name: "Custom",
+    level: build.level,
+    power,
+    power_band: classifyPowerBand(power, model.power_bands),
+    seed: `custom:${build.id || fallbackId}`,
+    build,
+  };
+}
+
+async function buildCompatibilitySnapshot(
+  projectRoot: URL,
+  model: BattleLabModel,
+): Promise<CompatibilitySnapshot> {
+  return {
+    simulator_hash: shortHash(
+      await readTextIfExists(
+        new URL("server/functions/_shared/battle_simulator.ts", projectRoot),
+      ),
+    ),
+    content_hash: shortHash(await readDefinitionsDigest(projectRoot)),
+    model_hash: shortHash(JSON.stringify(model)),
+    battle_log_schema: "battle_log_v1",
+    compatibility_status: "current",
+  };
+}
+
+async function readDefinitionsDigest(projectRoot: URL): Promise<string> {
+  const definitionsUrl = new URL("data/definitions/", projectRoot);
+  const chunks: string[] = [];
+  for await (const entry of Deno.readDir(definitionsUrl)) {
+    if (entry.isFile && entry.name.endsWith(".json")) {
+      const fileUrl = new URL(entry.name, definitionsUrl);
+      chunks.push(`${entry.name}:${await Deno.readTextFile(fileUrl)}`);
+    }
+  }
+  return chunks.sort().join("\n");
+}
+
+async function readTextIfExists(url: URL): Promise<string> {
+  try {
+    return await Deno.readTextFile(url);
+  } catch (error) {
+    if (error instanceof Deno.errors.NotFound) return "";
+    throw error;
+  }
+}
+
+function shortHash(value: string): string {
+  return hashString(value).toString(16).padStart(8, "0");
+}
+
+function sanitizeRunId(value: string): string {
+  return value.replace(/[^a-zA-Z0-9_.-]/g, "_").slice(0, 96) || "run";
+}
+
+function fileUrlFromPath(path: string): URL {
+  if (path.startsWith("file:")) {
+    return new URL(path);
+  }
+  const normalized = path.replaceAll("\\", "/");
+  if (/^[a-zA-Z]:\//.test(normalized)) {
+    return new URL(`file:///${normalized}`);
+  }
+  return new URL(
+    normalized,
+    new URL(`${Deno.cwd().replaceAll("\\", "/")}/`, "file:///"),
+  );
+}
+
+function localPathFromUrl(url: URL): string {
+  const path = decodeURIComponent(url.pathname);
+  return /^\/[a-zA-Z]:\//.test(path) ? path.slice(1) : path;
 }
 
 async function readGitHead(projectRoot: URL): Promise<string> {

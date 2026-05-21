@@ -1,0 +1,3848 @@
+{
+  "schema_version": "battle_lab_ui_v1",
+  "generated_at": "deterministic-local",
+  "model_id": "draxos_mobile_battle_lab_v1",
+  "overall_status": "REVIEW",
+  "summary": {
+    "total_battles": 1680,
+    "total_builds": 112,
+    "avg_duration": 18.91,
+    "median_duration": 18.7,
+    "short_rate_percent": 0,
+    "long_rate_percent": 0,
+    "anti_stall_rate_percent": 0.12,
+    "raw_stress_dominance_max_percent": 77.62,
+    "near_power_dominance_max_percent": 70.45,
+    "damage_by_source": {
+      "weapon": 3738690,
+      "spell": 585920,
+      "dot": 156045,
+      "pet": 126596,
+      "summon": 75806,
+      "system": 0
+    },
+    "damage_by_type": {
+      "magico": 4097953,
+      "fogo": 211252,
+      "gelo": 77710,
+      "veneno": 84063,
+      "choque": 81818,
+      "morte": 82418,
+      "sangramento": 47843,
+      "none": 0
+    },
+    "top_notes": [
+      "REVIEW: near_power_dominance observed 70.45% max / 25% min, target max <= 65%.",
+      "Critical outlier: RAW_STRESS_DOMINANCE on pet_handler.",
+      "Review first matchup: STOMP L40_M0036 (L40_elemental_mixer_fixed vs L40_starter_wand_r1)."
+    ]
+  },
+  "checks": [
+    {
+      "id": "average_duration_target",
+      "status": "PASS",
+      "observed": "18.91s",
+      "target": "18-28s",
+      "note": "Average battle duration should sit near the target playtest window."
+    },
+    {
+      "id": "short_battle_rate",
+      "status": "PASS",
+      "observed": "0%",
+      "target": "<= 20%",
+      "note": "Too many short battles suggest burst or low HP scaling issues."
+    },
+    {
+      "id": "long_battle_rate",
+      "status": "PASS",
+      "observed": "0%",
+      "target": "<= 20%",
+      "note": "Too many long battles suggest defensive scaling or low damage pressure."
+    },
+    {
+      "id": "anti_stall_rate",
+      "status": "PASS",
+      "observed": "0.12%",
+      "target": "<= 5%",
+      "note": "Anti-stall should be rare in normal same-level matchups."
+    },
+    {
+      "id": "near_power_dominance",
+      "status": "REVIEW",
+      "observed": "70.45% max / 25% min",
+      "target": "max <= 65%",
+      "note": "Dominance uses <= 20% power delta and excludes same-archetype mirrors."
+    },
+    {
+      "id": "level_coverage",
+      "status": "PASS",
+      "observed": "7/7",
+      "target": "7/7",
+      "note": "Every configured level checkpoint should produce matchups."
+    }
+  ],
+  "outliers": [
+    {
+      "type": "RAW_STRESS_DOMINANCE",
+      "severity": "CRITICAL",
+      "matchup_id": "",
+      "seed": "",
+      "player_build_id": "pet_handler",
+      "opponent_build_id": "all",
+      "level": "all",
+      "power": "",
+      "duration": "19.37",
+      "winner": "pet_handler",
+      "reason": "win_rate=77.62%"
+    },
+    {
+      "type": "RAW_STRESS_DOMINANCE",
+      "severity": "CRITICAL",
+      "matchup_id": "",
+      "seed": "",
+      "player_build_id": "burst_caster",
+      "opponent_build_id": "all",
+      "level": "all",
+      "power": "",
+      "duration": "17.46",
+      "winner": "burst_caster",
+      "reason": "win_rate=76.67%"
+    },
+    {
+      "type": "STOMP",
+      "severity": "REVIEW",
+      "matchup_id": "L40_M0036",
+      "seed": "battle_lab:draxos_mobile_battle_lab_v1:L40_M0036:battle_lab_alpha_20260521:elemental_mixer:L40:fixed:0:battle_lab_alpha_20260521:starter_wand:L40:random:1",
+      "player_build_id": "L40_elemental_mixer_fixed",
+      "opponent_build_id": "L40_starter_wand_r1",
+      "level": "40",
+      "power": "5740 vs 2860",
+      "duration": "16.7",
+      "winner": "elemental_mixer",
+      "reason": "combatant_defeated"
+    },
+    {
+      "type": "ANTI_STALL",
+      "severity": "REVIEW",
+      "matchup_id": "L40_M0211",
+      "seed": "battle_lab:draxos_mobile_battle_lab_v1:L40_M0211:battle_lab_alpha_20260521:defensive_caster:L40:fixed:0:battle_lab_alpha_20260521:defensive_caster:L40:random:1",
+      "player_build_id": "L40_defensive_caster_fixed",
+      "opponent_build_id": "L40_defensive_caster_r1",
+      "level": "40",
+      "power": "5540 vs 5700",
+      "duration": "31.2",
+      "winner": "defensive_caster",
+      "reason": "combatant_defeated"
+    },
+    {
+      "type": "ANTI_STALL",
+      "severity": "REVIEW",
+      "matchup_id": "L40_M0212",
+      "seed": "battle_lab:draxos_mobile_battle_lab_v1:L40_M0212:battle_lab_alpha_20260521:defensive_caster:L40:random:1:battle_lab_alpha_20260521:defensive_caster:L40:fixed:0",
+      "player_build_id": "L40_defensive_caster_r1",
+      "opponent_build_id": "L40_defensive_caster_fixed",
+      "level": "40",
+      "power": "5700 vs 5540",
+      "duration": "31.2",
+      "winner": "defensive_caster",
+      "reason": "combatant_defeated"
+    },
+    {
+      "type": "RAW_STRESS_DOMINANCE",
+      "severity": "REVIEW",
+      "matchup_id": "",
+      "seed": "",
+      "player_build_id": "elemental_mixer",
+      "opponent_build_id": "all",
+      "level": "all",
+      "power": "",
+      "duration": "18.51",
+      "winner": "elemental_mixer",
+      "reason": "win_rate=66.67%"
+    },
+    {
+      "type": "RAW_STRESS_DOMINANCE",
+      "severity": "REVIEW",
+      "matchup_id": "",
+      "seed": "",
+      "player_build_id": "summoner",
+      "opponent_build_id": "all",
+      "level": "all",
+      "power": "",
+      "duration": "18.04",
+      "winner": "summoner",
+      "reason": "win_rate=66.67%"
+    },
+    {
+      "type": "NEAR_POWER_DOMINANCE",
+      "severity": "REVIEW",
+      "matchup_id": "",
+      "seed": "",
+      "player_build_id": "pet_handler",
+      "opponent_build_id": "near_power_delta_20%",
+      "level": "all",
+      "power": "near_power",
+      "duration": "19.57",
+      "winner": "pet_handler",
+      "reason": "win_rate=70.45%"
+    }
+  ],
+  "builds": [
+    {
+      "id": "L1_starter_wand_fixed",
+      "kind": "fixed",
+      "archetype_id": "starter_wand",
+      "archetype_name": "Starter Wand",
+      "level": 1,
+      "power": 80,
+      "power_band": "band_001",
+      "build": {
+        "id": "L1_starter_wand_fixed",
+        "displayName": "Starter Wand L1",
+        "level": 1,
+        "weaponLevel": 1,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L1_starter_wand_r1",
+      "kind": "random",
+      "archetype_id": "starter_wand",
+      "archetype_name": "Starter Wand",
+      "level": 1,
+      "power": 80,
+      "power_band": "band_001",
+      "build": {
+        "id": "L1_starter_wand_r1",
+        "displayName": "Starter Wand L1",
+        "level": 1,
+        "weaponLevel": 1,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L1_cosmic_apprentice_fixed",
+      "kind": "fixed",
+      "archetype_id": "cosmic_apprentice",
+      "archetype_name": "Cosmic Apprentice",
+      "level": 1,
+      "power": 80,
+      "power_band": "band_001",
+      "build": {
+        "id": "L1_cosmic_apprentice_fixed",
+        "displayName": "Cosmic Apprentice L1",
+        "level": 1,
+        "weaponLevel": 1,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L1_cosmic_apprentice_r1",
+      "kind": "random",
+      "archetype_id": "cosmic_apprentice",
+      "archetype_name": "Cosmic Apprentice",
+      "level": 1,
+      "power": 80,
+      "power_band": "band_001",
+      "build": {
+        "id": "L1_cosmic_apprentice_r1",
+        "displayName": "Cosmic Apprentice L1",
+        "level": 1,
+        "weaponLevel": 1,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L1_elemental_mixer_fixed",
+      "kind": "fixed",
+      "archetype_id": "elemental_mixer",
+      "archetype_name": "Elemental Mixer",
+      "level": 1,
+      "power": 80,
+      "power_band": "band_001",
+      "build": {
+        "id": "L1_elemental_mixer_fixed",
+        "displayName": "Elemental Mixer L1",
+        "level": 1,
+        "weaponLevel": 1,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L1_elemental_mixer_r1",
+      "kind": "random",
+      "archetype_id": "elemental_mixer",
+      "archetype_name": "Elemental Mixer",
+      "level": 1,
+      "power": 105,
+      "power_band": "band_001",
+      "build": {
+        "id": "L1_elemental_mixer_r1",
+        "displayName": "Elemental Mixer L1",
+        "level": 1,
+        "weaponLevel": 1,
+        "weaponQualityTier": 1,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L1_pet_handler_fixed",
+      "kind": "fixed",
+      "archetype_id": "pet_handler",
+      "archetype_name": "Pet Handler",
+      "level": 1,
+      "power": 80,
+      "power_band": "band_001",
+      "build": {
+        "id": "L1_pet_handler_fixed",
+        "displayName": "Pet Handler L1",
+        "level": 1,
+        "weaponLevel": 1,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L1_pet_handler_r1",
+      "kind": "random",
+      "archetype_id": "pet_handler",
+      "archetype_name": "Pet Handler",
+      "level": 1,
+      "power": 80,
+      "power_band": "band_001",
+      "build": {
+        "id": "L1_pet_handler_r1",
+        "displayName": "Pet Handler L1",
+        "level": 1,
+        "weaponLevel": 1,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L1_summoner_fixed",
+      "kind": "fixed",
+      "archetype_id": "summoner",
+      "archetype_name": "Summoner",
+      "level": 1,
+      "power": 105,
+      "power_band": "band_001",
+      "build": {
+        "id": "L1_summoner_fixed",
+        "displayName": "Summoner L1",
+        "level": 1,
+        "weaponLevel": 1,
+        "weaponQualityTier": 1,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L1_summoner_r1",
+      "kind": "random",
+      "archetype_id": "summoner",
+      "archetype_name": "Summoner",
+      "level": 1,
+      "power": 130,
+      "power_band": "band_001",
+      "build": {
+        "id": "L1_summoner_r1",
+        "displayName": "Summoner L1",
+        "level": 1,
+        "weaponLevel": 1,
+        "weaponQualityTier": 2,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L1_defensive_caster_fixed",
+      "kind": "fixed",
+      "archetype_id": "defensive_caster",
+      "archetype_name": "Defensive Caster",
+      "level": 1,
+      "power": 80,
+      "power_band": "band_001",
+      "build": {
+        "id": "L1_defensive_caster_fixed",
+        "displayName": "Defensive Caster L1",
+        "level": 1,
+        "weaponLevel": 1,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L1_defensive_caster_r1",
+      "kind": "random",
+      "archetype_id": "defensive_caster",
+      "archetype_name": "Defensive Caster",
+      "level": 1,
+      "power": 105,
+      "power_band": "band_001",
+      "build": {
+        "id": "L1_defensive_caster_r1",
+        "displayName": "Defensive Caster L1",
+        "level": 1,
+        "weaponLevel": 1,
+        "weaponQualityTier": 1,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L1_dot_pressure_fixed",
+      "kind": "fixed",
+      "archetype_id": "dot_pressure",
+      "archetype_name": "DoT Pressure",
+      "level": 1,
+      "power": 80,
+      "power_band": "band_001",
+      "build": {
+        "id": "L1_dot_pressure_fixed",
+        "displayName": "DoT Pressure L1",
+        "level": 1,
+        "weaponLevel": 1,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L1_dot_pressure_r1",
+      "kind": "random",
+      "archetype_id": "dot_pressure",
+      "archetype_name": "DoT Pressure",
+      "level": 1,
+      "power": 80,
+      "power_band": "band_001",
+      "build": {
+        "id": "L1_dot_pressure_r1",
+        "displayName": "DoT Pressure L1",
+        "level": 1,
+        "weaponLevel": 1,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L1_burst_caster_fixed",
+      "kind": "fixed",
+      "archetype_id": "burst_caster",
+      "archetype_name": "Burst Caster",
+      "level": 1,
+      "power": 80,
+      "power_band": "band_001",
+      "build": {
+        "id": "L1_burst_caster_fixed",
+        "displayName": "Burst Caster L1",
+        "level": 1,
+        "weaponLevel": 1,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L1_burst_caster_r1",
+      "kind": "random",
+      "archetype_id": "burst_caster",
+      "archetype_name": "Burst Caster",
+      "level": 1,
+      "power": 105,
+      "power_band": "band_001",
+      "build": {
+        "id": "L1_burst_caster_r1",
+        "displayName": "Burst Caster L1",
+        "level": 1,
+        "weaponLevel": 1,
+        "weaponQualityTier": 1,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L3_starter_wand_fixed",
+      "kind": "fixed",
+      "archetype_id": "starter_wand",
+      "archetype_name": "Starter Wand",
+      "level": 3,
+      "power": 210,
+      "power_band": "band_001",
+      "build": {
+        "id": "L3_starter_wand_fixed",
+        "displayName": "Starter Wand L3",
+        "level": 3,
+        "weaponLevel": 2,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L3_starter_wand_r1",
+      "kind": "random",
+      "archetype_id": "starter_wand",
+      "archetype_name": "Starter Wand",
+      "level": 3,
+      "power": 240,
+      "power_band": "band_001",
+      "build": {
+        "id": "L3_starter_wand_r1",
+        "displayName": "Starter Wand L3",
+        "level": 3,
+        "weaponLevel": 3,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L3_cosmic_apprentice_fixed",
+      "kind": "fixed",
+      "archetype_id": "cosmic_apprentice",
+      "archetype_name": "Cosmic Apprentice",
+      "level": 3,
+      "power": 300,
+      "power_band": "band_002",
+      "build": {
+        "id": "L3_cosmic_apprentice_fixed",
+        "displayName": "Cosmic Apprentice L3",
+        "level": 3,
+        "weaponLevel": 3,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 3
+        }
+      }
+    },
+    {
+      "id": "L3_cosmic_apprentice_r1",
+      "kind": "random",
+      "archetype_id": "cosmic_apprentice",
+      "archetype_name": "Cosmic Apprentice",
+      "level": 3,
+      "power": 270,
+      "power_band": "band_002",
+      "build": {
+        "id": "L3_cosmic_apprentice_r1",
+        "displayName": "Cosmic Apprentice L3",
+        "level": 3,
+        "weaponLevel": 2,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 3
+        }
+      }
+    },
+    {
+      "id": "L3_elemental_mixer_fixed",
+      "kind": "fixed",
+      "archetype_id": "elemental_mixer",
+      "archetype_name": "Elemental Mixer",
+      "level": 3,
+      "power": 280,
+      "power_band": "band_002",
+      "build": {
+        "id": "L3_elemental_mixer_fixed",
+        "displayName": "Elemental Mixer L3",
+        "level": 3,
+        "weaponLevel": 3,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 2
+        }
+      }
+    },
+    {
+      "id": "L3_elemental_mixer_r1",
+      "kind": "random",
+      "archetype_id": "elemental_mixer",
+      "archetype_name": "Elemental Mixer",
+      "level": 3,
+      "power": 325,
+      "power_band": "band_002",
+      "build": {
+        "id": "L3_elemental_mixer_r1",
+        "displayName": "Elemental Mixer L3",
+        "level": 3,
+        "weaponLevel": 3,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 3
+        }
+      }
+    },
+    {
+      "id": "L3_pet_handler_fixed",
+      "kind": "fixed",
+      "archetype_id": "pet_handler",
+      "archetype_name": "Pet Handler",
+      "level": 3,
+      "power": 280,
+      "power_band": "band_002",
+      "build": {
+        "id": "L3_pet_handler_fixed",
+        "displayName": "Pet Handler L3",
+        "level": 3,
+        "weaponLevel": 3,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 2
+        }
+      }
+    },
+    {
+      "id": "L3_pet_handler_r1",
+      "kind": "random",
+      "archetype_id": "pet_handler",
+      "archetype_name": "Pet Handler",
+      "level": 3,
+      "power": 250,
+      "power_band": "band_001",
+      "build": {
+        "id": "L3_pet_handler_r1",
+        "displayName": "Pet Handler L3",
+        "level": 3,
+        "weaponLevel": 2,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 2
+        }
+      }
+    },
+    {
+      "id": "L3_summoner_fixed",
+      "kind": "fixed",
+      "archetype_id": "summoner",
+      "archetype_name": "Summoner",
+      "level": 3,
+      "power": 295,
+      "power_band": "band_002",
+      "build": {
+        "id": "L3_summoner_fixed",
+        "displayName": "Summoner L3",
+        "level": 3,
+        "weaponLevel": 2,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 3
+        }
+      }
+    },
+    {
+      "id": "L3_summoner_r1",
+      "kind": "random",
+      "archetype_id": "summoner",
+      "archetype_name": "Summoner",
+      "level": 3,
+      "power": 320,
+      "power_band": "band_002",
+      "build": {
+        "id": "L3_summoner_r1",
+        "displayName": "Summoner L3",
+        "level": 3,
+        "weaponLevel": 2,
+        "weaponQualityTier": 2,
+        "spellIds": [
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 3
+        }
+      }
+    },
+    {
+      "id": "L3_defensive_caster_fixed",
+      "kind": "fixed",
+      "archetype_id": "defensive_caster",
+      "archetype_name": "Defensive Caster",
+      "level": 3,
+      "power": 250,
+      "power_band": "band_001",
+      "build": {
+        "id": "L3_defensive_caster_fixed",
+        "displayName": "Defensive Caster L3",
+        "level": 3,
+        "weaponLevel": 2,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 2
+        }
+      }
+    },
+    {
+      "id": "L3_defensive_caster_r1",
+      "kind": "random",
+      "archetype_id": "defensive_caster",
+      "archetype_name": "Defensive Caster",
+      "level": 3,
+      "power": 250,
+      "power_band": "band_001",
+      "build": {
+        "id": "L3_defensive_caster_r1",
+        "displayName": "Defensive Caster L3",
+        "level": 3,
+        "weaponLevel": 2,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 2
+        }
+      }
+    },
+    {
+      "id": "L3_dot_pressure_fixed",
+      "kind": "fixed",
+      "archetype_id": "dot_pressure",
+      "archetype_name": "DoT Pressure",
+      "level": 3,
+      "power": 210,
+      "power_band": "band_001",
+      "build": {
+        "id": "L3_dot_pressure_fixed",
+        "displayName": "DoT Pressure L3",
+        "level": 3,
+        "weaponLevel": 2,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L3_dot_pressure_r1",
+      "kind": "random",
+      "archetype_id": "dot_pressure",
+      "archetype_name": "DoT Pressure",
+      "level": 3,
+      "power": 295,
+      "power_band": "band_002",
+      "build": {
+        "id": "L3_dot_pressure_r1",
+        "displayName": "DoT Pressure L3",
+        "level": 3,
+        "weaponLevel": 2,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 3
+        }
+      }
+    },
+    {
+      "id": "L3_burst_caster_fixed",
+      "kind": "fixed",
+      "archetype_id": "burst_caster",
+      "archetype_name": "Burst Caster",
+      "level": 3,
+      "power": 300,
+      "power_band": "band_002",
+      "build": {
+        "id": "L3_burst_caster_fixed",
+        "displayName": "Burst Caster L3",
+        "level": 3,
+        "weaponLevel": 3,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 3
+        }
+      }
+    },
+    {
+      "id": "L3_burst_caster_r1",
+      "kind": "random",
+      "archetype_id": "burst_caster",
+      "archetype_name": "Burst Caster",
+      "level": 3,
+      "power": 270,
+      "power_band": "band_002",
+      "build": {
+        "id": "L3_burst_caster_r1",
+        "displayName": "Burst Caster L3",
+        "level": 3,
+        "weaponLevel": 2,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 3
+        }
+      }
+    },
+    {
+      "id": "L7_starter_wand_fixed",
+      "kind": "fixed",
+      "archetype_id": "starter_wand",
+      "archetype_name": "Starter Wand",
+      "level": 7,
+      "power": 530,
+      "power_band": "band_002",
+      "build": {
+        "id": "L7_starter_wand_fixed",
+        "displayName": "Starter Wand L7",
+        "level": 7,
+        "weaponLevel": 6,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L7_starter_wand_r1",
+      "kind": "random",
+      "archetype_id": "starter_wand",
+      "archetype_name": "Starter Wand",
+      "level": 7,
+      "power": 530,
+      "power_band": "band_002",
+      "build": {
+        "id": "L7_starter_wand_r1",
+        "displayName": "Starter Wand L7",
+        "level": 7,
+        "weaponLevel": 6,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L7_cosmic_apprentice_fixed",
+      "kind": "fixed",
+      "archetype_id": "cosmic_apprentice",
+      "archetype_name": "Cosmic Apprentice",
+      "level": 7,
+      "power": 675,
+      "power_band": "band_003",
+      "build": {
+        "id": "L7_cosmic_apprentice_fixed",
+        "displayName": "Cosmic Apprentice L7",
+        "level": 7,
+        "weaponLevel": 6,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 6
+        }
+      }
+    },
+    {
+      "id": "L7_cosmic_apprentice_r1",
+      "kind": "random",
+      "archetype_id": "cosmic_apprentice",
+      "archetype_name": "Cosmic Apprentice",
+      "level": 7,
+      "power": 630,
+      "power_band": "band_003",
+      "build": {
+        "id": "L7_cosmic_apprentice_r1",
+        "displayName": "Cosmic Apprentice L7",
+        "level": 7,
+        "weaponLevel": 6,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "acender"
+        ],
+        "spellLevels": {
+          "acender": 5
+        }
+      }
+    },
+    {
+      "id": "L7_elemental_mixer_fixed",
+      "kind": "fixed",
+      "archetype_id": "elemental_mixer",
+      "archetype_name": "Elemental Mixer",
+      "level": 7,
+      "power": 795,
+      "power_band": "band_003",
+      "build": {
+        "id": "L7_elemental_mixer_fixed",
+        "displayName": "Elemental Mixer L7",
+        "level": 7,
+        "weaponLevel": 6,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 6,
+          "acender": 6
+        }
+      }
+    },
+    {
+      "id": "L7_elemental_mixer_r1",
+      "kind": "random",
+      "archetype_id": "elemental_mixer",
+      "archetype_name": "Elemental Mixer",
+      "level": 7,
+      "power": 620,
+      "power_band": "band_003",
+      "build": {
+        "id": "L7_elemental_mixer_r1",
+        "displayName": "Elemental Mixer L7",
+        "level": 7,
+        "weaponLevel": 5,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio"
+        ],
+        "spellLevels": {
+          "raio": 6
+        }
+      }
+    },
+    {
+      "id": "L7_pet_handler_fixed",
+      "kind": "fixed",
+      "archetype_id": "pet_handler",
+      "archetype_name": "Pet Handler",
+      "level": 7,
+      "power": 795,
+      "power_band": "band_003",
+      "build": {
+        "id": "L7_pet_handler_fixed",
+        "displayName": "Pet Handler L7",
+        "level": 7,
+        "weaponLevel": 6,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "raio_cosmico",
+          "congelar"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 6,
+          "congelar": 6
+        }
+      }
+    },
+    {
+      "id": "L7_pet_handler_r1",
+      "kind": "random",
+      "archetype_id": "pet_handler",
+      "archetype_name": "Pet Handler",
+      "level": 7,
+      "power": 650,
+      "power_band": "band_003",
+      "build": {
+        "id": "L7_pet_handler_r1",
+        "displayName": "Pet Handler L7",
+        "level": 7,
+        "weaponLevel": 6,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "congelar"
+        ],
+        "spellLevels": {
+          "congelar": 6
+        }
+      }
+    },
+    {
+      "id": "L7_summoner_fixed",
+      "kind": "fixed",
+      "archetype_id": "summoner",
+      "archetype_name": "Summoner",
+      "level": 7,
+      "power": 700,
+      "power_band": "band_003",
+      "build": {
+        "id": "L7_summoner_fixed",
+        "displayName": "Summoner L7",
+        "level": 7,
+        "weaponLevel": 6,
+        "weaponQualityTier": 2,
+        "spellIds": [
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 6
+        }
+      }
+    },
+    {
+      "id": "L7_summoner_r1",
+      "kind": "random",
+      "archetype_id": "summoner",
+      "archetype_name": "Summoner",
+      "level": 7,
+      "power": 665,
+      "power_band": "band_003",
+      "build": {
+        "id": "L7_summoner_r1",
+        "displayName": "Summoner L7",
+        "level": 7,
+        "weaponLevel": 5,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "envenenar"
+        ],
+        "spellLevels": {
+          "envenenar": 7
+        }
+      }
+    },
+    {
+      "id": "L7_defensive_caster_fixed",
+      "kind": "fixed",
+      "archetype_id": "defensive_caster",
+      "archetype_name": "Defensive Caster",
+      "level": 7,
+      "power": 725,
+      "power_band": "band_003",
+      "build": {
+        "id": "L7_defensive_caster_fixed",
+        "displayName": "Defensive Caster L7",
+        "level": 7,
+        "weaponLevel": 5,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "envenenar",
+          "congelar"
+        ],
+        "spellLevels": {
+          "envenenar": 5,
+          "congelar": 5
+        }
+      }
+    },
+    {
+      "id": "L7_defensive_caster_r1",
+      "kind": "random",
+      "archetype_id": "defensive_caster",
+      "archetype_name": "Defensive Caster",
+      "level": 7,
+      "power": 710,
+      "power_band": "band_003",
+      "build": {
+        "id": "L7_defensive_caster_r1",
+        "displayName": "Defensive Caster L7",
+        "level": 7,
+        "weaponLevel": 4,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "envenenar",
+          "raio"
+        ],
+        "spellLevels": {
+          "envenenar": 6,
+          "raio": 6
+        }
+      }
+    },
+    {
+      "id": "L7_dot_pressure_fixed",
+      "kind": "fixed",
+      "archetype_id": "dot_pressure",
+      "archetype_name": "DoT Pressure",
+      "level": 7,
+      "power": 805,
+      "power_band": "band_003",
+      "build": {
+        "id": "L7_dot_pressure_fixed",
+        "displayName": "DoT Pressure L7",
+        "level": 7,
+        "weaponLevel": 5,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "envenenar",
+          "acender"
+        ],
+        "spellLevels": {
+          "envenenar": 7,
+          "acender": 7
+        }
+      }
+    },
+    {
+      "id": "L7_dot_pressure_r1",
+      "kind": "random",
+      "archetype_id": "dot_pressure",
+      "archetype_name": "DoT Pressure",
+      "level": 7,
+      "power": 620,
+      "power_band": "band_003",
+      "build": {
+        "id": "L7_dot_pressure_r1",
+        "displayName": "DoT Pressure L7",
+        "level": 7,
+        "weaponLevel": 5,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "envenenar"
+        ],
+        "spellLevels": {
+          "envenenar": 6
+        }
+      }
+    },
+    {
+      "id": "L7_burst_caster_fixed",
+      "kind": "fixed",
+      "archetype_id": "burst_caster",
+      "archetype_name": "Burst Caster",
+      "level": 7,
+      "power": 835,
+      "power_band": "band_003",
+      "build": {
+        "id": "L7_burst_caster_fixed",
+        "displayName": "Burst Caster L7",
+        "level": 7,
+        "weaponLevel": 6,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 7,
+          "raio_cosmico": 7
+        }
+      }
+    },
+    {
+      "id": "L7_burst_caster_r1",
+      "kind": "random",
+      "archetype_id": "burst_caster",
+      "archetype_name": "Burst Caster",
+      "level": 7,
+      "power": 705,
+      "power_band": "band_003",
+      "build": {
+        "id": "L7_burst_caster_r1",
+        "displayName": "Burst Caster L7",
+        "level": 7,
+        "weaponLevel": 7,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 6
+        }
+      }
+    },
+    {
+      "id": "L10_starter_wand_fixed",
+      "kind": "fixed",
+      "archetype_id": "starter_wand",
+      "archetype_name": "Starter Wand",
+      "level": 10,
+      "power": 740,
+      "power_band": "band_003",
+      "build": {
+        "id": "L10_starter_wand_fixed",
+        "displayName": "Starter Wand L10",
+        "level": 10,
+        "weaponLevel": 8,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L10_starter_wand_r1",
+      "kind": "random",
+      "archetype_id": "starter_wand",
+      "archetype_name": "Starter Wand",
+      "level": 10,
+      "power": 740,
+      "power_band": "band_003",
+      "build": {
+        "id": "L10_starter_wand_r1",
+        "displayName": "Starter Wand L10",
+        "level": 10,
+        "weaponLevel": 8,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L10_cosmic_apprentice_fixed",
+      "kind": "fixed",
+      "archetype_id": "cosmic_apprentice",
+      "archetype_name": "Cosmic Apprentice",
+      "level": 10,
+      "power": 1045,
+      "power_band": "band_003",
+      "build": {
+        "id": "L10_cosmic_apprentice_fixed",
+        "displayName": "Cosmic Apprentice L10",
+        "level": 10,
+        "weaponLevel": 9,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 9
+        },
+        "passiveId": "foco_astral",
+        "passiveLevel": 7
+      }
+    },
+    {
+      "id": "L10_cosmic_apprentice_r1",
+      "kind": "random",
+      "archetype_id": "cosmic_apprentice",
+      "archetype_name": "Cosmic Apprentice",
+      "level": 10,
+      "power": 1035,
+      "power_band": "band_003",
+      "build": {
+        "id": "L10_cosmic_apprentice_r1",
+        "displayName": "Cosmic Apprentice L10",
+        "level": 10,
+        "weaponLevel": 9,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "envenenar"
+        ],
+        "spellLevels": {
+          "envenenar": 8
+        },
+        "passiveId": "escudo",
+        "passiveLevel": 8
+      }
+    },
+    {
+      "id": "L10_elemental_mixer_fixed",
+      "kind": "fixed",
+      "archetype_id": "elemental_mixer",
+      "archetype_name": "Elemental Mixer",
+      "level": 10,
+      "power": 1185,
+      "power_band": "band_003",
+      "build": {
+        "id": "L10_elemental_mixer_fixed",
+        "displayName": "Elemental Mixer L10",
+        "level": 10,
+        "weaponLevel": 9,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 8,
+          "acender": 8
+        },
+        "passiveId": "forca",
+        "passiveLevel": 7
+      }
+    },
+    {
+      "id": "L10_elemental_mixer_r1",
+      "kind": "random",
+      "archetype_id": "elemental_mixer",
+      "archetype_name": "Elemental Mixer",
+      "level": 10,
+      "power": 1060,
+      "power_band": "band_003",
+      "build": {
+        "id": "L10_elemental_mixer_r1",
+        "displayName": "Elemental Mixer L10",
+        "level": 10,
+        "weaponLevel": 7,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "congelar"
+        ],
+        "spellLevels": {
+          "raio": 7,
+          "congelar": 7
+        },
+        "passiveId": "foco_astral",
+        "passiveLevel": 7
+      }
+    },
+    {
+      "id": "L10_pet_handler_fixed",
+      "kind": "fixed",
+      "archetype_id": "pet_handler",
+      "archetype_name": "Pet Handler",
+      "level": 10,
+      "power": 1195,
+      "power_band": "band_003",
+      "build": {
+        "id": "L10_pet_handler_fixed",
+        "displayName": "Pet Handler L10",
+        "level": 10,
+        "weaponLevel": 9,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "raio_cosmico",
+          "congelar"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 8,
+          "congelar": 8
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 8
+      }
+    },
+    {
+      "id": "L10_pet_handler_r1",
+      "kind": "random",
+      "archetype_id": "pet_handler",
+      "archetype_name": "Pet Handler",
+      "level": 10,
+      "power": 1225,
+      "power_band": "band_004",
+      "build": {
+        "id": "L10_pet_handler_r1",
+        "displayName": "Pet Handler L10",
+        "level": 10,
+        "weaponLevel": 9,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 9,
+          "raio_cosmico": 9
+        },
+        "passiveId": "velocidade",
+        "passiveLevel": 7
+      }
+    },
+    {
+      "id": "L10_summoner_fixed",
+      "kind": "fixed",
+      "archetype_id": "summoner",
+      "archetype_name": "Summoner",
+      "level": 10,
+      "power": 1050,
+      "power_band": "band_003",
+      "build": {
+        "id": "L10_summoner_fixed",
+        "displayName": "Summoner L10",
+        "level": 10,
+        "weaponLevel": 8,
+        "weaponQualityTier": 2,
+        "spellIds": [
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 9
+        },
+        "passiveId": "foco_astral",
+        "passiveLevel": 8
+      }
+    },
+    {
+      "id": "L10_summoner_r1",
+      "kind": "random",
+      "archetype_id": "summoner",
+      "archetype_name": "Summoner",
+      "level": 10,
+      "power": 1055,
+      "power_band": "band_003",
+      "build": {
+        "id": "L10_summoner_r1",
+        "displayName": "Summoner L10",
+        "level": 10,
+        "weaponLevel": 9,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "acender"
+        ],
+        "spellLevels": {
+          "acender": 9
+        },
+        "passiveId": "velocidade",
+        "passiveLevel": 8
+      }
+    },
+    {
+      "id": "L10_defensive_caster_fixed",
+      "kind": "fixed",
+      "archetype_id": "defensive_caster",
+      "archetype_name": "Defensive Caster",
+      "level": 10,
+      "power": 1155,
+      "power_band": "band_003",
+      "build": {
+        "id": "L10_defensive_caster_fixed",
+        "displayName": "Defensive Caster L10",
+        "level": 10,
+        "weaponLevel": 7,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "envenenar",
+          "congelar"
+        ],
+        "spellLevels": {
+          "envenenar": 8,
+          "congelar": 8
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 10
+      }
+    },
+    {
+      "id": "L10_defensive_caster_r1",
+      "kind": "random",
+      "archetype_id": "defensive_caster",
+      "archetype_name": "Defensive Caster",
+      "level": 10,
+      "power": 1060,
+      "power_band": "band_003",
+      "build": {
+        "id": "L10_defensive_caster_r1",
+        "displayName": "Defensive Caster L10",
+        "level": 10,
+        "weaponLevel": 5,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio": 8,
+          "acender": 8
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 9
+      }
+    },
+    {
+      "id": "L10_dot_pressure_fixed",
+      "kind": "fixed",
+      "archetype_id": "dot_pressure",
+      "archetype_name": "DoT Pressure",
+      "level": 10,
+      "power": 1245,
+      "power_band": "band_004",
+      "build": {
+        "id": "L10_dot_pressure_fixed",
+        "displayName": "DoT Pressure L10",
+        "level": 10,
+        "weaponLevel": 8,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "envenenar",
+          "acender"
+        ],
+        "spellLevels": {
+          "envenenar": 10,
+          "acender": 10
+        },
+        "passiveId": "velocidade",
+        "passiveLevel": 8
+      }
+    },
+    {
+      "id": "L10_dot_pressure_r1",
+      "kind": "random",
+      "archetype_id": "dot_pressure",
+      "archetype_name": "DoT Pressure",
+      "level": 10,
+      "power": 995,
+      "power_band": "band_003",
+      "build": {
+        "id": "L10_dot_pressure_r1",
+        "displayName": "DoT Pressure L10",
+        "level": 10,
+        "weaponLevel": 7,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 9
+        },
+        "passiveId": "velocidade",
+        "passiveLevel": 8
+      }
+    },
+    {
+      "id": "L10_burst_caster_fixed",
+      "kind": "fixed",
+      "archetype_id": "burst_caster",
+      "archetype_name": "Burst Caster",
+      "level": 10,
+      "power": 1275,
+      "power_band": "band_004",
+      "build": {
+        "id": "L10_burst_caster_fixed",
+        "displayName": "Burst Caster L10",
+        "level": 10,
+        "weaponLevel": 9,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 10,
+          "raio_cosmico": 10
+        },
+        "passiveId": "forca",
+        "passiveLevel": 8
+      }
+    },
+    {
+      "id": "L10_burst_caster_r1",
+      "kind": "random",
+      "archetype_id": "burst_caster",
+      "archetype_name": "Burst Caster",
+      "level": 10,
+      "power": 1340,
+      "power_band": "band_004",
+      "build": {
+        "id": "L10_burst_caster_r1",
+        "displayName": "Burst Caster L10",
+        "level": 10,
+        "weaponLevel": 10,
+        "weaponQualityTier": 2,
+        "spellIds": [
+          "envenenar",
+          "raio"
+        ],
+        "spellLevels": {
+          "envenenar": 10,
+          "raio": 10
+        },
+        "passiveId": "vampirismo",
+        "passiveLevel": 9
+      }
+    },
+    {
+      "id": "L15_starter_wand_fixed",
+      "kind": "fixed",
+      "archetype_id": "starter_wand",
+      "archetype_name": "Starter Wand",
+      "level": 15,
+      "power": 1135,
+      "power_band": "band_003",
+      "build": {
+        "id": "L15_starter_wand_fixed",
+        "displayName": "Starter Wand L15",
+        "level": 15,
+        "weaponLevel": 12,
+        "weaponQualityTier": 1,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L15_starter_wand_r1",
+      "kind": "random",
+      "archetype_id": "starter_wand",
+      "archetype_name": "Starter Wand",
+      "level": 15,
+      "power": 1170,
+      "power_band": "band_003",
+      "build": {
+        "id": "L15_starter_wand_r1",
+        "displayName": "Starter Wand L15",
+        "level": 15,
+        "weaponLevel": 14,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L15_cosmic_apprentice_fixed",
+      "kind": "fixed",
+      "archetype_id": "cosmic_apprentice",
+      "archetype_name": "Cosmic Apprentice",
+      "level": 15,
+      "power": 1700,
+      "power_band": "band_004",
+      "build": {
+        "id": "L15_cosmic_apprentice_fixed",
+        "displayName": "Cosmic Apprentice L15",
+        "level": 15,
+        "weaponLevel": 13,
+        "weaponQualityTier": 2,
+        "spellIds": [
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 13
+        },
+        "passiveId": "foco_astral",
+        "passiveLevel": 10,
+        "petId": "familiar_cinzento",
+        "petLevel": 10
+      }
+    },
+    {
+      "id": "L15_cosmic_apprentice_r1",
+      "kind": "random",
+      "archetype_id": "cosmic_apprentice",
+      "archetype_name": "Cosmic Apprentice",
+      "level": 15,
+      "power": 2015,
+      "power_band": "band_004",
+      "build": {
+        "id": "L15_cosmic_apprentice_r1",
+        "displayName": "Cosmic Apprentice L15",
+        "level": 15,
+        "weaponLevel": 14,
+        "weaponQualityTier": 2,
+        "spellIds": [
+          "raio_cosmico",
+          "raio"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 15,
+          "raio": 15
+        },
+        "passiveId": "forca",
+        "passiveLevel": 9,
+        "petId": "gelum",
+        "petLevel": 7
+      }
+    },
+    {
+      "id": "L15_elemental_mixer_fixed",
+      "kind": "fixed",
+      "archetype_id": "elemental_mixer",
+      "archetype_name": "Elemental Mixer",
+      "level": 15,
+      "power": 1945,
+      "power_band": "band_004",
+      "build": {
+        "id": "L15_elemental_mixer_fixed",
+        "displayName": "Elemental Mixer L15",
+        "level": 15,
+        "weaponLevel": 13,
+        "weaponQualityTier": 2,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 12,
+          "acender": 12
+        },
+        "passiveId": "forca",
+        "passiveLevel": 11,
+        "petId": "familiar_cinzento",
+        "petLevel": 11
+      }
+    },
+    {
+      "id": "L15_elemental_mixer_r1",
+      "kind": "random",
+      "archetype_id": "elemental_mixer",
+      "archetype_name": "Elemental Mixer",
+      "level": 15,
+      "power": 1685,
+      "power_band": "band_004",
+      "build": {
+        "id": "L15_elemental_mixer_r1",
+        "displayName": "Elemental Mixer L15",
+        "level": 15,
+        "weaponLevel": 15,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "raio"
+        ],
+        "spellLevels": {
+          "raio": 10
+        },
+        "passiveId": "foco_astral",
+        "passiveLevel": 11,
+        "petId": "brasido",
+        "petLevel": 10
+      }
+    },
+    {
+      "id": "L15_pet_handler_fixed",
+      "kind": "fixed",
+      "archetype_id": "pet_handler",
+      "archetype_name": "Pet Handler",
+      "level": 15,
+      "power": 1960,
+      "power_band": "band_004",
+      "build": {
+        "id": "L15_pet_handler_fixed",
+        "displayName": "Pet Handler L15",
+        "level": 15,
+        "weaponLevel": 13,
+        "weaponQualityTier": 2,
+        "spellIds": [
+          "raio_cosmico",
+          "congelar"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 12,
+          "congelar": 12
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 11,
+        "petId": "familiar_cinzento",
+        "petLevel": 12
+      }
+    },
+    {
+      "id": "L15_pet_handler_r1",
+      "kind": "random",
+      "archetype_id": "pet_handler",
+      "archetype_name": "Pet Handler",
+      "level": 15,
+      "power": 1800,
+      "power_band": "band_004",
+      "build": {
+        "id": "L15_pet_handler_r1",
+        "displayName": "Pet Handler L15",
+        "level": 15,
+        "weaponLevel": 13,
+        "weaponQualityTier": 2,
+        "spellIds": [
+          "congelar"
+        ],
+        "spellLevels": {
+          "congelar": 13
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 14,
+        "petId": "familiar_cinzento",
+        "petLevel": 14
+      }
+    },
+    {
+      "id": "L15_summoner_fixed",
+      "kind": "fixed",
+      "archetype_id": "summoner",
+      "archetype_name": "Summoner",
+      "level": 15,
+      "power": 1740,
+      "power_band": "band_004",
+      "build": {
+        "id": "L15_summoner_fixed",
+        "displayName": "Summoner L15",
+        "level": 15,
+        "weaponLevel": 12,
+        "weaponQualityTier": 3,
+        "spellIds": [
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 14
+        },
+        "passiveId": "foco_astral",
+        "passiveLevel": 11,
+        "petId": "brasido",
+        "petLevel": 11
+      }
+    },
+    {
+      "id": "L15_summoner_r1",
+      "kind": "random",
+      "archetype_id": "summoner",
+      "archetype_name": "Summoner",
+      "level": 15,
+      "power": 1995,
+      "power_band": "band_004",
+      "build": {
+        "id": "L15_summoner_r1",
+        "displayName": "Summoner L15",
+        "level": 15,
+        "weaponLevel": 13,
+        "weaponQualityTier": 2,
+        "spellIds": [
+          "congelar",
+          "raio"
+        ],
+        "spellLevels": {
+          "congelar": 13,
+          "raio": 13
+        },
+        "passiveId": "foco_astral",
+        "passiveLevel": 9,
+        "petId": "gelum",
+        "petLevel": 13
+      }
+    },
+    {
+      "id": "L15_defensive_caster_fixed",
+      "kind": "fixed",
+      "archetype_id": "defensive_caster",
+      "archetype_name": "Defensive Caster",
+      "level": 15,
+      "power": 1875,
+      "power_band": "band_004",
+      "build": {
+        "id": "L15_defensive_caster_fixed",
+        "displayName": "Defensive Caster L15",
+        "level": 15,
+        "weaponLevel": 11,
+        "weaponQualityTier": 2,
+        "spellIds": [
+          "envenenar",
+          "congelar"
+        ],
+        "spellLevels": {
+          "envenenar": 11,
+          "congelar": 11
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 14,
+        "petId": "gelum",
+        "petLevel": 11
+      }
+    },
+    {
+      "id": "L15_defensive_caster_r1",
+      "kind": "random",
+      "archetype_id": "defensive_caster",
+      "archetype_name": "Defensive Caster",
+      "level": 15,
+      "power": 1655,
+      "power_band": "band_004",
+      "build": {
+        "id": "L15_defensive_caster_r1",
+        "displayName": "Defensive Caster L15",
+        "level": 15,
+        "weaponLevel": 12,
+        "weaponQualityTier": 2,
+        "spellIds": [
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 10
+        },
+        "passiveId": "foco_astral",
+        "passiveLevel": 13,
+        "petId": "brasido",
+        "petLevel": 11
+      }
+    },
+    {
+      "id": "L15_dot_pressure_fixed",
+      "kind": "fixed",
+      "archetype_id": "dot_pressure",
+      "archetype_name": "DoT Pressure",
+      "level": 15,
+      "power": 1965,
+      "power_band": "band_004",
+      "build": {
+        "id": "L15_dot_pressure_fixed",
+        "displayName": "DoT Pressure L15",
+        "level": 15,
+        "weaponLevel": 11,
+        "weaponQualityTier": 2,
+        "spellIds": [
+          "envenenar",
+          "acender"
+        ],
+        "spellLevels": {
+          "envenenar": 14,
+          "acender": 14
+        },
+        "passiveId": "velocidade",
+        "passiveLevel": 11,
+        "petId": "brasido",
+        "petLevel": 11
+      }
+    },
+    {
+      "id": "L15_dot_pressure_r1",
+      "kind": "random",
+      "archetype_id": "dot_pressure",
+      "archetype_name": "DoT Pressure",
+      "level": 15,
+      "power": 1755,
+      "power_band": "band_004",
+      "build": {
+        "id": "L15_dot_pressure_r1",
+        "displayName": "DoT Pressure L15",
+        "level": 15,
+        "weaponLevel": 10,
+        "weaponQualityTier": 3,
+        "spellIds": [
+          "acender"
+        ],
+        "spellLevels": {
+          "acender": 15
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 12,
+        "petId": "gelum",
+        "petLevel": 14
+      }
+    },
+    {
+      "id": "L15_burst_caster_fixed",
+      "kind": "fixed",
+      "archetype_id": "burst_caster",
+      "archetype_name": "Burst Caster",
+      "level": 15,
+      "power": 2050,
+      "power_band": "band_004",
+      "build": {
+        "id": "L15_burst_caster_fixed",
+        "displayName": "Burst Caster L15",
+        "level": 15,
+        "weaponLevel": 14,
+        "weaponQualityTier": 2,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 14,
+          "raio_cosmico": 14
+        },
+        "passiveId": "forca",
+        "passiveLevel": 12,
+        "petId": "brasido",
+        "petLevel": 10
+      }
+    },
+    {
+      "id": "L15_burst_caster_r1",
+      "kind": "random",
+      "archetype_id": "burst_caster",
+      "archetype_name": "Burst Caster",
+      "level": 15,
+      "power": 1830,
+      "power_band": "band_004",
+      "build": {
+        "id": "L15_burst_caster_r1",
+        "displayName": "Burst Caster L15",
+        "level": 15,
+        "weaponLevel": 12,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "acender",
+          "raio"
+        ],
+        "spellLevels": {
+          "acender": 12,
+          "raio": 12
+        },
+        "passiveId": "velocidade",
+        "passiveLevel": 11,
+        "petId": "gelum",
+        "petLevel": 7
+      }
+    },
+    {
+      "id": "L25_starter_wand_fixed",
+      "kind": "fixed",
+      "archetype_id": "starter_wand",
+      "archetype_name": "Starter Wand",
+      "level": 25,
+      "power": 1900,
+      "power_band": "band_004",
+      "build": {
+        "id": "L25_starter_wand_fixed",
+        "displayName": "Starter Wand L25",
+        "level": 25,
+        "weaponLevel": 20,
+        "weaponQualityTier": 2,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L25_starter_wand_r1",
+      "kind": "random",
+      "archetype_id": "starter_wand",
+      "archetype_name": "Starter Wand",
+      "level": 25,
+      "power": 1780,
+      "power_band": "band_004",
+      "build": {
+        "id": "L25_starter_wand_r1",
+        "displayName": "Starter Wand L25",
+        "level": 25,
+        "weaponLevel": 16,
+        "weaponQualityTier": 2,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L25_cosmic_apprentice_fixed",
+      "kind": "fixed",
+      "archetype_id": "cosmic_apprentice",
+      "archetype_name": "Cosmic Apprentice",
+      "level": 25,
+      "power": 2775,
+      "power_band": "band_005",
+      "build": {
+        "id": "L25_cosmic_apprentice_fixed",
+        "displayName": "Cosmic Apprentice L25",
+        "level": 25,
+        "weaponLevel": 21,
+        "weaponQualityTier": 3,
+        "spellIds": [
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 21
+        },
+        "passiveId": "foco_astral",
+        "passiveLevel": 16,
+        "petId": "familiar_cinzento",
+        "petLevel": 16
+      }
+    },
+    {
+      "id": "L25_cosmic_apprentice_r1",
+      "kind": "random",
+      "archetype_id": "cosmic_apprentice",
+      "archetype_name": "Cosmic Apprentice",
+      "level": 25,
+      "power": 3305,
+      "power_band": "band_005",
+      "build": {
+        "id": "L25_cosmic_apprentice_r1",
+        "displayName": "Cosmic Apprentice L25",
+        "level": 25,
+        "weaponLevel": 21,
+        "weaponQualityTier": 4,
+        "spellIds": [
+          "fortificar",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "fortificar": 23,
+          "raio_cosmico": 23
+        },
+        "passiveId": "velocidade",
+        "passiveLevel": 15,
+        "petId": "familiar_cinzento",
+        "petLevel": 17
+      }
+    },
+    {
+      "id": "L25_elemental_mixer_fixed",
+      "kind": "fixed",
+      "archetype_id": "elemental_mixer",
+      "archetype_name": "Elemental Mixer",
+      "level": 25,
+      "power": 3605,
+      "power_band": "band_005",
+      "build": {
+        "id": "L25_elemental_mixer_fixed",
+        "displayName": "Elemental Mixer L25",
+        "level": 25,
+        "weaponLevel": 21,
+        "weaponQualityTier": 3,
+        "spellIds": [
+          "raio_cosmico",
+          "acender",
+          "congelar"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 20,
+          "acender": 20,
+          "congelar": 20
+        },
+        "passiveId": "forca",
+        "passiveLevel": 18,
+        "petId": "familiar_cinzento",
+        "petLevel": 18
+      }
+    },
+    {
+      "id": "L25_elemental_mixer_r1",
+      "kind": "random",
+      "archetype_id": "elemental_mixer",
+      "archetype_name": "Elemental Mixer",
+      "level": 25,
+      "power": 2775,
+      "power_band": "band_005",
+      "build": {
+        "id": "L25_elemental_mixer_r1",
+        "displayName": "Elemental Mixer L25",
+        "level": 25,
+        "weaponLevel": 21,
+        "weaponQualityTier": 4,
+        "spellIds": [
+          "odio"
+        ],
+        "spellLevels": {
+          "odio": 18
+        },
+        "passiveId": "forca",
+        "passiveLevel": 15,
+        "petId": "familiar_cinzento",
+        "petLevel": 19
+      }
+    },
+    {
+      "id": "L25_pet_handler_fixed",
+      "kind": "fixed",
+      "archetype_id": "pet_handler",
+      "archetype_name": "Pet Handler",
+      "level": 25,
+      "power": 3705,
+      "power_band": "band_005",
+      "build": {
+        "id": "L25_pet_handler_fixed",
+        "displayName": "Pet Handler L25",
+        "level": 25,
+        "weaponLevel": 21,
+        "weaponQualityTier": 3,
+        "spellIds": [
+          "raio_cosmico",
+          "congelar",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 21,
+          "congelar": 21,
+          "acender": 21
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 19,
+        "petId": "familiar_cinzento",
+        "petLevel": 20
+      }
+    },
+    {
+      "id": "L25_pet_handler_r1",
+      "kind": "random",
+      "archetype_id": "pet_handler",
+      "archetype_name": "Pet Handler",
+      "level": 25,
+      "power": 3150,
+      "power_band": "band_005",
+      "build": {
+        "id": "L25_pet_handler_r1",
+        "displayName": "Pet Handler L25",
+        "level": 25,
+        "weaponLevel": 18,
+        "weaponQualityTier": 3,
+        "spellIds": [
+          "raio_cosmico",
+          "raio"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 20,
+          "raio": 20
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 20,
+        "petId": "gelum",
+        "petLevel": 19
+      }
+    },
+    {
+      "id": "L25_summoner_fixed",
+      "kind": "fixed",
+      "archetype_id": "summoner",
+      "archetype_name": "Summoner",
+      "level": 25,
+      "power": 3835,
+      "power_band": "band_005",
+      "build": {
+        "id": "L25_summoner_fixed",
+        "displayName": "Summoner L25",
+        "level": 25,
+        "weaponLevel": 21,
+        "weaponQualityTier": 4,
+        "spellIds": [
+          "raio_cosmico",
+          "invocar_demonio",
+          "animar_morto"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 23,
+          "invocar_demonio": 23,
+          "animar_morto": 23
+        },
+        "passiveId": "foco_astral",
+        "passiveLevel": 19,
+        "petId": "brasido",
+        "petLevel": 19
+      }
+    },
+    {
+      "id": "L25_summoner_r1",
+      "kind": "random",
+      "archetype_id": "summoner",
+      "archetype_name": "Summoner",
+      "level": 25,
+      "power": 3240,
+      "power_band": "band_005",
+      "build": {
+        "id": "L25_summoner_r1",
+        "displayName": "Summoner L25",
+        "level": 25,
+        "weaponLevel": 21,
+        "weaponQualityTier": 3,
+        "spellIds": [
+          "invocar_demonio",
+          "raio"
+        ],
+        "spellLevels": {
+          "invocar_demonio": 20,
+          "raio": 20
+        },
+        "passiveId": "forca",
+        "passiveLevel": 17,
+        "petId": "brasido",
+        "petLevel": 21
+      }
+    },
+    {
+      "id": "L25_defensive_caster_fixed",
+      "kind": "fixed",
+      "archetype_id": "defensive_caster",
+      "archetype_name": "Defensive Caster",
+      "level": 25,
+      "power": 3515,
+      "power_band": "band_005",
+      "build": {
+        "id": "L25_defensive_caster_fixed",
+        "displayName": "Defensive Caster L25",
+        "level": 25,
+        "weaponLevel": 18,
+        "weaponQualityTier": 3,
+        "spellIds": [
+          "fortificar",
+          "envenenar",
+          "congelar"
+        ],
+        "spellLevels": {
+          "fortificar": 19,
+          "envenenar": 19,
+          "congelar": 19
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 24,
+        "petId": "gelum",
+        "petLevel": 18
+      }
+    },
+    {
+      "id": "L25_defensive_caster_r1",
+      "kind": "random",
+      "archetype_id": "defensive_caster",
+      "archetype_name": "Defensive Caster",
+      "level": 25,
+      "power": 2755,
+      "power_band": "band_005",
+      "build": {
+        "id": "L25_defensive_caster_r1",
+        "displayName": "Defensive Caster L25",
+        "level": 25,
+        "weaponLevel": 18,
+        "weaponQualityTier": 2,
+        "spellIds": [
+          "animar_morto"
+        ],
+        "spellLevels": {
+          "animar_morto": 19
+        },
+        "passiveId": "forca",
+        "passiveLevel": 25,
+        "petId": "brasido",
+        "petLevel": 19
+      }
+    },
+    {
+      "id": "L25_dot_pressure_fixed",
+      "kind": "fixed",
+      "archetype_id": "dot_pressure",
+      "archetype_name": "DoT Pressure",
+      "level": 25,
+      "power": 3810,
+      "power_band": "band_005",
+      "build": {
+        "id": "L25_dot_pressure_fixed",
+        "displayName": "DoT Pressure L25",
+        "level": 25,
+        "weaponLevel": 19,
+        "weaponQualityTier": 3,
+        "spellIds": [
+          "envenenar",
+          "acender",
+          "dilacerar"
+        ],
+        "spellLevels": {
+          "envenenar": 24,
+          "acender": 24,
+          "dilacerar": 24
+        },
+        "passiveId": "velocidade",
+        "passiveLevel": 19,
+        "petId": "brasido",
+        "petLevel": 19
+      }
+    },
+    {
+      "id": "L25_dot_pressure_r1",
+      "kind": "random",
+      "archetype_id": "dot_pressure",
+      "archetype_name": "DoT Pressure",
+      "level": 25,
+      "power": 2855,
+      "power_band": "band_005",
+      "build": {
+        "id": "L25_dot_pressure_r1",
+        "displayName": "DoT Pressure L25",
+        "level": 25,
+        "weaponLevel": 19,
+        "weaponQualityTier": 3,
+        "spellIds": [
+          "odio"
+        ],
+        "spellLevels": {
+          "odio": 21
+        },
+        "passiveId": "vampirismo",
+        "passiveLevel": 21,
+        "petId": "brasido",
+        "petLevel": 22
+      }
+    },
+    {
+      "id": "L25_burst_caster_fixed",
+      "kind": "fixed",
+      "archetype_id": "burst_caster",
+      "archetype_name": "Burst Caster",
+      "level": 25,
+      "power": 3895,
+      "power_band": "band_005",
+      "build": {
+        "id": "L25_burst_caster_fixed",
+        "displayName": "Burst Caster L25",
+        "level": 25,
+        "weaponLevel": 23,
+        "weaponQualityTier": 3,
+        "spellIds": [
+          "odio",
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "odio": 24,
+          "raio": 24,
+          "raio_cosmico": 24
+        },
+        "passiveId": "forca",
+        "passiveLevel": 20,
+        "petId": "brasido",
+        "petLevel": 16
+      }
+    },
+    {
+      "id": "L25_burst_caster_r1",
+      "kind": "random",
+      "archetype_id": "burst_caster",
+      "archetype_name": "Burst Caster",
+      "level": 25,
+      "power": 2965,
+      "power_band": "band_005",
+      "build": {
+        "id": "L25_burst_caster_r1",
+        "displayName": "Burst Caster L25",
+        "level": 25,
+        "weaponLevel": 24,
+        "weaponQualityTier": 4,
+        "spellIds": [
+          "dilacerar"
+        ],
+        "spellLevels": {
+          "dilacerar": 25
+        },
+        "passiveId": "forca",
+        "passiveLevel": 17,
+        "petId": "familiar_cinzento",
+        "petLevel": 15
+      }
+    },
+    {
+      "id": "L40_starter_wand_fixed",
+      "kind": "fixed",
+      "archetype_id": "starter_wand",
+      "archetype_name": "Starter Wand",
+      "level": 40,
+      "power": 3035,
+      "power_band": "band_005",
+      "build": {
+        "id": "L40_starter_wand_fixed",
+        "displayName": "Starter Wand L40",
+        "level": 40,
+        "weaponLevel": 32,
+        "weaponQualityTier": 3,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L40_starter_wand_r1",
+      "kind": "random",
+      "archetype_id": "starter_wand",
+      "archetype_name": "Starter Wand",
+      "level": 40,
+      "power": 2860,
+      "power_band": "band_005",
+      "build": {
+        "id": "L40_starter_wand_r1",
+        "displayName": "Starter Wand L40",
+        "level": 40,
+        "weaponLevel": 27,
+        "weaponQualityTier": 2,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "L40_cosmic_apprentice_fixed",
+      "kind": "fixed",
+      "archetype_id": "cosmic_apprentice",
+      "archetype_name": "Cosmic Apprentice",
+      "level": 40,
+      "power": 4450,
+      "power_band": "band_005",
+      "build": {
+        "id": "L40_cosmic_apprentice_fixed",
+        "displayName": "Cosmic Apprentice L40",
+        "level": 40,
+        "weaponLevel": 34,
+        "weaponQualityTier": 4,
+        "spellIds": [
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 34
+        },
+        "passiveId": "foco_astral",
+        "passiveLevel": 26,
+        "petId": "familiar_cinzento",
+        "petLevel": 26
+      }
+    },
+    {
+      "id": "L40_cosmic_apprentice_r1",
+      "kind": "random",
+      "archetype_id": "cosmic_apprentice",
+      "archetype_name": "Cosmic Apprentice",
+      "level": 40,
+      "power": 4990,
+      "power_band": "band_005",
+      "build": {
+        "id": "L40_cosmic_apprentice_r1",
+        "displayName": "Cosmic Apprentice L40",
+        "level": 40,
+        "weaponLevel": 34,
+        "weaponQualityTier": 4,
+        "spellIds": [
+          "raio",
+          "animar_morto"
+        ],
+        "spellLevels": {
+          "raio": 30,
+          "animar_morto": 30
+        },
+        "passiveId": "escudo",
+        "passiveLevel": 22,
+        "petId": "familiar_cinzento",
+        "petLevel": 30
+      }
+    },
+    {
+      "id": "L40_elemental_mixer_fixed",
+      "kind": "fixed",
+      "archetype_id": "elemental_mixer",
+      "archetype_name": "Elemental Mixer",
+      "level": 40,
+      "power": 5740,
+      "power_band": "band_005",
+      "build": {
+        "id": "L40_elemental_mixer_fixed",
+        "displayName": "Elemental Mixer L40",
+        "level": 40,
+        "weaponLevel": 34,
+        "weaponQualityTier": 4,
+        "spellIds": [
+          "raio_cosmico",
+          "acender",
+          "congelar"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 32,
+          "acender": 32,
+          "congelar": 32
+        },
+        "passiveId": "forca",
+        "passiveLevel": 28,
+        "petId": "familiar_cinzento",
+        "petLevel": 28
+      }
+    },
+    {
+      "id": "L40_elemental_mixer_r1",
+      "kind": "random",
+      "archetype_id": "elemental_mixer",
+      "archetype_name": "Elemental Mixer",
+      "level": 40,
+      "power": 4275,
+      "power_band": "band_005",
+      "build": {
+        "id": "L40_elemental_mixer_r1",
+        "displayName": "Elemental Mixer L40",
+        "level": 40,
+        "weaponLevel": 28,
+        "weaponQualityTier": 3,
+        "spellIds": [
+          "animar_morto"
+        ],
+        "spellLevels": {
+          "animar_morto": 35
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 33,
+        "petId": "brasido",
+        "petLevel": 22
+      }
+    },
+    {
+      "id": "L40_pet_handler_fixed",
+      "kind": "fixed",
+      "archetype_id": "pet_handler",
+      "archetype_name": "Pet Handler",
+      "level": 40,
+      "power": 5880,
+      "power_band": "band_005",
+      "build": {
+        "id": "L40_pet_handler_fixed",
+        "displayName": "Pet Handler L40",
+        "level": 40,
+        "weaponLevel": 34,
+        "weaponQualityTier": 4,
+        "spellIds": [
+          "raio_cosmico",
+          "congelar",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 33,
+          "congelar": 33,
+          "acender": 33
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 30,
+        "petId": "familiar_cinzento",
+        "petLevel": 32
+      }
+    },
+    {
+      "id": "L40_pet_handler_r1",
+      "kind": "random",
+      "archetype_id": "pet_handler",
+      "archetype_name": "Pet Handler",
+      "level": 40,
+      "power": 5065,
+      "power_band": "band_005",
+      "build": {
+        "id": "L40_pet_handler_r1",
+        "displayName": "Pet Handler L40",
+        "level": 40,
+        "weaponLevel": 38,
+        "weaponQualityTier": 4,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 27,
+          "acender": 27
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 31,
+        "petId": "brasido",
+        "petLevel": 29
+      }
+    },
+    {
+      "id": "L40_summoner_fixed",
+      "kind": "fixed",
+      "archetype_id": "summoner",
+      "archetype_name": "Summoner",
+      "level": 40,
+      "power": 6000,
+      "power_band": "band_005",
+      "build": {
+        "id": "L40_summoner_fixed",
+        "displayName": "Summoner L40",
+        "level": 40,
+        "weaponLevel": 33,
+        "weaponQualityTier": 4,
+        "spellIds": [
+          "raio_cosmico",
+          "invocar_demonio",
+          "animar_morto"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 36,
+          "invocar_demonio": 36,
+          "animar_morto": 36
+        },
+        "passiveId": "foco_astral",
+        "passiveLevel": 30,
+        "petId": "brasido",
+        "petLevel": 30
+      }
+    },
+    {
+      "id": "L40_summoner_r1",
+      "kind": "random",
+      "archetype_id": "summoner",
+      "archetype_name": "Summoner",
+      "level": 40,
+      "power": 5895,
+      "power_band": "band_005",
+      "build": {
+        "id": "L40_summoner_r1",
+        "displayName": "Summoner L40",
+        "level": 40,
+        "weaponLevel": 28,
+        "weaponQualityTier": 4,
+        "spellIds": [
+          "raio_cosmico",
+          "odio",
+          "raio"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 37,
+          "odio": 37,
+          "raio": 37
+        },
+        "passiveId": "foco_astral",
+        "passiveLevel": 24,
+        "petId": "gelum",
+        "petLevel": 33
+      }
+    },
+    {
+      "id": "L40_defensive_caster_fixed",
+      "kind": "fixed",
+      "archetype_id": "defensive_caster",
+      "archetype_name": "Defensive Caster",
+      "level": 40,
+      "power": 5540,
+      "power_band": "band_005",
+      "build": {
+        "id": "L40_defensive_caster_fixed",
+        "displayName": "Defensive Caster L40",
+        "level": 40,
+        "weaponLevel": 28,
+        "weaponQualityTier": 4,
+        "spellIds": [
+          "fortificar",
+          "envenenar",
+          "congelar"
+        ],
+        "spellLevels": {
+          "fortificar": 30,
+          "envenenar": 30,
+          "congelar": 30
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 38,
+        "petId": "gelum",
+        "petLevel": 28
+      }
+    },
+    {
+      "id": "L40_defensive_caster_r1",
+      "kind": "random",
+      "archetype_id": "defensive_caster",
+      "archetype_name": "Defensive Caster",
+      "level": 40,
+      "power": 5700,
+      "power_band": "band_005",
+      "build": {
+        "id": "L40_defensive_caster_r1",
+        "displayName": "Defensive Caster L40",
+        "level": 40,
+        "weaponLevel": 25,
+        "weaponQualityTier": 4,
+        "spellIds": [
+          "animar_morto",
+          "congelar",
+          "fortificar"
+        ],
+        "spellLevels": {
+          "animar_morto": 34,
+          "congelar": 34,
+          "fortificar": 34
+        },
+        "passiveId": "velocidade",
+        "passiveLevel": 33,
+        "petId": "familiar_cinzento",
+        "petLevel": 32
+      }
+    },
+    {
+      "id": "L40_dot_pressure_fixed",
+      "kind": "fixed",
+      "archetype_id": "dot_pressure",
+      "archetype_name": "DoT Pressure",
+      "level": 40,
+      "power": 6030,
+      "power_band": "band_005",
+      "build": {
+        "id": "L40_dot_pressure_fixed",
+        "displayName": "DoT Pressure L40",
+        "level": 40,
+        "weaponLevel": 30,
+        "weaponQualityTier": 4,
+        "spellIds": [
+          "envenenar",
+          "acender",
+          "dilacerar"
+        ],
+        "spellLevels": {
+          "envenenar": 38,
+          "acender": 38,
+          "dilacerar": 38
+        },
+        "passiveId": "velocidade",
+        "passiveLevel": 30,
+        "petId": "brasido",
+        "petLevel": 30
+      }
+    },
+    {
+      "id": "L40_dot_pressure_r1",
+      "kind": "random",
+      "archetype_id": "dot_pressure",
+      "archetype_name": "DoT Pressure",
+      "level": 40,
+      "power": 5795,
+      "power_band": "band_005",
+      "build": {
+        "id": "L40_dot_pressure_r1",
+        "displayName": "DoT Pressure L40",
+        "level": 40,
+        "weaponLevel": 28,
+        "weaponQualityTier": 4,
+        "spellIds": [
+          "dilacerar",
+          "invocar_demonio",
+          "animar_morto"
+        ],
+        "spellLevels": {
+          "dilacerar": 35,
+          "invocar_demonio": 35,
+          "animar_morto": 35
+        },
+        "passiveId": "foco_astral",
+        "passiveLevel": 32,
+        "petId": "familiar_cinzento",
+        "petLevel": 29
+      }
+    },
+    {
+      "id": "L40_burst_caster_fixed",
+      "kind": "fixed",
+      "archetype_id": "burst_caster",
+      "archetype_name": "Burst Caster",
+      "level": 40,
+      "power": 6170,
+      "power_band": "band_005",
+      "build": {
+        "id": "L40_burst_caster_fixed",
+        "displayName": "Burst Caster L40",
+        "level": 40,
+        "weaponLevel": 36,
+        "weaponQualityTier": 4,
+        "spellIds": [
+          "odio",
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "odio": 38,
+          "raio": 38,
+          "raio_cosmico": 38
+        },
+        "passiveId": "forca",
+        "passiveLevel": 32,
+        "petId": "brasido",
+        "petLevel": 26
+      }
+    },
+    {
+      "id": "L40_burst_caster_r1",
+      "kind": "random",
+      "archetype_id": "burst_caster",
+      "archetype_name": "Burst Caster",
+      "level": 40,
+      "power": 6055,
+      "power_band": "band_005",
+      "build": {
+        "id": "L40_burst_caster_r1",
+        "displayName": "Burst Caster L40",
+        "level": 40,
+        "weaponLevel": 30,
+        "weaponQualityTier": 4,
+        "spellIds": [
+          "animar_morto",
+          "raio",
+          "acender"
+        ],
+        "spellLevels": {
+          "animar_morto": 40,
+          "raio": 40,
+          "acender": 40
+        },
+        "passiveId": "vampirismo",
+        "passiveLevel": 34,
+        "petId": "brasido",
+        "petLevel": 21
+      }
+    }
+  ],
+  "near_power_archetypes": [
+    {
+      "id": "starter_wand",
+      "display_name": "Starter Wand",
+      "total": 84,
+      "wins": 21,
+      "losses": 63,
+      "win_rate_percent": 25,
+      "avg_duration": 21.72,
+      "median_duration": 22.95,
+      "short_rate_percent": 0,
+      "long_rate_percent": 0,
+      "anti_stall_rate_percent": 0,
+      "status": "REVIEW"
+    },
+    {
+      "id": "cosmic_apprentice",
+      "display_name": "Cosmic Apprentice",
+      "total": 286,
+      "wins": 115,
+      "losses": 171,
+      "win_rate_percent": 40.21,
+      "avg_duration": 18.94,
+      "median_duration": 18.7,
+      "short_rate_percent": 0,
+      "long_rate_percent": 0,
+      "anti_stall_rate_percent": 0,
+      "status": "PASS"
+    },
+    {
+      "id": "elemental_mixer",
+      "display_name": "Elemental Mixer",
+      "total": 264,
+      "wins": 154,
+      "losses": 110,
+      "win_rate_percent": 58.33,
+      "avg_duration": 18.48,
+      "median_duration": 17.95,
+      "short_rate_percent": 0,
+      "long_rate_percent": 0,
+      "anti_stall_rate_percent": 0,
+      "status": "PASS"
+    },
+    {
+      "id": "pet_handler",
+      "display_name": "Pet Handler",
+      "total": 308,
+      "wins": 217,
+      "losses": 91,
+      "win_rate_percent": 70.45,
+      "avg_duration": 19.57,
+      "median_duration": 18.7,
+      "short_rate_percent": 0,
+      "long_rate_percent": 0,
+      "anti_stall_rate_percent": 0,
+      "status": "REVIEW"
+    },
+    {
+      "id": "summoner",
+      "display_name": "Summoner",
+      "total": 268,
+      "wins": 126,
+      "losses": 142,
+      "win_rate_percent": 47.01,
+      "avg_duration": 17.95,
+      "median_duration": 17.7,
+      "short_rate_percent": 0,
+      "long_rate_percent": 0,
+      "anti_stall_rate_percent": 0,
+      "status": "PASS"
+    },
+    {
+      "id": "defensive_caster",
+      "display_name": "Defensive Caster",
+      "total": 294,
+      "wins": 138,
+      "losses": 156,
+      "win_rate_percent": 46.94,
+      "avg_duration": 20.49,
+      "median_duration": 19.7,
+      "short_rate_percent": 0,
+      "long_rate_percent": 0,
+      "anti_stall_rate_percent": 0,
+      "status": "PASS"
+    },
+    {
+      "id": "dot_pressure",
+      "display_name": "DoT Pressure",
+      "total": 278,
+      "wins": 93,
+      "losses": 185,
+      "win_rate_percent": 33.45,
+      "avg_duration": 19.01,
+      "median_duration": 18.7,
+      "short_rate_percent": 0,
+      "long_rate_percent": 0,
+      "anti_stall_rate_percent": 0,
+      "status": "REVIEW"
+    },
+    {
+      "id": "burst_caster",
+      "display_name": "Burst Caster",
+      "total": 270,
+      "wins": 162,
+      "losses": 108,
+      "win_rate_percent": 60,
+      "avg_duration": 17.78,
+      "median_duration": 17.2,
+      "short_rate_percent": 0,
+      "long_rate_percent": 0,
+      "anti_stall_rate_percent": 0,
+      "status": "PASS"
+    }
+  ],
+  "near_power_matrix": [
+    {
+      "player_archetype_id": "starter_wand",
+      "opponent_archetype_id": "cosmic_apprentice",
+      "total": 8,
+      "wins": 4,
+      "win_rate_percent": 50,
+      "avg_duration": 21.57,
+      "status": "PASS"
+    },
+    {
+      "player_archetype_id": "starter_wand",
+      "opponent_archetype_id": "elemental_mixer",
+      "total": 5,
+      "wins": 2,
+      "win_rate_percent": 40,
+      "avg_duration": 21.1,
+      "status": "PASS"
+    },
+    {
+      "player_archetype_id": "starter_wand",
+      "opponent_archetype_id": "pet_handler",
+      "total": 9,
+      "wins": 4,
+      "win_rate_percent": 44.44,
+      "avg_duration": 22.14,
+      "status": "PASS"
+    },
+    {
+      "player_archetype_id": "starter_wand",
+      "opponent_archetype_id": "summoner",
+      "total": 1,
+      "wins": 0,
+      "win_rate_percent": 0,
+      "avg_duration": 18.7,
+      "status": "REVIEW"
+    },
+    {
+      "player_archetype_id": "starter_wand",
+      "opponent_archetype_id": "defensive_caster",
+      "total": 6,
+      "wins": 2,
+      "win_rate_percent": 33.33,
+      "avg_duration": 21.03,
+      "status": "REVIEW"
+    },
+    {
+      "player_archetype_id": "starter_wand",
+      "opponent_archetype_id": "dot_pressure",
+      "total": 9,
+      "wins": 6,
+      "win_rate_percent": 66.67,
+      "avg_duration": 22.7,
+      "status": "REVIEW"
+    },
+    {
+      "player_archetype_id": "starter_wand",
+      "opponent_archetype_id": "burst_caster",
+      "total": 4,
+      "wins": 2,
+      "win_rate_percent": 50,
+      "avg_duration": 21.45,
+      "status": "PASS"
+    },
+    {
+      "player_archetype_id": "cosmic_apprentice",
+      "opponent_archetype_id": "starter_wand",
+      "total": 8,
+      "wins": 8,
+      "win_rate_percent": 100,
+      "avg_duration": 21.57,
+      "status": "CRITICAL"
+    },
+    {
+      "player_archetype_id": "cosmic_apprentice",
+      "opponent_archetype_id": "elemental_mixer",
+      "total": 23,
+      "wins": 11,
+      "win_rate_percent": 47.83,
+      "avg_duration": 18.48,
+      "status": "PASS"
+    },
+    {
+      "player_archetype_id": "cosmic_apprentice",
+      "opponent_archetype_id": "pet_handler",
+      "total": 25,
+      "wins": 9,
+      "win_rate_percent": 36,
+      "avg_duration": 19.5,
+      "status": "PASS"
+    },
+    {
+      "player_archetype_id": "cosmic_apprentice",
+      "opponent_archetype_id": "summoner",
+      "total": 21,
+      "wins": 10,
+      "win_rate_percent": 47.62,
+      "avg_duration": 17.63,
+      "status": "PASS"
+    },
+    {
+      "player_archetype_id": "cosmic_apprentice",
+      "opponent_archetype_id": "defensive_caster",
+      "total": 24,
+      "wins": 14,
+      "win_rate_percent": 58.33,
+      "avg_duration": 20.3,
+      "status": "PASS"
+    },
+    {
+      "player_archetype_id": "cosmic_apprentice",
+      "opponent_archetype_id": "dot_pressure",
+      "total": 22,
+      "wins": 15,
+      "win_rate_percent": 68.18,
+      "avg_duration": 19.04,
+      "status": "REVIEW"
+    },
+    {
+      "player_archetype_id": "cosmic_apprentice",
+      "opponent_archetype_id": "burst_caster",
+      "total": 20,
+      "wins": 9,
+      "win_rate_percent": 45,
+      "avg_duration": 17.3,
+      "status": "PASS"
+    },
+    {
+      "player_archetype_id": "elemental_mixer",
+      "opponent_archetype_id": "starter_wand",
+      "total": 5,
+      "wins": 5,
+      "win_rate_percent": 100,
+      "avg_duration": 21.1,
+      "status": "CRITICAL"
+    },
+    {
+      "player_archetype_id": "elemental_mixer",
+      "opponent_archetype_id": "cosmic_apprentice",
+      "total": 23,
+      "wins": 17,
+      "win_rate_percent": 73.91,
+      "avg_duration": 18.48,
+      "status": "REVIEW"
+    },
+    {
+      "player_archetype_id": "elemental_mixer",
+      "opponent_archetype_id": "pet_handler",
+      "total": 22,
+      "wins": 10,
+      "win_rate_percent": 45.45,
+      "avg_duration": 19.25,
+      "status": "PASS"
+    },
+    {
+      "player_archetype_id": "elemental_mixer",
+      "opponent_archetype_id": "summoner",
+      "total": 23,
+      "wins": 16,
+      "win_rate_percent": 69.57,
+      "avg_duration": 17.31,
+      "status": "REVIEW"
+    },
+    {
+      "player_archetype_id": "elemental_mixer",
+      "opponent_archetype_id": "defensive_caster",
+      "total": 20,
+      "wins": 14,
+      "win_rate_percent": 70,
+      "avg_duration": 20.12,
+      "status": "REVIEW"
+    },
+    {
+      "player_archetype_id": "elemental_mixer",
+      "opponent_archetype_id": "dot_pressure",
+      "total": 18,
+      "wins": 16,
+      "win_rate_percent": 88.89,
+      "avg_duration": 18.2,
+      "status": "CRITICAL"
+    },
+    {
+      "player_archetype_id": "elemental_mixer",
+      "opponent_archetype_id": "burst_caster",
+      "total": 21,
+      "wins": 13,
+      "win_rate_percent": 61.9,
+      "avg_duration": 16.87,
+      "status": "PASS"
+    },
+    {
+      "player_archetype_id": "pet_handler",
+      "opponent_archetype_id": "starter_wand",
+      "total": 9,
+      "wins": 9,
+      "win_rate_percent": 100,
+      "avg_duration": 22.14,
+      "status": "CRITICAL"
+    },
+    {
+      "player_archetype_id": "pet_handler",
+      "opponent_archetype_id": "cosmic_apprentice",
+      "total": 25,
+      "wins": 23,
+      "win_rate_percent": 92,
+      "avg_duration": 19.54,
+      "status": "CRITICAL"
+    },
+    {
+      "player_archetype_id": "pet_handler",
+      "opponent_archetype_id": "elemental_mixer",
+      "total": 22,
+      "wins": 17,
+      "win_rate_percent": 77.27,
+      "avg_duration": 19.34,
+      "status": "CRITICAL"
+    },
+    {
+      "player_archetype_id": "pet_handler",
+      "opponent_archetype_id": "summoner",
+      "total": 23,
+      "wins": 17,
+      "win_rate_percent": 73.91,
+      "avg_duration": 18.33,
+      "status": "REVIEW"
+    },
+    {
+      "player_archetype_id": "pet_handler",
+      "opponent_archetype_id": "defensive_caster",
+      "total": 25,
+      "wins": 21,
+      "win_rate_percent": 84,
+      "avg_duration": 21.56,
+      "status": "CRITICAL"
+    },
+    {
+      "player_archetype_id": "pet_handler",
+      "opponent_archetype_id": "dot_pressure",
+      "total": 25,
+      "wins": 22,
+      "win_rate_percent": 88,
+      "avg_duration": 19.26,
+      "status": "CRITICAL"
+    },
+    {
+      "player_archetype_id": "pet_handler",
+      "opponent_archetype_id": "burst_caster",
+      "total": 25,
+      "wins": 17,
+      "win_rate_percent": 68,
+      "avg_duration": 18.26,
+      "status": "REVIEW"
+    },
+    {
+      "player_archetype_id": "summoner",
+      "opponent_archetype_id": "starter_wand",
+      "total": 1,
+      "wins": 1,
+      "win_rate_percent": 100,
+      "avg_duration": 18.7,
+      "status": "CRITICAL"
+    },
+    {
+      "player_archetype_id": "summoner",
+      "opponent_archetype_id": "cosmic_apprentice",
+      "total": 21,
+      "wins": 16,
+      "win_rate_percent": 76.19,
+      "avg_duration": 17.63,
+      "status": "CRITICAL"
+    },
+    {
+      "player_archetype_id": "summoner",
+      "opponent_archetype_id": "elemental_mixer",
+      "total": 23,
+      "wins": 11,
+      "win_rate_percent": 47.83,
+      "avg_duration": 17.31,
+      "status": "PASS"
+    },
+    {
+      "player_archetype_id": "summoner",
+      "opponent_archetype_id": "pet_handler",
+      "total": 23,
+      "wins": 8,
+      "win_rate_percent": 34.78,
+      "avg_duration": 18.35,
+      "status": "REVIEW"
+    },
+    {
+      "player_archetype_id": "summoner",
+      "opponent_archetype_id": "defensive_caster",
+      "total": 23,
+      "wins": 11,
+      "win_rate_percent": 47.83,
+      "avg_duration": 20.13,
+      "status": "PASS"
+    },
+    {
+      "player_archetype_id": "summoner",
+      "opponent_archetype_id": "dot_pressure",
+      "total": 21,
+      "wins": 15,
+      "win_rate_percent": 71.43,
+      "avg_duration": 17.53,
+      "status": "REVIEW"
+    },
+    {
+      "player_archetype_id": "summoner",
+      "opponent_archetype_id": "burst_caster",
+      "total": 22,
+      "wins": 11,
+      "win_rate_percent": 50,
+      "avg_duration": 16.52,
+      "status": "PASS"
+    },
+    {
+      "player_archetype_id": "defensive_caster",
+      "opponent_archetype_id": "starter_wand",
+      "total": 6,
+      "wins": 6,
+      "win_rate_percent": 100,
+      "avg_duration": 21.03,
+      "status": "CRITICAL"
+    },
+    {
+      "player_archetype_id": "defensive_caster",
+      "opponent_archetype_id": "cosmic_apprentice",
+      "total": 24,
+      "wins": 14,
+      "win_rate_percent": 58.33,
+      "avg_duration": 20.3,
+      "status": "PASS"
+    },
+    {
+      "player_archetype_id": "defensive_caster",
+      "opponent_archetype_id": "elemental_mixer",
+      "total": 20,
+      "wins": 10,
+      "win_rate_percent": 50,
+      "avg_duration": 20.32,
+      "status": "PASS"
+    },
+    {
+      "player_archetype_id": "defensive_caster",
+      "opponent_archetype_id": "pet_handler",
+      "total": 25,
+      "wins": 10,
+      "win_rate_percent": 40,
+      "avg_duration": 21.86,
+      "status": "PASS"
+    },
+    {
+      "player_archetype_id": "defensive_caster",
+      "opponent_archetype_id": "summoner",
+      "total": 23,
+      "wins": 13,
+      "win_rate_percent": 56.52,
+      "avg_duration": 20.24,
+      "status": "PASS"
+    },
+    {
+      "player_archetype_id": "defensive_caster",
+      "opponent_archetype_id": "dot_pressure",
+      "total": 25,
+      "wins": 16,
+      "win_rate_percent": 64,
+      "avg_duration": 20.66,
+      "status": "PASS"
+    },
+    {
+      "player_archetype_id": "defensive_caster",
+      "opponent_archetype_id": "burst_caster",
+      "total": 24,
+      "wins": 12,
+      "win_rate_percent": 50,
+      "avg_duration": 19.68,
+      "status": "PASS"
+    },
+    {
+      "player_archetype_id": "dot_pressure",
+      "opponent_archetype_id": "starter_wand",
+      "total": 9,
+      "wins": 8,
+      "win_rate_percent": 88.89,
+      "avg_duration": 22.7,
+      "status": "CRITICAL"
+    },
+    {
+      "player_archetype_id": "dot_pressure",
+      "opponent_archetype_id": "cosmic_apprentice",
+      "total": 22,
+      "wins": 12,
+      "win_rate_percent": 54.55,
+      "avg_duration": 19.04,
+      "status": "PASS"
+    },
+    {
+      "player_archetype_id": "dot_pressure",
+      "opponent_archetype_id": "elemental_mixer",
+      "total": 18,
+      "wins": 6,
+      "win_rate_percent": 33.33,
+      "avg_duration": 18.2,
+      "status": "REVIEW"
+    },
+    {
+      "player_archetype_id": "dot_pressure",
+      "opponent_archetype_id": "pet_handler",
+      "total": 25,
+      "wins": 8,
+      "win_rate_percent": 32,
+      "avg_duration": 19.26,
+      "status": "REVIEW"
+    },
+    {
+      "player_archetype_id": "dot_pressure",
+      "opponent_archetype_id": "summoner",
+      "total": 21,
+      "wins": 9,
+      "win_rate_percent": 42.86,
+      "avg_duration": 17.53,
+      "status": "PASS"
+    },
+    {
+      "player_archetype_id": "dot_pressure",
+      "opponent_archetype_id": "defensive_caster",
+      "total": 25,
+      "wins": 11,
+      "win_rate_percent": 44,
+      "avg_duration": 20.66,
+      "status": "PASS"
+    },
+    {
+      "player_archetype_id": "dot_pressure",
+      "opponent_archetype_id": "burst_caster",
+      "total": 19,
+      "wins": 6,
+      "win_rate_percent": 31.58,
+      "avg_duration": 17.09,
+      "status": "REVIEW"
+    },
+    {
+      "player_archetype_id": "burst_caster",
+      "opponent_archetype_id": "starter_wand",
+      "total": 4,
+      "wins": 4,
+      "win_rate_percent": 100,
+      "avg_duration": 21.45,
+      "status": "CRITICAL"
+    },
+    {
+      "player_archetype_id": "burst_caster",
+      "opponent_archetype_id": "cosmic_apprentice",
+      "total": 20,
+      "wins": 18,
+      "win_rate_percent": 90,
+      "avg_duration": 17.3,
+      "status": "CRITICAL"
+    },
+    {
+      "player_archetype_id": "burst_caster",
+      "opponent_archetype_id": "elemental_mixer",
+      "total": 21,
+      "wins": 12,
+      "win_rate_percent": 57.14,
+      "avg_duration": 16.87,
+      "status": "PASS"
+    },
+    {
+      "player_archetype_id": "burst_caster",
+      "opponent_archetype_id": "pet_handler",
+      "total": 25,
+      "wins": 14,
+      "win_rate_percent": 56,
+      "avg_duration": 18.18,
+      "status": "PASS"
+    },
+    {
+      "player_archetype_id": "burst_caster",
+      "opponent_archetype_id": "summoner",
+      "total": 22,
+      "wins": 16,
+      "win_rate_percent": 72.73,
+      "avg_duration": 16.52,
+      "status": "REVIEW"
+    },
+    {
+      "player_archetype_id": "burst_caster",
+      "opponent_archetype_id": "defensive_caster",
+      "total": 24,
+      "wins": 17,
+      "win_rate_percent": 70.83,
+      "avg_duration": 19.55,
+      "status": "REVIEW"
+    },
+    {
+      "player_archetype_id": "burst_caster",
+      "opponent_archetype_id": "dot_pressure",
+      "total": 19,
+      "wins": 16,
+      "win_rate_percent": 84.21,
+      "avg_duration": 17.09,
+      "status": "CRITICAL"
+    }
+  ],
+  "source_by_archetype": [
+    {
+      "archetype_id": "starter_wand",
+      "display_name": "Starter Wand",
+      "total": 406,
+      "wins": 35,
+      "avg_duration": 19.4,
+      "weapon_damage": 411166,
+      "spell_damage": 0,
+      "dot_damage": 0,
+      "pet_damage": 0,
+      "summon_damage": 0,
+      "system_damage": 0,
+      "total_damage": 411166,
+      "dominant_source": "weapon"
+    },
+    {
+      "archetype_id": "cosmic_apprentice",
+      "display_name": "Cosmic Apprentice",
+      "total": 406,
+      "wins": 173,
+      "avg_duration": 18.84,
+      "weapon_damage": 485908,
+      "spell_damage": 76644,
+      "dot_damage": 5826,
+      "pet_damage": 17282,
+      "summon_damage": 6178,
+      "system_damage": 0,
+      "total_damage": 591838,
+      "dominant_source": "weapon"
+    },
+    {
+      "archetype_id": "elemental_mixer",
+      "display_name": "Elemental Mixer",
+      "total": 406,
+      "wins": 252,
+      "avg_duration": 18.55,
+      "weapon_damage": 477446,
+      "spell_damage": 80108,
+      "dot_damage": 15032,
+      "pet_damage": 16744,
+      "summon_damage": 7350,
+      "system_damage": 0,
+      "total_damage": 596680,
+      "dominant_source": "weapon"
+    },
+    {
+      "archetype_id": "pet_handler",
+      "display_name": "Pet Handler",
+      "total": 406,
+      "wins": 289,
+      "avg_duration": 19.35,
+      "weapon_damage": 495737,
+      "spell_damage": 109445,
+      "dot_damage": 14167,
+      "pet_damage": 19502,
+      "summon_damage": 0,
+      "system_damage": 0,
+      "total_damage": 638851,
+      "dominant_source": "weapon"
+    },
+    {
+      "archetype_id": "summoner",
+      "display_name": "Summoner",
+      "total": 406,
+      "wins": 257,
+      "avg_duration": 18.06,
+      "weapon_damage": 471961,
+      "spell_damage": 92381,
+      "dot_damage": 6112,
+      "pet_damage": 18644,
+      "summon_damage": 26536,
+      "system_damage": 0,
+      "total_damage": 615634,
+      "dominant_source": "weapon"
+    },
+    {
+      "archetype_id": "defensive_caster",
+      "display_name": "Defensive Caster",
+      "total": 406,
+      "wins": 222,
+      "avg_duration": 20.54,
+      "weapon_damage": 490201,
+      "spell_damage": 49196,
+      "dot_damage": 31033,
+      "pet_damage": 21086,
+      "summon_damage": 13558,
+      "system_damage": 0,
+      "total_damage": 605074,
+      "dominant_source": "weapon"
+    },
+    {
+      "archetype_id": "dot_pressure",
+      "display_name": "DoT Pressure",
+      "total": 406,
+      "wins": 164,
+      "avg_duration": 18.8,
+      "weapon_damage": 422573,
+      "spell_damage": 63713,
+      "dot_damage": 64960,
+      "pet_damage": 18520,
+      "summon_damage": 14120,
+      "system_damage": 0,
+      "total_damage": 583886,
+      "dominant_source": "weapon"
+    },
+    {
+      "archetype_id": "burst_caster",
+      "display_name": "Burst Caster",
+      "total": 406,
+      "wins": 288,
+      "avg_duration": 17.52,
+      "weapon_damage": 483698,
+      "spell_damage": 114433,
+      "dot_damage": 18915,
+      "pet_damage": 14818,
+      "summon_damage": 8064,
+      "system_damage": 0,
+      "total_damage": 639928,
+      "dominant_source": "weapon"
+    }
+  ],
+  "history": [
+    {
+      "run_id": "2026-05-21_archetype_source_tuning_v02",
+      "archived_at": "2026-05-21T06:12:55.314Z",
+      "overall_status": "REVIEW",
+      "avg_duration": 18.91,
+      "short_rate_percent": 0,
+      "long_rate_percent": 0,
+      "anti_stall_rate_percent": 0.12,
+      "near_power_dominance_max_percent": 70.45,
+      "compatibility_status": "stale"
+    },
+    {
+      "run_id": "2026-05-21_pacing_alpha_v01",
+      "archived_at": "2026-05-21T03:40:47.495Z",
+      "overall_status": "CRITICAL",
+      "avg_duration": 18.19,
+      "short_rate_percent": 2.38,
+      "long_rate_percent": 0,
+      "anti_stall_rate_percent": 0.12,
+      "near_power_dominance_max_percent": 79.37,
+      "compatibility_status": "stale"
+    }
+  ],
+  "compare": [
+    {
+      "metric": "baseline_run",
+      "baseline": "2026-05-21_archetype_source_tuning_v02",
+      "current": "draxos_mobile_battle_lab_v1",
+      "delta": "changed"
+    },
+    {
+      "metric": "overall_status",
+      "baseline": "REVIEW",
+      "current": "REVIEW",
+      "delta": "unchanged"
+    },
+    {
+      "metric": "avg_duration",
+      "baseline": "18.91s",
+      "current": "18.91s",
+      "delta": "0s"
+    },
+    {
+      "metric": "median_duration",
+      "baseline": "18.7s",
+      "current": "18.7s",
+      "delta": "0s"
+    },
+    {
+      "metric": "short_rate_percent",
+      "baseline": "0%",
+      "current": "0%",
+      "delta": "0%"
+    },
+    {
+      "metric": "long_rate_percent",
+      "baseline": "0%",
+      "current": "0%",
+      "delta": "0%"
+    },
+    {
+      "metric": "anti_stall_rate_percent",
+      "baseline": "0.12%",
+      "current": "0.12%",
+      "delta": "0%"
+    },
+    {
+      "metric": "raw_stress_dominance_max_percent",
+      "baseline": "77.62%",
+      "current": "77.62%",
+      "delta": "0%"
+    },
+    {
+      "metric": "near_power_dominance_max_percent",
+      "baseline": "70.45%",
+      "current": "70.45%",
+      "delta": "0%"
+    },
+    {
+      "metric": "near_power_win_rate:starter_wand",
+      "baseline": "25%",
+      "current": "25%",
+      "delta": "0%"
+    },
+    {
+      "metric": "near_power_win_rate:cosmic_apprentice",
+      "baseline": "40.21%",
+      "current": "40.21%",
+      "delta": "0%"
+    },
+    {
+      "metric": "near_power_win_rate:elemental_mixer",
+      "baseline": "58.33%",
+      "current": "58.33%",
+      "delta": "0%"
+    },
+    {
+      "metric": "near_power_win_rate:pet_handler",
+      "baseline": "70.45%",
+      "current": "70.45%",
+      "delta": "0%"
+    },
+    {
+      "metric": "near_power_win_rate:summoner",
+      "baseline": "47.01%",
+      "current": "47.01%",
+      "delta": "0%"
+    },
+    {
+      "metric": "near_power_win_rate:defensive_caster",
+      "baseline": "46.94%",
+      "current": "46.94%",
+      "delta": "0%"
+    },
+    {
+      "metric": "near_power_win_rate:dot_pressure",
+      "baseline": "33.45%",
+      "current": "33.45%",
+      "delta": "0%"
+    },
+    {
+      "metric": "near_power_win_rate:burst_caster",
+      "baseline": "60%",
+      "current": "60%",
+      "delta": "0%"
+    }
+  ],
+  "replay_index": [
+    {
+      "tag": "STOMP",
+      "matchup_id": "L40_M0036",
+      "level": 40,
+      "player_build_id": "L40_elemental_mixer_fixed",
+      "opponent_build_id": "L40_starter_wand_r1",
+      "player_archetype_id": "elemental_mixer",
+      "opponent_archetype_id": "starter_wand",
+      "duration": 16.7,
+      "winner": "player",
+      "reason": "combatant_defeated"
+    },
+    {
+      "tag": "ANTI_STALL",
+      "matchup_id": "L40_M0211",
+      "level": 40,
+      "player_build_id": "L40_defensive_caster_fixed",
+      "opponent_build_id": "L40_defensive_caster_r1",
+      "player_archetype_id": "defensive_caster",
+      "opponent_archetype_id": "defensive_caster",
+      "duration": 31.2,
+      "winner": "player",
+      "reason": "combatant_defeated"
+    },
+    {
+      "tag": "ANTI_STALL",
+      "matchup_id": "L40_M0212",
+      "level": 40,
+      "player_build_id": "L40_defensive_caster_r1",
+      "opponent_build_id": "L40_defensive_caster_fixed",
+      "player_archetype_id": "defensive_caster",
+      "opponent_archetype_id": "defensive_caster",
+      "duration": 31.2,
+      "winner": "opponent",
+      "reason": "combatant_defeated"
+    },
+    {
+      "tag": "level_1_representative",
+      "matchup_id": "L1_M0001",
+      "level": 1,
+      "player_build_id": "L1_starter_wand_fixed",
+      "opponent_build_id": "L1_starter_wand_r1",
+      "player_archetype_id": "starter_wand",
+      "opponent_archetype_id": "starter_wand",
+      "duration": 23.7,
+      "winner": "player",
+      "reason": "combatant_defeated"
+    },
+    {
+      "tag": "level_3_representative",
+      "matchup_id": "L3_M0001",
+      "level": 3,
+      "player_build_id": "L3_starter_wand_fixed",
+      "opponent_build_id": "L3_starter_wand_r1",
+      "player_archetype_id": "starter_wand",
+      "opponent_archetype_id": "starter_wand",
+      "duration": 22.7,
+      "winner": "opponent",
+      "reason": "combatant_defeated"
+    },
+    {
+      "tag": "level_7_representative",
+      "matchup_id": "L7_M0001",
+      "level": 7,
+      "player_build_id": "L7_starter_wand_fixed",
+      "opponent_build_id": "L7_starter_wand_r1",
+      "player_archetype_id": "starter_wand",
+      "opponent_archetype_id": "starter_wand",
+      "duration": 23.7,
+      "winner": "player",
+      "reason": "combatant_defeated"
+    },
+    {
+      "tag": "level_10_representative",
+      "matchup_id": "L10_M0001",
+      "level": 10,
+      "player_build_id": "L10_starter_wand_fixed",
+      "opponent_build_id": "L10_starter_wand_r1",
+      "player_archetype_id": "starter_wand",
+      "opponent_archetype_id": "starter_wand",
+      "duration": 26.7,
+      "winner": "player",
+      "reason": "combatant_defeated"
+    },
+    {
+      "tag": "level_15_representative",
+      "matchup_id": "L15_M0001",
+      "level": 15,
+      "player_build_id": "L15_starter_wand_fixed",
+      "opponent_build_id": "L15_starter_wand_r1",
+      "player_archetype_id": "starter_wand",
+      "opponent_archetype_id": "starter_wand",
+      "duration": 25.7,
+      "winner": "opponent",
+      "reason": "combatant_defeated"
+    },
+    {
+      "tag": "level_25_representative",
+      "matchup_id": "L25_M0001",
+      "level": 25,
+      "player_build_id": "L25_starter_wand_fixed",
+      "opponent_build_id": "L25_starter_wand_r1",
+      "player_archetype_id": "starter_wand",
+      "opponent_archetype_id": "starter_wand",
+      "duration": 27.7,
+      "winner": "player",
+      "reason": "combatant_defeated"
+    },
+    {
+      "tag": "level_40_representative",
+      "matchup_id": "L40_M0001",
+      "level": 40,
+      "player_build_id": "L40_starter_wand_fixed",
+      "opponent_build_id": "L40_starter_wand_r1",
+      "player_archetype_id": "starter_wand",
+      "opponent_archetype_id": "starter_wand",
+      "duration": 29.7,
+      "winner": "player",
+      "reason": "combatant_defeated"
+    }
+  ]
+}

@@ -1,0 +1,819 @@
+extends Control
+
+signal close_requested
+
+const BattleLogPresenterScript := preload("res://ui/battle_log_presenter.gd")
+
+const REQUEST_SCHEMA := "battle_lab_request_v1"
+const RESPONSE_SCHEMA := "battle_lab_response_v1"
+const REQUEST_PATH := "user://battle_lab_request.json"
+const RESPONSE_PATH := "user://battle_lab_response.json"
+
+const SPELLS := [
+	{"id": "raio_cosmico", "label": "Raio Cosmico", "unlock": 3},
+	{"id": "raio", "label": "Raio", "unlock": 7},
+	{"id": "acender", "label": "Acender", "unlock": 7},
+	{"id": "envenenar", "label": "Envenenar", "unlock": 7},
+	{"id": "congelar", "label": "Congelar", "unlock": 7},
+	{"id": "odio", "label": "Odio", "unlock": 25},
+	{"id": "dilacerar", "label": "Dilacerar", "unlock": 25},
+	{"id": "fortificar", "label": "Fortificar", "unlock": 25},
+	{"id": "invocar_demonio", "label": "Invocar Demonio", "unlock": 25},
+	{"id": "animar_morto", "label": "Animar Morto", "unlock": 25},
+]
+
+const PASSIVES := [
+	{"id": "foco_astral", "label": "Foco Astral"},
+	{"id": "forca", "label": "Forca"},
+	{"id": "resistencia", "label": "Resistencia"},
+	{"id": "escudo", "label": "Escudo"},
+	{"id": "vampirismo", "label": "Vampirismo"},
+	{"id": "velocidade", "label": "Velocidade"},
+]
+
+const PETS := [
+	{"id": "familiar_cinzento", "label": "Familiar Cinzento"},
+	{"id": "brasido", "label": "Brasido"},
+	{"id": "gelum", "label": "Gelum"},
+]
+
+var _status_label: Label
+var _summary_label: Label
+var _checks_label: Label
+var _outliers_label: Label
+var _history_label: Label
+var _replay_log_label: Label
+var _replay_title_label: Label
+var _player_hp: ProgressBar
+var _opponent_hp: ProgressBar
+var _player_state_label: Label
+var _opponent_state_label: Label
+var _marker_label: Label
+var _run_id_edit: LineEdit
+var _compare_edit: LineEdit
+var _player_editor: Dictionary = {}
+var _opponent_editor: Dictionary = {}
+var _last_response: Dictionary = {}
+var _last_replays: Array = []
+var _active_replay: Dictionary = {}
+var _replay_events: Array = []
+var _replay_index := 0
+var _replay_playing := false
+var _replay_speed := 1.0
+var _replay_accumulator := 0.0
+var _inferred_player_max_hp := 1.0
+var _inferred_opponent_max_hp := 1.0
+
+static func is_available() -> bool:
+	return bool(ProjectSettings.get_setting("draxos_mobile/battle_lab/enabled", false)) and OS.has_feature("editor")
+
+static func max_spell_slots(level: int) -> int:
+	if level >= 25:
+		return 3
+	if level >= 7:
+		return 2
+	if level >= 3:
+		return 1
+	return 0
+
+static func allowed_spell_ids(level: int) -> Array[String]:
+	var ids: Array[String] = []
+	for spell: Dictionary in SPELLS:
+		if int(spell.get("unlock", 999)) <= level:
+			ids.append(str(spell.get("id", "")))
+	return ids
+
+static func calculate_power(build: Dictionary) -> int:
+	var spell_total := 0
+	var spell_levels := _as_dictionary_static(build.get("spellLevels", {}))
+	for value: Variant in spell_levels.values():
+		spell_total += int(value)
+	return int(build.get("level", 1)) * 50 + int(build.get("weaponLevel", 1)) * 30 + spell_total * 20 + int(build.get("petLevel", 0)) * 15 + int(build.get("passiveLevel", 0)) * 10 + int(build.get("weaponQualityTier", 0)) * 25
+
+static func validate_build(build: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var level := int(build.get("level", 0))
+	var weapon_level := int(build.get("weaponLevel", 0))
+	if level < 1 or level > 40:
+		errors.append("level deve estar entre 1 e 40")
+	if weapon_level < 1 or weapon_level > level:
+		errors.append("weaponLevel deve estar entre 1 e level")
+	if int(build.get("weaponQualityTier", -1)) < 0 or int(build.get("weaponQualityTier", -1)) > 4:
+		errors.append("weaponQualityTier deve estar entre 0 e 4")
+
+	var spell_ids := _as_array_static(build.get("spellIds", []))
+	if spell_ids.size() > max_spell_slots(level):
+		errors.append("spells excedem slots liberados")
+	var allowed := allowed_spell_ids(level)
+	var seen := {}
+	var spell_levels := _as_dictionary_static(build.get("spellLevels", {}))
+	for spell_id_value: Variant in spell_ids:
+		var spell_id := str(spell_id_value)
+		if seen.has(spell_id):
+			errors.append("spell duplicada: %s" % spell_id)
+		seen[spell_id] = true
+		if not allowed.has(spell_id):
+			errors.append("spell travada neste level: %s" % spell_id)
+		var spell_level := int(spell_levels.get(spell_id, 0))
+		if spell_level < 1 or spell_level > level:
+			errors.append("level invalido para spell: %s" % spell_id)
+
+	var passive_id := str(build.get("passiveId", ""))
+	if passive_id != "":
+		if level < 10:
+			errors.append("passiva libera no level 10")
+		if not _id_exists(PASSIVES, passive_id):
+			errors.append("passiva desconhecida: %s" % passive_id)
+		var passive_level := int(build.get("passiveLevel", 0))
+		if passive_level < 1 or passive_level > level:
+			errors.append("passiveLevel deve estar entre 1 e level")
+
+	var pet_id := str(build.get("petId", ""))
+	if pet_id != "":
+		if level < 15:
+			errors.append("pet libera no level 15")
+		if not _id_exists(PETS, pet_id):
+			errors.append("pet desconhecido: %s" % pet_id)
+		var pet_level := int(build.get("petLevel", 0))
+		if pet_level < 1 or pet_level > level:
+			errors.append("petLevel deve estar entre 1 e level")
+	return errors
+
+static func default_build(id_prefix: String, level: int = 25) -> Dictionary:
+	var spell_ids := ["raio_cosmico", "acender", "congelar"]
+	var spell_levels := {}
+	for spell_id: String in spell_ids:
+		spell_levels[spell_id] = level
+	return {
+		"id": "%s_custom" % id_prefix,
+		"displayName": "%s Custom" % id_prefix.capitalize(),
+		"level": level,
+		"weaponLevel": level,
+		"weaponQualityTier": 2,
+		"spellIds": spell_ids,
+		"spellLevels": spell_levels,
+		"passiveId": "foco_astral",
+		"passiveLevel": level,
+		"petId": "familiar_cinzento",
+		"petLevel": level,
+	}
+
+func _ready() -> void:
+	set_process(true)
+	_build_ui()
+	_set_status("Battle Lab dev pronto. Use scratch para ensaios locais ou replay custom para ver uma build especifica.")
+
+func _process(delta: float) -> void:
+	if not _replay_playing:
+		return
+	_replay_accumulator += delta * _replay_speed
+	if _replay_accumulator < 0.25:
+		return
+	_replay_accumulator = 0.0
+	_step_replay()
+
+func _build_ui() -> void:
+	var background := ColorRect.new()
+	background.color = Color(0.035, 0.04, 0.055, 1.0)
+	background.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(background)
+
+	var root := VBoxContainer.new()
+	root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.offset_left = 14
+	root.offset_top = 12
+	root.offset_right = -14
+	root.offset_bottom = -12
+	root.add_theme_constant_override("separation", 10)
+	add_child(root)
+
+	var header := HBoxContainer.new()
+	header.add_theme_constant_override("separation", 10)
+	root.add_child(header)
+
+	var title := Label.new()
+	title.text = "Battle Lab Dev"
+	title.add_theme_font_size_override("font_size", 24)
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	header.add_child(title)
+
+	var close_button := Button.new()
+	close_button.text = "Fechar"
+	close_button.custom_minimum_size = Vector2(120, 40)
+	close_button.pressed.connect(func() -> void:
+		close_requested.emit()
+	)
+	header.add_child(close_button)
+
+	_status_label = Label.new()
+	_status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	root.add_child(_status_label)
+
+	var tabs := TabContainer.new()
+	tabs.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	root.add_child(tabs)
+	tabs.add_child(_build_run_tab())
+	tabs.set_tab_title(0, "Run")
+	tabs.add_child(_build_builds_tab())
+	tabs.set_tab_title(1, "Builds")
+	tabs.add_child(_build_analytics_tab())
+	tabs.set_tab_title(2, "Analytics")
+	tabs.add_child(_build_replay_tab())
+	tabs.set_tab_title(3, "Replay")
+	tabs.add_child(_build_history_tab())
+	tabs.set_tab_title(4, "History")
+
+func _build_run_tab() -> Control:
+	var box := _scroll_vbox()
+	box.add_child(_body_label("Scratch fica fora do Git. Run oficial grava em docs/battle-lab/runs somente quando marcada explicitamente."))
+	_run_id_edit = LineEdit.new()
+	_run_id_edit.placeholder_text = "run_id oficial ou scratch"
+	_run_id_edit.text = "scratch_%s" % Time.get_datetime_string_from_system().replace(":", "-")
+	box.add_child(_labeled_control("Run ID", _run_id_edit))
+	_compare_edit = LineEdit.new()
+	_compare_edit.placeholder_text = "run anterior para comparar, opcional"
+	_compare_edit.text = "2026-05-21_archetype_source_tuning_v02"
+	box.add_child(_labeled_control("Compare With", _compare_edit))
+
+	var scratch_button := Button.new()
+	scratch_button.text = "Gerar Scratch Run"
+	scratch_button.pressed.connect(func() -> void:
+		await _generate_run(false)
+	)
+	box.add_child(scratch_button)
+
+	var generated_button := Button.new()
+	generated_button.text = "Atualizar Generated"
+	generated_button.pressed.connect(func() -> void:
+		await _generate_generated()
+	)
+	box.add_child(generated_button)
+
+	var official_button := Button.new()
+	official_button.text = "Arquivar Run Oficial"
+	official_button.pressed.connect(func() -> void:
+		await _generate_run(true)
+	)
+	box.add_child(official_button)
+
+	_summary_label = _output_label("Nenhuma run carregada nesta sessao.")
+	box.add_child(_summary_label.get_parent())
+	return box.get_parent()
+
+func _build_builds_tab() -> Control:
+	var box := _scroll_vbox()
+	box.add_child(_body_label("Monte builds livremente. O Lab valida unlocks antes de enviar para o simulador TypeScript."))
+	var editors := HBoxContainer.new()
+	editors.add_theme_constant_override("separation", 12)
+	editors.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	box.add_child(editors)
+	_player_editor = _create_build_editor("player", default_build("player", 25))
+	_opponent_editor = _create_build_editor("opponent", default_build("opponent", 25))
+	editors.add_child(_player_editor["root"])
+	editors.add_child(_opponent_editor["root"])
+
+	var replay_button := Button.new()
+	replay_button.text = "Gerar Replay Custom"
+	replay_button.pressed.connect(func() -> void:
+		await _generate_custom_replay()
+	)
+	box.add_child(replay_button)
+	return box.get_parent()
+
+func _build_analytics_tab() -> Control:
+	var box := _scroll_vbox()
+	_checks_label = _output_label("Checks aparecerao depois de uma run.")
+	box.add_child(_checks_label.get_parent())
+	_outliers_label = _output_label("Outliers aparecerao depois de uma run.")
+	box.add_child(_outliers_label.get_parent())
+	return box.get_parent()
+
+func _build_replay_tab() -> Control:
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 8)
+	box.add_child(_body_label("Replay debug 2D: aplica somente os campos do battle_log_v1. Nao recalcula resultado."))
+
+	_replay_title_label = Label.new()
+	_replay_title_label.text = "Nenhum replay carregado."
+	box.add_child(_replay_title_label)
+
+	var arena := PanelContainer.new()
+	arena.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	box.add_child(arena)
+	var arena_box := VBoxContainer.new()
+	arena_box.add_theme_constant_override("separation", 8)
+	arena.add_child(arena_box)
+
+	var bars := HBoxContainer.new()
+	bars.add_theme_constant_override("separation", 12)
+	arena_box.add_child(bars)
+	_player_hp = _hp_bar("Player")
+	_opponent_hp = _hp_bar("Opponent")
+	bars.add_child(_player_hp)
+	bars.add_child(_opponent_hp)
+
+	var states := HBoxContainer.new()
+	states.add_theme_constant_override("separation", 12)
+	arena_box.add_child(states)
+	_player_state_label = _body_label("Player: aguardando")
+	_opponent_state_label = _body_label("Opponent: aguardando")
+	states.add_child(_player_state_label)
+	states.add_child(_opponent_state_label)
+
+	_marker_label = _output_label("Pets/Summons/Status aparecerao aqui.")
+	arena_box.add_child(_marker_label.get_parent())
+
+	var controls := HBoxContainer.new()
+	controls.add_theme_constant_override("separation", 8)
+	box.add_child(controls)
+	var load_sample := Button.new()
+	load_sample.text = "Carregar Amostra"
+	load_sample.pressed.connect(_load_first_sample_replay)
+	controls.add_child(load_sample)
+	var play_button := Button.new()
+	play_button.text = "Play/Pause"
+	play_button.pressed.connect(func() -> void:
+		_replay_playing = not _replay_playing
+	)
+	controls.add_child(play_button)
+	var step_button := Button.new()
+	step_button.text = "Step"
+	step_button.pressed.connect(_step_replay)
+	controls.add_child(step_button)
+	var reset_button := Button.new()
+	reset_button.text = "Reset"
+	reset_button.pressed.connect(_reset_replay)
+	controls.add_child(reset_button)
+	var speed := HSlider.new()
+	speed.min_value = 0.5
+	speed.max_value = 4.0
+	speed.step = 0.5
+	speed.value = 1.0
+	speed.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	speed.value_changed.connect(func(value: float) -> void:
+		_replay_speed = value
+	)
+	controls.add_child(speed)
+
+	var scroll := ScrollContainer.new()
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	box.add_child(scroll)
+	_replay_log_label = Label.new()
+	_replay_log_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	scroll.add_child(_replay_log_label)
+	return box
+
+func _build_history_tab() -> Control:
+	var box := _scroll_vbox()
+	_history_label = _output_label("Historico aparecera depois de uma run.")
+	box.add_child(_history_label.get_parent())
+	return box.get_parent()
+
+func _create_build_editor(side: String, initial_build: Dictionary) -> Dictionary:
+	var root := PanelContainer.new()
+	root.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 6)
+	root.add_child(box)
+
+	var title := Label.new()
+	title.text = side.capitalize()
+	title.add_theme_font_size_override("font_size", 18)
+	box.add_child(title)
+
+	var id_edit := LineEdit.new()
+	id_edit.text = str(initial_build.get("id", "%s_custom" % side))
+	box.add_child(_labeled_control("ID", id_edit))
+
+	var name_edit := LineEdit.new()
+	name_edit.text = str(initial_build.get("displayName", "%s Custom" % side.capitalize()))
+	box.add_child(_labeled_control("Nome", name_edit))
+
+	var level := _spin(1, 40, int(initial_build.get("level", 25)))
+	box.add_child(_labeled_control("Level", level))
+	var weapon_level := _spin(1, 40, int(initial_build.get("weaponLevel", 25)))
+	box.add_child(_labeled_control("Arma Level", weapon_level))
+	var quality := _spin(0, 4, int(initial_build.get("weaponQualityTier", 2)))
+	box.add_child(_labeled_control("Qualidade", quality))
+
+	var spell_options: Array[OptionButton] = []
+	var spell_levels: Array[SpinBox] = []
+	var initial_spells := _as_array(initial_build.get("spellIds", []))
+	var initial_spell_levels := _as_dictionary(initial_build.get("spellLevels", {}))
+	for slot in range(3):
+		var option := _option_with_none(SPELLS)
+		if slot < initial_spells.size():
+			_select_option_metadata(option, str(initial_spells[slot]))
+		var spell_level := _spin(1, 40, int(initial_spell_levels.get(str(initial_spells[slot]) if slot < initial_spells.size() else "", int(level.value))))
+		spell_options.append(option)
+		spell_levels.append(spell_level)
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 6)
+		row.add_child(option)
+		row.add_child(spell_level)
+		box.add_child(_labeled_control("Spell %d" % (slot + 1), row))
+
+	var passive_option := _option_with_none(PASSIVES)
+	_select_option_metadata(passive_option, str(initial_build.get("passiveId", "")))
+	box.add_child(_labeled_control("Passiva", passive_option))
+	var passive_level := _spin(1, 40, int(initial_build.get("passiveLevel", int(level.value))))
+	box.add_child(_labeled_control("Passiva Level", passive_level))
+
+	var pet_option := _option_with_none(PETS)
+	_select_option_metadata(pet_option, str(initial_build.get("petId", "")))
+	box.add_child(_labeled_control("Pet", pet_option))
+	var pet_level := _spin(1, 40, int(initial_build.get("petLevel", int(level.value))))
+	box.add_child(_labeled_control("Pet Level", pet_level))
+
+	var power_label := Label.new()
+	box.add_child(power_label)
+	var editor := {
+		"root": root,
+		"id": id_edit,
+		"name": name_edit,
+		"level": level,
+		"weapon_level": weapon_level,
+		"quality": quality,
+		"spell_options": spell_options,
+		"spell_levels": spell_levels,
+		"passive_option": passive_option,
+		"passive_level": passive_level,
+		"pet_option": pet_option,
+		"pet_level": pet_level,
+		"power_label": power_label,
+	}
+	level.value_changed.connect(func(_value: float) -> void:
+		_refresh_editor(editor)
+	)
+	for option: OptionButton in spell_options:
+		option.item_selected.connect(func(_index: int) -> void:
+			_refresh_editor(editor)
+		)
+	for spin_box: SpinBox in [weapon_level, quality, passive_level, pet_level]:
+		spin_box.value_changed.connect(func(_value: float) -> void:
+			_refresh_editor(editor)
+		)
+	_refresh_editor(editor)
+	return editor
+
+func _build_from_editor(editor: Dictionary) -> Dictionary:
+	var level_spin: SpinBox = editor["level"]
+	var weapon_spin: SpinBox = editor["weapon_level"]
+	var quality_spin: SpinBox = editor["quality"]
+	var id_edit: LineEdit = editor["id"]
+	var name_edit: LineEdit = editor["name"]
+	var passive_level_spin: SpinBox = editor["passive_level"]
+	var pet_level_spin: SpinBox = editor["pet_level"]
+	var level := int(level_spin.value)
+	var spell_ids: Array[String] = []
+	var spell_levels := {}
+	var options: Array = editor["spell_options"]
+	var levels: Array = editor["spell_levels"]
+	for index in range(options.size()):
+		var spell_id := _selected_metadata(options[index])
+		if spell_id == "":
+			continue
+		var spell_level_spin: SpinBox = levels[index]
+		spell_ids.append(spell_id)
+		spell_levels[spell_id] = clampi(int(spell_level_spin.value), 1, level)
+	var build := {
+		"id": id_edit.text.strip_edges(),
+		"displayName": name_edit.text.strip_edges(),
+		"level": level,
+		"weaponLevel": clampi(int(weapon_spin.value), 1, level),
+		"weaponQualityTier": clampi(int(quality_spin.value), 0, 4),
+		"spellIds": spell_ids,
+		"spellLevels": spell_levels,
+	}
+	var passive_id := _selected_metadata(editor["passive_option"])
+	if passive_id != "":
+		build["passiveId"] = passive_id
+		build["passiveLevel"] = clampi(int(passive_level_spin.value), 1, level)
+	var pet_id := _selected_metadata(editor["pet_option"])
+	if pet_id != "":
+		build["petId"] = pet_id
+		build["petLevel"] = clampi(int(pet_level_spin.value), 1, level)
+	return build
+
+func _refresh_editor(editor: Dictionary) -> void:
+	var build := _build_from_editor(editor)
+	var errors := validate_build(build)
+	var suffix := "OK" if errors.is_empty() else "REVIEW: %s" % "; ".join(errors)
+	var power_label: Label = editor["power_label"]
+	power_label.text = "Poder %d | %s" % [calculate_power(build), suffix]
+
+func _generate_generated() -> void:
+	var request := {
+		"schema_version": REQUEST_SCHEMA,
+		"mode": "run",
+		"compare_with_run_id": _compare_edit.text.strip_edges(),
+	}
+	await _send_bridge_request(request)
+
+func _generate_run(official: bool) -> void:
+	var run_id := _run_id_edit.text.strip_edges()
+	if run_id == "":
+		_set_status("Informe um run_id.")
+		return
+	var request := {
+		"schema_version": REQUEST_SCHEMA,
+		"mode": "run",
+		"compare_with_run_id": _compare_edit.text.strip_edges(),
+	}
+	if official:
+		request["archive_run_id"] = run_id
+	else:
+		request["scratch_run_id"] = run_id
+	await _send_bridge_request(request)
+
+func _generate_custom_replay() -> void:
+	var player := _build_from_editor(_player_editor)
+	var opponent := _build_from_editor(_opponent_editor)
+	var errors := validate_build(player)
+	errors.append_array(validate_build(opponent))
+	if not errors.is_empty():
+		_set_status("Build invalida: %s" % "; ".join(errors))
+		return
+	var request := {
+		"schema_version": REQUEST_SCHEMA,
+		"mode": "replay",
+		"battle_id": "godot_custom_replay",
+		"seed": "godot_custom_replay:%s:%s" % [player.get("id", "player"), opponent.get("id", "opponent")],
+		"player_build": player,
+		"opponent_build": opponent,
+	}
+	var response := await _send_bridge_request(request)
+	if bool(response.get("ok", false)) and response.get("replay", null) is Dictionary:
+		_load_replay(_as_dictionary(response.get("replay", {})))
+
+func _send_bridge_request(request: Dictionary) -> Dictionary:
+	_set_status("Chamando Battle Lab Deno...")
+	var request_path := ProjectSettings.globalize_path(REQUEST_PATH)
+	var response_path := ProjectSettings.globalize_path(RESPONSE_PATH)
+	_write_json(request_path, request)
+
+	var script_path := ProjectSettings.globalize_path("res://tools/battle_lab/generate.ts")
+	var command := str(ProjectSettings.get_setting("draxos_mobile/battle_lab/deno_command", "npx"))
+	var args := _deno_prefix_args()
+	args.append(script_path)
+	args.append("--request")
+	args.append(request_path)
+	args.append("--response")
+	args.append(response_path)
+	var output: Array = []
+	var exit_code := OS.execute(command, args, output, true, false)
+	if exit_code != 0:
+		_set_status("Battle Lab falhou: %s" % "\n".join(output))
+		return {"ok": false}
+	var response := _read_json(response_path)
+	_last_response = response
+	if not bool(response.get("ok", false)):
+		var error := _as_dictionary(response.get("error", {}))
+		_set_status("Battle Lab erro: %s" % str(error.get("message", "erro desconhecido")))
+		return response
+	_set_status("Battle Lab OK: %s" % str(response.get("status", "PASS")))
+	_refresh_from_response(response)
+	return response
+
+func _refresh_from_response(response: Dictionary) -> void:
+	if response.get("mode", "") == "run":
+		_render_run_response(response)
+		var output_dir := str(response.get("output_dir", ""))
+		_load_replays_from_output(output_dir)
+
+func _render_run_response(response: Dictionary) -> void:
+	var summary := _as_dictionary(response.get("summary", {}))
+	_summary_label.text = "Status %s | batalhas %s | media %ss | curtas %s%% | longas %s%% | anti-stall %s%%\nReport: %s" % [
+		str(response.get("status", "")),
+		str(summary.get("total_battles", "?")),
+		str(summary.get("avg_duration", "?")),
+		str(summary.get("short_rate_percent", "?")),
+		str(summary.get("long_rate_percent", "?")),
+		str(summary.get("anti_stall_rate_percent", "?")),
+		str(response.get("report_path", "")),
+	]
+
+	var check_lines: PackedStringArray = PackedStringArray()
+	for item: Variant in _as_array(response.get("checks", [])):
+		var check := _as_dictionary(item)
+		check_lines.append("%s | %s | %s / %s" % [
+			str(check.get("status", "")),
+			str(check.get("id", "")),
+			str(check.get("observed", "")),
+			str(check.get("target", "")),
+		])
+	_checks_label.text = "\n".join(check_lines) if not check_lines.is_empty() else "Sem checks."
+
+	var outlier_lines: PackedStringArray = PackedStringArray()
+	for item: Variant in _as_array(response.get("outliers", [])):
+		var outlier := _as_dictionary(item)
+		outlier_lines.append("%s | %s | %ss | %s vs %s" % [
+			str(outlier.get("severity", "")),
+			str(outlier.get("matchup_id", "")),
+			str(outlier.get("duration", "")),
+			str(outlier.get("player_build_id", "")),
+			str(outlier.get("opponent_build_id", "")),
+		])
+	_outliers_label.text = "\n".join(outlier_lines) if not outlier_lines.is_empty() else "Sem outliers."
+
+	if response.get("compare", null) is Array:
+		_history_label.text = "Compare rows: %d\nOutput: %s" % [_as_array(response.get("compare", [])).size(), str(response.get("output_dir", ""))]
+
+func _load_replays_from_output(output_dir: String) -> void:
+	if output_dir == "":
+		return
+	var path := output_dir.path_join("battle_lab_replays.json")
+	var replays_doc := _read_json(path)
+	_last_replays = _as_array(replays_doc.get("replays", []))
+	if not _last_replays.is_empty():
+		_load_replay(_as_dictionary(_last_replays[0]))
+
+func _load_first_sample_replay() -> void:
+	if _last_replays.is_empty():
+		_set_status("Nenhuma amostra carregada. Gere uma run primeiro.")
+		return
+	_load_replay(_as_dictionary(_last_replays[0]))
+
+func _load_replay(replay: Dictionary) -> void:
+	_active_replay = replay
+	var battle_log := _as_dictionary(replay.get("battle_log", {}))
+	_replay_events = BattleLogPresenterScript.sorted_events(battle_log)
+	_replay_index = 0
+	_replay_playing = false
+	_replay_accumulator = 0.0
+	_infer_replay_hp()
+	_reset_replay()
+	_replay_title_label.text = "%s | %s vs %s | %ss | winner %s" % [
+		str(replay.get("matchup_id", "")),
+		str(replay.get("player_build_id", "")),
+		str(replay.get("opponent_build_id", "")),
+		str(replay.get("duration", "")),
+		str(replay.get("winner", "")),
+	]
+
+func _reset_replay() -> void:
+	_replay_index = 0
+	_replay_playing = false
+	_player_hp.max_value = _inferred_player_max_hp
+	_player_hp.value = _inferred_player_max_hp
+	_opponent_hp.max_value = _inferred_opponent_max_hp
+	_opponent_hp.value = _inferred_opponent_max_hp
+	_player_state_label.text = "Player HP %s" % str(_player_hp.value)
+	_opponent_state_label.text = "Opponent HP %s" % str(_opponent_hp.value)
+	_marker_label.text = "Marcadores: nenhum"
+	_replay_log_label.text = BattleLogPresenterScript.format_summary(_as_dictionary(_active_replay.get("battle_log", {})), _as_dictionary(_active_replay.get("rewards", {}))) if not _active_replay.is_empty() else ""
+
+func _step_replay() -> void:
+	if _replay_index >= _replay_events.size():
+		_replay_playing = false
+		return
+	var event := _as_dictionary(_replay_events[_replay_index])
+	_replay_index += 1
+	_apply_replay_event(event)
+	var line := BattleLogPresenterScript.format_event(event)
+	_replay_log_label.text = "%s\n%s" % [_replay_log_label.text, line]
+
+func _apply_replay_event(event: Dictionary) -> void:
+	var target := str(event.get("target", ""))
+	if event.has("hp_after"):
+		var hp_after := float(event.get("hp_after", 0.0))
+		if target == "player":
+			_player_hp.value = hp_after
+			_player_state_label.text = "Player HP %s" % str(hp_after)
+		elif target == "opponent":
+			_opponent_hp.value = hp_after
+			_opponent_state_label.text = "Opponent HP %s" % str(hp_after)
+	if str(event.get("type", "")) in ["summon_spawn", "summon_attack", "summon_expire", "pet_attack", "status_apply", "dot_apply", "status_expire"]:
+		_marker_label.text = "Marcador: %s %s -> %s" % [str(event.get("type", "")), str(event.get("source", "")), str(event.get("target", ""))]
+
+func _infer_replay_hp() -> void:
+	_inferred_player_max_hp = 1.0
+	_inferred_opponent_max_hp = 1.0
+	for item: Variant in _replay_events:
+		var event := _as_dictionary(item)
+		if not event.has("hp_after"):
+			continue
+		var hp := float(event.get("hp_after", 1.0))
+		if str(event.get("target", "")) == "player":
+			_inferred_player_max_hp = max(_inferred_player_max_hp, hp)
+		elif str(event.get("target", "")) == "opponent":
+			_inferred_opponent_max_hp = max(_inferred_opponent_max_hp, hp)
+
+func _deno_prefix_args() -> PackedStringArray:
+	var fallback := PackedStringArray(["-y", "deno", "run", "--allow-read", "--allow-write"])
+	var configured: Variant = ProjectSettings.get_setting("draxos_mobile/battle_lab/deno_prefix_args", fallback)
+	if configured is PackedStringArray:
+		return configured
+	if configured is Array:
+		return PackedStringArray(configured)
+	if configured is String:
+		return PackedStringArray(str(configured).split(" ", false))
+	return fallback
+
+func _scroll_vbox() -> VBoxContainer:
+	var scroll := ScrollContainer.new()
+	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	var box := VBoxContainer.new()
+	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	box.add_theme_constant_override("separation", 8)
+	scroll.add_child(box)
+	return box
+
+func _body_label(text: String) -> Label:
+	var label := Label.new()
+	label.text = text
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return label
+
+func _output_label(text: String) -> Label:
+	var panel := PanelContainer.new()
+	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var label := _body_label(text)
+	panel.add_child(label)
+	return label
+
+func _labeled_control(label_text: String, control: Control) -> HBoxContainer:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 6)
+	var label := Label.new()
+	label.text = label_text
+	label.custom_minimum_size = Vector2(120, 0)
+	row.add_child(label)
+	control.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(control)
+	return row
+
+func _spin(minimum: int, maximum: int, value: int) -> SpinBox:
+	var spin := SpinBox.new()
+	spin.min_value = minimum
+	spin.max_value = maximum
+	spin.step = 1
+	spin.value = value
+	spin.custom_minimum_size = Vector2(84, 0)
+	return spin
+
+func _hp_bar(label_text: String) -> ProgressBar:
+	var bar := ProgressBar.new()
+	bar.custom_minimum_size = Vector2(0, 32)
+	bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	bar.tooltip_text = label_text
+	return bar
+
+func _option_with_none(items: Array) -> OptionButton:
+	var option := OptionButton.new()
+	option.add_item("Nenhum")
+	option.set_item_metadata(0, "")
+	for item: Dictionary in items:
+		option.add_item(str(item.get("label", item.get("id", ""))))
+		option.set_item_metadata(option.item_count - 1, str(item.get("id", "")))
+	return option
+
+func _select_option_metadata(option: OptionButton, value: String) -> void:
+	for index in range(option.item_count):
+		if str(option.get_item_metadata(index)) == value:
+			option.select(index)
+			return
+	option.select(0)
+
+func _selected_metadata(option: OptionButton) -> String:
+	if option.selected < 0:
+		return ""
+	return str(option.get_item_metadata(option.selected))
+
+func _write_json(path: String, payload: Dictionary) -> void:
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file != null:
+		file.store_string(JSON.stringify(payload, "\t"))
+
+func _read_json(path: String) -> Dictionary:
+	if not FileAccess.file_exists(path):
+		return {}
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		return {}
+	var parsed: Variant = JSON.parse_string(file.get_as_text())
+	return _as_dictionary(parsed)
+
+func _set_status(message: String) -> void:
+	if _status_label != null:
+		_status_label.text = message
+
+func _as_dictionary(value: Variant) -> Dictionary:
+	return value if value is Dictionary else {}
+
+func _as_array(value: Variant) -> Array:
+	return value if value is Array else []
+
+static func _as_dictionary_static(value: Variant) -> Dictionary:
+	return value if value is Dictionary else {}
+
+static func _as_array_static(value: Variant) -> Array:
+	return value if value is Array else []
+
+static func _id_exists(items: Array, id: String) -> bool:
+	for item: Dictionary in items:
+		if str(item.get("id", "")) == id:
+			return true
+	return false

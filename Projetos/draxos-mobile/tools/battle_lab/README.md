@@ -20,10 +20,24 @@ Run oficial arquivada:
 npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --archive-run 2026-05-21_archetype_source_tuning_v02 --compare-with 2026-05-21_pacing_alpha_v01
 ```
 
+Bridge usado pelo Godot dev-only:
+
+```powershell
+npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --request user_request.json --response user_response.json
+```
+
+Scratch local fora do Git:
+
+```powershell
+npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --scratch-run scratch_pet_review
+```
+
 Saidas:
 
 - `docs/battle-lab/generated/battle_lab_report.html`
 - `docs/battle-lab/generated/battle_lab_summary.json`
+- `docs/battle-lab/generated/battle_lab_ui.json`
+- `docs/battle-lab/generated/battle_lab_replays.json`
 - `docs/battle-lab/generated/battle_lab_matchups.csv`
 - `docs/battle-lab/generated/battle_lab_builds.csv`
 - `docs/battle-lab/generated/battle_lab_archetypes.csv`
@@ -35,6 +49,27 @@ Saidas:
 - `docs/battle-lab/generated/battle_lab_history_index.csv`
 - `docs/battle-lab/generated/battle_lab_compare.csv`
 - `docs/battle-lab/runs/<run_id>/` para runs oficiais versionadas.
+- `.battle_lab_scratch/<run_id>/` para ensaios locais ignorados pelo Git.
+
+## Dentro Do Godot
+
+No editor, com `draxos_mobile/battle_lab/enabled=true`, o Refugio mostra
+`Battle Lab Dev`.
+
+Essa tela:
+
+- chama o runner Deno configurado em `project.godot`;
+- gera scratch runs e runs oficiais;
+- mostra resumo/checks/outliers;
+- permite montar builds manualmente com validacao de unlock;
+- gera replay custom sob demanda;
+- reproduz `battle_log_v1` em uma arena debug 2D.
+
+O cliente Godot nao calcula resultado, dano ou recompensa. Ele apenas monta o
+pedido, chama Deno local e apresenta o log retornado.
+
+Os exports excluem `dev/**`, `tools/battle_lab/**`, `docs/battle-lab/**` e
+`.battle_lab_scratch/**`.
 
 ## Configurar
 
@@ -62,7 +97,9 @@ Use nesta ordem:
 4. `Source By Archetype`: mostra quais fontes realmente sustentam cada build.
 5. `Level And Power Bands`: mostra onde a escala quebra por level/faixa.
 6. `Compare` e `Run History`: mostram deltas e historico oficial.
-7. `Outliers`: lista matchups reproduziveis por `matchup_id`, `seed` e build
+7. `Replay Samples`: use `battle_lab_replays.json` para ver logs completos de
+   outliers e representantes no Godot.
+8. `Outliers`: lista matchups reproduziveis por `matchup_id`, `seed` e build
    IDs.
 
 ## Regra De Tuning

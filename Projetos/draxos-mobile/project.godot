@@ -37,6 +37,9 @@ window/size/min_height=540
 
 supabase/url="http://127.0.0.1:54321"
 supabase/publishable_key="sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH"
+battle_lab/enabled=true
+battle_lab/deno_command="npx"
+battle_lab/deno_prefix_args=PackedStringArray("-y", "deno", "run", "--allow-read", "--allow-write")
 
 [editor_plugins]
 

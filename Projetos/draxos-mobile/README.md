@@ -12,7 +12,7 @@ Status: `P2_IMPLEMENTACAO - alpha hardening complete`
 
 - Track 00 completa: Godot client, Supabase local, auth guest, batalha server-authoritative, Base, Social/Competicao, Monetizacao, pipeline de conteudo, exports e testes.
 - Track 01 completa: hardening do alpha PC local, telemetria client nao autoritativa, reset seguro de sessao local, smokes de loop alpha e checklist de playtest.
-- Battle Lab offline implementado: `tools/battle_lab/` gera HTML/CSV/JSON em `docs/battle-lab/generated/`, arquiva runs oficiais em `docs/battle-lab/runs/` e compara deltas; o ajuste de pacing alpha levou a duracao media de `3.22s` para `18.19s`, e o ajuste por arquetipo/fonte v02 deixou o baseline em `18.91s`, `0%` de batalhas curtas e status `REVIEW` por `pet_handler`.
+- Battle Lab offline + dev-only no Godot implementado: `tools/battle_lab/` gera HTML/CSV/JSON/replays em `docs/battle-lab/generated/`, arquiva runs oficiais em `docs/battle-lab/runs/`, compara deltas, marca compatibilidade/stale e pode ser aberto no editor pelo Refugio para montar builds e assistir replays debug 2D; exports excluem a ferramenta. O ajuste de pacing alpha levou a duracao media de `3.22s` para `18.19s`, e o ajuste por arquetipo/fonte v02 deixou o baseline em `18.91s`, `0%` de batalhas curtas e status `REVIEW` por `pet_handler`.
 - Supabase runtime local configurado em `supabase/`: Docker Desktop, `npx supabase`, `npx deno`, migrations MVP/base/social/ranking/monetizacao, Auth anonimo, healthcheck e Edge Functions `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*` e `telemetry/*`.
 - Conta guest alpha implementada: `account/guest`, `account/state`, convite `ALPHA-TEST`, fixture inicial de player/resources/build, cache local nao autoritativo e escrita direta do cliente bloqueada.
 - Reuso conservador documentado em `docs/reuse-map.md`; padroes tecnicos foram adotados sem importar gameplay de outros projetos.
@@ -55,7 +55,7 @@ Status: `P2_IMPLEMENTACAO - alpha hardening complete`
 | Conta Guest MVP | Completo - T00-P05 |
 | Batalha, replay, Base, Social, Competicao e Monetizacao | Completo - T00-P07 a T00-P13 |
 | Alpha Playtest Hardening | Completo - Track 01 |
-| Battle Lab, historico e tuning de fonte/arquetipo | Completo - baseline v02 2026-05-21 |
+| Battle Lab, historico, replay dev e tuning de fonte/arquetipo | Completo - baseline v02 2026-05-21 |
 
 ---
 
@@ -95,6 +95,7 @@ draxos-mobile/
 |-- supabase/
 |-- core/
 |-- data/
+|-- dev/
 |-- ui/
 |-- modes/
 |-- social/

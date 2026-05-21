@@ -59,6 +59,10 @@ runs oficiais. Baseline v02: duracao media `18.91s`, batalhas curtas `0%`,
 anti-stall `0.12%`, status geral `REVIEW`; `burst_caster` caiu para `60%` em
 poder proximo e `pet_handler` caiu para `70.45%`, ainda acima do alvo de `65%`.
 
+Battle Lab Dev 2026-05-21: o laboratorio tambem pode ser aberto no Godot editor
+para montar builds, gerar scratch runs e assistir replays debug 2D a partir de
+`battle_log_v1`. Essa tela e dev-only e nao entra nos exports.
+
 Fontes externas v0:
 
 - Estrutura de Stats aplica bonus percentual em Vida, Ataque/dano base, Defesa, Mana e regen de mana.

@@ -7,6 +7,7 @@ Ferramentas de desenvolvimento e validacao.
 - `content_generator.gd` - gera `data/generated/draxos_mobile_catalog.tres` a partir de `data/definitions/*.json`.
 - `create_boot_scene.gd` - gera a cena boot minima via API do Godot.
 - `economy_simulator/` - fonte JSON e gerador Deno/TypeScript para a planilha de economia de seasons.
+- `battle_lab/` - runner Deno do laboratorio de combate, usado pelo HTML/CSV/JSON e pela tela dev-only Godot.
 
 Validacao local:
 
@@ -20,4 +21,11 @@ Simulador de economia:
 ```powershell
 cd D:\Estudio\Projetos\draxos-mobile
 npx -y deno run --allow-read --allow-write tools/economy_simulator/generate.ts
+```
+
+Battle Lab:
+
+```powershell
+cd D:\Estudio\Projetos\draxos-mobile
+npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --compare-with 2026-05-21_archetype_source_tuning_v02
 ```

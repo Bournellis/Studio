@@ -2,11 +2,13 @@ import { simulateFirstSliceBattle } from "../../server/functions/_shared/battle_
 import {
   allowedSpellIds,
   analyzeBattleLog,
+  buildBridgeReplayResponse,
   calculatePower,
   classifyPowerBand,
   compareBattleLabResults,
   createBuilds,
   historyIndexDocument,
+  markHistoryCompatibility,
   nearPowerMatchup,
   parseOptions,
   runBattleLab,
@@ -144,12 +146,32 @@ Deno.test("battle lab parses archive and compare options", () => {
     "run_a",
     "--compare-with",
     "run_b",
+    "--request",
+    "request.json",
+    "--response",
+    "response.json",
   ]);
   assertEquals(options.archiveRunId, "run_a", "archive run id should parse");
   assertEquals(
     options.compareWithRunId,
     "run_b",
     "compare run id should parse",
+  );
+  assertEquals(
+    options.requestPath,
+    "request.json",
+    "request path should parse",
+  );
+  assertEquals(
+    options.responsePath,
+    "response.json",
+    "response path should parse",
+  );
+  const scratchOptions = parseOptions(["--scratch-run", "scratch_a"]);
+  assertEquals(
+    scratchOptions.scratchRunId,
+    "scratch_a",
+    "scratch run id should parse",
   );
 });
 
@@ -244,6 +266,63 @@ Deno.test("battle lab builds a run manifest entry and history index document", (
     history[0].run_id,
     "test_run",
     "history index should keep run id",
+  );
+});
+
+Deno.test("battle lab marks old runs stale when compatibility hashes differ", () => {
+  const manifest = {
+    ...testRunManifest("old_run"),
+    compatibility: {
+      simulator_hash: "old",
+      content_hash: "old",
+      model_hash: "old",
+      battle_log_schema: "battle_log_v1",
+      compatibility_status: "current",
+    },
+  } as const;
+  const history = markHistoryCompatibility([manifest], {
+    simulator_hash: "new",
+    content_hash: "new",
+    model_hash: "new",
+    battle_log_schema: "battle_log_v1",
+    compatibility_status: "current",
+  });
+  assertEquals(
+    history[0].compatibility?.compatibility_status,
+    "stale",
+    "hash mismatch should mark old runs stale",
+  );
+});
+
+Deno.test("battle lab bridge generates deterministic custom replay logs", () => {
+  const model = testModel();
+  const player = createBuilds(model).find((build) =>
+    build.level === 25 && build.archetype_id === "dot_pressure"
+  )!;
+  const opponent = createBuilds(model).find((build) =>
+    build.level === 25 && build.archetype_id === "defensive_caster"
+  )!;
+  const first = buildBridgeReplayResponse(model, {
+    schema_version: "battle_lab_request_v1",
+    mode: "replay",
+    battle_id: "bridge_test",
+    seed: "bridge_seed",
+    player_build: player.build,
+    opponent_build: opponent.build,
+  });
+  const second = buildBridgeReplayResponse(model, {
+    schema_version: "battle_lab_request_v1",
+    mode: "replay",
+    battle_id: "bridge_test",
+    seed: "bridge_seed",
+    player_build: player.build,
+    opponent_build: opponent.build,
+  });
+  assertEquals(first.ok, true, "bridge replay should succeed");
+  assertEquals(
+    JSON.stringify(first.replay?.battle_log),
+    JSON.stringify(second.replay?.battle_log),
+    "same seed/builds should produce same battle log",
   );
 });
 

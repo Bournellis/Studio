@@ -28,16 +28,23 @@ Para arquivar uma run oficial e comparar com uma anterior:
 npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --archive-run 2026-05-21_archetype_source_tuning_v02 --compare-with 2026-05-21_pacing_alpha_v01
 ```
 
-2. Abrir `generated/battle_lab_report.html`.
-3. Ler primeiro os checks e outliers.
-4. Escolher uma hipotese pequena de tuning.
-5. Alterar numeros de combate em uma tarefa separada.
-6. Rodar o Battle Lab de novo e comparar relatorios.
+2. No Godot editor, abrir `Refugio -> Battle Lab Dev` quando quiser testar
+   builds visualmente.
+3. Gerar scratch runs para ensaios locais ou runs oficiais para tuning
+   versionado.
+4. Ler primeiro os checks, outliers e matriz de poder proximo.
+5. Assistir amostras de replay ou gerar replay custom por build.
+6. Escolher uma hipotese pequena de tuning.
+7. Alterar numeros de combate em uma tarefa separada.
+8. Rodar o Battle Lab de novo e comparar relatorios.
 
 ## Artefatos
 
 - `generated/battle_lab_report.html`: painel principal para leitura humana.
 - `generated/battle_lab_summary.json`: dados completos do baseline.
+- `generated/battle_lab_ui.json`: resumo compacto para a UI Godot.
+- `generated/battle_lab_replays.json`: amostras com `battle_log_v1` completo
+  para replay visual.
 - `generated/battle_lab_matchups.csv`: uma linha por batalha.
 - `generated/battle_lab_builds.csv`: builds e seeds reproduziveis.
 - `generated/battle_lab_archetypes.csv`: agregados por arquetipo.
@@ -54,6 +61,7 @@ npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --archiv
 - `generated/battle_lab_checks.csv`: criterios PASS/REVIEW/CRITICAL.
 - `runs/`: historico versionado de runs oficiais de balanceamento. `generated/`
   e sempre a visao atual sobrescrita.
+- `.battle_lab_scratch/`: runs locais ignoradas pelo Git.
 
 ## Contrato
 
@@ -64,6 +72,26 @@ npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --archiv
 - A ferramenta nao altera ranking, recursos ou progresso.
 - A ferramenta nao muda numeros de combate; isso pertence a uma etapa posterior
   de tuning.
+- A tela Godot e dev-only: aparece apenas no editor e os exports excluem
+  `dev/**`, `tools/battle_lab/**`, `docs/battle-lab/**` e scratch outputs.
+- Runs antigas recebem metadados de compatibilidade. Quando simulador, conteudo
+  ou modelo mudam, elas aparecem como `stale` em vez de desaparecer.
+
+## Battle Lab Dev No Godot
+
+Use para ver o combate enquanto ajusta numeros e arte:
+
+- `Run`: gera `generated/`, scratch ou run oficial.
+- `Builds`: editor visual completo de level, arma, qualidade, spells, passiva e
+  pet.
+- `Analytics`: checks e outliers da ultima run.
+- `Replay`: arena debug 2D com HP, marcadores de pet/summon/status, step,
+  play/pause e velocidade.
+- `History`: resumo da run e comparacao carregada.
+
+O Godot chama Deno por `draxos_mobile/battle_lab/deno_command` e
+`draxos_mobile/battle_lab/deno_prefix_args`. O padrao local e `npx -y deno run
+--allow-read --allow-write`.
 
 ## Como Usar Os Dados
 
@@ -121,9 +149,10 @@ Validacoes rodadas:
 ```powershell
 npx -y deno test server/tests/first_slice_simulator_test.ts
 npx -y deno test tools/battle_lab
-npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --archive-run 2026-05-21_archetype_source_tuning_v02 --compare-with 2026-05-21_pacing_alpha_v01
+npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --compare-with 2026-05-21_archetype_source_tuning_v02
 cd server/functions
 npx -y deno task check
 npx -y deno task lint
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-mobile -s res://tools/validate.gd
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-mobile -s res://tools/smoke_exports.gd
 ```

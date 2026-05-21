@@ -9,6 +9,7 @@ const SCREEN_BASE := "base"
 const SCREEN_SOCIAL := "social"
 const SCREEN_COMPETITION := "competition"
 const SCREEN_SHOP := "shop"
+const BATTLE_LAB_SCREEN_PATH := "res://dev/battle_lab/battle_lab_screen.gd"
 
 const RESOURCE_KEYS := ["almas", "energia", "sangue", "cristais", "ossos", "diamante"]
 
@@ -30,6 +31,7 @@ var _active_action_id := ""
 var _is_busy := false
 var _replay_running := false
 var _skip_replay := false
+var _battle_lab_overlay: Control
 
 func _ready() -> void:
 	_clear_existing_scene()
@@ -50,6 +52,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	get_viewport().set_input_as_handled()
 	if _confirm_dialog != null and _confirm_dialog.visible:
 		_confirm_dialog.hide()
+		return
+	if _battle_lab_overlay != null and is_instance_valid(_battle_lab_overlay):
+		_close_battle_lab_overlay()
 		return
 	if _replay_running:
 		_skip_replay = true
@@ -226,6 +231,43 @@ func _go_back() -> void:
 	var previous: String = _screen_history.pop_back()
 	_show_screen(previous, false)
 
+func _battle_lab_available() -> bool:
+	if not OS.has_feature("editor"):
+		return false
+	if not bool(ProjectSettings.get_setting("draxos_mobile/battle_lab/enabled", false)):
+		return false
+	return ResourceLoader.exists(BATTLE_LAB_SCREEN_PATH)
+
+func _open_battle_lab_overlay() -> void:
+	if not _battle_lab_available():
+		_error_label.text = "Battle Lab dev indisponivel neste ambiente."
+		return
+	if _battle_lab_overlay != null and is_instance_valid(_battle_lab_overlay):
+		return
+	var script: Script = load(BATTLE_LAB_SCREEN_PATH)
+	if script == null or not script.can_instantiate():
+		_error_label.text = "Battle Lab dev nao pode ser carregado."
+		return
+	var overlay: Control = script.new()
+	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	if overlay.has_signal("close_requested"):
+		overlay.connect("close_requested", Callable(self, "_close_battle_lab_overlay"))
+	add_child(overlay)
+	_battle_lab_overlay = overlay
+	_emit_client_event("battle_lab_opened", {
+		"screen": _current_screen,
+	})
+
+func _close_battle_lab_overlay() -> void:
+	if _battle_lab_overlay == null or not is_instance_valid(_battle_lab_overlay):
+		_battle_lab_overlay = null
+		return
+	_battle_lab_overlay.queue_free()
+	_battle_lab_overlay = null
+	_emit_client_event("battle_lab_closed", {
+		"screen": _current_screen,
+	})
+
 func _clear_content_body() -> void:
 	for child: Node in _content_body.get_children():
 		_content_body.remove_child(child)
@@ -237,6 +279,8 @@ func _render_hub_screen() -> void:
 	_add_action_button("Entrar como guest", "enter_guest")
 	_add_action_button("Sincronizar sessao", "refresh_session")
 	_add_action_button("Resetar sessao local", "reset_session", "Limpar apenas token/cache local desta maquina? O estado salvo no servidor nao sera apagado.")
+	if _battle_lab_available():
+		_add_action_button("Battle Lab Dev", "open_battle_lab")
 
 	var account := "Conta: nao iniciada"
 	if SessionStore.has_account_state():
@@ -385,6 +429,8 @@ func _execute_action(action_id: String) -> void:
 			await _refresh_session()
 		"reset_session":
 			await _reset_local_session()
+		"open_battle_lab":
+			_open_battle_lab_overlay()
 		"request_battle":
 			await _request_battle()
 		"show_latest_battle":

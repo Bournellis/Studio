@@ -5,6 +5,12 @@ const EXPECTED_PRESETS := {
 	"PC Windows Alpha": "Windows Desktop",
 	"PC Browser Alpha": "Web",
 }
+const EXPECTED_EXCLUDES := [
+	"dev/**",
+	"tools/battle_lab/**",
+	"docs/battle-lab/**",
+	".battle_lab_scratch/**",
+]
 
 var _failures: Array[String] = []
 
@@ -55,6 +61,10 @@ func _check_presets(config: ConfigFile) -> void:
 				_failures.append("%s expected platform %s, got %s" % [name, expected_platform, platform])
 			if export_path == "":
 				_failures.append("%s must define export_path" % name)
+			var exclude_filter := str(config.get_value(section, "exclude_filter", ""))
+			for expected_exclude: String in EXPECTED_EXCLUDES:
+				if not exclude_filter.contains(expected_exclude):
+					_failures.append("%s must exclude %s from packaged builds" % [name, expected_exclude])
 		index += 1
 
 	for expected_name: String in EXPECTED_PRESETS.keys():

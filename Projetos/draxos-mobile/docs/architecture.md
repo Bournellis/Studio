@@ -139,7 +139,10 @@ Presets alpha em `export_presets.cfg`:
 - `PC Windows Alpha`
 - `PC Browser Alpha`
 
-`tools/smoke_exports.gd` valida a existencia dos tres presets, plataformas e paths de saida sem exigir templates de export instalados.
+`tools/smoke_exports.gd` valida a existencia dos tres presets, plataformas,
+paths de saida e exclusao de ferramentas dev (`dev/**`, `tools/battle_lab/**`,
+`docs/battle-lab/**`, `.battle_lab_scratch/**`) sem exigir templates de export
+instalados.
 
 ---
 
