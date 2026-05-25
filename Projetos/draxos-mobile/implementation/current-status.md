@@ -1,11 +1,11 @@
 # Current Status
 
-- Last Updated: `2026-05-21`
+- Last Updated: `2026-05-25`
 - Active Project Name: `draxos-mobile`
-- Active Surface: `Track 01 - Alpha Playtest Hardening`
-- Active Track: `Track 01 - Alpha Playtest Hardening`
-- Active Track Status: `COMPLETE - PC_LOCAL_ALPHA_PLAYTEST_READY`
-- Current Operational Baseline: `Track 00 completa com T00-P01 a T00-P13 concluidos, e Track 01 completa para hardening do alpha PC local. Projeto Godot 4.6.2 tem boot hub alpha com abas/telas rolaveis, Voltar/Esc, confirmacoes simples para mutacoes, feedback de primeira sessao/refresh/offline/pre-condicoes, busy states, reset seguro de cache/sessao local, session_id local persistido para telemetria, GUT 9.6.0, validate integrado, export smoke Android/PC/Web, autoloads UiTokens/AssetIds/ContentLibrary/SessionStore/SupabaseClient, pipeline data/definitions -> data/generated/draxos_mobile_catalog.tres, conteudo real inicial, cliente HTTPRequest para Auth anonimo, account/battle/base/social/competition/monetization/telemetry, replay rico de battle_log_v1 e fluxos minimos de Base/Social/Competicao/Monetizacao. Battle Lab agora tem runner Deno offline, bridge request/response para Godot, scratch runs fora do Git, replays amostrados com battle_log_v1 completo, compatibilidade/stale em historico e tela dev-only no Refugio para montar builds e assistir arena debug 2D, excluida dos exports. Supabase local esta configurado no layout oficial supabase/, db reset passa quando runtime local esta ativo, healthcheck responde pelo gateway local, conta guest MVP cria/recupera estado server-authoritative, battle/request server-authoritative grava log/recompensa idempotente, FIRST_SLICE_SIM gera replay deterministico completo, Base Manager v0 implementa estruturas permanentes/fila/coleta offline/ledger/idempotencia, Social/Competicao v0 implementa guilda/chat por polling, matchmaking preview com bot fallback e ranking de season sem bots, Monetizacao v0 implementa Battle Pass/Diamante/rewards/premium/ledger/idempotencia, e telemetry/client-event grava eventos client nao autoritativos em telemetry_events sem mutar gameplay. Design do primeiro slice ja definiu cap 40, levels permanentes, unlocks de slots/pet/passiva, base v0 implementavel, missoes/onboarding v0, monetizacao/recompensas v0, social/ranking/chat v0, combate real/simulador, matchmaking por poder, bots iniciais, telemetria minima, schema de build, UX alpha com Refugio e baseline calibravel de economia/simulador de seasons.`
+- Active Surface: `Track 02 - Progression Lab`
+- Active Track: `Track 02 - Progression Lab`
+- Active Track Status: `IN_PROGRESS - ESTABLISHMENT`
+- Current Operational Baseline: `Track 00 completa com T00-P01 a T00-P13 concluidos, Track 01 completa para hardening do alpha PC local, e Track 02 iniciada para Progression Lab. Projeto Godot 4.6.2 tem boot hub alpha com abas/telas rolaveis, Voltar/Esc, confirmacoes simples para mutacoes, feedback de primeira sessao/refresh/offline/pre-condicoes, busy states, reset seguro de cache/sessao local, session_id local persistido para telemetria, GUT 9.6.0, validate integrado, export smoke Android/PC/Web, autoloads UiTokens/AssetIds/ContentLibrary/SessionStore/SupabaseClient, pipeline data/definitions -> data/generated/draxos_mobile_catalog.tres, conteudo real inicial, cliente HTTPRequest para Auth anonimo, account/battle/base/social/competition/monetization/telemetry, replay rico de battle_log_v1 e fluxos minimos de Base/Social/Competicao/Monetizacao. Battle Lab agora tem runner Deno offline, bridge request/response para Godot, scratch runs fora do Git, replays amostrados com battle_log_v1 completo, compatibilidade/stale em historico e tela dev-only no Refugio para montar builds e assistir arena debug 2D, excluida dos exports. Supabase local esta configurado no layout oficial supabase/, db reset passa quando runtime local esta ativo, healthcheck responde pelo gateway local, conta guest MVP cria/recupera estado server-authoritative, battle/request server-authoritative grava log/recompensa idempotente, FIRST_SLICE_SIM gera replay deterministico completo, Base Manager v0 implementa estruturas permanentes/fila/coleta offline/ledger/idempotencia, Social/Competicao v0 implementa guilda/chat por polling, matchmaking preview com bot fallback e ranking de season sem bots, Monetizacao v0 implementa Battle Pass/Diamante/rewards/premium/ledger/idempotencia, e telemetry/client-event grava eventos client nao autoritativos em telemetry_events sem mutar gameplay. Track 02 adiciona o objetivo operacional de gerar estados saudaveis seedados no Supabase local, perfis 2h-20h, bots/poder e fluxo manual dev-only no Godot para calibrar recompensa, scaling e moeda premium.`
 
 ---
 
@@ -17,6 +17,7 @@
 | Primeiro slice completo | Completo para alpha | T00-P13 completo; Track 01 hardening aplicado para PC local |
 | Design pendente | T00-P09 completo | DMOB-D001-D005, D008-D028 resolvidos; nao ha pendencia `PRIMEIRO_SLICE` bloqueando Track 00. D006-D007 e D029-D032 seguem calibraveis via simulador/playtest; D030 recebeu pacing alpha e tuning v02 por fonte/arquetipo em 2026-05-21 |
 | Economia e seasons | Baseline calibravel | `../docs/economy/README.md`, JSON versionado e gerador Deno/TypeScript criados; outputs em `../docs/economy/generated/` |
+| Progression Lab | Em implementacao | Track 02 estabelecida para gerar saves saudaveis 2h-20h, relatorios, seed Supabase local, bots/poder e fluxo manual Godot |
 | Reuso entre projetos | Documentado | Fonte viva: `../docs/reuse-map.md`; estrategia conservadora |
 | Contratos tecnicos | Definidos | Fonte inicial: `../docs/contracts/` |
 | Godot project | Alpha PC local pronto + Battle Lab dev | Hub alpha hardenizado, autoloads, `.gutconfig.json`, content generator, catalogo gerado, `SessionStore` com `session_id`, `SupabaseClient` com telemetria, `BattleLogPresenter`, tela dev-only do Battle Lab e GUT |
@@ -44,6 +45,9 @@
 - Escopo Track 00: `tracks/track-00-first-slice-foundation/scope.md`
 - Escopo Track 01: `tracks/track-01-alpha-playtest-hardening/scope.md`
 - Status Track 01: `tracks/track-01-alpha-playtest-hardening/current-status.md`
+- Escopo Track 02: `tracks/track-02-progression-lab/scope.md`
+- Status Track 02: `tracks/track-02-progression-lab/current-status.md`
+- Progression Lab: `../docs/progression-lab/README.md`
 - MVP tecnico: `tracks/track-00-first-slice-foundation/mvp-technical-definition.md`
 - Plano sequencial: `tracks/track-00-first-slice-foundation/implementation-plan.md`
 - Prompts atomicos: `tracks/track-00-first-slice-foundation/implementation-prompts.md`
@@ -60,6 +64,7 @@
 
 - Track 00 monta o primeiro slice completo.
 - Track 01 hardeniza o primeiro slice para playtest alpha PC local.
+- Track 02 calibra o loop inicial com saves saudaveis, perfis 2h-20h, bots, poder, moeda premium e teste manual no Godot.
 - MVP tecnico minimo e a primeira etapa da Track 00.
 - MVP tecnico usa fixtures `MVP_ONLY` e nao depende de balanceamento final.
 - Economia de Season 1 usa cap 40 por padrao, todos os levels sao permanentes e caps futuros ficam editaveis no simulador.
@@ -117,12 +122,12 @@
 ## Read Next
 
 1. `../AGENTS.md`
-2. `tracks/track-01-alpha-playtest-hardening/current-status.md`
-3. `tracks/track-01-alpha-playtest-hardening/scope.md`
-4. `../docs/reuse-map.md`
-5. `../docs/design-pending.md`
-6. `../docs/contracts/`
-7. `../docs/playtest-alpha.md`
+2. `tracks/track-02-progression-lab/current-status.md`
+3. `tracks/track-02-progression-lab/scope.md`
+4. `../docs/progression-lab/README.md`
+5. `../docs/reuse-map.md`
+6. `../docs/design-pending.md`
+7. `../docs/contracts/`
 
 ---
 
@@ -190,6 +195,6 @@ Supabase runtime validado localmente:
 
 ## Next
 
-1. Executar playtest alpha PC local usando `../docs/playtest-alpha.md`.
-2. Coletar feedback de UX, economia e estabilidade dos fluxos guest -> batalha -> base -> social -> competicao -> monetizacao.
-3. Usar `docs/economy/generated/` e telemetria client/server para calibrar antes de qualquer proxima track.
+1. Implementar `tools/progression_lab/model.v1.json` e gerador offline.
+2. Criar saves saudaveis seedados no Supabase local para `2h`, `5h`, `10h`, `15h` e `20h`.
+3. Carregar saves pelo Godot dev-only e cruzar feedback manual com Battle Lab e relatorios de economia/poder.

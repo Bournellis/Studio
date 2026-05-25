@@ -12,6 +12,7 @@ Status: `P2_IMPLEMENTACAO - alpha hardening complete`
 
 - Track 00 completa: Godot client, Supabase local, auth guest, batalha server-authoritative, Base, Social/Competicao, Monetizacao, pipeline de conteudo, exports e testes.
 - Track 01 completa: hardening do alpha PC local, telemetria client nao autoritativa, reset seguro de sessao local, smokes de loop alpha e checklist de playtest.
+- Track 02 iniciada: Progression Lab para gerar estados saudaveis, saves Supabase locais, bots/poder e fluxo manual de teste no Godot para as primeiras 2h-20h.
 - Battle Lab offline + dev-only no Godot implementado: `tools/battle_lab/` gera HTML/CSV/JSON/replays em `docs/battle-lab/generated/`, arquiva runs oficiais em `docs/battle-lab/runs/`, compara deltas, marca compatibilidade/stale e pode ser aberto no editor pelo Refugio para montar builds e assistir replays debug 2D; exports excluem a ferramenta. O ajuste de pacing alpha levou a duracao media de `3.22s` para `18.19s`, e o ajuste por arquetipo/fonte v02 deixou o baseline em `18.91s`, `0%` de batalhas curtas e status `REVIEW` por `pet_handler`.
 - Supabase runtime local configurado em `supabase/`: Docker Desktop, `npx supabase`, `npx deno`, migrations MVP/base/social/ranking/monetizacao, Auth anonimo, healthcheck e Edge Functions `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*` e `telemetry/*`.
 - Conta guest alpha implementada: `account/guest`, `account/state`, convite `ALPHA-TEST`, fixture inicial de player/resources/build, cache local nao autoritativo e escrita direta do cliente bloqueada.
@@ -37,6 +38,12 @@ Status: `P2_IMPLEMENTACAO - alpha hardening complete`
 | Smoke guest -> state -> battle -> base -> social -> competition -> shop | Completo |
 | Checklist e template de feedback de playtest | Completo |
 
+## Track 02
+
+| Objetivo | Status |
+|---|---|
+| Progression Lab para saves saudaveis 2h-20h, perfis economicos, bots, poder e teste manual no Godot | Em implementacao |
+
 ---
 
 ## Primeiro Slice Completo
@@ -56,6 +63,7 @@ Status: `P2_IMPLEMENTACAO - alpha hardening complete`
 | Batalha, replay, Base, Social, Competicao e Monetizacao | Completo - T00-P07 a T00-P13 |
 | Alpha Playtest Hardening | Completo - Track 01 |
 | Battle Lab, historico, replay dev e tuning de fonte/arquetipo | Completo - baseline v02 2026-05-21 |
+| Progression Lab, saves saudaveis e teste manual por milestone | Em implementacao - Track 02 |
 
 ---
 

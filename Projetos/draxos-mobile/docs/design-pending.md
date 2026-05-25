@@ -1,6 +1,6 @@
 # DraxosMobile - Design Pending
 
-- Ultima atualizacao: `2026-05-21`
+- Ultima atualizacao: `2026-05-25`
 - Status: registro vivo de pendencias de design
 - Escopo: DraxosMobile, Track 00 e evolucoes futuras
 
@@ -74,6 +74,9 @@ O MVP tecnico ja implementou conta guest server-authoritative, cliente de sessao
 | DMOB-D030 | Balanceamento | CALIBRAVEL_ALPHA | Quais valores finais de dano, cooldown, mana, DoT, pet, passiva e anti-stall? | Rodadas de tuning em 2026-05-21: pacing alpha levou duracao media de `3.22s` para `18.19s`; v02 por fonte/arquetipo manteve HP global, reduziu burst/pet, elevou DoTs, arquivou runs oficiais e deixou baseline em `18.91s`, `0%` curtas, status `REVIEW` por `pet_handler` em `70.45%` no poder proximo. Battle Lab Dev agora permite gerar scratch runs, builds manuais e replays debug 2D para orientar as proximas hipoteses. | `game-design-document.md` | CALIBRAR | - |
 | DMOB-D031 | Guilda | CALIBRAVEL_ALPHA | Os bonus de guilda estao leves o suficiente para nao serem obrigatorios? | Tuning social/economico precisa dados reais. | `game-design-document.md` | CALIBRAR | - |
 | DMOB-D032 | Diamante | CALIBRAVEL_ALPHA | A economia de Diamante cobre o gap esperado sem substituir gameplay? | Requer observacao de progressao free vs paga. | `game-design-document.md` | CALIBRAR | - |
+| DMOB-D044 | Progression Lab | CALIBRAVEL_ALPHA | Quais estados saudaveis representam 2h, 5h, 10h, 15h e 20h para cada perfil de jogador? | Sem esses estados, tuning manual e automatico continua pouco reproduzivel. | `docs/progression-lab/README.md` | CALIBRAR | - |
+| DMOB-D045 | Poder | CALIBRAVEL_ALPHA | Quais pesos de poder devem sair dos dados de Progression Lab + Battle Lab para pareamento inicial? | Pesos ruins geram matchups injustos mesmo quando economia e combate isolados parecem saudaveis. | `docs/progression-lab/README.md` | CALIBRAR | - |
+| DMOB-D046 | Premium | CALIBRAVEL_ALPHA | Qual gap aceitavel entre free, freemium, gastador leve e max_spender sem vender poder exclusivo acima do cap? | Moeda premium precisa vender tempo/conforto sem substituir gameplay ou quebrar matchmaking. | `docs/progression-lab/README.md` | CALIBRAR | - |
 | DMOB-D033 | PVE | POS_SLICE | Qual formato do Character Autobattler PVE? | Fora da Track 00, mas deve preservar compatibilidade futura. | `game-design-document.md` | ADIADO | - |
 | DMOB-D034 | Cardgame Roguelike | POS_SLICE | Qual formato competitivo e progressao propria do PVP Cardgame Roguelike? | Fora da Track 00. | `game-design-document.md` | ADIADO | - |
 | DMOB-D035 | Hero Defense | POS_SLICE | Como funciona o Hero Defense e quais beneficios recebe da conta/base? | Fora da Track 00. | `game-design-document.md` | ADIADO | - |
