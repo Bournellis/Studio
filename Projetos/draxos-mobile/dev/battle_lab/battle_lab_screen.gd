@@ -119,7 +119,17 @@ static func deno_invocation(settings_prefix: String, fallback_prefix: PackedStri
 			ProjectSettings.get_setting("%s/deno_prefix_args" % settings_prefix, fallback_prefix),
 			fallback_prefix
 		)
-	return {"command": command, "args": args}
+	return windows_safe_invocation(command, args)
+
+static func windows_safe_invocation(command: String, args: PackedStringArray) -> Dictionary:
+	var normalized_args := _normalize_runner_args_for_command(command, args)
+	if OS.get_name() != "Windows" or not _should_wrap_windows_command(command):
+		return {"command": command, "args": normalized_args}
+
+	var shell_args := PackedStringArray(["/C", _resolve_windows_command_path(command)])
+	for arg: String in normalized_args:
+		shell_args.append(arg)
+	return {"command": _windows_shell_command(), "args": shell_args}
 
 static func clean_deno_prefix_args(configured: Variant, fallback: PackedStringArray) -> PackedStringArray:
 	var raw := _variant_to_packed_string_array(configured, fallback)
@@ -311,21 +321,21 @@ func _build_run_tab() -> Control:
 	var scratch_button := Button.new()
 	scratch_button.text = "Gerar Scratch Run"
 	scratch_button.pressed.connect(func() -> void:
-		await _generate_run(false)
+		_generate_run(false)
 	)
 	box.add_child(scratch_button)
 
 	var generated_button := Button.new()
 	generated_button.text = "Atualizar Generated"
 	generated_button.pressed.connect(func() -> void:
-		await _generate_generated()
+		_generate_generated()
 	)
 	box.add_child(generated_button)
 
 	var official_button := Button.new()
 	official_button.text = "Arquivar Run Oficial"
 	official_button.pressed.connect(func() -> void:
-		await _generate_run(true)
+		_generate_run(true)
 	)
 	box.add_child(official_button)
 
@@ -348,7 +358,7 @@ func _build_builds_tab() -> Control:
 	var replay_button := Button.new()
 	replay_button.text = "Gerar Replay Custom"
 	replay_button.pressed.connect(func() -> void:
-		await _generate_custom_replay()
+		_generate_custom_replay()
 	)
 	box.add_child(replay_button)
 	return box.get_parent()
@@ -590,7 +600,7 @@ func _generate_generated() -> void:
 		"mode": "run",
 		"compare_with_run_id": _compare_edit.text.strip_edges(),
 	}
-	await _send_bridge_request(request)
+	_send_bridge_request(request)
 
 func _generate_run(official: bool) -> void:
 	var run_id := _run_id_edit.text.strip_edges()
@@ -606,7 +616,7 @@ func _generate_run(official: bool) -> void:
 		request["archive_run_id"] = run_id
 	else:
 		request["scratch_run_id"] = run_id
-	await _send_bridge_request(request)
+	_send_bridge_request(request)
 
 func _generate_custom_replay() -> void:
 	var player := _build_from_editor(_player_editor)
@@ -624,7 +634,7 @@ func _generate_custom_replay() -> void:
 		"player_build": player,
 		"opponent_build": opponent,
 	}
-	var response := await _send_bridge_request(request)
+	var response := _send_bridge_request(request)
 	if bool(response.get("ok", false)) and response.get("replay", null) is Dictionary:
 		_load_replay(_as_dictionary(response.get("replay", {})))
 
@@ -837,6 +847,61 @@ static func _is_dynamic_runner_arg(token: String) -> bool:
 static func _is_npx_token(token: String) -> bool:
 	var normalized := token.get_file().to_lower()
 	return normalized in ["npx", "npx.cmd", "npx.exe"]
+
+static func _is_deno_token(token: String) -> bool:
+	var normalized := token.get_file().to_lower()
+	return normalized in ["deno", "deno.exe"]
+
+static func _normalize_runner_args_for_command(command: String, args: PackedStringArray) -> PackedStringArray:
+	var normalized := PackedStringArray(args)
+	if not _is_deno_token(command):
+		return normalized
+	if normalized.size() >= 2 and normalized[0] == "-y" and normalized[1] == "deno":
+		var direct_deno_args := PackedStringArray()
+		for index: int in range(2, normalized.size()):
+			direct_deno_args.append(normalized[index])
+		return direct_deno_args
+	if normalized.size() >= 1 and normalized[0] == "deno":
+		var args_without_deno := PackedStringArray()
+		for index: int in range(1, normalized.size()):
+			args_without_deno.append(normalized[index])
+		return args_without_deno
+	return normalized
+
+static func _should_wrap_windows_command(command: String) -> bool:
+	var executable := command.get_file().to_lower()
+	if executable in ["cmd.exe", "powershell.exe", "pwsh.exe"]:
+		return false
+	return executable.get_extension().to_lower() != "exe"
+
+static func _windows_shell_command() -> String:
+	var comspec := OS.get_environment("COMSPEC").strip_edges()
+	return comspec if comspec != "" else "cmd.exe"
+
+static func _resolve_windows_command_path(command: String) -> String:
+	if command.is_absolute_path() and FileAccess.file_exists(command):
+		return command
+	var extensions := PackedStringArray([".cmd", ".exe", ".bat", ""])
+	var search_dirs := _windows_path_dirs()
+	for directory: String in search_dirs:
+		for extension: String in extensions:
+			var candidate := directory.path_join(command)
+			if candidate.get_extension() == "" and extension != "":
+				candidate += extension
+			if FileAccess.file_exists(candidate):
+				return candidate
+	return command
+
+static func _windows_path_dirs() -> PackedStringArray:
+	var dirs := PackedStringArray()
+	for item: String in OS.get_environment("PATH").split(";", false):
+		var directory := item.strip_edges()
+		if directory != "":
+			dirs.append(directory)
+	for common: String in PackedStringArray(["C:/Program Files/nodejs", "C:/Program Files (x86)/nodejs"]):
+		if not dirs.has(common):
+			dirs.append(common)
+	return dirs
 
 func _process_failure_message(tool_name: String, command: String, args: PackedStringArray, output: Array) -> String:
 	var output_text := _output_text(output)

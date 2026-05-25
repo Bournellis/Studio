@@ -2,6 +2,8 @@ extends Control
 
 signal close_requested
 
+const SessionStoreScript := preload("res://online/session_store.gd")
+
 const PROFILE_IDS := [
 	"free_50_rewards",
 	"free_100_rewards",
@@ -18,6 +20,7 @@ var _milestone_option: OptionButton
 var _status_label: Label
 var _summary_label: Label
 var _checklist_label: Label
+var _fallback_session_store = null
 
 static func is_available() -> bool:
 	return bool(ProjectSettings.get_setting("draxos_mobile/progression_lab/enabled", false)) and OS.has_feature("editor")
@@ -42,7 +45,17 @@ static func deno_invocation(settings_prefix: String, fallback_prefix: PackedStri
 			ProjectSettings.get_setting("%s/deno_prefix_args" % settings_prefix, fallback_prefix),
 			fallback_prefix
 		)
-	return {"command": command, "args": args}
+	return windows_safe_invocation(command, args)
+
+static func windows_safe_invocation(command: String, args: PackedStringArray) -> Dictionary:
+	var normalized_args := _normalize_runner_args_for_command(command, args)
+	if OS.get_name() != "Windows" or not _should_wrap_windows_command(command):
+		return {"command": command, "args": normalized_args}
+
+	var shell_args := PackedStringArray(["/C", _resolve_windows_command_path(command)])
+	for arg: String in normalized_args:
+		shell_args.append(arg)
+	return {"command": _windows_shell_command(), "args": shell_args}
 
 static func clean_deno_prefix_args(configured: Variant, fallback: PackedStringArray) -> PackedStringArray:
 	var raw := _variant_to_packed_string_array(configured, fallback)
@@ -129,10 +142,10 @@ func _build_ui() -> void:
 	buttons.add_theme_constant_override("separation", 8)
 	root.add_child(buttons)
 	buttons.add_child(_button("Gerar Relatorio", func() -> void:
-		await _generate_report()
+		_generate_report()
 	))
 	buttons.add_child(_button("Preparar Save Local", func() -> void:
-		await _prepare_local_save()
+		_prepare_local_save()
 	))
 	buttons.add_child(_button("Carregar Save", _load_selected_save))
 	buttons.add_child(_button("Abrir Checklist", _refresh_checklist))
@@ -205,12 +218,21 @@ func _load_selected_save() -> void:
 	if cache.is_empty():
 		_set_status("Cache invalido: %s" % global_path)
 		return
-	if not SessionStore.apply_snapshot_cache(cache):
-		_set_status("SessionStore recusou o cache: %s" % str(SessionStore.last_error.get("message", "erro desconhecido")))
+	var session_store = _session_store()
+	if not session_store.apply_snapshot_cache(cache):
+		_set_status("SessionStore recusou o cache: %s" % str(session_store.last_error.get("message", "erro desconhecido")))
 		return
-	SessionStore.save_cache()
+	session_store.save_cache()
 	_set_status("Save carregado no SessionStore. Feche o overlay e jogue a partir do Refugio.")
 	_summary_label.text = _session_summary(cache)
+
+func _session_store():
+	var session_store = get_node_or_null("/root/SessionStore")
+	if session_store != null:
+		return session_store
+	if _fallback_session_store == null:
+		_fallback_session_store = SessionStoreScript.new()
+	return _fallback_session_store
 
 func _refresh_checklist() -> void:
 	var save := _selected_healthy_save()
@@ -292,6 +314,61 @@ static func _is_dynamic_runner_arg(token: String) -> bool:
 static func _is_npx_token(token: String) -> bool:
 	var normalized := token.get_file().to_lower()
 	return normalized in ["npx", "npx.cmd", "npx.exe"]
+
+static func _is_deno_token(token: String) -> bool:
+	var normalized := token.get_file().to_lower()
+	return normalized in ["deno", "deno.exe"]
+
+static func _normalize_runner_args_for_command(command: String, args: PackedStringArray) -> PackedStringArray:
+	var normalized := PackedStringArray(args)
+	if not _is_deno_token(command):
+		return normalized
+	if normalized.size() >= 2 and normalized[0] == "-y" and normalized[1] == "deno":
+		var direct_deno_args := PackedStringArray()
+		for index: int in range(2, normalized.size()):
+			direct_deno_args.append(normalized[index])
+		return direct_deno_args
+	if normalized.size() >= 1 and normalized[0] == "deno":
+		var args_without_deno := PackedStringArray()
+		for index: int in range(1, normalized.size()):
+			args_without_deno.append(normalized[index])
+		return args_without_deno
+	return normalized
+
+static func _should_wrap_windows_command(command: String) -> bool:
+	var executable := command.get_file().to_lower()
+	if executable in ["cmd.exe", "powershell.exe", "pwsh.exe"]:
+		return false
+	return executable.get_extension().to_lower() != "exe"
+
+static func _windows_shell_command() -> String:
+	var comspec := OS.get_environment("COMSPEC").strip_edges()
+	return comspec if comspec != "" else "cmd.exe"
+
+static func _resolve_windows_command_path(command: String) -> String:
+	if command.is_absolute_path() and FileAccess.file_exists(command):
+		return command
+	var extensions := PackedStringArray([".cmd", ".exe", ".bat", ""])
+	var search_dirs := _windows_path_dirs()
+	for directory: String in search_dirs:
+		for extension: String in extensions:
+			var candidate := directory.path_join(command)
+			if candidate.get_extension() == "" and extension != "":
+				candidate += extension
+			if FileAccess.file_exists(candidate):
+				return candidate
+	return command
+
+static func _windows_path_dirs() -> PackedStringArray:
+	var dirs := PackedStringArray()
+	for item: String in OS.get_environment("PATH").split(";", false):
+		var directory := item.strip_edges()
+		if directory != "":
+			dirs.append(directory)
+	for common: String in PackedStringArray(["C:/Program Files/nodejs", "C:/Program Files (x86)/nodejs"]):
+		if not dirs.has(common):
+			dirs.append(common)
+	return dirs
 
 func _process_failure_message(tool_name: String, command: String, args: PackedStringArray, output: Array) -> String:
 	var output_text := _output_text(output)

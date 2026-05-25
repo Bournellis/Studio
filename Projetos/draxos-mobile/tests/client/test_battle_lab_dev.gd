@@ -42,19 +42,34 @@ func test_battle_lab_deno_invocation_sanitizes_project_settings() -> void:
 
 	ProjectSettings.set_setting(command_path, "npx -y deno run --allow-read --allow-write D:/tmp/generate.ts --request stale")
 	var inline_invocation := BattleLabScreenScript.deno_invocation(settings_prefix, fallback)
-	var inline_args := PackedStringArray(inline_invocation.get("args", PackedStringArray()))
-	assert_eq(str(inline_invocation.get("command", "")), "npx")
+	var inline_args := _runner_args(inline_invocation, ["npx", "npx.cmd"])
 	assert_eq(" ".join(inline_args), "-y deno run --allow-read --allow-write")
 
 	ProjectSettings.set_setting(command_path, "npx")
 	ProjectSettings.set_setting(args_path, PackedStringArray(["-y", "deno", "run", "--allow-read", "--allow-write", "D:/tmp/generate.ts", "--request", "stale"]))
 	var prefix_invocation := BattleLabScreenScript.deno_invocation(settings_prefix, fallback)
-	var prefix_args := PackedStringArray(prefix_invocation.get("args", PackedStringArray()))
+	var prefix_args := _runner_args(prefix_invocation, ["npx", "npx.cmd"])
 	prefix_args.append("mutated-locally")
 	var repeated_invocation := BattleLabScreenScript.deno_invocation(settings_prefix, fallback)
-	var repeated_args := PackedStringArray(repeated_invocation.get("args", PackedStringArray()))
+	var repeated_args := _runner_args(repeated_invocation, ["npx", "npx.cmd"])
 	assert_eq(" ".join(repeated_args), "-y deno run --allow-read --allow-write")
 	assert_false(repeated_args.has("mutated-locally"))
 
 	ProjectSettings.set_setting(command_path, original_command)
 	ProjectSettings.set_setting(args_path, original_args)
+
+func _runner_args(invocation: Dictionary, expected_windows_runner: Array[String]) -> PackedStringArray:
+	var command := str(invocation.get("command", ""))
+	var args := PackedStringArray(invocation.get("args", PackedStringArray()))
+	if OS.get_name() != "Windows":
+		assert_true(expected_windows_runner.has(command.get_file().to_lower()))
+		return args
+
+	assert_eq(command.get_file().to_lower(), "cmd.exe")
+	assert_gte(args.size(), 2)
+	assert_eq(args[0], "/C")
+	assert_true(expected_windows_runner.has(str(args[1]).get_file().to_lower()))
+	var runner_args := PackedStringArray()
+	for index: int in range(2, args.size()):
+		runner_args.append(args[index])
+	return runner_args
