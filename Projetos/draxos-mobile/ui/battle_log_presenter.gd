@@ -227,6 +227,13 @@ static func has_unknown_events(battle_log: Dictionary) -> bool:
 			return true
 	return false
 
+static func count_events_of_type(battle_log: Dictionary, event_type: String) -> int:
+	var count := 0
+	for event: Dictionary in sorted_events(battle_log):
+		if str(event.get("type", "")) == event_type:
+			count += 1
+	return count
+
 static func _source_label(source: String) -> String:
 	if source == "player":
 		return "Draxos"

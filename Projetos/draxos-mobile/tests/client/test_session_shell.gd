@@ -207,6 +207,7 @@ func test_battle_log_presenter_formats_first_slice_rich_events() -> void:
 		{"t": 0.0, "seq": 1, "type": "passive_apply", "source": "player", "target": "player", "passive_id": "sangue_obediente", "passive_level": 10},
 		{"t": 0.5, "seq": 2, "type": "mana_change", "source": "player", "target": "player", "mana_after": 12},
 		{"t": 0.5, "seq": 3, "type": "cooldown_start", "source": "player", "target": "player", "spell_id": "marca_brasa", "ready_at": 7.5},
+		{"t": 0.6, "seq": 4, "type": "spell_cast", "source": "player", "target": "opponent", "spell_id": "marca_brasa", "damage": 14, "damage_type": "fogo", "hp_after": 86},
 		{"t": 0.5, "seq": 4, "type": "dot_apply", "source": "player", "target": "opponent", "status_id": "queimando", "stacks": 1},
 		{"t": 1.5, "seq": 5, "type": "dot_tick", "source": "player", "target": "opponent", "status_id": "queimando", "damage": 6, "damage_type": "fogo", "hp_after": 94},
 		{"t": 2.0, "seq": 6, "type": "status_apply", "source": "opponent", "target": "player", "status_id": "lento", "stacks": 1},
@@ -227,9 +228,11 @@ func test_battle_log_presenter_formats_first_slice_rich_events() -> void:
 		lines.append(BattleLogPresenterScript.format_event(event))
 	var formatted := "\n".join(lines)
 	assert_string_contains(formatted, "aplicou queimando")
+	assert_string_contains(formatted, "conjurou marca_brasa")
 	assert_string_contains(formatted, "Barreira")
 	assert_string_contains(formatted, "invocou")
 	assert_string_contains(formatted, "Anti-stall")
+	assert_eq(BattleLogPresenterScript.count_events_of_type(battle_log, "spell_cast"), 1)
 	assert_string_contains(BattleLogPresenterScript.format_summary(battle_log, {"type": "FIRST_SLICE_SIM", "resources": {"xp": 50}}), "FIRST_SLICE_SIM")
 
 func test_battle_log_presenter_tolerates_null_optional_payloads() -> void:

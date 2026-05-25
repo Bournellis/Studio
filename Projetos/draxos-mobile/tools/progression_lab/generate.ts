@@ -262,7 +262,13 @@ const ARCHETYPE_SPELLS: Record<string, string[]> = {
   summoner: ["sussurro_medo", "erguer_ossos", "invocar_brasa_faminta"],
   defensive_occultist: ["coagulo_negro", "raizes_pedra", "geada_ossos"],
   dot_pressure: ["toxina_palida", "marca_brasa", "hemorragia_induzida"],
-  funeral_burst: ["marca_sepulcral", "coroa_cinzas", "descarga_nervosa"],
+  funeral_burst: [
+    "descarga_nervosa",
+    "marca_brasa",
+    "incisao_ritual",
+    "marca_sepulcral",
+    "coroa_cinzas",
+  ],
 };
 
 const ARCHETYPE_PASSIVE: Record<string, string> = {
@@ -637,22 +643,26 @@ function buildStateFor(
   gains: ResourceVector,
 ): BuildState {
   const ratio = profile.build_ratio;
-  const weaponLevel = clampedScaledLevel(level, ratio + 0.05);
+  const weaponLevel = clampedScaledLevel(level, Math.max(0.1, ratio - 0.08));
   const unlocked = unlockedSpells(level);
-  const preferred = (ARCHETYPE_SPELLS[archetypeId] ?? ["sussurro_medo"]).filter((
-    spell,
-  ) => unlocked.includes(spell));
+  const preferred = (ARCHETYPE_SPELLS[archetypeId] ?? ["sussurro_medo"]).filter(
+    (
+      spell,
+    ) => unlocked.includes(spell),
+  );
   const slots = maxSpellSlots(level);
   const spellSlots = preferred.slice(0, slots);
-  const spellLevel = clampedScaledLevel(level, Math.max(0.1, ratio - 0.05));
+  const spellLevel = clampedScaledLevel(level, Math.min(1, ratio + 0.08));
   const spellLevels: Record<string, number> = {};
   for (const spell of spellSlots) {
     spellLevels[spell] = spellLevel;
   }
   const passiveId = level >= 10 ? ARCHETYPE_PASSIVE[archetypeId] ?? "doutrina_pavor" : "";
   const petId = level >= 15 ? ARCHETYPE_PET[archetypeId] ?? "corvo_pressagio" : "";
-  const passiveLevel = passiveId === "" ? 0 : clampedScaledLevel(level, ratio - 0.12);
-  const petLevel = petId === "" ? 0 : clampedScaledLevel(level, ratio - 0.1);
+  const passiveLevel = passiveId === ""
+    ? 0
+    : clampedScaledLevel(level, Math.max(0.1, ratio - 0.05));
+  const petLevel = petId === "" ? 0 : clampedScaledLevel(level, Math.min(1, ratio + 0.02));
   const qualityTier = qualityTierFor(model, gains.ossos);
   const desired: BuildState = {
     archetype_id: archetypeId,
@@ -1003,19 +1013,19 @@ function buildStateForBot(
   offset: number,
 ): BuildState {
   const clone = structuredClone(save.build) as BuildState;
+  const factor = 1 + offset / 100;
   clone.archetype_id = archetypeId;
+  clone.weapon_type = ARCHETYPE_WEAPON[archetypeId] ?? clone.weapon_type;
   const preferred = (ARCHETYPE_SPELLS[archetypeId] ?? clone.spell_slots).filter(
     (spell) => clone.spells_unlocked.includes(spell),
   );
   clone.spell_slots = preferred.slice(0, maxSpellSlots(save.player.level));
   clone.spell_levels = {};
+  const baseSpellLevel = save.build.spell_levels[Object.keys(save.build.spell_levels)[0]] ??
+    save.player.level;
   for (const spell of clone.spell_slots) {
     clone.spell_levels[spell] = clamp(
-      Math.round(
-        (save.build.spell_levels[Object.keys(save.build.spell_levels)[0]] ??
-          save.player.level) *
-          (1 + offset / 100),
-      ),
+      Math.round(baseSpellLevel * factor),
       1,
       save.player.level,
     );
@@ -1024,6 +1034,21 @@ function buildStateForBot(
     ? ARCHETYPE_PASSIVE[archetypeId] ?? clone.passive_id
     : "";
   clone.pet_id = save.player.level >= 15 ? ARCHETYPE_PET[archetypeId] ?? clone.pet_id : "";
+  clone.weapon_level = clamp(
+    Math.round(clone.weapon_level * factor),
+    1,
+    save.player.level,
+  );
+  clone.passive_level = clone.passive_id === "" ? 0 : clamp(
+    Math.round((save.build.passive_level || save.player.level) * factor),
+    1,
+    save.player.level,
+  );
+  clone.pet_level = clone.pet_id === "" ? 0 : clamp(
+    Math.round((save.build.pet_level || save.player.level) * factor),
+    1,
+    save.player.level,
+  );
   return clone;
 }
 
@@ -1120,9 +1145,7 @@ function botArchetypeFor(
   archetypes: string[],
 ): string {
   if (offset < 0) {
-    return archetypes.includes("starter_instrument")
-      ? "starter_instrument"
-      : save.build.archetype_id;
+    return save.build.archetype_id;
   }
   if (offset > 0) {
     return archetypes.includes("funeral_burst") ? "funeral_burst" : save.build.archetype_id;

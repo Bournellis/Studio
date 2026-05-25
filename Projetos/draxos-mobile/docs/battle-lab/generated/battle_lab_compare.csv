@@ -1,13 +1,1 @@
 metric,baseline,current,delta
-baseline_run,2026-05-21_archetype_source_tuning_v02,draxos_mobile_battle_lab_v3_initial_balance,changed
-overall_status,REVIEW,PASS,changed
-avg_duration,18.91s,21.13s,+2.22s
-median_duration,18.7s,20.7s,+2s
-short_rate_percent,0%,0%,0%
-long_rate_percent,0%,0%,0%
-anti_stall_rate_percent,0.12%,0.96%,+0.84%
-raw_stress_dominance_max_percent,77.62%,73.78%,-3.84%
-near_power_dominance_max_percent,70.45%,64.46%,-5.99%
-near_power_win_rate:elemental_mixer,58.33%,63.41%,+5.08%
-near_power_win_rate:summoner,47.01%,55%,+7.99%
-near_power_win_rate:dot_pressure,33.45%,64.46%,+31.01%

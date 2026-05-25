@@ -2,6 +2,7 @@ extends Control
 
 const ProjectInfoScript := preload("res://core/project_info.gd")
 const BattleLogPresenterScript := preload("res://ui/battle_log_presenter.gd")
+const SessionStoreScript := preload("res://online/session_store.gd")
 
 const SCREEN_HUB := "hub"
 const SCREEN_BATTLE := "battle"
@@ -595,7 +596,7 @@ func _request_battle() -> void:
 	_show_screen(SCREEN_BATTLE, false)
 	_set_busy(true, "Solicitando batalha...")
 	var battle_result: Dictionary = await SupabaseClient.request_battle(
-		SessionStore.create_request_id(),
+		SessionStoreScript.create_request_id(),
 		SessionStore.access_token,
 		ProjectInfoScript.DEFAULT_BATTLE_MODE
 	)
@@ -664,7 +665,7 @@ func _collect_base() -> void:
 	_show_screen(SCREEN_BASE, false)
 	_set_busy(true, "Coletando producao offline...")
 	var base_result: Dictionary = await SupabaseClient.collect_base(
-		SessionStore.create_request_id(),
+		SessionStoreScript.create_request_id(),
 		SessionStore.access_token
 	)
 	if not bool(base_result.get("ok", false)):
@@ -691,7 +692,7 @@ func _upgrade_nucleo() -> void:
 	_show_screen(SCREEN_BASE, false)
 	_set_busy(true, "Solicitando evolucao do Nucleo...")
 	var base_result: Dictionary = await SupabaseClient.upgrade_base_structure(
-		SessionStore.create_request_id(),
+		SessionStoreScript.create_request_id(),
 		"nucleo_energia",
 		SessionStore.access_token
 	)
@@ -732,7 +733,7 @@ func _create_guild() -> void:
 	_show_screen(SCREEN_SOCIAL, false)
 	_set_busy(true, "Criando guilda alpha...")
 	var social_result: Dictionary = await SupabaseClient.create_guild(
-		SessionStore.create_request_id(),
+		SessionStoreScript.create_request_id(),
 		_default_guild_name(),
 		SessionStore.access_token
 	)
@@ -754,7 +755,7 @@ func _send_guild_chat() -> void:
 	_show_screen(SCREEN_SOCIAL, false)
 	_set_busy(true, "Enviando mensagem de guilda...")
 	var social_result: Dictionary = await SupabaseClient.send_guild_chat(
-		SessionStore.create_request_id(),
+		SessionStoreScript.create_request_id(),
 		"Primeiro pulso do Conclave.",
 		SessionStore.access_token
 	)
@@ -830,7 +831,7 @@ func _buy_premium_alpha() -> void:
 	_show_screen(SCREEN_SHOP, false)
 	_set_busy(true, "Liberando premium alpha...")
 	var monetization_result: Dictionary = await SupabaseClient.alpha_purchase(
-		SessionStore.create_request_id(),
+		SessionStoreScript.create_request_id(),
 		"alpha_battle_pass_premium",
 		SessionStore.access_token
 	)
@@ -852,7 +853,7 @@ func _grant_diamond_alpha() -> void:
 	_show_screen(SCREEN_SHOP, false)
 	_set_busy(true, "Registrando compra alpha de Diamante...")
 	var monetization_result: Dictionary = await SupabaseClient.alpha_purchase(
-		SessionStore.create_request_id(),
+		SessionStoreScript.create_request_id(),
 		"alpha_diamante_500",
 		SessionStore.access_token
 	)
@@ -874,7 +875,7 @@ func _claim_daily_reward() -> void:
 	_show_screen(SCREEN_SHOP, false)
 	_set_busy(true, "Resgatando recompensa diaria...")
 	var monetization_result: Dictionary = await SupabaseClient.claim_reward(
-		SessionStore.create_request_id(),
+		SessionStoreScript.create_request_id(),
 		"daily_collect_base",
 		SessionStore.access_token
 	)
@@ -1135,6 +1136,7 @@ func _play_battle_log(battle_log: Dictionary, rewards: Dictionary) -> void:
 		_sync_status_from_session()
 		return
 
+	_error_label.text = ""
 	_show_screen(SCREEN_BATTLE, false)
 	_replay_running = true
 	_skip_replay = false
@@ -1147,9 +1149,27 @@ func _play_battle_log(battle_log: Dictionary, rewards: Dictionary) -> void:
 
 	var lines: PackedStringArray = PackedStringArray()
 	lines.append(BattleLogPresenterScript.format_summary(battle_log, rewards))
+	var spell_count := BattleLogPresenterScript.count_events_of_type(battle_log, "spell_cast")
+	var weapon_count := BattleLogPresenterScript.count_events_of_type(battle_log, "weapon_attack")
+	var pet_count := BattleLogPresenterScript.count_events_of_type(battle_log, "pet_attack")
+	var summon_count := BattleLogPresenterScript.count_events_of_type(battle_log, "summon_attack")
+	lines.append("Eventos: %d spells | %d ataques | %d familiares | %d summons" % [
+		spell_count,
+		weapon_count,
+		pet_count,
+		summon_count,
+	])
 	_timeline_label.text = "\n".join(lines)
 
 	var events := BattleLogPresenterScript.sorted_events(battle_log)
+	var battle_mode := str(battle_log.get("mode", ""))
+	if battle_mode != ProjectInfoScript.DEFAULT_BATTLE_MODE:
+		_error_label.text = "Aviso: replay em modo %s. O rework atual usa %s; gere uma nova batalha com as Edge Functions atualizadas." % [
+			battle_mode,
+			ProjectInfoScript.DEFAULT_BATTLE_MODE,
+		]
+	elif spell_count <= 0:
+		_error_label.text = "Aviso: replay FIRST_SLICE_SIM sem spell_cast. Verifique build, bot e Supabase local atualizados."
 	if BattleLogPresenterScript.has_unknown_events(battle_log):
 		_error_label.text = "Aviso: replay contem evento desconhecido; exibindo fallback."
 
@@ -1207,7 +1227,7 @@ func _default_guild_name() -> String:
 	var player_id := str(SessionStore.player.get("id", ""))
 	var suffix := player_id.replace("-", "").substr(0, 8)
 	if suffix == "":
-		suffix = SessionStore.create_request_id().replace("-", "").substr(0, 8)
+		suffix = SessionStoreScript.create_request_id().replace("-", "").substr(0, 8)
 	return "Conclave %s" % suffix
 
 func _format_resources(resources: Dictionary, include_diamond: bool = true) -> String:

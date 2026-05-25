@@ -1,6 +1,7 @@
 extends GutTest
 
 const SessionStoreScript = preload("res://online/session_store.gd")
+const ProgressionLabScreenScript = preload("res://dev/progression_lab/progression_lab_screen.gd")
 
 func test_progression_lab_generated_saves_cover_manual_smoke_milestones() -> void:
 	var doc := _read_json("res://docs/progression-lab/generated/healthy_saves.json")
@@ -60,6 +61,33 @@ func test_session_store_accepts_progression_lab_snapshot_cache() -> void:
 	assert_eq(str(store.player.get("username", "")), "plab_free_100_rewards_10h")
 	assert_eq(int(store.resources.get("energia", 0)), 115)
 	store.free()
+
+func test_progression_lab_deno_invocation_sanitizes_project_settings() -> void:
+	var settings_prefix := "draxos_mobile/progression_lab"
+	var command_path := "%s/deno_command" % settings_prefix
+	var args_path := "%s/deno_prefix_args" % settings_prefix
+	var original_command: Variant = ProjectSettings.get_setting(command_path)
+	var original_args: Variant = ProjectSettings.get_setting(args_path)
+	var fallback := PackedStringArray(["-y", "deno", "run", "--allow-read", "--allow-write", "--allow-env", "--allow-net"])
+
+	ProjectSettings.set_setting(command_path, "npx -y deno run --allow-read --allow-write --allow-env --allow-net D:/tmp/generate.ts")
+	var inline_invocation := ProgressionLabScreenScript.deno_invocation(settings_prefix, fallback)
+	var inline_args := PackedStringArray(inline_invocation.get("args", PackedStringArray()))
+	assert_eq(str(inline_invocation.get("command", "")), "npx")
+	assert_eq(" ".join(inline_args), "-y deno run --allow-read --allow-write --allow-env --allow-net")
+
+	ProjectSettings.set_setting(command_path, "npx")
+	ProjectSettings.set_setting(args_path, PackedStringArray(["-y", "deno", "run", "--allow-read", "--allow-write", "--allow-env", "--allow-net", "D:/tmp/generate.ts", "--profile", "old"]))
+	var prefix_invocation := ProgressionLabScreenScript.deno_invocation(settings_prefix, fallback)
+	var prefix_args := PackedStringArray(prefix_invocation.get("args", PackedStringArray()))
+	prefix_args.append("mutated-locally")
+	var repeated_invocation := ProgressionLabScreenScript.deno_invocation(settings_prefix, fallback)
+	var repeated_args := PackedStringArray(repeated_invocation.get("args", PackedStringArray()))
+	assert_eq(" ".join(repeated_args), "-y deno run --allow-read --allow-write --allow-env --allow-net")
+	assert_false(repeated_args.has("mutated-locally"))
+
+	ProjectSettings.set_setting(command_path, original_command)
+	ProjectSettings.set_setting(args_path, original_args)
 
 func _read_json(path: String) -> Dictionary:
 	if not FileAccess.file_exists(path):

@@ -23,15 +23,15 @@
 
 ## DraxosMobile
 
-- Status: **P2_IMPLEMENTACAO - initial balance v1 implemented**
+- Status: **P2_IMPLEMENTACAO - source identity balance v2 implemented**
 - Fase: `Implementacao`
 - Local: `Projetos/draxos-mobile/`
 - Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
 - Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
-- Baseline atual: Track 00 completa com T00-P01 a T00-P13 concluidos e Track 01 completa para hardening do alpha PC local. Track 02 tem Progression Lab v1, Battle Lab dev-only, Character Systems Rework e Initial Balance v1 implementados em docs, catalogo, simulador, Edge Functions, seeds/migrations, Godot dev tools e testes: armas viraram Instrumentos Rituais, passivas viraram Doutrinas, pets viraram Familiares, Mental virou familia de status e fontes vivas agora sao Arcano/Fisico/Fogo/Agua/Gelo/Terra/Vento/Raio/Veneno/Sangue/Morte. Cliente Godot 4.6.2 segue com hub alpha, `tools/validate.gd`, GUT `26/26`, exports Android/PC/Web, pipeline `data/definitions/*.json` -> `data/generated/draxos_mobile_catalog.tres`, Supabase local em `supabase/`, conta guest, `battle/request` server-authoritative, Base/Social/Competicao/Monetizacao/Telemetria v0 e smokes verdes. Battle Lab run `2026-05-25_initial_balance_v01` gera `3132` batalhas e `212` builds com status `PASS`, duracao media `21.13s`, anti-stall `0.96%` e dominancia em poder proximo maxima `64.46%`; Progression Lab gera `25` saves e `75` bots com status `REVIEW` por premium gap e janelas 15h/20h.
+- Baseline atual: Track 00 completa com T00-P01 a T00-P13 concluidos e Track 01 completa para hardening do alpha PC local. Track 02 tem Progression Lab v1, Battle Lab dev-only, Character Systems Rework e Source Identity Balance v2 implementados em docs, catalogo, simulador, Edge Functions, seeds/migrations, Godot dev tools e testes: armas viraram Instrumentos Rituais, passivas viraram Doutrinas, pets viraram Familiares, Mental virou familia de status e fontes vivas agora sao Arcano/Fisico/Fogo/Agua/Gelo/Terra/Vento/Raio/Veneno/Sangue/Morte. Cliente Godot 4.6.2 segue com hub alpha, `tools/validate.gd`, GUT `28/28`, exports Android/PC/Web, pipeline `data/definitions/*.json` -> `data/generated/draxos_mobile_catalog.tres`, Supabase local em `supabase/`, conta guest, `battle/request` server-authoritative, Base/Social/Competicao/Monetizacao/Telemetria v0 e smokes verdes. Battle Lab/Progression Lab no Godot tem invocacao Deno sanitizada contra comandos completos/args acumulados, e Battle Lab prioriza amostra de replay com spells visiveis. Battle Lab run `2026-05-25_source_identity_balance_v02` gera `3132` batalhas e `212` builds com status `PASS`, duracao media `24.08s`, anti-stall `4.95%`, dominancia em poder proximo maxima `63.46%` e checks de identidade de fonte em `PASS`; Progression Lab gera `25` saves e `75` bots com status `REVIEW` por premium gap e janelas 15h/20h.
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
 - Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo.
-- Proximo passo: rodar Progression Lab com Supabase local, carregar saves `2h`-`20h` manualmente no Godot e abrir rodada before/after focada em premium gap 10h, janelas 15h/20h, poder, recompensa e sensacao de Familiar/Funeral.
+- Proximo passo: rodar Progression Lab com Supabase local, carregar saves `2h`-`20h` manualmente no Godot e abrir rodada before/after focada em premium gap 10h, janelas 15h/20h, poder, recompensa, Defesa/Mental e sensacao de Familiar/Funeral.
 
 ## rpg-isometrico
 

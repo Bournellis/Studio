@@ -86,23 +86,32 @@ The final source vocabulary is:
 
 Status design rule: a status must have a clear family, counter-stat and role. Similar DoTs should not differ only by name.
 
-## Initial Balance V1 - 2026-05-25
+## Source Identity Balance V2 - 2026-05-25
 
-The first numeric pass after the rework is now the live alpha baseline:
+The second numeric pass after the rework is now the live alpha baseline:
 
-- Battle Lab official run: `2026-05-25_initial_balance_v01`.
+- Battle Lab official run: `2026-05-25_source_identity_balance_v02`.
 - Overall Battle Lab status: `PASS`.
-- Average duration: `21.13s`.
-- Anti-stall: `0.96%`.
-- Near-power dominance: `64.46% max`, inside the `<= 65%` review gate.
+- Average duration: `24.08s`.
+- Anti-stall: `4.95%`.
+- Near-power dominance: `63.46% max`, inside the `<= 65%` review gate.
+- Source identity checks: all `PASS`; max non-starter weapon share from level 7+
+  is `53.86%`.
 
 Applied tuning direction:
 
-- Reduced global HP pacing from the post-rework placeholder so anti-stall is rare again.
-- Repriced power around equipped systems: level `42`, weapon level `30`, spell level total `35`, pet level `30`, passive level `22`, quality tier `30`.
-- Recalculated Battle Lab imported Progression Lab builds from their real combat loadout instead of trusting target power.
-- Split `corvo_pressagio` from `inquietacao`; Corvo now applies `pressagio` so it no longer stacks the same mental slow as `sussurro_medo`.
-- Softened Familiar, DoT and fire/blood pressure while strengthening `cajado_ossario` enough for Funeral/Summoner identities to function before late Death unlocks.
+- Reduced instrument dominance without removing Ritual Instruments as the
+  starter/base action.
+- Repriced power around equipped systems: level `42`, weapon level `28`, spell
+  level total `40`, pet level `34`, passive level `22`, quality tier `30`.
+- Added Battle Lab source-identity checks for Mental, Elemental, Familiar,
+  Summoner, DoT and Funeral builds.
+- Reordered combat processing so spells, familiars and summons are visible before
+  ritual-instrument attacks in replay logs when ready on the same tick.
+- Preserved weak Progression Lab bots as real lower-power builds instead of
+  replacing them with no-spell starter instruments.
+- Softened Familiar/DoT pressure, strengthened mental payloads/status control,
+  and moved anti-stall to the true duration limit.
 
 Progression Lab remains `REVIEW`, not final balance, because premium gap and some 15h/20h level windows still need manual playtest.
 

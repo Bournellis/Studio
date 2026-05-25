@@ -3,6 +3,7 @@ import {
   allowedSpellIds,
   analyzeBattleLog,
   buildBridgeReplayResponse,
+  buildReplaySamples,
   calculatePower,
   classifyPowerBand,
   compareBattleLabResults,
@@ -44,7 +45,9 @@ Deno.test("battle lab generated builds obey unlock rules by level", () => {
       `${build.id} weapon level should not exceed character level`,
     );
     assert(
-      Object.values(build.build.spellLevels).every((level) => level <= build.level),
+      Object.values(build.build.spellLevels).every((level) =>
+        level <= build.level
+      ),
       `${build.id} spell levels should not exceed character level`,
     );
     if (build.level < 10) {
@@ -80,7 +83,7 @@ Deno.test("battle lab calculates power and classifies power bands", () => {
   const power = calculatePower(build);
   assertEquals(
     power,
-    1285,
+    1334,
     "power formula should match the documented contract",
   );
   assertEquals(
@@ -94,7 +97,9 @@ Deno.test("battle lab parses combat log metrics", () => {
   const model = testModel();
   const builds = createBuilds(model).filter((build) => build.level === 25);
   const player = builds.find((build) => build.archetype_id === "dot_pressure")!;
-  const opponent = builds.find((build) => build.archetype_id === "defensive_occultist")!;
+  const opponent = builds.find((build) =>
+    build.archetype_id === "defensive_occultist"
+  )!;
   const simulation = simulateFirstSliceBattle({
     battleId: "test_battle",
     seed: "battle_lab_test_seed",
@@ -135,6 +140,28 @@ Deno.test("battle lab can generate a minimal summary", () => {
     ["PASS", "REVIEW", "CRITICAL"].includes(result.overall_status),
     "status should be valid",
   );
+});
+
+Deno.test("battle lab replay samples include a spell-active representative", () => {
+  const model = testModel();
+  const result = runBattleLab(model);
+  const samples = buildReplaySamples(model, result);
+  const representative = samples.find((sample) =>
+    sample.tag.includes("representative") &&
+    sample.player_archetype_id !== "starter_instrument" &&
+    sample.opponent_archetype_id !== "starter_instrument"
+  );
+  const spellCasts =
+    representative?.battle_log.events.filter((event) =>
+      event.type === "spell_cast"
+    ).length ?? 0;
+
+  assert(
+    representative !== undefined,
+    "samples should include non-starter representative",
+  );
+  assert(spellCasts > 0, "representative replay should visibly cast spells");
+  assert(samples.length <= 24, "samples should respect max sample count");
 });
 
 Deno.test("battle lab parses archive and compare options", () => {
@@ -190,7 +217,9 @@ Deno.test("battle lab excludes same-archetype mirrors from near-power dominance"
     0,
     "same-archetype mirrors should not feed near-power dominance",
   );
-  const dominance = result.checks.find((check) => check.id === "near_power_dominance");
+  const dominance = result.checks.find((check) =>
+    check.id === "near_power_dominance"
+  );
   assertEquals(
     dominance?.status,
     "PASS",
@@ -202,7 +231,9 @@ Deno.test("battle lab separates damage by side before aggregating sources", () =
   const model = testModel();
   const builds = createBuilds(model).filter((build) => build.level === 25);
   const player = builds.find((build) => build.archetype_id === "dot_pressure")!;
-  const opponent = builds.find((build) => build.archetype_id === "defensive_occultist")!;
+  const opponent = builds.find((build) =>
+    build.archetype_id === "defensive_occultist"
+  )!;
   const simulation = simulateFirstSliceBattle({
     battleId: "side_damage_test",
     seed: "side_damage_test_seed",
@@ -393,7 +424,12 @@ function testModel(): BattleLabModel {
         id: "dot_pressure",
         display_name: "DoT Pressure",
         role: "Test dot",
-        spell_preferences: ["toxina_palida", "marca_brasa", "hemorragia_induzida", "geada_ossos"],
+        spell_preferences: [
+          "toxina_palida",
+          "marca_brasa",
+          "hemorragia_induzida",
+          "geada_ossos",
+        ],
         passive_preferences: ["alquimia_toxica", "cinza_viva"],
         pet_preferences: ["serpente_toxina", "cao_cinzas"],
         weapon_level_ratio: 0.75,
@@ -412,7 +448,11 @@ function testModel(): BattleLabModel {
           "geada_ossos",
           "sussurro_medo",
         ],
-        passive_preferences: ["pedra_interna", "mente_fria", "sangue_obediente"],
+        passive_preferences: [
+          "pedra_interna",
+          "mente_fria",
+          "sangue_obediente",
+        ],
         pet_preferences: ["medusa_mare_fria", "corvo_pressagio"],
         weapon_level_ratio: 0.7,
         spell_level_ratio: 0.75,
@@ -485,7 +525,9 @@ function assertEquals(
 ): void {
   if (actual !== expected) {
     throw new Error(
-      `${message}. Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`,
+      `${message}. Expected ${JSON.stringify(expected)}, got ${
+        JSON.stringify(actual)
+      }`,
     );
   }
 }

@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "model_id": "draxos_mobile_battle_lab_v3_initial_balance",
-  "status": "INITIAL_BALANCE_ALPHA",
+  "model_id": "draxos_mobile_battle_lab_v4_source_identity",
+  "status": "SOURCE_IDENTITY_ALPHA",
   "notes": [
     "Offline battle balance lab for FIRST_SLICE_SIM.",
     "Character rework v2 uses ritual instruments, doutrines, familiars and the Arcano/Fisico/Sangue/Raio source taxonomy.",
     "This model must not change combat numbers; it only generates builds, matchups and reports.",
-    "Initial balance v1 reprices power around real equipped systems, lowers anti-stall dependence and splits Corvo pressagio from Inquietacao stacking."
+    "Source identity v2 reduces instrument dominance, brings spells/familiars forward in the replay, and fails builds whose fantasy does not appear in source mix."
   ],
   "output_dir": "docs/battle-lab/generated",
   "seed": "battle_lab_character_rework_20260525",
@@ -27,11 +27,36 @@
     "stomp_winner_hp_percent": 65
   },
   "power_bands": [
-    {"id": "band_001", "display_name": "Banda 001", "min_power": 0, "max_power": 250},
-    {"id": "band_002", "display_name": "Banda 002", "min_power": 251, "max_power": 600},
-    {"id": "band_003", "display_name": "Banda 003", "min_power": 601, "max_power": 1200},
-    {"id": "band_004", "display_name": "Banda 004", "min_power": 1201, "max_power": 2200},
-    {"id": "band_005", "display_name": "Banda 005", "min_power": 2201, "max_power": 999999}
+    {
+      "id": "band_001",
+      "display_name": "Banda 001",
+      "min_power": 0,
+      "max_power": 250
+    },
+    {
+      "id": "band_002",
+      "display_name": "Banda 002",
+      "min_power": 251,
+      "max_power": 600
+    },
+    {
+      "id": "band_003",
+      "display_name": "Banda 003",
+      "min_power": 601,
+      "max_power": 1200
+    },
+    {
+      "id": "band_004",
+      "display_name": "Banda 004",
+      "min_power": 1201,
+      "max_power": 2200
+    },
+    {
+      "id": "band_005",
+      "display_name": "Banda 005",
+      "min_power": 2201,
+      "max_power": 999999
+    }
   ],
   "archetypes": [
     {
@@ -51,91 +76,157 @@
       "id": "mental_controller",
       "display_name": "Mental Controller",
       "role": "Atos mentais para medir medo, terror e controle de ritmo.",
-      "spell_preferences": ["sussurro_medo", "terror_primordial", "labirinto_razao", "mandato_oculto"],
-      "passive_preferences": ["doutrina_pavor", "mente_fria", "pulso_tempestade"],
+      "spell_preferences": [
+        "sussurro_medo",
+        "terror_primordial",
+        "labirinto_razao",
+        "mandato_oculto"
+      ],
+      "passive_preferences": [
+        "doutrina_pavor",
+        "mente_fria",
+        "pulso_tempestade"
+      ],
       "pet_preferences": ["corvo_pressagio", "olho_veu"],
-      "weapon_level_ratio": 0.82,
-      "spell_level_ratio": 0.88,
+      "weapon_level_ratio": 0.62,
+      "spell_level_ratio": 0.96,
       "passive_level_ratio": 0.75,
-      "pet_level_ratio": 0.65,
+      "pet_level_ratio": 0.8,
       "quality_bias": 0
     },
     {
       "id": "elemental_mixer",
       "display_name": "Elemental Mixer",
       "role": "Mistura elementos fisicos para medir status e sinergias de fonte.",
-      "spell_preferences": ["descarga_nervosa", "marca_brasa", "mare_escura", "geada_ossos", "lamina_vento"],
-      "passive_preferences": ["pulso_tempestade", "cinza_viva", "mare_silenciosa"],
+      "spell_preferences": [
+        "descarga_nervosa",
+        "marca_brasa",
+        "mare_escura",
+        "geada_ossos",
+        "lamina_vento"
+      ],
+      "passive_preferences": [
+        "pulso_tempestade",
+        "cinza_viva",
+        "mare_silenciosa"
+      ],
       "pet_preferences": ["serpe_tempestade", "cao_cinzas", "medusa_mare_fria"],
-      "weapon_level_ratio": 0.85,
-      "spell_level_ratio": 0.8,
+      "weapon_level_ratio": 0.65,
+      "spell_level_ratio": 0.95,
       "passive_level_ratio": 0.7,
-      "pet_level_ratio": 0.7,
+      "pet_level_ratio": 0.8,
       "quality_bias": 0
     },
     {
       "id": "familiar_handler",
       "display_name": "Familiar Handler",
       "role": "Familiar com suporte leve para medir pressao sustentada por pet sem virar controlador elemental.",
-      "spell_preferences": ["sussurro_medo", "incisao_ritual", "mare_escura", "marca_brasa"],
+      "spell_preferences": [
+        "sussurro_medo",
+        "incisao_ritual",
+        "mare_escura",
+        "marca_brasa"
+      ],
       "passive_preferences": ["pacto_familiar", "mente_fria", "doutrina_pavor"],
-      "pet_preferences": ["corvo_pressagio", "olho_veu", "cao_cinzas", "sanguessuga_sacramental"],
-      "weapon_level_ratio": 0.78,
-      "spell_level_ratio": 0.72,
+      "pet_preferences": [
+        "corvo_pressagio",
+        "olho_veu",
+        "cao_cinzas",
+        "sanguessuga_sacramental"
+      ],
+      "weapon_level_ratio": 0.55,
+      "spell_level_ratio": 0.78,
       "passive_level_ratio": 0.75,
-      "pet_level_ratio": 0.86,
+      "pet_level_ratio": 0.85,
       "quality_bias": 0
     },
     {
       "id": "summoner",
       "display_name": "Summoner",
       "role": "Tres spells com summons para medir protecao e dano extra.",
-      "spell_preferences": ["sussurro_medo", "erguer_ossos", "invocar_brasa_faminta", "marca_sepulcral"],
-      "passive_preferences": ["ossuario_interior", "doutrina_pavor", "pedra_interna"],
+      "spell_preferences": [
+        "sussurro_medo",
+        "erguer_ossos",
+        "invocar_brasa_faminta",
+        "marca_sepulcral"
+      ],
+      "passive_preferences": [
+        "ossuario_interior",
+        "doutrina_pavor",
+        "pedra_interna"
+      ],
       "pet_preferences": ["cranio_errante", "corvo_pressagio"],
-      "weapon_level_ratio": 0.82,
-      "spell_level_ratio": 0.9,
+      "weapon_level_ratio": 0.55,
+      "spell_level_ratio": 0.98,
       "passive_level_ratio": 0.75,
-      "pet_level_ratio": 0.75,
+      "pet_level_ratio": 0.85,
       "quality_bias": 1
     },
     {
       "id": "defensive_occultist",
       "display_name": "Defensive Occultist",
       "role": "Barreiras, terra e gelo para medir lutas longas.",
-      "spell_preferences": ["coagulo_negro", "raizes_pedra", "geada_ossos", "prisao_gelo"],
+      "spell_preferences": [
+        "coagulo_negro",
+        "raizes_pedra",
+        "geada_ossos",
+        "prisao_gelo"
+      ],
       "passive_preferences": ["pedra_interna", "mente_fria", "mare_silenciosa"],
       "pet_preferences": ["escaravelho_pedra", "medusa_mare_fria", "olho_veu"],
-      "weapon_level_ratio": 0.7,
-      "spell_level_ratio": 0.75,
+      "weapon_level_ratio": 0.55,
+      "spell_level_ratio": 0.9,
       "passive_level_ratio": 0.95,
-      "pet_level_ratio": 0.7,
+      "pet_level_ratio": 0.85,
       "quality_bias": 0
     },
     {
       "id": "dot_pressure",
       "display_name": "DoT Pressure",
       "role": "Sangue, Veneno, Fogo e Morte para medir dano por tempo.",
-      "spell_preferences": ["toxina_palida", "marca_brasa", "hemorragia_induzida", "putrefacao"],
-      "passive_preferences": ["alquimia_toxica", "cinza_viva", "anatomista_profano"],
-      "pet_preferences": ["serpente_toxina", "sanguessuga_sacramental", "cao_cinzas"],
-      "weapon_level_ratio": 0.75,
-      "spell_level_ratio": 0.95,
-      "passive_level_ratio": 0.75,
-      "pet_level_ratio": 0.75,
+      "spell_preferences": [
+        "toxina_palida",
+        "marca_brasa",
+        "hemorragia_induzida",
+        "putrefacao"
+      ],
+      "passive_preferences": [
+        "alquimia_toxica",
+        "cinza_viva",
+        "anatomista_profano"
+      ],
+      "pet_preferences": [
+        "serpente_toxina",
+        "sanguessuga_sacramental",
+        "cao_cinzas"
+      ],
+      "weapon_level_ratio": 0.55,
+      "spell_level_ratio": 0.92,
+      "passive_level_ratio": 0.7,
+      "pet_level_ratio": 0.78,
       "quality_bias": 0
     },
     {
       "id": "funeral_burst",
       "display_name": "Funeral Burst",
       "role": "Morte e fogo alto para detectar stomps e payoffs.",
-      "spell_preferences": ["marca_sepulcral", "coroa_cinzas", "descarga_nervosa", "incisao_ritual"],
-      "passive_preferences": ["ossuario_interior", "cinza_viva", "anatomista_profano"],
+      "spell_preferences": [
+        "descarga_nervosa",
+        "marca_brasa",
+        "incisao_ritual",
+        "marca_sepulcral",
+        "coroa_cinzas"
+      ],
+      "passive_preferences": [
+        "ossuario_interior",
+        "cinza_viva",
+        "anatomista_profano"
+      ],
       "pet_preferences": ["cranio_errante", "cao_cinzas", "corvo_pressagio"],
-      "weapon_level_ratio": 0.9,
-      "spell_level_ratio": 0.95,
+      "weapon_level_ratio": 0.62,
+      "spell_level_ratio": 1,
       "passive_level_ratio": 0.8,
-      "pet_level_ratio": 0.65,
+      "pet_level_ratio": 0.8,
       "quality_bias": 0
     }
   ]

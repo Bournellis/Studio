@@ -166,9 +166,9 @@
   },
   "power_weights": {
     "level": 42,
-    "weapon_level": 30,
-    "spell_level": 35,
-    "pet_level": 30,
+    "weapon_level": 28,
+    "spell_level": 40,
+    "pet_level": 34,
     "passive_level": 22,
     "weapon_quality_tier": 30,
     "base_stats_level": 8,

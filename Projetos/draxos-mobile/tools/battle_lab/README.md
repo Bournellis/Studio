@@ -20,6 +20,12 @@ Run oficial arquivada:
 npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --archive-run 2026-05-25_initial_balance_v01 --compare-with 2026-05-21_archetype_source_tuning_v02
 ```
 
+Run oficial atual:
+
+```powershell
+npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --archive-run 2026-05-25_source_identity_balance_v02 --compare-with 2026-05-25_initial_balance_v01
+```
+
 Bridge usado pelo Godot dev-only:
 
 ```powershell
@@ -117,22 +123,23 @@ parametros em outra tarefa, regenere o relatorio e compare antes/depois.
 ## Baseline Atual
 
 O baseline gerado em `docs/battle-lab/generated/` inclui a run oficial
-`2026-05-25_initial_balance_v01` e os healthy saves do Progression Lab quando
+`2026-05-25_source_identity_balance_v02` e os healthy saves do Progression Lab quando
 `docs/progression-lab/generated/progression_summary.json` existe.
 
 Resumo:
 
 - batalhas/builds: `3132` / `212`;
-- duracao media: `21.13s`;
+- duracao media: `24.08s`;
 - batalhas curtas: `0%`;
-- batalhas longas: `0%`;
-- anti-stall: `0.96%`;
-- dominancia em poder proximo: `64.46% max`;
+- batalhas longas: `15.07%`;
+- anti-stall: `4.95%`;
+- dominancia em poder proximo: `63.46% max`;
+- identidade de fonte: todos os checks em `PASS`;
 - status geral: `PASS`;
 - `funeral_burst`: sucessor do antigo burst caster apos o rework de Morte/Fogo;
 - `familiar_handler`: sucessor do antigo pet handler com familiares por papel.
 
 Proximo foco recomendado: validar manualmente `familiar_handler`,
-`funeral_burst`, gap premium 10h e janelas 15h/20h usando
+`funeral_burst`, `mental_controller`, `defensive_occultist`, gap premium 10h e janelas 15h/20h usando
 `battle_lab_source_by_archetype.csv`, `battle_lab_near_power_matrix.csv`,
 `battle_lab_progression_matrix.csv` e `battle_lab_compare.csv`.

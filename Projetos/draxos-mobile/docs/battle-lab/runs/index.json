@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-05-25T10:13:07.290Z",
+  "updated_at": "2026-05-25T20:33:52.102Z",
   "runs": [
     {
       "run_id": "2026-05-21_archetype_source_tuning_v02",
@@ -101,6 +101,47 @@
         "simulator_hash": "72723c67",
         "content_hash": "32776b12",
         "model_hash": "b354944f",
+        "battle_log_schema": "battle_log_v1",
+        "compatibility_status": "stale"
+      },
+      "files": [
+        "battle_lab_report.html",
+        "battle_lab_summary.json",
+        "battle_lab_ui.json",
+        "battle_lab_replays.json",
+        "battle_lab_matchups.csv",
+        "battle_lab_progression_matrix.csv",
+        "battle_lab_builds.csv",
+        "battle_lab_checks.csv",
+        "battle_lab_archetypes.csv",
+        "battle_lab_power_bands.csv",
+        "battle_lab_outliers.csv",
+        "battle_lab_source_by_archetype.csv",
+        "battle_lab_near_power_matrix.csv",
+        "battle_lab_history_index.csv",
+        "battle_lab_compare.csv"
+      ]
+    },
+    {
+      "run_id": "2026-05-25_source_identity_balance_v02",
+      "archived_at": "2026-05-25T20:33:51.972Z",
+      "base_sha": "15facf9468c9",
+      "model_id": "draxos_mobile_battle_lab_v4_source_identity",
+      "seed": "battle_lab_character_rework_20260525",
+      "hypothesis": "2026-05-25 source identity balance v02",
+      "overall_status": "PASS",
+      "avg_duration": 24.08,
+      "median_duration": 22.7,
+      "short_rate_percent": 0,
+      "long_rate_percent": 15.07,
+      "anti_stall_rate_percent": 4.95,
+      "raw_stress_dominance_max_percent": 67.33,
+      "near_power_dominance_max_percent": 63.46,
+      "critical_archetypes": [],
+      "compatibility": {
+        "simulator_hash": "a6ea272d",
+        "content_hash": "58ae0529",
+        "model_hash": "01d2cb2a",
         "battle_log_schema": "battle_log_v1",
         "compatibility_status": "current"
       },

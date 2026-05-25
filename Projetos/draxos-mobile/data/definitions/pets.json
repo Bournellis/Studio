@@ -12,12 +12,17 @@
       "mode": "FIRST_SLICE",
       "unlock_level": 15,
       "damage_type": "morte",
-      "base_damage": 4,
-      "damage_per_level": 0.55,
-      "cadence_seconds": 4.0,
+      "base_damage": 8,
+      "damage_per_level": 1.05,
+      "cadence_seconds": 2.8,
       "effects": [
-        { "kind": "damage", "amount": 4 },
-        { "kind": "status", "status_id": "pressagio", "stacks": 1, "duration_seconds": 3 }
+        { "kind": "damage", "amount": 8 },
+        {
+          "kind": "status",
+          "status_id": "pressagio",
+          "stacks": 1,
+          "duration_seconds": 3
+        }
       ]
     },
     {
@@ -30,12 +35,17 @@
       "mode": "FIRST_SLICE",
       "unlock_level": 15,
       "damage_type": "sangue",
-      "base_damage": 5,
-      "damage_per_level": 0.75,
-      "cadence_seconds": 4.2,
+      "base_damage": 8,
+      "damage_per_level": 1.1,
+      "cadence_seconds": 3.0,
       "effects": [
-        { "kind": "damage", "amount": 5 },
-        { "kind": "dot", "status_id": "sangramento", "tick_damage": 2, "duration_seconds": 4 }
+        { "kind": "damage", "amount": 8 },
+        {
+          "kind": "dot",
+          "status_id": "sangramento",
+          "tick_damage": 2.5,
+          "duration_seconds": 4
+        }
       ]
     },
     {
@@ -48,12 +58,17 @@
       "mode": "FIRST_SLICE",
       "unlock_level": 15,
       "damage_type": "veneno",
-      "base_damage": 5,
-      "damage_per_level": 0.75,
-      "cadence_seconds": 4.1,
+      "base_damage": 8,
+      "damage_per_level": 1.1,
+      "cadence_seconds": 3.0,
       "effects": [
-        { "kind": "damage", "amount": 5 },
-        { "kind": "dot", "status_id": "toxina", "tick_damage": 2, "duration_seconds": 4 }
+        { "kind": "damage", "amount": 8 },
+        {
+          "kind": "dot",
+          "status_id": "toxina",
+          "tick_damage": 2.5,
+          "duration_seconds": 4
+        }
       ]
     },
     {
@@ -66,11 +81,11 @@
       "mode": "FIRST_SLICE",
       "unlock_level": 15,
       "damage_type": "fogo",
-      "base_damage": 6,
-      "damage_per_level": 0.85,
-      "cadence_seconds": 3.7,
+      "base_damage": 9,
+      "damage_per_level": 1.2,
+      "cadence_seconds": 2.8,
       "effects": [
-        { "kind": "damage", "amount": 6 }
+        { "kind": "damage", "amount": 9 }
       ]
     },
     {
@@ -83,12 +98,17 @@
       "mode": "FIRST_SLICE",
       "unlock_level": 15,
       "damage_type": "gelo",
-      "base_damage": 7,
-      "damage_per_level": 0.9,
-      "cadence_seconds": 4.8,
+      "base_damage": 10,
+      "damage_per_level": 1.25,
+      "cadence_seconds": 3.2,
       "effects": [
-        { "kind": "damage", "amount": 7 },
-        { "kind": "status", "status_id": "resfriado", "stacks": 1, "duration_seconds": 3.5 }
+        { "kind": "damage", "amount": 10 },
+        {
+          "kind": "status",
+          "status_id": "resfriado",
+          "stacks": 1,
+          "duration_seconds": 3.5
+        }
       ]
     },
     {
@@ -101,12 +121,17 @@
       "mode": "FIRST_SLICE",
       "unlock_level": 15,
       "damage_type": "terra",
-      "base_damage": 6,
-      "damage_per_level": 0.8,
-      "cadence_seconds": 4.6,
+      "base_damage": 9,
+      "damage_per_level": 1.15,
+      "cadence_seconds": 3.1,
       "effects": [
-        { "kind": "damage", "amount": 6 },
-        { "kind": "status", "status_id": "enraizado", "stacks": 1, "duration_seconds": 3.5 }
+        { "kind": "damage", "amount": 9 },
+        {
+          "kind": "status",
+          "status_id": "enraizado",
+          "stacks": 1,
+          "duration_seconds": 3.5
+        }
       ]
     },
     {
@@ -119,12 +144,17 @@
       "mode": "FIRST_SLICE",
       "unlock_level": 15,
       "damage_type": "raio",
-      "base_damage": 5,
-      "damage_per_level": 0.75,
-      "cadence_seconds": 3.6,
+      "base_damage": 8,
+      "damage_per_level": 1.1,
+      "cadence_seconds": 2.7,
       "effects": [
-        { "kind": "damage", "amount": 5 },
-        { "kind": "status", "status_id": "condutor", "stacks": 1, "duration_seconds": 3 }
+        { "kind": "damage", "amount": 8 },
+        {
+          "kind": "status",
+          "status_id": "condutor",
+          "stacks": 1,
+          "duration_seconds": 3
+        }
       ]
     },
     {
@@ -137,12 +167,17 @@
       "mode": "FIRST_SLICE",
       "unlock_level": 15,
       "damage_type": "morte",
-      "base_damage": 6,
-      "damage_per_level": 0.85,
-      "cadence_seconds": 4.4,
+      "base_damage": 9,
+      "damage_per_level": 1.2,
+      "cadence_seconds": 3.0,
       "effects": [
-        { "kind": "damage", "amount": 6 },
-        { "kind": "status", "status_id": "decaimento", "stacks": 1, "duration_seconds": 3.5 }
+        { "kind": "damage", "amount": 9 },
+        {
+          "kind": "status",
+          "status_id": "decaimento",
+          "stacks": 1,
+          "duration_seconds": 3.5
+        }
       ]
     },
     {
@@ -155,12 +190,17 @@
       "mode": "FIRST_SLICE",
       "unlock_level": 15,
       "damage_type": "arcano",
-      "base_damage": 4,
-      "damage_per_level": 0.65,
-      "cadence_seconds": 4.0,
+      "base_damage": 7,
+      "damage_per_level": 1.0,
+      "cadence_seconds": 2.8,
       "effects": [
-        { "kind": "damage", "amount": 4 },
-        { "kind": "status", "status_id": "vulneravel", "stacks": 1, "duration_seconds": 3 }
+        { "kind": "damage", "amount": 7 },
+        {
+          "kind": "status",
+          "status_id": "vulneravel",
+          "stacks": 1,
+          "duration_seconds": 3
+        }
       ]
     }
   ]

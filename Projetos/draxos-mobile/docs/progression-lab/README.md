@@ -99,13 +99,15 @@ Esse diretorio guarda sessoes locais e nao deve entrar no Git.
 
 ## Baseline Atual
 
-Ultima rodada viva: `2026-05-25_initial_balance_v01`.
+Ultima rodada viva: `2026-05-25_source_identity_balance_v02`.
 
 - `25` saves saudaveis e `75` bots gerados.
 - Status geral: `REVIEW`.
 - Power recommendations: todos os componentes em `PASS` com os pesos
-  `level=42`, `weapon_level=30`, `spell_level=35`, `pet_level=30`,
+  `level=42`, `weapon_level=28`, `spell_level=40`, `pet_level=34`,
   `passive_level=22`, `weapon_quality_tier=30`.
+- Bot pool: offsets negativos preservam o arquetipo do save e continuam usando
+  spells desbloqueadas, evitando bots fracos sem kit em milestones medias.
 - Premium gap: sem `CRITICAL` na escala atual, mas ainda com reviews em `5h`,
   `10h`, `15h` e `20h`.
 - Reward scaling: reviews nos levels `15h`/`20h` de alguns perfis free/freemium.

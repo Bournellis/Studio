@@ -99,6 +99,44 @@ var _inferred_opponent_max_hp := 1.0
 static func is_available() -> bool:
 	return bool(ProjectSettings.get_setting("draxos_mobile/battle_lab/enabled", false)) and OS.has_feature("editor")
 
+static func deno_invocation(settings_prefix: String, fallback_prefix: PackedStringArray) -> Dictionary:
+	var command_text := str(ProjectSettings.get_setting("%s/deno_command" % settings_prefix, "npx")).strip_edges()
+	if command_text == "":
+		command_text = "npx"
+	var command_tokens := _split_command_line(command_text)
+	if command_tokens.is_empty():
+		command_tokens.append("npx")
+
+	var command := str(command_tokens[0])
+	var args := PackedStringArray()
+	if command_tokens.size() > 1:
+		var inline_args := PackedStringArray()
+		for index: int in range(1, command_tokens.size()):
+			inline_args.append(command_tokens[index])
+		args = clean_deno_prefix_args(inline_args, fallback_prefix)
+	else:
+		args = clean_deno_prefix_args(
+			ProjectSettings.get_setting("%s/deno_prefix_args" % settings_prefix, fallback_prefix),
+			fallback_prefix
+		)
+	return {"command": command, "args": args}
+
+static func clean_deno_prefix_args(configured: Variant, fallback: PackedStringArray) -> PackedStringArray:
+	var raw := _variant_to_packed_string_array(configured, fallback)
+	var cleaned := PackedStringArray()
+	for token: String in raw:
+		var value := token.strip_edges()
+		if value == "":
+			continue
+		if _is_dynamic_runner_arg(value):
+			break
+		if cleaned.is_empty() and _is_npx_token(value):
+			continue
+		cleaned.append(value)
+	if cleaned.is_empty():
+		return PackedStringArray(fallback)
+	return cleaned
+
 static func max_spell_slots(level: int) -> int:
 	if level >= 25:
 		return 3
@@ -597,8 +635,12 @@ func _send_bridge_request(request: Dictionary) -> Dictionary:
 	_write_json(request_path, request)
 
 	var script_path := ProjectSettings.globalize_path("res://tools/battle_lab/generate.ts")
-	var command := str(ProjectSettings.get_setting("draxos_mobile/battle_lab/deno_command", "npx"))
-	var args := _deno_prefix_args()
+	var invocation := deno_invocation(
+		"draxos_mobile/battle_lab",
+		PackedStringArray(["-y", "deno", "run", "--allow-read", "--allow-write"])
+	)
+	var command := str(invocation.get("command", "npx"))
+	var args := PackedStringArray(invocation.get("args", PackedStringArray()))
 	args.append(script_path)
 	args.append("--request")
 	args.append(request_path)
@@ -607,7 +649,7 @@ func _send_bridge_request(request: Dictionary) -> Dictionary:
 	var output: Array = []
 	var exit_code := OS.execute(command, args, output, true, false)
 	if exit_code != 0:
-		_set_status("Battle Lab falhou: %s" % "\n".join(output))
+		_set_status(_process_failure_message("Battle Lab", command, args, output))
 		return {"ok": false}
 	var response := _read_json(response_path)
 	_last_response = response
@@ -670,13 +712,29 @@ func _load_replays_from_output(output_dir: String) -> void:
 	var replays_doc := _read_json(path)
 	_last_replays = _as_array(replays_doc.get("replays", []))
 	if not _last_replays.is_empty():
-		_load_replay(_as_dictionary(_last_replays[0]))
+		_load_replay(_preferred_replay(_last_replays))
 
 func _load_first_sample_replay() -> void:
 	if _last_replays.is_empty():
 		_set_status("Nenhuma amostra carregada. Gere uma run primeiro.")
 		return
-	_load_replay(_as_dictionary(_last_replays[0]))
+	_load_replay(_preferred_replay(_last_replays))
+
+func _preferred_replay(replays: Array) -> Dictionary:
+	for item: Variant in replays:
+		var replay := _as_dictionary(item)
+		var tag := str(replay.get("tag", ""))
+		var player_archetype := str(replay.get("player_archetype_id", ""))
+		var opponent_archetype := str(replay.get("opponent_archetype_id", ""))
+		if tag.contains("representative") and player_archetype != "starter_instrument" and opponent_archetype != "starter_instrument":
+			return replay
+	for fallback_item: Variant in replays:
+		var fallback_replay := _as_dictionary(fallback_item)
+		var fallback_player_archetype := str(fallback_replay.get("player_archetype_id", ""))
+		var fallback_opponent_archetype := str(fallback_replay.get("opponent_archetype_id", ""))
+		if fallback_player_archetype != "starter_instrument" and fallback_opponent_archetype != "starter_instrument":
+			return fallback_replay
+	return _as_dictionary(replays[0])
 
 func _load_replay(replay: Dictionary) -> void:
 	_active_replay = replay
@@ -743,16 +801,58 @@ func _infer_replay_hp() -> void:
 		elif str(event.get("target", "")) == "opponent":
 			_inferred_opponent_max_hp = max(_inferred_opponent_max_hp, hp)
 
-func _deno_prefix_args() -> PackedStringArray:
-	var fallback := PackedStringArray(["-y", "deno", "run", "--allow-read", "--allow-write"])
-	var configured: Variant = ProjectSettings.get_setting("draxos_mobile/battle_lab/deno_prefix_args", fallback)
+static func _variant_to_packed_string_array(configured: Variant, fallback: PackedStringArray) -> PackedStringArray:
 	if configured is PackedStringArray:
-		return configured
+		return PackedStringArray(configured)
 	if configured is Array:
 		return PackedStringArray(configured)
 	if configured is String:
-		return PackedStringArray(str(configured).split(" ", false))
-	return fallback
+		return _split_command_line(str(configured))
+	return PackedStringArray(fallback)
+
+static func _split_command_line(command_line: String) -> PackedStringArray:
+	var tokens := PackedStringArray()
+	var current := ""
+	var in_quotes := false
+	for index: int in range(command_line.length()):
+		var character := command_line.substr(index, 1)
+		if character == "\"":
+			in_quotes = not in_quotes
+			continue
+		if character == " " and not in_quotes:
+			if current != "":
+				tokens.append(current)
+				current = ""
+			continue
+		current += character
+	if current != "":
+		tokens.append(current)
+	return tokens
+
+static func _is_dynamic_runner_arg(token: String) -> bool:
+	if token.ends_with(".ts"):
+		return true
+	return token in ["--request", "--response", "--profile", "--milestone"]
+
+static func _is_npx_token(token: String) -> bool:
+	var normalized := token.get_file().to_lower()
+	return normalized in ["npx", "npx.cmd", "npx.exe"]
+
+func _process_failure_message(tool_name: String, command: String, args: PackedStringArray, output: Array) -> String:
+	var output_text := _output_text(output)
+	if output_text != "":
+		return "%s falhou: %s" % [tool_name, output_text]
+	return "%s falhou ao iniciar processo.\nExecutavel: %s\nArgs: %s" % [
+		tool_name,
+		command,
+		" ".join(args),
+	]
+
+func _output_text(output: Array) -> String:
+	var lines := PackedStringArray()
+	for item: Variant in output:
+		lines.append(str(item))
+	return "\n".join(lines)
 
 func _scroll_vbox() -> VBoxContainer:
 	var scroll := ScrollContainer.new()

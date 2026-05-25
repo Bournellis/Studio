@@ -10,14 +10,14 @@
       "hours": 2,
       "status": "PASS",
       "notes": [
-        "Use power 647 as initial matchmaking observation, not final truth."
+        "Use power 669 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_50_rewards_2h",
         "account_type": "progression_lab",
         "level": 8,
         "xp": 824,
-        "power": 647
+        "power": 669
       },
       "resources": {
         "xp": 823.5,
@@ -42,7 +42,7 @@
         "weapon_type": "orbe_tempestade",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
-        "weapon_level": 5,
+        "weapon_level": 4,
         "spell_slots": [
           "descarga_nervosa",
           "marca_brasa"
@@ -61,7 +61,7 @@
         ],
         "spell_levels": {
           "descarga_nervosa": 2,
-          "marca_brasa": 2
+          "marca_brasa": 3
         },
         "passive_id": "",
         "passive_level": 0,
@@ -119,7 +119,7 @@
         "displayName": "free_50_rewards_2h",
         "level": 8,
         "weaponId": "orbe_tempestade",
-        "weaponLevel": 5,
+        "weaponLevel": 4,
         "weaponQualityTier": 0,
         "spellIds": [
           "descarga_nervosa",
@@ -127,7 +127,7 @@
         ],
         "spellLevels": {
           "descarga_nervosa": 2,
-          "marca_brasa": 2
+          "marca_brasa": 3
         }
       },
       "manual_checklist": [
@@ -136,7 +136,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L5, spells descarga_nervosa, marca_brasa.",
+        "Conferir build: arma L4, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -148,18 +148,18 @@
       "hours": 5,
       "status": "PASS",
       "notes": [
-        "Use power 1040 as initial matchmaking observation, not final truth."
+        "Use power 1210 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_50_rewards_5h",
         "account_type": "progression_lab",
         "level": 10,
         "xp": 2059,
-        "power": 1040
+        "power": 1210
       },
       "resources": {
         "xp": 2058.75,
-        "almas": 52.38,
+        "almas": 22.38,
         "energia": 35.88,
         "sangue": 51.7,
         "cristais": 5.3,
@@ -180,7 +180,7 @@
         "weapon_type": "orbe_tempestade",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
-        "weapon_level": 6,
+        "weapon_level": 5,
         "spell_slots": [
           "descarga_nervosa",
           "marca_brasa"
@@ -198,8 +198,8 @@
           "descarga_nervosa"
         ],
         "spell_levels": {
-          "descarga_nervosa": 5,
-          "marca_brasa": 5
+          "descarga_nervosa": 7,
+          "marca_brasa": 7
         },
         "passive_id": "pulso_tempestade",
         "passive_level": 3,
@@ -257,15 +257,15 @@
         "displayName": "free_50_rewards_5h",
         "level": 10,
         "weaponId": "orbe_tempestade",
-        "weaponLevel": 6,
+        "weaponLevel": 5,
         "weaponQualityTier": 0,
         "spellIds": [
           "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 5,
-          "marca_brasa": 5
+          "descarga_nervosa": 7,
+          "marca_brasa": 7
         },
         "passiveId": "pulso_tempestade",
         "passiveLevel": 3
@@ -276,7 +276,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L6, spells descarga_nervosa, marca_brasa.",
+        "Conferir build: arma L5, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -288,18 +288,18 @@
       "hours": 10,
       "status": "PASS",
       "notes": [
-        "Use power 1332 as initial matchmaking observation, not final truth."
+        "Use power 1480 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_50_rewards_10h",
         "account_type": "progression_lab",
         "level": 12,
         "xp": 4118,
-        "power": 1332
+        "power": 1480
       },
       "resources": {
         "xp": 4117.5,
-        "almas": 191.75,
+        "almas": 168.75,
         "energia": 71.75,
         "sangue": 103.4,
         "cristais": 5.6,
@@ -320,7 +320,7 @@
         "weapon_type": "orbe_tempestade",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
-        "weapon_level": 8,
+        "weapon_level": 6,
         "spell_slots": [
           "descarga_nervosa",
           "marca_brasa"
@@ -338,8 +338,8 @@
           "descarga_nervosa"
         ],
         "spell_levels": {
-          "descarga_nervosa": 6,
-          "marca_brasa": 6
+          "descarga_nervosa": 8,
+          "marca_brasa": 8
         },
         "passive_id": "pulso_tempestade",
         "passive_level": 6,
@@ -397,15 +397,15 @@
         "displayName": "free_50_rewards_10h",
         "level": 12,
         "weaponId": "orbe_tempestade",
-        "weaponLevel": 8,
+        "weaponLevel": 6,
         "weaponQualityTier": 0,
         "spellIds": [
           "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 6,
-          "marca_brasa": 6
+          "descarga_nervosa": 8,
+          "marca_brasa": 8
         },
         "passiveId": "pulso_tempestade",
         "passiveLevel": 6
@@ -416,7 +416,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L8, spells descarga_nervosa, marca_brasa.",
+        "Conferir build: arma L6, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -429,21 +429,21 @@
       "status": "REVIEW",
       "notes": [
         "Level 14 outside target 15-30.",
-        "Use power 1528 as initial matchmaking observation, not final truth."
+        "Use power 1706 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_50_rewards_15h",
         "account_type": "progression_lab",
         "level": 14,
         "xp": 6176,
-        "power": 1528
+        "power": 1706
       },
       "resources": {
         "xp": 6176.25,
-        "almas": 338.13,
+        "almas": 309.13,
         "energia": 107.63,
         "sangue": 155.1,
-        "cristais": 20.9,
+        "cristais": 15.9,
         "ossos": 33.6,
         "diamante": 0.68
       },
@@ -461,7 +461,7 @@
         "weapon_type": "orbe_tempestade",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
-        "weapon_level": 9,
+        "weapon_level": 7,
         "spell_slots": [
           "descarga_nervosa",
           "marca_brasa"
@@ -479,11 +479,11 @@
           "descarga_nervosa"
         ],
         "spell_levels": {
-          "descarga_nervosa": 7,
-          "marca_brasa": 7
+          "descarga_nervosa": 9,
+          "marca_brasa": 9
         },
         "passive_id": "pulso_tempestade",
-        "passive_level": 6,
+        "passive_level": 7,
         "pet_id": "",
         "pet_level": 0
       },
@@ -538,18 +538,18 @@
         "displayName": "free_50_rewards_15h",
         "level": 14,
         "weaponId": "orbe_tempestade",
-        "weaponLevel": 9,
+        "weaponLevel": 7,
         "weaponQualityTier": 0,
         "spellIds": [
           "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 7,
-          "marca_brasa": 7
+          "descarga_nervosa": 9,
+          "marca_brasa": 9
         },
         "passiveId": "pulso_tempestade",
-        "passiveLevel": 6
+        "passiveLevel": 7
       },
       "manual_checklist": [
         "Carregar free_50_rewards em 15h.",
@@ -557,7 +557,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L9, spells descarga_nervosa, marca_brasa.",
+        "Conferir build: arma L7, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -570,21 +570,21 @@
       "status": "REVIEW",
       "notes": [
         "Level 15 outside target 18-36.",
-        "Use power 1876 as initial matchmaking observation, not final truth."
+        "Use power 2160 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_50_rewards_20h",
         "account_type": "progression_lab",
         "level": 15,
         "xp": 8235,
-        "power": 1876
+        "power": 2160
       },
       "resources": {
         "xp": 8235,
-        "almas": 494.5,
+        "almas": 451.5,
         "energia": 143.5,
-        "sangue": 174.8,
-        "cristais": 31.2,
+        "sangue": 152.8,
+        "cristais": 25.2,
         "ossos": 44.8,
         "diamante": 0.9
       },
@@ -602,7 +602,7 @@
         "weapon_type": "orbe_tempestade",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
-        "weapon_level": 9,
+        "weapon_level": 7,
         "spell_slots": [
           "descarga_nervosa",
           "marca_brasa"
@@ -624,13 +624,13 @@
           "raizes_pedra"
         ],
         "spell_levels": {
-          "descarga_nervosa": 8,
-          "marca_brasa": 8
+          "descarga_nervosa": 10,
+          "marca_brasa": 10
         },
         "passive_id": "pulso_tempestade",
-        "passive_level": 7,
+        "passive_level": 8,
         "pet_id": "serpe_tempestade",
-        "pet_level": 7
+        "pet_level": 9
       },
       "base": {
         "construction_slots": 1,
@@ -683,20 +683,20 @@
         "displayName": "free_50_rewards_20h",
         "level": 15,
         "weaponId": "orbe_tempestade",
-        "weaponLevel": 9,
+        "weaponLevel": 7,
         "weaponQualityTier": 0,
         "spellIds": [
           "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 8,
-          "marca_brasa": 8
+          "descarga_nervosa": 10,
+          "marca_brasa": 10
         },
         "passiveId": "pulso_tempestade",
-        "passiveLevel": 7,
+        "passiveLevel": 8,
         "petId": "serpe_tempestade",
-        "petLevel": 7
+        "petLevel": 9
       },
       "manual_checklist": [
         "Carregar free_50_rewards em 20h.",
@@ -704,7 +704,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L9, spells descarga_nervosa, marca_brasa.",
+        "Conferir build: arma L7, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -716,14 +716,14 @@
       "hours": 2,
       "status": "PASS",
       "notes": [
-        "Use power 678 as initial matchmaking observation, not final truth."
+        "Use power 738 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_100_rewards_2h",
         "account_type": "progression_lab",
         "level": 8,
         "xp": 1150,
-        "power": 678
+        "power": 738
       },
       "resources": {
         "xp": 1150,
@@ -748,9 +748,10 @@
         "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
-        "weapon_level": 6,
+        "weapon_level": 5,
         "spell_slots": [
-          "descarga_nervosa"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spells_unlocked": [
           "sussurro_medo",
@@ -765,7 +766,8 @@
           "descarga_nervosa"
         ],
         "spell_levels": {
-          "descarga_nervosa": 4
+          "descarga_nervosa": 3,
+          "marca_brasa": 3
         },
         "passive_id": "",
         "passive_level": 0,
@@ -823,13 +825,15 @@
         "displayName": "free_100_rewards_2h",
         "level": 8,
         "weaponId": "cajado_ossario",
-        "weaponLevel": 6,
+        "weaponLevel": 5,
         "weaponQualityTier": 0,
         "spellIds": [
-          "descarga_nervosa"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 4
+          "descarga_nervosa": 3,
+          "marca_brasa": 3
         }
       },
       "manual_checklist": [
@@ -838,7 +842,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L6, spells descarga_nervosa.",
+        "Conferir build: arma L5, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -850,18 +854,18 @@
       "hours": 5,
       "status": "PASS",
       "notes": [
-        "Use power 1068 as initial matchmaking observation, not final truth."
+        "Use power 1459 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_100_rewards_5h",
         "account_type": "progression_lab",
         "level": 11,
         "xp": 2875,
-        "power": 1068
+        "power": 1459
       },
       "resources": {
         "xp": 2875,
-        "almas": 119.5,
+        "almas": 30.5,
         "energia": 57.5,
         "sangue": 72.5,
         "cristais": 8.5,
@@ -882,9 +886,10 @@
         "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
-        "weapon_level": 8,
+        "weapon_level": 7,
         "spell_slots": [
-          "descarga_nervosa"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spells_unlocked": [
           "sussurro_medo",
@@ -899,7 +904,8 @@
           "descarga_nervosa"
         ],
         "spell_levels": {
-          "descarga_nervosa": 7
+          "descarga_nervosa": 8,
+          "marca_brasa": 9
         },
         "passive_id": "ossuario_interior",
         "passive_level": 4,
@@ -957,13 +963,15 @@
         "displayName": "free_100_rewards_5h",
         "level": 11,
         "weaponId": "cajado_ossario",
-        "weaponLevel": 8,
+        "weaponLevel": 7,
         "weaponQualityTier": 0,
         "spellIds": [
-          "descarga_nervosa"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 7
+          "descarga_nervosa": 8,
+          "marca_brasa": 9
         },
         "passiveId": "ossuario_interior",
         "passiveLevel": 4
@@ -974,7 +982,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L8, spells descarga_nervosa.",
+        "Conferir build: arma L7, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -986,18 +994,18 @@
       "hours": 10,
       "status": "PASS",
       "notes": [
-        "Use power 1456 as initial matchmaking observation, not final truth."
+        "Use power 1943 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_100_rewards_10h",
         "account_type": "progression_lab",
         "level": 14,
         "xp": 5750,
-        "power": 1456
+        "power": 1943
       },
       "resources": {
         "xp": 5750,
-        "almas": 283,
+        "almas": 150,
         "energia": 115,
         "sangue": 145,
         "cristais": 11,
@@ -1018,9 +1026,10 @@
         "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
-        "weapon_level": 11,
+        "weapon_level": 9,
         "spell_slots": [
-          "descarga_nervosa"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spells_unlocked": [
           "sussurro_medo",
@@ -1035,7 +1044,8 @@
           "descarga_nervosa"
         ],
         "spell_levels": {
-          "descarga_nervosa": 9
+          "descarga_nervosa": 11,
+          "marca_brasa": 11
         },
         "passive_id": "ossuario_interior",
         "passive_level": 8,
@@ -1093,13 +1103,15 @@
         "displayName": "free_100_rewards_10h",
         "level": 14,
         "weaponId": "cajado_ossario",
-        "weaponLevel": 11,
+        "weaponLevel": 9,
         "weaponQualityTier": 0,
         "spellIds": [
-          "descarga_nervosa"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 9
+          "descarga_nervosa": 11,
+          "marca_brasa": 11
         },
         "passiveId": "ossuario_interior",
         "passiveLevel": 8
@@ -1110,7 +1122,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L11, spells descarga_nervosa.",
+        "Conferir build: arma L9, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1122,21 +1134,21 @@
       "hours": 15,
       "status": "PASS",
       "notes": [
-        "Use power 2299 as initial matchmaking observation, not final truth."
+        "Use power 2609 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_100_rewards_15h",
         "account_type": "progression_lab",
         "level": 16,
         "xp": 8625,
-        "power": 2299
+        "power": 2609
       },
       "resources": {
         "xp": 8625,
-        "almas": 377.5,
+        "almas": 324.5,
         "energia": 152.5,
-        "sangue": 148.5,
-        "cristais": 26.5,
+        "sangue": 108.5,
+        "cristais": 16.5,
         "ossos": 50.25,
         "diamante": 1.5
       },
@@ -1154,7 +1166,7 @@
         "weapon_type": "orbe_tempestade",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
-        "weapon_level": 12,
+        "weapon_level": 10,
         "spell_slots": [
           "descarga_nervosa",
           "marca_brasa"
@@ -1176,13 +1188,13 @@
           "raizes_pedra"
         ],
         "spell_levels": {
-          "descarga_nervosa": 10,
-          "marca_brasa": 10
+          "descarga_nervosa": 12,
+          "marca_brasa": 12
         },
         "passive_id": "pulso_tempestade",
-        "passive_level": 9,
+        "passive_level": 10,
         "pet_id": "serpe_tempestade",
-        "pet_level": 10
+        "pet_level": 12
       },
       "base": {
         "construction_slots": 1,
@@ -1235,20 +1247,20 @@
         "displayName": "free_100_rewards_15h",
         "level": 16,
         "weaponId": "orbe_tempestade",
-        "weaponLevel": 12,
+        "weaponLevel": 10,
         "weaponQualityTier": 0,
         "spellIds": [
           "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 10,
-          "marca_brasa": 10
+          "descarga_nervosa": 12,
+          "marca_brasa": 12
         },
         "passiveId": "pulso_tempestade",
-        "passiveLevel": 9,
+        "passiveLevel": 10,
         "petId": "serpe_tempestade",
-        "petLevel": 10
+        "petLevel": 12
       },
       "manual_checklist": [
         "Carregar free_100_rewards em 15h.",
@@ -1256,7 +1268,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L12, spells descarga_nervosa, marca_brasa.",
+        "Conferir build: arma L10, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1269,21 +1281,21 @@
       "status": "REVIEW",
       "notes": [
         "Level 17 outside target 18-36.",
-        "Use power 2468 as initial matchmaking observation, not final truth."
+        "Use power 2786 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_100_rewards_20h",
         "account_type": "progression_lab",
         "level": 17,
         "xp": 11500,
-        "power": 2468
+        "power": 2786
       },
       "resources": {
         "xp": 11500,
-        "almas": 548,
+        "almas": 485,
         "energia": 195,
-        "sangue": 221,
-        "cristais": 40,
+        "sangue": 181,
+        "cristais": 28,
         "ossos": 67,
         "diamante": 2
       },
@@ -1301,7 +1313,7 @@
         "weapon_type": "orbe_tempestade",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
-        "weapon_level": 13,
+        "weapon_level": 11,
         "spell_slots": [
           "descarga_nervosa",
           "marca_brasa"
@@ -1323,13 +1335,13 @@
           "raizes_pedra"
         ],
         "spell_levels": {
-          "descarga_nervosa": 11,
-          "marca_brasa": 11
+          "descarga_nervosa": 13,
+          "marca_brasa": 13
         },
         "passive_id": "pulso_tempestade",
-        "passive_level": 10,
+        "passive_level": 11,
         "pet_id": "serpe_tempestade",
-        "pet_level": 10
+        "pet_level": 12
       },
       "base": {
         "construction_slots": 1,
@@ -1382,20 +1394,20 @@
         "displayName": "free_100_rewards_20h",
         "level": 17,
         "weaponId": "orbe_tempestade",
-        "weaponLevel": 13,
+        "weaponLevel": 11,
         "weaponQualityTier": 0,
         "spellIds": [
           "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 11,
-          "marca_brasa": 11
+          "descarga_nervosa": 13,
+          "marca_brasa": 13
         },
         "passiveId": "pulso_tempestade",
-        "passiveLevel": 10,
+        "passiveLevel": 11,
         "petId": "serpe_tempestade",
-        "petLevel": 10
+        "petLevel": 12
       },
       "manual_checklist": [
         "Carregar free_100_rewards em 20h.",
@@ -1403,7 +1415,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L13, spells descarga_nervosa, marca_brasa.",
+        "Conferir build: arma L11, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1416,14 +1428,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 751 as initial matchmaking observation, not final truth."
+        "Use power 809 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_freemium_basic_2h",
         "account_type": "progression_lab",
         "level": 9,
         "xp": 1192,
-        "power": 751
+        "power": 809
       },
       "resources": {
         "xp": 1192,
@@ -1448,9 +1460,10 @@
         "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
-        "weapon_level": 7,
+        "weapon_level": 6,
         "spell_slots": [
-          "descarga_nervosa"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spells_unlocked": [
           "sussurro_medo",
@@ -1465,7 +1478,8 @@
           "descarga_nervosa"
         ],
         "spell_levels": {
-          "descarga_nervosa": 4
+          "descarga_nervosa": 3,
+          "marca_brasa": 3
         },
         "passive_id": "",
         "passive_level": 0,
@@ -1523,13 +1537,15 @@
         "displayName": "freemium_basic_2h",
         "level": 9,
         "weaponId": "cajado_ossario",
-        "weaponLevel": 7,
+        "weaponLevel": 6,
         "weaponQualityTier": 0,
         "spellIds": [
-          "descarga_nervosa"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 4
+          "descarga_nervosa": 3,
+          "marca_brasa": 3
         }
       },
       "manual_checklist": [
@@ -1538,7 +1554,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L7, spells descarga_nervosa.",
+        "Conferir build: arma L6, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1551,18 +1567,18 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 1157 as initial matchmaking observation, not final truth."
+        "Use power 1483 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_freemium_basic_5h",
         "account_type": "progression_lab",
         "level": 11,
         "xp": 2980,
-        "power": 1157
+        "power": 1483
       },
       "resources": {
         "xp": 2980,
-        "almas": 104,
+        "almas": 44,
         "energia": 32,
         "sangue": 79.7,
         "cristais": 7.7,
@@ -1583,9 +1599,10 @@
         "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
-        "weapon_level": 9,
+        "weapon_level": 7,
         "spell_slots": [
-          "descarga_nervosa"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spells_unlocked": [
           "sussurro_medo",
@@ -1600,7 +1617,8 @@
           "descarga_nervosa"
         ],
         "spell_levels": {
-          "descarga_nervosa": 8
+          "descarga_nervosa": 8,
+          "marca_brasa": 9
         },
         "passive_id": "ossuario_interior",
         "passive_level": 5,
@@ -1658,13 +1676,15 @@
         "displayName": "freemium_basic_5h",
         "level": 11,
         "weaponId": "cajado_ossario",
-        "weaponLevel": 9,
+        "weaponLevel": 7,
         "weaponQualityTier": 0,
         "spellIds": [
-          "descarga_nervosa"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 8
+          "descarga_nervosa": 8,
+          "marca_brasa": 9
         },
         "passiveId": "ossuario_interior",
         "passiveLevel": 5
@@ -1675,7 +1695,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L9, spells descarga_nervosa.",
+        "Conferir build: arma L7, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1688,18 +1708,18 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 1523 as initial matchmaking observation, not final truth."
+        "Use power 2083 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_freemium_basic_10h",
         "account_type": "progression_lab",
         "level": 14,
         "xp": 5960,
-        "power": 1523
+        "power": 2083
       },
       "resources": {
         "xp": 5960,
-        "almas": 290,
+        "almas": 99,
         "energia": 64,
         "sangue": 159.4,
         "cristais": 11.4,
@@ -1720,9 +1740,10 @@
         "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
-        "weapon_level": 11,
+        "weapon_level": 10,
         "spell_slots": [
-          "descarga_nervosa"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spells_unlocked": [
           "sussurro_medo",
@@ -1737,7 +1758,8 @@
           "descarga_nervosa"
         ],
         "spell_levels": {
-          "descarga_nervosa": 10
+          "descarga_nervosa": 12,
+          "marca_brasa": 12
         },
         "passive_id": "ossuario_interior",
         "passive_level": 9,
@@ -1795,13 +1817,15 @@
         "displayName": "freemium_basic_10h",
         "level": 14,
         "weaponId": "cajado_ossario",
-        "weaponLevel": 11,
+        "weaponLevel": 10,
         "weaponQualityTier": 0,
         "spellIds": [
-          "descarga_nervosa"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 10
+          "descarga_nervosa": 12,
+          "marca_brasa": 12
         },
         "passiveId": "ossuario_interior",
         "passiveLevel": 9
@@ -1812,7 +1836,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L11, spells descarga_nervosa.",
+        "Conferir build: arma L10, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1825,21 +1849,21 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 2463 as initial matchmaking observation, not final truth."
+        "Use power 2751 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_freemium_basic_15h",
         "account_type": "progression_lab",
         "level": 16,
         "xp": 8940,
-        "power": 2463
+        "power": 2751
       },
       "resources": {
         "xp": 8940,
-        "almas": 336,
+        "almas": 273,
         "energia": 71,
-        "sangue": 152.1,
-        "cristais": 29.1,
+        "sangue": 130.1,
+        "cristais": 17.1,
         "ossos": 55.65,
         "diamante": 503.36
       },
@@ -1857,7 +1881,7 @@
         "weapon_type": "varinha_cinzas",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
-        "weapon_level": 13,
+        "weapon_level": 11,
         "spell_slots": [
           "sussurro_medo",
           "marca_brasa"
@@ -1879,13 +1903,13 @@
           "raizes_pedra"
         ],
         "spell_levels": {
-          "sussurro_medo": 11,
-          "marca_brasa": 11
+          "sussurro_medo": 13,
+          "marca_brasa": 13
         },
         "passive_id": "pacto_familiar",
-        "passive_level": 10,
+        "passive_level": 11,
         "pet_id": "corvo_pressagio",
-        "pet_level": 11
+        "pet_level": 12
       },
       "base": {
         "construction_slots": 2,
@@ -1938,20 +1962,20 @@
         "displayName": "freemium_basic_15h",
         "level": 16,
         "weaponId": "varinha_cinzas",
-        "weaponLevel": 13,
+        "weaponLevel": 11,
         "weaponQualityTier": 0,
         "spellIds": [
           "sussurro_medo",
           "marca_brasa"
         ],
         "spellLevels": {
-          "sussurro_medo": 11,
-          "marca_brasa": 11
+          "sussurro_medo": 13,
+          "marca_brasa": 13
         },
         "passiveId": "pacto_familiar",
-        "passiveLevel": 10,
+        "passiveLevel": 11,
         "petId": "corvo_pressagio",
-        "petLevel": 11
+        "petLevel": 12
       },
       "manual_checklist": [
         "Carregar freemium_basic em 15h.",
@@ -1959,7 +1983,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L13, spells sussurro_medo, marca_brasa.",
+        "Conferir build: arma L11, spells sussurro_medo, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1973,21 +1997,21 @@
       "notes": [
         "Level 17 outside target 18-36.",
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 2639 as initial matchmaking observation, not final truth."
+        "Use power 2969 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_freemium_basic_20h",
         "account_type": "progression_lab",
         "level": 17,
         "xp": 11920,
-        "power": 2639
+        "power": 2969
       },
       "resources": {
         "xp": 11920,
-        "almas": 505,
+        "almas": 432,
         "energia": 114,
-        "sangue": 231.8,
-        "cristais": 44.8,
+        "sangue": 184.8,
+        "cristais": 30.8,
         "ossos": 74.2,
         "diamante": 504.48
       },
@@ -2005,7 +2029,7 @@
         "weapon_type": "varinha_cinzas",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
-        "weapon_level": 14,
+        "weapon_level": 12,
         "spell_slots": [
           "sussurro_medo",
           "marca_brasa"
@@ -2027,13 +2051,13 @@
           "raizes_pedra"
         ],
         "spell_levels": {
-          "sussurro_medo": 12,
-          "marca_brasa": 12
+          "sussurro_medo": 14,
+          "marca_brasa": 14
         },
         "passive_id": "pacto_familiar",
-        "passive_level": 11,
+        "passive_level": 12,
         "pet_id": "corvo_pressagio",
-        "pet_level": 11
+        "pet_level": 13
       },
       "base": {
         "construction_slots": 2,
@@ -2086,20 +2110,20 @@
         "displayName": "freemium_basic_20h",
         "level": 17,
         "weaponId": "varinha_cinzas",
-        "weaponLevel": 14,
+        "weaponLevel": 12,
         "weaponQualityTier": 0,
         "spellIds": [
           "sussurro_medo",
           "marca_brasa"
         ],
         "spellLevels": {
-          "sussurro_medo": 12,
-          "marca_brasa": 12
+          "sussurro_medo": 14,
+          "marca_brasa": 14
         },
         "passiveId": "pacto_familiar",
-        "passiveLevel": 11,
+        "passiveLevel": 12,
         "petId": "corvo_pressagio",
-        "petLevel": 11
+        "petLevel": 13
       },
       "manual_checklist": [
         "Carregar freemium_basic em 20h.",
@@ -2107,7 +2131,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L14, spells sussurro_medo, marca_brasa.",
+        "Conferir build: arma L12, spells sussurro_medo, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2120,18 +2144,18 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 816 as initial matchmaking observation, not final truth."
+        "Use power 877 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_spender_light_2h",
         "account_type": "progression_lab",
         "level": 9,
         "xp": 1364,
-        "power": 816
+        "power": 877
       },
       "resources": {
         "xp": 1364,
-        "almas": 19.4,
+        "almas": 22.4,
         "energia": 26.2,
         "sangue": 40.75,
         "cristais": 15.08,
@@ -2152,9 +2176,10 @@
         "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
-        "weapon_level": 8,
+        "weapon_level": 7,
         "spell_slots": [
-          "descarga_nervosa"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spells_unlocked": [
           "sussurro_medo",
@@ -2169,7 +2194,8 @@
           "descarga_nervosa"
         ],
         "spell_levels": {
-          "descarga_nervosa": 5
+          "descarga_nervosa": 3,
+          "marca_brasa": 4
         },
         "passive_id": "",
         "passive_level": 0,
@@ -2227,13 +2253,15 @@
         "displayName": "spender_light_2h",
         "level": 9,
         "weaponId": "cajado_ossario",
-        "weaponLevel": 8,
+        "weaponLevel": 7,
         "weaponQualityTier": 0,
         "spellIds": [
-          "descarga_nervosa"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 5
+          "descarga_nervosa": 3,
+          "marca_brasa": 4
         }
       },
       "manual_checklist": [
@@ -2242,7 +2270,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L8, spells descarga_nervosa.",
+        "Conferir build: arma L7, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2255,18 +2283,18 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 1318 as initial matchmaking observation, not final truth."
+        "Use power 1715 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_spender_light_5h",
         "account_type": "progression_lab",
         "level": 12,
         "xp": 3410,
-        "power": 1318
+        "power": 1715
       },
       "resources": {
         "xp": 3410,
-        "almas": 133,
+        "almas": 44,
         "energia": 35.5,
         "sangue": 101.88,
         "cristais": 7.7,
@@ -2287,9 +2315,10 @@
         "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
-        "weapon_level": 10,
+        "weapon_level": 9,
         "spell_slots": [
-          "descarga_nervosa"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spells_unlocked": [
           "sussurro_medo",
@@ -2304,7 +2333,8 @@
           "descarga_nervosa"
         ],
         "spell_levels": {
-          "descarga_nervosa": 9
+          "descarga_nervosa": 9,
+          "marca_brasa": 10
         },
         "passive_id": "ossuario_interior",
         "passive_level": 7,
@@ -2362,13 +2392,15 @@
         "displayName": "spender_light_5h",
         "level": 12,
         "weaponId": "cajado_ossario",
-        "weaponLevel": 10,
+        "weaponLevel": 9,
         "weaponQualityTier": 0,
         "spellIds": [
-          "descarga_nervosa"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 9
+          "descarga_nervosa": 9,
+          "marca_brasa": 10
         },
         "passiveId": "ossuario_interior",
         "passiveLevel": 7
@@ -2379,7 +2411,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L10, spells descarga_nervosa.",
+        "Conferir build: arma L9, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2392,20 +2424,20 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 2481 as initial matchmaking observation, not final truth."
+        "Use power 2711 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_spender_light_10h",
         "account_type": "progression_lab",
         "level": 15,
         "xp": 6820,
-        "power": 2481
+        "power": 2711
       },
       "resources": {
         "xp": 6820,
-        "almas": 142,
+        "almas": 137,
         "energia": 71,
-        "sangue": 116.75,
+        "sangue": 69.75,
         "cristais": 21.4,
         "ossos": 49.75,
         "diamante": 421.8
@@ -2424,7 +2456,7 @@
         "weapon_type": "varinha_cinzas",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
-        "weapon_level": 13,
+        "weapon_level": 11,
         "spell_slots": [
           "sussurro_medo",
           "marca_brasa"
@@ -2446,13 +2478,13 @@
           "raizes_pedra"
         ],
         "spell_levels": {
-          "sussurro_medo": 12,
-          "marca_brasa": 12
+          "sussurro_medo": 13,
+          "marca_brasa": 13
         },
         "passive_id": "pacto_familiar",
         "passive_level": 10,
         "pet_id": "corvo_pressagio",
-        "pet_level": 11
+        "pet_level": 13
       },
       "base": {
         "construction_slots": 2,
@@ -2505,20 +2537,20 @@
         "displayName": "spender_light_10h",
         "level": 15,
         "weaponId": "varinha_cinzas",
-        "weaponLevel": 13,
+        "weaponLevel": 11,
         "weaponQualityTier": 0,
         "spellIds": [
           "sussurro_medo",
           "marca_brasa"
         ],
         "spellLevels": {
-          "sussurro_medo": 12,
-          "marca_brasa": 12
+          "sussurro_medo": 13,
+          "marca_brasa": 13
         },
         "passiveId": "pacto_familiar",
         "passiveLevel": 10,
         "petId": "corvo_pressagio",
-        "petLevel": 11
+        "petLevel": 13
       },
       "manual_checklist": [
         "Carregar spender_light em 10h.",
@@ -2526,7 +2558,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L13, spells sussurro_medo, marca_brasa.",
+        "Conferir build: arma L11, spells sussurro_medo, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2539,21 +2571,21 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 2628 as initial matchmaking observation, not final truth."
+        "Use power 2928 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_spender_light_15h",
         "account_type": "progression_lab",
         "level": 16,
         "xp": 10230,
-        "power": 2628
+        "power": 2928
       },
       "resources": {
         "xp": 10230,
-        "almas": 434,
+        "almas": 361,
         "energia": 100.5,
-        "sangue": 196.63,
-        "cristais": 47.1,
+        "sangue": 171.63,
+        "cristais": 33.1,
         "ossos": 74.63,
         "diamante": 382.7
       },
@@ -2571,7 +2603,7 @@
         "weapon_type": "varinha_cinzas",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
-        "weapon_level": 14,
+        "weapon_level": 12,
         "spell_slots": [
           "sussurro_medo",
           "marca_brasa"
@@ -2593,13 +2625,13 @@
           "raizes_pedra"
         ],
         "spell_levels": {
-          "sussurro_medo": 12,
-          "marca_brasa": 12
+          "sussurro_medo": 14,
+          "marca_brasa": 14
         },
         "passive_id": "pacto_familiar",
-        "passive_level": 11,
+        "passive_level": 12,
         "pet_id": "corvo_pressagio",
-        "pet_level": 12
+        "pet_level": 13
       },
       "base": {
         "construction_slots": 2,
@@ -2652,20 +2684,20 @@
         "displayName": "spender_light_15h",
         "level": 16,
         "weaponId": "varinha_cinzas",
-        "weaponLevel": 14,
+        "weaponLevel": 12,
         "weaponQualityTier": 0,
         "spellIds": [
           "sussurro_medo",
           "marca_brasa"
         ],
         "spellLevels": {
-          "sussurro_medo": 12,
-          "marca_brasa": 12
+          "sussurro_medo": 14,
+          "marca_brasa": 14
         },
         "passiveId": "pacto_familiar",
-        "passiveLevel": 11,
+        "passiveLevel": 12,
         "petId": "corvo_pressagio",
-        "petLevel": 12
+        "petLevel": 13
       },
       "manual_checklist": [
         "Carregar spender_light em 15h.",
@@ -2673,7 +2705,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L14, spells sussurro_medo, marca_brasa.",
+        "Conferir build: arma L12, spells sussurro_medo, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2686,21 +2718,21 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 2999 as initial matchmaking observation, not final truth."
+        "Use power 3325 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_spender_light_20h",
         "account_type": "progression_lab",
         "level": 18,
         "xp": 13640,
-        "power": 2999
+        "power": 3325
       },
       "resources": {
         "xp": 13640,
-        "almas": 523,
+        "almas": 466,
         "energia": 156,
-        "sangue": 273.5,
-        "cristais": 53.8,
+        "sangue": 210.5,
+        "cristais": 33.8,
         "ossos": 99.5,
         "diamante": 343.6
       },
@@ -2718,7 +2750,7 @@
         "weapon_type": "varinha_cinzas",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
-        "weapon_level": 16,
+        "weapon_level": 13,
         "spell_slots": [
           "sussurro_medo",
           "marca_brasa"
@@ -2740,13 +2772,13 @@
           "raizes_pedra"
         ],
         "spell_levels": {
-          "sussurro_medo": 14,
-          "marca_brasa": 14
+          "sussurro_medo": 16,
+          "marca_brasa": 16
         },
         "passive_id": "pacto_familiar",
-        "passive_level": 13,
+        "passive_level": 14,
         "pet_id": "corvo_pressagio",
-        "pet_level": 13
+        "pet_level": 15
       },
       "base": {
         "construction_slots": 2,
@@ -2799,20 +2831,20 @@
         "displayName": "spender_light_20h",
         "level": 18,
         "weaponId": "varinha_cinzas",
-        "weaponLevel": 16,
+        "weaponLevel": 13,
         "weaponQualityTier": 0,
         "spellIds": [
           "sussurro_medo",
           "marca_brasa"
         ],
         "spellLevels": {
-          "sussurro_medo": 14,
-          "marca_brasa": 14
+          "sussurro_medo": 16,
+          "marca_brasa": 16
         },
         "passiveId": "pacto_familiar",
-        "passiveLevel": 13,
+        "passiveLevel": 14,
         "petId": "corvo_pressagio",
-        "petLevel": 13
+        "petLevel": 15
       },
       "manual_checklist": [
         "Carregar spender_light em 20h.",
@@ -2820,7 +2852,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L16, spells sussurro_medo, marca_brasa.",
+        "Conferir build: arma L13, spells sussurro_medo, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2833,18 +2865,18 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 891 as initial matchmaking observation, not final truth."
+        "Use power 995 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_max_spender_2h",
         "account_type": "progression_lab",
         "level": 9,
         "xp": 1616,
-        "power": 891
+        "power": 995
       },
       "resources": {
         "xp": 1616,
-        "almas": 30,
+        "almas": 26,
         "energia": 32.4,
         "sangue": 52.3,
         "cristais": 19.2,
@@ -2865,9 +2897,10 @@
         "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
-        "weapon_level": 9,
+        "weapon_level": 8,
         "spell_slots": [
-          "descarga_nervosa"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spells_unlocked": [
           "sussurro_medo",
@@ -2882,7 +2915,8 @@
           "descarga_nervosa"
         ],
         "spell_levels": {
-          "descarga_nervosa": 6
+          "descarga_nervosa": 4,
+          "marca_brasa": 5
         },
         "passive_id": "",
         "passive_level": 0,
@@ -2940,13 +2974,15 @@
         "displayName": "max_spender_2h",
         "level": 9,
         "weaponId": "cajado_ossario",
-        "weaponLevel": 9,
+        "weaponLevel": 8,
         "weaponQualityTier": 0,
         "spellIds": [
-          "descarga_nervosa"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 6
+          "descarga_nervosa": 4,
+          "marca_brasa": 5
         }
       },
       "manual_checklist": [
@@ -2955,7 +2991,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L9, spells descarga_nervosa.",
+        "Conferir build: arma L8, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2968,18 +3004,18 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 1482 as initial matchmaking observation, not final truth."
+        "Use power 1857 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_max_spender_5h",
         "account_type": "progression_lab",
         "level": 12,
         "xp": 4040,
-        "power": 1482
+        "power": 1857
       },
       "resources": {
         "xp": 4040,
-        "almas": 127.5,
+        "almas": 71.5,
         "energia": 51,
         "sangue": 130.75,
         "cristais": 12,
@@ -3000,9 +3036,10 @@
         "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
-        "weapon_level": 12,
+        "weapon_level": 10,
         "spell_slots": [
-          "descarga_nervosa"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spells_unlocked": [
           "sussurro_medo",
@@ -3017,7 +3054,8 @@
           "descarga_nervosa"
         ],
         "spell_levels": {
-          "descarga_nervosa": 11
+          "descarga_nervosa": 10,
+          "marca_brasa": 11
         },
         "passive_id": "ossuario_interior",
         "passive_level": 8,
@@ -3075,13 +3113,15 @@
         "displayName": "max_spender_5h",
         "level": 12,
         "weaponId": "cajado_ossario",
-        "weaponLevel": 12,
+        "weaponLevel": 10,
         "weaponQualityTier": 0,
         "spellIds": [
-          "descarga_nervosa"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 11
+          "descarga_nervosa": 10,
+          "marca_brasa": 11
         },
         "passiveId": "ossuario_interior",
         "passiveLevel": 8
@@ -3092,7 +3132,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L12, spells descarga_nervosa.",
+        "Conferir build: arma L10, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -3105,20 +3145,20 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 2706 as initial matchmaking observation, not final truth."
+        "Use power 2956 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_max_spender_10h",
         "account_type": "progression_lab",
         "level": 15,
         "xp": 8080,
-        "power": 2706
+        "power": 2956
       },
       "resources": {
         "xp": 8080,
-        "almas": 173,
+        "almas": 134,
         "energia": 112,
-        "sangue": 127.5,
+        "sangue": 98.5,
         "cristais": 30,
         "ossos": 63.65,
         "diamante": 322.8
@@ -3137,7 +3177,7 @@
         "weapon_type": "varinha_cinzas",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
-        "weapon_level": 15,
+        "weapon_level": 13,
         "spell_slots": [
           "sussurro_medo",
           "marca_brasa"
@@ -3159,13 +3199,13 @@
           "raizes_pedra"
         ],
         "spell_levels": {
-          "sussurro_medo": 13,
-          "marca_brasa": 13
+          "sussurro_medo": 14,
+          "marca_brasa": 15
         },
         "passive_id": "pacto_familiar",
         "passive_level": 11,
         "pet_id": "corvo_pressagio",
-        "pet_level": 13
+        "pet_level": 14
       },
       "base": {
         "construction_slots": 2,
@@ -3218,20 +3258,20 @@
         "displayName": "max_spender_10h",
         "level": 15,
         "weaponId": "varinha_cinzas",
-        "weaponLevel": 15,
+        "weaponLevel": 13,
         "weaponQualityTier": 0,
         "spellIds": [
           "sussurro_medo",
           "marca_brasa"
         ],
         "spellLevels": {
-          "sussurro_medo": 13,
-          "marca_brasa": 13
+          "sussurro_medo": 14,
+          "marca_brasa": 15
         },
         "passiveId": "pacto_familiar",
         "passiveLevel": 11,
         "petId": "corvo_pressagio",
-        "petLevel": 13
+        "petLevel": 14
       },
       "manual_checklist": [
         "Carregar max_spender em 10h.",
@@ -3239,7 +3279,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L15, spells sussurro_medo, marca_brasa.",
+        "Conferir build: arma L13, spells sussurro_medo, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -3252,20 +3292,20 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 3109 as initial matchmaking observation, not final truth."
+        "Use power 3453 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_max_spender_15h",
         "account_type": "progression_lab",
         "level": 17,
         "xp": 12120,
-        "power": 3109
+        "power": 3453
       },
       "resources": {
         "xp": 12120,
-        "almas": 318.5,
+        "almas": 209.5,
         "energia": 146,
-        "sangue": 229.25,
+        "sangue": 157.25,
         "cristais": 27,
         "ossos": 95.48,
         "diamante": 234.2
@@ -3284,7 +3324,7 @@
         "weapon_type": "varinha_cinzas",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
-        "weapon_level": 17,
+        "weapon_level": 15,
         "spell_slots": [
           "sussurro_medo",
           "marca_brasa"
@@ -3306,13 +3346,13 @@
           "raizes_pedra"
         ],
         "spell_levels": {
-          "sussurro_medo": 15,
-          "marca_brasa": 15
+          "sussurro_medo": 17,
+          "marca_brasa": 17
         },
         "passive_id": "pacto_familiar",
         "passive_level": 14,
         "pet_id": "corvo_pressagio",
-        "pet_level": 14
+        "pet_level": 16
       },
       "base": {
         "construction_slots": 2,
@@ -3365,20 +3405,20 @@
         "displayName": "max_spender_15h",
         "level": 17,
         "weaponId": "varinha_cinzas",
-        "weaponLevel": 17,
+        "weaponLevel": 15,
         "weaponQualityTier": 0,
         "spellIds": [
           "sussurro_medo",
           "marca_brasa"
         ],
         "spellLevels": {
-          "sussurro_medo": 15,
-          "marca_brasa": 15
+          "sussurro_medo": 17,
+          "marca_brasa": 17
         },
         "passiveId": "pacto_familiar",
         "passiveLevel": 14,
         "petId": "corvo_pressagio",
-        "petLevel": 14
+        "petLevel": 16
       },
       "manual_checklist": [
         "Carregar max_spender em 15h.",
@@ -3386,7 +3426,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L17, spells sussurro_medo, marca_brasa.",
+        "Conferir build: arma L15, spells sussurro_medo, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -3399,20 +3439,20 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 3527 as initial matchmaking observation, not final truth."
+        "Use power 3867 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_max_spender_20h",
         "account_type": "progression_lab",
         "level": 19,
         "xp": 16160,
-        "power": 3527
+        "power": 3867
       },
       "resources": {
         "xp": 16160,
-        "almas": 386,
+        "almas": 307,
         "energia": 175,
-        "sangue": 288,
+        "sangue": 196,
         "cristais": 52,
         "ossos": 7.3,
         "diamante": 145.6
@@ -3431,7 +3471,7 @@
         "weapon_type": "varinha_cinzas",
         "weapon_quality": "reforcada",
         "weapon_quality_tier": 1,
-        "weapon_level": 19,
+        "weapon_level": 16,
         "spell_slots": [
           "sussurro_medo",
           "marca_brasa"
@@ -3453,13 +3493,13 @@
           "raizes_pedra"
         ],
         "spell_levels": {
-          "sussurro_medo": 17,
-          "marca_brasa": 17
+          "sussurro_medo": 19,
+          "marca_brasa": 19
         },
         "passive_id": "pacto_familiar",
         "passive_level": 15,
         "pet_id": "corvo_pressagio",
-        "pet_level": 16
+        "pet_level": 18
       },
       "base": {
         "construction_slots": 2,
@@ -3512,20 +3552,20 @@
         "displayName": "max_spender_20h",
         "level": 19,
         "weaponId": "varinha_cinzas",
-        "weaponLevel": 19,
+        "weaponLevel": 16,
         "weaponQualityTier": 1,
         "spellIds": [
           "sussurro_medo",
           "marca_brasa"
         ],
         "spellLevels": {
-          "sussurro_medo": 17,
-          "marca_brasa": 17
+          "sussurro_medo": 19,
+          "marca_brasa": 19
         },
         "passiveId": "pacto_familiar",
         "passiveLevel": 15,
         "petId": "corvo_pressagio",
-        "petLevel": 16
+        "petLevel": 18
       },
       "manual_checklist": [
         "Carregar max_spender em 20h.",
@@ -3533,7 +3573,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L19, spells sussurro_medo, marca_brasa.",
+        "Conferir build: arma L16, spells sussurro_medo, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     }

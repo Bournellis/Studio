@@ -28,6 +28,12 @@ Para arquivar uma run oficial e comparar com uma anterior:
 npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --archive-run 2026-05-21_archetype_source_tuning_v02 --compare-with 2026-05-21_pacing_alpha_v01
 ```
 
+Run oficial atual:
+
+```powershell
+npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --archive-run 2026-05-25_source_identity_balance_v02 --compare-with 2026-05-25_initial_balance_v01
+```
+
 2. No Godot editor, abrir `Refugio -> Battle Lab Dev` quando quiser testar
    builds visualmente.
 3. Gerar scratch runs para ensaios locais ou runs oficiais para tuning
@@ -115,43 +121,47 @@ O Godot chama Deno por `draxos_mobile/battle_lab/deno_command` e
 
 ## Tuning Atual
 
-Ultima rodada viva: `2026-05-25_initial_balance_v01`.
+Ultima rodada viva: `2026-05-25_source_identity_balance_v02`.
 
 Resultado:
 
 - Status geral: `PASS`.
 - Batalhas/builds: `3132` / `212`.
-- Duracao media: `21.13s`.
-- Anti-stall: `0.96%`.
-- Dominancia em poder proximo: `64.46% max`, dentro da meta `<= 65%`.
+- Duracao media: `24.08s`.
+- Anti-stall: `4.95%`.
+- Dominancia em poder proximo: `63.46% max`, dentro da meta `<= 65%`.
+- Checks de identidade de fonte: todos em `PASS`; maior share de arma fora do starter em L7+ ficou em `53.86%`.
 
 Mudanca aplicada:
 
-- Battle Lab v3 usa Instrumentos Rituais, Doutrinas, Familiares e a taxonomia
-  Arcano/Fisico/Fogo/Agua/Gelo/Terra/Vento/Raio/Veneno/Sangue/Morte.
-- Poder agora e recalculado pelo loadout real de combate, inclusive para saves e
-  bots importados do Progression Lab.
-- Sistemas equipados ficaram mais caros na formula de poder: spells, Familiar e
-  Doutrina deixam de parecer baratos em matchmaking.
-- `corvo_pressagio` aplica `pressagio`, nao mais `inquietacao`, para evitar stack
-  duplo com `sussurro_medo`.
-- Vida global, DoTs, Fogo/Sangue, Familiar e `cajado_ossario` receberam o primeiro
-  ajuste numerico para tirar o pos-rework de `CRITICAL`.
+- Battle Lab v4 adiciona checks de identidade por fonte: arma nao pode dominar
+  arquetipos nao-starter e Mental/Elemental/Familiar/Summoner/DoT/Funeral precisam
+  aparecer no mix de dano.
+- Poder inicial foi realinhado: arma pesa menos, spells e Familiar pesam mais
+  para o matchmaking nao tratar sistemas equipados como poder barato.
+- Bots do Progression Lab preservam arquetipo e spells no offset negativo; os
+  oponentes fracos deixam de parecer personagens sem kit.
+- O replay dev carrega uma amostra representativa nao-starter primeiro, deixando
+  spells, Familiar e summons visiveis no diagnostico.
+- Ritmo, DoTs, efeitos mentais, Familiar e anti-stall foram ajustados para o
+  combate deixar de parecer ataque basico sem voltar a dominancia por DoT.
 
 Leitura:
 
-- O baseline 2026-05-21 permanece arquivado como historico pre-rework.
-- Deltas numericos contra runs antigas devem ser lidos como alerta de
+- `2026-05-25_initial_balance_v01` permanece arquivada como primeira passada
+  numerica pos-rework.
+- Deltas numericos contra runs anteriores devem ser lidos como alerta de
   compatibilidade, nao como prova direta de balanceamento final.
-- Proxima rodada deve focar playtest manual: premium gap, janelas 15h/20h e
-  sensacao de Funeral/Familiar em replay visual.
+- Proxima rodada deve focar playtest manual: premium gap, janelas 15h/20h,
+  Defesa/Mental com win rate baixo em near-power e sensacao de Familiar/Funeral
+  em replay visual.
 
 Validacoes rodadas:
 
 ```powershell
 npx -y deno test server/tests/first_slice_simulator_test.ts
 npx -y deno test tools/battle_lab
-npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --archive-run 2026-05-25_initial_balance_v01 --compare-with 2026-05-21_archetype_source_tuning_v02
+npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --archive-run 2026-05-25_source_identity_balance_v02 --compare-with 2026-05-25_initial_balance_v01
 cd server/functions
 npx -y deno task check
 npx -y deno task lint

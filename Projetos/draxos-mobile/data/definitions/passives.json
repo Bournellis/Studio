@@ -12,10 +12,14 @@
       "mode": "FIRST_SLICE",
       "unlock_level": 10,
       "stat": "control_intensity",
-      "base_bonus": 0.04,
-      "bonus_per_level": 0.002,
+      "base_bonus": 0.08,
+      "bonus_per_level": 0.004,
       "effects": [
-        {"kind": "status_duration_percent", "family": "mental", "amount": 0.04}
+        {
+          "kind": "status_duration_percent",
+          "family": "mental",
+          "amount": 0.08
+        }
       ]
     },
     {
@@ -31,7 +35,7 @@
       "base_bonus": 0.03,
       "bonus_per_level": 0.0015,
       "effects": [
-        {"kind": "damage_reduction_percent", "amount": 0.03}
+        { "kind": "damage_reduction_percent", "amount": 0.03 }
       ]
     },
     {
@@ -47,7 +51,7 @@
       "base_bonus": 0.04,
       "bonus_per_level": 0.002,
       "effects": [
-        {"kind": "damage_percent", "amount": 0.04}
+        { "kind": "damage_percent", "amount": 0.04 }
       ]
     },
     {
@@ -63,7 +67,7 @@
       "base_bonus": 0.02,
       "bonus_per_level": 0.001,
       "effects": [
-        {"kind": "lifesteal_percent", "amount": 0.02}
+        { "kind": "lifesteal_percent", "amount": 0.02 }
       ]
     },
     {
@@ -76,10 +80,10 @@
       "mode": "FIRST_SLICE",
       "unlock_level": 10,
       "stat": "dot_damage",
-      "base_bonus": 0.04,
-      "bonus_per_level": 0.0015,
+      "base_bonus": 0.035,
+      "bonus_per_level": 0.001,
       "effects": [
-        {"kind": "dot_damage_percent", "family": "veneno", "amount": 0.04}
+        { "kind": "dot_damage_percent", "family": "veneno", "amount": 0.035 }
       ]
     },
     {
@@ -92,10 +96,10 @@
       "mode": "FIRST_SLICE",
       "unlock_level": 10,
       "stat": "fire_pressure",
-      "base_bonus": 0.04,
-      "bonus_per_level": 0.0015,
+      "base_bonus": 0.035,
+      "bonus_per_level": 0.001,
       "effects": [
-        {"kind": "dot_damage_percent", "family": "fogo", "amount": 0.04}
+        { "kind": "dot_damage_percent", "family": "fogo", "amount": 0.035 }
       ]
     },
     {
@@ -111,7 +115,7 @@
       "base_bonus": 0.03,
       "bonus_per_level": 0.0015,
       "effects": [
-        {"kind": "status_duration_percent", "family": "gelo", "amount": 0.03}
+        { "kind": "status_duration_percent", "family": "gelo", "amount": 0.03 }
       ]
     },
     {
@@ -127,7 +131,7 @@
       "base_bonus": 12,
       "bonus_per_level": 1,
       "effects": [
-        {"kind": "starting_barrier", "amount": 12}
+        { "kind": "starting_barrier", "amount": 12 }
       ]
     },
     {
@@ -140,10 +144,10 @@
       "mode": "FIRST_SLICE",
       "unlock_level": 10,
       "stat": "cooldown_reduction",
-      "base_bonus": 0.03,
-      "bonus_per_level": 0.001,
+      "base_bonus": 0.05,
+      "bonus_per_level": 0.0015,
       "effects": [
-        {"kind": "cooldown_reduction_percent", "amount": 0.03}
+        { "kind": "cooldown_reduction_percent", "amount": 0.05 }
       ]
     },
     {
@@ -156,10 +160,10 @@
       "mode": "FIRST_SLICE",
       "unlock_level": 10,
       "stat": "summon_power",
-      "base_bonus": 0.05,
-      "bonus_per_level": 0.002,
+      "base_bonus": 0.08,
+      "bonus_per_level": 0.003,
       "effects": [
-        {"kind": "summon_damage_percent", "amount": 0.05}
+        { "kind": "summon_damage_percent", "amount": 0.08 }
       ]
     },
     {
@@ -172,10 +176,10 @@
       "mode": "FIRST_SLICE",
       "unlock_level": 10,
       "stat": "pet_power",
-      "base_bonus": 0.05,
-      "bonus_per_level": 0.002,
+      "base_bonus": 0.04,
+      "bonus_per_level": 0.0015,
       "effects": [
-        {"kind": "pet_damage_percent", "amount": 0.05}
+        { "kind": "pet_damage_percent", "amount": 0.04 }
       ]
     }
   ]

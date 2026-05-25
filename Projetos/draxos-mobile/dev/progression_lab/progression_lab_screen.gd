@@ -22,6 +22,44 @@ var _checklist_label: Label
 static func is_available() -> bool:
 	return bool(ProjectSettings.get_setting("draxos_mobile/progression_lab/enabled", false)) and OS.has_feature("editor")
 
+static func deno_invocation(settings_prefix: String, fallback_prefix: PackedStringArray) -> Dictionary:
+	var command_text := str(ProjectSettings.get_setting("%s/deno_command" % settings_prefix, "npx")).strip_edges()
+	if command_text == "":
+		command_text = "npx"
+	var command_tokens := _split_command_line(command_text)
+	if command_tokens.is_empty():
+		command_tokens.append("npx")
+
+	var command := str(command_tokens[0])
+	var args := PackedStringArray()
+	if command_tokens.size() > 1:
+		var inline_args := PackedStringArray()
+		for index: int in range(1, command_tokens.size()):
+			inline_args.append(command_tokens[index])
+		args = clean_deno_prefix_args(inline_args, fallback_prefix)
+	else:
+		args = clean_deno_prefix_args(
+			ProjectSettings.get_setting("%s/deno_prefix_args" % settings_prefix, fallback_prefix),
+			fallback_prefix
+		)
+	return {"command": command, "args": args}
+
+static func clean_deno_prefix_args(configured: Variant, fallback: PackedStringArray) -> PackedStringArray:
+	var raw := _variant_to_packed_string_array(configured, fallback)
+	var cleaned := PackedStringArray()
+	for token: String in raw:
+		var value := token.strip_edges()
+		if value == "":
+			continue
+		if _is_dynamic_runner_arg(value):
+			break
+		if cleaned.is_empty() and _is_npx_token(value):
+			continue
+		cleaned.append(value)
+	if cleaned.is_empty():
+		return PackedStringArray(fallback)
+	return cleaned
+
 func _ready() -> void:
 	_build_ui()
 	_set_status("Progression Lab Dev pronto. Selecione um perfil e milestone.")
@@ -117,22 +155,33 @@ func _build_ui() -> void:
 func _generate_report() -> void:
 	_set_status("Gerando outputs do Progression Lab...")
 	var script_path := ProjectSettings.globalize_path("res://tools/progression_lab/generate.ts")
-	var command := str(ProjectSettings.get_setting("draxos_mobile/progression_lab/deno_command", "npx"))
-	var args := _deno_prefix_args()
+	var invocation := deno_invocation(
+		"draxos_mobile/progression_lab",
+		PackedStringArray(["-y", "deno", "run", "--allow-read", "--allow-write", "--allow-env", "--allow-net"])
+	)
+	var command := str(invocation.get("command", "npx"))
+	var args := PackedStringArray(invocation.get("args", PackedStringArray()))
 	args.append(script_path)
 	var output: Array = []
 	var exit_code := OS.execute(command, args, output, true, false)
 	if exit_code != 0:
-		_set_status("Progression Lab falhou: %s" % "\n".join(output))
+		_set_status(_process_failure_message("Progression Lab", command, args, output))
 		return
 	_set_status("Relatorio gerado em docs/progression-lab/generated/progression_report.html")
 	_refresh_checklist()
 
 func _prepare_local_save() -> void:
 	_set_status("Preparando save local no Supabase...")
+	if OS.get_environment("SUPABASE_SERVICE_ROLE_KEY").strip_edges() == "":
+		_set_status("Seeder requer SUPABASE_SERVICE_ROLE_KEY no ambiente. Para teste local sem Supabase, gere o relatorio e carregue o cache.")
+		return
 	var script_path := ProjectSettings.globalize_path("res://tools/progression_lab/seed_supabase.ts")
-	var command := str(ProjectSettings.get_setting("draxos_mobile/progression_lab/deno_command", "npx"))
-	var args := _deno_prefix_args()
+	var invocation := deno_invocation(
+		"draxos_mobile/progression_lab",
+		PackedStringArray(["-y", "deno", "run", "--allow-read", "--allow-write", "--allow-env", "--allow-net"])
+	)
+	var command := str(invocation.get("command", "npx"))
+	var args := PackedStringArray(invocation.get("args", PackedStringArray()))
 	args.append(script_path)
 	args.append("--profile")
 	args.append(_selected_profile())
@@ -141,7 +190,7 @@ func _prepare_local_save() -> void:
 	var output: Array = []
 	var exit_code := OS.execute(command, args, output, true, false)
 	if exit_code != 0:
-		_set_status("Seeder falhou: %s" % "\n".join(output))
+		_set_status(_process_failure_message("Seeder", command, args, output))
 		return
 	_set_status("Save local preparado. Use Carregar Save para aplicar o cache.")
 	_summary_label.text = "\n".join(output)
@@ -207,16 +256,58 @@ func _selected_milestone() -> String:
 		return MILESTONE_IDS[0]
 	return str(_milestone_option.get_item_metadata(_milestone_option.selected))
 
-func _deno_prefix_args() -> PackedStringArray:
-	var fallback := PackedStringArray(["-y", "deno", "run", "--allow-read", "--allow-write", "--allow-env", "--allow-net"])
-	var configured: Variant = ProjectSettings.get_setting("draxos_mobile/progression_lab/deno_prefix_args", fallback)
+static func _variant_to_packed_string_array(configured: Variant, fallback: PackedStringArray) -> PackedStringArray:
 	if configured is PackedStringArray:
-		return configured
+		return PackedStringArray(configured)
 	if configured is Array:
 		return PackedStringArray(configured)
 	if configured is String:
-		return PackedStringArray(str(configured).split(" ", false))
-	return fallback
+		return _split_command_line(str(configured))
+	return PackedStringArray(fallback)
+
+static func _split_command_line(command_line: String) -> PackedStringArray:
+	var tokens := PackedStringArray()
+	var current := ""
+	var in_quotes := false
+	for index: int in range(command_line.length()):
+		var character := command_line.substr(index, 1)
+		if character == "\"":
+			in_quotes = not in_quotes
+			continue
+		if character == " " and not in_quotes:
+			if current != "":
+				tokens.append(current)
+				current = ""
+			continue
+		current += character
+	if current != "":
+		tokens.append(current)
+	return tokens
+
+static func _is_dynamic_runner_arg(token: String) -> bool:
+	if token.ends_with(".ts"):
+		return true
+	return token in ["--request", "--response", "--profile", "--milestone"]
+
+static func _is_npx_token(token: String) -> bool:
+	var normalized := token.get_file().to_lower()
+	return normalized in ["npx", "npx.cmd", "npx.exe"]
+
+func _process_failure_message(tool_name: String, command: String, args: PackedStringArray, output: Array) -> String:
+	var output_text := _output_text(output)
+	if output_text != "":
+		return "%s falhou: %s" % [tool_name, output_text]
+	return "%s falhou ao iniciar processo.\nExecutavel: %s\nArgs: %s" % [
+		tool_name,
+		command,
+		" ".join(args),
+	]
+
+func _output_text(output: Array) -> String:
+	var lines := PackedStringArray()
+	for item: Variant in output:
+		lines.append(str(item))
+	return "\n".join(lines)
 
 func _button(text: String, callback: Callable) -> Button:
 	var button := Button.new()

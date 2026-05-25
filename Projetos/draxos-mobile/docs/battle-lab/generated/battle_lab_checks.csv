@@ -1,7 +1,14 @@
 id,status,observed,target,note
-average_duration_target,PASS,21.13s,18-28s,Average battle duration should sit near the target playtest window.
+average_duration_target,PASS,24.08s,18-28s,Average battle duration should sit near the target playtest window.
 short_battle_rate,PASS,0%,<= 20%,Too many short battles suggest burst or low HP scaling issues.
-long_battle_rate,PASS,0%,<= 20%,Too many long battles suggest defensive scaling or low damage pressure.
-anti_stall_rate,PASS,0.96%,<= 5%,Anti-stall should be rare in normal same-level matchups.
-near_power_dominance,PASS,64.46% max / 22.45% min,max <= 65%,Dominance uses <= 20% power delta and excludes same-archetype mirrors.
+long_battle_rate,PASS,15.07%,<= 20%,Too many long battles suggest defensive scaling or low damage pressure.
+anti_stall_rate,PASS,4.95%,<= 5%,Anti-stall should be rare in normal same-level matchups.
+near_power_dominance,PASS,63.46% max / 31.97% min,max <= 65%,Dominance uses <= 20% power delta and excludes same-archetype mirrors.
 level_coverage,PASS,"7/7 configured, 16 total",7/7,Every configured level checkpoint should produce matchups.
+source_identity_weapon_cap,PASS,53.86% max (defensive_occultist),<= 75% from level 7+ outside starter,Non-starter archetypes should not read as ritual-instrument-only combat once spells enter the kit.
+source_identity_mental,PASS,42.54% (spell+pet),>= 22%,"Mental Controller should visibly pressure through spells and occult familiars, not only weapon cadence."
+source_identity_elemental,PASS,54.58% (spell+dot+pet),>= 28%,"Elemental Mixer should show elemental spell, dot or familiar pressure in the damage mix."
+source_identity_familiar,PASS,17.3% (pet),>= 10%,Familiar Handler should have a measurable familiar contribution after pets unlock.
+source_identity_summoner,PASS,32.43% (summon),>= 10%,Summoner should produce real summon damage after superior physical rites unlock.
+source_identity_dot,PASS,21.99% (dot),>= 12%,"Dot Pressure should be readable through bleed, poison, burn or death ticks."
+source_identity_funeral,PASS,44.08% (spell+dot+summon),>= 30%,Funeral Burst should lean on death/fire rites once advanced physical magic unlocks.
