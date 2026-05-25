@@ -1,6 +1,6 @@
 # DraxosMobile — Game Design Document (Referencia De Implementacao)
 
-- Ultima atualizacao: `2026-05-21`
+- Ultima atualizacao: `2026-05-25`
 - Fonte historica completa: `../../_conceitos/mobile-universe/gdd.md`
 
 > Este documento e uma referencia condensada para implementacao. Para o design completo com todas as formulas, tabelas e decisoes detalhadas, consulte o GDD completo no caminho acima.
@@ -8,6 +8,38 @@
 ---
 
 ## Personagem
+
+### Character Systems Rework - 2026-05-25
+
+Fonte autoritativa detalhada: `character-systems-rework.md`.
+
+O personagem continua sendo um mago Draxos sem classes, mas a fantasia de build agora usa **Instrumentos Rituais**, **Spells**, **Doutrinas** e **Familiares**.
+
+Slots preservados:
+
+- 1 Instrumento Ritual
+- 3 slots de Spell
+- 1 slot de Doutrina (slot tecnico de passiva)
+- 1 slot de Familiar (slot tecnico de pet)
+
+Todos esses sistemas continuam com level proprio permanente e limitado pelo level global do personagem.
+
+Stats primarios finais: Vida, Mana, Potencia Ritual, Controle Ritual, Guarda, Vontade, Vitalidade e Celeridade Ritual.
+
+Stats derivados: Regen Vida, Regen Mana, Tenacidade, resistencias por fonte, intensidade/duracao de status e poder do Instrumento Ritual. Regen nao foi removido; `regen_vida` e `regen_mana` continuam no simulador e nas ferramentas, mas deixam de ser atributos de identidade primaria.
+
+Fontes de dano finais: Arcano, Fisico, Fogo, Agua, Gelo, Terra, Vento, Raio, Veneno, Sangue e Morte.
+
+Reworks de placeholder:
+
+- `Magico` -> `Arcano`
+- `Choque` -> `Raio`
+- `Sangramento` -> `Sangue` como fonte; Sangramento permanece status da familia Sangue
+- `Varinha Magica` -> Instrumento Ritual inicial `Varinha de Cinzas`
+- passivas genericas -> Doutrinas
+- pets por tipo de dano -> Familiares por papel e fantasia
+
+As secoes antigas abaixo permanecem como contexto de Track 00 quando necessario, mas o conteudo vivo de personagem deve seguir `character-systems-rework.md`, `data/definitions/*.json` e o simulador `FIRST_SLICE_SIM`.
 
 - Raca: Draxos. Nome definido pelo jogador. Sem classes.
 - Visual: silhueta vultuosa, manto comprido, etereo e energetico
@@ -46,18 +78,17 @@ Formulas:
 Tuning alpha 2026-05-21: o multiplicador de pacing acima foi introduzido apos o
 Battle Lab mostrar batalhas medias de `3.22s`. O objetivo nao e fechar
 balanceamento final, mas alinhar a duracao media do replay com a janela
-operacional `18s-28s` antes de mexer em dano, cooldowns, pet, DoT ou passivas.
+operacional `18s-28s` antes de mexer em dano, cooldowns, Familiar, DoT ou Doutrinas.
 Apos o ajuste, o baseline offline ficou em `18.19s` de duracao media, `2.38%`
 de batalhas curtas e `0.12%` de anti-stall.
 
-Tuning alpha 2026-05-21 v02: a segunda rodada manteve HP global intacto e
-ajustou fontes/arquetipos. `Raio` e `Odio` tiveram dano direto reduzido, DoTs de
-Fogo/Veneno/Sangramento receberam aumento leve de tick e pets tiveram dano
-base/escala reduzidos. O Battle Lab passou a avaliar dominancia principal em
-matchups de poder proximo (`<= 20%`, sem espelhos do mesmo arquetipo) e arquivar
-runs oficiais. Baseline v02: duracao media `18.91s`, batalhas curtas `0%`,
-anti-stall `0.12%`, status geral `REVIEW`; `burst_caster` caiu para `60%` em
-poder proximo e `pet_handler` caiu para `70.45%`, ainda acima do alvo de `65%`.
+Tuning alpha 2026-05-21 v02: baseline historico antes do rework de personagem.
+A rodada manteve HP global intacto, ajustou fontes/arquetipos e deixou o Battle
+Lab em `REVIEW`. Em 2026-05-25, o rework de personagem substituiu a taxonomia
+antiga por Instrumentos Rituais, Doutrinas, Familiares e as fontes finais
+Arcano/Fisico/Fogo/Agua/Gelo/Terra/Vento/Raio/Veneno/Sangue/Morte. A proxima
+rodada de tuning deve gerar novo baseline, sem comparar numeros diretamente
+como prova de balanceamento final.
 
 Battle Lab Dev 2026-05-21: o laboratorio tambem pode ser aberto no Godot editor
 para montar builds, gerar scratch runs e assistir replays debug 2D a partir de
@@ -65,27 +96,31 @@ para montar builds, gerar scratch runs e assistir replays debug 2D a partir de
 
 Fontes externas v0:
 
-- Estrutura de Stats aplica bonus percentual em Vida, Ataque/dano base, Defesa, Mana e regen de mana.
-- Passivas adicionam modificadores no simulador `FIRST_SLICE_SIM`: mana regen, dano, reducao de dano, barreira inicial, vampirismo e reducao de cooldown.
-- Buffs temporarios de batalha, como Fortificar, entram apenas durante a simulacao da batalha.
-- Equipamentos alem da Varinha nao entram no primeiro slice.
+- Estrutura de Stats aplica bonus percentual em Vida, Potencia Ritual/dano base, Guarda, Mana e regen de mana.
+- Doutrinas adicionam modificadores no simulador `FIRST_SLICE_SIM`: mana regen, dano, reducao de dano, barreira inicial, vampirismo, duracao/intensidade de status e reducao de cooldown.
+- Buffs temporarios de batalha, como Coagulo Negro, entram apenas durante a simulacao da batalha.
+- Outros equipamentos alem do Instrumento Ritual nao entram no primeiro slice.
 
 ### Tipos De Dano
 
-7 tipos: Magico, Fogo, Gelo, Veneno, Choque, Morte, Sangramento.
-DoTs, resistencias, barreiras e status effects: ver GDD secao 3.4–3.8.
+Fontes atuais: Arcano, Fisico, Fogo, Agua, Gelo, Terra, Vento, Raio, Veneno,
+Sangue e Morte. Mental nao e fonte de dano: e familia de status aplicada por
+spells de mente, medo, terror e controle.
+DoTs, resistencias, barreiras e status effects: ver `character-systems-rework.md`
+e o simulador `FIRST_SLICE_SIM`.
 
 **Regra de stacking de DoT implementada em T00-P10:** reaplicar o mesmo DoT pelo mesmo lado aumenta stacks ate 5 e renova a duracao; cada stack aumenta o tick.
 
-### Arma — Varinha Magica (Primeiro Slice)
+### Instrumento Ritual Inicial
 
-- Ataque basico: dano Magico direto
+- Instrumento inicial: Varinha de Cinzas (`varinha_cinzas`)
+- Ataque basico: dano Arcano direto
 - Ataque especial: 4o ataque = 3x dano
-- Tres dimensoes: Tipo / Qualidade (Ossos, craftado no Ossario) / Level (Almas, permanente, limitado pelo cap atual)
-- **Tipo atual (primeiro slice):** Varinha — dano Magico. Outros tipos: desbloqueio futuro.
+- Tres dimensoes: tipo de instrumento / qualidade (Ossos, craftado no Ossario) / level (Almas, permanente, limitado pelo cap atual)
+- Instrumentos rituais podem mudar cadencia, fonte de dano, especial e afinidade de build.
 - Crafting (primeiro slice): upgrade de dano via Ossos — sem outras dimensoes por enquanto
 - Ossos: drops de batalha + quests iniciais + producao do Ossario
-- Maestria: acumula por dano causado, amplifica dano da varinha, permanente na conta
+- Maestria: acumula por dano causado, amplifica dano do Instrumento Ritual, permanente na conta
 
 ### Spells — Pool Completa
 
@@ -95,40 +130,50 @@ Fila de alvos: Summon Frente → Summon Meio → Mago → Summon Tras.
 
 | Spell | Tipo | Tipo de Alvo | Efeito resumido |
 |---|---|---|---|
-| Raio Cosmico | Magico | Direto | Dano magico no primeiro da fila |
-| Raio | Choque | Jogador | Dano + marcadores no mago (5 = burst + stun) |
-| Acender | Fogo | Area | Dano + Queimando no primeiro e no segundo da fila |
-| Envenenar | Veneno | Jogador | Envenenado direto no mago |
-| Congelar | Gelo | Area | 1 stack de Lento no primeiro e no segundo da fila. Cada alvo tem contador independente — burst (grande dano + Congelado breve) dispara por alvo ao atingir 3 stacks, sem se propagar. |
-| Odio | Morte | Jogador | Grande dano de Morte direto no mago |
-| Dilacerar | Sangramento | Direto | Dano + Sangrando no primeiro da fila |
-| Fortificar | — | — | Barreira Magica + Resistencia Global (buff proprio) |
-| Invocar Demonio | Fogo | — | Summon — Demonio (Tras, dano Fogo). Tempo de vida a calibrar. |
-| Animar Morto | Morte | — | Summon — Esqueleto (Frente) ou Morto-Vivo (Meio), ambos dano Morte. Usa slot livre se ocupado. |
+| Sussurro do Medo | Mental | Jogador | Inquietacao/Medo; pressiona Vontade e prepara controle. |
+| Terror Primordial | Mental | Jogador | Terror; reduz acao do alvo e aumenta vulnerabilidade psicologica. |
+| Labirinto da Razao | Mental | Jogador | Confusao; atrasa casts e cria janela defensiva. |
+| Mandato Oculto | Mental | Jogador | Compulsao; controle mental breve e superior dentro do grau mental. |
+| Incisao Ritual | Fisico | Direto | Corte ritual e Ferida. |
+| Hemorragia Induzida | Sangue | Direto | Dano de Sangue e Sangramento escalavel. |
+| Coagulo Negro | Sangue | — | Barreira/vampirismo leve pela manipulacao corporal. |
+| Toxina Palida | Veneno | Jogador | Veneno e Toxina com pressao prolongada. |
+| Marca da Brasa | Fogo | Area | Queimando e Cinzas Marcadas. |
+| Coroa de Cinzas | Fogo | Area | Fogo superior com vulnerabilidade a dano continuo. |
+| Mare Escura | Agua | Area | Molhado; prepara Gelo/Raio. |
+| Geada dos Ossos | Gelo | Area | Resfriado/Lento. |
+| Prisao de Gelo | Gelo | Direto | Congelado breve contra alvo-chave. |
+| Raizes de Pedra | Terra | Direto | Enraizado e Guarda situacional. |
+| Lamina do Vento | Vento | Direto | Dano fisico/vento e Desequilibrado. |
+| Descarga Nervosa | Raio | Jogador | Condutor/Eletrificado; interage com Molhado. |
+| Putrefacao | Morte | Jogador | Decaimento e anti-regeneracao. |
+| Marca Sepulcral | Morte | Direto | Morte concentrada e vulnerabilidade sepulcral. |
+| Erguer Ossos | Morte | — | Summon Guardiao de Ossos na frente. |
+| Invocar Brasa Faminta | Fogo | — | Summon Brasa Faminta atras. |
 
-**Unlock de slots, spells, passiva e pet:**
+**Unlock de slots, spells, Doutrina e Familiar:**
 
-O personagem comeca com 0 slots de spell. A Varinha Magica sustenta o combate inicial ate o primeiro unlock. Levels liberam disponibilidade; compra/equipamento continuam passando pelo Altar das Almas ou estrutura correspondente quando houver custo.
+O personagem comeca com 0 slots de spell. A Varinha de Cinzas sustenta o combate inicial ate o primeiro unlock. Levels liberam disponibilidade; compra/equipamento continuam passando pelo Altar das Almas ou estrutura correspondente quando houver custo.
 
 | Level | Unlock |
 |---|---|
-| 1 | Varinha Magica inicial, sem spell equipada |
-| 3 | Slot de spell 1 e Raio Cosmico |
-| 7 | Slot de spell 2 e primeiro pacote elemental: Raio, Acender, Envenenar, Congelar |
-| 10 | Slot de passiva |
-| 15 | Slot de pet |
-| 25 | Slot de spell 3 e pacote avancado: Odio, Dilacerar, Fortificar, Invocar Demonio, Animar Morto |
+| 1 | Varinha de Cinzas inicial, sem spell equipada |
+| 3 | Slot de spell 1 e Sussurro do Medo |
+| 7 | Slot de spell 2 e primeiro pacote mental/elemental/corporal |
+| 10 | Slot de Doutrina |
+| 15 | Slot de Familiar |
+| 25 | Slot de spell 3 e pacote avancado com summons e Morte superior |
 
 Regras:
 
 - Uma spell desbloqueada pode ser equipada em qualquer slot de spell disponivel.
 - Slots bloqueados nao aceitam spell equipada nem placeholder autoritativo no servidor.
 - O servidor valida unlock por level antes de aceitar `build/equip`.
-- Passiva e pet podem existir como conteudo no catalogo antes do level minimo, mas nao podem ser equipados ate o unlock.
+- Doutrina e Familiar podem existir como conteudo no catalogo antes do level minimo, mas nao podem ser equipados ate o unlock.
 
-### Qualidades Da Varinha v0
+### Qualidades Do Instrumento v0
 
-A Varinha tem 5 qualidades no primeiro slice. Qualidade e permanente, custa Ossos, nao tem RNG e deve ser craftada em ordem no Ossario. O custo total ate a qualidade maxima da Season 1 e `30 * cap`, ou 1200 Ossos no cap 40.
+O Instrumento Ritual tem 5 qualidades no primeiro slice. Qualidade e permanente, custa Ossos, nao tem RNG e deve ser craftada em ordem no Ossario. O custo total ate a qualidade maxima da Season 1 e `30 * cap`, ou 1200 Ossos no cap 40.
 
 | Qualidade | Tier | Custo incremental | Custo acumulado | Multiplicador de dano |
 |---|---:|---:|---:|---:|
@@ -140,8 +185,8 @@ A Varinha tem 5 qualidades no primeiro slice. Qualidade e permanente, custa Osso
 
 Regras:
 
-- Qualidade de Varinha entra no calculo de poder como `WeaponQualityTier x 25`.
-- Qualidade melhora apenas dano da Varinha; nao desbloqueia spell, pet ou passiva.
+- Qualidade de Instrumento entra no calculo de poder como `WeaponQualityTier x 25`.
+- Qualidade melhora apenas dano do Instrumento Ritual; nao desbloqueia spell, Familiar ou Doutrina.
 - Qualidade nao e vendida como conteudo premium exclusivo.
 
 ### Summons
@@ -166,23 +211,21 @@ Criaturas invocadas por spells de summon que combatem ao lado do mago.
 
 | Summon | Posicao | HP |
 |---|---|---|
-| Esqueleto | Frente | 60 |
-| Morto-Vivo | Meio | 40 |
-| Demonio | Tras | 50 |
+| Guardiao de Ossos | Frente | 60 |
+| Brasa Faminta | Tras | 50 |
 
 **Duracao:** ~8s (ligeiramente menor que o recast de 10s — cria gap de ~2s sem summon). A calibrar.
 
 **Recast:**
-- Invocar Demonio: sempre substitui ao disparar
-- Animar Morto: prioriza slot vazio (Frente → Meio). So substitui se ambos estiverem ocupados.
+- Invocar Brasa Faminta: sempre substitui a posicao Tras ao disparar
+- Erguer Ossos: ocupa ou renova a posicao Frente
 
 **Spells de summon do primeiro slice:**
 
 | Spell | Summon | Posicao | Tipo de dano | Mana |
 |---|---|---|---|---|
-| Invocar Demonio | Demonio | Tras | Fogo | 20 |
-| Animar Morto | Esqueleto | Frente | Morte | 20 |
-| Animar Morto | Morto-Vivo | Meio | Morte | 20 |
+| Invocar Brasa Faminta | Brasa Faminta | Tras | Fogo | 20 |
+| Erguer Ossos | Guardiao de Ossos | Frente | Morte | 20 |
 
 ### Summons E Maestria v0
 
@@ -200,28 +243,35 @@ Valores base:
 
 | Summon | HP base | DPS base | Tipo de dano |
 |---|---:|---:|---|
-| Esqueleto | 60 | 6 | Morte |
-| Morto-Vivo | 40 | 5 | Morte |
-| Demonio | 50 | 7 | Fogo |
+| Guardiao de Ossos | 60 | 6 | Morte |
+| Brasa Faminta | 50 | 7 | Fogo |
 
 Maestria:
 
 - Dano causado por summon conta 100% para a maestria da spell invocadora.
 - Kills feitas por summon sao creditadas a spell invocadora.
 - Dano de summon tambem entra na telemetria de dano por tipo.
-- Summon nao gera maestria de Varinha nem de pet.
+- Summon nao gera maestria de Instrumento Ritual nem de Familiar.
 - Maestria e permanente e nunca reseta por season.
 
 Para valores completos: `../../_conceitos/mobile-universe/gdd.md` secao 3.15 e P14 em pendencias.md.
 
-### Passivas (1 Slot, 5 Opcoes, 40 Levels)
+### Doutrinas (1 Slot, 40 Levels)
 
-Forca / Resistencia / Escudo / Vampirismo / Velocidade.
-Desbloqueadas e upadas pelas Minas de Cristal. Recurso: Cristais. **Permanentes entre seasons.**
+Doutrinas substituem passivas genericas. Elas expressam caminhos ocultistas
+como Pavor, Mente Fria, Anatomia Profana, Sangue Obediente, Alquimia Toxica,
+Cinza Viva, Mare Silenciosa, Pedra Interna, Pulso de Tempestade, Ossuario
+Interior e Pacto Familiar.
 
-### Pets (1 Slot, 7 Opcoes, 40 Levels)
+Desbloqueadas e upadas pelas Minas de Cristal. Recurso: Cristais.
+**Permanentes entre seasons.**
 
-Um pet por tipo de dano. Recurso: Sangue. **Permanentes entre seasons.**
+### Familiares (1 Slot, 40 Levels)
+
+Familiares substituem pets por tipo de dano. Eles podem ser criaturas visiveis
+ou entidades abstratas e sao definidos por papel: pressagio, suporte de Sangue,
+toxina, brasa, gelo/agua, pedra, tempestade, morte ou veu mental. Recurso:
+Sangue. **Permanentes entre seasons.**
 
 ---
 
@@ -237,8 +287,8 @@ Toda construcao pode evoluir a si mesma ate level 40 (custo: Energia + tempo). O
 |---|---|---|
 | Altar das Almas | Almas | Unlock e upgrade de arma, slots de spell e spells |
 | Nucleo de Energia | Energia | Apenas self-upgrade (Energia e gasta nas outras construcoes) |
-| Pocos de Sangue | Sangue | Upgrade de pets |
-| Minas de Cristal | Cristais | Upgrade de passivas |
+| Pocos de Sangue | Sangue | Upgrade de Familiares |
+| Minas de Cristal | Cristais | Upgrade de Doutrinas |
 | Estrutura de Stats | — | Upgrade de stats do personagem |
 | Ossario | Ossos (drops + quests + producao) | Crafting de arma (upgrade de dano) |
 
@@ -290,7 +340,7 @@ Esses bonus devem entrar no calculo server-side de combate e poder, mas nao subs
 
 ### Ossario
 
-Ossos continuam raros. Batalhas, quests e Battle Pass seguem como fontes principais; o Ossario fornece renda constante para crafting de qualidade da Varinha. A meta inicial da Season 1 continua `30 * cap` Ossos para qualidade principal da Varinha.
+Ossos continuam raros. Batalhas, quests e Battle Pass seguem como fontes principais; o Ossario fornece renda constante para crafting de qualidade do Instrumento Ritual. A meta inicial da Season 1 continua `30 * cap` Ossos para qualidade principal do Instrumento.
 
 ### Segundo Slot De Construcao
 
@@ -344,9 +394,9 @@ Batalhas bot-vs-bot podem ser executadas como jobs de simulacao para gerar dados
 ### Season
 
 - Duracao: 4 meses, 2 Battle Passes por season
-- Cap da Season 1: 40 para level global, arma, spells, pet, passivas e construcoes
+- Cap da Season 1: 40 para level global, Instrumento Ritual, spells, Familiar, Doutrinas e construcoes
 - Caps futuros sao configuraveis por season no simulador economico
-- Permanentes entre seasons: Level Global, arma, spells, pet, passivas, construcoes, qualidade da varinha e maestrias
+- Permanentes entre seasons: Level Global, Instrumento Ritual, spells, Familiar, Doutrinas, construcoes, qualidade do Instrumento e maestrias
 - Resetam por season: Battle Pass, ranking/eventos de arena, missoes sazonais e ofertas temporarias
 - Catch-up futuro: multiplicador suave de XP/recursos para jogadores abaixo do cap anterior, sem pular toda a jornada
 
@@ -424,7 +474,7 @@ O primeiro slice usa monetizacao funcional de alpha. Compras reais podem ser sim
 Regras gerais:
 
 - Premium vende tempo, conforto, amplitude e previsibilidade.
-- Premium nao vende spell, pet, passiva, varinha exclusiva, poder acima do cap ou bypass permanente de matchmaking.
+- Premium nao vende spell, Familiar, Doutrina, Instrumento exclusivo, poder acima do cap ou bypass permanente de matchmaking.
 - Todas as recompensas com efeito economico sao server-authoritative, idempotentes por `request_id` e registradas em `resource_transactions`.
 - Battle Pass, ranking/eventos de arena, missoes sazonais e ofertas temporarias resetam por season.
 
@@ -451,7 +501,7 @@ Cosmeticos do primeiro slice:
 - Moldura de perfil.
 - Titulo.
 - Banner do Refugio.
-- Skin visual da Varinha.
+- Skin visual do Instrumento Ritual.
 - Badge de chat.
 
 Rewarded ads:
@@ -560,12 +610,12 @@ O primeiro slice precisa popular testes com bots gerados por faixas de poder. Ca
 
 Archetypes iniciais sugeridos:
 
-- `starter_wand`: level 1-2, varinha pura, sem spells.
-- `cosmic_apprentice`: level 3-6, Raio Cosmico.
-- `elemental_mixer`: level 7-14, duas spells elementais.
-- `pet_handler`: level 15-24, duas spells + pet.
+- `starter_instrument`: level 1-2, Instrumento Ritual puro, sem spells.
+- `mental_controller`: level 3-6, Sussurro do Medo e controle mental inicial.
+- `elemental_mixer`: level 7-14, duas spells elementais/corporais.
+- `familiar_handler`: level 15-24, duas spells + Familiar.
 - `summoner`: level 25-40, tres spells com summon.
-- `defensive_caster`: level 25-40, Fortificar + dano sustentado.
+- `defensive_occultist`: level 25-40, barreira/doutrina defensiva + dano sustentado.
 
 ### UX/Layout Do Primeiro Slice
 

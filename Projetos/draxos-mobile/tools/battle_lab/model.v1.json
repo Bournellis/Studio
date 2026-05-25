@@ -1,13 +1,14 @@
 {
   "schema_version": 1,
-  "model_id": "draxos_mobile_battle_lab_v1",
-  "status": "BASELINE_ALPHA",
+  "model_id": "draxos_mobile_battle_lab_v2_character_rework",
+  "status": "CHARACTER_REWORK_ALPHA",
   "notes": [
     "Offline battle balance lab for FIRST_SLICE_SIM.",
+    "Character rework v2 uses ritual instruments, doutrines, familiars and the Arcano/Fisico/Sangue/Raio source taxonomy.",
     "This model must not change combat numbers; it only generates builds, matchups and reports."
   ],
   "output_dir": "docs/battle-lab/generated",
-  "seed": "battle_lab_alpha_20260521",
+  "seed": "battle_lab_character_rework_20260525",
   "levels": [1, 3, 7, 10, 15, 25, 40],
   "random_builds_per_archetype_per_level": 1,
   "thresholds": {
@@ -25,42 +26,17 @@
     "stomp_winner_hp_percent": 65
   },
   "power_bands": [
-    {
-      "id": "band_001",
-      "display_name": "Banda 001",
-      "min_power": 0,
-      "max_power": 250
-    },
-    {
-      "id": "band_002",
-      "display_name": "Banda 002",
-      "min_power": 251,
-      "max_power": 600
-    },
-    {
-      "id": "band_003",
-      "display_name": "Banda 003",
-      "min_power": 601,
-      "max_power": 1200
-    },
-    {
-      "id": "band_004",
-      "display_name": "Banda 004",
-      "min_power": 1201,
-      "max_power": 2200
-    },
-    {
-      "id": "band_005",
-      "display_name": "Banda 005",
-      "min_power": 2201,
-      "max_power": 999999
-    }
+    {"id": "band_001", "display_name": "Banda 001", "min_power": 0, "max_power": 250},
+    {"id": "band_002", "display_name": "Banda 002", "min_power": 251, "max_power": 600},
+    {"id": "band_003", "display_name": "Banda 003", "min_power": 601, "max_power": 1200},
+    {"id": "band_004", "display_name": "Banda 004", "min_power": 1201, "max_power": 2200},
+    {"id": "band_005", "display_name": "Banda 005", "min_power": 2201, "max_power": 999999}
   ],
   "archetypes": [
     {
-      "id": "starter_wand",
-      "display_name": "Starter Wand",
-      "role": "Varinha pura para medir o baseline sem sistemas extras.",
+      "id": "starter_instrument",
+      "display_name": "Starter Instrument",
+      "role": "Varinha de Cinzas pura para medir baseline sem sistemas extras.",
       "spell_preferences": [],
       "passive_preferences": [],
       "pet_preferences": [],
@@ -71,31 +47,25 @@
       "quality_bias": -1
     },
     {
-      "id": "cosmic_apprentice",
-      "display_name": "Cosmic Apprentice",
-      "role": "Primeiro slot de spell com Raio Cosmico.",
-      "spell_preferences": ["raio_cosmico"],
-      "passive_preferences": ["foco_astral"],
-      "pet_preferences": ["familiar_cinzento"],
-      "weapon_level_ratio": 0.85,
-      "spell_level_ratio": 0.85,
-      "passive_level_ratio": 0.65,
+      "id": "mental_controller",
+      "display_name": "Mental Controller",
+      "role": "Atos mentais para medir medo, terror e controle de ritmo.",
+      "spell_preferences": ["sussurro_medo", "terror_primordial", "labirinto_razao", "mandato_oculto"],
+      "passive_preferences": ["doutrina_pavor", "mente_fria", "pulso_tempestade"],
+      "pet_preferences": ["corvo_pressagio", "olho_veu"],
+      "weapon_level_ratio": 0.82,
+      "spell_level_ratio": 0.88,
+      "passive_level_ratio": 0.75,
       "pet_level_ratio": 0.65,
       "quality_bias": 0
     },
     {
       "id": "elemental_mixer",
       "display_name": "Elemental Mixer",
-      "role": "Duas spells elementais para medir status e DoTs iniciais.",
-      "spell_preferences": [
-        "raio_cosmico",
-        "acender",
-        "congelar",
-        "raio",
-        "envenenar"
-      ],
-      "passive_preferences": ["forca", "foco_astral", "velocidade"],
-      "pet_preferences": ["familiar_cinzento", "brasido", "gelum"],
+      "role": "Mistura elementos fisicos para medir status e sinergias de fonte.",
+      "spell_preferences": ["descarga_nervosa", "marca_brasa", "mare_escura", "geada_ossos", "lamina_vento"],
+      "passive_preferences": ["pulso_tempestade", "cinza_viva", "mare_silenciosa"],
+      "pet_preferences": ["serpe_tempestade", "cao_cinzas", "medusa_mare_fria"],
       "weapon_level_ratio": 0.85,
       "spell_level_ratio": 0.8,
       "passive_level_ratio": 0.7,
@@ -103,12 +73,12 @@
       "quality_bias": 0
     },
     {
-      "id": "pet_handler",
-      "display_name": "Pet Handler",
-      "role": "Duas spells e pet para medir pressao sustentada.",
-      "spell_preferences": ["raio_cosmico", "congelar", "acender", "raio"],
-      "passive_preferences": ["resistencia", "forca", "foco_astral"],
-      "pet_preferences": ["familiar_cinzento", "brasido", "gelum"],
+      "id": "familiar_handler",
+      "display_name": "Familiar Handler",
+      "role": "Duas spells e familiar para medir pressao sustentada por pet.",
+      "spell_preferences": ["sussurro_medo", "geada_ossos", "marca_brasa", "descarga_nervosa"],
+      "passive_preferences": ["pacto_familiar", "mente_fria", "doutrina_pavor"],
+      "pet_preferences": ["corvo_pressagio", "cao_cinzas", "medusa_mare_fria", "serpe_tempestade"],
       "weapon_level_ratio": 0.85,
       "spell_level_ratio": 0.82,
       "passive_level_ratio": 0.75,
@@ -119,14 +89,9 @@
       "id": "summoner",
       "display_name": "Summoner",
       "role": "Tres spells com summons para medir protecao e dano extra.",
-      "spell_preferences": [
-        "raio_cosmico",
-        "invocar_demonio",
-        "animar_morto",
-        "fortificar"
-      ],
-      "passive_preferences": ["foco_astral", "escudo", "velocidade"],
-      "pet_preferences": ["brasido", "familiar_cinzento"],
+      "spell_preferences": ["sussurro_medo", "erguer_ossos", "invocar_brasa_faminta", "marca_sepulcral"],
+      "passive_preferences": ["ossuario_interior", "doutrina_pavor", "pedra_interna"],
+      "pet_preferences": ["cranio_errante", "corvo_pressagio"],
       "weapon_level_ratio": 0.82,
       "spell_level_ratio": 0.9,
       "passive_level_ratio": 0.75,
@@ -134,17 +99,12 @@
       "quality_bias": 1
     },
     {
-      "id": "defensive_caster",
-      "display_name": "Defensive Caster",
-      "role": "Fortificar e passivas defensivas para medir lutas longas.",
-      "spell_preferences": [
-        "fortificar",
-        "envenenar",
-        "congelar",
-        "raio_cosmico"
-      ],
-      "passive_preferences": ["resistencia", "escudo", "vampirismo"],
-      "pet_preferences": ["gelum", "familiar_cinzento"],
+      "id": "defensive_occultist",
+      "display_name": "Defensive Occultist",
+      "role": "Barreiras, terra e gelo para medir lutas longas.",
+      "spell_preferences": ["coagulo_negro", "raizes_pedra", "geada_ossos", "prisao_gelo"],
+      "passive_preferences": ["pedra_interna", "mente_fria", "mare_silenciosa"],
+      "pet_preferences": ["escaravelho_pedra", "medusa_mare_fria", "olho_veu"],
       "weapon_level_ratio": 0.7,
       "spell_level_ratio": 0.75,
       "passive_level_ratio": 0.95,
@@ -154,10 +114,10 @@
     {
       "id": "dot_pressure",
       "display_name": "DoT Pressure",
-      "role": "DoTs e status para medir dano por tempo.",
-      "spell_preferences": ["envenenar", "acender", "dilacerar", "congelar"],
-      "passive_preferences": ["velocidade", "foco_astral", "forca"],
-      "pet_preferences": ["brasido", "gelum"],
+      "role": "Sangue, Veneno, Fogo e Morte para medir dano por tempo.",
+      "spell_preferences": ["toxina_palida", "marca_brasa", "hemorragia_induzida", "putrefacao"],
+      "passive_preferences": ["alquimia_toxica", "cinza_viva", "anatomista_profano"],
+      "pet_preferences": ["serpente_toxina", "sanguessuga_sacramental", "cao_cinzas"],
       "weapon_level_ratio": 0.75,
       "spell_level_ratio": 0.95,
       "passive_level_ratio": 0.75,
@@ -165,12 +125,12 @@
       "quality_bias": 0
     },
     {
-      "id": "burst_caster",
-      "display_name": "Burst Caster",
-      "role": "Dano direto alto para detectar stomps.",
-      "spell_preferences": ["odio", "raio", "raio_cosmico", "dilacerar"],
-      "passive_preferences": ["forca", "velocidade", "foco_astral"],
-      "pet_preferences": ["brasido", "familiar_cinzento"],
+      "id": "funeral_burst",
+      "display_name": "Funeral Burst",
+      "role": "Morte e fogo alto para detectar stomps e payoffs.",
+      "spell_preferences": ["marca_sepulcral", "coroa_cinzas", "descarga_nervosa", "incisao_ritual"],
+      "passive_preferences": ["ossuario_interior", "cinza_viva", "anatomista_profano"],
+      "pet_preferences": ["cranio_errante", "cao_cinzas", "corvo_pressagio"],
       "weapon_level_ratio": 0.9,
       "spell_level_ratio": 0.95,
       "passive_level_ratio": 0.8,

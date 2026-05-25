@@ -118,7 +118,7 @@ interface HealthySave {
 
 interface BuildState {
   archetype_id: string;
-  weapon_type: "varinha_magica";
+  weapon_type: string;
   weapon_quality: string;
   weapon_quality_tier: number;
   weapon_level: number;
@@ -135,6 +135,7 @@ interface CombatBuild {
   id: string;
   displayName: string;
   level: number;
+  weaponId?: string;
   weaponLevel: number;
   weaponQualityTier: number;
   spellIds: string[];
@@ -231,49 +232,70 @@ const BASE_STRUCTURES: Array<
 const QUALITY_NAMES = ["starter", "reforcada", "ritual", "abissal", "cosmica"];
 
 const SPELL_UNLOCKS: Record<string, number> = {
-  raio_cosmico: 3,
-  raio: 7,
-  acender: 7,
-  envenenar: 7,
-  congelar: 7,
-  odio: 25,
-  dilacerar: 25,
-  fortificar: 25,
-  invocar_demonio: 25,
-  animar_morto: 25,
+  sussurro_medo: 3,
+  terror_primordial: 7,
+  labirinto_razao: 7,
+  incisao_ritual: 7,
+  toxina_palida: 7,
+  marca_brasa: 7,
+  mare_escura: 7,
+  geada_ossos: 7,
+  lamina_vento: 7,
+  descarga_nervosa: 7,
+  mandato_oculto: 15,
+  hemorragia_induzida: 15,
+  coagulo_negro: 15,
+  raizes_pedra: 15,
+  coroa_cinzas: 25,
+  prisao_gelo: 25,
+  putrefacao: 25,
+  marca_sepulcral: 25,
+  erguer_ossos: 25,
+  invocar_brasa_faminta: 25,
 };
 
 const ARCHETYPE_SPELLS: Record<string, string[]> = {
-  starter_wand: [],
-  cosmic_apprentice: ["raio_cosmico"],
-  elemental_mixer: ["raio_cosmico", "acender", "congelar"],
-  pet_handler: ["raio_cosmico", "acender", "raio"],
-  summoner: ["raio_cosmico", "invocar_demonio", "animar_morto"],
-  defensive_caster: ["fortificar", "congelar", "raio_cosmico"],
-  dot_pressure: ["envenenar", "acender", "dilacerar"],
-  burst_caster: ["odio", "raio", "raio_cosmico"],
+  starter_instrument: [],
+  mental_controller: ["sussurro_medo", "terror_primordial"],
+  elemental_mixer: ["descarga_nervosa", "marca_brasa", "geada_ossos"],
+  familiar_handler: ["sussurro_medo", "marca_brasa", "descarga_nervosa"],
+  summoner: ["sussurro_medo", "erguer_ossos", "invocar_brasa_faminta"],
+  defensive_occultist: ["coagulo_negro", "raizes_pedra", "geada_ossos"],
+  dot_pressure: ["toxina_palida", "marca_brasa", "hemorragia_induzida"],
+  funeral_burst: ["marca_sepulcral", "coroa_cinzas", "descarga_nervosa"],
 };
 
 const ARCHETYPE_PASSIVE: Record<string, string> = {
-  starter_wand: "",
-  cosmic_apprentice: "foco_astral",
-  elemental_mixer: "forca",
-  pet_handler: "resistencia",
-  summoner: "foco_astral",
-  defensive_caster: "escudo",
-  dot_pressure: "velocidade",
-  burst_caster: "forca",
+  starter_instrument: "",
+  mental_controller: "doutrina_pavor",
+  elemental_mixer: "pulso_tempestade",
+  familiar_handler: "pacto_familiar",
+  summoner: "ossuario_interior",
+  defensive_occultist: "pedra_interna",
+  dot_pressure: "alquimia_toxica",
+  funeral_burst: "ossuario_interior",
 };
 
 const ARCHETYPE_PET: Record<string, string> = {
-  starter_wand: "",
-  cosmic_apprentice: "familiar_cinzento",
-  elemental_mixer: "brasido",
-  pet_handler: "familiar_cinzento",
-  summoner: "brasido",
-  defensive_caster: "gelum",
-  dot_pressure: "gelum",
-  burst_caster: "brasido",
+  starter_instrument: "",
+  mental_controller: "corvo_pressagio",
+  elemental_mixer: "serpe_tempestade",
+  familiar_handler: "corvo_pressagio",
+  summoner: "cranio_errante",
+  defensive_occultist: "escaravelho_pedra",
+  dot_pressure: "serpente_toxina",
+  funeral_burst: "cranio_errante",
+};
+
+const ARCHETYPE_WEAPON: Record<string, string> = {
+  starter_instrument: "varinha_cinzas",
+  mental_controller: "grimorio_veu",
+  elemental_mixer: "orbe_tempestade",
+  familiar_handler: "varinha_cinzas",
+  summoner: "cajado_ossario",
+  defensive_occultist: "idolo_pedra_viva",
+  dot_pressure: "athame_hematico",
+  funeral_burst: "cajado_ossario",
 };
 
 export async function loadModel(
@@ -496,9 +518,8 @@ export function calculatePower(
     (sum, value) => sum + value,
     0,
   );
-  const baseStats =
-    structures.find((item) => item.structure_id === "estrutura_stats")?.level ??
-      0;
+  const baseStats = structures.find((item) => item.structure_id === "estrutura_stats")?.level ??
+    0;
   const baseAverage = avg(structures.map((item) => item.level));
   return Math.round(
     level * weights.level +
@@ -588,8 +609,7 @@ function estimateBuildSpend(
       build.passive_level,
     );
   }
-  spend.ossos +=
-    model.costs.weapon_quality_thresholds[build.weapon_quality_tier] ?? 0;
+  spend.ossos += model.costs.weapon_quality_thresholds[build.weapon_quality_tier] ?? 0;
   return roundResources(spend);
 }
 
@@ -617,7 +637,7 @@ function buildStateFor(
   const ratio = profile.build_ratio;
   const weaponLevel = clampedScaledLevel(level, ratio + 0.05);
   const unlocked = unlockedSpells(level);
-  const preferred = (ARCHETYPE_SPELLS[archetypeId] ?? ["raio_cosmico"]).filter((
+  const preferred = (ARCHETYPE_SPELLS[archetypeId] ?? ["sussurro_medo"]).filter((
     spell,
   ) => unlocked.includes(spell));
   const slots = maxSpellSlots(level);
@@ -627,20 +647,14 @@ function buildStateFor(
   for (const spell of spellSlots) {
     spellLevels[spell] = spellLevel;
   }
-  const passiveId = level >= 10
-    ? ARCHETYPE_PASSIVE[archetypeId] ?? "foco_astral"
-    : "";
-  const petId = level >= 15
-    ? ARCHETYPE_PET[archetypeId] ?? "familiar_cinzento"
-    : "";
-  const passiveLevel = passiveId === ""
-    ? 0
-    : clampedScaledLevel(level, ratio - 0.12);
+  const passiveId = level >= 10 ? ARCHETYPE_PASSIVE[archetypeId] ?? "doutrina_pavor" : "";
+  const petId = level >= 15 ? ARCHETYPE_PET[archetypeId] ?? "corvo_pressagio" : "";
+  const passiveLevel = passiveId === "" ? 0 : clampedScaledLevel(level, ratio - 0.12);
   const petLevel = petId === "" ? 0 : clampedScaledLevel(level, ratio - 0.1);
   const qualityTier = qualityTierFor(model, gains.ossos);
   const desired: BuildState = {
     archetype_id: archetypeId,
-    weapon_type: "varinha_magica",
+    weapon_type: ARCHETYPE_WEAPON[archetypeId] ?? "varinha_cinzas",
     weapon_quality: QUALITY_NAMES[qualityTier] ?? "starter",
     weapon_quality_tier: qualityTier,
     weapon_level: weaponLevel,
@@ -680,9 +694,8 @@ function baseStateFor(
     availableEnergia,
     profile,
   );
-  const primary =
-    structures.find((item) => item.structure_id === "nucleo_energia") ??
-      structures[0];
+  const primary = structures.find((item) => item.structure_id === "nucleo_energia") ??
+    structures[0];
   const activeJob = primary.level < level
     ? {
       structure_id: primary.structure_id,
@@ -805,6 +818,7 @@ function combatBuildFor(
     id,
     displayName: id,
     level,
+    weaponId: build.weapon_type,
     weaponLevel: build.weapon_level,
     weaponQualityTier: build.weapon_quality_tier,
     spellIds: build.spell_slots,
@@ -822,9 +836,7 @@ function buildRewardChecks(
 ): CheckRow[] {
   const rows: CheckRow[] = [];
   for (const save of saves) {
-    const milestone = model.milestones.find((item) =>
-      item.id === save.milestone_id
-    )!;
+    const milestone = model.milestones.find((item) => item.id === save.milestone_id)!;
     rows.push({
       id: "level_window",
       profile_id: save.profile_id,
@@ -916,9 +928,7 @@ function buildPowerRecommendations(
     const baseStats = save.base.structures.find((item) =>
       item.structure_id === "estrutura_stats"
     )?.level ?? 0;
-    const baseAverage = avg(save.base.structures.map((item) =>
-      item.level
-    ));
+    const baseAverage = avg(save.base.structures.map((item) => item.level));
     const components = {
       level: save.player.level * model.power_weights.level,
       weapon_level: save.build.weapon_level * model.power_weights.weapon_level,
@@ -1010,9 +1020,7 @@ function buildStateForBot(
   clone.passive_id = save.player.level >= 10
     ? ARCHETYPE_PASSIVE[archetypeId] ?? clone.passive_id
     : "";
-  clone.pet_id = save.player.level >= 15
-    ? ARCHETYPE_PET[archetypeId] ?? clone.pet_id
-    : "";
+  clone.pet_id = save.player.level >= 15 ? ARCHETYPE_PET[archetypeId] ?? clone.pet_id : "";
   return clone;
 }
 
@@ -1090,19 +1098,17 @@ function checklistFor(
 }
 
 function archetypeForLevel(level: number, profile: Profile): string {
-  if (level < 3) return "starter_wand";
-  if (level < 7) return "cosmic_apprentice";
+  if (level < 3) return "starter_instrument";
+  if (level < 7) return "mental_controller";
   if (level < 15) {
-    return profile.id === "free_50_rewards"
-      ? "elemental_mixer"
-      : "burst_caster";
+    return profile.id === "free_50_rewards" ? "elemental_mixer" : "funeral_burst";
   }
   if (level < 25) {
-    return profile.premium_pass ? "pet_handler" : "elemental_mixer";
+    return profile.premium_pass ? "familiar_handler" : "elemental_mixer";
   }
   if (profile.id === "max_spender") return "summoner";
-  if (profile.id === "spender_light") return "burst_caster";
-  return profile.id === "free_50_rewards" ? "defensive_caster" : "dot_pressure";
+  if (profile.id === "spender_light") return "funeral_burst";
+  return profile.id === "free_50_rewards" ? "defensive_occultist" : "dot_pressure";
 }
 
 function botArchetypeFor(
@@ -1111,14 +1117,12 @@ function botArchetypeFor(
   archetypes: string[],
 ): string {
   if (offset < 0) {
-    return archetypes.includes("starter_wand")
-      ? "starter_wand"
+    return archetypes.includes("starter_instrument")
+      ? "starter_instrument"
       : save.build.archetype_id;
   }
   if (offset > 0) {
-    return archetypes.includes("burst_caster")
-      ? "burst_caster"
-      : save.build.archetype_id;
+    return archetypes.includes("funeral_burst") ? "funeral_burst" : save.build.archetype_id;
   }
   return save.build.archetype_id;
 }
@@ -1317,9 +1321,8 @@ function reportHtml(model: ProgressionModel, data: ProgressionData): string {
   <h1>DraxosMobile Progression Lab</h1>
   <p>Model ${model.model_id}. Use this report to pick manual Godot saves and tuning hypotheses.</p>
   <div class="cards">${
-    cards.map(([label, value]) =>
-      `<div class="card"><strong>${label}</strong><br>${value}</div>`
-    ).join("")
+    cards.map(([label, value]) => `<div class="card"><strong>${label}</strong><br>${value}</div>`)
+      .join("")
   }</div>
   <h2>Healthy Saves</h2>
   <table><tr><th>Save</th><th>Status</th><th>Level</th><th>Power</th><th>Notes</th></tr>${saveRows}</table>

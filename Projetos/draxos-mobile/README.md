@@ -4,7 +4,7 @@ Jogo mobile multi-plataforma de PVP assincrono com base manager, progressao de p
 
 **Nao confundir com:** `draxos-roguelike-cardgame` - projeto Steam separado.
 
-Status: `P2_IMPLEMENTACAO - progression lab tooling implemented`
+Status: `P2_IMPLEMENTACAO - character systems rework implemented`
 
 ---
 
@@ -13,7 +13,8 @@ Status: `P2_IMPLEMENTACAO - progression lab tooling implemented`
 - Track 00 completa: Godot client, Supabase local, auth guest, batalha server-authoritative, Base, Social/Competicao, Monetizacao, pipeline de conteudo, exports e testes.
 - Track 01 completa: hardening do alpha PC local, telemetria client nao autoritativa, reset seguro de sessao local, smokes de loop alpha e checklist de playtest.
 - Track 02 com tooling v1 implementado: Progression Lab gera 25 estados saudaveis, saves Supabase locais, bot pool, recomendacoes de poder, matriz no Battle Lab e fluxo manual de teste no Godot para as primeiras 2h-20h.
-- Battle Lab offline + dev-only no Godot implementado: `tools/battle_lab/` gera HTML/CSV/JSON/replays em `docs/battle-lab/generated/`, arquiva runs oficiais em `docs/battle-lab/runs/`, compara deltas, marca compatibilidade/stale e pode ser aberto no editor pelo Refugio para montar builds e assistir replays debug 2D; exports excluem a ferramenta. O ajuste de pacing alpha levou a duracao media de `3.22s` para `18.19s`, e o ajuste por arquetipo/fonte v02 deixou o baseline em `18.91s`, `0%` de batalhas curtas e status `REVIEW` por `pet_handler`.
+- Rework de personagem 2026-05-25 implementado em docs, catalogo e simulador: armas viraram Instrumentos Rituais, passivas viraram Doutrinas, pets viraram Familiares, Mental e familia de status, e as fontes vivas sao Arcano/Fisico/Fogo/Agua/Gelo/Terra/Vento/Raio/Veneno/Sangue/Morte.
+- Battle Lab offline + dev-only no Godot implementado: `tools/battle_lab/` gera HTML/CSV/JSON/replays em `docs/battle-lab/generated/`, arquiva runs oficiais em `docs/battle-lab/runs/`, compara deltas, marca compatibilidade/stale e pode ser aberto no editor pelo Refugio para montar builds e assistir replays debug 2D; exports excluem a ferramenta. A rodada atual mede o rework de personagem e preserva o baseline 2026-05-21 apenas como historico pre-rework.
 - Supabase runtime local configurado em `supabase/`: Docker Desktop, `npx supabase`, `npx deno`, migrations MVP/base/social/ranking/monetizacao, Auth anonimo, healthcheck e Edge Functions `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*` e `telemetry/*`.
 - Conta guest alpha implementada: `account/guest`, `account/state`, convite `ALPHA-TEST`, fixture inicial de player/resources/build, cache local nao autoritativo e escrita direta do cliente bloqueada.
 - Reuso conservador documentado em `docs/reuse-map.md`; padroes tecnicos foram adotados sem importar gameplay de outros projetos.

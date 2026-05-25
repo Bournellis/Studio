@@ -7,11 +7,12 @@ func test_battle_lab_power_formula_matches_contract() -> void:
 		"id": "test",
 		"displayName": "Test",
 		"level": 10,
+		"weaponId": "varinha_cinzas",
 		"weaponLevel": 8,
 		"weaponQualityTier": 2,
-		"spellIds": ["raio_cosmico", "raio"],
-		"spellLevels": {"raio_cosmico": 7, "raio": 6},
-		"passiveId": "forca",
+		"spellIds": ["sussurro_medo", "descarga_nervosa"],
+		"spellLevels": {"sussurro_medo": 7, "descarga_nervosa": 6},
+		"passiveId": "anatomista_profano",
 		"passiveLevel": 5,
 	}
 	assert_eq(BattleLabScreenScript.calculate_power(build), 1100)
@@ -29,4 +30,4 @@ func test_battle_lab_default_level_25_build_is_valid() -> void:
 	var errors: Array[String] = BattleLabScreenScript.validate_build(build)
 	assert_eq(errors.size(), 0)
 	assert_eq(BattleLabScreenScript.max_spell_slots(25), 3)
-	assert_true(BattleLabScreenScript.allowed_spell_ids(25).has("odio"))
+	assert_true(BattleLabScreenScript.allowed_spell_ids(25).has("marca_sepulcral"))

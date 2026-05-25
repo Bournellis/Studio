@@ -60,7 +60,7 @@ Resultado local: passou com GUT integrado, `18/18` testes e `91` asserts.
 Smoke client:
 
 - Boot scene carrega em headless.
-- Smoke P06 via Godot HTTPRequest: Auth anonimo -> `account/guest` -> `account/state` passou no Supabase local com player guest e build `varinha_magica`.
+- Smoke P06 via Godot HTTPRequest: Auth anonimo -> `account/guest` -> `account/state` passou no Supabase local com player guest; fixture atual do rework usa build `varinha_cinzas`.
 - Smoke P07: `battle/request` exige auth, retorna `battle_log_v1`, `battle/latest` recupera o log e repetir `request_id` nao duplica XP/Ossos.
 - Smoke P08/P10: Godot solicita `FIRST_SLICE_SIM`, formata timeline rica, recupera `battle/latest` e nao calcula resultado/recompensa no cliente.
 - Smoke P11: Godot possui fluxo minimo de Base; `base/state`, `base/collect` e `base/upgrade` vivem no servidor.

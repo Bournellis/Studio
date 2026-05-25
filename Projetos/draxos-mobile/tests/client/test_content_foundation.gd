@@ -32,7 +32,7 @@ func test_mvp_training_fixture_is_server_authoritative_input_only() -> void:
 	assert_false(fixture.is_empty())
 	assert_eq(str(fixture.get("mode", "")), ProjectInfo.MVP_MODE)
 	assert_eq(str(Dictionary(fixture.get("opponent_fixture", {})).get("id", "")), "mvp_training_bot")
-	assert_has(Array(Dictionary(fixture.get("player_fixture", {})).get("spell_ids", [])), "raio_cosmico")
+	assert_has(Array(Dictionary(fixture.get("player_fixture", {})).get("spell_ids", [])), "sussurro_medo")
 
 func test_catalog_validation_reports_success() -> void:
 	var result: Dictionary = ContentLibrary.validate_catalog()

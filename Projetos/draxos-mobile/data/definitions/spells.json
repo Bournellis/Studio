@@ -3,51 +3,167 @@
   "collection": "spells",
   "items": [
     {
-      "id": "raio_cosmico",
-      "display_name": "Raio Cosmico",
-      "description": "Dano magico direto no primeiro alvo da fila.",
-      "version": 2,
+      "id": "sussurro_medo",
+      "display_name": "Sussurro do Medo",
+      "description": "Ato mental inicial que planta Inquietacao e abre caminho para Medo.",
+      "version": 3,
       "enabled": true,
-      "tags": ["FIRST_SLICE", "damage", "magico", "starter"],
+      "tags": ["FIRST_SLICE", "spell", "mental", "control", "starter"],
       "mode": "FIRST_SLICE",
       "unlock_level": 3,
-      "damage_type": "magico",
+      "damage_type": "none",
       "mana_cost": 8,
-      "cooldown_seconds": 4.0,
-      "target": "direct",
-      "base_damage": 18,
-      "damage_per_level": 2.4,
+      "cooldown_seconds": 4.5,
+      "target": "player",
+      "base_damage": 0,
+      "damage_per_level": 0,
       "effects": [
-        { "kind": "damage", "amount": 18 }
+        { "kind": "status", "status_id": "inquietacao", "stacks": 1, "duration_seconds": 6 }
       ]
     },
     {
-      "id": "raio",
-      "display_name": "Raio",
-      "description": "Dano de choque direto no mago inimigo e aplica marcadores de choque.",
+      "id": "terror_primordial",
+      "display_name": "Terror Primordial",
+      "description": "Ato mental que transforma medo acumulado em Terror e vulnerabilidade.",
       "version": 1,
       "enabled": true,
-      "tags": ["FIRST_SLICE", "damage", "choque", "elemental"],
+      "tags": ["FIRST_SLICE", "spell", "mental", "control"],
       "mode": "FIRST_SLICE",
       "unlock_level": 7,
-      "damage_type": "choque",
+      "damage_type": "none",
       "mana_cost": 12,
-      "cooldown_seconds": 6.0,
+      "cooldown_seconds": 7.0,
       "target": "player",
-      "base_damage": 14,
-      "damage_per_level": 1.8,
+      "base_damage": 0,
+      "damage_per_level": 0,
       "effects": [
-        { "kind": "damage", "amount": 14 },
-        { "kind": "status", "status_id": "choque_marcado", "stacks": 1 }
+        { "kind": "status", "status_id": "terror", "stacks": 1, "duration_seconds": 4 }
       ]
     },
     {
-      "id": "acender",
-      "display_name": "Acender",
-      "description": "Dano de fogo em area curta e aplica Queimando.",
+      "id": "labirinto_razao",
+      "display_name": "Labirinto da Razao",
+      "description": "Ato mental de Confusao que atrasa a leitura ritual do alvo.",
       "version": 1,
       "enabled": true,
-      "tags": ["FIRST_SLICE", "damage", "fogo", "dot"],
+      "tags": ["FIRST_SLICE", "spell", "mental", "control"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 7,
+      "damage_type": "none",
+      "mana_cost": 11,
+      "cooldown_seconds": 7.5,
+      "target": "player",
+      "base_damage": 0,
+      "damage_per_level": 0,
+      "effects": [
+        { "kind": "status", "status_id": "confusao", "stacks": 1, "duration_seconds": 5 }
+      ]
+    },
+    {
+      "id": "mandato_oculto",
+      "display_name": "Mandato Oculto",
+      "description": "Ato mental de Compulsao que torna a cadencia inimiga menos eficiente.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "spell", "mental", "control"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 15,
+      "damage_type": "none",
+      "mana_cost": 14,
+      "cooldown_seconds": 9.0,
+      "target": "player",
+      "base_damage": 0,
+      "damage_per_level": 0,
+      "effects": [
+        { "kind": "status", "status_id": "compulsao", "stacks": 1, "duration_seconds": 5 }
+      ]
+    },
+    {
+      "id": "incisao_ritual",
+      "display_name": "Incisao Ritual",
+      "description": "Corte ritual Fisico/Sangue que abre Ferida no primeiro alvo.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "spell", "damage", "fisico", "sangue"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 7,
+      "damage_type": "fisico",
+      "mana_cost": 12,
+      "cooldown_seconds": 6.5,
+      "target": "direct",
+      "base_damage": 16,
+      "damage_per_level": 1.9,
+      "effects": [
+        { "kind": "damage", "amount": 16 },
+        { "kind": "status", "status_id": "ferida", "stacks": 1, "duration_seconds": 6 }
+      ]
+    },
+    {
+      "id": "hemorragia_induzida",
+      "display_name": "Hemorragia Induzida",
+      "description": "Ato de Sangue que transforma feridas em perda continua.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "spell", "sangue", "dot"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 15,
+      "damage_type": "sangue",
+      "mana_cost": 16,
+      "cooldown_seconds": 8.0,
+      "target": "direct",
+      "base_damage": 8,
+      "damage_per_level": 1.0,
+      "effects": [
+        { "kind": "damage", "amount": 8 },
+        { "kind": "dot", "status_id": "hemorragia", "tick_damage": 5, "duration_seconds": 6 }
+      ]
+    },
+    {
+      "id": "coagulo_negro",
+      "display_name": "Coagulo Negro",
+      "description": "Ato defensivo de Sangue que cria uma barreira corporal profana.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "spell", "sangue", "barrier", "defense"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 15,
+      "damage_type": "none",
+      "mana_cost": 16,
+      "cooldown_seconds": 11.0,
+      "target": "self",
+      "base_barrier": 28,
+      "barrier_per_level": 2.6,
+      "effects": [
+        { "kind": "barrier", "amount": 28 },
+        { "kind": "status", "status_id": "coagulacao_profana", "stacks": 1, "duration_seconds": 7 }
+      ]
+    },
+    {
+      "id": "toxina_palida",
+      "display_name": "Toxina Palida",
+      "description": "Veneno ritual que pressiona Vitalidade e aplica Envenenado.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "spell", "veneno", "dot"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 7,
+      "damage_type": "veneno",
+      "mana_cost": 10,
+      "cooldown_seconds": 8.0,
+      "target": "player",
+      "base_damage": 6,
+      "damage_per_level": 0.8,
+      "effects": [
+        { "kind": "dot", "status_id": "envenenado", "tick_damage": 5, "duration_seconds": 6 }
+      ]
+    },
+    {
+      "id": "marca_brasa",
+      "display_name": "Marca de Brasa",
+      "description": "Fogo ritual que aplica Brasa e Queimando.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "spell", "damage", "fogo", "dot"],
       "mode": "FIRST_SLICE",
       "unlock_level": 7,
       "damage_type": "fogo",
@@ -62,31 +178,52 @@
       ]
     },
     {
-      "id": "envenenar",
-      "display_name": "Envenenar",
-      "description": "Aplica veneno diretamente no mago inimigo.",
+      "id": "coroa_cinzas",
+      "display_name": "Coroa de Cinzas",
+      "description": "Payoff de Fogo/Morte que pune alvos marcados por cinzas.",
       "version": 1,
       "enabled": true,
-      "tags": ["FIRST_SLICE", "veneno", "dot"],
+      "tags": ["FIRST_SLICE", "spell", "damage", "fogo", "morte"],
       "mode": "FIRST_SLICE",
-      "unlock_level": 7,
-      "damage_type": "veneno",
-      "mana_cost": 10,
-      "cooldown_seconds": 8.0,
+      "unlock_level": 25,
+      "damage_type": "fogo",
+      "mana_cost": 20,
+      "cooldown_seconds": 9.0,
       "target": "player",
-      "base_damage": 6,
-      "damage_per_level": 0.8,
+      "base_damage": 24,
+      "damage_per_level": 2.2,
       "effects": [
-        { "kind": "dot", "status_id": "envenenado", "tick_damage": 5, "duration_seconds": 6 }
+        { "kind": "damage", "amount": 24 },
+        { "kind": "status", "status_id": "cinzas_marcadas", "stacks": 1, "duration_seconds": 6 }
       ]
     },
     {
-      "id": "congelar",
-      "display_name": "Congelar",
-      "description": "Dano de gelo em area curta e aplica Lento.",
+      "id": "mare_escura",
+      "display_name": "Mare Escura",
+      "description": "Agua ritual que aplica Molhado e prepara gelo ou raio.",
       "version": 1,
       "enabled": true,
-      "tags": ["FIRST_SLICE", "damage", "gelo", "status"],
+      "tags": ["FIRST_SLICE", "spell", "agua", "status"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 7,
+      "damage_type": "agua",
+      "mana_cost": 11,
+      "cooldown_seconds": 6.5,
+      "target": "area",
+      "base_damage": 8,
+      "damage_per_level": 1.2,
+      "effects": [
+        { "kind": "damage", "amount": 8 },
+        { "kind": "status", "status_id": "molhado", "stacks": 1, "duration_seconds": 7 }
+      ]
+    },
+    {
+      "id": "geada_ossos",
+      "display_name": "Geada nos Ossos",
+      "description": "Gelo ritual que aplica Resfriado e Lento.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "spell", "damage", "gelo", "status"],
       "mode": "FIRST_SLICE",
       "unlock_level": 7,
       "damage_type": "gelo",
@@ -97,103 +234,165 @@
       "damage_per_level": 1.6,
       "effects": [
         { "kind": "damage", "amount": 11 },
-        { "kind": "status", "status_id": "lento", "stacks": 1 }
+        { "kind": "status", "status_id": "resfriado", "stacks": 1, "duration_seconds": 5 }
       ]
     },
     {
-      "id": "odio",
-      "display_name": "Odio",
-      "description": "Grande dano de Morte diretamente no mago inimigo.",
+      "id": "prisao_gelo",
+      "display_name": "Prisao de Gelo",
+      "description": "Controle superior de Gelo que cria Congelado breve.",
       "version": 1,
       "enabled": true,
-      "tags": ["FIRST_SLICE", "damage", "morte", "advanced"],
+      "tags": ["FIRST_SLICE", "spell", "gelo", "control", "advanced"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 25,
+      "damage_type": "gelo",
+      "mana_cost": 20,
+      "cooldown_seconds": 10.0,
+      "target": "area",
+      "base_damage": 12,
+      "damage_per_level": 1.4,
+      "effects": [
+        { "kind": "damage", "amount": 12 },
+        { "kind": "status", "status_id": "congelado", "stacks": 1, "duration_seconds": 3 }
+      ]
+    },
+    {
+      "id": "raizes_pedra",
+      "display_name": "Raizes de Pedra",
+      "description": "Terra ritual que enraiza o alvo e reforca a guarda do conjurador.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "spell", "terra", "control", "defense"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 15,
+      "damage_type": "terra",
+      "mana_cost": 17,
+      "cooldown_seconds": 10.5,
+      "target": "direct",
+      "base_damage": 14,
+      "damage_per_level": 1.7,
+      "base_barrier": 12,
+      "barrier_per_level": 1.2,
+      "effects": [
+        { "kind": "damage", "amount": 14 },
+        { "kind": "status", "status_id": "enraizado", "stacks": 1, "duration_seconds": 5 }
+      ]
+    },
+    {
+      "id": "lamina_vento",
+      "display_name": "Lamina de Vento",
+      "description": "Corte de Vento/Fisico rapido que desequilibra o alvo.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "spell", "damage", "vento", "fisico"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 7,
+      "damage_type": "vento",
+      "mana_cost": 12,
+      "cooldown_seconds": 5.5,
+      "target": "direct",
+      "base_damage": 15,
+      "damage_per_level": 1.8,
+      "effects": [
+        { "kind": "damage", "amount": 15 },
+        { "kind": "status", "status_id": "desequilibrado", "stacks": 1, "duration_seconds": 4 }
+      ]
+    },
+    {
+      "id": "descarga_nervosa",
+      "display_name": "Descarga Nervosa",
+      "description": "Raio ritual que aplica Condutor e pode eletrificar alvos preparados.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "spell", "damage", "raio", "status"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 7,
+      "damage_type": "raio",
+      "mana_cost": 12,
+      "cooldown_seconds": 6.0,
+      "target": "player",
+      "base_damage": 14,
+      "damage_per_level": 1.8,
+      "effects": [
+        { "kind": "damage", "amount": 14 },
+        { "kind": "status", "status_id": "condutor", "stacks": 1, "duration_seconds": 6 }
+      ]
+    },
+    {
+      "id": "putrefacao",
+      "display_name": "Putrefacao",
+      "description": "Ato funebre que aplica Decaimento e pressiona regeneracao.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "spell", "morte", "dot", "advanced"],
       "mode": "FIRST_SLICE",
       "unlock_level": 25,
       "damage_type": "morte",
       "mana_cost": 22,
       "cooldown_seconds": 9.0,
       "target": "player",
-      "base_damage": 26,
-      "damage_per_level": 2.4,
+      "base_damage": 10,
+      "damage_per_level": 1.2,
       "effects": [
-        { "kind": "damage", "amount": 26 }
+        { "kind": "damage", "amount": 10 },
+        { "kind": "dot", "status_id": "decaimento", "tick_damage": 6, "duration_seconds": 6 }
       ]
     },
     {
-      "id": "dilacerar",
-      "display_name": "Dilacerar",
-      "description": "Dano direto e sangramento no primeiro alvo da fila.",
+      "id": "marca_sepulcral",
+      "display_name": "Marca Sepulcral",
+      "description": "Marca de Morte que torna o alvo mais vulneravel a atos funebres.",
       "version": 1,
       "enabled": true,
-      "tags": ["FIRST_SLICE", "damage", "sangramento", "dot", "advanced"],
+      "tags": ["FIRST_SLICE", "spell", "morte", "status", "advanced"],
       "mode": "FIRST_SLICE",
       "unlock_level": 25,
-      "damage_type": "sangramento",
+      "damage_type": "morte",
       "mana_cost": 18,
-      "cooldown_seconds": 7.5,
-      "target": "direct",
-      "base_damage": 20,
-      "damage_per_level": 2.2,
+      "cooldown_seconds": 8.0,
+      "target": "player",
+      "base_damage": 18,
+      "damage_per_level": 1.8,
       "effects": [
-        { "kind": "damage", "amount": 20 },
-        { "kind": "dot", "status_id": "sangrando", "tick_damage": 6, "duration_seconds": 5 }
+        { "kind": "damage", "amount": 18 },
+        { "kind": "status", "status_id": "marca_sepulcral", "stacks": 1, "duration_seconds": 7 }
       ]
     },
     {
-      "id": "fortificar",
-      "display_name": "Fortificar",
-      "description": "Gera barreira magica e resistencia global temporaria.",
+      "id": "erguer_ossos",
+      "display_name": "Erguer Ossos",
+      "description": "Invoca um guardiao de ossos para proteger o mago.",
       "version": 1,
       "enabled": true,
-      "tags": ["FIRST_SLICE", "barrier", "defense", "advanced"],
-      "mode": "FIRST_SLICE",
-      "unlock_level": 25,
-      "damage_type": "none",
-      "mana_cost": 16,
-      "cooldown_seconds": 12.0,
-      "target": "self",
-      "base_barrier": 30,
-      "barrier_per_level": 3,
-      "effects": [
-        { "kind": "barrier", "amount": 30 },
-        { "kind": "resistance", "amount": 0.08, "duration_seconds": 8 }
-      ]
-    },
-    {
-      "id": "invocar_demonio",
-      "display_name": "Invocar Demonio",
-      "description": "Invoca um demonio na posicao Tras para causar dano de Fogo.",
-      "version": 1,
-      "enabled": true,
-      "tags": ["FIRST_SLICE", "summon", "fogo", "advanced"],
-      "mode": "FIRST_SLICE",
-      "unlock_level": 25,
-      "damage_type": "fogo",
-      "mana_cost": 20,
-      "cooldown_seconds": 10.0,
-      "target": "self",
-      "summon_id": "demonio",
-      "effects": [
-        { "kind": "summon", "summon_id": "demonio" }
-      ]
-    },
-    {
-      "id": "animar_morto",
-      "display_name": "Animar Morto",
-      "description": "Invoca um morto-vivo na Frente ou Meio para proteger o mago.",
-      "version": 1,
-      "enabled": true,
-      "tags": ["FIRST_SLICE", "summon", "morte", "advanced"],
+      "tags": ["FIRST_SLICE", "spell", "summon", "morte", "advanced"],
       "mode": "FIRST_SLICE",
       "unlock_level": 25,
       "damage_type": "morte",
       "mana_cost": 20,
       "cooldown_seconds": 10.0,
       "target": "self",
-      "summon_id": "esqueleto",
-      "alternate_summon_id": "morto_vivo",
+      "summon_id": "guardiao_ossos",
       "effects": [
-        { "kind": "summon", "summon_id": "esqueleto" }
+        { "kind": "summon", "summon_id": "guardiao_ossos" }
+      ]
+    },
+    {
+      "id": "invocar_brasa_faminta",
+      "display_name": "Invocar Brasa Faminta",
+      "description": "Invoca uma entidade ofensiva de Fogo e Morte.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "spell", "summon", "fogo", "morte", "advanced"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 25,
+      "damage_type": "fogo",
+      "mana_cost": 20,
+      "cooldown_seconds": 10.0,
+      "target": "self",
+      "summon_id": "brasa_faminta",
+      "effects": [
+        { "kind": "summon", "summon_id": "brasa_faminta" }
       ]
     }
   ]

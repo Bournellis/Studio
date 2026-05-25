@@ -7,7 +7,7 @@ O log de batalha e a unica fonte que o cliente usa para animar uma batalha. O cl
 
 Status MVP: `battle/request` server-authoritative implementado em T00-P07 com bot `mvp_training_bot`, seed deterministica e eventos `battle_log_v1`.
 
-Status primeiro slice: `FIRST_SLICE_SIM` completo em T00-P10 com simulador TypeScript deterministico, bots de variacao, varinha, mana, spells diretas, DoTs, status, resistencias, barreiras, pets, passivas, summons, cooldowns, anti-stall e recompensas `FIRST_SLICE_SIM`.
+Status primeiro slice: `FIRST_SLICE_SIM` completo em T00-P10 com simulador TypeScript deterministico, bots de variacao, Instrumentos Rituais, mana, spells diretas, DoTs, status, resistencias, barreiras, Familiares, Doutrinas, summons, cooldowns, anti-stall e recompensas `FIRST_SLICE_SIM`.
 
 ## Envelope
 
@@ -60,7 +60,7 @@ Todo evento possui:
   "source": "player",
   "target": "opponent",
   "damage": 15,
-  "damage_type": "magico",
+  "damage_type": "arcano",
   "hp_after": 85
 }
 ```
@@ -74,9 +74,9 @@ Todo evento possui:
   "type": "spell_cast",
   "source": "player",
   "target": "opponent",
-  "spell_id": "raio_cosmico",
+  "spell_id": "sussurro_medo",
   "damage": 25,
-  "damage_type": "magico",
+  "damage_type": "none",
   "hp_after": 60
 }
 ```
@@ -119,7 +119,7 @@ Todo evento possui:
   "type": "passive_apply",
   "source": "player",
   "target": "player",
-  "passive_id": "vampirismo",
+  "passive_id": "sangue_obediente",
   "passive_level": 20
 }
 ```
@@ -146,7 +146,7 @@ Todo evento possui:
   "type": "cooldown_start",
   "source": "player",
   "target": "player",
-  "spell_id": "acender",
+  "spell_id": "marca_brasa",
   "ready_at": 7.5
 }
 ```
@@ -158,7 +158,7 @@ Todo evento possui:
   "type": "cooldown_ready",
   "source": "player",
   "target": "player",
-  "spell_id": "acender"
+  "spell_id": "marca_brasa"
 }
 ```
 
@@ -171,7 +171,7 @@ Todo evento possui:
   "type": "dot_apply",
   "source": "opponent",
   "target": "player",
-  "spell_id": "acender",
+  "spell_id": "marca_brasa",
   "status_id": "queimando",
   "stacks": 1,
   "tick_damage": 3,
@@ -202,8 +202,8 @@ Todo evento possui:
   "type": "status_apply",
   "source": "opponent",
   "target": "player",
-  "spell_id": "congelar",
-  "status_id": "lento",
+  "spell_id": "geada_ossos",
+  "status_id": "resfriado",
   "stacks": 1,
   "duration": 5
 }
@@ -216,7 +216,7 @@ Todo evento possui:
   "type": "status_expire",
   "source": "opponent",
   "target": "player",
-  "status_id": "lento"
+  "status_id": "resfriado"
 }
 ```
 
@@ -228,8 +228,8 @@ Todo evento possui:
   "seq": 5,
   "type": "summon_spawn",
   "source": "player",
-  "target": "player_demonio",
-  "spell_id": "invocar_demonio",
+  "target": "player_brasa_faminta",
+  "spell_id": "invocar_brasa_faminta",
   "hp": 50,
   "damage_type": "fogo"
 }
@@ -242,7 +242,7 @@ Todo evento possui:
   "t": 1.0,
   "seq": 8,
   "type": "summon_attack",
-  "source": "player_demonio",
+  "source": "player_brasa_faminta",
   "target": "opponent",
   "damage": 7,
   "damage_type": "fogo",
@@ -259,9 +259,9 @@ Todo evento possui:
   "type": "pet_attack",
   "source": "player",
   "target": "opponent",
-  "pet_id": "familiar_cinzento",
+  "pet_id": "corvo_pressagio",
   "damage": 20,
-  "damage_type": "magico",
+  "damage_type": "morte",
   "hp_after": 93
 }
 ```
@@ -275,7 +275,7 @@ Todo evento possui:
   "type": "barrier_gain",
   "source": "player",
   "target": "player",
-  "spell_id": "fortificar",
+  "spell_id": "coagulo_negro",
   "amount": 48,
   "hp_after": 120
 }
@@ -290,7 +290,7 @@ Todo evento possui:
   "type": "barrier_absorb",
   "source": "player",
   "target": "opponent",
-  "damage_type": "magico",
+  "damage_type": "arcano",
   "amount": 12,
   "barrier_after": 0
 }
@@ -305,7 +305,7 @@ Todo evento possui:
   "type": "resistance_apply",
   "source": "player",
   "target": "player",
-  "spell_id": "fortificar",
+  "spell_id": "coagulo_negro",
   "status_id": "fortificado",
   "amount": 0.08,
   "duration": 8

@@ -100,7 +100,7 @@ O Godot chama Deno por `draxos_mobile/battle_lab/deno_command` e
 
 ## Como Usar Os Dados
 
-- Se muitas lutas caem abaixo de 12s, revisar burst, dano de varinha/spells ou
+- Se muitas lutas caem abaixo de 12s, revisar burst, dano de Instrumento/spells ou
   HP por level.
 - Se muitas lutas passam de 32s ou acionam anti-stall, revisar defesa, barreira,
   sustain, DoTs fracos ou dano global.
@@ -115,39 +115,27 @@ O Godot chama Deno por `draxos_mobile/battle_lab/deno_command` e
 
 ## Tuning Atual
 
-Ultima rodada: `2026-05-21_archetype_source_tuning_v02`.
+Ultima rodada viva: rework de personagem `2026-05-25`.
 
 Mudanca aplicada:
 
-- Battle Lab passou a arquivar runs oficiais em `docs/battle-lab/runs/` e gerar
-  comparacao contra baseline anterior.
-- Dominancia principal agora usa matchups de poder proximo (`<= 20%`) e exclui
-  espelhos do mesmo arquetipo.
-- `raio` e `odio` tiveram dano direto reduzido.
-- DoTs de Fogo, Veneno e Sangramento receberam aumento leve de tick.
-- Pets tiveram dano base/escala reduzidos.
-
-Resultado Battle Lab:
-
-| Metrica | Pacing v01 | Tuning v02 |
-|---|---:|---:|
-| Duracao media | 18.19s | 18.91s |
-| Batalhas curtas | 2.38% | 0% |
-| Batalhas longas | 0% | 0% |
-| Anti-stall | 0.12% | 0.12% |
-| Dominancia bruta maxima | 88.1% | 77.62% |
-| Dominancia poder proximo maxima | 79.37% | 70.45% |
-| Status geral | CRITICAL | REVIEW |
+- Battle Lab passou a usar Instrumentos Rituais, Doutrinas e Familiares.
+- A taxonomia de dano foi migrada para
+  Arcano/Fisico/Fogo/Agua/Gelo/Terra/Vento/Raio/Veneno/Sangue/Morte.
+- Mental deixou de ser dano e virou familia de status para medo, terror,
+  confusao e compulsao.
+- O gerador agora valida `weapon_id`/`weaponId` nos builds, CSVs e bridge Godot.
+- Archetypes antigos foram substituidos por `starter_instrument`,
+  `mental_controller`, `elemental_mixer`, `familiar_handler`, `summoner`,
+  `defensive_occultist`, `dot_pressure` e `funeral_burst`.
 
 Leitura:
 
-- O pacing global segue dentro da janela operacional `18s-28s`.
-- `burst_caster` saiu de dominancia critica em poder proximo (`76.13%` para
-  `60%`).
-- `pet_handler` caiu de `79.37%` para `70.45%` em poder proximo, ainda em
-  REVIEW e candidato a proxima rodada fina.
-- `dot_pressure` melhorou de `26.87%` para `33.45%`, mas ainda pede observacao.
-- A proxima rodada deve focar ajuste fino de pet/poder/DoT, nao HP global.
+- O baseline 2026-05-21 permanece arquivado como historico pre-rework.
+- Deltas numericos contra runs antigas devem ser lidos como alerta de
+  compatibilidade, nao como prova direta de balanceamento.
+- A proxima rodada de tuning deve medir dominancia por Instrumento/Familiar,
+  intensidade de status mental e pressao de Sangue/Veneno/Morte.
 
 Validacoes rodadas:
 

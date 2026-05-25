@@ -41,6 +41,7 @@ interface ResourceRow {
 }
 
 interface BuildRow {
+  weapon_type: string;
   weapon_quality: string;
   weapon_level: number;
   spell_slots: unknown;
@@ -391,7 +392,7 @@ async function loadPlayerState(
   );
   const buildResult = await restRequest<BuildRow[]>(
     config,
-    `builds?player_id=eq.${playerId}&select=weapon_quality,weapon_level,spell_slots,spells_unlocked,pet_id,pet_level,passive_id,passive_level&limit=1`,
+    `builds?player_id=eq.${playerId}&select=weapon_type,weapon_quality,weapon_level,spell_slots,spells_unlocked,pet_id,pet_level,passive_id,passive_level&limit=1`,
     { method: "GET" },
   );
 
@@ -495,11 +496,12 @@ function playerCombatant(player: PlayerRow, build: BuildRow): CombatantBuild {
     id: player.id,
     displayName: stringValue(player.username, "Draxos"),
     level: numberValue(player.level, 1),
+    weaponId: stringValue(build.weapon_type, "varinha_cinzas"),
     weaponLevel: numberValue(build.weapon_level, 1),
     weaponQualityTier: weaponQualityTier(build.weapon_quality),
-    spellIds: spells.length > 0 ? spells : ["raio_cosmico"],
+    spellIds: spells.length > 0 ? spells : ["sussurro_medo"],
     spellLevels: spellLevelMap(
-      spells.length > 0 ? spells : ["raio_cosmico"],
+      spells.length > 0 ? spells : ["sussurro_medo"],
       numberValue(player.level, 1),
     ),
     passiveId: build.passive_id ?? undefined,
@@ -516,9 +518,10 @@ function botCombatant(bot: BotBuildRow): CombatantBuild {
     id: bot.id,
     displayName: stringValue(data.display_name, "Treinador da Primeira Ruina"),
     level: numberValue(data.level, 5),
+    weaponId: stringValue(data.weapon_id, "varinha_cinzas"),
     weaponLevel: numberValue(data.weapon_level, 5),
     weaponQualityTier: weaponQualityTier(stringValue(data.weapon_quality, "reforcada")),
-    spellIds: spellIds.length > 0 ? spellIds : ["raio_cosmico"],
+    spellIds: spellIds.length > 0 ? spellIds : ["sussurro_medo"],
     spellLevels: recordOfNumbers(data.spell_levels),
     passiveId: optionalString(data.passive_id),
     passiveLevel: optionalString(data.passive_id) === undefined

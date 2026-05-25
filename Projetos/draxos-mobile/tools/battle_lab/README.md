@@ -87,7 +87,7 @@ Campos principais:
 - `random_builds_per_archetype_per_level`: volume de variantes deterministicas
   por arquetipo.
 - `thresholds`: janelas de duracao, anti-stall e dominancia.
-- `archetypes`: preferencias de spells, passivas, pets e ratios de level por
+- `archetypes`: preferencias de spells, Doutrinas, Familiares e ratios de level por
   build.
 
 ## Ler O Relatorio
@@ -128,10 +128,10 @@ Resumo:
 - batalhas longas: `0%`;
 - anti-stall: `0.06%`;
 - status geral: `REVIEW` por dominancia em poder proximo acima de 65%;
-- `burst_caster`: `60%` em poder proximo, fora de critical;
-- `pet_handler`: `70.45%` em poder proximo, ainda em review.
+- `funeral_burst`: sucessor do antigo burst caster apos o rework de Morte/Fogo;
+- `familiar_handler`: sucessor do antigo pet handler com familiares por papel.
 
-Proximo foco recomendado: investigar `pet_handler`, lacuna de `dot_pressure` e
+Proximo foco recomendado: investigar `familiar_handler`, lacuna de `dot_pressure` e
 formula/pesos de poder usando `battle_lab_source_by_archetype.csv`,
 `battle_lab_near_power_matrix.csv`, `battle_lab_progression_matrix.csv` e
 `battle_lab_compare.csv`.

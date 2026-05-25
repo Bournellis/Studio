@@ -28,7 +28,7 @@
 - `T00-P06` completo: cliente Godot com `SessionStore`, `SupabaseClient`, Auth anonimo, `account/guest`, `account/state`, cache local nao autoritativo e erro offline controlado.
 - `T00-P07` completo: `battle/request`, `battle/latest`, RPC `request_mvp_battle`, log `battle_log_v1`, recompensa `MVP_ONLY` e idempotencia server-side.
 - `T00-P08` completo: replay placeholder no Godot para `battle_log_v1`, timeline ordenada por `t`/`seq`, skip e tolerancia a eventos desconhecidos.
-- `T00-P10` completo: `FIRST_SLICE_SIM` server-authoritative com DoTs, status, resistencias, passivas, pets, summons, anti-stall, bots de variacao, smoke runtime Supabase e replay rico no cliente.
+- `T00-P10` completo e rework 2026-05-25 aplicado: `FIRST_SLICE_SIM` server-authoritative com Instrumentos Rituais, Doutrinas, Familiares, DoTs, status, resistencias, summons, anti-stall, bots de variacao, smoke runtime Supabase e replay rico no cliente.
 - `T00-P11` completo: Base Manager v0 server-authoritative com `base/state`, `base/collect`, `base/upgrade`, estruturas permanentes, fila de construcao, coleta offline, ledger e idempotencia.
 - `T00-P12` completo: Social/Competicao v0 server-authoritative com `social/state`, guilda alpha, chat de guilda por polling, matchmaking preview com fallback de bot e ranking de season sem bots.
 - `T00-P13` completo: Monetizacao v0 server-authoritative com Battle Pass, Diamante alpha, recompensas diarias/semanais, claims free/premium, ledger, idempotencia e export smoke Android/PC/Web.
@@ -217,7 +217,7 @@ MVP client implementado em `T00-P08`:
 
 - `Solicitar batalha`: envia intencao para `battle/request` e recebe `battle_log_v1`.
 - `Ver resultado`: busca `battle/latest` ou pula o replay atual.
-- Replay rico T00-P10: lista eventos ordenados por `t`/`seq`; DoTs, status, barreiras, resistencias, summons, pets, cooldowns, cura e anti-stall possuem linhas dedicadas; eventos desconhecidos continuam virando fallback.
+- Replay rico T00-P10: lista eventos ordenados por `t`/`seq`; DoTs, status, barreiras, resistencias, summons, Familiares, cooldowns, cura e anti-stall possuem linhas dedicadas; eventos desconhecidos continuam virando fallback.
 - Cliente nao recalcula dano, HP, vencedor, XP, Ossos ou recompensa.
 
 ---

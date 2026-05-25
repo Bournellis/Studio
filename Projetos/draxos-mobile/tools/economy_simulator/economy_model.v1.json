@@ -46,7 +46,7 @@
     {
       "id": "almas",
       "display_name": "Almas",
-      "role": "Upgrade de varinha e spells",
+      "role": "Upgrade de Instrumento Ritual e spells",
       "primary_sources": ["battle", "daily_missions", "weekly_missions", "battle_pass", "base", "limited_packs"],
       "primary_sinks": ["weapon_level", "spell_level", "spell_unlocks"],
       "persistence": "permanent"
@@ -62,7 +62,7 @@
     {
       "id": "sangue",
       "display_name": "Sangue",
-      "role": "Upgrade de pets",
+      "role": "Upgrade de Familiares",
       "primary_sources": ["battle", "daily_missions", "weekly_missions", "battle_pass", "base"],
       "primary_sinks": ["pet_level"],
       "persistence": "permanent"
@@ -70,7 +70,7 @@
     {
       "id": "cristais",
       "display_name": "Cristais",
-      "role": "Upgrade de passivas",
+      "role": "Upgrade de Doutrinas",
       "primary_sources": ["daily_missions", "weekly_missions", "battle_pass", "base"],
       "primary_sinks": ["passive_level"],
       "persistence": "permanent"
@@ -78,7 +78,7 @@
     {
       "id": "ossos",
       "display_name": "Ossos",
-      "role": "Qualidade e crafting da varinha",
+      "role": "Qualidade e crafting do Instrumento Ritual",
       "primary_sources": ["battle", "daily_missions", "weekly_missions", "battle_pass", "base"],
       "primary_sinks": ["weapon_quality"],
       "persistence": "permanent"

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "model_id": "draxos_mobile_progression_lab_v1",
-  "status": "REVIEW",
+  "status": "CRITICAL",
   "saves": [
     {
       "id": "free_50_rewards_2h",
@@ -40,24 +40,29 @@
       },
       "build": {
         "archetype_id": "elemental_mixer",
-        "weapon_type": "varinha_magica",
+        "weapon_type": "orbe_tempestade",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 5,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio_cosmico": 2,
-          "acender": 2
+          "descarga_nervosa": 2,
+          "marca_brasa": 2
         },
         "passive_id": "",
         "passive_level": 0,
@@ -114,15 +119,16 @@
         "id": "free_50_rewards_2h",
         "displayName": "free_50_rewards_2h",
         "level": 8,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 5,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 2,
-          "acender": 2
+          "descarga_nervosa": 2,
+          "marca_brasa": 2
         }
       },
       "manual_checklist": [
@@ -131,7 +137,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L5, spells raio_cosmico, acender.",
+        "Conferir build: arma L5, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -172,26 +178,31 @@
       },
       "build": {
         "archetype_id": "elemental_mixer",
-        "weapon_type": "varinha_magica",
+        "weapon_type": "orbe_tempestade",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 6,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio_cosmico": 5,
-          "acender": 5
+          "descarga_nervosa": 5,
+          "marca_brasa": 5
         },
-        "passive_id": "forca",
+        "passive_id": "pulso_tempestade",
         "passive_level": 3,
         "pet_id": "",
         "pet_level": 0
@@ -246,17 +257,18 @@
         "id": "free_50_rewards_5h",
         "displayName": "free_50_rewards_5h",
         "level": 10,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 6,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 5,
-          "acender": 5
+          "descarga_nervosa": 5,
+          "marca_brasa": 5
         },
-        "passiveId": "forca",
+        "passiveId": "pulso_tempestade",
         "passiveLevel": 3
       },
       "manual_checklist": [
@@ -265,7 +277,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L6, spells raio_cosmico, acender.",
+        "Conferir build: arma L6, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -306,26 +318,31 @@
       },
       "build": {
         "archetype_id": "elemental_mixer",
-        "weapon_type": "varinha_magica",
+        "weapon_type": "orbe_tempestade",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 8,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio_cosmico": 6,
-          "acender": 6
+          "descarga_nervosa": 6,
+          "marca_brasa": 6
         },
-        "passive_id": "forca",
+        "passive_id": "pulso_tempestade",
         "passive_level": 6,
         "pet_id": "",
         "pet_level": 0
@@ -380,17 +397,18 @@
         "id": "free_50_rewards_10h",
         "displayName": "free_50_rewards_10h",
         "level": 12,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 8,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 6,
-          "acender": 6
+          "descarga_nervosa": 6,
+          "marca_brasa": 6
         },
-        "passiveId": "forca",
+        "passiveId": "pulso_tempestade",
         "passiveLevel": 6
       },
       "manual_checklist": [
@@ -399,7 +417,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L8, spells raio_cosmico, acender.",
+        "Conferir build: arma L8, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -441,26 +459,31 @@
       },
       "build": {
         "archetype_id": "elemental_mixer",
-        "weapon_type": "varinha_magica",
+        "weapon_type": "orbe_tempestade",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 9,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio_cosmico": 7,
-          "acender": 7
+          "descarga_nervosa": 7,
+          "marca_brasa": 7
         },
-        "passive_id": "forca",
+        "passive_id": "pulso_tempestade",
         "passive_level": 6,
         "pet_id": "",
         "pet_level": 0
@@ -515,17 +538,18 @@
         "id": "free_50_rewards_15h",
         "displayName": "free_50_rewards_15h",
         "level": 14,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 9,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 7,
-          "acender": 7
+          "descarga_nervosa": 7,
+          "marca_brasa": 7
         },
-        "passiveId": "forca",
+        "passiveId": "pulso_tempestade",
         "passiveLevel": 6
       },
       "manual_checklist": [
@@ -534,7 +558,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L9, spells raio_cosmico, acender.",
+        "Conferir build: arma L9, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -576,28 +600,37 @@
       },
       "build": {
         "archetype_id": "elemental_mixer",
-        "weapon_type": "varinha_magica",
+        "weapon_type": "orbe_tempestade",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 9,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa",
+          "mandato_oculto",
+          "hemorragia_induzida",
+          "coagulo_negro",
+          "raizes_pedra"
         ],
         "spell_levels": {
-          "raio_cosmico": 8,
-          "acender": 8
+          "descarga_nervosa": 8,
+          "marca_brasa": 8
         },
-        "passive_id": "forca",
+        "passive_id": "pulso_tempestade",
         "passive_level": 7,
-        "pet_id": "brasido",
+        "pet_id": "serpe_tempestade",
         "pet_level": 7
       },
       "base": {
@@ -650,19 +683,20 @@
         "id": "free_50_rewards_20h",
         "displayName": "free_50_rewards_20h",
         "level": 15,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 9,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 8,
-          "acender": 8
+          "descarga_nervosa": 8,
+          "marca_brasa": 8
         },
-        "passiveId": "forca",
+        "passiveId": "pulso_tempestade",
         "passiveLevel": 7,
-        "petId": "brasido",
+        "petId": "serpe_tempestade",
         "petLevel": 7
       },
       "manual_checklist": [
@@ -671,7 +705,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L9, spells raio_cosmico, acender.",
+        "Conferir build: arma L9, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -683,14 +717,14 @@
       "hours": 2,
       "status": "PASS",
       "notes": [
-        "Use power 702 as initial matchmaking observation, not final truth."
+        "Use power 682 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_100_rewards_2h",
         "account_type": "progression_lab",
         "level": 8,
         "xp": 1150,
-        "power": 702
+        "power": 682
       },
       "resources": {
         "xp": 1150,
@@ -711,25 +745,28 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "burst_caster",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "funeral_burst",
+        "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 6,
         "spell_slots": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio": 2,
-          "raio_cosmico": 3
+          "descarga_nervosa": 4
         },
         "passive_id": "",
         "passive_level": 0,
@@ -786,15 +823,14 @@
         "id": "free_100_rewards_2h",
         "displayName": "free_100_rewards_2h",
         "level": 8,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 6,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 2,
-          "raio_cosmico": 3
+          "descarga_nervosa": 4
         }
       },
       "manual_checklist": [
@@ -803,7 +839,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L6, spells raio, raio_cosmico.",
+        "Conferir build: arma L6, spells descarga_nervosa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -815,18 +851,18 @@
       "hours": 5,
       "status": "PASS",
       "notes": [
-        "Use power 1143 as initial matchmaking observation, not final truth."
+        "Use power 1003 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_100_rewards_5h",
         "account_type": "progression_lab",
         "level": 11,
         "xp": 2875,
-        "power": 1143
+        "power": 1003
       },
       "resources": {
         "xp": 2875,
-        "almas": 59.5,
+        "almas": 119.5,
         "energia": 57.5,
         "sangue": 72.5,
         "cristais": 8.5,
@@ -843,27 +879,30 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "burst_caster",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "funeral_burst",
+        "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 8,
         "spell_slots": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio": 7,
-          "raio_cosmico": 7
+          "descarga_nervosa": 7
         },
-        "passive_id": "forca",
+        "passive_id": "ossuario_interior",
         "passive_level": 4,
         "pet_id": "",
         "pet_level": 0
@@ -918,17 +957,16 @@
         "id": "free_100_rewards_5h",
         "displayName": "free_100_rewards_5h",
         "level": 11,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 8,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 7,
-          "raio_cosmico": 7
+          "descarga_nervosa": 7
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 4
       },
       "manual_checklist": [
@@ -937,7 +975,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L8, spells raio, raio_cosmico.",
+        "Conferir build: arma L8, spells descarga_nervosa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -949,18 +987,18 @@
       "hours": 10,
       "status": "PASS",
       "notes": [
-        "Use power 1517 as initial matchmaking observation, not final truth."
+        "Use power 1337 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_100_rewards_10h",
         "account_type": "progression_lab",
         "level": 14,
         "xp": 5750,
-        "power": 1517
+        "power": 1337
       },
       "resources": {
         "xp": 5750,
-        "almas": 194,
+        "almas": 283,
         "energia": 115,
         "sangue": 145,
         "cristais": 11,
@@ -977,27 +1015,30 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "burst_caster",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "funeral_burst",
+        "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 11,
         "spell_slots": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio": 9,
-          "raio_cosmico": 9
+          "descarga_nervosa": 9
         },
-        "passive_id": "forca",
+        "passive_id": "ossuario_interior",
         "passive_level": 8,
         "pet_id": "",
         "pet_level": 0
@@ -1052,17 +1093,16 @@
         "id": "free_100_rewards_10h",
         "displayName": "free_100_rewards_10h",
         "level": 14,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 11,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 9,
-          "raio_cosmico": 9
+          "descarga_nervosa": 9
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 8
       },
       "manual_checklist": [
@@ -1071,7 +1111,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L11, spells raio, raio_cosmico.",
+        "Conferir build: arma L11, spells descarga_nervosa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1112,28 +1152,37 @@
       },
       "build": {
         "archetype_id": "elemental_mixer",
-        "weapon_type": "varinha_magica",
+        "weapon_type": "orbe_tempestade",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 12,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa",
+          "mandato_oculto",
+          "hemorragia_induzida",
+          "coagulo_negro",
+          "raizes_pedra"
         ],
         "spell_levels": {
-          "raio_cosmico": 10,
-          "acender": 10
+          "descarga_nervosa": 10,
+          "marca_brasa": 10
         },
-        "passive_id": "forca",
+        "passive_id": "pulso_tempestade",
         "passive_level": 9,
-        "pet_id": "brasido",
+        "pet_id": "serpe_tempestade",
         "pet_level": 10
       },
       "base": {
@@ -1186,19 +1235,20 @@
         "id": "free_100_rewards_15h",
         "displayName": "free_100_rewards_15h",
         "level": 16,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 12,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 10,
-          "acender": 10
+          "descarga_nervosa": 10,
+          "marca_brasa": 10
         },
-        "passiveId": "forca",
+        "passiveId": "pulso_tempestade",
         "passiveLevel": 9,
-        "petId": "brasido",
+        "petId": "serpe_tempestade",
         "petLevel": 10
       },
       "manual_checklist": [
@@ -1207,7 +1257,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L12, spells raio_cosmico, acender.",
+        "Conferir build: arma L12, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1249,28 +1299,37 @@
       },
       "build": {
         "archetype_id": "elemental_mixer",
-        "weapon_type": "varinha_magica",
+        "weapon_type": "orbe_tempestade",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 13,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa",
+          "mandato_oculto",
+          "hemorragia_induzida",
+          "coagulo_negro",
+          "raizes_pedra"
         ],
         "spell_levels": {
-          "raio_cosmico": 11,
-          "acender": 11
+          "descarga_nervosa": 11,
+          "marca_brasa": 11
         },
-        "passive_id": "forca",
+        "passive_id": "pulso_tempestade",
         "passive_level": 10,
-        "pet_id": "brasido",
+        "pet_id": "serpe_tempestade",
         "pet_level": 10
       },
       "base": {
@@ -1323,19 +1382,20 @@
         "id": "free_100_rewards_20h",
         "displayName": "free_100_rewards_20h",
         "level": 17,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 13,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 11,
-          "acender": 11
+          "descarga_nervosa": 11,
+          "marca_brasa": 11
         },
-        "passiveId": "forca",
+        "passiveId": "pulso_tempestade",
         "passiveLevel": 10,
-        "petId": "brasido",
+        "petId": "serpe_tempestade",
         "petLevel": 10
       },
       "manual_checklist": [
@@ -1344,7 +1404,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L13, spells raio_cosmico, acender.",
+        "Conferir build: arma L13, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1357,14 +1417,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 783 as initial matchmaking observation, not final truth."
+        "Use power 763 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_freemium_basic_2h",
         "account_type": "progression_lab",
         "level": 9,
         "xp": 1192,
-        "power": 783
+        "power": 763
       },
       "resources": {
         "xp": 1192,
@@ -1385,25 +1445,28 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "burst_caster",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "funeral_burst",
+        "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 7,
         "spell_slots": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio": 2,
-          "raio_cosmico": 3
+          "descarga_nervosa": 4
         },
         "passive_id": "",
         "passive_level": 0,
@@ -1460,15 +1523,14 @@
         "id": "freemium_basic_2h",
         "displayName": "freemium_basic_2h",
         "level": 9,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 7,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 2,
-          "raio_cosmico": 3
+          "descarga_nervosa": 4
         }
       },
       "manual_checklist": [
@@ -1477,7 +1539,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L7, spells raio, raio_cosmico.",
+        "Conferir build: arma L7, spells descarga_nervosa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1490,18 +1552,18 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 1205 as initial matchmaking observation, not final truth."
+        "Use power 1065 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_freemium_basic_5h",
         "account_type": "progression_lab",
         "level": 11,
         "xp": 2980,
-        "power": 1205
+        "power": 1065
       },
       "resources": {
         "xp": 2980,
-        "almas": 44,
+        "almas": 104,
         "energia": 32,
         "sangue": 79.7,
         "cristais": 7.7,
@@ -1518,27 +1580,30 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "burst_caster",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "funeral_burst",
+        "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 9,
         "spell_slots": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio": 7,
-          "raio_cosmico": 8
+          "descarga_nervosa": 8
         },
-        "passive_id": "forca",
+        "passive_id": "ossuario_interior",
         "passive_level": 5,
         "pet_id": "",
         "pet_level": 0
@@ -1593,17 +1658,16 @@
         "id": "freemium_basic_5h",
         "displayName": "freemium_basic_5h",
         "level": 11,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 9,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 7,
-          "raio_cosmico": 8
+          "descarga_nervosa": 8
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 5
       },
       "manual_checklist": [
@@ -1612,7 +1676,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L9, spells raio, raio_cosmico.",
+        "Conferir build: arma L9, spells descarga_nervosa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1625,18 +1689,18 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 1577 as initial matchmaking observation, not final truth."
+        "Use power 1377 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_freemium_basic_10h",
         "account_type": "progression_lab",
         "level": 14,
         "xp": 5960,
-        "power": 1577
+        "power": 1377
       },
       "resources": {
         "xp": 5960,
-        "almas": 181,
+        "almas": 290,
         "energia": 64,
         "sangue": 159.4,
         "cristais": 11.4,
@@ -1653,27 +1717,30 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "burst_caster",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "funeral_burst",
+        "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 11,
         "spell_slots": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio": 10,
-          "raio_cosmico": 10
+          "descarga_nervosa": 10
         },
-        "passive_id": "forca",
+        "passive_id": "ossuario_interior",
         "passive_level": 9,
         "pet_id": "",
         "pet_level": 0
@@ -1728,17 +1795,16 @@
         "id": "freemium_basic_10h",
         "displayName": "freemium_basic_10h",
         "level": 14,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 11,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 10,
-          "raio_cosmico": 10
+          "descarga_nervosa": 10
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 9
       },
       "manual_checklist": [
@@ -1747,7 +1813,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L11, spells raio, raio_cosmico.",
+        "Conferir build: arma L11, spells descarga_nervosa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1788,29 +1854,38 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "pet_handler",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "familiar_handler",
+        "weapon_type": "varinha_cinzas",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 13,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa",
+          "mandato_oculto",
+          "hemorragia_induzida",
+          "coagulo_negro",
+          "raizes_pedra"
         ],
         "spell_levels": {
-          "raio_cosmico": 11,
-          "acender": 11
+          "sussurro_medo": 11,
+          "marca_brasa": 11
         },
-        "passive_id": "resistencia",
+        "passive_id": "pacto_familiar",
         "passive_level": 10,
-        "pet_id": "familiar_cinzento",
+        "pet_id": "corvo_pressagio",
         "pet_level": 11
       },
       "base": {
@@ -1863,19 +1938,20 @@
         "id": "freemium_basic_15h",
         "displayName": "freemium_basic_15h",
         "level": 16,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 13,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 11,
-          "acender": 11
+          "sussurro_medo": 11,
+          "marca_brasa": 11
         },
-        "passiveId": "resistencia",
+        "passiveId": "pacto_familiar",
         "passiveLevel": 10,
-        "petId": "familiar_cinzento",
+        "petId": "corvo_pressagio",
         "petLevel": 11
       },
       "manual_checklist": [
@@ -1884,7 +1960,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L13, spells raio_cosmico, acender.",
+        "Conferir build: arma L13, spells sussurro_medo, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1926,29 +2002,38 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "pet_handler",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "familiar_handler",
+        "weapon_type": "varinha_cinzas",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 14,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa",
+          "mandato_oculto",
+          "hemorragia_induzida",
+          "coagulo_negro",
+          "raizes_pedra"
         ],
         "spell_levels": {
-          "raio_cosmico": 12,
-          "acender": 12
+          "sussurro_medo": 12,
+          "marca_brasa": 12
         },
-        "passive_id": "resistencia",
+        "passive_id": "pacto_familiar",
         "passive_level": 11,
-        "pet_id": "familiar_cinzento",
+        "pet_id": "corvo_pressagio",
         "pet_level": 11
       },
       "base": {
@@ -2001,19 +2086,20 @@
         "id": "freemium_basic_20h",
         "displayName": "freemium_basic_20h",
         "level": 17,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 14,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 12,
-          "acender": 12
+          "sussurro_medo": 12,
+          "marca_brasa": 12
         },
-        "passiveId": "resistencia",
+        "passiveId": "pacto_familiar",
         "passiveLevel": 11,
-        "petId": "familiar_cinzento",
+        "petId": "corvo_pressagio",
         "petLevel": 11
       },
       "manual_checklist": [
@@ -2022,7 +2108,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L14, spells raio_cosmico, acender.",
+        "Conferir build: arma L14, spells sussurro_medo, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2035,14 +2121,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 833 as initial matchmaking observation, not final truth."
+        "Use power 813 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_spender_light_2h",
         "account_type": "progression_lab",
         "level": 9,
         "xp": 1364,
-        "power": 833
+        "power": 813
       },
       "resources": {
         "xp": 1364,
@@ -2063,25 +2149,28 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "burst_caster",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "funeral_burst",
+        "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 8,
         "spell_slots": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio": 3,
-          "raio_cosmico": 3
+          "descarga_nervosa": 5
         },
         "passive_id": "",
         "passive_level": 0,
@@ -2138,15 +2227,14 @@
         "id": "spender_light_2h",
         "displayName": "spender_light_2h",
         "level": 9,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 8,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 3,
-          "raio_cosmico": 3
+          "descarga_nervosa": 5
         }
       },
       "manual_checklist": [
@@ -2155,7 +2243,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L8, spells raio, raio_cosmico.",
+        "Conferir build: arma L8, spells descarga_nervosa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2168,18 +2256,18 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 1375 as initial matchmaking observation, not final truth."
+        "Use power 1195 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_spender_light_5h",
         "account_type": "progression_lab",
         "level": 12,
         "xp": 3410,
-        "power": 1375
+        "power": 1195
       },
       "resources": {
         "xp": 3410,
-        "almas": 44,
+        "almas": 133,
         "energia": 35.5,
         "sangue": 101.88,
         "cristais": 7.7,
@@ -2196,27 +2284,30 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "burst_caster",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "funeral_burst",
+        "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 10,
         "spell_slots": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio": 9,
-          "raio_cosmico": 9
+          "descarga_nervosa": 9
         },
-        "passive_id": "forca",
+        "passive_id": "ossuario_interior",
         "passive_level": 7,
         "pet_id": "",
         "pet_level": 0
@@ -2271,17 +2362,16 @@
         "id": "spender_light_5h",
         "displayName": "spender_light_5h",
         "level": 12,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 10,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 9,
-          "raio_cosmico": 9
+          "descarga_nervosa": 9
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 7
       },
       "manual_checklist": [
@@ -2290,7 +2380,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L10, spells raio, raio_cosmico.",
+        "Conferir build: arma L10, spells descarga_nervosa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2331,29 +2421,38 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "pet_handler",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "familiar_handler",
+        "weapon_type": "varinha_cinzas",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 13,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa",
+          "mandato_oculto",
+          "hemorragia_induzida",
+          "coagulo_negro",
+          "raizes_pedra"
         ],
         "spell_levels": {
-          "raio_cosmico": 12,
-          "acender": 12
+          "sussurro_medo": 12,
+          "marca_brasa": 12
         },
-        "passive_id": "resistencia",
+        "passive_id": "pacto_familiar",
         "passive_level": 10,
-        "pet_id": "familiar_cinzento",
+        "pet_id": "corvo_pressagio",
         "pet_level": 11
       },
       "base": {
@@ -2406,19 +2505,20 @@
         "id": "spender_light_10h",
         "displayName": "spender_light_10h",
         "level": 15,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 13,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 12,
-          "acender": 12
+          "sussurro_medo": 12,
+          "marca_brasa": 12
         },
-        "passiveId": "resistencia",
+        "passiveId": "pacto_familiar",
         "passiveLevel": 10,
-        "petId": "familiar_cinzento",
+        "petId": "corvo_pressagio",
         "petLevel": 11
       },
       "manual_checklist": [
@@ -2427,7 +2527,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L13, spells raio_cosmico, acender.",
+        "Conferir build: arma L13, spells sussurro_medo, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2468,29 +2568,38 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "pet_handler",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "familiar_handler",
+        "weapon_type": "varinha_cinzas",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 14,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa",
+          "mandato_oculto",
+          "hemorragia_induzida",
+          "coagulo_negro",
+          "raizes_pedra"
         ],
         "spell_levels": {
-          "raio_cosmico": 12,
-          "acender": 12
+          "sussurro_medo": 12,
+          "marca_brasa": 12
         },
-        "passive_id": "resistencia",
+        "passive_id": "pacto_familiar",
         "passive_level": 11,
-        "pet_id": "familiar_cinzento",
+        "pet_id": "corvo_pressagio",
         "pet_level": 12
       },
       "base": {
@@ -2543,19 +2652,20 @@
         "id": "spender_light_15h",
         "displayName": "spender_light_15h",
         "level": 16,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 14,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 12,
-          "acender": 12
+          "sussurro_medo": 12,
+          "marca_brasa": 12
         },
-        "passiveId": "resistencia",
+        "passiveId": "pacto_familiar",
         "passiveLevel": 11,
-        "petId": "familiar_cinzento",
+        "petId": "corvo_pressagio",
         "petLevel": 12
       },
       "manual_checklist": [
@@ -2564,7 +2674,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L14, spells raio_cosmico, acender.",
+        "Conferir build: arma L14, spells sussurro_medo, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2605,29 +2715,38 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "pet_handler",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "familiar_handler",
+        "weapon_type": "varinha_cinzas",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 16,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa",
+          "mandato_oculto",
+          "hemorragia_induzida",
+          "coagulo_negro",
+          "raizes_pedra"
         ],
         "spell_levels": {
-          "raio_cosmico": 14,
-          "acender": 14
+          "sussurro_medo": 14,
+          "marca_brasa": 14
         },
-        "passive_id": "resistencia",
+        "passive_id": "pacto_familiar",
         "passive_level": 13,
-        "pet_id": "familiar_cinzento",
+        "pet_id": "corvo_pressagio",
         "pet_level": 13
       },
       "base": {
@@ -2680,19 +2799,20 @@
         "id": "spender_light_20h",
         "displayName": "spender_light_20h",
         "level": 18,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 16,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 14,
-          "acender": 14
+          "sussurro_medo": 14,
+          "marca_brasa": 14
         },
-        "passiveId": "resistencia",
+        "passiveId": "pacto_familiar",
         "passiveLevel": 13,
-        "petId": "familiar_cinzento",
+        "petId": "corvo_pressagio",
         "petLevel": 13
       },
       "manual_checklist": [
@@ -2701,7 +2821,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L16, spells raio_cosmico, acender.",
+        "Conferir build: arma L16, spells sussurro_medo, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2714,14 +2834,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 893 as initial matchmaking observation, not final truth."
+        "Use power 873 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_max_spender_2h",
         "account_type": "progression_lab",
         "level": 9,
         "xp": 1616,
-        "power": 893
+        "power": 873
       },
       "resources": {
         "xp": 1616,
@@ -2742,25 +2862,28 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "burst_caster",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "funeral_burst",
+        "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 9,
         "spell_slots": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio": 3,
-          "raio_cosmico": 4
+          "descarga_nervosa": 6
         },
         "passive_id": "",
         "passive_level": 0,
@@ -2817,15 +2940,14 @@
         "id": "max_spender_2h",
         "displayName": "max_spender_2h",
         "level": 9,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 9,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 3,
-          "raio_cosmico": 4
+          "descarga_nervosa": 6
         }
       },
       "manual_checklist": [
@@ -2834,7 +2956,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L9, spells raio, raio_cosmico.",
+        "Conferir build: arma L9, spells descarga_nervosa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2847,18 +2969,18 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 1477 as initial matchmaking observation, not final truth."
+        "Use power 1317 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_max_spender_5h",
         "account_type": "progression_lab",
         "level": 12,
         "xp": 4040,
-        "power": 1477
+        "power": 1317
       },
       "resources": {
         "xp": 4040,
-        "almas": 62.5,
+        "almas": 127.5,
         "energia": 51,
         "sangue": 130.75,
         "cristais": 12,
@@ -2875,27 +2997,30 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "burst_caster",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "funeral_burst",
+        "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 12,
         "spell_slots": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio": 9,
-          "raio_cosmico": 10
+          "descarga_nervosa": 11
         },
-        "passive_id": "forca",
+        "passive_id": "ossuario_interior",
         "passive_level": 8,
         "pet_id": "",
         "pet_level": 0
@@ -2950,17 +3075,16 @@
         "id": "max_spender_5h",
         "displayName": "max_spender_5h",
         "level": 12,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 12,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 9,
-          "raio_cosmico": 10
+          "descarga_nervosa": 11
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 8
       },
       "manual_checklist": [
@@ -2969,7 +3093,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L12, spells raio, raio_cosmico.",
+        "Conferir build: arma L12, spells descarga_nervosa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -3010,29 +3134,38 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "pet_handler",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "familiar_handler",
+        "weapon_type": "varinha_cinzas",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 15,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa",
+          "mandato_oculto",
+          "hemorragia_induzida",
+          "coagulo_negro",
+          "raizes_pedra"
         ],
         "spell_levels": {
-          "raio_cosmico": 13,
-          "acender": 13
+          "sussurro_medo": 13,
+          "marca_brasa": 13
         },
-        "passive_id": "resistencia",
+        "passive_id": "pacto_familiar",
         "passive_level": 11,
-        "pet_id": "familiar_cinzento",
+        "pet_id": "corvo_pressagio",
         "pet_level": 13
       },
       "base": {
@@ -3085,19 +3218,20 @@
         "id": "max_spender_10h",
         "displayName": "max_spender_10h",
         "level": 15,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 15,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 13,
-          "acender": 13
+          "sussurro_medo": 13,
+          "marca_brasa": 13
         },
-        "passiveId": "resistencia",
+        "passiveId": "pacto_familiar",
         "passiveLevel": 11,
-        "petId": "familiar_cinzento",
+        "petId": "corvo_pressagio",
         "petLevel": 13
       },
       "manual_checklist": [
@@ -3106,7 +3240,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L15, spells raio_cosmico, acender.",
+        "Conferir build: arma L15, spells sussurro_medo, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -3147,29 +3281,38 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "pet_handler",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "familiar_handler",
+        "weapon_type": "varinha_cinzas",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 17,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa",
+          "mandato_oculto",
+          "hemorragia_induzida",
+          "coagulo_negro",
+          "raizes_pedra"
         ],
         "spell_levels": {
-          "raio_cosmico": 15,
-          "acender": 15
+          "sussurro_medo": 15,
+          "marca_brasa": 15
         },
-        "passive_id": "resistencia",
+        "passive_id": "pacto_familiar",
         "passive_level": 14,
-        "pet_id": "familiar_cinzento",
+        "pet_id": "corvo_pressagio",
         "pet_level": 14
       },
       "base": {
@@ -3222,19 +3365,20 @@
         "id": "max_spender_15h",
         "displayName": "max_spender_15h",
         "level": 17,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 17,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 15,
-          "acender": 15
+          "sussurro_medo": 15,
+          "marca_brasa": 15
         },
-        "passiveId": "resistencia",
+        "passiveId": "pacto_familiar",
         "passiveLevel": 14,
-        "petId": "familiar_cinzento",
+        "petId": "corvo_pressagio",
         "petLevel": 14
       },
       "manual_checklist": [
@@ -3243,7 +3387,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L17, spells raio_cosmico, acender.",
+        "Conferir build: arma L17, spells sussurro_medo, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -3284,29 +3428,38 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "pet_handler",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "familiar_handler",
+        "weapon_type": "varinha_cinzas",
         "weapon_quality": "reforcada",
         "weapon_quality_tier": 1,
         "weapon_level": 19,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa",
+          "mandato_oculto",
+          "hemorragia_induzida",
+          "coagulo_negro",
+          "raizes_pedra"
         ],
         "spell_levels": {
-          "raio_cosmico": 17,
-          "acender": 17
+          "sussurro_medo": 17,
+          "marca_brasa": 17
         },
-        "passive_id": "resistencia",
+        "passive_id": "pacto_familiar",
         "passive_level": 15,
-        "pet_id": "familiar_cinzento",
+        "pet_id": "corvo_pressagio",
         "pet_level": 16
       },
       "base": {
@@ -3359,19 +3512,20 @@
         "id": "max_spender_20h",
         "displayName": "max_spender_20h",
         "level": 19,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 19,
         "weaponQualityTier": 1,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 17,
-          "acender": 17
+          "sussurro_medo": 17,
+          "marca_brasa": 17
         },
-        "passiveId": "resistencia",
+        "passiveId": "pacto_familiar",
         "passiveLevel": 15,
-        "petId": "familiar_cinzento",
+        "petId": "corvo_pressagio",
         "petLevel": 16
       },
       "manual_checklist": [
@@ -3380,7 +3534,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L19, spells raio_cosmico, acender.",
+        "Conferir build: arma L19, spells sussurro_medo, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     }
@@ -3842,7 +3996,7 @@
       "milestone_id": "2h",
       "profile_id": "free_50_rewards",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": -7.26,
+      "power_gap_percent": -4.55,
       "level_gap": 0,
       "premium_spend": 0,
       "status": "PASS"
@@ -3851,7 +4005,7 @@
       "milestone_id": "2h",
       "profile_id": "freemium_basic",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": 11.54,
+      "power_gap_percent": 11.88,
       "level_gap": 1,
       "premium_spend": 0,
       "status": "PASS"
@@ -3860,7 +4014,7 @@
       "milestone_id": "2h",
       "profile_id": "spender_light",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": 18.66,
+      "power_gap_percent": 19.21,
       "level_gap": 1,
       "premium_spend": 16,
       "status": "PASS"
@@ -3869,7 +4023,7 @@
       "milestone_id": "2h",
       "profile_id": "max_spender",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": 27.21,
+      "power_gap_percent": 28.01,
       "level_gap": 1,
       "premium_spend": 36,
       "status": "PASS"
@@ -3878,7 +4032,7 @@
       "milestone_id": "5h",
       "profile_id": "free_50_rewards",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": -18.29,
+      "power_gap_percent": -6.88,
       "level_gap": -1,
       "premium_spend": 0,
       "status": "PASS"
@@ -3887,7 +4041,7 @@
       "milestone_id": "5h",
       "profile_id": "freemium_basic",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": 5.42,
+      "power_gap_percent": 6.18,
       "level_gap": 0,
       "premium_spend": 0,
       "status": "PASS"
@@ -3896,7 +4050,7 @@
       "milestone_id": "5h",
       "profile_id": "spender_light",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": 20.3,
+      "power_gap_percent": 19.14,
       "level_gap": 1,
       "premium_spend": 41,
       "status": "PASS"
@@ -3905,7 +4059,7 @@
       "milestone_id": "5h",
       "profile_id": "max_spender",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": 29.22,
+      "power_gap_percent": 31.31,
       "level_gap": 1,
       "premium_spend": 90,
       "status": "PASS"
@@ -3914,7 +4068,7 @@
       "milestone_id": "10h",
       "profile_id": "free_50_rewards",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": -22.48,
+      "power_gap_percent": -12.04,
       "level_gap": -2,
       "premium_spend": 0,
       "status": "PASS"
@@ -3923,7 +4077,7 @@
       "milestone_id": "10h",
       "profile_id": "freemium_basic",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": 3.96,
+      "power_gap_percent": 2.99,
       "level_gap": 0,
       "premium_spend": 0,
       "status": "PASS"
@@ -3932,19 +4086,19 @@
       "milestone_id": "10h",
       "profile_id": "spender_light",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": 28.94,
+      "power_gap_percent": 46.3,
       "level_gap": 1,
       "premium_spend": 81,
-      "status": "PASS"
+      "status": "REVIEW"
     },
     {
       "milestone_id": "10h",
       "profile_id": "max_spender",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": 39.02,
+      "power_gap_percent": 57.74,
       "level_gap": 1,
       "premium_spend": 180,
-      "status": "REVIEW"
+      "status": "CRITICAL"
     },
     {
       "milestone_id": "15h",
@@ -4023,56 +4177,56 @@
     {
       "component": "level",
       "current_weight": 50,
-      "observed_share_percent": 43,
+      "observed_share_percent": 44.23,
       "recommendation": "Keep as baseline until Battle Lab matchup data disagrees.",
       "status": "PASS"
     },
     {
       "component": "weapon_level",
       "current_weight": 30,
-      "observed_share_percent": 21.16,
+      "observed_share_percent": 21.77,
       "recommendation": "Keep as baseline until Battle Lab matchup data disagrees.",
       "status": "PASS"
     },
     {
       "component": "spell_level",
       "current_weight": 20,
-      "observed_share_percent": 22.5,
+      "observed_share_percent": 20.29,
       "recommendation": "Keep as baseline until Battle Lab matchup data disagrees.",
       "status": "PASS"
     },
     {
       "component": "pet_level",
       "current_weight": 15,
-      "observed_share_percent": 4.94,
+      "observed_share_percent": 5.08,
       "recommendation": "Keep as baseline until Battle Lab matchup data disagrees.",
       "status": "PASS"
     },
     {
       "component": "passive_level",
       "current_weight": 10,
-      "observed_share_percent": 4.56,
+      "observed_share_percent": 4.69,
       "recommendation": "Keep as baseline until Battle Lab matchup data disagrees.",
       "status": "PASS"
     },
     {
       "component": "weapon_quality_tier",
       "current_weight": 25,
-      "observed_share_percent": 0.06,
+      "observed_share_percent": 0.07,
       "recommendation": "Keep as baseline until Battle Lab matchup data disagrees.",
       "status": "PASS"
     },
     {
       "component": "base_stats_level",
       "current_weight": 8,
-      "observed_share_percent": 2.57,
+      "observed_share_percent": 2.65,
       "recommendation": "Keep as baseline until Battle Lab matchup data disagrees.",
       "status": "PASS"
     },
     {
       "component": "base_average_level",
       "current_weight": 4,
-      "observed_share_percent": 1.19,
+      "observed_share_percent": 1.23,
       "recommendation": "Keep as baseline until Battle Lab matchup data disagrees.",
       "status": "PASS"
     }
@@ -4082,7 +4236,7 @@
       "id": "bot_free_50_rewards_2h_m12",
       "milestone_id": "2h",
       "profile_id": "free_50_rewards",
-      "archetype_id": "starter_wand",
+      "archetype_id": "starter_instrument",
       "target_power": 573,
       "power_band": "band_002",
       "level": 8,
@@ -4090,6 +4244,7 @@
         "id": "bot_free_50_rewards_2h_-12",
         "displayName": "bot_free_50_rewards_2h_-12",
         "level": 8,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 5,
         "weaponQualityTier": 0,
         "spellIds": [],
@@ -4108,15 +4263,16 @@
         "id": "bot_free_50_rewards_2h_0",
         "displayName": "bot_free_50_rewards_2h_0",
         "level": 8,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 5,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 2,
-          "acender": 2
+          "descarga_nervosa": 2,
+          "marca_brasa": 2
         }
       }
     },
@@ -4124,7 +4280,7 @@
       "id": "bot_free_50_rewards_2h_p12",
       "milestone_id": "2h",
       "profile_id": "free_50_rewards",
-      "archetype_id": "burst_caster",
+      "archetype_id": "funeral_burst",
       "target_power": 729,
       "power_band": "band_003",
       "level": 8,
@@ -4132,15 +4288,14 @@
         "id": "bot_free_50_rewards_2h_12",
         "displayName": "bot_free_50_rewards_2h_12",
         "level": 8,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 5,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 2,
-          "raio_cosmico": 2
+          "descarga_nervosa": 2
         }
       }
     },
@@ -4148,7 +4303,7 @@
       "id": "bot_free_50_rewards_5h_m12",
       "milestone_id": "5h",
       "profile_id": "free_50_rewards",
-      "archetype_id": "starter_wand",
+      "archetype_id": "starter_instrument",
       "target_power": 822,
       "power_band": "band_003",
       "level": 10,
@@ -4156,6 +4311,7 @@
         "id": "bot_free_50_rewards_5h_-12",
         "displayName": "bot_free_50_rewards_5h_-12",
         "level": 10,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 6,
         "weaponQualityTier": 0,
         "spellIds": [],
@@ -4175,17 +4331,18 @@
         "id": "bot_free_50_rewards_5h_0",
         "displayName": "bot_free_50_rewards_5h_0",
         "level": 10,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 6,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 5,
-          "acender": 5
+          "descarga_nervosa": 5,
+          "marca_brasa": 5
         },
-        "passiveId": "forca",
+        "passiveId": "pulso_tempestade",
         "passiveLevel": 3
       }
     },
@@ -4193,7 +4350,7 @@
       "id": "bot_free_50_rewards_5h_p12",
       "milestone_id": "5h",
       "profile_id": "free_50_rewards",
-      "archetype_id": "burst_caster",
+      "archetype_id": "funeral_burst",
       "target_power": 1046,
       "power_band": "band_003",
       "level": 10,
@@ -4201,17 +4358,16 @@
         "id": "bot_free_50_rewards_5h_12",
         "displayName": "bot_free_50_rewards_5h_12",
         "level": 10,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 6,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 6,
-          "raio_cosmico": 6
+          "descarga_nervosa": 6
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 3
       }
     },
@@ -4219,7 +4375,7 @@
       "id": "bot_free_50_rewards_10h_m12",
       "milestone_id": "10h",
       "profile_id": "free_50_rewards",
-      "archetype_id": "starter_wand",
+      "archetype_id": "starter_instrument",
       "target_power": 1035,
       "power_band": "band_003",
       "level": 12,
@@ -4227,6 +4383,7 @@
         "id": "bot_free_50_rewards_10h_-12",
         "displayName": "bot_free_50_rewards_10h_-12",
         "level": 12,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 8,
         "weaponQualityTier": 0,
         "spellIds": [],
@@ -4246,17 +4403,18 @@
         "id": "bot_free_50_rewards_10h_0",
         "displayName": "bot_free_50_rewards_10h_0",
         "level": 12,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 8,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 6,
-          "acender": 6
+          "descarga_nervosa": 6,
+          "marca_brasa": 6
         },
-        "passiveId": "forca",
+        "passiveId": "pulso_tempestade",
         "passiveLevel": 6
       }
     },
@@ -4264,7 +4422,7 @@
       "id": "bot_free_50_rewards_10h_p12",
       "milestone_id": "10h",
       "profile_id": "free_50_rewards",
-      "archetype_id": "burst_caster",
+      "archetype_id": "funeral_burst",
       "target_power": 1317,
       "power_band": "band_004",
       "level": 12,
@@ -4272,17 +4430,16 @@
         "id": "bot_free_50_rewards_10h_12",
         "displayName": "bot_free_50_rewards_10h_12",
         "level": 12,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 8,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 7,
-          "raio_cosmico": 7
+          "descarga_nervosa": 7
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 6
       }
     },
@@ -4290,7 +4447,7 @@
       "id": "bot_free_50_rewards_15h_m12",
       "milestone_id": "15h",
       "profile_id": "free_50_rewards",
-      "archetype_id": "starter_wand",
+      "archetype_id": "starter_instrument",
       "target_power": 1195,
       "power_band": "band_003",
       "level": 14,
@@ -4298,6 +4455,7 @@
         "id": "bot_free_50_rewards_15h_-12",
         "displayName": "bot_free_50_rewards_15h_-12",
         "level": 14,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 9,
         "weaponQualityTier": 0,
         "spellIds": [],
@@ -4317,17 +4475,18 @@
         "id": "bot_free_50_rewards_15h_0",
         "displayName": "bot_free_50_rewards_15h_0",
         "level": 14,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 9,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 7,
-          "acender": 7
+          "descarga_nervosa": 7,
+          "marca_brasa": 7
         },
-        "passiveId": "forca",
+        "passiveId": "pulso_tempestade",
         "passiveLevel": 6
       }
     },
@@ -4335,7 +4494,7 @@
       "id": "bot_free_50_rewards_15h_p12",
       "milestone_id": "15h",
       "profile_id": "free_50_rewards",
-      "archetype_id": "burst_caster",
+      "archetype_id": "funeral_burst",
       "target_power": 1521,
       "power_band": "band_004",
       "level": 14,
@@ -4343,17 +4502,16 @@
         "id": "bot_free_50_rewards_15h_12",
         "displayName": "bot_free_50_rewards_15h_12",
         "level": 14,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 9,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 8,
-          "raio_cosmico": 8
+          "descarga_nervosa": 8
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 6
       }
     },
@@ -4361,7 +4519,7 @@
       "id": "bot_free_50_rewards_20h_m12",
       "milestone_id": "20h",
       "profile_id": "free_50_rewards",
-      "archetype_id": "starter_wand",
+      "archetype_id": "starter_instrument",
       "target_power": 1379,
       "power_band": "band_004",
       "level": 15,
@@ -4369,6 +4527,7 @@
         "id": "bot_free_50_rewards_20h_-12",
         "displayName": "bot_free_50_rewards_20h_-12",
         "level": 15,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 9,
         "weaponQualityTier": 0,
         "spellIds": [],
@@ -4389,19 +4548,20 @@
         "id": "bot_free_50_rewards_20h_0",
         "displayName": "bot_free_50_rewards_20h_0",
         "level": 15,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 9,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 8,
-          "acender": 8
+          "descarga_nervosa": 8,
+          "marca_brasa": 8
         },
-        "passiveId": "forca",
+        "passiveId": "pulso_tempestade",
         "passiveLevel": 7,
-        "petId": "brasido",
+        "petId": "serpe_tempestade",
         "petLevel": 7
       }
     },
@@ -4409,7 +4569,7 @@
       "id": "bot_free_50_rewards_20h_p12",
       "milestone_id": "20h",
       "profile_id": "free_50_rewards",
-      "archetype_id": "burst_caster",
+      "archetype_id": "funeral_burst",
       "target_power": 1755,
       "power_band": "band_004",
       "level": 15,
@@ -4417,19 +4577,18 @@
         "id": "bot_free_50_rewards_20h_12",
         "displayName": "bot_free_50_rewards_20h_12",
         "level": 15,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 9,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 9,
-          "raio_cosmico": 9
+          "descarga_nervosa": 9
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 7,
-        "petId": "brasido",
+        "petId": "cranio_errante",
         "petLevel": 7
       }
     },
@@ -4437,14 +4596,15 @@
       "id": "bot_free_100_rewards_2h_m12",
       "milestone_id": "2h",
       "profile_id": "free_100_rewards",
-      "archetype_id": "starter_wand",
-      "target_power": 618,
-      "power_band": "band_003",
+      "archetype_id": "starter_instrument",
+      "target_power": 600,
+      "power_band": "band_002",
       "level": 8,
       "build": {
         "id": "bot_free_100_rewards_2h_-12",
         "displayName": "bot_free_100_rewards_2h_-12",
         "level": 8,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 6,
         "weaponQualityTier": 0,
         "spellIds": [],
@@ -4455,23 +4615,22 @@
       "id": "bot_free_100_rewards_2h_p0",
       "milestone_id": "2h",
       "profile_id": "free_100_rewards",
-      "archetype_id": "burst_caster",
-      "target_power": 702,
+      "archetype_id": "funeral_burst",
+      "target_power": 682,
       "power_band": "band_003",
       "level": 8,
       "build": {
         "id": "bot_free_100_rewards_2h_0",
         "displayName": "bot_free_100_rewards_2h_0",
         "level": 8,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 6,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 2,
-          "raio_cosmico": 2
+          "descarga_nervosa": 4
         }
       }
     },
@@ -4479,23 +4638,22 @@
       "id": "bot_free_100_rewards_2h_p12",
       "milestone_id": "2h",
       "profile_id": "free_100_rewards",
-      "archetype_id": "burst_caster",
-      "target_power": 786,
+      "archetype_id": "funeral_burst",
+      "target_power": 764,
       "power_band": "band_003",
       "level": 8,
       "build": {
         "id": "bot_free_100_rewards_2h_12",
         "displayName": "bot_free_100_rewards_2h_12",
         "level": 8,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 6,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 2,
-          "raio_cosmico": 2
+          "descarga_nervosa": 4
         }
       }
     },
@@ -4503,14 +4661,15 @@
       "id": "bot_free_100_rewards_5h_m12",
       "milestone_id": "5h",
       "profile_id": "free_100_rewards",
-      "archetype_id": "starter_wand",
-      "target_power": 1006,
+      "archetype_id": "starter_instrument",
+      "target_power": 883,
       "power_band": "band_003",
       "level": 11,
       "build": {
         "id": "bot_free_100_rewards_5h_-12",
         "displayName": "bot_free_100_rewards_5h_-12",
         "level": 11,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 8,
         "weaponQualityTier": 0,
         "spellIds": [],
@@ -4522,25 +4681,24 @@
       "id": "bot_free_100_rewards_5h_p0",
       "milestone_id": "5h",
       "profile_id": "free_100_rewards",
-      "archetype_id": "burst_caster",
-      "target_power": 1143,
+      "archetype_id": "funeral_burst",
+      "target_power": 1003,
       "power_band": "band_003",
       "level": 11,
       "build": {
         "id": "bot_free_100_rewards_5h_0",
         "displayName": "bot_free_100_rewards_5h_0",
         "level": 11,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 8,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 7,
-          "raio_cosmico": 7
+          "descarga_nervosa": 7
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 4
       }
     },
@@ -4548,25 +4706,24 @@
       "id": "bot_free_100_rewards_5h_p12",
       "milestone_id": "5h",
       "profile_id": "free_100_rewards",
-      "archetype_id": "burst_caster",
-      "target_power": 1280,
-      "power_band": "band_004",
+      "archetype_id": "funeral_burst",
+      "target_power": 1123,
+      "power_band": "band_003",
       "level": 11,
       "build": {
         "id": "bot_free_100_rewards_5h_12",
         "displayName": "bot_free_100_rewards_5h_12",
         "level": 11,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 8,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 8,
-          "raio_cosmico": 8
+          "descarga_nervosa": 8
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 4
       }
     },
@@ -4574,14 +4731,15 @@
       "id": "bot_free_100_rewards_10h_m12",
       "milestone_id": "10h",
       "profile_id": "free_100_rewards",
-      "archetype_id": "starter_wand",
-      "target_power": 1335,
-      "power_band": "band_004",
+      "archetype_id": "starter_instrument",
+      "target_power": 1177,
+      "power_band": "band_003",
       "level": 14,
       "build": {
         "id": "bot_free_100_rewards_10h_-12",
         "displayName": "bot_free_100_rewards_10h_-12",
         "level": 14,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 11,
         "weaponQualityTier": 0,
         "spellIds": [],
@@ -4593,25 +4751,24 @@
       "id": "bot_free_100_rewards_10h_p0",
       "milestone_id": "10h",
       "profile_id": "free_100_rewards",
-      "archetype_id": "burst_caster",
-      "target_power": 1517,
+      "archetype_id": "funeral_burst",
+      "target_power": 1337,
       "power_band": "band_004",
       "level": 14,
       "build": {
         "id": "bot_free_100_rewards_10h_0",
         "displayName": "bot_free_100_rewards_10h_0",
         "level": 14,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 11,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 9,
-          "raio_cosmico": 9
+          "descarga_nervosa": 9
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 8
       }
     },
@@ -4619,25 +4776,24 @@
       "id": "bot_free_100_rewards_10h_p12",
       "milestone_id": "10h",
       "profile_id": "free_100_rewards",
-      "archetype_id": "burst_caster",
-      "target_power": 1699,
+      "archetype_id": "funeral_burst",
+      "target_power": 1497,
       "power_band": "band_004",
       "level": 14,
       "build": {
         "id": "bot_free_100_rewards_10h_12",
         "displayName": "bot_free_100_rewards_10h_12",
         "level": 14,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 11,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 10,
-          "raio_cosmico": 10
+          "descarga_nervosa": 10
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 8
       }
     },
@@ -4645,7 +4801,7 @@
       "id": "bot_free_100_rewards_15h_m12",
       "milestone_id": "15h",
       "profile_id": "free_100_rewards",
-      "archetype_id": "starter_wand",
+      "archetype_id": "starter_instrument",
       "target_power": 1645,
       "power_band": "band_004",
       "level": 16,
@@ -4653,6 +4809,7 @@
         "id": "bot_free_100_rewards_15h_-12",
         "displayName": "bot_free_100_rewards_15h_-12",
         "level": 16,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 12,
         "weaponQualityTier": 0,
         "spellIds": [],
@@ -4673,19 +4830,20 @@
         "id": "bot_free_100_rewards_15h_0",
         "displayName": "bot_free_100_rewards_15h_0",
         "level": 16,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 12,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 10,
-          "acender": 10
+          "descarga_nervosa": 10,
+          "marca_brasa": 10
         },
-        "passiveId": "forca",
+        "passiveId": "pulso_tempestade",
         "passiveLevel": 9,
-        "petId": "brasido",
+        "petId": "serpe_tempestade",
         "petLevel": 10
       }
     },
@@ -4693,7 +4851,7 @@
       "id": "bot_free_100_rewards_15h_p12",
       "milestone_id": "15h",
       "profile_id": "free_100_rewards",
-      "archetype_id": "burst_caster",
+      "archetype_id": "funeral_burst",
       "target_power": 2093,
       "power_band": "band_004",
       "level": 16,
@@ -4701,19 +4859,18 @@
         "id": "bot_free_100_rewards_15h_12",
         "displayName": "bot_free_100_rewards_15h_12",
         "level": 16,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 12,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 11,
-          "raio_cosmico": 11
+          "descarga_nervosa": 11
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 9,
-        "petId": "brasido",
+        "petId": "cranio_errante",
         "petLevel": 10
       }
     },
@@ -4721,7 +4878,7 @@
       "id": "bot_free_100_rewards_20h_m12",
       "milestone_id": "20h",
       "profile_id": "free_100_rewards",
-      "archetype_id": "starter_wand",
+      "archetype_id": "starter_instrument",
       "target_power": 1764,
       "power_band": "band_004",
       "level": 17,
@@ -4729,6 +4886,7 @@
         "id": "bot_free_100_rewards_20h_-12",
         "displayName": "bot_free_100_rewards_20h_-12",
         "level": 17,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 13,
         "weaponQualityTier": 0,
         "spellIds": [],
@@ -4749,19 +4907,20 @@
         "id": "bot_free_100_rewards_20h_0",
         "displayName": "bot_free_100_rewards_20h_0",
         "level": 17,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 13,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 11,
-          "acender": 11
+          "descarga_nervosa": 11,
+          "marca_brasa": 11
         },
-        "passiveId": "forca",
+        "passiveId": "pulso_tempestade",
         "passiveLevel": 10,
-        "petId": "brasido",
+        "petId": "serpe_tempestade",
         "petLevel": 10
       }
     },
@@ -4769,7 +4928,7 @@
       "id": "bot_free_100_rewards_20h_p12",
       "milestone_id": "20h",
       "profile_id": "free_100_rewards",
-      "archetype_id": "burst_caster",
+      "archetype_id": "funeral_burst",
       "target_power": 2244,
       "power_band": "band_005",
       "level": 17,
@@ -4777,19 +4936,18 @@
         "id": "bot_free_100_rewards_20h_12",
         "displayName": "bot_free_100_rewards_20h_12",
         "level": 17,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 13,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 12,
-          "raio_cosmico": 12
+          "descarga_nervosa": 12
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 10,
-        "petId": "brasido",
+        "petId": "cranio_errante",
         "petLevel": 10
       }
     },
@@ -4797,14 +4955,15 @@
       "id": "bot_freemium_basic_2h_m12",
       "milestone_id": "2h",
       "profile_id": "freemium_basic",
-      "archetype_id": "starter_wand",
-      "target_power": 689,
+      "archetype_id": "starter_instrument",
+      "target_power": 671,
       "power_band": "band_003",
       "level": 9,
       "build": {
         "id": "bot_freemium_basic_2h_-12",
         "displayName": "bot_freemium_basic_2h_-12",
         "level": 9,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 7,
         "weaponQualityTier": 0,
         "spellIds": [],
@@ -4815,23 +4974,22 @@
       "id": "bot_freemium_basic_2h_p0",
       "milestone_id": "2h",
       "profile_id": "freemium_basic",
-      "archetype_id": "burst_caster",
-      "target_power": 783,
+      "archetype_id": "funeral_burst",
+      "target_power": 763,
       "power_band": "band_003",
       "level": 9,
       "build": {
         "id": "bot_freemium_basic_2h_0",
         "displayName": "bot_freemium_basic_2h_0",
         "level": 9,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 7,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 2,
-          "raio_cosmico": 2
+          "descarga_nervosa": 4
         }
       }
     },
@@ -4839,23 +4997,22 @@
       "id": "bot_freemium_basic_2h_p12",
       "milestone_id": "2h",
       "profile_id": "freemium_basic",
-      "archetype_id": "burst_caster",
-      "target_power": 877,
+      "archetype_id": "funeral_burst",
+      "target_power": 855,
       "power_band": "band_003",
       "level": 9,
       "build": {
         "id": "bot_freemium_basic_2h_12",
         "displayName": "bot_freemium_basic_2h_12",
         "level": 9,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 7,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 2,
-          "raio_cosmico": 2
+          "descarga_nervosa": 4
         }
       }
     },
@@ -4863,14 +5020,15 @@
       "id": "bot_freemium_basic_5h_m12",
       "milestone_id": "5h",
       "profile_id": "freemium_basic",
-      "archetype_id": "starter_wand",
-      "target_power": 1060,
+      "archetype_id": "starter_instrument",
+      "target_power": 937,
       "power_band": "band_003",
       "level": 11,
       "build": {
         "id": "bot_freemium_basic_5h_-12",
         "displayName": "bot_freemium_basic_5h_-12",
         "level": 11,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 9,
         "weaponQualityTier": 0,
         "spellIds": [],
@@ -4882,25 +5040,24 @@
       "id": "bot_freemium_basic_5h_p0",
       "milestone_id": "5h",
       "profile_id": "freemium_basic",
-      "archetype_id": "burst_caster",
-      "target_power": 1205,
-      "power_band": "band_004",
+      "archetype_id": "funeral_burst",
+      "target_power": 1065,
+      "power_band": "band_003",
       "level": 11,
       "build": {
         "id": "bot_freemium_basic_5h_0",
         "displayName": "bot_freemium_basic_5h_0",
         "level": 11,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 9,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 7,
-          "raio_cosmico": 7
+          "descarga_nervosa": 8
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 5
       }
     },
@@ -4908,25 +5065,24 @@
       "id": "bot_freemium_basic_5h_p12",
       "milestone_id": "5h",
       "profile_id": "freemium_basic",
-      "archetype_id": "burst_caster",
-      "target_power": 1350,
-      "power_band": "band_004",
+      "archetype_id": "funeral_burst",
+      "target_power": 1193,
+      "power_band": "band_003",
       "level": 11,
       "build": {
         "id": "bot_freemium_basic_5h_12",
         "displayName": "bot_freemium_basic_5h_12",
         "level": 11,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 9,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 8,
-          "raio_cosmico": 8
+          "descarga_nervosa": 9
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 5
       }
     },
@@ -4934,14 +5090,15 @@
       "id": "bot_freemium_basic_10h_m12",
       "milestone_id": "10h",
       "profile_id": "freemium_basic",
-      "archetype_id": "starter_wand",
-      "target_power": 1388,
+      "archetype_id": "starter_instrument",
+      "target_power": 1212,
       "power_band": "band_004",
       "level": 14,
       "build": {
         "id": "bot_freemium_basic_10h_-12",
         "displayName": "bot_freemium_basic_10h_-12",
         "level": 14,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 11,
         "weaponQualityTier": 0,
         "spellIds": [],
@@ -4953,25 +5110,24 @@
       "id": "bot_freemium_basic_10h_p0",
       "milestone_id": "10h",
       "profile_id": "freemium_basic",
-      "archetype_id": "burst_caster",
-      "target_power": 1577,
+      "archetype_id": "funeral_burst",
+      "target_power": 1377,
       "power_band": "band_004",
       "level": 14,
       "build": {
         "id": "bot_freemium_basic_10h_0",
         "displayName": "bot_freemium_basic_10h_0",
         "level": 14,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 11,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 10,
-          "raio_cosmico": 10
+          "descarga_nervosa": 10
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 9
       }
     },
@@ -4979,25 +5135,24 @@
       "id": "bot_freemium_basic_10h_p12",
       "milestone_id": "10h",
       "profile_id": "freemium_basic",
-      "archetype_id": "burst_caster",
-      "target_power": 1766,
+      "archetype_id": "funeral_burst",
+      "target_power": 1542,
       "power_band": "band_004",
       "level": 14,
       "build": {
         "id": "bot_freemium_basic_10h_12",
         "displayName": "bot_freemium_basic_10h_12",
         "level": 14,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 11,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 11,
-          "raio_cosmico": 11
+          "descarga_nervosa": 11
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 9
       }
     },
@@ -5005,7 +5160,7 @@
       "id": "bot_freemium_basic_15h_m12",
       "milestone_id": "15h",
       "profile_id": "freemium_basic",
-      "archetype_id": "starter_wand",
+      "archetype_id": "starter_instrument",
       "target_power": 1739,
       "power_band": "band_004",
       "level": 16,
@@ -5013,6 +5168,7 @@
         "id": "bot_freemium_basic_15h_-12",
         "displayName": "bot_freemium_basic_15h_-12",
         "level": 16,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 13,
         "weaponQualityTier": 0,
         "spellIds": [],
@@ -5025,7 +5181,7 @@
       "id": "bot_freemium_basic_15h_p0",
       "milestone_id": "15h",
       "profile_id": "freemium_basic",
-      "archetype_id": "pet_handler",
+      "archetype_id": "familiar_handler",
       "target_power": 1976,
       "power_band": "band_004",
       "level": 16,
@@ -5033,19 +5189,20 @@
         "id": "bot_freemium_basic_15h_0",
         "displayName": "bot_freemium_basic_15h_0",
         "level": 16,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 13,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 11,
-          "acender": 11
+          "sussurro_medo": 11,
+          "marca_brasa": 11
         },
-        "passiveId": "resistencia",
+        "passiveId": "pacto_familiar",
         "passiveLevel": 10,
-        "petId": "familiar_cinzento",
+        "petId": "corvo_pressagio",
         "petLevel": 11
       }
     },
@@ -5053,7 +5210,7 @@
       "id": "bot_freemium_basic_15h_p12",
       "milestone_id": "15h",
       "profile_id": "freemium_basic",
-      "archetype_id": "burst_caster",
+      "archetype_id": "funeral_burst",
       "target_power": 2213,
       "power_band": "band_005",
       "level": 16,
@@ -5061,19 +5218,18 @@
         "id": "bot_freemium_basic_15h_12",
         "displayName": "bot_freemium_basic_15h_12",
         "level": 16,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 13,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 12,
-          "raio_cosmico": 12
+          "descarga_nervosa": 12
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 10,
-        "petId": "brasido",
+        "petId": "cranio_errante",
         "petLevel": 11
       }
     },
@@ -5081,7 +5237,7 @@
       "id": "bot_freemium_basic_20h_m12",
       "milestone_id": "20h",
       "profile_id": "freemium_basic",
-      "archetype_id": "starter_wand",
+      "archetype_id": "starter_instrument",
       "target_power": 1864,
       "power_band": "band_004",
       "level": 17,
@@ -5089,6 +5245,7 @@
         "id": "bot_freemium_basic_20h_-12",
         "displayName": "bot_freemium_basic_20h_-12",
         "level": 17,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 14,
         "weaponQualityTier": 0,
         "spellIds": [],
@@ -5101,7 +5258,7 @@
       "id": "bot_freemium_basic_20h_p0",
       "milestone_id": "20h",
       "profile_id": "freemium_basic",
-      "archetype_id": "pet_handler",
+      "archetype_id": "familiar_handler",
       "target_power": 2118,
       "power_band": "band_004",
       "level": 17,
@@ -5109,19 +5266,20 @@
         "id": "bot_freemium_basic_20h_0",
         "displayName": "bot_freemium_basic_20h_0",
         "level": 17,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 14,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 12,
-          "acender": 12
+          "sussurro_medo": 12,
+          "marca_brasa": 12
         },
-        "passiveId": "resistencia",
+        "passiveId": "pacto_familiar",
         "passiveLevel": 11,
-        "petId": "familiar_cinzento",
+        "petId": "corvo_pressagio",
         "petLevel": 11
       }
     },
@@ -5129,7 +5287,7 @@
       "id": "bot_freemium_basic_20h_p12",
       "milestone_id": "20h",
       "profile_id": "freemium_basic",
-      "archetype_id": "burst_caster",
+      "archetype_id": "funeral_burst",
       "target_power": 2372,
       "power_band": "band_005",
       "level": 17,
@@ -5137,19 +5295,18 @@
         "id": "bot_freemium_basic_20h_12",
         "displayName": "bot_freemium_basic_20h_12",
         "level": 17,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 14,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 13,
-          "raio_cosmico": 13
+          "descarga_nervosa": 13
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 11,
-        "petId": "brasido",
+        "petId": "cranio_errante",
         "petLevel": 11
       }
     },
@@ -5157,14 +5314,15 @@
       "id": "bot_spender_light_2h_m12",
       "milestone_id": "2h",
       "profile_id": "spender_light",
-      "archetype_id": "starter_wand",
-      "target_power": 733,
+      "archetype_id": "starter_instrument",
+      "target_power": 715,
       "power_band": "band_003",
       "level": 9,
       "build": {
         "id": "bot_spender_light_2h_-12",
         "displayName": "bot_spender_light_2h_-12",
         "level": 9,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 8,
         "weaponQualityTier": 0,
         "spellIds": [],
@@ -5175,23 +5333,22 @@
       "id": "bot_spender_light_2h_p0",
       "milestone_id": "2h",
       "profile_id": "spender_light",
-      "archetype_id": "burst_caster",
-      "target_power": 833,
+      "archetype_id": "funeral_burst",
+      "target_power": 813,
       "power_band": "band_003",
       "level": 9,
       "build": {
         "id": "bot_spender_light_2h_0",
         "displayName": "bot_spender_light_2h_0",
         "level": 9,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 8,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 3,
-          "raio_cosmico": 3
+          "descarga_nervosa": 5
         }
       }
     },
@@ -5199,23 +5356,22 @@
       "id": "bot_spender_light_2h_p12",
       "milestone_id": "2h",
       "profile_id": "spender_light",
-      "archetype_id": "burst_caster",
-      "target_power": 933,
+      "archetype_id": "funeral_burst",
+      "target_power": 911,
       "power_band": "band_003",
       "level": 9,
       "build": {
         "id": "bot_spender_light_2h_12",
         "displayName": "bot_spender_light_2h_12",
         "level": 9,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 8,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 3,
-          "raio_cosmico": 3
+          "descarga_nervosa": 6
         }
       }
     },
@@ -5223,14 +5379,15 @@
       "id": "bot_spender_light_5h_m12",
       "milestone_id": "5h",
       "profile_id": "spender_light",
-      "archetype_id": "starter_wand",
-      "target_power": 1210,
-      "power_band": "band_004",
+      "archetype_id": "starter_instrument",
+      "target_power": 1052,
+      "power_band": "band_003",
       "level": 12,
       "build": {
         "id": "bot_spender_light_5h_-12",
         "displayName": "bot_spender_light_5h_-12",
         "level": 12,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 10,
         "weaponQualityTier": 0,
         "spellIds": [],
@@ -5242,25 +5399,24 @@
       "id": "bot_spender_light_5h_p0",
       "milestone_id": "5h",
       "profile_id": "spender_light",
-      "archetype_id": "burst_caster",
-      "target_power": 1375,
-      "power_band": "band_004",
+      "archetype_id": "funeral_burst",
+      "target_power": 1195,
+      "power_band": "band_003",
       "level": 12,
       "build": {
         "id": "bot_spender_light_5h_0",
         "displayName": "bot_spender_light_5h_0",
         "level": 12,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 10,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 9,
-          "raio_cosmico": 9
+          "descarga_nervosa": 9
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 7
       }
     },
@@ -5268,25 +5424,24 @@
       "id": "bot_spender_light_5h_p12",
       "milestone_id": "5h",
       "profile_id": "spender_light",
-      "archetype_id": "burst_caster",
-      "target_power": 1540,
+      "archetype_id": "funeral_burst",
+      "target_power": 1338,
       "power_band": "band_004",
       "level": 12,
       "build": {
         "id": "bot_spender_light_5h_12",
         "displayName": "bot_spender_light_5h_12",
         "level": 12,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 10,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 10,
-          "raio_cosmico": 10
+          "descarga_nervosa": 10
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 7
       }
     },
@@ -5294,7 +5449,7 @@
       "id": "bot_spender_light_10h_m12",
       "milestone_id": "10h",
       "profile_id": "spender_light",
-      "archetype_id": "starter_wand",
+      "archetype_id": "starter_instrument",
       "target_power": 1721,
       "power_band": "band_004",
       "level": 15,
@@ -5302,6 +5457,7 @@
         "id": "bot_spender_light_10h_-12",
         "displayName": "bot_spender_light_10h_-12",
         "level": 15,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 13,
         "weaponQualityTier": 0,
         "spellIds": [],
@@ -5314,7 +5470,7 @@
       "id": "bot_spender_light_10h_p0",
       "milestone_id": "10h",
       "profile_id": "spender_light",
-      "archetype_id": "pet_handler",
+      "archetype_id": "familiar_handler",
       "target_power": 1956,
       "power_band": "band_004",
       "level": 15,
@@ -5322,19 +5478,20 @@
         "id": "bot_spender_light_10h_0",
         "displayName": "bot_spender_light_10h_0",
         "level": 15,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 13,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 12,
-          "acender": 12
+          "sussurro_medo": 12,
+          "marca_brasa": 12
         },
-        "passiveId": "resistencia",
+        "passiveId": "pacto_familiar",
         "passiveLevel": 10,
-        "petId": "familiar_cinzento",
+        "petId": "corvo_pressagio",
         "petLevel": 11
       }
     },
@@ -5342,7 +5499,7 @@
       "id": "bot_spender_light_10h_p12",
       "milestone_id": "10h",
       "profile_id": "spender_light",
-      "archetype_id": "burst_caster",
+      "archetype_id": "funeral_burst",
       "target_power": 2191,
       "power_band": "band_004",
       "level": 15,
@@ -5350,19 +5507,18 @@
         "id": "bot_spender_light_10h_12",
         "displayName": "bot_spender_light_10h_12",
         "level": 15,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 13,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 13,
-          "raio_cosmico": 13
+          "descarga_nervosa": 13
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 10,
-        "petId": "brasido",
+        "petId": "cranio_errante",
         "petLevel": 11
       }
     },
@@ -5370,7 +5526,7 @@
       "id": "bot_spender_light_15h_m12",
       "milestone_id": "15h",
       "profile_id": "spender_light",
-      "archetype_id": "starter_wand",
+      "archetype_id": "starter_instrument",
       "target_power": 1834,
       "power_band": "band_004",
       "level": 16,
@@ -5378,6 +5534,7 @@
         "id": "bot_spender_light_15h_-12",
         "displayName": "bot_spender_light_15h_-12",
         "level": 16,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 14,
         "weaponQualityTier": 0,
         "spellIds": [],
@@ -5390,7 +5547,7 @@
       "id": "bot_spender_light_15h_p0",
       "milestone_id": "15h",
       "profile_id": "spender_light",
-      "archetype_id": "pet_handler",
+      "archetype_id": "familiar_handler",
       "target_power": 2084,
       "power_band": "band_004",
       "level": 16,
@@ -5398,19 +5555,20 @@
         "id": "bot_spender_light_15h_0",
         "displayName": "bot_spender_light_15h_0",
         "level": 16,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 14,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 12,
-          "acender": 12
+          "sussurro_medo": 12,
+          "marca_brasa": 12
         },
-        "passiveId": "resistencia",
+        "passiveId": "pacto_familiar",
         "passiveLevel": 11,
-        "petId": "familiar_cinzento",
+        "petId": "corvo_pressagio",
         "petLevel": 12
       }
     },
@@ -5418,7 +5576,7 @@
       "id": "bot_spender_light_15h_p12",
       "milestone_id": "15h",
       "profile_id": "spender_light",
-      "archetype_id": "burst_caster",
+      "archetype_id": "funeral_burst",
       "target_power": 2334,
       "power_band": "band_005",
       "level": 16,
@@ -5426,19 +5584,18 @@
         "id": "bot_spender_light_15h_12",
         "displayName": "bot_spender_light_15h_12",
         "level": 16,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 14,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 13,
-          "raio_cosmico": 13
+          "descarga_nervosa": 13
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 11,
-        "petId": "brasido",
+        "petId": "cranio_errante",
         "petLevel": 12
       }
     },
@@ -5446,7 +5603,7 @@
       "id": "bot_spender_light_20h_m12",
       "milestone_id": "20h",
       "profile_id": "spender_light",
-      "archetype_id": "starter_wand",
+      "archetype_id": "starter_instrument",
       "target_power": 2087,
       "power_band": "band_004",
       "level": 18,
@@ -5454,6 +5611,7 @@
         "id": "bot_spender_light_20h_-12",
         "displayName": "bot_spender_light_20h_-12",
         "level": 18,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 16,
         "weaponQualityTier": 0,
         "spellIds": [],
@@ -5466,7 +5624,7 @@
       "id": "bot_spender_light_20h_p0",
       "milestone_id": "20h",
       "profile_id": "spender_light",
-      "archetype_id": "pet_handler",
+      "archetype_id": "familiar_handler",
       "target_power": 2372,
       "power_band": "band_005",
       "level": 18,
@@ -5474,19 +5632,20 @@
         "id": "bot_spender_light_20h_0",
         "displayName": "bot_spender_light_20h_0",
         "level": 18,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 16,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 14,
-          "acender": 14
+          "sussurro_medo": 14,
+          "marca_brasa": 14
         },
-        "passiveId": "resistencia",
+        "passiveId": "pacto_familiar",
         "passiveLevel": 13,
-        "petId": "familiar_cinzento",
+        "petId": "corvo_pressagio",
         "petLevel": 13
       }
     },
@@ -5494,7 +5653,7 @@
       "id": "bot_spender_light_20h_p12",
       "milestone_id": "20h",
       "profile_id": "spender_light",
-      "archetype_id": "burst_caster",
+      "archetype_id": "funeral_burst",
       "target_power": 2657,
       "power_band": "band_005",
       "level": 18,
@@ -5502,19 +5661,18 @@
         "id": "bot_spender_light_20h_12",
         "displayName": "bot_spender_light_20h_12",
         "level": 18,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 16,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 16,
-          "raio_cosmico": 16
+          "descarga_nervosa": 16
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 13,
-        "petId": "brasido",
+        "petId": "cranio_errante",
         "petLevel": 13
       }
     },
@@ -5522,14 +5680,15 @@
       "id": "bot_max_spender_2h_m12",
       "milestone_id": "2h",
       "profile_id": "max_spender",
-      "archetype_id": "starter_wand",
-      "target_power": 786,
+      "archetype_id": "starter_instrument",
+      "target_power": 768,
       "power_band": "band_003",
       "level": 9,
       "build": {
         "id": "bot_max_spender_2h_-12",
         "displayName": "bot_max_spender_2h_-12",
         "level": 9,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 9,
         "weaponQualityTier": 0,
         "spellIds": [],
@@ -5540,23 +5699,22 @@
       "id": "bot_max_spender_2h_p0",
       "milestone_id": "2h",
       "profile_id": "max_spender",
-      "archetype_id": "burst_caster",
-      "target_power": 893,
+      "archetype_id": "funeral_burst",
+      "target_power": 873,
       "power_band": "band_003",
       "level": 9,
       "build": {
         "id": "bot_max_spender_2h_0",
         "displayName": "bot_max_spender_2h_0",
         "level": 9,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 9,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 3,
-          "raio_cosmico": 3
+          "descarga_nervosa": 6
         }
       }
     },
@@ -5564,23 +5722,22 @@
       "id": "bot_max_spender_2h_p12",
       "milestone_id": "2h",
       "profile_id": "max_spender",
-      "archetype_id": "burst_caster",
-      "target_power": 1000,
+      "archetype_id": "funeral_burst",
+      "target_power": 978,
       "power_band": "band_003",
       "level": 9,
       "build": {
         "id": "bot_max_spender_2h_12",
         "displayName": "bot_max_spender_2h_12",
         "level": 9,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 9,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 3,
-          "raio_cosmico": 3
+          "descarga_nervosa": 7
         }
       }
     },
@@ -5588,14 +5745,15 @@
       "id": "bot_max_spender_5h_m12",
       "milestone_id": "5h",
       "profile_id": "max_spender",
-      "archetype_id": "starter_wand",
-      "target_power": 1300,
-      "power_band": "band_004",
+      "archetype_id": "starter_instrument",
+      "target_power": 1159,
+      "power_band": "band_003",
       "level": 12,
       "build": {
         "id": "bot_max_spender_5h_-12",
         "displayName": "bot_max_spender_5h_-12",
         "level": 12,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 12,
         "weaponQualityTier": 0,
         "spellIds": [],
@@ -5607,25 +5765,24 @@
       "id": "bot_max_spender_5h_p0",
       "milestone_id": "5h",
       "profile_id": "max_spender",
-      "archetype_id": "burst_caster",
-      "target_power": 1477,
+      "archetype_id": "funeral_burst",
+      "target_power": 1317,
       "power_band": "band_004",
       "level": 12,
       "build": {
         "id": "bot_max_spender_5h_0",
         "displayName": "bot_max_spender_5h_0",
         "level": 12,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 12,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 9,
-          "raio_cosmico": 9
+          "descarga_nervosa": 11
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 8
       }
     },
@@ -5633,25 +5790,24 @@
       "id": "bot_max_spender_5h_p12",
       "milestone_id": "5h",
       "profile_id": "max_spender",
-      "archetype_id": "burst_caster",
-      "target_power": 1654,
+      "archetype_id": "funeral_burst",
+      "target_power": 1475,
       "power_band": "band_004",
       "level": 12,
       "build": {
         "id": "bot_max_spender_5h_12",
         "displayName": "bot_max_spender_5h_12",
         "level": 12,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 12,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 10,
-          "raio_cosmico": 10
+          "descarga_nervosa": 12
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 8
       }
     },
@@ -5659,7 +5815,7 @@
       "id": "bot_max_spender_10h_m12",
       "milestone_id": "10h",
       "profile_id": "max_spender",
-      "archetype_id": "starter_wand",
+      "archetype_id": "starter_instrument",
       "target_power": 1856,
       "power_band": "band_004",
       "level": 15,
@@ -5667,6 +5823,7 @@
         "id": "bot_max_spender_10h_-12",
         "displayName": "bot_max_spender_10h_-12",
         "level": 15,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 15,
         "weaponQualityTier": 0,
         "spellIds": [],
@@ -5679,7 +5836,7 @@
       "id": "bot_max_spender_10h_p0",
       "milestone_id": "10h",
       "profile_id": "max_spender",
-      "archetype_id": "pet_handler",
+      "archetype_id": "familiar_handler",
       "target_power": 2109,
       "power_band": "band_004",
       "level": 15,
@@ -5687,19 +5844,20 @@
         "id": "bot_max_spender_10h_0",
         "displayName": "bot_max_spender_10h_0",
         "level": 15,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 15,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 13,
-          "acender": 13
+          "sussurro_medo": 13,
+          "marca_brasa": 13
         },
-        "passiveId": "resistencia",
+        "passiveId": "pacto_familiar",
         "passiveLevel": 11,
-        "petId": "familiar_cinzento",
+        "petId": "corvo_pressagio",
         "petLevel": 13
       }
     },
@@ -5707,7 +5865,7 @@
       "id": "bot_max_spender_10h_p12",
       "milestone_id": "10h",
       "profile_id": "max_spender",
-      "archetype_id": "burst_caster",
+      "archetype_id": "funeral_burst",
       "target_power": 2362,
       "power_band": "band_005",
       "level": 15,
@@ -5715,19 +5873,18 @@
         "id": "bot_max_spender_10h_12",
         "displayName": "bot_max_spender_10h_12",
         "level": 15,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 15,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 15,
-          "raio_cosmico": 15
+          "descarga_nervosa": 15
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 11,
-        "petId": "brasido",
+        "petId": "cranio_errante",
         "petLevel": 13
       }
     },
@@ -5735,7 +5892,7 @@
       "id": "bot_max_spender_15h_m12",
       "milestone_id": "15h",
       "profile_id": "max_spender",
-      "archetype_id": "starter_wand",
+      "archetype_id": "starter_instrument",
       "target_power": 2127,
       "power_band": "band_004",
       "level": 17,
@@ -5743,6 +5900,7 @@
         "id": "bot_max_spender_15h_-12",
         "displayName": "bot_max_spender_15h_-12",
         "level": 17,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 17,
         "weaponQualityTier": 0,
         "spellIds": [],
@@ -5755,7 +5913,7 @@
       "id": "bot_max_spender_15h_p0",
       "milestone_id": "15h",
       "profile_id": "max_spender",
-      "archetype_id": "pet_handler",
+      "archetype_id": "familiar_handler",
       "target_power": 2417,
       "power_band": "band_005",
       "level": 17,
@@ -5763,19 +5921,20 @@
         "id": "bot_max_spender_15h_0",
         "displayName": "bot_max_spender_15h_0",
         "level": 17,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 17,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 15,
-          "acender": 15
+          "sussurro_medo": 15,
+          "marca_brasa": 15
         },
-        "passiveId": "resistencia",
+        "passiveId": "pacto_familiar",
         "passiveLevel": 14,
-        "petId": "familiar_cinzento",
+        "petId": "corvo_pressagio",
         "petLevel": 14
       }
     },
@@ -5783,7 +5942,7 @@
       "id": "bot_max_spender_15h_p12",
       "milestone_id": "15h",
       "profile_id": "max_spender",
-      "archetype_id": "burst_caster",
+      "archetype_id": "funeral_burst",
       "target_power": 2707,
       "power_band": "band_005",
       "level": 17,
@@ -5791,19 +5950,18 @@
         "id": "bot_max_spender_15h_12",
         "displayName": "bot_max_spender_15h_12",
         "level": 17,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 17,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 17,
-          "raio_cosmico": 17
+          "descarga_nervosa": 17
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 14,
-        "petId": "brasido",
+        "petId": "cranio_errante",
         "petLevel": 14
       }
     },
@@ -5811,7 +5969,7 @@
       "id": "bot_max_spender_20h_m12",
       "milestone_id": "20h",
       "profile_id": "max_spender",
-      "archetype_id": "starter_wand",
+      "archetype_id": "starter_instrument",
       "target_power": 2415,
       "power_band": "band_005",
       "level": 19,
@@ -5819,6 +5977,7 @@
         "id": "bot_max_spender_20h_-12",
         "displayName": "bot_max_spender_20h_-12",
         "level": 19,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 19,
         "weaponQualityTier": 1,
         "spellIds": [],
@@ -5831,7 +5990,7 @@
       "id": "bot_max_spender_20h_p0",
       "milestone_id": "20h",
       "profile_id": "max_spender",
-      "archetype_id": "pet_handler",
+      "archetype_id": "familiar_handler",
       "target_power": 2744,
       "power_band": "band_005",
       "level": 19,
@@ -5839,19 +5998,20 @@
         "id": "bot_max_spender_20h_0",
         "displayName": "bot_max_spender_20h_0",
         "level": 19,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 19,
         "weaponQualityTier": 1,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 17,
-          "acender": 17
+          "sussurro_medo": 17,
+          "marca_brasa": 17
         },
-        "passiveId": "resistencia",
+        "passiveId": "pacto_familiar",
         "passiveLevel": 15,
-        "petId": "familiar_cinzento",
+        "petId": "corvo_pressagio",
         "petLevel": 16
       }
     },
@@ -5859,7 +6019,7 @@
       "id": "bot_max_spender_20h_p12",
       "milestone_id": "20h",
       "profile_id": "max_spender",
-      "archetype_id": "burst_caster",
+      "archetype_id": "funeral_burst",
       "target_power": 3073,
       "power_band": "band_005",
       "level": 19,
@@ -5867,19 +6027,18 @@
         "id": "bot_max_spender_20h_12",
         "displayName": "bot_max_spender_20h_12",
         "level": 19,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 19,
         "weaponQualityTier": 1,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 19,
-          "raio_cosmico": 19
+          "descarga_nervosa": 19
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 15,
-        "petId": "brasido",
+        "petId": "cranio_errante",
         "petLevel": 16
       }
     }

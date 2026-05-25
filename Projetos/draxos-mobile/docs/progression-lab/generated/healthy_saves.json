@@ -39,24 +39,29 @@
       },
       "build": {
         "archetype_id": "elemental_mixer",
-        "weapon_type": "varinha_magica",
+        "weapon_type": "orbe_tempestade",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 5,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio_cosmico": 2,
-          "acender": 2
+          "descarga_nervosa": 2,
+          "marca_brasa": 2
         },
         "passive_id": "",
         "passive_level": 0,
@@ -113,15 +118,16 @@
         "id": "free_50_rewards_2h",
         "displayName": "free_50_rewards_2h",
         "level": 8,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 5,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 2,
-          "acender": 2
+          "descarga_nervosa": 2,
+          "marca_brasa": 2
         }
       },
       "manual_checklist": [
@@ -130,7 +136,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L5, spells raio_cosmico, acender.",
+        "Conferir build: arma L5, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -171,26 +177,31 @@
       },
       "build": {
         "archetype_id": "elemental_mixer",
-        "weapon_type": "varinha_magica",
+        "weapon_type": "orbe_tempestade",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 6,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio_cosmico": 5,
-          "acender": 5
+          "descarga_nervosa": 5,
+          "marca_brasa": 5
         },
-        "passive_id": "forca",
+        "passive_id": "pulso_tempestade",
         "passive_level": 3,
         "pet_id": "",
         "pet_level": 0
@@ -245,17 +256,18 @@
         "id": "free_50_rewards_5h",
         "displayName": "free_50_rewards_5h",
         "level": 10,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 6,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 5,
-          "acender": 5
+          "descarga_nervosa": 5,
+          "marca_brasa": 5
         },
-        "passiveId": "forca",
+        "passiveId": "pulso_tempestade",
         "passiveLevel": 3
       },
       "manual_checklist": [
@@ -264,7 +276,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L6, spells raio_cosmico, acender.",
+        "Conferir build: arma L6, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -305,26 +317,31 @@
       },
       "build": {
         "archetype_id": "elemental_mixer",
-        "weapon_type": "varinha_magica",
+        "weapon_type": "orbe_tempestade",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 8,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio_cosmico": 6,
-          "acender": 6
+          "descarga_nervosa": 6,
+          "marca_brasa": 6
         },
-        "passive_id": "forca",
+        "passive_id": "pulso_tempestade",
         "passive_level": 6,
         "pet_id": "",
         "pet_level": 0
@@ -379,17 +396,18 @@
         "id": "free_50_rewards_10h",
         "displayName": "free_50_rewards_10h",
         "level": 12,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 8,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 6,
-          "acender": 6
+          "descarga_nervosa": 6,
+          "marca_brasa": 6
         },
-        "passiveId": "forca",
+        "passiveId": "pulso_tempestade",
         "passiveLevel": 6
       },
       "manual_checklist": [
@@ -398,7 +416,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L8, spells raio_cosmico, acender.",
+        "Conferir build: arma L8, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -440,26 +458,31 @@
       },
       "build": {
         "archetype_id": "elemental_mixer",
-        "weapon_type": "varinha_magica",
+        "weapon_type": "orbe_tempestade",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 9,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio_cosmico": 7,
-          "acender": 7
+          "descarga_nervosa": 7,
+          "marca_brasa": 7
         },
-        "passive_id": "forca",
+        "passive_id": "pulso_tempestade",
         "passive_level": 6,
         "pet_id": "",
         "pet_level": 0
@@ -514,17 +537,18 @@
         "id": "free_50_rewards_15h",
         "displayName": "free_50_rewards_15h",
         "level": 14,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 9,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 7,
-          "acender": 7
+          "descarga_nervosa": 7,
+          "marca_brasa": 7
         },
-        "passiveId": "forca",
+        "passiveId": "pulso_tempestade",
         "passiveLevel": 6
       },
       "manual_checklist": [
@@ -533,7 +557,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L9, spells raio_cosmico, acender.",
+        "Conferir build: arma L9, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -575,28 +599,37 @@
       },
       "build": {
         "archetype_id": "elemental_mixer",
-        "weapon_type": "varinha_magica",
+        "weapon_type": "orbe_tempestade",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 9,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa",
+          "mandato_oculto",
+          "hemorragia_induzida",
+          "coagulo_negro",
+          "raizes_pedra"
         ],
         "spell_levels": {
-          "raio_cosmico": 8,
-          "acender": 8
+          "descarga_nervosa": 8,
+          "marca_brasa": 8
         },
-        "passive_id": "forca",
+        "passive_id": "pulso_tempestade",
         "passive_level": 7,
-        "pet_id": "brasido",
+        "pet_id": "serpe_tempestade",
         "pet_level": 7
       },
       "base": {
@@ -649,19 +682,20 @@
         "id": "free_50_rewards_20h",
         "displayName": "free_50_rewards_20h",
         "level": 15,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 9,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 8,
-          "acender": 8
+          "descarga_nervosa": 8,
+          "marca_brasa": 8
         },
-        "passiveId": "forca",
+        "passiveId": "pulso_tempestade",
         "passiveLevel": 7,
-        "petId": "brasido",
+        "petId": "serpe_tempestade",
         "petLevel": 7
       },
       "manual_checklist": [
@@ -670,7 +704,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L9, spells raio_cosmico, acender.",
+        "Conferir build: arma L9, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -682,14 +716,14 @@
       "hours": 2,
       "status": "PASS",
       "notes": [
-        "Use power 702 as initial matchmaking observation, not final truth."
+        "Use power 682 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_100_rewards_2h",
         "account_type": "progression_lab",
         "level": 8,
         "xp": 1150,
-        "power": 702
+        "power": 682
       },
       "resources": {
         "xp": 1150,
@@ -710,25 +744,28 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "burst_caster",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "funeral_burst",
+        "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 6,
         "spell_slots": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio": 2,
-          "raio_cosmico": 3
+          "descarga_nervosa": 4
         },
         "passive_id": "",
         "passive_level": 0,
@@ -785,15 +822,14 @@
         "id": "free_100_rewards_2h",
         "displayName": "free_100_rewards_2h",
         "level": 8,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 6,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 2,
-          "raio_cosmico": 3
+          "descarga_nervosa": 4
         }
       },
       "manual_checklist": [
@@ -802,7 +838,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L6, spells raio, raio_cosmico.",
+        "Conferir build: arma L6, spells descarga_nervosa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -814,18 +850,18 @@
       "hours": 5,
       "status": "PASS",
       "notes": [
-        "Use power 1143 as initial matchmaking observation, not final truth."
+        "Use power 1003 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_100_rewards_5h",
         "account_type": "progression_lab",
         "level": 11,
         "xp": 2875,
-        "power": 1143
+        "power": 1003
       },
       "resources": {
         "xp": 2875,
-        "almas": 59.5,
+        "almas": 119.5,
         "energia": 57.5,
         "sangue": 72.5,
         "cristais": 8.5,
@@ -842,27 +878,30 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "burst_caster",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "funeral_burst",
+        "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 8,
         "spell_slots": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio": 7,
-          "raio_cosmico": 7
+          "descarga_nervosa": 7
         },
-        "passive_id": "forca",
+        "passive_id": "ossuario_interior",
         "passive_level": 4,
         "pet_id": "",
         "pet_level": 0
@@ -917,17 +956,16 @@
         "id": "free_100_rewards_5h",
         "displayName": "free_100_rewards_5h",
         "level": 11,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 8,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 7,
-          "raio_cosmico": 7
+          "descarga_nervosa": 7
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 4
       },
       "manual_checklist": [
@@ -936,7 +974,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L8, spells raio, raio_cosmico.",
+        "Conferir build: arma L8, spells descarga_nervosa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -948,18 +986,18 @@
       "hours": 10,
       "status": "PASS",
       "notes": [
-        "Use power 1517 as initial matchmaking observation, not final truth."
+        "Use power 1337 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_100_rewards_10h",
         "account_type": "progression_lab",
         "level": 14,
         "xp": 5750,
-        "power": 1517
+        "power": 1337
       },
       "resources": {
         "xp": 5750,
-        "almas": 194,
+        "almas": 283,
         "energia": 115,
         "sangue": 145,
         "cristais": 11,
@@ -976,27 +1014,30 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "burst_caster",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "funeral_burst",
+        "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 11,
         "spell_slots": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio": 9,
-          "raio_cosmico": 9
+          "descarga_nervosa": 9
         },
-        "passive_id": "forca",
+        "passive_id": "ossuario_interior",
         "passive_level": 8,
         "pet_id": "",
         "pet_level": 0
@@ -1051,17 +1092,16 @@
         "id": "free_100_rewards_10h",
         "displayName": "free_100_rewards_10h",
         "level": 14,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 11,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 9,
-          "raio_cosmico": 9
+          "descarga_nervosa": 9
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 8
       },
       "manual_checklist": [
@@ -1070,7 +1110,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L11, spells raio, raio_cosmico.",
+        "Conferir build: arma L11, spells descarga_nervosa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1111,28 +1151,37 @@
       },
       "build": {
         "archetype_id": "elemental_mixer",
-        "weapon_type": "varinha_magica",
+        "weapon_type": "orbe_tempestade",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 12,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa",
+          "mandato_oculto",
+          "hemorragia_induzida",
+          "coagulo_negro",
+          "raizes_pedra"
         ],
         "spell_levels": {
-          "raio_cosmico": 10,
-          "acender": 10
+          "descarga_nervosa": 10,
+          "marca_brasa": 10
         },
-        "passive_id": "forca",
+        "passive_id": "pulso_tempestade",
         "passive_level": 9,
-        "pet_id": "brasido",
+        "pet_id": "serpe_tempestade",
         "pet_level": 10
       },
       "base": {
@@ -1185,19 +1234,20 @@
         "id": "free_100_rewards_15h",
         "displayName": "free_100_rewards_15h",
         "level": 16,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 12,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 10,
-          "acender": 10
+          "descarga_nervosa": 10,
+          "marca_brasa": 10
         },
-        "passiveId": "forca",
+        "passiveId": "pulso_tempestade",
         "passiveLevel": 9,
-        "petId": "brasido",
+        "petId": "serpe_tempestade",
         "petLevel": 10
       },
       "manual_checklist": [
@@ -1206,7 +1256,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L12, spells raio_cosmico, acender.",
+        "Conferir build: arma L12, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1248,28 +1298,37 @@
       },
       "build": {
         "archetype_id": "elemental_mixer",
-        "weapon_type": "varinha_magica",
+        "weapon_type": "orbe_tempestade",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 13,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa",
+          "mandato_oculto",
+          "hemorragia_induzida",
+          "coagulo_negro",
+          "raizes_pedra"
         ],
         "spell_levels": {
-          "raio_cosmico": 11,
-          "acender": 11
+          "descarga_nervosa": 11,
+          "marca_brasa": 11
         },
-        "passive_id": "forca",
+        "passive_id": "pulso_tempestade",
         "passive_level": 10,
-        "pet_id": "brasido",
+        "pet_id": "serpe_tempestade",
         "pet_level": 10
       },
       "base": {
@@ -1322,19 +1381,20 @@
         "id": "free_100_rewards_20h",
         "displayName": "free_100_rewards_20h",
         "level": 17,
+        "weaponId": "orbe_tempestade",
         "weaponLevel": 13,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "descarga_nervosa",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 11,
-          "acender": 11
+          "descarga_nervosa": 11,
+          "marca_brasa": 11
         },
-        "passiveId": "forca",
+        "passiveId": "pulso_tempestade",
         "passiveLevel": 10,
-        "petId": "brasido",
+        "petId": "serpe_tempestade",
         "petLevel": 10
       },
       "manual_checklist": [
@@ -1343,7 +1403,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L13, spells raio_cosmico, acender.",
+        "Conferir build: arma L13, spells descarga_nervosa, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1356,14 +1416,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 783 as initial matchmaking observation, not final truth."
+        "Use power 763 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_freemium_basic_2h",
         "account_type": "progression_lab",
         "level": 9,
         "xp": 1192,
-        "power": 783
+        "power": 763
       },
       "resources": {
         "xp": 1192,
@@ -1384,25 +1444,28 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "burst_caster",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "funeral_burst",
+        "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 7,
         "spell_slots": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio": 2,
-          "raio_cosmico": 3
+          "descarga_nervosa": 4
         },
         "passive_id": "",
         "passive_level": 0,
@@ -1459,15 +1522,14 @@
         "id": "freemium_basic_2h",
         "displayName": "freemium_basic_2h",
         "level": 9,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 7,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 2,
-          "raio_cosmico": 3
+          "descarga_nervosa": 4
         }
       },
       "manual_checklist": [
@@ -1476,7 +1538,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L7, spells raio, raio_cosmico.",
+        "Conferir build: arma L7, spells descarga_nervosa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1489,18 +1551,18 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 1205 as initial matchmaking observation, not final truth."
+        "Use power 1065 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_freemium_basic_5h",
         "account_type": "progression_lab",
         "level": 11,
         "xp": 2980,
-        "power": 1205
+        "power": 1065
       },
       "resources": {
         "xp": 2980,
-        "almas": 44,
+        "almas": 104,
         "energia": 32,
         "sangue": 79.7,
         "cristais": 7.7,
@@ -1517,27 +1579,30 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "burst_caster",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "funeral_burst",
+        "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 9,
         "spell_slots": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio": 7,
-          "raio_cosmico": 8
+          "descarga_nervosa": 8
         },
-        "passive_id": "forca",
+        "passive_id": "ossuario_interior",
         "passive_level": 5,
         "pet_id": "",
         "pet_level": 0
@@ -1592,17 +1657,16 @@
         "id": "freemium_basic_5h",
         "displayName": "freemium_basic_5h",
         "level": 11,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 9,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 7,
-          "raio_cosmico": 8
+          "descarga_nervosa": 8
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 5
       },
       "manual_checklist": [
@@ -1611,7 +1675,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L9, spells raio, raio_cosmico.",
+        "Conferir build: arma L9, spells descarga_nervosa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1624,18 +1688,18 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 1577 as initial matchmaking observation, not final truth."
+        "Use power 1377 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_freemium_basic_10h",
         "account_type": "progression_lab",
         "level": 14,
         "xp": 5960,
-        "power": 1577
+        "power": 1377
       },
       "resources": {
         "xp": 5960,
-        "almas": 181,
+        "almas": 290,
         "energia": 64,
         "sangue": 159.4,
         "cristais": 11.4,
@@ -1652,27 +1716,30 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "burst_caster",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "funeral_burst",
+        "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 11,
         "spell_slots": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio": 10,
-          "raio_cosmico": 10
+          "descarga_nervosa": 10
         },
-        "passive_id": "forca",
+        "passive_id": "ossuario_interior",
         "passive_level": 9,
         "pet_id": "",
         "pet_level": 0
@@ -1727,17 +1794,16 @@
         "id": "freemium_basic_10h",
         "displayName": "freemium_basic_10h",
         "level": 14,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 11,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 10,
-          "raio_cosmico": 10
+          "descarga_nervosa": 10
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 9
       },
       "manual_checklist": [
@@ -1746,7 +1812,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L11, spells raio, raio_cosmico.",
+        "Conferir build: arma L11, spells descarga_nervosa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1787,29 +1853,38 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "pet_handler",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "familiar_handler",
+        "weapon_type": "varinha_cinzas",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 13,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa",
+          "mandato_oculto",
+          "hemorragia_induzida",
+          "coagulo_negro",
+          "raizes_pedra"
         ],
         "spell_levels": {
-          "raio_cosmico": 11,
-          "acender": 11
+          "sussurro_medo": 11,
+          "marca_brasa": 11
         },
-        "passive_id": "resistencia",
+        "passive_id": "pacto_familiar",
         "passive_level": 10,
-        "pet_id": "familiar_cinzento",
+        "pet_id": "corvo_pressagio",
         "pet_level": 11
       },
       "base": {
@@ -1862,19 +1937,20 @@
         "id": "freemium_basic_15h",
         "displayName": "freemium_basic_15h",
         "level": 16,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 13,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 11,
-          "acender": 11
+          "sussurro_medo": 11,
+          "marca_brasa": 11
         },
-        "passiveId": "resistencia",
+        "passiveId": "pacto_familiar",
         "passiveLevel": 10,
-        "petId": "familiar_cinzento",
+        "petId": "corvo_pressagio",
         "petLevel": 11
       },
       "manual_checklist": [
@@ -1883,7 +1959,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L13, spells raio_cosmico, acender.",
+        "Conferir build: arma L13, spells sussurro_medo, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1925,29 +2001,38 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "pet_handler",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "familiar_handler",
+        "weapon_type": "varinha_cinzas",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 14,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa",
+          "mandato_oculto",
+          "hemorragia_induzida",
+          "coagulo_negro",
+          "raizes_pedra"
         ],
         "spell_levels": {
-          "raio_cosmico": 12,
-          "acender": 12
+          "sussurro_medo": 12,
+          "marca_brasa": 12
         },
-        "passive_id": "resistencia",
+        "passive_id": "pacto_familiar",
         "passive_level": 11,
-        "pet_id": "familiar_cinzento",
+        "pet_id": "corvo_pressagio",
         "pet_level": 11
       },
       "base": {
@@ -2000,19 +2085,20 @@
         "id": "freemium_basic_20h",
         "displayName": "freemium_basic_20h",
         "level": 17,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 14,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 12,
-          "acender": 12
+          "sussurro_medo": 12,
+          "marca_brasa": 12
         },
-        "passiveId": "resistencia",
+        "passiveId": "pacto_familiar",
         "passiveLevel": 11,
-        "petId": "familiar_cinzento",
+        "petId": "corvo_pressagio",
         "petLevel": 11
       },
       "manual_checklist": [
@@ -2021,7 +2107,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L14, spells raio_cosmico, acender.",
+        "Conferir build: arma L14, spells sussurro_medo, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2034,14 +2120,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 833 as initial matchmaking observation, not final truth."
+        "Use power 813 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_spender_light_2h",
         "account_type": "progression_lab",
         "level": 9,
         "xp": 1364,
-        "power": 833
+        "power": 813
       },
       "resources": {
         "xp": 1364,
@@ -2062,25 +2148,28 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "burst_caster",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "funeral_burst",
+        "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 8,
         "spell_slots": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio": 3,
-          "raio_cosmico": 3
+          "descarga_nervosa": 5
         },
         "passive_id": "",
         "passive_level": 0,
@@ -2137,15 +2226,14 @@
         "id": "spender_light_2h",
         "displayName": "spender_light_2h",
         "level": 9,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 8,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 3,
-          "raio_cosmico": 3
+          "descarga_nervosa": 5
         }
       },
       "manual_checklist": [
@@ -2154,7 +2242,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L8, spells raio, raio_cosmico.",
+        "Conferir build: arma L8, spells descarga_nervosa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2167,18 +2255,18 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 1375 as initial matchmaking observation, not final truth."
+        "Use power 1195 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_spender_light_5h",
         "account_type": "progression_lab",
         "level": 12,
         "xp": 3410,
-        "power": 1375
+        "power": 1195
       },
       "resources": {
         "xp": 3410,
-        "almas": 44,
+        "almas": 133,
         "energia": 35.5,
         "sangue": 101.88,
         "cristais": 7.7,
@@ -2195,27 +2283,30 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "burst_caster",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "funeral_burst",
+        "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 10,
         "spell_slots": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio": 9,
-          "raio_cosmico": 9
+          "descarga_nervosa": 9
         },
-        "passive_id": "forca",
+        "passive_id": "ossuario_interior",
         "passive_level": 7,
         "pet_id": "",
         "pet_level": 0
@@ -2270,17 +2361,16 @@
         "id": "spender_light_5h",
         "displayName": "spender_light_5h",
         "level": 12,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 10,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 9,
-          "raio_cosmico": 9
+          "descarga_nervosa": 9
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 7
       },
       "manual_checklist": [
@@ -2289,7 +2379,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L10, spells raio, raio_cosmico.",
+        "Conferir build: arma L10, spells descarga_nervosa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2330,29 +2420,38 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "pet_handler",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "familiar_handler",
+        "weapon_type": "varinha_cinzas",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 13,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa",
+          "mandato_oculto",
+          "hemorragia_induzida",
+          "coagulo_negro",
+          "raizes_pedra"
         ],
         "spell_levels": {
-          "raio_cosmico": 12,
-          "acender": 12
+          "sussurro_medo": 12,
+          "marca_brasa": 12
         },
-        "passive_id": "resistencia",
+        "passive_id": "pacto_familiar",
         "passive_level": 10,
-        "pet_id": "familiar_cinzento",
+        "pet_id": "corvo_pressagio",
         "pet_level": 11
       },
       "base": {
@@ -2405,19 +2504,20 @@
         "id": "spender_light_10h",
         "displayName": "spender_light_10h",
         "level": 15,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 13,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 12,
-          "acender": 12
+          "sussurro_medo": 12,
+          "marca_brasa": 12
         },
-        "passiveId": "resistencia",
+        "passiveId": "pacto_familiar",
         "passiveLevel": 10,
-        "petId": "familiar_cinzento",
+        "petId": "corvo_pressagio",
         "petLevel": 11
       },
       "manual_checklist": [
@@ -2426,7 +2526,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L13, spells raio_cosmico, acender.",
+        "Conferir build: arma L13, spells sussurro_medo, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2467,29 +2567,38 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "pet_handler",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "familiar_handler",
+        "weapon_type": "varinha_cinzas",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 14,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa",
+          "mandato_oculto",
+          "hemorragia_induzida",
+          "coagulo_negro",
+          "raizes_pedra"
         ],
         "spell_levels": {
-          "raio_cosmico": 12,
-          "acender": 12
+          "sussurro_medo": 12,
+          "marca_brasa": 12
         },
-        "passive_id": "resistencia",
+        "passive_id": "pacto_familiar",
         "passive_level": 11,
-        "pet_id": "familiar_cinzento",
+        "pet_id": "corvo_pressagio",
         "pet_level": 12
       },
       "base": {
@@ -2542,19 +2651,20 @@
         "id": "spender_light_15h",
         "displayName": "spender_light_15h",
         "level": 16,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 14,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 12,
-          "acender": 12
+          "sussurro_medo": 12,
+          "marca_brasa": 12
         },
-        "passiveId": "resistencia",
+        "passiveId": "pacto_familiar",
         "passiveLevel": 11,
-        "petId": "familiar_cinzento",
+        "petId": "corvo_pressagio",
         "petLevel": 12
       },
       "manual_checklist": [
@@ -2563,7 +2673,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L14, spells raio_cosmico, acender.",
+        "Conferir build: arma L14, spells sussurro_medo, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2604,29 +2714,38 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "pet_handler",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "familiar_handler",
+        "weapon_type": "varinha_cinzas",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 16,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa",
+          "mandato_oculto",
+          "hemorragia_induzida",
+          "coagulo_negro",
+          "raizes_pedra"
         ],
         "spell_levels": {
-          "raio_cosmico": 14,
-          "acender": 14
+          "sussurro_medo": 14,
+          "marca_brasa": 14
         },
-        "passive_id": "resistencia",
+        "passive_id": "pacto_familiar",
         "passive_level": 13,
-        "pet_id": "familiar_cinzento",
+        "pet_id": "corvo_pressagio",
         "pet_level": 13
       },
       "base": {
@@ -2679,19 +2798,20 @@
         "id": "spender_light_20h",
         "displayName": "spender_light_20h",
         "level": 18,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 16,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 14,
-          "acender": 14
+          "sussurro_medo": 14,
+          "marca_brasa": 14
         },
-        "passiveId": "resistencia",
+        "passiveId": "pacto_familiar",
         "passiveLevel": 13,
-        "petId": "familiar_cinzento",
+        "petId": "corvo_pressagio",
         "petLevel": 13
       },
       "manual_checklist": [
@@ -2700,7 +2820,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L16, spells raio_cosmico, acender.",
+        "Conferir build: arma L16, spells sussurro_medo, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2713,14 +2833,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 893 as initial matchmaking observation, not final truth."
+        "Use power 873 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_max_spender_2h",
         "account_type": "progression_lab",
         "level": 9,
         "xp": 1616,
-        "power": 893
+        "power": 873
       },
       "resources": {
         "xp": 1616,
@@ -2741,25 +2861,28 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "burst_caster",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "funeral_burst",
+        "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 9,
         "spell_slots": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio": 3,
-          "raio_cosmico": 4
+          "descarga_nervosa": 6
         },
         "passive_id": "",
         "passive_level": 0,
@@ -2816,15 +2939,14 @@
         "id": "max_spender_2h",
         "displayName": "max_spender_2h",
         "level": 9,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 9,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 3,
-          "raio_cosmico": 4
+          "descarga_nervosa": 6
         }
       },
       "manual_checklist": [
@@ -2833,7 +2955,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L9, spells raio, raio_cosmico.",
+        "Conferir build: arma L9, spells descarga_nervosa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2846,18 +2968,18 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 1477 as initial matchmaking observation, not final truth."
+        "Use power 1317 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_max_spender_5h",
         "account_type": "progression_lab",
         "level": 12,
         "xp": 4040,
-        "power": 1477
+        "power": 1317
       },
       "resources": {
         "xp": 4040,
-        "almas": 62.5,
+        "almas": 127.5,
         "energia": 51,
         "sangue": 130.75,
         "cristais": 12,
@@ -2874,27 +2996,30 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "burst_caster",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "funeral_burst",
+        "weapon_type": "cajado_ossario",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 12,
         "spell_slots": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa"
         ],
         "spell_levels": {
-          "raio": 9,
-          "raio_cosmico": 10
+          "descarga_nervosa": 11
         },
-        "passive_id": "forca",
+        "passive_id": "ossuario_interior",
         "passive_level": 8,
         "pet_id": "",
         "pet_level": 0
@@ -2949,17 +3074,16 @@
         "id": "max_spender_5h",
         "displayName": "max_spender_5h",
         "level": 12,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 12,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio",
-          "raio_cosmico"
+          "descarga_nervosa"
         ],
         "spellLevels": {
-          "raio": 9,
-          "raio_cosmico": 10
+          "descarga_nervosa": 11
         },
-        "passiveId": "forca",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 8
       },
       "manual_checklist": [
@@ -2968,7 +3092,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L12, spells raio, raio_cosmico.",
+        "Conferir build: arma L12, spells descarga_nervosa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -3009,29 +3133,38 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "pet_handler",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "familiar_handler",
+        "weapon_type": "varinha_cinzas",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 15,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa",
+          "mandato_oculto",
+          "hemorragia_induzida",
+          "coagulo_negro",
+          "raizes_pedra"
         ],
         "spell_levels": {
-          "raio_cosmico": 13,
-          "acender": 13
+          "sussurro_medo": 13,
+          "marca_brasa": 13
         },
-        "passive_id": "resistencia",
+        "passive_id": "pacto_familiar",
         "passive_level": 11,
-        "pet_id": "familiar_cinzento",
+        "pet_id": "corvo_pressagio",
         "pet_level": 13
       },
       "base": {
@@ -3084,19 +3217,20 @@
         "id": "max_spender_10h",
         "displayName": "max_spender_10h",
         "level": 15,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 15,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 13,
-          "acender": 13
+          "sussurro_medo": 13,
+          "marca_brasa": 13
         },
-        "passiveId": "resistencia",
+        "passiveId": "pacto_familiar",
         "passiveLevel": 11,
-        "petId": "familiar_cinzento",
+        "petId": "corvo_pressagio",
         "petLevel": 13
       },
       "manual_checklist": [
@@ -3105,7 +3239,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L15, spells raio_cosmico, acender.",
+        "Conferir build: arma L15, spells sussurro_medo, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -3146,29 +3280,38 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "pet_handler",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "familiar_handler",
+        "weapon_type": "varinha_cinzas",
         "weapon_quality": "starter",
         "weapon_quality_tier": 0,
         "weapon_level": 17,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa",
+          "mandato_oculto",
+          "hemorragia_induzida",
+          "coagulo_negro",
+          "raizes_pedra"
         ],
         "spell_levels": {
-          "raio_cosmico": 15,
-          "acender": 15
+          "sussurro_medo": 15,
+          "marca_brasa": 15
         },
-        "passive_id": "resistencia",
+        "passive_id": "pacto_familiar",
         "passive_level": 14,
-        "pet_id": "familiar_cinzento",
+        "pet_id": "corvo_pressagio",
         "pet_level": 14
       },
       "base": {
@@ -3221,19 +3364,20 @@
         "id": "max_spender_15h",
         "displayName": "max_spender_15h",
         "level": 17,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 17,
         "weaponQualityTier": 0,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 15,
-          "acender": 15
+          "sussurro_medo": 15,
+          "marca_brasa": 15
         },
-        "passiveId": "resistencia",
+        "passiveId": "pacto_familiar",
         "passiveLevel": 14,
-        "petId": "familiar_cinzento",
+        "petId": "corvo_pressagio",
         "petLevel": 14
       },
       "manual_checklist": [
@@ -3242,7 +3386,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L17, spells raio_cosmico, acender.",
+        "Conferir build: arma L17, spells sussurro_medo, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -3283,29 +3427,38 @@
         "diamante": 0
       },
       "build": {
-        "archetype_id": "pet_handler",
-        "weapon_type": "varinha_magica",
+        "archetype_id": "familiar_handler",
+        "weapon_type": "varinha_cinzas",
         "weapon_quality": "reforcada",
         "weapon_quality_tier": 1,
         "weapon_level": 19,
         "spell_slots": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spells_unlocked": [
-          "raio_cosmico",
-          "raio",
-          "acender",
-          "envenenar",
-          "congelar"
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao",
+          "incisao_ritual",
+          "toxina_palida",
+          "marca_brasa",
+          "mare_escura",
+          "geada_ossos",
+          "lamina_vento",
+          "descarga_nervosa",
+          "mandato_oculto",
+          "hemorragia_induzida",
+          "coagulo_negro",
+          "raizes_pedra"
         ],
         "spell_levels": {
-          "raio_cosmico": 17,
-          "acender": 17
+          "sussurro_medo": 17,
+          "marca_brasa": 17
         },
-        "passive_id": "resistencia",
+        "passive_id": "pacto_familiar",
         "passive_level": 15,
-        "pet_id": "familiar_cinzento",
+        "pet_id": "corvo_pressagio",
         "pet_level": 16
       },
       "base": {
@@ -3358,19 +3511,20 @@
         "id": "max_spender_20h",
         "displayName": "max_spender_20h",
         "level": 19,
+        "weaponId": "varinha_cinzas",
         "weaponLevel": 19,
         "weaponQualityTier": 1,
         "spellIds": [
-          "raio_cosmico",
-          "acender"
+          "sussurro_medo",
+          "marca_brasa"
         ],
         "spellLevels": {
-          "raio_cosmico": 17,
-          "acender": 17
+          "sussurro_medo": 17,
+          "marca_brasa": 17
         },
-        "passiveId": "resistencia",
+        "passiveId": "pacto_familiar",
         "passiveLevel": 15,
-        "petId": "familiar_cinzento",
+        "petId": "corvo_pressagio",
         "petLevel": 16
       },
       "manual_checklist": [
@@ -3379,7 +3533,7 @@
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
-        "Conferir build: arma L19, spells raio_cosmico, acender.",
+        "Conferir build: arma L19, spells sussurro_medo, marca_brasa.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     }

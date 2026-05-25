@@ -9,32 +9,64 @@ const RESPONSE_SCHEMA := "battle_lab_response_v1"
 const REQUEST_PATH := "user://battle_lab_request.json"
 const RESPONSE_PATH := "user://battle_lab_response.json"
 
+const WEAPONS := [
+	{"id": "varinha_cinzas", "label": "Varinha de Cinzas"},
+	{"id": "grimorio_veu", "label": "Grimorio do Veu"},
+	{"id": "athame_hematico", "label": "Athame Hematico"},
+	{"id": "cajado_ossario", "label": "Cajado Ossario"},
+	{"id": "orbe_tempestade", "label": "Orbe da Tempestade"},
+	{"id": "selo_mare_fria", "label": "Selo da Mare Fria"},
+	{"id": "idolo_pedra_viva", "label": "Idolo de Pedra Viva"},
+	{"id": "cetro_braseiro_negro", "label": "Cetro do Braseiro Negro"},
+]
+
 const SPELLS := [
-	{"id": "raio_cosmico", "label": "Raio Cosmico", "unlock": 3},
-	{"id": "raio", "label": "Raio", "unlock": 7},
-	{"id": "acender", "label": "Acender", "unlock": 7},
-	{"id": "envenenar", "label": "Envenenar", "unlock": 7},
-	{"id": "congelar", "label": "Congelar", "unlock": 7},
-	{"id": "odio", "label": "Odio", "unlock": 25},
-	{"id": "dilacerar", "label": "Dilacerar", "unlock": 25},
-	{"id": "fortificar", "label": "Fortificar", "unlock": 25},
-	{"id": "invocar_demonio", "label": "Invocar Demonio", "unlock": 25},
-	{"id": "animar_morto", "label": "Animar Morto", "unlock": 25},
+	{"id": "sussurro_medo", "label": "Sussurro do Medo", "unlock": 3},
+	{"id": "terror_primordial", "label": "Terror Primordial", "unlock": 7},
+	{"id": "labirinto_razao", "label": "Labirinto da Razao", "unlock": 7},
+	{"id": "incisao_ritual", "label": "Incisao Ritual", "unlock": 7},
+	{"id": "toxina_palida", "label": "Toxina Palida", "unlock": 7},
+	{"id": "marca_brasa", "label": "Marca de Brasa", "unlock": 7},
+	{"id": "mare_escura", "label": "Mare Escura", "unlock": 7},
+	{"id": "geada_ossos", "label": "Geada nos Ossos", "unlock": 7},
+	{"id": "lamina_vento", "label": "Lamina de Vento", "unlock": 7},
+	{"id": "descarga_nervosa", "label": "Descarga Nervosa", "unlock": 7},
+	{"id": "mandato_oculto", "label": "Mandato Oculto", "unlock": 15},
+	{"id": "hemorragia_induzida", "label": "Hemorragia Induzida", "unlock": 15},
+	{"id": "coagulo_negro", "label": "Coagulo Negro", "unlock": 15},
+	{"id": "raizes_pedra", "label": "Raizes de Pedra", "unlock": 15},
+	{"id": "coroa_cinzas", "label": "Coroa de Cinzas", "unlock": 25},
+	{"id": "prisao_gelo", "label": "Prisao de Gelo", "unlock": 25},
+	{"id": "putrefacao", "label": "Putrefacao", "unlock": 25},
+	{"id": "marca_sepulcral", "label": "Marca Sepulcral", "unlock": 25},
+	{"id": "erguer_ossos", "label": "Erguer Ossos", "unlock": 25},
+	{"id": "invocar_brasa_faminta", "label": "Invocar Brasa Faminta", "unlock": 25},
 ]
 
 const PASSIVES := [
-	{"id": "foco_astral", "label": "Foco Astral"},
-	{"id": "forca", "label": "Forca"},
-	{"id": "resistencia", "label": "Resistencia"},
-	{"id": "escudo", "label": "Escudo"},
-	{"id": "vampirismo", "label": "Vampirismo"},
-	{"id": "velocidade", "label": "Velocidade"},
+	{"id": "doutrina_pavor", "label": "Doutrina do Pavor"},
+	{"id": "mente_fria", "label": "Mente Fria"},
+	{"id": "anatomista_profano", "label": "Anatomista Profano"},
+	{"id": "sangue_obediente", "label": "Sangue Obediente"},
+	{"id": "alquimia_toxica", "label": "Alquimia Toxica"},
+	{"id": "cinza_viva", "label": "Cinza Viva"},
+	{"id": "mare_silenciosa", "label": "Mare Silenciosa"},
+	{"id": "pedra_interna", "label": "Pedra Interna"},
+	{"id": "pulso_tempestade", "label": "Pulso de Tempestade"},
+	{"id": "ossuario_interior", "label": "Ossuario Interior"},
+	{"id": "pacto_familiar", "label": "Pacto Familiar"},
 ]
 
 const PETS := [
-	{"id": "familiar_cinzento", "label": "Familiar Cinzento"},
-	{"id": "brasido", "label": "Brasido"},
-	{"id": "gelum", "label": "Gelum"},
+	{"id": "corvo_pressagio", "label": "Corvo do Pressagio"},
+	{"id": "sanguessuga_sacramental", "label": "Sanguessuga Sacramental"},
+	{"id": "serpente_toxina", "label": "Serpente de Toxina"},
+	{"id": "cao_cinzas", "label": "Cao de Cinzas"},
+	{"id": "medusa_mare_fria", "label": "Medusa de Mare Fria"},
+	{"id": "escaravelho_pedra", "label": "Escaravelho de Pedra"},
+	{"id": "serpe_tempestade", "label": "Serpe de Tempestade"},
+	{"id": "cranio_errante", "label": "Cranio Errante"},
+	{"id": "olho_veu", "label": "Olho do Veu"},
 ]
 
 var _status_label: Label
@@ -96,6 +128,8 @@ static func validate_build(build: Dictionary) -> Array[String]:
 	var weapon_level := int(build.get("weaponLevel", 0))
 	if level < 1 or level > 40:
 		errors.append("level deve estar entre 1 e 40")
+	if not _id_exists(WEAPONS, str(build.get("weaponId", "varinha_cinzas"))):
+		errors.append("instrumento desconhecido: %s" % str(build.get("weaponId", "")))
 	if weapon_level < 1 or weapon_level > level:
 		errors.append("weaponLevel deve estar entre 1 e level")
 	if int(build.get("weaponQualityTier", -1)) < 0 or int(build.get("weaponQualityTier", -1)) > 4:
@@ -140,7 +174,7 @@ static func validate_build(build: Dictionary) -> Array[String]:
 	return errors
 
 static func default_build(id_prefix: String, level: int = 25) -> Dictionary:
-	var spell_ids := ["raio_cosmico", "acender", "congelar"]
+	var spell_ids := ["sussurro_medo", "marca_brasa", "geada_ossos"]
 	var spell_levels := {}
 	for spell_id: String in spell_ids:
 		spell_levels[spell_id] = level
@@ -148,13 +182,14 @@ static func default_build(id_prefix: String, level: int = 25) -> Dictionary:
 		"id": "%s_custom" % id_prefix,
 		"displayName": "%s Custom" % id_prefix.capitalize(),
 		"level": level,
+		"weaponId": "varinha_cinzas",
 		"weaponLevel": level,
 		"weaponQualityTier": 2,
 		"spellIds": spell_ids,
 		"spellLevels": spell_levels,
-		"passiveId": "foco_astral",
+		"passiveId": "doutrina_pavor",
 		"passiveLevel": level,
-		"petId": "familiar_cinzento",
+		"petId": "corvo_pressagio",
 		"petLevel": level,
 	}
 
@@ -391,6 +426,9 @@ func _create_build_editor(side: String, initial_build: Dictionary) -> Dictionary
 
 	var level := _spin(1, 40, int(initial_build.get("level", 25)))
 	box.add_child(_labeled_control("Level", level))
+	var weapon_option := _option_from_items(WEAPONS)
+	_select_option_metadata(weapon_option, str(initial_build.get("weaponId", "varinha_cinzas")))
+	box.add_child(_labeled_control("Instrumento", weapon_option))
 	var weapon_level := _spin(1, 40, int(initial_build.get("weaponLevel", 25)))
 	box.add_child(_labeled_control("Arma Level", weapon_level))
 	var quality := _spin(0, 4, int(initial_build.get("weaponQualityTier", 2)))
@@ -432,6 +470,7 @@ func _create_build_editor(side: String, initial_build: Dictionary) -> Dictionary
 		"id": id_edit,
 		"name": name_edit,
 		"level": level,
+		"weapon_option": weapon_option,
 		"weapon_level": weapon_level,
 		"quality": quality,
 		"spell_options": spell_options,
@@ -448,7 +487,10 @@ func _create_build_editor(side: String, initial_build: Dictionary) -> Dictionary
 	for option: OptionButton in spell_options:
 		option.item_selected.connect(func(_index: int) -> void:
 			_refresh_editor(editor)
-		)
+	)
+	weapon_option.item_selected.connect(func(_index: int) -> void:
+		_refresh_editor(editor)
+	)
 	for spin_box: SpinBox in [weapon_level, quality, passive_level, pet_level]:
 		spin_box.value_changed.connect(func(_value: float) -> void:
 			_refresh_editor(editor)
@@ -458,6 +500,7 @@ func _create_build_editor(side: String, initial_build: Dictionary) -> Dictionary
 
 func _build_from_editor(editor: Dictionary) -> Dictionary:
 	var level_spin: SpinBox = editor["level"]
+	var weapon_option: OptionButton = editor["weapon_option"]
 	var weapon_spin: SpinBox = editor["weapon_level"]
 	var quality_spin: SpinBox = editor["quality"]
 	var id_edit: LineEdit = editor["id"]
@@ -480,6 +523,7 @@ func _build_from_editor(editor: Dictionary) -> Dictionary:
 		"id": id_edit.text.strip_edges(),
 		"displayName": name_edit.text.strip_edges(),
 		"level": level,
+		"weaponId": _selected_metadata(weapon_option),
 		"weaponLevel": clampi(int(weapon_spin.value), 1, level),
 		"weaponQualityTier": clampi(int(quality_spin.value), 0, 4),
 		"spellIds": spell_ids,
@@ -765,6 +809,13 @@ func _option_with_none(items: Array) -> OptionButton:
 	var option := OptionButton.new()
 	option.add_item("Nenhum")
 	option.set_item_metadata(0, "")
+	for item: Dictionary in items:
+		option.add_item(str(item.get("label", item.get("id", ""))))
+		option.set_item_metadata(option.item_count - 1, str(item.get("id", "")))
+	return option
+
+func _option_from_items(items: Array) -> OptionButton:
+	var option := OptionButton.new()
 	for item: Dictionary in items:
 		option.add_item(str(item.get("label", item.get("id", ""))))
 		option.set_item_metadata(option.item_count - 1, str(item.get("id", "")))

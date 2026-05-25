@@ -33,7 +33,7 @@
     {
       "id": "pocos_sangue",
       "display_name": "Pocos de Sangue",
-      "description": "Produz Sangue para progressao de pets.",
+      "description": "Produz Sangue para progressao de Familiares.",
       "version": 1,
       "enabled": true,
       "tags": ["FIRST_SLICE", "base", "sangue"],
@@ -47,7 +47,7 @@
     {
       "id": "minas_cristal",
       "display_name": "Minas de Cristal",
-      "description": "Produz Cristais para progressao de passivas.",
+      "description": "Produz Cristais para progressao de Doutrinas.",
       "version": 1,
       "enabled": true,
       "tags": ["FIRST_SLICE", "base", "cristais"],

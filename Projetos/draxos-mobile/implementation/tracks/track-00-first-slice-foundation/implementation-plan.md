@@ -97,9 +97,9 @@ Aceite: `docs/design-pending.md` nao possui pendencia `PRIMEIRO_SLICE` que bloqu
 
 Status: **Completo**.
 
-Expandir JSONs e implementar simulador server-authoritative com varinha, spells, DoTs, barreiras, status, pets, passivas, summons e anti-stall.
+Expandir JSONs e implementar simulador server-authoritative com Instrumento Ritual, spells, DoTs, barreiras, status, Familiares, Doutrinas, summons e anti-stall.
 
-Saida T00-P10: conteudo real inicial versionado em `data/definitions/`, seeds de bots `FIRST_SLICE`, simulador TypeScript deterministico espelhado em `server/functions/_shared/` e `supabase/functions/_shared/`, `battle/request` aceita `FIRST_SLICE_SIM` com bot default e `opponent_bot_id`, aplica recompensas de XP/Almas/Energia/Sangue/Ossos, preserva idempotencia por `request_id`, cobre DoTs/status/resistencias/passivas/pets/summons/anti-stall e possui replay rico no cliente.
+Saida T00-P10: conteudo real inicial versionado em `data/definitions/`, seeds de bots `FIRST_SLICE`, simulador TypeScript deterministico espelhado em `server/functions/_shared/` e `supabase/functions/_shared/`, `battle/request` aceita `FIRST_SLICE_SIM` com bot default e `opponent_bot_id`, aplica recompensas de XP/Almas/Energia/Sangue/Ossos, preserva idempotencia por `request_id`, cobre DoTs/status/resistencias/Doutrinas/Familiares/summons/anti-stall e possui replay rico no cliente.
 
 Aceite: servidor gera replay deterministico por seed e eventos conforme `battle-event-log.md`.
 

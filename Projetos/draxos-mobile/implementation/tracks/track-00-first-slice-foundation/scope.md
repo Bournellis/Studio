@@ -24,7 +24,7 @@ Inclui:
 
 Fora do MVP tecnico:
 
-- Pets, passivas, guilda, chat, ranking, Battle Pass, Diamante, loja, ads, Google Sign-In, email/senha, social real e balanceamento final.
+- Familiares, Doutrinas, guilda, chat, ranking, Battle Pass, Diamante, loja, ads, Google Sign-In, email/senha, social real e balanceamento final.
 
 Aceite:
 
@@ -39,7 +39,7 @@ Aceite:
 A Track 00 completa termina quando houver:
 
 - Conta guest, email/senha, Google Sign-In, migracao guest, convite de alpha e persistencia servidor-side.
-- PVP autobattler assincrono ate level cap 40 na Season 1, com levels permanentes, varinha, 0-3 slots de spell por unlock de level, pet no level 15, passivas, summons, anti-stall, recompensas, replay e skip/velocidade visual.
+- PVP autobattler assincrono ate level cap 40 na Season 1, com levels permanentes, Instrumento Ritual, 0-3 slots de spell por unlock de level, Familiar no level 15, Doutrinas, summons, anti-stall, recompensas, replay e skip/velocidade visual.
 - Base Manager com 6 estruturas, fila de construcao, coleta offline, upgrades, armazenamento, ajudas sociais e custos validados.
 - Matchmaking por poder com tolerancia de diferenca, jogadores reais e bots simulados para popular testes.
 - Ranking por season com snapshot.

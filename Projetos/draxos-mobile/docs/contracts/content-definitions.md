@@ -1,7 +1,7 @@
 # Content Definitions Contract
 
-- Ultima atualizacao: `2026-05-20`
-- Status: contrato inicial implementado com fixtures `MVP_ONLY`
+- Ultima atualizacao: `2026-05-25`
+- Status: contrato inicial implementado com rework de personagem
 
 Conteudo autorado vive em `../../data/definitions/`. Resources Godot gerados vivem em `../../data/generated/` e nao devem ser editados manualmente.
 
@@ -36,10 +36,10 @@ IDs sao estaveis. Nao renomear ID para mudar texto player-facing.
 
 | Arquivo | Collection | Conteudo |
 |---|---|---|
-| `spells.json` | `spells` | Spells, custos, alvo, tipo de dano, cooldown e efeitos |
-| `pets.json` | `pets` | Pets, tipo de dano, cadencia e efeito |
-| `passives.json` | `passives` | Passivas, bonus, escala e custo |
-| `weapons.json` | `weapons` | Tipos/qualidades de arma e custos de Ossos |
+| `spells.json` | `spells` | Spells, custos, alvo, fonte de dano, familia de status, cooldown e efeitos |
+| `pets.json` | `pets` | Familiares, fonte, cadencia e efeito |
+| `passives.json` | `passives` | Doutrinas, bonus, escala e custo |
+| `weapons.json` | `weapons` | Instrumentos rituais, qualidades e custos de Ossos |
 | `base_structures.json` | `base_structures` | Estruturas, producao, armazenamento, custos e duracoes |
 | `bot_builds.json` | `bot_builds` | Bots simulados por faixa de poder |
 | `power_bands.json` | `power_bands` | Faixas de matchmaking |
@@ -56,8 +56,8 @@ IDs sao estaveis. Nao renomear ID para mudar texto player-facing.
   "mode": "MVP_ONLY",
   "player_fixture": {
     "level": 1,
-    "weapon_type": "varinha_magica",
-    "spell_ids": ["raio_cosmico"]
+    "weapon_type": "varinha_cinzas",
+    "spell_ids": ["sussurro_medo"]
   },
   "opponent_fixture": {
     "id": "mvp_training_bot",
@@ -68,10 +68,10 @@ IDs sao estaveis. Nao renomear ID para mudar texto player-facing.
 
 Itens relacionados:
 
-- spell: `raio_cosmico`
-- weapon: `varinha_magica`
-- passive: `foco_astral`
-- pet: `familiar_cinzento`
+- spell: `sussurro_medo`
+- weapon: `varinha_cinzas`
+- passive/doutrine: `doutrina_pavor`
+- pet/familiar: `corvo_pressagio`
 - bot: `mvp_training_bot`
 - power band: `mvp_training_band`
 - reward: `mvp_training_reward`
@@ -120,12 +120,14 @@ Archetypes iniciais:
 
 | Archetype | Level | Uso |
 |---|---|---|
-| `starter_wand` | 1-2 | Varinha pura, sem spell |
-| `cosmic_apprentice` | 3-6 | Primeira spell, baseline inicial |
+| `starter_instrument` | 1-2 | Instrumento ritual puro, sem spell |
+| `mental_controller` | 3-6 | Primeiro ato mental, baseline inicial |
 | `elemental_mixer` | 7-14 | Duas spells elementais |
-| `pet_handler` | 15-24 | Duas spells + pet |
+| `familiar_handler` | 15-24 | Duas spells + familiar |
 | `summoner` | 25-40 | Tres spells com summon |
-| `defensive_caster` | 25-40 | Fortificar + dano sustentado |
+| `defensive_occultist` | 25-40 | Barreira/terra/gelo + dano sustentado |
+| `dot_pressure` | 15-40 | Sangue, Veneno, Fogo e Morte por tempo |
+| `funeral_burst` | 25-40 | Payoff de Morte/Fogo e dano alto |
 
 `power_bands.json` deve definir bandas por poder calculado, nao por level cru. A sugestao inicial e gerar bandas estreitas no comeco e mais largas no fim:
 

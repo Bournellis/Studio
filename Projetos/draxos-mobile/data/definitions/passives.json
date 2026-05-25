@@ -3,28 +3,44 @@
   "collection": "passives",
   "items": [
     {
-      "id": "foco_astral",
-      "display_name": "Foco Astral",
-      "description": "Passiva inicial que melhora regeneracao de mana.",
-      "version": 2,
+      "id": "doutrina_pavor",
+      "display_name": "Doutrina do Pavor",
+      "description": "Doutrina mental que fortalece Medo, Terror e quebra de vontade.",
+      "version": 3,
       "enabled": true,
-      "tags": ["FIRST_SLICE", "passive", "mana"],
+      "tags": ["FIRST_SLICE", "passive", "doutrine", "mental", "control"],
       "mode": "FIRST_SLICE",
       "unlock_level": 10,
-      "stat": "mana_regen",
+      "stat": "control_intensity",
       "base_bonus": 0.04,
       "bonus_per_level": 0.002,
       "effects": [
-        {"kind": "mana_regen_percent", "amount": 0.04}
+        {"kind": "status_duration_percent", "family": "mental", "amount": 0.04}
       ]
     },
     {
-      "id": "forca",
-      "display_name": "Forca",
-      "description": "Aumenta dano base da Varinha e spells diretas.",
+      "id": "mente_fria",
+      "display_name": "Mente Fria",
+      "description": "Aumenta Vontade e reduz o impacto de controle recebido.",
       "version": 1,
       "enabled": true,
-      "tags": ["FIRST_SLICE", "passive", "damage"],
+      "tags": ["FIRST_SLICE", "passive", "doutrine", "mental", "defense"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 10,
+      "stat": "mental_resistance",
+      "base_bonus": 0.03,
+      "bonus_per_level": 0.0015,
+      "effects": [
+        {"kind": "damage_reduction_percent", "amount": 0.03}
+      ]
+    },
+    {
+      "id": "anatomista_profano",
+      "display_name": "Anatomista Profano",
+      "description": "Melhora dano Fisico, Ferida e Sangramento.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "passive", "doutrine", "fisico", "sangue"],
       "mode": "FIRST_SLICE",
       "unlock_level": 10,
       "stat": "damage",
@@ -35,44 +51,12 @@
       ]
     },
     {
-      "id": "resistencia",
-      "display_name": "Resistencia",
-      "description": "Reduz dano recebido durante batalhas.",
+      "id": "sangue_obediente",
+      "display_name": "Sangue Obediente",
+      "description": "Converte parte do dano em cura e fortalece efeitos de Sangue.",
       "version": 1,
       "enabled": true,
-      "tags": ["FIRST_SLICE", "passive", "defense"],
-      "mode": "FIRST_SLICE",
-      "unlock_level": 10,
-      "stat": "damage_reduction",
-      "base_bonus": 0.03,
-      "bonus_per_level": 0.0015,
-      "effects": [
-        {"kind": "damage_reduction_percent", "amount": 0.03}
-      ]
-    },
-    {
-      "id": "escudo",
-      "display_name": "Escudo",
-      "description": "Concede barreira inicial no comeco da batalha.",
-      "version": 1,
-      "enabled": true,
-      "tags": ["FIRST_SLICE", "passive", "barrier"],
-      "mode": "FIRST_SLICE",
-      "unlock_level": 10,
-      "stat": "starting_barrier",
-      "base_bonus": 12,
-      "bonus_per_level": 1,
-      "effects": [
-        {"kind": "starting_barrier", "amount": 12}
-      ]
-    },
-    {
-      "id": "vampirismo",
-      "display_name": "Vampirismo",
-      "description": "Converte pequena parte do dano em cura.",
-      "version": 1,
-      "enabled": true,
-      "tags": ["FIRST_SLICE", "passive", "heal"],
+      "tags": ["FIRST_SLICE", "passive", "doutrine", "sangue", "heal"],
       "mode": "FIRST_SLICE",
       "unlock_level": 10,
       "stat": "lifesteal",
@@ -83,12 +67,76 @@
       ]
     },
     {
-      "id": "velocidade",
-      "display_name": "Velocidade",
-      "description": "Reduz levemente cooldowns de spells.",
+      "id": "alquimia_toxica",
+      "display_name": "Alquimia Toxica",
+      "description": "Melhora Veneno, Fraqueza e corrosao corporal.",
       "version": 1,
       "enabled": true,
-      "tags": ["FIRST_SLICE", "passive", "haste"],
+      "tags": ["FIRST_SLICE", "passive", "doutrine", "veneno", "dot"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 10,
+      "stat": "dot_damage",
+      "base_bonus": 0.04,
+      "bonus_per_level": 0.0015,
+      "effects": [
+        {"kind": "dot_damage_percent", "family": "veneno", "amount": 0.04}
+      ]
+    },
+    {
+      "id": "cinza_viva",
+      "display_name": "Cinza Viva",
+      "description": "Melhora Fogo, Queimando e marcas de cinzas.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "passive", "doutrine", "fogo", "dot"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 10,
+      "stat": "fire_pressure",
+      "base_bonus": 0.04,
+      "bonus_per_level": 0.0015,
+      "effects": [
+        {"kind": "dot_damage_percent", "family": "fogo", "amount": 0.04}
+      ]
+    },
+    {
+      "id": "mare_silenciosa",
+      "display_name": "Mare Silenciosa",
+      "description": "Melhora Agua, Gelo, lentidao e congelamento.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "passive", "doutrine", "agua", "gelo"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 10,
+      "stat": "slow_control",
+      "base_bonus": 0.03,
+      "bonus_per_level": 0.0015,
+      "effects": [
+        {"kind": "status_duration_percent", "family": "gelo", "amount": 0.03}
+      ]
+    },
+    {
+      "id": "pedra_interna",
+      "display_name": "Pedra Interna",
+      "description": "Aumenta Guarda, Tenacidade e barreiras de Terra.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "passive", "doutrine", "terra", "defense"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 10,
+      "stat": "starting_barrier",
+      "base_bonus": 12,
+      "bonus_per_level": 1,
+      "effects": [
+        {"kind": "starting_barrier", "amount": 12}
+      ]
+    },
+    {
+      "id": "pulso_tempestade",
+      "display_name": "Pulso de Tempestade",
+      "description": "Melhora Celeridade Ritual, Vento, Raio e interrupcoes.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "passive", "doutrine", "vento", "raio", "haste"],
       "mode": "FIRST_SLICE",
       "unlock_level": 10,
       "stat": "cooldown_reduction",
@@ -96,6 +144,38 @@
       "bonus_per_level": 0.001,
       "effects": [
         {"kind": "cooldown_reduction_percent", "amount": 0.03}
+      ]
+    },
+    {
+      "id": "ossuario_interior",
+      "display_name": "Ossuario Interior",
+      "description": "Melhora Morte, summons e pressao anti-regeneracao.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "passive", "doutrine", "morte", "summon"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 10,
+      "stat": "summon_power",
+      "base_bonus": 0.05,
+      "bonus_per_level": 0.002,
+      "effects": [
+        {"kind": "summon_damage_percent", "amount": 0.05}
+      ]
+    },
+    {
+      "id": "pacto_familiar",
+      "display_name": "Pacto Familiar",
+      "description": "Melhora familiares, cadencia de familiar e suporte de status.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "passive", "doutrine", "familiar", "pet"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 10,
+      "stat": "pet_power",
+      "base_bonus": 0.05,
+      "bonus_per_level": 0.002,
+      "effects": [
+        {"kind": "pet_damage_percent", "amount": 0.05}
       ]
     }
   ]

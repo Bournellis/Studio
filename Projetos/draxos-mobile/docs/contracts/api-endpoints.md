@@ -71,14 +71,14 @@ Response:
     "diamante": 0
   },
   "build": {
-    "weapon_type": "varinha_magica",
+    "weapon_type": "varinha_cinzas",
     "weapon_quality": "starter",
     "weapon_level": 1,
-    "spell_slots": ["raio_cosmico"],
-    "spells_unlocked": ["raio_cosmico"],
-    "pet_id": "familiar_cinzento",
+    "spell_slots": ["sussurro_medo"],
+    "spells_unlocked": ["sussurro_medo"],
+    "pet_id": "corvo_pressagio",
     "pet_level": 1,
-    "passive_id": "foco_astral",
+    "passive_id": "doutrina_pavor",
     "passive_level": 1
   }
 }
@@ -121,14 +121,14 @@ Response MVP:
   },
   "build": {
     "player_id": "uuid",
-    "weapon_type": "varinha_magica",
+    "weapon_type": "varinha_cinzas",
     "weapon_quality": "starter",
     "weapon_level": 1,
-    "spell_slots": ["raio_cosmico"],
-    "spells_unlocked": ["raio_cosmico"],
-    "pet_id": "familiar_cinzento",
+    "spell_slots": ["sussurro_medo"],
+    "spells_unlocked": ["sussurro_medo"],
+    "pet_id": "corvo_pressagio",
     "pet_level": 1,
-    "passive_id": "foco_astral",
+    "passive_id": "doutrina_pavor",
     "passive_level": 1,
     "updated_at": "iso-date"
   },
@@ -254,8 +254,8 @@ Response:
 | POST | `/account/google/link` | Vincular Google Sign-In |
 | POST | `/account/refresh` | Renovar sessao quando necessario |
 | GET | `/player/profile` | Perfil, level, XP, poder e season |
-| POST | `/build/equip` | Equipar arma, spells, passiva e pet |
-| POST | `/upgrade/request` | Solicitar upgrade de arma, spell, pet, passiva, stats ou construcao |
+| POST | `/build/equip` | Equipar instrumento ritual, spells, doutrina/passiva e familiar/pet |
+| POST | `/upgrade/request` | Solicitar upgrade de instrumento, spell, familiar, doutrina, stats ou construcao |
 | GET | `/base/state` | Ler estruturas, fila, producao pendente e recursos |
 | POST | `/base/upgrade` | Iniciar upgrade de estrutura permanente |
 | POST | `/base/collect` | Coletar recursos acumulados offline |
@@ -284,8 +284,8 @@ Regras do primeiro slice:
 - Servidor valida level, unlock, posse do conteudo e slot disponivel.
 - Spell desbloqueada pode ser equipada em qualquer slot de spell liberado.
 - Slot de spell 1 abre no level 3, slot 2 no level 7 e slot 3 no level 25.
-- Slot de passiva abre no level 10.
-- Slot de pet abre no level 15.
+- Slot de doutrina/passiva abre no level 10.
+- Slot de familiar/pet abre no level 15.
 - Servidor recalcula `players.power` apos sucesso.
 
 Request logico:
@@ -293,12 +293,12 @@ Request logico:
 ```json
 {
   "request_id": "uuid",
-  "weapon": { "type": "varinha_magica", "quality": "starter" },
+  "weapon": { "type": "varinha_cinzas", "quality": "starter" },
   "spell_slots": [
-    { "slot_index": 1, "spell_id": "raio_cosmico" }
+    { "slot_index": 1, "spell_id": "sussurro_medo" }
   ],
-  "passive_id": "foco_astral",
-  "pet_id": "familiar_cinzento"
+  "passive_id": "doutrina_pavor",
+  "pet_id": "corvo_pressagio"
 }
 ```
 

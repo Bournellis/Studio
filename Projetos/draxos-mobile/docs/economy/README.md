@@ -17,7 +17,7 @@ Este documento organiza como a economia do DraxosMobile deve ser trabalhada daqu
 - Season 1 usa cap 40 por padrao.
 - O simulador permite testar cap inicial 40, 50 ou 60.
 - Caps futuros sao editaveis por season; nao ha regra fixa de crescimento ainda.
-- Todos os sistemas compartilham o cap atual: level global, arma, spells, pet, passivas e construcoes.
+- Todos os sistemas compartilham o cap atual: level global, Instrumento Ritual, spells, Familiar, Doutrina e construcoes.
 - Nenhum level reseta entre seasons.
 - Resetam por season: Battle Pass, ranking/eventos de arena, missoes sazonais e ofertas temporarias.
 - Catch-up futuro usa multiplicador suave de XP/recursos para jogadores abaixo do cap anterior.
@@ -41,18 +41,18 @@ Esses tetos vivem tambem em `../../tools/economy_simulator/economy_model.v1.json
 | Recurso | Funcao | Entradas | Saidas | Persistencia |
 |---|---|---|---|---|
 | XP | Level global, unlocks e ritmo da season | Batalhas, missoes, Battle Pass, catch-up | Nao e gasto | Permanente |
-| Almas | Upgrade de arma e spells | Batalhas, base, missoes, Battle Pass, pacotes limitados | Varinha, spells e unlocks magicos | Permanente |
+| Almas | Upgrade de Instrumento Ritual e spells | Batalhas, base, missoes, Battle Pass, pacotes limitados | Instrumento Ritual, spells e unlocks magicos | Permanente |
 | Energia | Gargalo da base | Nucleo, batalhas, missoes, Battle Pass, Diamante | Construcoes, fila e aceleracao | Permanente |
-| Sangue | Progressao de pet | Pocos, batalhas, missoes, Battle Pass | Pets | Permanente |
-| Cristais | Progressao de passivas | Minas, missoes, Battle Pass | Passivas | Permanente |
-| Ossos | Qualidade/crafting da varinha | Ossario, batalha, quests, Battle Pass | Qualidade da varinha | Permanente |
+| Sangue | Progressao de Familiar | Pocos, batalhas, missoes, Battle Pass | Familiares | Permanente |
+| Cristais | Progressao de Doutrina | Minas, missoes, Battle Pass | Doutrinas | Permanente |
+| Ossos | Qualidade/crafting do Instrumento Ritual | Ossario, batalha, quests, Battle Pass | Qualidade do Instrumento Ritual | Permanente |
 | Diamante | Premium, tempo e conforto | Compra, passe premium, recompensas raras | Aceleracao, fila, pacotes limitados | Permanente |
 | Tempo/Fila | Controle de ritmo | Espera, fila gratis, segunda fila | Construcoes e aceleracao | Permanente |
 | Poder | Matchmaking e leitura de forca | Derivado de level/build/upgrades | Nao e gasto | Recalculado |
 | Arena | Ranking competitivo | PvP sazonal | Perdas/decay se existir | Sazonal |
 | Maestria | Progressao permanente por uso | Dano causado | Nao e gasto | Permanente |
 
-Regra de ownership: cada recurso deve ter um papel claro. XP libera, Almas fortalecem magia, Energia move a base, Sangue move pet, Cristais movem passivas, Ossos movem qualidade da varinha e Diamante compra tempo/conforto.
+Regra de ownership: cada recurso deve ter um papel claro. XP libera, Almas fortalecem magia e Instrumento Ritual, Energia move a base, Sangue move Familiar, Cristais movem Doutrinas, Ossos movem qualidade do Instrumento Ritual e Diamante compra tempo/conforto.
 
 ## Perfis Do Simulador
 
@@ -97,7 +97,7 @@ Battle Pass v0:
 - Cada season tem 2 passes.
 - Cada passe tem 30 tiers.
 - Trilha Free e Trilha Premium usam os mesmos tiers.
-- Premium adiciona recursos, cosmeticos e conforto; nao vende spell, pet, passiva, varinha exclusiva ou poder acima do cap.
+- Premium adiciona recursos, cosmeticos e conforto; nao vende spell, Familiar, Doutrina, Instrumento exclusivo ou poder acima do cap.
 
 Total por passe de 60 dias:
 

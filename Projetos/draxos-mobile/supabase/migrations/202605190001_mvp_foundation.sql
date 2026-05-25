@@ -28,7 +28,7 @@ create table if not exists public.resources (
 
 create table if not exists public.builds (
 	player_id uuid primary key references public.players(id) on delete cascade,
-	weapon_type text not null default 'varinha_magica',
+	weapon_type text not null default 'varinha_cinzas',
 	weapon_quality text not null default 'varinha_simples',
 	weapon_level integer not null default 1 check (weapon_level >= 1),
 	spell_slots jsonb not null default '[]'::jsonb,
@@ -154,7 +154,7 @@ values (
 	'mvp_training_bot',
 	50,
 	'MVP_ONLY',
-	'{"level": 1, "weapon_type": "varinha_magica", "spell_ids": []}'::jsonb,
+	'{"level": 1, "weapon_type": "varinha_cinzas", "spell_ids": []}'::jsonb,
 	true
 )
 on conflict (id) do update set

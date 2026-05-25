@@ -1,13 +1,17 @@
 export type BattleSideId = "player" | "opponent";
 
 type DamageType =
-  | "magico"
-  | "choque"
+  | "arcano"
+  | "fisico"
   | "fogo"
+  | "agua"
+  | "terra"
+  | "vento"
+  | "raio"
   | "veneno"
   | "gelo"
   | "morte"
-  | "sangramento"
+  | "sangue"
   | "none";
 
 type DamageCategory = "weapon" | "spell" | "dot" | "pet" | "summon" | "system";
@@ -16,6 +20,7 @@ export interface CombatantBuild {
   id: string;
   displayName: string;
   level: number;
+  weaponId?: string;
   weaponLevel: number;
   weaponQualityTier: number;
   spellIds: string[];
@@ -80,6 +85,10 @@ interface RuntimeCombatant {
   lifesteal: number;
   cooldownMultiplier: number;
   weaponDamage: number;
+  weaponDamageType: DamageType;
+  weaponCadence: number;
+  weaponSpecialEvery: number;
+  weaponSpecialMultiplier: number;
   nextWeaponAt: number;
   attackCount: number;
   spellCooldowns: Record<string, number>;
@@ -116,8 +125,11 @@ interface RuntimeStatus {
   stacks: number;
   expiresAt: number;
   vulnerabilityPerStack?: number;
+  damageTypeVulnerability?: Partial<Record<DamageType, number>>;
   slowPerStack?: number;
+  cooldownSlowPerStack?: number;
   resistanceBonus?: number;
+  regenPenaltyPerStack?: number;
 }
 
 interface SpellDefinition {
@@ -149,15 +161,21 @@ interface PetDefinition {
   baseDamage: number;
   damagePerLevel: number;
   cadence: number;
+  dot?: { statusId: string; tickDamage: number; duration: number };
+  status?: { statusId: string; stacks: number; duration: number };
 }
 
 interface PassiveStats {
   manaRegenBonus: number;
   damageBonus: number;
+  dotDamageBonus: number;
   damageReduction: number;
   startingBarrier: number;
   lifesteal: number;
   cooldownReduction: number;
+  statusDurationBonus: number;
+  petDamageBonus: number;
+  summonDamageBonus: number;
 }
 
 const MAX_DURATION = 36;
@@ -166,38 +184,158 @@ const DOT_TICK_SECONDS = 1;
 const COMBAT_PACE_HP_MULTIPLIER_BASE = 4.85;
 const COMBAT_PACE_HP_MULTIPLIER_PER_LEVEL = 0.121;
 
-const SPELLS: Record<string, SpellDefinition> = {
-  raio_cosmico: {
-    id: "raio_cosmico",
-    damageType: "magico",
-    manaCost: 8,
-    cooldown: 4,
-    target: "direct",
-    baseDamage: 18,
-    damagePerLevel: 2.4,
-  },
-  raio: {
-    id: "raio",
-    damageType: "choque",
-    manaCost: 12,
-    cooldown: 6,
-    target: "player",
-    baseDamage: 14,
+const WEAPONS: Record<
+  string,
+  {
+    damageType: DamageType;
+    baseDamage: number;
+    damagePerLevel: number;
+    cadence: number;
+    specialEvery: number;
+    specialMultiplier: number;
+  }
+> = {
+  varinha_cinzas: {
+    damageType: "arcano",
+    baseDamage: 15,
     damagePerLevel: 1.8,
-    status: { statusId: "choque_marcado", stacks: 1, duration: 6 },
+    cadence: 1,
+    specialEvery: 4,
+    specialMultiplier: 3,
   },
-  acender: {
-    id: "acender",
-    damageType: "fogo",
-    manaCost: 14,
-    cooldown: 7,
-    target: "area",
+  grimorio_veu: {
+    damageType: "arcano",
     baseDamage: 12,
-    damagePerLevel: 1.7,
-    dot: { statusId: "queimando", tickDamage: 4, duration: 5 },
+    damagePerLevel: 1.55,
+    cadence: 1.15,
+    specialEvery: 4,
+    specialMultiplier: 2.4,
   },
-  envenenar: {
-    id: "envenenar",
+  athame_hematico: {
+    damageType: "fisico",
+    baseDamage: 17,
+    damagePerLevel: 2,
+    cadence: 0.95,
+    specialEvery: 4,
+    specialMultiplier: 2.6,
+  },
+  cajado_ossario: {
+    damageType: "morte",
+    baseDamage: 14,
+    damagePerLevel: 1.75,
+    cadence: 1.1,
+    specialEvery: 4,
+    specialMultiplier: 2.8,
+  },
+  orbe_tempestade: {
+    damageType: "raio",
+    baseDamage: 13,
+    damagePerLevel: 1.65,
+    cadence: 0.85,
+    specialEvery: 4,
+    specialMultiplier: 2.3,
+  },
+  selo_mare_fria: {
+    damageType: "gelo",
+    baseDamage: 13,
+    damagePerLevel: 1.6,
+    cadence: 1.05,
+    specialEvery: 4,
+    specialMultiplier: 2.5,
+  },
+  idolo_pedra_viva: {
+    damageType: "terra",
+    baseDamage: 16,
+    damagePerLevel: 1.9,
+    cadence: 1.2,
+    specialEvery: 4,
+    specialMultiplier: 2.7,
+  },
+  cetro_braseiro_negro: {
+    damageType: "fogo",
+    baseDamage: 15,
+    damagePerLevel: 1.85,
+    cadence: 1,
+    specialEvery: 4,
+    specialMultiplier: 2.6,
+  },
+};
+
+const SPELLS: Record<string, SpellDefinition> = {
+  sussurro_medo: {
+    id: "sussurro_medo",
+    damageType: "none",
+    manaCost: 8,
+    cooldown: 4.5,
+    target: "player",
+    baseDamage: 0,
+    damagePerLevel: 0,
+    status: { statusId: "inquietacao", stacks: 1, duration: 6 },
+  },
+  terror_primordial: {
+    id: "terror_primordial",
+    damageType: "none",
+    manaCost: 12,
+    cooldown: 7,
+    target: "player",
+    baseDamage: 0,
+    damagePerLevel: 0,
+    status: { statusId: "terror", stacks: 1, duration: 4 },
+  },
+  labirinto_razao: {
+    id: "labirinto_razao",
+    damageType: "none",
+    manaCost: 11,
+    cooldown: 7.5,
+    target: "player",
+    baseDamage: 0,
+    damagePerLevel: 0,
+    status: { statusId: "confusao", stacks: 1, duration: 5 },
+  },
+  mandato_oculto: {
+    id: "mandato_oculto",
+    damageType: "none",
+    manaCost: 14,
+    cooldown: 9,
+    target: "player",
+    baseDamage: 0,
+    damagePerLevel: 0,
+    status: { statusId: "compulsao", stacks: 1, duration: 5 },
+  },
+  incisao_ritual: {
+    id: "incisao_ritual",
+    damageType: "fisico",
+    manaCost: 12,
+    cooldown: 6.5,
+    target: "direct",
+    baseDamage: 16,
+    damagePerLevel: 1.9,
+    status: { statusId: "ferida", stacks: 1, duration: 6 },
+  },
+  hemorragia_induzida: {
+    id: "hemorragia_induzida",
+    damageType: "sangue",
+    manaCost: 16,
+    cooldown: 8,
+    target: "direct",
+    baseDamage: 8,
+    damagePerLevel: 1,
+    dot: { statusId: "hemorragia", tickDamage: 5, duration: 6 },
+  },
+  coagulo_negro: {
+    id: "coagulo_negro",
+    damageType: "none",
+    manaCost: 16,
+    cooldown: 11,
+    target: "self",
+    baseDamage: 0,
+    damagePerLevel: 0,
+    barrierBase: 28,
+    barrierPerLevel: 2.6,
+    resistance: { amount: 0.06, duration: 7 },
+  },
+  toxina_palida: {
+    id: "toxina_palida",
     damageType: "veneno",
     manaCost: 10,
     cooldown: 8,
@@ -206,94 +344,198 @@ const SPELLS: Record<string, SpellDefinition> = {
     damagePerLevel: 0.8,
     dot: { statusId: "envenenado", tickDamage: 5, duration: 6 },
   },
-  congelar: {
-    id: "congelar",
+  marca_brasa: {
+    id: "marca_brasa",
+    damageType: "fogo",
+    manaCost: 14,
+    cooldown: 7,
+    target: "area",
+    baseDamage: 12,
+    damagePerLevel: 1.7,
+    dot: { statusId: "queimando", tickDamage: 4, duration: 5 },
+  },
+  coroa_cinzas: {
+    id: "coroa_cinzas",
+    damageType: "fogo",
+    manaCost: 20,
+    cooldown: 9,
+    target: "player",
+    baseDamage: 24,
+    damagePerLevel: 2.2,
+    status: { statusId: "cinzas_marcadas", stacks: 1, duration: 6 },
+  },
+  mare_escura: {
+    id: "mare_escura",
+    damageType: "agua",
+    manaCost: 11,
+    cooldown: 6.5,
+    target: "area",
+    baseDamage: 8,
+    damagePerLevel: 1.2,
+    status: { statusId: "molhado", stacks: 1, duration: 7 },
+  },
+  geada_ossos: {
+    id: "geada_ossos",
     damageType: "gelo",
     manaCost: 13,
     cooldown: 7.5,
     target: "area",
     baseDamage: 11,
     damagePerLevel: 1.6,
-    status: { statusId: "lento", stacks: 1, duration: 5 },
+    status: { statusId: "resfriado", stacks: 1, duration: 5 },
   },
-  odio: {
-    id: "odio",
+  prisao_gelo: {
+    id: "prisao_gelo",
+    damageType: "gelo",
+    manaCost: 20,
+    cooldown: 10,
+    target: "area",
+    baseDamage: 12,
+    damagePerLevel: 1.4,
+    status: { statusId: "congelado", stacks: 1, duration: 3 },
+  },
+  raizes_pedra: {
+    id: "raizes_pedra",
+    damageType: "terra",
+    manaCost: 17,
+    cooldown: 10.5,
+    target: "direct",
+    baseDamage: 14,
+    damagePerLevel: 1.7,
+    barrierBase: 12,
+    barrierPerLevel: 1.2,
+    status: { statusId: "enraizado", stacks: 1, duration: 5 },
+  },
+  lamina_vento: {
+    id: "lamina_vento",
+    damageType: "vento",
+    manaCost: 12,
+    cooldown: 5.5,
+    target: "direct",
+    baseDamage: 15,
+    damagePerLevel: 1.8,
+    status: { statusId: "desequilibrado", stacks: 1, duration: 4 },
+  },
+  descarga_nervosa: {
+    id: "descarga_nervosa",
+    damageType: "raio",
+    manaCost: 12,
+    cooldown: 6,
+    target: "player",
+    baseDamage: 14,
+    damagePerLevel: 1.8,
+    status: { statusId: "condutor", stacks: 1, duration: 6 },
+  },
+  putrefacao: {
+    id: "putrefacao",
     damageType: "morte",
     manaCost: 22,
     cooldown: 9,
     target: "player",
-    baseDamage: 26,
-    damagePerLevel: 2.4,
+    baseDamage: 10,
+    damagePerLevel: 1.2,
+    dot: { statusId: "decaimento", tickDamage: 6, duration: 6 },
   },
-  dilacerar: {
-    id: "dilacerar",
-    damageType: "sangramento",
+  marca_sepulcral: {
+    id: "marca_sepulcral",
+    damageType: "morte",
     manaCost: 18,
-    cooldown: 7.5,
-    target: "direct",
-    baseDamage: 20,
-    damagePerLevel: 2.2,
-    dot: { statusId: "sangrando", tickDamage: 6, duration: 5 },
+    cooldown: 8,
+    target: "player",
+    baseDamage: 18,
+    damagePerLevel: 1.8,
+    status: { statusId: "marca_sepulcral", stacks: 1, duration: 7 },
   },
-  fortificar: {
-    id: "fortificar",
-    damageType: "none",
-    manaCost: 16,
-    cooldown: 12,
-    target: "self",
-    baseDamage: 0,
-    damagePerLevel: 0,
-    barrierBase: 30,
-    barrierPerLevel: 3,
-    resistance: { amount: 0.08, duration: 8 },
-  },
-  invocar_demonio: {
-    id: "invocar_demonio",
-    damageType: "fogo",
-    manaCost: 20,
-    cooldown: 10,
-    target: "self",
-    baseDamage: 0,
-    damagePerLevel: 0,
-    summonId: "demonio",
-  },
-  animar_morto: {
-    id: "animar_morto",
+  erguer_ossos: {
+    id: "erguer_ossos",
     damageType: "morte",
     manaCost: 20,
     cooldown: 10,
     target: "self",
     baseDamage: 0,
     damagePerLevel: 0,
-    summonId: "esqueleto",
+    summonId: "guardiao_ossos",
+  },
+  invocar_brasa_faminta: {
+    id: "invocar_brasa_faminta",
+    damageType: "fogo",
+    manaCost: 20,
+    cooldown: 10,
+    target: "self",
+    baseDamage: 0,
+    damagePerLevel: 0,
+    summonId: "brasa_faminta",
   },
 };
 
 const PETS: Record<string, PetDefinition> = {
-  familiar_cinzento: {
-    damageType: "magico",
-    baseDamage: 6,
-    damagePerLevel: 0.9,
-    cadence: 4,
-  },
-  brasido: {
-    damageType: "fogo",
+  corvo_pressagio: {
+    damageType: "morte",
     baseDamage: 5,
-    damagePerLevel: 0.85,
-    cadence: 3.5,
+    damagePerLevel: 0.7,
+    cadence: 4,
+    status: { statusId: "inquietacao", stacks: 1, duration: 4 },
   },
-  gelum: {
+  sanguessuga_sacramental: {
+    damageType: "sangue",
+    baseDamage: 5,
+    damagePerLevel: 0.75,
+    cadence: 4.2,
+    dot: { statusId: "sangramento", tickDamage: 2, duration: 4 },
+  },
+  serpente_toxina: {
+    damageType: "veneno",
+    baseDamage: 5,
+    damagePerLevel: 0.75,
+    cadence: 4.1,
+    dot: { statusId: "toxina", tickDamage: 2, duration: 4 },
+  },
+  cao_cinzas: {
+    damageType: "fogo",
+    baseDamage: 6,
+    damagePerLevel: 0.85,
+    cadence: 3.7,
+  },
+  medusa_mare_fria: {
     damageType: "gelo",
-    baseDamage: 8,
-    damagePerLevel: 1,
+    baseDamage: 7,
+    damagePerLevel: 0.9,
     cadence: 4.8,
+    status: { statusId: "resfriado", stacks: 1, duration: 4 },
+  },
+  escaravelho_pedra: {
+    damageType: "terra",
+    baseDamage: 6,
+    damagePerLevel: 0.8,
+    cadence: 4.6,
+    status: { statusId: "enraizado", stacks: 1, duration: 4 },
+  },
+  serpe_tempestade: {
+    damageType: "raio",
+    baseDamage: 5,
+    damagePerLevel: 0.75,
+    cadence: 3.6,
+    status: { statusId: "condutor", stacks: 1, duration: 4 },
+  },
+  cranio_errante: {
+    damageType: "morte",
+    baseDamage: 6,
+    damagePerLevel: 0.85,
+    cadence: 4.4,
+    status: { statusId: "decaimento", stacks: 1, duration: 4 },
+  },
+  olho_veu: {
+    damageType: "arcano",
+    baseDamage: 4,
+    damagePerLevel: 0.65,
+    cadence: 4,
+    status: { statusId: "vulneravel", stacks: 1, duration: 4 },
   },
 };
 
 const SUMMONS: Record<string, { hp: number; dps: number; damageType: DamageType }> = {
-  esqueleto: { hp: 60, dps: 6, damageType: "morte" },
-  morto_vivo: { hp: 40, dps: 5, damageType: "morte" },
-  demonio: { hp: 50, dps: 7, damageType: "fogo" },
+  guardiao_ossos: { hp: 60, dps: 6, damageType: "morte" },
+  brasa_faminta: { hp: 50, dps: 7, damageType: "fogo" },
 };
 
 export function simulateFirstSliceBattle(input: BattleSimulationInput): BattleSimulationResult {
@@ -401,6 +643,7 @@ function createCombatant(side: BattleSideId, build: CombatantBuild): RuntimeComb
   const maxHp = maxHpForLevel(level);
   const maxMana = Math.round(20 + 1.5 * (level - 1));
   const passive = passiveStats(build.passiveId, build.passiveLevel);
+  const weapon = weaponDefinition(build.weaponId);
   return {
     side,
     build,
@@ -415,7 +658,11 @@ function createCombatant(side: BattleSideId, build: CombatantBuild): RuntimeComb
     damageReduction: passive.damageReduction,
     lifesteal: passive.lifesteal,
     cooldownMultiplier: 1 - passive.cooldownReduction,
-    weaponDamage: weaponDamage(build),
+    weaponDamage: weaponDamage(build, weapon),
+    weaponDamageType: weapon.damageType,
+    weaponCadence: weapon.cadence,
+    weaponSpecialEvery: weapon.specialEvery,
+    weaponSpecialMultiplier: weapon.specialMultiplier,
     nextWeaponAt: 0.5,
     attackCount: 0,
     spellCooldowns: {},
@@ -456,10 +703,11 @@ function emitPassiveStart(
 
 function regenerate(combatant: RuntimeCombatant): void {
   const slow = slowMultiplier(combatant);
+  const regenPenalty = regenPenaltyMultiplier(combatant);
   if (combatant.hp > 0) {
     combatant.hp = Math.min(
       combatant.maxHp,
-      combatant.hp + combatant.hpRegen * slow * TICK_SECONDS,
+      combatant.hp + combatant.hpRegen * slow * regenPenalty * TICK_SECONDS,
     );
   }
   combatant.mana = Math.min(
@@ -497,13 +745,15 @@ function processWeapon(
   }
 
   actor.attackCount += 1;
-  const multiplier = actor.attackCount % 4 === 0 ? 3 : 1;
+  const multiplier = actor.attackCount % actor.weaponSpecialEvery === 0
+    ? actor.weaponSpecialMultiplier
+    : 1;
   const rawDamage = Math.ceil(actor.weaponDamage * multiplier * (1 + actor.damageBonus));
   const result = applyDamage(
     time,
     target,
     rawDamage,
-    "magico",
+    actor.weaponDamageType,
     actor.side,
     "weapon",
     events,
@@ -514,7 +764,8 @@ function processWeapon(
     raw_damage: result.rawDamage,
     damage: result.hpDamage,
     absorbed: result.absorbed,
-    damage_type: "magico",
+    weapon_id: actor.build.weaponId ?? "varinha_cinzas",
+    damage_type: actor.weaponDamageType,
     resistance_percent: result.resistancePercent,
     hp_after: Math.max(0, target.hp),
     barrier_after: Math.max(0, target.barrier),
@@ -616,6 +867,24 @@ function processSpell(
       barrier_after: Math.max(0, target.barrier),
     });
     processLifesteal(time, actor, result.hpDamage, events, nextSeq);
+  } else {
+    events.push({
+      ...baseEvent(
+        time,
+        nextSeq(),
+        "spell_cast",
+        actor.side,
+        spell.target === "self" ? actor.side : target.side,
+      ),
+      spell_id: spellId,
+      raw_damage: 0,
+      damage: 0,
+      absorbed: 0,
+      damage_type: spell.damageType,
+      resistance_percent: 0,
+      hp_after: Math.max(0, target.hp),
+      barrier_after: Math.max(0, target.barrier),
+    });
   }
 
   if (spell.dot !== undefined && target.hp > 0) {
@@ -643,7 +912,11 @@ function processPet(
     return;
   }
   const petLevel = clamp(actor.build.petLevel, 1, 40);
-  const rawDamage = Math.ceil(pet.baseDamage + pet.damagePerLevel * Math.max(0, petLevel - 1));
+  const passive = passiveStats(actor.build.passiveId, actor.build.passiveLevel);
+  const rawDamage = Math.ceil(
+    (pet.baseDamage + pet.damagePerLevel * Math.max(0, petLevel - 1)) *
+      (1 + passive.petDamageBonus),
+  );
   const result = applyDamage(
     time,
     target,
@@ -666,6 +939,12 @@ function processPet(
     barrier_after: Math.max(0, target.barrier),
   });
   processLifesteal(time, actor, result.hpDamage, events, nextSeq);
+  if (pet.dot !== undefined && target.hp > 0) {
+    applyDotDefinition(time, actor, target, pet.dot, pet.damageType, petId, events, nextSeq);
+  }
+  if (pet.status !== undefined && target.hp > 0) {
+    applyStatusDefinition(time, actor, target, pet.status, petId, events, nextSeq);
+  }
   actor.petCooldown = time + pet.cadence;
 }
 
@@ -683,7 +962,8 @@ function processSummons(
       continue;
     }
     if (time + 0.0001 >= summon.nextAttackAt && target.hp > 0) {
-      const rawDamage = Math.ceil(summon.dps);
+      const passive = passiveStats(owner.build.passiveId, owner.build.passiveLevel);
+      const rawDamage = Math.ceil(summon.dps * (1 + passive.summonDamageBonus));
       const result = applyDamage(
         time,
         target,
@@ -795,11 +1075,13 @@ function applyDot(
   const existing = target.dots.find((dot) =>
     dot.id === spell.dot?.statusId && dot.source === actor.side
   );
-  const tickDamage = spell.dot.tickDamage + Math.max(0, spellLevel - 1) * 0.35;
+  const passive = passiveStats(actor.build.passiveId, actor.build.passiveLevel);
+  const tickDamage = (spell.dot.tickDamage + Math.max(0, spellLevel - 1) * 0.35) *
+    (1 + passive.dotDamageBonus);
   if (existing !== undefined) {
     existing.stacks = clamp(existing.stacks + 1, 1, 5);
     existing.tickDamage = Math.max(existing.tickDamage, tickDamage);
-    existing.expiresAt = time + spell.dot.duration;
+    existing.expiresAt = time + spell.dot.duration * (1 + passive.statusDurationBonus);
     existing.nextTickAt = Math.min(existing.nextTickAt, time + DOT_TICK_SECONDS);
     events.push({
       ...baseEvent(time, nextSeq(), "dot_apply", actor.side, target.side),
@@ -807,7 +1089,7 @@ function applyDot(
       status_id: existing.id,
       stacks: existing.stacks,
       tick_damage: Number(existing.tickDamage.toFixed(2)),
-      duration: spell.dot.duration,
+      duration: Number((spell.dot.duration * (1 + passive.statusDurationBonus)).toFixed(1)),
     });
     return;
   }
@@ -818,7 +1100,7 @@ function applyDot(
     damageType: spell.damageType,
     tickDamage,
     stacks: 1,
-    expiresAt: time + spell.dot.duration,
+    expiresAt: time + spell.dot.duration * (1 + passive.statusDurationBonus),
     nextTickAt: time + DOT_TICK_SECONDS,
   });
   events.push({
@@ -827,7 +1109,49 @@ function applyDot(
     status_id: spell.dot.statusId,
     stacks: 1,
     tick_damage: Number(tickDamage.toFixed(2)),
-    duration: spell.dot.duration,
+    duration: Number((spell.dot.duration * (1 + passive.statusDurationBonus)).toFixed(1)),
+  });
+}
+
+function applyDotDefinition(
+  time: number,
+  actor: RuntimeCombatant,
+  target: RuntimeCombatant,
+  dot: { statusId: string; tickDamage: number; duration: number },
+  damageType: DamageType,
+  sourceId: string,
+  events: BattleEvent[],
+  nextSeq: () => number,
+): void {
+  const passive = passiveStats(actor.build.passiveId, actor.build.passiveLevel);
+  const duration = dot.duration * (1 + passive.statusDurationBonus);
+  const tickDamage = dot.tickDamage * (1 + passive.dotDamageBonus);
+  const existing = target.dots.find((current) =>
+    current.id === dot.statusId && current.source === actor.side
+  );
+  if (existing !== undefined) {
+    existing.stacks = clamp(existing.stacks + 1, 1, 5);
+    existing.tickDamage = Math.max(existing.tickDamage, tickDamage);
+    existing.expiresAt = time + duration;
+    existing.nextTickAt = Math.min(existing.nextTickAt, time + DOT_TICK_SECONDS);
+  } else {
+    target.dots.push({
+      id: dot.statusId,
+      source: actor.side,
+      damageType,
+      tickDamage,
+      stacks: 1,
+      expiresAt: time + duration,
+      nextTickAt: time + DOT_TICK_SECONDS,
+    });
+  }
+  events.push({
+    ...baseEvent(time, nextSeq(), "dot_apply", actor.side, target.side),
+    pet_id: sourceId,
+    status_id: dot.statusId,
+    stacks: existing?.stacks ?? 1,
+    tick_damage: Number(tickDamage.toFixed(2)),
+    duration: Number(duration.toFixed(1)),
   });
 }
 
@@ -843,11 +1167,12 @@ function applyStatus(
     return;
   }
 
+  const passive = passiveStats(actor.build.passiveId, actor.build.passiveLevel);
   const status = createStatus(
     spell.status.statusId,
     actor.side,
     spell.status.stacks,
-    time + spell.status.duration,
+    time + spell.status.duration * (1 + passive.statusDurationBonus),
   );
   const existing = target.statuses.find((current) =>
     current.id === status.id && current.source === status.source
@@ -860,7 +1185,7 @@ function applyStatus(
       spell_id: spell.id,
       status_id: existing.id,
       stacks: existing.stacks,
-      duration: spell.status.duration,
+      duration: Number((spell.status.duration * (1 + passive.statusDurationBonus)).toFixed(1)),
     });
     return;
   }
@@ -871,7 +1196,42 @@ function applyStatus(
     spell_id: spell.id,
     status_id: status.id,
     stacks: status.stacks,
-    duration: spell.status.duration,
+    duration: Number((spell.status.duration * (1 + passive.statusDurationBonus)).toFixed(1)),
+  });
+}
+
+function applyStatusDefinition(
+  time: number,
+  actor: RuntimeCombatant,
+  target: RuntimeCombatant,
+  statusDefinition: { statusId: string; stacks: number; duration: number },
+  sourceId: string,
+  events: BattleEvent[],
+  nextSeq: () => number,
+): void {
+  const passive = passiveStats(actor.build.passiveId, actor.build.passiveLevel);
+  const duration = statusDefinition.duration * (1 + passive.statusDurationBonus);
+  const status = createStatus(
+    statusDefinition.statusId,
+    actor.side,
+    statusDefinition.stacks,
+    time + duration,
+  );
+  const existing = target.statuses.find((current) =>
+    current.id === status.id && current.source === status.source
+  );
+  if (existing !== undefined) {
+    existing.stacks = clamp(existing.stacks + status.stacks, 1, 5);
+    existing.expiresAt = status.expiresAt;
+  } else {
+    target.statuses.push(status);
+  }
+  events.push({
+    ...baseEvent(time, nextSeq(), "status_apply", actor.side, target.side),
+    pet_id: sourceId,
+    status_id: status.id,
+    stacks: existing?.stacks ?? status.stacks,
+    duration: Number(duration.toFixed(1)),
   });
 }
 
@@ -919,7 +1279,7 @@ function applyDamage(
   nextSeq: () => number,
 ): DamageResult {
   const normalizedRaw = Math.max(0, Math.ceil(rawDamage));
-  const vulnerability = targetVulnerability(target);
+  const vulnerability = targetVulnerabilityFor(target, damageType);
   const resistance = category === "system" ? 0 : totalDamageReduction(target, damageType);
   const mitigatedDamage = Math.max(
     0,
@@ -996,27 +1356,55 @@ function createStatus(
   stacks: number,
   expiresAt: number,
 ): RuntimeStatus {
-  if (id === "choque_marcado") {
-    return {
-      id,
-      source,
-      stacks,
-      expiresAt,
-      vulnerabilityPerStack: 0.05,
-    };
+  const base = { id, source, stacks, expiresAt };
+  switch (id) {
+    case "inquietacao":
+      return { ...base, vulnerabilityPerStack: 0.025, cooldownSlowPerStack: 0.03 };
+    case "medo":
+      return { ...base, vulnerabilityPerStack: 0.04, cooldownSlowPerStack: 0.05 };
+    case "terror":
+      return { ...base, vulnerabilityPerStack: 0.07, cooldownSlowPerStack: 0.08 };
+    case "confusao":
+    case "compulsao":
+      return { ...base, cooldownSlowPerStack: 0.08 };
+    case "ferida":
+      return { ...base, damageTypeVulnerability: { sangue: 0.05, fisico: 0.03 } };
+    case "sangue_exposto":
+    case "sangramento":
+      return { ...base, damageTypeVulnerability: { sangue: 0.05 } };
+    case "envenenado":
+    case "toxina":
+      return { ...base, regenPenaltyPerStack: 0.08 };
+    case "queimando":
+    case "cinzas_marcadas":
+      return { ...base, damageTypeVulnerability: { fogo: 0.04, morte: 0.03 } };
+    case "molhado":
+      return { ...base, damageTypeVulnerability: { raio: 0.08, gelo: 0.04 } };
+    case "resfriado":
+    case "lento":
+      return { ...base, slowPerStack: 0.15 };
+    case "congelado":
+      return {
+        ...base,
+        slowPerStack: 0.35,
+        damageTypeVulnerability: { fisico: 0.08, terra: 0.05 },
+      };
+    case "enraizado":
+      return { ...base, slowPerStack: 0.2 };
+    case "desequilibrado":
+    case "vulneravel":
+      return { ...base, vulnerabilityPerStack: 0.04 };
+    case "condutor":
+    case "eletrificado":
+      return { ...base, damageTypeVulnerability: { raio: 0.07 }, cooldownSlowPerStack: 0.04 };
+    case "decaimento":
+    case "anti_regeneracao":
+      return { ...base, damageTypeVulnerability: { morte: 0.05 }, regenPenaltyPerStack: 0.12 };
+    case "marca_sepulcral":
+      return { ...base, damageTypeVulnerability: { morte: 0.08 } };
+    default:
+      return base;
   }
-
-  if (id === "lento") {
-    return {
-      id,
-      source,
-      stacks,
-      expiresAt,
-      slowPerStack: 0.15,
-    };
-  }
-
-  return { id, source, stacks, expiresAt };
 }
 
 function createResistanceStatus(
@@ -1039,25 +1427,46 @@ function passiveStats(passiveId: string | undefined, level: number | undefined):
   const empty = {
     manaRegenBonus: 0,
     damageBonus: 0,
+    dotDamageBonus: 0,
     damageReduction: 0,
     startingBarrier: 0,
     lifesteal: 0,
     cooldownReduction: 0,
+    statusDurationBonus: 0,
+    petDamageBonus: 0,
+    summonDamageBonus: 0,
   };
 
   switch (passiveId) {
-    case "foco_astral":
-      return { ...empty, manaRegenBonus: 0.04 + scale * 0.002 };
-    case "forca":
-      return { ...empty, damageBonus: 0.04 + scale * 0.002 };
-    case "resistencia":
+    case "doutrina_pavor":
+      return { ...empty, statusDurationBonus: 0.04 + scale * 0.002 };
+    case "mente_fria":
       return { ...empty, damageReduction: 0.03 + scale * 0.0015 };
-    case "escudo":
-      return { ...empty, startingBarrier: Math.round(12 + scale) };
-    case "vampirismo":
+    case "anatomista_profano":
+      return { ...empty, damageBonus: 0.04 + scale * 0.002 };
+    case "sangue_obediente":
       return { ...empty, lifesteal: 0.02 + scale * 0.001 };
-    case "velocidade":
+    case "alquimia_toxica":
+    case "cinza_viva":
+      return { ...empty, dotDamageBonus: 0.04 + scale * 0.0015 };
+    case "mare_silenciosa":
+      return { ...empty, statusDurationBonus: 0.03 + scale * 0.0015 };
+    case "pedra_interna":
+      return {
+        ...empty,
+        startingBarrier: Math.round(12 + scale),
+        damageReduction: 0.015 + scale * 0.0008,
+      };
+    case "pulso_tempestade":
       return { ...empty, cooldownReduction: clampPercent(0.03 + scale * 0.001, 0, 0.25) };
+    case "ossuario_interior":
+      return {
+        ...empty,
+        summonDamageBonus: 0.05 + scale * 0.002,
+        dotDamageBonus: 0.02 + scale * 0.001,
+      };
+    case "pacto_familiar":
+      return { ...empty, petDamageBonus: 0.05 + scale * 0.002 };
     default:
       return empty;
   }
@@ -1072,14 +1481,20 @@ function totalDamageReduction(target: RuntimeCombatant, damageType: DamageType):
   return clampPercent(typeResistance + statusResistance, 0, 0.75);
 }
 
-function targetVulnerability(target: RuntimeCombatant): number {
+function targetVulnerabilityFor(target: RuntimeCombatant, damageType: DamageType): number {
   return clampPercent(
     target.statuses.reduce(
-      (total, status) => total + (status.vulnerabilityPerStack ?? 0) * status.stacks,
+      (total, status) => {
+        const generic = (status.vulnerabilityPerStack ?? 0) * status.stacks;
+        const typed = damageType === "none"
+          ? 0
+          : ((status.damageTypeVulnerability?.[damageType] ?? 0) * status.stacks);
+        return total + generic + typed;
+      },
       0,
     ),
     0,
-    0.5,
+    0.65,
   );
 }
 
@@ -1093,20 +1508,39 @@ function slowMultiplier(target: RuntimeCombatant): number {
 
 function cooldownSlowMultiplier(target: RuntimeCombatant): number {
   const slow = target.statuses.reduce(
-    (total, status) => total + (status.slowPerStack ?? 0) * status.stacks,
+    (total, status) =>
+      total + ((status.slowPerStack ?? 0) + (status.cooldownSlowPerStack ?? 0)) * status.stacks,
     0,
   );
   return 1 + clampPercent(slow, 0, 0.6);
 }
 
 function weaponInterval(actor: RuntimeCombatant): number {
-  return 1 * cooldownSlowMultiplier(actor);
+  return actor.weaponCadence * cooldownSlowMultiplier(actor);
 }
 
-function weaponDamage(build: CombatantBuild): number {
+function regenPenaltyMultiplier(target: RuntimeCombatant): number {
+  const penalty = target.statuses.reduce(
+    (total, status) => total + (status.regenPenaltyPerStack ?? 0) * status.stacks,
+    0,
+  );
+  return 1 - clampPercent(penalty, 0, 0.8);
+}
+
+function weaponDefinition(
+  weaponId: string | undefined,
+): typeof WEAPONS[keyof typeof WEAPONS] {
+  return WEAPONS[weaponId ?? ""] ?? WEAPONS.varinha_cinzas;
+}
+
+function weaponDamage(
+  build: CombatantBuild,
+  weapon: typeof WEAPONS[keyof typeof WEAPONS],
+): number {
   const qualityMultipliers = [1, 1.08, 1.18, 1.3, 1.45];
   const tier = clamp(build.weaponQualityTier, 0, qualityMultipliers.length - 1);
-  return (15 + 1.8 * Math.max(0, build.weaponLevel - 1)) * qualityMultipliers[tier];
+  return (weapon.baseDamage + weapon.damagePerLevel * Math.max(0, build.weaponLevel - 1)) *
+    qualityMultipliers[tier];
 }
 
 function maxHpForLevel(level: number): number {

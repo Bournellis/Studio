@@ -335,27 +335,72 @@ interface BattleLabResult {
 type NumericMap = Record<string, number>;
 
 const SPELL_UNLOCKS: Record<string, number> = {
-  raio_cosmico: 3,
-  raio: 7,
-  acender: 7,
-  envenenar: 7,
-  congelar: 7,
-  odio: 25,
-  dilacerar: 25,
-  fortificar: 25,
-  invocar_demonio: 25,
-  animar_morto: 25,
+  sussurro_medo: 3,
+  terror_primordial: 7,
+  labirinto_razao: 7,
+  incisao_ritual: 7,
+  toxina_palida: 7,
+  marca_brasa: 7,
+  mare_escura: 7,
+  geada_ossos: 7,
+  lamina_vento: 7,
+  descarga_nervosa: 7,
+  mandato_oculto: 15,
+  hemorragia_induzida: 15,
+  coagulo_negro: 15,
+  raizes_pedra: 15,
+  coroa_cinzas: 25,
+  prisao_gelo: 25,
+  putrefacao: 25,
+  marca_sepulcral: 25,
+  erguer_ossos: 25,
+  invocar_brasa_faminta: 25,
 };
 
 const PASSIVE_IDS = [
-  "foco_astral",
-  "forca",
-  "resistencia",
-  "escudo",
-  "vampirismo",
-  "velocidade",
+  "doutrina_pavor",
+  "mente_fria",
+  "anatomista_profano",
+  "sangue_obediente",
+  "alquimia_toxica",
+  "cinza_viva",
+  "mare_silenciosa",
+  "pedra_interna",
+  "pulso_tempestade",
+  "ossuario_interior",
+  "pacto_familiar",
 ];
-const PET_IDS = ["familiar_cinzento", "brasido", "gelum"];
+const PET_IDS = [
+  "corvo_pressagio",
+  "sanguessuga_sacramental",
+  "serpente_toxina",
+  "cao_cinzas",
+  "medusa_mare_fria",
+  "escaravelho_pedra",
+  "serpe_tempestade",
+  "cranio_errante",
+  "olho_veu",
+];
+const WEAPON_IDS = [
+  "varinha_cinzas",
+  "grimorio_veu",
+  "athame_hematico",
+  "cajado_ossario",
+  "orbe_tempestade",
+  "selo_mare_fria",
+  "idolo_pedra_viva",
+  "cetro_braseiro_negro",
+];
+const ARCHETYPE_WEAPONS: Record<string, string[]> = {
+  starter_instrument: ["varinha_cinzas"],
+  mental_controller: ["grimorio_veu", "varinha_cinzas"],
+  elemental_mixer: ["orbe_tempestade", "selo_mare_fria", "cetro_braseiro_negro"],
+  familiar_handler: ["varinha_cinzas", "grimorio_veu"],
+  summoner: ["cajado_ossario", "cetro_braseiro_negro"],
+  defensive_occultist: ["idolo_pedra_viva", "selo_mare_fria"],
+  dot_pressure: ["athame_hematico", "cetro_braseiro_negro"],
+  funeral_burst: ["cajado_ossario", "cetro_braseiro_negro"],
+};
 const DAMAGE_SOURCE_KEYS = [
   "weapon",
   "spell",
@@ -365,13 +410,17 @@ const DAMAGE_SOURCE_KEYS = [
   "system",
 ];
 const DAMAGE_TYPE_KEYS = [
-  "magico",
+  "arcano",
+  "fisico",
   "fogo",
+  "agua",
   "gelo",
+  "terra",
+  "vento",
+  "raio",
   "veneno",
-  "choque",
   "morte",
-  "sangramento",
+  "sangue",
   "none",
 ];
 const COMBAT_PACE_HP_MULTIPLIER_BASE = 4.85;
@@ -570,14 +619,10 @@ export function analyzeBattleLog(
   }
 
   const winner = simulation.battleLog.result.winner;
-  const winnerArchetypeId = winner === "player"
-    ? player.archetype_id
-    : opponent.archetype_id;
+  const winnerArchetypeId = winner === "player" ? player.archetype_id : opponent.archetype_id;
   const playerFinalHpPercent = percent(lastHp.player, maxHp.player);
   const opponentFinalHpPercent = percent(lastHp.opponent, maxHp.opponent);
-  const winnerHpPercent = winner === "player"
-    ? playerFinalHpPercent
-    : opponentFinalHpPercent;
+  const winnerHpPercent = winner === "player" ? playerFinalHpPercent : opponentFinalHpPercent;
   const alerts: string[] = [];
 
   if (simulation.battleLog.duration < model.thresholds.short_duration) {
@@ -664,25 +709,20 @@ async function runStandardGeneration(
   const compareRows = options.compareWithRunId === undefined
     ? []
     : await loadComparisonRows(runsUrl, options.compareWithRunId, result);
-  const manifest = options.archiveRunId === undefined
-    ? undefined
-    : await buildRunManifest(
-      projectRoot,
-      result,
-      options.archiveRunId,
-      compatibility,
-    );
-  const historyWithPending = manifest === undefined
-    ? history
-    : upsertHistory(history, manifest);
+  const manifest = options.archiveRunId === undefined ? undefined : await buildRunManifest(
+    projectRoot,
+    result,
+    options.archiveRunId,
+    compatibility,
+  );
+  const historyWithPending = manifest === undefined ? history : upsertHistory(history, manifest);
 
   await writeOutputs(model, result, outputUrl, historyWithPending, compareRows);
   if (manifest !== undefined) {
     await archiveRun(outputUrl, runsUrl, manifest, historyWithPending);
   }
 
-  const reviewCount =
-    result.checks.filter((check) => check.status !== "PASS").length;
+  const reviewCount = result.checks.filter((check) => check.status !== "PASS").length;
   console.log("[battle-lab] generated", {
     status: result.overall_status,
     battles: result.summary.total_battles,
@@ -1005,10 +1045,8 @@ export async function buildRunManifest(
     short_rate_percent: result.summary.short_rate_percent,
     long_rate_percent: result.summary.long_rate_percent,
     anti_stall_rate_percent: result.summary.anti_stall_rate_percent,
-    raw_stress_dominance_max_percent:
-      result.summary.raw_stress_dominance_max_percent,
-    near_power_dominance_max_percent:
-      result.summary.near_power_dominance_max_percent,
+    raw_stress_dominance_max_percent: result.summary.raw_stress_dominance_max_percent,
+    near_power_dominance_max_percent: result.summary.near_power_dominance_max_percent,
     critical_archetypes: result.near_power_archetypes
       .filter((row) => row.status === "CRITICAL")
       .map((row) => row.id),
@@ -1117,6 +1155,13 @@ function createBuild(
     kind,
     rng,
   );
+  const weaponId = selectOptional(
+    ARCHETYPE_WEAPONS[archetype.id] ?? [],
+    WEAPON_IDS,
+    true,
+    kind,
+    rng,
+  ) ?? "varinha_cinzas";
   const weaponLevel = scaledLevel(
     level,
     archetype.weapon_level_ratio,
@@ -1147,6 +1192,7 @@ function createBuild(
     id,
     displayName: `${archetype.display_name} L${level}`,
     level,
+    weaponId,
     weaponLevel,
     weaponQualityTier: qualityTier,
     spellIds: spells,
@@ -1229,23 +1275,34 @@ function archetypeIdForBuild(
   build: CombatantBuild,
 ): string {
   const spellIds = new Set(build.spellIds);
-  if (spellIds.has("invocar_demonio") || spellIds.has("animar_morto")) {
+  if (spellIds.has("erguer_ossos") || spellIds.has("invocar_brasa_faminta")) {
     return archetypeIdForModel(model, "summoner");
   }
-  if (spellIds.has("dilacerar") || spellIds.has("envenenar")) {
+  if (
+    spellIds.has("hemorragia_induzida") || spellIds.has("toxina_palida") ||
+    spellIds.has("putrefacao")
+  ) {
     return archetypeIdForModel(model, "dot_pressure");
   }
-  if (spellIds.has("odio") || spellIds.has("raio")) {
-    return archetypeIdForModel(model, "burst_caster");
+  if (
+    spellIds.has("marca_sepulcral") || spellIds.has("coroa_cinzas") ||
+    spellIds.has("descarga_nervosa")
+  ) {
+    return archetypeIdForModel(model, "funeral_burst");
   }
   if (build.petId !== undefined && build.petId !== "") {
-    return archetypeIdForModel(model, "pet_handler");
+    return archetypeIdForModel(model, "familiar_handler");
   }
-  if (spellIds.has("fortificar") || spellIds.has("congelar")) {
-    return archetypeIdForModel(model, "defensive_caster");
+  if (
+    spellIds.has("coagulo_negro") || spellIds.has("geada_ossos") || spellIds.has("raizes_pedra")
+  ) {
+    return archetypeIdForModel(model, "defensive_occultist");
   }
-  if (spellIds.size > 0) return archetypeIdForModel(model, "cosmic_apprentice");
-  return archetypeIdForModel(model, "starter_wand");
+  if (spellIds.has("sussurro_medo") || spellIds.has("terror_primordial")) {
+    return archetypeIdForModel(model, "mental_controller");
+  }
+  if (spellIds.size > 0) return archetypeIdForModel(model, "elemental_mixer");
+  return archetypeIdForModel(model, "starter_instrument");
 }
 
 function archetypeIdForModel(
@@ -1305,8 +1362,7 @@ function runSingleMatchup(
   opponent: LabBuild,
 ): LabMatchup {
   const battleId = `L${level}_M${String(index).padStart(4, "0")}`;
-  const seed =
-    `battle_lab:${model.model_id}:${battleId}:${player.seed}:${opponent.seed}`;
+  const seed = `battle_lab:${model.model_id}:${battleId}:${player.seed}:${opponent.seed}`;
   const simulation = simulateFirstSliceBattle({
     battleId,
     seed,
@@ -1324,15 +1380,10 @@ function summarize(
   const durations = matchups.map((matchup) => matchup.duration);
   const totalBattles = matchups.length;
   const shortCount =
-    matchups.filter((matchup) =>
-      matchup.duration < model.thresholds.short_duration
-    ).length;
+    matchups.filter((matchup) => matchup.duration < model.thresholds.short_duration).length;
   const longCount =
-    matchups.filter((matchup) =>
-      matchup.duration > model.thresholds.long_duration
-    ).length;
-  const antiStallCount =
-    matchups.filter((matchup) => matchup.anti_stall).length;
+    matchups.filter((matchup) => matchup.duration > model.thresholds.long_duration).length;
+  const antiStallCount = matchups.filter((matchup) => matchup.anti_stall).length;
   const damageBySource = sumMaps(
     matchups.map((matchup) => matchup.damage_by_source),
     DAMAGE_SOURCE_KEYS,
@@ -1413,9 +1464,7 @@ function aggregateArchetypes(
   matchups: LabMatchup[],
 ): AggregateRow[] {
   return model.archetypes.map((archetype) => {
-    const rows = matchups.filter((matchup) =>
-      matchup.player_archetype_id === archetype.id
-    );
+    const rows = matchups.filter((matchup) => matchup.player_archetype_id === archetype.id);
     return aggregateRows(archetype.id, archetype.display_name, rows, model);
   });
 }
@@ -1429,9 +1478,7 @@ function aggregateArchetypesAcrossSides(
       matchup.player_archetype_id === archetype.id ||
       matchup.opponent_archetype_id === archetype.id
     );
-    const wins = rows.filter((matchup) =>
-      matchup.winner_archetype_id === archetype.id
-    ).length;
+    const wins = rows.filter((matchup) => matchup.winner_archetype_id === archetype.id).length;
     return aggregateRowsWithWins(
       archetype.id,
       archetype.display_name,
@@ -1458,9 +1505,7 @@ function aggregateMatrix(
         matchup.opponent_archetype_id === opponent.id
       );
       if (filtered.length === 0) continue;
-      const wins = filtered.filter((matchup) =>
-        matchup.winner === "player"
-      ).length;
+      const wins = filtered.filter((matchup) => matchup.winner === "player").length;
       const winRate = rate(wins, filtered.length);
       rows.push({
         player_archetype_id: player.id,
@@ -1527,12 +1572,10 @@ function aggregateRowsWithWins(
   model: BattleLabModel,
 ): AggregateRow {
   const durations = rows.map((matchup) => matchup.duration);
-  const shortCount =
-    rows.filter((matchup) => matchup.duration < model.thresholds.short_duration)
-      .length;
-  const longCount =
-    rows.filter((matchup) => matchup.duration > model.thresholds.long_duration)
-      .length;
+  const shortCount = rows.filter((matchup) => matchup.duration < model.thresholds.short_duration)
+    .length;
+  const longCount = rows.filter((matchup) => matchup.duration > model.thresholds.long_duration)
+    .length;
   const antiStallCount = rows.filter((matchup) => matchup.anti_stall).length;
   const winRate = rate(wins, rows.length);
   return {
@@ -1680,9 +1723,7 @@ function buildOutliers(
     }
   }
 
-  return rows.sort((left, right) =>
-    statusRank(right.severity) - statusRank(left.severity)
-  );
+  return rows.sort((left, right) => statusRank(right.severity) - statusRank(left.severity));
 }
 
 function buildChecks(
@@ -1702,8 +1743,7 @@ function buildChecks(
   const maxWinRate = maxAggregateWinRate(nearPowerArchetypes);
   const minWinRate = minAggregateWinRate(nearPowerArchetypes);
   const coveredLevels = new Set(matchups.map((matchup) => matchup.level));
-  const configuredLevelsCovered =
-    model.levels.filter((level) => coveredLevels.has(level)).length;
+  const configuredLevelsCovered = model.levels.filter((level) => coveredLevels.has(level)).length;
   const expectedLevels = model.levels.length;
 
   return [
@@ -1714,35 +1754,26 @@ function buildChecks(
         ? "PASS"
         : "REVIEW",
       observed: `${avgDuration}s`,
-      target:
-        `${model.thresholds.target_duration_min}-${model.thresholds.target_duration_max}s`,
-      note:
-        "Average battle duration should sit near the target playtest window.",
+      target: `${model.thresholds.target_duration_min}-${model.thresholds.target_duration_max}s`,
+      note: "Average battle duration should sit near the target playtest window.",
     },
     {
       id: "short_battle_rate",
-      status: shortRate <= model.thresholds.short_battle_rate_review_percent
-        ? "PASS"
-        : "REVIEW",
+      status: shortRate <= model.thresholds.short_battle_rate_review_percent ? "PASS" : "REVIEW",
       observed: `${shortRate}%`,
       target: `<= ${model.thresholds.short_battle_rate_review_percent}%`,
       note: "Too many short battles suggest burst or low HP scaling issues.",
     },
     {
       id: "long_battle_rate",
-      status: longRate <= model.thresholds.long_battle_rate_review_percent
-        ? "PASS"
-        : "REVIEW",
+      status: longRate <= model.thresholds.long_battle_rate_review_percent ? "PASS" : "REVIEW",
       observed: `${longRate}%`,
       target: `<= ${model.thresholds.long_battle_rate_review_percent}%`,
-      note:
-        "Too many long battles suggest defensive scaling or low damage pressure.",
+      note: "Too many long battles suggest defensive scaling or low damage pressure.",
     },
     {
       id: "anti_stall_rate",
-      status: antiStallRate <= model.thresholds.anti_stall_review_percent
-        ? "PASS"
-        : "REVIEW",
+      status: antiStallRate <= model.thresholds.anti_stall_review_percent ? "PASS" : "REVIEW",
       observed: `${antiStallRate}%`,
       target: `<= ${model.thresholds.anti_stall_review_percent}%`,
       note: "Anti-stall should be rare in normal same-level matchups.",
@@ -1815,6 +1846,7 @@ export async function writeOutputs(
       "power",
       "power_band",
       "seed",
+      "weapon_id",
       "spell_ids",
       "passive_id",
       "pet_id",
@@ -2008,6 +2040,7 @@ function buildRows(builds: LabBuild[]): Array<Record<string, unknown>> {
     power: build.power,
     power_band: build.power_band,
     seed: build.seed,
+    weapon_id: build.build.weaponId ?? "varinha_cinzas",
     spell_ids: build.build.spellIds.join("|"),
     passive_id: build.build.passiveId ?? "",
     pet_id: build.build.petId ?? "",
@@ -2067,9 +2100,7 @@ function progressionMatrixRows(
     const category = progressionCategory(player.kind, opponent.kind);
     if (category === "") continue;
 
-    const milestoneId = player.milestone_id !== ""
-      ? player.milestone_id
-      : opponent.milestone_id;
+    const milestoneId = player.milestone_id !== "" ? player.milestone_id : opponent.milestone_id;
     const key = [
       category,
       milestoneId,
@@ -2244,9 +2275,7 @@ function buildReplaySamples(
     if (selected.size >= maxSamples) break;
     const representative = result.matchups.find((matchup) =>
       matchup.level === level && matchup.alerts.length === 0
-    ) ?? result.matchups.find((matchup) =>
-      matchup.level === level
-    );
+    ) ?? result.matchups.find((matchup) => matchup.level === level);
     if (representative !== undefined) {
       selected.set(representative.id, `level_${level}_representative`);
     }
@@ -2334,15 +2363,11 @@ function renderHtml(
     .map((row) =>
       `<tr><td><span class="badge ${row.severity.toLowerCase()}">${row.severity}</span></td><td>${
         escapeHtml(row.type)
-      }</td><td>${escapeHtml(row.matchup_id)}</td><td>${
-        escapeHtml(row.level)
-      }</td><td>${escapeHtml(row.power)}</td><td>${
-        escapeHtml(row.duration)
-      }</td><td>${escapeHtml(row.winner)}</td><td>${
+      }</td><td>${escapeHtml(row.matchup_id)}</td><td>${escapeHtml(row.level)}</td><td>${
+        escapeHtml(row.power)
+      }</td><td>${escapeHtml(row.duration)}</td><td>${escapeHtml(row.winner)}</td><td>${
         escapeHtml(row.player_build_id)
-      }</td><td>${escapeHtml(row.opponent_build_id)}</td><td>${
-        escapeHtml(row.reason)
-      }</td></tr>`
+      }</td><td>${escapeHtml(row.opponent_build_id)}</td><td>${escapeHtml(row.reason)}</td></tr>`
     )
     .join("\n");
   const sourceRows = result.source_by_archetype
@@ -2356,11 +2381,9 @@ function renderHtml(
     .join("\n");
   const compareTableRows = compareRows
     .map((row) =>
-      `<tr><td>${escapeHtml(row.metric)}</td><td>${
-        escapeHtml(row.baseline)
-      }</td><td>${escapeHtml(row.current)}</td><td>${
-        escapeHtml(row.delta)
-      }</td></tr>`
+      `<tr><td>${escapeHtml(row.metric)}</td><td>${escapeHtml(row.baseline)}</td><td>${
+        escapeHtml(row.current)
+      }</td><td>${escapeHtml(row.delta)}</td></tr>`
     )
     .join("\n");
   const historyTableRows = historyRows
@@ -2376,14 +2399,12 @@ function renderHtml(
     .map((row) =>
       `<tr><td><span class="badge ${row.status.toLowerCase()}">${row.status}</span></td><td>${
         escapeHtml(row.id)
-      }</td><td>${escapeHtml(row.observed)}</td><td>${
-        escapeHtml(row.target)
-      }</td><td>${escapeHtml(row.note)}</td></tr>`
+      }</td><td>${escapeHtml(row.observed)}</td><td>${escapeHtml(row.target)}</td><td>${
+        escapeHtml(row.note)
+      }</td></tr>`
     )
     .join("\n");
-  const notes = result.summary.top_notes.map((note) =>
-    `<li>${escapeHtml(note)}</li>`
-  ).join("\n");
+  const notes = result.summary.top_notes.map((note) => `<li>${escapeHtml(note)}</li>`).join("\n");
 
   return `<!doctype html>
 <html lang="pt-BR">
@@ -2496,9 +2517,9 @@ function renderHtml(
       <h1>DraxosMobile Battle Lab</h1>
       <span class="badge ${statusClass}">${result.overall_status}</span>
     </div>
-    <p>Model: ${escapeHtml(model.model_id)} | Status: ${
-    escapeHtml(model.status)
-  } | Generated: ${escapeHtml(result.generated_at)}</p>
+    <p>Model: ${escapeHtml(model.model_id)} | Status: ${escapeHtml(model.status)} | Generated: ${
+    escapeHtml(result.generated_at)
+  }</p>
     <p>Offline FIRST_SLICE_SIM analysis. This report does not mutate Supabase, rewards, ranking or client state.</p>
   </header>
   <main>
@@ -2628,16 +2649,14 @@ function renderHtml(
 }
 
 function metricCard(label: string, value: string | number): string {
-  return `<div class="card"><div class="label">${
-    escapeHtml(label)
-  }</div><div class="value">${escapeHtml(String(value))}</div></div>`;
+  return `<div class="card"><div class="label">${escapeHtml(label)}</div><div class="value">${
+    escapeHtml(String(value))
+  }</div></div>`;
 }
 
 function mapRows(map: NumericMap): string {
   return Object.entries(map)
-    .map(([key, value]) =>
-      `<tr><td>${escapeHtml(key)}</td><td>${round(value, 2)}</td></tr>`
-    )
+    .map(([key, value]) => `<tr><td>${escapeHtml(key)}</td><td>${round(value, 2)}</td></tr>`)
     .join("\n");
 }
 
@@ -2649,9 +2668,7 @@ function buildTopNotes(checks: CheckRow[], outliers: OutlierRow[]): string[] {
       `${check.status}: ${check.id} observed ${check.observed}, target ${check.target}.`,
     );
   }
-  const criticalOutlier = outliers.find((outlier) =>
-    outlier.severity === "CRITICAL"
-  );
+  const criticalOutlier = outliers.find((outlier) => outlier.severity === "CRITICAL");
   if (criticalOutlier !== undefined) {
     notes.push(
       `Critical outlier: ${criticalOutlier.type} on ${
@@ -2659,9 +2676,7 @@ function buildTopNotes(checks: CheckRow[], outliers: OutlierRow[]): string[] {
       }.`,
     );
   }
-  const reviewOutlier = outliers.find((outlier) =>
-    outlier.severity === "REVIEW"
-  );
+  const reviewOutlier = outliers.find((outlier) => outlier.severity === "REVIEW");
   if (reviewOutlier !== undefined) {
     notes.push(
       `Review first matchup: ${reviewOutlier.type} ${reviewOutlier.matchup_id} (${reviewOutlier.player_build_id} vs ${reviewOutlier.opponent_build_id}).`,
@@ -2686,12 +2701,8 @@ function selectSpells(
     return [];
   }
   const legal = allowedSpellIds(level);
-  const preferred = archetype.spell_preferences.filter((spellId) =>
-    legal.includes(spellId)
-  );
-  const candidates = kind === "fixed"
-    ? preferred
-    : shuffle(unique([...preferred, ...legal]), rng);
+  const preferred = archetype.spell_preferences.filter((spellId) => legal.includes(spellId));
+  const candidates = kind === "fixed" ? preferred : shuffle(unique([...preferred, ...legal]), rng);
   const desiredCount = kind === "fixed" ? maxSlots : 1 + rng.nextInt(maxSlots);
   return candidates.slice(0, Math.min(maxSlots, desiredCount));
 }
@@ -2733,15 +2744,7 @@ function qualityTierForLevel(
   kind: BuildKind,
   rng: SeededRandom,
 ): number {
-  const base = level >= 35
-    ? 4
-    : level >= 25
-    ? 3
-    : level >= 14
-    ? 2
-    : level >= 5
-    ? 1
-    : 0;
+  const base = level >= 35 ? 4 : level >= 25 ? 3 : level >= 14 ? 2 : level >= 5 ? 1 : 0;
   const jitter = kind === "fixed" ? 0 : rng.nextInt(3) - 1;
   return clamp(base + bias + jitter, 0, 4);
 }
@@ -2847,15 +2850,11 @@ function addMap(target: NumericMap, source: NumericMap): void {
 }
 
 function maxAggregateWinRate(rows: AggregateRow[]): number {
-  return rows.length === 0
-    ? 0
-    : Math.max(...rows.map((row) => row.win_rate_percent));
+  return rows.length === 0 ? 0 : Math.max(...rows.map((row) => row.win_rate_percent));
 }
 
 function minAggregateWinRate(rows: AggregateRow[]): number {
-  return rows.length === 0
-    ? 0
-    : Math.min(...rows.map((row) => row.win_rate_percent));
+  return rows.length === 0 ? 0 : Math.min(...rows.map((row) => row.win_rate_percent));
 }
 
 function compareText(
@@ -2897,6 +2896,7 @@ function validateBridgeBuild(
   const build = value as CombatantBuild;
   const errors: string[] = [];
   const level = numberValue(build.level, 0);
+  const weaponId = stringValue(build.weaponId, "varinha_cinzas");
   const weaponLevel = numberValue(build.weaponLevel, 0);
   const weaponQualityTier = numberValue(build.weaponQualityTier, -1);
   if (stringValue(build.id) === "") errors.push("id is required");
@@ -2904,6 +2904,9 @@ function validateBridgeBuild(
     errors.push("displayName is required");
   }
   if (level < 1 || level > 40) errors.push("level must be 1-40");
+  if (!WEAPON_IDS.includes(weaponId)) {
+    errors.push(`unknown weapon ${weaponId}`);
+  }
   if (weaponLevel < 1 || weaponLevel > level) {
     errors.push("weaponLevel must be 1..level");
   }
@@ -2960,6 +2963,7 @@ function validateBridgeBuild(
     id: String(build.id),
     displayName: String(build.displayName),
     level,
+    weaponId,
     weaponLevel,
     weaponQualityTier,
     spellIds: build.spellIds.map((spellId) => String(spellId)),
@@ -2969,16 +2973,12 @@ function validateBridgeBuild(
         numberValue(build.spellLevels?.[spellId], level),
       ]),
     ),
-    passiveId: build.passiveId === undefined
-      ? undefined
-      : String(build.passiveId),
+    passiveId: build.passiveId === undefined ? undefined : String(build.passiveId),
     passiveLevel: build.passiveId === undefined
       ? undefined
       : numberValue(build.passiveLevel, level),
     petId: build.petId === undefined ? undefined : String(build.petId),
-    petLevel: build.petId === undefined
-      ? undefined
-      : numberValue(build.petLevel, level),
+    petLevel: build.petId === undefined ? undefined : numberValue(build.petLevel, level),
   };
 }
 
@@ -3164,9 +3164,7 @@ function median(values: number[]): number {
   if (values.length === 0) return 0;
   const sorted = [...values].sort((left, right) => left - right);
   const middle = Math.floor(sorted.length / 2);
-  return sorted.length % 2 === 0
-    ? (sorted[middle - 1] + sorted[middle]) / 2
-    : sorted[middle];
+  return sorted.length % 2 === 0 ? (sorted[middle - 1] + sorted[middle]) / 2 : sorted[middle];
 }
 
 function rate(count: number, total: number): number {

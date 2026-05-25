@@ -44,14 +44,14 @@ func test_session_store_accepts_progression_lab_snapshot_cache() -> void:
 		},
 		"build": {
 			"player_id": "player-1",
-			"weapon_type": "varinha_magica",
+			"weapon_type": "varinha_cinzas",
 			"weapon_quality": "starter",
 			"weapon_level": 11,
-			"spell_slots": ["raio", "raio_cosmico"],
-			"spells_unlocked": ["raio_cosmico", "raio"],
+			"spell_slots": ["descarga_nervosa", "sussurro_medo"],
+			"spells_unlocked": ["sussurro_medo", "descarga_nervosa"],
 			"pet_id": null,
 			"pet_level": 0,
-			"passive_id": "forca",
+			"passive_id": "anatomista_profano",
 			"passive_level": 1,
 		},
 	})

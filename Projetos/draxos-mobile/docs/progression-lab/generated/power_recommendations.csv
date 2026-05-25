@@ -1,9 +1,9 @@
 component,current_weight,observed_share_percent,recommendation,status
-level,50,43,Keep as baseline until Battle Lab matchup data disagrees.,PASS
-weapon_level,30,21.16,Keep as baseline until Battle Lab matchup data disagrees.,PASS
-spell_level,20,22.5,Keep as baseline until Battle Lab matchup data disagrees.,PASS
-pet_level,15,4.94,Keep as baseline until Battle Lab matchup data disagrees.,PASS
-passive_level,10,4.56,Keep as baseline until Battle Lab matchup data disagrees.,PASS
-weapon_quality_tier,25,0.06,Keep as baseline until Battle Lab matchup data disagrees.,PASS
-base_stats_level,8,2.57,Keep as baseline until Battle Lab matchup data disagrees.,PASS
-base_average_level,4,1.19,Keep as baseline until Battle Lab matchup data disagrees.,PASS
+level,50,44.23,Keep as baseline until Battle Lab matchup data disagrees.,PASS
+weapon_level,30,21.77,Keep as baseline until Battle Lab matchup data disagrees.,PASS
+spell_level,20,20.29,Keep as baseline until Battle Lab matchup data disagrees.,PASS
+pet_level,15,5.08,Keep as baseline until Battle Lab matchup data disagrees.,PASS
+passive_level,10,4.69,Keep as baseline until Battle Lab matchup data disagrees.,PASS
+weapon_quality_tier,25,0.07,Keep as baseline until Battle Lab matchup data disagrees.,PASS
+base_stats_level,8,2.65,Keep as baseline until Battle Lab matchup data disagrees.,PASS
+base_average_level,4,1.23,Keep as baseline until Battle Lab matchup data disagrees.,PASS

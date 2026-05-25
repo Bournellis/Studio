@@ -111,14 +111,14 @@ begin
 	)
 	values (
 		player_row.id,
-		'varinha_magica',
+		'varinha_cinzas',
 		'starter',
 		1,
-		'["raio_cosmico"]'::jsonb,
-		'["raio_cosmico"]'::jsonb,
-		'familiar_cinzento',
+		'["sussurro_medo"]'::jsonb,
+		'["sussurro_medo"]'::jsonb,
+		'corvo_pressagio',
 		1,
-		'foco_astral',
+		'doutrina_pavor',
 		1
 	)
 	returning * into build_row;

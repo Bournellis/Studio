@@ -70,11 +70,11 @@ begin
 	seed_text := 'mvp_training:' || player_row.id::text || ':' || p_request_id::text;
 	events_payload := jsonb_build_array(
 		jsonb_build_object('t', 0.0, 'seq', 1, 'type', 'battle_start', 'source', 'system', 'target', 'none'),
-		jsonb_build_object('t', 0.5, 'seq', 2, 'type', 'weapon_attack', 'source', 'player', 'target', 'opponent', 'damage', 15, 'damage_type', 'magico', 'hp_after', 85),
-		jsonb_build_object('t', 0.9, 'seq', 3, 'type', 'weapon_attack', 'source', 'opponent', 'target', 'player', 'damage', 8, 'damage_type', 'magico', 'hp_after', 92),
-		jsonb_build_object('t', 1.2, 'seq', 4, 'type', 'spell_cast', 'source', 'player', 'target', 'opponent', 'spell_id', 'raio_cosmico', 'damage', 25, 'damage_type', 'magico', 'hp_after', 60),
-		jsonb_build_object('t', 2.1, 'seq', 5, 'type', 'weapon_attack', 'source', 'player', 'target', 'opponent', 'damage', 15, 'damage_type', 'magico', 'hp_after', 45),
-		jsonb_build_object('t', 3.4, 'seq', 6, 'type', 'spell_cast', 'source', 'player', 'target', 'opponent', 'spell_id', 'raio_cosmico', 'damage', 45, 'damage_type', 'magico', 'hp_after', 0),
+		jsonb_build_object('t', 0.5, 'seq', 2, 'type', 'weapon_attack', 'source', 'player', 'target', 'opponent', 'damage', 15, 'damage_type', 'arcano', 'weapon_id', 'varinha_cinzas', 'hp_after', 85),
+		jsonb_build_object('t', 0.9, 'seq', 3, 'type', 'weapon_attack', 'source', 'opponent', 'target', 'player', 'damage', 8, 'damage_type', 'arcano', 'weapon_id', 'varinha_cinzas', 'hp_after', 92),
+		jsonb_build_object('t', 1.2, 'seq', 4, 'type', 'spell_cast', 'source', 'player', 'target', 'opponent', 'spell_id', 'sussurro_medo', 'damage', 0, 'damage_type', 'none', 'hp_after', 60),
+		jsonb_build_object('t', 2.1, 'seq', 5, 'type', 'weapon_attack', 'source', 'player', 'target', 'opponent', 'damage', 15, 'damage_type', 'arcano', 'weapon_id', 'varinha_cinzas', 'hp_after', 45),
+		jsonb_build_object('t', 3.4, 'seq', 6, 'type', 'spell_cast', 'source', 'player', 'target', 'opponent', 'spell_id', 'sussurro_medo', 'damage', 0, 'damage_type', 'none', 'hp_after', 0),
 		jsonb_build_object('t', 3.9, 'seq', 7, 'type', 'reward_preview', 'source', 'system', 'target', 'player', 'reward_type', 'MVP_ONLY'),
 		jsonb_build_object('t', 4.0, 'seq', 8, 'type', 'battle_result', 'source', 'system', 'target', 'none', 'winner', 'player', 'reason', 'opponent_defeated')
 	);

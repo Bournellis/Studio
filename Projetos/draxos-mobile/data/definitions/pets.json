@@ -3,54 +3,164 @@
   "collection": "pets",
   "items": [
     {
-      "id": "familiar_cinzento",
-      "display_name": "Familiar Cinzento",
-      "description": "Pet inicial de dano magico para validar o slot de pet do primeiro slice.",
-      "version": 2,
+      "id": "corvo_pressagio",
+      "display_name": "Corvo do Pressagio",
+      "description": "Familiar criatura que marca alvos vulneraveis a medo e Morte.",
+      "version": 3,
       "enabled": true,
-      "tags": ["FIRST_SLICE", "pet", "magico"],
+      "tags": ["FIRST_SLICE", "pet", "familiar", "mental", "morte"],
       "mode": "FIRST_SLICE",
       "unlock_level": 15,
-      "damage_type": "magico",
-      "base_damage": 6,
-      "damage_per_level": 0.9,
+      "damage_type": "morte",
+      "base_damage": 5,
+      "damage_per_level": 0.7,
       "cadence_seconds": 4.0,
+      "effects": [
+        { "kind": "damage", "amount": 5 },
+        { "kind": "status", "status_id": "inquietacao", "stacks": 1 }
+      ]
+    },
+    {
+      "id": "sanguessuga_sacramental",
+      "display_name": "Sanguessuga Sacramental",
+      "description": "Familiar criatura de Sangue que drena e abre sangramentos leves.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "pet", "familiar", "sangue", "drain"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 15,
+      "damage_type": "sangue",
+      "base_damage": 5,
+      "damage_per_level": 0.75,
+      "cadence_seconds": 4.2,
+      "effects": [
+        { "kind": "damage", "amount": 5 },
+        { "kind": "dot", "status_id": "sangramento", "tick_damage": 2, "duration_seconds": 4 }
+      ]
+    },
+    {
+      "id": "serpente_toxina",
+      "display_name": "Serpente de Toxina",
+      "description": "Familiar criatura de Veneno que enfraquece a Vitalidade do alvo.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "pet", "familiar", "veneno", "dot"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 15,
+      "damage_type": "veneno",
+      "base_damage": 5,
+      "damage_per_level": 0.75,
+      "cadence_seconds": 4.1,
+      "effects": [
+        { "kind": "damage", "amount": 5 },
+        { "kind": "dot", "status_id": "toxina", "tick_damage": 2, "duration_seconds": 4 }
+      ]
+    },
+    {
+      "id": "cao_cinzas",
+      "display_name": "Cao de Cinzas",
+      "description": "Familiar criatura de Fogo para pressao sustentada.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "pet", "familiar", "fogo"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 15,
+      "damage_type": "fogo",
+      "base_damage": 6,
+      "damage_per_level": 0.85,
+      "cadence_seconds": 3.7,
       "effects": [
         { "kind": "damage", "amount": 6 }
       ]
     },
     {
-      "id": "brasido",
-      "display_name": "Brasido",
-      "description": "Pet de Fogo focado em dano sustentado.",
+      "id": "medusa_mare_fria",
+      "display_name": "Medusa de Mare Fria",
+      "description": "Familiar entidade de Agua/Gelo que aplica Molhado e Lento.",
       "version": 1,
       "enabled": true,
-      "tags": ["FIRST_SLICE", "pet", "fogo"],
-      "mode": "FIRST_SLICE",
-      "unlock_level": 15,
-      "damage_type": "fogo",
-      "base_damage": 5,
-      "damage_per_level": 0.85,
-      "cadence_seconds": 3.5,
-      "effects": [
-        { "kind": "damage", "amount": 5 }
-      ]
-    },
-    {
-      "id": "gelum",
-      "display_name": "Gelum",
-      "description": "Pet de Gelo com cadencia lenta e impacto maior.",
-      "version": 1,
-      "enabled": true,
-      "tags": ["FIRST_SLICE", "pet", "gelo"],
+      "tags": ["FIRST_SLICE", "pet", "familiar", "agua", "gelo"],
       "mode": "FIRST_SLICE",
       "unlock_level": 15,
       "damage_type": "gelo",
-      "base_damage": 8,
-      "damage_per_level": 1.0,
+      "base_damage": 7,
+      "damage_per_level": 0.9,
       "cadence_seconds": 4.8,
       "effects": [
-        { "kind": "damage", "amount": 8 }
+        { "kind": "damage", "amount": 7 },
+        { "kind": "status", "status_id": "resfriado", "stacks": 1 }
+      ]
+    },
+    {
+      "id": "escaravelho_pedra",
+      "display_name": "Escaravelho de Pedra",
+      "description": "Familiar criatura de Terra que apoia Guarda e raiz.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "pet", "familiar", "terra", "defense"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 15,
+      "damage_type": "terra",
+      "base_damage": 6,
+      "damage_per_level": 0.8,
+      "cadence_seconds": 4.6,
+      "effects": [
+        { "kind": "damage", "amount": 6 },
+        { "kind": "status", "status_id": "enraizado", "stacks": 1 }
+      ]
+    },
+    {
+      "id": "serpe_tempestade",
+      "display_name": "Serpe de Tempestade",
+      "description": "Familiar criatura de Vento/Raio que cria Condutor.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "pet", "familiar", "vento", "raio"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 15,
+      "damage_type": "raio",
+      "base_damage": 5,
+      "damage_per_level": 0.75,
+      "cadence_seconds": 3.6,
+      "effects": [
+        { "kind": "damage", "amount": 5 },
+        { "kind": "status", "status_id": "condutor", "stacks": 1 }
+      ]
+    },
+    {
+      "id": "cranio_errante",
+      "display_name": "Cranio Errante",
+      "description": "Familiar entidade de Morte que reforca Decaimento.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "pet", "familiar", "morte"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 15,
+      "damage_type": "morte",
+      "base_damage": 6,
+      "damage_per_level": 0.85,
+      "cadence_seconds": 4.4,
+      "effects": [
+        { "kind": "damage", "amount": 6 },
+        { "kind": "status", "status_id": "decaimento", "stacks": 1 }
+      ]
+    },
+    {
+      "id": "olho_veu",
+      "display_name": "Olho do Veu",
+      "description": "Familiar abstrato mental que revela fraquezas e amplifica controle.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["FIRST_SLICE", "pet", "familiar", "mental", "abstract"],
+      "mode": "FIRST_SLICE",
+      "unlock_level": 15,
+      "damage_type": "arcano",
+      "base_damage": 4,
+      "damage_per_level": 0.65,
+      "cadence_seconds": 4.0,
+      "effects": [
+        { "kind": "damage", "amount": 4 },
+        { "kind": "status", "status_id": "vulneravel", "stacks": 1 }
       ]
     }
   ]

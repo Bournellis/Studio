@@ -39,7 +39,7 @@ collections = {
 "upgrade_cost_formula": "max(20, round(0.5 * level^2)) energia",
 "version": 1.0
 }, {
-"description": "Produz Sangue para progressao de pets.",
+"description": "Produz Sangue para progressao de Familiares.",
 "display_name": "Pocos de Sangue",
 "duration_formula": "max(0.033h, 0.1 * level^2 hours)",
 "enabled": true,
@@ -55,7 +55,7 @@ collections = {
 "upgrade_cost_formula": "max(20, round(0.5 * level^2)) energia",
 "version": 1.0
 }, {
-"description": "Produz Cristais para progressao de passivas.",
+"description": "Produz Cristais para progressao de Doutrinas.",
 "display_name": "Minas de Cristal",
 "duration_formula": "max(0.033h, 0.1 * level^2 hours)",
 "enabled": true,
@@ -117,13 +117,13 @@ collections = {
 },
 "player_fixture": {
 "level": 1.0,
-"passive_id": "foco_astral",
-"pet_id": "familiar_cinzento",
-"spell_ids": ["raio_cosmico"],
-"weapon_type": "varinha_magica"
+"passive_id": "doutrina_pavor",
+"pet_id": "corvo_pressagio",
+"spell_ids": ["sussurro_medo"],
+"weapon_type": "varinha_cinzas"
 },
 "tags": ["MVP_ONLY", "battle", "fixture"],
-"version": 1.0
+"version": 2.0
 }, {
 "description": "Fixture de leitura para validar conteudo real do primeiro slice.",
 "display_name": "Smoke Do Simulador Real",
@@ -136,18 +136,18 @@ collections = {
 },
 "player_fixture": {
 "level": 25.0,
-"passive_id": "foco_astral",
-"pet_id": "familiar_cinzento",
-"spell_ids": ["raio_cosmico", "acender", "invocar_demonio"],
+"passive_id": "doutrina_pavor",
+"pet_id": "corvo_pressagio",
+"spell_ids": ["sussurro_medo", "marca_brasa", "invocar_brasa_faminta"],
 "weapon_level": 25.0,
 "weapon_quality": "ritual",
-"weapon_type": "varinha_magica"
+"weapon_type": "varinha_cinzas"
 },
 "tags": ["FIRST_SLICE", "battle", "fixture", "smoke"],
-"version": 1.0
+"version": 2.0
 }],
 "bot_builds": [{
-"archetype": "starter_wand",
+"archetype": "starter_instrument",
 "description": "Oponente tecnico fixo para battle fixture server-authoritative.",
 "display_name": "Bot de Treino MVP",
 "enabled": true,
@@ -155,28 +155,28 @@ collections = {
 "is_ranked": false,
 "level": 1.0,
 "mode": "MVP_ONLY",
-"passive_id": "foco_astral",
+"passive_id": "doutrina_pavor",
 "passive_level": 1.0,
-"pet_id": "familiar_cinzento",
+"pet_id": "corvo_pressagio",
 "pet_level": 1.0,
 "power": 50.0,
 "power_band_id": "mvp_training_band",
-"spell_ids": ["raio_cosmico"],
+"spell_ids": ["sussurro_medo"],
 "spell_levels": {
-"raio_cosmico": 1.0
+"sussurro_medo": 1.0
 },
 "tags": ["MVP_ONLY", "bot", "training"],
-"variation_seed": 20260519.0,
-"version": 1.0,
-"weapon_id": "varinha_magica",
+"variation_seed": 20260525.0,
+"version": 2.0,
+"weapon_id": "varinha_cinzas",
 "weapon_level": 1.0,
-"weapon_quality": "inicial"
+"weapon_quality": "starter"
 }, {
-"archetype": "starter_wand",
-"description": "Bot inicial de varinha pura.",
+"archetype": "starter_instrument",
+"description": "Bot inicial de instrumento ritual puro.",
 "display_name": "Aprendiz de Cinzas",
 "enabled": true,
-"id": "bot_starter_wand_01",
+"id": "bot_starter_instrument_01",
 "is_ranked": false,
 "level": 2.0,
 "mode": "FIRST_SLICE",
@@ -188,18 +188,18 @@ collections = {
 "power_band_id": "band_001",
 "spell_ids": [],
 "spell_levels": {},
-"tags": ["FIRST_SLICE", "bot", "starter_wand"],
+"tags": ["FIRST_SLICE", "bot", "starter_instrument"],
 "variation_seed": 101.0,
-"version": 1.0,
-"weapon_id": "varinha_magica",
+"version": 2.0,
+"weapon_id": "varinha_cinzas",
 "weapon_level": 2.0,
-"weapon_quality": "inicial"
+"weapon_quality": "starter"
 }, {
-"archetype": "cosmic_apprentice",
-"description": "Bot com Raio Cosmico para testar primeiro slot de spell.",
-"display_name": "Aprendiz Cosmico",
+"archetype": "mental_controller",
+"description": "Bot de atos mentais para testar controle e setup.",
+"display_name": "Sussurrador do Veu",
 "enabled": true,
-"id": "bot_cosmic_apprentice_01",
+"id": "bot_mental_controller_01",
 "is_ranked": false,
 "level": 5.0,
 "mode": "FIRST_SLICE",
@@ -209,14 +209,14 @@ collections = {
 "pet_level": 0.0,
 "power": 260.0,
 "power_band_id": "band_002",
-"spell_ids": ["raio_cosmico"],
+"spell_ids": ["sussurro_medo"],
 "spell_levels": {
-"raio_cosmico": 5.0
+"sussurro_medo": 5.0
 },
-"tags": ["FIRST_SLICE", "bot", "cosmic_apprentice"],
+"tags": ["FIRST_SLICE", "bot", "mental_controller"],
 "variation_seed": 202.0,
 "version": 1.0,
-"weapon_id": "varinha_magica",
+"weapon_id": "grimorio_veu",
 "weapon_level": 5.0,
 "weapon_quality": "reforcada"
 }, {
@@ -228,75 +228,75 @@ collections = {
 "is_ranked": false,
 "level": 14.0,
 "mode": "FIRST_SLICE",
-"passive_id": "forca",
+"passive_id": "pulso_tempestade",
 "passive_level": 8.0,
 "pet_id": "",
 "pet_level": 0.0,
 "power": 720.0,
 "power_band_id": "band_003",
-"spell_ids": ["raio_cosmico", "acender"],
+"spell_ids": ["descarga_nervosa", "marca_brasa"],
 "spell_levels": {
-"acender": 10.0,
-"raio_cosmico": 12.0
+"descarga_nervosa": 12.0,
+"marca_brasa": 10.0
 },
 "tags": ["FIRST_SLICE", "bot", "elemental_mixer"],
 "variation_seed": 303.0,
-"version": 1.0,
-"weapon_id": "varinha_magica",
+"version": 2.0,
+"weapon_id": "orbe_tempestade",
 "weapon_level": 12.0,
 "weapon_quality": "ritual"
 }, {
-"archetype": "pet_handler",
-"description": "Bot com pet e duas spells para validar slot de pet.",
+"archetype": "familiar_handler",
+"description": "Bot com familiar e duas spells para validar slot de familiar.",
 "display_name": "Condutor de Familiar",
 "enabled": true,
-"id": "bot_pet_handler_01",
+"id": "bot_familiar_handler_01",
 "is_ranked": false,
 "level": 22.0,
 "mode": "FIRST_SLICE",
-"passive_id": "resistencia",
+"passive_id": "pacto_familiar",
 "passive_level": 15.0,
-"pet_id": "familiar_cinzento",
+"pet_id": "corvo_pressagio",
 "pet_level": 16.0,
 "power": 1320.0,
 "power_band_id": "band_004",
-"spell_ids": ["raio_cosmico", "congelar"],
+"spell_ids": ["sussurro_medo", "geada_ossos"],
 "spell_levels": {
-"congelar": 16.0,
-"raio_cosmico": 18.0
+"geada_ossos": 16.0,
+"sussurro_medo": 18.0
 },
-"tags": ["FIRST_SLICE", "bot", "pet_handler"],
+"tags": ["FIRST_SLICE", "bot", "familiar_handler"],
 "variation_seed": 404.0,
-"version": 1.0,
-"weapon_id": "varinha_magica",
+"version": 2.0,
+"weapon_id": "varinha_cinzas",
 "weapon_level": 20.0,
 "weapon_quality": "abissal"
 }, {
 "archetype": "effect_trainer",
-"description": "Bot controlado para validar DoTs, status, barreiras e pet contra conta guest inicial.",
+"description": "Bot controlado para validar DoTs, status, barreiras e familiar contra conta guest inicial.",
 "display_name": "Treinador de Efeitos",
 "enabled": true,
 "id": "bot_effect_trainer_01",
 "is_ranked": false,
 "level": 6.0,
 "mode": "FIRST_SLICE",
-"passive_id": "escudo",
+"passive_id": "pedra_interna",
 "passive_level": 1.0,
-"pet_id": "familiar_cinzento",
+"pet_id": "corvo_pressagio",
 "pet_level": 1.0,
 "power": 180.0,
 "power_band_id": "band_002",
-"spell_ids": ["acender", "congelar"],
+"spell_ids": ["marca_brasa", "geada_ossos"],
 "spell_levels": {
-"acender": 1.0,
-"congelar": 1.0
+"geada_ossos": 1.0,
+"marca_brasa": 1.0
 },
 "tags": ["FIRST_SLICE", "bot", "effect_trainer", "smoke"],
 "variation_seed": 450.0,
-"version": 1.0,
-"weapon_id": "varinha_magica",
+"version": 2.0,
+"weapon_id": "varinha_cinzas",
 "weapon_level": 1.0,
-"weapon_quality": "inicial"
+"weapon_quality": "starter"
 }, {
 "archetype": "summon_trainer",
 "description": "Bot controlado para validar summons contra conta guest inicial.",
@@ -308,195 +308,415 @@ collections = {
 "mode": "FIRST_SLICE",
 "passive_id": "",
 "passive_level": 0.0,
-"pet_id": "familiar_cinzento",
+"pet_id": "corvo_pressagio",
 "pet_level": 1.0,
 "power": 210.0,
 "power_band_id": "band_002",
-"spell_ids": ["animar_morto", "congelar"],
+"spell_ids": ["erguer_ossos", "geada_ossos"],
 "spell_levels": {
-"animar_morto": 1.0,
-"congelar": 1.0
+"erguer_ossos": 1.0,
+"geada_ossos": 1.0
 },
 "tags": ["FIRST_SLICE", "bot", "summon_trainer", "smoke"],
 "variation_seed": 460.0,
-"version": 1.0,
-"weapon_id": "varinha_magica",
+"version": 2.0,
+"weapon_id": "cajado_ossario",
 "weapon_level": 1.0,
-"weapon_quality": "inicial"
+"weapon_quality": "starter"
 }, {
 "archetype": "summoner",
 "description": "Bot avancado com summons para validar o simulador completo.",
-"display_name": "Invocador Abissal",
+"display_name": "Invocador Ossario",
 "enabled": true,
 "id": "bot_summoner_01",
 "is_ranked": false,
 "level": 35.0,
 "mode": "FIRST_SLICE",
-"passive_id": "foco_astral",
+"passive_id": "ossuario_interior",
 "passive_level": 25.0,
-"pet_id": "brasido",
+"pet_id": "cranio_errante",
 "pet_level": 24.0,
 "power": 2450.0,
 "power_band_id": "band_005",
-"spell_ids": ["raio_cosmico", "invocar_demonio", "animar_morto"],
+"spell_ids": ["sussurro_medo", "erguer_ossos", "invocar_brasa_faminta"],
 "spell_levels": {
-"animar_morto": 28.0,
-"invocar_demonio": 28.0,
-"raio_cosmico": 30.0
+"erguer_ossos": 28.0,
+"invocar_brasa_faminta": 28.0,
+"sussurro_medo": 30.0
 },
 "tags": ["FIRST_SLICE", "bot", "summoner"],
 "variation_seed": 505.0,
-"version": 1.0,
-"weapon_id": "varinha_magica",
+"version": 2.0,
+"weapon_id": "cajado_ossario",
 "weapon_level": 32.0,
 "weapon_quality": "cosmica"
 }],
 "passives": [{
 "base_bonus": 0.04,
 "bonus_per_level": 0.002,
-"description": "Passiva inicial que melhora regeneracao de mana.",
-"display_name": "Foco Astral",
+"description": "Doutrina mental que fortalece Medo, Terror e quebra de vontade.",
+"display_name": "Doutrina do Pavor",
 "effects": [{
 "amount": 0.04,
-"kind": "mana_regen_percent"
+"family": "mental",
+"kind": "status_duration_percent"
 }],
 "enabled": true,
-"id": "foco_astral",
+"id": "doutrina_pavor",
 "mode": "FIRST_SLICE",
-"stat": "mana_regen",
-"tags": ["FIRST_SLICE", "passive", "mana"],
+"stat": "control_intensity",
+"tags": ["FIRST_SLICE", "passive", "doutrine", "mental", "control"],
 "unlock_level": 10.0,
-"version": 2.0
-}, {
-"base_bonus": 0.04,
-"bonus_per_level": 0.002,
-"description": "Aumenta dano base da Varinha e spells diretas.",
-"display_name": "Forca",
-"effects": [{
-"amount": 0.04,
-"kind": "damage_percent"
-}],
-"enabled": true,
-"id": "forca",
-"mode": "FIRST_SLICE",
-"stat": "damage",
-"tags": ["FIRST_SLICE", "passive", "damage"],
-"unlock_level": 10.0,
-"version": 1.0
+"version": 3.0
 }, {
 "base_bonus": 0.03,
 "bonus_per_level": 0.0015,
-"description": "Reduz dano recebido durante batalhas.",
-"display_name": "Resistencia",
+"description": "Aumenta Vontade e reduz o impacto de controle recebido.",
+"display_name": "Mente Fria",
 "effects": [{
 "amount": 0.03,
 "kind": "damage_reduction_percent"
 }],
 "enabled": true,
-"id": "resistencia",
+"id": "mente_fria",
 "mode": "FIRST_SLICE",
-"stat": "damage_reduction",
-"tags": ["FIRST_SLICE", "passive", "defense"],
+"stat": "mental_resistance",
+"tags": ["FIRST_SLICE", "passive", "doutrine", "mental", "defense"],
 "unlock_level": 10.0,
 "version": 1.0
 }, {
-"base_bonus": 12.0,
-"bonus_per_level": 1.0,
-"description": "Concede barreira inicial no comeco da batalha.",
-"display_name": "Escudo",
+"base_bonus": 0.04,
+"bonus_per_level": 0.002,
+"description": "Melhora dano Fisico, Ferida e Sangramento.",
+"display_name": "Anatomista Profano",
 "effects": [{
-"amount": 12.0,
-"kind": "starting_barrier"
+"amount": 0.04,
+"kind": "damage_percent"
 }],
 "enabled": true,
-"id": "escudo",
+"id": "anatomista_profano",
 "mode": "FIRST_SLICE",
-"stat": "starting_barrier",
-"tags": ["FIRST_SLICE", "passive", "barrier"],
+"stat": "damage",
+"tags": ["FIRST_SLICE", "passive", "doutrine", "fisico", "sangue"],
 "unlock_level": 10.0,
 "version": 1.0
 }, {
 "base_bonus": 0.02,
 "bonus_per_level": 0.001,
-"description": "Converte pequena parte do dano em cura.",
-"display_name": "Vampirismo",
+"description": "Converte parte do dano em cura e fortalece efeitos de Sangue.",
+"display_name": "Sangue Obediente",
 "effects": [{
 "amount": 0.02,
 "kind": "lifesteal_percent"
 }],
 "enabled": true,
-"id": "vampirismo",
+"id": "sangue_obediente",
 "mode": "FIRST_SLICE",
 "stat": "lifesteal",
-"tags": ["FIRST_SLICE", "passive", "heal"],
+"tags": ["FIRST_SLICE", "passive", "doutrine", "sangue", "heal"],
+"unlock_level": 10.0,
+"version": 1.0
+}, {
+"base_bonus": 0.04,
+"bonus_per_level": 0.0015,
+"description": "Melhora Veneno, Fraqueza e corrosao corporal.",
+"display_name": "Alquimia Toxica",
+"effects": [{
+"amount": 0.04,
+"family": "veneno",
+"kind": "dot_damage_percent"
+}],
+"enabled": true,
+"id": "alquimia_toxica",
+"mode": "FIRST_SLICE",
+"stat": "dot_damage",
+"tags": ["FIRST_SLICE", "passive", "doutrine", "veneno", "dot"],
+"unlock_level": 10.0,
+"version": 1.0
+}, {
+"base_bonus": 0.04,
+"bonus_per_level": 0.0015,
+"description": "Melhora Fogo, Queimando e marcas de cinzas.",
+"display_name": "Cinza Viva",
+"effects": [{
+"amount": 0.04,
+"family": "fogo",
+"kind": "dot_damage_percent"
+}],
+"enabled": true,
+"id": "cinza_viva",
+"mode": "FIRST_SLICE",
+"stat": "fire_pressure",
+"tags": ["FIRST_SLICE", "passive", "doutrine", "fogo", "dot"],
+"unlock_level": 10.0,
+"version": 1.0
+}, {
+"base_bonus": 0.03,
+"bonus_per_level": 0.0015,
+"description": "Melhora Agua, Gelo, lentidao e congelamento.",
+"display_name": "Mare Silenciosa",
+"effects": [{
+"amount": 0.03,
+"family": "gelo",
+"kind": "status_duration_percent"
+}],
+"enabled": true,
+"id": "mare_silenciosa",
+"mode": "FIRST_SLICE",
+"stat": "slow_control",
+"tags": ["FIRST_SLICE", "passive", "doutrine", "agua", "gelo"],
+"unlock_level": 10.0,
+"version": 1.0
+}, {
+"base_bonus": 12.0,
+"bonus_per_level": 1.0,
+"description": "Aumenta Guarda, Tenacidade e barreiras de Terra.",
+"display_name": "Pedra Interna",
+"effects": [{
+"amount": 12.0,
+"kind": "starting_barrier"
+}],
+"enabled": true,
+"id": "pedra_interna",
+"mode": "FIRST_SLICE",
+"stat": "starting_barrier",
+"tags": ["FIRST_SLICE", "passive", "doutrine", "terra", "defense"],
 "unlock_level": 10.0,
 "version": 1.0
 }, {
 "base_bonus": 0.03,
 "bonus_per_level": 0.001,
-"description": "Reduz levemente cooldowns de spells.",
-"display_name": "Velocidade",
+"description": "Melhora Celeridade Ritual, Vento, Raio e interrupcoes.",
+"display_name": "Pulso de Tempestade",
 "effects": [{
 "amount": 0.03,
 "kind": "cooldown_reduction_percent"
 }],
 "enabled": true,
-"id": "velocidade",
+"id": "pulso_tempestade",
 "mode": "FIRST_SLICE",
 "stat": "cooldown_reduction",
-"tags": ["FIRST_SLICE", "passive", "haste"],
+"tags": ["FIRST_SLICE", "passive", "doutrine", "vento", "raio", "haste"],
+"unlock_level": 10.0,
+"version": 1.0
+}, {
+"base_bonus": 0.05,
+"bonus_per_level": 0.002,
+"description": "Melhora Morte, summons e pressao anti-regeneracao.",
+"display_name": "Ossuario Interior",
+"effects": [{
+"amount": 0.05,
+"kind": "summon_damage_percent"
+}],
+"enabled": true,
+"id": "ossuario_interior",
+"mode": "FIRST_SLICE",
+"stat": "summon_power",
+"tags": ["FIRST_SLICE", "passive", "doutrine", "morte", "summon"],
+"unlock_level": 10.0,
+"version": 1.0
+}, {
+"base_bonus": 0.05,
+"bonus_per_level": 0.002,
+"description": "Melhora familiares, cadencia de familiar e suporte de status.",
+"display_name": "Pacto Familiar",
+"effects": [{
+"amount": 0.05,
+"kind": "pet_damage_percent"
+}],
+"enabled": true,
+"id": "pacto_familiar",
+"mode": "FIRST_SLICE",
+"stat": "pet_power",
+"tags": ["FIRST_SLICE", "passive", "doutrine", "familiar", "pet"],
 "unlock_level": 10.0,
 "version": 1.0
 }],
 "pets": [{
-"base_damage": 6.0,
+"base_damage": 5.0,
 "cadence_seconds": 4.0,
-"damage_per_level": 0.9,
-"damage_type": "magico",
-"description": "Pet inicial de dano magico para validar o slot de pet do primeiro slice.",
-"display_name": "Familiar Cinzento",
+"damage_per_level": 0.7,
+"damage_type": "morte",
+"description": "Familiar criatura que marca alvos vulneraveis a medo e Morte.",
+"display_name": "Corvo do Pressagio",
+"effects": [{
+"amount": 5.0,
+"kind": "damage"
+}, {
+"kind": "status",
+"stacks": 1.0,
+"status_id": "inquietacao"
+}],
+"enabled": true,
+"id": "corvo_pressagio",
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "pet", "familiar", "mental", "morte"],
+"unlock_level": 15.0,
+"version": 3.0
+}, {
+"base_damage": 5.0,
+"cadence_seconds": 4.2,
+"damage_per_level": 0.75,
+"damage_type": "sangue",
+"description": "Familiar criatura de Sangue que drena e abre sangramentos leves.",
+"display_name": "Sanguessuga Sacramental",
+"effects": [{
+"amount": 5.0,
+"kind": "damage"
+}, {
+"duration_seconds": 4.0,
+"kind": "dot",
+"status_id": "sangramento",
+"tick_damage": 2.0
+}],
+"enabled": true,
+"id": "sanguessuga_sacramental",
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "pet", "familiar", "sangue", "drain"],
+"unlock_level": 15.0,
+"version": 1.0
+}, {
+"base_damage": 5.0,
+"cadence_seconds": 4.1,
+"damage_per_level": 0.75,
+"damage_type": "veneno",
+"description": "Familiar criatura de Veneno que enfraquece a Vitalidade do alvo.",
+"display_name": "Serpente de Toxina",
+"effects": [{
+"amount": 5.0,
+"kind": "damage"
+}, {
+"duration_seconds": 4.0,
+"kind": "dot",
+"status_id": "toxina",
+"tick_damage": 2.0
+}],
+"enabled": true,
+"id": "serpente_toxina",
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "pet", "familiar", "veneno", "dot"],
+"unlock_level": 15.0,
+"version": 1.0
+}, {
+"base_damage": 6.0,
+"cadence_seconds": 3.7,
+"damage_per_level": 0.85,
+"damage_type": "fogo",
+"description": "Familiar criatura de Fogo para pressao sustentada.",
+"display_name": "Cao de Cinzas",
 "effects": [{
 "amount": 6.0,
 "kind": "damage"
 }],
 "enabled": true,
-"id": "familiar_cinzento",
+"id": "cao_cinzas",
 "mode": "FIRST_SLICE",
-"tags": ["FIRST_SLICE", "pet", "magico"],
-"unlock_level": 15.0,
-"version": 2.0
-}, {
-"base_damage": 5.0,
-"cadence_seconds": 3.5,
-"damage_per_level": 0.85,
-"damage_type": "fogo",
-"description": "Pet de Fogo focado em dano sustentado.",
-"display_name": "Brasido",
-"effects": [{
-"amount": 5.0,
-"kind": "damage"
-}],
-"enabled": true,
-"id": "brasido",
-"mode": "FIRST_SLICE",
-"tags": ["FIRST_SLICE", "pet", "fogo"],
+"tags": ["FIRST_SLICE", "pet", "familiar", "fogo"],
 "unlock_level": 15.0,
 "version": 1.0
 }, {
-"base_damage": 8.0,
+"base_damage": 7.0,
 "cadence_seconds": 4.8,
-"damage_per_level": 1.0,
+"damage_per_level": 0.9,
 "damage_type": "gelo",
-"description": "Pet de Gelo com cadencia lenta e impacto maior.",
-"display_name": "Gelum",
+"description": "Familiar entidade de Agua/Gelo que aplica Molhado e Lento.",
+"display_name": "Medusa de Mare Fria",
 "effects": [{
-"amount": 8.0,
+"amount": 7.0,
 "kind": "damage"
+}, {
+"kind": "status",
+"stacks": 1.0,
+"status_id": "resfriado"
 }],
 "enabled": true,
-"id": "gelum",
+"id": "medusa_mare_fria",
 "mode": "FIRST_SLICE",
-"tags": ["FIRST_SLICE", "pet", "gelo"],
+"tags": ["FIRST_SLICE", "pet", "familiar", "agua", "gelo"],
+"unlock_level": 15.0,
+"version": 1.0
+}, {
+"base_damage": 6.0,
+"cadence_seconds": 4.6,
+"damage_per_level": 0.8,
+"damage_type": "terra",
+"description": "Familiar criatura de Terra que apoia Guarda e raiz.",
+"display_name": "Escaravelho de Pedra",
+"effects": [{
+"amount": 6.0,
+"kind": "damage"
+}, {
+"kind": "status",
+"stacks": 1.0,
+"status_id": "enraizado"
+}],
+"enabled": true,
+"id": "escaravelho_pedra",
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "pet", "familiar", "terra", "defense"],
+"unlock_level": 15.0,
+"version": 1.0
+}, {
+"base_damage": 5.0,
+"cadence_seconds": 3.6,
+"damage_per_level": 0.75,
+"damage_type": "raio",
+"description": "Familiar criatura de Vento/Raio que cria Condutor.",
+"display_name": "Serpe de Tempestade",
+"effects": [{
+"amount": 5.0,
+"kind": "damage"
+}, {
+"kind": "status",
+"stacks": 1.0,
+"status_id": "condutor"
+}],
+"enabled": true,
+"id": "serpe_tempestade",
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "pet", "familiar", "vento", "raio"],
+"unlock_level": 15.0,
+"version": 1.0
+}, {
+"base_damage": 6.0,
+"cadence_seconds": 4.4,
+"damage_per_level": 0.85,
+"damage_type": "morte",
+"description": "Familiar entidade de Morte que reforca Decaimento.",
+"display_name": "Cranio Errante",
+"effects": [{
+"amount": 6.0,
+"kind": "damage"
+}, {
+"kind": "status",
+"stacks": 1.0,
+"status_id": "decaimento"
+}],
+"enabled": true,
+"id": "cranio_errante",
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "pet", "familiar", "morte"],
+"unlock_level": 15.0,
+"version": 1.0
+}, {
+"base_damage": 4.0,
+"cadence_seconds": 4.0,
+"damage_per_level": 0.65,
+"damage_type": "arcano",
+"description": "Familiar abstrato mental que revela fraquezas e amplifica controle.",
+"display_name": "Olho do Veu",
+"effects": [{
+"amount": 4.0,
+"kind": "damage"
+}, {
+"kind": "status",
+"stacks": 1.0,
+"status_id": "vulneravel"
+}],
+"enabled": true,
+"id": "olho_veu",
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "pet", "familiar", "mental", "abstract"],
 "unlock_level": 15.0,
 "version": 1.0
 }],
@@ -666,44 +886,179 @@ collections = {
 "version": 1.0
 }],
 "spells": [{
-"base_damage": 18.0,
-"cooldown_seconds": 4.0,
-"damage_per_level": 2.4,
-"damage_type": "magico",
-"description": "Dano magico direto no primeiro alvo da fila.",
-"display_name": "Raio Cosmico",
+"base_damage": 0.0,
+"cooldown_seconds": 4.5,
+"damage_per_level": 0.0,
+"damage_type": "none",
+"description": "Ato mental inicial que planta Inquietacao e abre caminho para Medo.",
+"display_name": "Sussurro do Medo",
 "effects": [{
-"amount": 18.0,
-"kind": "damage"
-}],
-"enabled": true,
-"id": "raio_cosmico",
-"mana_cost": 8.0,
-"mode": "FIRST_SLICE",
-"tags": ["FIRST_SLICE", "damage", "magico", "starter"],
-"target": "direct",
-"unlock_level": 3.0,
-"version": 2.0
-}, {
-"base_damage": 14.0,
-"cooldown_seconds": 6.0,
-"damage_per_level": 1.8,
-"damage_type": "choque",
-"description": "Dano de choque direto no mago inimigo e aplica marcadores de choque.",
-"display_name": "Raio",
-"effects": [{
-"amount": 14.0,
-"kind": "damage"
-}, {
+"duration_seconds": 6.0,
 "kind": "status",
 "stacks": 1.0,
-"status_id": "choque_marcado"
+"status_id": "inquietacao"
 }],
 "enabled": true,
-"id": "raio",
+"id": "sussurro_medo",
+"mana_cost": 8.0,
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "spell", "mental", "control", "starter"],
+"target": "player",
+"unlock_level": 3.0,
+"version": 3.0
+}, {
+"base_damage": 0.0,
+"cooldown_seconds": 7.0,
+"damage_per_level": 0.0,
+"damage_type": "none",
+"description": "Ato mental que transforma medo acumulado em Terror e vulnerabilidade.",
+"display_name": "Terror Primordial",
+"effects": [{
+"duration_seconds": 4.0,
+"kind": "status",
+"stacks": 1.0,
+"status_id": "terror"
+}],
+"enabled": true,
+"id": "terror_primordial",
 "mana_cost": 12.0,
 "mode": "FIRST_SLICE",
-"tags": ["FIRST_SLICE", "damage", "choque", "elemental"],
+"tags": ["FIRST_SLICE", "spell", "mental", "control"],
+"target": "player",
+"unlock_level": 7.0,
+"version": 1.0
+}, {
+"base_damage": 0.0,
+"cooldown_seconds": 7.5,
+"damage_per_level": 0.0,
+"damage_type": "none",
+"description": "Ato mental de Confusao que atrasa a leitura ritual do alvo.",
+"display_name": "Labirinto da Razao",
+"effects": [{
+"duration_seconds": 5.0,
+"kind": "status",
+"stacks": 1.0,
+"status_id": "confusao"
+}],
+"enabled": true,
+"id": "labirinto_razao",
+"mana_cost": 11.0,
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "spell", "mental", "control"],
+"target": "player",
+"unlock_level": 7.0,
+"version": 1.0
+}, {
+"base_damage": 0.0,
+"cooldown_seconds": 9.0,
+"damage_per_level": 0.0,
+"damage_type": "none",
+"description": "Ato mental de Compulsao que torna a cadencia inimiga menos eficiente.",
+"display_name": "Mandato Oculto",
+"effects": [{
+"duration_seconds": 5.0,
+"kind": "status",
+"stacks": 1.0,
+"status_id": "compulsao"
+}],
+"enabled": true,
+"id": "mandato_oculto",
+"mana_cost": 14.0,
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "spell", "mental", "control"],
+"target": "player",
+"unlock_level": 15.0,
+"version": 1.0
+}, {
+"base_damage": 16.0,
+"cooldown_seconds": 6.5,
+"damage_per_level": 1.9,
+"damage_type": "fisico",
+"description": "Corte ritual Fisico/Sangue que abre Ferida no primeiro alvo.",
+"display_name": "Incisao Ritual",
+"effects": [{
+"amount": 16.0,
+"kind": "damage"
+}, {
+"duration_seconds": 6.0,
+"kind": "status",
+"stacks": 1.0,
+"status_id": "ferida"
+}],
+"enabled": true,
+"id": "incisao_ritual",
+"mana_cost": 12.0,
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "spell", "damage", "fisico", "sangue"],
+"target": "direct",
+"unlock_level": 7.0,
+"version": 1.0
+}, {
+"base_damage": 8.0,
+"cooldown_seconds": 8.0,
+"damage_per_level": 1.0,
+"damage_type": "sangue",
+"description": "Ato de Sangue que transforma feridas em perda continua.",
+"display_name": "Hemorragia Induzida",
+"effects": [{
+"amount": 8.0,
+"kind": "damage"
+}, {
+"duration_seconds": 6.0,
+"kind": "dot",
+"status_id": "hemorragia",
+"tick_damage": 5.0
+}],
+"enabled": true,
+"id": "hemorragia_induzida",
+"mana_cost": 16.0,
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "spell", "sangue", "dot"],
+"target": "direct",
+"unlock_level": 15.0,
+"version": 1.0
+}, {
+"barrier_per_level": 2.6,
+"base_barrier": 28.0,
+"cooldown_seconds": 11.0,
+"damage_type": "none",
+"description": "Ato defensivo de Sangue que cria uma barreira corporal profana.",
+"display_name": "Coagulo Negro",
+"effects": [{
+"amount": 28.0,
+"kind": "barrier"
+}, {
+"duration_seconds": 7.0,
+"kind": "status",
+"stacks": 1.0,
+"status_id": "coagulacao_profana"
+}],
+"enabled": true,
+"id": "coagulo_negro",
+"mana_cost": 16.0,
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "spell", "sangue", "barrier", "defense"],
+"target": "self",
+"unlock_level": 15.0,
+"version": 1.0
+}, {
+"base_damage": 6.0,
+"cooldown_seconds": 8.0,
+"damage_per_level": 0.8,
+"damage_type": "veneno",
+"description": "Veneno ritual que pressiona Vitalidade e aplica Envenenado.",
+"display_name": "Toxina Palida",
+"effects": [{
+"duration_seconds": 6.0,
+"kind": "dot",
+"status_id": "envenenado",
+"tick_damage": 5.0
+}],
+"enabled": true,
+"id": "toxina_palida",
+"mana_cost": 10.0,
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "spell", "veneno", "dot"],
 "target": "player",
 "unlock_level": 7.0,
 "version": 1.0
@@ -712,8 +1067,8 @@ collections = {
 "cooldown_seconds": 7.0,
 "damage_per_level": 1.7,
 "damage_type": "fogo",
-"description": "Dano de fogo em area curta e aplica Queimando.",
-"display_name": "Acender",
+"description": "Fogo ritual que aplica Brasa e Queimando.",
+"display_name": "Marca de Brasa",
 "effects": [{
 "amount": 12.0,
 "kind": "damage"
@@ -724,32 +1079,59 @@ collections = {
 "tick_damage": 4.0
 }],
 "enabled": true,
-"id": "acender",
+"id": "marca_brasa",
 "mana_cost": 14.0,
 "mode": "FIRST_SLICE",
-"tags": ["FIRST_SLICE", "damage", "fogo", "dot"],
+"tags": ["FIRST_SLICE", "spell", "damage", "fogo", "dot"],
 "target": "area",
 "unlock_level": 7.0,
 "version": 1.0
 }, {
-"base_damage": 6.0,
-"cooldown_seconds": 8.0,
-"damage_per_level": 0.8,
-"damage_type": "veneno",
-"description": "Aplica veneno diretamente no mago inimigo.",
-"display_name": "Envenenar",
+"base_damage": 24.0,
+"cooldown_seconds": 9.0,
+"damage_per_level": 2.2,
+"damage_type": "fogo",
+"description": "Payoff de Fogo/Morte que pune alvos marcados por cinzas.",
+"display_name": "Coroa de Cinzas",
 "effects": [{
+"amount": 24.0,
+"kind": "damage"
+}, {
 "duration_seconds": 6.0,
-"kind": "dot",
-"status_id": "envenenado",
-"tick_damage": 5.0
+"kind": "status",
+"stacks": 1.0,
+"status_id": "cinzas_marcadas"
 }],
 "enabled": true,
-"id": "envenenar",
-"mana_cost": 10.0,
+"id": "coroa_cinzas",
+"mana_cost": 20.0,
 "mode": "FIRST_SLICE",
-"tags": ["FIRST_SLICE", "veneno", "dot"],
+"tags": ["FIRST_SLICE", "spell", "damage", "fogo", "morte"],
 "target": "player",
+"unlock_level": 25.0,
+"version": 1.0
+}, {
+"base_damage": 8.0,
+"cooldown_seconds": 6.5,
+"damage_per_level": 1.2,
+"damage_type": "agua",
+"description": "Agua ritual que aplica Molhado e prepara gelo ou raio.",
+"display_name": "Mare Escura",
+"effects": [{
+"amount": 8.0,
+"kind": "damage"
+}, {
+"duration_seconds": 7.0,
+"kind": "status",
+"stacks": 1.0,
+"status_id": "molhado"
+}],
+"enabled": true,
+"id": "mare_escura",
+"mana_cost": 11.0,
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "spell", "agua", "status"],
+"target": "area",
 "unlock_level": 7.0,
 "version": 1.0
 }, {
@@ -757,124 +1139,204 @@ collections = {
 "cooldown_seconds": 7.5,
 "damage_per_level": 1.6,
 "damage_type": "gelo",
-"description": "Dano de gelo em area curta e aplica Lento.",
-"display_name": "Congelar",
+"description": "Gelo ritual que aplica Resfriado e Lento.",
+"display_name": "Geada nos Ossos",
 "effects": [{
 "amount": 11.0,
 "kind": "damage"
 }, {
+"duration_seconds": 5.0,
 "kind": "status",
 "stacks": 1.0,
-"status_id": "lento"
+"status_id": "resfriado"
 }],
 "enabled": true,
-"id": "congelar",
+"id": "geada_ossos",
 "mana_cost": 13.0,
 "mode": "FIRST_SLICE",
-"tags": ["FIRST_SLICE", "damage", "gelo", "status"],
+"tags": ["FIRST_SLICE", "spell", "damage", "gelo", "status"],
 "target": "area",
 "unlock_level": 7.0,
 "version": 1.0
 }, {
-"base_damage": 26.0,
-"cooldown_seconds": 9.0,
-"damage_per_level": 2.4,
-"damage_type": "morte",
-"description": "Grande dano de Morte diretamente no mago inimigo.",
-"display_name": "Odio",
+"base_damage": 12.0,
+"cooldown_seconds": 10.0,
+"damage_per_level": 1.4,
+"damage_type": "gelo",
+"description": "Controle superior de Gelo que cria Congelado breve.",
+"display_name": "Prisao de Gelo",
 "effects": [{
-"amount": 26.0,
+"amount": 12.0,
 "kind": "damage"
+}, {
+"duration_seconds": 3.0,
+"kind": "status",
+"stacks": 1.0,
+"status_id": "congelado"
 }],
 "enabled": true,
-"id": "odio",
+"id": "prisao_gelo",
+"mana_cost": 20.0,
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "spell", "gelo", "control", "advanced"],
+"target": "area",
+"unlock_level": 25.0,
+"version": 1.0
+}, {
+"barrier_per_level": 1.2,
+"base_barrier": 12.0,
+"base_damage": 14.0,
+"cooldown_seconds": 10.5,
+"damage_per_level": 1.7,
+"damage_type": "terra",
+"description": "Terra ritual que enraiza o alvo e reforca a guarda do conjurador.",
+"display_name": "Raizes de Pedra",
+"effects": [{
+"amount": 14.0,
+"kind": "damage"
+}, {
+"duration_seconds": 5.0,
+"kind": "status",
+"stacks": 1.0,
+"status_id": "enraizado"
+}],
+"enabled": true,
+"id": "raizes_pedra",
+"mana_cost": 17.0,
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "spell", "terra", "control", "defense"],
+"target": "direct",
+"unlock_level": 15.0,
+"version": 1.0
+}, {
+"base_damage": 15.0,
+"cooldown_seconds": 5.5,
+"damage_per_level": 1.8,
+"damage_type": "vento",
+"description": "Corte de Vento/Fisico rapido que desequilibra o alvo.",
+"display_name": "Lamina de Vento",
+"effects": [{
+"amount": 15.0,
+"kind": "damage"
+}, {
+"duration_seconds": 4.0,
+"kind": "status",
+"stacks": 1.0,
+"status_id": "desequilibrado"
+}],
+"enabled": true,
+"id": "lamina_vento",
+"mana_cost": 12.0,
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "spell", "damage", "vento", "fisico"],
+"target": "direct",
+"unlock_level": 7.0,
+"version": 1.0
+}, {
+"base_damage": 14.0,
+"cooldown_seconds": 6.0,
+"damage_per_level": 1.8,
+"damage_type": "raio",
+"description": "Raio ritual que aplica Condutor e pode eletrificar alvos preparados.",
+"display_name": "Descarga Nervosa",
+"effects": [{
+"amount": 14.0,
+"kind": "damage"
+}, {
+"duration_seconds": 6.0,
+"kind": "status",
+"stacks": 1.0,
+"status_id": "condutor"
+}],
+"enabled": true,
+"id": "descarga_nervosa",
+"mana_cost": 12.0,
+"mode": "FIRST_SLICE",
+"tags": ["FIRST_SLICE", "spell", "damage", "raio", "status"],
+"target": "player",
+"unlock_level": 7.0,
+"version": 1.0
+}, {
+"base_damage": 10.0,
+"cooldown_seconds": 9.0,
+"damage_per_level": 1.2,
+"damage_type": "morte",
+"description": "Ato funebre que aplica Decaimento e pressiona regeneracao.",
+"display_name": "Putrefacao",
+"effects": [{
+"amount": 10.0,
+"kind": "damage"
+}, {
+"duration_seconds": 6.0,
+"kind": "dot",
+"status_id": "decaimento",
+"tick_damage": 6.0
+}],
+"enabled": true,
+"id": "putrefacao",
 "mana_cost": 22.0,
 "mode": "FIRST_SLICE",
-"tags": ["FIRST_SLICE", "damage", "morte", "advanced"],
+"tags": ["FIRST_SLICE", "spell", "morte", "dot", "advanced"],
 "target": "player",
 "unlock_level": 25.0,
 "version": 1.0
 }, {
-"base_damage": 20.0,
-"cooldown_seconds": 7.5,
-"damage_per_level": 2.2,
-"damage_type": "sangramento",
-"description": "Dano direto e sangramento no primeiro alvo da fila.",
-"display_name": "Dilacerar",
+"base_damage": 18.0,
+"cooldown_seconds": 8.0,
+"damage_per_level": 1.8,
+"damage_type": "morte",
+"description": "Marca de Morte que torna o alvo mais vulneravel a atos funebres.",
+"display_name": "Marca Sepulcral",
 "effects": [{
-"amount": 20.0,
+"amount": 18.0,
 "kind": "damage"
 }, {
-"duration_seconds": 5.0,
-"kind": "dot",
-"status_id": "sangrando",
-"tick_damage": 6.0
+"duration_seconds": 7.0,
+"kind": "status",
+"stacks": 1.0,
+"status_id": "marca_sepulcral"
 }],
 "enabled": true,
-"id": "dilacerar",
+"id": "marca_sepulcral",
 "mana_cost": 18.0,
 "mode": "FIRST_SLICE",
-"tags": ["FIRST_SLICE", "damage", "sangramento", "dot", "advanced"],
-"target": "direct",
+"tags": ["FIRST_SLICE", "spell", "morte", "status", "advanced"],
+"target": "player",
 "unlock_level": 25.0,
 "version": 1.0
 }, {
-"barrier_per_level": 3.0,
-"base_barrier": 30.0,
-"cooldown_seconds": 12.0,
-"damage_type": "none",
-"description": "Gera barreira magica e resistencia global temporaria.",
-"display_name": "Fortificar",
+"cooldown_seconds": 10.0,
+"damage_type": "morte",
+"description": "Invoca um guardiao de ossos para proteger o mago.",
+"display_name": "Erguer Ossos",
 "effects": [{
-"amount": 30.0,
-"kind": "barrier"
-}, {
-"amount": 0.08,
-"duration_seconds": 8.0,
-"kind": "resistance"
+"kind": "summon",
+"summon_id": "guardiao_ossos"
 }],
 "enabled": true,
-"id": "fortificar",
-"mana_cost": 16.0,
+"id": "erguer_ossos",
+"mana_cost": 20.0,
 "mode": "FIRST_SLICE",
-"tags": ["FIRST_SLICE", "barrier", "defense", "advanced"],
+"summon_id": "guardiao_ossos",
+"tags": ["FIRST_SLICE", "spell", "summon", "morte", "advanced"],
 "target": "self",
 "unlock_level": 25.0,
 "version": 1.0
 }, {
 "cooldown_seconds": 10.0,
 "damage_type": "fogo",
-"description": "Invoca um demonio na posicao Tras para causar dano de Fogo.",
-"display_name": "Invocar Demonio",
+"description": "Invoca uma entidade ofensiva de Fogo e Morte.",
+"display_name": "Invocar Brasa Faminta",
 "effects": [{
 "kind": "summon",
-"summon_id": "demonio"
+"summon_id": "brasa_faminta"
 }],
 "enabled": true,
-"id": "invocar_demonio",
+"id": "invocar_brasa_faminta",
 "mana_cost": 20.0,
 "mode": "FIRST_SLICE",
-"summon_id": "demonio",
-"tags": ["FIRST_SLICE", "summon", "fogo", "advanced"],
-"target": "self",
-"unlock_level": 25.0,
-"version": 1.0
-}, {
-"alternate_summon_id": "morto_vivo",
-"cooldown_seconds": 10.0,
-"damage_type": "morte",
-"description": "Invoca um morto-vivo na Frente ou Meio para proteger o mago.",
-"display_name": "Animar Morto",
-"effects": [{
-"kind": "summon",
-"summon_id": "esqueleto"
-}],
-"enabled": true,
-"id": "animar_morto",
-"mana_cost": 20.0,
-"mode": "FIRST_SLICE",
-"summon_id": "esqueleto",
-"tags": ["FIRST_SLICE", "summon", "morte", "advanced"],
+"summon_id": "brasa_faminta",
+"tags": ["FIRST_SLICE", "spell", "summon", "fogo", "morte", "advanced"],
 "target": "self",
 "unlock_level": 25.0,
 "version": 1.0
@@ -883,16 +1345,16 @@ collections = {
 "base_damage": 15.0,
 "cadence_seconds": 1.0,
 "damage_per_level": 1.8,
-"damage_type": "magico",
-"description": "Arma base do mago Draxos no primeiro slice.",
-"display_name": "Varinha Magica",
+"damage_type": "arcano",
+"description": "Instrumento ritual inicial, equilibrado e focado em dano Arcano.",
+"display_name": "Varinha de Cinzas",
 "enabled": true,
-"id": "varinha_magica",
+"id": "varinha_cinzas",
 "mode": "FIRST_SLICE",
 "qualities": [{
 "bone_cost": 0.0,
 "damage_multiplier": 1.0,
-"id": "inicial",
+"id": "starter",
 "tier": 0.0
 }, {
 "bone_cost": 120.0,
@@ -917,8 +1379,127 @@ collections = {
 }],
 "special_damage_multiplier": 3.0,
 "special_every_attacks": 4.0,
-"tags": ["FIRST_SLICE", "weapon", "starter"],
-"version": 2.0,
-"weapon_type": "wand"
+"tags": ["FIRST_SLICE", "weapon", "ritual_instrument", "starter", "arcano"],
+"version": 3.0,
+"weapon_type": "ritual_instrument"
+}, {
+"base_damage": 12.0,
+"cadence_seconds": 1.15,
+"damage_per_level": 1.55,
+"damage_type": "arcano",
+"description": "Instrumento ritual de controle mental, medo e compulsoes.",
+"display_name": "Grimorio do Veu",
+"enabled": true,
+"id": "grimorio_veu",
+"mode": "FIRST_SLICE",
+"qualities": [],
+"special_damage_multiplier": 2.4,
+"special_every_attacks": 4.0,
+"status_bias": "mental",
+"tags": ["FIRST_SLICE", "weapon", "ritual_instrument", "mental", "arcano"],
+"version": 1.0,
+"weapon_type": "ritual_instrument"
+}, {
+"base_damage": 17.0,
+"cadence_seconds": 0.95,
+"damage_per_level": 2.0,
+"damage_type": "fisico",
+"description": "Laminal ritual para feridas, Sangue e execucao corporal.",
+"display_name": "Athame Hematico",
+"enabled": true,
+"id": "athame_hematico",
+"mode": "FIRST_SLICE",
+"qualities": [],
+"special_damage_multiplier": 2.6,
+"special_every_attacks": 4.0,
+"status_bias": "ferida",
+"tags": ["FIRST_SLICE", "weapon", "ritual_instrument", "fisico", "sangue"],
+"version": 1.0,
+"weapon_type": "ritual_instrument"
+}, {
+"base_damage": 14.0,
+"cadence_seconds": 1.1,
+"damage_per_level": 1.75,
+"damage_type": "morte",
+"description": "Instrumento de Morte e Terra para protecao, summons e decaimento.",
+"display_name": "Cajado Ossario",
+"enabled": true,
+"id": "cajado_ossario",
+"mode": "FIRST_SLICE",
+"qualities": [],
+"special_damage_multiplier": 2.8,
+"special_every_attacks": 4.0,
+"status_bias": "funeral",
+"tags": ["FIRST_SLICE", "weapon", "ritual_instrument", "morte", "terra"],
+"version": 1.0,
+"weapon_type": "ritual_instrument"
+}, {
+"base_damage": 13.0,
+"cadence_seconds": 0.85,
+"damage_per_level": 1.65,
+"damage_type": "raio",
+"description": "Instrumento de Vento e Raio para interrupcao, velocidade e condutores.",
+"display_name": "Orbe da Tempestade",
+"enabled": true,
+"id": "orbe_tempestade",
+"mode": "FIRST_SLICE",
+"qualities": [],
+"special_damage_multiplier": 2.3,
+"special_every_attacks": 4.0,
+"status_bias": "condutor",
+"tags": ["FIRST_SLICE", "weapon", "ritual_instrument", "vento", "raio"],
+"version": 1.0,
+"weapon_type": "ritual_instrument"
+}, {
+"base_damage": 13.0,
+"cadence_seconds": 1.05,
+"damage_per_level": 1.6,
+"damage_type": "gelo",
+"description": "Instrumento de Agua e Gelo para molhar, resfriar e controlar.",
+"display_name": "Selo da Mare Fria",
+"enabled": true,
+"id": "selo_mare_fria",
+"mode": "FIRST_SLICE",
+"qualities": [],
+"special_damage_multiplier": 2.5,
+"special_every_attacks": 4.0,
+"status_bias": "resfriado",
+"tags": ["FIRST_SLICE", "weapon", "ritual_instrument", "agua", "gelo"],
+"version": 1.0,
+"weapon_type": "ritual_instrument"
+}, {
+"base_damage": 16.0,
+"cadence_seconds": 1.2,
+"damage_per_level": 1.9,
+"damage_type": "terra",
+"description": "Instrumento de Terra e Fisico para guarda, raiz e fratura.",
+"display_name": "Idolo de Pedra Viva",
+"enabled": true,
+"id": "idolo_pedra_viva",
+"mode": "FIRST_SLICE",
+"qualities": [],
+"special_damage_multiplier": 2.7,
+"special_every_attacks": 4.0,
+"status_bias": "enraizado",
+"tags": ["FIRST_SLICE", "weapon", "ritual_instrument", "terra", "fisico"],
+"version": 1.0,
+"weapon_type": "ritual_instrument"
+}, {
+"base_damage": 15.0,
+"cadence_seconds": 1.0,
+"damage_per_level": 1.85,
+"damage_type": "fogo",
+"description": "Instrumento de Fogo e Morte para queimadura, cinzas e pressao sustentada.",
+"display_name": "Cetro do Braseiro Negro",
+"enabled": true,
+"id": "cetro_braseiro_negro",
+"mode": "FIRST_SLICE",
+"qualities": [],
+"special_damage_multiplier": 2.6,
+"special_every_attacks": 4.0,
+"status_bias": "cinzas",
+"tags": ["FIRST_SLICE", "weapon", "ritual_instrument", "fogo", "morte"],
+"version": 1.0,
+"weapon_type": "ritual_instrument"
 }]
 }

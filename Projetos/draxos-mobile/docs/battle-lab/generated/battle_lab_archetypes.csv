@@ -1,9 +1,9 @@
 id,display_name,total,wins,losses,win_rate_percent,avg_duration,median_duration,short_rate_percent,long_rate_percent,anti_stall_rate_percent,status
-starter_wand,Starter Wand,541,61,480,11.28,19.58,19.2,0,0,0,REVIEW
-cosmic_apprentice,Cosmic Apprentice,242,133,109,54.96,18.52,18.7,0,0,0,PASS
-elemental_mixer,Elemental Mixer,436,233,203,53.44,18.51,18.7,0,0,0,PASS
-pet_handler,Pet Handler,450,343,107,76.22,18.37,17.7,0,0,0,CRITICAL
-summoner,Summoner,242,168,74,69.42,17.9,17.7,0,0,0,REVIEW
-defensive_caster,Defensive Caster,242,149,93,61.57,20.45,19.7,0,0,0.83,PASS
-dot_pressure,DoT Pressure,242,118,124,48.76,18.66,18.7,0,0,0,PASS
-burst_caster,Burst Caster,737,555,182,75.31,17.48,17.7,0,0,0,CRITICAL
+starter_instrument,Starter Instrument,541,77,464,14.23,25.46,26.7,0,0,32.16,REVIEW
+mental_controller,Mental Controller,242,55,187,22.73,27.16,28.7,0,0,35.54,REVIEW
+elemental_mixer,Elemental Mixer,436,351,85,80.5,23.49,23.7,0,0,6.88,CRITICAL
+familiar_handler,Familiar Handler,450,337,113,74.89,23.54,23.2,0,0,4.67,REVIEW
+summoner,Summoner,242,121,121,50,26.32,27.7,0,0,27.27,REVIEW
+defensive_occultist,Defensive Occultist,242,103,139,42.56,27.22,29.2,0,0,44.63,REVIEW
+dot_pressure,DoT Pressure,242,156,86,64.46,22.94,22.7,0,0,12.81,REVIEW
+funeral_burst,Funeral Burst,737,320,417,43.42,27.28,28.7,0,0,44.64,REVIEW
