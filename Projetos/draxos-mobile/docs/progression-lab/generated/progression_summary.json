@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "model_id": "draxos_mobile_progression_lab_v1",
-  "status": "CRITICAL",
+  "status": "REVIEW",
   "saves": [
     {
       "id": "free_50_rewards_2h",
@@ -11,14 +11,14 @@
       "hours": 2,
       "status": "PASS",
       "notes": [
-        "Use power 651 as initial matchmaking observation, not final truth."
+        "Use power 647 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_50_rewards_2h",
         "account_type": "progression_lab",
         "level": 8,
         "xp": 824,
-        "power": 651
+        "power": 647
       },
       "resources": {
         "xp": 823.5,
@@ -149,14 +149,14 @@
       "hours": 5,
       "status": "PASS",
       "notes": [
-        "Use power 934 as initial matchmaking observation, not final truth."
+        "Use power 1040 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_50_rewards_5h",
         "account_type": "progression_lab",
         "level": 10,
         "xp": 2059,
-        "power": 934
+        "power": 1040
       },
       "resources": {
         "xp": 2058.75,
@@ -289,14 +289,14 @@
       "hours": 10,
       "status": "PASS",
       "notes": [
-        "Use power 1176 as initial matchmaking observation, not final truth."
+        "Use power 1332 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_50_rewards_10h",
         "account_type": "progression_lab",
         "level": 12,
         "xp": 4118,
-        "power": 1176
+        "power": 1332
       },
       "resources": {
         "xp": 4117.5,
@@ -430,14 +430,14 @@
       "status": "REVIEW",
       "notes": [
         "Level 14 outside target 15-30.",
-        "Use power 1358 as initial matchmaking observation, not final truth."
+        "Use power 1528 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_50_rewards_15h",
         "account_type": "progression_lab",
         "level": 14,
         "xp": 6176,
-        "power": 1358
+        "power": 1528
       },
       "resources": {
         "xp": 6176.25,
@@ -571,14 +571,14 @@
       "status": "REVIEW",
       "notes": [
         "Level 15 outside target 18-36.",
-        "Use power 1567 as initial matchmaking observation, not final truth."
+        "Use power 1876 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_50_rewards_20h",
         "account_type": "progression_lab",
         "level": 15,
         "xp": 8235,
-        "power": 1567
+        "power": 1876
       },
       "resources": {
         "xp": 8235,
@@ -717,14 +717,14 @@
       "hours": 2,
       "status": "PASS",
       "notes": [
-        "Use power 682 as initial matchmaking observation, not final truth."
+        "Use power 678 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_100_rewards_2h",
         "account_type": "progression_lab",
         "level": 8,
         "xp": 1150,
-        "power": 682
+        "power": 678
       },
       "resources": {
         "xp": 1150,
@@ -851,14 +851,14 @@
       "hours": 5,
       "status": "PASS",
       "notes": [
-        "Use power 1003 as initial matchmaking observation, not final truth."
+        "Use power 1068 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_100_rewards_5h",
         "account_type": "progression_lab",
         "level": 11,
         "xp": 2875,
-        "power": 1003
+        "power": 1068
       },
       "resources": {
         "xp": 2875,
@@ -987,14 +987,14 @@
       "hours": 10,
       "status": "PASS",
       "notes": [
-        "Use power 1337 as initial matchmaking observation, not final truth."
+        "Use power 1456 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_100_rewards_10h",
         "account_type": "progression_lab",
         "level": 14,
         "xp": 5750,
-        "power": 1337
+        "power": 1456
       },
       "resources": {
         "xp": 5750,
@@ -1123,14 +1123,14 @@
       "hours": 15,
       "status": "PASS",
       "notes": [
-        "Use power 1869 as initial matchmaking observation, not final truth."
+        "Use power 2299 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_100_rewards_15h",
         "account_type": "progression_lab",
         "level": 16,
         "xp": 8625,
-        "power": 1869
+        "power": 2299
       },
       "resources": {
         "xp": 8625,
@@ -1270,14 +1270,14 @@
       "status": "REVIEW",
       "notes": [
         "Level 17 outside target 18-36.",
-        "Use power 2004 as initial matchmaking observation, not final truth."
+        "Use power 2468 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_100_rewards_20h",
         "account_type": "progression_lab",
         "level": 17,
         "xp": 11500,
-        "power": 2004
+        "power": 2468
       },
       "resources": {
         "xp": 11500,
@@ -1417,14 +1417,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 763 as initial matchmaking observation, not final truth."
+        "Use power 751 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_freemium_basic_2h",
         "account_type": "progression_lab",
         "level": 9,
         "xp": 1192,
-        "power": 763
+        "power": 751
       },
       "resources": {
         "xp": 1192,
@@ -1552,14 +1552,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 1065 as initial matchmaking observation, not final truth."
+        "Use power 1157 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_freemium_basic_5h",
         "account_type": "progression_lab",
         "level": 11,
         "xp": 2980,
-        "power": 1065
+        "power": 1157
       },
       "resources": {
         "xp": 2980,
@@ -1689,14 +1689,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 1377 as initial matchmaking observation, not final truth."
+        "Use power 1523 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_freemium_basic_10h",
         "account_type": "progression_lab",
         "level": 14,
         "xp": 5960,
-        "power": 1377
+        "power": 1523
       },
       "resources": {
         "xp": 5960,
@@ -1826,14 +1826,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 1976 as initial matchmaking observation, not final truth."
+        "Use power 2463 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_freemium_basic_15h",
         "account_type": "progression_lab",
         "level": 16,
         "xp": 8940,
-        "power": 1976
+        "power": 2463
       },
       "resources": {
         "xp": 8940,
@@ -1974,14 +1974,14 @@
       "notes": [
         "Level 17 outside target 18-36.",
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 2118 as initial matchmaking observation, not final truth."
+        "Use power 2639 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_freemium_basic_20h",
         "account_type": "progression_lab",
         "level": 17,
         "xp": 11920,
-        "power": 2118
+        "power": 2639
       },
       "resources": {
         "xp": 11920,
@@ -2121,14 +2121,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 813 as initial matchmaking observation, not final truth."
+        "Use power 816 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_spender_light_2h",
         "account_type": "progression_lab",
         "level": 9,
         "xp": 1364,
-        "power": 813
+        "power": 816
       },
       "resources": {
         "xp": 1364,
@@ -2256,14 +2256,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 1195 as initial matchmaking observation, not final truth."
+        "Use power 1318 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_spender_light_5h",
         "account_type": "progression_lab",
         "level": 12,
         "xp": 3410,
-        "power": 1195
+        "power": 1318
       },
       "resources": {
         "xp": 3410,
@@ -2393,14 +2393,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 1956 as initial matchmaking observation, not final truth."
+        "Use power 2481 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_spender_light_10h",
         "account_type": "progression_lab",
         "level": 15,
         "xp": 6820,
-        "power": 1956
+        "power": 2481
       },
       "resources": {
         "xp": 6820,
@@ -2540,14 +2540,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 2084 as initial matchmaking observation, not final truth."
+        "Use power 2628 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_spender_light_15h",
         "account_type": "progression_lab",
         "level": 16,
         "xp": 10230,
-        "power": 2084
+        "power": 2628
       },
       "resources": {
         "xp": 10230,
@@ -2687,14 +2687,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 2372 as initial matchmaking observation, not final truth."
+        "Use power 2999 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_spender_light_20h",
         "account_type": "progression_lab",
         "level": 18,
         "xp": 13640,
-        "power": 2372
+        "power": 2999
       },
       "resources": {
         "xp": 13640,
@@ -2834,14 +2834,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 873 as initial matchmaking observation, not final truth."
+        "Use power 891 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_max_spender_2h",
         "account_type": "progression_lab",
         "level": 9,
         "xp": 1616,
-        "power": 873
+        "power": 891
       },
       "resources": {
         "xp": 1616,
@@ -2969,14 +2969,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 1317 as initial matchmaking observation, not final truth."
+        "Use power 1482 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_max_spender_5h",
         "account_type": "progression_lab",
         "level": 12,
         "xp": 4040,
-        "power": 1317
+        "power": 1482
       },
       "resources": {
         "xp": 4040,
@@ -3106,14 +3106,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 2109 as initial matchmaking observation, not final truth."
+        "Use power 2706 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_max_spender_10h",
         "account_type": "progression_lab",
         "level": 15,
         "xp": 8080,
-        "power": 2109
+        "power": 2706
       },
       "resources": {
         "xp": 8080,
@@ -3253,14 +3253,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 2417 as initial matchmaking observation, not final truth."
+        "Use power 3109 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_max_spender_15h",
         "account_type": "progression_lab",
         "level": 17,
         "xp": 12120,
-        "power": 2417
+        "power": 3109
       },
       "resources": {
         "xp": 12120,
@@ -3400,14 +3400,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 2744 as initial matchmaking observation, not final truth."
+        "Use power 3527 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_max_spender_20h",
         "account_type": "progression_lab",
         "level": 19,
         "xp": 16160,
-        "power": 2744
+        "power": 3527
       },
       "resources": {
         "xp": 16160,
@@ -3996,7 +3996,7 @@
       "milestone_id": "2h",
       "profile_id": "free_50_rewards",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": -4.55,
+      "power_gap_percent": -4.57,
       "level_gap": 0,
       "premium_spend": 0,
       "status": "PASS"
@@ -4005,7 +4005,7 @@
       "milestone_id": "2h",
       "profile_id": "freemium_basic",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": 11.88,
+      "power_gap_percent": 10.77,
       "level_gap": 1,
       "premium_spend": 0,
       "status": "PASS"
@@ -4014,7 +4014,7 @@
       "milestone_id": "2h",
       "profile_id": "spender_light",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": 19.21,
+      "power_gap_percent": 20.35,
       "level_gap": 1,
       "premium_spend": 16,
       "status": "PASS"
@@ -4023,7 +4023,7 @@
       "milestone_id": "2h",
       "profile_id": "max_spender",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": 28.01,
+      "power_gap_percent": 31.42,
       "level_gap": 1,
       "premium_spend": 36,
       "status": "PASS"
@@ -4032,7 +4032,7 @@
       "milestone_id": "5h",
       "profile_id": "free_50_rewards",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": -6.88,
+      "power_gap_percent": -2.62,
       "level_gap": -1,
       "premium_spend": 0,
       "status": "PASS"
@@ -4041,7 +4041,7 @@
       "milestone_id": "5h",
       "profile_id": "freemium_basic",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": 6.18,
+      "power_gap_percent": 8.33,
       "level_gap": 0,
       "premium_spend": 0,
       "status": "PASS"
@@ -4050,7 +4050,7 @@
       "milestone_id": "5h",
       "profile_id": "spender_light",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": 19.14,
+      "power_gap_percent": 23.41,
       "level_gap": 1,
       "premium_spend": 41,
       "status": "PASS"
@@ -4059,16 +4059,16 @@
       "milestone_id": "5h",
       "profile_id": "max_spender",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": 31.31,
+      "power_gap_percent": 38.76,
       "level_gap": 1,
       "premium_spend": 90,
-      "status": "PASS"
+      "status": "REVIEW"
     },
     {
       "milestone_id": "10h",
       "profile_id": "free_50_rewards",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": -12.04,
+      "power_gap_percent": -8.52,
       "level_gap": -2,
       "premium_spend": 0,
       "status": "PASS"
@@ -4077,7 +4077,7 @@
       "milestone_id": "10h",
       "profile_id": "freemium_basic",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": 2.99,
+      "power_gap_percent": 4.6,
       "level_gap": 0,
       "premium_spend": 0,
       "status": "PASS"
@@ -4086,7 +4086,7 @@
       "milestone_id": "10h",
       "profile_id": "spender_light",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": 46.3,
+      "power_gap_percent": 70.4,
       "level_gap": 1,
       "premium_spend": 81,
       "status": "REVIEW"
@@ -4095,16 +4095,16 @@
       "milestone_id": "10h",
       "profile_id": "max_spender",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": 57.74,
+      "power_gap_percent": 85.85,
       "level_gap": 1,
       "premium_spend": 180,
-      "status": "CRITICAL"
+      "status": "REVIEW"
     },
     {
       "milestone_id": "15h",
       "profile_id": "free_50_rewards",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": -27.34,
+      "power_gap_percent": -33.54,
       "level_gap": -2,
       "premium_spend": 0,
       "status": "PASS"
@@ -4113,7 +4113,7 @@
       "milestone_id": "15h",
       "profile_id": "freemium_basic",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": 5.72,
+      "power_gap_percent": 7.13,
       "level_gap": 0,
       "premium_spend": 0,
       "status": "PASS"
@@ -4122,7 +4122,7 @@
       "milestone_id": "15h",
       "profile_id": "spender_light",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": 11.5,
+      "power_gap_percent": 14.31,
       "level_gap": 0,
       "premium_spend": 122,
       "status": "PASS"
@@ -4131,16 +4131,16 @@
       "milestone_id": "15h",
       "profile_id": "max_spender",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": 29.32,
+      "power_gap_percent": 35.23,
       "level_gap": 1,
       "premium_spend": 270,
-      "status": "PASS"
+      "status": "REVIEW"
     },
     {
       "milestone_id": "20h",
       "profile_id": "free_50_rewards",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": -21.81,
+      "power_gap_percent": -23.99,
       "level_gap": -2,
       "premium_spend": 0,
       "status": "PASS"
@@ -4149,7 +4149,7 @@
       "milestone_id": "20h",
       "profile_id": "freemium_basic",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": 5.69,
+      "power_gap_percent": 6.93,
       "level_gap": 0,
       "premium_spend": 0,
       "status": "PASS"
@@ -4158,7 +4158,7 @@
       "milestone_id": "20h",
       "profile_id": "spender_light",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": 18.36,
+      "power_gap_percent": 21.52,
       "level_gap": 1,
       "premium_spend": 162,
       "status": "PASS"
@@ -4167,7 +4167,7 @@
       "milestone_id": "20h",
       "profile_id": "max_spender",
       "compared_to": "free_100_rewards",
-      "power_gap_percent": 36.93,
+      "power_gap_percent": 42.91,
       "level_gap": 2,
       "premium_spend": 360,
       "status": "REVIEW"
@@ -4176,42 +4176,42 @@
   "power_recommendations": [
     {
       "component": "level",
-      "current_weight": 50,
-      "observed_share_percent": 44.23,
+      "current_weight": 42,
+      "observed_share_percent": 31.26,
       "recommendation": "Keep as baseline until Battle Lab matchup data disagrees.",
       "status": "PASS"
     },
     {
       "component": "weapon_level",
       "current_weight": 30,
-      "observed_share_percent": 21.77,
+      "observed_share_percent": 18.32,
       "recommendation": "Keep as baseline until Battle Lab matchup data disagrees.",
       "status": "PASS"
     },
     {
       "component": "spell_level",
-      "current_weight": 20,
-      "observed_share_percent": 20.29,
+      "current_weight": 35,
+      "observed_share_percent": 29.87,
       "recommendation": "Keep as baseline until Battle Lab matchup data disagrees.",
       "status": "PASS"
     },
     {
       "component": "pet_level",
-      "current_weight": 15,
-      "observed_share_percent": 5.08,
+      "current_weight": 30,
+      "observed_share_percent": 8.56,
       "recommendation": "Keep as baseline until Battle Lab matchup data disagrees.",
       "status": "PASS"
     },
     {
       "component": "passive_level",
-      "current_weight": 10,
-      "observed_share_percent": 4.69,
+      "current_weight": 22,
+      "observed_share_percent": 8.68,
       "recommendation": "Keep as baseline until Battle Lab matchup data disagrees.",
       "status": "PASS"
     },
     {
       "component": "weapon_quality_tier",
-      "current_weight": 25,
+      "current_weight": 30,
       "observed_share_percent": 0.07,
       "recommendation": "Keep as baseline until Battle Lab matchup data disagrees.",
       "status": "PASS"
@@ -4219,14 +4219,14 @@
     {
       "component": "base_stats_level",
       "current_weight": 8,
-      "observed_share_percent": 2.65,
+      "observed_share_percent": 2.23,
       "recommendation": "Keep as baseline until Battle Lab matchup data disagrees.",
       "status": "PASS"
     },
     {
       "component": "base_average_level",
       "current_weight": 4,
-      "observed_share_percent": 1.23,
+      "observed_share_percent": 1.03,
       "recommendation": "Keep as baseline until Battle Lab matchup data disagrees.",
       "status": "PASS"
     }
@@ -4237,7 +4237,7 @@
       "milestone_id": "2h",
       "profile_id": "free_50_rewards",
       "archetype_id": "starter_instrument",
-      "target_power": 573,
+      "target_power": 569,
       "power_band": "band_002",
       "level": 8,
       "build": {
@@ -4256,7 +4256,7 @@
       "milestone_id": "2h",
       "profile_id": "free_50_rewards",
       "archetype_id": "elemental_mixer",
-      "target_power": 651,
+      "target_power": 647,
       "power_band": "band_003",
       "level": 8,
       "build": {
@@ -4281,7 +4281,7 @@
       "milestone_id": "2h",
       "profile_id": "free_50_rewards",
       "archetype_id": "funeral_burst",
-      "target_power": 729,
+      "target_power": 725,
       "power_band": "band_003",
       "level": 8,
       "build": {
@@ -4304,7 +4304,7 @@
       "milestone_id": "5h",
       "profile_id": "free_50_rewards",
       "archetype_id": "starter_instrument",
-      "target_power": 822,
+      "target_power": 915,
       "power_band": "band_003",
       "level": 10,
       "build": {
@@ -4324,7 +4324,7 @@
       "milestone_id": "5h",
       "profile_id": "free_50_rewards",
       "archetype_id": "elemental_mixer",
-      "target_power": 934,
+      "target_power": 1040,
       "power_band": "band_003",
       "level": 10,
       "build": {
@@ -4351,7 +4351,7 @@
       "milestone_id": "5h",
       "profile_id": "free_50_rewards",
       "archetype_id": "funeral_burst",
-      "target_power": 1046,
+      "target_power": 1165,
       "power_band": "band_003",
       "level": 10,
       "build": {
@@ -4376,7 +4376,7 @@
       "milestone_id": "10h",
       "profile_id": "free_50_rewards",
       "archetype_id": "starter_instrument",
-      "target_power": 1035,
+      "target_power": 1172,
       "power_band": "band_003",
       "level": 12,
       "build": {
@@ -4396,8 +4396,8 @@
       "milestone_id": "10h",
       "profile_id": "free_50_rewards",
       "archetype_id": "elemental_mixer",
-      "target_power": 1176,
-      "power_band": "band_003",
+      "target_power": 1332,
+      "power_band": "band_004",
       "level": 12,
       "build": {
         "id": "bot_free_50_rewards_10h_0",
@@ -4423,7 +4423,7 @@
       "milestone_id": "10h",
       "profile_id": "free_50_rewards",
       "archetype_id": "funeral_burst",
-      "target_power": 1317,
+      "target_power": 1492,
       "power_band": "band_004",
       "level": 12,
       "build": {
@@ -4448,8 +4448,8 @@
       "milestone_id": "15h",
       "profile_id": "free_50_rewards",
       "archetype_id": "starter_instrument",
-      "target_power": 1195,
-      "power_band": "band_003",
+      "target_power": 1345,
+      "power_band": "band_004",
       "level": 14,
       "build": {
         "id": "bot_free_50_rewards_15h_-12",
@@ -4468,7 +4468,7 @@
       "milestone_id": "15h",
       "profile_id": "free_50_rewards",
       "archetype_id": "elemental_mixer",
-      "target_power": 1358,
+      "target_power": 1528,
       "power_band": "band_004",
       "level": 14,
       "build": {
@@ -4495,7 +4495,7 @@
       "milestone_id": "15h",
       "profile_id": "free_50_rewards",
       "archetype_id": "funeral_burst",
-      "target_power": 1521,
+      "target_power": 1711,
       "power_band": "band_004",
       "level": 14,
       "build": {
@@ -4520,7 +4520,7 @@
       "milestone_id": "20h",
       "profile_id": "free_50_rewards",
       "archetype_id": "starter_instrument",
-      "target_power": 1379,
+      "target_power": 1651,
       "power_band": "band_004",
       "level": 15,
       "build": {
@@ -4541,7 +4541,7 @@
       "milestone_id": "20h",
       "profile_id": "free_50_rewards",
       "archetype_id": "elemental_mixer",
-      "target_power": 1567,
+      "target_power": 1876,
       "power_band": "band_004",
       "level": 15,
       "build": {
@@ -4570,7 +4570,7 @@
       "milestone_id": "20h",
       "profile_id": "free_50_rewards",
       "archetype_id": "funeral_burst",
-      "target_power": 1755,
+      "target_power": 2101,
       "power_band": "band_004",
       "level": 15,
       "build": {
@@ -4597,7 +4597,7 @@
       "milestone_id": "2h",
       "profile_id": "free_100_rewards",
       "archetype_id": "starter_instrument",
-      "target_power": 600,
+      "target_power": 597,
       "power_band": "band_002",
       "level": 8,
       "build": {
@@ -4616,7 +4616,7 @@
       "milestone_id": "2h",
       "profile_id": "free_100_rewards",
       "archetype_id": "funeral_burst",
-      "target_power": 682,
+      "target_power": 678,
       "power_band": "band_003",
       "level": 8,
       "build": {
@@ -4639,7 +4639,7 @@
       "milestone_id": "2h",
       "profile_id": "free_100_rewards",
       "archetype_id": "funeral_burst",
-      "target_power": 764,
+      "target_power": 759,
       "power_band": "band_003",
       "level": 8,
       "build": {
@@ -4662,7 +4662,7 @@
       "milestone_id": "5h",
       "profile_id": "free_100_rewards",
       "archetype_id": "starter_instrument",
-      "target_power": 883,
+      "target_power": 940,
       "power_band": "band_003",
       "level": 11,
       "build": {
@@ -4682,7 +4682,7 @@
       "milestone_id": "5h",
       "profile_id": "free_100_rewards",
       "archetype_id": "funeral_burst",
-      "target_power": 1003,
+      "target_power": 1068,
       "power_band": "band_003",
       "level": 11,
       "build": {
@@ -4707,7 +4707,7 @@
       "milestone_id": "5h",
       "profile_id": "free_100_rewards",
       "archetype_id": "funeral_burst",
-      "target_power": 1123,
+      "target_power": 1196,
       "power_band": "band_003",
       "level": 11,
       "build": {
@@ -4732,8 +4732,8 @@
       "milestone_id": "10h",
       "profile_id": "free_100_rewards",
       "archetype_id": "starter_instrument",
-      "target_power": 1177,
-      "power_band": "band_003",
+      "target_power": 1281,
+      "power_band": "band_004",
       "level": 14,
       "build": {
         "id": "bot_free_100_rewards_10h_-12",
@@ -4752,7 +4752,7 @@
       "milestone_id": "10h",
       "profile_id": "free_100_rewards",
       "archetype_id": "funeral_burst",
-      "target_power": 1337,
+      "target_power": 1456,
       "power_band": "band_004",
       "level": 14,
       "build": {
@@ -4777,7 +4777,7 @@
       "milestone_id": "10h",
       "profile_id": "free_100_rewards",
       "archetype_id": "funeral_burst",
-      "target_power": 1497,
+      "target_power": 1631,
       "power_band": "band_004",
       "level": 14,
       "build": {
@@ -4802,7 +4802,7 @@
       "milestone_id": "15h",
       "profile_id": "free_100_rewards",
       "archetype_id": "starter_instrument",
-      "target_power": 1645,
+      "target_power": 2023,
       "power_band": "band_004",
       "level": 16,
       "build": {
@@ -4823,8 +4823,8 @@
       "milestone_id": "15h",
       "profile_id": "free_100_rewards",
       "archetype_id": "elemental_mixer",
-      "target_power": 1869,
-      "power_band": "band_004",
+      "target_power": 2299,
+      "power_band": "band_005",
       "level": 16,
       "build": {
         "id": "bot_free_100_rewards_15h_0",
@@ -4852,8 +4852,8 @@
       "milestone_id": "15h",
       "profile_id": "free_100_rewards",
       "archetype_id": "funeral_burst",
-      "target_power": 2093,
-      "power_band": "band_004",
+      "target_power": 2575,
+      "power_band": "band_005",
       "level": 16,
       "build": {
         "id": "bot_free_100_rewards_15h_12",
@@ -4879,7 +4879,7 @@
       "milestone_id": "20h",
       "profile_id": "free_100_rewards",
       "archetype_id": "starter_instrument",
-      "target_power": 1764,
+      "target_power": 2172,
       "power_band": "band_004",
       "level": 17,
       "build": {
@@ -4900,8 +4900,8 @@
       "milestone_id": "20h",
       "profile_id": "free_100_rewards",
       "archetype_id": "elemental_mixer",
-      "target_power": 2004,
-      "power_band": "band_004",
+      "target_power": 2468,
+      "power_band": "band_005",
       "level": 17,
       "build": {
         "id": "bot_free_100_rewards_20h_0",
@@ -4929,7 +4929,7 @@
       "milestone_id": "20h",
       "profile_id": "free_100_rewards",
       "archetype_id": "funeral_burst",
-      "target_power": 2244,
+      "target_power": 2764,
       "power_band": "band_005",
       "level": 17,
       "build": {
@@ -4956,7 +4956,7 @@
       "milestone_id": "2h",
       "profile_id": "freemium_basic",
       "archetype_id": "starter_instrument",
-      "target_power": 671,
+      "target_power": 661,
       "power_band": "band_003",
       "level": 9,
       "build": {
@@ -4975,7 +4975,7 @@
       "milestone_id": "2h",
       "profile_id": "freemium_basic",
       "archetype_id": "funeral_burst",
-      "target_power": 763,
+      "target_power": 751,
       "power_band": "band_003",
       "level": 9,
       "build": {
@@ -4998,7 +4998,7 @@
       "milestone_id": "2h",
       "profile_id": "freemium_basic",
       "archetype_id": "funeral_burst",
-      "target_power": 855,
+      "target_power": 841,
       "power_band": "band_003",
       "level": 9,
       "build": {
@@ -5021,7 +5021,7 @@
       "milestone_id": "5h",
       "profile_id": "freemium_basic",
       "archetype_id": "starter_instrument",
-      "target_power": 937,
+      "target_power": 1018,
       "power_band": "band_003",
       "level": 11,
       "build": {
@@ -5041,7 +5041,7 @@
       "milestone_id": "5h",
       "profile_id": "freemium_basic",
       "archetype_id": "funeral_burst",
-      "target_power": 1065,
+      "target_power": 1157,
       "power_band": "band_003",
       "level": 11,
       "build": {
@@ -5066,8 +5066,8 @@
       "milestone_id": "5h",
       "profile_id": "freemium_basic",
       "archetype_id": "funeral_burst",
-      "target_power": 1193,
-      "power_band": "band_003",
+      "target_power": 1296,
+      "power_band": "band_004",
       "level": 11,
       "build": {
         "id": "bot_freemium_basic_5h_12",
@@ -5091,7 +5091,7 @@
       "milestone_id": "10h",
       "profile_id": "freemium_basic",
       "archetype_id": "starter_instrument",
-      "target_power": 1212,
+      "target_power": 1340,
       "power_band": "band_004",
       "level": 14,
       "build": {
@@ -5111,7 +5111,7 @@
       "milestone_id": "10h",
       "profile_id": "freemium_basic",
       "archetype_id": "funeral_burst",
-      "target_power": 1377,
+      "target_power": 1523,
       "power_band": "band_004",
       "level": 14,
       "build": {
@@ -5136,7 +5136,7 @@
       "milestone_id": "10h",
       "profile_id": "freemium_basic",
       "archetype_id": "funeral_burst",
-      "target_power": 1542,
+      "target_power": 1706,
       "power_band": "band_004",
       "level": 14,
       "build": {
@@ -5161,7 +5161,7 @@
       "milestone_id": "15h",
       "profile_id": "freemium_basic",
       "archetype_id": "starter_instrument",
-      "target_power": 1739,
+      "target_power": 2167,
       "power_band": "band_004",
       "level": 16,
       "build": {
@@ -5182,8 +5182,8 @@
       "milestone_id": "15h",
       "profile_id": "freemium_basic",
       "archetype_id": "familiar_handler",
-      "target_power": 1976,
-      "power_band": "band_004",
+      "target_power": 2463,
+      "power_band": "band_005",
       "level": 16,
       "build": {
         "id": "bot_freemium_basic_15h_0",
@@ -5211,7 +5211,7 @@
       "milestone_id": "15h",
       "profile_id": "freemium_basic",
       "archetype_id": "funeral_burst",
-      "target_power": 2213,
+      "target_power": 2759,
       "power_band": "band_005",
       "level": 16,
       "build": {
@@ -5238,8 +5238,8 @@
       "milestone_id": "20h",
       "profile_id": "freemium_basic",
       "archetype_id": "starter_instrument",
-      "target_power": 1864,
-      "power_band": "band_004",
+      "target_power": 2322,
+      "power_band": "band_005",
       "level": 17,
       "build": {
         "id": "bot_freemium_basic_20h_-12",
@@ -5259,8 +5259,8 @@
       "milestone_id": "20h",
       "profile_id": "freemium_basic",
       "archetype_id": "familiar_handler",
-      "target_power": 2118,
-      "power_band": "band_004",
+      "target_power": 2639,
+      "power_band": "band_005",
       "level": 17,
       "build": {
         "id": "bot_freemium_basic_20h_0",
@@ -5288,7 +5288,7 @@
       "milestone_id": "20h",
       "profile_id": "freemium_basic",
       "archetype_id": "funeral_burst",
-      "target_power": 2372,
+      "target_power": 2956,
       "power_band": "band_005",
       "level": 17,
       "build": {
@@ -5315,7 +5315,7 @@
       "milestone_id": "2h",
       "profile_id": "spender_light",
       "archetype_id": "starter_instrument",
-      "target_power": 715,
+      "target_power": 718,
       "power_band": "band_003",
       "level": 9,
       "build": {
@@ -5334,7 +5334,7 @@
       "milestone_id": "2h",
       "profile_id": "spender_light",
       "archetype_id": "funeral_burst",
-      "target_power": 813,
+      "target_power": 816,
       "power_band": "band_003",
       "level": 9,
       "build": {
@@ -5357,7 +5357,7 @@
       "milestone_id": "2h",
       "profile_id": "spender_light",
       "archetype_id": "funeral_burst",
-      "target_power": 911,
+      "target_power": 914,
       "power_band": "band_003",
       "level": 9,
       "build": {
@@ -5380,7 +5380,7 @@
       "milestone_id": "5h",
       "profile_id": "spender_light",
       "archetype_id": "starter_instrument",
-      "target_power": 1052,
+      "target_power": 1160,
       "power_band": "band_003",
       "level": 12,
       "build": {
@@ -5400,8 +5400,8 @@
       "milestone_id": "5h",
       "profile_id": "spender_light",
       "archetype_id": "funeral_burst",
-      "target_power": 1195,
-      "power_band": "band_003",
+      "target_power": 1318,
+      "power_band": "band_004",
       "level": 12,
       "build": {
         "id": "bot_spender_light_5h_0",
@@ -5425,7 +5425,7 @@
       "milestone_id": "5h",
       "profile_id": "spender_light",
       "archetype_id": "funeral_burst",
-      "target_power": 1338,
+      "target_power": 1476,
       "power_band": "band_004",
       "level": 12,
       "build": {
@@ -5450,7 +5450,7 @@
       "milestone_id": "10h",
       "profile_id": "spender_light",
       "archetype_id": "starter_instrument",
-      "target_power": 1721,
+      "target_power": 2183,
       "power_band": "band_004",
       "level": 15,
       "build": {
@@ -5471,8 +5471,8 @@
       "milestone_id": "10h",
       "profile_id": "spender_light",
       "archetype_id": "familiar_handler",
-      "target_power": 1956,
-      "power_band": "band_004",
+      "target_power": 2481,
+      "power_band": "band_005",
       "level": 15,
       "build": {
         "id": "bot_spender_light_10h_0",
@@ -5500,8 +5500,8 @@
       "milestone_id": "10h",
       "profile_id": "spender_light",
       "archetype_id": "funeral_burst",
-      "target_power": 2191,
-      "power_band": "band_004",
+      "target_power": 2779,
+      "power_band": "band_005",
       "level": 15,
       "build": {
         "id": "bot_spender_light_10h_12",
@@ -5527,8 +5527,8 @@
       "milestone_id": "15h",
       "profile_id": "spender_light",
       "archetype_id": "starter_instrument",
-      "target_power": 1834,
-      "power_band": "band_004",
+      "target_power": 2313,
+      "power_band": "band_005",
       "level": 16,
       "build": {
         "id": "bot_spender_light_15h_-12",
@@ -5548,8 +5548,8 @@
       "milestone_id": "15h",
       "profile_id": "spender_light",
       "archetype_id": "familiar_handler",
-      "target_power": 2084,
-      "power_band": "band_004",
+      "target_power": 2628,
+      "power_band": "band_005",
       "level": 16,
       "build": {
         "id": "bot_spender_light_15h_0",
@@ -5577,7 +5577,7 @@
       "milestone_id": "15h",
       "profile_id": "spender_light",
       "archetype_id": "funeral_burst",
-      "target_power": 2334,
+      "target_power": 2943,
       "power_band": "band_005",
       "level": 16,
       "build": {
@@ -5604,8 +5604,8 @@
       "milestone_id": "20h",
       "profile_id": "spender_light",
       "archetype_id": "starter_instrument",
-      "target_power": 2087,
-      "power_band": "band_004",
+      "target_power": 2639,
+      "power_band": "band_005",
       "level": 18,
       "build": {
         "id": "bot_spender_light_20h_-12",
@@ -5625,7 +5625,7 @@
       "milestone_id": "20h",
       "profile_id": "spender_light",
       "archetype_id": "familiar_handler",
-      "target_power": 2372,
+      "target_power": 2999,
       "power_band": "band_005",
       "level": 18,
       "build": {
@@ -5654,7 +5654,7 @@
       "milestone_id": "20h",
       "profile_id": "spender_light",
       "archetype_id": "funeral_burst",
-      "target_power": 2657,
+      "target_power": 3359,
       "power_band": "band_005",
       "level": 18,
       "build": {
@@ -5681,7 +5681,7 @@
       "milestone_id": "2h",
       "profile_id": "max_spender",
       "archetype_id": "starter_instrument",
-      "target_power": 768,
+      "target_power": 784,
       "power_band": "band_003",
       "level": 9,
       "build": {
@@ -5700,7 +5700,7 @@
       "milestone_id": "2h",
       "profile_id": "max_spender",
       "archetype_id": "funeral_burst",
-      "target_power": 873,
+      "target_power": 891,
       "power_band": "band_003",
       "level": 9,
       "build": {
@@ -5723,7 +5723,7 @@
       "milestone_id": "2h",
       "profile_id": "max_spender",
       "archetype_id": "funeral_burst",
-      "target_power": 978,
+      "target_power": 998,
       "power_band": "band_003",
       "level": 9,
       "build": {
@@ -5746,8 +5746,8 @@
       "milestone_id": "5h",
       "profile_id": "max_spender",
       "archetype_id": "starter_instrument",
-      "target_power": 1159,
-      "power_band": "band_003",
+      "target_power": 1304,
+      "power_band": "band_004",
       "level": 12,
       "build": {
         "id": "bot_max_spender_5h_-12",
@@ -5766,7 +5766,7 @@
       "milestone_id": "5h",
       "profile_id": "max_spender",
       "archetype_id": "funeral_burst",
-      "target_power": 1317,
+      "target_power": 1482,
       "power_band": "band_004",
       "level": 12,
       "build": {
@@ -5791,7 +5791,7 @@
       "milestone_id": "5h",
       "profile_id": "max_spender",
       "archetype_id": "funeral_burst",
-      "target_power": 1475,
+      "target_power": 1660,
       "power_band": "band_004",
       "level": 12,
       "build": {
@@ -5816,8 +5816,8 @@
       "milestone_id": "10h",
       "profile_id": "max_spender",
       "archetype_id": "starter_instrument",
-      "target_power": 1856,
-      "power_band": "band_004",
+      "target_power": 2381,
+      "power_band": "band_005",
       "level": 15,
       "build": {
         "id": "bot_max_spender_10h_-12",
@@ -5837,8 +5837,8 @@
       "milestone_id": "10h",
       "profile_id": "max_spender",
       "archetype_id": "familiar_handler",
-      "target_power": 2109,
-      "power_band": "band_004",
+      "target_power": 2706,
+      "power_band": "band_005",
       "level": 15,
       "build": {
         "id": "bot_max_spender_10h_0",
@@ -5866,7 +5866,7 @@
       "milestone_id": "10h",
       "profile_id": "max_spender",
       "archetype_id": "funeral_burst",
-      "target_power": 2362,
+      "target_power": 3031,
       "power_band": "band_005",
       "level": 15,
       "build": {
@@ -5893,8 +5893,8 @@
       "milestone_id": "15h",
       "profile_id": "max_spender",
       "archetype_id": "starter_instrument",
-      "target_power": 2127,
-      "power_band": "band_004",
+      "target_power": 2736,
+      "power_band": "band_005",
       "level": 17,
       "build": {
         "id": "bot_max_spender_15h_-12",
@@ -5914,7 +5914,7 @@
       "milestone_id": "15h",
       "profile_id": "max_spender",
       "archetype_id": "familiar_handler",
-      "target_power": 2417,
+      "target_power": 3109,
       "power_band": "band_005",
       "level": 17,
       "build": {
@@ -5943,7 +5943,7 @@
       "milestone_id": "15h",
       "profile_id": "max_spender",
       "archetype_id": "funeral_burst",
-      "target_power": 2707,
+      "target_power": 3482,
       "power_band": "band_005",
       "level": 17,
       "build": {
@@ -5970,7 +5970,7 @@
       "milestone_id": "20h",
       "profile_id": "max_spender",
       "archetype_id": "starter_instrument",
-      "target_power": 2415,
+      "target_power": 3104,
       "power_band": "band_005",
       "level": 19,
       "build": {
@@ -5991,7 +5991,7 @@
       "milestone_id": "20h",
       "profile_id": "max_spender",
       "archetype_id": "familiar_handler",
-      "target_power": 2744,
+      "target_power": 3527,
       "power_band": "band_005",
       "level": 19,
       "build": {
@@ -6020,7 +6020,7 @@
       "milestone_id": "20h",
       "profile_id": "max_spender",
       "archetype_id": "funeral_burst",
-      "target_power": 3073,
+      "target_power": 3950,
       "power_band": "band_005",
       "level": 19,
       "build": {

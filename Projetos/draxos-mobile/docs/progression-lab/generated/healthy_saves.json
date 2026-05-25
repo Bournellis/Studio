@@ -10,14 +10,14 @@
       "hours": 2,
       "status": "PASS",
       "notes": [
-        "Use power 651 as initial matchmaking observation, not final truth."
+        "Use power 647 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_50_rewards_2h",
         "account_type": "progression_lab",
         "level": 8,
         "xp": 824,
-        "power": 651
+        "power": 647
       },
       "resources": {
         "xp": 823.5,
@@ -148,14 +148,14 @@
       "hours": 5,
       "status": "PASS",
       "notes": [
-        "Use power 934 as initial matchmaking observation, not final truth."
+        "Use power 1040 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_50_rewards_5h",
         "account_type": "progression_lab",
         "level": 10,
         "xp": 2059,
-        "power": 934
+        "power": 1040
       },
       "resources": {
         "xp": 2058.75,
@@ -288,14 +288,14 @@
       "hours": 10,
       "status": "PASS",
       "notes": [
-        "Use power 1176 as initial matchmaking observation, not final truth."
+        "Use power 1332 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_50_rewards_10h",
         "account_type": "progression_lab",
         "level": 12,
         "xp": 4118,
-        "power": 1176
+        "power": 1332
       },
       "resources": {
         "xp": 4117.5,
@@ -429,14 +429,14 @@
       "status": "REVIEW",
       "notes": [
         "Level 14 outside target 15-30.",
-        "Use power 1358 as initial matchmaking observation, not final truth."
+        "Use power 1528 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_50_rewards_15h",
         "account_type": "progression_lab",
         "level": 14,
         "xp": 6176,
-        "power": 1358
+        "power": 1528
       },
       "resources": {
         "xp": 6176.25,
@@ -570,14 +570,14 @@
       "status": "REVIEW",
       "notes": [
         "Level 15 outside target 18-36.",
-        "Use power 1567 as initial matchmaking observation, not final truth."
+        "Use power 1876 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_50_rewards_20h",
         "account_type": "progression_lab",
         "level": 15,
         "xp": 8235,
-        "power": 1567
+        "power": 1876
       },
       "resources": {
         "xp": 8235,
@@ -716,14 +716,14 @@
       "hours": 2,
       "status": "PASS",
       "notes": [
-        "Use power 682 as initial matchmaking observation, not final truth."
+        "Use power 678 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_100_rewards_2h",
         "account_type": "progression_lab",
         "level": 8,
         "xp": 1150,
-        "power": 682
+        "power": 678
       },
       "resources": {
         "xp": 1150,
@@ -850,14 +850,14 @@
       "hours": 5,
       "status": "PASS",
       "notes": [
-        "Use power 1003 as initial matchmaking observation, not final truth."
+        "Use power 1068 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_100_rewards_5h",
         "account_type": "progression_lab",
         "level": 11,
         "xp": 2875,
-        "power": 1003
+        "power": 1068
       },
       "resources": {
         "xp": 2875,
@@ -986,14 +986,14 @@
       "hours": 10,
       "status": "PASS",
       "notes": [
-        "Use power 1337 as initial matchmaking observation, not final truth."
+        "Use power 1456 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_100_rewards_10h",
         "account_type": "progression_lab",
         "level": 14,
         "xp": 5750,
-        "power": 1337
+        "power": 1456
       },
       "resources": {
         "xp": 5750,
@@ -1122,14 +1122,14 @@
       "hours": 15,
       "status": "PASS",
       "notes": [
-        "Use power 1869 as initial matchmaking observation, not final truth."
+        "Use power 2299 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_100_rewards_15h",
         "account_type": "progression_lab",
         "level": 16,
         "xp": 8625,
-        "power": 1869
+        "power": 2299
       },
       "resources": {
         "xp": 8625,
@@ -1269,14 +1269,14 @@
       "status": "REVIEW",
       "notes": [
         "Level 17 outside target 18-36.",
-        "Use power 2004 as initial matchmaking observation, not final truth."
+        "Use power 2468 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_free_100_rewards_20h",
         "account_type": "progression_lab",
         "level": 17,
         "xp": 11500,
-        "power": 2004
+        "power": 2468
       },
       "resources": {
         "xp": 11500,
@@ -1416,14 +1416,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 763 as initial matchmaking observation, not final truth."
+        "Use power 751 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_freemium_basic_2h",
         "account_type": "progression_lab",
         "level": 9,
         "xp": 1192,
-        "power": 763
+        "power": 751
       },
       "resources": {
         "xp": 1192,
@@ -1551,14 +1551,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 1065 as initial matchmaking observation, not final truth."
+        "Use power 1157 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_freemium_basic_5h",
         "account_type": "progression_lab",
         "level": 11,
         "xp": 2980,
-        "power": 1065
+        "power": 1157
       },
       "resources": {
         "xp": 2980,
@@ -1688,14 +1688,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 1377 as initial matchmaking observation, not final truth."
+        "Use power 1523 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_freemium_basic_10h",
         "account_type": "progression_lab",
         "level": 14,
         "xp": 5960,
-        "power": 1377
+        "power": 1523
       },
       "resources": {
         "xp": 5960,
@@ -1825,14 +1825,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 1976 as initial matchmaking observation, not final truth."
+        "Use power 2463 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_freemium_basic_15h",
         "account_type": "progression_lab",
         "level": 16,
         "xp": 8940,
-        "power": 1976
+        "power": 2463
       },
       "resources": {
         "xp": 8940,
@@ -1973,14 +1973,14 @@
       "notes": [
         "Level 17 outside target 18-36.",
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 2118 as initial matchmaking observation, not final truth."
+        "Use power 2639 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_freemium_basic_20h",
         "account_type": "progression_lab",
         "level": 17,
         "xp": 11920,
-        "power": 2118
+        "power": 2639
       },
       "resources": {
         "xp": 11920,
@@ -2120,14 +2120,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 813 as initial matchmaking observation, not final truth."
+        "Use power 816 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_spender_light_2h",
         "account_type": "progression_lab",
         "level": 9,
         "xp": 1364,
-        "power": 813
+        "power": 816
       },
       "resources": {
         "xp": 1364,
@@ -2255,14 +2255,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 1195 as initial matchmaking observation, not final truth."
+        "Use power 1318 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_spender_light_5h",
         "account_type": "progression_lab",
         "level": 12,
         "xp": 3410,
-        "power": 1195
+        "power": 1318
       },
       "resources": {
         "xp": 3410,
@@ -2392,14 +2392,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 1956 as initial matchmaking observation, not final truth."
+        "Use power 2481 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_spender_light_10h",
         "account_type": "progression_lab",
         "level": 15,
         "xp": 6820,
-        "power": 1956
+        "power": 2481
       },
       "resources": {
         "xp": 6820,
@@ -2539,14 +2539,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 2084 as initial matchmaking observation, not final truth."
+        "Use power 2628 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_spender_light_15h",
         "account_type": "progression_lab",
         "level": 16,
         "xp": 10230,
-        "power": 2084
+        "power": 2628
       },
       "resources": {
         "xp": 10230,
@@ -2686,14 +2686,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 2372 as initial matchmaking observation, not final truth."
+        "Use power 2999 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_spender_light_20h",
         "account_type": "progression_lab",
         "level": 18,
         "xp": 13640,
-        "power": 2372
+        "power": 2999
       },
       "resources": {
         "xp": 13640,
@@ -2833,14 +2833,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 873 as initial matchmaking observation, not final truth."
+        "Use power 891 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_max_spender_2h",
         "account_type": "progression_lab",
         "level": 9,
         "xp": 1616,
-        "power": 873
+        "power": 891
       },
       "resources": {
         "xp": 1616,
@@ -2968,14 +2968,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 1317 as initial matchmaking observation, not final truth."
+        "Use power 1482 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_max_spender_5h",
         "account_type": "progression_lab",
         "level": 12,
         "xp": 4040,
-        "power": 1317
+        "power": 1482
       },
       "resources": {
         "xp": 4040,
@@ -3105,14 +3105,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 2109 as initial matchmaking observation, not final truth."
+        "Use power 2706 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_max_spender_10h",
         "account_type": "progression_lab",
         "level": 15,
         "xp": 8080,
-        "power": 2109
+        "power": 2706
       },
       "resources": {
         "xp": 8080,
@@ -3252,14 +3252,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 2417 as initial matchmaking observation, not final truth."
+        "Use power 3109 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_max_spender_15h",
         "account_type": "progression_lab",
         "level": 17,
         "xp": 12120,
-        "power": 2417
+        "power": 3109
       },
       "resources": {
         "xp": 12120,
@@ -3399,14 +3399,14 @@
       "status": "PASS",
       "notes": [
         "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
-        "Use power 2744 as initial matchmaking observation, not final truth."
+        "Use power 3527 as initial matchmaking observation, not final truth."
       ],
       "player": {
         "username": "plab_max_spender_20h",
         "account_type": "progression_lab",
         "level": 19,
         "xp": 16160,
-        "power": 2744
+        "power": 3527
       },
       "resources": {
         "xp": 16160,

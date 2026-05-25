@@ -91,10 +91,10 @@
       "mana_cost": 12,
       "cooldown_seconds": 6.5,
       "target": "direct",
-      "base_damage": 16,
-      "damage_per_level": 1.9,
+      "base_damage": 14,
+      "damage_per_level": 1.6,
       "effects": [
-        { "kind": "damage", "amount": 16 },
+        { "kind": "damage", "amount": 14 },
         { "kind": "status", "status_id": "ferida", "stacks": 1, "duration_seconds": 6 }
       ]
     },
@@ -115,7 +115,7 @@
       "damage_per_level": 1.0,
       "effects": [
         { "kind": "damage", "amount": 8 },
-        { "kind": "dot", "status_id": "hemorragia", "tick_damage": 5, "duration_seconds": 6 }
+        { "kind": "dot", "status_id": "hemorragia", "tick_damage": 4.5, "duration_seconds": 6 }
       ]
     },
     {
@@ -154,7 +154,7 @@
       "base_damage": 6,
       "damage_per_level": 0.8,
       "effects": [
-        { "kind": "dot", "status_id": "envenenado", "tick_damage": 5, "duration_seconds": 6 }
+        { "kind": "dot", "status_id": "envenenado", "tick_damage": 4.5, "duration_seconds": 6 }
       ]
     },
     {
@@ -170,11 +170,11 @@
       "mana_cost": 14,
       "cooldown_seconds": 7.0,
       "target": "area",
-      "base_damage": 12,
-      "damage_per_level": 1.7,
+      "base_damage": 11,
+      "damage_per_level": 1.5,
       "effects": [
-        { "kind": "damage", "amount": 12 },
-        { "kind": "dot", "status_id": "queimando", "tick_damage": 4, "duration_seconds": 5 }
+        { "kind": "damage", "amount": 11 },
+        { "kind": "dot", "status_id": "queimando", "tick_damage": 3.5, "duration_seconds": 5 }
       ]
     },
     {
@@ -275,7 +275,7 @@
       "base_barrier": 12,
       "barrier_per_level": 1.2,
       "effects": [
-        { "kind": "damage", "amount": 14 },
+        { "kind": "damage", "amount": 12 },
         { "kind": "status", "status_id": "enraizado", "stacks": 1, "duration_seconds": 5 }
       ]
     },
@@ -312,11 +312,11 @@
       "mana_cost": 12,
       "cooldown_seconds": 6.0,
       "target": "player",
-      "base_damage": 14,
-      "damage_per_level": 1.8,
+      "base_damage": 12,
+      "damage_per_level": 1.55,
       "effects": [
         { "kind": "damage", "amount": 14 },
-        { "kind": "status", "status_id": "condutor", "stacks": 1, "duration_seconds": 6 }
+        { "kind": "status", "status_id": "condutor", "stacks": 1, "duration_seconds": 4.5 }
       ]
     },
     {
@@ -336,7 +336,7 @@
       "damage_per_level": 1.2,
       "effects": [
         { "kind": "damage", "amount": 10 },
-        { "kind": "dot", "status_id": "decaimento", "tick_damage": 6, "duration_seconds": 6 }
+        { "kind": "dot", "status_id": "decaimento", "tick_damage": 5.5, "duration_seconds": 6 }
       ]
     },
     {

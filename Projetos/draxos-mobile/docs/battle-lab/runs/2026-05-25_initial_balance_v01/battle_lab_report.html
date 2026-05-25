@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DraxosMobile Battle Lab</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #181b20;
+      --muted: #5b6472;
+      --line: #d9dee7;
+      --pass: #147a3f;
+      --review: #9a6700;
+      --critical: #b42318;
+      --pass-bg: #dff7e9;
+      --review-bg: #fff1c7;
+      --critical-bg: #ffe1dd;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.35;
+    }
+    header {
+      padding: 24px 28px 16px;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel);
+    }
+    main { padding: 20px 28px 32px; }
+    h1 { margin: 0 0 8px; font-size: 28px; letter-spacing: 0; }
+    h2 { margin: 26px 0 10px; font-size: 18px; letter-spacing: 0; }
+    p { margin: 0 0 8px; color: var(--muted); }
+    .status-line { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .badge {
+      display: inline-block;
+      min-width: 64px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 12px;
+      border: 1px solid transparent;
+    }
+    .pass { color: var(--pass); background: var(--pass-bg); border-color: #a7dfbb; }
+    .review { color: var(--review); background: var(--review-bg); border-color: #e5c96f; }
+    .critical { color: var(--critical); background: var(--critical-bg); border-color: #f4aaa3; }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      margin: 16px 0 8px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .card .label { color: var(--muted); font-size: 12px; }
+    .card .value { font-size: 24px; font-weight: 700; margin-top: 2px; }
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.9fr) minmax(360px, 1.1fr);
+      gap: 14px;
+    }
+    section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      overflow: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      padding: 7px 8px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      white-space: nowrap;
+    }
+    th {
+      color: var(--muted);
+      font-weight: 700;
+      background: #f1f3f6;
+      position: sticky;
+      top: 0;
+    }
+    ul { margin: 8px 0 0 18px; padding: 0; }
+    li { margin: 4px 0; }
+    .wide { margin-top: 14px; }
+    @media (max-width: 920px) {
+      main, header { padding-left: 16px; padding-right: 16px; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="status-line">
+      <h1>DraxosMobile Battle Lab</h1>
+      <span class="badge pass">PASS</span>
+    </div>
+    <p>Model: draxos_mobile_battle_lab_v3_initial_balance | Status: INITIAL_BALANCE_ALPHA | Generated: deterministic-local</p>
+    <p>Offline FIRST_SLICE_SIM analysis. This report does not mutate Supabase, rewards, ranking or client state.</p>
+  </header>
+  <main>
+    <div class="cards">
+      <div class="card"><div class="label">Battles</div><div class="value">3132</div></div>
+      <div class="card"><div class="label">Builds</div><div class="value">212</div></div>
+      <div class="card"><div class="label">Avg duration</div><div class="value">21.13s</div></div>
+      <div class="card"><div class="label">Median</div><div class="value">20.7s</div></div>
+      <div class="card"><div class="label">Short</div><div class="value">0%</div></div>
+      <div class="card"><div class="label">Long</div><div class="value">0%</div></div>
+      <div class="card"><div class="label">Anti-stall</div><div class="value">0.96%</div></div>
+      <div class="card"><div class="label">Raw dominance</div><div class="value">73.78%</div></div>
+      <div class="card"><div class="label">Near power</div><div class="value">64.46%</div></div>
+    </div>
+
+    <div class="grid">
+      <section>
+        <h2>O Que Olhar Primeiro</h2>
+        <ul><li>Review first matchup: ANTI_STALL L3_M0087 (L3_mental_controller_r1 vs L3_elemental_mixer_r1).</li></ul>
+      </section>
+      <section>
+        <h2>Checks</h2>
+        <table>
+          <thead><tr><th>Status</th><th>Check</th><th>Observed</th><th>Target</th><th>Note</th></tr></thead>
+          <tbody><tr><td><span class="badge pass">PASS</span></td><td>average_duration_target</td><td>21.13s</td><td>18-28s</td><td>Average battle duration should sit near the target playtest window.</td></tr>
+<tr><td><span class="badge pass">PASS</span></td><td>short_battle_rate</td><td>0%</td><td>&lt;= 20%</td><td>Too many short battles suggest burst or low HP scaling issues.</td></tr>
+<tr><td><span class="badge pass">PASS</span></td><td>long_battle_rate</td><td>0%</td><td>&lt;= 20%</td><td>Too many long battles suggest defensive scaling or low damage pressure.</td></tr>
+<tr><td><span class="badge pass">PASS</span></td><td>anti_stall_rate</td><td>0.96%</td><td>&lt;= 5%</td><td>Anti-stall should be rare in normal same-level matchups.</td></tr>
+<tr><td><span class="badge pass">PASS</span></td><td>near_power_dominance</td><td>64.46% max / 22.45% min</td><td>max &lt;= 65%</td><td>Dominance uses &lt;= 20% power delta and excludes same-archetype mirrors.</td></tr>
+<tr><td><span class="badge pass">PASS</span></td><td>level_coverage</td><td>7/7 configured, 16 total</td><td>7/7</td><td>Every configured level checkpoint should produce matchups.</td></tr></tbody>
+        </table>
+      </section>
+    </div>
+
+    <section class="wide">
+      <h2>Near Power Archetypes</h2>
+      <table>
+        <thead><tr><th>Archetype</th><th>Total</th><th>Win rate</th><th>Avg duration</th><th>Short</th><th>Long</th><th>Anti-stall</th><th>Status</th></tr></thead>
+        <tbody><tr><td>Starter Instrument</td><td>94</td><td>47.87%</td><td>22.8s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>Mental Controller</td><td>290</td><td>37.24%</td><td>21.33s</td><td>0%</td><td>0%</td><td>1.38%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>Elemental Mixer</td><td>440</td><td>63.41%</td><td>21.32s</td><td>0%</td><td>0%</td><td>0.91%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>Familiar Handler</td><td>434</td><td>64.06%</td><td>20.1s</td><td>0%</td><td>0%</td><td>0.46%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>Summoner</td><td>260</td><td>55%</td><td>20.94s</td><td>0%</td><td>0%</td><td>0.77%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>Defensive Occultist</td><td>230</td><td>52.61%</td><td>23.93s</td><td>0%</td><td>0%</td><td>4.35%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>DoT Pressure</td><td>242</td><td>64.46%</td><td>18.51s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>Funeral Burst</td><td>490</td><td>22.45%</td><td>20.95s</td><td>0%</td><td>0%</td><td>0.41%</td><td><span class="badge review">REVIEW</span></td></tr></tbody>
+      </table>
+    </section>
+
+    <section class="wide">
+      <h2>Raw Stress Archetypes</h2>
+      <table>
+        <thead><tr><th>Archetype</th><th>Total</th><th>Win rate</th><th>Avg duration</th><th>Short</th><th>Long</th><th>Anti-stall</th><th>Status</th></tr></thead>
+        <tbody><tr><td>Starter Instrument</td><td>541</td><td>16.45%</td><td>21.38s</td><td>0%</td><td>0%</td><td>2.59%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>Mental Controller</td><td>242</td><td>55.37%</td><td>20.88s</td><td>0%</td><td>0%</td><td>0.83%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>Elemental Mixer</td><td>436</td><td>64.45%</td><td>20.68s</td><td>0%</td><td>0%</td><td>0.92%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>Familiar Handler</td><td>450</td><td>73.78%</td><td>19.45s</td><td>0%</td><td>0%</td><td>0.22%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>Summoner</td><td>242</td><td>64.46%</td><td>20.96s</td><td>0%</td><td>0%</td><td>0.41%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>Defensive Occultist</td><td>242</td><td>48.35%</td><td>22.62s</td><td>0%</td><td>0%</td><td>2.89%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>DoT Pressure</td><td>242</td><td>66.12%</td><td>17.9s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>Funeral Burst</td><td>737</td><td>55.63%</td><td>22.97s</td><td>0%</td><td>0%</td><td>0.14%</td><td><span class="badge pass">PASS</span></td></tr></tbody>
+      </table>
+    </section>
+
+    <section class="wide">
+      <h2>Level And Power Bands</h2>
+      <table>
+        <thead><tr><th>Level</th><th>Power band</th><th>Total</th><th>Win rate</th><th>Avg</th><th>Median</th><th>Short</th><th>Long</th><th>Anti-stall</th><th>Status</th></tr></thead>
+        <tbody><tr><td>1</td><td>band_001</td><td>240</td><td>53.33%</td><td>20.39s</td><td>18.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>3</td><td>band_001</td><td>90</td><td>25.56%</td><td>21.24s</td><td>19.7s</td><td>0%</td><td>0%</td><td>1.11%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>3</td><td>band_002</td><td>150</td><td>72%</td><td>23.5s</td><td>23.2s</td><td>0%</td><td>0%</td><td>2%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>7</td><td>band_002</td><td>30</td><td>30%</td><td>18.47s</td><td>17.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>7</td><td>band_003</td><td>210</td><td>56.67%</td><td>18.81s</td><td>18.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>8</td><td>band_002</td><td>21</td><td>23.81%</td><td>26.89s</td><td>26.7s</td><td>0%</td><td>0%</td><td>9.52%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>8</td><td>band_003</td><td>35</td><td>74.29%</td><td>25.84s</td><td>23.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>9</td><td>band_002</td><td>11</td><td>0%</td><td>27.02s</td><td>26.2s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>9</td><td>band_003</td><td>121</td><td>66.12%</td><td>25.88s</td><td>26.2s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>10</td><td>band_002</td><td>19</td><td>0%</td><td>21.75s</td><td>21.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>10</td><td>band_003</td><td>190</td><td>35.79%</td><td>22.55s</td><td>22.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>10</td><td>band_004</td><td>171</td><td>73.68%</td><td>19.92s</td><td>20.2s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>11</td><td>band_003</td><td>56</td><td>60.71%</td><td>28.27s</td><td>27.7s</td><td>0%</td><td>0%</td><td>3.57%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>12</td><td>band_003</td><td>44</td><td>18.18%</td><td>26.27s</td><td>27.7s</td><td>0%</td><td>0%</td><td>4.55%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>12</td><td>band_004</td><td>88</td><td>73.86%</td><td>24.67s</td><td>23.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>14</td><td>band_003</td><td>33</td><td>6.06%</td><td>28.52s</td><td>29.2s</td><td>0%</td><td>0%</td><td>18.18%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>14</td><td>band_004</td><td>99</td><td>79.8%</td><td>27.49s</td><td>28.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>15</td><td>band_003</td><td>135</td><td>14.07%</td><td>18.76s</td><td>18.7s</td><td>0%</td><td>0%</td><td>1.48%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>15</td><td>band_004</td><td>162</td><td>29.63%</td><td>21.21s</td><td>21.2s</td><td>0%</td><td>0%</td><td>2.47%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>15</td><td>band_005</td><td>459</td><td>70.15%</td><td>18.25s</td><td>18.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>16</td><td>band_003</td><td>33</td><td>9.09%</td><td>19.12s</td><td>19.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>16</td><td>band_004</td><td>33</td><td>39.39%</td><td>20.97s</td><td>20.2s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>16</td><td>band_005</td><td>66</td><td>87.88%</td><td>20.17s</td><td>20.2s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>17</td><td>band_003</td><td>22</td><td>4.55%</td><td>18.79s</td><td>19.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>17</td><td>band_004</td><td>33</td><td>30.3%</td><td>20.25s</td><td>20.2s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>17</td><td>band_005</td><td>77</td><td>76.62%</td><td>19.48s</td><td>19.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>18</td><td>band_004</td><td>3</td><td>0%</td><td>16.7s</td><td>15.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>18</td><td>band_005</td><td>9</td><td>77.78%</td><td>19.59s</td><td>20.2s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>19</td><td>band_004</td><td>3</td><td>0%</td><td>15.03s</td><td>14.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>19</td><td>band_005</td><td>9</td><td>77.78%</td><td>17.26s</td><td>17.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>25</td><td>band_004</td><td>30</td><td>10%</td><td>18.77s</td><td>17.2s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>25</td><td>band_005</td><td>210</td><td>58.1%</td><td>19.01s</td><td>18.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>40</td><td>band_005</td><td>240</td><td>52.92%</td><td>21.74s</td><td>21.7s</td><td>0%</td><td>0%</td><td>3.33%</td><td><span class="badge pass">PASS</span></td></tr></tbody>
+      </table>
+    </section>
+
+    <section class="wide">
+      <h2>Near Power Matrix</h2>
+      <table>
+        <thead><tr><th>Player archetype</th><th>Opponent archetype</th><th>Total</th><th>Player win rate</th><th>Avg duration</th><th>Status</th></tr></thead>
+        <tbody><tr><td>starter_instrument</td><td>mental_controller</td><td>4</td><td>75%</td><td>21.2s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>starter_instrument</td><td>elemental_mixer</td><td>6</td><td>50%</td><td>22.03s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>starter_instrument</td><td>familiar_handler</td><td>4</td><td>25%</td><td>18.7s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>starter_instrument</td><td>summoner</td><td>2</td><td>50%</td><td>19.2s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>starter_instrument</td><td>defensive_occultist</td><td>5</td><td>80%</td><td>20.5s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>starter_instrument</td><td>dot_pressure</td><td>7</td><td>57.14%</td><td>19.7s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>starter_instrument</td><td>funeral_burst</td><td>19</td><td>63.16%</td><td>26.36s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>mental_controller</td><td>starter_instrument</td><td>4</td><td>25%</td><td>21.2s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>mental_controller</td><td>elemental_mixer</td><td>24</td><td>41.67%</td><td>22.2s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>mental_controller</td><td>familiar_handler</td><td>33</td><td>45.45%</td><td>21.12s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>mental_controller</td><td>summoner</td><td>23</td><td>26.09%</td><td>21.55s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>mental_controller</td><td>defensive_occultist</td><td>15</td><td>26.67%</td><td>25.6s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>mental_controller</td><td>dot_pressure</td><td>19</td><td>47.37%</td><td>19.02s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>mental_controller</td><td>funeral_burst</td><td>27</td><td>59.26%</td><td>20.07s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>starter_instrument</td><td>6</td><td>50%</td><td>22.03s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>mental_controller</td><td>24</td><td>54.17%</td><td>22.1s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>familiar_handler</td><td>43</td><td>46.51%</td><td>20.19s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>summoner</td><td>27</td><td>48.15%</td><td>20.83s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>defensive_occultist</td><td>23</td><td>47.83%</td><td>24.57s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>dot_pressure</td><td>17</td><td>47.06%</td><td>17.55s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>funeral_burst</td><td>80</td><td>92.5%</td><td>21.67s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>familiar_handler</td><td>starter_instrument</td><td>4</td><td>100%</td><td>18.7s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>familiar_handler</td><td>mental_controller</td><td>33</td><td>81.82%</td><td>21.03s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>familiar_handler</td><td>elemental_mixer</td><td>43</td><td>55.81%</td><td>20.18s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>familiar_handler</td><td>summoner</td><td>27</td><td>62.96%</td><td>20.46s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>familiar_handler</td><td>defensive_occultist</td><td>23</td><td>39.13%</td><td>23.79s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>familiar_handler</td><td>dot_pressure</td><td>28</td><td>53.57%</td><td>17.93s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>familiar_handler</td><td>funeral_burst</td><td>59</td><td>84.75%</td><td>18.97s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>summoner</td><td>starter_instrument</td><td>2</td><td>50%</td><td>19.2s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>summoner</td><td>mental_controller</td><td>23</td><td>82.61%</td><td>21.55s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>summoner</td><td>elemental_mixer</td><td>27</td><td>62.96%</td><td>20.83s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>summoner</td><td>familiar_handler</td><td>27</td><td>40.74%</td><td>20.44s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>summoner</td><td>defensive_occultist</td><td>17</td><td>58.82%</td><td>24.05s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>summoner</td><td>dot_pressure</td><td>15</td><td>33.33%</td><td>18.77s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>summoner</td><td>funeral_burst</td><td>19</td><td>78.95%</td><td>20.09s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>defensive_occultist</td><td>starter_instrument</td><td>5</td><td>40%</td><td>20.5s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>defensive_occultist</td><td>mental_controller</td><td>15</td><td>66.67%</td><td>25.57s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>defensive_occultist</td><td>elemental_mixer</td><td>23</td><td>56.52%</td><td>24.44s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>defensive_occultist</td><td>familiar_handler</td><td>23</td><td>60.87%</td><td>23.83s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>defensive_occultist</td><td>summoner</td><td>17</td><td>47.06%</td><td>24.17s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>defensive_occultist</td><td>dot_pressure</td><td>13</td><td>30.77%</td><td>21.24s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>defensive_occultist</td><td>funeral_burst</td><td>19</td><td>63.16%</td><td>24.73s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>dot_pressure</td><td>starter_instrument</td><td>7</td><td>85.71%</td><td>19.7s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>dot_pressure</td><td>mental_controller</td><td>19</td><td>57.89%</td><td>18.86s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>dot_pressure</td><td>elemental_mixer</td><td>17</td><td>52.94%</td><td>17.55s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>dot_pressure</td><td>familiar_handler</td><td>28</td><td>53.57%</td><td>17.93s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>dot_pressure</td><td>summoner</td><td>15</td><td>73.33%</td><td>18.73s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>dot_pressure</td><td>defensive_occultist</td><td>13</td><td>76.92%</td><td>21.16s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>dot_pressure</td><td>funeral_burst</td><td>22</td><td>95.45%</td><td>17.45s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>funeral_burst</td><td>starter_instrument</td><td>19</td><td>68.42%</td><td>26.36s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>funeral_burst</td><td>mental_controller</td><td>27</td><td>55.56%</td><td>20.03s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>funeral_burst</td><td>elemental_mixer</td><td>80</td><td>8.75%</td><td>21.68s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>funeral_burst</td><td>familiar_handler</td><td>59</td><td>15.25%</td><td>19.03s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>funeral_burst</td><td>summoner</td><td>19</td><td>47.37%</td><td>20.17s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>funeral_burst</td><td>defensive_occultist</td><td>19</td><td>47.37%</td><td>24.65s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>funeral_burst</td><td>dot_pressure</td><td>22</td><td>13.64%</td><td>17.47s</td><td><span class="badge review">REVIEW</span></td></tr></tbody>
+      </table>
+    </section>
+
+    <section class="wide">
+      <h2>Raw Stress Matrix</h2>
+      <table>
+        <thead><tr><th>Player archetype</th><th>Opponent archetype</th><th>Total</th><th>Player win rate</th><th>Avg duration</th><th>Status</th></tr></thead>
+        <tbody><tr><td>starter_instrument</td><td>starter_instrument</td><td>70</td><td>51.43%</td><td>23.74s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>starter_instrument</td><td>mental_controller</td><td>36</td><td>16.67%</td><td>19.59s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>starter_instrument</td><td>elemental_mixer</td><td>80</td><td>6.25%</td><td>20.44s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>starter_instrument</td><td>familiar_handler</td><td>84</td><td>3.57%</td><td>16.6s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>starter_instrument</td><td>summoner</td><td>36</td><td>11.11%</td><td>20.83s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>starter_instrument</td><td>defensive_occultist</td><td>36</td><td>36.11%</td><td>23.71s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>starter_instrument</td><td>dot_pressure</td><td>36</td><td>11.11%</td><td>16.85s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>starter_instrument</td><td>funeral_burst</td><td>163</td><td>11.04%</td><td>24.3s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>mental_controller</td><td>starter_instrument</td><td>36</td><td>83.33%</td><td>19.59s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>mental_controller</td><td>mental_controller</td><td>14</td><td>50%</td><td>20.84s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>mental_controller</td><td>elemental_mixer</td><td>36</td><td>50%</td><td>21.71s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>mental_controller</td><td>familiar_handler</td><td>36</td><td>47.22%</td><td>21.01s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>mental_controller</td><td>summoner</td><td>28</td><td>35.71%</td><td>21.43s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>mental_controller</td><td>defensive_occultist</td><td>28</td><td>53.57%</td><td>23.13s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>mental_controller</td><td>dot_pressure</td><td>28</td><td>53.57%</td><td>19.06s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>mental_controller</td><td>funeral_burst</td><td>36</td><td>61.11%</td><td>20.49s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>starter_instrument</td><td>80</td><td>93.75%</td><td>20.44s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>elemental_mixer</td><td>mental_controller</td><td>36</td><td>50%</td><td>21.66s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>elemental_mixer</td><td>44</td><td>61.36%</td><td>20.58s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>familiar_handler</td><td>68</td><td>38.24%</td><td>20.15s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>summoner</td><td>36</td><td>44.44%</td><td>20.92s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>defensive_occultist</td><td>36</td><td>55.56%</td><td>23.14s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>dot_pressure</td><td>36</td><td>41.67%</td><td>17.41s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>funeral_burst</td><td>100</td><td>84%</td><td>21.12s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>familiar_handler</td><td>starter_instrument</td><td>84</td><td>98.81%</td><td>16.6s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>familiar_handler</td><td>mental_controller</td><td>36</td><td>77.78%</td><td>20.92s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>familiar_handler</td><td>elemental_mixer</td><td>68</td><td>63.24%</td><td>20.14s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>familiar_handler</td><td>familiar_handler</td><td>70</td><td>68.57%</td><td>20.37s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>familiar_handler</td><td>summoner</td><td>36</td><td>55.56%</td><td>20.63s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>familiar_handler</td><td>defensive_occultist</td><td>36</td><td>58.33%</td><td>22.05s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>familiar_handler</td><td>dot_pressure</td><td>36</td><td>55.56%</td><td>17.92s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>familiar_handler</td><td>funeral_burst</td><td>84</td><td>82.14%</td><td>19.37s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>summoner</td><td>starter_instrument</td><td>36</td><td>88.89%</td><td>20.83s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>summoner</td><td>mental_controller</td><td>28</td><td>71.43%</td><td>21.41s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>summoner</td><td>elemental_mixer</td><td>36</td><td>63.89%</td><td>20.92s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>summoner</td><td>familiar_handler</td><td>36</td><td>47.22%</td><td>20.62s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>summoner</td><td>summoner</td><td>14</td><td>57.14%</td><td>21.45s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>summoner</td><td>defensive_occultist</td><td>28</td><td>64.29%</td><td>22.95s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>summoner</td><td>dot_pressure</td><td>28</td><td>46.43%</td><td>19.06s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>summoner</td><td>funeral_burst</td><td>36</td><td>69.44%</td><td>20.85s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>defensive_occultist</td><td>starter_instrument</td><td>36</td><td>63.89%</td><td>23.71s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>defensive_occultist</td><td>mental_controller</td><td>28</td><td>46.43%</td><td>23.06s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>defensive_occultist</td><td>elemental_mixer</td><td>36</td><td>47.22%</td><td>23.05s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>defensive_occultist</td><td>familiar_handler</td><td>36</td><td>41.67%</td><td>21.96s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>defensive_occultist</td><td>summoner</td><td>28</td><td>42.86%</td><td>22.99s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>defensive_occultist</td><td>defensive_occultist</td><td>14</td><td>57.14%</td><td>23.59s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>defensive_occultist</td><td>dot_pressure</td><td>28</td><td>35.71%</td><td>19.54s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>defensive_occultist</td><td>funeral_burst</td><td>36</td><td>52.78%</td><td>23.13s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>dot_pressure</td><td>starter_instrument</td><td>36</td><td>97.22%</td><td>16.85s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>dot_pressure</td><td>mental_controller</td><td>28</td><td>50%</td><td>18.95s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>dot_pressure</td><td>elemental_mixer</td><td>36</td><td>58.33%</td><td>17.41s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>dot_pressure</td><td>familiar_handler</td><td>36</td><td>50%</td><td>17.89s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>dot_pressure</td><td>summoner</td><td>28</td><td>57.14%</td><td>19.04s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>dot_pressure</td><td>defensive_occultist</td><td>28</td><td>67.86%</td><td>19.5s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>dot_pressure</td><td>dot_pressure</td><td>14</td><td>50%</td><td>15.13s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>dot_pressure</td><td>funeral_burst</td><td>36</td><td>83.33%</td><td>17.58s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>funeral_burst</td><td>starter_instrument</td><td>163</td><td>92.64%</td><td>24.3s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>funeral_burst</td><td>mental_controller</td><td>36</td><td>50%</td><td>20.46s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>funeral_burst</td><td>elemental_mixer</td><td>100</td><td>17%</td><td>21.14s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>funeral_burst</td><td>familiar_handler</td><td>84</td><td>17.86%</td><td>19.43s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>funeral_burst</td><td>summoner</td><td>36</td><td>44.44%</td><td>20.89s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>funeral_burst</td><td>defensive_occultist</td><td>36</td><td>58.33%</td><td>23.08s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>funeral_burst</td><td>dot_pressure</td><td>36</td><td>22.22%</td><td>17.59s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>funeral_burst</td><td>funeral_burst</td><td>246</td><td>66.67%</td><td>25.48s</td><td><span class="badge review">REVIEW</span></td></tr></tbody>
+      </table>
+    </section>
+
+    <section class="wide">
+      <h2>Outliers</h2>
+      <table>
+        <thead><tr><th>Severity</th><th>Type</th><th>Matchup</th><th>Level</th><th>Power</th><th>Duration</th><th>Winner</th><th>Player build</th><th>Opponent build</th><th>Reason</th></tr></thead>
+        <tbody><tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L3_M0087</td><td>3</td><td>291 vs 291</td><td>30.2</td><td>elemental_mixer</td><td>L3_mental_controller_r1</td><td>L3_elemental_mixer_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L3_M0088</td><td>3</td><td>291 vs 291</td><td>30.2</td><td>mental_controller</td><td>L3_elemental_mixer_r1</td><td>L3_mental_controller_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L3_M0109</td><td>3</td><td>216 vs 291</td><td>30.2</td><td>elemental_mixer</td><td>L3_elemental_mixer_fixed</td><td>L3_elemental_mixer_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L3_M0110</td><td>3</td><td>291 vs 216</td><td>30.2</td><td>elemental_mixer</td><td>L3_elemental_mixer_r1</td><td>L3_elemental_mixer_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L8_M0031</td><td>8</td><td>486 vs 516</td><td>30.2</td><td>starter_instrument</td><td>PLBOT_bot_free_50_rewards_2h_m12</td><td>PLBOT_bot_free_100_rewards_2h_m12</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L8_M0032</td><td>8</td><td>516 vs 486</td><td>30.2</td><td>starter_instrument</td><td>PLBOT_bot_free_100_rewards_2h_m12</td><td>PLBOT_bot_free_50_rewards_2h_m12</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>STOMP</td><td>L10_M0103</td><td>10</td><td>1496 vs 600</td><td>16.7</td><td>mental_controller</td><td>L10_mental_controller_fixed</td><td>PLBOT_bot_free_50_rewards_5h_m12</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L11_M0031</td><td>11</td><td>702 vs 732</td><td>30.2</td><td>starter_instrument</td><td>PLBOT_bot_free_100_rewards_5h_m12</td><td>PLBOT_bot_freemium_basic_5h_m12</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L11_M0032</td><td>11</td><td>732 vs 702</td><td>30.2</td><td>starter_instrument</td><td>PLBOT_bot_freemium_basic_5h_m12</td><td>PLBOT_bot_free_100_rewards_5h_m12</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L12_M0065</td><td>12</td><td>744 vs 804</td><td>30.2</td><td>starter_instrument</td><td>PLBOT_bot_free_50_rewards_10h_m12</td><td>PLBOT_bot_spender_light_5h_m12</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L12_M0066</td><td>12</td><td>804 vs 744</td><td>30.2</td><td>starter_instrument</td><td>PLBOT_bot_spender_light_5h_m12</td><td>PLBOT_bot_free_50_rewards_10h_m12</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L14_M0065</td><td>14</td><td>858 vs 918</td><td>30.2</td><td>starter_instrument</td><td>PLBOT_bot_free_50_rewards_15h_m12</td><td>PLBOT_bot_free_100_rewards_10h_m12</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L14_M0066</td><td>14</td><td>918 vs 858</td><td>30.2</td><td>starter_instrument</td><td>PLBOT_bot_free_100_rewards_10h_m12</td><td>PLBOT_bot_free_50_rewards_15h_m12</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L14_M0071</td><td>14</td><td>858 vs 918</td><td>30.2</td><td>starter_instrument</td><td>PLBOT_bot_free_50_rewards_15h_m12</td><td>PLBOT_bot_freemium_basic_10h_m12</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L14_M0072</td><td>14</td><td>918 vs 858</td><td>30.2</td><td>starter_instrument</td><td>PLBOT_bot_freemium_basic_10h_m12</td><td>PLBOT_bot_free_50_rewards_15h_m12</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L14_M0107</td><td>14</td><td>918 vs 918</td><td>30.2</td><td>starter_instrument</td><td>PLBOT_bot_free_100_rewards_10h_m12</td><td>PLBOT_bot_freemium_basic_10h_m12</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L14_M0108</td><td>14</td><td>918 vs 918</td><td>30.2</td><td>starter_instrument</td><td>PLBOT_bot_freemium_basic_10h_m12</td><td>PLBOT_bot_free_100_rewards_10h_m12</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L15_M0073</td><td>15</td><td>960 vs 1921</td><td>30.7</td><td>defensive_occultist</td><td>L15_starter_instrument_r1</td><td>L15_defensive_occultist_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L15_M0074</td><td>15</td><td>1921 vs 960</td><td>30.7</td><td>starter_instrument</td><td>L15_defensive_occultist_r1</td><td>L15_starter_instrument_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>STOMP</td><td>L15_M0139</td><td>15</td><td>2502 vs 900</td><td>15.7</td><td>mental_controller</td><td>L15_mental_controller_fixed</td><td>PLBOT_bot_free_50_rewards_20h_m12</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>STOMP</td><td>L15_M0140</td><td>15</td><td>900 vs 2502</td><td>15.7</td><td>mental_controller</td><td>PLBOT_bot_free_50_rewards_20h_m12</td><td>L15_mental_controller_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>STOMP</td><td>L15_M0277</td><td>15</td><td>2474 vs 900</td><td>12.7</td><td>elemental_mixer</td><td>L15_elemental_mixer_r1</td><td>PLBOT_bot_free_50_rewards_20h_m12</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>STOMP</td><td>L15_M0278</td><td>15</td><td>900 vs 2474</td><td>12.7</td><td>elemental_mixer</td><td>PLBOT_bot_free_50_rewards_20h_m12</td><td>L15_elemental_mixer_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>STOMP</td><td>L15_M0319</td><td>15</td><td>2452 vs 900</td><td>15.7</td><td>familiar_handler</td><td>L15_familiar_handler_fixed</td><td>PLBOT_bot_free_50_rewards_20h_m12</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>STOMP</td><td>L15_M0320</td><td>15</td><td>900 vs 2452</td><td>15.7</td><td>familiar_handler</td><td>PLBOT_bot_free_50_rewards_20h_m12</td><td>L15_familiar_handler_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>STOMP</td><td>L15_M0359</td><td>15</td><td>2690 vs 900</td><td>14.7</td><td>familiar_handler</td><td>L15_familiar_handler_r1</td><td>PLBOT_bot_free_50_rewards_20h_m12</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>STOMP</td><td>L15_M0360</td><td>15</td><td>900 vs 2690</td><td>14.7</td><td>familiar_handler</td><td>PLBOT_bot_free_50_rewards_20h_m12</td><td>L15_familiar_handler_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>STOMP</td><td>L15_M0433</td><td>15</td><td>2798 vs 900</td><td>15.7</td><td>summoner</td><td>L15_summoner_r1</td><td>PLBOT_bot_free_50_rewards_20h_m12</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>STOMP</td><td>L15_M0434</td><td>15</td><td>900 vs 2798</td><td>15.7</td><td>summoner</td><td>PLBOT_bot_free_50_rewards_20h_m12</td><td>L15_summoner_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L15_M0499</td><td>15</td><td>1921 vs 900</td><td>30.7</td><td>defensive_occultist</td><td>L15_defensive_occultist_r1</td><td>PLBOT_bot_free_50_rewards_20h_m12</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L15_M0500</td><td>15</td><td>900 vs 1921</td><td>30.7</td><td>defensive_occultist</td><td>PLBOT_bot_free_50_rewards_20h_m12</td><td>L15_defensive_occultist_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L15_M0503</td><td>15</td><td>1921 vs 1579</td><td>30.7</td><td>defensive_occultist</td><td>L15_defensive_occultist_r1</td><td>PLBOT_bot_free_50_rewards_20h_p12</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L15_M0504</td><td>15</td><td>1579 vs 1921</td><td>30.7</td><td>defensive_occultist</td><td>PLBOT_bot_free_50_rewards_20h_p12</td><td>L15_defensive_occultist_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>STOMP</td><td>L15_M0649</td><td>15</td><td>2410 vs 900</td><td>15.7</td><td>familiar_handler</td><td>PL_spender_light_10h</td><td>PLBOT_bot_free_50_rewards_20h_m12</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>STOMP</td><td>L15_M0650</td><td>15</td><td>900 vs 2410</td><td>15.7</td><td>familiar_handler</td><td>PLBOT_bot_free_50_rewards_20h_m12</td><td>PL_spender_light_10h</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>STOMP</td><td>L15_M0667</td><td>15</td><td>2622 vs 900</td><td>14.7</td><td>familiar_handler</td><td>PL_max_spender_10h</td><td>PLBOT_bot_free_50_rewards_20h_m12</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>STOMP</td><td>L15_M0668</td><td>15</td><td>900 vs 2622</td><td>14.7</td><td>familiar_handler</td><td>PLBOT_bot_free_50_rewards_20h_m12</td><td>PL_max_spender_10h</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>STOMP</td><td>L15_M0691</td><td>15</td><td>900 vs 2410</td><td>15.7</td><td>familiar_handler</td><td>PLBOT_bot_free_50_rewards_20h_m12</td><td>PLBOT_bot_spender_light_10h_p0</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>STOMP</td><td>L15_M0692</td><td>15</td><td>2410 vs 900</td><td>15.7</td><td>familiar_handler</td><td>PLBOT_bot_spender_light_10h_p0</td><td>PLBOT_bot_free_50_rewards_20h_m12</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>STOMP</td><td>L15_M0697</td><td>15</td><td>900 vs 2622</td><td>14.7</td><td>familiar_handler</td><td>PLBOT_bot_free_50_rewards_20h_m12</td><td>PLBOT_bot_max_spender_10h_p0</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>STOMP</td><td>L15_M0698</td><td>15</td><td>2622 vs 900</td><td>14.7</td><td>familiar_handler</td><td>PLBOT_bot_max_spender_10h_p0</td><td>PLBOT_bot_free_50_rewards_20h_m12</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>STOMP</td><td>L40_M0031</td><td>40</td><td>2550 vs 7905</td><td>16.7</td><td>mental_controller</td><td>L40_starter_instrument_r1</td><td>L40_mental_controller_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>STOMP</td><td>L40_M0032</td><td>40</td><td>7905 vs 2550</td><td>16.7</td><td>mental_controller</td><td>L40_mental_controller_fixed</td><td>L40_starter_instrument_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>STOMP</td><td>L40_M0049</td><td>40</td><td>2550 vs 7956</td><td>16.7</td><td>defensive_occultist</td><td>L40_starter_instrument_r1</td><td>L40_defensive_occultist_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>STOMP</td><td>L40_M0050</td><td>40</td><td>7956 vs 2550</td><td>16.7</td><td>defensive_occultist</td><td>L40_defensive_occultist_r1</td><td>L40_starter_instrument_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>STOMP</td><td>L40_M0051</td><td>40</td><td>2550 vs 8250</td><td>14.7</td><td>dot_pressure</td><td>L40_starter_instrument_r1</td><td>L40_dot_pressure_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>STOMP</td><td>L40_M0052</td><td>40</td><td>8250 vs 2550</td><td>14.7</td><td>dot_pressure</td><td>L40_dot_pressure_fixed</td><td>L40_starter_instrument_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L40_M0073</td><td>40</td><td>7905 vs 7466</td><td>30.7</td><td>defensive_occultist</td><td>L40_mental_controller_fixed</td><td>L40_defensive_occultist_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L40_M0074</td><td>40</td><td>7466 vs 7905</td><td>30.7</td><td>mental_controller</td><td>L40_defensive_occultist_fixed</td><td>L40_mental_controller_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L40_M0139</td><td>40</td><td>6841 vs 7466</td><td>30.7</td><td>defensive_occultist</td><td>L40_elemental_mixer_r1</td><td>L40_defensive_occultist_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L40_M0140</td><td>40</td><td>7466 vs 6841</td><td>30.7</td><td>defensive_occultist</td><td>L40_defensive_occultist_fixed</td><td>L40_elemental_mixer_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L40_M0173</td><td>40</td><td>6650 vs 7466</td><td>30.2</td><td>defensive_occultist</td><td>L40_familiar_handler_r1</td><td>L40_defensive_occultist_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L40_M0174</td><td>40</td><td>7466 vs 6650</td><td>30.2</td><td>defensive_occultist</td><td>L40_defensive_occultist_fixed</td><td>L40_familiar_handler_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L40_M0199</td><td>40</td><td>6690 vs 7466</td><td>30.7</td><td>summoner</td><td>L40_summoner_r1</td><td>L40_defensive_occultist_fixed</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L40_M0200</td><td>40</td><td>7466 vs 6690</td><td>30.7</td><td>summoner</td><td>L40_defensive_occultist_fixed</td><td>L40_summoner_r1</td><td>combatant_defeated</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>RAW_STRESS_DOMINANCE</td><td></td><td>all</td><td></td><td>19.45</td><td>familiar_handler</td><td>familiar_handler</td><td>all</td><td>win_rate=73.78%</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>RAW_STRESS_DOMINANCE</td><td></td><td>all</td><td></td><td>17.9</td><td>dot_pressure</td><td>dot_pressure</td><td>all</td><td>win_rate=66.12%</td></tr></tbody>
+      </table>
+    </section>
+
+    <section class="wide">
+      <h2>Source By Archetype</h2>
+      <table>
+        <thead><tr><th>Archetype</th><th>Total</th><th>Wins</th><th>Avg</th><th>Weapon</th><th>Spell</th><th>DoT</th><th>Pet</th><th>Summon</th><th>System</th><th>Total damage</th><th>Dominant</th></tr></thead>
+        <tbody><tr><td>Starter Instrument</td><td>1012</td><td>165</td><td>21.22s</td><td>840364</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>840364</td><td>weapon</td></tr>
+<tr><td>Mental Controller</td><td>470</td><td>252</td><td>20.86s</td><td>505272</td><td>11531</td><td>3432</td><td>17324</td><td>5535</td><td>0</td><td>543094</td><td>weapon</td></tr>
+<tr><td>Elemental Mixer</td><td>828</td><td>546</td><td>20.68s</td><td>737243</td><td>115057</td><td>67130</td><td>28267</td><td>0</td><td>0</td><td>947697</td><td>weapon</td></tr>
+<tr><td>Familiar Handler</td><td>830</td><td>623</td><td>19.37s</td><td>880732</td><td>83419</td><td>55598</td><td>41643</td><td>0</td><td>0</td><td>1061392</td><td>weapon</td></tr>
+<tr><td>Summoner</td><td>470</td><td>296</td><td>20.95s</td><td>489393</td><td>14776</td><td>1119</td><td>19549</td><td>33835</td><td>0</td><td>558672</td><td>weapon</td></tr>
+<tr><td>Defensive Occultist</td><td>470</td><td>224</td><td>22.6s</td><td>462970</td><td>37687</td><td>1123</td><td>20182</td><td>7509</td><td>0</td><td>529471</td><td>weapon</td></tr>
+<tr><td>DoT Pressure</td><td>470</td><td>310</td><td>18s</td><td>413371</td><td>40196</td><td>63041</td><td>15627</td><td>4898</td><td>0</td><td>537133</td><td>weapon</td></tr>
+<tr><td>Funeral Burst</td><td>1228</td><td>716</td><td>22.46s</td><td>1234891</td><td>180890</td><td>3591</td><td>35231</td><td>10663</td><td>0</td><td>1465266</td><td>weapon</td></tr></tbody>
+      </table>
+    </section>
+
+    <section class="wide">
+      <h2>Compare</h2>
+      <table>
+        <thead><tr><th>Metric</th><th>Baseline</th><th>Current</th><th>Delta</th></tr></thead>
+        <tbody><tr><td>baseline_run</td><td>2026-05-21_archetype_source_tuning_v02</td><td>draxos_mobile_battle_lab_v3_initial_balance</td><td>changed</td></tr>
+<tr><td>overall_status</td><td>REVIEW</td><td>PASS</td><td>changed</td></tr>
+<tr><td>avg_duration</td><td>18.91s</td><td>21.13s</td><td>+2.22s</td></tr>
+<tr><td>median_duration</td><td>18.7s</td><td>20.7s</td><td>+2s</td></tr>
+<tr><td>short_rate_percent</td><td>0%</td><td>0%</td><td>0%</td></tr>
+<tr><td>long_rate_percent</td><td>0%</td><td>0%</td><td>0%</td></tr>
+<tr><td>anti_stall_rate_percent</td><td>0.12%</td><td>0.96%</td><td>+0.84%</td></tr>
+<tr><td>raw_stress_dominance_max_percent</td><td>77.62%</td><td>73.78%</td><td>-3.84%</td></tr>
+<tr><td>near_power_dominance_max_percent</td><td>70.45%</td><td>64.46%</td><td>-5.99%</td></tr>
+<tr><td>near_power_win_rate:elemental_mixer</td><td>58.33%</td><td>63.41%</td><td>+5.08%</td></tr>
+<tr><td>near_power_win_rate:summoner</td><td>47.01%</td><td>55%</td><td>+7.99%</td></tr>
+<tr><td>near_power_win_rate:dot_pressure</td><td>33.45%</td><td>64.46%</td><td>+31.01%</td></tr></tbody>
+      </table>
+    </section>
+
+    <section class="wide">
+      <h2>Run History</h2>
+      <table>
+        <thead><tr><th>Run</th><th>Archived</th><th>Status</th><th>Avg</th><th>Short</th><th>Anti-stall</th><th>Raw dominance</th><th>Near dominance</th><th>Critical archetypes</th><th>Hypothesis</th></tr></thead>
+        <tbody><tr><td>2026-05-21_archetype_source_tuning_v02</td><td>2026-05-21T06:12:55.314Z</td><td><span class="badge review">REVIEW</span></td><td>18.91s</td><td>0%</td><td>0.12%</td><td>77.62%</td><td>70.45%</td><td></td><td>Ajuste por arquetipo/fonte: reduzir burst/pet e medir dominancia por poder proximo.</td></tr>
+<tr><td>2026-05-21_pacing_alpha_v01</td><td>2026-05-21T03:40:47.495Z</td><td><span class="badge critical">CRITICAL</span></td><td>18.19s</td><td>2.38%</td><td>0.12%</td><td>88.1%</td><td>79.37%</td><td>pet_handler|burst_caster</td><td>Baseline apos pacing alpha global de HP e antes do ajuste por fonte.</td></tr>
+<tr><td>2026-05-25_initial_balance_v01</td><td>2026-05-25T10:13:07.200Z</td><td><span class="badge pass">PASS</span></td><td>21.13s</td><td>0%</td><td>0.96%</td><td>73.78%</td><td>64.46%</td><td></td><td>2026-05-25 initial balance v01</td></tr></tbody>
+      </table>
+    </section>
+
+    <section class="wide">
+      <h2>Damage Breakdown</h2>
+      <table>
+        <thead><tr><th>Source</th><th>Damage</th></tr></thead>
+        <tbody><tr><td>weapon</td><td>5564236</td></tr>
+<tr><td>spell</td><td>483556</td></tr>
+<tr><td>dot</td><td>195034</td></tr>
+<tr><td>pet</td><td>177823</td></tr>
+<tr><td>summon</td><td>62440</td></tr>
+<tr><td>system</td><td>0</td></tr></tbody>
+      </table>
+      <h2>Damage Types</h2>
+      <table>
+        <thead><tr><th>Type</th><th>Damage</th></tr></thead>
+        <tbody><tr><td>arcano</td><td>1932650</td></tr>
+<tr><td>fisico</td><td>443672</td></tr>
+<tr><td>fogo</td><td>550825</td></tr>
+<tr><td>agua</td><td>20141</td></tr>
+<tr><td>gelo</td><td>127643</td></tr>
+<tr><td>terra</td><td>557190</td></tr>
+<tr><td>vento</td><td>32328</td></tr>
+<tr><td>raio</td><td>1077485</td></tr>
+<tr><td>veneno</td><td>63239</td></tr>
+<tr><td>morte</td><td>1628973</td></tr>
+<tr><td>sangue</td><td>48943</td></tr>
+<tr><td>none</td><td>0</td></tr></tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>

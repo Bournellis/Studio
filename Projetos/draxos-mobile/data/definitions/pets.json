@@ -12,12 +12,12 @@
       "mode": "FIRST_SLICE",
       "unlock_level": 15,
       "damage_type": "morte",
-      "base_damage": 5,
-      "damage_per_level": 0.7,
+      "base_damage": 4,
+      "damage_per_level": 0.55,
       "cadence_seconds": 4.0,
       "effects": [
-        { "kind": "damage", "amount": 5 },
-        { "kind": "status", "status_id": "inquietacao", "stacks": 1 }
+        { "kind": "damage", "amount": 4 },
+        { "kind": "status", "status_id": "pressagio", "stacks": 1, "duration_seconds": 3 }
       ]
     },
     {
@@ -88,7 +88,7 @@
       "cadence_seconds": 4.8,
       "effects": [
         { "kind": "damage", "amount": 7 },
-        { "kind": "status", "status_id": "resfriado", "stacks": 1 }
+        { "kind": "status", "status_id": "resfriado", "stacks": 1, "duration_seconds": 3.5 }
       ]
     },
     {
@@ -106,7 +106,7 @@
       "cadence_seconds": 4.6,
       "effects": [
         { "kind": "damage", "amount": 6 },
-        { "kind": "status", "status_id": "enraizado", "stacks": 1 }
+        { "kind": "status", "status_id": "enraizado", "stacks": 1, "duration_seconds": 3.5 }
       ]
     },
     {
@@ -124,7 +124,7 @@
       "cadence_seconds": 3.6,
       "effects": [
         { "kind": "damage", "amount": 5 },
-        { "kind": "status", "status_id": "condutor", "stacks": 1 }
+        { "kind": "status", "status_id": "condutor", "stacks": 1, "duration_seconds": 3 }
       ]
     },
     {
@@ -142,7 +142,7 @@
       "cadence_seconds": 4.4,
       "effects": [
         { "kind": "damage", "amount": 6 },
-        { "kind": "status", "status_id": "decaimento", "stacks": 1 }
+        { "kind": "status", "status_id": "decaimento", "stacks": 1, "duration_seconds": 3.5 }
       ]
     },
     {
@@ -160,7 +160,7 @@
       "cadence_seconds": 4.0,
       "effects": [
         { "kind": "damage", "amount": 4 },
-        { "kind": "status", "status_id": "vulneravel", "stacks": 1 }
+        { "kind": "status", "status_id": "vulneravel", "stacks": 1, "duration_seconds": 3 }
       ]
     }
   ]

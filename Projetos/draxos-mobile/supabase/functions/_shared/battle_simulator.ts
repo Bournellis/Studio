@@ -181,8 +181,8 @@ interface PassiveStats {
 const MAX_DURATION = 36;
 const TICK_SECONDS = 0.5;
 const DOT_TICK_SECONDS = 1;
-const COMBAT_PACE_HP_MULTIPLIER_BASE = 4.85;
-const COMBAT_PACE_HP_MULTIPLIER_PER_LEVEL = 0.121;
+const COMBAT_PACE_HP_MULTIPLIER_BASE = 3.85;
+const COMBAT_PACE_HP_MULTIPLIER_PER_LEVEL = 0.095;
 
 const WEAPONS: Record<
   string,
@@ -205,11 +205,11 @@ const WEAPONS: Record<
   },
   grimorio_veu: {
     damageType: "arcano",
-    baseDamage: 12,
-    damagePerLevel: 1.55,
-    cadence: 1.15,
+    baseDamage: 15,
+    damagePerLevel: 1.9,
+    cadence: 1,
     specialEvery: 4,
-    specialMultiplier: 2.4,
+    specialMultiplier: 2.8,
   },
   athame_hematico: {
     damageType: "fisico",
@@ -221,17 +221,17 @@ const WEAPONS: Record<
   },
   cajado_ossario: {
     damageType: "morte",
-    baseDamage: 14,
-    damagePerLevel: 1.75,
-    cadence: 1.1,
+    baseDamage: 15,
+    damagePerLevel: 1.85,
+    cadence: 1.05,
     specialEvery: 4,
-    specialMultiplier: 2.8,
+    specialMultiplier: 2.9,
   },
   orbe_tempestade: {
     damageType: "raio",
-    baseDamage: 13,
-    damagePerLevel: 1.65,
-    cadence: 0.85,
+    baseDamage: 12,
+    damagePerLevel: 1.55,
+    cadence: 0.95,
     specialEvery: 4,
     specialMultiplier: 2.3,
   },
@@ -308,8 +308,8 @@ const SPELLS: Record<string, SpellDefinition> = {
     manaCost: 12,
     cooldown: 6.5,
     target: "direct",
-    baseDamage: 16,
-    damagePerLevel: 1.9,
+    baseDamage: 14,
+    damagePerLevel: 1.6,
     status: { statusId: "ferida", stacks: 1, duration: 6 },
   },
   hemorragia_induzida: {
@@ -320,7 +320,7 @@ const SPELLS: Record<string, SpellDefinition> = {
     target: "direct",
     baseDamage: 8,
     damagePerLevel: 1,
-    dot: { statusId: "hemorragia", tickDamage: 5, duration: 6 },
+    dot: { statusId: "hemorragia", tickDamage: 4.5, duration: 6 },
   },
   coagulo_negro: {
     id: "coagulo_negro",
@@ -342,7 +342,7 @@ const SPELLS: Record<string, SpellDefinition> = {
     target: "player",
     baseDamage: 6,
     damagePerLevel: 0.8,
-    dot: { statusId: "envenenado", tickDamage: 5, duration: 6 },
+    dot: { statusId: "envenenado", tickDamage: 4.5, duration: 6 },
   },
   marca_brasa: {
     id: "marca_brasa",
@@ -350,9 +350,9 @@ const SPELLS: Record<string, SpellDefinition> = {
     manaCost: 14,
     cooldown: 7,
     target: "area",
-    baseDamage: 12,
-    damagePerLevel: 1.7,
-    dot: { statusId: "queimando", tickDamage: 4, duration: 5 },
+    baseDamage: 11,
+    damagePerLevel: 1.5,
+    dot: { statusId: "queimando", tickDamage: 3.5, duration: 5 },
   },
   coroa_cinzas: {
     id: "coroa_cinzas",
@@ -422,9 +422,9 @@ const SPELLS: Record<string, SpellDefinition> = {
     manaCost: 12,
     cooldown: 6,
     target: "player",
-    baseDamage: 14,
-    damagePerLevel: 1.8,
-    status: { statusId: "condutor", stacks: 1, duration: 6 },
+    baseDamage: 12,
+    damagePerLevel: 1.55,
+    status: { statusId: "condutor", stacks: 1, duration: 4.5 },
   },
   putrefacao: {
     id: "putrefacao",
@@ -434,7 +434,7 @@ const SPELLS: Record<string, SpellDefinition> = {
     target: "player",
     baseDamage: 10,
     damagePerLevel: 1.2,
-    dot: { statusId: "decaimento", tickDamage: 6, duration: 6 },
+    dot: { statusId: "decaimento", tickDamage: 5.5, duration: 6 },
   },
   marca_sepulcral: {
     id: "marca_sepulcral",
@@ -471,10 +471,10 @@ const SPELLS: Record<string, SpellDefinition> = {
 const PETS: Record<string, PetDefinition> = {
   corvo_pressagio: {
     damageType: "morte",
-    baseDamage: 5,
-    damagePerLevel: 0.7,
+    baseDamage: 4,
+    damagePerLevel: 0.55,
     cadence: 4,
-    status: { statusId: "inquietacao", stacks: 1, duration: 4 },
+    status: { statusId: "pressagio", stacks: 1, duration: 3 },
   },
   sanguessuga_sacramental: {
     damageType: "sangue",
@@ -501,35 +501,35 @@ const PETS: Record<string, PetDefinition> = {
     baseDamage: 7,
     damagePerLevel: 0.9,
     cadence: 4.8,
-    status: { statusId: "resfriado", stacks: 1, duration: 4 },
+    status: { statusId: "resfriado", stacks: 1, duration: 3.5 },
   },
   escaravelho_pedra: {
     damageType: "terra",
     baseDamage: 6,
     damagePerLevel: 0.8,
     cadence: 4.6,
-    status: { statusId: "enraizado", stacks: 1, duration: 4 },
+    status: { statusId: "enraizado", stacks: 1, duration: 3.5 },
   },
   serpe_tempestade: {
     damageType: "raio",
     baseDamage: 5,
     damagePerLevel: 0.75,
     cadence: 3.6,
-    status: { statusId: "condutor", stacks: 1, duration: 4 },
+    status: { statusId: "condutor", stacks: 1, duration: 3 },
   },
   cranio_errante: {
     damageType: "morte",
     baseDamage: 6,
     damagePerLevel: 0.85,
     cadence: 4.4,
-    status: { statusId: "decaimento", stacks: 1, duration: 4 },
+    status: { statusId: "decaimento", stacks: 1, duration: 3.5 },
   },
   olho_veu: {
     damageType: "arcano",
     baseDamage: 4,
     damagePerLevel: 0.65,
     cadence: 4,
-    status: { statusId: "vulneravel", stacks: 1, duration: 4 },
+    status: { statusId: "vulneravel", stacks: 1, duration: 3 },
   },
 };
 
@@ -1359,14 +1359,16 @@ function createStatus(
   const base = { id, source, stacks, expiresAt };
   switch (id) {
     case "inquietacao":
-      return { ...base, vulnerabilityPerStack: 0.025, cooldownSlowPerStack: 0.03 };
+      return { ...base, vulnerabilityPerStack: 0.035, cooldownSlowPerStack: 0.04 };
     case "medo":
       return { ...base, vulnerabilityPerStack: 0.04, cooldownSlowPerStack: 0.05 };
+    case "pressagio":
+      return { ...base, vulnerabilityPerStack: 0.025, damageTypeVulnerability: { morte: 0.03 } };
     case "terror":
-      return { ...base, vulnerabilityPerStack: 0.07, cooldownSlowPerStack: 0.08 };
+      return { ...base, vulnerabilityPerStack: 0.11, cooldownSlowPerStack: 0.12 };
     case "confusao":
     case "compulsao":
-      return { ...base, cooldownSlowPerStack: 0.08 };
+      return { ...base, cooldownSlowPerStack: 0.14 };
     case "ferida":
       return { ...base, damageTypeVulnerability: { sangue: 0.05, fisico: 0.03 } };
     case "sangue_exposto":
@@ -1396,7 +1398,7 @@ function createStatus(
       return { ...base, vulnerabilityPerStack: 0.04 };
     case "condutor":
     case "eletrificado":
-      return { ...base, damageTypeVulnerability: { raio: 0.07 }, cooldownSlowPerStack: 0.04 };
+      return { ...base, damageTypeVulnerability: { raio: 0.055 }, cooldownSlowPerStack: 0.035 };
     case "decaimento":
     case "anti_regeneracao":
       return { ...base, damageTypeVulnerability: { morte: 0.05 }, regenPenaltyPerStack: 0.12 };
@@ -1439,7 +1441,7 @@ function passiveStats(passiveId: string | undefined, level: number | undefined):
 
   switch (passiveId) {
     case "doutrina_pavor":
-      return { ...empty, statusDurationBonus: 0.04 + scale * 0.002 };
+      return { ...empty, statusDurationBonus: 0.06 + scale * 0.003 };
     case "mente_fria":
       return { ...empty, damageReduction: 0.03 + scale * 0.0015 };
     case "anatomista_profano":
@@ -1448,7 +1450,7 @@ function passiveStats(passiveId: string | undefined, level: number | undefined):
       return { ...empty, lifesteal: 0.02 + scale * 0.001 };
     case "alquimia_toxica":
     case "cinza_viva":
-      return { ...empty, dotDamageBonus: 0.04 + scale * 0.0015 };
+      return { ...empty, dotDamageBonus: 0.03 + scale * 0.001 };
     case "mare_silenciosa":
       return { ...empty, statusDurationBonus: 0.03 + scale * 0.0015 };
     case "pedra_interna":
@@ -1466,7 +1468,7 @@ function passiveStats(passiveId: string | undefined, level: number | undefined):
         dotDamageBonus: 0.02 + scale * 0.001,
       };
     case "pacto_familiar":
-      return { ...empty, petDamageBonus: 0.05 + scale * 0.002 };
+      return { ...empty, petDamageBonus: 0.01 + scale * 0.0008 };
     default:
       return empty;
   }

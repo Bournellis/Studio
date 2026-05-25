@@ -97,6 +97,22 @@ Esse diretorio guarda sessoes locais e nao deve entrar no Git.
 - Nao promove pesos de poder sem Battle Lab + Progression Lab concordarem.
 - Premium deve vender tempo e conforto, nao poder exclusivo acima do cap.
 
+## Baseline Atual
+
+Ultima rodada viva: `2026-05-25_initial_balance_v01`.
+
+- `25` saves saudaveis e `75` bots gerados.
+- Status geral: `REVIEW`.
+- Power recommendations: todos os componentes em `PASS` com os pesos
+  `level=42`, `weapon_level=30`, `spell_level=35`, `pet_level=30`,
+  `passive_level=22`, `weapon_quality_tier=30`.
+- Premium gap: sem `CRITICAL` na escala atual, mas ainda com reviews em `5h`,
+  `10h`, `15h` e `20h`.
+- Reward scaling: reviews nos levels `15h`/`20h` de alguns perfis free/freemium.
+
+O status `REVIEW` e intencional: a ferramenta ja nao bloqueia por erro numerico
+critico, mas ainda precisa validacao manual no Godot/Supabase local.
+
 ## Validacao Local
 
 ```powershell

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-05-21T06:12:55.384Z",
+  "updated_at": "2026-05-25T10:13:07.290Z",
   "runs": [
     {
       "run_id": "2026-05-21_archetype_source_tuning_v02",
@@ -31,7 +31,14 @@
         "battle_lab_near_power_matrix.csv",
         "battle_lab_history_index.csv",
         "battle_lab_compare.csv"
-      ]
+      ],
+      "compatibility": {
+        "simulator_hash": "unknown",
+        "content_hash": "unknown",
+        "model_hash": "unknown",
+        "battle_log_schema": "battle_log_v1",
+        "compatibility_status": "stale"
+      }
     },
     {
       "run_id": "2026-05-21_pacing_alpha_v01",
@@ -56,6 +63,54 @@
         "battle_lab_report.html",
         "battle_lab_summary.json",
         "battle_lab_matchups.csv",
+        "battle_lab_builds.csv",
+        "battle_lab_checks.csv",
+        "battle_lab_archetypes.csv",
+        "battle_lab_power_bands.csv",
+        "battle_lab_outliers.csv",
+        "battle_lab_source_by_archetype.csv",
+        "battle_lab_near_power_matrix.csv",
+        "battle_lab_history_index.csv",
+        "battle_lab_compare.csv"
+      ],
+      "compatibility": {
+        "simulator_hash": "unknown",
+        "content_hash": "unknown",
+        "model_hash": "unknown",
+        "battle_log_schema": "battle_log_v1",
+        "compatibility_status": "stale"
+      }
+    },
+    {
+      "run_id": "2026-05-25_initial_balance_v01",
+      "archived_at": "2026-05-25T10:13:07.200Z",
+      "base_sha": "6135c070184d",
+      "model_id": "draxos_mobile_battle_lab_v3_initial_balance",
+      "seed": "battle_lab_character_rework_20260525",
+      "hypothesis": "2026-05-25 initial balance v01",
+      "overall_status": "PASS",
+      "avg_duration": 21.13,
+      "median_duration": 20.7,
+      "short_rate_percent": 0,
+      "long_rate_percent": 0,
+      "anti_stall_rate_percent": 0.96,
+      "raw_stress_dominance_max_percent": 73.78,
+      "near_power_dominance_max_percent": 64.46,
+      "critical_archetypes": [],
+      "compatibility": {
+        "simulator_hash": "72723c67",
+        "content_hash": "32776b12",
+        "model_hash": "b354944f",
+        "battle_log_schema": "battle_log_v1",
+        "compatibility_status": "current"
+      },
+      "files": [
+        "battle_lab_report.html",
+        "battle_lab_summary.json",
+        "battle_lab_ui.json",
+        "battle_lab_replays.json",
+        "battle_lab_matchups.csv",
+        "battle_lab_progression_matrix.csv",
         "battle_lab_builds.csv",
         "battle_lab_checks.csv",
         "battle_lab_archetypes.csv",

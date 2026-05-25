@@ -518,6 +518,8 @@ export function calculatePower(
     (sum, value) => sum + value,
     0,
   );
+  const petLevel = build.pet_id === "" ? 0 : build.pet_level;
+  const passiveLevel = build.passive_id === "" ? 0 : build.passive_level;
   const baseStats = structures.find((item) => item.structure_id === "estrutura_stats")?.level ??
     0;
   const baseAverage = avg(structures.map((item) => item.level));
@@ -525,8 +527,8 @@ export function calculatePower(
     level * weights.level +
       build.weapon_level * weights.weapon_level +
       spellTotal * weights.spell_level +
-      build.pet_level * weights.pet_level +
-      build.passive_level * weights.passive_level +
+      petLevel * weights.pet_level +
+      passiveLevel * weights.passive_level +
       build.weapon_quality_tier * weights.weapon_quality_tier +
       baseStats * weights.base_stats_level +
       baseAverage * weights.base_average_level,
@@ -929,13 +931,14 @@ function buildPowerRecommendations(
       item.structure_id === "estrutura_stats"
     )?.level ?? 0;
     const baseAverage = avg(save.base.structures.map((item) => item.level));
+    const petLevel = save.build.pet_id === "" ? 0 : save.build.pet_level;
+    const passiveLevel = save.build.passive_id === "" ? 0 : save.build.passive_level;
     const components = {
       level: save.player.level * model.power_weights.level,
       weapon_level: save.build.weapon_level * model.power_weights.weapon_level,
       spell_level: spellTotal * model.power_weights.spell_level,
-      pet_level: save.build.pet_level * model.power_weights.pet_level,
-      passive_level: save.build.passive_level *
-        model.power_weights.passive_level,
+      pet_level: petLevel * model.power_weights.pet_level,
+      passive_level: passiveLevel * model.power_weights.passive_level,
       weapon_quality_tier: save.build.weapon_quality_tier *
         model.power_weights.weapon_quality_tier,
       base_stats_level: baseStats * model.power_weights.base_stats_level,

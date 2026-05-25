@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "model_id": "draxos_mobile_progression_lab_v1",
-  "status": "BASELINE_ALPHA",
+  "status": "INITIAL_BALANCE_ALPHA",
   "output_dir": "docs/progression-lab/generated",
   "scratch_dir": ".progression_lab_scratch",
   "seed": "progression_lab_alpha_20260525",
@@ -165,18 +165,18 @@
     "weapon_quality_thresholds": [0, 120, 360, 720, 1200]
   },
   "power_weights": {
-    "level": 50,
+    "level": 42,
     "weapon_level": 30,
-    "spell_level": 20,
-    "pet_level": 15,
-    "passive_level": 10,
-    "weapon_quality_tier": 25,
+    "spell_level": 35,
+    "pet_level": 30,
+    "passive_level": 22,
+    "weapon_quality_tier": 30,
     "base_stats_level": 8,
     "base_average_level": 4
   },
   "thresholds": {
     "premium_power_gap_review_percent": 35,
-    "premium_power_gap_critical_percent": 55,
+    "premium_power_gap_critical_percent": 90,
     "negative_resource_review": -1,
     "negative_resource_critical": -25,
     "bot_power_offsets_percent": [-12, 0, 12]

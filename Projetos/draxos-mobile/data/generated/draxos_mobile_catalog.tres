@@ -533,19 +533,20 @@ collections = {
 "version": 1.0
 }],
 "pets": [{
-"base_damage": 5.0,
+"base_damage": 4.0,
 "cadence_seconds": 4.0,
-"damage_per_level": 0.7,
+"damage_per_level": 0.55,
 "damage_type": "morte",
 "description": "Familiar criatura que marca alvos vulneraveis a medo e Morte.",
 "display_name": "Corvo do Pressagio",
 "effects": [{
-"amount": 5.0,
+"amount": 4.0,
 "kind": "damage"
 }, {
+"duration_seconds": 3.0,
 "kind": "status",
 "stacks": 1.0,
-"status_id": "inquietacao"
+"status_id": "pressagio"
 }],
 "enabled": true,
 "id": "corvo_pressagio",
@@ -625,6 +626,7 @@ collections = {
 "amount": 7.0,
 "kind": "damage"
 }, {
+"duration_seconds": 3.5,
 "kind": "status",
 "stacks": 1.0,
 "status_id": "resfriado"
@@ -646,6 +648,7 @@ collections = {
 "amount": 6.0,
 "kind": "damage"
 }, {
+"duration_seconds": 3.5,
 "kind": "status",
 "stacks": 1.0,
 "status_id": "enraizado"
@@ -667,6 +670,7 @@ collections = {
 "amount": 5.0,
 "kind": "damage"
 }, {
+"duration_seconds": 3.0,
 "kind": "status",
 "stacks": 1.0,
 "status_id": "condutor"
@@ -688,6 +692,7 @@ collections = {
 "amount": 6.0,
 "kind": "damage"
 }, {
+"duration_seconds": 3.5,
 "kind": "status",
 "stacks": 1.0,
 "status_id": "decaimento"
@@ -709,6 +714,7 @@ collections = {
 "amount": 4.0,
 "kind": "damage"
 }, {
+"duration_seconds": 3.0,
 "kind": "status",
 "stacks": 1.0,
 "status_id": "vulneravel"
@@ -970,14 +976,14 @@ collections = {
 "unlock_level": 15.0,
 "version": 1.0
 }, {
-"base_damage": 16.0,
+"base_damage": 14.0,
 "cooldown_seconds": 6.5,
-"damage_per_level": 1.9,
+"damage_per_level": 1.6,
 "damage_type": "fisico",
 "description": "Corte ritual Fisico/Sangue que abre Ferida no primeiro alvo.",
 "display_name": "Incisao Ritual",
 "effects": [{
-"amount": 16.0,
+"amount": 14.0,
 "kind": "damage"
 }, {
 "duration_seconds": 6.0,
@@ -1007,7 +1013,7 @@ collections = {
 "duration_seconds": 6.0,
 "kind": "dot",
 "status_id": "hemorragia",
-"tick_damage": 5.0
+"tick_damage": 4.5
 }],
 "enabled": true,
 "id": "hemorragia_induzida",
@@ -1052,7 +1058,7 @@ collections = {
 "duration_seconds": 6.0,
 "kind": "dot",
 "status_id": "envenenado",
-"tick_damage": 5.0
+"tick_damage": 4.5
 }],
 "enabled": true,
 "id": "toxina_palida",
@@ -1063,20 +1069,20 @@ collections = {
 "unlock_level": 7.0,
 "version": 1.0
 }, {
-"base_damage": 12.0,
+"base_damage": 11.0,
 "cooldown_seconds": 7.0,
-"damage_per_level": 1.7,
+"damage_per_level": 1.5,
 "damage_type": "fogo",
 "description": "Fogo ritual que aplica Brasa e Queimando.",
 "display_name": "Marca de Brasa",
 "effects": [{
-"amount": 12.0,
+"amount": 11.0,
 "kind": "damage"
 }, {
 "duration_seconds": 5.0,
 "kind": "dot",
 "status_id": "queimando",
-"tick_damage": 4.0
+"tick_damage": 3.5
 }],
 "enabled": true,
 "id": "marca_brasa",
@@ -1192,7 +1198,7 @@ collections = {
 "description": "Terra ritual que enraiza o alvo e reforca a guarda do conjurador.",
 "display_name": "Raizes de Pedra",
 "effects": [{
-"amount": 14.0,
+"amount": 12.0,
 "kind": "damage"
 }, {
 "duration_seconds": 5.0,
@@ -1233,9 +1239,9 @@ collections = {
 "unlock_level": 7.0,
 "version": 1.0
 }, {
-"base_damage": 14.0,
+"base_damage": 12.0,
 "cooldown_seconds": 6.0,
-"damage_per_level": 1.8,
+"damage_per_level": 1.55,
 "damage_type": "raio",
 "description": "Raio ritual que aplica Condutor e pode eletrificar alvos preparados.",
 "display_name": "Descarga Nervosa",
@@ -1243,7 +1249,7 @@ collections = {
 "amount": 14.0,
 "kind": "damage"
 }, {
-"duration_seconds": 6.0,
+"duration_seconds": 4.5,
 "kind": "status",
 "stacks": 1.0,
 "status_id": "condutor"
@@ -1270,7 +1276,7 @@ collections = {
 "duration_seconds": 6.0,
 "kind": "dot",
 "status_id": "decaimento",
-"tick_damage": 6.0
+"tick_damage": 5.5
 }],
 "enabled": true,
 "id": "putrefacao",
@@ -1383,9 +1389,9 @@ collections = {
 "version": 3.0,
 "weapon_type": "ritual_instrument"
 }, {
-"base_damage": 12.0,
-"cadence_seconds": 1.15,
-"damage_per_level": 1.55,
+"base_damage": 15.0,
+"cadence_seconds": 1.0,
+"damage_per_level": 1.9,
 "damage_type": "arcano",
 "description": "Instrumento ritual de controle mental, medo e compulsoes.",
 "display_name": "Grimorio do Veu",
@@ -1393,7 +1399,7 @@ collections = {
 "id": "grimorio_veu",
 "mode": "FIRST_SLICE",
 "qualities": [],
-"special_damage_multiplier": 2.4,
+"special_damage_multiplier": 2.8,
 "special_every_attacks": 4.0,
 "status_bias": "mental",
 "tags": ["FIRST_SLICE", "weapon", "ritual_instrument", "mental", "arcano"],
@@ -1417,9 +1423,9 @@ collections = {
 "version": 1.0,
 "weapon_type": "ritual_instrument"
 }, {
-"base_damage": 14.0,
-"cadence_seconds": 1.1,
-"damage_per_level": 1.75,
+"base_damage": 15.0,
+"cadence_seconds": 1.05,
+"damage_per_level": 1.85,
 "damage_type": "morte",
 "description": "Instrumento de Morte e Terra para protecao, summons e decaimento.",
 "display_name": "Cajado Ossario",
@@ -1427,16 +1433,16 @@ collections = {
 "id": "cajado_ossario",
 "mode": "FIRST_SLICE",
 "qualities": [],
-"special_damage_multiplier": 2.8,
+"special_damage_multiplier": 2.9,
 "special_every_attacks": 4.0,
 "status_bias": "funeral",
 "tags": ["FIRST_SLICE", "weapon", "ritual_instrument", "morte", "terra"],
 "version": 1.0,
 "weapon_type": "ritual_instrument"
 }, {
-"base_damage": 13.0,
-"cadence_seconds": 0.85,
-"damage_per_level": 1.65,
+"base_damage": 12.0,
+"cadence_seconds": 0.95,
+"damage_per_level": 1.55,
 "damage_type": "raio",
 "description": "Instrumento de Vento e Raio para interrupcao, velocidade e condutores.",
 "display_name": "Orbe da Tempestade",

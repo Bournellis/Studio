@@ -80,12 +80,12 @@ Deno.test("battle lab calculates power and classifies power bands", () => {
   const power = calculatePower(build);
   assertEquals(
     power,
-    1100,
+    1285,
     "power formula should match the documented contract",
   );
   assertEquals(
     classifyPowerBand(power, testModel().power_bands),
-    "band_003",
+    "band_004",
     "power band should match",
   );
 });

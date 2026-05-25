@@ -1,11 +1,12 @@
 {
   "schema_version": 1,
-  "model_id": "draxos_mobile_battle_lab_v2_character_rework",
-  "status": "CHARACTER_REWORK_ALPHA",
+  "model_id": "draxos_mobile_battle_lab_v3_initial_balance",
+  "status": "INITIAL_BALANCE_ALPHA",
   "notes": [
     "Offline battle balance lab for FIRST_SLICE_SIM.",
     "Character rework v2 uses ritual instruments, doutrines, familiars and the Arcano/Fisico/Sangue/Raio source taxonomy.",
-    "This model must not change combat numbers; it only generates builds, matchups and reports."
+    "This model must not change combat numbers; it only generates builds, matchups and reports.",
+    "Initial balance v1 reprices power around real equipped systems, lowers anti-stall dependence and splits Corvo pressagio from Inquietacao stacking."
   ],
   "output_dir": "docs/battle-lab/generated",
   "seed": "battle_lab_character_rework_20260525",
@@ -75,14 +76,14 @@
     {
       "id": "familiar_handler",
       "display_name": "Familiar Handler",
-      "role": "Duas spells e familiar para medir pressao sustentada por pet.",
-      "spell_preferences": ["sussurro_medo", "geada_ossos", "marca_brasa", "descarga_nervosa"],
+      "role": "Familiar com suporte leve para medir pressao sustentada por pet sem virar controlador elemental.",
+      "spell_preferences": ["sussurro_medo", "incisao_ritual", "mare_escura", "marca_brasa"],
       "passive_preferences": ["pacto_familiar", "mente_fria", "doutrina_pavor"],
-      "pet_preferences": ["corvo_pressagio", "cao_cinzas", "medusa_mare_fria", "serpe_tempestade"],
-      "weapon_level_ratio": 0.85,
-      "spell_level_ratio": 0.82,
+      "pet_preferences": ["corvo_pressagio", "olho_veu", "cao_cinzas", "sanguessuga_sacramental"],
+      "weapon_level_ratio": 0.78,
+      "spell_level_ratio": 0.72,
       "passive_level_ratio": 0.75,
-      "pet_level_ratio": 0.8,
+      "pet_level_ratio": 0.86,
       "quality_bias": 0
     },
     {

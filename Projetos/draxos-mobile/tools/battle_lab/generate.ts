@@ -423,8 +423,8 @@ const DAMAGE_TYPE_KEYS = [
   "sangue",
   "none",
 ];
-const COMBAT_PACE_HP_MULTIPLIER_BASE = 4.85;
-const COMBAT_PACE_HP_MULTIPLIER_PER_LEVEL = 0.121;
+const COMBAT_PACE_HP_MULTIPLIER_BASE = 3.85;
+const COMBAT_PACE_HP_MULTIPLIER_PER_LEVEL = 0.095;
 const NEAR_POWER_MAX_DELTA_PERCENT = 20;
 const RUN_OUTPUT_FILES = [
   "battle_lab_report.html",
@@ -517,12 +517,14 @@ export function calculatePower(build: CombatantBuild): number {
     (sum, level) => sum + level,
     0,
   );
-  return (build.level * 50) +
+  const petLevel = (build.petId ?? "") === "" ? 0 : build.petLevel ?? 0;
+  const passiveLevel = (build.passiveId ?? "") === "" ? 0 : build.passiveLevel ?? 0;
+  return (build.level * 42) +
     (build.weaponLevel * 30) +
-    (spellLevelsTotal * 20) +
-    ((build.petLevel ?? 0) * 15) +
-    ((build.passiveLevel ?? 0) * 10) +
-    (build.weaponQualityTier * 25);
+    (spellLevelsTotal * 35) +
+    (petLevel * 30) +
+    (passiveLevel * 22) +
+    (build.weaponQualityTier * 30);
 }
 
 export function classifyPowerBand(power: number, bands: PowerBand[]): string {
@@ -1243,7 +1245,7 @@ function progressionLabBuild(
   displayName: string,
   archetypeId: string,
   level: number,
-  power: number,
+  _power: number,
   build: CombatantBuild,
   seed: string,
 ): LabBuild {
@@ -1254,9 +1256,7 @@ function progressionLabBuild(
     displayName,
     level,
   };
-  const resolvedPower = Number.isFinite(power) && power >= 0
-    ? Math.round(power)
-    : calculatePower(combatBuild);
+  const resolvedPower = calculatePower(combatBuild);
   return {
     id,
     kind: "fixed",

@@ -82,9 +82,29 @@ The final source vocabulary is:
 | Water/Ice | Molhado, Resfriado, Lento, Congelado, Estilhacavel |
 | Earth/Physical | Enraizado, Fraturado, Vulneravel, Couraca |
 | Wind/Lightning | Desequilibrado, Condutor, Eletrificado, Atordoado |
-| Death | Decaimento, Marca Sepulcral, Carne Morta, Anti-Regeneracao |
+| Death | Pressagio, Decaimento, Marca Sepulcral, Carne Morta, Anti-Regeneracao |
 
 Status design rule: a status must have a clear family, counter-stat and role. Similar DoTs should not differ only by name.
+
+## Initial Balance V1 - 2026-05-25
+
+The first numeric pass after the rework is now the live alpha baseline:
+
+- Battle Lab official run: `2026-05-25_initial_balance_v01`.
+- Overall Battle Lab status: `PASS`.
+- Average duration: `21.13s`.
+- Anti-stall: `0.96%`.
+- Near-power dominance: `64.46% max`, inside the `<= 65%` review gate.
+
+Applied tuning direction:
+
+- Reduced global HP pacing from the post-rework placeholder so anti-stall is rare again.
+- Repriced power around equipped systems: level `42`, weapon level `30`, spell level total `35`, pet level `30`, passive level `22`, quality tier `30`.
+- Recalculated Battle Lab imported Progression Lab builds from their real combat loadout instead of trusting target power.
+- Split `corvo_pressagio` from `inquietacao`; Corvo now applies `pressagio` so it no longer stacks the same mental slow as `sussurro_medo`.
+- Softened Familiar, DoT and fire/blood pressure while strengthening `cajado_ossario` enough for Funeral/Summoner identities to function before late Death unlocks.
+
+Progression Lab remains `REVIEW`, not final balance, because premium gap and some 15h/20h level windows still need manual playtest.
 
 ## Ritual Instruments
 

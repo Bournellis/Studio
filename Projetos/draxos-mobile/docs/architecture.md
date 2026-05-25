@@ -254,7 +254,7 @@ Primeiro slice completo:
 - Bots simulados nao aparecem em ranking.
 - Ranking usa pontos de arena por season e snapshot no encerramento.
 
-Formula inicial de poder: `(Level x 50) + (ArmaLevel x 30) + (SpellLevelsTotal x 20) + (PetLevel x 15) + (PassiveLevelsTotal x 10) + (WeaponQualityTier x 25)`.
+Formula alpha de poder apos balance v1: `(Level x 42) + (ArmaLevel x 30) + (SpellLevelsTotal x 35) + (PetLevel x 30, se Familiar equipado) + (PassiveLevel x 22, se Doutrina equipada) + (WeaponQualityTier x 30)`.
 
 Formula inicial de ranking:
 

@@ -115,34 +115,43 @@ O Godot chama Deno por `draxos_mobile/battle_lab/deno_command` e
 
 ## Tuning Atual
 
-Ultima rodada viva: rework de personagem `2026-05-25`.
+Ultima rodada viva: `2026-05-25_initial_balance_v01`.
+
+Resultado:
+
+- Status geral: `PASS`.
+- Batalhas/builds: `3132` / `212`.
+- Duracao media: `21.13s`.
+- Anti-stall: `0.96%`.
+- Dominancia em poder proximo: `64.46% max`, dentro da meta `<= 65%`.
 
 Mudanca aplicada:
 
-- Battle Lab passou a usar Instrumentos Rituais, Doutrinas e Familiares.
-- A taxonomia de dano foi migrada para
+- Battle Lab v3 usa Instrumentos Rituais, Doutrinas, Familiares e a taxonomia
   Arcano/Fisico/Fogo/Agua/Gelo/Terra/Vento/Raio/Veneno/Sangue/Morte.
-- Mental deixou de ser dano e virou familia de status para medo, terror,
-  confusao e compulsao.
-- O gerador agora valida `weapon_id`/`weaponId` nos builds, CSVs e bridge Godot.
-- Archetypes antigos foram substituidos por `starter_instrument`,
-  `mental_controller`, `elemental_mixer`, `familiar_handler`, `summoner`,
-  `defensive_occultist`, `dot_pressure` e `funeral_burst`.
+- Poder agora e recalculado pelo loadout real de combate, inclusive para saves e
+  bots importados do Progression Lab.
+- Sistemas equipados ficaram mais caros na formula de poder: spells, Familiar e
+  Doutrina deixam de parecer baratos em matchmaking.
+- `corvo_pressagio` aplica `pressagio`, nao mais `inquietacao`, para evitar stack
+  duplo com `sussurro_medo`.
+- Vida global, DoTs, Fogo/Sangue, Familiar e `cajado_ossario` receberam o primeiro
+  ajuste numerico para tirar o pos-rework de `CRITICAL`.
 
 Leitura:
 
 - O baseline 2026-05-21 permanece arquivado como historico pre-rework.
 - Deltas numericos contra runs antigas devem ser lidos como alerta de
-  compatibilidade, nao como prova direta de balanceamento.
-- A proxima rodada de tuning deve medir dominancia por Instrumento/Familiar,
-  intensidade de status mental e pressao de Sangue/Veneno/Morte.
+  compatibilidade, nao como prova direta de balanceamento final.
+- Proxima rodada deve focar playtest manual: premium gap, janelas 15h/20h e
+  sensacao de Funeral/Familiar em replay visual.
 
 Validacoes rodadas:
 
 ```powershell
 npx -y deno test server/tests/first_slice_simulator_test.ts
 npx -y deno test tools/battle_lab
-npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --compare-with 2026-05-21_archetype_source_tuning_v02
+npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --archive-run 2026-05-25_initial_balance_v01 --compare-with 2026-05-21_archetype_source_tuning_v02
 cd server/functions
 npx -y deno task check
 npx -y deno task lint

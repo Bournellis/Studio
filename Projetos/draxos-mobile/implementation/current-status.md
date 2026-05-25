@@ -4,7 +4,7 @@
 - Active Project Name: `draxos-mobile`
 - Active Surface: `Track 02 - Progression Lab`
 - Active Track: `Track 02 - Progression Lab`
-- Active Track Status: `IN_PROGRESS - CHARACTER SYSTEMS REWORK IMPLEMENTED`
+- Active Track Status: `IN_PROGRESS - INITIAL BALANCE V1 IMPLEMENTED`
 - Current Operational Baseline: `Track 00 completa com T00-P01 a T00-P13 concluidos, Track 01 completa para hardening do alpha PC local, e Track 02 Progression Lab com tooling v1 implementado. Character Systems Rework 2026-05-25 implementado em docs, catalogo, simulador, Battle Lab, Progression Lab, seeds, migrations e testes: armas viraram Instrumentos Rituais, passivas viraram Doutrinas, pets viraram Familiares, Mental virou familia de status e as fontes vivas sao Arcano/Fisico/Fogo/Agua/Gelo/Terra/Vento/Raio/Veneno/Sangue/Morte. Projeto Godot 4.6.2 tem boot hub alpha com abas/telas rolaveis, Voltar/Esc, confirmacoes simples para mutacoes, feedback de primeira sessao/refresh/offline/pre-condicoes, busy states, reset seguro de cache/sessao local, session_id local persistido para telemetria, GUT 9.6.0, validate integrado, export smoke Android/PC/Web, autoloads UiTokens/AssetIds/ContentLibrary/SessionStore/SupabaseClient, pipeline data/definitions -> data/generated/draxos_mobile_catalog.tres, conteudo real inicial, cliente HTTPRequest para Auth anonimo, account/battle/base/social/competition/monetization/telemetry, replay rico de battle_log_v1 e fluxos minimos de Base/Social/Competicao/Monetizacao. Battle Lab agora tem runner Deno offline, bridge request/response para Godot, scratch runs fora do Git, replays amostrados com battle_log_v1 completo, compatibilidade/stale em historico e tela dev-only no Refugio para montar builds e assistir arena debug 2D, excluida dos exports. Supabase local esta configurado no layout oficial supabase/, db reset passa quando runtime local esta ativo, healthcheck responde pelo gateway local, conta guest MVP cria/recupera estado server-authoritative, battle/request server-authoritative grava log/recompensa idempotente, FIRST_SLICE_SIM gera replay deterministico completo, Base Manager v0 implementa estruturas permanentes/fila/coleta offline/ledger/idempotencia, Social/Competicao v0 implementa guilda/chat por polling, matchmaking preview com bot fallback e ranking de season sem bots, Monetizacao v0 implementa Battle Pass/Diamante/rewards/premium/ledger/idempotencia, e telemetry/client-event grava eventos client nao autoritativos em telemetry_events sem mutar gameplay. Track 02 gera 25 saves saudaveis 2h-20h, 75 bots, relatorios offline, seeder Supabase local, cache .progression_lab_scratch, matriz Battle Lab e fluxo manual dev-only no Godot para calibrar recompensa, scaling, poder e moeda premium.`
 
 ---
@@ -15,14 +15,14 @@
 |---|---|---|
 | MVP tecnico minimo | Completo | Loop guest -> battle/request -> replay placeholder -> latest/state validado; cliente nao calcula resultado, recompensa ou progressao |
 | Primeiro slice completo | Completo para alpha | T00-P13 completo; Track 01 hardening aplicado para PC local |
-| Design pendente | T00-P09 completo | DMOB-D047 resolvido pelo Character Systems Rework 2026-05-25; D006-D007 e D029-D032 seguem calibraveis via simulador/playtest; D030 voltou a exigir rodada numerica porque Battle Lab pos-rework marcou `CRITICAL` por anti-stall/dominancia |
+| Design pendente | T00-P09 completo | DMOB-D047 resolvido pelo Character Systems Rework 2026-05-25; D030 recebeu balance v1 com Battle Lab `PASS`; D006-D007 e D029-D032 seguem calibraveis via simulador/playtest |
 | Economia e seasons | Baseline calibravel | `../docs/economy/README.md`, JSON versionado e gerador Deno/TypeScript criados; outputs em `../docs/economy/generated/` |
-| Progression Lab | Ferramenta v1 atualizada para rework | Gera `25` saves, `75` bots, relatorios HTML/CSV/JSON, seeder Supabase local, cache `.progression_lab_scratch/`, tela dev-only no Refugio e matriz Progression Lab no Battle Lab; status atual `CRITICAL` por checks calibraveis de progressao, falta rodada manual real no editor com Supabase local |
+| Progression Lab | Ferramenta v1 atualizada para balance v1 | Gera `25` saves, `75` bots, relatorios HTML/CSV/JSON, seeder Supabase local, cache `.progression_lab_scratch/`, tela dev-only no Refugio e matriz Progression Lab no Battle Lab; status atual `REVIEW` por premium gap e janelas 15h/20h calibraveis, falta rodada manual real no editor com Supabase local |
 | Reuso entre projetos | Documentado | Fonte viva: `../docs/reuse-map.md`; estrategia conservadora |
 | Contratos tecnicos | Definidos | Fonte inicial: `../docs/contracts/` |
 | Godot project | Alpha PC local pronto + Battle Lab/Progression Lab dev | Hub alpha hardenizado, autoloads, `.gutconfig.json`, content generator, catalogo gerado, `SessionStore` com `session_id` e `apply_snapshot_cache`, `SupabaseClient` com telemetria, `BattleLogPresenter`, telas dev-only do Battle Lab e Progression Lab e GUT |
 | Supabase project | Conta guest + battle MVP + first-slice sim + base/social/competicao/monetizacao/telemetria v0 prontos | Layout `supabase/`, migrations MVP/base/social/ranking/monetizacao, Auth anonimo, healthcheck, `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, seeds `FIRST_SLICE`, JWT config de funcoes e simulador compartilhado configurados |
-| Validacao | Verde tecnico; tuning em alerta | Godot validate + GUT `26/26` passam; smoke de exports passa; Deno check/lint/test passam; dry-run do seeder seleciona `25/25` saves; Battle Lab e Progression Lab geram outputs pos-rework com status `CRITICAL` esperado ate rodada numerica; Supabase runtime real ainda precisa rodada manual com `SUPABASE_SERVICE_ROLE_KEY` |
+| Validacao | Verde tecnico; tuning manual pendente | Godot validate + GUT `26/26` passam; smoke de exports passa; Deno check/lint/test passam; dry-run do seeder seleciona `25/25` saves; Battle Lab balance v1 gera `PASS`; Progression Lab gera `REVIEW`; Supabase runtime real ainda precisa rodada manual com `SUPABASE_SERVICE_ROLE_KEY` |
 
 ---
 
@@ -34,8 +34,8 @@
 - Edge Function `battle/request`, migrations e seeds agora usam `varinha_cinzas`, `sussurro_medo`, `doutrina_pavor` e `corvo_pressagio` como baseline de conta/fixture.
 - Battle Lab, Progression Lab, tela dev-only do Battle Lab, testes Godot e testes Deno foram atualizados para validar `weapon_id` e os novos ids.
 - Baseline de tuning 2026-05-21 permanece arquivado como historico pre-rework; comparacoes numericas contra ele servem apenas como alerta de compatibilidade.
-- Rodada pos-rework: Progression Lab gerou `25` saves e `75` bots com status `CRITICAL`; Battle Lab gerou `3132` batalhas e `212` builds com status `CRITICAL`, duracao media `25.48s`, anti-stall `26.98%` e dominancia em poder proximo maxima `84.79%`.
-- Proxima calibracao deve mirar anti-stall, dominancia por Instrumento/Familiar, status mental, pressao de Sangue/Veneno/Morte e pesos de poder/matchmaking.
+- Initial Balance v1: Battle Lab run `2026-05-25_initial_balance_v01` gerou `3132` batalhas e `212` builds com status `PASS`, duracao media `21.13s`, anti-stall `0.96%` e dominancia em poder proximo maxima `64.46%`; Progression Lab gerou `25` saves e `75` bots com status `REVIEW`.
+- Proxima calibracao deve mirar premium gap 10h, janelas 15h/20h, sensacao manual de Familiar/Funeral e pesos de poder apos playtest no Godot.
 
 ---
 
@@ -154,9 +154,9 @@ Ultimo resultado local:
 - `npx -y deno test server/tests/first_slice_simulator_test.ts`: passou.
 - `npx -y deno test tools/battle_lab`: passou.
 - `npx -y deno test tools/progression_lab`: passou.
-- `npx -y deno run --allow-read --allow-write tools/progression_lab/generate.ts`: passou, gerando `25` saves, `75` bots e status `CRITICAL` pos-rework para calibracao.
+- `npx -y deno run --allow-read --allow-write tools/progression_lab/generate.ts`: passou, gerando `25` saves, `75` bots e status `REVIEW` para calibracao manual.
 - `npx -y deno run --allow-read tools/progression_lab/seed_supabase.ts --dry-run --all`: passou, selecionando `25/25` saves.
-- `npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --compare-with 2026-05-21_archetype_source_tuning_v02`: passou, gerando `3132` batalhas, `212` builds, matriz Progression Lab e status `CRITICAL` pos-rework para calibracao.
+- `npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --archive-run 2026-05-25_initial_balance_v01 --compare-with 2026-05-21_archetype_source_tuning_v02`: passou, gerando `3132` batalhas, `212` builds, matriz Progression Lab e status `PASS`.
 
 Server standalone:
 
