@@ -1,0 +1,194 @@
+{
+  "schema_version": 1,
+  "model_id": "draxos_mobile_progression_lab_v1",
+  "status": "BASELINE_ALPHA",
+  "output_dir": "docs/progression-lab/generated",
+  "scratch_dir": ".progression_lab_scratch",
+  "seed": "progression_lab_alpha_20260525",
+  "cap": 40,
+  "milestones": [
+    { "id": "2h", "hours": 2, "target_level_min": 4, "target_level_max": 9 },
+    { "id": "5h", "hours": 5, "target_level_min": 7, "target_level_max": 14 },
+    {
+      "id": "10h",
+      "hours": 10,
+      "target_level_min": 11,
+      "target_level_max": 22
+    },
+    {
+      "id": "15h",
+      "hours": 15,
+      "target_level_min": 15,
+      "target_level_max": 30
+    },
+    { "id": "20h", "hours": 20, "target_level_min": 18, "target_level_max": 36 }
+  ],
+  "profiles": [
+    {
+      "id": "free_50_rewards",
+      "display_name": "Free 50% rewards",
+      "description": "Free, completes half of routine rewards.",
+      "reward_completion": 0.5,
+      "battle_pass_completion": 0.45,
+      "battles_per_hour": 8,
+      "checkins_per_hour": 0.8,
+      "premium_pass": false,
+      "second_construction_queue": false,
+      "store_pack_intensity": 0,
+      "speedup_multiplier": 1,
+      "build_ratio": 0.58,
+      "base_ratio": 0.52
+    },
+    {
+      "id": "free_100_rewards",
+      "display_name": "Free 100% rewards",
+      "description": "Free, completes all routine rewards.",
+      "reward_completion": 1,
+      "battle_pass_completion": 1,
+      "battles_per_hour": 10,
+      "checkins_per_hour": 1,
+      "premium_pass": false,
+      "second_construction_queue": false,
+      "store_pack_intensity": 0,
+      "speedup_multiplier": 1,
+      "build_ratio": 0.7,
+      "base_ratio": 0.65
+    },
+    {
+      "id": "freemium_basic",
+      "display_name": "Freemium basic",
+      "description": "Battle Pass plus second construction queue, 80% rewards.",
+      "reward_completion": 0.8,
+      "battle_pass_completion": 0.8,
+      "battles_per_hour": 10,
+      "checkins_per_hour": 1,
+      "premium_pass": true,
+      "second_construction_queue": true,
+      "store_pack_intensity": 0,
+      "speedup_multiplier": 1.08,
+      "build_ratio": 0.76,
+      "base_ratio": 0.78
+    },
+    {
+      "id": "spender_light",
+      "display_name": "Light spender",
+      "description": "Battle Pass, second queue and light store spend, 100% rewards.",
+      "reward_completion": 1,
+      "battle_pass_completion": 1,
+      "battles_per_hour": 11,
+      "checkins_per_hour": 1.1,
+      "premium_pass": true,
+      "second_construction_queue": true,
+      "store_pack_intensity": 0.45,
+      "speedup_multiplier": 1.18,
+      "build_ratio": 0.82,
+      "base_ratio": 0.86
+    },
+    {
+      "id": "max_spender",
+      "display_name": "Max spender stress",
+      "description": "Maximum practical spend/time stress profile.",
+      "reward_completion": 1,
+      "battle_pass_completion": 1,
+      "battles_per_hour": 14,
+      "checkins_per_hour": 1.5,
+      "premium_pass": true,
+      "second_construction_queue": true,
+      "store_pack_intensity": 1,
+      "speedup_multiplier": 1.55,
+      "build_ratio": 0.94,
+      "base_ratio": 1
+    }
+  ],
+  "source_values": {
+    "battle": {
+      "xp": 42,
+      "almas": 3.5,
+      "energia": 1.8,
+      "sangue": 0.9,
+      "cristais": 0.15,
+      "ossos": 0.16,
+      "diamante": 0
+    },
+    "routine_reward_hour_full": {
+      "xp": 120,
+      "almas": 9,
+      "energia": 8,
+      "sangue": 2.8,
+      "cristais": 1.4,
+      "ossos": 1,
+      "diamante": 0
+    },
+    "free_pass_hour_full": {
+      "xp": 35,
+      "almas": 3.5,
+      "energia": 3.5,
+      "sangue": 1.2,
+      "cristais": 0.8,
+      "ossos": 0.4,
+      "diamante": 0.1
+    },
+    "premium_pass_hour_full": {
+      "xp": 65,
+      "almas": 6.5,
+      "energia": 6.5,
+      "sangue": 2.8,
+      "cristais": 1.6,
+      "ossos": 0.8,
+      "diamante": 0.18
+    },
+    "base_checkin_hour": {
+      "xp": 0,
+      "almas": 3,
+      "energia": 14,
+      "sangue": 1.5,
+      "cristais": 1,
+      "ossos": 0.35,
+      "diamante": 0
+    },
+    "store_pack_hour": {
+      "xp": 0,
+      "almas": 12,
+      "energia": 22,
+      "sangue": 4.5,
+      "cristais": 2.2,
+      "ossos": 1.4,
+      "diamante": -18
+    }
+  },
+  "costs": {
+    "weapon_almas": { "min": 10, "coefficient": 0.2 },
+    "spell_almas": { "min": 10, "coefficient": 0.2 },
+    "pet_sangue": { "min": 5, "coefficient": 0.15 },
+    "passive_cristais": { "min": 5, "coefficient": 0.1 },
+    "base_structure_energia": { "min": 20, "coefficient": 0.5 },
+    "weapon_quality_thresholds": [0, 120, 360, 720, 1200]
+  },
+  "power_weights": {
+    "level": 50,
+    "weapon_level": 30,
+    "spell_level": 20,
+    "pet_level": 15,
+    "passive_level": 10,
+    "weapon_quality_tier": 25,
+    "base_stats_level": 8,
+    "base_average_level": 4
+  },
+  "thresholds": {
+    "premium_power_gap_review_percent": 35,
+    "premium_power_gap_critical_percent": 55,
+    "negative_resource_review": -1,
+    "negative_resource_critical": -25,
+    "bot_power_offsets_percent": [-12, 0, 12]
+  },
+  "bot_archetypes": [
+    "starter_wand",
+    "cosmic_apprentice",
+    "elemental_mixer",
+    "pet_handler",
+    "summoner",
+    "defensive_caster",
+    "dot_pressure",
+    "burst_caster"
+  ]
+}

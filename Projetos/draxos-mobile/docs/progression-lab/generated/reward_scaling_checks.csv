@@ -1,0 +1,51 @@
+id,profile_id,milestone_id,status,observed,target,note
+level_window,free_50_rewards,2h,PASS,8,4-9,Level should stay inside the intended first-hours window.
+resource_debt,free_50_rewards,2h,PASS,0,>= -1,Healthy save should not require large hidden resource debt.
+level_window,free_50_rewards,5h,PASS,10,7-14,Level should stay inside the intended first-hours window.
+resource_debt,free_50_rewards,5h,PASS,0,>= -1,Healthy save should not require large hidden resource debt.
+level_window,free_50_rewards,10h,PASS,12,11-22,Level should stay inside the intended first-hours window.
+resource_debt,free_50_rewards,10h,PASS,0,>= -1,Healthy save should not require large hidden resource debt.
+level_window,free_50_rewards,15h,REVIEW,14,15-30,Level should stay inside the intended first-hours window.
+resource_debt,free_50_rewards,15h,PASS,0,>= -1,Healthy save should not require large hidden resource debt.
+level_window,free_50_rewards,20h,REVIEW,15,18-36,Level should stay inside the intended first-hours window.
+resource_debt,free_50_rewards,20h,PASS,0,>= -1,Healthy save should not require large hidden resource debt.
+level_window,free_100_rewards,2h,PASS,8,4-9,Level should stay inside the intended first-hours window.
+resource_debt,free_100_rewards,2h,PASS,0,>= -1,Healthy save should not require large hidden resource debt.
+level_window,free_100_rewards,5h,PASS,11,7-14,Level should stay inside the intended first-hours window.
+resource_debt,free_100_rewards,5h,PASS,0,>= -1,Healthy save should not require large hidden resource debt.
+level_window,free_100_rewards,10h,PASS,14,11-22,Level should stay inside the intended first-hours window.
+resource_debt,free_100_rewards,10h,PASS,0,>= -1,Healthy save should not require large hidden resource debt.
+level_window,free_100_rewards,15h,PASS,16,15-30,Level should stay inside the intended first-hours window.
+resource_debt,free_100_rewards,15h,PASS,0,>= -1,Healthy save should not require large hidden resource debt.
+level_window,free_100_rewards,20h,REVIEW,17,18-36,Level should stay inside the intended first-hours window.
+resource_debt,free_100_rewards,20h,PASS,0,>= -1,Healthy save should not require large hidden resource debt.
+level_window,freemium_basic,2h,PASS,9,4-9,Level should stay inside the intended first-hours window.
+resource_debt,freemium_basic,2h,PASS,0,>= -1,Healthy save should not require large hidden resource debt.
+level_window,freemium_basic,5h,PASS,11,7-14,Level should stay inside the intended first-hours window.
+resource_debt,freemium_basic,5h,PASS,0,>= -1,Healthy save should not require large hidden resource debt.
+level_window,freemium_basic,10h,PASS,14,11-22,Level should stay inside the intended first-hours window.
+resource_debt,freemium_basic,10h,PASS,0,>= -1,Healthy save should not require large hidden resource debt.
+level_window,freemium_basic,15h,PASS,16,15-30,Level should stay inside the intended first-hours window.
+resource_debt,freemium_basic,15h,PASS,0,>= -1,Healthy save should not require large hidden resource debt.
+level_window,freemium_basic,20h,REVIEW,17,18-36,Level should stay inside the intended first-hours window.
+resource_debt,freemium_basic,20h,PASS,0,>= -1,Healthy save should not require large hidden resource debt.
+level_window,spender_light,2h,PASS,9,4-9,Level should stay inside the intended first-hours window.
+resource_debt,spender_light,2h,PASS,0,>= -1,Healthy save should not require large hidden resource debt.
+level_window,spender_light,5h,PASS,12,7-14,Level should stay inside the intended first-hours window.
+resource_debt,spender_light,5h,PASS,0,>= -1,Healthy save should not require large hidden resource debt.
+level_window,spender_light,10h,PASS,15,11-22,Level should stay inside the intended first-hours window.
+resource_debt,spender_light,10h,PASS,0,>= -1,Healthy save should not require large hidden resource debt.
+level_window,spender_light,15h,PASS,16,15-30,Level should stay inside the intended first-hours window.
+resource_debt,spender_light,15h,PASS,0,>= -1,Healthy save should not require large hidden resource debt.
+level_window,spender_light,20h,PASS,18,18-36,Level should stay inside the intended first-hours window.
+resource_debt,spender_light,20h,PASS,0,>= -1,Healthy save should not require large hidden resource debt.
+level_window,max_spender,2h,PASS,9,4-9,Level should stay inside the intended first-hours window.
+resource_debt,max_spender,2h,PASS,0,>= -1,Healthy save should not require large hidden resource debt.
+level_window,max_spender,5h,PASS,12,7-14,Level should stay inside the intended first-hours window.
+resource_debt,max_spender,5h,PASS,0,>= -1,Healthy save should not require large hidden resource debt.
+level_window,max_spender,10h,PASS,15,11-22,Level should stay inside the intended first-hours window.
+resource_debt,max_spender,10h,PASS,0,>= -1,Healthy save should not require large hidden resource debt.
+level_window,max_spender,15h,PASS,17,15-30,Level should stay inside the intended first-hours window.
+resource_debt,max_spender,15h,PASS,0,>= -1,Healthy save should not require large hidden resource debt.
+level_window,max_spender,20h,PASS,19,18-36,Level should stay inside the intended first-hours window.
+resource_debt,max_spender,20h,PASS,0,>= -1,Healthy save should not require large hidden resource debt.

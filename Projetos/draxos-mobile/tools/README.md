@@ -8,6 +8,7 @@ Ferramentas de desenvolvimento e validacao.
 - `create_boot_scene.gd` - gera a cena boot minima via API do Godot.
 - `economy_simulator/` - fonte JSON e gerador Deno/TypeScript para a planilha de economia de seasons.
 - `battle_lab/` - runner Deno do laboratorio de combate, usado pelo HTML/CSV/JSON e pela tela dev-only Godot.
+- `progression_lab/` - modelo, gerador e seeder local para saves saudaveis 2h-20h, relatorios, bots e Progression Lab Dev.
 
 Validacao local:
 
@@ -28,4 +29,12 @@ Battle Lab:
 ```powershell
 cd D:\Estudio\Projetos\draxos-mobile
 npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --compare-with 2026-05-21_archetype_source_tuning_v02
+```
+
+Progression Lab:
+
+```powershell
+cd D:\Estudio\Projetos\draxos-mobile
+npx -y deno run --allow-read --allow-write tools/progression_lab/generate.ts
+npx -y deno run --allow-read tools/progression_lab/seed_supabase.ts --dry-run --all
 ```

@@ -114,21 +114,21 @@
   </header>
   <main>
     <div class="cards">
-      <div class="card"><div class="label">Battles</div><div class="value">1680</div></div>
-      <div class="card"><div class="label">Builds</div><div class="value">112</div></div>
-      <div class="card"><div class="label">Avg duration</div><div class="value">18.91s</div></div>
+      <div class="card"><div class="label">Battles</div><div class="value">3132</div></div>
+      <div class="card"><div class="label">Builds</div><div class="value">212</div></div>
+      <div class="card"><div class="label">Avg duration</div><div class="value">18.55s</div></div>
       <div class="card"><div class="label">Median</div><div class="value">18.7s</div></div>
       <div class="card"><div class="label">Short</div><div class="value">0%</div></div>
       <div class="card"><div class="label">Long</div><div class="value">0%</div></div>
-      <div class="card"><div class="label">Anti-stall</div><div class="value">0.12%</div></div>
-      <div class="card"><div class="label">Raw dominance</div><div class="value">77.62%</div></div>
-      <div class="card"><div class="label">Near power</div><div class="value">70.45%</div></div>
+      <div class="card"><div class="label">Anti-stall</div><div class="value">0.06%</div></div>
+      <div class="card"><div class="label">Raw dominance</div><div class="value">76.22%</div></div>
+      <div class="card"><div class="label">Near power</div><div class="value">68.73%</div></div>
     </div>
 
     <div class="grid">
       <section>
         <h2>O Que Olhar Primeiro</h2>
-        <ul><li>REVIEW: near_power_dominance observed 70.45% max / 25% min, target max &lt;= 65%.</li>
+        <ul><li>REVIEW: near_power_dominance observed 68.73% max / 5.15% min, target max &lt;= 65%.</li>
 <li>Critical outlier: RAW_STRESS_DOMINANCE on pet_handler.</li>
 <li>Review first matchup: STOMP L40_M0036 (L40_elemental_mixer_fixed vs L40_starter_wand_r1).</li></ul>
       </section>
@@ -136,12 +136,12 @@
         <h2>Checks</h2>
         <table>
           <thead><tr><th>Status</th><th>Check</th><th>Observed</th><th>Target</th><th>Note</th></tr></thead>
-          <tbody><tr><td><span class="badge pass">PASS</span></td><td>average_duration_target</td><td>18.91s</td><td>18-28s</td><td>Average battle duration should sit near the target playtest window.</td></tr>
+          <tbody><tr><td><span class="badge pass">PASS</span></td><td>average_duration_target</td><td>18.55s</td><td>18-28s</td><td>Average battle duration should sit near the target playtest window.</td></tr>
 <tr><td><span class="badge pass">PASS</span></td><td>short_battle_rate</td><td>0%</td><td>&lt;= 20%</td><td>Too many short battles suggest burst or low HP scaling issues.</td></tr>
 <tr><td><span class="badge pass">PASS</span></td><td>long_battle_rate</td><td>0%</td><td>&lt;= 20%</td><td>Too many long battles suggest defensive scaling or low damage pressure.</td></tr>
-<tr><td><span class="badge pass">PASS</span></td><td>anti_stall_rate</td><td>0.12%</td><td>&lt;= 5%</td><td>Anti-stall should be rare in normal same-level matchups.</td></tr>
-<tr><td><span class="badge review">REVIEW</span></td><td>near_power_dominance</td><td>70.45% max / 25% min</td><td>max &lt;= 65%</td><td>Dominance uses &lt;= 20% power delta and excludes same-archetype mirrors.</td></tr>
-<tr><td><span class="badge pass">PASS</span></td><td>level_coverage</td><td>7/7</td><td>7/7</td><td>Every configured level checkpoint should produce matchups.</td></tr></tbody>
+<tr><td><span class="badge pass">PASS</span></td><td>anti_stall_rate</td><td>0.06%</td><td>&lt;= 5%</td><td>Anti-stall should be rare in normal same-level matchups.</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>near_power_dominance</td><td>68.73% max / 5.15% min</td><td>max &lt;= 65%</td><td>Dominance uses &lt;= 20% power delta and excludes same-archetype mirrors.</td></tr>
+<tr><td><span class="badge pass">PASS</span></td><td>level_coverage</td><td>7/7 configured, 16 total</td><td>7/7</td><td>Every configured level checkpoint should produce matchups.</td></tr></tbody>
         </table>
       </section>
     </div>
@@ -150,14 +150,14 @@
       <h2>Near Power Archetypes</h2>
       <table>
         <thead><tr><th>Archetype</th><th>Total</th><th>Win rate</th><th>Avg duration</th><th>Short</th><th>Long</th><th>Anti-stall</th><th>Status</th></tr></thead>
-        <tbody><tr><td>Starter Wand</td><td>84</td><td>25%</td><td>21.72s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>Cosmic Apprentice</td><td>286</td><td>40.21%</td><td>18.94s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>Elemental Mixer</td><td>264</td><td>58.33%</td><td>18.48s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>Pet Handler</td><td>308</td><td>70.45%</td><td>19.57s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>Summoner</td><td>268</td><td>47.01%</td><td>17.95s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>Defensive Caster</td><td>294</td><td>46.94%</td><td>20.49s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>DoT Pressure</td><td>278</td><td>33.45%</td><td>19.01s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>Burst Caster</td><td>270</td><td>60%</td><td>17.78s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr></tbody>
+        <tbody><tr><td>Starter Wand</td><td>408</td><td>5.15%</td><td>19.34s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>Cosmic Apprentice</td><td>336</td><td>46.43%</td><td>18.59s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>Elemental Mixer</td><td>542</td><td>48.15%</td><td>18.81s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>Pet Handler</td><td>598</td><td>68.73%</td><td>18.56s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>Summoner</td><td>316</td><td>52.85%</td><td>17.82s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>Defensive Caster</td><td>342</td><td>51.75%</td><td>20.39s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>DoT Pressure</td><td>326</td><td>36.5%</td><td>18.87s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>Burst Caster</td><td>652</td><td>68.71%</td><td>17.86s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr></tbody>
       </table>
     </section>
 
@@ -165,14 +165,14 @@
       <h2>Raw Stress Archetypes</h2>
       <table>
         <thead><tr><th>Archetype</th><th>Total</th><th>Win rate</th><th>Avg duration</th><th>Short</th><th>Long</th><th>Anti-stall</th><th>Status</th></tr></thead>
-        <tbody><tr><td>Starter Wand</td><td>210</td><td>14.29%</td><td>19.61s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>Cosmic Apprentice</td><td>210</td><td>50.95%</td><td>18.84s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>Elemental Mixer</td><td>210</td><td>66.67%</td><td>18.51s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>Pet Handler</td><td>210</td><td>77.62%</td><td>19.37s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge critical">CRITICAL</span></td></tr>
-<tr><td>Summoner</td><td>210</td><td>66.67%</td><td>18.04s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>Defensive Caster</td><td>210</td><td>59.05%</td><td>20.62s</td><td>0%</td><td>0%</td><td>0.95%</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>DoT Pressure</td><td>210</td><td>46.19%</td><td>18.78s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>Burst Caster</td><td>210</td><td>76.67%</td><td>17.46s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge critical">CRITICAL</span></td></tr></tbody>
+        <tbody><tr><td>Starter Wand</td><td>541</td><td>11.28%</td><td>19.58s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>Cosmic Apprentice</td><td>242</td><td>54.96%</td><td>18.52s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>Elemental Mixer</td><td>436</td><td>53.44%</td><td>18.51s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>Pet Handler</td><td>450</td><td>76.22%</td><td>18.37s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>Summoner</td><td>242</td><td>69.42%</td><td>17.9s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>Defensive Caster</td><td>242</td><td>61.57%</td><td>20.45s</td><td>0%</td><td>0%</td><td>0.83%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>DoT Pressure</td><td>242</td><td>48.76%</td><td>18.66s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>Burst Caster</td><td>737</td><td>75.31%</td><td>17.48s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge critical">CRITICAL</span></td></tr></tbody>
       </table>
     </section>
 
@@ -185,10 +185,27 @@
 <tr><td>3</td><td>band_002</td><td>150</td><td>81.33%</td><td>18.18s</td><td>18.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge critical">CRITICAL</span></td></tr>
 <tr><td>7</td><td>band_002</td><td>30</td><td>6.67%</td><td>19.03s</td><td>19.2s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
 <tr><td>7</td><td>band_003</td><td>210</td><td>59.05%</td><td>18.4s</td><td>17.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>10</td><td>band_003</td><td>180</td><td>43.89%</td><td>18.71s</td><td>18.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>10</td><td>band_004</td><td>60</td><td>78.33%</td><td>16.02s</td><td>15.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge critical">CRITICAL</span></td></tr>
-<tr><td>15</td><td>band_003</td><td>30</td><td>3.33%</td><td>17.8s</td><td>17.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>15</td><td>band_004</td><td>210</td><td>61.43%</td><td>17.18s</td><td>16.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>8</td><td>band_002</td><td>7</td><td>0%</td><td>21.84s</td><td>21.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>8</td><td>band_003</td><td>49</td><td>61.22%</td><td>20.86s</td><td>20.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>9</td><td>band_003</td><td>132</td><td>56.06%</td><td>18.49s</td><td>18.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>10</td><td>band_003</td><td>304</td><td>45.39%</td><td>18.95s</td><td>19.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>10</td><td>band_004</td><td>76</td><td>82.89%</td><td>15.9s</td><td>15.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>11</td><td>band_003</td><td>28</td><td>25%</td><td>18.77s</td><td>18.2s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>11</td><td>band_004</td><td>28</td><td>89.29%</td><td>17.77s</td><td>17.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>12</td><td>band_003</td><td>33</td><td>24.24%</td><td>18.52s</td><td>17.2s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>12</td><td>band_004</td><td>99</td><td>63.64%</td><td>16.97s</td><td>15.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>14</td><td>band_003</td><td>11</td><td>0%</td><td>20.97s</td><td>18.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>14</td><td>band_004</td><td>121</td><td>64.46%</td><td>19.27s</td><td>18.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>15</td><td>band_003</td><td>54</td><td>9.26%</td><td>18.57s</td><td>17.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>15</td><td>band_004</td><td>675</td><td>55.85%</td><td>17.23s</td><td>16.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>15</td><td>band_005</td><td>27</td><td>85.19%</td><td>15.26s</td><td>14.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>16</td><td>band_004</td><td>110</td><td>48.18%</td><td>19.28s</td><td>18.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>16</td><td>band_005</td><td>22</td><td>95.45%</td><td>17.11s</td><td>17.2s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>17</td><td>band_004</td><td>77</td><td>37.66%</td><td>18.98s</td><td>19.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>17</td><td>band_005</td><td>55</td><td>80%</td><td>16.84s</td><td>16.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>18</td><td>band_004</td><td>3</td><td>0%</td><td>18.03s</td><td>18.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>18</td><td>band_005</td><td>9</td><td>77.78%</td><td>18.03s</td><td>17.2s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>19</td><td>band_005</td><td>12</td><td>75%</td><td>15.7s</td><td>15.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
 <tr><td>25</td><td>band_004</td><td>30</td><td>3.33%</td><td>18.57s</td><td>17.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge review">REVIEW</span></td></tr>
 <tr><td>25</td><td>band_005</td><td>210</td><td>60.48%</td><td>17.48s</td><td>16.7s</td><td>0%</td><td>0%</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
 <tr><td>40</td><td>band_005</td><td>240</td><td>51.67%</td><td>20.45s</td><td>19.2s</td><td>0%</td><td>0%</td><td>0.83%</td><td><span class="badge pass">PASS</span></td></tr></tbody>
@@ -199,62 +216,62 @@
       <h2>Near Power Matrix</h2>
       <table>
         <thead><tr><th>Player archetype</th><th>Opponent archetype</th><th>Total</th><th>Player win rate</th><th>Avg duration</th><th>Status</th></tr></thead>
-        <tbody><tr><td>starter_wand</td><td>cosmic_apprentice</td><td>8</td><td>50%</td><td>21.57s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>starter_wand</td><td>elemental_mixer</td><td>5</td><td>40%</td><td>21.1s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>starter_wand</td><td>pet_handler</td><td>9</td><td>44.44%</td><td>22.14s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>starter_wand</td><td>summoner</td><td>1</td><td>0%</td><td>18.7s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>starter_wand</td><td>defensive_caster</td><td>6</td><td>33.33%</td><td>21.03s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>starter_wand</td><td>dot_pressure</td><td>9</td><td>66.67%</td><td>22.7s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>starter_wand</td><td>burst_caster</td><td>4</td><td>50%</td><td>21.45s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>cosmic_apprentice</td><td>starter_wand</td><td>8</td><td>100%</td><td>21.57s</td><td><span class="badge critical">CRITICAL</span></td></tr>
-<tr><td>cosmic_apprentice</td><td>elemental_mixer</td><td>23</td><td>47.83%</td><td>18.48s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>cosmic_apprentice</td><td>pet_handler</td><td>25</td><td>36%</td><td>19.5s</td><td><span class="badge pass">PASS</span></td></tr>
+        <tbody><tr><td>starter_wand</td><td>cosmic_apprentice</td><td>13</td><td>30.77%</td><td>19.47s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>starter_wand</td><td>elemental_mixer</td><td>46</td><td>4.35%</td><td>20.29s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>starter_wand</td><td>pet_handler</td><td>43</td><td>9.3%</td><td>19.05s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>starter_wand</td><td>summoner</td><td>5</td><td>0%</td><td>16.7s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>starter_wand</td><td>defensive_caster</td><td>11</td><td>18.18%</td><td>20.43s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>starter_wand</td><td>dot_pressure</td><td>14</td><td>42.86%</td><td>21.34s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>starter_wand</td><td>burst_caster</td><td>72</td><td>2.78%</td><td>18.53s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>cosmic_apprentice</td><td>starter_wand</td><td>13</td><td>100%</td><td>19.47s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>cosmic_apprentice</td><td>elemental_mixer</td><td>29</td><td>58.62%</td><td>18.53s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>cosmic_apprentice</td><td>pet_handler</td><td>33</td><td>39.39%</td><td>18.58s</td><td><span class="badge pass">PASS</span></td></tr>
 <tr><td>cosmic_apprentice</td><td>summoner</td><td>21</td><td>47.62%</td><td>17.63s</td><td><span class="badge pass">PASS</span></td></tr>
 <tr><td>cosmic_apprentice</td><td>defensive_caster</td><td>24</td><td>58.33%</td><td>20.3s</td><td><span class="badge pass">PASS</span></td></tr>
 <tr><td>cosmic_apprentice</td><td>dot_pressure</td><td>22</td><td>68.18%</td><td>19.04s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>cosmic_apprentice</td><td>burst_caster</td><td>20</td><td>45%</td><td>17.3s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>elemental_mixer</td><td>starter_wand</td><td>5</td><td>100%</td><td>21.1s</td><td><span class="badge critical">CRITICAL</span></td></tr>
-<tr><td>elemental_mixer</td><td>cosmic_apprentice</td><td>23</td><td>73.91%</td><td>18.48s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>elemental_mixer</td><td>pet_handler</td><td>22</td><td>45.45%</td><td>19.25s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>elemental_mixer</td><td>summoner</td><td>23</td><td>69.57%</td><td>17.31s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>elemental_mixer</td><td>defensive_caster</td><td>20</td><td>70%</td><td>20.12s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>elemental_mixer</td><td>dot_pressure</td><td>18</td><td>88.89%</td><td>18.2s</td><td><span class="badge critical">CRITICAL</span></td></tr>
-<tr><td>elemental_mixer</td><td>burst_caster</td><td>21</td><td>61.9%</td><td>16.87s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>pet_handler</td><td>starter_wand</td><td>9</td><td>100%</td><td>22.14s</td><td><span class="badge critical">CRITICAL</span></td></tr>
-<tr><td>pet_handler</td><td>cosmic_apprentice</td><td>25</td><td>92%</td><td>19.54s</td><td><span class="badge critical">CRITICAL</span></td></tr>
-<tr><td>pet_handler</td><td>elemental_mixer</td><td>22</td><td>77.27%</td><td>19.34s</td><td><span class="badge critical">CRITICAL</span></td></tr>
-<tr><td>pet_handler</td><td>summoner</td><td>23</td><td>73.91%</td><td>18.33s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>pet_handler</td><td>defensive_caster</td><td>25</td><td>84%</td><td>21.56s</td><td><span class="badge critical">CRITICAL</span></td></tr>
-<tr><td>pet_handler</td><td>dot_pressure</td><td>25</td><td>88%</td><td>19.26s</td><td><span class="badge critical">CRITICAL</span></td></tr>
-<tr><td>pet_handler</td><td>burst_caster</td><td>25</td><td>68%</td><td>18.26s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>summoner</td><td>starter_wand</td><td>1</td><td>100%</td><td>18.7s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>cosmic_apprentice</td><td>burst_caster</td><td>26</td><td>57.69%</td><td>17.05s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>starter_wand</td><td>46</td><td>100%</td><td>20.29s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>elemental_mixer</td><td>cosmic_apprentice</td><td>29</td><td>58.62%</td><td>18.53s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>pet_handler</td><td>50</td><td>44%</td><td>18.62s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>summoner</td><td>29</td><td>55.17%</td><td>17.53s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>defensive_caster</td><td>28</td><td>57.14%</td><td>20.22s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>dot_pressure</td><td>22</td><td>72.73%</td><td>18.56s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>elemental_mixer</td><td>burst_caster</td><td>67</td><td>26.87%</td><td>18.08s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>pet_handler</td><td>starter_wand</td><td>43</td><td>100%</td><td>19.05s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>pet_handler</td><td>cosmic_apprentice</td><td>33</td><td>81.82%</td><td>18.61s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>pet_handler</td><td>elemental_mixer</td><td>50</td><td>86%</td><td>18.66s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>pet_handler</td><td>summoner</td><td>31</td><td>67.74%</td><td>17.91s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>pet_handler</td><td>defensive_caster</td><td>31</td><td>74.19%</td><td>21.07s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>pet_handler</td><td>dot_pressure</td><td>33</td><td>90.91%</td><td>18.76s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>pet_handler</td><td>burst_caster</td><td>78</td><td>58.97%</td><td>17.35s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>summoner</td><td>starter_wand</td><td>5</td><td>100%</td><td>16.7s</td><td><span class="badge critical">CRITICAL</span></td></tr>
 <tr><td>summoner</td><td>cosmic_apprentice</td><td>21</td><td>76.19%</td><td>17.63s</td><td><span class="badge critical">CRITICAL</span></td></tr>
-<tr><td>summoner</td><td>elemental_mixer</td><td>23</td><td>47.83%</td><td>17.31s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>summoner</td><td>pet_handler</td><td>23</td><td>34.78%</td><td>18.35s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>summoner</td><td>elemental_mixer</td><td>29</td><td>58.62%</td><td>17.53s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>summoner</td><td>pet_handler</td><td>31</td><td>45.16%</td><td>17.93s</td><td><span class="badge pass">PASS</span></td></tr>
 <tr><td>summoner</td><td>defensive_caster</td><td>23</td><td>47.83%</td><td>20.13s</td><td><span class="badge pass">PASS</span></td></tr>
 <tr><td>summoner</td><td>dot_pressure</td><td>21</td><td>71.43%</td><td>17.53s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>summoner</td><td>burst_caster</td><td>22</td><td>50%</td><td>16.52s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>defensive_caster</td><td>starter_wand</td><td>6</td><td>100%</td><td>21.03s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>summoner</td><td>burst_caster</td><td>28</td><td>60.71%</td><td>16.63s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>defensive_caster</td><td>starter_wand</td><td>11</td><td>100%</td><td>20.43s</td><td><span class="badge critical">CRITICAL</span></td></tr>
 <tr><td>defensive_caster</td><td>cosmic_apprentice</td><td>24</td><td>58.33%</td><td>20.3s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>defensive_caster</td><td>elemental_mixer</td><td>20</td><td>50%</td><td>20.32s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>defensive_caster</td><td>pet_handler</td><td>25</td><td>40%</td><td>21.86s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>defensive_caster</td><td>elemental_mixer</td><td>28</td><td>64.29%</td><td>20.36s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>defensive_caster</td><td>pet_handler</td><td>31</td><td>45.16%</td><td>21.31s</td><td><span class="badge pass">PASS</span></td></tr>
 <tr><td>defensive_caster</td><td>summoner</td><td>23</td><td>56.52%</td><td>20.24s</td><td><span class="badge pass">PASS</span></td></tr>
 <tr><td>defensive_caster</td><td>dot_pressure</td><td>25</td><td>64%</td><td>20.66s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>defensive_caster</td><td>burst_caster</td><td>24</td><td>50%</td><td>19.68s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>dot_pressure</td><td>starter_wand</td><td>9</td><td>88.89%</td><td>22.7s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>defensive_caster</td><td>burst_caster</td><td>29</td><td>55.17%</td><td>19.68s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>dot_pressure</td><td>starter_wand</td><td>14</td><td>92.86%</td><td>21.34s</td><td><span class="badge critical">CRITICAL</span></td></tr>
 <tr><td>dot_pressure</td><td>cosmic_apprentice</td><td>22</td><td>54.55%</td><td>19.04s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>dot_pressure</td><td>elemental_mixer</td><td>18</td><td>33.33%</td><td>18.2s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>dot_pressure</td><td>pet_handler</td><td>25</td><td>32%</td><td>19.26s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>dot_pressure</td><td>elemental_mixer</td><td>22</td><td>45.45%</td><td>18.56s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>dot_pressure</td><td>pet_handler</td><td>33</td><td>30.3%</td><td>18.76s</td><td><span class="badge review">REVIEW</span></td></tr>
 <tr><td>dot_pressure</td><td>summoner</td><td>21</td><td>42.86%</td><td>17.53s</td><td><span class="badge pass">PASS</span></td></tr>
 <tr><td>dot_pressure</td><td>defensive_caster</td><td>25</td><td>44%</td><td>20.66s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>dot_pressure</td><td>burst_caster</td><td>19</td><td>31.58%</td><td>17.09s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>burst_caster</td><td>starter_wand</td><td>4</td><td>100%</td><td>21.45s</td><td><span class="badge critical">CRITICAL</span></td></tr>
-<tr><td>burst_caster</td><td>cosmic_apprentice</td><td>20</td><td>90%</td><td>17.3s</td><td><span class="badge critical">CRITICAL</span></td></tr>
-<tr><td>burst_caster</td><td>elemental_mixer</td><td>21</td><td>57.14%</td><td>16.87s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>burst_caster</td><td>pet_handler</td><td>25</td><td>56%</td><td>18.18s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>burst_caster</td><td>summoner</td><td>22</td><td>72.73%</td><td>16.52s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>burst_caster</td><td>defensive_caster</td><td>24</td><td>70.83%</td><td>19.55s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>burst_caster</td><td>dot_pressure</td><td>19</td><td>84.21%</td><td>17.09s</td><td><span class="badge critical">CRITICAL</span></td></tr></tbody>
+<tr><td>dot_pressure</td><td>burst_caster</td><td>26</td><td>34.62%</td><td>17.14s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>burst_caster</td><td>starter_wand</td><td>72</td><td>100%</td><td>18.53s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>burst_caster</td><td>cosmic_apprentice</td><td>26</td><td>73.08%</td><td>17.05s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>burst_caster</td><td>elemental_mixer</td><td>67</td><td>80.6%</td><td>18.08s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>burst_caster</td><td>pet_handler</td><td>78</td><td>56.41%</td><td>17.33s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>burst_caster</td><td>summoner</td><td>28</td><td>60.71%</td><td>16.63s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>burst_caster</td><td>defensive_caster</td><td>29</td><td>65.52%</td><td>19.58s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>burst_caster</td><td>dot_pressure</td><td>26</td><td>76.92%</td><td>17.14s</td><td><span class="badge critical">CRITICAL</span></td></tr></tbody>
       </table>
     </section>
 
@@ -262,70 +279,70 @@
       <h2>Raw Stress Matrix</h2>
       <table>
         <thead><tr><th>Player archetype</th><th>Opponent archetype</th><th>Total</th><th>Player win rate</th><th>Avg duration</th><th>Status</th></tr></thead>
-        <tbody><tr><td>starter_wand</td><td>starter_wand</td><td>14</td><td>71.43%</td><td>25.7s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>starter_wand</td><td>cosmic_apprentice</td><td>28</td><td>14.29%</td><td>19.41s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>starter_wand</td><td>elemental_mixer</td><td>28</td><td>7.14%</td><td>19.06s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>starter_wand</td><td>pet_handler</td><td>28</td><td>14.29%</td><td>19.2s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>starter_wand</td><td>summoner</td><td>28</td><td>0%</td><td>18.09s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>starter_wand</td><td>defensive_caster</td><td>28</td><td>7.14%</td><td>21.41s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>starter_wand</td><td>dot_pressure</td><td>28</td><td>21.43%</td><td>19.95s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>starter_wand</td><td>burst_caster</td><td>28</td><td>7.14%</td><td>17.13s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>cosmic_apprentice</td><td>starter_wand</td><td>28</td><td>100%</td><td>19.41s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+        <tbody><tr><td>starter_wand</td><td>starter_wand</td><td>70</td><td>58.57%</td><td>25.79s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>starter_wand</td><td>cosmic_apprentice</td><td>36</td><td>11.11%</td><td>18.78s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>starter_wand</td><td>elemental_mixer</td><td>80</td><td>2.5%</td><td>19.75s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>starter_wand</td><td>pet_handler</td><td>84</td><td>4.76%</td><td>18.24s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>starter_wand</td><td>summoner</td><td>36</td><td>0%</td><td>17.84s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>starter_wand</td><td>defensive_caster</td><td>36</td><td>5.56%</td><td>21.12s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>starter_wand</td><td>dot_pressure</td><td>36</td><td>16.67%</td><td>19.63s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>starter_wand</td><td>burst_caster</td><td>163</td><td>1.23%</td><td>17.74s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>cosmic_apprentice</td><td>starter_wand</td><td>36</td><td>100%</td><td>18.78s</td><td><span class="badge critical">CRITICAL</span></td></tr>
 <tr><td>cosmic_apprentice</td><td>cosmic_apprentice</td><td>14</td><td>64.29%</td><td>18.84s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>cosmic_apprentice</td><td>elemental_mixer</td><td>28</td><td>39.29%</td><td>18.41s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>cosmic_apprentice</td><td>pet_handler</td><td>28</td><td>32.14%</td><td>19.31s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>cosmic_apprentice</td><td>elemental_mixer</td><td>36</td><td>52.78%</td><td>18.2s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>cosmic_apprentice</td><td>pet_handler</td><td>36</td><td>36.11%</td><td>18.51s</td><td><span class="badge pass">PASS</span></td></tr>
 <tr><td>cosmic_apprentice</td><td>summoner</td><td>28</td><td>35.71%</td><td>18.06s</td><td><span class="badge pass">PASS</span></td></tr>
 <tr><td>cosmic_apprentice</td><td>defensive_caster</td><td>28</td><td>50%</td><td>20.59s</td><td><span class="badge pass">PASS</span></td></tr>
 <tr><td>cosmic_apprentice</td><td>dot_pressure</td><td>28</td><td>60.71%</td><td>18.9s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>cosmic_apprentice</td><td>burst_caster</td><td>28</td><td>32.14%</td><td>17.16s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>elemental_mixer</td><td>starter_wand</td><td>28</td><td>100%</td><td>19.06s</td><td><span class="badge critical">CRITICAL</span></td></tr>
-<tr><td>elemental_mixer</td><td>cosmic_apprentice</td><td>28</td><td>78.57%</td><td>18.41s</td><td><span class="badge critical">CRITICAL</span></td></tr>
-<tr><td>elemental_mixer</td><td>elemental_mixer</td><td>14</td><td>50%</td><td>17.7s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>elemental_mixer</td><td>pet_handler</td><td>28</td><td>46.43%</td><td>19.13s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>elemental_mixer</td><td>summoner</td><td>28</td><td>57.14%</td><td>17.66s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>elemental_mixer</td><td>defensive_caster</td><td>28</td><td>64.29%</td><td>20.31s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>elemental_mixer</td><td>dot_pressure</td><td>28</td><td>78.57%</td><td>18.29s</td><td><span class="badge critical">CRITICAL</span></td></tr>
-<tr><td>elemental_mixer</td><td>burst_caster</td><td>28</td><td>50%</td><td>17.15s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>pet_handler</td><td>starter_wand</td><td>28</td><td>100%</td><td>19.2s</td><td><span class="badge critical">CRITICAL</span></td></tr>
-<tr><td>pet_handler</td><td>cosmic_apprentice</td><td>28</td><td>92.86%</td><td>19.34s</td><td><span class="badge critical">CRITICAL</span></td></tr>
-<tr><td>pet_handler</td><td>elemental_mixer</td><td>28</td><td>71.43%</td><td>19.2s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>pet_handler</td><td>pet_handler</td><td>14</td><td>57.14%</td><td>20.2s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>pet_handler</td><td>summoner</td><td>28</td><td>60.71%</td><td>18.54s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>pet_handler</td><td>defensive_caster</td><td>28</td><td>78.57%</td><td>21.33s</td><td><span class="badge critical">CRITICAL</span></td></tr>
-<tr><td>pet_handler</td><td>dot_pressure</td><td>28</td><td>89.29%</td><td>19.09s</td><td><span class="badge critical">CRITICAL</span></td></tr>
-<tr><td>pet_handler</td><td>burst_caster</td><td>28</td><td>60.71%</td><td>18.49s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>summoner</td><td>starter_wand</td><td>28</td><td>100%</td><td>18.09s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>cosmic_apprentice</td><td>burst_caster</td><td>36</td><td>41.67%</td><td>16.89s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>starter_wand</td><td>80</td><td>100%</td><td>19.75s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>elemental_mixer</td><td>cosmic_apprentice</td><td>36</td><td>61.11%</td><td>18.2s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>elemental_mixer</td><td>44</td><td>65.91%</td><td>18.65s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>elemental_mixer</td><td>pet_handler</td><td>68</td><td>36.76%</td><td>18.2s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>summoner</td><td>36</td><td>44.44%</td><td>17.67s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>defensive_caster</td><td>36</td><td>55.56%</td><td>20.34s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>dot_pressure</td><td>36</td><td>61.11%</td><td>18.35s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>elemental_mixer</td><td>burst_caster</td><td>100</td><td>19%</td><td>17.47s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>pet_handler</td><td>starter_wand</td><td>84</td><td>100%</td><td>18.24s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>pet_handler</td><td>cosmic_apprentice</td><td>36</td><td>83.33%</td><td>18.53s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>pet_handler</td><td>elemental_mixer</td><td>68</td><td>85.29%</td><td>18.23s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>pet_handler</td><td>pet_handler</td><td>70</td><td>62.86%</td><td>18.49s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>pet_handler</td><td>summoner</td><td>36</td><td>58.33%</td><td>18.13s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>pet_handler</td><td>defensive_caster</td><td>36</td><td>72.22%</td><td>20.63s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>pet_handler</td><td>dot_pressure</td><td>36</td><td>91.67%</td><td>18.67s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>pet_handler</td><td>burst_caster</td><td>84</td><td>55.95%</td><td>17.45s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>summoner</td><td>starter_wand</td><td>36</td><td>100%</td><td>17.84s</td><td><span class="badge critical">CRITICAL</span></td></tr>
 <tr><td>summoner</td><td>cosmic_apprentice</td><td>28</td><td>82.14%</td><td>18.06s</td><td><span class="badge critical">CRITICAL</span></td></tr>
-<tr><td>summoner</td><td>elemental_mixer</td><td>28</td><td>57.14%</td><td>17.66s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>summoner</td><td>pet_handler</td><td>28</td><td>46.43%</td><td>18.56s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>summoner</td><td>elemental_mixer</td><td>36</td><td>66.67%</td><td>17.67s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>summoner</td><td>pet_handler</td><td>36</td><td>52.78%</td><td>18.14s</td><td><span class="badge pass">PASS</span></td></tr>
 <tr><td>summoner</td><td>summoner</td><td>14</td><td>57.14%</td><td>17.49s</td><td><span class="badge pass">PASS</span></td></tr>
 <tr><td>summoner</td><td>defensive_caster</td><td>28</td><td>57.14%</td><td>19.74s</td><td><span class="badge pass">PASS</span></td></tr>
 <tr><td>summoner</td><td>dot_pressure</td><td>28</td><td>78.57%</td><td>17.86s</td><td><span class="badge critical">CRITICAL</span></td></tr>
-<tr><td>summoner</td><td>burst_caster</td><td>28</td><td>50%</td><td>16.59s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>defensive_caster</td><td>starter_wand</td><td>28</td><td>100%</td><td>21.41s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>summoner</td><td>burst_caster</td><td>36</td><td>55.56%</td><td>16.59s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>defensive_caster</td><td>starter_wand</td><td>36</td><td>100%</td><td>21.12s</td><td><span class="badge critical">CRITICAL</span></td></tr>
 <tr><td>defensive_caster</td><td>cosmic_apprentice</td><td>28</td><td>64.29%</td><td>20.59s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>defensive_caster</td><td>elemental_mixer</td><td>28</td><td>50%</td><td>20.45s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>defensive_caster</td><td>pet_handler</td><td>28</td><td>42.86%</td><td>21.59s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>defensive_caster</td><td>elemental_mixer</td><td>36</td><td>61.11%</td><td>20.45s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>defensive_caster</td><td>pet_handler</td><td>36</td><td>44.44%</td><td>20.84s</td><td><span class="badge pass">PASS</span></td></tr>
 <tr><td>defensive_caster</td><td>summoner</td><td>28</td><td>46.43%</td><td>19.82s</td><td><span class="badge pass">PASS</span></td></tr>
 <tr><td>defensive_caster</td><td>defensive_caster</td><td>14</td><td>57.14%</td><td>21.84s</td><td><span class="badge pass">PASS</span></td></tr>
 <tr><td>defensive_caster</td><td>dot_pressure</td><td>28</td><td>64.29%</td><td>20.49s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>defensive_caster</td><td>burst_caster</td><td>28</td><td>46.43%</td><td>19.4s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>dot_pressure</td><td>starter_wand</td><td>28</td><td>96.43%</td><td>19.95s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>defensive_caster</td><td>burst_caster</td><td>36</td><td>50%</td><td>19.21s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>dot_pressure</td><td>starter_wand</td><td>36</td><td>97.22%</td><td>19.63s</td><td><span class="badge critical">CRITICAL</span></td></tr>
 <tr><td>dot_pressure</td><td>cosmic_apprentice</td><td>28</td><td>57.14%</td><td>18.9s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>dot_pressure</td><td>elemental_mixer</td><td>28</td><td>35.71%</td><td>18.29s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>dot_pressure</td><td>pet_handler</td><td>28</td><td>28.57%</td><td>19.09s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>dot_pressure</td><td>elemental_mixer</td><td>36</td><td>50%</td><td>18.35s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>dot_pressure</td><td>pet_handler</td><td>36</td><td>27.78%</td><td>18.67s</td><td><span class="badge review">REVIEW</span></td></tr>
 <tr><td>dot_pressure</td><td>summoner</td><td>28</td><td>32.14%</td><td>17.86s</td><td><span class="badge review">REVIEW</span></td></tr>
 <tr><td>dot_pressure</td><td>defensive_caster</td><td>28</td><td>42.86%</td><td>20.49s</td><td><span class="badge pass">PASS</span></td></tr>
 <tr><td>dot_pressure</td><td>dot_pressure</td><td>14</td><td>57.14%</td><td>18.31s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>dot_pressure</td><td>burst_caster</td><td>28</td><td>25%</td><td>17.15s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>burst_caster</td><td>starter_wand</td><td>28</td><td>100%</td><td>17.13s</td><td><span class="badge critical">CRITICAL</span></td></tr>
-<tr><td>burst_caster</td><td>cosmic_apprentice</td><td>28</td><td>92.86%</td><td>17.16s</td><td><span class="badge critical">CRITICAL</span></td></tr>
-<tr><td>burst_caster</td><td>elemental_mixer</td><td>28</td><td>64.29%</td><td>17.09s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>burst_caster</td><td>pet_handler</td><td>28</td><td>60.71%</td><td>18.41s</td><td><span class="badge pass">PASS</span></td></tr>
-<tr><td>burst_caster</td><td>summoner</td><td>28</td><td>71.43%</td><td>16.59s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>burst_caster</td><td>defensive_caster</td><td>28</td><td>71.43%</td><td>19.29s</td><td><span class="badge review">REVIEW</span></td></tr>
-<tr><td>burst_caster</td><td>dot_pressure</td><td>28</td><td>89.29%</td><td>17.15s</td><td><span class="badge critical">CRITICAL</span></td></tr>
-<tr><td>burst_caster</td><td>burst_caster</td><td>14</td><td>50%</td><td>16.27s</td><td><span class="badge pass">PASS</span></td></tr></tbody>
+<tr><td>dot_pressure</td><td>burst_caster</td><td>36</td><td>27.78%</td><td>17.13s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>burst_caster</td><td>starter_wand</td><td>163</td><td>100%</td><td>17.74s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>burst_caster</td><td>cosmic_apprentice</td><td>36</td><td>80.56%</td><td>16.89s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>burst_caster</td><td>elemental_mixer</td><td>100</td><td>86%</td><td>17.45s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>burst_caster</td><td>pet_handler</td><td>84</td><td>59.52%</td><td>17.42s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>burst_caster</td><td>summoner</td><td>36</td><td>63.89%</td><td>16.59s</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>burst_caster</td><td>defensive_caster</td><td>36</td><td>69.44%</td><td>19.12s</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>burst_caster</td><td>dot_pressure</td><td>36</td><td>83.33%</td><td>17.13s</td><td><span class="badge critical">CRITICAL</span></td></tr>
+<tr><td>burst_caster</td><td>burst_caster</td><td>246</td><td>60.57%</td><td>17.37s</td><td><span class="badge pass">PASS</span></td></tr></tbody>
       </table>
     </section>
 
@@ -333,14 +350,14 @@
       <h2>Outliers</h2>
       <table>
         <thead><tr><th>Severity</th><th>Type</th><th>Matchup</th><th>Level</th><th>Power</th><th>Duration</th><th>Winner</th><th>Player build</th><th>Opponent build</th><th>Reason</th></tr></thead>
-        <tbody><tr><td><span class="badge critical">CRITICAL</span></td><td>RAW_STRESS_DOMINANCE</td><td></td><td>all</td><td></td><td>19.37</td><td>pet_handler</td><td>pet_handler</td><td>all</td><td>win_rate=77.62%</td></tr>
-<tr><td><span class="badge critical">CRITICAL</span></td><td>RAW_STRESS_DOMINANCE</td><td></td><td>all</td><td></td><td>17.46</td><td>burst_caster</td><td>burst_caster</td><td>all</td><td>win_rate=76.67%</td></tr>
+        <tbody><tr><td><span class="badge critical">CRITICAL</span></td><td>RAW_STRESS_DOMINANCE</td><td></td><td>all</td><td></td><td>18.37</td><td>pet_handler</td><td>pet_handler</td><td>all</td><td>win_rate=76.22%</td></tr>
+<tr><td><span class="badge critical">CRITICAL</span></td><td>RAW_STRESS_DOMINANCE</td><td></td><td>all</td><td></td><td>17.48</td><td>burst_caster</td><td>burst_caster</td><td>all</td><td>win_rate=75.31%</td></tr>
 <tr><td><span class="badge review">REVIEW</span></td><td>STOMP</td><td>L40_M0036</td><td>40</td><td>5740 vs 2860</td><td>16.7</td><td>elemental_mixer</td><td>L40_elemental_mixer_fixed</td><td>L40_starter_wand_r1</td><td>combatant_defeated</td></tr>
 <tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L40_M0211</td><td>40</td><td>5540 vs 5700</td><td>31.2</td><td>defensive_caster</td><td>L40_defensive_caster_fixed</td><td>L40_defensive_caster_r1</td><td>combatant_defeated</td></tr>
 <tr><td><span class="badge review">REVIEW</span></td><td>ANTI_STALL</td><td>L40_M0212</td><td>40</td><td>5700 vs 5540</td><td>31.2</td><td>defensive_caster</td><td>L40_defensive_caster_r1</td><td>L40_defensive_caster_fixed</td><td>combatant_defeated</td></tr>
-<tr><td><span class="badge review">REVIEW</span></td><td>RAW_STRESS_DOMINANCE</td><td></td><td>all</td><td></td><td>18.51</td><td>elemental_mixer</td><td>elemental_mixer</td><td>all</td><td>win_rate=66.67%</td></tr>
-<tr><td><span class="badge review">REVIEW</span></td><td>RAW_STRESS_DOMINANCE</td><td></td><td>all</td><td></td><td>18.04</td><td>summoner</td><td>summoner</td><td>all</td><td>win_rate=66.67%</td></tr>
-<tr><td><span class="badge review">REVIEW</span></td><td>NEAR_POWER_DOMINANCE</td><td></td><td>all</td><td>near_power</td><td>19.57</td><td>pet_handler</td><td>pet_handler</td><td>near_power_delta_20%</td><td>win_rate=70.45%</td></tr></tbody>
+<tr><td><span class="badge review">REVIEW</span></td><td>RAW_STRESS_DOMINANCE</td><td></td><td>all</td><td></td><td>17.9</td><td>summoner</td><td>summoner</td><td>all</td><td>win_rate=69.42%</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>NEAR_POWER_DOMINANCE</td><td></td><td>all</td><td>near_power</td><td>18.56</td><td>pet_handler</td><td>pet_handler</td><td>near_power_delta_20%</td><td>win_rate=68.73%</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>NEAR_POWER_DOMINANCE</td><td></td><td>all</td><td>near_power</td><td>17.86</td><td>burst_caster</td><td>burst_caster</td><td>near_power_delta_20%</td><td>win_rate=68.71%</td></tr></tbody>
       </table>
     </section>
 
@@ -348,14 +365,14 @@
       <h2>Source By Archetype</h2>
       <table>
         <thead><tr><th>Archetype</th><th>Total</th><th>Wins</th><th>Avg</th><th>Weapon</th><th>Spell</th><th>DoT</th><th>Pet</th><th>Summon</th><th>System</th><th>Total damage</th><th>Dominant</th></tr></thead>
-        <tbody><tr><td>Starter Wand</td><td>406</td><td>35</td><td>19.4s</td><td>411166</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>411166</td><td>weapon</td></tr>
-<tr><td>Cosmic Apprentice</td><td>406</td><td>173</td><td>18.84s</td><td>485908</td><td>76644</td><td>5826</td><td>17282</td><td>6178</td><td>0</td><td>591838</td><td>weapon</td></tr>
-<tr><td>Elemental Mixer</td><td>406</td><td>252</td><td>18.55s</td><td>477446</td><td>80108</td><td>15032</td><td>16744</td><td>7350</td><td>0</td><td>596680</td><td>weapon</td></tr>
-<tr><td>Pet Handler</td><td>406</td><td>289</td><td>19.35s</td><td>495737</td><td>109445</td><td>14167</td><td>19502</td><td>0</td><td>0</td><td>638851</td><td>weapon</td></tr>
-<tr><td>Summoner</td><td>406</td><td>257</td><td>18.06s</td><td>471961</td><td>92381</td><td>6112</td><td>18644</td><td>26536</td><td>0</td><td>615634</td><td>weapon</td></tr>
-<tr><td>Defensive Caster</td><td>406</td><td>222</td><td>20.54s</td><td>490201</td><td>49196</td><td>31033</td><td>21086</td><td>13558</td><td>0</td><td>605074</td><td>weapon</td></tr>
-<tr><td>DoT Pressure</td><td>406</td><td>164</td><td>18.8s</td><td>422573</td><td>63713</td><td>64960</td><td>18520</td><td>14120</td><td>0</td><td>583886</td><td>weapon</td></tr>
-<tr><td>Burst Caster</td><td>406</td><td>288</td><td>17.52s</td><td>483698</td><td>114433</td><td>18915</td><td>14818</td><td>8064</td><td>0</td><td>639928</td><td>weapon</td></tr></tbody>
+        <tbody><tr><td>Starter Wand</td><td>1012</td><td>91</td><td>19.15s</td><td>1026548</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1026548</td><td>weapon</td></tr>
+<tr><td>Cosmic Apprentice</td><td>470</td><td>224</td><td>18.51s</td><td>550986</td><td>92380</td><td>6786</td><td>19828</td><td>6178</td><td>0</td><td>676158</td><td>weapon</td></tr>
+<tr><td>Elemental Mixer</td><td>828</td><td>411</td><td>18.5s</td><td>862578</td><td>183260</td><td>49384</td><td>30834</td><td>7350</td><td>0</td><td>1133406</td><td>weapon</td></tr>
+<tr><td>Pet Handler</td><td>830</td><td>612</td><td>18.36s</td><td>975039</td><td>248021</td><td>55045</td><td>51096</td><td>0</td><td>0</td><td>1329201</td><td>weapon</td></tr>
+<tr><td>Summoner</td><td>470</td><td>310</td><td>17.92s</td><td>540287</td><td>105173</td><td>6952</td><td>21620</td><td>26536</td><td>0</td><td>700568</td><td>weapon</td></tr>
+<tr><td>Defensive Caster</td><td>470</td><td>268</td><td>20.37s</td><td>556951</td><td>58704</td><td>36038</td><td>24382</td><td>13558</td><td>0</td><td>689633</td><td>weapon</td></tr>
+<tr><td>DoT Pressure</td><td>470</td><td>204</td><td>18.67s</td><td>482847</td><td>72211</td><td>74866</td><td>21936</td><td>14120</td><td>0</td><td>665980</td><td>weapon</td></tr>
+<tr><td>Burst Caster</td><td>1228</td><td>1012</td><td>17.51s</td><td>1459614</td><td>404102</td><td>22575</td><td>37413</td><td>8064</td><td>0</td><td>1931768</td><td>weapon</td></tr></tbody>
       </table>
     </section>
 
@@ -365,21 +382,21 @@
         <thead><tr><th>Metric</th><th>Baseline</th><th>Current</th><th>Delta</th></tr></thead>
         <tbody><tr><td>baseline_run</td><td>2026-05-21_archetype_source_tuning_v02</td><td>draxos_mobile_battle_lab_v1</td><td>changed</td></tr>
 <tr><td>overall_status</td><td>REVIEW</td><td>REVIEW</td><td>unchanged</td></tr>
-<tr><td>avg_duration</td><td>18.91s</td><td>18.91s</td><td>0s</td></tr>
+<tr><td>avg_duration</td><td>18.91s</td><td>18.55s</td><td>-0.36s</td></tr>
 <tr><td>median_duration</td><td>18.7s</td><td>18.7s</td><td>0s</td></tr>
 <tr><td>short_rate_percent</td><td>0%</td><td>0%</td><td>0%</td></tr>
 <tr><td>long_rate_percent</td><td>0%</td><td>0%</td><td>0%</td></tr>
-<tr><td>anti_stall_rate_percent</td><td>0.12%</td><td>0.12%</td><td>0%</td></tr>
-<tr><td>raw_stress_dominance_max_percent</td><td>77.62%</td><td>77.62%</td><td>0%</td></tr>
-<tr><td>near_power_dominance_max_percent</td><td>70.45%</td><td>70.45%</td><td>0%</td></tr>
-<tr><td>near_power_win_rate:starter_wand</td><td>25%</td><td>25%</td><td>0%</td></tr>
-<tr><td>near_power_win_rate:cosmic_apprentice</td><td>40.21%</td><td>40.21%</td><td>0%</td></tr>
-<tr><td>near_power_win_rate:elemental_mixer</td><td>58.33%</td><td>58.33%</td><td>0%</td></tr>
-<tr><td>near_power_win_rate:pet_handler</td><td>70.45%</td><td>70.45%</td><td>0%</td></tr>
-<tr><td>near_power_win_rate:summoner</td><td>47.01%</td><td>47.01%</td><td>0%</td></tr>
-<tr><td>near_power_win_rate:defensive_caster</td><td>46.94%</td><td>46.94%</td><td>0%</td></tr>
-<tr><td>near_power_win_rate:dot_pressure</td><td>33.45%</td><td>33.45%</td><td>0%</td></tr>
-<tr><td>near_power_win_rate:burst_caster</td><td>60%</td><td>60%</td><td>0%</td></tr></tbody>
+<tr><td>anti_stall_rate_percent</td><td>0.12%</td><td>0.06%</td><td>-0.06%</td></tr>
+<tr><td>raw_stress_dominance_max_percent</td><td>77.62%</td><td>76.22%</td><td>-1.4%</td></tr>
+<tr><td>near_power_dominance_max_percent</td><td>70.45%</td><td>68.73%</td><td>-1.72%</td></tr>
+<tr><td>near_power_win_rate:starter_wand</td><td>25%</td><td>5.15%</td><td>-19.85%</td></tr>
+<tr><td>near_power_win_rate:cosmic_apprentice</td><td>40.21%</td><td>46.43%</td><td>+6.22%</td></tr>
+<tr><td>near_power_win_rate:elemental_mixer</td><td>58.33%</td><td>48.15%</td><td>-10.18%</td></tr>
+<tr><td>near_power_win_rate:pet_handler</td><td>70.45%</td><td>68.73%</td><td>-1.72%</td></tr>
+<tr><td>near_power_win_rate:summoner</td><td>47.01%</td><td>52.85%</td><td>+5.84%</td></tr>
+<tr><td>near_power_win_rate:defensive_caster</td><td>46.94%</td><td>51.75%</td><td>+4.81%</td></tr>
+<tr><td>near_power_win_rate:dot_pressure</td><td>33.45%</td><td>36.5%</td><td>+3.05%</td></tr>
+<tr><td>near_power_win_rate:burst_caster</td><td>60%</td><td>68.71%</td><td>+8.71%</td></tr></tbody>
       </table>
     </section>
 
@@ -396,21 +413,21 @@
       <h2>Damage Breakdown</h2>
       <table>
         <thead><tr><th>Source</th><th>Damage</th></tr></thead>
-        <tbody><tr><td>weapon</td><td>3738690</td></tr>
-<tr><td>spell</td><td>585920</td></tr>
-<tr><td>dot</td><td>156045</td></tr>
-<tr><td>pet</td><td>126596</td></tr>
+        <tbody><tr><td>weapon</td><td>6454850</td></tr>
+<tr><td>spell</td><td>1163851</td></tr>
+<tr><td>dot</td><td>251646</td></tr>
+<tr><td>pet</td><td>207109</td></tr>
 <tr><td>summon</td><td>75806</td></tr>
 <tr><td>system</td><td>0</td></tr></tbody>
       </table>
       <h2>Damage Types</h2>
       <table>
         <thead><tr><th>Type</th><th>Damage</th></tr></thead>
-        <tbody><tr><td>magico</td><td>4097953</td></tr>
-<tr><td>fogo</td><td>211252</td></tr>
-<tr><td>gelo</td><td>77710</td></tr>
-<tr><td>veneno</td><td>84063</td></tr>
-<tr><td>choque</td><td>81818</td></tr>
+        <tbody><tr><td>magico</td><td>7228994</td></tr>
+<tr><td>fogo</td><td>411863</td></tr>
+<tr><td>gelo</td><td>94774</td></tr>
+<tr><td>veneno</td><td>97110</td></tr>
+<tr><td>choque</td><td>190260</td></tr>
 <tr><td>morte</td><td>82418</td></tr>
 <tr><td>sangramento</td><td>47843</td></tr>
 <tr><td>none</td><td>0</td></tr></tbody>

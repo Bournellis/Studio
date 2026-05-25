@@ -1,9 +1,9 @@
 archetype_id,display_name,total,wins,avg_duration,weapon_damage,spell_damage,dot_damage,pet_damage,summon_damage,system_damage,total_damage,dominant_source
-starter_wand,Starter Wand,406,35,19.4,411166,0,0,0,0,0,411166,weapon
-cosmic_apprentice,Cosmic Apprentice,406,173,18.84,485908,76644,5826,17282,6178,0,591838,weapon
-elemental_mixer,Elemental Mixer,406,252,18.55,477446,80108,15032,16744,7350,0,596680,weapon
-pet_handler,Pet Handler,406,289,19.35,495737,109445,14167,19502,0,0,638851,weapon
-summoner,Summoner,406,257,18.06,471961,92381,6112,18644,26536,0,615634,weapon
-defensive_caster,Defensive Caster,406,222,20.54,490201,49196,31033,21086,13558,0,605074,weapon
-dot_pressure,DoT Pressure,406,164,18.8,422573,63713,64960,18520,14120,0,583886,weapon
-burst_caster,Burst Caster,406,288,17.52,483698,114433,18915,14818,8064,0,639928,weapon
+starter_wand,Starter Wand,1012,91,19.15,1026548,0,0,0,0,0,1026548,weapon
+cosmic_apprentice,Cosmic Apprentice,470,224,18.51,550986,92380,6786,19828,6178,0,676158,weapon
+elemental_mixer,Elemental Mixer,828,411,18.5,862578,183260,49384,30834,7350,0,1133406,weapon
+pet_handler,Pet Handler,830,612,18.36,975039,248021,55045,51096,0,0,1329201,weapon
+summoner,Summoner,470,310,17.92,540287,105173,6952,21620,26536,0,700568,weapon
+defensive_caster,Defensive Caster,470,268,20.37,556951,58704,36038,24382,13558,0,689633,weapon
+dot_pressure,DoT Pressure,470,204,18.67,482847,72211,74866,21936,14120,0,665980,weapon
+burst_caster,Burst Caster,1228,1012,17.51,1459614,404102,22575,37413,8064,0,1931768,weapon

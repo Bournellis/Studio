@@ -46,6 +46,9 @@ npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --archiv
 - `generated/battle_lab_replays.json`: amostras com `battle_log_v1` completo
   para replay visual.
 - `generated/battle_lab_matchups.csv`: uma linha por batalha.
+- `generated/battle_lab_progression_matrix.csv`: matriz dos healthy saves do
+  Progression Lab contra bots, perfis e arquetipos quando
+  `docs/progression-lab/generated/progression_summary.json` existe.
 - `generated/battle_lab_builds.csv`: builds e seeds reproduziveis.
 - `generated/battle_lab_archetypes.csv`: agregados por arquetipo.
 - `generated/battle_lab_source_by_archetype.csv`: dano causado por fonte e
@@ -70,6 +73,8 @@ npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --archiv
 - A ferramenta nao cria jogador.
 - A ferramenta nao aplica recompensa.
 - A ferramenta nao altera ranking, recursos ou progresso.
+- Quando o Progression Lab ja foi gerado, a ferramenta importa apenas os JSONs
+  locais de saves/bots saudaveis para simular combate; continua offline.
 - A ferramenta nao muda numeros de combate; isso pertence a uma etapa posterior
   de tuning.
 - A tela Godot e dev-only: aparece apenas no editor e os exports excluem

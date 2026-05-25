@@ -8,8 +8,11 @@ const EXPECTED_PRESETS := {
 const EXPECTED_EXCLUDES := [
 	"dev/**",
 	"tools/battle_lab/**",
+	"tools/progression_lab/**",
 	"docs/battle-lab/**",
+	"docs/progression-lab/**",
 	".battle_lab_scratch/**",
+	".progression_lab_scratch/**",
 ]
 
 var _failures: Array[String] = []

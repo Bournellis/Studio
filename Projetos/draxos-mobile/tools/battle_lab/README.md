@@ -39,6 +39,7 @@ Saidas:
 - `docs/battle-lab/generated/battle_lab_ui.json`
 - `docs/battle-lab/generated/battle_lab_replays.json`
 - `docs/battle-lab/generated/battle_lab_matchups.csv`
+- `docs/battle-lab/generated/battle_lab_progression_matrix.csv`
 - `docs/battle-lab/generated/battle_lab_builds.csv`
 - `docs/battle-lab/generated/battle_lab_archetypes.csv`
 - `docs/battle-lab/generated/battle_lab_power_bands.csv`
@@ -70,6 +71,11 @@ pedido, chama Deno local e apresenta o log retornado.
 
 Os exports excluem `dev/**`, `tools/battle_lab/**`, `docs/battle-lab/**` e
 `.battle_lab_scratch/**`.
+
+Quando `docs/progression-lab/generated/progression_summary.json` existe, o
+runner tambem importa os healthy saves e bots do Progression Lab para gerar a
+matriz `battle_lab_progression_matrix.csv`. Isso continua offline e nao chama
+Supabase.
 
 ## Configurar
 
@@ -111,19 +117,21 @@ parametros em outra tarefa, regenere o relatorio e compare antes/depois.
 ## Baseline Atual
 
 O baseline gerado em `docs/battle-lab/generated/` ja inclui a rodada
-`2026-05-21_archetype_source_tuning_v02`.
+`2026-05-21_archetype_source_tuning_v02` e os healthy saves do Progression Lab
+quando `docs/progression-lab/generated/progression_summary.json` existe.
 
 Resumo:
 
-- duracao media: `18.91s`;
+- batalhas/builds: `3132` / `212`;
+- duracao media: `18.55s`;
 - batalhas curtas: `0%`;
 - batalhas longas: `0%`;
-- anti-stall: `0.12%`;
-- status geral: `REVIEW` por `pet_handler` ainda acima de 65% em poder
-  proximo;
+- anti-stall: `0.06%`;
+- status geral: `REVIEW` por dominancia em poder proximo acima de 65%;
 - `burst_caster`: `60%` em poder proximo, fora de critical;
 - `pet_handler`: `70.45%` em poder proximo, ainda em review.
 
 Proximo foco recomendado: investigar `pet_handler`, lacuna de `dot_pressure` e
 formula/pesos de poder usando `battle_lab_source_by_archetype.csv`,
-`battle_lab_near_power_matrix.csv` e `battle_lab_compare.csv`.
+`battle_lab_near_power_matrix.csv`, `battle_lab_progression_matrix.csv` e
+`battle_lab_compare.csv`.

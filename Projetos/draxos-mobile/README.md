@@ -4,7 +4,7 @@ Jogo mobile multi-plataforma de PVP assincrono com base manager, progressao de p
 
 **Nao confundir com:** `draxos-roguelike-cardgame` - projeto Steam separado.
 
-Status: `P2_IMPLEMENTACAO - alpha hardening complete`
+Status: `P2_IMPLEMENTACAO - progression lab tooling implemented`
 
 ---
 
@@ -12,7 +12,7 @@ Status: `P2_IMPLEMENTACAO - alpha hardening complete`
 
 - Track 00 completa: Godot client, Supabase local, auth guest, batalha server-authoritative, Base, Social/Competicao, Monetizacao, pipeline de conteudo, exports e testes.
 - Track 01 completa: hardening do alpha PC local, telemetria client nao autoritativa, reset seguro de sessao local, smokes de loop alpha e checklist de playtest.
-- Track 02 iniciada: Progression Lab para gerar estados saudaveis, saves Supabase locais, bots/poder e fluxo manual de teste no Godot para as primeiras 2h-20h.
+- Track 02 com tooling v1 implementado: Progression Lab gera 25 estados saudaveis, saves Supabase locais, bot pool, recomendacoes de poder, matriz no Battle Lab e fluxo manual de teste no Godot para as primeiras 2h-20h.
 - Battle Lab offline + dev-only no Godot implementado: `tools/battle_lab/` gera HTML/CSV/JSON/replays em `docs/battle-lab/generated/`, arquiva runs oficiais em `docs/battle-lab/runs/`, compara deltas, marca compatibilidade/stale e pode ser aberto no editor pelo Refugio para montar builds e assistir replays debug 2D; exports excluem a ferramenta. O ajuste de pacing alpha levou a duracao media de `3.22s` para `18.19s`, e o ajuste por arquetipo/fonte v02 deixou o baseline em `18.91s`, `0%` de batalhas curtas e status `REVIEW` por `pet_handler`.
 - Supabase runtime local configurado em `supabase/`: Docker Desktop, `npx supabase`, `npx deno`, migrations MVP/base/social/ranking/monetizacao, Auth anonimo, healthcheck e Edge Functions `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*` e `telemetry/*`.
 - Conta guest alpha implementada: `account/guest`, `account/state`, convite `ALPHA-TEST`, fixture inicial de player/resources/build, cache local nao autoritativo e escrita direta do cliente bloqueada.
@@ -42,7 +42,7 @@ Status: `P2_IMPLEMENTACAO - alpha hardening complete`
 
 | Objetivo | Status |
 |---|---|
-| Progression Lab para saves saudaveis 2h-20h, perfis economicos, bots, poder e teste manual no Godot | Em implementacao |
+| Progression Lab para saves saudaveis 2h-20h, perfis economicos, bots, poder e teste manual no Godot | Tooling v1 implementado; falta rodada manual com Supabase local |
 
 ---
 
@@ -63,7 +63,7 @@ Status: `P2_IMPLEMENTACAO - alpha hardening complete`
 | Batalha, replay, Base, Social, Competicao e Monetizacao | Completo - T00-P07 a T00-P13 |
 | Alpha Playtest Hardening | Completo - Track 01 |
 | Battle Lab, historico, replay dev e tuning de fonte/arquetipo | Completo - baseline v02 2026-05-21 |
-| Progression Lab, saves saudaveis e teste manual por milestone | Em implementacao - Track 02 |
+| Progression Lab, saves saudaveis e teste manual por milestone | Tooling v1 implementado - Track 02 |
 
 ---
 
@@ -75,6 +75,7 @@ draxos-mobile/
 |-- README.md
 |-- docs/
 |   |-- battle-lab/
+|   |-- progression-lab/
 |   |-- product-brief.md
 |   |-- game-design-document.md
 |   |-- design-pending.md
@@ -109,6 +110,7 @@ draxos-mobile/
 |-- social/
 |-- tools/
 |   |-- battle_lab/
+|   |-- progression_lab/
 |-- tests/
 `-- addons/
 ```
@@ -119,7 +121,7 @@ draxos-mobile/
 
 1. `AGENTS.md`
 2. `implementation/current-status.md`
-3. `implementation/tracks/track-01-alpha-playtest-hardening/current-status.md`
-4. `docs/reuse-map.md`
-5. `docs/design-pending.md`
-6. `docs/playtest-alpha.md`
+3. `implementation/tracks/track-02-progression-lab/current-status.md`
+4. `docs/progression-lab/README.md`
+5. `docs/reuse-map.md`
+6. `docs/design-pending.md`

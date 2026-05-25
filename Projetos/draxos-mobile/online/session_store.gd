@@ -57,6 +57,22 @@ func save_cache() -> bool:
 	file.store_string(JSON.stringify(snapshot(), "\t"))
 	return true
 
+func apply_snapshot_cache(cache: Dictionary) -> bool:
+	if int(cache.get("cache_version", 0)) != CACHE_VERSION:
+		last_error = {
+			"code": "INVALID_SESSION_CACHE",
+			"message": "Cache de sessao incompativel.",
+		}
+		session_changed.emit()
+		return false
+
+	_apply_cache(cache)
+	ensure_session_id()
+	last_error = {}
+	offline = false
+	session_changed.emit()
+	return true
+
 func clear_session() -> void:
 	access_token = ""
 	refresh_token = ""

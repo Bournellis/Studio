@@ -51,7 +51,14 @@ npx -y deno run --allow-read --allow-write tools/progression_lab/generate.ts
 3. Preparar save local no Supabase:
 
 ```powershell
+$env:SUPABASE_SERVICE_ROLE_KEY="<service-role-local>"
 npx -y deno run --allow-net --allow-env --allow-read --allow-write tools/progression_lab/seed_supabase.ts --profile free_100_rewards --milestone 10h
+```
+
+Para validar a selecao sem tocar no Supabase:
+
+```powershell
+npx -y deno run --allow-read tools/progression_lab/seed_supabase.ts --dry-run --all
 ```
 
 4. Abrir o Godot editor e usar `Refugio -> Progression Lab Dev`.
@@ -71,6 +78,10 @@ npx -y deno run --allow-net --allow-env --allow-read --allow-write tools/progres
 - `generated/bot_pool.csv`
 - `generated/progression_report.html`
 
+Battle Lab tambem passa a ler `generated/progression_summary.json` quando existir e gera:
+
+- `docs/battle-lab/generated/battle_lab_progression_matrix.csv`
+
 Scratch local:
 
 - `.progression_lab_scratch/`
@@ -85,3 +96,16 @@ Esse diretorio guarda sessoes locais e nao deve entrar no Git.
 - Nao muda numeros automaticamente.
 - Nao promove pesos de poder sem Battle Lab + Progression Lab concordarem.
 - Premium deve vender tempo e conforto, nao poder exclusivo acima do cap.
+
+## Validacao Local
+
+```powershell
+npx -y deno test tools/progression_lab
+npx -y deno test tools/battle_lab
+npx -y deno run --allow-read --allow-write tools/progression_lab/generate.ts
+npx -y deno run --allow-read tools/progression_lab/seed_supabase.ts --dry-run --all
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-mobile -s res://tools/validate.gd
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-mobile -s res://tools/smoke_exports.gd
+```
+
+O seed real exige Supabase local ativo, `SUPABASE_SERVICE_ROLE_KEY` e URL local. O script recusa URLs fora de `localhost`, `127.0.0.1` ou `::1`.

@@ -1,9 +1,9 @@
 type,severity,matchup_id,seed,player_build_id,opponent_build_id,level,power,duration,winner,reason
-RAW_STRESS_DOMINANCE,CRITICAL,,,pet_handler,all,all,,19.37,pet_handler,win_rate=77.62%
-RAW_STRESS_DOMINANCE,CRITICAL,,,burst_caster,all,all,,17.46,burst_caster,win_rate=76.67%
+RAW_STRESS_DOMINANCE,CRITICAL,,,pet_handler,all,all,,18.37,pet_handler,win_rate=76.22%
+RAW_STRESS_DOMINANCE,CRITICAL,,,burst_caster,all,all,,17.48,burst_caster,win_rate=75.31%
 STOMP,REVIEW,L40_M0036,battle_lab:draxos_mobile_battle_lab_v1:L40_M0036:battle_lab_alpha_20260521:elemental_mixer:L40:fixed:0:battle_lab_alpha_20260521:starter_wand:L40:random:1,L40_elemental_mixer_fixed,L40_starter_wand_r1,40,5740 vs 2860,16.7,elemental_mixer,combatant_defeated
 ANTI_STALL,REVIEW,L40_M0211,battle_lab:draxos_mobile_battle_lab_v1:L40_M0211:battle_lab_alpha_20260521:defensive_caster:L40:fixed:0:battle_lab_alpha_20260521:defensive_caster:L40:random:1,L40_defensive_caster_fixed,L40_defensive_caster_r1,40,5540 vs 5700,31.2,defensive_caster,combatant_defeated
 ANTI_STALL,REVIEW,L40_M0212,battle_lab:draxos_mobile_battle_lab_v1:L40_M0212:battle_lab_alpha_20260521:defensive_caster:L40:random:1:battle_lab_alpha_20260521:defensive_caster:L40:fixed:0,L40_defensive_caster_r1,L40_defensive_caster_fixed,40,5700 vs 5540,31.2,defensive_caster,combatant_defeated
-RAW_STRESS_DOMINANCE,REVIEW,,,elemental_mixer,all,all,,18.51,elemental_mixer,win_rate=66.67%
-RAW_STRESS_DOMINANCE,REVIEW,,,summoner,all,all,,18.04,summoner,win_rate=66.67%
-NEAR_POWER_DOMINANCE,REVIEW,,,pet_handler,near_power_delta_20%,all,near_power,19.57,pet_handler,win_rate=70.45%
+RAW_STRESS_DOMINANCE,REVIEW,,,summoner,all,all,,17.9,summoner,win_rate=69.42%
+NEAR_POWER_DOMINANCE,REVIEW,,,pet_handler,near_power_delta_20%,all,near_power,18.56,pet_handler,win_rate=68.73%
+NEAR_POWER_DOMINANCE,REVIEW,,,burst_caster,near_power_delta_20%,all,near_power,17.86,burst_caster,win_rate=68.71%

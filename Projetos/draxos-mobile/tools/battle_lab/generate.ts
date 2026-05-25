@@ -273,6 +273,35 @@ interface BattleLabBridgeResponse {
   error?: { code: string; message: string };
 }
 
+interface ProgressionLabDocument {
+  saves?: ProgressionLabSave[];
+  bot_pool?: ProgressionLabBot[];
+}
+
+interface ProgressionLabSave {
+  id: string;
+  profile_id: string;
+  milestone_id: string;
+  player: {
+    level: number;
+    power: number;
+  };
+  build: {
+    archetype_id?: string;
+  };
+  combat_build: CombatantBuild;
+}
+
+interface ProgressionLabBot {
+  id: string;
+  milestone_id: string;
+  profile_id: string;
+  archetype_id: string;
+  target_power: number;
+  level: number;
+  build: CombatantBuild;
+}
+
 interface BattleLabResult {
   model_id: string;
   generated_at: string;
@@ -354,6 +383,7 @@ const RUN_OUTPUT_FILES = [
   "battle_lab_ui.json",
   "battle_lab_replays.json",
   "battle_lab_matchups.csv",
+  "battle_lab_progression_matrix.csv",
   "battle_lab_builds.csv",
   "battle_lab_checks.csv",
   "battle_lab_archetypes.csv",
@@ -364,6 +394,7 @@ const RUN_OUTPUT_FILES = [
   "battle_lab_history_index.csv",
   "battle_lab_compare.csv",
 ];
+const PROGRESSION_MILESTONE_IDS = ["2h", "5h", "10h", "15h", "20h"];
 
 export async function loadModel(
   modelUrl = new URL("model.v1.json", import.meta.url),
@@ -392,7 +423,44 @@ export function createBuilds(model: BattleLabModel): LabBuild[] {
       }
     }
   }
+  builds.push(...createProgressionLabBuilds(model));
   return builds;
+}
+
+function createProgressionLabBuilds(model: BattleLabModel): LabBuild[] {
+  const document = loadProgressionLabDocument();
+  if (document === null) return [];
+
+  const builds: LabBuild[] = [];
+  for (const save of document.saves ?? []) {
+    const archetypeId = save.build.archetype_id ??
+      archetypeIdForBuild(model, save.combat_build);
+    builds.push(progressionLabBuild(
+      model,
+      `PL_${save.id}`,
+      `PL ${save.profile_id} ${save.milestone_id}`,
+      archetypeId,
+      save.player.level,
+      save.player.power,
+      save.combat_build,
+      `${model.seed}:progression_save:${save.id}`,
+    ));
+  }
+
+  for (const bot of document.bot_pool ?? []) {
+    builds.push(progressionLabBuild(
+      model,
+      `PLBOT_${bot.id}`,
+      `PL Bot ${bot.milestone_id} ${bot.archetype_id}`,
+      bot.archetype_id,
+      bot.level,
+      bot.target_power,
+      bot.build,
+      `${model.seed}:progression_bot:${bot.id}`,
+    ));
+  }
+
+  return uniqueBuilds(builds);
 }
 
 export function calculatePower(build: CombatantBuild): number {
@@ -1102,6 +1170,110 @@ function createBuild(
   };
 }
 
+function loadProgressionLabDocument(): ProgressionLabDocument | null {
+  const candidates = [
+    new URL(
+      "../../docs/progression-lab/generated/progression_summary.json",
+      import.meta.url,
+    ),
+    new URL(
+      "../../docs/progression-lab/generated/healthy_saves.json",
+      import.meta.url,
+    ),
+  ];
+  for (const url of candidates) {
+    try {
+      return JSON.parse(Deno.readTextFileSync(url)) as ProgressionLabDocument;
+    } catch {
+      continue;
+    }
+  }
+  return null;
+}
+
+function progressionLabBuild(
+  model: BattleLabModel,
+  id: string,
+  displayName: string,
+  archetypeId: string,
+  level: number,
+  power: number,
+  build: CombatantBuild,
+  seed: string,
+): LabBuild {
+  const normalizedArchetypeId = archetypeIdForModel(model, archetypeId);
+  const combatBuild: CombatantBuild = {
+    ...build,
+    id,
+    displayName,
+    level,
+  };
+  const resolvedPower = Number.isFinite(power) && power >= 0
+    ? Math.round(power)
+    : calculatePower(combatBuild);
+  return {
+    id,
+    kind: "fixed",
+    archetype_id: normalizedArchetypeId,
+    archetype_name: archetypeNameFor(model, normalizedArchetypeId),
+    level,
+    power: resolvedPower,
+    power_band: classifyPowerBand(resolvedPower, model.power_bands),
+    seed,
+    build: combatBuild,
+  };
+}
+
+function archetypeIdForBuild(
+  model: BattleLabModel,
+  build: CombatantBuild,
+): string {
+  const spellIds = new Set(build.spellIds);
+  if (spellIds.has("invocar_demonio") || spellIds.has("animar_morto")) {
+    return archetypeIdForModel(model, "summoner");
+  }
+  if (spellIds.has("dilacerar") || spellIds.has("envenenar")) {
+    return archetypeIdForModel(model, "dot_pressure");
+  }
+  if (spellIds.has("odio") || spellIds.has("raio")) {
+    return archetypeIdForModel(model, "burst_caster");
+  }
+  if (build.petId !== undefined && build.petId !== "") {
+    return archetypeIdForModel(model, "pet_handler");
+  }
+  if (spellIds.has("fortificar") || spellIds.has("congelar")) {
+    return archetypeIdForModel(model, "defensive_caster");
+  }
+  if (spellIds.size > 0) return archetypeIdForModel(model, "cosmic_apprentice");
+  return archetypeIdForModel(model, "starter_wand");
+}
+
+function archetypeIdForModel(
+  model: BattleLabModel,
+  archetypeId: string,
+): string {
+  if (model.archetypes.some((candidate) => candidate.id === archetypeId)) {
+    return archetypeId;
+  }
+  return model.archetypes[0]?.id ?? archetypeId;
+}
+
+function archetypeNameFor(model: BattleLabModel, archetypeId: string): string {
+  return model.archetypes.find((candidate) => candidate.id === archetypeId)
+    ?.display_name ?? archetypeId;
+}
+
+function uniqueBuilds(builds: LabBuild[]): LabBuild[] {
+  const seen = new Set<string>();
+  const unique: LabBuild[] = [];
+  for (const build of builds) {
+    if (seen.has(build.id)) continue;
+    seen.add(build.id);
+    unique.push(build);
+  }
+  return unique;
+}
+
 function runMatchups(model: BattleLabModel, builds: LabBuild[]): LabMatchup[] {
   const matchups: LabMatchup[] = [];
   const byLevel = groupBy(builds, (build) => String(build.level));
@@ -1529,7 +1701,9 @@ function buildChecks(
   const antiStallRate = rate(antiStallCount, totalBattles);
   const maxWinRate = maxAggregateWinRate(nearPowerArchetypes);
   const minWinRate = minAggregateWinRate(nearPowerArchetypes);
-  const levelsCovered = new Set(matchups.map((matchup) => matchup.level)).size;
+  const coveredLevels = new Set(matchups.map((matchup) => matchup.level));
+  const configuredLevelsCovered =
+    model.levels.filter((level) => coveredLevels.has(level)).length;
   const expectedLevels = model.levels.length;
 
   return [
@@ -1587,8 +1761,9 @@ function buildChecks(
     },
     {
       id: "level_coverage",
-      status: levelsCovered === expectedLevels ? "PASS" : "CRITICAL",
-      observed: `${levelsCovered}/${expectedLevels}`,
+      status: configuredLevelsCovered === expectedLevels ? "PASS" : "CRITICAL",
+      observed:
+        `${configuredLevelsCovered}/${expectedLevels} configured, ${coveredLevels.size} total`,
       target: `${expectedLevels}/${expectedLevels}`,
       note: "Every configured level checkpoint should produce matchups.",
     },
@@ -1677,6 +1852,20 @@ export async function writeOutputs(
       "player_damage_by_type",
       "opponent_damage_by_type",
       "spell_casts",
+    ]),
+  );
+  await Deno.writeTextFile(
+    new URL("battle_lab_progression_matrix.csv", outputUrl),
+    toCsv(progressionMatrixRows(result.matchups), [
+      "category",
+      "milestone_id",
+      "player",
+      "opponent",
+      "total",
+      "wins",
+      "win_rate_percent",
+      "avg_duration",
+      "status",
     ]),
   );
   await Deno.writeTextFile(
@@ -1857,6 +2046,122 @@ function matchupRows(matchups: LabMatchup[]): Array<Record<string, unknown>> {
     opponent_damage_by_type: compactMap(matchup.opponent_damage_by_type),
     spell_casts: compactMap(matchup.spell_casts),
   }));
+}
+
+function progressionMatrixRows(
+  matchups: LabMatchup[],
+): Array<Record<string, unknown>> {
+  const buckets = new Map<
+    string,
+    { total: number; wins: number; durations: number[] }
+  >();
+  for (const matchup of matchups) {
+    const player = progressionBuildInfo(
+      matchup.player_build_id,
+      matchup.player_archetype_id,
+    );
+    const opponent = progressionBuildInfo(
+      matchup.opponent_build_id,
+      matchup.opponent_archetype_id,
+    );
+    const category = progressionCategory(player.kind, opponent.kind);
+    if (category === "") continue;
+
+    const milestoneId = player.milestone_id !== ""
+      ? player.milestone_id
+      : opponent.milestone_id;
+    const key = [
+      category,
+      milestoneId,
+      player.label,
+      opponent.label,
+    ].join("::");
+    const bucket = buckets.get(key) ?? { total: 0, wins: 0, durations: [] };
+    bucket.total += 1;
+    if (matchup.winner === "player") bucket.wins += 1;
+    bucket.durations.push(matchup.duration);
+    buckets.set(key, bucket);
+  }
+
+  return [...buckets.entries()].map(([key, bucket]) => {
+    const [category, milestoneId, player, opponent] = key.split("::");
+    const winRate = rate(bucket.wins, bucket.total);
+    return {
+      category,
+      milestone_id: milestoneId,
+      player,
+      opponent,
+      total: bucket.total,
+      wins: bucket.wins,
+      win_rate_percent: winRate,
+      avg_duration: round(avg(bucket.durations), 2),
+      status: winRate >= 35 && winRate <= 65 ? "PASS" : "REVIEW",
+    };
+  });
+}
+
+function progressionBuildInfo(buildId: string, archetypeId: string): {
+  kind: "profile" | "bot" | "archetype";
+  milestone_id: string;
+  label: string;
+} {
+  if (buildId.startsWith("PLBOT_bot_")) {
+    const parsed = parseProgressionId(buildId.slice("PLBOT_bot_".length));
+    return {
+      kind: "bot",
+      milestone_id: parsed.milestone_id,
+      label: `bot:${parsed.profile_id}:${parsed.milestone_id}`,
+    };
+  }
+  if (buildId.startsWith("PL_")) {
+    const parsed = parseProgressionId(buildId.slice("PL_".length));
+    return {
+      kind: "profile",
+      milestone_id: parsed.milestone_id,
+      label: `profile:${parsed.profile_id}:${parsed.milestone_id}`,
+    };
+  }
+  return {
+    kind: "archetype",
+    milestone_id: "",
+    label: `archetype:${archetypeId}`,
+  };
+}
+
+function parseProgressionId(
+  id: string,
+): { profile_id: string; milestone_id: string } {
+  for (const milestoneId of PROGRESSION_MILESTONE_IDS) {
+    const middleToken = `_${milestoneId}_`;
+    const middleIndex = id.indexOf(middleToken);
+    if (middleIndex >= 0) {
+      return {
+        profile_id: id.slice(0, middleIndex),
+        milestone_id: milestoneId,
+      };
+    }
+    const endToken = `_${milestoneId}`;
+    if (id.endsWith(endToken)) {
+      return {
+        profile_id: id.slice(0, -endToken.length),
+        milestone_id: milestoneId,
+      };
+    }
+  }
+  return { profile_id: id, milestone_id: "" };
+}
+
+function progressionCategory(left: string, right: string): string {
+  if (
+    (left === "profile" && right === "bot") ||
+    (left === "bot" && right === "profile")
+  ) return "profile_vs_bot";
+  if (left === "profile" && right === "profile") return "profile_vs_profile";
+  if (
+    (left === "profile" && right === "archetype") ||
+    (left === "archetype" && right === "profile")
+  ) return "profile_vs_archetype";
+  return "";
 }
 
 function historyRowsForCsv(

@@ -40,6 +40,9 @@ supabase/publishable_key="sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH"
 battle_lab/enabled=true
 battle_lab/deno_command="npx"
 battle_lab/deno_prefix_args=PackedStringArray("-y", "deno", "run", "--allow-read", "--allow-write")
+progression_lab/enabled=true
+progression_lab/deno_command="npx"
+progression_lab/deno_prefix_args=PackedStringArray("-y", "deno", "run", "--allow-read", "--allow-write", "--allow-env", "--allow-net")
 
 [editor_plugins]
 

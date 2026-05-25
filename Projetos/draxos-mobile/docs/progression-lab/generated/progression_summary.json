@@ -1,0 +1,5887 @@
+{
+  "schema_version": 1,
+  "model_id": "draxos_mobile_progression_lab_v1",
+  "status": "REVIEW",
+  "saves": [
+    {
+      "id": "free_50_rewards_2h",
+      "profile_id": "free_50_rewards",
+      "profile_name": "Free 50% rewards",
+      "milestone_id": "2h",
+      "hours": 2,
+      "status": "PASS",
+      "notes": [
+        "Use power 651 as initial matchmaking observation, not final truth."
+      ],
+      "player": {
+        "username": "plab_free_50_rewards_2h",
+        "account_type": "progression_lab",
+        "level": 8,
+        "xp": 824,
+        "power": 651
+      },
+      "resources": {
+        "xp": 823.5,
+        "almas": 12.95,
+        "energia": 22.35,
+        "sangue": 20.68,
+        "cristais": 6.12,
+        "ossos": 4.48,
+        "diamante": 0.09
+      },
+      "resource_debt": {
+        "xp": 0,
+        "almas": 0,
+        "energia": 0,
+        "sangue": 0,
+        "cristais": 0,
+        "ossos": 0,
+        "diamante": 0
+      },
+      "build": {
+        "archetype_id": "elemental_mixer",
+        "weapon_type": "varinha_magica",
+        "weapon_quality": "starter",
+        "weapon_quality_tier": 0,
+        "weapon_level": 5,
+        "spell_slots": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spells_unlocked": [
+          "raio_cosmico",
+          "raio",
+          "acender",
+          "envenenar",
+          "congelar"
+        ],
+        "spell_levels": {
+          "raio_cosmico": 2,
+          "acender": 2
+        },
+        "passive_id": "",
+        "passive_level": 0,
+        "pet_id": "",
+        "pet_level": 0
+      },
+      "base": {
+        "construction_slots": 1,
+        "structures": [
+          {
+            "structure_id": "nucleo_energia",
+            "produces": "energia",
+            "level": 1
+          },
+          {
+            "structure_id": "altar_das_almas",
+            "produces": "almas",
+            "level": 1
+          },
+          {
+            "structure_id": "pocos_sangue",
+            "produces": "sangue",
+            "level": 1
+          },
+          {
+            "structure_id": "minas_cristal",
+            "produces": "cristais",
+            "level": 1
+          },
+          {
+            "structure_id": "ossario",
+            "produces": "ossos",
+            "level": 2
+          },
+          {
+            "structure_id": "estrutura_stats",
+            "produces": "",
+            "level": 2
+          }
+        ],
+        "active_job": {
+          "structure_id": "nucleo_energia",
+          "target_level": 2,
+          "remaining_minutes": 86
+        }
+      },
+      "monetization": {
+        "premium_pass": false,
+        "battle_pass_xp": 59,
+        "premium_unlocked": false,
+        "simulated_store_spend": 0
+      },
+      "combat_build": {
+        "id": "free_50_rewards_2h",
+        "displayName": "free_50_rewards_2h",
+        "level": 8,
+        "weaponLevel": 5,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 2,
+          "acender": 2
+        }
+      },
+      "manual_checklist": [
+        "Carregar free_50_rewards em 2h.",
+        "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
+        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
+        "Conferir build: arma L5, spells raio_cosmico, acender.",
+        "Registrar gargalo, momento confuso e vontade de continuar."
+      ]
+    },
+    {
+      "id": "free_50_rewards_5h",
+      "profile_id": "free_50_rewards",
+      "profile_name": "Free 50% rewards",
+      "milestone_id": "5h",
+      "hours": 5,
+      "status": "PASS",
+      "notes": [
+        "Use power 934 as initial matchmaking observation, not final truth."
+      ],
+      "player": {
+        "username": "plab_free_50_rewards_5h",
+        "account_type": "progression_lab",
+        "level": 10,
+        "xp": 2059,
+        "power": 934
+      },
+      "resources": {
+        "xp": 2058.75,
+        "almas": 52.38,
+        "energia": 35.88,
+        "sangue": 51.7,
+        "cristais": 5.3,
+        "ossos": 11.2,
+        "diamante": 0.23
+      },
+      "resource_debt": {
+        "xp": 0,
+        "almas": 0,
+        "energia": 0,
+        "sangue": 0,
+        "cristais": 0,
+        "ossos": 0,
+        "diamante": 0
+      },
+      "build": {
+        "archetype_id": "elemental_mixer",
+        "weapon_type": "varinha_magica",
+        "weapon_quality": "starter",
+        "weapon_quality_tier": 0,
+        "weapon_level": 6,
+        "spell_slots": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spells_unlocked": [
+          "raio_cosmico",
+          "raio",
+          "acender",
+          "envenenar",
+          "congelar"
+        ],
+        "spell_levels": {
+          "raio_cosmico": 5,
+          "acender": 5
+        },
+        "passive_id": "forca",
+        "passive_level": 3,
+        "pet_id": "",
+        "pet_level": 0
+      },
+      "base": {
+        "construction_slots": 1,
+        "structures": [
+          {
+            "structure_id": "nucleo_energia",
+            "produces": "energia",
+            "level": 2
+          },
+          {
+            "structure_id": "altar_das_almas",
+            "produces": "almas",
+            "level": 2
+          },
+          {
+            "structure_id": "pocos_sangue",
+            "produces": "sangue",
+            "level": 2
+          },
+          {
+            "structure_id": "minas_cristal",
+            "produces": "cristais",
+            "level": 2
+          },
+          {
+            "structure_id": "ossario",
+            "produces": "ossos",
+            "level": 2
+          },
+          {
+            "structure_id": "estrutura_stats",
+            "produces": "",
+            "level": 2
+          }
+        ],
+        "active_job": {
+          "structure_id": "nucleo_energia",
+          "target_level": 3,
+          "remaining_minutes": 80
+        }
+      },
+      "monetization": {
+        "premium_pass": false,
+        "battle_pass_xp": 146,
+        "premium_unlocked": false,
+        "simulated_store_spend": 0
+      },
+      "combat_build": {
+        "id": "free_50_rewards_5h",
+        "displayName": "free_50_rewards_5h",
+        "level": 10,
+        "weaponLevel": 6,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 5,
+          "acender": 5
+        },
+        "passiveId": "forca",
+        "passiveLevel": 3
+      },
+      "manual_checklist": [
+        "Carregar free_50_rewards em 5h.",
+        "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
+        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
+        "Conferir build: arma L6, spells raio_cosmico, acender.",
+        "Registrar gargalo, momento confuso e vontade de continuar."
+      ]
+    },
+    {
+      "id": "free_50_rewards_10h",
+      "profile_id": "free_50_rewards",
+      "profile_name": "Free 50% rewards",
+      "milestone_id": "10h",
+      "hours": 10,
+      "status": "PASS",
+      "notes": [
+        "Use power 1176 as initial matchmaking observation, not final truth."
+      ],
+      "player": {
+        "username": "plab_free_50_rewards_10h",
+        "account_type": "progression_lab",
+        "level": 12,
+        "xp": 4118,
+        "power": 1176
+      },
+      "resources": {
+        "xp": 4117.5,
+        "almas": 191.75,
+        "energia": 71.75,
+        "sangue": 103.4,
+        "cristais": 5.6,
+        "ossos": 22.4,
+        "diamante": 0.45
+      },
+      "resource_debt": {
+        "xp": 0,
+        "almas": 0,
+        "energia": 0,
+        "sangue": 0,
+        "cristais": 0,
+        "ossos": 0,
+        "diamante": 0
+      },
+      "build": {
+        "archetype_id": "elemental_mixer",
+        "weapon_type": "varinha_magica",
+        "weapon_quality": "starter",
+        "weapon_quality_tier": 0,
+        "weapon_level": 8,
+        "spell_slots": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spells_unlocked": [
+          "raio_cosmico",
+          "raio",
+          "acender",
+          "envenenar",
+          "congelar"
+        ],
+        "spell_levels": {
+          "raio_cosmico": 6,
+          "acender": 6
+        },
+        "passive_id": "forca",
+        "passive_level": 6,
+        "pet_id": "",
+        "pet_level": 0
+      },
+      "base": {
+        "construction_slots": 1,
+        "structures": [
+          {
+            "structure_id": "nucleo_energia",
+            "produces": "energia",
+            "level": 3
+          },
+          {
+            "structure_id": "altar_das_almas",
+            "produces": "almas",
+            "level": 3
+          },
+          {
+            "structure_id": "pocos_sangue",
+            "produces": "sangue",
+            "level": 3
+          },
+          {
+            "structure_id": "minas_cristal",
+            "produces": "cristais",
+            "level": 3
+          },
+          {
+            "structure_id": "ossario",
+            "produces": "ossos",
+            "level": 3
+          },
+          {
+            "structure_id": "estrutura_stats",
+            "produces": "",
+            "level": 3
+          }
+        ],
+        "active_job": {
+          "structure_id": "nucleo_energia",
+          "target_level": 4,
+          "remaining_minutes": 70
+        }
+      },
+      "monetization": {
+        "premium_pass": false,
+        "battle_pass_xp": 293,
+        "premium_unlocked": false,
+        "simulated_store_spend": 0
+      },
+      "combat_build": {
+        "id": "free_50_rewards_10h",
+        "displayName": "free_50_rewards_10h",
+        "level": 12,
+        "weaponLevel": 8,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 6,
+          "acender": 6
+        },
+        "passiveId": "forca",
+        "passiveLevel": 6
+      },
+      "manual_checklist": [
+        "Carregar free_50_rewards em 10h.",
+        "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
+        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
+        "Conferir build: arma L8, spells raio_cosmico, acender.",
+        "Registrar gargalo, momento confuso e vontade de continuar."
+      ]
+    },
+    {
+      "id": "free_50_rewards_15h",
+      "profile_id": "free_50_rewards",
+      "profile_name": "Free 50% rewards",
+      "milestone_id": "15h",
+      "hours": 15,
+      "status": "REVIEW",
+      "notes": [
+        "Level 14 outside target 15-30.",
+        "Use power 1358 as initial matchmaking observation, not final truth."
+      ],
+      "player": {
+        "username": "plab_free_50_rewards_15h",
+        "account_type": "progression_lab",
+        "level": 14,
+        "xp": 6176,
+        "power": 1358
+      },
+      "resources": {
+        "xp": 6176.25,
+        "almas": 338.13,
+        "energia": 107.63,
+        "sangue": 155.1,
+        "cristais": 20.9,
+        "ossos": 33.6,
+        "diamante": 0.68
+      },
+      "resource_debt": {
+        "xp": 0,
+        "almas": 0,
+        "energia": 0,
+        "sangue": 0,
+        "cristais": 0,
+        "ossos": 0,
+        "diamante": 0
+      },
+      "build": {
+        "archetype_id": "elemental_mixer",
+        "weapon_type": "varinha_magica",
+        "weapon_quality": "starter",
+        "weapon_quality_tier": 0,
+        "weapon_level": 9,
+        "spell_slots": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spells_unlocked": [
+          "raio_cosmico",
+          "raio",
+          "acender",
+          "envenenar",
+          "congelar"
+        ],
+        "spell_levels": {
+          "raio_cosmico": 7,
+          "acender": 7
+        },
+        "passive_id": "forca",
+        "passive_level": 6,
+        "pet_id": "",
+        "pet_level": 0
+      },
+      "base": {
+        "construction_slots": 1,
+        "structures": [
+          {
+            "structure_id": "nucleo_energia",
+            "produces": "energia",
+            "level": 4
+          },
+          {
+            "structure_id": "altar_das_almas",
+            "produces": "almas",
+            "level": 4
+          },
+          {
+            "structure_id": "pocos_sangue",
+            "produces": "sangue",
+            "level": 4
+          },
+          {
+            "structure_id": "minas_cristal",
+            "produces": "cristais",
+            "level": 4
+          },
+          {
+            "structure_id": "ossario",
+            "produces": "ossos",
+            "level": 4
+          },
+          {
+            "structure_id": "estrutura_stats",
+            "produces": "",
+            "level": 4
+          }
+        ],
+        "active_job": {
+          "structure_id": "nucleo_energia",
+          "target_level": 5,
+          "remaining_minutes": 60
+        }
+      },
+      "monetization": {
+        "premium_pass": false,
+        "battle_pass_xp": 439,
+        "premium_unlocked": false,
+        "simulated_store_spend": 0
+      },
+      "combat_build": {
+        "id": "free_50_rewards_15h",
+        "displayName": "free_50_rewards_15h",
+        "level": 14,
+        "weaponLevel": 9,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 7,
+          "acender": 7
+        },
+        "passiveId": "forca",
+        "passiveLevel": 6
+      },
+      "manual_checklist": [
+        "Carregar free_50_rewards em 15h.",
+        "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
+        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
+        "Conferir build: arma L9, spells raio_cosmico, acender.",
+        "Registrar gargalo, momento confuso e vontade de continuar."
+      ]
+    },
+    {
+      "id": "free_50_rewards_20h",
+      "profile_id": "free_50_rewards",
+      "profile_name": "Free 50% rewards",
+      "milestone_id": "20h",
+      "hours": 20,
+      "status": "REVIEW",
+      "notes": [
+        "Level 15 outside target 18-36.",
+        "Use power 1567 as initial matchmaking observation, not final truth."
+      ],
+      "player": {
+        "username": "plab_free_50_rewards_20h",
+        "account_type": "progression_lab",
+        "level": 15,
+        "xp": 8235,
+        "power": 1567
+      },
+      "resources": {
+        "xp": 8235,
+        "almas": 494.5,
+        "energia": 143.5,
+        "sangue": 174.8,
+        "cristais": 31.2,
+        "ossos": 44.8,
+        "diamante": 0.9
+      },
+      "resource_debt": {
+        "xp": 0,
+        "almas": 0,
+        "energia": 0,
+        "sangue": 0,
+        "cristais": 0,
+        "ossos": 0,
+        "diamante": 0
+      },
+      "build": {
+        "archetype_id": "elemental_mixer",
+        "weapon_type": "varinha_magica",
+        "weapon_quality": "starter",
+        "weapon_quality_tier": 0,
+        "weapon_level": 9,
+        "spell_slots": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spells_unlocked": [
+          "raio_cosmico",
+          "raio",
+          "acender",
+          "envenenar",
+          "congelar"
+        ],
+        "spell_levels": {
+          "raio_cosmico": 8,
+          "acender": 8
+        },
+        "passive_id": "forca",
+        "passive_level": 7,
+        "pet_id": "brasido",
+        "pet_level": 7
+      },
+      "base": {
+        "construction_slots": 1,
+        "structures": [
+          {
+            "structure_id": "nucleo_energia",
+            "produces": "energia",
+            "level": 5
+          },
+          {
+            "structure_id": "altar_das_almas",
+            "produces": "almas",
+            "level": 5
+          },
+          {
+            "structure_id": "pocos_sangue",
+            "produces": "sangue",
+            "level": 6
+          },
+          {
+            "structure_id": "minas_cristal",
+            "produces": "cristais",
+            "level": 5
+          },
+          {
+            "structure_id": "ossario",
+            "produces": "ossos",
+            "level": 5
+          },
+          {
+            "structure_id": "estrutura_stats",
+            "produces": "",
+            "level": 4
+          }
+        ],
+        "active_job": {
+          "structure_id": "nucleo_energia",
+          "target_level": 6,
+          "remaining_minutes": 50
+        }
+      },
+      "monetization": {
+        "premium_pass": false,
+        "battle_pass_xp": 585,
+        "premium_unlocked": false,
+        "simulated_store_spend": 0
+      },
+      "combat_build": {
+        "id": "free_50_rewards_20h",
+        "displayName": "free_50_rewards_20h",
+        "level": 15,
+        "weaponLevel": 9,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 8,
+          "acender": 8
+        },
+        "passiveId": "forca",
+        "passiveLevel": 7,
+        "petId": "brasido",
+        "petLevel": 7
+      },
+      "manual_checklist": [
+        "Carregar free_50_rewards em 20h.",
+        "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
+        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
+        "Conferir build: arma L9, spells raio_cosmico, acender.",
+        "Registrar gargalo, momento confuso e vontade de continuar."
+      ]
+    },
+    {
+      "id": "free_100_rewards_2h",
+      "profile_id": "free_100_rewards",
+      "profile_name": "Free 100% rewards",
+      "milestone_id": "2h",
+      "hours": 2,
+      "status": "PASS",
+      "notes": [
+        "Use power 702 as initial matchmaking observation, not final truth."
+      ],
+      "player": {
+        "username": "plab_free_100_rewards_2h",
+        "account_type": "progression_lab",
+        "level": 8,
+        "xp": 1150,
+        "power": 702
+      },
+      "resources": {
+        "xp": 1150,
+        "almas": 21,
+        "energia": 27,
+        "sangue": 29,
+        "cristais": 9.4,
+        "ossos": 6.7,
+        "diamante": 0.2
+      },
+      "resource_debt": {
+        "xp": 0,
+        "almas": 0,
+        "energia": 0,
+        "sangue": 0,
+        "cristais": 0,
+        "ossos": 0,
+        "diamante": 0
+      },
+      "build": {
+        "archetype_id": "burst_caster",
+        "weapon_type": "varinha_magica",
+        "weapon_quality": "starter",
+        "weapon_quality_tier": 0,
+        "weapon_level": 6,
+        "spell_slots": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spells_unlocked": [
+          "raio_cosmico",
+          "raio",
+          "acender",
+          "envenenar",
+          "congelar"
+        ],
+        "spell_levels": {
+          "raio": 2,
+          "raio_cosmico": 3
+        },
+        "passive_id": "",
+        "passive_level": 0,
+        "pet_id": "",
+        "pet_level": 0
+      },
+      "base": {
+        "construction_slots": 1,
+        "structures": [
+          {
+            "structure_id": "nucleo_energia",
+            "produces": "energia",
+            "level": 1
+          },
+          {
+            "structure_id": "altar_das_almas",
+            "produces": "almas",
+            "level": 1
+          },
+          {
+            "structure_id": "pocos_sangue",
+            "produces": "sangue",
+            "level": 1
+          },
+          {
+            "structure_id": "minas_cristal",
+            "produces": "cristais",
+            "level": 2
+          },
+          {
+            "structure_id": "ossario",
+            "produces": "ossos",
+            "level": 2
+          },
+          {
+            "structure_id": "estrutura_stats",
+            "produces": "",
+            "level": 2
+          }
+        ],
+        "active_job": {
+          "structure_id": "nucleo_energia",
+          "target_level": 2,
+          "remaining_minutes": 86
+        }
+      },
+      "monetization": {
+        "premium_pass": false,
+        "battle_pass_xp": 130,
+        "premium_unlocked": false,
+        "simulated_store_spend": 0
+      },
+      "combat_build": {
+        "id": "free_100_rewards_2h",
+        "displayName": "free_100_rewards_2h",
+        "level": 8,
+        "weaponLevel": 6,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 2,
+          "raio_cosmico": 3
+        }
+      },
+      "manual_checklist": [
+        "Carregar free_100_rewards em 2h.",
+        "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
+        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
+        "Conferir build: arma L6, spells raio, raio_cosmico.",
+        "Registrar gargalo, momento confuso e vontade de continuar."
+      ]
+    },
+    {
+      "id": "free_100_rewards_5h",
+      "profile_id": "free_100_rewards",
+      "profile_name": "Free 100% rewards",
+      "milestone_id": "5h",
+      "hours": 5,
+      "status": "PASS",
+      "notes": [
+        "Use power 1143 as initial matchmaking observation, not final truth."
+      ],
+      "player": {
+        "username": "plab_free_100_rewards_5h",
+        "account_type": "progression_lab",
+        "level": 11,
+        "xp": 2875,
+        "power": 1143
+      },
+      "resources": {
+        "xp": 2875,
+        "almas": 59.5,
+        "energia": 57.5,
+        "sangue": 72.5,
+        "cristais": 8.5,
+        "ossos": 16.75,
+        "diamante": 0.5
+      },
+      "resource_debt": {
+        "xp": 0,
+        "almas": 0,
+        "energia": 0,
+        "sangue": 0,
+        "cristais": 0,
+        "ossos": 0,
+        "diamante": 0
+      },
+      "build": {
+        "archetype_id": "burst_caster",
+        "weapon_type": "varinha_magica",
+        "weapon_quality": "starter",
+        "weapon_quality_tier": 0,
+        "weapon_level": 8,
+        "spell_slots": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spells_unlocked": [
+          "raio_cosmico",
+          "raio",
+          "acender",
+          "envenenar",
+          "congelar"
+        ],
+        "spell_levels": {
+          "raio": 7,
+          "raio_cosmico": 7
+        },
+        "passive_id": "forca",
+        "passive_level": 4,
+        "pet_id": "",
+        "pet_level": 0
+      },
+      "base": {
+        "construction_slots": 1,
+        "structures": [
+          {
+            "structure_id": "nucleo_energia",
+            "produces": "energia",
+            "level": 2
+          },
+          {
+            "structure_id": "altar_das_almas",
+            "produces": "almas",
+            "level": 2
+          },
+          {
+            "structure_id": "pocos_sangue",
+            "produces": "sangue",
+            "level": 2
+          },
+          {
+            "structure_id": "minas_cristal",
+            "produces": "cristais",
+            "level": 2
+          },
+          {
+            "structure_id": "ossario",
+            "produces": "ossos",
+            "level": 3
+          },
+          {
+            "structure_id": "estrutura_stats",
+            "produces": "",
+            "level": 3
+          }
+        ],
+        "active_job": {
+          "structure_id": "nucleo_energia",
+          "target_level": 3,
+          "remaining_minutes": 80
+        }
+      },
+      "monetization": {
+        "premium_pass": false,
+        "battle_pass_xp": 325,
+        "premium_unlocked": false,
+        "simulated_store_spend": 0
+      },
+      "combat_build": {
+        "id": "free_100_rewards_5h",
+        "displayName": "free_100_rewards_5h",
+        "level": 11,
+        "weaponLevel": 8,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 7,
+          "raio_cosmico": 7
+        },
+        "passiveId": "forca",
+        "passiveLevel": 4
+      },
+      "manual_checklist": [
+        "Carregar free_100_rewards em 5h.",
+        "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
+        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
+        "Conferir build: arma L8, spells raio, raio_cosmico.",
+        "Registrar gargalo, momento confuso e vontade de continuar."
+      ]
+    },
+    {
+      "id": "free_100_rewards_10h",
+      "profile_id": "free_100_rewards",
+      "profile_name": "Free 100% rewards",
+      "milestone_id": "10h",
+      "hours": 10,
+      "status": "PASS",
+      "notes": [
+        "Use power 1517 as initial matchmaking observation, not final truth."
+      ],
+      "player": {
+        "username": "plab_free_100_rewards_10h",
+        "account_type": "progression_lab",
+        "level": 14,
+        "xp": 5750,
+        "power": 1517
+      },
+      "resources": {
+        "xp": 5750,
+        "almas": 194,
+        "energia": 115,
+        "sangue": 145,
+        "cristais": 11,
+        "ossos": 33.5,
+        "diamante": 1
+      },
+      "resource_debt": {
+        "xp": 0,
+        "almas": 0,
+        "energia": 0,
+        "sangue": 0,
+        "cristais": 0,
+        "ossos": 0,
+        "diamante": 0
+      },
+      "build": {
+        "archetype_id": "burst_caster",
+        "weapon_type": "varinha_magica",
+        "weapon_quality": "starter",
+        "weapon_quality_tier": 0,
+        "weapon_level": 11,
+        "spell_slots": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spells_unlocked": [
+          "raio_cosmico",
+          "raio",
+          "acender",
+          "envenenar",
+          "congelar"
+        ],
+        "spell_levels": {
+          "raio": 9,
+          "raio_cosmico": 9
+        },
+        "passive_id": "forca",
+        "passive_level": 8,
+        "pet_id": "",
+        "pet_level": 0
+      },
+      "base": {
+        "construction_slots": 1,
+        "structures": [
+          {
+            "structure_id": "nucleo_energia",
+            "produces": "energia",
+            "level": 3
+          },
+          {
+            "structure_id": "altar_das_almas",
+            "produces": "almas",
+            "level": 3
+          },
+          {
+            "structure_id": "pocos_sangue",
+            "produces": "sangue",
+            "level": 4
+          },
+          {
+            "structure_id": "minas_cristal",
+            "produces": "cristais",
+            "level": 4
+          },
+          {
+            "structure_id": "ossario",
+            "produces": "ossos",
+            "level": 4
+          },
+          {
+            "structure_id": "estrutura_stats",
+            "produces": "",
+            "level": 4
+          }
+        ],
+        "active_job": {
+          "structure_id": "nucleo_energia",
+          "target_level": 4,
+          "remaining_minutes": 70
+        }
+      },
+      "monetization": {
+        "premium_pass": false,
+        "battle_pass_xp": 650,
+        "premium_unlocked": false,
+        "simulated_store_spend": 0
+      },
+      "combat_build": {
+        "id": "free_100_rewards_10h",
+        "displayName": "free_100_rewards_10h",
+        "level": 14,
+        "weaponLevel": 11,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 9,
+          "raio_cosmico": 9
+        },
+        "passiveId": "forca",
+        "passiveLevel": 8
+      },
+      "manual_checklist": [
+        "Carregar free_100_rewards em 10h.",
+        "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
+        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
+        "Conferir build: arma L11, spells raio, raio_cosmico.",
+        "Registrar gargalo, momento confuso e vontade de continuar."
+      ]
+    },
+    {
+      "id": "free_100_rewards_15h",
+      "profile_id": "free_100_rewards",
+      "profile_name": "Free 100% rewards",
+      "milestone_id": "15h",
+      "hours": 15,
+      "status": "PASS",
+      "notes": [
+        "Use power 1869 as initial matchmaking observation, not final truth."
+      ],
+      "player": {
+        "username": "plab_free_100_rewards_15h",
+        "account_type": "progression_lab",
+        "level": 16,
+        "xp": 8625,
+        "power": 1869
+      },
+      "resources": {
+        "xp": 8625,
+        "almas": 377.5,
+        "energia": 152.5,
+        "sangue": 148.5,
+        "cristais": 26.5,
+        "ossos": 50.25,
+        "diamante": 1.5
+      },
+      "resource_debt": {
+        "xp": 0,
+        "almas": 0,
+        "energia": 0,
+        "sangue": 0,
+        "cristais": 0,
+        "ossos": 0,
+        "diamante": 0
+      },
+      "build": {
+        "archetype_id": "elemental_mixer",
+        "weapon_type": "varinha_magica",
+        "weapon_quality": "starter",
+        "weapon_quality_tier": 0,
+        "weapon_level": 12,
+        "spell_slots": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spells_unlocked": [
+          "raio_cosmico",
+          "raio",
+          "acender",
+          "envenenar",
+          "congelar"
+        ],
+        "spell_levels": {
+          "raio_cosmico": 10,
+          "acender": 10
+        },
+        "passive_id": "forca",
+        "passive_level": 9,
+        "pet_id": "brasido",
+        "pet_level": 10
+      },
+      "base": {
+        "construction_slots": 1,
+        "structures": [
+          {
+            "structure_id": "nucleo_energia",
+            "produces": "energia",
+            "level": 5
+          },
+          {
+            "structure_id": "altar_das_almas",
+            "produces": "almas",
+            "level": 5
+          },
+          {
+            "structure_id": "pocos_sangue",
+            "produces": "sangue",
+            "level": 5
+          },
+          {
+            "structure_id": "minas_cristal",
+            "produces": "cristais",
+            "level": 5
+          },
+          {
+            "structure_id": "ossario",
+            "produces": "ossos",
+            "level": 5
+          },
+          {
+            "structure_id": "estrutura_stats",
+            "produces": "",
+            "level": 6
+          }
+        ],
+        "active_job": {
+          "structure_id": "nucleo_energia",
+          "target_level": 6,
+          "remaining_minutes": 60
+        }
+      },
+      "monetization": {
+        "premium_pass": false,
+        "battle_pass_xp": 975,
+        "premium_unlocked": false,
+        "simulated_store_spend": 0
+      },
+      "combat_build": {
+        "id": "free_100_rewards_15h",
+        "displayName": "free_100_rewards_15h",
+        "level": 16,
+        "weaponLevel": 12,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 10,
+          "acender": 10
+        },
+        "passiveId": "forca",
+        "passiveLevel": 9,
+        "petId": "brasido",
+        "petLevel": 10
+      },
+      "manual_checklist": [
+        "Carregar free_100_rewards em 15h.",
+        "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
+        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
+        "Conferir build: arma L12, spells raio_cosmico, acender.",
+        "Registrar gargalo, momento confuso e vontade de continuar."
+      ]
+    },
+    {
+      "id": "free_100_rewards_20h",
+      "profile_id": "free_100_rewards",
+      "profile_name": "Free 100% rewards",
+      "milestone_id": "20h",
+      "hours": 20,
+      "status": "REVIEW",
+      "notes": [
+        "Level 17 outside target 18-36.",
+        "Use power 2004 as initial matchmaking observation, not final truth."
+      ],
+      "player": {
+        "username": "plab_free_100_rewards_20h",
+        "account_type": "progression_lab",
+        "level": 17,
+        "xp": 11500,
+        "power": 2004
+      },
+      "resources": {
+        "xp": 11500,
+        "almas": 548,
+        "energia": 195,
+        "sangue": 221,
+        "cristais": 40,
+        "ossos": 67,
+        "diamante": 2
+      },
+      "resource_debt": {
+        "xp": 0,
+        "almas": 0,
+        "energia": 0,
+        "sangue": 0,
+        "cristais": 0,
+        "ossos": 0,
+        "diamante": 0
+      },
+      "build": {
+        "archetype_id": "elemental_mixer",
+        "weapon_type": "varinha_magica",
+        "weapon_quality": "starter",
+        "weapon_quality_tier": 0,
+        "weapon_level": 13,
+        "spell_slots": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spells_unlocked": [
+          "raio_cosmico",
+          "raio",
+          "acender",
+          "envenenar",
+          "congelar"
+        ],
+        "spell_levels": {
+          "raio_cosmico": 11,
+          "acender": 11
+        },
+        "passive_id": "forca",
+        "passive_level": 10,
+        "pet_id": "brasido",
+        "pet_level": 10
+      },
+      "base": {
+        "construction_slots": 1,
+        "structures": [
+          {
+            "structure_id": "nucleo_energia",
+            "produces": "energia",
+            "level": 6
+          },
+          {
+            "structure_id": "altar_das_almas",
+            "produces": "almas",
+            "level": 6
+          },
+          {
+            "structure_id": "pocos_sangue",
+            "produces": "sangue",
+            "level": 7
+          },
+          {
+            "structure_id": "minas_cristal",
+            "produces": "cristais",
+            "level": 7
+          },
+          {
+            "structure_id": "ossario",
+            "produces": "ossos",
+            "level": 7
+          },
+          {
+            "structure_id": "estrutura_stats",
+            "produces": "",
+            "level": 6
+          }
+        ],
+        "active_job": {
+          "structure_id": "nucleo_energia",
+          "target_level": 7,
+          "remaining_minutes": 50
+        }
+      },
+      "monetization": {
+        "premium_pass": false,
+        "battle_pass_xp": 1300,
+        "premium_unlocked": false,
+        "simulated_store_spend": 0
+      },
+      "combat_build": {
+        "id": "free_100_rewards_20h",
+        "displayName": "free_100_rewards_20h",
+        "level": 17,
+        "weaponLevel": 13,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 11,
+          "acender": 11
+        },
+        "passiveId": "forca",
+        "passiveLevel": 10,
+        "petId": "brasido",
+        "petLevel": 10
+      },
+      "manual_checklist": [
+        "Carregar free_100_rewards em 20h.",
+        "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
+        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
+        "Conferir build: arma L13, spells raio_cosmico, acender.",
+        "Registrar gargalo, momento confuso e vontade de continuar."
+      ]
+    },
+    {
+      "id": "freemium_basic_2h",
+      "profile_id": "freemium_basic",
+      "profile_name": "Freemium basic",
+      "milestone_id": "2h",
+      "hours": 2,
+      "status": "PASS",
+      "notes": [
+        "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
+        "Use power 783 as initial matchmaking observation, not final truth."
+      ],
+      "player": {
+        "username": "plab_freemium_basic_2h",
+        "account_type": "progression_lab",
+        "level": 9,
+        "xp": 1192,
+        "power": 783
+      },
+      "resources": {
+        "xp": 1192,
+        "almas": 16.4,
+        "energia": 12.8,
+        "sangue": 31.88,
+        "cristais": 11.08,
+        "ossos": 7.42,
+        "diamante": 500.45
+      },
+      "resource_debt": {
+        "xp": 0,
+        "almas": 0,
+        "energia": 0,
+        "sangue": 0,
+        "cristais": 0,
+        "ossos": 0,
+        "diamante": 0
+      },
+      "build": {
+        "archetype_id": "burst_caster",
+        "weapon_type": "varinha_magica",
+        "weapon_quality": "starter",
+        "weapon_quality_tier": 0,
+        "weapon_level": 7,
+        "spell_slots": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spells_unlocked": [
+          "raio_cosmico",
+          "raio",
+          "acender",
+          "envenenar",
+          "congelar"
+        ],
+        "spell_levels": {
+          "raio": 2,
+          "raio_cosmico": 3
+        },
+        "passive_id": "",
+        "passive_level": 0,
+        "pet_id": "",
+        "pet_level": 0
+      },
+      "base": {
+        "construction_slots": 2,
+        "structures": [
+          {
+            "structure_id": "nucleo_energia",
+            "produces": "energia",
+            "level": 1
+          },
+          {
+            "structure_id": "altar_das_almas",
+            "produces": "almas",
+            "level": 1
+          },
+          {
+            "structure_id": "pocos_sangue",
+            "produces": "sangue",
+            "level": 2
+          },
+          {
+            "structure_id": "minas_cristal",
+            "produces": "cristais",
+            "level": 2
+          },
+          {
+            "structure_id": "ossario",
+            "produces": "ossos",
+            "level": 2
+          },
+          {
+            "structure_id": "estrutura_stats",
+            "produces": "",
+            "level": 2
+          }
+        ],
+        "active_job": {
+          "structure_id": "nucleo_energia",
+          "target_level": 2,
+          "remaining_minutes": 86
+        }
+      },
+      "monetization": {
+        "premium_pass": true,
+        "battle_pass_xp": 140,
+        "premium_unlocked": true,
+        "simulated_store_spend": 0
+      },
+      "combat_build": {
+        "id": "freemium_basic_2h",
+        "displayName": "freemium_basic_2h",
+        "level": 9,
+        "weaponLevel": 7,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 2,
+          "raio_cosmico": 3
+        }
+      },
+      "manual_checklist": [
+        "Carregar freemium_basic em 2h.",
+        "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
+        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
+        "Conferir build: arma L7, spells raio, raio_cosmico.",
+        "Registrar gargalo, momento confuso e vontade de continuar."
+      ]
+    },
+    {
+      "id": "freemium_basic_5h",
+      "profile_id": "freemium_basic",
+      "profile_name": "Freemium basic",
+      "milestone_id": "5h",
+      "hours": 5,
+      "status": "PASS",
+      "notes": [
+        "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
+        "Use power 1205 as initial matchmaking observation, not final truth."
+      ],
+      "player": {
+        "username": "plab_freemium_basic_5h",
+        "account_type": "progression_lab",
+        "level": 11,
+        "xp": 2980,
+        "power": 1205
+      },
+      "resources": {
+        "xp": 2980,
+        "almas": 44,
+        "energia": 32,
+        "sangue": 79.7,
+        "cristais": 7.7,
+        "ossos": 18.55,
+        "diamante": 501.12
+      },
+      "resource_debt": {
+        "xp": 0,
+        "almas": 0,
+        "energia": 0,
+        "sangue": 0,
+        "cristais": 0,
+        "ossos": 0,
+        "diamante": 0
+      },
+      "build": {
+        "archetype_id": "burst_caster",
+        "weapon_type": "varinha_magica",
+        "weapon_quality": "starter",
+        "weapon_quality_tier": 0,
+        "weapon_level": 9,
+        "spell_slots": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spells_unlocked": [
+          "raio_cosmico",
+          "raio",
+          "acender",
+          "envenenar",
+          "congelar"
+        ],
+        "spell_levels": {
+          "raio": 7,
+          "raio_cosmico": 8
+        },
+        "passive_id": "forca",
+        "passive_level": 5,
+        "pet_id": "",
+        "pet_level": 0
+      },
+      "base": {
+        "construction_slots": 2,
+        "structures": [
+          {
+            "structure_id": "nucleo_energia",
+            "produces": "energia",
+            "level": 2
+          },
+          {
+            "structure_id": "altar_das_almas",
+            "produces": "almas",
+            "level": 2
+          },
+          {
+            "structure_id": "pocos_sangue",
+            "produces": "sangue",
+            "level": 3
+          },
+          {
+            "structure_id": "minas_cristal",
+            "produces": "cristais",
+            "level": 3
+          },
+          {
+            "structure_id": "ossario",
+            "produces": "ossos",
+            "level": 3
+          },
+          {
+            "structure_id": "estrutura_stats",
+            "produces": "",
+            "level": 3
+          }
+        ],
+        "active_job": {
+          "structure_id": "nucleo_energia",
+          "target_level": 3,
+          "remaining_minutes": 80
+        }
+      },
+      "monetization": {
+        "premium_pass": true,
+        "battle_pass_xp": 351,
+        "premium_unlocked": true,
+        "simulated_store_spend": 0
+      },
+      "combat_build": {
+        "id": "freemium_basic_5h",
+        "displayName": "freemium_basic_5h",
+        "level": 11,
+        "weaponLevel": 9,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 7,
+          "raio_cosmico": 8
+        },
+        "passiveId": "forca",
+        "passiveLevel": 5
+      },
+      "manual_checklist": [
+        "Carregar freemium_basic em 5h.",
+        "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
+        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
+        "Conferir build: arma L9, spells raio, raio_cosmico.",
+        "Registrar gargalo, momento confuso e vontade de continuar."
+      ]
+    },
+    {
+      "id": "freemium_basic_10h",
+      "profile_id": "freemium_basic",
+      "profile_name": "Freemium basic",
+      "milestone_id": "10h",
+      "hours": 10,
+      "status": "PASS",
+      "notes": [
+        "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
+        "Use power 1577 as initial matchmaking observation, not final truth."
+      ],
+      "player": {
+        "username": "plab_freemium_basic_10h",
+        "account_type": "progression_lab",
+        "level": 14,
+        "xp": 5960,
+        "power": 1577
+      },
+      "resources": {
+        "xp": 5960,
+        "almas": 181,
+        "energia": 64,
+        "sangue": 159.4,
+        "cristais": 11.4,
+        "ossos": 37.1,
+        "diamante": 502.24
+      },
+      "resource_debt": {
+        "xp": 0,
+        "almas": 0,
+        "energia": 0,
+        "sangue": 0,
+        "cristais": 0,
+        "ossos": 0,
+        "diamante": 0
+      },
+      "build": {
+        "archetype_id": "burst_caster",
+        "weapon_type": "varinha_magica",
+        "weapon_quality": "starter",
+        "weapon_quality_tier": 0,
+        "weapon_level": 11,
+        "spell_slots": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spells_unlocked": [
+          "raio_cosmico",
+          "raio",
+          "acender",
+          "envenenar",
+          "congelar"
+        ],
+        "spell_levels": {
+          "raio": 10,
+          "raio_cosmico": 10
+        },
+        "passive_id": "forca",
+        "passive_level": 9,
+        "pet_id": "",
+        "pet_level": 0
+      },
+      "base": {
+        "construction_slots": 2,
+        "structures": [
+          {
+            "structure_id": "nucleo_energia",
+            "produces": "energia",
+            "level": 4
+          },
+          {
+            "structure_id": "altar_das_almas",
+            "produces": "almas",
+            "level": 4
+          },
+          {
+            "structure_id": "pocos_sangue",
+            "produces": "sangue",
+            "level": 4
+          },
+          {
+            "structure_id": "minas_cristal",
+            "produces": "cristais",
+            "level": 4
+          },
+          {
+            "structure_id": "ossario",
+            "produces": "ossos",
+            "level": 5
+          },
+          {
+            "structure_id": "estrutura_stats",
+            "produces": "",
+            "level": 5
+          }
+        ],
+        "active_job": {
+          "structure_id": "nucleo_energia",
+          "target_level": 5,
+          "remaining_minutes": 70
+        }
+      },
+      "monetization": {
+        "premium_pass": true,
+        "battle_pass_xp": 702,
+        "premium_unlocked": true,
+        "simulated_store_spend": 0
+      },
+      "combat_build": {
+        "id": "freemium_basic_10h",
+        "displayName": "freemium_basic_10h",
+        "level": 14,
+        "weaponLevel": 11,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 10,
+          "raio_cosmico": 10
+        },
+        "passiveId": "forca",
+        "passiveLevel": 9
+      },
+      "manual_checklist": [
+        "Carregar freemium_basic em 10h.",
+        "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
+        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
+        "Conferir build: arma L11, spells raio, raio_cosmico.",
+        "Registrar gargalo, momento confuso e vontade de continuar."
+      ]
+    },
+    {
+      "id": "freemium_basic_15h",
+      "profile_id": "freemium_basic",
+      "profile_name": "Freemium basic",
+      "milestone_id": "15h",
+      "hours": 15,
+      "status": "PASS",
+      "notes": [
+        "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
+        "Use power 1976 as initial matchmaking observation, not final truth."
+      ],
+      "player": {
+        "username": "plab_freemium_basic_15h",
+        "account_type": "progression_lab",
+        "level": 16,
+        "xp": 8940,
+        "power": 1976
+      },
+      "resources": {
+        "xp": 8940,
+        "almas": 336,
+        "energia": 71,
+        "sangue": 152.1,
+        "cristais": 29.1,
+        "ossos": 55.65,
+        "diamante": 503.36
+      },
+      "resource_debt": {
+        "xp": 0,
+        "almas": 0,
+        "energia": 0,
+        "sangue": 0,
+        "cristais": 0,
+        "ossos": 0,
+        "diamante": 0
+      },
+      "build": {
+        "archetype_id": "pet_handler",
+        "weapon_type": "varinha_magica",
+        "weapon_quality": "starter",
+        "weapon_quality_tier": 0,
+        "weapon_level": 13,
+        "spell_slots": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spells_unlocked": [
+          "raio_cosmico",
+          "raio",
+          "acender",
+          "envenenar",
+          "congelar"
+        ],
+        "spell_levels": {
+          "raio_cosmico": 11,
+          "acender": 11
+        },
+        "passive_id": "resistencia",
+        "passive_level": 10,
+        "pet_id": "familiar_cinzento",
+        "pet_level": 11
+      },
+      "base": {
+        "construction_slots": 2,
+        "structures": [
+          {
+            "structure_id": "nucleo_energia",
+            "produces": "energia",
+            "level": 6
+          },
+          {
+            "structure_id": "altar_das_almas",
+            "produces": "almas",
+            "level": 6
+          },
+          {
+            "structure_id": "pocos_sangue",
+            "produces": "sangue",
+            "level": 6
+          },
+          {
+            "structure_id": "minas_cristal",
+            "produces": "cristais",
+            "level": 6
+          },
+          {
+            "structure_id": "ossario",
+            "produces": "ossos",
+            "level": 6
+          },
+          {
+            "structure_id": "estrutura_stats",
+            "produces": "",
+            "level": 7
+          }
+        ],
+        "active_job": {
+          "structure_id": "nucleo_energia",
+          "target_level": 7,
+          "remaining_minutes": 60
+        }
+      },
+      "monetization": {
+        "premium_pass": true,
+        "battle_pass_xp": 1053,
+        "premium_unlocked": true,
+        "simulated_store_spend": 0
+      },
+      "combat_build": {
+        "id": "freemium_basic_15h",
+        "displayName": "freemium_basic_15h",
+        "level": 16,
+        "weaponLevel": 13,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 11,
+          "acender": 11
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 10,
+        "petId": "familiar_cinzento",
+        "petLevel": 11
+      },
+      "manual_checklist": [
+        "Carregar freemium_basic em 15h.",
+        "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
+        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
+        "Conferir build: arma L13, spells raio_cosmico, acender.",
+        "Registrar gargalo, momento confuso e vontade de continuar."
+      ]
+    },
+    {
+      "id": "freemium_basic_20h",
+      "profile_id": "freemium_basic",
+      "profile_name": "Freemium basic",
+      "milestone_id": "20h",
+      "hours": 20,
+      "status": "REVIEW",
+      "notes": [
+        "Level 17 outside target 18-36.",
+        "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
+        "Use power 2118 as initial matchmaking observation, not final truth."
+      ],
+      "player": {
+        "username": "plab_freemium_basic_20h",
+        "account_type": "progression_lab",
+        "level": 17,
+        "xp": 11920,
+        "power": 2118
+      },
+      "resources": {
+        "xp": 11920,
+        "almas": 505,
+        "energia": 114,
+        "sangue": 231.8,
+        "cristais": 44.8,
+        "ossos": 74.2,
+        "diamante": 504.48
+      },
+      "resource_debt": {
+        "xp": 0,
+        "almas": 0,
+        "energia": 0,
+        "sangue": 0,
+        "cristais": 0,
+        "ossos": 0,
+        "diamante": 0
+      },
+      "build": {
+        "archetype_id": "pet_handler",
+        "weapon_type": "varinha_magica",
+        "weapon_quality": "starter",
+        "weapon_quality_tier": 0,
+        "weapon_level": 14,
+        "spell_slots": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spells_unlocked": [
+          "raio_cosmico",
+          "raio",
+          "acender",
+          "envenenar",
+          "congelar"
+        ],
+        "spell_levels": {
+          "raio_cosmico": 12,
+          "acender": 12
+        },
+        "passive_id": "resistencia",
+        "passive_level": 11,
+        "pet_id": "familiar_cinzento",
+        "pet_level": 11
+      },
+      "base": {
+        "construction_slots": 2,
+        "structures": [
+          {
+            "structure_id": "nucleo_energia",
+            "produces": "energia",
+            "level": 7
+          },
+          {
+            "structure_id": "altar_das_almas",
+            "produces": "almas",
+            "level": 7
+          },
+          {
+            "structure_id": "pocos_sangue",
+            "produces": "sangue",
+            "level": 7
+          },
+          {
+            "structure_id": "minas_cristal",
+            "produces": "cristais",
+            "level": 7
+          },
+          {
+            "structure_id": "ossario",
+            "produces": "ossos",
+            "level": 8
+          },
+          {
+            "structure_id": "estrutura_stats",
+            "produces": "",
+            "level": 8
+          }
+        ],
+        "active_job": {
+          "structure_id": "nucleo_energia",
+          "target_level": 8,
+          "remaining_minutes": 50
+        }
+      },
+      "monetization": {
+        "premium_pass": true,
+        "battle_pass_xp": 1404,
+        "premium_unlocked": true,
+        "simulated_store_spend": 0
+      },
+      "combat_build": {
+        "id": "freemium_basic_20h",
+        "displayName": "freemium_basic_20h",
+        "level": 17,
+        "weaponLevel": 14,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 12,
+          "acender": 12
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 11,
+        "petId": "familiar_cinzento",
+        "petLevel": 11
+      },
+      "manual_checklist": [
+        "Carregar freemium_basic em 20h.",
+        "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
+        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
+        "Conferir build: arma L14, spells raio_cosmico, acender.",
+        "Registrar gargalo, momento confuso e vontade de continuar."
+      ]
+    },
+    {
+      "id": "spender_light_2h",
+      "profile_id": "spender_light",
+      "profile_name": "Light spender",
+      "milestone_id": "2h",
+      "hours": 2,
+      "status": "PASS",
+      "notes": [
+        "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
+        "Use power 833 as initial matchmaking observation, not final truth."
+      ],
+      "player": {
+        "username": "plab_spender_light_2h",
+        "account_type": "progression_lab",
+        "level": 9,
+        "xp": 1364,
+        "power": 833
+      },
+      "resources": {
+        "xp": 1364,
+        "almas": 19.4,
+        "energia": 26.2,
+        "sangue": 40.75,
+        "cristais": 15.08,
+        "ossos": 9.95,
+        "diamante": 484.36
+      },
+      "resource_debt": {
+        "xp": 0,
+        "almas": 0,
+        "energia": 0,
+        "sangue": 0,
+        "cristais": 0,
+        "ossos": 0,
+        "diamante": 0
+      },
+      "build": {
+        "archetype_id": "burst_caster",
+        "weapon_type": "varinha_magica",
+        "weapon_quality": "starter",
+        "weapon_quality_tier": 0,
+        "weapon_level": 8,
+        "spell_slots": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spells_unlocked": [
+          "raio_cosmico",
+          "raio",
+          "acender",
+          "envenenar",
+          "congelar"
+        ],
+        "spell_levels": {
+          "raio": 3,
+          "raio_cosmico": 3
+        },
+        "passive_id": "",
+        "passive_level": 0,
+        "pet_id": "",
+        "pet_level": 0
+      },
+      "base": {
+        "construction_slots": 2,
+        "structures": [
+          {
+            "structure_id": "nucleo_energia",
+            "produces": "energia",
+            "level": 1
+          },
+          {
+            "structure_id": "altar_das_almas",
+            "produces": "almas",
+            "level": 2
+          },
+          {
+            "structure_id": "pocos_sangue",
+            "produces": "sangue",
+            "level": 2
+          },
+          {
+            "structure_id": "minas_cristal",
+            "produces": "cristais",
+            "level": 2
+          },
+          {
+            "structure_id": "ossario",
+            "produces": "ossos",
+            "level": 2
+          },
+          {
+            "structure_id": "estrutura_stats",
+            "produces": "",
+            "level": 2
+          }
+        ],
+        "active_job": {
+          "structure_id": "nucleo_energia",
+          "target_level": 2,
+          "remaining_minutes": 86
+        }
+      },
+      "monetization": {
+        "premium_pass": true,
+        "battle_pass_xp": 176,
+        "premium_unlocked": true,
+        "simulated_store_spend": 16
+      },
+      "combat_build": {
+        "id": "spender_light_2h",
+        "displayName": "spender_light_2h",
+        "level": 9,
+        "weaponLevel": 8,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 3,
+          "raio_cosmico": 3
+        }
+      },
+      "manual_checklist": [
+        "Carregar spender_light em 2h.",
+        "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
+        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
+        "Conferir build: arma L8, spells raio, raio_cosmico.",
+        "Registrar gargalo, momento confuso e vontade de continuar."
+      ]
+    },
+    {
+      "id": "spender_light_5h",
+      "profile_id": "spender_light",
+      "profile_name": "Light spender",
+      "milestone_id": "5h",
+      "hours": 5,
+      "status": "PASS",
+      "notes": [
+        "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
+        "Use power 1375 as initial matchmaking observation, not final truth."
+      ],
+      "player": {
+        "username": "plab_spender_light_5h",
+        "account_type": "progression_lab",
+        "level": 12,
+        "xp": 3410,
+        "power": 1375
+      },
+      "resources": {
+        "xp": 3410,
+        "almas": 44,
+        "energia": 35.5,
+        "sangue": 101.88,
+        "cristais": 7.7,
+        "ossos": 24.88,
+        "diamante": 460.9
+      },
+      "resource_debt": {
+        "xp": 0,
+        "almas": 0,
+        "energia": 0,
+        "sangue": 0,
+        "cristais": 0,
+        "ossos": 0,
+        "diamante": 0
+      },
+      "build": {
+        "archetype_id": "burst_caster",
+        "weapon_type": "varinha_magica",
+        "weapon_quality": "starter",
+        "weapon_quality_tier": 0,
+        "weapon_level": 10,
+        "spell_slots": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spells_unlocked": [
+          "raio_cosmico",
+          "raio",
+          "acender",
+          "envenenar",
+          "congelar"
+        ],
+        "spell_levels": {
+          "raio": 9,
+          "raio_cosmico": 9
+        },
+        "passive_id": "forca",
+        "passive_level": 7,
+        "pet_id": "",
+        "pet_level": 0
+      },
+      "base": {
+        "construction_slots": 2,
+        "structures": [
+          {
+            "structure_id": "nucleo_energia",
+            "produces": "energia",
+            "level": 3
+          },
+          {
+            "structure_id": "altar_das_almas",
+            "produces": "almas",
+            "level": 3
+          },
+          {
+            "structure_id": "pocos_sangue",
+            "produces": "sangue",
+            "level": 3
+          },
+          {
+            "structure_id": "minas_cristal",
+            "produces": "cristais",
+            "level": 3
+          },
+          {
+            "structure_id": "ossario",
+            "produces": "ossos",
+            "level": 4
+          },
+          {
+            "structure_id": "estrutura_stats",
+            "produces": "",
+            "level": 4
+          }
+        ],
+        "active_job": {
+          "structure_id": "nucleo_energia",
+          "target_level": 4,
+          "remaining_minutes": 80
+        }
+      },
+      "monetization": {
+        "premium_pass": true,
+        "battle_pass_xp": 439,
+        "premium_unlocked": true,
+        "simulated_store_spend": 41
+      },
+      "combat_build": {
+        "id": "spender_light_5h",
+        "displayName": "spender_light_5h",
+        "level": 12,
+        "weaponLevel": 10,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 9,
+          "raio_cosmico": 9
+        },
+        "passiveId": "forca",
+        "passiveLevel": 7
+      },
+      "manual_checklist": [
+        "Carregar spender_light em 5h.",
+        "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
+        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
+        "Conferir build: arma L10, spells raio, raio_cosmico.",
+        "Registrar gargalo, momento confuso e vontade de continuar."
+      ]
+    },
+    {
+      "id": "spender_light_10h",
+      "profile_id": "spender_light",
+      "profile_name": "Light spender",
+      "milestone_id": "10h",
+      "hours": 10,
+      "status": "PASS",
+      "notes": [
+        "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
+        "Use power 1956 as initial matchmaking observation, not final truth."
+      ],
+      "player": {
+        "username": "plab_spender_light_10h",
+        "account_type": "progression_lab",
+        "level": 15,
+        "xp": 6820,
+        "power": 1956
+      },
+      "resources": {
+        "xp": 6820,
+        "almas": 142,
+        "energia": 71,
+        "sangue": 116.75,
+        "cristais": 21.4,
+        "ossos": 49.75,
+        "diamante": 421.8
+      },
+      "resource_debt": {
+        "xp": 0,
+        "almas": 0,
+        "energia": 0,
+        "sangue": 0,
+        "cristais": 0,
+        "ossos": 0,
+        "diamante": 0
+      },
+      "build": {
+        "archetype_id": "pet_handler",
+        "weapon_type": "varinha_magica",
+        "weapon_quality": "starter",
+        "weapon_quality_tier": 0,
+        "weapon_level": 13,
+        "spell_slots": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spells_unlocked": [
+          "raio_cosmico",
+          "raio",
+          "acender",
+          "envenenar",
+          "congelar"
+        ],
+        "spell_levels": {
+          "raio_cosmico": 12,
+          "acender": 12
+        },
+        "passive_id": "resistencia",
+        "passive_level": 10,
+        "pet_id": "familiar_cinzento",
+        "pet_level": 11
+      },
+      "base": {
+        "construction_slots": 2,
+        "structures": [
+          {
+            "structure_id": "nucleo_energia",
+            "produces": "energia",
+            "level": 5
+          },
+          {
+            "structure_id": "altar_das_almas",
+            "produces": "almas",
+            "level": 5
+          },
+          {
+            "structure_id": "pocos_sangue",
+            "produces": "sangue",
+            "level": 6
+          },
+          {
+            "structure_id": "minas_cristal",
+            "produces": "cristais",
+            "level": 6
+          },
+          {
+            "structure_id": "ossario",
+            "produces": "ossos",
+            "level": 6
+          },
+          {
+            "structure_id": "estrutura_stats",
+            "produces": "",
+            "level": 6
+          }
+        ],
+        "active_job": {
+          "structure_id": "nucleo_energia",
+          "target_level": 6,
+          "remaining_minutes": 70
+        }
+      },
+      "monetization": {
+        "premium_pass": true,
+        "battle_pass_xp": 878,
+        "premium_unlocked": true,
+        "simulated_store_spend": 81
+      },
+      "combat_build": {
+        "id": "spender_light_10h",
+        "displayName": "spender_light_10h",
+        "level": 15,
+        "weaponLevel": 13,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 12,
+          "acender": 12
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 10,
+        "petId": "familiar_cinzento",
+        "petLevel": 11
+      },
+      "manual_checklist": [
+        "Carregar spender_light em 10h.",
+        "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
+        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
+        "Conferir build: arma L13, spells raio_cosmico, acender.",
+        "Registrar gargalo, momento confuso e vontade de continuar."
+      ]
+    },
+    {
+      "id": "spender_light_15h",
+      "profile_id": "spender_light",
+      "profile_name": "Light spender",
+      "milestone_id": "15h",
+      "hours": 15,
+      "status": "PASS",
+      "notes": [
+        "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
+        "Use power 2084 as initial matchmaking observation, not final truth."
+      ],
+      "player": {
+        "username": "plab_spender_light_15h",
+        "account_type": "progression_lab",
+        "level": 16,
+        "xp": 10230,
+        "power": 2084
+      },
+      "resources": {
+        "xp": 10230,
+        "almas": 434,
+        "energia": 100.5,
+        "sangue": 196.63,
+        "cristais": 47.1,
+        "ossos": 74.63,
+        "diamante": 382.7
+      },
+      "resource_debt": {
+        "xp": 0,
+        "almas": 0,
+        "energia": 0,
+        "sangue": 0,
+        "cristais": 0,
+        "ossos": 0,
+        "diamante": 0
+      },
+      "build": {
+        "archetype_id": "pet_handler",
+        "weapon_type": "varinha_magica",
+        "weapon_quality": "starter",
+        "weapon_quality_tier": 0,
+        "weapon_level": 14,
+        "spell_slots": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spells_unlocked": [
+          "raio_cosmico",
+          "raio",
+          "acender",
+          "envenenar",
+          "congelar"
+        ],
+        "spell_levels": {
+          "raio_cosmico": 12,
+          "acender": 12
+        },
+        "passive_id": "resistencia",
+        "passive_level": 11,
+        "pet_id": "familiar_cinzento",
+        "pet_level": 12
+      },
+      "base": {
+        "construction_slots": 2,
+        "structures": [
+          {
+            "structure_id": "nucleo_energia",
+            "produces": "energia",
+            "level": 7
+          },
+          {
+            "structure_id": "altar_das_almas",
+            "produces": "almas",
+            "level": 7
+          },
+          {
+            "structure_id": "pocos_sangue",
+            "produces": "sangue",
+            "level": 7
+          },
+          {
+            "structure_id": "minas_cristal",
+            "produces": "cristais",
+            "level": 8
+          },
+          {
+            "structure_id": "ossario",
+            "produces": "ossos",
+            "level": 8
+          },
+          {
+            "structure_id": "estrutura_stats",
+            "produces": "",
+            "level": 8
+          }
+        ],
+        "active_job": {
+          "structure_id": "nucleo_energia",
+          "target_level": 8,
+          "remaining_minutes": 60
+        }
+      },
+      "monetization": {
+        "premium_pass": true,
+        "battle_pass_xp": 1316,
+        "premium_unlocked": true,
+        "simulated_store_spend": 122
+      },
+      "combat_build": {
+        "id": "spender_light_15h",
+        "displayName": "spender_light_15h",
+        "level": 16,
+        "weaponLevel": 14,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 12,
+          "acender": 12
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 11,
+        "petId": "familiar_cinzento",
+        "petLevel": 12
+      },
+      "manual_checklist": [
+        "Carregar spender_light em 15h.",
+        "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
+        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
+        "Conferir build: arma L14, spells raio_cosmico, acender.",
+        "Registrar gargalo, momento confuso e vontade de continuar."
+      ]
+    },
+    {
+      "id": "spender_light_20h",
+      "profile_id": "spender_light",
+      "profile_name": "Light spender",
+      "milestone_id": "20h",
+      "hours": 20,
+      "status": "PASS",
+      "notes": [
+        "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
+        "Use power 2372 as initial matchmaking observation, not final truth."
+      ],
+      "player": {
+        "username": "plab_spender_light_20h",
+        "account_type": "progression_lab",
+        "level": 18,
+        "xp": 13640,
+        "power": 2372
+      },
+      "resources": {
+        "xp": 13640,
+        "almas": 523,
+        "energia": 156,
+        "sangue": 273.5,
+        "cristais": 53.8,
+        "ossos": 99.5,
+        "diamante": 343.6
+      },
+      "resource_debt": {
+        "xp": 0,
+        "almas": 0,
+        "energia": 0,
+        "sangue": 0,
+        "cristais": 0,
+        "ossos": 0,
+        "diamante": 0
+      },
+      "build": {
+        "archetype_id": "pet_handler",
+        "weapon_type": "varinha_magica",
+        "weapon_quality": "starter",
+        "weapon_quality_tier": 0,
+        "weapon_level": 16,
+        "spell_slots": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spells_unlocked": [
+          "raio_cosmico",
+          "raio",
+          "acender",
+          "envenenar",
+          "congelar"
+        ],
+        "spell_levels": {
+          "raio_cosmico": 14,
+          "acender": 14
+        },
+        "passive_id": "resistencia",
+        "passive_level": 13,
+        "pet_id": "familiar_cinzento",
+        "pet_level": 13
+      },
+      "base": {
+        "construction_slots": 2,
+        "structures": [
+          {
+            "structure_id": "nucleo_energia",
+            "produces": "energia",
+            "level": 8
+          },
+          {
+            "structure_id": "altar_das_almas",
+            "produces": "almas",
+            "level": 8
+          },
+          {
+            "structure_id": "pocos_sangue",
+            "produces": "sangue",
+            "level": 9
+          },
+          {
+            "structure_id": "minas_cristal",
+            "produces": "cristais",
+            "level": 9
+          },
+          {
+            "structure_id": "ossario",
+            "produces": "ossos",
+            "level": 9
+          },
+          {
+            "structure_id": "estrutura_stats",
+            "produces": "",
+            "level": 9
+          }
+        ],
+        "active_job": {
+          "structure_id": "nucleo_energia",
+          "target_level": 9,
+          "remaining_minutes": 50
+        }
+      },
+      "monetization": {
+        "premium_pass": true,
+        "battle_pass_xp": 1755,
+        "premium_unlocked": true,
+        "simulated_store_spend": 162
+      },
+      "combat_build": {
+        "id": "spender_light_20h",
+        "displayName": "spender_light_20h",
+        "level": 18,
+        "weaponLevel": 16,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 14,
+          "acender": 14
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 13,
+        "petId": "familiar_cinzento",
+        "petLevel": 13
+      },
+      "manual_checklist": [
+        "Carregar spender_light em 20h.",
+        "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
+        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
+        "Conferir build: arma L16, spells raio_cosmico, acender.",
+        "Registrar gargalo, momento confuso e vontade de continuar."
+      ]
+    },
+    {
+      "id": "max_spender_2h",
+      "profile_id": "max_spender",
+      "profile_name": "Max spender stress",
+      "milestone_id": "2h",
+      "hours": 2,
+      "status": "PASS",
+      "notes": [
+        "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
+        "Use power 893 as initial matchmaking observation, not final truth."
+      ],
+      "player": {
+        "username": "plab_max_spender_2h",
+        "account_type": "progression_lab",
+        "level": 9,
+        "xp": 1616,
+        "power": 893
+      },
+      "resources": {
+        "xp": 1616,
+        "almas": 30,
+        "energia": 32.4,
+        "sangue": 52.3,
+        "cristais": 19.2,
+        "ossos": 12.73,
+        "diamante": 464.56
+      },
+      "resource_debt": {
+        "xp": 0,
+        "almas": 0,
+        "energia": 0,
+        "sangue": 0,
+        "cristais": 0,
+        "ossos": 0,
+        "diamante": 0
+      },
+      "build": {
+        "archetype_id": "burst_caster",
+        "weapon_type": "varinha_magica",
+        "weapon_quality": "starter",
+        "weapon_quality_tier": 0,
+        "weapon_level": 9,
+        "spell_slots": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spells_unlocked": [
+          "raio_cosmico",
+          "raio",
+          "acender",
+          "envenenar",
+          "congelar"
+        ],
+        "spell_levels": {
+          "raio": 3,
+          "raio_cosmico": 4
+        },
+        "passive_id": "",
+        "passive_level": 0,
+        "pet_id": "",
+        "pet_level": 0
+      },
+      "base": {
+        "construction_slots": 2,
+        "structures": [
+          {
+            "structure_id": "nucleo_energia",
+            "produces": "energia",
+            "level": 2
+          },
+          {
+            "structure_id": "altar_das_almas",
+            "produces": "almas",
+            "level": 2
+          },
+          {
+            "structure_id": "pocos_sangue",
+            "produces": "sangue",
+            "level": 2
+          },
+          {
+            "structure_id": "minas_cristal",
+            "produces": "cristais",
+            "level": 2
+          },
+          {
+            "structure_id": "ossario",
+            "produces": "ossos",
+            "level": 2
+          },
+          {
+            "structure_id": "estrutura_stats",
+            "produces": "",
+            "level": 3
+          }
+        ],
+        "active_job": {
+          "structure_id": "nucleo_energia",
+          "target_level": 3,
+          "remaining_minutes": 86
+        }
+      },
+      "monetization": {
+        "premium_pass": true,
+        "battle_pass_xp": 176,
+        "premium_unlocked": true,
+        "simulated_store_spend": 36
+      },
+      "combat_build": {
+        "id": "max_spender_2h",
+        "displayName": "max_spender_2h",
+        "level": 9,
+        "weaponLevel": 9,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 3,
+          "raio_cosmico": 4
+        }
+      },
+      "manual_checklist": [
+        "Carregar max_spender em 2h.",
+        "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
+        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
+        "Conferir build: arma L9, spells raio, raio_cosmico.",
+        "Registrar gargalo, momento confuso e vontade de continuar."
+      ]
+    },
+    {
+      "id": "max_spender_5h",
+      "profile_id": "max_spender",
+      "profile_name": "Max spender stress",
+      "milestone_id": "5h",
+      "hours": 5,
+      "status": "PASS",
+      "notes": [
+        "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
+        "Use power 1477 as initial matchmaking observation, not final truth."
+      ],
+      "player": {
+        "username": "plab_max_spender_5h",
+        "account_type": "progression_lab",
+        "level": 12,
+        "xp": 4040,
+        "power": 1477
+      },
+      "resources": {
+        "xp": 4040,
+        "almas": 62.5,
+        "energia": 51,
+        "sangue": 130.75,
+        "cristais": 12,
+        "ossos": 31.83,
+        "diamante": 411.4
+      },
+      "resource_debt": {
+        "xp": 0,
+        "almas": 0,
+        "energia": 0,
+        "sangue": 0,
+        "cristais": 0,
+        "ossos": 0,
+        "diamante": 0
+      },
+      "build": {
+        "archetype_id": "burst_caster",
+        "weapon_type": "varinha_magica",
+        "weapon_quality": "starter",
+        "weapon_quality_tier": 0,
+        "weapon_level": 12,
+        "spell_slots": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spells_unlocked": [
+          "raio_cosmico",
+          "raio",
+          "acender",
+          "envenenar",
+          "congelar"
+        ],
+        "spell_levels": {
+          "raio": 9,
+          "raio_cosmico": 10
+        },
+        "passive_id": "forca",
+        "passive_level": 8,
+        "pet_id": "",
+        "pet_level": 0
+      },
+      "base": {
+        "construction_slots": 2,
+        "structures": [
+          {
+            "structure_id": "nucleo_energia",
+            "produces": "energia",
+            "level": 4
+          },
+          {
+            "structure_id": "altar_das_almas",
+            "produces": "almas",
+            "level": 4
+          },
+          {
+            "structure_id": "pocos_sangue",
+            "produces": "sangue",
+            "level": 4
+          },
+          {
+            "structure_id": "minas_cristal",
+            "produces": "cristais",
+            "level": 4
+          },
+          {
+            "structure_id": "ossario",
+            "produces": "ossos",
+            "level": 4
+          },
+          {
+            "structure_id": "estrutura_stats",
+            "produces": "",
+            "level": 5
+          }
+        ],
+        "active_job": {
+          "structure_id": "nucleo_energia",
+          "target_level": 5,
+          "remaining_minutes": 80
+        }
+      },
+      "monetization": {
+        "premium_pass": true,
+        "battle_pass_xp": 439,
+        "premium_unlocked": true,
+        "simulated_store_spend": 90
+      },
+      "combat_build": {
+        "id": "max_spender_5h",
+        "displayName": "max_spender_5h",
+        "level": 12,
+        "weaponLevel": 12,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 9,
+          "raio_cosmico": 10
+        },
+        "passiveId": "forca",
+        "passiveLevel": 8
+      },
+      "manual_checklist": [
+        "Carregar max_spender em 5h.",
+        "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
+        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
+        "Conferir build: arma L12, spells raio, raio_cosmico.",
+        "Registrar gargalo, momento confuso e vontade de continuar."
+      ]
+    },
+    {
+      "id": "max_spender_10h",
+      "profile_id": "max_spender",
+      "profile_name": "Max spender stress",
+      "milestone_id": "10h",
+      "hours": 10,
+      "status": "PASS",
+      "notes": [
+        "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
+        "Use power 2109 as initial matchmaking observation, not final truth."
+      ],
+      "player": {
+        "username": "plab_max_spender_10h",
+        "account_type": "progression_lab",
+        "level": 15,
+        "xp": 8080,
+        "power": 2109
+      },
+      "resources": {
+        "xp": 8080,
+        "almas": 173,
+        "energia": 112,
+        "sangue": 127.5,
+        "cristais": 30,
+        "ossos": 63.65,
+        "diamante": 322.8
+      },
+      "resource_debt": {
+        "xp": 0,
+        "almas": 0,
+        "energia": 0,
+        "sangue": 0,
+        "cristais": 0,
+        "ossos": 0,
+        "diamante": 0
+      },
+      "build": {
+        "archetype_id": "pet_handler",
+        "weapon_type": "varinha_magica",
+        "weapon_quality": "starter",
+        "weapon_quality_tier": 0,
+        "weapon_level": 15,
+        "spell_slots": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spells_unlocked": [
+          "raio_cosmico",
+          "raio",
+          "acender",
+          "envenenar",
+          "congelar"
+        ],
+        "spell_levels": {
+          "raio_cosmico": 13,
+          "acender": 13
+        },
+        "passive_id": "resistencia",
+        "passive_level": 11,
+        "pet_id": "familiar_cinzento",
+        "pet_level": 13
+      },
+      "base": {
+        "construction_slots": 2,
+        "structures": [
+          {
+            "structure_id": "nucleo_energia",
+            "produces": "energia",
+            "level": 7
+          },
+          {
+            "structure_id": "altar_das_almas",
+            "produces": "almas",
+            "level": 7
+          },
+          {
+            "structure_id": "pocos_sangue",
+            "produces": "sangue",
+            "level": 7
+          },
+          {
+            "structure_id": "minas_cristal",
+            "produces": "cristais",
+            "level": 7
+          },
+          {
+            "structure_id": "ossario",
+            "produces": "ossos",
+            "level": 7
+          },
+          {
+            "structure_id": "estrutura_stats",
+            "produces": "",
+            "level": 7
+          }
+        ],
+        "active_job": {
+          "structure_id": "nucleo_energia",
+          "target_level": 8,
+          "remaining_minutes": 70
+        }
+      },
+      "monetization": {
+        "premium_pass": true,
+        "battle_pass_xp": 878,
+        "premium_unlocked": true,
+        "simulated_store_spend": 180
+      },
+      "combat_build": {
+        "id": "max_spender_10h",
+        "displayName": "max_spender_10h",
+        "level": 15,
+        "weaponLevel": 15,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 13,
+          "acender": 13
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 11,
+        "petId": "familiar_cinzento",
+        "petLevel": 13
+      },
+      "manual_checklist": [
+        "Carregar max_spender em 10h.",
+        "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
+        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
+        "Conferir build: arma L15, spells raio_cosmico, acender.",
+        "Registrar gargalo, momento confuso e vontade de continuar."
+      ]
+    },
+    {
+      "id": "max_spender_15h",
+      "profile_id": "max_spender",
+      "profile_name": "Max spender stress",
+      "milestone_id": "15h",
+      "hours": 15,
+      "status": "PASS",
+      "notes": [
+        "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
+        "Use power 2417 as initial matchmaking observation, not final truth."
+      ],
+      "player": {
+        "username": "plab_max_spender_15h",
+        "account_type": "progression_lab",
+        "level": 17,
+        "xp": 12120,
+        "power": 2417
+      },
+      "resources": {
+        "xp": 12120,
+        "almas": 318.5,
+        "energia": 146,
+        "sangue": 229.25,
+        "cristais": 27,
+        "ossos": 95.48,
+        "diamante": 234.2
+      },
+      "resource_debt": {
+        "xp": 0,
+        "almas": 0,
+        "energia": 0,
+        "sangue": 0,
+        "cristais": 0,
+        "ossos": 0,
+        "diamante": 0
+      },
+      "build": {
+        "archetype_id": "pet_handler",
+        "weapon_type": "varinha_magica",
+        "weapon_quality": "starter",
+        "weapon_quality_tier": 0,
+        "weapon_level": 17,
+        "spell_slots": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spells_unlocked": [
+          "raio_cosmico",
+          "raio",
+          "acender",
+          "envenenar",
+          "congelar"
+        ],
+        "spell_levels": {
+          "raio_cosmico": 15,
+          "acender": 15
+        },
+        "passive_id": "resistencia",
+        "passive_level": 14,
+        "pet_id": "familiar_cinzento",
+        "pet_level": 14
+      },
+      "base": {
+        "construction_slots": 2,
+        "structures": [
+          {
+            "structure_id": "nucleo_energia",
+            "produces": "energia",
+            "level": 8
+          },
+          {
+            "structure_id": "altar_das_almas",
+            "produces": "almas",
+            "level": 9
+          },
+          {
+            "structure_id": "pocos_sangue",
+            "produces": "sangue",
+            "level": 9
+          },
+          {
+            "structure_id": "minas_cristal",
+            "produces": "cristais",
+            "level": 9
+          },
+          {
+            "structure_id": "ossario",
+            "produces": "ossos",
+            "level": 9
+          },
+          {
+            "structure_id": "estrutura_stats",
+            "produces": "",
+            "level": 9
+          }
+        ],
+        "active_job": {
+          "structure_id": "nucleo_energia",
+          "target_level": 9,
+          "remaining_minutes": 60
+        }
+      },
+      "monetization": {
+        "premium_pass": true,
+        "battle_pass_xp": 1316,
+        "premium_unlocked": true,
+        "simulated_store_spend": 270
+      },
+      "combat_build": {
+        "id": "max_spender_15h",
+        "displayName": "max_spender_15h",
+        "level": 17,
+        "weaponLevel": 17,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 15,
+          "acender": 15
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 14,
+        "petId": "familiar_cinzento",
+        "petLevel": 14
+      },
+      "manual_checklist": [
+        "Carregar max_spender em 15h.",
+        "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
+        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
+        "Conferir build: arma L17, spells raio_cosmico, acender.",
+        "Registrar gargalo, momento confuso e vontade de continuar."
+      ]
+    },
+    {
+      "id": "max_spender_20h",
+      "profile_id": "max_spender",
+      "profile_name": "Max spender stress",
+      "milestone_id": "20h",
+      "hours": 20,
+      "status": "PASS",
+      "notes": [
+        "Premium profile: validate that advantage feels like time/conforto, not exclusive power.",
+        "Use power 2744 as initial matchmaking observation, not final truth."
+      ],
+      "player": {
+        "username": "plab_max_spender_20h",
+        "account_type": "progression_lab",
+        "level": 19,
+        "xp": 16160,
+        "power": 2744
+      },
+      "resources": {
+        "xp": 16160,
+        "almas": 386,
+        "energia": 175,
+        "sangue": 288,
+        "cristais": 52,
+        "ossos": 7.3,
+        "diamante": 145.6
+      },
+      "resource_debt": {
+        "xp": 0,
+        "almas": 0,
+        "energia": 0,
+        "sangue": 0,
+        "cristais": 0,
+        "ossos": 0,
+        "diamante": 0
+      },
+      "build": {
+        "archetype_id": "pet_handler",
+        "weapon_type": "varinha_magica",
+        "weapon_quality": "reforcada",
+        "weapon_quality_tier": 1,
+        "weapon_level": 19,
+        "spell_slots": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spells_unlocked": [
+          "raio_cosmico",
+          "raio",
+          "acender",
+          "envenenar",
+          "congelar"
+        ],
+        "spell_levels": {
+          "raio_cosmico": 17,
+          "acender": 17
+        },
+        "passive_id": "resistencia",
+        "passive_level": 15,
+        "pet_id": "familiar_cinzento",
+        "pet_level": 16
+      },
+      "base": {
+        "construction_slots": 2,
+        "structures": [
+          {
+            "structure_id": "nucleo_energia",
+            "produces": "energia",
+            "level": 10
+          },
+          {
+            "structure_id": "altar_das_almas",
+            "produces": "almas",
+            "level": 10
+          },
+          {
+            "structure_id": "pocos_sangue",
+            "produces": "sangue",
+            "level": 10
+          },
+          {
+            "structure_id": "minas_cristal",
+            "produces": "cristais",
+            "level": 10
+          },
+          {
+            "structure_id": "ossario",
+            "produces": "ossos",
+            "level": 10
+          },
+          {
+            "structure_id": "estrutura_stats",
+            "produces": "",
+            "level": 11
+          }
+        ],
+        "active_job": {
+          "structure_id": "nucleo_energia",
+          "target_level": 11,
+          "remaining_minutes": 50
+        }
+      },
+      "monetization": {
+        "premium_pass": true,
+        "battle_pass_xp": 1755,
+        "premium_unlocked": true,
+        "simulated_store_spend": 360
+      },
+      "combat_build": {
+        "id": "max_spender_20h",
+        "displayName": "max_spender_20h",
+        "level": 19,
+        "weaponLevel": 19,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 17,
+          "acender": 17
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 15,
+        "petId": "familiar_cinzento",
+        "petLevel": 16
+      },
+      "manual_checklist": [
+        "Carregar max_spender em 20h.",
+        "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
+        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
+        "Conferir build: arma L19, spells raio_cosmico, acender.",
+        "Registrar gargalo, momento confuso e vontade de continuar."
+      ]
+    }
+  ],
+  "reward_checks": [
+    {
+      "id": "level_window",
+      "profile_id": "free_50_rewards",
+      "milestone_id": "2h",
+      "status": "PASS",
+      "observed": "8",
+      "target": "4-9",
+      "note": "Level should stay inside the intended first-hours window."
+    },
+    {
+      "id": "resource_debt",
+      "profile_id": "free_50_rewards",
+      "milestone_id": "2h",
+      "status": "PASS",
+      "observed": "0",
+      "target": ">= -1",
+      "note": "Healthy save should not require large hidden resource debt."
+    },
+    {
+      "id": "level_window",
+      "profile_id": "free_50_rewards",
+      "milestone_id": "5h",
+      "status": "PASS",
+      "observed": "10",
+      "target": "7-14",
+      "note": "Level should stay inside the intended first-hours window."
+    },
+    {
+      "id": "resource_debt",
+      "profile_id": "free_50_rewards",
+      "milestone_id": "5h",
+      "status": "PASS",
+      "observed": "0",
+      "target": ">= -1",
+      "note": "Healthy save should not require large hidden resource debt."
+    },
+    {
+      "id": "level_window",
+      "profile_id": "free_50_rewards",
+      "milestone_id": "10h",
+      "status": "PASS",
+      "observed": "12",
+      "target": "11-22",
+      "note": "Level should stay inside the intended first-hours window."
+    },
+    {
+      "id": "resource_debt",
+      "profile_id": "free_50_rewards",
+      "milestone_id": "10h",
+      "status": "PASS",
+      "observed": "0",
+      "target": ">= -1",
+      "note": "Healthy save should not require large hidden resource debt."
+    },
+    {
+      "id": "level_window",
+      "profile_id": "free_50_rewards",
+      "milestone_id": "15h",
+      "status": "REVIEW",
+      "observed": "14",
+      "target": "15-30",
+      "note": "Level should stay inside the intended first-hours window."
+    },
+    {
+      "id": "resource_debt",
+      "profile_id": "free_50_rewards",
+      "milestone_id": "15h",
+      "status": "PASS",
+      "observed": "0",
+      "target": ">= -1",
+      "note": "Healthy save should not require large hidden resource debt."
+    },
+    {
+      "id": "level_window",
+      "profile_id": "free_50_rewards",
+      "milestone_id": "20h",
+      "status": "REVIEW",
+      "observed": "15",
+      "target": "18-36",
+      "note": "Level should stay inside the intended first-hours window."
+    },
+    {
+      "id": "resource_debt",
+      "profile_id": "free_50_rewards",
+      "milestone_id": "20h",
+      "status": "PASS",
+      "observed": "0",
+      "target": ">= -1",
+      "note": "Healthy save should not require large hidden resource debt."
+    },
+    {
+      "id": "level_window",
+      "profile_id": "free_100_rewards",
+      "milestone_id": "2h",
+      "status": "PASS",
+      "observed": "8",
+      "target": "4-9",
+      "note": "Level should stay inside the intended first-hours window."
+    },
+    {
+      "id": "resource_debt",
+      "profile_id": "free_100_rewards",
+      "milestone_id": "2h",
+      "status": "PASS",
+      "observed": "0",
+      "target": ">= -1",
+      "note": "Healthy save should not require large hidden resource debt."
+    },
+    {
+      "id": "level_window",
+      "profile_id": "free_100_rewards",
+      "milestone_id": "5h",
+      "status": "PASS",
+      "observed": "11",
+      "target": "7-14",
+      "note": "Level should stay inside the intended first-hours window."
+    },
+    {
+      "id": "resource_debt",
+      "profile_id": "free_100_rewards",
+      "milestone_id": "5h",
+      "status": "PASS",
+      "observed": "0",
+      "target": ">= -1",
+      "note": "Healthy save should not require large hidden resource debt."
+    },
+    {
+      "id": "level_window",
+      "profile_id": "free_100_rewards",
+      "milestone_id": "10h",
+      "status": "PASS",
+      "observed": "14",
+      "target": "11-22",
+      "note": "Level should stay inside the intended first-hours window."
+    },
+    {
+      "id": "resource_debt",
+      "profile_id": "free_100_rewards",
+      "milestone_id": "10h",
+      "status": "PASS",
+      "observed": "0",
+      "target": ">= -1",
+      "note": "Healthy save should not require large hidden resource debt."
+    },
+    {
+      "id": "level_window",
+      "profile_id": "free_100_rewards",
+      "milestone_id": "15h",
+      "status": "PASS",
+      "observed": "16",
+      "target": "15-30",
+      "note": "Level should stay inside the intended first-hours window."
+    },
+    {
+      "id": "resource_debt",
+      "profile_id": "free_100_rewards",
+      "milestone_id": "15h",
+      "status": "PASS",
+      "observed": "0",
+      "target": ">= -1",
+      "note": "Healthy save should not require large hidden resource debt."
+    },
+    {
+      "id": "level_window",
+      "profile_id": "free_100_rewards",
+      "milestone_id": "20h",
+      "status": "REVIEW",
+      "observed": "17",
+      "target": "18-36",
+      "note": "Level should stay inside the intended first-hours window."
+    },
+    {
+      "id": "resource_debt",
+      "profile_id": "free_100_rewards",
+      "milestone_id": "20h",
+      "status": "PASS",
+      "observed": "0",
+      "target": ">= -1",
+      "note": "Healthy save should not require large hidden resource debt."
+    },
+    {
+      "id": "level_window",
+      "profile_id": "freemium_basic",
+      "milestone_id": "2h",
+      "status": "PASS",
+      "observed": "9",
+      "target": "4-9",
+      "note": "Level should stay inside the intended first-hours window."
+    },
+    {
+      "id": "resource_debt",
+      "profile_id": "freemium_basic",
+      "milestone_id": "2h",
+      "status": "PASS",
+      "observed": "0",
+      "target": ">= -1",
+      "note": "Healthy save should not require large hidden resource debt."
+    },
+    {
+      "id": "level_window",
+      "profile_id": "freemium_basic",
+      "milestone_id": "5h",
+      "status": "PASS",
+      "observed": "11",
+      "target": "7-14",
+      "note": "Level should stay inside the intended first-hours window."
+    },
+    {
+      "id": "resource_debt",
+      "profile_id": "freemium_basic",
+      "milestone_id": "5h",
+      "status": "PASS",
+      "observed": "0",
+      "target": ">= -1",
+      "note": "Healthy save should not require large hidden resource debt."
+    },
+    {
+      "id": "level_window",
+      "profile_id": "freemium_basic",
+      "milestone_id": "10h",
+      "status": "PASS",
+      "observed": "14",
+      "target": "11-22",
+      "note": "Level should stay inside the intended first-hours window."
+    },
+    {
+      "id": "resource_debt",
+      "profile_id": "freemium_basic",
+      "milestone_id": "10h",
+      "status": "PASS",
+      "observed": "0",
+      "target": ">= -1",
+      "note": "Healthy save should not require large hidden resource debt."
+    },
+    {
+      "id": "level_window",
+      "profile_id": "freemium_basic",
+      "milestone_id": "15h",
+      "status": "PASS",
+      "observed": "16",
+      "target": "15-30",
+      "note": "Level should stay inside the intended first-hours window."
+    },
+    {
+      "id": "resource_debt",
+      "profile_id": "freemium_basic",
+      "milestone_id": "15h",
+      "status": "PASS",
+      "observed": "0",
+      "target": ">= -1",
+      "note": "Healthy save should not require large hidden resource debt."
+    },
+    {
+      "id": "level_window",
+      "profile_id": "freemium_basic",
+      "milestone_id": "20h",
+      "status": "REVIEW",
+      "observed": "17",
+      "target": "18-36",
+      "note": "Level should stay inside the intended first-hours window."
+    },
+    {
+      "id": "resource_debt",
+      "profile_id": "freemium_basic",
+      "milestone_id": "20h",
+      "status": "PASS",
+      "observed": "0",
+      "target": ">= -1",
+      "note": "Healthy save should not require large hidden resource debt."
+    },
+    {
+      "id": "level_window",
+      "profile_id": "spender_light",
+      "milestone_id": "2h",
+      "status": "PASS",
+      "observed": "9",
+      "target": "4-9",
+      "note": "Level should stay inside the intended first-hours window."
+    },
+    {
+      "id": "resource_debt",
+      "profile_id": "spender_light",
+      "milestone_id": "2h",
+      "status": "PASS",
+      "observed": "0",
+      "target": ">= -1",
+      "note": "Healthy save should not require large hidden resource debt."
+    },
+    {
+      "id": "level_window",
+      "profile_id": "spender_light",
+      "milestone_id": "5h",
+      "status": "PASS",
+      "observed": "12",
+      "target": "7-14",
+      "note": "Level should stay inside the intended first-hours window."
+    },
+    {
+      "id": "resource_debt",
+      "profile_id": "spender_light",
+      "milestone_id": "5h",
+      "status": "PASS",
+      "observed": "0",
+      "target": ">= -1",
+      "note": "Healthy save should not require large hidden resource debt."
+    },
+    {
+      "id": "level_window",
+      "profile_id": "spender_light",
+      "milestone_id": "10h",
+      "status": "PASS",
+      "observed": "15",
+      "target": "11-22",
+      "note": "Level should stay inside the intended first-hours window."
+    },
+    {
+      "id": "resource_debt",
+      "profile_id": "spender_light",
+      "milestone_id": "10h",
+      "status": "PASS",
+      "observed": "0",
+      "target": ">= -1",
+      "note": "Healthy save should not require large hidden resource debt."
+    },
+    {
+      "id": "level_window",
+      "profile_id": "spender_light",
+      "milestone_id": "15h",
+      "status": "PASS",
+      "observed": "16",
+      "target": "15-30",
+      "note": "Level should stay inside the intended first-hours window."
+    },
+    {
+      "id": "resource_debt",
+      "profile_id": "spender_light",
+      "milestone_id": "15h",
+      "status": "PASS",
+      "observed": "0",
+      "target": ">= -1",
+      "note": "Healthy save should not require large hidden resource debt."
+    },
+    {
+      "id": "level_window",
+      "profile_id": "spender_light",
+      "milestone_id": "20h",
+      "status": "PASS",
+      "observed": "18",
+      "target": "18-36",
+      "note": "Level should stay inside the intended first-hours window."
+    },
+    {
+      "id": "resource_debt",
+      "profile_id": "spender_light",
+      "milestone_id": "20h",
+      "status": "PASS",
+      "observed": "0",
+      "target": ">= -1",
+      "note": "Healthy save should not require large hidden resource debt."
+    },
+    {
+      "id": "level_window",
+      "profile_id": "max_spender",
+      "milestone_id": "2h",
+      "status": "PASS",
+      "observed": "9",
+      "target": "4-9",
+      "note": "Level should stay inside the intended first-hours window."
+    },
+    {
+      "id": "resource_debt",
+      "profile_id": "max_spender",
+      "milestone_id": "2h",
+      "status": "PASS",
+      "observed": "0",
+      "target": ">= -1",
+      "note": "Healthy save should not require large hidden resource debt."
+    },
+    {
+      "id": "level_window",
+      "profile_id": "max_spender",
+      "milestone_id": "5h",
+      "status": "PASS",
+      "observed": "12",
+      "target": "7-14",
+      "note": "Level should stay inside the intended first-hours window."
+    },
+    {
+      "id": "resource_debt",
+      "profile_id": "max_spender",
+      "milestone_id": "5h",
+      "status": "PASS",
+      "observed": "0",
+      "target": ">= -1",
+      "note": "Healthy save should not require large hidden resource debt."
+    },
+    {
+      "id": "level_window",
+      "profile_id": "max_spender",
+      "milestone_id": "10h",
+      "status": "PASS",
+      "observed": "15",
+      "target": "11-22",
+      "note": "Level should stay inside the intended first-hours window."
+    },
+    {
+      "id": "resource_debt",
+      "profile_id": "max_spender",
+      "milestone_id": "10h",
+      "status": "PASS",
+      "observed": "0",
+      "target": ">= -1",
+      "note": "Healthy save should not require large hidden resource debt."
+    },
+    {
+      "id": "level_window",
+      "profile_id": "max_spender",
+      "milestone_id": "15h",
+      "status": "PASS",
+      "observed": "17",
+      "target": "15-30",
+      "note": "Level should stay inside the intended first-hours window."
+    },
+    {
+      "id": "resource_debt",
+      "profile_id": "max_spender",
+      "milestone_id": "15h",
+      "status": "PASS",
+      "observed": "0",
+      "target": ">= -1",
+      "note": "Healthy save should not require large hidden resource debt."
+    },
+    {
+      "id": "level_window",
+      "profile_id": "max_spender",
+      "milestone_id": "20h",
+      "status": "PASS",
+      "observed": "19",
+      "target": "18-36",
+      "note": "Level should stay inside the intended first-hours window."
+    },
+    {
+      "id": "resource_debt",
+      "profile_id": "max_spender",
+      "milestone_id": "20h",
+      "status": "PASS",
+      "observed": "0",
+      "target": ">= -1",
+      "note": "Healthy save should not require large hidden resource debt."
+    }
+  ],
+  "premium_gap": [
+    {
+      "milestone_id": "2h",
+      "profile_id": "free_50_rewards",
+      "compared_to": "free_100_rewards",
+      "power_gap_percent": -7.26,
+      "level_gap": 0,
+      "premium_spend": 0,
+      "status": "PASS"
+    },
+    {
+      "milestone_id": "2h",
+      "profile_id": "freemium_basic",
+      "compared_to": "free_100_rewards",
+      "power_gap_percent": 11.54,
+      "level_gap": 1,
+      "premium_spend": 0,
+      "status": "PASS"
+    },
+    {
+      "milestone_id": "2h",
+      "profile_id": "spender_light",
+      "compared_to": "free_100_rewards",
+      "power_gap_percent": 18.66,
+      "level_gap": 1,
+      "premium_spend": 16,
+      "status": "PASS"
+    },
+    {
+      "milestone_id": "2h",
+      "profile_id": "max_spender",
+      "compared_to": "free_100_rewards",
+      "power_gap_percent": 27.21,
+      "level_gap": 1,
+      "premium_spend": 36,
+      "status": "PASS"
+    },
+    {
+      "milestone_id": "5h",
+      "profile_id": "free_50_rewards",
+      "compared_to": "free_100_rewards",
+      "power_gap_percent": -18.29,
+      "level_gap": -1,
+      "premium_spend": 0,
+      "status": "PASS"
+    },
+    {
+      "milestone_id": "5h",
+      "profile_id": "freemium_basic",
+      "compared_to": "free_100_rewards",
+      "power_gap_percent": 5.42,
+      "level_gap": 0,
+      "premium_spend": 0,
+      "status": "PASS"
+    },
+    {
+      "milestone_id": "5h",
+      "profile_id": "spender_light",
+      "compared_to": "free_100_rewards",
+      "power_gap_percent": 20.3,
+      "level_gap": 1,
+      "premium_spend": 41,
+      "status": "PASS"
+    },
+    {
+      "milestone_id": "5h",
+      "profile_id": "max_spender",
+      "compared_to": "free_100_rewards",
+      "power_gap_percent": 29.22,
+      "level_gap": 1,
+      "premium_spend": 90,
+      "status": "PASS"
+    },
+    {
+      "milestone_id": "10h",
+      "profile_id": "free_50_rewards",
+      "compared_to": "free_100_rewards",
+      "power_gap_percent": -22.48,
+      "level_gap": -2,
+      "premium_spend": 0,
+      "status": "PASS"
+    },
+    {
+      "milestone_id": "10h",
+      "profile_id": "freemium_basic",
+      "compared_to": "free_100_rewards",
+      "power_gap_percent": 3.96,
+      "level_gap": 0,
+      "premium_spend": 0,
+      "status": "PASS"
+    },
+    {
+      "milestone_id": "10h",
+      "profile_id": "spender_light",
+      "compared_to": "free_100_rewards",
+      "power_gap_percent": 28.94,
+      "level_gap": 1,
+      "premium_spend": 81,
+      "status": "PASS"
+    },
+    {
+      "milestone_id": "10h",
+      "profile_id": "max_spender",
+      "compared_to": "free_100_rewards",
+      "power_gap_percent": 39.02,
+      "level_gap": 1,
+      "premium_spend": 180,
+      "status": "REVIEW"
+    },
+    {
+      "milestone_id": "15h",
+      "profile_id": "free_50_rewards",
+      "compared_to": "free_100_rewards",
+      "power_gap_percent": -27.34,
+      "level_gap": -2,
+      "premium_spend": 0,
+      "status": "PASS"
+    },
+    {
+      "milestone_id": "15h",
+      "profile_id": "freemium_basic",
+      "compared_to": "free_100_rewards",
+      "power_gap_percent": 5.72,
+      "level_gap": 0,
+      "premium_spend": 0,
+      "status": "PASS"
+    },
+    {
+      "milestone_id": "15h",
+      "profile_id": "spender_light",
+      "compared_to": "free_100_rewards",
+      "power_gap_percent": 11.5,
+      "level_gap": 0,
+      "premium_spend": 122,
+      "status": "PASS"
+    },
+    {
+      "milestone_id": "15h",
+      "profile_id": "max_spender",
+      "compared_to": "free_100_rewards",
+      "power_gap_percent": 29.32,
+      "level_gap": 1,
+      "premium_spend": 270,
+      "status": "PASS"
+    },
+    {
+      "milestone_id": "20h",
+      "profile_id": "free_50_rewards",
+      "compared_to": "free_100_rewards",
+      "power_gap_percent": -21.81,
+      "level_gap": -2,
+      "premium_spend": 0,
+      "status": "PASS"
+    },
+    {
+      "milestone_id": "20h",
+      "profile_id": "freemium_basic",
+      "compared_to": "free_100_rewards",
+      "power_gap_percent": 5.69,
+      "level_gap": 0,
+      "premium_spend": 0,
+      "status": "PASS"
+    },
+    {
+      "milestone_id": "20h",
+      "profile_id": "spender_light",
+      "compared_to": "free_100_rewards",
+      "power_gap_percent": 18.36,
+      "level_gap": 1,
+      "premium_spend": 162,
+      "status": "PASS"
+    },
+    {
+      "milestone_id": "20h",
+      "profile_id": "max_spender",
+      "compared_to": "free_100_rewards",
+      "power_gap_percent": 36.93,
+      "level_gap": 2,
+      "premium_spend": 360,
+      "status": "REVIEW"
+    }
+  ],
+  "power_recommendations": [
+    {
+      "component": "level",
+      "current_weight": 50,
+      "observed_share_percent": 43,
+      "recommendation": "Keep as baseline until Battle Lab matchup data disagrees.",
+      "status": "PASS"
+    },
+    {
+      "component": "weapon_level",
+      "current_weight": 30,
+      "observed_share_percent": 21.16,
+      "recommendation": "Keep as baseline until Battle Lab matchup data disagrees.",
+      "status": "PASS"
+    },
+    {
+      "component": "spell_level",
+      "current_weight": 20,
+      "observed_share_percent": 22.5,
+      "recommendation": "Keep as baseline until Battle Lab matchup data disagrees.",
+      "status": "PASS"
+    },
+    {
+      "component": "pet_level",
+      "current_weight": 15,
+      "observed_share_percent": 4.94,
+      "recommendation": "Keep as baseline until Battle Lab matchup data disagrees.",
+      "status": "PASS"
+    },
+    {
+      "component": "passive_level",
+      "current_weight": 10,
+      "observed_share_percent": 4.56,
+      "recommendation": "Keep as baseline until Battle Lab matchup data disagrees.",
+      "status": "PASS"
+    },
+    {
+      "component": "weapon_quality_tier",
+      "current_weight": 25,
+      "observed_share_percent": 0.06,
+      "recommendation": "Keep as baseline until Battle Lab matchup data disagrees.",
+      "status": "PASS"
+    },
+    {
+      "component": "base_stats_level",
+      "current_weight": 8,
+      "observed_share_percent": 2.57,
+      "recommendation": "Keep as baseline until Battle Lab matchup data disagrees.",
+      "status": "PASS"
+    },
+    {
+      "component": "base_average_level",
+      "current_weight": 4,
+      "observed_share_percent": 1.19,
+      "recommendation": "Keep as baseline until Battle Lab matchup data disagrees.",
+      "status": "PASS"
+    }
+  ],
+  "bot_pool": [
+    {
+      "id": "bot_free_50_rewards_2h_m12",
+      "milestone_id": "2h",
+      "profile_id": "free_50_rewards",
+      "archetype_id": "starter_wand",
+      "target_power": 573,
+      "power_band": "band_002",
+      "level": 8,
+      "build": {
+        "id": "bot_free_50_rewards_2h_-12",
+        "displayName": "bot_free_50_rewards_2h_-12",
+        "level": 8,
+        "weaponLevel": 5,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "bot_free_50_rewards_2h_p0",
+      "milestone_id": "2h",
+      "profile_id": "free_50_rewards",
+      "archetype_id": "elemental_mixer",
+      "target_power": 651,
+      "power_band": "band_003",
+      "level": 8,
+      "build": {
+        "id": "bot_free_50_rewards_2h_0",
+        "displayName": "bot_free_50_rewards_2h_0",
+        "level": 8,
+        "weaponLevel": 5,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 2,
+          "acender": 2
+        }
+      }
+    },
+    {
+      "id": "bot_free_50_rewards_2h_p12",
+      "milestone_id": "2h",
+      "profile_id": "free_50_rewards",
+      "archetype_id": "burst_caster",
+      "target_power": 729,
+      "power_band": "band_003",
+      "level": 8,
+      "build": {
+        "id": "bot_free_50_rewards_2h_12",
+        "displayName": "bot_free_50_rewards_2h_12",
+        "level": 8,
+        "weaponLevel": 5,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 2,
+          "raio_cosmico": 2
+        }
+      }
+    },
+    {
+      "id": "bot_free_50_rewards_5h_m12",
+      "milestone_id": "5h",
+      "profile_id": "free_50_rewards",
+      "archetype_id": "starter_wand",
+      "target_power": 822,
+      "power_band": "band_003",
+      "level": 10,
+      "build": {
+        "id": "bot_free_50_rewards_5h_-12",
+        "displayName": "bot_free_50_rewards_5h_-12",
+        "level": 10,
+        "weaponLevel": 6,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {},
+        "passiveLevel": 3
+      }
+    },
+    {
+      "id": "bot_free_50_rewards_5h_p0",
+      "milestone_id": "5h",
+      "profile_id": "free_50_rewards",
+      "archetype_id": "elemental_mixer",
+      "target_power": 934,
+      "power_band": "band_003",
+      "level": 10,
+      "build": {
+        "id": "bot_free_50_rewards_5h_0",
+        "displayName": "bot_free_50_rewards_5h_0",
+        "level": 10,
+        "weaponLevel": 6,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 5,
+          "acender": 5
+        },
+        "passiveId": "forca",
+        "passiveLevel": 3
+      }
+    },
+    {
+      "id": "bot_free_50_rewards_5h_p12",
+      "milestone_id": "5h",
+      "profile_id": "free_50_rewards",
+      "archetype_id": "burst_caster",
+      "target_power": 1046,
+      "power_band": "band_003",
+      "level": 10,
+      "build": {
+        "id": "bot_free_50_rewards_5h_12",
+        "displayName": "bot_free_50_rewards_5h_12",
+        "level": 10,
+        "weaponLevel": 6,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 6,
+          "raio_cosmico": 6
+        },
+        "passiveId": "forca",
+        "passiveLevel": 3
+      }
+    },
+    {
+      "id": "bot_free_50_rewards_10h_m12",
+      "milestone_id": "10h",
+      "profile_id": "free_50_rewards",
+      "archetype_id": "starter_wand",
+      "target_power": 1035,
+      "power_band": "band_003",
+      "level": 12,
+      "build": {
+        "id": "bot_free_50_rewards_10h_-12",
+        "displayName": "bot_free_50_rewards_10h_-12",
+        "level": 12,
+        "weaponLevel": 8,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {},
+        "passiveLevel": 6
+      }
+    },
+    {
+      "id": "bot_free_50_rewards_10h_p0",
+      "milestone_id": "10h",
+      "profile_id": "free_50_rewards",
+      "archetype_id": "elemental_mixer",
+      "target_power": 1176,
+      "power_band": "band_003",
+      "level": 12,
+      "build": {
+        "id": "bot_free_50_rewards_10h_0",
+        "displayName": "bot_free_50_rewards_10h_0",
+        "level": 12,
+        "weaponLevel": 8,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 6,
+          "acender": 6
+        },
+        "passiveId": "forca",
+        "passiveLevel": 6
+      }
+    },
+    {
+      "id": "bot_free_50_rewards_10h_p12",
+      "milestone_id": "10h",
+      "profile_id": "free_50_rewards",
+      "archetype_id": "burst_caster",
+      "target_power": 1317,
+      "power_band": "band_004",
+      "level": 12,
+      "build": {
+        "id": "bot_free_50_rewards_10h_12",
+        "displayName": "bot_free_50_rewards_10h_12",
+        "level": 12,
+        "weaponLevel": 8,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 7,
+          "raio_cosmico": 7
+        },
+        "passiveId": "forca",
+        "passiveLevel": 6
+      }
+    },
+    {
+      "id": "bot_free_50_rewards_15h_m12",
+      "milestone_id": "15h",
+      "profile_id": "free_50_rewards",
+      "archetype_id": "starter_wand",
+      "target_power": 1195,
+      "power_band": "band_003",
+      "level": 14,
+      "build": {
+        "id": "bot_free_50_rewards_15h_-12",
+        "displayName": "bot_free_50_rewards_15h_-12",
+        "level": 14,
+        "weaponLevel": 9,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {},
+        "passiveLevel": 6
+      }
+    },
+    {
+      "id": "bot_free_50_rewards_15h_p0",
+      "milestone_id": "15h",
+      "profile_id": "free_50_rewards",
+      "archetype_id": "elemental_mixer",
+      "target_power": 1358,
+      "power_band": "band_004",
+      "level": 14,
+      "build": {
+        "id": "bot_free_50_rewards_15h_0",
+        "displayName": "bot_free_50_rewards_15h_0",
+        "level": 14,
+        "weaponLevel": 9,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 7,
+          "acender": 7
+        },
+        "passiveId": "forca",
+        "passiveLevel": 6
+      }
+    },
+    {
+      "id": "bot_free_50_rewards_15h_p12",
+      "milestone_id": "15h",
+      "profile_id": "free_50_rewards",
+      "archetype_id": "burst_caster",
+      "target_power": 1521,
+      "power_band": "band_004",
+      "level": 14,
+      "build": {
+        "id": "bot_free_50_rewards_15h_12",
+        "displayName": "bot_free_50_rewards_15h_12",
+        "level": 14,
+        "weaponLevel": 9,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 8,
+          "raio_cosmico": 8
+        },
+        "passiveId": "forca",
+        "passiveLevel": 6
+      }
+    },
+    {
+      "id": "bot_free_50_rewards_20h_m12",
+      "milestone_id": "20h",
+      "profile_id": "free_50_rewards",
+      "archetype_id": "starter_wand",
+      "target_power": 1379,
+      "power_band": "band_004",
+      "level": 15,
+      "build": {
+        "id": "bot_free_50_rewards_20h_-12",
+        "displayName": "bot_free_50_rewards_20h_-12",
+        "level": 15,
+        "weaponLevel": 9,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {},
+        "passiveLevel": 7,
+        "petLevel": 7
+      }
+    },
+    {
+      "id": "bot_free_50_rewards_20h_p0",
+      "milestone_id": "20h",
+      "profile_id": "free_50_rewards",
+      "archetype_id": "elemental_mixer",
+      "target_power": 1567,
+      "power_band": "band_004",
+      "level": 15,
+      "build": {
+        "id": "bot_free_50_rewards_20h_0",
+        "displayName": "bot_free_50_rewards_20h_0",
+        "level": 15,
+        "weaponLevel": 9,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 8,
+          "acender": 8
+        },
+        "passiveId": "forca",
+        "passiveLevel": 7,
+        "petId": "brasido",
+        "petLevel": 7
+      }
+    },
+    {
+      "id": "bot_free_50_rewards_20h_p12",
+      "milestone_id": "20h",
+      "profile_id": "free_50_rewards",
+      "archetype_id": "burst_caster",
+      "target_power": 1755,
+      "power_band": "band_004",
+      "level": 15,
+      "build": {
+        "id": "bot_free_50_rewards_20h_12",
+        "displayName": "bot_free_50_rewards_20h_12",
+        "level": 15,
+        "weaponLevel": 9,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 9,
+          "raio_cosmico": 9
+        },
+        "passiveId": "forca",
+        "passiveLevel": 7,
+        "petId": "brasido",
+        "petLevel": 7
+      }
+    },
+    {
+      "id": "bot_free_100_rewards_2h_m12",
+      "milestone_id": "2h",
+      "profile_id": "free_100_rewards",
+      "archetype_id": "starter_wand",
+      "target_power": 618,
+      "power_band": "band_003",
+      "level": 8,
+      "build": {
+        "id": "bot_free_100_rewards_2h_-12",
+        "displayName": "bot_free_100_rewards_2h_-12",
+        "level": 8,
+        "weaponLevel": 6,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "bot_free_100_rewards_2h_p0",
+      "milestone_id": "2h",
+      "profile_id": "free_100_rewards",
+      "archetype_id": "burst_caster",
+      "target_power": 702,
+      "power_band": "band_003",
+      "level": 8,
+      "build": {
+        "id": "bot_free_100_rewards_2h_0",
+        "displayName": "bot_free_100_rewards_2h_0",
+        "level": 8,
+        "weaponLevel": 6,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 2,
+          "raio_cosmico": 2
+        }
+      }
+    },
+    {
+      "id": "bot_free_100_rewards_2h_p12",
+      "milestone_id": "2h",
+      "profile_id": "free_100_rewards",
+      "archetype_id": "burst_caster",
+      "target_power": 786,
+      "power_band": "band_003",
+      "level": 8,
+      "build": {
+        "id": "bot_free_100_rewards_2h_12",
+        "displayName": "bot_free_100_rewards_2h_12",
+        "level": 8,
+        "weaponLevel": 6,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 2,
+          "raio_cosmico": 2
+        }
+      }
+    },
+    {
+      "id": "bot_free_100_rewards_5h_m12",
+      "milestone_id": "5h",
+      "profile_id": "free_100_rewards",
+      "archetype_id": "starter_wand",
+      "target_power": 1006,
+      "power_band": "band_003",
+      "level": 11,
+      "build": {
+        "id": "bot_free_100_rewards_5h_-12",
+        "displayName": "bot_free_100_rewards_5h_-12",
+        "level": 11,
+        "weaponLevel": 8,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {},
+        "passiveLevel": 4
+      }
+    },
+    {
+      "id": "bot_free_100_rewards_5h_p0",
+      "milestone_id": "5h",
+      "profile_id": "free_100_rewards",
+      "archetype_id": "burst_caster",
+      "target_power": 1143,
+      "power_band": "band_003",
+      "level": 11,
+      "build": {
+        "id": "bot_free_100_rewards_5h_0",
+        "displayName": "bot_free_100_rewards_5h_0",
+        "level": 11,
+        "weaponLevel": 8,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 7,
+          "raio_cosmico": 7
+        },
+        "passiveId": "forca",
+        "passiveLevel": 4
+      }
+    },
+    {
+      "id": "bot_free_100_rewards_5h_p12",
+      "milestone_id": "5h",
+      "profile_id": "free_100_rewards",
+      "archetype_id": "burst_caster",
+      "target_power": 1280,
+      "power_band": "band_004",
+      "level": 11,
+      "build": {
+        "id": "bot_free_100_rewards_5h_12",
+        "displayName": "bot_free_100_rewards_5h_12",
+        "level": 11,
+        "weaponLevel": 8,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 8,
+          "raio_cosmico": 8
+        },
+        "passiveId": "forca",
+        "passiveLevel": 4
+      }
+    },
+    {
+      "id": "bot_free_100_rewards_10h_m12",
+      "milestone_id": "10h",
+      "profile_id": "free_100_rewards",
+      "archetype_id": "starter_wand",
+      "target_power": 1335,
+      "power_band": "band_004",
+      "level": 14,
+      "build": {
+        "id": "bot_free_100_rewards_10h_-12",
+        "displayName": "bot_free_100_rewards_10h_-12",
+        "level": 14,
+        "weaponLevel": 11,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {},
+        "passiveLevel": 8
+      }
+    },
+    {
+      "id": "bot_free_100_rewards_10h_p0",
+      "milestone_id": "10h",
+      "profile_id": "free_100_rewards",
+      "archetype_id": "burst_caster",
+      "target_power": 1517,
+      "power_band": "band_004",
+      "level": 14,
+      "build": {
+        "id": "bot_free_100_rewards_10h_0",
+        "displayName": "bot_free_100_rewards_10h_0",
+        "level": 14,
+        "weaponLevel": 11,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 9,
+          "raio_cosmico": 9
+        },
+        "passiveId": "forca",
+        "passiveLevel": 8
+      }
+    },
+    {
+      "id": "bot_free_100_rewards_10h_p12",
+      "milestone_id": "10h",
+      "profile_id": "free_100_rewards",
+      "archetype_id": "burst_caster",
+      "target_power": 1699,
+      "power_band": "band_004",
+      "level": 14,
+      "build": {
+        "id": "bot_free_100_rewards_10h_12",
+        "displayName": "bot_free_100_rewards_10h_12",
+        "level": 14,
+        "weaponLevel": 11,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 10,
+          "raio_cosmico": 10
+        },
+        "passiveId": "forca",
+        "passiveLevel": 8
+      }
+    },
+    {
+      "id": "bot_free_100_rewards_15h_m12",
+      "milestone_id": "15h",
+      "profile_id": "free_100_rewards",
+      "archetype_id": "starter_wand",
+      "target_power": 1645,
+      "power_band": "band_004",
+      "level": 16,
+      "build": {
+        "id": "bot_free_100_rewards_15h_-12",
+        "displayName": "bot_free_100_rewards_15h_-12",
+        "level": 16,
+        "weaponLevel": 12,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {},
+        "passiveLevel": 9,
+        "petLevel": 10
+      }
+    },
+    {
+      "id": "bot_free_100_rewards_15h_p0",
+      "milestone_id": "15h",
+      "profile_id": "free_100_rewards",
+      "archetype_id": "elemental_mixer",
+      "target_power": 1869,
+      "power_band": "band_004",
+      "level": 16,
+      "build": {
+        "id": "bot_free_100_rewards_15h_0",
+        "displayName": "bot_free_100_rewards_15h_0",
+        "level": 16,
+        "weaponLevel": 12,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 10,
+          "acender": 10
+        },
+        "passiveId": "forca",
+        "passiveLevel": 9,
+        "petId": "brasido",
+        "petLevel": 10
+      }
+    },
+    {
+      "id": "bot_free_100_rewards_15h_p12",
+      "milestone_id": "15h",
+      "profile_id": "free_100_rewards",
+      "archetype_id": "burst_caster",
+      "target_power": 2093,
+      "power_band": "band_004",
+      "level": 16,
+      "build": {
+        "id": "bot_free_100_rewards_15h_12",
+        "displayName": "bot_free_100_rewards_15h_12",
+        "level": 16,
+        "weaponLevel": 12,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 11,
+          "raio_cosmico": 11
+        },
+        "passiveId": "forca",
+        "passiveLevel": 9,
+        "petId": "brasido",
+        "petLevel": 10
+      }
+    },
+    {
+      "id": "bot_free_100_rewards_20h_m12",
+      "milestone_id": "20h",
+      "profile_id": "free_100_rewards",
+      "archetype_id": "starter_wand",
+      "target_power": 1764,
+      "power_band": "band_004",
+      "level": 17,
+      "build": {
+        "id": "bot_free_100_rewards_20h_-12",
+        "displayName": "bot_free_100_rewards_20h_-12",
+        "level": 17,
+        "weaponLevel": 13,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {},
+        "passiveLevel": 10,
+        "petLevel": 10
+      }
+    },
+    {
+      "id": "bot_free_100_rewards_20h_p0",
+      "milestone_id": "20h",
+      "profile_id": "free_100_rewards",
+      "archetype_id": "elemental_mixer",
+      "target_power": 2004,
+      "power_band": "band_004",
+      "level": 17,
+      "build": {
+        "id": "bot_free_100_rewards_20h_0",
+        "displayName": "bot_free_100_rewards_20h_0",
+        "level": 17,
+        "weaponLevel": 13,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 11,
+          "acender": 11
+        },
+        "passiveId": "forca",
+        "passiveLevel": 10,
+        "petId": "brasido",
+        "petLevel": 10
+      }
+    },
+    {
+      "id": "bot_free_100_rewards_20h_p12",
+      "milestone_id": "20h",
+      "profile_id": "free_100_rewards",
+      "archetype_id": "burst_caster",
+      "target_power": 2244,
+      "power_band": "band_005",
+      "level": 17,
+      "build": {
+        "id": "bot_free_100_rewards_20h_12",
+        "displayName": "bot_free_100_rewards_20h_12",
+        "level": 17,
+        "weaponLevel": 13,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 12,
+          "raio_cosmico": 12
+        },
+        "passiveId": "forca",
+        "passiveLevel": 10,
+        "petId": "brasido",
+        "petLevel": 10
+      }
+    },
+    {
+      "id": "bot_freemium_basic_2h_m12",
+      "milestone_id": "2h",
+      "profile_id": "freemium_basic",
+      "archetype_id": "starter_wand",
+      "target_power": 689,
+      "power_band": "band_003",
+      "level": 9,
+      "build": {
+        "id": "bot_freemium_basic_2h_-12",
+        "displayName": "bot_freemium_basic_2h_-12",
+        "level": 9,
+        "weaponLevel": 7,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "bot_freemium_basic_2h_p0",
+      "milestone_id": "2h",
+      "profile_id": "freemium_basic",
+      "archetype_id": "burst_caster",
+      "target_power": 783,
+      "power_band": "band_003",
+      "level": 9,
+      "build": {
+        "id": "bot_freemium_basic_2h_0",
+        "displayName": "bot_freemium_basic_2h_0",
+        "level": 9,
+        "weaponLevel": 7,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 2,
+          "raio_cosmico": 2
+        }
+      }
+    },
+    {
+      "id": "bot_freemium_basic_2h_p12",
+      "milestone_id": "2h",
+      "profile_id": "freemium_basic",
+      "archetype_id": "burst_caster",
+      "target_power": 877,
+      "power_band": "band_003",
+      "level": 9,
+      "build": {
+        "id": "bot_freemium_basic_2h_12",
+        "displayName": "bot_freemium_basic_2h_12",
+        "level": 9,
+        "weaponLevel": 7,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 2,
+          "raio_cosmico": 2
+        }
+      }
+    },
+    {
+      "id": "bot_freemium_basic_5h_m12",
+      "milestone_id": "5h",
+      "profile_id": "freemium_basic",
+      "archetype_id": "starter_wand",
+      "target_power": 1060,
+      "power_band": "band_003",
+      "level": 11,
+      "build": {
+        "id": "bot_freemium_basic_5h_-12",
+        "displayName": "bot_freemium_basic_5h_-12",
+        "level": 11,
+        "weaponLevel": 9,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {},
+        "passiveLevel": 5
+      }
+    },
+    {
+      "id": "bot_freemium_basic_5h_p0",
+      "milestone_id": "5h",
+      "profile_id": "freemium_basic",
+      "archetype_id": "burst_caster",
+      "target_power": 1205,
+      "power_band": "band_004",
+      "level": 11,
+      "build": {
+        "id": "bot_freemium_basic_5h_0",
+        "displayName": "bot_freemium_basic_5h_0",
+        "level": 11,
+        "weaponLevel": 9,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 7,
+          "raio_cosmico": 7
+        },
+        "passiveId": "forca",
+        "passiveLevel": 5
+      }
+    },
+    {
+      "id": "bot_freemium_basic_5h_p12",
+      "milestone_id": "5h",
+      "profile_id": "freemium_basic",
+      "archetype_id": "burst_caster",
+      "target_power": 1350,
+      "power_band": "band_004",
+      "level": 11,
+      "build": {
+        "id": "bot_freemium_basic_5h_12",
+        "displayName": "bot_freemium_basic_5h_12",
+        "level": 11,
+        "weaponLevel": 9,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 8,
+          "raio_cosmico": 8
+        },
+        "passiveId": "forca",
+        "passiveLevel": 5
+      }
+    },
+    {
+      "id": "bot_freemium_basic_10h_m12",
+      "milestone_id": "10h",
+      "profile_id": "freemium_basic",
+      "archetype_id": "starter_wand",
+      "target_power": 1388,
+      "power_band": "band_004",
+      "level": 14,
+      "build": {
+        "id": "bot_freemium_basic_10h_-12",
+        "displayName": "bot_freemium_basic_10h_-12",
+        "level": 14,
+        "weaponLevel": 11,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {},
+        "passiveLevel": 9
+      }
+    },
+    {
+      "id": "bot_freemium_basic_10h_p0",
+      "milestone_id": "10h",
+      "profile_id": "freemium_basic",
+      "archetype_id": "burst_caster",
+      "target_power": 1577,
+      "power_band": "band_004",
+      "level": 14,
+      "build": {
+        "id": "bot_freemium_basic_10h_0",
+        "displayName": "bot_freemium_basic_10h_0",
+        "level": 14,
+        "weaponLevel": 11,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 10,
+          "raio_cosmico": 10
+        },
+        "passiveId": "forca",
+        "passiveLevel": 9
+      }
+    },
+    {
+      "id": "bot_freemium_basic_10h_p12",
+      "milestone_id": "10h",
+      "profile_id": "freemium_basic",
+      "archetype_id": "burst_caster",
+      "target_power": 1766,
+      "power_band": "band_004",
+      "level": 14,
+      "build": {
+        "id": "bot_freemium_basic_10h_12",
+        "displayName": "bot_freemium_basic_10h_12",
+        "level": 14,
+        "weaponLevel": 11,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 11,
+          "raio_cosmico": 11
+        },
+        "passiveId": "forca",
+        "passiveLevel": 9
+      }
+    },
+    {
+      "id": "bot_freemium_basic_15h_m12",
+      "milestone_id": "15h",
+      "profile_id": "freemium_basic",
+      "archetype_id": "starter_wand",
+      "target_power": 1739,
+      "power_band": "band_004",
+      "level": 16,
+      "build": {
+        "id": "bot_freemium_basic_15h_-12",
+        "displayName": "bot_freemium_basic_15h_-12",
+        "level": 16,
+        "weaponLevel": 13,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {},
+        "passiveLevel": 10,
+        "petLevel": 11
+      }
+    },
+    {
+      "id": "bot_freemium_basic_15h_p0",
+      "milestone_id": "15h",
+      "profile_id": "freemium_basic",
+      "archetype_id": "pet_handler",
+      "target_power": 1976,
+      "power_band": "band_004",
+      "level": 16,
+      "build": {
+        "id": "bot_freemium_basic_15h_0",
+        "displayName": "bot_freemium_basic_15h_0",
+        "level": 16,
+        "weaponLevel": 13,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 11,
+          "acender": 11
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 10,
+        "petId": "familiar_cinzento",
+        "petLevel": 11
+      }
+    },
+    {
+      "id": "bot_freemium_basic_15h_p12",
+      "milestone_id": "15h",
+      "profile_id": "freemium_basic",
+      "archetype_id": "burst_caster",
+      "target_power": 2213,
+      "power_band": "band_005",
+      "level": 16,
+      "build": {
+        "id": "bot_freemium_basic_15h_12",
+        "displayName": "bot_freemium_basic_15h_12",
+        "level": 16,
+        "weaponLevel": 13,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 12,
+          "raio_cosmico": 12
+        },
+        "passiveId": "forca",
+        "passiveLevel": 10,
+        "petId": "brasido",
+        "petLevel": 11
+      }
+    },
+    {
+      "id": "bot_freemium_basic_20h_m12",
+      "milestone_id": "20h",
+      "profile_id": "freemium_basic",
+      "archetype_id": "starter_wand",
+      "target_power": 1864,
+      "power_band": "band_004",
+      "level": 17,
+      "build": {
+        "id": "bot_freemium_basic_20h_-12",
+        "displayName": "bot_freemium_basic_20h_-12",
+        "level": 17,
+        "weaponLevel": 14,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {},
+        "passiveLevel": 11,
+        "petLevel": 11
+      }
+    },
+    {
+      "id": "bot_freemium_basic_20h_p0",
+      "milestone_id": "20h",
+      "profile_id": "freemium_basic",
+      "archetype_id": "pet_handler",
+      "target_power": 2118,
+      "power_band": "band_004",
+      "level": 17,
+      "build": {
+        "id": "bot_freemium_basic_20h_0",
+        "displayName": "bot_freemium_basic_20h_0",
+        "level": 17,
+        "weaponLevel": 14,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 12,
+          "acender": 12
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 11,
+        "petId": "familiar_cinzento",
+        "petLevel": 11
+      }
+    },
+    {
+      "id": "bot_freemium_basic_20h_p12",
+      "milestone_id": "20h",
+      "profile_id": "freemium_basic",
+      "archetype_id": "burst_caster",
+      "target_power": 2372,
+      "power_band": "band_005",
+      "level": 17,
+      "build": {
+        "id": "bot_freemium_basic_20h_12",
+        "displayName": "bot_freemium_basic_20h_12",
+        "level": 17,
+        "weaponLevel": 14,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 13,
+          "raio_cosmico": 13
+        },
+        "passiveId": "forca",
+        "passiveLevel": 11,
+        "petId": "brasido",
+        "petLevel": 11
+      }
+    },
+    {
+      "id": "bot_spender_light_2h_m12",
+      "milestone_id": "2h",
+      "profile_id": "spender_light",
+      "archetype_id": "starter_wand",
+      "target_power": 733,
+      "power_band": "band_003",
+      "level": 9,
+      "build": {
+        "id": "bot_spender_light_2h_-12",
+        "displayName": "bot_spender_light_2h_-12",
+        "level": 9,
+        "weaponLevel": 8,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "bot_spender_light_2h_p0",
+      "milestone_id": "2h",
+      "profile_id": "spender_light",
+      "archetype_id": "burst_caster",
+      "target_power": 833,
+      "power_band": "band_003",
+      "level": 9,
+      "build": {
+        "id": "bot_spender_light_2h_0",
+        "displayName": "bot_spender_light_2h_0",
+        "level": 9,
+        "weaponLevel": 8,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 3,
+          "raio_cosmico": 3
+        }
+      }
+    },
+    {
+      "id": "bot_spender_light_2h_p12",
+      "milestone_id": "2h",
+      "profile_id": "spender_light",
+      "archetype_id": "burst_caster",
+      "target_power": 933,
+      "power_band": "band_003",
+      "level": 9,
+      "build": {
+        "id": "bot_spender_light_2h_12",
+        "displayName": "bot_spender_light_2h_12",
+        "level": 9,
+        "weaponLevel": 8,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 3,
+          "raio_cosmico": 3
+        }
+      }
+    },
+    {
+      "id": "bot_spender_light_5h_m12",
+      "milestone_id": "5h",
+      "profile_id": "spender_light",
+      "archetype_id": "starter_wand",
+      "target_power": 1210,
+      "power_band": "band_004",
+      "level": 12,
+      "build": {
+        "id": "bot_spender_light_5h_-12",
+        "displayName": "bot_spender_light_5h_-12",
+        "level": 12,
+        "weaponLevel": 10,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {},
+        "passiveLevel": 7
+      }
+    },
+    {
+      "id": "bot_spender_light_5h_p0",
+      "milestone_id": "5h",
+      "profile_id": "spender_light",
+      "archetype_id": "burst_caster",
+      "target_power": 1375,
+      "power_band": "band_004",
+      "level": 12,
+      "build": {
+        "id": "bot_spender_light_5h_0",
+        "displayName": "bot_spender_light_5h_0",
+        "level": 12,
+        "weaponLevel": 10,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 9,
+          "raio_cosmico": 9
+        },
+        "passiveId": "forca",
+        "passiveLevel": 7
+      }
+    },
+    {
+      "id": "bot_spender_light_5h_p12",
+      "milestone_id": "5h",
+      "profile_id": "spender_light",
+      "archetype_id": "burst_caster",
+      "target_power": 1540,
+      "power_band": "band_004",
+      "level": 12,
+      "build": {
+        "id": "bot_spender_light_5h_12",
+        "displayName": "bot_spender_light_5h_12",
+        "level": 12,
+        "weaponLevel": 10,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 10,
+          "raio_cosmico": 10
+        },
+        "passiveId": "forca",
+        "passiveLevel": 7
+      }
+    },
+    {
+      "id": "bot_spender_light_10h_m12",
+      "milestone_id": "10h",
+      "profile_id": "spender_light",
+      "archetype_id": "starter_wand",
+      "target_power": 1721,
+      "power_band": "band_004",
+      "level": 15,
+      "build": {
+        "id": "bot_spender_light_10h_-12",
+        "displayName": "bot_spender_light_10h_-12",
+        "level": 15,
+        "weaponLevel": 13,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {},
+        "passiveLevel": 10,
+        "petLevel": 11
+      }
+    },
+    {
+      "id": "bot_spender_light_10h_p0",
+      "milestone_id": "10h",
+      "profile_id": "spender_light",
+      "archetype_id": "pet_handler",
+      "target_power": 1956,
+      "power_band": "band_004",
+      "level": 15,
+      "build": {
+        "id": "bot_spender_light_10h_0",
+        "displayName": "bot_spender_light_10h_0",
+        "level": 15,
+        "weaponLevel": 13,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 12,
+          "acender": 12
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 10,
+        "petId": "familiar_cinzento",
+        "petLevel": 11
+      }
+    },
+    {
+      "id": "bot_spender_light_10h_p12",
+      "milestone_id": "10h",
+      "profile_id": "spender_light",
+      "archetype_id": "burst_caster",
+      "target_power": 2191,
+      "power_band": "band_004",
+      "level": 15,
+      "build": {
+        "id": "bot_spender_light_10h_12",
+        "displayName": "bot_spender_light_10h_12",
+        "level": 15,
+        "weaponLevel": 13,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 13,
+          "raio_cosmico": 13
+        },
+        "passiveId": "forca",
+        "passiveLevel": 10,
+        "petId": "brasido",
+        "petLevel": 11
+      }
+    },
+    {
+      "id": "bot_spender_light_15h_m12",
+      "milestone_id": "15h",
+      "profile_id": "spender_light",
+      "archetype_id": "starter_wand",
+      "target_power": 1834,
+      "power_band": "band_004",
+      "level": 16,
+      "build": {
+        "id": "bot_spender_light_15h_-12",
+        "displayName": "bot_spender_light_15h_-12",
+        "level": 16,
+        "weaponLevel": 14,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {},
+        "passiveLevel": 11,
+        "petLevel": 12
+      }
+    },
+    {
+      "id": "bot_spender_light_15h_p0",
+      "milestone_id": "15h",
+      "profile_id": "spender_light",
+      "archetype_id": "pet_handler",
+      "target_power": 2084,
+      "power_band": "band_004",
+      "level": 16,
+      "build": {
+        "id": "bot_spender_light_15h_0",
+        "displayName": "bot_spender_light_15h_0",
+        "level": 16,
+        "weaponLevel": 14,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 12,
+          "acender": 12
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 11,
+        "petId": "familiar_cinzento",
+        "petLevel": 12
+      }
+    },
+    {
+      "id": "bot_spender_light_15h_p12",
+      "milestone_id": "15h",
+      "profile_id": "spender_light",
+      "archetype_id": "burst_caster",
+      "target_power": 2334,
+      "power_band": "band_005",
+      "level": 16,
+      "build": {
+        "id": "bot_spender_light_15h_12",
+        "displayName": "bot_spender_light_15h_12",
+        "level": 16,
+        "weaponLevel": 14,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 13,
+          "raio_cosmico": 13
+        },
+        "passiveId": "forca",
+        "passiveLevel": 11,
+        "petId": "brasido",
+        "petLevel": 12
+      }
+    },
+    {
+      "id": "bot_spender_light_20h_m12",
+      "milestone_id": "20h",
+      "profile_id": "spender_light",
+      "archetype_id": "starter_wand",
+      "target_power": 2087,
+      "power_band": "band_004",
+      "level": 18,
+      "build": {
+        "id": "bot_spender_light_20h_-12",
+        "displayName": "bot_spender_light_20h_-12",
+        "level": 18,
+        "weaponLevel": 16,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {},
+        "passiveLevel": 13,
+        "petLevel": 13
+      }
+    },
+    {
+      "id": "bot_spender_light_20h_p0",
+      "milestone_id": "20h",
+      "profile_id": "spender_light",
+      "archetype_id": "pet_handler",
+      "target_power": 2372,
+      "power_band": "band_005",
+      "level": 18,
+      "build": {
+        "id": "bot_spender_light_20h_0",
+        "displayName": "bot_spender_light_20h_0",
+        "level": 18,
+        "weaponLevel": 16,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 14,
+          "acender": 14
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 13,
+        "petId": "familiar_cinzento",
+        "petLevel": 13
+      }
+    },
+    {
+      "id": "bot_spender_light_20h_p12",
+      "milestone_id": "20h",
+      "profile_id": "spender_light",
+      "archetype_id": "burst_caster",
+      "target_power": 2657,
+      "power_band": "band_005",
+      "level": 18,
+      "build": {
+        "id": "bot_spender_light_20h_12",
+        "displayName": "bot_spender_light_20h_12",
+        "level": 18,
+        "weaponLevel": 16,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 16,
+          "raio_cosmico": 16
+        },
+        "passiveId": "forca",
+        "passiveLevel": 13,
+        "petId": "brasido",
+        "petLevel": 13
+      }
+    },
+    {
+      "id": "bot_max_spender_2h_m12",
+      "milestone_id": "2h",
+      "profile_id": "max_spender",
+      "archetype_id": "starter_wand",
+      "target_power": 786,
+      "power_band": "band_003",
+      "level": 9,
+      "build": {
+        "id": "bot_max_spender_2h_-12",
+        "displayName": "bot_max_spender_2h_-12",
+        "level": 9,
+        "weaponLevel": 9,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "bot_max_spender_2h_p0",
+      "milestone_id": "2h",
+      "profile_id": "max_spender",
+      "archetype_id": "burst_caster",
+      "target_power": 893,
+      "power_band": "band_003",
+      "level": 9,
+      "build": {
+        "id": "bot_max_spender_2h_0",
+        "displayName": "bot_max_spender_2h_0",
+        "level": 9,
+        "weaponLevel": 9,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 3,
+          "raio_cosmico": 3
+        }
+      }
+    },
+    {
+      "id": "bot_max_spender_2h_p12",
+      "milestone_id": "2h",
+      "profile_id": "max_spender",
+      "archetype_id": "burst_caster",
+      "target_power": 1000,
+      "power_band": "band_003",
+      "level": 9,
+      "build": {
+        "id": "bot_max_spender_2h_12",
+        "displayName": "bot_max_spender_2h_12",
+        "level": 9,
+        "weaponLevel": 9,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 3,
+          "raio_cosmico": 3
+        }
+      }
+    },
+    {
+      "id": "bot_max_spender_5h_m12",
+      "milestone_id": "5h",
+      "profile_id": "max_spender",
+      "archetype_id": "starter_wand",
+      "target_power": 1300,
+      "power_band": "band_004",
+      "level": 12,
+      "build": {
+        "id": "bot_max_spender_5h_-12",
+        "displayName": "bot_max_spender_5h_-12",
+        "level": 12,
+        "weaponLevel": 12,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {},
+        "passiveLevel": 8
+      }
+    },
+    {
+      "id": "bot_max_spender_5h_p0",
+      "milestone_id": "5h",
+      "profile_id": "max_spender",
+      "archetype_id": "burst_caster",
+      "target_power": 1477,
+      "power_band": "band_004",
+      "level": 12,
+      "build": {
+        "id": "bot_max_spender_5h_0",
+        "displayName": "bot_max_spender_5h_0",
+        "level": 12,
+        "weaponLevel": 12,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 9,
+          "raio_cosmico": 9
+        },
+        "passiveId": "forca",
+        "passiveLevel": 8
+      }
+    },
+    {
+      "id": "bot_max_spender_5h_p12",
+      "milestone_id": "5h",
+      "profile_id": "max_spender",
+      "archetype_id": "burst_caster",
+      "target_power": 1654,
+      "power_band": "band_004",
+      "level": 12,
+      "build": {
+        "id": "bot_max_spender_5h_12",
+        "displayName": "bot_max_spender_5h_12",
+        "level": 12,
+        "weaponLevel": 12,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 10,
+          "raio_cosmico": 10
+        },
+        "passiveId": "forca",
+        "passiveLevel": 8
+      }
+    },
+    {
+      "id": "bot_max_spender_10h_m12",
+      "milestone_id": "10h",
+      "profile_id": "max_spender",
+      "archetype_id": "starter_wand",
+      "target_power": 1856,
+      "power_band": "band_004",
+      "level": 15,
+      "build": {
+        "id": "bot_max_spender_10h_-12",
+        "displayName": "bot_max_spender_10h_-12",
+        "level": 15,
+        "weaponLevel": 15,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {},
+        "passiveLevel": 11,
+        "petLevel": 13
+      }
+    },
+    {
+      "id": "bot_max_spender_10h_p0",
+      "milestone_id": "10h",
+      "profile_id": "max_spender",
+      "archetype_id": "pet_handler",
+      "target_power": 2109,
+      "power_band": "band_004",
+      "level": 15,
+      "build": {
+        "id": "bot_max_spender_10h_0",
+        "displayName": "bot_max_spender_10h_0",
+        "level": 15,
+        "weaponLevel": 15,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 13,
+          "acender": 13
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 11,
+        "petId": "familiar_cinzento",
+        "petLevel": 13
+      }
+    },
+    {
+      "id": "bot_max_spender_10h_p12",
+      "milestone_id": "10h",
+      "profile_id": "max_spender",
+      "archetype_id": "burst_caster",
+      "target_power": 2362,
+      "power_band": "band_005",
+      "level": 15,
+      "build": {
+        "id": "bot_max_spender_10h_12",
+        "displayName": "bot_max_spender_10h_12",
+        "level": 15,
+        "weaponLevel": 15,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 15,
+          "raio_cosmico": 15
+        },
+        "passiveId": "forca",
+        "passiveLevel": 11,
+        "petId": "brasido",
+        "petLevel": 13
+      }
+    },
+    {
+      "id": "bot_max_spender_15h_m12",
+      "milestone_id": "15h",
+      "profile_id": "max_spender",
+      "archetype_id": "starter_wand",
+      "target_power": 2127,
+      "power_band": "band_004",
+      "level": 17,
+      "build": {
+        "id": "bot_max_spender_15h_-12",
+        "displayName": "bot_max_spender_15h_-12",
+        "level": 17,
+        "weaponLevel": 17,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {},
+        "passiveLevel": 14,
+        "petLevel": 14
+      }
+    },
+    {
+      "id": "bot_max_spender_15h_p0",
+      "milestone_id": "15h",
+      "profile_id": "max_spender",
+      "archetype_id": "pet_handler",
+      "target_power": 2417,
+      "power_band": "band_005",
+      "level": 17,
+      "build": {
+        "id": "bot_max_spender_15h_0",
+        "displayName": "bot_max_spender_15h_0",
+        "level": 17,
+        "weaponLevel": 17,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 15,
+          "acender": 15
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 14,
+        "petId": "familiar_cinzento",
+        "petLevel": 14
+      }
+    },
+    {
+      "id": "bot_max_spender_15h_p12",
+      "milestone_id": "15h",
+      "profile_id": "max_spender",
+      "archetype_id": "burst_caster",
+      "target_power": 2707,
+      "power_band": "band_005",
+      "level": 17,
+      "build": {
+        "id": "bot_max_spender_15h_12",
+        "displayName": "bot_max_spender_15h_12",
+        "level": 17,
+        "weaponLevel": 17,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 17,
+          "raio_cosmico": 17
+        },
+        "passiveId": "forca",
+        "passiveLevel": 14,
+        "petId": "brasido",
+        "petLevel": 14
+      }
+    },
+    {
+      "id": "bot_max_spender_20h_m12",
+      "milestone_id": "20h",
+      "profile_id": "max_spender",
+      "archetype_id": "starter_wand",
+      "target_power": 2415,
+      "power_band": "band_005",
+      "level": 19,
+      "build": {
+        "id": "bot_max_spender_20h_-12",
+        "displayName": "bot_max_spender_20h_-12",
+        "level": 19,
+        "weaponLevel": 19,
+        "weaponQualityTier": 1,
+        "spellIds": [],
+        "spellLevels": {},
+        "passiveLevel": 15,
+        "petLevel": 16
+      }
+    },
+    {
+      "id": "bot_max_spender_20h_p0",
+      "milestone_id": "20h",
+      "profile_id": "max_spender",
+      "archetype_id": "pet_handler",
+      "target_power": 2744,
+      "power_band": "band_005",
+      "level": 19,
+      "build": {
+        "id": "bot_max_spender_20h_0",
+        "displayName": "bot_max_spender_20h_0",
+        "level": 19,
+        "weaponLevel": 19,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "raio_cosmico",
+          "acender"
+        ],
+        "spellLevels": {
+          "raio_cosmico": 17,
+          "acender": 17
+        },
+        "passiveId": "resistencia",
+        "passiveLevel": 15,
+        "petId": "familiar_cinzento",
+        "petLevel": 16
+      }
+    },
+    {
+      "id": "bot_max_spender_20h_p12",
+      "milestone_id": "20h",
+      "profile_id": "max_spender",
+      "archetype_id": "burst_caster",
+      "target_power": 3073,
+      "power_band": "band_005",
+      "level": 19,
+      "build": {
+        "id": "bot_max_spender_20h_12",
+        "displayName": "bot_max_spender_20h_12",
+        "level": 19,
+        "weaponLevel": 19,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "raio",
+          "raio_cosmico"
+        ],
+        "spellLevels": {
+          "raio": 19,
+          "raio_cosmico": 19
+        },
+        "passiveId": "forca",
+        "passiveLevel": 15,
+        "petId": "brasido",
+        "petLevel": 16
+      }
+    }
+  ]
+}
