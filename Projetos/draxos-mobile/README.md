@@ -140,4 +140,5 @@ draxos-mobile/
 3. `implementation/tracks/track-03-internal-alpha-v0/current-status.md`
 4. `implementation/tracks/track-03-internal-alpha-v0/scope.md`
 5. `docs/internal-alpha-v0.md`
-6. `docs/design-pending.md`
+6. `docs/internal-alpha-v0-design-lock.md`
+7. `docs/design-pending.md`

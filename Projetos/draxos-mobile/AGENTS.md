@@ -77,6 +77,7 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 | Plano da Track 03 | `implementation/tracks/track-03-internal-alpha-v0/implementation-plan.md` |
 | Status da Track 03 | `implementation/tracks/track-03-internal-alpha-v0/current-status.md` |
 | Runbook Internal Alpha v0 | `docs/internal-alpha-v0.md` |
+| Design Lock Internal Alpha v0 | `docs/internal-alpha-v0-design-lock.md` |
 | Checklist Internal Alpha v0 | `docs/playtest-internal-alpha-v0.md` |
 | MVP tecnico minimo | `implementation/tracks/track-00-first-slice-foundation/mvp-technical-definition.md` |
 | Sequencia de execucao | `implementation/tracks/track-00-first-slice-foundation/implementation-plan.md` |

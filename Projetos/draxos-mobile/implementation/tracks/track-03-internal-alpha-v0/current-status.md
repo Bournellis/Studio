@@ -1,7 +1,7 @@
 # Track 03 - Internal Alpha v0 - Current Status
 
 - Last Updated: `2026-05-26`
-- Status: `READY_FOR_IMPLEMENTATION - DOCUMENTATION AND WORKSPACE PREP`
+- Status: `T03-P01_IN_PROGRESS - DESIGN LOCK RECORDED WITH STORE FOLLOWUPS`
 - Baseline: Track 00 completa, Track 01 completa e Track 02 com Progression Lab/Battle Lab v1 implementados. O projeto ja possui Godot 4.6.2, Supabase local, conta guest, batalha server-authoritative, Base/Social/Competicao/Monetizacao v0, telemetria client nao autoritativa, exports Android/PC/Web, Battle Visual Mockup compartilhado e laboratorios dev-only. A Track 03 prepara a transicao para uma build fechada realista com email/senha, dois saves por conta, backend remoto, updates e playtest de 2 usuarios.
 
 ## Implementado Nesta Preparacao
@@ -11,6 +11,9 @@
 - Runbook operacional `docs/internal-alpha-v0.md` criado.
 - Checklist de playtest `docs/playtest-internal-alpha-v0.md` criado.
 - Worktree limpa de outputs gerados e ignore atualizado para novos `.uid`, `.translation` e `build/`.
+- Design lock da Internal Alpha v0 registrado em `docs/internal-alpha-v0-design-lock.md`.
+- Pendencias `DMOB-D048`, `DMOB-D049`, `DMOB-D051`, `DMOB-D052`, `DMOB-D053`, `DMOB-D054` e `DMOB-D055` resolvidas.
+- `DMOB-D050` ficou como calibracao/follow-up por faltar quantidade/custo/moeda/reset diario dos redeems.
 
 ## Ainda Nao Implementado
 
@@ -36,7 +39,7 @@
 
 ## Proximo Passo
 
-Executar `T03-P01 - Design Lock Da Build Interna`, resolvendo as pendencias `DMOB-D048` a `DMOB-D055` antes de escrever codigo funcional amplo.
+Fechar os follow-ups de loja/social em `docs/internal-alpha-v0-design-lock.md`, principalmente quantidades/custos dos redeems, moeda usada, horario de reset diario e identificador para adicionar amigos.
 
 ## Validacao Da Preparacao
 

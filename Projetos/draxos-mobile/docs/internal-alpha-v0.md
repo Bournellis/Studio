@@ -2,6 +2,7 @@
 
 - Ultima atualizacao: `2026-05-26`
 - Fonte de execucao: `../implementation/tracks/track-03-internal-alpha-v0/`
+- Design lock: `internal-alpha-v0-design-lock.md`
 - Objetivo: fechar uma build interna profissional para Fabio + 1 amigo testarem um jogo real em Android, PC e Web, com servidor real, conta/save compartilhados, features principais funcionais e iteracao rapida.
 
 ## Resumo Da Build
@@ -91,6 +92,8 @@ Politica:
 
 ## Sistemas Da Build
 
+As decisoes detalhadas de uso, layout, tooltips e fluxo ficam em `internal-alpha-v0-design-lock.md`.
+
 ### Batalha
 
 - Mantem `battle_log_v1` server-authoritative.
@@ -151,16 +154,13 @@ Proof-of-concept:
 
 ## Design Sessions Pendentes
 
-Antes de codigo funcional amplo, resolver:
+Antes de codigo funcional amplo, resolver os follow-ups finais do design lock:
 
-- Base: menus, beneficios por predio e copy final do alpha.
-- Saves: como alternar, resetar e avisar o usuario.
-- Loja: pacotes fixos de redeem e limites.
-- Competicao: bots entram ou nao na leaderboard.
-- Social: limites de chat, guilda e moderacao minima.
-- Updates: obrigatorio vs recomendado.
-- Conta: convite, recuperacao e criacao das duas contas de teste.
-- Progression Lab: quais acoes ficam permitidas no save lab.
+- Quantidades/custos exatos dos redeems da loja.
+- Moeda/ponto usada nos redeems.
+- Horario de reset diario.
+- Identificador para adicionar amigos: username, email, ou ambos.
+- Marcador visual opcional para usuarios em `progression_lab` no social/chat.
 
 Estas decisoes vivem em `docs/design-pending.md` como `DMOB-D048` a `DMOB-D055`.
 
