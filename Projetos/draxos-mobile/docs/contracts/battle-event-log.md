@@ -351,6 +351,27 @@ O contrato ainda pode aceitar estes tipos quando o simulador expandir alem do T0
 
 Cada novo tipo deve documentar payload antes de ser usado pelo cliente.
 
+## Uso Visual Atual
+
+`res://ui/battle_visual_mockup.gd` e o presenter visual compartilhado da tela
+Batalha e do Battle Lab. Ele consome somente `battle_log_v1` e `rewards` para
+montar HUD, placeholders de personagens, icons de evento, HP, Mana, Barreira,
+status, cooldowns, summons, Familiar, resultado e timeline.
+
+Campos ja usados visualmente quando existem:
+
+- `damage`, `raw_damage`, `absorbed`, `damage_type`, `hp_after`,
+  `barrier_after`;
+- `mana_after`;
+- `spell_id`, `pet_id`, `passive_id`, `status_id`;
+- `stacks`, `duration`, `ready_at`;
+- `player_hp_after`, `opponent_hp_after`;
+- `winner`, `reason`, `reward_type`.
+
+IDs de arte futura ficam reservados em `core/asset_ids.gd`. A ausencia desses
+assets nao deve quebrar replay, testes ou export smoke; o cliente deve manter
+fallback com controles nativos do Godot.
+
 ## Tolerancia Do Cliente
 
 - Eventos desconhecidos nao quebram replay; cliente registra aviso e segue.

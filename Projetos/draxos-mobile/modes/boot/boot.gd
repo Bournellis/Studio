@@ -2,6 +2,7 @@ extends Control
 
 const ProjectInfoScript := preload("res://core/project_info.gd")
 const BattleLogPresenterScript := preload("res://ui/battle_log_presenter.gd")
+const BattleVisualMockupScript := preload("res://ui/battle_visual_mockup.gd")
 const SessionStoreScript := preload("res://online/session_store.gd")
 
 const SCREEN_HUB := "hub"
@@ -22,6 +23,7 @@ var _back_button: Button
 var _content_title: Label
 var _content_body: VBoxContainer
 var _timeline_label: Label
+var _battle_visual: Control
 var _confirm_dialog: ConfirmationDialog
 
 var _action_buttons: Dictionary = {}
@@ -199,6 +201,7 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	_current_screen = screen_id
 	_action_buttons.clear()
 	_timeline_label = null
+	_battle_visual = null
 	_error_label.text = ""
 	_clear_content_body()
 	_content_title.text = _screen_title(screen_id)
@@ -353,10 +356,16 @@ func _render_battle_screen() -> void:
 	_add_body_text("Batalha server-authoritative: o cliente solicita a luta, recebe o log e apenas apresenta o replay.")
 	_add_action_button("Solicitar batalha", "request_battle")
 	_add_action_button("Ver resultado", "show_latest_battle")
+	_battle_visual = BattleVisualMockupScript.new()
+	_battle_visual.custom_minimum_size = Vector2(0, 380)
+	_content_body.add_child(_battle_visual)
 	_timeline_label = _add_output_label("")
 	if SessionStore.has_battle_log():
-		_timeline_label.text = BattleLogPresenterScript.format_summary(SessionStore.last_battle_log, SessionStore.last_battle_rewards)
+		_battle_visual.load_battle_log(SessionStore.last_battle_log, SessionStore.last_battle_rewards)
+		_battle_visual.reveal_all()
+		_timeline_label.text = _battle_visual.get_timeline_text()
 	else:
+		_battle_visual.show_empty_state("Nenhuma batalha carregada. Solicite uma batalha ou busque o ultimo resultado.")
 		_timeline_label.text = "Nenhuma batalha carregada. Solicite uma batalha ou busque o ultimo resultado."
 
 func _render_base_screen() -> void:
@@ -1159,6 +1168,8 @@ func _play_battle_log(battle_log: Dictionary, rewards: Dictionary) -> void:
 		pet_count,
 		summon_count,
 	])
+	if _battle_visual != null and is_instance_valid(_battle_visual):
+		_battle_visual.load_battle_log(battle_log, rewards)
 	_timeline_label.text = "\n".join(lines)
 
 	var events := BattleLogPresenterScript.sorted_events(battle_log)
@@ -1177,6 +1188,8 @@ func _play_battle_log(battle_log: Dictionary, rewards: Dictionary) -> void:
 		if _skip_replay:
 			break
 		lines.append(BattleLogPresenterScript.format_event(event))
+		if _battle_visual != null and is_instance_valid(_battle_visual):
+			_battle_visual.step_next_event()
 		_timeline_label.text = "\n".join(lines)
 		await get_tree().create_timer(0.15).timeout
 
@@ -1189,7 +1202,12 @@ func _play_battle_log(battle_log: Dictionary, rewards: Dictionary) -> void:
 			var formatted := BattleLogPresenterScript.format_event(event)
 			if not lines.has(formatted):
 				lines.append(formatted)
+		if _battle_visual != null and is_instance_valid(_battle_visual):
+			_battle_visual.reveal_all()
 		_timeline_label.text = "\n".join(lines)
+
+	if _battle_visual != null and is_instance_valid(_battle_visual):
+		_battle_visual.reveal_all()
 
 	_replay_running = false
 	_skip_replay = false

@@ -70,7 +70,8 @@ Essa tela:
 - mostra resumo/checks/outliers;
 - permite montar builds manualmente com validacao de unlock;
 - gera replay custom sob demanda e registra esse resultado de sessao em Replay/History;
-- reproduz `battle_log_v1` em uma arena debug 2D.
+- reproduz `battle_log_v1` no `BattleVisualMockup`, o mesmo mockup usado pela
+  tela Batalha do alpha.
 
 O cliente Godot nao calcula resultado, dano ou recompensa. Ele apenas monta o
 pedido, chama Deno local e apresenta o log retornado.

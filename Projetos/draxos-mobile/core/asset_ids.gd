@@ -8,7 +8,23 @@ const PATHS: Dictionary = {
 	"icon_result": "res://assets/ui/icon_result.png",
 	"portrait_draxos_mage": "res://assets/portraits/portrait_draxos_mage.png",
 	"portrait_training_bot": "res://assets/portraits/portrait_training_bot.png",
-	"placeholder_card": "res://assets/ui/placeholder_card.png"
+	"placeholder_card": "res://assets/ui/placeholder_card.png",
+	"battle_character_player": "res://assets/battle/characters/player_draxos.png",
+	"battle_character_opponent": "res://assets/battle/characters/opponent_placeholder.png",
+	"battle_icon_event": "res://assets/battle/icons/event.png",
+	"battle_icon_weapon": "res://assets/battle/icons/weapon.png",
+	"battle_icon_spell": "res://assets/battle/icons/spell.png",
+	"battle_icon_status": "res://assets/battle/icons/status.png",
+	"battle_icon_buff": "res://assets/battle/icons/buff.png",
+	"battle_icon_damage": "res://assets/battle/icons/damage.png",
+	"battle_icon_summon": "res://assets/battle/icons/summon.png",
+	"battle_icon_pet": "res://assets/battle/icons/familiar.png",
+	"battle_icon_heal": "res://assets/battle/icons/heal.png",
+	"battle_icon_reward": "res://assets/battle/icons/reward.png",
+	"battle_icon_result": "res://assets/battle/icons/result.png",
+	"battle_fx_hit": "res://assets/battle/fx/hit.png",
+	"battle_fx_spell": "res://assets/battle/fx/spell.png",
+	"battle_fx_buff": "res://assets/battle/fx/buff.png"
 }
 
 func path(asset_id: String) -> String:

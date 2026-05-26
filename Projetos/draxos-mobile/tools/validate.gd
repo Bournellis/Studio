@@ -38,6 +38,7 @@ func _run_validation() -> int:
 	_check_resource("res://online/session_store.gd")
 	_check_resource("res://online/supabase_client.gd")
 	_check_resource("res://ui/battle_log_presenter.gd")
+	_check_resource("res://ui/battle_visual_mockup.gd")
 	_check_resource("res://dev/battle_lab/battle_lab_screen.gd")
 	_check_resource("res://tools/smoke_session_shell.gd")
 	_check_resource("res://tools/smoke_battle_replay.gd")

@@ -76,6 +76,7 @@ Classes utilitarias:
 | Classe | Arquivo | Responsabilidade |
 |---|---|---|
 | `BattleLogPresenter` | `ui/battle_log_presenter.gd` | Ordenar e formatar eventos `battle_log_v1` sem calcular gameplay |
+| `BattleVisualMockup` | `ui/battle_visual_mockup.gd` | Apresentar `battle_log_v1` como HUD visual reutilizavel para Batalha e Battle Lab, usando placeholders nativos e asset hooks futuros sem calcular gameplay |
 
 Regras:
 
@@ -218,6 +219,7 @@ MVP client implementado em `T00-P08`:
 - `Solicitar batalha`: envia intencao para `battle/request` e recebe `battle_log_v1`.
 - `Ver resultado`: busca `battle/latest` ou pula o replay atual.
 - Replay rico T00-P10: lista eventos ordenados por `t`/`seq`; DoTs, status, barreiras, resistencias, summons, Familiares, cooldowns, cura e anti-stall possuem linhas dedicadas; eventos desconhecidos continuam virando fallback.
+- Battle Visual Mockup 2026-05-26: a tela Batalha e o Battle Lab usam o mesmo controle visual para personagens placeholder, ataque basico, spells, buffs, dano, efeitos, icons, summons, Familiar, HP/Mana/Barreira, resultado e timeline a partir do mesmo log.
 - Cliente nao recalcula dano, HP, vencedor, XP, Ossos ou recompensa.
 
 ---

@@ -97,7 +97,8 @@ Use para ver o combate enquanto ajusta numeros e arte:
   pet.
 - `Analytics`: checks e outliers da ultima run.
 - `Replay`: arena debug 2D com HP, marcadores de pet/summon/status, step,
-  play/pause e velocidade.
+  play/pause e velocidade. Esta aba usa o mesmo `BattleVisualMockup` da tela
+  Batalha para evitar divergencia entre replay real e replay de laboratorio.
 - `History`: resumo da run e comparacao carregada.
 
 O Godot chama Deno por `draxos_mobile/battle_lab/deno_command` e

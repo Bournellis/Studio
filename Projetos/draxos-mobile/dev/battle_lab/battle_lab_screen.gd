@@ -3,6 +3,7 @@ extends Control
 signal close_requested
 
 const BattleLogPresenterScript := preload("res://ui/battle_log_presenter.gd")
+const BattleVisualMockupScript := preload("res://ui/battle_visual_mockup.gd")
 
 const REQUEST_SCHEMA := "battle_lab_request_v1"
 const RESPONSE_SCHEMA := "battle_lab_response_v1"
@@ -74,13 +75,8 @@ var _summary_label: Label
 var _checks_label: Label
 var _outliers_label: Label
 var _history_label: Label
-var _replay_log_label: Label
 var _replay_title_label: Label
-var _player_hp: ProgressBar
-var _opponent_hp: ProgressBar
-var _player_state_label: Label
-var _opponent_state_label: Label
-var _marker_label: Label
+var _battle_visual: Control
 var _tabs: TabContainer
 var _run_id_edit: LineEdit
 var _compare_edit: LineEdit
@@ -96,8 +92,6 @@ var _replay_index := 0
 var _replay_playing := false
 var _replay_speed := 1.0
 var _replay_accumulator := 0.0
-var _inferred_player_max_hp := 1.0
-var _inferred_opponent_max_hp := 1.0
 
 static func is_available() -> bool:
 	return bool(ProjectSettings.get_setting("draxos_mobile/battle_lab/enabled", false)) and OS.has_feature("editor")
@@ -377,37 +371,16 @@ func _build_analytics_tab() -> Control:
 func _build_replay_tab() -> Control:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 8)
-	box.add_child(_body_label("Replay debug 2D: aplica somente os campos do battle_log_v1. Nao recalcula resultado."))
+	box.add_child(_body_label("Replay debug 2D compartilhado: aplica somente os campos do battle_log_v1. Nao recalcula resultado."))
 
 	_replay_title_label = Label.new()
 	_replay_title_label.text = "Nenhum replay carregado."
 	box.add_child(_replay_title_label)
 
-	var arena := PanelContainer.new()
-	arena.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	box.add_child(arena)
-	var arena_box := VBoxContainer.new()
-	arena_box.add_theme_constant_override("separation", 8)
-	arena.add_child(arena_box)
-
-	var bars := HBoxContainer.new()
-	bars.add_theme_constant_override("separation", 12)
-	arena_box.add_child(bars)
-	_player_hp = _hp_bar("Player")
-	_opponent_hp = _hp_bar("Opponent")
-	bars.add_child(_player_hp)
-	bars.add_child(_opponent_hp)
-
-	var states := HBoxContainer.new()
-	states.add_theme_constant_override("separation", 12)
-	arena_box.add_child(states)
-	_player_state_label = _body_label("Player: aguardando")
-	_opponent_state_label = _body_label("Opponent: aguardando")
-	states.add_child(_player_state_label)
-	states.add_child(_opponent_state_label)
-
-	_marker_label = _output_label("Pets/Summons/Status aparecerao aqui.")
-	arena_box.add_child(_marker_label.get_parent())
+	_battle_visual = BattleVisualMockupScript.new()
+	_battle_visual.custom_minimum_size = Vector2(0, 380)
+	_battle_visual.show_empty_state("Nenhuma amostra carregada. Gere uma run ou replay custom.")
+	box.add_child(_battle_visual)
 
 	var controls := HBoxContainer.new()
 	controls.add_theme_constant_override("separation", 8)
@@ -440,20 +413,6 @@ func _build_replay_tab() -> Control:
 		_replay_speed = value
 	)
 	controls.add_child(speed)
-
-	var scroll := ScrollContainer.new()
-	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	box.add_child(scroll)
-	_replay_log_label = Label.new()
-	_replay_log_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_replay_log_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_replay_log_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
-	_replay_log_label.custom_minimum_size = Vector2(720, 0)
-	scroll.resized.connect(func() -> void:
-		_replay_log_label.custom_minimum_size.x = max(360.0, scroll.size.x - 24.0)
-	)
-	scroll.add_child(_replay_log_label)
 	return box
 
 func _build_history_tab() -> Control:
@@ -818,7 +777,6 @@ func _load_replay(replay: Dictionary) -> void:
 	_replay_index = 0
 	_replay_playing = false
 	_replay_accumulator = 0.0
-	_infer_replay_hp()
 	_reset_replay()
 	_replay_title_label.text = "%s | %s vs %s | %ss | winner %s" % [
 		str(replay.get("matchup_id", "")),
@@ -831,14 +789,15 @@ func _load_replay(replay: Dictionary) -> void:
 func _reset_replay() -> void:
 	_replay_index = 0
 	_replay_playing = false
-	_player_hp.max_value = _inferred_player_max_hp
-	_player_hp.value = _inferred_player_max_hp
-	_opponent_hp.max_value = _inferred_opponent_max_hp
-	_opponent_hp.value = _inferred_opponent_max_hp
-	_player_state_label.text = "Player HP %s" % str(_player_hp.value)
-	_opponent_state_label.text = "Opponent HP %s" % str(_opponent_hp.value)
-	_marker_label.text = "Marcadores: nenhum"
-	_replay_log_label.text = BattleLogPresenterScript.format_summary(_as_dictionary(_active_replay.get("battle_log", {})), _as_dictionary(_active_replay.get("rewards", {}))) if not _active_replay.is_empty() else ""
+	if _battle_visual == null or not is_instance_valid(_battle_visual):
+		return
+	if _active_replay.is_empty():
+		_battle_visual.show_empty_state("Nenhum replay carregado.")
+		return
+	_battle_visual.load_battle_log(
+		_as_dictionary(_active_replay.get("battle_log", {})),
+		_as_dictionary(_active_replay.get("rewards", {}))
+	)
 
 func _step_replay() -> void:
 	if _replay_index >= _replay_events.size():
@@ -847,34 +806,10 @@ func _step_replay() -> void:
 	var event := _as_dictionary(_replay_events[_replay_index])
 	_replay_index += 1
 	_apply_replay_event(event)
-	var line := BattleLogPresenterScript.format_event(event)
-	_replay_log_label.text = "%s\n%s" % [_replay_log_label.text, line]
 
 func _apply_replay_event(event: Dictionary) -> void:
-	var target := str(event.get("target", ""))
-	if event.has("hp_after"):
-		var hp_after := float(event.get("hp_after", 0.0))
-		if target == "player":
-			_player_hp.value = hp_after
-			_player_state_label.text = "Player HP %s" % str(hp_after)
-		elif target == "opponent":
-			_opponent_hp.value = hp_after
-			_opponent_state_label.text = "Opponent HP %s" % str(hp_after)
-	if str(event.get("type", "")) in ["summon_spawn", "summon_attack", "summon_expire", "pet_attack", "status_apply", "dot_apply", "status_expire"]:
-		_marker_label.text = "Marcador: %s %s -> %s" % [str(event.get("type", "")), str(event.get("source", "")), str(event.get("target", ""))]
-
-func _infer_replay_hp() -> void:
-	_inferred_player_max_hp = 1.0
-	_inferred_opponent_max_hp = 1.0
-	for item: Variant in _replay_events:
-		var event := _as_dictionary(item)
-		if not event.has("hp_after"):
-			continue
-		var hp := float(event.get("hp_after", 1.0))
-		if str(event.get("target", "")) == "player":
-			_inferred_player_max_hp = max(_inferred_player_max_hp, hp)
-		elif str(event.get("target", "")) == "opponent":
-			_inferred_opponent_max_hp = max(_inferred_opponent_max_hp, hp)
+	if _battle_visual != null and is_instance_valid(_battle_visual):
+		_battle_visual.apply_event(event)
 
 static func _variant_to_packed_string_array(configured: Variant, fallback: PackedStringArray) -> PackedStringArray:
 	if configured is PackedStringArray:
@@ -1030,13 +965,6 @@ func _spin(minimum: int, maximum: int, value: int) -> SpinBox:
 	spin.value = value
 	spin.custom_minimum_size = Vector2(84, 0)
 	return spin
-
-func _hp_bar(label_text: String) -> ProgressBar:
-	var bar := ProgressBar.new()
-	bar.custom_minimum_size = Vector2(0, 32)
-	bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	bar.tooltip_text = label_text
-	return bar
 
 func _option_with_none(items: Array) -> OptionButton:
 	var option := OptionButton.new()

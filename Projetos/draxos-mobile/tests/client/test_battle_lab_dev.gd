@@ -61,6 +61,8 @@ func test_battle_lab_replay_response_registers_custom_replay() -> void:
 	assert_true(screen._replay_title_label.text.contains("godot_custom_replay"))
 	assert_true(screen._history_label.text.contains("Custom replays"))
 	assert_eq(screen._tabs.current_tab, 3)
+	assert_not_null(screen._battle_visual)
+	assert_eq(screen._battle_visual.get_event_count(), 1)
 
 func test_battle_lab_deno_invocation_sanitizes_project_settings() -> void:
 	var settings_prefix := "draxos_mobile/battle_lab"

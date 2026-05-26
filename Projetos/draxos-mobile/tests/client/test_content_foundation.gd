@@ -18,6 +18,8 @@ func test_ui_tokens_expose_mvp_colors() -> void:
 func test_asset_ids_are_registered_without_requiring_art_yet() -> void:
 	assert_true(AssetIds.has_asset_id("icon_guest"))
 	assert_eq(AssetIds.path("icon_guest"), "res://assets/ui/icon_guest.png")
+	assert_true(AssetIds.has_asset_id("battle_icon_spell"))
+	assert_eq(AssetIds.path("battle_icon_spell"), "res://assets/battle/icons/spell.png")
 	assert_has(Array(AssetIds.missing_art_ids()), "icon_guest")
 
 func test_generated_catalog_loads_expected_collections() -> void:
