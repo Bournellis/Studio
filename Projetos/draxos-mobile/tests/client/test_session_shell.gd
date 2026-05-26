@@ -121,11 +121,18 @@ func test_session_store_accepts_battle_log_snapshot_without_mutating_resources()
 		"ok": true,
 		"battle_log": _battle_log_fixture(),
 		"rewards": {"type": "MVP_ONLY"},
+		"competition": {
+			"ranked": true,
+			"result": "win",
+			"arena_delta": 20,
+			"ranking": {"arena_points": 20},
+		},
 	})
 	assert_true(applied)
 	assert_true(store.has_battle_log())
 	assert_eq(str(store.last_battle_id), "battle-1")
 	assert_eq(int(store.resources.get("ossos", 0)), 0)
+	assert_eq(int(Dictionary(store.competition_state["last_battle"]).get("arena_delta", 0)), 20)
 	store.free()
 
 func test_supabase_client_uses_local_contract_urls() -> void:

@@ -28,6 +28,7 @@ var _content_body: VBoxContainer
 var _timeline_label: Label
 var _base_state_container: VBoxContainer
 var _social_state_container: VBoxContainer
+var _competition_state_container: VBoxContainer
 var _social_friend_input: LineEdit
 var _social_guild_input: LineEdit
 var _social_chat_input: LineEdit
@@ -216,6 +217,7 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	_timeline_label = null
 	_base_state_container = null
 	_social_state_container = null
+	_competition_state_container = null
 	_social_friend_input = null
 	_social_guild_input = null
 	_social_chat_input = null
@@ -461,10 +463,16 @@ func _render_social_screen() -> void:
 	_render_social_state()
 
 func _render_competition_screen() -> void:
-	_add_body_text("Competicao v0 com preview de matchmaking por poder e ranking da season sem bots.")
-	_add_action_button("Preview matchmaking", "show_matchmaking")
-	_add_action_button("Ver ranking", "show_ranking")
+	_add_body_text("Competicao alpha com matchmaking por poder, pontos de arena por batalha normal e leaderboard sem bots.")
+	var matchmaking_button := _add_action_button("Preview matchmaking", "show_matchmaking")
+	matchmaking_button.tooltip_text = "Mostra o oponente sugerido para o seu poder atual. Bots podem aparecer como alvo de treino, mas nao entram no leaderboard."
+	var ranking_button := _add_action_button("Ver ranking", "show_ranking")
+	ranking_button.tooltip_text = "Busca o top 10 da season, sua posicao atual e o modelo de pontos de arena aplicado no servidor."
 	_timeline_label = _add_output_label("")
+	_competition_state_container = VBoxContainer.new()
+	_competition_state_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_competition_state_container.add_theme_constant_override("separation", 10)
+	_content_body.add_child(_competition_state_container)
 	_render_competition_state()
 
 func _render_shop_screen() -> void:
@@ -1827,21 +1835,39 @@ func _guild_structure_label(structure_id: String) -> String:
 func _render_competition_state() -> void:
 	if _timeline_label == null:
 		return
+	if _competition_state_container != null:
+		_clear_node_children(_competition_state_container)
 	var competition := SessionStore.competition_state
 	if competition.is_empty():
 		_timeline_label.text = "Competicao ainda nao carregada. Use Preview matchmaking ou Ver ranking."
+		if _competition_state_container != null:
+			_competition_state_container.add_child(_base_info_panel(
+				"Leaderboard da Alpha",
+				"Batalhas normais atualizam pontos de arena no servidor. Use Ver ranking para carregar o top 10 e a sua posicao."
+			))
 		return
 
 	var lines := PackedStringArray()
 	lines.append("Competicao server-authoritative")
+	var last_battle := _as_dictionary(competition.get("last_battle", {}))
+	if not last_battle.is_empty():
+		if bool(last_battle.get("ranked", false)):
+			lines.append("Ultima batalha: %s%d pontos | %s" % [
+				"+" if int(last_battle.get("arena_delta", 0)) >= 0 else "",
+				int(last_battle.get("arena_delta", 0)),
+				_competition_result_text(str(last_battle.get("result", "draw"))),
+			])
+		else:
+			lines.append("Ultima batalha: sem pontuacao (%s)" % str(last_battle.get("excluded_reason", "fora do ranking")))
 	var matchmaking := _as_dictionary(competition.get("matchmaking", {}))
 	if matchmaking.is_empty():
 		lines.append("Matchmaking: ainda nao carregado.")
 	else:
 		var opponent := _as_dictionary(matchmaking.get("selected_opponent", {}))
 		lines.append("Poder: %s" % str(matchmaking.get("player_power", 0)))
-		lines.append("Oponente: %s | bot=%s | ranked=%s" % [
+		lines.append("Oponente: %s | Poder %s | bot=%s | ranqueado=%s" % [
 			str(opponent.get("id", "nenhum")),
+			str(opponent.get("power", "?")),
 			str(opponent.get("is_bot", false)),
 			str(opponent.get("is_ranked", false)),
 		])
@@ -1852,11 +1878,162 @@ func _render_competition_state() -> void:
 		var season := _as_dictionary(ranking.get("season", {}))
 		var self_ranking := _as_dictionary(ranking.get("self", {}))
 		lines.append("Season: %s" % str(season.get("display_name", "")))
-		lines.append("Arena: %s pontos | bots no ranking: %s" % [
-			str(self_ranking.get("arena_points", 0)),
+		if self_ranking.is_empty():
+			lines.append("Arena: save atual fora da competicao.")
+		else:
+			lines.append("Arena: #%s | %s pontos | %sV/%sD" % [
+				str(self_ranking.get("rank", "?")),
+				str(self_ranking.get("arena_points", 0)),
+				str(self_ranking.get("wins", 0)),
+				str(self_ranking.get("losses", 0)),
+			])
+		lines.append("Top %s | Jogadores ranqueados: %s | bots no ranking: %s" % [
+			str(ranking.get("top_limit", 10)),
+			str(ranking.get("total_ranked", 0)),
 			str(ranking.get("bots_included", false)),
 		])
 	_timeline_label.text = "\n".join(lines)
+	_render_competition_panels(last_battle, matchmaking, ranking)
+
+func _render_competition_panels(last_battle: Dictionary, matchmaking: Dictionary, ranking: Dictionary) -> void:
+	if _competition_state_container == null:
+		return
+	if not last_battle.is_empty():
+		_competition_state_container.add_child(_competition_last_battle_panel(last_battle))
+	_competition_state_container.add_child(_competition_matchmaking_panel(matchmaking))
+	_competition_state_container.add_child(_competition_ranking_panel(ranking))
+
+func _competition_last_battle_panel(last_battle: Dictionary) -> Control:
+	var panel := _base_panel()
+	panel.tooltip_text = "Resumo competitivo retornado pela ultima battle/request. O cliente apenas apresenta estes dados; a pontuacao vem do servidor."
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 6)
+	panel.add_child(box)
+	box.add_child(_base_label("Ultima Batalha Competitiva", "text_primary", 17))
+	if not bool(last_battle.get("ranked", false)):
+		box.add_child(_base_label("Sem pontuacao: %s" % str(last_battle.get("excluded_reason", "fora do ranking")), "status_warning"))
+		return panel
+	var ranking := _as_dictionary(last_battle.get("ranking", {}))
+	var raw_delta := int(last_battle.get("arena_delta_raw", last_battle.get("arena_delta", 0)))
+	var applied_delta := int(last_battle.get("arena_delta", 0))
+	var delta_color := "status_success" if raw_delta >= 0 else "status_warning"
+	box.add_child(_base_label("%s | Delta %s%d | Total %s pontos" % [
+		_competition_result_text(str(last_battle.get("result", "draw"))),
+		"+" if applied_delta >= 0 else "",
+		applied_delta,
+		str(ranking.get("arena_points", 0)),
+	], delta_color))
+	if raw_delta != applied_delta:
+		box.add_child(_base_label("Formula: %s%d | aplicado: %s%d por piso minimo em 0" % [
+			"+" if raw_delta >= 0 else "",
+			raw_delta,
+			"+" if applied_delta >= 0 else "",
+			applied_delta,
+		], "text_secondary"))
+	box.add_child(_base_label("Poder: voce %s vs oponente %s | Modelo %s" % [
+		str(last_battle.get("player_power", 0)),
+		str(last_battle.get("opponent_power", 0)),
+		_competition_scoring_model_text(str(last_battle.get("scoring_model", ""))),
+	], "text_secondary"))
+	return panel
+
+func _competition_matchmaking_panel(matchmaking: Dictionary) -> Control:
+	var panel := _base_panel()
+	panel.tooltip_text = "Preview de matchmaking: mostra quem o servidor escolheria para uma batalha pelo poder atual."
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 6)
+	panel.add_child(box)
+	box.add_child(_base_label("Matchmaking", "text_primary", 17))
+	if matchmaking.is_empty():
+		box.add_child(_base_label("Ainda nao carregado. Use Preview matchmaking.", "text_secondary"))
+		return panel
+	var opponent := _as_dictionary(matchmaking.get("selected_opponent", {}))
+	box.add_child(_base_label("Seu poder: %s | candidatos: %s" % [
+		str(matchmaking.get("player_power", 0)),
+		str(matchmaking.get("candidate_count", "?")),
+	], "text_secondary"))
+	if opponent.is_empty():
+		box.add_child(_base_label("Nenhum oponente disponivel agora.", "status_warning"))
+		return panel
+	box.add_child(_base_label("Oponente: %s | Poder %s | Faixa %s" % [
+		str(opponent.get("id", "desconhecido")),
+		str(opponent.get("power", "?")),
+		str(opponent.get("power_band", "?")),
+	], "text_secondary"))
+	box.add_child(_base_label("Bot de treino: %s | Entra no ranking: %s" % [
+		"sim" if bool(opponent.get("is_bot", false)) else "nao",
+		"sim" if bool(opponent.get("is_ranked", false)) else "nao",
+	], "status_warning" if bool(opponent.get("is_bot", false)) else "text_secondary"))
+	return panel
+
+func _competition_ranking_panel(ranking: Dictionary) -> Control:
+	var panel := _base_panel()
+	panel.tooltip_text = "Leaderboard da season alpha. Mostra top 10 e sua posicao mesmo quando voce estiver fora do top."
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 6)
+	panel.add_child(box)
+	box.add_child(_base_label("Leaderboard", "text_primary", 17))
+	if ranking.is_empty():
+		box.add_child(_base_label("Ainda nao carregado. Use Ver ranking.", "text_secondary"))
+		return panel
+	if str(ranking.get("excluded_reason", "")) == "PROGRESSION_LAB_DOES_NOT_RANK":
+		box.add_child(_base_label("Progression Lab nao pontua competicao e fica fora do leaderboard.", "status_error"))
+		return panel
+	var season := _as_dictionary(ranking.get("season", {}))
+	box.add_child(_base_label("%s | Modelo %s" % [
+		str(season.get("display_name", "Season alpha")),
+		_competition_scoring_model_text(str(ranking.get("scoring_model", ""))),
+	], "text_secondary"))
+	var self_ranking := _as_dictionary(ranking.get("self", {}))
+	if not self_ranking.is_empty():
+		box.add_child(_base_label("Sua posicao: #%s | %s pontos | %sV/%sD" % [
+			str(self_ranking.get("rank", "?")),
+			str(self_ranking.get("arena_points", 0)),
+			str(self_ranking.get("wins", 0)),
+			str(self_ranking.get("losses", 0)),
+		], "status_success" if bool(ranking.get("self_in_top", false)) else "status_warning"))
+	var entries := _as_array(ranking.get("entries", []))
+	if entries.is_empty():
+		box.add_child(_base_label("Nenhum jogador pontuou ainda nesta season.", "text_secondary"))
+		return panel
+	box.add_child(_base_label("Top %s" % str(ranking.get("top_limit", 10)), "text_primary"))
+	for item: Variant in entries:
+		var entry := _as_dictionary(item)
+		if entry.is_empty():
+			continue
+		box.add_child(_base_label("#%s  %s  |  %s pts  |  %sV/%sD" % [
+			str(entry.get("rank", "?")),
+			_competition_entry_name(entry),
+			str(entry.get("arena_points", 0)),
+			str(entry.get("wins", 0)),
+			str(entry.get("losses", 0)),
+		], "status_success" if str(entry.get("player_id", "")) == str(self_ranking.get("player_id", "")) else "text_secondary"))
+	return panel
+
+func _competition_entry_name(entry: Dictionary) -> String:
+	var player := _as_dictionary(entry.get("player", {}))
+	var username := str(entry.get("username", player.get("username", ""))).strip_edges()
+	if username == "":
+		username = "jogador"
+	var badge := str(player.get("save_badge", "normal"))
+	if badge == "lab":
+		return "%s [lab]" % username
+	return username
+
+func _competition_result_text(result: String) -> String:
+	match result:
+		"win":
+			return "Vitoria"
+		"loss":
+			return "Derrota"
+	return "Empate"
+
+func _competition_scoring_model_text(model: String) -> String:
+	if model == "alpha_v0_power_adjusted":
+		return "alpha v0: +20/-10 ajustado por poder"
+	if model.strip_edges() == "":
+		return "nao informado"
+	return model
 
 func _render_monetization_state() -> void:
 	if _timeline_label == null:

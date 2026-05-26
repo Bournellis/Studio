@@ -61,7 +61,7 @@ Enquanto o remoto estiver adiado, `T03-P02` permanece repo-ready: a configuracao
 
 ### T03-P03 - Conta Email/Senha E Dois Saves
 
-Status local-first: `IN_PROGRESS - T03-P06_COMPLETE`.
+Status local-first: `IN_PROGRESS - T03-P07_COMPLETE`.
 
 - Implementar fluxo email/senha.
 - Manter guest/local como fallback de desenvolvimento, se ainda util.
@@ -151,6 +151,8 @@ Implementado:
 
 ### T03-P07 - Competicao E Leaderboards
 
+Status: `COMPLETE`.
+
 - Ranking basico da season alpha.
 - Pontos de arena atualizados por batalha server-authoritative.
 - Bots entram ou nao entram conforme design lock.
@@ -160,6 +162,15 @@ Implementado:
 Saida esperada:
 
 - Batalhas alteram pontos e leaderboard atualiza sem mutacao client-side.
+
+Implementado:
+
+- `battle/request` `FIRST_SLICE_SIM` aplica `alpha_v0_power_adjusted` no save `normal`, preserva idempotencia por `request_id` e retorna resumo competitivo da ultima batalha.
+- `progression_lab` permanece fora do ranking com `PROGRESSION_LAB_DOES_NOT_RANK`.
+- `competition/ranking/current` retorna top 10, `self.rank`, total ranqueado, `self_in_top`, season e modelo de pontuacao.
+- `competition/matchmaking/preview` explicita quantidade de bots candidatos e que bots nao entram na leaderboard.
+- A aba Competicao do Hub mostra preview, ultima batalha competitiva, top 10, posicao do jogador e tooltips objetivos.
+- Smokes de battle/social cobrem pontos de arena, top 10, posicao do jogador e exclusao de bots.
 
 ### T03-P08 - Loja Proof-Of-Concept
 

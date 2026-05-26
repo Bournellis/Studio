@@ -30,7 +30,10 @@ const initialState = await getJson(
   firstPlayer.headers,
 );
 assertEq(
-  stringField(objectField(objectField(initialState, "social"), "identity"), "scope"),
+  stringField(
+    objectField(objectField(initialState, "social"), "identity"),
+    "scope",
+  ),
   "account",
   "social identity should be account-scoped",
 );
@@ -79,11 +82,19 @@ const joinedGuildState = await postJson(
   { request_id: crypto.randomUUID(), name: guildName },
   secondPlayer.headers,
 );
-const members = arrayField(objectField(joinedGuildState, "social"), "guild_members");
-assertEq(members.length, 2, "guild/join should add the second tester as member");
+const members = arrayField(
+  objectField(joinedGuildState, "social"),
+  "guild_members",
+);
+assertEq(
+  members.length,
+  2,
+  "guild/join should add the second tester as member",
+);
 assert(
   members.some((entry) =>
-    stringField(objectField(entry as JsonObject, "player"), "username") === secondPlayer.username
+    stringField(objectField(entry as JsonObject, "player"), "username") ===
+      secondPlayer.username
   ),
   "guild members should include enriched usernames",
 );
@@ -111,21 +122,29 @@ const rateLimitedChat = await postJson(
   firstPlayer.headers,
   false,
 );
-assertEq(errorCode(rateLimitedChat), "CHAT_RATE_LIMITED", "chat should rate limit same sender");
+assertEq(
+  errorCode(rateLimitedChat),
+  "CHAT_RATE_LIMITED",
+  "chat should rate limit same sender",
+);
 
 const guildReply = await postJson(
   `${SUPABASE_URL}/functions/v1/social/chat/send`,
   { request_id: crypto.randomUUID(), content: "Resposta do segundo tester." },
   secondPlayer.headers,
 );
-const chatMessages = arrayField(objectField(guildReply, "social"), "guild_chat");
+const chatMessages = arrayField(
+  objectField(guildReply, "social"),
+  "guild_chat",
+);
 assert(
   chatMessages.length >= 2,
   "guild chat polling should return recent messages from both testers",
 );
 assert(
   chatMessages.some((entry) =>
-    stringField(entry as JsonObject, "sender_username") === secondPlayer.username
+    stringField(entry as JsonObject, "sender_username") ===
+      secondPlayer.username
   ),
   "guild chat should include sender username",
 );
@@ -158,6 +177,16 @@ assert(
   isObject(objectField(objectField(ranking, "ranking"), "self")),
   "ranking should include self row",
 );
+assertEq(
+  numberField(objectField(ranking, "ranking"), "top_limit"),
+  10,
+  "ranking should expose top 10 limit",
+);
+assert(
+  numberField(objectField(objectField(ranking, "ranking"), "self"), "rank") >=
+    1,
+  "ranking should include self position",
+);
 
 const directGuildInsert = await postJson(
   `${SUPABASE_URL}/rest/v1/guilds`,
@@ -169,7 +198,7 @@ const directGuildInsert = await postJson(
   false,
 );
 assert(
-  !Boolean(directGuildInsert.ok),
+  !directGuildInsert.ok,
   "direct anon insert into guilds should be blocked by RLS",
 );
 
@@ -178,7 +207,8 @@ console.log("[social-competition-smoke] OK", {
   members: members.length,
   chat_messages: chatMessages.length,
   opponent: selectedOpponent.id,
-  ranking_points: objectField(objectField(ranking, "ranking"), "self").arena_points,
+  ranking_points:
+    objectField(objectField(ranking, "ranking"), "self").arena_points,
 });
 
 async function createTestPlayer(deviceLabel: string): Promise<TestPlayer> {
@@ -269,6 +299,20 @@ function stringField(payload: JsonObject, key: string): string {
   return typeof value === "string" ? value : "";
 }
 
+function numberField(payload: JsonObject, key: string): number {
+  const value = payload[key];
+  if (typeof value === "number") {
+    return value;
+  }
+  if (typeof value === "string") {
+    const parsed = Number(value);
+    if (Number.isFinite(parsed)) {
+      return parsed;
+    }
+  }
+  throw new Error(`${key} should be numeric, got ${JSON.stringify(value)}`);
+}
+
 function errorCode(payload: JsonObject): string {
   return stringField(objectField(payload, "error"), "code");
 }
@@ -294,7 +338,9 @@ function assert(condition: boolean, message: string): asserts condition {
 function assertEq(actual: unknown, expected: unknown, message: string): void {
   if (actual !== expected) {
     throw new Error(
-      `${message}. Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`,
+      `${message}. Expected ${JSON.stringify(expected)}, got ${
+        JSON.stringify(actual)
+      }`,
     );
   }
 }

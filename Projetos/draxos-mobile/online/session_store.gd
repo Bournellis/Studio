@@ -166,6 +166,8 @@ func apply_battle_result(payload: Dictionary) -> bool:
 	last_battle_log = battle_log.duplicate(true)
 	last_battle_rewards = _as_dictionary(body.get("rewards", {})).duplicate(true)
 	last_battle_id = str(last_battle_log.get("battle_id", ""))
+	if body.get("competition", null) is Dictionary:
+		competition_state["last_battle"] = _as_dictionary(body.get("competition", {})).duplicate(true)
 	last_error = {}
 	offline = false
 	session_changed.emit()

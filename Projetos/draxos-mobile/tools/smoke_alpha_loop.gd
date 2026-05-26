@@ -43,6 +43,11 @@ func _run_smoke() -> int:
 		store.free()
 		client.queue_free()
 		return _fail(battle_result, "battle")
+	var battle_competition := Dictionary(store.competition_state.get("last_battle", {}))
+	if battle_competition.is_empty() or not battle_competition.has("arena_delta"):
+		store.free()
+		client.queue_free()
+		return _fail({"error": {"code": "BATTLE_COMPETITION_MISSING"}}, "battle-competition")
 
 	print("[smoke-alpha-loop] loading base")
 	var base_result: Dictionary = await client.fetch_base_state(store.access_token)

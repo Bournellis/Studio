@@ -1,7 +1,7 @@
 # Track 03 - Internal Alpha v0 - Current Status
 
 - Last Updated: `2026-05-26`
-- Status: `T03-P06_COMPLETE - SOCIAL BASIC PLAYABLE READY`
+- Status: `T03-P07_COMPLETE - COMPETITION LEADERBOARD PLAYABLE READY`
 - Baseline: Track 00 completa, Track 01 completa e Track 02 com Progression Lab/Battle Lab v1 implementados. O projeto ja possui Godot 4.6.2, Supabase local, conta guest, batalha server-authoritative, Base/Social/Competicao/Monetizacao v0, telemetria client nao autoritativa, exports Android/PC/Web, Battle Visual Mockup compartilhado e laboratorios internos. A Track 03 prepara a transicao para uma build fechada realista com email/senha, dois saves por conta, backend remoto, updates e playtest de 2 usuarios.
 
 ## Implementado Nesta Preparacao
@@ -23,6 +23,7 @@
 - `T03-P04` completo: `POST /progression-lab/apply` e RPC `apply_progression_lab_save` aplicam healthy saves versionados apenas no save `progression_lab`, preservam o save `normal`, limpam snapshots/estado antigo do Lab, mantem idempotencia por `request_id`, atualizam o Progression Lab Dev com "Aplicar no Save Lab" e validam o fluxo em smoke server.
 - `T03-P05` completo: Base Manager virou fluxo jogavel no Hub, com mapa de predios clicaveis, painel detalhado por estrutura, tooltips, upgrade por predio, compra alpha de Energia, custo/tempo/producao/status calculados pelo servidor e smoke cobrindo upgrade/fila.
 - `T03-P06` completo: Social virou fluxo basico jogavel no Hub, com amigos por username, criar/entrar em guilda, lista de membros/estruturas, chat de guilda por polling, rate limit, erros amigaveis, tooltips, painéis de estado e identidade social de conta com marcador `lab`.
+- `T03-P07` completo: Competicao virou leaderboard alpha jogavel; `battle/request` `FIRST_SLICE_SIM` pontua o save `normal` com modelo `alpha_v0_power_adjusted`, `progression_lab` permanece fora do ranking, `competition/ranking/current` retorna top 10 + posicao do jogador, bots ficam fora da leaderboard e o Hub mostra matchmaking, ultima batalha competitiva e ranking com tooltips.
 
 ## Ainda Nao Implementado
 
@@ -30,7 +31,7 @@
 - Supabase remoto real criado/configurado na conta Supabase.
 - Deploy remoto de migrations/functions e smoke contra URL real.
 - Manifest de updates em Supabase Storage.
-- Competicao/Loja refinadas para build fechada.
+- Loja refinada para build fechada.
 - Export/publicacao das tres builds finais.
 
 ## Decisoes Ja Travadas
@@ -47,7 +48,7 @@
 
 ## Proximo Passo
 
-Executar `T03-P07`: transformar Competicao em leaderboard alpha funcional com pontos de arena e top/posicao do jogador.
+Executar `T03-P08`: transformar Loja em proof-of-concept alpha com redeems diarios de Diamante/premium e feedback de compra/claim voltado ao testador.
 
 ## Validacao Da Preparacao
 
@@ -64,12 +65,12 @@ Executar `T03-P07`: transformar Competicao em leaderboard alpha funcional com po
 - `npx -y deno run --allow-net --allow-env server/tests/two_save_context_smoke.ts`: passou em 2026-05-26, criando saves distintos `normal` e `progression_lab` na mesma sessao Auth.
 - `npx -y deno run --allow-net --allow-env server/tests/reset_save_context_smoke.ts`: passou em 2026-05-26, validando reset separado, idempotencia e rejeicao de mismatch de `save_type`.
 - `npx -y deno run --allow-net --allow-env server/tests/progression_lab_apply_smoke.ts`: passou em 2026-05-26, validando aplicacao server-backed do Progression Lab, preservacao do save normal, ranking bloqueado e batalha jogavel no Lab.
-- `npx -y deno run --allow-net --allow-env server/tests/social_competition_smoke.ts`: passou em 2026-05-26, validando dois testadores, amizade por username, guilda create/join, membros enriquecidos, chat idempotente, rate limit, polling e RLS.
-- Smokes existentes `battle_request_smoke.ts`, `first_slice_battle_smoke.ts`, `base_manager_smoke.ts`, `monetization_rewards_smoke.ts` e `client_telemetry_smoke.ts`: passaram em 2026-05-26 apos reset de save.
+- `npx -y deno run --allow-net --allow-env server/tests/social_competition_smoke.ts`: passou em 2026-05-26, validando dois testadores, amizade por username, guilda create/join, membros enriquecidos, chat idempotente, rate limit, polling, top 10/self rank e RLS.
+- Smokes existentes `battle_request_smoke.ts`, `first_slice_battle_smoke.ts`, `base_manager_smoke.ts`, `monetization_rewards_smoke.ts` e `client_telemetry_smoke.ts`: passaram em 2026-05-26 apos reset de save; `first_slice_battle_smoke.ts` agora valida arena/ranking idempotente.
 - `npx -y deno test tools/progression_lab`: passou em 2026-05-26.
 - `npx -y deno run --allow-read tools/progression_lab/seed_supabase.ts --dry-run --all`: passou em 2026-05-26.
 - `npx -y deno run --allow-read --allow-write tools/progression_lab/generate.ts`: passou em 2026-05-26.
-- `tools/validate.gd`: passou em 2026-05-26 com GUT `48/48` e `306` asserts.
+- `tools/validate.gd`: passou em 2026-05-26 com GUT `48/48` e `307` asserts.
 - `npx -y deno run --allow-net --allow-env server/tests/base_manager_smoke.ts`: passou em 2026-05-26, validando payload jogavel da Base, compra alpha de Energia, upgrade por predio e fila cheia.
 - `tools/smoke_session_shell.gd`: passou em 2026-05-26 com Auth anonimo, conta guest e `account/state`.
 - `tools/smoke_alpha_loop.gd`: passou em 2026-05-26 com Auth anonimo, battle/base/social/competition/shop e telemetria final.

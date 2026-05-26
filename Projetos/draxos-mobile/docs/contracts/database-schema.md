@@ -358,9 +358,9 @@ Chat v0 usa canal de guilda por polling. Mensagens tem limite de 280 caracteres,
 
 ### `ranking`
 
-Status: **implementado em T00-P12**.
+Status: **implementado em T00-P12** e refinado em `T03-P07`.
 
-Ranking da season ativa por jogador real. `competition/ranking/current` cria linha propria com 0 pontos quando necessario. Bots ficam fora desta tabela.
+Ranking da season ativa por jogador real. `competition/ranking/current` cria linha propria com 0 pontos quando necessario, retorna top 10 + posicao do jogador e mantem bots fora desta tabela. `battle/request` no modo `FIRST_SLICE_SIM` atualiza pontos do save `normal` com o modelo `alpha_v0_power_adjusted`; `progression_lab` nao insere nem pontua ranking.
 
 ### `guild_contributions`, `construction_helps`
 

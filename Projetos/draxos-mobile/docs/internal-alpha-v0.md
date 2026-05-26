@@ -58,7 +58,7 @@ Regras:
 - Dados de ranking/social do save normal nao devem ser contaminados pelo lab.
 - Toda mutacao continua server-authoritative.
 
-Status local atual (`T03-P06`):
+Status local atual (`T03-P07`):
 
 - Godot persiste o save ativo e envia `x-draxos-save-type`.
 - Supabase local resolve `normal` e `progression_lab` por `players.save_type`.
@@ -69,6 +69,7 @@ Status local atual (`T03-P06`):
 - A tela Progression Lab Dev possui `Aplicar no Save Lab`; o servidor valida o perfil/milestone contra o catalogo versionado, aplica apenas no save `progression_lab` e preserva o save `normal`.
 - A Base ja funciona como fluxo jogavel local: mapa de predios clicaveis, painel por predio, tooltips, custo/tempo/producao/status vindo do servidor, compra alpha de Energia e upgrade server-authoritative por estrutura.
 - O Social ja funciona como fluxo basico local: amigos por username, criar/entrar em guilda, membros/estruturas visiveis, chat de guilda por polling, rate limit e marcadores `normal`/`lab`.
+- A Competicao ja funciona como leaderboard alpha local: batalha normal pontua no servidor, ranking mostra top 10 + posicao do jogador, bots ficam fora da tabela e o Lab continua sem pontuacao.
 
 ## Backend Remoto
 
@@ -201,9 +202,10 @@ Status local atual:
 Alpha basico:
 
 - matchmaking preview;
-- batalha atualiza pontos;
-- leaderboard mostra top jogadores/bots conforme decisao;
-- jogador ve sua posicao e season ativa.
+- batalha normal atualiza pontos de arena no servidor;
+- leaderboard mostra top 10, posicao do jogador e season ativa;
+- bots podem ser oponente de treino, mas nao aparecem no ranking;
+- `progression_lab` pode batalhar, mas nao pontua competicao.
 
 ### Loja
 
@@ -242,7 +244,6 @@ Estas decisoes vivem em `docs/design-pending.md` como `DMOB-D048` a `DMOB-D055`.
 - Criar keystore Android internal alpha e guardar senha fora do Git.
 - Escolher URL/canal da Web build.
 - Aprovar redeems da loja.
-- Aprovar politica de bots na leaderboard.
 - Testar com o segundo usuario e preencher checklist.
 
 ## Guardrails

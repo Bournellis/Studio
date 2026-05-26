@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
 - Ultima atualizacao: `2026-05-26`
-- Status: contrato com `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*` e `progression-lab/*` implementados localmente; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`; Track 03 ja implementou selecao local de save via `x-draxos-save-type`, reset separado por save, aplicacao server-backed do Progression Lab no save `progression_lab` e payload jogavel da Base com custo/tempo/producao/bloqueio por predio; ainda planeja email/senha e updates internos
+- Status: contrato com `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*` e `progression-lab/*` implementados localmente; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`; Track 03 ja implementou selecao local de save via `x-draxos-save-type`, reset separado por save, aplicacao server-backed do Progression Lab no save `progression_lab`, payload jogavel da Base, Social basico e leaderboard alpha com pontos por batalha normal; ainda planeja email/senha e updates internos
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -148,6 +148,7 @@ Erros minimos: `UNAUTHENTICATED`, `PLAYER_NOT_FOUND`, `ACCOUNT_STATE_INCOMPLETE`
 Solicita batalha server-authoritative.
 
 Status: **implementado em T00-P07** para `MVP_ONLY`; **completo em T00-P10** para `FIRST_SLICE_SIM`.
+Em `T03-P07`, `FIRST_SLICE_SIM` tambem retorna `competition` e aplica pontos de arena no save `normal`. O save `progression_lab` recebe `excluded_reason = PROGRESSION_LAB_DOES_NOT_RANK`.
 
 Request MVP:
 
@@ -228,13 +229,39 @@ Response primeiro slice v0:
       "sangue": 0.2,
       "ossos": 0.04
     }
+  },
+  "competition": {
+    "ranked": true,
+    "season": { "id": "season_001", "display_name": "Season 1 Alpha" },
+    "result": "loss",
+    "scoring_model": "alpha_v0_power_adjusted",
+    "arena_delta": 0,
+    "arena_delta_raw": -5,
+    "player_power": 50,
+    "opponent_power": 180,
+    "opponent": {
+      "id": "bot_effect_trainer_01",
+      "power": 180,
+      "power_band": "band_002",
+      "is_bot": true,
+      "is_ranked": false
+    },
+    "ranking": {
+      "season_id": "season_001",
+      "player_id": "uuid",
+      "arena_points": 0,
+      "wins": 0,
+      "losses": 1
+    }
   }
 }
 ```
 
 Erros minimos: `UNAUTHENTICATED`, `PLAYER_NOT_FOUND`, `INVALID_BOT_ID`, `BATTLE_RATE_LIMITED`, `SIMULATION_FAILED`.
 
-Idempotencia: repetir o mesmo `request_id` retorna o mesmo `battle_id`, `seed`, log e recompensa, sem reaplicar XP/Ossos ou recursos do primeiro slice.
+Idempotencia: repetir o mesmo `request_id` retorna o mesmo `battle_id`, `seed`, log, recompensa e payload competitivo, sem reaplicar XP/Ossos, recursos ou pontos de arena do primeiro slice.
+
+`competition.arena_delta_raw` e o resultado direto da formula. `competition.arena_delta` e o delta aplicado depois do piso minimo de `0` pontos.
 
 ### `GET /battle/latest`
 
@@ -566,7 +593,7 @@ Idempotencia: repetir o mesmo `request_id` retorna o mesmo job/payload e nao gas
 
 ### `GET /matchmaking/preview`
 
-Status: **implementado em T00-P12** como `GET /competition/matchmaking/preview`.
+Status: **implementado em T00-P12** como `GET /competition/matchmaking/preview`, refinado em `T03-P07`.
 
 Retorna a leitura server-authoritative da faixa de matchmaking e o fallback de bot do alpha. O cliente nao escolhe oponente nem envia poder final.
 
@@ -589,6 +616,8 @@ Response v0:
       "is_bot": true,
       "is_ranked": false
     },
+    "candidate_count": 6,
+    "bots_included_in_leaderboard": false,
     "fallback_reason": "BOT_ALPHA_POOL"
   }
 }
@@ -596,9 +625,9 @@ Response v0:
 
 ### `GET /ranking/current`
 
-Status: **implementado em T00-P12** como `GET /competition/ranking/current`.
+Status: **implementado em T00-P12** como `GET /competition/ranking/current`, refinado em `T03-P07`.
 
-Retorna ranking da season ativa e cria a linha do jogador com `0` pontos quando necessario. Bots nao entram no ranking.
+Retorna ranking da season ativa, cria a linha do jogador com `0` pontos quando necessario, limita a lista visivel ao top 10, inclui `self.rank` mesmo quando o jogador estiver fora do top e informa o modelo `alpha_v0_power_adjusted`. Bots nao entram no ranking, mas batalhas normais contra bots podem alterar pontos do jogador no alpha interno. No save `progression_lab`, retorna `self = null`, `entries = []` e `excluded_reason = PROGRESSION_LAB_DOES_NOT_RANK`.
 
 ### `GET /social/state`
 

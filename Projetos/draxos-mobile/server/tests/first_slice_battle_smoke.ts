@@ -50,6 +50,10 @@ const state = await getJson(
   `${SUPABASE_URL}/functions/v1/account/state`,
   headers,
 );
+const ranking = await getJson(
+  `${SUPABASE_URL}/functions/v1/competition/ranking/current`,
+  headers,
+);
 
 const effectLog = objectField(effectBattle, "battle_log");
 const repeatedEffectLog = objectField(repeatedEffectBattle, "battle_log");
@@ -92,6 +96,10 @@ assertEvent(summonLog, "summon_attack");
 const effectRewards = objectField(effectBattle, "rewards");
 const summonRewards = objectField(summonBattle, "rewards");
 const defaultRewards = objectField(defaultBattle, "rewards");
+const effectCompetition = objectField(effectBattle, "competition");
+const repeatedEffectCompetition = objectField(repeatedEffectBattle, "competition");
+const summonCompetition = objectField(summonBattle, "competition");
+const defaultCompetition = objectField(defaultBattle, "competition");
 assertEq(
   stringField(effectRewards, "type"),
   "FIRST_SLICE_SIM",
@@ -149,6 +157,44 @@ assertApprox(
   "Ossos should match",
 );
 
+assertEq(
+  stringField(effectCompetition, "scoring_model"),
+  "alpha_v0_power_adjusted",
+  "arena scoring model should be explicit",
+);
+assertEq(
+  stringField(objectField(effectCompetition, "ranking"), "player_id"),
+  stringField(objectField(defaultCompetition, "ranking"), "player_id"),
+  "arena ranking should belong to the same player",
+);
+assertEq(
+  numberField(objectField(effectCompetition, "ranking"), "arena_points"),
+  numberField(objectField(repeatedEffectCompetition, "ranking"), "arena_points"),
+  "repeated request_id should not duplicate arena points",
+);
+const rankingPayload = objectField(ranking, "ranking");
+const selfRanking = objectField(rankingPayload, "self");
+assertEq(
+  numberField(selfRanking, "arena_points"),
+  numberField(objectField(defaultCompetition, "ranking"), "arena_points"),
+  "ranking/current should match latest arena points",
+);
+assertEq(
+  numberField(selfRanking, "wins") + numberField(selfRanking, "losses"),
+  3,
+  "ranking should count each unique normal battle",
+);
+assertEq(rankingPayload.bots_included, false, "ranking should exclude bots");
+assertEq(numberField(rankingPayload, "top_limit"), 10, "ranking should expose top 10");
+assert(
+  arrayField(rankingPayload, "entries").length <= 10,
+  "ranking entries should be limited to top 10",
+);
+assert(
+  stringField(summonCompetition, "result") !== "",
+  "competition result should be available on every unique battle",
+);
+
 console.log("[first-slice-smoke] OK", {
   effect_battle_id: stringField(effectLog, "battle_id"),
   summon_battle_id: stringField(summonLog, "battle_id"),
@@ -157,6 +203,7 @@ console.log("[first-slice-smoke] OK", {
   summon_events: (summonLog.events as unknown[]).length,
   xp: numberField(objectField(state, "player"), "xp"),
   almas: numberField(objectField(state, "resources"), "almas"),
+  arena_points: numberField(selfRanking, "arena_points"),
 });
 
 async function requestFirstSlice(
@@ -219,9 +266,7 @@ async function parseResponse(
   if (requireOk) {
     assert(
       response.ok,
-      `request failed with status ${response.status}: ${
-        JSON.stringify(payload)
-      }`,
+      `request failed with status ${response.status}: ${JSON.stringify(payload)}`,
     );
     assert(
       payload.ok === true,
@@ -247,6 +292,12 @@ function resourceNumber(rewards: JsonObject, key: string): number {
 function objectField(payload: JsonObject, key: string): JsonObject {
   const value = payload[key];
   assert(isObject(value), `${key} should be an object`);
+  return value;
+}
+
+function arrayField(payload: JsonObject, key: string): unknown[] {
+  const value = payload[key];
+  assert(Array.isArray(value), `${key} should be an array`);
   return value;
 }
 
@@ -282,9 +333,7 @@ function assert(condition: boolean, message: string): asserts condition {
 function assertEq(actual: unknown, expected: unknown, message: string): void {
   if (actual !== expected) {
     throw new Error(
-      `${message}. Expected ${JSON.stringify(expected)}, got ${
-        JSON.stringify(actual)
-      }`,
+      `${message}. Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`,
     );
   }
 }

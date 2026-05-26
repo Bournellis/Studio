@@ -90,7 +90,7 @@ Nakama deve ser reavaliado somente se pelo menos uma destas premissas mudar:
 - `T00-P12` completo: Social/Competicao v0 server-authoritative com `social/state`, guilda alpha, chat de guilda por polling, matchmaking preview com fallback de bot e ranking de season sem bots.
 - `T00-P13` completo: Monetizacao v0 server-authoritative com Battle Pass, Diamante alpha, recompensas diarias/semanais, claims free/premium, ledger, idempotencia e export smoke Android/PC/Web.
 - `Track 01` completo: hardening do alpha PC local com fluxo de primeira sessao mais claro, estados ocupados/erros offline/pre-condicoes visiveis, reset seguro de sessao local, telemetria client nao autoritativa e smoke do loop alpha.
-- `Track 03` com design lock completo, estrategia backend definida, T03-P02 repo-side preparado e T03-P06 completo: Supabase remoto Free para alpha, `BackendConfig` no Godot, env vars seguras, `.env` reais ignorados, smoke remoto minimo, `players.save_type` local, header `x-draxos-save-type` nos endpoints alpha, dois saves server-backed no Supabase local, reset separado por save, Progression Lab aplicado server-authoritative no save `progression_lab`, Base Manager jogavel, Social basico jogavel no Godot/local e Backend Proprio + Postgres como plano de saida preferido. Nakama fica apenas como alternativa futura se realtime/social competitivo virar pilar.
+- `Track 03` com design lock completo, estrategia backend definida, T03-P02 repo-side preparado e T03-P07 completo: Supabase remoto Free para alpha, `BackendConfig` no Godot, env vars seguras, `.env` reais ignorados, smoke remoto minimo, `players.save_type` local, header `x-draxos-save-type` nos endpoints alpha, dois saves server-backed no Supabase local, reset separado por save, Progression Lab aplicado server-authoritative no save `progression_lab`, Base Manager jogavel, Social basico jogavel, Competicao com pontos/top 10/posicao do jogador no Godot/local e Backend Proprio + Postgres como plano de saida preferido. Nakama fica apenas como alternativa futura se realtime/social competitivo virar pilar.
 
 ---
 
@@ -258,7 +258,7 @@ Regras:
 - Ranking, social e loja do save normal nao podem ser contaminados pelo `progression_lab`.
 - Implementacao inicial pode adaptar o schema atual de `players` para `save_type`, mas a direcao de longo prazo e separar conta de jogo e saves para permitir novos modos/fases sem acoplar tudo a uma linha de player.
 
-Implementado localmente ate `T03-P06`:
+Implementado localmente ate `T03-P07`:
 
 - `players.save_type` aceita `normal` e `progression_lab`.
 - A unicidade de jogador passa a ser `auth_user_id + save_type`.
@@ -268,6 +268,7 @@ Implementado localmente ate `T03-P06`:
 - `POST /progression-lab/apply` aplica um healthy save versionado no save `progression_lab`, sem aceitar o save `normal`.
 - `GET /base/state` entrega metadados de apresentacao server-side para Base jogavel: descricao, beneficio, custo, duracao, status, bloqueio e remaining time.
 - Social usa identidade de conta no runtime: `normal` e o social canonico quando existir, `progression_lab` recebe marcador `lab`, amigos retornam username enriquecido, guilda permite criar/entrar/ver membros e chat de guilda tem polling + rate limit.
+- Competicao usa `battle/request` `FIRST_SLICE_SIM` para pontuar o save `normal` no servidor, retorna top 10 + posicao do jogador e mantem bots e `progression_lab` fora da tabela `ranking`.
 
 Modelo escolhido em `DMOB-D042`:
 

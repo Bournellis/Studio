@@ -636,7 +636,7 @@ Formula v0:
 - Derrota contra oponente mais fraco: perda aumentada ate `-15`.
 - Pontos nunca ficam abaixo de 0.
 - Ranking reseta por season e gera snapshot ao encerrar.
-- Match contra bot pode conceder recompensa economica normal, mas nao deve conceder pontos de ranking no alpha.
+- Para a Internal Alpha v0, match normal contra bot pode conceder pontos ao jogador para validar o loop diario; o bot continua fora da leaderboard e nao possui linha propria em `ranking`.
 
 ### Bots Iniciais
 

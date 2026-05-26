@@ -1,6 +1,11 @@
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
 import { type CombatantBuild, simulateFirstSliceBattle } from "../_shared/battle_simulator.ts";
-import { type SaveType, saveTypeFromRequest, saveTypeQuery } from "../_shared/save_context.ts";
+import {
+  isProgressionLabSave,
+  type SaveType,
+  saveTypeFromRequest,
+  saveTypeQuery,
+} from "../_shared/save_context.ts";
 
 type Route = "request" | "latest";
 type BattleMode = "MVP_ONLY" | "FIRST_SLICE_SIM";
@@ -32,6 +37,7 @@ interface PlayerRow {
   save_type?: SaveType;
   level?: number;
   xp?: number;
+  power?: number;
 }
 
 interface ResourceRow {
@@ -78,9 +84,28 @@ interface IdempotencyRow {
   response_payload: unknown;
 }
 
+interface SeasonRow {
+  id: string;
+  display_name: string;
+  starts_at: string;
+  ends_at: string;
+}
+
+interface RankingRow {
+  season_id: string;
+  player_id: string;
+  arena_points: number;
+  wins: number;
+  losses: number;
+  updated_at: string;
+}
+
+type BattleOutcome = "win" | "loss" | "draw";
+
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const DEFAULT_FIRST_SLICE_BOT_ID = "bot_effect_trainer_01";
 const BOT_ID_PATTERN = /^[a-z0-9_]+$/;
+const ARENA_SCORING_MODEL = "alpha_v0_power_adjusted";
 
 Deno.serve(async (request: Request) => {
   if (request.method === "OPTIONS") {
@@ -266,10 +291,26 @@ async function handleFirstSliceRequest(
     return errorResponse(applyReward.code, applyReward.message, applyReward.status);
   }
 
+  const competition = await applyArenaResult(
+    config,
+    auth,
+    playerState.value.player,
+    bot,
+    battleOutcome(simulation.battleLog.result),
+  );
+  if (competition.error !== null) {
+    return errorResponse(
+      competition.error.code,
+      competition.error.message,
+      competition.error.status,
+    );
+  }
+
   const responsePayload = {
     ok: true,
     battle_log: simulation.battleLog,
     rewards: simulation.reward,
+    competition: competition.value,
   };
   const insertIdempotency = await restRequest<unknown>(config, "idempotency_keys", {
     method: "POST",
@@ -371,7 +412,7 @@ async function loadPlayerState(
     config,
     `players?auth_user_id=eq.${encodeURIComponent(auth.userId)}&${
       saveTypeQuery(auth.saveType)
-    }&select=id,username,save_type,level,xp&limit=1`,
+    }&select=id,username,save_type,level,xp,power&limit=1`,
     { method: "GET" },
   );
   if (playerResult.error !== null) {
@@ -491,6 +532,225 @@ async function applyBattleReward(
   }
 
   return null;
+}
+
+async function applyArenaResult(
+  config: EdgeConfig,
+  auth: AuthContext,
+  player: PlayerRow,
+  bot: BotBuildRow,
+  outcome: BattleOutcome,
+): Promise<
+  { value: Record<string, unknown>; error: null } | { value: null; error: RestError }
+> {
+  if (isProgressionLabSave(auth.saveType)) {
+    return {
+      value: {
+        ranked: false,
+        excluded_reason: "PROGRESSION_LAB_DOES_NOT_RANK",
+        scoring_model: ARENA_SCORING_MODEL,
+      },
+      error: null,
+    };
+  }
+
+  const season = await activeSeason(config);
+  if (season.error !== null) {
+    return { value: null, error: season.error };
+  }
+
+  const ensureRanking = await restRequest<unknown>(config, "ranking", {
+    method: "POST",
+    headers: { prefer: "resolution=ignore-duplicates,return=minimal" },
+    body: JSON.stringify({
+      season_id: season.value.id,
+      player_id: player.id,
+    }),
+  });
+  if (ensureRanking.error !== null) {
+    return {
+      value: null,
+      error: {
+        code: "RANKING_APPLY_FAILED",
+        message: "Unable to initialize arena ranking.",
+        status: 500,
+      },
+    };
+  }
+
+  const currentRanking = await restRequest<RankingRow[]>(
+    config,
+    `ranking?season_id=eq.${encodeURIComponent(season.value.id)}&player_id=eq.${
+      encodeURIComponent(player.id)
+    }&select=season_id,player_id,arena_points,wins,losses,updated_at&limit=1`,
+    { method: "GET" },
+  );
+  if (currentRanking.error !== null) {
+    return {
+      value: null,
+      error: {
+        code: "RANKING_APPLY_FAILED",
+        message: "Unable to read arena ranking.",
+        status: 500,
+      },
+    };
+  }
+
+  const current = currentRanking.value[0] ?? {
+    season_id: season.value.id,
+    player_id: player.id,
+    arena_points: 0,
+    wins: 0,
+    losses: 0,
+    updated_at: new Date().toISOString(),
+  };
+  const currentPoints = numberValue(current.arena_points, 0);
+  const playerPower = effectivePower(player.power, player.level);
+  const opponentPower = Math.max(1, numberValue(bot.power, 1));
+  const rawArenaDelta = arenaPointDelta(outcome, playerPower, opponentPower);
+  const nextPoints = Math.max(0, currentPoints + rawArenaDelta);
+  const arenaDelta = nextPoints - currentPoints;
+  const nextWins = numberValue(current.wins, 0) + (outcome === "win" ? 1 : 0);
+  const nextLosses = numberValue(current.losses, 0) + (outcome === "loss" ? 1 : 0);
+  const updatedAt = new Date().toISOString();
+
+  const updateRanking = await restRequest<RankingRow[]>(
+    config,
+    `ranking?season_id=eq.${encodeURIComponent(season.value.id)}&player_id=eq.${
+      encodeURIComponent(player.id)
+    }&select=season_id,player_id,arena_points,wins,losses,updated_at`,
+    {
+      method: "PATCH",
+      headers: { prefer: "return=representation" },
+      body: JSON.stringify({
+        arena_points: nextPoints,
+        wins: nextWins,
+        losses: nextLosses,
+        updated_at: updatedAt,
+      }),
+    },
+  );
+  if (updateRanking.error !== null) {
+    return {
+      value: null,
+      error: {
+        code: "RANKING_APPLY_FAILED",
+        message: "Unable to update arena ranking.",
+        status: 500,
+      },
+    };
+  }
+
+  return {
+    value: {
+      ranked: true,
+      season: season.value,
+      result: outcome,
+      scoring_model: ARENA_SCORING_MODEL,
+      arena_delta: arenaDelta,
+      arena_delta_raw: rawArenaDelta,
+      player_power: playerPower,
+      opponent_power: opponentPower,
+      opponent: {
+        id: bot.id,
+        power: bot.power,
+        power_band: bot.power_band,
+        is_bot: true,
+        is_ranked: false,
+      },
+      ranking: updateRanking.value[0] ?? {
+        season_id: season.value.id,
+        player_id: player.id,
+        arena_points: nextPoints,
+        wins: nextWins,
+        losses: nextLosses,
+        updated_at: updatedAt,
+      },
+    },
+    error: null,
+  };
+}
+
+async function activeSeason(
+  config: EdgeConfig,
+): Promise<{ value: SeasonRow; error: null } | { value: null; error: RestError }> {
+  const result = await restRequest<SeasonRow[]>(
+    config,
+    "seasons?status=eq.active&select=id,display_name,starts_at,ends_at&order=starts_at.desc&limit=1",
+    { method: "GET" },
+  );
+  if (result.error !== null) {
+    return { value: null, error: stateReadError() };
+  }
+
+  const season = result.value[0] ?? null;
+  if (season === null) {
+    return {
+      value: null,
+      error: {
+        code: "SEASON_NOT_FOUND",
+        message: "No active season is configured.",
+        status: 500,
+      },
+    };
+  }
+
+  return { value: season, error: null };
+}
+
+function battleOutcome(result: unknown): BattleOutcome {
+  if (!isObject(result)) {
+    return "draw";
+  }
+
+  const winner = stringValue(result.winner, "");
+  if (winner === "player") {
+    return "win";
+  }
+  if (winner === "opponent") {
+    return "loss";
+  }
+  return "draw";
+}
+
+function effectivePower(power: unknown, level: unknown): number {
+  const explicitPower = numberValue(power, 0);
+  if (explicitPower > 0) {
+    return explicitPower;
+  }
+
+  return Math.max(50, numberValue(level, 1) * 50);
+}
+
+function arenaPointDelta(
+  outcome: BattleOutcome,
+  playerPower: number,
+  opponentPower: number,
+): number {
+  if (outcome === "draw") {
+    return 0;
+  }
+
+  const referencePower = Math.max(1, playerPower);
+  const differenceRatio = Math.min(Math.abs(opponentPower - playerPower) / referencePower, 0.35);
+  const normalized = differenceRatio / 0.35;
+  if (outcome === "win") {
+    if (opponentPower > playerPower) {
+      return 20 + Math.round(normalized * 10);
+    }
+    if (opponentPower < playerPower) {
+      return 20 - Math.round(normalized * 8);
+    }
+    return 20;
+  }
+
+  if (opponentPower > playerPower) {
+    return -10 + Math.round(normalized * 5);
+  }
+  if (opponentPower < playerPower) {
+    return -10 - Math.round(normalized * 5);
+  }
+  return -10;
 }
 
 function playerCombatant(player: PlayerRow, build: BuildRow): CombatantBuild {
