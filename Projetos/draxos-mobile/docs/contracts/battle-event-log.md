@@ -231,9 +231,14 @@ Todo evento possui:
   "target": "player_brasa_faminta",
   "spell_id": "invocar_brasa_faminta",
   "hp": 50,
-  "damage_type": "fogo"
+  "damage_type": "fogo",
+  "slot": "front"
 }
 ```
+
+`slot` e opcional e usado apenas pela apresentacao. Valores previstos:
+`front`, `middle` e `back`. Logs antigos sem `slot` continuam validos; o cliente
+aplica fallback visual.
 
 ### `summon_attack`
 
@@ -364,6 +369,7 @@ Campos ja usados visualmente quando existem:
   `barrier_after`;
 - `mana_after`;
 - `spell_id`, `pet_id`, `passive_id`, `status_id`;
+- `slot` em summons, quando existir;
 - `stacks`, `duration`, `ready_at`;
 - `player_hp_after`, `opponent_hp_after`;
 - `winner`, `reason`, `reward_type`.

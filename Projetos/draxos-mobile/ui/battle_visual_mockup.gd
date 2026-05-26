@@ -2,6 +2,7 @@ class_name BattleVisualMockup
 extends VBoxContainer
 
 const BattleLogPresenterScript := preload("res://ui/battle_log_presenter.gd")
+const BattleStage2DScript := preload("res://ui/battle_stage_2d.gd")
 
 const SIDE_PLAYER := "player"
 const SIDE_OPPONENT := "opponent"
@@ -76,6 +77,7 @@ var _event_icon_label: Label
 var _event_title_label: Label
 var _event_detail_label: Label
 var _timeline_label: Label
+var _stage_2d: Control
 var _name_labels: Dictionary = {}
 var _portrait_labels: Dictionary = {}
 var _hp_bars: Dictionary = {}
@@ -113,6 +115,8 @@ func show_empty_state(message: String) -> void:
 	_counts_label.text = "0 eventos"
 	_result_label.text = "Aguardando battle_log_v1"
 	_render_dynamic_state()
+	if _stage_2d != null and is_instance_valid(_stage_2d) and _stage_2d.has_method("show_empty_state"):
+		_stage_2d.show_empty_state(message)
 	_render_timeline()
 
 func step_next_event() -> bool:
@@ -121,7 +125,7 @@ func step_next_event() -> bool:
 		return false
 	_apply_event(_events[_event_index])
 	_event_index += 1
-	_render_dynamic_state()
+	_render_dynamic_state(true)
 	_render_timeline()
 	return true
 
@@ -129,7 +133,7 @@ func apply_event(event: Dictionary) -> void:
 	_ensure_ui()
 	_apply_event(event)
 	_event_index = mini(_event_index + 1, _events.size())
-	_render_dynamic_state()
+	_render_dynamic_state(true)
 	_render_timeline()
 
 func reveal_all() -> void:
@@ -165,6 +169,7 @@ func debug_snapshot() -> Dictionary:
 		"latest_event_type": str(_latest_event.get("type", "")),
 		"player": _as_dictionary(_side_state.get(SIDE_PLAYER, {})).duplicate(true),
 		"opponent": _as_dictionary(_side_state.get(SIDE_OPPONENT, {})).duplicate(true),
+		"stage": _stage_2d.debug_snapshot() if _stage_2d != null and _stage_2d.has_method("debug_snapshot") else {},
 		"timeline": get_timeline_text(),
 	}
 
@@ -191,6 +196,12 @@ func _ensure_ui() -> void:
 
 	_counts_label = _body_label("0 eventos")
 	header_box.add_child(_counts_label)
+
+	_stage_2d = BattleStage2DScript.new()
+	_stage_2d.custom_minimum_size = Vector2(760, 360)
+	_stage_2d.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_stage_2d.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	add_child(_stage_2d)
 
 	var arena := PanelContainer.new()
 	arena.add_theme_stylebox_override("panel", _panel_style("bg_deep", "border_default"))
@@ -425,7 +436,7 @@ func _render_all() -> void:
 	_render_dynamic_state()
 	_render_timeline()
 
-func _render_dynamic_state() -> void:
+func _render_dynamic_state(animate_stage_event: bool = false) -> void:
 	for side: String in SIDES:
 		var side_data := _as_dictionary(_side_state.get(side, {}))
 		var display_name := str(side_data.get("display_name", _default_side_name(side)))
@@ -466,6 +477,8 @@ func _render_dynamic_state() -> void:
 			event_type,
 		]
 		_event_detail_label.text = BattleLogPresenterScript.format_event(_latest_event)
+	if _stage_2d != null and is_instance_valid(_stage_2d) and _stage_2d.has_method("render_snapshot"):
+		_stage_2d.render_snapshot(_side_state, _latest_event, _event_index, _events.size(), animate_stage_event)
 
 func _render_status_row(side: String, statuses: Dictionary) -> void:
 	var row: HFlowContainer = _status_rows[side]
@@ -630,9 +643,18 @@ func _set_summon(side: String, summon_id: String, event: Dictionary) -> void:
 	summons[summon_id] = {
 		"hp": event.get("hp", 0),
 		"damage_type": event.get("damage_type", ""),
+		"slot": str(event.get("slot", _next_summon_slot(summons.size()))),
 	}
 	data["summons"] = summons
 	_side_state[side] = data
+
+func _next_summon_slot(existing_count: int) -> String:
+	match existing_count % 3:
+		0:
+			return "front"
+		1:
+			return "middle"
+	return "back"
 
 func _clear_summon(side: String, summon_id: String) -> void:
 	for candidate_side: String in SIDES:

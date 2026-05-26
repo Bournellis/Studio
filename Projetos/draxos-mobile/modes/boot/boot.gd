@@ -357,7 +357,7 @@ func _render_battle_screen() -> void:
 	_add_action_button("Solicitar batalha", "request_battle")
 	_add_action_button("Ver resultado", "show_latest_battle")
 	_battle_visual = BattleVisualMockupScript.new()
-	_battle_visual.custom_minimum_size = Vector2(0, 380)
+	_battle_visual.custom_minimum_size = Vector2(0, 720)
 	_content_body.add_child(_battle_visual)
 	_timeline_label = _add_output_label("")
 	if SessionStore.has_battle_log():

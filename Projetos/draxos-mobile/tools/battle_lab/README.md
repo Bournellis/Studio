@@ -71,7 +71,8 @@ Essa tela:
 - permite montar builds manualmente com validacao de unlock;
 - gera replay custom sob demanda e registra esse resultado de sessao em Replay/History;
 - reproduz `battle_log_v1` no `BattleVisualMockup`, o mesmo mockup usado pela
-  tela Batalha do alpha.
+  tela Batalha do alpha, com palco 2D procedural, slots front/middle/back,
+  efeitos temporarios e tooltips.
 
 O cliente Godot nao calcula resultado, dano ou recompensa. Ele apenas monta o
 pedido, chama Deno local e apresenta o log retornado.

@@ -63,6 +63,7 @@ func test_battle_lab_replay_response_registers_custom_replay() -> void:
 	assert_eq(screen._tabs.current_tab, 3)
 	assert_not_null(screen._battle_visual)
 	assert_eq(screen._battle_visual.get_event_count(), 1)
+	assert_true(screen._tabs.get_child(3) is ScrollContainer)
 
 func test_battle_lab_deno_invocation_sanitizes_project_settings() -> void:
 	var settings_prefix := "draxos_mobile/battle_lab"

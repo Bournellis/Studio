@@ -1,0 +1,59 @@
+class_name BattleSymbolIcon
+extends Control
+
+var symbol := "?"
+var fill_color := Color("#5DD4C8")
+var cooldown_ratio := 0.0
+var count_text := ""
+
+var _label: Label
+var _count_label: Label
+
+func _ready() -> void:
+	mouse_filter = Control.MOUSE_FILTER_PASS
+	custom_minimum_size = Vector2(42, 42)
+	_ensure_labels()
+
+func configure(new_symbol: String, new_color: Color, new_tooltip: String = "", new_count_text: String = "", new_cooldown_ratio: float = 0.0) -> void:
+	_ensure_labels()
+	symbol = new_symbol
+	fill_color = new_color
+	count_text = new_count_text
+	cooldown_ratio = clampf(new_cooldown_ratio, 0.0, 1.0)
+	tooltip_text = new_tooltip
+	_label.text = symbol
+	_count_label.text = count_text
+	queue_redraw()
+
+func _ensure_labels() -> void:
+	if _label != null:
+		return
+	_label = Label.new()
+	_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_label.add_theme_font_size_override("font_size", 13)
+	_label.add_theme_color_override("font_color", Color("#F0EEE5"))
+	add_child(_label)
+
+	_count_label = Label.new()
+	_count_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_count_label.offset_top = 22
+	_count_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_count_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_count_label.add_theme_font_size_override("font_size", 9)
+	_count_label.add_theme_color_override("font_color", Color("#F0EEE5"))
+	add_child(_count_label)
+
+func _draw() -> void:
+	var rect := Rect2(Vector2.ZERO, size)
+	var radius: float = minf(size.x, size.y) * 0.5
+	var center := rect.get_center()
+	var bg: Color = fill_color.darkened(0.55)
+	var border: Color = fill_color.lightened(0.12)
+	draw_circle(center, radius - 1.0, bg)
+	draw_arc(center, radius - 2.0, 0.0, TAU, 36, border, 2.0, true)
+	if cooldown_ratio > 0.0:
+		var sweep: float = TAU * cooldown_ratio
+		draw_arc(center, radius - 6.0, -PI / 2.0, -PI / 2.0 + sweep, 32, Color("#080B10", 0.82), 7.0, true)
+	draw_line(Vector2(center.x - radius * 0.5, center.y), Vector2(center.x + radius * 0.5, center.y), border.darkened(0.1), 1.0, true)

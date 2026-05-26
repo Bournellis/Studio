@@ -96,7 +96,8 @@ Use para ver o combate enquanto ajusta numeros e arte:
 - `Builds`: editor visual completo de level, arma, qualidade, spells, passiva e
   pet.
 - `Analytics`: checks e outliers da ultima run.
-- `Replay`: arena debug 2D com HP, marcadores de pet/summon/status, step,
+- `Replay`: aba rolavel com palco procedural 2D, HP, marcadores de
+  pet/summon/status, slots front/middle/back, numeros flutuantes, step,
   play/pause e velocidade. Esta aba usa o mesmo `BattleVisualMockup` da tela
   Batalha para evitar divergencia entre replay real e replay de laboratorio.
 - `History`: resumo da run e comparacao carregada.

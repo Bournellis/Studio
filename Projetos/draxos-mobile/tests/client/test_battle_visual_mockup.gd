@@ -23,6 +23,9 @@ func test_battle_visual_mockup_steps_rich_battle_feedback() -> void:
 	assert_eq(int(snapshot.get("event_index", 0)), visual.get_event_count())
 	assert_string_contains(str(snapshot.get("timeline", "")), "conjurou marca_brasa")
 	assert_string_contains(str(snapshot.get("timeline", "")), "Anti-stall")
+	var stage := Dictionary(snapshot.get("stage", {}))
+	assert_eq(str(stage.get("latest_event_type", "")), "battle_result")
+	assert_true(bool(stage.get("has_player_actor", false)))
 
 	var player := Dictionary(snapshot.get("player", {}))
 	var opponent := Dictionary(snapshot.get("opponent", {}))

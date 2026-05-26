@@ -369,7 +369,7 @@ func _build_analytics_tab() -> Control:
 	return box.get_parent()
 
 func _build_replay_tab() -> Control:
-	var box := VBoxContainer.new()
+	var box := _scroll_vbox()
 	box.add_theme_constant_override("separation", 8)
 	box.add_child(_body_label("Replay debug 2D compartilhado: aplica somente os campos do battle_log_v1. Nao recalcula resultado."))
 
@@ -378,7 +378,7 @@ func _build_replay_tab() -> Control:
 	box.add_child(_replay_title_label)
 
 	_battle_visual = BattleVisualMockupScript.new()
-	_battle_visual.custom_minimum_size = Vector2(0, 380)
+	_battle_visual.custom_minimum_size = Vector2(0, 720)
 	_battle_visual.show_empty_state("Nenhuma amostra carregada. Gere uma run ou replay custom.")
 	box.add_child(_battle_visual)
 
@@ -413,7 +413,7 @@ func _build_replay_tab() -> Control:
 		_replay_speed = value
 	)
 	controls.add_child(speed)
-	return box
+	return box.get_parent()
 
 func _build_history_tab() -> Control:
 	var box := _scroll_vbox()
@@ -923,9 +923,13 @@ func _scroll_vbox() -> VBoxContainer:
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	var box := VBoxContainer.new()
 	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	box.add_theme_constant_override("separation", 8)
+	scroll.resized.connect(func() -> void:
+		box.custom_minimum_size.x = max(360.0, scroll.size.x - 24.0)
+	)
 	scroll.add_child(box)
 	return box
 

@@ -1,6 +1,6 @@
 # DraxosMobile - Architecture
 
-- Ultima atualizacao: `2026-05-20`
+- Ultima atualizacao: `2026-05-26`
 
 ---
 
@@ -77,6 +77,9 @@ Classes utilitarias:
 |---|---|---|
 | `BattleLogPresenter` | `ui/battle_log_presenter.gd` | Ordenar e formatar eventos `battle_log_v1` sem calcular gameplay |
 | `BattleVisualMockup` | `ui/battle_visual_mockup.gd` | Apresentar `battle_log_v1` como HUD visual reutilizavel para Batalha e Battle Lab, usando placeholders nativos e asset hooks futuros sem calcular gameplay |
+| `BattleStage2D` | `ui/battle_stage_2d.gd` | Palco procedural lateral com personagens parados, slots front/middle/back, efeitos temporarios e tooltips |
+| `BattleActorMarker` | `ui/battle_actor_marker.gd` | Silhueta procedural de combatente, barras e pulse de feedback |
+| `BattleSymbolIcon` | `ui/battle_symbol_icon.gd` | Icone procedural para evento, status, cooldown, Familiar e summon |
 
 Regras:
 
@@ -220,6 +223,7 @@ MVP client implementado em `T00-P08`:
 - `Ver resultado`: busca `battle/latest` ou pula o replay atual.
 - Replay rico T00-P10: lista eventos ordenados por `t`/`seq`; DoTs, status, barreiras, resistencias, summons, Familiares, cooldowns, cura e anti-stall possuem linhas dedicadas; eventos desconhecidos continuam virando fallback.
 - Battle Visual Mockup 2026-05-26: a tela Batalha e o Battle Lab usam o mesmo controle visual para personagens placeholder, ataque basico, spells, buffs, dano, efeitos, icons, summons, Familiar, HP/Mana/Barreira, resultado e timeline a partir do mesmo log.
+- Battle Stage 2D 2026-05-26: o mockup agora inclui palco procedural estilo luta lateral, com player na esquerda, oponente na direita, objetos em slots front/middle/back, numeros flutuantes, projeteis simples, flashes e tooltips sem assets importados.
 - Cliente nao recalcula dano, HP, vencedor, XP, Ossos ou recompensa.
 
 ---
