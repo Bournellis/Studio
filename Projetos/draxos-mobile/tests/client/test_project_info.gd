@@ -11,7 +11,7 @@ func test_project_info_constants_are_set() -> void:
 
 func test_boot_actions_match_mvp_scope() -> void:
 	var actions := ProjectInfo.boot_actions()
-	assert_eq(actions.size(), 18)
+	assert_eq(actions.size(), 19)
 	assert_has(actions, "Entrar como guest")
 	assert_has(actions, "Sincronizar sessao")
 	assert_has(actions, "Resetar sessao local")
@@ -20,7 +20,8 @@ func test_boot_actions_match_mvp_scope() -> void:
 	assert_has(actions, "Ver resultado")
 	assert_has(actions, "Ver base")
 	assert_has(actions, "Coletar base")
-	assert_has(actions, "Evoluir Nucleo")
+	assert_has(actions, "Comprar Energia Base")
+	assert_has(actions, "Evoluir predio da Base")
 	assert_has(actions, "Ver social")
 	assert_has(actions, "Criar guilda")
 	assert_has(actions, "Chat guilda")

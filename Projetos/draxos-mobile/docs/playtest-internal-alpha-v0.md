@@ -28,7 +28,7 @@
 7. Solicitar batalha e assistir replay ate o fim ou pular.
 8. Conferir recompensa/resultado no servidor via UI.
 9. Abrir Base.
-10. Coletar recursos, iniciar upgrade e verificar feedback.
+10. Selecionar predios no mapa, conferir tooltip/detalhe, comprar Energia alpha se necessario, iniciar upgrade e verificar feedback.
 11. Abrir Loja.
 12. Usar um redeem alpha e confirmar recurso/premium.
 13. Abrir Competicao.
@@ -79,6 +79,7 @@ Batalha:
 
 Base:
 - Predios claros?
+- Foi facil entender custo, tempo, producao e motivo de bloqueio?
 - Upgrade/coleta funcionaram?
 - Erros foram objetivos?
 

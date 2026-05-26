@@ -49,6 +49,27 @@ assertEq(
   1,
   "base v0 starts with one construction slot",
 );
+const initialNucleo = structureById(structures, "nucleo_energia");
+assertEq(
+  stringField(initialNucleo, "display_name"),
+  "Nucleo de Energia",
+  "base/state should expose structure display data",
+);
+assertEq(
+  stringField(initialNucleo, "blocked_reason"),
+  "INSUFFICIENT_RESOURCES",
+  "base/state should explain why the first upgrade is blocked",
+);
+assertEq(
+  numberField(objectField(initialNucleo, "upgrade_cost"), "energia"),
+  20,
+  "base/state should expose next upgrade cost",
+);
+assertEq(
+  numberField(initialNucleo, "upgrade_duration_seconds"),
+  360,
+  "base/state should expose next upgrade duration",
+);
 
 const collectRequestId = crypto.randomUUID();
 const firstCollect = await postJson(
@@ -79,9 +100,65 @@ assertEq(
   "base/upgrade should reject missing Energia",
 );
 
+await postJson(
+  `${SUPABASE_URL}/functions/v1/monetization/alpha-purchase`,
+  { request_id: crypto.randomUUID(), product_id: "alpha_diamante_500" },
+  headers,
+);
+await postJson(
+  `${SUPABASE_URL}/functions/v1/monetization/alpha-purchase`,
+  { request_id: crypto.randomUUID(), product_id: "alpha_energy_pack_small" },
+  headers,
+);
+
+const fundedBaseState = await getJson(
+  `${SUPABASE_URL}/functions/v1/base/state`,
+  headers,
+);
+const fundedNucleo = structureById(
+  arrayField(objectField(fundedBaseState, "base"), "structures"),
+  "nucleo_energia",
+);
+assertEq(
+  fundedNucleo.can_upgrade,
+  true,
+  "base/state should mark upgrade available after buying Energia",
+);
+
+const upgradeRequestId = crypto.randomUUID();
+const startedUpgrade = await postJson(
+  `${SUPABASE_URL}/functions/v1/base/upgrade`,
+  { request_id: upgradeRequestId, structure_id: "nucleo_energia" },
+  headers,
+);
+const upgradeJob = objectField(startedUpgrade, "job");
+assertEq(
+  stringField(upgradeJob, "structure_id"),
+  "nucleo_energia",
+  "base/upgrade should start a job for selected structure",
+);
+assertEq(
+  numberField(upgradeJob, "target_level"),
+  1,
+  "base/upgrade should target next level",
+);
+
+const queueFull = await postJson(
+  `${SUPABASE_URL}/functions/v1/base/upgrade`,
+  { request_id: crypto.randomUUID(), structure_id: "altar_das_almas" },
+  headers,
+  false,
+);
+assertEq(
+  errorCode(queueFull),
+  "CONSTRUCTION_QUEUE_FULL",
+  "base/upgrade should reject a second active job",
+);
+
 console.log("[base-smoke] OK", {
   structures: structures.length,
   collected: objectField(firstCollect, "collected"),
+  upgrade_job: upgradeJob.id,
 });
 
 function baseHeaders(): Record<string, string> {
@@ -152,8 +229,23 @@ function stringField(payload: JsonObject, key: string): string {
   return typeof value === "string" ? value : "";
 }
 
+function numberField(payload: JsonObject, key: string): number {
+  const value = payload[key];
+  if (typeof value === "number") return value;
+  if (typeof value === "string") return Number(value);
+  return 0;
+}
+
 function errorCode(payload: JsonObject): string {
   return stringField(objectField(payload, "error"), "code");
+}
+
+function structureById(items: unknown[], structureId: string): JsonObject {
+  const structure = items.find((item) =>
+    isObject(item) && stringField(item, "structure_id") === structureId
+  );
+  assert(isObject(structure), `structure ${structureId} should exist`);
+  return structure;
 }
 
 function resourceSummary(payload: JsonObject): string {

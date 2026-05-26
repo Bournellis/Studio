@@ -36,6 +36,11 @@ solicita `FIRST_SLICE_SIM` contra bots de efeito/invocacao, repete o mesmo
 `request_id`, consulta `battle/latest` e confirma eventos ricos, idempotencia e
 aplicacao de XP/Almas/Energia/Sangue/Ossos.
 
+O smoke `base_manager_smoke.ts` valida auth obrigatoria, inicializacao dos seis
+predios, payload de UI com custo/tempo/status, coleta idempotente, compra alpha
+de Energia, upgrade server-authoritative por predio e bloqueio de segunda
+construcao quando a fila esta cheia.
+
 O smoke `client_telemetry_smoke.ts` valida auth obrigatoria, evento pre-conta
 com `player_id = null`, evento pos-conta, rejeicao de schema desconhecido e
 bloqueio de insert direto em `telemetry_events` com JWT anonimo.

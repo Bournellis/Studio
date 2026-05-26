@@ -71,6 +71,8 @@ interface IdempotencyRow {
 interface StructureDefinition {
   id: string;
   displayName: string;
+  description: string;
+  benefitLabel: string;
   resource: ResourceKey | null;
   dailyAtLevel40: number;
 }
@@ -79,19 +81,57 @@ type ResourceKey = "almas" | "energia" | "sangue" | "cristais" | "ossos";
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const SECONDS_PER_DAY = 86_400;
+const MAX_STRUCTURE_LEVEL = 40;
 const DEFAULT_CONSTRUCTION_SLOTS = 1;
 const STRUCTURES: StructureDefinition[] = [
-  { id: "altar_das_almas", displayName: "Altar das Almas", resource: "almas", dailyAtLevel40: 10 },
+  {
+    id: "altar_das_almas",
+    displayName: "Altar das Almas",
+    description: "Produz Almas e sustenta upgrades de instrumento, slots de spell e spells.",
+    benefitLabel: "Almas para progressao arcana",
+    resource: "almas",
+    dailyAtLevel40: 10,
+  },
   {
     id: "nucleo_energia",
     displayName: "Nucleo de Energia",
+    description: "Produz Energia, o gargalo principal das construcoes da base.",
+    benefitLabel: "Energia para evoluir predios",
     resource: "energia",
     dailyAtLevel40: 80,
   },
-  { id: "pocos_sangue", displayName: "Pocos de Sangue", resource: "sangue", dailyAtLevel40: 8 },
-  { id: "minas_cristal", displayName: "Minas de Cristal", resource: "cristais", dailyAtLevel40: 5 },
-  { id: "estrutura_stats", displayName: "Estrutura de Stats", resource: null, dailyAtLevel40: 0 },
-  { id: "ossario", displayName: "Ossario", resource: "ossos", dailyAtLevel40: 2 },
+  {
+    id: "pocos_sangue",
+    displayName: "Pocos de Sangue",
+    description: "Produz Sangue para crescimento de Familiares e sistemas biologicos.",
+    benefitLabel: "Sangue para Familiares",
+    resource: "sangue",
+    dailyAtLevel40: 8,
+  },
+  {
+    id: "minas_cristal",
+    displayName: "Minas de Cristal",
+    description: "Produz Cristais usados em Doutrinas e refinamentos arcanos.",
+    benefitLabel: "Cristais para Doutrinas",
+    resource: "cristais",
+    dailyAtLevel40: 5,
+  },
+  {
+    id: "estrutura_stats",
+    displayName: "Estrutura de Stats",
+    description: "Abriga melhorias permanentes de Vida, dano base, Defesa, Mana e regen.",
+    benefitLabel: "Bonus permanentes de personagem",
+    resource: null,
+    dailyAtLevel40: 0,
+  },
+  {
+    id: "ossario",
+    displayName: "Ossario",
+    description: "Produz Ossos e sustenta crafting de qualidade do instrumento ritual.",
+    benefitLabel: "Ossos para crafting",
+    resource: "ossos",
+    dailyAtLevel40: 2,
+  },
 ];
 
 Deno.serve(async (request: Request) => {
@@ -300,12 +340,6 @@ async function handleUpgrade(
     return errorResponse("BASE_STATE_INCOMPLETE", "Base structure state is missing.", 409);
   }
   if (
-    refreshed.value.jobs.filter((job) => job.status === "active").length >=
-      DEFAULT_CONSTRUCTION_SLOTS
-  ) {
-    return errorResponse("CONSTRUCTION_QUEUE_FULL", "No construction slot is available.", 409);
-  }
-  if (
     refreshed.value.jobs.some((job) => job.status === "active" && job.structure_id === structureId)
   ) {
     return errorResponse(
@@ -314,9 +348,15 @@ async function handleUpgrade(
       409,
     );
   }
+  if (
+    refreshed.value.jobs.filter((job) => job.status === "active").length >=
+      DEFAULT_CONSTRUCTION_SLOTS
+  ) {
+    return errorResponse("CONSTRUCTION_QUEUE_FULL", "No construction slot is available.", 409);
+  }
 
   const targetLevel = structure.level + 1;
-  const cap = Math.min(40, Math.max(1, refreshed.value.player.level));
+  const cap = Math.min(MAX_STRUCTURE_LEVEL, Math.max(1, refreshed.value.player.level));
   if (targetLevel > cap) {
     return errorResponse("LEVEL_CAP_REACHED", "Structure upgrade is limited by player level.", 409);
   }
@@ -515,26 +555,106 @@ function baseStatePayload(state: {
   jobs: ConstructionJobRow[];
 }) {
   const now = new Date();
+  const activeJobs = state.jobs.filter((job) => job.status === "active");
   return {
     ok: true,
     resources: state.resources,
     base: {
+      server_time: now.toISOString(),
       construction_slots: DEFAULT_CONSTRUCTION_SLOTS,
       structures: state.structures.map((structure) => {
         const definition = definitionFor(structure.structure_id);
         const pending = collectableFor(structure, now);
+        const activeJob = activeJobs.find((job) => job.structure_id === structure.structure_id);
+        const nextLevel = structure.level >= MAX_STRUCTURE_LEVEL ? null : structure.level + 1;
+        const upgradeCostValue = nextLevel === null ? null : upgradeCost(nextLevel);
+        const upgradeDurationValue = nextLevel === null ? null : upgradeDurationSeconds(nextLevel);
+        const blockedReason = upgradeBlockReason(
+          structure,
+          state.player,
+          state.resources,
+          activeJob,
+          activeJobs.length,
+        );
         return {
           ...structure,
           display_name: definition?.displayName ?? structure.structure_id,
+          description: definition?.description ?? "",
+          benefit_label: definition?.benefitLabel ?? "",
+          max_level: MAX_STRUCTURE_LEVEL,
           produces: definition?.resource,
           daily_production: dailyProduction(structure),
           storage_cap: storageCap(structure),
           pending_collectable: pending,
+          next_level: nextLevel,
+          upgrade_cost: upgradeCostValue === null ? null : { energia: upgradeCostValue },
+          upgrade_duration_seconds: upgradeDurationValue,
+          can_upgrade: blockedReason === "",
+          blocked_reason: blockedReason,
+          blocked_message: upgradeBlockMessage(blockedReason),
+          active_job: activeJob === undefined ? null : jobPayload(activeJob, now),
         };
       }),
-      jobs: state.jobs,
+      jobs: state.jobs.map((job) => jobPayload(job, now)),
     },
   };
+}
+
+function jobPayload(job: ConstructionJobRow, now: Date) {
+  return {
+    ...job,
+    display_name: definitionFor(job.structure_id)?.displayName ?? job.structure_id,
+    remaining_seconds: Math.max(
+      0,
+      Math.ceil((new Date(job.completes_at).getTime() - now.getTime()) / 1000),
+    ),
+  };
+}
+
+function upgradeBlockReason(
+  structure: BaseStructureRow,
+  player: PlayerRow,
+  resources: ResourceRow,
+  activeJob: ConstructionJobRow | undefined,
+  activeJobCount: number,
+): string {
+  if (structure.level >= MAX_STRUCTURE_LEVEL) {
+    return "MAX_LEVEL_REACHED";
+  }
+  if (activeJob !== undefined) {
+    return "STRUCTURE_ALREADY_UPGRADING";
+  }
+  if (activeJobCount >= DEFAULT_CONSTRUCTION_SLOTS) {
+    return "CONSTRUCTION_QUEUE_FULL";
+  }
+  const targetLevel = structure.level + 1;
+  const cap = Math.min(MAX_STRUCTURE_LEVEL, Math.max(1, player.level));
+  if (targetLevel > cap) {
+    return "LEVEL_CAP_REACHED";
+  }
+  if (numberValue(resources.energia, 0) < upgradeCost(targetLevel)) {
+    return "INSUFFICIENT_RESOURCES";
+  }
+  return "";
+}
+
+function upgradeBlockMessage(reason: string): string {
+  switch (reason) {
+    case "":
+      return "Upgrade disponivel.";
+    case "MAX_LEVEL_REACHED":
+      return "Predio ja esta no nivel maximo.";
+    case "STRUCTURE_ALREADY_UPGRADING":
+      return "Este predio ja esta em upgrade.";
+    case "CONSTRUCTION_QUEUE_FULL":
+      return "Fila de construcao cheia.";
+    case "LEVEL_CAP_REACHED":
+      return "Nivel do predio limitado pelo level do jogador.";
+    case "INSUFFICIENT_RESOURCES":
+      return "Energia insuficiente para iniciar este upgrade.";
+    default:
+      return "Upgrade bloqueado.";
+  }
 }
 
 function calculateCollectable(

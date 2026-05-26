@@ -16,6 +16,8 @@ const PROGRESSION_LAB_SCREEN_PATH := "res://dev/progression_lab/progression_lab_
 const BATTLE_REPLAY_TICK_SECONDS := 0.05
 
 const RESOURCE_KEYS := ["almas", "energia", "sangue", "cristais", "ossos", "diamante"]
+const BASE_STRUCTURE_IDS := ["altar_das_almas", "nucleo_energia", "pocos_sangue", "minas_cristal", "estrutura_stats", "ossario"]
+const ALPHA_ENERGY_PACK_PRODUCT_ID := "alpha_energy_pack_small"
 
 var _status_label: Label
 var _detail_label: Label
@@ -24,6 +26,7 @@ var _back_button: Button
 var _content_title: Label
 var _content_body: VBoxContainer
 var _timeline_label: Label
+var _base_state_container: VBoxContainer
 var _battle_visual: Control
 var _confirm_dialog: ConfirmationDialog
 
@@ -38,6 +41,7 @@ var _replay_running := false
 var _skip_replay := false
 var _battle_lab_overlay: Control
 var _progression_lab_overlay: Control
+var _selected_base_structure_id := "nucleo_energia"
 
 func _ready() -> void:
 	_clear_existing_scene()
@@ -203,6 +207,7 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	_current_screen = screen_id
 	_action_buttons.clear()
 	_timeline_label = null
+	_base_state_container = null
 	_battle_visual = null
 	_error_label.text = ""
 	_clear_content_body()
@@ -321,6 +326,11 @@ func _clear_content_body() -> void:
 		_content_body.remove_child(child)
 		child.queue_free()
 
+func _clear_node_children(parent: Node) -> void:
+	for child: Node in parent.get_children():
+		parent.remove_child(child)
+		child.queue_free()
+
 func _render_hub_screen() -> void:
 	_add_section_label("Alpha PC local")
 	_add_body_text("Track 01 endurece o playtest local: sessao recuperavel, reset seguro de cache, erros claros e telemetria nao autoritativa.")
@@ -391,11 +401,15 @@ func _render_battle_screen() -> void:
 		_timeline_label.text = "Nenhuma batalha carregada. Solicite uma batalha ou busque o ultimo resultado."
 
 func _render_base_screen() -> void:
-	_add_body_text("Base v0 com seis estruturas, coleta offline e fila de construcao no servidor.")
+	_add_body_text("Base do Refugio: predios permanentes, coleta offline e uma fila de construcao server-authoritative.")
 	_add_action_button("Atualizar base", "show_base")
 	_add_action_button("Coletar producao", "collect_base", "Coletar a producao offline acumulada da base?")
-	_add_action_button("Evoluir Nucleo", "upgrade_nucleo", "Iniciar evolucao do Nucleo de Energia usando recursos do servidor?")
+	_add_action_button("Comprar Energia alpha", "buy_energy_pack_alpha", "Gastar 80 Diamantes para comprar 80 Energia no save ativo?")
 	_timeline_label = _add_output_label("")
+	_base_state_container = VBoxContainer.new()
+	_base_state_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_base_state_container.add_theme_constant_override("separation", 10)
+	_content_body.add_child(_base_state_container)
 	_render_base_state()
 
 func _render_social_screen() -> void:
@@ -498,54 +512,61 @@ func _execute_action(action_id: String) -> void:
 	_active_action_id = action_id
 	_error_label.text = ""
 	_emit_client_event("action_start", _action_payload(action_id))
-	match action_id:
-		"enter_guest":
-			await _enter_guest()
-		"refresh_session":
-			await _refresh_session()
-		"reset_session":
-			await _reset_local_session()
-		"reset_active_save":
-			await _reset_active_save()
-		"select_save_normal":
-			_select_save(SessionStoreScript.SAVE_TYPE_NORMAL)
-		"select_save_progression_lab":
-			_select_save(SessionStoreScript.SAVE_TYPE_PROGRESSION_LAB)
-		"open_battle_lab":
-			_open_battle_lab_overlay()
-		"open_progression_lab":
-			_open_progression_lab_overlay()
-		"request_battle":
-			await _request_battle()
-		"show_latest_battle":
-			if _replay_running:
-				_skip_replay = true
-				return
-			await _show_latest_battle()
-		"show_base":
-			await _show_base()
-		"collect_base":
-			await _collect_base()
-		"upgrade_nucleo":
-			await _upgrade_nucleo()
-		"show_social":
-			await _show_social()
-		"create_guild":
-			await _create_guild()
-		"send_guild_chat":
-			await _send_guild_chat()
-		"show_matchmaking":
-			await _show_matchmaking()
-		"show_ranking":
-			await _show_ranking()
-		"show_shop":
-			await _show_shop()
-		"buy_premium_alpha":
-			await _buy_premium_alpha()
-		"grant_diamond_alpha":
-			await _grant_diamond_alpha()
-		"claim_daily_reward":
-			await _claim_daily_reward()
+	if action_id.begins_with("select_base_structure:"):
+		_select_base_structure(action_id.get_slice(":", 1))
+	elif action_id.begins_with("upgrade_base_structure:"):
+		await _upgrade_base_structure(action_id.get_slice(":", 1))
+	else:
+		match action_id:
+			"enter_guest":
+				await _enter_guest()
+			"refresh_session":
+				await _refresh_session()
+			"reset_session":
+				await _reset_local_session()
+			"reset_active_save":
+				await _reset_active_save()
+			"select_save_normal":
+				_select_save(SessionStoreScript.SAVE_TYPE_NORMAL)
+			"select_save_progression_lab":
+				_select_save(SessionStoreScript.SAVE_TYPE_PROGRESSION_LAB)
+			"open_battle_lab":
+				_open_battle_lab_overlay()
+			"open_progression_lab":
+				_open_progression_lab_overlay()
+			"request_battle":
+				await _request_battle()
+			"show_latest_battle":
+				if _replay_running:
+					_skip_replay = true
+					return
+				await _show_latest_battle()
+			"show_base":
+				await _show_base()
+			"collect_base":
+				await _collect_base()
+			"buy_energy_pack_alpha":
+				await _buy_energy_pack_alpha()
+			"upgrade_nucleo":
+				await _upgrade_base_structure("nucleo_energia")
+			"show_social":
+				await _show_social()
+			"create_guild":
+				await _create_guild()
+			"send_guild_chat":
+				await _send_guild_chat()
+			"show_matchmaking":
+				await _show_matchmaking()
+			"show_ranking":
+				await _show_ranking()
+			"show_shop":
+				await _show_shop()
+			"buy_premium_alpha":
+				await _buy_premium_alpha()
+			"grant_diamond_alpha":
+				await _grant_diamond_alpha()
+			"claim_daily_reward":
+				await _claim_daily_reward()
 	if _active_action_id == action_id:
 		var event_type := "action_failure" if _error_label.text != "" else "action_success"
 		var payload := _action_payload(action_id)
@@ -765,15 +786,46 @@ func _collect_base() -> void:
 	_set_busy(false, message)
 	_render_base_state(collected)
 
-func _upgrade_nucleo() -> void:
-	if not _require_account("Crie uma sessao guest antes de evoluir a base."):
+func _buy_energy_pack_alpha() -> void:
+	if not _require_account("Crie uma sessao guest antes de comprar Energia alpha."):
 		return
 
 	_show_screen(SCREEN_BASE, false)
-	_set_busy(true, "Solicitando evolucao do Nucleo...")
+	_set_busy(true, "Comprando pacote de Energia alpha...")
+	var monetization_result: Dictionary = await SupabaseClient.alpha_purchase(
+		SessionStoreScript.create_request_id(),
+		ALPHA_ENERGY_PACK_PRODUCT_ID,
+		SessionStore.access_token
+	)
+	if not bool(monetization_result.get("ok", false)):
+		_fail_with_error(monetization_result)
+		return
+
+	if not SessionStore.apply_monetization_result(monetization_result):
+		_fail_with_error({"error": SessionStore.last_error})
+		return
+
+	var base_result: Dictionary = await SupabaseClient.fetch_base_state(SessionStore.access_token)
+	if bool(base_result.get("ok", false)):
+		SessionStore.apply_base_result(base_result)
+
+	SessionStore.save_cache()
+	_set_busy(false, "Energia alpha comprada. A Base foi atualizada com o novo saldo.")
+	_render_base_state()
+
+func _upgrade_base_structure(structure_id: String) -> void:
+	if not _require_account("Crie uma sessao guest antes de evoluir a base."):
+		return
+	var target_structure_id := structure_id.strip_edges()
+	if target_structure_id == "":
+		target_structure_id = _selected_base_structure_id
+	_selected_base_structure_id = target_structure_id
+
+	_show_screen(SCREEN_BASE, false)
+	_set_busy(true, "Solicitando evolucao de %s..." % _structure_label(target_structure_id))
 	var base_result: Dictionary = await SupabaseClient.upgrade_base_structure(
 		SessionStoreScript.create_request_id(),
-		"nucleo_energia",
+		target_structure_id,
 		SessionStore.access_token
 	)
 	if not bool(base_result.get("ok", false)):
@@ -785,7 +837,7 @@ func _upgrade_nucleo() -> void:
 		return
 
 	SessionStore.save_cache()
-	_set_busy(false, "Evolucao iniciada no servidor.")
+	_set_busy(false, "Evolucao de %s iniciada no servidor." % _structure_label(target_structure_id))
 	_render_base_state()
 
 func _show_social() -> void:
@@ -1031,6 +1083,8 @@ func _sync_buttons() -> void:
 			button.disabled = button.disabled or not SessionStore.is_progression_lab_active()
 		elif action_id == "select_save_progression_lab":
 			button.disabled = button.disabled or SessionStore.is_progression_lab_active()
+		elif action_id.begins_with("upgrade_base_structure:"):
+			button.disabled = button.disabled or not _can_upgrade_base_structure(action_id.get_slice(":", 1))
 		if action_id == "show_latest_battle":
 			button.text = "Pular replay" if _replay_running else "Ver resultado"
 	for screen_id: String in _nav_buttons.keys():
@@ -1089,8 +1143,15 @@ func _render_base_state(collected: Dictionary = {}) -> void:
 	if _timeline_label == null:
 		return
 	var base := SessionStore.base_state
+	if _base_state_container != null:
+		_clear_node_children(_base_state_container)
 	if base.is_empty():
 		_timeline_label.text = "Base ainda nao carregada. Use Atualizar base."
+		if _base_state_container != null:
+			_base_state_container.add_child(_base_info_panel(
+				"Base nao carregada",
+				"Use Atualizar base para buscar os predios, a fila de construcao e os recursos no servidor."
+			))
 		return
 
 	var resources := SessionStore.resources
@@ -1111,16 +1172,17 @@ func _render_base_state(collected: Dictionary = {}) -> void:
 	if structures.is_empty():
 		lines.append("Estruturas: nenhuma estrutura retornada pelo servidor.")
 	else:
-		lines.append("Estruturas:")
+		lines.append("Estruturas: %d predios clicaveis no mapa abaixo." % structures.size())
 	for item: Variant in structures:
 		var structure := _as_dictionary(item)
 		if structure.is_empty():
 			continue
-		lines.append("- %s L%s | pendente %s/%s" % [
+		lines.append("- %s L%s | pendente %s/%s | %s" % [
 			_structure_label(str(structure.get("structure_id", "")), str(structure.get("display_name", ""))),
 			str(structure.get("level", 0)),
-			str(structure.get("pending_collectable", 0)),
-			str(structure.get("storage_cap", 0)),
+			_format_number(float(structure.get("pending_collectable", 0.0))),
+			_format_number(float(structure.get("storage_cap", 0.0))),
+			str(structure.get("blocked_message", "Upgrade bloqueado.")),
 		])
 
 	var jobs := _as_array(base.get("jobs", []))
@@ -1129,12 +1191,335 @@ func _render_base_state(collected: Dictionary = {}) -> void:
 		var job := _as_dictionary(item)
 		if str(job.get("status", "")) == "active":
 			active_jobs += 1
-			lines.append("- Em construcao: %s -> L%s" % [
+			lines.append("- Em construcao: %s -> L%s | resta %s" % [
 				_structure_label(str(job.get("structure_id", ""))),
 				str(job.get("target_level", "?")),
+				_format_duration(int(job.get("remaining_seconds", 0))),
 			])
 	lines.append("Fila: %d/%d" % [active_jobs, int(base.get("construction_slots", 1))])
 	_timeline_label.text = "\n".join(lines)
+	_render_base_playable_panels(structures, base, collected)
+
+func _render_base_playable_panels(structures: Array, base: Dictionary, collected: Dictionary) -> void:
+	if _base_state_container == null:
+		return
+	_ensure_selected_base_structure(structures)
+	_base_state_container.add_child(_base_summary_panel(base, collected))
+	_base_state_container.add_child(_base_map_panel(structures))
+	_base_state_container.add_child(_base_detail_panel(structures))
+
+func _base_summary_panel(base: Dictionary, collected: Dictionary) -> Control:
+	var panel := _base_panel()
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 6)
+	panel.add_child(box)
+	box.add_child(_base_label("Resumo da Base", "text_primary", 17))
+	box.add_child(_base_label("Recursos: %s" % _format_resources(SessionStore.resources), "text_secondary"))
+	var active_jobs := _active_base_jobs(_as_array(base.get("jobs", [])))
+	box.add_child(_base_label("Fila de construcao: %d/%d" % [
+		active_jobs.size(),
+		int(base.get("construction_slots", 1)),
+	], "text_secondary"))
+	if not collected.is_empty():
+		var collect_text := "Coleta: nada acumulado agora."
+		if _resource_total(collected) > 0.0:
+			collect_text = "Coletado agora: %s" % _format_resources(collected, false)
+		box.add_child(_base_label(collect_text, "status_success"))
+	if SessionStore.is_progression_lab_active():
+		box.add_child(_base_label("Progression Lab: base isolada do save normal.", "status_warning"))
+	return panel
+
+func _base_map_panel(structures: Array) -> Control:
+	var panel := _base_panel()
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 8)
+	panel.add_child(box)
+	box.add_child(_base_label("Mapa da Base", "text_primary", 17))
+	var grid := GridContainer.new()
+	grid.columns = 3
+	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	grid.add_theme_constant_override("h_separation", 8)
+	grid.add_theme_constant_override("v_separation", 8)
+	box.add_child(grid)
+	for structure_id: String in BASE_STRUCTURE_IDS:
+		var structure := _base_structure_by_id(structures, structure_id)
+		if structure.is_empty():
+			continue
+		grid.add_child(_base_structure_button(structure))
+	return panel
+
+func _base_detail_panel(structures: Array) -> Control:
+	var structure := _base_structure_by_id(structures, _selected_base_structure_id)
+	if structure.is_empty() and not structures.is_empty():
+		structure = _as_dictionary(structures[0])
+	var panel := _base_panel()
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 7)
+	panel.add_child(box)
+	if structure.is_empty():
+		box.add_child(_base_label("Selecione um predio no mapa da Base.", "text_secondary"))
+		return panel
+
+	var structure_id := str(structure.get("structure_id", ""))
+	var display_label := _structure_label(structure_id, str(structure.get("display_name", "")))
+	box.add_child(_base_label("%s - Level %s/%s" % [
+		display_label,
+		str(structure.get("level", 0)),
+		str(structure.get("max_level", 40)),
+	], "text_primary", 18))
+	box.add_child(_base_label(str(structure.get("description", "")), "text_secondary"))
+	box.add_child(_base_label("Beneficio: %s" % _base_benefit_text(structure), "text_secondary"))
+	box.add_child(_base_label("Producao pendente: %s" % _base_pending_text(structure), "text_secondary"))
+	box.add_child(_base_label("Proximo upgrade: %s" % _base_upgrade_text(structure), "text_secondary"))
+	box.add_child(_base_label("Status: %s" % str(structure.get("blocked_message", "")), _base_status_color_token(structure)))
+
+	var action_id := "upgrade_base_structure:%s" % structure_id
+	var upgrade_button := Button.new()
+	upgrade_button.text = "Evoluir %s" % display_label
+	upgrade_button.custom_minimum_size = Vector2(260, 44)
+	upgrade_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	upgrade_button.tooltip_text = _base_structure_tooltip(structure)
+	upgrade_button.disabled = not _can_upgrade_base_structure(structure_id)
+	upgrade_button.pressed.connect(func() -> void:
+		_trigger_action(action_id, "Iniciar upgrade de %s no servidor?" % display_label)
+	)
+	box.add_child(upgrade_button)
+	_action_buttons[action_id] = upgrade_button
+	return panel
+
+func _base_structure_button(structure: Dictionary) -> Button:
+	var structure_id := str(structure.get("structure_id", ""))
+	var selected := structure_id == _selected_base_structure_id
+	var button := Button.new()
+	button.text = "%s\n%s\nL%s -> %s\n%s" % [
+		_base_structure_symbol(structure_id),
+		_base_structure_short_label(structure_id),
+		str(structure.get("level", 0)),
+		_base_next_level_text(structure),
+		_base_short_status(structure),
+	]
+	button.custom_minimum_size = Vector2(190, 112)
+	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	button.tooltip_text = _base_structure_tooltip(structure)
+	button.add_theme_stylebox_override("normal", _base_structure_card_style(structure_id, selected))
+	button.add_theme_stylebox_override("hover", _base_structure_card_style(structure_id, true))
+	button.add_theme_stylebox_override("pressed", _base_structure_card_style(structure_id, true))
+	var action_id := "select_base_structure:%s" % structure_id
+	button.pressed.connect(func() -> void:
+		_trigger_action(action_id)
+	)
+	_action_buttons[action_id] = button
+	return button
+
+func _select_base_structure(structure_id: String) -> void:
+	if structure_id.strip_edges() == "":
+		return
+	_selected_base_structure_id = structure_id.strip_edges()
+	_render_base_state()
+
+func _ensure_selected_base_structure(structures: Array) -> void:
+	if not _base_structure_by_id(structures, _selected_base_structure_id).is_empty():
+		return
+	for structure_id: String in BASE_STRUCTURE_IDS:
+		if not _base_structure_by_id(structures, structure_id).is_empty():
+			_selected_base_structure_id = structure_id
+			return
+	if not structures.is_empty():
+		_selected_base_structure_id = str(_as_dictionary(structures[0]).get("structure_id", _selected_base_structure_id))
+
+func _base_structure_by_id(structures: Array, structure_id: String) -> Dictionary:
+	for item: Variant in structures:
+		var structure := _as_dictionary(item)
+		if str(structure.get("structure_id", "")) == structure_id:
+			return structure
+	return {}
+
+func _base_panel() -> PanelContainer:
+	var panel := PanelContainer.new()
+	panel.add_theme_stylebox_override("panel", _panel_style("bg_panel", "border_default"))
+	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return panel
+
+func _base_info_panel(title_text: String, body_text: String) -> Control:
+	var panel := _base_panel()
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 6)
+	panel.add_child(box)
+	box.add_child(_base_label(title_text, "text_primary", 17))
+	box.add_child(_base_label(body_text, "text_secondary"))
+	return panel
+
+func _base_label(text: String, color_token: String = "text_secondary", font_size: int = 0) -> Label:
+	var label := Label.new()
+	label.text = text
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.add_theme_color_override("font_color", UiTokens.color(color_token))
+	if font_size > 0:
+		label.add_theme_font_size_override("font_size", font_size)
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return label
+
+func _base_structure_card_style(structure_id: String, selected: bool) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = _base_structure_color(structure_id).darkened(0.25 if selected else 0.45)
+	style.border_color = UiTokens.color("status_success") if selected else UiTokens.color("border_default")
+	style.set_border_width_all(2 if selected else 1)
+	style.set_corner_radius_all(6)
+	style.content_margin_left = 10
+	style.content_margin_right = 10
+	style.content_margin_top = 10
+	style.content_margin_bottom = 10
+	return style
+
+func _base_structure_color(structure_id: String) -> Color:
+	match structure_id:
+		"altar_das_almas":
+			return Color(0.45, 0.35, 0.78)
+		"nucleo_energia":
+			return Color(0.25, 0.58, 0.86)
+		"pocos_sangue":
+			return Color(0.70, 0.20, 0.26)
+		"minas_cristal":
+			return Color(0.22, 0.66, 0.62)
+		"estrutura_stats":
+			return Color(0.58, 0.58, 0.50)
+		"ossario":
+			return Color(0.72, 0.66, 0.54)
+	return UiTokens.color("bg_panel_alt")
+
+func _base_structure_symbol(structure_id: String) -> String:
+	match structure_id:
+		"altar_das_almas":
+			return "[ALM]"
+		"nucleo_energia":
+			return "[ENE]"
+		"pocos_sangue":
+			return "[SAN]"
+		"minas_cristal":
+			return "[CRI]"
+		"estrutura_stats":
+			return "[STA]"
+		"ossario":
+			return "[OSS]"
+	return "[???]"
+
+func _base_structure_short_label(structure_id: String) -> String:
+	match structure_id:
+		"altar_das_almas":
+			return "Altar"
+		"nucleo_energia":
+			return "Nucleo"
+		"pocos_sangue":
+			return "Pocos"
+		"minas_cristal":
+			return "Minas"
+		"estrutura_stats":
+			return "Stats"
+		"ossario":
+			return "Ossario"
+	return structure_id
+
+func _base_benefit_text(structure: Dictionary) -> String:
+	var produces := str(structure.get("produces", ""))
+	if produces != "" and produces != "<null>":
+		return "%s por dia: %s | armazenamento: %s" % [
+			produces.capitalize(),
+			_format_number(float(structure.get("daily_production", 0.0))),
+			_format_number(float(structure.get("storage_cap", 0.0))),
+		]
+	return str(structure.get("benefit_label", "Bonus permanente."))
+
+func _base_pending_text(structure: Dictionary) -> String:
+	var produces := str(structure.get("produces", ""))
+	if produces == "" or produces == "<null>":
+		return "Este predio nao gera coleta direta."
+	return "%s %s de %s" % [
+		_format_number(float(structure.get("pending_collectable", 0.0))),
+		produces.capitalize(),
+		_format_number(float(structure.get("storage_cap", 0.0))),
+	]
+
+func _base_upgrade_text(structure: Dictionary) -> String:
+	var next_level: Variant = structure.get("next_level", null)
+	if next_level == null:
+		return "nivel maximo"
+	var cost := _as_dictionary(structure.get("upgrade_cost", {}))
+	return "L%s | custo %s | tempo %s" % [
+		str(next_level),
+		_format_cost(cost),
+		_format_duration(int(structure.get("upgrade_duration_seconds", 0))),
+	]
+
+func _base_next_level_text(structure: Dictionary) -> String:
+	var next_level: Variant = structure.get("next_level", null)
+	return "max" if next_level == null else "L%s" % str(next_level)
+
+func _base_short_status(structure: Dictionary) -> String:
+	var active_job := _as_dictionary(structure.get("active_job", {}))
+	if not active_job.is_empty():
+		return "Upgrade %s" % _format_duration(int(active_job.get("remaining_seconds", 0)))
+	if bool(structure.get("can_upgrade", false)):
+		return "Upgrade pronto"
+	return str(structure.get("blocked_message", "Bloqueado"))
+
+func _base_status_color_token(structure: Dictionary) -> String:
+	if bool(structure.get("can_upgrade", false)):
+		return "status_success"
+	var reason := str(structure.get("blocked_reason", ""))
+	if reason == "INSUFFICIENT_RESOURCES" or reason == "CONSTRUCTION_QUEUE_FULL":
+		return "status_warning"
+	return "text_secondary"
+
+func _base_structure_tooltip(structure: Dictionary) -> String:
+	var structure_id := str(structure.get("structure_id", ""))
+	return "%s\nO que e: %s\nComo funciona: %s\nImporta porque: %s" % [
+		_structure_label(structure_id, str(structure.get("display_name", ""))),
+		str(structure.get("description", "")),
+		_base_upgrade_text(structure),
+		_base_benefit_text(structure),
+	]
+
+func _can_upgrade_base_structure(structure_id: String) -> bool:
+	if SessionStore.is_progression_lab_local_only():
+		return false
+	if not SessionStore.has_valid_access_token() or not SessionStore.has_account_state():
+		return false
+	var base := SessionStore.base_state
+	var structures := _as_array(base.get("structures", []))
+	var structure := _base_structure_by_id(structures, structure_id)
+	return bool(structure.get("can_upgrade", false))
+
+func _active_base_jobs(jobs: Array) -> Array:
+	var active: Array = []
+	for item: Variant in jobs:
+		var job := _as_dictionary(item)
+		if str(job.get("status", "")) == "active":
+			active.append(job)
+	return active
+
+func _format_cost(cost: Dictionary) -> String:
+	if cost.is_empty():
+		return "-"
+	var parts := PackedStringArray()
+	for key: String in cost.keys():
+		parts.append("%s %s" % [str(key).capitalize(), _format_number(float(cost.get(key, 0.0)))])
+	return " | ".join(parts)
+
+func _format_duration(total_seconds: int) -> String:
+	var seconds: int = max(0, total_seconds)
+	var hours := int(seconds / 3600)
+	var minutes := int((seconds % 3600) / 60)
+	var remaining_seconds: int = seconds % 60
+	if hours > 0:
+		return "%dh %02dm" % [hours, minutes]
+	if minutes > 0:
+		return "%dm %02ds" % [minutes, remaining_seconds]
+	return "%ds" % remaining_seconds
+
+func _format_number(value: float) -> String:
+	if abs(value - round(value)) < 0.005:
+		return str(int(round(value)))
+	return "%.2f" % value
 
 func _render_social_state() -> void:
 	if _timeline_label == null:
@@ -1388,7 +1773,7 @@ func _structure_label(structure_id: String, fallback: String = "") -> String:
 	if fallback != "":
 		return fallback
 	match structure_id:
-		"altar_almas":
+		"altar_das_almas":
 			return "Altar das Almas"
 		"nucleo_energia":
 			return "Nucleo de Energia"
@@ -1433,7 +1818,15 @@ func _friendly_error_message(code: String, message: String) -> String:
 		"CLIENT_MISCONFIGURED":
 			return "Cliente Supabase sem chave publishable configurada."
 		"INSUFFICIENT_RESOURCES":
-			return "Energia insuficiente para iniciar evolucao do Nucleo."
+			return "Recursos insuficientes para esta acao. Na Base, confira Energia, custo e loja alpha."
+		"CONSTRUCTION_QUEUE_FULL":
+			return "Fila de construcao cheia. Aguarde o upgrade ativo terminar antes de iniciar outro."
+		"STRUCTURE_ALREADY_UPGRADING":
+			return "Este predio ja esta em upgrade."
+		"LEVEL_CAP_REACHED":
+			return "O level do jogador limita o proximo upgrade deste predio."
+		"INVALID_STRUCTURE":
+			return "Predio da Base nao encontrado no contrato atual."
 		"GUILD_REQUIRED":
 			return "Crie uma guilda antes de enviar mensagem no chat."
 		"GUILD_ALREADY_JOINED":

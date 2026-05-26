@@ -58,7 +58,7 @@ Regras:
 - Dados de ranking/social do save normal nao devem ser contaminados pelo lab.
 - Toda mutacao continua server-authoritative.
 
-Status local atual (`T03-P04`):
+Status local atual (`T03-P05`):
 
 - Godot persiste o save ativo e envia `x-draxos-save-type`.
 - Supabase local resolve `normal` e `progression_lab` por `players.save_type`.
@@ -67,6 +67,7 @@ Status local atual (`T03-P04`):
 - `progression_lab` fica fora do ranking com motivo explicito `PROGRESSION_LAB_DOES_NOT_RANK`.
 - O hub possui reset perigoso do save ativo; o servidor reconstrui apenas aquele save, preservando o outro.
 - A tela Progression Lab Dev possui `Aplicar no Save Lab`; o servidor valida o perfil/milestone contra o catalogo versionado, aplica apenas no save `progression_lab` e preserva o save `normal`.
+- A Base ja funciona como fluxo jogavel local: mapa de predios clicaveis, painel por predio, tooltips, custo/tempo/producao/status vindo do servidor, compra alpha de Energia e upgrade server-authoritative por estrutura.
 
 ## Backend Remoto
 
@@ -168,6 +169,13 @@ Cada predio precisa mostrar:
 - tempo/restante;
 - status da fila;
 - botao de upgrade ou motivo objetivo para bloqueio.
+
+Status local atual:
+
+- a aba Base mostra placeholders clicaveis para os seis predios;
+- cada predio tem painel proprio com level, beneficio, producao, custo, tempo, status e tooltip;
+- o servidor calcula `can_upgrade`, `blocked_reason`, custo, duracao e remaining time;
+- o cliente envia apenas intencao de coleta/upgrade/compra alpha e aplica o estado retornado.
 
 ### Social
 

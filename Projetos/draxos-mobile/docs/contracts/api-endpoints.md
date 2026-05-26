@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
 - Ultima atualizacao: `2026-05-26`
-- Status: contrato com `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*` e `progression-lab/*` implementados localmente; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`; Track 03 ja implementou selecao local de save via `x-draxos-save-type`, reset separado por save e aplicacao server-backed do Progression Lab no save `progression_lab`; ainda planeja email/senha e updates internos
+- Status: contrato com `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*` e `progression-lab/*` implementados localmente; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`; Track 03 ja implementou selecao local de save via `x-draxos-save-type`, reset separado por save, aplicacao server-backed do Progression Lab no save `progression_lab` e payload jogavel da Base com custo/tempo/producao/bloqueio por predio; ainda planeja email/senha e updates internos
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -486,7 +486,7 @@ Request logico:
 
 ### `GET /base/state`
 
-Status: **implementado em T00-P11**.
+Status: **implementado em T00-P11; enriquecido para UI jogavel em T03-P05**.
 
 Retorna o estado server-authoritative da Base v0. Ao carregar, o servidor conclui jobs vencidos antes de montar o payload.
 
@@ -497,16 +497,27 @@ Response v0:
   "ok": true,
   "resources": {},
   "base": {
+    "server_time": "2026-05-26T12:00:00.000Z",
     "construction_slots": 1,
     "structures": [
       {
         "structure_id": "nucleo_energia",
         "display_name": "Nucleo de Energia",
+        "description": "Produz Energia, o gargalo principal das construcoes da base.",
+        "benefit_label": "Energia para evoluir predios",
         "level": 0,
+        "max_level": 40,
         "produces": "energia",
         "daily_production": 0,
         "storage_cap": 0,
-        "pending_collectable": 0
+        "pending_collectable": 0,
+        "next_level": 1,
+        "upgrade_cost": { "energia": 20 },
+        "upgrade_duration_seconds": 120,
+        "can_upgrade": false,
+        "blocked_reason": "INSUFFICIENT_RESOURCES",
+        "blocked_message": "Energia insuficiente para iniciar este upgrade.",
+        "active_job": null
       }
     ],
     "jobs": []
@@ -514,9 +525,11 @@ Response v0:
 }
 ```
 
+Campos de apresentacao como `description`, `benefit_label`, `upgrade_cost`, `upgrade_duration_seconds`, `can_upgrade`, `blocked_reason`, `blocked_message`, `active_job` e `jobs[].remaining_seconds` sao calculados no servidor para a UI nao precisar replicar regras economicas.
+
 ### `POST /base/collect`
 
-Status: **implementado em T00-P11**.
+Status: **implementado em T00-P11; usado pela UI jogavel da Base em T03-P05**.
 
 Coleta producao offline de todas as estruturas produtoras, respeitando storage por estrutura. O cliente envia somente a intencao e um `request_id`; deltas sao calculados no servidor e gravados em `resource_transactions`.
 

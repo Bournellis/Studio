@@ -61,7 +61,7 @@ Enquanto o remoto estiver adiado, `T03-P02` permanece repo-ready: a configuracao
 
 ### T03-P03 - Conta Email/Senha E Dois Saves
 
-Status local-first: `IN_PROGRESS - T03-P04_COMPLETE`.
+Status local-first: `IN_PROGRESS - T03-P05_COMPLETE`.
 
 - Implementar fluxo email/senha.
 - Manter guest/local como fallback de desenvolvimento, se ainda util.
@@ -106,6 +106,8 @@ Implementado:
 
 ### T03-P05 - Base Manager Jogavel
 
+Status: `COMPLETE`.
+
 - Transformar predios da Base em tela navegavel de alpha.
 - Cada predio precisa ter estado, upgrade, custo, tempo, producao/beneficio e feedback.
 - Menus devem ser rolaveis em Android/PC/Web.
@@ -115,6 +117,14 @@ Implementado:
 Saida esperada:
 
 - Fluxo de base completo para o save normal e snapshot/isolamento para lab.
+
+Implementado:
+
+- `GET /base/state` retorna descricao, beneficio, custo, duracao, status, motivo de bloqueio, job ativo e remaining time por predio.
+- A aba Base do Hub mostra mapa de predios clicaveis, painel de detalhes, tooltips e upgrade por predio.
+- `POST /base/upgrade` segue server-authoritative e agora prioriza erro de estrutura ja em upgrade antes de fila cheia.
+- Atalho alpha "Comprar Energia" usa produto existente `alpha_energy_pack_small` para destravar o primeiro loop de upgrade.
+- Smoke `base_manager_smoke.ts` cobre payload jogavel, compra de Energia, upgrade do Nucleo e bloqueio de segunda construcao.
 
 ### T03-P06 - Social Basico Funcional
 

@@ -1,7 +1,7 @@
 # Track 03 - Internal Alpha v0 - Current Status
 
 - Last Updated: `2026-05-26`
-- Status: `T03-P04_COMPLETE - PROGRESSION LAB SERVER APPLY READY`
+- Status: `T03-P05_COMPLETE - BASE MANAGER PLAYABLE READY`
 - Baseline: Track 00 completa, Track 01 completa e Track 02 com Progression Lab/Battle Lab v1 implementados. O projeto ja possui Godot 4.6.2, Supabase local, conta guest, batalha server-authoritative, Base/Social/Competicao/Monetizacao v0, telemetria client nao autoritativa, exports Android/PC/Web, Battle Visual Mockup compartilhado e laboratorios internos. A Track 03 prepara a transicao para uma build fechada realista com email/senha, dois saves por conta, backend remoto, updates e playtest de 2 usuarios.
 
 ## Implementado Nesta Preparacao
@@ -21,6 +21,7 @@
 - `T03-P03B` completo: schema local ganhou `players.save_type`, unicidade por `auth_user_id + save_type`, RPCs `create_guest_account`/`request_mvp_battle` recebem save, Edge Functions resolvem `x-draxos-save-type` para `account`, `battle`, `base`, `social`, `competition`, `monetization` e `telemetry`, o Hub libera acoes server-backed no Lab, e o save `progression_lab` fica isolado do normal e fora do ranking com motivo explicito.
 - `T03-P03C` completo: `POST /account/saves/reset` e RPC `reset_player_save` reconstroem apenas o save ativo, preservam o outro save da mesma sessao Auth, limpam snapshots client-side do save resetado, mantem idempotencia por `request_id` e expoem botao perigoso "Resetar save ativo" no Hub.
 - `T03-P04` completo: `POST /progression-lab/apply` e RPC `apply_progression_lab_save` aplicam healthy saves versionados apenas no save `progression_lab`, preservam o save `normal`, limpam snapshots/estado antigo do Lab, mantem idempotencia por `request_id`, atualizam o Progression Lab Dev com "Aplicar no Save Lab" e validam o fluxo em smoke server.
+- `T03-P05` completo: Base Manager virou fluxo jogavel no Hub, com mapa de predios clicaveis, painel detalhado por estrutura, tooltips, upgrade por predio, compra alpha de Energia, custo/tempo/producao/status calculados pelo servidor e smoke cobrindo upgrade/fila.
 
 ## Ainda Nao Implementado
 
@@ -28,7 +29,7 @@
 - Supabase remoto real criado/configurado na conta Supabase.
 - Deploy remoto de migrations/functions e smoke contra URL real.
 - Manifest de updates em Supabase Storage.
-- Base/Social/Competicao/Loja refinados para build fechada.
+- Social/Competicao/Loja refinados para build fechada.
 - Export/publicacao das tres builds finais.
 
 ## Decisoes Ja Travadas
@@ -45,7 +46,7 @@
 
 ## Proximo Passo
 
-Executar `T03-P05`: transformar Base Manager em fluxo de jogo mais navegavel, com predios clicaveis, menus legiveis, feedback de custo/tempo/producao e isolamento correto entre save normal e Lab.
+Executar `T03-P06`: transformar Social em fluxo basico funcional para amigos por username, guilda, membros e chat por polling.
 
 ## Validacao Da Preparacao
 
@@ -65,7 +66,8 @@ Executar `T03-P05`: transformar Base Manager em fluxo de jogo mais navegavel, co
 - `npx -y deno test tools/progression_lab`: passou em 2026-05-26.
 - `npx -y deno run --allow-read tools/progression_lab/seed_supabase.ts --dry-run --all`: passou em 2026-05-26.
 - `npx -y deno run --allow-read --allow-write tools/progression_lab/generate.ts`: passou em 2026-05-26.
-- `tools/validate.gd`: passou em 2026-05-26 com GUT `48/48` e `303` asserts.
+- `tools/validate.gd`: passou em 2026-05-26 com GUT `48/48` e `304` asserts.
+- `npx -y deno run --allow-net --allow-env server/tests/base_manager_smoke.ts`: passou em 2026-05-26, validando payload jogavel da Base, compra alpha de Energia, upgrade por predio e fila cheia.
 - `tools/smoke_session_shell.gd`: passou em 2026-05-26 com Auth anonimo, conta guest e `account/state`.
 - `tools/smoke_dev_lab_ui.gd`: passou em 2026-05-26 no renderer headless.
 - `tools/smoke_dev_labs.gd`: passou em 2026-05-26.
