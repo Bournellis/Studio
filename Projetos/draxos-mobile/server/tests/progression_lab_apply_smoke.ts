@@ -48,7 +48,7 @@ await postJson(`${SUPABASE_URL}/functions/v1/battle/request`, {
 }, normalHeaders);
 await postJson(`${SUPABASE_URL}/functions/v1/monetization/alpha-purchase`, {
   request_id: crypto.randomUUID(),
-  product_id: "alpha_diamante_500",
+  product_id: "alpha_redeem_medium",
 }, normalHeaders);
 
 const normalApply = await postJson(

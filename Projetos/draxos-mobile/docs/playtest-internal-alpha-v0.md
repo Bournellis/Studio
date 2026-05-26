@@ -94,7 +94,9 @@ Competicao:
 
 Loja:
 - Redeem funcionou?
-- Premium/recursos ficaram claros?
+- Ficou claro que os redeems diarios entregam apenas Diamante e resetam por save?
+- Premium, fila dupla e recursos ficaram claros?
+- A fila dupla apareceu na Base como 2 slots?
 - Algum risco de parecer compra real?
 
 Progression Lab:

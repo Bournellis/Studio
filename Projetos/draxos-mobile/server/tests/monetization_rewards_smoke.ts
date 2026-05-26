@@ -57,8 +57,13 @@ assert(
 );
 assertEq(
   arrayField(monetization, "alpha_products").length,
-  3,
-  "state should include three alpha products",
+  8,
+  "state should include the alpha shop product catalog",
+);
+assertEq(
+  numberField(objectField(monetization, "shop_summary"), "daily_redeems_total"),
+  4,
+  "shop summary should expose four daily redeem packages",
 );
 
 const claimRequestId = crypto.randomUUID();
@@ -94,26 +99,53 @@ assertEq(
   "already claimed response should not mutate resources",
 );
 
-const diamondsRequestId = crypto.randomUUID();
-const firstDiamonds = await postJson(
+const smallRedeemRequestId = crypto.randomUUID();
+const firstSmallRedeem = await postJson(
   `${SUPABASE_URL}/functions/v1/monetization/alpha-purchase`,
-  { request_id: diamondsRequestId, product_id: "alpha_diamante_500" },
+  { request_id: smallRedeemRequestId, product_id: "alpha_redeem_small" },
   headers,
 );
-const repeatedDiamonds = await postJson(
+const repeatedSmallRedeem = await postJson(
   `${SUPABASE_URL}/functions/v1/monetization/alpha-purchase`,
-  { request_id: diamondsRequestId, product_id: "alpha_diamante_500" },
+  { request_id: smallRedeemRequestId, product_id: "alpha_redeem_small" },
   headers,
 );
 assertEq(
-  numberField(objectField(firstDiamonds, "resources"), "diamante"),
-  500,
-  "alpha diamond purchase should grant Diamante",
+  numberField(objectField(firstSmallRedeem, "resources"), "diamante"),
+  150,
+  "small alpha redeem should grant Diamante",
 );
 assertEq(
-  resourceSummary(objectField(firstDiamonds, "resources")),
-  resourceSummary(objectField(repeatedDiamonds, "resources")),
-  "alpha purchase should be idempotent",
+  resourceSummary(objectField(firstSmallRedeem, "resources")),
+  resourceSummary(objectField(repeatedSmallRedeem, "resources")),
+  "alpha redeem should be idempotent by request_id",
+);
+
+const duplicateSmallRedeem = await postJson(
+  `${SUPABASE_URL}/functions/v1/monetization/alpha-purchase`,
+  { request_id: crypto.randomUUID(), product_id: "alpha_redeem_small" },
+  headers,
+);
+assertEq(
+  duplicateSmallRedeem.already_redeemed,
+  true,
+  "same daily redeem should not double grant in the same Sao Paulo day",
+);
+assertEq(
+  resourceSummary(objectField(firstSmallRedeem, "resources")),
+  resourceSummary(objectField(duplicateSmallRedeem, "resources")),
+  "already redeemed response should not mutate resources",
+);
+
+const premiumRedeem = await postJson(
+  `${SUPABASE_URL}/functions/v1/monetization/alpha-purchase`,
+  { request_id: crypto.randomUUID(), product_id: "alpha_redeem_premium" },
+  headers,
+);
+assertEq(
+  numberField(objectField(premiumRedeem, "resources"), "diamante"),
+  3150,
+  "premium alpha redeem should fund the convenience shop",
 );
 
 const premium = await postJson(
@@ -128,7 +160,31 @@ const premiumProgress = objectField(
 assertEq(
   premiumProgress.premium_unlocked,
   true,
-  "premium alpha purchase should unlock premium pass",
+  "premium alpha purchase should spend Diamante and unlock premium pass",
+);
+assertEq(
+  numberField(objectField(premium, "resources"), "diamante"),
+  1950,
+  "premium alpha purchase should cost Diamante",
+);
+
+const doubleQueue = await postJson(
+  `${SUPABASE_URL}/functions/v1/monetization/alpha-purchase`,
+  { request_id: crypto.randomUUID(), product_id: "alpha_double_construction_queue" },
+  headers,
+);
+assertEq(
+  numberField(objectField(doubleQueue, "resources"), "diamante"),
+  1050,
+  "double construction queue should cost Diamante",
+);
+assert(
+  arrayField(
+    objectField(objectField(doubleQueue, "monetization"), "shop_summary"),
+    "convenience_owned",
+  )
+    .includes("alpha_double_construction_queue"),
+  "shop summary should list owned convenience products",
 );
 
 const premiumReward = await postJson(
@@ -156,13 +212,13 @@ const directRewardInsert = await postJson(
   false,
 );
 assert(
-  !Boolean(directRewardInsert.ok),
+  !directRewardInsert.ok,
   "direct anon insert into reward_claims should be blocked by RLS",
 );
 
 console.log("[monetization-rewards-smoke] OK", {
   player_id: player.id,
-  diamonds: numberField(objectField(firstDiamonds, "resources"), "diamante"),
+  diamonds: numberField(objectField(doubleQueue, "resources"), "diamante"),
   premium_unlocked: premiumProgress.premium_unlocked,
 });
 
@@ -268,9 +324,7 @@ function assert(condition: boolean, message: string): asserts condition {
 function assertEq(actual: unknown, expected: unknown, message: string): void {
   if (actual !== expected) {
     throw new Error(
-      `${message}. Expected ${JSON.stringify(expected)}, got ${
-        JSON.stringify(actual)
-      }`,
+      `${message}. Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`,
     );
   }
 }

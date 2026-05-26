@@ -83,6 +83,7 @@ const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3
 const SECONDS_PER_DAY = 86_400;
 const MAX_STRUCTURE_LEVEL = 40;
 const DEFAULT_CONSTRUCTION_SLOTS = 1;
+const DOUBLE_CONSTRUCTION_QUEUE_PRODUCT_ID = "alpha_double_construction_queue";
 const STRUCTURES: StructureDefinition[] = [
   {
     id: "altar_das_almas",
@@ -350,7 +351,7 @@ async function handleUpgrade(
   }
   if (
     refreshed.value.jobs.filter((job) => job.status === "active").length >=
-      DEFAULT_CONSTRUCTION_SLOTS
+      refreshed.value.constructionSlots
   ) {
     return errorResponse("CONSTRUCTION_QUEUE_FULL", "No construction slot is available.", 409);
   }
@@ -440,6 +441,7 @@ async function loadBaseState(
       resources: ResourceRow;
       structures: BaseStructureRow[];
       jobs: ConstructionJobRow[];
+      constructionSlots: number;
     };
     error: null;
   } | { value: null; error: RestError }
@@ -467,6 +469,10 @@ async function loadBaseState(
   }
 
   await ensureBaseRows(config, player.id);
+  const constructionSlots = await loadConstructionSlots(config, player.id);
+  if (constructionSlots.error !== null) {
+    return { value: null, error: constructionSlots.error };
+  }
   const playerId = encodeURIComponent(player.id);
   const resourcesResult = await restRequest<ResourceRow[]>(
     config,
@@ -496,9 +502,32 @@ async function loadBaseState(
     };
   }
   return {
-    value: { player, resources, structures: structuresResult.value, jobs: jobsResult.value },
+    value: {
+      player,
+      resources,
+      structures: structuresResult.value,
+      jobs: jobsResult.value,
+      constructionSlots: constructionSlots.value,
+    },
     error: null,
   };
+}
+
+async function loadConstructionSlots(
+  config: EdgeConfig,
+  playerId: string,
+): Promise<{ value: number; error: null } | { value: null; error: RestError }> {
+  const result = await restRequest<{ id: string }[]>(
+    config,
+    `alpha_purchases?player_id=eq.${encodeURIComponent(playerId)}&product_id=eq.${
+      encodeURIComponent(DOUBLE_CONSTRUCTION_QUEUE_PRODUCT_ID)
+    }&select=id&limit=1`,
+    { method: "GET" },
+  );
+  if (result.error !== null) {
+    return { value: null, error: stateReadError() };
+  }
+  return { value: result.value.length > 0 ? 2 : DEFAULT_CONSTRUCTION_SLOTS, error: null };
 }
 
 async function ensureBaseRows(config: EdgeConfig, playerId: string): Promise<void> {
@@ -553,6 +582,7 @@ function baseStatePayload(state: {
   resources: ResourceRow;
   structures: BaseStructureRow[];
   jobs: ConstructionJobRow[];
+  constructionSlots: number;
 }) {
   const now = new Date();
   const activeJobs = state.jobs.filter((job) => job.status === "active");
@@ -561,7 +591,10 @@ function baseStatePayload(state: {
     resources: state.resources,
     base: {
       server_time: now.toISOString(),
-      construction_slots: DEFAULT_CONSTRUCTION_SLOTS,
+      construction_slots: state.constructionSlots,
+      construction_slots_source: state.constructionSlots > DEFAULT_CONSTRUCTION_SLOTS
+        ? DOUBLE_CONSTRUCTION_QUEUE_PRODUCT_ID
+        : "default",
       structures: state.structures.map((structure) => {
         const definition = definitionFor(structure.structure_id);
         const pending = collectableFor(structure, now);
@@ -575,6 +608,7 @@ function baseStatePayload(state: {
           state.resources,
           activeJob,
           activeJobs.length,
+          state.constructionSlots,
         );
         return {
           ...structure,
@@ -617,6 +651,7 @@ function upgradeBlockReason(
   resources: ResourceRow,
   activeJob: ConstructionJobRow | undefined,
   activeJobCount: number,
+  constructionSlots: number,
 ): string {
   if (structure.level >= MAX_STRUCTURE_LEVEL) {
     return "MAX_LEVEL_REACHED";
@@ -624,7 +659,7 @@ function upgradeBlockReason(
   if (activeJob !== undefined) {
     return "STRUCTURE_ALREADY_UPGRADING";
   }
-  if (activeJobCount >= DEFAULT_CONSTRUCTION_SLOTS) {
+  if (activeJobCount >= constructionSlots) {
     return "CONSTRUCTION_QUEUE_FULL";
   }
   const targetLevel = structure.level + 1;

@@ -320,8 +320,8 @@ Campos:
 
 Regras:
 
-- Base v0 usa 1 slot de construcao.
-- Segundo slot existe como contrato de design, mas compra/liberacao fica para monetizacao/alpha posterior.
+- Base v0 usa 1 slot de construcao por padrao.
+- `alpha_double_construction_queue`, registrado em `alpha_purchases`, libera 2 slots de construcao para aquele save.
 - Nao ha dois jobs ativos da mesma estrutura.
 - Jobs vencidos sao concluidos pelo servidor ao ler/coletar/evoluir base.
 - Gastos e coletas usam `resource_transactions` e `idempotency_keys`.
@@ -455,7 +455,9 @@ Regras:
 
 - Unico por `player_id + request_id`.
 - Compras alpha nao integram gateway real de pagamento.
-- Diamante, premium e pacotes continuam mutando estado apenas via Edge Function e ledger.
+- Redeems diarios usam `purchase_payload.redeem_period_key` com dia `America/Sao_Paulo` para impedir duplicacao por produto/save.
+- Produtos unicos, como `alpha_battle_pass_premium` e `alpha_double_construction_queue`, retornam `already_owned=true` quando ja ativos e nao cobram de novo.
+- Diamante, premium, fila dupla e pacotes continuam mutando estado apenas via Edge Function e ledger.
 
 ## Regras De Seguranca
 

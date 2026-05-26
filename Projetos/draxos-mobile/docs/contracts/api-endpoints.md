@@ -482,7 +482,7 @@ Implementado localmente em `T03-P03B` por header HTTP:
 | POST | `/chat/send` | Enviar mensagem direct/guilda |
 | GET | `/monetization/state` | Estado do passe atual, recompensas, produtos alpha e claims |
 | POST | `/monetization/rewards/claim` | Coletar recompensa diaria/semanal/passe |
-| POST | `/monetization/alpha-purchase` | Compra alpha simulada de Premium/Diamante/pacotes |
+| POST | `/monetization/alpha-purchase` | Redeem/compra alpha simulada de Diamante, Premium, fila dupla e pacotes |
 | POST | `/telemetry/client-event` | Registrar evento client-side nao autoritativo |
 
 ### `POST /build/equip`
@@ -688,11 +688,23 @@ Response v0:
     "daily_rewards": [],
     "weekly_rewards": [],
     "alpha_products": [],
+    "shop_summary": {
+      "environment": "internal_alpha_v0",
+      "currency": "diamante",
+      "diamond_balance": 0,
+      "premium_unlocked": false,
+      "daily_redeem_period_key": "2026-05-20",
+      "daily_redeems_total": 4,
+      "daily_redeems_claimed": 0,
+      "reset_timezone": "America/Sao_Paulo"
+    },
     "claimed": [],
+    "alpha_purchases": [],
     "period_keys": {
       "daily": "2026-05-20",
       "weekly": "2026-W21",
-      "battle_pass": "bp_s1_01"
+      "battle_pass": "bp_s1_01",
+      "alpha_redeem_daily": "2026-05-20"
     }
   }
 }
@@ -734,15 +746,28 @@ Request:
 ```json
 {
   "request_id": "uuid",
-  "product_id": "alpha_diamante_500"
+  "product_id": "alpha_redeem_premium"
 }
 ```
 
 Product IDs v0:
 
-- `alpha_battle_pass_premium`: libera trilha premium do Battle Pass atual.
-- `alpha_diamante_500`: credita 500 Diamantes para teste alpha.
+- `alpha_redeem_small`: redeem diario pequeno, credita 150 Diamantes.
+- `alpha_redeem_medium`: redeem diario medio, credita 500 Diamantes.
+- `alpha_redeem_large`: redeem diario grande, credita 1200 Diamantes.
+- `alpha_redeem_premium`: redeem diario premium, credita 3000 Diamantes.
+- `alpha_battle_pass_premium`: gasta 1200 Diamantes e libera trilha premium do Battle Pass atual.
+- `alpha_double_construction_queue`: gasta 900 Diamantes e libera 2 slots de construcao na Base do save.
 - `alpha_energy_pack_small`: gasta 80 Diamantes e credita 80 Energia.
+- `alpha_resource_pack_medium`: gasta 250 Diamantes e credita pacote misto de Almas, Energia, Sangue, Cristais e Ossos.
+
+Regras:
+
+- Redeems diarios entregam apenas Diamante, sao por save e resetam a meia-noite `America/Sao_Paulo`.
+- `alpha_redeem_premium` deve cobrir Battle Pass + fila dupla + conveniencias principais da loja alpha do build.
+- Repetir o mesmo `request_id` retorna o mesmo payload.
+- Novo `request_id` para redeem ja resgatado no mesmo dia retorna `already_redeemed=true` sem duplicar recurso.
+- Novo `request_id` para produto unico ja ativo retorna `already_owned=true` sem cobrar de novo.
 
 Erros minimos: `UNAUTHENTICATED`, `PLAYER_NOT_FOUND`, `INVALID_REQUEST_ID`, `INVALID_PRODUCT`, `INSUFFICIENT_RESOURCES`, `ALPHA_PURCHASE_FAILED`.
 

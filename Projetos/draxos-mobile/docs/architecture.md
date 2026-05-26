@@ -86,11 +86,11 @@ Nakama deve ser reavaliado somente se pelo menos uma destas premissas mudar:
 - `T00-P07` completo: `battle/request`, `battle/latest`, RPC `request_mvp_battle`, log `battle_log_v1`, recompensa `MVP_ONLY` e idempotencia server-side.
 - `T00-P08` completo: replay placeholder no Godot para `battle_log_v1`, timeline ordenada por `t`/`seq`, skip e tolerancia a eventos desconhecidos.
 - `T00-P10` completo e rework 2026-05-25 aplicado: `FIRST_SLICE_SIM` server-authoritative com Instrumentos Rituais, Doutrinas, Familiares, DoTs, status, resistencias, summons, anti-stall, bots de variacao, smoke runtime Supabase e replay rico no cliente.
-- `T00-P11` completo e refinado em `T03-P05`: Base Manager v0 server-authoritative com `base/state`, `base/collect`, `base/upgrade`, estruturas permanentes, fila de construcao, coleta offline, ledger, idempotencia e payload de apresentacao com custo/tempo/producao/bloqueio por predio.
+- `T00-P11` completo e refinado em `T03-P05`/`T03-P08`: Base Manager v0 server-authoritative com `base/state`, `base/collect`, `base/upgrade`, estruturas permanentes, fila de construcao, fila dupla via loja alpha, coleta offline, ledger, idempotencia e payload de apresentacao com custo/tempo/producao/bloqueio por predio.
 - `T00-P12` completo: Social/Competicao v0 server-authoritative com `social/state`, guilda alpha, chat de guilda por polling, matchmaking preview com fallback de bot e ranking de season sem bots.
-- `T00-P13` completo: Monetizacao v0 server-authoritative com Battle Pass, Diamante alpha, recompensas diarias/semanais, claims free/premium, ledger, idempotencia e export smoke Android/PC/Web.
+- `T00-P13` completo e refinado em `T03-P08`: Monetizacao v0 server-authoritative com Battle Pass, redeems diarios de Diamante, recompensas diarias/semanais, claims free/premium, produtos alpha por Diamante, fila dupla, ledger, idempotencia e export smoke Android/PC/Web.
 - `Track 01` completo: hardening do alpha PC local com fluxo de primeira sessao mais claro, estados ocupados/erros offline/pre-condicoes visiveis, reset seguro de sessao local, telemetria client nao autoritativa e smoke do loop alpha.
-- `Track 03` com design lock completo, estrategia backend definida, T03-P02 repo-side preparado e T03-P07 completo: Supabase remoto Free para alpha, `BackendConfig` no Godot, env vars seguras, `.env` reais ignorados, smoke remoto minimo, `players.save_type` local, header `x-draxos-save-type` nos endpoints alpha, dois saves server-backed no Supabase local, reset separado por save, Progression Lab aplicado server-authoritative no save `progression_lab`, Base Manager jogavel, Social basico jogavel, Competicao com pontos/top 10/posicao do jogador no Godot/local e Backend Proprio + Postgres como plano de saida preferido. Nakama fica apenas como alternativa futura se realtime/social competitivo virar pilar.
+- `Track 03` com design lock completo, estrategia backend definida, T03-P02 repo-side preparado e T03-P08 completo: Supabase remoto Free para alpha, `BackendConfig` no Godot, env vars seguras, `.env` reais ignorados, smoke remoto minimo, `players.save_type` local, header `x-draxos-save-type` nos endpoints alpha, dois saves server-backed no Supabase local, reset separado por save, Progression Lab aplicado server-authoritative no save `progression_lab`, Base Manager jogavel, Social basico jogavel, Competicao com pontos/top 10/posicao do jogador, Loja proof-of-concept no Godot/local e Backend Proprio + Postgres como plano de saida preferido. Nakama fica apenas como alternativa futura se realtime/social competitivo virar pilar.
 
 ---
 
@@ -258,7 +258,7 @@ Regras:
 - Ranking, social e loja do save normal nao podem ser contaminados pelo `progression_lab`.
 - Implementacao inicial pode adaptar o schema atual de `players` para `save_type`, mas a direcao de longo prazo e separar conta de jogo e saves para permitir novos modos/fases sem acoplar tudo a uma linha de player.
 
-Implementado localmente ate `T03-P07`:
+Implementado localmente ate `T03-P08`:
 
 - `players.save_type` aceita `normal` e `progression_lab`.
 - A unicidade de jogador passa a ser `auth_user_id + save_type`.
@@ -269,6 +269,7 @@ Implementado localmente ate `T03-P07`:
 - `GET /base/state` entrega metadados de apresentacao server-side para Base jogavel: descricao, beneficio, custo, duracao, status, bloqueio e remaining time.
 - Social usa identidade de conta no runtime: `normal` e o social canonico quando existir, `progression_lab` recebe marcador `lab`, amigos retornam username enriquecido, guilda permite criar/entrar/ver membros e chat de guilda tem polling + rate limit.
 - Competicao usa `battle/request` `FIRST_SLICE_SIM` para pontuar o save `normal` no servidor, retorna top 10 + posicao do jogador e mantem bots e `progression_lab` fora da tabela `ranking`.
+- Loja usa `monetization/state`/`alpha-purchase` para redeems diarios de Diamante, produtos por Diamante, Battle Pass premium, fila dupla, pacotes e status de compra por save.
 
 Modelo escolhido em `DMOB-D042`:
 
@@ -419,14 +420,16 @@ Implementacao local `T03-P06`:
 
 Monetizacao do alpha e funcional para validar fluxo e contrato, mas nao usa gateway real de pagamento.
 
-Sistemas implementados em `T00-P13`:
+Sistemas implementados em `T00-P13` e refinados em `T03-P08`:
 
 - Battle Pass ativo `bp_s1_01` com trilhas free e premium.
 - Progresso em `battle_pass_progress`, criado sob demanda.
 - Rewards diarias e semanais no Edge Function `monetization`.
 - Claims em `reward_claims`, unicos por periodo.
 - Compras alpha em `alpha_purchases`, idempotentes por `request_id`.
-- Produtos alpha: premium pass, 500 Diamantes e pacote pequeno de Energia.
+- Produtos alpha: redeems diarios de Diamante, premium pass, fila dupla de construcao, pacote pequeno de Energia e pacote medio de recursos.
+- `shop_summary` e `alpha_products` enriquecidos para UI: custo, ganho, efeito, `can_purchase`, `already_redeemed`/`already_owned` e periodo de reset.
+- A Base consulta `alpha_double_construction_queue` em `alpha_purchases` para liberar 2 slots de construcao no save.
 
 Regras:
 
@@ -434,6 +437,7 @@ Regras:
 - Toda mutacao economica passa por `resource_transactions`.
 - Premium required e periodo de claim sao validados no servidor.
 - Repetir o mesmo `request_id` retorna o mesmo payload; repetir reward no mesmo periodo com novo request nao duplica recurso.
+- Redeems diarios sao por produto/save e resetam a meia-noite `America/Sao_Paulo`.
 
 ## Telemetria E Simulacoes
 

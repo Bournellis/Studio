@@ -102,7 +102,7 @@ assertEq(
 
 await postJson(
   `${SUPABASE_URL}/functions/v1/monetization/alpha-purchase`,
-  { request_id: crypto.randomUUID(), product_id: "alpha_diamante_500" },
+  { request_id: crypto.randomUUID(), product_id: "alpha_redeem_large" },
   headers,
 );
 await postJson(
@@ -155,6 +155,42 @@ assertEq(
   "base/upgrade should reject a second active job",
 );
 
+await postJson(
+  `${SUPABASE_URL}/functions/v1/monetization/alpha-purchase`,
+  { request_id: crypto.randomUUID(), product_id: "alpha_double_construction_queue" },
+  headers,
+);
+const doubleQueueBaseState = await getJson(
+  `${SUPABASE_URL}/functions/v1/base/state`,
+  headers,
+);
+assertEq(
+  objectField(doubleQueueBaseState, "base").construction_slots,
+  2,
+  "base/state should expose purchased double construction queue",
+);
+const secondUpgrade = await postJson(
+  `${SUPABASE_URL}/functions/v1/base/upgrade`,
+  { request_id: crypto.randomUUID(), structure_id: "altar_das_almas" },
+  headers,
+);
+assertEq(
+  numberField(objectField(secondUpgrade, "job"), "target_level"),
+  1,
+  "double construction queue should allow a second active upgrade",
+);
+const queueFullWithDouble = await postJson(
+  `${SUPABASE_URL}/functions/v1/base/upgrade`,
+  { request_id: crypto.randomUUID(), structure_id: "pocos_sangue" },
+  headers,
+  false,
+);
+assertEq(
+  errorCode(queueFullWithDouble),
+  "CONSTRUCTION_QUEUE_FULL",
+  "double construction queue should still cap at two active jobs",
+);
+
 console.log("[base-smoke] OK", {
   structures: structures.length,
   collected: objectField(firstCollect, "collected"),
@@ -200,9 +236,7 @@ async function parseResponse(
   if (requireOk) {
     assert(
       response.ok,
-      `request failed with status ${response.status}: ${
-        JSON.stringify(payload)
-      }`,
+      `request failed with status ${response.status}: ${JSON.stringify(payload)}`,
     );
     assert(
       payload.ok === true,
@@ -267,9 +301,7 @@ function assert(condition: boolean, message: string): asserts condition {
 function assertEq(actual: unknown, expected: unknown, message: string): void {
   if (actual !== expected) {
     throw new Error(
-      `${message}. Expected ${JSON.stringify(expected)}, got ${
-        JSON.stringify(actual)
-      }`,
+      `${message}. Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`,
     );
   }
 }

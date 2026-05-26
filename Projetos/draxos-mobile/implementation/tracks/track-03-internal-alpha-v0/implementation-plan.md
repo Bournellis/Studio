@@ -61,7 +61,7 @@ Enquanto o remoto estiver adiado, `T03-P02` permanece repo-ready: a configuracao
 
 ### T03-P03 - Conta Email/Senha E Dois Saves
 
-Status local-first: `IN_PROGRESS - T03-P07_COMPLETE`.
+Status local-first: `IN_PROGRESS - T03-P08_COMPLETE`.
 
 - Implementar fluxo email/senha.
 - Manter guest/local como fallback de desenvolvimento, se ainda util.
@@ -183,6 +183,16 @@ Implementado:
 Saida esperada:
 
 - Testador free consegue simular estados premium por redeem e observar impacto no save correto.
+
+Implementado:
+
+- Catalogo alpha com quatro redeems diarios de Diamante (`pequeno`, `medio`, `grande`, `premium`), reset por save em `America/Sao_Paulo`.
+- Produtos comprados com Diamante: Battle Pass premium, fila dupla de construcao, pacote de Energia e pacote medio de recursos.
+- `monetization/state` retorna `shop_summary`, `alpha_products` com custo/ganho/efeito/status e historico de compras.
+- `monetization/alpha-purchase` mantem ledger/idempotencia, bloqueia duplicacao diaria por produto e evita cobrar produto unico ja ativo.
+- `base/state` e `base/upgrade` respeitam `alpha_double_construction_queue` e passam de 1 para 2 slots quando comprado.
+- A aba Loja do Hub exibe botoes, tooltips, resumo, catalogo, recompensas e desabilita produtos ja resgatados/ativos quando o estado esta carregado.
+- Smokes de monetizacao/base cobrem redeems, compra premium, fila dupla e isolamento por save.
 
 ### T03-P09 - Batalha Visual Polish Pequeno
 

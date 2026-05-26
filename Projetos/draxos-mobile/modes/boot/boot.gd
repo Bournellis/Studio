@@ -18,6 +18,58 @@ const BATTLE_REPLAY_TICK_SECONDS := 0.05
 const RESOURCE_KEYS := ["almas", "energia", "sangue", "cristais", "ossos", "diamante"]
 const BASE_STRUCTURE_IDS := ["altar_das_almas", "nucleo_energia", "pocos_sangue", "minas_cristal", "estrutura_stats", "ossario"]
 const ALPHA_ENERGY_PACK_PRODUCT_ID := "alpha_energy_pack_small"
+const SHOP_REDEEM_PRODUCTS := [
+	{
+		"id": "alpha_redeem_small",
+		"label": "Redeem pequeno",
+		"confirm": "Resgatar o pacote diario pequeno de Diamante neste save?",
+		"tooltip": "Pacote diario pequeno: entrega Diamante para testar compras leves no save ativo. Reseta a meia-noite de Sao Paulo.",
+	},
+	{
+		"id": "alpha_redeem_medium",
+		"label": "Redeem medio",
+		"confirm": "Resgatar o pacote diario medio de Diamante neste save?",
+		"tooltip": "Pacote diario medio: entrega Diamante para comprar alguns recursos e acelerar um teste curto.",
+	},
+	{
+		"id": "alpha_redeem_large",
+		"label": "Redeem grande",
+		"confirm": "Resgatar o pacote diario grande de Diamante neste save?",
+		"tooltip": "Pacote diario grande: entrega Diamante para testar compras maiores sem resetar o save.",
+	},
+	{
+		"id": "alpha_redeem_premium",
+		"label": "Redeem premium",
+		"confirm": "Resgatar o pacote diario premium de Diamante neste save?",
+		"tooltip": "Pacote diario premium: entrega Diamante suficiente para Battle Pass, fila dupla e conveniencias alpha.",
+	},
+]
+const SHOP_PURCHASE_PRODUCTS := [
+	{
+		"id": "alpha_battle_pass_premium",
+		"label": "Comprar Battle Pass",
+		"confirm": "Comprar a trilha premium do Battle Pass alpha com Diamante?",
+		"tooltip": "Libera recompensas premium do Battle Pass neste save. Nao pode ser comprado duas vezes.",
+	},
+	{
+		"id": "alpha_double_construction_queue",
+		"label": "Comprar fila dupla",
+		"confirm": "Comprar a fila dupla de construcao da Base com Diamante?",
+		"tooltip": "Aumenta a fila da Base para dois upgrades ativos ao mesmo tempo neste save.",
+	},
+	{
+		"id": "alpha_energy_pack_small",
+		"label": "Comprar Energia",
+		"confirm": "Gastar Diamante para comprar Energia no save ativo?",
+		"tooltip": "Converte Diamante em Energia para continuar upgrades de predios.",
+	},
+	{
+		"id": "alpha_resource_pack_medium",
+		"label": "Comprar recursos",
+		"confirm": "Gastar Diamante para comprar o pacote de recursos alpha?",
+		"tooltip": "Converte Diamante em Almas, Energia, Sangue, Cristais e Ossos para simular progresso comprado.",
+	},
+]
 
 var _status_label: Label
 var _detail_label: Label
@@ -29,6 +81,7 @@ var _timeline_label: Label
 var _base_state_container: VBoxContainer
 var _social_state_container: VBoxContainer
 var _competition_state_container: VBoxContainer
+var _shop_state_container: VBoxContainer
 var _social_friend_input: LineEdit
 var _social_guild_input: LineEdit
 var _social_chat_input: LineEdit
@@ -218,6 +271,7 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	_base_state_container = null
 	_social_state_container = null
 	_competition_state_container = null
+	_shop_state_container = null
 	_social_friend_input = null
 	_social_guild_input = null
 	_social_chat_input = null
@@ -476,12 +530,37 @@ func _render_competition_screen() -> void:
 	_render_competition_state()
 
 func _render_shop_screen() -> void:
-	_add_body_text("Loja alpha funcional: Battle Pass, Diamante, premium alpha e claims idempotentes.")
-	_add_action_button("Atualizar loja", "show_shop")
-	_add_action_button("Comprar premium alpha", "buy_premium_alpha", "Liberar Premium Battle Pass Alpha nesta conta de teste?")
-	_add_action_button("Receber Diamante", "grant_diamond_alpha", "Creditar 500 Diamantes alpha nesta conta de teste?")
-	_add_action_button("Claim diario", "claim_daily_reward", "Resgatar a recompensa diaria de coleta da base?")
+	_add_body_text("Loja alpha funcional: redeems diarios de Diamante, compras de progresso, Battle Pass e conveniencias por save.")
+	var refresh_button := _add_action_button("Atualizar loja", "show_shop")
+	refresh_button.tooltip_text = "Busca saldo, produtos, resgates diarios e recompensas atuais no servidor."
+	_add_section_label("Redeems diarios")
+	for spec: Dictionary in SHOP_REDEEM_PRODUCTS:
+		var redeem_button := _add_action_button(
+			str(spec.get("label", "")),
+			"shop_purchase:%s" % str(spec.get("id", "")),
+			str(spec.get("confirm", ""))
+		)
+		redeem_button.tooltip_text = str(spec.get("tooltip", ""))
+	_add_section_label("Compras alpha")
+	for spec: Dictionary in SHOP_PURCHASE_PRODUCTS:
+		var product_button := _add_action_button(
+			str(spec.get("label", "")),
+			"shop_purchase:%s" % str(spec.get("id", "")),
+			str(spec.get("confirm", ""))
+		)
+		product_button.tooltip_text = str(spec.get("tooltip", ""))
+	_add_section_label("Recompensas")
+	var daily_button := _add_action_button(
+		"Claim coleta diaria",
+		"claim_reward:daily_collect_base",
+		"Resgatar a recompensa diaria de coleta da base?"
+	)
+	daily_button.tooltip_text = "Recompensa diaria server-authoritative ligada a XP, recursos e progresso de Battle Pass."
 	_timeline_label = _add_output_label("")
+	_shop_state_container = VBoxContainer.new()
+	_shop_state_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_shop_state_container.add_theme_constant_override("separation", 10)
+	_content_body.add_child(_shop_state_container)
 	_render_monetization_state()
 
 func _add_section_label(text: String) -> Label:
@@ -584,6 +663,10 @@ func _execute_action(action_id: String) -> void:
 		_select_base_structure(action_id.get_slice(":", 1))
 	elif action_id.begins_with("upgrade_base_structure:"):
 		await _upgrade_base_structure(action_id.get_slice(":", 1))
+	elif action_id.begins_with("shop_purchase:"):
+		await _buy_shop_product(action_id.get_slice(":", 1))
+	elif action_id.begins_with("claim_reward:"):
+		await _claim_shop_reward(action_id.get_slice(":", 1))
 	else:
 		match action_id:
 			"enter_guest":
@@ -634,11 +717,11 @@ func _execute_action(action_id: String) -> void:
 			"show_shop":
 				await _show_shop()
 			"buy_premium_alpha":
-				await _buy_premium_alpha()
+				await _buy_shop_product("alpha_battle_pass_premium")
 			"grant_diamond_alpha":
-				await _grant_diamond_alpha()
+				await _buy_shop_product("alpha_redeem_medium")
 			"claim_daily_reward":
-				await _claim_daily_reward()
+				await _claim_shop_reward("daily_collect_base")
 	if _active_action_id == action_id:
 		var event_type := "action_failure" if _error_label.text != "" else "action_success"
 		var payload := _action_payload(action_id)
@@ -1088,15 +1171,15 @@ func _show_shop() -> void:
 	_set_busy(false, "Loja alpha recuperada.")
 	_render_monetization_state()
 
-func _buy_premium_alpha() -> void:
-	if not _require_account("Crie uma sessao guest antes de comprar premium alpha."):
+func _buy_shop_product(product_id: String) -> void:
+	if not _require_account("Crie uma sessao guest antes de comprar na Loja."):
 		return
 
 	_show_screen(SCREEN_SHOP, false)
-	_set_busy(true, "Liberando premium alpha...")
+	_set_busy(true, "Processando produto alpha...")
 	var monetization_result: Dictionary = await SupabaseClient.alpha_purchase(
 		SessionStoreScript.create_request_id(),
-		"alpha_battle_pass_premium",
+		product_id,
 		SessionStore.access_token
 	)
 	if not bool(monetization_result.get("ok", false)):
@@ -1106,41 +1189,24 @@ func _buy_premium_alpha() -> void:
 		_fail_with_error({"error": SessionStore.last_error})
 		return
 
+	if product_id == ALPHA_ENERGY_PACK_PRODUCT_ID or product_id == "alpha_double_construction_queue":
+		var base_result: Dictionary = await SupabaseClient.fetch_base_state(SessionStore.access_token)
+		if bool(base_result.get("ok", false)):
+			SessionStore.apply_base_result(base_result)
+
 	SessionStore.save_cache()
-	_set_busy(false, "Premium alpha liberado.")
+	_set_busy(false, _shop_purchase_message(product_id, _as_dictionary(monetization_result.get("body", {}))))
 	_render_monetization_state()
 
-func _grant_diamond_alpha() -> void:
-	if not _require_account("Crie uma sessao guest antes de receber Diamante."):
+func _claim_shop_reward(reward_id: String) -> void:
+	if not _require_account("Crie uma sessao guest antes de resgatar recompensa."):
 		return
 
 	_show_screen(SCREEN_SHOP, false)
-	_set_busy(true, "Registrando compra alpha de Diamante...")
-	var monetization_result: Dictionary = await SupabaseClient.alpha_purchase(
-		SessionStoreScript.create_request_id(),
-		"alpha_diamante_500",
-		SessionStore.access_token
-	)
-	if not bool(monetization_result.get("ok", false)):
-		_fail_with_error(monetization_result)
-		return
-	if not SessionStore.apply_monetization_result(monetization_result):
-		_fail_with_error({"error": SessionStore.last_error})
-		return
-
-	SessionStore.save_cache()
-	_set_busy(false, "Diamante alpha creditado.")
-	_render_monetization_state()
-
-func _claim_daily_reward() -> void:
-	if not _require_account("Crie uma sessao guest antes de resgatar recompensa diaria."):
-		return
-
-	_show_screen(SCREEN_SHOP, false)
-	_set_busy(true, "Resgatando recompensa diaria...")
+	_set_busy(true, "Resgatando recompensa...")
 	var monetization_result: Dictionary = await SupabaseClient.claim_reward(
 		SessionStoreScript.create_request_id(),
-		"daily_collect_base",
+		reward_id,
 		SessionStore.access_token
 	)
 	if not bool(monetization_result.get("ok", false)):
@@ -1151,9 +1217,9 @@ func _claim_daily_reward() -> void:
 		return
 
 	var body := _as_dictionary(monetization_result.get("body", {}))
-	var message := "Recompensa diaria registrada no servidor."
+	var message := "Recompensa registrada no servidor."
 	if bool(body.get("already_claimed", false)):
-		message = "Recompensa diaria ja havia sido resgatada."
+		message = "Recompensa ja havia sido resgatada neste periodo."
 	SessionStore.save_cache()
 	_set_busy(false, message)
 	_render_monetization_state()
@@ -1217,6 +1283,14 @@ func _sync_buttons() -> void:
 			button.disabled = button.disabled or SessionStore.is_progression_lab_active()
 		elif action_id.begins_with("upgrade_base_structure:"):
 			button.disabled = button.disabled or not _can_upgrade_base_structure(action_id.get_slice(":", 1))
+		elif action_id.begins_with("shop_purchase:"):
+			var product := _shop_product_by_id(action_id.get_slice(":", 1))
+			if not product.is_empty():
+				button.disabled = button.disabled or not bool(product.get("can_purchase", true))
+		elif action_id.begins_with("claim_reward:"):
+			var reward := _shop_reward_by_id(action_id.get_slice(":", 1))
+			if not reward.is_empty():
+				button.disabled = button.disabled or bool(reward.get("claimed", false))
 		if action_id == "show_latest_battle":
 			button.text = "Pular replay" if _replay_running else "Ver resultado"
 	for screen_id: String in _nav_buttons.keys():
@@ -2038,14 +2112,33 @@ func _competition_scoring_model_text(model: String) -> String:
 func _render_monetization_state() -> void:
 	if _timeline_label == null:
 		return
+	if _shop_state_container != null:
+		_clear_node_children(_shop_state_container)
 	var monetization := SessionStore.monetization_state
 	if monetization.is_empty():
 		_timeline_label.text = "Loja alpha ainda nao carregada. Use Atualizar loja."
+		if _shop_state_container != null:
+			_shop_state_container.add_child(_base_info_panel(
+				"Loja nao carregada",
+				"Atualize a Loja para ver saldo de Diamante, produtos, resgates diarios e recompensas disponiveis."
+			))
 		return
 
 	var lines := PackedStringArray()
-	lines.append("Monetizacao alpha server-authoritative")
+	var summary := _as_dictionary(monetization.get("shop_summary", {}))
+	lines.append("Loja alpha server-authoritative")
 	lines.append("Recursos: %s" % _format_resources(SessionStore.resources))
+	if not summary.is_empty():
+		lines.append("Diamante: %s | Premium: %s | Redeems hoje: %s/%s" % [
+			str(summary.get("diamond_balance", SessionStore.resources.get("diamante", 0))),
+			"ativo" if bool(summary.get("premium_unlocked", false)) else "inativo",
+			str(summary.get("daily_redeems_claimed", 0)),
+			str(summary.get("daily_redeems_total", 0)),
+		])
+		lines.append("Reset diario: %s (%s)" % [
+			str(summary.get("daily_redeem_period_key", "")),
+			str(summary.get("reset_timezone", "America/Sao_Paulo")),
+		])
 	var battle_pass := _as_dictionary(monetization.get("battle_pass", {}))
 	var pass_config := _as_dictionary(battle_pass.get("pass", {}))
 	var progress := _as_dictionary(battle_pass.get("progress", {}))
@@ -2055,23 +2148,189 @@ func _render_monetization_state() -> void:
 		str(progress.get("premium_unlocked", false)),
 	])
 	var daily_rewards := _as_array(monetization.get("daily_rewards", []))
-	lines.append("Recompensas diarias:")
-	for item: Variant in daily_rewards.slice(0, min(daily_rewards.size(), 5)):
+	var products := _as_array(monetization.get("alpha_products", []))
+	lines.append("Produtos alpha: %d | Recompensas diarias: %d" % [products.size(), daily_rewards.size()])
+	_timeline_label.text = "\n".join(lines)
+	if _shop_state_container != null:
+		_render_shop_panels(monetization)
+	_sync_buttons()
+
+func _render_shop_panels(monetization: Dictionary) -> void:
+	var summary := _as_dictionary(monetization.get("shop_summary", {}))
+	if not summary.is_empty():
+		_shop_state_container.add_child(_shop_summary_panel(summary))
+
+	var redeem_products: Array = []
+	var purchase_products: Array = []
+	for item: Variant in _as_array(monetization.get("alpha_products", [])):
+		var product := _as_dictionary(item)
+		if product.is_empty():
+			continue
+		if bool(product.get("daily_redeem", false)):
+			redeem_products.append(product)
+		else:
+			purchase_products.append(product)
+	_shop_state_container.add_child(_shop_product_group_panel("Redeems diarios de Diamante", redeem_products))
+	_shop_state_container.add_child(_shop_product_group_panel("Compras e conveniencias", purchase_products))
+	_shop_state_container.add_child(_shop_reward_group_panel("Recompensas diarias", _as_array(monetization.get("daily_rewards", []))))
+
+	var battle_pass := _as_dictionary(monetization.get("battle_pass", {}))
+	_shop_state_container.add_child(_shop_reward_group_panel("Battle Pass", _as_array(battle_pass.get("rewards", []))))
+
+func _shop_summary_panel(summary: Dictionary) -> Control:
+	var panel := _base_panel()
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 6)
+	panel.add_child(box)
+	box.add_child(_base_label("Resumo da Loja", "text_primary", 17))
+	box.add_child(_base_label("Diamante: %s | Moeda principal do alpha: %s" % [
+		str(summary.get("diamond_balance", 0)),
+		str(summary.get("currency", "diamante")).capitalize(),
+	], "text_secondary"))
+	box.add_child(_base_label("Premium: %s | Redeems hoje: %s/%s | Reset: meia-noite America/Sao_Paulo" % [
+		"ativo" if bool(summary.get("premium_unlocked", false)) else "inativo",
+		str(summary.get("daily_redeems_claimed", 0)),
+		str(summary.get("daily_redeems_total", 0)),
+	], "text_secondary"))
+	var owned := _as_array(summary.get("convenience_owned", []))
+	if owned.is_empty():
+		box.add_child(_base_label("Conveniencias ativas: nenhuma.", "text_secondary"))
+	else:
+		var owned_ids := PackedStringArray()
+		for item: Variant in owned:
+			owned_ids.append(str(item))
+		box.add_child(_base_label("Conveniencias ativas: %s" % ", ".join(owned_ids), "status_success"))
+	return panel
+
+func _shop_product_group_panel(title_text: String, products: Array) -> Control:
+	var panel := _base_panel()
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 8)
+	panel.add_child(box)
+	box.add_child(_base_label(title_text, "text_primary", 17))
+	if products.is_empty():
+		box.add_child(_base_label("Nenhum produto retornado pelo servidor.", "text_secondary"))
+		return panel
+	for item: Variant in products:
+		var product := _as_dictionary(item)
+		if product.is_empty():
+			continue
+		box.add_child(_base_label("%s | %s" % [
+			str(product.get("label", product.get("id", ""))),
+			_shop_product_status_text(product),
+		], _shop_product_status_color(product)))
+		box.add_child(_base_label("Custo: %s | Recebe: %s | Efeito: %s" % [
+			_format_shop_delta(_as_dictionary(product.get("cost", {})), "gratis"),
+			_format_shop_delta(_as_dictionary(product.get("resources", {})), "nenhum recurso direto"),
+			_shop_effect_text(_as_dictionary(product.get("effect", {}))),
+		], "text_secondary"))
+		var description := str(product.get("description", ""))
+		if description != "":
+			box.add_child(_base_label(description, "text_secondary"))
+	return panel
+
+func _shop_reward_group_panel(title_text: String, rewards: Array) -> Control:
+	var panel := _base_panel()
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 8)
+	panel.add_child(box)
+	box.add_child(_base_label(title_text, "text_primary", 17))
+	if rewards.is_empty():
+		box.add_child(_base_label("Nenhuma recompensa retornada pelo servidor.", "text_secondary"))
+		return panel
+	for item: Variant in rewards:
 		var reward := _as_dictionary(item)
 		if reward.is_empty():
 			continue
-		lines.append("- %s | xp %s | claimed=%s" % [
+		var status_text := "resgatada" if bool(reward.get("claimed", false)) else "disponivel"
+		var color_token := "status_success" if not bool(reward.get("claimed", false)) else "text_secondary"
+		if bool(reward.get("premium_required", false)):
+			status_text += " | premium"
+		box.add_child(_base_label("%s | XP %s | %s" % [
 			str(reward.get("label", reward.get("id", ""))),
 			str(reward.get("xp", 0)),
-			str(reward.get("claimed", false)),
-		])
-	var products := _as_array(monetization.get("alpha_products", []))
-	lines.append("Produtos alpha: %d" % products.size())
-	for item: Variant in products:
+			status_text,
+		], color_token))
+		box.add_child(_base_label("Recursos: %s | Periodo: %s" % [
+			_format_shop_delta(_as_dictionary(reward.get("resources", {})), "nenhum recurso"),
+			str(reward.get("period_key", "")),
+		], "text_secondary"))
+	return panel
+
+func _shop_product_status_text(product: Dictionary) -> String:
+	if bool(product.get("already_redeemed", false)):
+		return "resgatado hoje"
+	if bool(product.get("already_owned", false)):
+		return "ja ativo"
+	if bool(product.get("can_purchase", true)):
+		return "disponivel"
+	return _shop_locked_reason_text(str(product.get("locked_reason", "")))
+
+func _shop_product_status_color(product: Dictionary) -> String:
+	if bool(product.get("can_purchase", true)):
+		return "status_success"
+	if bool(product.get("already_redeemed", false)) or bool(product.get("already_owned", false)):
+		return "text_secondary"
+	return "status_warning"
+
+func _shop_locked_reason_text(reason: String) -> String:
+	match reason:
+		"DAILY_REDEEM_ALREADY_CLAIMED":
+			return "resgatado hoje"
+		"ALREADY_OWNED":
+			return "ja ativo"
+		"INSUFFICIENT_RESOURCES":
+			return "Diamante insuficiente"
+		"":
+			return "indisponivel"
+	return reason
+
+func _shop_effect_text(effect: Dictionary) -> String:
+	if effect.is_empty():
+		return "nenhum efeito persistente"
+	match str(effect.get("type", "")):
+		"construction_slots":
+			return "fila da Base: %s slots" % str(effect.get("value", 0))
+	return str(effect)
+
+func _format_shop_delta(delta: Dictionary, empty_text: String) -> String:
+	if delta.is_empty():
+		return empty_text
+	return _format_cost(delta)
+
+func _shop_product_by_id(product_id: String) -> Dictionary:
+	var monetization := SessionStore.monetization_state
+	for item: Variant in _as_array(monetization.get("alpha_products", [])):
 		var product := _as_dictionary(item)
-		if not product.is_empty():
-			lines.append("- %s" % str(product.get("label", product.get("id", ""))))
-	_timeline_label.text = "\n".join(lines)
+		if str(product.get("id", "")) == product_id:
+			return product
+	return {}
+
+func _shop_reward_by_id(reward_id: String) -> Dictionary:
+	var monetization := SessionStore.monetization_state
+	for group_key: String in ["daily_rewards", "weekly_rewards"]:
+		for item: Variant in _as_array(monetization.get(group_key, [])):
+			var reward := _as_dictionary(item)
+			if str(reward.get("id", "")) == reward_id:
+				return reward
+	var battle_pass := _as_dictionary(monetization.get("battle_pass", {}))
+	for item: Variant in _as_array(battle_pass.get("rewards", [])):
+		var reward := _as_dictionary(item)
+		if str(reward.get("id", "")) == reward_id:
+			return reward
+	return {}
+
+func _shop_purchase_message(product_id: String, body: Dictionary) -> String:
+	if bool(body.get("already_redeemed", false)):
+		return "Redeem diario ja havia sido resgatado neste save."
+	if bool(body.get("already_owned", false)):
+		return "Produto ja estava ativo neste save."
+	var purchase := _as_dictionary(body.get("purchase", {}))
+	var label := str(purchase.get("label", product_id))
+	var delta := _as_dictionary(purchase.get("delta", {}))
+	if delta.is_empty():
+		return "%s aplicado." % label
+	return "%s aplicado: %s." % [label, _format_shop_delta(delta, "sem mudanca de recurso")]
 
 func _play_battle_log(battle_log: Dictionary, rewards: Dictionary) -> void:
 	var schema_version := str(battle_log.get("schema_version", ""))
@@ -2300,6 +2559,12 @@ func _friendly_error_message(code: String, message: String) -> String:
 			return "Aguarde alguns segundos antes de enviar outra mensagem."
 		"PRODUCT_NOT_FOUND":
 			return "Produto alpha nao encontrado no servidor."
+		"INVALID_PRODUCT":
+			return "Produto alpha nao encontrado no catalogo atual."
+		"DAILY_REDEEM_ALREADY_CLAIMED":
+			return "Este redeem diario ja foi resgatado hoje neste save."
+		"ALREADY_OWNED":
+			return "Este produto ja esta ativo neste save."
 		"REWARD_NOT_FOUND":
 			return "Recompensa alpha nao encontrada no servidor."
 		"UNAUTHENTICATED":

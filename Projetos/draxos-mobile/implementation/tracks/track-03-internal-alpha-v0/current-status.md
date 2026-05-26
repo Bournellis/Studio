@@ -1,7 +1,7 @@
 # Track 03 - Internal Alpha v0 - Current Status
 
 - Last Updated: `2026-05-26`
-- Status: `T03-P07_COMPLETE - COMPETITION LEADERBOARD PLAYABLE READY`
+- Status: `T03-P08_COMPLETE - SHOP PROOF-OF-CONCEPT PLAYABLE`
 - Baseline: Track 00 completa, Track 01 completa e Track 02 com Progression Lab/Battle Lab v1 implementados. O projeto ja possui Godot 4.6.2, Supabase local, conta guest, batalha server-authoritative, Base/Social/Competicao/Monetizacao v0, telemetria client nao autoritativa, exports Android/PC/Web, Battle Visual Mockup compartilhado e laboratorios internos. A Track 03 prepara a transicao para uma build fechada realista com email/senha, dois saves por conta, backend remoto, updates e playtest de 2 usuarios.
 
 ## Implementado Nesta Preparacao
@@ -24,6 +24,7 @@
 - `T03-P05` completo: Base Manager virou fluxo jogavel no Hub, com mapa de predios clicaveis, painel detalhado por estrutura, tooltips, upgrade por predio, compra alpha de Energia, custo/tempo/producao/status calculados pelo servidor e smoke cobrindo upgrade/fila.
 - `T03-P06` completo: Social virou fluxo basico jogavel no Hub, com amigos por username, criar/entrar em guilda, lista de membros/estruturas, chat de guilda por polling, rate limit, erros amigaveis, tooltips, painéis de estado e identidade social de conta com marcador `lab`.
 - `T03-P07` completo: Competicao virou leaderboard alpha jogavel; `battle/request` `FIRST_SLICE_SIM` pontua o save `normal` com modelo `alpha_v0_power_adjusted`, `progression_lab` permanece fora do ranking, `competition/ranking/current` retorna top 10 + posicao do jogador, bots ficam fora da leaderboard e o Hub mostra matchmaking, ultima batalha competitiva e ranking com tooltips.
+- `T03-P08` completo: Loja virou proof-of-concept jogavel; `monetization/state` retorna `shop_summary` e produtos enriquecidos, redeems diarios entregam apenas Diamante por save com reset Sao Paulo, Battle Pass/fila dupla/pacotes usam Diamante, fila dupla altera a Base para 2 slots e o Hub mostra resumo, catalogo, recompensas, bloqueio visual e tooltips.
 
 ## Ainda Nao Implementado
 
@@ -31,7 +32,6 @@
 - Supabase remoto real criado/configurado na conta Supabase.
 - Deploy remoto de migrations/functions e smoke contra URL real.
 - Manifest de updates em Supabase Storage.
-- Loja refinada para build fechada.
 - Export/publicacao das tres builds finais.
 
 ## Decisoes Ja Travadas
@@ -48,7 +48,7 @@
 
 ## Proximo Passo
 
-Executar `T03-P08`: transformar Loja em proof-of-concept alpha com redeems diarios de Diamante/premium e feedback de compra/claim voltado ao testador.
+Executar `T03-P09`: polir somente clareza visual/HUD/tooltips da batalha se isso aumentar a leitura do playtest, sem importar assets externos.
 
 ## Validacao Da Preparacao
 
@@ -60,6 +60,8 @@ Executar `T03-P08`: transformar Loja em proof-of-concept alpha com redeems diari
 - `npx -y deno check server/tests/reset_save_context_smoke.ts`: passou em 2026-05-26.
 - `npx -y deno check server/tests/progression_lab_apply_smoke.ts`: passou em 2026-05-26.
 - `npx -y deno check server/tests/social_competition_smoke.ts`: passou em 2026-05-26.
+- `npx -y deno check supabase/functions/monetization/index.ts supabase/functions/base/index.ts server/tests/monetization_rewards_smoke.ts server/tests/base_manager_smoke.ts server/tests/progression_lab_apply_smoke.ts server/tests/reset_save_context_smoke.ts`: passou em 2026-05-26.
+- `npx -y deno lint supabase/functions/monetization/index.ts supabase/functions/base/index.ts server/functions/monetization/index.ts server/functions/base/index.ts server/tests/monetization_rewards_smoke.ts server/tests/base_manager_smoke.ts server/tests/progression_lab_apply_smoke.ts server/tests/reset_save_context_smoke.ts`: passou em 2026-05-26.
 - `npx -y deno check tools/progression_lab/seed_supabase.ts`: passou em 2026-05-26.
 - `npx -y supabase db reset`: passou em 2026-05-26 aplicando `202605260001_two_save_context.sql`, `202605260002_reset_save_context.sql` e `202605260003_progression_lab_apply.sql`.
 - `npx -y deno run --allow-net --allow-env server/tests/two_save_context_smoke.ts`: passou em 2026-05-26, criando saves distintos `normal` e `progression_lab` na mesma sessao Auth.
@@ -71,9 +73,10 @@ Executar `T03-P08`: transformar Loja em proof-of-concept alpha com redeems diari
 - `npx -y deno run --allow-read tools/progression_lab/seed_supabase.ts --dry-run --all`: passou em 2026-05-26.
 - `npx -y deno run --allow-read --allow-write tools/progression_lab/generate.ts`: passou em 2026-05-26.
 - `tools/validate.gd`: passou em 2026-05-26 com GUT `48/48` e `307` asserts.
-- `npx -y deno run --allow-net --allow-env server/tests/base_manager_smoke.ts`: passou em 2026-05-26, validando payload jogavel da Base, compra alpha de Energia, upgrade por predio e fila cheia.
+- `npx -y deno run --allow-net --allow-env server/tests/base_manager_smoke.ts`: passou em 2026-05-26, validando payload jogavel da Base, compra alpha de Energia, upgrade por predio, fila cheia, compra da fila dupla e limite em 2 upgrades ativos.
+- `npx -y deno run --allow-net --allow-env server/tests/monetization_rewards_smoke.ts`: passou em 2026-05-26, validando `shop_summary`, quatro redeems diarios, bloqueio de duplicacao diaria, compra premium por Diamante, fila dupla em `convenience_owned`, reward premium e RLS.
 - `tools/smoke_session_shell.gd`: passou em 2026-05-26 com Auth anonimo, conta guest e `account/state`.
-- `tools/smoke_alpha_loop.gd`: passou em 2026-05-26 com Auth anonimo, battle/base/social/competition/shop e telemetria final.
+- `tools/smoke_alpha_loop.gd`: passou em 2026-05-26 com Auth anonimo, battle/base/social/competition/shop, redeem de Loja e telemetria final.
 - `tools/smoke_dev_lab_ui.gd`: passou em 2026-05-26 no renderer headless.
 - `tools/smoke_dev_labs.gd`: passou em 2026-05-26.
 - `tools/smoke_exports.gd`: passou em 2026-05-26 para Android Alpha, PC Windows Alpha e PC Browser Alpha.

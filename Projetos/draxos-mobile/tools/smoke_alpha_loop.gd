@@ -107,6 +107,15 @@ func _run_smoke() -> int:
 		store.free()
 		client.queue_free()
 		return _fail(shop_result, "shop")
+	var redeem_result: Dictionary = await client.alpha_purchase(
+		SessionStoreScript.create_request_id(),
+		"alpha_redeem_small",
+		store.access_token
+	)
+	if not bool(redeem_result.get("ok", false)) or not store.apply_monetization_result(redeem_result):
+		store.free()
+		client.queue_free()
+		return _fail(redeem_result, "shop-redeem")
 	var reward_result: Dictionary = await client.claim_reward(
 		SessionStoreScript.create_request_id(),
 		"daily_collect_base",

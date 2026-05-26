@@ -48,7 +48,7 @@ await postJson(`${SUPABASE_URL}/functions/v1/battle/request`, {
 }, normalHeaders);
 await postJson(`${SUPABASE_URL}/functions/v1/monetization/alpha-purchase`, {
   request_id: crypto.randomUUID(),
-  product_id: "alpha_diamante_500",
+  product_id: "alpha_redeem_medium",
 }, normalHeaders);
 await postJson(`${SUPABASE_URL}/functions/v1/battle/request`, {
   request_id: crypto.randomUUID(),
@@ -56,7 +56,7 @@ await postJson(`${SUPABASE_URL}/functions/v1/battle/request`, {
 }, labHeaders);
 await postJson(`${SUPABASE_URL}/functions/v1/monetization/alpha-purchase`, {
   request_id: crypto.randomUUID(),
-  product_id: "alpha_diamante_500",
+  product_id: "alpha_redeem_medium",
 }, labHeaders);
 
 const progressedNormal = await getJson(
@@ -331,9 +331,7 @@ function assert(condition: boolean, message: string): asserts condition {
 function assertEq(actual: unknown, expected: unknown, message: string): void {
   if (actual !== expected) {
     throw new Error(
-      `${message}. Expected ${JSON.stringify(expected)}, got ${
-        JSON.stringify(actual)
-      }`,
+      `${message}. Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`,
     );
   }
 }

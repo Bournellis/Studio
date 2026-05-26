@@ -75,6 +75,14 @@ interface RewardClaimRow {
   created_at: string;
 }
 
+interface AlphaPurchaseRow {
+  id: string;
+  product_id: string;
+  request_id: string;
+  purchase_payload: unknown;
+  created_at: string;
+}
+
 interface IdempotencyRow {
   response_payload: unknown;
 }
@@ -92,9 +100,23 @@ interface RewardDefinition {
 interface AlphaProduct {
   id: string;
   label: string;
-  kind: "grant" | "premium_unlock" | "resource_pack";
+  description: string;
+  kind: "daily_redeem" | "premium_unlock" | "resource_pack" | "convenience_unlock";
   resources?: Partial<Record<ResourceKey, number>>;
   cost?: Partial<Record<ResourceKey, number>>;
+  dailyRedeem?: boolean;
+  redeemTier?: "pequeno" | "medio" | "grande" | "premium";
+  effect?: Record<string, unknown>;
+  sortOrder: number;
+}
+
+interface MonetizationState {
+  player: PlayerRow;
+  resources: ResourceRow;
+  pass: BattlePassRow;
+  progress: BattlePassProgressRow;
+  claims: RewardClaimRow[];
+  purchases: AlphaPurchaseRow[];
 }
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -191,22 +213,80 @@ const BATTLE_PASS_REWARDS: RewardDefinition[] = [
 
 const ALPHA_PRODUCTS: AlphaProduct[] = [
   {
-    id: "alpha_battle_pass_premium",
-    label: "Premium Battle Pass Alpha",
-    kind: "premium_unlock",
+    id: "alpha_redeem_small",
+    label: "Redeem diario pequeno",
+    description: "Credita Diamante para testar um impulso leve de loja neste save.",
+    kind: "daily_redeem",
+    resources: { diamante: 150 },
+    dailyRedeem: true,
+    redeemTier: "pequeno",
+    sortOrder: 10,
   },
   {
-    id: "alpha_diamante_500",
-    label: "Diamante Alpha 500",
-    kind: "grant",
+    id: "alpha_redeem_medium",
+    label: "Redeem diario medio",
+    description: "Credita Diamante suficiente para alguns pacotes de recurso alpha.",
+    kind: "daily_redeem",
     resources: { diamante: 500 },
+    dailyRedeem: true,
+    redeemTier: "medio",
+    sortOrder: 20,
+  },
+  {
+    id: "alpha_redeem_large",
+    label: "Redeem diario grande",
+    description: "Credita Diamante para acelerar uma sessao de teste sem resetar o save.",
+    kind: "daily_redeem",
+    resources: { diamante: 1200 },
+    dailyRedeem: true,
+    redeemTier: "grande",
+    sortOrder: 30,
+  },
+  {
+    id: "alpha_redeem_premium",
+    label: "Redeem diario premium",
+    description:
+      "Credita Diamante para comprar Battle Pass, fila dupla e conveniencias alpha no mesmo dia.",
+    kind: "daily_redeem",
+    resources: { diamante: 3000 },
+    dailyRedeem: true,
+    redeemTier: "premium",
+    sortOrder: 40,
+  },
+  {
+    id: "alpha_battle_pass_premium",
+    label: "Premium Battle Pass Alpha",
+    description: "Compra a trilha premium do Battle Pass alpha no save ativo.",
+    kind: "premium_unlock",
+    cost: { diamante: -1200 },
+    sortOrder: 100,
+  },
+  {
+    id: "alpha_double_construction_queue",
+    label: "Fila dupla de construcao",
+    description: "Libera dois upgrades de predio ativos ao mesmo tempo na Base deste save.",
+    kind: "convenience_unlock",
+    cost: { diamante: -900 },
+    effect: { type: "construction_slots", value: 2 },
+    sortOrder: 110,
   },
   {
     id: "alpha_energy_pack_small",
     label: "Pacote de Energia Alpha",
     kind: "resource_pack",
+    description: "Converte Diamante em Energia para continuar upgrades da Base.",
     cost: { diamante: -80 },
     resources: { energia: 80 },
+    sortOrder: 200,
+  },
+  {
+    id: "alpha_resource_pack_medium",
+    label: "Pacote de recursos Alpha",
+    description: "Converte Diamante em recursos mistos para simular compra de progresso.",
+    kind: "resource_pack",
+    cost: { diamante: -250 },
+    resources: { almas: 50, energia: 120, sangue: 20, cristais: 10, ossos: 5 },
+    sortOrder: 210,
   },
 ];
 
@@ -433,6 +513,7 @@ async function handleRewardClaim(
           created_at: now.toISOString(),
         },
       ],
+      purchases: state.value.purchases,
     }, now),
     already_claimed: false,
     reward: {
@@ -491,6 +572,52 @@ async function handleAlphaPurchase(
     return jsonResponse(existing.value);
   }
 
+  const now = new Date();
+  const dailyRedeemPeriodKey = dateKeySaoPaulo(now);
+  if (
+    product.dailyRedeem === true && isDailyRedeemClaimed(
+      state.value.purchases,
+      product,
+      dailyRedeemPeriodKey,
+    )
+  ) {
+    const responsePayload = {
+      ...monetizationStatePayload(state.value, now),
+      already_redeemed: true,
+      purchase: alphaProductPayload(product, state.value, dailyRedeemPeriodKey),
+    };
+    const idem = await insertIdempotency(
+      config,
+      state.value.player.id,
+      "monetization/alpha-purchase",
+      requestId,
+      responsePayload,
+    );
+    if (idem !== null) {
+      return errorResponse(idem.code, idem.message, idem.status);
+    }
+    return jsonResponse(responsePayload);
+  }
+
+  if (isAlphaProductOwned(state.value, product)) {
+    const responsePayload = {
+      ...monetizationStatePayload(state.value, now),
+      already_owned: true,
+      purchase: alphaProductPayload(product, state.value, dailyRedeemPeriodKey),
+    };
+    const idem = await insertIdempotency(
+      config,
+      state.value.player.id,
+      "monetization/alpha-purchase",
+      requestId,
+      responsePayload,
+    );
+    if (idem !== null) {
+      return errorResponse(idem.code, idem.message, idem.status);
+    }
+    return jsonResponse(responsePayload);
+  }
+
   const delta = combineResourceDeltas(product.cost ?? {}, product.resources ?? {});
   if (!canApplyDelta(state.value.resources, delta)) {
     return errorResponse("INSUFFICIENT_RESOURCES", "Not enough resources for alpha product.", 409);
@@ -521,9 +648,14 @@ async function handleAlphaPurchase(
   const purchasePayload = {
     product_id: product.id,
     label: product.label,
+    description: product.description,
     kind: product.kind,
     alpha_simulated: true,
+    cost: resourceDelta(product.cost ?? {}),
+    resources: resourceDelta(product.resources ?? {}),
     delta: resourceDelta(delta),
+    redeem_period_key: product.dailyRedeem === true ? dailyRedeemPeriodKey : null,
+    effect: product.effect ?? null,
   };
   const purchaseError = await insertAlphaPurchase(
     config,
@@ -546,12 +678,20 @@ async function handleAlphaPurchase(
     return errorResponse(ledgerError.code, ledgerError.message, ledgerError.status);
   }
 
+  const purchaseRow: AlphaPurchaseRow = {
+    id: "",
+    product_id: product.id,
+    request_id: requestId,
+    purchase_payload: purchasePayload,
+    created_at: now.toISOString(),
+  };
   const responsePayload = {
     ...monetizationStatePayload({
       ...state.value,
       resources: updatedResources.value,
       progress: updatedProgress.value,
-    }, new Date()),
+      purchases: [purchaseRow, ...state.value.purchases],
+    }, now),
     purchase: purchasePayload,
   };
   const idem = await insertIdempotency(
@@ -570,18 +710,7 @@ async function handleAlphaPurchase(
 async function loadMonetizationState(
   auth: AuthContext,
   config: EdgeConfig,
-): Promise<
-  {
-    value: {
-      player: PlayerRow;
-      resources: ResourceRow;
-      pass: BattlePassRow;
-      progress: BattlePassProgressRow;
-      claims: RewardClaimRow[];
-    };
-    error: null;
-  } | { value: null; error: RestError }
-> {
+): Promise<{ value: MonetizationState; error: null } | { value: null; error: RestError }> {
   const player = await loadPlayer(auth, config);
   if (player.error !== null) return { value: null, error: player.error };
   const resources = await loadResources(config, player.value.id);
@@ -592,6 +721,8 @@ async function loadMonetizationState(
   if (progress.error !== null) return { value: null, error: progress.error };
   const claims = await loadRewardClaims(config, player.value.id);
   if (claims.error !== null) return { value: null, error: claims.error };
+  const purchases = await loadAlphaPurchases(config, player.value.id);
+  if (purchases.error !== null) return { value: null, error: purchases.error };
   return {
     value: {
       player: player.value,
@@ -599,21 +730,19 @@ async function loadMonetizationState(
       pass: pass.value,
       progress: progress.value,
       claims: claims.value,
+      purchases: purchases.value,
     },
     error: null,
   };
 }
 
-function monetizationStatePayload(state: {
-  player: PlayerRow;
-  resources: ResourceRow;
-  pass: BattlePassRow;
-  progress: BattlePassProgressRow;
-  claims: RewardClaimRow[];
-}, now: Date) {
-  const dailyKey = dateKeyUTC(now);
+function monetizationStatePayload(state: MonetizationState, now: Date) {
+  const dailyKey = dateKeySaoPaulo(now);
   const weeklyKey = weekKeyUTC(now);
   const passKey = state.pass.id;
+  const products = ALPHA_PRODUCTS.toSorted((left, right) => left.sortOrder - right.sortOrder).map(
+    (product) => alphaProductPayload(product, state, dailyKey),
+  );
   return {
     ok: true,
     player: state.player,
@@ -632,12 +761,15 @@ function monetizationStatePayload(state: {
       weekly_rewards: WEEKLY_REWARDS.map((reward) =>
         rewardPayload(reward, isClaimed(state.claims, reward, weeklyKey), weeklyKey)
       ),
-      alpha_products: ALPHA_PRODUCTS,
+      alpha_products: products,
+      shop_summary: alphaShopSummary(state, dailyKey),
       claimed: state.claims,
+      alpha_purchases: state.purchases,
       period_keys: {
         daily: dailyKey,
         weekly: weeklyKey,
         battle_pass: passKey,
+        alpha_redeem_daily: dailyKey,
       },
       server_time: now.toISOString(),
     },
@@ -655,6 +787,67 @@ function rewardPayload(reward: RewardDefinition, claimed: boolean, periodKey: st
     resources: resourceDelta(reward.resources),
     claimed,
     period_key: periodKey,
+  };
+}
+
+function alphaProductPayload(
+  product: AlphaProduct,
+  state: MonetizationState,
+  dailyRedeemPeriodKey: string,
+) {
+  const delta = combineResourceDeltas(product.cost ?? {}, product.resources ?? {});
+  const alreadyRedeemed = product.dailyRedeem === true &&
+    isDailyRedeemClaimed(state.purchases, product, dailyRedeemPeriodKey);
+  const alreadyOwned = isAlphaProductOwned(state, product);
+  let lockedReason = "";
+  if (alreadyRedeemed) {
+    lockedReason = "DAILY_REDEEM_ALREADY_CLAIMED";
+  } else if (alreadyOwned) {
+    lockedReason = "ALREADY_OWNED";
+  } else if (!canApplyDelta(state.resources, delta)) {
+    lockedReason = "INSUFFICIENT_RESOURCES";
+  }
+  return {
+    id: product.id,
+    label: product.label,
+    description: product.description,
+    kind: product.kind,
+    cost: resourceDelta(product.cost ?? {}),
+    resources: resourceDelta(product.resources ?? {}),
+    delta: resourceDelta(delta),
+    daily_redeem: product.dailyRedeem === true,
+    redeem_tier: product.redeemTier ?? null,
+    redeem_period_key: product.dailyRedeem === true ? dailyRedeemPeriodKey : null,
+    effect: product.effect ?? null,
+    already_redeemed: alreadyRedeemed,
+    already_owned: alreadyOwned,
+    can_purchase: lockedReason === "",
+    locked_reason: lockedReason,
+    alpha_simulated: true,
+    sort_order: product.sortOrder,
+  };
+}
+
+function alphaShopSummary(state: MonetizationState, dailyRedeemPeriodKey: string) {
+  const dailyRedeemProducts = ALPHA_PRODUCTS.filter((product) => product.dailyRedeem === true);
+  const dailyRedeemsClaimed =
+    dailyRedeemProducts.filter((product) =>
+      isDailyRedeemClaimed(state.purchases, product, dailyRedeemPeriodKey)
+    ).length;
+  const convenienceOwned = ALPHA_PRODUCTS.filter((product) =>
+    product.kind === "convenience_unlock" && isAlphaProductOwned(state, product)
+  ).map((product) => product.id);
+  return {
+    environment: "internal_alpha_v0",
+    alpha_simulated: true,
+    currency: "diamante",
+    diamond_balance: numberValue(state.resources.diamante, 0),
+    premium_unlocked: state.progress.premium_unlocked,
+    daily_redeem_period_key: dailyRedeemPeriodKey,
+    daily_redeems_total: dailyRedeemProducts.length,
+    daily_redeems_claimed: dailyRedeemsClaimed,
+    convenience_owned: convenienceOwned,
+    reset_timezone: "America/Sao_Paulo",
   };
 }
 
@@ -768,6 +961,21 @@ async function loadRewardClaims(
     `reward_claims?player_id=eq.${
       encodeURIComponent(playerId)
     }&select=id,source,reward_id,period_key,reward_payload,created_at&order=created_at.desc&limit=100`,
+    { method: "GET" },
+  );
+  if (result.error !== null) return { value: null, error: stateReadError() };
+  return { value: result.value, error: null };
+}
+
+async function loadAlphaPurchases(
+  config: EdgeConfig,
+  playerId: string,
+): Promise<{ value: AlphaPurchaseRow[]; error: null } | { value: null; error: RestError }> {
+  const result = await restRequest<AlphaPurchaseRow[]>(
+    config,
+    `alpha_purchases?player_id=eq.${
+      encodeURIComponent(playerId)
+    }&select=id,product_id,request_id,purchase_payload,created_at&order=created_at.desc&limit=200`,
     { method: "GET" },
   );
   if (result.error !== null) return { value: null, error: stateReadError() };
@@ -1015,7 +1223,7 @@ function rewardDefinition(rewardId: string): RewardDefinition | undefined {
 }
 
 function rewardPeriodKey(reward: RewardDefinition, pass: BattlePassRow, now: Date): string {
-  if (reward.source === "daily") return dateKeyUTC(now);
+  if (reward.source === "daily") return dateKeySaoPaulo(now);
   if (reward.source === "weekly") return weekKeyUTC(now);
   return pass.id;
 }
@@ -1025,6 +1233,31 @@ function isClaimed(claims: RewardClaimRow[], reward: RewardDefinition, periodKey
     claim.source === reward.source && claim.reward_id === reward.id &&
     claim.period_key === periodKey
   );
+}
+
+function isDailyRedeemClaimed(
+  purchases: AlphaPurchaseRow[],
+  product: AlphaProduct,
+  periodKey: string,
+): boolean {
+  if (product.dailyRedeem !== true) return false;
+  return purchases.some((purchase) => {
+    if (purchase.product_id !== product.id) return false;
+    const payload = isObject(purchase.purchase_payload) ? purchase.purchase_payload : {};
+    if (stringValue(payload.redeem_period_key, "") === periodKey) return true;
+    if ("redeem_period_key" in payload) return false;
+    return dateKeySaoPaulo(new Date(purchase.created_at)) === periodKey;
+  });
+}
+
+function isAlphaProductOwned(state: MonetizationState, product: AlphaProduct): boolean {
+  if (product.kind === "premium_unlock") {
+    return state.progress.premium_unlocked;
+  }
+  if (product.kind === "convenience_unlock") {
+    return state.purchases.some((purchase) => purchase.product_id === product.id);
+  }
+  return false;
 }
 
 function canApplyDelta(
@@ -1059,8 +1292,8 @@ function resourceDelta(delta: Partial<Record<ResourceKey, number>>): Record<stri
   return payload;
 }
 
-function dateKeyUTC(date: Date): string {
-  return date.toISOString().slice(0, 10);
+function dateKeySaoPaulo(date: Date): string {
+  return new Date(date.getTime() - 3 * 60 * 60 * 1000).toISOString().slice(0, 10);
 }
 
 function weekKeyUTC(date: Date): string {

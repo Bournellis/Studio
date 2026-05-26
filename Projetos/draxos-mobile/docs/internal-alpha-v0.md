@@ -58,7 +58,7 @@ Regras:
 - Dados de ranking/social do save normal nao devem ser contaminados pelo lab.
 - Toda mutacao continua server-authoritative.
 
-Status local atual (`T03-P07`):
+Status local atual (`T03-P08`):
 
 - Godot persiste o save ativo e envia `x-draxos-save-type`.
 - Supabase local resolve `normal` e `progression_lab` por `players.save_type`.
@@ -70,6 +70,7 @@ Status local atual (`T03-P07`):
 - A Base ja funciona como fluxo jogavel local: mapa de predios clicaveis, painel por predio, tooltips, custo/tempo/producao/status vindo do servidor, compra alpha de Energia e upgrade server-authoritative por estrutura.
 - O Social ja funciona como fluxo basico local: amigos por username, criar/entrar em guilda, membros/estruturas visiveis, chat de guilda por polling, rate limit e marcadores `normal`/`lab`.
 - A Competicao ja funciona como leaderboard alpha local: batalha normal pontua no servidor, ranking mostra top 10 + posicao do jogador, bots ficam fora da tabela e o Lab continua sem pontuacao.
+- A Loja ja funciona como proof-of-concept local: quatro redeems diarios por save entregam apenas Diamante, compras usam Diamante, Battle Pass premium e fila dupla sao produtos unicos, a fila dupla altera a Base para 2 slots e a UI mostra catalogo/status/claims com tooltips.
 
 ## Backend Remoto
 
@@ -211,11 +212,19 @@ Alpha basico:
 
 Proof-of-concept:
 
-- redeem alpha de Diamante/moedas;
-- premium pass alpha;
-- pacotes fixos para testar diferentes niveis premium;
+- redeems diarios `pequeno`, `medio`, `grande` e `premium` entregam apenas Diamante;
+- reset dos redeems a meia-noite `America/Sao_Paulo`;
+- premium pass alpha comprado com Diamante;
+- fila dupla de construcao comprada com Diamante e aplicada na Base;
+- pacote pequeno de Energia e pacote medio de recursos;
 - claims free/premium idempotentes;
 - sem pagamento real.
+
+Status local atual:
+
+- `GET /monetization/state` retorna `shop_summary`, `alpha_products` enriquecidos com custo, ganho, efeito, `can_purchase`, `already_redeemed`/`already_owned` e periodo de redeem.
+- `POST /monetization/alpha-purchase` aplica redeems/compras com ledger e idempotencia; redeems diarios nao duplicam com novo `request_id` no mesmo dia.
+- A aba Loja do Hub tem botoes de redeem/compra, paineis de resumo, grupos de produtos e recompensas, mensagens objetivas e desabilita produtos ja resgatados/ativos quando o estado esta carregado.
 
 ## Design Sessions Pendentes
 
