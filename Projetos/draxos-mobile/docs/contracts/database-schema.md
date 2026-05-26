@@ -211,13 +211,14 @@ Implementado em `T03-P04`:
 - `apply_progression_lab_save` seleciona somente o `players.id` com `save_type = progression_lab`;
 - a Edge Function `progression-lab/apply` valida `profile_id`, `milestone_id` e `save_id` contra o catalogo versionado de healthy saves antes de chamar a RPC;
 - aplicacao substitui level/xp/power, resources, build, base, job ativo e progresso do Battle Pass do Lab;
-- aplicacao limpa batalha, ranking, social isolado, loja anterior, jobs, claims, compras alpha, ledger e idempotencias de acoes daquele save;
+- aplicacao limpa batalha, ranking, social vinculado ao player do Lab quando existir, loja anterior, jobs, claims, compras alpha, ledger e idempotencias de acoes daquele save;
 - a RPC nunca escreve no save `normal`, grava ledger `progression-lab/apply` e preserva idempotencia por `request_id`;
 - `account/guest` do save Lab passa a retornar o payload aplicado se repetir o `request_id` original.
 
 Limites atuais desta etapa:
 
-- social esta isolado por `player_id/save_type` no alpha local, e pode virar social de conta inteira com marcador `lab` em `T03-P06` se o design exigir;
+- social foi promovido em `T03-P06` para identidade de conta no runtime: Edge Functions usam o save `normal` como `social_player` canonico quando ele existe e retornam marcador `lab` para o viewer em `progression_lab`;
+- as tabelas continuam referenciando `players.id`, entao uma refatoracao futura para `account_profiles/game_saves` continua recomendada antes de escalar social remoto;
 - email/senha remoto ainda fica adiado ate o gameplay local estar pronto.
 
 Refatoracao futura, se o projeto crescer:
@@ -333,26 +334,27 @@ Seed atual: `season_001` / `Season 1 Alpha`, ativa.
 
 ### `friendships`
 
-Status: **implementado em T00-P12**.
+Status: **implementado em T00-P12** e refinado em `T03-P06`.
 
-Guarda relacoes sociais entre jogadores. No alpha, `friends/add` cria arestas aceitas nos dois sentidos por username.
+Guarda relacoes sociais entre jogadores. No alpha, `friends/add` cria arestas aceitas nos dois sentidos por username e o backend resolve usernames de save Lab para a identidade social normal da mesma conta quando possivel.
 
 ### `guilds`, `guild_members`, `guild_structures`
 
-Status: **implementado em T00-P12**.
+Status: **implementado em T00-P12** e refinado em `T03-P06`.
 
 Guilda v0:
 
 - level 1-10;
 - jogador participa de 1 guilda por vez;
 - criador entra como `owner`;
+- `social/guild/join` permite entrar por nome de guilda;
 - quatro estruturas iniciais: `oficina_ritual`, `condensador_astral`, `arquivo_de_dominio`, `cofre_abissal`.
 
 ### `chat_channels`, `chat_messages`
 
-Status: **implementado em T00-P12**.
+Status: **implementado em T00-P12** e refinado em `T03-P06`.
 
-Chat v0 usa canal de guilda por polling. Mensagens tem limite de 280 caracteres, soft delete futuro via `deleted_at` e leitura restrita a membros da guilda.
+Chat v0 usa canal de guilda por polling. Mensagens tem limite de 280 caracteres, rate limit alpha por usuario/canal, soft delete futuro via `deleted_at` e leitura restrita a membros da guilda.
 
 ### `ranking`
 

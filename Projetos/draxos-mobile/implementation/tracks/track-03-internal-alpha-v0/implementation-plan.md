@@ -61,7 +61,7 @@ Enquanto o remoto estiver adiado, `T03-P02` permanece repo-ready: a configuracao
 
 ### T03-P03 - Conta Email/Senha E Dois Saves
 
-Status local-first: `IN_PROGRESS - T03-P05_COMPLETE`.
+Status local-first: `IN_PROGRESS - T03-P06_COMPLETE`.
 
 - Implementar fluxo email/senha.
 - Manter guest/local como fallback de desenvolvimento, se ainda util.
@@ -128,7 +128,9 @@ Implementado:
 
 ### T03-P06 - Social Basico Funcional
 
-- Amigos por username/codigo.
+Status: `COMPLETE`.
+
+- Amigos por username.
 - Guilda: criar/entrar/ver membros.
 - Chat de guilda por polling.
 - Feedback de rate limit, sem guilda, usuario nao encontrado, offline.
@@ -137,6 +139,15 @@ Implementado:
 Saida esperada:
 
 - Dois testadores conseguem se encontrar e trocar mensagem em guilda.
+
+Implementado:
+
+- `GET /social/state` retorna identidade social de conta, save ativo, marcador `lab`, amigos, membros e mensagens enriquecidos com username.
+- `POST /social/friends/add` adiciona amigo por username.
+- `POST /social/guild/create` cria guilda, owner, estruturas e canal.
+- `POST /social/guild/join` entra em guilda por nome.
+- `POST /social/chat/send` envia mensagem por polling com limite de tamanho, guilda obrigatoria e rate limit alpha.
+- A aba Social do Hub tem inputs de username/guilda/chat, botões de atualizar/adicionar/criar/entrar/enviar, tooltips e painéis de identidade, amigos, guilda, membros, estruturas e chat.
 
 ### T03-P07 - Competicao E Leaderboards
 

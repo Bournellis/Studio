@@ -27,6 +27,10 @@ var _content_title: Label
 var _content_body: VBoxContainer
 var _timeline_label: Label
 var _base_state_container: VBoxContainer
+var _social_state_container: VBoxContainer
+var _social_friend_input: LineEdit
+var _social_guild_input: LineEdit
+var _social_chat_input: LineEdit
 var _battle_visual: Control
 var _confirm_dialog: ConfirmationDialog
 
@@ -42,6 +46,9 @@ var _skip_replay := false
 var _battle_lab_overlay: Control
 var _progression_lab_overlay: Control
 var _selected_base_structure_id := "nucleo_energia"
+var _last_social_friend_username := ""
+var _last_social_guild_name := ""
+var _last_social_chat_message := "Primeiro pulso do Conclave."
 
 func _ready() -> void:
 	_clear_existing_scene()
@@ -208,6 +215,10 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	_action_buttons.clear()
 	_timeline_label = null
 	_base_state_container = null
+	_social_state_container = null
+	_social_friend_input = null
+	_social_guild_input = null
+	_social_chat_input = null
 	_battle_visual = null
 	_error_label.text = ""
 	_clear_content_body()
@@ -413,11 +424,40 @@ func _render_base_screen() -> void:
 	_render_base_state()
 
 func _render_social_screen() -> void:
-	_add_body_text("Social alpha disponivel para teste: estado social, guilda e chat por polling.")
-	_add_action_button("Atualizar social", "show_social")
-	_add_action_button("Criar guilda", "create_guild", "Criar uma guilda alpha para esta conta?")
-	_add_action_button("Chat guilda", "send_guild_chat", "Enviar uma mensagem fixa de teste no chat da guilda?")
+	_add_body_text("Social alpha da conta: encontre outro jogador por username, crie ou entre em uma guilda e teste chat de guilda por polling.")
+	var refresh_social_button := _add_action_button("Atualizar social", "show_social")
+	refresh_social_button.tooltip_text = "Busca amigos, guilda, membros, estruturas e mensagens recentes no servidor."
+	_social_friend_input = _add_social_input(
+		"Amigo por username",
+		"guest_12345678",
+		_last_social_friend_username,
+		"Digite o username do outro jogador. No alpha a amizade e aceita automaticamente."
+	)
+	var add_friend_button := _add_action_button("Adicionar amigo", "add_friend")
+	add_friend_button.tooltip_text = "Cria amizade aceita nos dois sentidos, usando o username informado."
+	_social_guild_input = _add_social_input(
+		"Guilda",
+		_default_guild_name(),
+		_default_social_guild_text(),
+		"Digite o nome da guilda para criar ou entrar. O nome precisa ter 3 a 32 caracteres."
+	)
+	var create_guild_button := _add_action_button("Criar guilda", "create_guild", "Criar uma guilda alpha para esta conta?")
+	create_guild_button.tooltip_text = "Cria uma guilda, adiciona voce como owner e inicializa estruturas e canal de chat."
+	var join_guild_button := _add_action_button("Entrar guilda", "join_guild")
+	join_guild_button.tooltip_text = "Entra na guilda pelo nome exato. Voce so pode participar de uma guilda por vez."
+	_social_chat_input = _add_social_input(
+		"Mensagem de guilda",
+		"Mensagem curta para o chat",
+		_last_social_chat_message,
+		"Mensagem enviada para o canal da guilda. O alpha aplica rate limit simples para evitar spam."
+	)
+	var send_chat_button := _add_action_button("Enviar chat guilda", "send_guild_chat")
+	send_chat_button.tooltip_text = "Envia a mensagem digitada e atualiza o polling do chat."
 	_timeline_label = _add_output_label("")
+	_social_state_container = VBoxContainer.new()
+	_social_state_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_social_state_container.add_theme_constant_override("separation", 10)
+	_content_body.add_child(_social_state_container)
 	_render_social_state()
 
 func _render_competition_screen() -> void:
@@ -478,6 +518,26 @@ func _add_action_button(text: String, action_id: String, confirm_message: String
 	_content_body.add_child(button)
 	_action_buttons[action_id] = button
 	return button
+
+func _add_social_input(label_text: String, placeholder: String, initial_text: String, tooltip_text: String) -> LineEdit:
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 4)
+	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_content_body.add_child(box)
+
+	var label := Label.new()
+	label.text = label_text
+	label.add_theme_color_override("font_color", UiTokens.color("text_secondary"))
+	box.add_child(label)
+
+	var input := LineEdit.new()
+	input.placeholder_text = placeholder
+	input.text = initial_text
+	input.tooltip_text = tooltip_text
+	input.custom_minimum_size = Vector2(260, 40)
+	input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	box.add_child(input)
+	return input
 
 func _add_screen_button(text: String, screen_id: String) -> Button:
 	var target_screen := screen_id
@@ -551,8 +611,12 @@ func _execute_action(action_id: String) -> void:
 				await _upgrade_base_structure("nucleo_energia")
 			"show_social":
 				await _show_social()
+			"add_friend":
+				await _add_friend()
 			"create_guild":
 				await _create_guild()
+			"join_guild":
+				await _join_guild()
 			"send_guild_chat":
 				await _send_guild_chat()
 			"show_matchmaking":
@@ -858,15 +922,43 @@ func _show_social() -> void:
 	_set_busy(false, "Social recuperado.")
 	_render_social_state()
 
+func _add_friend() -> void:
+	if not _require_account("Crie uma sessao guest antes de adicionar amigo."):
+		return
+
+	_last_social_friend_username = _social_input_text(_social_friend_input)
+	if _last_social_friend_username == "":
+		_error_label.text = "Informe o username do amigo."
+		return
+
+	_show_screen(SCREEN_SOCIAL, false)
+	_set_busy(true, "Adicionando amigo...")
+	var social_result: Dictionary = await SupabaseClient.add_friend(
+		SessionStoreScript.create_request_id(),
+		_last_social_friend_username,
+		SessionStore.access_token
+	)
+	if not bool(social_result.get("ok", false)):
+		_fail_with_error(social_result)
+		return
+	if not SessionStore.apply_social_result(social_result):
+		_fail_with_error({"error": SessionStore.last_error})
+		return
+
+	SessionStore.save_cache()
+	_set_busy(false, "Amigo adicionado.")
+	_render_social_state()
+
 func _create_guild() -> void:
 	if not _require_account("Crie uma sessao guest antes de criar guilda."):
 		return
 
+	_last_social_guild_name = _social_input_text(_social_guild_input, _default_guild_name())
 	_show_screen(SCREEN_SOCIAL, false)
 	_set_busy(true, "Criando guilda alpha...")
 	var social_result: Dictionary = await SupabaseClient.create_guild(
 		SessionStoreScript.create_request_id(),
-		_default_guild_name(),
+		_last_social_guild_name,
 		SessionStore.access_token
 	)
 	if not bool(social_result.get("ok", false)):
@@ -880,15 +972,47 @@ func _create_guild() -> void:
 	_set_busy(false, "Guilda criada no servidor.")
 	_render_social_state()
 
+func _join_guild() -> void:
+	if not _require_account("Crie uma sessao guest antes de entrar em guilda."):
+		return
+
+	_last_social_guild_name = _social_input_text(_social_guild_input)
+	if _last_social_guild_name == "":
+		_error_label.text = "Informe o nome da guilda."
+		return
+
+	_show_screen(SCREEN_SOCIAL, false)
+	_set_busy(true, "Entrando na guilda...")
+	var social_result: Dictionary = await SupabaseClient.join_guild(
+		SessionStoreScript.create_request_id(),
+		_last_social_guild_name,
+		SessionStore.access_token
+	)
+	if not bool(social_result.get("ok", false)):
+		_fail_with_error(social_result)
+		return
+	if not SessionStore.apply_social_result(social_result):
+		_fail_with_error({"error": SessionStore.last_error})
+		return
+
+	SessionStore.save_cache()
+	_set_busy(false, "Guilda sincronizada.")
+	_render_social_state()
+
 func _send_guild_chat() -> void:
 	if not _require_account("Crie uma sessao guest antes de usar chat."):
+		return
+
+	_last_social_chat_message = _social_input_text(_social_chat_input, _last_social_chat_message)
+	if _last_social_chat_message == "":
+		_error_label.text = "Digite uma mensagem para o chat da guilda."
 		return
 
 	_show_screen(SCREEN_SOCIAL, false)
 	_set_busy(true, "Enviando mensagem de guilda...")
 	var social_result: Dictionary = await SupabaseClient.send_guild_chat(
 		SessionStoreScript.create_request_id(),
-		"Primeiro pulso do Conclave.",
+		_last_social_chat_message,
 		SessionStore.access_token
 	)
 	if not bool(social_result.get("ok", false)):
@@ -1524,13 +1648,25 @@ func _format_number(value: float) -> String:
 func _render_social_state() -> void:
 	if _timeline_label == null:
 		return
+	if _social_state_container != null:
+		_clear_node_children(_social_state_container)
 	var social := SessionStore.social_state
 	if social.is_empty():
 		_timeline_label.text = "Social ainda nao carregado. Use Atualizar social."
+		if _social_state_container != null:
+			_social_state_container.add_child(_base_info_panel(
+				"Social da conta",
+				"Atualize o Social para ver amigos, guilda, membros, estruturas e chat por polling."
+			))
 		return
 
 	var lines := PackedStringArray()
+	var identity := _as_dictionary(social.get("identity", {}))
+	var active_player := _as_dictionary(social.get("active_player", {}))
+	var social_player := _as_dictionary(social.get("player", {}))
 	lines.append("Social server-authoritative")
+	lines.append("Escopo: conta inteira | Save ativo: %s" % _social_save_badge_text(str(identity.get("viewer_badge", SessionStore.active_save_badge()))))
+	lines.append("Identidade social: %s" % _social_username_text(social_player))
 	var guild := _as_dictionary(social.get("guild", {}))
 	if guild.is_empty():
 		lines.append("Guilda: nenhuma")
@@ -1545,8 +1681,148 @@ func _render_social_state() -> void:
 	for item: Variant in messages.slice(0, min(messages.size(), 4)):
 		var message := _as_dictionary(item)
 		if not message.is_empty():
-			lines.append("- %s" % str(message.get("content", "")))
+			lines.append("- %s: %s" % [
+				str(message.get("sender_username", "desconhecido")),
+				str(message.get("content", "")),
+			])
 	_timeline_label.text = "\n".join(lines)
+	if _social_state_container != null:
+		_social_state_container.add_child(_social_identity_panel(identity, social_player, active_player))
+		_social_state_container.add_child(_social_friends_panel(friends))
+		_social_state_container.add_child(_social_guild_panel(guild, _as_array(social.get("guild_members", [])), _as_array(social.get("guild_structures", []))))
+		_social_state_container.add_child(_social_chat_panel(messages))
+
+func _social_identity_panel(identity: Dictionary, social_player: Dictionary, active_player: Dictionary) -> Control:
+	var panel := _base_panel()
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 6)
+	panel.add_child(box)
+	box.add_child(_base_label("Identidade Social", "text_primary", 17))
+	box.add_child(_base_label("Username social: %s" % _social_username_text(social_player), "text_secondary"))
+	box.add_child(_base_label("Save ativo: %s" % _social_username_text(active_player), "text_secondary"))
+	var badge := str(identity.get("viewer_badge", SessionStore.active_save_badge()))
+	var badge_label := _base_label("Marcador visivel: %s" % _social_save_badge_text(badge), "status_error" if badge == "lab" else "status_success")
+	box.add_child(badge_label)
+	if bool(identity.get("fallback_to_active_save", false)):
+		box.add_child(_base_label("Aviso: save Normal ainda nao existe; o social esta usando o save ativo como fallback.", "status_warning"))
+	return panel
+
+func _social_friends_panel(friends: Array) -> Control:
+	var panel := _base_panel()
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 6)
+	panel.add_child(box)
+	box.add_child(_base_label("Amigos (%d)" % friends.size(), "text_primary", 17))
+	if friends.is_empty():
+		box.add_child(_base_label("Nenhum amigo ainda. Use o username do outro jogador para adicionar.", "text_secondary"))
+		return panel
+	for item: Variant in friends:
+		var friendship := _as_dictionary(item)
+		var profile := _as_dictionary(friendship.get("friend", {}))
+		box.add_child(_base_label("%s | %s | L%s | Poder %s" % [
+			_social_username_text(profile),
+			str(friendship.get("status", "accepted")),
+			str(profile.get("level", 1)),
+			str(profile.get("power", 0)),
+		], "status_error" if str(profile.get("save_badge", "")) == "lab" else "text_secondary"))
+	return panel
+
+func _social_guild_panel(guild: Dictionary, members: Array, structures: Array) -> Control:
+	var panel := _base_panel()
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 6)
+	panel.add_child(box)
+	box.add_child(_base_label("Guilda", "text_primary", 17))
+	if guild.is_empty():
+		box.add_child(_base_label("Sem guilda. Crie uma guilda ou entre pelo nome.", "text_secondary"))
+		return panel
+	box.add_child(_base_label("%s | Level %s | %d membros" % [
+		str(guild.get("name", "")),
+		str(guild.get("level", 1)),
+		members.size(),
+	], "text_secondary"))
+	box.add_child(_base_label("Membros", "text_primary"))
+	for item: Variant in members:
+		var member := _as_dictionary(item)
+		var profile := _as_dictionary(member.get("player", {}))
+		var badge := str(profile.get("save_badge", "normal"))
+		box.add_child(_base_label("%s | %s | L%s | Poder %s" % [
+			_social_username_text(profile),
+			str(member.get("role", "member")),
+			str(profile.get("level", 1)),
+			str(profile.get("power", 0)),
+		], "status_error" if badge == "lab" else "text_secondary"))
+	box.add_child(_base_label("Estruturas", "text_primary"))
+	for item: Variant in structures:
+		var structure := _as_dictionary(item)
+		box.add_child(_base_label("%s L%s" % [
+			_guild_structure_label(str(structure.get("structure_id", ""))),
+			str(structure.get("level", 1)),
+		], "text_secondary"))
+	return panel
+
+func _social_chat_panel(messages: Array) -> Control:
+	var panel := _base_panel()
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 6)
+	panel.add_child(box)
+	box.add_child(_base_label("Chat de Guilda (%d recentes)" % messages.size(), "text_primary", 17))
+	if messages.is_empty():
+		box.add_child(_base_label("Sem mensagens recentes. Entre em uma guilda e envie a primeira mensagem.", "text_secondary"))
+		return panel
+	for item: Variant in messages:
+		var message := _as_dictionary(item)
+		var badge := str(message.get("sender_save_badge", "normal"))
+		var sender_label := str(message.get("sender_username", "desconhecido"))
+		if badge == "lab":
+			sender_label += " [lab]"
+		box.add_child(_base_label("%s: %s" % [
+			sender_label,
+			str(message.get("content", "")),
+		], "status_error" if badge == "lab" else "text_secondary"))
+	return panel
+
+func _social_input_text(input: LineEdit, fallback: String = "") -> String:
+	if input == null:
+		return fallback.strip_edges()
+	var text := input.text.strip_edges()
+	if text == "":
+		return fallback.strip_edges()
+	return text
+
+func _default_social_guild_text() -> String:
+	if _last_social_guild_name.strip_edges() != "":
+		return _last_social_guild_name
+	var guild := _as_dictionary(SessionStore.social_state.get("guild", {}))
+	if not guild.is_empty():
+		return str(guild.get("name", "")).strip_edges()
+	return _default_guild_name()
+
+func _social_username_text(profile: Dictionary) -> String:
+	var username := str(profile.get("username", "")).strip_edges()
+	if username == "":
+		username = "sem username"
+	var badge := str(profile.get("save_badge", "normal"))
+	if badge == "lab":
+		return "%s [lab]" % username
+	return username
+
+func _social_save_badge_text(badge: String) -> String:
+	if badge == "lab":
+		return "lab"
+	return "normal"
+
+func _guild_structure_label(structure_id: String) -> String:
+	match structure_id:
+		"oficina_ritual":
+			return "Oficina Ritual"
+		"condensador_astral":
+			return "Condensador Astral"
+		"arquivo_de_dominio":
+			return "Arquivo de Dominio"
+		"cofre_abissal":
+			return "Cofre Abissal"
+	return structure_id
 
 func _render_competition_state() -> void:
 	if _timeline_label == null:
@@ -1827,10 +2103,24 @@ func _friendly_error_message(code: String, message: String) -> String:
 			return "O level do jogador limita o proximo upgrade deste predio."
 		"INVALID_STRUCTURE":
 			return "Predio da Base nao encontrado no contrato atual."
+		"USER_NOT_FOUND":
+			return "Usuario nao encontrado. Confirme o username do outro jogador."
+		"INVALID_FRIEND":
+			return "Voce nao pode adicionar a propria conta como amigo."
+		"INVALID_GUILD_NAME":
+			return "Nome de guilda invalido. Use de 3 a 32 caracteres."
+		"GUILD_NOT_FOUND":
+			return "Guilda nao encontrada. Confira o nome exato com o outro jogador."
 		"GUILD_REQUIRED":
-			return "Crie uma guilda antes de enviar mensagem no chat."
+			return "Entre em uma guilda antes de enviar mensagem no chat."
 		"GUILD_ALREADY_JOINED":
 			return "Esta conta ja participa de uma guilda."
+		"GUILD_FULL":
+			return "Esta guilda esta cheia."
+		"EMPTY_MESSAGE":
+			return "Digite uma mensagem antes de enviar."
+		"CHAT_RATE_LIMITED":
+			return "Aguarde alguns segundos antes de enviar outra mensagem."
 		"PRODUCT_NOT_FOUND":
 			return "Produto alpha nao encontrado no servidor."
 		"REWARD_NOT_FOUND":

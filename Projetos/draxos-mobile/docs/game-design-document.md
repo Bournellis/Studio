@@ -562,6 +562,14 @@ Valores numericos detalhados de recompensas diarias, semanais e Battle Pass vive
 
 O primeiro slice usa um social funcional e leve. Guilda deve aumentar rotina e cooperacao, mas nao pode virar obrigatoria para competitividade.
 
+Regras sociais da Internal Alpha v0:
+
+- Amigos sao adicionados por username e entram aceitos automaticamente no alpha.
+- Social pertence a conta inteira; o save `normal` e a identidade social canonica quando existir.
+- Jogadores usando `progression_lab` aparecem com marcador vermelho `lab` no Social/Chat e nao pontuam ranking.
+- Chat de guilda usa polling e rate limit simples; chat global fica fora da build interna.
+- Direct/friends permanece no contrato de primeiro slice, mas a etapa local `T03-P06` foca amizade, guilda e chat de guilda para validar o teste fechado de 2 usuarios.
+
 Regras de guilda:
 
 - Guilda desbloqueia no level 10.

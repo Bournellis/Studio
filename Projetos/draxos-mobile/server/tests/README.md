@@ -41,6 +41,12 @@ predios, payload de UI com custo/tempo/status, coleta idempotente, compra alpha
 de Energia, upgrade server-authoritative por predio e bloqueio de segunda
 construcao quando a fila esta cheia.
 
+O smoke `social_competition_smoke.ts` valida social basico com dois testadores:
+auth obrigatoria, identidade social de conta, amizade por username, guilda
+create/join, membros enriquecidos, chat de guilda idempotente, rate limit,
+polling com usernames, matchmaking com bot fora do ranking e RLS contra insert
+direto em guilda.
+
 O smoke `client_telemetry_smoke.ts` valida auth obrigatoria, evento pre-conta
 com `player_id = null`, evento pos-conta, rejeicao de schema desconhecido e
 bloqueio de insert direto em `telemetry_events` com JWT anonimo.

@@ -6,19 +6,10 @@ interface JsonObject {
   [key: string]: unknown;
 }
 
-const auth = await postJson(
-  `${SUPABASE_URL}/auth/v1/signup`,
-  { data: { provider: "guest" } },
-  baseHeaders(),
-  false,
-);
-const accessToken = stringField(auth, "access_token");
-assert(accessToken !== "", "anonymous auth should return access_token");
-
-const headers = {
-  ...baseHeaders(),
-  authorization: `Bearer ${accessToken}`,
-};
+interface TestPlayer {
+  headers: Record<string, string>;
+  username: string;
+}
 
 const unauthenticatedSocial = await getJson(
   `${SUPABASE_URL}/functions/v1/social/state`,
@@ -31,19 +22,34 @@ assertEq(
   "social/state should require auth",
 );
 
-await postJson(`${SUPABASE_URL}/functions/v1/account/guest`, {
-  invite_code: "ALPHA-TEST",
-  device_label: "deno-social-smoke",
-  request_id: crypto.randomUUID(),
-}, headers);
+const firstPlayer = await createTestPlayer("deno-social-smoke-a");
+const secondPlayer = await createTestPlayer("deno-social-smoke-b");
 
-const socialState = await getJson(
+const initialState = await getJson(
   `${SUPABASE_URL}/functions/v1/social/state`,
-  headers,
+  firstPlayer.headers,
 );
-assert(
-  isObject(objectField(socialState, "social")),
-  "social state should exist",
+assertEq(
+  stringField(objectField(objectField(initialState, "social"), "identity"), "scope"),
+  "account",
+  "social identity should be account-scoped",
+);
+
+const friendState = await postJson(
+  `${SUPABASE_URL}/functions/v1/social/friends/add`,
+  {
+    request_id: crypto.randomUUID(),
+    username: secondPlayer.username,
+  },
+  firstPlayer.headers,
+);
+const friends = arrayField(objectField(friendState, "social"), "friends");
+assertEq(friends.length, 1, "friends/add should return one accepted friend");
+const friendProfile = objectField(friends[0] as JsonObject, "friend");
+assertEq(
+  stringField(friendProfile, "username"),
+  secondPlayer.username,
+  "friends/add should enrich friend username",
 );
 
 const guildRequestId = crypto.randomUUID();
@@ -51,12 +57,12 @@ const guildName = `Conclave ${guildRequestId.slice(0, 8)}`;
 const firstGuild = await postJson(
   `${SUPABASE_URL}/functions/v1/social/guild/create`,
   { request_id: guildRequestId, name: guildName },
-  headers,
+  firstPlayer.headers,
 );
 const secondGuild = await postJson(
   `${SUPABASE_URL}/functions/v1/social/guild/create`,
   { request_id: guildRequestId, name: guildName },
-  headers,
+  firstPlayer.headers,
 );
 const guild = objectField(objectField(firstGuild, "social"), "guild");
 const repeatedGuild = objectField(objectField(secondGuild, "social"), "guild");
@@ -68,16 +74,30 @@ assertEq(
   "guild should initialize four structures",
 );
 
+const joinedGuildState = await postJson(
+  `${SUPABASE_URL}/functions/v1/social/guild/join`,
+  { request_id: crypto.randomUUID(), name: guildName },
+  secondPlayer.headers,
+);
+const members = arrayField(objectField(joinedGuildState, "social"), "guild_members");
+assertEq(members.length, 2, "guild/join should add the second tester as member");
+assert(
+  members.some((entry) =>
+    stringField(objectField(entry as JsonObject, "player"), "username") === secondPlayer.username
+  ),
+  "guild members should include enriched usernames",
+);
+
 const chatRequestId = crypto.randomUUID();
 const firstChat = await postJson(
   `${SUPABASE_URL}/functions/v1/social/chat/send`,
   { request_id: chatRequestId, content: "Primeiro pulso social." },
-  headers,
+  firstPlayer.headers,
 );
 const secondChat = await postJson(
   `${SUPABASE_URL}/functions/v1/social/chat/send`,
   { request_id: chatRequestId, content: "Primeiro pulso social." },
-  headers,
+  firstPlayer.headers,
 );
 assertEq(
   objectField(firstChat, "message").id,
@@ -85,9 +105,34 @@ assertEq(
   "chat/send should be idempotent",
 );
 
+const rateLimitedChat = await postJson(
+  `${SUPABASE_URL}/functions/v1/social/chat/send`,
+  { request_id: crypto.randomUUID(), content: "Spam controlado." },
+  firstPlayer.headers,
+  false,
+);
+assertEq(errorCode(rateLimitedChat), "CHAT_RATE_LIMITED", "chat should rate limit same sender");
+
+const guildReply = await postJson(
+  `${SUPABASE_URL}/functions/v1/social/chat/send`,
+  { request_id: crypto.randomUUID(), content: "Resposta do segundo tester." },
+  secondPlayer.headers,
+);
+const chatMessages = arrayField(objectField(guildReply, "social"), "guild_chat");
+assert(
+  chatMessages.length >= 2,
+  "guild chat polling should return recent messages from both testers",
+);
+assert(
+  chatMessages.some((entry) =>
+    stringField(entry as JsonObject, "sender_username") === secondPlayer.username
+  ),
+  "guild chat should include sender username",
+);
+
 const matchmaking = await getJson(
   `${SUPABASE_URL}/functions/v1/competition/matchmaking/preview`,
-  headers,
+  firstPlayer.headers,
 );
 const selectedOpponent = objectField(
   objectField(matchmaking, "matchmaking"),
@@ -102,7 +147,7 @@ assertEq(selectedOpponent.is_ranked, false, "bot should not be ranked");
 
 const ranking = await getJson(
   `${SUPABASE_URL}/functions/v1/competition/ranking/current`,
-  headers,
+  firstPlayer.headers,
 );
 assertEq(
   objectField(ranking, "ranking").bots_included,
@@ -120,7 +165,7 @@ const directGuildInsert = await postJson(
     name: `Forbidden ${crypto.randomUUID().slice(0, 6)}`,
     owner_id: guild.owner_id,
   },
-  headers,
+  firstPlayer.headers,
   false,
 );
 assert(
@@ -130,10 +175,35 @@ assert(
 
 console.log("[social-competition-smoke] OK", {
   guild_id: guild.id,
+  members: members.length,
+  chat_messages: chatMessages.length,
   opponent: selectedOpponent.id,
-  ranking_points:
-    objectField(objectField(ranking, "ranking"), "self").arena_points,
+  ranking_points: objectField(objectField(ranking, "ranking"), "self").arena_points,
 });
+
+async function createTestPlayer(deviceLabel: string): Promise<TestPlayer> {
+  const auth = await postJson(
+    `${SUPABASE_URL}/auth/v1/signup`,
+    { data: { provider: "guest" } },
+    baseHeaders(),
+    false,
+  );
+  const accessToken = stringField(auth, "access_token");
+  assert(accessToken !== "", "anonymous auth should return access_token");
+  const headers = {
+    ...baseHeaders(),
+    authorization: `Bearer ${accessToken}`,
+  };
+  const account = await postJson(`${SUPABASE_URL}/functions/v1/account/guest`, {
+    invite_code: "ALPHA-TEST",
+    device_label: deviceLabel,
+    request_id: crypto.randomUUID(),
+  }, headers);
+  return {
+    headers,
+    username: stringField(objectField(account, "player"), "username"),
+  };
+}
 
 function baseHeaders(): Record<string, string> {
   return {
@@ -224,9 +294,7 @@ function assert(condition: boolean, message: string): asserts condition {
 function assertEq(actual: unknown, expected: unknown, message: string): void {
   if (actual !== expected) {
     throw new Error(
-      `${message}. Expected ${JSON.stringify(expected)}, got ${
-        JSON.stringify(actual)
-      }`,
+      `${message}. Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`,
     );
   }
 }

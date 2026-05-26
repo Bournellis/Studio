@@ -58,7 +58,7 @@ Regras:
 - Dados de ranking/social do save normal nao devem ser contaminados pelo lab.
 - Toda mutacao continua server-authoritative.
 
-Status local atual (`T03-P05`):
+Status local atual (`T03-P06`):
 
 - Godot persiste o save ativo e envia `x-draxos-save-type`.
 - Supabase local resolve `normal` e `progression_lab` por `players.save_type`.
@@ -68,6 +68,7 @@ Status local atual (`T03-P05`):
 - O hub possui reset perigoso do save ativo; o servidor reconstrui apenas aquele save, preservando o outro.
 - A tela Progression Lab Dev possui `Aplicar no Save Lab`; o servidor valida o perfil/milestone contra o catalogo versionado, aplica apenas no save `progression_lab` e preserva o save `normal`.
 - A Base ja funciona como fluxo jogavel local: mapa de predios clicaveis, painel por predio, tooltips, custo/tempo/producao/status vindo do servidor, compra alpha de Energia e upgrade server-authoritative por estrutura.
+- O Social ja funciona como fluxo basico local: amigos por username, criar/entrar em guilda, membros/estruturas visiveis, chat de guilda por polling, rate limit e marcadores `normal`/`lab`.
 
 ## Backend Remoto
 
@@ -181,11 +182,19 @@ Status local atual:
 
 Alpha basico:
 
-- amigos por username/codigo;
+- amigos por username;
 - guilda criada por jogador;
+- entrar em guilda por nome;
 - lista de membros;
 - chat de guilda por polling;
 - mensagens de erro claras.
+
+Status local atual:
+
+- `GET /social/state` retorna identidade social de conta, amigos, guilda, membros, estruturas e mensagens enriquecidas com username.
+- O save `progression_lab` mostra marcador `lab`; a identidade social canonica usa o save `normal` quando existir.
+- A aba Social do Hub tem campos para username, nome da guilda e mensagem, com tooltips objetivos e painéis legíveis para dois testadores.
+- `POST /social/chat/send` aplica rate limit alpha e retorna feedback amigável quando falta guilda, username nao existe ou a mensagem esta vazia.
 
 ### Competicao
 

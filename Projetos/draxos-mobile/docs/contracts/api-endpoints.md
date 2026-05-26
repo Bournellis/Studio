@@ -385,7 +385,7 @@ Regras:
 - nao atualiza ranking/social normal;
 - payload referencia perfil/milestone/save gerado e o servidor valida contra o catalogo versionado de healthy saves;
 - a aplicacao substitui player level/xp/power, resources, build, base, job ativo e Battle Pass do save `progression_lab`;
-- a aplicacao limpa batalha, ranking, social isolado, loja anterior, jobs, claims, compras alpha, ledger e idempotencias de acoes daquele save;
+- a aplicacao limpa batalha, ranking, social vinculado ao player do Lab quando existir, loja anterior, jobs, claims, compras alpha, ledger e idempotencias de acoes daquele save;
 - repetir o mesmo `request_id` retorna o mesmo payload;
 - usar `x-draxos-save-type: normal` retorna `PROGRESSION_LAB_SAVE_REQUIRED`.
 
@@ -423,9 +423,9 @@ Implementado localmente em `T03-P03B` por header HTTP:
 - `x-draxos-save-type: progression_lab` usa o save isolado de laboratorio;
 - ausencia do header usa `normal`;
 - valores diferentes retornam `INVALID_SAVE_TYPE`;
-- `account`, `battle`, `base`, `social`, `competition`, `monetization` e `telemetry` resolvem o player pelo save ativo;
+- `account`, `battle`, `base`, `competition`, `monetization` e `telemetry` resolvem o player pelo save ativo;
+- `social` valida o save ativo, mas usa a identidade social de conta: o save `normal` e canonico quando existir; `progression_lab` aparece com marcador `lab` sem criar ranking;
 - `competition/ranking/current` retorna `excluded_reason = PROGRESSION_LAB_DOES_NOT_RANK` no save de lab;
-- social esta temporariamente isolado por `player_id/save_type` no alpha local; a versao final pode promover social para nivel de conta com marcador `lab`, se necessario.
 - permissao interna remota fina ainda fica para a etapa de auth/email e deploy remoto.
 
 ## Endpoints Do Primeiro Slice Completo
@@ -602,27 +602,33 @@ Retorna ranking da season ativa e cria a linha do jogador com `0` pontos quando 
 
 ### `GET /social/state`
 
-Status: **implementado em T00-P12**.
+Status: **implementado em T00-P12** e refinado em `T03-P06`.
 
-Retorna amigos, guilda, membros, estruturas de guilda e ultimas mensagens de chat de guilda visiveis ao jogador.
+Retorna identidade social de conta, amigos enriquecidos com username, guilda, membros, estruturas de guilda e ultimas mensagens de chat de guilda visiveis ao jogador. No save `progression_lab`, o payload traz `identity.viewer_badge = "lab"` e usa o save `normal` como identidade social canonica quando ele existir.
 
 ### `POST /friends/add`
 
-Status: **implementado em T00-P12** como `POST /social/friends/add`.
+Status: **implementado em T00-P12** como `POST /social/friends/add` e refinado em `T03-P06`.
 
-Adiciona amizade aceita por username no alpha. Mutacao idempotente por `request_id`.
+Adiciona amizade aceita por username no alpha. Mutacao idempotente por `request_id`. Erros esperados: `USER_NOT_FOUND`, `INVALID_FRIEND`, `INVALID_REQUEST_ID`.
 
 ### `POST /guild/create`
 
-Status: **implementado em T00-P12** como `POST /social/guild/create`.
+Status: **implementado em T00-P12** como `POST /social/guild/create` e refinado em `T03-P06`.
 
 Cria uma guilda alpha, adiciona o jogador como owner, cria as quatro estruturas de guilda v0 e canal de chat da guilda. Mutacao idempotente por `request_id`.
 
+### `POST /guild/join`
+
+Status: **implementado em T03-P06** como `POST /social/guild/join`.
+
+Entra em uma guilda existente pelo nome. Mutacao idempotente por `request_id`. Erros esperados: `GUILD_NOT_FOUND`, `GUILD_ALREADY_JOINED`, `GUILD_FULL`, `INVALID_GUILD_NAME`.
+
 ### `POST /chat/send`
 
-Status: **implementado em T00-P12** como `POST /social/chat/send`.
+Status: **implementado em T00-P12** como `POST /social/chat/send` e refinado em `T03-P06`.
 
-Envia mensagem para o chat de guilda por polling. Requer o jogador estar em guilda. Mutacao idempotente por `request_id`.
+Envia mensagem para o chat de guilda por polling. Requer o jogador estar em guilda. Mutacao idempotente por `request_id`, limite de 280 caracteres e rate limit alpha por usuario/canal. Erros esperados: `GUILD_REQUIRED`, `EMPTY_MESSAGE`, `CHAT_RATE_LIMITED`.
 
 ### `GET /monetization/state`
 

@@ -169,9 +169,31 @@ func fetch_social_state(access_token: String) -> Dictionary:
 		{}
 	)
 
+func add_friend(request_id: String, friend_username: String, access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("social/friends/add"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		{
+			"request_id": request_id,
+			"username": friend_username,
+		}
+	)
+
 func create_guild(request_id: String, guild_name: String, access_token: String) -> Dictionary:
 	return await _send_json(
 		function_url("social/guild/create"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		{
+			"request_id": request_id,
+			"name": guild_name,
+		}
+	)
+
+func join_guild(request_id: String, guild_name: String, access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("social/guild/join"),
 		HTTPClient.METHOD_POST,
 		_auth_headers(access_token),
 		{
