@@ -39,3 +39,18 @@ bloqueio de insert direto em `telemetry_events` com JWT anonimo.
 
 Validacao standalone de Edge Functions pode usar `npx deno`. Validacao de
 runtime Supabase depende de Docker e Supabase CLI no ambiente local.
+
+## Remote Internal Alpha
+
+Depois de criar um projeto Supabase remoto e publicar o healthcheck:
+
+```powershell
+$env:SUPABASE_URL='https://<project-ref>.supabase.co'
+$env:SUPABASE_PUBLISHABLE_KEY='sb_publishable_<public-key>'
+npx -y deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts
+```
+
+O smoke remoto rejeita URLs locais e service role no lugar da publishable key.
+Use `DRAXOS_REMOTE_ANON_AUTH_SMOKE=1` para incluir Auth anonimo e
+`DRAXOS_REMOTE_ACCOUNT_SMOKE=1` depois que migrations, Edge Functions e convite
+alpha estiverem publicados.

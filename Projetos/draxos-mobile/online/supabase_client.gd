@@ -1,18 +1,43 @@
 extends Node
 
-const DEFAULT_SUPABASE_URL := "http://127.0.0.1:54321"
-const DEFAULT_PUBLISHABLE_KEY := "sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH"
+const BackendConfigScript = preload("res://online/backend_config.gd")
+
+const DEFAULT_SUPABASE_URL := BackendConfigScript.DEFAULT_LOCAL_SUPABASE_URL
+const DEFAULT_PUBLISHABLE_KEY := BackendConfigScript.DEFAULT_LOCAL_PUBLISHABLE_KEY
 const REQUEST_TIMEOUT_SECONDS := 15.0
 
 var supabase_url := DEFAULT_SUPABASE_URL
 var publishable_key := DEFAULT_PUBLISHABLE_KEY
+var backend_environment := BackendConfigScript.DEFAULT_BACKEND_ENVIRONMENT
+var backend_config_source := "defaults"
+var backend_config_errors := PackedStringArray()
 
 func _ready() -> void:
 	_load_project_settings()
 
 func configure(url: String, key: String) -> void:
-	supabase_url = url.strip_edges().trim_suffix("/")
-	publishable_key = key.strip_edges()
+	configure_backend(BackendConfigScript.config_from_values(
+		BackendConfigScript.ENVIRONMENT_CUSTOM,
+		url,
+		key,
+		"manual"
+	))
+
+func configure_backend(config: Dictionary) -> void:
+	backend_environment = str(config.get("environment", BackendConfigScript.DEFAULT_BACKEND_ENVIRONMENT))
+	backend_config_source = str(config.get("source", "unknown"))
+	backend_config_errors = _packed_string_array(config.get("errors", PackedStringArray()))
+	supabase_url = str(config.get("supabase_url", "")).strip_edges().trim_suffix("/")
+	publishable_key = str(config.get("publishable_key", "")).strip_edges()
+
+func backend_summary() -> Dictionary:
+	return {
+		"environment": backend_environment,
+		"source": backend_config_source,
+		"supabase_url": supabase_url,
+		"configured": backend_config_errors.is_empty(),
+		"errors": backend_config_errors,
+	}
 
 func auth_anonymous_url() -> String:
 	return "%s/auth/v1/signup" % supabase_url
@@ -196,9 +221,7 @@ func send_client_telemetry(access_token: String, session_id: String, event_type:
 	)
 
 func _load_project_settings() -> void:
-	var configured_url := str(ProjectSettings.get_setting("draxos_mobile/supabase/url", DEFAULT_SUPABASE_URL))
-	var configured_key := str(ProjectSettings.get_setting("draxos_mobile/supabase/publishable_key", DEFAULT_PUBLISHABLE_KEY))
-	configure(configured_url, configured_key)
+	configure_backend(BackendConfigScript.load_from_project_settings())
 
 func _base_headers() -> PackedStringArray:
 	return PackedStringArray([
@@ -213,6 +236,8 @@ func _auth_headers(access_token: String) -> PackedStringArray:
 	return headers
 
 func _send_json(url: String, method: HTTPClient.Method, headers: PackedStringArray, body: Dictionary) -> Dictionary:
+	if not backend_config_errors.is_empty():
+		return _error("CLIENT_MISCONFIGURED", "Backend config invalid: %s" % ", ".join(backend_config_errors))
 	if publishable_key == "":
 		return _error("CLIENT_MISCONFIGURED", "Supabase publishable key is missing.")
 
@@ -292,3 +317,12 @@ static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:
 		return Dictionary(value)
 	return {}
+
+static func _packed_string_array(value: Variant) -> PackedStringArray:
+	if value is PackedStringArray:
+		return value
+	var result := PackedStringArray()
+	if value is Array:
+		for item in value:
+			result.append(str(item))
+	return result

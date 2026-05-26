@@ -1,5 +1,9 @@
 # Workspace-local tools e caches
 .local-tools/
+Projetos/**/.env
+Projetos/**/.env.*
+!Projetos/**/.env.example
+!Projetos/**/.env.*.example
 
 # Builds e exports gerados
 builds/

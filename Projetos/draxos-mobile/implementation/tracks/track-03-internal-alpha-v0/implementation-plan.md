@@ -26,6 +26,8 @@ Saida esperada:
 
 ### T03-P02 - Supabase Remoto E Configuracao Segura
 
+Status repo-side: `READY - remote project credentials pending`.
+
 - Criar/configurar projeto Supabase remoto Free.
 - Desativar email confirmation no alpha interno.
 - Configurar URL e anon key por ambiente local, sem commitar secrets.
@@ -39,6 +41,8 @@ Saida esperada:
 
 - Runbook operacional com passos manuais executaveis.
 - Smoke remoto minimo: auth, healthcheck e account state.
+- `BackendConfig` no cliente Godot para `local`, `internal_alpha_v0` e `custom`.
+- `.env` reais ignorados e `.env.internal-alpha.example` versionado.
 - Decisao backend registrada: Supabase para alpha; Backend Proprio + Postgres como plano de saida; Nakama como alternativa futura condicional.
 
 ### T03-P03 - Conta Email/Senha E Dois Saves
@@ -197,7 +201,7 @@ cd D:\Estudio\Projetos\draxos-mobile
 npx -y deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts
 ```
 
-O smoke remoto ainda precisa ser implementado em T03-P02/T03-P03.
+O smoke remoto exige `SUPABASE_URL` e `SUPABASE_PUBLISHABLE_KEY` de um projeto remoto real e rejeita URLs locais.
 
 ## Regra De Commit
 

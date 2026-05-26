@@ -3,6 +3,7 @@
 - Ultima atualizacao: `2026-05-26`
 - Fonte de execucao: `../implementation/tracks/track-03-internal-alpha-v0/`
 - Design lock: `internal-alpha-v0-design-lock.md` (`LOCKED`)
+- Setup remoto: `internal-alpha-remote-setup.md`
 - Objetivo: fechar uma build interna profissional para Fabio + 1 amigo testarem um jogo real em Android, PC e Web, com servidor real, conta/save compartilhados, features principais funcionais e iteracao rapida.
 
 ## Resumo Da Build
@@ -51,6 +52,8 @@ Alvo inicial:
 - Edge Functions para acoes autoritativas.
 - Postgres com RLS.
 - Storage para manifest e artefatos de update.
+- Ambiente `internal_alpha_v0` configuravel por `BackendConfig` no Godot.
+- URL e publishable key via env vars ou project settings publicos.
 
 Direcao de longo prazo:
 
@@ -67,6 +70,7 @@ Motivo:
 Seguranca minima:
 
 - `anon key` pode existir no cliente.
+- `publishable key` pode existir no cliente quando for a key publica do projeto.
 - `service_role` nunca pode entrar no cliente, Web export, APK, zip ou repo.
 - Policies devem continuar limitando leitura/escrita ao dono.
 - Mutacoes economicas usam Edge Functions, idempotencia e ledger.
@@ -191,6 +195,7 @@ Estas decisoes vivem em `docs/design-pending.md` como `DMOB-D048` a `DMOB-D055`.
 
 - Criar projeto Supabase remoto Free ou confirmar qual sera usado.
 - Desativar email confirmation.
+- Copiar `Project URL` e publishable key para ambiente local/export seguro.
 - Criar/fornecer convites alpha.
 - Guardar service role fora do Git.
 - Criar keystore Android internal alpha e guardar senha fora do Git.

@@ -24,6 +24,8 @@ Decisao para Internal Alpha v0:
 - usar Supabase remoto Free agora;
 - manter Postgres como centro autoritativo de dados;
 - manter Edge Functions como camada HTTP server-authoritative;
+- configurar ambiente remoto no cliente por `BackendConfig`, env vars e project settings publicos;
+- bloquear chaves com aparencia de service role/secret no cliente Godot;
 - preservar um plano de saida para Backend Proprio + Postgres.
 
 Justificativa:
@@ -44,6 +46,7 @@ Alternativas avaliadas:
 Regras anti-lock-in:
 
 - O Godot deve falar com endpoints logicos do projeto, nao com detalhes internos de tabelas ou vendor.
+- `online/supabase_client.gd` deve receber configuracao de backend sem conhecer secrets.
 - Contratos HTTP devem permanecer estaveis: `account`, `battle`, `base`, `social`, `competition`, `monetization`, `telemetry`.
 - Edge Functions devem concentrar adaptadores de plataforma, chamando logica de dominio portavel sempre que possivel.
 - Regras economicas devem gerar ledger exportavel.
@@ -87,7 +90,7 @@ Nakama deve ser reavaliado somente se pelo menos uma destas premissas mudar:
 - `T00-P12` completo: Social/Competicao v0 server-authoritative com `social/state`, guilda alpha, chat de guilda por polling, matchmaking preview com fallback de bot e ranking de season sem bots.
 - `T00-P13` completo: Monetizacao v0 server-authoritative com Battle Pass, Diamante alpha, recompensas diarias/semanais, claims free/premium, ledger, idempotencia e export smoke Android/PC/Web.
 - `Track 01` completo: hardening do alpha PC local com fluxo de primeira sessao mais claro, estados ocupados/erros offline/pre-condicoes visiveis, reset seguro de sessao local, telemetria client nao autoritativa e smoke do loop alpha.
-- `Track 03` com design lock completo e estrategia backend definida: Supabase remoto Free para alpha, Backend Proprio + Postgres como plano de saida preferido e Nakama apenas como alternativa futura se realtime/social competitivo virar pilar.
+- `Track 03` com design lock completo, estrategia backend definida e T03-P02 repo-side preparado: Supabase remoto Free para alpha, `BackendConfig` no Godot, env vars seguras, `.env` reais ignorados, smoke remoto minimo e Backend Proprio + Postgres como plano de saida preferido. Nakama fica apenas como alternativa futura se realtime/social competitivo virar pilar.
 
 ---
 
@@ -126,12 +129,13 @@ Autoloads atuais:
 | `AssetIds` | `core/asset_ids.gd` | Manifesto de ids visuais e fallback enquanto assets nao existem |
 | `ContentLibrary` | `data/content_library.gd` | Gerar/carregar catalogo de conteudo e expor consultas por collection/id |
 | `SessionStore` | `online/session_store.gd` | Token/cache local nao autoritativo, validacao de expiracao e snapshot de estado recebido do servidor |
-| `SupabaseClient` | `online/supabase_client.gd` | HTTPRequest para Auth anonimo e Edge Functions locais |
+| `SupabaseClient` | `online/supabase_client.gd` | HTTPRequest para Auth e Edge Functions locais/remotas |
 
 Classes utilitarias:
 
 | Classe | Arquivo | Responsabilidade |
 |---|---|---|
+| `BackendConfig` | `online/backend_config.gd` | Resolver ambiente `local`/`internal_alpha_v0`, URL, publishable key, env vars e validacao contra secrets no cliente |
 | `BattleLogPresenter` | `ui/battle_log_presenter.gd` | Ordenar e formatar eventos `battle_log_v1` sem calcular gameplay |
 | `BattleVisualMockup` | `ui/battle_visual_mockup.gd` | Apresentar `battle_log_v1` como HUD visual reutilizavel para Batalha e Battle Lab, usando placeholders nativos e asset hooks futuros sem calcular gameplay |
 | `BattleStage2D` | `ui/battle_stage_2d.gd` | Palco procedural lateral com personagens parados, slots front/middle/back, efeitos temporarios e tooltips |
