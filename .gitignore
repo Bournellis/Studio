@@ -9,7 +9,10 @@ materiais/exports-temp/
 # Godot-generated files (todos os projetos sob Projetos/)
 Projetos/**/.godot/
 Projetos/**/android/
+Projetos/**/build/
 Projetos/**/*.import
+Projetos/**/*.translation
+Projetos/**/*.uid
 Projetos/**/export_presets.cfg
 Projetos/**/supabase/.branches/
 Projetos/**/supabase/.temp/
