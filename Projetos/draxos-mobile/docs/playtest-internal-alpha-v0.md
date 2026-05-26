@@ -3,6 +3,13 @@
 - Ultima atualizacao: `2026-05-26`
 - Alvo: Android + PC executavel + PC browser com backend remoto.
 - Testadores: Fabio + 1 amigo.
+- QA local automatizado: `PASS_LOCAL_AUTOMATED_QA` em `internal-alpha-v0-qa-report.md`.
+
+## Status Local-First
+
+- O roteiro abaixo continua sendo o alvo da build fechada real com remoto/builds.
+- Enquanto remoto/builds estao adiados, a cobertura automatizada local ja validou batalha, Base, Social, Competicao, Loja, Progression Lab, dois saves, reset separado, telemetria e presets de export.
+- Antes de compartilhar com outro testador, falta uma passada manual no Godot/editor para UX/legibilidade real e uma passada remota quando o Supabase alpha estiver configurado.
 
 ## Pre-Flight
 

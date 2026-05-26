@@ -61,7 +61,7 @@ Enquanto o remoto estiver adiado, `T03-P02` permanece repo-ready: a configuracao
 
 ### T03-P03 - Conta Email/Senha E Dois Saves
 
-Status local-first: `IN_PROGRESS - T03-P09_COMPLETE`.
+Status local-first: `IN_PROGRESS - T03-P11_LOCAL_QA_COMPLETE`.
 
 - Implementar fluxo email/senha.
 - Manter guest/local como fallback de desenvolvimento, se ainda util.
@@ -229,6 +229,8 @@ Saida esperada:
 
 ### T03-P11 - QA, Smokes E Playtest Fechado
 
+Status local-first: `LOCAL_AUTOMATED_QA_COMPLETE`.
+
 - Rodar validate/GUT.
 - Rodar smokes remotos.
 - Rodar checklist interno com duas contas.
@@ -238,6 +240,18 @@ Saida esperada:
 Saida esperada:
 
 - Build fechada testavel por Fabio + 1 amigo.
+
+Implementado em modo local-first:
+
+- Ambiente local resetado: cache Godot, scratch Progression Lab e Supabase local.
+- Checks/lints Deno de `supabase/functions` e `server/functions` passaram.
+- Smokes server-authoritative locais cobriram batalha, dois saves, reset separado, Progression Lab apply, Base, Social, Competicao, Loja e Telemetria.
+- Godot validate/GUT, smoke de exports, shell, replay, alpha loop e labs dev passaram.
+- Relatorio curto criado em `docs/internal-alpha-v0-qa-report.md`.
+
+Lacunas intencionais:
+
+- Smoke remoto real, email/senha, builds exportadas e manifest de updates seguem adiados ate o gameplay local estar aprovado para compartilhar.
 
 ## Design Sessions Obrigatorias Antes De Codigo Funcional
 

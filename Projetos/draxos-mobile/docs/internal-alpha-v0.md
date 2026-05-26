@@ -58,7 +58,7 @@ Regras:
 - Dados de ranking/social do save normal nao devem ser contaminados pelo lab.
 - Toda mutacao continua server-authoritative.
 
-Status local atual (`T03-P09`):
+Status local atual (`T03-P11`):
 
 - Godot persiste o save ativo e envia `x-draxos-save-type`.
 - Supabase local resolve `normal` e `progression_lab` por `players.save_type`.
@@ -72,6 +72,7 @@ Status local atual (`T03-P09`):
 - A Competicao ja funciona como leaderboard alpha local: batalha normal pontua no servidor, ranking mostra top 10 + posicao do jogador, bots ficam fora da tabela e o Lab continua sem pontuacao.
 - A Loja ja funciona como proof-of-concept local: quatro redeems diarios por save entregam apenas Diamante, compras usam Diamante, Battle Pass premium e fila dupla sao produtos unicos, a fila dupla altera a Base para 2 slots e a UI mostra catalogo/status/claims com tooltips.
 - A Batalha possui polish visual pequeno para playtest: nomes mostram HP percentual, o palco exibe readout compacto de replay/tempo/HP/status/cooldowns/aliados e tooltips de evento humanizam fonte/alvo.
+- QA local automatizado passou apos reset completo de cache Godot, scratch Progression Lab e Supabase local; detalhes em `internal-alpha-v0-qa-report.md`.
 
 ## Backend Remoto
 
