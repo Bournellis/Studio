@@ -1,8 +1,8 @@
 # Track 02 - Progression Lab - Current Status
 
 - Last Updated: `2026-05-26`
-- Status: `IN_PROGRESS - SOURCE IDENTITY BALANCE V2 + DEV LAB FLOW/VISUAL HARDENED + BATTLE STAGE 2D CONTINUOUS COOLDOWNS`
-- Baseline: Track 00 completa, Track 01 alpha PC local pronta, Battle Lab e simulador economico existentes. Progression Lab v1 agora gera saves saudaveis, relatorios, bot pool, seeder local e fluxo manual dev-only no Godot. Em 2026-05-25, o Character Systems Rework atualizou instrumentos, spells, doutrinas, familiares, fontes de dano e status no catalogo, simulador, labs e testes; Source Identity Balance v2 manteve Battle Lab em `PASS`, adicionou checks de identidade de fonte e deixou Progression Lab em `REVIEW` calibravel. O runner dev-only dos labs no Godot agora sanitiza comandos acumulados, usa wrapper Windows-safe para `npx.cmd`, registra replay custom em Replay/History, cria cache local-only do Progression Lab sem Supabase e tem smokes reais via `tools/smoke_dev_labs.gd` e `tools/smoke_dev_lab_ui.gd`. A tela Batalha e o Battle Lab compartilham `BattleVisualMockup` para apresentar `battle_log_v1` com palco procedural 2D estilo luta lateral, personagens parados frente a frente, HP/Mana/Barreira, ataque basico, spells, buffs, dano, numeros flutuantes com nomes completos de efeito/dano, projeteis simples, simbolos procedurais, cooldowns com timer restante em relogio continuo de replay, tooltips objetivos imediatos, slots front/middle/back, summons, Familiar, resultado e timeline sem simular combate no cliente; efeitos animados nao bloqueiam hover, os icons reaproveitam os mesmos nos durante o replay e o palco reduz largura minima para caber melhor na apresentacao.
+- Status: `IN_PROGRESS - SOURCE IDENTITY BALANCE V2 + DEV LAB FLOW/VISUAL HARDENED + BATTLE STAGE 2D CONTINUOUS COOLDOWNS + LOCAL-ONLY SESSION GUARD`
+- Baseline: Track 00 completa, Track 01 alpha PC local pronta, Battle Lab e simulador economico existentes. Progression Lab v1 agora gera saves saudaveis, relatorios, bot pool, seeder local e fluxo manual dev-only no Godot. Em 2026-05-25, o Character Systems Rework atualizou instrumentos, spells, doutrinas, familiares, fontes de dano e status no catalogo, simulador, labs e testes; Source Identity Balance v2 manteve Battle Lab em `PASS`, adicionou checks de identidade de fonte e deixou Progression Lab em `REVIEW` calibravel. O runner dev-only dos labs no Godot agora sanitiza comandos acumulados, usa wrapper Windows-safe para `npx.cmd`, registra replay custom em Replay/History, cria cache local-only do Progression Lab sem Supabase, sem token valido e com bloqueio claro para acoes online, e tem smokes reais via `tools/smoke_dev_labs.gd` e `tools/smoke_dev_lab_ui.gd`. A tela Batalha e o Battle Lab compartilham `BattleVisualMockup` para apresentar `battle_log_v1` com palco procedural 2D estilo luta lateral, personagens parados frente a frente, HP/Mana/Barreira, ataque basico, spells, buffs, dano, numeros flutuantes com nomes completos de efeito/dano, projeteis simples, simbolos procedurais, cooldowns com timer restante em relogio continuo de replay, tooltips objetivos imediatos, slots front/middle/back, summons, Familiar, resultado e timeline sem simular combate no cliente; efeitos animados nao bloqueiam hover, os icons reaproveitam os mesmos nos durante o replay e o palco reduz largura minima para caber melhor na apresentacao.
 
 ## Objetivo Atual
 
@@ -18,16 +18,17 @@ Criar o Progression Lab para testar e calibrar manualmente e por simulacao as pr
 - Outputs versionados em `docs/progression-lab/generated/`.
 - Seeder local `tools/progression_lab/seed_supabase.ts` com trava para Supabase local, `--dry-run`, `--all`, selecao por perfil/milestone e cache em `.progression_lab_scratch/`.
 - Tela dev-only `Progression Lab Dev` no Refugio do editor para gerar relatorio, preparar save local, carregar cache no `SessionStore` e abrir checklist manual.
-- `SessionStore.apply_snapshot_cache()` para aplicar o cache produzido pelo seeder.
+- `SessionStore.apply_snapshot_cache()` para aplicar o cache produzido pelo seeder e preservar metadados `progression_lab`.
 - Battle Lab integrado aos healthy saves e bot pool do Progression Lab, com `battle_lab_progression_matrix.csv`.
 - Character Systems Rework 2026-05-25 integrado ao Progression Lab e Battle Lab: `weapon_id` entra nos builds, archetypes antigos foram substituidos e os ids vivos seguem `docs/character-systems-rework.md`.
 - Source Identity Balance v2 2026-05-25 integrado: Battle Lab v4 valida identidade de fonte, recalcula poder por loadout real, usa pesos `level=42`, `weapon=28`, `spell=40`, `pet=34`, `passive=22`, move anti-stall para o limite real, reduz dominancia de ataque basico/DoT/Familiar e arquiva a run oficial `2026-05-25_source_identity_balance_v02`.
 - Exports Android/PC/Web excluem `tools/progression_lab/`, `docs/progression-lab/` e `.progression_lab_scratch/`.
 - Smoke GUT cobre saves `2h`, `10h`, `20h` e aplicacao de snapshot do Progression Lab.
 - Smoke Godot `tools/smoke_dev_labs.gd` cobre o spawn real de Battle Lab/Progression Lab via `OS.execute`, replay custom com spells/effects e geracao dos outputs do Progression Lab.
-- Smoke Godot `tools/smoke_dev_lab_ui.gd` cobre o fluxo visual dos labs, incluindo replay custom na aba Replay/History, porcentagem da velocidade do replay, cache local-only do Progression Lab e largura minima para labels dentro de `ScrollContainer`.
+- Smoke Godot `tools/smoke_dev_lab_ui.gd` cobre o fluxo visual dos labs, incluindo replay custom na aba Replay/History, porcentagem da velocidade do replay, cache local-only do Progression Lab sem token valido e largura minima para labels dentro de `ScrollContainer`.
 - Conhecimento operacional registrado em `docs/dev-lab-workflow.md`.
 - Mockup visual de batalha registrado em `docs/battle-visual-mockup.md`, com asset hooks futuros em `core/asset_ids.gd` e uso compartilhado por `modes/boot/boot.gd` e `dev/battle_lab/battle_lab_screen.gd`.
+- Boot shell diferencia cache local-only de sessao server-backed: base abre como snapshot somente leitura, enquanto batalha, coleta, upgrade, social e loja exibem mensagem objetiva pedindo cache seeded no Supabase local.
 
 ## Ultimo Resultado Local
 
@@ -36,9 +37,10 @@ Criar o Progression Lab para testar e calibrar manualmente e por simulacao as pr
 - `npx -y deno test tools/battle_lab`: `14/14` testes.
 - `npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --archive-run 2026-05-25_source_identity_balance_v02 --compare-with 2026-05-25_initial_balance_v01`: `3132` batalhas, `212` builds, status `PASS`, duracao media `24.08s`, anti-stall `4.95%`, dominancia em poder proximo maxima `63.46%`, checks de identidade de fonte em `PASS`.
 - `npx -y deno run --allow-read tools/progression_lab/seed_supabase.ts --dry-run --all`: selecionou `25/25` saves.
-- `tools/validate.gd`: passou com GUT `40/40`, `235` asserts.
+- `tools/validate.gd`: passou com GUT `41/41`, `253` asserts.
+- `tools/smoke_session_shell.gd`: passou com Auth anonimo, conta guest e account/state.
 - `tools/smoke_dev_labs.gd`: passou, executando Battle Lab bridge e Progression Lab generate pelo `OS.execute` do Godot.
-- `tools/smoke_dev_lab_ui.gd`: passou em headless e gerou screenshots em modo visual.
+- `tools/smoke_dev_lab_ui.gd`: passou em headless validando que cache local-only nao cria token online; screenshots sao pulados no renderer headless.
 - `tools/smoke_exports.gd`: passou para Android Alpha, PC Windows Alpha e PC Browser Alpha.
 
 ## Proximo Passo

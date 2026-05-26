@@ -55,8 +55,15 @@ func test_session_store_accepts_progression_lab_snapshot_cache() -> void:
 			"passive_id": "anatomista_profano",
 			"passive_level": 1,
 		},
+		"progression_lab": {
+			"save_id": "free_100_rewards_10h",
+			"profile_id": "free_100_rewards",
+			"milestone_id": "10h",
+		},
 	})
 	assert_true(applied)
+	assert_true(store.has_valid_access_token(now))
+	assert_false(store.is_progression_lab_local_only())
 	assert_true(store.has_account_state())
 	assert_eq(str(store.player.get("username", "")), "plab_free_100_rewards_10h")
 	assert_eq(int(store.resources.get("energia", 0)), 115)
@@ -67,10 +74,16 @@ func test_progression_lab_builds_local_snapshot_cache_from_healthy_save() -> voi
 	var save := _as_dictionary(_as_array(doc.get("saves", []))[0])
 	var cache := ProgressionLabScreenScript.session_cache_from_save(save)
 	var store = SessionStoreScript.new()
+	var auth := _as_dictionary(cache.get("auth", {}))
+	assert_eq(str(auth.get("access_token", "")), "")
+	assert_eq(int(auth.get("expires_at", -1)), 0)
 	assert_true(store.apply_snapshot_cache(cache))
+	assert_false(store.has_valid_access_token())
+	assert_true(store.is_progression_lab_local_only())
 	assert_true(store.has_account_state())
 	assert_eq(str(store.player.get("username", "")), str(_as_dictionary(save.get("player", {})).get("username", "")))
 	assert_eq(str(_as_dictionary(cache.get("progression_lab", {})).get("save_id", "")), str(save.get("id", "")))
+	assert_eq(store.progression_lab_label(), "%s/%s" % [str(save.get("profile_id", "")), str(save.get("milestone_id", ""))])
 	assert_eq(str(store.build.get("weapon_type", "")), str(_as_dictionary(save.get("build", {})).get("weapon_type", "")))
 	store.free()
 

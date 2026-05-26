@@ -272,10 +272,10 @@ static func session_cache_from_save(save: Dictionary) -> Dictionary:
 	return {
 		"cache_version": 1,
 		"auth": {
-			"access_token": "progression_lab_local_only",
-			"refresh_token": "progression_lab_local_only",
-			"expires_at": now_unix + 86400,
-			"user_id": "auth_%s" % save_id,
+			"access_token": "",
+			"refresh_token": "",
+			"expires_at": 0,
+			"user_id": "",
 		},
 		"session_id": SessionStoreScript.create_request_id(),
 		"guest_request_id": SessionStoreScript.create_request_id(),

@@ -21,7 +21,9 @@ Registro operacional dos problemas corrigidos nos labs do Godot em 2026-05-26.
 
 - Gerar relatorio nao cria cache de sessao. O cache server-backed nasce do seeder local com `SUPABASE_SERVICE_ROLE_KEY`.
 - Para playtest visual sem Supabase, a tela deve conseguir montar um cache local-only a partir de `docs/progression-lab/generated/healthy_saves.json`.
-- Esse cache local-only serve para carregar o Refugio/SessionStore e avaliar UI, recursos, base, monetizacao e checklist; acoes online ainda dependem de uma sessao real seeded no Supabase.
+- Esse cache local-only serve para carregar o Refugio/SessionStore e avaliar UI, recursos, base, monetizacao e checklist em modo somente leitura.
+- Cache local-only nao deve gerar token de acesso valido. A shell pode abrir a base como snapshot, mas batalha, coleta, upgrade, social e loja devem ser bloqueados com mensagem objetiva em vez de tentar HTTP.
+- Acoes online ainda dependem de uma sessao real seeded no Supabase local pelo seeder.
 - `Carregar Save` deve ser tolerante: se nao houver cache em `.progression_lab_scratch/`, ele gera um cache local-only a partir do healthy save selecionado.
 
 ## UI

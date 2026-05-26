@@ -62,7 +62,7 @@ npx -y deno run --allow-read tools/progression_lab/seed_supabase.ts --dry-run --
 ```
 
 4. Abrir o Godot editor e usar `Refugio -> Progression Lab Dev`.
-5. Carregar o save e jogar manualmente. Sem `SUPABASE_SERVICE_ROLE_KEY`, a tela cria um cache local-only a partir do healthy save selecionado para validar UI/fluxo; com service key, o seeder cria uma sessao real no Supabase local.
+5. Carregar o save e jogar manualmente. Sem `SUPABASE_SERVICE_ROLE_KEY`, a tela cria um cache local-only a partir do healthy save selecionado para validar UI/fluxo em modo somente leitura. Esse cache nao tem token valido: base pode ser inspecionada como snapshot, mas batalha, coleta, upgrade e outras acoes server-authoritative exigem uma sessao real criada pelo seeder no Supabase local. Com service key, o seeder cria essa sessao real.
 6. Registrar feedback de ritmo, recompensa, gargalo, poder e loja.
 7. Rodar Battle Lab com as builds saudaveis.
 8. Ajustar numeros em tarefa separada e comparar before/after.
@@ -92,6 +92,7 @@ Esse diretorio guarda sessoes locais e nao deve entrar no Git.
 
 - Ferramenta local/dev-only.
 - Nao substitui Supabase como autoridade do jogo.
+- Cache local-only e read-only e nunca deve simular autenticacao online.
 - Nao cria pagamento real.
 - Nao muda numeros automaticamente.
 - Nao promove pesos de poder sem Battle Lab + Progression Lab concordarem.

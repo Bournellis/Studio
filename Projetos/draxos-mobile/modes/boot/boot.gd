@@ -49,7 +49,7 @@ func _ready() -> void:
 		SessionStore.save_cache()
 	_show_screen(SCREEN_HUB, false)
 	_sync_status_from_session()
-	if SessionStore.has_valid_access_token():
+	if SessionStore.has_valid_access_token() and not SessionStore.is_progression_lab_local_only():
 		call_deferred("_recover_session_state")
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -332,7 +332,13 @@ func _render_hub_screen() -> void:
 		_add_action_button("Progression Lab Dev", "open_progression_lab")
 
 	var account := "Conta: nao iniciada"
-	if SessionStore.has_account_state():
+	if SessionStore.is_progression_lab_local_only() and SessionStore.has_account_state():
+		account = "Progression Lab local: %s | Level %s | Poder %s" % [
+			SessionStore.player_display_name(),
+			str(SessionStore.player.get("level", 1)),
+			str(SessionStore.player.get("power", 0)),
+		]
+	elif SessionStore.has_account_state():
 		account = "Conta: %s | Level %s | Poder %s" % [
 			SessionStore.player_display_name(),
 			str(SessionStore.player.get("level", 1)),
@@ -530,7 +536,7 @@ func _execute_action(action_id: String) -> void:
 func _enter_guest() -> void:
 	_set_busy(true, "Criando sessao guest...")
 	var auth_result: Dictionary = {"ok": true}
-	if not SessionStore.has_valid_access_token():
+	if not SessionStore.has_valid_access_token() or SessionStore.is_progression_lab_local_only():
 		auth_result = await SupabaseClient.sign_in_anonymously()
 		if not bool(auth_result.get("ok", false)):
 			_fail_with_error(auth_result)
@@ -566,7 +572,7 @@ func _refresh_session() -> void:
 func _reset_local_session() -> void:
 	var previous_player_id := str(SessionStore.player.get("id", ""))
 	var previous_session_id := SessionStore.ensure_session_id()
-	if SessionStore.has_valid_access_token():
+	if SessionStore.has_valid_access_token() and not SessionStore.is_progression_lab_local_only():
 		await SupabaseClient.send_client_telemetry(
 			SessionStore.access_token,
 			previous_session_id,
@@ -583,6 +589,9 @@ func _reset_local_session() -> void:
 	_show_screen(SCREEN_HUB, false)
 
 func _recover_session_state() -> bool:
+	if SessionStore.is_progression_lab_local_only():
+		_sync_status_from_session()
+		return false
 	if not SessionStore.has_valid_access_token():
 		_sync_status_from_session()
 		return false
@@ -650,6 +659,11 @@ func _show_latest_battle() -> void:
 	await _play_battle_log(SessionStore.last_battle_log, SessionStore.last_battle_rewards)
 
 func _show_base() -> void:
+	if SessionStore.is_progression_lab_local_only():
+		_show_screen(SCREEN_BASE, false)
+		_set_busy(false, "Snapshot local do Progression Lab carregado. Base em modo somente leitura; coletas e upgrades precisam de save seeded no Supabase local.")
+		_render_base_state()
+		return
 	if not _require_session("Crie uma sessao guest antes de abrir a base."):
 		return
 
@@ -970,6 +984,15 @@ func _sync_nav_buttons() -> void:
 		button.button_pressed = screen_id == _current_screen
 
 func _require_session(message: String) -> bool:
+	if SessionStore.is_progression_lab_local_only():
+		_error_label.text = "Save local-only do Progression Lab nao executa acoes online."
+		_detail_label.text = "Use o seeder com Supabase local para testar batalha, coleta, upgrades e outras mutacoes server-authoritative."
+		_emit_client_event("precondition_failed", {
+			"action_id": _active_action_id,
+			"screen": _current_screen,
+			"reason": "progression_lab_local_only",
+		})
+		return false
 	if SessionStore.has_valid_access_token():
 		return true
 	_error_label.text = message
@@ -982,6 +1005,15 @@ func _require_session(message: String) -> bool:
 	return false
 
 func _require_account(message: String) -> bool:
+	if SessionStore.is_progression_lab_local_only():
+		_error_label.text = "Save local-only do Progression Lab nao executa acoes online."
+		_detail_label.text = "Para batalhas, coleta, upgrades e compras, rode o seeder com Supabase local e carregue o cache server-backed."
+		_emit_client_event("precondition_failed", {
+			"action_id": _active_action_id,
+			"screen": _current_screen,
+			"reason": "progression_lab_local_only",
+		})
+		return false
 	if SessionStore.has_valid_access_token() and SessionStore.has_account_state():
 		return true
 	_error_label.text = message
@@ -1003,7 +1035,11 @@ func _render_base_state(collected: Dictionary = {}) -> void:
 
 	var resources := SessionStore.resources
 	var lines := PackedStringArray()
-	lines.append("Refugio server-authoritative")
+	if SessionStore.is_progression_lab_local_only():
+		lines.append("Refugio Progression Lab local (somente leitura)")
+		lines.append("Acoes online exigem cache server-backed criado pelo seeder Supabase.")
+	else:
+		lines.append("Refugio server-authoritative")
 	lines.append("Recursos: %s" % _format_resources(resources))
 	if not collected.is_empty():
 		if _resource_total(collected) <= 0.0:
@@ -1254,6 +1290,11 @@ func _screen_title(screen_id: String) -> String:
 	return "Refugio"
 
 func _session_status_text() -> String:
+	if SessionStore.is_progression_lab_local_only() and SessionStore.has_account_state():
+		var label := SessionStore.progression_lab_label()
+		if label == "":
+			label = SessionStore.player_display_name()
+		return "Progression Lab local: %s (somente leitura)" % label
 	if SessionStore.has_account_state():
 		return "Sessao guest pronta: %s" % SessionStore.player_display_name()
 	if SessionStore.has_valid_access_token():
@@ -1313,6 +1354,8 @@ func _extract_error(result: Dictionary) -> Dictionary:
 
 func _friendly_error_message(code: String, message: String) -> String:
 	match code:
+		"PROGRESSION_LAB_LOCAL_ONLY":
+			return "Save local-only do Progression Lab. Use o seeder com Supabase local para testar acoes online."
 		"NETWORK_UNAVAILABLE":
 			return "Supabase local indisponivel. Confirme Docker/Supabase local em http://127.0.0.1:54321 e tente sincronizar."
 		"REQUEST_NOT_STARTED":
@@ -1367,6 +1410,8 @@ func _action_payload(action_id: String) -> Dictionary:
 	}
 
 func _emit_client_event(event_type: String, payload: Dictionary) -> void:
+	if SessionStore.is_progression_lab_local_only():
+		return
 	if not SessionStore.has_valid_access_token():
 		return
 	call_deferred("_send_telemetry_deferred", event_type, payload.duplicate(true))

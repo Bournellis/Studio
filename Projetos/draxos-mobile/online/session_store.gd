@@ -20,6 +20,7 @@ var base_state: Dictionary = {}
 var social_state: Dictionary = {}
 var competition_state: Dictionary = {}
 var monetization_state: Dictionary = {}
+var progression_lab: Dictionary = {}
 var last_battle_id: Variant = null
 var last_battle_log: Dictionary = {}
 var last_battle_rewards: Dictionary = {}
@@ -87,6 +88,7 @@ func clear_session() -> void:
 	social_state = {}
 	competition_state = {}
 	monetization_state = {}
+	progression_lab = {}
 	last_battle_id = null
 	last_battle_log = {}
 	last_battle_rewards = {}
@@ -108,6 +110,18 @@ func apply_auth_session(session: Dictionary) -> bool:
 		session_changed.emit()
 		return false
 
+	if is_progression_lab_local_only():
+		player = {}
+		resources = {}
+		build = {}
+		base_state = {}
+		social_state = {}
+		competition_state = {}
+		monetization_state = {}
+		progression_lab = {}
+		last_battle_id = null
+		last_battle_log = {}
+		last_battle_rewards = {}
 	access_token = token
 	refresh_token = refresh
 	expires_at = expiry
@@ -319,6 +333,18 @@ func has_competition_state() -> bool:
 func has_monetization_state() -> bool:
 	return not monetization_state.is_empty()
 
+func is_progression_lab_local_only() -> bool:
+	return bool(progression_lab.get("local_only", false))
+
+func progression_lab_label() -> String:
+	if progression_lab.is_empty():
+		return ""
+	var profile_id := str(progression_lab.get("profile_id", ""))
+	var milestone_id := str(progression_lab.get("milestone_id", ""))
+	if profile_id != "" and milestone_id != "":
+		return "%s/%s" % [profile_id, milestone_id]
+	return str(progression_lab.get("save_id", "Progression Lab"))
+
 func ensure_guest_request_id() -> String:
 	if guest_request_id == "":
 		guest_request_id = create_request_id()
@@ -351,6 +377,7 @@ func snapshot() -> Dictionary:
 		"social_state": social_state.duplicate(true),
 		"competition_state": competition_state.duplicate(true),
 		"monetization_state": monetization_state.duplicate(true),
+		"progression_lab": progression_lab.duplicate(true),
 		"last_battle_id": last_battle_id,
 		"last_battle_log": last_battle_log.duplicate(true),
 		"last_battle_rewards": last_battle_rewards.duplicate(true),
@@ -394,6 +421,7 @@ func _apply_cache(cache: Dictionary) -> void:
 	social_state = _as_dictionary(cache.get("social_state", {})).duplicate(true)
 	competition_state = _as_dictionary(cache.get("competition_state", {})).duplicate(true)
 	monetization_state = _as_dictionary(cache.get("monetization_state", {})).duplicate(true)
+	progression_lab = _as_dictionary(cache.get("progression_lab", {})).duplicate(true)
 	last_battle_id = cache.get("last_battle_id", null)
 	last_battle_log = _as_dictionary(cache.get("last_battle_log", {})).duplicate(true)
 	last_battle_rewards = _as_dictionary(cache.get("last_battle_rewards", {})).duplicate(true)

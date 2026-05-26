@@ -64,6 +64,14 @@ func _capture_progression_lab() -> void:
 		_failures.append("Progression Lab local cache did not load into SessionStore.")
 	if not screen._summary_label.text.contains("Save"):
 		_failures.append("Progression Lab did not render a loaded save summary.")
+	var store := root.get_node_or_null("/root/SessionStore")
+	if store == null:
+		_failures.append("SessionStore autoload is not available after Progression Lab load.")
+	else:
+		if not bool(store.call("is_progression_lab_local_only")):
+			_failures.append("Progression Lab local cache was not flagged as local-only.")
+		if bool(store.call("has_valid_access_token")):
+			_failures.append("Progression Lab local cache created a valid online token.")
 	await _capture("progression_loaded_save.png")
 	screen.queue_free()
 	await process_frame
