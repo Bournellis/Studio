@@ -1,7 +1,7 @@
 # Database Schema Contract
 
 - Ultima atualizacao: `2026-05-26`
-- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type` local e reset separado por save implementadas; Track 03 ainda planeja email/senha e aplicacao do Progression Lab no save de lab
+- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type` local, reset separado por save e aplicacao do Progression Lab no save de lab implementadas; Track 03 ainda planeja email/senha e updates internos
 
 Este documento define o schema esperado. A fonte tecnica viva do runtime local e `../../supabase/migrations/`; `../../server/schema/migrations/` permanece como espelho backend durante o alpha local.
 
@@ -15,6 +15,7 @@ Migrations atuais:
 - `202605200005_monetization_rewards_alpha.sql`: Battle Pass, progresso de passe, claims de reward, compras alpha, RLS de leitura e seed `bp_s1_01`.
 - `202605260001_two_save_context.sql`: `players.save_type`, unicidade por `auth_user_id + save_type` e RPCs com contexto de save.
 - `202605260002_reset_save_context.sql`: RPC `reset_player_save` para reconstruir apenas o save ativo sem tocar o outro.
+- `202605260003_progression_lab_apply.sql`: RPC `apply_progression_lab_save` para aplicar um healthy save gerado no save `progression_lab`.
 
 ## MVP Tecnico
 
@@ -205,9 +206,17 @@ Implementado em `T03-P03C`:
 - reset usa `request_id`, grava ledger `account/saves/reset` e preserva idempotencia do proprio reset;
 - `account/guest` do mesmo save passa a retornar o payload resetado se repetir o `request_id` original.
 
+Implementado em `T03-P04`:
+
+- `apply_progression_lab_save` seleciona somente o `players.id` com `save_type = progression_lab`;
+- a Edge Function `progression-lab/apply` valida `profile_id`, `milestone_id` e `save_id` contra o catalogo versionado de healthy saves antes de chamar a RPC;
+- aplicacao substitui level/xp/power, resources, build, base, job ativo e progresso do Battle Pass do Lab;
+- aplicacao limpa batalha, ranking, social isolado, loja anterior, jobs, claims, compras alpha, ledger e idempotencias de acoes daquele save;
+- a RPC nunca escreve no save `normal`, grava ledger `progression-lab/apply` e preserva idempotencia por `request_id`;
+- `account/guest` do save Lab passa a retornar o payload aplicado se repetir o `request_id` original.
+
 Limites atuais desta etapa:
 
-- Progression Lab ainda nao aplica perfil/milestone no save server-backed;
 - social esta isolado por `player_id/save_type` no alpha local, e pode virar social de conta inteira com marcador `lab` em `T03-P06` se o design exigir;
 - email/senha remoto ainda fica adiado ate o gameplay local estar pronto.
 

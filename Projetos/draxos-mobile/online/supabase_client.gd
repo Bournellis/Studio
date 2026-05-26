@@ -99,6 +99,19 @@ func reset_active_save(request_id: String, access_token: String) -> Dictionary:
 		}
 	)
 
+func apply_progression_lab_save(request_id: String, profile_id: String, milestone_id: String, save_id: String, access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("progression-lab/apply"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		{
+			"request_id": request_id,
+			"profile_id": profile_id,
+			"milestone_id": milestone_id,
+			"save_id": save_id,
+		}
+	)
+
 func request_battle(request_id: String, access_token: String, mode: String = ProjectInfo.DEFAULT_BATTLE_MODE, opponent_bot_id: String = "") -> Dictionary:
 	var body := {
 		"request_id": request_id,

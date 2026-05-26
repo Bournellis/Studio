@@ -218,6 +218,35 @@ func apply_save_reset(payload: Dictionary) -> bool:
 	session_changed.emit()
 	return true
 
+func apply_progression_lab_result(payload: Dictionary) -> bool:
+	if not apply_server_state(payload):
+		return false
+
+	var body := _unwrap_body(payload)
+	var metadata := _as_dictionary(body.get("progression_lab", {}))
+	if metadata.is_empty():
+		last_error = {
+			"code": "PROGRESSION_LAB_METADATA_MISSING",
+			"message": "Servidor nao retornou metadados do Progression Lab.",
+		}
+		session_changed.emit()
+		return false
+
+	active_save_type = SAVE_TYPE_PROGRESSION_LAB
+	progression_lab = metadata.duplicate(true)
+	progression_lab["local_only"] = bool(progression_lab.get("local_only", false))
+	base_state = {}
+	social_state = {}
+	competition_state = {}
+	monetization_state = {}
+	last_battle_id = null
+	last_battle_log = {}
+	last_battle_rewards = {}
+	last_error = {}
+	offline = false
+	session_changed.emit()
+	return true
+
 func apply_base_result(payload: Dictionary) -> bool:
 	var body := _unwrap_body(payload)
 	if not bool(body.get("ok", false)):

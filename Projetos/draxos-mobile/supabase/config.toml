@@ -398,6 +398,9 @@ verify_jwt = true
 [functions.monetization]
 verify_jwt = true
 
+[functions.progression-lab]
+verify_jwt = true
+
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"
 

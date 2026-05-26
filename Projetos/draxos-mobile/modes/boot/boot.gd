@@ -1420,6 +1420,12 @@ func _friendly_error_message(code: String, message: String) -> String:
 			return "Save Progression Lab selecionado. Acoes online serao ligadas ao Supabase local na proxima subetapa."
 		"PROGRESSION_LAB_LOCAL_ONLY":
 			return "Save local-only do Progression Lab. Use o seeder com Supabase local para testar acoes online."
+		"PROGRESSION_LAB_SAVE_REQUIRED":
+			return "Selecione o save Progression Lab antes de aplicar um perfil do laboratorio."
+		"PROGRESSION_LAB_SAVE_NOT_FOUND":
+			return "Perfil/milestone do Progression Lab nao encontrado no catalogo do servidor."
+		"INVALID_PROGRESSION_LAB_SAVE":
+			return "O servidor recusou o estado gerado do Progression Lab."
 		"NETWORK_UNAVAILABLE":
 			return "Supabase local indisponivel. Confirme Docker/Supabase local em http://127.0.0.1:54321 e tente sincronizar."
 		"REQUEST_NOT_STARTED":

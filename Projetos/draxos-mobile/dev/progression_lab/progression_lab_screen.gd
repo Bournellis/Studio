@@ -26,7 +26,9 @@ var _checklist_label: Label
 var _fallback_session_store = null
 
 static func is_available() -> bool:
-	return bool(ProjectSettings.get_setting("draxos_mobile/progression_lab/enabled", false)) and OS.has_feature("editor")
+	if not bool(ProjectSettings.get_setting("draxos_mobile/progression_lab/enabled", false)):
+		return false
+	return OS.has_feature("editor") or bool(ProjectSettings.get_setting("draxos_mobile/internal_alpha/dev_tools_enabled", false))
 
 static func deno_invocation(settings_prefix: String, fallback_prefix: PackedStringArray) -> Dictionary:
 	var command_text := str(ProjectSettings.get_setting("%s/deno_command" % settings_prefix, "npx")).strip_edges()
@@ -151,6 +153,7 @@ func _build_ui() -> void:
 		_prepare_local_save()
 	))
 	buttons.add_child(_button("Carregar Save", _load_selected_save))
+	buttons.add_child(_button("Aplicar no Save Lab", _apply_selected_to_server_lab_save))
 	buttons.add_child(_button("Abrir Checklist", _refresh_checklist))
 
 	var split := HSplitContainer.new()
@@ -246,6 +249,52 @@ func _load_selected_save() -> void:
 	_set_status("Save carregado no SessionStore. Feche o overlay e jogue a partir do Refugio.")
 	_summary_label.text = _session_summary(cache)
 
+func _apply_selected_to_server_lab_save() -> void:
+	var save := _selected_healthy_save()
+	if save.is_empty():
+		_set_status("Healthy save nao encontrado. Gere o relatorio primeiro.")
+		return
+
+	var session_store = _session_store()
+	if not session_store.has_valid_access_token():
+		_set_status("Entre como guest antes de aplicar um perfil no save Progression Lab.")
+		return
+	if not session_store.is_progression_lab_active():
+		_set_status("Selecione o save Progression Lab no Refugio antes de aplicar o perfil.")
+		return
+	if not session_store.has_account_state():
+		_set_status("Crie ou sincronize a conta guest do save Progression Lab antes de aplicar o perfil.")
+		return
+
+	var supabase_client = _supabase_client()
+	if supabase_client == null:
+		_set_status("SupabaseClient indisponivel: nao foi possivel aplicar no servidor.")
+		return
+
+	_set_status("Aplicando %s/%s no save Progression Lab..." % [_selected_profile(), _selected_milestone()])
+	supabase_client.configure_save_type(SessionStoreScript.SAVE_TYPE_PROGRESSION_LAB)
+	var result: Dictionary = await supabase_client.apply_progression_lab_save(
+		SessionStoreScript.create_request_id(),
+		_selected_profile(),
+		_selected_milestone(),
+		str(save.get("id", "")),
+		session_store.access_token
+	)
+	if not bool(result.get("ok", false)):
+		var error_payload := _as_dictionary(result.get("error", {}))
+		_set_status("Aplicacao falhou: %s - %s" % [
+			str(error_payload.get("code", "REQUEST_FAILED")),
+			str(error_payload.get("message", "Falha na requisicao.")),
+		])
+		return
+	if not session_store.apply_progression_lab_result(result):
+		_set_status("SessionStore recusou o retorno: %s" % str(session_store.last_error.get("message", "erro desconhecido")))
+		return
+	session_store.save_cache()
+	_write_selected_cache(session_store.snapshot())
+	_set_status("Perfil aplicado no save Progression Lab. Feche o overlay e jogue esse estado isolado.")
+	_summary_label.text = _session_summary(session_store.snapshot())
+
 func _session_store():
 	var session_store = get_node_or_null("/root/SessionStore")
 	if session_store != null:
@@ -254,8 +303,10 @@ func _session_store():
 		_fallback_session_store = SessionStoreScript.new()
 	return _fallback_session_store
 
+func _supabase_client():
+	return get_node_or_null("/root/SupabaseClient")
+
 static func session_cache_from_save(save: Dictionary) -> Dictionary:
-	var now_unix := int(Time.get_unix_time_from_system())
 	var now_text := Time.get_datetime_string_from_system(true)
 	var save_id := str(save.get("id", "progression_lab_save"))
 	var player_id := "local_%s" % save_id
@@ -277,6 +328,7 @@ static func session_cache_from_save(save: Dictionary) -> Dictionary:
 			"expires_at": 0,
 			"user_id": "",
 		},
+		"active_save_type": SessionStoreScript.SAVE_TYPE_PROGRESSION_LAB,
 		"session_id": SessionStoreScript.create_request_id(),
 		"guest_request_id": SessionStoreScript.create_request_id(),
 		"player": {

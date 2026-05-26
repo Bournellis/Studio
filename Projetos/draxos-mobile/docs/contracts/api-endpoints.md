@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
 - Ultima atualizacao: `2026-05-26`
-- Status: contrato com `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*` e `telemetry/*` implementados localmente; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`; Track 03 ja implementou selecao local de save via `x-draxos-save-type` e reset separado por save; ainda planeja email/senha, aplicacao do Progression Lab e updates internos
+- Status: contrato com `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*` e `progression-lab/*` implementados localmente; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`; Track 03 ja implementou selecao local de save via `x-draxos-save-type`, reset separado por save e aplicacao server-backed do Progression Lab no save `progression_lab`; ainda planeja email/senha e updates internos
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -356,13 +356,64 @@ Response logico:
 
 Aplica um estado gerado pelo Progression Lab no save `progression_lab`.
 
+Status: **implementado localmente em T03-P04**.
+
+Headers:
+
+```http
+Authorization: Bearer <jwt>
+apikey: <anon_or_publishable_key>
+x-draxos-save-type: progression_lab
+```
+
+Request logico:
+
+```json
+{
+  "request_id": "uuid",
+  "profile_id": "free_100_rewards",
+  "milestone_id": "10h",
+  "save_id": "free_100_rewards_10h"
+}
+```
+
 Regras:
 
 - endpoint interno/gated;
 - exige permissao alpha interna;
 - nunca escreve no save `normal`;
 - nao atualiza ranking/social normal;
-- payload final deve referenciar perfil/milestone ou save gerado, nao delta arbitrario sem validacao.
+- payload referencia perfil/milestone/save gerado e o servidor valida contra o catalogo versionado de healthy saves;
+- a aplicacao substitui player level/xp/power, resources, build, base, job ativo e Battle Pass do save `progression_lab`;
+- a aplicacao limpa batalha, ranking, social isolado, loja anterior, jobs, claims, compras alpha, ledger e idempotencias de acoes daquele save;
+- repetir o mesmo `request_id` retorna o mesmo payload;
+- usar `x-draxos-save-type: normal` retorna `PROGRESSION_LAB_SAVE_REQUIRED`.
+
+Response logico:
+
+```json
+{
+  "ok": true,
+  "applied": {
+    "save_type": "progression_lab",
+    "player_id": "uuid",
+    "request_id": "uuid",
+    "save_id": "free_100_rewards_10h",
+    "profile_id": "free_100_rewards",
+    "milestone_id": "10h"
+  },
+  "progression_lab": {
+    "save_id": "free_100_rewards_10h",
+    "profile_id": "free_100_rewards",
+    "milestone_id": "10h",
+    "local_only": false
+  },
+  "player": {},
+  "resources": {},
+  "build": {},
+  "last_battle_id": null
+}
+```
 
 ### Save ativo nos endpoints de gameplay
 
@@ -375,8 +426,7 @@ Implementado localmente em `T03-P03B` por header HTTP:
 - `account`, `battle`, `base`, `social`, `competition`, `monetization` e `telemetry` resolvem o player pelo save ativo;
 - `competition/ranking/current` retorna `excluded_reason = PROGRESSION_LAB_DOES_NOT_RANK` no save de lab;
 - social esta temporariamente isolado por `player_id/save_type` no alpha local; a versao final pode promover social para nivel de conta com marcador `lab`, se necessario.
-
-Permissao interna remota e aplicacao do Progression Lab no save de lab ficam para as proximas subetapas da Track 03.
+- permissao interna remota fina ainda fica para a etapa de auth/email e deploy remoto.
 
 ## Endpoints Do Primeiro Slice Completo
 

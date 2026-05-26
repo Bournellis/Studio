@@ -48,7 +48,21 @@ npx -y deno run --allow-read --allow-write tools/progression_lab/generate.ts
 - `generated/power_recommendations.csv`
 - `generated/bot_pool.csv`
 
-3. Preparar save local no Supabase:
+3. Preparar ou aplicar save no Supabase local.
+
+Fluxo atual recomendado para a Track 03:
+
+- entrar no app como guest;
+- alternar para o save `Progression Lab`;
+- criar/sincronizar a conta guest desse save;
+- abrir `Refugio -> Progression Lab Dev`;
+- selecionar perfil/milestone e usar `Aplicar no Save Lab`.
+
+Esse fluxo chama `POST /progression-lab/apply`, que valida o perfil/milestone
+contra o catalogo versionado de healthy saves e escreve somente no save
+`progression_lab`.
+
+O seeder local continua existindo como ferramenta de apoio/dev:
 
 ```powershell
 $env:SUPABASE_SERVICE_ROLE_KEY="<service-role-local>"
@@ -62,7 +76,7 @@ npx -y deno run --allow-read tools/progression_lab/seed_supabase.ts --dry-run --
 ```
 
 4. Abrir o Godot editor e usar `Refugio -> Progression Lab Dev`.
-5. Carregar o save e jogar manualmente. Sem `SUPABASE_SERVICE_ROLE_KEY`, a tela cria um cache local-only a partir do healthy save selecionado para validar UI/fluxo em modo somente leitura. Esse cache nao tem token valido: base pode ser inspecionada como snapshot, mas batalha, coleta, upgrade e outras acoes server-authoritative exigem uma sessao real criada pelo seeder no Supabase local. Com service key, o seeder cria essa sessao real.
+5. Carregar ou aplicar o save e jogar manualmente. Sem `SUPABASE_SERVICE_ROLE_KEY`, `Preparar Save Local` cria um cache local-only a partir do healthy save selecionado para validar UI/fluxo em modo somente leitura. Esse cache nao tem token valido: base pode ser inspecionada como snapshot, mas batalha, coleta, upgrade e outras acoes server-authoritative exigem uma sessao real. Com uma sessao real no save `progression_lab`, `Aplicar no Save Lab` usa o endpoint server-authoritative e nao precisa expor service role ao cliente.
 6. Registrar feedback de ritmo, recompensa, gargalo, poder e loja.
 7. Rodar Battle Lab com as builds saudaveis.
 8. Ajustar numeros em tarefa separada e comparar before/after.
@@ -92,6 +106,7 @@ Esse diretorio guarda sessoes locais e nao deve entrar no Git.
 
 - Ferramenta local/dev-only.
 - Nao substitui Supabase como autoridade do jogo.
+- Aplicacao server-backed usa `POST /progression-lab/apply` e nunca escreve no save `normal`.
 - Cache local-only e read-only e nunca deve simular autenticacao online.
 - Nao cria pagamento real.
 - Nao muda numeros automaticamente.

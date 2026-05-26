@@ -96,8 +96,7 @@ interface SeededSave {
 }
 
 const DEFAULT_SUPABASE_URL = "http://127.0.0.1:54321";
-const DEFAULT_PUBLISHABLE_KEY =
-  "sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH";
+const DEFAULT_PUBLISHABLE_KEY = "sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH";
 const HEALTHY_SAVES_PATH = "docs/progression-lab/generated/healthy_saves.json";
 const SCRATCH_DIR = ".progression_lab_scratch";
 const BATTLE_PASS_ID = "bp_s1_01";
@@ -188,7 +187,6 @@ async function seedSave(
   await upsertBase(config, player.id, save);
   await upsertBattlePass(config, player.id, save);
   await insertRewardClaim(config, player.id, save);
-  await upsertRanking(config, player.id, save);
 
   const sessionCache = buildSessionCache(save, auth, player.id, username);
   const sessionCacheUrl = new URL(
@@ -269,13 +267,14 @@ async function upsertPlayer(
 ): Promise<{ id: string }> {
   const rows = await restRequest<Array<{ id: string }>>(
     config,
-    "players?on_conflict=auth_user_id",
+    "players?on_conflict=auth_user_id,save_type",
     {
       method: "POST",
       body: [{
         auth_user_id: authUserId,
         username,
         account_type: "guest",
+        save_type: "progression_lab",
         level: save.player.level,
         xp: save.player.xp,
         power: save.player.power,
@@ -419,24 +418,6 @@ async function insertRewardClaim(
   });
 }
 
-async function upsertRanking(
-  config: RestConfig,
-  playerId: string,
-  save: HealthySave,
-): Promise<void> {
-  await restRequest(config, "ranking?on_conflict=season_id,player_id", {
-    method: "POST",
-    body: [{
-      season_id: SEASON_ID,
-      player_id: playerId,
-      arena_points: Math.max(0, Math.round(save.player.power / 20)),
-      wins: 0,
-      losses: 0,
-      updated_at: nowIso(),
-    }],
-  });
-}
-
 async function verifyAccountState(
   config: RestConfig,
   accessToken: string,
@@ -449,15 +430,14 @@ async function verifyAccountState(
         "accept": "application/json",
         "apikey": config.publishableKey,
         "authorization": `Bearer ${accessToken}`,
+        "x-draxos-save-type": "progression_lab",
       },
     },
   );
   const body = await readJson(response);
   if (!response.ok || !(body as { ok?: boolean }).ok) {
     throw new Error(
-      `account/state verification failed (${response.status}): ${
-        JSON.stringify(body)
-      }`,
+      `account/state verification failed (${response.status}): ${JSON.stringify(body)}`,
     );
   }
   return true;
@@ -477,12 +457,14 @@ function buildSessionCache(
       expires_at: auth.expires_at,
       user_id: auth.user.id,
     },
+    active_save_type: "progression_lab",
     session_id: crypto.randomUUID(),
     guest_request_id: crypto.randomUUID(),
     player: {
       id: playerId,
       username,
       account_type: "guest",
+      save_type: "progression_lab",
       level: save.player.level,
       xp: save.player.xp,
       power: save.player.power,
@@ -533,11 +515,12 @@ function buildSessionCache(
           display_name: "Season 1 Alpha",
         },
         self: {
-          arena_points: Math.max(0, Math.round(save.player.power / 20)),
+          arena_points: 0,
           wins: 0,
           losses: 0,
         },
         bots_included: false,
+        excluded_reason: "PROGRESSION_LAB_DOES_NOT_RANK",
       },
     },
     monetization_state: {
@@ -565,6 +548,7 @@ function buildSessionCache(
       save_id: save.id,
       profile_id: save.profile_id,
       milestone_id: save.milestone_id,
+      local_only: false,
       manual_checklist: save.manual_checklist,
     },
   };
@@ -596,9 +580,7 @@ async function restRequest<T = unknown>(
   const responseBody = await readJson(response);
   if (!response.ok) {
     throw new Error(
-      `REST ${path} failed (${response.status}): ${
-        JSON.stringify(responseBody)
-      }`,
+      `REST ${path} failed (${response.status}): ${JSON.stringify(responseBody)}`,
     );
   }
   return responseBody as T;

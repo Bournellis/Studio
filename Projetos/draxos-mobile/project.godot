@@ -40,6 +40,7 @@ supabase/url="http://127.0.0.1:54321"
 supabase/publishable_key="sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH"
 internal_alpha/supabase_url=""
 internal_alpha/publishable_key=""
+internal_alpha/dev_tools_enabled=true
 battle_lab/enabled=true
 battle_lab/deno_command="npx"
 battle_lab/deno_prefix_args=PackedStringArray("-y", "deno", "run", "--allow-read", "--allow-write")

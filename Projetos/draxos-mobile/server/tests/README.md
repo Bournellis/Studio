@@ -24,6 +24,7 @@ npx -y deno run --allow-net --allow-env server/tests/monetization_rewards_smoke.
 npx -y deno run --allow-net --allow-env server/tests/client_telemetry_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/two_save_context_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/reset_save_context_smoke.ts
+npx -y deno run --allow-net --allow-env server/tests/progression_lab_apply_smoke.ts
 ```
 
 O smoke cria uma sessao anonima, cria conta guest, solicita batalha `MVP_ONLY`,
@@ -47,6 +48,11 @@ na mesma sessao auth, batalha/base/loja no save Lab e ranking bloqueado para
 O smoke `reset_save_context_smoke.ts` valida `POST /account/saves/reset`:
 reset do Lab preserva Normal, reset do Normal preserva Lab, `request_id` e
 idempotente e `save_type` divergente entre body/header e rejeitado.
+
+O smoke `progression_lab_apply_smoke.ts` valida `POST /progression-lab/apply`:
+perfil/milestone versionado aplicado no save `progression_lab`, save normal
+preservado, idempotencia por `request_id`, ranking do Lab bloqueado e batalha
+do Lab ainda jogavel apos a aplicacao.
 
 Validacao standalone de Edge Functions pode usar `npx deno`. Validacao de
 runtime Supabase depende de Docker e Supabase CLI no ambiente local.

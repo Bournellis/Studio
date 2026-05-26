@@ -61,7 +61,7 @@ Enquanto o remoto estiver adiado, `T03-P02` permanece repo-ready: a configuracao
 
 ### T03-P03 - Conta Email/Senha E Dois Saves
 
-Status local-first: `IN_PROGRESS - T03-P03C_COMPLETE`.
+Status local-first: `IN_PROGRESS - T03-P04_COMPLETE`.
 
 - Implementar fluxo email/senha.
 - Manter guest/local como fallback de desenvolvimento, se ainda util.
@@ -84,6 +84,8 @@ Subetapas locais:
 
 ### T03-P04 - Progression Lab Exportado Interno
 
+Status: `COMPLETE`.
+
 - Gatear Progression Lab por flag internal alpha.
 - Permitir aplicar perfis/milestones ao save `progression_lab`.
 - Mostrar claramente quando o usuario esta no save lab.
@@ -92,6 +94,15 @@ Subetapas locais:
 Saida esperada:
 
 - Um testador consegue alternar entre normal e lab sem corromper progressao.
+
+Implementado:
+
+- `POST /progression-lab/apply` com catalogo server-side de healthy saves.
+- RPC `apply_progression_lab_save` transacional, idempotente e restrita ao save `progression_lab`.
+- Botao `Aplicar no Save Lab` na tela Progression Lab Dev.
+- `SessionStore` preserva metadados do Lab server-backed e limpa snapshots antigos ao aplicar novo perfil.
+- Seeder local atualizado para `save_type = progression_lab` e sem ranking.
+- Smoke `progression_lab_apply_smoke.ts` cobrindo preservacao do save normal, idempotencia, ranking bloqueado e batalha jogavel.
 
 ### T03-P05 - Base Manager Jogavel
 

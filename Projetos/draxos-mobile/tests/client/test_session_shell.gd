@@ -134,6 +134,7 @@ func test_supabase_client_uses_local_contract_urls() -> void:
 	assert_eq(client.auth_anonymous_url(), "http://127.0.0.1:54321/auth/v1/signup")
 	assert_eq(client.function_url("account/guest"), "http://127.0.0.1:54321/functions/v1/account/guest")
 	assert_eq(client.function_url("account/saves/reset"), "http://127.0.0.1:54321/functions/v1/account/saves/reset")
+	assert_eq(client.function_url("progression-lab/apply"), "http://127.0.0.1:54321/functions/v1/progression-lab/apply")
 	assert_eq(client.function_url("battle/request"), "http://127.0.0.1:54321/functions/v1/battle/request")
 	assert_eq(client.function_url("base/state"), "http://127.0.0.1:54321/functions/v1/base/state")
 	assert_eq(client.function_url("social/state"), "http://127.0.0.1:54321/functions/v1/social/state")
@@ -333,6 +334,40 @@ func test_session_store_save_reset_clears_gameplay_snapshots() -> void:
 	assert_false(store.has_battle_log())
 	assert_eq(int(store.player.get("level", 0)), 1)
 	assert_eq(int(store.resources.get("ossos", -1)), 0)
+	store.free()
+
+func test_session_store_progression_lab_apply_sets_metadata_and_clears_snapshots() -> void:
+	var store = SessionStoreScript.new()
+	store.active_save_type = SessionStoreScript.SAVE_TYPE_PROGRESSION_LAB
+	store.base_state = {"structures": [{"structure_id": "nucleo_energia", "level": 2}]}
+	store.social_state = {"guild": {"name": "Old Lab Guild"}}
+	store.competition_state = {"ranking": {"self": {"arena_points": 50}}}
+	store.monetization_state = {"battle_pass": {"progress": {"premium_unlocked": true}}}
+	store.last_battle_log = _battle_log_fixture()
+	var applied := store.apply_progression_lab_result({
+		"ok": true,
+		"player": {"id": "player-lab", "username": "guest_lab", "save_type": "progression_lab", "level": 20, "xp": 4200, "power": 1500},
+		"resources": {"player_id": "player-lab", "almas": 30, "energia": 40, "ossos": 12, "diamante": 5},
+		"build": {"player_id": "player-lab", "weapon_type": "orbe_tempestade", "weapon_quality": "starter"},
+		"last_battle_id": null,
+		"progression_lab": {
+			"save_id": "free_100_rewards_10h",
+			"profile_id": "free_100_rewards",
+			"milestone_id": "10h",
+			"local_only": false,
+		},
+	})
+	assert_true(applied)
+	assert_true(store.is_progression_lab_active())
+	assert_false(store.is_progression_lab_local_only())
+	assert_eq(store.progression_lab_label(), "free_100_rewards/10h")
+	assert_eq(int(store.player.get("level", 0)), 20)
+	assert_eq(str(store.build.get("weapon_type", "")), "orbe_tempestade")
+	assert_false(store.has_base_state())
+	assert_false(store.has_social_state())
+	assert_false(store.has_competition_state())
+	assert_false(store.has_monetization_state())
+	assert_false(store.has_battle_log())
 	store.free()
 
 func test_battle_log_presenter_sorts_formats_and_tolerates_unknown_events() -> void:
