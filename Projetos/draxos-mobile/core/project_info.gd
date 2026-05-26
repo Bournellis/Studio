@@ -14,6 +14,7 @@ static func boot_actions() -> PackedStringArray:
 		"Entrar como guest",
 		"Sincronizar sessao",
 		"Resetar sessao local",
+		"Resetar save ativo",
 		"Solicitar batalha",
 		"Ver resultado",
 		"Ver base",

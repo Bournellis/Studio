@@ -1,7 +1,7 @@
 # Database Schema Contract
 
 - Ultima atualizacao: `2026-05-26`
-- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client e `save_type` local implementadas; Track 03 ainda planeja email/senha, reset separado e aplicacao do Progression Lab no save de lab
+- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type` local e reset separado por save implementadas; Track 03 ainda planeja email/senha e aplicacao do Progression Lab no save de lab
 
 Este documento define o schema esperado. A fonte tecnica viva do runtime local e `../../supabase/migrations/`; `../../server/schema/migrations/` permanece como espelho backend durante o alpha local.
 
@@ -14,6 +14,7 @@ Migrations atuais:
 - `202605200004_social_matchmaking_ranking.sql`: season ativa, amizades, guilda, estruturas de guilda, chat, ranking e telemetria minima.
 - `202605200005_monetization_rewards_alpha.sql`: Battle Pass, progresso de passe, claims de reward, compras alpha, RLS de leitura e seed `bp_s1_01`.
 - `202605260001_two_save_context.sql`: `players.save_type`, unicidade por `auth_user_id + save_type` e RPCs com contexto de save.
+- `202605260002_reset_save_context.sql`: RPC `reset_player_save` para reconstruir apenas o save ativo sem tocar o outro.
 
 ## MVP Tecnico
 
@@ -196,9 +197,16 @@ Implementacao inicial em `T03-P03B` usa uma evolucao compativel do schema atual:
 - criar ou recuperar cada `player`/save conforme o header `x-draxos-save-type`;
 - deixar `competition/ranking/current` fora do `progression_lab` com motivo explicito `PROGRESSION_LAB_DOES_NOT_RANK`.
 
+Implementado em `T03-P03C`:
+
+- `reset_player_save` reconstrui o save selecionado em torno do mesmo `player_id`;
+- reset limpa estado de batalha, base, social, ranking, loja, recursos, build, jobs, idempotencia de acoes e progresso daquele save;
+- reset nao toca outro `players.id` da mesma `auth_user_id`;
+- reset usa `request_id`, grava ledger `account/saves/reset` e preserva idempotencia do proprio reset;
+- `account/guest` do mesmo save passa a retornar o payload resetado se repetir o `request_id` original.
+
 Limites atuais desta etapa:
 
-- reset separado por save ainda fica para `T03-P03C`;
 - Progression Lab ainda nao aplica perfil/milestone no save server-backed;
 - social esta isolado por `player_id/save_type` no alpha local, e pode virar social de conta inteira com marcador `lab` em `T03-P06` se o design exigir;
 - email/senha remoto ainda fica adiado ate o gameplay local estar pronto.
@@ -483,6 +491,23 @@ Regras:
 - Gera seed deterministica a partir de player e `request_id`.
 - Grava `battles`, `resource_transactions` e `idempotency_keys`.
 - Aplica uma unica vez a recompensa tecnica `mvp_training_reward`: `xp +5`, `ossos +1`.
+- `GRANT EXECUTE` fica restrito a `service_role`; cliente usa Edge Function, nao RPC direto.
+
+### `public.reset_player_save(p_auth_user_id, p_request_id, p_save_type)`
+
+Responsabilidade: resetar de forma server-authoritative apenas o save selecionado de uma conta.
+
+Implementado em: `202605260002_reset_save_context.sql`.
+
+Regras:
+
+- Exige player existente para o `auth_user_id` e `p_save_type`.
+- `p_save_type` aceita apenas `normal` ou `progression_lab`.
+- Mantem o mesmo `players.id`, `auth_user_id`, `username`, `account_type` e `save_type`.
+- Reseta `level`, `xp`, `power`, `resources`, `builds`, `base_structures`, `construction_jobs`, `battles`, `ranking`, `battle_pass_progress`, `reward_claims`, `alpha_purchases`, social/guilda/chat vinculado ao player e idempotencias de acoes daquele save.
+- Nao altera linhas de outro save da mesma conta.
+- Desassocia telemetria client antiga do `player_id` resetado.
+- Grava `resource_transactions` com source `account/saves/reset`.
 - `GRANT EXECUTE` fica restrito a `service_role`; cliente usa Edge Function, nao RPC direto.
 
 ## Regras De Temporada

@@ -133,6 +133,7 @@ func test_supabase_client_uses_local_contract_urls() -> void:
 	client.configure("http://127.0.0.1:54321/", "publishable")
 	assert_eq(client.auth_anonymous_url(), "http://127.0.0.1:54321/auth/v1/signup")
 	assert_eq(client.function_url("account/guest"), "http://127.0.0.1:54321/functions/v1/account/guest")
+	assert_eq(client.function_url("account/saves/reset"), "http://127.0.0.1:54321/functions/v1/account/saves/reset")
 	assert_eq(client.function_url("battle/request"), "http://127.0.0.1:54321/functions/v1/battle/request")
 	assert_eq(client.function_url("base/state"), "http://127.0.0.1:54321/functions/v1/base/state")
 	assert_eq(client.function_url("social/state"), "http://127.0.0.1:54321/functions/v1/social/state")
@@ -306,6 +307,32 @@ func test_session_store_accepts_monetization_snapshot() -> void:
 	var snapshot := store.snapshot()
 	Dictionary(snapshot["monetization_state"])["alpha_products"] = [{"id": "mutated"}]
 	assert_eq(Array(store.monetization_state.get("alpha_products", [])).size(), 0)
+	store.free()
+
+func test_session_store_save_reset_clears_gameplay_snapshots() -> void:
+	var store = SessionStoreScript.new()
+	store.base_state = {"structures": [{"structure_id": "nucleo_energia", "level": 2}]}
+	store.social_state = {"guild": {"name": "Old Guild"}}
+	store.competition_state = {"ranking": {"self": {"arena_points": 20}}}
+	store.monetization_state = {"battle_pass": {"progress": {"premium_unlocked": true}}}
+	store.last_battle_log = _battle_log_fixture()
+	store.last_battle_rewards = {"type": "MVP_ONLY"}
+	var applied := store.apply_save_reset({
+		"ok": true,
+		"player": {"id": "player-reset", "username": "guest_reset", "save_type": "normal", "level": 1, "xp": 0, "power": 0},
+		"resources": {"player_id": "player-reset", "almas": 0, "energia": 0, "ossos": 0, "diamante": 0},
+		"build": {"player_id": "player-reset", "weapon_type": "varinha_cinzas", "weapon_quality": "starter"},
+		"last_battle_id": null,
+	})
+	assert_true(applied)
+	assert_true(store.has_account_state())
+	assert_false(store.has_base_state())
+	assert_false(store.has_social_state())
+	assert_false(store.has_competition_state())
+	assert_false(store.has_monetization_state())
+	assert_false(store.has_battle_log())
+	assert_eq(int(store.player.get("level", 0)), 1)
+	assert_eq(int(store.resources.get("ossos", -1)), 0)
 	store.free()
 
 func test_battle_log_presenter_sorts_formats_and_tolerates_unknown_events() -> void:

@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
 - Ultima atualizacao: `2026-05-26`
-- Status: contrato com `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*` e `telemetry/*` implementados localmente; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`; Track 03 ja implementou selecao local de save via `x-draxos-save-type` e ainda planeja email/senha, reset separado e updates internos
+- Status: contrato com `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*` e `telemetry/*` implementados localmente; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`; Track 03 ja implementou selecao local de save via `x-draxos-save-type` e reset separado por save; ainda planeja email/senha, aplicacao do Progression Lab e updates internos
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -306,6 +306,16 @@ Response logico:
 
 Reseta apenas o save solicitado.
 
+Status: **implementado localmente em T03-P03C**.
+
+Headers:
+
+```http
+Authorization: Bearer <jwt>
+apikey: <anon_or_publishable_key>
+x-draxos-save-type: normal
+```
+
 Request logico:
 
 ```json
@@ -318,8 +328,29 @@ Request logico:
 Regras:
 
 - `save_type` deve ser `normal` ou `progression_lab`.
+- `save_type` no body, quando enviado, deve bater com `x-draxos-save-type`.
 - Reset de um save nao altera o outro.
-- Reset deve gerar ledger/audit alpha quando apagar progresso autoritativo.
+- Reset reconstrui o mesmo `player_id` para estado inicial: player level/xp/power, resources, build, base, batalha, ranking, social, loja, jobs, claims e compras alpha daquele save.
+- Reset limpa ou desassocia telemetria daquele player, mas nao afeta o outro save da mesma conta.
+- Reset grava ledger/audit alpha em `resource_transactions`.
+- Repetir o mesmo `request_id` retorna o mesmo payload.
+
+Response logico:
+
+```json
+{
+  "ok": true,
+  "reset": {
+    "save_type": "normal",
+    "player_id": "uuid",
+    "request_id": "uuid"
+  },
+  "player": {},
+  "resources": {},
+  "build": {},
+  "last_battle_id": null
+}
+```
 
 ### `POST /progression-lab/apply`
 
@@ -345,7 +376,7 @@ Implementado localmente em `T03-P03B` por header HTTP:
 - `competition/ranking/current` retorna `excluded_reason = PROGRESSION_LAB_DOES_NOT_RANK` no save de lab;
 - social esta temporariamente isolado por `player_id/save_type` no alpha local; a versao final pode promover social para nivel de conta com marcador `lab`, se necessario.
 
-Reset separado, permissao interna remota e aplicacao do Progression Lab no save de lab ficam para as proximas subetapas da Track 03.
+Permissao interna remota e aplicacao do Progression Lab no save de lab ficam para as proximas subetapas da Track 03.
 
 ## Endpoints Do Primeiro Slice Completo
 

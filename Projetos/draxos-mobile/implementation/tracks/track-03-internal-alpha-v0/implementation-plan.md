@@ -61,7 +61,7 @@ Enquanto o remoto estiver adiado, `T03-P02` permanece repo-ready: a configuracao
 
 ### T03-P03 - Conta Email/Senha E Dois Saves
 
-Status local-first: `IN_PROGRESS - T03-P03B_COMPLETE`.
+Status local-first: `IN_PROGRESS - T03-P03C_COMPLETE`.
 
 - Implementar fluxo email/senha.
 - Manter guest/local como fallback de desenvolvimento, se ainda util.
@@ -79,8 +79,8 @@ Subetapas locais:
 
 - `T03-P03A`: completo; cliente Godot entende save ativo (`normal`/`progression_lab`), persiste no cache, mostra no HUD e bloqueia acoes perigosas do Lab quando o cache e local-only.
 - `T03-P03B`: completo; Supabase local/schema/runtime resolve `save_type` server-side para todos os endpoints alpha.
-- `T03-P03C`: proximo; reset separado por save no runtime local.
-- `T03-P03D`: email/senha fica preparado no cliente e validado localmente quando o fluxo de auth for ativado.
+- `T03-P03C`: completo; reset separado por save no runtime local.
+- `T03-P03D`: adiado; email/senha fica preparado no cliente e validado localmente quando o fluxo de auth for ativado.
 
 ### T03-P04 - Progression Lab Exportado Interno
 

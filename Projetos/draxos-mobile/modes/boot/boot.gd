@@ -336,6 +336,11 @@ func _render_hub_screen() -> void:
 	_add_body_text("O save Normal executa o loop server-authoritative local. O save Progression Lab fica isolado para testes e nao deve pontuar ranking/social.")
 	_add_action_button("Usar save normal", "select_save_normal")
 	_add_action_button("Usar save Progression Lab", "select_save_progression_lab")
+	_add_action_button(
+		"Resetar save ativo",
+		"reset_active_save",
+		"Resetar apenas o save %s no servidor? O outro save e a sessao local serao preservados." % SessionStore.active_save_label()
+	)
 	_add_output_label("Save atual: %s (%s)" % [
 		SessionStore.active_save_label(),
 		SessionStore.active_save_badge(),
@@ -500,6 +505,8 @@ func _execute_action(action_id: String) -> void:
 			await _refresh_session()
 		"reset_session":
 			await _reset_local_session()
+		"reset_active_save":
+			await _reset_active_save()
 		"select_save_normal":
 			_select_save(SessionStoreScript.SAVE_TYPE_NORMAL)
 		"select_save_progression_lab":
@@ -600,6 +607,28 @@ func _reset_local_session() -> void:
 	SessionStore.save_cache()
 	_screen_history.clear()
 	_set_busy(false, "Cache local limpo. Entre como guest para recuperar ou criar uma sessao de teste.")
+	_show_screen(SCREEN_HUB, false)
+
+func _reset_active_save() -> void:
+	if not _require_account("Crie uma sessao guest antes de resetar o save ativo."):
+		return
+	_set_busy(true, "Resetando save %s..." % SessionStore.active_save_label())
+	var reset_result: Dictionary = await SupabaseClient.reset_active_save(
+		SessionStore.create_request_id(),
+		SessionStore.access_token
+	)
+	if not bool(reset_result.get("ok", false)):
+		_fail_with_error(reset_result)
+		return
+	if not SessionStore.apply_save_reset(reset_result):
+		_fail_with_error({
+			"ok": false,
+			"error": SessionStore.last_error,
+		})
+		return
+	SessionStore.save_cache()
+	_screen_history.clear()
+	_set_busy(false, "Save %s resetado. O outro save foi preservado." % SessionStore.active_save_label())
 	_show_screen(SCREEN_HUB, false)
 
 func _select_save(save_type: String) -> void:

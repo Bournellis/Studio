@@ -1,7 +1,7 @@
 # Track 03 - Internal Alpha v0 - Current Status
 
 - Last Updated: `2026-05-26`
-- Status: `T03-P03B_COMPLETE - LOCAL SERVER SAVE_TYPE READY`
+- Status: `T03-P03C_COMPLETE - LOCAL SAVE RESET READY`
 - Baseline: Track 00 completa, Track 01 completa e Track 02 com Progression Lab/Battle Lab v1 implementados. O projeto ja possui Godot 4.6.2, Supabase local, conta guest, batalha server-authoritative, Base/Social/Competicao/Monetizacao v0, telemetria client nao autoritativa, exports Android/PC/Web, Battle Visual Mockup compartilhado e laboratorios dev-only. A Track 03 prepara a transicao para uma build fechada realista com email/senha, dois saves por conta, backend remoto, updates e playtest de 2 usuarios.
 
 ## Implementado Nesta Preparacao
@@ -19,11 +19,11 @@
 - Ordem local-first aprovada em 2026-05-26: implementar o jogo rodando no Godot/local primeiro; Supabase remoto, builds Android/PC/Web e manifest de updates ficam adiados ate o gameplay local estar pronto para compartilhar.
 - `T03-P03A` completo: `SessionStore` possui save ativo `normal`/`progression_lab`, persiste no cache, limpa snapshots ao alternar contexto, marca snapshots local-only do Progression Lab como Lab, `SupabaseClient` prepara header `x-draxos-save-type` e o Hub mostra/troca save ativo com bloqueio claro quando o Lab esta em cache local-only.
 - `T03-P03B` completo: schema local ganhou `players.save_type`, unicidade por `auth_user_id + save_type`, RPCs `create_guest_account`/`request_mvp_battle` recebem save, Edge Functions resolvem `x-draxos-save-type` para `account`, `battle`, `base`, `social`, `competition`, `monetization` e `telemetry`, o Hub libera acoes server-backed no Lab, e o save `progression_lab` fica isolado do normal e fora do ranking com motivo explicito.
+- `T03-P03C` completo: `POST /account/saves/reset` e RPC `reset_player_save` reconstroem apenas o save ativo, preservam o outro save da mesma sessao Auth, limpam snapshots client-side do save resetado, mantem idempotencia por `request_id` e expõem botao perigoso "Resetar save ativo" no Hub.
 
 ## Ainda Nao Implementado
 
 - Auth email/senha remoto.
-- Reset separado por save.
 - Progression Lab aplicado ao save `progression_lab`.
 - Supabase remoto real criado/configurado na conta Supabase.
 - Deploy remoto de migrations/functions e smoke contra URL real.
@@ -45,7 +45,7 @@
 
 ## Proximo Passo
 
-Executar `T03-P03C`: implementar reset separado por save no runtime local, garantindo que resetar `normal` nao toque `progression_lab` e vice-versa.
+Executar `T03-P04`: aplicar perfis/milestones do Progression Lab no save server-backed `progression_lab`, mantendo o save `normal` preservado.
 
 ## Validacao Da Preparacao
 
@@ -54,10 +54,12 @@ Executar `T03-P03C`: implementar reset separado por save no runtime local, garan
 - `npx -y deno task check` em `supabase/functions`: passou em 2026-05-26.
 - `npx -y deno task check` em `server/functions`: passou em 2026-05-26.
 - `npx -y deno check server/tests/two_save_context_smoke.ts`: passou em 2026-05-26.
-- `npx -y supabase db reset`: passou em 2026-05-26 aplicando `202605260001_two_save_context.sql`.
+- `npx -y deno check server/tests/reset_save_context_smoke.ts`: passou em 2026-05-26.
+- `npx -y supabase db reset`: passou em 2026-05-26 aplicando `202605260001_two_save_context.sql` e `202605260002_reset_save_context.sql`.
 - `npx -y deno run --allow-net --allow-env server/tests/two_save_context_smoke.ts`: passou em 2026-05-26, criando saves distintos `normal` e `progression_lab` na mesma sessao Auth.
-- Smokes existentes `battle_request_smoke.ts`, `base_manager_smoke.ts`, `social_competition_smoke.ts`, `monetization_rewards_smoke.ts` e `client_telemetry_smoke.ts`: passaram em 2026-05-26 apos `save_type`.
-- `tools/validate.gd`: passou em 2026-05-26 com GUT `46/46` e `280` asserts.
+- `npx -y deno run --allow-net --allow-env server/tests/reset_save_context_smoke.ts`: passou em 2026-05-26, validando reset separado, idempotencia e rejeicao de mismatch de `save_type`.
+- Smokes existentes `battle_request_smoke.ts`, `first_slice_battle_smoke.ts`, `base_manager_smoke.ts`, `social_competition_smoke.ts`, `monetization_rewards_smoke.ts` e `client_telemetry_smoke.ts`: passaram em 2026-05-26 apos reset de save.
+- `tools/validate.gd`: passou em 2026-05-26 com GUT `47/47` e `291` asserts.
 - `tools/smoke_session_shell.gd`: passou em 2026-05-26 com Auth anonimo, conta guest e `account/state`.
 - `tools/smoke_dev_lab_ui.gd`: passou em 2026-05-26 no renderer headless.
 - `tools/smoke_exports.gd`: passou em 2026-05-26 para Android Alpha, PC Windows Alpha e PC Browser Alpha.

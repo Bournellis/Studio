@@ -88,6 +88,17 @@ func fetch_account_state(access_token: String) -> Dictionary:
 		{}
 	)
 
+func reset_active_save(request_id: String, access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("account/saves/reset"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		{
+			"request_id": request_id,
+			"save_type": active_save_type,
+		}
+	)
+
 func request_battle(request_id: String, access_token: String, mode: String = ProjectInfo.DEFAULT_BATTLE_MODE, opponent_bot_id: String = "") -> Dictionary:
 	var body := {
 		"request_id": request_id,

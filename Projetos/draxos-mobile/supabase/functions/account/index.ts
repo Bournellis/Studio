@@ -1,7 +1,12 @@
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
-import { type SaveType, saveTypeFromRequest, saveTypeQuery } from "../_shared/save_context.ts";
+import {
+  normalizeSaveType,
+  type SaveType,
+  saveTypeFromRequest,
+  saveTypeQuery,
+} from "../_shared/save_context.ts";
 
-type Route = "guest" | "state";
+type Route = "guest" | "state" | "save_reset";
 
 interface EdgeConfig {
   supabaseUrl: string;
@@ -86,6 +91,10 @@ Deno.serve(async (request: Request) => {
       return errorResponse("METHOD_NOT_ALLOWED", "Use GET /account/state.", 405);
     }
 
+    if (route === "save_reset" && request.method !== "POST") {
+      return errorResponse("METHOD_NOT_ALLOWED", "Use POST /account/saves/reset.", 405);
+    }
+
     const auth = decodeAuthContext(request);
     if (auth.error !== null) {
       return errorResponse(auth.error.code, auth.error.message, auth.error.status);
@@ -98,6 +107,9 @@ Deno.serve(async (request: Request) => {
 
     if (route === "guest") {
       return await handleGuest(request, auth.value, config.value);
+    }
+    if (route === "save_reset") {
+      return await handleSaveReset(request, auth.value, config.value);
     }
 
     return await handleState(auth.value, config.value);
@@ -206,7 +218,62 @@ async function handleState(auth: AuthContext, config: EdgeConfig): Promise<Respo
   });
 }
 
+async function handleSaveReset(
+  request: Request,
+  auth: AuthContext,
+  config: EdgeConfig,
+): Promise<Response> {
+  const body = await readJsonObject(request);
+  if (body === null) {
+    return errorResponse("INVALID_JSON", "Request body must be a JSON object.", 400);
+  }
+
+  const requestId = stringField(body, "request_id");
+  if (!UUID_PATTERN.test(requestId)) {
+    return errorResponse("INVALID_REQUEST_ID", "request_id must be a UUID.", 400);
+  }
+
+  const bodySaveType = stringField(body, "save_type");
+  if (bodySaveType !== "") {
+    const normalizedBodySaveType = normalizeSaveType(bodySaveType);
+    if (normalizedBodySaveType === null) {
+      return errorResponse(
+        "INVALID_SAVE_TYPE",
+        "Save type must be normal or progression_lab.",
+        400,
+      );
+    }
+    if (normalizedBodySaveType !== auth.saveType) {
+      return errorResponse(
+        "SAVE_TYPE_MISMATCH",
+        "Request save_type must match x-draxos-save-type.",
+        409,
+      );
+    }
+  }
+
+  const rpc = await restRequest<unknown>(config, "rpc/reset_player_save", {
+    method: "POST",
+    body: JSON.stringify({
+      p_auth_user_id: auth.userId,
+      p_request_id: requestId,
+      p_save_type: auth.saveType,
+    }),
+  });
+
+  if (rpc.error !== null) {
+    const mapped = mapDatabaseError(rpc.error);
+    return errorResponse(mapped.code, mapped.message, mapped.status);
+  }
+
+  return jsonResponse(rpc.value);
+}
+
 function resolveRoute(pathname: string): Route | null {
+  if (pathname.endsWith("/saves/reset")) {
+    return "save_reset";
+  }
+
   if (pathname.endsWith("/guest")) {
     return "guest";
   }
@@ -441,6 +508,14 @@ function mapDatabaseError(error: RestError): RestError {
       code: "INVALID_SAVE_TYPE",
       message: "Save type must be normal or progression_lab.",
       status: 400,
+    };
+  }
+
+  if (message.includes("PLAYER_NOT_FOUND")) {
+    return {
+      code: "PLAYER_NOT_FOUND",
+      message: "Guest account was not created yet.",
+      status: 404,
     };
   }
 

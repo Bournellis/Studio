@@ -202,6 +202,22 @@ func apply_server_state(payload: Dictionary) -> bool:
 	session_changed.emit()
 	return true
 
+func apply_save_reset(payload: Dictionary) -> bool:
+	if not apply_server_state(payload):
+		return false
+
+	base_state = {}
+	social_state = {}
+	competition_state = {}
+	monetization_state = {}
+	last_battle_id = null
+	last_battle_log = {}
+	last_battle_rewards = {}
+	last_error = {}
+	offline = false
+	session_changed.emit()
+	return true
+
 func apply_base_result(payload: Dictionary) -> bool:
 	var body := _unwrap_body(payload)
 	if not bool(body.get("ok", false)):
