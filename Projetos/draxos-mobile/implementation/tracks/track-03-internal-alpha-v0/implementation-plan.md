@@ -27,6 +27,7 @@ Saida esperada:
 ### T03-P02 - Supabase Remoto E Configuracao Segura
 
 Status repo-side: `READY - remote project credentials pending`.
+Status de execucao: `DEFERRED_UNTIL_GAMEPLAY_READY`.
 
 - Criar/configurar projeto Supabase remoto Free.
 - Desativar email confirmation no alpha interno.
@@ -45,7 +46,22 @@ Saida esperada:
 - `.env` reais ignorados e `.env.internal-alpha.example` versionado.
 - Decisao backend registrada: Supabase para alpha; Backend Proprio + Postgres como plano de saida; Nakama como alternativa futura condicional.
 
+### Ordem Local-First Aprovada - 2026-05-26
+
+Fabio vai trabalhar somente no Godot/local ate o jogo estar implementado o bastante para compartilhar com o segundo testador. Portanto, a ordem correta desta fase e:
+
+1. Implementar e validar localmente no Godot e Supabase local.
+2. Fechar fluxo de conta/save/lab/base/social/competicao/loja/batalha no editor.
+3. Fazer QA local e ajustar UX/tooltips/legibilidade.
+4. Somente depois criar/configurar Supabase remoto.
+5. Somente depois exportar Android, PC e Web.
+6. Somente depois publicar artefatos e manifest de update.
+
+Enquanto o remoto estiver adiado, `T03-P02` permanece repo-ready: a configuracao segura existe, mas nao bloqueia as etapas locais.
+
 ### T03-P03 - Conta Email/Senha E Dois Saves
+
+Status local-first: `IN_PROGRESS`.
 
 - Implementar fluxo email/senha.
 - Manter guest/local como fallback de desenvolvimento, se ainda util.
@@ -58,6 +74,13 @@ Saida esperada:
 
 - Teste de cross-platform save por token remoto.
 - Smokes de reset separado e isolamento.
+
+Subetapas locais:
+
+- `T03-P03A`: cliente Godot entende save ativo (`normal`/`progression_lab`), persiste no cache, mostra no HUD e bloqueia acoes perigosas do Lab.
+- `T03-P03B`: Supabase local/schema/runtime passa a resolver `save_type` server-side para todos os endpoints.
+- `T03-P03C`: reset separado por save no runtime local.
+- `T03-P03D`: email/senha fica preparado no cliente e validado localmente quando o fluxo de auth for ativado.
 
 ### T03-P04 - Progression Lab Exportado Interno
 
@@ -130,6 +153,8 @@ Saida esperada:
 
 ### T03-P10 - Releases E Updates
 
+Status de execucao: `DEFERRED_UNTIL_LOCAL_GAMEPLAY_READY`.
+
 - Criar schema de manifest remoto em Supabase Storage.
 - Cliente consulta manifest no boot e mostra status de update.
 - Definir `minimum_supported_version`, `latest_version`, links de Android/PC/Web e notas.
@@ -166,6 +191,8 @@ As decisoes abaixo estao registradas em `docs/design-pending.md` e precisam ser 
 - `DMOB-D055`: regras de isolamento do Progression Lab.
 
 ## Trabalho Manual Do Fabio
+
+Adiado ate o gameplay local estar pronto:
 
 - Criar ou confirmar projeto Supabase remoto Free para `internal_alpha_v0`.
 - Desativar email confirmation no projeto alpha.

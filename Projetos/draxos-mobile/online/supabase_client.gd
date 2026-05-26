@@ -5,12 +5,15 @@ const BackendConfigScript = preload("res://online/backend_config.gd")
 const DEFAULT_SUPABASE_URL := BackendConfigScript.DEFAULT_LOCAL_SUPABASE_URL
 const DEFAULT_PUBLISHABLE_KEY := BackendConfigScript.DEFAULT_LOCAL_PUBLISHABLE_KEY
 const REQUEST_TIMEOUT_SECONDS := 15.0
+const SAVE_TYPE_NORMAL := "normal"
+const SAVE_TYPE_PROGRESSION_LAB := "progression_lab"
 
 var supabase_url := DEFAULT_SUPABASE_URL
 var publishable_key := DEFAULT_PUBLISHABLE_KEY
 var backend_environment := BackendConfigScript.DEFAULT_BACKEND_ENVIRONMENT
 var backend_config_source := "defaults"
 var backend_config_errors := PackedStringArray()
+var active_save_type := SAVE_TYPE_NORMAL
 
 func _ready() -> void:
 	_load_project_settings()
@@ -38,6 +41,9 @@ func backend_summary() -> Dictionary:
 		"configured": backend_config_errors.is_empty(),
 		"errors": backend_config_errors,
 	}
+
+func configure_save_type(save_type: String) -> void:
+	active_save_type = _normalize_save_type(save_type)
 
 func auth_anonymous_url() -> String:
 	return "%s/auth/v1/signup" % supabase_url
@@ -228,6 +234,7 @@ func _base_headers() -> PackedStringArray:
 		"Accept: application/json",
 		"Content-Type: application/json",
 		"apikey: %s" % publishable_key,
+		"x-draxos-save-type: %s" % active_save_type,
 	])
 
 func _auth_headers(access_token: String) -> PackedStringArray:
@@ -326,3 +333,8 @@ static func _packed_string_array(value: Variant) -> PackedStringArray:
 		for item in value:
 			result.append(str(item))
 	return result
+
+static func _normalize_save_type(save_type: String) -> String:
+	if save_type.strip_edges().to_lower() == SAVE_TYPE_PROGRESSION_LAB:
+		return SAVE_TYPE_PROGRESSION_LAB
+	return SAVE_TYPE_NORMAL

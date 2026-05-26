@@ -6,6 +6,8 @@ const CACHE_VERSION := 1
 const CACHE_PATH := "user://session_cache.json"
 const DEFAULT_INVITE_CODE := "ALPHA-TEST"
 const TOKEN_EXPIRY_GRACE_SECONDS := 60
+const SAVE_TYPE_NORMAL := "normal"
+const SAVE_TYPE_PROGRESSION_LAB := "progression_lab"
 
 var access_token := ""
 var refresh_token := ""
@@ -13,6 +15,7 @@ var expires_at := 0
 var auth_user_id := ""
 var session_id := ""
 var guest_request_id := ""
+var active_save_type := SAVE_TYPE_NORMAL
 var player: Dictionary = {}
 var resources: Dictionary = {}
 var build: Dictionary = {}
@@ -81,6 +84,7 @@ func clear_session() -> void:
 	auth_user_id = ""
 	session_id = create_request_id()
 	guest_request_id = ""
+	active_save_type = SAVE_TYPE_NORMAL
 	player = {}
 	resources = {}
 	build = {}
@@ -122,6 +126,7 @@ func apply_auth_session(session: Dictionary) -> bool:
 		last_battle_id = null
 		last_battle_log = {}
 		last_battle_rewards = {}
+		active_save_type = SAVE_TYPE_NORMAL
 	access_token = token
 	refresh_token = refresh
 	expires_at = expiry
@@ -190,6 +195,7 @@ func apply_server_state(payload: Dictionary) -> bool:
 	player = server_player.duplicate(true)
 	resources = server_resources.duplicate(true)
 	build = server_build.duplicate(true)
+	active_save_type = normalize_save_type(str(server_player.get("save_type", active_save_type)))
 	last_battle_id = body.get("last_battle_id", last_battle_id)
 	last_error = {}
 	offline = false
@@ -336,6 +342,37 @@ func has_monetization_state() -> bool:
 func is_progression_lab_local_only() -> bool:
 	return bool(progression_lab.get("local_only", false))
 
+func is_progression_lab_active() -> bool:
+	return active_save_type == SAVE_TYPE_PROGRESSION_LAB
+
+func active_save_label() -> String:
+	if active_save_type == SAVE_TYPE_PROGRESSION_LAB:
+		return "Progression Lab"
+	return "Normal"
+
+func active_save_badge() -> String:
+	if active_save_type == SAVE_TYPE_PROGRESSION_LAB:
+		return "lab"
+	return "normal"
+
+func set_active_save_type(save_type: String) -> bool:
+	var normalized := normalize_save_type(save_type)
+	if normalized == active_save_type:
+		return false
+	active_save_type = normalized
+	_clear_account_snapshots()
+	last_error = {}
+	offline = false
+	save_cache()
+	session_changed.emit()
+	return true
+
+static func normalize_save_type(save_type: String) -> String:
+	var normalized := save_type.strip_edges().to_lower()
+	if normalized == SAVE_TYPE_PROGRESSION_LAB:
+		return SAVE_TYPE_PROGRESSION_LAB
+	return SAVE_TYPE_NORMAL
+
 func progression_lab_label() -> String:
 	if progression_lab.is_empty():
 		return ""
@@ -370,6 +407,7 @@ func snapshot() -> Dictionary:
 		},
 		"session_id": ensure_session_id(),
 		"guest_request_id": guest_request_id,
+		"active_save_type": active_save_type,
 		"player": player.duplicate(true),
 		"resources": resources.duplicate(true),
 		"build": build.duplicate(true),
@@ -414,6 +452,7 @@ func _apply_cache(cache: Dictionary) -> void:
 	auth_user_id = str(auth.get("user_id", ""))
 	session_id = str(cache.get("session_id", ""))
 	guest_request_id = str(cache.get("guest_request_id", ""))
+	active_save_type = normalize_save_type(str(cache.get("active_save_type", SAVE_TYPE_NORMAL)))
 	player = _as_dictionary(cache.get("player", {})).duplicate(true)
 	resources = _as_dictionary(cache.get("resources", {})).duplicate(true)
 	build = _as_dictionary(cache.get("build", {})).duplicate(true)
@@ -427,6 +466,22 @@ func _apply_cache(cache: Dictionary) -> void:
 	last_battle_rewards = _as_dictionary(cache.get("last_battle_rewards", {})).duplicate(true)
 	offline = bool(cache.get("offline", false))
 	last_error = _as_dictionary(cache.get("last_error", {})).duplicate(true)
+	if bool(progression_lab.get("local_only", false)):
+		active_save_type = SAVE_TYPE_PROGRESSION_LAB
+
+func _clear_account_snapshots() -> void:
+	player = {}
+	resources = {}
+	build = {}
+	base_state = {}
+	social_state = {}
+	competition_state = {}
+	monetization_state = {}
+	if active_save_type == SAVE_TYPE_NORMAL:
+		progression_lab = {}
+	last_battle_id = null
+	last_battle_log = {}
+	last_battle_rewards = {}
 
 func _unwrap_body(payload: Dictionary) -> Dictionary:
 	if payload.has("body") and payload["body"] is Dictionary:

@@ -56,6 +56,8 @@ func test_session_store_flags_and_clears_progression_lab_local_only_cache() -> v
 	assert_true(store.has_valid_access_token(now))
 	assert_true(store.has_account_state())
 	assert_true(store.is_progression_lab_local_only())
+	assert_true(store.is_progression_lab_active())
+	assert_eq(store.active_save_type, SessionStoreScript.SAVE_TYPE_PROGRESSION_LAB)
 	assert_eq(store.progression_lab_label(), "free_100_rewards/20h")
 
 	assert_true(store.apply_auth_session({
@@ -68,8 +70,34 @@ func test_session_store_flags_and_clears_progression_lab_local_only_cache() -> v
 	assert_false(store.has_account_state())
 	assert_false(store.has_base_state())
 	assert_false(store.is_progression_lab_local_only())
+	assert_false(store.is_progression_lab_active())
+	assert_eq(store.active_save_type, SessionStoreScript.SAVE_TYPE_NORMAL)
 	assert_eq(store.player_display_name(), "Guest Draxos")
 	store.free()
+
+func test_session_store_tracks_active_save_without_mixing_snapshots() -> void:
+	var store = SessionStoreScript.new()
+	store.player = {"id": "player-normal", "username": "normal_user"}
+	store.resources = {"almas": 10}
+	store.build = {"weapon_type": "varinha_cinzas"}
+	store.base_state = {"structures": [{"structure_id": "nucleo_energia"}]}
+	assert_true(store.has_account_state())
+	assert_false(store.is_progression_lab_active())
+
+	assert_true(store.set_active_save_type(SessionStoreScript.SAVE_TYPE_PROGRESSION_LAB))
+	assert_true(store.is_progression_lab_active())
+	assert_eq(store.active_save_label(), "Progression Lab")
+	assert_eq(store.active_save_badge(), "lab")
+	assert_false(store.has_account_state())
+	assert_false(store.has_base_state())
+
+	var snapshot := store.snapshot()
+	var restored = SessionStoreScript.new()
+	restored._apply_cache(snapshot)
+	assert_true(restored.is_progression_lab_active())
+	assert_false(restored.has_account_state())
+	store.free()
+	restored.free()
 
 func test_session_store_keeps_server_state_as_snapshot() -> void:
 	var store = SessionStoreScript.new()
@@ -150,6 +178,14 @@ func test_supabase_client_can_use_backend_config() -> void:
 	assert_eq(client.function_url("account/state"), "https://example.supabase.co/functions/v1/account/state")
 	var summary := client.backend_summary()
 	assert_true(bool(summary.get("configured", false)))
+	client.free()
+
+func test_supabase_client_normalizes_save_context_header_state() -> void:
+	var client = SupabaseClientScript.new()
+	client.configure_save_type("progression_lab")
+	assert_eq(client.active_save_type, "progression_lab")
+	client.configure_save_type("unknown")
+	assert_eq(client.active_save_type, "normal")
 	client.free()
 
 func test_session_store_persists_local_telemetry_session_id() -> void:

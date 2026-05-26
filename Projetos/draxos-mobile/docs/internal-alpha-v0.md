@@ -20,6 +20,20 @@ Internal Alpha v0 e a primeira build fechada com intencao de jogo real. Ela nao 
 - Progression Lab como ferramenta interna isolada;
 - updates coordenados entre Android, PC e Web.
 
+## Ordem De Implementacao Local-First
+
+Decisao operacional de 2026-05-26:
+
+1. Trabalhar somente no Godot/local ate o jogo estar implementado o bastante para compartilhar.
+2. Usar Supabase local quando um sistema precisar de fluxo server-authoritative.
+3. Nao criar build Android/PC/Web enquanto o loop local ainda estiver mudando.
+4. Nao subir Supabase remoto enquanto conta/save/base/social/competicao/loja ainda estiverem em implementacao principal.
+5. Depois do gameplay local estar pronto, configurar Supabase remoto.
+6. Depois do remoto validado, exportar as tres builds.
+7. Depois das builds, publicar manifest/update e iniciar o teste fechado Fabio + 1 amigo.
+
+Esta ordem nao remove a decisao de usar Supabase no alpha. Ela apenas adia remoto, build e distribuicao para reduzir friccao enquanto a implementacao ainda muda muito.
+
 ## Modelo De Conta E Save
 
 Autenticacao:

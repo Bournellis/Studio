@@ -23,15 +23,15 @@
 
 ## DraxosMobile
 
-- Status: **P2_IMPLEMENTACAO - internal alpha v0 remote config repo-ready**
+- Status: **P2_IMPLEMENTACAO - internal alpha v0 local-first save context ready**
 - Fase: `Implementacao`
 - Local: `Projetos/draxos-mobile/`
 - Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
 - Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
-- Baseline atual: Track 00 completa com primeiro slice server-authoritative, Track 01 completa para hardening do alpha PC local e Track 02 com Progression Lab/Battle Lab v1, Character Systems Rework, Source Identity Balance v2, batalha visual procedural 2D, smokes e validacoes verdes no ultimo baseline. Track 03 tem design lock completo e T03-P02 repo-ready: `BackendConfig` no Godot, ambiente `internal_alpha_v0`, env vars seguras, `.env` reais ignorados, runbook/smoke remoto e guarda contra service role no cliente. Supabase segue para alpha, Backend Proprio + Postgres e o plano de saida preferido, e Nakama fica apenas se realtime/social competitivo virar pilar. A build mira app hibrido idle/manager + hub RPG, Android paisagem, PC/Web amplo, email/senha, username, dois saves por conta (`normal` e `progression_lab`), Lab marcado em vermelho no social/chat e fora da competicao, Base/Social/Competicao/Loja jogaveis, leaderboard sem bots, redeems diarios em Diamante e manifest remoto de updates para Android/PC/Web.
+- Baseline atual: Track 00 completa com primeiro slice server-authoritative, Track 01 completa para hardening do alpha PC local e Track 02 com Progression Lab/Battle Lab v1, Character Systems Rework, Source Identity Balance v2, batalha visual procedural 2D, smokes e validacoes verdes no ultimo baseline. Track 03 tem design lock completo, T03-P02 repo-ready e ordem local-first aprovada: implementar tudo no Godot/Supabase local antes de remoto/builds. T03-P03A esta completo com save ativo `normal`/`progression_lab` no Godot, cache persistente, HUD de save e bloqueio claro de acoes online do Lab ate o schema local suportar dois saves. Supabase segue para alpha, Backend Proprio + Postgres e o plano de saida preferido, e Nakama fica apenas se realtime/social competitivo virar pilar. A build mira app hibrido idle/manager + hub RPG, Android paisagem, PC/Web amplo, email/senha, username, dois saves por conta, Lab marcado em vermelho no social/chat e fora da competicao, Base/Social/Competicao/Loja jogaveis, leaderboard sem bots, redeems diarios em Diamante e manifest remoto de updates para Android/PC/Web.
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
 - Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export.
-- Proximo passo: executar `T03-P02 - Supabase Remoto E Configuracao Segura`, mantendo contratos anti-lock-in para futura API propria + Postgres.
+- Proximo passo: executar `T03-P03B - save_type server-side no Supabase local`; Supabase remoto e builds ficam adiados ate o gameplay local estar pronto.
 
 ## rpg-isometrico
 

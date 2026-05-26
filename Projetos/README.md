@@ -19,8 +19,8 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
 ## Implementacao - Alpha Local
 
-- `draxos-mobile/`: jogo mobile multi-plataforma - mago Draxos (PVP assincrono, base manager, social). Plataformas: Android + PC executavel + PC browser. Backend: Supabase para alpha, com Backend Proprio + Postgres como plano de saida preferido. Batalha 100% simulada no servidor. Track 00 completa, Track 01 completa e Track 02 com Progression Lab/Battle Lab v1 implementados; batalha visual procedural 2D e labs dev-only estao prontos para a primeira rodada de teste. Track 03 tem design lock completo para Internal Alpha v0: email/senha, dois saves por conta (`normal` e `progression_lab`), Supabase remoto Free, Progression Lab isolado, Base/Social/Competicao/Loja jogaveis, leaderboard sem bots, redeems diarios em Diamante, manifest de updates e playtest fechado Fabio + 1 amigo. T03-P02 esta repo-ready com `BackendConfig`, env vars seguras, runbook e smoke remoto; falta criar/configurar o Supabase remoto real.
-  - Priority/status: `P2_IMPLEMENTACAO - internal alpha v0 remote config repo-ready`
+- `draxos-mobile/`: jogo mobile multi-plataforma - mago Draxos (PVP assincrono, base manager, social). Plataformas: Android + PC executavel + PC browser. Backend: Supabase para alpha, com Backend Proprio + Postgres como plano de saida preferido. Batalha 100% simulada no servidor. Track 00 completa, Track 01 completa e Track 02 com Progression Lab/Battle Lab v1 implementados; batalha visual procedural 2D e labs dev-only estao prontos para a primeira rodada de teste. Track 03 tem design lock completo para Internal Alpha v0: email/senha, dois saves por conta (`normal` e `progression_lab`), Supabase remoto Free, Progression Lab isolado, Base/Social/Competicao/Loja jogaveis, leaderboard sem bots, redeems diarios em Diamante, manifest de updates e playtest fechado Fabio + 1 amigo. Ordem local-first aprovada: implementar no Godot/Supabase local antes de remoto/builds. T03-P02 esta repo-ready e T03-P03A esta completo com save ativo no Godot/cache/HUD.
+  - Priority/status: `P2_IMPLEMENTACAO - internal alpha v0 local-first save context ready`
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Operational status: `draxos-mobile/implementation/current-status.md`
   - Track 00 scope: `draxos-mobile/implementation/tracks/track-00-first-slice-foundation/scope.md`
@@ -37,7 +37,7 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
   - Economy model: `draxos-mobile/docs/economy/README.md`
   - Design archive: `_conceitos/mobile-universe/gdd.md`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: criar/configurar o Supabase remoto real, rodar `server/tests/internal_alpha_remote_smoke.ts` e seguir para `T03-P03 - Conta Email/Senha E Dois Saves`.
+  - Current next step: executar `T03-P03B - save_type server-side no Supabase local`; remoto/builds ficam adiados ate o gameplay local estar pronto.
 
 ## Arquivo De Design
 
