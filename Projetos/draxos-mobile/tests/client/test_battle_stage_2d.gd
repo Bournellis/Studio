@@ -69,6 +69,28 @@ func test_battle_stage_2d_cooldown_timer_uses_remaining_replay_time() -> void:
 	assert_string_contains(cooldown_tooltip_text, "Tempo atual do replay: 3.5s")
 	assert_string_contains(cooldown_tooltip_text, "Restante: 4s")
 
+func test_battle_stage_2d_exposes_compact_replay_readout() -> void:
+	var stage = BattleStage2DScript.new()
+	stage.custom_minimum_size = Vector2(820, 380)
+	add_child_autofree(stage)
+	stage.render_snapshot(_side_state(), {"type": "spell_cast", "source": "player", "target": "opponent", "spell_id": "marca_brasa", "damage": 27, "damage_type": "fogo", "seq": 3, "t": 2.5}, 3, 8, false, 3.5)
+
+	var snapshot := Dictionary(stage.debug_snapshot())
+	var readout := str(snapshot.get("readout", ""))
+	var readout_tooltip := str(snapshot.get("readout_tooltip", ""))
+	var tooltips := Dictionary(snapshot.get("tooltips", {}))
+	assert_string_contains(readout, "Replay 3/8")
+	assert_string_contains(readout, "Tempo 3.5s")
+	assert_string_contains(readout, "Draxos Teste HP 90%")
+	assert_string_contains(readout, "Bot Teste HP 72%")
+	assert_string_contains(readout, "Status 1 x 1")
+	assert_string_contains(readout, "Cooldowns 1 x 0")
+	assert_string_contains(readout, "Aliados 3 x 0")
+	assert_string_contains(readout_tooltip, "battle_log_v1")
+	assert_string_contains(str(tooltips.get("event", "")), "Fonte: Draxos")
+	assert_string_contains(str(tooltips.get("event", "")), "Alvo: Oponente")
+	assert_string_contains(str(tooltips.get("event", "")), "Leitura rapida: Spell: Marca Brasa -27")
+
 func test_battle_stage_2d_effect_feedback_uses_full_names() -> void:
 	var stage = BattleStage2DScript.new()
 	add_child_autofree(stage)
@@ -93,6 +115,8 @@ func test_battle_stage_2d_empty_state_is_stable() -> void:
 	var snapshot: Dictionary = stage.debug_snapshot()
 	assert_eq(int(snapshot.get("event_count", -1)), 0)
 	assert_eq(str(snapshot.get("latest_event_type", "x")), "")
+	assert_string_contains(str(snapshot.get("readout", "")), "aguardando battle_log_v1")
+	assert_false(str(snapshot.get("readout", "")).contains("HP 0%"))
 
 func _side_state() -> Dictionary:
 	return {

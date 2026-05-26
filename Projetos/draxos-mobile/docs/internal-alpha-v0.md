@@ -58,7 +58,7 @@ Regras:
 - Dados de ranking/social do save normal nao devem ser contaminados pelo lab.
 - Toda mutacao continua server-authoritative.
 
-Status local atual (`T03-P08`):
+Status local atual (`T03-P09`):
 
 - Godot persiste o save ativo e envia `x-draxos-save-type`.
 - Supabase local resolve `normal` e `progression_lab` por `players.save_type`.
@@ -71,6 +71,7 @@ Status local atual (`T03-P08`):
 - O Social ja funciona como fluxo basico local: amigos por username, criar/entrar em guilda, membros/estruturas visiveis, chat de guilda por polling, rate limit e marcadores `normal`/`lab`.
 - A Competicao ja funciona como leaderboard alpha local: batalha normal pontua no servidor, ranking mostra top 10 + posicao do jogador, bots ficam fora da tabela e o Lab continua sem pontuacao.
 - A Loja ja funciona como proof-of-concept local: quatro redeems diarios por save entregam apenas Diamante, compras usam Diamante, Battle Pass premium e fila dupla sao produtos unicos, a fila dupla altera a Base para 2 slots e a UI mostra catalogo/status/claims com tooltips.
+- A Batalha possui polish visual pequeno para playtest: nomes mostram HP percentual, o palco exibe readout compacto de replay/tempo/HP/status/cooldowns/aliados e tooltips de evento humanizam fonte/alvo.
 
 ## Backend Remoto
 
@@ -148,7 +149,7 @@ As decisoes detalhadas de uso, layout, tooltips e fluxo ficam em `internal-alpha
 
 - Mantem `battle_log_v1` server-authoritative.
 - Cliente apenas apresenta replay.
-- Mockup visual atual continua valido: palco 2D procedural, personagens parados, spells, buffs, dano, cooldowns, summons, Familiar, tooltips e HUD.
+- Mockup visual atual continua valido: palco 2D procedural, personagens parados, spells, buffs, dano, cooldowns, summons, Familiar, tooltips, HUD e readout compacto.
 - Pequenas melhorias entram apenas se aumentarem clareza do playtest.
 
 ### Base

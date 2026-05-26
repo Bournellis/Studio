@@ -48,7 +48,8 @@ Nao pode alterar:
 | Camada | Representa hoje | Substituicao futura |
 |---|---|---|
 | Palco 2D procedural | Visao lateral tipo luta classica: Draxos na esquerda, oponente na direita, solo e guia de centro | Cena final de batalha, camera, paralaxe, animacoes e VFX. |
-| Combatant HUD | Nome, HP, Mana, Barreira, status, cooldowns | HUD final com retrato, frame, animacao de barra e tooltips. |
+| Combatant HUD | Nome, HP com percentual, Mana, Barreira, status, cooldowns | HUD final com retrato, frame, animacao de barra e tooltips. |
+| Readout compacto | Faixa no palco com progresso do replay, tempo atual, HP percentual, status, cooldowns e aliados visiveis por lado | Overlay final de combate, callouts de vantagem e feed resumido. |
 | Actor procedural | Silhueta desenhada por `_draw()`, barras e pulse de impacto | Personagem, rig, sprite, animacao ou retrato. |
 | Event icon | Simbolos procedurais simples (`/`, `*`, `~`, `+`, `^`, `@`, `!`, `$`, `#`) | Icones finais por evento, spell, fonte ou efeito. |
 | Slots front/middle/back | Familiar e summons posicionados em frente, meio e tras de cada personagem | Marcadores com sprites, ancoras de VFX e animacoes. |
@@ -76,6 +77,9 @@ Nao pode alterar:
 - Cooldowns mostram o tempo restante calculado a partir de `ready_at` e do
   relogio visual continuo do replay; `ready_at` continua sendo o dado
   autoritativo do log, e o cliente apenas apresenta a contagem.
+- O readout compacto fica sempre visivel no palco e resume `Replay X/Y`,
+  tempo atual, HP percentual, quantidade de status/cooldowns e aliados visiveis
+  por lado. Ele e apenas uma leitura derivada do estado visual ja recebido.
 - `BattleVisualMockup.set_replay_time()` permite que a tela Batalha e o Battle
   Lab atualizem timer, aro de recarga e tooltip entre eventos, sem simular regra
   de combate.
@@ -155,7 +159,8 @@ Quando um novo evento visual entrar:
 - `tests/client/test_battle_stage_2d.gd` garante que tooltips de evento, slots,
   status e cooldown seguem disponiveis durante efeitos animados e que os nos de
   tooltip continuam estaveis entre passos do replay; tambem cobre timer restante
-  de cooldown, relogio visual continuo e textos de feedback com nomes completos.
+  de cooldown, relogio visual continuo, readout compacto e textos de feedback
+  com nomes completos.
 - `tests/client/test_battle_visual_mockup.gd` garante que o mockup compartilhado
   expoe tooltips objetivos no snapshot do palco e atualiza cooldowns contra o
   tempo continuo informado pela superficie de replay.

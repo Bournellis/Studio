@@ -61,7 +61,7 @@ Enquanto o remoto estiver adiado, `T03-P02` permanece repo-ready: a configuracao
 
 ### T03-P03 - Conta Email/Senha E Dois Saves
 
-Status local-first: `IN_PROGRESS - T03-P08_COMPLETE`.
+Status local-first: `IN_PROGRESS - T03-P09_COMPLETE`.
 
 - Implementar fluxo email/senha.
 - Manter guest/local como fallback de desenvolvimento, se ainda util.
@@ -196,6 +196,8 @@ Implementado:
 
 ### T03-P09 - Batalha Visual Polish Pequeno
 
+Status: `COMPLETE`.
+
 - Preservar mockup visual atual como baseline.
 - Ajustar apenas clareza de HUD, mensagens, replay, cooldown e tooltips se surgirem no playtest.
 - Nao adicionar assets externos nesta track.
@@ -203,6 +205,13 @@ Implementado:
 Saida esperada:
 
 - Batalha continua boa o suficiente para validar o jogo real enquanto arte final nao existe.
+
+Implementado:
+
+- `BattleStage2D` ganhou readout compacto no palco com progresso do replay, tempo atual, HP percentual, status, cooldowns e aliados visiveis por lado.
+- Labels dos combatentes agora mostram HP absoluto e percentual.
+- Tooltips de evento humanizam fonte/alvo e incluem leitura rapida do feedback visual.
+- Regressao GUT cobre o readout e a tooltip de evento sem depender de assets externos.
 
 ### T03-P10 - Releases E Updates
 

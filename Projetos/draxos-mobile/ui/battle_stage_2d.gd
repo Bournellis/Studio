@@ -78,6 +78,8 @@ var _slot_layer: Control
 var _effects_layer: Control
 var _event_icon
 var _event_label: Label
+var _readout_panel: PanelContainer
+var _readout_label: Label
 var _empty_label: Label
 var _tooltip_panel: PanelContainer
 var _tooltip_label: Label
@@ -124,6 +126,8 @@ func debug_snapshot() -> Dictionary:
 		"has_player_actor": _actors.has(SIDE_PLAYER),
 		"has_opponent_actor": _actors.has(SIDE_OPPONENT),
 		"replay_time": _visual_replay_time,
+		"readout": _readout_label.text if _readout_label != null else "",
+		"readout_tooltip": _readout_label.tooltip_text if _readout_label != null else "",
 		"tooltips": debug_tooltip_samples(),
 		"tooltip_node_ids": debug_tooltip_node_ids(),
 		"cooldown_counts": debug_cooldown_counts(),
@@ -226,6 +230,18 @@ func _ensure_ui() -> void:
 	event_row.add_child(_event_label)
 	_bind_stage_tooltip(_event_label)
 
+	_readout_panel = PanelContainer.new()
+	_readout_panel.name = "ReadoutPanel"
+	_readout_panel.add_theme_stylebox_override("panel", _panel_style("bg_panel", "border_default"))
+	_readout_panel.mouse_filter = Control.MOUSE_FILTER_PASS
+	add_child(_readout_panel)
+	_bind_stage_tooltip(_readout_panel)
+	_readout_label = _stage_label("Replay 0/0 | Tempo 0s", 12, _token_color("text_secondary"))
+	_readout_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_readout_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_readout_panel.add_child(_readout_label)
+	_bind_stage_tooltip(_readout_label)
+
 	_empty_label = _stage_label("", 15, _token_color("text_secondary"))
 	_empty_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_empty_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -278,6 +294,13 @@ func _layout_nodes() -> void:
 		event_panel.size = Vector2(min(360.0, stage_size.x - 32.0), 62.0)
 		event_panel.position = Vector2((stage_size.x - event_panel.size.x) * 0.5, 12.0)
 
+	var readout_panel := get_node_or_null("ReadoutPanel") as Control
+	if readout_panel != null:
+		readout_panel.size = Vector2(min(560.0, stage_size.x - 32.0), 54.0)
+		readout_panel.position = Vector2((stage_size.x - readout_panel.size.x) * 0.5, 82.0)
+		if _readout_label != null:
+			_readout_label.custom_minimum_size = Vector2(maxf(120.0, readout_panel.size.x - 18.0), 0.0)
+
 	_empty_label.size = Vector2(stage_size.x - 80.0, 60.0)
 	_empty_label.position = Vector2(40.0, stage_size.y * 0.42)
 	queue_redraw()
@@ -328,10 +351,11 @@ func _render_dynamic_state() -> void:
 			summons.size() + (1 if familiar != "" else 0)
 		)
 		var name_label: Label = _name_labels[side]
-		name_label.text = "%s  HP %s/%s" % [
+		name_label.text = "%s  HP %s/%s (%s%%)" % [
 			display_name,
 			_number_text(float(side_data.get("hp", 0.0))),
 			_number_text(float(side_data.get("max_hp", 1.0))),
+			_hp_percent_text(side_data),
 		]
 		name_label.tooltip_text = actor.tooltip_text
 		_refresh_stage_tooltip(actor)
@@ -340,6 +364,7 @@ func _render_dynamic_state() -> void:
 		_render_icon_row(_cooldown_rows[side], _as_dictionary(side_data.get("cooldowns", {})), "cooldown")
 
 	_render_slots()
+	_render_readout()
 	_render_event_panel()
 	if _tooltip_source != null:
 		_refresh_stage_tooltip(_tooltip_source)
@@ -459,6 +484,59 @@ func _render_event_panel() -> void:
 	_refresh_stage_tooltip(_event_icon)
 	_refresh_stage_tooltip(_event_label)
 
+func _render_readout() -> void:
+	if _readout_label == null:
+		return
+	var readout_tooltip := "Resumo rapido da batalha\nMostra progresso do replay, tempo atual, vida percentual, status, cooldowns e aliados visiveis de cada lado.\nTodos os valores sao derivados do battle_log_v1 recebido; o cliente apresenta o replay e nao calcula resultado."
+	if _side_state.is_empty() and _latest_event.is_empty():
+		_readout_label.text = "Replay 0/0 | aguardando battle_log_v1\nHP, status, cooldowns e aliados aparecem quando uma batalha carregar."
+		_readout_label.tooltip_text = readout_tooltip
+		_readout_panel.tooltip_text = readout_tooltip
+		_refresh_stage_tooltip(_readout_label)
+		_refresh_stage_tooltip(_readout_panel)
+		return
+	var player_data := _as_dictionary(_side_state.get(SIDE_PLAYER, {}))
+	var opponent_data := _as_dictionary(_side_state.get(SIDE_OPPONENT, {}))
+	var readout_text := "Replay %d/%d | Tempo %ss | %s x %s\nStatus %d x %d | Cooldowns %d x %d | Aliados %d x %d" % [
+		_event_index,
+		_event_count,
+		_number_text(_current_replay_time()),
+		_side_hp_summary(player_data, SIDE_PLAYER),
+		_side_hp_summary(opponent_data, SIDE_OPPONENT),
+		_active_status_count(player_data),
+		_active_status_count(opponent_data),
+		_active_cooldown_count(player_data),
+		_active_cooldown_count(opponent_data),
+		_visible_ally_count(player_data),
+		_visible_ally_count(opponent_data),
+	]
+	_readout_label.text = readout_text
+	_readout_label.tooltip_text = readout_tooltip
+	_readout_panel.tooltip_text = readout_tooltip
+	_refresh_stage_tooltip(_readout_label)
+	_refresh_stage_tooltip(_readout_panel)
+
+func _side_hp_summary(side_data: Dictionary, side: String) -> String:
+	var display_name := str(side_data.get("display_name", _default_side_name(side)))
+	return "%s HP %s%%" % [display_name, _hp_percent_text(side_data)]
+
+func _hp_percent_text(side_data: Dictionary) -> String:
+	var max_hp := maxf(1.0, float(side_data.get("max_hp", 1.0)))
+	var hp := clampf(float(side_data.get("hp", 0.0)), 0.0, max_hp)
+	return _number_text((hp / max_hp) * 100.0)
+
+func _active_status_count(side_data: Dictionary) -> int:
+	return _as_dictionary(side_data.get("statuses", {})).size()
+
+func _active_cooldown_count(side_data: Dictionary) -> int:
+	return _as_dictionary(side_data.get("cooldowns", {})).size()
+
+func _visible_ally_count(side_data: Dictionary) -> int:
+	var total := _as_dictionary(side_data.get("summons", {})).size()
+	if str(side_data.get("familiar", "")) != "":
+		total += 1
+	return total
+
 func _empty_row_tooltip(row_kind: String) -> String:
 	match row_kind:
 		"cooldown":
@@ -545,9 +623,10 @@ func _event_tooltip(event: Dictionary) -> String:
 	var source := str(event.get("source", ""))
 	var target := str(event.get("target", ""))
 	if source != "":
-		lines.append("Fonte: %s." % source)
+		lines.append("Fonte: %s." % _humanize_id(source))
 	if target != "" and target != "none":
-		lines.append("Alvo: %s." % target)
+		lines.append("Alvo: %s." % _humanize_id(target))
+	lines.append("Leitura rapida: %s." % _effect_feedback_text(event))
 	match event_type:
 		"weapon_attack":
 			lines.append("Ataque basico do combatente. Mostra dano e HP final recebidos do servidor.")

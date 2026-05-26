@@ -1,7 +1,7 @@
 # Track 03 - Internal Alpha v0 - Current Status
 
 - Last Updated: `2026-05-26`
-- Status: `T03-P08_COMPLETE - SHOP PROOF-OF-CONCEPT PLAYABLE`
+- Status: `T03-P09_COMPLETE - BATTLE VISUAL POLISH SMALL`
 - Baseline: Track 00 completa, Track 01 completa e Track 02 com Progression Lab/Battle Lab v1 implementados. O projeto ja possui Godot 4.6.2, Supabase local, conta guest, batalha server-authoritative, Base/Social/Competicao/Monetizacao v0, telemetria client nao autoritativa, exports Android/PC/Web, Battle Visual Mockup compartilhado e laboratorios internos. A Track 03 prepara a transicao para uma build fechada realista com email/senha, dois saves por conta, backend remoto, updates e playtest de 2 usuarios.
 
 ## Implementado Nesta Preparacao
@@ -25,6 +25,7 @@
 - `T03-P06` completo: Social virou fluxo basico jogavel no Hub, com amigos por username, criar/entrar em guilda, lista de membros/estruturas, chat de guilda por polling, rate limit, erros amigaveis, tooltips, painéis de estado e identidade social de conta com marcador `lab`.
 - `T03-P07` completo: Competicao virou leaderboard alpha jogavel; `battle/request` `FIRST_SLICE_SIM` pontua o save `normal` com modelo `alpha_v0_power_adjusted`, `progression_lab` permanece fora do ranking, `competition/ranking/current` retorna top 10 + posicao do jogador, bots ficam fora da leaderboard e o Hub mostra matchmaking, ultima batalha competitiva e ranking com tooltips.
 - `T03-P08` completo: Loja virou proof-of-concept jogavel; `monetization/state` retorna `shop_summary` e produtos enriquecidos, redeems diarios entregam apenas Diamante por save com reset Sao Paulo, Battle Pass/fila dupla/pacotes usam Diamante, fila dupla altera a Base para 2 slots e o Hub mostra resumo, catalogo, recompensas, bloqueio visual e tooltips.
+- `T03-P09` completo: Batalha recebeu polish visual pequeno sem assets externos; o palco 2D mostra readout compacto de replay/tempo/HP/status/cooldowns/aliados, labels incluem HP percentual e tooltips de evento humanizam fonte/alvo com leitura rapida.
 
 ## Ainda Nao Implementado
 
@@ -48,7 +49,7 @@
 
 ## Proximo Passo
 
-Executar `T03-P09`: polir somente clareza visual/HUD/tooltips da batalha se isso aumentar a leitura do playtest, sem importar assets externos.
+Preparar `T03-P11`: rodada local de QA/playtest no Godot para consolidar bugs e lacunas antes de remoto/builds. `T03-P10` continua adiado ate o gameplay local estar pronto para export/publicacao.
 
 ## Validacao Da Preparacao
 
@@ -72,7 +73,7 @@ Executar `T03-P09`: polir somente clareza visual/HUD/tooltips da batalha se isso
 - `npx -y deno test tools/progression_lab`: passou em 2026-05-26.
 - `npx -y deno run --allow-read tools/progression_lab/seed_supabase.ts --dry-run --all`: passou em 2026-05-26.
 - `npx -y deno run --allow-read --allow-write tools/progression_lab/generate.ts`: passou em 2026-05-26.
-- `tools/validate.gd`: passou em 2026-05-26 com GUT `48/48` e `307` asserts.
+- `tools/validate.gd`: passou em 2026-05-26 com GUT `49/49` e `320` asserts.
 - `npx -y deno run --allow-net --allow-env server/tests/base_manager_smoke.ts`: passou em 2026-05-26, validando payload jogavel da Base, compra alpha de Energia, upgrade por predio, fila cheia, compra da fila dupla e limite em 2 upgrades ativos.
 - `npx -y deno run --allow-net --allow-env server/tests/monetization_rewards_smoke.ts`: passou em 2026-05-26, validando `shop_summary`, quatro redeems diarios, bloqueio de duplicacao diaria, compra premium por Diamante, fila dupla em `convenience_owned`, reward premium e RLS.
 - `tools/smoke_session_shell.gd`: passou em 2026-05-26 com Auth anonimo, conta guest e `account/state`.
