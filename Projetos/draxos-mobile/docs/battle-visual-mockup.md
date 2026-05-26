@@ -73,8 +73,12 @@ Nao pode alterar:
 - Icons de status, cooldown, Familiar e summons sao atualizados no lugar durante
   o replay; nao devem ser destruidos/recriados a cada evento, para o hover
   continuar vivo enquanto a batalha avanca.
-- Cooldowns mostram o tempo restante calculado a partir de `ready_at` e do tempo
-  do evento atual; `ready_at` continua sendo o dado autoritativo do log.
+- Cooldowns mostram o tempo restante calculado a partir de `ready_at` e do
+  relogio visual continuo do replay; `ready_at` continua sendo o dado
+  autoritativo do log, e o cliente apenas apresenta a contagem.
+- `BattleVisualMockup.set_replay_time()` permite que a tela Batalha e o Battle
+  Lab atualizem timer, aro de recarga e tooltip entre eventos, sem simular regra
+  de combate.
 - Textos flutuantes de dano/efeito usam nomes completos e legiveis, enquanto os
   circulos pequenos usam apenas simbolos procedurais e explicam o significado
   via tooltip.
@@ -151,9 +155,10 @@ Quando um novo evento visual entrar:
 - `tests/client/test_battle_stage_2d.gd` garante que tooltips de evento, slots,
   status e cooldown seguem disponiveis durante efeitos animados e que os nos de
   tooltip continuam estaveis entre passos do replay; tambem cobre timer restante
-  de cooldown e textos de feedback com nomes completos.
+  de cooldown, relogio visual continuo e textos de feedback com nomes completos.
 - `tests/client/test_battle_visual_mockup.gd` garante que o mockup compartilhado
-  expoe tooltips objetivos no snapshot do palco.
+  expoe tooltips objetivos no snapshot do palco e atualiza cooldowns contra o
+  tempo continuo informado pela superficie de replay.
 
 Quando arte real chegar:
 

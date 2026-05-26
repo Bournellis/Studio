@@ -92,7 +92,7 @@ var _replay_events: Array = []
 var _replay_index := 0
 var _replay_playing := false
 var _replay_speed := 1.0
-var _replay_accumulator := 0.0
+var _replay_clock := 0.0
 
 static func is_available() -> bool:
 	return bool(ProjectSettings.get_setting("draxos_mobile/battle_lab/enabled", false)) and OS.has_feature("editor")
@@ -247,11 +247,17 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if not _replay_playing:
 		return
-	_replay_accumulator += delta * _replay_speed
-	if _replay_accumulator < 0.25:
-		return
-	_replay_accumulator = 0.0
-	_step_replay()
+	_replay_clock += delta * _replay_speed
+	_sync_replay_visual_time()
+	while _replay_index < _replay_events.size():
+		var event := _as_dictionary(_replay_events[_replay_index])
+		var event_time := float(event.get("t", _replay_clock))
+		if event_time > _replay_clock + 0.0001:
+			break
+		_replay_index += 1
+		_apply_replay_event(event)
+	if _replay_index >= _replay_events.size():
+		_replay_playing = false
 
 func _build_ui() -> void:
 	var background := ColorRect.new()
@@ -783,7 +789,7 @@ func _load_replay(replay: Dictionary) -> void:
 	_replay_events = BattleLogPresenterScript.sorted_events(battle_log)
 	_replay_index = 0
 	_replay_playing = false
-	_replay_accumulator = 0.0
+	_replay_clock = 0.0
 	_reset_replay()
 	_replay_title_label.text = "%s | %s vs %s | %ss | winner %s" % [
 		str(replay.get("matchup_id", "")),
@@ -796,6 +802,7 @@ func _load_replay(replay: Dictionary) -> void:
 func _reset_replay() -> void:
 	_replay_index = 0
 	_replay_playing = false
+	_replay_clock = 0.0
 	if _battle_visual == null or not is_instance_valid(_battle_visual):
 		return
 	if _active_replay.is_empty():
@@ -805,18 +812,25 @@ func _reset_replay() -> void:
 		_as_dictionary(_active_replay.get("battle_log", {})),
 		_as_dictionary(_active_replay.get("rewards", {}))
 	)
+	_sync_replay_visual_time()
 
 func _step_replay() -> void:
 	if _replay_index >= _replay_events.size():
 		_replay_playing = false
 		return
 	var event := _as_dictionary(_replay_events[_replay_index])
+	_replay_clock = maxf(_replay_clock, float(event.get("t", _replay_clock)))
+	_sync_replay_visual_time()
 	_replay_index += 1
 	_apply_replay_event(event)
 
 func _apply_replay_event(event: Dictionary) -> void:
 	if _battle_visual != null and is_instance_valid(_battle_visual):
 		_battle_visual.apply_event(event)
+
+func _sync_replay_visual_time() -> void:
+	if _battle_visual != null and is_instance_valid(_battle_visual) and _battle_visual.has_method("set_replay_time"):
+		_battle_visual.set_replay_time(_replay_clock)
 
 func _set_replay_speed(value: float) -> void:
 	_replay_speed = value

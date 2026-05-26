@@ -83,6 +83,7 @@ var _tooltip_panel: PanelContainer
 var _tooltip_label: Label
 var _tooltip_source: Control
 var _last_animated_key := ""
+var _visual_replay_time := 0.0
 
 func _ready() -> void:
 	_ensure_ui()
@@ -93,6 +94,7 @@ func show_empty_state(message: String) -> void:
 	_latest_event = {}
 	_event_index = 0
 	_event_count = 0
+	_visual_replay_time = 0.0
 	_last_animated_key = ""
 	_empty_label.text = message
 	_empty_label.visible = true
@@ -100,12 +102,13 @@ func show_empty_state(message: String) -> void:
 	_event_icon.configure("...", _token_color("placeholder"), "Palco de batalha vazio. Quando um replay carregar, este icone mostra o evento atual recebido do battle_log_v1.")
 	_render_dynamic_state()
 
-func render_snapshot(side_state: Dictionary, latest_event: Dictionary, event_index: int, event_count: int, animate_event: bool = false) -> void:
+func render_snapshot(side_state: Dictionary, latest_event: Dictionary, event_index: int, event_count: int, animate_event: bool = false, replay_time: float = -1.0) -> void:
 	_ensure_ui()
 	_side_state = side_state.duplicate(true)
 	_latest_event = latest_event.duplicate(true)
 	_event_index = event_index
 	_event_count = event_count
+	_visual_replay_time = maxf(0.0, replay_time) if replay_time >= 0.0 else float(_latest_event.get("t", 0.0))
 	_empty_label.visible = false
 	_render_dynamic_state()
 	if animate_event and not _latest_event.is_empty():
@@ -120,6 +123,7 @@ func debug_snapshot() -> Dictionary:
 		"effect_count": _effects_layer.get_child_count() if _effects_layer != null else 0,
 		"has_player_actor": _actors.has(SIDE_PLAYER),
 		"has_opponent_actor": _actors.has(SIDE_OPPONENT),
+		"replay_time": _visual_replay_time,
 		"tooltips": debug_tooltip_samples(),
 		"tooltip_node_ids": debug_tooltip_node_ids(),
 		"cooldown_counts": debug_cooldown_counts(),
@@ -478,14 +482,15 @@ func _status_tooltip(status_id: String, value: Variant) -> String:
 	return "Status ativo: %s\n%s" % [_humanize_id(status_id), "\n".join(details)]
 
 func _cooldown_tooltip(spell_id: String, ready_at: float, remaining: float) -> String:
-	return "Cooldown de spell: %s\nA spell foi usada e fica indisponivel ate o tempo do replay chegar ao ready_at.\nRestante: %ss.\nPronta em: %ss.\nO aro escuro mostra a recarga visual; a regra real vem do battle_log_v1." % [
+	return "Cooldown de spell: %s\nA spell foi usada e fica indisponivel ate o tempo do replay chegar ao ready_at.\nTempo atual do replay: %ss.\nRestante: %ss.\nPronta em: %ss.\nO aro escuro mostra a recarga visual; a regra real vem do battle_log_v1." % [
 		_humanize_id(spell_id),
+		_number_text(_current_replay_time()),
 		_number_text(remaining),
 		_number_text(ready_at),
 	]
 
 func _current_replay_time() -> float:
-	return float(_latest_event.get("t", 0.0))
+	return _visual_replay_time
 
 func _cooldown_ready_at(value: Variant) -> float:
 	if value is Dictionary:
@@ -756,10 +761,10 @@ func _position_stage_tooltip() -> void:
 	_tooltip_panel.size = Vector2(tooltip_width, 0.0)
 	_tooltip_panel.reset_size()
 	var panel_size := _tooltip_panel.size
-	var position := get_local_mouse_position() + Vector2(14.0, 14.0)
-	position.x = clampf(position.x, 8.0, max(8.0, stage_size.x - panel_size.x - 8.0))
-	position.y = clampf(position.y, 8.0, max(8.0, stage_size.y - panel_size.y - 8.0))
-	_tooltip_panel.position = position
+	var tooltip_position := get_local_mouse_position() + Vector2(14.0, 14.0)
+	tooltip_position.x = clampf(tooltip_position.x, 8.0, max(8.0, stage_size.x - panel_size.x - 8.0))
+	tooltip_position.y = clampf(tooltip_position.y, 8.0, max(8.0, stage_size.y - panel_size.y - 8.0))
+	_tooltip_panel.position = tooltip_position
 	_tooltip_panel.move_to_front()
 
 func _animate_event(event: Dictionary) -> void:

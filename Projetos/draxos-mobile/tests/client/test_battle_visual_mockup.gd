@@ -46,6 +46,26 @@ func test_battle_visual_mockup_empty_state_is_stable() -> void:
 	assert_eq(visual.get_current_event_index(), 0)
 	assert_string_contains(visual.get_timeline_text(), "Nenhuma batalha")
 
+func test_battle_visual_mockup_updates_cooldown_against_continuous_replay_time() -> void:
+	var visual = BattleVisualMockupScript.new()
+	add_child_autofree(visual)
+	visual.load_battle_log(_rich_battle_log())
+
+	assert_true(visual.step_next_event())
+	assert_true(visual.step_next_event())
+	assert_true(visual.step_next_event())
+	visual.set_replay_time(3.5)
+
+	var snapshot := Dictionary(visual.debug_snapshot())
+	var stage := Dictionary(snapshot.get("stage", {}))
+	var cooldown_counts := Dictionary(stage.get("cooldown_counts", {}))
+	var tooltips := Dictionary(stage.get("tooltips", {}))
+	var cooldown_tooltip_text := _joined_tooltips(Array(tooltips.get("cooldowns", [])))
+	assert_eq(float(snapshot.get("replay_time", 0.0)), 3.5)
+	assert_true(Array(cooldown_counts.get("player", [])).has("4s"))
+	assert_string_contains(cooldown_tooltip_text, "Tempo atual do replay: 3.5s")
+	assert_string_contains(cooldown_tooltip_text, "Restante: 4s")
+
 func _rich_battle_log() -> Dictionary:
 	return {
 		"schema_version": "battle_log_v1",
@@ -75,3 +95,9 @@ func _rich_battle_log() -> Dictionary:
 			{"t": 31.0, "seq": 14, "type": "battle_result", "source": "system", "target": "none", "winner": "player", "reason": "combatant_defeated"},
 		],
 	}
+
+func _joined_tooltips(values: Array) -> String:
+	var lines := PackedStringArray()
+	for value: Variant in values:
+		lines.append(str(value))
+	return "\n".join(lines)

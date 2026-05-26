@@ -13,6 +13,7 @@ const SCREEN_COMPETITION := "competition"
 const SCREEN_SHOP := "shop"
 const BATTLE_LAB_SCREEN_PATH := "res://dev/battle_lab/battle_lab_screen.gd"
 const PROGRESSION_LAB_SCREEN_PATH := "res://dev/progression_lab/progression_lab_screen.gd"
+const BATTLE_REPLAY_TICK_SECONDS := 0.05
 
 const RESOURCE_KEYS := ["almas", "energia", "sangue", "cristais", "ossos", "diamante"]
 
@@ -1170,6 +1171,7 @@ func _play_battle_log(battle_log: Dictionary, rewards: Dictionary) -> void:
 	])
 	if _battle_visual != null and is_instance_valid(_battle_visual):
 		_battle_visual.load_battle_log(battle_log, rewards)
+		_set_battle_visual_time(0.0)
 	_timeline_label.text = "\n".join(lines)
 
 	var events := BattleLogPresenterScript.sorted_events(battle_log)
@@ -1184,14 +1186,27 @@ func _play_battle_log(battle_log: Dictionary, rewards: Dictionary) -> void:
 	if BattleLogPresenterScript.has_unknown_events(battle_log):
 		_error_label.text = "Aviso: replay contem evento desconhecido; exibindo fallback."
 
+	var replay_time := 0.0
 	for event: Dictionary in events:
 		if _skip_replay:
 			break
+		var event_time := maxf(replay_time, float(event.get("t", replay_time)))
+		while replay_time + 0.001 < event_time:
+			if _skip_replay:
+				break
+			var tick := minf(BATTLE_REPLAY_TICK_SECONDS, event_time - replay_time)
+			replay_time += tick
+			_set_battle_visual_time(replay_time)
+			await get_tree().create_timer(tick).timeout
+		if _skip_replay:
+			break
 		lines.append(BattleLogPresenterScript.format_event(event))
+		_set_battle_visual_time(event_time)
 		if _battle_visual != null and is_instance_valid(_battle_visual):
 			_battle_visual.step_next_event()
 		_timeline_label.text = "\n".join(lines)
-		await get_tree().create_timer(0.15).timeout
+		replay_time = event_time
+		await get_tree().process_frame
 
 	if _skip_replay:
 		_emit_client_event("replay_skip", {
@@ -1217,6 +1232,10 @@ func _play_battle_log(battle_log: Dictionary, rewards: Dictionary) -> void:
 		"events": events.size(),
 	})
 	_sync_buttons()
+
+func _set_battle_visual_time(replay_time: float) -> void:
+	if _battle_visual != null and is_instance_valid(_battle_visual) and _battle_visual.has_method("set_replay_time"):
+		_battle_visual.set_replay_time(replay_time)
 
 func _screen_title(screen_id: String) -> String:
 	match screen_id:

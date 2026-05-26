@@ -68,6 +68,51 @@ func test_battle_lab_replay_response_registers_custom_replay() -> void:
 	screen._set_replay_speed(2.5)
 	assert_eq(screen._replay_speed_label.text, "250% do tempo normal")
 
+func test_battle_lab_autoplay_tracks_battle_log_time_for_cooldowns() -> void:
+	var screen = BattleLabScreenScript.new()
+	add_child_autofree(screen)
+	screen._refresh_from_response({
+		"schema_version": "battle_lab_response_v1",
+		"ok": true,
+		"mode": "replay",
+		"status": "PASS",
+		"replay": {
+			"tag": "custom",
+			"matchup_id": "godot_timed_replay",
+			"player_build_id": "player_custom",
+			"opponent_build_id": "opponent_custom",
+			"duration": 4.0,
+			"winner": "player",
+			"battle_log": {
+				"schema_version": "battle_log_v1",
+				"events": [
+					{"t": 0.5, "seq": 1, "type": "cooldown_start", "source": "player", "target": "player", "spell_id": "marca_brasa", "ready_at": 4.0},
+					{"t": 1.0, "seq": 2, "type": "spell_cast", "source": "player", "target": "opponent", "hp_after": 10},
+					{"t": 4.0, "seq": 3, "type": "cooldown_ready", "source": "player", "target": "player", "spell_id": "marca_brasa"},
+				],
+			},
+			"rewards": {},
+		},
+	})
+
+	screen._replay_playing = true
+	screen._process(1.5)
+
+	var snapshot := Dictionary(screen._battle_visual.debug_snapshot())
+	var stage := Dictionary(snapshot.get("stage", {}))
+	var cooldown_counts := Dictionary(stage.get("cooldown_counts", {}))
+	assert_eq(screen._replay_index, 2)
+	assert_eq(float(snapshot.get("replay_time", 0.0)), 1.5)
+	assert_true(Array(cooldown_counts.get("player", [])).has("2.5s"))
+
+	screen._process(2.5)
+	snapshot = Dictionary(screen._battle_visual.debug_snapshot())
+	stage = Dictionary(snapshot.get("stage", {}))
+	cooldown_counts = Dictionary(stage.get("cooldown_counts", {}))
+	assert_eq(screen._replay_index, 3)
+	assert_false(screen._replay_playing)
+	assert_true(Array(cooldown_counts.get("player", [])).has(""))
+
 func test_battle_lab_deno_invocation_sanitizes_project_settings() -> void:
 	var settings_prefix := "draxos_mobile/battle_lab"
 	var command_path := "%s/deno_command" % settings_prefix

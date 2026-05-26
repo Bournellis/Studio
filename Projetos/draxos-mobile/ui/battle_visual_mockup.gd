@@ -66,6 +66,7 @@ var _battle_log: Dictionary = {}
 var _rewards: Dictionary = {}
 var _events: Array[Dictionary] = []
 var _event_index := 0
+var _visual_replay_time := 0.0
 var _side_state: Dictionary = {}
 var _timeline_lines: PackedStringArray = PackedStringArray()
 var _latest_event: Dictionary = {}
@@ -95,6 +96,7 @@ func load_battle_log(battle_log: Dictionary, rewards: Dictionary = {}) -> void:
 	_rewards = rewards.duplicate(true)
 	_events = BattleLogPresenterScript.sorted_events(_battle_log)
 	_event_index = 0
+	_visual_replay_time = 0.0
 	_latest_event = {}
 	_side_state = _build_initial_side_state()
 	_timeline_lines = PackedStringArray()
@@ -108,6 +110,7 @@ func show_empty_state(message: String) -> void:
 	_rewards = {}
 	_events = []
 	_event_index = 0
+	_visual_replay_time = 0.0
 	_latest_event = {}
 	_side_state = _build_empty_side_state()
 	_timeline_lines = PackedStringArray([message])
@@ -136,9 +139,16 @@ func apply_event(event: Dictionary) -> void:
 	_render_dynamic_state(true)
 	_render_timeline()
 
+func set_replay_time(replay_time: float) -> void:
+	_ensure_ui()
+	var latest_event_time := float(_latest_event.get("t", 0.0)) if not _latest_event.is_empty() else 0.0
+	_visual_replay_time = maxf(maxf(0.0, replay_time), latest_event_time)
+	_render_dynamic_state()
+
 func reveal_all() -> void:
 	_ensure_ui()
 	_event_index = 0
+	_visual_replay_time = 0.0
 	_latest_event = {}
 	_side_state = _build_initial_side_state()
 	_timeline_lines = PackedStringArray()
@@ -167,6 +177,7 @@ func debug_snapshot() -> Dictionary:
 		"event_index": _event_index,
 		"event_count": _events.size(),
 		"latest_event_type": str(_latest_event.get("type", "")),
+		"replay_time": _visual_replay_time,
 		"player": _as_dictionary(_side_state.get(SIDE_PLAYER, {})).duplicate(true),
 		"opponent": _as_dictionary(_side_state.get(SIDE_OPPONENT, {})).duplicate(true),
 		"stage": _stage_2d.debug_snapshot() if _stage_2d != null and _stage_2d.has_method("debug_snapshot") else {},
@@ -478,7 +489,7 @@ func _render_dynamic_state(animate_stage_event: bool = false) -> void:
 		]
 		_event_detail_label.text = BattleLogPresenterScript.format_event(_latest_event)
 	if _stage_2d != null and is_instance_valid(_stage_2d) and _stage_2d.has_method("render_snapshot"):
-		_stage_2d.render_snapshot(_side_state, _latest_event, _event_index, _events.size(), animate_stage_event)
+		_stage_2d.render_snapshot(_side_state, _latest_event, _event_index, _events.size(), animate_stage_event, _visual_replay_time)
 
 func _render_status_row(side: String, statuses: Dictionary) -> void:
 	var row: HFlowContainer = _status_rows[side]
@@ -570,6 +581,8 @@ func _render_timeline() -> void:
 
 func _apply_event(event: Dictionary) -> void:
 	_latest_event = event.duplicate(true)
+	var event_time := float(event.get("t", _visual_replay_time))
+	_visual_replay_time = maxf(_visual_replay_time, event_time)
 	_timeline_lines.append(BattleLogPresenterScript.format_event(event))
 	var event_type := str(event.get("type", ""))
 	var source_side := _side_from_actor(str(event.get("source", "")))
@@ -598,7 +611,7 @@ func _apply_event(event: Dictionary) -> void:
 				_set_side_number(mana_side, "mana", mana_after)
 				_set_side_number(mana_side, "max_mana", max(mana_after, float(_as_dictionary(_side_state[mana_side]).get("max_mana", 0.0))))
 		"cooldown_start":
-			_set_cooldown(source_side, str(event.get("spell_id", "spell")), float(event.get("ready_at", 0.0)))
+			_set_cooldown(source_side, str(event.get("spell_id", "spell")), float(event.get("ready_at", 0.0)), event_time)
 		"cooldown_ready":
 			_clear_cooldown(source_side, str(event.get("spell_id", "spell")))
 		"passive_apply":
@@ -660,14 +673,14 @@ func _clear_status(side: String, status_id: String) -> void:
 	data["statuses"] = statuses
 	_side_state[side] = data
 
-func _set_cooldown(side: String, spell_id: String, ready_at: float) -> void:
+func _set_cooldown(side: String, spell_id: String, ready_at: float, started_at: float) -> void:
 	if side == "" or not _side_state.has(side) or spell_id == "":
 		return
 	var data := _as_dictionary(_side_state[side])
 	var cooldowns := _as_dictionary(data.get("cooldowns", {}))
 	cooldowns[spell_id] = {
 		"ready_at": ready_at,
-		"started_at": _current_replay_time(),
+		"started_at": started_at,
 	}
 	data["cooldowns"] = cooldowns
 	_side_state[side] = data
@@ -758,14 +771,15 @@ func _status_tooltip(status_id: String, status: Dictionary) -> String:
 	return "\n".join(lines)
 
 func _cooldown_tooltip(spell_id: String, ready_at: float, remaining: float) -> String:
-	return "Cooldown de spell: %s\nA spell ja foi usada e fica indisponivel ate ready_at no replay.\nRestante: %ss.\nPronta em: %ss.\nO cliente mostra o timer; o servidor decide quando ela pode ser usada de novo.\nAsset futuro: battle_icon_spell." % [
+	return "Cooldown de spell: %s\nA spell ja foi usada e fica indisponivel ate ready_at no replay.\nTempo atual do replay: %ss.\nRestante: %ss.\nPronta em: %ss.\nO cliente mostra o timer; o servidor decide quando ela pode ser usada de novo.\nAsset futuro: battle_icon_spell." % [
 		_humanize_id(spell_id),
+		_number_text(_current_replay_time()),
 		_number_text(remaining),
 		_number_text(ready_at),
 	]
 
 func _current_replay_time() -> float:
-	return float(_latest_event.get("t", 0.0))
+	return _visual_replay_time
 
 func _cooldown_ready_at(value: Variant) -> float:
 	if value is Dictionary:

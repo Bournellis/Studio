@@ -59,6 +59,16 @@ func test_battle_stage_2d_cooldown_timer_uses_remaining_replay_time() -> void:
 	assert_string_contains(cooldown_tooltip_text, "Restante: 5s")
 	assert_string_contains(cooldown_tooltip_text, "Pronta em: 7.5s")
 
+	stage.render_snapshot(_side_state(), {"type": "dot_tick", "source": "player", "target": "opponent", "status_id": "queimando", "damage": 6, "damage_type": "fogo", "seq": 3, "t": 2.5}, 3, 8, false, 3.5)
+	snapshot = Dictionary(stage.debug_snapshot())
+	cooldown_counts = Dictionary(snapshot.get("cooldown_counts", {}))
+	tooltips = Dictionary(snapshot.get("tooltips", {}))
+	cooldown_tooltip_text = _joined_tooltips(Array(tooltips.get("cooldowns", [])))
+	assert_eq(float(snapshot.get("replay_time", 0.0)), 3.5)
+	assert_true(Array(cooldown_counts.get("player", [])).has("4s"))
+	assert_string_contains(cooldown_tooltip_text, "Tempo atual do replay: 3.5s")
+	assert_string_contains(cooldown_tooltip_text, "Restante: 4s")
+
 func test_battle_stage_2d_effect_feedback_uses_full_names() -> void:
 	var stage = BattleStage2DScript.new()
 	add_child_autofree(stage)
