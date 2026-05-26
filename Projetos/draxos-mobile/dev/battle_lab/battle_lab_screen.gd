@@ -81,12 +81,15 @@ var _opponent_hp: ProgressBar
 var _player_state_label: Label
 var _opponent_state_label: Label
 var _marker_label: Label
+var _tabs: TabContainer
 var _run_id_edit: LineEdit
 var _compare_edit: LineEdit
 var _player_editor: Dictionary = {}
 var _opponent_editor: Dictionary = {}
 var _last_response: Dictionary = {}
 var _last_replays: Array = []
+var _custom_replays: Array = []
+var _last_run_history_text := ""
 var _active_replay: Dictionary = {}
 var _replay_events: Array = []
 var _replay_index := 0
@@ -292,19 +295,19 @@ func _build_ui() -> void:
 	_status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	root.add_child(_status_label)
 
-	var tabs := TabContainer.new()
-	tabs.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	root.add_child(tabs)
-	tabs.add_child(_build_run_tab())
-	tabs.set_tab_title(0, "Run")
-	tabs.add_child(_build_builds_tab())
-	tabs.set_tab_title(1, "Builds")
-	tabs.add_child(_build_analytics_tab())
-	tabs.set_tab_title(2, "Analytics")
-	tabs.add_child(_build_replay_tab())
-	tabs.set_tab_title(3, "Replay")
-	tabs.add_child(_build_history_tab())
-	tabs.set_tab_title(4, "History")
+	_tabs = TabContainer.new()
+	_tabs.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	root.add_child(_tabs)
+	_tabs.add_child(_build_run_tab())
+	_tabs.set_tab_title(0, "Run")
+	_tabs.add_child(_build_builds_tab())
+	_tabs.set_tab_title(1, "Builds")
+	_tabs.add_child(_build_analytics_tab())
+	_tabs.set_tab_title(2, "Analytics")
+	_tabs.add_child(_build_replay_tab())
+	_tabs.set_tab_title(3, "Replay")
+	_tabs.add_child(_build_history_tab())
+	_tabs.set_tab_title(4, "History")
 
 func _build_run_tab() -> Control:
 	var box := _scroll_vbox()
@@ -440,9 +443,16 @@ func _build_replay_tab() -> Control:
 
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	box.add_child(scroll)
 	_replay_log_label = Label.new()
 	_replay_log_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_replay_log_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_replay_log_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+	_replay_log_label.custom_minimum_size = Vector2(720, 0)
+	scroll.resized.connect(func() -> void:
+		_replay_log_label.custom_minimum_size.x = max(360.0, scroll.size.x - 24.0)
+	)
 	scroll.add_child(_replay_log_label)
 	return box
 
@@ -634,15 +644,14 @@ func _generate_custom_replay() -> void:
 		"player_build": player,
 		"opponent_build": opponent,
 	}
-	var response := _send_bridge_request(request)
-	if bool(response.get("ok", false)) and response.get("replay", null) is Dictionary:
-		_load_replay(_as_dictionary(response.get("replay", {})))
+	_send_bridge_request(request)
 
 func _send_bridge_request(request: Dictionary) -> Dictionary:
 	_set_status("Chamando Battle Lab Deno...")
 	var request_path := ProjectSettings.globalize_path(REQUEST_PATH)
 	var response_path := ProjectSettings.globalize_path(RESPONSE_PATH)
 	_write_json(request_path, request)
+	_clear_file(response_path)
 
 	var script_path := ProjectSettings.globalize_path("res://tools/battle_lab/generate.ts")
 	var invocation := deno_invocation(
@@ -676,6 +685,8 @@ func _refresh_from_response(response: Dictionary) -> void:
 		_render_run_response(response)
 		var output_dir := str(response.get("output_dir", ""))
 		_load_replays_from_output(output_dir)
+	elif response.get("mode", "") == "replay":
+		_render_replay_response(response)
 
 func _render_run_response(response: Dictionary) -> void:
 	var summary := _as_dictionary(response.get("summary", {}))
@@ -712,8 +723,62 @@ func _render_run_response(response: Dictionary) -> void:
 		])
 	_outliers_label.text = "\n".join(outlier_lines) if not outlier_lines.is_empty() else "Sem outliers."
 
+	var history_lines := PackedStringArray()
+	history_lines.append("Ultima run: %s" % str(response.get("status", "")))
+	history_lines.append("Output: %s" % str(response.get("output_dir", "")))
 	if response.get("compare", null) is Array:
-		_history_label.text = "Compare rows: %d\nOutput: %s" % [_as_array(response.get("compare", [])).size(), str(response.get("output_dir", ""))]
+		history_lines.append("Compare rows: %d" % _as_array(response.get("compare", [])).size())
+	_last_run_history_text = "\n".join(history_lines)
+	_render_history()
+
+func _render_replay_response(response: Dictionary) -> void:
+	var replay := _as_dictionary(response.get("replay", {}))
+	if replay.is_empty():
+		_set_status("Battle Lab custom replay nao retornou replay.")
+		return
+	_register_custom_replay(replay)
+	_load_replay(replay)
+	_select_tab(3)
+	_set_status("Battle Lab custom replay OK: aberto na aba Replay e registrado no History.")
+
+func _register_custom_replay(replay: Dictionary) -> void:
+	_last_replays.push_front(replay)
+	_custom_replays.push_front(replay)
+	while _custom_replays.size() > 8:
+		_custom_replays.pop_back()
+	while _last_replays.size() > 24:
+		_last_replays.pop_back()
+	_render_history()
+
+func _render_history() -> void:
+	if _history_label == null:
+		return
+	var lines := PackedStringArray()
+	if _last_run_history_text != "":
+		lines.append(_last_run_history_text)
+	if not _custom_replays.is_empty():
+		if not lines.is_empty():
+			lines.append("")
+		lines.append("Custom replays desta sessao:")
+		for item: Variant in _custom_replays:
+			var replay := _as_dictionary(item)
+			lines.append("- %s | %s vs %s | %ss | winner %s" % [
+				str(replay.get("matchup_id", "")),
+				str(replay.get("player_build_id", "")),
+				str(replay.get("opponent_build_id", "")),
+				str(replay.get("duration", "")),
+				str(replay.get("winner", "")),
+			])
+	if lines.is_empty():
+		_history_label.text = "Historico aparecera depois de uma run ou replay custom."
+	else:
+		_history_label.text = "\n".join(lines)
+
+func _select_tab(index: int) -> void:
+	if _tabs == null:
+		return
+	if index >= 0 and index < _tabs.get_tab_count():
+		_tabs.current_tab = index
 
 func _load_replays_from_output(output_dir: String) -> void:
 	if output_dir == "":
@@ -934,12 +999,15 @@ func _body_label(text: String) -> Label:
 	label.text = text
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	label.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 	return label
 
 func _output_label(text: String) -> Label:
 	var panel := PanelContainer.new()
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var label := _body_label(text)
+	label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 	panel.add_child(label)
 	return label
 
@@ -1002,6 +1070,11 @@ func _write_json(path: String, payload: Dictionary) -> void:
 	var file := FileAccess.open(path, FileAccess.WRITE)
 	if file != null:
 		file.store_string(JSON.stringify(payload, "\t"))
+
+func _clear_file(path: String) -> void:
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file != null:
+		file.store_string("")
 
 func _read_json(path: String) -> Dictionary:
 	if not FileAccess.file_exists(path):

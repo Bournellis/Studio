@@ -62,6 +62,18 @@ func test_session_store_accepts_progression_lab_snapshot_cache() -> void:
 	assert_eq(int(store.resources.get("energia", 0)), 115)
 	store.free()
 
+func test_progression_lab_builds_local_snapshot_cache_from_healthy_save() -> void:
+	var doc := _read_json("res://docs/progression-lab/generated/healthy_saves.json")
+	var save := _as_dictionary(_as_array(doc.get("saves", []))[0])
+	var cache := ProgressionLabScreenScript.session_cache_from_save(save)
+	var store = SessionStoreScript.new()
+	assert_true(store.apply_snapshot_cache(cache))
+	assert_true(store.has_account_state())
+	assert_eq(str(store.player.get("username", "")), str(_as_dictionary(save.get("player", {})).get("username", "")))
+	assert_eq(str(_as_dictionary(cache.get("progression_lab", {})).get("save_id", "")), str(save.get("id", "")))
+	assert_eq(str(store.build.get("weapon_type", "")), str(_as_dictionary(save.get("build", {})).get("weapon_type", "")))
+	store.free()
+
 func test_progression_lab_deno_invocation_sanitizes_project_settings() -> void:
 	var settings_prefix := "draxos_mobile/progression_lab"
 	var command_path := "%s/deno_command" % settings_prefix

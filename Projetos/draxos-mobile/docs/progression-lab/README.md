@@ -62,7 +62,7 @@ npx -y deno run --allow-read tools/progression_lab/seed_supabase.ts --dry-run --
 ```
 
 4. Abrir o Godot editor e usar `Refugio -> Progression Lab Dev`.
-5. Carregar o save e jogar manualmente.
+5. Carregar o save e jogar manualmente. Sem `SUPABASE_SERVICE_ROLE_KEY`, a tela cria um cache local-only a partir do healthy save selecionado para validar UI/fluxo; com service key, o seeder cria uma sessao real no Supabase local.
 6. Registrar feedback de ritmo, recompensa, gargalo, poder e loja.
 7. Rodar Battle Lab com as builds saudaveis.
 8. Ajustar numeros em tarefa separada e comparar before/after.
@@ -123,6 +123,8 @@ npx -y deno test tools/battle_lab
 npx -y deno run --allow-read --allow-write tools/progression_lab/generate.ts
 npx -y deno run --allow-read tools/progression_lab/seed_supabase.ts --dry-run --all
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-mobile -s res://tools/validate.gd
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-mobile -s res://tools/smoke_dev_labs.gd
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-mobile -s res://tools/smoke_dev_lab_ui.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-mobile -s res://tools/smoke_exports.gd
 ```
 

@@ -32,6 +32,36 @@ func test_battle_lab_default_level_25_build_is_valid() -> void:
 	assert_eq(BattleLabScreenScript.max_spell_slots(25), 3)
 	assert_true(BattleLabScreenScript.allowed_spell_ids(25).has("marca_sepulcral"))
 
+func test_battle_lab_replay_response_registers_custom_replay() -> void:
+	var screen = BattleLabScreenScript.new()
+	add_child_autofree(screen)
+	screen._refresh_from_response({
+		"schema_version": "battle_lab_response_v1",
+		"ok": true,
+		"mode": "replay",
+		"status": "PASS",
+		"replay": {
+			"tag": "custom",
+			"matchup_id": "godot_custom_replay",
+			"player_build_id": "player_custom",
+			"opponent_build_id": "opponent_custom",
+			"duration": 12.5,
+			"winner": "player",
+			"battle_log": {
+				"schema_version": "battle_log_v1",
+				"events": [
+					{"t": 1.0, "seq": 1, "type": "spell_cast", "source": "player", "target": "opponent", "hp_after": 10},
+				],
+			},
+			"rewards": {},
+		},
+	})
+	assert_eq(screen._last_replays.size(), 1)
+	assert_eq(screen._custom_replays.size(), 1)
+	assert_true(screen._replay_title_label.text.contains("godot_custom_replay"))
+	assert_true(screen._history_label.text.contains("Custom replays"))
+	assert_eq(screen._tabs.current_tab, 3)
+
 func test_battle_lab_deno_invocation_sanitizes_project_settings() -> void:
 	var settings_prefix := "draxos_mobile/battle_lab"
 	var command_path := "%s/deno_command" % settings_prefix

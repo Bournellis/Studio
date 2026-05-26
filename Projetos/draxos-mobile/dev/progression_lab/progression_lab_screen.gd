@@ -14,6 +14,9 @@ const PROFILE_IDS := [
 const MILESTONE_IDS := ["2h", "5h", "10h", "15h", "20h"]
 const HEALTHY_SAVES_PATH := "res://docs/progression-lab/generated/healthy_saves.json"
 const SESSION_PATH_TEMPLATE := "res://.progression_lab_scratch/session_%s_%s.json"
+const SESSION_LATEST_PATH := "res://.progression_lab_scratch/session_latest.json"
+const BATTLE_PASS_ID := "bp_s1_01"
+const SEASON_ID := "season_001"
 
 var _profile_option: OptionButton
 var _milestone_option: OptionButton
@@ -160,8 +163,15 @@ func _build_ui() -> void:
 	var checklist_scroll := ScrollContainer.new()
 	checklist_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	checklist_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	checklist_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	_checklist_label = Label.new()
 	_checklist_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_checklist_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_checklist_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+	_checklist_label.custom_minimum_size = Vector2(520, 0)
+	checklist_scroll.resized.connect(func() -> void:
+		_checklist_label.custom_minimum_size.x = max(360.0, checklist_scroll.size.x - 24.0)
+	)
 	checklist_scroll.add_child(_checklist_label)
 	split.add_child(checklist_scroll)
 
@@ -186,7 +196,14 @@ func _generate_report() -> void:
 func _prepare_local_save() -> void:
 	_set_status("Preparando save local no Supabase...")
 	if OS.get_environment("SUPABASE_SERVICE_ROLE_KEY").strip_edges() == "":
-		_set_status("Seeder requer SUPABASE_SERVICE_ROLE_KEY no ambiente. Para teste local sem Supabase, gere o relatorio e carregue o cache.")
+		var save := _selected_healthy_save()
+		if save.is_empty():
+			_set_status("Healthy save nao encontrado. Gere o relatorio primeiro.")
+			return
+		var cache := session_cache_from_save(save)
+		_write_selected_cache(cache)
+		_set_status("Save local offline preparado. Use Carregar Save para aplicar no SessionStore.")
+		_summary_label.text = _session_summary(cache)
 		return
 	var script_path := ProjectSettings.globalize_path("res://tools/progression_lab/seed_supabase.ts")
 	var invocation := deno_invocation(
@@ -212,8 +229,11 @@ func _load_selected_save() -> void:
 	var path := SESSION_PATH_TEMPLATE % [_selected_profile(), _selected_milestone()]
 	var global_path := ProjectSettings.globalize_path(path)
 	if not FileAccess.file_exists(global_path):
-		_set_status("Cache nao encontrado. Use Preparar Save Local primeiro: %s" % global_path)
-		return
+		var save := _selected_healthy_save()
+		if save.is_empty():
+			_set_status("Cache nao encontrado e healthy save indisponivel: %s" % global_path)
+			return
+		_write_selected_cache(session_cache_from_save(save))
 	var cache := _read_json(global_path)
 	if cache.is_empty():
 		_set_status("Cache invalido: %s" % global_path)
@@ -233,6 +253,139 @@ func _session_store():
 	if _fallback_session_store == null:
 		_fallback_session_store = SessionStoreScript.new()
 	return _fallback_session_store
+
+static func session_cache_from_save(save: Dictionary) -> Dictionary:
+	var now_unix := int(Time.get_unix_time_from_system())
+	var now_text := Time.get_datetime_string_from_system(true)
+	var save_id := str(save.get("id", "progression_lab_save"))
+	var player_id := "local_%s" % save_id
+	var player := _as_dictionary_static(save.get("player", {}))
+	var resources := _as_dictionary_static(save.get("resources", {}))
+	var build := _as_dictionary_static(save.get("build", {}))
+	var base := _as_dictionary_static(save.get("base", {}))
+	var monetization := _as_dictionary_static(save.get("monetization", {}))
+	var resource_cache := resources.duplicate(true)
+	resource_cache["player_id"] = player_id
+	resource_cache["diamante"] = int(round(float(resources.get("diamante", 0))))
+	resource_cache["updated_at"] = now_text
+
+	return {
+		"cache_version": 1,
+		"auth": {
+			"access_token": "progression_lab_local_only",
+			"refresh_token": "progression_lab_local_only",
+			"expires_at": now_unix + 86400,
+			"user_id": "auth_%s" % save_id,
+		},
+		"session_id": SessionStoreScript.create_request_id(),
+		"guest_request_id": SessionStoreScript.create_request_id(),
+		"player": {
+			"id": player_id,
+			"username": str(player.get("username", "plab_local_%s" % save_id)),
+			"account_type": "progression_lab_local",
+			"level": int(player.get("level", 1)),
+			"xp": int(round(float(player.get("xp", 0)))),
+			"power": int(player.get("power", 0)),
+			"created_at": now_text,
+			"updated_at": now_text,
+		},
+		"resources": resource_cache,
+		"build": {
+			"player_id": player_id,
+			"weapon_type": str(build.get("weapon_type", "")),
+			"weapon_quality": str(build.get("weapon_quality", "starter")),
+			"weapon_level": int(build.get("weapon_level", 1)),
+			"spell_slots": _as_array_static(build.get("spell_slots", [])).duplicate(true),
+			"spells_unlocked": _as_array_static(build.get("spells_unlocked", [])).duplicate(true),
+			"pet_id": _nullable_text(str(build.get("pet_id", ""))),
+			"pet_level": int(build.get("pet_level", 0)),
+			"passive_id": _nullable_text(str(build.get("passive_id", ""))),
+			"passive_level": int(build.get("passive_level", 0)),
+			"updated_at": now_text,
+		},
+		"base_state": {
+			"construction_slots": int(base.get("construction_slots", 1)),
+			"structures": _base_structures_from_save(base, now_text),
+			"jobs": _base_jobs_from_save(base, now_text),
+		},
+		"social_state": {},
+		"competition_state": {
+			"ranking": {
+				"season": {
+					"id": SEASON_ID,
+					"display_name": "Season 1 Alpha",
+				},
+				"self": {
+					"arena_points": max(0, int(round(float(player.get("power", 0)) / 20.0))),
+					"wins": 0,
+					"losses": 0,
+				},
+				"bots_included": false,
+			},
+		},
+		"monetization_state": {
+			"battle_pass": {
+				"pass": {
+					"id": BATTLE_PASS_ID,
+					"display_name": "Battle Pass Alpha 01",
+				},
+				"progress": {
+					"player_id": player_id,
+					"pass_id": BATTLE_PASS_ID,
+					"pass_xp": int(monetization.get("battle_pass_xp", 0)),
+					"premium_unlocked": bool(monetization.get("premium_unlocked", false)),
+				},
+			},
+			"daily_rewards": [],
+			"alpha_products": [],
+		},
+		"last_battle_id": null,
+		"last_battle_log": {},
+		"last_battle_rewards": {},
+		"offline": false,
+		"last_error": {},
+		"progression_lab": {
+			"save_id": save_id,
+			"profile_id": str(save.get("profile_id", "")),
+			"milestone_id": str(save.get("milestone_id", "")),
+			"local_only": true,
+			"manual_checklist": _as_array_static(save.get("manual_checklist", [])).duplicate(true),
+		},
+	}
+
+static func _base_structures_from_save(base: Dictionary, now_text: String) -> Array:
+	var structures: Array = []
+	for item: Variant in _as_array_static(base.get("structures", [])):
+		var structure := _as_dictionary_static(item)
+		var level := int(structure.get("level", 1))
+		structures.append({
+			"structure_id": str(structure.get("structure_id", "")),
+			"display_name": str(structure.get("structure_id", "")).capitalize(),
+			"level": level,
+			"pending_collectable": 0,
+			"storage_cap": max(100, level * 100),
+			"last_collected_at": now_text,
+		})
+	return structures
+
+static func _base_jobs_from_save(base: Dictionary, now_text: String) -> Array:
+	var active_job := _as_dictionary_static(base.get("active_job", {}))
+	if active_job.is_empty():
+		return []
+	return [{
+		"structure_id": str(active_job.get("structure_id", "")),
+		"target_level": int(active_job.get("target_level", 1)),
+		"status": "active",
+		"completes_at": now_text,
+	}]
+
+static func _nullable_text(value: String) -> Variant:
+	var normalized := value.strip_edges()
+	return null if normalized == "" else normalized
+
+func _write_selected_cache(cache: Dictionary) -> void:
+	_write_json(ProjectSettings.globalize_path(SESSION_PATH_TEMPLATE % [_selected_profile(), _selected_milestone()]), cache)
+	_write_json(ProjectSettings.globalize_path(SESSION_LATEST_PATH), cache)
 
 func _refresh_checklist() -> void:
 	var save := _selected_healthy_save()
@@ -414,8 +567,16 @@ func _output_label(text: String) -> Label:
 	label.text = text
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	label.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 	panel.add_child(label)
 	return label
+
+func _write_json(path: String, payload: Dictionary) -> void:
+	DirAccess.make_dir_recursive_absolute(path.get_base_dir())
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file != null:
+		file.store_string(JSON.stringify(payload, "\t"))
 
 func _read_json(path: String) -> Dictionary:
 	if not FileAccess.file_exists(path):
@@ -452,4 +613,10 @@ func _as_dictionary(value: Variant) -> Dictionary:
 	return value if value is Dictionary else {}
 
 func _as_array(value: Variant) -> Array:
+	return value if value is Array else []
+
+static func _as_dictionary_static(value: Variant) -> Dictionary:
+	return value if value is Dictionary else {}
+
+static func _as_array_static(value: Variant) -> Array:
 	return value if value is Array else []

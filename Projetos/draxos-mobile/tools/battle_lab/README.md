@@ -69,7 +69,7 @@ Essa tela:
 - gera scratch runs e runs oficiais;
 - mostra resumo/checks/outliers;
 - permite montar builds manualmente com validacao de unlock;
-- gera replay custom sob demanda;
+- gera replay custom sob demanda e registra esse resultado de sessao em Replay/History;
 - reproduz `battle_log_v1` em uma arena debug 2D.
 
 O cliente Godot nao calcula resultado, dano ou recompensa. Ele apenas monta o
