@@ -1,7 +1,7 @@
 # Database Schema Contract
 
-- Ultima atualizacao: `2026-05-20`
-- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards e telemetria client implementadas
+- Ultima atualizacao: `2026-05-26`
+- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards e telemetria client implementadas; Track 03 planeja suporte a email/senha e dois saves por conta
 
 Este documento define o schema esperado. A fonte tecnica viva do runtime local e `../../supabase/migrations/`; `../../server/schema/migrations/` permanece como espelho backend durante o alpha local.
 
@@ -176,6 +176,36 @@ Adicionar ou detalhar:
 - `reward_claims`
 - `alpha_purchases`
 - `telemetry_events`
+
+## Internal Alpha v0 - Extensao Planejada
+
+Track 03 precisa separar conta de teste e save de jogo sem quebrar o runtime atual. A direcao de longo prazo e:
+
+- uma conta Supabase Auth pode ter metadados alpha;
+- a conta possui dois saves logicos: `normal` e `progression_lab`;
+- tabelas de gameplay devem conseguir apontar para o save correto;
+- Progression Lab escreve somente no save `progression_lab`.
+
+Implementacao inicial pode usar uma evolucao compativel do schema atual:
+
+- adicionar `save_type` a `players` com valores `normal` e `progression_lab`;
+- garantir unicidade por `auth_user_id + save_type`;
+- fazer tabelas existentes continuarem referenciando `players.id`;
+- criar os dois `players`/saves no bootstrap da conta alpha;
+- marcar metadados do save lab em payload ou coluna propria.
+
+Refatoracao futura, se o projeto crescer:
+
+- criar `account_profiles` para dados da conta;
+- criar `game_saves` para saves por modo/tipo;
+- migrar tabelas de gameplay de `player_id` para `save_id` ou manter `player_id` como alias de save.
+
+Regras de seguranca:
+
+- RLS precisa isolar saves do mesmo `auth_user_id` de outros usuarios.
+- Edge Functions decidem o save ativo.
+- Reset de um save nao toca linhas do outro.
+- Ranking/social normal nao recebe efeitos de `progression_lab`, salvo decisao explicita futura.
 
 ### `telemetry_events`
 

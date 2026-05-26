@@ -11,7 +11,7 @@
 | Client | Godot `4.6.2-stable` (GDScript) |
 | Backend | Supabase Auth, Postgres, Edge Functions, Realtime |
 | Comunicacao | REST via HTTPRequest do Godot |
-| Autenticacao | JWT Supabase, Auth anonimo para guest MVP, Google OAuth2 futuro |
+| Autenticacao | JWT Supabase, Auth anonimo para guest/local, email/senha para Internal Alpha v0, Google OAuth2 futuro |
 | Testes client | GUT `9.6.0` |
 | Testes server | Deno/TypeScript tests para Edge Functions |
 
@@ -33,6 +33,7 @@
 - `T00-P12` completo: Social/Competicao v0 server-authoritative com `social/state`, guilda alpha, chat de guilda por polling, matchmaking preview com fallback de bot e ranking de season sem bots.
 - `T00-P13` completo: Monetizacao v0 server-authoritative com Battle Pass, Diamante alpha, recompensas diarias/semanais, claims free/premium, ledger, idempotencia e export smoke Android/PC/Web.
 - `Track 01` completo: hardening do alpha PC local com fluxo de primeira sessao mais claro, estados ocupados/erros offline/pre-condicoes visiveis, reset seguro de sessao local, telemetria client nao autoritativa e smoke do loop alpha.
+- `Track 03` preparado: Internal Alpha v0 documentado para email/senha, dois saves por conta, Supabase remoto Free, Web/PC/Android com update manifest e Progression Lab isolado do save normal.
 
 ---
 
@@ -45,6 +46,7 @@ Antes de criar codigo ou migrations, consulte:
 - `contracts/database-schema.md`
 - `contracts/content-definitions.md`
 - `reuse-map.md`
+- `internal-alpha-v0.md`
 
 `supabase/` e a fonte de execucao local da Supabase CLI. `server/schema/` e `server/functions/` permanecem como espelho organizado do backend durante o alpha local.
 
@@ -148,6 +150,18 @@ paths de saida e exclusao de ferramentas dev (`dev/**`, `tools/battle_lab/**`,
 `docs/battle-lab/**`, `.battle_lab_scratch/**`) sem exigir templates de export
 instalados.
 
+Track 03 adiciona manifest remoto para updates internos. O manifest deve viver em Supabase Storage ou endpoint equivalente sem secrets, com:
+
+- `schema_version`;
+- canal (`internal_alpha`);
+- `latest_version`;
+- `minimum_supported_version`;
+- links de artefatos Android/PC/Web;
+- `sha256` para artefatos baixaveis quando aplicavel;
+- release notes curtas.
+
+O cliente pode continuar rodando se houver update recomendado. Se a versao atual ficar abaixo de `minimum_supported_version`, o cliente deve bloquear acoes online e orientar update.
+
 ---
 
 ## Arquitetura De Conta
@@ -167,6 +181,23 @@ Boot
 Guest pode migrar para conta registrada sem perder progresso.
 
 MVP tecnico implementa apenas guest com codigo de convite.
+
+Internal Alpha v0 usa email/senha como caminho principal. Email confirmation fica desligado no projeto alpha para reduzir atrito entre dois testadores, mas o servidor ainda precisa validar convite/flag alpha antes de criar ou liberar save.
+
+### Modelo De Saves Da Internal Alpha v0
+
+Cada conta alpha possui dois saves logicos:
+
+- `normal`: progresso real do teste fechado.
+- `progression_lab`: estado custom criado pelo Progression Lab.
+
+Regras:
+
+- Reset separado por save.
+- UI sempre mostra o save ativo.
+- Endpoints autoritativos devem resolver o save ativo no servidor; o cliente nao envia deltas finais.
+- Ranking, social e loja do save normal nao podem ser contaminados pelo `progression_lab`.
+- Implementacao inicial pode adaptar o schema atual de `players` para `save_type`, mas a direcao de longo prazo e separar conta de jogo e saves para permitir novos modos/fases sem acoplar tudo a uma linha de player.
 
 Modelo escolhido em `DMOB-D042`:
 

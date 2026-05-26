@@ -2,10 +2,10 @@
 
 - Last Updated: `2026-05-26`
 - Active Project Name: `draxos-mobile`
-- Active Surface: `Track 02 - Progression Lab`
-- Active Track: `Track 02 - Progression Lab`
-- Active Track Status: `IN_PROGRESS - SOURCE IDENTITY BALANCE V2 + DEV LAB FLOW/VISUAL HARDENED + BATTLE STAGE 2D CONTINUOUS COOLDOWNS + PROGRESSION LAB LOCAL-ONLY GUARD`
-- Current Operational Baseline: `Track 00 completa com T00-P01 a T00-P13 concluidos, Track 01 completa para hardening do alpha PC local, e Track 02 Progression Lab com tooling v1 implementado. Character Systems Rework 2026-05-25 e Source Identity Balance v2 implementados em docs, catalogo, simulador, Battle Lab, Progression Lab, seeds, migrations e testes: armas viraram Instrumentos Rituais, passivas viraram Doutrinas, pets viraram Familiares, Mental virou familia de status e as fontes vivas sao Arcano/Fisico/Fogo/Agua/Gelo/Terra/Vento/Raio/Veneno/Sangue/Morte. Projeto Godot 4.6.2 tem boot hub alpha com abas/telas rolaveis, Voltar/Esc, confirmacoes simples para mutacoes, feedback de primeira sessao/refresh/offline/pre-condicoes, busy states, reset seguro de cache/sessao local, session_id local persistido para telemetria, GUT 9.6.0, validate integrado, export smoke Android/PC/Web, autoloads UiTokens/AssetIds/ContentLibrary/SessionStore/SupabaseClient, pipeline data/definitions -> data/generated/draxos_mobile_catalog.tres, conteudo real inicial, cliente HTTPRequest para Auth anonimo, account/battle/base/social/competition/monetization/telemetry, replay rico de battle_log_v1, mockup visual compartilhado para Batalha/Battle Lab com palco procedural 2D estilo luta lateral, personagens placeholder parados frente a frente, ataque basico, spells, buffs, dano, numeros flutuantes com nomes completos de efeito/dano, projeteis simples, simbolos procedurais, cooldowns com timer restante em relogio continuo de replay, tooltips imediatos no palco, slots front/middle/back, summons, Familiar e HUD basica, e fluxos minimos de Base/Social/Competicao/Monetizacao. Battle Lab agora tem runner Deno offline com invocacao sanitizada e Windows-safe no Godot, bridge request/response, scratch runs fora do Git, checks de identidade de fonte, replays amostrados com battle_log_v1 completo e representante com spells, replay custom registrado como resultado de sessao em Replay/History, aba Replay rolavel, autoplay baseado no `t` do log, compatibilidade/stale em historico e tela dev-only no Refugio para montar builds e assistir o mesmo mockup visual de batalha, excluida dos exports. Progression Lab usa o mesmo hardening de invocacao Deno no Godot, cria cache local-only a partir dos healthy saves quando Supabase/service key nao esta disponivel sem token valido, abre base como snapshot somente leitura e bloqueia batalha/coleta/upgrades/acoes online com mensagem objetiva; `tools/smoke_dev_labs.gd`/`tools/smoke_dev_lab_ui.gd` validam o caminho real de `OS.execute` e o fluxo visual das telas. Supabase local esta configurado no layout oficial supabase/, db reset passa quando runtime local esta ativo, healthcheck responde pelo gateway local, conta guest MVP cria/recupera estado server-authoritative, battle/request server-authoritative grava log/recompensa idempotente, FIRST_SLICE_SIM gera replay deterministico completo, Base Manager v0 implementa estruturas permanentes/fila/coleta offline/ledger/idempotencia, Social/Competicao v0 implementa guilda/chat por polling, matchmaking preview com bot fallback e ranking de season sem bots, Monetizacao v0 implementa Battle Pass/Diamante/rewards/premium/ledger/idempotencia, e telemetry/client-event grava eventos client nao autoritativos em telemetry_events sem mutar gameplay. Track 02 gera 25 saves saudaveis 2h-20h, 75 bots, relatorios offline, seeder Supabase local, cache .progression_lab_scratch, matriz Battle Lab e fluxo manual dev-only no Godot para calibrar recompensa, scaling, poder e moeda premium.`
+- Active Surface: `Track 03 - Internal Alpha v0`
+- Active Track: `Track 03 - Internal Alpha v0`
+- Active Track Status: `READY_FOR_IMPLEMENTATION - DOCUMENTATION AND WORKSPACE PREP`
+- Current Operational Baseline: Track 00 completa com primeiro slice server-authoritative, Track 01 completa para hardening do alpha PC local e Track 02 com Progression Lab/Battle Lab v1 implementados. Godot 4.6.2 possui hub alpha, Base/Social/Competicao/Monetizacao v0, batalha `battle_log_v1` server-authoritative, mockup visual 2D procedural compartilhado por Batalha/Battle Lab, exports Android/PC/Web, validate/GUT/smokes verdes no ultimo baseline e Supabase local em layout oficial. Track 03 prepara Internal Alpha v0: email/senha, dois saves por conta (`normal` e `progression_lab`), Supabase remoto Free, Progression Lab isolado, loja com redeems alpha, leaderboards basicas, social/base jogaveis e manifest de updates para Android/PC/Web.
 
 ---
 
@@ -18,6 +18,7 @@
 | Design pendente | T00-P09 completo | DMOB-D047 resolvido pelo Character Systems Rework 2026-05-25; D030 recebeu Source Identity Balance v2 com Battle Lab `PASS`; D006-D007 e D029-D032 seguem calibraveis via simulador/playtest |
 | Economia e seasons | Baseline calibravel | `../docs/economy/README.md`, JSON versionado e gerador Deno/TypeScript criados; outputs em `../docs/economy/generated/` |
 | Progression Lab | Ferramenta v1 atualizada para Source Identity Balance v2 | Gera `25` saves, `75` bots, relatorios HTML/CSV/JSON, seeder Supabase local, cache `.progression_lab_scratch/`, fallback local-only sem Supabase e sem token valido, tela dev-only no Refugio e matriz Progression Lab no Battle Lab; cache local-only abre base como snapshot somente leitura e bloqueia acoes online com mensagem objetiva; status atual `REVIEW` por premium gap e janelas 15h/20h calibraveis, falta rodada manual real no editor com Supabase local |
+| Internal Alpha v0 | Preparada para implementacao | Track 03 documentada com escopo, plano, runbook, checklist, pendencias de design `DMOB-D048`-`DMOB-D055`, contratos planejados de email/senha/dois saves e regra de updates via manifest remoto |
 | Reuso entre projetos | Documentado | Fonte viva: `../docs/reuse-map.md`; estrategia conservadora |
 | Contratos tecnicos | Definidos | Fonte inicial: `../docs/contracts/` |
 | Godot project | Alpha PC local pronto + Battle Lab/Progression Lab dev + battle stage 2D continuous cooldowns | Hub alpha hardenizado, autoloads, `.gutconfig.json`, content generator, catalogo gerado, `SessionStore` com `session_id`, `apply_snapshot_cache` e metadados `progression_lab`, `SupabaseClient` com telemetria, `BattleLogPresenter`, `BattleVisualMockup`, `BattleStage2D` responsivo com tooltips imediatos, nos estaveis durante efeitos, cooldown restante por relogio continuo de replay e feedback textual com nomes completos, telas dev-only do Battle Lab e Progression Lab, cache local-only read-only sem token valido, runner Deno sanitizado/Windows-safe, smoke real de labs, smoke visual/comportamental e GUT |
@@ -47,6 +48,11 @@
 - Status Track 01: `tracks/track-01-alpha-playtest-hardening/current-status.md`
 - Escopo Track 02: `tracks/track-02-progression-lab/scope.md`
 - Status Track 02: `tracks/track-02-progression-lab/current-status.md`
+- Escopo Track 03: `tracks/track-03-internal-alpha-v0/scope.md`
+- Plano Track 03: `tracks/track-03-internal-alpha-v0/implementation-plan.md`
+- Status Track 03: `tracks/track-03-internal-alpha-v0/current-status.md`
+- Internal Alpha v0: `../docs/internal-alpha-v0.md`
+- Checklist Internal Alpha v0: `../docs/playtest-internal-alpha-v0.md`
 - Progression Lab: `../docs/progression-lab/README.md`
 - Dev Lab Workflow Notes: `../docs/dev-lab-workflow.md`
 - MVP tecnico: `tracks/track-00-first-slice-foundation/mvp-technical-definition.md`
@@ -66,6 +72,7 @@
 - Track 00 monta o primeiro slice completo.
 - Track 01 hardeniza o primeiro slice para playtest alpha PC local.
 - Track 02 calibra o loop inicial com saves saudaveis, perfis 2h-20h, bots, poder, moeda premium e teste manual no Godot.
+- Track 03 transforma o alpha local em build fechada realista com email/senha, dois saves, Supabase remoto, base/social/competicao/loja funcionais e updates internos.
 - MVP tecnico minimo e a primeira etapa da Track 00.
 - MVP tecnico usa fixtures `MVP_ONLY` e nao depende de balanceamento final.
 - Economia de Season 1 usa cap 40 por padrao, todos os levels sao permanentes e caps futuros ficam editaveis no simulador.
@@ -131,11 +138,12 @@
 ## Read Next
 
 1. `../AGENTS.md`
-2. `tracks/track-02-progression-lab/current-status.md`
-3. `tracks/track-02-progression-lab/scope.md`
-4. `../docs/progression-lab/README.md`
-5. `../docs/reuse-map.md`
+2. `tracks/track-03-internal-alpha-v0/current-status.md`
+3. `tracks/track-03-internal-alpha-v0/scope.md`
+4. `tracks/track-03-internal-alpha-v0/implementation-plan.md`
+5. `../docs/internal-alpha-v0.md`
 6. `../docs/design-pending.md`
+7. `../docs/contracts/`
 7. `../docs/contracts/`
 
 ---
@@ -210,6 +218,6 @@ Supabase runtime validado localmente:
 
 ## Next
 
-1. Rodar `tools/progression_lab/seed_supabase.ts --all` contra Supabase local com `SUPABASE_SERVICE_ROLE_KEY`.
-2. Carregar pelo Godot dev-only pelo menos um save de cada milestone (`2h`, `5h`, `10h`, `15h`, `20h`).
-3. Registrar feedback manual e abrir rodada before/after para custo, recompensa, poder e bots.
+1. Executar `T03-P01 - Design Lock Da Build Interna`, resolvendo `DMOB-D048` a `DMOB-D055`.
+2. Preparar Supabase remoto Free, email/senha e ambiente seguro sem commitar secrets.
+3. Implementar dois saves por conta e isolamento do Progression Lab antes de expandir Base/Social/Loja.

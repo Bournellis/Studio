@@ -20,16 +20,18 @@ Este projeto foi promovido de `Projetos/_conceitos/mobile-universe/` em 2026-05-
 
 ## Read Order
 
-### Fast Lane Para Track 01
+### Fast Lane Para Track 03
 
 1. `implementation/current-status.md`
-2. `implementation/tracks/track-01-alpha-playtest-hardening/current-status.md`
-3. `implementation/tracks/track-01-alpha-playtest-hardening/scope.md`
+2. `implementation/tracks/track-03-internal-alpha-v0/current-status.md`
+3. `implementation/tracks/track-03-internal-alpha-v0/scope.md`
+4. `implementation/tracks/track-03-internal-alpha-v0/implementation-plan.md`
 4. `docs/design-pending.md`
-5. `docs/reuse-map.md`
+5. `docs/internal-alpha-v0.md`
 6. `docs/contracts/`
-7. este arquivo
-8. arquivos tocados
+7. `docs/reuse-map.md`
+8. este arquivo
+9. arquivos tocados
 
 ### Trabalho substancial
 
@@ -43,7 +45,7 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 6. `docs/architecture.md`
 7. `docs/contracts/`
 8. `implementation/current-status.md`
-9. `implementation/tracks/track-01-alpha-playtest-hardening/`
+9. `implementation/tracks/track-03-internal-alpha-v0/`
 10. este arquivo
 11. arquivos tocados
 
@@ -69,6 +71,13 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 | Escopo da Track 00 | `implementation/tracks/track-00-first-slice-foundation/scope.md` |
 | Escopo da Track 01 | `implementation/tracks/track-01-alpha-playtest-hardening/scope.md` |
 | Status da Track 01 | `implementation/tracks/track-01-alpha-playtest-hardening/current-status.md` |
+| Escopo da Track 02 | `implementation/tracks/track-02-progression-lab/scope.md` |
+| Status da Track 02 | `implementation/tracks/track-02-progression-lab/current-status.md` |
+| Escopo da Track 03 | `implementation/tracks/track-03-internal-alpha-v0/scope.md` |
+| Plano da Track 03 | `implementation/tracks/track-03-internal-alpha-v0/implementation-plan.md` |
+| Status da Track 03 | `implementation/tracks/track-03-internal-alpha-v0/current-status.md` |
+| Runbook Internal Alpha v0 | `docs/internal-alpha-v0.md` |
+| Checklist Internal Alpha v0 | `docs/playtest-internal-alpha-v0.md` |
 | MVP tecnico minimo | `implementation/tracks/track-00-first-slice-foundation/mvp-technical-definition.md` |
 | Sequencia de execucao | `implementation/tracks/track-00-first-slice-foundation/implementation-plan.md` |
 | Prompts atomicos para agentes | `implementation/tracks/track-00-first-slice-foundation/implementation-prompts.md` |
@@ -131,6 +140,6 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 
 ## Active Track
 
-Track ativa: `Track 01 - Alpha Playtest Hardening`.
+Track ativa: `Track 03 - Internal Alpha v0`.
 
-Comece por `implementation/current-status.md` e siga `implementation/tracks/track-01-alpha-playtest-hardening/current-status.md`.
+Comece por `implementation/current-status.md` e siga `implementation/tracks/track-03-internal-alpha-v0/current-status.md`.

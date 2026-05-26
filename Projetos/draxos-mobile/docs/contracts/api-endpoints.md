@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
-- Ultima atualizacao: `2026-05-20`
-- Status: contrato com `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*` e `telemetry/*` implementados localmente; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`
+- Ultima atualizacao: `2026-05-26`
+- Status: contrato com `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*` e `telemetry/*` implementados localmente; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`; Track 03 adiciona contratos planejados para email/senha, dois saves e updates internos
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -245,6 +245,98 @@ Response:
   "battle_log": {}
 }
 ```
+
+## Endpoints Planejados - Internal Alpha v0
+
+Estes contratos sao alvo da Track 03 e ainda podem receber ajuste fino em `T03-P01`, antes da implementacao funcional.
+
+### Supabase Auth email/senha
+
+O cliente usa Supabase Auth nativo para email/senha:
+
+- signup/login com email e senha;
+- JWT Supabase no header `Authorization`;
+- email confirmation desligado no projeto alpha;
+- convite/flag alpha validado por Edge Function antes de criar/liberar saves.
+
+### `POST /account/alpha/bootstrap`
+
+Cria ou recupera a estrutura de conta do Internal Alpha v0 apos login email/senha.
+
+Responsabilidades:
+
+- validar JWT;
+- validar convite/flag alpha;
+- criar perfil alpha se necessario;
+- garantir os saves `normal` e `progression_lab`;
+- retornar resumo do save ativo e permissoes internas.
+
+Request logico:
+
+```json
+{
+  "invite_code": "ALPHA-TEST",
+  "device_label": "optional",
+  "request_id": "uuid"
+}
+```
+
+### `GET /account/saves`
+
+Retorna os dois saves da conta autenticada.
+
+Response logico:
+
+```json
+{
+  "ok": true,
+  "saves": [
+    { "save_type": "normal", "level": 1, "power": 0, "updated_at": "iso-date" },
+    { "save_type": "progression_lab", "level": 10, "power": 500, "updated_at": "iso-date" }
+  ]
+}
+```
+
+### `POST /account/saves/reset`
+
+Reseta apenas o save solicitado.
+
+Request logico:
+
+```json
+{
+  "request_id": "uuid",
+  "save_type": "normal"
+}
+```
+
+Regras:
+
+- `save_type` deve ser `normal` ou `progression_lab`.
+- Reset de um save nao altera o outro.
+- Reset deve gerar ledger/audit alpha quando apagar progresso autoritativo.
+
+### `POST /progression-lab/apply`
+
+Aplica um estado gerado pelo Progression Lab no save `progression_lab`.
+
+Regras:
+
+- endpoint interno/gated;
+- exige permissao alpha interna;
+- nunca escreve no save `normal`;
+- nao atualiza ranking/social normal;
+- payload final deve referenciar perfil/milestone ou save gerado, nao delta arbitrario sem validacao.
+
+### Save ativo nos endpoints de gameplay
+
+Durante Track 03, todos os endpoints autoritativos de gameplay precisam resolver qual save esta em uso. A regra inicial e:
+
+- ausencia de selecao explicita usa `normal`;
+- `progression_lab` so e aceito quando a conta tem permissao interna;
+- ranking/social/loja podem bloquear ou isolar `progression_lab`, conforme `DMOB-D055`.
+
+O transporte final da selecao de save (`header`, campo de request ou estado server-side) sera fechado em `T03-P01` antes da implementacao.
 
 ## Endpoints Do Primeiro Slice Completo
 

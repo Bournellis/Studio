@@ -4,7 +4,7 @@ Jogo mobile multi-plataforma de PVP assincrono com base manager, progressao de p
 
 **Nao confundir com:** `draxos-roguelike-cardgame` - projeto Steam separado.
 
-Status: `P2_IMPLEMENTACAO - character systems rework implemented`
+Status: `P2_IMPLEMENTACAO - internal alpha v0 ready for implementation`
 
 ---
 
@@ -13,6 +13,7 @@ Status: `P2_IMPLEMENTACAO - character systems rework implemented`
 - Track 00 completa: Godot client, Supabase local, auth guest, batalha server-authoritative, Base, Social/Competicao, Monetizacao, pipeline de conteudo, exports e testes.
 - Track 01 completa: hardening do alpha PC local, telemetria client nao autoritativa, reset seguro de sessao local, smokes de loop alpha e checklist de playtest.
 - Track 02 com tooling v1 implementado: Progression Lab gera 25 estados saudaveis, saves Supabase locais, bot pool, recomendacoes de poder, matriz no Battle Lab e fluxo manual de teste no Godot para as primeiras 2h-20h.
+- Track 03 preparada: Internal Alpha v0 documentada para email/senha, dois saves por conta, Supabase remoto Free, Progression Lab isolado, Base/Social/Competicao/Loja jogaveis, manifest de updates e playtest fechado Fabio + 1 amigo.
 - Rework de personagem 2026-05-25 implementado em docs, catalogo e simulador: armas viraram Instrumentos Rituais, passivas viraram Doutrinas, pets viraram Familiares, Mental e familia de status, e as fontes vivas sao Arcano/Fisico/Fogo/Agua/Gelo/Terra/Vento/Raio/Veneno/Sangue/Morte.
 - Battle Lab offline + dev-only no Godot implementado: `tools/battle_lab/` gera HTML/CSV/JSON/replays em `docs/battle-lab/generated/`, arquiva runs oficiais em `docs/battle-lab/runs/`, compara deltas, marca compatibilidade/stale e pode ser aberto no editor pelo Refugio para montar builds e assistir replays debug 2D; exports excluem a ferramenta. A rodada atual mede o rework de personagem e preserva o baseline 2026-05-21 apenas como historico pre-rework.
 - Supabase runtime local configurado em `supabase/`: Docker Desktop, `npx supabase`, `npx deno`, migrations MVP/base/social/ranking/monetizacao, Auth anonimo, healthcheck e Edge Functions `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*` e `telemetry/*`.
@@ -44,6 +45,12 @@ Status: `P2_IMPLEMENTACAO - character systems rework implemented`
 | Objetivo | Status |
 |---|---|
 | Progression Lab para saves saudaveis 2h-20h, perfis economicos, bots, poder e teste manual no Godot | Tooling v1 implementado; falta rodada manual com Supabase local |
+
+## Track 03
+
+| Objetivo | Status |
+|---|---|
+| Build fechada Internal Alpha v0 com conta email/senha, dois saves, backend remoto, updates e features principais funcionais | Documentada e pronta para implementacao |
 
 ---
 
@@ -91,13 +98,21 @@ draxos-mobile/
 |-- implementation/
 |   |-- current-status.md
 |   `-- tracks/
-|       `-- track-00-first-slice-foundation/
+|       |-- track-00-first-slice-foundation/
 |           |-- current-status.md
 |           |-- scope.md
 |           |-- mvp-technical-definition.md
 |           |-- implementation-plan.md
 |           `-- implementation-prompts.md
-|       `-- track-01-alpha-playtest-hardening/
+|       |-- track-01-alpha-playtest-hardening/
+|           |-- current-status.md
+|           |-- scope.md
+|           `-- implementation-plan.md
+|       |-- track-02-progression-lab/
+|           |-- current-status.md
+|           |-- scope.md
+|           `-- implementation-plan.md
+|       `-- track-03-internal-alpha-v0/
 |           |-- current-status.md
 |           |-- scope.md
 |           `-- implementation-plan.md
@@ -122,7 +137,7 @@ draxos-mobile/
 
 1. `AGENTS.md`
 2. `implementation/current-status.md`
-3. `implementation/tracks/track-02-progression-lab/current-status.md`
-4. `docs/progression-lab/README.md`
-5. `docs/reuse-map.md`
+3. `implementation/tracks/track-03-internal-alpha-v0/current-status.md`
+4. `implementation/tracks/track-03-internal-alpha-v0/scope.md`
+5. `docs/internal-alpha-v0.md`
 6. `docs/design-pending.md`

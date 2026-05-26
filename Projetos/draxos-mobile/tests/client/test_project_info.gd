@@ -4,7 +4,7 @@ func test_project_info_constants_are_set() -> void:
 	assert_eq(ProjectInfo.PROJECT_NAME, "DraxosMobile")
 	assert_eq(ProjectInfo.GODOT_VERSION, "4.6.2-stable")
 	assert_eq(ProjectInfo.GUT_VERSION, "9.6.0")
-	assert_eq(ProjectInfo.ACTIVE_TRACK, "Track 01 - Alpha Playtest Hardening")
+	assert_eq(ProjectInfo.ACTIVE_TRACK, "Track 03 - Internal Alpha v0")
 	assert_eq(ProjectInfo.MVP_MODE, "MVP_ONLY")
 	assert_eq(ProjectInfo.FIRST_SLICE_MODE, "FIRST_SLICE_SIM")
 	assert_eq(ProjectInfo.DEFAULT_BATTLE_MODE, ProjectInfo.FIRST_SLICE_MODE)

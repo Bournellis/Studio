@@ -1,6 +1,6 @@
 # DraxosMobile - Product Brief
 
-- Ultima atualizacao: `2026-05-20`
+- Ultima atualizacao: `2026-05-26`
 
 ---
 
@@ -35,6 +35,20 @@ Track 00 monta o primeiro slice completo. A primeira etapa e o MVP tecnico minim
 | MVP tecnico minimo | Godot 4.6.2 + Supabase, guest com convite, batalha fixture server-authoritative e log animavel placeholder |
 | Primeiro slice completo | PVP autobattler, base manager, social, ranking, bots, conta, economia, Battle Pass/Diamante, validacao e exports |
 
+## Track 03 - Internal Alpha v0
+
+Track 03 transforma o alpha local em uma build fechada realista para Fabio + 1 amigo. O objetivo e simular um jogo real com conta, save compartilhado entre plataformas, servidor remoto, updates e features principais funcionando em estado de prova profissional.
+
+| Pilar | Decisao |
+|---|---|
+| Conta | Email + senha via Supabase Auth |
+| Acesso | Convite/flag alpha; link Web pode ser publico/unlisted, mas login e acesso alpha sao obrigatorios |
+| Saves | Dois saves por conta: `normal` e `progression_lab`, com reset separado |
+| Progression Lab | Ferramenta interna/gated, isolada do save normal |
+| Loja | Redeems alpha fixos para testar niveis premium sem pagamento real |
+| Backend | Supabase remoto Free primeiro |
+| Updates | Android, PC e Web recebem a mesma cadencia via manifest remoto |
+
 ---
 
 ## Primeiro Slice - Escopo
@@ -48,7 +62,7 @@ Track 00 monta o primeiro slice completo. A primeira etapa e o MVP tecnico minim
 | Ranking por pontos de arena | Sim |
 | Matchmaking por poder | Sim |
 | Builds simuladas (bots) | Sim |
-| Conta guest + registrada + Google Sign-In | Sim |
+| Conta guest + registrada + Google Sign-In | Sim; Internal Alpha v0 prioriza email/senha, guest fica para dev/local enquanto util |
 | Varinha Magica (arma unica) | Sim |
 | 0-3 slots de spell com selecao | Sim |
 | 1 slot de passiva (5 opcoes) | Sim |
@@ -88,8 +102,8 @@ Direcao visual: cartoon gore sombrio, arcano e legivel em mobile, sem depender d
 | Testes client | GUT `9.6.0` |
 | Backend | Supabase Auth, Postgres, Edge Functions, Realtime |
 | Batalha | 100% servidor - cliente anima log de eventos |
-| Autenticacao | Guest + username/senha + Google Sign-In |
-| Alpha | Convite por codigo, APK sideload + PC executavel |
+| Autenticacao | Guest local/dev + email/senha no Internal Alpha v0; Google Sign-In futuro |
+| Alpha | Convite/flag alpha, Web/PC/Android internos, APK sideload ou canal interno |
 | Season | 4 meses, 2 Battle Passes por season |
 | Level maximo Season 1 | 40 por padrao; simulador permite testar 40/50/60 |
 | Persistencia de levels | Todos os levels sao permanentes; seasons futuras aumentam o cap |
@@ -102,5 +116,7 @@ Direcao visual: cartoon gore sombrio, arcano e legivel em mobile, sem depender d
 - `design-pending.md` - pendencias de design e balanceamento.
 - `contracts/` - contratos tecnicos antes das migrations/codigo.
 - `../implementation/tracks/track-00-first-slice-foundation/scope.md` - escopo da Track 00.
+- `../implementation/tracks/track-03-internal-alpha-v0/scope.md` - escopo da Internal Alpha v0.
+- `internal-alpha-v0.md` - runbook operacional da build fechada.
 - `../../_conceitos/mobile-universe/gdd.md` - GDD historico completo.
 - `../../_conceitos/mobile-universe/pendencias.md` - historico de decisoes da fase conceitual.
