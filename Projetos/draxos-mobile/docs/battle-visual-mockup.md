@@ -50,9 +50,9 @@ Nao pode alterar:
 | Palco 2D procedural | Visao lateral tipo luta classica: Draxos na esquerda, oponente na direita, solo e guia de centro | Cena final de batalha, camera, paralaxe, animacoes e VFX. |
 | Combatant HUD | Nome, HP, Mana, Barreira, status, cooldowns | HUD final com retrato, frame, animacao de barra e tooltips. |
 | Actor procedural | Silhueta desenhada por `_draw()`, barras e pulse de impacto | Personagem, rig, sprite, animacao ou retrato. |
-| Event icon | `ATK`, `SP`, `DOT`, `BUF`, `SUM`, `PET`, `HEAL`, `ANTI`, `END` | Icones finais por evento, spell, fonte ou efeito. |
+| Event icon | Simbolos procedurais simples (`/`, `*`, `~`, `+`, `^`, `@`, `!`, `$`, `#`) | Icones finais por evento, spell, fonte ou efeito. |
 | Slots front/middle/back | Familiar e summons posicionados em frente, meio e tras de cada personagem | Marcadores com sprites, ancoras de VFX e animacoes. |
-| Efeitos temporarios | Projeteis simples, flashes, numeros flutuantes e labels que somem por tween | VFX reais, hit stop, camera shake, sprite trails e animacoes. |
+| Efeitos temporarios | Projeteis simples, flashes, numeros flutuantes e labels com nomes completos de efeito/dano que somem por tween | VFX reais, hit stop, camera shake, sprite trails e animacoes. |
 | Tooltips | Explicam de forma objetiva combatente, evento, status, cooldown, familiar, summon e slot; o palco usa tooltip imediato proprio e mantem os mesmos nos entre passos do replay | Tooltips finais com nomes localizados, regras e icones. |
 | Timeline | Texto formatado por `BattleLogPresenter` | Feed compacto, log expandivel ou overlay de debug. |
 
@@ -73,6 +73,11 @@ Nao pode alterar:
 - Icons de status, cooldown, Familiar e summons sao atualizados no lugar durante
   o replay; nao devem ser destruidos/recriados a cada evento, para o hover
   continuar vivo enquanto a batalha avanca.
+- Cooldowns mostram o tempo restante calculado a partir de `ready_at` e do tempo
+  do evento atual; `ready_at` continua sendo o dado autoritativo do log.
+- Textos flutuantes de dano/efeito usam nomes completos e legiveis, enquanto os
+  circulos pequenos usam apenas simbolos procedurais e explicam o significado
+  via tooltip.
 - Essa escolha e somente apresentacao; nao altera alvo, dano, HP, resultado ou
   qualquer regra autoritativa.
 
@@ -113,13 +118,13 @@ Enquanto esses arquivos nao existem, `AssetIds.has_art(id)` deve continuar retor
 | Evento | Feedback visual atual |
 |---|---|
 | `battle_start` | Timeline inicia e palco fica pronto. |
-| `weapon_attack` | Icone `ATK`, projetil procedural, dano flutuante, pulse no alvo, fonte e HP do alvo. |
-| `spell_cast` | Icone `SP`, projetil/flash procedural, spell, fonte, dano e HP do alvo. |
+| `weapon_attack` | Simbolo `/`, projetil procedural, texto `Ataque basico -X`, pulse no alvo, fonte e HP do alvo. |
+| `spell_cast` | Simbolo `*`, projetil/flash procedural, texto `Spell: Nome -X`, fonte, dano e HP do alvo. |
 | `mana_change` | Mana atualizada no HUD do lado afetado. |
-| `cooldown_start` / `cooldown_ready` | Icone de cooldown entra/sai da faixa de spells com timer `ready_at`. |
-| `passive_apply` | Doutrina entra como buff/status. |
-| `dot_apply` / `dot_tick` | Status/DoT entra no alvo, tick mostra numero flutuante e HP atualiza. |
-| `status_apply` / `status_expire` | Badge de status entra/sai do alvo. |
+| `cooldown_start` / `cooldown_ready` | Icone de cooldown entra/sai da faixa de spells com timer restante ate `ready_at`. |
+| `passive_apply` | Doutrina entra como buff/status e texto flutuante mostra o nome da doutrina. |
+| `dot_apply` / `dot_tick` | Status/DoT entra no alvo, tick mostra nome completo + dano flutuante e HP atualiza. |
+| `status_apply` / `status_expire` | Badge de status entra/sai do alvo e texto flutuante descreve o status. |
 | `barrier_gain` / `barrier_absorb` | Barreira entra no HUD e badge de buff. |
 | `resistance_apply` | Resistencia entra como buff/status. |
 | `summon_spawn` / `summon_attack` / `summon_expire` | Summon aparece em slot front/middle/back, ataca e pode sumir. |
@@ -145,9 +150,10 @@ Quando um novo evento visual entrar:
 
 - `tests/client/test_battle_stage_2d.gd` garante que tooltips de evento, slots,
   status e cooldown seguem disponiveis durante efeitos animados e que os nos de
-  tooltip continuam estaveis entre passos do replay.
+  tooltip continuam estaveis entre passos do replay; tambem cobre timer restante
+  de cooldown e textos de feedback com nomes completos.
 - `tests/client/test_battle_visual_mockup.gd` garante que o mockup compartilhado
-  expõe tooltips objetivos no snapshot do palco.
+  expoe tooltips objetivos no snapshot do palco.
 
 Quando arte real chegar:
 

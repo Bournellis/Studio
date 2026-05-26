@@ -474,7 +474,7 @@ func _render_dynamic_state(animate_stage_event: bool = false) -> void:
 		_event_icon_label.add_theme_stylebox_override("normal", _badge_style(_event_color(_latest_event)))
 		_event_title_label.text = "%ss | %s" % [
 			"%.1f" % float(_latest_event.get("t", 0.0)),
-			event_type,
+			_event_title(event_type),
 		]
 		_event_detail_label.text = BattleLogPresenterScript.format_event(_latest_event)
 	if _stage_2d != null and is_instance_valid(_stage_2d) and _stage_2d.has_method("render_snapshot"):
@@ -496,7 +496,7 @@ func _render_status_row(side: String, statuses: Dictionary) -> void:
 	keys.sort()
 	for key: Variant in keys:
 		var status := _as_dictionary(statuses[key])
-		var label := str(key)
+		var label := _humanize_id(str(key))
 		var stacks := int(status.get("stacks", 0))
 		if stacks > 1:
 			label = "%s x%d" % [label, stacks]
@@ -516,19 +516,21 @@ func _render_cooldown_row(side: String, cooldowns: Dictionary) -> void:
 			"key": "empty",
 			"text": "Livre",
 			"color": _token_color("border_default"),
-			"tooltip": "Nenhum cooldown ativo. Quando uma spell entrar em recarga, o icone mostra o ready_at recebido do servidor.",
+			"tooltip": "Nenhum cooldown ativo. Quando uma spell entrar em recarga, o icone mostra o tempo restante ate ready_at.",
 		})
 		_sync_badge_row(row, entries)
 		return
 	var keys := cooldowns.keys()
 	keys.sort()
 	for key: Variant in keys:
-		var ready_at := float(cooldowns[key])
+		var value: Variant = cooldowns[key]
+		var ready_at: float = _cooldown_ready_at(value)
+		var remaining: float = _cooldown_remaining(value)
 		entries.append({
 			"key": str(key),
-			"text": "%s %.1fs" % [str(key), ready_at],
+			"text": "%s %ss" % [_humanize_id(str(key)), _number_text(remaining)],
 			"color": DAMAGE_COLORS["arcano"],
-			"tooltip": _cooldown_tooltip(str(key), ready_at),
+			"tooltip": _cooldown_tooltip(str(key), ready_at, remaining),
 		})
 	_sync_badge_row(row, entries)
 
@@ -663,7 +665,10 @@ func _set_cooldown(side: String, spell_id: String, ready_at: float) -> void:
 		return
 	var data := _as_dictionary(_side_state[side])
 	var cooldowns := _as_dictionary(data.get("cooldowns", {}))
-	cooldowns[spell_id] = ready_at
+	cooldowns[spell_id] = {
+		"ready_at": ready_at,
+		"started_at": _current_replay_time(),
+	}
 	data["cooldowns"] = cooldowns
 	_side_state[side] = data
 
@@ -723,7 +728,7 @@ func _event_count_text() -> String:
 	var status_count := BattleLogPresenterScript.count_events_of_type(_battle_log, "status_apply")
 	var summon_count := BattleLogPresenterScript.count_events_of_type(_battle_log, "summon_attack")
 	var pet_count := BattleLogPresenterScript.count_events_of_type(_battle_log, "pet_attack")
-	return "Eventos: %d total | %d ATK | %d SP | %d DoT | %d status | %d summon | %d familiar" % [
+	return "Eventos: %d total | %d ataque basico | %d spell | %d DoT | %d status | %d summon | %d familiar" % [
 		_events.size(),
 		weapon_count,
 		spell_count,
@@ -746,17 +751,31 @@ func _event_is_damage(event_type: String) -> bool:
 func _status_tooltip(status_id: String, status: Dictionary) -> String:
 	var stacks: int = maxi(1, int(status.get("stacks", 1)))
 	var lines := PackedStringArray()
-	lines.append("Status ativo: %s." % status_id)
+	lines.append("Status ativo: %s." % _humanize_id(status_id))
 	lines.append("Stacks: %d." % stacks)
 	lines.append("Pode representar buff, debuff, DoT ou resistencia. O efeito real e a expiracao vem do battle_log_v1.")
 	lines.append("Asset futuro: battle_icon_status ou battle_icon_buff.")
 	return "\n".join(lines)
 
-func _cooldown_tooltip(spell_id: String, ready_at: float) -> String:
-	return "Cooldown de spell: %s\nA spell ja foi usada e fica indisponivel ate ready_at %ss no replay.\nO cliente mostra o timer; o servidor decide quando ela pode ser usada de novo.\nAsset futuro: battle_icon_spell." % [
-		spell_id,
+func _cooldown_tooltip(spell_id: String, ready_at: float, remaining: float) -> String:
+	return "Cooldown de spell: %s\nA spell ja foi usada e fica indisponivel ate ready_at no replay.\nRestante: %ss.\nPronta em: %ss.\nO cliente mostra o timer; o servidor decide quando ela pode ser usada de novo.\nAsset futuro: battle_icon_spell." % [
+		_humanize_id(spell_id),
+		_number_text(remaining),
 		_number_text(ready_at),
 	]
+
+func _current_replay_time() -> float:
+	return float(_latest_event.get("t", 0.0))
+
+func _cooldown_ready_at(value: Variant) -> float:
+	if value is Dictionary:
+		var data := _as_dictionary(value)
+		return float(data.get("ready_at", 0.0))
+	return float(value)
+
+func _cooldown_remaining(value: Variant) -> float:
+	var ready_at: float = _cooldown_ready_at(value)
+	return maxf(0.0, ready_at - _current_replay_time())
 
 func _summon_tooltip(kind: String, entity_id: String, side: String, slot: String) -> String:
 	if kind == "familiar":
@@ -787,13 +806,15 @@ func _event_tooltip(event: Dictionary) -> String:
 		"weapon_attack":
 			lines.append("Ataque basico com dano e HP final recebidos do servidor.")
 		"spell_cast":
-			lines.append("Spell conjurada: %s." % str(event.get("spell_id", "spell")))
+			lines.append("Spell conjurada: %s." % _humanize_id(str(event.get("spell_id", "spell"))))
 		"dot_apply", "status_apply", "resistance_apply":
-			lines.append("Aplica efeito: %s." % str(event.get("status_id", event.get("spell_id", event_type))))
+			lines.append("Aplica efeito: %s." % _humanize_id(str(event.get("status_id", event.get("spell_id", event_type)))))
 		"dot_tick":
 			lines.append("Tick de dano ao longo do tempo.")
 		"cooldown_start":
-			lines.append("Inicia recarga de %s ate ready_at %ss." % [str(event.get("spell_id", "spell")), _number_text(float(event.get("ready_at", 0.0)))])
+			var ready_at: float = float(event.get("ready_at", 0.0))
+			var remaining: float = maxf(0.0, ready_at - float(event.get("t", _current_replay_time())))
+			lines.append("Inicia recarga de %s: restante %ss, pronta em %ss." % [_humanize_id(str(event.get("spell_id", "spell"))), _number_text(remaining), _number_text(ready_at)])
 		"summon_spawn":
 			lines.append("Summon entra no palco no lado de quem conjurou.")
 		"summon_attack":
@@ -845,6 +866,14 @@ func _event_title(event_type: String) -> String:
 			return "Familiar atacou"
 		"heal":
 			return "Cura"
+		"battle_start":
+			return "Inicio da batalha"
+		"cooldown_start":
+			return "Cooldown iniciado"
+		"cooldown_ready":
+			return "Spell pronta"
+		"mana_change":
+			return "Mana alterada"
 		"anti_stall":
 			return "Anti-stall"
 		"reward_preview":
@@ -856,28 +885,34 @@ func _event_title(event_type: String) -> String:
 func _event_code(event_type: String) -> String:
 	match event_type:
 		"weapon_attack":
-			return "ATK"
+			return "/"
 		"spell_cast":
-			return "SP"
+			return "*"
 		"dot_apply", "dot_tick":
-			return "DOT"
+			return "~"
 		"status_apply", "status_expire":
-			return "STS"
+			return "~"
 		"passive_apply", "barrier_gain", "barrier_absorb", "resistance_apply":
-			return "BUF"
+			return "+"
 		"summon_spawn", "summon_attack", "summon_expire":
-			return "SUM"
+			return "^"
 		"pet_attack":
-			return "PET"
+			return "@"
 		"heal":
-			return "HEAL"
+			return "+"
 		"anti_stall":
-			return "ANTI"
+			return "!"
 		"reward_preview":
-			return "RW"
+			return "$"
 		"battle_result":
-			return "END"
-	return "EVT"
+			return "#"
+		"battle_start":
+			return "."
+		"cooldown_start", "cooldown_ready":
+			return "o"
+		"mana_change":
+			return "%"
+	return "?"
 
 func _asset_id_for_event(event_type: String) -> String:
 	return str(EVENT_ASSET_IDS.get(event_type, "battle_icon_event"))
@@ -940,6 +975,20 @@ func _number_text(value: float) -> String:
 	if is_equal_approx(value, roundf(value)):
 		return str(int(roundf(value)))
 	return "%.1f" % value
+
+func _humanize_id(value: String) -> String:
+	var cleaned := value.strip_edges()
+	if cleaned == "":
+		return ""
+	if cleaned == SIDE_PLAYER:
+		return _default_side_name(SIDE_PLAYER)
+	if cleaned == SIDE_OPPONENT:
+		return _default_side_name(SIDE_OPPONENT)
+	for prefix: String in ["player_", "opponent_"]:
+		if cleaned.begins_with(prefix):
+			cleaned = cleaned.substr(prefix.length())
+	cleaned = cleaned.replace("_", " ")
+	return cleaned.capitalize()
 
 func _body_label(text: String) -> Label:
 	var label := Label.new()

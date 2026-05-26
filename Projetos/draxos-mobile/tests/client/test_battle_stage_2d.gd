@@ -45,6 +45,36 @@ func test_battle_stage_2d_keeps_tooltip_nodes_stable_between_replay_steps() -> v
 	assert_eq(Array(before_ids.get("status", [])), Array(after_ids.get("status", [])))
 	assert_eq(Array(before_ids.get("cooldowns", [])), Array(after_ids.get("cooldowns", [])))
 
+func test_battle_stage_2d_cooldown_timer_uses_remaining_replay_time() -> void:
+	var stage = BattleStage2DScript.new()
+	stage.custom_minimum_size = Vector2(820, 380)
+	add_child_autofree(stage)
+	stage.render_snapshot(_side_state(), {"type": "dot_tick", "source": "player", "target": "opponent", "status_id": "queimando", "damage": 6, "damage_type": "fogo", "seq": 3, "t": 2.5}, 3, 8, false)
+
+	var snapshot := Dictionary(stage.debug_snapshot())
+	var cooldown_counts := Dictionary(snapshot.get("cooldown_counts", {}))
+	var tooltips := Dictionary(snapshot.get("tooltips", {}))
+	var cooldown_tooltip_text := _joined_tooltips(Array(tooltips.get("cooldowns", [])))
+	assert_true(Array(cooldown_counts.get("player", [])).has("5s"))
+	assert_string_contains(cooldown_tooltip_text, "Restante: 5s")
+	assert_string_contains(cooldown_tooltip_text, "Pronta em: 7.5s")
+
+func test_battle_stage_2d_effect_feedback_uses_full_names() -> void:
+	var stage = BattleStage2DScript.new()
+	add_child_autofree(stage)
+
+	var spell_text := stage.debug_event_feedback_text({"type": "spell_cast", "spell_id": "marca_brasa", "damage": 27})
+	var status_text := stage.debug_event_feedback_text({"type": "status_apply", "status_id": "lento"})
+	var mana_text := stage.debug_event_feedback_text({"type": "mana_change", "mana_after": 12})
+
+	assert_string_contains(spell_text, "Marca Brasa")
+	assert_string_contains(spell_text, "-27")
+	assert_eq(status_text, "Status aplicado: Lento")
+	assert_eq(mana_text, "Mana: 12")
+	assert_false(spell_text.contains("SP"))
+	assert_false(status_text.contains("STS"))
+	assert_false(mana_text.contains("EVT"))
+
 func test_battle_stage_2d_empty_state_is_stable() -> void:
 	var stage = BattleStage2DScript.new()
 	add_child_autofree(stage)

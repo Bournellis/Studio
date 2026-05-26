@@ -122,7 +122,11 @@ func debug_snapshot() -> Dictionary:
 		"has_opponent_actor": _actors.has(SIDE_OPPONENT),
 		"tooltips": debug_tooltip_samples(),
 		"tooltip_node_ids": debug_tooltip_node_ids(),
+		"cooldown_counts": debug_cooldown_counts(),
 	}
+
+func debug_event_feedback_text(event: Dictionary) -> String:
+	return _effect_feedback_text(event)
 
 func debug_tooltip_samples() -> Dictionary:
 	var status_tooltips: Array[String] = []
@@ -148,6 +152,12 @@ func debug_tooltip_node_ids() -> Dictionary:
 		"status": status_ids,
 		"cooldowns": cooldown_ids,
 	}
+
+func debug_cooldown_counts() -> Dictionary:
+	var counts: Dictionary = {}
+	for side: String in SIDES:
+		counts[side] = _collect_symbol_counts(_cooldown_rows.get(side))
+	return counts
 
 func _ensure_ui() -> void:
 	if _built:
@@ -356,10 +366,11 @@ func _render_icon_row(row: HBoxContainer, values: Dictionary, row_kind: String) 
 		var tooltip := "%s: %s" % [row_kind.capitalize(), str(key)]
 		var cooldown_ratio := 0.0
 		if row_kind == "cooldown":
-			var ready_at := float(value)
-			count = "%.1fs" % ready_at
-			cooldown_ratio = 0.72
-			tooltip = _cooldown_tooltip(str(key), ready_at)
+			var ready_at: float = _cooldown_ready_at(value)
+			var remaining: float = _cooldown_remaining(value)
+			count = "%ss" % _number_text(remaining)
+			cooldown_ratio = _cooldown_ratio(value)
+			tooltip = _cooldown_tooltip(str(key), ready_at, remaining)
 		elif value is Dictionary:
 			var stacks := int(Dictionary(value).get("stacks", 1))
 			if stacks > 1:
@@ -388,7 +399,7 @@ func _render_slots() -> void:
 				"kind": "familiar",
 				"slot": SLOT_BACK,
 				"color": DAMAGE_COLORS["morte"],
-				"symbol": "PET",
+				"symbol": "@",
 			})
 		var summons := _as_dictionary(side_data.get("summons", {}))
 		var keys := summons.keys()
@@ -401,7 +412,7 @@ func _render_slots() -> void:
 				"kind": "summon",
 				"slot": str(summon.get("slot", SLOT_ORDER[index % SLOT_ORDER.size()])),
 				"color": _damage_color(str(summon.get("damage_type", "fogo"))),
-				"symbol": "SUM",
+				"symbol": "^",
 			})
 		var used_offsets: Dictionary = {}
 		for entry: Dictionary in slot_entries:
@@ -447,7 +458,7 @@ func _render_event_panel() -> void:
 func _empty_row_tooltip(row_kind: String) -> String:
 	match row_kind:
 		"cooldown":
-			return "Cooldowns\nNenhuma spell esta em recarga agora. Quando o simulador emitir cooldown_start, o icone aparece com o tempo ready_at."
+			return "Cooldowns\nNenhuma spell esta em recarga agora. Quando o simulador emitir cooldown_start, o icone mostra o tempo restante ate ready_at."
 		"status":
 			return "Status e buffs\nNenhum buff, debuff, DoT ou resistencia esta ativo neste lado da batalha."
 	return "Nenhum marcador ativo nesta linha."
@@ -464,13 +475,40 @@ func _status_tooltip(status_id: String, value: Variant) -> String:
 			details.append("Fonte: %s." % str(status.get("source", "")))
 	details.append("Stacks: %d." % stacks)
 	details.append("O cliente mostra o estado atual; aplicacao, expiracao e efeito real vem do simulador autoritativo.")
-	return "Status ativo: %s\n%s" % [status_id, "\n".join(details)]
+	return "Status ativo: %s\n%s" % [_humanize_id(status_id), "\n".join(details)]
 
-func _cooldown_tooltip(spell_id: String, ready_at: float) -> String:
-	return "Cooldown de spell: %s\nA spell foi usada e fica indisponivel ate o tempo do replay chegar ao ready_at.\nReady at: %ss.\nO aro escuro indica recarga visual; a regra real vem do battle_log_v1." % [
-		spell_id,
+func _cooldown_tooltip(spell_id: String, ready_at: float, remaining: float) -> String:
+	return "Cooldown de spell: %s\nA spell foi usada e fica indisponivel ate o tempo do replay chegar ao ready_at.\nRestante: %ss.\nPronta em: %ss.\nO aro escuro mostra a recarga visual; a regra real vem do battle_log_v1." % [
+		_humanize_id(spell_id),
+		_number_text(remaining),
 		_number_text(ready_at),
 	]
+
+func _current_replay_time() -> float:
+	return float(_latest_event.get("t", 0.0))
+
+func _cooldown_ready_at(value: Variant) -> float:
+	if value is Dictionary:
+		var data := _as_dictionary(value)
+		return float(data.get("ready_at", 0.0))
+	return float(value)
+
+func _cooldown_started_at(value: Variant) -> float:
+	if value is Dictionary:
+		var data := _as_dictionary(value)
+		if data.has("started_at"):
+			return float(data.get("started_at", 0.0))
+	return 0.0
+
+func _cooldown_remaining(value: Variant) -> float:
+	var ready_at: float = _cooldown_ready_at(value)
+	return maxf(0.0, ready_at - _current_replay_time())
+
+func _cooldown_ratio(value: Variant) -> float:
+	var ready_at: float = _cooldown_ready_at(value)
+	var started_at: float = _cooldown_started_at(value)
+	var total: float = maxf(0.1, ready_at - started_at)
+	return clampf(_cooldown_remaining(value) / total, 0.0, 1.0)
 
 func _slot_entry_tooltip(entry: Dictionary, side: String, slot: String) -> String:
 	var kind := str(entry.get("kind", "objeto"))
@@ -515,9 +553,11 @@ func _event_tooltip(event: Dictionary) -> String:
 		"dot_tick":
 			lines.append("Tick de dano ao longo do tempo: %s." % str(event.get("status_id", "dot")))
 		"cooldown_start":
-			lines.append("Inicia recarga da spell %s ate ready_at %ss." % [str(event.get("spell_id", "spell")), _number_text(float(event.get("ready_at", 0.0)))])
+			var ready_at: float = float(event.get("ready_at", 0.0))
+			var remaining: float = maxf(0.0, ready_at - float(event.get("t", _current_replay_time())))
+			lines.append("Inicia recarga da spell %s: restante %ss, pronta em %ss." % [_humanize_id(str(event.get("spell_id", "spell"))), _number_text(remaining), _number_text(ready_at)])
 		"cooldown_ready":
-			lines.append("A spell %s voltou a ficar pronta." % str(event.get("spell_id", "spell")))
+			lines.append("A spell %s voltou a ficar pronta." % _humanize_id(str(event.get("spell_id", "spell"))))
 		"pet_attack":
 			lines.append("Familiar ataca. O familiar e visual; resultado ja veio do simulador.")
 		"summon_spawn":
@@ -577,6 +617,14 @@ func _event_title(event_type: String) -> String:
 			return "Familiar atacou"
 		"heal":
 			return "Cura"
+		"battle_start":
+			return "Inicio da batalha"
+		"cooldown_start":
+			return "Cooldown iniciado"
+		"cooldown_ready":
+			return "Spell pronta"
+		"mana_change":
+			return "Mana alterada"
 		"anti_stall":
 			return "Anti-stall"
 		"reward_preview":
@@ -731,28 +779,28 @@ func _animate_event(event: Dictionary) -> void:
 		var from_pos := _source_position_for_event(event, source_side)
 		var to_pos := _target_position_for_event(event, target_side)
 		_spawn_projectile(from_pos, to_pos, color, _event_code(event_type))
-		_spawn_float_text(_damage_text(event), to_pos + Vector2(0, -70), color)
+		_spawn_float_text(_effect_feedback_text(event), to_pos + Vector2(0, -70), color)
 		_pulse_actor(target_side, color)
 	elif event_type in ["heal"]:
 		var heal_target := target_side if target_side != "" else source_side
-		_spawn_float_text("+%s" % _number_text(float(event.get("amount", event.get("healing", 0.0)))), _actor_center(heal_target) + Vector2(0, -92), _token_color("status_success"))
+		_spawn_float_text(_effect_feedback_text(event), _actor_center(heal_target) + Vector2(0, -92), _token_color("status_success"))
 		_pulse_actor(heal_target, _token_color("status_success"))
 	elif event_type in ["dot_apply", "status_apply", "status_expire", "passive_apply", "resistance_apply", "barrier_gain", "barrier_absorb", "cooldown_start", "cooldown_ready", "mana_change"]:
 		var side := target_side if target_side != "" else source_side
-		_spawn_float_text(_event_code(event_type), _actor_center(side) + Vector2(0, -108), color)
+		_spawn_float_text(_effect_feedback_text(event), _actor_center(side) + Vector2(0, -108), color)
 		_pulse_actor(side, color)
 	elif event_type == "summon_spawn":
 		var slot_side := source_side if source_side != "" else SIDE_PLAYER
 		var summon_id := str(event.get("target", "summon"))
 		var slot := _summon_slot_for_event(slot_side, summon_id, str(event.get("slot", SLOT_FRONT)))
 		_spawn_impact(_slot_position(slot_side, slot), color, 54.0)
-		_spawn_float_text("SUM", _slot_position(slot_side, slot) + Vector2(0, -54), color)
+		_spawn_float_text(_effect_feedback_text(event), _slot_position(slot_side, slot) + Vector2(0, -54), color)
 	elif event_type == "anti_stall":
-		_spawn_float_text("ANTI", _stage_size() * Vector2(0.5, 0.42), _token_color("status_error"), 28)
+		_spawn_float_text(_effect_feedback_text(event), _stage_size() * Vector2(0.5, 0.42), _token_color("status_error"), 28)
 		_pulse_actor(SIDE_PLAYER, _token_color("status_error"))
 		_pulse_actor(SIDE_OPPONENT, _token_color("status_error"))
 	elif event_type == "battle_result":
-		_spawn_float_text("WIN %s" % str(event.get("winner", "?")).to_upper(), _stage_size() * Vector2(0.5, 0.36), _token_color("accent_bone"), 28)
+		_spawn_float_text(_effect_feedback_text(event), _stage_size() * Vector2(0.5, 0.36), _token_color("accent_bone"), 28)
 
 func _source_position_for_event(event: Dictionary, source_side: String) -> Vector2:
 	var event_type := str(event.get("type", ""))
@@ -830,7 +878,11 @@ func _spawn_float_text(text: String, origin: Vector2, color: Color, font_size: i
 	label.add_theme_color_override("font_shadow_color", Color("#080B10"))
 	label.add_theme_constant_override("shadow_offset_x", 1)
 	label.add_theme_constant_override("shadow_offset_y", 1)
-	label.size = Vector2(150, 34)
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var max_width: float = maxf(180.0, _stage_size().x - 24.0)
+	var text_width: float = clampf(150.0 + float(text.length()) * 6.5, 190.0, minf(360.0, max_width))
+	var text_height: float = 42.0 if font_size <= 20 else 58.0
+	label.size = Vector2(text_width, text_height)
 	label.position = origin - label.size * 0.5
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_effects_layer.add_child(label)
@@ -879,56 +931,119 @@ func _stage_size() -> Vector2:
 	return resolved
 
 func _event_brief(event: Dictionary) -> String:
+	return _effect_feedback_text(event)
+
+func _damage_text(event: Dictionary) -> String:
+	return _effect_feedback_text(event)
+
+func _effect_feedback_text(event: Dictionary) -> String:
 	var event_type := str(event.get("type", ""))
 	match event_type:
 		"weapon_attack":
-			return "%s -> %s | dano %s" % [event.get("source", ""), event.get("target", ""), _number_text(float(event.get("damage", 0.0)))]
+			return _feedback_with_suffix("Ataque basico", _damage_suffix(event))
 		"spell_cast":
-			return "%s | %s dano %s" % [event.get("spell_id", "spell"), event.get("target", ""), _number_text(float(event.get("damage", 0.0)))]
+			return _feedback_with_suffix("Spell: %s" % _humanize_id(str(event.get("spell_id", "spell"))), _damage_suffix(event))
 		"dot_tick":
-			return "%s tick %s" % [event.get("status_id", "dot"), _number_text(float(event.get("damage", 0.0)))]
+			return _feedback_with_suffix("Dano periodico: %s" % _humanize_id(str(event.get("status_id", "dot"))), _damage_suffix(event))
+		"summon_attack":
+			return _feedback_with_suffix("Summon: %s" % _humanize_id(str(event.get("source", "summon"))), _damage_suffix(event))
 		"pet_attack":
-			return "%s ataca %s" % [event.get("pet_id", "familiar"), event.get("target", "")]
+			return _feedback_with_suffix("Familiar: %s" % _humanize_id(str(event.get("pet_id", "familiar"))), _damage_suffix(event))
+		"heal":
+			return "Cura +%s" % _number_text(float(event.get("amount", event.get("healing", 0.0))))
+		"dot_apply":
+			return "DoT aplicado: %s" % _humanize_id(str(event.get("status_id", event.get("spell_id", "dot"))))
+		"status_apply":
+			return "Status aplicado: %s" % _humanize_id(str(event.get("status_id", "status")))
+		"status_expire":
+			return "Status expirou: %s" % _humanize_id(str(event.get("status_id", "status")))
+		"passive_apply":
+			return "Doutrina: %s" % _humanize_id(str(event.get("passive_id", "passiva")))
+		"resistance_apply":
+			return "Resistencia: %s" % _humanize_id(str(event.get("status_id", event.get("spell_id", "resistencia"))))
+		"barrier_gain":
+			return "Barreira +%s" % _number_text(float(event.get("amount", event.get("barrier_after", 0.0))))
+		"barrier_absorb":
+			return "Barreira absorveu %s" % _number_text(float(event.get("absorbed", event.get("amount", 0.0))))
+		"cooldown_start":
+			var ready_at: float = float(event.get("ready_at", 0.0))
+			var remaining: float = maxf(0.0, ready_at - float(event.get("t", _current_replay_time())))
+			return "Cooldown: %s (%ss)" % [_humanize_id(str(event.get("spell_id", "spell"))), _number_text(remaining)]
+		"cooldown_ready":
+			return "Spell pronta: %s" % _humanize_id(str(event.get("spell_id", "spell")))
+		"mana_change":
+			return "Mana: %s" % _number_text(float(event.get("mana_after", 0.0)))
 		"summon_spawn":
-			return "%s aparece" % str(event.get("target", "summon"))
+			return "Summon invocado: %s" % _humanize_id(str(event.get("target", "summon")))
+		"summon_expire":
+			return "Summon saiu: %s" % _humanize_id(str(event.get("source", event.get("target", "summon"))))
+		"anti_stall":
+			return "Anti-stall"
+		"reward_preview":
+			return "Recompensa: %s" % _humanize_id(str(event.get("reward_type", "recompensa")))
 		"battle_result":
-			return "vencedor %s" % str(event.get("winner", "?"))
-	return event_type
+			return "Vencedor: %s" % _humanize_id(str(event.get("winner", "?")))
+	return _event_title(event_type)
 
-func _damage_text(event: Dictionary) -> String:
+func _feedback_with_suffix(title: String, suffix: String) -> String:
+	if suffix == "":
+		return title
+	return "%s %s" % [title, suffix]
+
+func _damage_suffix(event: Dictionary) -> String:
 	var damage := float(event.get("damage", 0.0))
 	var absorbed := float(event.get("absorbed", 0.0))
 	if damage <= 0.0 and absorbed <= 0.0:
-		return _event_code(str(event.get("type", "")))
+		return ""
 	if absorbed > 0.0:
-		return "-%s (%s)" % [_number_text(damage), _number_text(absorbed)]
+		return "-%s (%s absorvido)" % [_number_text(damage), _number_text(absorbed)]
 	return "-%s" % _number_text(damage)
+
+func _humanize_id(value: String) -> String:
+	var cleaned := value.strip_edges()
+	if cleaned == "":
+		return ""
+	if cleaned == SIDE_PLAYER:
+		return _default_side_name(SIDE_PLAYER)
+	if cleaned == SIDE_OPPONENT:
+		return _default_side_name(SIDE_OPPONENT)
+	for prefix: String in ["player_", "opponent_"]:
+		if cleaned.begins_with(prefix):
+			cleaned = cleaned.substr(prefix.length())
+	cleaned = cleaned.replace("_", " ")
+	return cleaned.capitalize()
 
 func _event_code(event_type: String) -> String:
 	match event_type:
 		"weapon_attack":
-			return "ATK"
+			return "/"
 		"spell_cast":
-			return "SP"
+			return "*"
 		"dot_apply", "dot_tick":
-			return "DOT"
+			return "~"
 		"status_apply", "status_expire":
-			return "STS"
+			return "~"
 		"passive_apply", "barrier_gain", "barrier_absorb", "resistance_apply":
-			return "BUF"
+			return "+"
 		"summon_spawn", "summon_attack", "summon_expire":
-			return "SUM"
+			return "^"
 		"pet_attack":
-			return "PET"
+			return "@"
 		"heal":
-			return "HEAL"
+			return "+"
 		"anti_stall":
-			return "ANTI"
+			return "!"
 		"reward_preview":
-			return "RW"
+			return "$"
 		"battle_result":
-			return "END"
-	return "EVT"
+			return "#"
+		"battle_start":
+			return "."
+		"cooldown_start", "cooldown_ready":
+			return "o"
+		"mana_change":
+			return "%"
+	return "?"
 
 func _event_color(event: Dictionary) -> Color:
 	var event_type := str(event.get("type", ""))
@@ -1059,6 +1174,17 @@ func _collect_tooltips(root: Variant) -> Array[String]:
 			values.append(str(control.tooltip_text))
 	for child: Node in node.get_children():
 		values.append_array(_collect_tooltips(child))
+	return values
+
+func _collect_symbol_counts(root: Variant) -> Array[String]:
+	var values: Array[String] = []
+	var node := root as Node
+	if node == null:
+		return values
+	for child: Node in node.get_children():
+		var icon := child as BattleSymbolIcon
+		if icon != null:
+			values.append(str(icon.count_text))
 	return values
 
 func _collect_tooltip_node_ids(root: Variant) -> Array[String]:
