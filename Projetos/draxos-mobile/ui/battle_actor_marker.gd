@@ -19,7 +19,7 @@ var _flash_color := Color.WHITE
 var _flash_strength := 0.0
 
 func _ready() -> void:
-	mouse_filter = Control.MOUSE_FILTER_PASS
+	mouse_filter = Control.MOUSE_FILTER_STOP
 	custom_minimum_size = Vector2(130, 190)
 
 func configure(new_side: String, new_display_name: String, new_tint: Color) -> void:
@@ -95,7 +95,7 @@ func _draw_bar(origin: Vector2, width: float, height: float, ratio: float, color
 	draw_rect(Rect2(origin, Vector2(width, height)), Color("#F0EEE5", 0.22), false, 1.0)
 
 func _refresh_tooltip() -> void:
-	tooltip_text = "%s\nPlaceholder procedural. Asset futuro: %s\nHP %s/%s | Mana %s/%s | Barreira %s\nStatus %d | Slots aliados %d" % [
+	tooltip_text = "%s\nCombatente principal da batalha. O cliente apenas apresenta o battle_log_v1; HP, mana e barreira ja vieram do simulador autoritativo.\nAsset futuro: %s\nHP %s/%s | Mana %s/%s | Barreira %s\nStatus ativos %d | Familiares/summons %d" % [
 		display_name,
 		"battle_character_player" if side == SIDE_PLAYER else "battle_character_opponent",
 		_number_text(hp),

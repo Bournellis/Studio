@@ -12,6 +12,27 @@ const SLOT_MIDDLE := "middle"
 const SLOT_BACK := "back"
 const SLOT_ORDER := [SLOT_FRONT, SLOT_MIDDLE, SLOT_BACK]
 
+const EVENT_ASSET_IDS := {
+	"weapon_attack": "battle_icon_weapon",
+	"spell_cast": "battle_icon_spell",
+	"dot_apply": "battle_icon_status",
+	"dot_tick": "battle_icon_damage",
+	"status_apply": "battle_icon_status",
+	"status_expire": "battle_icon_status",
+	"passive_apply": "battle_icon_buff",
+	"barrier_gain": "battle_icon_buff",
+	"barrier_absorb": "battle_icon_buff",
+	"resistance_apply": "battle_icon_buff",
+	"summon_spawn": "battle_icon_summon",
+	"summon_attack": "battle_icon_summon",
+	"summon_expire": "battle_icon_summon",
+	"pet_attack": "battle_icon_pet",
+	"heal": "battle_icon_heal",
+	"anti_stall": "battle_icon_damage",
+	"reward_preview": "battle_icon_reward",
+	"battle_result": "battle_icon_result",
+}
+
 const DAMAGE_COLORS := {
 	"arcano": Color("#5DD4C8"),
 	"fisico": Color("#C0C5CC"),
@@ -73,7 +94,7 @@ func show_empty_state(message: String) -> void:
 	_empty_label.text = message
 	_empty_label.visible = true
 	_event_label.text = "Aguardando battle_log_v1"
-	_event_icon.configure("...", _token_color("placeholder"), "Palco procedural sem arte importada.")
+	_event_icon.configure("...", _token_color("placeholder"), "Palco de batalha vazio. Quando um replay carregar, este icone mostra o evento atual recebido do battle_log_v1.")
 	_render_dynamic_state()
 
 func render_snapshot(side_state: Dictionary, latest_event: Dictionary, event_index: int, event_count: int, animate_event: bool = false) -> void:
@@ -96,6 +117,20 @@ func debug_snapshot() -> Dictionary:
 		"effect_count": _effects_layer.get_child_count() if _effects_layer != null else 0,
 		"has_player_actor": _actors.has(SIDE_PLAYER),
 		"has_opponent_actor": _actors.has(SIDE_OPPONENT),
+		"tooltips": debug_tooltip_samples(),
+	}
+
+func debug_tooltip_samples() -> Dictionary:
+	var status_tooltips: Array[String] = []
+	var cooldown_tooltips: Array[String] = []
+	for side: String in SIDES:
+		status_tooltips.append_array(_collect_tooltips(_status_rows.get(side)))
+		cooldown_tooltips.append_array(_collect_tooltips(_cooldown_rows.get(side)))
+	return {
+		"event": str(_event_icon.tooltip_text) if _event_icon != null else "",
+		"slots": _collect_tooltips(_slot_layer),
+		"status": status_tooltips,
+		"cooldowns": cooldown_tooltips,
 	}
 
 func _ensure_ui() -> void:
@@ -103,10 +138,14 @@ func _ensure_ui() -> void:
 		return
 	_built = true
 	clip_contents = true
-	custom_minimum_size = Vector2(760, 360)
+	custom_minimum_size = Vector2(360, 360)
 	size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	size_flags_vertical = Control.SIZE_EXPAND_FILL
 	resized.connect(_layout_nodes)
+
+	_slot_layer = Control.new()
+	_slot_layer.mouse_filter = Control.MOUSE_FILTER_PASS
+	add_child(_slot_layer)
 
 	for side: String in SIDES:
 		var actor = BattleActorMarkerScript.new()
@@ -122,17 +161,15 @@ func _ensure_ui() -> void:
 
 		var status_row := HBoxContainer.new()
 		status_row.add_theme_constant_override("separation", 4)
+		status_row.mouse_filter = Control.MOUSE_FILTER_PASS
 		add_child(status_row)
 		_status_rows[side] = status_row
 
 		var cooldown_row := HBoxContainer.new()
 		cooldown_row.add_theme_constant_override("separation", 4)
+		cooldown_row.mouse_filter = Control.MOUSE_FILTER_PASS
 		add_child(cooldown_row)
 		_cooldown_rows[side] = cooldown_row
-
-	_slot_layer = Control.new()
-	_slot_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_slot_layer)
 
 	_effects_layer = Control.new()
 	_effects_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -159,6 +196,7 @@ func _ensure_ui() -> void:
 	_empty_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_empty_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_empty_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_empty_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_empty_label)
 
 	_layout_nodes()
@@ -263,7 +301,7 @@ func _render_icon_row(row: HBoxContainer, values: Dictionary, row_kind: String) 
 	if values.is_empty():
 		var empty_icon = BattleSymbolIconScript.new()
 		empty_icon.custom_minimum_size = Vector2(34, 34)
-		empty_icon.configure("-", _token_color("border_default"), "Nenhum %s ativo." % row_kind)
+		empty_icon.configure("-", _token_color("border_default"), _empty_row_tooltip(row_kind))
 		row.add_child(empty_icon)
 		return
 	var keys := values.keys()
@@ -280,12 +318,12 @@ func _render_icon_row(row: HBoxContainer, values: Dictionary, row_kind: String) 
 			var ready_at := float(value)
 			count = "%.1fs" % ready_at
 			cooldown_ratio = 0.72
-			tooltip = "Cooldown placeholder de spell: %s pronto em %.1fs. Futuro: battle_icon_spell." % [str(key), ready_at]
+			tooltip = _cooldown_tooltip(str(key), ready_at)
 		elif value is Dictionary:
 			var stacks := int(Dictionary(value).get("stacks", 1))
 			if stacks > 1:
 				count = "x%d" % stacks
-			tooltip = "Status/Buff placeholder: %s. Futuro: battle_icon_status ou battle_icon_buff." % str(key)
+			tooltip = _status_tooltip(str(key), value)
 		var icon = BattleSymbolIconScript.new()
 		icon.custom_minimum_size = Vector2(36, 36)
 		icon.configure(symbol, color, tooltip, count, cooldown_ratio)
@@ -331,12 +369,7 @@ func _render_slots() -> void:
 			icon.configure(
 				str(entry.get("symbol", "?")),
 				entry_color,
-				"%s %s no slot %s de %s. Futuro: sprite/animacao propria." % [
-					str(entry.get("kind", "objeto")).capitalize(),
-					str(entry.get("id", "")),
-					_slot_label(slot),
-					_default_side_name(side),
-				],
+				_slot_entry_tooltip(entry, side, slot),
 				_slot_short(slot)
 			)
 			var pos := _slot_position(side, slot)
@@ -346,17 +379,161 @@ func _render_slots() -> void:
 
 func _render_event_panel() -> void:
 	if _latest_event.is_empty():
-		_event_icon.configure("...", _token_color("placeholder"), "Aguardando evento do battle_log_v1.")
+		_event_icon.configure("...", _token_color("placeholder"), "Replay aguardando o proximo evento do battle_log_v1.")
 		_event_label.text = "Evento %d/%d | aguardando replay" % [_event_index, _event_count]
 		return
 	var event_type := str(_latest_event.get("type", ""))
-	_event_icon.configure(_event_code(event_type), _event_color(_latest_event), "Evento procedural: %s. Futuro: asset por evento/fonte." % event_type)
+	_event_icon.configure(_event_code(event_type), _event_color(_latest_event), _event_tooltip(_latest_event))
 	_event_label.text = "Evento %d/%d | %ss | %s" % [
 		_event_index,
 		_event_count,
 		"%.1f" % float(_latest_event.get("t", 0.0)),
 		_event_brief(_latest_event),
 	]
+
+func _empty_row_tooltip(row_kind: String) -> String:
+	match row_kind:
+		"cooldown":
+			return "Cooldowns\nNenhuma spell esta em recarga agora. Quando o simulador emitir cooldown_start, o icone aparece com o tempo ready_at."
+		"status":
+			return "Status e buffs\nNenhum buff, debuff, DoT ou resistencia esta ativo neste lado da batalha."
+	return "Nenhum marcador ativo nesta linha."
+
+func _status_tooltip(status_id: String, value: Variant) -> String:
+	var stacks := 1
+	var details := PackedStringArray()
+	if value is Dictionary:
+		var status := _as_dictionary(value)
+		stacks = maxi(1, int(status.get("stacks", 1)))
+		if status.has("duration"):
+			details.append("Duracao informada: %ss." % _number_text(float(status.get("duration", 0.0))))
+		if status.has("source"):
+			details.append("Fonte: %s." % str(status.get("source", "")))
+	details.append("Stacks: %d." % stacks)
+	details.append("O cliente mostra o estado atual; aplicacao, expiracao e efeito real vem do simulador autoritativo.")
+	return "Status ativo: %s\n%s" % [status_id, "\n".join(details)]
+
+func _cooldown_tooltip(spell_id: String, ready_at: float) -> String:
+	return "Cooldown de spell: %s\nA spell foi usada e fica indisponivel ate o tempo do replay chegar ao ready_at.\nReady at: %ss.\nO aro escuro indica recarga visual; a regra real vem do battle_log_v1." % [
+		spell_id,
+		_number_text(ready_at),
+	]
+
+func _slot_entry_tooltip(entry: Dictionary, side: String, slot: String) -> String:
+	var kind := str(entry.get("kind", "objeto"))
+	var title := "Objeto"
+	var behavior := "Marcador auxiliar do lado da batalha."
+	if kind == "familiar":
+		title = "Familiar"
+		behavior = "Companheiro equipado do combatente. Ele aparece atras e anima quando o log receber pet_attack."
+	elif kind == "summon":
+		title = "Summon"
+		behavior = "Criatura invocada por spell. Ela ocupa frente, meio ou tras e anima quando o log receber summon_attack."
+	return "%s: %s\nLado: %s | Posicao: %s\n%s\nO cliente nao calcula ataques; ele apenas apresenta eventos recebidos." % [
+		title,
+		str(entry.get("id", "")),
+		_default_side_name(side),
+		_slot_label(slot),
+		behavior,
+	]
+
+func _event_tooltip(event: Dictionary) -> String:
+	var event_type := str(event.get("type", ""))
+	var lines := PackedStringArray()
+	lines.append("%s (%s)" % [_event_title(event_type), event_type])
+	lines.append("Evento %d/%d em %ss do battle_log_v1." % [
+		_event_index,
+		_event_count,
+		_number_text(float(event.get("t", 0.0))),
+	])
+	var source := str(event.get("source", ""))
+	var target := str(event.get("target", ""))
+	if source != "":
+		lines.append("Fonte: %s." % source)
+	if target != "" and target != "none":
+		lines.append("Alvo: %s." % target)
+	match event_type:
+		"weapon_attack":
+			lines.append("Ataque basico do combatente. Mostra dano e HP final recebidos do servidor.")
+		"spell_cast":
+			lines.append("Spell conjurada: %s. O icone resume dano, tipo e alvo do cast." % str(event.get("spell_id", "spell")))
+		"dot_apply", "status_apply", "resistance_apply":
+			lines.append("Aplica status/buff/debuff: %s." % str(event.get("status_id", event.get("spell_id", event_type))))
+		"dot_tick":
+			lines.append("Tick de dano ao longo do tempo: %s." % str(event.get("status_id", "dot")))
+		"cooldown_start":
+			lines.append("Inicia recarga da spell %s ate ready_at %ss." % [str(event.get("spell_id", "spell")), _number_text(float(event.get("ready_at", 0.0)))])
+		"cooldown_ready":
+			lines.append("A spell %s voltou a ficar pronta." % str(event.get("spell_id", "spell")))
+		"pet_attack":
+			lines.append("Familiar ataca. O familiar e visual; resultado ja veio do simulador.")
+		"summon_spawn":
+			lines.append("Summon aparece no slot visual de seu lado da arena.")
+		"summon_attack":
+			lines.append("Summon ataca a partir do slot onde esta representado.")
+		"heal":
+			lines.append("Cura aplicada ao alvo, com HP final informado no evento.")
+		"barrier_gain", "barrier_absorb", "passive_apply":
+			lines.append("Feedback defensivo/passivo: mostra escudo, absorcao ou passiva ativa.")
+		"anti_stall":
+			lines.append("Regra anti-stall do simulador para encerrar lutas longas.")
+		"battle_result":
+			lines.append("Resultado final da batalha.")
+	if event.has("damage"):
+		lines.append("Dano: %s %s." % [_number_text(float(event.get("damage", 0.0))), str(event.get("damage_type", "none"))])
+	if event.has("absorbed"):
+		lines.append("Absorvido por barreira: %s." % _number_text(float(event.get("absorbed", 0.0))))
+	if event.has("hp_after"):
+		lines.append("HP apos evento: %s." % _number_text(float(event.get("hp_after", 0.0))))
+	if event.has("barrier_after"):
+		lines.append("Barreira apos evento: %s." % _number_text(float(event.get("barrier_after", 0.0))))
+	if event.has("winner"):
+		lines.append("Vencedor: %s." % str(event.get("winner", "")))
+	lines.append("Trocar asset futuro: %s." % _asset_id_for_event(event_type))
+	return "\n".join(lines)
+
+func _event_title(event_type: String) -> String:
+	match event_type:
+		"weapon_attack":
+			return "Ataque basico"
+		"spell_cast":
+			return "Spell conjurada"
+		"dot_apply":
+			return "DoT aplicado"
+		"dot_tick":
+			return "Dano periodico"
+		"status_apply":
+			return "Status aplicado"
+		"status_expire":
+			return "Status expirou"
+		"passive_apply":
+			return "Passiva ativada"
+		"barrier_gain":
+			return "Barreira ganhou carga"
+		"barrier_absorb":
+			return "Barreira absorveu dano"
+		"resistance_apply":
+			return "Resistencia aplicada"
+		"summon_spawn":
+			return "Summon invocado"
+		"summon_attack":
+			return "Summon atacou"
+		"summon_expire":
+			return "Summon saiu"
+		"pet_attack":
+			return "Familiar atacou"
+		"heal":
+			return "Cura"
+		"anti_stall":
+			return "Anti-stall"
+		"reward_preview":
+			return "Previa de recompensa"
+		"battle_result":
+			return "Resultado"
+	return "Evento"
+
+func _asset_id_for_event(event_type: String) -> String:
+	return str(EVENT_ASSET_IDS.get(event_type, "battle_icon_event"))
 
 func _animate_event(event: Dictionary) -> void:
 	var key := "%s:%s:%s" % [str(event.get("seq", "")), str(event.get("t", "")), str(event.get("type", ""))]
@@ -387,7 +564,8 @@ func _animate_event(event: Dictionary) -> void:
 		_pulse_actor(side, color)
 	elif event_type == "summon_spawn":
 		var slot_side := source_side if source_side != "" else SIDE_PLAYER
-		var slot := str(event.get("slot", SLOT_FRONT))
+		var summon_id := str(event.get("target", "summon"))
+		var slot := _summon_slot_for_event(slot_side, summon_id, str(event.get("slot", SLOT_FRONT)))
 		_spawn_impact(_slot_position(slot_side, slot), color, 54.0)
 		_spawn_float_text("SUM", _slot_position(slot_side, slot) + Vector2(0, -54), color)
 	elif event_type == "anti_stall":
@@ -413,6 +591,14 @@ func _source_position_for_event(event: Dictionary, source_side: String) -> Vecto
 		return _actor_center(source_side)
 	return _stage_size() * Vector2(0.5, 0.45)
 
+func _summon_slot_for_event(side: String, summon_id: String, fallback: String) -> String:
+	var side_data := _as_dictionary(_side_state.get(side, {}))
+	var summons := _as_dictionary(side_data.get("summons", {}))
+	if summons.has(summon_id):
+		var summon := _as_dictionary(summons[summon_id])
+		return str(summon.get("slot", fallback))
+	return fallback
+
 func _target_position_for_event(_event: Dictionary, target_side: String) -> Vector2:
 	if target_side != "":
 		return _actor_center(target_side)
@@ -423,8 +609,9 @@ func _spawn_projectile(from_pos: Vector2, to_pos: Vector2, color: Color, symbol:
 	dot.custom_minimum_size = Vector2(32, 32)
 	dot.size = dot.custom_minimum_size
 	dot.position = from_pos - dot.size * 0.5
-	dot.configure(symbol, color, "Efeito procedural temporario. Futuro: battle_fx_hit/spell.")
+	dot.configure(symbol, color, "Efeito visual do evento atual.")
 	_effects_layer.add_child(dot)
+	dot.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var tween := create_tween()
 	tween.tween_property(dot, "position", to_pos - dot.size * 0.5, 0.22)
 	tween.tween_callback(func() -> void:
@@ -466,7 +653,7 @@ func _spawn_float_text(text: String, origin: Vector2, color: Color, font_size: i
 	label.add_theme_constant_override("shadow_offset_y", 1)
 	label.size = Vector2(150, 34)
 	label.position = origin - label.size * 0.5
-	label.tooltip_text = "Numero/feedback temporario gerado pelo log."
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_effects_layer.add_child(label)
 	var tween := create_tween()
 	tween.parallel().tween_property(label, "position", label.position + Vector2(0, -42), 0.72)
@@ -491,19 +678,23 @@ func _actor_center(side: String) -> Vector2:
 func _slot_position(side: String, slot: String) -> Vector2:
 	var center := _actor_center(side)
 	var direction := 1.0 if side == SIDE_PLAYER else -1.0
+	var stage_width := _stage_size().x
+	var front_offset := clampf(stage_width * 0.16, 58.0, 124.0)
+	var middle_offset := clampf(stage_width * 0.05, 22.0, 38.0)
+	var back_offset := clampf(stage_width * 0.12, 46.0, 92.0)
 	match slot:
 		SLOT_FRONT:
-			return center + Vector2(124.0 * direction, -4.0)
+			return center + Vector2(front_offset * direction, -4.0)
 		SLOT_MIDDLE:
-			return center + Vector2(38.0 * direction, -66.0)
+			return center + Vector2(middle_offset * direction, -66.0)
 		SLOT_BACK:
-			return center + Vector2(-92.0 * direction, -16.0)
+			return center + Vector2(-back_offset * direction, -16.0)
 	return center
 
 func _stage_size() -> Vector2:
 	var resolved := size
 	if resolved.x < 10.0:
-		resolved.x = max(custom_minimum_size.x, 760.0)
+		resolved.x = max(custom_minimum_size.x, 360.0)
 	if resolved.y < 10.0:
 		resolved.y = max(custom_minimum_size.y, 360.0)
 	return resolved
@@ -675,6 +866,19 @@ func _clear_children(node: Node) -> void:
 	for child: Node in node.get_children():
 		node.remove_child(child)
 		child.free()
+
+func _collect_tooltips(root: Variant) -> Array[String]:
+	var values: Array[String] = []
+	var node := root as Node
+	if node == null:
+		return values
+	if node is Control:
+		var control := node as Control
+		if control.tooltip_text != "":
+			values.append(str(control.tooltip_text))
+	for child: Node in node.get_children():
+		values.append_array(_collect_tooltips(child))
+	return values
 
 static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:

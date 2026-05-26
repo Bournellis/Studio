@@ -381,7 +381,9 @@ static func _base_jobs_from_save(base: Dictionary, now_text: String) -> Array:
 
 static func _nullable_text(value: String) -> Variant:
 	var normalized := value.strip_edges()
-	return null if normalized == "" else normalized
+	if normalized == "":
+		return null
+	return normalized
 
 func _write_selected_cache(cache: Dictionary) -> void:
 	_write_json(ProjectSettings.globalize_path(SESSION_PATH_TEMPLATE % [_selected_profile(), _selected_milestone()]), cache)

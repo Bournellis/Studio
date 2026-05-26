@@ -10,7 +10,7 @@ var _label: Label
 var _count_label: Label
 
 func _ready() -> void:
-	mouse_filter = Control.MOUSE_FILTER_PASS
+	mouse_filter = Control.MOUSE_FILTER_STOP
 	custom_minimum_size = Vector2(42, 42)
 	_ensure_labels()
 
@@ -32,6 +32,7 @@ func _ensure_labels() -> void:
 	_label.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_label.add_theme_font_size_override("font_size", 13)
 	_label.add_theme_color_override("font_color", Color("#F0EEE5"))
 	add_child(_label)
@@ -41,6 +42,7 @@ func _ensure_labels() -> void:
 	_count_label.offset_top = 22
 	_count_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_count_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_count_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_count_label.add_theme_font_size_override("font_size", 9)
 	_count_label.add_theme_color_override("font_color", Color("#F0EEE5"))
 	add_child(_count_label)

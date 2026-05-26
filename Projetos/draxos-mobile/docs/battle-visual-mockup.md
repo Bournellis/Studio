@@ -5,7 +5,7 @@
 
 ## Objetivo
 
-Criar uma representacao completa e substituivel da batalha enquanto o projeto ainda nao tem arte final. O mockup usa controles nativos do Godot para mostrar um palco 2D lateral, personagens parados frente a frente, ataques basicos, spells, buffs, dano, efeitos, icones de placeholder, summons, Familiar, status, cooldowns, HP, Mana, Barreira, resultado e timeline.
+Criar uma representacao completa e substituivel da batalha enquanto o projeto ainda nao tem arte final. O mockup usa controles nativos do Godot para mostrar um palco 2D lateral, personagens parados frente a frente, ataques basicos, spells, buffs, dano, efeitos, icones procedurais, summons, Familiar, status, cooldowns, HP, Mana, Barreira, resultado e timeline.
 
 O controle orquestrador vivo e `res://ui/battle_visual_mockup.gd`.
 
@@ -53,7 +53,7 @@ Nao pode alterar:
 | Event icon | `ATK`, `SP`, `DOT`, `BUF`, `SUM`, `PET`, `HEAL`, `ANTI`, `END` | Icones finais por evento, spell, fonte ou efeito. |
 | Slots front/middle/back | Familiar e summons posicionados em frente, meio e tras de cada personagem | Marcadores com sprites, ancoras de VFX e animacoes. |
 | Efeitos temporarios | Projeteis simples, flashes, numeros flutuantes e labels que somem por tween | VFX reais, hit stop, camera shake, sprite trails e animacoes. |
-| Tooltips | Explicam placeholders, asset futuro, status, cooldown e slot | Tooltips finais com nomes localizados, regras e icones. |
+| Tooltips | Explicam de forma objetiva combatente, evento, status, cooldown, familiar, summon e slot; efeitos animados ignoram mouse para nao bloquear hover | Tooltips finais com nomes localizados, regras e icones. |
 | Timeline | Texto formatado por `BattleLogPresenter` | Feed compacto, log expandivel ou overlay de debug. |
 
 ## Formato 2D Atual
@@ -68,6 +68,8 @@ Nao pode alterar:
   em `back`.
 - `slot` pode ser adicionado futuramente em `summon_spawn` sem quebrar logs
   antigos.
+- O palco tem largura minima responsiva para caber na tela Batalha e no Battle
+  Lab sem exigir scroll horizontal para a apresentacao principal.
 - Essa escolha e somente apresentacao; nao altera alvo, dano, HP, resultado ou
   qualquer regra autoritativa.
 
@@ -111,7 +113,7 @@ Enquanto esses arquivos nao existem, `AssetIds.has_art(id)` deve continuar retor
 | `weapon_attack` | Icone `ATK`, projetil procedural, dano flutuante, pulse no alvo, fonte e HP do alvo. |
 | `spell_cast` | Icone `SP`, projetil/flash procedural, spell, fonte, dano e HP do alvo. |
 | `mana_change` | Mana atualizada no HUD do lado afetado. |
-| `cooldown_start` / `cooldown_ready` | Icone de cooldown entra/sai da faixa de spells com timer placeholder. |
+| `cooldown_start` / `cooldown_ready` | Icone de cooldown entra/sai da faixa de spells com timer `ready_at`. |
 | `passive_apply` | Doutrina entra como buff/status. |
 | `dot_apply` / `dot_tick` | Status/DoT entra no alvo, tick mostra numero flutuante e HP atualiza. |
 | `status_apply` / `status_expire` | Badge de status entra/sai do alvo. |
@@ -135,6 +137,13 @@ Quando um novo evento visual entrar:
 5. Adicionar ou reservar asset id em `core/asset_ids.gd`.
 6. Cobrir com teste em `tests/client/`.
 7. Rodar `tools/validate.gd` e, se mexer no Battle Lab, `tools/smoke_dev_lab_ui.gd`.
+
+## Regressao Coberta
+
+- `tests/client/test_battle_stage_2d.gd` garante que tooltips de evento, slots,
+  status e cooldown seguem disponiveis durante efeitos animados.
+- `tests/client/test_battle_visual_mockup.gd` garante que o mockup compartilhado
+  expõe tooltips objetivos no snapshot do palco.
 
 Quando arte real chegar:
 

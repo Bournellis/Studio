@@ -14,6 +14,23 @@ func test_battle_stage_2d_renders_procedural_actor_slots() -> void:
 	assert_true(bool(snapshot.get("has_player_actor", false)))
 	assert_true(bool(snapshot.get("has_opponent_actor", false)))
 
+func test_battle_stage_2d_tooltips_remain_available_during_effects() -> void:
+	var stage = BattleStage2DScript.new()
+	stage.size = Vector2(360, 380)
+	add_child_autofree(stage)
+	stage.render_snapshot(_side_state(), {"type": "spell_cast", "source": "player", "target": "opponent", "spell_id": "marca_brasa", "damage": 27, "damage_type": "fogo", "hp_after": 117, "seq": 2, "t": 1.4}, 2, 8, true)
+
+	var snapshot: Dictionary = stage.debug_snapshot()
+	var tooltips := Dictionary(snapshot.get("tooltips", {}))
+	assert_true(stage.custom_minimum_size.x <= 360.0)
+	assert_true(int(snapshot.get("effect_count", 0)) > 0)
+	assert_string_contains(str(tooltips.get("event", "")), "Spell conjurada")
+	assert_string_contains(_joined_tooltips(Array(tooltips.get("slots", []))), "Familiar")
+	assert_string_contains(_joined_tooltips(Array(tooltips.get("slots", []))), "Summon")
+	assert_string_contains(_joined_tooltips(Array(tooltips.get("status", []))), "Status ativo")
+	assert_string_contains(_joined_tooltips(Array(tooltips.get("cooldowns", []))), "Cooldown de spell")
+	assert_false(str(tooltips).to_lower().contains("placeholder"))
+
 func test_battle_stage_2d_empty_state_is_stable() -> void:
 	var stage = BattleStage2DScript.new()
 	add_child_autofree(stage)
@@ -53,3 +70,9 @@ func _side_state() -> Dictionary:
 			"summons": {},
 		},
 	}
+
+func _joined_tooltips(values: Array) -> String:
+	var lines := PackedStringArray()
+	for value: Variant in values:
+		lines.append(str(value))
+	return "\n".join(lines)
