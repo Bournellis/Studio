@@ -100,13 +100,30 @@ Direcao visual: cartoon gore sombrio, arcano e legivel em mobile, sem depender d
 |---|---|
 | Engine | Godot `4.6.2-stable` |
 | Testes client | GUT `9.6.0` |
-| Backend | Supabase Auth, Postgres, Edge Functions, Realtime |
+| Backend alpha | Supabase Auth, Postgres, Edge Functions, Storage e Realtime quando util |
+| Plano de saida | Backend Proprio + Postgres |
+| Nakama | Alternativa futura apenas se realtime/lobbies/matchmaking/social competitivo virar pilar |
 | Batalha | 100% servidor - cliente anima log de eventos |
 | Autenticacao | Guest local/dev + email/senha no Internal Alpha v0; Google Sign-In futuro |
 | Alpha | Convite/flag alpha, Web/PC/Android internos, APK sideload ou canal interno |
 | Season | 4 meses, 2 Battle Passes por season |
 | Level maximo Season 1 | 40 por padrao; simulador permite testar 40/50/60 |
 | Persistencia de levels | Todos os levels sao permanentes; seasons futuras aumentam o cap |
+
+## Direcao Online
+
+DraxosMobile nao depende de jogadores juntos na mesma partida. As partidas sao PvE/PVP assincronas: o servidor resolve, grava resultado e entrega um replay para o cliente apresentar.
+
+Social existe como camada de retencao e cooperacao, nao como partida realtime:
+
+- amigos por username;
+- chat privado/direct;
+- chat de guilda;
+- guilda;
+- ajudas e contribuicoes;
+- possivel transferencia de recursos se aprovada em design futuro.
+
+Essa direcao favorece dados relacionais, transacoes, ledger e auditoria. Por isso, Supabase e uma boa ponte para a alpha, e Backend Proprio + Postgres e o melhor alvo de maturidade se o jogo crescer.
 
 ---
 

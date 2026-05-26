@@ -4,8 +4,8 @@
 - Active Project Name: `draxos-mobile`
 - Active Surface: `Track 03 - Internal Alpha v0`
 - Active Track: `Track 03 - Internal Alpha v0`
-- Active Track Status: `T03-P01_COMPLETE - DESIGN LOCK READY FOR IMPLEMENTATION`
-- Current Operational Baseline: Track 00 completa com primeiro slice server-authoritative, Track 01 completa para hardening do alpha PC local e Track 02 com Progression Lab/Battle Lab v1 implementados. Godot 4.6.2 possui hub alpha, Base/Social/Competicao/Monetizacao v0, batalha `battle_log_v1` server-authoritative, mockup visual 2D procedural compartilhado por Batalha/Battle Lab, exports Android/PC/Web, validate/GUT/smokes verdes no ultimo baseline e Supabase local em layout oficial. Track 03 prepara Internal Alpha v0: email/senha, dois saves por conta (`normal` e `progression_lab`), Supabase remoto Free, Progression Lab isolado, loja com redeems alpha, leaderboards basicas, social/base jogaveis e manifest de updates para Android/PC/Web.
+- Active Track Status: `T03-P01_COMPLETE - DESIGN LOCK AND BACKEND STRATEGY READY`
+- Current Operational Baseline: Track 00 completa com primeiro slice server-authoritative, Track 01 completa para hardening do alpha PC local e Track 02 com Progression Lab/Battle Lab v1 implementados. Godot 4.6.2 possui hub alpha, Base/Social/Competicao/Monetizacao v0, batalha `battle_log_v1` server-authoritative, mockup visual 2D procedural compartilhado por Batalha/Battle Lab, exports Android/PC/Web, validate/GUT/smokes verdes no ultimo baseline e Supabase local em layout oficial. Track 03 prepara Internal Alpha v0: email/senha, dois saves por conta (`normal` e `progression_lab`), Supabase remoto Free, Progression Lab isolado, loja com redeems alpha, leaderboards basicas, social/base jogaveis e manifest de updates para Android/PC/Web. Estrategia backend registrada: Supabase para alpha, Backend Proprio + Postgres como plano de saida preferido e Nakama como alternativa futura apenas se realtime/social competitivo virar pilar.
 
 ---
 
@@ -19,6 +19,7 @@
 | Economia e seasons | Baseline calibravel | `../docs/economy/README.md`, JSON versionado e gerador Deno/TypeScript criados; outputs em `../docs/economy/generated/` |
 | Progression Lab | Ferramenta v1 atualizada para Source Identity Balance v2 | Gera `25` saves, `75` bots, relatorios HTML/CSV/JSON, seeder Supabase local, cache `.progression_lab_scratch/`, fallback local-only sem Supabase e sem token valido, tela dev-only no Refugio e matriz Progression Lab no Battle Lab; cache local-only abre base como snapshot somente leitura e bloqueia acoes online com mensagem objetiva; status atual `REVIEW` por premium gap e janelas 15h/20h calibraveis, falta rodada manual real no editor com Supabase local |
 | Internal Alpha v0 | Design lock completo | Track 03 documentada com escopo, plano, runbook, checklist e design lock. `DMOB-D048` a `DMOB-D055` resolvidas; valores numericos da loja ficam como dados calibraveis do catalogo/seed |
+| Estrategia backend | Definida | Supabase segue para Internal Alpha v0; plano de saida preferido e Backend Proprio + Postgres; Nakama fica condicionado a mudanca futura para realtime/lobbies/matchmaking/social competitivo forte |
 | Reuso entre projetos | Documentado | Fonte viva: `../docs/reuse-map.md`; estrategia conservadora |
 | Contratos tecnicos | Definidos | Fonte inicial: `../docs/contracts/` |
 | Godot project | Alpha PC local pronto + Battle Lab/Progression Lab dev + battle stage 2D continuous cooldowns | Hub alpha hardenizado, autoloads, `.gutconfig.json`, content generator, catalogo gerado, `SessionStore` com `session_id`, `apply_snapshot_cache` e metadados `progression_lab`, `SupabaseClient` com telemetria, `BattleLogPresenter`, `BattleVisualMockup`, `BattleStage2D` responsivo com tooltips imediatos, nos estaveis durante efeitos, cooldown restante por relogio continuo de replay e feedback textual com nomes completos, telas dev-only do Battle Lab e Progression Lab, cache local-only read-only sem token valido, runner Deno sanitizado/Windows-safe, smoke real de labs, smoke visual/comportamental e GUT |
@@ -73,7 +74,7 @@
 - Track 00 monta o primeiro slice completo.
 - Track 01 hardeniza o primeiro slice para playtest alpha PC local.
 - Track 02 calibra o loop inicial com saves saudaveis, perfis 2h-20h, bots, poder, moeda premium e teste manual no Godot.
-- Track 03 transforma o alpha local em build fechada realista com email/senha, dois saves, Supabase remoto, base/social/competicao/loja funcionais e updates internos.
+- Track 03 transforma o alpha local em build fechada realista com email/senha, dois saves, Supabase remoto, base/social/competicao/loja funcionais, updates internos e contratos preparados para futura migracao para Backend Proprio + Postgres.
 - MVP tecnico minimo e a primeira etapa da Track 00.
 - MVP tecnico usa fixtures `MVP_ONLY` e nao depende de balanceamento final.
 - Economia de Season 1 usa cap 40 por padrao, todos os levels sao permanentes e caps futuros ficam editaveis no simulador.

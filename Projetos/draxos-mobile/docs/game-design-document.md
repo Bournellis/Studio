@@ -1,9 +1,40 @@
-# DraxosMobile — Game Design Document (Referencia De Implementacao)
+# DraxosMobile - Game Design Document (Referencia De Implementacao)
 
-- Ultima atualizacao: `2026-05-25`
+- Ultima atualizacao: `2026-05-26`
 - Fonte historica completa: `../../_conceitos/mobile-universe/gdd.md`
 
 > Este documento e uma referencia condensada para implementacao. Para o design completo com todas as formulas, tabelas e decisoes detalhadas, consulte o GDD completo no caminho acima.
+
+---
+
+## Direcao Online E Backend
+
+DraxosMobile e um jogo online assincrono. O jogador nao divide uma partida viva com outro jogador conectado ao mesmo tempo. As partidas sao PvE ou PVP assincrono:
+
+- o cliente solicita uma batalha;
+- o servidor seleciona/resolve oponente ou bot;
+- o servidor simula o resultado;
+- o servidor grava log, recompensa, ranking e ledger;
+- o cliente apenas apresenta o replay.
+
+O jogo deve ter social e interacoes entre jogadores, mas sem exigir conexao direta de partida, lobby ativo ou matchmaking realtime. Sistemas sociais previstos:
+
+- chat privado/direct;
+- chat de guilda;
+- amigos por username;
+- guilda;
+- ajuda entre amigos/membros de guilda;
+- transferencia de recursos quando/ se aprovada por design;
+- contribuicoes e interacoes de rotina entre jogadores.
+
+Consequencia de design: a prioridade tecnica do backend e consistencia, auditoria, economia server-authoritative e evolucao simples de regras, nao infraestrutura de sala realtime. Supabase e o backend escolhido para Internal Alpha v0 por acelerar Auth, Postgres, Edge Functions e Storage. O plano de longo prazo preferido, se o jogo crescer, e Backend Proprio + Postgres. Nakama permanece uma alternativa futura apenas se o jogo mudar para social/realtime competitivo muito mais forte.
+
+Regras de produto que preservam essa direcao:
+
+- todo endpoint de gameplay deve ser logico (`account`, `battle`, `base`, `social`, `competition`, `monetization`) e nao acoplado ao fornecedor;
+- transferencias, recompensas, compras, claims e upgrades devem ser transacionais e auditaveis;
+- nenhuma mecanica central deve depender de jogadores simultaneamente conectados na mesma partida;
+- realtime pode ser usado como conveniencia de chat/presenca, mas nao como fundamento da batalha.
 
 ---
 

@@ -52,6 +52,18 @@ Alvo inicial:
 - Postgres com RLS.
 - Storage para manifest e artefatos de update.
 
+Direcao de longo prazo:
+
+- Supabase e usado para acelerar a Internal Alpha v0.
+- O plano de saida preferido e Backend Proprio + Postgres.
+- Nakama fica como alternativa futura apenas se DraxosMobile passar a exigir realtime, lobbies, matchmaking ativo ou social competitivo pronto.
+
+Motivo:
+
+- partidas sao PvE/PVP assincronas, nao salas realtime;
+- social existe, mas e chat/interacao/ajuda/guilda sem conexao direta de partida;
+- economia, transferencia, claims, upgrades, recursos e ranking precisam de transacoes, ledger e auditoria.
+
 Seguranca minima:
 
 - `anon key` pode existir no cliente.
@@ -59,6 +71,12 @@ Seguranca minima:
 - Policies devem continuar limitando leitura/escrita ao dono.
 - Mutacoes economicas usam Edge Functions, idempotencia e ledger.
 - Web link publico/unlisted nao e segredo de seguranca; auth e alpha flag sao a barreira real.
+
+Regra anti-lock-in:
+
+- Godot usa endpoints logicos do jogo, nao detalhes internos do Supabase.
+- `service_role`, policies e tabelas sao detalhes de backend.
+- IDs internos do jogo devem permitir migracao futura para API propria.
 
 ## Updates E Distribuicao
 

@@ -1,7 +1,7 @@
 # Track 03 - Internal Alpha v0 - Current Status
 
 - Last Updated: `2026-05-26`
-- Status: `T03-P01_COMPLETE - DESIGN LOCK READY FOR IMPLEMENTATION`
+- Status: `T03-P01_COMPLETE - DESIGN LOCK AND BACKEND STRATEGY READY`
 - Baseline: Track 00 completa, Track 01 completa e Track 02 com Progression Lab/Battle Lab v1 implementados. O projeto ja possui Godot 4.6.2, Supabase local, conta guest, batalha server-authoritative, Base/Social/Competicao/Monetizacao v0, telemetria client nao autoritativa, exports Android/PC/Web, Battle Visual Mockup compartilhado e laboratorios dev-only. A Track 03 prepara a transicao para uma build fechada realista com email/senha, dois saves por conta, backend remoto, updates e playtest de 2 usuarios.
 
 ## Implementado Nesta Preparacao
@@ -14,6 +14,7 @@
 - Design lock da Internal Alpha v0 registrado em `docs/internal-alpha-v0-design-lock.md`.
 - Pendencias `DMOB-D048` a `DMOB-D055` resolvidas.
 - Follow-ups de loja/social fechados: redeems entregam apenas Diamante, resetam a meia-noite `America/Sao_Paulo`, amigos usam username e usuarios no Lab aparecem com marcador vermelho `lab`.
+- Estrategia backend registrada: Supabase para Internal Alpha v0, Backend Proprio + Postgres como plano de saida preferido e Nakama como alternativa futura apenas se realtime/social competitivo virar pilar.
 
 ## Ainda Nao Implementado
 
@@ -39,7 +40,7 @@
 
 ## Proximo Passo
 
-Executar `T03-P02 - Supabase Remoto E Configuracao Segura`, mantendo os valores numericos da loja como dados calibraveis do catalogo/seed.
+Executar `T03-P02 - Supabase Remoto E Configuracao Segura`, mantendo contratos anti-lock-in e preparando o caminho para futura API propria + Postgres.
 
 ## Validacao Da Preparacao
 

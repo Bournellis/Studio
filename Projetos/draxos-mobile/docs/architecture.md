@@ -17,6 +17,60 @@
 
 ---
 
+## Estrategia De Backend E Plano De Saida
+
+Decisao para Internal Alpha v0:
+
+- usar Supabase remoto Free agora;
+- manter Postgres como centro autoritativo de dados;
+- manter Edge Functions como camada HTTP server-authoritative;
+- preservar um plano de saida para Backend Proprio + Postgres.
+
+Justificativa:
+
+- DraxosMobile e PvE/PVP assincrono, nao multiplayer realtime com jogadores na mesma partida.
+- O jogo precisa mais de transacoes, ledger, auditoria, recursos, saves, base, loja e ranking do que de salas, lobbies ou tick de partida.
+- Social existe, mas e assincrono ou semi-assincrono: direct, chat de guilda, ajuda, guilda, contribuicoes e possivel transferencia de recursos.
+- Postgres combina melhor com economia, historico, idempotencia e consistencia forte.
+
+Alternativas avaliadas:
+
+| Opcao | Papel |
+|---|---|
+| Supabase | Escolha atual para alpha: acelera Auth, Postgres, Edge Functions, Storage e migrations locais/remotas. |
+| Backend Proprio + Postgres | Alvo de longo prazo se o jogo crescer: API propria, Postgres gerenciado, jobs, observabilidade, backups e painel admin. |
+| Nakama | Alternativa futura se o produto passar a depender fortemente de realtime, matchmaking, presenca, lobbies, torneios ou social competitivo pronto. Nao e o alvo principal atual. |
+
+Regras anti-lock-in:
+
+- O Godot deve falar com endpoints logicos do projeto, nao com detalhes internos de tabelas ou vendor.
+- Contratos HTTP devem permanecer estaveis: `account`, `battle`, `base`, `social`, `competition`, `monetization`, `telemetry`.
+- Edge Functions devem concentrar adaptadores de plataforma, chamando logica de dominio portavel sempre que possivel.
+- Regras economicas devem gerar ledger exportavel.
+- IDs internos de conta/save/player devem pertencer ao jogo; `auth.users.id` ou equivalente do fornecedor e detalhe de auth.
+- Schema SQL, migrations e seeds devem ficar versionados.
+- Storage de builds/manifests pode mudar de fornecedor sem alterar gameplay.
+
+Plano de saida para Backend Proprio + Postgres:
+
+1. Congelar contratos HTTP atuais.
+2. Exportar schema/dados do Postgres.
+3. Criar API propria com os mesmos endpoints logicos.
+4. Migrar a logica das Edge Functions para modulos de dominio no backend proprio.
+5. Manter cliente Godot apontando para uma `base_url` diferente.
+6. Migrar Auth com fluxo controlado de conta/email, preservando `account_id` interno do jogo.
+7. Validar ledger, ranking, saves e historico de batalha antes de desligar Supabase.
+
+Nakama deve ser reavaliado somente se pelo menos uma destas premissas mudar:
+
+- jogadores precisam ficar juntos em partidas conectadas;
+- matchmaking/lobbies se tornam centrais;
+- presenca online vira sistema principal;
+- chat/guilda/leaderboards prontos passam a valer mais do que controle total de economia e dados relacionais;
+- a equipe prefere operar um game backend pronto em vez de manter API propria.
+
+---
+
 ## Status Tecnico Atual
 
 - `T00-P01` completo: projeto Godot, boot scene, `ProjectInfo`, validate e GUT.
@@ -33,7 +87,7 @@
 - `T00-P12` completo: Social/Competicao v0 server-authoritative com `social/state`, guilda alpha, chat de guilda por polling, matchmaking preview com fallback de bot e ranking de season sem bots.
 - `T00-P13` completo: Monetizacao v0 server-authoritative com Battle Pass, Diamante alpha, recompensas diarias/semanais, claims free/premium, ledger, idempotencia e export smoke Android/PC/Web.
 - `Track 01` completo: hardening do alpha PC local com fluxo de primeira sessao mais claro, estados ocupados/erros offline/pre-condicoes visiveis, reset seguro de sessao local, telemetria client nao autoritativa e smoke do loop alpha.
-- `Track 03` preparado: Internal Alpha v0 documentado para email/senha, dois saves por conta, Supabase remoto Free, Web/PC/Android com update manifest e Progression Lab isolado do save normal.
+- `Track 03` com design lock completo e estrategia backend definida: Supabase remoto Free para alpha, Backend Proprio + Postgres como plano de saida preferido e Nakama apenas como alternativa futura se realtime/social competitivo virar pilar.
 
 ---
 
@@ -47,6 +101,7 @@ Antes de criar codigo ou migrations, consulte:
 - `contracts/content-definitions.md`
 - `reuse-map.md`
 - `internal-alpha-v0.md`
+- `internal-alpha-v0-design-lock.md`
 
 `supabase/` e a fonte de execucao local da Supabase CLI. `server/schema/` e `server/functions/` permanecem como espelho organizado do backend durante o alpha local.
 

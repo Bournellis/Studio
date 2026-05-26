@@ -12,6 +12,7 @@ Este documento descreve a interface logica entre cliente Godot e Supabase Edge F
 - Guest MVP: cliente primeiro cria sessao Supabase Auth anonima; depois chama `/account/guest` com o JWT anonimo e codigo de convite.
 - Correlation: cliente envia `request_id` em mutacoes para idempotencia.
 - Runtime local atual: `supabase/functions/account`, `battle`, `base`, `social`, `competition`, `monetization` e `telemetry`, espelhados em `server/functions/`.
+- Anti-lock-in: os endpoints logicos deste documento pertencem ao jogo, nao ao Supabase. O cliente Godot deve depender de `account`, `battle`, `base`, `social`, `competition`, `monetization` e `telemetry`, permitindo futura migracao para Backend Proprio + Postgres sem redesenhar o cliente.
 - Resposta de erro padrao:
 
 ```json

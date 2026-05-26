@@ -32,11 +32,14 @@ Saida esperada:
 - Criar ambiente `internal_alpha_v0` no cliente Godot.
 - Validar Edge Functions em remoto com healthcheck.
 - Documentar reset controlado do banco alpha.
+- Confirmar os contratos anti-lock-in: cliente Godot fala com endpoints logicos e Supabase fica como implementacao atual.
+- Preparar nota de plano de saida para Backend Proprio + Postgres antes de expandir auth/saves.
 
 Saida esperada:
 
 - Runbook operacional com passos manuais executaveis.
 - Smoke remoto minimo: auth, healthcheck e account state.
+- Decisao backend registrada: Supabase para alpha; Backend Proprio + Postgres como plano de saida; Nakama como alternativa futura condicional.
 
 ### T03-P03 - Conta Email/Senha E Dois Saves
 
