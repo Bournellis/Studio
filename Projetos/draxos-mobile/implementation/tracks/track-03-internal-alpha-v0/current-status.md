@@ -1,7 +1,7 @@
 # Track 03 - Internal Alpha v0 - Current Status
 
 - Last Updated: `2026-05-26`
-- Status: `T03-P01_IN_PROGRESS - DESIGN LOCK RECORDED WITH STORE FOLLOWUPS`
+- Status: `T03-P01_COMPLETE - DESIGN LOCK READY FOR IMPLEMENTATION`
 - Baseline: Track 00 completa, Track 01 completa e Track 02 com Progression Lab/Battle Lab v1 implementados. O projeto ja possui Godot 4.6.2, Supabase local, conta guest, batalha server-authoritative, Base/Social/Competicao/Monetizacao v0, telemetria client nao autoritativa, exports Android/PC/Web, Battle Visual Mockup compartilhado e laboratorios dev-only. A Track 03 prepara a transicao para uma build fechada realista com email/senha, dois saves por conta, backend remoto, updates e playtest de 2 usuarios.
 
 ## Implementado Nesta Preparacao
@@ -12,8 +12,8 @@
 - Checklist de playtest `docs/playtest-internal-alpha-v0.md` criado.
 - Worktree limpa de outputs gerados e ignore atualizado para novos `.uid`, `.translation` e `build/`.
 - Design lock da Internal Alpha v0 registrado em `docs/internal-alpha-v0-design-lock.md`.
-- Pendencias `DMOB-D048`, `DMOB-D049`, `DMOB-D051`, `DMOB-D052`, `DMOB-D053`, `DMOB-D054` e `DMOB-D055` resolvidas.
-- `DMOB-D050` ficou como calibracao/follow-up por faltar quantidade/custo/moeda/reset diario dos redeems.
+- Pendencias `DMOB-D048` a `DMOB-D055` resolvidas.
+- Follow-ups de loja/social fechados: redeems entregam apenas Diamante, resetam a meia-noite `America/Sao_Paulo`, amigos usam username e usuarios no Lab aparecem com marcador vermelho `lab`.
 
 ## Ainda Nao Implementado
 
@@ -39,7 +39,7 @@
 
 ## Proximo Passo
 
-Fechar os follow-ups de loja/social em `docs/internal-alpha-v0-design-lock.md`, principalmente quantidades/custos dos redeems, moeda usada, horario de reset diario e identificador para adicionar amigos.
+Executar `T03-P02 - Supabase Remoto E Configuracao Segura`, mantendo os valores numericos da loja como dados calibraveis do catalogo/seed.
 
 ## Validacao Da Preparacao
 

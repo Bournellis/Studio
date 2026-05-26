@@ -2,7 +2,7 @@
 
 - Ultima atualizacao: `2026-05-26`
 - Track: `T03-P01 - Design Lock Da Build Interna`
-- Status: `RECORDED_WITH_FOLLOWUPS`
+- Status: `LOCKED`
 
 Este documento registra as decisoes de uso, layout e comportamento da Internal Alpha v0. O objetivo e fazer o app parecer uma simulacao funcional de jogo real, nao uma tela puramente de desenvolvimento, mesmo ainda sem arte final.
 
@@ -244,8 +244,12 @@ Progression Lab:
 
 - usa o mesmo social da conta;
 - nao pontua competicao.
+- jogadores usando o save `progression_lab` aparecem no social/chat com marcador vermelho `lab`.
 
-Observacao de seguranca: senha nunca deve ser usada como identificador social. Para adicionar amigos, usar username e/ou email, a confirmar no follow-up.
+Identificador social:
+
+- amigos sao adicionados por username.
+- senha nunca deve ser usada como identificador social.
 
 ## Competicao
 
@@ -272,17 +276,28 @@ Redeems alpha:
 - grande;
 - premium.
 
+Moeda:
+
+- todos os redeems entregam apenas Diamante.
+- nao existe `alpha_points` na Internal Alpha v0.
+
 Frequencia:
 
 - cada pacote pode ser resgatado 1 vez por dia por save.
+- reset diario acontece a meia-noite no horario `America/Sao_Paulo`.
 
 Uso:
 
-- o jogador usa os pontos/moeda resgatados para comprar outros recursos e facilidades na loja.
-- Premium e outras facilidades devem estar disponiveis para compra com os pontos/moedas do alpha.
+- o jogador usa Diamante para comprar recursos e facilidades na loja.
+- Premium, Battle Pass, fila dupla e outras facilidades devem estar disponiveis para compra com Diamante.
+- o redeem `premium` deve entregar Diamante suficiente para comprar todos os itens premium/conveniencia da loja alpha daquele build, usando Battle Pass e fila dupla como referencia minima.
 - Nao precisa exibir aviso de pagamento real, desde que nao exista gateway real.
 
-Ainda falta fechar quantidades/custos exatos dos pacotes.
+Regra de valores:
+
+- `pequeno`, `medio` e `grande` sao aceleradores diarios graduais.
+- `premium` e calculado a partir do custo total dos itens premium/conveniencia disponiveis no catalogo da loja do build.
+- valores numericos finais vivem no catalogo/seed da loja e podem ser rebalanceados sem reabrir o design lock, desde que mantenham as regras acima.
 
 ## Updates
 
@@ -299,8 +314,6 @@ Politica:
 
 ## Follow-Ups Ainda Necessarios
 
-1. Quantidades exatas dos redeems `pequeno`, `medio`, `grande` e `premium`.
-2. Moeda/ponto usado pelos redeems: Diamante direto, `alpha_points`, ou ambos.
-3. Horario de reset diario dos redeems.
-4. Identificador para adicionar amigo: username, email, ou ambos.
-5. Se usuarios em `progression_lab` devem aparecer com algum marcador no social/chat.
+Nenhum bloqueador de design para T03-P01.
+
+Valores numericos dos redeems e precos da loja entram como dados calibraveis de implementacao, seguindo as regras deste documento.

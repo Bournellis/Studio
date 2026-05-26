@@ -4,7 +4,7 @@
 - Active Project Name: `draxos-mobile`
 - Active Surface: `Track 03 - Internal Alpha v0`
 - Active Track: `Track 03 - Internal Alpha v0`
-- Active Track Status: `T03-P01_IN_PROGRESS - DESIGN LOCK RECORDED WITH STORE FOLLOWUPS`
+- Active Track Status: `T03-P01_COMPLETE - DESIGN LOCK READY FOR IMPLEMENTATION`
 - Current Operational Baseline: Track 00 completa com primeiro slice server-authoritative, Track 01 completa para hardening do alpha PC local e Track 02 com Progression Lab/Battle Lab v1 implementados. Godot 4.6.2 possui hub alpha, Base/Social/Competicao/Monetizacao v0, batalha `battle_log_v1` server-authoritative, mockup visual 2D procedural compartilhado por Batalha/Battle Lab, exports Android/PC/Web, validate/GUT/smokes verdes no ultimo baseline e Supabase local em layout oficial. Track 03 prepara Internal Alpha v0: email/senha, dois saves por conta (`normal` e `progression_lab`), Supabase remoto Free, Progression Lab isolado, loja com redeems alpha, leaderboards basicas, social/base jogaveis e manifest de updates para Android/PC/Web.
 
 ---
@@ -18,7 +18,7 @@
 | Design pendente | T00-P09 completo | DMOB-D047 resolvido pelo Character Systems Rework 2026-05-25; D030 recebeu Source Identity Balance v2 com Battle Lab `PASS`; D006-D007 e D029-D032 seguem calibraveis via simulador/playtest |
 | Economia e seasons | Baseline calibravel | `../docs/economy/README.md`, JSON versionado e gerador Deno/TypeScript criados; outputs em `../docs/economy/generated/` |
 | Progression Lab | Ferramenta v1 atualizada para Source Identity Balance v2 | Gera `25` saves, `75` bots, relatorios HTML/CSV/JSON, seeder Supabase local, cache `.progression_lab_scratch/`, fallback local-only sem Supabase e sem token valido, tela dev-only no Refugio e matriz Progression Lab no Battle Lab; cache local-only abre base como snapshot somente leitura e bloqueia acoes online com mensagem objetiva; status atual `REVIEW` por premium gap e janelas 15h/20h calibraveis, falta rodada manual real no editor com Supabase local |
-| Internal Alpha v0 | Design lock em andamento | Track 03 documentada com escopo, plano, runbook, checklist e design lock. `DMOB-D048`, `DMOB-D049`, `DMOB-D051`, `DMOB-D052`, `DMOB-D053`, `DMOB-D054` e `DMOB-D055` resolvidas; `DMOB-D050` segue em calibracao por valores de redeems/loja |
+| Internal Alpha v0 | Design lock completo | Track 03 documentada com escopo, plano, runbook, checklist e design lock. `DMOB-D048` a `DMOB-D055` resolvidas; valores numericos da loja ficam como dados calibraveis do catalogo/seed |
 | Reuso entre projetos | Documentado | Fonte viva: `../docs/reuse-map.md`; estrategia conservadora |
 | Contratos tecnicos | Definidos | Fonte inicial: `../docs/contracts/` |
 | Godot project | Alpha PC local pronto + Battle Lab/Progression Lab dev + battle stage 2D continuous cooldowns | Hub alpha hardenizado, autoloads, `.gutconfig.json`, content generator, catalogo gerado, `SessionStore` com `session_id`, `apply_snapshot_cache` e metadados `progression_lab`, `SupabaseClient` com telemetria, `BattleLogPresenter`, `BattleVisualMockup`, `BattleStage2D` responsivo com tooltips imediatos, nos estaveis durante efeitos, cooldown restante por relogio continuo de replay e feedback textual com nomes completos, telas dev-only do Battle Lab e Progression Lab, cache local-only read-only sem token valido, runner Deno sanitizado/Windows-safe, smoke real de labs, smoke visual/comportamental e GUT |
@@ -219,6 +219,6 @@ Supabase runtime validado localmente:
 
 ## Next
 
-1. Fechar follow-ups do design lock: valores dos redeems, moeda usada, reset diario e identificador de amigos.
-2. Preparar Supabase remoto Free, email/senha e ambiente seguro sem commitar secrets.
+1. Executar `T03-P02 - Supabase Remoto E Configuracao Segura`.
+2. Preparar email/senha e ambiente seguro sem commitar secrets.
 3. Implementar dois saves por conta e isolamento do Progression Lab antes de expandir Base/Social/Loja.

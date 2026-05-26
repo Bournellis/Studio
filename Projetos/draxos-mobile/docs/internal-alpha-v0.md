@@ -2,7 +2,7 @@
 
 - Ultima atualizacao: `2026-05-26`
 - Fonte de execucao: `../implementation/tracks/track-03-internal-alpha-v0/`
-- Design lock: `internal-alpha-v0-design-lock.md`
+- Design lock: `internal-alpha-v0-design-lock.md` (`LOCKED`)
 - Objetivo: fechar uma build interna profissional para Fabio + 1 amigo testarem um jogo real em Android, PC e Web, com servidor real, conta/save compartilhados, features principais funcionais e iteracao rapida.
 
 ## Resumo Da Build
@@ -154,13 +154,18 @@ Proof-of-concept:
 
 ## Design Sessions Pendentes
 
-Antes de codigo funcional amplo, resolver os follow-ups finais do design lock:
+Design lock fechado em `internal-alpha-v0-design-lock.md`.
 
-- Quantidades/custos exatos dos redeems da loja.
-- Moeda/ponto usada nos redeems.
-- Horario de reset diario.
-- Identificador para adicionar amigos: username, email, ou ambos.
-- Marcador visual opcional para usuarios em `progression_lab` no social/chat.
+Regras finais registradas:
+
+- app hibrido entre idle/manager e hub de RPG;
+- Android em paisagem, PC/Web com layout amplo;
+- tela inicial com `Continuar`, `Progression Lab` e `Configuracoes`;
+- amigos por username;
+- usuarios em `progression_lab` aparecem com marcador vermelho `lab` no social/chat;
+- redeems diarios entregam apenas Diamante;
+- reset diario dos redeems a meia-noite `America/Sao_Paulo`;
+- redeem `premium` deve cobrir o custo dos itens premium/conveniencia da loja alpha do build.
 
 Estas decisoes vivem em `docs/design-pending.md` como `DMOB-D048` a `DMOB-D055`.
 

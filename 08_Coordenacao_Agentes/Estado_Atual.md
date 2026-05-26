@@ -23,15 +23,15 @@
 
 ## DraxosMobile
 
-- Status: **P2_IMPLEMENTACAO - internal alpha v0 ready for implementation**
+- Status: **P2_IMPLEMENTACAO - internal alpha v0 design lock complete**
 - Fase: `Implementacao`
 - Local: `Projetos/draxos-mobile/`
 - Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
 - Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
-- Baseline atual: Track 00 completa com primeiro slice server-authoritative, Track 01 completa para hardening do alpha PC local e Track 02 com Progression Lab/Battle Lab v1, Character Systems Rework, Source Identity Balance v2, batalha visual procedural 2D, smokes e validacoes verdes no ultimo baseline. Track 03 agora esta documentada para executar Internal Alpha v0: email/senha, dois saves por conta (`normal` e `progression_lab`), Supabase remoto Free, Progression Lab isolado, Base/Social/Competicao/Loja jogaveis, leaderboard basica, redeems alpha e manifest remoto de updates para Android/PC/Web.
+- Baseline atual: Track 00 completa com primeiro slice server-authoritative, Track 01 completa para hardening do alpha PC local e Track 02 com Progression Lab/Battle Lab v1, Character Systems Rework, Source Identity Balance v2, batalha visual procedural 2D, smokes e validacoes verdes no ultimo baseline. Track 03 tem design lock completo para Internal Alpha v0: app hibrido idle/manager + hub RPG, Android paisagem, PC/Web amplo, email/senha, username, dois saves por conta (`normal` e `progression_lab`), Lab marcado em vermelho no social/chat e fora da competicao, Supabase remoto Free, Base/Social/Competicao/Loja jogaveis, leaderboard sem bots, redeems diarios em Diamante e manifest remoto de updates para Android/PC/Web.
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
 - Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export.
-- Proximo passo: executar `T03-P01 - Design Lock Da Build Interna`, resolver `DMOB-D048` a `DMOB-D055` e entao implementar Supabase remoto/email-senha/dois saves.
+- Proximo passo: executar `T03-P02 - Supabase Remoto E Configuracao Segura`.
 
 ## rpg-isometrico
 
