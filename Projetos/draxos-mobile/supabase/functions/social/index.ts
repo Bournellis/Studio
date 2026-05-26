@@ -1,4 +1,5 @@
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import { type SaveType, saveTypeFromRequest, saveTypeQuery } from "../_shared/save_context.ts";
 
 type Route = "state" | "friend_add" | "guild_create" | "chat_send";
 
@@ -9,6 +10,7 @@ interface EdgeConfig {
 
 interface AuthContext {
   userId: string;
+  saveType: SaveType;
 }
 
 interface RestError {
@@ -25,6 +27,7 @@ interface JwtPayload {
 interface PlayerRow {
   id: string;
   username: string | null;
+  save_type: SaveType;
   level: number;
   power: number;
 }
@@ -158,7 +161,9 @@ async function handleFriendAdd(
 
   const targetResult = await restRequest<PlayerRow[]>(
     config,
-    `players?username=eq.${encodeURIComponent(username)}&select=id,username,level,power&limit=1`,
+    `players?username=eq.${
+      encodeURIComponent(username)
+    }&select=id,username,save_type,level,power&limit=1`,
     { method: "GET" },
   );
   if (targetResult.error !== null) {
@@ -395,9 +400,9 @@ async function loadPlayer(
 ): Promise<{ value: PlayerRow; error: null } | { value: null; error: RestError }> {
   const result = await restRequest<PlayerRow[]>(
     config,
-    `players?auth_user_id=eq.${
-      encodeURIComponent(auth.userId)
-    }&select=id,username,level,power&limit=1`,
+    `players?auth_user_id=eq.${encodeURIComponent(auth.userId)}&${
+      saveTypeQuery(auth.saveType)
+    }&select=id,username,save_type,level,power&limit=1`,
     { method: "GET" },
   );
   if (result.error !== null) return { value: null, error: stateReadError() };
@@ -507,7 +512,18 @@ function decodeAuthContext(
       },
     };
   }
-  return { value: { userId: payload.sub }, error: null };
+  const saveType = saveTypeFromRequest(request);
+  if (saveType === null) {
+    return {
+      value: null,
+      error: {
+        code: "INVALID_SAVE_TYPE",
+        message: "Save type must be normal or progression_lab.",
+        status: 400,
+      },
+    };
+  }
+  return { value: { userId: payload.sub, saveType }, error: null };
 }
 
 function decodeJwtPayload(encodedPayload: string): JwtPayload | null {

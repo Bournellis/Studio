@@ -90,7 +90,7 @@ Nakama deve ser reavaliado somente se pelo menos uma destas premissas mudar:
 - `T00-P12` completo: Social/Competicao v0 server-authoritative com `social/state`, guilda alpha, chat de guilda por polling, matchmaking preview com fallback de bot e ranking de season sem bots.
 - `T00-P13` completo: Monetizacao v0 server-authoritative com Battle Pass, Diamante alpha, recompensas diarias/semanais, claims free/premium, ledger, idempotencia e export smoke Android/PC/Web.
 - `Track 01` completo: hardening do alpha PC local com fluxo de primeira sessao mais claro, estados ocupados/erros offline/pre-condicoes visiveis, reset seguro de sessao local, telemetria client nao autoritativa e smoke do loop alpha.
-- `Track 03` com design lock completo, estrategia backend definida e T03-P02 repo-side preparado: Supabase remoto Free para alpha, `BackendConfig` no Godot, env vars seguras, `.env` reais ignorados, smoke remoto minimo e Backend Proprio + Postgres como plano de saida preferido. Nakama fica apenas como alternativa futura se realtime/social competitivo virar pilar.
+- `Track 03` com design lock completo, estrategia backend definida, T03-P02 repo-side preparado e T03-P03B completo: Supabase remoto Free para alpha, `BackendConfig` no Godot, env vars seguras, `.env` reais ignorados, smoke remoto minimo, `players.save_type` local, header `x-draxos-save-type` nos endpoints alpha, dois saves server-backed no Supabase local e Backend Proprio + Postgres como plano de saida preferido. Nakama fica apenas como alternativa futura se realtime/social competitivo virar pilar.
 
 ---
 
@@ -128,8 +128,8 @@ Autoloads atuais:
 | `UiTokens` | `core/ui_tokens.gd` | Cores, estilos e tokens semanticos de UI |
 | `AssetIds` | `core/asset_ids.gd` | Manifesto de ids visuais e fallback enquanto assets nao existem |
 | `ContentLibrary` | `data/content_library.gd` | Gerar/carregar catalogo de conteudo e expor consultas por collection/id |
-| `SessionStore` | `online/session_store.gd` | Token/cache local nao autoritativo, validacao de expiracao e snapshot de estado recebido do servidor |
-| `SupabaseClient` | `online/supabase_client.gd` | HTTPRequest para Auth e Edge Functions locais/remotas |
+| `SessionStore` | `online/session_store.gd` | Token/cache local nao autoritativo, validacao de expiracao, snapshot de estado recebido do servidor e save ativo `normal`/`progression_lab` |
+| `SupabaseClient` | `online/supabase_client.gd` | HTTPRequest para Auth e Edge Functions locais/remotas, enviando `x-draxos-save-type` |
 
 Classes utilitarias:
 
@@ -257,6 +257,14 @@ Regras:
 - Endpoints autoritativos devem resolver o save ativo no servidor; o cliente nao envia deltas finais.
 - Ranking, social e loja do save normal nao podem ser contaminados pelo `progression_lab`.
 - Implementacao inicial pode adaptar o schema atual de `players` para `save_type`, mas a direcao de longo prazo e separar conta de jogo e saves para permitir novos modos/fases sem acoplar tudo a uma linha de player.
+
+Implementado localmente em `T03-P03B`:
+
+- `players.save_type` aceita `normal` e `progression_lab`.
+- A unicidade de jogador passa a ser `auth_user_id + save_type`.
+- Edge Functions resolvem o player pelo header `x-draxos-save-type`; sem header, usam `normal`.
+- Ranking retorna exclusao explicita para `progression_lab`.
+- Social esta isolado por save nesta etapa local; a evolucao para social de conta inteira com marcador `lab` fica para o refinamento de Social, se necessario.
 
 Modelo escolhido em `DMOB-D042`:
 

@@ -1,4 +1,5 @@
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import { type SaveType, saveTypeFromRequest, saveTypeQuery } from "../_shared/save_context.ts";
 
 interface EdgeConfig {
   supabaseUrl: string;
@@ -7,6 +8,7 @@ interface EdgeConfig {
 
 interface AuthContext {
   userId: string;
+  saveType: SaveType;
 }
 
 interface RestError {
@@ -119,7 +121,9 @@ async function loadPlayerId(
 ): Promise<{ value: string | null; error: null } | { value: null; error: RestError }> {
   const result = await restRequest<PlayerRow[]>(
     config,
-    `players?auth_user_id=eq.${encodeURIComponent(auth.userId)}&select=id&limit=1`,
+    `players?auth_user_id=eq.${encodeURIComponent(auth.userId)}&${
+      saveTypeQuery(auth.saveType)
+    }&select=id&limit=1`,
     { method: "GET" },
   );
   if (result.error !== null) {
@@ -161,7 +165,18 @@ function decodeAuthContext(request: Request): { value: AuthContext; error: null 
       error: { code: "UNAUTHENTICATED", message: "Token subject is invalid.", status: 401 },
     };
   }
-  return { value: { userId: payload.sub }, error: null };
+  const saveType = saveTypeFromRequest(request);
+  if (saveType === null) {
+    return {
+      value: null,
+      error: {
+        code: "INVALID_SAVE_TYPE",
+        message: "Save type must be normal or progression_lab.",
+        status: 400,
+      },
+    };
+  }
+  return { value: { userId: payload.sub, saveType }, error: null };
 }
 
 function decodeJwtPayload(encodedPayload: string): JwtPayload | null {

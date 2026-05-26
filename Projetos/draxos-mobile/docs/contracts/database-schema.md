@@ -1,7 +1,7 @@
 # Database Schema Contract
 
 - Ultima atualizacao: `2026-05-26`
-- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards e telemetria client implementadas; Track 03 planeja suporte a email/senha e dois saves por conta
+- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client e `save_type` local implementadas; Track 03 ainda planeja email/senha, reset separado e aplicacao do Progression Lab no save de lab
 
 Este documento define o schema esperado. A fonte tecnica viva do runtime local e `../../supabase/migrations/`; `../../server/schema/migrations/` permanece como espelho backend durante o alpha local.
 
@@ -13,6 +13,7 @@ Migrations atuais:
 - `202605200003_base_manager_economy.sql`: estruturas permanentes, fila de construcao, RLS de leitura e bootstrap da Base v0.
 - `202605200004_social_matchmaking_ranking.sql`: season ativa, amizades, guilda, estruturas de guilda, chat, ranking e telemetria minima.
 - `202605200005_monetization_rewards_alpha.sql`: Battle Pass, progresso de passe, claims de reward, compras alpha, RLS de leitura e seed `bp_s1_01`.
+- `202605260001_two_save_context.sql`: `players.save_type`, unicidade por `auth_user_id + save_type` e RPCs com contexto de save.
 
 ## MVP Tecnico
 
@@ -24,6 +25,7 @@ Campos minimos:
 
 - `id`
 - `auth_user_id`
+- `save_type`
 - `username`
 - `account_type`
 - `level`
@@ -177,7 +179,7 @@ Adicionar ou detalhar:
 - `alpha_purchases`
 - `telemetry_events`
 
-## Internal Alpha v0 - Extensao Planejada
+## Internal Alpha v0 - Extensao De Save
 
 Track 03 precisa separar conta de teste e save de jogo sem quebrar o runtime atual. A direcao de longo prazo e:
 
@@ -186,13 +188,20 @@ Track 03 precisa separar conta de teste e save de jogo sem quebrar o runtime atu
 - tabelas de gameplay devem conseguir apontar para o save correto;
 - Progression Lab escreve somente no save `progression_lab`.
 
-Implementacao inicial pode usar uma evolucao compativel do schema atual:
+Implementacao inicial em `T03-P03B` usa uma evolucao compativel do schema atual:
 
 - adicionar `save_type` a `players` com valores `normal` e `progression_lab`;
 - garantir unicidade por `auth_user_id + save_type`;
 - fazer tabelas existentes continuarem referenciando `players.id`;
-- criar os dois `players`/saves no bootstrap da conta alpha;
-- marcar metadados do save lab em payload ou coluna propria.
+- criar ou recuperar cada `player`/save conforme o header `x-draxos-save-type`;
+- deixar `competition/ranking/current` fora do `progression_lab` com motivo explicito `PROGRESSION_LAB_DOES_NOT_RANK`.
+
+Limites atuais desta etapa:
+
+- reset separado por save ainda fica para `T03-P03C`;
+- Progression Lab ainda nao aplica perfil/milestone no save server-backed;
+- social esta isolado por `player_id/save_type` no alpha local, e pode virar social de conta inteira com marcador `lab` em `T03-P06` se o design exigir;
+- email/senha remoto ainda fica adiado ate o gameplay local estar pronto.
 
 Refatoracao futura, se o projeto crescer:
 
@@ -442,29 +451,33 @@ Regras:
 
 ## RPCs MVP
 
-### `public.create_guest_account(p_auth_user_id, p_invite_code, p_request_id, p_device_label)`
+### `public.create_guest_account(p_auth_user_id, p_invite_code, p_request_id, p_device_label, p_save_type)`
 
 Responsabilidade: criar de forma idempotente a conta guest inicial para um usuario Supabase Auth anonimo.
 
-Implementado em: `202605190002_guest_account_mvp.sql`.
+Implementado originalmente em: `202605190002_guest_account_mvp.sql`.
+Atualizado em: `202605260001_two_save_context.sql`.
 
 Regras:
 
 - Exige usuario em `auth.users` com `is_anonymous = true`.
+- `p_save_type` aceita apenas `normal` ou `progression_lab`.
 - Valida convite ativo, nao expirado e com usos disponiveis.
-- Cria `players`, `resources` e `builds` com fixture `MVP_ONLY`.
+- Cria ou recupera `players`, `resources` e `builds` com fixture `MVP_ONLY` para o save solicitado.
 - Grava resposta em `idempotency_keys` para endpoint `account/guest`.
 - `GRANT EXECUTE` fica restrito a `service_role`; cliente usa Edge Function, nao RPC direto.
 
-### `public.request_mvp_battle(p_auth_user_id, p_request_id, p_mode)`
+### `public.request_mvp_battle(p_auth_user_id, p_request_id, p_mode, p_save_type)`
 
 Responsabilidade: criar batalha fixture `MVP_ONLY` de forma idempotente para um jogador autenticado.
 
-Implementado em: `202605200001_battle_request_mvp.sql`.
+Implementado originalmente em: `202605200001_battle_request_mvp.sql`.
+Atualizado em: `202605260001_two_save_context.sql`.
 
 Regras:
 
-- Exige player existente para o `auth_user_id`.
+- Exige player existente para o `auth_user_id` e `p_save_type`.
+- `p_save_type` aceita apenas `normal` ou `progression_lab`.
 - Aceita apenas `p_mode = 'MVP_ONLY'` no MVP tecnico.
 - Usa bot ativo `mvp_training_bot`.
 - Gera seed deterministica a partir de player e `request_id`.

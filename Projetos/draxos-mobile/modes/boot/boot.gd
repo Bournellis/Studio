@@ -548,10 +548,6 @@ func _execute_action(action_id: String) -> void:
 	_active_action_id = ""
 
 func _enter_guest() -> void:
-	if SessionStore.is_progression_lab_active():
-		_error_label.text = "Save Progression Lab ainda nao cria sessao online."
-		_detail_label.text = "Volte para o save Normal para criar/recuperar guest enquanto o schema local de dois saves nao esta pronto."
-		return
 	_set_busy(true, "Criando sessao guest...")
 	var auth_result: Dictionary = {"ok": true}
 	if not SessionStore.has_valid_access_token() or SessionStore.is_progression_lab_local_only():
@@ -613,7 +609,7 @@ func _select_save(save_type: String) -> void:
 		_screen_history.clear()
 		var message := "Save ativo alterado para %s." % SessionStore.active_save_label()
 		if SessionStore.is_progression_lab_active():
-			message = "Save Progression Lab selecionado. Acoes online ficam bloqueadas ate o save_type existir no Supabase local."
+			message = "Save Progression Lab selecionado. As acoes usam um player isolado no Supabase local."
 		_set_busy(false, message)
 	else:
 		_set_busy(false, "Save %s ja estava ativo." % SessionStore.active_save_label())
@@ -622,10 +618,6 @@ func _select_save(save_type: String) -> void:
 func _recover_session_state() -> bool:
 	if SessionStore.is_progression_lab_local_only():
 		_sync_status_from_session()
-		return false
-	if SessionStore.is_progression_lab_active():
-		_sync_status_from_session()
-		_detail_label.text = "Save Progression Lab selecionado. O servidor local ainda sera ligado a ele em T03-P03B."
 		return false
 	if not SessionStore.has_valid_access_token():
 		_sync_status_from_session()
@@ -1023,15 +1015,6 @@ func _sync_nav_buttons() -> void:
 		button.button_pressed = screen_id == _current_screen
 
 func _require_session(message: String) -> bool:
-	if SessionStore.is_progression_lab_active() and not SessionStore.is_progression_lab_local_only():
-		_error_label.text = "Save Progression Lab ainda nao executa acoes online."
-		_detail_label.text = "Use o save Normal para o loop server-authoritative atual. Em T03-P03B o Supabase local passara a resolver save_type."
-		_emit_client_event("precondition_failed", {
-			"action_id": _active_action_id,
-			"screen": _current_screen,
-			"reason": "progression_lab_save_pending",
-		})
-		return false
 	if SessionStore.is_progression_lab_local_only():
 		_error_label.text = "Save local-only do Progression Lab nao executa acoes online."
 		_detail_label.text = "Use o seeder com Supabase local para testar batalha, coleta, upgrades e outras mutacoes server-authoritative."
@@ -1053,15 +1036,6 @@ func _require_session(message: String) -> bool:
 	return false
 
 func _require_account(message: String) -> bool:
-	if SessionStore.is_progression_lab_active() and not SessionStore.is_progression_lab_local_only():
-		_error_label.text = "Save Progression Lab ainda nao executa acoes online."
-		_detail_label.text = "Volte para o save Normal para batalhar, coletar, evoluir e comprar enquanto o schema local de dois saves nao esta pronto."
-		_emit_client_event("precondition_failed", {
-			"action_id": _active_action_id,
-			"screen": _current_screen,
-			"reason": "progression_lab_save_pending",
-		})
-		return false
 	if SessionStore.is_progression_lab_local_only():
 		_error_label.text = "Save local-only do Progression Lab nao executa acoes online."
 		_detail_label.text = "Para batalhas, coleta, upgrades e compras, rode o seeder com Supabase local e carregue o cache server-backed."
@@ -1472,7 +1446,7 @@ func _action_payload(action_id: String) -> Dictionary:
 	}
 
 func _emit_client_event(event_type: String, payload: Dictionary) -> void:
-	if SessionStore.is_progression_lab_active():
+	if SessionStore.is_progression_lab_local_only():
 		return
 	if not SessionStore.has_valid_access_token():
 		return

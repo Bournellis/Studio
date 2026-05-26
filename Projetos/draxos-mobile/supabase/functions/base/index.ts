@@ -1,4 +1,5 @@
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import { type SaveType, saveTypeFromRequest, saveTypeQuery } from "../_shared/save_context.ts";
 
 type Route = "state" | "collect" | "upgrade";
 
@@ -9,6 +10,7 @@ interface EdgeConfig {
 
 interface AuthContext {
   userId: string;
+  saveType: SaveType;
 }
 
 interface RestError {
@@ -24,6 +26,7 @@ interface JwtPayload {
 
 interface PlayerRow {
   id: string;
+  save_type: SaveType;
   level: number;
 }
 
@@ -403,7 +406,9 @@ async function loadBaseState(
 > {
   const playerResult = await restRequest<PlayerRow[]>(
     config,
-    `players?auth_user_id=eq.${encodeURIComponent(auth.userId)}&select=id,level&limit=1`,
+    `players?auth_user_id=eq.${encodeURIComponent(auth.userId)}&${
+      saveTypeQuery(auth.saveType)
+    }&select=id,save_type,level&limit=1`,
     { method: "GET" },
   );
   if (playerResult.error !== null) {
@@ -697,7 +702,18 @@ function decodeAuthContext(request: Request): { value: AuthContext; error: null 
       },
     };
   }
-  return { value: { userId: payload.sub }, error: null };
+  const saveType = saveTypeFromRequest(request);
+  if (saveType === null) {
+    return {
+      value: null,
+      error: {
+        code: "INVALID_SAVE_TYPE",
+        message: "Save type must be normal or progression_lab.",
+        status: 400,
+      },
+    };
+  }
+  return { value: { userId: payload.sub, saveType }, error: null };
 }
 
 function decodeJwtPayload(encodedPayload: string): JwtPayload | null {

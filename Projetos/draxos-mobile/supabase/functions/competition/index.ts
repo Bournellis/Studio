@@ -1,4 +1,10 @@
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import {
+  isProgressionLabSave,
+  type SaveType,
+  saveTypeFromRequest,
+  saveTypeQuery,
+} from "../_shared/save_context.ts";
 
 type Route = "matchmaking_preview" | "ranking_current";
 
@@ -9,6 +15,7 @@ interface EdgeConfig {
 
 interface AuthContext {
   userId: string;
+  saveType: SaveType;
 }
 
 interface RestError {
@@ -25,6 +32,7 @@ interface JwtPayload {
 interface PlayerRow {
   id: string;
   username: string | null;
+  save_type: SaveType;
   level: number;
   power: number;
 }
@@ -134,6 +142,18 @@ async function handleRankingCurrent(auth: AuthContext, config: EdgeConfig): Prom
   if (season.error !== null) {
     return errorResponse(season.error.code, season.error.message, season.error.status);
   }
+  if (isProgressionLabSave(auth.saveType)) {
+    return jsonResponse({
+      ok: true,
+      ranking: {
+        season: season.value,
+        entries: [],
+        self: null,
+        bots_included: false,
+        excluded_reason: "PROGRESSION_LAB_DOES_NOT_RANK",
+      },
+    });
+  }
   await restRequest<unknown>(config, "ranking", {
     method: "POST",
     headers: { prefer: "resolution=ignore-duplicates,return=minimal" },
@@ -173,9 +193,9 @@ async function loadPlayer(
 ): Promise<{ value: PlayerRow; error: null } | { value: null; error: RestError }> {
   const result = await restRequest<PlayerRow[]>(
     config,
-    `players?auth_user_id=eq.${
-      encodeURIComponent(auth.userId)
-    }&select=id,username,level,power&limit=1`,
+    `players?auth_user_id=eq.${encodeURIComponent(auth.userId)}&${
+      saveTypeQuery(auth.saveType)
+    }&select=id,username,save_type,level,power&limit=1`,
     { method: "GET" },
   );
   if (result.error !== null) return { value: null, error: stateReadError() };
@@ -257,7 +277,18 @@ function decodeAuthContext(
       },
     };
   }
-  return { value: { userId: payload.sub }, error: null };
+  const saveType = saveTypeFromRequest(request);
+  if (saveType === null) {
+    return {
+      value: null,
+      error: {
+        code: "INVALID_SAVE_TYPE",
+        message: "Save type must be normal or progression_lab.",
+        status: 400,
+      },
+    };
+  }
+  return { value: { userId: payload.sub, saveType }, error: null };
 }
 
 function decodeJwtPayload(encodedPayload: string): JwtPayload | null {

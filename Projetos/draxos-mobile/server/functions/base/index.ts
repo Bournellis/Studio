@@ -1,4 +1,5 @@
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import { type SaveType, saveTypeFromRequest, saveTypeQuery } from "../_shared/save_context.ts";
 
 type Route = "state" | "collect" | "upgrade";
 
@@ -9,6 +10,7 @@ interface EdgeConfig {
 
 interface AuthContext {
   userId: string;
+  saveType: SaveType;
 }
 
 interface RestError {
@@ -24,6 +26,7 @@ interface JwtPayload {
 
 interface PlayerRow {
   id: string;
+  save_type: SaveType;
   level: number;
 }
 
@@ -74,47 +77,21 @@ interface StructureDefinition {
 
 type ResourceKey = "almas" | "energia" | "sangue" | "cristais" | "ossos";
 
-const UUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const SECONDS_PER_DAY = 86_400;
 const DEFAULT_CONSTRUCTION_SLOTS = 1;
 const STRUCTURES: StructureDefinition[] = [
-  {
-    id: "altar_das_almas",
-    displayName: "Altar das Almas",
-    resource: "almas",
-    dailyAtLevel40: 10,
-  },
+  { id: "altar_das_almas", displayName: "Altar das Almas", resource: "almas", dailyAtLevel40: 10 },
   {
     id: "nucleo_energia",
     displayName: "Nucleo de Energia",
     resource: "energia",
     dailyAtLevel40: 80,
   },
-  {
-    id: "pocos_sangue",
-    displayName: "Pocos de Sangue",
-    resource: "sangue",
-    dailyAtLevel40: 8,
-  },
-  {
-    id: "minas_cristal",
-    displayName: "Minas de Cristal",
-    resource: "cristais",
-    dailyAtLevel40: 5,
-  },
-  {
-    id: "estrutura_stats",
-    displayName: "Estrutura de Stats",
-    resource: null,
-    dailyAtLevel40: 0,
-  },
-  {
-    id: "ossario",
-    displayName: "Ossario",
-    resource: "ossos",
-    dailyAtLevel40: 2,
-  },
+  { id: "pocos_sangue", displayName: "Pocos de Sangue", resource: "sangue", dailyAtLevel40: 8 },
+  { id: "minas_cristal", displayName: "Minas de Cristal", resource: "cristais", dailyAtLevel40: 5 },
+  { id: "estrutura_stats", displayName: "Estrutura de Stats", resource: null, dailyAtLevel40: 0 },
+  { id: "ossario", displayName: "Ossario", resource: "ossos", dailyAtLevel40: 2 },
 ];
 
 Deno.serve(async (request: Request) => {
@@ -132,36 +109,20 @@ Deno.serve(async (request: Request) => {
       return errorResponse("METHOD_NOT_ALLOWED", "Use GET /base/state.", 405);
     }
     if (route === "collect" && request.method !== "POST") {
-      return errorResponse(
-        "METHOD_NOT_ALLOWED",
-        "Use POST /base/collect.",
-        405,
-      );
+      return errorResponse("METHOD_NOT_ALLOWED", "Use POST /base/collect.", 405);
     }
     if (route === "upgrade" && request.method !== "POST") {
-      return errorResponse(
-        "METHOD_NOT_ALLOWED",
-        "Use POST /base/upgrade.",
-        405,
-      );
+      return errorResponse("METHOD_NOT_ALLOWED", "Use POST /base/upgrade.", 405);
     }
 
     const auth = decodeAuthContext(request);
     if (auth.error !== null) {
-      return errorResponse(
-        auth.error.code,
-        auth.error.message,
-        auth.error.status,
-      );
+      return errorResponse(auth.error.code, auth.error.message, auth.error.status);
     }
 
     const config = loadConfig();
     if (config.error !== null) {
-      return errorResponse(
-        config.error.code,
-        config.error.message,
-        config.error.status,
-      );
+      return errorResponse(config.error.code, config.error.message, config.error.status);
     }
 
     if (route === "state") {
@@ -173,39 +134,19 @@ Deno.serve(async (request: Request) => {
     return await handleUpgrade(request, auth.value, config.value);
   } catch (error) {
     console.error(error);
-    return errorResponse(
-      "INTERNAL_ERROR",
-      "Unexpected base service error.",
-      500,
-    );
+    return errorResponse("INTERNAL_ERROR", "Unexpected base service error.", 500);
   }
 });
 
-async function handleState(
-  auth: AuthContext,
-  config: EdgeConfig,
-): Promise<Response> {
+async function handleState(auth: AuthContext, config: EdgeConfig): Promise<Response> {
   const state = await loadBaseState(auth, config);
   if (state.error !== null) {
-    return errorResponse(
-      state.error.code,
-      state.error.message,
-      state.error.status,
-    );
+    return errorResponse(state.error.code, state.error.message, state.error.status);
   }
-  await completeDueJobs(
-    config,
-    state.value.player.id,
-    state.value.jobs,
-    new Date(),
-  );
+  await completeDueJobs(config, state.value.player.id, state.value.jobs, new Date());
   const refreshed = await loadBaseState(auth, config);
   if (refreshed.error !== null) {
-    return errorResponse(
-      refreshed.error.code,
-      refreshed.error.message,
-      refreshed.error.status,
-    );
+    return errorResponse(refreshed.error.code, refreshed.error.message, refreshed.error.status);
   }
   return jsonResponse(baseStatePayload(refreshed.value));
 }
@@ -217,41 +158,20 @@ async function handleCollect(
 ): Promise<Response> {
   const body = await readJsonObject(request);
   if (body === null) {
-    return errorResponse(
-      "INVALID_JSON",
-      "Request body must be a JSON object.",
-      400,
-    );
+    return errorResponse("INVALID_JSON", "Request body must be a JSON object.", 400);
   }
   const requestId = stringField(body, "request_id");
   if (!UUID_PATTERN.test(requestId)) {
-    return errorResponse(
-      "INVALID_REQUEST_ID",
-      "request_id must be a UUID.",
-      400,
-    );
+    return errorResponse("INVALID_REQUEST_ID", "request_id must be a UUID.", 400);
   }
 
   const state = await loadBaseState(auth, config);
   if (state.error !== null) {
-    return errorResponse(
-      state.error.code,
-      state.error.message,
-      state.error.status,
-    );
+    return errorResponse(state.error.code, state.error.message, state.error.status);
   }
-  const existing = await loadIdempotency(
-    config,
-    state.value.player.id,
-    "base/collect",
-    requestId,
-  );
+  const existing = await loadIdempotency(config, state.value.player.id, "base/collect", requestId);
   if (existing.error !== null) {
-    return errorResponse(
-      existing.error.code,
-      existing.error.message,
-      existing.error.status,
-    );
+    return errorResponse(existing.error.code, existing.error.message, existing.error.status);
   }
   if (existing.value !== null) {
     return jsonResponse(existing.value);
@@ -261,11 +181,7 @@ async function handleCollect(
   await completeDueJobs(config, state.value.player.id, state.value.jobs, now);
   const refreshed = await loadBaseState(auth, config);
   if (refreshed.error !== null) {
-    return errorResponse(
-      refreshed.error.code,
-      refreshed.error.message,
-      refreshed.error.status,
-    );
+    return errorResponse(refreshed.error.code, refreshed.error.message, refreshed.error.status);
   }
 
   const collected = calculateCollectable(refreshed.value.structures, now);
@@ -283,18 +199,10 @@ async function handleCollect(
     const resourcePatch = await restRequest<unknown>(
       config,
       `resources?player_id=eq.${encodeURIComponent(refreshed.value.player.id)}`,
-      {
-        method: "PATCH",
-        headers: { prefer: "return=minimal" },
-        body: JSON.stringify(patch),
-      },
+      { method: "PATCH", headers: { prefer: "return=minimal" }, body: JSON.stringify(patch) },
     );
     if (resourcePatch.error !== null) {
-      return errorResponse(
-        "BASE_COLLECT_FAILED",
-        "Unable to apply collected resources.",
-        500,
-      );
+      return errorResponse("BASE_COLLECT_FAILED", "Unable to apply collected resources.", 500);
     }
     const transaction = await insertLedger(
       config,
@@ -304,11 +212,7 @@ async function handleCollect(
       collected,
     );
     if (transaction !== null) {
-      return errorResponse(
-        transaction.code,
-        transaction.message,
-        transaction.status,
-      );
+      return errorResponse(transaction.code, transaction.message, transaction.status);
     }
   }
 
@@ -334,11 +238,7 @@ async function handleCollect(
 
   const finalState = await loadBaseState(auth, config);
   if (finalState.error !== null) {
-    return errorResponse(
-      finalState.error.code,
-      finalState.error.message,
-      finalState.error.status,
-    );
+    return errorResponse(finalState.error.code, finalState.error.message, finalState.error.status);
   }
   const responsePayload = {
     ...baseStatePayload(finalState.value),
@@ -364,50 +264,25 @@ async function handleUpgrade(
 ): Promise<Response> {
   const body = await readJsonObject(request);
   if (body === null) {
-    return errorResponse(
-      "INVALID_JSON",
-      "Request body must be a JSON object.",
-      400,
-    );
+    return errorResponse("INVALID_JSON", "Request body must be a JSON object.", 400);
   }
   const requestId = stringField(body, "request_id");
   const structureId = stringField(body, "structure_id");
   if (!UUID_PATTERN.test(requestId)) {
-    return errorResponse(
-      "INVALID_REQUEST_ID",
-      "request_id must be a UUID.",
-      400,
-    );
+    return errorResponse("INVALID_REQUEST_ID", "request_id must be a UUID.", 400);
   }
   const definition = definitionFor(structureId);
   if (definition === undefined) {
-    return errorResponse(
-      "INVALID_STRUCTURE",
-      "structure_id is not part of Base v0.",
-      400,
-    );
+    return errorResponse("INVALID_STRUCTURE", "structure_id is not part of Base v0.", 400);
   }
 
   const state = await loadBaseState(auth, config);
   if (state.error !== null) {
-    return errorResponse(
-      state.error.code,
-      state.error.message,
-      state.error.status,
-    );
+    return errorResponse(state.error.code, state.error.message, state.error.status);
   }
-  const existing = await loadIdempotency(
-    config,
-    state.value.player.id,
-    "base/upgrade",
-    requestId,
-  );
+  const existing = await loadIdempotency(config, state.value.player.id, "base/upgrade", requestId);
   if (existing.error !== null) {
-    return errorResponse(
-      existing.error.code,
-      existing.error.message,
-      existing.error.status,
-    );
+    return errorResponse(existing.error.code, existing.error.message, existing.error.status);
   }
   if (existing.value !== null) {
     return jsonResponse(existing.value);
@@ -417,37 +292,21 @@ async function handleUpgrade(
   await completeDueJobs(config, state.value.player.id, state.value.jobs, now);
   const refreshed = await loadBaseState(auth, config);
   if (refreshed.error !== null) {
-    return errorResponse(
-      refreshed.error.code,
-      refreshed.error.message,
-      refreshed.error.status,
-    );
+    return errorResponse(refreshed.error.code, refreshed.error.message, refreshed.error.status);
   }
 
-  const structure = refreshed.value.structures.find((item) =>
-    item.structure_id === structureId
-  );
+  const structure = refreshed.value.structures.find((item) => item.structure_id === structureId);
   if (structure === undefined) {
-    return errorResponse(
-      "BASE_STATE_INCOMPLETE",
-      "Base structure state is missing.",
-      409,
-    );
+    return errorResponse("BASE_STATE_INCOMPLETE", "Base structure state is missing.", 409);
   }
   if (
     refreshed.value.jobs.filter((job) => job.status === "active").length >=
       DEFAULT_CONSTRUCTION_SLOTS
   ) {
-    return errorResponse(
-      "CONSTRUCTION_QUEUE_FULL",
-      "No construction slot is available.",
-      409,
-    );
+    return errorResponse("CONSTRUCTION_QUEUE_FULL", "No construction slot is available.", 409);
   }
   if (
-    refreshed.value.jobs.some((job) =>
-      job.status === "active" && job.structure_id === structureId
-    )
+    refreshed.value.jobs.some((job) => job.status === "active" && job.structure_id === structureId)
   ) {
     return errorResponse(
       "STRUCTURE_ALREADY_UPGRADING",
@@ -459,19 +318,11 @@ async function handleUpgrade(
   const targetLevel = structure.level + 1;
   const cap = Math.min(40, Math.max(1, refreshed.value.player.level));
   if (targetLevel > cap) {
-    return errorResponse(
-      "LEVEL_CAP_REACHED",
-      "Structure upgrade is limited by player level.",
-      409,
-    );
+    return errorResponse("LEVEL_CAP_REACHED", "Structure upgrade is limited by player level.", 409);
   }
   const cost = upgradeCost(targetLevel);
   if (numberValue(refreshed.value.resources.energia, 0) < cost) {
-    return errorResponse(
-      "INSUFFICIENT_RESOURCES",
-      "Not enough Energia for this upgrade.",
-      409,
-    );
+    return errorResponse("INSUFFICIENT_RESOURCES", "Not enough Energia for this upgrade.", 409);
   }
 
   const resourcePatch = await restRequest<unknown>(
@@ -487,16 +338,10 @@ async function handleUpgrade(
     },
   );
   if (resourcePatch.error !== null) {
-    return errorResponse(
-      "BASE_UPGRADE_FAILED",
-      "Unable to spend Energia.",
-      500,
-    );
+    return errorResponse("BASE_UPGRADE_FAILED", "Unable to spend Energia.", 500);
   }
 
-  const completesAt = new Date(
-    now.getTime() + upgradeDurationSeconds(targetLevel) * 1000,
-  );
+  const completesAt = new Date(now.getTime() + upgradeDurationSeconds(targetLevel) * 1000);
   const jobInsert = await restRequest<ConstructionJobRow[]>(
     config,
     "construction_jobs?select=*",
@@ -515,32 +360,18 @@ async function handleUpgrade(
     },
   );
   if (jobInsert.error !== null) {
-    return errorResponse(
-      "BASE_UPGRADE_FAILED",
-      "Unable to create construction job.",
-      500,
-    );
+    return errorResponse("BASE_UPGRADE_FAILED", "Unable to create construction job.", 500);
   }
-  const ledger = await insertLedger(
-    config,
-    refreshed.value.player.id,
-    "base/upgrade",
-    requestId,
-    {
-      energia: -cost,
-    },
-  );
+  const ledger = await insertLedger(config, refreshed.value.player.id, "base/upgrade", requestId, {
+    energia: -cost,
+  });
   if (ledger !== null) {
     return errorResponse(ledger.code, ledger.message, ledger.status);
   }
 
   const finalState = await loadBaseState(auth, config);
   if (finalState.error !== null) {
-    return errorResponse(
-      finalState.error.code,
-      finalState.error.message,
-      finalState.error.status,
-    );
+    return errorResponse(finalState.error.code, finalState.error.message, finalState.error.status);
   }
   const responsePayload = {
     ...baseStatePayload(finalState.value),
@@ -575,9 +406,9 @@ async function loadBaseState(
 > {
   const playerResult = await restRequest<PlayerRow[]>(
     config,
-    `players?auth_user_id=eq.${
-      encodeURIComponent(auth.userId)
-    }&select=id,level&limit=1`,
+    `players?auth_user_id=eq.${encodeURIComponent(auth.userId)}&${
+      saveTypeQuery(auth.saveType)
+    }&select=id,save_type,level&limit=1`,
     { method: "GET" },
   );
   if (playerResult.error !== null) {
@@ -613,8 +444,7 @@ async function loadBaseState(
     { method: "GET" },
   );
   if (
-    resourcesResult.error !== null || structuresResult.error !== null ||
-    jobsResult.error !== null
+    resourcesResult.error !== null || structuresResult.error !== null || jobsResult.error !== null
   ) {
     return { value: null, error: stateReadError() };
   }
@@ -622,36 +452,21 @@ async function loadBaseState(
   if (resources === null || structuresResult.value.length < STRUCTURES.length) {
     return {
       value: null,
-      error: {
-        code: "BASE_STATE_INCOMPLETE",
-        message: "Base state is incomplete.",
-        status: 409,
-      },
+      error: { code: "BASE_STATE_INCOMPLETE", message: "Base state is incomplete.", status: 409 },
     };
   }
   return {
-    value: {
-      player,
-      resources,
-      structures: structuresResult.value,
-      jobs: jobsResult.value,
-    },
+    value: { player, resources, structures: structuresResult.value, jobs: jobsResult.value },
     error: null,
   };
 }
 
-async function ensureBaseRows(
-  config: EdgeConfig,
-  playerId: string,
-): Promise<void> {
+async function ensureBaseRows(config: EdgeConfig, playerId: string): Promise<void> {
   for (const definition of STRUCTURES) {
     await restRequest<unknown>(config, "base_structures", {
       method: "POST",
       headers: { prefer: "resolution=ignore-duplicates,return=minimal" },
-      body: JSON.stringify({
-        player_id: playerId,
-        structure_id: definition.id,
-      }),
+      body: JSON.stringify({ player_id: playerId, structure_id: definition.id }),
     });
   }
 }
@@ -663,10 +478,7 @@ async function completeDueJobs(
   now: Date,
 ): Promise<void> {
   for (const job of jobs) {
-    if (
-      job.status !== "active" ||
-      new Date(job.completes_at).getTime() > now.getTime()
-    ) {
+    if (job.status !== "active" || new Date(job.completes_at).getTime() > now.getTime()) {
       continue;
     }
     await restRequest<unknown>(
@@ -684,16 +496,13 @@ async function completeDueJobs(
     );
     await restRequest<unknown>(
       config,
-      `base_structures?player_id=eq.${
-        encodeURIComponent(playerId)
-      }&structure_id=eq.${encodeURIComponent(job.structure_id)}`,
+      `base_structures?player_id=eq.${encodeURIComponent(playerId)}&structure_id=eq.${
+        encodeURIComponent(job.structure_id)
+      }`,
       {
         method: "PATCH",
         headers: { prefer: "return=minimal" },
-        body: JSON.stringify({
-          level: job.target_level,
-          updated_at: now.toISOString(),
-        }),
+        body: JSON.stringify({ level: job.target_level, updated_at: now.toISOString() }),
       },
     );
   }
@@ -753,33 +562,23 @@ function calculateCollectable(
 
 function collectableFor(structure: BaseStructureRow, now: Date): number {
   const definition = definitionFor(structure.structure_id);
-  if (
-    definition === undefined || definition.resource === null ||
-    structure.level <= 0
-  ) {
+  if (definition === undefined || definition.resource === null || structure.level <= 0) {
     return 0;
   }
   const elapsedSeconds = Math.max(
     0,
     (now.getTime() - new Date(structure.last_collected_at).getTime()) / 1000,
   );
-  const produced = dailyProduction(structure) *
-    (elapsedSeconds / SECONDS_PER_DAY);
+  const produced = dailyProduction(structure) * (elapsedSeconds / SECONDS_PER_DAY);
   return round2(Math.min(storageCap(structure), produced));
 }
 
 function dailyProduction(structure: BaseStructureRow): number {
   const definition = definitionFor(structure.structure_id);
-  if (
-    definition === undefined || definition.resource === null ||
-    structure.level <= 0
-  ) {
+  if (definition === undefined || definition.resource === null || structure.level <= 0) {
     return 0;
   }
-  return Math.max(
-    1,
-    Math.round(definition.dailyAtLevel40 * structure.level / 40),
-  );
+  return Math.max(1, Math.round(definition.dailyAtLevel40 * structure.level / 40));
 }
 
 function storageCap(structure: BaseStructureRow): number {
@@ -804,16 +603,12 @@ async function loadIdempotency(
   playerId: string,
   endpoint: string,
   requestId: string,
-): Promise<
-  { value: unknown | null; error: null } | { value: null; error: RestError }
-> {
+): Promise<{ value: unknown | null; error: null } | { value: null; error: RestError }> {
   const result = await restRequest<IdempotencyRow[]>(
     config,
-    `idempotency_keys?player_id=eq.${
-      encodeURIComponent(playerId)
-    }&endpoint=eq.${encodeURIComponent(endpoint)}&request_id=eq.${
-      encodeURIComponent(requestId)
-    }&select=response_payload&limit=1`,
+    `idempotency_keys?player_id=eq.${encodeURIComponent(playerId)}&endpoint=eq.${
+      encodeURIComponent(endpoint)
+    }&request_id=eq.${encodeURIComponent(requestId)}&select=response_payload&limit=1`,
     { method: "GET" },
   );
   if (result.error !== null) {
@@ -832,18 +627,11 @@ async function insertLedger(
   const result = await restRequest<unknown>(config, "resource_transactions", {
     method: "POST",
     headers: { prefer: "return=minimal" },
-    body: JSON.stringify({
-      player_id: playerId,
-      source,
-      request_id: requestId,
-      delta,
-    }),
+    body: JSON.stringify({ player_id: playerId, source, request_id: requestId, delta }),
   });
-  return result.error === null ? null : {
-    code: "LEDGER_WRITE_FAILED",
-    message: "Unable to record resource ledger.",
-    status: 500,
-  };
+  return result.error === null
+    ? null
+    : { code: "LEDGER_WRITE_FAILED", message: "Unable to record resource ledger.", status: 500 };
 }
 
 async function insertIdempotency(
@@ -877,9 +665,7 @@ function resolveRoute(pathname: string): Route | null {
   return null;
 }
 
-function decodeAuthContext(
-  request: Request,
-): { value: AuthContext; error: null } | {
+function decodeAuthContext(request: Request): { value: AuthContext; error: null } | {
   value: null;
   error: RestError;
 } {
@@ -888,11 +674,7 @@ function decodeAuthContext(
   if (!header.startsWith(prefix)) {
     return {
       value: null,
-      error: {
-        code: "UNAUTHENTICATED",
-        message: "Bearer token is required.",
-        status: 401,
-      },
+      error: { code: "UNAUTHENTICATED", message: "Bearer token is required.", status: 401 },
     };
   }
   const token = header.slice(prefix.length);
@@ -900,25 +682,14 @@ function decodeAuthContext(
   if (parts.length < 2) {
     return {
       value: null,
-      error: {
-        code: "UNAUTHENTICATED",
-        message: "Invalid bearer token.",
-        status: 401,
-      },
+      error: { code: "UNAUTHENTICATED", message: "Invalid bearer token.", status: 401 },
     };
   }
   const payload = decodeJwtPayload(parts[1]);
-  if (
-    payload === null || typeof payload.sub !== "string" ||
-    !UUID_PATTERN.test(payload.sub)
-  ) {
+  if (payload === null || typeof payload.sub !== "string" || !UUID_PATTERN.test(payload.sub)) {
     return {
       value: null,
-      error: {
-        code: "UNAUTHENTICATED",
-        message: "Token subject is invalid.",
-        status: 401,
-      },
+      error: { code: "UNAUTHENTICATED", message: "Token subject is invalid.", status: 401 },
     };
   }
   if (payload.is_anonymous === false) {
@@ -931,17 +702,25 @@ function decodeAuthContext(
       },
     };
   }
-  return { value: { userId: payload.sub }, error: null };
+  const saveType = saveTypeFromRequest(request);
+  if (saveType === null) {
+    return {
+      value: null,
+      error: {
+        code: "INVALID_SAVE_TYPE",
+        message: "Save type must be normal or progression_lab.",
+        status: 400,
+      },
+    };
+  }
+  return { value: { userId: payload.sub, saveType }, error: null };
 }
 
 function decodeJwtPayload(encodedPayload: string): JwtPayload | null {
   try {
     const normalized = encodedPayload.replaceAll("-", "+").replaceAll("_", "/");
     const padded = normalized + "=".repeat((4 - normalized.length % 4) % 4);
-    const bytes = Uint8Array.from(
-      atob(padded),
-      (character) => character.charCodeAt(0),
-    );
+    const bytes = Uint8Array.from(atob(padded), (character) => character.charCodeAt(0));
     const payload: unknown = JSON.parse(new TextDecoder().decode(bytes));
     return isObject(payload) ? payload as JwtPayload : null;
   } catch {
@@ -949,10 +728,7 @@ function decodeJwtPayload(encodedPayload: string): JwtPayload | null {
   }
 }
 
-function loadConfig(): { value: EdgeConfig; error: null } | {
-  value: null;
-  error: RestError;
-} {
+function loadConfig(): { value: EdgeConfig; error: null } | { value: null; error: RestError } {
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
   if (supabaseUrl === "" || serviceRoleKey === "") {
@@ -965,15 +741,10 @@ function loadConfig(): { value: EdgeConfig; error: null } | {
       },
     };
   }
-  return {
-    value: { supabaseUrl: supabaseUrl.replace(/\/$/, ""), serviceRoleKey },
-    error: null,
-  };
+  return { value: { supabaseUrl: supabaseUrl.replace(/\/$/, ""), serviceRoleKey }, error: null };
 }
 
-async function readJsonObject(
-  request: Request,
-): Promise<Record<string, unknown> | null> {
+async function readJsonObject(request: Request): Promise<Record<string, unknown> | null> {
   try {
     const payload: unknown = await request.json();
     return isObject(payload) ? payload : null;
@@ -994,10 +765,7 @@ async function restRequest<T>(
   if (init.body !== undefined) {
     headers.set("content-type", "application/json");
   }
-  const response = await fetch(`${config.supabaseUrl}/rest/v1/${path}`, {
-    ...init,
-    headers,
-  });
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${path}`, { ...init, headers });
   const text = await response.text();
   const data = text === "" ? null : parseJson(text);
   if (!response.ok) {
@@ -1015,18 +783,10 @@ async function restRequest<T>(
 }
 
 function stateReadError(): RestError {
-  return {
-    code: "STATE_READ_FAILED",
-    message: "Unable to load base state.",
-    status: 500,
-  };
+  return { code: "STATE_READ_FAILED", message: "Unable to load base state.", status: 500 };
 }
 
-function errorResponse(
-  code: string,
-  message: string,
-  status: number,
-): Response {
+function errorResponse(code: string, message: string, status: number): Response {
   return jsonResponse({ ok: false, error: { code, message } }, status);
 }
 

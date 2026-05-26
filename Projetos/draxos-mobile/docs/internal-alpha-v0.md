@@ -58,6 +58,15 @@ Regras:
 - Dados de ranking/social do save normal nao devem ser contaminados pelo lab.
 - Toda mutacao continua server-authoritative.
 
+Status local atual (`T03-P03B`):
+
+- Godot persiste o save ativo e envia `x-draxos-save-type`.
+- Supabase local resolve `normal` e `progression_lab` por `players.save_type`.
+- Uma mesma sessao Auth pode criar/carregar dois players/saves distintos.
+- Batalha, Base, Social, Competicao, Loja e Telemetria usam o save ativo no servidor.
+- `progression_lab` fica fora do ranking com motivo explicito `PROGRESSION_LAB_DOES_NOT_RANK`.
+- Reset separado e aplicacao de perfil/milestone do Progression Lab ainda ficam para as proximas subetapas.
+
 ## Backend Remoto
 
 Alvo inicial:

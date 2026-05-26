@@ -1,5 +1,6 @@
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
 import { type CombatantBuild, simulateFirstSliceBattle } from "../_shared/battle_simulator.ts";
+import { type SaveType, saveTypeFromRequest, saveTypeQuery } from "../_shared/save_context.ts";
 
 type Route = "request" | "latest";
 type BattleMode = "MVP_ONLY" | "FIRST_SLICE_SIM";
@@ -11,6 +12,7 @@ interface EdgeConfig {
 
 interface AuthContext {
   userId: string;
+  saveType: SaveType;
 }
 
 interface RestError {
@@ -27,6 +29,7 @@ interface JwtPayload {
 interface PlayerRow {
   id: string;
   username?: string | null;
+  save_type?: SaveType;
   level?: number;
   xp?: number;
 }
@@ -168,6 +171,7 @@ async function handleMvpRequest(
       p_auth_user_id: auth.userId,
       p_request_id: requestId,
       p_mode: mode,
+      p_save_type: auth.saveType,
     }),
   });
 
@@ -287,7 +291,9 @@ async function handleFirstSliceRequest(
 async function handleLatest(auth: AuthContext, config: EdgeConfig): Promise<Response> {
   const playerResult = await restRequest<PlayerRow[]>(
     config,
-    `players?auth_user_id=eq.${encodeURIComponent(auth.userId)}&select=id&limit=1`,
+    `players?auth_user_id=eq.${encodeURIComponent(auth.userId)}&${
+      saveTypeQuery(auth.saveType)
+    }&select=id,save_type&limit=1`,
     { method: "GET" },
   );
 
@@ -363,9 +369,9 @@ async function loadPlayerState(
 > {
   const playerResult = await restRequest<PlayerRow[]>(
     config,
-    `players?auth_user_id=eq.${
-      encodeURIComponent(auth.userId)
-    }&select=id,username,level,xp&limit=1`,
+    `players?auth_user_id=eq.${encodeURIComponent(auth.userId)}&${
+      saveTypeQuery(auth.saveType)
+    }&select=id,username,save_type,level,xp&limit=1`,
     { method: "GET" },
   );
   if (playerResult.error !== null) {
@@ -599,8 +605,20 @@ function decodeAuthContext(request: Request): { value: AuthContext; error: null 
     };
   }
 
+  const saveType = saveTypeFromRequest(request);
+  if (saveType === null) {
+    return {
+      value: null,
+      error: {
+        code: "INVALID_SAVE_TYPE",
+        message: "Save type must be normal or progression_lab.",
+        status: 400,
+      },
+    };
+  }
+
   return {
-    value: { userId: payload.sub },
+    value: { userId: payload.sub, saveType },
     error: null,
   };
 }
@@ -743,6 +761,14 @@ function mapDatabaseError(error: RestError): RestError {
     return {
       code: "INVALID_REQUEST_ID",
       message: "request_id must be a UUID.",
+      status: 400,
+    };
+  }
+
+  if (message.includes("INVALID_SAVE_TYPE")) {
+    return {
+      code: "INVALID_SAVE_TYPE",
+      message: "Save type must be normal or progression_lab.",
       status: 400,
     };
   }

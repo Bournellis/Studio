@@ -1,4 +1,5 @@
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import { type SaveType, saveTypeFromRequest, saveTypeQuery } from "../_shared/save_context.ts";
 
 type Route = "state" | "friend_add" | "guild_create" | "chat_send";
 
@@ -9,6 +10,7 @@ interface EdgeConfig {
 
 interface AuthContext {
   userId: string;
+  saveType: SaveType;
 }
 
 interface RestError {
@@ -25,6 +27,7 @@ interface JwtPayload {
 interface PlayerRow {
   id: string;
   username: string | null;
+  save_type: SaveType;
   level: number;
   power: number;
 }
@@ -78,8 +81,7 @@ interface ChatMessageRow {
   created_at: string;
 }
 
-const UUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const GUILD_STRUCTURES = [
   "oficina_ritual",
   "condensador_astral",
@@ -101,59 +103,32 @@ Deno.serve(async (request: Request) => {
       return errorResponse("METHOD_NOT_ALLOWED", "Use GET /social/state.", 405);
     }
     if (route !== "state" && request.method !== "POST") {
-      return errorResponse(
-        "METHOD_NOT_ALLOWED",
-        "Use POST for social mutations.",
-        405,
-      );
+      return errorResponse("METHOD_NOT_ALLOWED", "Use POST for social mutations.", 405);
     }
 
     const auth = decodeAuthContext(request);
     if (auth.error !== null) {
-      return errorResponse(
-        auth.error.code,
-        auth.error.message,
-        auth.error.status,
-      );
+      return errorResponse(auth.error.code, auth.error.message, auth.error.status);
     }
     const config = loadConfig();
     if (config.error !== null) {
-      return errorResponse(
-        config.error.code,
-        config.error.message,
-        config.error.status,
-      );
+      return errorResponse(config.error.code, config.error.message, config.error.status);
     }
 
     if (route === "state") return await handleState(auth.value, config.value);
-    if (route === "friend_add") {
-      return await handleFriendAdd(request, auth.value, config.value);
-    }
-    if (route === "guild_create") {
-      return await handleGuildCreate(request, auth.value, config.value);
-    }
+    if (route === "friend_add") return await handleFriendAdd(request, auth.value, config.value);
+    if (route === "guild_create") return await handleGuildCreate(request, auth.value, config.value);
     return await handleChatSend(request, auth.value, config.value);
   } catch (error) {
     console.error(error);
-    return errorResponse(
-      "INTERNAL_ERROR",
-      "Unexpected social service error.",
-      500,
-    );
+    return errorResponse("INTERNAL_ERROR", "Unexpected social service error.", 500);
   }
 });
 
-async function handleState(
-  auth: AuthContext,
-  config: EdgeConfig,
-): Promise<Response> {
+async function handleState(auth: AuthContext, config: EdgeConfig): Promise<Response> {
   const player = await loadPlayer(auth, config);
   if (player.error !== null) {
-    return errorResponse(
-      player.error.code,
-      player.error.message,
-      player.error.status,
-    );
+    return errorResponse(player.error.code, player.error.message, player.error.status);
   }
   return jsonResponse(await socialStatePayload(config, player.value));
 }
@@ -165,45 +140,22 @@ async function handleFriendAdd(
 ): Promise<Response> {
   const body = await readJsonObject(request);
   if (body === null) {
-    return errorResponse(
-      "INVALID_JSON",
-      "Request body must be a JSON object.",
-      400,
-    );
+    return errorResponse("INVALID_JSON", "Request body must be a JSON object.", 400);
   }
   const requestId = stringField(body, "request_id");
   const username = stringField(body, "username");
   if (!UUID_PATTERN.test(requestId)) {
-    return errorResponse(
-      "INVALID_REQUEST_ID",
-      "request_id must be a UUID.",
-      400,
-    );
+    return errorResponse("INVALID_REQUEST_ID", "request_id must be a UUID.", 400);
   }
-  if (username === "") {
-    return errorResponse("INVALID_USERNAME", "username is required.", 400);
-  }
+  if (username === "") return errorResponse("INVALID_USERNAME", "username is required.", 400);
 
   const player = await loadPlayer(auth, config);
   if (player.error !== null) {
-    return errorResponse(
-      player.error.code,
-      player.error.message,
-      player.error.status,
-    );
+    return errorResponse(player.error.code, player.error.message, player.error.status);
   }
-  const existing = await loadIdempotency(
-    config,
-    player.value.id,
-    "friends/add",
-    requestId,
-  );
+  const existing = await loadIdempotency(config, player.value.id, "friends/add", requestId);
   if (existing.error !== null) {
-    return errorResponse(
-      existing.error.code,
-      existing.error.message,
-      existing.error.status,
-    );
+    return errorResponse(existing.error.code, existing.error.message, existing.error.status);
   }
   if (existing.value !== null) return jsonResponse(existing.value);
 
@@ -211,7 +163,7 @@ async function handleFriendAdd(
     config,
     `players?username=eq.${
       encodeURIComponent(username)
-    }&select=id,username,level,power&limit=1`,
+    }&select=id,username,save_type,level,power&limit=1`,
     { method: "GET" },
   );
   if (targetResult.error !== null) {
@@ -219,11 +171,7 @@ async function handleFriendAdd(
   }
   const target = targetResult.value[0] ?? null;
   if (target === null) {
-    return errorResponse(
-      "PLAYER_NOT_FOUND",
-      "Friend username was not found.",
-      404,
-    );
+    return errorResponse("PLAYER_NOT_FOUND", "Friend username was not found.", 404);
   }
   if (target.id === player.value.id) {
     return errorResponse("INVALID_FRIEND", "Cannot add yourself.", 400);
@@ -246,13 +194,7 @@ async function handleFriendAdd(
   }
 
   const payload = await socialStatePayload(config, player.value);
-  await insertIdempotency(
-    config,
-    player.value.id,
-    "friends/add",
-    requestId,
-    payload,
-  );
+  await insertIdempotency(config, player.value.id, "friends/add", requestId, payload);
   return jsonResponse(payload);
 }
 
@@ -263,49 +205,24 @@ async function handleGuildCreate(
 ): Promise<Response> {
   const body = await readJsonObject(request);
   if (body === null) {
-    return errorResponse(
-      "INVALID_JSON",
-      "Request body must be a JSON object.",
-      400,
-    );
+    return errorResponse("INVALID_JSON", "Request body must be a JSON object.", 400);
   }
   const requestId = stringField(body, "request_id");
   const name = stringField(body, "name");
   if (!UUID_PATTERN.test(requestId)) {
-    return errorResponse(
-      "INVALID_REQUEST_ID",
-      "request_id must be a UUID.",
-      400,
-    );
+    return errorResponse("INVALID_REQUEST_ID", "request_id must be a UUID.", 400);
   }
   if (name.length < 3 || name.length > 32) {
-    return errorResponse(
-      "INVALID_GUILD_NAME",
-      "Guild name must be 3-32 characters.",
-      400,
-    );
+    return errorResponse("INVALID_GUILD_NAME", "Guild name must be 3-32 characters.", 400);
   }
 
   const player = await loadPlayer(auth, config);
   if (player.error !== null) {
-    return errorResponse(
-      player.error.code,
-      player.error.message,
-      player.error.status,
-    );
+    return errorResponse(player.error.code, player.error.message, player.error.status);
   }
-  const existing = await loadIdempotency(
-    config,
-    player.value.id,
-    "guild/create",
-    requestId,
-  );
+  const existing = await loadIdempotency(config, player.value.id, "guild/create", requestId);
   if (existing.error !== null) {
-    return errorResponse(
-      existing.error.code,
-      existing.error.message,
-      existing.error.status,
-    );
+    return errorResponse(existing.error.code, existing.error.message, existing.error.status);
   }
   if (existing.value !== null) return jsonResponse(existing.value);
 
@@ -318,11 +235,7 @@ async function handleGuildCreate(
     );
   }
   if (currentGuild.value !== null) {
-    return errorResponse(
-      "GUILD_ALREADY_JOINED",
-      "Player already belongs to a guild.",
-      409,
-    );
+    return errorResponse("GUILD_ALREADY_JOINED", "Player already belongs to a guild.", 409);
   }
 
   const guildInsert = await restRequest<GuildRow[]>(config, "guilds?select=*", {
@@ -337,21 +250,13 @@ async function handleGuildCreate(
   await restRequest<unknown>(config, "guild_members", {
     method: "POST",
     headers: { prefer: "return=minimal" },
-    body: JSON.stringify({
-      guild_id: guild.id,
-      player_id: player.value.id,
-      role: "owner",
-    }),
+    body: JSON.stringify({ guild_id: guild.id, player_id: player.value.id, role: "owner" }),
   });
   for (const structureId of GUILD_STRUCTURES) {
     await restRequest<unknown>(config, "guild_structures", {
       method: "POST",
       headers: { prefer: "resolution=ignore-duplicates,return=minimal" },
-      body: JSON.stringify({
-        guild_id: guild.id,
-        structure_id: structureId,
-        level: 1,
-      }),
+      body: JSON.stringify({ guild_id: guild.id, structure_id: structureId, level: 1 }),
     });
   }
   await restRequest<unknown>(config, "chat_channels", {
@@ -361,13 +266,7 @@ async function handleGuildCreate(
   });
 
   const payload = await socialStatePayload(config, player.value);
-  await insertIdempotency(
-    config,
-    player.value.id,
-    "guild/create",
-    requestId,
-    payload,
-  );
+  await insertIdempotency(config, player.value.id, "guild/create", requestId, payload);
   return jsonResponse(payload);
 }
 
@@ -378,62 +277,31 @@ async function handleChatSend(
 ): Promise<Response> {
   const body = await readJsonObject(request);
   if (body === null) {
-    return errorResponse(
-      "INVALID_JSON",
-      "Request body must be a JSON object.",
-      400,
-    );
+    return errorResponse("INVALID_JSON", "Request body must be a JSON object.", 400);
   }
   const requestId = stringField(body, "request_id");
   const content = stringField(body, "content").slice(0, 280);
   if (!UUID_PATTERN.test(requestId)) {
-    return errorResponse(
-      "INVALID_REQUEST_ID",
-      "request_id must be a UUID.",
-      400,
-    );
+    return errorResponse("INVALID_REQUEST_ID", "request_id must be a UUID.", 400);
   }
-  if (content === "") {
-    return errorResponse("EMPTY_MESSAGE", "Chat message cannot be empty.", 400);
-  }
+  if (content === "") return errorResponse("EMPTY_MESSAGE", "Chat message cannot be empty.", 400);
 
   const player = await loadPlayer(auth, config);
   if (player.error !== null) {
-    return errorResponse(
-      player.error.code,
-      player.error.message,
-      player.error.status,
-    );
+    return errorResponse(player.error.code, player.error.message, player.error.status);
   }
-  const existing = await loadIdempotency(
-    config,
-    player.value.id,
-    "chat/send",
-    requestId,
-  );
+  const existing = await loadIdempotency(config, player.value.id, "chat/send", requestId);
   if (existing.error !== null) {
-    return errorResponse(
-      existing.error.code,
-      existing.error.message,
-      existing.error.status,
-    );
+    return errorResponse(existing.error.code, existing.error.message, existing.error.status);
   }
   if (existing.value !== null) return jsonResponse(existing.value);
 
   const membership = await loadGuildMembership(config, player.value.id);
   if (membership.error !== null) {
-    return errorResponse(
-      membership.error.code,
-      membership.error.message,
-      membership.error.status,
-    );
+    return errorResponse(membership.error.code, membership.error.message, membership.error.status);
   }
   if (membership.value === null) {
-    return errorResponse(
-      "GUILD_REQUIRED",
-      "Join a guild before using guild chat.",
-      409,
-    );
+    return errorResponse("GUILD_REQUIRED", "Join a guild before using guild chat.", 409);
   }
 
   const channelResult = await restRequest<ChatChannelRow[]>(
@@ -444,44 +312,26 @@ async function handleChatSend(
     { method: "GET" },
   );
   if (channelResult.error !== null || channelResult.value[0] === undefined) {
-    return errorResponse(
-      "CHAT_SEND_FAILED",
-      "Guild chat channel is unavailable.",
-      500,
-    );
+    return errorResponse("CHAT_SEND_FAILED", "Guild chat channel is unavailable.", 500);
   }
-  const messageInsert = await restRequest<ChatMessageRow[]>(
-    config,
-    "chat_messages?select=*",
-    {
-      method: "POST",
-      headers: { prefer: "return=representation" },
-      body: JSON.stringify({
-        channel_id: channelResult.value[0].id,
-        sender_id: player.value.id,
-        content,
-      }),
-    },
-  );
+  const messageInsert = await restRequest<ChatMessageRow[]>(config, "chat_messages?select=*", {
+    method: "POST",
+    headers: { prefer: "return=representation" },
+    body: JSON.stringify({
+      channel_id: channelResult.value[0].id,
+      sender_id: player.value.id,
+      content,
+    }),
+  });
   if (messageInsert.error !== null) {
-    return errorResponse(
-      "CHAT_SEND_FAILED",
-      "Unable to send chat message.",
-      500,
-    );
+    return errorResponse("CHAT_SEND_FAILED", "Unable to send chat message.", 500);
   }
 
   const payload = {
     ...(await socialStatePayload(config, player.value)),
     message: messageInsert.value[0],
   };
-  await insertIdempotency(
-    config,
-    player.value.id,
-    "chat/send",
-    requestId,
-    payload,
-  );
+  await insertIdempotency(config, player.value.id, "chat/send", requestId, payload);
   return jsonResponse(payload);
 }
 
@@ -500,35 +350,22 @@ async function socialStatePayload(config: EdgeConfig, player: PlayerRow) {
   let messages: ChatMessageRow[] = [];
   if (membership.value !== null) {
     const guildId = encodeURIComponent(membership.value.guild_id);
-    const [guildResult, memberResult, structureResult, channelResult] =
-      await Promise.all([
-        restRequest<GuildRow[]>(
-          config,
-          `guilds?id=eq.${guildId}&select=*&limit=1`,
-          {
-            method: "GET",
-          },
-        ),
-        restRequest<GuildMemberRow[]>(
-          config,
-          `guild_members?guild_id=eq.${guildId}&select=*`,
-          {
-            method: "GET",
-          },
-        ),
-        restRequest<GuildStructureRow[]>(
-          config,
-          `guild_structures?guild_id=eq.${guildId}&select=*`,
-          {
-            method: "GET",
-          },
-        ),
-        restRequest<ChatChannelRow[]>(
-          config,
-          `chat_channels?channel_type=eq.guild&guild_id=eq.${guildId}&select=id,channel_type,guild_id&limit=1`,
-          { method: "GET" },
-        ),
-      ]);
+    const [guildResult, memberResult, structureResult, channelResult] = await Promise.all([
+      restRequest<GuildRow[]>(config, `guilds?id=eq.${guildId}&select=*&limit=1`, {
+        method: "GET",
+      }),
+      restRequest<GuildMemberRow[]>(config, `guild_members?guild_id=eq.${guildId}&select=*`, {
+        method: "GET",
+      }),
+      restRequest<GuildStructureRow[]>(config, `guild_structures?guild_id=eq.${guildId}&select=*`, {
+        method: "GET",
+      }),
+      restRequest<ChatChannelRow[]>(
+        config,
+        `chat_channels?channel_type=eq.guild&guild_id=eq.${guildId}&select=id,channel_type,guild_id&limit=1`,
+        { method: "GET" },
+      ),
+    ]);
     guild = guildResult.value?.[0] ?? null;
     members = memberResult.value ?? [];
     structures = structureResult.value ?? [];
@@ -560,14 +397,12 @@ async function socialStatePayload(config: EdgeConfig, player: PlayerRow) {
 async function loadPlayer(
   auth: AuthContext,
   config: EdgeConfig,
-): Promise<
-  { value: PlayerRow; error: null } | { value: null; error: RestError }
-> {
+): Promise<{ value: PlayerRow; error: null } | { value: null; error: RestError }> {
   const result = await restRequest<PlayerRow[]>(
     config,
-    `players?auth_user_id=eq.${
-      encodeURIComponent(auth.userId)
-    }&select=id,username,level,power&limit=1`,
+    `players?auth_user_id=eq.${encodeURIComponent(auth.userId)}&${
+      saveTypeQuery(auth.saveType)
+    }&select=id,username,save_type,level,power&limit=1`,
     { method: "GET" },
   );
   if (result.error !== null) return { value: null, error: stateReadError() };
@@ -588,17 +423,10 @@ async function loadPlayer(
 async function loadGuildMembership(
   config: EdgeConfig,
   playerId: string,
-): Promise<
-  { value: GuildMemberRow | null; error: null } | {
-    value: null;
-    error: RestError;
-  }
-> {
+): Promise<{ value: GuildMemberRow | null; error: null } | { value: null; error: RestError }> {
   const result = await restRequest<GuildMemberRow[]>(
     config,
-    `guild_members?player_id=eq.${
-      encodeURIComponent(playerId)
-    }&select=*&limit=1`,
+    `guild_members?player_id=eq.${encodeURIComponent(playerId)}&select=*&limit=1`,
     { method: "GET" },
   );
   if (result.error !== null) return { value: null, error: stateReadError() };
@@ -613,11 +441,9 @@ async function loadIdempotency(
 ) {
   const result = await restRequest<IdempotencyRow[]>(
     config,
-    `idempotency_keys?player_id=eq.${
-      encodeURIComponent(playerId)
-    }&endpoint=eq.${encodeURIComponent(endpoint)}&request_id=eq.${
-      encodeURIComponent(requestId)
-    }&select=response_payload&limit=1`,
+    `idempotency_keys?player_id=eq.${encodeURIComponent(playerId)}&endpoint=eq.${
+      encodeURIComponent(endpoint)
+    }&request_id=eq.${encodeURIComponent(requestId)}&select=response_payload&limit=1`,
     { method: "GET" },
   );
   if (result.error !== null) return { value: null, error: stateReadError() };
@@ -658,11 +484,7 @@ function decodeAuthContext(
   if (!header.startsWith("Bearer ")) {
     return {
       value: null,
-      error: {
-        code: "UNAUTHENTICATED",
-        message: "Bearer token is required.",
-        status: 401,
-      },
+      error: { code: "UNAUTHENTICATED", message: "Bearer token is required.", status: 401 },
     };
   }
   const token = header.slice("Bearer ".length);
@@ -670,25 +492,14 @@ function decodeAuthContext(
   if (parts.length < 2) {
     return {
       value: null,
-      error: {
-        code: "UNAUTHENTICATED",
-        message: "Invalid bearer token.",
-        status: 401,
-      },
+      error: { code: "UNAUTHENTICATED", message: "Invalid bearer token.", status: 401 },
     };
   }
   const payload = decodeJwtPayload(parts[1]);
-  if (
-    payload === null || typeof payload.sub !== "string" ||
-    !UUID_PATTERN.test(payload.sub)
-  ) {
+  if (payload === null || typeof payload.sub !== "string" || !UUID_PATTERN.test(payload.sub)) {
     return {
       value: null,
-      error: {
-        code: "UNAUTHENTICATED",
-        message: "Token subject is invalid.",
-        status: 401,
-      },
+      error: { code: "UNAUTHENTICATED", message: "Token subject is invalid.", status: 401 },
     };
   }
   if (payload.is_anonymous === false) {
@@ -701,17 +512,25 @@ function decodeAuthContext(
       },
     };
   }
-  return { value: { userId: payload.sub }, error: null };
+  const saveType = saveTypeFromRequest(request);
+  if (saveType === null) {
+    return {
+      value: null,
+      error: {
+        code: "INVALID_SAVE_TYPE",
+        message: "Save type must be normal or progression_lab.",
+        status: 400,
+      },
+    };
+  }
+  return { value: { userId: payload.sub, saveType }, error: null };
 }
 
 function decodeJwtPayload(encodedPayload: string): JwtPayload | null {
   try {
     const normalized = encodedPayload.replaceAll("-", "+").replaceAll("_", "/");
     const padded = normalized + "=".repeat((4 - normalized.length % 4) % 4);
-    const bytes = Uint8Array.from(
-      atob(padded),
-      (character) => character.charCodeAt(0),
-    );
+    const bytes = Uint8Array.from(atob(padded), (character) => character.charCodeAt(0));
     const payload: unknown = JSON.parse(new TextDecoder().decode(bytes));
     return isObject(payload) ? payload as JwtPayload : null;
   } catch {
@@ -719,10 +538,7 @@ function decodeJwtPayload(encodedPayload: string): JwtPayload | null {
   }
 }
 
-function loadConfig(): { value: EdgeConfig; error: null } | {
-  value: null;
-  error: RestError;
-} {
+function loadConfig(): { value: EdgeConfig; error: null } | { value: null; error: RestError } {
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
   if (supabaseUrl === "" || serviceRoleKey === "") {
@@ -735,15 +551,10 @@ function loadConfig(): { value: EdgeConfig; error: null } | {
       },
     };
   }
-  return {
-    value: { supabaseUrl: supabaseUrl.replace(/\/$/, ""), serviceRoleKey },
-    error: null,
-  };
+  return { value: { supabaseUrl: supabaseUrl.replace(/\/$/, ""), serviceRoleKey }, error: null };
 }
 
-async function readJsonObject(
-  request: Request,
-): Promise<Record<string, unknown> | null> {
+async function readJsonObject(request: Request): Promise<Record<string, unknown> | null> {
   try {
     const payload: unknown = await request.json();
     return isObject(payload) ? payload : null;
@@ -752,20 +563,13 @@ async function readJsonObject(
   }
 }
 
-async function restRequest<T>(
-  config: EdgeConfig,
-  path: string,
-  init: RequestInit,
-) {
+async function restRequest<T>(config: EdgeConfig, path: string, init: RequestInit) {
   const headers = new Headers(init.headers);
   headers.set("accept", "application/json");
   headers.set("apikey", config.serviceRoleKey);
   headers.set("authorization", `Bearer ${config.serviceRoleKey}`);
   if (init.body !== undefined) headers.set("content-type", "application/json");
-  const response = await fetch(`${config.supabaseUrl}/rest/v1/${path}`, {
-    ...init,
-    headers,
-  });
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${path}`, { ...init, headers });
   const text = await response.text();
   const data = text === "" ? null : parseJson(text);
   if (!response.ok) {
@@ -783,18 +587,10 @@ async function restRequest<T>(
 }
 
 function stateReadError(): RestError {
-  return {
-    code: "STATE_READ_FAILED",
-    message: "Unable to load social state.",
-    status: 500,
-  };
+  return { code: "STATE_READ_FAILED", message: "Unable to load social state.", status: 500 };
 }
 
-function errorResponse(
-  code: string,
-  message: string,
-  status: number,
-): Response {
+function errorResponse(code: string, message: string, status: number): Response {
   return jsonResponse({ ok: false, error: { code, message } }, status);
 }
 

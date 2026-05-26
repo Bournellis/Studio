@@ -1,4 +1,5 @@
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import { type SaveType, saveTypeFromRequest, saveTypeQuery } from "../_shared/save_context.ts";
 
 type Route = "state" | "reward_claim" | "alpha_purchase";
 type RewardSource = "daily" | "weekly" | "battle_pass";
@@ -11,6 +12,7 @@ interface EdgeConfig {
 
 interface AuthContext {
   userId: string;
+  saveType: SaveType;
 }
 
 interface RestError {
@@ -27,6 +29,7 @@ interface JwtPayload {
 interface PlayerRow {
   id: string;
   username: string | null;
+  save_type: SaveType;
   level: number;
   xp: number | string;
   power: number;
@@ -661,9 +664,9 @@ async function loadPlayer(
 ): Promise<{ value: PlayerRow; error: null } | { value: null; error: RestError }> {
   const result = await restRequest<PlayerRow[]>(
     config,
-    `players?auth_user_id=eq.${
-      encodeURIComponent(auth.userId)
-    }&select=id,username,level,xp,power&limit=1`,
+    `players?auth_user_id=eq.${encodeURIComponent(auth.userId)}&${
+      saveTypeQuery(auth.saveType)
+    }&select=id,username,save_type,level,xp,power&limit=1`,
     { method: "GET" },
   );
   if (result.error !== null) return { value: null, error: stateReadError() };
@@ -797,7 +800,7 @@ async function applyXp(
   if (xpDelta === 0) return { value: player, error: null };
   const result = await restRequest<PlayerRow[]>(
     config,
-    `players?id=eq.${encodeURIComponent(player.id)}&select=id,username,level,xp,power`,
+    `players?id=eq.${encodeURIComponent(player.id)}&select=id,username,save_type,level,xp,power`,
     {
       method: "PATCH",
       headers: { prefer: "return=representation" },
@@ -1105,7 +1108,18 @@ function decodeAuthContext(request: Request): { value: AuthContext; error: null 
       },
     };
   }
-  return { value: { userId: payload.sub }, error: null };
+  const saveType = saveTypeFromRequest(request);
+  if (saveType === null) {
+    return {
+      value: null,
+      error: {
+        code: "INVALID_SAVE_TYPE",
+        message: "Save type must be normal or progression_lab.",
+        status: 400,
+      },
+    };
+  }
+  return { value: { userId: payload.sub, saveType }, error: null };
 }
 
 function decodeJwtPayload(encodedPayload: string): JwtPayload | null {

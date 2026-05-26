@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
 - Ultima atualizacao: `2026-05-26`
-- Status: contrato com `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*` e `telemetry/*` implementados localmente; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`; Track 03 adiciona contratos planejados para email/senha, dois saves e updates internos
+- Status: contrato com `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*` e `telemetry/*` implementados localmente; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`; Track 03 ja implementou selecao local de save via `x-draxos-save-type` e ainda planeja email/senha, reset separado e updates internos
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -9,6 +9,7 @@ Este documento descreve a interface logica entre cliente Godot e Supabase Edge F
 
 - Transporte: HTTPS REST via HTTPRequest do Godot.
 - Autenticacao: JWT Supabase no header `Authorization: Bearer <token>`.
+- Save ativo: endpoints de gameplay aceitam `x-draxos-save-type: normal|progression_lab`; ausencia do header usa `normal`.
 - Guest MVP: cliente primeiro cria sessao Supabase Auth anonima; depois chama `/account/guest` com o JWT anonimo e codigo de convite.
 - Correlation: cliente envia `request_id` em mutacoes para idempotencia.
 - Runtime local atual: `supabase/functions/account`, `battle`, `base`, `social`, `competition`, `monetization` e `telemetry`, espelhados em `server/functions/`.
@@ -31,13 +32,14 @@ Este documento descreve a interface logica entre cliente Godot e Supabase Edge F
 
 Cria o estado de jogo para uma sessao guest anonima ja autenticada.
 
-Status: **implementado em T00-P05**.
+Status: **implementado em T00-P05** e atualizado em `T03-P03B` para `save_type`.
 
 Headers:
 
 ```http
 Authorization: Bearer <anonymous_jwt>
 apikey: <anon_or_publishable_key>
+x-draxos-save-type: normal
 ```
 
 Request:
@@ -58,6 +60,7 @@ Response:
   "player": {
     "id": "uuid",
     "username": "guest_xxxxxxxx",
+    "save_type": "normal",
     "account_type": "guest",
     "level": 1,
     "xp": 0,
@@ -93,7 +96,7 @@ Idempotencia: repetir o mesmo `request_id` para a mesma sessao anonima retorna o
 
 Retorna estado minimo do jogador autenticado.
 
-Status: **implementado em T00-P05**.
+Status: **implementado em T00-P05** e atualizado em `T03-P03B` para `save_type`.
 
 Response MVP:
 
@@ -103,6 +106,7 @@ Response MVP:
   "player": {
     "id": "uuid",
     "username": "guest_xxxxxxxx",
+    "save_type": "normal",
     "account_type": "guest",
     "level": 1,
     "xp": 0,
@@ -331,13 +335,17 @@ Regras:
 
 ### Save ativo nos endpoints de gameplay
 
-Durante Track 03, todos os endpoints autoritativos de gameplay precisam resolver qual save esta em uso. A regra inicial e:
+Implementado localmente em `T03-P03B` por header HTTP:
 
-- ausencia de selecao explicita usa `normal`;
-- `progression_lab` so e aceito quando a conta tem permissao interna;
-- ranking/social/loja podem bloquear ou isolar `progression_lab`, conforme `DMOB-D055`.
+- `x-draxos-save-type: normal` usa o save normal;
+- `x-draxos-save-type: progression_lab` usa o save isolado de laboratorio;
+- ausencia do header usa `normal`;
+- valores diferentes retornam `INVALID_SAVE_TYPE`;
+- `account`, `battle`, `base`, `social`, `competition`, `monetization` e `telemetry` resolvem o player pelo save ativo;
+- `competition/ranking/current` retorna `excluded_reason = PROGRESSION_LAB_DOES_NOT_RANK` no save de lab;
+- social esta temporariamente isolado por `player_id/save_type` no alpha local; a versao final pode promover social para nivel de conta com marcador `lab`, se necessario.
 
-O transporte final da selecao de save (`header`, campo de request ou estado server-side) sera fechado em `T03-P01` antes da implementacao.
+Reset separado, permissao interna remota e aplicacao do Progression Lab no save de lab ficam para as proximas subetapas da Track 03.
 
 ## Endpoints Do Primeiro Slice Completo
 
