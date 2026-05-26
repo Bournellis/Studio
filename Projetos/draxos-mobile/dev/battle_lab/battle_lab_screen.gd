@@ -76,6 +76,7 @@ var _checks_label: Label
 var _outliers_label: Label
 var _history_label: Label
 var _replay_title_label: Label
+var _replay_speed_label: Label
 var _battle_visual: Control
 var _tabs: TabContainer
 var _run_id_edit: LineEdit
@@ -403,6 +404,11 @@ func _build_replay_tab() -> Control:
 	reset_button.text = "Reset"
 	reset_button.pressed.connect(_reset_replay)
 	controls.add_child(reset_button)
+	_replay_speed_label = Label.new()
+	_replay_speed_label.custom_minimum_size = Vector2(164, 0)
+	_replay_speed_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_replay_speed_label.tooltip_text = "Porcentagem do tempo normal usada pelo autoplay do replay."
+	controls.add_child(_replay_speed_label)
 	var speed := HSlider.new()
 	speed.min_value = 0.5
 	speed.max_value = 4.0
@@ -410,9 +416,10 @@ func _build_replay_tab() -> Control:
 	speed.value = 1.0
 	speed.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	speed.value_changed.connect(func(value: float) -> void:
-		_replay_speed = value
+		_set_replay_speed(value)
 	)
 	controls.add_child(speed)
+	_set_replay_speed(float(speed.value))
 	return box.get_parent()
 
 func _build_history_tab() -> Control:
@@ -810,6 +817,14 @@ func _step_replay() -> void:
 func _apply_replay_event(event: Dictionary) -> void:
 	if _battle_visual != null and is_instance_valid(_battle_visual):
 		_battle_visual.apply_event(event)
+
+func _set_replay_speed(value: float) -> void:
+	_replay_speed = value
+	if _replay_speed_label != null and is_instance_valid(_replay_speed_label):
+		_replay_speed_label.text = _replay_speed_percent_text(value)
+
+func _replay_speed_percent_text(value: float) -> String:
+	return "%d%% do tempo normal" % int(roundf(value * 100.0))
 
 static func _variant_to_packed_string_array(configured: Variant, fallback: PackedStringArray) -> PackedStringArray:
 	if configured is PackedStringArray:

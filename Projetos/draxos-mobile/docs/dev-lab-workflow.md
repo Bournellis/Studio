@@ -12,8 +12,9 @@ Registro operacional dos problemas corrigidos nos labs do Godot em 2026-05-26.
 
 - Runs e analytics sao outputs persistentes; replay custom e um resultado de sessao, nao uma run arquivada.
 - Mesmo sendo de sessao, replay custom precisa ser visivel: registrar em `_last_replays`, mostrar no History e trocar automaticamente para a aba Replay.
+- A barra de velocidade do replay deve mostrar a porcentagem do tempo normal selecionada (`100%`, `250%`, etc.) para deixar claro o ritmo do autoplay.
 - Antes de chamar o bridge, limpar o response JSON para evitar leitura de resposta antiga quando algum processo falhar silenciosamente.
-- `tools/smoke_dev_lab_ui.gd` cobre o comportamento visual: Builds visivel, replay custom abrindo a aba Replay e History registrando a entrada custom.
+- `tools/smoke_dev_lab_ui.gd` cobre o comportamento visual: Builds visivel, replay custom abrindo a aba Replay, History registrando a entrada custom e label de porcentagem na velocidade do replay.
 
 ## Progression Lab
 

@@ -22,7 +22,7 @@
 | Contratos tecnicos | Definidos | Fonte inicial: `../docs/contracts/` |
 | Godot project | Alpha PC local pronto + Battle Lab/Progression Lab dev + battle stage 2D feedback hardened | Hub alpha hardenizado, autoloads, `.gutconfig.json`, content generator, catalogo gerado, `SessionStore` com `session_id` e `apply_snapshot_cache`, `SupabaseClient` com telemetria, `BattleLogPresenter`, `BattleVisualMockup`, `BattleStage2D` responsivo com tooltips imediatos, nos estaveis durante efeitos, cooldown restante e feedback textual com nomes completos, telas dev-only do Battle Lab e Progression Lab, runner Deno sanitizado/Windows-safe, smoke real de labs, smoke visual/comportamental e GUT |
 | Supabase project | Conta guest + battle MVP + first-slice sim + base/social/competicao/monetizacao/telemetria v0 prontos | Layout `supabase/`, migrations MVP/base/social/ranking/monetizacao, Auth anonimo, healthcheck, `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, seeds `FIRST_SLICE`, JWT config de funcoes e simulador compartilhado configurados |
-| Validacao | Verde tecnico; tuning manual pendente | Godot validate + GUT `38/38`, `216` asserts passam; smoke de labs executa Battle Lab/Progression Lab via `OS.execute`; smoke visual/comportamental passa; smoke de exports passa; Deno tests passam; dry-run do seeder seleciona `25/25` saves; Battle Lab Source Identity Balance v2 gera `PASS`; Progression Lab gera `REVIEW`; Supabase runtime real ainda precisa rodada manual com `SUPABASE_SERVICE_ROLE_KEY` |
+| Validacao | Verde tecnico; tuning manual pendente | Godot validate + GUT `38/38`, `218` asserts passam; smoke de labs executa Battle Lab/Progression Lab via `OS.execute`; smoke visual/comportamental passa; smoke de exports passa; Deno tests passam; dry-run do seeder seleciona `25/25` saves; Battle Lab Source Identity Balance v2 gera `PASS`; Progression Lab gera `REVIEW`; Supabase runtime real ainda precisa rodada manual com `SUPABASE_SERVICE_ROLE_KEY` |
 
 ---
 
@@ -33,7 +33,7 @@
 - `FIRST_SLICE_SIM` atualizado para `weaponId`, fontes Arcano/Fisico/Fogo/Agua/Gelo/Terra/Vento/Raio/Veneno/Sangue/Morte, status mental/corporal/elemental/Morte e familiares com dano, DoT e status.
 - Edge Function `battle/request`, migrations e seeds agora usam `varinha_cinzas`, `sussurro_medo`, `doutrina_pavor` e `corvo_pressagio` como baseline de conta/fixture.
 - Battle Lab, Progression Lab, tela dev-only do Battle Lab, testes Godot e testes Deno foram atualizados para validar `weapon_id`, os novos ids, invocacao Deno Windows-safe no Godot e amostras de replay com spells visiveis.
-- Follow-up de 2026-05-26: Battle Lab custom replay agora entra em Replay/History como resultado de sessao; Progression Lab cria cache local-only a partir de healthy saves quando nao ha Supabase service key; telas dev-only corrigem quebra vertical de texto em `ScrollContainer`; conhecimento operacional registrado em `../docs/dev-lab-workflow.md`.
+- Follow-up de 2026-05-26: Battle Lab custom replay agora entra em Replay/History como resultado de sessao e a velocidade do replay mostra a porcentagem do tempo normal; Progression Lab cria cache local-only a partir de healthy saves quando nao ha Supabase service key; telas dev-only corrigem quebra vertical de texto em `ScrollContainer`; conhecimento operacional registrado em `../docs/dev-lab-workflow.md`.
 - Baseline de tuning 2026-05-21 permanece arquivado como historico pre-rework; comparacoes numericas contra ele servem apenas como alerta de compatibilidade.
 - Source Identity Balance v2: Battle Lab run `2026-05-25_source_identity_balance_v02` gerou `3132` batalhas e `212` builds com status `PASS`, duracao media `24.08s`, anti-stall `4.95%`, dominancia em poder proximo maxima `63.46%` e checks de identidade de fonte em `PASS`; Progression Lab gerou `25` saves e `75` bots com status `REVIEW`.
 - Proxima calibracao deve mirar premium gap 10h, janelas 15h/20h, sensacao manual de Familiar/Funeral, Defesa/Mental em near-power e pesos de poder apos playtest no Godot.
@@ -120,7 +120,7 @@
 - `supabase/functions/telemetry/` implementa `POST /telemetry/client-event` com JWT, schema `telemetry_client_v1`, `source = client`, `player_id` opcional antes da conta guest e escrita exclusiva em `telemetry_events`.
 - `supabase/functions/_shared/battle_simulator.ts` e `server/functions/_shared/battle_simulator.ts` simulam batalha com Instrumento Ritual, Vida/regen de Vida, mana, spells diretas e nao-dano, DoTs, status mentais/corporais/elementais/Morte, resistencias, Doutrinas, barreira, Familiares, summons, cooldowns, anti-stall e recompensa server-authoritative. Em 2026-05-25 receberam o rework de personagem e continuam usando pacing alpha de Vida como baseline calibravel.
 - `tools/battle_lab/` gera simulacoes offline bot-vs-bot com builds fixas/randomicas deterministicas, relatorio HTML, JSON, CSVs, JSON compacto de UI, amostras de replay completas em `docs/battle-lab/generated/`, scratch runs locais e historico versionado em `docs/battle-lab/runs/`.
-- `dev/battle_lab/battle_lab_screen.gd` adiciona a tela dev-only do Battle Lab no Godot editor: gera runs via Deno, edita builds, mostra analytics e reproduz `battle_log_v1` em arena debug 2D sem calcular resultado no cliente.
+- `dev/battle_lab/battle_lab_screen.gd` adiciona a tela dev-only do Battle Lab no Godot editor: gera runs via Deno, edita builds, mostra analytics e reproduz `battle_log_v1` em arena debug 2D sem calcular resultado no cliente, com controle de velocidade mostrando porcentagem do tempo normal.
 - `tools/progression_lab/` gera estados saudaveis por perfil/milestone, checks de recurso/recompensa/premium, recomendacoes de poder, bot pool e relatorio em `docs/progression-lab/generated/`.
 - `tools/progression_lab/seed_supabase.ts` cria contas dev em Supabase local e grava caches de sessao em `.progression_lab_scratch/`.
 - `dev/progression_lab/progression_lab_screen.gd` adiciona a tela dev-only do Progression Lab no Refugio para gerar relatorio, preparar save local, carregar cache no `SessionStore` e abrir checklist manual.
@@ -161,7 +161,7 @@ Ultimo resultado local:
 - `tools/smoke_dev_labs.gd`: passou, executando Battle Lab bridge e Progression Lab generate pelo `OS.execute` do Godot.
 - `tools/smoke_dev_lab_ui.gd`: passou em headless; em modo visual salvou screenshots de Builds, Replay, History e Progression loaded save em `user://dev_lab_visual_smoke/`.
 - `tools/smoke_exports.gd`: passou para Android Alpha, PC Windows Alpha e PC Browser Alpha.
-- GUT integrado: `38/38` testes, `216` asserts.
+- GUT integrado: `38/38` testes, `218` asserts.
 - `npx -y deno test tools/battle_lab tools/progression_lab server/tests/first_slice_simulator_test.ts`: passou, `20/20`.
 - `npx -y deno run --allow-read --allow-write tools/progression_lab/generate.ts`: passou, gerando `25` saves, `75` bots e status `REVIEW` para calibracao manual.
 - `npx -y deno run --allow-read tools/progression_lab/seed_supabase.ts --dry-run --all`: passou, selecionando `25/25` saves.

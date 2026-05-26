@@ -64,6 +64,9 @@ func test_battle_lab_replay_response_registers_custom_replay() -> void:
 	assert_not_null(screen._battle_visual)
 	assert_eq(screen._battle_visual.get_event_count(), 1)
 	assert_true(screen._tabs.get_child(3) is ScrollContainer)
+	assert_eq(screen._replay_speed_label.text, "100% do tempo normal")
+	screen._set_replay_speed(2.5)
+	assert_eq(screen._replay_speed_label.text, "250% do tempo normal")
 
 func test_battle_lab_deno_invocation_sanitizes_project_settings() -> void:
 	var settings_prefix := "draxos_mobile/battle_lab"

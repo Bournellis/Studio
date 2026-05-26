@@ -44,6 +44,8 @@ func _capture_battle_lab() -> void:
 		_failures.append("Battle Lab custom replay was not registered as a sample.")
 	if not screen._history_label.text.contains("Custom replays"):
 		_failures.append("Battle Lab custom replay was not registered in History.")
+	if not screen._replay_speed_label.text.contains("100% do tempo normal"):
+		_failures.append("Battle Lab replay speed percent label is missing.")
 	await _capture("battle_custom_replay.png")
 	screen._tabs.current_tab = 4
 	await _capture("battle_history.png")

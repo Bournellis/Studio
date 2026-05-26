@@ -25,7 +25,7 @@ Criar o Progression Lab para testar e calibrar manualmente e por simulacao as pr
 - Exports Android/PC/Web excluem `tools/progression_lab/`, `docs/progression-lab/` e `.progression_lab_scratch/`.
 - Smoke GUT cobre saves `2h`, `10h`, `20h` e aplicacao de snapshot do Progression Lab.
 - Smoke Godot `tools/smoke_dev_labs.gd` cobre o spawn real de Battle Lab/Progression Lab via `OS.execute`, replay custom com spells/effects e geracao dos outputs do Progression Lab.
-- Smoke Godot `tools/smoke_dev_lab_ui.gd` cobre o fluxo visual dos labs, incluindo replay custom na aba Replay/History, cache local-only do Progression Lab e largura minima para labels dentro de `ScrollContainer`.
+- Smoke Godot `tools/smoke_dev_lab_ui.gd` cobre o fluxo visual dos labs, incluindo replay custom na aba Replay/History, porcentagem da velocidade do replay, cache local-only do Progression Lab e largura minima para labels dentro de `ScrollContainer`.
 - Conhecimento operacional registrado em `docs/dev-lab-workflow.md`.
 - Mockup visual de batalha registrado em `docs/battle-visual-mockup.md`, com asset hooks futuros em `core/asset_ids.gd` e uso compartilhado por `modes/boot/boot.gd` e `dev/battle_lab/battle_lab_screen.gd`.
 
@@ -36,7 +36,7 @@ Criar o Progression Lab para testar e calibrar manualmente e por simulacao as pr
 - `npx -y deno test tools/battle_lab`: `14/14` testes.
 - `npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --archive-run 2026-05-25_source_identity_balance_v02 --compare-with 2026-05-25_initial_balance_v01`: `3132` batalhas, `212` builds, status `PASS`, duracao media `24.08s`, anti-stall `4.95%`, dominancia em poder proximo maxima `63.46%`, checks de identidade de fonte em `PASS`.
 - `npx -y deno run --allow-read tools/progression_lab/seed_supabase.ts --dry-run --all`: selecionou `25/25` saves.
-- `tools/validate.gd`: passou com GUT `38/38`, `216` asserts.
+- `tools/validate.gd`: passou com GUT `38/38`, `218` asserts.
 - `tools/smoke_dev_labs.gd`: passou, executando Battle Lab bridge e Progression Lab generate pelo `OS.execute` do Godot.
 - `tools/smoke_dev_lab_ui.gd`: passou em headless e gerou screenshots em modo visual.
 - `tools/smoke_exports.gd`: passou para Android Alpha, PC Windows Alpha e PC Browser Alpha.
