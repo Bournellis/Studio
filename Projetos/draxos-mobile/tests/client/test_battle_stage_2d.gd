@@ -31,6 +31,20 @@ func test_battle_stage_2d_tooltips_remain_available_during_effects() -> void:
 	assert_string_contains(_joined_tooltips(Array(tooltips.get("cooldowns", []))), "Cooldown de spell")
 	assert_false(str(tooltips).to_lower().contains("placeholder"))
 
+func test_battle_stage_2d_keeps_tooltip_nodes_stable_between_replay_steps() -> void:
+	var stage = BattleStage2DScript.new()
+	stage.custom_minimum_size = Vector2(820, 380)
+	add_child_autofree(stage)
+	stage.render_snapshot(_side_state(), {"type": "spell_cast", "source": "player", "target": "opponent", "spell_id": "marca_brasa", "damage": 27, "damage_type": "fogo", "seq": 1, "t": 1.0}, 1, 4, false)
+	var before_ids := Dictionary(stage.debug_snapshot().get("tooltip_node_ids", {}))
+
+	stage.render_snapshot(_side_state(), {"type": "dot_tick", "source": "player", "target": "opponent", "status_id": "queimando", "damage": 6, "damage_type": "fogo", "seq": 2, "t": 1.5}, 2, 4, false)
+	var after_ids := Dictionary(stage.debug_snapshot().get("tooltip_node_ids", {}))
+
+	assert_eq(Array(before_ids.get("slots", [])), Array(after_ids.get("slots", [])))
+	assert_eq(Array(before_ids.get("status", [])), Array(after_ids.get("status", [])))
+	assert_eq(Array(before_ids.get("cooldowns", [])), Array(after_ids.get("cooldowns", [])))
+
 func test_battle_stage_2d_empty_state_is_stable() -> void:
 	var stage = BattleStage2DScript.new()
 	add_child_autofree(stage)

@@ -53,7 +53,7 @@ Nao pode alterar:
 | Event icon | `ATK`, `SP`, `DOT`, `BUF`, `SUM`, `PET`, `HEAL`, `ANTI`, `END` | Icones finais por evento, spell, fonte ou efeito. |
 | Slots front/middle/back | Familiar e summons posicionados em frente, meio e tras de cada personagem | Marcadores com sprites, ancoras de VFX e animacoes. |
 | Efeitos temporarios | Projeteis simples, flashes, numeros flutuantes e labels que somem por tween | VFX reais, hit stop, camera shake, sprite trails e animacoes. |
-| Tooltips | Explicam de forma objetiva combatente, evento, status, cooldown, familiar, summon e slot; efeitos animados ignoram mouse para nao bloquear hover | Tooltips finais com nomes localizados, regras e icones. |
+| Tooltips | Explicam de forma objetiva combatente, evento, status, cooldown, familiar, summon e slot; o palco usa tooltip imediato proprio e mantem os mesmos nos entre passos do replay | Tooltips finais com nomes localizados, regras e icones. |
 | Timeline | Texto formatado por `BattleLogPresenter` | Feed compacto, log expandivel ou overlay de debug. |
 
 ## Formato 2D Atual
@@ -70,6 +70,9 @@ Nao pode alterar:
   antigos.
 - O palco tem largura minima responsiva para caber na tela Batalha e no Battle
   Lab sem exigir scroll horizontal para a apresentacao principal.
+- Icons de status, cooldown, Familiar e summons sao atualizados no lugar durante
+  o replay; nao devem ser destruidos/recriados a cada evento, para o hover
+  continuar vivo enquanto a batalha avanca.
 - Essa escolha e somente apresentacao; nao altera alvo, dano, HP, resultado ou
   qualquer regra autoritativa.
 
@@ -141,7 +144,8 @@ Quando um novo evento visual entrar:
 ## Regressao Coberta
 
 - `tests/client/test_battle_stage_2d.gd` garante que tooltips de evento, slots,
-  status e cooldown seguem disponiveis durante efeitos animados.
+  status e cooldown seguem disponiveis durante efeitos animados e que os nos de
+  tooltip continuam estaveis entre passos do replay.
 - `tests/client/test_battle_visual_mockup.gd` garante que o mockup compartilhado
   expõe tooltips objetivos no snapshot do palco.
 

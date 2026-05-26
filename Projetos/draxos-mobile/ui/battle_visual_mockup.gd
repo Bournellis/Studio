@@ -482,9 +482,15 @@ func _render_dynamic_state(animate_stage_event: bool = false) -> void:
 
 func _render_status_row(side: String, statuses: Dictionary) -> void:
 	var row: HFlowContainer = _status_rows[side]
-	_clear_children(row)
+	var entries: Array[Dictionary] = []
 	if statuses.is_empty():
-		row.add_child(_badge("OK", _token_color("border_default"), "Sem status ativo neste lado. Buffs, debuffs, DoTs e resistencias aparecem aqui quando o log aplicar um efeito."))
+		entries.append({
+			"key": "empty",
+			"text": "OK",
+			"color": _token_color("border_default"),
+			"tooltip": "Sem status ativo neste lado. Buffs, debuffs, DoTs e resistencias aparecem aqui quando o log aplicar um efeito.",
+		})
+		_sync_badge_row(row, entries)
 		return
 	var keys := statuses.keys()
 	keys.sort()
@@ -494,34 +500,68 @@ func _render_status_row(side: String, statuses: Dictionary) -> void:
 		var stacks := int(status.get("stacks", 0))
 		if stacks > 1:
 			label = "%s x%d" % [label, stacks]
-		row.add_child(_badge(label, _status_color(label), _status_tooltip(str(key), status)))
+		entries.append({
+			"key": str(key),
+			"text": label,
+			"color": _status_color(label),
+			"tooltip": _status_tooltip(str(key), status),
+		})
+	_sync_badge_row(row, entries)
 
 func _render_cooldown_row(side: String, cooldowns: Dictionary) -> void:
 	var row: HFlowContainer = _cooldown_rows[side]
-	_clear_children(row)
+	var entries: Array[Dictionary] = []
 	if cooldowns.is_empty():
-		row.add_child(_badge("Livre", _token_color("border_default"), "Nenhum cooldown ativo. Quando uma spell entrar em recarga, o icone mostra o ready_at recebido do servidor."))
+		entries.append({
+			"key": "empty",
+			"text": "Livre",
+			"color": _token_color("border_default"),
+			"tooltip": "Nenhum cooldown ativo. Quando uma spell entrar em recarga, o icone mostra o ready_at recebido do servidor.",
+		})
+		_sync_badge_row(row, entries)
 		return
 	var keys := cooldowns.keys()
 	keys.sort()
 	for key: Variant in keys:
 		var ready_at := float(cooldowns[key])
-		row.add_child(_badge("%s %.1fs" % [str(key), ready_at], DAMAGE_COLORS["arcano"], _cooldown_tooltip(str(key), ready_at)))
+		entries.append({
+			"key": str(key),
+			"text": "%s %.1fs" % [str(key), ready_at],
+			"color": DAMAGE_COLORS["arcano"],
+			"tooltip": _cooldown_tooltip(str(key), ready_at),
+		})
+	_sync_badge_row(row, entries)
 
 func _render_summon_row(side: String, side_data: Dictionary) -> void:
 	var row: HFlowContainer = _summon_rows[side]
-	_clear_children(row)
+	var entries: Array[Dictionary] = []
 	var familiar := str(side_data.get("familiar", ""))
 	if familiar != "":
-		row.add_child(_badge(familiar, DAMAGE_COLORS["morte"], _summon_tooltip("familiar", familiar, side, "tras")))
+		entries.append({
+			"key": "familiar:%s" % familiar,
+			"text": familiar,
+			"color": DAMAGE_COLORS["morte"],
+			"tooltip": _summon_tooltip("familiar", familiar, side, "tras"),
+		})
 	var summons := _as_dictionary(side_data.get("summons", {}))
 	var keys := summons.keys()
 	keys.sort()
 	for key: Variant in keys:
 		var summon := _as_dictionary(summons[key])
-		row.add_child(_badge(str(key), DAMAGE_COLORS["fogo"], _summon_tooltip("summon", str(key), side, str(summon.get("slot", "frente")))))
+		entries.append({
+			"key": "summon:%s" % str(key),
+			"text": str(key),
+			"color": DAMAGE_COLORS["fogo"],
+			"tooltip": _summon_tooltip("summon", str(key), side, str(summon.get("slot", "frente"))),
+		})
 	if familiar == "" and summons.is_empty():
-		row.add_child(_badge("Nenhum", _token_color("border_default"), "Nenhum familiar ou summon visivel neste lado. Familiares aparecem atras; summons ocupam frente, meio ou tras."))
+		entries.append({
+			"key": "empty",
+			"text": "Nenhum",
+			"color": _token_color("border_default"),
+			"tooltip": "Nenhum familiar ou summon visivel neste lado. Familiares aparecem atras; summons ocupam frente, meio ou tras.",
+		})
+	_sync_badge_row(row, entries)
 
 func _render_timeline() -> void:
 	_timeline_label.text = "\n".join(_timeline_lines)
@@ -915,19 +955,52 @@ func _small_caption(text: String) -> Label:
 	label.add_theme_color_override("font_color", _token_color("text_secondary"))
 	return label
 
+func _sync_badge_row(row: HFlowContainer, entries: Array[Dictionary]) -> void:
+	var existing: Dictionary = {}
+	for child: Node in row.get_children():
+		var key := str(child.get_meta("render_key", ""))
+		if key != "":
+			existing[key] = child
+	var wanted: Dictionary = {}
+	for index: int in range(entries.size()):
+		var entry := entries[index]
+		var key := str(entry.get("key", ""))
+		wanted[key] = true
+		var label := existing.get(key, null) as Label
+		if label == null:
+			label = Label.new()
+			label.set_meta("render_key", key)
+			row.add_child(label)
+		var color: Color = _token_color("border_default")
+		if entry.get("color", null) is Color:
+			color = entry.get("color")
+		_configure_badge(label, str(entry.get("text", "")), color, str(entry.get("tooltip", "")))
+		if label.get_index() != index:
+			row.move_child(label, index)
+	for child: Node in row.get_children():
+		var key := str(child.get_meta("render_key", ""))
+		if key == "" or wanted.has(key):
+			continue
+		row.remove_child(child)
+		child.free()
+
 func _badge(text: String, color: Color, tooltip: String = "") -> Label:
 	var label := Label.new()
+	_configure_badge(label, text, color, tooltip)
+	return label
+
+func _configure_badge(label: Label, text: String, color: Color, tooltip: String = "") -> void:
 	label.text = text
 	label.clip_text = true
 	label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	label.custom_minimum_size = Vector2(66, 24)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.mouse_filter = Control.MOUSE_FILTER_STOP
 	label.add_theme_font_size_override("font_size", 12)
 	label.add_theme_color_override("font_color", _token_color("text_primary"))
 	label.add_theme_stylebox_override("normal", _badge_style(color))
 	label.tooltip_text = tooltip
-	return label
 
 func _panel_style(bg_token: String, border_token: String) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()

@@ -79,6 +79,9 @@ var _effects_layer: Control
 var _event_icon
 var _event_label: Label
 var _empty_label: Label
+var _tooltip_panel: PanelContainer
+var _tooltip_label: Label
+var _tooltip_source: Control
 var _last_animated_key := ""
 
 func _ready() -> void:
@@ -118,6 +121,7 @@ func debug_snapshot() -> Dictionary:
 		"has_player_actor": _actors.has(SIDE_PLAYER),
 		"has_opponent_actor": _actors.has(SIDE_OPPONENT),
 		"tooltips": debug_tooltip_samples(),
+		"tooltip_node_ids": debug_tooltip_node_ids(),
 	}
 
 func debug_tooltip_samples() -> Dictionary:
@@ -131,6 +135,18 @@ func debug_tooltip_samples() -> Dictionary:
 		"slots": _collect_tooltips(_slot_layer),
 		"status": status_tooltips,
 		"cooldowns": cooldown_tooltips,
+	}
+
+func debug_tooltip_node_ids() -> Dictionary:
+	var status_ids: Array[String] = []
+	var cooldown_ids: Array[String] = []
+	for side: String in SIDES:
+		status_ids.append_array(_collect_tooltip_node_ids(_status_rows.get(side)))
+		cooldown_ids.append_array(_collect_tooltip_node_ids(_cooldown_rows.get(side)))
+	return {
+		"slots": _collect_tooltip_node_ids(_slot_layer),
+		"status": status_ids,
+		"cooldowns": cooldown_ids,
 	}
 
 func _ensure_ui() -> void:
@@ -152,11 +168,13 @@ func _ensure_ui() -> void:
 		actor.name = "%sActor" % side.capitalize()
 		actor.configure(side, _default_side_name(side), _side_color(side))
 		add_child(actor)
+		_bind_stage_tooltip(actor)
 		_actors[side] = actor
 
 		var name_label := _stage_label(_default_side_name(side), 16, _token_color("text_primary"))
 		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		add_child(name_label)
+		_bind_stage_tooltip(name_label)
 		_name_labels[side] = name_label
 
 		var status_row := HBoxContainer.new()
@@ -187,10 +205,12 @@ func _ensure_ui() -> void:
 	_event_icon = BattleSymbolIconScript.new()
 	_event_icon.custom_minimum_size = Vector2(42, 42)
 	event_row.add_child(_event_icon)
+	_bind_stage_tooltip(_event_icon)
 	_event_label = _stage_label("Aguardando battle_log_v1", 13, _token_color("text_primary"))
 	_event_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_event_label.custom_minimum_size = Vector2(240, 42)
 	event_row.add_child(_event_label)
+	_bind_stage_tooltip(_event_label)
 
 	_empty_label = _stage_label("", 15, _token_color("text_secondary"))
 	_empty_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -198,6 +218,17 @@ func _ensure_ui() -> void:
 	_empty_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_empty_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_empty_label)
+
+	_tooltip_panel = PanelContainer.new()
+	_tooltip_panel.name = "BattleTooltip"
+	_tooltip_panel.visible = false
+	_tooltip_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_tooltip_panel.add_theme_stylebox_override("panel", _panel_style("bg_panel", "border_active"))
+	add_child(_tooltip_panel)
+	_tooltip_label = _stage_label("", 12, _token_color("text_primary"))
+	_tooltip_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_tooltip_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_tooltip_panel.add_child(_tooltip_label)
 
 	_layout_nodes()
 	show_empty_state("Nenhuma batalha carregada.")
@@ -289,20 +320,30 @@ func _render_dynamic_state() -> void:
 			_number_text(float(side_data.get("max_hp", 1.0))),
 		]
 		name_label.tooltip_text = actor.tooltip_text
+		_refresh_stage_tooltip(actor)
+		_refresh_stage_tooltip(name_label)
 		_render_icon_row(_status_rows[side], statuses, "status")
 		_render_icon_row(_cooldown_rows[side], _as_dictionary(side_data.get("cooldowns", {})), "cooldown")
 
 	_render_slots()
 	_render_event_panel()
+	if _tooltip_source != null:
+		_refresh_stage_tooltip(_tooltip_source)
 	queue_redraw()
 
 func _render_icon_row(row: HBoxContainer, values: Dictionary, row_kind: String) -> void:
-	_clear_children(row)
+	var entries: Array[Dictionary] = []
 	if values.is_empty():
-		var empty_icon = BattleSymbolIconScript.new()
-		empty_icon.custom_minimum_size = Vector2(34, 34)
-		empty_icon.configure("-", _token_color("border_default"), _empty_row_tooltip(row_kind))
-		row.add_child(empty_icon)
+		entries.append({
+			"key": "empty",
+			"symbol": "-",
+			"color": _token_color("border_default"),
+			"tooltip": _empty_row_tooltip(row_kind),
+			"count": "",
+			"cooldown_ratio": 0.0,
+			"size": Vector2(34, 34),
+		})
+		_sync_symbol_icon_row(row, entries)
 		return
 	var keys := values.keys()
 	keys.sort()
@@ -324,13 +365,19 @@ func _render_icon_row(row: HBoxContainer, values: Dictionary, row_kind: String) 
 			if stacks > 1:
 				count = "x%d" % stacks
 			tooltip = _status_tooltip(str(key), value)
-		var icon = BattleSymbolIconScript.new()
-		icon.custom_minimum_size = Vector2(36, 36)
-		icon.configure(symbol, color, tooltip, count, cooldown_ratio)
-		row.add_child(icon)
+		entries.append({
+			"key": str(key),
+			"symbol": symbol,
+			"color": color,
+			"tooltip": tooltip,
+			"count": count,
+			"cooldown_ratio": cooldown_ratio,
+			"size": Vector2(36, 36),
+		})
+	_sync_symbol_icon_row(row, entries)
 
 func _render_slots() -> void:
-	_clear_children(_slot_layer)
+	var entries: Array[Dictionary] = []
 	for side: String in SIDES:
 		var side_data := _as_dictionary(_side_state.get(side, {}))
 		var slot_entries: Array[Dictionary] = []
@@ -361,26 +408,29 @@ func _render_slots() -> void:
 			var slot := str(entry.get("slot", SLOT_MIDDLE))
 			var offset_count := int(used_offsets.get(slot, 0))
 			used_offsets[slot] = offset_count + 1
-			var icon = BattleSymbolIconScript.new()
-			icon.custom_minimum_size = Vector2(46, 46)
 			var entry_color: Color = _token_color("accent_bone")
 			if entry.get("color", null) is Color:
 				entry_color = entry.get("color")
-			icon.configure(
-				str(entry.get("symbol", "?")),
-				entry_color,
-				_slot_entry_tooltip(entry, side, slot),
-				_slot_short(slot)
-			)
 			var pos := _slot_position(side, slot)
-			icon.position = pos - icon.custom_minimum_size * 0.5 + Vector2(0, offset_count * 8.0)
-			icon.size = icon.custom_minimum_size
-			_slot_layer.add_child(icon)
+			entries.append({
+				"key": "%s:%s:%s" % [side, str(entry.get("kind", "objeto")), str(entry.get("id", ""))],
+				"symbol": str(entry.get("symbol", "?")),
+				"color": entry_color,
+				"tooltip": _slot_entry_tooltip(entry, side, slot),
+				"count": _slot_short(slot),
+				"cooldown_ratio": 0.0,
+				"size": Vector2(46, 46),
+				"position": pos - Vector2(46, 46) * 0.5 + Vector2(0, offset_count * 8.0),
+			})
+	_sync_slot_icons(entries)
 
 func _render_event_panel() -> void:
 	if _latest_event.is_empty():
 		_event_icon.configure("...", _token_color("placeholder"), "Replay aguardando o proximo evento do battle_log_v1.")
 		_event_label.text = "Evento %d/%d | aguardando replay" % [_event_index, _event_count]
+		_event_label.tooltip_text = _event_icon.tooltip_text
+		_refresh_stage_tooltip(_event_icon)
+		_refresh_stage_tooltip(_event_label)
 		return
 	var event_type := str(_latest_event.get("type", ""))
 	_event_icon.configure(_event_code(event_type), _event_color(_latest_event), _event_tooltip(_latest_event))
@@ -390,6 +440,9 @@ func _render_event_panel() -> void:
 		"%.1f" % float(_latest_event.get("t", 0.0)),
 		_event_brief(_latest_event),
 	]
+	_event_label.tooltip_text = _event_icon.tooltip_text
+	_refresh_stage_tooltip(_event_icon)
+	_refresh_stage_tooltip(_event_label)
 
 func _empty_row_tooltip(row_kind: String) -> String:
 	match row_kind:
@@ -534,6 +587,132 @@ func _event_title(event_type: String) -> String:
 
 func _asset_id_for_event(event_type: String) -> String:
 	return str(EVENT_ASSET_IDS.get(event_type, "battle_icon_event"))
+
+func _sync_symbol_icon_row(row: HBoxContainer, entries: Array[Dictionary]) -> void:
+	var existing := _children_by_render_key(row)
+	var wanted: Dictionary = {}
+	for index: int in range(entries.size()):
+		var entry := entries[index]
+		var key := str(entry.get("key", ""))
+		wanted[key] = true
+		var icon := existing.get(key, null) as BattleSymbolIcon
+		if icon == null:
+			icon = BattleSymbolIconScript.new()
+			icon.set_meta("render_key", key)
+			row.add_child(icon)
+			_bind_stage_tooltip(icon)
+		_configure_symbol_icon(icon, entry)
+		if icon.get_index() != index:
+			row.move_child(icon, index)
+		_refresh_stage_tooltip(icon)
+	_remove_unwanted_children(row, wanted)
+
+func _sync_slot_icons(entries: Array[Dictionary]) -> void:
+	var existing := _children_by_render_key(_slot_layer)
+	var wanted: Dictionary = {}
+	for index: int in range(entries.size()):
+		var entry := entries[index]
+		var key := str(entry.get("key", ""))
+		wanted[key] = true
+		var icon := existing.get(key, null) as BattleSymbolIcon
+		if icon == null:
+			icon = BattleSymbolIconScript.new()
+			icon.set_meta("render_key", key)
+			_slot_layer.add_child(icon)
+			_bind_stage_tooltip(icon)
+		_configure_symbol_icon(icon, entry)
+		var icon_position: Vector2 = Vector2(entry.get("position", icon.position))
+		icon.position = icon_position
+		if icon.get_index() != index:
+			_slot_layer.move_child(icon, index)
+		_refresh_stage_tooltip(icon)
+	_remove_unwanted_children(_slot_layer, wanted)
+
+func _configure_symbol_icon(icon: BattleSymbolIcon, entry: Dictionary) -> void:
+	var icon_size: Vector2 = Vector2(entry.get("size", Vector2(36, 36)))
+	var icon_color: Color = _token_color("accent_bone")
+	if entry.get("color", null) is Color:
+		icon_color = entry.get("color")
+	icon.custom_minimum_size = icon_size
+	icon.size = icon_size
+	icon.configure(
+		str(entry.get("symbol", "?")),
+		icon_color,
+		str(entry.get("tooltip", "")),
+		str(entry.get("count", "")),
+		float(entry.get("cooldown_ratio", 0.0))
+	)
+
+func _children_by_render_key(parent: Node) -> Dictionary:
+	var existing: Dictionary = {}
+	for child: Node in parent.get_children():
+		var key := str(child.get_meta("render_key", ""))
+		if key != "":
+			existing[key] = child
+	return existing
+
+func _remove_unwanted_children(parent: Node, wanted: Dictionary) -> void:
+	for child: Node in parent.get_children():
+		var key := str(child.get_meta("render_key", ""))
+		if key == "" or wanted.has(key):
+			continue
+		if _tooltip_source == child:
+			_hide_stage_tooltip()
+		parent.remove_child(child)
+		child.free()
+
+func _bind_stage_tooltip(control: Control) -> void:
+	if control == null or control.has_meta("battle_tooltip_bound"):
+		return
+	control.set_meta("battle_tooltip_bound", true)
+	control.mouse_entered.connect(func() -> void:
+		_show_stage_tooltip(control)
+	)
+	control.mouse_exited.connect(func() -> void:
+		if _tooltip_source == control:
+			_hide_stage_tooltip()
+	)
+	control.gui_input.connect(func(event: InputEvent) -> void:
+		if event is InputEventMouseMotion and _tooltip_source == control:
+			_position_stage_tooltip()
+	)
+
+func _show_stage_tooltip(control: Control) -> void:
+	if control == null:
+		_hide_stage_tooltip()
+		return
+	var text := control.tooltip_text.strip_edges()
+	if text == "":
+		_hide_stage_tooltip()
+		return
+	_tooltip_source = control
+	_tooltip_label.text = text
+	_tooltip_panel.visible = true
+	_position_stage_tooltip()
+
+func _refresh_stage_tooltip(control: Control) -> void:
+	if _tooltip_source == control:
+		_show_stage_tooltip(control)
+
+func _hide_stage_tooltip() -> void:
+	_tooltip_source = null
+	if _tooltip_panel != null:
+		_tooltip_panel.visible = false
+
+func _position_stage_tooltip() -> void:
+	if _tooltip_panel == null or not _tooltip_panel.visible:
+		return
+	var stage_size := _stage_size()
+	var tooltip_width: float = min(340.0, max(220.0, stage_size.x - 24.0))
+	_tooltip_label.custom_minimum_size = Vector2(max(160.0, tooltip_width - 20.0), 0.0)
+	_tooltip_panel.size = Vector2(tooltip_width, 0.0)
+	_tooltip_panel.reset_size()
+	var panel_size := _tooltip_panel.size
+	var position := get_local_mouse_position() + Vector2(14.0, 14.0)
+	position.x = clampf(position.x, 8.0, max(8.0, stage_size.x - panel_size.x - 8.0))
+	position.y = clampf(position.y, 8.0, max(8.0, stage_size.y - panel_size.y - 8.0))
+	_tooltip_panel.position = position
+	_tooltip_panel.move_to_front()
 
 func _animate_event(event: Dictionary) -> void:
 	var key := "%s:%s:%s" % [str(event.get("seq", "")), str(event.get("t", "")), str(event.get("type", ""))]
@@ -864,6 +1043,8 @@ func _number_text(value: float) -> String:
 
 func _clear_children(node: Node) -> void:
 	for child: Node in node.get_children():
+		if _tooltip_source == child:
+			_hide_stage_tooltip()
 		node.remove_child(child)
 		child.free()
 
@@ -878,6 +1059,19 @@ func _collect_tooltips(root: Variant) -> Array[String]:
 			values.append(str(control.tooltip_text))
 	for child: Node in node.get_children():
 		values.append_array(_collect_tooltips(child))
+	return values
+
+func _collect_tooltip_node_ids(root: Variant) -> Array[String]:
+	var values: Array[String] = []
+	var node := root as Node
+	if node == null:
+		return values
+	if node is Control:
+		var control := node as Control
+		if control.tooltip_text != "":
+			values.append(str(control.get_instance_id()))
+	for child: Node in node.get_children():
+		values.append_array(_collect_tooltip_node_ids(child))
 	return values
 
 static func _as_dictionary(value: Variant) -> Dictionary:
