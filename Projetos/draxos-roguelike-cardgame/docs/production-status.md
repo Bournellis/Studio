@@ -17,13 +17,13 @@ Track 02 currently includes:
 - full Track 02 keyword/status vocabulary and implemented keyword engine;
 - Terra/Gelo/Ar/Fogo enemy galleries, deterministic hybrid enemy AI, and visible enemy intent;
 - encounter modes, board formats, field effects, and boss hooks for maps 8/15/22/29;
-- modular GUT suites, generated catalog hashing, shared route pacing simulator, and local Run Lab CSV/JSON output.
+- modular GUT suites, generated catalog hashing, shared route pacing simulator, local Run Lab CSV/JSON output, and internal directors/services for enemy AI/intent, rewards, and battle preview data.
 
 ## Validation
 
 Latest green local baseline:
 
-- GUT: `96/96` tests, `1206` asserts.
+- GUT: `97/97` tests, `1218` asserts.
 - Full-route smoke: `29/29` maps, 217 estimated turns, 116 HP loss, 0 deaths.
 - Arcano seed `20260518`: 362 Souls earned, 291 spent, 71 left, 38-card final deck, 6 relics, 21 shop actions.
 - Run Lab: Arcano, Invocador, and Necromante complete `29/29` with seed `20260518`.

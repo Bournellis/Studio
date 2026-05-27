@@ -1,6 +1,6 @@
 # Track 02 Handoff Log
 
-- Last Updated: `2026-05-18`
+- Last Updated: `2026-05-27`
 - Status: `READY_FOR_THREAD_HANDOFFS`
 
 ## Protocol
@@ -115,5 +115,14 @@ Each entry should include:
 - summary: Cleaned stale satellite docs, added the Track 02 human playtest checklist, extracted route pacing into a shared simulator used by validation and Run Lab, and added GUT coverage for simulator schema/parity.
 - changed files: `tools/route_pacing_simulator.gd`, `tools/validate.gd`, `tools/run_lab.gd`, `tests/unit/test_route_pacing_simulator.gd`, docs/status snapshots, and coordination note.
 - validation result: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <worktree>\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd` passed with 96/96 GUT tests and 1206 asserts. Shared full-route pacing smoke completed 29/29 maps with 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 shop actions.
+- blockers: none. Remaining known debt: optional missing final PNG art and 4 non-fatal ship overlay alpha warnings.
+- next prompt id: none; Track 02 remains ready for human playtest.
+
+### 2026-05-27 - Foundation Hardening 3
+
+- prompt id: `FOUNDATION-HARDENING-3`
+- summary: Extracted enemy commander turn resolution into `battle/enemy_turn_director.gd`, enemy intent assembly into `battle/enemy_intent_director.gd`, reward choice/application logic into `core/run_reward_service.gd`, and pure battle preview/readout data into `modes/battle/battle_preview_presenter.gd` while preserving public wrappers and Track 02 behavior.
+- changed files: `battle/battle_engine.gd`, `battle/enemy_turn_director.gd`, `battle/enemy_intent_director.gd`, `core/run_session.gd`, `core/run_reward_service.gd`, `modes/battle/battle_root.gd`, `modes/battle/battle_preview_presenter.gd`, `tools/validate.gd`, focused unit tests, docs/status snapshots, and coordination note.
+- validation result: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <worktree>\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd` passed with 97/97 GUT tests and 1218 asserts. Shared full-route pacing smoke completed 29/29 maps with 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 shop actions.
 - blockers: none. Remaining known debt: optional missing final PNG art and 4 non-fatal ship overlay alpha warnings.
 - next prompt id: none; Track 02 remains ready for human playtest.

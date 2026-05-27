@@ -1,13 +1,13 @@
 # Track 02 Validation And Tuning Notes
 
 - Last Updated: `2026-05-27`
-- Prompt: `FOUNDATION-HARDENING-2`
+- Prompt: `FOUNDATION-HARDENING-3`
 - Status: `READY_FOR_USER_PLAYTEST`
 
 ## Validation Summary
 
 - Godot validation command: green.
-- GUT: `96/96` tests passing, `1206` asserts.
+- GUT: `97/97` tests passing, `1218` asserts.
 - Full-route pacing smoke: `29/29` maps completed.
 - Estimated route turns: `217`.
 - Estimated HP loss across route: `116`.
@@ -18,6 +18,7 @@
 - Shop usage count: `21`.
 - Shared simulator: `tools/route_pacing_simulator.gd`.
 - Run Lab parity: Arcano, Invocador, and Necromante complete `29/29` with seed `20260518`.
+- Foundation Pass 3 modularized enemy AI/intent internals, reward choice/application logic, and battle preview data without changing route metrics.
 
 ## First Tuning Pass
 

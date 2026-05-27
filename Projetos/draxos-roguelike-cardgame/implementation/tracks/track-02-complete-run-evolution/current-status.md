@@ -4,7 +4,7 @@
 - Status: `T02-P09_COMPLETE`
 - Scope: `First complete 29-map version of the Draxos roguelike cardgame`
 - Baseline Dependency: `Track 01 - Playable Run Loop`
-- Validation Baseline: `Foundation hardening 2 validation green: 96/96 GUT tests, 1206 asserts, shared full-route pacing smoke green`
+- Validation Baseline: `Foundation hardening 3 validation green: 97/97 GUT tests, 1218 asserts, shared full-route pacing smoke green`
 
 ## Purpose
 
@@ -83,6 +83,7 @@ Next implementation prompt: none. Track 02 is ready for user playtest.
 - T02-P09 added full-route pacing telemetry to validation, with map count, estimated turns, HP loss, Souls, deck size, relic count, shop usage, and deaths.
 - Foundation hardening 2 extracted that route pacing telemetry into `tools/route_pacing_simulator.gd`, now shared by `tools/validate.gd`, `tools/run_lab.gd`, and GUT coverage.
 - Foundation hardening 2 added `docs/playtest-track-02.md` as the human playtest checklist for the complete route.
+- Foundation hardening 3 extracted enemy turn and intent directors, `core/run_reward_service.gd`, and the pure battle preview presenter while preserving public APIs, route behavior, reward/shop payloads, UI layout, and pacing metrics.
 - Reward screen, RunMap, Souls shop/relic state, keyword preview, enemy intent, and dense Battle layouts received readability polish.
 - Discard marking now happens in the main creature-play phase with right-click card selection, a visible hand hint, and marked-card discard/redraw on combat resolution instead of a separate pre-combat phase.
 - 5/5, 6/6, and 7/7 battle layouts now have regression coverage.

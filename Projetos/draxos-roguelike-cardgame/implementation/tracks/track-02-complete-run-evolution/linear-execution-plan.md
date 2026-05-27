@@ -28,7 +28,7 @@
 | T02-P06 | complete | Promote placeholder cards into real class cards and add enemy card content. | Green 87/87 |
 | T02-P07 | complete | Implement enemy AI profiles and enemy intent panel. | Green 89/89 + screenshots |
 | T02-P08 | complete | Implement 29-map route, new encounter modes, board formats, field effects, boss phases. | Green 92/92 + screenshots |
-| T02-P09 | complete | Polish UI/visuals, add telemetry, run full-route validation, and tune. | Green; post-hardening baseline 96/96 + smoke notes |
+| T02-P09 | complete | Polish UI/visuals, add telemetry, run full-route validation, and tune. | Green; post-hardening baseline 97/97 + smoke notes |
 
 ## Current Execution Cursor
 

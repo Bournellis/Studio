@@ -105,8 +105,8 @@ O objetivo do intent nao e ser uma IA final perfeita; e tornar previsivel o bast
 
 Baseline em 2026-05-27:
 
-- GUT: 96/96.
-- Test scripts: 7 modular suites, 1206 asserts.
+- GUT: 97/97.
+- Test scripts: 7 modular suites, 1218 asserts.
 - Full-route pacing smoke: 29/29 mapas.
 - Telemetria: 217 turnos estimados, 116 HP loss estimado, 0 mortes, 362 Souls earned, 291 Souls spent, 71 Souls left, deck final de 38 cartas, 6 reliquias, 21 acoes de loja.
 - `route_pacing_simulator.gd` e fonte compartilhada para validacao e Run Lab.

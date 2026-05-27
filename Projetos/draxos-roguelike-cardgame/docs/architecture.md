@@ -1,7 +1,7 @@
 # Architecture
 
 - Last Updated: `2026-05-27`
-- Status: `Track 02 foundation hardening baseline`
+- Status: `Track 02 foundation hardening 3 baseline`
 
 ## Goal
 
@@ -90,7 +90,7 @@ Responsibilities:
 - stable seeded pending choices;
 - save/snapshot payload v5.
 
-Foundation direction: keep the public API stable while moving reward/shop logic into internal services.
+Foundation checkpoint: `RunSession` remains the public owner of run state while reward choice generation/application now delegates to `core/run_reward_service.gd`; shop mutation/cost services remain separate and behavior-compatible.
 
 ### `Battle`
 
@@ -109,7 +109,7 @@ Responsibilities:
 - visible enemy intent;
 - visual events and UI refresh.
 
-Foundation direction: keep the public `BattleEngine` API stable while extracting enemy AI/intent, keyword/status hooks, encounter directors, boss directors and field-effect directors behind the engine.
+Foundation checkpoint: the public `BattleEngine` API remains stable while enemy commander turn resolution delegates to `battle/enemy_turn_director.gd`, enemy intent delegates to `battle/enemy_intent_director.gd`, and existing field-effect/encounter/boss hooks stay behavior-compatible behind the engine.
 
 ### `Data`
 
@@ -141,7 +141,7 @@ Responsibilities:
 - run map node presentation;
 - reward/state text for fixed rewards, utility rewards, relics, upgrades and new-card choices.
 
-Foundation direction: `BattleRoot` should trend toward composition/presenter code, with board/hand, intent panel and modals extracted in small validated steps.
+Foundation checkpoint: `BattleRoot` keeps current scene composition, anchors, layout and drag/drop behavior while pure battle preview/readout data now delegates to `modes/battle/battle_preview_presenter.gd`. Board/hand and modal extraction remain future small validated steps.
 
 ### `Validation`
 
@@ -155,7 +155,7 @@ Responsibilities:
 - run GUT;
 - report playtest readiness and known non-fatal art alpha debts.
 
-Expected baseline after 2026-05-27 hardening 2: GUT 96/96, full-route smoke 29/29 through the shared route pacing simulator, Run Lab parity for class/seed sweeps, and repeated validation does not dirty generated content when the JSON is unchanged.
+Expected baseline after 2026-05-27 hardening 3: GUT 97/97 with 1218 asserts, full-route smoke 29/29 through the shared route pacing simulator, Run Lab parity for class/seed sweeps, and repeated validation does not dirty generated content when the JSON is unchanged.
 
 ### `Run Lab`
 
