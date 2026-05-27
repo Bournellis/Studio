@@ -3,8 +3,8 @@
 - Last Updated: `2026-05-27`
 - Status: `ACTIVE_FOUNDATION_HARDENING`
 - Depends On: `T07_INTEGRATED_PRESENTATION_READY`
-- Current Stage: `T08_A_COMPLETE`
-- Next Action: integrate T08-A into master, then run T08-B to T08-F in parallel worktrees.
+- Current Stage: `T08_D_COMPLETE`
+- Next Action: continue T08-B/T08-C/T08-F in parallel worktrees; run T08-E after T08-B and T08-G after T08-B to T08-F.
 
 ## Estado
 
@@ -12,16 +12,25 @@ Track 08 is active as the post-presentation foundation hardening pass.
 
 The project now has a mobile-first Refugio home, route shell, internal surfaces and fullscreen landscape battle. The next risk is structural drift while adding future features: routes living only inside `boot.gd`, session/save boundary assumptions spread across client code, touch/layout rules copied per surface, battle fullscreen behavior needing mode-level contract, and validation becoming hard to remember.
 
+T08-D Mobile UI Contract is complete in `codex/draxos-mobile/t08-mobile-ui-contract`. It adds `DraxosMobileUiContract` as the small shared contract for minimum touch target, touch-scroll drag threshold, scrollbar/touch policy and portrait/landscape layout columns. `DraxosTouchScrollContainer`, `boot.gd` and existing shell/base buttons now reuse the helper without redesign, new assets, backend/schema changes or gameplay changes.
+
 ## Ordem Atual
 
 1. `T08-A` Coordenacao/Audit: complete; opened the track and recorded the foundation gap report.
 2. `T08-B` App Shell Lifecycle: pending after T08-A.
 3. `T08-C` Session/Save Boundary: pending after T08-A.
-4. `T08-D` Mobile UI Contract: pending after T08-A.
+4. `T08-D` Mobile UI Contract: complete; centralized touch/scroll/button/layout rules and covered them in GUT plus mobile presentation smoke.
 5. `T08-E` Battle Mode Contract: pending after T08-B.
 6. `T08-F` Service/Asset Contract Checks: pending after T08-A.
 7. `T08-G` Validation Harness: pending after T08-B to T08-F.
 8. `T08-H` Integracao: pending after T08-B to T08-G.
+
+## T08-D Validation
+
+- GUT client command with `-gtest=res://tests/client/test_boot_mobile_ui.gd`: passed; project config loaded the full client suite, `85/85` tests and `985` asserts.
+- `tools/smoke_mobile_presentation.gd`: passed.
+- `tools/validate.gd`: passed; `DraxosMobile validate: OK`, `85/85` tests and `985` asserts.
+- `git diff --check`: passed.
 
 ## Guardrails
 

@@ -10,6 +10,7 @@ const BaseSurfacePresenterScript := preload("res://modes/boot/surfaces/base_surf
 const SocialSurfacePresenterScript := preload("res://modes/boot/surfaces/social_surface_presenter.gd")
 const CompetitionSurfacePresenterScript := preload("res://modes/boot/surfaces/competition_surface_presenter.gd")
 const ShopSurfacePresenterScript := preload("res://modes/boot/surfaces/shop_surface_presenter.gd")
+const MobileUiContractScript := preload("res://modes/boot/ui/mobile_ui_contract.gd")
 
 const ROUTE_REFUGE_HOME := "refuge_home"
 const ROUTE_ACCOUNT := "account"
@@ -149,7 +150,7 @@ func _manifest_url() -> String:
 	return SupabaseClient.manifest_url()
 
 func _button_min_size() -> Vector2:
-	return Vector2(154, 50) if _compact_layout else Vector2(220, 44)
+	return MobileUiContractScript.button_min_size(_compact_layout)
 
 func _action_button_columns() -> int:
 	return action_button_columns_for_size(get_viewport_rect().size, _compact_layout)
@@ -158,25 +159,13 @@ func _surface_columns(max_columns: int = 2) -> int:
 	return surface_columns_for_size(get_viewport_rect().size, max_columns)
 
 static func action_button_columns_for_size(viewport_size: Vector2, compact: bool) -> int:
-	if compact:
-		if viewport_size.x <= viewport_size.y or viewport_size.x < 760.0:
-			return 2
-		return 3
-	return 2
+	return MobileUiContractScript.action_button_columns_for_size(viewport_size, compact)
 
 static func surface_columns_for_size(viewport_size: Vector2, max_columns: int = 2) -> int:
-	var clamped_columns := clampi(max_columns, 1, 3)
-	if viewport_size.x < 760.0:
-		return 1
-	if viewport_size.x <= viewport_size.y * 1.08:
-		return 1
-	return clamped_columns
+	return MobileUiContractScript.surface_columns_for_size(viewport_size, max_columns)
 
 func _base_map_columns() -> int:
-	if not _compact_layout:
-		return 3
-	var viewport_size := get_viewport_rect().size
-	return 6 if viewport_size.x >= 1180.0 else 3
+	return MobileUiContractScript.base_map_columns_for_size(get_viewport_rect().size, _compact_layout)
 
 func _reset_action_group() -> void:
 	_current_action_grid = null
@@ -553,7 +542,7 @@ func _add_social_input(label_text: String, placeholder: String, initial_text: St
 	input.placeholder_text = placeholder
 	input.text = initial_text
 	input.tooltip_text = input_tooltip
-	input.custom_minimum_size = Vector2(260, 48) if _compact_layout else Vector2(260, 40)
+	input.custom_minimum_size = MobileUiContractScript.input_min_size(_compact_layout)
 	input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	box.add_child(input)
 	return input
@@ -573,9 +562,7 @@ func _add_screen_button(text: String, screen_id: String) -> Button:
 	return button
 
 func _prepare_touch_button(button: Button) -> void:
-	button.mouse_filter = Control.MOUSE_FILTER_PASS
-	button.focus_mode = Control.FOCUS_NONE
-	button.custom_minimum_size.y = maxf(button.custom_minimum_size.y, 48.0)
+	MobileUiContractScript.apply_touch_button(button)
 
 func _trigger_action(action_id: String, confirm_message: String = "") -> void:
 	if _is_busy:

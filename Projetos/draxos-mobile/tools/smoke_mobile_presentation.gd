@@ -1,6 +1,8 @@
 extends SceneTree
 
 const ProjectInfoScript = preload("res://core/project_info.gd")
+const MobileUiContractScript = preload("res://modes/boot/ui/mobile_ui_contract.gd")
+const TouchScrollContainerScript = preload("res://modes/boot/ui/touch_scroll_container.gd")
 const BOOT_SCREEN_PATH := "res://modes/boot/boot.gd"
 
 var _failures: PackedStringArray = PackedStringArray()
@@ -37,7 +39,9 @@ func _check_portrait_app_loop() -> void:
 	_expect(_label_tree_contains(boot, "Altar do Refugio"), "portrait Refugio shows altar")
 	_expect(_find_button_by_text(boot, "Perfil/Conta") != null, "portrait Refugio has account hotspot")
 	_expect(_find_button_by_text(boot, "Base") != null, "portrait Refugio has Base hotspot")
-	_expect(_find_button_by_text(boot, "Batalha") != null, "portrait Refugio has Battle hotspot")
+	var battle_hotspot := _find_button_by_text(boot, "Batalha")
+	_expect(battle_hotspot != null, "portrait Refugio has Battle hotspot")
+	_expect(battle_hotspot != null and battle_hotspot.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET, "portrait hotspots keep mobile touch target")
 	_expect(_get_back_button(boot) != null and not _get_back_button(boot).visible, "portrait root hides Back")
 
 	boot.call("_show_screen", "account")
@@ -66,10 +70,14 @@ func _check_landscape_app_loop() -> void:
 	_expect(str(boot.get("_current_screen")) == "base", "landscape Base route opens")
 	_expect(_get_back_button(boot) != null and _get_back_button(boot).visible, "landscape internal route exposes Back")
 	_expect(_get_content_scroll(boot) != null, "landscape internal route uses touch scroll container")
+	_expect(_get_content_scroll(boot) is TouchScrollContainerScript, "landscape internal route reuses DraxosTouchScrollContainer")
 	_expect(_label_tree_contains(boot, "Rotina da Base"), "landscape Base keeps routine panel")
 
 	var scroll := _get_content_scroll(boot)
 	if scroll != null:
+		_expect(scroll.vertical_scroll_mode == ScrollContainer.SCROLL_MODE_SHOW_ALWAYS, "touch scroll policy keeps vertical scrollbar visible")
+		_expect(scroll.horizontal_scroll_mode == ScrollContainer.SCROLL_MODE_DISABLED, "touch scroll policy disables horizontal drag")
+		_expect(scroll.get_v_scroll_bar().custom_minimum_size.x >= MobileUiContractScript.TOUCH_SCROLLBAR_WIDTH, "touch scrollbar keeps minimum target width")
 		scroll.scroll_vertical = 120
 	boot.call("_show_screen", "social")
 	await process_frame

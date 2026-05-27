@@ -229,6 +229,7 @@ static func _base_detail_panel(host: Node, structures: Array) -> Control:
 	upgrade_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	upgrade_button.tooltip_text = _base_structure_tooltip(structure)
 	upgrade_button.disabled = not can_upgrade_structure(host, structure_id)
+	_prepare_touch_button(host, upgrade_button)
 	upgrade_button.pressed.connect(func() -> void:
 		host.call("_trigger_action", action_id, "Iniciar upgrade de %s no servidor?" % display_label)
 	)
@@ -253,6 +254,7 @@ static func _base_structure_button(host: Node, structure: Dictionary) -> Button:
 	button.add_theme_stylebox_override("normal", _base_structure_card_style(structure_id, selected))
 	button.add_theme_stylebox_override("hover", _base_structure_card_style(structure_id, true))
 	button.add_theme_stylebox_override("pressed", _base_structure_card_style(structure_id, true))
+	_prepare_touch_button(host, button)
 	var action_id := "select_base_structure:%s" % structure_id
 	button.pressed.connect(func() -> void:
 		host.call("_trigger_action", action_id)
@@ -607,6 +609,9 @@ static func _add_action_button(host: Node, text: String, action_id: String, conf
 static func _register_action_button(host: Node, action_id: String, button: Button) -> void:
 	var action_buttons: Dictionary = host.get("_action_buttons")
 	action_buttons[action_id] = button
+
+static func _prepare_touch_button(host: Node, button: Button) -> void:
+	host.call("_prepare_touch_button", button)
 
 static func _add_responsive_panel_layout(host: Node, container: VBoxContainer, panels: Array, max_columns: int) -> void:
 	host.call("_add_responsive_panel_layout", container, panels, max_columns)
