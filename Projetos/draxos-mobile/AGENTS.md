@@ -103,6 +103,9 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 | Escopo da Track 07 | `implementation/tracks/track-07-mobile-presentation-loop-and-layout-rework/scope.md` |
 | Plano da Track 07 | `implementation/tracks/track-07-mobile-presentation-loop-and-layout-rework/implementation-plan.md` |
 | Status da Track 07 | `implementation/tracks/track-07-mobile-presentation-loop-and-layout-rework/current-status.md` |
+| Escopo da Track 08 | `implementation/tracks/track-08-foundation-review-and-hardening/scope.md` |
+| Plano da Track 08 | `implementation/tracks/track-08-foundation-review-and-hardening/implementation-plan.md` |
+| Status da Track 08 | `implementation/tracks/track-08-foundation-review-and-hardening/current-status.md` |
 | Runbook Internal Alpha v0 | `docs/internal-alpha-v0.md` |
 | Setup remoto Internal Alpha v0 | `docs/internal-alpha-remote-setup.md` |
 | Host estatico Internal Alpha v0 | `docs/internal-alpha-static-hosting.md` |
@@ -172,6 +175,6 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 
 ## Active Track
 
-Track ativa: `Track 07 - Mobile Presentation Loop And Layout Rework` (`INTEGRATED_PRESENTATION_READY`; aguardando walkthrough manual mobile/PC/Web).
+Track ativa: `Track 08 - Foundation Review And Hardening` (`ACTIVE_FOUNDATION_HARDENING`).
 
-Comece por `implementation/current-status.md` e siga `implementation/tracks/track-07-mobile-presentation-loop-and-layout-rework/current-status.md`.
+Comece por `implementation/current-status.md` e siga `implementation/tracks/track-08-foundation-review-and-hardening/current-status.md`.
