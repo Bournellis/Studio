@@ -3,8 +3,8 @@
 - Last Updated: `2026-05-27`
 - Status: `ACTIVE_FEATURE_INSTALLATION`
 - Depends On: `T05_INTEGRATED_FOUNDATION_READY`
-- Current Stage: `T06_A_READY_FOR_MERGE`
-- Next Action: merge T06-A coordination, then run T06-B and T06-C before the parallel feature slices.
+- Current Stage: `T06_C_READY_FOR_MERGE`
+- Next Action: merge/integrate T06-C runtime config with T06-B feature rails before dependent feature slices consume flags.
 
 ## Estado
 
@@ -15,8 +15,8 @@ The track deliberately prioritizes solid installation rails and small visible fe
 ## Ordem Atual
 
 1. `T06-A` Coordenacao: complete.
-2. `T06-B` Feature Rails: pending after T06-A.
-3. `T06-C` Runtime Config: pending after T06-A.
+2. `T06-B` Feature Rails: pending/parallel after T06-A.
+3. `T06-C` Runtime Config: ready for merge.
 4. `T06-D` Perfil/Conta: pending after T06-B.
 5. `T06-E` Battle History: pending after T06-B.
 6. `T06-F` Base Routine: pending after T06-B.
@@ -32,6 +32,33 @@ The track deliberately prioritizes solid installation rails and small visible fe
 - Do not publish builds or mutate remote release state.
 - Do not put secrets or service role data in client/export or runtime config.
 - Keep missing art allowed.
+
+## T06-C Runtime Config
+
+Status: `READY_FOR_MERGE`.
+
+Entregas:
+
+- `GET /release/config` no release service como endpoint `release`, read-only, sem JWT obrigatorio e sem `x-draxos-save-type`.
+- Payload `runtime_config_v1` com flags T06 allowlisted e defaults conservadores.
+- Overrides operacionais limitados a campos allowlisted; flags desconhecidas sao ignoradas.
+- Cliente Godot com `RuntimeConfig`, URL derivada de `BackendConfig`, `SupabaseClient.fetch_runtime_config()`, fallback conservador no `SessionStore` e fetch inicial no Boot.
+- Contrato e smokes focados documentados.
+
+Guardrails preservados: sem schema/migration, sem economia, combate, tuning, secrets, service role, player/save state, publicacao remota ou mutacao de release remoto.
+
+Validacao T06-C:
+
+- `npx -y deno task --cwd supabase/functions check` passou.
+- `npx -y deno task --cwd server/functions check` passou.
+- `npx -y deno check server/tests/runtime_config_smoke.ts` passou.
+- `tools/smoke_runtime_config.gd` passou.
+- `tools/validate.gd` passou com `66/66` testes e `722` asserts.
+- GUT client passou com `66/66` testes e `722` asserts.
+- `release_manifest_smoke.ts` e `runtime_config_smoke.ts` passaram contra `server/functions/release/index.ts` servido localmente via Deno em `127.0.0.1:8000`.
+- `runtime_config_smoke.ts` passou contra `supabase/functions/release/index.ts` servido localmente via Deno em `127.0.0.1:8000`.
+
+Nota operacional: o Supabase local ja rodando em `127.0.0.1:54321` ainda servia a funcao antiga e retornou `404 Unknown release endpoint` para `/release/config`; o smoke HTTP da funcao nova foi validado por serve Deno isolado sem publicar ou tocar remoto.
 
 ## Validation Baseline
 
