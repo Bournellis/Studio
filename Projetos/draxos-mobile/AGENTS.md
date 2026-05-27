@@ -93,6 +93,9 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 | Escopo da Track 04 | `implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/scope.md` |
 | Plano da Track 04 | `implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/implementation-plan.md` |
 | Status da Track 04 | `implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/current-status.md` |
+| Escopo da Track 05 | `implementation/tracks/track-05-foundation-stabilization-and-asset-service-readiness/scope.md` |
+| Plano da Track 05 | `implementation/tracks/track-05-foundation-stabilization-and-asset-service-readiness/implementation-plan.md` |
+| Status da Track 05 | `implementation/tracks/track-05-foundation-stabilization-and-asset-service-readiness/current-status.md` |
 | Runbook Internal Alpha v0 | `docs/internal-alpha-v0.md` |
 | Setup remoto Internal Alpha v0 | `docs/internal-alpha-remote-setup.md` |
 | Host estatico Internal Alpha v0 | `docs/internal-alpha-static-hosting.md` |
@@ -162,6 +165,6 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 
 ## Active Track
 
-Track ativa: `Track 04 - Post-Handoff Hardening And Hub Modularization`.
+Track ativa: `Track 05 - Foundation Stabilization And Asset/Service Readiness`.
 
-Comece por `implementation/current-status.md` e siga `implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/current-status.md`.
+Comece por `implementation/current-status.md` e siga `implementation/tracks/track-05-foundation-stabilization-and-asset-service-readiness/current-status.md`.

@@ -1,9 +1,9 @@
 # Track 04 - Current Status
 
 - Last Updated: `2026-05-27`
-- Status: `ACTIVE_POST_ALPHA_EVOLUTION`
+- Status: `COMPLETE_INTEGRATED_HANDOFF_TO_T05`
 - Depends On: `T03-P18_COMPLETE - INTERNAL_ALPHA_V0_HANDOFF_READY`; `T04-P00_COMPLETE_BY_USER_CONFIRMATION`
-- Next Action: revisar/publicar a branch de integracao `codex/draxos-mobile/t04-integration`; depois escolher entre tuning humano do Progression Lab, UX/onboarding Android ou nova rodada de modularizacao fina.
+- Next Action: seguir pela Track 05 `ACTIVE_FOUNDATION_STABILIZATION` para estabilizar validacao, Hub foundation, contratos, asset pipeline, Progression Human Pack e release ops.
 - Account Save Gate: `DECIDED_KEEP_PLAYERS_SAVE_TYPE_FOR_ALPHA` em `account-save-gate-decision.md`.
 
 ## Estado
