@@ -3,6 +3,7 @@ extends Control
 const BattleClassActiveTokenScript = preload("res://ui/controls/battle_class_active_token.gd")
 const BattleHeroTargetControlScript = preload("res://ui/controls/battle_hero_target_control.gd")
 const BattleBoardAreaTargetScript = preload("res://ui/controls/battle_board_area_target.gd")
+const EnemyIntentPanelPresenter = preload("res://modes/battle/enemy_intent_panel_presenter.gd")
 
 var engine: BattleEngine = BattleEngine.new()
 var player_hud_dock: PanelContainer
@@ -947,31 +948,12 @@ func _refresh_enemy_intent_panel(state: Dictionary) -> void:
 	if enemy_intent_title_label != null:
 		enemy_intent_title_label.text = str(intent.get("title", "Intencao inimiga"))
 	if enemy_intent_profile_label != null:
-		var profile_text: String = "%s: %s" % [str(intent.get("profile_name", "")), str(intent.get("profile_summary", ""))]
-		if str(intent.get("kind", "")) == "boss":
-			profile_text = "%s | %s" % [str(intent.get("current_phase", "")), profile_text]
-		enemy_intent_profile_label.text = profile_text
+		enemy_intent_profile_label.text = EnemyIntentPanelPresenter.profile_text(intent)
 	if enemy_intent_pressure_label != null:
 		enemy_intent_pressure_label.text = str(intent.get("incoming_pressure", ""))
 	if enemy_intent_body_label != null:
-		var lines: Array[String] = []
-		for priority: Variant in Array(intent.get("priorities", [])):
-			var text: String = str(priority)
-			if text != "":
-				lines.append(text)
-		var lanes: Array = Array(intent.get("lane_pressure", []))
-		if not lanes.is_empty():
-			lines.append(str(lanes[0]))
-		if str(intent.get("kind", "")) == "boss":
-			lines.append("Gatilho: %s" % str(intent.get("next_scripted_trigger", "")))
-			lines.append("Especial: %s" % str(intent.get("next_major_special_action", "")))
-		else:
-			var field_hint: String = str(intent.get("incoming_field_effect", ""))
-			if field_hint != "":
-				lines.append(field_hint)
-		var max_lines: int = 5 if _is_compact_viewport() else 6
-		enemy_intent_body_label.text = "\n".join(lines.slice(0, max_lines))
-	enemy_intent_panel.tooltip_text = _enemy_intent_tooltip(intent)
+		enemy_intent_body_label.text = EnemyIntentPanelPresenter.body_text(intent, _is_compact_viewport())
+	enemy_intent_panel.tooltip_text = EnemyIntentPanelPresenter.tooltip_text(intent)
 
 func _refresh_objective_chip(state: Dictionary) -> void:
 	if objective_chip == null:
@@ -1858,15 +1840,6 @@ func _apply_enemy_intent_panel_rect(control: Control) -> void:
 	control.offset_top = 62.0 if _is_compact_viewport() and bool(engine.enemy_commander_enabled) else (5.0 if _is_compact_viewport() else 8.0)
 	control.offset_right = control.offset_left + panel_size.x
 	control.offset_bottom = control.offset_top + panel_size.y
-
-func _enemy_intent_tooltip(intent: Dictionary) -> String:
-	var ids: Array = Array(intent.get("tooltip_ids", []))
-	var lines: Array[String] = []
-	for intent_id: Variant in ids:
-		var tooltip: String = ContentLibrary.enemy_intent_tooltip_text(str(intent_id))
-		if tooltip != "":
-			lines.append(tooltip)
-	return "\n".join(lines)
 
 func _apply_area_target_overlay_rect(control: Control) -> void:
 	control.anchor_left = 0.09

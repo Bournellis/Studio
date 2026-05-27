@@ -16,7 +16,7 @@
 - Status: **P0_IMPLEMENTACAO - ativo**
 - Fase: `Implementacao`
 - Track ativa: `Track 02 - Complete Run Evolution` (T02-P09_COMPLETE)
-- Baseline atual: Track 02 completa para playtest de usuario em Godot 4.6.2 com rota fixa de 29 mapas, recompensas/reliquias/loja expandida, keywords completas, AI/intent, modos e formatos de encontro, field effects, boss hooks, UI polida para mapa/batalha/recompensa/loja/tooltips, descarte marcado na fase principal, validacao verde 94/94, telemetria de rota completa e screenshots obrigatorias capturadas.
+- Baseline atual: Track 02 completa para playtest de usuario em Godot 4.6.2 com rota fixa de 29 mapas, save/snapshot v5, recompensas/reliquias/loja expandida, keywords completas, AI/intent, modos e formatos de encontro, field effects, boss hooks, UI polida para mapa/batalha/recompensa/loja/tooltips, descarte marcado na fase principal, testes modulares, geracao idempotente do catalogo, Run Lab local JSON/CSV, validacao verde 94/94 em 2026-05-27 e telemetria de rota completa 29/29.
 - Meta ativa: playtest manual da Track 02 completa e coleta de feedback de balanceamento.
 - Trabalho permitido: codigo, validacao, playtest e documentacao local.
 - Proximo passo: executar playtest de usuario da Track 02 completa.

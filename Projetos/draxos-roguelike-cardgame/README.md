@@ -1,8 +1,10 @@
 # Draxos Roguelike Cardgame
 
-New Godot project for a Draxos roguelike cardgame.
+Menu-first Draxos roguelike cardgame in Godot 4.6.2.
 
-This project is official in the Estudio workspace, but its first checkpoint is a bootstrap scaffold, not a playable slice.
+The current baseline is Track 02 - Complete Run Evolution: a complete-run build with a fixed 29-map route, ShipHub, RunMap, Deck, Souls shop, Battle, three classes, save/snapshot v5, production rewards, universal relics, expanded shop actions, full keyword/status vocabulary, elemental enemy galleries, enemy AI/intent, encounter modes, board formats, field effects, and boss hooks.
+
+This build is ready for user playtest and balance feedback. It is not a new-content track; current foundation work should keep the JSON Track 02 catalog as source of truth and preserve behavior unless a product decision says otherwise.
 
 Start with:
 
@@ -18,3 +20,13 @@ Validation:
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd
 ```
+
+Expected foundation baseline after the 2026-05-27 hardening pass: GUT 94/94, full-route pacing smoke 29/29, and no generated-catalog churn when validation is run repeatedly without semantic JSON changes.
+
+Run Lab:
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_lab.gd -- --classes=arcano,invocador,necromante --seeds=20260518
+```
+
+By default the Run Lab writes `user://run_lab/run_lab_metrics.json` and `user://run_lab/run_lab_metrics.csv`.

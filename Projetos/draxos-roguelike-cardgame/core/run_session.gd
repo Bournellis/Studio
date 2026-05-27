@@ -1,5 +1,7 @@
 extends Node
 
+const RunShopService = preload("res://core/run_shop_service.gd")
+
 const DEFAULT_RUN_SEED: int = 0
 const REWARD_ADD_PULSO_ASTRAL: String = "add_pulso_astral"
 const REWARD_REINFORCE_HEALTH: String = "reinforce_health"
@@ -588,7 +590,7 @@ func buy_shop_relic(relic_id: String) -> Dictionary:
 	return {"ok": true, "message": "Reliquia comprada: %s." % ContentLibrary.get_relic_display_name(relic_id)}
 
 func current_reroll_cost() -> int:
-	return SHOP_REROLL_COST_BASE + (SHOP_REROLL_COST_STEP * maxi(0, reroll_count))
+	return RunShopService.reroll_cost(reroll_count, SHOP_REROLL_COST_BASE, SHOP_REROLL_COST_STEP)
 
 func buy_shop_reroll() -> Dictionary:
 	if not active:
@@ -1320,33 +1322,19 @@ func _unique_current_deck_card_ids() -> Array[String]:
 	return result
 
 func _shop_upgrade_cost() -> int:
-	return SHOP_CARD_UPGRADE_COST
+	return RunShopService.upgrade_cost(SHOP_CARD_UPGRADE_COST)
 
 func _shop_remove_card_cost() -> int:
-	if has_relic_id(RELIC_FERRAMENTAS_DE_CIRURGIA) and not bool(shop_state.get("free_remove_card_used", false)):
-		return 0
-	return SHOP_REMOVE_CARD_COST
+	return RunShopService.remove_card_cost(SHOP_REMOVE_CARD_COST, has_relic_id(RELIC_FERRAMENTAS_DE_CIRURGIA), bool(shop_state.get("free_remove_card_used", false)))
 
 func _shop_duplicate_card_cost() -> int:
-	if has_relic_id(RELIC_LAMINA_DE_RESERVA) and not bool(shop_state.get("discount_duplicate_used", false)):
-		return int(SHOP_DUPLICATE_CARD_COST / 2)
-	return SHOP_DUPLICATE_CARD_COST
+	return RunShopService.duplicate_card_cost(SHOP_DUPLICATE_CARD_COST, has_relic_id(RELIC_LAMINA_DE_RESERVA), bool(shop_state.get("discount_duplicate_used", false)))
 
 func _shop_card_cost_for_rarity(rarity: String) -> int:
-	match rarity:
-		REWARD_RARITY_RARE, "rare":
-			return SHOP_BUY_RARE_CARD_COST
-		REWARD_RARITY_ULTRA, "ultra_rare", "ultra":
-			return SHOP_BUY_ULTRA_RARE_CARD_COST
-	return SHOP_BUY_COMMON_CARD_COST
+	return RunShopService.card_cost_for_rarity(rarity, SHOP_BUY_COMMON_CARD_COST, SHOP_BUY_RARE_CARD_COST, SHOP_BUY_ULTRA_RARE_CARD_COST)
 
 func _shop_relic_cost_for_rarity(rarity: String) -> int:
-	match rarity:
-		"rare", REWARD_RARITY_RARE:
-			return SHOP_BUY_RARE_RELIC_COST
-		"ultra_rare", "ultra", REWARD_RARITY_ULTRA:
-			return SHOP_BUY_ULTRA_RARE_RELIC_COST
-	return SHOP_BUY_COMMON_RELIC_COST
+	return RunShopService.relic_cost_for_rarity(rarity, SHOP_BUY_COMMON_RELIC_COST, SHOP_BUY_RARE_RELIC_COST, SHOP_BUY_ULTRA_RARE_RELIC_COST)
 
 func _shop_max_health_purchase_count() -> int:
 	if shop_state.is_empty():
@@ -1354,7 +1342,7 @@ func _shop_max_health_purchase_count() -> int:
 	return clampi(int(shop_state.get("max_health_purchases", 0)), 0, SHOP_MAX_HEALTH_PURCHASE_LIMIT)
 
 func _shop_max_health_cost() -> int:
-	return SHOP_MAX_HEALTH_FIRST_COST if _shop_max_health_purchase_count() <= 0 else SHOP_MAX_HEALTH_SECOND_COST
+	return RunShopService.max_health_cost(_shop_max_health_purchase_count(), SHOP_MAX_HEALTH_FIRST_COST, SHOP_MAX_HEALTH_SECOND_COST)
 
 func _modified_heal_amount(amount: int) -> int:
 	var value: int = maxi(0, amount)

@@ -12,6 +12,11 @@ func generate_all() -> Dictionary:
 	var definition: Dictionary = _load_definition()
 	if definition.is_empty():
 		return {"ok": false, "message": "Failed to load slice catalog definition."}
+	var definition_hash: String = _definition_hash(definition)
+
+	var existing_catalog = _load_existing_catalog()
+	if existing_catalog != null and str(existing_catalog.definition_hash) == definition_hash:
+		return {"ok": true, "message": "Generated slice catalog unchanged."}
 
 	var catalog = SliceCatalogResourceScript.new()
 	catalog.player_hero = _build_hero(definition.get("player_hero", {}))
@@ -27,6 +32,7 @@ func generate_all() -> Dictionary:
 	catalog.encounters = _typed_dictionary_array(definition.get("encounters", []))
 	catalog.run_map = Dictionary(definition.get("run_map", {}))
 	catalog.track_contract = Dictionary(definition.get("track_contract", {}))
+	catalog.definition_hash = definition_hash
 
 	for card_data: Dictionary in _typed_dictionary_array(definition.get("cards", [])):
 		catalog.cards.append(_build_card(card_data))
@@ -37,6 +43,11 @@ func generate_all() -> Dictionary:
 		return {"ok": false, "message": "Failed to save generated slice catalog."}
 	return {"ok": true, "message": "Generated slice catalog."}
 
+func _load_existing_catalog():
+	if not ResourceLoader.exists(CATALOG_PATH):
+		return null
+	return load(CATALOG_PATH)
+
 func _load_definition() -> Dictionary:
 	if not FileAccess.file_exists(DEFINITION_PATH):
 		return {}
@@ -45,6 +56,37 @@ func _load_definition() -> Dictionary:
 	if typeof(parsed) != TYPE_DICTIONARY:
 		return {}
 	return parsed
+
+func _definition_hash(value: Variant) -> String:
+	return _stable_definition_string(value).sha256_text()
+
+func _stable_definition_string(value: Variant) -> String:
+	match typeof(value):
+		TYPE_DICTIONARY:
+			var data: Dictionary = Dictionary(value)
+			var keys: Array = data.keys()
+			keys.sort()
+			var parts: PackedStringArray = PackedStringArray()
+			for key: Variant in keys:
+				parts.append("%s:%s" % [_stable_definition_string(str(key)), _stable_definition_string(data[key])])
+			return "{%s}" % ",".join(parts)
+		TYPE_ARRAY:
+			var items: PackedStringArray = PackedStringArray()
+			for item: Variant in Array(value):
+				items.append(_stable_definition_string(item))
+			return "[%s]" % ",".join(items)
+		TYPE_STRING:
+			return "\"%s\"" % _escape_json_string(str(value))
+		TYPE_BOOL:
+			return "true" if bool(value) else "false"
+		TYPE_INT, TYPE_FLOAT:
+			return str(value)
+		TYPE_NIL:
+			return "null"
+	return "\"%s\"" % _escape_json_string(str(value))
+
+func _escape_json_string(value: String) -> String:
+	return value.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
 
 func _build_hero(data: Dictionary):
 	var hero = HeroDefinitionResourceScript.new()
