@@ -5,8 +5,10 @@
 - from: `Codex | Claude | Usuario`
 - to: `Codex | Claude | Usuario`
 - date: `<YYYY-MM-DD>`
-- projeto: `estudio | draxos-roguelike-cardgame | mobile-universe | rpg-isometrico | rpg-turnos`
-- prioridade_portfolio: `P0_IMPLEMENTACAO | P1_CONCEITO | PAUSADO_INDEFINIDO | AGUARDANDO_DECISAO | ARQUIVO_HISTORICO`
+- projeto: `estudio | draxos-roguelike-cardgame | draxos-mobile | mobile-universe | rpg-isometrico | rpg-turnos`
+- prioridade_portfolio: `P0_IMPLEMENTACAO | P2_IMPLEMENTACAO | P1_CONCEITO | PAUSADO_INDEFINIDO | AGUARDANDO_DECISAO | ARQUIVO_DESIGN | ARQUIVO_HISTORICO`
+- branch: `<branch>`
+- worktree: `<absolute-path>`
 
 ## Contexto
 
@@ -37,3 +39,7 @@ Liste perguntas em aberto.
 ## Recommended Next Step
 
 Indique o proximo passo recomendado.
+
+## Validation
+
+Liste comandos rodados ou validacao pendente.

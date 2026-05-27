@@ -16,6 +16,30 @@ This file governs agent behavior for the `D:\Estudio` workspace.
 - `08_Coordenacao_Agentes/` is the coordination hub: Kanban, Handoffs, Decisoes, Prioridades, Painel Visual, and Estado_Atual.
 - `Projetos/README.md` is the lightweight project registry for active, conceptual, and paused projects.
 
+## Multi-Agent Worktree And Git Rule
+
+`D:\Estudio` is the main coordination/read workspace. By default, agents must not use it as an implementation worktree. Each agent working on implementation, documentation, contracts, backend, client, validation, release or portfolio changes must create or use a dedicated Git worktree outside the main root, unless the user explicitly asks for direct work in `D:\Estudio`.
+
+Default worktree path:
+
+```text
+D:\Estudio-worktrees\<projeto>--<agente>--<slug>
+```
+
+Default branch names:
+
+- Codex: `codex/<projeto>/<slug>`
+- Other agents: `<agente>/<projeto>/<slug>`
+
+Rules:
+
+- Never edit another agent's worktree unless the user explicitly asks for intervention there.
+- Before touching shared files (`AGENTS.md`, `canon/`, `08_Coordenacao_Agentes/`, `Projetos/README.md`) run `git status --short`, `git worktree list`, and read the current coordination docs.
+- At the start of work, register branch, worktree, objective, intended files, base docs read, validation plan and next handoff point in `08_Coordenacao_Agentes/Kanban/Doing/` or `08_Coordenacao_Agentes/Handoffs/`.
+- Commit by logical stage by default: documentation, contract, backend, client, validation, publication, and coordination updates should not be mixed into one mega commit.
+- Keep commits coherent and explain the delivered state. If a stage cannot be committed yet, record the reason in the Doing/Handoff note.
+- Keep the worktree clean at handoff whenever possible. If not clean, list every remaining changed file and why it remains changed.
+
 ## Portfolio Gate
 
 Antes de abrir documentacao profunda de qualquer projeto, consulte:

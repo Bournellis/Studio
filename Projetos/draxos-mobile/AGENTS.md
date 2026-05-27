@@ -18,6 +18,17 @@ Este projeto foi promovido de `Projetos/_conceitos/mobile-universe/` em 2026-05-
 
 ---
 
+## Regra Multi-Agente E Git
+
+- Por padrao, trabalhe em worktree propria fora de `D:\Estudio`: `D:\Estudio-worktrees\draxos-mobile--<agente>--<slug>`.
+- Branch padrao Codex: `codex/draxos-mobile/<slug>`. Outros agentes: `<agente>/draxos-mobile/<slug>`.
+- Nao edite a worktree de outro agente e nao use a worktree principal `D:\Estudio` para implementacao, salvo pedido explicito.
+- Antes de tocar `AGENTS.md`, `../../canon/`, `../../08_Coordenacao_Agentes/` ou `../README.md`, rode `git status --short`, `git worktree list` e leia os docs de coordenacao.
+- Registre no inicio em Kanban/Doing ou Handoff: worktree, branch, objetivo, arquivos pretendidos, base lida, validacao planejada e proximo ponto de handoff.
+- Commits devem ser por etapa logica: documentacao, contrato, backend, client Godot, validacao, publicacao e coordenacao.
+
+---
+
 ## Read Order
 
 ### Fast Lane Para Track 03

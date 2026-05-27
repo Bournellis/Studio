@@ -89,6 +89,15 @@ Before working in a project, read:
 
 Do not import mechanics from one project into another unless the target project's local docs explicitly adopt them.
 
+Multi-agent default:
+
+- Use a dedicated worktree outside `D:\Estudio`: `D:\Estudio-worktrees\<projeto>--<agente>--<slug>`.
+- Use branch `codex/<projeto>/<slug>` for Codex or `<agente>/<projeto>/<slug>` for non-Codex agents.
+- Register branch, worktree, objective, intended files, base docs read and validation plan in Kanban/Doing or Handoffs before editing.
+- Commit each logical stage separately. Avoid mega commits that mix documentation, contracts, backend, client, validation and publication.
+- Before editing shared portfolio/canon/coordination files, check `git status --short`, `git worktree list` and the coordination docs.
+- Do not edit another agent's worktree unless the user explicitly asks for that intervention.
+
 ## Future Projects
 
 A future project under `Projetos/` becomes an official implementation project only when it has:

@@ -20,6 +20,15 @@ Current identity:
 - no free RPG exploration map
 - no Slay the Spire-style combat presentation
 
+## Multi-Agent And Git Rule
+
+- By default, work in a dedicated worktree outside `D:\Estudio`: `D:\Estudio-worktrees\draxos-roguelike-cardgame--<agente>--<slug>`.
+- Default Codex branch: `codex/draxos-roguelike-cardgame/<slug>`. Other agents: `<agente>/draxos-roguelike-cardgame/<slug>`.
+- Do not edit another agent's worktree and do not use the main `D:\Estudio` worktree for implementation unless the user explicitly asks.
+- Before touching `AGENTS.md`, `../../canon/`, `../../08_Coordenacao_Agentes/` or `../README.md`, run `git status --short`, `git worktree list` and read the coordination docs.
+- Register branch, worktree, objective, intended files, docs read, validation plan and next handoff point in Kanban/Doing or Handoffs before editing.
+- Commit by logical stage: documentation, contracts, client, validation, publication and coordination should stay separate whenever possible.
+
 ## Read Order
 
 Before substantial work:
