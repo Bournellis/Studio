@@ -3,7 +3,7 @@
 - Ultima atualizacao: `2026-05-27`
 - Alvo: preparar o projeto Supabase remoto para `internal_alpha_v0`.
 - Ponto de partida: screenshot enviada em 2026-05-26 com projeto Supabase novo, status `Healthy`.
-- Estado atual: projeto `armxgipvnbbshzqawklw` linkado, migrations/functions publicadas, Auth email/senha configurado sem confirmacao obrigatoria e smokes remotos verdes.
+- Estado atual: projeto `armxgipvnbbshzqawklw` linkado, migrations/functions publicadas, Auth email/senha configurado sem confirmacao obrigatoria, manifest remoto de updates publicado e smokes remotos verdes.
 
 ## O Que Ja Da Para Identificar Pela Screenshot
 
@@ -218,6 +218,7 @@ npx -y supabase functions deploy competition
 npx -y supabase functions deploy monetization
 npx -y supabase functions deploy telemetry
 npx -y supabase functions deploy progression-lab
+npx -y supabase functions deploy release
 ```
 
 A configuracao de `verify_jwt` vive em `supabase/config.toml`.
@@ -255,6 +256,13 @@ $env:DRAXOS_REMOTE_EMAIL_AUTH_SMOKE='1'
 npx -y deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts
 ```
 
+Com manifest remoto de updates:
+
+```powershell
+$env:DRAXOS_REMOTE_RELEASE_SMOKE='1'
+npx -y deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts
+```
+
 Observacao: o fluxo final agora e email/senha. Os smokes guest continuam existindo como fallback dev/local.
 
 ## Passo 10 - O Que Enviar Para O Codex Agora
@@ -282,7 +290,7 @@ O Codex executa a proxima etapa:
 
 1. `T03-P13`: link/deploy/smoke remoto. **Feito**.
 2. `T03-P14`: implementar email/senha no Godot e backend. **Feito**.
-3. `T03-P15`: manifest de updates.
+3. `T03-P15`: manifest de updates. **Feito**.
 4. `T03-P16`: exportar APK, PC ZIP e Web.
 5. `T03-P17`: publicar portal/Web/downloads e rodar QA remoto fechado.
 6. `T03-P18`: handoff final da Internal Alpha v0.

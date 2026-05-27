@@ -78,6 +78,7 @@ var _back_button: Button
 var _content_title: Label
 var _content_body: VBoxContainer
 var _timeline_label: Label
+var _update_output_label: Label
 var _base_state_container: VBoxContainer
 var _social_state_container: VBoxContainer
 var _competition_state_container: VBoxContainer
@@ -107,6 +108,7 @@ var _selected_base_structure_id := "nucleo_energia"
 var _last_social_friend_username := ""
 var _last_social_guild_name := ""
 var _last_social_chat_message := "Primeiro pulso do Conclave."
+var _update_gate := ProjectInfoScript.unchecked_update_status()
 
 func _ready() -> void:
 	_clear_existing_scene()
@@ -115,10 +117,12 @@ func _ready() -> void:
 	var cache_loaded := SessionStore.load_cache()
 	SessionStore.ensure_session_id()
 	SupabaseClient.configure_save_type(SessionStore.active_save_type)
+	_update_gate = ProjectInfoScript.unchecked_update_status(SupabaseClient.manifest_url())
 	if not cache_loaded:
 		SessionStore.save_cache()
 	_show_screen(SCREEN_HUB, false)
 	_sync_status_from_session()
+	call_deferred("_check_update_manifest")
 	if SessionStore.has_valid_access_token() and not SessionStore.is_progression_lab_local_only():
 		call_deferred("_recover_session_state")
 
@@ -272,6 +276,7 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	_current_screen = screen_id
 	_action_buttons.clear()
 	_timeline_label = null
+	_update_output_label = null
 	_base_state_container = null
 	_social_state_container = null
 	_competition_state_container = null
@@ -478,6 +483,10 @@ func _render_hub_screen() -> void:
 		SessionStore.ensure_session_id(),
 		str(SessionStore.offline),
 	])
+
+	_add_section_label("Versao e updates")
+	_update_output_label = _add_output_label(_update_status_text())
+	_add_action_button("Checar update", "check_update")
 
 	_add_section_label("Telas")
 	_add_screen_button("Abrir Batalha", SCREEN_BATTLE)
@@ -694,7 +703,18 @@ func _execute_action(action_id: String) -> void:
 	_active_action_id = action_id
 	_error_label.text = ""
 	_emit_client_event("action_start", _action_payload(action_id))
-	if action_id.begins_with("select_base_structure:"):
+	if _update_gate_blocks_action(action_id):
+		_error_label.text = "Update obrigatorio antes de usar recursos online."
+		_detail_label.text = str(_update_gate.get("detail", "Baixe a nova build pelo portal."))
+		_emit_client_event("precondition_failed", {
+			"action_id": action_id,
+			"screen": _current_screen,
+			"reason": "required_update",
+			"current_version": ProjectInfoScript.APP_VERSION,
+			"minimum_supported_version": str(_update_gate.get("minimum_supported_version", "")),
+		})
+		_sync_buttons()
+	elif action_id.begins_with("select_base_structure:"):
 		_select_base_structure(action_id.get_slice(":", 1))
 	elif action_id.begins_with("upgrade_base_structure:"):
 		await _upgrade_base_structure(action_id.get_slice(":", 1))
@@ -706,6 +726,8 @@ func _execute_action(action_id: String) -> void:
 		match action_id:
 			"enter_guest":
 				await _enter_guest()
+			"check_update":
+				await _check_update_manifest(true)
 			"email_sign_up":
 				await _email_sign_up()
 			"email_sign_in":
@@ -768,6 +790,33 @@ func _execute_action(action_id: String) -> void:
 			payload["error_text"] = _error_label.text
 		_emit_client_event(event_type, payload)
 	_active_action_id = ""
+
+func _check_update_manifest(manual: bool = false) -> void:
+	if manual:
+		_set_busy(true, "Checando manifest de update...")
+	var manifest_result: Dictionary = await SupabaseClient.fetch_update_manifest()
+	if bool(manifest_result.get("ok", false)):
+		_update_gate = ProjectInfoScript.update_status_from_manifest(
+			_as_dictionary(manifest_result.get("body", {})),
+			SupabaseClient.manifest_url()
+		)
+		_error_label.text = ""
+	else:
+		var update_error := _extract_error(manifest_result)
+		_update_gate = ProjectInfoScript.update_status_error(
+			str(update_error.get("code", "UPDATE_CHECK_FAILED")),
+			str(update_error.get("message", "Manifest indisponivel.")),
+			SupabaseClient.manifest_url()
+		)
+		if manual:
+			_error_label.text = str(_update_gate.get("detail", "Manifest indisponivel."))
+	if manual:
+		_set_busy(false, str(_update_gate.get("summary", "Checagem concluida.")))
+	elif bool(_update_gate.get("block_online", false)):
+		_error_label.text = "Update obrigatorio antes de usar recursos online."
+		_detail_label.text = str(_update_gate.get("detail", "Baixe a nova build pelo portal."))
+	_refresh_update_output_label()
+	_sync_status_from_session()
 
 func _enter_guest() -> void:
 	_set_busy(true, "Criando sessao guest...")
@@ -1511,6 +1560,7 @@ func _sync_buttons() -> void:
 		if not is_instance_valid(button):
 			continue
 		button.disabled = _is_busy or (_replay_running and action_id != "show_latest_battle")
+		button.disabled = button.disabled or _update_gate_blocks_action(action_id)
 		if action_id == "select_save_normal":
 			button.disabled = button.disabled or not SessionStore.is_progression_lab_active()
 		elif action_id == "select_save_progression_lab":
@@ -1531,6 +1581,52 @@ func _sync_buttons() -> void:
 		var nav_button: Button = _nav_buttons[screen_id]
 		nav_button.disabled = _is_busy or _replay_running
 	_back_button.disabled = _is_busy or _replay_running
+
+func _update_status_text() -> String:
+	var lines := PackedStringArray()
+	lines.append("Canal: %s | Build: %s (code %d)" % [
+		ProjectInfoScript.RELEASE_CHANNEL,
+		ProjectInfoScript.APP_VERSION,
+		ProjectInfoScript.APP_VERSION_CODE,
+	])
+	lines.append(str(_update_gate.get("summary", "Update ainda nao verificado.")))
+	lines.append(str(_update_gate.get("detail", "O jogo vai checar o manifest remoto antes do teste fechado.")))
+	var manifest_url := str(_update_gate.get("manifest_url", SupabaseClient.manifest_url()))
+	if manifest_url != "":
+		lines.append("Manifest: %s" % manifest_url)
+	var manifest := _as_dictionary(_update_gate.get("manifest", {}))
+	var artifacts := _as_dictionary(manifest.get("artifacts", {}))
+	var platform_artifact := _as_dictionary(artifacts.get(ProjectInfoScript.current_platform_key(), {}))
+	if not platform_artifact.is_empty():
+		var label := str(platform_artifact.get("label", "Download"))
+		var url := str(platform_artifact.get("url", ""))
+		if url != "":
+			lines.append("Download desta plataforma: %s - %s" % [label, url])
+		else:
+			lines.append("Download desta plataforma: %s ainda sem URL final." % label)
+	return "\n".join(lines)
+
+func _refresh_update_output_label() -> void:
+	if _update_output_label != null and is_instance_valid(_update_output_label):
+		_update_output_label.text = _update_status_text()
+
+func _update_gate_blocks_action(action_id: String) -> bool:
+	if not bool(_update_gate.get("block_online", false)):
+		return false
+	if _replay_running and action_id == "show_latest_battle":
+		return false
+	if action_id in [
+		"check_update",
+		"reset_session",
+		"select_save_normal",
+		"select_save_progression_lab",
+		"open_battle_lab",
+		"open_progression_lab",
+	]:
+		return false
+	if action_id.begins_with("select_base_structure:"):
+		return false
+	return true
 
 func _sync_nav_buttons() -> void:
 	for screen_id: String in _nav_buttons.keys():
@@ -2681,6 +2777,8 @@ func _screen_title(screen_id: String) -> String:
 	return "Refugio"
 
 func _session_status_text() -> String:
+	if bool(_update_gate.get("block_online", false)):
+		return str(_update_gate.get("summary", "Update obrigatorio antes de usar recursos online."))
 	if SessionStore.is_progression_lab_local_only() and SessionStore.has_account_state():
 		var label := SessionStore.progression_lab_label()
 		if label == "":

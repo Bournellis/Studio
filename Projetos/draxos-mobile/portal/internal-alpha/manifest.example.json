@@ -2,9 +2,12 @@
   "schema_version": "internal_alpha_manifest_v1",
   "channel": "internal_alpha",
   "latest_version": "0.0.1-alpha.0",
+  "latest_version_code": 1,
   "minimum_supported_version": "0.0.1-alpha.0",
-  "released_at": "2026-05-26T00:00:00Z",
+  "minimum_supported_version_code": 1,
+  "released_at": "2026-05-27T00:00:00Z",
   "requires_save_reset": false,
+  "portal_url": "PORTAL_URL_PENDING_T03_P16",
   "notes": [
     "Primeira release candidate interna.",
     "APK Android, PC ZIP e Web compartilham o mesmo backend remoto.",
@@ -13,17 +16,17 @@
   "artifacts": {
     "android": {
       "label": "Android APK",
-      "url": "ANDROID_APK_URL",
-      "sha256": "ANDROID_APK_SHA256"
+      "url": "ANDROID_APK_URL_PENDING_T03_P16",
+      "sha256": "ANDROID_APK_SHA256_PENDING_T03_P16"
     },
     "pc_windows": {
       "label": "PC Windows ZIP",
-      "url": "PC_ZIP_URL",
-      "sha256": "PC_ZIP_SHA256"
+      "url": "PC_ZIP_URL_PENDING_T03_P16",
+      "sha256": "PC_ZIP_SHA256_PENDING_T03_P16"
     },
     "web": {
       "label": "Web",
-      "url": "WEB_GAME_URL"
+      "url": "WEB_GAME_URL_PENDING_T03_P16"
     }
   },
   "known_issues": [

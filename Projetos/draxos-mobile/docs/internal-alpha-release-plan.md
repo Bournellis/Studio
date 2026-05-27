@@ -93,18 +93,20 @@ Resultado em 2026-05-27:
 
 ### T03-P15 - Release Config E Manifest
 
-Status: `NEXT`.
+Status: `COMPLETE`.
 
-Saida esperada:
+Saida:
 
-- versao `internal_alpha_v0` definida em build metadata;
-- ambiente `internal_alpha_v0` apontando para Supabase remoto;
-- manifest remoto com `latest_version`, `minimum_supported_version`, links e notas;
-- cliente mostra update recomendado/obrigatorio.
+- build metadata definida no `ProjectInfo`: canal `internal_alpha`, versao `0.0.1-alpha.0`, version code `1` e schema `internal_alpha_manifest_v1`;
+- `BackendConfig` e `SupabaseClient` resolvem `DRAXOS_MOBILE_UPDATE_MANIFEST_URL` e usam `<supabase_url>/functions/v1/release/manifest` como padrao;
+- Edge Function publica `GET /release/manifest` implementada/local/remota, com manifest default e override operacional por `RELEASE_MANIFEST_JSON`;
+- Hub do Godot mostra status de update no boot, permite checar manualmente e bloqueia acoes online quando `minimum_supported_version_code` exige;
+- manifest exemplo do portal atualizado com version codes, portal URL e placeholders de artefatos para `T03-P16`;
+- smokes local/remoto validam o contrato do manifest.
 
 ### T03-P16 - Export Das Tres Builds
 
-Status: `PENDING_MANIFEST`.
+Status: `NEXT`.
 
 Saida esperada:
 

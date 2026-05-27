@@ -37,7 +37,7 @@ Decisao operacional de 2026-05-26:
 
 Esta ordem nao remove a decisao de usar Supabase no alpha. Ela apenas adia remoto, build e distribuicao para reduzir friccao enquanto a implementacao ainda muda muito.
 
-Atualizacao de 2026-05-27: `T03-P13` concluiu o bootstrap Supabase remoto e `T03-P14` concluiu auth email/senha + alpha gate. A proxima sequencia esta documentada em `internal-alpha-release-plan.md`: `T03-P15` manifest de updates, `T03-P16` export das builds, `T03-P17` QA remoto fechado e `T03-P18` handoff.
+Atualizacao de 2026-05-27: `T03-P13` concluiu o bootstrap Supabase remoto, `T03-P14` concluiu auth email/senha + alpha gate e `T03-P15` concluiu manifest remoto + version gate no cliente. A proxima sequencia esta documentada em `internal-alpha-release-plan.md`: `T03-P16` export das builds, `T03-P17` QA remoto fechado e `T03-P18` handoff.
 
 ## Modelo De Conta E Save
 
@@ -90,7 +90,7 @@ Alvo inicial:
 - Status remoto atual: CLI linkado, 11 migrations aplicadas, Edge Functions publicadas, Auth email/senha sem confirmacao obrigatoria e smokes de healthcheck/Auth anonimo dev/email+saves verdes em 2026-05-27.
 - Edge Functions para acoes autoritativas.
 - Postgres com RLS.
-- Storage para manifest e artefatos de update.
+- Edge Function publica para manifest de updates; artefatos de build podem ficar em Storage ou host externo conforme tamanho.
 - Ambiente `internal_alpha_v0` configuravel por `BackendConfig` no Godot.
 - URL e publishable key via env vars ou project settings publicos.
 
@@ -134,15 +134,19 @@ Distribuicao escolhida para Internal Alpha v0:
 - Portal: pagina estatica simples em `portal/internal-alpha/`, considerada suficiente por enquanto; refinamento visual fica para depois de `T03-P18`.
 - Updates: app consulta manifest e mostra aviso/link de download; quando `minimum_supported_version` subir, acoes online ficam bloqueadas ate atualizar.
 
-Manifest remoto em Supabase Storage:
+Manifest remoto atual em `GET /release/manifest`:
 
 ```json
 {
   "schema_version": "internal_alpha_manifest_v1",
   "channel": "internal_alpha",
   "latest_version": "0.0.1-alpha.0",
+  "latest_version_code": 1,
   "minimum_supported_version": "0.0.1-alpha.0",
-  "released_at": "2026-05-26T00:00:00Z",
+  "minimum_supported_version_code": 1,
+  "released_at": "2026-05-27T00:00:00Z",
+  "requires_save_reset": false,
+  "portal_url": "PORTAL_URL_PENDING_T03_P16",
   "notes": ["Primeira build interna"],
   "artifacts": {
     "android": { "url": "https://...", "sha256": "..." },
@@ -151,6 +155,14 @@ Manifest remoto em Supabase Storage:
   }
 }
 ```
+
+Status atual (`T03-P15`):
+
+- `ProjectInfo` declara canal, versao, code e schema do manifest.
+- `BackendConfig` resolve a URL do manifest por project settings/env e usa `<supabase_url>/functions/v1/release/manifest` como padrao.
+- `SupabaseClient` busca o manifest no boot.
+- O Hub mostra resumo da versao, status do update, detalhes e URL do manifest.
+- Quando o manifest exige `minimum_supported_version_code` maior que o code local, o Hub bloqueia acoes online e permite apenas checar update, trocar save, limpar cache local e abrir ferramentas dev.
 
 Politica:
 

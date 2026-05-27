@@ -1,0 +1,121 @@
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "http://127.0.0.1:54321";
+const PUBLISHABLE_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ??
+  "sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH";
+
+interface JsonObject {
+  [key: string]: unknown;
+}
+
+const manifest = await getJson(
+  `${SUPABASE_URL.replace(/\/+$/, "")}/functions/v1/release/manifest`,
+  baseHeaders(),
+);
+
+assertEq(
+  stringField(manifest, "schema_version"),
+  "internal_alpha_manifest_v1",
+  "release manifest schema should match the Godot client contract",
+);
+assertEq(
+  stringField(manifest, "channel"),
+  "internal_alpha",
+  "release manifest should serve the internal alpha channel",
+);
+assertEq(
+  stringField(manifest, "latest_version"),
+  "0.0.1-alpha.0",
+  "release manifest should expose the current alpha version",
+);
+assertEq(
+  numberField(manifest, "latest_version_code"),
+  1,
+  "release manifest should expose the current version code",
+);
+assertEq(
+  numberField(manifest, "minimum_supported_version_code"),
+  1,
+  "release manifest should not force-update the first alpha build",
+);
+
+const artifacts = objectField(manifest, "artifacts");
+assert(
+  isObject(artifacts.android),
+  "manifest should include Android artifact metadata",
+);
+assert(
+  isObject(artifacts.pc_windows),
+  "manifest should include PC artifact metadata",
+);
+assert(
+  isObject(artifacts.web),
+  "manifest should include Web artifact metadata",
+);
+
+console.log("[release-manifest-smoke] OK", {
+  url: SUPABASE_URL,
+  version: stringField(manifest, "latest_version"),
+  version_code: numberField(manifest, "latest_version_code"),
+});
+
+function baseHeaders(): Record<string, string> {
+  return {
+    apikey: PUBLISHABLE_KEY,
+    "content-type": "application/json",
+  };
+}
+
+async function getJson(
+  url: string,
+  headers: Record<string, string>,
+): Promise<JsonObject> {
+  const response = await fetch(url, { method: "GET", headers });
+  const text = await response.text();
+  const payload = parseJson(text);
+  if (!isObject(payload)) {
+    throw new Error(`response should be a JSON object: ${text}`);
+  }
+  assert(response.ok, `request failed with status ${response.status}: ${text}`);
+  return payload;
+}
+
+function objectField(payload: JsonObject, key: string): JsonObject {
+  const value = payload[key];
+  if (!isObject(value)) {
+    throw new Error(`${key} should be an object`);
+  }
+  return value;
+}
+
+function stringField(payload: JsonObject, key: string): string {
+  const value = payload[key];
+  return typeof value === "string" ? value : "";
+}
+
+function numberField(payload: JsonObject, key: string): number {
+  const value = payload[key];
+  return typeof value === "number" ? value : 0;
+}
+
+function parseJson(text: string): unknown {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+}
+
+function isObject(value: unknown): value is JsonObject {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function assert(condition: boolean, message: string): void {
+  if (!condition) {
+    throw new Error(message);
+  }
+}
+
+function assertEq(actual: unknown, expected: unknown, message: string): void {
+  if (actual !== expected) {
+    throw new Error(`${message}. Expected ${expected}, got ${actual}.`);
+  }
+}

@@ -186,6 +186,7 @@ func test_supabase_client_uses_local_contract_urls() -> void:
 	assert_eq(client.function_url("competition/ranking/current"), "http://127.0.0.1:54321/functions/v1/competition/ranking/current")
 	assert_eq(client.function_url("monetization/state"), "http://127.0.0.1:54321/functions/v1/monetization/state")
 	assert_eq(client.function_url("telemetry/client-event"), "http://127.0.0.1:54321/functions/v1/telemetry/client-event")
+	assert_eq(client.manifest_url(), "http://127.0.0.1:54321/functions/v1/release/manifest")
 	client.free()
 
 func test_backend_config_supports_internal_alpha_without_service_role() -> void:
@@ -198,8 +199,10 @@ func test_backend_config_supports_internal_alpha_without_service_role() -> void:
 	assert_true(bool(config.get("ok", false)))
 	assert_eq(str(config.get("environment", "")), BackendConfigScript.ENVIRONMENT_INTERNAL_ALPHA)
 	assert_eq(str(config.get("supabase_url", "")), "https://example.supabase.co")
+	assert_eq(str(config.get("update_manifest_url", "")), "https://example.supabase.co/functions/v1/release/manifest")
 	assert_true(bool(config.get("is_remote", false)))
 	assert_false(Array(BackendConfigScript.client_environment_variables()).has("SUPABASE_SERVICE_ROLE_KEY"))
+	assert_true(Array(BackendConfigScript.client_environment_variables()).has("DRAXOS_MOBILE_UPDATE_MANIFEST_URL"))
 
 func test_backend_config_rejects_secret_like_client_key() -> void:
 	var config := BackendConfigScript.config_from_values(
@@ -223,8 +226,10 @@ func test_supabase_client_can_use_backend_config() -> void:
 	assert_eq(client.backend_environment, BackendConfigScript.ENVIRONMENT_INTERNAL_ALPHA)
 	assert_eq(client.auth_anonymous_url(), "https://example.supabase.co/auth/v1/signup")
 	assert_eq(client.function_url("account/state"), "https://example.supabase.co/functions/v1/account/state")
+	assert_eq(client.manifest_url(), "https://example.supabase.co/functions/v1/release/manifest")
 	var summary := client.backend_summary()
 	assert_true(bool(summary.get("configured", false)))
+	assert_eq(str(summary.get("update_manifest_url", "")), "https://example.supabase.co/functions/v1/release/manifest")
 	client.free()
 
 func test_supabase_client_normalizes_save_context_header_state() -> void:

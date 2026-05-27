@@ -3,6 +3,8 @@ const PUBLISHABLE_KEY = requiredEnv("SUPABASE_PUBLISHABLE_KEY");
 const RUN_ANON_AUTH = Deno.env.get("DRAXOS_REMOTE_ANON_AUTH_SMOKE") === "1";
 const RUN_ACCOUNT_STATE = Deno.env.get("DRAXOS_REMOTE_ACCOUNT_SMOKE") === "1";
 const RUN_EMAIL_AUTH = Deno.env.get("DRAXOS_REMOTE_EMAIL_AUTH_SMOKE") === "1";
+const RUN_RELEASE_MANIFEST =
+  Deno.env.get("DRAXOS_REMOTE_RELEASE_SMOKE") === "1";
 
 assertRemoteUrl(SUPABASE_URL);
 assertClientKey(PUBLISHABLE_KEY);
@@ -16,6 +18,35 @@ const healthcheck = await getJson(
   baseHeaders(),
 );
 assertEq(healthcheck.ok, true, "remote healthcheck should return ok");
+
+let releaseManifestChecked = false;
+if (RUN_RELEASE_MANIFEST) {
+  const manifest = await getJson(
+    `${SUPABASE_URL}/functions/v1/release/manifest`,
+    baseHeaders(),
+    false,
+  );
+  assertEq(
+    stringField(manifest, "schema_version"),
+    "internal_alpha_manifest_v1",
+    "release manifest schema should match the Godot contract",
+  );
+  assertEq(
+    stringField(manifest, "channel"),
+    "internal_alpha",
+    "release manifest should use the internal alpha channel",
+  );
+  assertEq(
+    manifest.latest_version_code,
+    1,
+    "release manifest should expose the current version code",
+  );
+  assert(
+    isObject(manifest.artifacts),
+    "release manifest should include artifacts",
+  );
+  releaseManifestChecked = true;
+}
 
 let authUser = "";
 let playerId = "";
@@ -150,6 +181,7 @@ console.log("[internal-alpha-remote-smoke] OK", {
   anon_auth: RUN_ANON_AUTH || RUN_ACCOUNT_STATE ? "checked" : "skipped",
   account_state: RUN_ACCOUNT_STATE ? "checked" : "skipped",
   email_auth: RUN_EMAIL_AUTH ? "checked" : "skipped",
+  release_manifest: releaseManifestChecked ? "checked" : "skipped",
   auth_user: authUser,
   player_id: playerId,
   email_user: emailUser,
@@ -167,9 +199,10 @@ function baseHeaders(): Record<string, string> {
 async function getJson(
   url: string,
   headers: Record<string, string>,
+  requireOk = true,
 ): Promise<JsonObject> {
   const response = await fetch(url, { method: "GET", headers });
-  return await parseResponse(response, true);
+  return await parseResponse(response, requireOk);
 }
 
 async function postJson(

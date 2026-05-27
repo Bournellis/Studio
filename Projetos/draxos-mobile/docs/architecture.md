@@ -1,6 +1,6 @@
 # DraxosMobile - Architecture
 
-- Ultima atualizacao: `2026-05-26`
+- Ultima atualizacao: `2026-05-27`
 
 ---
 
@@ -90,7 +90,7 @@ Nakama deve ser reavaliado somente se pelo menos uma destas premissas mudar:
 - `T00-P12` completo: Social/Competicao v0 server-authoritative com `social/state`, guilda alpha, chat de guilda por polling, matchmaking preview com fallback de bot e ranking de season sem bots.
 - `T00-P13` completo e refinado em `T03-P08`: Monetizacao v0 server-authoritative com Battle Pass, redeems diarios de Diamante, recompensas diarias/semanais, claims free/premium, produtos alpha por Diamante, fila dupla, ledger, idempotencia e export smoke Android/PC/Web.
 - `Track 01` completo: hardening do alpha PC local com fluxo de primeira sessao mais claro, estados ocupados/erros offline/pre-condicoes visiveis, reset seguro de sessao local, telemetria client nao autoritativa e smoke do loop alpha.
-- `Track 03` com design lock completo, estrategia backend definida, T03-P02 repo-side preparado e T03-P08 completo: Supabase remoto Free para alpha, `BackendConfig` no Godot, env vars seguras, `.env` reais ignorados, smoke remoto minimo, `players.save_type` local, header `x-draxos-save-type` nos endpoints alpha, dois saves server-backed no Supabase local, reset separado por save, Progression Lab aplicado server-authoritative no save `progression_lab`, Base Manager jogavel, Social basico jogavel, Competicao com pontos/top 10/posicao do jogador, Loja proof-of-concept no Godot/local e Backend Proprio + Postgres como plano de saida preferido. Nakama fica apenas como alternativa futura se realtime/social competitivo virar pilar.
+- `Track 03` com design lock completo, estrategia backend definida e T03-P15 completo: Supabase remoto Free para alpha, `BackendConfig` no Godot, env vars seguras, `.env` reais ignorados, smokes remotos, `players.save_type`, header `x-draxos-save-type`, dois saves server-backed no Supabase local/remoto, reset separado por save, Progression Lab aplicado server-authoritative no save `progression_lab`, Base Manager jogavel, Social basico jogavel, Competicao com pontos/top 10/posicao do jogador, Loja proof-of-concept no Godot/local, auth email/senha, manifest/version gate de updates e Backend Proprio + Postgres como plano de saida preferido. Nakama fica apenas como alternativa futura se realtime/social competitivo virar pilar.
 
 ---
 
@@ -129,7 +129,7 @@ Autoloads atuais:
 | `AssetIds` | `core/asset_ids.gd` | Manifesto de ids visuais e fallback enquanto assets nao existem |
 | `ContentLibrary` | `data/content_library.gd` | Gerar/carregar catalogo de conteudo e expor consultas por collection/id |
 | `SessionStore` | `online/session_store.gd` | Token/cache local nao autoritativo, validacao de expiracao, snapshot de estado recebido do servidor e save ativo `normal`/`progression_lab` |
-| `SupabaseClient` | `online/supabase_client.gd` | HTTPRequest para Auth e Edge Functions locais/remotas, enviando `x-draxos-save-type` |
+| `SupabaseClient` | `online/supabase_client.gd` | HTTPRequest para Auth, Edge Functions locais/remotas, save ativo e manifest de updates |
 
 Classes utilitarias:
 
@@ -209,12 +209,16 @@ paths de saida e exclusao de ferramentas dev (`dev/**`, `tools/battle_lab/**`,
 `docs/battle-lab/**`, `.battle_lab_scratch/**`) sem exigir templates de export
 instalados.
 
-Track 03 adiciona manifest remoto para updates internos. O manifest deve viver em Supabase Storage ou endpoint equivalente sem secrets, com:
+Track 03 adiciona manifest remoto para updates internos. Na Internal Alpha v0, o manifest vive em `GET /release/manifest`, uma Edge Function publica sem secrets. A URL padrao e derivada do Supabase URL (`<supabase_url>/functions/v1/release/manifest`) e pode ser sobrescrita por `DRAXOS_MOBILE_UPDATE_MANIFEST_URL` ou project setting.
+
+O manifest contem:
 
 - `schema_version`;
 - canal (`internal_alpha`);
 - `latest_version`;
+- `latest_version_code`;
 - `minimum_supported_version`;
+- `minimum_supported_version_code`;
 - links de artefatos Android/PC/Web;
 - `sha256` para artefatos baixaveis quando aplicavel;
 - release notes curtas.

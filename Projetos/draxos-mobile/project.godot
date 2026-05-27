@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="DraxosMobile"
+config/version="0.0.1-alpha.0"
 run/main_scene="res://modes/boot/boot.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 
@@ -38,8 +39,10 @@ window/size/min_height=540
 backend/environment="local"
 supabase/url="http://127.0.0.1:54321"
 supabase/publishable_key="sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH"
+update/manifest_url=""
 internal_alpha/supabase_url=""
 internal_alpha/publishable_key=""
+internal_alpha/update_manifest_url=""
 internal_alpha/dev_tools_enabled=true
 battle_lab/enabled=true
 battle_lab/deno_command="npx"

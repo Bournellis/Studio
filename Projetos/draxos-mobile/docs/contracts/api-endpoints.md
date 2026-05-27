@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
 - Ultima atualizacao: `2026-05-27`
-- Status: contrato com `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*` e `progression-lab/*` implementados local/remoto; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`; Track 03 implementou email/senha via `/account/bootstrap`, selecao de save via `x-draxos-save-type`, reset separado por save, aplicacao server-backed do Progression Lab no save `progression_lab`, Base/Social/Competicao/Loja jogaveis e leaderboard alpha com pontos por batalha normal; ainda planeja manifest de updates internos
+- Status: contrato com `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*` e `release/*` implementados local/remoto; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`; Track 03 implementou email/senha via `/account/bootstrap`, selecao de save via `x-draxos-save-type`, reset separado por save, aplicacao server-backed do Progression Lab no save `progression_lab`, Base/Social/Competicao/Loja jogaveis, leaderboard alpha com pontos por batalha normal e manifest/version gate de updates internos
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -13,8 +13,8 @@ Este documento descreve a interface logica entre cliente Godot e Supabase Edge F
 - Internal Alpha: cliente cria sessao Supabase Auth por email/senha; depois chama `/account/bootstrap` com JWT registrado, username e convite para criar o primeiro save.
 - Guest dev: cliente ainda pode criar sessao Supabase Auth anonima e chamar `/account/guest`, mas esse fluxo e ferramenta de desenvolvimento/fallback e nao o caminho real da build interna.
 - Correlation: cliente envia `request_id` em mutacoes para idempotencia.
-- Runtime local atual: `supabase/functions/account`, `battle`, `base`, `social`, `competition`, `monetization` e `telemetry`, espelhados em `server/functions/`.
-- Anti-lock-in: os endpoints logicos deste documento pertencem ao jogo, nao ao Supabase. O cliente Godot deve depender de `account`, `battle`, `base`, `social`, `competition`, `monetization` e `telemetry`, permitindo futura migracao para Backend Proprio + Postgres sem redesenhar o cliente.
+- Runtime local atual: `supabase/functions/account`, `battle`, `base`, `social`, `competition`, `monetization`, `telemetry`, `progression-lab` e `release`, espelhados em `server/functions/`.
+- Anti-lock-in: os endpoints logicos deste documento pertencem ao jogo, nao ao Supabase. O cliente Godot deve depender de `account`, `battle`, `base`, `social`, `competition`, `monetization`, `telemetry`, `progression-lab` e `release`, permitindo futura migracao para Backend Proprio + Postgres sem redesenhar o cliente.
 - Resposta de erro padrao:
 
 ```json
@@ -26,6 +26,46 @@ Este documento descreve a interface logica entre cliente Godot e Supabase Edge F
   }
 }
 ```
+
+## Endpoints De Release
+
+### `GET /release/manifest`
+
+Retorna o manifest publico de updates da Internal Alpha v0.
+
+Status: **implementado em T03-P15**.
+
+Auth: nao exige JWT. Pode receber `apikey` publica quando chamado pelo cliente Godot ou smokes.
+
+Response:
+
+```json
+{
+  "schema_version": "internal_alpha_manifest_v1",
+  "channel": "internal_alpha",
+  "latest_version": "0.0.1-alpha.0",
+  "latest_version_code": 1,
+  "minimum_supported_version": "0.0.1-alpha.0",
+  "minimum_supported_version_code": 1,
+  "released_at": "2026-05-27T00:00:00Z",
+  "requires_save_reset": false,
+  "portal_url": "PORTAL_URL_PENDING_T03_P16",
+  "notes": ["Primeira release candidate interna."],
+  "artifacts": {
+    "android": { "label": "Android APK", "url": "ANDROID_APK_URL_PENDING_T03_P16" },
+    "pc_windows": { "label": "PC Windows ZIP", "url": "PC_ZIP_URL_PENDING_T03_P16" },
+    "web": { "label": "Web", "url": "WEB_GAME_URL_PENDING_T03_P16" }
+  }
+}
+```
+
+Regras do cliente:
+
+- `latest_version_code` maior que o code local mostra update recomendado.
+- `minimum_supported_version_code` maior que o code local bloqueia acoes online ate atualizar.
+- `requires_save_reset` apenas avisa; reset destrutivo continua manual e documentado.
+
+Contrato detalhado: `update-manifest.md`.
 
 ## Endpoints De Conta
 

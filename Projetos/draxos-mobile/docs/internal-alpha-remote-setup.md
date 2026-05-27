@@ -1,10 +1,10 @@
 # DraxosMobile - Internal Alpha Remote Setup
 
 - Ultima atualizacao: `2026-05-27`
-- Track: `T03-P14 - Auth Email/Senha E Alpha Gate`
-- Status: `auth email/senha remote green, update manifest pending`
+- Track: `T03-P15 - Update Manifest E Version Gate`
+- Status: `auth email/senha e manifest remoto verdes`
 
-Este runbook deixa a Internal Alpha v0 preparada para usar Supabase remoto sem colocar secrets no cliente. O projeto remoto ja foi linkado pela CLI, recebeu migrations/Edge Functions, recebeu config de Auth email/senha sem confirmacao obrigatoria e passou nos smokes remotos de healthcheck, Auth anonimo dev e email/senha com dois saves.
+Este runbook deixa a Internal Alpha v0 preparada para usar Supabase remoto sem colocar secrets no cliente. O projeto remoto ja foi linkado pela CLI, recebeu migrations/Edge Functions, recebeu config de Auth email/senha sem confirmacao obrigatoria, recebeu `release/manifest` e passou nos smokes remotos de healthcheck, Auth anonimo dev, email/senha com dois saves e manifest de update.
 
 Tutorial detalhado para Fabio: `supabase-remote-tutorial.md`.
 
@@ -37,7 +37,7 @@ Tutorial detalhado para Fabio: `supabase-remote-tutorial.md`.
 - Regiao: `West US (Oregon)`.
 - Status no dashboard: `Healthy`.
 
-Estado operacional: o dashboard mostrou o projeto saudavel e, em 2026-05-27, o bootstrap remoto aplicou as migrations, publicou as Edge Functions, atualizou config de Auth e validou o fluxo email/senha. Para a build, o backend remoto esta pronto para a etapa de manifest de updates.
+Estado operacional: o dashboard mostrou o projeto saudavel e, em 2026-05-27, o bootstrap remoto aplicou as migrations, publicou as Edge Functions, atualizou config de Auth, validou o fluxo email/senha e publicou o manifest de updates. Para a build, o backend remoto esta pronto para exportar/publicar artefatos em `T03-P16`.
 
 ## Resultado T03-P13
 
@@ -58,6 +58,13 @@ Estado operacional: o dashboard mostrou o projeto saudavel e, em 2026-05-27, o b
 - `server/tests/internal_alpha_remote_smoke.ts` com `DRAXOS_REMOTE_EMAIL_AUTH_SMOKE=1`: passou em remoto com email/senha e os dois saves.
 - `server/tests/internal_alpha_remote_smoke.ts` com `DRAXOS_REMOTE_ANON_AUTH_SMOKE=1`: passou em remoto para fallback dev anonimo.
 
+## Resultado T03-P15
+
+- `release` Edge Function adicionada em `supabase/functions/release` e `server/functions/release`.
+- `supabase/config.toml` define `verify_jwt = false` para `release`.
+- `GET /release/manifest` retorna schema `internal_alpha_manifest_v1`, canal `internal_alpha`, versao/code atuais, politica de minimo suportado e placeholders de artefatos Android/PC/Web.
+- `DRAXOS_REMOTE_RELEASE_SMOKE=1 npx -y deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts`: valida o manifest remoto.
+
 ## Variaveis Do Cliente
 
 Estas variaveis podem ser usadas no editor ou em execucao local:
@@ -66,6 +73,7 @@ Estas variaveis podem ser usadas no editor ou em execucao local:
 $env:DRAXOS_MOBILE_BACKEND_ENV='internal_alpha_v0'
 $env:DRAXOS_MOBILE_SUPABASE_URL='https://<project-ref>.supabase.co'
 $env:DRAXOS_MOBILE_SUPABASE_PUBLISHABLE_KEY='sb_publishable_<public-key>'
+$env:DRAXOS_MOBILE_UPDATE_MANIFEST_URL='https://<project-ref>.supabase.co/functions/v1/release/manifest'
 ```
 
 Equivalentes em `project.godot`, apenas com valores publicos:
@@ -73,6 +81,7 @@ Equivalentes em `project.godot`, apenas com valores publicos:
 - `draxos_mobile/backend/environment`
 - `draxos_mobile/internal_alpha/supabase_url`
 - `draxos_mobile/internal_alpha/publishable_key`
+- `draxos_mobile/internal_alpha/update_manifest_url`
 
 Nunca usar `SUPABASE_SERVICE_ROLE_KEY` no Godot, no Web export, no APK, no zip PC ou em configuracao de cliente.
 
@@ -114,6 +123,13 @@ $env:DRAXOS_REMOTE_EMAIL_AUTH_SMOKE='1'
 npx -y deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts
 ```
 
+Opcionalmente, para testar manifest de updates remoto:
+
+```powershell
+$env:DRAXOS_REMOTE_RELEASE_SMOKE='1'
+npx -y deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts
+```
+
 Opcionalmente, para testar account guest temporario/dev:
 
 ```powershell
@@ -149,11 +165,11 @@ No alpha interno, reset destrutivo pode ser aceitavel, mas precisa ser explicito
 
 Supabase Storage pode hospedar manifest e artefatos pequenos, mas o limite do plano Free pode nao ser ideal para todos os builds. Para a Internal Alpha v0:
 
-- manifest pode viver no Supabase;
+- manifest vive no endpoint publico `release/manifest`;
 - links podem apontar para storage externo se os artefatos ficarem grandes;
 - o cliente deve depender do schema do manifest, nao do fornecedor de storage.
 
-## Checklist Antes De T03-P15
+## Checklist Atual Antes De T03-P16
 
 - Projeto remoto confirmado.
 - URL e publishable key publicas configuradas localmente.
@@ -165,4 +181,5 @@ Supabase Storage pode hospedar manifest e artefatos pequenos, mas o limite do pl
 - Email confirmation desligado via config remoto.
 - Politica de alpha gate definida para email/senha: convite + username no primeiro save.
 - Fluxo email/senha implementado no cliente/backend.
-- Proximo: manifest remoto de updates e version gate.
+- Manifest remoto de updates e version gate implementados.
+- Proximo: exportar Android, PC e Web em `T03-P16`.

@@ -1,7 +1,7 @@
 # Track 03 - Internal Alpha v0 - Current Status
 
 - Last Updated: `2026-05-27`
-- Status: `T03-P14_AUTH_EMAIL_COMPLETE - REMOTE_EMAIL_SMOKE_GREEN`
+- Status: `T03-P15_UPDATE_MANIFEST_COMPLETE - REMOTE_MANIFEST_SMOKE_GREEN`
 - Baseline: Track 00 completa, Track 01 completa e Track 02 com Progression Lab/Battle Lab v1 implementados. O projeto ja possui Godot 4.6.2, Supabase local, conta guest, batalha server-authoritative, Base/Social/Competicao/Monetizacao v0, telemetria client nao autoritativa, exports Android/PC/Web, Battle Visual Mockup compartilhado e laboratorios internos. A Track 03 prepara a transicao para uma build fechada realista com email/senha, dois saves por conta, backend remoto, updates e playtest de 2 usuarios.
 
 ## Implementado Nesta Preparacao
@@ -16,7 +16,7 @@
 - Follow-ups de loja/social fechados: redeems entregam apenas Diamante, resetam a meia-noite `America/Sao_Paulo`, amigos usam username e usuarios no Lab aparecem com marcador vermelho `lab`.
 - Estrategia backend registrada: Supabase para Internal Alpha v0, Backend Proprio + Postgres como plano de saida preferido e Nakama como alternativa futura apenas se realtime/social competitivo virar pilar.
 - `T03-P02` preparado do lado do repo: `BackendConfig` no Godot, ambiente `internal_alpha_v0`, env vars seguras, `.env` reais ignorados, `.env.internal-alpha.example`, runbook remoto e smoke Deno remoto sem service role.
-- Ordem local-first aprovada em 2026-05-26 e ja cumprida para release prep: o jogo foi implementado/validado no Godot/Supabase local primeiro; Supabase remoto foi inicializado em `T03-P13`; auth email/senha foi fechado em `T03-P14`; manifest de updates e builds Android/PC/Web seguem em `T03-P15` a `T03-P18`.
+- Ordem local-first aprovada em 2026-05-26 e ja cumprida para release prep: o jogo foi implementado/validado no Godot/Supabase local primeiro; Supabase remoto foi inicializado em `T03-P13`; auth email/senha foi fechado em `T03-P14`; manifest de updates foi fechado em `T03-P15`; builds Android/PC/Web seguem em `T03-P16` a `T03-P18`.
 - `T03-P03A` completo: `SessionStore` possui save ativo `normal`/`progression_lab`, persiste no cache, limpa snapshots ao alternar contexto, marca snapshots local-only do Progression Lab como Lab, `SupabaseClient` prepara header `x-draxos-save-type` e o Hub mostra/troca save ativo com bloqueio claro quando o Lab esta em cache local-only.
 - `T03-P03B` completo: schema local ganhou `players.save_type`, unicidade por `auth_user_id + save_type`, RPCs `create_guest_account`/`request_mvp_battle` recebem save, Edge Functions resolvem `x-draxos-save-type` para `account`, `battle`, `base`, `social`, `competition`, `monetization` e `telemetry`, o Hub libera acoes server-backed no Lab, e o save `progression_lab` fica isolado do normal e fora do ranking com motivo explicito.
 - `T03-P03C` completo: `POST /account/saves/reset` e RPC `reset_player_save` reconstroem apenas o save ativo, preservam o outro save da mesma sessao Auth, limpam snapshots client-side do save resetado, mantem idempotencia por `request_id` e expoem botao perigoso "Resetar save ativo" no Hub.
@@ -30,10 +30,10 @@
 - `T03-P12` completo: plano de release `T03-P12` a `T03-P18` registrado, base do portal estatico criada em `portal/internal-alpha/`, manifest exemplo criado, tutorial detalhado de Supabase remoto documentado e ponto de partida remoto anotado (`armxgipvnbbshzqawklw`, `https://armxgipvnbbshzqawklw.supabase.co`).
 - `T03-P13` completo: Supabase CLI logado/linkado ao projeto remoto `armxgipvnbbshzqawklw`, migrations aplicadas com `supabase db push`, Edge Functions `healthcheck`, `account`, `battle`, `base`, `social`, `competition`, `monetization`, `telemetry` e `progression-lab` publicadas, lista local/remota de migrations alinhada e smoke remoto minimo verde.
 - `T03-P14` completo: cliente Godot recebeu fluxo de conta alpha com email/senha, username e convite; guest ficou como ferramenta dev; `SessionStore` persiste metodo/email/username/request id alpha; `SupabaseClient` suporta signup/login password e `/account/bootstrap`; schema/Edge Function adicionaram `create_alpha_account` para contas registradas e saves `normal`/`progression_lab`; Auth remoto foi alinhado com confirmacao de email desligada; smokes local/remoto de email/senha passaram.
+- `T03-P15` completo: `ProjectInfo` define versao/canal/schema do manifest, `BackendConfig`/`SupabaseClient` resolvem URL de manifest, Hub checa update no boot e bloqueia acoes online quando `minimum_supported_version_code` exige, `GET /release/manifest` foi implementado/local/remoto sem JWT obrigatorio e smokes local/remoto passaram.
 
 ## Ainda Nao Implementado
 
-- `T03-P15`: manifest remoto de updates e version gate.
 - `T03-P16`: export/publicacao das tres builds finais.
 - `T03-P17`: QA remoto fechado com duas contas reais.
 - `T03-P18`: handoff final da Internal Alpha v0.
@@ -53,7 +53,7 @@
 
 ## Proximo Passo
 
-Executar `T03-P15 - Update Manifest E Version Gate`: publicar o manifest remoto real, ligar o boot do Godot ao manifest e preparar update recomendado/obrigatorio para Android, PC e Web.
+Executar `T03-P16 - Export Android, PC E Web`: exportar APK Android, PC Windows ZIP e Web, registrar hashes/links e preparar artefatos para o portal/manifest.
 
 ## Validacao Da Preparacao
 
@@ -101,3 +101,11 @@ Executar `T03-P15 - Update Manifest E Version Gate`: publicar o manifest remoto 
 - `npx -y supabase config push --yes`: passou em 2026-05-27, alinhando Auth remoto com `enable_confirmations = false`.
 - `DRAXOS_REMOTE_EMAIL_AUTH_SMOKE=1 npx -y deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts`: passou em 2026-05-27 contra `https://armxgipvnbbshzqawklw.supabase.co`.
 - `DRAXOS_REMOTE_ANON_AUTH_SMOKE=1 npx -y deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts`: passou em 2026-05-27 contra `https://armxgipvnbbshzqawklw.supabase.co`.
+- `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-mobile -s res://tools/validate.gd`: passou em 2026-05-27 com GUT `53/53` e `358` asserts.
+- `npx -y deno task check` e `npx -y deno task lint` em `supabase/functions`: passaram em 2026-05-27 incluindo `release/index.ts`.
+- `npx -y deno task check` e `npx -y deno task lint` em `server/functions`: passaram em 2026-05-27 incluindo `release/index.ts`.
+- `npx -y deno check server/tests/release_manifest_smoke.ts server/tests/internal_alpha_remote_smoke.ts`: passou em 2026-05-27.
+- `npx -y deno run --allow-net --allow-env server/tests/release_manifest_smoke.ts`: passou em 2026-05-27 contra Supabase local apos reiniciar a Edge Runtime.
+- `npx -y supabase functions deploy release --no-verify-jwt`: passou em 2026-05-27 contra `armxgipvnbbshzqawklw`.
+- `DRAXOS_REMOTE_RELEASE_SMOKE=1 npx -y deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts`: passou em 2026-05-27 contra `https://armxgipvnbbshzqawklw.supabase.co`.
+- `npx -y deno run --allow-net --allow-env server/tests/release_manifest_smoke.ts`: passou em 2026-05-27 contra `https://armxgipvnbbshzqawklw.supabase.co`.

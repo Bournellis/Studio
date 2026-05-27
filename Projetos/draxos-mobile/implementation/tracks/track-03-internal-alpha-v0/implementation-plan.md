@@ -59,7 +59,7 @@ Fabio vai trabalhar somente no Godot/local ate o jogo estar implementado o basta
 
 Durante a fase local-first, `T03-P02` permaneceu repo-ready: a configuracao segura existe e agora volta a ser a proxima trilha de release.
 
-Atualizacao de 2026-05-27: o projeto Supabase remoto (`armxgipvnbbshzqawklw`, `https://armxgipvnbbshzqawklw.supabase.co`) foi linkado pela CLI, recebeu migrations/functions, config de Auth email/senha sem confirmacao obrigatoria e passou em smokes remotos de healthcheck, Auth anonimo dev e email/senha com saves `normal`/`progression_lab`. Proxima etapa: `T03-P15`.
+Atualizacao de 2026-05-27: o projeto Supabase remoto (`armxgipvnbbshzqawklw`, `https://armxgipvnbbshzqawklw.supabase.co`) foi linkado pela CLI, recebeu migrations/functions, config de Auth email/senha sem confirmacao obrigatoria, passou em smokes remotos de healthcheck/Auth/email+saves e recebeu `GET /release/manifest` com smoke remoto verde. Proxima etapa: `T03-P16`.
 
 ### T03-P03 - Conta Email/Senha E Dois Saves
 
@@ -260,7 +260,7 @@ Implementado em modo local-first:
 
 Lacunas intencionais:
 
-- Builds exportadas, manifest de updates e QA remoto fechado seguem encaminhados para `T03-P15` a `T03-P18`.
+- Builds exportadas e QA remoto fechado seguem encaminhados para `T03-P16` a `T03-P18`.
 
 ### T03-P12 - Release Plan, Portal Base E Tutorial Remoto
 
@@ -328,16 +328,21 @@ Implementado em 2026-05-27:
 
 ### T03-P15 - Update Manifest E Version Gate
 
-Status: `NEXT`.
+Status: `COMPLETE`.
 
-- Publicar manifest remoto real.
-- Conectar boot do Godot ao manifest.
-- Mostrar update recomendado e bloquear online quando `minimum_supported_version` exigir.
-- Registrar politica de reset destrutivo por release quando necessario.
+Implementado em 2026-05-27:
+
+- Manifest remoto real publicado em `GET /release/manifest`, sem JWT obrigatorio.
+- `ProjectInfo` define canal `internal_alpha`, versao `0.0.1-alpha.0`, version code `1` e schema `internal_alpha_manifest_v1`.
+- `BackendConfig` e `SupabaseClient` resolvem `DRAXOS_MOBILE_UPDATE_MANIFEST_URL` e usam `<supabase_url>/functions/v1/release/manifest` como default.
+- Hub do Godot checa o manifest no boot, mostra status de update e permite checagem manual.
+- Quando `minimum_supported_version_code` exige build mais nova, o Hub bloqueia acoes online e orienta baixar update pelo portal.
+- `requires_save_reset` fica como aviso/documentacao, sem apagar save automaticamente.
+- Smokes local/remoto validam o contrato do manifest.
 
 ### T03-P16 - Export Android, PC E Web
 
-Status: `PENDING_T03_P14_T03_P15`.
+Status: `NEXT`.
 
 - Exportar APK Android direto por link.
 - Exportar PC Windows em zip direto por link.
@@ -381,11 +386,11 @@ As decisoes abaixo estao registradas em `docs/design-pending.md` e precisam ser 
 
 ## Trabalho Manual Do Fabio
 
-Necessario agora para `T03-P15` a `T03-P18`:
+Necessario agora para `T03-P16` a `T03-P18`:
 
 - Criar keystore Android internal alpha e guardar senha fora do Git.
 - Escolher onde hospedar a Web build unlisted, APK e zip PC.
-- Definir URL final do manifest remoto e dos downloads no portal.
+- Definir URLs finais dos downloads no portal e, se necessario, override de `RELEASE_MANIFEST_JSON`.
 - Informar os emails/usernames desejados para Fabio e o amigo, se quiser contas humanas predefinidas em vez de cadastro por convite.
 - Guardar `SUPABASE_SERVICE_ROLE_KEY` fora do Git para resets/deploys controlados; nunca colocar no cliente.
 

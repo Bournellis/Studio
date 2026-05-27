@@ -10,6 +10,7 @@ const SAVE_TYPE_PROGRESSION_LAB := "progression_lab"
 
 var supabase_url := DEFAULT_SUPABASE_URL
 var publishable_key := DEFAULT_PUBLISHABLE_KEY
+var update_manifest_url := "%s/functions/v1/release/manifest" % DEFAULT_SUPABASE_URL
 var backend_environment := BackendConfigScript.DEFAULT_BACKEND_ENVIRONMENT
 var backend_config_source := "defaults"
 var backend_config_errors := PackedStringArray()
@@ -32,12 +33,14 @@ func configure_backend(config: Dictionary) -> void:
 	backend_config_errors = _packed_string_array(config.get("errors", PackedStringArray()))
 	supabase_url = str(config.get("supabase_url", "")).strip_edges().trim_suffix("/")
 	publishable_key = str(config.get("publishable_key", "")).strip_edges()
+	update_manifest_url = str(config.get("update_manifest_url", "")).strip_edges()
 
 func backend_summary() -> Dictionary:
 	return {
 		"environment": backend_environment,
 		"source": backend_config_source,
 		"supabase_url": supabase_url,
+		"update_manifest_url": update_manifest_url,
 		"configured": backend_config_errors.is_empty(),
 		"errors": backend_config_errors,
 	}
@@ -53,6 +56,19 @@ func auth_password_url() -> String:
 
 func function_url(endpoint: String) -> String:
 	return "%s/functions/v1/%s" % [supabase_url, endpoint.trim_prefix("/")]
+
+func manifest_url() -> String:
+	return update_manifest_url
+
+func fetch_update_manifest() -> Dictionary:
+	if update_manifest_url == "":
+		return _error("UPDATE_MANIFEST_URL_MISSING", "Update manifest URL is not configured.")
+	return await _send_json(
+		update_manifest_url,
+		HTTPClient.METHOD_GET,
+		_manifest_headers(),
+		{}
+	)
 
 func sign_in_anonymously() -> Dictionary:
 	var result: Dictionary = await _send_json(
@@ -338,6 +354,15 @@ func _base_headers() -> PackedStringArray:
 		"apikey: %s" % publishable_key,
 		"x-draxos-save-type: %s" % active_save_type,
 	])
+
+func _manifest_headers() -> PackedStringArray:
+	var headers := PackedStringArray([
+		"Accept: application/json",
+		"Content-Type: application/json",
+	])
+	if update_manifest_url.begins_with(supabase_url):
+		headers.append("apikey: %s" % publishable_key)
+	return headers
 
 func _auth_headers(access_token: String) -> PackedStringArray:
 	var headers := _base_headers()
