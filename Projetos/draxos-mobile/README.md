@@ -52,6 +52,12 @@ Status: `P2_IMPLEMENTACAO - T03-P18 internal alpha v0 handoff complete; rodada f
 |---|---|
 | Build fechada Internal Alpha v0 com conta email/senha, dois saves, backend remoto, updates e features principais funcionais | Completo em T03-P18; handoff pronto para rodada fechada Fabio + tester |
 
+## Track 04
+
+| Objetivo | Status |
+|---|---|
+| Pos-handoff: bugs reais, UX Android/onboarding, modularizacao incremental do Hub e gate futuro de conta/save | Planejada apos rodada fechada Fabio + tester |
+
 ---
 
 ## Primeiro Slice Completo
@@ -113,7 +119,11 @@ draxos-mobile/
 |           |-- current-status.md
 |           |-- scope.md
 |           `-- implementation-plan.md
-|       `-- track-03-internal-alpha-v0/
+|       |-- track-03-internal-alpha-v0/
+|           |-- current-status.md
+|           |-- scope.md
+|           `-- implementation-plan.md
+|       `-- track-04-post-handoff-hardening-and-hub-modularization/
 |           |-- current-status.md
 |           |-- scope.md
 |           `-- implementation-plan.md
@@ -141,15 +151,16 @@ draxos-mobile/
 1. `AGENTS.md`
 2. `implementation/current-status.md`
 3. `docs/product-vision.md`
-4. `implementation/tracks/track-03-internal-alpha-v0/current-status.md`
-5. `implementation/tracks/track-03-internal-alpha-v0/scope.md`
-6. `docs/internal-alpha-v0.md`
-7. `docs/internal-alpha-remote-setup.md`
-8. `docs/internal-alpha-release-plan.md`
-9. `docs/internal-alpha-static-hosting.md`
-10. `docs/internal-alpha-v0-export-report.md`
-11. `docs/internal-alpha-v0-publication-report.md`
-12. `docs/internal-alpha-v0-handoff.md`
-13. `docs/supabase-remote-tutorial.md`
-14. `docs/internal-alpha-v0-design-lock.md`
-15. `docs/design-pending.md`
+4. `implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/current-status.md`
+5. `implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/scope.md`
+6. `implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/implementation-plan.md`
+7. `docs/internal-alpha-v0-handoff.md`
+8. `docs/internal-alpha-v0.md`
+9. `docs/internal-alpha-remote-setup.md`
+10. `docs/internal-alpha-release-plan.md`
+11. `docs/internal-alpha-static-hosting.md`
+12. `docs/internal-alpha-v0-export-report.md`
+13. `docs/internal-alpha-v0-publication-report.md`
+14. `docs/supabase-remote-tutorial.md`
+15. `docs/internal-alpha-v0-design-lock.md`
+16. `docs/design-pending.md`

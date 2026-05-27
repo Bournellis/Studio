@@ -31,18 +31,19 @@ Este projeto foi promovido de `Projetos/_conceitos/mobile-universe/` em 2026-05-
 
 ## Read Order
 
-### Fast Lane Para Track 03
+### Fast Lane Pos-Handoff / Track 04
 
 1. `implementation/current-status.md`
-2. `implementation/tracks/track-03-internal-alpha-v0/current-status.md`
-3. `implementation/tracks/track-03-internal-alpha-v0/scope.md`
-4. `implementation/tracks/track-03-internal-alpha-v0/implementation-plan.md`
-4. `docs/design-pending.md`
-5. `docs/internal-alpha-v0.md`
-6. `docs/contracts/`
-7. `docs/reuse-map.md`
-8. este arquivo
-9. arquivos tocados
+2. `implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/current-status.md`
+3. `implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/scope.md`
+4. `implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/implementation-plan.md`
+5. `docs/internal-alpha-v0-handoff.md`
+6. `docs/product-vision.md`
+7. `docs/design-pending.md`
+8. `docs/contracts/`
+9. `docs/reuse-map.md`
+10. este arquivo
+11. arquivos tocados
 
 ### Trabalho substancial
 
@@ -57,7 +58,7 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 7. `docs/architecture.md`
 8. `docs/contracts/`
 9. `implementation/current-status.md`
-10. `implementation/tracks/track-03-internal-alpha-v0/`
+10. `implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/`
 11. este arquivo
 12. arquivos tocados
 
@@ -89,6 +90,9 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 | Escopo da Track 03 | `implementation/tracks/track-03-internal-alpha-v0/scope.md` |
 | Plano da Track 03 | `implementation/tracks/track-03-internal-alpha-v0/implementation-plan.md` |
 | Status da Track 03 | `implementation/tracks/track-03-internal-alpha-v0/current-status.md` |
+| Escopo da Track 04 | `implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/scope.md` |
+| Plano da Track 04 | `implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/implementation-plan.md` |
+| Status da Track 04 | `implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/current-status.md` |
 | Runbook Internal Alpha v0 | `docs/internal-alpha-v0.md` |
 | Setup remoto Internal Alpha v0 | `docs/internal-alpha-remote-setup.md` |
 | Host estatico Internal Alpha v0 | `docs/internal-alpha-static-hosting.md` |
@@ -158,6 +162,6 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 
 ## Active Track
 
-Track ativa: `Track 03 - Internal Alpha v0`.
+Track ativa: `Track 04 - Post-Handoff Hardening And Hub Modularization`.
 
-Comece por `implementation/current-status.md` e siga `implementation/tracks/track-03-internal-alpha-v0/current-status.md`.
+Comece por `implementation/current-status.md` e siga `implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/current-status.md`.

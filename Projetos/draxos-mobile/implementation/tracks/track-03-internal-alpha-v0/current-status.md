@@ -2,7 +2,8 @@
 
 - Last Updated: `2026-05-27`
 - Status: `T03-P18_COMPLETE - INTERNAL_ALPHA_V0_HANDOFF_READY`
-- Baseline: Track 00 completa, Track 01 completa e Track 02 com Progression Lab/Battle Lab v1 implementados. O projeto ja possui Godot 4.6.2, Supabase local, conta guest, batalha server-authoritative, Base/Social/Competicao/Monetizacao v0, telemetria client nao autoritativa, exports Android/PC/Web, Battle Visual Mockup compartilhado e laboratorios internos. A Track 03 prepara a transicao para uma build fechada realista com email/senha, dois saves por conta, backend remoto, updates e playtest de 2 usuarios.
+- Baseline: Track 00 completa, Track 01 completa e Track 02 com Progression Lab/Battle Lab v1 implementados. O projeto ja possui Godot 4.6.2, Supabase local/remoto, conta email/senha, guest dev, batalha server-authoritative, Base/Social/Competicao/Monetizacao v0, telemetria client nao autoritativa, exports Android/PC/Web, Battle Visual Mockup compartilhado e laboratorios internos. A Track 03 concluiu a transicao para uma build fechada realista com email/senha, dois saves por conta, backend remoto, updates e pacote de playtest de 2 usuarios.
+- Proxima track: `../track-04-post-handoff-hardening-and-hub-modularization/` para rodada fechada, bugs, UX Android/onboarding, modularizacao do Hub e gate futuro de conta/save.
 
 ## Implementado Nesta Preparacao
 

@@ -137,6 +137,7 @@ Essa direcao favorece dados relacionais, transacoes, ledger e auditoria. Por iss
 - `contracts/` - contratos tecnicos antes das migrations/codigo.
 - `../implementation/tracks/track-00-first-slice-foundation/scope.md` - escopo da Track 00.
 - `../implementation/tracks/track-03-internal-alpha-v0/scope.md` - escopo da Internal Alpha v0.
+- `../implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/scope.md` - pos-handoff, UX Android/onboarding, modularizacao do Hub e gates futuros.
 - `internal-alpha-v0.md` - runbook operacional da build fechada.
 - `../../_conceitos/mobile-universe/gdd.md` - GDD historico completo.
 - `../../_conceitos/mobile-universe/pendencias.md` - historico de decisoes da fase conceitual.

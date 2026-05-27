@@ -238,6 +238,8 @@ Refatoracao futura, se o projeto crescer:
 - criar `game_saves` para saves por modo/tipo;
 - migrar tabelas de gameplay de `player_id` para `save_id` ou manter `player_id` como alias de save.
 
+Gate Track 04: nao executar essa migracao antes da rodada fechada Fabio + tester, salvo bug real de isolamento, seguranca ou corrupcao de save.
+
 Regras de seguranca:
 
 - RLS precisa isolar saves do mesmo `auth_user_id` de outros usuarios.

@@ -19,7 +19,7 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
 ## Implementacao - Internal Alpha
 
-- `draxos-mobile/`: jogo mobile multi-plataforma - mago Draxos (PVP assincrono, base manager, social). Plataformas: Android + PC executavel + PC browser. Backend: Supabase para alpha, com Backend Proprio + Postgres como plano de saida preferido. Batalha 100% simulada no servidor. Track 00 completa, Track 01 completa e Track 02 com Progression Lab/Battle Lab v1 implementados; batalha visual procedural 2D e labs internos estao prontos para a primeira rodada de teste. Track 03 esta completa para Internal Alpha v0: design lock, email/senha, dois saves por conta (`normal` e `progression_lab`), Supabase remoto Free, Progression Lab isolado, Base/Social/Competicao/Loja jogaveis, leaderboard sem bots, redeems diarios em Diamante, manifest de updates, exports Android/PC/Web, publicacao unlisted, passada Android UI, QA remoto automatizado e handoff final. Handoff: `draxos-mobile/docs/internal-alpha-v0-handoff.md`.
+- `draxos-mobile/`: jogo mobile multi-plataforma - mago Draxos (PVP assincrono, base manager, social). Plataformas: Android + PC executavel + PC browser. Backend: Supabase para alpha, com Backend Proprio + Postgres como plano de saida preferido. Batalha 100% simulada no servidor. Track 00 completa, Track 01 completa e Track 02 com Progression Lab/Battle Lab v1 implementados; batalha visual procedural 2D e labs internos estao prontos para a primeira rodada de teste. Track 03 esta completa para Internal Alpha v0: design lock, email/senha, dois saves por conta (`normal` e `progression_lab`), Supabase remoto Free, Progression Lab isolado, Base/Social/Competicao/Loja jogaveis, leaderboard sem bots, redeems diarios em Diamante, manifest de updates, exports Android/PC/Web, publicacao unlisted, passada Android UI, QA remoto automatizado e handoff final. Track 04 esta planejada para pos-handoff: rodada Fabio + tester, bugs bloqueantes, UX Android/onboarding, modularizacao incremental do Hub e gate futuro de conta/save. Handoff: `draxos-mobile/docs/internal-alpha-v0-handoff.md`.
   - Priority/status: `P2_IMPLEMENTACAO - internal alpha v0 T03-P18 complete; handoff ready`
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Operational status: `draxos-mobile/implementation/current-status.md`
@@ -28,6 +28,7 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
   - Track 01 scope: `draxos-mobile/implementation/tracks/track-01-alpha-playtest-hardening/scope.md`
   - Track 02 scope: `draxos-mobile/implementation/tracks/track-02-progression-lab/scope.md`
   - Track 03 scope: `draxos-mobile/implementation/tracks/track-03-internal-alpha-v0/scope.md`
+  - Track 04 scope: `draxos-mobile/implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/scope.md`
   - Internal Alpha v0 runbook: `draxos-mobile/docs/internal-alpha-v0.md`
   - Internal Alpha remote setup: `draxos-mobile/docs/internal-alpha-remote-setup.md`
   - Internal Alpha release plan: `draxos-mobile/docs/internal-alpha-release-plan.md`
@@ -43,7 +44,7 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
   - Economy model: `draxos-mobile/docs/economy/README.md`
   - Design archive: `_conceitos/mobile-universe/gdd.md`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: rodada fechada Fabio + tester e backlog de feedback pos-handoff.
+  - Current next step: rodada fechada Fabio + tester, backlog de feedback pos-handoff e entrada controlada na Track 04.
 
 ## Arquivo De Design
 

@@ -90,7 +90,7 @@ Treat existing RPG Turnos mechanical IDs as stable placeholders unless a dedicat
 - portfolio source of truth lives in `D:\Estudio\08_Coordenacao_Agentes\Prioridades_Estudio.md`
 - Draxos Roguelike Cardgame operational status lives in `D:\Estudio\Projetos\draxos-roguelike-cardgame\implementation\current-status.md`
 - DraxosMobile operational status lives in `D:\Estudio\Projetos\draxos-mobile\implementation\current-status.md`
-- DraxosMobile active work is organized under `D:\Estudio\Projetos\draxos-mobile\implementation\tracks\track-03-internal-alpha-v0\`, using Track 00/01/02 as completed baseline tracks.
+- DraxosMobile is post `T03-P18` handoff; active planned work is organized under `D:\Estudio\Projetos\draxos-mobile\implementation\tracks\track-04-post-handoff-hardening-and-hub-modularization\`, using Track 00/01/02/03 as completed baseline tracks.
 - historical validation and cutover records live under `D:\Estudio\Projetos\rpg-isometrico\implementation\phase-g1` through `phase-g4` and `D:\Estudio\migration\`
 
 ## Shared Architecture Snapshot
