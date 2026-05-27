@@ -105,11 +105,27 @@ assertEq(
   "signed-in account should recover the same normal save",
 );
 
+const registeredBattle = await postJson(
+  `${SUPABASE_URL}/functions/v1/battle/request`,
+  {
+    request_id: crypto.randomUUID(),
+    mode: "FIRST_SLICE_SIM",
+  },
+  authHeaders(signinToken),
+);
+const battleLog = objectField(registeredBattle, "battle_log");
+assertEq(
+  stringField(battleLog, "schema_version"),
+  "battle_log_v1",
+  "signed-in account should be able to request a battle",
+);
+
 console.log("[email-auth-alpha-smoke] OK", {
   email,
   username,
   normal_player: stringField(objectField(normalState, "player"), "id"),
   lab_player: stringField(objectField(labState, "player"), "id"),
+  battle_id: stringField(battleLog, "battle_id"),
 });
 
 function baseHeaders(): Record<string, string> {
@@ -207,9 +223,7 @@ function assert(condition: boolean, message: string): asserts condition {
 function assertEq(actual: unknown, expected: unknown, message: string): void {
   if (actual !== expected) {
     throw new Error(
-      `${message}. Expected ${JSON.stringify(expected)}, got ${
-        JSON.stringify(actual)
-      }`,
+      `${message}. Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`,
     );
   }
 }

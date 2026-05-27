@@ -762,16 +762,6 @@ function decodeAuthContext(
       error: { code: "UNAUTHENTICATED", message: "Token subject is invalid.", status: 401 },
     };
   }
-  if (payload.is_anonymous === false) {
-    return {
-      value: null,
-      error: {
-        code: "AUTH_NOT_ANONYMOUS",
-        message: "Use an anonymous Supabase Auth session.",
-        status: 403,
-      },
-    };
-  }
   const saveType = saveTypeFromRequest(request);
   if (saveType === null) {
     return {

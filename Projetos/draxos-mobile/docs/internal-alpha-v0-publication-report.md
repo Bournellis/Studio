@@ -58,6 +58,8 @@ Executado contra `https://armxgipvnbbshzqawklw.supabase.co`:
 
 Os smokes foram ajustados para aceitar o comportamento remoto do gateway Supabase quando uma chamada sem JWT e barrada antes da Edge Function.
 
+Hotfix de 2026-05-27: as rotas de gameplay `battle`, `base`, `social`, `competition` e `monetization` ainda rejeitavam JWT registrado de email/senha com `AUTH_NOT_ANONYMOUS`, herdado do MVP guest. O guard foi removido dessas rotas, mantendo `/account/guest` como a unica rota exclusiva de guest dev. As cinco Edge Functions foram redeployadas e a bateria remota confirmou email/senha + batalha, alem dos smokes de batalha/base/social/competicao/loja/telemetria.
+
 ## Host Estatico Cloudflare Pages
 
 O Cloudflare Pages nao deve receber `build/internal-alpha/publish/` inteiro, porque o `web/index.wasm` do Godot excede o limite por arquivo do Pages. A publicacao correta usa um pacote hibrido:

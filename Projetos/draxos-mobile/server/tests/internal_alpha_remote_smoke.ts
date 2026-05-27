@@ -3,8 +3,7 @@ const PUBLISHABLE_KEY = requiredEnv("SUPABASE_PUBLISHABLE_KEY");
 const RUN_ANON_AUTH = Deno.env.get("DRAXOS_REMOTE_ANON_AUTH_SMOKE") === "1";
 const RUN_ACCOUNT_STATE = Deno.env.get("DRAXOS_REMOTE_ACCOUNT_SMOKE") === "1";
 const RUN_EMAIL_AUTH = Deno.env.get("DRAXOS_REMOTE_EMAIL_AUTH_SMOKE") === "1";
-const RUN_RELEASE_MANIFEST =
-  Deno.env.get("DRAXOS_REMOTE_RELEASE_SMOKE") === "1";
+const RUN_RELEASE_MANIFEST = Deno.env.get("DRAXOS_REMOTE_RELEASE_SMOKE") === "1";
 
 assertRemoteUrl(SUPABASE_URL);
 assertClientKey(PUBLISHABLE_KEY);
@@ -94,6 +93,7 @@ if (RUN_ANON_AUTH || RUN_ACCOUNT_STATE) {
 let emailUser = "";
 let emailPlayerId = "";
 let labPlayerId = "";
+let emailBattleId = "";
 if (RUN_EMAIL_AUTH) {
   const runId = crypto.randomUUID().replaceAll("-", "").slice(0, 12);
   const email = `draxosremotealpha${runId}@gmail.com`;
@@ -173,6 +173,26 @@ if (RUN_EMAIL_AUTH) {
     username,
     "email signin should recover normal save",
   );
+
+  const registeredBattle = await postJson(
+    `${SUPABASE_URL}/functions/v1/battle/request`,
+    {
+      request_id: crypto.randomUUID(),
+      mode: "FIRST_SLICE_SIM",
+    },
+    {
+      ...baseHeaders(),
+      authorization: `Bearer ${stringField(signin, "access_token")}`,
+    },
+  );
+  const registeredBattleLog = objectField(registeredBattle, "battle_log");
+  emailBattleId = stringField(registeredBattleLog, "battle_id");
+  assert(emailBattleId !== "", "registered email account should be able to request battle");
+  assertEq(
+    stringField(registeredBattleLog, "schema_version"),
+    "battle_log_v1",
+    "registered email battle should return a battle log",
+  );
 }
 
 console.log("[internal-alpha-remote-smoke] OK", {
@@ -187,6 +207,7 @@ console.log("[internal-alpha-remote-smoke] OK", {
   email_user: emailUser,
   email_player_id: emailPlayerId,
   lab_player_id: labPlayerId,
+  email_battle_id: emailBattleId,
 });
 
 function baseHeaders(): Record<string, string> {
@@ -301,9 +322,7 @@ function assert(condition: boolean, message: string): asserts condition {
 function assertEq(actual: unknown, expected: unknown, message: string): void {
   if (actual !== expected) {
     throw new Error(
-      `${message}. Expected ${JSON.stringify(expected)}, got ${
-        JSON.stringify(actual)
-      }`,
+      `${message}. Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`,
     );
   }
 }

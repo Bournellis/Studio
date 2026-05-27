@@ -35,6 +35,7 @@
 - `T03-P17` publicacao tecnica completa: migration `202605270002_internal_alpha_storage.sql` criou bucket publico unlisted `draxos-internal-alpha`, `tools/publish_internal_alpha.ps1` publicou APK/PC ZIP, `tools/build_cloudflare_pages_package.ps1` gerou pacote hibrido Cloudflare Pages, Portal/Web foram publicados em `https://draxos-mobile-internal-alpha.pages.dev`, `release/manifest` recebeu links finais e QA remoto automatizado passou.
 - Correcao pos-publicacao: Supabase Storage retorna HTML como `text/plain` e Edge Functions tambem nao servem `text/html`; APK/PC ZIP e assets grandes continuam por Storage, enquanto Portal/Web HTML ficam no Cloudflare Pages.
 - Correcao Cloudflare Pages: o pacote hibrido publica Portal em `/`, Web em `/web`, mantem redirects de `/portal/index.html` e `/web/index.html`, e evita o limite por arquivo do Pages.
+- Hotfix gameplay email/senha: `battle`, `base`, `social`, `competition` e `monetization` removem o guard legado `AUTH_NOT_ANONYMOUS` do MVP e aceitam JWT registrado; `/account/guest` continua restrito a guest dev.
 
 ## Ainda Nao Implementado
 
@@ -124,3 +125,4 @@ Executar signoff manual de `T03-P17`: Fabio + 1 tester usam os links publicados,
 - `npx -y deno run --allow-net --allow-env server/tests/social_competition_smoke.ts`: passou em 2026-05-27 contra remoto.
 - `npx -y deno run --allow-net --allow-env server/tests/battle_request_smoke.ts`: passou em 2026-05-27 contra remoto.
 - `npx -y deno run --allow-net --allow-env server/tests/client_telemetry_smoke.ts`: passou em 2026-05-27 contra remoto.
+- Hotfix 2026-05-27: redeploy remoto de `battle`, `base`, `social`, `competition` e `monetization` passou; `internal_alpha_remote_smoke.ts` com `DRAXOS_REMOTE_EMAIL_AUTH_SMOKE=1` validou email/senha + `battle/request`; `email_auth_alpha_smoke.ts`, `first_slice_battle_smoke.ts`, `base_manager_smoke.ts`, `social_competition_smoke.ts`, `monetization_rewards_smoke.ts`, `battle_request_smoke.ts` e `client_telemetry_smoke.ts` passaram contra remoto.

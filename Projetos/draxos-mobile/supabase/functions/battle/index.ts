@@ -854,17 +854,6 @@ function decodeAuthContext(request: Request): { value: AuthContext; error: null 
     };
   }
 
-  if (payload.is_anonymous === false) {
-    return {
-      value: null,
-      error: {
-        code: "AUTH_NOT_ANONYMOUS",
-        message: "Use an anonymous Supabase Auth session for the MVP battle request.",
-        status: 403,
-      },
-    };
-  }
-
   const saveType = saveTypeFromRequest(request);
   if (saveType === null) {
     return {
