@@ -1,7 +1,7 @@
 # Architecture
 
 - Last Updated: `2026-05-27`
-- Status: `Track 02 foundation hardening 4 baseline`
+- Status: `Track 02 foundation hardening 5 baseline`
 
 ## Goal
 
@@ -90,7 +90,7 @@ Responsibilities:
 - stable seeded pending choices;
 - save/snapshot payload v5.
 
-Foundation checkpoint: `RunSession` remains the public owner of run state while reward choice generation/application now delegates to `core/run_reward_service.gd`; shop mutation/cost services remain separate and behavior-compatible.
+Foundation checkpoint: `RunSession` remains the public owner of run state while reward choice generation/application delegates to `core/run_reward_service.gd`; Souls shop offers, purchases, rerolls, max-HP buys, cost helpers and `shop_state` sync delegate to `core/run_shop_service.gd` behind compatible wrappers.
 
 ### `Battle`
 
@@ -155,7 +155,7 @@ Responsibilities:
 - run GUT;
 - report playtest readiness and known non-fatal art alpha debts.
 
-Expected baseline after 2026-05-27 hardening 4: GUT 99/99 with 1228 asserts, full-route smoke 29/29 through the shared route pacing simulator, Arcano seed `20260518` protected by exact golden metrics, Run Lab parity for class/seed sweeps, and repeated validation does not dirty generated content when the JSON is unchanged.
+Expected baseline after 2026-05-27 hardening 5: GUT 100/100 with 1238 asserts, full-route smoke 29/29 through the shared route pacing simulator, Arcano seed `20260518` protected by exact golden metrics, Run Lab parity for class/seed sweeps, and repeated validation does not dirty generated content when the JSON is unchanged.
 
 ### `Run Lab`
 

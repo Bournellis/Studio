@@ -135,3 +135,12 @@ Each entry should include:
 - validation result: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <worktree>\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd` passed with 99/99 GUT tests and 1228 asserts. Shared full-route pacing smoke completed 29/29 maps with 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 shop actions. Run Lab `--compare-golden --require-golden` passed for Arcano, Invocador, and Necromante seed `20260518`.
 - blockers: none. Remaining known debt: optional missing final PNG art and 4 non-fatal ship overlay alpha warnings.
 - next prompt id: none; Track 02 remains ready for human playtest. Recommended next foundation pass: Run Economy Services.
+
+### 2026-05-27 - Foundation Hardening 5
+
+- prompt id: `FOUNDATION-HARDENING-5`
+- summary: Extracted Souls shop economy services from `RunSession` into `core/run_shop_service.gd`, including offer refresh, purchases, rerolls, remove/duplicate/card/relic/max-HP actions, cost helpers, and `shop_state` sync while keeping public `RunSession` wrappers and snapshot v5 payloads compatible.
+- changed files: `core/run_session.gd`, `core/run_shop_service.gd`, `tests/unit/test_run_rewards_shop_save.gd`, docs/status snapshots, and coordination note.
+- validation result: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <worktree>\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd` passed with 100/100 GUT tests and 1238 asserts. Shared full-route pacing smoke completed 29/29 maps with 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 shop actions. Run Lab `--compare-golden --require-golden` passed for Arcano, Invocador, and Necromante seed `20260518`.
+- blockers: none. Remaining known debt: optional missing final PNG art and 4 non-fatal ship overlay alpha warnings.
+- next prompt id: none; Track 02 remains ready for human playtest. Recommended next foundation pass: BattleRoot Composition.
