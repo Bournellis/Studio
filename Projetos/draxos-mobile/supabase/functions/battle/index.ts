@@ -7,7 +7,7 @@ import {
   saveTypeQuery,
 } from "../_shared/save_context.ts";
 
-type Route = "request" | "latest";
+type Route = "request" | "latest" | "history" | "replay";
 type BattleMode = "MVP_ONLY" | "FIRST_SLICE_SIM";
 
 interface EdgeConfig {
@@ -78,6 +78,7 @@ interface BattleRow {
   result: unknown;
   event_log: unknown;
   reward_payload: unknown;
+  created_at?: string;
 }
 
 interface IdempotencyRow {
@@ -106,6 +107,8 @@ const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3
 const DEFAULT_FIRST_SLICE_BOT_ID = "bot_effect_trainer_01";
 const BOT_ID_PATTERN = /^[a-z0-9_]+$/;
 const ARENA_SCORING_MODEL = "alpha_v0_power_adjusted";
+const DEFAULT_HISTORY_LIMIT = 10;
+const MAX_HISTORY_LIMIT = 20;
 
 Deno.serve(async (request: Request) => {
   if (request.method === "OPTIONS") {
@@ -126,6 +129,14 @@ Deno.serve(async (request: Request) => {
       return errorResponse("METHOD_NOT_ALLOWED", "Use GET /battle/latest.", 405);
     }
 
+    if (route === "history" && request.method !== "GET") {
+      return errorResponse("METHOD_NOT_ALLOWED", "Use GET /battle/history.", 405);
+    }
+
+    if (route === "replay" && request.method !== "GET") {
+      return errorResponse("METHOD_NOT_ALLOWED", "Use GET /battle/replay?battle_id=...", 405);
+    }
+
     const auth = decodeAuthContext(request);
     if (auth.error !== null) {
       return errorResponse(auth.error.code, auth.error.message, auth.error.status);
@@ -140,7 +151,15 @@ Deno.serve(async (request: Request) => {
       return await handleRequest(request, auth.value, config.value);
     }
 
-    return await handleLatest(auth.value, config.value);
+    if (route === "latest") {
+      return await handleLatest(auth.value, config.value);
+    }
+
+    if (route === "history") {
+      return await handleHistory(request, auth.value, config.value);
+    }
+
+    return await handleReplay(request, auth.value, config.value);
   } catch (error) {
     console.error(error);
     return errorResponse("INTERNAL_ERROR", "Unexpected battle service error.", 500);
@@ -330,28 +349,16 @@ async function handleFirstSliceRequest(
 }
 
 async function handleLatest(auth: AuthContext, config: EdgeConfig): Promise<Response> {
-  const playerResult = await restRequest<PlayerRow[]>(
-    config,
-    `players?auth_user_id=eq.${encodeURIComponent(auth.userId)}&${
-      saveTypeQuery(auth.saveType)
-    }&select=id,save_type&limit=1`,
-    { method: "GET" },
-  );
-
-  if (playerResult.error !== null) {
-    return errorResponse("STATE_READ_FAILED", "Unable to load player state.", 500);
-  }
-
-  const player = playerResult.value[0] ?? null;
-  if (player === null) {
-    return errorResponse("PLAYER_NOT_FOUND", "Guest account was not created yet.", 404);
+  const player = await loadPlayerForRead(auth, config);
+  if (player.error !== null) {
+    return errorResponse(player.error.code, player.error.message, player.error.status);
   }
 
   const battleResult = await restRequest<BattleRow[]>(
     config,
     `battles?attacker_id=eq.${
-      encodeURIComponent(player.id)
-    }&select=id,schema_version,seed,defender_id,defender_is_bot,result,event_log,reward_payload&order=created_at.desc&limit=1`,
+      encodeURIComponent(player.value.id)
+    }&select=id,schema_version,seed,defender_id,defender_is_bot,result,event_log,reward_payload,created_at&order=created_at.desc&limit=1`,
     { method: "GET" },
   );
 
@@ -368,35 +375,182 @@ async function handleLatest(auth: AuthContext, config: EdgeConfig): Promise<Resp
     });
   }
 
-  const rewardPayload = isObject(battle.reward_payload) ? battle.reward_payload : {};
-  const events = Array.isArray(battle.event_log) ? battle.event_log : [];
-  const lastEvent = events.findLast((event) => isObject(event) && typeof event.t === "number");
-  const rewardType = stringValue(rewardPayload.type, "MVP_ONLY");
-  const mode = rewardType === "FIRST_SLICE_SIM" ? "FIRST_SLICE_SIM" : "MVP_ONLY";
+  return jsonResponse({
+    ok: true,
+    battle_log: battleLogFromRow(player.value, battle),
+    rewards: battle.reward_payload,
+  });
+}
+
+async function handleHistory(
+  request: Request,
+  auth: AuthContext,
+  config: EdgeConfig,
+): Promise<Response> {
+  const player = await loadPlayerForRead(auth, config);
+  if (player.error !== null) {
+    return errorResponse(player.error.code, player.error.message, player.error.status);
+  }
+
+  const limit = historyLimit(new URL(request.url));
+  const battleResult = await restRequest<BattleRow[]>(
+    config,
+    `battles?attacker_id=eq.${
+      encodeURIComponent(player.value.id)
+    }&select=id,schema_version,seed,defender_id,defender_is_bot,result,event_log,reward_payload,created_at&order=created_at.desc&limit=${limit}`,
+    { method: "GET" },
+  );
+
+  if (battleResult.error !== null) {
+    return errorResponse("BATTLE_HISTORY_READ_FAILED", "Unable to load battle history.", 500);
+  }
 
   return jsonResponse({
     ok: true,
-    battle_log: {
-      schema_version: battle.schema_version,
-      battle_id: battle.id,
-      seed: battle.seed,
-      mode,
-      duration: isObject(lastEvent) ? numberValue(lastEvent.t, 4.2) : 4.2,
-      participants: {
-        player: { id: player.id, display_name: "Draxos" },
-        opponent: {
-          id: battle.defender_id,
-          display_name: mode === "FIRST_SLICE_SIM"
-            ? "Treinador da Primeira Ruina"
-            : "Bot de Treino",
-          is_bot: battle.defender_is_bot,
-        },
-      },
-      result: battle.result,
-      events: battle.event_log,
-    },
-    rewards: battle.reward_payload,
+    schema_version: "battle_history_v1",
+    save_type: player.value.save_type ?? auth.saveType,
+    history: battleResult.value.map((battle) => historyEntryFromRow(battle)),
   });
+}
+
+async function handleReplay(
+  request: Request,
+  auth: AuthContext,
+  config: EdgeConfig,
+): Promise<Response> {
+  const battleId = new URL(request.url).searchParams.get("battle_id")?.trim() ?? "";
+  if (!UUID_PATTERN.test(battleId)) {
+    return errorResponse("INVALID_BATTLE_ID", "battle_id must be a UUID.", 400);
+  }
+
+  const player = await loadPlayerForRead(auth, config);
+  if (player.error !== null) {
+    return errorResponse(player.error.code, player.error.message, player.error.status);
+  }
+
+  const battleResult = await restRequest<BattleRow[]>(
+    config,
+    `battles?attacker_id=eq.${encodeURIComponent(player.value.id)}&id=eq.${
+      encodeURIComponent(battleId)
+    }&select=id,schema_version,seed,defender_id,defender_is_bot,result,event_log,reward_payload,created_at&limit=1`,
+    { method: "GET" },
+  );
+
+  if (battleResult.error !== null) {
+    return errorResponse("BATTLE_REPLAY_READ_FAILED", "Unable to load battle replay.", 500);
+  }
+
+  const battle = battleResult.value[0] ?? null;
+  if (battle === null) {
+    return errorResponse("BATTLE_NOT_FOUND", "Battle was not found for the active save.", 404);
+  }
+
+  return jsonResponse({
+    ok: true,
+    battle_log: battleLogFromRow(player.value, battle),
+    rewards: battle.reward_payload,
+    replay: {
+      battle_id: battle.id,
+      created_at: battle.created_at ?? null,
+      save_type: player.value.save_type ?? auth.saveType,
+      read_only: true,
+    },
+  });
+}
+
+async function loadPlayerForRead(
+  auth: AuthContext,
+  config: EdgeConfig,
+): Promise<{ value: PlayerRow; error: null } | { value: null; error: RestError }> {
+  const playerResult = await restRequest<PlayerRow[]>(
+    config,
+    `players?auth_user_id=eq.${encodeURIComponent(auth.userId)}&${
+      saveTypeQuery(auth.saveType)
+    }&select=id,save_type&limit=1`,
+    { method: "GET" },
+  );
+
+  if (playerResult.error !== null) {
+    return { value: null, error: stateReadError() };
+  }
+
+  const player = playerResult.value[0] ?? null;
+  if (player === null) {
+    return {
+      value: null,
+      error: {
+        code: "PLAYER_NOT_FOUND",
+        message: "Guest account was not created yet.",
+        status: 404,
+      },
+    };
+  }
+
+  return { value: player, error: null };
+}
+
+function battleLogFromRow(player: PlayerRow, battle: BattleRow): Record<string, unknown> {
+  const rewardPayload = isObject(battle.reward_payload) ? battle.reward_payload : {};
+  const events = Array.isArray(battle.event_log) ? battle.event_log : [];
+  const rewardType = stringValue(rewardPayload.type, "MVP_ONLY");
+  const mode = rewardType === "FIRST_SLICE_SIM" ? "FIRST_SLICE_SIM" : "MVP_ONLY";
+
+  return {
+    schema_version: battle.schema_version,
+    battle_id: battle.id,
+    seed: battle.seed,
+    mode,
+    duration: battleDuration(events),
+    participants: {
+      player: { id: player.id, display_name: "Draxos" },
+      opponent: opponentSummaryFromRow(battle, mode),
+    },
+    result: battle.result,
+    events,
+  };
+}
+
+function historyEntryFromRow(battle: BattleRow): Record<string, unknown> {
+  const rewardPayload = isObject(battle.reward_payload) ? battle.reward_payload : {};
+  const events = Array.isArray(battle.event_log) ? battle.event_log : [];
+  const rewardType = stringValue(rewardPayload.type, "MVP_ONLY");
+  const mode = rewardType === "FIRST_SLICE_SIM" ? "FIRST_SLICE_SIM" : "MVP_ONLY";
+
+  return {
+    battle_id: battle.id,
+    created_at: battle.created_at ?? null,
+    schema_version: battle.schema_version,
+    mode,
+    duration: battleDuration(events),
+    event_count: events.length,
+    opponent: opponentSummaryFromRow(battle, mode),
+    result: battle.result,
+    rewards: {
+      type: rewardType,
+      resources: isObject(rewardPayload.resources) ? rewardPayload.resources : {},
+    },
+  };
+}
+
+function opponentSummaryFromRow(battle: BattleRow, mode: BattleMode): Record<string, unknown> {
+  return {
+    id: battle.defender_id,
+    display_name: mode === "FIRST_SLICE_SIM" ? "Treinador da Primeira Ruina" : "Bot de Treino",
+    is_bot: battle.defender_is_bot,
+  };
+}
+
+function battleDuration(events: unknown[]): number {
+  const lastEvent = events.findLast((event) => isObject(event) && typeof event.t === "number");
+  return isObject(lastEvent) ? numberValue(lastEvent.t, 4.2) : 4.2;
+}
+
+function historyLimit(url: URL): number {
+  const requested = Number(url.searchParams.get("limit") ?? DEFAULT_HISTORY_LIMIT);
+  if (!Number.isFinite(requested)) {
+    return DEFAULT_HISTORY_LIMIT;
+  }
+  return Math.max(1, Math.min(MAX_HISTORY_LIMIT, Math.trunc(requested)));
 }
 
 async function loadPlayerState(
@@ -807,6 +961,14 @@ function resolveRoute(pathname: string): Route | null {
 
   if (pathname.endsWith("/latest")) {
     return "latest";
+  }
+
+  if (pathname.endsWith("/history")) {
+    return "history";
+  }
+
+  if (pathname.endsWith("/replay")) {
+    return "replay";
   }
 
   return null;
