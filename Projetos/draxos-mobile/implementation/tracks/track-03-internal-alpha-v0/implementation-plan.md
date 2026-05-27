@@ -365,7 +365,7 @@ Status: `DOWNLOADS_GREEN - PORTAL_WEB_GREEN - AUTOMATED_REMOTE_QA_GREEN - MANUAL
 
 ### T03-P17A - Android UI Usability Pass
 
-Status: `DOWNLOADS_MANIFEST_GREEN - CLOUDFLARE_REDEPLOY_BLOCKED`.
+Status: `REPUBLISHED_GREEN - MANUAL_SIGNOFF_PENDING`.
 
 - Corrigir o primeiro desconforto observado no APK sem abrir nova fase de design visual.
 - Manter o layout amplo de PC/Web funcional, mas aplicar modo compacto automatico no Android.
@@ -378,7 +378,7 @@ Status: `DOWNLOADS_MANIFEST_GREEN - CLOUDFLARE_REDEPLOY_BLOCKED`.
 - Gerar rebuild local Android/PC/Web para reteste antes de republicar downloads/Cloudflare.
 - Aprovado por Fabio em 2026-05-27 como bom o suficiente para seguir.
 - APK/PC ZIP e `release/manifest` republicados em 2026-05-27.
-- Deploy automatico do Cloudflare Pages bloqueado por falta de `CLOUDFLARE_API_TOKEN`; pacote atualizado pronto em `build/internal-alpha/draxos-mobile-cloudflare-pages.zip`.
+- Cloudflare Pages redeployado por Wrangler em 2026-05-27, deploy `https://a2383707.draxos-mobile-internal-alpha.pages.dev`; dominio estavel validado em `https://draxos-mobile-internal-alpha.pages.dev`.
 
 ### T03-P18 - Handoff Da Internal Alpha v0
 
@@ -405,7 +405,7 @@ As decisoes abaixo estao registradas em `docs/design-pending.md` e precisam ser 
 
 ## Trabalho Manual Do Fabio
 
-Necessario agora para concluir `T03-P17` manual e seguir `T03-P18`:
+Necessario agora para concluir o signoff manual de `T03-P17` e seguir `T03-P18`:
 
 - Criar keystore Android release internal alpha e guardar senha fora do Git antes de uma distribuicao mais ampla; `T03-P17` usou APK `debug_fallback`.
 - Usar os links publicados do relatorio `docs/internal-alpha-v0-publication-report.md` para o teste Fabio + amigo.

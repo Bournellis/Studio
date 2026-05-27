@@ -2,7 +2,7 @@
 
 - Data: `2026-05-27`
 - Track: `T03-P17 - Publicacao Unlisted E QA Remoto Fechado`
-- Status: `T03-P17A_DOWNLOADS_MANIFEST_GREEN - CLOUDFLARE_REDEPLOY_BLOCKED - MANUAL_SIGNOFF_PENDING`
+- Status: `T03-P17A_REPUBLISHED_GREEN - MANUAL_SIGNOFF_PENDING`
 - Canal: `internal_alpha`
 - Versao in-app: `0.0.1-alpha.0`
 - Version code: `1`
@@ -41,7 +41,7 @@
 
 ## Republicacao T03-P17A
 
-Em 2026-05-27, apos Fabio aprovar a ergonomia Android da `T03-P17A`, os artefatos locais foram reexportados e os downloads/manifest foram republicados.
+Em 2026-05-27, apos Fabio aprovar a ergonomia Android da `T03-P17A`, os artefatos locais foram reexportados e APK/PC ZIP/manifest/Cloudflare Pages foram republicados.
 
 Resultado:
 
@@ -51,13 +51,12 @@ Resultado:
 - Android APK remoto: `200`, `27811908` bytes, `application/vnd.android.package-archive`.
 - PC ZIP remoto: `200`, `36331728` bytes, `application/zip`.
 - Manifest remoto: `200`, `application/json`, validado por `release_manifest_smoke.ts` remoto.
-- Portal remoto: `200`, `text/html`, HTML igual ao pacote local.
-
-Bloqueio:
-
-- `npx -y wrangler pages deploy .\build\internal-alpha\cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main` falhou porque o ambiente nao possui `CLOUDFLARE_API_TOKEN`.
-- O pacote Cloudflare atualizado esta pronto em `build/internal-alpha/draxos-mobile-cloudflare-pages.zip`.
-- O Web HTML remoto ainda difere do pacote local: `fileSizes.index.pck` remoto `398768`, pacote local `415856`. Antes do signoff Web final, publicar o pacote atualizado no Cloudflare Pages via upload manual ou configurar `CLOUDFLARE_API_TOKEN` e repetir o deploy CLI.
+- `npx -y wrangler pages deploy .\build\internal-alpha\cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`: passou.
+- Deploy Cloudflare Pages: `https://a2383707.draxos-mobile-internal-alpha.pages.dev`.
+- Portal/Web preview: `200`, `text/html`, HTML igual ao pacote local.
+- Portal/Web dominio estavel: `200`, `text/html`, HTML igual ao pacote local.
+- `release_manifest_smoke.ts` remoto: passou.
+- `internal_alpha_remote_smoke.ts` com `DRAXOS_REMOTE_RELEASE_SMOKE=1`: passou.
 
 ## Correcao Pos-Publicacao
 
@@ -100,10 +99,12 @@ Observacao operacional: se `/` nao retornar o portal completo, ou `/web` nao ret
 
 Validacao final em 2026-05-27:
 
+- `https://a2383707.draxos-mobile-internal-alpha.pages.dev/portal/index.html`: Portal, `200`, `text/html`, HTML igual ao pacote local.
+- `https://a2383707.draxos-mobile-internal-alpha.pages.dev/web/index.html`: Web HTML com `GODOT_CONFIG`, `200`, `text/html`, HTML igual ao pacote local.
 - `https://469c4169.draxos-mobile-internal-alpha.pages.dev/`: portal completo, `200`, `text/html`.
 - `https://469c4169.draxos-mobile-internal-alpha.pages.dev/web`: Web HTML com `GODOT_CONFIG`, `200`, `text/html`.
-- `https://draxos-mobile-internal-alpha.pages.dev/`: portal completo, `200`, `text/html`.
-- `https://draxos-mobile-internal-alpha.pages.dev/web`: Web HTML com `GODOT_CONFIG`, `200`, `text/html`.
+- `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`: Portal, `200`, `text/html`, HTML igual ao pacote local.
+- `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`: Web HTML com `GODOT_CONFIG`, `200`, `text/html`, HTML igual ao pacote local.
 - `https://8f43a34a.draxos-mobile-internal-alpha.pages.dev`: deploy antigo invalido, nao usar.
 
 ## Pendencia Manual
@@ -117,4 +118,4 @@ A parte automatizada de backend/downloads/portal/Web esta verde. O que falta e s
 - alternar para `progression_lab`, confirmar isolamento e ausencia no ranking;
 - registrar problemas de ergonomia Android paisagem e qualquer bloqueio de update/login.
 
-Depois desse host estatico e signoff, seguir para `T03-P18 - Handoff Da Internal Alpha v0`.
+Depois desse signoff, seguir para `T03-P18 - Handoff Da Internal Alpha v0`.

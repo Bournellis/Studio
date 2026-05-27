@@ -26,7 +26,7 @@ Metadata local gerado:
 
 ## Rebuild T03-P17A - Android UI Usability Pass
 
-Em 2026-05-27, apos o feedback de usabilidade no APK, foi gerado um rebuild local com a passada compacta do Hub/abas. Este rebuild ainda nao substitui automaticamente o pacote Cloudflare Pages publicado; ele serve para reteste local e para republicacao dos downloads quando aprovado.
+Em 2026-05-27, apos o feedback de usabilidade no APK, foi gerado um rebuild local com a passada compacta do Hub/abas. Este rebuild foi aprovado por Fabio e republicado em APK/PC ZIP/manifest/Cloudflare Pages durante `T03-P17A`.
 
 Status manual: aprovado por Fabio em 2026-05-27 como bom o suficiente para seguir para republicacao. Reexport de 2026-05-27 15:53 UTC atualizou os hashes abaixo.
 
