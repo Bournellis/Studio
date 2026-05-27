@@ -3,8 +3,8 @@
 - Last Updated: `2026-05-27`
 - Status: `ACTIVE_FOUNDATION_HARDENING`
 - Depends On: `T07_INTEGRATED_PRESENTATION_READY`
-- Current Stage: `T08_B_TO_T08_F_COMPLETE`
-- Next Action: create T08-G validation harness and close T08-H.
+- Current Stage: `T08_B_TO_T08_G_COMPLETE`
+- Next Action: run T08-H final validation and update status/portfolio.
 
 ## Estado
 
@@ -22,6 +22,8 @@ T08-E Battle Mode Contract is complete in `codex/draxos-mobile/t08-battle-mode-c
 
 T08-F Service/Asset Contract Checks is complete in `codex/draxos-mobile/t08-service-asset-contracts`. It adds a no-network Deno test for `docs/contracts/api-endpoints.md` endpoint matrix scopes and Track 06 feature card completeness, plus focused GUT coverage that keeps optional `AssetIds` missing-art fallback stable apart from installed Asset Pack 01 ids. No endpoint, schema, migration, service or final asset was added.
 
+T08-G Validation Harness is complete in `codex/draxos-mobile/t08-integration`. It adds `tools/smoke_foundation_hardening.gd` as a no-network smoke for route/back aliases, mobile UI contract, session/save/runtime config boundary and battle mode fullscreen/summary contract. `tools/validate.gd` now checks the smoke resource.
+
 ## Ordem Atual
 
 1. `T08-A` Coordenacao/Audit: complete; opened the track and recorded the foundation gap report.
@@ -30,8 +32,12 @@ T08-F Service/Asset Contract Checks is complete in `codex/draxos-mobile/t08-serv
 4. `T08-D` Mobile UI Contract: complete; centralized touch/scroll/button/layout rules and covered them in GUT plus mobile presentation smoke.
 5. `T08-E` Battle Mode Contract: complete; fullscreen battle/replay contract and tests delivered.
 6. `T08-F` Service/Asset Contract Checks: complete; endpoint matrix, feature registry and asset fallback checks delivered.
-7. `T08-G` Validation Harness: pending after T08-B to T08-F.
-8. `T08-H` Integracao: pending after T08-B to T08-G.
+7. `T08-G` Validation Harness: complete; no-network hardening smoke delivered.
+8. `T08-H` Integracao: in progress; final validation/status closeout remains.
+
+## T08-G Validation
+
+- `tools/smoke_foundation_hardening.gd`: passed in headless mode on the integration worktree.
 
 ## T08-D Validation
 

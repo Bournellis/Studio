@@ -52,23 +52,23 @@ Validation: `validate.gd`, GUT and `git diff --check` passed in `codex/draxos-mo
 
 ## T08-C - Session/Save Boundary
 
-Status: `PENDING_AFTER_T08_A`.
+Status: `COMPLETE`.
 
 - Harden invariants for normal vs `progression_lab`, local-only cache, runtime config fallback and per-surface snapshots.
 - Add non-secret `diagnostics_snapshot` if useful for internal debug.
 - Do not alter Auth, HTTP contracts, schema, `players.save_type` or public payloads.
 
-Validation: `test_session_shell.gd`, `validate.gd`, GUT and `git diff --check`.
+Validation: `test_session_shell.gd`, `validate.gd`, GUT and `git diff --check` passed in `codex/draxos-mobile/t08-session-save-boundary`.
 
 ## T08-D - Mobile UI Contract
 
-Status: `PENDING_AFTER_T08_A`.
+Status: `COMPLETE`.
 
 - Centralize minimum touch target, drag threshold, scrollbar/touch policy and responsive layout rules.
 - Reuse `DraxosTouchScrollContainer` and existing shell helpers.
 - Avoid redesign, asset swaps or broad UI rework.
 
-Validation: focused GUT, `smoke_mobile_presentation.gd`, `validate.gd` and `git diff --check`.
+Validation: focused GUT, `smoke_mobile_presentation.gd`, `validate.gd` and `git diff --check` passed in `codex/draxos-mobile/t08-mobile-ui-contract`.
 
 ## T08-E - Battle Mode Contract
 
@@ -82,7 +82,7 @@ Validation: `smoke_battle_replay.gd`, battle fullscreen/summary GUT, `validate.g
 
 ## T08-F - Service/Asset Contract Checks
 
-Status: `READY_FOR_INTEGRATION`.
+Status: `COMPLETE`.
 
 - Add lightweight checks for endpoint matrix scopes, feature registry completeness and `AssetIds` fallback stability.
 - No endpoints, schema, migrations, final assets or services.
@@ -97,17 +97,32 @@ Validation: Deno check/test/lint for `foundation_contracts_test.ts`, `validate.g
 
 ## T08-G - Validation Harness
 
-Status: `PENDING_AFTER_T08_B_TO_F`.
+Status: `COMPLETE`.
 
 - Add `tools/smoke_foundation_hardening.gd`.
 - Update tools docs and Track 08 validation matrix.
 - Smoke should cover routes, back stack, session/save boundary, touch/layout contract and battle mode without network where possible.
 
-Validation: `smoke_foundation_hardening.gd`, `validate.gd`, GUT and `git diff --check`.
+Delivered in `codex/draxos-mobile/t08-integration`:
+
+- `tools/smoke_foundation_hardening.gd` covers route/back aliases, mobile touch/layout contract, session/save/runtime config boundary and battle fullscreen/summary contract without network.
+- `tools/README.md` documents the smoke command.
+- `tools/validate.gd` now verifies the smoke resource exists.
+
+Validation: `smoke_foundation_hardening.gd` passed in headless mode.
+
+## Validation Matrix
+
+| Package | Purpose | Commands |
+|---|---|---|
+| Quick | Local foundation sanity before small client changes | `tools/validate.gd`, `tools/smoke_foundation_hardening.gd`, `git diff --check` |
+| Full | Integration confidence for Track 08 and future feature tracks | Quick package plus GUT complete, `smoke_session_shell.gd`, `smoke_runtime_config.gd`, `smoke_mobile_presentation.gd`, `smoke_foundation_surfaces.gd`, `smoke_battle_replay.gd`, `smoke_exports.gd` |
+| Release | Readiness before build/export/publication tasks | Full package plus release/export checks already documented in `docs/release-ops-checklist.md`; do not publish unless a release task explicitly authorizes it |
+| Remote | Remote Supabase/portal confidence | Run only with approved remote env and publishable key; no service role in client/smokes |
 
 ## T08-H - Integracao
 
-Status: `BLOCKED_UNTIL_T08_B_TO_G`.
+Status: `IN_PROGRESS`.
 
 - Integrate T08-B to T08-G safely.
 - Resolve conflicts without hiding validation failures.
