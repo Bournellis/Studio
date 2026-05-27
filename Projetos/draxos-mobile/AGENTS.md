@@ -169,6 +169,6 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 
 ## Active Track
 
-Track ativa: `Track 06 - Feature Installation Rails And First Feature Slices`.
+Track ativa: `Track 06 - Feature Installation Rails And First Feature Slices` (`INTEGRATED_FEATURE_SLICES_READY`; aguardando walkthrough manual e decisao da Track 07).
 
 Comece por `implementation/current-status.md` e siga `implementation/tracks/track-06-feature-installation-rails-and-first-slices/current-status.md`.

@@ -42,7 +42,7 @@ Validation: `git diff --check`.
 
 ## T06-B - Feature Rails
 
-Status: `READY_FOR_HANDOFF`.
+Status: `INTEGRATED`.
 
 - Transformar `feature-registry.md` em contrato operacional.
 - Definir template/checklist por feature: owner, surface, endpoints, service scope, validation, fallback and rollback.
@@ -60,7 +60,7 @@ Handoff:
 
 ## T06-C - Runtime Config
 
-Status: `PENDING_AFTER_T06_A`.
+Status: `INTEGRATED`.
 
 - Implementar `GET /release/config` as release-scoped, read-only and no-secret.
 - Retornar `runtime_config_v1` with flags for T06 features.
@@ -71,7 +71,7 @@ Validation: Deno checks, runtime config smoke, `validate.gd`, GUT if client touc
 
 ## T06-D - Perfil/Conta
 
-Status: `PENDING_AFTER_T06_B`.
+Status: `INTEGRATED`.
 
 - Install a Profile/Account panel using `SessionStore`, `account/state`, update state and existing session metadata.
 - Show username, active save, level, power, auth method and alpha status.
@@ -81,7 +81,7 @@ Validation: profile GUT/smoke, `validate.gd`, GUT and `git diff --check`.
 
 ## T06-E - Battle History
 
-Status: `PENDING_AFTER_T06_B`.
+Status: `INTEGRATED`.
 
 - Implement `GET /battle/history` and `GET /battle/replay?battle_id=...` as save-scoped read-only endpoints.
 - Install battle history UI/replay selection in the Battle surface.
@@ -91,7 +91,7 @@ Validation: Deno checks, battle history/replay smoke, `smoke_battle_replay.gd`, 
 
 ## T06-F - Base Routine
 
-Status: `PENDING_AFTER_T06_B`.
+Status: `INTEGRATED`.
 
 - Add a Base routine/next objective panel using existing Base state payload.
 - Cover collect readiness, construction jobs, free slots and next readable upgrade.
@@ -101,7 +101,7 @@ Validation: focused GUT/smoke, `smoke_foundation_surfaces.gd`, GUT and `git diff
 
 ## T06-G - Social QoL
 
-Status: `PENDING_AFTER_T06_B`.
+Status: `INTEGRATED`.
 
 - Improve readability for friends, guild, chat, empty states, refresh state and current messages.
 - No realtime, moderation, schema or endpoint expansion unless documented as blocker.
@@ -110,7 +110,7 @@ Validation: focused GUT/smoke, `smoke_foundation_surfaces.gd`, GUT and `git diff
 
 ## T06-H - Asset Pack 01
 
-Status: `PENDING_AFTER_T06_B`.
+Status: `INTEGRATED`.
 
 - Install a small safe asset pack through existing `AssetIds` conventions.
 - Prefer UI icons, battle icons/fx or small portraits.
@@ -121,7 +121,7 @@ Validation: AssetIds/fallback GUT, `validate.gd`, `smoke_exports.gd` and `git di
 
 ## T06-I - Integracao
 
-Status: `BLOCKED_UNTIL_T06_C_TO_H`.
+Status: `COMPLETE_VALIDATED`.
 
 - Integrate T06-C to T06-H in safe order.
 - Resolve conflicts without hiding validation failures.
@@ -131,16 +131,19 @@ Status: `BLOCKED_UNTIL_T06_C_TO_H`.
 
 Final validation:
 
-- `tools/validate.gd`
-- GUT client complete
-- `tools/smoke_session_shell.gd`
-- `tools/smoke_battle_replay.gd`
-- `tools/smoke_foundation_surfaces.gd`
-- `tools/smoke_exports.gd`
-- new runtime config smoke
-- new battle history/replay smoke
-- Deno checks for `supabase/functions` and `server/functions`
-- `git diff --check`
+- `tools/validate.gd`: passed with `73/73` tests and `843` asserts.
+- GUT client complete: passed with `73/73` tests and `843` asserts.
+- `tools/smoke_session_shell.gd`: passed.
+- `tools/smoke_runtime_config.gd`: passed.
+- `tools/smoke_battle_replay.gd`: passed with `BATTLE_FUNCTION_URL` pointing at the current worktree-served battle function.
+- `tools/smoke_foundation_surfaces.gd`: passed.
+- `tools/smoke_dev_labs.gd`: passed.
+- `tools/smoke_dev_lab_ui.gd`: passed headless.
+- `tools/smoke_exports.gd`: passed.
+- `npx -y deno task --cwd supabase/functions check`: passed.
+- `npx -y deno task --cwd server/functions check`: passed.
+- `npx -y deno check server/tests/battle_history_replay_smoke.ts`: passed.
+- `git diff --check`: passed.
 
 ## Assumptions
 

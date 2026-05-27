@@ -1,6 +1,8 @@
 class_name BattleSymbolIcon
 extends Control
 
+const AssetIdsScript = preload("res://core/asset_ids.gd")
+
 var symbol := "?"
 var fill_color := Color("#5DD4C8")
 var cooldown_ratio := 0.0
@@ -10,11 +12,24 @@ var asset_id := ""
 var _label: Label
 var _count_label: Label
 var _texture: Texture2D
+var _asset_ids_fallback: Node
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	custom_minimum_size = Vector2(42, 42)
 	_ensure_labels()
+
+func _exit_tree() -> void:
+	_free_asset_ids_fallback()
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_PREDELETE:
+		_free_asset_ids_fallback()
+
+func _free_asset_ids_fallback() -> void:
+	if _asset_ids_fallback != null:
+		_asset_ids_fallback.free()
+		_asset_ids_fallback = null
 
 func configure(new_symbol: String, new_color: Color, new_tooltip: String = "", new_count_text: String = "", new_cooldown_ratio: float = 0.0, new_asset_id: String = "") -> void:
 	_ensure_labels()
@@ -76,6 +91,19 @@ func _draw() -> void:
 		draw_line(Vector2(center.x - radius * 0.5, center.y), Vector2(center.x + radius * 0.5, center.y), border.darkened(0.1), 1.0, true)
 
 func _load_texture(new_asset_id: String) -> Texture2D:
-	if new_asset_id == "" or not AssetIds.has_asset_id(new_asset_id):
+	var asset_ids := _asset_ids()
+	if new_asset_id == "" or not bool(asset_ids.call("has_asset_id", new_asset_id)):
 		return null
-	return AssetIds.texture(new_asset_id)
+	var texture: Variant = asset_ids.call("texture", new_asset_id)
+	if texture is Texture2D:
+		return texture
+	return null
+
+func _asset_ids() -> Node:
+	if is_inside_tree():
+		var singleton := get_tree().root.get_node_or_null("AssetIds")
+		if singleton != null:
+			return singleton
+	if _asset_ids_fallback == null:
+		_asset_ids_fallback = AssetIdsScript.new()
+	return _asset_ids_fallback

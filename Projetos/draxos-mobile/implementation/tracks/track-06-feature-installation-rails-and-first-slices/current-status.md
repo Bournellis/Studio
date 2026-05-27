@@ -1,30 +1,30 @@
 # Track 06 - Current Status
 
 - Last Updated: `2026-05-27`
-- Status: `ACTIVE_FEATURE_INSTALLATION`
+- Status: `INTEGRATED_FEATURE_SLICES_READY`
 - Depends On: `T05_INTEGRATED_FOUNDATION_READY`
-- Current Stage: `T06_I_VALIDATION`
-- Next Action: run full Track 06 validation, update final status, then merge T06-I.
+- Current Stage: `T06_I_COMPLETE`
+- Next Action: manual walkthrough of Track 06 slices in the app, then decide Track 07 feature/service package.
 
 ## Estado
 
-Track 06 is active as the first feature installation package after the Track 05 foundation baseline.
+Track 06 is integrated as the first feature installation package after the Track 05 foundation baseline.
 
 The track deliberately prioritizes solid installation rails and small visible feature slices over tuning. Progression Lab remains available, but economy, power, bots, rewards, shop and combat numbers are not active objectives in this track.
 
-T06-F Base Routine is ready for integration: the Base tab now has a render-only routine panel derived from existing `base/state` payloads, showing collect readiness, active jobs, free construction slots and a readable next upgrade without endpoint, schema, economy, queue or message contract changes.
+T06-I integrated the feature rails, runtime config, profile/account panel, Battle History/replay, Base Routine, Social QoL and Asset Pack 01. The package keeps the Track 06 rule: visible slices and service rails only, without tuning, account/save migration, payment, realtime social or remote publication.
 
 ## Ordem Atual
 
-1. `T06-A` Coordenacao: complete.
-2. `T06-B` Feature Rails: ready for handoff; feature registry now defines the standard install contract, smoke/GUT rule by surface, fallback and rollback checklist.
-3. `T06-C` Runtime Config: integrated into the T06 integration base.
-4. `T06-D` Perfil/Conta: ready for integration; panel renders existing session/account state, active save, username, level, power, auth method, update state and alpha status without a new endpoint.
-5. `T06-E` Battle History: ready for integration; delivered save-scoped read-only `GET /battle/history`, `GET /battle/replay?battle_id=...`, Battle tab history/replay UI and focused smokes/GUT without simulator/reward/schema changes.
-6. `T06-F` Base Routine: ready for integration; panel derives routine/next objective from existing Base payload and is covered by GUT plus `smoke_foundation_surfaces.gd`.
-7. `T06-G` Social QoL: ready for integration; improves Social readability, empty states, refresh/polling clarity and current message formatting without endpoint/schema changes.
-8. `T06-H` Asset Pack 01: ready for integration; installs lightweight PNGs for selected UI, portrait and battle icon ids with native fallback still valid.
-9. `T06-I` Integracao: in validation.
+1. `T06-A` Coordenacao: complete and on master.
+2. `T06-B` Feature Rails: integrated; feature registry defines the standard install contract, smoke/GUT rule by surface, fallback and rollback checklist.
+3. `T06-C` Runtime Config: integrated; `GET /release/config` and Godot fallback path are in the package.
+4. `T06-D` Perfil/Conta: integrated; panel renders existing session/account state, active save, username, level, power, auth method, update state and alpha status without a new endpoint.
+5. `T06-E` Battle History: integrated; delivered save-scoped read-only `GET /battle/history`, `GET /battle/replay?battle_id=...`, Battle tab history/replay UI and focused smokes/GUT without simulator/reward/schema changes.
+6. `T06-F` Base Routine: integrated; panel derives routine/next objective from existing Base payload and is covered by GUT plus `smoke_foundation_surfaces.gd`.
+7. `T06-G` Social QoL: integrated; improves Social readability, empty states, refresh/polling clarity and current message formatting without endpoint/schema changes.
+8. `T06-H` Asset Pack 01: integrated; installs lightweight PNGs for selected UI, portrait and battle icon ids with native fallback still valid.
+9. `T06-I` Integracao: complete; final validation passed with one operational note for local function refresh.
 
 ## Guardrails
 
@@ -37,7 +37,7 @@ T06-F Base Routine is ready for integration: the Base tab now has a render-only 
 
 ## T06-C Runtime Config
 
-Status: `READY_FOR_INTEGRATION`.
+Status: `INTEGRATED`.
 
 Entregas:
 
@@ -64,7 +64,7 @@ Nota operacional: o Supabase local ja rodando em `127.0.0.1:54321` ainda servia 
 
 ## T06-D Handoff
 
-- Status: `READY_FOR_INTEGRATION`
+- Status: `INTEGRATED`
 - Delivered: Hub profile/account panel using existing `SessionStore`, current `account/state` snapshot, active save metadata and update gate state.
 - Client files: `modes/boot/surfaces/hub_account_surface_presenter.gd`, `modes/boot/surfaces/hub_surface_presenter.gd`.
 - Tests/smoke: `tests/client/test_boot_mobile_ui.gd`, `tools/smoke_session_shell.gd`.
@@ -72,11 +72,11 @@ Nota operacional: o Supabase local ja rodando em `127.0.0.1:54321` ainda servia 
 
 ## T06-G Delivery Note
 
-Branch `codex/draxos-mobile/t06-social-qol` keeps Social QoL client-only. It updates the render-only Social presenter, focused GUT coverage and `smoke_foundation_surfaces.gd` assertions for current chat messages, guild members and structures. No new endpoint, schema, realtime, moderation, ranking behavior, backend mutation or Progression Lab leaderboard behavior was added.
+Social QoL is integrated and remains client-only. It updates the render-only Social presenter, focused GUT coverage and `smoke_foundation_surfaces.gd` assertions for current chat messages, guild members and structures. No new endpoint, schema, realtime, moderation, ranking behavior, backend mutation or Progression Lab leaderboard behavior was added.
 
 ## T06-H Asset Pack 01 Update
 
-`ASSET_PACK_01_SAFE` is ready for integration. The package adds lightweight
+`ASSET_PACK_01_SAFE` is integrated. The package adds lightweight
 128x128 transparent PNGs for `icon_guest`, `icon_battle`, `icon_result`,
 `portrait_draxos_mage`, `portrait_training_bot` and the existing
 `battle_icon_*` ids. It also adds an optional `BattleSymbolIcon` texture hook for
@@ -109,23 +109,27 @@ npx -y deno task --cwd server/functions check
 git diff --check
 ```
 
-## Expected Final Integration Validation
+## Final Integration Validation
 
-- `tools/validate.gd`
-- GUT client completo
-- `tools/smoke_session_shell.gd`
-- `tools/smoke_battle_replay.gd`
-- `tools/smoke_foundation_surfaces.gd`
-- `tools/smoke_exports.gd`
-- New runtime config smoke
-- New battle history/replay smoke
-- GUT for Profile, Base Routine, Social QoL and AssetIds/fallback as applicable
-- Deno checks for `supabase/functions` and `server/functions`
-- `git diff --check`
+- `tools/validate.gd`: passed with `73/73` tests and `843` asserts.
+- GUT client completo: passed with `73/73` tests and `843` asserts.
+- `tools/smoke_session_shell.gd`: passed.
+- `tools/smoke_runtime_config.gd`: passed.
+- `tools/smoke_battle_replay.gd`: passed against the worktree-served current `battle` function with `BATTLE_FUNCTION_URL=http://127.0.0.1:8000`.
+- `tools/smoke_foundation_surfaces.gd`: passed.
+- `tools/smoke_dev_labs.gd`: passed.
+- `tools/smoke_dev_lab_ui.gd`: passed headless, with screenshots skipped by renderer as expected.
+- `tools/smoke_exports.gd`: passed.
+- `npx -y deno task --cwd supabase/functions check`: passed.
+- `npx -y deno task --cwd server/functions check`: passed.
+- `npx -y deno check server/tests/battle_history_replay_smoke.ts`: passed.
+- `git diff --check`: passed.
+
+Operational note: the already-running Supabase local Edge Runtime at `127.0.0.1:54321` still served an older `battle` function and returned `404 Unknown battle endpoint` for `/battle/history`. The new Track 06 battle function was validated by serving the worktree function locally on `127.0.0.1:8000`; restart/redeploy local functions before expecting `/battle/history` on the default Supabase local endpoint.
 
 ## T06-E Battle History Handoff
 
-Status: `READY_FOR_INTEGRATION`.
+Status: `INTEGRATED`.
 
 Delivered:
 

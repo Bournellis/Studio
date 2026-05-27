@@ -2,7 +2,7 @@
 
 - Last Updated: `2026-05-27`
 - Owner: `Track 06 agents`
-- Status: `T06-D_PROFILE_READY_FOR_INTEGRATION`
+- Status: `T06_INTEGRATED_FEATURE_SLICES_READY`
 - Depends On: `T06-A_ON_MASTER`
 
 ## Objetivo
@@ -104,13 +104,13 @@ Rollback deve ser simples e local:
 
 | Feature ID | Owner | Surface | Status | Endpoints affected | Service scope | Smoke required | GUT required |
 |---|---|---|---|---|---|---|---|
-| `T06_FEATURE_RAILS` | `T06-B Feature Rails` | docs/coordination | `READY_FOR_INTEGRATION` | none | none | `N/A docs-only` | `N/A docs-only` |
-| `RUNTIME_CONFIG_V1` | `T06-C Runtime Config` | release/client boot | `READY_FOR_INTEGRATION` | new `GET /release/config` | `release` | runtime config smoke | runtime config read path/fallback GUT |
-| `PROFILE_ACCOUNT_PANEL` | `T06-D Perfil/Conta` | Hub account/session | `READY_FOR_INTEGRATION` | existing `GET /account/state` | `save-scoped` existing read | `smoke_session_shell.gd` profile summary extension | profile/presenter GUT |
-| `BATTLE_HISTORY_REPLAY` | `T06-E Battle History` | Battle tab | `READY_FOR_INTEGRATION` | new `GET /battle/history`, new `GET /battle/replay?battle_id=...` | `save-scoped` read-only | `battle_history_replay_smoke.ts` and `smoke_battle_replay.gd` | battle history/replay presenter GUT |
-| `BASE_ROUTINE_PANEL` | `T06-F Base Routine` | Base tab | `READY_FOR_INTEGRATION` | existing `GET /base/state` | `save-scoped` existing read | `smoke_foundation_surfaces.gd` Base coverage | Base routine/presenter GUT |
-| `SOCIAL_QOL_READABILITY` | `T06-G Social QoL` | Social tab | `READY_FOR_INTEGRATION` | existing `GET /social/state` and current social actions | `account-scoped` existing behavior | `smoke_foundation_surfaces.gd` Social coverage passed | Social readability/presenter GUT passed |
-| `ASSET_PACK_01_SAFE` | `T06-H Asset Pack 01` | shared UI/battle visuals | `READY_FOR_INTEGRATION` | none | none | `smoke_exports.gd` | AssetIds/fallback GUT |
+| `T06_FEATURE_RAILS` | `T06-B Feature Rails` | docs/coordination | `INTEGRATED` | none | none | `N/A docs-only` | `N/A docs-only` |
+| `RUNTIME_CONFIG_V1` | `T06-C Runtime Config` | release/client boot | `INTEGRATED` | new `GET /release/config` | `release` | runtime config smoke | runtime config read path/fallback GUT |
+| `PROFILE_ACCOUNT_PANEL` | `T06-D Perfil/Conta` | Hub account/session | `INTEGRATED` | existing `GET /account/state` | `save-scoped` existing read | `smoke_session_shell.gd` profile summary extension | profile/presenter GUT |
+| `BATTLE_HISTORY_REPLAY` | `T06-E Battle History` | Battle tab | `INTEGRATED` | new `GET /battle/history`, new `GET /battle/replay?battle_id=...` | `save-scoped` read-only | `battle_history_replay_smoke.ts` and `smoke_battle_replay.gd` | battle history/replay presenter GUT |
+| `BASE_ROUTINE_PANEL` | `T06-F Base Routine` | Base tab | `INTEGRATED` | existing `GET /base/state` | `save-scoped` existing read | `smoke_foundation_surfaces.gd` Base coverage | Base routine/presenter GUT |
+| `SOCIAL_QOL_READABILITY` | `T06-G Social QoL` | Social tab | `INTEGRATED` | existing `GET /social/state` and current social actions | `account-scoped` existing behavior | `smoke_foundation_surfaces.gd` Social coverage passed | Social readability/presenter GUT passed |
+| `ASSET_PACK_01_SAFE` | `T06-H Asset Pack 01` | shared UI/battle visuals | `INTEGRATED` | none | none | `smoke_exports.gd` | AssetIds/fallback GUT |
 
 ## Feature Cards
 
@@ -118,7 +118,7 @@ Rollback deve ser simples e local:
 
 - Owner: `T06-B Feature Rails`
 - Surface: docs/coordination
-- Status: `READY_FOR_INTEGRATION`
+- Status: `INTEGRATED`
 - Endpoints affected: none
 - Service scope: none
 - Service contract notes: creates installation contract only; no endpoint contract is changed.
@@ -136,7 +136,7 @@ Rollback deve ser simples e local:
 
 - Owner: `T06-C Runtime Config`
 - Surface: release/client boot
-- Status: `READY_FOR_INTEGRATION`
+- Status: `INTEGRATED`
 - Endpoints affected: new `GET /release/config`
 - Service scope: `release`
 - Service contract notes: no JWT required; no `x-draxos-save-type`; no idempotency; read-only; response uses `runtime_config_v1`, allowlisted T06 flags and must not include secrets, service-role data, mutable gameplay state, player/save state or release publication controls.
@@ -154,7 +154,7 @@ Rollback deve ser simples e local:
 
 - Owner: `T06-D Perfil/Conta`
 - Surface: Hub account/session
-- Status: `READY_FOR_INTEGRATION`
+- Status: `INTEGRATED`
 - Endpoints affected: existing `GET /account/state` only
 - Service scope: `save-scoped` existing read
 - Service contract notes: no endpoint change; `boot.gd` continues to call `GET /account/state` through the existing refresh/recover paths with the active `x-draxos-save-type`; the panel only renders `SessionStore` session metadata, current account/save snapshot, update gate and alpha channel state.
@@ -172,7 +172,7 @@ Rollback deve ser simples e local:
 
 - Owner: `T06-E Battle History`
 - Surface: Battle tab
-- Status: `READY_FOR_INTEGRATION`
+- Status: `INTEGRATED`
 - Endpoints affected: new `GET /battle/history`, new `GET /battle/replay?battle_id=...`
 - Service scope: `save-scoped` read-only
 - Service contract notes: JWT required; uses active `x-draxos-save-type` with absence defaulting to `normal`; no idempotency because both endpoints are GET/read-only; `history` returns recent saved battle summaries; `replay` returns the stored `battle_log_v1` for a battle owned by the active save; must never rerun simulator, reapply rewards or mutate ranking/resources.
@@ -190,7 +190,7 @@ Rollback deve ser simples e local:
 
 - Owner: `T06-F Base Routine`
 - Surface: Base tab
-- Status: `READY_FOR_INTEGRATION`
+- Status: `INTEGRATED`
 - Endpoints affected: existing `GET /base/state` only
 - Service scope: `save-scoped` existing read
 - Service contract notes: no endpoint change; uses existing Base presentation payload for collect readiness, construction jobs, free slots and next upgrade.
@@ -208,7 +208,7 @@ Rollback deve ser simples e local:
 
 - Owner: `T06-G Social QoL`
 - Surface: Social tab
-- Status: `READY_FOR_INTEGRATION`
+- Status: `INTEGRATED`
 - Endpoints affected: existing `GET /social/state` and current social actions only
 - Service scope: `account-scoped` existing behavior
 - Service contract notes: no endpoint change expected; preserves polling/chat/ranking boundaries and current account identity rules.
@@ -226,7 +226,7 @@ Rollback deve ser simples e local:
 
 - Owner: `T06-H Asset Pack 01`
 - Surface: shared UI/battle visuals
-- Status: `READY_FOR_INTEGRATION`
+- Status: `INTEGRATED`
 - Endpoints affected: none
 - Service scope: none
 - Service contract notes: no backend service.

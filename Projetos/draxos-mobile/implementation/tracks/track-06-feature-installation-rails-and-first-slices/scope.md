@@ -1,6 +1,6 @@
 # Track 06 - Feature Installation Rails And First Feature Slices
 
-- Status: `ACTIVE_FEATURE_INSTALLATION`
+- Status: `INTEGRATED_FEATURE_SLICES_READY`
 - Started: `2026-05-27`
 - Depends On: `T05_INTEGRATED_FOUNDATION_READY`
 
