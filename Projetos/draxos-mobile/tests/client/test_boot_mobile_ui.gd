@@ -4,6 +4,17 @@ const BootScreenScript = preload("res://modes/boot/boot.gd")
 
 func after_each() -> void:
 	ProjectSettings.set_setting("draxos_mobile/ui/force_compact_layout", false)
+	SessionStore.access_token = ""
+	SessionStore.expires_at = 0
+	SessionStore.player = {}
+	SessionStore.resources = {}
+	SessionStore.build = {}
+	SessionStore.base_state = {}
+	SessionStore.monetization_state = {}
+	SessionStore.social_state = {}
+	SessionStore.competition_state = {}
+	SessionStore.progression_lab = {}
+	SessionStore.active_save_type = SessionStore.SAVE_TYPE_NORMAL
 
 func test_boot_compact_layout_groups_actions_for_mobile_landscape() -> void:
 	ProjectSettings.set_setting("draxos_mobile/ui/force_compact_layout", true)
@@ -22,6 +33,156 @@ func test_boot_compact_layout_groups_actions_for_mobile_landscape() -> void:
 	var sign_up_button := boot._action_buttons["email_sign_up"] as Button
 	assert_true(sign_up_button.custom_minimum_size.y >= 48.0)
 	assert_false(_has_direct_button_child(boot._content_body))
+	assert_not_null(boot._confirm_dialog)
+
+func test_boot_hub_presenter_renders_login_save_session_and_update_gate() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	assert_not_null(boot._auth_email_input)
+	assert_not_null(boot._auth_password_input)
+	assert_true(boot._auth_password_input.secret)
+	assert_not_null(boot._auth_username_input)
+	assert_not_null(boot._auth_invite_input)
+	assert_not_null(boot._update_output_label)
+	assert_string_contains(boot._update_output_label.text, "Canal:")
+	assert_true(boot._action_buttons.has("email_sign_up"))
+	assert_true(boot._action_buttons.has("email_sign_in"))
+	assert_true(boot._action_buttons.has("select_save_normal"))
+	assert_true(boot._action_buttons.has("select_save_progression_lab"))
+	assert_true(boot._action_buttons.has("check_update"))
+
+func test_boot_surface_presenters_render_shells_without_network() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	boot._show_screen("battle")
+	assert_true(boot._action_buttons.has("request_battle"))
+	assert_true(boot._action_buttons.has("show_latest_battle"))
+	assert_not_null(boot._battle_visual)
+	await get_tree().process_frame
+
+	boot._show_screen("base")
+	assert_true(boot._action_buttons.has("show_base"))
+	assert_true(boot._action_buttons.has("collect_base"))
+	assert_not_null(boot._base_state_container)
+	await get_tree().process_frame
+
+	boot._show_screen("social")
+	assert_true(boot._action_buttons.has("show_social"))
+	assert_true(boot._action_buttons.has("send_guild_chat"))
+	assert_not_null(boot._social_state_container)
+	await get_tree().process_frame
+
+	boot._show_screen("competition")
+	assert_true(boot._action_buttons.has("show_matchmaking"))
+	assert_true(boot._action_buttons.has("show_ranking"))
+	assert_not_null(boot._competition_state_container)
+	await get_tree().process_frame
+
+	boot._show_screen("shop")
+	assert_true(boot._action_buttons.has("show_shop"))
+	assert_true(boot._action_buttons.has("claim_reward:daily_collect_base"))
+	assert_not_null(boot._shop_state_container)
+	await get_tree().process_frame
+
+func test_base_presenter_renders_loaded_state_without_network() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	_prepare_account_state()
+	SessionStore.base_state = _base_state_fixture()
+
+	boot._show_screen("base")
+	await get_tree().process_frame
+
+	assert_string_contains(boot._timeline_label.text, "Refugio server-authoritative")
+	assert_string_contains(boot._timeline_label.text, "Fila: 1/2")
+	assert_true(boot._action_buttons.has("select_base_structure:nucleo_energia"))
+	assert_true(boot._action_buttons.has("upgrade_base_structure:nucleo_energia"))
+	assert_not_null(boot._base_state_container)
+	assert_true(boot._base_state_container.get_child_count() >= 3)
+	var upgrade_button := boot._action_buttons["upgrade_base_structure:nucleo_energia"] as Button
+	assert_false(upgrade_button.disabled)
+
+func test_shop_presenter_renders_loaded_state_and_disables_claimed_items() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	_prepare_account_state()
+	SessionStore.monetization_state = _shop_state_fixture()
+
+	boot._show_screen("shop")
+	await get_tree().process_frame
+
+	assert_string_contains(boot._timeline_label.text, "Loja alpha server-authoritative")
+	assert_string_contains(boot._timeline_label.text, "Redeems hoje: 1/4")
+	assert_true(boot._action_buttons.has("shop_purchase:alpha_battle_pass_premium"))
+	assert_true(boot._action_buttons.has("claim_reward:daily_collect_base"))
+	assert_not_null(boot._shop_state_container)
+	assert_true(boot._shop_state_container.get_child_count() >= 4)
+	var pass_button := boot._action_buttons["shop_purchase:alpha_battle_pass_premium"] as Button
+	assert_true(pass_button.disabled)
+	var reward_button := boot._action_buttons["claim_reward:daily_collect_base"] as Button
+	assert_true(reward_button.disabled)
+
+func test_boot_social_presenter_renders_chat_polling_and_lab_badges() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	SessionStore.social_state = {
+		"identity": {"viewer_badge": "normal"},
+		"player": {"username": "fabio", "save_badge": "normal"},
+		"active_player": {"username": "lab_save", "save_badge": "lab"},
+		"guild": {"name": "Conclave QA", "level": 2},
+		"friends": [{
+			"status": "accepted",
+			"friend": {"username": "tester_lab", "save_badge": "lab", "level": 8, "power": 640},
+		}],
+		"guild_members": [{
+			"role": "member",
+			"player": {"username": "tester_lab", "save_badge": "lab", "level": 8, "power": 640},
+		}],
+		"guild_structures": [{"structure_id": "oficina_ritual", "level": 1}],
+		"guild_chat": [{
+			"sender_username": "tester_lab",
+			"sender_save_badge": "lab",
+			"content": "Ola atual",
+		}],
+	}
+
+	boot._show_screen("social")
+	assert_string_contains(boot._timeline_label.text, "Chat guilda: 1 mensagens recentes")
+	assert_string_contains(boot._timeline_label.text, "- tester_lab: Ola atual")
+	assert_true(_label_tree_contains(boot._social_state_container, "tester_lab [lab]: Ola atual"))
+	assert_true(_label_tree_contains(boot._social_state_container, "Oficina Ritual L1"))
+	await get_tree().process_frame
+
+func test_boot_competition_presenter_preserves_lab_and_bot_ranking_messages() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	SessionStore.competition_state = {
+		"matchmaking": {
+			"player_power": 720,
+			"candidate_count": 1,
+			"selected_opponent": {
+				"id": "bot_rankless_001",
+				"power": 700,
+				"power_band": "near",
+				"is_bot": true,
+				"is_ranked": false,
+			},
+		},
+		"ranking": {
+			"excluded_reason": "PROGRESSION_LAB_DOES_NOT_RANK",
+			"bots_included": false,
+			"top_limit": 10,
+			"total_ranked": 0,
+		},
+	}
+
+	boot._show_screen("competition")
+	assert_string_contains(boot._timeline_label.text, "bots no ranking:")
+	assert_true(_label_tree_contains(boot._competition_state_container, "Bot de treino: sim | Entra no ranking: nao"))
+	assert_true(_label_tree_contains(boot._competition_state_container, "Progression Lab nao pontua competicao e fica fora do leaderboard."))
+	await get_tree().process_frame
 
 func _first_action_grid(parent: Node) -> GridContainer:
 	for child: Node in parent.get_children():
@@ -34,3 +195,136 @@ func _has_direct_button_child(parent: Node) -> bool:
 		if child is Button:
 			return true
 	return false
+
+func _label_tree_contains(root: Node, needle: String) -> bool:
+	if root == null:
+		return false
+	if root is Label and str((root as Label).text).contains(needle):
+		return true
+	for child: Node in root.get_children():
+		if _label_tree_contains(child, needle):
+			return true
+	return false
+
+func _prepare_account_state() -> void:
+	SessionStore.access_token = "test-token"
+	SessionStore.expires_at = int(Time.get_unix_time_from_system()) + 3600
+	SessionStore.player = {"id": "player-1", "level": 8, "power": 120, "username": "tester"}
+	SessionStore.resources = {
+		"almas": 100,
+		"energia": 200,
+		"sangue": 8,
+		"cristais": 5,
+		"ossos": 3,
+		"diamante": 160,
+	}
+	SessionStore.build = {"weapon_id": "varinha_cinzas"}
+
+func _base_state_fixture() -> Dictionary:
+	return {
+		"construction_slots": 2,
+		"structures": [
+			{
+				"structure_id": "nucleo_energia",
+				"display_name": "Nucleo de Energia",
+				"level": 2,
+				"max_level": 40,
+				"next_level": 3,
+				"description": "Gera Energia para upgrades.",
+				"produces": "energia",
+				"daily_production": 40,
+				"pending_collectable": 12,
+				"storage_cap": 80,
+				"upgrade_cost": {"energia": 20},
+				"upgrade_duration_seconds": 120,
+				"can_upgrade": true,
+				"blocked_message": "Upgrade disponivel.",
+			},
+			{
+				"structure_id": "altar_das_almas",
+				"display_name": "Altar das Almas",
+				"level": 1,
+				"max_level": 40,
+				"next_level": 2,
+				"description": "Gera Almas.",
+				"produces": "almas",
+				"daily_production": 20,
+				"pending_collectable": 4,
+				"storage_cap": 50,
+				"upgrade_cost": {"energia": 10},
+				"upgrade_duration_seconds": 60,
+				"can_upgrade": false,
+				"blocked_reason": "CONSTRUCTION_QUEUE_FULL",
+				"blocked_message": "Fila de construcao cheia.",
+			},
+		],
+		"jobs": [
+			{
+				"status": "active",
+				"structure_id": "altar_das_almas",
+				"target_level": 2,
+				"remaining_seconds": 90,
+			},
+		],
+	}
+
+func _shop_state_fixture() -> Dictionary:
+	return {
+		"shop_summary": {
+			"diamond_balance": 160,
+			"currency": "diamante",
+			"premium_unlocked": true,
+			"daily_redeems_claimed": 1,
+			"daily_redeems_total": 4,
+			"daily_redeem_period_key": "2026-05-27",
+			"reset_timezone": "America/Sao_Paulo",
+			"convenience_owned": ["alpha_double_construction_queue"],
+		},
+		"alpha_products": [
+			{
+				"id": "alpha_redeem_small",
+				"label": "Redeem pequeno",
+				"daily_redeem": true,
+				"can_purchase": true,
+				"cost": {},
+				"resources": {"diamante": 40},
+				"description": "Diamante diario pequeno.",
+			},
+			{
+				"id": "alpha_battle_pass_premium",
+				"label": "Comprar Battle Pass",
+				"daily_redeem": false,
+				"can_purchase": false,
+				"already_owned": true,
+				"locked_reason": "ALREADY_OWNED",
+				"cost": {"diamante": 120},
+				"resources": {},
+				"description": "Premium ja ativo.",
+			},
+		],
+		"daily_rewards": [
+			{
+				"id": "daily_collect_base",
+				"label": "Coleta diaria",
+				"xp": 20,
+				"claimed": true,
+				"resources": {"energia": 80},
+				"period_key": "2026-05-27",
+			},
+		],
+		"battle_pass": {
+			"pass": {"id": "bp_s1_01", "display_name": "Battle Pass Alpha"},
+			"progress": {"pass_xp": 30, "premium_unlocked": true},
+			"rewards": [
+				{
+					"id": "bp_alpha_1",
+					"label": "Recompensa Alpha",
+					"xp": 10,
+					"claimed": false,
+					"premium_required": true,
+					"resources": {"ossos": 2},
+					"period_key": "s1",
+				},
+			],
+		},
+	}

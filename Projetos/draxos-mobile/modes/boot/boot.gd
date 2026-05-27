@@ -2,8 +2,16 @@ extends Control
 
 const ProjectInfoScript := preload("res://core/project_info.gd")
 const BattleLogPresenterScript := preload("res://ui/battle_log_presenter.gd")
-const BattleVisualMockupScript := preload("res://ui/battle_visual_mockup.gd")
 const SessionStoreScript := preload("res://online/session_store.gd")
+const ShellSurfacePresenterScript := preload("res://modes/boot/surfaces/shell_surface_presenter.gd")
+const HubSurfacePresenterScript := preload("res://modes/boot/surfaces/hub_surface_presenter.gd")
+const HubAccountSurfacePresenterScript := preload("res://modes/boot/surfaces/hub_account_surface_presenter.gd")
+const BattleSurfacePresenterScript := preload("res://modes/boot/surfaces/battle_surface_presenter.gd")
+const BattleReplayPresenterScript := preload("res://modes/boot/surfaces/battle_replay_presenter.gd")
+const BaseSurfacePresenterScript := preload("res://modes/boot/surfaces/base_surface_presenter.gd")
+const SocialSurfacePresenterScript := preload("res://modes/boot/surfaces/social_surface_presenter.gd")
+const CompetitionSurfacePresenterScript := preload("res://modes/boot/surfaces/competition_surface_presenter.gd")
+const ShopSurfacePresenterScript := preload("res://modes/boot/surfaces/shop_surface_presenter.gd")
 
 const SCREEN_HUB := "hub"
 const SCREEN_BATTLE := "battle"
@@ -18,58 +26,6 @@ const BATTLE_REPLAY_TICK_SECONDS := 0.05
 const RESOURCE_KEYS := ["almas", "energia", "sangue", "cristais", "ossos", "diamante"]
 const BASE_STRUCTURE_IDS := ["altar_das_almas", "nucleo_energia", "pocos_sangue", "minas_cristal", "estrutura_stats", "ossario"]
 const ALPHA_ENERGY_PACK_PRODUCT_ID := "alpha_energy_pack_small"
-const SHOP_REDEEM_PRODUCTS := [
-	{
-		"id": "alpha_redeem_small",
-		"label": "Redeem pequeno",
-		"confirm": "Resgatar o pacote diario pequeno de Diamante neste save?",
-		"tooltip": "Pacote diario pequeno: entrega Diamante para testar compras leves no save ativo. Reseta a meia-noite de Sao Paulo.",
-	},
-	{
-		"id": "alpha_redeem_medium",
-		"label": "Redeem medio",
-		"confirm": "Resgatar o pacote diario medio de Diamante neste save?",
-		"tooltip": "Pacote diario medio: entrega Diamante para comprar alguns recursos e acelerar um teste curto.",
-	},
-	{
-		"id": "alpha_redeem_large",
-		"label": "Redeem grande",
-		"confirm": "Resgatar o pacote diario grande de Diamante neste save?",
-		"tooltip": "Pacote diario grande: entrega Diamante para testar compras maiores sem resetar o save.",
-	},
-	{
-		"id": "alpha_redeem_premium",
-		"label": "Redeem premium",
-		"confirm": "Resgatar o pacote diario premium de Diamante neste save?",
-		"tooltip": "Pacote diario premium: entrega Diamante suficiente para Battle Pass, fila dupla e conveniencias alpha.",
-	},
-]
-const SHOP_PURCHASE_PRODUCTS := [
-	{
-		"id": "alpha_battle_pass_premium",
-		"label": "Comprar Battle Pass",
-		"confirm": "Comprar a trilha premium do Battle Pass alpha com Diamante?",
-		"tooltip": "Libera recompensas premium do Battle Pass neste save. Nao pode ser comprado duas vezes.",
-	},
-	{
-		"id": "alpha_double_construction_queue",
-		"label": "Comprar fila dupla",
-		"confirm": "Comprar a fila dupla de construcao da Base com Diamante?",
-		"tooltip": "Aumenta a fila da Base para dois upgrades ativos ao mesmo tempo neste save.",
-	},
-	{
-		"id": "alpha_energy_pack_small",
-		"label": "Comprar Energia",
-		"confirm": "Gastar Diamante para comprar Energia no save ativo?",
-		"tooltip": "Converte Diamante em Energia para continuar upgrades de predios.",
-	},
-	{
-		"id": "alpha_resource_pack_medium",
-		"label": "Comprar recursos",
-		"confirm": "Gastar Diamante para comprar o pacote de recursos alpha?",
-		"tooltip": "Converte Diamante em Almas, Energia, Sangue, Cristais e Ossos para simular progresso comprado.",
-	},
-]
 
 var _status_label: Label
 var _detail_label: Label
@@ -111,6 +67,7 @@ var _last_social_friend_username := ""
 var _last_social_guild_name := ""
 var _last_social_chat_message := "Primeiro pulso do Conclave."
 var _update_gate := ProjectInfoScript.unchecked_update_status()
+var _battle_replay_presenter = BattleReplayPresenterScript.new()
 
 func _ready() -> void:
 	_clear_existing_scene()
@@ -155,132 +112,7 @@ func _clear_existing_scene() -> void:
 
 func _build_ui() -> void:
 	_compact_layout = _should_use_compact_layout()
-	var background := ColorRect.new()
-	background.color = UiTokens.color("bg_deep")
-	background.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(background)
-
-	var root := VBoxContainer.new()
-	root.set_anchors_preset(Control.PRESET_FULL_RECT)
-	root.offset_left = 8 if _compact_layout else 16
-	root.offset_top = 8 if _compact_layout else 12
-	root.offset_right = -8 if _compact_layout else -16
-	root.offset_bottom = -8 if _compact_layout else -12
-	root.add_theme_constant_override("separation", 6 if _compact_layout else 10)
-	add_child(root)
-
-	var header := PanelContainer.new()
-	header.add_theme_stylebox_override("panel", _panel_style("bg_panel", "border_default"))
-	header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	root.add_child(header)
-
-	var header_box := VBoxContainer.new()
-	header_box.add_theme_constant_override("separation", 5 if _compact_layout else 8)
-	header.add_child(header_box)
-
-	var title_row := HBoxContainer.new()
-	title_row.add_theme_constant_override("separation", 8 if _compact_layout else 10)
-	header_box.add_child(title_row)
-
-	var title_stack := VBoxContainer.new()
-	title_stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	title_row.add_child(title_stack)
-
-	var title := Label.new()
-	title.text = "DraxosMobile"
-	title.add_theme_font_size_override("font_size", 20 if _compact_layout else 24)
-	title.add_theme_color_override("font_color", UiTokens.color("text_primary"))
-	title_stack.add_child(title)
-
-	_status_label = Label.new()
-	_status_label.text = "%s - primeiro slice" % ProjectInfoScript.PROJECT_NAME
-	_status_label.autowrap_mode = TextServer.AUTOWRAP_OFF if _compact_layout else TextServer.AUTOWRAP_WORD_SMART
-	if _compact_layout:
-		_status_label.clip_text = true
-		_status_label.add_theme_font_size_override("font_size", 12)
-	_status_label.add_theme_color_override("font_color", UiTokens.color("text_secondary"))
-	title_stack.add_child(_status_label)
-
-	_back_button = Button.new()
-	_back_button.text = "<" if _compact_layout else "Voltar"
-	_back_button.tooltip_text = "Voltar para a tela anterior."
-	_back_button.custom_minimum_size = Vector2(64, 48) if _compact_layout else Vector2(110, 42)
-	_back_button.pressed.connect(_go_back)
-	title_row.add_child(_back_button)
-
-	var nav := HBoxContainer.new()
-	nav.add_theme_constant_override("separation", 4 if _compact_layout else 6)
-	header_box.add_child(nav)
-	_add_nav_button(nav, "Refugio", SCREEN_HUB)
-	_add_nav_button(nav, "Batalha", SCREEN_BATTLE)
-	_add_nav_button(nav, "Base", SCREEN_BASE)
-	_add_nav_button(nav, "Social", SCREEN_SOCIAL)
-	_add_nav_button(nav, "Competicao", SCREEN_COMPETITION)
-	_add_nav_button(nav, "Loja", SCREEN_SHOP)
-
-	var content_panel := PanelContainer.new()
-	content_panel.add_theme_stylebox_override("panel", _panel_style("bg_panel_alt", "border_default"))
-	content_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	content_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	root.add_child(content_panel)
-
-	var content_stack := VBoxContainer.new()
-	content_stack.add_theme_constant_override("separation", 6 if _compact_layout else 8)
-	content_panel.add_child(content_stack)
-
-	_content_title = Label.new()
-	_content_title.add_theme_font_size_override("font_size", 18 if _compact_layout else 22)
-	_content_title.add_theme_color_override("font_color", UiTokens.color("text_primary"))
-	content_stack.add_child(_content_title)
-
-	_detail_label = Label.new()
-	_detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	if _compact_layout:
-		_detail_label.add_theme_font_size_override("font_size", 13)
-	_detail_label.add_theme_color_override("font_color", UiTokens.color("text_secondary"))
-	content_stack.add_child(_detail_label)
-
-	_error_label = Label.new()
-	_error_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	if _compact_layout:
-		_error_label.add_theme_font_size_override("font_size", 13)
-	_error_label.add_theme_color_override("font_color", UiTokens.color("status_error"))
-	content_stack.add_child(_error_label)
-
-	var separator := HSeparator.new()
-	content_stack.add_child(separator)
-
-	var scroll := ScrollContainer.new()
-	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	content_stack.add_child(scroll)
-
-	_content_body = VBoxContainer.new()
-	_content_body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_content_body.add_theme_constant_override("separation", 8 if _compact_layout else 10)
-	scroll.add_child(_content_body)
-
-	_confirm_dialog = ConfirmationDialog.new()
-	_confirm_dialog.title = "Confirmar acao"
-	_confirm_dialog.dialog_text = ""
-	_confirm_dialog.confirmed.connect(_on_confirmation_confirmed)
-	add_child(_confirm_dialog)
-	_confirm_dialog.get_ok_button().text = "Confirmar"
-	_confirm_dialog.get_cancel_button().text = "Voltar"
-
-func _add_nav_button(nav: HBoxContainer, label: String, screen_id: String) -> void:
-	var target_screen := screen_id
-	var button := Button.new()
-	button.text = _nav_button_text(label, screen_id)
-	button.toggle_mode = true
-	button.custom_minimum_size = Vector2(96, 48) if _compact_layout else Vector2(120, 40)
-	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	button.tooltip_text = label
-	button.pressed.connect(func() -> void:
-		_show_screen(target_screen)
-	)
-	nav.add_child(button)
-	_nav_buttons[screen_id] = button
+	ShellSurfacePresenterScript.render(self)
 
 func _should_use_compact_layout() -> bool:
 	if bool(ProjectSettings.get_setting("draxos_mobile/ui/force_compact_layout", false)):
@@ -289,16 +121,6 @@ func _should_use_compact_layout() -> bool:
 		return true
 	var viewport_size := get_viewport_rect().size
 	return viewport_size.y <= 620.0 and viewport_size.x > viewport_size.y
-
-func _nav_button_text(label: String, screen_id: String) -> String:
-	if not _compact_layout:
-		return label
-	match screen_id:
-		SCREEN_HUB:
-			return "Refugio"
-		SCREEN_COMPETITION:
-			return "Ranking"
-	return label
 
 func _button_min_size() -> Vector2:
 	return Vector2(154, 50) if _compact_layout else Vector2(220, 44)
@@ -345,6 +167,7 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	_social_guild_input = null
 	_social_chat_input = null
 	_battle_visual = null
+	_battle_replay_presenter.clear()
 	_error_label.text = ""
 	_clear_content_body()
 	_content_title.text = _screen_title(screen_id)
@@ -468,206 +291,30 @@ func _clear_node_children(parent: Node) -> void:
 		child.queue_free()
 
 func _render_hub_screen() -> void:
-	_add_section_label("Conta Internal Alpha")
-	_add_body_text("Entre com email e senha para usar o save compartilhado entre PC, Web e Android. O convite libera o primeiro save desta conta.")
-	_auth_email_input = _add_social_input(
-		"Email",
-		"tester@exemplo.com",
-		SessionStore.auth_email,
-		"Email usado no Supabase Auth da Internal Alpha."
-	)
-	_auth_password_input = _add_social_input(
-		"Senha",
-		"Senha da conta alpha",
-		"",
-		"Senha da conta alpha. Ela nao e salva no cache local."
-	)
-	_auth_password_input.secret = true
-	_auth_username_input = _add_social_input(
-		"Username",
-		"draxos_tester",
-		SessionStore.account_username,
-		"Username publico: 3 a 24 letras minusculas, numeros ou underscores."
-	)
-	_auth_invite_input = _add_social_input(
-		"Convite alpha",
-		SessionStore.DEFAULT_INVITE_CODE,
-		SessionStore.DEFAULT_INVITE_CODE,
-		"Convite usado apenas para liberar o primeiro save da conta."
-	)
-	_add_action_button("Criar conta alpha", "email_sign_up")
-	_add_action_button("Entrar com email", "email_sign_in")
-	_add_action_button("Sincronizar sessao", "refresh_session")
-	_add_action_button("Resetar sessao local", "reset_session", "Limpar apenas token/cache local desta maquina? O estado salvo no servidor nao sera apagado.")
-
-	_add_section_label("Teste rapido")
-	_add_body_text("Use guest apenas para validar rapidamente sem criar conta. O teste principal da alpha usa email/senha.")
-	_add_action_button("Entrar como guest", "enter_guest")
-	if _battle_lab_available() or _progression_lab_available():
-		_add_section_label("Labs do editor")
-		if _battle_lab_available():
-			_add_action_button("Battle Lab", "open_battle_lab")
-		if _progression_lab_available():
-			_add_action_button("Progression Lab", "open_progression_lab")
-
-	_add_section_label("Save ativo")
-	_add_body_text("O save Normal executa o loop server-authoritative local. O save Progression Lab fica isolado para testes e nao deve pontuar ranking/social.")
-	_add_action_button("Usar save normal", "select_save_normal")
-	_add_action_button("Usar save Progression Lab", "select_save_progression_lab")
-	_add_action_button(
-		"Resetar save ativo",
-		"reset_active_save",
-		"Resetar apenas o save %s no servidor? O outro save e a sessao local serao preservados." % SessionStore.active_save_label()
-	)
-	_add_output_label("Save atual: %s (%s)" % [
-		SessionStore.active_save_label(),
-		SessionStore.active_save_badge(),
-	])
-
-	var account := "Conta: nao iniciada"
-	if SessionStore.is_progression_lab_local_only() and SessionStore.has_account_state():
-		account = "Progression Lab local: %s | Level %s | Poder %s" % [
-			SessionStore.player_display_name(),
-			str(SessionStore.player.get("level", 1)),
-			str(SessionStore.player.get("power", 0)),
-		]
-	elif SessionStore.has_account_state():
-		account = "Conta %s: %s | Level %s | Poder %s" % [
-			SessionStore.auth_method,
-			SessionStore.player_display_name(),
-			str(SessionStore.player.get("level", 1)),
-			str(SessionStore.player.get("power", 0)),
-		]
-	elif SessionStore.has_valid_access_token():
-		account = "Conta: sessao %s criada; falta carregar/criar save." % SessionStore.auth_method
-	_add_output_label(account)
-	_add_output_label("Sessao local: %s | Offline: %s" % [
-		SessionStore.ensure_session_id(),
-		str(SessionStore.offline),
-	])
-
-	_add_section_label("Versao e updates")
-	_update_output_label = _add_output_label(_update_status_text())
-	_add_action_button("Checar update", "check_update")
-
-	_add_section_label("Telas")
-	_add_screen_button("Abrir Batalha", SCREEN_BATTLE)
-	_add_screen_button("Abrir Base", SCREEN_BASE)
-	_add_screen_button("Abrir Social", SCREEN_SOCIAL)
-	_add_screen_button("Abrir Competicao", SCREEN_COMPETITION)
-	_add_screen_button("Abrir Loja", SCREEN_SHOP)
+	HubSurfacePresenterScript.render(self)
 
 func _render_battle_screen() -> void:
-	_add_body_text("Batalha server-authoritative: o cliente solicita a luta, recebe o log e apenas apresenta o replay.")
-	_add_action_button("Solicitar batalha", "request_battle")
-	_add_action_button("Ver resultado", "show_latest_battle")
-	_battle_visual = BattleVisualMockupScript.new()
-	_battle_visual.custom_minimum_size = Vector2(0, 560 if _compact_layout else 720)
-	_content_body.add_child(_battle_visual)
-	_timeline_label = _add_output_label("")
-	if SessionStore.has_battle_log():
-		_battle_visual.load_battle_log(SessionStore.last_battle_log, SessionStore.last_battle_rewards)
-		_battle_visual.reveal_all()
-		_timeline_label.text = _battle_visual.get_timeline_text()
-	else:
-		_battle_visual.show_empty_state("Nenhuma batalha carregada. Solicite uma batalha ou busque o ultimo resultado.")
-		_timeline_label.text = "Nenhuma batalha carregada. Solicite uma batalha ou busque o ultimo resultado."
+	_battle_replay_presenter.render(
+		self,
+		_compact_layout,
+		SessionStore.last_battle_log,
+		SessionStore.last_battle_rewards,
+		SessionStore.has_battle_log()
+	)
+	_timeline_label = _battle_replay_presenter.get_timeline_label()
+	_battle_visual = _battle_replay_presenter.get_visual()
 
 func _render_base_screen() -> void:
-	_add_body_text("Base do Refugio: predios permanentes, coleta offline e uma fila de construcao server-authoritative.")
-	_add_action_button("Atualizar base", "show_base")
-	_add_action_button("Coletar producao", "collect_base", "Coletar a producao offline acumulada da base?")
-	_add_action_button("Comprar Energia alpha", "buy_energy_pack_alpha", "Gastar 80 Diamantes para comprar 80 Energia no save ativo?")
-	_timeline_label = _add_output_label("")
-	_base_state_container = VBoxContainer.new()
-	_base_state_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_base_state_container.add_theme_constant_override("separation", 10)
-	_content_body.add_child(_base_state_container)
-	_render_base_state()
+	BaseSurfacePresenterScript.render(self)
 
 func _render_social_screen() -> void:
-	_add_body_text("Social alpha da conta: encontre outro jogador por username, crie ou entre em uma guilda e teste chat de guilda por polling.")
-	var refresh_social_button := _add_action_button("Atualizar social", "show_social")
-	refresh_social_button.tooltip_text = "Busca amigos, guilda, membros, estruturas e mensagens recentes no servidor."
-	_social_friend_input = _add_social_input(
-		"Amigo por username",
-		"guest_12345678",
-		_last_social_friend_username,
-		"Digite o username do outro jogador. No alpha a amizade e aceita automaticamente."
-	)
-	var add_friend_button := _add_action_button("Adicionar amigo", "add_friend")
-	add_friend_button.tooltip_text = "Cria amizade aceita nos dois sentidos, usando o username informado."
-	_social_guild_input = _add_social_input(
-		"Guilda",
-		_default_guild_name(),
-		_default_social_guild_text(),
-		"Digite o nome da guilda para criar ou entrar. O nome precisa ter 3 a 32 caracteres."
-	)
-	var create_guild_button := _add_action_button("Criar guilda", "create_guild", "Criar uma guilda alpha para esta conta?")
-	create_guild_button.tooltip_text = "Cria uma guilda, adiciona voce como owner e inicializa estruturas e canal de chat."
-	var join_guild_button := _add_action_button("Entrar guilda", "join_guild")
-	join_guild_button.tooltip_text = "Entra na guilda pelo nome exato. Voce so pode participar de uma guilda por vez."
-	_social_chat_input = _add_social_input(
-		"Mensagem de guilda",
-		"Mensagem curta para o chat",
-		_last_social_chat_message,
-		"Mensagem enviada para o canal da guilda. O alpha aplica rate limit simples para evitar spam."
-	)
-	var send_chat_button := _add_action_button("Enviar chat guilda", "send_guild_chat")
-	send_chat_button.tooltip_text = "Envia a mensagem digitada e atualiza o polling do chat."
-	_timeline_label = _add_output_label("")
-	_social_state_container = VBoxContainer.new()
-	_social_state_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_social_state_container.add_theme_constant_override("separation", 10)
-	_content_body.add_child(_social_state_container)
-	_render_social_state()
+	SocialSurfacePresenterScript.render(self)
 
 func _render_competition_screen() -> void:
-	_add_body_text("Competicao alpha com matchmaking por poder, pontos de arena por batalha normal e leaderboard sem bots.")
-	var matchmaking_button := _add_action_button("Preview matchmaking", "show_matchmaking")
-	matchmaking_button.tooltip_text = "Mostra o oponente sugerido para o seu poder atual. Bots podem aparecer como alvo de treino, mas nao entram no leaderboard."
-	var ranking_button := _add_action_button("Ver ranking", "show_ranking")
-	ranking_button.tooltip_text = "Busca o top 10 da season, sua posicao atual e o modelo de pontos de arena aplicado no servidor."
-	_timeline_label = _add_output_label("")
-	_competition_state_container = VBoxContainer.new()
-	_competition_state_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_competition_state_container.add_theme_constant_override("separation", 10)
-	_content_body.add_child(_competition_state_container)
-	_render_competition_state()
+	CompetitionSurfacePresenterScript.render(self)
 
 func _render_shop_screen() -> void:
-	_add_body_text("Loja alpha funcional: redeems diarios de Diamante, compras de progresso, Battle Pass e conveniencias por save.")
-	var refresh_button := _add_action_button("Atualizar loja", "show_shop")
-	refresh_button.tooltip_text = "Busca saldo, produtos, resgates diarios e recompensas atuais no servidor."
-	_add_section_label("Redeems diarios")
-	for spec: Dictionary in SHOP_REDEEM_PRODUCTS:
-		var redeem_button := _add_action_button(
-			str(spec.get("label", "")),
-			"shop_purchase:%s" % str(spec.get("id", "")),
-			str(spec.get("confirm", ""))
-		)
-		redeem_button.tooltip_text = str(spec.get("tooltip", ""))
-	_add_section_label("Compras alpha")
-	for spec: Dictionary in SHOP_PURCHASE_PRODUCTS:
-		var product_button := _add_action_button(
-			str(spec.get("label", "")),
-			"shop_purchase:%s" % str(spec.get("id", "")),
-			str(spec.get("confirm", ""))
-		)
-		product_button.tooltip_text = str(spec.get("tooltip", ""))
-	_add_section_label("Recompensas")
-	var daily_button := _add_action_button(
-		"Claim coleta diaria",
-		"claim_reward:daily_collect_base",
-		"Resgatar a recompensa diaria de coleta da base?"
-	)
-	daily_button.tooltip_text = "Recompensa diaria server-authoritative ligada a XP, recursos e progresso de Battle Pass."
-	_timeline_label = _add_output_label("")
-	_shop_state_container = VBoxContainer.new()
-	_shop_state_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_shop_state_container.add_theme_constant_override("separation", 10)
-	_content_body.add_child(_shop_state_container)
-	_render_monetization_state()
+	ShopSurfacePresenterScript.render(self)
 
 func _add_section_label(text: String) -> Label:
 	_reset_action_group()
@@ -706,6 +353,11 @@ func _add_output_label(text: String) -> Label:
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	panel.add_child(label)
 	return label
+
+func _add_content_control(control: Control) -> void:
+	_reset_action_group()
+	control.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_content_body.add_child(control)
 
 func _add_action_button(text: String, action_id: String, confirm_message: String = "") -> Button:
 	var button := Button.new()
@@ -1234,7 +886,7 @@ func _show_latest_battle() -> void:
 	var body := _as_dictionary(latest_result.get("body", {}))
 	if body.get("battle_log", null) == null:
 		_set_busy(false, "Nenhuma batalha registrada.")
-		_timeline_label.text = "Solicite uma batalha para gerar o primeiro replay."
+		_battle_replay_presenter.show_empty_state("Solicite uma batalha para gerar o primeiro replay.")
 		return
 
 	if not SessionStore.apply_battle_result(latest_result):
@@ -1655,28 +1307,7 @@ func _sync_buttons() -> void:
 	_back_button.disabled = _is_busy or _replay_running
 
 func _update_status_text() -> String:
-	var lines := PackedStringArray()
-	lines.append("Canal: %s | Build: %s (code %d)" % [
-		ProjectInfoScript.RELEASE_CHANNEL,
-		ProjectInfoScript.APP_VERSION,
-		ProjectInfoScript.APP_VERSION_CODE,
-	])
-	lines.append(str(_update_gate.get("summary", "Update ainda nao verificado.")))
-	lines.append(str(_update_gate.get("detail", "O jogo vai checar o manifest remoto antes do teste fechado.")))
-	var manifest_url := str(_update_gate.get("manifest_url", SupabaseClient.manifest_url()))
-	if manifest_url != "":
-		lines.append("Manifest: %s" % manifest_url)
-	var manifest := _as_dictionary(_update_gate.get("manifest", {}))
-	var artifacts := _as_dictionary(manifest.get("artifacts", {}))
-	var platform_artifact := _as_dictionary(artifacts.get(ProjectInfoScript.current_platform_key(), {}))
-	if not platform_artifact.is_empty():
-		var label := str(platform_artifact.get("label", "Download"))
-		var url := str(platform_artifact.get("url", ""))
-		if url != "":
-			lines.append("Download desta plataforma: %s - %s" % [label, url])
-		else:
-			lines.append("Download desta plataforma: %s ainda sem URL final." % label)
-	return "\n".join(lines)
+	return HubAccountSurfacePresenterScript.update_status_text(self)
 
 func _refresh_update_output_label() -> void:
 	if _update_output_label != null and is_instance_valid(_update_output_label):
@@ -1748,6 +1379,8 @@ func _require_account(message: String) -> bool:
 	return false
 
 func _render_base_state(collected: Dictionary = {}) -> void:
+	BaseSurfacePresenterScript.render_state(self, collected)
+	return
 	if _timeline_label == null:
 		return
 	var base := SessionStore.base_state
@@ -1920,6 +1553,8 @@ func _base_structure_button(structure: Dictionary) -> Button:
 	return button
 
 func _select_base_structure(structure_id: String) -> void:
+	BaseSurfacePresenterScript.select_structure(self, structure_id)
+	return
 	if structure_id.strip_edges() == "":
 		return
 	_selected_base_structure_id = structure_id.strip_edges()
@@ -2090,6 +1725,7 @@ func _base_structure_tooltip(structure: Dictionary) -> String:
 	]
 
 func _can_upgrade_base_structure(structure_id: String) -> bool:
+	return BaseSurfacePresenterScript.can_upgrade_structure(self, structure_id)
 	if SessionStore.is_progression_lab_local_only():
 		return false
 	if not SessionStore.has_valid_access_token() or not SessionStore.has_account_state():
@@ -2132,6 +1768,8 @@ func _format_number(value: float) -> String:
 	return "%.2f" % value
 
 func _render_social_state() -> void:
+	SocialSurfacePresenterScript.render_state(self)
+	return
 	if _timeline_label == null:
 		return
 	if _social_state_container != null:
@@ -2311,6 +1949,8 @@ func _guild_structure_label(structure_id: String) -> String:
 	return structure_id
 
 func _render_competition_state() -> void:
+	CompetitionSurfacePresenterScript.render_state(self)
+	return
 	if _timeline_label == null:
 		return
 	if _competition_state_container != null:
@@ -2514,6 +2154,8 @@ func _competition_scoring_model_text(model: String) -> String:
 	return model
 
 func _render_monetization_state() -> void:
+	ShopSurfacePresenterScript.render_state(self)
+	return
 	if _timeline_label == null:
 		return
 	if _shop_state_container != null:
@@ -2703,6 +2345,7 @@ func _format_shop_delta(delta: Dictionary, empty_text: String) -> String:
 	return _format_cost(delta)
 
 func _shop_product_by_id(product_id: String) -> Dictionary:
+	return ShopSurfacePresenterScript.product_by_id(product_id)
 	var monetization := SessionStore.monetization_state
 	for item: Variant in _as_array(monetization.get("alpha_products", [])):
 		var product := _as_dictionary(item)
@@ -2711,6 +2354,7 @@ func _shop_product_by_id(product_id: String) -> Dictionary:
 	return {}
 
 func _shop_reward_by_id(reward_id: String) -> Dictionary:
+	return ShopSurfacePresenterScript.reward_by_id(reward_id)
 	var monetization := SessionStore.monetization_state
 	for group_key: String in ["daily_rewards", "weekly_rewards"]:
 		for item: Variant in _as_array(monetization.get(group_key, [])):
@@ -2725,6 +2369,7 @@ func _shop_reward_by_id(reward_id: String) -> Dictionary:
 	return {}
 
 func _shop_purchase_message(product_id: String, body: Dictionary) -> String:
+	return ShopSurfacePresenterScript.purchase_message(product_id, body)
 	if bool(body.get("already_redeemed", false)):
 		return "Redeem diario ja havia sido resgatado neste save."
 	if bool(body.get("already_owned", false)):
@@ -2754,34 +2399,14 @@ func _play_battle_log(battle_log: Dictionary, rewards: Dictionary) -> void:
 		"mode": str(battle_log.get("mode", "")),
 	})
 
-	var lines: PackedStringArray = PackedStringArray()
-	lines.append(BattleLogPresenterScript.format_summary(battle_log, rewards))
-	var spell_count := BattleLogPresenterScript.count_events_of_type(battle_log, "spell_cast")
-	var weapon_count := BattleLogPresenterScript.count_events_of_type(battle_log, "weapon_attack")
-	var pet_count := BattleLogPresenterScript.count_events_of_type(battle_log, "pet_attack")
-	var summon_count := BattleLogPresenterScript.count_events_of_type(battle_log, "summon_attack")
-	lines.append("Eventos: %d spells | %d ataques | %d familiares | %d summons" % [
-		spell_count,
-		weapon_count,
-		pet_count,
-		summon_count,
-	])
-	if _battle_visual != null and is_instance_valid(_battle_visual):
-		_battle_visual.load_battle_log(battle_log, rewards)
-		_set_battle_visual_time(0.0)
-	_timeline_label.text = "\n".join(lines)
+	_battle_replay_presenter.begin_replay(battle_log, rewards)
+	_timeline_label = _battle_replay_presenter.get_timeline_label()
+	_battle_visual = _battle_replay_presenter.get_visual()
 
-	var events := BattleLogPresenterScript.sorted_events(battle_log)
-	var battle_mode := str(battle_log.get("mode", ""))
-	if battle_mode != ProjectInfoScript.DEFAULT_BATTLE_MODE:
-		_error_label.text = "Aviso: replay em modo %s. O rework atual usa %s; gere uma nova batalha com as Edge Functions atualizadas." % [
-			battle_mode,
-			ProjectInfoScript.DEFAULT_BATTLE_MODE,
-		]
-	elif spell_count <= 0:
-		_error_label.text = "Aviso: replay FIRST_SLICE_SIM sem spell_cast. Verifique build, bot e Supabase local atualizados."
-	if BattleLogPresenterScript.has_unknown_events(battle_log):
-		_error_label.text = "Aviso: replay contem evento desconhecido; exibindo fallback."
+	var events := _battle_replay_presenter.sorted_events(battle_log)
+	var warning_text := _battle_replay_presenter.build_warning_text(battle_log, ProjectInfoScript.DEFAULT_BATTLE_MODE)
+	if not warning_text.is_empty():
+		_error_label.text = warning_text
 
 	var replay_time := 0.0
 	for event: Dictionary in events:
@@ -2793,15 +2418,12 @@ func _play_battle_log(battle_log: Dictionary, rewards: Dictionary) -> void:
 				break
 			var tick := minf(BATTLE_REPLAY_TICK_SECONDS, event_time - replay_time)
 			replay_time += tick
-			_set_battle_visual_time(replay_time)
+			_battle_replay_presenter.set_replay_time(replay_time)
 			await get_tree().create_timer(tick).timeout
 		if _skip_replay:
 			break
-		lines.append(BattleLogPresenterScript.format_event(event))
-		_set_battle_visual_time(event_time)
-		if _battle_visual != null and is_instance_valid(_battle_visual):
-			_battle_visual.step_next_event()
-		_timeline_label.text = "\n".join(lines)
+		_battle_replay_presenter.set_replay_time(event_time)
+		_battle_replay_presenter.append_event(event)
 		replay_time = event_time
 		await get_tree().process_frame
 
@@ -2810,16 +2432,9 @@ func _play_battle_log(battle_log: Dictionary, rewards: Dictionary) -> void:
 			"battle_id": str(battle_log.get("battle_id", "")),
 			"events": events.size(),
 		})
-		for event: Dictionary in events:
-			var formatted := BattleLogPresenterScript.format_event(event)
-			if not lines.has(formatted):
-				lines.append(formatted)
-		if _battle_visual != null and is_instance_valid(_battle_visual):
-			_battle_visual.reveal_all()
-		_timeline_label.text = "\n".join(lines)
+		_battle_replay_presenter.reveal_all_events(events)
 
-	if _battle_visual != null and is_instance_valid(_battle_visual):
-		_battle_visual.reveal_all()
+	_battle_replay_presenter.reveal_all()
 
 	_replay_running = false
 	_skip_replay = false
@@ -2829,10 +2444,6 @@ func _play_battle_log(battle_log: Dictionary, rewards: Dictionary) -> void:
 		"events": events.size(),
 	})
 	_sync_buttons()
-
-func _set_battle_visual_time(replay_time: float) -> void:
-	if _battle_visual != null and is_instance_valid(_battle_visual) and _battle_visual.has_method("set_replay_time"):
-		_battle_visual.set_replay_time(replay_time)
 
 func _screen_title(screen_id: String) -> String:
 	match screen_id:
