@@ -1,6 +1,6 @@
 # DraxosMobile Internal Alpha Portal
 
-Status: `PUBLISHED_UNLISTED_VIA_GENERATED_COPY`.
+Status: `T03_P18_HANDOFF_READY`.
 
 Este portal e o ponto unlisted da Internal Alpha v0. Ele nao e seguranca. O jogo precisa exigir email/senha e alpha gate no backend. O portal apenas organiza:
 
@@ -18,15 +18,9 @@ Este portal e o ponto unlisted da Internal Alpha v0. Ele nao e seguranca. O jogo
 
 ## Como Usar
 
-1. Em `T03-P17`, publique os artefatos exportados e atualize os links em `index.html`.
-2. Depois de publicar os artefatos, substitua os placeholders:
-   - `ANDROID_APK_URL_PENDING_T03_P17`;
-   - `ANDROID_APK_SHA256_PENDING_T03_P17`;
-   - `PC_ZIP_URL_PENDING_T03_P17`;
-   - `PC_ZIP_SHA256_PENDING_T03_P17`;
-   - `WEB_GAME_URL_PENDING_T03_P17`;
-   - `PORTAL_URL_PENDING_T03_P17`.
-3. Publique esta pasta em um host estatico unlisted.
+1. Use `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html` como URL estavel do portal.
+2. Use o manifest remoto para conferir links e hashes da build vigente.
+3. Para um update, gere novos artefatos, rode `tools/publish_internal_alpha.ps1`, gere o pacote Cloudflare Pages e publique um novo deploy.
 4. Envie o link apenas ao tester.
 
 O manifest real da alpha v0 e servido pela Edge Function publica:
@@ -35,9 +29,9 @@ O manifest real da alpha v0 e servido pela Edge Function publica:
 https://<project-ref>.supabase.co/functions/v1/release/manifest
 ```
 
-O arquivo `manifest.example.json` e a copia documental do schema esperado para atualizar links/notas em `T03-P17`. Os hashes locais de `T03-P16` ficam registrados em `../../docs/internal-alpha-v0-export-report.md`.
+O arquivo `manifest.example.json` e a copia documental do manifest vigente da Internal Alpha v0. Os hashes finais ficam registrados em `../../docs/internal-alpha-v0-export-report.md` e `../../docs/internal-alpha-v0-publication-report.md`.
 
-Em `T03-P17`, o portal publicado foi gerado em `build/internal-alpha/publish/portal/` por `tools/publish_internal_alpha.ps1`, com os placeholders substituidos por URLs reais. O source versionado continua como template.
+Em `T03-P17`, o portal publicado foi gerado em `build/internal-alpha/publish/portal/` por `tools/publish_internal_alpha.ps1`. Em `T03-P18`, o source versionado tambem foi atualizado com os links reais para facilitar iteracao futura.
 
 ## Guardrails
 

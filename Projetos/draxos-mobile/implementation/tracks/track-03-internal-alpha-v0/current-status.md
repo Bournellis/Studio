@@ -1,7 +1,7 @@
 # Track 03 - Internal Alpha v0 - Current Status
 
 - Last Updated: `2026-05-27`
-- Status: `T03-P17A_SIGNOFF_APPROVED - T03-P18_READY`
+- Status: `T03-P18_COMPLETE - INTERNAL_ALPHA_V0_HANDOFF_READY`
 - Baseline: Track 00 completa, Track 01 completa e Track 02 com Progression Lab/Battle Lab v1 implementados. O projeto ja possui Godot 4.6.2, Supabase local, conta guest, batalha server-authoritative, Base/Social/Competicao/Monetizacao v0, telemetria client nao autoritativa, exports Android/PC/Web, Battle Visual Mockup compartilhado e laboratorios internos. A Track 03 prepara a transicao para uma build fechada realista com email/senha, dois saves por conta, backend remoto, updates e playtest de 2 usuarios.
 
 ## Implementado Nesta Preparacao
@@ -22,7 +22,7 @@
 - `T03-P03C` completo: `POST /account/saves/reset` e RPC `reset_player_save` reconstroem apenas o save ativo, preservam o outro save da mesma sessao Auth, limpam snapshots client-side do save resetado, mantem idempotencia por `request_id` e expoem botao perigoso "Resetar save ativo" no Hub.
 - `T03-P04` completo: `POST /progression-lab/apply` e RPC `apply_progression_lab_save` aplicam healthy saves versionados apenas no save `progression_lab`, preservam o save `normal`, limpam snapshots/estado antigo do Lab, mantem idempotencia por `request_id`, atualizam o Progression Lab Dev com "Aplicar no Save Lab" e validam o fluxo em smoke server.
 - `T03-P05` completo: Base Manager virou fluxo jogavel no Hub, com mapa de predios clicaveis, painel detalhado por estrutura, tooltips, upgrade por predio, compra alpha de Energia, custo/tempo/producao/status calculados pelo servidor e smoke cobrindo upgrade/fila.
-- `T03-P06` completo: Social virou fluxo basico jogavel no Hub, com amigos por username, criar/entrar em guilda, lista de membros/estruturas, chat de guilda por polling, rate limit, erros amigaveis, tooltips, painéis de estado e identidade social de conta com marcador `lab`.
+- `T03-P06` completo: Social virou fluxo basico jogavel no Hub, com amigos por username, criar/entrar em guilda, lista de membros/estruturas, chat de guilda por polling, rate limit, erros amigaveis, tooltips, painÃ©is de estado e identidade social de conta com marcador `lab`.
 - `T03-P07` completo: Competicao virou leaderboard alpha jogavel; `battle/request` `FIRST_SLICE_SIM` pontua o save `normal` com modelo `alpha_v0_power_adjusted`, `progression_lab` permanece fora do ranking, `competition/ranking/current` retorna top 10 + posicao do jogador, bots ficam fora da leaderboard e o Hub mostra matchmaking, ultima batalha competitiva e ranking com tooltips.
 - `T03-P08` completo: Loja virou proof-of-concept jogavel; `monetization/state` retorna `shop_summary` e produtos enriquecidos, redeems diarios entregam apenas Diamante por save com reset Sao Paulo, Battle Pass/fila dupla/pacotes usam Diamante, fila dupla altera a Base para 2 slots e o Hub mostra resumo, catalogo, recompensas, bloqueio visual e tooltips.
 - `T03-P09` completo: Batalha recebeu polish visual pequeno sem assets externos; o palco 2D mostra readout compacto de replay/tempo/HP/status/cooldowns/aliados, labels incluem HP percentual e tooltips de evento humanizam fonte/alvo com leitura rapida.
@@ -38,11 +38,11 @@
 - Hotfix gameplay email/senha: `battle`, `base`, `social`, `competition` e `monetization` removem o guard legado `AUTH_NOT_ANONYMOUS` do MVP e aceitam JWT registrado; `/account/guest` continua restrito a guest dev.
 - `T03-P17A` aprovado: passada curta de usabilidade Android no Boot. O Hub/abas detectam Android ou `draxos_mobile/ui/force_compact_layout`, reduzem margens/fontes de chrome, mantem nav com alvo de toque maior, agrupam botoes de acao em grades, deixam o mapa da Base em 6 colunas no Android paisagem larga e trocam a linguagem visivel de "dev" do fluxo normal por "teste rapido". Foi adicionado GUT de regressao para o layout compacto, gerado rebuild local Android/PC/Web e Fabio aprovou a etapa como boa o suficiente para seguir.
 - Republicacao `T03-P17A` completa: APK/PC ZIP foram republicados no Supabase Storage, `release/manifest` foi atualizado via secret override e validado remoto, Cloudflare Pages foi redeployado via Wrangler para `https://a2383707.draxos-mobile-internal-alpha.pages.dev` e o dominio estavel `https://draxos-mobile-internal-alpha.pages.dev` passou com Portal/Web iguais ao pacote local.
-- Signoff manual Fabio: aprovado em 2026-05-27 para avancar para `T03-P18`; feedback posterior do tester entra como bug conhecido/handoff.
+- `T03-P18` completo: handoff final criado em `docs/internal-alpha-v0-handoff.md`, portal/manifest versionados atualizados com links reais e proximo ciclo definido como rodada fechada Fabio + tester.
 
 ## Ainda Nao Implementado
 
-- `T03-P18`: handoff final da Internal Alpha v0.
+- Track 03 nao tem pendencia restante de execucao; feedback real entra no backlog pos-handoff.
 
 ## Decisoes Ja Travadas
 
@@ -59,7 +59,7 @@
 
 ## Proximo Passo
 
-Executar `T03-P18 - Handoff Da Internal Alpha v0`.
+Rodada fechada Fabio + tester usando `docs/internal-alpha-v0-handoff.md`; depois registrar bugs/feedback e decidir a proxima fase.
 
 ## Validacao Da Preparacao
 
@@ -137,3 +137,4 @@ Executar `T03-P18 - Handoff Da Internal Alpha v0`.
 - HTTP final em 2026-05-27: Portal `200 text/html`, Web `200 text/html`, Manifest `200 application/json`, Android APK `200` com `27811908` bytes, PC ZIP `200` com `36331728` bytes.
 - `npx -y wrangler pages deploy .\build\internal-alpha\cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`: passou em 2026-05-27, deploy `https://a2383707.draxos-mobile-internal-alpha.pages.dev`.
 - Validacao HTTP/HTML em 2026-05-27: `portal-preview`, `web-preview`, `portal-stable` e `web-stable` retornaram `200 text/html` e `html_match=True` contra o pacote local.
+- T03-P18 em 2026-05-27: `deno check/lint` de `release` passou; `publish_internal_alpha.ps1` passou; `build_cloudflare_pages_package.ps1` passou; Wrangler deploy passou em `https://3a994d39.draxos-mobile-internal-alpha.pages.dev`; Portal/Web preview e dominio estavel retornaram `200 text/html` e `html_match=True`; `release_manifest_smoke.ts` remoto e `internal_alpha_remote_smoke.ts` com `DRAXOS_REMOTE_RELEASE_SMOKE=1` passaram.

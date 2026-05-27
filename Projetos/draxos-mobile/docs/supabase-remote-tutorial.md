@@ -291,9 +291,9 @@ O Codex executa a proxima etapa:
 1. `T03-P13`: link/deploy/smoke remoto. **Feito**.
 2. `T03-P14`: implementar email/senha no Godot e backend. **Feito**.
 3. `T03-P15`: manifest de updates. **Feito**.
-4. `T03-P16`: exportar APK, PC ZIP e Web.
-5. `T03-P17`: publicar downloads/assets grandes no Supabase, publicar Portal/Web no Cloudflare Pages e rodar QA remoto fechado.
-6. `T03-P18`: handoff final da Internal Alpha v0.
+4. `T03-P16`: exportar APK, PC ZIP e Web. **Feito**.
+5. `T03-P17`: publicar downloads/assets grandes no Supabase, publicar Portal/Web no Cloudflare Pages e rodar QA remoto fechado. **Feito**.
+6. `T03-P18`: handoff final da Internal Alpha v0. **Feito**.
 
 ## Referencias Oficiais Consultadas
 

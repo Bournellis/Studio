@@ -63,7 +63,7 @@ Atualizacao de 2026-05-27: o projeto Supabase remoto (`armxgipvnbbshzqawklw`, `h
 
 ### T03-P03 - Conta Email/Senha E Dois Saves
 
-Status local-first: `IN_PROGRESS - T03-P11_LOCAL_QA_COMPLETE`.
+Status: `COMPLETE - T03-P14_EMAIL_AUTH_AND_DUAL_SAVE_COMPLETE`.
 
 - Implementar fluxo email/senha.
 - Manter guest/local como fallback de desenvolvimento, se ainda util.
@@ -217,7 +217,7 @@ Implementado:
 
 ### T03-P10 - Releases E Updates
 
-Status de execucao: `RELEASE_PREP - T03-P12_PORTAL_BASE_COMPLETE`.
+Status de execucao: `COMPLETE - T03-P18_HANDOFF_READY`.
 
 - Criar schema de manifest remoto em Supabase Storage.
 - Cliente consulta manifest no boot e mostra status de update.
@@ -383,13 +383,20 @@ Status: `COMPLETE - SIGNOFF_APPROVED`.
 
 ### T03-P18 - Handoff Da Internal Alpha v0
 
-Status: `READY`.
+Status: `COMPLETE`.
 
 - Atualizar portal com links reais finais.
 - Atualizar release notes e manifest.
 - Registrar bugs conhecidos e instrucoes de update.
 - Fechar pacote de teste Fabio + 1 amigo.
 - Depois de `T03-P18`, Fabio pode melhorar o portal sem bloquear a build.
+
+Entregue em 2026-05-27:
+
+- `docs/internal-alpha-v0-handoff.md` criado com links finais, hashes, release notes, bugs conhecidos e instrucoes de update.
+- Portal source e `manifest.example.json` atualizados com links reais.
+- Defaults de `release/manifest` atualizados com hashes finais e texto pos-signoff.
+- Proximo ciclo definido como rodada fechada Fabio + tester e backlog de feedback.
 
 ## Design Sessions Obrigatorias Antes De Codigo Funcional
 
@@ -404,9 +411,9 @@ As decisoes abaixo estao registradas em `docs/design-pending.md` e precisam ser 
 - `DMOB-D054`: fluxo de conta, convite e recuperacao no alpha.
 - `DMOB-D055`: regras de isolamento do Progression Lab.
 
-## Trabalho Manual Do Fabio
+## Trabalho Manual Pos-Handoff
 
-Necessario agora para concluir `T03-P18`:
+Necessario depois de `T03-P18`:
 
 - Criar keystore Android release internal alpha e guardar senha fora do Git antes de uma distribuicao mais ampla; `T03-P17` usou APK `debug_fallback`.
 - Usar os links publicados do relatorio `docs/internal-alpha-v0-publication-report.md` para o teste Fabio + amigo.

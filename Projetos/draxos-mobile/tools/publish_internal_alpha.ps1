@@ -249,7 +249,7 @@ $manifest = [ordered]@{
     known_issues = @(
         "Layout Android paisagem ainda precisa de ergonomia real no aparelho.",
         "APK desta publicacao usa debug_fallback enquanto a keystore release dedicada nao estiver configurada.",
-        "Web usa hospedagem hibrida Cloudflare Pages + Supabase Storage e deve ser validada no navegador desktop antes do signoff."
+        "Web usa hospedagem hibrida Cloudflare Pages + Supabase Storage; validar /portal/index.html e /web/index.html apos cada deploy."
     )
 }
 
@@ -266,9 +266,9 @@ Get-ChildItem -LiteralPath $portalDir -File | Where-Object {
 
 $portalIndexPath = Join-Path $portalPublishDir "index.html"
 $portalText = Get-Content -LiteralPath $portalIndexPath -Raw
-$portalText = $portalText.Replace("WEB_GAME_URL_PENDING_T03_P17", $(if ($webUrl -ne "") { $webUrl } else { "STATIC_HOST_PENDING_T03_P17" }))
-$portalText = $portalText.Replace("ANDROID_APK_URL_PENDING_T03_P17", $androidUrl)
-$portalText = $portalText.Replace("PC_ZIP_URL_PENDING_T03_P17", $pcUrl)
+$portalText = $portalText.Replace("WEB_GAME_URL_PLACEHOLDER", $(if ($webUrl -ne "") { $webUrl } else { "STATIC_HOST_PLACEHOLDER" }))
+$portalText = $portalText.Replace("ANDROID_APK_URL_PLACEHOLDER", $androidUrl)
+$portalText = $portalText.Replace("PC_ZIP_URL_PLACEHOLDER", $pcUrl)
 $portalText | Set-Content -LiteralPath $portalIndexPath -Encoding UTF8
 
 $portalManifestPath = Join-Path $portalPublishDir "manifest.example.json"

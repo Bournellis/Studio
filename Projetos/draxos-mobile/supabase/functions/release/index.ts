@@ -7,7 +7,7 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
   latest_version_code: 1,
   minimum_supported_version: "0.0.1-alpha.0",
   minimum_supported_version_code: 1,
-  released_at: "2026-05-27T00:00:00Z",
+  released_at: "2026-05-27T15:02:12Z",
   requires_save_reset: false,
   portal_url: "https://draxos-mobile-internal-alpha.pages.dev/portal/index.html",
   notes: [
@@ -21,13 +21,13 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
       label: "Android APK",
       url:
         "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.apk",
-      sha256: "87533f150ffb773ef3bb7e41f6d69e98c7fdd4a85cbbf1e28544040aaade2448",
+      sha256: "6c39ce9a63eaf4796a67a9e5a29e9252f1f03266f713ffa58c5d2333c15102d6",
     },
     pc_windows: {
       label: "PC Windows ZIP",
       url:
         "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.zip",
-      sha256: "e678fb7e2d2e984ad7356a47cbdcf4fdb12628ebe23636ab1a3b976365111082",
+      sha256: "4b7dc516bc4c5c4895930f8732ad9e97733cca85ba7574c9a0308c705982d236",
     },
     web: {
       label: "Web",
@@ -37,7 +37,7 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
   known_issues: [
     "Layout Android paisagem ainda precisa de ergonomia real no aparelho.",
     "APK desta publicacao usa debug_fallback enquanto a keystore release dedicada nao estiver configurada.",
-    "Web usa hospedagem hibrida Cloudflare Pages + Supabase Storage e deve ser validada no navegador desktop antes do signoff.",
+    "Web usa hospedagem hibrida Cloudflare Pages + Supabase Storage; validar /portal/index.html e /web/index.html apos cada deploy.",
   ],
 };
 

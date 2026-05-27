@@ -2,7 +2,7 @@
 
 - Data: `2026-05-27`
 - Track: `T03-P17 - Publicacao Unlisted E QA Remoto Fechado`
-- Status: `T03-P17A_SIGNOFF_APPROVED - T03-P18_READY`
+- Status: `T03-P18_COMPLETE - INTERNAL_ALPHA_V0_HANDOFF_READY`
 - Canal: `internal_alpha`
 - Versao in-app: `0.0.1-alpha.0`
 - Version code: `1`
@@ -57,7 +57,6 @@ Resultado:
 - Portal/Web dominio estavel: `200`, `text/html`, HTML igual ao pacote local.
 - `release_manifest_smoke.ts` remoto: passou.
 - `internal_alpha_remote_smoke.ts` com `DRAXOS_REMOTE_RELEASE_SMOKE=1`: passou.
-
 ## Correcao Pos-Publicacao
 
 Na primeira abertura manual, o link direto do Storage exibiu o HTML do portal como texto puro porque a resposta veio com `Content-Type: text/plain`, `nosniff` e CSP sandbox. A tentativa de servir por Edge Function confirmou a mesma politica para `text/html`. A solucao final de `T03-P17` foi manter Supabase como backend/downloads/assets grandes e publicar Portal/Web HTML no Cloudflare Pages.
@@ -109,7 +108,7 @@ Validacao final em 2026-05-27:
 
 ## Signoff E Proxima Etapa
 
-A parte automatizada de backend/downloads/portal/Web esta verde. Em 2026-05-27, Fabio aprovou avancar para `T03-P18`. Feedback posterior do tester deve entrar como bug conhecido/handoff:
+A parte automatizada de backend/downloads/portal/Web esta verde. Em 2026-05-27, Fabio aprovou avancar para `T03-P18`, e o handoff final foi fechado em `internal-alpha-v0-handoff.md`. Feedback posterior do tester deve entrar no backlog pos-handoff:
 
 - abrir portal e baixar/abrir pelo menos duas plataformas;
 - criar/login com email e senha;
@@ -118,4 +117,20 @@ A parte automatizada de backend/downloads/portal/Web esta verde. Em 2026-05-27, 
 - alternar para `progression_lab`, confirmar isolamento e ausencia no ranking;
 - registrar problemas de ergonomia Android paisagem e qualquer bloqueio de update/login.
 
-Proximo passo: `T03-P18 - Handoff Da Internal Alpha v0`.
+Proximo passo: rodada fechada Fabio + tester e backlog de feedback pos-handoff.
+
+## T03-P18 Handoff
+
+Em 2026-05-27, o handoff final atualizou o portal source, o manifest exemplo, os defaults de `release/manifest`, as notas pos-signoff e o pacote Cloudflare.
+
+Validacao T03-P18:
+
+- `npx -y deno check supabase/functions/release/index.ts server/functions/release/index.ts`: passou.
+- `npx -y deno lint supabase/functions/release/index.ts server/functions/release/index.ts`: passou.
+- `tools/publish_internal_alpha.ps1 -StaticSiteBaseUrl "https://draxos-mobile-internal-alpha.pages.dev" -SkipUpload -UseManifestSecret`: passou.
+- `tools/build_cloudflare_pages_package.ps1`: passou.
+- `npx -y wrangler pages deploy .\build\internal-alpha\cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`: passou, deploy `https://3a994d39.draxos-mobile-internal-alpha.pages.dev`.
+- Portal/Web preview e dominio estavel: `200 text/html` e HTML igual ao pacote local.
+- Manifest remoto: `200 application/json` com known issue atualizado para validacao apos cada deploy.
+- `release_manifest_smoke.ts` remoto: passou.
+- `internal_alpha_remote_smoke.ts` com `DRAXOS_REMOTE_RELEASE_SMOKE=1`: passou.

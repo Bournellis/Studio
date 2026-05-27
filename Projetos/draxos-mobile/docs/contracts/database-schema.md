@@ -1,7 +1,7 @@
 # Database Schema Contract
 
 - Ultima atualizacao: `2026-05-27`
-- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type`, reset separado por save, aplicacao do Progression Lab no save de lab e auth email/senha com alpha gate implementados; Track 03 ainda planeja manifest de updates internos
+- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type`, reset separado por save, aplicacao do Progression Lab no save de lab e auth email/senha com alpha gate implementados; Internal Alpha v0 publicada com manifest/update em T03-P18
 
 Este documento define o schema esperado. A fonte tecnica viva do runtime local e `../../supabase/migrations/`; `../../server/schema/migrations/` permanece como espelho backend durante o alpha local.
 

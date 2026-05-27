@@ -139,7 +139,7 @@ Correcao Cloudflare Pages: nao publicar `build/internal-alpha/publish/` inteira 
 
 ### T03-P18 - Handoff Da Internal Alpha v0
 
-Status: `READY`.
+Status: `COMPLETE`.
 
 Saida esperada:
 
@@ -147,6 +147,13 @@ Saida esperada:
 - bugs conhecidos registrados;
 - pacote de links finais pronto para Fabio + 1 tester;
 - portal segue suficiente por enquanto e pode ser refinado por Fabio depois desta etapa.
+
+Saida entregue em 2026-05-27:
+
+- handoff final em `internal-alpha-v0-handoff.md`;
+- portal source e manifest exemplo com links reais;
+- defaults de `release/manifest` com hashes finais e texto pos-signoff;
+- instrucoes de update e riscos conhecidos registrados.
 
 ## Valores Que Fabio Deve Enviar Ao Codex
 
@@ -191,3 +198,4 @@ Antes de publicar:
 - Tutorial Supabase para Fabio: `supabase-remote-tutorial.md`
 - Portal base: `../portal/internal-alpha/`
 - Checklist QA: `playtest-internal-alpha-v0.md`
+- Handoff final: `internal-alpha-v0-handoff.md`

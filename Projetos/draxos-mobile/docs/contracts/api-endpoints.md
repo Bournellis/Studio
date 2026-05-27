@@ -47,14 +47,14 @@ Response:
   "latest_version_code": 1,
   "minimum_supported_version": "0.0.1-alpha.0",
   "minimum_supported_version_code": 1,
-  "released_at": "2026-05-27T00:00:00Z",
+  "released_at": "2026-05-27T15:02:12Z",
   "requires_save_reset": false,
-  "portal_url": "PORTAL_URL_PENDING_T03_P17",
+  "portal_url": "https://draxos-mobile-internal-alpha.pages.dev/portal/index.html",
   "notes": ["Primeira release candidate interna."],
   "artifacts": {
-    "android": { "label": "Android APK", "url": "ANDROID_APK_URL_PENDING_T03_P17" },
-    "pc_windows": { "label": "PC Windows ZIP", "url": "PC_ZIP_URL_PENDING_T03_P17" },
-    "web": { "label": "Web", "url": "WEB_GAME_URL_PENDING_T03_P17" }
+    "android": { "label": "Android APK", "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.apk" },
+    "pc_windows": { "label": "PC Windows ZIP", "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.zip" },
+    "web": { "label": "Web", "url": "https://draxos-mobile-internal-alpha.pages.dev/web/index.html" }
   }
 }
 ```

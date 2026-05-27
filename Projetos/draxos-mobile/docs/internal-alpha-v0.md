@@ -7,6 +7,7 @@
 - Tutorial Supabase remoto: `supabase-remote-tutorial.md`
 - Plano de release: `internal-alpha-release-plan.md`
 - Relatorio de export: `internal-alpha-v0-export-report.md`
+- Handoff final: `internal-alpha-v0-handoff.md`
 - Portal base: `../portal/internal-alpha/`
 - Objetivo: fechar uma build interna profissional para Fabio + 1 amigo testarem um jogo real em Android, PC e Web, com servidor real, conta/save compartilhados, features principais funcionais e iteracao rapida.
 
@@ -38,7 +39,7 @@ Decisao operacional de 2026-05-26:
 
 Esta ordem nao remove a decisao de usar Supabase no alpha. Ela apenas adia remoto, build e distribuicao para reduzir friccao enquanto a implementacao ainda muda muito.
 
-Atualizacao de 2026-05-27: `T03-P13` concluiu o bootstrap Supabase remoto, `T03-P14` concluiu auth email/senha + alpha gate, `T03-P15` concluiu manifest remoto + version gate no cliente, `T03-P16` exportou Android/PC/Web localmente e `T03-P17` publicou APK/PC ZIP em links unlisted, Portal/Web no Cloudflare Pages e manifest remoto com links finais. QA remoto automatizado esta verde. Fabio aprovou avancar para `T03-P18` em 2026-05-27.
+Atualizacao de 2026-05-27: `T03-P13` concluiu o bootstrap Supabase remoto, `T03-P14` concluiu auth email/senha + alpha gate, `T03-P15` concluiu manifest remoto + version gate no cliente, `T03-P16` exportou Android/PC/Web localmente, `T03-P17` publicou APK/PC ZIP em links unlisted, Portal/Web no Cloudflare Pages e manifest remoto com links finais, e `T03-P18` fechou o handoff final em `internal-alpha-v0-handoff.md`. QA remoto automatizado esta verde.
 
 ## Modelo De Conta E Save
 
@@ -145,14 +146,14 @@ Manifest remoto atual em `GET /release/manifest`:
   "latest_version_code": 1,
   "minimum_supported_version": "0.0.1-alpha.0",
   "minimum_supported_version_code": 1,
-  "released_at": "2026-05-27T00:00:00Z",
+  "released_at": "2026-05-27T15:02:12Z",
   "requires_save_reset": false,
-  "portal_url": "PORTAL_URL_PENDING_T03_P17",
-  "notes": ["Primeira build interna"],
+  "portal_url": "https://draxos-mobile-internal-alpha.pages.dev/portal/index.html",
+  "notes": ["Primeira release candidate interna."],
   "artifacts": {
-    "android": { "url": "https://...", "sha256": "..." },
-    "pc_windows": { "url": "https://...", "sha256": "..." },
-    "web": { "url": "https://..." }
+    "android": { "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.apk", "sha256": "6c39ce9a63eaf4796a67a9e5a29e9252f1f03266f713ffa58c5d2333c15102d6" },
+    "pc_windows": { "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.zip", "sha256": "4b7dc516bc4c5c4895930f8732ad9e97733cca85ba7574c9a0308c705982d236" },
+    "web": { "url": "https://draxos-mobile-internal-alpha.pages.dev/web/index.html" }
   }
 }
 ```
@@ -179,7 +180,7 @@ Status de publicacao (`T03-P17`):
 - Portal/Web publicados no Cloudflare Pages porque Supabase Storage/Edge Functions nao servem HTML como pagina.
 - Manifest remoto reconfigurado com URLs/hashes reais no default versionado da Edge Function `release`.
 - Relatorio: `internal-alpha-v0-publication-report.md`.
-- Signoff aprovado por Fabio em 2026-05-27; feedback posterior do tester entra como bug conhecido/handoff de `T03-P18`.
+- Handoff final fechado em `internal-alpha-v0-handoff.md`; feedback posterior do tester entra no backlog pos-handoff.
 
 Politica:
 

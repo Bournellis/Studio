@@ -1,7 +1,7 @@
 # Update Manifest Contract
 
 - Ultima atualizacao: `2026-05-27`
-- Status: `T03-P17_PUBLISHED_UNLISTED`
+- Status: `T03-P18_COMPLETE_HANDOFF_READY`
 - Endpoint atual: `GET /release/manifest`
 - Schema: `internal_alpha_manifest_v1`
 
@@ -27,27 +27,36 @@ A funcao retorna um JSON sem secrets e sem depender de login. A implementacao po
   "latest_version_code": 1,
   "minimum_supported_version": "0.0.1-alpha.0",
   "minimum_supported_version_code": 1,
-  "released_at": "2026-05-27T00:00:00Z",
+  "released_at": "2026-05-27T15:02:12Z",
   "requires_save_reset": false,
-  "portal_url": "PORTAL_URL_PENDING_T03_P17",
-  "notes": ["Primeira release candidate interna."],
+  "portal_url": "https://draxos-mobile-internal-alpha.pages.dev/portal/index.html",
+  "notes": [
+    "Primeira release candidate interna.",
+    "APK Android e PC ZIP compartilham o mesmo backend remoto.",
+    "Portal/Web rodam no Cloudflare Pages; downloads e assets grandes continuam no Supabase Storage.",
+    "Progression Lab usa save separado e nao pontua ranking."
+  ],
   "artifacts": {
     "android": {
       "label": "Android APK",
-      "url": "ANDROID_APK_URL_PENDING_T03_P17",
-      "sha256": "ANDROID_APK_SHA256_PENDING_T03_P17"
+      "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.apk",
+      "sha256": "6c39ce9a63eaf4796a67a9e5a29e9252f1f03266f713ffa58c5d2333c15102d6"
     },
     "pc_windows": {
       "label": "PC Windows ZIP",
-      "url": "PC_ZIP_URL_PENDING_T03_P17",
-      "sha256": "PC_ZIP_SHA256_PENDING_T03_P17"
+      "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.zip",
+      "sha256": "4b7dc516bc4c5c4895930f8732ad9e97733cca85ba7574c9a0308c705982d236"
     },
     "web": {
       "label": "Web",
-      "url": "WEB_GAME_URL_PENDING_T03_P17"
+      "url": "https://draxos-mobile-internal-alpha.pages.dev/web/index.html"
     }
   },
-  "known_issues": []
+  "known_issues": [
+    "Layout Android paisagem ainda precisa de ergonomia real no aparelho.",
+    "APK desta publicacao usa debug_fallback enquanto a keystore release dedicada nao estiver configurada.",
+    "Web usa hospedagem hibrida Cloudflare Pages + Supabase Storage; validar /portal/index.html e /web/index.html apos cada deploy."
+  ]
 }
 ```
 
@@ -71,4 +80,4 @@ A funcao retorna um JSON sem secrets e sem depender de login. A implementacao po
 
 ## Evolucao
 
-Em `T03-P16`, os artefatos locais foram exportados e seus hashes foram registrados em `../internal-alpha-v0-export-report.md`. Em `T03-P17`, APK/PC ZIP foram publicados no Supabase Storage unlisted, Portal/Web foram publicados no Cloudflare Pages e o manifest remoto passou a usar hashes/links reais. A correcao pos-publicacao registrou que Supabase Storage/Edge Functions nao servem HTML como pagina, portanto Cloudflare Pages serve os HTMLs e Supabase Storage continua com downloads/assets grandes. Detalhes em `../internal-alpha-v0-publication-report.md`. Em releases futuras, subir `latest_version_code` gera update recomendado; subir `minimum_supported_version_code` torna o update obrigatorio para acoes online.
+Em `T03-P16`, os artefatos locais foram exportados e seus hashes foram registrados em `../internal-alpha-v0-export-report.md`. Em `T03-P17`, APK/PC ZIP foram publicados no Supabase Storage unlisted, Portal/Web foram publicados no Cloudflare Pages e o manifest remoto passou a usar hashes/links reais. Em `T03-P18`, o handoff final foi registrado em `../internal-alpha-v0-handoff.md`. Em releases futuras, subir `latest_version_code` gera update recomendado; subir `minimum_supported_version_code` torna o update obrigatorio para acoes online.

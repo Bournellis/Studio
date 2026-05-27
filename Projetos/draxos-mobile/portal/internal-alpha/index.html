@@ -320,17 +320,18 @@
       <section class="hero">
         <div class="eyebrow">Internal Alpha v0</div>
         <h1>DraxosMobile</h1>
-        <p>Build fechada para Fabio + 1 tester. Use esta pagina para baixar as builds, abrir a versao Web e acompanhar notas de teste.</p>
+        <p>Build fechada para Fabio + 1 tester. Use esta pagina para baixar as builds, abrir a versao Web e acompanhar notas de teste. Handoff T03-P18 concluido.</p>
         <div class="actions">
-          <a class="button primary" href="WEB_GAME_URL_PENDING_T03_P17">Jogar Web</a>
-          <a class="button" href="ANDROID_APK_URL_PENDING_T03_P17">Baixar APK</a>
-          <a class="button" href="PC_ZIP_URL_PENDING_T03_P17">Baixar PC ZIP</a>
+          <a class="button primary" href="/web/index.html">Jogar Web</a>
+          <a class="button" href="https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.apk">Baixar APK</a>
+          <a class="button" href="https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.zip">Baixar PC ZIP</a>
         </div>
         <div class="meta">
           <span class="pill">Versao 0.0.1-alpha.0</span>
           <span class="pill">Servidor remoto</span>
           <span class="pill">Email + senha</span>
           <span class="pill">Unlisted</span>
+          <span class="pill">T03-P18 complete</span>
         </div>
       </section>
 
@@ -364,17 +365,17 @@
       <article class="card">
         <strong>Android APK</strong>
         <p>Instalacao direta por link. Aceite instalacao de fonte externa apenas para este teste.</p>
-        <div class="actions"><a class="button" href="ANDROID_APK_URL_PENDING_T03_P17">Download</a></div>
+        <div class="actions"><a class="button" href="https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.apk">Download</a></div>
       </article>
       <article class="card">
         <strong>PC Windows</strong>
         <p>ZIP com executavel. Extraia a pasta inteira antes de abrir o jogo.</p>
-        <div class="actions"><a class="button" href="PC_ZIP_URL_PENDING_T03_P17">Download</a></div>
+        <div class="actions"><a class="button" href="https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.zip">Download</a></div>
       </article>
       <article class="card">
         <strong>PC Browser</strong>
         <p>Build Web para teste rapido. O save deve ser o mesmo das outras plataformas.</p>
-        <div class="actions"><a class="button" href="WEB_GAME_URL_PENDING_T03_P17">Abrir</a></div>
+        <div class="actions"><a class="button" href="/web/index.html">Abrir</a></div>
       </article>
     </section>
 
@@ -397,13 +398,15 @@
           <li>Base, Social, Competicao e Loja funcionais em alpha.</li>
           <li>Dois saves por conta: normal e progression_lab.</li>
           <li>Redeems diarios de Diamante para acelerar testes.</li>
+          <li>Portal/Web rodam no Cloudflare Pages; downloads e assets grandes ficam no Supabase Storage.</li>
         </ul>
       </article>
 
       <article class="card">
         <h2>Problemas Conhecidos</h2>
         <ul>
-          <li>Layout Android paisagem ainda precisa de validacao no aparelho real.</li>
+          <li>Layout Android paisagem foi aprovado como suficiente, mas ainda deve ser observado no aparelho real.</li>
+          <li>APK usa assinatura debug_fallback enquanto a keystore release dedicada nao estiver configurada.</li>
           <li>Sem arte final, animacoes ou icones definitivos.</li>
           <li>Loja nao possui pagamento real e serve apenas como prova de conceito.</li>
         </ul>

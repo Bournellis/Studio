@@ -40,7 +40,7 @@ Host estatico para Portal/Web: `internal-alpha-static-hosting.md`.
 - Regiao: `West US (Oregon)`.
 - Status no dashboard: `Healthy`.
 
-Estado operacional: o dashboard mostrou o projeto saudavel e, em 2026-05-27, o bootstrap remoto aplicou as migrations, publicou as Edge Functions, atualizou config de Auth, validou o fluxo email/senha, publicou o manifest de updates, exportou artefatos locais em `T03-P16`, publicou APK/PC ZIP em Supabase Storage, publicou Portal/Web no Cloudflare Pages em `T03-P17` e recebeu aprovacao de Fabio para avancar para `T03-P18`.
+Estado operacional: o dashboard mostrou o projeto saudavel e, em 2026-05-27, o bootstrap remoto aplicou as migrations, publicou as Edge Functions, atualizou config de Auth, validou o fluxo email/senha, publicou o manifest de updates, exportou artefatos locais em `T03-P16`, publicou APK/PC ZIP em Supabase Storage, publicou Portal/Web no Cloudflare Pages em `T03-P17` e fechou o handoff `T03-P18`.
 
 ## Resultado T03-P13
 
@@ -219,4 +219,4 @@ Supabase Storage pode hospedar manifest e artefatos pequenos, mas o limite do pl
 - Portal/Web publicados no Cloudflare Pages.
 - Manifest remoto aponta para URLs/hashes finais.
 - QA remoto automatizado verde.
-- Proximo: executar `T03-P18`; bugs encontrados por Fabio/tester entram no handoff da build.
+- Proximo: rodada fechada Fabio + tester; bugs encontrados entram no backlog pos-handoff.

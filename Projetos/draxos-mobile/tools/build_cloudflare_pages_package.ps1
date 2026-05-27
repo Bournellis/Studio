@@ -85,7 +85,7 @@ Copy-Item -LiteralPath $portalSource -Destination (Join-Path $OutputDir "portal"
 
 $portalIndexPath = Join-Path $OutputDir "portal/index.html"
 $portalHtml = Get-Content -Raw -LiteralPath $portalIndexPath
-$portalHtml = $portalHtml.Replace("STATIC_HOST_PENDING_T03_P17", "/web/index.html")
+$portalHtml = $portalHtml.Replace("STATIC_HOST_PLACEHOLDER", "/web/index.html")
 [System.IO.File]::WriteAllText($portalIndexPath, $portalHtml, [System.Text.UTF8Encoding]::new($false))
 
 $assetBase = $StaticAssetBaseUrl.TrimEnd("/")
