@@ -1,10 +1,10 @@
 # DraxosMobile - Internal Alpha Remote Setup
 
-- Ultima atualizacao: `2026-05-26`
+- Ultima atualizacao: `2026-05-27`
 - Track: `T03-P02 - Supabase Remoto E Configuracao Segura`
-- Status: `repo-ready, remote project observed, public values pending`
+- Status: `remote bootstrap complete, auth email/senha pending`
 
-Este runbook deixa a Internal Alpha v0 preparada para usar Supabase remoto sem colocar secrets no cliente. O projeto remoto ja foi observado no dashboard do usuario, mas ainda precisa ser configurado via CLI, migrations, Edge Functions, Auth e smoke real.
+Este runbook deixa a Internal Alpha v0 preparada para usar Supabase remoto sem colocar secrets no cliente. O projeto remoto ja foi linkado pela CLI, recebeu migrations/Edge Functions e passou no smoke minimo de healthcheck. Auth email/senha e alpha gate seguem para `T03-P14`.
 
 Tutorial detalhado para Fabio: `supabase-remote-tutorial.md`.
 
@@ -36,7 +36,16 @@ Tutorial detalhado para Fabio: `supabase-remote-tutorial.md`.
 - Regiao: `West US (Oregon)`.
 - Status no dashboard: `Healthy`.
 
-Estado operacional: o dashboard mostra o projeto saudavel, mas ainda sem migrations/backups/branch conectada. Para o repo, isso conta como ponto de partida remoto, nao como backend alpha pronto.
+Estado operacional: o dashboard mostrou o projeto saudavel e, em 2026-05-27, o bootstrap remoto aplicou as migrations e publicou as Edge Functions. Para a build, o backend remoto esta pronto para a etapa de auth email/senha.
+
+## Resultado T03-P13
+
+- `supabase link --project-ref armxgipvnbbshzqawklw`: concluido.
+- `supabase db push`: concluiu e aplicou as 10 migrations locais no remoto.
+- `supabase functions deploy healthcheck account battle base social competition monetization telemetry progression-lab`: concluiu.
+- `server/tests/internal_alpha_remote_smoke.ts`: passou com `healthcheck: true`.
+- `supabase migration list`: confirmou migrations locais/remotas alinhadas.
+- Smokes de Auth/account remotos permanecem intencionalmente fora desta etapa ate `T03-P14`.
 
 ## Variaveis Do Cliente
 
@@ -126,14 +135,15 @@ Supabase Storage pode hospedar manifest e artefatos pequenos, mas o limite do pl
 - links podem apontar para storage externo se os artefatos ficarem grandes;
 - o cliente deve depender do schema do manifest, nao do fornecedor de storage.
 
-## Checklist Antes De T03-P13
+## Checklist Antes De T03-P14
 
 - Projeto remoto confirmado.
 - URL e publishable key publicas configuradas localmente.
 - Service role guardada fora do Git.
 - Supabase CLI logada e linkada ao projeto remoto.
 - Migrations aplicadas em remoto.
+- Edge Functions publicadas em remoto.
 - `healthcheck` remoto verde.
 - Email confirmation desligado.
 - Politica de alpha gate definida para email/senha.
-- Smoke remoto verde.
+- Fluxo email/senha implementado no cliente/backend.

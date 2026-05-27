@@ -1,7 +1,7 @@
 # Track 03 - Internal Alpha v0 - Current Status
 
-- Last Updated: `2026-05-26`
-- Status: `T03-P12_RELEASE_PLAN_PORTAL_BASE_COMPLETE - READY_FOR_REMOTE_BOOTSTRAP`
+- Last Updated: `2026-05-27`
+- Status: `T03-P13_REMOTE_BOOTSTRAP_COMPLETE - REMOTE_HEALTHCHECK_GREEN`
 - Baseline: Track 00 completa, Track 01 completa e Track 02 com Progression Lab/Battle Lab v1 implementados. O projeto ja possui Godot 4.6.2, Supabase local, conta guest, batalha server-authoritative, Base/Social/Competicao/Monetizacao v0, telemetria client nao autoritativa, exports Android/PC/Web, Battle Visual Mockup compartilhado e laboratorios internos. A Track 03 prepara a transicao para uma build fechada realista com email/senha, dois saves por conta, backend remoto, updates e playtest de 2 usuarios.
 
 ## Implementado Nesta Preparacao
@@ -16,7 +16,7 @@
 - Follow-ups de loja/social fechados: redeems entregam apenas Diamante, resetam a meia-noite `America/Sao_Paulo`, amigos usam username e usuarios no Lab aparecem com marcador vermelho `lab`.
 - Estrategia backend registrada: Supabase para Internal Alpha v0, Backend Proprio + Postgres como plano de saida preferido e Nakama como alternativa futura apenas se realtime/social competitivo virar pilar.
 - `T03-P02` preparado do lado do repo: `BackendConfig` no Godot, ambiente `internal_alpha_v0`, env vars seguras, `.env` reais ignorados, `.env.internal-alpha.example`, runbook remoto e smoke Deno remoto sem service role.
-- Ordem local-first aprovada em 2026-05-26 e ja cumprida para release prep: o jogo foi implementado/validado no Godot/Supabase local primeiro; Supabase remoto, builds Android/PC/Web e manifest de updates agora seguem em `T03-P13` a `T03-P18`.
+- Ordem local-first aprovada em 2026-05-26 e ja cumprida para release prep: o jogo foi implementado/validado no Godot/Supabase local primeiro; Supabase remoto foi inicializado em `T03-P13`; auth, builds Android/PC/Web e manifest de updates seguem em `T03-P14` a `T03-P18`.
 - `T03-P03A` completo: `SessionStore` possui save ativo `normal`/`progression_lab`, persiste no cache, limpa snapshots ao alternar contexto, marca snapshots local-only do Progression Lab como Lab, `SupabaseClient` prepara header `x-draxos-save-type` e o Hub mostra/troca save ativo com bloqueio claro quando o Lab esta em cache local-only.
 - `T03-P03B` completo: schema local ganhou `players.save_type`, unicidade por `auth_user_id + save_type`, RPCs `create_guest_account`/`request_mvp_battle` recebem save, Edge Functions resolvem `x-draxos-save-type` para `account`, `battle`, `base`, `social`, `competition`, `monetization` e `telemetry`, o Hub libera acoes server-backed no Lab, e o save `progression_lab` fica isolado do normal e fora do ranking com motivo explicito.
 - `T03-P03C` completo: `POST /account/saves/reset` e RPC `reset_player_save` reconstroem apenas o save ativo, preservam o outro save da mesma sessao Auth, limpam snapshots client-side do save resetado, mantem idempotencia por `request_id` e expoem botao perigoso "Resetar save ativo" no Hub.
@@ -28,10 +28,10 @@
 - `T03-P09` completo: Batalha recebeu polish visual pequeno sem assets externos; o palco 2D mostra readout compacto de replay/tempo/HP/status/cooldowns/aliados, labels incluem HP percentual e tooltips de evento humanizam fonte/alvo com leitura rapida.
 - `T03-P11` local QA completo: ambiente local resetado, checks/lints Deno verdes, smokes Supabase locais verdes, Godot validate/GUT verde, smokes de app/labs/export presets verdes e relatorio `docs/internal-alpha-v0-qa-report.md` criado.
 - `T03-P12` completo: plano de release `T03-P12` a `T03-P18` registrado, base do portal estatico criada em `portal/internal-alpha/`, manifest exemplo criado, tutorial detalhado de Supabase remoto documentado e ponto de partida remoto anotado (`armxgipvnbbshzqawklw`, `https://armxgipvnbbshzqawklw.supabase.co`).
+- `T03-P13` completo: Supabase CLI logado/linkado ao projeto remoto `armxgipvnbbshzqawklw`, migrations aplicadas com `supabase db push`, Edge Functions `healthcheck`, `account`, `battle`, `base`, `social`, `competition`, `monetization`, `telemetry` e `progression-lab` publicadas, lista local/remota de migrations alinhada e smoke remoto minimo verde.
 
 ## Ainda Nao Implementado
 
-- `T03-P13`: Supabase remoto existe em branco, mas ainda precisa valores publicos confirmados, CLI link, migrations/functions e smoke contra URL real.
 - `T03-P14`: auth email/senha e alpha gate.
 - `T03-P15`: manifest remoto de updates e version gate.
 - `T03-P16`: export/publicacao das tres builds finais.
@@ -53,7 +53,7 @@
 
 ## Proximo Passo
 
-Fabio deve seguir `docs/supabase-remote-tutorial.md`, criar o `.env.internal-alpha.local` ignorado, confirmar/desligar email confirmation e enviar os valores publicos do projeto remoto. Depois disso, executar `T03-P13 - Supabase Remote Bootstrap`.
+Executar `T03-P14 - Auth Email/Senha E Alpha Gate`: trocar o fluxo real da build interna para email/senha, manter guest apenas como ferramenta dev/local se ainda for util e validar carregamento dos dois saves por conta remota.
 
 ## Validacao Da Preparacao
 
@@ -87,3 +87,7 @@ Fabio deve seguir `docs/supabase-remote-tutorial.md`, criar o `.env.internal-alp
 - `tools/smoke_dev_labs.gd`: passou em 2026-05-26.
 - `tools/smoke_exports.gd`: passou em 2026-05-26 para Android Alpha, PC Windows Alpha e PC Browser Alpha.
 - `T03-P12 docs/portal`: `git diff --check` passou em 2026-05-26.
+- `npx -y supabase db push`: passou em 2026-05-27 contra `armxgipvnbbshzqawklw`, aplicando as 10 migrations da alpha.
+- `npx -y supabase functions deploy healthcheck account battle base social competition monetization telemetry progression-lab`: passou em 2026-05-27.
+- `npx -y deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts`: passou em 2026-05-27 contra `https://armxgipvnbbshzqawklw.supabase.co` com `healthcheck: true`; smokes de auth/account ficaram pulados ate `T03-P14`.
+- `npx -y supabase migration list`: passou em 2026-05-27 com as migrations locais e remotas alinhadas.

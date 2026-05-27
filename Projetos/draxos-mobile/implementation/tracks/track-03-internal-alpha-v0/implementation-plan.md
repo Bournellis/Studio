@@ -26,8 +26,8 @@ Saida esperada:
 
 ### T03-P02 - Supabase Remoto E Configuracao Segura
 
-Status repo-side: `READY - remote project observed, public values pending`.
-Status de execucao: `PENDING_FABIO_VALUES`.
+Status repo-side: `COMPLETE - remote bootstrap green`.
+Status de execucao: `REMOTE_BOOTSTRAP_COMPLETE`.
 
 - Criar/configurar projeto Supabase remoto Free.
 - Desativar email confirmation no alpha interno.
@@ -59,7 +59,7 @@ Fabio vai trabalhar somente no Godot/local ate o jogo estar implementado o basta
 
 Durante a fase local-first, `T03-P02` permaneceu repo-ready: a configuracao segura existe e agora volta a ser a proxima trilha de release.
 
-Atualizacao de 2026-05-26: o gameplay local foi considerado limpo o bastante para iniciar preparacao de release. Existe um projeto Supabase remoto em branco observado no dashboard (`armxgipvnbbshzqawklw`, `https://armxgipvnbbshzqawklw.supabase.co`), mas o repo ainda precisa dos valores publicos confirmados e do arquivo local ignorado antes de aplicar migrations/functions.
+Atualizacao de 2026-05-27: o projeto Supabase remoto (`armxgipvnbbshzqawklw`, `https://armxgipvnbbshzqawklw.supabase.co`) foi linkado pela CLI, recebeu migrations/functions e passou no smoke minimo de healthcheck. Auth email/senha e alpha gate seguem em `T03-P14`.
 
 ### T03-P03 - Conta Email/Senha E Dois Saves
 
@@ -282,7 +282,7 @@ Saida entregue:
 
 ### T03-P13 - Supabase Remote Bootstrap
 
-Status: `PENDING_FABIO_VALUES`.
+Status: `COMPLETE`.
 
 - Fabio confirma `Project URL`, `Project Ref` e public/publishable key.
 - Fabio cria `.env.internal-alpha.local` local e ignorado.
@@ -297,9 +297,17 @@ Saida esperada:
 - Smoke remoto verde contra `https://armxgipvnbbshzqawklw.supabase.co`.
 - Documentacao atualizada com resultado real.
 
+Implementado em 2026-05-27:
+
+- Supabase CLI logado e linkado ao projeto `armxgipvnbbshzqawklw`.
+- `supabase db push` aplicou as 10 migrations da alpha no remoto.
+- Edge Functions `healthcheck`, `account`, `battle`, `base`, `social`, `competition`, `monetization`, `telemetry` e `progression-lab` publicadas.
+- Smoke remoto minimo passou com `healthcheck: true`.
+- `supabase migration list` confirmou migrations locais/remotas alinhadas.
+
 ### T03-P14 - Auth Email/Senha E Alpha Gate
 
-Status: `PENDING_T03_P13`.
+Status: `NEXT`.
 
 - Ativar fluxo email/senha no Godot.
 - Manter guest apenas como fallback dev/local.

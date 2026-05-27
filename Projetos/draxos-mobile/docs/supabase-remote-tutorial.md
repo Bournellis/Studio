@@ -1,6 +1,6 @@
 # DraxosMobile - Tutorial Supabase Remoto
 
-- Ultima atualizacao: `2026-05-26`
+- Ultima atualizacao: `2026-05-27`
 - Alvo: preparar o projeto Supabase remoto para `internal_alpha_v0`.
 - Ponto de partida: screenshot enviada em 2026-05-26 com projeto Supabase novo, status `Healthy`.
 
@@ -90,6 +90,8 @@ ou, se for legacy:
 ```text
 SUPABASE_PUBLISHABLE_KEY=<anon-public-jwt>
 ```
+
+Se o Supabase mostrar a chave com nome de framework, como `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, copie apenas o valor e use nos nomes do DraxosMobile: `DRAXOS_MOBILE_SUPABASE_PUBLISHABLE_KEY` e `SUPABASE_PUBLISHABLE_KEY`.
 
 Nunca envie a `service_role` para o cliente. Se ela for necessaria para um comando de deploy, use arquivo local ignorado.
 

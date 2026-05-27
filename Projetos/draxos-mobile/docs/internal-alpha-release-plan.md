@@ -1,6 +1,6 @@
 # DraxosMobile - Internal Alpha Release Plan
 
-- Ultima atualizacao: `2026-05-26`
+- Ultima atualizacao: `2026-05-27`
 - Fase: `T03-P12+ - Internal Alpha Release Candidate`
 - Objetivo: soltar Android, PC e Web juntos para Fabio + 1 tester, usando Supabase remoto real, conta email/senha, portal unlisted e manifest de update.
 
@@ -47,7 +47,7 @@ O portal final pode ser refinado depois de `T03-P18`. Por enquanto ele existe pa
 
 ### T03-P13 - Supabase Remoto Real
 
-Status: `PENDING_FABIO_VALUES`.
+Status: `COMPLETE`.
 
 Saida esperada:
 
@@ -65,9 +65,16 @@ Depende de Fabio:
 - fazer login ou liberar token da Supabase CLI localmente;
 - confirmar que email confirmation esta desligado.
 
+Resultado em 2026-05-27:
+
+- projeto remoto linkado: `armxgipvnbbshzqawklw`;
+- migrations aplicadas;
+- Edge Functions publicadas;
+- smoke remoto minimo passou contra `https://armxgipvnbbshzqawklw.supabase.co`.
+
 ### T03-P14 - Auth Email/Senha No Godot E Backend
 
-Status: `PENDING_IMPLEMENTATION`.
+Status: `NEXT`.
 
 Saida esperada:
 

@@ -1,6 +1,6 @@
 # DraxosMobile - Internal Alpha v0
 
-- Ultima atualizacao: `2026-05-26`
+- Ultima atualizacao: `2026-05-27`
 - Fonte de execucao: `../implementation/tracks/track-03-internal-alpha-v0/`
 - Design lock: `internal-alpha-v0-design-lock.md` (`LOCKED`)
 - Setup remoto: `internal-alpha-remote-setup.md`
@@ -37,7 +37,7 @@ Decisao operacional de 2026-05-26:
 
 Esta ordem nao remove a decisao de usar Supabase no alpha. Ela apenas adia remoto, build e distribuicao para reduzir friccao enquanto a implementacao ainda muda muito.
 
-Atualizacao de 2026-05-26: o loop local foi considerado limpo o bastante para iniciar release prep. A proxima sequencia esta documentada em `internal-alpha-release-plan.md`: `T03-P13` Supabase remoto, `T03-P14` email/senha, `T03-P15` manifest de updates, `T03-P16` export das builds, `T03-P17` QA remoto fechado e `T03-P18` handoff.
+Atualizacao de 2026-05-27: `T03-P13` concluiu o bootstrap Supabase remoto. A proxima sequencia esta documentada em `internal-alpha-release-plan.md`: `T03-P14` email/senha, `T03-P15` manifest de updates, `T03-P16` export das builds, `T03-P17` QA remoto fechado e `T03-P18` handoff.
 
 ## Modelo De Conta E Save
 
@@ -85,6 +85,7 @@ Alvo inicial:
 
 - Supabase Free.
 - Projeto remoto observado no dashboard: `Bournellis's Project`, ref `armxgipvnbbshzqawklw`, URL `https://armxgipvnbbshzqawklw.supabase.co`, regiao `West US (Oregon)`, status `Healthy`.
+- Status remoto atual: CLI linkado, 10 migrations aplicadas, Edge Functions publicadas e smoke minimo de healthcheck verde em 2026-05-27.
 - Edge Functions para acoes autoritativas.
 - Postgres com RLS.
 - Storage para manifest e artefatos de update.
@@ -111,7 +112,7 @@ Seguranca minima:
 - Policies devem continuar limitando leitura/escrita ao dono.
 - Mutacoes economicas usam Edge Functions, idempotencia e ledger.
 - Web link publico/unlisted nao e segredo de seguranca; auth e alpha flag sao a barreira real.
-- O projeto remoto observado ainda deve ser tratado como em branco ate migrations, Edge Functions, Auth e smokes passarem.
+- Auth email/senha e alpha gate ainda entram em `T03-P14`; ate la, os smokes remotos de login/account seguem fora do criterio de aceite.
 
 Regra anti-lock-in:
 
@@ -263,10 +264,10 @@ Estas decisoes vivem em `docs/design-pending.md` como `DMOB-D048` a `DMOB-D055`.
 ## Trabalho Manual Do Fabio
 
 - Seguir o tutorial detalhado em `supabase-remote-tutorial.md`.
-- Confirmar que o projeto Supabase remoto usado sera `armxgipvnbbshzqawklw`.
-- Desativar email confirmation.
-- Copiar `Project URL` e publishable key para ambiente local/export seguro.
-- Criar `.env.internal-alpha.local` ignorado no Git.
+- Confirmar que o projeto Supabase remoto usado sera `armxgipvnbbshzqawklw`. (`feito em T03-P13`)
+- Desativar email confirmation. (`feito pelo Fabio antes de T03-P13`)
+- Copiar `Project URL` e publishable key para ambiente local/export seguro. (`feito localmente; nao versionar chave real`)
+- Criar `.env.internal-alpha.local` ignorado no Git. (`feito localmente`)
 - Criar/fornecer convites alpha.
 - Guardar service role fora do Git.
 - Criar keystore Android internal alpha e guardar senha fora do Git.
