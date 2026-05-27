@@ -3,8 +3,8 @@
 - Last Updated: `2026-05-27`
 - Status: `ACTIVE_FEATURE_INSTALLATION`
 - Depends On: `T05_INTEGRATED_FOUNDATION_READY`
-- Current Stage: `T06_C_READY_FOR_INTEGRATION`
-- Next Action: integrate T06-C runtime config, then integrate T06-D to T06-H feature slices in small batches.
+- Current Stage: `T06_I_PARTIAL_INTEGRATION`
+- Next Action: integrate T06-D/F/G/H client slices, then integrate T06-E Battle History when ready.
 
 ## Estado
 
@@ -16,8 +16,8 @@ The track deliberately prioritizes solid installation rails and small visible fe
 
 1. `T06-A` Coordenacao: complete.
 2. `T06-B` Feature Rails: ready for handoff; feature registry now defines the standard install contract, smoke/GUT rule by surface, fallback and rollback checklist.
-3. `T06-C` Runtime Config: ready for integration.
-4. `T06-D` Perfil/Conta: pending after T06-B merge; must fill feature card before runtime.
+3. `T06-C` Runtime Config: integrated into the T06 integration base.
+4. `T06-D` Perfil/Conta: ready for integration; panel renders existing session/account state, active save, username, level, power, auth method, update state and alpha status without a new endpoint.
 5. `T06-E` Battle History: pending after T06-B merge; must fill feature card before runtime.
 6. `T06-F` Base Routine: pending after T06-B merge; must fill feature card before runtime.
 7. `T06-G` Social QoL: pending after T06-B merge; must fill feature card before runtime.
@@ -59,6 +59,14 @@ Validacao T06-C:
 - `runtime_config_smoke.ts` passou contra `supabase/functions/release/index.ts` servido localmente via Deno em `127.0.0.1:8000`.
 
 Nota operacional: o Supabase local ja rodando em `127.0.0.1:54321` ainda servia a funcao antiga e retornou `404 Unknown release endpoint` para `/release/config`; o smoke HTTP da funcao nova foi validado por serve Deno isolado sem publicar ou tocar remoto.
+
+## T06-D Handoff
+
+- Status: `READY_FOR_INTEGRATION`
+- Delivered: Hub profile/account panel using existing `SessionStore`, current `account/state` snapshot, active save metadata and update gate state.
+- Client files: `modes/boot/surfaces/hub_account_surface_presenter.gd`, `modes/boot/surfaces/hub_surface_presenter.gd`.
+- Tests/smoke: `tests/client/test_boot_mobile_ui.gd`, `tools/smoke_session_shell.gd`.
+- Guardrails preserved: no endpoint, Auth, Supabase schema, persisted `SessionStore` contract, `BackendConfig`, economy, combat, ranking or remote manifest change.
 
 ## Validation Baseline
 

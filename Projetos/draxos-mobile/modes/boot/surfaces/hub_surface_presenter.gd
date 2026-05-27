@@ -7,6 +7,7 @@ static func render(host: Node) -> void:
 	HubAccountSurfacePresenterScript.render_login(host)
 	HubAccountSurfacePresenterScript.render_quick_test(host)
 	HubAccountSurfacePresenterScript.render_active_save(host)
+	HubAccountSurfacePresenterScript.render_profile_account_panel(host)
 	HubAccountSurfacePresenterScript.render_session_status(host)
 	HubAccountSurfacePresenterScript.render_update_gate(host)
 	HubAccountSurfacePresenterScript.render_screen_links(host)

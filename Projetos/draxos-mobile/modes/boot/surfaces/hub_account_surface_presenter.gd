@@ -74,6 +74,10 @@ static func render_active_save(host: Node) -> void:
 		SessionStore.active_save_badge(),
 	])
 
+static func render_profile_account_panel(host: Node) -> void:
+	_add_section_label(host, "Perfil e conta")
+	_add_output_label(host, profile_account_status_text(host))
+
 static func render_session_status(host: Node) -> void:
 	var account := "Conta: nao iniciada"
 	if SessionStore.is_progression_lab_local_only() and SessionStore.has_account_state():
@@ -137,8 +141,129 @@ static func update_status_text(host: Node) -> String:
 			lines.append("Download desta plataforma: %s ainda sem URL final." % label)
 	return "\n".join(lines)
 
+static func profile_account_status_text(host: Node = null, store: Object = null) -> String:
+	var effective_store: Object = store
+	if effective_store == null:
+		effective_store = SessionStore
+	var update_gate := {}
+	if host != null:
+		update_gate = _as_dictionary(host.get("_update_gate"))
+	return "\n".join(profile_account_status_lines(effective_store, update_gate))
+
+static func profile_account_status_lines(store: Object, update_gate: Dictionary = {}) -> PackedStringArray:
+	var lines := PackedStringArray()
+	lines.append("Username: %s" % _profile_username(store))
+	lines.append("Conta: %s" % _account_identity_text(store))
+	lines.append("Save ativo: %s (%s)" % [_store_call_string(store, "active_save_label", "Normal"), _store_call_string(store, "active_save_badge", "normal")])
+	lines.append("Level: %s" % _player_field_text(store, "level", "sem save carregado"))
+	lines.append("Poder: %s" % _player_field_text(store, "power", "sem save carregado"))
+	lines.append("Auth: %s" % _auth_method_text(store))
+	lines.append("account/state: %s" % _account_state_text(store))
+	lines.append("Update: %s (%s)" % [
+		str(update_gate.get("summary", "Update ainda nao verificado.")),
+		str(update_gate.get("status", "unchecked")),
+	])
+	lines.append("Alpha: %s %s | %s" % [
+		ProjectInfoScript.RELEASE_CHANNEL,
+		ProjectInfoScript.APP_VERSION,
+		_alpha_status_text(store, update_gate),
+	])
+	return lines
+
 static func _as_dictionary(value: Variant) -> Dictionary:
 	return value if value is Dictionary else {}
+
+static func _profile_username(store: Object) -> String:
+	var player := _store_dictionary(store, "player")
+	var username := str(player.get("username", "")).strip_edges()
+	if username != "":
+		return username
+	var account_username := _store_string(store, "account_username").strip_edges()
+	if account_username != "":
+		return account_username
+	var auth_email := _store_string(store, "auth_email").strip_edges()
+	if auth_email != "":
+		return auth_email
+	return "sem conta carregada"
+
+static func _account_identity_text(store: Object) -> String:
+	var account_username := _store_string(store, "account_username").strip_edges()
+	if account_username != "":
+		return account_username
+	var auth_email := _store_string(store, "auth_email").strip_edges()
+	if auth_email != "":
+		return auth_email
+	return "sem identidade alpha"
+
+static func _player_field_text(store: Object, key: String, fallback: String) -> String:
+	var player := _store_dictionary(store, "player")
+	if player.has(key):
+		return str(player.get(key, fallback))
+	return fallback
+
+static func _auth_method_text(store: Object) -> String:
+	var method := _store_string(store, "auth_method", "guest").strip_edges().to_lower()
+	var email := _store_string(store, "auth_email").strip_edges()
+	match method:
+		"email":
+			if email != "":
+				return "email/senha (%s)" % email
+			return "email/senha"
+		"guest":
+			return "guest dev"
+	if method == "":
+		return "desconhecido"
+	return method
+
+static func _account_state_text(store: Object) -> String:
+	if _store_call_bool(store, "has_account_state"):
+		if _store_call_bool(store, "is_progression_lab_local_only"):
+			return "snapshot local-only do Progression Lab"
+		return "carregado do save ativo"
+	if _store_call_bool(store, "has_valid_access_token"):
+		return "sessao auth pronta; falta sincronizar/criar save"
+	return "sem sessao auth"
+
+static func _alpha_status_text(store: Object, update_gate: Dictionary) -> String:
+	if _store_call_bool(store, "is_progression_lab_local_only"):
+		return "Progression Lab local-only"
+	if bool(update_gate.get("block_online", false)):
+		return "bloqueado por update obrigatorio"
+	if _store_bool(store, "offline"):
+		return "offline/cache local"
+	if _store_call_bool(store, "has_account_state"):
+		return "online pronto"
+	if _store_call_bool(store, "has_valid_access_token"):
+		return "sessao auth sem save carregado"
+	return "aguardando login"
+
+static func _store_dictionary(store: Object, property_name: String) -> Dictionary:
+	if store == null:
+		return {}
+	return _as_dictionary(store.get(property_name))
+
+static func _store_string(store: Object, property_name: String, fallback: String = "") -> String:
+	if store == null:
+		return fallback
+	var value: Variant = store.get(property_name)
+	if value == null:
+		return fallback
+	return str(value)
+
+static func _store_bool(store: Object, property_name: String) -> bool:
+	if store == null:
+		return false
+	return bool(store.get(property_name))
+
+static func _store_call_string(store: Object, method_name: String, fallback: String = "") -> String:
+	if store == null or not store.has_method(method_name):
+		return fallback
+	return str(store.call(method_name))
+
+static func _store_call_bool(store: Object, method_name: String) -> bool:
+	if store == null or not store.has_method(method_name):
+		return false
+	return bool(store.call(method_name))
 
 static func _add_section_label(host: Node, text: String) -> Label:
 	return host.call("_add_section_label", text) as Label
