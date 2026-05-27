@@ -12,6 +12,8 @@ Track 06 is active as the first feature installation package after the Track 05 
 
 The track deliberately prioritizes solid installation rails and small visible feature slices over tuning. Progression Lab remains available, but economy, power, bots, rewards, shop and combat numbers are not active objectives in this track.
 
+T06-F Base Routine is ready for integration: the Base tab now has a render-only routine panel derived from existing `base/state` payloads, showing collect readiness, active jobs, free construction slots and a readable next upgrade without endpoint, schema, economy, queue or message contract changes.
+
 ## Ordem Atual
 
 1. `T06-A` Coordenacao: complete.
@@ -19,7 +21,7 @@ The track deliberately prioritizes solid installation rails and small visible fe
 3. `T06-C` Runtime Config: integrated into the T06 integration base.
 4. `T06-D` Perfil/Conta: ready for integration; panel renders existing session/account state, active save, username, level, power, auth method, update state and alpha status without a new endpoint.
 5. `T06-E` Battle History: pending after T06-B merge; must fill feature card before runtime.
-6. `T06-F` Base Routine: pending after T06-B merge; must fill feature card before runtime.
+6. `T06-F` Base Routine: ready for integration; panel derives routine/next objective from existing Base payload and is covered by GUT plus `smoke_foundation_surfaces.gd`.
 7. `T06-G` Social QoL: pending after T06-B merge; must fill feature card before runtime.
 8. `T06-H` Asset Pack 01: pending after T06-B merge; must fill feature card before runtime.
 9. `T06-I` Integracao: blocked until T06-C to T06-H are delivered.

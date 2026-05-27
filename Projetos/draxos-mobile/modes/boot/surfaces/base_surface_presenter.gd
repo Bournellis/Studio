@@ -97,12 +97,33 @@ static func can_upgrade_structure(_host: Node, structure_id: String) -> bool:
 	var structure := _base_structure_by_id(structures, structure_id)
 	return bool(structure.get("can_upgrade", false))
 
+static func routine_summary(base: Dictionary, collected: Dictionary = {}) -> Dictionary:
+	var structures := _as_array(base.get("structures", []))
+	var active_jobs := _active_base_jobs(_as_array(base.get("jobs", [])))
+	var slots: int = maxi(0, int(base.get("construction_slots", 1)))
+	var free_slots: int = maxi(0, slots - active_jobs.size())
+	var collect_ready := _collect_ready_resources(structures)
+	var next_upgrade := _next_upgrade_candidate(structures)
+	return {
+		"collect_ready": collect_ready,
+		"collect_text": _routine_collect_text(collect_ready, collected),
+		"has_collect_ready": not collect_ready.is_empty(),
+		"active_job_count": active_jobs.size(),
+		"job_lines": _routine_job_lines(active_jobs),
+		"construction_slots": slots,
+		"free_slots": free_slots,
+		"next_upgrade_id": str(next_upgrade.get("structure_id", "")),
+		"next_upgrade_ready": bool(next_upgrade.get("can_upgrade", false)),
+		"next_upgrade_text": _routine_next_upgrade_text(next_upgrade),
+	}
+
 static func _render_playable_panels(host: Node, structures: Array, base: Dictionary, collected: Dictionary) -> void:
 	var container := _base_state_container(host)
 	if container == null:
 		return
 	_ensure_selected_base_structure(host, structures)
 	container.add_child(_base_summary_panel(host, base, collected))
+	container.add_child(_base_routine_panel(host, base, collected))
 	container.add_child(_base_map_panel(host, structures))
 	container.add_child(_base_detail_panel(host, structures))
 
@@ -125,6 +146,34 @@ static func _base_summary_panel(host: Node, base: Dictionary, collected: Diction
 		box.add_child(_base_label(host, collect_text, "status_success"))
 	if SessionStore.is_progression_lab_active():
 		box.add_child(_base_label(host, "Progression Lab: base isolada do save normal.", "status_warning"))
+	return panel
+
+static func _base_routine_panel(host: Node, base: Dictionary, collected: Dictionary) -> Control:
+	var routine := routine_summary(base, collected)
+	var panel := _base_panel(host)
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 6)
+	panel.add_child(box)
+	box.add_child(_base_label(host, "Rotina da Base", "text_primary", 17))
+
+	var collect_color := "status_success" if bool(routine.get("has_collect_ready", false)) else "text_secondary"
+	box.add_child(_base_label(host, str(routine.get("collect_text", "Coleta pronta: sem dados da Base.")), collect_color))
+
+	var active_job_count := int(routine.get("active_job_count", 0))
+	if active_job_count <= 0:
+		box.add_child(_base_label(host, "Jobs em andamento: nenhum.", "text_secondary"))
+	else:
+		box.add_child(_base_label(host, "Jobs em andamento: %d." % active_job_count, "text_secondary"))
+		for line: String in Array(routine.get("job_lines", [])):
+			box.add_child(_base_label(host, "- %s" % line, "text_secondary"))
+
+	var free_slots := int(routine.get("free_slots", 0))
+	var slots := int(routine.get("construction_slots", 0))
+	var slot_color := "status_success" if free_slots > 0 else "status_warning"
+	box.add_child(_base_label(host, "Slots livres: %d/%d." % [free_slots, slots], slot_color))
+
+	var upgrade_color := "status_success" if bool(routine.get("next_upgrade_ready", false)) else "text_secondary"
+	box.add_child(_base_label(host, "Proximo upgrade: %s" % str(routine.get("next_upgrade_text", "")), upgrade_color))
 	return panel
 
 static func _base_map_panel(host: Node, structures: Array) -> Control:
@@ -382,6 +431,73 @@ static func _active_base_jobs(jobs: Array) -> Array:
 			active.append(job)
 	return active
 
+static func _collect_ready_resources(structures: Array) -> Dictionary:
+	var ready := {}
+	for item: Variant in structures:
+		var structure := _as_dictionary(item)
+		var resource_id := str(structure.get("produces", ""))
+		if resource_id == "" or resource_id == "<null>":
+			continue
+		var amount := float(structure.get("pending_collectable", 0.0))
+		if amount <= 0.005:
+			continue
+		ready[resource_id] = float(ready.get(resource_id, 0.0)) + amount
+	return ready
+
+static func _routine_collect_text(collect_ready: Dictionary, collected: Dictionary) -> String:
+	if not collect_ready.is_empty():
+		return "Coleta pronta: %s." % _format_nonzero_resources(collect_ready)
+	if _resource_total(collected) > 0.0:
+		return "Coleta pronta: coletado agora %s." % _format_nonzero_resources(collected)
+	return "Coleta pronta: nada acumulado agora."
+
+static func _routine_job_lines(active_jobs: Array) -> Array:
+	var lines: Array = []
+	for item: Variant in active_jobs:
+		var job := _as_dictionary(item)
+		var structure_id := str(job.get("structure_id", ""))
+		var display_name := str(job.get("display_name", ""))
+		lines.append("%s -> L%s | resta %s" % [
+			_structure_label(structure_id, display_name),
+			str(job.get("target_level", "?")),
+			_format_duration(int(job.get("remaining_seconds", 0))),
+		])
+	return lines
+
+static func _next_upgrade_candidate(structures: Array) -> Dictionary:
+	var blocked_candidate := {}
+	var active_candidate := {}
+	for structure_id: String in BASE_STRUCTURE_IDS:
+		var structure := _base_structure_by_id(structures, structure_id)
+		if structure.is_empty() or structure.get("next_level", null) == null:
+			continue
+		if bool(structure.get("can_upgrade", false)):
+			return structure
+		var active_job := _as_dictionary(structure.get("active_job", {}))
+		if active_job.is_empty() and blocked_candidate.is_empty():
+			blocked_candidate = structure
+		elif not active_job.is_empty() and active_candidate.is_empty():
+			active_candidate = structure
+	if not blocked_candidate.is_empty():
+		return blocked_candidate
+	return active_candidate
+
+static func _routine_next_upgrade_text(structure: Dictionary) -> String:
+	if structure.is_empty():
+		return "sem upgrade disponivel no payload atual."
+	var structure_id := str(structure.get("structure_id", ""))
+	var next_level: Variant = structure.get("next_level", null)
+	if next_level == null:
+		return "%s no nivel maximo." % _structure_label(structure_id, str(structure.get("display_name", "")))
+	var status := "pronto para iniciar" if bool(structure.get("can_upgrade", false)) else str(structure.get("blocked_message", "Upgrade bloqueado."))
+	return "%s para L%s | custo %s | tempo %s | %s" % [
+		_structure_label(structure_id, str(structure.get("display_name", ""))),
+		str(next_level),
+		_format_cost(_as_dictionary(structure.get("upgrade_cost", {}))),
+		_format_duration(int(structure.get("upgrade_duration_seconds", 0))),
+		status,
+	]
+
 static func _format_cost(cost: Dictionary) -> String:
 	if cost.is_empty():
 		return "-"
@@ -405,6 +521,23 @@ static func _format_number(value: float) -> String:
 	if abs(value - round(value)) < 0.005:
 		return str(int(round(value)))
 	return "%.2f" % value
+
+static func _format_nonzero_resources(resources: Dictionary) -> String:
+	var parts := PackedStringArray()
+	for key: String in RESOURCE_KEYS:
+		var amount := float(resources.get(key, 0.0))
+		if amount > 0.005:
+			parts.append("%s %s" % [key.capitalize(), _format_number(amount)])
+	for raw_key: Variant in resources.keys():
+		var key := str(raw_key)
+		if RESOURCE_KEYS.has(key):
+			continue
+		var amount := float(resources.get(key, 0.0))
+		if amount > 0.005:
+			parts.append("%s %s" % [key.capitalize(), _format_number(amount)])
+	if parts.is_empty():
+		return "nenhum recurso"
+	return " | ".join(parts)
 
 static func _format_resources(resources: Dictionary, include_diamond: bool = true) -> String:
 	var parts := PackedStringArray()
