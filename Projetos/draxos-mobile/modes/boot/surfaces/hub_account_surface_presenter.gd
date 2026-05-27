@@ -9,6 +9,30 @@ const SCREEN_SOCIAL := "social"
 const SCREEN_COMPETITION := "competition"
 const SCREEN_SHOP := "shop"
 
+static func render_account_panel(host: Node) -> void:
+	_add_section_label(host, "Painel de conta")
+	_add_body_text(host, "Login, registro, save ativo, updates e teste guest ficam concentrados aqui para manter o Refugio como home limpa.")
+	render_profile_account_panel(host)
+	render_login(host)
+	render_guest_access(host)
+	render_active_save(host)
+	render_session_status(host)
+	render_update_gate(host)
+
+static func home_account_summary_text(host: Node) -> String:
+	var update_gate := _as_dictionary(host.get("_update_gate")) if host != null else {}
+	var lines := PackedStringArray()
+	lines.append("Conta: %s" % _account_identity_text(SessionStore))
+	lines.append("Save ativo: %s (%s)" % [SessionStore.active_save_label(), SessionStore.active_save_badge()])
+	lines.append("Estado: %s" % _account_state_text(SessionStore))
+	lines.append("Alpha: %s %s | %s" % [
+		ProjectInfoScript.RELEASE_CHANNEL,
+		ProjectInfoScript.APP_VERSION,
+		_alpha_status_text(SessionStore, update_gate),
+	])
+	lines.append("Update: %s" % str(update_gate.get("summary", "Update ainda nao verificado.")))
+	return "\n".join(lines)
+
 static func render_login(host: Node) -> void:
 	_add_section_label(host, "Conta Internal Alpha")
 	_add_body_text(host, "Entre com email e senha para usar o save compartilhado entre PC, Web e Android. O convite libera o primeiro save desta conta.")
@@ -47,10 +71,13 @@ static func render_login(host: Node) -> void:
 	_add_action_button(host, "Sincronizar sessao", "refresh_session")
 	_add_action_button(host, "Resetar sessao local", "reset_session", "Limpar apenas token/cache local desta maquina? O estado salvo no servidor nao sera apagado.")
 
-static func render_quick_test(host: Node) -> void:
-	_add_section_label(host, "Teste rapido")
+static func render_guest_access(host: Node) -> void:
+	_add_section_label(host, "Teste rapido local")
 	_add_body_text(host, "Use guest apenas para validar rapidamente sem criar conta. O teste principal da alpha usa email/senha.")
 	_add_action_button(host, "Entrar como guest", "enter_guest")
+
+static func render_quick_test(host: Node) -> void:
+	render_guest_access(host)
 	if bool(host.call("_battle_lab_available")) or bool(host.call("_progression_lab_available")):
 		_add_section_label(host, "Labs do editor")
 		if bool(host.call("_battle_lab_available")):

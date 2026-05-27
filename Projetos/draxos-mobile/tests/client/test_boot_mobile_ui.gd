@@ -22,7 +22,13 @@ func test_boot_compact_layout_groups_actions_for_mobile_landscape() -> void:
 	assert_true(boot._nav_buttons.is_empty())
 	assert_true(boot._back_button.custom_minimum_size.y >= 48.0)
 	assert_true(boot._content_scroll is TouchScrollContainerScript)
+	assert_true(_label_tree_contains(boot._content_body, "Altar do Refugio"))
+	var battle_hotspot := _find_button_by_text(boot._content_body, "Batalha")
+	assert_not_null(battle_hotspot)
+	assert_true(battle_hotspot.custom_minimum_size.y >= 48.0)
+	assert_false(_has_direct_button_child(boot._content_body))
 
+	boot._show_screen("account")
 	var action_grid := _first_action_grid(boot._content_body)
 	assert_not_null(action_grid)
 	assert_eq(action_grid.columns, 3)
@@ -39,6 +45,7 @@ func test_boot_route_stack_normalizes_legacy_screen_ids() -> void:
 	assert_eq(boot._current_screen, "refuge_home")
 	assert_false(boot._route_supports_back("hub"))
 	assert_true(boot._route_supports_back("battle"))
+	assert_eq(boot._normalize_route("perfil"), "account")
 
 	boot._show_screen("battle")
 	assert_eq(boot._current_screen, "battle_entry")
@@ -59,6 +66,38 @@ func test_boot_shell_has_no_global_tab_navigation() -> void:
 	boot._show_screen("base")
 	assert_true(boot._back_button.visible)
 	assert_true(boot._nav_buttons.is_empty())
+
+func test_boot_refugio_home_renders_altar_hotspots_and_account_route() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	assert_eq(boot._current_screen, "refuge_home")
+	assert_true(_label_tree_contains(boot._content_body, "Altar do Refugio"))
+	assert_true(_label_tree_contains(boot._content_body, "Estado do Refugio"))
+	assert_true(_label_tree_contains(boot._content_body, "Hotspots"))
+	assert_null(boot._auth_email_input)
+	assert_false(boot._action_buttons.has("email_sign_up"))
+
+	for hotspot_text: String in ["Batalha", "Base", "Social", "Competicao", "Loja", "Perfil/Conta"]:
+		var hotspot := _find_button_by_text(boot._content_body, hotspot_text)
+		assert_not_null(hotspot, "Refugio should expose hotspot '%s'." % hotspot_text)
+		assert_true(hotspot.custom_minimum_size.y >= 48.0)
+
+	var account_hotspot := _find_button_by_text(boot._content_body, "Perfil/Conta")
+	account_hotspot.pressed.emit()
+	assert_eq(boot._current_screen, "account")
+	assert_not_null(boot._auth_email_input)
+	assert_true(boot._back_button.visible)
+
+func test_boot_refugio_home_shows_progression_lab_when_dev_tools_are_enabled() -> void:
+	ProjectSettings.set_setting("draxos_mobile/progression_lab/enabled", true)
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	if boot._progression_lab_available():
+		assert_true(_label_tree_contains(boot._content_body, "Labs dev"))
+		assert_not_null(_find_button_by_text(boot._content_body, "Progression Lab"))
+		assert_true(boot._action_buttons.has("open_progression_lab"))
 
 func test_boot_battle_running_route_declares_landscape() -> void:
 	var boot = BootScreenScript.new()
@@ -91,9 +130,10 @@ func test_touch_scroll_container_uses_drag_threshold_and_wide_scrollbar() -> voi
 	assert_true(scroll.is_touch_dragging_for_test())
 	assert_true(scroll.get_v_scroll_bar().custom_minimum_size.x >= 30.0)
 
-func test_boot_hub_presenter_renders_login_save_session_and_update_gate() -> void:
+func test_boot_account_panel_renders_login_save_session_and_update_gate() -> void:
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)
+	boot._show_screen("account")
 
 	assert_not_null(boot._auth_email_input)
 	assert_not_null(boot._auth_password_input)
@@ -116,7 +156,7 @@ func test_boot_profile_account_panel_shows_save_account_update_and_alpha_status(
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)
 	boot._update_gate = ProjectInfo.update_status_from_manifest(_current_manifest_fixture(), "https://manifest.example")
-	boot._show_screen("hub", false)
+	boot._show_screen("account", false)
 	await get_tree().process_frame
 
 	assert_true(_label_tree_contains(boot._content_body, "Perfil e conta"))
@@ -133,6 +173,7 @@ func test_boot_profile_account_panel_shows_save_account_update_and_alpha_status(
 func test_boot_profile_account_panel_has_clear_empty_state_without_account() -> void:
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)
+	boot._show_screen("account")
 
 	assert_true(_label_tree_contains(boot._content_body, "Username: sem conta carregada"))
 	assert_true(_label_tree_contains(boot._content_body, "account/state: sem sessao auth"))
@@ -370,6 +411,17 @@ func _has_direct_button_child(parent: Node) -> bool:
 		if child is Button:
 			return true
 	return false
+
+func _find_button_by_text(root: Node, text: String) -> Button:
+	if root == null:
+		return null
+	if root is Button and str((root as Button).text) == text:
+		return root as Button
+	for child: Node in root.get_children():
+		var found := _find_button_by_text(child, text)
+		if found != null:
+			return found
+	return null
 
 func _label_tree_contains(root: Node, needle: String) -> bool:
 	if root == null:

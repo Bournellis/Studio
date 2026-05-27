@@ -94,7 +94,7 @@ Validation:
 
 ## T07-C - Refugio/Home
 
-Status: `PLANNED`.
+Status: `COMPLETE_VALIDATED`.
 
 - Make Refugio the first full-screen home.
 - Render altar/ambient center with hotspot/menu actions for Battle, Base, Social, Competition, Shop, Profile/Account and dev Labs.
@@ -102,7 +102,19 @@ Status: `PLANNED`.
 - Keep secondary actions such as sync/reset/update/save under account/config sections.
 - Ensure Progression Lab appears when dev tools/editor are enabled.
 
-Validation: Refugio/account/labs GUT, `smoke_session_shell.gd`, `validate.gd` and `git diff --check`.
+Handoff:
+
+- Refugio renders a central altar/ambient home surface and route hotspots instead of the old login/status/screen list.
+- Profile/Account is a dedicated route for login, registration, guest dev, active save, reset, update and profile status controls.
+- Battle Lab and Progression Lab remain dev/editor-gated hotspots from the Refugio; Progression Lab appears only when available.
+- `boot.gd` changes are limited to account route rendering and route aliases; existing action handlers remain owned by `boot.gd`.
+
+Validation:
+
+- `tools/validate.gd`: passed with `79/79` tests and `894` asserts.
+- GUT client complete: passed with `79/79` tests and `894` asserts.
+- `tools/smoke_session_shell.gd`: passed.
+- `git diff --check`: passed.
 
 ## T07-D - App Screens
 

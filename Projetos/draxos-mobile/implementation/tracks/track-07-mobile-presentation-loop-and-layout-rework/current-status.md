@@ -3,8 +3,8 @@
 - Last Updated: `2026-05-27`
 - Status: `ACTIVE_PRESENTATION_REWORK`
 - Depends On: `T06_INTEGRATED_FEATURE_SLICES_READY`
-- Current Stage: `T07_B_APP_SHELL_FOUNDATION`
-- Next Action: run Refugio/Home, App Screens and Battle Fullscreen work in parallel on top of the T07-B foundation.
+- Current Stage: `T07_C_REFUGIO_HOME_COMPLETE`
+- Next Action: continue/integrate App Screens and Battle Fullscreen work, then run PC/Web validation on top of the delivered Refugio/Home package.
 
 ## Estado
 
@@ -15,8 +15,8 @@ The track responds to the first post-Track 06 walkthrough findings: the current 
 ## Ordem Atual
 
 1. `T07-A` Coordenacao: complete and on master.
-2. `T07-B` App Shell/Foundation: in progress on `codex/draxos-mobile/t07-app-shell-foundation`; creates routes, back stack, orientation helpers and scroll/touch foundation.
-3. `T07-C` Refugio/Home: planned after `T07-B`; turns Refugio into full-screen home with altar/hotspots and cleaner account panel.
+2. `T07-B` App Shell/Foundation: complete and validated; creates routes, back stack, orientation helpers and scroll/touch foundation.
+3. `T07-C` Refugio/Home: complete and validated on `codex/draxos-mobile/t07-refugio-home`; turns Refugio into full-screen home with altar/hotspots and cleaner account panel.
 4. `T07-D` App Screens: planned after `T07-B`; adapts Base, Social, Competition and Shop into internal app screens.
 5. `T07-E` Battle Fullscreen: planned after `T07-B`; makes battle/replay full-screen landscape with skip and summary.
 6. `T07-F` PC/Web + Validation: planned after `T07-C` to `T07-E`; adds presentation smoke and compatibility coverage.
@@ -50,6 +50,25 @@ Validation:
 
 - `tools/validate.gd`: passed with `77/77` tests and `865` asserts.
 - GUT client completo: passed with `77/77` tests and `865` asserts.
+- `git diff --check`: passed.
+
+## T07-C Handoff
+
+Status: `COMPLETE_VALIDATED`.
+
+Delivered:
+
+- Refugio now renders as a full-screen home surface with a central altar/ambient panel instead of the previous login/status/tabs list.
+- Home hotspots open Battle, Base, Social, Competition, Shop and Profile/Account through the T07-B route shell.
+- Dev Lab hotspots remain internal/editor-gated; Progression Lab appears on the Refugio only when the editor/dev setting is enabled.
+- Account/login/register/guest/save/update controls moved into the focused `account` route/panel, preserving existing `boot.gd` actions.
+- Focused GUT coverage validates Refugio hotspots, account route, dev Progression Lab visibility and the moved account controls.
+
+Validation:
+
+- `tools/validate.gd`: passed with `79/79` tests and `894` asserts.
+- GUT client completo: passed with `79/79` tests and `894` asserts.
+- `tools/smoke_session_shell.gd`: passed with anonymous auth, guest account and `account/state`.
 - `git diff --check`: passed.
 
 ## Validation Baseline

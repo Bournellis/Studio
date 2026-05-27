@@ -189,6 +189,10 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	_social_friend_input = null
 	_social_guild_input = null
 	_social_chat_input = null
+	_auth_email_input = null
+	_auth_password_input = null
+	_auth_username_input = null
+	_auth_invite_input = null
 	_battle_visual = null
 	_battle_replay_presenter.clear()
 	_error_label.text = ""
@@ -200,6 +204,8 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	match screen_id:
 		SCREEN_HUB:
 			_render_hub_screen()
+		ROUTE_ACCOUNT:
+			_render_account_screen()
 		SCREEN_BATTLE:
 			_render_battle_screen()
 		SCREEN_BASE:
@@ -233,6 +239,8 @@ func _normalize_route(route_id: String) -> String:
 	match route_id:
 		"hub", "refugio", "refuge":
 			return ROUTE_REFUGE_HOME
+		"conta", "perfil", "profile":
+			return ROUTE_ACCOUNT
 		"battle":
 			return ROUTE_BATTLE_ENTRY
 		"monetization":
@@ -344,6 +352,9 @@ func _clear_node_children(parent: Node) -> void:
 
 func _render_hub_screen() -> void:
 	HubSurfacePresenterScript.render(self)
+
+func _render_account_screen() -> void:
+	HubAccountSurfacePresenterScript.render_account_panel(self)
 
 func _render_battle_screen() -> void:
 	_battle_replay_presenter.render(
