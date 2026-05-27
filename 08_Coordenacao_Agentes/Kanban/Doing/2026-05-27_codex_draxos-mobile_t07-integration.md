@@ -6,7 +6,7 @@
 - Branch: `codex/draxos-mobile/t07-integration`
 - Worktree: `D:\Estudio-worktrees\draxos-mobile--codex--t07-integration`
 - Objetivo: integrar Track 07 completa, resolver conflitos e validar a matriz final.
-- Status: `IN_PROGRESS`
+- Status: `COMPLETE_VALIDATED`
 
 ## Base Lida
 
@@ -36,4 +36,23 @@
 
 ## Handoff
 
-Ao final, atualizar current-status, Track 07 status e snapshots de portfolio.
+Track 07 integrada em `codex/draxos-mobile/t07-integration` e pronta para walkthrough manual mobile/PC/Web.
+
+Entregas:
+
+- T07-D e T07-E integradas sobre T07-C/T07-B com conflitos resolvidos apenas em documentacao da Track.
+- T07-F adicionou `tools/smoke_mobile_presentation.gd` e registro em `tools/validate.gd`.
+- Status local, Track 07, registry de agentes e snapshots de portfolio atualizados.
+
+Validacao final:
+
+- `tools/validate.gd`: passou com `85/85` testes e `968` asserts.
+- GUT client completo: passou com `85/85` testes e `968` asserts.
+- `tools/smoke_session_shell.gd`: passou.
+- `tools/smoke_foundation_surfaces.gd`: passou.
+- `tools/smoke_mobile_presentation.gd`: passou.
+- `tools/smoke_exports.gd`: passou.
+- `tools/smoke_battle_replay.gd`: passou com `BATTLE_FUNCTION_URL` apontando para a funcao `battle` atual servida a partir do worktree de integracao.
+- `git diff --check`: passou.
+
+Nota operacional: a Edge Runtime local ja em execucao em `127.0.0.1:54321` ainda servia uma funcao `battle` antiga sem `/battle/history`; reiniciar/redeployar funcoes locais antes de validar esse endpoint padrao.

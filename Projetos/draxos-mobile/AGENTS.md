@@ -172,6 +172,6 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 
 ## Active Track
 
-Track ativa: `Track 07 - Mobile Presentation Loop And Layout Rework` (`ACTIVE_PRESENTATION_REWORK`).
+Track ativa: `Track 07 - Mobile Presentation Loop And Layout Rework` (`INTEGRATED_PRESENTATION_READY`; aguardando walkthrough manual mobile/PC/Web).
 
 Comece por `implementation/current-status.md` e siga `implementation/tracks/track-07-mobile-presentation-loop-and-layout-rework/current-status.md`.

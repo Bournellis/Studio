@@ -7,7 +7,7 @@
 ## Prioridade do Estudio
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Foco P2 de implementacao: `Projetos/draxos-mobile/` (Track 07 `ACTIVE_PRESENTATION_REWORK`)
+- Foco P2 de implementacao: `Projetos/draxos-mobile/` (Track 07 `INTEGRATED_PRESENTATION_READY`)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -23,15 +23,15 @@
 
 ## DraxosMobile
 
-- Status: **P2_IMPLEMENTACAO - Track 07 ACTIVE_PRESENTATION_REWORK**
+- Status: **P2_IMPLEMENTACAO - Track 07 INTEGRATED_PRESENTATION_READY**
 - Fase: `Implementacao`
 - Local: `Projetos/draxos-mobile/`
 - Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
 - Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
-- Baseline atual: Track 00 completa com primeiro slice server-authoritative, Track 01 completa para hardening do alpha PC local e Track 02 com Progression Lab/Battle Lab v1, Character Systems Rework, Source Identity Balance v2, batalha visual procedural 2D, smokes e validacoes verdes. Track 03 esta completa para Internal Alpha v0 e Fabio confirmou que os testes Fabio + tester passaram. Track 04 consolidou presenters render-only do Hub, Track 05 integrou a fundacao validada e Track 06 integrou feature rails, runtime config, Perfil/Conta, Battle History/replay read-only, rotina da Base, Social QoL e Asset Pack 01 seguro. Track 07 esta ativa para corrigir apresentacao e layout mobile-first: Refugio como home full screen, app portrait/landscape fora de gameplay, rotas/back stack, scroll touch confortavel, telas internas em vez de lista de abas e autobattler full-screen landscape. Supabase segue para alpha, Backend Proprio + Postgres e o plano de saida preferido, e Nakama fica apenas se realtime/social competitivo virar pilar.
+- Baseline atual: Track 00 completa com primeiro slice server-authoritative, Track 01 completa para hardening do alpha PC local e Track 02 com Progression Lab/Battle Lab v1, Character Systems Rework, Source Identity Balance v2, batalha visual procedural 2D, smokes e validacoes verdes. Track 03 esta completa para Internal Alpha v0 e Fabio confirmou que os testes Fabio + tester passaram. Track 04 consolidou presenters render-only do Hub, Track 05 integrou a fundacao validada e Track 06 integrou feature rails, runtime config, Perfil/Conta, Battle History/replay read-only, rotina da Base, Social QoL e Asset Pack 01 seguro. Track 07 esta integrada: Refugio home full screen, app shell com rotas/back stack, scroll touch confortavel, telas internas portrait/landscape para Base/Social/Competicao/Loja e autobattler full-screen landscape com skip/summary. Supabase segue para alpha, Backend Proprio + Postgres e o plano de saida preferido, e Nakama fica apenas se realtime/social competitivo virar pilar.
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
 - Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export.
-- Proximo passo: integrar `T07-B` App Shell/Foundation e entao executar Refugio/Home, App Screens e Battle Fullscreen em paralelo.
+- Proximo passo: fazer walkthrough manual mobile/PC/Web do novo loop e entao decidir a proxima track de assets/servicos/features.
 
 ## rpg-isometrico
 

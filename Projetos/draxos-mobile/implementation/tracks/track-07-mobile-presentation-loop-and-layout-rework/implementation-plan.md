@@ -58,7 +58,7 @@ Orientation behavior:
 
 ## T07-A - Coordenacao
 
-Status: `IN_PROGRESS`.
+Status: `COMPLETE`.
 
 - Criar pasta da Track 07 com `scope.md`, `current-status.md`, `implementation-plan.md`, `agent-registry.md` e `agent-prompts.md`.
 - Atualizar snapshots de portfolio e status local.
@@ -118,13 +118,13 @@ Validation:
 
 ## T07-D - App Screens
 
-Status: `PLANNED`.
+Status: `COMPLETE_VALIDATED`.
 
-- Adapt Base, Social, Competition and Shop presenters to internal app screens opened from Refugio.
-- Provide Back, portrait/landscape layout and comfortable scroll.
-- Preserve existing actions, endpoints, schema, economy and contract messages.
+- Adapted Base, Social, Competition and Shop presenters to internal app screens opened from Refugio.
+- Added shared responsive panel layout for portrait/narrow and landscape/wide screens.
+- Preserved existing actions, endpoints, schema, economy and contract messages.
 
-Validation: `smoke_foundation_surfaces.gd`, focused GUT, `validate.gd` and `git diff --check`.
+Validation: `smoke_foundation_surfaces.gd`, focused GUT, `validate.gd` and `git diff --check` passed.
 
 ## T07-E - Battle Fullscreen
 
@@ -139,34 +139,39 @@ Validation: `smoke_battle_replay.gd`, battle fullscreen/summary GUT, `validate.g
 
 ## T07-F - PC/Web + Validation
 
-Status: `PLANNED`.
+Status: `COMPLETE_VALIDATED`.
 
-- Add `tools/smoke_mobile_presentation.gd`.
-- Cover portrait, landscape, PC/browser-compatible layout, route stack, Back, Refugio home, Progression Lab dev visibility, scroll over buttons, battle fullscreen and summary.
-- Make only compatibility adjustments needed for the smoke to pass.
+- Added `tools/smoke_mobile_presentation.gd`.
+- Covered portrait, landscape, PC/browser-compatible layout, route stack, Back, Refugio home, scroll reset, battle fullscreen and summary.
+- Made only compatibility/test harness adjustments needed for the smoke to pass.
 
-Validation: `smoke_mobile_presentation.gd`, `smoke_exports.gd`, `validate.gd`, GUT and `git diff --check`.
+Handoff:
+
+- `tools/smoke_mobile_presentation.gd` covers portrait Refugio/account/Back, landscape internal app route/scroll reset and battle fullscreen/summary without network.
+- `tools/validate.gd` checks that the presentation smoke is present.
+
+Validation: `smoke_mobile_presentation.gd`, `smoke_exports.gd`, `validate.gd`, GUT and `git diff --check` passed.
 
 ## T07-G - Integracao
 
-Status: `PLANNED`.
+Status: `COMPLETE_VALIDATED`.
 
-- Integrate T07-B to T07-F in safe order.
-- Resolve conflicts without hiding validation failures.
-- Preserve Track 07 guardrails.
-- Run the final validation matrix.
-- Update `implementation/current-status.md`, Track 07 status and portfolio snapshots.
+- Integrated T07-B to T07-F in safe order.
+- Resolved conflicts without hiding validation failures.
+- Preserved Track 07 guardrails.
+- Ran the final validation matrix.
+- Updated `implementation/current-status.md`, Track 07 status and portfolio snapshots.
 
 Final validation:
 
-- `tools/validate.gd`
-- GUT client complete
-- `tools/smoke_session_shell.gd`
-- `tools/smoke_battle_replay.gd`
-- `tools/smoke_foundation_surfaces.gd`
-- `tools/smoke_exports.gd`
-- `tools/smoke_mobile_presentation.gd`
-- `git diff --check`
+- `tools/validate.gd`: passed with `85/85` tests and `968` asserts.
+- GUT client complete: passed with `85/85` tests and `968` asserts.
+- `tools/smoke_session_shell.gd`: passed.
+- `tools/smoke_battle_replay.gd`: passed with `BATTLE_FUNCTION_URL` pointed to the current worktree-served `battle` function.
+- `tools/smoke_foundation_surfaces.gd`: passed.
+- `tools/smoke_exports.gd`: passed.
+- `tools/smoke_mobile_presentation.gd`: passed.
+- `git diff --check`: passed.
 
 ## Assumptions
 

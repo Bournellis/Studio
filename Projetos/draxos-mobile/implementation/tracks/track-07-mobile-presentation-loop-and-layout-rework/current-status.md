@@ -1,14 +1,14 @@
 # Track 07 - Current Status
 
 - Last Updated: `2026-05-27`
-- Status: `ACTIVE_PRESENTATION_REWORK`
+- Status: `INTEGRATED_PRESENTATION_READY`
 - Depends On: `T06_INTEGRATED_FEATURE_SLICES_READY`
-- Current Stage: `T07_G_INTEGRATION`
-- Next Action: add PC/Web presentation validation and run the final validation matrix.
+- Current Stage: `T07_G_COMPLETE_VALIDATED`
+- Next Action: run a manual mobile/PC/Web walkthrough of the new presentation loop and decide the next asset/service feature track.
 
 ## Estado
 
-Track 07 is active as the mobile-first presentation and layout rework.
+Track 07 is integrated as the mobile-first presentation and layout rework.
 
 The track responds to the first post-Track 06 walkthrough findings: the current Hub still reads like a tab/list app, touch scrolling competes with buttons, the scrollbar affordance is too narrow, Refugio/account/login are cluttered, Progression Lab access became too hidden, and battle should feel like a full-screen landscape game moment instead of a screen inside the Hub chrome.
 
@@ -19,8 +19,8 @@ The track responds to the first post-Track 06 walkthrough findings: the current 
 3. `T07-C` Refugio/Home: complete and integrated into `T07-G`; turns Refugio into full-screen home with altar/hotspots and cleaner account panel.
 4. `T07-D` App Screens: complete and integrated into `T07-G`; adapts Base, Social, Competition and Shop into internal app screens.
 5. `T07-E` Battle Fullscreen: complete and integrated into `T07-G`; makes battle/replay full-screen landscape with skip and summary.
-6. `T07-F` PC/Web + Validation: in progress in `T07-G`; adds presentation smoke and compatibility coverage.
-7. `T07-G` Integracao: in progress for final integration and status update.
+6. `T07-F` PC/Web + Validation: complete and validated in `T07-G`; added presentation smoke and compatibility coverage.
+7. `T07-G` Integracao: complete and validated; final status and portfolio snapshots updated.
 
 ## Guardrails
 
@@ -110,6 +110,48 @@ Validation:
 - `tools/validate.gd`: passed with `81/81` tests and `907` asserts.
 - `tools/smoke_battle_replay.gd`: passed when `BATTLE_FUNCTION_URL` pointed to the current `battle` function served from this worktree. The default local Supabase Edge Runtime was still mounted to another worktree and returned `NOT_FOUND` for `/battle/history`.
 - `git diff --check`: passed.
+
+## T07-F Handoff
+
+Status: `COMPLETE_VALIDATED`.
+
+Delivered:
+
+- Added `tools/smoke_mobile_presentation.gd` to exercise the presentation loop without network.
+- Smoke covers portrait Refugio/home, account route, Back behavior, landscape internal app route, scroll reset, battle fullscreen route, landscape declaration and battle summary actions.
+- `tools/validate.gd` now checks that the presentation smoke exists.
+
+Validation:
+
+- `tools/smoke_mobile_presentation.gd`: passed.
+- `tools/smoke_exports.gd`: passed.
+- `tools/validate.gd`: passed with `85/85` tests and `968` asserts.
+- GUT client complete: passed with `85/85` tests and `968` asserts.
+
+## T07-G Integration
+
+Status: `COMPLETE_VALIDATED`.
+
+Delivered:
+
+- Integrated T07-D and T07-E into `codex/draxos-mobile/t07-integration` after T07-C and resolved documentation conflicts without changing backend/schema/economy/rewards/ranking/simulator contracts.
+- Added the T07-F mobile presentation smoke directly in the integration worktree because C/D/E were already available there.
+- Updated `implementation/current-status.md`, Track 07 status, agent registry, implementation plan and portfolio snapshots.
+
+Final validation:
+
+- `tools/validate.gd`: passed with `85/85` tests and `968` asserts.
+- GUT client complete: passed with `85/85` tests and `968` asserts.
+- `tools/smoke_session_shell.gd`: passed.
+- `tools/smoke_foundation_surfaces.gd`: passed.
+- `tools/smoke_mobile_presentation.gd`: passed.
+- `tools/smoke_exports.gd`: passed.
+- `tools/smoke_battle_replay.gd`: passed with `BATTLE_FUNCTION_URL` pointing to the current `battle` function served from the integration worktree.
+- `git diff --check`: passed after final status updates.
+
+Known operational note:
+
+- The already-running local Supabase Edge Runtime on `127.0.0.1:54321` was still serving an older `battle` function and returned `NOT_FOUND` for `/battle/history`. Restart/redeploy local functions before using the default local endpoint for battle history/replay validation.
 
 ## Validation Baseline
 
