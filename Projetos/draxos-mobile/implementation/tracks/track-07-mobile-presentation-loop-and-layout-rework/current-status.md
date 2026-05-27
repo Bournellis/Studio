@@ -3,8 +3,8 @@
 - Last Updated: `2026-05-27`
 - Status: `ACTIVE_PRESENTATION_REWORK`
 - Depends On: `T06_INTEGRATED_FEATURE_SLICES_READY`
-- Current Stage: `T07_A_COORDINATION`
-- Next Action: integrate the App Shell/Foundation branch, then run Refugio, app screens and battle fullscreen work in parallel.
+- Current Stage: `T07_B_APP_SHELL_FOUNDATION`
+- Next Action: run Refugio/Home, App Screens and Battle Fullscreen work in parallel on top of the T07-B foundation.
 
 ## Estado
 
@@ -14,8 +14,8 @@ The track responds to the first post-Track 06 walkthrough findings: the current 
 
 ## Ordem Atual
 
-1. `T07-A` Coordenacao: in progress on `codex/draxos-mobile/t07-coordenacao`.
-2. `T07-B` App Shell/Foundation: planned after `T07-A`; creates routes, back stack, orientation helpers and scroll/touch foundation.
+1. `T07-A` Coordenacao: complete and on master.
+2. `T07-B` App Shell/Foundation: in progress on `codex/draxos-mobile/t07-app-shell-foundation`; creates routes, back stack, orientation helpers and scroll/touch foundation.
 3. `T07-C` Refugio/Home: planned after `T07-B`; turns Refugio into full-screen home with altar/hotspots and cleaner account panel.
 4. `T07-D` App Screens: planned after `T07-B`; adapts Base, Social, Competition and Shop into internal app screens.
 5. `T07-E` Battle Fullscreen: planned after `T07-B`; makes battle/replay full-screen landscape with skip and summary.
@@ -30,6 +30,27 @@ The track responds to the first post-Track 06 walkthrough findings: the current 
 - Do not publish builds or mutate remote release state.
 - Keep Progression Lab dev/internal.
 - Keep PC executable and PC browser usable for handoff and testing.
+
+## T07-B Handoff
+
+Status: `COMPLETE_VALIDATED`.
+
+Delivered:
+
+- Route constants and normalization for `refuge_home`, `account`, `base`, `social`, `competition`, `shop`, `battle_entry`, `battle_running`, `battle_summary`, `battle_lab` and `progression_lab`.
+- Legacy route compatibility for older calls such as `hub`, `battle` and `monetization`.
+- Route stack/back helpers with Refugio as root.
+- Android-only orientation helper that locks `battle_running` to landscape and restores sensor orientation after leaving gameplay.
+- Shell presenter without the old global tab navigation row.
+- `DraxosTouchScrollContainer` with wider scrollbar affordance and drag threshold for touch/mouse scrolling.
+- Touch-friendly button helper using larger targets and pass-through mouse filtering for scroll gestures.
+- Focused GUT coverage for route normalization, absent global nav, orientation route declaration and touch-scroll threshold.
+
+Validation:
+
+- `tools/validate.gd`: passed with `77/77` tests and `865` asserts.
+- GUT client completo: passed with `77/77` tests and `865` asserts.
+- `git diff --check`: passed.
 
 ## Validation Baseline
 

@@ -69,7 +69,7 @@ Validation: `git diff --check`.
 
 ## T07-B - App Shell/Foundation
 
-Status: `PLANNED`.
+Status: `COMPLETE_VALIDATED`.
 
 - Add route constants and stack helpers.
 - Replace global tab/list navigation with route-driven shell rendering.
@@ -78,7 +78,19 @@ Status: `PLANNED`.
 - Enlarge scroll affordance/touch target.
 - Keep content presenters render-only where practical.
 
-Validation: route/back stack GUT, scroll/tap GUT, `validate.gd`, GUT and `git diff --check`.
+Handoff:
+
+- Route ids are now normalized through the Boot shell; `hub`, `battle` and `monetization` remain accepted as compatibility aliases.
+- The old global tab navigation row has been removed from the shell; navigation should be opened from Refugio hotspots and internal Back.
+- `DraxosTouchScrollContainer` is the app content scroll foundation.
+- Buttons use `_prepare_touch_button()` so scroll gestures can bubble through button surfaces.
+- `battle_running` is the only route that currently declares landscape orientation.
+
+Validation:
+
+- `tools/validate.gd`: passed with `77/77` tests and `865` asserts.
+- GUT client complete: passed with `77/77` tests and `865` asserts.
+- `git diff --check`: passed.
 
 ## T07-C - Refugio/Home
 

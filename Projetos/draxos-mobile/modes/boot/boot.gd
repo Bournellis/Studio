@@ -11,15 +11,29 @@ const SocialSurfacePresenterScript := preload("res://modes/boot/surfaces/social_
 const CompetitionSurfacePresenterScript := preload("res://modes/boot/surfaces/competition_surface_presenter.gd")
 const ShopSurfacePresenterScript := preload("res://modes/boot/surfaces/shop_surface_presenter.gd")
 
-const SCREEN_HUB := "hub"
-const SCREEN_BATTLE := "battle"
-const SCREEN_BASE := "base"
-const SCREEN_SOCIAL := "social"
-const SCREEN_COMPETITION := "competition"
-const SCREEN_SHOP := "shop"
+const ROUTE_REFUGE_HOME := "refuge_home"
+const ROUTE_ACCOUNT := "account"
+const ROUTE_BASE := "base"
+const ROUTE_SOCIAL := "social"
+const ROUTE_COMPETITION := "competition"
+const ROUTE_SHOP := "shop"
+const ROUTE_BATTLE_ENTRY := "battle_entry"
+const ROUTE_BATTLE_RUNNING := "battle_running"
+const ROUTE_BATTLE_SUMMARY := "battle_summary"
+const ROUTE_BATTLE_LAB := "battle_lab"
+const ROUTE_PROGRESSION_LAB := "progression_lab"
+
+const SCREEN_HUB := ROUTE_REFUGE_HOME
+const SCREEN_BATTLE := ROUTE_BATTLE_ENTRY
+const SCREEN_BASE := ROUTE_BASE
+const SCREEN_SOCIAL := ROUTE_SOCIAL
+const SCREEN_COMPETITION := ROUTE_COMPETITION
+const SCREEN_SHOP := ROUTE_SHOP
 const BATTLE_LAB_SCREEN_PATH := "res://dev/battle_lab/battle_lab_screen.gd"
 const PROGRESSION_LAB_SCREEN_PATH := "res://dev/progression_lab/progression_lab_screen.gd"
 const BATTLE_REPLAY_TICK_SECONDS := 0.05
+const APP_ORIENTATION_SENSOR := DisplayServer.SCREEN_SENSOR
+const APP_ORIENTATION_LANDSCAPE := DisplayServer.SCREEN_LANDSCAPE
 
 const RESOURCE_KEYS := ["almas", "energia", "sangue", "cristais", "ossos", "diamante"]
 const BASE_STRUCTURE_IDS := ["altar_das_almas", "nucleo_energia", "pocos_sangue", "minas_cristal", "estrutura_stats", "ossario"]
@@ -30,6 +44,7 @@ var _detail_label: Label
 var _error_label: Label
 var _back_button: Button
 var _content_title: Label
+var _content_scroll: ScrollContainer
 var _content_body: VBoxContainer
 var _timeline_label: Label
 var _update_output_label: Label
@@ -52,6 +67,8 @@ var _nav_buttons: Dictionary = {}
 var _current_action_grid: GridContainer
 var _screen_history: Array[String] = []
 var _current_screen := SCREEN_HUB
+var _app_orientation_locked := false
+var _orientation_restore_pending := false
 var _pending_confirmation_action := ""
 var _active_action_id := ""
 var _is_busy := false
@@ -156,9 +173,11 @@ func _ensure_action_grid() -> GridContainer:
 	return grid
 
 func _show_screen(screen_id: String, push_history: bool = true) -> void:
+	screen_id = _normalize_route(screen_id)
 	if push_history and screen_id != _current_screen:
 		_screen_history.append(_current_screen)
 	_current_screen = screen_id
+	_apply_orientation_for_route(screen_id)
 	_action_buttons.clear()
 	_current_action_grid = null
 	_timeline_label = null
@@ -209,6 +228,35 @@ func _go_back() -> void:
 		return
 	var previous: String = _screen_history.pop_back()
 	_show_screen(previous, false)
+
+func _normalize_route(route_id: String) -> String:
+	match route_id:
+		"hub", "refugio", "refuge":
+			return ROUTE_REFUGE_HOME
+		"battle":
+			return ROUTE_BATTLE_ENTRY
+		"monetization":
+			return ROUTE_SHOP
+	return route_id
+
+func _route_supports_back(route_id: String) -> bool:
+	return _normalize_route(route_id) != ROUTE_REFUGE_HOME
+
+func _route_prefers_landscape(route_id: String) -> bool:
+	return _normalize_route(route_id) == ROUTE_BATTLE_RUNNING
+
+func _apply_orientation_for_route(route_id: String) -> void:
+	if OS.get_name() != "Android":
+		return
+	if _route_prefers_landscape(route_id):
+		if not _app_orientation_locked:
+			_orientation_restore_pending = true
+		_app_orientation_locked = true
+		DisplayServer.screen_set_orientation(APP_ORIENTATION_LANDSCAPE)
+	elif _app_orientation_locked or _orientation_restore_pending:
+		_app_orientation_locked = false
+		_orientation_restore_pending = false
+		DisplayServer.screen_set_orientation(APP_ORIENTATION_SENSOR)
 
 func _battle_lab_available() -> bool:
 	if not OS.has_feature("editor"):
@@ -370,6 +418,7 @@ func _add_action_button(text: String, action_id: String, confirm_message: String
 	button.custom_minimum_size = _button_min_size()
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	button.tooltip_text = text
+	_prepare_touch_button(button)
 	button.pressed.connect(func() -> void:
 		_trigger_action(action_id, confirm_message)
 	)
@@ -399,17 +448,23 @@ func _add_social_input(label_text: String, placeholder: String, initial_text: St
 	return input
 
 func _add_screen_button(text: String, screen_id: String) -> Button:
-	var target_screen := screen_id
+	var target_screen := _normalize_route(screen_id)
 	var button := Button.new()
 	button.text = text
 	button.custom_minimum_size = _button_min_size()
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	button.tooltip_text = "Abrir %s." % _screen_title(screen_id)
+	_prepare_touch_button(button)
 	button.pressed.connect(func() -> void:
 		_show_screen(target_screen)
 	)
 	_ensure_action_grid().add_child(button)
 	return button
+
+func _prepare_touch_button(button: Button) -> void:
+	button.mouse_filter = Control.MOUSE_FILTER_PASS
+	button.focus_mode = Control.FOCUS_NONE
+	button.custom_minimum_size.y = maxf(button.custom_minimum_size.y, 48.0)
 
 func _trigger_action(action_id: String, confirm_message: String = "") -> void:
 	if _is_busy:
@@ -1370,7 +1425,8 @@ func _sync_buttons() -> void:
 	for screen_id: String in _nav_buttons.keys():
 		var nav_button: Button = _nav_buttons[screen_id]
 		nav_button.disabled = _is_busy or _replay_running
-	_back_button.disabled = _is_busy or _replay_running
+	if _back_button != null:
+		_back_button.disabled = _is_busy or _replay_running
 
 func _update_status_text() -> String:
 	return HubAccountSurfacePresenterScript.update_status_text(self)
@@ -2201,7 +2257,7 @@ func _play_battle_log(battle_log: Dictionary, rewards: Dictionary) -> void:
 		return
 
 	_error_label.text = ""
-	_show_screen(SCREEN_BATTLE, false)
+	_show_screen(ROUTE_BATTLE_RUNNING, false)
 	_replay_running = true
 	_skip_replay = false
 	_set_busy(false, "Reproduzindo replay do primeiro slice...")
@@ -2258,11 +2314,18 @@ func _play_battle_log(battle_log: Dictionary, rewards: Dictionary) -> void:
 	_sync_buttons()
 
 func _screen_title(screen_id: String) -> String:
+	screen_id = _normalize_route(screen_id)
 	match screen_id:
 		SCREEN_HUB:
 			return "Refugio"
 		SCREEN_BATTLE:
 			return "Batalha"
+		ROUTE_BATTLE_RUNNING:
+			return "Batalha"
+		ROUTE_BATTLE_SUMMARY:
+			return "Resumo"
+		ROUTE_ACCOUNT:
+			return "Conta"
 		SCREEN_BASE:
 			return "Base"
 		SCREEN_SOCIAL:

@@ -2,22 +2,7 @@ class_name BootShellSurfacePresenter
 extends RefCounted
 
 const ProjectInfoScript := preload("res://core/project_info.gd")
-
-const SCREEN_HUB := "hub"
-const SCREEN_BATTLE := "battle"
-const SCREEN_BASE := "base"
-const SCREEN_SOCIAL := "social"
-const SCREEN_COMPETITION := "competition"
-const SCREEN_SHOP := "shop"
-
-const NAV_ITEMS := [
-	{"label": "Refugio", "screen": SCREEN_HUB},
-	{"label": "Batalha", "screen": SCREEN_BATTLE},
-	{"label": "Base", "screen": SCREEN_BASE},
-	{"label": "Social", "screen": SCREEN_SOCIAL},
-	{"label": "Competicao", "screen": SCREEN_COMPETITION},
-	{"label": "Loja", "screen": SCREEN_SHOP},
-]
+const TouchScrollContainerScript := preload("res://modes/boot/ui/touch_scroll_container.gd")
 
 static func render(host: Control) -> void:
 	var compact := bool(host.get("_compact_layout"))
@@ -77,15 +62,10 @@ static func _render_header(host: Control, root: VBoxContainer, compact: bool) ->
 	back_button.text = "<" if compact else "Voltar"
 	back_button.tooltip_text = "Voltar para a tela anterior."
 	back_button.custom_minimum_size = Vector2(64, 48) if compact else Vector2(110, 42)
+	host.call("_prepare_touch_button", back_button)
 	back_button.pressed.connect(Callable(host, "_go_back"))
 	title_row.add_child(back_button)
 	host.set("_back_button", back_button)
-
-	var nav := HBoxContainer.new()
-	nav.add_theme_constant_override("separation", 4 if compact else 6)
-	header_box.add_child(nav)
-	for item: Dictionary in NAV_ITEMS:
-		_add_nav_button(host, nav, str(item.get("label", "")), str(item.get("screen", "")), compact)
 
 static func _render_content_shell(host: Control, root: VBoxContainer, compact: bool) -> void:
 	var content_panel := PanelContainer.new()
@@ -122,10 +102,11 @@ static func _render_content_shell(host: Control, root: VBoxContainer, compact: b
 
 	content_stack.add_child(HSeparator.new())
 
-	var scroll := ScrollContainer.new()
+	var scroll := TouchScrollContainerScript.new()
 	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	content_stack.add_child(scroll)
+	host.set("_content_scroll", scroll)
 
 	var content_body := VBoxContainer.new()
 	content_body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -142,30 +123,6 @@ static func _render_confirmation_dialog(host: Control) -> void:
 	confirm_dialog.get_ok_button().text = "Confirmar"
 	confirm_dialog.get_cancel_button().text = "Voltar"
 	host.set("_confirm_dialog", confirm_dialog)
-
-static func _add_nav_button(host: Control, nav: HBoxContainer, label: String, screen_id: String, compact: bool) -> void:
-	var button := Button.new()
-	button.text = _nav_button_text(label, screen_id, compact)
-	button.toggle_mode = true
-	button.custom_minimum_size = Vector2(96, 48) if compact else Vector2(120, 40)
-	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	button.tooltip_text = label
-	button.pressed.connect(Callable(host, "_show_screen").bind(screen_id))
-	nav.add_child(button)
-
-	var nav_buttons := host.get("_nav_buttons") as Dictionary
-	nav_buttons[screen_id] = button
-	host.set("_nav_buttons", nav_buttons)
-
-static func _nav_button_text(label: String, screen_id: String, compact: bool) -> String:
-	if not compact:
-		return label
-	match screen_id:
-		SCREEN_HUB:
-			return "Refugio"
-		SCREEN_COMPETITION:
-			return "Ranking"
-	return label
 
 static func _panel_style(host: Control, background_token: String, border_token: String) -> StyleBoxFlat:
 	return host.call("_panel_style", background_token, border_token) as StyleBoxFlat

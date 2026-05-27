@@ -2,6 +2,7 @@ extends GutTest
 
 const BootScreenScript = preload("res://modes/boot/boot.gd")
 const BaseSurfacePresenterScript = preload("res://modes/boot/surfaces/base_surface_presenter.gd")
+const TouchScrollContainerScript = preload("res://modes/boot/ui/touch_scroll_container.gd")
 
 func before_each() -> void:
 	_reset_session_store_for_test()
@@ -18,16 +19,77 @@ func test_boot_compact_layout_groups_actions_for_mobile_landscape() -> void:
 	assert_true(boot._compact_layout)
 	assert_eq(boot._action_button_columns(), 3)
 	assert_eq(boot._base_map_columns(), 6)
-	var hub_button := boot._nav_buttons["hub"] as Button
-	assert_true(hub_button.custom_minimum_size.y >= 48.0)
+	assert_true(boot._nav_buttons.is_empty())
+	assert_true(boot._back_button.custom_minimum_size.y >= 48.0)
+	assert_true(boot._content_scroll is TouchScrollContainerScript)
 
 	var action_grid := _first_action_grid(boot._content_body)
 	assert_not_null(action_grid)
 	assert_eq(action_grid.columns, 3)
 	var sign_up_button := boot._action_buttons["email_sign_up"] as Button
 	assert_true(sign_up_button.custom_minimum_size.y >= 48.0)
+	assert_eq(sign_up_button.mouse_filter, Control.MOUSE_FILTER_PASS)
 	assert_false(_has_direct_button_child(boot._content_body))
 	assert_not_null(boot._confirm_dialog)
+
+func test_boot_route_stack_normalizes_legacy_screen_ids() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	assert_eq(boot._current_screen, "refuge_home")
+	assert_false(boot._route_supports_back("hub"))
+	assert_true(boot._route_supports_back("battle"))
+
+	boot._show_screen("battle")
+	assert_eq(boot._current_screen, "battle_entry")
+	assert_eq(boot._screen_history.size(), 1)
+	assert_eq(boot._screen_history[0], "refuge_home")
+	assert_eq(boot._screen_title("battle"), "Batalha")
+
+	boot._go_back()
+	assert_eq(boot._current_screen, "refuge_home")
+	assert_true(boot._screen_history.is_empty())
+
+func test_boot_shell_has_no_global_tab_navigation() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	assert_true(boot._nav_buttons.is_empty())
+	assert_true(boot._back_button.visible == false)
+	boot._show_screen("base")
+	assert_true(boot._back_button.visible)
+	assert_true(boot._nav_buttons.is_empty())
+
+func test_boot_battle_running_route_declares_landscape() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	assert_false(boot._route_prefers_landscape("battle_entry"))
+	assert_true(boot._route_prefers_landscape("battle_running"))
+	assert_false(boot._route_prefers_landscape("refuge_home"))
+
+func test_touch_scroll_container_uses_drag_threshold_and_wide_scrollbar() -> void:
+	var scroll: DraxosTouchScrollContainer = TouchScrollContainerScript.new()
+	scroll.custom_minimum_size = Vector2(240, 160)
+	add_child_autofree(scroll)
+	await get_tree().process_frame
+	await get_tree().process_frame
+
+	var touch_press := InputEventScreenTouch.new()
+	touch_press.pressed = true
+	touch_press.position = Vector2(20, 20)
+	scroll._gui_input(touch_press)
+
+	var small_drag := InputEventScreenDrag.new()
+	small_drag.relative = Vector2(0, 4)
+	scroll._gui_input(small_drag)
+	assert_false(scroll.is_touch_dragging_for_test())
+
+	var large_drag := InputEventScreenDrag.new()
+	large_drag.relative = Vector2(0, 24)
+	scroll._gui_input(large_drag)
+	assert_true(scroll.is_touch_dragging_for_test())
+	assert_true(scroll.get_v_scroll_bar().custom_minimum_size.x >= 30.0)
 
 func test_boot_hub_presenter_renders_login_save_session_and_update_gate() -> void:
 	var boot = BootScreenScript.new()
