@@ -110,7 +110,7 @@ Rollback deve ser simples e local:
 | `BATTLE_HISTORY_REPLAY` | `T06-E Battle History` | Battle tab | `PLANNED` | new `GET /battle/history`, new `GET /battle/replay?battle_id=...` | `save-scoped` read-only | battle history/replay smoke and `smoke_battle_replay.gd` | battle history/replay presenter GUT |
 | `BASE_ROUTINE_PANEL` | `T06-F Base Routine` | Base tab | `READY_FOR_INTEGRATION` | existing `GET /base/state` | `save-scoped` existing read | `smoke_foundation_surfaces.gd` Base coverage | Base routine/presenter GUT |
 | `SOCIAL_QOL_READABILITY` | `T06-G Social QoL` | Social tab | `READY_FOR_INTEGRATION` | existing `GET /social/state` and current social actions | `account-scoped` existing behavior | `smoke_foundation_surfaces.gd` Social coverage passed | Social readability/presenter GUT passed |
-| `ASSET_PACK_01_SAFE` | `T06-H Asset Pack 01` | shared UI/battle visuals | `PLANNED` | none | none | visual/export smoke if hooks change | AssetIds/fallback GUT |
+| `ASSET_PACK_01_SAFE` | `T06-H Asset Pack 01` | shared UI/battle visuals | `READY_FOR_INTEGRATION` | none | none | `smoke_exports.gd` | AssetIds/fallback GUT |
 
 ## Feature Cards
 
@@ -226,19 +226,19 @@ Rollback deve ser simples e local:
 
 - Owner: `T06-H Asset Pack 01`
 - Surface: shared UI/battle visuals
-- Status: `PLANNED`
+- Status: `READY_FOR_INTEGRATION`
 - Endpoints affected: none
 - Service scope: none
 - Service contract notes: no backend service.
-- Client files: `AssetIds`, asset definitions and safe hooks to be declared by T06-H.
+- Client files: `assets/ui/icon_guest.png`, `assets/ui/icon_battle.png`, `assets/ui/icon_result.png`, `assets/portraits/portrait_draxos_mage.png`, `assets/portraits/portrait_training_bot.png`, `assets/battle/icons/*.png`, `core/asset_ids.gd`, `ui/battle_symbol_icon.gd`, `ui/battle_stage_2d.gd`, `tests/client/test_content_foundation.gd`.
 - Backend files: none.
-- Smoke required: visual/export smoke if hooks change.
-- GUT required: AssetIds/fallback GUT.
-- Other validation: `validate.gd`, `smoke_exports.gd`, `git diff --check`.
-- Fallback: all missing art remains allowed through existing fallback IDs and native placeholders.
-- Rollback: remove pack references and assets; fallback IDs continue to render.
-- Guardrail notes: no broad visual rework, no final art dependency, no required remote asset, no export breakage.
-- Handoff notes: T06-I should verify missing-art path and exports after integration.
+- Smoke required: `smoke_exports.gd` because the package adds runtime PNGs and a safe battle icon hook.
+- GUT required: AssetIds/fallback GUT in `tests/client/test_content_foundation.gd`.
+- Other validation: `validate.gd`, full GUT client, `smoke_exports.gd`, `git diff --check`.
+- Fallback: uninstalled ids such as `boot_background`, `placeholder_card` and `battle_fx_hit` still return `null`; `BattleSymbolIcon` renders its native label/circle fallback when a texture is missing.
+- Rollback: remove the PNG files and the optional `BattleSymbolIcon`/`BattleStage2D` hook; existing ids and procedural/native visuals continue to render.
+- Guardrail notes: no backend, schema, economy, tuning, remote asset, broad visual rework, required art dependency or publication change.
+- Handoff notes: T06-I should integrate the PNG subset and confirm missing-art fallback plus exports after conflict resolution.
 
 ## Template For New Feature Cards
 

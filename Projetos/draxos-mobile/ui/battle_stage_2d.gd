@@ -422,6 +422,7 @@ func _render_icon_row(row: HBoxContainer, values: Dictionary, row_kind: String) 
 			"tooltip": tooltip,
 			"count": count,
 			"cooldown_ratio": cooldown_ratio,
+			"asset_id": _asset_id_for_icon_row(row_kind),
 			"size": Vector2(36, 36),
 		})
 	_sync_symbol_icon_row(row, entries)
@@ -439,6 +440,7 @@ func _render_slots() -> void:
 				"slot": SLOT_BACK,
 				"color": DAMAGE_COLORS["morte"],
 				"symbol": "@",
+				"asset_id": "battle_icon_pet",
 			})
 		var summons := _as_dictionary(side_data.get("summons", {}))
 		var keys := summons.keys()
@@ -452,6 +454,7 @@ func _render_slots() -> void:
 				"slot": str(summon.get("slot", SLOT_ORDER[index % SLOT_ORDER.size()])),
 				"color": _damage_color(str(summon.get("damage_type", "fogo"))),
 				"symbol": "^",
+				"asset_id": "battle_icon_summon",
 			})
 		var used_offsets: Dictionary = {}
 		for entry: Dictionary in slot_entries:
@@ -469,6 +472,7 @@ func _render_slots() -> void:
 				"tooltip": _slot_entry_tooltip(entry, side, slot),
 				"count": _slot_short(slot),
 				"cooldown_ratio": 0.0,
+				"asset_id": str(entry.get("asset_id", "")),
 				"size": Vector2(46, 46),
 				"position": pos - Vector2(46, 46) * 0.5 + Vector2(0, offset_count * 8.0),
 			})
@@ -486,7 +490,7 @@ func _render_event_panel() -> void:
 		return
 	var event_type := str(_latest_event.get("type", ""))
 	var event_tooltip := _event_tooltip(_latest_event)
-	_event_icon.configure(_event_code(event_type), _event_color(_latest_event), event_tooltip)
+	_event_icon.configure(_event_code(event_type), _event_color(_latest_event), event_tooltip, "", 0.0, _asset_id_for_event(event_type))
 	_set_stage_tooltip(_event_icon, event_tooltip)
 	_event_label.text = "Evento %d/%d | %ss | %s" % [
 		_event_index,
@@ -734,6 +738,14 @@ func _event_title(event_type: String) -> String:
 func _asset_id_for_event(event_type: String) -> String:
 	return str(EVENT_ASSET_IDS.get(event_type, "battle_icon_event"))
 
+func _asset_id_for_icon_row(row_kind: String) -> String:
+	match row_kind:
+		"status":
+			return "battle_icon_status"
+		"cooldown":
+			return "battle_icon_spell"
+	return ""
+
 func _sync_symbol_icon_row(row: HBoxContainer, entries: Array[Dictionary]) -> void:
 	var existing := _children_by_render_key(row)
 	var wanted: Dictionary = {}
@@ -786,7 +798,8 @@ func _configure_symbol_icon(icon: BattleSymbolIcon, entry: Dictionary) -> void:
 		icon_color,
 		str(entry.get("tooltip", "")),
 		str(entry.get("count", "")),
-		float(entry.get("cooldown_ratio", 0.0))
+		float(entry.get("cooldown_ratio", 0.0)),
+		str(entry.get("asset_id", ""))
 	)
 	_set_stage_tooltip(icon, str(entry.get("tooltip", "")))
 

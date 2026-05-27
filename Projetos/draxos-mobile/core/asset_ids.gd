@@ -37,6 +37,25 @@ const CATEGORY_IDS: Dictionary = {
 	]
 }
 
+const PACK_01_SAFE_IDS: Array[String] = [
+	"icon_guest",
+	"icon_battle",
+	"icon_result",
+	"portrait_draxos_mage",
+	"portrait_training_bot",
+	"battle_icon_event",
+	"battle_icon_weapon",
+	"battle_icon_spell",
+	"battle_icon_status",
+	"battle_icon_buff",
+	"battle_icon_damage",
+	"battle_icon_summon",
+	"battle_icon_pet",
+	"battle_icon_heal",
+	"battle_icon_reward",
+	"battle_icon_result"
+]
+
 const PATHS: Dictionary = {
 	"ui_logo": "res://assets/ui/ui_logo.png",
 	"boot_background": "res://assets/ui/boot_background.png",
@@ -89,6 +108,11 @@ func all_ids() -> PackedStringArray:
 	var ids: Array[String] = []
 	for asset_id: Variant in PATHS.keys():
 		ids.append(str(asset_id))
+	ids.sort()
+	return PackedStringArray(ids)
+
+func pack_01_safe_ids() -> PackedStringArray:
+	var ids: Array[String] = PACK_01_SAFE_IDS.duplicate()
 	ids.sort()
 	return PackedStringArray(ids)
 

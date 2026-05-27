@@ -23,7 +23,7 @@ T06-F Base Routine is ready for integration: the Base tab now has a render-only 
 5. `T06-E` Battle History: pending after T06-B merge; must fill feature card before runtime.
 6. `T06-F` Base Routine: ready for integration; panel derives routine/next objective from existing Base payload and is covered by GUT plus `smoke_foundation_surfaces.gd`.
 7. `T06-G` Social QoL: ready for integration; improves Social readability, empty states, refresh/polling clarity and current message formatting without endpoint/schema changes.
-8. `T06-H` Asset Pack 01: pending after T06-B merge; must fill feature card before runtime.
+8. `T06-H` Asset Pack 01: ready for integration; installs lightweight PNGs for selected UI, portrait and battle icon ids with native fallback still valid.
 9. `T06-I` Integracao: blocked until T06-C to T06-H are delivered.
 
 ## Guardrails
@@ -73,6 +73,16 @@ Nota operacional: o Supabase local ja rodando em `127.0.0.1:54321` ainda servia 
 ## T06-G Delivery Note
 
 Branch `codex/draxos-mobile/t06-social-qol` keeps Social QoL client-only. It updates the render-only Social presenter, focused GUT coverage and `smoke_foundation_surfaces.gd` assertions for current chat messages, guild members and structures. No new endpoint, schema, realtime, moderation, ranking behavior, backend mutation or Progression Lab leaderboard behavior was added.
+
+## T06-H Asset Pack 01 Update
+
+`ASSET_PACK_01_SAFE` is ready for integration. The package adds lightweight
+128x128 transparent PNGs for `icon_guest`, `icon_battle`, `icon_result`,
+`portrait_draxos_mage`, `portrait_training_bot` and the existing
+`battle_icon_*` ids. It also adds an optional `BattleSymbolIcon` texture hook for
+the battle stage; if a texture is absent, the native symbol/circle fallback stays
+active. No backend, schema, economy, tuning, remote asset or broad visual rework
+was introduced.
 
 ## Validation Baseline
 
