@@ -98,21 +98,21 @@ $webHtml = $webHtml.Replace('<script src="index.js"></script>', ('<script src="'
 $webHtml = $webHtml.Replace('"executable":"index"', ('"executable":"' + $assetBase + '/index"'))
 [System.IO.File]::WriteAllText($webIndexPath, $webHtml, [System.Text.UTF8Encoding]::new($false))
 
-$rootIndex = @'
-<!doctype html>
-<html lang="pt-BR">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="refresh" content="0; url=/portal/index.html">
-  <title>DraxosMobile Internal Alpha</title>
-</head>
-<body>
-  <p><a href="/portal/index.html">Abrir DraxosMobile Internal Alpha</a></p>
-</body>
-</html>
+# Flat root files make Cloudflare direct upload more forgiving when a browser
+# upload loses nested folders. The canonical URLs remain /portal/index.html and
+# /web/index.html through _redirects rewrites.
+[System.IO.File]::WriteAllText((Join-Path $OutputDir "index.html"), $portalHtml, [System.Text.UTF8Encoding]::new($false))
+[System.IO.File]::WriteAllText((Join-Path $OutputDir "web.html"), $webHtml, [System.Text.UTF8Encoding]::new($false))
+
+$redirects = @'
+/portal/index.html /index.html 200
+/portal/ /index.html 200
+/portal /index.html 200
+/web/index.html /web.html 200
+/web/ /web.html 200
+/web /web.html 200
 '@
-[System.IO.File]::WriteAllText((Join-Path $OutputDir "index.html"), $rootIndex, [System.Text.UTF8Encoding]::new($false))
+[System.IO.File]::WriteAllText((Join-Path $OutputDir "_redirects"), $redirects, [System.Text.UTF8Encoding]::new($false))
 
 $oversizedFiles = Get-ChildItem -LiteralPath $OutputDir -Recurse -File |
     Where-Object { $_.Length -ge 25MB } |

@@ -93,6 +93,8 @@ build/internal-alpha/draxos-mobile-cloudflare-pages.zip
 
 Publicar no Cloudflare Pages a pasta `build/internal-alpha/cloudflare-pages/` ou o zip `build/internal-alpha/draxos-mobile-cloudflare-pages.zip`.
 
+O pacote tambem inclui `index.html`, `web.html` e `_redirects` na raiz. Isso deixa o deploy mais tolerante ao upload direto do Cloudflare: mesmo que a interface nao preserve bem as pastas no primeiro envio, as URLs finais esperadas continuam sendo `/portal/index.html` e `/web/index.html`.
+
 ## Passo Manual Fabio
 
 1. Na tela Workers/Pages, clicar em `Looking to deploy Pages? Get started`.
@@ -100,13 +102,20 @@ Publicar no Cloudflare Pages a pasta `build/internal-alpha/cloudflare-pages/` ou
 3. Usar o nome de projeto sugerido `draxos-mobile-internal-alpha`.
 4. Enviar `build/internal-alpha/cloudflare-pages/` ou `build/internal-alpha/draxos-mobile-cloudflare-pages.zip`.
 5. Clicar em deploy/save and deploy.
-6. Copiar a URL final, por exemplo:
+6. Conferir no deploy:
+
+```text
+/portal/index.html deve mostrar o portal completo.
+/web/index.html deve conter/carregar a Web build do Godot.
+```
+
+7. Copiar a URL final, por exemplo:
 
 ```text
 https://draxos-mobile-internal-alpha.pages.dev
 ```
 
-7. Enviar essa URL ao Codex.
+8. Enviar essa URL ao Codex.
 
 ## Passo Codex Depois Da URL
 
