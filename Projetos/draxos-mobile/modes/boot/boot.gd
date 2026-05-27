@@ -95,6 +95,7 @@ var _confirm_dialog: ConfirmationDialog
 
 var _action_buttons: Dictionary = {}
 var _nav_buttons: Dictionary = {}
+var _current_action_grid: GridContainer
 var _screen_history: Array[String] = []
 var _current_screen := SCREEN_HUB
 var _pending_confirmation_action := ""
@@ -102,6 +103,7 @@ var _active_action_id := ""
 var _is_busy := false
 var _replay_running := false
 var _skip_replay := false
+var _compact_layout := false
 var _battle_lab_overlay: Control
 var _progression_lab_overlay: Control
 var _selected_base_structure_id := "nucleo_energia"
@@ -152,6 +154,7 @@ func _clear_existing_scene() -> void:
 		child.free()
 
 func _build_ui() -> void:
+	_compact_layout = _should_use_compact_layout()
 	var background := ColorRect.new()
 	background.color = UiTokens.color("bg_deep")
 	background.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -159,11 +162,11 @@ func _build_ui() -> void:
 
 	var root := VBoxContainer.new()
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
-	root.offset_left = 16
-	root.offset_top = 12
-	root.offset_right = -16
-	root.offset_bottom = -12
-	root.add_theme_constant_override("separation", 10)
+	root.offset_left = 8 if _compact_layout else 16
+	root.offset_top = 8 if _compact_layout else 12
+	root.offset_right = -8 if _compact_layout else -16
+	root.offset_bottom = -8 if _compact_layout else -12
+	root.add_theme_constant_override("separation", 6 if _compact_layout else 10)
 	add_child(root)
 
 	var header := PanelContainer.new()
@@ -172,11 +175,11 @@ func _build_ui() -> void:
 	root.add_child(header)
 
 	var header_box := VBoxContainer.new()
-	header_box.add_theme_constant_override("separation", 8)
+	header_box.add_theme_constant_override("separation", 5 if _compact_layout else 8)
 	header.add_child(header_box)
 
 	var title_row := HBoxContainer.new()
-	title_row.add_theme_constant_override("separation", 10)
+	title_row.add_theme_constant_override("separation", 8 if _compact_layout else 10)
 	header_box.add_child(title_row)
 
 	var title_stack := VBoxContainer.new()
@@ -185,24 +188,28 @@ func _build_ui() -> void:
 
 	var title := Label.new()
 	title.text = "DraxosMobile"
-	title.add_theme_font_size_override("font_size", 24)
+	title.add_theme_font_size_override("font_size", 20 if _compact_layout else 24)
 	title.add_theme_color_override("font_color", UiTokens.color("text_primary"))
 	title_stack.add_child(title)
 
 	_status_label = Label.new()
 	_status_label.text = "%s - primeiro slice" % ProjectInfoScript.PROJECT_NAME
-	_status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_status_label.autowrap_mode = TextServer.AUTOWRAP_OFF if _compact_layout else TextServer.AUTOWRAP_WORD_SMART
+	if _compact_layout:
+		_status_label.clip_text = true
+		_status_label.add_theme_font_size_override("font_size", 12)
 	_status_label.add_theme_color_override("font_color", UiTokens.color("text_secondary"))
 	title_stack.add_child(_status_label)
 
 	_back_button = Button.new()
-	_back_button.text = "Voltar"
-	_back_button.custom_minimum_size = Vector2(110, 42)
+	_back_button.text = "<" if _compact_layout else "Voltar"
+	_back_button.tooltip_text = "Voltar para a tela anterior."
+	_back_button.custom_minimum_size = Vector2(64, 48) if _compact_layout else Vector2(110, 42)
 	_back_button.pressed.connect(_go_back)
 	title_row.add_child(_back_button)
 
 	var nav := HBoxContainer.new()
-	nav.add_theme_constant_override("separation", 6)
+	nav.add_theme_constant_override("separation", 4 if _compact_layout else 6)
 	header_box.add_child(nav)
 	_add_nav_button(nav, "Refugio", SCREEN_HUB)
 	_add_nav_button(nav, "Batalha", SCREEN_BATTLE)
@@ -218,21 +225,25 @@ func _build_ui() -> void:
 	root.add_child(content_panel)
 
 	var content_stack := VBoxContainer.new()
-	content_stack.add_theme_constant_override("separation", 8)
+	content_stack.add_theme_constant_override("separation", 6 if _compact_layout else 8)
 	content_panel.add_child(content_stack)
 
 	_content_title = Label.new()
-	_content_title.add_theme_font_size_override("font_size", 22)
+	_content_title.add_theme_font_size_override("font_size", 18 if _compact_layout else 22)
 	_content_title.add_theme_color_override("font_color", UiTokens.color("text_primary"))
 	content_stack.add_child(_content_title)
 
 	_detail_label = Label.new()
 	_detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	if _compact_layout:
+		_detail_label.add_theme_font_size_override("font_size", 13)
 	_detail_label.add_theme_color_override("font_color", UiTokens.color("text_secondary"))
 	content_stack.add_child(_detail_label)
 
 	_error_label = Label.new()
 	_error_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	if _compact_layout:
+		_error_label.add_theme_font_size_override("font_size", 13)
 	_error_label.add_theme_color_override("font_color", UiTokens.color("status_error"))
 	content_stack.add_child(_error_label)
 
@@ -246,7 +257,7 @@ func _build_ui() -> void:
 
 	_content_body = VBoxContainer.new()
 	_content_body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_content_body.add_theme_constant_override("separation", 10)
+	_content_body.add_theme_constant_override("separation", 8 if _compact_layout else 10)
 	scroll.add_child(_content_body)
 
 	_confirm_dialog = ConfirmationDialog.new()
@@ -260,21 +271,70 @@ func _build_ui() -> void:
 func _add_nav_button(nav: HBoxContainer, label: String, screen_id: String) -> void:
 	var target_screen := screen_id
 	var button := Button.new()
-	button.text = label
+	button.text = _nav_button_text(label, screen_id)
 	button.toggle_mode = true
-	button.custom_minimum_size = Vector2(120, 40)
+	button.custom_minimum_size = Vector2(96, 48) if _compact_layout else Vector2(120, 40)
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	button.tooltip_text = label
 	button.pressed.connect(func() -> void:
 		_show_screen(target_screen)
 	)
 	nav.add_child(button)
 	_nav_buttons[screen_id] = button
 
+func _should_use_compact_layout() -> bool:
+	if bool(ProjectSettings.get_setting("draxos_mobile/ui/force_compact_layout", false)):
+		return true
+	if OS.get_name() == "Android":
+		return true
+	var viewport_size := get_viewport_rect().size
+	return viewport_size.y <= 620.0 and viewport_size.x > viewport_size.y
+
+func _nav_button_text(label: String, screen_id: String) -> String:
+	if not _compact_layout:
+		return label
+	match screen_id:
+		SCREEN_HUB:
+			return "Refugio"
+		SCREEN_COMPETITION:
+			return "Ranking"
+	return label
+
+func _button_min_size() -> Vector2:
+	return Vector2(154, 50) if _compact_layout else Vector2(220, 44)
+
+func _action_button_columns() -> int:
+	if _compact_layout:
+		return 3
+	return 2
+
+func _base_map_columns() -> int:
+	if not _compact_layout:
+		return 3
+	var viewport_size := get_viewport_rect().size
+	return 6 if viewport_size.x >= 1180.0 else 3
+
+func _reset_action_group() -> void:
+	_current_action_grid = null
+
+func _ensure_action_grid() -> GridContainer:
+	if _current_action_grid != null and is_instance_valid(_current_action_grid):
+		return _current_action_grid
+	var grid := GridContainer.new()
+	grid.columns = _action_button_columns()
+	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	grid.add_theme_constant_override("h_separation", 8 if _compact_layout else 10)
+	grid.add_theme_constant_override("v_separation", 8)
+	_content_body.add_child(grid)
+	_current_action_grid = grid
+	return grid
+
 func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	if push_history and screen_id != _current_screen:
 		_screen_history.append(_current_screen)
 	_current_screen = screen_id
 	_action_buttons.clear()
+	_current_action_grid = null
 	_timeline_label = null
 	_update_output_label = null
 	_base_state_container = null
@@ -440,13 +500,15 @@ func _render_hub_screen() -> void:
 	_add_action_button("Sincronizar sessao", "refresh_session")
 	_add_action_button("Resetar sessao local", "reset_session", "Limpar apenas token/cache local desta maquina? O estado salvo no servidor nao sera apagado.")
 
-	_add_section_label("Ferramentas dev")
-	_add_body_text("Guest anonimo fica como fallback de desenvolvimento local enquanto a build interna real usa email/senha.")
-	_add_action_button("Entrar como guest dev", "enter_guest")
-	if _battle_lab_available():
-		_add_action_button("Battle Lab Dev", "open_battle_lab")
-	if _progression_lab_available():
-		_add_action_button("Progression Lab Dev", "open_progression_lab")
+	_add_section_label("Teste rapido")
+	_add_body_text("Use guest apenas para validar rapidamente sem criar conta. O teste principal da alpha usa email/senha.")
+	_add_action_button("Entrar como guest", "enter_guest")
+	if _battle_lab_available() or _progression_lab_available():
+		_add_section_label("Labs do editor")
+		if _battle_lab_available():
+			_add_action_button("Battle Lab", "open_battle_lab")
+		if _progression_lab_available():
+			_add_action_button("Progression Lab", "open_progression_lab")
 
 	_add_section_label("Save ativo")
 	_add_body_text("O save Normal executa o loop server-authoritative local. O save Progression Lab fica isolado para testes e nao deve pontuar ranking/social.")
@@ -500,7 +562,7 @@ func _render_battle_screen() -> void:
 	_add_action_button("Solicitar batalha", "request_battle")
 	_add_action_button("Ver resultado", "show_latest_battle")
 	_battle_visual = BattleVisualMockupScript.new()
-	_battle_visual.custom_minimum_size = Vector2(0, 720)
+	_battle_visual.custom_minimum_size = Vector2(0, 560 if _compact_layout else 720)
 	_content_body.add_child(_battle_visual)
 	_timeline_label = _add_output_label("")
 	if SessionStore.has_battle_log():
@@ -608,23 +670,28 @@ func _render_shop_screen() -> void:
 	_render_monetization_state()
 
 func _add_section_label(text: String) -> Label:
+	_reset_action_group()
 	var label := Label.new()
 	label.text = text
-	label.add_theme_font_size_override("font_size", 18)
+	label.add_theme_font_size_override("font_size", 16 if _compact_layout else 18)
 	label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
 	_content_body.add_child(label)
 	return label
 
 func _add_body_text(text: String) -> Label:
+	_reset_action_group()
 	var label := Label.new()
 	label.text = text
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	if _compact_layout:
+		label.add_theme_font_size_override("font_size", 13)
 	label.add_theme_color_override("font_color", UiTokens.color("text_secondary"))
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_content_body.add_child(label)
 	return label
 
 func _add_output_label(text: String) -> Label:
+	_reset_action_group()
 	var panel := PanelContainer.new()
 	panel.add_theme_stylebox_override("panel", _panel_style("bg_panel", "border_default"))
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -633,6 +700,8 @@ func _add_output_label(text: String) -> Label:
 	var label := Label.new()
 	label.text = text
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	if _compact_layout:
+		label.add_theme_font_size_override("font_size", 13)
 	label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	panel.add_child(label)
@@ -641,16 +710,18 @@ func _add_output_label(text: String) -> Label:
 func _add_action_button(text: String, action_id: String, confirm_message: String = "") -> Button:
 	var button := Button.new()
 	button.text = text
-	button.custom_minimum_size = Vector2(260, 44)
+	button.custom_minimum_size = _button_min_size()
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	button.tooltip_text = text
 	button.pressed.connect(func() -> void:
 		_trigger_action(action_id, confirm_message)
 	)
-	_content_body.add_child(button)
+	_ensure_action_grid().add_child(button)
 	_action_buttons[action_id] = button
 	return button
 
 func _add_social_input(label_text: String, placeholder: String, initial_text: String, input_tooltip: String) -> LineEdit:
+	_reset_action_group()
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 4)
 	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -665,7 +736,7 @@ func _add_social_input(label_text: String, placeholder: String, initial_text: St
 	input.placeholder_text = placeholder
 	input.text = initial_text
 	input.tooltip_text = input_tooltip
-	input.custom_minimum_size = Vector2(260, 40)
+	input.custom_minimum_size = Vector2(260, 48) if _compact_layout else Vector2(260, 40)
 	input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	box.add_child(input)
 	return input
@@ -674,12 +745,13 @@ func _add_screen_button(text: String, screen_id: String) -> Button:
 	var target_screen := screen_id
 	var button := Button.new()
 	button.text = text
-	button.custom_minimum_size = Vector2(260, 44)
+	button.custom_minimum_size = _button_min_size()
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	button.tooltip_text = "Abrir %s." % _screen_title(screen_id)
 	button.pressed.connect(func() -> void:
 		_show_screen(target_screen)
 	)
-	_content_body.add_child(button)
+	_ensure_action_grid().add_child(button)
 	return button
 
 func _trigger_action(action_id: String, confirm_message: String = "") -> void:
@@ -1772,7 +1844,7 @@ func _base_map_panel(structures: Array) -> Control:
 	panel.add_child(box)
 	box.add_child(_base_label("Mapa da Base", "text_primary", 17))
 	var grid := GridContainer.new()
-	grid.columns = 3
+	grid.columns = _base_map_columns()
 	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	grid.add_theme_constant_override("h_separation", 8)
 	grid.add_theme_constant_override("v_separation", 8)
@@ -1812,7 +1884,7 @@ func _base_detail_panel(structures: Array) -> Control:
 	var action_id := "upgrade_base_structure:%s" % structure_id
 	var upgrade_button := Button.new()
 	upgrade_button.text = "Evoluir %s" % display_label
-	upgrade_button.custom_minimum_size = Vector2(260, 44)
+	upgrade_button.custom_minimum_size = _button_min_size()
 	upgrade_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	upgrade_button.tooltip_text = _base_structure_tooltip(structure)
 	upgrade_button.disabled = not _can_upgrade_base_structure(structure_id)
@@ -1834,7 +1906,7 @@ func _base_structure_button(structure: Dictionary) -> Button:
 		_base_next_level_text(structure),
 		_base_short_status(structure),
 	]
-	button.custom_minimum_size = Vector2(190, 112)
+	button.custom_minimum_size = Vector2(148, 96) if _compact_layout else Vector2(190, 112)
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	button.tooltip_text = _base_structure_tooltip(structure)
 	button.add_theme_stylebox_override("normal", _base_structure_card_style(structure_id, selected))
@@ -1891,7 +1963,9 @@ func _base_label(text: String, color_token: String = "text_secondary", font_size
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.add_theme_color_override("font_color", UiTokens.color(color_token))
 	if font_size > 0:
-		label.add_theme_font_size_override("font_size", font_size)
+		label.add_theme_font_size_override("font_size", max(12, font_size - 1) if _compact_layout else font_size)
+	elif _compact_layout:
+		label.add_theme_font_size_override("font_size", 13)
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	return label
 
@@ -2935,10 +3009,10 @@ func _panel_style(bg_token: String, border_token: String) -> StyleBoxFlat:
 	style.border_color = UiTokens.color(border_token)
 	style.set_border_width_all(1)
 	style.set_corner_radius_all(6)
-	style.content_margin_left = 14
-	style.content_margin_right = 14
-	style.content_margin_top = 12
-	style.content_margin_bottom = 12
+	style.content_margin_left = 10 if _compact_layout else 14
+	style.content_margin_right = 10 if _compact_layout else 14
+	style.content_margin_top = 8 if _compact_layout else 12
+	style.content_margin_bottom = 8 if _compact_layout else 12
 	return style
 
 static func _as_dictionary(value: Variant) -> Dictionary:

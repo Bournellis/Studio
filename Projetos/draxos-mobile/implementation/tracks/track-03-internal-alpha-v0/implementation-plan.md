@@ -363,9 +363,23 @@ Status: `DOWNLOADS_GREEN - PORTAL_WEB_GREEN - AUTOMATED_REMOTE_QA_GREEN - MANUAL
 - Validar loop normal: entrar, coletar, batalhar, receber recompensa, evoluir, loja/social/competicao.
 - Validar save `progression_lab` isolado e fora da competicao.
 
+### T03-P17A - Android UI Usability Pass
+
+Status: `COMPLETE_LOCAL_REBUILD - MANUAL_RETEST_PENDING`.
+
+- Corrigir o primeiro desconforto observado no APK sem abrir nova fase de design visual.
+- Manter o layout amplo de PC/Web funcional, mas aplicar modo compacto automatico no Android.
+- Agrupar botoes de acao em grades para evitar uma coluna longa dentro do scroll.
+- Aumentar alvos de toque de botoes e nav no modo compacto.
+- Reduzir margens/fontes do chrome da tela no Android paisagem.
+- Deixar o mapa da Base mais denso em paisagem larga para reduzir rolagem.
+- Trocar textos visiveis de fluxo normal para linguagem de teste interno, deixando "dev" apenas nos labs do editor.
+- Adicionar teste automatizado para garantir que o modo compacto continua usando grade de acoes e toque minimo.
+- Gerar rebuild local Android/PC/Web para reteste antes de republicar downloads/Cloudflare.
+
 ### T03-P18 - Handoff Da Internal Alpha v0
 
-Status: `PENDING_T03_P17`.
+Status: `PENDING_T03_P17_MANUAL_SIGNOFF`.
 
 - Atualizar portal com links reais finais.
 - Atualizar release notes e manifest.

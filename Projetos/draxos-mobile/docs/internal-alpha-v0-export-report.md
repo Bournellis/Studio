@@ -24,6 +24,16 @@ Metadata local gerado:
 - `build/internal-alpha/release-artifacts.json`
 - `build/internal-alpha/SHA256SUMS.txt`
 
+## Rebuild T03-P17A - Android UI Usability Pass
+
+Em 2026-05-27, apos o feedback de usabilidade no APK, foi gerado um rebuild local com a passada compacta do Hub/abas. Este rebuild ainda nao substitui automaticamente o pacote Cloudflare Pages publicado; ele serve para reteste local e para republicacao dos downloads quando aprovado.
+
+| Plataforma | Artefato local | Bytes | SHA256 |
+|---|---|---:|---|
+| Android APK | `build/android/draxos-mobile-alpha.apk` | `27811908` | `acfb572a28d437027a49b7f4f46b218f5204341c1fe276d8354e160deee78fe7` |
+| PC Windows ZIP | `build/pc/draxos-mobile-alpha.zip` | `36331728` | `222e0ec6e4d155b54dca367b97f4761a4e048a20f8698a5fd0b0a87264d8bfe5` |
+| Web index | `build/web/index.html` | `5442` | `04c8da05bcada497128a9c506092579bf47075d8da636634ffb1722e3cbd1a1b` |
+
 ## Android
 
 O APK foi exportado como `debug_fallback`, assinado pela debug keystore local configurada no Godot. Isso e suficiente para instalar por link no teste interno Fabio + 1 amigo, desde que as proximas builds Android usadas para update continuem saindo da mesma maquina/keystore ou que uma keystore release dedicada seja configurada antes da distribuicao.
