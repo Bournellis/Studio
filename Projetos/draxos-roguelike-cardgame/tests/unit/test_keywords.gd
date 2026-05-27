@@ -1,5 +1,7 @@
 ﻿extends "res://tests/unit/draxos_test_base.gd"
 
+const BattlePreviewPresenterScript = preload("res://modes/battle/battle_preview_presenter.gd")
+
 func test_ability_power_updates_spell_values_and_text() -> void:
 	var engine: BattleEngine = BattleEngine.new()
 	engine.start_battle(ContentLibrary.get_catalog(), ["arcano_fagulha", "arcano_barreira", "arcano_choque", "arcano_tempestade"], {
@@ -179,6 +181,11 @@ func test_unlocked_passive_and_active_stay_visible_with_preview_data() -> void:
 	assert_true(active_tile.visible)
 	assert_string_contains(str(battle._class_passive_preview_data().get("body", "")), "Fluxo")
 	assert_string_contains(str(battle._class_active_preview_data().get("body", "")), "Fluxo")
+	assert_eq(BattlePreviewPresenterScript.class_passive_preview_data(), battle._class_passive_preview_data())
+	assert_eq(BattlePreviewPresenterScript.class_active_preview_data(battle.engine), battle._class_active_preview_data())
+	var occupant: Dictionary = battle.engine._build_occupant(ContentLibrary.get_card("arcano_fagulha"), BattleEngine.PLAYER_ID, false)
+	assert_eq(BattlePreviewPresenterScript.card_preview_data(battle.engine, "arcano_fagulha", occupant), battle._card_preview_data("arcano_fagulha", occupant))
+	assert_eq(BattlePreviewPresenterScript.hero_preview_data(BattleEngine.PLAYER_ID, "Arcano", battle.engine.player_health), battle._hero_preview_data(BattleEngine.PLAYER_ID, "Arcano", battle.engine.player_health))
 	battle.engine.mana = 0
 	battle._refresh()
 	assert_true(active_tile.visible)

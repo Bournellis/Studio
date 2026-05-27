@@ -1,5 +1,7 @@
 ﻿extends "res://tests/unit/draxos_test_base.gd"
 
+const RunRewardServiceScript = preload("res://core/run_reward_service.gd")
+
 func test_run_session_tracks_hand_limit_reward() -> void:
 	var result: Dictionary = RunSession.start_class_run("arcano", 77)
 	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
@@ -50,6 +52,20 @@ func test_reward_choices_apply_levels_and_two_step_new_cards() -> void:
 	RunSession.record_battle_result("n11_ondas_avancadas", "vitoria", 20)
 	assert_false(RunSession.has_pending_reward())
 	assert_gt(RunSession.current_deck_ids.count(remaining_card_id), 0)
+
+func test_run_reward_service_matches_run_session_reward_wrappers() -> void:
+	var result: Dictionary = RunSession.start_class_run("arcano", 20260518)
+	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
+	RunSession.record_battle_result("n02_tutorial_dois_fronts", "vitoria", 20)
+	RunSession.record_battle_result("n03_tutorial_primeira_onda", "vitoria", 20)
+	var pending: Dictionary = RunSession.current_pending_reward()
+	var wrapper_choices: Array[Dictionary] = RunSession.pending_reward_choices()
+	assert_eq(RunRewardServiceScript.reward_choices_for_pending(RunSession, pending), wrapper_choices)
+	assert_eq(RunRewardServiceScript.rarity_map_for_pending(RunSession, pending), RunSession._rarity_map_for_pending(pending))
+	var selected_id: String = str(wrapper_choices[0].get("id", ""))
+	var service_result: Dictionary = RunRewardServiceScript.apply_reward_choice(RunSession, selected_id)
+	assert_true(bool(service_result.get("ok", false)), str(service_result.get("message", "")))
+	assert_false(RunSession.has_pending_reward())
 
 func test_necromancer_passive_reward_unlocks_active_then_upgrade() -> void:
 	var result: Dictionary = RunSession.start_class_run("necromante", 77)

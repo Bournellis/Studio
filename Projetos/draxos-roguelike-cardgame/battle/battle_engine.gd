@@ -77,6 +77,8 @@ const ENEMY_AI_GELO: String = "gelo"
 const ENEMY_AI_AR: String = "ar"
 const ENEMY_AI_FOGO: String = "fogo"
 const EnemyAiDirector = preload("res://battle/enemy_ai_director.gd")
+const EnemyTurnDirector = preload("res://battle/enemy_turn_director.gd")
+const EnemyIntentDirector = preload("res://battle/enemy_intent_director.gd")
 const KeywordStatusHooks = preload("res://battle/keyword_status_hooks.gd")
 const BossDirector = preload("res://battle/boss_director.gd")
 const FieldEffectDirector = preload("res://battle/field_effect_director.gd")
@@ -1162,288 +1164,46 @@ func _draw_enemy_to_hand_size() -> void:
 		enemy_hand.append(enemy_deck.pop_front())
 
 func _resolve_enemy_turn_actions() -> void:
-	if not enemy_commander_enabled or enemy_hand_count <= 0:
-		return
-	_draw_enemy_to_hand_size()
-	var played_count: int = 0
-	while played_count < 12:
-		var play: Dictionary = _best_enemy_play()
-		if play.is_empty():
-			break
-		if not _play_enemy_card_from_hand(int(play.get("hand_index", -1)), Dictionary(play.get("target", {}))):
-			break
-		played_count += 1
-	if played_count > 0:
-		_log("Comandante inimigo jogou %d carta(s)." % played_count)
+	EnemyTurnDirector.resolve_enemy_turn_actions(self)
 
 func _best_enemy_play() -> Dictionary:
-	var best_play: Dictionary = {}
-	var best_score: float = -999999.0
-	for index: int in range(enemy_hand.size()):
-		var card = _card(enemy_hand[index])
-		if card == null or not card.occupies_slot() or int(card.cost) > enemy_mana:
-			continue
-		for slot_index: int in range(enemy_slots.size()):
-			if enemy_slots[slot_index] != null:
-				continue
-			var score: float = _score_enemy_creature_play(card, slot_index, index)
-			if best_play.is_empty() or score > best_score:
-				best_score = score
-				best_play = {"hand_index": index, "target": {"owner": ENEMY_ID, "slot": slot_index}, "score": score}
-	for index: int in range(enemy_hand.size()):
-		var card = _card(enemy_hand[index])
-		if card == null or card.occupies_slot() or int(card.cost) > enemy_mana:
-			continue
-		var targets: Array[Dictionary] = _enemy_spell_targets(card)
-		for target: Dictionary in targets:
-			var score: float = _score_enemy_spell_play(card, target, index)
-			if best_play.is_empty() or score > best_score:
-				best_score = score
-				best_play = {"hand_index": index, "target": target.duplicate(), "score": score}
-	return best_play
+	return EnemyTurnDirector.best_enemy_play(self)
 
 func _play_enemy_card_from_hand(hand_index: int, target: Dictionary) -> bool:
-	if hand_index < 0 or hand_index >= enemy_hand.size():
-		return false
-	var card = _card(enemy_hand[hand_index])
-	if card == null or int(card.cost) > enemy_mana:
-		return false
-	enemy_mana -= int(card.cost)
-	var card_id: String = enemy_hand[hand_index]
-	enemy_hand.remove_at(hand_index)
-	enemy_discard.append(card_id)
-	if card.occupies_slot():
-		var slot_index: int = int(target.get("slot", _best_enemy_creature_slot()))
-		if slot_index < 0 or slot_index >= enemy_slots.size() or enemy_slots[slot_index] != null:
-			return false
-		enemy_slots[slot_index] = _build_occupant(card, ENEMY_ID, true)
-		_apply_summon_field_effect(ENEMY_ID, slot_index)
-		_resolve_on_enter(card, ENEMY_ID, slot_index)
-		_log("Comandante inimigo invocou %s no slot %d." % [card.display_name, slot_index + 1])
-	else:
-		_resolve_enemy_spell(card, target)
-	_check_outcome()
-	return true
+	return EnemyTurnDirector.play_enemy_card_from_hand(self, hand_index, target)
 
 func _resolve_enemy_spell(card, target: Dictionary) -> void:
-	var effect: Dictionary = Dictionary(card.effect)
-	match str(effect.get("action", "")):
-		"damage":
-			var amount: int = int(effect.get("amount", effect.get("damage", 0)))
-			var target_data: Dictionary = target if not target.is_empty() else _first_player_target()
-			if target_data.has("slot"):
-				_damage_slot(str(target_data.get("owner", PLAYER_ID)), int(target_data.get("slot", -1)), amount, "spell")
-			else:
-				_damage_hero(str(target_data.get("owner", PLAYER_ID)), amount)
-			_log("Comandante inimigo usou %s." % card.display_name)
-		"random_damage":
-			_resolve_random_damage(int(effect.get("amount", effect.get("damage", 0))), PLAYER_ID)
-			_log("Comandante inimigo espalhou dano com %s." % card.display_name)
-		"all_enemy_damage":
-			for player_index: int in range(player_slots.size()):
-				if player_slots[player_index] != null:
-					_damage_slot(PLAYER_ID, player_index, int(effect.get("amount", 1)), "spell")
-			_log("Comandante inimigo atingiu a mesa com %s." % card.display_name)
-		"freeze_random_enemy":
-			var frozen_count: int = _freeze_random_enemies(bool(effect.get("all", false)), int(effect.get("count", 1)), int(effect.get("amount", 1)), PLAYER_ID)
-			_log("Comandante inimigo congelou %d criatura(s)." % frozen_count)
-		"poison_all_enemies":
-			for player_index: int in range(player_slots.size()):
-				if player_slots[player_index] != null:
-					_apply_poison_to_slot(PLAYER_ID, player_index, int(effect.get("amount", 1)))
-			_log("Comandante inimigo espalhou Veneno.")
-		"debuff", "weaken", "snare", "multi_debuff", "punish_snared":
-			_apply_debuff_to_target(effect, target)
-			_log("Comandante inimigo controlou uma criatura com %s." % card.display_name)
-		"buff_ally":
-			var slot_index: int = _strongest_enemy_slot()
-			_buff_slot(ENEMY_ID, slot_index, int(effect.get("attack", 0)), int(effect.get("health", 0)), bool(effect.get("temporary", false)))
-			_log("Comandante inimigo fortaleceu uma criatura.")
+	EnemyTurnDirector.resolve_enemy_spell(self, card, target)
 
 func _best_enemy_creature_slot() -> int:
-	var best_slot: int = -1
-	var best_score: float = -999999.0
-	for slot_index: int in range(enemy_slots.size()):
-		if enemy_slots[slot_index] != null:
-			continue
-		var score: float = _score_enemy_lane_for_profile(slot_index, _enemy_ai_profile())
-		if best_slot < 0 or score > best_score:
-			best_score = score
-			best_slot = slot_index
-	if best_slot >= 0:
-		return best_slot
-	return -1
+	return EnemyTurnDirector.best_enemy_creature_slot(self)
 
 func _best_enemy_spell_target(card) -> Dictionary:
-	var best_target: Dictionary = {}
-	var best_score: float = -999999.0
-	for target: Dictionary in _enemy_spell_targets(card):
-		var score: float = _score_enemy_spell_play(card, target, 0)
-		if best_target.is_empty() or score > best_score:
-			best_score = score
-			best_target = target.duplicate()
-	return best_target
+	return EnemyTurnDirector.best_enemy_spell_target(self, card)
 
 func _enemy_spell_targets(card) -> Array[Dictionary]:
-	var targets: Array[Dictionary] = []
-	var effect: Dictionary = Dictionary(card.effect)
-	match str(effect.get("action", "")):
-		"damage", "debuff", "weaken", "snare", "multi_debuff", "punish_snared":
-			targets.append_array(_targetable_occupied_slot_targets(PLAYER_ID, true))
-			if _enemy_hero_is_objective() or targets.is_empty():
-				targets.append({"owner": PLAYER_ID, "hero": true})
-		"random_damage", "all_enemy_damage", "freeze_random_enemy", "poison_all_enemies":
-			if not _area_damage_targets(PLAYER_ID).is_empty():
-				targets.append(_board_area_target(PLAYER_ID))
-			elif _enemy_hero_is_objective():
-				targets.append({"owner": PLAYER_ID, "hero": true})
-		"buff_ally":
-			targets.append_array(_targetable_occupied_slot_targets(ENEMY_ID, false))
-	return targets
+	return EnemyTurnDirector.enemy_spell_targets(self, card)
 
 func _score_enemy_creature_play(card, slot_index: int, hand_index: int) -> float:
-	var profile: Dictionary = _enemy_ai_profile()
-	var score: float = float(card.attack) * (0.55 + 0.12 * float(profile.get("burst", 1.0)))
-	score += float(card.health) * (0.20 + 0.18 * float(profile.get("durability", 1.0)))
-	score -= float(card.cost) * 0.18
-	score -= float(hand_index) * 0.01
-	score += _score_enemy_lane_for_profile(slot_index, profile)
-	score += _score_enemy_card_keywords(card, profile)
-	var front: Dictionary = _slot_occupant(PLAYER_ID, slot_index)
-	if not front.is_empty():
-		score += 1.8 * float(profile.get("lane_pressure", 1.0))
-		score += _player_unit_threat_score(front) * float(profile.get("high_value", 1.0)) * 0.26
-		if bool(front.get("defensor", false)):
-			score += 2.4 * float(profile.get("defender", 1.0))
-		if int(front.get("thorns_amount", 0)) > 0 and int(card.attack) > 0:
-			score -= float(int(front.get("thorns_amount", 0))) * float(profile.get("thorns_risk", 1.0)) * (1.0 if int(card.health) <= 2 else 0.55)
-		if int(front.get("attack", 0)) >= int(card.health):
-			score += 1.1 * float(profile.get("trade", 1.0))
-	else:
-		score += 2.0 * float(profile.get("empty_lane", 1.0))
-		if _enemy_hero_is_objective():
-			score += 2.6 * float(profile.get("direct", 1.0))
-	var nearest_defender: Dictionary = _nearest_defender_target(PLAYER_ID, slot_index)
-	if not nearest_defender.is_empty() and front.is_empty():
-		score += 1.15 * float(profile.get("defender", 1.0))
-	if mode == MODE_DEFENSE_POSITION and slot_index == defense_slot_index:
-		score += 3.2
-	if mode == MODE_SUMMONER_BOSS:
-		score += _boss_piece_protection_score(slot_index) * float(profile.get("protect", 1.0))
-	return score
+	return EnemyTurnDirector.score_enemy_creature_play(self, card, slot_index, hand_index)
 
 func _score_enemy_spell_play(card, target: Dictionary, hand_index: int) -> float:
-	var profile: Dictionary = _enemy_ai_profile()
-	var effect: Dictionary = Dictionary(card.effect)
-	var action: String = str(effect.get("action", ""))
-	var score: float = 1.0 - float(card.cost) * 0.12 - float(hand_index) * 0.01
-	if bool(target.get("hero", false)):
-		var amount: int = int(effect.get("amount", effect.get("damage", 0)))
-		score += float(amount) * (1.0 + float(profile.get("direct", 1.0)))
-		if player_health <= amount:
-			score += 20.0
-		return score
-	if str(target.get("area", "")) == "board":
-		score += float(_area_damage_targets(PLAYER_ID).size()) * (1.4 if action == "random_damage" else 1.0)
-		if action in ["freeze_random_enemy", "poison_all_enemies"]:
-			score += 2.0 * float(profile.get("control", 1.0))
-		return score
-	var occupant: Dictionary = _slot_occupant(str(target.get("owner", PLAYER_ID)), int(target.get("slot", -1)))
-	if action == "buff_ally":
-		score += _enemy_unit_value(occupant) * (0.35 + float(profile.get("protect", 1.0)) * 0.25)
-	else:
-		score += _player_unit_threat_score(occupant) * (0.30 + float(profile.get("high_value", 1.0)) * 0.18)
-		if action in ["debuff", "weaken", "snare", "multi_debuff", "punish_snared"]:
-			score += 2.4 * float(profile.get("control", 1.0))
-		if int(effect.get("amount", effect.get("damage", 0))) >= int(occupant.get("health", 999)):
-			score += 4.0
-	return score
+	return EnemyTurnDirector.score_enemy_spell_play(self, card, target, hand_index)
 
 func _score_enemy_lane_for_profile(slot_index: int, profile: Dictionary) -> float:
-	var score: float = 0.0
-	var front: Dictionary = _slot_occupant(PLAYER_ID, slot_index)
-	if front.is_empty():
-		score += 1.0 * float(profile.get("empty_lane", 1.0))
-	else:
-		score += 1.0 * float(profile.get("lane_pressure", 1.0))
-		score += _player_unit_threat_score(front) * 0.08 * float(profile.get("high_value", 1.0))
-	var center: float = float(enemy_slots.size() - 1) * 0.5
-	score -= abs(float(slot_index) - center) * 0.08
-	return score
+	return EnemyTurnDirector.score_enemy_lane_for_profile(self, slot_index, profile)
 
 func _score_enemy_card_keywords(card, profile: Dictionary) -> float:
-	var score: float = 0.0
-	for keyword: String in card.keywords:
-		match keyword:
-			"defensor", "resistencia", "escudo", "crescer":
-				score += 0.9 * float(profile.get("durability", 1.0)) + 0.45 * float(profile.get("protect", 1.0))
-			"congelar", "veneno":
-				score += 1.3 * float(profile.get("control", 1.0))
-			"iniciativa", "ecoar", "atropelar":
-				score += 1.0 * float(profile.get("direct", 1.0)) + 0.45 * float(profile.get("burst", 1.0))
-			"brutal", "furia", "ressurgir":
-				score += 1.15 * float(profile.get("trade", 1.0)) + 0.65 * float(profile.get("burst", 1.0))
-			"espinhos":
-				score += 0.65 * float(profile.get("trade", 1.0)) + 0.55 * float(profile.get("durability", 1.0))
-	return score
+	return EnemyTurnDirector.score_enemy_card_keywords(card, profile)
 
 func get_enemy_intent() -> Dictionary:
-	if mode == MODE_SUMMONER_BOSS:
-		return _boss_enemy_intent()
-	return _common_enemy_intent()
+	return EnemyIntentDirector.enemy_intent(self)
 
 func _common_enemy_intent() -> Dictionary:
-	var profile: Dictionary = _enemy_ai_profile()
-	var incoming: Dictionary = _estimate_enemy_incoming_pressure()
-	var next_play: Dictionary = _best_enemy_play()
-	var target_priority: Dictionary = _highest_value_player_target()
-	var priorities: Array[String] = _profile_priority_lines(str(profile.get("display_name", "")))
-	if not next_play.is_empty():
-		priorities.append("Proxima jogada provavel: %s." % _intent_next_play_line(next_play))
-	if not target_priority.is_empty():
-		priorities.append("Alvo de maior valor: %s." % _target_display_name(target_priority))
-	return {
-		"visible": _intent_should_be_visible(),
-		"kind": "common",
-		"title": "Intencao inimiga",
-		"profile_id": enemy_ai_profile_id,
-		"profile_name": str(profile.get("display_name", "Terra")),
-		"profile_summary": str(profile.get("summary", "")),
-		"priorities": priorities,
-		"target_priority": _target_display_name(target_priority) if not target_priority.is_empty() else "Heroi do jogador",
-		"lane_pressure": Array(incoming.get("lanes", [])).duplicate(),
-		"incoming_pressure": str(incoming.get("summary", "Sem pressao imediata.")),
-		"incoming_field_effect": _profile_field_effect_hint(enemy_ai_profile_id),
-		"next_action": _intent_next_play_line(next_play),
-		"tooltip_ids": ["lane_pressure", "incoming_pressure", "control_target"]
-	}
+	return EnemyIntentDirector.common_enemy_intent(self)
 
 func _boss_enemy_intent() -> Dictionary:
-	var common: Dictionary = _common_enemy_intent()
-	var phase: Dictionary = _boss_phase_state()
-	var next_special: String = _next_boss_special_action()
-	var priorities: Array[String] = []
-	for priority: Variant in Array(common.get("priorities", [])):
-		priorities.append(str(priority))
-	priorities.push_front("Fase atual: %s." % str(phase.get("label", "")))
-	priorities.append("Acao especial: %s." % next_special)
-	return {
-		"visible": true,
-		"kind": "boss",
-		"title": "Intencao do chefe",
-		"profile_id": enemy_ai_profile_id,
-		"profile_name": str(common.get("profile_name", "")),
-		"profile_summary": str(common.get("profile_summary", "")),
-		"priorities": priorities,
-		"target_priority": str(common.get("target_priority", "")),
-		"lane_pressure": Array(common.get("lane_pressure", [])).duplicate(),
-		"incoming_pressure": str(common.get("incoming_pressure", "")),
-		"current_phase": str(phase.get("label", "")),
-		"next_scripted_trigger": str(phase.get("next_trigger", "")),
-		"next_major_special_action": next_special,
-		"next_action": str(common.get("next_action", "")),
-		"tooltip_ids": ["boss_phase", "lane_pressure", "incoming_pressure"]
-	}
+	return EnemyIntentDirector.boss_enemy_intent(self)
 
 func _enemy_ai_profile() -> Dictionary:
 	return EnemyAiDirector.profile(enemy_ai_profile_id)
@@ -1458,18 +1218,10 @@ func _enemy_unit_value(occupant: Dictionary) -> float:
 	return KeywordStatusHooks.enemy_unit_value(occupant)
 
 func _boss_piece_protection_score(slot_index: int) -> float:
-	var score: float = 0.0
-	for index: int in range(enemy_slots.size()):
-		var occupant: Dictionary = _slot_occupant(ENEMY_ID, index)
-		if occupant.is_empty():
-			continue
-		var distance: int = absi(index - slot_index)
-		if distance <= 1:
-			score += _enemy_unit_value(occupant) * (0.18 if distance == 0 else 0.10)
-	return score
+	return EnemyIntentDirector.boss_piece_protection_score(self, slot_index)
 
 func _intent_should_be_visible() -> bool:
-	return enemy_commander_enabled or not _board_is_clear(ENEMY_ID) or mode in [MODE_WAVES, MODE_DEFENSE_POSITION, MODE_SURVIVE_TURNS, MODE_SUMMONER_BOSS, MODE_AMBUSH, MODE_ESCORT, MODE_INVASION]
+	return EnemyIntentDirector.intent_should_be_visible(self)
 
 func _profile_priority_lines(profile_name: String) -> Array[String]:
 	return EnemyAiDirector.priority_lines(enemy_ai_profile_id, profile_name)
@@ -1478,55 +1230,13 @@ func _profile_field_effect_hint(profile_id: String) -> String:
 	return EnemyAiDirector.field_effect_hint(profile_id, _active_field_effect_hint())
 
 func _highest_value_player_target() -> Dictionary:
-	var best_target: Dictionary = {}
-	var best_score: float = -1.0
-	for index: int in range(player_slots.size()):
-		var occupant: Dictionary = _slot_occupant(PLAYER_ID, index)
-		if occupant.is_empty():
-			continue
-		var score: float = _player_unit_threat_score(occupant)
-		if best_target.is_empty() or score > best_score:
-			best_score = score
-			best_target = {"owner": PLAYER_ID, "slot": index}
-	return best_target
+	return EnemyIntentDirector.highest_value_player_target(self)
 
 func _estimate_enemy_incoming_pressure() -> Dictionary:
-	var lanes: Array[String] = []
-	var hero_damage: int = 0
-	var board_damage: int = 0
-	for slot_index: int in range(enemy_slots.size()):
-		var attacker: Dictionary = _slot_occupant(ENEMY_ID, slot_index)
-		if attacker.is_empty():
-			continue
-		if int(attacker.get("frozen_turns", 0)) > 0 or int(attacker.get("slow_turns", 0)) > 0:
-			lanes.append("Lane %d: ataque atrasado por controle." % (slot_index + 1))
-			continue
-		var target: Dictionary = _front_attack_target(ENEMY_ID, slot_index)
-		if target.is_empty():
-			target = _overflow_attack_target(ENEMY_ID, slot_index)
-		if target.is_empty():
-			continue
-		var damage: int = int(attacker.get("attack", 0)) + _inspire_bonus_for(ENEMY_ID, slot_index) + _board_attack_bonus(ENEMY_ID, slot_index)
-		if bool(target.get("hero", false)):
-			hero_damage += damage
-		else:
-			board_damage += damage
-		lanes.append("Lane %d: %d dano em %s." % [slot_index + 1, damage, _target_display_name(target)])
-	var summary: String = "%d dano ao heroi, %d em criaturas." % [hero_damage, board_damage]
-	if hero_damage == 0 and board_damage == 0 and lanes.is_empty():
-		summary = "Sem ataque imediato no proximo combate."
-	return {"hero_damage": hero_damage, "board_damage": board_damage, "lanes": lanes, "summary": summary}
+	return EnemyIntentDirector.estimate_enemy_incoming_pressure(self)
 
 func _intent_next_play_line(play: Dictionary) -> String:
-	if play.is_empty():
-		return "Sem carta clara para jogar."
-	var hand_index: int = int(play.get("hand_index", -1))
-	if hand_index < 0 or hand_index >= enemy_hand.size():
-		return "Sem carta clara para jogar."
-	var card = _card(enemy_hand[hand_index])
-	if card == null:
-		return "Sem carta clara para jogar."
-	return "%s em %s" % [card.display_name, _target_display_name(Dictionary(play.get("target", {})))]
+	return EnemyIntentDirector.intent_next_play_line(self, play)
 
 func _active_field_effect_hint() -> String:
 	return FieldEffectDirector.active_hint(field_effects)

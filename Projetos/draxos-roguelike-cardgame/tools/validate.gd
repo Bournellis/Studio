@@ -81,7 +81,7 @@ func _validate_contract() -> Dictionary:
 	if catalog.starter_deck_ids.size() != 9:
 		return {"ok": false, "message": "Starter deck must have 9 cost-1 cards before the map 2 cost-2 reward."}
 	if catalog.class_options.size() != 3:
-		return {"ok": false, "message": "Catalog must expose exactly 3 playable class options for Track 01."}
+		return {"ok": false, "message": "Catalog must expose exactly 3 playable class options for the current run baseline."}
 	var expected_classes: Array[String] = ["arcano", "invocador", "necromante"]
 	for class_option: Dictionary in catalog.class_options:
 		var class_id: String = str(class_option.get("id", ""))

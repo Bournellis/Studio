@@ -1,5 +1,8 @@
 ﻿extends "res://tests/unit/draxos_test_base.gd"
 
+const EnemyTurnDirectorScript = preload("res://battle/enemy_turn_director.gd")
+const EnemyIntentDirectorScript = preload("res://battle/enemy_intent_director.gd")
+
 func test_duel_enemy_commander_plays_after_combat_for_next_turn() -> void:
 	var engine: BattleEngine = BattleEngine.new()
 	engine.start_battle(ContentLibrary.get_catalog(), ["invocador_soldado"], {
@@ -90,6 +93,10 @@ func test_enemy_ai_profiles_make_deterministic_lane_decisions() -> void:
 		"shuffle_deck": false
 	})
 	engine.player_slots[0] = engine._build_occupant(ContentLibrary.get_card("invocador_soldado"), BattleEngine.PLAYER_ID, false)
+	var direct_play: Dictionary = EnemyTurnDirectorScript.best_enemy_play(engine)
+	assert_eq(int(Dictionary(direct_play.get("target", {})).get("slot", -1)), 1)
+	assert_eq(engine._best_enemy_play(), direct_play)
+	assert_eq(str(EnemyIntentDirectorScript.common_enemy_intent(engine).get("next_action", "")), str(engine.get_enemy_intent().get("next_action", "")))
 	engine._resolve_enemy_turn_actions()
 	assert_eq(str(Dictionary(engine.enemy_slots[1]).get("card_id", "")), "enemy_ar_elemental_do_raio")
 
