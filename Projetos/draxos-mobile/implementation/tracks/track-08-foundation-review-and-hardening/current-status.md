@@ -3,8 +3,8 @@
 - Last Updated: `2026-05-27`
 - Status: `ACTIVE_FOUNDATION_HARDENING`
 - Depends On: `T07_INTEGRATED_PRESENTATION_READY`
-- Current Stage: `T08_B_COMPLETE`
-- Next Action: continue T08-C/T08-D/T08-F in parallel and start T08-E from the T08-B route/orientation contract.
+- Current Stage: `T08_B_T08_D_COMPLETE`
+- Next Action: continue integrating T08-C/T08-E/T08-F, then create T08-G validation harness and close T08-H.
 
 ## Estado
 
@@ -14,16 +14,25 @@ The project now has a mobile-first Refugio home, route shell, internal surfaces 
 
 T08-B App Shell Lifecycle is complete in `codex/draxos-mobile/t08-app-shell-lifecycle`. It introduced `DraxosAppShellRouteContract` as a small route/back/orientation helper under `modes/boot/ui/`, kept `boot.gd` as the orchestrator, and added GUT coverage for legacy aliases, Refugio root behavior, nested back stack, `battle_running` landscape preference and battle summary return to Refugio.
 
+T08-D Mobile UI Contract is complete in `codex/draxos-mobile/t08-mobile-ui-contract`. It adds `DraxosMobileUiContract` as the small shared contract for minimum touch target, touch-scroll drag threshold, scrollbar/touch policy and portrait/landscape layout columns. `DraxosTouchScrollContainer`, `boot.gd` and existing shell/base buttons now reuse the helper without redesign, new assets, backend/schema changes or gameplay changes.
+
 ## Ordem Atual
 
 1. `T08-A` Coordenacao/Audit: complete; opened the track and recorded the foundation gap report.
 2. `T08-B` App Shell Lifecycle: complete; route/back/orientation contract helper and tests delivered.
 3. `T08-C` Session/Save Boundary: pending after T08-A.
-4. `T08-D` Mobile UI Contract: pending after T08-A.
-5. `T08-E` Battle Mode Contract: unblocked by T08-B.
+4. `T08-D` Mobile UI Contract: complete; centralized touch/scroll/button/layout rules and covered them in GUT plus mobile presentation smoke.
+5. `T08-E` Battle Mode Contract: pending after T08-B.
 6. `T08-F` Service/Asset Contract Checks: pending after T08-A.
 7. `T08-G` Validation Harness: pending after T08-B to T08-F.
 8. `T08-H` Integracao: pending after T08-B to T08-G.
+
+## T08-D Validation
+
+- GUT client command with `-gtest=res://tests/client/test_boot_mobile_ui.gd`: passed; project config loaded the full client suite, `85/85` tests and `985` asserts.
+- `tools/smoke_mobile_presentation.gd`: passed.
+- `tools/validate.gd`: passed; `DraxosMobile validate: OK`, `85/85` tests and `985` asserts.
+- `git diff --check`: passed.
 
 ## Guardrails
 

@@ -4,6 +4,7 @@ const BootScreenScript = preload("res://modes/boot/boot.gd")
 const AppShellRouteContractScript = preload("res://modes/boot/ui/app_shell_route_contract.gd")
 const BaseSurfacePresenterScript = preload("res://modes/boot/surfaces/base_surface_presenter.gd")
 const BattleReplayPresenterScript = preload("res://modes/boot/surfaces/battle_replay_presenter.gd")
+const MobileUiContractScript = preload("res://modes/boot/ui/mobile_ui_contract.gd")
 const TouchScrollContainerScript = preload("res://modes/boot/ui/touch_scroll_container.gd")
 
 func before_each() -> void:
@@ -22,12 +23,12 @@ func test_boot_compact_layout_groups_actions_for_mobile() -> void:
 	assert_true(boot._action_button_columns() >= 2)
 	assert_eq(boot._base_map_columns(), 6)
 	assert_true(boot._nav_buttons.is_empty())
-	assert_true(boot._back_button.custom_minimum_size.y >= 48.0)
+	assert_true(boot._back_button.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
 	assert_true(boot._content_scroll is TouchScrollContainerScript)
 	assert_true(_label_tree_contains(boot._content_body, "Altar do Refugio"))
 	var battle_hotspot := _find_button_by_text(boot._content_body, "Batalha")
 	assert_not_null(battle_hotspot)
-	assert_true(battle_hotspot.custom_minimum_size.y >= 48.0)
+	assert_true(battle_hotspot.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
 	assert_false(_has_direct_button_child(boot._content_body))
 
 	boot._show_screen("account")
@@ -35,7 +36,7 @@ func test_boot_compact_layout_groups_actions_for_mobile() -> void:
 	assert_not_null(action_grid)
 	assert_eq(action_grid.columns, boot._action_button_columns())
 	var sign_up_button := boot._action_buttons["email_sign_up"] as Button
-	assert_true(sign_up_button.custom_minimum_size.y >= 48.0)
+	assert_true(sign_up_button.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
 	assert_eq(sign_up_button.mouse_filter, Control.MOUSE_FILTER_PASS)
 	assert_false(_has_direct_button_child(boot._content_body))
 	assert_not_null(boot._confirm_dialog)
@@ -129,7 +130,7 @@ func test_boot_refugio_home_renders_altar_hotspots_and_account_route() -> void:
 	for hotspot_text: String in ["Batalha", "Base", "Social", "Competicao", "Loja", "Perfil/Conta"]:
 		var hotspot := _find_button_by_text(boot._content_body, hotspot_text)
 		assert_not_null(hotspot, "Refugio should expose hotspot '%s'." % hotspot_text)
-		assert_true(hotspot.custom_minimum_size.y >= 48.0)
+		assert_true(hotspot.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
 
 	var account_hotspot := _find_button_by_text(boot._content_body, "Perfil/Conta")
 	account_hotspot.pressed.emit()
@@ -164,6 +165,26 @@ func test_internal_app_screen_layout_uses_portrait_single_column_and_landscape_c
 	assert_eq(BootScreenScript.action_button_columns_for_size(Vector2(540, 960), true), 2)
 	assert_eq(BootScreenScript.action_button_columns_for_size(Vector2(1180, 720), true), 3)
 
+	var portrait_contract := MobileUiContractScript.layout_summary_for_size(Vector2(540, 960), true)
+	assert_eq(str(portrait_contract.get("orientation", "")), "portrait")
+	assert_eq(int(portrait_contract.get("surface_columns", 0)), 1)
+	assert_eq(int(portrait_contract.get("action_button_columns", 0)), 2)
+	assert_eq(int(portrait_contract.get("base_map_columns", 0)), 3)
+
+	var landscape_contract := MobileUiContractScript.layout_summary_for_size(Vector2(1180, 720), true)
+	assert_eq(str(landscape_contract.get("orientation", "")), "landscape")
+	assert_eq(int(landscape_contract.get("surface_columns", 0)), 2)
+	assert_eq(int(landscape_contract.get("action_button_columns", 0)), 3)
+	assert_eq(int(landscape_contract.get("base_map_columns", 0)), 6)
+
+	var button := Button.new()
+	button.custom_minimum_size = Vector2(24, 12)
+	MobileUiContractScript.apply_touch_button(button)
+	assert_eq(button.mouse_filter, Control.MOUSE_FILTER_PASS)
+	assert_eq(button.focus_mode, Control.FOCUS_NONE)
+	assert_true(button.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
+	button.free()
+
 func test_app_surfaces_open_as_internal_routes_with_back_and_touch_scroll() -> void:
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)
@@ -186,6 +207,11 @@ func test_touch_scroll_container_uses_drag_threshold_and_wide_scrollbar() -> voi
 	await get_tree().process_frame
 	await get_tree().process_frame
 
+	assert_eq(scroll.drag_threshold, MobileUiContractScript.TOUCH_DRAG_THRESHOLD)
+	assert_eq(scroll.mouse_filter, Control.MOUSE_FILTER_PASS)
+	assert_eq(scroll.vertical_scroll_mode, ScrollContainer.SCROLL_MODE_SHOW_ALWAYS)
+	assert_eq(scroll.horizontal_scroll_mode, ScrollContainer.SCROLL_MODE_DISABLED)
+
 	var touch_press := InputEventScreenTouch.new()
 	touch_press.pressed = true
 	touch_press.position = Vector2(20, 20)
@@ -200,7 +226,7 @@ func test_touch_scroll_container_uses_drag_threshold_and_wide_scrollbar() -> voi
 	large_drag.relative = Vector2(0, 24)
 	scroll._gui_input(large_drag)
 	assert_true(scroll.is_touch_dragging_for_test())
-	assert_true(scroll.get_v_scroll_bar().custom_minimum_size.x >= 30.0)
+	assert_true(scroll.get_v_scroll_bar().custom_minimum_size.x >= MobileUiContractScript.TOUCH_SCROLLBAR_WIDTH)
 
 func test_boot_account_panel_renders_login_save_session_and_update_gate() -> void:
 	var boot = BootScreenScript.new()
@@ -315,6 +341,8 @@ func test_base_presenter_renders_loaded_state_without_network() -> void:
 	assert_true(_panel_tree_count(boot._base_state_container) >= 3)
 	var upgrade_button := boot._action_buttons["upgrade_base_structure:nucleo_energia"] as Button
 	assert_false(upgrade_button.disabled)
+	assert_eq(upgrade_button.mouse_filter, Control.MOUSE_FILTER_PASS)
+	assert_true(upgrade_button.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
 
 func test_base_routine_panel_derives_objective_from_existing_payload() -> void:
 	var routine: Dictionary = BaseSurfacePresenterScript.routine_summary(_base_state_fixture())
