@@ -96,6 +96,10 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 | Escopo da Track 05 | `implementation/tracks/track-05-foundation-stabilization-and-asset-service-readiness/scope.md` |
 | Plano da Track 05 | `implementation/tracks/track-05-foundation-stabilization-and-asset-service-readiness/implementation-plan.md` |
 | Status da Track 05 | `implementation/tracks/track-05-foundation-stabilization-and-asset-service-readiness/current-status.md` |
+| Escopo da Track 06 | `implementation/tracks/track-06-feature-installation-rails-and-first-slices/scope.md` |
+| Plano da Track 06 | `implementation/tracks/track-06-feature-installation-rails-and-first-slices/implementation-plan.md` |
+| Status da Track 06 | `implementation/tracks/track-06-feature-installation-rails-and-first-slices/current-status.md` |
+| Feature registry da Track 06 | `implementation/tracks/track-06-feature-installation-rails-and-first-slices/feature-registry.md` |
 | Runbook Internal Alpha v0 | `docs/internal-alpha-v0.md` |
 | Setup remoto Internal Alpha v0 | `docs/internal-alpha-remote-setup.md` |
 | Host estatico Internal Alpha v0 | `docs/internal-alpha-static-hosting.md` |
@@ -165,6 +169,6 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 
 ## Active Track
 
-Track ativa: `Track 05 - Foundation Stabilization And Asset/Service Readiness`.
+Track ativa: `Track 06 - Feature Installation Rails And First Feature Slices`.
 
-Comece por `implementation/current-status.md` e siga `implementation/tracks/track-05-foundation-stabilization-and-asset-service-readiness/current-status.md`.
+Comece por `implementation/current-status.md` e siga `implementation/tracks/track-06-feature-installation-rails-and-first-slices/current-status.md`.

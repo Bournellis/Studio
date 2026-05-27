@@ -19,8 +19,8 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
 ## Implementacao - Internal Alpha
 
-- `draxos-mobile/`: jogo mobile multi-plataforma - mago Draxos (PVP assincrono, base manager, social). Plataformas: Android + PC executavel + PC browser. Backend: Supabase para alpha, com Backend Proprio + Postgres como plano de saida preferido. Batalha 100% simulada no servidor. Track 00 completa, Track 01 completa e Track 02 com Progression Lab/Battle Lab v1 implementados; batalha visual procedural 2D e labs internos estao prontos. Track 03 esta completa para Internal Alpha v0: design lock, email/senha, dois saves por conta (`normal` e `progression_lab`), Supabase remoto Free, Progression Lab isolado, Base/Social/Competicao/Loja jogaveis, leaderboard sem bots, redeems diarios em Diamante, manifest de updates, exports Android/PC/Web, publicacao unlisted, passada Android UI, QA remoto automatizado, handoff final e testes Fabio + tester aprovados. Track 04 consolidou presenters render-only do Hub, plano de modularizacao, relatorio Progression/Economia e decisao Account/Save Gate mantendo `players.save_type` no curto prazo. Track 05 esta integrada como fundacao validada antes de assets reais e novos servicos: matriz de validacao, smoke Base/Shop/Social/Competition, Hub foundation, contratos de servico, asset pipeline, Progression Human Pack e release ops. Handoff: `draxos-mobile/docs/internal-alpha-v0-handoff.md`.
-  - Priority/status: `P2_IMPLEMENTACAO - Track 05 INTEGRATED_FOUNDATION_READY`
+- `draxos-mobile/`: jogo mobile multi-plataforma - mago Draxos (PVP assincrono, base manager, social). Plataformas: Android + PC executavel + PC browser. Backend: Supabase para alpha, com Backend Proprio + Postgres como plano de saida preferido. Batalha 100% simulada no servidor. Track 00 completa, Track 01 completa e Track 02 com Progression Lab/Battle Lab v1 implementados; batalha visual procedural 2D e labs internos estao prontos. Track 03 esta completa para Internal Alpha v0: design lock, email/senha, dois saves por conta (`normal` e `progression_lab`), Supabase remoto Free, Progression Lab isolado, Base/Social/Competicao/Loja jogaveis, leaderboard sem bots, redeems diarios em Diamante, manifest de updates, exports Android/PC/Web, publicacao unlisted, passada Android UI, QA remoto automatizado, handoff final e testes Fabio + tester aprovados. Track 04 consolidou presenters render-only do Hub, plano de modularizacao, relatorio Progression/Economia e decisao Account/Save Gate mantendo `players.save_type` no curto prazo. Track 05 esta integrada como fundacao validada antes de assets reais e novos servicos: matriz de validacao, smoke Base/Shop/Social/Competition, Hub foundation, contratos de servico, asset pipeline, Progression Human Pack e release ops. Track 06 esta ativa para instalar feature rails e primeiros slices de runtime config, perfil/conta, battle history, rotina da Base, Social QoL e Asset Pack 01, sem tuning nem migration conta/save. Handoff: `draxos-mobile/docs/internal-alpha-v0-handoff.md`.
+  - Priority/status: `P2_IMPLEMENTACAO - Track 06 ACTIVE_FEATURE_INSTALLATION`
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Operational status: `draxos-mobile/implementation/current-status.md`
   - Product vision: `draxos-mobile/docs/product-vision.md`
@@ -30,6 +30,7 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
   - Track 03 scope: `draxos-mobile/implementation/tracks/track-03-internal-alpha-v0/scope.md`
   - Track 04 scope: `draxos-mobile/implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/scope.md`
   - Track 05 scope: `draxos-mobile/implementation/tracks/track-05-foundation-stabilization-and-asset-service-readiness/scope.md`
+  - Track 06 scope: `draxos-mobile/implementation/tracks/track-06-feature-installation-rails-and-first-slices/scope.md`
   - Internal Alpha v0 runbook: `draxos-mobile/docs/internal-alpha-v0.md`
   - Internal Alpha remote setup: `draxos-mobile/docs/internal-alpha-remote-setup.md`
   - Internal Alpha release plan: `draxos-mobile/docs/internal-alpha-release-plan.md`
@@ -45,7 +46,7 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
   - Economy model: `draxos-mobile/docs/economy/README.md`
   - Design archive: `_conceitos/mobile-universe/gdd.md`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: executar a rodada humana do Progression Lab; depois abrir assets reais e novos servicos sobre a fundacao validada.
+  - Current next step: executar Track 06 em worktrees paralelas, com feature rails e runtime config antes das features de perfil, batalha, Base, Social e assets.
 
 ## Arquivo De Design
 

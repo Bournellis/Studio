@@ -5,7 +5,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 ## Foco Atual
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Foco P2 de implementacao (Track 05 `INTEGRATED_FOUNDATION_READY`): `Projetos/draxos-mobile/`
+- Foco P2 de implementacao (Track 06 `ACTIVE_FEATURE_INSTALLATION`): `Projetos/draxos-mobile/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/` (preservado como referencia - nao e o projeto ativo)
 - Projetos pausados: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -14,7 +14,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 | Prioridade | Projeto | Caminho | Fase | Status | Trabalho permitido | Proximo passo | Restricao operacional |
 |---|---|---|---|---|---|---|---|
 | P0 | Draxos Roguelike Cardgame | `Projetos/draxos-roguelike-cardgame/` | Implementacao | `P0_IMPLEMENTACAO` | Codigo, validacao, playtest, documentacao local | Playtest de usuario da Track 02 completa | Pode receber trabalho de implementacao por padrao |
-| P2 | DraxosMobile | `Projetos/draxos-mobile/` | Implementacao - Track 05 `INTEGRATED_FOUNDATION_READY` | `P2_IMPLEMENTACAO` | Codigo, design, documentacao local, configuracao de infraestrutura | Rodar rodada humana do Progression Lab e entao abrir assets reais/servicos novos sobre a fundacao validada | iOS sem pedido explicito; mobile browser fora do escopo; secrets e service role nunca entram no cliente/export; migration conta/save fora do pacote atual; Track 05 nao mudou economia, schema, assets finais nem publicou remoto |
+| P2 | DraxosMobile | `Projetos/draxos-mobile/` | Implementacao - Track 06 `ACTIVE_FEATURE_INSTALLATION` | `P2_IMPLEMENTACAO` | Codigo, design, documentacao local, configuracao de infraestrutura | Instalar feature rails, runtime config, perfil/conta, historico de batalha, rotina da Base, Social QoL e Asset Pack 01 sobre a fundacao Track 05 | iOS sem pedido explicito; mobile browser fora do escopo; secrets e service role nunca entram no cliente/export; migration conta/save fora do pacote atual; Track 06 nao faz tuning numerico, pagamento real, realtime social nem publicacao remota |
 | Arquivo | Mobile Universe (conceito) | `Projetos/_conceitos/mobile-universe/` | Arquivo de design | `ARQUIVO_DESIGN` | Leitura e referencia de design apenas | - | Nao criar codigo, cenas, assets ou projeto Godot a partir daqui |
 | Pausado | RPG Isometrico | `Projetos/rpg-isometrico/` | Pausado | `PAUSADO_INDEFINIDO` | Consulta historica quando solicitado | Nenhum enquanto pausado | Nao implementar, expandir gates ou selecionar Next Gate sem pedido explicito |
 | Pausado | RPG Turnos | `Projetos/rpg-turnos/` | Pausado | `PAUSADO_INDEFINIDO` | Consulta historica quando solicitado | Nenhum enquanto pausado | Nao implementar, selecionar track/gate, regenerar `.tres` ou alterar escopo sem pedido explicito |
