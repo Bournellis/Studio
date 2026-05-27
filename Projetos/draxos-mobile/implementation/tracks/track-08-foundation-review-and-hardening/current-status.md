@@ -3,8 +3,8 @@
 - Last Updated: `2026-05-27`
 - Status: `ACTIVE_FOUNDATION_HARDENING`
 - Depends On: `T07_INTEGRATED_PRESENTATION_READY`
-- Current Stage: `T08_A_COMPLETE`
-- Next Action: integrate T08-A into master, then run T08-B to T08-F in parallel worktrees.
+- Current Stage: `T08_C_COMPLETE_PENDING_INTEGRATION`
+- Next Action: continue T08-B/T08-D/T08-F parallel worktrees and integrate delivered T08-C during T08-H.
 
 ## Estado
 
@@ -16,7 +16,7 @@ The project now has a mobile-first Refugio home, route shell, internal surfaces 
 
 1. `T08-A` Coordenacao/Audit: complete; opened the track and recorded the foundation gap report.
 2. `T08-B` App Shell Lifecycle: pending after T08-A.
-3. `T08-C` Session/Save Boundary: pending after T08-A.
+3. `T08-C` Session/Save Boundary: complete in `codex/draxos-mobile/t08-session-save-boundary`; pending Track 08 integration.
 4. `T08-D` Mobile UI Contract: pending after T08-A.
 5. `T08-E` Battle Mode Contract: pending after T08-B.
 6. `T08-F` Service/Asset Contract Checks: pending after T08-A.
@@ -33,6 +33,13 @@ The project now has a mobile-first Refugio home, route shell, internal surfaces 
 - Keep presenters render-oriented; actions, session, network and telemetry remain host-owned unless explicitly documented.
 
 ## Validation Baseline
+
+Latest T08-C local validation:
+
+- `res://tests/client/test_session_shell.gd` via GUT `-gtest`: passed as part of client run with `90/90` tests and `1001` asserts after one-time headless import.
+- `tools/validate.gd`: passed; includes client GUT `90/90` tests and `1001` asserts.
+- Full client GUT `-gdir=res://tests/client`: passed with `90/90` tests and `1001` asserts.
+- `git diff --check`: passed.
 
 Client packages:
 

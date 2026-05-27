@@ -54,7 +54,9 @@ func test_session_store_flags_and_clears_progression_lab_local_only_cache() -> v
 			"local_only": true,
 		},
 	}))
-	assert_true(store.has_valid_access_token(now))
+	assert_false(store.has_valid_access_token(now))
+	assert_eq(store.access_token, "")
+	assert_eq(store.refresh_token, "")
 	assert_true(store.has_account_state())
 	assert_true(store.is_progression_lab_local_only())
 	assert_true(store.is_progression_lab_active())
@@ -172,6 +174,58 @@ func test_session_store_accepts_battle_log_snapshot_without_mutating_resources()
 	assert_eq(int(Dictionary(store.competition_state["last_battle"]).get("arena_delta", 0)), 20)
 	store.free()
 
+func test_session_store_rejects_stale_save_scoped_surface_payloads() -> void:
+	var store = SessionStoreScript.new()
+	assert_false(store.is_progression_lab_active())
+	var applied := store.apply_base_result({
+		"ok": true,
+		"_client": {"save_type": "progression_lab"},
+		"resources": {"energia": 7},
+		"base": {
+			"construction_slots": 1,
+			"structures": [{"structure_id": "nucleo_energia", "level": 1}],
+			"jobs": [],
+		},
+	})
+	assert_false(applied)
+	assert_false(store.has_base_state())
+	assert_eq(str(store.last_error.get("code", "")), "STALE_SAVE_RESPONSE")
+	store.free()
+
+func test_session_store_tracks_surface_snapshots_per_save() -> void:
+	var store = SessionStoreScript.new()
+	assert_true(store.apply_server_state({
+		"ok": true,
+		"_client": {"save_type": "normal"},
+		"player": {"id": "player-normal", "username": "normal_user", "save_type": "normal"},
+		"resources": {"almas": 1},
+		"build": {"weapon_type": "varinha_cinzas"},
+	}))
+	assert_true(store.apply_base_result({
+		"ok": true,
+		"_client": {"save_type": "normal"},
+		"resources": {"energia": 10},
+		"base": {
+			"construction_slots": 1,
+			"structures": [{"structure_id": "nucleo_energia", "level": 1}],
+			"jobs": [],
+		},
+	}))
+	assert_true(store.has_account_state())
+	assert_true(store.has_base_state())
+	var diagnostics := store.diagnostics_snapshot()
+	var surfaces := Dictionary(diagnostics.get("surfaces", {}))
+	assert_eq(str(Dictionary(surfaces.get("account", {})).get("save_type", "")), "normal")
+	assert_eq(str(Dictionary(surfaces.get("base", {})).get("save_type", "")), "normal")
+
+	assert_true(store.set_active_save_type(SessionStoreScript.SAVE_TYPE_PROGRESSION_LAB))
+	assert_false(store.has_account_state())
+	assert_false(store.has_base_state())
+	var lab_surfaces := Dictionary(store.diagnostics_snapshot().get("surfaces", {}))
+	var lab_base_diagnostics := Dictionary(lab_surfaces.get("base", {}))
+	assert_false(bool(lab_base_diagnostics.get("has_snapshot", true)))
+	store.free()
+
 func test_supabase_client_uses_local_contract_urls() -> void:
 	var client = SupabaseClientScript.new()
 	client.configure("http://127.0.0.1:54321/", "publishable")
@@ -191,6 +245,17 @@ func test_supabase_client_uses_local_contract_urls() -> void:
 	assert_eq(client.function_url("telemetry/client-event"), "http://127.0.0.1:54321/functions/v1/telemetry/client-event")
 	assert_eq(client.manifest_url(), "http://127.0.0.1:54321/functions/v1/release/manifest")
 	assert_eq(client.runtime_config_url(), "http://127.0.0.1:54321/functions/v1/release/config")
+	client.free()
+
+func test_supabase_client_diagnostics_do_not_expose_publishable_key() -> void:
+	var client = SupabaseClientScript.new()
+	client.configure("https://example.supabase.co/", "sb_publishable_example")
+	client.configure_save_type("progression_lab")
+	var diagnostics := client.diagnostics_snapshot()
+	assert_false(diagnostics.has("publishable_key"))
+	assert_false(str(diagnostics).contains("sb_publishable_example"))
+	assert_eq(str(Dictionary(diagnostics.get("save_context", {})).get("active_save_type", "")), "progression_lab")
+	assert_true(bool(Dictionary(diagnostics.get("auth", {})).get("publishable_key_configured", false)))
 	client.free()
 
 func test_backend_config_supports_internal_alpha_without_service_role() -> void:
@@ -310,6 +375,12 @@ func test_supabase_client_normalizes_save_context_header_state() -> void:
 	var client = SupabaseClientScript.new()
 	client.configure_save_type("progression_lab")
 	assert_eq(client.active_save_type, "progression_lab")
+	var annotated := client._with_client_context(
+		{"ok": true, "body": {"ok": true}},
+		PackedStringArray(["Accept: application/json", "x-draxos-save-type: progression_lab"])
+	)
+	assert_eq(str(Dictionary(annotated.get("_client", {})).get("save_type", "")), "progression_lab")
+	assert_eq(Dictionary(annotated.get("body", {})), {"ok": true})
 	client.configure_save_type("unknown")
 	assert_eq(client.active_save_type, "normal")
 	client.free()
@@ -458,6 +529,50 @@ func test_session_store_save_reset_clears_gameplay_snapshots() -> void:
 	assert_false(store.has_battle_log())
 	assert_eq(int(store.player.get("level", 0)), 1)
 	assert_eq(int(store.resources.get("ossos", -1)), 0)
+	store.free()
+
+func test_session_store_lab_save_reset_clears_progression_lab_metadata() -> void:
+	var store = SessionStoreScript.new()
+	store.active_save_type = SessionStoreScript.SAVE_TYPE_PROGRESSION_LAB
+	store.progression_lab = {
+		"save_id": "free_100_rewards_10h",
+		"profile_id": "free_100_rewards",
+		"milestone_id": "10h",
+		"local_only": false,
+	}
+	var applied := store.apply_save_reset({
+		"ok": true,
+		"_client": {"save_type": "progression_lab"},
+		"player": {"id": "player-lab-reset", "username": "guest_lab", "save_type": "progression_lab", "level": 1, "xp": 0, "power": 0},
+		"resources": {"player_id": "player-lab-reset", "almas": 0, "energia": 0, "ossos": 0, "diamante": 0},
+		"build": {"player_id": "player-lab-reset", "weapon_type": "varinha_cinzas", "weapon_quality": "starter"},
+		"last_battle_id": null,
+	})
+	assert_true(applied)
+	assert_true(store.is_progression_lab_active())
+	assert_true(store.progression_lab.is_empty())
+	assert_eq(store.progression_lab_label(), "")
+	assert_true(store.has_account_state())
+	store.free()
+
+func test_session_store_diagnostics_do_not_expose_auth_secrets() -> void:
+	var store = SessionStoreScript.new()
+	var now := int(Time.get_unix_time_from_system())
+	assert_true(store.apply_auth_session({
+		"access_token": "super-secret-access-token",
+		"refresh_token": "super-secret-refresh-token",
+		"expires_at": now + 3600,
+		"user_id": "auth-user",
+		"auth_method": "email",
+		"email": "tester@example.com",
+	}))
+	var diagnostics := store.diagnostics_snapshot()
+	var diagnostic_text := str(diagnostics)
+	assert_false(diagnostic_text.contains("super-secret-access-token"))
+	assert_false(diagnostic_text.contains("super-secret-refresh-token"))
+	assert_false(diagnostic_text.contains("tester@example.com"))
+	assert_true(bool(Dictionary(diagnostics.get("auth", {})).get("has_access_token", false)))
+	assert_true(bool(Dictionary(diagnostics.get("auth", {})).get("has_refresh_token", false)))
 	store.free()
 
 func test_session_store_progression_lab_apply_sets_metadata_and_clears_snapshots() -> void:

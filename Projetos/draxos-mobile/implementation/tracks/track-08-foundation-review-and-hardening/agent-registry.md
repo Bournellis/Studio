@@ -4,7 +4,7 @@
 |---|---|---|---|---|---|
 | T08-A Coordenacao/Audit | Codex | `codex/draxos-mobile/t08-coordenacao` | `D:\Estudio-worktrees\draxos-mobile--codex--t08-coordenacao` | `COMPLETE` | Track docs, gap report and portfolio baseline |
 | T08-B App Shell Lifecycle | Codex worker | `codex/draxos-mobile/t08-app-shell-lifecycle` | `D:\Estudio-worktrees\draxos-mobile--codex--t08-app-shell-lifecycle` | `PENDING` | Route/back/orientation contract |
-| T08-C Session/Save Boundary | Codex worker | `codex/draxos-mobile/t08-session-save-boundary` | `D:\Estudio-worktrees\draxos-mobile--codex--t08-session-save-boundary` | `PENDING` | Session/save/cache/runtime config invariants |
+| T08-C Session/Save Boundary | Codex worker | `codex/draxos-mobile/t08-session-save-boundary` | `D:\Estudio-worktrees\draxos-mobile--codex--t08-session-save-boundary` | `COMPLETE_PENDING_INTEGRATION` | Session/save/cache/runtime config invariants and non-secret diagnostics |
 | T08-D Mobile UI Contract | Codex worker | `codex/draxos-mobile/t08-mobile-ui-contract` | `D:\Estudio-worktrees\draxos-mobile--codex--t08-mobile-ui-contract` | `PENDING` | Touch/scroll/button/layout contract |
 | T08-E Battle Mode Contract | Codex worker | `codex/draxos-mobile/t08-battle-mode-contract` | `D:\Estudio-worktrees\draxos-mobile--codex--t08-battle-mode-contract` | `PENDING` | Fullscreen battle mode contract |
 | T08-F Service/Asset Contract Checks | Codex worker | `codex/draxos-mobile/t08-service-asset-contracts` | `D:\Estudio-worktrees\draxos-mobile--codex--t08-service-asset-contracts` | `PENDING` | Endpoint/registry/asset contract checks |
