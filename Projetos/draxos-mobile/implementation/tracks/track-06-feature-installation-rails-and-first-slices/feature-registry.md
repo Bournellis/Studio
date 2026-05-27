@@ -107,7 +107,7 @@ Rollback deve ser simples e local:
 | `T06_FEATURE_RAILS` | `T06-B Feature Rails` | docs/coordination | `READY_FOR_INTEGRATION` | none | none | `N/A docs-only` | `N/A docs-only` |
 | `RUNTIME_CONFIG_V1` | `T06-C Runtime Config` | release/client boot | `PLANNED` | new `GET /release/config` | `release` | runtime config smoke | runtime config read path/fallback GUT |
 | `PROFILE_ACCOUNT_PANEL` | `T06-D Perfil/Conta` | Hub account/session | `PLANNED` | existing `GET /account/state` | `save-scoped` existing read | profile/session smoke | profile/presenter GUT |
-| `BATTLE_HISTORY_REPLAY` | `T06-E Battle History` | Battle tab | `PLANNED` | new `GET /battle/history`, new `GET /battle/replay?battle_id=...` | `save-scoped` read-only | battle history/replay smoke and `smoke_battle_replay.gd` | battle history/replay presenter GUT |
+| `BATTLE_HISTORY_REPLAY` | `T06-E Battle History` | Battle tab | `READY_FOR_INTEGRATION` | new `GET /battle/history`, new `GET /battle/replay?battle_id=...` | `save-scoped` read-only | `battle_history_replay_smoke.ts` and `smoke_battle_replay.gd` | battle history/replay presenter GUT |
 | `BASE_ROUTINE_PANEL` | `T06-F Base Routine` | Base tab | `PLANNED` | existing `GET /base/state` | `save-scoped` existing read | `smoke_foundation_surfaces.gd` Base coverage | Base routine/presenter GUT |
 | `SOCIAL_QOL_READABILITY` | `T06-G Social QoL` | Social tab | `PLANNED` | existing `GET /social/state` and current social actions | `account-scoped` existing behavior | `smoke_foundation_surfaces.gd` Social coverage | Social readability/presenter GUT |
 | `ASSET_PACK_01_SAFE` | `T06-H Asset Pack 01` | shared UI/battle visuals | `PLANNED` | none | none | visual/export smoke if hooks change | AssetIds/fallback GUT |
@@ -172,19 +172,19 @@ Rollback deve ser simples e local:
 
 - Owner: `T06-E Battle History`
 - Surface: Battle tab
-- Status: `PLANNED`
+- Status: `READY_FOR_INTEGRATION`
 - Endpoints affected: new `GET /battle/history`, new `GET /battle/replay?battle_id=...`
 - Service scope: `save-scoped` read-only
-- Service contract notes: JWT required; uses active `x-draxos-save-type`; no idempotency because read-only; must never rerun simulator, reapply rewards or mutate ranking/resources.
-- Client files: battle history UI/replay selection files to be declared by T06-E.
-- Backend files: `supabase/functions/battle`, `server/functions/battle`, Deno smoke to be declared by T06-E.
-- Smoke required: battle history/replay smoke and `smoke_battle_replay.gd`.
-- GUT required: battle history/replay presenter GUT.
+- Service contract notes: JWT required; uses active `x-draxos-save-type` with absence defaulting to `normal`; no idempotency because both endpoints are GET/read-only; `history` returns recent saved battle summaries; `replay` returns the stored `battle_log_v1` for a battle owned by the active save; must never rerun simulator, reapply rewards or mutate ranking/resources.
+- Client files: `online/supabase_client.gd`, `modes/boot/boot.gd`, `modes/boot/surfaces/battle_replay_presenter.gd`, `tools/smoke_battle_replay.gd`, focused `tests/client` coverage.
+- Backend files: `supabase/functions/battle/index.ts`, `server/functions/battle/index.ts`, `server/tests/battle_history_replay_smoke.ts`, `server/tests/README.md`.
+- Smoke required: `server/tests/battle_history_replay_smoke.ts` and `tools/smoke_battle_replay.gd`.
+- GUT required: battle history/replay presenter GUT in `tests/client`.
 - Other validation: Deno checks, `validate.gd`, GUT client, `git diff --check`.
 - Fallback: show empty history or readable load error; latest battle flow remains available.
 - Rollback: disable history UI and remove read-only endpoints while preserving `battle/request`, `battle/latest` and stored battle rows.
 - Guardrail notes: no simulator, reward, ranking, economy, `battle_log_v1` or schema change unless blocked and escalated.
-- Handoff notes: T06-I should verify saved replay is read-only and active-save scoped.
+- Handoff notes: delivered with Deno checks, direct-function battle history smoke, `smoke_battle_replay.gd`, `validate.gd`, GUT client and `git diff --check`; T06-I should verify saved replay is read-only, active-save scoped and does not change account state after replay fetch.
 
 ### `BASE_ROUTINE_PANEL`
 

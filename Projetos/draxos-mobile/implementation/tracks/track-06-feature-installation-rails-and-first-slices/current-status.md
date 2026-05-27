@@ -3,8 +3,8 @@
 - Last Updated: `2026-05-27`
 - Status: `ACTIVE_FEATURE_INSTALLATION`
 - Depends On: `T05_INTEGRATED_FOUNDATION_READY`
-- Current Stage: `T06_B_READY_FOR_HANDOFF`
-- Next Action: merge T06-B feature rails, continue T06-C runtime config, then let T06-D to T06-H implement from the registry checklist.
+- Current Stage: `T06_E_READY_FOR_INTEGRATION`
+- Next Action: integrate T06-E with the other Track 06 feature slices in T06-I after parallel branches are ready.
 
 ## Estado
 
@@ -18,7 +18,7 @@ The track deliberately prioritizes solid installation rails and small visible fe
 2. `T06-B` Feature Rails: ready for handoff; feature registry now defines the standard install contract, smoke/GUT rule by surface, fallback and rollback checklist.
 3. `T06-C` Runtime Config: pending after T06-A.
 4. `T06-D` Perfil/Conta: pending after T06-B merge; must fill feature card before runtime.
-5. `T06-E` Battle History: pending after T06-B merge; must fill feature card before runtime.
+5. `T06-E` Battle History: ready for integration; delivered save-scoped read-only `GET /battle/history`, `GET /battle/replay?battle_id=...`, Battle tab history/replay UI and focused smokes/GUT without simulator/reward/schema changes.
 6. `T06-F` Base Routine: pending after T06-B merge; must fill feature card before runtime.
 7. `T06-G` Social QoL: pending after T06-B merge; must fill feature card before runtime.
 8. `T06-H` Asset Pack 01: pending after T06-B merge; must fill feature card before runtime.
@@ -71,6 +71,19 @@ git diff --check
 - GUT for Profile, Base Routine, Social QoL and AssetIds/fallback as applicable
 - Deno checks for `supabase/functions` and `server/functions`
 - `git diff --check`
+
+## T06-E Battle History Handoff
+
+Status: `READY_FOR_INTEGRATION`.
+
+Delivered:
+
+- `GET /battle/history` returns recent saved battle summaries for the active save.
+- `GET /battle/replay?battle_id=...` returns the stored `battle_log_v1` for a battle owned by the active save.
+- Battle tab now has a History action, renders recent saved battles and can replay a selected saved battle without rerunning simulation.
+- `smoke_battle_replay.gd` validates history/replay when `BATTLE_FUNCTION_URL` points to the worktree-served battle function.
+
+Guardrails preserved: no schema change, no simulator change, no reward/economy/ranking change, no `battle_log_v1` mutation and no remote publication.
 
 ## Fontes
 
