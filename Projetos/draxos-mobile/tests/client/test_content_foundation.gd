@@ -22,6 +22,17 @@ const EXPECTED_ASSET_PACK_01_IDS: Array[String] = [
 	"portrait_training_bot"
 ]
 
+const EXPECTED_OPTIONAL_MISSING_ART_IDS: Array[String] = [
+	"battle_character_opponent",
+	"battle_character_player",
+	"battle_fx_buff",
+	"battle_fx_hit",
+	"battle_fx_spell",
+	"boot_background",
+	"placeholder_card",
+	"ui_logo"
+]
+
 const EXPECTED_ASSET_PATHS: Dictionary = {
 	"ui_logo": "res://assets/ui/ui_logo.png",
 	"boot_background": "res://assets/ui/boot_background.png",
@@ -127,6 +138,14 @@ func test_asset_ids_allow_missing_art_fallback() -> void:
 	assert_null(AssetIds.texture("__missing_art_probe__"))
 	assert_has(Array(AssetIds.missing_art_ids(PackedStringArray(["__missing_art_probe__"]))), "__missing_art_probe__")
 	assert_has(Array(AssetIds.missing_art_ids()), "boot_background")
+
+func test_asset_ids_keep_optional_missing_art_contract_stable() -> void:
+	assert_eq(Array(AssetIds.missing_art_ids()), EXPECTED_OPTIONAL_MISSING_ART_IDS)
+	for asset_id: String in EXPECTED_OPTIONAL_MISSING_ART_IDS:
+		assert_true(AssetIds.has_asset_id(asset_id), "Optional missing id should stay registered: %s" % asset_id)
+		assert_false(AssetIds.has_art(asset_id), "Optional missing id should not require final art yet: %s" % asset_id)
+		assert_null(AssetIds.texture(asset_id), "Optional missing id should return null texture: %s" % asset_id)
+		assert_false(Array(AssetIds.pack_01_safe_ids()).has(asset_id), "Optional missing id should not be part of installed Pack 01: %s" % asset_id)
 
 func test_asset_pack_01_safe_art_is_loadable_without_making_all_art_required() -> void:
 	assert_eq(Array(AssetIds.pack_01_safe_ids()), EXPECTED_ASSET_PACK_01_IDS)

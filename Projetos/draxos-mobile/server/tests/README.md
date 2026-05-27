@@ -13,6 +13,17 @@ No MVP atual, o alvo inicial e validar:
 
 ## Smokes
 
+Sem Supabase local:
+
+```powershell
+npx -y deno test --allow-read server/tests/foundation_contracts_test.ts
+```
+
+O teste `foundation_contracts_test.ts` le `docs/contracts/api-endpoints.md` e o
+feature registry para garantir que a matriz atual declare escopo por endpoint e
+que os cards mantenham campos obrigatorios completos antes de novas
+features/servicos.
+
 Com Supabase local rodando:
 
 ```powershell

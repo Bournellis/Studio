@@ -7,7 +7,7 @@
 | T08-C Session/Save Boundary | Codex worker | `codex/draxos-mobile/t08-session-save-boundary` | `D:\Estudio-worktrees\draxos-mobile--codex--t08-session-save-boundary` | `COMPLETE` | Session/save/cache/runtime config invariants and non-secret diagnostics |
 | T08-D Mobile UI Contract | Codex worker | `codex/draxos-mobile/t08-mobile-ui-contract` | `D:\Estudio-worktrees\draxos-mobile--codex--t08-mobile-ui-contract` | `COMPLETE` | Touch/scroll/button/layout contract |
 | T08-E Battle Mode Contract | Codex worker | `codex/draxos-mobile/t08-battle-mode-contract` | `D:\Estudio-worktrees\draxos-mobile--codex--t08-battle-mode-contract` | `PENDING` | Fullscreen battle mode contract |
-| T08-F Service/Asset Contract Checks | Codex worker | `codex/draxos-mobile/t08-service-asset-contracts` | `D:\Estudio-worktrees\draxos-mobile--codex--t08-service-asset-contracts` | `PENDING` | Endpoint/registry/asset contract checks |
+| T08-F Service/Asset Contract Checks | Codex worker | `codex/draxos-mobile/t08-service-asset-contracts` | `D:\Estudio-worktrees\draxos-mobile--codex--t08-service-asset-contracts` | `COMPLETE` | Deno docs/contracts + feature registry check and AssetIds fallback GUT |
 | T08-G Validation Harness | Codex | `codex/draxos-mobile/t08-validation-harness` | `D:\Estudio-worktrees\draxos-mobile--codex--t08-validation-harness` | `PENDING` | Foundation hardening smoke |
 | T08-H Integracao | Codex | `codex/draxos-mobile/t08-integration` | `D:\Estudio-worktrees\draxos-mobile--codex--t08-integration` | `PENDING` | Integrated validated package |
 

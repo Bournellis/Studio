@@ -3,8 +3,8 @@
 - Last Updated: `2026-05-27`
 - Status: `ACTIVE_FOUNDATION_HARDENING`
 - Depends On: `T07_INTEGRATED_PRESENTATION_READY`
-- Current Stage: `T08_B_T08_C_T08_D_COMPLETE`
-- Next Action: continue integrating T08-E/T08-F, then create T08-G validation harness and close T08-H.
+- Current Stage: `T08_B_T08_C_T08_D_T08_F_COMPLETE`
+- Next Action: continue integrating T08-E, then create T08-G validation harness and close T08-H.
 
 ## Estado
 
@@ -18,6 +18,8 @@ T08-C Session/Save Boundary is complete in `codex/draxos-mobile/t08-session-save
 
 T08-D Mobile UI Contract is complete in `codex/draxos-mobile/t08-mobile-ui-contract`. It adds `DraxosMobileUiContract` as the small shared contract for minimum touch target, touch-scroll drag threshold, scrollbar/touch policy and portrait/landscape layout columns. `DraxosTouchScrollContainer`, `boot.gd` and existing shell/base buttons now reuse the helper without redesign, new assets, backend/schema changes or gameplay changes.
 
+T08-F Service/Asset Contract Checks is complete in `codex/draxos-mobile/t08-service-asset-contracts`. It adds a no-network Deno test for `docs/contracts/api-endpoints.md` endpoint matrix scopes and Track 06 feature card completeness, plus focused GUT coverage that keeps optional `AssetIds` missing-art fallback stable apart from installed Asset Pack 01 ids. No endpoint, schema, migration, service or final asset was added.
+
 ## Ordem Atual
 
 1. `T08-A` Coordenacao/Audit: complete; opened the track and recorded the foundation gap report.
@@ -25,7 +27,7 @@ T08-D Mobile UI Contract is complete in `codex/draxos-mobile/t08-mobile-ui-contr
 3. `T08-C` Session/Save Boundary: complete; session/save/cache/runtime config invariants and diagnostics delivered.
 4. `T08-D` Mobile UI Contract: complete; centralized touch/scroll/button/layout rules and covered them in GUT plus mobile presentation smoke.
 5. `T08-E` Battle Mode Contract: pending after T08-B.
-6. `T08-F` Service/Asset Contract Checks: pending after T08-A.
+6. `T08-F` Service/Asset Contract Checks: complete; endpoint matrix, feature registry and asset fallback checks delivered.
 7. `T08-G` Validation Harness: pending after T08-B to T08-F.
 8. `T08-H` Integracao: pending after T08-B to T08-G.
 
@@ -82,6 +84,9 @@ Backend/docs packages:
 
 ```powershell
 cd <WORKTREE>\Projetos\draxos-mobile
+npx -y deno check server/tests/foundation_contracts_test.ts
+npx -y deno test --allow-read server/tests/foundation_contracts_test.ts
+npx -y deno lint server/tests/foundation_contracts_test.ts
 npx -y deno task --cwd supabase/functions check
 npx -y deno task --cwd server/functions check
 git diff --check

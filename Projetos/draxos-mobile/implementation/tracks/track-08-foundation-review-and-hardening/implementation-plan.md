@@ -82,12 +82,18 @@ Validation: `smoke_battle_replay.gd`, battle fullscreen/summary GUT, `validate.g
 
 ## T08-F - Service/Asset Contract Checks
 
-Status: `PENDING_AFTER_T08_A`.
+Status: `READY_FOR_INTEGRATION`.
 
 - Add lightweight checks for endpoint matrix scopes, feature registry completeness and `AssetIds` fallback stability.
 - No endpoints, schema, migrations, final assets or services.
 
-Validation: Deno checks when applicable, `validate.gd`/GUT if touching client, and `git diff --check`.
+Delivered in `codex/draxos-mobile/t08-service-asset-contracts`:
+
+- `server/tests/foundation_contracts_test.ts` checks `docs/contracts/api-endpoints.md` endpoint matrix scopes and Track 06 feature card completeness.
+- `tests/client/test_content_foundation.gd` now locks optional missing-art fallback ids separately from installed Pack 01 ids.
+- `server/tests/README.md` documents the no-Supabase foundation contract test command.
+
+Validation: Deno check/test/lint for `foundation_contracts_test.ts`, `validate.gd`, GUT client and `git diff --check`.
 
 ## T08-G - Validation Harness
 
