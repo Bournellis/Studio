@@ -25,6 +25,26 @@ Assumptions travadas:
 - A proxima evolucao prioriza estabilidade estrutural e capacidade de paralelizacao antes de features grandes.
 - iOS, mobile browser, pagamento real, rework visual completo e novos modos seguem fora do escopo.
 
+## Integracao Paralela - 2026-05-27
+
+Status: `T04_A_TO_H_INTEGRATED`.
+
+- `T04-A`: coordenacao e snapshots de portfolio aplicados.
+- `T04-B`: scaffold `modes/boot/surfaces/` e plano `hub-modularization-plan.md` integrados.
+- `T04-C`: Shell/Login/Update extraidos para presenters render-only.
+- `T04-D`: Base/Loja render-only integrados, sem alterar endpoints `base/*` ou `monetization/*`.
+- `T04-E`: Social/Competicao render-only integrados, preservando polling/chat/ranking e exclusao do Lab no ranking.
+- `T04-F`: Batalha/Replay integrada via presenter de replay, preservando `BattleLogPresenter`, `BattleVisualMockup`, `BattleStage2D`, simulador, reward e endpoints `battle/*`.
+- `T04-G`: rodada tecnica de Progression/Economia registrada em `../../../docs/progression-lab/2026-05-27-t04-progression-economia.md`; nenhum numero foi alterado.
+- `T04-H`: decisao registrada em `account-save-gate-decision.md`; manter `players.save_type` para alpha/Track 04 inicial e nao criar migration agora.
+
+Validacao da integracao:
+
+- `tools/validate.gd`: passou com `60/60` testes e `417` asserts.
+- `tools/smoke_session_shell.gd`: passou.
+- `tools/smoke_battle_replay.gd`: passou.
+- `git diff --check`: deve ser mantido como check final antes de commit/publicacao.
+
 ## Trilhas Paralelas Oficiais
 
 Prompts operacionais para abrir as threads paralelas ficam em `agent-prompts.md`.
@@ -96,7 +116,7 @@ Saida esperada:
 
 ## T04-P03 - Plano De Corte Do Hub
 
-Status: `READY_AFTER_T04_A`.
+Status: `COMPLETE_INTEGRATED`.
 
 - Mapear responsabilidades atuais de `modes/boot/boot.gd`.
 - Definir contratos de presenter/tela para cada superficie.
@@ -109,7 +129,7 @@ Saida esperada:
 
 ## T04-P04 - Extrair Shell/Login/Update
 
-Status: `WAITING_FOR_T04_B`.
+Status: `COMPLETE_INTEGRATED`.
 
 - Extrair tela/presenter de sessao, login, account bootstrap e update gate.
 - `boot.gd` continua compondo sinais, dependencias e navegacao.
@@ -123,7 +143,7 @@ Validacao:
 
 ## T04-P05 - Extrair Batalha
 
-Status: `WAITING_FOR_T04_C`.
+Status: `COMPLETE_INTEGRATED`.
 
 - Extrair controles da aba Batalha e composicao do mockup/replay.
 - Preservar `BattleLogPresenter`, `BattleVisualMockup` e `BattleStage2D`.
@@ -136,7 +156,7 @@ Validacao:
 
 ## T04-P06 - Extrair Base
 
-Status: `WAITING_FOR_T04_C`.
+Status: `COMPLETE_INTEGRATED`.
 
 - Extrair mapa de predios, painel de detalhe, upgrade/coleta e busy/error states.
 - Nao alterar endpoints `base/*`, economia ou fila dupla.
@@ -148,7 +168,7 @@ Validacao:
 
 ## T04-P07 - Extrair Social, Competicao E Loja
 
-Status: `WAITING_FOR_T04_C`.
+Status: `COMPLETE_INTEGRATED`.
 
 - Extrair uma superficie por commit quando possivel.
 - Preservar polling/chat/ranking/loja e tooltips existentes.
@@ -161,7 +181,7 @@ Validacao:
 
 ## T04-P08 - Rodada Humana Do Progression Lab
 
-Status: `READY_AFTER_T04_A`.
+Status: `TECHNICAL_REVIEW_COMPLETE_HUMAN_VALIDATION_PENDING`.
 
 - Rodar cenarios 2h, 5h, 10h, 15h e 20h.
 - Cobrir perfis free, freemium, light e max.
@@ -171,18 +191,25 @@ Saida esperada:
 
 - Recomendacoes de tuning antes de mexer em economia maior.
 
+Resultado 2026-05-27:
+
+- Relatorio tecnico registrado em `../../../docs/progression-lab/2026-05-27-t04-progression-economia.md`.
+- Status segue `REVIEW`; proxima rodada humana deve focar `spender_light_10h`, `max_spender_10h`, `max_spender_20h`, `free_100_rewards_20h` e `freemium_basic_20h`.
+- Nenhum numero de economia, combate, recompensa, poder, bots ou loja foi alterado.
+
 ## T04-P09 - Gate Account Profiles / Game Saves
 
-Status: `READY_AFTER_T04_A`.
+Status: `DECIDED_KEEP_PLAYERS_SAVE_TYPE_FOR_ALPHA`.
 
-- Avaliar se `players.save_type` gerou bug real, ambiguidade social, risco de isolamento ou custo alto de evolucao.
-- Se sim, planejar migration `account_profiles` + `game_saves` em track/commit proprio.
-- Se nao, manter schema atual ate proxima necessidade tecnica.
+- Decisao registrada em `account-save-gate-decision.md`.
+- Manter `players.save_type` para Internal Alpha v0 e primeiros pacotes da Track 04.
+- Nao planejar migration `account_profiles` + `game_saves` agora.
+- Reabrir o gate somente com bug real de isolamento/seguranca/corrupcao, pagamento/entitlement account-wide, social remoto em escala, mais de dois saves/modos por conta ou inicio do plano de saida Supabase.
 
 Regra:
 
 - Nao executar migration junto de modularizacao do Hub.
-- Nao executar migration antes do playtest inicial, salvo bug real de isolamento.
+- Se um gatilho aparecer, criar plano de migration em track/commit proprio antes de qualquer SQL.
 
 ## Validacao Base
 

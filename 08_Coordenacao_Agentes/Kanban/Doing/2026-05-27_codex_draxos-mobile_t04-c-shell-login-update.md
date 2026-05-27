@@ -4,7 +4,7 @@
 - Agente sugerido: `Codex`
 - Branch sugerida: `codex/draxos-mobile/t04-shell-login-update`
 - Worktree sugerida: `D:\Estudio-worktrees\draxos-mobile--codex--t04-shell-login-update`
-- Status: `WAITING_FOR_T04_B`
+- Status: `DONE_INTEGRATED`
 
 ## Objetivo
 

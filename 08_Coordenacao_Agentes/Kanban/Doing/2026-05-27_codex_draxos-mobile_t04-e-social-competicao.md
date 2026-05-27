@@ -4,7 +4,7 @@
 - Agente sugerido: `Codex`
 - Branch sugerida: `codex/draxos-mobile/t04-social-competicao`
 - Worktree sugerida: `D:\Estudio-worktrees\draxos-mobile--codex--t04-social-competicao`
-- Status: `WAITING_FOR_T04_C`
+- Status: `DONE_INTEGRATED`
 
 ## Objetivo
 

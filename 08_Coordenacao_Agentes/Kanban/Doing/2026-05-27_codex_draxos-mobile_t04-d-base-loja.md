@@ -4,7 +4,7 @@
 - Agente sugerido: `Codex`
 - Branch sugerida: `codex/draxos-mobile/t04-base-loja`
 - Worktree sugerida: `D:\Estudio-worktrees\draxos-mobile--codex--t04-base-loja`
-- Status: `WAITING_FOR_T04_C`
+- Status: `DONE_INTEGRATED`
 
 ## Objetivo
 

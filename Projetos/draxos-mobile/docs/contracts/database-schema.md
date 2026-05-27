@@ -232,13 +232,20 @@ Limites atuais desta etapa:
 - as tabelas continuam referenciando `players.id`, entao uma refatoracao futura para `account_profiles/game_saves` continua recomendada antes de escalar social remoto;
 - o alpha gate ainda e simples: convite + username no primeiro save, sem painel administrativo de convites.
 
+Decisao Track 04 em `../../implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/account-save-gate-decision.md`:
+
+- manter `players.save_type` para Internal Alpha v0 e primeiros pacotes da Track 04;
+- nao planejar migration `account_profiles` + `game_saves` agora;
+- reabrir o gate somente com bug real de isolamento/seguranca/corrupcao, pagamento ou entitlement account-wide, social remoto em escala, mais de dois saves/modos por conta ou inicio do plano de saida Supabase;
+- se reaberto, a migration deve ser track/commit proprio e nao pode ser misturada com modularizacao do Hub.
+
 Refatoracao futura, se o projeto crescer:
 
 - criar `account_profiles` para dados da conta;
 - criar `game_saves` para saves por modo/tipo;
 - migrar tabelas de gameplay de `player_id` para `save_id` ou manter `player_id` como alias de save.
 
-Gate Track 04: nao executar essa migracao antes da rodada fechada Fabio + tester, salvo bug real de isolamento, seguranca ou corrupcao de save.
+Gate Track 04: avaliado em 2026-05-27; nao ha migration planejada agora. Reabrir apenas pelos gatilhos da decisao acima.
 
 Regras de seguranca:
 

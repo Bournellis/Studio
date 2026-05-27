@@ -115,7 +115,9 @@ Esse diretorio guarda sessoes locais e nao deve entrar no Git.
 
 ## Baseline Atual
 
-Ultima rodada viva: `2026-05-25_source_identity_balance_v02`.
+Ultima rodada viva de Battle Lab: `2026-05-25_source_identity_balance_v02`.
+Ultima rodada tecnica registrada de Progression Lab:
+`2026-05-27-t04-progression-economia.md`.
 
 - `25` saves saudaveis e `75` bots gerados.
 - Status geral: `REVIEW`.
@@ -124,8 +126,8 @@ Ultima rodada viva: `2026-05-25_source_identity_balance_v02`.
   `passive_level=22`, `weapon_quality_tier=30`.
 - Bot pool: offsets negativos preservam o arquetipo do save e continuam usando
   spells desbloqueadas, evitando bots fracos sem kit em milestones medias.
-- Premium gap: sem `CRITICAL` na escala atual, mas ainda com reviews em `5h`,
-  `10h`, `15h` e `20h`.
+- Premium gap: sem `CRITICAL` na escala atual, mas ainda com reviews em
+  `10h` para `spender_light`/`max_spender` e em `20h` para `max_spender`.
 - Reward scaling: reviews nos levels `15h`/`20h` de alguns perfis free/freemium.
 
 O status `REVIEW` e intencional: a ferramenta ja nao bloqueia por erro numerico

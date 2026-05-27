@@ -4,7 +4,7 @@
 - Agente sugerido: `Codex`
 - Branch sugerida: `codex/draxos-mobile/t04-account-save-gate`
 - Worktree sugerida: `D:\Estudio-worktrees\draxos-mobile--codex--t04-account-save-gate`
-- Status: `READY_AFTER_T04_A`
+- Status: `DONE_INTEGRATED`
 
 ## Objetivo
 
@@ -30,3 +30,9 @@ Avaliar o modelo atual `players.save_type` depois do alpha aprovado e decidir do
 ## Proximo Handoff
 
 Se a decisao for migrar, abrir track/commit proprio antes de qualquer alteracao SQL/backend.
+
+## Resultado Integrado
+
+- Decisao registrada em `Projetos/draxos-mobile/implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/account-save-gate-decision.md`.
+- Manter `players.save_type` para Internal Alpha v0 e primeiros pacotes da Track 04.
+- Migration `account_profiles` + `game_saves` nao sera planejada nem executada no pacote atual.

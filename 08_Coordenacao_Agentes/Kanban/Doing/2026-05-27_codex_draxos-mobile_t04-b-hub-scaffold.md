@@ -4,7 +4,7 @@
 - Agente sugerido: `Codex`
 - Branch sugerida: `codex/draxos-mobile/t04-hub-scaffold`
 - Worktree sugerida: `D:\Estudio-worktrees\draxos-mobile--codex--t04-hub-scaffold`
-- Status: `READY_AFTER_T04_A`
+- Status: `DONE_INTEGRATED`
 
 ## Objetivo
 

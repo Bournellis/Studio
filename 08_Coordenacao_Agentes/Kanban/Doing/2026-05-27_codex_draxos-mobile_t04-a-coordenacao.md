@@ -4,7 +4,7 @@
 - Agente: `Codex`
 - Branch: `codex/draxos-mobile/t04-coordenacao`
 - Worktree: `D:\Estudio-worktrees\draxos-mobile--codex--t04-coordenacao`
-- Status: `READY_FOR_REVIEW`
+- Status: `DONE_INTEGRATED`
 
 ## Objetivo
 
