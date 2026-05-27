@@ -1,5 +1,42 @@
 extends Node
 
+const CATEGORY_IDS: Dictionary = {
+	"ui": [
+		"ui_logo",
+		"boot_background",
+		"icon_guest",
+		"icon_battle",
+		"icon_result",
+		"placeholder_card"
+	],
+	"portraits": [
+		"portrait_draxos_mage",
+		"portrait_training_bot"
+	],
+	"battle_characters": [
+		"battle_character_player",
+		"battle_character_opponent"
+	],
+	"battle_icons": [
+		"battle_icon_event",
+		"battle_icon_weapon",
+		"battle_icon_spell",
+		"battle_icon_status",
+		"battle_icon_buff",
+		"battle_icon_damage",
+		"battle_icon_summon",
+		"battle_icon_pet",
+		"battle_icon_heal",
+		"battle_icon_reward",
+		"battle_icon_result"
+	],
+	"battle_fx": [
+		"battle_fx_hit",
+		"battle_fx_spell",
+		"battle_fx_buff"
+	]
+}
+
 const PATHS: Dictionary = {
 	"ui_logo": "res://assets/ui/ui_logo.png",
 	"boot_background": "res://assets/ui/boot_background.png",
@@ -26,6 +63,34 @@ const PATHS: Dictionary = {
 	"battle_fx_spell": "res://assets/battle/fx/spell.png",
 	"battle_fx_buff": "res://assets/battle/fx/buff.png"
 }
+
+func categories() -> PackedStringArray:
+	var category_ids: Array[String] = []
+	for category_id: Variant in CATEGORY_IDS.keys():
+		category_ids.append(str(category_id))
+	category_ids.sort()
+	return PackedStringArray(category_ids)
+
+func ids_for_category(category_id: String) -> PackedStringArray:
+	var ids: Array[String] = []
+	for asset_id: Variant in Array(CATEGORY_IDS.get(category_id, [])):
+		ids.append(str(asset_id))
+	ids.sort()
+	return PackedStringArray(ids)
+
+func category(asset_id: String) -> String:
+	for category_id: Variant in CATEGORY_IDS.keys():
+		for category_asset_id: Variant in Array(CATEGORY_IDS.get(category_id, [])):
+			if str(category_asset_id) == asset_id:
+				return str(category_id)
+	return ""
+
+func all_ids() -> PackedStringArray:
+	var ids: Array[String] = []
+	for asset_id: Variant in PATHS.keys():
+		ids.append(str(asset_id))
+	ids.sort()
+	return PackedStringArray(ids)
 
 func path(asset_id: String) -> String:
 	return str(PATHS.get(asset_id, ""))

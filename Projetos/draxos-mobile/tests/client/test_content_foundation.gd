@@ -2,6 +2,70 @@ extends GutTest
 
 const ContentGeneratorScript = preload("res://tools/content_generator.gd")
 
+const EXPECTED_ASSET_PATHS: Dictionary = {
+	"ui_logo": "res://assets/ui/ui_logo.png",
+	"boot_background": "res://assets/ui/boot_background.png",
+	"icon_guest": "res://assets/ui/icon_guest.png",
+	"icon_battle": "res://assets/ui/icon_battle.png",
+	"icon_result": "res://assets/ui/icon_result.png",
+	"portrait_draxos_mage": "res://assets/portraits/portrait_draxos_mage.png",
+	"portrait_training_bot": "res://assets/portraits/portrait_training_bot.png",
+	"placeholder_card": "res://assets/ui/placeholder_card.png",
+	"battle_character_player": "res://assets/battle/characters/player_draxos.png",
+	"battle_character_opponent": "res://assets/battle/characters/opponent_placeholder.png",
+	"battle_icon_event": "res://assets/battle/icons/event.png",
+	"battle_icon_weapon": "res://assets/battle/icons/weapon.png",
+	"battle_icon_spell": "res://assets/battle/icons/spell.png",
+	"battle_icon_status": "res://assets/battle/icons/status.png",
+	"battle_icon_buff": "res://assets/battle/icons/buff.png",
+	"battle_icon_damage": "res://assets/battle/icons/damage.png",
+	"battle_icon_summon": "res://assets/battle/icons/summon.png",
+	"battle_icon_pet": "res://assets/battle/icons/familiar.png",
+	"battle_icon_heal": "res://assets/battle/icons/heal.png",
+	"battle_icon_reward": "res://assets/battle/icons/reward.png",
+	"battle_icon_result": "res://assets/battle/icons/result.png",
+	"battle_fx_hit": "res://assets/battle/fx/hit.png",
+	"battle_fx_spell": "res://assets/battle/fx/spell.png",
+	"battle_fx_buff": "res://assets/battle/fx/buff.png"
+}
+
+const EXPECTED_ASSET_CATEGORIES: Dictionary = {
+	"ui": [
+		"boot_background",
+		"icon_battle",
+		"icon_guest",
+		"icon_result",
+		"placeholder_card",
+		"ui_logo"
+	],
+	"portraits": [
+		"portrait_draxos_mage",
+		"portrait_training_bot"
+	],
+	"battle_characters": [
+		"battle_character_opponent",
+		"battle_character_player"
+	],
+	"battle_icons": [
+		"battle_icon_buff",
+		"battle_icon_damage",
+		"battle_icon_event",
+		"battle_icon_heal",
+		"battle_icon_pet",
+		"battle_icon_result",
+		"battle_icon_reward",
+		"battle_icon_spell",
+		"battle_icon_status",
+		"battle_icon_summon",
+		"battle_icon_weapon"
+	],
+	"battle_fx": [
+		"battle_fx_buff",
+		"battle_fx_hit",
+		"battle_fx_spell"
+	]
+}
+
 func before_each() -> void:
 	ContentLibrary.reload()
 
@@ -16,10 +80,32 @@ func test_ui_tokens_expose_mvp_colors() -> void:
 	assert_eq(int(UiTokens.text_style("button").get("font_size", 0)), 16)
 
 func test_asset_ids_are_registered_without_requiring_art_yet() -> void:
-	assert_true(AssetIds.has_asset_id("icon_guest"))
-	assert_eq(AssetIds.path("icon_guest"), "res://assets/ui/icon_guest.png")
-	assert_true(AssetIds.has_asset_id("battle_icon_spell"))
-	assert_eq(AssetIds.path("battle_icon_spell"), "res://assets/battle/icons/spell.png")
+	var all_ids: Array = Array(AssetIds.all_ids())
+	assert_eq(all_ids.size(), EXPECTED_ASSET_PATHS.size())
+
+	for asset_id_variant: Variant in EXPECTED_ASSET_PATHS.keys():
+		var asset_id: String = str(asset_id_variant)
+		assert_true(AssetIds.has_asset_id(asset_id), "Asset id should be registered: %s" % asset_id)
+		assert_eq(AssetIds.path(asset_id), str(EXPECTED_ASSET_PATHS[asset_id]))
+		assert_ne(AssetIds.category(asset_id), "", "Asset id should have a category: %s" % asset_id)
+		assert_has(all_ids, asset_id)
+
+func test_asset_ids_keep_category_groups_stable() -> void:
+	var categories: Array = Array(AssetIds.categories())
+	assert_eq(categories.size(), EXPECTED_ASSET_CATEGORIES.size())
+
+	for category_id_variant: Variant in EXPECTED_ASSET_CATEGORIES.keys():
+		var category_id: String = str(category_id_variant)
+		assert_has(categories, category_id)
+		assert_eq(Array(AssetIds.ids_for_category(category_id)), EXPECTED_ASSET_CATEGORIES[category_id])
+		for asset_id: String in EXPECTED_ASSET_CATEGORIES[category_id]:
+			assert_eq(AssetIds.category(asset_id), category_id)
+
+func test_asset_ids_allow_missing_art_fallback() -> void:
+	assert_eq(AssetIds.path("__missing_art_probe__"), "")
+	assert_false(AssetIds.has_art("__missing_art_probe__"))
+	assert_null(AssetIds.texture("__missing_art_probe__"))
+	assert_has(Array(AssetIds.missing_art_ids(PackedStringArray(["__missing_art_probe__"]))), "__missing_art_probe__")
 	assert_has(Array(AssetIds.missing_art_ids()), "icon_guest")
 
 func test_generated_catalog_loads_expected_collections() -> void:
