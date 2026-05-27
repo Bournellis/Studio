@@ -1,10 +1,10 @@
 # DraxosMobile - Internal Alpha Remote Setup
 
 - Ultima atualizacao: `2026-05-27`
-- Track: `T03-P16 - Export Android, PC E Web`
-- Status: `auth/manifest remotos verdes e exports locais gerados`
+- Track: `T03-P17 - Publicacao Unlisted E QA Remoto Fechado`
+- Status: `publicacao unlisted verde e QA remoto automatizado verde`
 
-Este runbook deixa a Internal Alpha v0 preparada para usar Supabase remoto sem colocar secrets no cliente. O projeto remoto ja foi linkado pela CLI, recebeu migrations/Edge Functions, recebeu config de Auth email/senha sem confirmacao obrigatoria, recebeu `release/manifest`, passou nos smokes remotos de healthcheck, Auth anonimo dev, email/senha com dois saves e manifest de update, e as builds locais Android/PC/Web foram exportadas em `T03-P16`.
+Este runbook deixa a Internal Alpha v0 preparada para usar Supabase remoto sem colocar secrets no cliente. O projeto remoto ja foi linkado pela CLI, recebeu migrations/Edge Functions, recebeu config de Auth email/senha sem confirmacao obrigatoria, recebeu `release/manifest`, passou nos smokes remotos de healthcheck, Auth anonimo dev, email/senha com dois saves e manifest de update, as builds locais Android/PC/Web foram exportadas em `T03-P16` e a publicacao unlisted foi feita em `T03-P17`.
 
 Tutorial detalhado para Fabio: `supabase-remote-tutorial.md`.
 
@@ -37,7 +37,7 @@ Tutorial detalhado para Fabio: `supabase-remote-tutorial.md`.
 - Regiao: `West US (Oregon)`.
 - Status no dashboard: `Healthy`.
 
-Estado operacional: o dashboard mostrou o projeto saudavel e, em 2026-05-27, o bootstrap remoto aplicou as migrations, publicou as Edge Functions, atualizou config de Auth, validou o fluxo email/senha, publicou o manifest de updates e exportou artefatos locais em `T03-P16`. Para `T03-P17`, falta hospedar portal/Web/APK/PC e atualizar o manifest com URLs reais.
+Estado operacional: o dashboard mostrou o projeto saudavel e, em 2026-05-27, o bootstrap remoto aplicou as migrations, publicou as Edge Functions, atualizou config de Auth, validou o fluxo email/senha, publicou o manifest de updates, exportou artefatos locais em `T03-P16` e publicou portal/Web/APK/PC ZIP em `T03-P17`. Falta signoff manual Fabio + tester antes do handoff.
 
 ## Resultado T03-P13
 
@@ -74,6 +74,20 @@ Estado operacional: o dashboard mostrou o projeto saudavel e, em 2026-05-27, o b
   - `build/web/`
 - Hashes registrados em `docs/internal-alpha-v0-export-report.md`.
 - Android saiu como `debug_fallback`; configurar keystore release no `.env.internal-alpha.local` para APK release-signed.
+
+## Resultado T03-P17
+
+- Bucket publico unlisted `draxos-internal-alpha` criado por migration `202605270002_internal_alpha_storage.sql`.
+- Portal/Web/APK/PC ZIP publicados em `internal-alpha/v0`.
+- Manifest remoto reconfigurado por `RELEASE_MANIFEST_JSON_BASE64`.
+- Relatorio versionado: `internal-alpha-v0-publication-report.md`.
+- Metadata local ignorada: `build/internal-alpha/publication-report.json`.
+
+Links de teste:
+
+- Portal: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/portal/index.html`
+- Web: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/web/index.html`
+- Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 
 ## Variaveis Do Cliente
 
@@ -179,11 +193,11 @@ Supabase Storage pode hospedar manifest e artefatos pequenos, mas o limite do pl
 - links podem apontar para storage externo se os artefatos ficarem grandes;
 - o cliente deve depender do schema do manifest, nao do fornecedor de storage.
 
-## Checklist Atual Antes De T03-P17
+## Checklist Atual Antes Do Signoff Manual
 
 - Projeto remoto confirmado.
 - URL e publishable key publicas configuradas localmente.
-- Service role guardada fora do Git.
+- Secrets reais permanecem fora do Git.
 - Supabase CLI logada e linkada ao projeto remoto.
 - Migrations aplicadas em remoto.
 - Edge Functions publicadas em remoto.
@@ -193,4 +207,7 @@ Supabase Storage pode hospedar manifest e artefatos pequenos, mas o limite do pl
 - Fluxo email/senha implementado no cliente/backend.
 - Manifest remoto de updates e version gate implementados.
 - Builds locais Android, PC e Web exportadas.
-- Proximo: publicar portal/Web/APK/PC em links unlisted, atualizar manifest com URLs/hashes finais e rodar QA remoto fechado em `T03-P17`.
+- Portal/Web/APK/PC publicados em links unlisted.
+- Manifest remoto aponta para URLs/hashes finais.
+- QA remoto automatizado verde.
+- Proximo: Fabio + tester fazem signoff manual em pelo menos duas plataformas e registram bugs antes de `T03-P18`.

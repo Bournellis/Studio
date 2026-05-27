@@ -1,7 +1,7 @@
 # Update Manifest Contract
 
 - Ultima atualizacao: `2026-05-27`
-- Status: `T03-P16_LOCAL_ARTIFACTS_READY`
+- Status: `T03-P17_PUBLISHED_UNLISTED`
 - Endpoint atual: `GET /release/manifest`
 - Schema: `internal_alpha_manifest_v1`
 
@@ -15,7 +15,7 @@ Durante a Internal Alpha v0, o manifest vive como Edge Function publica:
 https://<project-ref>.supabase.co/functions/v1/release/manifest
 ```
 
-A funcao retorna um JSON sem secrets e sem depender de login. A implementacao possui um manifest padrao versionado no repo e aceita override operacional por variavel de ambiente `RELEASE_MANIFEST_JSON`, caso seja necessario trocar links/notas sem alterar codigo.
+A funcao retorna um JSON sem secrets e sem depender de login. A implementacao possui um manifest padrao versionado no repo e aceita override operacional por variavel de ambiente `RELEASE_MANIFEST_JSON`. Para publicacao real, o caminho preferido e `RELEASE_MANIFEST_JSON_BASE64`, evitando problemas de escaping do JSON no CLI.
 
 ## Payload
 
@@ -71,4 +71,4 @@ A funcao retorna um JSON sem secrets e sem depender de login. A implementacao po
 
 ## Evolucao
 
-Em `T03-P16`, os artefatos locais foram exportados e seus hashes foram registrados em `../internal-alpha-v0-export-report.md`. Em `T03-P17`, os placeholders de Android, PC e Web devem ser substituidos pelos links unlisted reais e hashes finais publicados. Em releases futuras, subir `latest_version_code` gera update recomendado; subir `minimum_supported_version_code` torna o update obrigatorio para acoes online.
+Em `T03-P16`, os artefatos locais foram exportados e seus hashes foram registrados em `../internal-alpha-v0-export-report.md`. Em `T03-P17`, portal/Web/APK/PC ZIP foram publicados no Supabase Storage unlisted e o manifest remoto passou a usar URLs/hashes reais; detalhes em `../internal-alpha-v0-publication-report.md`. Em releases futuras, subir `latest_version_code` gera update recomendado; subir `minimum_supported_version_code` torna o update obrigatorio para acoes online.

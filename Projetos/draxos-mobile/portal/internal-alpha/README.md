@@ -1,6 +1,6 @@
 # DraxosMobile Internal Alpha Portal
 
-Status: `BASE_READY_FOR_T03_P17_PUBLICATION`.
+Status: `PUBLISHED_UNLISTED_VIA_GENERATED_COPY`.
 
 Este portal e o ponto unlisted da Internal Alpha v0. Ele nao e seguranca. O jogo precisa exigir email/senha e alpha gate no backend. O portal apenas organiza:
 
@@ -36,6 +36,8 @@ https://<project-ref>.supabase.co/functions/v1/release/manifest
 ```
 
 O arquivo `manifest.example.json` e a copia documental do schema esperado para atualizar links/notas em `T03-P17`. Os hashes locais de `T03-P16` ficam registrados em `../../docs/internal-alpha-v0-export-report.md`.
+
+Em `T03-P17`, o portal publicado foi gerado em `build/internal-alpha/publish/portal/` por `tools/publish_internal_alpha.ps1`, com os placeholders substituidos por URLs reais. O source versionado continua como template.
 
 ## Guardrails
 

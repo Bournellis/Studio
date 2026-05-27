@@ -81,7 +81,7 @@ Deno.serve((request: Request) => {
 });
 
 function buildManifest(): ReleaseManifest {
-  const overrideText = Deno.env.get("RELEASE_MANIFEST_JSON")?.trim() ?? "";
+  const overrideText = manifestOverrideText();
   if (overrideText === "") {
     return DEFAULT_MANIFEST;
   }
@@ -123,6 +123,16 @@ function buildManifest(): ReleaseManifest {
       : DEFAULT_MANIFEST.artifacts,
     known_issues: stringArrayOverride(parsed, "known_issues", DEFAULT_MANIFEST.known_issues),
   };
+}
+
+function manifestOverrideText(): string {
+  const encoded = Deno.env.get("RELEASE_MANIFEST_JSON_BASE64")?.trim() ?? "";
+  if (encoded !== "") {
+    return new TextDecoder().decode(
+      Uint8Array.from(atob(encoded), (character) => character.charCodeAt(0)),
+    );
+  }
+  return Deno.env.get("RELEASE_MANIFEST_JSON")?.trim() ?? "";
 }
 
 function asRecordOfRecord(value: Record<string, unknown>): Record<string, Record<string, string>> {

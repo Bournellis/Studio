@@ -1,7 +1,7 @@
 # Track 03 - Internal Alpha v0 - Current Status
 
 - Last Updated: `2026-05-27`
-- Status: `T03-P16_EXPORTS_COMPLETE - LOCAL_ARTIFACTS_GREEN`
+- Status: `T03-P17_PUBLISHED_UNLISTED - AUTOMATED_REMOTE_QA_GREEN - MANUAL_SIGNOFF_PENDING`
 - Baseline: Track 00 completa, Track 01 completa e Track 02 com Progression Lab/Battle Lab v1 implementados. O projeto ja possui Godot 4.6.2, Supabase local, conta guest, batalha server-authoritative, Base/Social/Competicao/Monetizacao v0, telemetria client nao autoritativa, exports Android/PC/Web, Battle Visual Mockup compartilhado e laboratorios internos. A Track 03 prepara a transicao para uma build fechada realista com email/senha, dois saves por conta, backend remoto, updates e playtest de 2 usuarios.
 
 ## Implementado Nesta Preparacao
@@ -16,7 +16,7 @@
 - Follow-ups de loja/social fechados: redeems entregam apenas Diamante, resetam a meia-noite `America/Sao_Paulo`, amigos usam username e usuarios no Lab aparecem com marcador vermelho `lab`.
 - Estrategia backend registrada: Supabase para Internal Alpha v0, Backend Proprio + Postgres como plano de saida preferido e Nakama como alternativa futura apenas se realtime/social competitivo virar pilar.
 - `T03-P02` preparado do lado do repo: `BackendConfig` no Godot, ambiente `internal_alpha_v0`, env vars seguras, `.env` reais ignorados, `.env.internal-alpha.example`, runbook remoto e smoke Deno remoto sem service role.
-- Ordem local-first aprovada em 2026-05-26 e ja cumprida para release prep: o jogo foi implementado/validado no Godot/Supabase local primeiro; Supabase remoto foi inicializado em `T03-P13`; auth email/senha foi fechado em `T03-P14`; manifest de updates foi fechado em `T03-P15`; exports Android/PC/Web foram fechados em `T03-P16`; publicacao e QA remoto seguem em `T03-P17` a `T03-P18`.
+- Ordem local-first aprovada em 2026-05-26 e ja cumprida para release prep: o jogo foi implementado/validado no Godot/Supabase local primeiro; Supabase remoto foi inicializado em `T03-P13`; auth email/senha foi fechado em `T03-P14`; manifest de updates foi fechado em `T03-P15`; exports Android/PC/Web foram fechados em `T03-P16`; publicacao unlisted e QA remoto automatizado foram fechados em `T03-P17`; signoff manual e handoff seguem em `T03-P17`/`T03-P18`.
 - `T03-P03A` completo: `SessionStore` possui save ativo `normal`/`progression_lab`, persiste no cache, limpa snapshots ao alternar contexto, marca snapshots local-only do Progression Lab como Lab, `SupabaseClient` prepara header `x-draxos-save-type` e o Hub mostra/troca save ativo com bloqueio claro quando o Lab esta em cache local-only.
 - `T03-P03B` completo: schema local ganhou `players.save_type`, unicidade por `auth_user_id + save_type`, RPCs `create_guest_account`/`request_mvp_battle` recebem save, Edge Functions resolvem `x-draxos-save-type` para `account`, `battle`, `base`, `social`, `competition`, `monetization` e `telemetry`, o Hub libera acoes server-backed no Lab, e o save `progression_lab` fica isolado do normal e fora do ranking com motivo explicito.
 - `T03-P03C` completo: `POST /account/saves/reset` e RPC `reset_player_save` reconstroem apenas o save ativo, preservam o outro save da mesma sessao Auth, limpam snapshots client-side do save resetado, mantem idempotencia por `request_id` e expoem botao perigoso "Resetar save ativo" no Hub.
@@ -32,10 +32,11 @@
 - `T03-P14` completo: cliente Godot recebeu fluxo de conta alpha com email/senha, username e convite; guest ficou como ferramenta dev; `SessionStore` persiste metodo/email/username/request id alpha; `SupabaseClient` suporta signup/login password e `/account/bootstrap`; schema/Edge Function adicionaram `create_alpha_account` para contas registradas e saves `normal`/`progression_lab`; Auth remoto foi alinhado com confirmacao de email desligada; smokes local/remoto de email/senha passaram.
 - `T03-P15` completo: `ProjectInfo` define versao/canal/schema do manifest, `BackendConfig`/`SupabaseClient` resolvem URL de manifest, Hub checa update no boot e bloqueia acoes online quando `minimum_supported_version_code` exige, `GET /release/manifest` foi implementado/local/remoto sem JWT obrigatorio e smokes local/remoto passaram.
 - `T03-P16` completo: presets Android/PC/Web foram corrigidos para export real, Android recebeu ETC2/ASTC, icone placeholder e permissoes de rede, `tools/export_internal_alpha.ps1` injeta config publica do Supabase apenas durante o build, gera APK/PC ZIP/Web e registra hashes em `docs/internal-alpha-v0-export-report.md`.
+- `T03-P17` publicacao tecnica completa: migration `202605270002_internal_alpha_storage.sql` criou bucket publico unlisted `draxos-internal-alpha`, `tools/publish_internal_alpha.ps1` publicou portal/Web/APK/PC ZIP, `release/manifest` usa `RELEASE_MANIFEST_JSON_BASE64` com URLs/hashes reais e QA remoto automatizado passou.
 
 ## Ainda Nao Implementado
 
-- `T03-P17`: QA remoto fechado com duas contas reais.
+- Signoff manual de `T03-P17`: Fabio + 1 tester validam duas plataformas e registram bugs.
 - `T03-P18`: handoff final da Internal Alpha v0.
 
 ## Decisoes Ja Travadas
@@ -53,7 +54,7 @@
 
 ## Proximo Passo
 
-Executar `T03-P17 - Publicacao Unlisted E QA Remoto Fechado`: hospedar portal/Web/APK/PC, atualizar manifest com URLs/hashes finais e validar duas contas reais em pelo menos duas plataformas.
+Executar signoff manual de `T03-P17`: Fabio + 1 tester usam os links publicados, validam pelo menos duas plataformas, confirmam save cross-platform, loop normal, Progression Lab isolado e update notice. Depois seguir `T03-P18 - Handoff Da Internal Alpha v0`.
 
 ## Validacao Da Preparacao
 
@@ -111,3 +112,13 @@ Executar `T03-P17 - Publicacao Unlisted E QA Remoto Fechado`: hospedar portal/We
 - `npx -y deno run --allow-net --allow-env server/tests/release_manifest_smoke.ts`: passou em 2026-05-27 contra `https://armxgipvnbbshzqawklw.supabase.co`.
 - `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-mobile -s res://tools/smoke_exports.gd`: passou em 2026-05-27 apos ajustes de Android/export.
 - `powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\export_internal_alpha.ps1 -ProjectDir . -GodotExe "D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe" -AllowAndroidDebugFallback`: passou em 2026-05-27 gerando APK, PC ZIP, Web e hashes locais. Android mode: `debug_fallback`.
+- `npx -y supabase db push`: passou em 2026-05-27 aplicando `202605270002_internal_alpha_storage.sql` no remoto.
+- `powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 -ProjectDir . -SkipUpload`: passou em 2026-05-27 apos upload inicial, validando portal/Web/APK/PC ZIP e manifest remoto com URLs/hashes reais.
+- `DRAXOS_REMOTE_RELEASE_SMOKE=1 DRAXOS_REMOTE_EMAIL_AUTH_SMOKE=1 npx -y deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts`: passou em 2026-05-27.
+- `npx -y deno run --allow-net --allow-env server/tests/release_manifest_smoke.ts`: passou em 2026-05-27 contra o manifest publicado.
+- `npx -y deno run --allow-net --allow-env server/tests/first_slice_battle_smoke.ts`: passou em 2026-05-27 contra remoto.
+- `npx -y deno run --allow-net --allow-env server/tests/base_manager_smoke.ts`: passou em 2026-05-27 contra remoto.
+- `npx -y deno run --allow-net --allow-env server/tests/monetization_rewards_smoke.ts`: passou em 2026-05-27 contra remoto.
+- `npx -y deno run --allow-net --allow-env server/tests/social_competition_smoke.ts`: passou em 2026-05-27 contra remoto.
+- `npx -y deno run --allow-net --allow-env server/tests/battle_request_smoke.ts`: passou em 2026-05-27 contra remoto.
+- `npx -y deno run --allow-net --allow-env server/tests/client_telemetry_smoke.ts`: passou em 2026-05-27 contra remoto.

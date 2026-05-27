@@ -59,7 +59,7 @@ Fabio vai trabalhar somente no Godot/local ate o jogo estar implementado o basta
 
 Durante a fase local-first, `T03-P02` permaneceu repo-ready: a configuracao segura existe e agora volta a ser a proxima trilha de release.
 
-Atualizacao de 2026-05-27: o projeto Supabase remoto (`armxgipvnbbshzqawklw`, `https://armxgipvnbbshzqawklw.supabase.co`) foi linkado pela CLI, recebeu migrations/functions, config de Auth email/senha sem confirmacao obrigatoria, passou em smokes remotos de healthcheck/Auth/email+saves, recebeu `GET /release/manifest` com smoke remoto verde e exportou builds locais Android/PC/Web em `T03-P16`. Proxima etapa: `T03-P17`.
+Atualizacao de 2026-05-27: o projeto Supabase remoto (`armxgipvnbbshzqawklw`, `https://armxgipvnbbshzqawklw.supabase.co`) foi linkado pela CLI, recebeu migrations/functions, config de Auth email/senha sem confirmacao obrigatoria, passou em smokes remotos de healthcheck/Auth/email+saves, recebeu `GET /release/manifest` com smoke remoto verde, exportou builds locais Android/PC/Web em `T03-P16` e publicou portal/Web/APK/PC ZIP em Storage unlisted em `T03-P17`. Proxima etapa: signoff manual Fabio + tester e depois `T03-P18`.
 
 ### T03-P03 - Conta Email/Senha E Dois Saves
 
@@ -260,7 +260,7 @@ Implementado em modo local-first:
 
 Lacunas intencionais:
 
-- Builds exportadas foram fechadas em `T03-P16`; publicacao e QA remoto fechado seguem encaminhados para `T03-P17` a `T03-P18`.
+- Builds exportadas foram fechadas em `T03-P16`; publicacao unlisted e QA remoto automatizado foram fechados em `T03-P17`; signoff manual e handoff seguem encaminhados para `T03-P17`/`T03-P18`.
 
 ### T03-P12 - Release Plan, Portal Base E Tutorial Remoto
 
@@ -354,7 +354,7 @@ Status: `COMPLETE`.
 
 ### T03-P17 - Remote QA Fechado
 
-Status: `NEXT`.
+Status: `PUBLICATION_GREEN - AUTOMATED_REMOTE_QA_GREEN - MANUAL_SIGNOFF_PENDING`.
 
 - Publicar portal/Web/APK/PC em links unlisted.
 - Rodar smoke remoto automatizado.
@@ -388,11 +388,11 @@ As decisoes abaixo estao registradas em `docs/design-pending.md` e precisam ser 
 
 ## Trabalho Manual Do Fabio
 
-Necessario agora para `T03-P17` a `T03-P18`:
+Necessario agora para concluir `T03-P17` manual e seguir `T03-P18`:
 
-- Criar keystore Android release internal alpha e guardar senha fora do Git, se o APK de `T03-P17` precisar sair release-signed em vez do debug fallback local.
-- Escolher onde hospedar a Web build unlisted, APK e zip PC.
-- Definir URLs finais dos downloads no portal e, se necessario, override de `RELEASE_MANIFEST_JSON`.
+- Criar keystore Android release internal alpha e guardar senha fora do Git antes de uma distribuicao mais ampla; `T03-P17` usou APK `debug_fallback`.
+- Usar os links publicados do relatorio `docs/internal-alpha-v0-publication-report.md` para o teste Fabio + amigo.
+- Registrar bugs e feedback de ergonomia Android/PC/Web durante o signoff manual.
 - Informar os emails/usernames desejados para Fabio e o amigo, se quiser contas humanas predefinidas em vez de cadastro por convite.
 - Guardar `SUPABASE_SERVICE_ROLE_KEY` fora do Git para resets/deploys controlados; nunca colocar no cliente.
 

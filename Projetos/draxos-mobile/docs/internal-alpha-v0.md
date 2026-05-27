@@ -38,7 +38,7 @@ Decisao operacional de 2026-05-26:
 
 Esta ordem nao remove a decisao de usar Supabase no alpha. Ela apenas adia remoto, build e distribuicao para reduzir friccao enquanto a implementacao ainda muda muito.
 
-Atualizacao de 2026-05-27: `T03-P13` concluiu o bootstrap Supabase remoto, `T03-P14` concluiu auth email/senha + alpha gate, `T03-P15` concluiu manifest remoto + version gate no cliente e `T03-P16` exportou Android/PC/Web localmente. A proxima sequencia esta documentada em `internal-alpha-release-plan.md`: `T03-P17` publicacao unlisted + QA remoto fechado e `T03-P18` handoff.
+Atualizacao de 2026-05-27: `T03-P13` concluiu o bootstrap Supabase remoto, `T03-P14` concluiu auth email/senha + alpha gate, `T03-P15` concluiu manifest remoto + version gate no cliente, `T03-P16` exportou Android/PC/Web localmente e `T03-P17` publicou portal/Web/APK/PC ZIP em links unlisted com QA remoto automatizado verde. A proxima sequencia esta documentada em `internal-alpha-release-plan.md`: signoff manual Fabio + tester e `T03-P18` handoff.
 
 ## Modelo De Conta E Save
 
@@ -173,6 +173,13 @@ Status de export (`T03-P16`):
 - Hashes e metadata: `internal-alpha-v0-export-report.md` e `build/internal-alpha/release-artifacts.json`.
 - APK Android saiu como `debug_fallback` porque a keystore release dedicada ainda nao foi configurada; suficiente para o teste interno inicial, mas uma keystore release deve ser configurada antes de distribuicoes mais amplas.
 
+Status de publicacao (`T03-P17`):
+
+- Portal/Web/APK/PC ZIP publicados no bucket `draxos-internal-alpha`.
+- Manifest remoto reconfigurado com URLs/hashes reais por `RELEASE_MANIFEST_JSON_BASE64`.
+- Relatorio: `internal-alpha-v0-publication-report.md`.
+- Falta signoff manual Fabio + 1 tester antes de `T03-P18`.
+
 Politica:
 
 - `latest_version` maior: mostrar update recomendado.
@@ -293,7 +300,7 @@ Estas decisoes vivem em `docs/design-pending.md` como `DMOB-D048` a `DMOB-D055`.
 - Criar `.env.internal-alpha.local` ignorado no Git. (`feito localmente`)
 - Criar/fornecer convites alpha. (`ALPHA-TEST` existe para smokes; convites humanos finais ainda podem ser definidos`)
 - Guardar service role fora do Git.
-- Criar keystore Android release internal alpha e guardar senha fora do Git. (`T03-P16` usou debug fallback local; configurar release antes de uma distribuicao mais ampla ou se quiser updates Android com chave dedicada ja no T03-P17`)
+- Criar keystore Android release internal alpha e guardar senha fora do Git. (`T03-P16`/`T03-P17` usaram debug fallback local; configurar release antes de uma distribuicao mais ampla ou se quiser updates Android com chave dedicada)
 - Escolher URL/canal da Web build.
 - Aprovar redeems da loja. (`feito para alpha atual; valores seguem calibraveis`)
 - Testar com o segundo usuario e preencher checklist.

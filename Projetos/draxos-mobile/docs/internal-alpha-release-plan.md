@@ -99,9 +99,9 @@ Saida:
 
 - build metadata definida no `ProjectInfo`: canal `internal_alpha`, versao `0.0.1-alpha.0`, version code `1` e schema `internal_alpha_manifest_v1`;
 - `BackendConfig` e `SupabaseClient` resolvem `DRAXOS_MOBILE_UPDATE_MANIFEST_URL` e usam `<supabase_url>/functions/v1/release/manifest` como padrao;
-- Edge Function publica `GET /release/manifest` implementada/local/remota, com manifest default e override operacional por `RELEASE_MANIFEST_JSON`;
+- Edge Function publica `GET /release/manifest` implementada/local/remota, com manifest default e override operacional por `RELEASE_MANIFEST_JSON_BASE64` ou `RELEASE_MANIFEST_JSON`;
 - Hub do Godot mostra status de update no boot, permite checar manualmente e bloqueia acoes online quando `minimum_supported_version_code` exige;
-- manifest exemplo do portal atualizado com version codes, portal URL e placeholders de artefatos para `T03-P16`;
+- manifest exemplo do portal atualizado com version codes, portal URL e placeholders de artefatos para `T03-P17`;
 - smokes local/remoto validam o contrato do manifest.
 
 ### T03-P16 - Export Das Tres Builds
@@ -122,21 +122,20 @@ Observacao Android: como nenhuma keystore release foi configurada em ambiente lo
 
 ### T03-P17 - Publicacao Unlisted E QA Remoto Fechado
 
-Status: `NEXT`.
+Status: `PUBLICATION_GREEN - AUTOMATED_REMOTE_QA_GREEN - MANUAL_SIGNOFF_PENDING`.
 
-Saida esperada:
+Saida entregue em 2026-05-27:
 
-- portal publicado em URL unlisted;
-- Web build publicada;
-- APK e PC ZIP disponiveis por link;
-- manifest publicado/reconfigurado com URLs e hashes finais;
-- Fabio e tester validam pelo menos duas plataformas cada;
-- login, save cross-platform, batalha, base, loja, social, ranking, Lab e update notice passam;
-- bugs viram backlog curto antes de nova release.
+- portal publicado em URL unlisted via Supabase Storage;
+- Web build publicada no mesmo bucket;
+- APK e PC ZIP disponiveis por link publico unlisted;
+- manifest remoto reconfigurado com URLs e hashes finais via `RELEASE_MANIFEST_JSON_BASE64`;
+- QA remoto automatizado verde para release manifest, email/senha, dois saves, batalha, base, loja, social, competicao e telemetria;
+- signoff manual Fabio + tester ainda pendente antes de `T03-P18`.
 
 ### T03-P18 - Handoff Da Internal Alpha v0
 
-Status: `PENDING_REMOTE_QA`.
+Status: `PENDING_MANUAL_SIGNOFF`.
 
 Saida esperada:
 

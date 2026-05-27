@@ -175,6 +175,10 @@ function stringField(payload: JsonObject, key: string): string {
 }
 
 function errorCode(payload: JsonObject): string {
+  const gatewayMessage = stringField(payload, "message");
+  if (gatewayMessage.toLowerCase().includes("authorization")) {
+    return "UNAUTHENTICATED";
+  }
   return stringField(objectField(payload, "error"), "code");
 }
 

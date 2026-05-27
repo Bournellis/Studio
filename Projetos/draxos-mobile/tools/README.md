@@ -5,6 +5,7 @@ Ferramentas de desenvolvimento e validacao.
 - `validate.gd` - validacao headless do projeto Godot, gerando conteudo, checando contrato client e rodando GUT.
 - `smoke_exports.gd` - smoke leve dos presets Android Alpha, PC Windows Alpha e PC Browser Alpha.
 - `export_internal_alpha.ps1` - exporta Android APK, PC Windows ZIP e Web usando `.env.internal-alpha.local`, sem commitar config real do cliente.
+- `publish_internal_alpha.ps1` - publica portal/Web/APK/ZIP no Supabase Storage unlisted e atualiza `release/manifest` via secret base64.
 - `smoke_dev_labs.gd` - smoke do caminho real `OS.execute` para Battle Lab e Progression Lab.
 - `smoke_dev_lab_ui.gd` - smoke visual/comportamental das telas dev-only; salva screenshots quando rodado sem `--headless`.
 - `content_generator.gd` - gera `data/generated/draxos_mobile_catalog.tres` a partir de `data/definitions/*.json`.
@@ -36,6 +37,16 @@ DRAXOS_MOBILE_ANDROID_KEYSTORE_RELEASE_PATH=D:\caminho\para\draxos-mobile-intern
 DRAXOS_MOBILE_ANDROID_KEYSTORE_RELEASE_USER=draxosmobilealpha
 DRAXOS_MOBILE_ANDROID_KEYSTORE_RELEASE_PASSWORD=<senha-local>
 ```
+
+Publicacao Internal Alpha v0:
+
+```powershell
+cd D:\Estudio\Projetos\draxos-mobile
+npx -y supabase db push
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 -ProjectDir .
+```
+
+O script usa `SUPABASE_PROJECT_REF`, `SUPABASE_URL` e `SUPABASE_PUBLISHABLE_KEY` de `.env.internal-alpha.local`, publica no bucket `draxos-internal-alpha`, valida os links publicos e atualiza `RELEASE_MANIFEST_JSON_BASE64`.
 
 Simulador de economia:
 
