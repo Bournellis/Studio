@@ -2,9 +2,9 @@
 
 - Last Updated: `2026-05-27`
 - Active Project Name: `draxos-mobile`
-- Active Surface: `Feature installation rails and first feature slices`
-- Active Track: `Track 06 - Feature Installation Rails And First Feature Slices`
-- Active Track Status: `INTEGRATED_FEATURE_SLICES_READY`
+- Active Surface: `Mobile presentation loop and layout rework`
+- Active Track: `Track 07 - Mobile Presentation Loop And Layout Rework`
+- Active Track Status: `ACTIVE_PRESENTATION_REWORK`
 - Release Prep Update: T03-P12 registrou a ordem `T03-P12` a `T03-P18`, criou a base do portal estatico em `portal/internal-alpha/`, criou manifest exemplo e tutorial detalhado para o Supabase remoto observado (`armxgipvnbbshzqawklw`, `https://armxgipvnbbshzqawklw.supabase.co`). T03-P13 concluiu bootstrap remoto: CLI linkado, migrations aplicadas, Edge Functions publicadas, migrations locais/remotas alinhadas e smoke minimo de healthcheck verde. T03-P14 concluiu auth email/senha: cliente Godot, `/account/bootstrap`, migration `create_alpha_account`, config Auth remoto sem confirmacao obrigatoria e smokes local/remoto verdes. T03-P15 concluiu manifest remoto/version gate: `GET /release/manifest` publicado local/remoto, Hub checa update no boot e bloqueia acoes online quando a versao minima exigir. T03-P16 concluiu exports locais Android/PC/Web com hashes registrados. T03-P17 publicou APK/PC ZIP em Supabase Storage unlisted, publicou Portal/Web no Cloudflare Pages, atualizou o manifest remoto com links finais e passou no QA remoto automatizado. T03-P17A aplicou uma passada curta de ergonomia Android no Hub/abas, gerou novos artefatos locais, foi aprovada por Fabio, republicou APK/PC ZIP/manifest/Cloudflare Pages e passou na validacao remota final. T03-P18 fechou o handoff final em `docs/internal-alpha-v0-handoff.md`, atualizou portal/manifest final e deixou o proximo ciclo como rodada fechada Fabio + tester.
 - Track 04 Post-Alpha Update 2026-05-27: Fabio confirmou que os testes da Internal Alpha v0 com Fabio + tester passaram. `T04-P00` fica concluido por confirmacao do usuario, sem bug bloqueante reportado como impeditivo imediato. A Track 04 entra em evolucao ativa com execucao paralela controlada: coordenacao, Hub scaffold, shell/login/update, Base/Loja, Social/Competicao, Batalha/Replay, Progression/Economia e Account/Save Gate em worktrees separadas.
 - Track 04 Integration Update 2026-05-27: as trilhas `T04-A` a `T04-H` foram consolidadas na branch `codex/draxos-mobile/t04-integration`. O Hub agora possui presenters render-only em `modes/boot/surfaces/` para shell, account/update, Base, Loja, Social, Competicao e Batalha/Replay; `boot.gd` segue dono de actions/network/session. `T04-G` registrou rodada tecnica de Progression/Economia sem mudar numeros e `T04-H` decidiu manter `players.save_type` para alpha/Track 04 inicial, sem migration.
@@ -12,6 +12,7 @@
 - UI pass 2026-05-27: Hub/abas do Boot agora usam modo compacto no Android, botoes de acao agrupados em grades com alvo de toque maior, nav mais compacta, mapa da Base com 6 colunas em paisagem larga e texto de teste rapido menos "dev" no fluxo normal. Build local Android/PC/Web foi regenerada com APK `debug_fallback` e aprovada por Fabio como boa o suficiente para seguir.
 - Track 05 Foundation Update 2026-05-27: Track 05 foi integrada em `INTEGRATED_FOUNDATION_READY`. Entregas: matriz oficial `quick/full/release/remote`, smoke focado Base/Shop/Social/Competition, hardening render-only do Hub, classificacao de contratos de servico, pipeline de assets com ids/fallback, pacote humano do Progression Lab e release ops sem publicar. Guardrails preservados: sem migration `account_profiles` + `game_saves`, sem tuning numerico, sem assets finais, sem servicos novos de gameplay e sem publicacao remota.
 - Track 06 Feature Installation Update 2026-05-27: Track 06 foi integrada como primeiro pacote de instalacao de features sobre a fundacao Track 05. T06-B consolidou o contrato padrao de feature em `tracks/track-06-feature-installation-rails-and-first-slices/feature-registry.md`: toda feature declara owner, surface, endpoints afetados, escopo de servico, smoke/GUT obrigatorio, fallback e rollback antes de runtime. T06-I consolidou runtime config, Perfil/Conta, Battle History/replay, rotina da Base, Social QoL e Asset Pack 01. Guardrails preservados: sem tuning numerico, sem migration `account_profiles` + `game_saves`, sem pagamento real, sem iOS/mobile browser, sem social realtime e sem publicacao remota.
+- Track 07 Presentation Update 2026-05-27: Track 07 foi aberta para rever o loop completo de apresentacao mobile. Decisoes travadas: Refugio vira home full screen, app fora de gameplay suporta portrait/landscape, autobattler roda full-screen landscape durante batalha/replay, PC executavel e PC browser seguem funcionais, Progression Lab aparece no Refugio quando dev tools/editor estiverem habilitados. Guardrails: sem backend, schema, economia, recompensa, ranking, contratos HTTP, simulador ou publicacao remota.
 - Track 06 Runtime Config Update 2026-05-27: T06-C esta integrada. Entregou `GET /release/config` com `runtime_config_v1` release-scoped/read-only, flags T06 allowlisted, cliente Godot com fallback conservador e smokes/GUT focados. Sem schema, tuning, secrets, service role, estado de jogador, publicacao remota ou mutacao de gameplay.
 - Track 06 Profile/Account Update 2026-05-27: T06-D esta integrada. Entregou painel Perfil/Conta read-only usando `SessionStore`, snapshot `account/state`, save ativo, username, level, poder, auth method, update state e status alpha, sem endpoint novo e sem mudar Auth/schema/economia.
 - Track 06 T06-G Social QoL Update 2026-05-27: T06-G esta integrada. Social segue client-only e render-only: o presenter agora destaca refresh/polling, identidade da conta, amigos, guilda, estados vazios e mensagens atuais com formatting legivel. `smoke_foundation_surfaces.gd` valida guilda/membros/estruturas e mensagem atual retornada por polling. Sem endpoint novo, schema, realtime, moderacao, ranking behavior, backend ou vazamento do Progression Lab para leaderboard.
@@ -185,9 +186,9 @@
 ## Read Next
 
 1. `../AGENTS.md`
-2. `tracks/track-06-feature-installation-rails-and-first-slices/current-status.md`
-3. `tracks/track-06-feature-installation-rails-and-first-slices/scope.md`
-4. `tracks/track-06-feature-installation-rails-and-first-slices/implementation-plan.md`
+2. `tracks/track-07-mobile-presentation-loop-and-layout-rework/current-status.md`
+3. `tracks/track-07-mobile-presentation-loop-and-layout-rework/scope.md`
+4. `tracks/track-07-mobile-presentation-loop-and-layout-rework/implementation-plan.md`
 5. `../docs/internal-alpha-v0-handoff.md`
 6. `../docs/product-vision.md`
 7. `../docs/design-pending.md`
@@ -279,6 +280,6 @@ Supabase runtime validado localmente:
 
 ## Next
 
-1. Integrar `T06-B` Feature Rails e usar o registry como contrato para os agentes de feature.
-2. Continuar `T06-C` Runtime Config.
-3. Executar `T06-D` a `T06-H` em worktrees paralelas a partir do checklist, com `T06-I` para integracao final.
+1. Integrar `T07-B` App Shell/Foundation como base comum de rotas, back stack, orientacao e scroll/touch.
+2. Executar `T07-C`, `T07-D` e `T07-E` em worktrees paralelas sobre a fundacao T07-B.
+3. Executar `T07-F` para smoke mobile/PC/Web e finalizar em `T07-G` com validacao completa.

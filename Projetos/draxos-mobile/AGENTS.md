@@ -100,6 +100,9 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 | Plano da Track 06 | `implementation/tracks/track-06-feature-installation-rails-and-first-slices/implementation-plan.md` |
 | Status da Track 06 | `implementation/tracks/track-06-feature-installation-rails-and-first-slices/current-status.md` |
 | Feature registry da Track 06 | `implementation/tracks/track-06-feature-installation-rails-and-first-slices/feature-registry.md` |
+| Escopo da Track 07 | `implementation/tracks/track-07-mobile-presentation-loop-and-layout-rework/scope.md` |
+| Plano da Track 07 | `implementation/tracks/track-07-mobile-presentation-loop-and-layout-rework/implementation-plan.md` |
+| Status da Track 07 | `implementation/tracks/track-07-mobile-presentation-loop-and-layout-rework/current-status.md` |
 | Runbook Internal Alpha v0 | `docs/internal-alpha-v0.md` |
 | Setup remoto Internal Alpha v0 | `docs/internal-alpha-remote-setup.md` |
 | Host estatico Internal Alpha v0 | `docs/internal-alpha-static-hosting.md` |
@@ -169,6 +172,6 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 
 ## Active Track
 
-Track ativa: `Track 06 - Feature Installation Rails And First Feature Slices` (`INTEGRATED_FEATURE_SLICES_READY`; aguardando walkthrough manual e decisao da Track 07).
+Track ativa: `Track 07 - Mobile Presentation Loop And Layout Rework` (`ACTIVE_PRESENTATION_REWORK`).
 
-Comece por `implementation/current-status.md` e siga `implementation/tracks/track-06-feature-installation-rails-and-first-slices/current-status.md`.
+Comece por `implementation/current-status.md` e siga `implementation/tracks/track-07-mobile-presentation-loop-and-layout-rework/current-status.md`.
