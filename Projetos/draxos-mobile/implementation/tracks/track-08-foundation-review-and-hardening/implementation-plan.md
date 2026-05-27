@@ -41,14 +41,14 @@ Validation: `git diff --check`.
 
 ## T08-B - App Shell Lifecycle
 
-Status: `PENDING_AFTER_T08_A`.
+Status: `COMPLETE`.
 
 - Consolidate route/back/orientation contract after Track 07.
 - Extract a small route helper only if it reduces risk and is easy to test.
 - Cover legacy aliases, Refugio root, back stack, `battle_running` landscape and summary/refuge return.
 - Keep `boot.gd` as orchestrator.
 
-Validation: `validate.gd`, GUT and `git diff --check`.
+Validation: `validate.gd`, GUT and `git diff --check` passed in `codex/draxos-mobile/t08-app-shell-lifecycle`.
 
 ## T08-C - Session/Save Boundary
 

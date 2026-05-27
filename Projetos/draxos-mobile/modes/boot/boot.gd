@@ -10,16 +10,17 @@ const BaseSurfacePresenterScript := preload("res://modes/boot/surfaces/base_surf
 const SocialSurfacePresenterScript := preload("res://modes/boot/surfaces/social_surface_presenter.gd")
 const CompetitionSurfacePresenterScript := preload("res://modes/boot/surfaces/competition_surface_presenter.gd")
 const ShopSurfacePresenterScript := preload("res://modes/boot/surfaces/shop_surface_presenter.gd")
+const AppShellRouteContractScript := preload("res://modes/boot/ui/app_shell_route_contract.gd")
 
-const ROUTE_REFUGE_HOME := "refuge_home"
-const ROUTE_ACCOUNT := "account"
-const ROUTE_BASE := "base"
-const ROUTE_SOCIAL := "social"
-const ROUTE_COMPETITION := "competition"
-const ROUTE_SHOP := "shop"
-const ROUTE_BATTLE_ENTRY := "battle_entry"
-const ROUTE_BATTLE_RUNNING := "battle_running"
-const ROUTE_BATTLE_SUMMARY := "battle_summary"
+const ROUTE_REFUGE_HOME := AppShellRouteContractScript.ROUTE_REFUGE_HOME
+const ROUTE_ACCOUNT := AppShellRouteContractScript.ROUTE_ACCOUNT
+const ROUTE_BASE := AppShellRouteContractScript.ROUTE_BASE
+const ROUTE_SOCIAL := AppShellRouteContractScript.ROUTE_SOCIAL
+const ROUTE_COMPETITION := AppShellRouteContractScript.ROUTE_COMPETITION
+const ROUTE_SHOP := AppShellRouteContractScript.ROUTE_SHOP
+const ROUTE_BATTLE_ENTRY := AppShellRouteContractScript.ROUTE_BATTLE_ENTRY
+const ROUTE_BATTLE_RUNNING := AppShellRouteContractScript.ROUTE_BATTLE_RUNNING
+const ROUTE_BATTLE_SUMMARY := AppShellRouteContractScript.ROUTE_BATTLE_SUMMARY
 const ROUTE_BATTLE_LAB := "battle_lab"
 const ROUTE_PROGRESSION_LAB := "progression_lab"
 
@@ -194,9 +195,7 @@ func _ensure_action_grid() -> GridContainer:
 	return grid
 
 func _show_screen(screen_id: String, push_history: bool = true) -> void:
-	screen_id = _normalize_route(screen_id)
-	if push_history and screen_id != _current_screen:
-		_screen_history.append(_current_screen)
+	screen_id = AppShellRouteContractScript.push_route(_screen_history, _current_screen, screen_id, push_history)
 	_current_screen = screen_id
 	_apply_orientation_for_route(screen_id)
 	_action_buttons.clear()
@@ -222,7 +221,7 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	if _content_scroll != null:
 		_content_scroll.scroll_vertical = 0
 	_content_title.text = _screen_title(screen_id)
-	_back_button.visible = screen_id != SCREEN_HUB
+	_back_button.visible = _route_supports_back(screen_id)
 	_sync_nav_buttons()
 
 	match screen_id:
@@ -257,29 +256,17 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 func _go_back() -> void:
 	if _is_busy:
 		return
-	if _screen_history.is_empty():
-		_show_screen(SCREEN_HUB, false)
-		return
-	var previous: String = _screen_history.pop_back()
+	var previous := AppShellRouteContractScript.pop_back_or_root(_screen_history)
 	_show_screen(previous, false)
 
 func _normalize_route(route_id: String) -> String:
-	match route_id:
-		"hub", "refugio", "refuge":
-			return ROUTE_REFUGE_HOME
-		"conta", "perfil", "profile":
-			return ROUTE_ACCOUNT
-		"battle":
-			return ROUTE_BATTLE_ENTRY
-		"monetization":
-			return ROUTE_SHOP
-	return route_id
+	return AppShellRouteContractScript.normalize(route_id)
 
 func _route_supports_back(route_id: String) -> bool:
-	return _normalize_route(route_id) != ROUTE_REFUGE_HOME
+	return AppShellRouteContractScript.supports_back(route_id)
 
 func _route_prefers_landscape(route_id: String) -> bool:
-	return _normalize_route(route_id) == ROUTE_BATTLE_RUNNING
+	return AppShellRouteContractScript.prefers_landscape(route_id)
 
 func _apply_orientation_for_route(route_id: String) -> void:
 	if OS.get_name() != "Android":
@@ -1102,8 +1089,7 @@ func _return_to_refuge() -> void:
 	_replay_running = false
 	_skip_replay = false
 	_battle_summary_skipped = false
-	_screen_history.clear()
-	_show_screen(SCREEN_HUB, false)
+	_show_screen(AppShellRouteContractScript.clear_for_root_return(_screen_history), false)
 
 func _replay_latest_battle_from_summary() -> void:
 	if not SessionStore.has_battle_log():
@@ -2466,27 +2452,7 @@ func _play_battle_log(battle_log: Dictionary, rewards: Dictionary) -> void:
 	_sync_buttons()
 
 func _screen_title(screen_id: String) -> String:
-	screen_id = _normalize_route(screen_id)
-	match screen_id:
-		SCREEN_HUB:
-			return "Refugio"
-		SCREEN_BATTLE:
-			return "Batalha"
-		ROUTE_BATTLE_RUNNING:
-			return "Batalha"
-		ROUTE_BATTLE_SUMMARY:
-			return "Resumo"
-		ROUTE_ACCOUNT:
-			return "Conta"
-		SCREEN_BASE:
-			return "Base"
-		SCREEN_SOCIAL:
-			return "Social"
-		SCREEN_COMPETITION:
-			return "Competicao"
-		SCREEN_SHOP:
-			return "Loja"
-	return "Refugio"
+	return AppShellRouteContractScript.title_for(screen_id)
 
 func _session_status_text() -> String:
 	if bool(_update_gate.get("block_online", false)):
