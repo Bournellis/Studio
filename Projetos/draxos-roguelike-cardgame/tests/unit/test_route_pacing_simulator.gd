@@ -1,6 +1,7 @@
 extends "res://tests/unit/draxos_test_base.gd"
 
 const RoutePacingSimulatorScript = preload("res://tools/route_pacing_simulator.gd")
+const RunLabGoldenMetricsScript = preload("res://tools/run_lab_golden_metrics.gd")
 const SMOKE_SEED: int = 20260518
 const METRIC_SCHEMA: PackedStringArray = [
 	"class_id",
@@ -70,3 +71,23 @@ func test_route_pacing_simulator_completes_all_track02_classes() -> void:
 		assert_eq(int(metrics.get("shop_usage", 0)), 21)
 		assert_eq(int(metrics.get("deaths", 0)), 0)
 		assert_true(bool(simulator.acceptance_for(metrics).get("ok", false)))
+
+func test_run_lab_golden_metrics_accepts_track02_baseline() -> void:
+	var simulator = RoutePacingSimulatorScript.new()
+	for golden_case: Dictionary in RunLabGoldenMetricsScript.default_cases():
+		var class_id: String = str(golden_case.get("class_id", ""))
+		var seed: int = int(golden_case.get("seed", 0))
+		var metrics: Dictionary = simulator.simulate_route(RunSession, ContentLibrary.get_catalog(), class_id, seed)
+		var comparison: Dictionary = RunLabGoldenMetricsScript.compare_metrics(metrics, {"require_known": true})
+		assert_true(bool(comparison.get("checked", false)), "Golden case was not checked: %s." % str(golden_case.get("key", "")))
+		assert_true(bool(comparison.get("ok", false)), RunLabGoldenMetricsScript.format_comparison(comparison))
+
+func test_run_lab_golden_metrics_reports_arcano_regression() -> void:
+	var simulator = RoutePacingSimulatorScript.new()
+	var metrics: Dictionary = simulator.simulate_route(RunSession, ContentLibrary.get_catalog(), "arcano", SMOKE_SEED)
+	metrics["estimated_turns"] = int(metrics.get("estimated_turns", 0)) + 1
+	var comparison: Dictionary = RunLabGoldenMetricsScript.compare_metrics(metrics, {"require_known": true})
+	assert_true(bool(comparison.get("checked", false)))
+	assert_false(bool(comparison.get("ok", true)))
+	assert_gt(Array(comparison.get("differences", [])).size(), 0)
+	assert_string_contains(RunLabGoldenMetricsScript.format_comparison(comparison), "estimated_turns")

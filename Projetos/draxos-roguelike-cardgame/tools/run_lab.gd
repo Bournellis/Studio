@@ -2,6 +2,7 @@ extends SceneTree
 
 const ContentGeneratorScript = preload("res://tools/content_generator.gd")
 const RoutePacingSimulatorScript = preload("res://tools/route_pacing_simulator.gd")
+const RunLabGoldenMetricsScript = preload("res://tools/run_lab_golden_metrics.gd")
 const DEFAULT_CLASSES: PackedStringArray = ["arcano", "invocador", "necromante"]
 const DEFAULT_SEEDS: PackedInt64Array = [20260518]
 const DEFAULT_OUTPUT_DIR: String = "user://run_lab"
@@ -51,19 +52,32 @@ func _run_lab() -> int:
 				int(result.get("relic_count", 0)),
 				int(result.get("shop_usage", 0))
 			])
+	var comparison: Dictionary = {}
+	if bool(options.get("compare_golden", false)):
+		comparison = RunLabGoldenMetricsScript.compare_many(results, {
+			"require_known": bool(options.get("require_golden", false)),
+			"strict": bool(options.get("strict_golden", false))
+		})
 	var output_dir: String = str(options.get("out", DEFAULT_OUTPUT_DIR))
-	var write_result: Dictionary = _write_outputs(output_dir, results)
+	var write_result: Dictionary = _write_outputs(output_dir, results, comparison)
 	if not bool(write_result.get("ok", false)):
 		printerr("[run_lab] %s" % str(write_result.get("message", "Failed to write outputs.")))
 		return 1
 	print("[run_lab] wrote %s and %s" % [str(write_result.get("json_path", "")), str(write_result.get("csv_path", ""))])
+	if not comparison.is_empty():
+		_print_golden_comparison(comparison)
+		if not bool(comparison.get("ok", false)):
+			return 1
 	return 0
 
 func _parse_options() -> Dictionary:
 	var options: Dictionary = {
 		"classes": DEFAULT_CLASSES,
 		"seeds": DEFAULT_SEEDS,
-		"out": DEFAULT_OUTPUT_DIR
+		"out": DEFAULT_OUTPUT_DIR,
+		"compare_golden": false,
+		"require_golden": false,
+		"strict_golden": false
 	}
 	for arg: String in OS.get_cmdline_user_args():
 		if arg.begins_with("--class="):
@@ -79,19 +93,30 @@ func _parse_options() -> Dictionary:
 			options["seeds"] = seeds
 		elif arg.begins_with("--out="):
 			options["out"] = arg.trim_prefix("--out=")
+		elif arg == "--compare-golden" or arg == "--golden":
+			options["compare_golden"] = true
+		elif arg == "--require-golden":
+			options["require_golden"] = true
+			options["compare_golden"] = true
+		elif arg == "--strict-golden":
+			options["strict_golden"] = true
+			options["compare_golden"] = true
 	return options
 
 func _simulate_route(session, catalog, class_id: String, seed: int) -> Dictionary:
 	return RoutePacingSimulatorScript.new().simulate_route(session, catalog, class_id, seed)
 
-func _write_outputs(output_dir: String, results: Array[Dictionary]) -> Dictionary:
+func _write_outputs(output_dir: String, results: Array[Dictionary], comparison: Dictionary = {}) -> Dictionary:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output_dir))
 	var json_path: String = "%s/run_lab_metrics.json" % output_dir
 	var csv_path: String = "%s/run_lab_metrics.csv" % output_dir
 	var json_file := FileAccess.open(json_path, FileAccess.WRITE)
 	if json_file == null:
 		return {"ok": false, "message": "Could not write %s." % json_path}
-	json_file.store_string(JSON.stringify({"runs": results}, "\t"))
+	var payload: Dictionary = {"runs": results}
+	if not comparison.is_empty():
+		payload["golden_comparison"] = comparison
+	json_file.store_string(JSON.stringify(payload, "\t"))
 	var csv_file := FileAccess.open(csv_path, FileAccess.WRITE)
 	if csv_file == null:
 		return {"ok": false, "message": "Could not write %s." % csv_path}
@@ -106,6 +131,18 @@ func _write_outputs(output_dir: String, results: Array[Dictionary]) -> Dictionar
 				row.append(_csv_escape(str(result.get(header, ""))))
 		csv_file.store_line(",".join(row))
 	return {"ok": true, "json_path": json_path, "csv_path": csv_path}
+
+func _print_golden_comparison(comparison: Dictionary) -> void:
+	for result: Dictionary in Array(comparison.get("results", [])):
+		var message: String = RunLabGoldenMetricsScript.format_comparison(result)
+		if bool(result.get("ok", false)):
+			print("[run_lab] %s" % message)
+		else:
+			printerr("[run_lab] %s" % message)
+	print("[run_lab] golden summary checked=%d mismatches=%d" % [
+		int(comparison.get("checked_count", 0)),
+		int(comparison.get("mismatch_count", 0))
+	])
 
 func _csv_escape(value: String) -> String:
 	if value.find(",") >= 0 or value.find("\"") >= 0 or value.find("\n") >= 0:

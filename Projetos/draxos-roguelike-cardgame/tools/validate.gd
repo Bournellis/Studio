@@ -2,6 +2,7 @@ extends SceneTree
 
 const ContentGeneratorScript = preload("res://tools/content_generator.gd")
 const RoutePacingSimulatorScript = preload("res://tools/route_pacing_simulator.gd")
+const RunLabGoldenMetricsScript = preload("res://tools/run_lab_golden_metrics.gd")
 const SceneGeneratorScript = preload("res://tools/scene_generator.gd")
 const VisualAssetsScript = preload("res://core/visual_assets.gd")
 const TRACK_02_CONTRACT_ID: String = "track_02_complete_run_evolution"
@@ -464,7 +465,19 @@ func _validate_track_02_full_route_pacing(catalog) -> Dictionary:
 	var metrics: Dictionary = simulator.simulate_route(session, catalog, "arcano", 20260518)
 	if not bool(metrics.get("ok", false)):
 		return {"ok": false, "message": "Pacing smoke failed: %s" % str(metrics.get("message", "")), "metrics": metrics}
-	return simulator.acceptance_for(metrics)
+	var acceptance: Dictionary = simulator.acceptance_for(metrics)
+	if not bool(acceptance.get("ok", false)):
+		return acceptance
+	var golden_comparison: Dictionary = RunLabGoldenMetricsScript.compare_metrics(metrics, {"require_known": true})
+	if not bool(golden_comparison.get("ok", false)):
+		return {
+			"ok": false,
+			"message": "Pacing smoke golden mismatch: %s" % RunLabGoldenMetricsScript.format_comparison(golden_comparison),
+			"metrics": metrics,
+			"golden_comparison": golden_comparison
+		}
+	acceptance["golden_comparison"] = golden_comparison
+	return acceptance
 
 func _format_pacing_metrics(metrics: Dictionary) -> String:
 	return RoutePacingSimulatorScript.new().format_metrics(metrics)
