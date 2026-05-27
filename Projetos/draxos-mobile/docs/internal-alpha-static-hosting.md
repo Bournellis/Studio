@@ -77,6 +77,8 @@ APK/ZIP podem continuar apontando para Supabase Storage; a pasta `downloads/` ex
 
 ## Pacote A Publicar No Cloudflare
 
+Checklist release-ready e validacao somente leitura: `release-ops-checklist.md`.
+
 Gerar o pacote especifico para Cloudflare Pages:
 
 ```powershell
