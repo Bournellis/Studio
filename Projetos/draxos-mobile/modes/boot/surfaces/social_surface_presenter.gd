@@ -95,11 +95,13 @@ static func render_state(host: Node) -> void:
 	lines.append("Mensagem atual: %s" % _latest_message_text(messages))
 	timeline_label.text = "\n".join(lines)
 	if social_state_container != null:
-		social_state_container.add_child(_social_refresh_panel(host, friends, guild, messages))
-		social_state_container.add_child(_social_identity_panel(host, identity, social_player, active_player))
-		social_state_container.add_child(_social_friends_panel(host, friends))
-		social_state_container.add_child(_social_guild_panel(host, guild, members, structures))
-		social_state_container.add_child(_social_chat_panel(host, messages, not guild.is_empty()))
+		host.call("_add_responsive_panel_layout", social_state_container, [
+			_social_refresh_panel(host, friends, guild, messages),
+			_social_identity_panel(host, identity, social_player, active_player),
+			_social_friends_panel(host, friends),
+			_social_guild_panel(host, guild, members, structures),
+			_social_chat_panel(host, messages, not guild.is_empty()),
+		], 2)
 
 static func _social_refresh_panel(host: Node, friends: Array, guild: Dictionary, messages: Array) -> Control:
 	var panel := _base_panel(host)

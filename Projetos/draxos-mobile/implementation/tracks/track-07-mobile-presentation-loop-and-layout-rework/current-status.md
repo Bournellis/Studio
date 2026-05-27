@@ -3,8 +3,8 @@
 - Last Updated: `2026-05-27`
 - Status: `ACTIVE_PRESENTATION_REWORK`
 - Depends On: `T06_INTEGRATED_FEATURE_SLICES_READY`
-- Current Stage: `T07_B_APP_SHELL_FOUNDATION`
-- Next Action: run Refugio/Home, App Screens and Battle Fullscreen work in parallel on top of the T07-B foundation.
+- Current Stage: `T07_D_APP_SCREENS`
+- Next Action: integrate Refugio/Home, App Screens and Battle Fullscreen branches, then run PC/Web presentation validation.
 
 ## Estado
 
@@ -15,9 +15,9 @@ The track responds to the first post-Track 06 walkthrough findings: the current 
 ## Ordem Atual
 
 1. `T07-A` Coordenacao: complete and on master.
-2. `T07-B` App Shell/Foundation: in progress on `codex/draxos-mobile/t07-app-shell-foundation`; creates routes, back stack, orientation helpers and scroll/touch foundation.
+2. `T07-B` App Shell/Foundation: complete and on master; created routes, back stack, orientation helpers and scroll/touch foundation.
 3. `T07-C` Refugio/Home: planned after `T07-B`; turns Refugio into full-screen home with altar/hotspots and cleaner account panel.
-4. `T07-D` App Screens: planned after `T07-B`; adapts Base, Social, Competition and Shop into internal app screens.
+4. `T07-D` App Screens: complete on `codex/draxos-mobile/t07-app-screens`; adapts Base, Social, Competition and Shop into internal app screens.
 5. `T07-E` Battle Fullscreen: planned after `T07-B`; makes battle/replay full-screen landscape with skip and summary.
 6. `T07-F` PC/Web + Validation: planned after `T07-C` to `T07-E`; adds presentation smoke and compatibility coverage.
 7. `T07-G` Integracao: planned final integration and status update.
@@ -50,6 +50,26 @@ Validation:
 
 - `tools/validate.gd`: passed with `77/77` tests and `865` asserts.
 - GUT client completo: passed with `77/77` tests and `865` asserts.
+- `git diff --check`: passed.
+
+## T07-D Handoff
+
+Status: `COMPLETE_VALIDATED`.
+
+Delivered:
+
+- Base, Social, Competition and Shop remain render-only presenters, now organized as internal route screens opened through the T07-B route shell.
+- Added a shared responsive panel helper in `boot.gd`: portrait/narrow layouts stay single-column; landscape/wide layouts use two panel columns while keeping the global `TouchScrollContainer`.
+- Base routine, map and selected-structure detail now sit in responsive panels without changing Base endpoints, payloads or upgrade/collect actions.
+- Social, Competition and Shop state panels use the same responsive internal-screen layout while preserving polling, ranking, product, reward and contract text.
+- Route/back behavior remains host-owned: Base, Social, Competition and Shop show `Voltar`, clear scroll position on route change and keep the old tab list absent.
+- Focused GUT coverage added for portrait/landscape layout decisions and internal route/back/scroll behavior.
+
+Validation:
+
+- `tools/smoke_foundation_surfaces.gd`: passed against local Supabase runtime.
+- `tools/validate.gd`: passed with `79/79` tests and `897` asserts.
+- GUT client complete: passed with `79/79` tests and `897` asserts.
 - `git diff --check`: passed.
 
 ## Validation Baseline

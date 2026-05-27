@@ -122,10 +122,12 @@ static func _render_playable_panels(host: Node, structures: Array, base: Diction
 	if container == null:
 		return
 	_ensure_selected_base_structure(host, structures)
-	container.add_child(_base_summary_panel(host, base, collected))
-	container.add_child(_base_routine_panel(host, base, collected))
-	container.add_child(_base_map_panel(host, structures))
-	container.add_child(_base_detail_panel(host, structures))
+	_add_responsive_panel_layout(host, container, [
+		_base_summary_panel(host, base, collected),
+		_base_routine_panel(host, base, collected),
+		_base_map_panel(host, structures),
+		_base_detail_panel(host, structures),
+	], 2)
 
 static func _base_summary_panel(host: Node, base: Dictionary, collected: Dictionary) -> Control:
 	var panel := _base_panel(host)
@@ -605,6 +607,9 @@ static func _add_action_button(host: Node, text: String, action_id: String, conf
 static func _register_action_button(host: Node, action_id: String, button: Button) -> void:
 	var action_buttons: Dictionary = host.get("_action_buttons")
 	action_buttons[action_id] = button
+
+static func _add_responsive_panel_layout(host: Node, container: VBoxContainer, panels: Array, max_columns: int) -> void:
+	host.call("_add_responsive_panel_layout", container, panels, max_columns)
 
 static func _clear_node_children(parent: Node) -> void:
 	for child: Node in parent.get_children():

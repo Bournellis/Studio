@@ -85,10 +85,12 @@ static func _render_competition_panels(host: Node, last_battle: Dictionary, matc
 	var competition_state_container := host.get("_competition_state_container") as VBoxContainer
 	if competition_state_container == null:
 		return
+	var panels: Array = []
 	if not last_battle.is_empty():
-		competition_state_container.add_child(_competition_last_battle_panel(host, last_battle))
-	competition_state_container.add_child(_competition_matchmaking_panel(host, matchmaking))
-	competition_state_container.add_child(_competition_ranking_panel(host, ranking))
+		panels.append(_competition_last_battle_panel(host, last_battle))
+	panels.append(_competition_matchmaking_panel(host, matchmaking))
+	panels.append(_competition_ranking_panel(host, ranking))
+	host.call("_add_responsive_panel_layout", competition_state_container, panels, 2)
 
 static func _competition_last_battle_panel(host: Node, last_battle: Dictionary) -> Control:
 	var panel := _base_panel(host)
