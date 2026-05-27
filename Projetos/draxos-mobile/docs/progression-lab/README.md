@@ -118,6 +118,8 @@ Esse diretorio guarda sessoes locais e nao deve entrar no Git.
 Ultima rodada viva de Battle Lab: `2026-05-25_source_identity_balance_v02`.
 Ultima rodada tecnica registrada de Progression Lab:
 `2026-05-27-t04-progression-economia.md`.
+Runbook humano Track 05:
+`2026-05-27-t05-progression-human-runbook.md`.
 
 - `25` saves saudaveis e `75` bots gerados.
 - Status geral: `REVIEW`.
@@ -132,6 +134,23 @@ Ultima rodada tecnica registrada de Progression Lab:
 
 O status `REVIEW` e intencional: a ferramenta ja nao bloqueia por erro numerico
 critico, mas ainda precisa validacao manual no Godot/Supabase local.
+
+## Rodada Humana Track 05
+
+Antes de tuning numerico, executar o runbook
+`2026-05-27-t05-progression-human-runbook.md`.
+
+Casos obrigatorios de foco:
+
+- `spender_light_10h`
+- `max_spender_10h`
+- `max_spender_20h`
+- `free_100_rewards_20h`
+- `freemium_basic_20h`
+
+A rodada deve decidir premium gap, janela `20h`, bots ponte, recursos e pesos de
+poder. Qualquer ajuste de economia, poder, bots, loja, recompensas ou combate
+deve virar tarefa separada com comparacao before/after.
 
 ## Validacao Local
 

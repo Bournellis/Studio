@@ -22,6 +22,16 @@ No final art, new service, economy tuning, schema migration or gameplay expansio
 7. `T05-G` Release Ops: checklist for manifest/export/publication readiness without publishing.
 8. `T05-H` Integracao: merge, validate and update final status.
 
+## T05-F Progression Human Pack
+
+Status: `READY_FOR_HUMAN_REVIEW` on branch `codex/draxos-mobile/t05-progression-human-pack`.
+
+- Runbook: `../../../docs/progression-lab/2026-05-27-t05-progression-human-runbook.md`
+- Track notes: `progression-human-pack.md`
+- Focus cases: `spender_light_10h`, `max_spender_10h`, `max_spender_20h`, `free_100_rewards_20h`, `freemium_basic_20h`
+- Decision criteria covered: premium gap, `20h` window, bridge bots, resources and power weights
+- Guardrail: no economy, power, bot, shop, reward, resource or combat number changes in this package
+
 ## Guardrails
 
 - Do not edit directly in `D:\Estudio` for implementation.
