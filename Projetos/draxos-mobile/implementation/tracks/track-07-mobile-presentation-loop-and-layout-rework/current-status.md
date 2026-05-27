@@ -4,7 +4,7 @@
 - Status: `ACTIVE_PRESENTATION_REWORK`
 - Depends On: `T06_INTEGRATED_FEATURE_SLICES_READY`
 - Current Stage: `T07_G_INTEGRATION`
-- Next Action: integrate Battle Fullscreen, add PC/Web presentation validation and run the final validation matrix.
+- Next Action: add PC/Web presentation validation and run the final validation matrix.
 
 ## Estado
 
@@ -18,8 +18,8 @@ The track responds to the first post-Track 06 walkthrough findings: the current 
 2. `T07-B` App Shell/Foundation: complete and on master; created routes, back stack, orientation helpers and scroll/touch foundation.
 3. `T07-C` Refugio/Home: complete and integrated into `T07-G`; turns Refugio into full-screen home with altar/hotspots and cleaner account panel.
 4. `T07-D` App Screens: complete and integrated into `T07-G`; adapts Base, Social, Competition and Shop into internal app screens.
-5. `T07-E` Battle Fullscreen: in progress; makes battle/replay full-screen landscape with skip and summary.
-6. `T07-F` PC/Web + Validation: planned after `T07-E`; adds presentation smoke and compatibility coverage.
+5. `T07-E` Battle Fullscreen: complete and integrated into `T07-G`; makes battle/replay full-screen landscape with skip and summary.
+6. `T07-F` PC/Web + Validation: in progress in `T07-G`; adds presentation smoke and compatibility coverage.
 7. `T07-G` Integracao: in progress for final integration and status update.
 
 ## Guardrails
@@ -89,6 +89,26 @@ Validation:
 - `tools/smoke_foundation_surfaces.gd`: passed against local Supabase runtime.
 - `tools/validate.gd`: passed with `79/79` tests and `897` asserts.
 - GUT client complete: passed with `79/79` tests and `897` asserts.
+- `git diff --check`: passed.
+
+## T07-E Handoff
+
+Status: `COMPLETE_VALIDATED`.
+
+Delivered:
+
+- `battle_running` renders a full-screen overlay using the existing `BattleReplayPresenter`, `BattleVisualMockup` and `BattleStage2D` replay path.
+- The battle overlay uses a 16:9 landscape frame for Android, PC and Web windows, while Android orientation lock/restoration remains owned by the T07-B route helper.
+- A large fixed `Pular` button sits in the lower-right corner and remains enabled while replay is running.
+- Replay completion or skip transitions to `battle_summary`, restoring app orientation and rendering a full-screen summary.
+- Summary shows winner, duration, event count, mode, reward/resources, and actions: `Voltar ao Refugio`, `Rever replay`, `Historico`.
+- Existing battle request/latest/history/replay endpoints, `battle_log_v1`, simulator and reward flow were not changed.
+
+Validation:
+
+- GUT client complete: passed with `81/81` tests and `907` asserts.
+- `tools/validate.gd`: passed with `81/81` tests and `907` asserts.
+- `tools/smoke_battle_replay.gd`: passed when `BATTLE_FUNCTION_URL` pointed to the current `battle` function served from this worktree. The default local Supabase Edge Runtime was still mounted to another worktree and returned `NOT_FOUND` for `/battle/history`.
 - `git diff --check`: passed.
 
 ## Validation Baseline

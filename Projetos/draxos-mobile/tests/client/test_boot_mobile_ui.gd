@@ -2,6 +2,7 @@ extends GutTest
 
 const BootScreenScript = preload("res://modes/boot/boot.gd")
 const BaseSurfacePresenterScript = preload("res://modes/boot/surfaces/base_surface_presenter.gd")
+const BattleReplayPresenterScript = preload("res://modes/boot/surfaces/battle_replay_presenter.gd")
 const TouchScrollContainerScript = preload("res://modes/boot/ui/touch_scroll_container.gd")
 
 func before_each() -> void:
@@ -421,6 +422,92 @@ func test_boot_battle_presenter_renders_history_entries_without_network() -> voi
 	assert_true(_label_tree_contains(boot._content_body, "FIRST_SLICE_SIM"))
 	assert_true(_label_tree_contains(boot._content_body, "vitoria"))
 
+func test_boot_battle_running_renders_fullscreen_overlay_and_skip() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	SessionStore.last_battle_log = _battle_log_fixture()
+	SessionStore.last_battle_rewards = _battle_rewards_fixture()
+
+	boot._show_screen("battle_running")
+	await get_tree().process_frame
+
+	assert_eq(boot._current_screen, "battle_running")
+	assert_not_null(boot._battle_fullscreen_overlay)
+	assert_eq(boot.get_child(boot.get_child_count() - 1), boot._battle_fullscreen_overlay)
+	assert_not_null(boot._battle_visual)
+	assert_not_null(boot._timeline_label)
+	assert_true(boot._action_buttons.has("skip_battle_replay"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Autobattler"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Timeline"))
+	var skip_button := boot._action_buttons["skip_battle_replay"] as Button
+	assert_eq(skip_button.text, "Pular")
+	assert_true(skip_button.custom_minimum_size.x >= 176.0)
+	assert_true(skip_button.custom_minimum_size.y >= 64.0)
+	assert_eq(skip_button.mouse_filter, Control.MOUSE_FILTER_STOP)
+
+	boot._replay_running = true
+	boot._sync_buttons()
+	assert_false(skip_button.disabled)
+	boot._skip_current_replay()
+	assert_true(boot._skip_replay)
+
+func test_boot_battle_summary_renders_fullscreen_stats_resources_and_actions() -> void:
+	_prepare_account_state()
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	SessionStore.last_battle_log = _battle_log_fixture()
+	SessionStore.last_battle_rewards = _battle_rewards_fixture()
+	boot._battle_summary_skipped = true
+
+	boot._show_screen("battle_summary")
+	await get_tree().process_frame
+
+	assert_eq(boot._current_screen, "battle_summary")
+	assert_not_null(boot._battle_fullscreen_overlay)
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Resumo da batalha - replay pulado"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Vencedor"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Vitoria"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Duracao"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "12.5s"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Eventos"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Recompensa"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "FIRST_SLICE_SIM xp=10, almas=0.8, ossos=1"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Recursos"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "energia=200"))
+	assert_true(boot._action_buttons.has("return_refuge"))
+	assert_true(boot._action_buttons.has("replay_latest_battle"))
+	assert_true(boot._action_buttons.has("show_battle_history"))
+
+func test_boot_play_battle_log_finishes_on_summary_route() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	SessionStore.last_battle_log = _battle_log_fixture()
+	SessionStore.last_battle_rewards = _battle_rewards_fixture()
+
+	await boot._play_battle_log(SessionStore.last_battle_log, SessionStore.last_battle_rewards)
+
+	assert_eq(boot._current_screen, "battle_summary")
+	assert_false(boot._replay_running)
+	assert_false(boot._skip_replay)
+	assert_false(boot._battle_summary_skipped)
+	assert_not_null(boot._battle_fullscreen_overlay)
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Resumo da batalha"))
+	assert_true(boot._action_buttons.has("return_refuge"))
+
+func test_battle_summary_data_uses_battle_log_rewards_and_resource_snapshot() -> void:
+	var summary := BattleReplayPresenterScript.summary_data(
+		_battle_log_fixture(),
+		_battle_rewards_fixture(),
+		{"almas": 7, "energia": 9, "diamante": 2}
+	)
+
+	assert_eq(str(summary.get("winner", "")), "player")
+	assert_eq(str(summary.get("winner_label", "")), "Vitoria")
+	assert_eq(str(summary.get("duration_text", "")), "12.5s")
+	assert_eq(int(summary.get("event_count", 0)), 2)
+	assert_eq(str(summary.get("reward_text", "")), "FIRST_SLICE_SIM xp=10, almas=0.8, ossos=1")
+	assert_eq(str(summary.get("resources_text", "")), "almas=7, energia=9, diamante=2")
+
 func _first_action_grid(parent: Node) -> GridContainer:
 	for child: Node in parent.get_children():
 		if child is GridContainer:
@@ -512,6 +599,30 @@ func _prepare_account_state() -> void:
 		"diamante": 160,
 	}
 	SessionStore.build = {"weapon_id": "varinha_cinzas"}
+
+func _battle_log_fixture() -> Dictionary:
+	return {
+		"schema_version": "battle_log_v1",
+		"battle_id": "battle-fullscreen-1",
+		"seed": "seed-fullscreen",
+		"mode": ProjectInfo.FIRST_SLICE_MODE,
+		"duration": 12.5,
+		"participants": {
+			"player": {"id": "player-1", "display_name": "Draxos"},
+			"opponent": {"id": "bot-1", "display_name": "Treinador da Primeira Ruina", "is_bot": true},
+		},
+		"result": {"winner": "player", "reason": "opponent_defeated"},
+		"events": [
+			{"t": 0.0, "seq": 1, "type": "battle_start", "source": "system", "target": "none"},
+			{"t": 0.0, "seq": 2, "type": "battle_result", "source": "system", "target": "none", "winner": "player", "reason": "opponent_defeated"},
+		],
+	}
+
+func _battle_rewards_fixture() -> Dictionary:
+	return {
+		"type": "FIRST_SLICE_SIM",
+		"resources": {"xp": 10, "almas": 0.8, "ossos": 1},
+	}
 
 func _current_manifest_fixture() -> Dictionary:
 	return {

@@ -128,12 +128,12 @@ Validation: `smoke_foundation_surfaces.gd`, focused GUT, `validate.gd` and `git 
 
 ## T07-E - Battle Fullscreen
 
-Status: `PLANNED`.
+Status: `COMPLETE_VALIDATED`.
 
-- Render battle/replay as full-screen landscape gameplay without app chrome.
-- Place a large fixed `Pular` action in the lower-right corner.
-- On finish/skip, render a full-screen summary with winner, duration, events, rewards/resources and return actions.
-- Preserve `BattleLogPresenter`, `BattleVisualMockup`, `BattleStage2D`, battle endpoints and `battle_log_v1`.
+- Rendered battle/replay as full-screen landscape gameplay overlay without app chrome.
+- Placed a large fixed `Pular` action in the lower-right corner.
+- On finish/skip, renders a full-screen summary with winner, duration, events, rewards/resources and return actions.
+- Preserved `BattleLogPresenter`, `BattleVisualMockup`, `BattleStage2D`, battle endpoints and `battle_log_v1`.
 
 Validation: `smoke_battle_replay.gd`, battle fullscreen/summary GUT, `validate.gd` and `git diff --check`.
 
