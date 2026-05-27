@@ -3,8 +3,8 @@
 - Last Updated: `2026-05-27`
 - Status: `ACTIVE_FEATURE_INSTALLATION`
 - Depends On: `T05_INTEGRATED_FOUNDATION_READY`
-- Current Stage: `T06_C_READY_FOR_MERGE`
-- Next Action: merge/integrate T06-C runtime config with T06-B feature rails before dependent feature slices consume flags.
+- Current Stage: `T06_C_READY_FOR_INTEGRATION`
+- Next Action: integrate T06-C runtime config, then integrate T06-D to T06-H feature slices in small batches.
 
 ## Estado
 
@@ -15,13 +15,13 @@ The track deliberately prioritizes solid installation rails and small visible fe
 ## Ordem Atual
 
 1. `T06-A` Coordenacao: complete.
-2. `T06-B` Feature Rails: pending/parallel after T06-A.
-3. `T06-C` Runtime Config: ready for merge.
-4. `T06-D` Perfil/Conta: pending after T06-B.
-5. `T06-E` Battle History: pending after T06-B.
-6. `T06-F` Base Routine: pending after T06-B.
-7. `T06-G` Social QoL: pending after T06-B.
-8. `T06-H` Asset Pack 01: pending after T06-B.
+2. `T06-B` Feature Rails: ready for handoff; feature registry now defines the standard install contract, smoke/GUT rule by surface, fallback and rollback checklist.
+3. `T06-C` Runtime Config: ready for integration.
+4. `T06-D` Perfil/Conta: pending after T06-B merge; must fill feature card before runtime.
+5. `T06-E` Battle History: pending after T06-B merge; must fill feature card before runtime.
+6. `T06-F` Base Routine: pending after T06-B merge; must fill feature card before runtime.
+7. `T06-G` Social QoL: pending after T06-B merge; must fill feature card before runtime.
+8. `T06-H` Asset Pack 01: pending after T06-B merge; must fill feature card before runtime.
 9. `T06-I` Integracao: blocked until T06-C to T06-H are delivered.
 
 ## Guardrails
@@ -35,7 +35,7 @@ The track deliberately prioritizes solid installation rails and small visible fe
 
 ## T06-C Runtime Config
 
-Status: `READY_FOR_MERGE`.
+Status: `READY_FOR_INTEGRATION`.
 
 Entregas:
 
