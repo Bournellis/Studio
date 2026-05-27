@@ -6,6 +6,7 @@
 - Setup remoto: `internal-alpha-remote-setup.md`
 - Tutorial Supabase remoto: `supabase-remote-tutorial.md`
 - Plano de release: `internal-alpha-release-plan.md`
+- Relatorio de export: `internal-alpha-v0-export-report.md`
 - Portal base: `../portal/internal-alpha/`
 - Objetivo: fechar uma build interna profissional para Fabio + 1 amigo testarem um jogo real em Android, PC e Web, com servidor real, conta/save compartilhados, features principais funcionais e iteracao rapida.
 
@@ -37,7 +38,7 @@ Decisao operacional de 2026-05-26:
 
 Esta ordem nao remove a decisao de usar Supabase no alpha. Ela apenas adia remoto, build e distribuicao para reduzir friccao enquanto a implementacao ainda muda muito.
 
-Atualizacao de 2026-05-27: `T03-P13` concluiu o bootstrap Supabase remoto, `T03-P14` concluiu auth email/senha + alpha gate e `T03-P15` concluiu manifest remoto + version gate no cliente. A proxima sequencia esta documentada em `internal-alpha-release-plan.md`: `T03-P16` export das builds, `T03-P17` QA remoto fechado e `T03-P18` handoff.
+Atualizacao de 2026-05-27: `T03-P13` concluiu o bootstrap Supabase remoto, `T03-P14` concluiu auth email/senha + alpha gate, `T03-P15` concluiu manifest remoto + version gate no cliente e `T03-P16` exportou Android/PC/Web localmente. A proxima sequencia esta documentada em `internal-alpha-release-plan.md`: `T03-P17` publicacao unlisted + QA remoto fechado e `T03-P18` handoff.
 
 ## Modelo De Conta E Save
 
@@ -146,7 +147,7 @@ Manifest remoto atual em `GET /release/manifest`:
   "minimum_supported_version_code": 1,
   "released_at": "2026-05-27T00:00:00Z",
   "requires_save_reset": false,
-  "portal_url": "PORTAL_URL_PENDING_T03_P16",
+  "portal_url": "PORTAL_URL_PENDING_T03_P17",
   "notes": ["Primeira build interna"],
   "artifacts": {
     "android": { "url": "https://...", "sha256": "..." },
@@ -163,6 +164,14 @@ Status atual (`T03-P15`):
 - `SupabaseClient` busca o manifest no boot.
 - O Hub mostra resumo da versao, status do update, detalhes e URL do manifest.
 - Quando o manifest exige `minimum_supported_version_code` maior que o code local, o Hub bloqueia acoes online e permite apenas checar update, trocar save, limpar cache local e abrir ferramentas dev.
+
+Status de export (`T03-P16`):
+
+- Android APK local: `build/android/draxos-mobile-alpha.apk`.
+- PC Windows ZIP local: `build/pc/draxos-mobile-alpha.zip`.
+- Web build local: `build/web/`.
+- Hashes e metadata: `internal-alpha-v0-export-report.md` e `build/internal-alpha/release-artifacts.json`.
+- APK Android saiu como `debug_fallback` porque a keystore release dedicada ainda nao foi configurada; suficiente para o teste interno inicial, mas uma keystore release deve ser configurada antes de distribuicoes mais amplas.
 
 Politica:
 
@@ -284,7 +293,7 @@ Estas decisoes vivem em `docs/design-pending.md` como `DMOB-D048` a `DMOB-D055`.
 - Criar `.env.internal-alpha.local` ignorado no Git. (`feito localmente`)
 - Criar/fornecer convites alpha. (`ALPHA-TEST` existe para smokes; convites humanos finais ainda podem ser definidos`)
 - Guardar service role fora do Git.
-- Criar keystore Android internal alpha e guardar senha fora do Git.
+- Criar keystore Android release internal alpha e guardar senha fora do Git. (`T03-P16` usou debug fallback local; configurar release antes de uma distribuicao mais ampla ou se quiser updates Android com chave dedicada ja no T03-P17`)
 - Escolher URL/canal da Web build.
 - Aprovar redeems da loja. (`feito para alpha atual; valores seguem calibraveis`)
 - Testar com o segundo usuario e preencher checklist.

@@ -8,7 +8,7 @@
 
 | Area | Decisao |
 |---|---|
-| Android | APK direto por link, fora da Play Store nesta alpha |
+| Android | APK direto por link, fora da Play Store nesta alpha; T03-P16 gerou APK `debug_fallback` enquanto a keystore release dedicada nao estiver configurada |
 | PC | ZIP direto por link |
 | Web | Build Web em URL unlisted |
 | Portal | Site unlisted simples com downloads, changelog, instrucoes e link Web |
@@ -106,26 +106,30 @@ Saida:
 
 ### T03-P16 - Export Das Tres Builds
 
-Status: `NEXT`.
+Status: `COMPLETE - LOCAL_ARTIFACTS_GREEN`.
 
-Saida esperada:
+Saida entregue em 2026-05-27:
 
 - `build/android/draxos-mobile-alpha.apk`;
 - `build/pc/draxos-mobile-alpha.zip`;
 - `build/web/` com export Web;
-- hashes SHA256 registrados para APK e PC ZIP;
-- presets continuam excluindo ferramentas dev e scratch.
+- hashes SHA256 registrados em `docs/internal-alpha-v0-export-report.md`;
+- metadata local em `build/internal-alpha/release-artifacts.json`;
+- presets excluem ferramentas dev, docs, servidor, portal, scratch e `build/**`;
+- Android export corrigido com ETC2/ASTC, icone placeholder e permissoes de rede.
+
+Observacao Android: como nenhuma keystore release foi configurada em ambiente local, o script usou `-AllowAndroidDebugFallback` e gerou APK debug-signed. Para release-signed, configurar `DRAXOS_MOBILE_ANDROID_KEYSTORE_RELEASE_PATH`, `DRAXOS_MOBILE_ANDROID_KEYSTORE_RELEASE_USER` e `DRAXOS_MOBILE_ANDROID_KEYSTORE_RELEASE_PASSWORD` no arquivo local ignorado `.env.internal-alpha.local`.
 
 ### T03-P17 - Publicacao Unlisted E QA Remoto Fechado
 
-Status: `PENDING_ARTIFACTS`.
+Status: `NEXT`.
 
 Saida esperada:
 
 - portal publicado em URL unlisted;
 - Web build publicada;
 - APK e PC ZIP disponiveis por link;
-- manifest publicado e referenciado pelo portal.
+- manifest publicado/reconfigurado com URLs e hashes finais;
 - Fabio e tester validam pelo menos duas plataformas cada;
 - login, save cross-platform, batalha, base, loja, social, ranking, Lab e update notice passam;
 - bugs viram backlog curto antes de nova release.

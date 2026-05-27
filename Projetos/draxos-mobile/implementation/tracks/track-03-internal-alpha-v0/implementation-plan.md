@@ -59,7 +59,7 @@ Fabio vai trabalhar somente no Godot/local ate o jogo estar implementado o basta
 
 Durante a fase local-first, `T03-P02` permaneceu repo-ready: a configuracao segura existe e agora volta a ser a proxima trilha de release.
 
-Atualizacao de 2026-05-27: o projeto Supabase remoto (`armxgipvnbbshzqawklw`, `https://armxgipvnbbshzqawklw.supabase.co`) foi linkado pela CLI, recebeu migrations/functions, config de Auth email/senha sem confirmacao obrigatoria, passou em smokes remotos de healthcheck/Auth/email+saves e recebeu `GET /release/manifest` com smoke remoto verde. Proxima etapa: `T03-P16`.
+Atualizacao de 2026-05-27: o projeto Supabase remoto (`armxgipvnbbshzqawklw`, `https://armxgipvnbbshzqawklw.supabase.co`) foi linkado pela CLI, recebeu migrations/functions, config de Auth email/senha sem confirmacao obrigatoria, passou em smokes remotos de healthcheck/Auth/email+saves, recebeu `GET /release/manifest` com smoke remoto verde e exportou builds locais Android/PC/Web em `T03-P16`. Proxima etapa: `T03-P17`.
 
 ### T03-P03 - Conta Email/Senha E Dois Saves
 
@@ -260,7 +260,7 @@ Implementado em modo local-first:
 
 Lacunas intencionais:
 
-- Builds exportadas e QA remoto fechado seguem encaminhados para `T03-P16` a `T03-P18`.
+- Builds exportadas foram fechadas em `T03-P16`; publicacao e QA remoto fechado seguem encaminhados para `T03-P17` a `T03-P18`.
 
 ### T03-P12 - Release Plan, Portal Base E Tutorial Remoto
 
@@ -342,17 +342,19 @@ Implementado em 2026-05-27:
 
 ### T03-P16 - Export Android, PC E Web
 
-Status: `NEXT`.
+Status: `COMPLETE`.
 
 - Exportar APK Android direto por link.
 - Exportar PC Windows em zip direto por link.
 - Exportar Web para acesso unlisted via portal.
 - Usar mesma versao/canal nos tres artefatos.
 - Guardar keystore Android e qualquer credencial fora do repo.
+- Registrar hashes locais em `docs/internal-alpha-v0-export-report.md`.
+- Quando keystore release nao estiver configurada, permitir `debug_fallback` apenas para teste interno local.
 
 ### T03-P17 - Remote QA Fechado
 
-Status: `PENDING_T03_P16`.
+Status: `NEXT`.
 
 - Publicar portal/Web/APK/PC em links unlisted.
 - Rodar smoke remoto automatizado.
@@ -386,9 +388,9 @@ As decisoes abaixo estao registradas em `docs/design-pending.md` e precisam ser 
 
 ## Trabalho Manual Do Fabio
 
-Necessario agora para `T03-P16` a `T03-P18`:
+Necessario agora para `T03-P17` a `T03-P18`:
 
-- Criar keystore Android internal alpha e guardar senha fora do Git.
+- Criar keystore Android release internal alpha e guardar senha fora do Git, se o APK de `T03-P17` precisar sair release-signed em vez do debug fallback local.
 - Escolher onde hospedar a Web build unlisted, APK e zip PC.
 - Definir URLs finais dos downloads no portal e, se necessario, override de `RELEASE_MANIFEST_JSON`.
 - Informar os emails/usernames desejados para Fabio e o amigo, se quiser contas humanas predefinidas em vez de cadastro por convite.

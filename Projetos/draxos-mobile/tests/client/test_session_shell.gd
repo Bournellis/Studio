@@ -203,6 +203,10 @@ func test_backend_config_supports_internal_alpha_without_service_role() -> void:
 	assert_true(bool(config.get("is_remote", false)))
 	assert_false(Array(BackendConfigScript.client_environment_variables()).has("SUPABASE_SERVICE_ROLE_KEY"))
 	assert_true(Array(BackendConfigScript.client_environment_variables()).has("DRAXOS_MOBILE_UPDATE_MANIFEST_URL"))
+	assert_eq(
+		BackendConfigScript.INTERNAL_ALPHA_RUNTIME_CONFIG_PATH,
+		"res://online/internal_alpha_runtime_config.gd"
+	)
 
 func test_backend_config_rejects_secret_like_client_key() -> void:
 	var config := BackendConfigScript.config_from_values(

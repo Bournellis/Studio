@@ -1,10 +1,10 @@
 # DraxosMobile - Internal Alpha Remote Setup
 
 - Ultima atualizacao: `2026-05-27`
-- Track: `T03-P15 - Update Manifest E Version Gate`
-- Status: `auth email/senha e manifest remoto verdes`
+- Track: `T03-P16 - Export Android, PC E Web`
+- Status: `auth/manifest remotos verdes e exports locais gerados`
 
-Este runbook deixa a Internal Alpha v0 preparada para usar Supabase remoto sem colocar secrets no cliente. O projeto remoto ja foi linkado pela CLI, recebeu migrations/Edge Functions, recebeu config de Auth email/senha sem confirmacao obrigatoria, recebeu `release/manifest` e passou nos smokes remotos de healthcheck, Auth anonimo dev, email/senha com dois saves e manifest de update.
+Este runbook deixa a Internal Alpha v0 preparada para usar Supabase remoto sem colocar secrets no cliente. O projeto remoto ja foi linkado pela CLI, recebeu migrations/Edge Functions, recebeu config de Auth email/senha sem confirmacao obrigatoria, recebeu `release/manifest`, passou nos smokes remotos de healthcheck, Auth anonimo dev, email/senha com dois saves e manifest de update, e as builds locais Android/PC/Web foram exportadas em `T03-P16`.
 
 Tutorial detalhado para Fabio: `supabase-remote-tutorial.md`.
 
@@ -37,7 +37,7 @@ Tutorial detalhado para Fabio: `supabase-remote-tutorial.md`.
 - Regiao: `West US (Oregon)`.
 - Status no dashboard: `Healthy`.
 
-Estado operacional: o dashboard mostrou o projeto saudavel e, em 2026-05-27, o bootstrap remoto aplicou as migrations, publicou as Edge Functions, atualizou config de Auth, validou o fluxo email/senha e publicou o manifest de updates. Para a build, o backend remoto esta pronto para exportar/publicar artefatos em `T03-P16`.
+Estado operacional: o dashboard mostrou o projeto saudavel e, em 2026-05-27, o bootstrap remoto aplicou as migrations, publicou as Edge Functions, atualizou config de Auth, validou o fluxo email/senha, publicou o manifest de updates e exportou artefatos locais em `T03-P16`. Para `T03-P17`, falta hospedar portal/Web/APK/PC e atualizar o manifest com URLs reais.
 
 ## Resultado T03-P13
 
@@ -64,6 +64,16 @@ Estado operacional: o dashboard mostrou o projeto saudavel e, em 2026-05-27, o b
 - `supabase/config.toml` define `verify_jwt = false` para `release`.
 - `GET /release/manifest` retorna schema `internal_alpha_manifest_v1`, canal `internal_alpha`, versao/code atuais, politica de minimo suportado e placeholders de artefatos Android/PC/Web.
 - `DRAXOS_REMOTE_RELEASE_SMOKE=1 npx -y deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts`: valida o manifest remoto.
+
+## Resultado T03-P16
+
+- `tools/export_internal_alpha.ps1` exportou Android, PC Windows e Web usando `.env.internal-alpha.local` ignorado.
+- Artefatos locais:
+  - `build/android/draxos-mobile-alpha.apk`
+  - `build/pc/draxos-mobile-alpha.zip`
+  - `build/web/`
+- Hashes registrados em `docs/internal-alpha-v0-export-report.md`.
+- Android saiu como `debug_fallback`; configurar keystore release no `.env.internal-alpha.local` para APK release-signed.
 
 ## Variaveis Do Cliente
 
@@ -169,7 +179,7 @@ Supabase Storage pode hospedar manifest e artefatos pequenos, mas o limite do pl
 - links podem apontar para storage externo se os artefatos ficarem grandes;
 - o cliente deve depender do schema do manifest, nao do fornecedor de storage.
 
-## Checklist Atual Antes De T03-P16
+## Checklist Atual Antes De T03-P17
 
 - Projeto remoto confirmado.
 - URL e publishable key publicas configuradas localmente.
@@ -182,4 +192,5 @@ Supabase Storage pode hospedar manifest e artefatos pequenos, mas o limite do pl
 - Politica de alpha gate definida para email/senha: convite + username no primeiro save.
 - Fluxo email/senha implementado no cliente/backend.
 - Manifest remoto de updates e version gate implementados.
-- Proximo: exportar Android, PC e Web em `T03-P16`.
+- Builds locais Android, PC e Web exportadas.
+- Proximo: publicar portal/Web/APK/PC em links unlisted, atualizar manifest com URLs/hashes finais e rodar QA remoto fechado em `T03-P17`.

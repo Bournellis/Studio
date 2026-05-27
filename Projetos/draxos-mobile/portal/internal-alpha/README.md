@@ -1,6 +1,6 @@
 # DraxosMobile Internal Alpha Portal
 
-Status: `BASE_COMPLETE_WITH_MANIFEST_CONTRACT`.
+Status: `BASE_READY_FOR_T03_P17_PUBLICATION`.
 
 Este portal e o ponto unlisted da Internal Alpha v0. Ele nao e seguranca. O jogo precisa exigir email/senha e alpha gate no backend. O portal apenas organiza:
 
@@ -18,14 +18,14 @@ Este portal e o ponto unlisted da Internal Alpha v0. Ele nao e seguranca. O jogo
 
 ## Como Usar
 
-1. Depois de `T03-P16`, atualize os links em `index.html`.
+1. Em `T03-P17`, publique os artefatos exportados e atualize os links em `index.html`.
 2. Depois de publicar os artefatos, substitua os placeholders:
-   - `ANDROID_APK_URL_PENDING_T03_P16`;
-   - `ANDROID_APK_SHA256_PENDING_T03_P16`;
-   - `PC_ZIP_URL_PENDING_T03_P16`;
-   - `PC_ZIP_SHA256_PENDING_T03_P16`;
-   - `WEB_GAME_URL_PENDING_T03_P16`;
-   - `PORTAL_URL_PENDING_T03_P16`.
+   - `ANDROID_APK_URL_PENDING_T03_P17`;
+   - `ANDROID_APK_SHA256_PENDING_T03_P17`;
+   - `PC_ZIP_URL_PENDING_T03_P17`;
+   - `PC_ZIP_SHA256_PENDING_T03_P17`;
+   - `WEB_GAME_URL_PENDING_T03_P17`;
+   - `PORTAL_URL_PENDING_T03_P17`.
 3. Publique esta pasta em um host estatico unlisted.
 4. Envie o link apenas ao tester.
 
@@ -35,7 +35,7 @@ O manifest real da alpha v0 e servido pela Edge Function publica:
 https://<project-ref>.supabase.co/functions/v1/release/manifest
 ```
 
-O arquivo `manifest.example.json` e a copia documental do schema esperado para atualizar links/notas em `T03-P16`.
+O arquivo `manifest.example.json` e a copia documental do schema esperado para atualizar links/notas em `T03-P17`. Os hashes locais de `T03-P16` ficam registrados em `../../docs/internal-alpha-v0-export-report.md`.
 
 ## Guardrails
 

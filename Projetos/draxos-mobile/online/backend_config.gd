@@ -26,12 +26,15 @@ const ERROR_SUPABASE_URL_MISSING := "SUPABASE_URL_MISSING"
 const ERROR_SUPABASE_URL_INVALID := "SUPABASE_URL_INVALID"
 const ERROR_PUBLISHABLE_KEY_MISSING := "SUPABASE_PUBLISHABLE_KEY_MISSING"
 const ERROR_PUBLISHABLE_KEY_LOOKS_SECRET := "SUPABASE_PUBLISHABLE_KEY_LOOKS_SECRET"
+const INTERNAL_ALPHA_RUNTIME_CONFIG_PATH := "res://online/internal_alpha_runtime_config.gd"
 
 static func load_from_project_settings() -> Dictionary:
-	var environment := _env_string(
-		ENV_BACKEND_ENVIRONMENT,
-		_setting_string(SETTING_BACKEND_ENVIRONMENT, DEFAULT_BACKEND_ENVIRONMENT)
-	)
+	var runtime_config := _runtime_internal_alpha_config()
+	var configured_environment := _setting_string(SETTING_BACKEND_ENVIRONMENT, DEFAULT_BACKEND_ENVIRONMENT)
+	var default_environment := configured_environment
+	if OS.has_feature("alpha") and not OS.has_environment(ENV_BACKEND_ENVIRONMENT):
+		default_environment = str(runtime_config.get("backend_environment", ENVIRONMENT_INTERNAL_ALPHA))
+	var environment := _env_string(ENV_BACKEND_ENVIRONMENT, default_environment)
 	var normalized_environment := normalize_environment(environment)
 
 	var url := ""
@@ -46,6 +49,9 @@ static func load_from_project_settings() -> Dictionary:
 			url = _setting_string(SETTING_INTERNAL_ALPHA_SUPABASE_URL, "")
 			key = _setting_string(SETTING_INTERNAL_ALPHA_PUBLISHABLE_KEY, "")
 			manifest_url = _setting_string(SETTING_INTERNAL_ALPHA_UPDATE_MANIFEST_URL, "")
+			url = str(runtime_config.get("supabase_url", url))
+			key = str(runtime_config.get("publishable_key", key))
+			manifest_url = str(runtime_config.get("update_manifest_url", manifest_url))
 		_:
 			url = _setting_string(SETTING_SUPABASE_URL, "")
 			key = _setting_string(SETTING_SUPABASE_PUBLISHABLE_KEY, "")
@@ -127,3 +133,19 @@ static func _looks_like_secret_key(key: String) -> bool:
 		or normalized.find("service_role") >= 0
 		or normalized.find("secret") >= 0
 	)
+
+static func _runtime_internal_alpha_config() -> Dictionary:
+	if not OS.has_feature("alpha"):
+		return {}
+	if not ResourceLoader.exists(INTERNAL_ALPHA_RUNTIME_CONFIG_PATH):
+		return {}
+	var script_resource: Resource = load(INTERNAL_ALPHA_RUNTIME_CONFIG_PATH)
+	if script_resource == null or not script_resource is GDScript:
+		return {}
+	var instance: RefCounted = (script_resource as GDScript).new()
+	if instance == null or not instance.has_method("config"):
+		return {}
+	var config: Variant = instance.call("config")
+	if config is Dictionary:
+		return Dictionary(config)
+	return {}

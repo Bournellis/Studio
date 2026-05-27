@@ -9,7 +9,7 @@
 
 - O roteiro abaixo continua sendo o alvo da build fechada real com remoto/builds.
 - A cobertura automatizada local ja validou batalha, Base, Social, Competicao, Loja, Progression Lab, dois saves, reset separado, telemetria e presets de export.
-- A passada manual inicial de Fabio nao apontou bloqueios graves; Supabase remoto, email/senha e manifest/version gate ja passaram em `T03-P13`/`T03-P15`. A proxima validacao real acontece depois de `T03-P16` exports.
+- A passada manual inicial de Fabio nao apontou bloqueios graves; Supabase remoto, email/senha, manifest/version gate e exports locais ja passaram em `T03-P13` a `T03-P16`. A proxima validacao real acontece em `T03-P17`, depois da publicacao unlisted.
 
 ## Pre-Flight
 

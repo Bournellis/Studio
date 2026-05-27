@@ -12,6 +12,7 @@ config_version=5
 
 config/name="DraxosMobile"
 config/version="0.0.1-alpha.0"
+config/icon="res://icon.svg"
 run/main_scene="res://modes/boot/boot.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 
@@ -54,3 +55,7 @@ progression_lab/deno_prefix_args=PackedStringArray("-y", "deno", "run", "--allow
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/gut/plugin.cfg")
+
+[rendering]
+
+textures/vram_compression/import_etc2_astc=true

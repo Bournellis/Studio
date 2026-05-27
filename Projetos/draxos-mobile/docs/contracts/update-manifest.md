@@ -1,7 +1,7 @@
 # Update Manifest Contract
 
 - Ultima atualizacao: `2026-05-27`
-- Status: `T03-P15_IMPLEMENTED`
+- Status: `T03-P16_LOCAL_ARTIFACTS_READY`
 - Endpoint atual: `GET /release/manifest`
 - Schema: `internal_alpha_manifest_v1`
 
@@ -29,22 +29,22 @@ A funcao retorna um JSON sem secrets e sem depender de login. A implementacao po
   "minimum_supported_version_code": 1,
   "released_at": "2026-05-27T00:00:00Z",
   "requires_save_reset": false,
-  "portal_url": "PORTAL_URL_PENDING_T03_P16",
+  "portal_url": "PORTAL_URL_PENDING_T03_P17",
   "notes": ["Primeira release candidate interna."],
   "artifacts": {
     "android": {
       "label": "Android APK",
-      "url": "ANDROID_APK_URL_PENDING_T03_P16",
-      "sha256": "ANDROID_APK_SHA256_PENDING_T03_P16"
+      "url": "ANDROID_APK_URL_PENDING_T03_P17",
+      "sha256": "ANDROID_APK_SHA256_PENDING_T03_P17"
     },
     "pc_windows": {
       "label": "PC Windows ZIP",
-      "url": "PC_ZIP_URL_PENDING_T03_P16",
-      "sha256": "PC_ZIP_SHA256_PENDING_T03_P16"
+      "url": "PC_ZIP_URL_PENDING_T03_P17",
+      "sha256": "PC_ZIP_SHA256_PENDING_T03_P17"
     },
     "web": {
       "label": "Web",
-      "url": "WEB_GAME_URL_PENDING_T03_P16"
+      "url": "WEB_GAME_URL_PENDING_T03_P17"
     }
   },
   "known_issues": []
@@ -71,4 +71,4 @@ A funcao retorna um JSON sem secrets e sem depender de login. A implementacao po
 
 ## Evolucao
 
-Em `T03-P16`, os placeholders de Android, PC e Web serao substituidos pelos links reais e hashes SHA256 dos artefatos exportados. Em releases futuras, subir `latest_version_code` gera update recomendado; subir `minimum_supported_version_code` torna o update obrigatorio para acoes online.
+Em `T03-P16`, os artefatos locais foram exportados e seus hashes foram registrados em `../internal-alpha-v0-export-report.md`. Em `T03-P17`, os placeholders de Android, PC e Web devem ser substituidos pelos links unlisted reais e hashes finais publicados. Em releases futuras, subir `latest_version_code` gera update recomendado; subir `minimum_supported_version_code` torna o update obrigatorio para acoes online.

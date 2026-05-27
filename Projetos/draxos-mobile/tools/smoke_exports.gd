@@ -7,10 +7,18 @@ const EXPECTED_PRESETS := {
 }
 const EXPECTED_EXCLUDES := [
 	"dev/**",
-	"tools/battle_lab/**",
-	"tools/progression_lab/**",
-	"docs/battle-lab/**",
-	"docs/progression-lab/**",
+	"tools/**",
+	"docs/**",
+	"tests/**",
+	"addons/gut/**",
+	"implementation/**",
+	"server/**",
+	"supabase/**",
+	"portal/**",
+	"build/**",
+	".godot/global_script_class_cache.cfg",
+	".godot/uid_cache.bin",
+	".gutconfig.json",
 	".battle_lab_scratch/**",
 	".progression_lab_scratch/**",
 ]
@@ -32,6 +40,7 @@ func _run_smoke() -> int:
 		return 1
 
 	_check_main_scene()
+	_check_android_project_settings()
 	_check_presets(config)
 
 	if _failures.is_empty():
@@ -48,6 +57,13 @@ func _check_main_scene() -> void:
 		_failures.append("application/run/main_scene must point to boot.tscn")
 	if not FileAccess.file_exists(main_scene):
 		_failures.append("main scene is missing: %s" % main_scene)
+	var icon_path := str(ProjectSettings.get_setting("application/config/icon", ""))
+	if icon_path == "" or not FileAccess.file_exists(icon_path):
+		_failures.append("application/config/icon must point to an exported icon resource")
+
+func _check_android_project_settings() -> void:
+	if not bool(ProjectSettings.get_setting("rendering/textures/vram_compression/import_etc2_astc", false)):
+		_failures.append("Android exports require rendering/textures/vram_compression/import_etc2_astc=true")
 
 func _check_presets(config: ConfigFile) -> void:
 	var found: Dictionary = {}
@@ -68,8 +84,22 @@ func _check_presets(config: ConfigFile) -> void:
 			for expected_exclude: String in EXPECTED_EXCLUDES:
 				if not exclude_filter.contains(expected_exclude):
 					_failures.append("%s must exclude %s from packaged builds" % [name, expected_exclude])
+			if name == "Android Alpha":
+				_check_android_options(config, "%s.options" % section)
 		index += 1
 
 	for expected_name: String in EXPECTED_PRESETS.keys():
 		if not bool(found.get(expected_name, false)):
 			_failures.append("missing export preset: %s" % expected_name)
+
+func _check_android_options(config: ConfigFile, options_section: String) -> void:
+	if not bool(config.get_value(options_section, "package/signed", false)):
+		_failures.append("Android Alpha must keep package/signed=true")
+	if int(config.get_value(options_section, "version/code", 0)) < 1:
+		_failures.append("Android Alpha must define a positive version/code")
+	if str(config.get_value(options_section, "version/name", "")) == "":
+		_failures.append("Android Alpha must define version/name")
+	if not bool(config.get_value(options_section, "permissions/internet", false)):
+		_failures.append("Android Alpha must enable permissions/internet")
+	if not bool(config.get_value(options_section, "permissions/access_network_state", false)):
+		_failures.append("Android Alpha must enable permissions/access_network_state")

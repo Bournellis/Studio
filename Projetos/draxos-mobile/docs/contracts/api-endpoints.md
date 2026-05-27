@@ -49,12 +49,12 @@ Response:
   "minimum_supported_version_code": 1,
   "released_at": "2026-05-27T00:00:00Z",
   "requires_save_reset": false,
-  "portal_url": "PORTAL_URL_PENDING_T03_P16",
+  "portal_url": "PORTAL_URL_PENDING_T03_P17",
   "notes": ["Primeira release candidate interna."],
   "artifacts": {
-    "android": { "label": "Android APK", "url": "ANDROID_APK_URL_PENDING_T03_P16" },
-    "pc_windows": { "label": "PC Windows ZIP", "url": "PC_ZIP_URL_PENDING_T03_P16" },
-    "web": { "label": "Web", "url": "WEB_GAME_URL_PENDING_T03_P16" }
+    "android": { "label": "Android APK", "url": "ANDROID_APK_URL_PENDING_T03_P17" },
+    "pc_windows": { "label": "PC Windows ZIP", "url": "PC_ZIP_URL_PENDING_T03_P17" },
+    "web": { "label": "Web", "url": "WEB_GAME_URL_PENDING_T03_P17" }
   }
 }
 ```
