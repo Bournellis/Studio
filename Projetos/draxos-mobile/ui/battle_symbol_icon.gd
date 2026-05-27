@@ -5,25 +5,36 @@ var symbol := "?"
 var fill_color := Color("#5DD4C8")
 var cooldown_ratio := 0.0
 var count_text := ""
+var asset_id := ""
 
 var _label: Label
 var _count_label: Label
+var _texture: Texture2D
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	custom_minimum_size = Vector2(42, 42)
 	_ensure_labels()
 
-func configure(new_symbol: String, new_color: Color, new_tooltip: String = "", new_count_text: String = "", new_cooldown_ratio: float = 0.0) -> void:
+func configure(new_symbol: String, new_color: Color, new_tooltip: String = "", new_count_text: String = "", new_cooldown_ratio: float = 0.0, new_asset_id: String = "") -> void:
 	_ensure_labels()
 	symbol = new_symbol
 	fill_color = new_color
 	count_text = new_count_text
 	cooldown_ratio = clampf(new_cooldown_ratio, 0.0, 1.0)
+	asset_id = new_asset_id
+	_texture = _load_texture(asset_id)
 	tooltip_text = new_tooltip
 	_label.text = symbol
+	_label.visible = _texture == null
 	_count_label.text = count_text
 	queue_redraw()
+
+func debug_has_texture() -> bool:
+	return _texture != null
+
+func debug_asset_id() -> String:
+	return asset_id
 
 func _ensure_labels() -> void:
 	if _label != null:
@@ -58,4 +69,13 @@ func _draw() -> void:
 	if cooldown_ratio > 0.0:
 		var sweep: float = TAU * cooldown_ratio
 		draw_arc(center, radius - 6.0, -PI / 2.0, -PI / 2.0 + sweep, 32, Color("#080B10", 0.82), 7.0, true)
-	draw_line(Vector2(center.x - radius * 0.5, center.y), Vector2(center.x + radius * 0.5, center.y), border.darkened(0.1), 1.0, true)
+	if _texture != null:
+		var inset: float = maxf(4.0, radius * 0.24)
+		draw_texture_rect(_texture, rect.grow(-inset), false)
+	else:
+		draw_line(Vector2(center.x - radius * 0.5, center.y), Vector2(center.x + radius * 0.5, center.y), border.darkened(0.1), 1.0, true)
+
+func _load_texture(new_asset_id: String) -> Texture2D:
+	if new_asset_id == "" or not AssetIds.has_asset_id(new_asset_id):
+		return null
+	return AssetIds.texture(new_asset_id)

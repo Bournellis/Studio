@@ -100,7 +100,7 @@ Nao pode alterar:
 
 ## Asset Hooks
 
-`core/asset_ids.gd` ja reserva ids para assets futuros:
+`core/asset_ids.gd` reserva ids estaveis para assets visuais:
 
 - `battle_character_player`
 - `battle_character_opponent`
@@ -119,7 +119,11 @@ Nao pode alterar:
 - `battle_fx_spell`
 - `battle_fx_buff`
 
-Enquanto esses arquivos nao existem, `AssetIds.has_art(id)` deve continuar retornando `false` e a UI usa placeholders nativos.
+Track 06-H instalou `ASSET_PACK_01_SAFE` com PNGs leves para os ids
+`battle_icon_*`. `BattleSymbolIcon` usa essas texturas quando existem. Quando
+um arquivo nao existe, por exemplo `battle_fx_hit` ou sprites de personagens,
+`AssetIds.has_art(id)` continua retornando `false` e a UI usa placeholders
+nativos.
 
 ## Mapeamento De Eventos
 

@@ -1,8 +1,15 @@
 # DraxosMobile Asset Pipeline
 
-Track 05 prepares the project to receive real art later. This folder currently
-contains no final art. Runtime must keep working with procedural visuals and
-native Godot placeholders while files under `assets/` are missing.
+Track 05 prepared the project to receive real art later. Track 06-H installs
+Asset Pack 01 as a small safe visual package. Runtime must keep working with
+procedural visuals and native Godot placeholders while files under `assets/` are
+missing.
+
+## Installed Packs
+
+| Pack | Status | Ids | Notes |
+|---|---|---|---|
+| `ASSET_PACK_01_SAFE` | Installed in Track 06-H | `icon_guest`, `icon_battle`, `icon_result`, `portrait_draxos_mage`, `portrait_training_bot`, `battle_icon_*` | Lightweight 128x128 transparent PNGs for the first UI/battle readability pass. Several ids intentionally remain missing to keep fallback exercised. |
 
 ## Folder Contract
 

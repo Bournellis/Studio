@@ -1,6 +1,26 @@
 extends GutTest
 
+const BattleSymbolIconScript = preload("res://ui/battle_symbol_icon.gd")
 const ContentGeneratorScript = preload("res://tools/content_generator.gd")
+
+const EXPECTED_ASSET_PACK_01_IDS: Array[String] = [
+	"battle_icon_buff",
+	"battle_icon_damage",
+	"battle_icon_event",
+	"battle_icon_heal",
+	"battle_icon_pet",
+	"battle_icon_result",
+	"battle_icon_reward",
+	"battle_icon_spell",
+	"battle_icon_status",
+	"battle_icon_summon",
+	"battle_icon_weapon",
+	"icon_battle",
+	"icon_guest",
+	"icon_result",
+	"portrait_draxos_mage",
+	"portrait_training_bot"
+]
 
 const EXPECTED_ASSET_PATHS: Dictionary = {
 	"ui_logo": "res://assets/ui/ui_logo.png",
@@ -106,7 +126,33 @@ func test_asset_ids_allow_missing_art_fallback() -> void:
 	assert_false(AssetIds.has_art("__missing_art_probe__"))
 	assert_null(AssetIds.texture("__missing_art_probe__"))
 	assert_has(Array(AssetIds.missing_art_ids(PackedStringArray(["__missing_art_probe__"]))), "__missing_art_probe__")
-	assert_has(Array(AssetIds.missing_art_ids()), "icon_guest")
+	assert_has(Array(AssetIds.missing_art_ids()), "boot_background")
+
+func test_asset_pack_01_safe_art_is_loadable_without_making_all_art_required() -> void:
+	assert_eq(Array(AssetIds.pack_01_safe_ids()), EXPECTED_ASSET_PACK_01_IDS)
+	for asset_id: String in EXPECTED_ASSET_PACK_01_IDS:
+		assert_true(AssetIds.has_art(asset_id), "Pack 01 art should exist: %s" % asset_id)
+		var texture := AssetIds.texture(asset_id)
+		assert_not_null(texture, "Pack 01 texture should load: %s" % asset_id)
+		assert_true(texture.get_width() <= 128, "Pack 01 texture should stay lightweight: %s" % asset_id)
+		assert_true(texture.get_height() <= 128, "Pack 01 texture should stay lightweight: %s" % asset_id)
+
+	for optional_id: String in ["ui_logo", "boot_background", "placeholder_card", "battle_fx_hit"]:
+		assert_true(AssetIds.has_asset_id(optional_id), "Optional id should remain registered: %s" % optional_id)
+		assert_false(AssetIds.has_art(optional_id), "Optional art should still be allowed to be missing: %s" % optional_id)
+		assert_null(AssetIds.texture(optional_id), "Optional missing texture should fall back to null: %s" % optional_id)
+
+func test_battle_symbol_icon_uses_pack_texture_and_keeps_missing_art_fallback() -> void:
+	var icon = BattleSymbolIconScript.new()
+	add_child_autofree(icon)
+
+	icon.configure("SP", Color("#5DD4C8"), "Spell icon", "", 0.0, "battle_icon_spell")
+	assert_true(icon.debug_has_texture())
+	assert_eq(icon.debug_asset_id(), "battle_icon_spell")
+
+	icon.configure("FX", Color("#5DD4C8"), "Missing fx fallback", "", 0.0, "battle_fx_hit")
+	assert_false(icon.debug_has_texture())
+	assert_eq(icon.debug_asset_id(), "battle_fx_hit")
 
 func test_generated_catalog_loads_expected_collections() -> void:
 	var catalog = ContentLibrary.get_catalog()
