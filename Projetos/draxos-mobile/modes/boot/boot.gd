@@ -66,6 +66,8 @@ var _last_social_guild_name := ""
 var _last_social_chat_message := "Primeiro pulso do Conclave."
 var _update_gate := ProjectInfoScript.unchecked_update_status()
 var _battle_replay_presenter = BattleReplayPresenterScript.new()
+var _battle_history_entries: Array[Dictionary] = []
+var _battle_history_save_type := SessionStoreScript.SAVE_TYPE_NORMAL
 
 func _ready() -> void:
 	_clear_existing_scene()
@@ -301,7 +303,8 @@ func _render_battle_screen() -> void:
 		_compact_layout,
 		SessionStore.last_battle_log,
 		SessionStore.last_battle_rewards,
-		SessionStore.has_battle_log()
+		SessionStore.has_battle_log(),
+		_battle_history_for_active_save()
 	)
 	_timeline_label = _battle_replay_presenter.get_timeline_label()
 	_battle_visual = _battle_replay_presenter.get_visual()
@@ -448,6 +451,8 @@ func _execute_action(action_id: String) -> void:
 		await _buy_shop_product(action_id.get_slice(":", 1))
 	elif action_id.begins_with("claim_reward:"):
 		await _claim_shop_reward(action_id.get_slice(":", 1))
+	elif action_id.begins_with("battle_replay:"):
+		await _show_battle_replay(action_id.get_slice(":", 1))
 	else:
 		match action_id:
 			"enter_guest":
@@ -479,6 +484,8 @@ func _execute_action(action_id: String) -> void:
 					_skip_replay = true
 					return
 				await _show_latest_battle()
+			"show_battle_history":
+				await _show_battle_history()
 			"show_base":
 				await _show_base()
 			"collect_base":
@@ -560,6 +567,7 @@ func _enter_guest() -> void:
 			_fail_with_error(auth_result)
 			return
 		SessionStore.apply_auth_session(_as_dictionary(auth_result.get("session", {})))
+		_clear_battle_history()
 		SessionStore.save_cache()
 
 	var request_id := SessionStore.ensure_guest_request_id()
@@ -594,6 +602,7 @@ func _email_sign_up() -> void:
 		return
 	var selected_save_type := SessionStore.active_save_type
 	SessionStore.clear_session()
+	_clear_battle_history()
 	SessionStore.set_active_save_type(selected_save_type)
 	SupabaseClient.configure_save_type(SessionStore.active_save_type)
 	SessionStore.apply_auth_session(_as_dictionary(auth_result.get("session", {})))
@@ -619,6 +628,7 @@ func _email_sign_in() -> void:
 		return
 	var selected_save_type := SessionStore.active_save_type
 	SessionStore.clear_session()
+	_clear_battle_history()
 	SessionStore.set_active_save_type(selected_save_type)
 	SupabaseClient.configure_save_type(SessionStore.active_save_type)
 	SessionStore.apply_auth_session(_as_dictionary(auth_result.get("session", {})))
@@ -658,6 +668,7 @@ func _reset_local_session() -> void:
 			}
 		)
 	SessionStore.clear_session()
+	_clear_battle_history()
 	SessionStore.save_cache()
 	_screen_history.clear()
 	_set_busy(false, "Cache local limpo. Entre com email para recuperar a conta alpha ou use guest dev.")
@@ -681,6 +692,7 @@ func _reset_active_save() -> void:
 		})
 		return
 	SessionStore.save_cache()
+	_clear_battle_history()
 	_screen_history.clear()
 	_set_busy(false, "Save %s resetado. O outro save foi preservado." % SessionStore.active_save_label())
 	_show_screen(SCREEN_HUB, false)
@@ -689,6 +701,7 @@ func _select_save(save_type: String) -> void:
 	var changed := SessionStore.set_active_save_type(save_type)
 	SupabaseClient.configure_save_type(SessionStore.active_save_type)
 	if changed:
+		_clear_battle_history()
 		_screen_history.clear()
 
 	if SessionStore.has_valid_access_token() and not SessionStore.is_progression_lab_local_only():
@@ -904,6 +917,50 @@ func _show_latest_battle() -> void:
 
 	SessionStore.save_cache()
 	_set_busy(false, "Ultimo resultado recuperado.")
+	await _play_battle_log(SessionStore.last_battle_log, SessionStore.last_battle_rewards)
+
+func _show_battle_history() -> void:
+	if not _require_session("Entre com email ou use guest dev antes de abrir o historico."):
+		return
+
+	_show_screen(SCREEN_BATTLE, false)
+	_set_busy(true, "Buscando historico de batalhas...")
+	var history_result: Dictionary = await SupabaseClient.fetch_battle_history(SessionStore.access_token)
+	if not bool(history_result.get("ok", false)):
+		_fail_with_error(history_result)
+		return
+
+	var body := _as_dictionary(history_result.get("body", {}))
+	_battle_history_entries = _as_dictionary_array(body.get("history", []))
+	_battle_history_save_type = SessionStore.active_save_type
+	_show_screen(SCREEN_BATTLE, false)
+	_set_busy(false, "Historico atualizado: %d batalhas recentes." % _battle_history_entries.size())
+
+func _show_battle_replay(battle_id: String) -> void:
+	if not _require_session("Entre com email ou use guest dev antes de reproduzir historico."):
+		return
+
+	var requested_battle_id := battle_id.strip_edges()
+	if requested_battle_id == "":
+		_error_label.text = "BATTLE_ID_MISSING: batalha invalida no historico."
+		return
+
+	_show_screen(SCREEN_BATTLE, false)
+	_set_busy(true, "Carregando replay salvo...")
+	var replay_result: Dictionary = await SupabaseClient.fetch_battle_replay(
+		requested_battle_id,
+		SessionStore.access_token
+	)
+	if not bool(replay_result.get("ok", false)):
+		_fail_with_error(replay_result)
+		return
+
+	if not SessionStore.apply_battle_result(replay_result):
+		_fail_with_error({"error": SessionStore.last_error})
+		return
+
+	SessionStore.save_cache()
+	_set_busy(false, "Replay salvo recuperado.")
 	await _play_battle_log(SessionStore.last_battle_log, SessionStore.last_battle_rewards)
 
 func _show_base() -> void:
@@ -2390,6 +2447,24 @@ static func _as_array(value: Variant) -> Array:
 	if value is Array:
 		return Array(value)
 	return []
+
+static func _as_dictionary_array(value: Variant) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	if not value is Array:
+		return result
+	for item: Variant in Array(value):
+		if item is Dictionary:
+			result.append(Dictionary(item))
+	return result
+
+func _battle_history_for_active_save() -> Array[Dictionary]:
+	if _battle_history_save_type != SessionStore.active_save_type:
+		_clear_battle_history()
+	return _battle_history_entries
+
+func _clear_battle_history() -> void:
+	_battle_history_entries = []
+	_battle_history_save_type = SessionStore.active_save_type
 
 func _action_payload(action_id: String) -> Dictionary:
 	return {

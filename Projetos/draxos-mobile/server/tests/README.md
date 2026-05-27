@@ -18,6 +18,7 @@ Com Supabase local rodando:
 ```powershell
 npx -y deno run --allow-net --allow-env server/tests/battle_request_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/first_slice_battle_smoke.ts
+npx -y deno run --allow-net --allow-env server/tests/battle_history_replay_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/base_manager_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/social_competition_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/monetization_rewards_smoke.ts
@@ -39,6 +40,14 @@ solicita `FIRST_SLICE_SIM` contra bots de efeito/invocacao, repete o mesmo
 `request_id`, consulta `battle/latest`/`competition/ranking/current` e confirma
 eventos ricos, idempotencia, aplicacao de XP/Almas/Energia/Sangue/Ossos e
 pontuacao de arena sem duplicar o mesmo `request_id`.
+
+O smoke `battle_history_replay_smoke.ts` valida `GET /battle/history` e
+`GET /battle/replay?battle_id=...`: auth obrigatoria, lista recente sem
+`event_log` completo, replay salvo com `battle_log_v1`, leitura sem alterar
+XP/recursos e isolamento entre saves `normal` e `progression_lab`.
+Use `BATTLE_FUNCTION_URL=http://127.0.0.1:8000` quando a funcao `battle` for
+servida diretamente por Deno para validar um worktree sem reiniciar o Edge
+Runtime compartilhado.
 
 O smoke `base_manager_smoke.ts` valida auth obrigatoria, inicializacao dos seis
 predios, payload de UI com custo/tempo/status, coleta idempotente, compra alpha

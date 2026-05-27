@@ -227,6 +227,23 @@ func fetch_latest_battle(access_token: String) -> Dictionary:
 		{}
 	)
 
+func fetch_battle_history(access_token: String, limit: int = 10) -> Dictionary:
+	var safe_limit := clampi(limit, 1, 20)
+	return await _send_json(
+		"%s?limit=%d" % [function_url("battle/history"), safe_limit],
+		HTTPClient.METHOD_GET,
+		_auth_headers(access_token),
+		{}
+	)
+
+func fetch_battle_replay(battle_id: String, access_token: String) -> Dictionary:
+	return await _send_json(
+		"%s?battle_id=%s" % [function_url("battle/replay"), battle_id.strip_edges()],
+		HTTPClient.METHOD_GET,
+		_auth_headers(access_token),
+		{}
+	)
+
 func fetch_base_state(access_token: String) -> Dictionary:
 	return await _send_json(
 		function_url("base/state"),

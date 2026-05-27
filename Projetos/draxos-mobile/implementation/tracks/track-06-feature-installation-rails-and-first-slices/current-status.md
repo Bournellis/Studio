@@ -3,8 +3,8 @@
 - Last Updated: `2026-05-27`
 - Status: `ACTIVE_FEATURE_INSTALLATION`
 - Depends On: `T05_INTEGRATED_FOUNDATION_READY`
-- Current Stage: `T06_I_PARTIAL_INTEGRATION`
-- Next Action: integrate T06-D/F/G/H client slices, then integrate T06-E Battle History when ready.
+- Current Stage: `T06_I_VALIDATION`
+- Next Action: run full Track 06 validation, update final status, then merge T06-I.
 
 ## Estado
 
@@ -20,11 +20,11 @@ T06-F Base Routine is ready for integration: the Base tab now has a render-only 
 2. `T06-B` Feature Rails: ready for handoff; feature registry now defines the standard install contract, smoke/GUT rule by surface, fallback and rollback checklist.
 3. `T06-C` Runtime Config: integrated into the T06 integration base.
 4. `T06-D` Perfil/Conta: ready for integration; panel renders existing session/account state, active save, username, level, power, auth method, update state and alpha status without a new endpoint.
-5. `T06-E` Battle History: pending after T06-B merge; must fill feature card before runtime.
+5. `T06-E` Battle History: ready for integration; delivered save-scoped read-only `GET /battle/history`, `GET /battle/replay?battle_id=...`, Battle tab history/replay UI and focused smokes/GUT without simulator/reward/schema changes.
 6. `T06-F` Base Routine: ready for integration; panel derives routine/next objective from existing Base payload and is covered by GUT plus `smoke_foundation_surfaces.gd`.
 7. `T06-G` Social QoL: ready for integration; improves Social readability, empty states, refresh/polling clarity and current message formatting without endpoint/schema changes.
 8. `T06-H` Asset Pack 01: ready for integration; installs lightweight PNGs for selected UI, portrait and battle icon ids with native fallback still valid.
-9. `T06-I` Integracao: blocked until T06-C to T06-H are delivered.
+9. `T06-I` Integracao: in validation.
 
 ## Guardrails
 
@@ -122,6 +122,19 @@ git diff --check
 - GUT for Profile, Base Routine, Social QoL and AssetIds/fallback as applicable
 - Deno checks for `supabase/functions` and `server/functions`
 - `git diff --check`
+
+## T06-E Battle History Handoff
+
+Status: `READY_FOR_INTEGRATION`.
+
+Delivered:
+
+- `GET /battle/history` returns recent saved battle summaries for the active save.
+- `GET /battle/replay?battle_id=...` returns the stored `battle_log_v1` for a battle owned by the active save.
+- Battle tab now has a History action, renders recent saved battles and can replay a selected saved battle without rerunning simulation.
+- `smoke_battle_replay.gd` validates history/replay when `BATTLE_FUNCTION_URL` points to the worktree-served battle function.
+
+Guardrails preserved: no schema change, no simulator change, no reward/economy/ranking change, no `battle_log_v1` mutation and no remote publication.
 
 ## Fontes
 

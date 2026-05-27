@@ -65,6 +65,8 @@ novo.
 | POST | `/account/saves/reset` | `save-scoped` | Sim | `request_id` por save | Reseta apenas o save ativo e exige consistencia entre body e header quando ambos aparecem. |
 | POST | `/battle/request` | `save-scoped` | Sim | `request_id` por save | Simula no servidor, aplica recompensa/ranking do save ativo e bloqueia ranking do Lab. |
 | GET | `/battle/latest` | `save-scoped` | Sim | Nao | Retorna ultima batalha do save ativo sem reaplicar efeitos. |
+| GET | `/battle/history` | `save-scoped` | Sim | Nao | Retorna historico recente do save ativo como sumarios read-only, sem eventos completos. |
+| GET | `/battle/replay?battle_id=...` | `save-scoped` | Sim | Nao | Retorna o `battle_log_v1` salvo de uma batalha do save ativo, sem rerodar simulador nem reaplicar recompensa. |
 | GET | `/base/state` | `save-scoped` | Sim | Nao | Estado server-authoritative da Base do save ativo. |
 | POST | `/base/collect` | `save-scoped` | Sim | `request_id` por save | Coleta recursos do save ativo com ledger. |
 | POST | `/base/upgrade` | `save-scoped` | Sim | `request_id` por save | Inicia upgrade da Base do save ativo com ledger. |
@@ -525,6 +527,119 @@ Response:
   "battle_log": {}
 }
 ```
+
+### `GET /battle/history`
+
+Retorna a lista recente de batalhas salvas do save ativo, sem eventos completos.
+
+Status: **implementado em T06-E**.
+
+Scope: `save-scoped`.
+
+Headers:
+
+```http
+Authorization: Bearer <jwt>
+apikey: <anon_or_publishable_key>
+x-draxos-save-type: normal
+```
+
+Query params:
+
+- `limit`: opcional, default `10`, maximo `20`.
+
+Response:
+
+```json
+{
+  "ok": true,
+  "schema_version": "battle_history_v1",
+  "save_type": "normal",
+  "history": [
+    {
+      "battle_id": "uuid",
+      "created_at": "iso-date",
+      "schema_version": "battle_log_v1",
+      "mode": "FIRST_SLICE_SIM",
+      "duration": 31.2,
+      "event_count": 30,
+      "opponent": {
+        "id": "bot_effect_trainer_01",
+        "display_name": "Treinador da Primeira Ruina",
+        "is_bot": true
+      },
+      "result": { "winner": "player", "reason": "combatant_defeated" },
+      "rewards": {
+        "type": "FIRST_SLICE_SIM",
+        "resources": { "xp": 10, "almas": 0.8 }
+      }
+    }
+  ]
+}
+```
+
+Regras:
+
+- Usa o mesmo `x-draxos-save-type` dos endpoints de gameplay; ausencia usa `normal`.
+- Lista apenas batalhas cujo `attacker_id` pertence ao save ativo.
+- Nao retorna `event_log` completo; a UI deve chamar `/battle/replay` para reproduzir uma batalha.
+- Nao muta recursos, ranking, recompensas, idempotencia ou telemetria.
+
+Erros minimos: `UNAUTHENTICATED`, `INVALID_SAVE_TYPE`, `PLAYER_NOT_FOUND`, `BATTLE_HISTORY_READ_FAILED`.
+
+### `GET /battle/replay?battle_id=...`
+
+Retorna o replay completo salvo para uma batalha do save ativo, sem recalcular combate.
+
+Status: **implementado em T06-E**.
+
+Scope: `save-scoped`.
+
+Headers:
+
+```http
+Authorization: Bearer <jwt>
+apikey: <anon_or_publishable_key>
+x-draxos-save-type: normal
+```
+
+Query params:
+
+- `battle_id`: UUID obrigatorio.
+
+Response:
+
+```json
+{
+  "ok": true,
+  "battle_log": {
+    "schema_version": "battle_log_v1",
+    "battle_id": "uuid",
+    "seed": "first_slice:<player_id>:<request_id>",
+    "mode": "FIRST_SLICE_SIM",
+    "duration": 31.2,
+    "participants": {},
+    "result": {},
+    "events": []
+  },
+  "rewards": {},
+  "replay": {
+    "battle_id": "uuid",
+    "created_at": "iso-date",
+    "save_type": "normal",
+    "read_only": true
+  }
+}
+```
+
+Regras:
+
+- `battle_id` precisa pertencer ao save ativo; uma batalha do outro save retorna `BATTLE_NOT_FOUND`.
+- O servidor reconstrui o envelope `battle_log_v1` a partir da linha salva em `battles`; nao chama simulador.
+- A resposta pode ser aplicada no cliente como snapshot de replay, mas nao deve alterar recursos locais.
+- Nao reaplica recompensa, XP, arena points, ranking, recursos ou ledger.
+
+Erros minimos: `UNAUTHENTICATED`, `INVALID_SAVE_TYPE`, `INVALID_BATTLE_ID`, `PLAYER_NOT_FOUND`, `BATTLE_NOT_FOUND`, `BATTLE_REPLAY_READ_FAILED`.
 
 ## Endpoints Planejados - Internal Alpha v0
 
