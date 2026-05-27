@@ -4,6 +4,9 @@
 - Fonte de execucao: `../implementation/tracks/track-03-internal-alpha-v0/`
 - Design lock: `internal-alpha-v0-design-lock.md` (`LOCKED`)
 - Setup remoto: `internal-alpha-remote-setup.md`
+- Tutorial Supabase remoto: `supabase-remote-tutorial.md`
+- Plano de release: `internal-alpha-release-plan.md`
+- Portal base: `../portal/internal-alpha/`
 - Objetivo: fechar uma build interna profissional para Fabio + 1 amigo testarem um jogo real em Android, PC e Web, com servidor real, conta/save compartilhados, features principais funcionais e iteracao rapida.
 
 ## Resumo Da Build
@@ -33,6 +36,8 @@ Decisao operacional de 2026-05-26:
 7. Depois das builds, publicar manifest/update e iniciar o teste fechado Fabio + 1 amigo.
 
 Esta ordem nao remove a decisao de usar Supabase no alpha. Ela apenas adia remoto, build e distribuicao para reduzir friccao enquanto a implementacao ainda muda muito.
+
+Atualizacao de 2026-05-26: o loop local foi considerado limpo o bastante para iniciar release prep. A proxima sequencia esta documentada em `internal-alpha-release-plan.md`: `T03-P13` Supabase remoto, `T03-P14` email/senha, `T03-P15` manifest de updates, `T03-P16` export das builds, `T03-P17` QA remoto fechado e `T03-P18` handoff.
 
 ## Modelo De Conta E Save
 
@@ -79,6 +84,7 @@ Status local atual (`T03-P11`):
 Alvo inicial:
 
 - Supabase Free.
+- Projeto remoto observado no dashboard: `Bournellis's Project`, ref `armxgipvnbbshzqawklw`, URL `https://armxgipvnbbshzqawklw.supabase.co`, regiao `West US (Oregon)`, status `Healthy`.
 - Edge Functions para acoes autoritativas.
 - Postgres com RLS.
 - Storage para manifest e artefatos de update.
@@ -105,6 +111,7 @@ Seguranca minima:
 - Policies devem continuar limitando leitura/escrita ao dono.
 - Mutacoes economicas usam Edge Functions, idempotencia e ledger.
 - Web link publico/unlisted nao e segredo de seguranca; auth e alpha flag sao a barreira real.
+- O projeto remoto observado ainda deve ser tratado como em branco ate migrations, Edge Functions, Auth e smokes passarem.
 
 Regra anti-lock-in:
 
@@ -115,6 +122,14 @@ Regra anti-lock-in:
 ## Updates E Distribuicao
 
 Todos os canais usam a mesma cadencia de versao.
+
+Distribuicao escolhida para Internal Alpha v0:
+
+- Android: APK direto por link.
+- PC Windows: zip direto por link.
+- Web: build PC browser publicada em link unlisted.
+- Portal: pagina estatica simples em `portal/internal-alpha/`, considerada suficiente por enquanto; refinamento visual fica para depois de `T03-P18`.
+- Updates: app consulta manifest e mostra aviso/link de download; quando `minimum_supported_version` subir, acoes online ficam bloqueadas ate atualizar.
 
 Manifest remoto em Supabase Storage:
 
@@ -247,9 +262,11 @@ Estas decisoes vivem em `docs/design-pending.md` como `DMOB-D048` a `DMOB-D055`.
 
 ## Trabalho Manual Do Fabio
 
-- Criar projeto Supabase remoto Free ou confirmar qual sera usado.
+- Seguir o tutorial detalhado em `supabase-remote-tutorial.md`.
+- Confirmar que o projeto Supabase remoto usado sera `armxgipvnbbshzqawklw`.
 - Desativar email confirmation.
 - Copiar `Project URL` e publishable key para ambiente local/export seguro.
+- Criar `.env.internal-alpha.local` ignorado no Git.
 - Criar/fornecer convites alpha.
 - Guardar service role fora do Git.
 - Criar keystore Android internal alpha e guardar senha fora do Git.

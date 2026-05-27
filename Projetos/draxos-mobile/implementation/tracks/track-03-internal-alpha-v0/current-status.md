@@ -1,7 +1,7 @@
 # Track 03 - Internal Alpha v0 - Current Status
 
 - Last Updated: `2026-05-26`
-- Status: `T03-P11_LOCAL_QA_COMPLETE - AUTOMATED LOCAL QA GREEN`
+- Status: `T03-P12_RELEASE_PLAN_PORTAL_BASE_COMPLETE - READY_FOR_REMOTE_BOOTSTRAP`
 - Baseline: Track 00 completa, Track 01 completa e Track 02 com Progression Lab/Battle Lab v1 implementados. O projeto ja possui Godot 4.6.2, Supabase local, conta guest, batalha server-authoritative, Base/Social/Competicao/Monetizacao v0, telemetria client nao autoritativa, exports Android/PC/Web, Battle Visual Mockup compartilhado e laboratorios internos. A Track 03 prepara a transicao para uma build fechada realista com email/senha, dois saves por conta, backend remoto, updates e playtest de 2 usuarios.
 
 ## Implementado Nesta Preparacao
@@ -16,7 +16,7 @@
 - Follow-ups de loja/social fechados: redeems entregam apenas Diamante, resetam a meia-noite `America/Sao_Paulo`, amigos usam username e usuarios no Lab aparecem com marcador vermelho `lab`.
 - Estrategia backend registrada: Supabase para Internal Alpha v0, Backend Proprio + Postgres como plano de saida preferido e Nakama como alternativa futura apenas se realtime/social competitivo virar pilar.
 - `T03-P02` preparado do lado do repo: `BackendConfig` no Godot, ambiente `internal_alpha_v0`, env vars seguras, `.env` reais ignorados, `.env.internal-alpha.example`, runbook remoto e smoke Deno remoto sem service role.
-- Ordem local-first aprovada em 2026-05-26: implementar o jogo rodando no Godot/local primeiro; Supabase remoto, builds Android/PC/Web e manifest de updates ficam adiados ate o gameplay local estar pronto para compartilhar.
+- Ordem local-first aprovada em 2026-05-26 e ja cumprida para release prep: o jogo foi implementado/validado no Godot/Supabase local primeiro; Supabase remoto, builds Android/PC/Web e manifest de updates agora seguem em `T03-P13` a `T03-P18`.
 - `T03-P03A` completo: `SessionStore` possui save ativo `normal`/`progression_lab`, persiste no cache, limpa snapshots ao alternar contexto, marca snapshots local-only do Progression Lab como Lab, `SupabaseClient` prepara header `x-draxos-save-type` e o Hub mostra/troca save ativo com bloqueio claro quando o Lab esta em cache local-only.
 - `T03-P03B` completo: schema local ganhou `players.save_type`, unicidade por `auth_user_id + save_type`, RPCs `create_guest_account`/`request_mvp_battle` recebem save, Edge Functions resolvem `x-draxos-save-type` para `account`, `battle`, `base`, `social`, `competition`, `monetization` e `telemetry`, o Hub libera acoes server-backed no Lab, e o save `progression_lab` fica isolado do normal e fora do ranking com motivo explicito.
 - `T03-P03C` completo: `POST /account/saves/reset` e RPC `reset_player_save` reconstroem apenas o save ativo, preservam o outro save da mesma sessao Auth, limpam snapshots client-side do save resetado, mantem idempotencia por `request_id` e expoem botao perigoso "Resetar save ativo" no Hub.
@@ -27,14 +27,16 @@
 - `T03-P08` completo: Loja virou proof-of-concept jogavel; `monetization/state` retorna `shop_summary` e produtos enriquecidos, redeems diarios entregam apenas Diamante por save com reset Sao Paulo, Battle Pass/fila dupla/pacotes usam Diamante, fila dupla altera a Base para 2 slots e o Hub mostra resumo, catalogo, recompensas, bloqueio visual e tooltips.
 - `T03-P09` completo: Batalha recebeu polish visual pequeno sem assets externos; o palco 2D mostra readout compacto de replay/tempo/HP/status/cooldowns/aliados, labels incluem HP percentual e tooltips de evento humanizam fonte/alvo com leitura rapida.
 - `T03-P11` local QA completo: ambiente local resetado, checks/lints Deno verdes, smokes Supabase locais verdes, Godot validate/GUT verde, smokes de app/labs/export presets verdes e relatorio `docs/internal-alpha-v0-qa-report.md` criado.
+- `T03-P12` completo: plano de release `T03-P12` a `T03-P18` registrado, base do portal estatico criada em `portal/internal-alpha/`, manifest exemplo criado, tutorial detalhado de Supabase remoto documentado e ponto de partida remoto anotado (`armxgipvnbbshzqawklw`, `https://armxgipvnbbshzqawklw.supabase.co`).
 
 ## Ainda Nao Implementado
 
-- Auth email/senha remoto.
-- Supabase remoto real criado/configurado na conta Supabase.
-- Deploy remoto de migrations/functions e smoke contra URL real.
-- Manifest de updates em Supabase Storage.
-- Export/publicacao das tres builds finais.
+- `T03-P13`: Supabase remoto existe em branco, mas ainda precisa valores publicos confirmados, CLI link, migrations/functions e smoke contra URL real.
+- `T03-P14`: auth email/senha e alpha gate.
+- `T03-P15`: manifest remoto de updates e version gate.
+- `T03-P16`: export/publicacao das tres builds finais.
+- `T03-P17`: QA remoto fechado com duas contas reais.
+- `T03-P18`: handoff final da Internal Alpha v0.
 
 ## Decisoes Ja Travadas
 
@@ -46,11 +48,12 @@
 - Progression Lab exportado apenas como ferramenta interna/gated.
 - Loja com redeem alpha fixo para testar premium.
 - Web link pode ser publico/unlisted, mas jogo exige login e acesso alpha.
+- Android sera APK direto por link; PC Windows sera zip direto por link; Web sera unlisted via portal.
 - Android usa keystore dedicada de Internal Alpha.
 
 ## Proximo Passo
 
-Executar passada manual no Godot/editor para UX/legibilidade real antes de decidir entre ajustes locais adicionais ou retomada de `T03-P02`/`T03-P10` remoto/builds. `T03-P10` continua adiado ate o gameplay local estar aprovado para compartilhar.
+Fabio deve seguir `docs/supabase-remote-tutorial.md`, criar o `.env.internal-alpha.local` ignorado, confirmar/desligar email confirmation e enviar os valores publicos do projeto remoto. Depois disso, executar `T03-P13 - Supabase Remote Bootstrap`.
 
 ## Validacao Da Preparacao
 
@@ -83,3 +86,4 @@ Executar passada manual no Godot/editor para UX/legibilidade real antes de decid
 - `tools/smoke_dev_lab_ui.gd`: passou em 2026-05-26 no renderer headless.
 - `tools/smoke_dev_labs.gd`: passou em 2026-05-26.
 - `tools/smoke_exports.gd`: passou em 2026-05-26 para Android Alpha, PC Windows Alpha e PC Browser Alpha.
+- `T03-P12 docs/portal`: `git diff --check` passou em 2026-05-26.

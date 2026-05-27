@@ -2,9 +2,11 @@
 
 - Ultima atualizacao: `2026-05-26`
 - Track: `T03-P02 - Supabase Remoto E Configuracao Segura`
-- Status: `repo-ready, remote project pending`
+- Status: `repo-ready, remote project observed, public values pending`
 
-Este runbook deixa a Internal Alpha v0 preparada para usar Supabase remoto sem colocar secrets no cliente. O projeto remoto ainda precisa ser criado manualmente na conta Supabase antes do smoke real.
+Este runbook deixa a Internal Alpha v0 preparada para usar Supabase remoto sem colocar secrets no cliente. O projeto remoto ja foi observado no dashboard do usuario, mas ainda precisa ser configurado via CLI, migrations, Edge Functions, Auth e smoke real.
+
+Tutorial detalhado para Fabio: `supabase-remote-tutorial.md`.
 
 ## Decisao
 
@@ -21,6 +23,20 @@ Este runbook deixa a Internal Alpha v0 preparada para usar Supabase remoto sem c
 - `.env.internal-alpha.example` documenta as variaveis seguras.
 - `.gitignore` ignora `.env` reais em projetos.
 - `server/tests/internal_alpha_remote_smoke.ts` valida remoto sem service role.
+- `docs/supabase-remote-tutorial.md` descreve a configuracao manual, os comandos e exatamente quais valores enviar.
+- `portal/internal-alpha/` contem a base do portal unlisted para distribuir Web/APK/PC quando as builds forem exportadas.
+
+## Projeto Remoto Observado
+
+- Organizacao: `Bournellis's Org`.
+- Projeto: `Bournellis's Project`.
+- Branch/environment: `main` / `PRODUCTION`.
+- Project ref: `armxgipvnbbshzqawklw`.
+- Project URL: `https://armxgipvnbbshzqawklw.supabase.co`.
+- Regiao: `West US (Oregon)`.
+- Status no dashboard: `Healthy`.
+
+Estado operacional: o dashboard mostra o projeto saudavel, mas ainda sem migrations/backups/branch conectada. Para o repo, isso conta como ponto de partida remoto, nao como backend alpha pronto.
 
 ## Variaveis Do Cliente
 
@@ -42,16 +58,18 @@ Nunca usar `SUPABASE_SERVICE_ROLE_KEY` no Godot, no Web export, no APK, no zip P
 
 ## Passos Manuais Do Projeto Remoto
 
-Quando houver acesso a conta Supabase:
+Para executar `T03-P13`:
 
-1. Criar um projeto Supabase Free para `draxos-mobile-internal-alpha-v0`.
+1. Confirmar que o projeto remoto correto e `armxgipvnbbshzqawklw`.
 2. Desativar email confirmation no projeto alpha.
 3. Copiar `Project URL`.
 4. Copiar a public/publishable key do cliente.
-5. Guardar `service_role` somente no gerenciador de secrets/local terminal.
-6. Aplicar migrations e Edge Functions a partir de `supabase/`.
-7. Rodar o smoke remoto abaixo.
-8. Preencher os valores publicos em ambiente local ou export settings.
+5. Criar `.env.internal-alpha.local` usando `.env.internal-alpha.example`.
+6. Guardar `service_role` somente no gerenciador de secrets/local terminal.
+7. Fazer login/link da Supabase CLI.
+8. Aplicar migrations e Edge Functions a partir de `supabase/`.
+9. Rodar o smoke remoto abaixo.
+10. Preencher os valores publicos em ambiente local ou export settings.
 
 ## Smoke Remoto
 
@@ -108,11 +126,12 @@ Supabase Storage pode hospedar manifest e artefatos pequenos, mas o limite do pl
 - links podem apontar para storage externo se os artefatos ficarem grandes;
 - o cliente deve depender do schema do manifest, nao do fornecedor de storage.
 
-## Checklist Antes De T03-P03
+## Checklist Antes De T03-P13
 
-- Projeto remoto criado.
+- Projeto remoto confirmado.
 - URL e publishable key publicas configuradas localmente.
 - Service role guardada fora do Git.
+- Supabase CLI logada e linkada ao projeto remoto.
 - Migrations aplicadas em remoto.
 - `healthcheck` remoto verde.
 - Email confirmation desligado.

@@ -219,7 +219,7 @@ Limites atuais desta etapa:
 
 - social foi promovido em `T03-P06` para identidade de conta no runtime: Edge Functions usam o save `normal` como `social_player` canonico quando ele existe e retornam marcador `lab` para o viewer em `progression_lab`;
 - as tabelas continuam referenciando `players.id`, entao uma refatoracao futura para `account_profiles/game_saves` continua recomendada antes de escalar social remoto;
-- email/senha remoto ainda fica adiado ate o gameplay local estar pronto.
+- email/senha remoto segue para `T03-P14`, depois do bootstrap Supabase remoto em `T03-P13`.
 
 Refatoracao futura, se o projeto crescer:
 

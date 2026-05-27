@@ -26,8 +26,8 @@ Saida esperada:
 
 ### T03-P02 - Supabase Remoto E Configuracao Segura
 
-Status repo-side: `READY - remote project credentials pending`.
-Status de execucao: `DEFERRED_UNTIL_GAMEPLAY_READY`.
+Status repo-side: `READY - remote project observed, public values pending`.
+Status de execucao: `PENDING_FABIO_VALUES`.
 
 - Criar/configurar projeto Supabase remoto Free.
 - Desativar email confirmation no alpha interno.
@@ -57,7 +57,9 @@ Fabio vai trabalhar somente no Godot/local ate o jogo estar implementado o basta
 5. Somente depois exportar Android, PC e Web.
 6. Somente depois publicar artefatos e manifest de update.
 
-Enquanto o remoto estiver adiado, `T03-P02` permanece repo-ready: a configuracao segura existe, mas nao bloqueia as etapas locais.
+Durante a fase local-first, `T03-P02` permaneceu repo-ready: a configuracao segura existe e agora volta a ser a proxima trilha de release.
+
+Atualizacao de 2026-05-26: o gameplay local foi considerado limpo o bastante para iniciar preparacao de release. Existe um projeto Supabase remoto em branco observado no dashboard (`armxgipvnbbshzqawklw`, `https://armxgipvnbbshzqawklw.supabase.co`), mas o repo ainda precisa dos valores publicos confirmados e do arquivo local ignorado antes de aplicar migrations/functions.
 
 ### T03-P03 - Conta Email/Senha E Dois Saves
 
@@ -80,7 +82,7 @@ Subetapas locais:
 - `T03-P03A`: completo; cliente Godot entende save ativo (`normal`/`progression_lab`), persiste no cache, mostra no HUD e bloqueia acoes perigosas do Lab quando o cache e local-only.
 - `T03-P03B`: completo; Supabase local/schema/runtime resolve `save_type` server-side para todos os endpoints alpha.
 - `T03-P03C`: completo; reset separado por save no runtime local.
-- `T03-P03D`: adiado; email/senha fica preparado no cliente e validado localmente quando o fluxo de auth for ativado.
+- `T03-P03D`: pendente remoto; email/senha sera ativado em `T03-P14` depois do bootstrap Supabase remoto.
 
 ### T03-P04 - Progression Lab Exportado Interno
 
@@ -215,7 +217,7 @@ Implementado:
 
 ### T03-P10 - Releases E Updates
 
-Status de execucao: `DEFERRED_UNTIL_LOCAL_GAMEPLAY_READY`.
+Status de execucao: `RELEASE_PREP - T03-P12_PORTAL_BASE_COMPLETE`.
 
 - Criar schema de manifest remoto em Supabase Storage.
 - Cliente consulta manifest no boot e mostra status de update.
@@ -226,6 +228,13 @@ Status de execucao: `DEFERRED_UNTIL_LOCAL_GAMEPLAY_READY`.
 Saida esperada:
 
 - As tres plataformas sabem quando existe update e onde buscar.
+
+Implementado em `T03-P12`:
+
+- Plano de release e ordem correta de `T03-P12` a `T03-P18` documentados em `docs/internal-alpha-release-plan.md`.
+- Base do portal estatico criada em `portal/internal-alpha/` com links placeholders para Web, APK, PC zip e manifest.
+- Manifest de update exemplo criado em `portal/internal-alpha/manifest.example.json`.
+- Tutorial operacional de Supabase remoto criado em `docs/supabase-remote-tutorial.md`.
 
 ### T03-P11 - QA, Smokes E Playtest Fechado
 
@@ -251,7 +260,92 @@ Implementado em modo local-first:
 
 Lacunas intencionais:
 
-- Smoke remoto real, email/senha, builds exportadas e manifest de updates seguem adiados ate o gameplay local estar aprovado para compartilhar.
+- Smoke remoto real, email/senha, builds exportadas e manifest de updates seguem encaminhados para `T03-P13` a `T03-P18`.
+
+### T03-P12 - Release Plan, Portal Base E Tutorial Remoto
+
+Status: `COMPLETE`.
+
+- Registrar as proximas etapas de release sem voltar a misturar implementacao local, remoto, builds e portal.
+- Criar uma base de portal simples e unlisted para concentrar Web build, APK, PC zip, notas e aviso de update.
+- Documentar o ponto de partida Supabase mostrado no dashboard do usuario.
+- Criar tutorial detalhado do que Fabio precisa configurar e quais valores enviar para continuar.
+- Manter o portal como "feito por enquanto"; detalhes visuais e conteudo final ficam fora do bloqueio ate depois de `T03-P18`.
+
+Saida entregue:
+
+- `docs/internal-alpha-release-plan.md`.
+- `docs/supabase-remote-tutorial.md`.
+- `portal/internal-alpha/README.md`.
+- `portal/internal-alpha/index.html`.
+- `portal/internal-alpha/manifest.example.json`.
+
+### T03-P13 - Supabase Remote Bootstrap
+
+Status: `PENDING_FABIO_VALUES`.
+
+- Fabio confirma `Project URL`, `Project Ref` e public/publishable key.
+- Fabio cria `.env.internal-alpha.local` local e ignorado.
+- Linkar Supabase CLI ao projeto remoto.
+- Aplicar migrations em remoto.
+- Deployar Edge Functions.
+- Rodar healthcheck e smoke remoto minimo sem service role no cliente.
+
+Saida esperada:
+
+- Remoto com schema/functions da build atual.
+- Smoke remoto verde contra `https://armxgipvnbbshzqawklw.supabase.co`.
+- Documentacao atualizada com resultado real.
+
+### T03-P14 - Auth Email/Senha E Alpha Gate
+
+Status: `PENDING_T03_P13`.
+
+- Ativar fluxo email/senha no Godot.
+- Manter guest apenas como fallback dev/local.
+- Garantir que conta cria/carrega os dois saves.
+- Definir alpha gate simples para Fabio + 1 amigo.
+- Validar login/logout/reentrada em PC/Web/Android.
+
+### T03-P15 - Update Manifest E Version Gate
+
+Status: `PENDING_T03_P13`.
+
+- Publicar manifest remoto real.
+- Conectar boot do Godot ao manifest.
+- Mostrar update recomendado e bloquear online quando `minimum_supported_version` exigir.
+- Registrar politica de reset destrutivo por release quando necessario.
+
+### T03-P16 - Export Android, PC E Web
+
+Status: `PENDING_T03_P14_T03_P15`.
+
+- Exportar APK Android direto por link.
+- Exportar PC Windows em zip direto por link.
+- Exportar Web para acesso unlisted via portal.
+- Usar mesma versao/canal nos tres artefatos.
+- Guardar keystore Android e qualquer credencial fora do repo.
+
+### T03-P17 - Remote QA Fechado
+
+Status: `PENDING_T03_P16`.
+
+- Publicar portal/Web/APK/PC em links unlisted.
+- Rodar smoke remoto automatizado.
+- Rodar checklist manual com duas contas reais.
+- Validar save comum entre plataformas.
+- Validar loop normal: entrar, coletar, batalhar, receber recompensa, evoluir, loja/social/competicao.
+- Validar save `progression_lab` isolado e fora da competicao.
+
+### T03-P18 - Handoff Da Internal Alpha v0
+
+Status: `PENDING_T03_P17`.
+
+- Atualizar portal com links reais finais.
+- Atualizar release notes e manifest.
+- Registrar bugs conhecidos e instrucoes de update.
+- Fechar pacote de teste Fabio + 1 amigo.
+- Depois de `T03-P18`, Fabio pode melhorar o portal sem bloquear a build.
 
 ## Design Sessions Obrigatorias Antes De Codigo Funcional
 
@@ -268,15 +362,17 @@ As decisoes abaixo estao registradas em `docs/design-pending.md` e precisam ser 
 
 ## Trabalho Manual Do Fabio
 
-Adiado ate o gameplay local estar pronto:
+Necessario agora para `T03-P13`:
 
-- Criar ou confirmar projeto Supabase remoto Free para `internal_alpha_v0`.
+- Confirmar se o projeto remoto usado sera `Bournellis's Project` / `armxgipvnbbshzqawklw`.
 - Desativar email confirmation no projeto alpha.
 - Guardar `SUPABASE_SERVICE_ROLE_KEY` fora do Git.
-- Informar URL e anon key publica do projeto remoto quando a implementacao precisar testar remoto.
+- Criar `.env.internal-alpha.local` local e ignorado conforme `docs/supabase-remote-tutorial.md`.
+- Informar `SUPABASE_PROJECT_REF`, `SUPABASE_URL` e public/publishable key do projeto remoto.
+- Confirmar se Supabase CLI login/link foi feito localmente.
 - Criar email/senha dos testadores ou permitir cadastro com convite.
 - Criar keystore Android internal alpha e guardar senha fora do Git.
-- Escolher onde hospedar a Web build e se o link sera unlisted.
+- Escolher onde hospedar a Web build unlisted, APK e zip PC.
 - Aprovar quais redeems premium entram na loja alpha.
 - Aprovar se bots aparecem na leaderboard nesta build.
 

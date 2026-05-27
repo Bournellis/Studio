@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DraxosMobile Internal Alpha</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #080b10;
+      --panel: #151b22;
+      --panel-alt: #202832;
+      --line: #405060;
+      --text: #f0eee5;
+      --muted: #aeb7bf;
+      --teal: #5dd4c8;
+      --gold: #d6c08a;
+      --red: #b95757;
+      --green: #66b56f;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.5;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .shell {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 20px 48px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      align-items: stretch;
+      min-height: 360px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 28px;
+    }
+
+    .hero {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 18px;
+    }
+
+    .eyebrow {
+      color: var(--gold);
+      font-size: 13px;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 46px;
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .button {
+      display: inline-flex;
+      min-height: 42px;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 10px 14px;
+      background: var(--panel-alt);
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .button.primary {
+      border-color: var(--teal);
+      background: #12302f;
+    }
+
+    .stage {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #10151b;
+      min-height: 340px;
+    }
+
+    .stage::before {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      border: 1px solid rgba(214, 192, 138, 0.22);
+      border-radius: 6px;
+    }
+
+    .floor {
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      bottom: 52px;
+      height: 2px;
+      background: var(--gold);
+      opacity: 0.55;
+    }
+
+    .mage {
+      position: absolute;
+      bottom: 55px;
+      width: 92px;
+      height: 164px;
+    }
+
+    .mage.left {
+      left: 16%;
+      color: var(--teal);
+    }
+
+    .mage.right {
+      right: 16%;
+      color: var(--red);
+      transform: scaleX(-1);
+    }
+
+    .mage .head {
+      position: absolute;
+      left: 28px;
+      top: 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .mage .body {
+      position: absolute;
+      left: 22px;
+      top: 42px;
+      width: 48px;
+      height: 76px;
+      background: currentColor;
+      border: 2px solid rgba(255, 255, 255, 0.24);
+    }
+
+    .mage .arm {
+      position: absolute;
+      left: 62px;
+      top: 58px;
+      width: 44px;
+      height: 8px;
+      background: currentColor;
+      transform: rotate(-15deg);
+      transform-origin: left center;
+    }
+
+    .mage .leg {
+      position: absolute;
+      top: 118px;
+      width: 12px;
+      height: 46px;
+      background: currentColor;
+    }
+
+    .mage .leg.a {
+      left: 28px;
+      transform: rotate(8deg);
+    }
+
+    .mage .leg.b {
+      left: 52px;
+      transform: rotate(-8deg);
+    }
+
+    .orb {
+      position: absolute;
+      left: calc(50% - 24px);
+      top: 45%;
+      width: 48px;
+      height: 48px;
+      border: 2px solid var(--gold);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--gold);
+      font-weight: 800;
+    }
+
+    .status-strip {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 18px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .status-strip span {
+      min-height: 28px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 18px;
+    }
+
+    .card strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .sections {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 28px;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    li + li {
+      margin-top: 8px;
+    }
+
+    footer {
+      margin-top: 28px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 820px) {
+      header,
+      .sections,
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 34px;
+      }
+
+      .stage {
+        min-height: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <section class="hero">
+        <div class="eyebrow">Internal Alpha v0</div>
+        <h1>DraxosMobile</h1>
+        <p>Build fechada para Fabio + 1 tester. Use esta pagina para baixar as builds, abrir a versao Web e acompanhar notas de teste.</p>
+        <div class="actions">
+          <a class="button primary" href="WEB_GAME_URL">Jogar Web</a>
+          <a class="button" href="ANDROID_APK_URL">Baixar APK</a>
+          <a class="button" href="PC_ZIP_URL">Baixar PC ZIP</a>
+        </div>
+        <div class="meta">
+          <span class="pill">Versao 0.0.1-alpha.0</span>
+          <span class="pill">Servidor remoto</span>
+          <span class="pill">Email + senha</span>
+          <span class="pill">Unlisted</span>
+        </div>
+      </section>
+
+      <section class="stage" aria-label="Representacao procedural da batalha alpha">
+        <div class="floor"></div>
+        <div class="mage left">
+          <span class="head"></span>
+          <span class="body"></span>
+          <span class="arm"></span>
+          <span class="leg a"></span>
+          <span class="leg b"></span>
+        </div>
+        <div class="orb">VS</div>
+        <div class="mage right">
+          <span class="head"></span>
+          <span class="body"></span>
+          <span class="arm"></span>
+          <span class="leg a"></span>
+          <span class="leg b"></span>
+        </div>
+        <div class="status-strip">
+          <span>Batalha</span>
+          <span>Base</span>
+          <span>Social</span>
+          <span>Lab</span>
+        </div>
+      </section>
+    </header>
+
+    <section class="grid" aria-label="Downloads">
+      <article class="card">
+        <strong>Android APK</strong>
+        <p>Instalacao direta por link. Aceite instalacao de fonte externa apenas para este teste.</p>
+        <div class="actions"><a class="button" href="ANDROID_APK_URL">Download</a></div>
+      </article>
+      <article class="card">
+        <strong>PC Windows</strong>
+        <p>ZIP com executavel. Extraia a pasta inteira antes de abrir o jogo.</p>
+        <div class="actions"><a class="button" href="PC_ZIP_URL">Download</a></div>
+      </article>
+      <article class="card">
+        <strong>PC Browser</strong>
+        <p>Build Web para teste rapido. O save deve ser o mesmo das outras plataformas.</p>
+        <div class="actions"><a class="button" href="WEB_GAME_URL">Abrir</a></div>
+      </article>
+    </section>
+
+    <section class="sections">
+      <article class="card">
+        <h2>Como Testar</h2>
+        <ul>
+          <li>Crie ou entre com email e senha.</li>
+          <li>Jogue uma batalha e confira recompensa.</li>
+          <li>Abra Base, Loja, Competicao e Social.</li>
+          <li>Troque para Progression Lab e confirme que o save normal nao mudou.</li>
+          <li>Teste em pelo menos duas plataformas.</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>Notas Da Versao</h2>
+        <ul>
+          <li>Batalha server-authoritative com replay visual 2D procedural.</li>
+          <li>Base, Social, Competicao e Loja funcionais em alpha.</li>
+          <li>Dois saves por conta: normal e progression_lab.</li>
+          <li>Redeems diarios de Diamante para acelerar testes.</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>Problemas Conhecidos</h2>
+        <ul>
+          <li>Layout Android paisagem ainda precisa de validacao no aparelho real.</li>
+          <li>Sem arte final, animacoes ou icones definitivos.</li>
+          <li>Loja nao possui pagamento real e serve apenas como prova de conceito.</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>Update</h2>
+        <p>Manifest da build: <a href="MANIFEST_URL">MANIFEST_URL</a></p>
+        <p>Se o jogo pedir update, volte a esta pagina e baixe a plataforma correta.</p>
+      </article>
+    </section>
+
+    <footer>
+      Link unlisted nao e seguranca. Nao compartilhe fora do teste fechado. O acesso real depende de conta, alpha gate e backend.
+    </footer>
+  </main>
+</body>
+</html>

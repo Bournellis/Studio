@@ -5,11 +5,11 @@
 - Testadores: Fabio + 1 amigo.
 - QA local automatizado: `PASS_LOCAL_AUTOMATED_QA` em `internal-alpha-v0-qa-report.md`.
 
-## Status Local-First
+## Status Release Prep
 
 - O roteiro abaixo continua sendo o alvo da build fechada real com remoto/builds.
-- Enquanto remoto/builds estao adiados, a cobertura automatizada local ja validou batalha, Base, Social, Competicao, Loja, Progression Lab, dois saves, reset separado, telemetria e presets de export.
-- Antes de compartilhar com outro testador, falta uma passada manual no Godot/editor para UX/legibilidade real e uma passada remota quando o Supabase alpha estiver configurado.
+- A cobertura automatizada local ja validou batalha, Base, Social, Competicao, Loja, Progression Lab, dois saves, reset separado, telemetria e presets de export.
+- A passada manual inicial de Fabio nao apontou bloqueios graves; a proxima validacao real acontece depois de `T03-P13` Supabase remoto, `T03-P14` email/senha e `T03-P16` exports.
 
 ## Pre-Flight
 

@@ -1,0 +1,33 @@
+{
+  "schema_version": "internal_alpha_manifest_v1",
+  "channel": "internal_alpha",
+  "latest_version": "0.0.1-alpha.0",
+  "minimum_supported_version": "0.0.1-alpha.0",
+  "released_at": "2026-05-26T00:00:00Z",
+  "requires_save_reset": false,
+  "notes": [
+    "Primeira release candidate interna.",
+    "APK Android, PC ZIP e Web compartilham o mesmo backend remoto.",
+    "Progression Lab usa save separado e nao pontua ranking."
+  ],
+  "artifacts": {
+    "android": {
+      "label": "Android APK",
+      "url": "ANDROID_APK_URL",
+      "sha256": "ANDROID_APK_SHA256"
+    },
+    "pc_windows": {
+      "label": "PC Windows ZIP",
+      "url": "PC_ZIP_URL",
+      "sha256": "PC_ZIP_SHA256"
+    },
+    "web": {
+      "label": "Web",
+      "url": "WEB_GAME_URL"
+    }
+  },
+  "known_issues": [
+    "Layout Android paisagem ainda precisa de ergonomia real no aparelho.",
+    "Portal visual e placeholder ate refinamento pos-P18."
+  ]
+}
