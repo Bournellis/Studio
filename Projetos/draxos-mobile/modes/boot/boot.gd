@@ -1,12 +1,10 @@
 extends Control
 
 const ProjectInfoScript := preload("res://core/project_info.gd")
-const BattleLogPresenterScript := preload("res://ui/battle_log_presenter.gd")
 const SessionStoreScript := preload("res://online/session_store.gd")
 const ShellSurfacePresenterScript := preload("res://modes/boot/surfaces/shell_surface_presenter.gd")
 const HubSurfacePresenterScript := preload("res://modes/boot/surfaces/hub_surface_presenter.gd")
 const HubAccountSurfacePresenterScript := preload("res://modes/boot/surfaces/hub_account_surface_presenter.gd")
-const BattleSurfacePresenterScript := preload("res://modes/boot/surfaces/battle_surface_presenter.gd")
 const BattleReplayPresenterScript := preload("res://modes/boot/surfaces/battle_replay_presenter.gd")
 const BaseSurfacePresenterScript := preload("res://modes/boot/surfaces/base_surface_presenter.gd")
 const SocialSurfacePresenterScript := preload("res://modes/boot/surfaces/social_surface_presenter.gd")
@@ -1380,66 +1378,6 @@ func _require_account(message: String) -> bool:
 
 func _render_base_state(collected: Dictionary = {}) -> void:
 	BaseSurfacePresenterScript.render_state(self, collected)
-	return
-	if _timeline_label == null:
-		return
-	var base := SessionStore.base_state
-	if _base_state_container != null:
-		_clear_node_children(_base_state_container)
-	if base.is_empty():
-		_timeline_label.text = "Base ainda nao carregada. Use Atualizar base."
-		if _base_state_container != null:
-			_base_state_container.add_child(_base_info_panel(
-				"Base nao carregada",
-				"Use Atualizar base para buscar os predios, a fila de construcao e os recursos no servidor."
-			))
-		return
-
-	var resources := SessionStore.resources
-	var lines := PackedStringArray()
-	if SessionStore.is_progression_lab_local_only():
-		lines.append("Refugio Progression Lab local (somente leitura)")
-		lines.append("Acoes online exigem cache server-backed criado pelo seeder Supabase.")
-	else:
-		lines.append("Refugio server-authoritative")
-	lines.append("Recursos: %s" % _format_resources(resources))
-	if not collected.is_empty():
-		if _resource_total(collected) <= 0.0:
-			lines.append("Coleta: nada acumulado agora.")
-		else:
-			lines.append("Coletado: %s" % _format_resources(collected, false))
-
-	var structures := _as_array(base.get("structures", []))
-	if structures.is_empty():
-		lines.append("Estruturas: nenhuma estrutura retornada pelo servidor.")
-	else:
-		lines.append("Estruturas: %d predios clicaveis no mapa abaixo." % structures.size())
-	for item: Variant in structures:
-		var structure := _as_dictionary(item)
-		if structure.is_empty():
-			continue
-		lines.append("- %s L%s | pendente %s/%s | %s" % [
-			_structure_label(str(structure.get("structure_id", "")), str(structure.get("display_name", ""))),
-			str(structure.get("level", 0)),
-			_format_number(float(structure.get("pending_collectable", 0.0))),
-			_format_number(float(structure.get("storage_cap", 0.0))),
-			str(structure.get("blocked_message", "Upgrade bloqueado.")),
-		])
-
-	var jobs := _as_array(base.get("jobs", []))
-	var active_jobs := 0
-	for item: Variant in jobs:
-		var job := _as_dictionary(item)
-		if str(job.get("status", "")) == "active":
-			active_jobs += 1
-			lines.append("- Em construcao: %s -> L%s | resta %s" % [
-				_structure_label(str(job.get("structure_id", ""))),
-				str(job.get("target_level", "?")),
-				_format_duration(int(job.get("remaining_seconds", 0))),
-			])
-	lines.append("Fila: %d/%d" % [active_jobs, int(base.get("construction_slots", 1))])
-	_timeline_label.text = "\n".join(lines)
-	_render_base_playable_panels(structures, base, collected)
 
 func _render_base_playable_panels(structures: Array, base: Dictionary, collected: Dictionary) -> void:
 	if _base_state_container == null:
@@ -1554,11 +1492,6 @@ func _base_structure_button(structure: Dictionary) -> Button:
 
 func _select_base_structure(structure_id: String) -> void:
 	BaseSurfacePresenterScript.select_structure(self, structure_id)
-	return
-	if structure_id.strip_edges() == "":
-		return
-	_selected_base_structure_id = structure_id.strip_edges()
-	_render_base_state()
 
 func _ensure_selected_base_structure(structures: Array) -> void:
 	if not _base_structure_by_id(structures, _selected_base_structure_id).is_empty():
@@ -1726,14 +1659,6 @@ func _base_structure_tooltip(structure: Dictionary) -> String:
 
 func _can_upgrade_base_structure(structure_id: String) -> bool:
 	return BaseSurfacePresenterScript.can_upgrade_structure(self, structure_id)
-	if SessionStore.is_progression_lab_local_only():
-		return false
-	if not SessionStore.has_valid_access_token() or not SessionStore.has_account_state():
-		return false
-	var base := SessionStore.base_state
-	var structures := _as_array(base.get("structures", []))
-	var structure := _base_structure_by_id(structures, structure_id)
-	return bool(structure.get("can_upgrade", false))
 
 func _active_base_jobs(jobs: Array) -> Array:
 	var active: Array = []
@@ -1769,52 +1694,6 @@ func _format_number(value: float) -> String:
 
 func _render_social_state() -> void:
 	SocialSurfacePresenterScript.render_state(self)
-	return
-	if _timeline_label == null:
-		return
-	if _social_state_container != null:
-		_clear_node_children(_social_state_container)
-	var social := SessionStore.social_state
-	if social.is_empty():
-		_timeline_label.text = "Social ainda nao carregado. Use Atualizar social."
-		if _social_state_container != null:
-			_social_state_container.add_child(_base_info_panel(
-				"Social da conta",
-				"Atualize o Social para ver amigos, guilda, membros, estruturas e chat por polling."
-			))
-		return
-
-	var lines := PackedStringArray()
-	var identity := _as_dictionary(social.get("identity", {}))
-	var active_player := _as_dictionary(social.get("active_player", {}))
-	var social_player := _as_dictionary(social.get("player", {}))
-	lines.append("Social server-authoritative")
-	lines.append("Escopo: conta inteira | Save ativo: %s" % _social_save_badge_text(str(identity.get("viewer_badge", SessionStore.active_save_badge()))))
-	lines.append("Identidade social: %s" % _social_username_text(social_player))
-	var guild := _as_dictionary(social.get("guild", {}))
-	if guild.is_empty():
-		lines.append("Guilda: nenhuma")
-	else:
-		lines.append("Guilda: %s L%s" % [str(guild.get("name", "")), str(guild.get("level", 1))])
-		lines.append("Membros: %d" % _as_array(social.get("guild_members", [])).size())
-		lines.append("Estruturas de guilda: %d" % _as_array(social.get("guild_structures", [])).size())
-	var friends := _as_array(social.get("friends", []))
-	lines.append("Amigos: %d" % friends.size())
-	var messages := _as_array(social.get("guild_chat", []))
-	lines.append("Chat guilda: %d mensagens recentes" % messages.size())
-	for item: Variant in messages.slice(0, min(messages.size(), 4)):
-		var message := _as_dictionary(item)
-		if not message.is_empty():
-			lines.append("- %s: %s" % [
-				str(message.get("sender_username", "desconhecido")),
-				str(message.get("content", "")),
-			])
-	_timeline_label.text = "\n".join(lines)
-	if _social_state_container != null:
-		_social_state_container.add_child(_social_identity_panel(identity, social_player, active_player))
-		_social_state_container.add_child(_social_friends_panel(friends))
-		_social_state_container.add_child(_social_guild_panel(guild, _as_array(social.get("guild_members", [])), _as_array(social.get("guild_structures", []))))
-		_social_state_container.add_child(_social_chat_panel(messages))
 
 func _social_identity_panel(identity: Dictionary, social_player: Dictionary, active_player: Dictionary) -> Control:
 	var panel := _base_panel()
@@ -1950,68 +1829,6 @@ func _guild_structure_label(structure_id: String) -> String:
 
 func _render_competition_state() -> void:
 	CompetitionSurfacePresenterScript.render_state(self)
-	return
-	if _timeline_label == null:
-		return
-	if _competition_state_container != null:
-		_clear_node_children(_competition_state_container)
-	var competition := SessionStore.competition_state
-	if competition.is_empty():
-		_timeline_label.text = "Competicao ainda nao carregada. Use Preview matchmaking ou Ver ranking."
-		if _competition_state_container != null:
-			_competition_state_container.add_child(_base_info_panel(
-				"Leaderboard da Alpha",
-				"Batalhas normais atualizam pontos de arena no servidor. Use Ver ranking para carregar o top 10 e a sua posicao."
-			))
-		return
-
-	var lines := PackedStringArray()
-	lines.append("Competicao server-authoritative")
-	var last_battle := _as_dictionary(competition.get("last_battle", {}))
-	if not last_battle.is_empty():
-		if bool(last_battle.get("ranked", false)):
-			lines.append("Ultima batalha: %s%d pontos | %s" % [
-				"+" if int(last_battle.get("arena_delta", 0)) >= 0 else "",
-				int(last_battle.get("arena_delta", 0)),
-				_competition_result_text(str(last_battle.get("result", "draw"))),
-			])
-		else:
-			lines.append("Ultima batalha: sem pontuacao (%s)" % str(last_battle.get("excluded_reason", "fora do ranking")))
-	var matchmaking := _as_dictionary(competition.get("matchmaking", {}))
-	if matchmaking.is_empty():
-		lines.append("Matchmaking: ainda nao carregado.")
-	else:
-		var opponent := _as_dictionary(matchmaking.get("selected_opponent", {}))
-		lines.append("Poder: %s" % str(matchmaking.get("player_power", 0)))
-		lines.append("Oponente: %s | Poder %s | bot=%s | ranqueado=%s" % [
-			str(opponent.get("id", "nenhum")),
-			str(opponent.get("power", "?")),
-			str(opponent.get("is_bot", false)),
-			str(opponent.get("is_ranked", false)),
-		])
-	var ranking := _as_dictionary(competition.get("ranking", {}))
-	if ranking.is_empty():
-		lines.append("Ranking: ainda nao carregado.")
-	else:
-		var season := _as_dictionary(ranking.get("season", {}))
-		var self_ranking := _as_dictionary(ranking.get("self", {}))
-		lines.append("Season: %s" % str(season.get("display_name", "")))
-		if self_ranking.is_empty():
-			lines.append("Arena: save atual fora da competicao.")
-		else:
-			lines.append("Arena: #%s | %s pontos | %sV/%sD" % [
-				str(self_ranking.get("rank", "?")),
-				str(self_ranking.get("arena_points", 0)),
-				str(self_ranking.get("wins", 0)),
-				str(self_ranking.get("losses", 0)),
-			])
-		lines.append("Top %s | Jogadores ranqueados: %s | bots no ranking: %s" % [
-			str(ranking.get("top_limit", 10)),
-			str(ranking.get("total_ranked", 0)),
-			str(ranking.get("bots_included", false)),
-		])
-	_timeline_label.text = "\n".join(lines)
-	_render_competition_panels(last_battle, matchmaking, ranking)
 
 func _render_competition_panels(last_battle: Dictionary, matchmaking: Dictionary, ranking: Dictionary) -> void:
 	if _competition_state_container == null:
@@ -2155,51 +1972,6 @@ func _competition_scoring_model_text(model: String) -> String:
 
 func _render_monetization_state() -> void:
 	ShopSurfacePresenterScript.render_state(self)
-	return
-	if _timeline_label == null:
-		return
-	if _shop_state_container != null:
-		_clear_node_children(_shop_state_container)
-	var monetization := SessionStore.monetization_state
-	if monetization.is_empty():
-		_timeline_label.text = "Loja alpha ainda nao carregada. Use Atualizar loja."
-		if _shop_state_container != null:
-			_shop_state_container.add_child(_base_info_panel(
-				"Loja nao carregada",
-				"Atualize a Loja para ver saldo de Diamante, produtos, resgates diarios e recompensas disponiveis."
-			))
-		return
-
-	var lines := PackedStringArray()
-	var summary := _as_dictionary(monetization.get("shop_summary", {}))
-	lines.append("Loja alpha server-authoritative")
-	lines.append("Recursos: %s" % _format_resources(SessionStore.resources))
-	if not summary.is_empty():
-		lines.append("Diamante: %s | Premium: %s | Redeems hoje: %s/%s" % [
-			str(summary.get("diamond_balance", SessionStore.resources.get("diamante", 0))),
-			"ativo" if bool(summary.get("premium_unlocked", false)) else "inativo",
-			str(summary.get("daily_redeems_claimed", 0)),
-			str(summary.get("daily_redeems_total", 0)),
-		])
-		lines.append("Reset diario: %s (%s)" % [
-			str(summary.get("daily_redeem_period_key", "")),
-			str(summary.get("reset_timezone", "America/Sao_Paulo")),
-		])
-	var battle_pass := _as_dictionary(monetization.get("battle_pass", {}))
-	var pass_config := _as_dictionary(battle_pass.get("pass", {}))
-	var progress := _as_dictionary(battle_pass.get("progress", {}))
-	lines.append("Battle Pass: %s | XP %s | premium=%s" % [
-		str(pass_config.get("display_name", pass_config.get("id", ""))),
-		str(progress.get("pass_xp", 0)),
-		str(progress.get("premium_unlocked", false)),
-	])
-	var daily_rewards := _as_array(monetization.get("daily_rewards", []))
-	var products := _as_array(monetization.get("alpha_products", []))
-	lines.append("Produtos alpha: %d | Recompensas diarias: %d" % [products.size(), daily_rewards.size()])
-	_timeline_label.text = "\n".join(lines)
-	if _shop_state_container != null:
-		_render_shop_panels(monetization)
-	_sync_buttons()
 
 func _render_shop_panels(monetization: Dictionary) -> void:
 	var summary := _as_dictionary(monetization.get("shop_summary", {}))
@@ -2346,40 +2118,12 @@ func _format_shop_delta(delta: Dictionary, empty_text: String) -> String:
 
 func _shop_product_by_id(product_id: String) -> Dictionary:
 	return ShopSurfacePresenterScript.product_by_id(product_id)
-	var monetization := SessionStore.monetization_state
-	for item: Variant in _as_array(monetization.get("alpha_products", [])):
-		var product := _as_dictionary(item)
-		if str(product.get("id", "")) == product_id:
-			return product
-	return {}
 
 func _shop_reward_by_id(reward_id: String) -> Dictionary:
 	return ShopSurfacePresenterScript.reward_by_id(reward_id)
-	var monetization := SessionStore.monetization_state
-	for group_key: String in ["daily_rewards", "weekly_rewards"]:
-		for item: Variant in _as_array(monetization.get(group_key, [])):
-			var reward := _as_dictionary(item)
-			if str(reward.get("id", "")) == reward_id:
-				return reward
-	var battle_pass := _as_dictionary(monetization.get("battle_pass", {}))
-	for item: Variant in _as_array(battle_pass.get("rewards", [])):
-		var reward := _as_dictionary(item)
-		if str(reward.get("id", "")) == reward_id:
-			return reward
-	return {}
 
 func _shop_purchase_message(product_id: String, body: Dictionary) -> String:
 	return ShopSurfacePresenterScript.purchase_message(product_id, body)
-	if bool(body.get("already_redeemed", false)):
-		return "Redeem diario ja havia sido resgatado neste save."
-	if bool(body.get("already_owned", false)):
-		return "Produto ja estava ativo neste save."
-	var purchase := _as_dictionary(body.get("purchase", {}))
-	var label := str(purchase.get("label", product_id))
-	var delta := _as_dictionary(purchase.get("delta", {}))
-	if delta.is_empty():
-		return "%s aplicado." % label
-	return "%s aplicado: %s." % [label, _format_shop_delta(delta, "sem mudanca de recurso")]
 
 func _play_battle_log(battle_log: Dictionary, rewards: Dictionary) -> void:
 	var schema_version := str(battle_log.get("schema_version", ""))

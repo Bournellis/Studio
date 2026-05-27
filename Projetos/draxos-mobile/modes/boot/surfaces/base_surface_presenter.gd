@@ -87,7 +87,7 @@ static func select_structure(host: Node, structure_id: String) -> void:
 	host.set("_selected_base_structure_id", structure_id.strip_edges())
 	render_state(host)
 
-static func can_upgrade_structure(host: Node, structure_id: String) -> bool:
+static func can_upgrade_structure(_host: Node, structure_id: String) -> bool:
 	if SessionStore.is_progression_lab_local_only():
 		return false
 	if not SessionStore.has_valid_access_token() or not SessionStore.has_account_state():
