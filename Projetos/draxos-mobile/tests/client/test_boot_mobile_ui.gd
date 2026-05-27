@@ -11,13 +11,13 @@ func after_each() -> void:
 	ProjectSettings.set_setting("draxos_mobile/ui/force_compact_layout", false)
 	_reset_session_store_for_test()
 
-func test_boot_compact_layout_groups_actions_for_mobile_landscape() -> void:
+func test_boot_compact_layout_groups_actions_for_mobile() -> void:
 	ProjectSettings.set_setting("draxos_mobile/ui/force_compact_layout", true)
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)
 
 	assert_true(boot._compact_layout)
-	assert_eq(boot._action_button_columns(), 3)
+	assert_true(boot._action_button_columns() >= 2)
 	assert_eq(boot._base_map_columns(), 6)
 	assert_true(boot._nav_buttons.is_empty())
 	assert_true(boot._back_button.custom_minimum_size.y >= 48.0)
@@ -31,7 +31,7 @@ func test_boot_compact_layout_groups_actions_for_mobile_landscape() -> void:
 	boot._show_screen("account")
 	var action_grid := _first_action_grid(boot._content_body)
 	assert_not_null(action_grid)
-	assert_eq(action_grid.columns, 3)
+	assert_eq(action_grid.columns, boot._action_button_columns())
 	var sign_up_button := boot._action_buttons["email_sign_up"] as Button
 	assert_true(sign_up_button.custom_minimum_size.y >= 48.0)
 	assert_eq(sign_up_button.mouse_filter, Control.MOUSE_FILTER_PASS)
@@ -106,6 +106,27 @@ func test_boot_battle_running_route_declares_landscape() -> void:
 	assert_false(boot._route_prefers_landscape("battle_entry"))
 	assert_true(boot._route_prefers_landscape("battle_running"))
 	assert_false(boot._route_prefers_landscape("refuge_home"))
+
+func test_internal_app_screen_layout_uses_portrait_single_column_and_landscape_columns() -> void:
+	assert_eq(BootScreenScript.surface_columns_for_size(Vector2(540, 960), 2), 1)
+	assert_eq(BootScreenScript.surface_columns_for_size(Vector2(1180, 720), 2), 2)
+	assert_eq(BootScreenScript.action_button_columns_for_size(Vector2(540, 960), true), 2)
+	assert_eq(BootScreenScript.action_button_columns_for_size(Vector2(1180, 720), true), 3)
+
+func test_app_surfaces_open_as_internal_routes_with_back_and_touch_scroll() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	for route: String in ["base", "social", "competition", "shop"]:
+		boot._show_screen(route)
+		assert_eq(boot._current_screen, route)
+		assert_true(boot._back_button.visible)
+		assert_true(boot._content_scroll is TouchScrollContainerScript)
+		assert_true(boot._nav_buttons.is_empty())
+		assert_eq(boot._screen_history.back(), "refuge_home")
+		boot._go_back()
+		assert_eq(boot._current_screen, "refuge_home")
+		assert_true(boot._screen_history.is_empty())
 
 func test_touch_scroll_container_uses_drag_threshold_and_wide_scrollbar() -> void:
 	var scroll: DraxosTouchScrollContainer = TouchScrollContainerScript.new()
@@ -240,7 +261,7 @@ func test_base_presenter_renders_loaded_state_without_network() -> void:
 	assert_true(boot._action_buttons.has("select_base_structure:nucleo_energia"))
 	assert_true(boot._action_buttons.has("upgrade_base_structure:nucleo_energia"))
 	assert_not_null(boot._base_state_container)
-	assert_true(boot._base_state_container.get_child_count() >= 3)
+	assert_true(_panel_tree_count(boot._base_state_container) >= 3)
 	var upgrade_button := boot._action_buttons["upgrade_base_structure:nucleo_energia"] as Button
 	assert_false(upgrade_button.disabled)
 
@@ -284,7 +305,7 @@ func test_shop_presenter_renders_loaded_state_and_disables_claimed_items() -> vo
 	assert_true(boot._action_buttons.has("shop_purchase:alpha_battle_pass_premium"))
 	assert_true(boot._action_buttons.has("claim_reward:daily_collect_base"))
 	assert_not_null(boot._shop_state_container)
-	assert_true(boot._shop_state_container.get_child_count() >= 4)
+	assert_true(_panel_tree_count(boot._shop_state_container) >= 4)
 	var pass_button := boot._action_buttons["shop_purchase:alpha_battle_pass_premium"] as Button
 	assert_true(pass_button.disabled)
 	var reward_button := boot._action_buttons["claim_reward:daily_collect_base"] as Button
@@ -432,6 +453,14 @@ func _label_tree_contains(root: Node, needle: String) -> bool:
 		if _label_tree_contains(child, needle):
 			return true
 	return false
+
+func _panel_tree_count(root: Node) -> int:
+	if root == null:
+		return 0
+	var count := 1 if root is PanelContainer else 0
+	for child: Node in root.get_children():
+		count += _panel_tree_count(child)
+	return count
 
 func _surface_presenter_script_paths() -> PackedStringArray:
 	var paths: PackedStringArray = PackedStringArray()

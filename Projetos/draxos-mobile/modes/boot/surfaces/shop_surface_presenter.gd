@@ -182,9 +182,10 @@ static func _render_shop_panels(host: Node, monetization: Dictionary) -> void:
 	var container := _shop_state_container(host)
 	if container == null:
 		return
+	var panels: Array = []
 	var summary := _as_dictionary(monetization.get("shop_summary", {}))
 	if not summary.is_empty():
-		container.add_child(_shop_summary_panel(host, summary))
+		panels.append(_shop_summary_panel(host, summary))
 
 	var redeem_products: Array = []
 	var purchase_products: Array = []
@@ -196,12 +197,13 @@ static func _render_shop_panels(host: Node, monetization: Dictionary) -> void:
 			redeem_products.append(product)
 		else:
 			purchase_products.append(product)
-	container.add_child(_shop_product_group_panel(host, "Redeems diarios de Diamante", redeem_products))
-	container.add_child(_shop_product_group_panel(host, "Compras e conveniencias", purchase_products))
-	container.add_child(_shop_reward_group_panel(host, "Recompensas diarias", _as_array(monetization.get("daily_rewards", []))))
+	panels.append(_shop_product_group_panel(host, "Redeems diarios de Diamante", redeem_products))
+	panels.append(_shop_product_group_panel(host, "Compras e conveniencias", purchase_products))
+	panels.append(_shop_reward_group_panel(host, "Recompensas diarias", _as_array(monetization.get("daily_rewards", []))))
 
 	var battle_pass := _as_dictionary(monetization.get("battle_pass", {}))
-	container.add_child(_shop_reward_group_panel(host, "Battle Pass", _as_array(battle_pass.get("rewards", []))))
+	panels.append(_shop_reward_group_panel(host, "Battle Pass", _as_array(battle_pass.get("rewards", []))))
+	host.call("_add_responsive_panel_layout", container, panels, 2)
 
 static func _shop_summary_panel(host: Node, summary: Dictionary) -> Control:
 	var panel := _shop_panel(host)

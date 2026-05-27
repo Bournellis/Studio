@@ -147,9 +147,25 @@ func _button_min_size() -> Vector2:
 	return Vector2(154, 50) if _compact_layout else Vector2(220, 44)
 
 func _action_button_columns() -> int:
-	if _compact_layout:
+	return action_button_columns_for_size(get_viewport_rect().size, _compact_layout)
+
+func _surface_columns(max_columns: int = 2) -> int:
+	return surface_columns_for_size(get_viewport_rect().size, max_columns)
+
+static func action_button_columns_for_size(viewport_size: Vector2, compact: bool) -> int:
+	if compact:
+		if viewport_size.x <= viewport_size.y or viewport_size.x < 760.0:
+			return 2
 		return 3
 	return 2
+
+static func surface_columns_for_size(viewport_size: Vector2, max_columns: int = 2) -> int:
+	var clamped_columns := clampi(max_columns, 1, 3)
+	if viewport_size.x < 760.0:
+		return 1
+	if viewport_size.x <= viewport_size.y * 1.08:
+		return 1
+	return clamped_columns
 
 func _base_map_columns() -> int:
 	if not _compact_layout:
@@ -197,6 +213,8 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	_battle_replay_presenter.clear()
 	_error_label.text = ""
 	_clear_content_body()
+	if _content_scroll != null:
+		_content_scroll.scroll_vertical = 0
 	_content_title.text = _screen_title(screen_id)
 	_back_button.visible = screen_id != SCREEN_HUB
 	_sync_nav_buttons()
@@ -422,6 +440,36 @@ func _add_content_control(control: Control) -> void:
 	_reset_action_group()
 	control.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_content_body.add_child(control)
+
+func _add_responsive_panel_layout(container: VBoxContainer, panels: Array, max_columns: int = 2) -> void:
+	if container == null:
+		return
+	var column_count := _surface_columns(max_columns)
+	if column_count <= 1 or panels.size() <= 1:
+		for panel: Variant in panels:
+			if panel is Control:
+				container.add_child(panel as Control)
+		return
+
+	var row := HBoxContainer.new()
+	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_theme_constant_override("separation", 8 if _compact_layout else 10)
+	container.add_child(row)
+
+	var columns: Array = []
+	for index in range(column_count):
+		var column := VBoxContainer.new()
+		column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		column.add_theme_constant_override("separation", 8 if _compact_layout else 10)
+		row.add_child(column)
+		columns.append(column)
+
+	for index in range(panels.size()):
+		var panel: Variant = panels[index]
+		if panel is Control:
+			var column := columns[index % column_count] as VBoxContainer
+			if column != null:
+				column.add_child(panel as Control)
 
 func _add_action_button(text: String, action_id: String, confirm_message: String = "") -> Button:
 	var button := Button.new()
