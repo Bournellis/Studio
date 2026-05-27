@@ -1,6 +1,7 @@
 extends GutTest
 
 const BootScreenScript = preload("res://modes/boot/boot.gd")
+const AppShellRouteContractScript = preload("res://modes/boot/ui/app_shell_route_contract.gd")
 const BaseSurfacePresenterScript = preload("res://modes/boot/surfaces/base_surface_presenter.gd")
 const BattleReplayPresenterScript = preload("res://modes/boot/surfaces/battle_replay_presenter.gd")
 const TouchScrollContainerScript = preload("res://modes/boot/ui/touch_scroll_container.gd")
@@ -46,7 +47,13 @@ func test_boot_route_stack_normalizes_legacy_screen_ids() -> void:
 	assert_eq(boot._current_screen, "refuge_home")
 	assert_false(boot._route_supports_back("hub"))
 	assert_true(boot._route_supports_back("battle"))
+	assert_eq(boot._normalize_route("hub"), "refuge_home")
+	assert_eq(boot._normalize_route("refugio"), "refuge_home")
+	assert_eq(boot._normalize_route("refuge"), "refuge_home")
+	assert_eq(boot._normalize_route("conta"), "account")
 	assert_eq(boot._normalize_route("perfil"), "account")
+	assert_eq(boot._normalize_route("profile"), "account")
+	assert_eq(boot._normalize_route("monetization"), "shop")
 
 	boot._show_screen("battle")
 	assert_eq(boot._current_screen, "battle_entry")
@@ -57,6 +64,46 @@ func test_boot_route_stack_normalizes_legacy_screen_ids() -> void:
 	boot._go_back()
 	assert_eq(boot._current_screen, "refuge_home")
 	assert_true(boot._screen_history.is_empty())
+
+func test_app_shell_route_contract_manages_back_stack_without_boot_ui() -> void:
+	var history: Array[String] = []
+	var current := AppShellRouteContractScript.ROUTE_REFUGE_HOME
+
+	current = AppShellRouteContractScript.push_route(history, current, "base", true)
+	assert_eq(current, "base")
+	assert_eq(history, ["refuge_home"])
+
+	current = AppShellRouteContractScript.push_route(history, current, "social", true)
+	assert_eq(current, "social")
+	assert_eq(history, ["refuge_home", "base"])
+
+	current = AppShellRouteContractScript.pop_back_or_root(history)
+	assert_eq(current, "base")
+	assert_eq(history, ["refuge_home"])
+
+	current = AppShellRouteContractScript.pop_back_or_root(history)
+	assert_eq(current, "refuge_home")
+	assert_true(history.is_empty())
+	assert_eq(AppShellRouteContractScript.clear_for_root_return(history), "refuge_home")
+
+func test_boot_back_stack_returns_nested_routes_to_refugio_root() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	boot._show_screen("base")
+	boot._show_screen("social")
+
+	assert_eq(boot._current_screen, "social")
+	assert_eq(boot._screen_history, ["refuge_home", "base"])
+
+	boot._go_back()
+	assert_eq(boot._current_screen, "base")
+	assert_eq(boot._screen_history, ["refuge_home"])
+
+	boot._go_back()
+	assert_eq(boot._current_screen, "refuge_home")
+	assert_true(boot._screen_history.is_empty())
+	assert_false(boot._back_button.visible)
 
 func test_boot_shell_has_no_global_tab_navigation() -> void:
 	var boot = BootScreenScript.new()
@@ -107,6 +154,9 @@ func test_boot_battle_running_route_declares_landscape() -> void:
 	assert_false(boot._route_prefers_landscape("battle_entry"))
 	assert_true(boot._route_prefers_landscape("battle_running"))
 	assert_false(boot._route_prefers_landscape("refuge_home"))
+	assert_false(AppShellRouteContractScript.prefers_landscape("battle"))
+	assert_true(AppShellRouteContractScript.prefers_landscape("battle_running"))
+	assert_false(AppShellRouteContractScript.prefers_landscape("battle_summary"))
 
 func test_internal_app_screen_layout_uses_portrait_single_column_and_landscape_columns() -> void:
 	assert_eq(BootScreenScript.surface_columns_for_size(Vector2(540, 960), 2), 1)
@@ -477,6 +527,34 @@ func test_boot_battle_summary_renders_fullscreen_stats_resources_and_actions() -
 	assert_true(boot._action_buttons.has("return_refuge"))
 	assert_true(boot._action_buttons.has("replay_latest_battle"))
 	assert_true(boot._action_buttons.has("show_battle_history"))
+
+func test_boot_battle_summary_return_to_refuge_clears_lifecycle_state() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	SessionStore.last_battle_log = _battle_log_fixture()
+	SessionStore.last_battle_rewards = _battle_rewards_fixture()
+
+	boot._show_screen("battle")
+	boot._show_screen("battle_running")
+	boot._battle_summary_skipped = true
+	boot._show_screen("battle_summary")
+	await get_tree().process_frame
+
+	assert_eq(boot._current_screen, "battle_summary")
+	assert_not_null(boot._battle_fullscreen_overlay)
+	assert_true(boot._screen_history.size() >= 2)
+
+	boot._replay_running = true
+	boot._skip_replay = true
+	boot._return_to_refuge()
+
+	assert_eq(boot._current_screen, "refuge_home")
+	assert_true(boot._screen_history.is_empty())
+	assert_false(boot._back_button.visible)
+	assert_false(boot._replay_running)
+	assert_false(boot._skip_replay)
+	assert_false(boot._battle_summary_skipped)
+	assert_null(boot._battle_fullscreen_overlay)
 
 func test_boot_play_battle_log_finishes_on_summary_route() -> void:
 	var boot = BootScreenScript.new()

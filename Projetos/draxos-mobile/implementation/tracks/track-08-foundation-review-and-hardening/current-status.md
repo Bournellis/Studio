@@ -3,8 +3,8 @@
 - Last Updated: `2026-05-27`
 - Status: `ACTIVE_FOUNDATION_HARDENING`
 - Depends On: `T07_INTEGRATED_PRESENTATION_READY`
-- Current Stage: `T08_A_COMPLETE`
-- Next Action: integrate T08-A into master, then run T08-B to T08-F in parallel worktrees.
+- Current Stage: `T08_B_COMPLETE`
+- Next Action: continue T08-C/T08-D/T08-F in parallel and start T08-E from the T08-B route/orientation contract.
 
 ## Estado
 
@@ -12,13 +12,15 @@ Track 08 is active as the post-presentation foundation hardening pass.
 
 The project now has a mobile-first Refugio home, route shell, internal surfaces and fullscreen landscape battle. The next risk is structural drift while adding future features: routes living only inside `boot.gd`, session/save boundary assumptions spread across client code, touch/layout rules copied per surface, battle fullscreen behavior needing mode-level contract, and validation becoming hard to remember.
 
+T08-B App Shell Lifecycle is complete in `codex/draxos-mobile/t08-app-shell-lifecycle`. It introduced `DraxosAppShellRouteContract` as a small route/back/orientation helper under `modes/boot/ui/`, kept `boot.gd` as the orchestrator, and added GUT coverage for legacy aliases, Refugio root behavior, nested back stack, `battle_running` landscape preference and battle summary return to Refugio.
+
 ## Ordem Atual
 
 1. `T08-A` Coordenacao/Audit: complete; opened the track and recorded the foundation gap report.
-2. `T08-B` App Shell Lifecycle: pending after T08-A.
+2. `T08-B` App Shell Lifecycle: complete; route/back/orientation contract helper and tests delivered.
 3. `T08-C` Session/Save Boundary: pending after T08-A.
 4. `T08-D` Mobile UI Contract: pending after T08-A.
-5. `T08-E` Battle Mode Contract: pending after T08-B.
+5. `T08-E` Battle Mode Contract: unblocked by T08-B.
 6. `T08-F` Service/Asset Contract Checks: pending after T08-A.
 7. `T08-G` Validation Harness: pending after T08-B to T08-F.
 8. `T08-H` Integracao: pending after T08-B to T08-G.
@@ -51,6 +53,12 @@ Expected final smokes:
 - `tools/smoke_foundation_surfaces.gd`
 - `tools/smoke_battle_replay.gd`
 - `tools/smoke_exports.gd`
+
+Latest T08-B validation:
+
+- `tools/validate.gd`: passed.
+- GUT client complete: passed, `88/88` tests and `1003` asserts.
+- `git diff --check`: passed.
 
 Backend/docs packages:
 
