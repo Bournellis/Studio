@@ -300,287 +300,76 @@ func apply_reward_choice(choice_id: String) -> Dictionary:
 	return RunRewardService.apply_reward_choice(self, choice_id)
 
 func refresh_shop_upgrade_offers() -> void:
-	refresh_shop_inventory()
+	RunShopService.refresh_shop_upgrade_offers(self)
 
 func refresh_shop_inventory() -> void:
-	if not active:
-		return
-	var refresh_id: String = last_completed_node_id
-	if refresh_id == "" and not completed_node_ids.is_empty():
-		refresh_id = completed_node_ids[completed_node_ids.size() - 1]
-	if refresh_id == "" and current_node_id != "":
-		refresh_id = current_node_id
-	if refresh_id == "":
-		return
-	var candidates: Array[String] = _shop_upgrade_candidates()
-	candidates = _stable_shuffled_strings(candidates, "shop_upgrade:%s:%d:%d" % [refresh_id, completed_node_ids.size(), reroll_count])
-	shop_upgrade_offer_card_ids = []
-	for card_id: String in candidates:
-		shop_upgrade_offer_card_ids.append(card_id)
-		if shop_upgrade_offer_card_ids.size() >= SHOP_UPGRADE_OFFER_COUNT:
-			break
-	shop_upgrade_refresh_node_id = refresh_id
-	shop_upgrade_purchase_node_id = ""
-	var card_offer_ids: Array[String] = _stable_shuffled_strings(_shop_card_candidates(), "shop_card:%s:%d:%d" % [refresh_id, completed_node_ids.size(), reroll_count])
-	var card_rarities: Dictionary = {}
-	var trimmed_card_offer_ids: Array[String] = []
-	for card_id: String in card_offer_ids:
-		trimmed_card_offer_ids.append(card_id)
-		card_rarities[card_id] = _roll_rarity("shop:%s:%d" % [refresh_id, reroll_count], card_id)
-		if trimmed_card_offer_ids.size() >= SHOP_CARD_OFFER_COUNT:
-			break
-	var relic_offer_ids: Array[String] = _stable_shuffled_strings(_shop_relic_candidates(), "shop_relic:%s:%d:%d" % [refresh_id, completed_node_ids.size(), reroll_count])
-	var trimmed_relic_offer_ids: Array[String] = []
-	for relic_id: String in relic_offer_ids:
-		trimmed_relic_offer_ids.append(relic_id)
-		if trimmed_relic_offer_ids.size() >= SHOP_RELIC_OFFER_COUNT:
-			break
-	_sync_shop_state(trimmed_card_offer_ids, card_rarities, trimmed_relic_offer_ids)
+	RunShopService.refresh_shop_inventory(self)
 
 func shop_upgrade_choices() -> Array[Dictionary]:
-	var result: Array[Dictionary] = []
-	for card_id: String in shop_upgrade_offer_card_ids:
-		if int(card_upgrade_counts.get(card_id, 0)) >= 2:
-			continue
-		var card = ContentLibrary.get_card(card_id)
-		if card == null:
-			continue
-		var upgrade_index: int = int(card_upgrade_counts.get(card_id, 0)) + 1
-		result.append({
-			"id": "shop_upgrade:%s" % card_id,
-			"card_id": card_id,
-			"title": "%s - Lvl %d" % [str(card.display_name), upgrade_index + 1],
-			"body": _upgrade_choice_body(card_id, upgrade_index),
-			"cost": _shop_upgrade_cost(),
-			"can_buy": can_buy_shop_upgrade(card_id)
-		})
-	return result
+	return RunShopService.shop_upgrade_choices(self)
 
 func can_buy_shop_upgrade(card_id: String) -> bool:
-	return active \
-		and soul_total >= _shop_upgrade_cost() \
-		and shop_upgrade_refresh_node_id != "" \
-		and shop_upgrade_purchase_node_id != shop_upgrade_refresh_node_id \
-		and shop_upgrade_offer_card_ids.has(card_id) \
-		and int(card_upgrade_counts.get(card_id, 0)) < 2
+	return RunShopService.can_buy_shop_upgrade(self, card_id)
 
 func buy_shop_card_upgrade(card_id: String) -> Dictionary:
-	if not active:
-		return {"ok": false, "message": "Nenhuma run ativa."}
-	if shop_upgrade_purchase_node_id == shop_upgrade_refresh_node_id and shop_upgrade_refresh_node_id != "":
-		return {"ok": false, "message": "Upgrade da loja ja comprado neste combate."}
-	if not shop_upgrade_offer_card_ids.has(card_id):
-		return {"ok": false, "message": "Carta nao esta nas ofertas da loja."}
-	if int(card_upgrade_counts.get(card_id, 0)) >= 2:
-		return {"ok": false, "message": "Carta ja esta no nivel maximo."}
-	var cost: int = _shop_upgrade_cost()
-	if soul_total < cost:
-		return {"ok": false, "message": "Almas insuficientes para upgrade."}
-	soul_total -= cost
-	card_upgrade_counts[card_id] = mini(2, int(card_upgrade_counts.get(card_id, 0)) + 1)
-	shop_upgrade_purchase_node_id = shop_upgrade_refresh_node_id
-	_sync_shop_state()
-	return {"ok": true, "message": "Upgrade comprado: %s." % ContentLibrary.get_card_name(card_id)}
+	return RunShopService.buy_shop_card_upgrade(self, card_id)
 
 func can_buy_heal() -> bool:
-	return active and soul_total >= PAID_HEAL_COST and current_health < max_health and _modified_heal_amount(PAID_HEAL_AMOUNT) > 0
+	return RunShopService.can_buy_heal(self)
 
 func buy_paid_heal() -> Dictionary:
-	if not active:
-		return {"ok": false, "message": "Nenhuma run ativa."}
-	if current_health >= max_health:
-		return {"ok": false, "message": "%s ja esta com vida cheia." % player_display_name()}
-	if soul_total < PAID_HEAL_COST:
-		return {"ok": false, "message": "Almas insuficientes para cura."}
-	soul_total -= PAID_HEAL_COST
-	var heal_amount: int = _modified_heal_amount(PAID_HEAL_AMOUNT)
-	current_health = mini(max_health, current_health + heal_amount)
-	return {"ok": true, "message": "Cura paga aplicada: +%d vida por %d almas." % [heal_amount, PAID_HEAL_COST]}
+	return RunShopService.buy_paid_heal(self)
 
 func shop_remove_card_choices() -> Array[Dictionary]:
-	var result: Array[Dictionary] = []
-	for card_id: String in _unique_current_deck_card_ids():
-		result.append({
-			"id": "shop_remove:%s" % card_id,
-			"card_id": card_id,
-			"title": "Remover %s" % ContentLibrary.get_card_name(card_id),
-			"body": "Remove 1 copia desta carta do deck da run.",
-			"cost": _shop_remove_card_cost(),
-			"can_buy": can_buy_shop_remove_card(card_id)
-		})
-	return result
+	return RunShopService.shop_remove_card_choices(self)
 
 func can_buy_shop_remove_card(card_id: String) -> bool:
-	return active and current_deck_ids.has(card_id) and soul_total >= _shop_remove_card_cost()
+	return RunShopService.can_buy_shop_remove_card(self, card_id)
 
 func buy_shop_remove_card(card_id: String) -> Dictionary:
-	if not active:
-		return {"ok": false, "message": "Nenhuma run ativa."}
-	if not current_deck_ids.has(card_id):
-		return {"ok": false, "message": "Carta nao existe no deck da run."}
-	var cost: int = _shop_remove_card_cost()
-	if soul_total < cost:
-		return {"ok": false, "message": "Almas insuficientes para remover carta."}
-	soul_total -= cost
-	current_deck_ids.erase(card_id)
-	if cost == 0 and has_relic_id(RELIC_FERRAMENTAS_DE_CIRURGIA):
-		shop_state["free_remove_card_used"] = true
-	return {"ok": true, "message": "Carta removida: %s." % ContentLibrary.get_card_name(card_id)}
+	return RunShopService.buy_shop_remove_card(self, card_id)
 
 func shop_duplicate_card_choices() -> Array[Dictionary]:
-	var result: Array[Dictionary] = []
-	for card_id: String in _unique_current_deck_card_ids():
-		result.append({
-			"id": "shop_duplicate:%s" % card_id,
-			"card_id": card_id,
-			"title": "Duplicar %s" % ContentLibrary.get_card_name(card_id),
-			"body": "Adiciona 1 copia desta carta ao deck da run.",
-			"cost": _shop_duplicate_card_cost(),
-			"can_buy": can_buy_shop_duplicate_card(card_id)
-		})
-	return result
+	return RunShopService.shop_duplicate_card_choices(self)
 
 func can_buy_shop_duplicate_card(card_id: String) -> bool:
-	return active and ContentLibrary.get_card(card_id) != null and current_deck_ids.has(card_id) and soul_total >= _shop_duplicate_card_cost()
+	return RunShopService.can_buy_shop_duplicate_card(self, card_id)
 
 func buy_shop_duplicate_card(card_id: String) -> Dictionary:
-	if not active:
-		return {"ok": false, "message": "Nenhuma run ativa."}
-	if not current_deck_ids.has(card_id) or ContentLibrary.get_card(card_id) == null:
-		return {"ok": false, "message": "Carta invalida para duplicacao."}
-	var cost: int = _shop_duplicate_card_cost()
-	if soul_total < cost:
-		return {"ok": false, "message": "Almas insuficientes para duplicar carta."}
-	soul_total -= cost
-	current_deck_ids.append(card_id)
-	if cost < SHOP_DUPLICATE_CARD_COST and has_relic_id(RELIC_LAMINA_DE_RESERVA):
-		shop_state["discount_duplicate_used"] = true
-	return {"ok": true, "message": "Carta duplicada: %s." % ContentLibrary.get_card_name(card_id)}
+	return RunShopService.buy_shop_duplicate_card(self, card_id)
 
 func shop_card_choices() -> Array[Dictionary]:
-	var result: Array[Dictionary] = []
-	var card_offer_ids: Array[String] = _string_array(shop_state.get("card_offer_ids", []))
-	var rarity_by_id: Dictionary = Dictionary(shop_state.get("card_offer_rarity_by_id", {}))
-	var purchased: Array[String] = _string_array(shop_state.get("purchased_card_offer_ids", []))
-	for card_id: String in card_offer_ids:
-		var card = ContentLibrary.get_card(card_id)
-		if card == null:
-			continue
-		var rarity: String = str(rarity_by_id.get(card_id, REWARD_RARITY_COMMON))
-		result.append({
-			"id": "shop_card:%s" % card_id,
-			"card_id": card_id,
-			"rarity": rarity,
-			"title": "%s%s" % [_rarity_title_prefix(rarity), str(card.display_name)],
-			"body": "Compra 1 copia para o deck da run.",
-			"cost": _shop_card_cost_for_rarity(rarity),
-			"can_buy": can_buy_shop_card(card_id),
-			"purchased": purchased.has(card_id)
-		})
-	return result
+	return RunShopService.shop_card_choices(self)
 
 func can_buy_shop_card(card_id: String) -> bool:
-	var purchased: Array[String] = _string_array(shop_state.get("purchased_card_offer_ids", []))
-	if purchased.has(card_id):
-		return false
-	var rarity_by_id: Dictionary = Dictionary(shop_state.get("card_offer_rarity_by_id", {}))
-	var rarity: String = str(rarity_by_id.get(card_id, REWARD_RARITY_COMMON))
-	return active and _string_array(shop_state.get("card_offer_ids", [])).has(card_id) and ContentLibrary.get_card(card_id) != null and soul_total >= _shop_card_cost_for_rarity(rarity)
+	return RunShopService.can_buy_shop_card(self, card_id)
 
 func buy_shop_card(card_id: String) -> Dictionary:
-	if not can_buy_shop_card(card_id):
-		return {"ok": false, "message": "Carta indisponivel ou Almas insuficientes."}
-	var rarity_by_id: Dictionary = Dictionary(shop_state.get("card_offer_rarity_by_id", {}))
-	var rarity: String = str(rarity_by_id.get(card_id, REWARD_RARITY_COMMON))
-	var cost: int = _shop_card_cost_for_rarity(rarity)
-	soul_total -= cost
-	current_deck_ids.append(card_id)
-	var purchased: Array[String] = _string_array(shop_state.get("purchased_card_offer_ids", []))
-	if not purchased.has(card_id):
-		purchased.append(card_id)
-	shop_state["purchased_card_offer_ids"] = purchased
-	return {"ok": true, "message": "Carta comprada: %s." % ContentLibrary.get_card_name(card_id)}
+	return RunShopService.buy_shop_card(self, card_id)
 
 func shop_relic_choices() -> Array[Dictionary]:
-	var result: Array[Dictionary] = []
-	for relic_id: String in _string_array(shop_state.get("relic_offer_ids", [])):
-		var relic: Dictionary = ContentLibrary.get_relic_definition(relic_id)
-		if relic.is_empty():
-			continue
-		var rarity: String = str(relic.get("rarity", "common"))
-		result.append({
-			"id": "shop_relic:%s" % relic_id,
-			"relic_id": relic_id,
-			"rarity": rarity,
-			"title": _relic_title(relic),
-			"body": _relic_body(relic),
-			"cost": _shop_relic_cost_for_rarity(rarity),
-			"can_buy": can_buy_shop_relic(relic_id),
-			"owned": has_relic_id(relic_id)
-		})
-	return result
+	return RunShopService.shop_relic_choices(self)
 
 func can_buy_shop_relic(relic_id: String) -> bool:
-	var relic: Dictionary = ContentLibrary.get_relic_definition(relic_id)
-	if relic.is_empty() or has_relic_id(relic_id):
-		return false
-	return active and _string_array(shop_state.get("relic_offer_ids", [])).has(relic_id) and soul_total >= _shop_relic_cost_for_rarity(str(relic.get("rarity", "common")))
+	return RunShopService.can_buy_shop_relic(self, relic_id)
 
 func buy_shop_relic(relic_id: String) -> Dictionary:
-	if not can_buy_shop_relic(relic_id):
-		return {"ok": false, "message": "Reliquia indisponivel ou Almas insuficientes."}
-	var relic: Dictionary = ContentLibrary.get_relic_definition(relic_id)
-	var cost: int = _shop_relic_cost_for_rarity(str(relic.get("rarity", "common")))
-	var relic_result: Dictionary = add_relic_id(relic_id)
-	if not bool(relic_result.get("ok", false)):
-		return relic_result
-	soul_total -= cost
-	return {"ok": true, "message": "Reliquia comprada: %s." % ContentLibrary.get_relic_display_name(relic_id)}
+	return RunShopService.buy_shop_relic(self, relic_id)
 
 func current_reroll_cost() -> int:
-	return RunShopService.reroll_cost(reroll_count, SHOP_REROLL_COST_BASE, SHOP_REROLL_COST_STEP)
+	return RunShopService.current_reroll_cost(self)
 
 func buy_shop_reroll() -> Dictionary:
-	if not active:
-		return {"ok": false, "message": "Nenhuma run ativa."}
-	var cost: int = current_reroll_cost()
-	if soul_total < cost:
-		return {"ok": false, "message": "Almas insuficientes para reroll da loja."}
-	soul_total -= cost
-	reroll_count += 1
-	refresh_shop_inventory()
-	return {"ok": true, "message": "Loja rerolada por %d almas." % cost}
+	return RunShopService.buy_shop_reroll(self)
 
 func buy_reward_reroll() -> Dictionary:
-	if not active or rewards_pending.is_empty():
-		return {"ok": false, "message": "Nenhuma recompensa pendente para reroll."}
-	var cost: int = current_reroll_cost()
-	if soul_total < cost:
-		return {"ok": false, "message": "Almas insuficientes para reroll de recompensa."}
-	soul_total -= cost
-	reroll_count += 1
-	var pending: Dictionary = rewards_pending[0]
-	pending["reroll_index"] = int(pending.get("reroll_index", 0)) + 1
-	pending["rarity_by_card_id"] = _rarity_map_for_pending(pending)
-	rewards_pending[0] = pending
-	return {"ok": true, "message": "Recompensa rerolada por %d almas." % cost}
+	return RunShopService.buy_reward_reroll(self)
 
 func can_buy_shop_max_health() -> bool:
-	return active and _shop_max_health_purchase_count() < SHOP_MAX_HEALTH_PURCHASE_LIMIT and soul_total >= _shop_max_health_cost()
+	return RunShopService.can_buy_shop_max_health(self)
 
 func buy_shop_max_health() -> Dictionary:
-	if not active:
-		return {"ok": false, "message": "Nenhuma run ativa."}
-	var purchase_count: int = _shop_max_health_purchase_count()
-	if purchase_count >= SHOP_MAX_HEALTH_PURCHASE_LIMIT:
-		return {"ok": false, "message": "Limite de HP maximo da loja atingido."}
-	var cost: int = _shop_max_health_cost()
-	if soul_total < cost:
-		return {"ok": false, "message": "Almas insuficientes para HP maximo."}
-	soul_total -= cost
-	shop_state["max_health_purchases"] = purchase_count + 1
-	_increase_max_health(SHOP_MAX_HEALTH_AMOUNT)
-	return {"ok": true, "message": "HP maximo aumentado em +%d." % SHOP_MAX_HEALTH_AMOUNT}
+	return RunShopService.buy_shop_max_health(self)
 
 func has_relic_id(relic_id: String) -> bool:
 	return relic_ids.has(relic_id)
@@ -951,75 +740,37 @@ func _extra_upgrade_copies_for_rarity(_rarity: String) -> int:
 	return RunRewardService.extra_upgrade_copies_for_rarity(_rarity)
 
 func _shop_upgrade_candidates() -> Array[String]:
-	var result: Array[String] = []
-	var seen: Array[String] = []
-	for card_id: String in current_deck_ids:
-		if seen.has(card_id):
-			continue
-		seen.append(card_id)
-		if int(card_upgrade_counts.get(card_id, 0)) >= 2:
-			continue
-		if ContentLibrary.get_card(card_id) == null:
-			continue
-		result.append(card_id)
-	return result
+	return RunShopService.shop_upgrade_candidates(self)
 
 func _shop_card_candidates() -> Array[String]:
-	var result: Array[String] = []
-	var pool: Array[String] = _class_reward_pool()
-	for card_id: String in pool:
-		if result.has(card_id) or ContentLibrary.get_card(card_id) == null:
-			continue
-		result.append(card_id)
-	for card_id: String in _unique_current_deck_card_ids():
-		if result.has(card_id) or ContentLibrary.get_card(card_id) == null:
-			continue
-		result.append(card_id)
-	return result
+	return RunShopService.shop_card_candidates(self)
 
 func _shop_relic_candidates() -> Array[String]:
-	var result: Array[String] = []
-	for relic: Variant in ContentLibrary.get_relic_definitions():
-		if typeof(relic) != TYPE_DICTIONARY:
-			continue
-		var relic_id: String = str(Dictionary(relic).get("id", ""))
-		if relic_id == "" or relic_ids.has(relic_id):
-			continue
-		result.append(relic_id)
-	return result
+	return RunShopService.shop_relic_candidates(self)
 
 func _unique_current_deck_card_ids() -> Array[String]:
-	var result: Array[String] = []
-	for card_id: String in current_deck_ids:
-		if result.has(card_id):
-			continue
-		if ContentLibrary.get_card(card_id) == null:
-			continue
-		result.append(card_id)
-	return result
+	return RunShopService.unique_current_deck_card_ids(self)
 
 func _shop_upgrade_cost() -> int:
-	return RunShopService.upgrade_cost(SHOP_CARD_UPGRADE_COST)
+	return RunShopService.shop_upgrade_cost(self)
 
 func _shop_remove_card_cost() -> int:
-	return RunShopService.remove_card_cost(SHOP_REMOVE_CARD_COST, has_relic_id(RELIC_FERRAMENTAS_DE_CIRURGIA), bool(shop_state.get("free_remove_card_used", false)))
+	return RunShopService.shop_remove_card_cost(self)
 
 func _shop_duplicate_card_cost() -> int:
-	return RunShopService.duplicate_card_cost(SHOP_DUPLICATE_CARD_COST, has_relic_id(RELIC_LAMINA_DE_RESERVA), bool(shop_state.get("discount_duplicate_used", false)))
+	return RunShopService.shop_duplicate_card_cost(self)
 
 func _shop_card_cost_for_rarity(rarity: String) -> int:
-	return RunShopService.card_cost_for_rarity(rarity, SHOP_BUY_COMMON_CARD_COST, SHOP_BUY_RARE_CARD_COST, SHOP_BUY_ULTRA_RARE_CARD_COST)
+	return RunShopService.shop_card_cost_for_rarity(self, rarity)
 
 func _shop_relic_cost_for_rarity(rarity: String) -> int:
-	return RunShopService.relic_cost_for_rarity(rarity, SHOP_BUY_COMMON_RELIC_COST, SHOP_BUY_RARE_RELIC_COST, SHOP_BUY_ULTRA_RARE_RELIC_COST)
+	return RunShopService.shop_relic_cost_for_rarity(self, rarity)
 
 func _shop_max_health_purchase_count() -> int:
-	if shop_state.is_empty():
-		shop_state = _default_shop_state()
-	return clampi(int(shop_state.get("max_health_purchases", 0)), 0, SHOP_MAX_HEALTH_PURCHASE_LIMIT)
+	return RunShopService.shop_max_health_purchase_count(self)
 
 func _shop_max_health_cost() -> int:
-	return RunShopService.max_health_cost(_shop_max_health_purchase_count(), SHOP_MAX_HEALTH_FIRST_COST, SHOP_MAX_HEALTH_SECOND_COST)
+	return RunShopService.shop_max_health_cost(self)
 
 func _modified_heal_amount(amount: int) -> int:
 	var value: int = maxi(0, amount)
@@ -1084,24 +835,7 @@ func _rarity_from_relic_label(rarity: String) -> String:
 	return REWARD_RARITY_COMMON
 
 func _default_shop_state() -> Dictionary:
-	var contract: Dictionary = ContentLibrary.get_track_contract()
-	var schema: Dictionary = Dictionary(contract.get("shop_state_schema", {}))
-	return {
-		"schema_version": int(schema.get("version", TRACK_02_SHOP_SCHEMA_VERSION)),
-		"expanded_shop_pending": bool(schema.get("expanded_shop_pending", true)),
-		"refresh_node_id": shop_upgrade_refresh_node_id,
-		"purchase_node_id": shop_upgrade_purchase_node_id,
-		"upgrade_offer_card_ids": shop_upgrade_offer_card_ids.duplicate(),
-		"card_offer_ids": [],
-		"card_offer_rarity_by_id": {},
-		"relic_offer_ids": [],
-		"purchased_card_offer_ids": [],
-		"max_health_purchases": 0,
-		"free_remove_card_used": false,
-		"discount_duplicate_used": false,
-		"track_01_upgrade_cost": SHOP_CARD_UPGRADE_COST,
-		"prices": _shop_prices_snapshot()
-	}
+	return RunShopService.default_shop_state(self)
 
 func _default_reward_category_state() -> Dictionary:
 	var contract: Dictionary = ContentLibrary.get_track_contract()
@@ -1135,49 +869,10 @@ func _sync_track_01_shop_state() -> void:
 	_sync_shop_state()
 
 func _sync_shop_state(card_offer_ids: Array = [], card_rarities: Dictionary = {}, relic_offer_ids: Array = []) -> void:
-	if shop_state.is_empty():
-		shop_state = _default_shop_state()
-	if card_offer_ids.is_empty() and shop_state.has("card_offer_ids"):
-		card_offer_ids = _string_array(shop_state.get("card_offer_ids", []))
-	if card_rarities.is_empty() and shop_state.has("card_offer_rarity_by_id"):
-		card_rarities = Dictionary(shop_state.get("card_offer_rarity_by_id", {}))
-	if relic_offer_ids.is_empty() and shop_state.has("relic_offer_ids"):
-		relic_offer_ids = _string_array(shop_state.get("relic_offer_ids", []))
-	shop_state["refresh_node_id"] = shop_upgrade_refresh_node_id
-	shop_state["purchase_node_id"] = shop_upgrade_purchase_node_id
-	shop_state["upgrade_offer_card_ids"] = shop_upgrade_offer_card_ids.duplicate()
-	shop_state["card_offer_ids"] = card_offer_ids.duplicate()
-	shop_state["card_offer_rarity_by_id"] = card_rarities.duplicate()
-	shop_state["relic_offer_ids"] = relic_offer_ids.duplicate()
-	if not shop_state.has("purchased_card_offer_ids"):
-		shop_state["purchased_card_offer_ids"] = []
-	if not shop_state.has("max_health_purchases"):
-		shop_state["max_health_purchases"] = 0
-	if not shop_state.has("free_remove_card_used"):
-		shop_state["free_remove_card_used"] = false
-	if not shop_state.has("discount_duplicate_used"):
-		shop_state["discount_duplicate_used"] = false
-	shop_state["expanded_shop_pending"] = false
-	shop_state["track_01_upgrade_cost"] = SHOP_CARD_UPGRADE_COST
-	shop_state["prices"] = _shop_prices_snapshot()
+	RunShopService.sync_shop_state(self, card_offer_ids, card_rarities, relic_offer_ids)
 
 func _shop_prices_snapshot() -> Dictionary:
-	return {
-		"heal": SHOP_HEAL_COST,
-		"remove_card": SHOP_REMOVE_CARD_COST,
-		"duplicate_card": SHOP_DUPLICATE_CARD_COST,
-		"upgrade_card": SHOP_CARD_UPGRADE_COST,
-		"buy_card_common": SHOP_BUY_COMMON_CARD_COST,
-		"buy_card_rare": SHOP_BUY_RARE_CARD_COST,
-		"buy_card_ultra_rare": SHOP_BUY_ULTRA_RARE_CARD_COST,
-		"buy_relic_common": SHOP_BUY_COMMON_RELIC_COST,
-		"buy_relic_rare": SHOP_BUY_RARE_RELIC_COST,
-		"buy_relic_ultra_rare": SHOP_BUY_ULTRA_RARE_RELIC_COST,
-		"reroll_base": SHOP_REROLL_COST_BASE,
-		"reroll_step": SHOP_REROLL_COST_STEP,
-		"max_health_first": SHOP_MAX_HEALTH_FIRST_COST,
-		"max_health_second": SHOP_MAX_HEALTH_SECOND_COST
-	}
+	return RunShopService.shop_prices_snapshot(self)
 
 func _dictionary_with_defaults(defaults: Dictionary, source: Dictionary) -> Dictionary:
 	var result: Dictionary = defaults.duplicate(true)

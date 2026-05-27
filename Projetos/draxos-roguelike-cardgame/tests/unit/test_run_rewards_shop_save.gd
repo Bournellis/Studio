@@ -1,6 +1,7 @@
 ﻿extends "res://tests/unit/draxos_test_base.gd"
 
 const RunRewardServiceScript = preload("res://core/run_reward_service.gd")
+const RunShopServiceScript = preload("res://core/run_shop_service.gd")
 
 func test_run_session_tracks_hand_limit_reward() -> void:
 	var result: Dictionary = RunSession.start_class_run("arcano", 77)
@@ -66,6 +67,26 @@ func test_run_reward_service_matches_run_session_reward_wrappers() -> void:
 	var service_result: Dictionary = RunRewardServiceScript.apply_reward_choice(RunSession, selected_id)
 	assert_true(bool(service_result.get("ok", false)), str(service_result.get("message", "")))
 	assert_false(RunSession.has_pending_reward())
+
+func test_run_shop_service_matches_run_session_shop_wrappers() -> void:
+	var result: Dictionary = RunSession.start_class_run("arcano", 20260518)
+	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
+	RunSession.soul_total = 220
+	RunSession.record_battle_result("n01_tutorial_primeiro_contato", "vitoria", 12)
+	assert_eq(RunShopServiceScript.shop_upgrade_choices(RunSession), RunSession.shop_upgrade_choices())
+	assert_eq(RunShopServiceScript.shop_card_choices(RunSession), RunSession.shop_card_choices())
+	assert_eq(RunShopServiceScript.shop_relic_choices(RunSession), RunSession.shop_relic_choices())
+	assert_eq(RunShopServiceScript.shop_remove_card_choices(RunSession), RunSession.shop_remove_card_choices())
+	assert_eq(RunShopServiceScript.shop_duplicate_card_choices(RunSession), RunSession.shop_duplicate_card_choices())
+	var card_choices: Array[Dictionary] = RunSession.shop_card_choices()
+	var selected_card_id: String = str(card_choices[0].get("card_id", ""))
+	var before_souls: int = RunSession.soul_total
+	var before_count: int = RunSession.current_deck_ids.count(selected_card_id)
+	var card_result: Dictionary = RunShopServiceScript.buy_shop_card(RunSession, selected_card_id)
+	assert_true(bool(card_result.get("ok", false)), str(card_result.get("message", "")))
+	assert_eq(RunSession.current_deck_ids.count(selected_card_id), before_count + 1)
+	assert_lt(RunSession.soul_total, before_souls)
+	assert_false(RunSession.can_buy_shop_card(selected_card_id))
 
 func test_necromancer_passive_reward_unlocks_active_then_upgrade() -> void:
 	var result: Dictionary = RunSession.start_class_run("necromante", 77)
