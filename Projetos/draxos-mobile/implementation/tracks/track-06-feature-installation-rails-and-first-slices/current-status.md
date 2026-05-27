@@ -3,8 +3,8 @@
 - Last Updated: `2026-05-27`
 - Status: `ACTIVE_FEATURE_INSTALLATION`
 - Depends On: `T05_INTEGRATED_FOUNDATION_READY`
-- Current Stage: `T06_B_READY_FOR_HANDOFF`
-- Next Action: merge T06-B feature rails, continue T06-C runtime config, then let T06-D to T06-H implement from the registry checklist.
+- Current Stage: `T06_G_READY_FOR_INTEGRATION`
+- Next Action: continue remaining T06-C/T06-D/T06-E/T06-F/T06-H slices and let T06-I integrate all ready feature branches.
 
 ## Estado
 
@@ -20,7 +20,7 @@ The track deliberately prioritizes solid installation rails and small visible fe
 4. `T06-D` Perfil/Conta: pending after T06-B merge; must fill feature card before runtime.
 5. `T06-E` Battle History: pending after T06-B merge; must fill feature card before runtime.
 6. `T06-F` Base Routine: pending after T06-B merge; must fill feature card before runtime.
-7. `T06-G` Social QoL: pending after T06-B merge; must fill feature card before runtime.
+7. `T06-G` Social QoL: ready for integration; improves Social readability, empty states, refresh/polling clarity and current message formatting without endpoint/schema changes.
 8. `T06-H` Asset Pack 01: pending after T06-B merge; must fill feature card before runtime.
 9. `T06-I` Integracao: blocked until T06-C to T06-H are delivered.
 
@@ -32,6 +32,10 @@ The track deliberately prioritizes solid installation rails and small visible fe
 - Do not publish builds or mutate remote release state.
 - Do not put secrets or service role data in client/export or runtime config.
 - Keep missing art allowed.
+
+## T06-G Delivery Note
+
+Branch `codex/draxos-mobile/t06-social-qol` keeps Social QoL client-only. It updates the render-only Social presenter, focused GUT coverage and `smoke_foundation_surfaces.gd` assertions for current chat messages, guild members and structures. No new endpoint, schema, realtime, moderation, ranking behavior, backend mutation or Progression Lab leaderboard behavior was added.
 
 ## Validation Baseline
 

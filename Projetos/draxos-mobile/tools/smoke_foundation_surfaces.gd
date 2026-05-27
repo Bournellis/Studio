@@ -114,16 +114,27 @@ func _check_social(client: Node, store: Node) -> int:
 		return _fail(guild_result, "guild")
 	if _as_dictionary(store.social_state.get("guild", {})).is_empty():
 		return _fail_local("social", "GUILD_MISSING", "Guild creation must return the updated social state.")
+	if Array(store.social_state.get("guild_members", [])).is_empty():
+		return _fail_local("social", "GUILD_MEMBERS_MISSING", "Guild state must expose members for Social readability.")
+	if Array(store.social_state.get("guild_structures", [])).is_empty():
+		return _fail_local("social", "GUILD_STRUCTURES_MISSING", "Guild state must expose structures for Social readability.")
 
+	var message_text := "Foundation surfaces smoke ativo."
 	var chat_result: Dictionary = await client.send_guild_chat(
 		SessionStoreScript.create_request_id(),
-		"Foundation surfaces smoke ativo.",
+		message_text,
 		store.access_token
 	)
 	if not bool(chat_result.get("ok", false)) or not store.apply_social_result(chat_result):
 		return _fail(chat_result, "chat")
-	if Array(store.social_state.get("guild_chat", [])).is_empty():
+	var messages := Array(store.social_state.get("guild_chat", []))
+	if messages.is_empty():
 		return _fail_local("social", "GUILD_CHAT_MISSING", "Guild chat mutation must return recent chat.")
+	var current_message := _as_dictionary(messages[0])
+	if str(current_message.get("content", "")) != message_text:
+		return _fail_local("social", "GUILD_CHAT_STALE", "Guild chat polling must return the current message first.")
+	if str(current_message.get("sender_username", "")).strip_edges() == "":
+		return _fail_local("social", "GUILD_CHAT_SENDER_MISSING", "Guild chat must expose a readable sender username.")
 	return 0
 
 func _check_competition(client: Node, store: Node) -> int:

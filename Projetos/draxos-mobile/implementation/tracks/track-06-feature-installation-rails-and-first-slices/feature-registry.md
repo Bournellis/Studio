@@ -109,7 +109,7 @@ Rollback deve ser simples e local:
 | `PROFILE_ACCOUNT_PANEL` | `T06-D Perfil/Conta` | Hub account/session | `PLANNED` | existing `GET /account/state` | `save-scoped` existing read | profile/session smoke | profile/presenter GUT |
 | `BATTLE_HISTORY_REPLAY` | `T06-E Battle History` | Battle tab | `PLANNED` | new `GET /battle/history`, new `GET /battle/replay?battle_id=...` | `save-scoped` read-only | battle history/replay smoke and `smoke_battle_replay.gd` | battle history/replay presenter GUT |
 | `BASE_ROUTINE_PANEL` | `T06-F Base Routine` | Base tab | `PLANNED` | existing `GET /base/state` | `save-scoped` existing read | `smoke_foundation_surfaces.gd` Base coverage | Base routine/presenter GUT |
-| `SOCIAL_QOL_READABILITY` | `T06-G Social QoL` | Social tab | `PLANNED` | existing `GET /social/state` and current social actions | `account-scoped` existing behavior | `smoke_foundation_surfaces.gd` Social coverage | Social readability/presenter GUT |
+| `SOCIAL_QOL_READABILITY` | `T06-G Social QoL` | Social tab | `READY_FOR_INTEGRATION` | existing `GET /social/state` and current social actions | `account-scoped` existing behavior | `smoke_foundation_surfaces.gd` Social coverage passed | Social readability/presenter GUT passed |
 | `ASSET_PACK_01_SAFE` | `T06-H Asset Pack 01` | shared UI/battle visuals | `PLANNED` | none | none | visual/export smoke if hooks change | AssetIds/fallback GUT |
 
 ## Feature Cards
@@ -208,19 +208,19 @@ Rollback deve ser simples e local:
 
 - Owner: `T06-G Social QoL`
 - Surface: Social tab
-- Status: `PLANNED`
+- Status: `READY_FOR_INTEGRATION`
 - Endpoints affected: existing `GET /social/state` and current social actions only
 - Service scope: `account-scoped` existing behavior
 - Service contract notes: no endpoint change expected; preserves polling/chat/ranking boundaries and current account identity rules.
-- Client files: Social readability/presenter files to be declared by T06-G.
-- Backend files: none expected unless a blocker is documented.
-- Smoke required: `smoke_foundation_surfaces.gd` Social coverage.
-- GUT required: Social readability/presenter GUT.
-- Other validation: `validate.gd`, GUT client, `git diff --check`.
+- Client files: `modes/boot/surfaces/social_surface_presenter.gd`, `tests/client/test_boot_mobile_ui.gd`, `tools/smoke_foundation_surfaces.gd`.
+- Backend files: none.
+- Smoke required: `smoke_foundation_surfaces.gd` Social coverage passed in T06-G.
+- GUT required: Social readability/presenter GUT passed through `tests/client/test_boot_mobile_ui.gd`.
+- Other validation: `validate.gd`, GUT client complete and `git diff --check` passed in T06-G.
 - Fallback: clear empty states for no friends, no guild, no messages and offline refresh failure.
 - Rollback: remove readability UI changes and keep existing social actions.
 - Guardrail notes: no realtime, moderation, schema, endpoint expansion, ranking change or Lab leaderboard leakage.
-- Handoff notes: T06-I should check empty states and current message readability.
+- Handoff notes: T06-I should review the new refresh/polling panel, empty states and current message formatting while preserving the existing Social endpoint/action flow.
 
 ### `ASSET_PACK_01_SAFE`
 
