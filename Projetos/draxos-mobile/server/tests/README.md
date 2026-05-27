@@ -77,6 +77,12 @@ O smoke `release_manifest_smoke.ts` valida `GET /release/manifest`: schema do
 manifest de update, canal `internal_alpha`, versao/code atuais e metadados de
 artefatos Android/PC/Web.
 
+O smoke `release_artifacts_remote_smoke.ts` valida somente leitura contra o
+remoto publicado: manifest, hashes Android/PC no payload, alcance do APK/ZIP
+via `HEAD` ou `GET` parcial, Portal com `DraxosMobile` e Web HTML com
+`GODOT_CONFIG`. Ele exige URL remota e publishable key, recusa URL
+local/service role e nao publica nada.
+
 Validacao standalone de Edge Functions pode usar `npx deno`. Validacao de
 runtime Supabase depende de Docker e Supabase CLI no ambiente local.
 
@@ -96,3 +102,11 @@ Use `DRAXOS_REMOTE_ANON_AUTH_SMOKE=1` para incluir Auth anonimo,
 `DRAXOS_REMOTE_EMAIL_AUTH_SMOKE=1` para validar email/senha, `account/bootstrap`
 e os dois saves da conta alpha. Use `DRAXOS_REMOTE_RELEASE_SMOKE=1` para validar
 tambem o manifest remoto de updates.
+
+Para validar links ja publicados sem redeploy:
+
+```powershell
+$env:SUPABASE_URL='https://<project-ref>.supabase.co'
+$env:SUPABASE_PUBLISHABLE_KEY='sb_publishable_<public-key>'
+npx -y deno run --allow-net --allow-env server/tests/release_artifacts_remote_smoke.ts
+```

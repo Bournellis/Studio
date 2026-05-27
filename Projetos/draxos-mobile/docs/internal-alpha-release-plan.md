@@ -182,6 +182,8 @@ Forma preferida para secrets:
 
 ## Gates De Release
 
+Checklist operacional Track 05: `release-ops-checklist.md`.
+
 Antes de publicar:
 
 - `git status --short` limpo;

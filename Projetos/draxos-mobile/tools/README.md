@@ -58,6 +58,8 @@ cd D:\Estudio\Projetos\draxos-mobile
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build_cloudflare_pages_package.ps1 -ProjectDir .
 ```
 
+Checklist operacional antes de qualquer publicacao nova: `docs/release-ops-checklist.md`.
+
 Publique `build/internal-alpha/cloudflare-pages/` ou `build/internal-alpha/draxos-mobile-cloudflare-pages.zip` no Cloudflare Pages. Depois rode:
 
 ```powershell
