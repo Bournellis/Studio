@@ -28,7 +28,7 @@ Host estatico para Portal/Web: `internal-alpha-static-hosting.md`.
 - `server/tests/email_auth_alpha_smoke.ts` valida localmente signup/login email/senha e `/account/bootstrap`.
 - `docs/supabase-remote-tutorial.md` descreve a configuracao manual, os comandos e exatamente quais valores enviar.
 - `portal/internal-alpha/` contem a base do portal unlisted para distribuir Web/APK/PC quando as builds forem exportadas.
-- Portal/Web precisam de host estatico externo; Supabase Storage/Edge Functions nao servem HTML como pagina.
+- Portal/Web rodam no Cloudflare Pages; Supabase Storage/Edge Functions nao servem HTML como pagina.
 
 ## Projeto Remoto Observado
 
@@ -40,7 +40,7 @@ Host estatico para Portal/Web: `internal-alpha-static-hosting.md`.
 - Regiao: `West US (Oregon)`.
 - Status no dashboard: `Healthy`.
 
-Estado operacional: o dashboard mostrou o projeto saudavel e, em 2026-05-27, o bootstrap remoto aplicou as migrations, publicou as Edge Functions, atualizou config de Auth, validou o fluxo email/senha, publicou o manifest de updates, exportou artefatos locais em `T03-P16` e publicou APK/PC ZIP em `T03-P17`. Portal/Web aguardam host estatico externo antes do signoff completo.
+Estado operacional: o dashboard mostrou o projeto saudavel e, em 2026-05-27, o bootstrap remoto aplicou as migrations, publicou as Edge Functions, atualizou config de Auth, validou o fluxo email/senha, publicou o manifest de updates, exportou artefatos locais em `T03-P16`, publicou APK/PC ZIP em Supabase Storage e publicou Portal/Web no Cloudflare Pages em `T03-P17`. Falta signoff humano completo.
 
 ## Resultado T03-P13
 
@@ -83,15 +83,15 @@ Estado operacional: o dashboard mostrou o projeto saudavel e, em 2026-05-27, o b
 - Bucket publico unlisted `draxos-internal-alpha` criado por migration `202605270002_internal_alpha_storage.sql`.
 - APK/PC ZIP publicados em `internal-alpha/v0/downloads`.
 - Web build e portal foram gerados, mas nao devem ser compartilhados por link direto do Storage porque HTML e retornado como texto puro.
-- Portal/Web aguardam host estatico externo.
+- Portal/Web publicados no Cloudflare Pages.
 - Manifest remoto reconfigurado pelo default versionado da Edge Function `release`; override por secret fica opt-in com `RELEASE_MANIFEST_OVERRIDE_ENABLED=1`.
 - Relatorio versionado: `internal-alpha-v0-publication-report.md`.
 - Metadata local ignorada: `build/internal-alpha/publication-report.json`.
 
 Links de teste:
 
-- Portal: pendente de host estatico externo.
-- Web: pendente de host estatico externo.
+- Portal: `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`.
+- Web: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`.
 - Android APK: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.apk`
 - PC ZIP: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.zip`
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
@@ -216,7 +216,7 @@ Supabase Storage pode hospedar manifest e artefatos pequenos, mas o limite do pl
 - Manifest remoto de updates e version gate implementados.
 - Builds locais Android, PC e Web exportadas.
 - APK/PC publicados em links unlisted.
-- Portal/Web pendentes de host estatico externo.
+- Portal/Web publicados no Cloudflare Pages.
 - Manifest remoto aponta para URLs/hashes finais.
 - QA remoto automatizado verde.
 - Proximo: Fabio + tester fazem signoff manual em pelo menos duas plataformas e registram bugs antes de `T03-P18`.

@@ -9,11 +9,11 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
   minimum_supported_version_code: 1,
   released_at: "2026-05-27T00:00:00Z",
   requires_save_reset: false,
-  portal_url: "",
+  portal_url: "https://draxos-mobile-internal-alpha.pages.dev/portal/index.html",
   notes: [
     "Primeira release candidate interna.",
     "APK Android e PC ZIP compartilham o mesmo backend remoto.",
-    "Portal/Web precisam de host estatico externo; Supabase Storage/Edge Functions nao servem HTML como pagina.",
+    "Portal/Web rodam no Cloudflare Pages; downloads e assets grandes continuam no Supabase Storage.",
     "Progression Lab usa save separado e nao pontua ranking.",
   ],
   artifacts: {
@@ -31,13 +31,13 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
     },
     web: {
       label: "Web",
-      url: "",
+      url: "https://draxos-mobile-internal-alpha.pages.dev/web/index.html",
     },
   },
   known_issues: [
     "Layout Android paisagem ainda precisa de ergonomia real no aparelho.",
     "APK desta publicacao usa debug_fallback enquanto a keystore release dedicada nao estiver configurada.",
-    "Link Web/Portal aguarda publicacao em host estatico externo.",
+    "Web usa hospedagem hibrida Cloudflare Pages + Supabase Storage e deve ser validada no navegador desktop antes do signoff.",
   ],
 };
 

@@ -38,7 +38,7 @@ Decisao operacional de 2026-05-26:
 
 Esta ordem nao remove a decisao de usar Supabase no alpha. Ela apenas adia remoto, build e distribuicao para reduzir friccao enquanto a implementacao ainda muda muito.
 
-Atualizacao de 2026-05-27: `T03-P13` concluiu o bootstrap Supabase remoto, `T03-P14` concluiu auth email/senha + alpha gate, `T03-P15` concluiu manifest remoto + version gate no cliente, `T03-P16` exportou Android/PC/Web localmente e `T03-P17` publicou APK/PC ZIP em links unlisted com QA remoto automatizado verde. Portal/Web aguardam host estatico externo porque Supabase nao serve HTML como pagina. A proxima sequencia esta documentada em `internal-alpha-release-plan.md`: publicar Portal/Web, signoff manual Fabio + tester e `T03-P18` handoff.
+Atualizacao de 2026-05-27: `T03-P13` concluiu o bootstrap Supabase remoto, `T03-P14` concluiu auth email/senha + alpha gate, `T03-P15` concluiu manifest remoto + version gate no cliente, `T03-P16` exportou Android/PC/Web localmente e `T03-P17` publicou APK/PC ZIP em links unlisted, Portal/Web no Cloudflare Pages e manifest remoto com links finais. QA remoto automatizado esta verde. A proxima sequencia esta documentada em `internal-alpha-release-plan.md`: signoff manual Fabio + tester e `T03-P18` handoff.
 
 ## Modelo De Conta E Save
 
@@ -131,8 +131,8 @@ Distribuicao escolhida para Internal Alpha v0:
 
 - Android: APK direto por link.
 - PC Windows: zip direto por link.
-- Web: build PC browser exportada; publicacao final aguarda host estatico externo.
-- Portal: pagina estatica simples em `portal/internal-alpha/`, considerada suficiente por enquanto; refinamento visual fica para depois de `T03-P18` e publicacao final aguarda host estatico externo.
+- Web: build PC browser exportada e publicada em `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`.
+- Portal: pagina estatica simples em `portal/internal-alpha/`, considerada suficiente por enquanto e publicada em `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`; refinamento visual fica para depois de `T03-P18`.
 - Updates: app consulta manifest e mostra aviso/link de download; quando `minimum_supported_version` subir, acoes online ficam bloqueadas ate atualizar.
 
 Manifest remoto atual em `GET /release/manifest`:
@@ -176,10 +176,10 @@ Status de export (`T03-P16`):
 Status de publicacao (`T03-P17`):
 
 - APK/PC ZIP publicados no bucket `draxos-internal-alpha`.
-- Portal/Web gerados, mas aguardam host estatico externo porque Supabase Storage/Edge Functions nao servem HTML como pagina.
+- Portal/Web publicados no Cloudflare Pages porque Supabase Storage/Edge Functions nao servem HTML como pagina.
 - Manifest remoto reconfigurado com URLs/hashes reais no default versionado da Edge Function `release`.
 - Relatorio: `internal-alpha-v0-publication-report.md`.
-- Falta publicar Portal/Web em host estatico externo e fazer signoff manual Fabio + 1 tester antes de `T03-P18`.
+- Falta fazer signoff manual Fabio + 1 tester antes de `T03-P18`.
 
 Politica:
 

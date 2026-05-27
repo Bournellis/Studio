@@ -39,6 +39,10 @@ assertEq(
 
 const artifacts = objectField(manifest, "artifacts");
 assert(
+  stringField(manifest, "portal_url").startsWith("https://"),
+  "manifest should include the published portal URL",
+);
+assert(
   isObject(artifacts.android),
   "manifest should include Android artifact metadata",
 );
@@ -49,6 +53,10 @@ assert(
 assert(
   isObject(artifacts.web),
   "manifest should include Web artifact metadata",
+);
+assert(
+  stringField(objectField(artifacts, "web"), "url").startsWith("https://"),
+  "manifest should include the published Web URL",
 );
 
 console.log("[release-manifest-smoke] OK", {

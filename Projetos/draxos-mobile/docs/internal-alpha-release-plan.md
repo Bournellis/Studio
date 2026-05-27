@@ -122,20 +122,20 @@ Observacao Android: como nenhuma keystore release foi configurada em ambiente lo
 
 ### T03-P17 - Publicacao Unlisted E QA Remoto Fechado
 
-Status: `DOWNLOADS_GREEN - AUTOMATED_REMOTE_QA_GREEN - PORTAL_WEB_STATIC_HOST_PENDING`.
+Status: `DOWNLOADS_GREEN - PORTAL_WEB_GREEN - AUTOMATED_REMOTE_QA_GREEN - MANUAL_SIGNOFF_PENDING`.
 
 Saida entregue em 2026-05-27:
 
 - APK e PC ZIP publicados em URL unlisted via Supabase Storage;
-- portal/Web gerados, mas aguardando host estatico externo;
+- Portal/Web publicados no Cloudflare Pages em `https://draxos-mobile-internal-alpha.pages.dev`;
 - APK e PC ZIP disponiveis por link publico unlisted;
-- manifest remoto reconfigurado com hashes finais de Android/PC no default versionado da Edge Function `release`;
+- manifest remoto reconfigurado com hashes finais de Android/PC e links finais de Portal/Web;
 - QA remoto automatizado verde para release manifest, email/senha, dois saves, batalha, base, loja, social, competicao e telemetria;
-- signoff manual Fabio + tester ainda pendente antes de `T03-P18`, bloqueado pelo host estatico de Portal/Web.
+- signoff manual Fabio + tester ainda pendente antes de `T03-P18`.
 
 Correcao pos-publicacao: links diretos de Storage para HTML/Web nao devem ser usados como link final, porque a Supabase retorna HTML como `text/plain` com CSP sandbox. Edge Functions tambem nao servem HTML como pagina. O caminho correto e publicar `build/internal-alpha/publish/` em host estatico externo e depois rodar `publish_internal_alpha.ps1 -StaticSiteBaseUrl <url> -SkipUpload -UseManifestSecret`.
 
-Correcao Cloudflare Pages: nao publicar `build/internal-alpha/publish/` inteira no Cloudflare, porque `web/index.wasm` ultrapassa o limite por arquivo do Pages. Gerar o pacote hibrido com `tools/build_cloudflare_pages_package.ps1` e publicar `build/internal-alpha/cloudflare-pages/` ou `build/internal-alpha/draxos-mobile-cloudflare-pages.zip`; esse pacote serve Portal/Web HTML pelo Cloudflare e continua buscando assets grandes no Supabase Storage.
+Correcao Cloudflare Pages: nao publicar `build/internal-alpha/publish/` inteira no Cloudflare, porque `web/index.wasm` ultrapassa o limite por arquivo do Pages. Gerar o pacote hibrido com `tools/build_cloudflare_pages_package.ps1` e publicar `build/internal-alpha/cloudflare-pages/` ou `build/internal-alpha/draxos-mobile-cloudflare-pages.zip`; esse pacote serve Portal/Web HTML pelo Cloudflare e continua buscando assets grandes no Supabase Storage. O deployment final validado usa o dominio estavel `https://draxos-mobile-internal-alpha.pages.dev`.
 
 ### T03-P18 - Handoff Da Internal Alpha v0
 

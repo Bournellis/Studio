@@ -1,7 +1,7 @@
 # Track 03 - Internal Alpha v0 - Current Status
 
 - Last Updated: `2026-05-27`
-- Status: `T03-P17_DOWNLOADS_GREEN - AUTOMATED_REMOTE_QA_GREEN - PORTAL_WEB_STATIC_HOST_PENDING`
+- Status: `T03-P17_DOWNLOADS_GREEN - PORTAL_WEB_GREEN - AUTOMATED_REMOTE_QA_GREEN - MANUAL_SIGNOFF_PENDING`
 - Baseline: Track 00 completa, Track 01 completa e Track 02 com Progression Lab/Battle Lab v1 implementados. O projeto ja possui Godot 4.6.2, Supabase local, conta guest, batalha server-authoritative, Base/Social/Competicao/Monetizacao v0, telemetria client nao autoritativa, exports Android/PC/Web, Battle Visual Mockup compartilhado e laboratorios internos. A Track 03 prepara a transicao para uma build fechada realista com email/senha, dois saves por conta, backend remoto, updates e playtest de 2 usuarios.
 
 ## Implementado Nesta Preparacao
@@ -16,7 +16,7 @@
 - Follow-ups de loja/social fechados: redeems entregam apenas Diamante, resetam a meia-noite `America/Sao_Paulo`, amigos usam username e usuarios no Lab aparecem com marcador vermelho `lab`.
 - Estrategia backend registrada: Supabase para Internal Alpha v0, Backend Proprio + Postgres como plano de saida preferido e Nakama como alternativa futura apenas se realtime/social competitivo virar pilar.
 - `T03-P02` preparado do lado do repo: `BackendConfig` no Godot, ambiente `internal_alpha_v0`, env vars seguras, `.env` reais ignorados, `.env.internal-alpha.example`, runbook remoto e smoke Deno remoto sem service role.
-- Ordem local-first aprovada em 2026-05-26 e ja cumprida para release prep: o jogo foi implementado/validado no Godot/Supabase local primeiro; Supabase remoto foi inicializado em `T03-P13`; auth email/senha foi fechado em `T03-P14`; manifest de updates foi fechado em `T03-P15`; exports Android/PC/Web foram fechados em `T03-P16`; backend/downloads e QA remoto automatizado foram fechados em `T03-P17`; Portal/Web aguardam host estatico externo antes do signoff manual e handoff.
+- Ordem local-first aprovada em 2026-05-26 e ja cumprida para release prep: o jogo foi implementado/validado no Godot/Supabase local primeiro; Supabase remoto foi inicializado em `T03-P13`; auth email/senha foi fechado em `T03-P14`; manifest de updates foi fechado em `T03-P15`; exports Android/PC/Web foram fechados em `T03-P16`; backend/downloads, Portal/Web e QA remoto automatizado foram fechados em `T03-P17`; falta signoff manual antes do handoff.
 - `T03-P03A` completo: `SessionStore` possui save ativo `normal`/`progression_lab`, persiste no cache, limpa snapshots ao alternar contexto, marca snapshots local-only do Progression Lab como Lab, `SupabaseClient` prepara header `x-draxos-save-type` e o Hub mostra/troca save ativo com bloqueio claro quando o Lab esta em cache local-only.
 - `T03-P03B` completo: schema local ganhou `players.save_type`, unicidade por `auth_user_id + save_type`, RPCs `create_guest_account`/`request_mvp_battle` recebem save, Edge Functions resolvem `x-draxos-save-type` para `account`, `battle`, `base`, `social`, `competition`, `monetization` e `telemetry`, o Hub libera acoes server-backed no Lab, e o save `progression_lab` fica isolado do normal e fora do ranking com motivo explicito.
 - `T03-P03C` completo: `POST /account/saves/reset` e RPC `reset_player_save` reconstroem apenas o save ativo, preservam o outro save da mesma sessao Auth, limpam snapshots client-side do save resetado, mantem idempotencia por `request_id` e expoem botao perigoso "Resetar save ativo" no Hub.
@@ -32,13 +32,12 @@
 - `T03-P14` completo: cliente Godot recebeu fluxo de conta alpha com email/senha, username e convite; guest ficou como ferramenta dev; `SessionStore` persiste metodo/email/username/request id alpha; `SupabaseClient` suporta signup/login password e `/account/bootstrap`; schema/Edge Function adicionaram `create_alpha_account` para contas registradas e saves `normal`/`progression_lab`; Auth remoto foi alinhado com confirmacao de email desligada; smokes local/remoto de email/senha passaram.
 - `T03-P15` completo: `ProjectInfo` define versao/canal/schema do manifest, `BackendConfig`/`SupabaseClient` resolvem URL de manifest, Hub checa update no boot e bloqueia acoes online quando `minimum_supported_version_code` exige, `GET /release/manifest` foi implementado/local/remoto sem JWT obrigatorio e smokes local/remoto passaram.
 - `T03-P16` completo: presets Android/PC/Web foram corrigidos para export real, Android recebeu ETC2/ASTC, icone placeholder e permissoes de rede, `tools/export_internal_alpha.ps1` injeta config publica do Supabase apenas durante o build, gera APK/PC ZIP/Web e registra hashes em `docs/internal-alpha-v0-export-report.md`.
-- `T03-P17` publicacao tecnica completa para backend/downloads: migration `202605270002_internal_alpha_storage.sql` criou bucket publico unlisted `draxos-internal-alpha`, `tools/publish_internal_alpha.ps1` publicou APK/PC ZIP, `release/manifest` usa default versionado para Android/PC e QA remoto automatizado passou.
-- Correcao pos-publicacao: Supabase Storage retorna HTML como `text/plain` e Edge Functions tambem nao servem `text/html`; Portal/Web aguardam host estatico externo. APK/PC ZIP continuam por Storage.
-- Correcao Cloudflare Pages: `tools/build_cloudflare_pages_package.ps1` gera pacote hibrido para publicar apenas Portal/Web HTML no Cloudflare e manter assets grandes do Web export no Supabase Storage, evitando o limite por arquivo do Pages.
+- `T03-P17` publicacao tecnica completa: migration `202605270002_internal_alpha_storage.sql` criou bucket publico unlisted `draxos-internal-alpha`, `tools/publish_internal_alpha.ps1` publicou APK/PC ZIP, `tools/build_cloudflare_pages_package.ps1` gerou pacote hibrido Cloudflare Pages, Portal/Web foram publicados em `https://draxos-mobile-internal-alpha.pages.dev`, `release/manifest` recebeu links finais e QA remoto automatizado passou.
+- Correcao pos-publicacao: Supabase Storage retorna HTML como `text/plain` e Edge Functions tambem nao servem `text/html`; APK/PC ZIP e assets grandes continuam por Storage, enquanto Portal/Web HTML ficam no Cloudflare Pages.
+- Correcao Cloudflare Pages: o pacote hibrido publica Portal em `/`, Web em `/web`, mantem redirects de `/portal/index.html` e `/web/index.html`, e evita o limite por arquivo do Pages.
 
 ## Ainda Nao Implementado
 
-- Publicar o pacote Cloudflare Pages de Portal/Web em host estatico externo e atualizar manifest com a URL final.
 - Signoff manual de `T03-P17`: Fabio + 1 tester validam duas plataformas e registram bugs.
 - `T03-P18`: handoff final da Internal Alpha v0.
 
@@ -57,7 +56,7 @@
 
 ## Proximo Passo
 
-Escolher/publicar host estatico externo para Portal/Web, atualizar manifest com a URL final e entao executar signoff manual de `T03-P17`: Fabio + 1 tester usam os links publicados, validam pelo menos duas plataformas, confirmam save cross-platform, loop normal, Progression Lab isolado e update notice. Depois seguir `T03-P18 - Handoff Da Internal Alpha v0`.
+Executar signoff manual de `T03-P17`: Fabio + 1 tester usam os links publicados, validam pelo menos duas plataformas, confirmam save cross-platform, loop normal, Progression Lab isolado e update notice. Depois seguir `T03-P18 - Handoff Da Internal Alpha v0`.
 
 ## Validacao Da Preparacao
 

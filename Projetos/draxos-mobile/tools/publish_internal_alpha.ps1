@@ -227,7 +227,7 @@ $manifest = [ordered]@{
     notes = @(
         "Primeira release candidate interna.",
         "APK Android e PC ZIP compartilham o mesmo backend remoto.",
-        "Portal/Web precisam de host estatico externo; Supabase Storage/Edge Functions nao servem HTML como pagina.",
+        "Portal/Web rodam no Cloudflare Pages; downloads e assets grandes continuam no Supabase Storage.",
         "Progression Lab usa save separado e nao pontua ranking."
     )
     artifacts = [ordered]@{
@@ -249,7 +249,7 @@ $manifest = [ordered]@{
     known_issues = @(
         "Layout Android paisagem ainda precisa de ergonomia real no aparelho.",
         "APK desta publicacao usa debug_fallback enquanto a keystore release dedicada nao estiver configurada.",
-        "Link Web/Portal aguarda publicacao em host estatico externo."
+        "Web usa hospedagem hibrida Cloudflare Pages + Supabase Storage e deve ser validada no navegador desktop antes do signoff."
     )
 }
 

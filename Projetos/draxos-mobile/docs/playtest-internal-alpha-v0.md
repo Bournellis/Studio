@@ -9,7 +9,7 @@
 
 - O roteiro abaixo continua sendo o alvo da build fechada real com remoto/builds.
 - A cobertura automatizada local ja validou batalha, Base, Social, Competicao, Loja, Progression Lab, dois saves, reset separado, telemetria e presets de export.
-- A passada manual inicial de Fabio nao apontou bloqueios graves; Supabase remoto, email/senha, manifest/version gate, exports locais, downloads e QA remoto automatizado ja passaram em `T03-P13` a `T03-P17`. Portal/Web aguardam host estatico externo antes da proxima validacao real e do signoff manual Fabio + 1 tester usando os links publicados.
+- A passada manual inicial de Fabio nao apontou bloqueios graves; Supabase remoto, email/senha, manifest/version gate, exports locais, downloads, Portal/Web no Cloudflare Pages e QA remoto automatizado ja passaram em `T03-P13` a `T03-P17`. Falta signoff manual Fabio + 1 tester usando os links publicados.
 
 ## Pre-Flight
 
