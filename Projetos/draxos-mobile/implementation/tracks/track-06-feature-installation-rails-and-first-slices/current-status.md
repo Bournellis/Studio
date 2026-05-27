@@ -3,8 +3,8 @@
 - Last Updated: `2026-05-27`
 - Status: `ACTIVE_FEATURE_INSTALLATION`
 - Depends On: `T05_INTEGRATED_FOUNDATION_READY`
-- Current Stage: `T06_B_READY_FOR_HANDOFF`
-- Next Action: merge T06-B feature rails, continue T06-C runtime config, then let T06-D to T06-H implement from the registry checklist.
+- Current Stage: `T06_H_READY_FOR_INTEGRATION`
+- Next Action: integrate T06-C to T06-H in T06-I after parallel feature branches are ready; Asset Pack 01 is ready for integration with fallback validation.
 
 ## Estado
 
@@ -21,7 +21,7 @@ The track deliberately prioritizes solid installation rails and small visible fe
 5. `T06-E` Battle History: pending after T06-B merge; must fill feature card before runtime.
 6. `T06-F` Base Routine: pending after T06-B merge; must fill feature card before runtime.
 7. `T06-G` Social QoL: pending after T06-B merge; must fill feature card before runtime.
-8. `T06-H` Asset Pack 01: pending after T06-B merge; must fill feature card before runtime.
+8. `T06-H` Asset Pack 01: ready for integration; installs lightweight PNGs for selected UI, portrait and battle icon ids with native fallback still valid.
 9. `T06-I` Integracao: blocked until T06-C to T06-H are delivered.
 
 ## Guardrails
@@ -32,6 +32,16 @@ The track deliberately prioritizes solid installation rails and small visible fe
 - Do not publish builds or mutate remote release state.
 - Do not put secrets or service role data in client/export or runtime config.
 - Keep missing art allowed.
+
+## T06-H Asset Pack 01 Update
+
+`ASSET_PACK_01_SAFE` is ready for integration. The package adds lightweight
+128x128 transparent PNGs for `icon_guest`, `icon_battle`, `icon_result`,
+`portrait_draxos_mage`, `portrait_training_bot` and the existing
+`battle_icon_*` ids. It also adds an optional `BattleSymbolIcon` texture hook for
+the battle stage; if a texture is absent, the native symbol/circle fallback stays
+active. No backend, schema, economy, tuning, remote asset or broad visual rework
+was introduced.
 
 ## Validation Baseline
 
