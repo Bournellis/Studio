@@ -51,6 +51,7 @@ func test_boot_surface_presenters_render_shells_without_network() -> void:
 
 	boot._show_screen("battle")
 	assert_true(boot._action_buttons.has("request_battle"))
+	assert_true(boot._action_buttons.has("show_battle_history"))
 	assert_true(boot._action_buttons.has("show_latest_battle"))
 	assert_not_null(boot._battle_visual)
 	await get_tree().process_frame
@@ -188,6 +189,31 @@ func test_boot_competition_presenter_preserves_lab_and_bot_ranking_messages() ->
 	assert_true(_label_tree_contains(boot._competition_state_container, "Bot de treino: sim | Entra no ranking: nao"))
 	assert_true(_label_tree_contains(boot._competition_state_container, "Progression Lab nao pontua competicao e fica fora do leaderboard."))
 	await get_tree().process_frame
+
+func test_boot_battle_presenter_renders_history_entries_without_network() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	var history_entries: Array[Dictionary] = []
+	history_entries.append({
+		"battle_id": "11111111-1111-4111-8111-111111111111",
+		"created_at": "2026-05-27T12:00:00Z",
+		"schema_version": "battle_log_v1",
+		"mode": ProjectInfo.FIRST_SLICE_MODE,
+		"duration": 12.5,
+		"event_count": 14,
+		"opponent": {"display_name": "Treinador da Primeira Ruina"},
+		"result": {"winner": "player"},
+		"rewards": {"type": "FIRST_SLICE_SIM", "resources": {"xp": 10, "almas": 0.8}},
+	})
+	boot._battle_history_entries = history_entries
+
+	boot._show_screen("battle")
+	await get_tree().process_frame
+
+	assert_true(boot._action_buttons.has("show_battle_history"))
+	assert_true(boot._action_buttons.has("battle_replay:11111111-1111-4111-8111-111111111111"))
+	assert_true(_label_tree_contains(boot._content_body, "FIRST_SLICE_SIM"))
+	assert_true(_label_tree_contains(boot._content_body, "vitoria"))
 
 func _first_action_grid(parent: Node) -> GridContainer:
 	for child: Node in parent.get_children():

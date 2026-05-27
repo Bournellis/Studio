@@ -181,6 +181,8 @@ func test_supabase_client_uses_local_contract_urls() -> void:
 	assert_eq(client.function_url("account/saves/reset"), "http://127.0.0.1:54321/functions/v1/account/saves/reset")
 	assert_eq(client.function_url("progression-lab/apply"), "http://127.0.0.1:54321/functions/v1/progression-lab/apply")
 	assert_eq(client.function_url("battle/request"), "http://127.0.0.1:54321/functions/v1/battle/request")
+	assert_eq(client.function_url("battle/history"), "http://127.0.0.1:54321/functions/v1/battle/history")
+	assert_eq(client.function_url("battle/replay"), "http://127.0.0.1:54321/functions/v1/battle/replay")
 	assert_eq(client.function_url("base/state"), "http://127.0.0.1:54321/functions/v1/base/state")
 	assert_eq(client.function_url("social/state"), "http://127.0.0.1:54321/functions/v1/social/state")
 	assert_eq(client.function_url("competition/ranking/current"), "http://127.0.0.1:54321/functions/v1/competition/ranking/current")
