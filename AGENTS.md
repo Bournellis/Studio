@@ -112,6 +112,8 @@ Nao aplique silenciosamente a mecanica de um projeto em outro. `rpg-turnos` pode
 
 Nao trate `draxos-roguelike-cardgame` como variante de `rpg-turnos`. O projeto foi bootstrapped com reuso estreito, mas possui contratos locais proprios. Qualquer regra de combate, deck, mana, compra, recompensa, hub, mapa ou pacing de `rpg-turnos` so vale em Draxos se um documento local de `draxos-roguelike-cardgame` adotar explicitamente.
 
+DraxosMobile tem visao longa local em `Projetos/draxos-mobile/docs/product-vision.md`. Ate promocao explicita ao canon compartilhado, use esse documento para pilares, anti-pilares, limites de plataforma, monetizacao, live ops e futuro nao prometido do mobile.
+
 Nao trate RPGMobile ou BattleMobile como projetos Godot oficiais ate que recebam `AGENTS.md`, `implementation/current-status.md`, entrada oficial em `Projetos/README.md` como projeto implementavel e entrada resumida em `Estado_Atual.md`.
 
 ## Godot Rule

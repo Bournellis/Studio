@@ -1,6 +1,6 @@
 # DraxosMobile - Product Brief
 
-- Ultima atualizacao: `2026-05-26`
+- Ultima atualizacao: `2026-05-27`
 
 ---
 
@@ -11,6 +11,8 @@ DraxosMobile e um jogo mobile multi-partes. O jogador e um Draxos, mago intergal
 O jogador nao e o heroi. O jogador e o vilao.
 
 Todos os modos pertencem a um unico ecossistema com conta, personagem, base e progressao conectadas.
+
+Fonte viva de visao longa: `product-vision.md`. Este brief resume o produto e o slice atual; a visao longa define pilares, anti-pilares, limites de monetizacao, live ops, backend e futuro nao prometido.
 
 ---
 
@@ -129,6 +131,7 @@ Essa direcao favorece dados relacionais, transacoes, ledger e auditoria. Por iss
 
 ## Documentos Vivos
 
+- `product-vision.md` - visao longa local, pilares, anti-pilares e limites do produto.
 - `game-design-document.md` - design autoritativo para implementacao.
 - `design-pending.md` - pendencias de design e balanceamento.
 - `contracts/` - contratos tecnicos antes das migrations/codigo.

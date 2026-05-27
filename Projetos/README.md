@@ -23,6 +23,7 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
   - Priority/status: `P2_IMPLEMENTACAO - internal alpha v0 T03-P18 complete; handoff ready`
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Operational status: `draxos-mobile/implementation/current-status.md`
+  - Product vision: `draxos-mobile/docs/product-vision.md`
   - Track 00 scope: `draxos-mobile/implementation/tracks/track-00-first-slice-foundation/scope.md`
   - Track 01 scope: `draxos-mobile/implementation/tracks/track-01-alpha-playtest-hardening/scope.md`
   - Track 02 scope: `draxos-mobile/implementation/tracks/track-02-progression-lab/scope.md`

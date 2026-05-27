@@ -49,16 +49,17 @@ Este projeto foi promovido de `Projetos/_conceitos/mobile-universe/` em 2026-05-
 Use quando afetar arquitetura, progressao, economia, modos, backend, contratos ou escopo.
 
 1. `../../canon/canon-brief.md`
-2. `docs/product-brief.md`
-3. `docs/game-design-document.md`
-4. `docs/design-pending.md`
-5. `docs/pre-implementation-decisions.md`
-6. `docs/architecture.md`
-7. `docs/contracts/`
-8. `implementation/current-status.md`
-9. `implementation/tracks/track-03-internal-alpha-v0/`
-10. este arquivo
-11. arquivos tocados
+2. `docs/product-vision.md`
+3. `docs/product-brief.md`
+4. `docs/game-design-document.md`
+5. `docs/design-pending.md`
+6. `docs/pre-implementation-decisions.md`
+7. `docs/architecture.md`
+8. `docs/contracts/`
+9. `implementation/current-status.md`
+10. `implementation/tracks/track-03-internal-alpha-v0/`
+11. este arquivo
+12. arquivos tocados
 
 ### Trabalho delimitado
 
@@ -72,6 +73,7 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 
 | Pergunta | Documento |
 |---|---|
+| Visao longa, pilares, anti-pilares e limites de produto | `docs/product-vision.md` |
 | O que e o jogo, quais plataformas, escopo do slice | `docs/product-brief.md` |
 | Como um sistema funciona | `docs/game-design-document.md` |
 | O que ainda precisa de design | `docs/design-pending.md` |
@@ -106,6 +108,7 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 ## Regra De Canon
 
 - Lore compartilhado em `../../canon/` informa o projeto.
+- `docs/product-vision.md` e a fonte viva local para visao longa de produto ate eventual promocao de partes ao canon compartilhado.
 - Nao importar mecanicas de outros projetos do estudio sem documento local adotando a regra.
 - Reuso tecnico permitido vive em `docs/reuse-map.md`; gameplay de outros projetos continua vetado por padrao.
 - Se design local conflita com lore compartilhado, lore prevalece ate o canon ser atualizado.

@@ -2,7 +2,9 @@
 
 This directory is the shared engine-neutral source of truth for established studio canon.
 
-Most current product, gameplay, progression, roadmap, and platform documents describe RPG Isometrico. Shared lore lives under `lore/`. New projects may reuse shared lore context, but they must not treat RPG Isometrico mechanics as automatic canon.
+Most current product, gameplay, progression, roadmap, and platform documents still describe RPG Isometrico. Shared lore lives under `lore/`. New projects may reuse shared lore context, but they must not treat RPG Isometrico mechanics as automatic canon.
+
+DraxosMobile has local product canon in `D:\Estudio\Projetos\draxos-mobile\docs\product-vision.md` until specific parts are promoted into this shared canon. Draxos Roguelike Cardgame also owns its local product/gameplay contracts. Do not copy RPG Isometrico product rules into these projects by default.
 
 ## Authority
 
@@ -46,8 +48,13 @@ New project-specific mechanics belong in the local project docs until they are p
 
 Engine-local operational documentation belongs in the Godot workspace:
 
+- `D:\Estudio\Projetos\draxos-roguelike-cardgame\implementation\current-status.md`
+- `D:\Estudio\Projetos\draxos-mobile\docs\product-vision.md`
+- `D:\Estudio\Projetos\draxos-mobile\implementation\current-status.md`
 - `D:\Estudio\Projetos\rpg-isometrico\implementation\current-status.md`
 - `D:\Estudio\Projetos\rpg-turnos\implementation\current-status.md`
+- active tracks under `D:\Estudio\Projetos\draxos-roguelike-cardgame\implementation\tracks\`
+- active tracks under `D:\Estudio\Projetos\draxos-mobile\implementation\tracks\`
 - the active track under `D:\Estudio\Projetos\rpg-isometrico\implementation\tracks\`
 - future active tracks under `D:\Estudio\Projetos\rpg-turnos\implementation\tracks\`
 

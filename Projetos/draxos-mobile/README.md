@@ -84,6 +84,7 @@ draxos-mobile/
 |-- docs/
 |   |-- battle-lab/
 |   |-- progression-lab/
+|   |-- product-vision.md
 |   |-- product-brief.md
 |   |-- game-design-document.md
 |   |-- design-pending.md
@@ -139,15 +140,16 @@ draxos-mobile/
 
 1. `AGENTS.md`
 2. `implementation/current-status.md`
-3. `implementation/tracks/track-03-internal-alpha-v0/current-status.md`
-4. `implementation/tracks/track-03-internal-alpha-v0/scope.md`
-5. `docs/internal-alpha-v0.md`
-6. `docs/internal-alpha-remote-setup.md`
-7. `docs/internal-alpha-release-plan.md`
-8. `docs/internal-alpha-static-hosting.md`
-9. `docs/internal-alpha-v0-export-report.md`
-10. `docs/internal-alpha-v0-publication-report.md`
-11. `docs/internal-alpha-v0-handoff.md`
-12. `docs/supabase-remote-tutorial.md`
-13. `docs/internal-alpha-v0-design-lock.md`
-14. `docs/design-pending.md`
+3. `docs/product-vision.md`
+4. `implementation/tracks/track-03-internal-alpha-v0/current-status.md`
+5. `implementation/tracks/track-03-internal-alpha-v0/scope.md`
+6. `docs/internal-alpha-v0.md`
+7. `docs/internal-alpha-remote-setup.md`
+8. `docs/internal-alpha-release-plan.md`
+9. `docs/internal-alpha-static-hosting.md`
+10. `docs/internal-alpha-v0-export-report.md`
+11. `docs/internal-alpha-v0-publication-report.md`
+12. `docs/internal-alpha-v0-handoff.md`
+13. `docs/supabase-remote-tutorial.md`
+14. `docs/internal-alpha-v0-design-lock.md`
+15. `docs/design-pending.md`

@@ -61,6 +61,8 @@ Treat DraxosMobile as:
 - backed by Supabase Auth, Postgres, Edge Functions, and eventually Realtime
 - scoped for Track 00 as MVP technical foundation first, then first slice systems
 
+Local long-term product authority lives in `Projetos/draxos-mobile/docs/product-vision.md`. Use that document for DraxosMobile pillars, anti-pillars, monetization limits, platform boundaries, live ops direction and future-not-promised items until specific parts are promoted into shared canon.
+
 Do not import rules from Draxos Roguelike Cardgame, RPG Turnos, or RPG Isometrico unless DraxosMobile local docs explicitly adopt them in `Projetos/draxos-mobile/docs/reuse-map.md` and the affected local contract.
 
 ## RPG Turnos Initial Contract
