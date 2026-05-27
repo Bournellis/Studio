@@ -606,7 +606,7 @@ func _add_action_button(text: String, action_id: String, confirm_message: String
 	_action_buttons[action_id] = button
 	return button
 
-func _add_social_input(label_text: String, placeholder: String, initial_text: String, tooltip_text: String) -> LineEdit:
+func _add_social_input(label_text: String, placeholder: String, initial_text: String, input_tooltip: String) -> LineEdit:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 4)
 	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -620,7 +620,7 @@ func _add_social_input(label_text: String, placeholder: String, initial_text: St
 	var input := LineEdit.new()
 	input.placeholder_text = placeholder
 	input.text = initial_text
-	input.tooltip_text = tooltip_text
+	input.tooltip_text = input_tooltip
 	input.custom_minimum_size = Vector2(260, 40)
 	input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	box.add_child(input)
@@ -790,7 +790,7 @@ func _reset_active_save() -> void:
 		return
 	_set_busy(true, "Resetando save %s..." % SessionStore.active_save_label())
 	var reset_result: Dictionary = await SupabaseClient.reset_active_save(
-		SessionStore.create_request_id(),
+		SessionStoreScript.create_request_id(),
 		SessionStore.access_token
 	)
 	if not bool(reset_result.get("ok", false)):
@@ -1713,8 +1713,8 @@ func _format_cost(cost: Dictionary) -> String:
 
 func _format_duration(total_seconds: int) -> String:
 	var seconds: int = max(0, total_seconds)
-	var hours := int(seconds / 3600)
-	var minutes := int((seconds % 3600) / 60)
+	var hours := int(float(seconds) / 3600.0)
+	var minutes := int(float(seconds % 3600) / 60.0)
 	var remaining_seconds: int = seconds % 60
 	if hours > 0:
 		return "%dh %02dm" % [hours, minutes]
