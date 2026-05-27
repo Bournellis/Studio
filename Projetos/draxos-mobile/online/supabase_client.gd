@@ -8,6 +8,8 @@ const DEFAULT_PUBLISHABLE_KEY := BackendConfigScript.DEFAULT_LOCAL_PUBLISHABLE_K
 const REQUEST_TIMEOUT_SECONDS := 15.0
 const SAVE_TYPE_NORMAL := "normal"
 const SAVE_TYPE_PROGRESSION_LAB := "progression_lab"
+const CLIENT_META_KEY := "_client"
+const CLIENT_SAVE_TYPE_KEY := "save_type"
 
 var supabase_url := DEFAULT_SUPABASE_URL
 var publishable_key := DEFAULT_PUBLISHABLE_KEY
@@ -47,6 +49,30 @@ func backend_summary() -> Dictionary:
 		"runtime_config_url": runtime_config_endpoint_url,
 		"configured": backend_config_errors.is_empty(),
 		"errors": backend_config_errors,
+	}
+
+func diagnostics_snapshot() -> Dictionary:
+	var summary := backend_summary()
+	return {
+		"backend": {
+			"environment": str(summary.get("environment", "")),
+			"source": str(summary.get("source", "")),
+			"supabase_url": str(summary.get("supabase_url", "")),
+			"update_manifest_url": str(summary.get("update_manifest_url", "")),
+			"runtime_config_url": str(summary.get("runtime_config_url", "")),
+			"configured": bool(summary.get("configured", false)),
+			"errors": _packed_string_array(summary.get("errors", PackedStringArray())),
+		},
+		"auth": {
+			"publishable_key_configured": publishable_key != "",
+		},
+		"save_context": save_context_snapshot(),
+	}
+
+func save_context_snapshot() -> Dictionary:
+	return {
+		"active_save_type": active_save_type,
+		"save_header": "x-draxos-save-type",
 	}
 
 func configure_save_type(save_type: String) -> void:
@@ -412,9 +438,15 @@ func _auth_headers(access_token: String) -> PackedStringArray:
 
 func _send_json(url: String, method: HTTPClient.Method, headers: PackedStringArray, body: Dictionary) -> Dictionary:
 	if not backend_config_errors.is_empty():
-		return _error("CLIENT_MISCONFIGURED", "Backend config invalid: %s" % ", ".join(backend_config_errors))
+		return _with_client_context(
+			_error("CLIENT_MISCONFIGURED", "Backend config invalid: %s" % ", ".join(backend_config_errors)),
+			headers
+		)
 	if publishable_key == "":
-		return _error("CLIENT_MISCONFIGURED", "Supabase publishable key is missing.")
+		return _with_client_context(
+			_error("CLIENT_MISCONFIGURED", "Supabase publishable key is missing."),
+			headers
+		)
 
 	var request := HTTPRequest.new()
 	request.timeout = REQUEST_TIMEOUT_SECONDS
@@ -427,7 +459,10 @@ func _send_json(url: String, method: HTTPClient.Method, headers: PackedStringArr
 	var error_code: Error = request.request(url, headers, method, request_body)
 	if error_code != OK:
 		request.queue_free()
-		return _error("REQUEST_NOT_STARTED", "HTTP request could not be started.")
+		return _with_client_context(
+			_error("REQUEST_NOT_STARTED", "HTTP request could not be started."),
+			headers
+		)
 
 	var completed: Array = await request.request_completed
 	request.queue_free()
@@ -437,7 +472,10 @@ func _send_json(url: String, method: HTTPClient.Method, headers: PackedStringArr
 	var response_body := PackedByteArray(completed[3]).get_string_from_utf8()
 
 	if result_code != HTTPRequest.RESULT_SUCCESS:
-		return _error("NETWORK_UNAVAILABLE", "Rede indisponivel ou Supabase local fora do ar.", response_code)
+		return _with_client_context(
+			_error("NETWORK_UNAVAILABLE", "Rede indisponivel ou Supabase local fora do ar.", response_code),
+			headers
+		)
 
 	var parsed: Variant = null
 	if response_body != "":
@@ -446,13 +484,16 @@ func _send_json(url: String, method: HTTPClient.Method, headers: PackedStringArr
 	if parsed == null:
 		parsed = {}
 	if not parsed is Dictionary:
-		return _error("INVALID_JSON", "Server response was not a JSON object.", response_code)
+		return _with_client_context(
+			_error("INVALID_JSON", "Server response was not a JSON object.", response_code),
+			headers
+		)
 
 	var payload := _as_dictionary(parsed)
 	if response_code < 200 or response_code >= 300 or not bool(payload.get("ok", true)):
-		return _server_error(payload, response_code)
+		return _with_client_context(_server_error(payload, response_code), headers)
 
-	return {"ok": true, "status": response_code, "body": payload}
+	return _with_client_context({"ok": true, "status": response_code, "body": payload}, headers)
 
 func _session_from_auth_payload(payload: Dictionary, require_anonymous: bool, require_registered: bool) -> Dictionary:
 	var access_token := str(payload.get("access_token", ""))
@@ -508,6 +549,28 @@ static func _packed_string_array(value: Variant) -> PackedStringArray:
 		for item in value:
 			result.append(str(item))
 	return result
+
+static func _with_client_context(result: Dictionary, headers: PackedStringArray) -> Dictionary:
+	var context := _client_context_from_headers(headers)
+	if context.is_empty():
+		return result
+	var annotated := result.duplicate(true)
+	annotated[CLIENT_META_KEY] = context
+	return annotated
+
+static func _client_context_from_headers(headers: PackedStringArray) -> Dictionary:
+	for header: String in headers:
+		var delimiter_index := header.find(":")
+		if delimiter_index < 0:
+			continue
+		var header_name := header.substr(0, delimiter_index).strip_edges().to_lower()
+		if header_name != "x-draxos-save-type":
+			continue
+		var header_value := header.substr(delimiter_index + 1).strip_edges()
+		return {
+			CLIENT_SAVE_TYPE_KEY: _normalize_save_type(header_value),
+		}
+	return {}
 
 static func _normalize_save_type(save_type: String) -> String:
 	if save_type.strip_edges().to_lower() == SAVE_TYPE_PROGRESSION_LAB:

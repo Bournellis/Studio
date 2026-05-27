@@ -10,6 +10,14 @@ const DEFAULT_INVITE_CODE := "ALPHA-TEST"
 const TOKEN_EXPIRY_GRACE_SECONDS := 60
 const SAVE_TYPE_NORMAL := "normal"
 const SAVE_TYPE_PROGRESSION_LAB := "progression_lab"
+const CLIENT_META_KEY := "_client"
+const CLIENT_SAVE_TYPE_KEY := "save_type"
+const SURFACE_ACCOUNT := "account"
+const SURFACE_BASE := "base"
+const SURFACE_SOCIAL := "social"
+const SURFACE_COMPETITION := "competition"
+const SURFACE_MONETIZATION := "monetization"
+const SURFACE_BATTLE := "battle"
 
 var access_token := ""
 var refresh_token := ""
@@ -35,6 +43,7 @@ var last_battle_log: Dictionary = {}
 var last_battle_rewards: Dictionary = {}
 var last_error: Dictionary = {}
 var runtime_config: Dictionary = {}
+var surface_save_types: Dictionary = {}
 var offline := false
 
 func _init() -> void:
@@ -111,6 +120,7 @@ func clear_session() -> void:
 	last_battle_log = {}
 	last_battle_rewards = {}
 	last_error = {}
+	surface_save_types = {}
 	offline = false
 	if FileAccess.file_exists(CACHE_PATH):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(CACHE_PATH))
@@ -129,17 +139,8 @@ func apply_auth_session(session: Dictionary) -> bool:
 		return false
 
 	if is_progression_lab_local_only():
-		player = {}
-		resources = {}
-		build = {}
-		base_state = {}
-		social_state = {}
-		competition_state = {}
-		monetization_state = {}
+		_clear_account_snapshots()
 		progression_lab = {}
-		last_battle_id = null
-		last_battle_log = {}
-		last_battle_rewards = {}
 		active_save_type = SAVE_TYPE_NORMAL
 	access_token = token
 	refresh_token = refresh
@@ -156,6 +157,8 @@ func apply_auth_session(session: Dictionary) -> bool:
 
 func apply_battle_result(payload: Dictionary) -> bool:
 	var body := _unwrap_body(payload)
+	if not _accept_save_scoped_payload(SURFACE_BATTLE, payload, active_save_type):
+		return false
 	if not bool(body.get("ok", false)):
 		last_error = _as_dictionary(body.get("error", {
 			"code": "BATTLE_NOT_OK",
@@ -184,8 +187,10 @@ func apply_battle_result(payload: Dictionary) -> bool:
 	last_battle_log = battle_log.duplicate(true)
 	last_battle_rewards = _as_dictionary(body.get("rewards", {})).duplicate(true)
 	last_battle_id = str(last_battle_log.get("battle_id", ""))
+	_remember_surface_snapshot(SURFACE_BATTLE)
 	if body.get("competition", null) is Dictionary:
 		competition_state["last_battle"] = _as_dictionary(body.get("competition", {})).duplicate(true)
+		_remember_surface_snapshot(SURFACE_COMPETITION)
 	last_error = {}
 	offline = false
 	session_changed.emit()
@@ -204,6 +209,12 @@ func apply_server_state(payload: Dictionary) -> bool:
 	var server_player := _as_dictionary(body.get("player", {}))
 	var server_resources := _as_dictionary(body.get("resources", {}))
 	var server_build := _as_dictionary(body.get("build", {}))
+	if not _accept_save_scoped_payload(
+		SURFACE_ACCOUNT,
+		payload,
+		str(server_player.get("save_type", active_save_type))
+	):
+		return false
 	if server_player.is_empty() or server_resources.is_empty() or server_build.is_empty():
 		last_error = {
 			"code": "ACCOUNT_STATE_INCOMPLETE",
@@ -215,7 +226,10 @@ func apply_server_state(payload: Dictionary) -> bool:
 	player = server_player.duplicate(true)
 	resources = server_resources.duplicate(true)
 	build = server_build.duplicate(true)
-	active_save_type = normalize_save_type(str(server_player.get("save_type", active_save_type)))
+	active_save_type = _payload_save_type(payload, str(server_player.get("save_type", active_save_type)))
+	if not player.has("save_type"):
+		player["save_type"] = active_save_type
+	_remember_surface_snapshot(SURFACE_ACCOUNT)
 	var server_username := str(server_player.get("username", "")).strip_edges()
 	if active_save_type == SAVE_TYPE_NORMAL or account_username == "":
 		account_username = base_account_username(server_username)
@@ -229,13 +243,9 @@ func apply_save_reset(payload: Dictionary) -> bool:
 	if not apply_server_state(payload):
 		return false
 
-	base_state = {}
-	social_state = {}
-	competition_state = {}
-	monetization_state = {}
-	last_battle_id = null
-	last_battle_log = {}
-	last_battle_rewards = {}
+	if active_save_type == SAVE_TYPE_PROGRESSION_LAB:
+		progression_lab = {}
+	_clear_gameplay_snapshots()
 	last_error = {}
 	offline = false
 	session_changed.emit()
@@ -258,13 +268,8 @@ func apply_progression_lab_result(payload: Dictionary) -> bool:
 	active_save_type = SAVE_TYPE_PROGRESSION_LAB
 	progression_lab = metadata.duplicate(true)
 	progression_lab["local_only"] = bool(progression_lab.get("local_only", false))
-	base_state = {}
-	social_state = {}
-	competition_state = {}
-	monetization_state = {}
-	last_battle_id = null
-	last_battle_log = {}
-	last_battle_rewards = {}
+	_clear_gameplay_snapshots()
+	_remember_surface_snapshot(SURFACE_ACCOUNT)
 	last_error = {}
 	offline = false
 	session_changed.emit()
@@ -272,6 +277,8 @@ func apply_progression_lab_result(payload: Dictionary) -> bool:
 
 func apply_base_result(payload: Dictionary) -> bool:
 	var body := _unwrap_body(payload)
+	if not _accept_save_scoped_payload(SURFACE_BASE, payload, active_save_type):
+		return false
 	if not bool(body.get("ok", false)):
 		last_error = _as_dictionary(body.get("error", {
 			"code": "BASE_NOT_OK",
@@ -291,7 +298,9 @@ func apply_base_result(payload: Dictionary) -> bool:
 
 	if body.get("resources", null) is Dictionary:
 		resources = _as_dictionary(body.get("resources", {})).duplicate(true)
+		_remember_surface_snapshot(SURFACE_ACCOUNT)
 	base_state = server_base.duplicate(true)
+	_remember_surface_snapshot(SURFACE_BASE)
 	last_error = {}
 	offline = false
 	session_changed.emit()
@@ -299,6 +308,8 @@ func apply_base_result(payload: Dictionary) -> bool:
 
 func apply_social_result(payload: Dictionary) -> bool:
 	var body := _unwrap_body(payload)
+	if not _accept_save_scoped_payload(SURFACE_SOCIAL, payload, active_save_type):
+		return false
 	if not bool(body.get("ok", false)):
 		last_error = _as_dictionary(body.get("error", {
 			"code": "SOCIAL_NOT_OK",
@@ -317,6 +328,7 @@ func apply_social_result(payload: Dictionary) -> bool:
 		return false
 
 	social_state = server_social.duplicate(true)
+	_remember_surface_snapshot(SURFACE_SOCIAL)
 	last_error = {}
 	offline = false
 	session_changed.emit()
@@ -324,6 +336,8 @@ func apply_social_result(payload: Dictionary) -> bool:
 
 func apply_competition_result(payload: Dictionary) -> bool:
 	var body := _unwrap_body(payload)
+	if not _accept_save_scoped_payload(SURFACE_COMPETITION, payload, active_save_type):
+		return false
 	if not bool(body.get("ok", false)):
 		last_error = _as_dictionary(body.get("error", {
 			"code": "COMPETITION_NOT_OK",
@@ -347,6 +361,7 @@ func apply_competition_result(payload: Dictionary) -> bool:
 
 	for key: String in state.keys():
 		competition_state[key] = state[key]
+	_remember_surface_snapshot(SURFACE_COMPETITION)
 	last_error = {}
 	offline = false
 	session_changed.emit()
@@ -354,6 +369,8 @@ func apply_competition_result(payload: Dictionary) -> bool:
 
 func apply_monetization_result(payload: Dictionary) -> bool:
 	var body := _unwrap_body(payload)
+	if not _accept_save_scoped_payload(SURFACE_MONETIZATION, payload, active_save_type):
+		return false
 	if not bool(body.get("ok", false)):
 		last_error = _as_dictionary(body.get("error", {
 			"code": "MONETIZATION_NOT_OK",
@@ -373,9 +390,14 @@ func apply_monetization_result(payload: Dictionary) -> bool:
 
 	if body.get("resources", null) is Dictionary:
 		resources = _as_dictionary(body.get("resources", {})).duplicate(true)
+		_remember_surface_snapshot(SURFACE_ACCOUNT)
 	if body.get("player", null) is Dictionary:
 		player = _as_dictionary(body.get("player", {})).duplicate(true)
+		if not player.has("save_type"):
+			player["save_type"] = active_save_type
+		_remember_surface_snapshot(SURFACE_ACCOUNT)
 	monetization_state = state.duplicate(true)
+	_remember_surface_snapshot(SURFACE_MONETIZATION)
 	last_error = {}
 	offline = false
 	session_changed.emit()
@@ -395,22 +417,22 @@ func has_valid_access_token(now: int = int(Time.get_unix_time_from_system())) ->
 	return access_token != "" and expires_at > now + TOKEN_EXPIRY_GRACE_SECONDS
 
 func has_account_state() -> bool:
-	return not player.is_empty() and not resources.is_empty() and not build.is_empty()
+	return not player.is_empty() and not resources.is_empty() and not build.is_empty() and _surface_matches_active_save(SURFACE_ACCOUNT)
 
 func has_battle_log() -> bool:
-	return not last_battle_log.is_empty()
+	return not last_battle_log.is_empty() and _surface_matches_active_save(SURFACE_BATTLE)
 
 func has_base_state() -> bool:
-	return not base_state.is_empty()
+	return not base_state.is_empty() and _surface_matches_active_save(SURFACE_BASE)
 
 func has_social_state() -> bool:
-	return not social_state.is_empty()
+	return not social_state.is_empty() and _surface_matches_active_save(SURFACE_SOCIAL)
 
 func has_competition_state() -> bool:
-	return not competition_state.is_empty()
+	return not competition_state.is_empty() and _surface_matches_active_save(SURFACE_COMPETITION)
 
 func has_monetization_state() -> bool:
-	return not monetization_state.is_empty()
+	return not monetization_state.is_empty() and _surface_matches_active_save(SURFACE_MONETIZATION)
 
 func is_progression_lab_local_only() -> bool:
 	return bool(progression_lab.get("local_only", false))
@@ -426,6 +448,45 @@ func runtime_feature_enabled(feature_id: String) -> bool:
 
 func runtime_config_is_fallback() -> bool:
 	return RuntimeConfigScript.is_fallback(runtime_config)
+
+func diagnostics_snapshot() -> Dictionary:
+	var runtime := RuntimeConfigScript.normalize(runtime_config)
+	return {
+		"cache_version": CACHE_VERSION,
+		"session_id": ensure_session_id(),
+		"auth": {
+			"has_access_token": access_token != "",
+			"has_refresh_token": refresh_token != "",
+			"expires_at": expires_at,
+			"has_auth_user_id": auth_user_id != "",
+			"auth_method": auth_method,
+			"registered": is_registered_session(),
+		},
+		"save": {
+			"active_save_type": active_save_type,
+			"label": active_save_label(),
+			"badge": active_save_badge(),
+		},
+		"surfaces": _diagnostics_surfaces(),
+		"progression_lab": {
+			"active": is_progression_lab_active(),
+			"local_only": is_progression_lab_local_only(),
+			"has_metadata": not progression_lab.is_empty(),
+			"label": progression_lab_label(),
+		},
+		"runtime_config": {
+			"fallback": RuntimeConfigScript.is_fallback(runtime),
+			"config_source": str(runtime.get("config_source", "")),
+			"config_version": str(runtime.get("config_version", "")),
+			"channel": str(runtime.get("channel", "")),
+			"features": _as_dictionary(runtime.get("features", {})).duplicate(true),
+		},
+		"offline": offline,
+		"last_error": {
+			"code": str(last_error.get("code", "")),
+			"status": int(last_error.get("status", 0)),
+		},
+	}
 
 func active_save_label() -> String:
 	if active_save_type == SAVE_TYPE_PROGRESSION_LAB:
@@ -509,6 +570,7 @@ func snapshot() -> Dictionary:
 		"competition_state": competition_state.duplicate(true),
 		"monetization_state": monetization_state.duplicate(true),
 		"progression_lab": progression_lab.duplicate(true),
+		"surface_save_types": surface_save_types.duplicate(true),
 		"last_battle_id": last_battle_id,
 		"last_battle_log": last_battle_log.duplicate(true),
 		"last_battle_rewards": last_battle_rewards.duplicate(true),
@@ -560,13 +622,25 @@ func _apply_cache(cache: Dictionary) -> void:
 	competition_state = _as_dictionary(cache.get("competition_state", {})).duplicate(true)
 	monetization_state = _as_dictionary(cache.get("monetization_state", {})).duplicate(true)
 	progression_lab = _as_dictionary(cache.get("progression_lab", {})).duplicate(true)
+	surface_save_types = _normalized_surface_save_types(_as_dictionary(cache.get("surface_save_types", {})))
 	last_battle_id = cache.get("last_battle_id", null)
 	last_battle_log = _as_dictionary(cache.get("last_battle_log", {})).duplicate(true)
 	last_battle_rewards = _as_dictionary(cache.get("last_battle_rewards", {})).duplicate(true)
 	offline = bool(cache.get("offline", false))
 	last_error = _as_dictionary(cache.get("last_error", {})).duplicate(true)
+	if not progression_lab.is_empty() and not bool(progression_lab.get("local_only", false)):
+		active_save_type = SAVE_TYPE_PROGRESSION_LAB
 	if bool(progression_lab.get("local_only", false)):
 		active_save_type = SAVE_TYPE_PROGRESSION_LAB
+		access_token = ""
+		refresh_token = ""
+		expires_at = 0
+		auth_user_id = ""
+		auth_method = "guest"
+		auth_email = ""
+	if active_save_type == SAVE_TYPE_NORMAL:
+		progression_lab = {}
+	_backfill_surface_save_types()
 
 func _clear_account_snapshots() -> void:
 	player = {}
@@ -581,6 +655,21 @@ func _clear_account_snapshots() -> void:
 	last_battle_id = null
 	last_battle_log = {}
 	last_battle_rewards = {}
+	surface_save_types = {}
+
+func _clear_gameplay_snapshots() -> void:
+	base_state = {}
+	social_state = {}
+	competition_state = {}
+	monetization_state = {}
+	last_battle_id = null
+	last_battle_log = {}
+	last_battle_rewards = {}
+	surface_save_types.erase(SURFACE_BASE)
+	surface_save_types.erase(SURFACE_SOCIAL)
+	surface_save_types.erase(SURFACE_COMPETITION)
+	surface_save_types.erase(SURFACE_MONETIZATION)
+	surface_save_types.erase(SURFACE_BATTLE)
 
 func ensure_alpha_account_request_id() -> String:
 	if alpha_account_request_id == "":
@@ -598,6 +687,76 @@ func _unwrap_body(payload: Dictionary) -> Dictionary:
 	if payload.has("body") and payload["body"] is Dictionary:
 		return _as_dictionary(payload["body"])
 	return payload
+
+func _payload_save_type(payload: Dictionary, fallback_save_type: String) -> String:
+	var meta := _as_dictionary(payload.get(CLIENT_META_KEY, {}))
+	if meta.has(CLIENT_SAVE_TYPE_KEY):
+		return normalize_save_type(str(meta.get(CLIENT_SAVE_TYPE_KEY, fallback_save_type)))
+	var body := _unwrap_body(payload)
+	if body.has("save_type"):
+		return normalize_save_type(str(body.get("save_type", fallback_save_type)))
+	var body_player := _as_dictionary(body.get("player", {}))
+	if body_player.has("save_type"):
+		return normalize_save_type(str(body_player.get("save_type", fallback_save_type)))
+	return normalize_save_type(fallback_save_type)
+
+func _accept_save_scoped_payload(surface: String, payload: Dictionary, fallback_save_type: String) -> bool:
+	var payload_save_type := _payload_save_type(payload, fallback_save_type)
+	if payload_save_type == active_save_type:
+		return true
+	last_error = {
+		"code": "STALE_SAVE_RESPONSE",
+		"message": "Resposta de %s pertence ao save %s, mas o save ativo e %s." % [
+			surface,
+			payload_save_type,
+			active_save_type,
+		],
+	}
+	session_changed.emit()
+	return false
+
+func _remember_surface_snapshot(surface: String, save_type: String = active_save_type) -> void:
+	surface_save_types[surface] = normalize_save_type(save_type)
+
+func _surface_matches_active_save(surface: String) -> bool:
+	return normalize_save_type(str(surface_save_types.get(surface, active_save_type))) == active_save_type
+
+func _backfill_surface_save_types() -> void:
+	if has_account_state() and not surface_save_types.has(SURFACE_ACCOUNT):
+		_remember_surface_snapshot(SURFACE_ACCOUNT)
+	if not base_state.is_empty() and not surface_save_types.has(SURFACE_BASE):
+		_remember_surface_snapshot(SURFACE_BASE)
+	if not social_state.is_empty() and not surface_save_types.has(SURFACE_SOCIAL):
+		_remember_surface_snapshot(SURFACE_SOCIAL)
+	if not competition_state.is_empty() and not surface_save_types.has(SURFACE_COMPETITION):
+		_remember_surface_snapshot(SURFACE_COMPETITION)
+	if not monetization_state.is_empty() and not surface_save_types.has(SURFACE_MONETIZATION):
+		_remember_surface_snapshot(SURFACE_MONETIZATION)
+	if not last_battle_log.is_empty() and not surface_save_types.has(SURFACE_BATTLE):
+		_remember_surface_snapshot(SURFACE_BATTLE)
+
+func _diagnostics_surfaces() -> Dictionary:
+	return {
+		SURFACE_ACCOUNT: _diagnostics_surface(SURFACE_ACCOUNT, has_account_state()),
+		SURFACE_BASE: _diagnostics_surface(SURFACE_BASE, has_base_state()),
+		SURFACE_SOCIAL: _diagnostics_surface(SURFACE_SOCIAL, has_social_state()),
+		SURFACE_COMPETITION: _diagnostics_surface(SURFACE_COMPETITION, has_competition_state()),
+		SURFACE_MONETIZATION: _diagnostics_surface(SURFACE_MONETIZATION, has_monetization_state()),
+		SURFACE_BATTLE: _diagnostics_surface(SURFACE_BATTLE, has_battle_log()),
+	}
+
+func _diagnostics_surface(surface: String, has_snapshot: bool) -> Dictionary:
+	return {
+		"has_snapshot": has_snapshot,
+		"save_type": normalize_save_type(str(surface_save_types.get(surface, active_save_type))),
+		"matches_active_save": _surface_matches_active_save(surface),
+	}
+
+func _normalized_surface_save_types(value: Dictionary) -> Dictionary:
+	var normalized := {}
+	for key: String in value.keys():
+		normalized[key] = normalize_save_type(str(value.get(key, SAVE_TYPE_NORMAL)))
+	return normalized
 
 static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:
