@@ -814,8 +814,8 @@ func _select_save(save_type: String) -> void:
 		_screen_history.clear()
 
 	if SessionStore.has_valid_access_token() and not SessionStore.is_progression_lab_local_only():
-		var ready := await _recover_or_create_active_save()
-		if not ready:
+		var active_save_ready := await _recover_or_create_active_save()
+		if not active_save_ready:
 			_show_screen(SCREEN_HUB, false)
 			return
 		var ready_message := "Save %s pronto. Batalha, Base, Social, Competicao e Loja usam este contexto." % SessionStore.active_save_label()
