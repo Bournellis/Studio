@@ -1,14 +1,14 @@
 # Track 02 Current Status
 
-- Last Updated: `2026-05-18`
+- Last Updated: `2026-05-27`
 - Status: `T02-P09_COMPLETE`
 - Scope: `First complete 29-map version of the Draxos roguelike cardgame`
 - Baseline Dependency: `Track 01 - Playable Run Loop`
-- Validation Baseline: `T02-P09 validation green after discard-flow correction: 94/94 GUT tests, 1126 asserts, full-route pacing smoke green`
+- Validation Baseline: `Foundation hardening 2 validation green: 96/96 GUT tests, 1206 asserts, shared full-route pacing smoke green`
 
 ## Purpose
 
-Track 02 turns the validated 13-map playable slice into the first complete version of the game.
+Track 02 turned the historical validated 13-map playable slice into the first complete version of the game.
 
 The target is a fixed, linear 29-map run with all planned encounter types, all planned keywords, improved enemy AI, a redesigned reward economy, universal run relics, a complete Souls shop, and stronger battle/map/reward UI.
 
@@ -81,6 +81,8 @@ Next implementation prompt: none. Track 02 is ready for user playtest.
 - Validation now checks the 29-map route, linear unlock chain, reward schedule, mode/format/effect coverage, and boss hook coverage; representative tests exercise new modes, board formats, and field effects.
 - Screenshot workflow captures RunMap and representative Battle surfaces for the complete-route state.
 - T02-P09 added full-route pacing telemetry to validation, with map count, estimated turns, HP loss, Souls, deck size, relic count, shop usage, and deaths.
+- Foundation hardening 2 extracted that route pacing telemetry into `tools/route_pacing_simulator.gd`, now shared by `tools/validate.gd`, `tools/run_lab.gd`, and GUT coverage.
+- Foundation hardening 2 added `docs/playtest-track-02.md` as the human playtest checklist for the complete route.
 - Reward screen, RunMap, Souls shop/relic state, keyword preview, enemy intent, and dense Battle layouts received readability polish.
 - Discard marking now happens in the main creature-play phase with right-click card selection, a visible hand hint, and marked-card discard/redraw on combat resolution instead of a separate pre-combat phase.
 - 5/5, 6/6, and 7/7 battle layouts now have regression coverage.

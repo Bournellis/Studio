@@ -50,9 +50,9 @@ The current checkpoint is Track 02 complete-run build:
 - Terra/Gelo/Ar/Fogo enemy galleries.
 - Deterministic hybrid enemy AI and visible enemy intent.
 - Encounter modes, board formats, field effects, and boss hooks for maps 8/15/22/29.
-- Validation telemetry for a full-route smoke.
+- Shared validation/Run Lab telemetry for full-route pacing smoke.
 
-Current validation baseline on 2026-05-27: GUT 94/94, full-route pacing smoke 29/29, 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 estimated shop actions.
+Current validation baseline on 2026-05-27: GUT 96/96 across 7 modular suites, 1206 asserts, full-route pacing smoke 29/29, 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 estimated shop actions.
 
 ## Historical Material
 

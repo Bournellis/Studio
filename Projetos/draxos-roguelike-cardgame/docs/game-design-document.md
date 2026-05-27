@@ -105,10 +105,11 @@ O objetivo do intent nao e ser uma IA final perfeita; e tornar previsivel o bast
 
 Baseline em 2026-05-27:
 
-- GUT: 94/94.
-- Test scripts: 6 modular suites, 1136 asserts.
+- GUT: 96/96.
+- Test scripts: 7 modular suites, 1206 asserts.
 - Full-route pacing smoke: 29/29 mapas.
 - Telemetria: 217 turnos estimados, 116 HP loss estimado, 0 mortes, 362 Souls earned, 291 Souls spent, 71 Souls left, deck final de 38 cartas, 6 reliquias, 21 acoes de loja.
+- `route_pacing_simulator.gd` e fonte compartilhada para validacao e Run Lab.
 
 ## Historical Material
 
@@ -119,3 +120,4 @@ Track 01 / 13 mapas e save v3/v4 sao material historico. Use apenas como referen
 - Playtest humano completo da rota 29 mapas.
 - Ajuste de dificuldade, shop economy, reliquias e pacing apos feedback.
 - Run Lab serve para regressao e comparacao de tuning, nao como substituto de playtest.
+- Checklist vivo de playtest: `playtest-track-02.md`.

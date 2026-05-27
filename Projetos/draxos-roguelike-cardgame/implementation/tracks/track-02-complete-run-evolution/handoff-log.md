@@ -108,3 +108,12 @@ Each entry should include:
 - validation result: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd` passed with 93/93 GUT tests and 1119 asserts. Full-route pacing smoke completed 29/29 maps with 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 shop actions. Screenshot workflow saved RunMap, reward screen, shop/relic, keyword tooltip, enemy intent, and late-board Battle screenshots at 1280x720 and 960x540.
 - blockers: none. Remaining known debt: optional missing final PNG art and 4 non-fatal ship overlay alpha warnings.
 - next prompt id: none; Track 02 ready for user playtest.
+
+### 2026-05-27 - Foundation Hardening 2
+
+- prompt id: `FOUNDATION-HARDENING-2`
+- summary: Cleaned stale satellite docs, added the Track 02 human playtest checklist, extracted route pacing into a shared simulator used by validation and Run Lab, and added GUT coverage for simulator schema/parity.
+- changed files: `tools/route_pacing_simulator.gd`, `tools/validate.gd`, `tools/run_lab.gd`, `tests/unit/test_route_pacing_simulator.gd`, docs/status snapshots, and coordination note.
+- validation result: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <worktree>\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd` passed with 96/96 GUT tests and 1206 asserts. Shared full-route pacing smoke completed 29/29 maps with 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 shop actions.
+- blockers: none. Remaining known debt: optional missing final PNG art and 4 non-fatal ship overlay alpha warnings.
+- next prompt id: none; Track 02 remains ready for human playtest.

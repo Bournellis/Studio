@@ -155,7 +155,7 @@ Responsibilities:
 - run GUT;
 - report playtest readiness and known non-fatal art alpha debts.
 
-Expected baseline after 2026-05-27 hardening: GUT 94/94, full-route smoke 29/29, and repeated validation does not dirty generated content when the JSON is unchanged.
+Expected baseline after 2026-05-27 hardening 2: GUT 96/96, full-route smoke 29/29 through the shared route pacing simulator, Run Lab parity for class/seed sweeps, and repeated validation does not dirty generated content when the JSON is unchanged.
 
 ### `Run Lab`
 

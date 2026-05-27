@@ -1,20 +1,18 @@
 # Arcano
 
-- Last Updated: `2026-05-15`
-- Status: `Track 01 P05 playtest tuning pass validated`
+- Last Updated: `2026-05-27`
+- Status: `Track 02 complete-run baseline`
 - Indice: `README.md`
 
 ## Identidade
 
-O Arcano vence atraves de spells amplificadas. Cartas jogadas no turno constroem Fluxo, e Fluxo aumenta dano direto de spells e da habilidade ativa quando a passiva esta desbloqueada.
+O Arcano vence atraves de spells amplificadas. Cartas jogadas no turno constroem Fluxo depois que a passiva esta desbloqueada, e Fluxo aumenta dano direto de spells e da habilidade ativa.
 
 ## Passiva Fixa - Fluxo Continuo
 
 Desbloqueio: mapa 8.
 
-Cada carta jogada pelo jogador no turno gera 1 ponto de Fluxo. Cada ponto de Fluxo adiciona +1 de dano a fontes de dano direto do jogador no mesmo turno: spells e habilidade ativa. Fluxo nao aumenta ATK de criaturas e reseta no inicio do proximo turno do jogador.
-
-Antes do mapa 8, Fluxo nao e gerado e nao modifica dano.
+Cada carta jogada pelo jogador no turno gera 1 ponto de Fluxo. Cada ponto adiciona +1 de dano a fontes de dano direto do jogador no mesmo turno: spells e habilidade ativa. Fluxo nao aumenta ATK de criaturas e reseta no inicio do proximo turno do jogador.
 
 ## Habilidade Ativa
 
@@ -24,50 +22,26 @@ Desbloqueio: mapa 10.
 
 **Efeito:** causa 1 de dano a qualquer alvo valido, amplificado pelo Fluxo atual e por poder de habilidade.
 
-Antes do mapa 10, a habilidade nao aparece na UI e nao pode ser usada.
-
-## Deck Atual
-
-Parametros do slice: mana inicial 1, HP do Comandante 20, mao base 3, deck inicial 9 cartas custo 1. O mapa 2 adiciona 3 copias de `Tempestade Arcana`.
+## Deck Inicial
 
 | Carta | Custo | Qty | Stats | Efeito |
 |---|---:|---:|---|---|
-| Choque | 1 | 3 inicial | - | Causa 2 de dano a criatura ou heroi inimigo valido. |
-| Fagulha Arcana | 1 | 3 inicial | 1/2 | Enquanto em campo: +1 poder de habilidade. |
-| Barreira Arcana | 1 | 3 inicial | 0/3 | `defensor`. Enquanto em campo: +1 poder de habilidade. |
-| Tempestade Arcana | 2 | 3 no mapa 2 | - | Causa 4 pontos de dano distribuidos aleatoriamente entre alvos inimigos validos. |
+| Choque | 1 | 3 inicial | - | Causa dano direto. |
+| Fagulha Arcana | 1 | 3 inicial | 1/2 | Aura de poder de habilidade. |
+| Barreira Arcana | 1 | 3 inicial | 0/3 | `defensor` e aura de poder de habilidade. |
+| Tempestade Arcana | 2 | 3 no mapa 2 | - | Dano aleatorio em alvos inimigos validos. |
 
-## Upgrades
+## Reward Pool Track 02
 
-| Carta | Lvl 2 | Lvl 3 |
-|---|---|---|
-| Choque | +1 dano, total 3. | Custa 0. |
-| Fagulha Arcana | Vira 2/4 e mantem +1 poder de habilidade. | Mantem 2/4 e aumenta aura para +4 poder de habilidade. |
-| Barreira Arcana | Vira 1/6 e mantem `defensor` +1 poder de habilidade. | Vira 2/9 e aumenta aura para +2 poder de habilidade total. |
-| Tempestade Arcana | Causa 6 dano aleatorio. | Custa 1 e causa 6 dano aleatorio. |
-| Bola de Fogo | Causa 2 dano no alvo e 2 nos adjacentes. | Causa 6 dano no alvo principal e 2 nos adjacentes. |
-| Acelerar | +3 poder de habilidade temporario. | +3 poder de habilidade temporario e +1 mana. |
+| Elemento | Cartas |
+|---|---|
+| Terra | Bola de Fogo, Acelerar |
+| Gelo | Vortice, Sentinela Arcana |
+| Ar | Amplificador, Canalizar |
+| Fogo | Espelho Arcano, Descarga |
 
-## Cartas Novas
+Todas possuem Lvl 2 e Lvl 3 no catalogo ativo.
 
-| Carta | Custo | Tipo | Lvl 1 |
-|---|---:|---|---|
-| Bola de Fogo | 2 | Magia | Causa 1 dano no alvo e 1 dano em cada slot adjacente. Poder de habilidade e Fluxo amplificam todos os alvos. |
-| Acelerar | 0 | Magia | Mesa aliada alvo recebe +1 poder de habilidade temporario ate o final do turno. |
+## Proximo Passo
 
-O mapa 7 oferece `Bola de Fogo` e `Acelerar`; o mapa 11 oferece a carta que nao foi escolhida.
-
-## Cartas em Proposta (nao implementadas)
-
-> As cartas abaixo sao sugestoes de design nao definitivas. Nenhuma esta no engine.
-> Detalhes completos (custos, stats, upgrades, quando aparecem na run) em:
-> `../design-proposals/sessao-b-cartas-novas.md`
-
-| Carta | Elemento | Custo | Tipo | Ideia central |
-|---|---|---:|---|---|
-| Vórtice | Gelo | 2 | Magia | Congela criatura inimiga aleatória. Gera Fluxo. |
-| Sentinela Arcana | Gelo | 2 | Criatura 2/3 | Escudo. Spells jogadas restauram HP. |
-| Amplificador | Ar | 1 | Criatura 1/2 | Ecoar. +2 poder de habilidade passivo. |
-| Canalizar | Ar | 1 | Magia | Dano = Fluxo atual + 2. Gera Fluxo ao resolver. |
-| Espelho Arcano | Fogo | 2 | Criatura 0/4 | Espinhos 2. +1 poder de habilidade. |
-| Descarga | Fogo | 3 | Magia | 2 de dano a cada criatura inimiga. Amplificado por Fluxo. |
+Playtestar se Fluxo, poder de habilidade e Acelerar/Canalizar/Descarga mantem dano explosivo legivel sem trivializar chefes.

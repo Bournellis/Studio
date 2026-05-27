@@ -1,13 +1,13 @@
 # Track 02 Validation And Tuning Notes
 
-- Last Updated: `2026-05-18`
-- Prompt: `T02-P09`
+- Last Updated: `2026-05-27`
+- Prompt: `FOUNDATION-HARDENING-2`
 - Status: `READY_FOR_USER_PLAYTEST`
 
 ## Validation Summary
 
 - Godot validation command: green.
-- GUT: `94/94` tests passing, `1126` asserts.
+- GUT: `96/96` tests passing, `1206` asserts.
 - Full-route pacing smoke: `29/29` maps completed.
 - Estimated route turns: `217`.
 - Estimated HP loss across route: `116`.
@@ -16,6 +16,8 @@
 - Final deck size: `38`.
 - Relic count: `6`.
 - Shop usage count: `21`.
+- Shared simulator: `tools/route_pacing_simulator.gd`.
+- Run Lab parity: Arcano, Invocador, and Necromante complete `29/29` with seed `20260518`.
 
 ## First Tuning Pass
 
@@ -41,3 +43,4 @@ Captured at `1280x720` and `960x540` in:
 - Final card/enemy art is still placeholder-driven where PNGs are absent.
 - Four ship overlay alpha warnings remain non-fatal asset debt.
 - The full-route smoke is deterministic validation telemetry, not a human balance verdict.
+- Human checklist lives at `docs/playtest-track-02.md`.
