@@ -1,9 +1,9 @@
 # Track 04 - Post-Handoff Hardening And Hub Modularization
 
-- Status: `PLANNED_AFTER_CLOSED_PLAYTEST`
+- Status: `ACTIVE_POST_ALPHA_EVOLUTION`
 - Projeto: `draxos-mobile`
-- Dependencia inicial: rodada fechada Fabio + tester da Internal Alpha v0.
-- Objetivo: transformar feedback real do handoff em correcoes pequenas, melhorar UX Android/onboarding e reduzir a divida tecnica do Hub sem mudar comportamento nem misturar refatoracao com backend/schema.
+- Dependencia inicial: rodada fechada Fabio + tester da Internal Alpha v0 concluida por confirmacao do usuario em 2026-05-27.
+- Objetivo: evoluir a build Internal Alpha v0 aprovada com paralelizacao controlada, reduzindo a divida tecnica do Hub sem mudar comportamento, enquanto Progression/Economia e Account/Save Gate avancam por analise/documentacao.
 
 ## Problema
 
@@ -11,24 +11,24 @@
 
 Antes de expandir sistemas, o projeto precisa:
 
-- observar a build em uso real por Fabio + tester;
-- corrigir bugs bloqueantes antes de qualquer refatoracao;
+- considerar a rodada Fabio + tester como gate inicial satisfeito;
+- corrigir bugs bloqueantes antes de polish caso aparecam;
 - melhorar ergonomia Android e onboarding se o playtest confirmar atrito;
 - modularizar o Hub em etapas pequenas, preservando comportamento;
 - decidir com evidencia se o schema `players.save_type` precisa virar `account_profiles` + `game_saves`.
 
 ## Ordem De Prioridade
 
-1. Rodada fechada Fabio + tester.
-2. Triagem de bugs bloqueantes e regressões do alpha.
-3. UX Android/onboarding do fluxo real.
-4. Modularizacao do Hub Godot por superficies.
-5. Rodada humana do Progression Lab.
-6. Decisao sobre schema `account_profiles` + `game_saves`.
+1. T04-A Coordenacao pos-alpha.
+2. T04-B Hub Scaffold e plano de corte.
+3. T04-C Shell/Login/Update.
+4. T04-D Base/Loja, T04-E Social/Competicao e T04-F Batalha/Replay.
+5. T04-G Progression/Economia.
+6. T04-H decisao sobre schema `account_profiles` + `game_saves`.
 
 ## Entregas
 
-- Backlog pos-playtest classificado por bloqueante, UX, tuning, divida tecnica e futuro.
+- Backlog pos-alpha classificado por bloqueante, UX, tuning, divida tecnica e futuro.
 - Passada de UX Android/onboarding quando houver feedback real.
 - Plano incremental para separar `modes/boot/boot.gd` por superficie.
 - Primeira extracao de presenters/telas sem mudanca de comportamento.
@@ -64,7 +64,7 @@ Gate futuro: migrar de `players.save_type` para modelo explicito:
 - `game_saves` para saves por tipo/modo;
 - tabelas de gameplay apontando para save quando fizer sentido.
 
-Nao executar essa migracao antes do playtest Fabio + tester, salvo bug real de isolamento, seguranca ou corrupcao de save.
+Nao executar essa migracao antes de `T04-H` registrar decisao documentada, salvo bug real de isolamento, seguranca ou corrupcao de save.
 
 ## Progression Lab Humano
 
@@ -89,7 +89,7 @@ Resultados devem alimentar ajustes de premium gap, janelas 15h/20h, poder e bots
 
 ## Criterios De Aceite
 
-- Feedback da rodada Fabio + tester registrado antes de iniciar refatoracao grande.
+- Feedback da rodada Fabio + tester considerado aprovado por confirmacao do usuario antes de iniciar refatoracao grande.
 - Bugs bloqueantes tratados antes de melhorias esteticas.
 - UX Android/onboarding ajustados apenas quando houver problema observado ou risco claro.
 - `boot.gd` fica menor por extracao progressiva de telas/presenters, sem regressao funcional.
