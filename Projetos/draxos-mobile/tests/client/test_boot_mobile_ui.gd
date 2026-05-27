@@ -45,6 +45,36 @@ func test_boot_hub_presenter_renders_login_save_session_and_update_gate() -> voi
 	assert_true(boot._action_buttons.has("select_save_progression_lab"))
 	assert_true(boot._action_buttons.has("check_update"))
 
+func test_boot_profile_account_panel_shows_save_account_update_and_alpha_status() -> void:
+	_prepare_account_state()
+	SessionStore.auth_method = "email"
+	SessionStore.auth_email = "alpha@example.com"
+	SessionStore.account_username = "alpha_tester"
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	boot._update_gate = ProjectInfo.update_status_from_manifest(_current_manifest_fixture(), "https://manifest.example")
+	boot._show_screen("hub", false)
+	await get_tree().process_frame
+
+	assert_true(_label_tree_contains(boot._content_body, "Perfil e conta"))
+	assert_true(_label_tree_contains(boot._content_body, "Username: tester"))
+	assert_true(_label_tree_contains(boot._content_body, "Conta: alpha_tester"))
+	assert_true(_label_tree_contains(boot._content_body, "Save ativo: Normal (normal)"))
+	assert_true(_label_tree_contains(boot._content_body, "Level: 8"))
+	assert_true(_label_tree_contains(boot._content_body, "Poder: 120"))
+	assert_true(_label_tree_contains(boot._content_body, "Auth: email/senha (alpha@example.com)"))
+	assert_true(_label_tree_contains(boot._content_body, "account/state: carregado do save ativo"))
+	assert_true(_label_tree_contains(boot._content_body, "Update: Build atualizada"))
+	assert_true(_label_tree_contains(boot._content_body, "Alpha: internal_alpha 0.0.1-alpha.0 | online pronto"))
+
+func test_boot_profile_account_panel_has_clear_empty_state_without_account() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	assert_true(_label_tree_contains(boot._content_body, "Username: sem conta carregada"))
+	assert_true(_label_tree_contains(boot._content_body, "account/state: sem sessao auth"))
+	assert_true(_label_tree_contains(boot._content_body, "Alpha: internal_alpha 0.0.1-alpha.0 | aguardando login"))
+
 func test_boot_surface_presenters_render_shells_without_network() -> void:
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)
@@ -261,6 +291,18 @@ func _prepare_account_state() -> void:
 		"diamante": 160,
 	}
 	SessionStore.build = {"weapon_id": "varinha_cinzas"}
+
+func _current_manifest_fixture() -> Dictionary:
+	return {
+		"schema_version": ProjectInfo.MANIFEST_SCHEMA_VERSION,
+		"channel": ProjectInfo.RELEASE_CHANNEL,
+		"latest_version": ProjectInfo.APP_VERSION,
+		"latest_version_code": ProjectInfo.APP_VERSION_CODE,
+		"minimum_supported_version": ProjectInfo.APP_VERSION,
+		"minimum_supported_version_code": ProjectInfo.APP_VERSION_CODE,
+		"requires_save_reset": false,
+		"notes": ["Alpha QA current."],
+	}
 
 func _base_state_fixture() -> Dictionary:
 	return {

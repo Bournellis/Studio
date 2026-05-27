@@ -1,8 +1,8 @@
 # Track 06 - Feature Registry And Installation Rails
 
 - Last Updated: `2026-05-27`
-- Owner: `T06-B Feature Rails`
-- Status: `T06-B_READY_FOR_HANDOFF`
+- Owner: `Track 06 agents`
+- Status: `T06-D_PROFILE_READY_FOR_INTEGRATION`
 - Depends On: `T06-A_ON_MASTER`
 
 ## Objetivo
@@ -106,7 +106,7 @@ Rollback deve ser simples e local:
 |---|---|---|---|---|---|---|---|
 | `T06_FEATURE_RAILS` | `T06-B Feature Rails` | docs/coordination | `READY_FOR_INTEGRATION` | none | none | `N/A docs-only` | `N/A docs-only` |
 | `RUNTIME_CONFIG_V1` | `T06-C Runtime Config` | release/client boot | `PLANNED` | new `GET /release/config` | `release` | runtime config smoke | runtime config read path/fallback GUT |
-| `PROFILE_ACCOUNT_PANEL` | `T06-D Perfil/Conta` | Hub account/session | `PLANNED` | existing `GET /account/state` | `save-scoped` existing read | profile/session smoke | profile/presenter GUT |
+| `PROFILE_ACCOUNT_PANEL` | `T06-D Perfil/Conta` | Hub account/session | `READY_FOR_INTEGRATION` | existing `GET /account/state` | `save-scoped` existing read | `smoke_session_shell.gd` profile summary extension | profile/presenter GUT |
 | `BATTLE_HISTORY_REPLAY` | `T06-E Battle History` | Battle tab | `PLANNED` | new `GET /battle/history`, new `GET /battle/replay?battle_id=...` | `save-scoped` read-only | battle history/replay smoke and `smoke_battle_replay.gd` | battle history/replay presenter GUT |
 | `BASE_ROUTINE_PANEL` | `T06-F Base Routine` | Base tab | `PLANNED` | existing `GET /base/state` | `save-scoped` existing read | `smoke_foundation_surfaces.gd` Base coverage | Base routine/presenter GUT |
 | `SOCIAL_QOL_READABILITY` | `T06-G Social QoL` | Social tab | `PLANNED` | existing `GET /social/state` and current social actions | `account-scoped` existing behavior | `smoke_foundation_surfaces.gd` Social coverage | Social readability/presenter GUT |
@@ -154,19 +154,19 @@ Rollback deve ser simples e local:
 
 - Owner: `T06-D Perfil/Conta`
 - Surface: Hub account/session
-- Status: `PLANNED`
+- Status: `READY_FOR_INTEGRATION`
 - Endpoints affected: existing `GET /account/state` only
 - Service scope: `save-scoped` existing read
-- Service contract notes: no endpoint change; reads current account/save snapshot and session metadata; must respect active save.
-- Client files: panel/presenter files to be declared by T06-D.
-- Backend files: none expected.
-- Smoke required: profile/session smoke or focused extension of `smoke_session_shell.gd`.
-- GUT required: profile/presenter GUT.
-- Other validation: `validate.gd`, GUT client, `git diff --check`.
+- Service contract notes: no endpoint change; `boot.gd` continues to call `GET /account/state` through the existing refresh/recover paths with the active `x-draxos-save-type`; the panel only renders `SessionStore` session metadata, current account/save snapshot, update gate and alpha channel state.
+- Client files: `modes/boot/surfaces/hub_account_surface_presenter.gd`, `modes/boot/surfaces/hub_surface_presenter.gd`.
+- Backend files: none.
+- Smoke required: focused extension of `tools/smoke_session_shell.gd` to validate account/profile summary data after `account/state`.
+- GUT required: profile/presenter GUT in `tests/client/test_boot_mobile_ui.gd`.
+- Other validation: `validate.gd`, GUT client, `smoke_session_shell.gd`, `git diff --check`.
 - Fallback: show available session metadata and clear empty state when account snapshot is missing.
 - Rollback: remove UI entry/presenter and keep existing account/session flow.
-- Guardrail notes: no Auth change, no SessionStore persisted contract change, no schema, no economy.
-- Handoff notes: T06-I should confirm panel remains read-only and save-aware.
+- Guardrail notes: no Auth change, no SessionStore persisted contract change, no schema, no economy, no combat, no ranking, no manifest mutation and no new endpoint.
+- Handoff notes: profile/account panel is read-only and save-aware; T06-I should integrate the presenter/test/smoke docs and keep actions/session/network/telemetry in `boot.gd`.
 
 ### `BATTLE_HISTORY_REPLAY`
 

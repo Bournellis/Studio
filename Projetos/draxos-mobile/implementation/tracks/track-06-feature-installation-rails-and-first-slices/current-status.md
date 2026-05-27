@@ -3,8 +3,8 @@
 - Last Updated: `2026-05-27`
 - Status: `ACTIVE_FEATURE_INSTALLATION`
 - Depends On: `T05_INTEGRATED_FOUNDATION_READY`
-- Current Stage: `T06_B_READY_FOR_HANDOFF`
-- Next Action: merge T06-B feature rails, continue T06-C runtime config, then let T06-D to T06-H implement from the registry checklist.
+- Current Stage: `T06_D_READY_FOR_INTEGRATION`
+- Next Action: continue T06-C and T06-E to T06-H in parallel, then integrate T06-D through T06-I.
 
 ## Estado
 
@@ -17,7 +17,7 @@ The track deliberately prioritizes solid installation rails and small visible fe
 1. `T06-A` Coordenacao: complete.
 2. `T06-B` Feature Rails: ready for handoff; feature registry now defines the standard install contract, smoke/GUT rule by surface, fallback and rollback checklist.
 3. `T06-C` Runtime Config: pending after T06-A.
-4. `T06-D` Perfil/Conta: pending after T06-B merge; must fill feature card before runtime.
+4. `T06-D` Perfil/Conta: ready for integration; panel renders existing session/account state, active save, username, level, power, auth method, update state and alpha status without a new endpoint.
 5. `T06-E` Battle History: pending after T06-B merge; must fill feature card before runtime.
 6. `T06-F` Base Routine: pending after T06-B merge; must fill feature card before runtime.
 7. `T06-G` Social QoL: pending after T06-B merge; must fill feature card before runtime.
@@ -32,6 +32,14 @@ The track deliberately prioritizes solid installation rails and small visible fe
 - Do not publish builds or mutate remote release state.
 - Do not put secrets or service role data in client/export or runtime config.
 - Keep missing art allowed.
+
+## T06-D Handoff
+
+- Status: `READY_FOR_INTEGRATION`
+- Delivered: Hub profile/account panel using existing `SessionStore`, current `account/state` snapshot, active save metadata and update gate state.
+- Client files: `modes/boot/surfaces/hub_account_surface_presenter.gd`, `modes/boot/surfaces/hub_surface_presenter.gd`.
+- Tests/smoke: `tests/client/test_boot_mobile_ui.gd`, `tools/smoke_session_shell.gd`.
+- Guardrails preserved: no endpoint, Auth, Supabase schema, persisted `SessionStore` contract, `BackendConfig`, economy, combat, ranking or remote manifest change.
 
 ## Validation Baseline
 
