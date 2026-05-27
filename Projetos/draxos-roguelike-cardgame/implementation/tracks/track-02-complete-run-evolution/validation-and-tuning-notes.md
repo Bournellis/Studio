@@ -1,13 +1,13 @@
 # Track 02 Validation And Tuning Notes
 
 - Last Updated: `2026-05-27`
-- Prompt: `FOUNDATION-HARDENING-3`
+- Prompt: `FOUNDATION-HARDENING-4`
 - Status: `READY_FOR_USER_PLAYTEST`
 
 ## Validation Summary
 
 - Godot validation command: green.
-- GUT: `97/97` tests passing, `1218` asserts.
+- GUT: `99/99` tests passing, `1228` asserts.
 - Full-route pacing smoke: `29/29` maps completed.
 - Estimated route turns: `217`.
 - Estimated HP loss across route: `116`.
@@ -17,8 +17,9 @@
 - Relic count: `6`.
 - Shop usage count: `21`.
 - Shared simulator: `tools/route_pacing_simulator.gd`.
-- Run Lab parity: Arcano, Invocador, and Necromante complete `29/29` with seed `20260518`.
-- Foundation Pass 3 modularized enemy AI/intent internals, reward choice/application logic, and battle preview data without changing route metrics.
+- Golden metrics: `tools/run_lab_golden_metrics.gd` protects Arcano seed `20260518` exact metrics and checks Invocador/Necromante completion/no-death contracts.
+- Run Lab parity: `--compare-golden --require-golden` passes for Arcano, Invocador, and Necromante with seed `20260518`.
+- Foundation Pass 4 added the golden comparison harness without changing route metrics or gameplay behavior.
 
 ## First Tuning Pass
 

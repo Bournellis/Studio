@@ -126,3 +126,12 @@ Each entry should include:
 - validation result: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <worktree>\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd` passed with 97/97 GUT tests and 1218 asserts. Shared full-route pacing smoke completed 29/29 maps with 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 shop actions.
 - blockers: none. Remaining known debt: optional missing final PNG art and 4 non-fatal ship overlay alpha warnings.
 - next prompt id: none; Track 02 remains ready for human playtest.
+
+### 2026-05-27 - Foundation Hardening 4
+
+- prompt id: `FOUNDATION-HARDENING-4`
+- summary: Added Track 02 golden metrics for Run Lab regression checks, wired the Arcano seed `20260518` exact golden into validation, added optional `--compare-golden` / `--require-golden` Run Lab comparison, and covered golden acceptance/mismatch reporting in GUT.
+- changed files: `tools/run_lab_golden_metrics.gd`, `tools/run_lab.gd`, `tools/validate.gd`, `tests/unit/test_route_pacing_simulator.gd`, docs/status snapshots, and coordination note.
+- validation result: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <worktree>\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd` passed with 99/99 GUT tests and 1228 asserts. Shared full-route pacing smoke completed 29/29 maps with 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 shop actions. Run Lab `--compare-golden --require-golden` passed for Arcano, Invocador, and Necromante seed `20260518`.
+- blockers: none. Remaining known debt: optional missing final PNG art and 4 non-fatal ship overlay alpha warnings.
+- next prompt id: none; Track 02 remains ready for human playtest. Recommended next foundation pass: Run Economy Services.

@@ -1,7 +1,7 @@
 # Architecture
 
 - Last Updated: `2026-05-27`
-- Status: `Track 02 foundation hardening 3 baseline`
+- Status: `Track 02 foundation hardening 4 baseline`
 
 ## Goal
 
@@ -155,7 +155,7 @@ Responsibilities:
 - run GUT;
 - report playtest readiness and known non-fatal art alpha debts.
 
-Expected baseline after 2026-05-27 hardening 3: GUT 97/97 with 1218 asserts, full-route smoke 29/29 through the shared route pacing simulator, Run Lab parity for class/seed sweeps, and repeated validation does not dirty generated content when the JSON is unchanged.
+Expected baseline after 2026-05-27 hardening 4: GUT 99/99 with 1228 asserts, full-route smoke 29/29 through the shared route pacing simulator, Arcano seed `20260518` protected by exact golden metrics, Run Lab parity for class/seed sweeps, and repeated validation does not dirty generated content when the JSON is unchanged.
 
 ### `Run Lab`
 
@@ -165,6 +165,7 @@ Responsibilities:
 
 - run route simulations by class and seed;
 - emit CSV/JSON metrics for completed maps, HP, deck size, relics, shop actions, deaths and estimated turns;
+- compare approved Track 02 golden metrics when run with `--compare-golden`;
 - support regression and tuning comparison.
 
 Run Lab is not a replacement for human playtest.

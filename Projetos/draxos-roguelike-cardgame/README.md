@@ -21,7 +21,7 @@ Validation:
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd
 ```
 
-Expected foundation baseline after the 2026-05-27 hardening pass 3: GUT 97/97, 1218 asserts, full-route pacing smoke 29/29, internal directors/services for enemy AI/intent, rewards and battle previews, and no generated-catalog churn when validation is run repeatedly without semantic JSON changes.
+Expected foundation baseline after the 2026-05-27 hardening pass 4: GUT 99/99, 1228 asserts, full-route pacing smoke 29/29, golden Run Lab comparison for Track 02 class/seed regressions, internal directors/services for enemy AI/intent, rewards and battle previews, and no generated-catalog churn when validation is run repeatedly without semantic JSON changes.
 
 Run Lab:
 
@@ -30,3 +30,5 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 ```
 
 By default the Run Lab writes `user://run_lab/run_lab_metrics.json` and `user://run_lab/run_lab_metrics.csv`.
+
+Use `--compare-golden --require-golden` to validate the approved Track 02 regression baseline for Arcano, Invocador, and Necromante with seed `20260518`.
