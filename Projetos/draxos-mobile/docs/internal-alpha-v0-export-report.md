@@ -72,4 +72,4 @@ Resultado: ambos passaram. O Godot ainda emite `ObjectDB instances leaked at exi
 
 ## Proximo Passo
 
-`T03-P17` publicou APK/PC em links unlisted, publicou Portal/Web no Cloudflare Pages e atualizou o manifest remoto com hashes/links finais. Detalhes em `internal-alpha-v0-publication-report.md`. Falta fazer o signoff manual Fabio + 1 tester antes de `T03-P18`.
+`T03-P17` publicou APK/PC em links unlisted, publicou Portal/Web no Cloudflare Pages e atualizou o manifest remoto com hashes/links finais. Detalhes em `internal-alpha-v0-publication-report.md`. Fabio aprovou avancar para `T03-P18` em 2026-05-27.

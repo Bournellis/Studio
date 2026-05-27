@@ -2,7 +2,7 @@
 
 - Data: `2026-05-27`
 - Track: `T03-P17 - Publicacao Unlisted E QA Remoto Fechado`
-- Status: `T03-P17A_REPUBLISHED_GREEN - MANUAL_SIGNOFF_PENDING`
+- Status: `T03-P17A_SIGNOFF_APPROVED - T03-P18_READY`
 - Canal: `internal_alpha`
 - Versao in-app: `0.0.1-alpha.0`
 - Version code: `1`
@@ -107,9 +107,9 @@ Validacao final em 2026-05-27:
 - `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`: Web HTML com `GODOT_CONFIG`, `200`, `text/html`, HTML igual ao pacote local.
 - `https://8f43a34a.draxos-mobile-internal-alpha.pages.dev`: deploy antigo invalido, nao usar.
 
-## Pendencia Manual
+## Signoff E Proxima Etapa
 
-A parte automatizada de backend/downloads/portal/Web esta verde. O que falta e signoff humano completo:
+A parte automatizada de backend/downloads/portal/Web esta verde. Em 2026-05-27, Fabio aprovou avancar para `T03-P18`. Feedback posterior do tester deve entrar como bug conhecido/handoff:
 
 - abrir portal e baixar/abrir pelo menos duas plataformas;
 - criar/login com email e senha;
@@ -118,4 +118,4 @@ A parte automatizada de backend/downloads/portal/Web esta verde. O que falta e s
 - alternar para `progression_lab`, confirmar isolamento e ausencia no ranking;
 - registrar problemas de ergonomia Android paisagem e qualquer bloqueio de update/login.
 
-Depois desse signoff, seguir para `T03-P18 - Handoff Da Internal Alpha v0`.
+Proximo passo: `T03-P18 - Handoff Da Internal Alpha v0`.

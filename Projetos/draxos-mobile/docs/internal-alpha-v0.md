@@ -38,7 +38,7 @@ Decisao operacional de 2026-05-26:
 
 Esta ordem nao remove a decisao de usar Supabase no alpha. Ela apenas adia remoto, build e distribuicao para reduzir friccao enquanto a implementacao ainda muda muito.
 
-Atualizacao de 2026-05-27: `T03-P13` concluiu o bootstrap Supabase remoto, `T03-P14` concluiu auth email/senha + alpha gate, `T03-P15` concluiu manifest remoto + version gate no cliente, `T03-P16` exportou Android/PC/Web localmente e `T03-P17` publicou APK/PC ZIP em links unlisted, Portal/Web no Cloudflare Pages e manifest remoto com links finais. QA remoto automatizado esta verde. A proxima sequencia esta documentada em `internal-alpha-release-plan.md`: signoff manual Fabio + tester e `T03-P18` handoff.
+Atualizacao de 2026-05-27: `T03-P13` concluiu o bootstrap Supabase remoto, `T03-P14` concluiu auth email/senha + alpha gate, `T03-P15` concluiu manifest remoto + version gate no cliente, `T03-P16` exportou Android/PC/Web localmente e `T03-P17` publicou APK/PC ZIP em links unlisted, Portal/Web no Cloudflare Pages e manifest remoto com links finais. QA remoto automatizado esta verde. Fabio aprovou avancar para `T03-P18` em 2026-05-27.
 
 ## Modelo De Conta E Save
 
@@ -179,7 +179,7 @@ Status de publicacao (`T03-P17`):
 - Portal/Web publicados no Cloudflare Pages porque Supabase Storage/Edge Functions nao servem HTML como pagina.
 - Manifest remoto reconfigurado com URLs/hashes reais no default versionado da Edge Function `release`.
 - Relatorio: `internal-alpha-v0-publication-report.md`.
-- Falta fazer signoff manual Fabio + 1 tester antes de `T03-P18`.
+- Signoff aprovado por Fabio em 2026-05-27; feedback posterior do tester entra como bug conhecido/handoff de `T03-P18`.
 
 Politica:
 

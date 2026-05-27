@@ -122,7 +122,7 @@ Observacao Android: como nenhuma keystore release foi configurada em ambiente lo
 
 ### T03-P17 - Publicacao Unlisted E QA Remoto Fechado
 
-Status: `DOWNLOADS_GREEN - PORTAL_WEB_GREEN - AUTOMATED_REMOTE_QA_GREEN - MANUAL_SIGNOFF_PENDING`.
+Status: `COMPLETE - SIGNOFF_APPROVED`.
 
 Saida entregue em 2026-05-27:
 
@@ -131,7 +131,7 @@ Saida entregue em 2026-05-27:
 - APK e PC ZIP disponiveis por link publico unlisted;
 - manifest remoto reconfigurado com hashes finais de Android/PC e links finais de Portal/Web;
 - QA remoto automatizado verde para release manifest, email/senha, dois saves, batalha, base, loja, social, competicao e telemetria;
-- signoff manual Fabio + tester ainda pendente antes de `T03-P18`.
+- Fabio aprovou avancar para `T03-P18` em 2026-05-27; feedback posterior do tester entra como bug conhecido/handoff.
 
 Correcao pos-publicacao: links diretos de Storage para HTML/Web nao devem ser usados como link final, porque a Supabase retorna HTML como `text/plain` com CSP sandbox. Edge Functions tambem nao servem HTML como pagina. O caminho correto e publicar `build/internal-alpha/publish/` em host estatico externo e depois rodar `publish_internal_alpha.ps1 -StaticSiteBaseUrl <url> -SkipUpload -UseManifestSecret`.
 
@@ -139,7 +139,7 @@ Correcao Cloudflare Pages: nao publicar `build/internal-alpha/publish/` inteira 
 
 ### T03-P18 - Handoff Da Internal Alpha v0
 
-Status: `PENDING_MANUAL_SIGNOFF`.
+Status: `READY`.
 
 Saida esperada:
 

@@ -1,7 +1,7 @@
 # Track 03 - Internal Alpha v0 - Current Status
 
 - Last Updated: `2026-05-27`
-- Status: `T03-P17A_REPUBLISHED_GREEN - MANUAL_SIGNOFF_PENDING`
+- Status: `T03-P17A_SIGNOFF_APPROVED - T03-P18_READY`
 - Baseline: Track 00 completa, Track 01 completa e Track 02 com Progression Lab/Battle Lab v1 implementados. O projeto ja possui Godot 4.6.2, Supabase local, conta guest, batalha server-authoritative, Base/Social/Competicao/Monetizacao v0, telemetria client nao autoritativa, exports Android/PC/Web, Battle Visual Mockup compartilhado e laboratorios internos. A Track 03 prepara a transicao para uma build fechada realista com email/senha, dois saves por conta, backend remoto, updates e playtest de 2 usuarios.
 
 ## Implementado Nesta Preparacao
@@ -16,7 +16,7 @@
 - Follow-ups de loja/social fechados: redeems entregam apenas Diamante, resetam a meia-noite `America/Sao_Paulo`, amigos usam username e usuarios no Lab aparecem com marcador vermelho `lab`.
 - Estrategia backend registrada: Supabase para Internal Alpha v0, Backend Proprio + Postgres como plano de saida preferido e Nakama como alternativa futura apenas se realtime/social competitivo virar pilar.
 - `T03-P02` preparado do lado do repo: `BackendConfig` no Godot, ambiente `internal_alpha_v0`, env vars seguras, `.env` reais ignorados, `.env.internal-alpha.example`, runbook remoto e smoke Deno remoto sem service role.
-- Ordem local-first aprovada em 2026-05-26 e ja cumprida para release prep: o jogo foi implementado/validado no Godot/Supabase local primeiro; Supabase remoto foi inicializado em `T03-P13`; auth email/senha foi fechado em `T03-P14`; manifest de updates foi fechado em `T03-P15`; exports Android/PC/Web foram fechados em `T03-P16`; backend/downloads, Portal/Web e QA remoto automatizado foram fechados em `T03-P17`; falta signoff manual antes do handoff.
+- Ordem local-first aprovada em 2026-05-26 e ja cumprida para release prep: o jogo foi implementado/validado no Godot/Supabase local primeiro; Supabase remoto foi inicializado em `T03-P13`; auth email/senha foi fechado em `T03-P14`; manifest de updates foi fechado em `T03-P15`; exports Android/PC/Web foram fechados em `T03-P16`; backend/downloads, Portal/Web e QA remoto automatizado foram fechados em `T03-P17`; Fabio aprovou seguir para `T03-P18` em 2026-05-27.
 - `T03-P03A` completo: `SessionStore` possui save ativo `normal`/`progression_lab`, persiste no cache, limpa snapshots ao alternar contexto, marca snapshots local-only do Progression Lab como Lab, `SupabaseClient` prepara header `x-draxos-save-type` e o Hub mostra/troca save ativo com bloqueio claro quando o Lab esta em cache local-only.
 - `T03-P03B` completo: schema local ganhou `players.save_type`, unicidade por `auth_user_id + save_type`, RPCs `create_guest_account`/`request_mvp_battle` recebem save, Edge Functions resolvem `x-draxos-save-type` para `account`, `battle`, `base`, `social`, `competition`, `monetization` e `telemetry`, o Hub libera acoes server-backed no Lab, e o save `progression_lab` fica isolado do normal e fora do ranking com motivo explicito.
 - `T03-P03C` completo: `POST /account/saves/reset` e RPC `reset_player_save` reconstroem apenas o save ativo, preservam o outro save da mesma sessao Auth, limpam snapshots client-side do save resetado, mantem idempotencia por `request_id` e expoem botao perigoso "Resetar save ativo" no Hub.
@@ -38,10 +38,10 @@
 - Hotfix gameplay email/senha: `battle`, `base`, `social`, `competition` e `monetization` removem o guard legado `AUTH_NOT_ANONYMOUS` do MVP e aceitam JWT registrado; `/account/guest` continua restrito a guest dev.
 - `T03-P17A` aprovado: passada curta de usabilidade Android no Boot. O Hub/abas detectam Android ou `draxos_mobile/ui/force_compact_layout`, reduzem margens/fontes de chrome, mantem nav com alvo de toque maior, agrupam botoes de acao em grades, deixam o mapa da Base em 6 colunas no Android paisagem larga e trocam a linguagem visivel de "dev" do fluxo normal por "teste rapido". Foi adicionado GUT de regressao para o layout compacto, gerado rebuild local Android/PC/Web e Fabio aprovou a etapa como boa o suficiente para seguir.
 - Republicacao `T03-P17A` completa: APK/PC ZIP foram republicados no Supabase Storage, `release/manifest` foi atualizado via secret override e validado remoto, Cloudflare Pages foi redeployado via Wrangler para `https://a2383707.draxos-mobile-internal-alpha.pages.dev` e o dominio estavel `https://draxos-mobile-internal-alpha.pages.dev` passou com Portal/Web iguais ao pacote local.
+- Signoff manual Fabio: aprovado em 2026-05-27 para avancar para `T03-P18`; feedback posterior do tester entra como bug conhecido/handoff.
 
 ## Ainda Nao Implementado
 
-- Signoff manual de `T03-P17`: Fabio + 1 tester validam duas plataformas e registram bugs.
 - `T03-P18`: handoff final da Internal Alpha v0.
 
 ## Decisoes Ja Travadas
@@ -59,7 +59,7 @@
 
 ## Proximo Passo
 
-Concluir o signoff manual final com Fabio + 1 tester usando os links atualizados e seguir `T03-P18 - Handoff Da Internal Alpha v0`.
+Executar `T03-P18 - Handoff Da Internal Alpha v0`.
 
 ## Validacao Da Preparacao
 

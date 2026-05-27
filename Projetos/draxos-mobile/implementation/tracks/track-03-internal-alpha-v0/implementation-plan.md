@@ -59,7 +59,7 @@ Fabio vai trabalhar somente no Godot/local ate o jogo estar implementado o basta
 
 Durante a fase local-first, `T03-P02` permaneceu repo-ready: a configuracao segura existe e agora volta a ser a proxima trilha de release.
 
-Atualizacao de 2026-05-27: o projeto Supabase remoto (`armxgipvnbbshzqawklw`, `https://armxgipvnbbshzqawklw.supabase.co`) foi linkado pela CLI, recebeu migrations/functions, config de Auth email/senha sem confirmacao obrigatoria, passou em smokes remotos de healthcheck/Auth/email+saves, recebeu `GET /release/manifest` com smoke remoto verde, exportou builds locais Android/PC/Web em `T03-P16` e publicou APK/PC ZIP em Storage unlisted em `T03-P17`. Correcao pos-publicacao: Portal/Web nao podem viver no Supabase porque Storage/Edge Functions nao servem HTML como pagina; a solucao final usa Cloudflare Pages para Portal/Web HTML e Supabase Storage para downloads/assets grandes. Proxima etapa: signoff Fabio + tester e `T03-P18`.
+Atualizacao de 2026-05-27: o projeto Supabase remoto (`armxgipvnbbshzqawklw`, `https://armxgipvnbbshzqawklw.supabase.co`) foi linkado pela CLI, recebeu migrations/functions, config de Auth email/senha sem confirmacao obrigatoria, passou em smokes remotos de healthcheck/Auth/email+saves, recebeu `GET /release/manifest` com smoke remoto verde, exportou builds locais Android/PC/Web em `T03-P16` e publicou APK/PC ZIP em Storage unlisted em `T03-P17`. Correcao pos-publicacao: Portal/Web nao podem viver no Supabase porque Storage/Edge Functions nao servem HTML como pagina; a solucao final usa Cloudflare Pages para Portal/Web HTML e Supabase Storage para downloads/assets grandes. Fabio aprovou avancar para `T03-P18` em 2026-05-27.
 
 ### T03-P03 - Conta Email/Senha E Dois Saves
 
@@ -260,7 +260,7 @@ Implementado em modo local-first:
 
 Lacunas intencionais:
 
-- Builds exportadas foram fechadas em `T03-P16`; backend/downloads, Portal/Web e QA remoto automatizado foram fechados em `T03-P17`; falta signoff manual e handoff.
+- Builds exportadas foram fechadas em `T03-P16`; backend/downloads, Portal/Web e QA remoto automatizado foram fechados em `T03-P17`; Fabio aprovou seguir para handoff.
 
 ### T03-P12 - Release Plan, Portal Base E Tutorial Remoto
 
@@ -354,7 +354,7 @@ Status: `COMPLETE`.
 
 ### T03-P17 - Remote QA Fechado
 
-Status: `DOWNLOADS_GREEN - PORTAL_WEB_GREEN - AUTOMATED_REMOTE_QA_GREEN - MANUAL_SIGNOFF_PENDING`.
+Status: `COMPLETE - SIGNOFF_APPROVED`.
 
 - Publicar APK/PC em links unlisted e Portal/Web em host estatico externo.
 - Rodar smoke remoto automatizado.
@@ -365,7 +365,7 @@ Status: `DOWNLOADS_GREEN - PORTAL_WEB_GREEN - AUTOMATED_REMOTE_QA_GREEN - MANUAL
 
 ### T03-P17A - Android UI Usability Pass
 
-Status: `REPUBLISHED_GREEN - MANUAL_SIGNOFF_PENDING`.
+Status: `COMPLETE - SIGNOFF_APPROVED`.
 
 - Corrigir o primeiro desconforto observado no APK sem abrir nova fase de design visual.
 - Manter o layout amplo de PC/Web funcional, mas aplicar modo compacto automatico no Android.
@@ -379,10 +379,11 @@ Status: `REPUBLISHED_GREEN - MANUAL_SIGNOFF_PENDING`.
 - Aprovado por Fabio em 2026-05-27 como bom o suficiente para seguir.
 - APK/PC ZIP e `release/manifest` republicados em 2026-05-27.
 - Cloudflare Pages redeployado por Wrangler em 2026-05-27, deploy `https://a2383707.draxos-mobile-internal-alpha.pages.dev`; dominio estavel validado em `https://draxos-mobile-internal-alpha.pages.dev`.
+- Signoff aprovado por Fabio em 2026-05-27 para avancar para `T03-P18`; feedback posterior do tester entra como bug conhecido/handoff.
 
 ### T03-P18 - Handoff Da Internal Alpha v0
 
-Status: `PENDING_T03_P17_MANUAL_SIGNOFF`.
+Status: `READY`.
 
 - Atualizar portal com links reais finais.
 - Atualizar release notes e manifest.
@@ -405,11 +406,11 @@ As decisoes abaixo estao registradas em `docs/design-pending.md` e precisam ser 
 
 ## Trabalho Manual Do Fabio
 
-Necessario agora para concluir o signoff manual de `T03-P17` e seguir `T03-P18`:
+Necessario agora para concluir `T03-P18`:
 
 - Criar keystore Android release internal alpha e guardar senha fora do Git antes de uma distribuicao mais ampla; `T03-P17` usou APK `debug_fallback`.
 - Usar os links publicados do relatorio `docs/internal-alpha-v0-publication-report.md` para o teste Fabio + amigo.
-- Registrar bugs e feedback de ergonomia Android/PC/Web durante o signoff manual.
+- Registrar bugs e feedback de ergonomia Android/PC/Web que surgirem apos a aprovacao.
 - Informar os emails/usernames desejados para Fabio e o amigo, se quiser contas humanas predefinidas em vez de cadastro por convite.
 - Guardar `SUPABASE_SERVICE_ROLE_KEY` fora do Git para resets/deploys controlados; nunca colocar no cliente.
 
