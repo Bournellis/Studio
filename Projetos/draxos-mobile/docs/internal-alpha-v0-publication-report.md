@@ -73,7 +73,7 @@ Publicar uma destas saidas no Cloudflare Pages:
 
 Esse pacote deixa Portal/Web HTML no Cloudflare e mantem APK/PC/Web assets grandes apontando para Supabase Storage.
 
-Observacao operacional: se `/portal/index.html` ou `/web/index.html` retornarem apenas o `index.html` raiz curto, o deploy nao recebeu os arquivos esperados. Regenerar o pacote e criar um novo deploy no Pages. O pacote atual inclui `_redirects`, `index.html` e `web.html` na raiz para preservar as URLs finais mesmo em upload direto mais restritivo.
+Observacao operacional: se `/` nao retornar o portal completo, ou `/web` nao retornar HTML com `GODOT_CONFIG`, o deploy nao recebeu os arquivos esperados. Regenerar o pacote e criar um novo deploy no Pages. O pacote atual inclui `_redirects`, `index.html` e `web.html` na raiz; `/portal/index.html` redireciona para `/` e `/web/index.html` redireciona para `/web`.
 
 ## Pendencia Manual
 

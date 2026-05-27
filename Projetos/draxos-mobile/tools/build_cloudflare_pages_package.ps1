@@ -105,12 +105,11 @@ $webHtml = $webHtml.Replace('"executable":"index"', ('"executable":"' + $assetBa
 [System.IO.File]::WriteAllText((Join-Path $OutputDir "web.html"), $webHtml, [System.Text.UTF8Encoding]::new($false))
 
 $redirects = @'
-/portal/index.html /index.html 200
-/portal/ /index.html 200
-/portal /index.html 200
-/web/index.html /web.html 200
-/web/ /web.html 200
-/web /web.html 200
+/portal/index.html / 302
+/portal/ / 302
+/portal / 302
+/web/index.html /web 302
+/web/ /web 302
 '@
 [System.IO.File]::WriteAllText((Join-Path $OutputDir "_redirects"), $redirects, [System.Text.UTF8Encoding]::new($false))
 

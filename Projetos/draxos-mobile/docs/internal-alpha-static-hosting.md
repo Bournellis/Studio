@@ -93,7 +93,7 @@ build/internal-alpha/draxos-mobile-cloudflare-pages.zip
 
 Publicar no Cloudflare Pages a pasta `build/internal-alpha/cloudflare-pages/` ou o zip `build/internal-alpha/draxos-mobile-cloudflare-pages.zip`.
 
-O pacote tambem inclui `index.html`, `web.html` e `_redirects` na raiz. Isso deixa o deploy mais tolerante ao upload direto do Cloudflare: mesmo que a interface nao preserve bem as pastas no primeiro envio, as URLs finais esperadas continuam sendo `/portal/index.html` e `/web/index.html`.
+O pacote tambem inclui `index.html`, `web.html` e `_redirects` na raiz. Isso deixa o deploy mais tolerante ao upload direto do Cloudflare: mesmo que a interface nao preserve bem as pastas no primeiro envio, `/portal/index.html` redireciona para `/` e `/web/index.html` redireciona para `/web`, onde o Pages serve `web.html` via clean URL.
 
 ## Passo Manual Fabio
 
@@ -105,8 +105,10 @@ O pacote tambem inclui `index.html`, `web.html` e `_redirects` na raiz. Isso dei
 6. Conferir no deploy:
 
 ```text
-/portal/index.html deve mostrar o portal completo.
-/web/index.html deve conter/carregar a Web build do Godot.
+/ deve mostrar o portal completo.
+/web deve conter/carregar a Web build do Godot.
+/portal/index.html deve redirecionar para /.
+/web/index.html deve redirecionar para /web.
 ```
 
 7. Copiar a URL final, por exemplo:
