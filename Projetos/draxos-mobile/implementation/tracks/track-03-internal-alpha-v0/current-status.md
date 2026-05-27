@@ -1,7 +1,7 @@
 # Track 03 - Internal Alpha v0 - Current Status
 
 - Last Updated: `2026-05-27`
-- Status: `T03-P17A_ANDROID_UI_APPROVED - REPUBLISH_PENDING`
+- Status: `T03-P17A_DOWNLOADS_MANIFEST_GREEN - CLOUDFLARE_REDEPLOY_BLOCKED`
 - Baseline: Track 00 completa, Track 01 completa e Track 02 com Progression Lab/Battle Lab v1 implementados. O projeto ja possui Godot 4.6.2, Supabase local, conta guest, batalha server-authoritative, Base/Social/Competicao/Monetizacao v0, telemetria client nao autoritativa, exports Android/PC/Web, Battle Visual Mockup compartilhado e laboratorios internos. A Track 03 prepara a transicao para uma build fechada realista com email/senha, dois saves por conta, backend remoto, updates e playtest de 2 usuarios.
 
 ## Implementado Nesta Preparacao
@@ -37,9 +37,11 @@
 - Correcao Cloudflare Pages: o pacote hibrido publica Portal em `/`, Web em `/web`, mantem redirects de `/portal/index.html` e `/web/index.html`, e evita o limite por arquivo do Pages.
 - Hotfix gameplay email/senha: `battle`, `base`, `social`, `competition` e `monetization` removem o guard legado `AUTH_NOT_ANONYMOUS` do MVP e aceitam JWT registrado; `/account/guest` continua restrito a guest dev.
 - `T03-P17A` aprovado: passada curta de usabilidade Android no Boot. O Hub/abas detectam Android ou `draxos_mobile/ui/force_compact_layout`, reduzem margens/fontes de chrome, mantem nav com alvo de toque maior, agrupam botoes de acao em grades, deixam o mapa da Base em 6 colunas no Android paisagem larga e trocam a linguagem visivel de "dev" do fluxo normal por "teste rapido". Foi adicionado GUT de regressao para o layout compacto, gerado rebuild local Android/PC/Web e Fabio aprovou a etapa como boa o suficiente para seguir.
+- Republicacao `T03-P17A` parcial: APK/PC ZIP foram republicados no Supabase Storage, `release/manifest` foi atualizado via secret override e validado remoto. O pacote Cloudflare Pages atualizado foi gerado, mas o deploy automatico via Wrangler ficou bloqueado por falta de `CLOUDFLARE_API_TOKEN`; Web HTML remoto ainda carrega metadata antiga de `index.pck`, entao Web precisa de upload manual do pacote ou token antes do signoff Web final.
 
 ## Ainda Nao Implementado
 
+- Republicar Cloudflare Pages com `build/internal-alpha/draxos-mobile-cloudflare-pages.zip` ou configurar `CLOUDFLARE_API_TOKEN` para deploy CLI.
 - Signoff manual de `T03-P17`: Fabio + 1 tester validam duas plataformas e registram bugs.
 - `T03-P18`: handoff final da Internal Alpha v0.
 
@@ -58,7 +60,7 @@
 
 ## Proximo Passo
 
-Republicar APK/PC e pacote Cloudflare Pages com o rebuild aprovado da `T03-P17A`, atualizar manifest/links do portal, concluir o signoff manual final com Fabio + 1 tester e seguir `T03-P18 - Handoff Da Internal Alpha v0`.
+Publicar o pacote Cloudflare Pages atualizado (`build/internal-alpha/draxos-mobile-cloudflare-pages.zip`) por upload manual ou configurar `CLOUDFLARE_API_TOKEN` e rodar `wrangler pages deploy`. Depois validar `/web`, concluir o signoff manual final com Fabio + 1 tester e seguir `T03-P18 - Handoff Da Internal Alpha v0`.
 
 ## Validacao Da Preparacao
 
@@ -130,3 +132,8 @@ Republicar APK/PC e pacote Cloudflare Pages com o rebuild aprovado da `T03-P17A`
 - `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-mobile -s res://tools/validate.gd`: passou em 2026-05-27 com GUT `54/54` e `367` asserts apos adicionar `test_boot_mobile_ui.gd`.
 - `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-mobile -s res://tools/smoke_exports.gd`: passou em 2026-05-27 apos T03-P17A.
 - `powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\export_internal_alpha.ps1 -ProjectDir . -GodotExe "D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe" -AllowAndroidDebugFallback`: passou em 2026-05-27 apos T03-P17A, gerando APK `debug_fallback`, PC ZIP e Web locais com hashes atualizados.
+- `powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 -ProjectDir . -StaticSiteBaseUrl "https://draxos-mobile-internal-alpha.pages.dev" -SkipUpload -UseManifestSecret`: passou em 2026-05-27 apos republicacao `T03-P17A`, atualizando manifest remoto e validando Portal/Web/downloads.
+- `npx -y deno run --allow-net --allow-env server/tests/release_manifest_smoke.ts` com env remoto: passou em 2026-05-27.
+- `DRAXOS_REMOTE_RELEASE_SMOKE=1 npx -y deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts` com env remoto: passou em 2026-05-27.
+- HTTP final em 2026-05-27: Portal `200 text/html`, Web `200 text/html`, Manifest `200 application/json`, Android APK `200` com `27811908` bytes, PC ZIP `200` com `36331728` bytes.
+- `npx -y wrangler pages deploy .\build\internal-alpha\cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`: bloqueado em 2026-05-27 porque Wrangler exige `CLOUDFLARE_API_TOKEN` em ambiente nao interativo.

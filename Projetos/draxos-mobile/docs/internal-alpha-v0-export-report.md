@@ -28,12 +28,12 @@ Metadata local gerado:
 
 Em 2026-05-27, apos o feedback de usabilidade no APK, foi gerado um rebuild local com a passada compacta do Hub/abas. Este rebuild ainda nao substitui automaticamente o pacote Cloudflare Pages publicado; ele serve para reteste local e para republicacao dos downloads quando aprovado.
 
-Status manual: aprovado por Fabio em 2026-05-27 como bom o suficiente para seguir para republicacao.
+Status manual: aprovado por Fabio em 2026-05-27 como bom o suficiente para seguir para republicacao. Reexport de 2026-05-27 15:53 UTC atualizou os hashes abaixo.
 
 | Plataforma | Artefato local | Bytes | SHA256 |
 |---|---|---:|---|
-| Android APK | `build/android/draxos-mobile-alpha.apk` | `27811908` | `acfb572a28d437027a49b7f4f46b218f5204341c1fe276d8354e160deee78fe7` |
-| PC Windows ZIP | `build/pc/draxos-mobile-alpha.zip` | `36331728` | `222e0ec6e4d155b54dca367b97f4761a4e048a20f8698a5fd0b0a87264d8bfe5` |
+| Android APK | `build/android/draxos-mobile-alpha.apk` | `27811908` | `6c39ce9a63eaf4796a67a9e5a29e9252f1f03266f713ffa58c5d2333c15102d6` |
+| PC Windows ZIP | `build/pc/draxos-mobile-alpha.zip` | `36331728` | `4b7dc516bc4c5c4895930f8732ad9e97733cca85ba7574c9a0308c705982d236` |
 | Web index | `build/web/index.html` | `5442` | `04c8da05bcada497128a9c506092579bf47075d8da636634ffb1722e3cbd1a1b` |
 
 ## Android

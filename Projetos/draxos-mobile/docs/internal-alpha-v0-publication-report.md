@@ -2,7 +2,7 @@
 
 - Data: `2026-05-27`
 - Track: `T03-P17 - Publicacao Unlisted E QA Remoto Fechado`
-- Status: `DOWNLOADS_GREEN - PORTAL_WEB_GREEN - AUTOMATED_REMOTE_QA_GREEN - MANUAL_SIGNOFF_PENDING`
+- Status: `T03-P17A_DOWNLOADS_MANIFEST_GREEN - CLOUDFLARE_REDEPLOY_BLOCKED - MANUAL_SIGNOFF_PENDING`
 - Canal: `internal_alpha`
 - Versao in-app: `0.0.1-alpha.0`
 - Version code: `1`
@@ -24,9 +24,9 @@
 
 | Plataforma | Bytes | SHA256 |
 |---|---:|---|
-| Android APK | `27795524` | `87533f150ffb773ef3bb7e41f6d69e98c7fdd4a85cbbf1e28544040aaade2448` |
-| PC Windows ZIP | `36315593` | `e678fb7e2d2e984ad7356a47cbdcf4fdb12628ebe23636ab1a3b976365111082` |
-| Web index | `5442` | `66b279ad9c9d9e1a5ae27f78880b98c8ba0dc8d788da955f1955754ab0cff71e` |
+| Android APK | `27811908` | `6c39ce9a63eaf4796a67a9e5a29e9252f1f03266f713ffa58c5d2333c15102d6` |
+| PC Windows ZIP | `36331728` | `4b7dc516bc4c5c4895930f8732ad9e97733cca85ba7574c9a0308c705982d236` |
+| Web index | `5442` | `04c8da05bcada497128a9c506092579bf47075d8da636634ffb1722e3cbd1a1b` |
 
 ## Resultado Tecnico
 
@@ -38,6 +38,26 @@
 - Override por secret (`RELEASE_MANIFEST_JSON_BASE64` ou `RELEASE_MANIFEST_JSON`) continua possivel apenas quando `RELEASE_MANIFEST_OVERRIDE_ENABLED=1`.
 - `release` Edge Function foi redeployada para ignorar secrets antigos por padrao, evitando que um override obsoleto mantenha URLs diretas de Storage para HTML/Web.
 - `build/internal-alpha/publication-report.json` guarda metadata local ignorada pelo Git.
+
+## Republicacao T03-P17A
+
+Em 2026-05-27, apos Fabio aprovar a ergonomia Android da `T03-P17A`, os artefatos locais foram reexportados e os downloads/manifest foram republicados.
+
+Resultado:
+
+- `tools/smoke_exports.gd`: passou.
+- `tools/export_internal_alpha.ps1`: passou, Android mode `debug_fallback`.
+- `tools/publish_internal_alpha.ps1 -StaticSiteBaseUrl "https://draxos-mobile-internal-alpha.pages.dev" -SkipUpload -UseManifestSecret`: passou.
+- Android APK remoto: `200`, `27811908` bytes, `application/vnd.android.package-archive`.
+- PC ZIP remoto: `200`, `36331728` bytes, `application/zip`.
+- Manifest remoto: `200`, `application/json`, validado por `release_manifest_smoke.ts` remoto.
+- Portal remoto: `200`, `text/html`, HTML igual ao pacote local.
+
+Bloqueio:
+
+- `npx -y wrangler pages deploy .\build\internal-alpha\cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main` falhou porque o ambiente nao possui `CLOUDFLARE_API_TOKEN`.
+- O pacote Cloudflare atualizado esta pronto em `build/internal-alpha/draxos-mobile-cloudflare-pages.zip`.
+- O Web HTML remoto ainda difere do pacote local: `fileSizes.index.pck` remoto `398768`, pacote local `415856`. Antes do signoff Web final, publicar o pacote atualizado no Cloudflare Pages via upload manual ou configurar `CLOUDFLARE_API_TOKEN` e repetir o deploy CLI.
 
 ## Correcao Pos-Publicacao
 

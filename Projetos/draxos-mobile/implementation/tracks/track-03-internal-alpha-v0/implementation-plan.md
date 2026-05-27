@@ -365,7 +365,7 @@ Status: `DOWNLOADS_GREEN - PORTAL_WEB_GREEN - AUTOMATED_REMOTE_QA_GREEN - MANUAL
 
 ### T03-P17A - Android UI Usability Pass
 
-Status: `APPROVED - REPUBLISH_PENDING`.
+Status: `DOWNLOADS_MANIFEST_GREEN - CLOUDFLARE_REDEPLOY_BLOCKED`.
 
 - Corrigir o primeiro desconforto observado no APK sem abrir nova fase de design visual.
 - Manter o layout amplo de PC/Web funcional, mas aplicar modo compacto automatico no Android.
@@ -377,6 +377,8 @@ Status: `APPROVED - REPUBLISH_PENDING`.
 - Adicionar teste automatizado para garantir que o modo compacto continua usando grade de acoes e toque minimo.
 - Gerar rebuild local Android/PC/Web para reteste antes de republicar downloads/Cloudflare.
 - Aprovado por Fabio em 2026-05-27 como bom o suficiente para seguir.
+- APK/PC ZIP e `release/manifest` republicados em 2026-05-27.
+- Deploy automatico do Cloudflare Pages bloqueado por falta de `CLOUDFLARE_API_TOKEN`; pacote atualizado pronto em `build/internal-alpha/draxos-mobile-cloudflare-pages.zip`.
 
 ### T03-P18 - Handoff Da Internal Alpha v0
 
