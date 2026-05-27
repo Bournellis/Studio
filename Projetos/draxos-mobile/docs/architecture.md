@@ -54,6 +54,24 @@ Regras anti-lock-in:
 - Schema SQL, migrations e seeds devem ficar versionados.
 - Storage de builds/manifests pode mudar de fornecedor sem alterar gameplay.
 
+### Limite De Escopo De Servicos - Track 05
+
+Cada Edge Function HTTP deve declarar escopo antes de evoluir:
+
+- `save-scoped`: `account`, `battle`, `base`, `competition`,
+  `monetization` e `progression-lab` quando resolvem o save ativo por
+  `x-draxos-save-type`.
+- `account-scoped`: `social`, porque usa identidade social canonica da conta e
+  apenas valida o save ativo para marcar/limitar o Lab.
+- `release`: `release` e `healthcheck`, sem estado de gameplay.
+- `telemetry`: `telemetry`, sem autoridade economica, ranking ou recompensa.
+- `admin-future`: reservado para administracao futura; nao existe endpoint
+  implementado neste escopo na Track 05.
+
+Novos endpoints devem declarar escopo no contrato de API antes de codigo,
+smoke ou migration. Track 05 mantem `players.save_type` e nao cria
+`account_profiles` ou `game_saves`.
+
 Plano de saida para Backend Proprio + Postgres:
 
 1. Congelar contratos HTTP atuais.

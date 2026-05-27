@@ -18,6 +18,29 @@ Migrations atuais:
 - `202605260003_progression_lab_apply.sql`: RPC `apply_progression_lab_save` para aplicar um healthy save gerado no save `progression_lab`.
 - `202605270001_alpha_email_account.sql`: RPC `create_alpha_account` para conta email/senha registrada, alpha gate por convite/username e criacao dos saves `normal`/`progression_lab`.
 
+## Regras De Escopo De Servico
+
+Track 05 nao altera schema. A classificacao de escopo usa o schema atual como
+limite operacional:
+
+- `save-scoped`: endpoints resolvem `players.id` por `auth_user_id +
+  players.save_type`; tabelas de gameplay continuam referenciando `player_id`.
+- `account-scoped`: endpoints sociais podem usar o save `normal` como
+  identidade canonica da conta quando existir, validando o save ativo apenas
+  para nao misturar `progression_lab` com ranking/social normal.
+- `release`: endpoints operacionais como manifest/healthcheck nao leem nem
+  escrevem tabelas de gameplay.
+- `telemetry`: endpoints de diagnostico escrevem somente em `telemetry_events`
+  e podem manter `player_id = null` antes da criacao de save.
+- `admin-future`: qualquer administracao de convites, suporte, moderacao,
+  entitlement account-wide ou publicacao deve receber contrato e autorizacao
+  propria antes de migration ou Edge Function.
+
+Mutacoes `save-scoped` e `account-scoped` atuais continuam usando
+`idempotency_keys` com o `player_id` do save ativo ou da identidade social
+canonica. Uma mutacao account-wide futura nao deve reutilizar esse padrao sem
+decisao explicita, porque ainda nao ha `account_profiles` ou `game_saves`.
+
 ## MVP Tecnico
 
 ### `players`

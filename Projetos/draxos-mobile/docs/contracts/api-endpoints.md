@@ -13,7 +13,7 @@ Este documento descreve a interface logica entre cliente Godot e Supabase Edge F
 - Internal Alpha: cliente cria sessao Supabase Auth por email/senha; depois chama `/account/bootstrap` com JWT registrado, username e convite para criar o primeiro save.
 - Guest dev: cliente ainda pode criar sessao Supabase Auth anonima e chamar `/account/guest`, mas esse fluxo e ferramenta de desenvolvimento/fallback e nao o caminho real da build interna.
 - Correlation: cliente envia `request_id` em mutacoes para idempotencia.
-- Runtime local atual: `supabase/functions/account`, `battle`, `base`, `social`, `competition`, `monetization`, `telemetry`, `progression-lab` e `release`, espelhados em `server/functions/`.
+- Runtime local atual: `supabase/functions/healthcheck`, `account`, `battle`, `base`, `social`, `competition`, `monetization`, `telemetry`, `progression-lab` e `release`, espelhados em `server/functions/`.
 - Anti-lock-in: os endpoints logicos deste documento pertencem ao jogo, nao ao Supabase. O cliente Godot deve depender de `account`, `battle`, `base`, `social`, `competition`, `monetization`, `telemetry`, `progression-lab` e `release`, permitindo futura migracao para Backend Proprio + Postgres sem redesenhar o cliente.
 - Resposta de erro padrao:
 
@@ -27,13 +27,95 @@ Este documento descreve a interface logica entre cliente Godot e Supabase Edge F
 }
 ```
 
+## Classificacao De Escopo - Track 05
+
+Todo endpoint atual ou futuro deve declarar um dos escopos abaixo antes de
+entrar em codigo, smoke, migration ou documentacao publica de payload.
+
+- `save-scoped`: resolve o jogador pelo save ativo (`x-draxos-save-type`), com
+  ausencia do header usando `normal`. Leituras e mutacoes atingem somente esse
+  save.
+- `account-scoped`: resolve identidade de conta, social ou relacionamento que
+  atravessa saves. Pode validar o save ativo, mas nao deve contaminar o save
+  `normal` com estado do `progression_lab`.
+- `release`: endpoint publico/operacional sem JWT obrigatorio e sem leitura ou
+  escrita de gameplay.
+- `telemetry`: endpoint de diagnostico/UX; pode associar evento ao save ativo
+  quando existir, mas nunca concede recurso, ranking, recompensa ou progresso.
+- `admin-future`: superficie futura de administracao, convites, suporte,
+  moderacao, entitlement ou publicacao. Nao existe endpoint implementado neste
+  escopo na Track 05; qualquer criacao exige contrato e autorizacao explicitos.
+
+Regra para endpoints novos: adicionar `Scope: <valor>` na secao do endpoint,
+declarar se usa `x-draxos-save-type`, declarar o dono da idempotencia
+(`player_id`, identidade social/account ou nenhum) e apontar o teste/smoke
+existente ou novo que cobre esse comportamento. Esta Track 05 nao cria endpoint
+novo.
+
+### Matriz Atual De Endpoints
+
+| Metodo | Endpoint / funcao | Escopo | Save header | Idempotencia | Observacao |
+|---|---|---|---|---|---|
+| GET | `/healthcheck` | `release` | Nao | Nao | Healthcheck operacional local/remoto; nao le gameplay. |
+| GET | `/release/manifest` | `release` | Nao | Nao | Manifest publico de update/version gate. |
+| POST | `/account/bootstrap` | `save-scoped` | Sim | `request_id` por save | Cria/recupera o save `normal` ou `progression_lab` de conta registrada; o gate de convite e account-aware. |
+| POST | `/account/guest` | `save-scoped` | Sim | `request_id` por save | Fallback dev/local anonimo; cria/recupera o save selecionado. |
+| GET | `/account/state` | `save-scoped` | Sim | Nao | Retorna snapshot do save ativo. |
+| POST | `/account/saves/reset` | `save-scoped` | Sim | `request_id` por save | Reseta apenas o save ativo e exige consistencia entre body e header quando ambos aparecem. |
+| POST | `/battle/request` | `save-scoped` | Sim | `request_id` por save | Simula no servidor, aplica recompensa/ranking do save ativo e bloqueia ranking do Lab. |
+| GET | `/battle/latest` | `save-scoped` | Sim | Nao | Retorna ultima batalha do save ativo sem reaplicar efeitos. |
+| GET | `/base/state` | `save-scoped` | Sim | Nao | Estado server-authoritative da Base do save ativo. |
+| POST | `/base/collect` | `save-scoped` | Sim | `request_id` por save | Coleta recursos do save ativo com ledger. |
+| POST | `/base/upgrade` | `save-scoped` | Sim | `request_id` por save | Inicia upgrade da Base do save ativo com ledger. |
+| GET | `/social/state` | `account-scoped` | Sim, validado | Nao | Usa identidade social canonica da conta; Lab recebe marcador `lab`. |
+| POST | `/social/friends/add` | `account-scoped` | Sim, validado | `request_id` na identidade social | Amizade por username na identidade social canonica. |
+| POST | `/social/guild/create` | `account-scoped` | Sim, validado | `request_id` na identidade social | Cria guilda e membership para a identidade social canonica. |
+| POST | `/social/guild/join` | `account-scoped` | Sim, validado | `request_id` na identidade social | Entra em guilda pela identidade social canonica. |
+| POST | `/social/chat/send` | `account-scoped` | Sim, validado | `request_id` na identidade social | Envia chat de guilda; nao concede progresso. |
+| GET | `/competition/matchmaking/preview` | `save-scoped` | Sim | Nao | Preview do save ativo; `progression_lab` pode ver preview sem ranquear. |
+| GET | `/competition/ranking/current` | `save-scoped` | Sim | Nao | Ranking do save `normal`; Lab retorna exclusao explicita. |
+| GET | `/monetization/state` | `save-scoped` | Sim | Nao | Loja/Battle Pass do save ativo. |
+| POST | `/monetization/rewards/claim` | `save-scoped` | Sim | `request_id` por save | Claim economico do save ativo com ledger. |
+| POST | `/monetization/alpha-purchase` | `save-scoped` | Sim | `request_id` por save | Compra/redeem alpha do save ativo com ledger. |
+| POST | `/telemetry/client-event` | `telemetry` | Sim, opcional | Nao | Grava diagnostico client; `player_id` pode ser nulo antes de conta/save. |
+| POST | `/progression-lab/apply` | `save-scoped` | Sim, exige `progression_lab` | `request_id` por save Lab | Interno/gated; aplica healthy save apenas no Lab e nunca escreve no Normal. |
+
+`admin-future` fica reservado para endpoints ainda inexistentes, como painel de
+convites, suporte, moderacao, entitlement account-wide, operacao de release ou
+publicacao remota. Esses endpoints nao devem reutilizar silenciosamente
+`save-scoped`.
+
 ## Endpoints De Release
+
+### `GET /healthcheck`
+
+Retorna healthcheck operacional da funcao local/remota.
+
+Status: **implementado em T00-P02B**.
+
+Scope: `release`.
+
+Auth: nao exige JWT.
+
+Response:
+
+```json
+{
+  "ok": true,
+  "service": "draxos-mobile",
+  "function": "healthcheck",
+  "track": "Track 00 - First Slice Foundation",
+  "schema_version": "mvp_foundation_v1"
+}
+```
 
 ### `GET /release/manifest`
 
 Retorna o manifest publico de updates da Internal Alpha v0.
 
 Status: **implementado em T03-P15**.
+
+Scope: `release`.
 
 Auth: nao exige JWT. Pode receber `apikey` publica quando chamado pelo cliente Godot ou smokes.
 
@@ -392,6 +474,11 @@ Response:
 ```
 
 ## Endpoints Planejados - Internal Alpha v0
+
+Nota Track 05: esta secao e historica/futura. Endpoints ja implementados foram
+classificados na matriz atual acima. Qualquer endpoint ainda nao implementado
+ou renomeado daqui deve ganhar `Scope: <save-scoped|account-scoped|release|telemetry|admin-future>`
+antes de virar codigo, migration ou smoke.
 
 Estes contratos sao alvo da Track 03 e ainda podem receber ajuste fino em `T03-P01`, antes da implementacao funcional.
 
