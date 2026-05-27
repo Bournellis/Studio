@@ -1,6 +1,7 @@
 extends GutTest
 
 const BootScreenScript = preload("res://modes/boot/boot.gd")
+const BaseSurfacePresenterScript = preload("res://modes/boot/surfaces/base_surface_presenter.gd")
 
 func before_each() -> void:
 	_reset_session_store_for_test()
@@ -108,6 +109,32 @@ func test_base_presenter_renders_loaded_state_without_network() -> void:
 	assert_true(boot._base_state_container.get_child_count() >= 3)
 	var upgrade_button := boot._action_buttons["upgrade_base_structure:nucleo_energia"] as Button
 	assert_false(upgrade_button.disabled)
+
+func test_base_routine_panel_derives_objective_from_existing_payload() -> void:
+	var routine: Dictionary = BaseSurfacePresenterScript.routine_summary(_base_state_fixture())
+
+	assert_string_contains(str(routine.get("collect_text", "")), "Coleta pronta: Almas 4 | Energia 12.")
+	assert_eq(int(routine.get("active_job_count", 0)), 1)
+	assert_eq(int(routine.get("free_slots", -1)), 1)
+	assert_eq(str(routine.get("next_upgrade_id", "")), "nucleo_energia")
+	assert_string_contains(str(routine.get("next_upgrade_text", "")), "Nucleo de Energia para L3")
+	assert_string_contains(str(routine.get("next_upgrade_text", "")), "custo Energia 20")
+	assert_string_contains(str(routine.get("next_upgrade_text", "")), "tempo 2m 00s")
+
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	_prepare_account_state()
+	SessionStore.base_state = _base_state_fixture()
+
+	boot._show_screen("base")
+	await get_tree().process_frame
+
+	assert_true(_label_tree_contains(boot._base_state_container, "Rotina da Base"))
+	assert_true(_label_tree_contains(boot._base_state_container, "Coleta pronta: Almas 4 | Energia 12."))
+	assert_true(_label_tree_contains(boot._base_state_container, "Jobs em andamento: 1."))
+	assert_true(_label_tree_contains(boot._base_state_container, "Altar das Almas -> L2 | resta 1m 30s"))
+	assert_true(_label_tree_contains(boot._base_state_container, "Slots livres: 1/2."))
+	assert_true(_label_tree_contains(boot._base_state_container, "Proximo upgrade: Nucleo de Energia para L3"))
 
 func test_shop_presenter_renders_loaded_state_and_disables_claimed_items() -> void:
 	var boot = BootScreenScript.new()

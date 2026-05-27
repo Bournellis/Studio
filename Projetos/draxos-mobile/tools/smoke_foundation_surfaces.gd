@@ -88,6 +88,13 @@ func _check_base(client: Node, store: Node) -> int:
 		return _fail_local("base", "BASE_STRUCTURES_MISSING", "Base state must expose the six current structures.")
 	if int(store.base_state.get("construction_slots", 0)) < 1:
 		return _fail_local("base", "BASE_SLOTS_MISSING", "Base state must expose construction slots.")
+	var routine := _base_routine_probe(store.base_state)
+	if str(routine.get("collect_text", "")).strip_edges() == "":
+		return _fail_local("base", "BASE_ROUTINE_COLLECT_MISSING", "Base routine must expose collect readiness text.")
+	if int(routine.get("construction_slots", 0)) < 1 or int(routine.get("free_slots", -1)) < 0:
+		return _fail_local("base", "BASE_ROUTINE_SLOTS_MISSING", "Base routine must expose free construction slots.")
+	if str(routine.get("next_upgrade_text", "")).strip_edges() == "":
+		return _fail_local("base", "BASE_ROUTINE_NEXT_UPGRADE_MISSING", "Base routine must expose a readable next upgrade.")
 
 	var collect_result: Dictionary = await client.collect_base(
 		SessionStoreScript.create_request_id(),
@@ -95,6 +102,11 @@ func _check_base(client: Node, store: Node) -> int:
 	)
 	if not bool(collect_result.get("ok", false)) or not store.apply_base_result(collect_result):
 		return _fail(collect_result, "base-collect")
+	var collect_body := _as_dictionary(collect_result.get("body", {}))
+	var collected := _as_dictionary(collect_body.get("collected", {}))
+	var collected_routine := _base_routine_probe(store.base_state, collected)
+	if str(collected_routine.get("collect_text", "")).strip_edges() == "":
+		return _fail_local("base", "BASE_ROUTINE_COLLECT_RESULT_MISSING", "Base routine must remain readable after collection.")
 	return 0
 
 func _check_social(client: Node, store: Node) -> int:
@@ -188,7 +200,50 @@ func _fail_local(scope: String, code: String, message: String) -> int:
 	printerr("[smoke-foundation-surfaces:%s] %s: %s" % [scope, code, message])
 	return 1
 
+func _base_routine_probe(base: Dictionary, collected: Dictionary = {}) -> Dictionary:
+	var structures := _as_array(base.get("structures", []))
+	var jobs := _as_array(base.get("jobs", []))
+	var active_job_count := 0
+	for item: Variant in jobs:
+		var job := _as_dictionary(item)
+		if str(job.get("status", "")) == "active":
+			active_job_count += 1
+	var slots: int = int(base.get("construction_slots", 0))
+	var next_upgrade_text := ""
+	var has_ready_collect := false
+	for item: Variant in structures:
+		var structure := _as_dictionary(item)
+		if float(structure.get("pending_collectable", 0.0)) > 0.005:
+			has_ready_collect = true
+		if next_upgrade_text == "" and structure.get("next_level", null) != null:
+			next_upgrade_text = "%s -> L%s | %s" % [
+				str(structure.get("display_name", structure.get("structure_id", ""))),
+				str(structure.get("next_level", "?")),
+				str(structure.get("blocked_message", "")),
+			]
+	if next_upgrade_text == "":
+		next_upgrade_text = "sem upgrade pendente"
+	var collect_text: String = "ready" if has_ready_collect or _resource_total(collected) > 0.0 else "empty"
+	return {
+		"collect_text": collect_text,
+		"active_job_count": active_job_count,
+		"construction_slots": slots,
+		"free_slots": maxi(0, slots - active_job_count),
+		"next_upgrade_text": next_upgrade_text,
+	}
+
+func _resource_total(resources: Dictionary) -> float:
+	var total := 0.0
+	for value: Variant in resources.values():
+		total += float(value)
+	return total
+
 static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:
 		return Dictionary(value)
 	return {}
+
+static func _as_array(value: Variant) -> Array:
+	if value is Array:
+		return Array(value)
+	return []
