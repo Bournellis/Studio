@@ -2,6 +2,7 @@ const SUPABASE_URL = requiredEnv("SUPABASE_URL").replace(/\/+$/, "");
 const PUBLISHABLE_KEY = requiredEnv("SUPABASE_PUBLISHABLE_KEY");
 const RUN_ANON_AUTH = Deno.env.get("DRAXOS_REMOTE_ANON_AUTH_SMOKE") === "1";
 const RUN_ACCOUNT_STATE = Deno.env.get("DRAXOS_REMOTE_ACCOUNT_SMOKE") === "1";
+const RUN_EMAIL_AUTH = Deno.env.get("DRAXOS_REMOTE_EMAIL_AUTH_SMOKE") === "1";
 
 assertRemoteUrl(SUPABASE_URL);
 assertClientKey(PUBLISHABLE_KEY);
@@ -59,13 +60,101 @@ if (RUN_ANON_AUTH || RUN_ACCOUNT_STATE) {
   }
 }
 
+let emailUser = "";
+let emailPlayerId = "";
+let labPlayerId = "";
+if (RUN_EMAIL_AUTH) {
+  const runId = crypto.randomUUID().replaceAll("-", "").slice(0, 12);
+  const email = `draxosremotealpha${runId}@gmail.com`;
+  const password = `alpha-${runId}`;
+  const username = `remote_${runId.slice(0, 10)}`;
+  const signup = await postJson(
+    `${SUPABASE_URL}/auth/v1/signup`,
+    { email, password },
+    baseHeaders(),
+  );
+  const signupToken = stringField(signup, "access_token");
+  emailUser = stringField(objectField(signup, "user"), "id");
+  assert(signupToken !== "", "email signup should return token");
+  assert(emailUser !== "", "email signup should return user id");
+
+  const headers = {
+    ...baseHeaders(),
+    authorization: `Bearer ${signupToken}`,
+  };
+  const account = await postJson(
+    `${SUPABASE_URL}/functions/v1/account/bootstrap`,
+    {
+      invite_code: Deno.env.get("DRAXOS_REMOTE_INVITE_CODE") ?? "ALPHA-TEST",
+      username,
+      device_label: "deno-internal-alpha-email-smoke",
+      request_id: crypto.randomUUID(),
+    },
+    headers,
+  );
+  emailPlayerId = stringField(objectField(account, "player"), "id");
+  assert(
+    emailPlayerId !== "",
+    "account/bootstrap should return email player id",
+  );
+  assertEq(
+    stringField(objectField(account, "player"), "account_type"),
+    "registered",
+    "email bootstrap should create registered player",
+  );
+
+  const labHeaders = {
+    ...headers,
+    "x-draxos-save-type": "progression_lab",
+  };
+  const lab = await postJson(
+    `${SUPABASE_URL}/functions/v1/account/bootstrap`,
+    {
+      invite_code: Deno.env.get("DRAXOS_REMOTE_INVITE_CODE") ?? "ALPHA-TEST",
+      username,
+      device_label: "deno-internal-alpha-email-smoke",
+      request_id: crypto.randomUUID(),
+    },
+    labHeaders,
+  );
+  labPlayerId = stringField(objectField(lab, "player"), "id");
+  assert(labPlayerId !== "", "account/bootstrap should return lab player id");
+  assertEq(
+    stringField(objectField(lab, "player"), "username"),
+    `${username}_lab`,
+    "email bootstrap should create lab username suffix",
+  );
+
+  const signin = await postJson(
+    `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
+    { email, password },
+    baseHeaders(),
+  );
+  const signinState = await getJson(
+    `${SUPABASE_URL}/functions/v1/account/state`,
+    {
+      ...baseHeaders(),
+      authorization: `Bearer ${stringField(signin, "access_token")}`,
+    },
+  );
+  assertEq(
+    stringField(objectField(signinState, "player"), "username"),
+    username,
+    "email signin should recover normal save",
+  );
+}
+
 console.log("[internal-alpha-remote-smoke] OK", {
   url: SUPABASE_URL,
   healthcheck: healthcheck.ok,
   anon_auth: RUN_ANON_AUTH || RUN_ACCOUNT_STATE ? "checked" : "skipped",
   account_state: RUN_ACCOUNT_STATE ? "checked" : "skipped",
+  email_auth: RUN_EMAIL_AUTH ? "checked" : "skipped",
   auth_user: authUser,
   player_id: playerId,
+  email_user: emailUser,
+  email_player_id: emailPlayerId,
+  lab_player_id: labPlayerId,
 });
 
 function baseHeaders(): Record<string, string> {
@@ -109,7 +198,10 @@ async function parseResponse(
       response.ok,
       `request failed with status ${response.status}: ${text}`,
     );
-    assert(payload.ok === true, `response ok should be true: ${text}`);
+    assert(
+      payload.ok === true || stringField(payload, "access_token") !== "",
+      `response should be ok/auth: ${text}`,
+    );
   }
   return payload;
 }

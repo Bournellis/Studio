@@ -6,7 +6,7 @@ import {
   saveTypeQuery,
 } from "../_shared/save_context.ts";
 
-type Route = "guest" | "state" | "save_reset";
+type Route = "bootstrap" | "guest" | "state" | "save_reset";
 
 interface EdgeConfig {
   supabaseUrl: string;
@@ -15,6 +15,7 @@ interface EdgeConfig {
 
 interface AuthContext {
   userId: string;
+  isAnonymous: boolean;
   saveType: SaveType;
 }
 
@@ -87,6 +88,10 @@ Deno.serve(async (request: Request) => {
       return errorResponse("METHOD_NOT_ALLOWED", "Use POST /account/guest.", 405);
     }
 
+    if (route === "bootstrap" && request.method !== "POST") {
+      return errorResponse("METHOD_NOT_ALLOWED", "Use POST /account/bootstrap.", 405);
+    }
+
     if (route === "state" && request.method !== "GET") {
       return errorResponse("METHOD_NOT_ALLOWED", "Use GET /account/state.", 405);
     }
@@ -108,6 +113,9 @@ Deno.serve(async (request: Request) => {
     if (route === "guest") {
       return await handleGuest(request, auth.value, config.value);
     }
+    if (route === "bootstrap") {
+      return await handleBootstrap(request, auth.value, config.value);
+    }
     if (route === "save_reset") {
       return await handleSaveReset(request, auth.value, config.value);
     }
@@ -124,6 +132,14 @@ async function handleGuest(
   auth: AuthContext,
   config: EdgeConfig,
 ): Promise<Response> {
+  if (!auth.isAnonymous) {
+    return errorResponse(
+      "AUTH_NOT_ANONYMOUS",
+      "Use an anonymous Supabase Auth session for guest account creation.",
+      403,
+    );
+  }
+
   const body = await readJsonObject(request);
   if (body === null) {
     return errorResponse("INVALID_JSON", "Request body must be a JSON object.", 400);
@@ -160,6 +176,53 @@ async function handleGuest(
   return jsonResponse(rpc.value);
 }
 
+async function handleBootstrap(
+  request: Request,
+  auth: AuthContext,
+  config: EdgeConfig,
+): Promise<Response> {
+  if (auth.isAnonymous) {
+    return errorResponse(
+      "AUTH_REQUIRES_EMAIL",
+      "Use email/password Supabase Auth for Internal Alpha accounts.",
+      403,
+    );
+  }
+
+  const body = await readJsonObject(request);
+  if (body === null) {
+    return errorResponse("INVALID_JSON", "Request body must be a JSON object.", 400);
+  }
+
+  const inviteCode = stringField(body, "invite_code");
+  const requestId = stringField(body, "request_id");
+  const deviceLabel = stringField(body, "device_label");
+  const username = stringField(body, "username");
+
+  if (!UUID_PATTERN.test(requestId)) {
+    return errorResponse("INVALID_REQUEST_ID", "request_id must be a UUID.", 400);
+  }
+
+  const rpc = await restRequest<unknown>(config, "rpc/create_alpha_account", {
+    method: "POST",
+    body: JSON.stringify({
+      p_auth_user_id: auth.userId,
+      p_invite_code: inviteCode,
+      p_request_id: requestId,
+      p_device_label: deviceLabel === "" ? null : deviceLabel,
+      p_save_type: auth.saveType,
+      p_username: username === "" ? null : username,
+    }),
+  });
+
+  if (rpc.error !== null) {
+    const mapped = mapDatabaseError(rpc.error);
+    return errorResponse(mapped.code, mapped.message, mapped.status);
+  }
+
+  return jsonResponse(rpc.value);
+}
+
 async function handleState(auth: AuthContext, config: EdgeConfig): Promise<Response> {
   const playerResult = await restRequest<PlayerRow[]>(
     config,
@@ -175,7 +238,7 @@ async function handleState(auth: AuthContext, config: EdgeConfig): Promise<Respo
 
   const player = playerResult.value[0] ?? null;
   if (player === null) {
-    return errorResponse("PLAYER_NOT_FOUND", "Guest account was not created yet.", 404);
+    return errorResponse("PLAYER_NOT_FOUND", "Account save was not created yet.", 404);
   }
 
   const playerId = encodeURIComponent(player.id);
@@ -206,7 +269,7 @@ async function handleState(auth: AuthContext, config: EdgeConfig): Promise<Respo
   const resources = resourcesResult.value[0] ?? null;
   const build = buildResult.value[0] ?? null;
   if (resources === null || build === null) {
-    return errorResponse("ACCOUNT_STATE_INCOMPLETE", "Guest account state is incomplete.", 409);
+    return errorResponse("ACCOUNT_STATE_INCOMPLETE", "Account save state is incomplete.", 409);
   }
 
   return jsonResponse({
@@ -274,6 +337,10 @@ function resolveRoute(pathname: string): Route | null {
     return "save_reset";
   }
 
+  if (pathname.endsWith("/bootstrap")) {
+    return "bootstrap";
+  }
+
   if (pathname.endsWith("/guest")) {
     return "guest";
   }
@@ -327,17 +394,6 @@ function decodeAuthContext(request: Request): { value: AuthContext; error: null 
     };
   }
 
-  if (payload.is_anonymous === false) {
-    return {
-      value: null,
-      error: {
-        code: "AUTH_NOT_ANONYMOUS",
-        message: "Use an anonymous Supabase Auth session for guest account creation.",
-        status: 403,
-      },
-    };
-  }
-
   const saveType = saveTypeFromRequest(request);
   if (saveType === null) {
     return {
@@ -351,7 +407,7 @@ function decodeAuthContext(request: Request): { value: AuthContext; error: null 
   }
 
   return {
-    value: { userId: payload.sub, saveType },
+    value: { userId: payload.sub, isAnonymous: payload.is_anonymous === true, saveType },
     error: null,
   };
 }
@@ -490,7 +546,31 @@ function mapDatabaseError(error: RestError): RestError {
   if (message.includes("ACCOUNT_ALREADY_CREATED")) {
     return {
       code: "ACCOUNT_ALREADY_CREATED",
-      message: "This auth session already has a guest account.",
+      message: "This auth session already has this save.",
+      status: 409,
+    };
+  }
+
+  if (message.includes("AUTH_REQUIRES_EMAIL")) {
+    return {
+      code: "AUTH_REQUIRES_EMAIL",
+      message: "Email/password auth is required for this account action.",
+      status: 403,
+    };
+  }
+
+  if (message.includes("INVALID_USERNAME")) {
+    return {
+      code: "INVALID_USERNAME",
+      message: "Username must use 3 to 24 lowercase letters, numbers or underscores.",
+      status: 400,
+    };
+  }
+
+  if (message.includes("USERNAME_TAKEN")) {
+    return {
+      code: "USERNAME_TAKEN",
+      message: "Username is already in use.",
       status: 409,
     };
   }
@@ -514,7 +594,7 @@ function mapDatabaseError(error: RestError): RestError {
   if (message.includes("PLAYER_NOT_FOUND")) {
     return {
       code: "PLAYER_NOT_FOUND",
-      message: "Guest account was not created yet.",
+      message: "Account save was not created yet.",
       status: 404,
     };
   }
@@ -522,14 +602,14 @@ function mapDatabaseError(error: RestError): RestError {
   if (message.includes("UNAUTHENTICATED")) {
     return {
       code: "UNAUTHENTICATED",
-      message: "Anonymous auth session is required.",
+      message: "Authenticated Supabase session is required.",
       status: 401,
     };
   }
 
   return {
     code: "ACCOUNT_CREATE_FAILED",
-    message: "Guest account could not be created.",
+    message: "Account save could not be created.",
     status: error.status >= 400 ? error.status : 500,
   };
 }

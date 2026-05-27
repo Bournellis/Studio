@@ -59,7 +59,7 @@ Fabio vai trabalhar somente no Godot/local ate o jogo estar implementado o basta
 
 Durante a fase local-first, `T03-P02` permaneceu repo-ready: a configuracao segura existe e agora volta a ser a proxima trilha de release.
 
-Atualizacao de 2026-05-27: o projeto Supabase remoto (`armxgipvnbbshzqawklw`, `https://armxgipvnbbshzqawklw.supabase.co`) foi linkado pela CLI, recebeu migrations/functions e passou no smoke minimo de healthcheck. Auth email/senha e alpha gate seguem em `T03-P14`.
+Atualizacao de 2026-05-27: o projeto Supabase remoto (`armxgipvnbbshzqawklw`, `https://armxgipvnbbshzqawklw.supabase.co`) foi linkado pela CLI, recebeu migrations/functions, config de Auth email/senha sem confirmacao obrigatoria e passou em smokes remotos de healthcheck, Auth anonimo dev e email/senha com saves `normal`/`progression_lab`. Proxima etapa: `T03-P15`.
 
 ### T03-P03 - Conta Email/Senha E Dois Saves
 
@@ -82,7 +82,7 @@ Subetapas locais:
 - `T03-P03A`: completo; cliente Godot entende save ativo (`normal`/`progression_lab`), persiste no cache, mostra no HUD e bloqueia acoes perigosas do Lab quando o cache e local-only.
 - `T03-P03B`: completo; Supabase local/schema/runtime resolve `save_type` server-side para todos os endpoints alpha.
 - `T03-P03C`: completo; reset separado por save no runtime local.
-- `T03-P03D`: pendente remoto; email/senha sera ativado em `T03-P14` depois do bootstrap Supabase remoto.
+- `T03-P03D`: completo em `T03-P14`; email/senha usa Supabase Auth password e `/account/bootstrap` para criar/carregar saves por conta.
 
 ### T03-P04 - Progression Lab Exportado Interno
 
@@ -260,7 +260,7 @@ Implementado em modo local-first:
 
 Lacunas intencionais:
 
-- Smoke remoto real, email/senha, builds exportadas e manifest de updates seguem encaminhados para `T03-P13` a `T03-P18`.
+- Builds exportadas, manifest de updates e QA remoto fechado seguem encaminhados para `T03-P15` a `T03-P18`.
 
 ### T03-P12 - Release Plan, Portal Base E Tutorial Remoto
 
@@ -307,7 +307,7 @@ Implementado em 2026-05-27:
 
 ### T03-P14 - Auth Email/Senha E Alpha Gate
 
-Status: `NEXT`.
+Status: `COMPLETE`.
 
 - Ativar fluxo email/senha no Godot.
 - Manter guest apenas como fallback dev/local.
@@ -315,9 +315,20 @@ Status: `NEXT`.
 - Definir alpha gate simples para Fabio + 1 amigo.
 - Validar login/logout/reentrada em PC/Web/Android.
 
+Implementado em 2026-05-27:
+
+- Hub do Godot agora mostra formulario de email, senha, username e convite alpha; "Criar conta alpha" e "Entrar com email" sao o fluxo real.
+- "Entrar como guest dev" permanece separado em ferramentas dev.
+- `SessionStore` persiste `auth_method`, `auth_email`, `account_username` e `alpha_account_request_id`.
+- `SupabaseClient` implementa signup/login password e `POST /account/bootstrap`.
+- `account/bootstrap` exige JWT registrado, cria `players.account_type = registered`, consome convite apenas no primeiro save e cria `progression_lab` com sufixo `*_lab`.
+- `account/guest` passa a rejeitar JWT registrado.
+- Auth remoto foi alinhado por `supabase config push --yes`, com email confirmation desligado.
+- Smokes local/remoto validam email/senha, save normal, save Lab e login posterior.
+
 ### T03-P15 - Update Manifest E Version Gate
 
-Status: `PENDING_T03_P13`.
+Status: `NEXT`.
 
 - Publicar manifest remoto real.
 - Conectar boot do Godot ao manifest.
@@ -370,19 +381,13 @@ As decisoes abaixo estao registradas em `docs/design-pending.md` e precisam ser 
 
 ## Trabalho Manual Do Fabio
 
-Necessario agora para `T03-P13`:
+Necessario agora para `T03-P15` a `T03-P18`:
 
-- Confirmar se o projeto remoto usado sera `Bournellis's Project` / `armxgipvnbbshzqawklw`.
-- Desativar email confirmation no projeto alpha.
-- Guardar `SUPABASE_SERVICE_ROLE_KEY` fora do Git.
-- Criar `.env.internal-alpha.local` local e ignorado conforme `docs/supabase-remote-tutorial.md`.
-- Informar `SUPABASE_PROJECT_REF`, `SUPABASE_URL` e public/publishable key do projeto remoto.
-- Confirmar se Supabase CLI login/link foi feito localmente.
-- Criar email/senha dos testadores ou permitir cadastro com convite.
 - Criar keystore Android internal alpha e guardar senha fora do Git.
 - Escolher onde hospedar a Web build unlisted, APK e zip PC.
-- Aprovar quais redeems premium entram na loja alpha.
-- Aprovar se bots aparecem na leaderboard nesta build.
+- Definir URL final do manifest remoto e dos downloads no portal.
+- Informar os emails/usernames desejados para Fabio e o amigo, se quiser contas humanas predefinidas em vez de cadastro por convite.
+- Guardar `SUPABASE_SERVICE_ROLE_KEY` fora do Git para resets/deploys controlados; nunca colocar no cliente.
 
 ## Validacao Esperada
 
@@ -405,6 +410,8 @@ Remote alpha:
 
 ```powershell
 cd D:\Estudio\Projetos\draxos-mobile
+npx -y deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts
+$env:DRAXOS_REMOTE_EMAIL_AUTH_SMOKE='1'
 npx -y deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts
 ```
 

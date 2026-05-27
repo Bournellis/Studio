@@ -13,8 +13,12 @@ var access_token := ""
 var refresh_token := ""
 var expires_at := 0
 var auth_user_id := ""
+var auth_method := "guest"
+var auth_email := ""
 var session_id := ""
 var guest_request_id := ""
+var alpha_account_request_id := ""
+var account_username := ""
 var active_save_type := SAVE_TYPE_NORMAL
 var player: Dictionary = {}
 var resources: Dictionary = {}
@@ -82,8 +86,12 @@ func clear_session() -> void:
 	refresh_token = ""
 	expires_at = 0
 	auth_user_id = ""
+	auth_method = "guest"
+	auth_email = ""
 	session_id = create_request_id()
 	guest_request_id = ""
+	alpha_account_request_id = ""
+	account_username = ""
 	active_save_type = SAVE_TYPE_NORMAL
 	player = {}
 	resources = {}
@@ -109,7 +117,7 @@ func apply_auth_session(session: Dictionary) -> bool:
 	if token == "" or refresh == "" or expiry <= 0:
 		last_error = {
 			"code": "INVALID_AUTH_SESSION",
-			"message": "Sessao anonima invalida.",
+			"message": "Sessao de autenticacao invalida.",
 		}
 		session_changed.emit()
 		return false
@@ -131,6 +139,10 @@ func apply_auth_session(session: Dictionary) -> bool:
 	refresh_token = refresh
 	expires_at = expiry
 	auth_user_id = str(session.get("user_id", auth_user_id))
+	auth_method = str(session.get("auth_method", "guest")).strip_edges().to_lower()
+	if auth_method == "":
+		auth_method = "guest"
+	auth_email = str(session.get("email", auth_email)).strip_edges()
 	last_error = {}
 	offline = false
 	session_changed.emit()
@@ -198,6 +210,9 @@ func apply_server_state(payload: Dictionary) -> bool:
 	resources = server_resources.duplicate(true)
 	build = server_build.duplicate(true)
 	active_save_type = normalize_save_type(str(server_player.get("save_type", active_save_type)))
+	var server_username := str(server_player.get("username", "")).strip_edges()
+	if active_save_type == SAVE_TYPE_NORMAL or account_username == "":
+		account_username = base_account_username(server_username)
 	last_battle_id = body.get("last_battle_id", last_battle_id)
 	last_error = {}
 	offline = false
@@ -392,6 +407,9 @@ func is_progression_lab_local_only() -> bool:
 func is_progression_lab_active() -> bool:
 	return active_save_type == SAVE_TYPE_PROGRESSION_LAB
 
+func is_registered_session() -> bool:
+	return auth_method == "email"
+
 func active_save_label() -> String:
 	if active_save_type == SAVE_TYPE_PROGRESSION_LAB:
 		return "Progression Lab"
@@ -443,6 +461,13 @@ func ensure_session_id() -> String:
 func player_display_name() -> String:
 	return str(player.get("username", "Guest Draxos"))
 
+func account_display_name() -> String:
+	if account_username != "":
+		return account_username
+	if auth_email != "":
+		return auth_email
+	return player_display_name()
+
 func snapshot() -> Dictionary:
 	return {
 		"cache_version": CACHE_VERSION,
@@ -451,9 +476,13 @@ func snapshot() -> Dictionary:
 			"refresh_token": refresh_token,
 			"expires_at": expires_at,
 			"user_id": auth_user_id,
+			"auth_method": auth_method,
+			"email": auth_email,
 		},
 		"session_id": ensure_session_id(),
 		"guest_request_id": guest_request_id,
+		"alpha_account_request_id": alpha_account_request_id,
+		"account_username": account_username,
 		"active_save_type": active_save_type,
 		"player": player.duplicate(true),
 		"resources": resources.duplicate(true),
@@ -497,8 +526,14 @@ func _apply_cache(cache: Dictionary) -> void:
 	refresh_token = str(auth.get("refresh_token", ""))
 	expires_at = int(auth.get("expires_at", 0))
 	auth_user_id = str(auth.get("user_id", ""))
+	auth_method = str(auth.get("auth_method", "guest")).strip_edges().to_lower()
+	if auth_method == "":
+		auth_method = "guest"
+	auth_email = str(auth.get("email", ""))
 	session_id = str(cache.get("session_id", ""))
 	guest_request_id = str(cache.get("guest_request_id", ""))
+	alpha_account_request_id = str(cache.get("alpha_account_request_id", ""))
+	account_username = str(cache.get("account_username", ""))
 	active_save_type = normalize_save_type(str(cache.get("active_save_type", SAVE_TYPE_NORMAL)))
 	player = _as_dictionary(cache.get("player", {})).duplicate(true)
 	resources = _as_dictionary(cache.get("resources", {})).duplicate(true)
@@ -529,6 +564,18 @@ func _clear_account_snapshots() -> void:
 	last_battle_id = null
 	last_battle_log = {}
 	last_battle_rewards = {}
+
+func ensure_alpha_account_request_id() -> String:
+	if alpha_account_request_id == "":
+		alpha_account_request_id = create_request_id()
+		save_cache()
+	return alpha_account_request_id
+
+static func base_account_username(username: String) -> String:
+	var normalized := username.strip_edges()
+	if normalized.ends_with("_lab"):
+		return normalized.trim_suffix("_lab")
+	return normalized
 
 func _unwrap_body(payload: Dictionary) -> Dictionary:
 	if payload.has("body") and payload["body"] is Dictionary:

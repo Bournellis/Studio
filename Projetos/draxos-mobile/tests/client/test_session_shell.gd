@@ -101,6 +101,14 @@ func test_session_store_tracks_active_save_without_mixing_snapshots() -> void:
 
 func test_session_store_keeps_server_state_as_snapshot() -> void:
 	var store = SessionStoreScript.new()
+	store.apply_auth_session({
+		"access_token": "token",
+		"refresh_token": "refresh",
+		"expires_at": int(Time.get_unix_time_from_system()) + 3600,
+		"user_id": "auth-user",
+		"auth_method": "email",
+		"email": "tester@example.com",
+	})
 	var applied := store.apply_server_state({
 		"ok": true,
 		"player": {"id": "player-1", "username": "guest_test"},
@@ -112,7 +120,35 @@ func test_session_store_keeps_server_state_as_snapshot() -> void:
 	var snapshot := store.snapshot()
 	Dictionary(snapshot["resources"])["almas"] = 999
 	assert_eq(int(store.resources.get("almas", 0)), 1)
+	assert_true(store.is_registered_session())
+	assert_eq(store.auth_email, "tester@example.com")
+	assert_eq(store.account_username, "guest_test")
 	store.free()
+
+func test_session_store_persists_alpha_account_metadata() -> void:
+	var store = SessionStoreScript.new()
+	var now := int(Time.get_unix_time_from_system())
+	assert_true(store.apply_auth_session({
+		"access_token": "email-token",
+		"refresh_token": "email-refresh",
+		"expires_at": now + 3600,
+		"user_id": "auth-email",
+		"auth_method": "email",
+		"email": "alpha@example.com",
+	}))
+	store.account_username = "alpha_tester"
+	var request_id := store.ensure_alpha_account_request_id()
+	var snapshot := store.snapshot()
+
+	var restored = SessionStoreScript.new()
+	restored._apply_cache(snapshot)
+	assert_true(restored.is_registered_session())
+	assert_eq(restored.auth_email, "alpha@example.com")
+	assert_eq(restored.account_username, "alpha_tester")
+	assert_eq(restored.ensure_alpha_account_request_id(), request_id)
+	assert_eq(restored.account_display_name(), "alpha_tester")
+	store.free()
+	restored.free()
 
 func test_session_store_accepts_battle_log_snapshot_without_mutating_resources() -> void:
 	var store = SessionStoreScript.new()
@@ -139,6 +175,8 @@ func test_supabase_client_uses_local_contract_urls() -> void:
 	var client = SupabaseClientScript.new()
 	client.configure("http://127.0.0.1:54321/", "publishable")
 	assert_eq(client.auth_anonymous_url(), "http://127.0.0.1:54321/auth/v1/signup")
+	assert_eq(client.auth_password_url(), "http://127.0.0.1:54321/auth/v1/token?grant_type=password")
+	assert_eq(client.function_url("account/bootstrap"), "http://127.0.0.1:54321/functions/v1/account/bootstrap")
 	assert_eq(client.function_url("account/guest"), "http://127.0.0.1:54321/functions/v1/account/guest")
 	assert_eq(client.function_url("account/saves/reset"), "http://127.0.0.1:54321/functions/v1/account/saves/reset")
 	assert_eq(client.function_url("progression-lab/apply"), "http://127.0.0.1:54321/functions/v1/progression-lab/apply")

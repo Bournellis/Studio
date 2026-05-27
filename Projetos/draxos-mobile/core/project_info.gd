@@ -11,7 +11,9 @@ const DEFAULT_BATTLE_MODE := FIRST_SLICE_MODE
 
 static func boot_actions() -> PackedStringArray:
 	return PackedStringArray([
-		"Entrar como guest",
+		"Criar conta alpha",
+		"Entrar com email",
+		"Entrar como guest dev",
 		"Sincronizar sessao",
 		"Resetar sessao local",
 		"Resetar save ativo",

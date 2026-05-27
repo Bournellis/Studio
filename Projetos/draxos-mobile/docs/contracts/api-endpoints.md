@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
-- Ultima atualizacao: `2026-05-26`
-- Status: contrato com `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*` e `progression-lab/*` implementados localmente; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`; Track 03 ja implementou selecao local de save via `x-draxos-save-type`, reset separado por save, aplicacao server-backed do Progression Lab no save `progression_lab`, payload jogavel da Base, Social basico e leaderboard alpha com pontos por batalha normal; ainda planeja email/senha e updates internos
+- Ultima atualizacao: `2026-05-27`
+- Status: contrato com `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*` e `progression-lab/*` implementados local/remoto; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`; Track 03 implementou email/senha via `/account/bootstrap`, selecao de save via `x-draxos-save-type`, reset separado por save, aplicacao server-backed do Progression Lab no save `progression_lab`, Base/Social/Competicao/Loja jogaveis e leaderboard alpha com pontos por batalha normal; ainda planeja manifest de updates internos
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -10,7 +10,8 @@ Este documento descreve a interface logica entre cliente Godot e Supabase Edge F
 - Transporte: HTTPS REST via HTTPRequest do Godot.
 - Autenticacao: JWT Supabase no header `Authorization: Bearer <token>`.
 - Save ativo: endpoints de gameplay aceitam `x-draxos-save-type: normal|progression_lab`; ausencia do header usa `normal`.
-- Guest MVP: cliente primeiro cria sessao Supabase Auth anonima; depois chama `/account/guest` com o JWT anonimo e codigo de convite.
+- Internal Alpha: cliente cria sessao Supabase Auth por email/senha; depois chama `/account/bootstrap` com JWT registrado, username e convite para criar o primeiro save.
+- Guest dev: cliente ainda pode criar sessao Supabase Auth anonima e chamar `/account/guest`, mas esse fluxo e ferramenta de desenvolvimento/fallback e nao o caminho real da build interna.
 - Correlation: cliente envia `request_id` em mutacoes para idempotencia.
 - Runtime local atual: `supabase/functions/account`, `battle`, `base`, `social`, `competition`, `monetization` e `telemetry`, espelhados em `server/functions/`.
 - Anti-lock-in: os endpoints logicos deste documento pertencem ao jogo, nao ao Supabase. O cliente Godot deve depender de `account`, `battle`, `base`, `social`, `competition`, `monetization` e `telemetry`, permitindo futura migracao para Backend Proprio + Postgres sem redesenhar o cliente.
@@ -26,13 +27,85 @@ Este documento descreve a interface logica entre cliente Godot e Supabase Edge F
 }
 ```
 
-## Endpoints MVP Tecnico
+## Endpoints De Conta
+
+### `POST /account/bootstrap`
+
+Cria o save da Internal Alpha v0 para uma conta Supabase Auth registrada por email/senha.
+
+Status: **implementado em T03-P14** para saves `normal` e `progression_lab`.
+
+Headers:
+
+```http
+Authorization: Bearer <email_password_jwt>
+apikey: <publishable_key>
+x-draxos-save-type: normal
+```
+
+Request:
+
+```json
+{
+  "invite_code": "ALPHA-TEST",
+  "username": "draxos_tester",
+  "device_label": "optional",
+  "request_id": "uuid"
+}
+```
+
+Regras:
+
+- O JWT nao pode ser anonimo.
+- O primeiro save da conta exige `invite_code` valido e `username`.
+- `username` usa 3 a 24 caracteres: letras minusculas, numeros ou `_`.
+- Quando `x-draxos-save-type = progression_lab`, o servidor cria o save Lab isolado com sufixo social `*_lab`.
+- Depois que a conta ja possui um save, criar o outro save da mesma conta nao consome novo convite.
+- Repetir o mesmo `request_id` para o save criado retorna o mesmo payload.
+
+Response:
+
+```json
+{
+  "ok": true,
+  "player": {
+    "id": "uuid",
+    "username": "draxos_tester",
+    "save_type": "normal",
+    "account_type": "registered",
+    "level": 1,
+    "xp": 0,
+    "power": 0
+  },
+  "resources": {
+    "almas": 0,
+    "energia": 0,
+    "sangue": 0,
+    "cristais": 0,
+    "ossos": 0,
+    "diamante": 0
+  },
+  "build": {
+    "weapon_type": "varinha_cinzas",
+    "weapon_quality": "starter",
+    "weapon_level": 1,
+    "spell_slots": ["sussurro_medo"],
+    "spells_unlocked": ["sussurro_medo"],
+    "pet_id": "corvo_pressagio",
+    "pet_level": 1,
+    "passive_id": "doutrina_pavor",
+    "passive_level": 1
+  }
+}
+```
+
+Erros minimos: `UNAUTHENTICATED`, `AUTH_REQUIRES_EMAIL`, `INVALID_INVITE`, `INVITE_EXHAUSTED`, `INVALID_USERNAME`, `USERNAME_TAKEN`, `ACCOUNT_ALREADY_CREATED`, `ACCOUNT_CREATE_FAILED`.
 
 ### `POST /account/guest`
 
-Cria o estado de jogo para uma sessao guest anonima ja autenticada.
+Cria o estado de jogo para uma sessao guest anonima ja autenticada. Na Internal Alpha v0 este fluxo fica como fallback dev/local; a build real usa `/account/bootstrap`.
 
-Status: **implementado em T00-P05** e atualizado em `T03-P03B` para `save_type`.
+Status: **implementado em T00-P05**, atualizado em `T03-P03B` para `save_type` e restringido em `T03-P14` a JWT anonimo.
 
 Headers:
 
@@ -88,7 +161,7 @@ Response:
 }
 ```
 
-Erros minimos: `UNAUTHENTICATED`, `INVALID_INVITE`, `INVITE_EXHAUSTED`, `ACCOUNT_ALREADY_CREATED`, `ACCOUNT_CREATE_FAILED`.
+Erros minimos: `UNAUTHENTICATED`, `AUTH_NOT_ANONYMOUS`, `INVALID_INVITE`, `INVITE_EXHAUSTED`, `ACCOUNT_ALREADY_CREATED`, `ACCOUNT_CREATE_FAILED`.
 
 Idempotencia: repetir o mesmo `request_id` para a mesma sessao anonima retorna o mesmo payload sem consumir outro uso do convite.
 
@@ -96,7 +169,7 @@ Idempotencia: repetir o mesmo `request_id` para a mesma sessao anonima retorna o
 
 Retorna estado minimo do jogador autenticado.
 
-Status: **implementado em T00-P05** e atualizado em `T03-P03B` para `save_type`.
+Status: **implementado em T00-P05**, atualizado em `T03-P03B` para `save_type` e validado em `T03-P14` com JWT anonimo e JWT email/senha.
 
 Response MVP:
 

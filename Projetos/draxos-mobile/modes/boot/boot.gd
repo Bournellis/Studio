@@ -82,6 +82,10 @@ var _base_state_container: VBoxContainer
 var _social_state_container: VBoxContainer
 var _competition_state_container: VBoxContainer
 var _shop_state_container: VBoxContainer
+var _auth_email_input: LineEdit
+var _auth_password_input: LineEdit
+var _auth_username_input: LineEdit
+var _auth_invite_input: LineEdit
 var _social_friend_input: LineEdit
 var _social_guild_input: LineEdit
 var _social_chat_input: LineEdit
@@ -399,11 +403,41 @@ func _clear_node_children(parent: Node) -> void:
 		child.queue_free()
 
 func _render_hub_screen() -> void:
-	_add_section_label("Alpha PC local")
-	_add_body_text("Track 01 endurece o playtest local: sessao recuperavel, reset seguro de cache, erros claros e telemetria nao autoritativa.")
-	_add_action_button("Entrar como guest", "enter_guest")
+	_add_section_label("Conta Internal Alpha")
+	_add_body_text("Entre com email e senha para usar o save compartilhado entre PC, Web e Android. O convite libera o primeiro save desta conta.")
+	_auth_email_input = _add_social_input(
+		"Email",
+		"tester@exemplo.com",
+		SessionStore.auth_email,
+		"Email usado no Supabase Auth da Internal Alpha."
+	)
+	_auth_password_input = _add_social_input(
+		"Senha",
+		"Senha da conta alpha",
+		"",
+		"Senha da conta alpha. Ela nao e salva no cache local."
+	)
+	_auth_password_input.secret = true
+	_auth_username_input = _add_social_input(
+		"Username",
+		"draxos_tester",
+		SessionStore.account_username,
+		"Username publico: 3 a 24 letras minusculas, numeros ou underscores."
+	)
+	_auth_invite_input = _add_social_input(
+		"Convite alpha",
+		SessionStore.DEFAULT_INVITE_CODE,
+		SessionStore.DEFAULT_INVITE_CODE,
+		"Convite usado apenas para liberar o primeiro save da conta."
+	)
+	_add_action_button("Criar conta alpha", "email_sign_up")
+	_add_action_button("Entrar com email", "email_sign_in")
 	_add_action_button("Sincronizar sessao", "refresh_session")
 	_add_action_button("Resetar sessao local", "reset_session", "Limpar apenas token/cache local desta maquina? O estado salvo no servidor nao sera apagado.")
+
+	_add_section_label("Ferramentas dev")
+	_add_body_text("Guest anonimo fica como fallback de desenvolvimento local enquanto a build interna real usa email/senha.")
+	_add_action_button("Entrar como guest dev", "enter_guest")
 	if _battle_lab_available():
 		_add_action_button("Battle Lab Dev", "open_battle_lab")
 	if _progression_lab_available():
@@ -431,13 +465,14 @@ func _render_hub_screen() -> void:
 			str(SessionStore.player.get("power", 0)),
 		]
 	elif SessionStore.has_account_state():
-		account = "Conta: %s | Level %s | Poder %s" % [
+		account = "Conta %s: %s | Level %s | Poder %s" % [
+			SessionStore.auth_method,
 			SessionStore.player_display_name(),
 			str(SessionStore.player.get("level", 1)),
 			str(SessionStore.player.get("power", 0)),
 		]
 	elif SessionStore.has_valid_access_token():
-		account = "Conta: sessao anonima criada; falta recuperar/criar guest."
+		account = "Conta: sessao %s criada; falta carregar/criar save." % SessionStore.auth_method
 	_add_output_label(account)
 	_add_output_label("Sessao local: %s | Offline: %s" % [
 		SessionStore.ensure_session_id(),
@@ -671,6 +706,10 @@ func _execute_action(action_id: String) -> void:
 		match action_id:
 			"enter_guest":
 				await _enter_guest()
+			"email_sign_up":
+				await _email_sign_up()
+			"email_sign_in":
+				await _email_sign_in()
 			"refresh_session":
 				await _refresh_session()
 			"reset_session":
@@ -759,8 +798,65 @@ func _enter_guest() -> void:
 	_show_notice("Sessao guest pronta. Todas as abas do alpha estao disponiveis.")
 	_show_screen(SCREEN_HUB, false)
 
+func _email_sign_up() -> void:
+	var credentials := _auth_form_values(true)
+	if credentials.is_empty():
+		return
+	_set_busy(true, "Criando conta por email...")
+	var auth_result: Dictionary = await SupabaseClient.sign_up_with_email(
+		str(credentials.get("email", "")),
+		str(credentials.get("password", ""))
+	)
+	if not bool(auth_result.get("ok", false)):
+		_fail_with_error(auth_result)
+		return
+	var selected_save_type := SessionStore.active_save_type
+	SessionStore.clear_session()
+	SessionStore.set_active_save_type(selected_save_type)
+	SupabaseClient.configure_save_type(SessionStore.active_save_type)
+	SessionStore.apply_auth_session(_as_dictionary(auth_result.get("session", {})))
+	SessionStore.account_username = str(credentials.get("username", ""))
+	SessionStore.save_cache()
+	var save_ready := await _recover_or_create_active_save(str(credentials.get("invite", "")), str(credentials.get("username", "")))
+	if not save_ready:
+		return
+	_show_notice("Conta alpha criada. O save %s esta pronto." % SessionStore.active_save_label())
+	_show_screen(SCREEN_HUB, false)
+
+func _email_sign_in() -> void:
+	var credentials := _auth_form_values(false)
+	if credentials.is_empty():
+		return
+	_set_busy(true, "Entrando com email...")
+	var auth_result: Dictionary = await SupabaseClient.sign_in_with_email(
+		str(credentials.get("email", "")),
+		str(credentials.get("password", ""))
+	)
+	if not bool(auth_result.get("ok", false)):
+		_fail_with_error(auth_result)
+		return
+	var selected_save_type := SessionStore.active_save_type
+	SessionStore.clear_session()
+	SessionStore.set_active_save_type(selected_save_type)
+	SupabaseClient.configure_save_type(SessionStore.active_save_type)
+	SessionStore.apply_auth_session(_as_dictionary(auth_result.get("session", {})))
+	if str(credentials.get("username", "")) != "":
+		SessionStore.account_username = str(credentials.get("username", ""))
+	SessionStore.save_cache()
+	var recovered := await _recover_session_state()
+	if not recovered:
+		var error_payload := _extract_error({
+			"error": SessionStore.last_error,
+		})
+		if str(error_payload.get("code", "")) == "PLAYER_NOT_FOUND" and str(credentials.get("username", "")) != "":
+			recovered = await _recover_or_create_active_save(str(credentials.get("invite", "")), str(credentials.get("username", "")))
+	if not recovered:
+		return
+	_show_notice("Login concluido. Save %s sincronizado." % SessionStore.active_save_label())
+	_show_screen(SCREEN_HUB, false)
+
 func _refresh_session() -> void:
-	if not _require_session("Crie uma sessao guest antes de sincronizar."):
+	if not _require_session("Entre com email ou use guest dev antes de sincronizar."):
 		return
 	var recovered := await _recover_session_state()
 	if recovered:
@@ -782,11 +878,11 @@ func _reset_local_session() -> void:
 	SessionStore.clear_session()
 	SessionStore.save_cache()
 	_screen_history.clear()
-	_set_busy(false, "Cache local limpo. Entre como guest para recuperar ou criar uma sessao de teste.")
+	_set_busy(false, "Cache local limpo. Entre com email para recuperar a conta alpha ou use guest dev.")
 	_show_screen(SCREEN_HUB, false)
 
 func _reset_active_save() -> void:
-	if not _require_account("Crie uma sessao guest antes de resetar o save ativo."):
+	if not _require_account("Entre com email antes de resetar o save ativo."):
 		return
 	_set_busy(true, "Resetando save %s..." % SessionStore.active_save_label())
 	var reset_result: Dictionary = await SupabaseClient.reset_active_save(
@@ -828,7 +924,7 @@ func _select_save(save_type: String) -> void:
 	if changed:
 		var message := "Save ativo alterado para %s." % SessionStore.active_save_label()
 		if SessionStore.is_progression_lab_active():
-			message = "Save Progression Lab selecionado. Entre como guest para criar ou carregar o player Lab isolado."
+			message = "Save Progression Lab selecionado. Entre com email para criar/carregar o player Lab isolado ou use guest dev."
 		_set_busy(false, message)
 	else:
 		_set_busy(false, "Save %s ja estava ativo." % SessionStore.active_save_label())
@@ -850,7 +946,7 @@ func _recover_session_state() -> bool:
 
 	return _apply_recovered_state(state_result, "Sessao sincronizada com o servidor.")
 
-func _recover_or_create_active_save() -> bool:
+func _recover_or_create_active_save(invite_code: String = "", username: String = "") -> bool:
 	if SessionStore.is_progression_lab_local_only():
 		_sync_status_from_session()
 		return false
@@ -869,22 +965,102 @@ func _recover_or_create_active_save() -> bool:
 		return false
 
 	_set_busy(true, "Criando save %s..." % SessionStore.active_save_label())
-	var guest_result: Dictionary = await SupabaseClient.create_guest_account(
-		SessionStore.DEFAULT_INVITE_CODE,
-		SessionStore.ensure_guest_request_id(),
-		OS.get_name(),
-		SessionStore.access_token
-	)
-	if not bool(guest_result.get("ok", false)):
-		var guest_error := _extract_error(guest_result)
-		if str(guest_error.get("code", "")) == "ACCOUNT_ALREADY_CREATED":
+	var account_result: Dictionary
+	if SessionStore.is_registered_session():
+		var effective_username := _effective_alpha_username(username)
+		var effective_invite := _effective_alpha_invite(invite_code)
+		account_result = await SupabaseClient.bootstrap_alpha_account(
+			effective_invite,
+			effective_username,
+			SessionStore.ensure_alpha_account_request_id(),
+			OS.get_name(),
+			SessionStore.access_token
+		)
+	else:
+		account_result = await SupabaseClient.create_guest_account(
+			SessionStore.DEFAULT_INVITE_CODE,
+			SessionStore.ensure_guest_request_id(),
+			OS.get_name(),
+			SessionStore.access_token
+		)
+	if not bool(account_result.get("ok", false)):
+		var account_error := _extract_error(account_result)
+		if str(account_error.get("code", "")) == "ACCOUNT_ALREADY_CREATED":
 			state_result = await SupabaseClient.fetch_account_state(SessionStore.access_token)
 			if bool(state_result.get("ok", false)):
 				return _apply_recovered_state(state_result, "Save %s sincronizado." % SessionStore.active_save_label())
-		_fail_with_error(guest_result)
+		_fail_with_error(account_result)
 		return false
 
-	return _apply_recovered_state(guest_result, "Save %s pronto." % SessionStore.active_save_label())
+	return _apply_recovered_state(account_result, "Save %s pronto." % SessionStore.active_save_label())
+
+func _auth_form_values(require_username: bool) -> Dictionary:
+	var email := _social_input_text(_auth_email_input).to_lower()
+	var password := _social_input_text(_auth_password_input)
+	var username := _normalized_alpha_username(_social_input_text(_auth_username_input, SessionStore.account_username))
+	var invite := _social_input_text(_auth_invite_input, SessionStore.DEFAULT_INVITE_CODE).to_upper()
+
+	if email == "" or not email.contains("@") or not email.contains("."):
+		_error_label.text = "Informe um email valido."
+		_detail_label.text = "A conta alpha usa email/senha para compartilhar o save entre PC, Web e Android."
+		return {}
+	if password.length() < 6:
+		_error_label.text = "A senha precisa ter pelo menos 6 caracteres."
+		_detail_label.text = "Use a mesma senha para recuperar o save em outra plataforma."
+		return {}
+	if require_username and username == "":
+		_error_label.text = "Informe um username valido."
+		_detail_label.text = "Use 3 a 24 caracteres: letras minusculas, numeros ou underscore."
+		return {}
+	if username != "" and not _is_valid_alpha_username(username):
+		_error_label.text = "Username invalido."
+		_detail_label.text = "Use 3 a 24 caracteres: letras minusculas, numeros ou underscore."
+		return {}
+	if require_username and invite == "":
+		_error_label.text = "Informe o convite alpha."
+		_detail_label.text = "O convite libera o primeiro save desta conta."
+		return {}
+
+	return {
+		"email": email,
+		"password": password,
+		"username": username,
+		"invite": invite,
+	}
+
+func _effective_alpha_username(username: String) -> String:
+	var normalized := _normalized_alpha_username(username)
+	if normalized == "":
+		normalized = _normalized_alpha_username(SessionStore.account_username)
+	if normalized == "":
+		normalized = _normalized_alpha_username(SessionStore.player_display_name())
+	if normalized == "":
+		normalized = "tester_%s" % SessionStore.ensure_session_id().replace("-", "").substr(0, 8)
+	normalized = SessionStoreScript.base_account_username(normalized)
+	return normalized
+
+func _effective_alpha_invite(invite_code: String) -> String:
+	var normalized := invite_code.strip_edges().to_upper()
+	if normalized == "":
+		normalized = _social_input_text(_auth_invite_input, SessionStore.DEFAULT_INVITE_CODE).to_upper()
+	if normalized == "":
+		normalized = SessionStore.DEFAULT_INVITE_CODE
+	return normalized
+
+func _normalized_alpha_username(username: String) -> String:
+	return username.strip_edges().to_lower()
+
+func _is_valid_alpha_username(username: String) -> bool:
+	if username.length() < 3 or username.length() > 24:
+		return false
+	for index in username.length():
+		var code := username.unicode_at(index)
+		var is_number := code >= 48 and code <= 57
+		var is_lower := code >= 97 and code <= 122
+		var is_underscore := code == 95
+		if not is_number and not is_lower and not is_underscore:
+			return false
+	return true
 
 func _apply_recovered_state(state_result: Dictionary, message: String) -> bool:
 	if not SessionStore.apply_server_state(state_result):
@@ -899,7 +1075,7 @@ func _apply_recovered_state(state_result: Dictionary, message: String) -> bool:
 	return true
 
 func _request_battle() -> void:
-	if not _require_account("Crie uma sessao guest antes de solicitar batalha."):
+	if not _require_account("Entre com email antes de solicitar batalha."):
 		return
 
 	_show_screen(SCREEN_BATTLE, false)
@@ -924,7 +1100,7 @@ func _request_battle() -> void:
 	await _play_battle_log(SessionStore.last_battle_log, SessionStore.last_battle_rewards)
 
 func _show_latest_battle() -> void:
-	if not _require_session("Crie uma sessao guest antes de ver resultado."):
+	if not _require_session("Entre com email ou use guest dev antes de ver resultado."):
 		return
 
 	_show_screen(SCREEN_BATTLE, false)
@@ -954,7 +1130,7 @@ func _show_base() -> void:
 		_set_busy(false, "Snapshot local do Progression Lab carregado. Base em modo somente leitura; coletas e upgrades precisam de save seeded no Supabase local.")
 		_render_base_state()
 		return
-	if not _require_session("Crie uma sessao guest antes de abrir a base."):
+	if not _require_session("Entre com email ou use guest dev antes de abrir a base."):
 		return
 
 	_show_screen(SCREEN_BASE, false)
@@ -973,7 +1149,7 @@ func _show_base() -> void:
 	_render_base_state()
 
 func _collect_base() -> void:
-	if not _require_account("Crie uma sessao guest antes de coletar a base."):
+	if not _require_account("Entre com email ou use guest dev antes de coletar a base."):
 		return
 
 	_show_screen(SCREEN_BASE, false)
@@ -1000,7 +1176,7 @@ func _collect_base() -> void:
 	_render_base_state(collected)
 
 func _buy_energy_pack_alpha() -> void:
-	if not _require_account("Crie uma sessao guest antes de comprar Energia alpha."):
+	if not _require_account("Entre com email ou use guest dev antes de comprar Energia alpha."):
 		return
 
 	_show_screen(SCREEN_BASE, false)
@@ -1027,7 +1203,7 @@ func _buy_energy_pack_alpha() -> void:
 	_render_base_state()
 
 func _upgrade_base_structure(structure_id: String) -> void:
-	if not _require_account("Crie uma sessao guest antes de evoluir a base."):
+	if not _require_account("Entre com email ou use guest dev antes de evoluir a base."):
 		return
 	var target_structure_id := structure_id.strip_edges()
 	if target_structure_id == "":
@@ -1054,7 +1230,7 @@ func _upgrade_base_structure(structure_id: String) -> void:
 	_render_base_state()
 
 func _show_social() -> void:
-	if not _require_session("Crie uma sessao guest antes de abrir Social."):
+	if not _require_session("Entre com email ou use guest dev antes de abrir Social."):
 		return
 
 	_show_screen(SCREEN_SOCIAL, false)
@@ -1072,7 +1248,7 @@ func _show_social() -> void:
 	_render_social_state()
 
 func _add_friend() -> void:
-	if not _require_account("Crie uma sessao guest antes de adicionar amigo."):
+	if not _require_account("Entre com email ou use guest dev antes de adicionar amigo."):
 		return
 
 	_last_social_friend_username = _social_input_text(_social_friend_input)
@@ -1099,7 +1275,7 @@ func _add_friend() -> void:
 	_render_social_state()
 
 func _create_guild() -> void:
-	if not _require_account("Crie uma sessao guest antes de criar guilda."):
+	if not _require_account("Entre com email ou use guest dev antes de criar guilda."):
 		return
 
 	_last_social_guild_name = _social_input_text(_social_guild_input, _default_guild_name())
@@ -1122,7 +1298,7 @@ func _create_guild() -> void:
 	_render_social_state()
 
 func _join_guild() -> void:
-	if not _require_account("Crie uma sessao guest antes de entrar em guilda."):
+	if not _require_account("Entre com email ou use guest dev antes de entrar em guilda."):
 		return
 
 	_last_social_guild_name = _social_input_text(_social_guild_input)
@@ -1149,7 +1325,7 @@ func _join_guild() -> void:
 	_render_social_state()
 
 func _send_guild_chat() -> void:
-	if not _require_account("Crie uma sessao guest antes de usar chat."):
+	if not _require_account("Entre com email ou use guest dev antes de usar chat."):
 		return
 
 	_last_social_chat_message = _social_input_text(_social_chat_input, _last_social_chat_message)
@@ -1176,7 +1352,7 @@ func _send_guild_chat() -> void:
 	_render_social_state()
 
 func _show_matchmaking() -> void:
-	if not _require_session("Crie uma sessao guest antes de abrir matchmaking."):
+	if not _require_session("Entre com email ou use guest dev antes de abrir matchmaking."):
 		return
 
 	_show_screen(SCREEN_COMPETITION, false)
@@ -1194,7 +1370,7 @@ func _show_matchmaking() -> void:
 	_render_competition_state()
 
 func _show_ranking() -> void:
-	if not _require_session("Crie uma sessao guest antes de abrir ranking."):
+	if not _require_session("Entre com email ou use guest dev antes de abrir ranking."):
 		return
 
 	_show_screen(SCREEN_COMPETITION, false)
@@ -1212,7 +1388,7 @@ func _show_ranking() -> void:
 	_render_competition_state()
 
 func _show_shop() -> void:
-	if not _require_session("Crie uma sessao guest antes de abrir Loja."):
+	if not _require_session("Entre com email ou use guest dev antes de abrir Loja."):
 		return
 
 	_show_screen(SCREEN_SHOP, false)
@@ -1230,7 +1406,7 @@ func _show_shop() -> void:
 	_render_monetization_state()
 
 func _buy_shop_product(product_id: String) -> void:
-	if not _require_account("Crie uma sessao guest antes de comprar na Loja."):
+	if not _require_account("Entre com email ou use guest dev antes de comprar na Loja."):
 		return
 
 	_show_screen(SCREEN_SHOP, false)
@@ -1257,7 +1433,7 @@ func _buy_shop_product(product_id: String) -> void:
 	_render_monetization_state()
 
 func _claim_shop_reward(reward_id: String) -> void:
-	if not _require_account("Crie uma sessao guest antes de resgatar recompensa."):
+	if not _require_account("Entre com email ou use guest dev antes de resgatar recompensa."):
 		return
 
 	_show_screen(SCREEN_SHOP, false)
@@ -1374,7 +1550,7 @@ func _require_session(message: String) -> bool:
 	if SessionStore.has_valid_access_token():
 		return true
 	_error_label.text = message
-	_detail_label.text = "Use Entrar como guest no Refugio."
+	_detail_label.text = "Entre com email no Refugio ou use guest dev para teste local."
 	_emit_client_event("precondition_failed", {
 		"action_id": _active_action_id,
 		"screen": _current_screen,
@@ -1395,7 +1571,7 @@ func _require_account(message: String) -> bool:
 	if SessionStore.has_valid_access_token() and SessionStore.has_account_state():
 		return true
 	_error_label.text = message
-	_detail_label.text = "Use Entrar como guest no Refugio."
+	_detail_label.text = "Entre com email no Refugio ou use guest dev para teste local."
 	_emit_client_event("precondition_failed", {
 		"action_id": _active_action_id,
 		"screen": _current_screen,
@@ -2511,11 +2687,22 @@ func _session_status_text() -> String:
 			label = SessionStore.player_display_name()
 		return "Progression Lab local: %s (somente leitura)" % label
 	if SessionStore.is_progression_lab_active():
+		if SessionStore.has_account_state():
+			return "Save Progression Lab - sessao %s pronta: %s" % [
+				SessionStore.auth_method,
+				SessionStore.player_display_name(),
+			]
 		return "Save Progression Lab ativo - isolado do save normal"
 	if SessionStore.has_account_state():
-		return "Save Normal - sessao guest pronta: %s" % SessionStore.player_display_name()
+		return "Save Normal - sessao %s pronta: %s" % [
+			SessionStore.auth_method,
+			SessionStore.player_display_name(),
+		]
 	if SessionStore.has_valid_access_token():
-		return "Save %s - sessao anonima criada." % SessionStore.active_save_label()
+		return "Save %s - sessao %s criada." % [
+			SessionStore.active_save_label(),
+			SessionStore.auth_method,
+		]
 	return "%s - primeiro slice" % ProjectInfoScript.PROJECT_NAME
 
 func _default_guild_name() -> String:
@@ -2587,6 +2774,18 @@ func _friendly_error_message(code: String, message: String) -> String:
 			return "Requisicao nao iniciou. Verifique URL/chave local do Supabase nas Project Settings."
 		"CLIENT_MISCONFIGURED":
 			return "Cliente Supabase sem chave publishable configurada."
+		"AUTH_REQUIRES_EMAIL":
+			return "Esta acao exige conta por email/senha. Use Criar conta alpha ou Entrar com email."
+		"AUTH_NOT_ANONYMOUS":
+			return "Esta rota e apenas para guest dev. Use o fluxo de email/senha para a conta alpha."
+		"INVALID_LOGIN_CREDENTIALS":
+			return "Email ou senha invalidos. Confira os dados e tente novamente."
+		"INVALID_USERNAME":
+			return "Username invalido. Use 3 a 24 caracteres: letras minusculas, numeros ou underscore."
+		"USERNAME_TAKEN":
+			return "Este username ja esta em uso. Escolha outro para a conta alpha."
+		"ACCOUNT_ALREADY_CREATED":
+			return "Esta conta ja possui save criado. Sincronize a sessao para carregar o estado."
 		"INSUFFICIENT_RESOURCES":
 			return "Recursos insuficientes para esta acao. Na Base, confira Energia, custo e loja alpha."
 		"CONSTRUCTION_QUEUE_FULL":
@@ -2626,7 +2825,7 @@ func _friendly_error_message(code: String, message: String) -> String:
 		"REWARD_NOT_FOUND":
 			return "Recompensa alpha nao encontrada no servidor."
 		"UNAUTHENTICATED":
-			return "Sessao expirada. Entre como guest novamente."
+			return "Sessao expirada. Entre com email novamente ou use guest dev."
 	return "%s: %s" % [code, message]
 
 func _is_network_error(code: String) -> bool:

@@ -3,6 +3,7 @@
 - Ultima atualizacao: `2026-05-27`
 - Alvo: preparar o projeto Supabase remoto para `internal_alpha_v0`.
 - Ponto de partida: screenshot enviada em 2026-05-26 com projeto Supabase novo, status `Healthy`.
+- Estado atual: projeto `armxgipvnbbshzqawklw` linkado, migrations/functions publicadas, Auth email/senha configurado sem confirmacao obrigatoria e smokes remotos verdes.
 
 ## O Que Ja Da Para Identificar Pela Screenshot
 
@@ -109,6 +110,8 @@ Para esta alpha fechada vamos usar email/senha sem obrigar confirmacao de email.
 Se a UI estiver diferente, procure em `Authentication` por `Providers`, `Email`, `Confirm email` ou `Email confirmations`.
 
 Observacao: a documentacao oficial indica que, com `Confirm Email` desligado, o email e considerado confirmado para login. Isso e adequado para a alpha interna, mas nao e recomendacao automatica para producao publica.
+
+Resultado real em 2026-05-27: alem do ajuste manual, `npx -y supabase config push --yes` foi usado para alinhar o Auth remoto ao `supabase/config.toml` local, com `enable_confirmations = false`.
 
 ## Passo 4 - Criar Arquivo Local Ignorado
 
@@ -245,7 +248,14 @@ $env:DRAXOS_REMOTE_INVITE_CODE='ALPHA-TEST'
 npx -y deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts
 ```
 
-Observacao: o fluxo final sera email/senha. O smoke guest atual existe porque a base local ainda nasceu com guest/dev. `T03-P14` vai adaptar o cliente e backend para conta email/senha real.
+Com email/senha real da Internal Alpha v0:
+
+```powershell
+$env:DRAXOS_REMOTE_EMAIL_AUTH_SMOKE='1'
+npx -y deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts
+```
+
+Observacao: o fluxo final agora e email/senha. Os smokes guest continuam existindo como fallback dev/local.
 
 ## Passo 10 - O Que Enviar Para O Codex Agora
 
@@ -270,8 +280,8 @@ Valores publicos e secrets foram colocados em .env.internal-alpha.local
 
 O Codex executa a proxima etapa:
 
-1. `T03-P13`: link/deploy/smoke remoto.
-2. `T03-P14`: implementar email/senha no Godot e backend.
+1. `T03-P13`: link/deploy/smoke remoto. **Feito**.
+2. `T03-P14`: implementar email/senha no Godot e backend. **Feito**.
 3. `T03-P15`: manifest de updates.
 4. `T03-P16`: exportar APK, PC ZIP e Web.
 5. `T03-P17`: publicar portal/Web/downloads e rodar QA remoto fechado.

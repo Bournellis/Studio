@@ -1,7 +1,7 @@
 # Database Schema Contract
 
-- Ultima atualizacao: `2026-05-26`
-- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type` local, reset separado por save e aplicacao do Progression Lab no save de lab implementadas; Track 03 ainda planeja email/senha e updates internos
+- Ultima atualizacao: `2026-05-27`
+- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type`, reset separado por save, aplicacao do Progression Lab no save de lab e auth email/senha com alpha gate implementados; Track 03 ainda planeja manifest de updates internos
 
 Este documento define o schema esperado. A fonte tecnica viva do runtime local e `../../supabase/migrations/`; `../../server/schema/migrations/` permanece como espelho backend durante o alpha local.
 
@@ -16,6 +16,7 @@ Migrations atuais:
 - `202605260001_two_save_context.sql`: `players.save_type`, unicidade por `auth_user_id + save_type` e RPCs com contexto de save.
 - `202605260002_reset_save_context.sql`: RPC `reset_player_save` para reconstruir apenas o save ativo sem tocar o outro.
 - `202605260003_progression_lab_apply.sql`: RPC `apply_progression_lab_save` para aplicar um healthy save gerado no save `progression_lab`.
+- `202605270001_alpha_email_account.sql`: RPC `create_alpha_account` para conta email/senha registrada, alpha gate por convite/username e criacao dos saves `normal`/`progression_lab`.
 
 ## MVP Tecnico
 
@@ -215,11 +216,21 @@ Implementado em `T03-P04`:
 - a RPC nunca escreve no save `normal`, grava ledger `progression-lab/apply` e preserva idempotencia por `request_id`;
 - `account/guest` do save Lab passa a retornar o payload aplicado se repetir o `request_id` original.
 
+Implementado em `T03-P14`:
+
+- `create_alpha_account` exige `auth.users.is_anonymous = false`;
+- o primeiro save da conta exige convite alpha ativo e `username` valido;
+- `players.account_type` fica como `registered` para contas email/senha;
+- criar o segundo save da mesma conta nao consome novo convite;
+- save `progression_lab` recebe username com sufixo `*_lab` para leitura social e permanece isolado do ranking;
+- a Edge Function `account/bootstrap` chama a RPC com `request_id` idempotente;
+- `account/guest` passa a rejeitar JWT registrado e fica restrito a fallback dev/local.
+
 Limites atuais desta etapa:
 
 - social foi promovido em `T03-P06` para identidade de conta no runtime: Edge Functions usam o save `normal` como `social_player` canonico quando ele existe e retornam marcador `lab` para o viewer em `progression_lab`;
 - as tabelas continuam referenciando `players.id`, entao uma refatoracao futura para `account_profiles/game_saves` continua recomendada antes de escalar social remoto;
-- email/senha remoto segue para `T03-P14`, depois do bootstrap Supabase remoto em `T03-P13`.
+- o alpha gate ainda e simples: convite + username no primeiro save, sem painel administrativo de convites.
 
 Refatoracao futura, se o projeto crescer:
 

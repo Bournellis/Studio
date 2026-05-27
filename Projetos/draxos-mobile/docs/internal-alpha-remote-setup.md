@@ -1,10 +1,10 @@
 # DraxosMobile - Internal Alpha Remote Setup
 
 - Ultima atualizacao: `2026-05-27`
-- Track: `T03-P02 - Supabase Remoto E Configuracao Segura`
-- Status: `remote bootstrap complete, auth email/senha pending`
+- Track: `T03-P14 - Auth Email/Senha E Alpha Gate`
+- Status: `auth email/senha remote green, update manifest pending`
 
-Este runbook deixa a Internal Alpha v0 preparada para usar Supabase remoto sem colocar secrets no cliente. O projeto remoto ja foi linkado pela CLI, recebeu migrations/Edge Functions e passou no smoke minimo de healthcheck. Auth email/senha e alpha gate seguem para `T03-P14`.
+Este runbook deixa a Internal Alpha v0 preparada para usar Supabase remoto sem colocar secrets no cliente. O projeto remoto ja foi linkado pela CLI, recebeu migrations/Edge Functions, recebeu config de Auth email/senha sem confirmacao obrigatoria e passou nos smokes remotos de healthcheck, Auth anonimo dev e email/senha com dois saves.
 
 Tutorial detalhado para Fabio: `supabase-remote-tutorial.md`.
 
@@ -22,7 +22,8 @@ Tutorial detalhado para Fabio: `supabase-remote-tutorial.md`.
 - `project.godot` fica em ambiente `local` por padrao.
 - `.env.internal-alpha.example` documenta as variaveis seguras.
 - `.gitignore` ignora `.env` reais em projetos.
-- `server/tests/internal_alpha_remote_smoke.ts` valida remoto sem service role.
+- `server/tests/internal_alpha_remote_smoke.ts` valida remoto sem service role, incluindo flags para Auth anonimo dev, account guest dev e email/senha alpha.
+- `server/tests/email_auth_alpha_smoke.ts` valida localmente signup/login email/senha e `/account/bootstrap`.
 - `docs/supabase-remote-tutorial.md` descreve a configuracao manual, os comandos e exatamente quais valores enviar.
 - `portal/internal-alpha/` contem a base do portal unlisted para distribuir Web/APK/PC quando as builds forem exportadas.
 
@@ -36,7 +37,7 @@ Tutorial detalhado para Fabio: `supabase-remote-tutorial.md`.
 - Regiao: `West US (Oregon)`.
 - Status no dashboard: `Healthy`.
 
-Estado operacional: o dashboard mostrou o projeto saudavel e, em 2026-05-27, o bootstrap remoto aplicou as migrations e publicou as Edge Functions. Para a build, o backend remoto esta pronto para a etapa de auth email/senha.
+Estado operacional: o dashboard mostrou o projeto saudavel e, em 2026-05-27, o bootstrap remoto aplicou as migrations, publicou as Edge Functions, atualizou config de Auth e validou o fluxo email/senha. Para a build, o backend remoto esta pronto para a etapa de manifest de updates.
 
 ## Resultado T03-P13
 
@@ -45,7 +46,17 @@ Estado operacional: o dashboard mostrou o projeto saudavel e, em 2026-05-27, o b
 - `supabase functions deploy healthcheck account battle base social competition monetization telemetry progression-lab`: concluiu.
 - `server/tests/internal_alpha_remote_smoke.ts`: passou com `healthcheck: true`.
 - `supabase migration list`: confirmou migrations locais/remotas alinhadas.
-- Smokes de Auth/account remotos permanecem intencionalmente fora desta etapa ate `T03-P14`.
+- Smokes de Auth/account remotos foram fechados em `T03-P14`.
+
+## Resultado T03-P14
+
+- `202605270001_alpha_email_account.sql` aplicada local/remoto.
+- `account` Edge Function publicada novamente com `/account/bootstrap`.
+- `supabase config push --yes` aplicou Auth remoto com `enable_confirmations = false` e Auth anonimo dev habilitado.
+- `.env.internal-alpha.local` local foi corrigido com a publishable key publica atual; o arquivo segue ignorado pelo Git.
+- `server/tests/email_auth_alpha_smoke.ts`: passou localmente com signup/login, save normal e save `progression_lab`.
+- `server/tests/internal_alpha_remote_smoke.ts` com `DRAXOS_REMOTE_EMAIL_AUTH_SMOKE=1`: passou em remoto com email/senha e os dois saves.
+- `server/tests/internal_alpha_remote_smoke.ts` com `DRAXOS_REMOTE_ANON_AUTH_SMOKE=1`: passou em remoto para fallback dev anonimo.
 
 ## Variaveis Do Cliente
 
@@ -96,7 +107,14 @@ $env:DRAXOS_REMOTE_ANON_AUTH_SMOKE='1'
 npx -y deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts
 ```
 
-Opcionalmente, depois de migrations, functions e convite alpha aplicados:
+Opcionalmente, para testar email/senha e os dois saves remotos:
+
+```powershell
+$env:DRAXOS_REMOTE_EMAIL_AUTH_SMOKE='1'
+npx -y deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts
+```
+
+Opcionalmente, para testar account guest temporario/dev:
 
 ```powershell
 $env:DRAXOS_REMOTE_ACCOUNT_SMOKE='1'
@@ -135,7 +153,7 @@ Supabase Storage pode hospedar manifest e artefatos pequenos, mas o limite do pl
 - links podem apontar para storage externo se os artefatos ficarem grandes;
 - o cliente deve depender do schema do manifest, nao do fornecedor de storage.
 
-## Checklist Antes De T03-P14
+## Checklist Antes De T03-P15
 
 - Projeto remoto confirmado.
 - URL e publishable key publicas configuradas localmente.
@@ -144,6 +162,7 @@ Supabase Storage pode hospedar manifest e artefatos pequenos, mas o limite do pl
 - Migrations aplicadas em remoto.
 - Edge Functions publicadas em remoto.
 - `healthcheck` remoto verde.
-- Email confirmation desligado.
-- Politica de alpha gate definida para email/senha.
+- Email confirmation desligado via config remoto.
+- Politica de alpha gate definida para email/senha: convite + username no primeiro save.
 - Fluxo email/senha implementado no cliente/backend.
+- Proximo: manifest remoto de updates e version gate.

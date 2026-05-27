@@ -25,6 +25,7 @@ npx -y deno run --allow-net --allow-env server/tests/client_telemetry_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/two_save_context_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/reset_save_context_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/progression_lab_apply_smoke.ts
+npx -y deno run --allow-net --allow-env server/tests/email_auth_alpha_smoke.ts
 ```
 
 O smoke cria uma sessao anonima, cria conta guest, solicita batalha `MVP_ONLY`,
@@ -66,6 +67,11 @@ perfil/milestone versionado aplicado no save `progression_lab`, save normal
 preservado, idempotencia por `request_id`, ranking do Lab bloqueado e batalha
 do Lab ainda jogavel apos a aplicacao.
 
+O smoke `email_auth_alpha_smoke.ts` valida signup/login por email/senha,
+`POST /account/bootstrap`, criacao do save `normal`, criacao do save
+`progression_lab` com sufixo `*_lab`, recuperacao por `account/state` e login
+posterior na mesma conta.
+
 Validacao standalone de Edge Functions pode usar `npx deno`. Validacao de
 runtime Supabase depende de Docker e Supabase CLI no ambiente local.
 
@@ -80,6 +86,7 @@ npx -y deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke
 ```
 
 O smoke remoto rejeita URLs locais e service role no lugar da publishable key.
-Use `DRAXOS_REMOTE_ANON_AUTH_SMOKE=1` para incluir Auth anonimo e
-`DRAXOS_REMOTE_ACCOUNT_SMOKE=1` depois que migrations, Edge Functions e convite
-alpha estiverem publicados.
+Use `DRAXOS_REMOTE_ANON_AUTH_SMOKE=1` para incluir Auth anonimo,
+`DRAXOS_REMOTE_ACCOUNT_SMOKE=1` para validar account guest dev e
+`DRAXOS_REMOTE_EMAIL_AUTH_SMOKE=1` para validar email/senha, `account/bootstrap`
+e os dois saves da conta alpha.

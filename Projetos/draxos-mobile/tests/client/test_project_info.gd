@@ -11,8 +11,10 @@ func test_project_info_constants_are_set() -> void:
 
 func test_boot_actions_match_mvp_scope() -> void:
 	var actions := ProjectInfo.boot_actions()
-	assert_eq(actions.size(), 21)
-	assert_has(actions, "Entrar como guest")
+	assert_eq(actions.size(), 23)
+	assert_has(actions, "Criar conta alpha")
+	assert_has(actions, "Entrar com email")
+	assert_has(actions, "Entrar como guest dev")
 	assert_has(actions, "Sincronizar sessao")
 	assert_has(actions, "Resetar sessao local")
 	assert_has(actions, "Resetar save ativo")

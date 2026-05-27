@@ -74,7 +74,7 @@ Resultado em 2026-05-27:
 
 ### T03-P14 - Auth Email/Senha No Godot E Backend
 
-Status: `NEXT`.
+Status: `COMPLETE`.
 
 Saida esperada:
 
@@ -84,9 +84,16 @@ Saida esperada:
 - criacao/carregamento dos dois saves por conta email/senha;
 - guest fica apenas como ferramenta dev/local, se ainda for util.
 
+Resultado em 2026-05-27:
+
+- Hub do Godot recebeu cadastro/login por email/senha, username e convite.
+- Backend recebeu `/account/bootstrap` e RPC `create_alpha_account`.
+- Auth remoto foi alinhado com confirmacao de email desligada.
+- Smokes local/remoto validaram email/senha, save normal, save `progression_lab` e login posterior.
+
 ### T03-P15 - Release Config E Manifest
 
-Status: `PENDING_IMPLEMENTATION`.
+Status: `NEXT`.
 
 Saida esperada:
 
@@ -97,7 +104,7 @@ Saida esperada:
 
 ### T03-P16 - Export Das Tres Builds
 
-Status: `PENDING_REMOTE_AND_AUTH`.
+Status: `PENDING_MANIFEST`.
 
 Saida esperada:
 

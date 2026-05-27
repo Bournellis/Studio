@@ -48,6 +48,9 @@ func configure_save_type(save_type: String) -> void:
 func auth_anonymous_url() -> String:
 	return "%s/auth/v1/signup" % supabase_url
 
+func auth_password_url() -> String:
+	return "%s/auth/v1/token?grant_type=password" % supabase_url
+
 func function_url(endpoint: String) -> String:
 	return "%s/functions/v1/%s" % [supabase_url, endpoint.trim_prefix("/")]
 
@@ -62,11 +65,64 @@ func sign_in_anonymously() -> Dictionary:
 		return result
 
 	var payload: Dictionary = _as_dictionary(result.get("body", {}))
-	var session := _session_from_auth_payload(payload)
+	var session := _session_from_auth_payload(payload, true, false)
 	if session.is_empty():
 		return _error("INVALID_AUTH_RESPONSE", "Supabase Auth did not return an anonymous session.")
 
 	return {"ok": true, "session": session}
+
+func sign_up_with_email(email: String, password: String) -> Dictionary:
+	var result: Dictionary = await _send_json(
+		auth_anonymous_url(),
+		HTTPClient.METHOD_POST,
+		_base_headers(),
+		{
+			"email": email.strip_edges(),
+			"password": password,
+		}
+	)
+	if not bool(result.get("ok", false)):
+		return result
+
+	var payload: Dictionary = _as_dictionary(result.get("body", {}))
+	var session := _session_from_auth_payload(payload, false, true)
+	if session.is_empty():
+		return _error("INVALID_AUTH_RESPONSE", "Supabase Auth did not return an email session. Confirm email may still be enabled.")
+
+	return {"ok": true, "session": session}
+
+func sign_in_with_email(email: String, password: String) -> Dictionary:
+	var result: Dictionary = await _send_json(
+		auth_password_url(),
+		HTTPClient.METHOD_POST,
+		_base_headers(),
+		{
+			"email": email.strip_edges(),
+			"password": password,
+		}
+	)
+	if not bool(result.get("ok", false)):
+		return result
+
+	var payload: Dictionary = _as_dictionary(result.get("body", {}))
+	var session := _session_from_auth_payload(payload, false, true)
+	if session.is_empty():
+		return _error("INVALID_AUTH_RESPONSE", "Supabase Auth did not return an email session.")
+
+	return {"ok": true, "session": session}
+
+func bootstrap_alpha_account(invite_code: String, username: String, request_id: String, device_label: String, access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("account/bootstrap"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		{
+			"invite_code": invite_code,
+			"username": username,
+			"device_label": device_label,
+			"request_id": request_id,
+		}
+	)
 
 func create_guest_account(invite_code: String, request_id: String, device_label: String, access_token: String) -> Dictionary:
 	return await _send_json(
@@ -332,14 +388,19 @@ func _send_json(url: String, method: HTTPClient.Method, headers: PackedStringArr
 
 	return {"ok": true, "status": response_code, "body": payload}
 
-func _session_from_auth_payload(payload: Dictionary) -> Dictionary:
+func _session_from_auth_payload(payload: Dictionary, require_anonymous: bool, require_registered: bool) -> Dictionary:
 	var access_token := str(payload.get("access_token", ""))
 	var refresh_token := str(payload.get("refresh_token", ""))
 	var expires_at := int(payload.get("expires_at", 0))
+	if expires_at <= 0:
+		expires_at = int(Time.get_unix_time_from_system()) + int(payload.get("expires_in", 3600))
 	var user := _as_dictionary(payload.get("user", {}))
 	if access_token == "" or refresh_token == "" or expires_at <= 0:
 		return {}
-	if not bool(user.get("is_anonymous", false)):
+	var is_anonymous := bool(user.get("is_anonymous", false))
+	if require_anonymous and not is_anonymous:
+		return {}
+	if require_registered and is_anonymous:
 		return {}
 
 	return {
@@ -347,7 +408,9 @@ func _session_from_auth_payload(payload: Dictionary) -> Dictionary:
 		"refresh_token": refresh_token,
 		"expires_at": expires_at,
 		"user_id": str(user.get("id", "")),
-		"is_anonymous": true,
+		"is_anonymous": is_anonymous,
+		"auth_method": "guest" if is_anonymous else "email",
+		"email": str(user.get("email", "")),
 	}
 
 func _server_error(payload: Dictionary, response_code: int) -> Dictionary:

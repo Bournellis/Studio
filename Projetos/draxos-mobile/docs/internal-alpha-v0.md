@@ -37,7 +37,7 @@ Decisao operacional de 2026-05-26:
 
 Esta ordem nao remove a decisao de usar Supabase no alpha. Ela apenas adia remoto, build e distribuicao para reduzir friccao enquanto a implementacao ainda muda muito.
 
-Atualizacao de 2026-05-27: `T03-P13` concluiu o bootstrap Supabase remoto. A proxima sequencia esta documentada em `internal-alpha-release-plan.md`: `T03-P14` email/senha, `T03-P15` manifest de updates, `T03-P16` export das builds, `T03-P17` QA remoto fechado e `T03-P18` handoff.
+Atualizacao de 2026-05-27: `T03-P13` concluiu o bootstrap Supabase remoto e `T03-P14` concluiu auth email/senha + alpha gate. A proxima sequencia esta documentada em `internal-alpha-release-plan.md`: `T03-P15` manifest de updates, `T03-P16` export das builds, `T03-P17` QA remoto fechado e `T03-P18` handoff.
 
 ## Modelo De Conta E Save
 
@@ -63,10 +63,12 @@ Regras:
 - Dados de ranking/social do save normal nao devem ser contaminados pelo lab.
 - Toda mutacao continua server-authoritative.
 
-Status local atual (`T03-P11`):
+Status atual (`T03-P14`):
 
-- Godot persiste o save ativo e envia `x-draxos-save-type`.
-- Supabase local resolve `normal` e `progression_lab` por `players.save_type`.
+- Godot possui fluxo real de conta alpha com email, senha, username e convite; guest fica em ferramentas dev.
+- Godot persiste metodo de auth, email, username, save ativo e envia `x-draxos-save-type`.
+- Supabase local/remoto resolve `normal` e `progression_lab` por `players.save_type`.
+- `/account/bootstrap` cria saves para JWT registrado; `/account/guest` fica restrito a JWT anonimo dev.
 - Uma mesma sessao Auth pode criar/carregar dois players/saves distintos.
 - Batalha, Base, Social, Competicao, Loja e Telemetria usam o save ativo no servidor.
 - `progression_lab` fica fora do ranking com motivo explicito `PROGRESSION_LAB_DOES_NOT_RANK`.
@@ -85,7 +87,7 @@ Alvo inicial:
 
 - Supabase Free.
 - Projeto remoto observado no dashboard: `Bournellis's Project`, ref `armxgipvnbbshzqawklw`, URL `https://armxgipvnbbshzqawklw.supabase.co`, regiao `West US (Oregon)`, status `Healthy`.
-- Status remoto atual: CLI linkado, 10 migrations aplicadas, Edge Functions publicadas e smoke minimo de healthcheck verde em 2026-05-27.
+- Status remoto atual: CLI linkado, 11 migrations aplicadas, Edge Functions publicadas, Auth email/senha sem confirmacao obrigatoria e smokes de healthcheck/Auth anonimo dev/email+saves verdes em 2026-05-27.
 - Edge Functions para acoes autoritativas.
 - Postgres com RLS.
 - Storage para manifest e artefatos de update.
@@ -112,7 +114,7 @@ Seguranca minima:
 - Policies devem continuar limitando leitura/escrita ao dono.
 - Mutacoes economicas usam Edge Functions, idempotencia e ledger.
 - Web link publico/unlisted nao e segredo de seguranca; auth e alpha flag sao a barreira real.
-- Auth email/senha e alpha gate ainda entram em `T03-P14`; ate la, os smokes remotos de login/account seguem fora do criterio de aceite.
+- Auth email/senha e alpha gate foram implementados em `T03-P14`; `service_role` continua fora do cliente e smokes remotos usam apenas publishable key.
 
 Regra anti-lock-in:
 
@@ -265,14 +267,14 @@ Estas decisoes vivem em `docs/design-pending.md` como `DMOB-D048` a `DMOB-D055`.
 
 - Seguir o tutorial detalhado em `supabase-remote-tutorial.md`.
 - Confirmar que o projeto Supabase remoto usado sera `armxgipvnbbshzqawklw`. (`feito em T03-P13`)
-- Desativar email confirmation. (`feito pelo Fabio antes de T03-P13`)
+- Desativar email confirmation. (`feito e alinhado por supabase config push em T03-P14`)
 - Copiar `Project URL` e publishable key para ambiente local/export seguro. (`feito localmente; nao versionar chave real`)
 - Criar `.env.internal-alpha.local` ignorado no Git. (`feito localmente`)
-- Criar/fornecer convites alpha.
+- Criar/fornecer convites alpha. (`ALPHA-TEST` existe para smokes; convites humanos finais ainda podem ser definidos`)
 - Guardar service role fora do Git.
 - Criar keystore Android internal alpha e guardar senha fora do Git.
 - Escolher URL/canal da Web build.
-- Aprovar redeems da loja.
+- Aprovar redeems da loja. (`feito para alpha atual; valores seguem calibraveis`)
 - Testar com o segundo usuario e preencher checklist.
 
 ## Guardrails
