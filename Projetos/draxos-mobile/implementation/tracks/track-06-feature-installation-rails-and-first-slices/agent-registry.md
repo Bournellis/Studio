@@ -4,8 +4,8 @@ All agents must use dedicated worktrees outside `D:\Estudio`.
 
 | Agent | Track | Worktree | Branch | Status | Handoff |
 |---|---|---|---|---|---|
-| Codex | T06-A Coordenacao | `D:\Estudio-worktrees\draxos-mobile--codex--t06-coordenacao` | `codex/draxos-mobile/t06-coordenacao` | `READY_FOR_MERGE` | Merge docs/status, then unblock B-H |
-| Codex worker | T06-B Feature Rails | `D:\Estudio-worktrees\draxos-mobile--codex--t06-feature-rails` | `codex/draxos-mobile/t06-feature-rails` | `PENDING_AFTER_T06_A` | Feature contract ready for D-H |
+| Codex | T06-A Coordenacao | `D:\Estudio-worktrees\draxos-mobile--codex--t06-coordenacao` | `codex/draxos-mobile/t06-coordenacao` | `INTEGRATED_ON_MASTER` | Base docs/status available for B-H |
+| Codex worker | T06-B Feature Rails | `D:\Estudio-worktrees\draxos-mobile--codex--t06-feature-rails` | `codex/draxos-mobile/t06-feature-rails` | `READY_FOR_HANDOFF` | Feature contract, checklist, surface validation, fallback and rollback ready for D-H |
 | Codex worker | T06-C Runtime Config | `D:\Estudio-worktrees\draxos-mobile--codex--t06-runtime-config` | `codex/draxos-mobile/t06-runtime-config` | `PENDING_AFTER_T06_A` | Release config endpoint/client/smoke |
 | Codex worker | T06-D Perfil/Conta | `D:\Estudio-worktrees\draxos-mobile--codex--t06-profile-account` | `codex/draxos-mobile/t06-profile-account` | `PENDING_AFTER_T06_B` | Profile/account panel validated |
 | Codex worker | T06-E Battle History | `D:\Estudio-worktrees\draxos-mobile--codex--t06-battle-history` | `codex/draxos-mobile/t06-battle-history` | `PENDING_AFTER_T06_B` | History/replay endpoints and UI validated |

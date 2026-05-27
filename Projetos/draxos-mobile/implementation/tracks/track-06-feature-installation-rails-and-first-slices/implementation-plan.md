@@ -42,7 +42,7 @@ Validation: `git diff --check`.
 
 ## T06-B - Feature Rails
 
-Status: `PENDING_AFTER_T06_A`.
+Status: `READY_FOR_HANDOFF`.
 
 - Transformar `feature-registry.md` em contrato operacional.
 - Definir template/checklist por feature: owner, surface, endpoints, service scope, validation, fallback and rollback.
@@ -50,6 +50,13 @@ Status: `PENDING_AFTER_T06_A`.
 - Sem runtime gameplay.
 
 Validation: docs checks and `git diff --check`; client validation only if tooling is touched.
+
+Handoff:
+
+- `feature-registry.md` now defines the standard feature installation contract.
+- Every Track 06 feature must declare owner, surface, endpoints affected, service scope, smoke/GUT requirement, fallback and rollback before implementation.
+- Surface validation is explicit for docs, release/client boot, Hub account/session, Battle, Base, Social, shared visual assets and backend-only services.
+- Feature work that discovers schema, tuning, real payment, realtime social, remote publication or account/save migration must stop for decision instead of silently expanding scope.
 
 ## T06-C - Runtime Config
 
