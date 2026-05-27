@@ -28,6 +28,8 @@ Metadata local gerado:
 
 Em 2026-05-27, apos o feedback de usabilidade no APK, foi gerado um rebuild local com a passada compacta do Hub/abas. Este rebuild ainda nao substitui automaticamente o pacote Cloudflare Pages publicado; ele serve para reteste local e para republicacao dos downloads quando aprovado.
 
+Status manual: aprovado por Fabio em 2026-05-27 como bom o suficiente para seguir para republicacao.
+
 | Plataforma | Artefato local | Bytes | SHA256 |
 |---|---|---:|---|
 | Android APK | `build/android/draxos-mobile-alpha.apk` | `27811908` | `acfb572a28d437027a49b7f4f46b218f5204341c1fe276d8354e160deee78fe7` |

@@ -365,7 +365,7 @@ Status: `DOWNLOADS_GREEN - PORTAL_WEB_GREEN - AUTOMATED_REMOTE_QA_GREEN - MANUAL
 
 ### T03-P17A - Android UI Usability Pass
 
-Status: `COMPLETE_LOCAL_REBUILD - MANUAL_RETEST_PENDING`.
+Status: `APPROVED - REPUBLISH_PENDING`.
 
 - Corrigir o primeiro desconforto observado no APK sem abrir nova fase de design visual.
 - Manter o layout amplo de PC/Web funcional, mas aplicar modo compacto automatico no Android.
@@ -376,6 +376,7 @@ Status: `COMPLETE_LOCAL_REBUILD - MANUAL_RETEST_PENDING`.
 - Trocar textos visiveis de fluxo normal para linguagem de teste interno, deixando "dev" apenas nos labs do editor.
 - Adicionar teste automatizado para garantir que o modo compacto continua usando grade de acoes e toque minimo.
 - Gerar rebuild local Android/PC/Web para reteste antes de republicar downloads/Cloudflare.
+- Aprovado por Fabio em 2026-05-27 como bom o suficiente para seguir.
 
 ### T03-P18 - Handoff Da Internal Alpha v0
 

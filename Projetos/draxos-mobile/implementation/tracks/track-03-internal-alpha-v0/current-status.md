@@ -1,7 +1,7 @@
 # Track 03 - Internal Alpha v0 - Current Status
 
 - Last Updated: `2026-05-27`
-- Status: `T03-P17A_ANDROID_UI_USABILITY_PASS_COMPLETE - MANUAL_SIGNOFF_PENDING`
+- Status: `T03-P17A_ANDROID_UI_APPROVED - REPUBLISH_PENDING`
 - Baseline: Track 00 completa, Track 01 completa e Track 02 com Progression Lab/Battle Lab v1 implementados. O projeto ja possui Godot 4.6.2, Supabase local, conta guest, batalha server-authoritative, Base/Social/Competicao/Monetizacao v0, telemetria client nao autoritativa, exports Android/PC/Web, Battle Visual Mockup compartilhado e laboratorios internos. A Track 03 prepara a transicao para uma build fechada realista com email/senha, dois saves por conta, backend remoto, updates e playtest de 2 usuarios.
 
 ## Implementado Nesta Preparacao
@@ -36,7 +36,7 @@
 - Correcao pos-publicacao: Supabase Storage retorna HTML como `text/plain` e Edge Functions tambem nao servem `text/html`; APK/PC ZIP e assets grandes continuam por Storage, enquanto Portal/Web HTML ficam no Cloudflare Pages.
 - Correcao Cloudflare Pages: o pacote hibrido publica Portal em `/`, Web em `/web`, mantem redirects de `/portal/index.html` e `/web/index.html`, e evita o limite por arquivo do Pages.
 - Hotfix gameplay email/senha: `battle`, `base`, `social`, `competition` e `monetization` removem o guard legado `AUTH_NOT_ANONYMOUS` do MVP e aceitam JWT registrado; `/account/guest` continua restrito a guest dev.
-- `T03-P17A` completo: passada curta de usabilidade Android no Boot. O Hub/abas detectam Android ou `draxos_mobile/ui/force_compact_layout`, reduzem margens/fontes de chrome, mantem nav com alvo de toque maior, agrupam botoes de acao em grades, deixam o mapa da Base em 6 colunas no Android paisagem larga e trocam a linguagem visivel de "dev" do fluxo normal por "teste rapido". Foi adicionado GUT de regressao para o layout compacto e gerado rebuild local Android/PC/Web.
+- `T03-P17A` aprovado: passada curta de usabilidade Android no Boot. O Hub/abas detectam Android ou `draxos_mobile/ui/force_compact_layout`, reduzem margens/fontes de chrome, mantem nav com alvo de toque maior, agrupam botoes de acao em grades, deixam o mapa da Base em 6 colunas no Android paisagem larga e trocam a linguagem visivel de "dev" do fluxo normal por "teste rapido". Foi adicionado GUT de regressao para o layout compacto, gerado rebuild local Android/PC/Web e Fabio aprovou a etapa como boa o suficiente para seguir.
 
 ## Ainda Nao Implementado
 
@@ -58,7 +58,7 @@
 
 ## Proximo Passo
 
-Executar reteste manual da ergonomia Android com o APK local gerado em `build/android/draxos-mobile-alpha.apk`. Se o resultado estiver aceitavel, republicar APK/PC e pacote Cloudflare Pages para atualizar os links do portal, entao concluir o signoff manual de `T03-P17` com Fabio + 1 tester e seguir `T03-P18 - Handoff Da Internal Alpha v0`.
+Republicar APK/PC e pacote Cloudflare Pages com o rebuild aprovado da `T03-P17A`, atualizar manifest/links do portal, concluir o signoff manual final com Fabio + 1 tester e seguir `T03-P18 - Handoff Da Internal Alpha v0`.
 
 ## Validacao Da Preparacao
 

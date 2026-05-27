@@ -9,7 +9,7 @@
 
 - O roteiro abaixo continua sendo o alvo da build fechada real com remoto/builds.
 - A cobertura automatizada local ja validou batalha, Base, Social, Competicao, Loja, Progression Lab, dois saves, reset separado, telemetria e presets de export.
-- A passada manual inicial de Fabio nao apontou bloqueios graves de backend/saves; Supabase remoto, email/senha, manifest/version gate, exports locais, downloads, Portal/Web no Cloudflare Pages e QA remoto automatizado ja passaram em `T03-P13` a `T03-P17`. T03-P17A aplicou uma passada local de ergonomia Android no Hub/abas e gerou novo APK local para reteste. Falta signoff manual Fabio + 1 tester usando build republicada ou APK local aprovado.
+- A passada manual inicial de Fabio nao apontou bloqueios graves de backend/saves; Supabase remoto, email/senha, manifest/version gate, exports locais, downloads, Portal/Web no Cloudflare Pages e QA remoto automatizado ja passaram em `T03-P13` a `T03-P17`. T03-P17A aplicou uma passada local de ergonomia Android no Hub/abas, gerou novo APK local e foi aprovada por Fabio em 2026-05-27 como boa o suficiente para seguir. Falta republicar a build aprovada e fazer signoff manual Fabio + 1 tester usando os links atualizados.
 
 ## Pre-Flight
 
@@ -23,7 +23,7 @@
 - Duas contas de teste criadas ou prontas para cadastro.
 - `service_role` nao aparece no cliente/export.
 - Keystore Android internal alpha guardada fora do Git.
-- Para reteste T03-P17A: APK local em `build/android/draxos-mobile-alpha.apk`, modo `debug_fallback`, deve ser instalado por cima ou apos remover a build anterior se o Android bloquear assinatura.
+- T03-P17A aprovada: APK local em `build/android/draxos-mobile-alpha.apk`, modo `debug_fallback`. A republicacao deve usar este rebuild aprovado antes do signoff final com o tester.
 
 ## Roteiro Principal
 
