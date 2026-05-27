@@ -22,7 +22,7 @@ T06-F Base Routine is ready for integration: the Base tab now has a render-only 
 4. `T06-D` Perfil/Conta: ready for integration; panel renders existing session/account state, active save, username, level, power, auth method, update state and alpha status without a new endpoint.
 5. `T06-E` Battle History: pending after T06-B merge; must fill feature card before runtime.
 6. `T06-F` Base Routine: ready for integration; panel derives routine/next objective from existing Base payload and is covered by GUT plus `smoke_foundation_surfaces.gd`.
-7. `T06-G` Social QoL: pending after T06-B merge; must fill feature card before runtime.
+7. `T06-G` Social QoL: ready for integration; improves Social readability, empty states, refresh/polling clarity and current message formatting without endpoint/schema changes.
 8. `T06-H` Asset Pack 01: pending after T06-B merge; must fill feature card before runtime.
 9. `T06-I` Integracao: blocked until T06-C to T06-H are delivered.
 
@@ -69,6 +69,10 @@ Nota operacional: o Supabase local ja rodando em `127.0.0.1:54321` ainda servia 
 - Client files: `modes/boot/surfaces/hub_account_surface_presenter.gd`, `modes/boot/surfaces/hub_surface_presenter.gd`.
 - Tests/smoke: `tests/client/test_boot_mobile_ui.gd`, `tools/smoke_session_shell.gd`.
 - Guardrails preserved: no endpoint, Auth, Supabase schema, persisted `SessionStore` contract, `BackendConfig`, economy, combat, ranking or remote manifest change.
+
+## T06-G Delivery Note
+
+Branch `codex/draxos-mobile/t06-social-qol` keeps Social QoL client-only. It updates the render-only Social presenter, focused GUT coverage and `smoke_foundation_surfaces.gd` assertions for current chat messages, guild members and structures. No new endpoint, schema, realtime, moderation, ranking behavior, backend mutation or Progression Lab leaderboard behavior was added.
 
 ## Validation Baseline
 

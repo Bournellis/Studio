@@ -51,55 +51,79 @@ static func render_state(host: Node) -> void:
 		host.call("_clear_node_children", social_state_container)
 	var social := _as_dictionary(SessionStore.social_state)
 	if social.is_empty():
-		timeline_label.text = "Social ainda nao carregado. Use Atualizar social."
+		timeline_label.text = "\n".join(PackedStringArray([
+			"Social ainda nao carregado.",
+			"Refresh: use Atualizar social para buscar amigos, guilda e chat por polling.",
+			"Estado atual: nenhum snapshot em memoria.",
+		]))
 		if social_state_container != null:
 			social_state_container.add_child(_base_info_panel(
 				host,
 				"Social da conta",
-				"Atualize o Social para ver amigos, guilda, membros, estruturas e chat por polling."
+				"Atualize o Social para ver amigos, guilda, membros, estruturas e mensagens atuais. A surface continua sem realtime nesta track."
 			))
 		return
 
-	var lines := PackedStringArray()
 	var identity := _as_dictionary(social.get("identity", {}))
 	var active_player := _as_dictionary(social.get("active_player", {}))
 	var social_player := _as_dictionary(social.get("player", {}))
-	lines.append("Social server-authoritative")
-	lines.append("Escopo: conta inteira | Save ativo: %s" % _social_save_badge_text(str(identity.get("viewer_badge", SessionStore.active_save_badge()))))
-	lines.append("Identidade social: %s" % _social_username_text(social_player))
 	var guild := _as_dictionary(social.get("guild", {}))
+	var friends := _as_array(social.get("friends", []))
+	var members := _as_array(social.get("guild_members", []))
+	var structures := _as_array(social.get("guild_structures", []))
+	var messages := _as_array(social.get("guild_chat", []))
+
+	var lines := PackedStringArray()
+	lines.append("Social server-authoritative")
+	lines.append("Refresh: snapshot atual por polling manual; use Atualizar social para sincronizar.")
+	lines.append("Escopo: conta inteira | Save ativo: %s" % _social_save_badge_text(str(identity.get("viewer_badge", SessionStore.active_save_badge()))))
+	lines.append("Identidade: %s | Jogador ativo: %s" % [
+		_social_username_text(social_player),
+		_social_username_text(active_player),
+	])
+	lines.append("Amigos: %s" % _count_text(friends.size(), "amigo", "amigos"))
 	if guild.is_empty():
 		lines.append("Guilda: nenhuma")
 	else:
-		lines.append("Guilda: %s L%s" % [str(guild.get("name", "")), str(guild.get("level", 1))])
-		lines.append("Membros: %d" % _as_array(social.get("guild_members", [])).size())
-		lines.append("Estruturas de guilda: %d" % _as_array(social.get("guild_structures", [])).size())
-	var friends := _as_array(social.get("friends", []))
-	lines.append("Amigos: %d" % friends.size())
-	var messages := _as_array(social.get("guild_chat", []))
-	lines.append("Chat guilda: %d mensagens recentes" % messages.size())
-	for item: Variant in messages.slice(0, min(messages.size(), 4)):
-		var message := _as_dictionary(item)
-		if not message.is_empty():
-			lines.append("- %s: %s" % [
-				str(message.get("sender_username", "desconhecido")),
-				str(message.get("content", "")),
-			])
+		lines.append("Guilda: %s L%s | %s | %s" % [
+			str(guild.get("name", "")),
+			str(guild.get("level", 1)),
+			_count_text(members.size(), "membro", "membros"),
+			_count_text(structures.size(), "estrutura", "estruturas"),
+		])
+	lines.append("Chat de guilda: %s" % _count_text(messages.size(), "mensagem atual", "mensagens atuais"))
+	lines.append("Mensagem atual: %s" % _latest_message_text(messages))
 	timeline_label.text = "\n".join(lines)
 	if social_state_container != null:
+		social_state_container.add_child(_social_refresh_panel(host, friends, guild, messages))
 		social_state_container.add_child(_social_identity_panel(host, identity, social_player, active_player))
 		social_state_container.add_child(_social_friends_panel(host, friends))
-		social_state_container.add_child(_social_guild_panel(host, guild, _as_array(social.get("guild_members", [])), _as_array(social.get("guild_structures", []))))
-		social_state_container.add_child(_social_chat_panel(host, messages))
+		social_state_container.add_child(_social_guild_panel(host, guild, members, structures))
+		social_state_container.add_child(_social_chat_panel(host, messages, not guild.is_empty()))
+
+static func _social_refresh_panel(host: Node, friends: Array, guild: Dictionary, messages: Array) -> Control:
+	var panel := _base_panel(host)
+	panel.tooltip_text = "Social usa polling manual nesta track. Atualizar social busca um novo snapshot no servidor."
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 6)
+	panel.add_child(box)
+	box.add_child(_base_label(host, "Refresh e Polling", "text_primary", 17))
+	box.add_child(_base_label(host, "Snapshot em memoria: %s, guilda %s, %s." % [
+		_count_text(friends.size(), "amigo", "amigos"),
+		"ativa" if not guild.is_empty() else "ausente",
+		_count_text(messages.size(), "mensagem atual", "mensagens atuais"),
+	], "text_secondary"))
+	box.add_child(_base_label(host, "Use Atualizar social para buscar mensagens novas. Chat e guilda continuam sem realtime.", "status_warning"))
+	return panel
 
 static func _social_identity_panel(host: Node, identity: Dictionary, social_player: Dictionary, active_player: Dictionary) -> Control:
 	var panel := _base_panel(host)
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 6)
 	panel.add_child(box)
-	box.add_child(_base_label(host, "Identidade Social", "text_primary", 17))
-	box.add_child(_base_label(host, "Username social: %s" % _social_username_text(social_player), "text_secondary"))
-	box.add_child(_base_label(host, "Save ativo: %s" % _social_username_text(active_player), "text_secondary"))
+	box.add_child(_base_label(host, "Identidade da Conta", "text_primary", 17))
+	box.add_child(_base_label(host, "Perfil social: %s" % _social_username_text(social_player), "text_secondary"))
+	box.add_child(_base_label(host, "Jogador do save ativo: %s" % _social_username_text(active_player), "text_secondary"))
 	var badge := str(identity.get("viewer_badge", SessionStore.active_save_badge()))
 	var badge_label := _base_label(host, "Marcador visivel: %s" % _social_save_badge_text(badge), "status_error" if badge == "lab" else "status_success")
 	box.add_child(badge_label)
@@ -112,19 +136,24 @@ static func _social_friends_panel(host: Node, friends: Array) -> Control:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 6)
 	panel.add_child(box)
-	box.add_child(_base_label(host, "Amigos (%d)" % friends.size(), "text_primary", 17))
+	box.add_child(_base_label(host, "Amigos - %s" % _count_text(friends.size(), "amigo", "amigos"), "text_primary", 17))
 	if friends.is_empty():
 		box.add_child(_base_label(host, "Nenhum amigo ainda. Use o username do outro jogador para adicionar.", "text_secondary"))
+		box.add_child(_base_label(host, "No alpha a amizade e aceita automaticamente e aparece no proximo snapshot.", "status_warning"))
 		return panel
 	for item: Variant in friends:
 		var friendship := _as_dictionary(item)
 		var profile := _as_dictionary(friendship.get("friend", {}))
-		box.add_child(_base_label(host, "%s | %s | L%s | Poder %s" % [
+		var created_at := _compact_timestamp(str(friendship.get("created_at", "")))
+		var line := "%s - %s - L%s - Poder %s" % [
 			_social_username_text(profile),
-			str(friendship.get("status", "accepted")),
+			_friend_status_text(str(friendship.get("status", "accepted"))),
 			str(profile.get("level", 1)),
 			str(profile.get("power", 0)),
-		], "status_error" if str(profile.get("save_badge", "")) == "lab" else "text_secondary"))
+		]
+		if created_at != "":
+			line += " - desde %s" % created_at
+		box.add_child(_base_label(host, line, "status_error" if str(profile.get("save_badge", "")) == "lab" else "text_secondary"))
 	return panel
 
 static func _social_guild_panel(host: Node, guild: Dictionary, members: Array, structures: Array) -> Control:
@@ -135,52 +164,80 @@ static func _social_guild_panel(host: Node, guild: Dictionary, members: Array, s
 	box.add_child(_base_label(host, "Guilda", "text_primary", 17))
 	if guild.is_empty():
 		box.add_child(_base_label(host, "Sem guilda. Crie uma guilda ou entre pelo nome.", "text_secondary"))
+		box.add_child(_base_label(host, "Chat e estruturas aparecem depois que a conta entra em uma guilda.", "status_warning"))
 		return panel
-	box.add_child(_base_label(host, "%s | Level %s | %d membros" % [
+	box.add_child(_base_label(host, "%s | Level %s | %s" % [
 		str(guild.get("name", "")),
 		str(guild.get("level", 1)),
-		members.size(),
+		_count_text(members.size(), "membro", "membros"),
 	], "text_secondary"))
 	box.add_child(_base_label(host, "Membros", "text_primary"))
-	for item: Variant in members:
-		var member := _as_dictionary(item)
-		var profile := _as_dictionary(member.get("player", {}))
-		var badge := str(profile.get("save_badge", "normal"))
-		box.add_child(_base_label(host, "%s | %s | L%s | Poder %s" % [
-			_social_username_text(profile),
-			str(member.get("role", "member")),
-			str(profile.get("level", 1)),
-			str(profile.get("power", 0)),
-		], "status_error" if badge == "lab" else "text_secondary"))
+	if members.is_empty():
+		box.add_child(_base_label(host, "Nenhum membro retornado pelo polling atual.", "status_warning"))
+	else:
+		for item: Variant in members:
+			var member := _as_dictionary(item)
+			var profile := _as_dictionary(member.get("player", {}))
+			var badge := str(profile.get("save_badge", "normal"))
+			box.add_child(_base_label(host, "%s - %s - L%s - Poder %s" % [
+				_social_username_text(profile),
+				_member_role_text(str(member.get("role", "member"))),
+				str(profile.get("level", 1)),
+				str(profile.get("power", 0)),
+			], "status_error" if badge == "lab" else "text_secondary"))
 	box.add_child(_base_label(host, "Estruturas", "text_primary"))
-	for item: Variant in structures:
-		var structure := _as_dictionary(item)
-		box.add_child(_base_label(host, "%s L%s" % [
-			_guild_structure_label(str(structure.get("structure_id", ""))),
-			str(structure.get("level", 1)),
-		], "text_secondary"))
+	if structures.is_empty():
+		box.add_child(_base_label(host, "Nenhuma estrutura de guilda retornada.", "status_warning"))
+	else:
+		for item: Variant in structures:
+			var structure := _as_dictionary(item)
+			box.add_child(_base_label(host, "%s L%s" % [
+				_guild_structure_label(str(structure.get("structure_id", ""))),
+				str(structure.get("level", 1)),
+			], "text_secondary"))
 	return panel
 
-static func _social_chat_panel(host: Node, messages: Array) -> Control:
+static func _social_chat_panel(host: Node, messages: Array, has_guild: bool) -> Control:
 	var panel := _base_panel(host)
+	panel.tooltip_text = "Mostra as mensagens atuais do snapshot recebido de /social/state ou da ultima acao social."
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 6)
 	panel.add_child(box)
-	box.add_child(_base_label(host, "Chat de Guilda (%d recentes)" % messages.size(), "text_primary", 17))
+	box.add_child(_base_label(host, "Chat de Guilda - %s" % _count_text(messages.size(), "mensagem atual", "mensagens atuais"), "text_primary", 17))
+	box.add_child(_base_label(host, "Mensagens mais recentes recebidas por polling. Use Atualizar social para sincronizar.", "text_secondary"))
 	if messages.is_empty():
-		box.add_child(_base_label(host, "Sem mensagens recentes. Entre em uma guilda e envie a primeira mensagem.", "text_secondary"))
+		if has_guild:
+			box.add_child(_base_label(host, "Sem mensagens atuais. Envie a primeira mensagem para iniciar o chat da guilda.", "text_secondary"))
+		else:
+			box.add_child(_base_label(host, "Sem guilda. O chat fica disponivel depois de criar ou entrar em uma guilda.", "text_secondary"))
 		return panel
 	for item: Variant in messages:
 		var message := _as_dictionary(item)
 		var badge := str(message.get("sender_save_badge", "normal"))
-		var sender_label := str(message.get("sender_username", "desconhecido"))
-		if badge == "lab":
-			sender_label += " [lab]"
-		box.add_child(_base_label(host, "%s: %s" % [
-			sender_label,
-			str(message.get("content", "")),
-		], "status_error" if badge == "lab" else "text_secondary"))
+		box.add_child(_base_label(host, _message_summary_text(message), "status_error" if badge == "lab" else "text_secondary"))
 	return panel
+
+static func _latest_message_text(messages: Array) -> String:
+	for item: Variant in messages:
+		var message := _as_dictionary(item)
+		if not message.is_empty():
+			return _message_summary_text(message)
+	return "nenhuma"
+
+static func _message_summary_text(message: Dictionary) -> String:
+	var sender_label := str(message.get("sender_username", "desconhecido")).strip_edges()
+	if sender_label == "":
+		sender_label = "desconhecido"
+	var badge := str(message.get("sender_save_badge", "normal"))
+	if badge == "lab":
+		sender_label += " [lab]"
+	var content := str(message.get("content", "")).strip_edges()
+	if content == "":
+		content = "(mensagem vazia)"
+	var created_at := _compact_timestamp(str(message.get("created_at", "")))
+	if created_at != "":
+		return "%s: %s (%s)" % [sender_label, content, created_at]
+	return "%s: %s" % [sender_label, content]
 
 static func _social_username_text(profile: Dictionary) -> String:
 	var username := str(profile.get("username", "")).strip_edges()
@@ -195,6 +252,40 @@ static func _social_save_badge_text(badge: String) -> String:
 	if badge == "lab":
 		return "lab"
 	return "normal"
+
+static func _friend_status_text(status: String) -> String:
+	match status:
+		"accepted":
+			return "aceito"
+		"pending":
+			return "pendente"
+	return status
+
+static func _member_role_text(role: String) -> String:
+	match role:
+		"owner":
+			return "lider"
+		"member":
+			return "membro"
+	return role
+
+static func _count_text(count: int, singular: String, plural: String) -> String:
+	if count == 1:
+		return "1 %s" % singular
+	return "%d %s" % [count, plural]
+
+static func _compact_timestamp(value: String) -> String:
+	var text := value.strip_edges()
+	if text == "":
+		return ""
+	text = text.replace("T", " ")
+	text = text.replace("Z", "")
+	var dot_index := text.find(".")
+	if dot_index >= 0:
+		text = text.substr(0, dot_index)
+	if text.length() > 16:
+		return text.substr(0, 16)
+	return text
 
 static func _guild_structure_label(structure_id: String) -> String:
 	match structure_id:

@@ -207,14 +207,39 @@ func test_boot_social_presenter_renders_chat_polling_and_lab_badges() -> void:
 			"sender_username": "tester_lab",
 			"sender_save_badge": "lab",
 			"content": "Ola atual",
+			"created_at": "2026-05-27T14:45:20Z",
 		}],
 	}
 
 	boot._show_screen("social")
-	assert_string_contains(boot._timeline_label.text, "Chat guilda: 1 mensagens recentes")
-	assert_string_contains(boot._timeline_label.text, "- tester_lab: Ola atual")
-	assert_true(_label_tree_contains(boot._social_state_container, "tester_lab [lab]: Ola atual"))
+	assert_string_contains(boot._timeline_label.text, "Refresh: snapshot atual por polling manual")
+	assert_string_contains(boot._timeline_label.text, "Chat de guilda: 1 mensagem atual")
+	assert_string_contains(boot._timeline_label.text, "Mensagem atual: tester_lab [lab]: Ola atual")
+	assert_true(_label_tree_contains(boot._social_state_container, "Mensagens mais recentes recebidas por polling."))
+	assert_true(_label_tree_contains(boot._social_state_container, "tester_lab [lab]: Ola atual (2026-05-27 14:45)"))
 	assert_true(_label_tree_contains(boot._social_state_container, "Oficina Ritual L1"))
+	await get_tree().process_frame
+
+func test_boot_social_presenter_renders_empty_states_and_refresh_hint() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	SessionStore.social_state = {
+		"identity": {"viewer_badge": "normal"},
+		"player": {"username": "fabio", "save_badge": "normal"},
+		"active_player": {"username": "fabio", "save_badge": "normal"},
+		"friends": [],
+		"guild": null,
+		"guild_members": [],
+		"guild_structures": [],
+		"guild_chat": [],
+	}
+
+	boot._show_screen("social")
+	assert_string_contains(boot._timeline_label.text, "Mensagem atual: nenhuma")
+	assert_true(_label_tree_contains(boot._social_state_container, "Refresh e Polling"))
+	assert_true(_label_tree_contains(boot._social_state_container, "Nenhum amigo ainda. Use o username do outro jogador para adicionar."))
+	assert_true(_label_tree_contains(boot._social_state_container, "Chat e estruturas aparecem depois que a conta entra em uma guilda."))
+	assert_true(_label_tree_contains(boot._social_state_container, "Sem guilda. O chat fica disponivel depois de criar ou entrar em uma guilda."))
 	await get_tree().process_frame
 
 func test_boot_competition_presenter_preserves_lab_and_bot_ranking_messages() -> void:
