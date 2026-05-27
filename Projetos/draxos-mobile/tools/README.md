@@ -6,6 +6,7 @@ Ferramentas de desenvolvimento e validacao.
 - `smoke_exports.gd` - smoke leve dos presets Android Alpha, PC Windows Alpha e PC Browser Alpha.
 - `export_internal_alpha.ps1` - exporta Android APK, PC Windows ZIP e Web usando `.env.internal-alpha.local`, sem commitar config real do cliente.
 - `publish_internal_alpha.ps1` - publica APK/ZIP no Supabase Storage unlisted, prepara portal/Web para host estatico externo e valida `release/manifest`.
+- `build_cloudflare_pages_package.ps1` - gera o pacote hibrido para Cloudflare Pages, mantendo HTML no Cloudflare e assets grandes do Web export no Supabase Storage.
 - `smoke_dev_labs.gd` - smoke do caminho real `OS.execute` para Battle Lab e Progression Lab.
 - `smoke_dev_lab_ui.gd` - smoke visual/comportamental das telas dev-only; salva screenshots quando rodado sem `--headless`.
 - `content_generator.gd` - gera `data/generated/draxos_mobile_catalog.tres` a partir de `data/definitions/*.json`.
@@ -46,7 +47,20 @@ npx -y supabase db push
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 -ProjectDir .
 ```
 
-O script usa `SUPABASE_PROJECT_REF`, `SUPABASE_URL` e `SUPABASE_PUBLISHABLE_KEY` de `.env.internal-alpha.local`, publica no bucket `draxos-internal-alpha`, valida APK/ZIP via Storage e redeploya `release`. Para Portal/Web, publique `build/internal-alpha/publish/` em host estatico externo e rode novamente com `-StaticSiteBaseUrl <url> -SkipUpload -UseManifestSecret`. Supabase Storage/Edge Functions nao servem HTML como pagina.
+O script usa `SUPABASE_PROJECT_REF`, `SUPABASE_URL` e `SUPABASE_PUBLISHABLE_KEY` de `.env.internal-alpha.local`, publica no bucket `draxos-internal-alpha`, valida APK/ZIP via Storage e redeploya `release`. Supabase Storage/Edge Functions nao servem HTML como pagina.
+
+Para Cloudflare Pages, gere o pacote hibrido primeiro:
+
+```powershell
+cd D:\Estudio\Projetos\draxos-mobile
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build_cloudflare_pages_package.ps1 -ProjectDir .
+```
+
+Publique `build/internal-alpha/cloudflare-pages/` ou `build/internal-alpha/draxos-mobile-cloudflare-pages.zip` no Cloudflare Pages. Depois rode:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 -ProjectDir . -StaticSiteBaseUrl "https://draxos-mobile-internal-alpha.pages.dev" -SkipUpload -UseManifestSecret
+```
 
 Simulador de economia:
 

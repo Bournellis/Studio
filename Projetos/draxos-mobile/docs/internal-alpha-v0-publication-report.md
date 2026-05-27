@@ -57,11 +57,27 @@ Executado contra `https://armxgipvnbbshzqawklw.supabase.co`:
 
 Os smokes foram ajustados para aceitar o comportamento remoto do gateway Supabase quando uma chamada sem JWT e barrada antes da Edge Function.
 
+## Host Estatico Cloudflare Pages
+
+O Cloudflare Pages nao deve receber `build/internal-alpha/publish/` inteiro, porque o `web/index.wasm` do Godot excede o limite por arquivo do Pages. A publicacao correta usa um pacote hibrido:
+
+```powershell
+cd D:\Estudio\Projetos\draxos-mobile
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build_cloudflare_pages_package.ps1 -ProjectDir .
+```
+
+Publicar uma destas saidas no Cloudflare Pages:
+
+- `build/internal-alpha/cloudflare-pages/`
+- `build/internal-alpha/draxos-mobile-cloudflare-pages.zip`
+
+Esse pacote deixa Portal/Web HTML no Cloudflare e mantem APK/PC/Web assets grandes apontando para Supabase Storage.
+
 ## Pendencia Manual
 
 A parte automatizada de backend/downloads esta verde, mas Portal/Web ainda precisam de host estatico externo antes do signoff humano completo:
 
-- publicar `build/internal-alpha/publish/` em host estatico externo e atualizar o manifest;
+- publicar o pacote Cloudflare Pages em host estatico externo e atualizar o manifest;
 - abrir portal e baixar/abrir pelo menos duas plataformas;
 - criar/login com email e senha;
 - confirmar save comum entre plataformas;

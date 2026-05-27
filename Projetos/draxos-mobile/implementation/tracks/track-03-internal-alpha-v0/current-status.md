@@ -34,10 +34,11 @@
 - `T03-P16` completo: presets Android/PC/Web foram corrigidos para export real, Android recebeu ETC2/ASTC, icone placeholder e permissoes de rede, `tools/export_internal_alpha.ps1` injeta config publica do Supabase apenas durante o build, gera APK/PC ZIP/Web e registra hashes em `docs/internal-alpha-v0-export-report.md`.
 - `T03-P17` publicacao tecnica completa para backend/downloads: migration `202605270002_internal_alpha_storage.sql` criou bucket publico unlisted `draxos-internal-alpha`, `tools/publish_internal_alpha.ps1` publicou APK/PC ZIP, `release/manifest` usa default versionado para Android/PC e QA remoto automatizado passou.
 - Correcao pos-publicacao: Supabase Storage retorna HTML como `text/plain` e Edge Functions tambem nao servem `text/html`; Portal/Web aguardam host estatico externo. APK/PC ZIP continuam por Storage.
+- Correcao Cloudflare Pages: `tools/build_cloudflare_pages_package.ps1` gera pacote hibrido para publicar apenas Portal/Web HTML no Cloudflare e manter assets grandes do Web export no Supabase Storage, evitando o limite por arquivo do Pages.
 
 ## Ainda Nao Implementado
 
-- Publicar Portal/Web em host estatico externo e atualizar manifest com a URL final.
+- Publicar o pacote Cloudflare Pages de Portal/Web em host estatico externo e atualizar manifest com a URL final.
 - Signoff manual de `T03-P17`: Fabio + 1 tester validam duas plataformas e registram bugs.
 - `T03-P18`: handoff final da Internal Alpha v0.
 

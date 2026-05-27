@@ -135,6 +135,8 @@ Saida entregue em 2026-05-27:
 
 Correcao pos-publicacao: links diretos de Storage para HTML/Web nao devem ser usados como link final, porque a Supabase retorna HTML como `text/plain` com CSP sandbox. Edge Functions tambem nao servem HTML como pagina. O caminho correto e publicar `build/internal-alpha/publish/` em host estatico externo e depois rodar `publish_internal_alpha.ps1 -StaticSiteBaseUrl <url> -SkipUpload -UseManifestSecret`.
 
+Correcao Cloudflare Pages: nao publicar `build/internal-alpha/publish/` inteira no Cloudflare, porque `web/index.wasm` ultrapassa o limite por arquivo do Pages. Gerar o pacote hibrido com `tools/build_cloudflare_pages_package.ps1` e publicar `build/internal-alpha/cloudflare-pages/` ou `build/internal-alpha/draxos-mobile-cloudflare-pages.zip`; esse pacote serve Portal/Web HTML pelo Cloudflare e continua buscando assets grandes no Supabase Storage.
+
 ### T03-P18 - Handoff Da Internal Alpha v0
 
 Status: `PENDING_MANUAL_SIGNOFF`.

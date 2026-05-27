@@ -32,7 +32,20 @@ Alternativas aceitaveis:
 - Vercel static deploy;
 - GitHub Pages, se o projeto ganhar remoto privado/publico adequado.
 
-## Pasta A Publicar
+## Cloudflare Pages E Web Build Godot
+
+Nao publique a pasta `build/internal-alpha/publish/` inteira no Cloudflare Pages.
+
+Motivo: o export Web do Godot gera `web/index.wasm` com cerca de 36 MB nesta alpha, enquanto Cloudflare Pages aceita no maximo 25 MiB por arquivo de asset. A solucao da Internal Alpha v0 e hibrida:
+
+- Cloudflare Pages serve apenas o portal e os arquivos HTML pequenos.
+- Supabase Storage continua servindo os assets grandes ja publicados do Web export (`index.wasm`, `index.js`, `index.pck`, imagens/worklets).
+- O HTML publicado no Cloudflare aponta para os assets grandes no Supabase.
+- APK e PC ZIP continuam baixando pelo Supabase Storage.
+
+Essa estrategia mantem o portal abrindo como pagina real e evita bloquear a Web build no limite de tamanho do Cloudflare.
+
+## Fonte Dos Artefatos
 
 Depois de exportar e publicar os artefatos:
 
@@ -62,18 +75,38 @@ publish/
 
 APK/ZIP podem continuar apontando para Supabase Storage; a pasta `downloads/` existe como copia conveniente, nao como fonte obrigatoria.
 
+## Pacote A Publicar No Cloudflare
+
+Gerar o pacote especifico para Cloudflare Pages:
+
+```powershell
+cd D:\Estudio\Projetos\draxos-mobile
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build_cloudflare_pages_package.ps1 -ProjectDir .
+```
+
+Saidas esperadas:
+
+```text
+build/internal-alpha/cloudflare-pages/
+build/internal-alpha/draxos-mobile-cloudflare-pages.zip
+```
+
+Publicar no Cloudflare Pages a pasta `build/internal-alpha/cloudflare-pages/` ou o zip `build/internal-alpha/draxos-mobile-cloudflare-pages.zip`.
+
 ## Passo Manual Fabio
 
-1. Criar um projeto em Cloudflare Pages.
-2. Escolher deploy por upload direto da pasta estatica.
-3. Enviar a pasta `build/internal-alpha/publish/`.
-4. Copiar a URL final, por exemplo:
+1. Na tela Workers/Pages, clicar em `Looking to deploy Pages? Get started`.
+2. Escolher deploy por upload direto/drag and drop de arquivos estaticos.
+3. Usar o nome de projeto sugerido `draxos-mobile-internal-alpha`.
+4. Enviar `build/internal-alpha/cloudflare-pages/` ou `build/internal-alpha/draxos-mobile-cloudflare-pages.zip`.
+5. Clicar em deploy/save and deploy.
+6. Copiar a URL final, por exemplo:
 
 ```text
 https://draxos-mobile-internal-alpha.pages.dev
 ```
 
-5. Enviar essa URL ao Codex.
+7. Enviar essa URL ao Codex.
 
 ## Passo Codex Depois Da URL
 
