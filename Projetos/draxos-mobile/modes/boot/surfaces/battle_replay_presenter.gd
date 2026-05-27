@@ -6,6 +6,10 @@ const BattleVisualMockupScript := preload("res://ui/battle_visual_mockup.gd")
 const EMPTY_BATTLE_TEXT := "Nenhuma batalha carregada. Solicite uma batalha, carregue o historico ou busque o ultimo resultado."
 const EMPTY_HISTORY_TEXT := "Historico recente vazio para este save."
 const MAX_RENDERED_HISTORY_ENTRIES := 5
+const ACTION_SKIP_REPLAY := "skip_battle_replay"
+const ACTION_RETURN_REFUGE := "return_refuge"
+const ACTION_REPLAY_LATEST := "replay_latest_battle"
+const SUMMARY_RESOURCE_KEYS := ["almas", "energia", "sangue", "cristais", "ossos", "diamante"]
 
 var _host: Node
 var _visual: Control
@@ -43,6 +47,119 @@ func render(
 		show_battle_log(battle_log, rewards)
 	else:
 		show_empty_state(EMPTY_BATTLE_TEXT)
+
+func render_fullscreen_replay(
+	host: Node,
+	parent: Control,
+	compact_layout: bool,
+	battle_log: Dictionary,
+	rewards: Dictionary
+) -> void:
+	clear()
+	_host = host
+	_add_fullscreen_background(parent)
+	var frame := _add_landscape_frame(parent, compact_layout)
+	var body := HBoxContainer.new()
+	body.add_theme_constant_override("separation", 10 if compact_layout else 14)
+	body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	frame.add_child(body)
+
+	var stage_column := VBoxContainer.new()
+	stage_column.add_theme_constant_override("separation", 6 if compact_layout else 8)
+	stage_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	stage_column.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	body.add_child(stage_column)
+
+	stage_column.add_child(_fullscreen_label("Autobattler", 18 if compact_layout else 24, "text_primary"))
+	stage_column.add_child(_fullscreen_label(BattleLogPresenterScript.format_summary(battle_log, rewards), 12 if compact_layout else 14, "text_secondary"))
+
+	_visual = BattleVisualMockupScript.new()
+	_visual.custom_minimum_size = Vector2(640, 360) if compact_layout else Vector2(860, 480)
+	_visual.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_visual.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	stage_column.add_child(_visual)
+
+	var timeline_panel := PanelContainer.new()
+	timeline_panel.add_theme_stylebox_override("panel", _panel_style("bg_panel", "border_default"))
+	timeline_panel.custom_minimum_size = Vector2(260, 0) if compact_layout else Vector2(320, 0)
+	timeline_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	body.add_child(timeline_panel)
+
+	var timeline_stack := VBoxContainer.new()
+	timeline_stack.add_theme_constant_override("separation", 6)
+	timeline_panel.add_child(timeline_stack)
+	timeline_stack.add_child(_fullscreen_label("Timeline", 15 if compact_layout else 17, "text_primary"))
+
+	var timeline_scroll := ScrollContainer.new()
+	timeline_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	timeline_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	timeline_stack.add_child(timeline_scroll)
+
+	_timeline_label = _fullscreen_label("", 12 if compact_layout else 13, "text_primary")
+	_timeline_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	timeline_scroll.add_child(_timeline_label)
+
+	var skip_button := _fullscreen_action_button("Pular", ACTION_SKIP_REPLAY, Vector2(176, 64))
+	skip_button.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	skip_button.offset_left = -196
+	skip_button.offset_top = -84
+	skip_button.offset_right = -20
+	skip_button.offset_bottom = -20
+	parent.add_child(skip_button)
+
+func render_fullscreen_summary(
+	host: Node,
+	parent: Control,
+	compact_layout: bool,
+	battle_log: Dictionary,
+	rewards: Dictionary,
+	current_resources: Dictionary,
+	skipped: bool
+) -> void:
+	clear()
+	_host = host
+	_add_fullscreen_background(parent)
+	var frame := _add_landscape_frame(parent, compact_layout)
+	var stack := VBoxContainer.new()
+	stack.add_theme_constant_override("separation", 8 if compact_layout else 12)
+	stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	stack.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	frame.add_child(stack)
+
+	var title := "Resumo da batalha"
+	if skipped:
+		title += " - replay pulado"
+	stack.add_child(_fullscreen_label(title, 20 if compact_layout else 28, "text_primary"))
+	stack.add_child(_fullscreen_label(BattleLogPresenterScript.format_summary(battle_log, rewards), 12 if compact_layout else 14, "text_secondary"))
+
+	var summary := summary_data(battle_log, rewards, current_resources)
+	var stats := GridContainer.new()
+	stats.columns = 2
+	stats.add_theme_constant_override("h_separation", 10 if compact_layout else 16)
+	stats.add_theme_constant_override("v_separation", 6 if compact_layout else 10)
+	stats.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	stack.add_child(stats)
+	_add_summary_stat(stats, "Vencedor", str(summary.get("winner_label", "")), compact_layout)
+	_add_summary_stat(stats, "Duracao", str(summary.get("duration_text", "")), compact_layout)
+	_add_summary_stat(stats, "Eventos", str(summary.get("event_count", 0)), compact_layout)
+	_add_summary_stat(stats, "Modo", str(summary.get("mode", "")), compact_layout)
+
+	var detail_row := HBoxContainer.new()
+	detail_row.add_theme_constant_override("separation", 8 if compact_layout else 12)
+	detail_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	detail_row.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	stack.add_child(detail_row)
+	detail_row.add_child(_summary_detail_panel("Recompensa", str(summary.get("reward_text", "")), compact_layout))
+	detail_row.add_child(_summary_detail_panel("Recursos", str(summary.get("resources_text", "")), compact_layout))
+
+	var actions := HBoxContainer.new()
+	actions.add_theme_constant_override("separation", 8 if compact_layout else 12)
+	actions.alignment = BoxContainer.ALIGNMENT_END
+	stack.add_child(actions)
+	actions.add_child(_fullscreen_action_button("Voltar ao Refugio", ACTION_RETURN_REFUGE, Vector2(190, 58)))
+	actions.add_child(_fullscreen_action_button("Rever replay", ACTION_REPLAY_LATEST, Vector2(170, 58)))
+	actions.add_child(_fullscreen_action_button("Historico", "show_battle_history", Vector2(150, 58)))
 
 func get_timeline_label() -> Label:
 	return _timeline_label
@@ -129,6 +246,26 @@ static func history_entry_detail(entry: Dictionary) -> String:
 		opponent_name,
 	]
 
+static func summary_data(battle_log: Dictionary, rewards: Dictionary, current_resources: Dictionary = {}) -> Dictionary:
+	var result := _as_dictionary(battle_log.get("result", {}))
+	var winner := str(result.get("winner", ""))
+	var events := BattleLogPresenterScript.sorted_events(battle_log)
+	var duration := float(battle_log.get("duration", -1.0))
+	if duration < 0.0 and not events.is_empty():
+		duration = float(events[events.size() - 1].get("t", 0.0))
+	if duration < 0.0:
+		duration = 0.0
+	return {
+		"winner": winner,
+		"winner_label": _winner_summary_text(winner),
+		"duration": duration,
+		"duration_text": "%.1fs" % duration,
+		"event_count": events.size(),
+		"mode": str(battle_log.get("mode", "MVP_ONLY")),
+		"reward_text": _reward_text(rewards),
+		"resources_text": _resources_text(current_resources),
+	}
+
 func _initial_replay_lines(battle_log: Dictionary, rewards: Dictionary) -> PackedStringArray:
 	var lines: PackedStringArray = PackedStringArray()
 	lines.append(BattleLogPresenterScript.format_summary(battle_log, rewards))
@@ -175,17 +312,39 @@ static func _winner_text(result: Dictionary) -> String:
 		_:
 			return "resultado"
 
+static func _winner_summary_text(winner: String) -> String:
+	match winner:
+		"player":
+			return "Vitoria"
+		"opponent":
+			return "Derrota"
+		"draw":
+			return "Empate"
+		_:
+			return "Resultado"
+
 static func _reward_text(rewards: Dictionary) -> String:
 	var reward_type := str(rewards.get("type", "MVP_ONLY"))
 	var resources := _as_dictionary(rewards.get("resources", {}))
 	if resources.is_empty():
 		return reward_type
 	var parts: PackedStringArray = PackedStringArray()
-	for key in ["xp", "almas", "energia", "sangue", "ossos"]:
+	for key in ["xp", "almas", "energia", "sangue", "cristais", "ossos", "diamante"]:
 		if not resources.has(key):
 			continue
 		parts.append("%s=%s" % [key, str(resources.get(key, 0))])
 	return "%s %s" % [reward_type, ", ".join(parts)]
+
+static func _resources_text(resources: Dictionary) -> String:
+	if resources.is_empty():
+		return "sem snapshot"
+	var parts: PackedStringArray = PackedStringArray()
+	for key in SUMMARY_RESOURCE_KEYS:
+		if resources.has(key):
+			parts.append("%s=%s" % [key, str(resources.get(key, 0))])
+	if parts.is_empty():
+		return "sem recursos principais"
+	return ", ".join(parts)
 
 static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:
@@ -198,6 +357,81 @@ func _refresh_timeline() -> void:
 func _set_timeline_text(text: String) -> void:
 	if _timeline_label != null and is_instance_valid(_timeline_label):
 		_timeline_label.text = text
+
+func _add_fullscreen_background(parent: Control) -> void:
+	var background := ColorRect.new()
+	background.color = UiTokens.color("bg_deep")
+	background.set_anchors_preset(Control.PRESET_FULL_RECT)
+	parent.add_child(background)
+
+func _add_landscape_frame(parent: Control, compact_layout: bool) -> PanelContainer:
+	var margin := MarginContainer.new()
+	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
+	var edge := 10 if compact_layout else 18
+	margin.add_theme_constant_override("margin_left", edge)
+	margin.add_theme_constant_override("margin_top", edge)
+	margin.add_theme_constant_override("margin_right", edge)
+	margin.add_theme_constant_override("margin_bottom", edge)
+	parent.add_child(margin)
+
+	var aspect := AspectRatioContainer.new()
+	aspect.ratio = 16.0 / 9.0
+	aspect.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	aspect.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	margin.add_child(aspect)
+
+	var frame := PanelContainer.new()
+	frame.add_theme_stylebox_override("panel", _panel_style("bg_panel_alt", "border_default"))
+	frame.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	frame.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	aspect.add_child(frame)
+	return frame
+
+func _fullscreen_label(text: String, font_size: int, color_token: String) -> Label:
+	var label := Label.new()
+	label.text = text
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.add_theme_font_size_override("font_size", font_size)
+	label.add_theme_color_override("font_color", UiTokens.color(color_token))
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return label
+
+func _add_summary_stat(parent: Node, label_text: String, value_text: String, compact_layout: bool) -> void:
+	parent.add_child(_fullscreen_label(label_text, 13 if compact_layout else 15, "text_secondary"))
+	parent.add_child(_fullscreen_label(value_text, 15 if compact_layout else 18, "text_primary"))
+
+func _summary_detail_panel(title: String, text: String, compact_layout: bool) -> PanelContainer:
+	var panel := PanelContainer.new()
+	panel.add_theme_stylebox_override("panel", _panel_style("bg_panel", "border_default"))
+	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	var stack := VBoxContainer.new()
+	stack.add_theme_constant_override("separation", 5 if compact_layout else 8)
+	panel.add_child(stack)
+	stack.add_child(_fullscreen_label(title, 14 if compact_layout else 17, "text_primary"))
+	stack.add_child(_fullscreen_label(text, 12 if compact_layout else 14, "text_secondary"))
+	return panel
+
+func _fullscreen_action_button(text: String, action_id: String, min_size: Vector2) -> Button:
+	var button := Button.new()
+	button.text = text
+	button.tooltip_text = text
+	button.custom_minimum_size = min_size
+	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_call_host("_prepare_touch_button", [button])
+	button.mouse_filter = Control.MOUSE_FILTER_STOP
+	button.pressed.connect(func() -> void:
+		_call_host("_trigger_action", [action_id])
+	)
+	if _host != null and is_instance_valid(_host):
+		var buttons: Variant = _host.get("_action_buttons")
+		if buttons is Dictionary:
+			var action_buttons: Dictionary = buttons
+			action_buttons[action_id] = button
+	return button
+
+func _panel_style(background_token: String, border_token: String) -> StyleBoxFlat:
+	return _call_host("_panel_style", [background_token, border_token]) as StyleBoxFlat
 
 func _call_host(method_name: StringName, args: Array = []) -> Variant:
 	if _host == null or not is_instance_valid(_host) or not _host.has_method(method_name):

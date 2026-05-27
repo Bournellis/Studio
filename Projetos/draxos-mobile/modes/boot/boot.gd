@@ -34,6 +34,9 @@ const PROGRESSION_LAB_SCREEN_PATH := "res://dev/progression_lab/progression_lab_
 const BATTLE_REPLAY_TICK_SECONDS := 0.05
 const APP_ORIENTATION_SENSOR := DisplayServer.SCREEN_SENSOR
 const APP_ORIENTATION_LANDSCAPE := DisplayServer.SCREEN_LANDSCAPE
+const ACTION_SKIP_REPLAY := "skip_battle_replay"
+const ACTION_RETURN_REFUGE := "return_refuge"
+const ACTION_REPLAY_LATEST := "replay_latest_battle"
 
 const RESOURCE_KEYS := ["almas", "energia", "sangue", "cristais", "ossos", "diamante"]
 const BASE_STRUCTURE_IDS := ["altar_das_almas", "nucleo_energia", "pocos_sangue", "minas_cristal", "estrutura_stats", "ossario"]
@@ -60,6 +63,7 @@ var _social_friend_input: LineEdit
 var _social_guild_input: LineEdit
 var _social_chat_input: LineEdit
 var _battle_visual: Control
+var _battle_fullscreen_overlay: Control
 var _confirm_dialog: ConfirmationDialog
 
 var _action_buttons: Dictionary = {}
@@ -74,6 +78,7 @@ var _active_action_id := ""
 var _is_busy := false
 var _replay_running := false
 var _skip_replay := false
+var _battle_summary_skipped := false
 var _compact_layout := false
 var _battle_lab_overlay: Control
 var _progression_lab_overlay: Control
@@ -190,6 +195,7 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	_social_guild_input = null
 	_social_chat_input = null
 	_battle_visual = null
+	_clear_battle_fullscreen_overlay()
 	_battle_replay_presenter.clear()
 	_error_label.text = ""
 	_clear_content_body()
@@ -202,6 +208,10 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 			_render_hub_screen()
 		SCREEN_BATTLE:
 			_render_battle_screen()
+		ROUTE_BATTLE_RUNNING:
+			_render_battle_running_screen()
+		ROUTE_BATTLE_SUMMARY:
+			_render_battle_summary_screen()
 		SCREEN_BASE:
 			_render_base_screen()
 		SCREEN_SOCIAL:
@@ -342,6 +352,22 @@ func _clear_node_children(parent: Node) -> void:
 		parent.remove_child(child)
 		child.queue_free()
 
+func _clear_battle_fullscreen_overlay() -> void:
+	if _battle_fullscreen_overlay == null:
+		return
+	if is_instance_valid(_battle_fullscreen_overlay):
+		_battle_fullscreen_overlay.queue_free()
+	_battle_fullscreen_overlay = null
+
+func _create_battle_fullscreen_overlay() -> Control:
+	var overlay := Control.new()
+	overlay.name = "BattleFullscreenOverlay"
+	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	add_child(overlay)
+	_battle_fullscreen_overlay = overlay
+	return overlay
+
 func _render_hub_screen() -> void:
 	HubSurfacePresenterScript.render(self)
 
@@ -353,6 +379,32 @@ func _render_battle_screen() -> void:
 		SessionStore.last_battle_rewards,
 		SessionStore.has_battle_log(),
 		_battle_history_for_active_save()
+	)
+	_timeline_label = _battle_replay_presenter.get_timeline_label()
+	_battle_visual = _battle_replay_presenter.get_visual()
+
+func _render_battle_running_screen() -> void:
+	var overlay := _create_battle_fullscreen_overlay()
+	_battle_replay_presenter.render_fullscreen_replay(
+		self,
+		overlay,
+		_compact_layout,
+		SessionStore.last_battle_log,
+		SessionStore.last_battle_rewards
+	)
+	_timeline_label = _battle_replay_presenter.get_timeline_label()
+	_battle_visual = _battle_replay_presenter.get_visual()
+
+func _render_battle_summary_screen() -> void:
+	var overlay := _create_battle_fullscreen_overlay()
+	_battle_replay_presenter.render_fullscreen_summary(
+		self,
+		overlay,
+		_compact_layout,
+		SessionStore.last_battle_log,
+		SessionStore.last_battle_rewards,
+		SessionStore.resources,
+		_battle_summary_skipped
 	)
 	_timeline_label = _battle_replay_presenter.get_timeline_label()
 	_battle_visual = _battle_replay_presenter.get_visual()
@@ -534,6 +586,12 @@ func _execute_action(action_id: String) -> void:
 				_open_progression_lab_overlay()
 			"request_battle":
 				await _request_battle()
+			ACTION_SKIP_REPLAY:
+				_skip_current_replay()
+			ACTION_RETURN_REFUGE:
+				_return_to_refuge()
+			ACTION_REPLAY_LATEST:
+				await _replay_latest_battle_from_summary()
 			"show_latest_battle":
 				if _replay_running:
 					_skip_replay = true
@@ -974,6 +1032,26 @@ func _show_latest_battle() -> void:
 	_set_busy(false, "Ultimo resultado recuperado.")
 	await _play_battle_log(SessionStore.last_battle_log, SessionStore.last_battle_rewards)
 
+func _skip_current_replay() -> void:
+	if not _replay_running:
+		return
+	_skip_replay = true
+	_show_notice("Replay pulando para o resumo final...")
+	_sync_buttons()
+
+func _return_to_refuge() -> void:
+	_replay_running = false
+	_skip_replay = false
+	_battle_summary_skipped = false
+	_screen_history.clear()
+	_show_screen(SCREEN_HUB, false)
+
+func _replay_latest_battle_from_summary() -> void:
+	if not SessionStore.has_battle_log():
+		_error_label.text = "Nenhum replay carregado para rever."
+		return
+	await _play_battle_log(SessionStore.last_battle_log, SessionStore.last_battle_rewards)
+
 func _show_battle_history() -> void:
 	if not _require_session("Entre com email ou use guest dev antes de abrir o historico."):
 		return
@@ -1404,8 +1482,10 @@ func _sync_buttons() -> void:
 		var button: Button = _action_buttons[action_id]
 		if not is_instance_valid(button):
 			continue
-		button.disabled = _is_busy or (_replay_running and action_id != "show_latest_battle")
+		button.disabled = _is_busy or (_replay_running and not _action_allowed_during_replay(action_id))
 		button.disabled = button.disabled or _update_gate_blocks_action(action_id)
+		if action_id == ACTION_SKIP_REPLAY:
+			button.disabled = not _replay_running
 		if action_id == "select_save_normal":
 			button.disabled = button.disabled or not SessionStore.is_progression_lab_active()
 		elif action_id == "select_save_progression_lab":
@@ -1428,6 +1508,9 @@ func _sync_buttons() -> void:
 	if _back_button != null:
 		_back_button.disabled = _is_busy or _replay_running
 
+func _action_allowed_during_replay(action_id: String) -> bool:
+	return action_id in [ACTION_SKIP_REPLAY, "show_latest_battle"]
+
 func _update_status_text() -> String:
 	return HubAccountSurfacePresenterScript.update_status_text(self)
 
@@ -1439,6 +1522,12 @@ func _update_gate_blocks_action(action_id: String) -> bool:
 	if not bool(_update_gate.get("block_online", false)):
 		return false
 	if _replay_running and action_id == "show_latest_battle":
+		return false
+	if action_id in [
+		ACTION_SKIP_REPLAY,
+		ACTION_RETURN_REFUGE,
+		ACTION_REPLAY_LATEST,
+	]:
 		return false
 	if action_id in [
 		"check_update",
@@ -2304,13 +2393,17 @@ func _play_battle_log(battle_log: Dictionary, rewards: Dictionary) -> void:
 
 	_battle_replay_presenter.reveal_all()
 
+	var skipped := _skip_replay
 	_replay_running = false
 	_skip_replay = false
-	_set_busy(false, "Replay concluido.")
+	_battle_summary_skipped = skipped
 	_emit_client_event("replay_end", {
 		"battle_id": str(battle_log.get("battle_id", "")),
 		"events": events.size(),
+		"skipped": skipped,
 	})
+	_show_screen(ROUTE_BATTLE_SUMMARY, false)
+	_set_busy(false, "Replay concluido.")
 	_sync_buttons()
 
 func _screen_title(screen_id: String) -> String:
