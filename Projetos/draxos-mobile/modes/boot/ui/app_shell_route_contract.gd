@@ -11,6 +11,12 @@ const ROUTE_BATTLE_ENTRY := "battle_entry"
 const ROUTE_BATTLE_RUNNING := "battle_running"
 const ROUTE_BATTLE_SUMMARY := "battle_summary"
 
+const ACTION_REQUEST_BATTLE := "request_battle"
+const ACTION_SHOW_BATTLE_HISTORY := "show_battle_history"
+const ACTION_BATTLE_REPLAY_PREFIX := "battle_replay:"
+const ACTION_SKIP_REPLAY := "skip_battle_replay"
+const ACTION_REPLAY_LATEST := "replay_latest_battle"
+
 const _ALIASES := {
 	"hub": ROUTE_REFUGE_HOME,
 	"refugio": ROUTE_REFUGE_HOME,
@@ -34,6 +40,17 @@ const _TITLES := {
 	ROUTE_BATTLE_SUMMARY: "Resumo",
 }
 
+const _BATTLE_MODE_ROUTES := {
+	ROUTE_BATTLE_ENTRY: true,
+	ROUTE_BATTLE_RUNNING: true,
+	ROUTE_BATTLE_SUMMARY: true,
+}
+
+const _FULLSCREEN_GAMEPLAY_ROUTES := {
+	ROUTE_BATTLE_RUNNING: true,
+	ROUTE_BATTLE_SUMMARY: true,
+}
+
 static func normalize(route_id: String) -> String:
 	var candidate := route_id.strip_edges()
 	if candidate == "":
@@ -47,6 +64,29 @@ static func supports_back(route_id: String) -> bool:
 
 static func prefers_landscape(route_id: String) -> bool:
 	return normalize(route_id) == ROUTE_BATTLE_RUNNING
+
+static func is_battle_mode(route_id: String) -> bool:
+	return bool(_BATTLE_MODE_ROUTES.get(normalize(route_id), false))
+
+static func is_fullscreen_gameplay(route_id: String) -> bool:
+	return bool(_FULLSCREEN_GAMEPLAY_ROUTES.get(normalize(route_id), false))
+
+static func shows_app_chrome(route_id: String) -> bool:
+	return not is_fullscreen_gameplay(route_id)
+
+static func summary_route_for(route_id: String) -> String:
+	if is_battle_mode(route_id):
+		return ROUTE_BATTLE_SUMMARY
+	return normalize(route_id)
+
+static func is_safe_replay_action(action_id: String) -> bool:
+	return action_id.strip_edges() == ACTION_SKIP_REPLAY
+
+static func is_read_only_battle_action(action_id: String) -> bool:
+	var candidate := action_id.strip_edges()
+	return candidate == ACTION_SHOW_BATTLE_HISTORY \
+		or candidate == ACTION_REPLAY_LATEST \
+		or candidate.begins_with(ACTION_BATTLE_REPLAY_PREFIX)
 
 static func title_for(route_id: String) -> String:
 	return str(_TITLES.get(normalize(route_id), "Refugio"))

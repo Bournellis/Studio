@@ -72,13 +72,13 @@ Validation: focused GUT, `smoke_mobile_presentation.gd`, `validate.gd` and `git 
 
 ## T08-E - Battle Mode Contract
 
-Status: `PENDING_AFTER_T08_B`.
+Status: `COMPLETE`.
 
 - Formalize battle/replay as fullscreen gameplay mode.
 - Cover no app chrome, landscape route, safe skip, mandatory summary, read-only replay/history and Refugio return.
 - Do not touch simulator, rewards, ranking, `battle_log_v1` or battle endpoints.
 
-Validation: `smoke_battle_replay.gd`, battle fullscreen/summary GUT, `validate.gd` and `git diff --check`.
+Validation: `smoke_battle_replay.gd`, battle fullscreen/summary GUT, `validate.gd` and `git diff --check` passed in `codex/draxos-mobile/t08-battle-mode-contract`.
 
 ## T08-F - Service/Asset Contract Checks
 

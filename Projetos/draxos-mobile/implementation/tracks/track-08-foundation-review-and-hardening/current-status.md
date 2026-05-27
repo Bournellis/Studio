@@ -3,8 +3,8 @@
 - Last Updated: `2026-05-27`
 - Status: `ACTIVE_FOUNDATION_HARDENING`
 - Depends On: `T07_INTEGRATED_PRESENTATION_READY`
-- Current Stage: `T08_B_COMPLETE`
-- Next Action: continue T08-C/T08-D/T08-F in parallel and start T08-E from the T08-B route/orientation contract.
+- Current Stage: `T08_E_COMPLETE`
+- Next Action: continue T08-C/T08-D/T08-F in parallel; T08-G remains blocked until T08-B to T08-F are all integrated.
 
 ## Estado
 
@@ -14,13 +14,15 @@ The project now has a mobile-first Refugio home, route shell, internal surfaces 
 
 T08-B App Shell Lifecycle is complete in `codex/draxos-mobile/t08-app-shell-lifecycle`. It introduced `DraxosAppShellRouteContract` as a small route/back/orientation helper under `modes/boot/ui/`, kept `boot.gd` as the orchestrator, and added GUT coverage for legacy aliases, Refugio root behavior, nested back stack, `battle_running` landscape preference and battle summary return to Refugio.
 
+T08-E Battle Mode Contract is complete in `codex/draxos-mobile/t08-battle-mode-contract`. It extended `DraxosAppShellRouteContract` with explicit battle gameplay-mode rules, hides app chrome for fullscreen `battle_running`/`battle_summary`, keeps skip as the only replay-safe action, forces completed replays through the summary route, and covers read-only history/replay actions plus return to Refugio in GUT. Guardrails preserved: no simulator, `battle_log_v1`, reward, ranking or `battle/*` endpoint changes.
+
 ## Ordem Atual
 
 1. `T08-A` Coordenacao/Audit: complete; opened the track and recorded the foundation gap report.
 2. `T08-B` App Shell Lifecycle: complete; route/back/orientation contract helper and tests delivered.
 3. `T08-C` Session/Save Boundary: pending after T08-A.
 4. `T08-D` Mobile UI Contract: pending after T08-A.
-5. `T08-E` Battle Mode Contract: unblocked by T08-B.
+5. `T08-E` Battle Mode Contract: complete; fullscreen battle/replay contract and tests delivered.
 6. `T08-F` Service/Asset Contract Checks: pending after T08-A.
 7. `T08-G` Validation Harness: pending after T08-B to T08-F.
 8. `T08-H` Integracao: pending after T08-B to T08-G.
@@ -58,6 +60,13 @@ Latest T08-B validation:
 
 - `tools/validate.gd`: passed.
 - GUT client complete: passed, `88/88` tests and `1003` asserts.
+- `git diff --check`: passed.
+
+Latest T08-E validation:
+
+- `tools/smoke_battle_replay.gd`: default local Edge Runtime returned `NOT_FOUND` for `/battle/history`; passed after serving the current worktree `battle` function on `http://127.0.0.1:8000` and setting `BATTLE_FUNCTION_URL=http://127.0.0.1:8000`.
+- GUT client complete: passed, `89/89` tests and `1031` asserts.
+- `tools/validate.gd`: passed, including GUT `89/89` tests and `1031` asserts.
 - `git diff --check`: passed.
 
 Backend/docs packages:
