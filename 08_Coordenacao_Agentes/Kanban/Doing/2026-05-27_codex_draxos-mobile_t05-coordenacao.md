@@ -37,7 +37,7 @@ Abrir oficialmente a Track 05 - Foundation Stabilization And Asset/Service Readi
 ## Resultado
 
 - Track 05 criada com escopo, status, plano e prompts.
-- Snapshots de portfolio e status local apontam para `ACTIVE_FOUNDATION_STABILIZATION`.
+- Snapshots de portfolio e status local apontavam inicialmente para `ACTIVE_FOUNDATION_STABILIZATION`; T05-H atualizou o estado final para `INTEGRATED_FOUNDATION_READY`.
 - Track 04 marcada como handoff integrado para Track 05.
 - Nenhuma alteracao em runtime Godot, Supabase, schema, economia ou assets.
 - `git diff --check`: OK.

@@ -3,7 +3,7 @@
 - Last Updated: `2026-05-27`
 - Status: `COMPLETE_INTEGRATED_HANDOFF_TO_T05`
 - Depends On: `T03-P18_COMPLETE - INTERNAL_ALPHA_V0_HANDOFF_READY`; `T04-P00_COMPLETE_BY_USER_CONFIRMATION`
-- Next Action: seguir pela Track 05 `ACTIVE_FOUNDATION_STABILIZATION` para estabilizar validacao, Hub foundation, contratos, asset pipeline, Progression Human Pack e release ops.
+- Next Action: Track 05 integrada como `INTEGRATED_FOUNDATION_READY`; seguir para rodada humana do Progression Lab e proxima track de assets/servicos.
 - Account Save Gate: `DECIDED_KEEP_PLAYERS_SAVE_TYPE_FOR_ALPHA` em `account-save-gate-decision.md`.
 
 ## Estado

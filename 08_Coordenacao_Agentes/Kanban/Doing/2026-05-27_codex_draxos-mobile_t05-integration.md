@@ -4,7 +4,7 @@
 - Agente: `Codex`
 - Branch: `codex/draxos-mobile/t05-integration`
 - Worktree: `D:\Estudio-worktrees\draxos-mobile--codex--t05-integration`
-- Status: `IN_PROGRESS`
+- Status: `COMPLETE`
 
 ## Objetivo
 
@@ -39,3 +39,26 @@ Integrar as entregas T05-B a T05-G da Track 05, resolver conflitos, validar a fu
 - Nao criar migration `account_profiles` + `game_saves`.
 - Nao alterar contratos HTTP, economia, ranking, simulador, monetizacao real, assets finais ou servicos novos.
 - Registrar qualquer bloqueio de validacao em vez de esconder falha.
+
+## Resultado
+
+- Branches T05-B a T05-G integradas em `codex/draxos-mobile/t05-integration`.
+- Nenhum conflito manual foi necessario; `tools/README.md` foi resolvido por automerge normal.
+- Track 05 marcada como `INTEGRATED_FOUNDATION_READY`.
+- Proximo passo oficial: rodada humana do Progression Lab antes de tuning numerico, seguida de nova track para assets reais ou servicos novos.
+
+## Validacao Executada
+
+- `tools/validate.gd`: passou com `63/63` testes e `696` asserts.
+- GUT client completo: passou com `63/63` testes e `696` asserts.
+- `tools/smoke_session_shell.gd`: passou.
+- `tools/smoke_battle_replay.gd`: passou.
+- `tools/smoke_foundation_surfaces.gd`: passou.
+- `tools/smoke_dev_labs.gd`: passou.
+- `tools/smoke_dev_lab_ui.gd`: passou.
+- `tools/smoke_exports.gd`: passou.
+- `npx -y deno task --cwd supabase/functions check`: passou.
+- `npx -y deno task --cwd server/functions check`: passou.
+- `npx -y deno check server/tests/release_artifacts_remote_smoke.ts`: passou.
+- `npx -y deno lint server/tests/release_artifacts_remote_smoke.ts`: passou.
+- `git diff --check`: passou.

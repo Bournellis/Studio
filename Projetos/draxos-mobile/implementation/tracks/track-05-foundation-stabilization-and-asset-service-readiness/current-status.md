@@ -1,30 +1,30 @@
 # Track 05 - Current Status
 
 - Last Updated: `2026-05-27`
-- Status: `ACTIVE_FOUNDATION_STABILIZATION`
+- Status: `INTEGRATED_FOUNDATION_READY`
 - Depends On: `T04_A_TO_H_INTEGRATED`
-- Next Action: run T05-B to T05-G in parallel worktrees, then integrate through T05-H.
+- Next Action: run the human Progression Lab review, then open follow-up tracks for real assets and new services on top of the stabilized foundation.
 
 ## Estado
 
-Track 05 is active as a foundation stabilization track. Internal Alpha v0 passed, Track 04 integrated Hub render-only presenters, and the next step is to make the project easier to validate, extend with assets and prepare for future service work without changing gameplay behavior.
+Track 05 is integrated as a foundation stabilization package. Internal Alpha v0 passed, Track 04 integrated Hub render-only presenters, and Track 05 now provides a reproducible validation matrix, focused surface smoke coverage, Hub/presenter hardening, service scope contracts, an asset pipeline contract, a human Progression Lab review pack and release ops readiness.
 
 No final art, new service, economy tuning, schema migration or gameplay expansion is approved in this track.
 
 ## Ordem Atual
 
-1. `T05-A` Coordenacao: create Track 05 docs, update portfolio/status and register prompts.
-2. `T05-B` Validation Matrix: quick/full/release/remote validation and focused smokes.
-3. `T05-C` Hub Foundation: harden Hub/presenter ownership without behavior changes.
-4. `T05-D` Service Contracts: classify endpoint/service scope without schema changes.
-5. `T05-E` Asset Pipeline: prepare asset conventions, ids and fallback tests.
-6. `T05-F` Progression Human Pack: prepare human review before tuning.
-7. `T05-G` Release Ops: checklist for manifest/export/publication readiness without publishing.
-8. `T05-H` Integracao: merge, validate and update final status.
+1. `T05-A` Coordenacao: complete.
+2. `T05-B` Validation Matrix: complete, with `quick/full/release/remote` matrix and `smoke_foundation_surfaces.gd`.
+3. `T05-C` Hub Foundation: complete, with render-only presenter contract coverage and retired obsolete Battle scaffold.
+4. `T05-D` Service Contracts: complete, with endpoint scopes classified as `save-scoped`, `account-scoped`, `release`, `telemetry` or `admin-future`.
+5. `T05-E` Asset Pipeline: complete, with asset conventions, category ids, stable paths and missing-art fallback tests.
+6. `T05-F` Progression Human Pack: complete, with human review runbook before tuning.
+7. `T05-G` Release Ops: complete, with release-ready checklist and remote artifact smoke.
+8. `T05-H` Integracao: complete, with final validation green.
 
 ## T05-F Progression Human Pack
 
-Status: `READY_FOR_HUMAN_REVIEW` on branch `codex/draxos-mobile/t05-progression-human-pack`.
+Status: `READY_FOR_HUMAN_REVIEW` integrated through branch `codex/draxos-mobile/t05-integration`.
 
 - Runbook: `../../../docs/progression-lab/2026-05-27-t05-progression-human-runbook.md`
 - Track notes: `progression-human-pack.md`
@@ -60,10 +60,28 @@ Backend/test packages:
 
 ```powershell
 cd <WORKTREE>\Projetos\draxos-mobile
-npx -y deno task check --cwd supabase/functions
-npx -y deno task check --cwd server/functions
+npx -y deno task --cwd supabase/functions check
+npx -y deno task --cwd server/functions check
 git diff --check
 ```
+
+## Final Integration Validation
+
+Validated on `2026-05-27` in `D:\Estudio-worktrees\draxos-mobile--codex--t05-integration`:
+
+- Pass: `tools/validate.gd` with `63/63` tests and `696` asserts.
+- Pass: GUT client with `63/63` tests and `696` asserts.
+- Pass: `tools/smoke_session_shell.gd`.
+- Pass: `tools/smoke_battle_replay.gd`.
+- Pass: `tools/smoke_foundation_surfaces.gd`.
+- Pass: `tools/smoke_dev_labs.gd`.
+- Pass: `tools/smoke_dev_lab_ui.gd`.
+- Pass: `tools/smoke_exports.gd`.
+- Pass: `npx -y deno task --cwd supabase/functions check`.
+- Pass: `npx -y deno task --cwd server/functions check`.
+- Pass: `npx -y deno check server/tests/release_artifacts_remote_smoke.ts`.
+- Pass: `npx -y deno lint server/tests/release_artifacts_remote_smoke.ts`.
+- Pass: `git diff --check`.
 
 ## Fontes
 
