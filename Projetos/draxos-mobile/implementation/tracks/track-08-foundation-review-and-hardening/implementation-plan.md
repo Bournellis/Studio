@@ -122,7 +122,7 @@ Validation: `smoke_foundation_hardening.gd` passed in headless mode.
 
 ## T08-H - Integracao
 
-Status: `IN_PROGRESS`.
+Status: `COMPLETE`.
 
 - Integrate T08-B to T08-G safely.
 - Resolve conflicts without hiding validation failures.
@@ -142,6 +142,8 @@ Final validation:
 - `tools/smoke_exports.gd`
 - Deno checks if applicable
 - `git diff --check`
+
+Final result: passed in `codex/draxos-mobile/t08-integration`. `smoke_battle_replay.gd` required serving the current `battle` function locally with `BATTLE_FUNCTION_URL=http://127.0.0.1:8000` because the default Edge Runtime on `127.0.0.1:54321` was still serving an older `battle` function without `/battle/history`.
 
 ## Assumptions
 

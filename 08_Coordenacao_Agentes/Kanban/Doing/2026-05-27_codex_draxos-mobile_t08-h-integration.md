@@ -6,7 +6,7 @@
 - Worktree: `D:\Estudio-worktrees\draxos-mobile--codex--t08-integration`
 - Branch: `codex/draxos-mobile/t08-integration`
 - Base: `master` apos `T08-A` (`bd395cf`)
-- Status: `DOING`
+- Status: `DONE`
 
 ## Objetivo
 
@@ -48,4 +48,22 @@ Integrar as entregas `T08-B` a `T08-F`, criar o harness final `T08-G`, resolver 
 
 ## Handoff
 
-Entregar branch integrada, status/portfolio atualizados, validacao final registrada e worktree limpa ou com pendencias explicitamente listadas.
+Branch integrada em `codex/draxos-mobile/t08-integration`, status/portfolio atualizados e validacao final registrada.
+
+## Validacao Final
+
+- `tools/validate.gd`: passou com GUT integrado `95/95` testes e `1114` asserts.
+- GUT completo `res://tests/client`: passou com `95/95` testes e `1114` asserts.
+- `tools/smoke_session_shell.gd`: passou.
+- `tools/smoke_runtime_config.gd`: passou.
+- `tools/smoke_mobile_presentation.gd`: passou.
+- `tools/smoke_foundation_hardening.gd`: passou.
+- `tools/smoke_foundation_surfaces.gd`: passou.
+- `tools/smoke_battle_replay.gd`: passou com `BATTLE_FUNCTION_URL=http://127.0.0.1:8000` apos servir a funcao `battle` atual localmente.
+- `tools/smoke_exports.gd`: passou.
+- Checks Deno de `supabase/functions`, `server/functions` e `server/tests/foundation_contracts_test.ts`: passaram.
+- `git diff --check`: passou.
+
+## Observacao
+
+A Edge Runtime local padrao em `127.0.0.1:54321` ainda estava servindo uma funcao `battle` antiga sem `/battle/history`; para o smoke de replay final, a funcao atual foi servida isoladamente e encerrada apos o teste.

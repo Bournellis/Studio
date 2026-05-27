@@ -5,7 +5,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 ## Foco Atual
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Foco P2 de implementacao (Track 08 `ACTIVE_FOUNDATION_HARDENING`): `Projetos/draxos-mobile/`
+- Foco P2 de implementacao (Track 08 `INTEGRATED_FOUNDATION_HARDENED`): `Projetos/draxos-mobile/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/` (preservado como referencia - nao e o projeto ativo)
 - Projetos pausados: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -14,7 +14,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 | Prioridade | Projeto | Caminho | Fase | Status | Trabalho permitido | Proximo passo | Restricao operacional |
 |---|---|---|---|---|---|---|---|
 | P0 | Draxos Roguelike Cardgame | `Projetos/draxos-roguelike-cardgame/` | Implementacao | `P0_IMPLEMENTACAO` | Codigo, validacao, playtest, documentacao local | Playtest de usuario da Track 02 completa | Pode receber trabalho de implementacao por padrao |
-| P2 | DraxosMobile | `Projetos/draxos-mobile/` | Implementacao - Track 08 `ACTIVE_FOUNDATION_HARDENING` | `P2_IMPLEMENTACAO` | Codigo, design, documentacao local, configuracao de infraestrutura | Endurecer fundacao pos-Track 07 antes de novas features/assets/servicos maiores | iOS sem pedido explicito; mobile browser fora do escopo primario; secrets e service role nunca entram no cliente/export; migration conta/save fora do pacote atual; sem tuning numerico; sem gameplay novo; backend endpoint novo/schema/economia/ranking/recompensas/simulador/assets finais e publicacao remota fora da Track 08 |
+| P2 | DraxosMobile | `Projetos/draxos-mobile/` | Implementacao - Track 08 `INTEGRATED_FOUNDATION_HARDENED` | `P2_IMPLEMENTACAO` | Codigo, design, documentacao local, configuracao de infraestrutura | Planejar proxima track sobre a fundacao endurecida para features/assets/servicos maiores | iOS sem pedido explicito; mobile browser fora do escopo primario; secrets e service role nunca entram no cliente/export; migration conta/save fora do pacote atual; usar matriz Track 08 como baseline antes de novos pacotes |
 | Arquivo | Mobile Universe (conceito) | `Projetos/_conceitos/mobile-universe/` | Arquivo de design | `ARQUIVO_DESIGN` | Leitura e referencia de design apenas | - | Nao criar codigo, cenas, assets ou projeto Godot a partir daqui |
 | Pausado | RPG Isometrico | `Projetos/rpg-isometrico/` | Pausado | `PAUSADO_INDEFINIDO` | Consulta historica quando solicitado | Nenhum enquanto pausado | Nao implementar, expandir gates ou selecionar Next Gate sem pedido explicito |
 | Pausado | RPG Turnos | `Projetos/rpg-turnos/` | Pausado | `PAUSADO_INDEFINIDO` | Consulta historica quando solicitado | Nenhum enquanto pausado | Nao implementar, selecionar track/gate, regenerar `.tres` ou alterar escopo sem pedido explicito |

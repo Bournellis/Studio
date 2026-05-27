@@ -1,14 +1,14 @@
 # Track 08 - Current Status
 
 - Last Updated: `2026-05-27`
-- Status: `ACTIVE_FOUNDATION_HARDENING`
+- Status: `INTEGRATED_FOUNDATION_HARDENED`
 - Depends On: `T07_INTEGRATED_PRESENTATION_READY`
-- Current Stage: `T08_B_TO_T08_G_COMPLETE`
-- Next Action: run T08-H final validation and update status/portfolio.
+- Current Stage: `T08_H_COMPLETE`
+- Next Action: plan the next features/assets/services track on top of the hardened foundation.
 
 ## Estado
 
-Track 08 is active as the post-presentation foundation hardening pass.
+Track 08 is integrated as the post-presentation foundation hardening pass.
 
 The project now has a mobile-first Refugio home, route shell, internal surfaces and fullscreen landscape battle. The next risk is structural drift while adding future features: routes living only inside `boot.gd`, session/save boundary assumptions spread across client code, touch/layout rules copied per surface, battle fullscreen behavior needing mode-level contract, and validation becoming hard to remember.
 
@@ -33,7 +33,26 @@ T08-G Validation Harness is complete in `codex/draxos-mobile/t08-integration`. I
 5. `T08-E` Battle Mode Contract: complete; fullscreen battle/replay contract and tests delivered.
 6. `T08-F` Service/Asset Contract Checks: complete; endpoint matrix, feature registry and asset fallback checks delivered.
 7. `T08-G` Validation Harness: complete; no-network hardening smoke delivered.
-8. `T08-H` Integracao: in progress; final validation/status closeout remains.
+8. `T08-H` Integracao: complete; branches integrated, final validation passed and status/portfolio closeout recorded.
+
+## T08-H Final Validation
+
+- `tools/validate.gd`: passed; GUT integrated `95/95` tests and `1114` asserts.
+- GUT complete `res://tests/client`: passed; `95/95` tests and `1114` asserts.
+- `tools/smoke_session_shell.gd`: passed.
+- `tools/smoke_runtime_config.gd`: passed.
+- `tools/smoke_mobile_presentation.gd`: passed.
+- `tools/smoke_foundation_hardening.gd`: passed.
+- `tools/smoke_foundation_surfaces.gd`: passed.
+- `tools/smoke_battle_replay.gd`: passed with `BATTLE_FUNCTION_URL=http://127.0.0.1:8000` after serving the current `battle` function locally; the default Edge Runtime on `127.0.0.1:54321` still served an older `battle` function without `/battle/history`.
+- `tools/smoke_exports.gd`: passed.
+- `npx -y deno task --cwd supabase/functions check`: passed.
+- `npx -y deno task --cwd server/functions check`: passed.
+- `npx -y deno check server/tests/foundation_contracts_test.ts`: passed.
+- `npx -y deno test --allow-read server/tests/foundation_contracts_test.ts`: passed, `2/2`.
+- `npx -y deno lint server/tests/foundation_contracts_test.ts`: passed.
+- `npx -y deno fmt --check server/tests/foundation_contracts_test.ts`: passed.
+- `git diff --check`: passed.
 
 ## T08-G Validation
 

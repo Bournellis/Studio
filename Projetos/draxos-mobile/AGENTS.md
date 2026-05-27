@@ -175,6 +175,6 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 
 ## Active Track
 
-Track ativa: `Track 08 - Foundation Review And Hardening` (`ACTIVE_FOUNDATION_HARDENING`).
+Track ativa: `Track 08 - Foundation Review And Hardening` (`INTEGRATED_FOUNDATION_HARDENED`).
 
 Comece por `implementation/current-status.md` e siga `implementation/tracks/track-08-foundation-review-and-hardening/current-status.md`.
