@@ -3,14 +3,16 @@
 - Last Updated: `2026-05-27`
 - Status: `ACTIVE_FOUNDATION_HARDENING`
 - Depends On: `T07_INTEGRATED_PRESENTATION_READY`
-- Current Stage: `T08_A_COMPLETE`
-- Next Action: integrate T08-A into master, then run T08-B to T08-F in parallel worktrees.
+- Current Stage: `T08_A_COMPLETE`; `T08_F_READY_FOR_INTEGRATION`
+- Next Action: continue T08-B/T08-C/T08-D/T08-E/T08-G in their worktrees, then integrate T08-F in T08-H.
 
 ## Estado
 
 Track 08 is active as the post-presentation foundation hardening pass.
 
 The project now has a mobile-first Refugio home, route shell, internal surfaces and fullscreen landscape battle. The next risk is structural drift while adding future features: routes living only inside `boot.gd`, session/save boundary assumptions spread across client code, touch/layout rules copied per surface, battle fullscreen behavior needing mode-level contract, and validation becoming hard to remember.
+
+T08-F is ready for integration in branch `codex/draxos-mobile/t08-service-asset-contracts`. It adds a no-network Deno test for `docs/contracts/api-endpoints.md` endpoint matrix scopes and Track 06 feature card completeness, plus focused GUT coverage that keeps optional `AssetIds` missing-art fallback stable apart from installed Asset Pack 01 ids. No endpoint, schema, migration, service or final asset was added.
 
 ## Ordem Atual
 
@@ -19,7 +21,7 @@ The project now has a mobile-first Refugio home, route shell, internal surfaces 
 3. `T08-C` Session/Save Boundary: pending after T08-A.
 4. `T08-D` Mobile UI Contract: pending after T08-A.
 5. `T08-E` Battle Mode Contract: pending after T08-B.
-6. `T08-F` Service/Asset Contract Checks: pending after T08-A.
+6. `T08-F` Service/Asset Contract Checks: ready for integration.
 7. `T08-G` Validation Harness: pending after T08-B to T08-F.
 8. `T08-H` Integracao: pending after T08-B to T08-G.
 
@@ -56,6 +58,9 @@ Backend/docs packages:
 
 ```powershell
 cd <WORKTREE>\Projetos\draxos-mobile
+npx -y deno check server/tests/foundation_contracts_test.ts
+npx -y deno test --allow-read server/tests/foundation_contracts_test.ts
+npx -y deno lint server/tests/foundation_contracts_test.ts
 npx -y deno task --cwd supabase/functions check
 npx -y deno task --cwd server/functions check
 git diff --check
