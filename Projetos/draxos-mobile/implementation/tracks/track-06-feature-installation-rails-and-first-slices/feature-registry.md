@@ -108,7 +108,7 @@ Rollback deve ser simples e local:
 | `RUNTIME_CONFIG_V1` | `T06-C Runtime Config` | release/client boot | `PLANNED` | new `GET /release/config` | `release` | runtime config smoke | runtime config read path/fallback GUT |
 | `PROFILE_ACCOUNT_PANEL` | `T06-D Perfil/Conta` | Hub account/session | `PLANNED` | existing `GET /account/state` | `save-scoped` existing read | profile/session smoke | profile/presenter GUT |
 | `BATTLE_HISTORY_REPLAY` | `T06-E Battle History` | Battle tab | `PLANNED` | new `GET /battle/history`, new `GET /battle/replay?battle_id=...` | `save-scoped` read-only | battle history/replay smoke and `smoke_battle_replay.gd` | battle history/replay presenter GUT |
-| `BASE_ROUTINE_PANEL` | `T06-F Base Routine` | Base tab | `PLANNED` | existing `GET /base/state` | `save-scoped` existing read | `smoke_foundation_surfaces.gd` Base coverage | Base routine/presenter GUT |
+| `BASE_ROUTINE_PANEL` | `T06-F Base Routine` | Base tab | `READY_FOR_INTEGRATION` | existing `GET /base/state` | `save-scoped` existing read | `smoke_foundation_surfaces.gd` Base coverage | Base routine/presenter GUT |
 | `SOCIAL_QOL_READABILITY` | `T06-G Social QoL` | Social tab | `PLANNED` | existing `GET /social/state` and current social actions | `account-scoped` existing behavior | `smoke_foundation_surfaces.gd` Social coverage | Social readability/presenter GUT |
 | `ASSET_PACK_01_SAFE` | `T06-H Asset Pack 01` | shared UI/battle visuals | `PLANNED` | none | none | visual/export smoke if hooks change | AssetIds/fallback GUT |
 
@@ -190,19 +190,19 @@ Rollback deve ser simples e local:
 
 - Owner: `T06-F Base Routine`
 - Surface: Base tab
-- Status: `PLANNED`
+- Status: `READY_FOR_INTEGRATION`
 - Endpoints affected: existing `GET /base/state` only
 - Service scope: `save-scoped` existing read
 - Service contract notes: no endpoint change; uses existing Base presentation payload for collect readiness, construction jobs, free slots and next upgrade.
-- Client files: Base routine panel/presenter files to be declared by T06-F.
+- Client files: `modes/boot/surfaces/base_surface_presenter.gd`, `tests/client/test_boot_mobile_ui.gd`, `tools/smoke_foundation_surfaces.gd`.
 - Backend files: none expected.
-- Smoke required: `smoke_foundation_surfaces.gd` Base coverage.
-- GUT required: Base routine/presenter GUT.
-- Other validation: `validate.gd`, GUT client, `git diff --check`.
+- Smoke required: `smoke_foundation_surfaces.gd` Base coverage; passed in T06-F.
+- GUT required: Base routine/presenter GUT in `test_boot_mobile_ui.gd`; passed in T06-F.
+- Other validation: `validate.gd`, GUT client complete, `git diff --check`.
 - Fallback: show no-ready-action state when payload is empty or offline.
 - Rollback: remove routine panel and keep existing Base state/actions.
 - Guardrail notes: no economy tuning, no endpoint, no schema, no queue rule change.
-- Handoff notes: T06-I should verify routine is derived from existing payload, not duplicated logic.
+- Handoff notes: T06-I should verify routine remains derived from existing `base/state` presentation payload and keep `base/*` endpoints/actions unchanged.
 
 ### `SOCIAL_QOL_READABILITY`
 

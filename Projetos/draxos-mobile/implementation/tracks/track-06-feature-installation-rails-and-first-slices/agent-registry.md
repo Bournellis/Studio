@@ -9,7 +9,7 @@ All agents must use dedicated worktrees outside `D:\Estudio`.
 | Codex worker | T06-C Runtime Config | `D:\Estudio-worktrees\draxos-mobile--codex--t06-runtime-config` | `codex/draxos-mobile/t06-runtime-config` | `PENDING_AFTER_T06_A` | Release config endpoint/client/smoke |
 | Codex worker | T06-D Perfil/Conta | `D:\Estudio-worktrees\draxos-mobile--codex--t06-profile-account` | `codex/draxos-mobile/t06-profile-account` | `PENDING_AFTER_T06_B` | Profile/account panel validated |
 | Codex worker | T06-E Battle History | `D:\Estudio-worktrees\draxos-mobile--codex--t06-battle-history` | `codex/draxos-mobile/t06-battle-history` | `PENDING_AFTER_T06_B` | History/replay endpoints and UI validated |
-| Codex worker | T06-F Base Routine | `D:\Estudio-worktrees\draxos-mobile--codex--t06-base-routine` | `codex/draxos-mobile/t06-base-routine` | `PENDING_AFTER_T06_B` | Base routine panel validated |
+| Codex worker | T06-F Base Routine | `D:\Estudio-worktrees\draxos-mobile--codex--t06-base-routine` | `codex/draxos-mobile/t06-base-routine` | `READY_FOR_INTEGRATION` | Base routine panel validated with GUT, validate and foundation smoke |
 | Codex worker | T06-G Social QoL | `D:\Estudio-worktrees\draxos-mobile--codex--t06-social-qol` | `codex/draxos-mobile/t06-social-qol` | `PENDING_AFTER_T06_B` | Social readability improvements validated |
 | Codex worker | T06-H Asset Pack 01 | `D:\Estudio-worktrees\draxos-mobile--codex--t06-asset-pack-01` | `codex/draxos-mobile/t06-asset-pack-01` | `PENDING_AFTER_T06_B` | Safe asset pack validated |
 | Codex | T06-I Integracao | `D:\Estudio-worktrees\draxos-mobile--codex--t06-integration` | `codex/draxos-mobile/t06-integration` | `BLOCKED_UNTIL_T06_C_TO_H` | Full validation and final status |
