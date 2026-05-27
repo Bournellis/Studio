@@ -11,6 +11,7 @@ const SLOT_FRONT := "front"
 const SLOT_MIDDLE := "middle"
 const SLOT_BACK := "back"
 const SLOT_ORDER := [SLOT_FRONT, SLOT_MIDDLE, SLOT_BACK]
+const STAGE_TOOLTIP_META := "battle_stage_tooltip_text"
 
 const EVENT_ASSET_IDS := {
 	"weapon_attack": "battle_icon_weapon",
@@ -127,7 +128,7 @@ func debug_snapshot() -> Dictionary:
 		"has_opponent_actor": _actors.has(SIDE_OPPONENT),
 		"replay_time": _visual_replay_time,
 		"readout": _readout_label.text if _readout_label != null else "",
-		"readout_tooltip": _readout_label.tooltip_text if _readout_label != null else "",
+		"readout_tooltip": _stage_tooltip_text(_readout_label) if _readout_label != null else "",
 		"tooltips": debug_tooltip_samples(),
 		"tooltip_node_ids": debug_tooltip_node_ids(),
 		"cooldown_counts": debug_cooldown_counts(),
@@ -143,7 +144,7 @@ func debug_tooltip_samples() -> Dictionary:
 		status_tooltips.append_array(_collect_tooltips(_status_rows.get(side)))
 		cooldown_tooltips.append_array(_collect_tooltips(_cooldown_rows.get(side)))
 	return {
-		"event": str(_event_icon.tooltip_text) if _event_icon != null else "",
+		"event": _stage_tooltip_text(_event_icon) if _event_icon != null else "",
 		"slots": _collect_tooltips(_slot_layer),
 		"status": status_tooltips,
 		"cooldowns": cooldown_tooltips,
@@ -160,6 +161,14 @@ func debug_tooltip_node_ids() -> Dictionary:
 		"status": status_ids,
 		"cooldowns": cooldown_ids,
 	}
+
+func debug_has_native_tooltips() -> bool:
+	return _has_native_tooltip(self)
+
+func debug_native_tooltip_paths() -> Array[String]:
+	var paths: Array[String] = []
+	_collect_native_tooltip_paths(self, paths)
+	return paths
 
 func debug_cooldown_counts() -> Dictionary:
 	var counts: Dictionary = {}
@@ -357,7 +366,8 @@ func _render_dynamic_state() -> void:
 			_number_text(float(side_data.get("max_hp", 1.0))),
 			_hp_percent_text(side_data),
 		]
-		name_label.tooltip_text = actor.tooltip_text
+		_set_stage_tooltip(actor, actor.tooltip_text)
+		_set_stage_tooltip(name_label, _stage_tooltip_text(actor))
 		_refresh_stage_tooltip(actor)
 		_refresh_stage_tooltip(name_label)
 		_render_icon_row(_status_rows[side], statuses, "status")
@@ -466,21 +476,25 @@ func _render_slots() -> void:
 
 func _render_event_panel() -> void:
 	if _latest_event.is_empty():
-		_event_icon.configure("...", _token_color("placeholder"), "Replay aguardando o proximo evento do battle_log_v1.")
+		var empty_tooltip := "Replay aguardando o proximo evento do battle_log_v1."
+		_event_icon.configure("...", _token_color("placeholder"), empty_tooltip)
+		_set_stage_tooltip(_event_icon, empty_tooltip)
 		_event_label.text = "Evento %d/%d | aguardando replay" % [_event_index, _event_count]
-		_event_label.tooltip_text = _event_icon.tooltip_text
+		_set_stage_tooltip(_event_label, empty_tooltip)
 		_refresh_stage_tooltip(_event_icon)
 		_refresh_stage_tooltip(_event_label)
 		return
 	var event_type := str(_latest_event.get("type", ""))
-	_event_icon.configure(_event_code(event_type), _event_color(_latest_event), _event_tooltip(_latest_event))
+	var event_tooltip := _event_tooltip(_latest_event)
+	_event_icon.configure(_event_code(event_type), _event_color(_latest_event), event_tooltip)
+	_set_stage_tooltip(_event_icon, event_tooltip)
 	_event_label.text = "Evento %d/%d | %ss | %s" % [
 		_event_index,
 		_event_count,
 		"%.1f" % float(_latest_event.get("t", 0.0)),
 		_event_brief(_latest_event),
 	]
-	_event_label.tooltip_text = _event_icon.tooltip_text
+	_set_stage_tooltip(_event_label, event_tooltip)
 	_refresh_stage_tooltip(_event_icon)
 	_refresh_stage_tooltip(_event_label)
 
@@ -490,8 +504,8 @@ func _render_readout() -> void:
 	var readout_tooltip := "Resumo rapido da batalha\nMostra progresso do replay, tempo atual, vida percentual, status, cooldowns e aliados visiveis de cada lado.\nTodos os valores sao derivados do battle_log_v1 recebido; o cliente apresenta o replay e nao calcula resultado."
 	if _side_state.is_empty() and _latest_event.is_empty():
 		_readout_label.text = "Replay 0/0 | aguardando battle_log_v1\nHP, status, cooldowns e aliados aparecem quando uma batalha carregar."
-		_readout_label.tooltip_text = readout_tooltip
-		_readout_panel.tooltip_text = readout_tooltip
+		_set_stage_tooltip(_readout_label, readout_tooltip)
+		_set_stage_tooltip(_readout_panel, readout_tooltip)
 		_refresh_stage_tooltip(_readout_label)
 		_refresh_stage_tooltip(_readout_panel)
 		return
@@ -511,8 +525,8 @@ func _render_readout() -> void:
 		_visible_ally_count(opponent_data),
 	]
 	_readout_label.text = readout_text
-	_readout_label.tooltip_text = readout_tooltip
-	_readout_panel.tooltip_text = readout_tooltip
+	_set_stage_tooltip(_readout_label, readout_tooltip)
+	_set_stage_tooltip(_readout_panel, readout_tooltip)
 	_refresh_stage_tooltip(_readout_label)
 	_refresh_stage_tooltip(_readout_panel)
 
@@ -774,6 +788,7 @@ func _configure_symbol_icon(icon: BattleSymbolIcon, entry: Dictionary) -> void:
 		str(entry.get("count", "")),
 		float(entry.get("cooldown_ratio", 0.0))
 	)
+	_set_stage_tooltip(icon, str(entry.get("tooltip", "")))
 
 func _children_by_render_key(parent: Node) -> Dictionary:
 	var existing: Dictionary = {}
@@ -796,6 +811,8 @@ func _remove_unwanted_children(parent: Node, wanted: Dictionary) -> void:
 func _bind_stage_tooltip(control: Control) -> void:
 	if control == null or control.has_meta("battle_tooltip_bound"):
 		return
+	if control.tooltip_text.strip_edges() != "":
+		_set_stage_tooltip(control, control.tooltip_text)
 	control.set_meta("battle_tooltip_bound", true)
 	control.mouse_entered.connect(func() -> void:
 		_show_stage_tooltip(control)
@@ -813,7 +830,7 @@ func _show_stage_tooltip(control: Control) -> void:
 	if control == null:
 		_hide_stage_tooltip()
 		return
-	var text := control.tooltip_text.strip_edges()
+	var text := _stage_tooltip_text(control)
 	if text == "":
 		_hide_stage_tooltip()
 		return
@@ -825,6 +842,20 @@ func _show_stage_tooltip(control: Control) -> void:
 func _refresh_stage_tooltip(control: Control) -> void:
 	if _tooltip_source == control:
 		_show_stage_tooltip(control)
+
+func _set_stage_tooltip(control: Control, text: String) -> void:
+	if control == null:
+		return
+	var normalized := text.strip_edges()
+	control.set_meta(STAGE_TOOLTIP_META, normalized)
+	control.tooltip_text = ""
+
+func _stage_tooltip_text(control: Control) -> String:
+	if control == null:
+		return ""
+	if control.has_meta(STAGE_TOOLTIP_META):
+		return str(control.get_meta(STAGE_TOOLTIP_META)).strip_edges()
+	return control.tooltip_text.strip_edges()
 
 func _hide_stage_tooltip() -> void:
 	_tooltip_source = null
@@ -920,7 +951,7 @@ func _spawn_projectile(from_pos: Vector2, to_pos: Vector2, color: Color, symbol:
 	dot.custom_minimum_size = Vector2(32, 32)
 	dot.size = dot.custom_minimum_size
 	dot.position = from_pos - dot.size * 0.5
-	dot.configure(symbol, color, "Efeito visual do evento atual.")
+	dot.configure(symbol, color)
 	_effects_layer.add_child(dot)
 	dot.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var tween := create_tween()
@@ -1254,8 +1285,9 @@ func _collect_tooltips(root: Variant) -> Array[String]:
 		return values
 	if node is Control:
 		var control := node as Control
-		if control.tooltip_text != "":
-			values.append(str(control.tooltip_text))
+		var tooltip := _stage_tooltip_text(control)
+		if tooltip != "":
+			values.append(tooltip)
 	for child: Node in node.get_children():
 		values.append_array(_collect_tooltips(child))
 	return values
@@ -1278,11 +1310,29 @@ func _collect_tooltip_node_ids(root: Variant) -> Array[String]:
 		return values
 	if node is Control:
 		var control := node as Control
-		if control.tooltip_text != "":
+		if _stage_tooltip_text(control) != "":
 			values.append(str(control.get_instance_id()))
 	for child: Node in node.get_children():
 		values.append_array(_collect_tooltip_node_ids(child))
 	return values
+
+func _has_native_tooltip(node: Node) -> bool:
+	if node is Control:
+		var control := node as Control
+		if control.tooltip_text.strip_edges() != "":
+			return true
+	for child: Node in node.get_children():
+		if _has_native_tooltip(child):
+			return true
+	return false
+
+func _collect_native_tooltip_paths(node: Node, paths: Array[String]) -> void:
+	if node is Control:
+		var control := node as Control
+		if control.tooltip_text.strip_edges() != "":
+			paths.append("%s=%s" % [str(control.get_path()), control.tooltip_text.strip_edges()])
+	for child: Node in node.get_children():
+		_collect_native_tooltip_paths(child, paths)
 
 static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:

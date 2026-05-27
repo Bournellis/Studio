@@ -30,6 +30,7 @@ func test_battle_stage_2d_tooltips_remain_available_during_effects() -> void:
 	assert_string_contains(_joined_tooltips(Array(tooltips.get("status", []))), "Status ativo")
 	assert_string_contains(_joined_tooltips(Array(tooltips.get("cooldowns", []))), "Cooldown de spell")
 	assert_false(str(tooltips).to_lower().contains("placeholder"))
+	assert_false(stage.debug_has_native_tooltips(), str(stage.debug_native_tooltip_paths()))
 
 func test_battle_stage_2d_keeps_tooltip_nodes_stable_between_replay_steps() -> void:
 	var stage = BattleStage2DScript.new()

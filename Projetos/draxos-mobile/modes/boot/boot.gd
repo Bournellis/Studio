@@ -678,9 +678,9 @@ func _execute_action(action_id: String) -> void:
 			"reset_active_save":
 				await _reset_active_save()
 			"select_save_normal":
-				_select_save(SessionStoreScript.SAVE_TYPE_NORMAL)
+				await _select_save(SessionStoreScript.SAVE_TYPE_NORMAL)
 			"select_save_progression_lab":
-				_select_save(SessionStoreScript.SAVE_TYPE_PROGRESSION_LAB)
+				await _select_save(SessionStoreScript.SAVE_TYPE_PROGRESSION_LAB)
 			"open_battle_lab":
 				_open_battle_lab_overlay()
 			"open_progression_lab":
@@ -812,9 +812,23 @@ func _select_save(save_type: String) -> void:
 	SupabaseClient.configure_save_type(SessionStore.active_save_type)
 	if changed:
 		_screen_history.clear()
+
+	if SessionStore.has_valid_access_token() and not SessionStore.is_progression_lab_local_only():
+		var ready := await _recover_or_create_active_save()
+		if not ready:
+			_show_screen(SCREEN_HUB, false)
+			return
+		var ready_message := "Save %s pronto. Batalha, Base, Social, Competicao e Loja usam este contexto." % SessionStore.active_save_label()
+		if SessionStore.is_progression_lab_active():
+			ready_message = "Save Progression Lab pronto. As abas usam o player Lab isolado e ele nao pontua ranking."
+		_set_busy(false, ready_message)
+		_show_screen(SCREEN_HUB, false)
+		return
+
+	if changed:
 		var message := "Save ativo alterado para %s." % SessionStore.active_save_label()
 		if SessionStore.is_progression_lab_active():
-			message = "Save Progression Lab selecionado. As acoes usam um player isolado no Supabase local."
+			message = "Save Progression Lab selecionado. Entre como guest para criar ou carregar o player Lab isolado."
 		_set_busy(false, message)
 	else:
 		_set_busy(false, "Save %s ja estava ativo." % SessionStore.active_save_label())
@@ -834,9 +848,53 @@ func _recover_session_state() -> bool:
 		_fail_with_error(state_result)
 		return false
 
-	SessionStore.apply_server_state(state_result)
+	return _apply_recovered_state(state_result, "Sessao sincronizada com o servidor.")
+
+func _recover_or_create_active_save() -> bool:
+	if SessionStore.is_progression_lab_local_only():
+		_sync_status_from_session()
+		return false
+	if not SessionStore.has_valid_access_token():
+		_sync_status_from_session()
+		return false
+
+	_set_busy(true, "Carregando save %s..." % SessionStore.active_save_label())
+	var state_result: Dictionary = await SupabaseClient.fetch_account_state(SessionStore.access_token)
+	if bool(state_result.get("ok", false)):
+		return _apply_recovered_state(state_result, "Save %s sincronizado." % SessionStore.active_save_label())
+
+	var state_error := _extract_error(state_result)
+	if str(state_error.get("code", "")) != "PLAYER_NOT_FOUND":
+		_fail_with_error(state_result)
+		return false
+
+	_set_busy(true, "Criando save %s..." % SessionStore.active_save_label())
+	var guest_result: Dictionary = await SupabaseClient.create_guest_account(
+		SessionStore.DEFAULT_INVITE_CODE,
+		SessionStore.ensure_guest_request_id(),
+		OS.get_name(),
+		SessionStore.access_token
+	)
+	if not bool(guest_result.get("ok", false)):
+		var guest_error := _extract_error(guest_result)
+		if str(guest_error.get("code", "")) == "ACCOUNT_ALREADY_CREATED":
+			state_result = await SupabaseClient.fetch_account_state(SessionStore.access_token)
+			if bool(state_result.get("ok", false)):
+				return _apply_recovered_state(state_result, "Save %s sincronizado." % SessionStore.active_save_label())
+		_fail_with_error(guest_result)
+		return false
+
+	return _apply_recovered_state(guest_result, "Save %s pronto." % SessionStore.active_save_label())
+
+func _apply_recovered_state(state_result: Dictionary, message: String) -> bool:
+	if not SessionStore.apply_server_state(state_result):
+		_fail_with_error({
+			"ok": false,
+			"error": SessionStore.last_error,
+		})
+		return false
 	SessionStore.save_cache()
-	_set_busy(false, "Sessao sincronizada com o servidor.")
+	_set_busy(false, message)
 	_sync_status_from_session()
 	return true
 

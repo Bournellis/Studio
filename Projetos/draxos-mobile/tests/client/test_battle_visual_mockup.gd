@@ -29,6 +29,7 @@ func test_battle_visual_mockup_steps_rich_battle_feedback() -> void:
 	var stage_tooltips := Dictionary(stage.get("tooltips", {}))
 	assert_string_contains(str(stage_tooltips.get("event", "")), "Resultado")
 	assert_false(str(stage_tooltips).to_lower().contains("placeholder"))
+	assert_false(visual.debug_has_native_tooltips())
 
 	var player := Dictionary(snapshot.get("player", {}))
 	var opponent := Dictionary(snapshot.get("opponent", {}))

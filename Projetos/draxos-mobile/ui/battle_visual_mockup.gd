@@ -7,6 +7,7 @@ const BattleStage2DScript := preload("res://ui/battle_stage_2d.gd")
 const SIDE_PLAYER := "player"
 const SIDE_OPPONENT := "opponent"
 const SIDES := [SIDE_PLAYER, SIDE_OPPONENT]
+const VISUAL_TOOLTIP_META := "battle_visual_tooltip_text"
 
 const EVENT_ASSET_IDS := {
 	"weapon_attack": "battle_icon_weapon",
@@ -184,6 +185,9 @@ func debug_snapshot() -> Dictionary:
 		"timeline": get_timeline_text(),
 	}
 
+func debug_has_native_tooltips() -> bool:
+	return _has_native_tooltip(self)
+
 func _ensure_ui() -> void:
 	if _built:
 		return
@@ -272,7 +276,7 @@ func _build_side_card(side: String) -> Control:
 	var portrait_panel := PanelContainer.new()
 	portrait_panel.add_theme_stylebox_override("panel", _panel_style("placeholder", "border_active"))
 	portrait_panel.custom_minimum_size = Vector2(0, 112)
-	portrait_panel.tooltip_text = _actor_asset_hint(side)
+	_set_visual_tooltip(portrait_panel, _actor_asset_hint(side))
 	box.add_child(portrait_panel)
 
 	var portrait := Label.new()
@@ -474,14 +478,14 @@ func _render_dynamic_state(animate_stage_event: bool = false) -> void:
 
 	if _latest_event.is_empty():
 		_event_icon_label.text = "..."
-		_event_icon_label.tooltip_text = "Replay aguardando evento do battle_log_v1. Ataques, spells, buffs e resultado aparecem aqui conforme o log avanca."
+		_set_visual_tooltip(_event_icon_label, "Replay aguardando evento do battle_log_v1. Ataques, spells, buffs e resultado aparecem aqui conforme o log avanca.")
 		_event_icon_label.add_theme_stylebox_override("normal", _badge_style(_token_color("placeholder")))
 		_event_title_label.text = "Aguardando evento"
 		_event_detail_label.text = "Ataques, spells, buffs, dano, efeitos e icons entram aqui."
 	else:
 		var event_type := str(_latest_event.get("type", ""))
 		_event_icon_label.text = _event_code(event_type)
-		_event_icon_label.tooltip_text = _event_tooltip(_latest_event)
+		_set_visual_tooltip(_event_icon_label, _event_tooltip(_latest_event))
 		_event_icon_label.add_theme_stylebox_override("normal", _badge_style(_event_color(_latest_event)))
 		_event_title_label.text = "%ss | %s" % [
 			"%.1f" % float(_latest_event.get("t", 0.0)),
@@ -1063,7 +1067,23 @@ func _configure_badge(label: Label, text: String, color: Color, tooltip: String 
 	label.add_theme_font_size_override("font_size", 12)
 	label.add_theme_color_override("font_color", _token_color("text_primary"))
 	label.add_theme_stylebox_override("normal", _badge_style(color))
-	label.tooltip_text = tooltip
+	_set_visual_tooltip(label, tooltip)
+
+func _set_visual_tooltip(control: Control, text: String) -> void:
+	if control == null:
+		return
+	control.set_meta(VISUAL_TOOLTIP_META, text.strip_edges())
+	control.tooltip_text = ""
+
+func _has_native_tooltip(node: Node) -> bool:
+	if node is Control:
+		var control := node as Control
+		if control.tooltip_text.strip_edges() != "":
+			return true
+	for child: Node in node.get_children():
+		if _has_native_tooltip(child):
+			return true
+	return false
 
 func _panel_style(bg_token: String, border_token: String) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
