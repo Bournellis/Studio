@@ -41,6 +41,41 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
   ],
 };
 
+const RUNTIME_FEATURE_FLAGS = [
+  "profile_account_panel",
+  "battle_history_replay",
+  "base_routine_panel",
+  "social_qol_readability",
+  "asset_pack_01_safe",
+] as const;
+
+const DEFAULT_RUNTIME_CONFIG: RuntimeConfig = {
+  schema_version: "runtime_config_v1",
+  channel: "internal_alpha",
+  config_version: "t06-c-safe-defaults",
+  generated_at: "2026-05-27T00:00:00Z",
+  features: {
+    profile_account_panel: false,
+    battle_history_replay: false,
+    base_routine_panel: false,
+    social_qol_readability: false,
+    asset_pack_01_safe: false,
+  },
+  client: {
+    offline_fallback_allowed: true,
+    config_refresh_seconds: 900,
+  },
+  guardrails: {
+    release_scoped: true,
+    read_only: true,
+    no_service_role: true,
+    no_secrets: true,
+    no_player_state: true,
+    no_gameplay_tuning: true,
+    mutable_gameplay_state: false,
+  },
+};
+
 interface ReleaseManifest {
   schema_version: string;
   channel: string;
@@ -56,6 +91,29 @@ interface ReleaseManifest {
   known_issues: string[];
 }
 
+type RuntimeFeatureFlag = typeof RUNTIME_FEATURE_FLAGS[number];
+
+interface RuntimeConfig {
+  schema_version: string;
+  channel: string;
+  config_version: string;
+  generated_at: string;
+  features: Record<RuntimeFeatureFlag, boolean>;
+  client: {
+    offline_fallback_allowed: boolean;
+    config_refresh_seconds: number;
+  };
+  guardrails: {
+    release_scoped: boolean;
+    read_only: boolean;
+    no_service_role: boolean;
+    no_secrets: boolean;
+    no_player_state: boolean;
+    no_gameplay_tuning: boolean;
+    mutable_gameplay_state: boolean;
+  };
+}
+
 Deno.serve((request: Request) => {
   if (request.method === "OPTIONS") {
     return emptyResponse();
@@ -66,23 +124,37 @@ Deno.serve((request: Request) => {
       ok: false,
       error: {
         code: "METHOD_NOT_ALLOWED",
-        message: "Use GET /release/manifest.",
+        message: "Use GET /release/manifest or GET /release/config.",
       },
     }, 405);
   }
 
+  const route = releaseRoute(request);
+
   try {
+    if (route === "config") {
+      return jsonResponse(buildRuntimeConfig());
+    }
     return jsonResponse(buildManifest());
   } catch (error) {
+    const routeLabel = route === "config" ? "runtime config" : "release manifest";
     return jsonResponse({
       ok: false,
       error: {
-        code: "INVALID_RELEASE_MANIFEST",
-        message: error instanceof Error ? error.message : "Release manifest override is invalid.",
+        code: route === "config" ? "INVALID_RUNTIME_CONFIG" : "INVALID_RELEASE_MANIFEST",
+        message: error instanceof Error ? error.message : `${routeLabel} override is invalid.`,
       },
     }, 500);
   }
 });
+
+function releaseRoute(request: Request): "manifest" | "config" {
+  const pathname = new URL(request.url).pathname.replace(/\/+$/, "");
+  if (pathname.endsWith("/config")) {
+    return "config";
+  }
+  return "manifest";
+}
 
 function buildManifest(): ReleaseManifest {
   const overrideText = manifestOverrideText();
@@ -129,6 +201,43 @@ function buildManifest(): ReleaseManifest {
   };
 }
 
+function buildRuntimeConfig(): RuntimeConfig {
+  const overrideText = runtimeConfigOverrideText();
+  if (overrideText === "") {
+    return DEFAULT_RUNTIME_CONFIG;
+  }
+
+  const parsed: unknown = JSON.parse(overrideText);
+  if (!isObject(parsed)) {
+    throw new Error("RELEASE_RUNTIME_CONFIG_JSON must be a JSON object.");
+  }
+
+  const client = isObject(parsed.client) ? parsed.client : {};
+  const features = isObject(parsed.features) ? parsed.features : {};
+  return {
+    schema_version: DEFAULT_RUNTIME_CONFIG.schema_version,
+    channel: stringOverride(parsed, "channel", DEFAULT_RUNTIME_CONFIG.channel),
+    config_version: stringOverride(parsed, "config_version", DEFAULT_RUNTIME_CONFIG.config_version),
+    generated_at: stringOverride(parsed, "generated_at", DEFAULT_RUNTIME_CONFIG.generated_at),
+    features: featureFlagOverrides(features),
+    client: {
+      offline_fallback_allowed: booleanOverride(
+        client,
+        "offline_fallback_allowed",
+        DEFAULT_RUNTIME_CONFIG.client.offline_fallback_allowed,
+      ),
+      config_refresh_seconds: boundedNumberOverride(
+        client,
+        "config_refresh_seconds",
+        DEFAULT_RUNTIME_CONFIG.client.config_refresh_seconds,
+        60,
+        3600,
+      ),
+    },
+    guardrails: DEFAULT_RUNTIME_CONFIG.guardrails,
+  };
+}
+
 function manifestOverrideText(): string {
   if ((Deno.env.get("RELEASE_MANIFEST_OVERRIDE_ENABLED") ?? "").trim() !== "1") {
     return "";
@@ -140,6 +249,19 @@ function manifestOverrideText(): string {
     );
   }
   return Deno.env.get("RELEASE_MANIFEST_JSON")?.trim() ?? "";
+}
+
+function runtimeConfigOverrideText(): string {
+  if ((Deno.env.get("RELEASE_RUNTIME_CONFIG_OVERRIDE_ENABLED") ?? "").trim() !== "1") {
+    return "";
+  }
+  const encoded = Deno.env.get("RELEASE_RUNTIME_CONFIG_JSON_BASE64")?.trim() ?? "";
+  if (encoded !== "") {
+    return new TextDecoder().decode(
+      Uint8Array.from(atob(encoded), (character) => character.charCodeAt(0)),
+    );
+  }
+  return Deno.env.get("RELEASE_RUNTIME_CONFIG_JSON")?.trim() ?? "";
 }
 
 function asRecordOfRecord(value: Record<string, unknown>): Record<string, Record<string, string>> {
@@ -175,6 +297,20 @@ function numberOverride(
   return typeof value[key] === "number" ? value[key] : fallback;
 }
 
+function boundedNumberOverride(
+  value: Record<string, unknown>,
+  key: string,
+  fallback: number,
+  min: number,
+  max: number,
+): number {
+  const next = numberOverride(value, key, fallback);
+  if (!Number.isFinite(next)) {
+    return fallback;
+  }
+  return Math.max(min, Math.min(max, Math.round(next)));
+}
+
 function booleanOverride(
   value: Record<string, unknown>,
   key: string,
@@ -189,4 +325,14 @@ function stringArrayOverride(
   fallback: string[],
 ): string[] {
   return Array.isArray(value[key]) ? value[key].map(String) : fallback;
+}
+
+function featureFlagOverrides(value: Record<string, unknown>): Record<RuntimeFeatureFlag, boolean> {
+  const features = { ...DEFAULT_RUNTIME_CONFIG.features };
+  for (const flag of RUNTIME_FEATURE_FLAGS) {
+    if (typeof value[flag] === "boolean") {
+      features[flag] = value[flag];
+    }
+  }
+  return features;
 }

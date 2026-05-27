@@ -1,6 +1,7 @@
 extends Node
 
 const BackendConfigScript = preload("res://online/backend_config.gd")
+const RuntimeConfigScript = preload("res://online/runtime_config.gd")
 
 const DEFAULT_SUPABASE_URL := BackendConfigScript.DEFAULT_LOCAL_SUPABASE_URL
 const DEFAULT_PUBLISHABLE_KEY := BackendConfigScript.DEFAULT_LOCAL_PUBLISHABLE_KEY
@@ -11,6 +12,7 @@ const SAVE_TYPE_PROGRESSION_LAB := "progression_lab"
 var supabase_url := DEFAULT_SUPABASE_URL
 var publishable_key := DEFAULT_PUBLISHABLE_KEY
 var update_manifest_url := "%s/functions/v1/release/manifest" % DEFAULT_SUPABASE_URL
+var runtime_config_endpoint_url := "%s/functions/v1/release/config" % DEFAULT_SUPABASE_URL
 var backend_environment := BackendConfigScript.DEFAULT_BACKEND_ENVIRONMENT
 var backend_config_source := "defaults"
 var backend_config_errors := PackedStringArray()
@@ -34,6 +36,7 @@ func configure_backend(config: Dictionary) -> void:
 	supabase_url = str(config.get("supabase_url", "")).strip_edges().trim_suffix("/")
 	publishable_key = str(config.get("publishable_key", "")).strip_edges()
 	update_manifest_url = str(config.get("update_manifest_url", "")).strip_edges()
+	runtime_config_endpoint_url = str(config.get("runtime_config_url", "")).strip_edges()
 
 func backend_summary() -> Dictionary:
 	return {
@@ -41,6 +44,7 @@ func backend_summary() -> Dictionary:
 		"source": backend_config_source,
 		"supabase_url": supabase_url,
 		"update_manifest_url": update_manifest_url,
+		"runtime_config_url": runtime_config_endpoint_url,
 		"configured": backend_config_errors.is_empty(),
 		"errors": backend_config_errors,
 	}
@@ -60,6 +64,9 @@ func function_url(endpoint: String) -> String:
 func manifest_url() -> String:
 	return update_manifest_url
 
+func runtime_config_url() -> String:
+	return runtime_config_endpoint_url
+
 func fetch_update_manifest() -> Dictionary:
 	if update_manifest_url == "":
 		return _error("UPDATE_MANIFEST_URL_MISSING", "Update manifest URL is not configured.")
@@ -69,6 +76,20 @@ func fetch_update_manifest() -> Dictionary:
 		_manifest_headers(),
 		{}
 	)
+
+func fetch_runtime_config() -> Dictionary:
+	if runtime_config_endpoint_url == "":
+		return RuntimeConfigScript.from_fetch_result(
+			_error("RUNTIME_CONFIG_URL_MISSING", "Runtime config URL is not configured."),
+			runtime_config_endpoint_url
+		)
+	var result: Dictionary = await _send_json(
+		runtime_config_endpoint_url,
+		HTTPClient.METHOD_GET,
+		_release_headers(runtime_config_endpoint_url),
+		{}
+	)
+	return RuntimeConfigScript.from_fetch_result(result, runtime_config_endpoint_url)
 
 func sign_in_anonymously() -> Dictionary:
 	var result: Dictionary = await _send_json(
@@ -356,11 +377,14 @@ func _base_headers() -> PackedStringArray:
 	])
 
 func _manifest_headers() -> PackedStringArray:
+	return _release_headers(update_manifest_url)
+
+func _release_headers(url: String) -> PackedStringArray:
 	var headers := PackedStringArray([
 		"Accept: application/json",
 		"Content-Type: application/json",
 	])
-	if update_manifest_url.begins_with(supabase_url):
+	if url.begins_with(supabase_url):
 		headers.append("apikey: %s" % publishable_key)
 	return headers
 

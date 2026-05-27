@@ -3,6 +3,7 @@ extends GutTest
 const SessionStoreScript = preload("res://online/session_store.gd")
 const SupabaseClientScript = preload("res://online/supabase_client.gd")
 const BackendConfigScript = preload("res://online/backend_config.gd")
+const RuntimeConfigScript = preload("res://online/runtime_config.gd")
 const BattleLogPresenterScript = preload("res://ui/battle_log_presenter.gd")
 
 func test_request_id_is_uuid_v4() -> void:
@@ -187,6 +188,7 @@ func test_supabase_client_uses_local_contract_urls() -> void:
 	assert_eq(client.function_url("monetization/state"), "http://127.0.0.1:54321/functions/v1/monetization/state")
 	assert_eq(client.function_url("telemetry/client-event"), "http://127.0.0.1:54321/functions/v1/telemetry/client-event")
 	assert_eq(client.manifest_url(), "http://127.0.0.1:54321/functions/v1/release/manifest")
+	assert_eq(client.runtime_config_url(), "http://127.0.0.1:54321/functions/v1/release/config")
 	client.free()
 
 func test_backend_config_supports_internal_alpha_without_service_role() -> void:
@@ -200,9 +202,11 @@ func test_backend_config_supports_internal_alpha_without_service_role() -> void:
 	assert_eq(str(config.get("environment", "")), BackendConfigScript.ENVIRONMENT_INTERNAL_ALPHA)
 	assert_eq(str(config.get("supabase_url", "")), "https://example.supabase.co")
 	assert_eq(str(config.get("update_manifest_url", "")), "https://example.supabase.co/functions/v1/release/manifest")
+	assert_eq(str(config.get("runtime_config_url", "")), "https://example.supabase.co/functions/v1/release/config")
 	assert_true(bool(config.get("is_remote", false)))
 	assert_false(Array(BackendConfigScript.client_environment_variables()).has("SUPABASE_SERVICE_ROLE_KEY"))
 	assert_true(Array(BackendConfigScript.client_environment_variables()).has("DRAXOS_MOBILE_UPDATE_MANIFEST_URL"))
+	assert_true(Array(BackendConfigScript.client_environment_variables()).has("DRAXOS_MOBILE_RUNTIME_CONFIG_URL"))
 	assert_eq(
 		BackendConfigScript.INTERNAL_ALPHA_RUNTIME_CONFIG_PATH,
 		"res://online/internal_alpha_runtime_config.gd"
@@ -231,10 +235,74 @@ func test_supabase_client_can_use_backend_config() -> void:
 	assert_eq(client.auth_anonymous_url(), "https://example.supabase.co/auth/v1/signup")
 	assert_eq(client.function_url("account/state"), "https://example.supabase.co/functions/v1/account/state")
 	assert_eq(client.manifest_url(), "https://example.supabase.co/functions/v1/release/manifest")
+	assert_eq(client.runtime_config_url(), "https://example.supabase.co/functions/v1/release/config")
 	var summary := client.backend_summary()
 	assert_true(bool(summary.get("configured", false)))
 	assert_eq(str(summary.get("update_manifest_url", "")), "https://example.supabase.co/functions/v1/release/manifest")
+	assert_eq(str(summary.get("runtime_config_url", "")), "https://example.supabase.co/functions/v1/release/config")
 	client.free()
+
+func test_runtime_config_fallback_disables_t06_flags_conservatively() -> void:
+	var config := RuntimeConfigScript.fallback(
+		"https://example.supabase.co/functions/v1/release/config",
+		"NETWORK_UNAVAILABLE",
+		"Offline"
+	)
+	assert_eq(str(config.get("schema_version", "")), RuntimeConfigScript.SCHEMA_VERSION)
+	assert_true(RuntimeConfigScript.is_fallback(config))
+	for flag: String in RuntimeConfigScript.FEATURE_FLAGS:
+		assert_false(RuntimeConfigScript.feature_enabled(config, flag), "Fallback should disable %s" % flag)
+	var client := Dictionary(config.get("client", {}))
+	assert_true(bool(client.get("offline_fallback_allowed", false)))
+	var guardrails := Dictionary(config.get("guardrails", {}))
+	assert_true(bool(guardrails.get("read_only", false)))
+	assert_true(bool(guardrails.get("no_service_role", false)))
+	assert_false(bool(guardrails.get("mutable_gameplay_state", true)))
+
+func test_runtime_config_normalizes_only_known_feature_flags() -> void:
+	var config := RuntimeConfigScript.normalize({
+		"schema_version": "runtime_config_v1",
+		"channel": "internal_alpha",
+		"config_version": "test",
+		"features": {
+			"profile_account_panel": true,
+			"battle_history_replay": "yes",
+			"unknown_future_flag": true,
+		},
+		"client": {
+			"offline_fallback_allowed": true,
+			"config_refresh_seconds": 5,
+		},
+		"guardrails": {
+			"release_scoped": true,
+			"read_only": true,
+			"no_service_role": true,
+			"no_player_state": true,
+			"mutable_gameplay_state": false,
+		},
+	})
+	assert_false(RuntimeConfigScript.is_fallback(config))
+	assert_true(RuntimeConfigScript.feature_enabled(config, RuntimeConfigScript.FEATURE_PROFILE_ACCOUNT_PANEL))
+	assert_false(RuntimeConfigScript.feature_enabled(config, RuntimeConfigScript.FEATURE_BATTLE_HISTORY_REPLAY))
+	assert_false(Dictionary(config.get("features", {})).has("unknown_future_flag"))
+	assert_eq(int(Dictionary(config.get("client", {})).get("config_refresh_seconds", 0)), 60)
+
+func test_runtime_config_fetch_error_returns_fallback_for_session_store() -> void:
+	var result := RuntimeConfigScript.from_fetch_result({
+		"ok": false,
+		"status": 0,
+		"error": {
+			"code": "NETWORK_UNAVAILABLE",
+			"message": "Runtime config offline.",
+		},
+	}, "https://example.supabase.co/functions/v1/release/config")
+	assert_false(bool(result.get("ok", true)))
+	assert_true(bool(result.get("fallback", false)))
+	var store = SessionStoreScript.new()
+	assert_true(store.apply_runtime_config(Dictionary(result.get("runtime_config", {}))))
+	assert_true(store.runtime_config_is_fallback())
+	assert_false(store.runtime_feature_enabled(RuntimeConfigScript.FEATURE_BASE_ROUTINE_PANEL))
+	store.free()
 
 func test_supabase_client_normalizes_save_context_header_state() -> void:
 	var client = SupabaseClientScript.new()

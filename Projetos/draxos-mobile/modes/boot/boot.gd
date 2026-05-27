@@ -79,6 +79,7 @@ func _ready() -> void:
 		SessionStore.save_cache()
 	_show_screen(SCREEN_HUB, false)
 	_sync_status_from_session()
+	call_deferred("_check_runtime_config")
 	call_deferred("_check_update_manifest")
 	if SessionStore.has_valid_access_token() and not SessionStore.is_progression_lab_local_only():
 		call_deferred("_recover_session_state")
@@ -515,6 +516,13 @@ func _execute_action(action_id: String) -> void:
 			payload["error_text"] = _error_label.text
 		_emit_client_event(event_type, payload)
 	_active_action_id = ""
+
+func _check_runtime_config() -> void:
+	var config_result: Dictionary = await SupabaseClient.fetch_runtime_config()
+	var config_payload := _as_dictionary(config_result.get("runtime_config", {}))
+	if config_payload.is_empty():
+		config_payload = _as_dictionary(config_result.get("body", {}))
+	SessionStore.apply_runtime_config(config_payload)
 
 func _check_update_manifest(manual: bool = false) -> void:
 	if manual:

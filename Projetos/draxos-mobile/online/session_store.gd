@@ -2,6 +2,8 @@ extends Node
 
 signal session_changed
 
+const RuntimeConfigScript = preload("res://online/runtime_config.gd")
+
 const CACHE_VERSION := 1
 const CACHE_PATH := "user://session_cache.json"
 const DEFAULT_INVITE_CODE := "ALPHA-TEST"
@@ -32,7 +34,11 @@ var last_battle_id: Variant = null
 var last_battle_log: Dictionary = {}
 var last_battle_rewards: Dictionary = {}
 var last_error: Dictionary = {}
+var runtime_config: Dictionary = {}
 var offline := false
+
+func _init() -> void:
+	runtime_config = RuntimeConfigScript.fallback()
 
 func load_cache() -> bool:
 	if not FileAccess.file_exists(CACHE_PATH):
@@ -375,6 +381,11 @@ func apply_monetization_result(payload: Dictionary) -> bool:
 	session_changed.emit()
 	return true
 
+func apply_runtime_config(config: Dictionary) -> bool:
+	runtime_config = RuntimeConfigScript.normalize(config)
+	session_changed.emit()
+	return true
+
 func mark_offline(error_payload: Dictionary) -> void:
 	offline = true
 	last_error = error_payload.duplicate(true)
@@ -409,6 +420,12 @@ func is_progression_lab_active() -> bool:
 
 func is_registered_session() -> bool:
 	return auth_method == "email"
+
+func runtime_feature_enabled(feature_id: String) -> bool:
+	return RuntimeConfigScript.feature_enabled(runtime_config, feature_id)
+
+func runtime_config_is_fallback() -> bool:
+	return RuntimeConfigScript.is_fallback(runtime_config)
 
 func active_save_label() -> String:
 	if active_save_type == SAVE_TYPE_PROGRESSION_LAB:

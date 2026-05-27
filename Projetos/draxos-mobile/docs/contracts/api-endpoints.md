@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
 - Ultima atualizacao: `2026-05-27`
-- Status: contrato com `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*` e `release/*` implementados local/remoto; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`; Track 03 implementou email/senha via `/account/bootstrap`, selecao de save via `x-draxos-save-type`, reset separado por save, aplicacao server-backed do Progression Lab no save `progression_lab`, Base/Social/Competicao/Loja jogaveis, leaderboard alpha com pontos por batalha normal e manifest/version gate de updates internos
+- Status: contrato com `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*` e `release/*` implementados local/remoto; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`; Track 03 implementou email/senha via `/account/bootstrap`, selecao de save via `x-draxos-save-type`, reset separado por save, aplicacao server-backed do Progression Lab no save `progression_lab`, Base/Social/Competicao/Loja jogaveis, leaderboard alpha com pontos por batalha normal e manifest/version gate de updates internos; Track 06 adicionou `GET /release/config` com `runtime_config_v1` release-scoped e read-only para flags conservadoras de features
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -58,6 +58,7 @@ novo.
 |---|---|---|---|---|---|
 | GET | `/healthcheck` | `release` | Nao | Nao | Healthcheck operacional local/remoto; nao le gameplay. |
 | GET | `/release/manifest` | `release` | Nao | Nao | Manifest publico de update/version gate. |
+| GET | `/release/config` | `release` | Nao | Nao | Runtime config publico read-only com flags T06; nao le secrets, gameplay state nem tuning. |
 | POST | `/account/bootstrap` | `save-scoped` | Sim | `request_id` por save | Cria/recupera o save `normal` ou `progression_lab` de conta registrada; o gate de convite e account-aware. |
 | POST | `/account/guest` | `save-scoped` | Sim | `request_id` por save | Fallback dev/local anonimo; cria/recupera o save selecionado. |
 | GET | `/account/state` | `save-scoped` | Sim | Nao | Retorna snapshot do save ativo. |
@@ -148,6 +149,58 @@ Regras do cliente:
 - `requires_save_reset` apenas avisa; reset destrutivo continua manual e documentado.
 
 Contrato detalhado: `update-manifest.md`.
+
+### `GET /release/config`
+
+Retorna a runtime config publica do cliente para flags de instalacao da Track 06.
+
+Status: **implementado em T06-C**.
+
+Scope: `release`.
+
+Auth: nao exige JWT. Pode receber `apikey` publica quando chamado pelo cliente Godot ou smokes.
+
+Save header: nao usa `x-draxos-save-type`.
+
+Idempotencia: nao se aplica; endpoint e read-only e nao muta estado remoto.
+
+Response:
+
+```json
+{
+  "schema_version": "runtime_config_v1",
+  "channel": "internal_alpha",
+  "config_version": "t06-c-safe-defaults",
+  "generated_at": "2026-05-27T00:00:00Z",
+  "features": {
+    "profile_account_panel": false,
+    "battle_history_replay": false,
+    "base_routine_panel": false,
+    "social_qol_readability": false,
+    "asset_pack_01_safe": false
+  },
+  "client": {
+    "offline_fallback_allowed": true,
+    "config_refresh_seconds": 900
+  },
+  "guardrails": {
+    "release_scoped": true,
+    "read_only": true,
+    "no_service_role": true,
+    "no_secrets": true,
+    "no_player_state": true,
+    "no_gameplay_tuning": true,
+    "mutable_gameplay_state": false
+  }
+}
+```
+
+Regras:
+
+- O payload deve conter apenas configuracao release-scoped e flags conhecidas.
+- O payload nao contem service role, secrets, JWT, player/save state, recursos, builds, battle logs, ranking ou parametros de tuning.
+- Overrides operacionais podem alterar apenas campos allowlisted pelo service; flags desconhecidas sao ignoradas.
+- O cliente deve tolerar indisponibilidade usando fallback conservador: todas as flags T06 ficam `false`, `offline_fallback_allowed` fica `true` e nenhuma acao online e destravada por config ausente.
 
 ## Endpoints De Conta
 

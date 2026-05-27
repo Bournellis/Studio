@@ -27,6 +27,7 @@ npx -y deno run --allow-net --allow-env server/tests/reset_save_context_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/progression_lab_apply_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/email_auth_alpha_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/release_manifest_smoke.ts
+npx -y deno run --allow-net --allow-env server/tests/runtime_config_smoke.ts
 ```
 
 O smoke cria uma sessao anonima, cria conta guest, solicita batalha `MVP_ONLY`,
@@ -76,6 +77,10 @@ posterior na mesma conta.
 O smoke `release_manifest_smoke.ts` valida `GET /release/manifest`: schema do
 manifest de update, canal `internal_alpha`, versao/code atuais e metadados de
 artefatos Android/PC/Web.
+
+O smoke `runtime_config_smoke.ts` valida `GET /release/config`: schema
+`runtime_config_v1`, flags booleanas da Track 06, fallback offline permitido e
+guardrails contra service role, secrets, estado de jogador e tuning de gameplay.
 
 O smoke `release_artifacts_remote_smoke.ts` valida somente leitura contra o
 remoto publicado: manifest, hashes Android/PC no payload, alcance do APK/ZIP

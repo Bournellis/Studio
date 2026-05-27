@@ -13,14 +13,17 @@ const SETTING_BACKEND_ENVIRONMENT := "draxos_mobile/backend/environment"
 const SETTING_SUPABASE_URL := "draxos_mobile/supabase/url"
 const SETTING_SUPABASE_PUBLISHABLE_KEY := "draxos_mobile/supabase/publishable_key"
 const SETTING_UPDATE_MANIFEST_URL := "draxos_mobile/update/manifest_url"
+const SETTING_RUNTIME_CONFIG_URL := "draxos_mobile/release/runtime_config_url"
 const SETTING_INTERNAL_ALPHA_SUPABASE_URL := "draxos_mobile/internal_alpha/supabase_url"
 const SETTING_INTERNAL_ALPHA_PUBLISHABLE_KEY := "draxos_mobile/internal_alpha/publishable_key"
 const SETTING_INTERNAL_ALPHA_UPDATE_MANIFEST_URL := "draxos_mobile/internal_alpha/update_manifest_url"
+const SETTING_INTERNAL_ALPHA_RUNTIME_CONFIG_URL := "draxos_mobile/internal_alpha/runtime_config_url"
 
 const ENV_BACKEND_ENVIRONMENT := "DRAXOS_MOBILE_BACKEND_ENV"
 const ENV_SUPABASE_URL := "DRAXOS_MOBILE_SUPABASE_URL"
 const ENV_SUPABASE_PUBLISHABLE_KEY := "DRAXOS_MOBILE_SUPABASE_PUBLISHABLE_KEY"
 const ENV_UPDATE_MANIFEST_URL := "DRAXOS_MOBILE_UPDATE_MANIFEST_URL"
+const ENV_RUNTIME_CONFIG_URL := "DRAXOS_MOBILE_RUNTIME_CONFIG_URL"
 
 const ERROR_SUPABASE_URL_MISSING := "SUPABASE_URL_MISSING"
 const ERROR_SUPABASE_URL_INVALID := "SUPABASE_URL_INVALID"
@@ -40,33 +43,40 @@ static func load_from_project_settings() -> Dictionary:
 	var url := ""
 	var key := ""
 	var manifest_url := ""
+	var runtime_config_url := ""
 	match normalized_environment:
 		ENVIRONMENT_LOCAL:
 			url = _setting_string(SETTING_SUPABASE_URL, DEFAULT_LOCAL_SUPABASE_URL)
 			key = _setting_string(SETTING_SUPABASE_PUBLISHABLE_KEY, DEFAULT_LOCAL_PUBLISHABLE_KEY)
 			manifest_url = _setting_string(SETTING_UPDATE_MANIFEST_URL, "")
+			runtime_config_url = _setting_string(SETTING_RUNTIME_CONFIG_URL, "")
 		ENVIRONMENT_INTERNAL_ALPHA:
 			url = _setting_string(SETTING_INTERNAL_ALPHA_SUPABASE_URL, "")
 			key = _setting_string(SETTING_INTERNAL_ALPHA_PUBLISHABLE_KEY, "")
 			manifest_url = _setting_string(SETTING_INTERNAL_ALPHA_UPDATE_MANIFEST_URL, "")
+			runtime_config_url = _setting_string(SETTING_INTERNAL_ALPHA_RUNTIME_CONFIG_URL, "")
 			url = str(runtime_config.get("supabase_url", url))
 			key = str(runtime_config.get("publishable_key", key))
 			manifest_url = str(runtime_config.get("update_manifest_url", manifest_url))
+			runtime_config_url = str(runtime_config.get("runtime_config_url", runtime_config_url))
 		_:
 			url = _setting_string(SETTING_SUPABASE_URL, "")
 			key = _setting_string(SETTING_SUPABASE_PUBLISHABLE_KEY, "")
 			manifest_url = _setting_string(SETTING_UPDATE_MANIFEST_URL, "")
+			runtime_config_url = _setting_string(SETTING_RUNTIME_CONFIG_URL, "")
 
 	url = _env_string(ENV_SUPABASE_URL, url)
 	key = _env_string(ENV_SUPABASE_PUBLISHABLE_KEY, key)
 	manifest_url = _env_string(ENV_UPDATE_MANIFEST_URL, manifest_url)
-	return config_from_values(normalized_environment, url, key, "project_settings+env", manifest_url)
+	runtime_config_url = _env_string(ENV_RUNTIME_CONFIG_URL, runtime_config_url)
+	return config_from_values(normalized_environment, url, key, "project_settings+env", manifest_url, runtime_config_url)
 
-static func config_from_values(environment: String, url: String, key: String, source: String = "manual", manifest_url: String = "") -> Dictionary:
+static func config_from_values(environment: String, url: String, key: String, source: String = "manual", manifest_url: String = "", runtime_config_url: String = "") -> Dictionary:
 	var normalized_environment := normalize_environment(environment)
 	var normalized_url := normalize_url(url)
 	var normalized_key := key.strip_edges()
 	var normalized_manifest_url := normalize_update_manifest_url(manifest_url, normalized_url)
+	var normalized_runtime_config_url := normalize_runtime_config_url(runtime_config_url, normalized_url)
 	var errors := validate_client_config(normalized_url, normalized_key)
 	return {
 		"ok": errors.is_empty(),
@@ -74,6 +84,7 @@ static func config_from_values(environment: String, url: String, key: String, so
 		"supabase_url": normalized_url,
 		"publishable_key": normalized_key,
 		"update_manifest_url": normalized_manifest_url,
+		"runtime_config_url": normalized_runtime_config_url,
 		"source": source,
 		"errors": errors,
 		"is_remote": normalized_environment != ENVIRONMENT_LOCAL,
@@ -92,6 +103,12 @@ static func normalize_update_manifest_url(manifest_url: String, supabase_url: St
 	var normalized := manifest_url.strip_edges()
 	if normalized == "" and supabase_url.strip_edges() != "":
 		normalized = "%s/functions/v1/release/manifest" % supabase_url.strip_edges().trim_suffix("/")
+	return normalized
+
+static func normalize_runtime_config_url(runtime_config_url: String, supabase_url: String) -> String:
+	var normalized := runtime_config_url.strip_edges()
+	if normalized == "" and supabase_url.strip_edges() != "":
+		normalized = "%s/functions/v1/release/config" % supabase_url.strip_edges().trim_suffix("/")
 	return normalized
 
 static func validate_client_config(url: String, key: String) -> PackedStringArray:
@@ -113,6 +130,7 @@ static func client_environment_variables() -> PackedStringArray:
 		ENV_SUPABASE_URL,
 		ENV_SUPABASE_PUBLISHABLE_KEY,
 		ENV_UPDATE_MANIFEST_URL,
+		ENV_RUNTIME_CONFIG_URL,
 	])
 
 static func _setting_string(key: String, fallback: String) -> String:
