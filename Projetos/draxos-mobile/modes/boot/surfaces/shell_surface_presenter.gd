@@ -12,6 +12,7 @@ static func render(host: Control) -> void:
 	host.add_child(background)
 
 	var root := VBoxContainer.new()
+	root.name = "AppShellChromeRoot"
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	root.offset_left = 8 if compact else 16
 	root.offset_top = 8 if compact else 12
@@ -19,6 +20,7 @@ static func render(host: Control) -> void:
 	root.offset_bottom = -8 if compact else -12
 	root.add_theme_constant_override("separation", 6 if compact else 10)
 	host.add_child(root)
+	host.set("_app_chrome_root", root)
 
 	_render_header(host, root, compact)
 	_render_content_shell(host, root, compact)

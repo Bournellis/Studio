@@ -67,6 +67,7 @@ var _social_chat_input: LineEdit
 var _battle_visual: Control
 var _battle_fullscreen_overlay: Control
 var _confirm_dialog: ConfirmationDialog
+var _app_chrome_root: Control
 
 var _action_buttons: Dictionary = {}
 var _nav_buttons: Dictionary = {}
@@ -124,8 +125,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		_close_progression_lab_overlay()
 		return
 	if _replay_running:
-		_skip_replay = true
-		_show_notice("Replay pulando para o resumo final...")
+		_skip_current_replay()
 		return
 	if _current_screen != SCREEN_HUB:
 		_go_back()
@@ -210,7 +210,8 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	if _content_scroll != null:
 		_content_scroll.scroll_vertical = 0
 	_content_title.text = _screen_title(screen_id)
-	_back_button.visible = _route_supports_back(screen_id)
+	_back_button.visible = _route_shows_app_chrome(screen_id) and _route_supports_back(screen_id)
+	_sync_app_chrome_for_route(screen_id)
 	_sync_nav_buttons()
 
 	match screen_id:
@@ -256,6 +257,13 @@ func _route_supports_back(route_id: String) -> bool:
 
 func _route_prefers_landscape(route_id: String) -> bool:
 	return AppShellRouteContractScript.prefers_landscape(route_id)
+
+func _route_shows_app_chrome(route_id: String) -> bool:
+	return AppShellRouteContractScript.shows_app_chrome(route_id)
+
+func _sync_app_chrome_for_route(route_id: String) -> void:
+	if _app_chrome_root != null and is_instance_valid(_app_chrome_root):
+		_app_chrome_root.visible = _route_shows_app_chrome(route_id)
 
 func _apply_orientation_for_route(route_id: String) -> void:
 	if OS.get_name() != "Android":
@@ -1541,7 +1549,7 @@ func _sync_buttons() -> void:
 		_back_button.disabled = _is_busy or _replay_running
 
 func _action_allowed_during_replay(action_id: String) -> bool:
-	return action_id in [ACTION_SKIP_REPLAY, "show_latest_battle"]
+	return AppShellRouteContractScript.is_safe_replay_action(action_id)
 
 func _update_status_text() -> String:
 	return HubAccountSurfacePresenterScript.update_status_text(self)
@@ -1553,7 +1561,7 @@ func _refresh_update_output_label() -> void:
 func _update_gate_blocks_action(action_id: String) -> bool:
 	if not bool(_update_gate.get("block_online", false)):
 		return false
-	if _replay_running and action_id == "show_latest_battle":
+	if _replay_running and AppShellRouteContractScript.is_safe_replay_action(action_id):
 		return false
 	if action_id in [
 		ACTION_SKIP_REPLAY,
@@ -2434,7 +2442,7 @@ func _play_battle_log(battle_log: Dictionary, rewards: Dictionary) -> void:
 		"events": events.size(),
 		"skipped": skipped,
 	})
-	_show_screen(ROUTE_BATTLE_SUMMARY, false)
+	_show_screen(AppShellRouteContractScript.summary_route_for(ROUTE_BATTLE_RUNNING), false)
 	_set_busy(false, "Replay concluido.")
 	_sync_buttons()
 

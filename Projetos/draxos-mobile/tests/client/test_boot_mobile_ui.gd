@@ -159,6 +159,27 @@ func test_boot_battle_running_route_declares_landscape() -> void:
 	assert_true(AppShellRouteContractScript.prefers_landscape("battle_running"))
 	assert_false(AppShellRouteContractScript.prefers_landscape("battle_summary"))
 
+func test_app_shell_route_contract_declares_battle_gameplay_mode() -> void:
+	assert_true(AppShellRouteContractScript.is_battle_mode("battle"))
+	assert_true(AppShellRouteContractScript.is_battle_mode("battle_running"))
+	assert_true(AppShellRouteContractScript.is_battle_mode("battle_summary"))
+	assert_false(AppShellRouteContractScript.is_battle_mode("base"))
+	assert_false(AppShellRouteContractScript.is_fullscreen_gameplay("battle"))
+	assert_true(AppShellRouteContractScript.is_fullscreen_gameplay("battle_running"))
+	assert_true(AppShellRouteContractScript.is_fullscreen_gameplay("battle_summary"))
+	assert_true(AppShellRouteContractScript.shows_app_chrome("battle"))
+	assert_false(AppShellRouteContractScript.shows_app_chrome("battle_running"))
+	assert_false(AppShellRouteContractScript.shows_app_chrome("battle_summary"))
+	assert_eq(AppShellRouteContractScript.summary_route_for("battle_running"), "battle_summary")
+	assert_eq(AppShellRouteContractScript.summary_route_for("battle"), "battle_summary")
+	assert_eq(AppShellRouteContractScript.summary_route_for("base"), "base")
+	assert_true(AppShellRouteContractScript.is_safe_replay_action("skip_battle_replay"))
+	assert_false(AppShellRouteContractScript.is_safe_replay_action("show_latest_battle"))
+	assert_true(AppShellRouteContractScript.is_read_only_battle_action("show_battle_history"))
+	assert_true(AppShellRouteContractScript.is_read_only_battle_action("battle_replay:11111111-1111-4111-8111-111111111111"))
+	assert_true(AppShellRouteContractScript.is_read_only_battle_action("replay_latest_battle"))
+	assert_false(AppShellRouteContractScript.is_read_only_battle_action("request_battle"))
+
 func test_internal_app_screen_layout_uses_portrait_single_column_and_landscape_columns() -> void:
 	assert_eq(BootScreenScript.surface_columns_for_size(Vector2(540, 960), 2), 1)
 	assert_eq(BootScreenScript.surface_columns_for_size(Vector2(1180, 720), 2), 2)
@@ -512,6 +533,9 @@ func test_boot_battle_running_renders_fullscreen_overlay_and_skip() -> void:
 	assert_eq(boot._current_screen, "battle_running")
 	assert_not_null(boot._battle_fullscreen_overlay)
 	assert_eq(boot.get_child(boot.get_child_count() - 1), boot._battle_fullscreen_overlay)
+	assert_false(boot._app_chrome_root.visible)
+	assert_false(boot._back_button.visible)
+	assert_false(boot._route_shows_app_chrome("battle_running"))
 	assert_not_null(boot._battle_visual)
 	assert_not_null(boot._timeline_label)
 	assert_true(boot._action_buttons.has("skip_battle_replay"))
@@ -542,6 +566,8 @@ func test_boot_battle_summary_renders_fullscreen_stats_resources_and_actions() -
 
 	assert_eq(boot._current_screen, "battle_summary")
 	assert_not_null(boot._battle_fullscreen_overlay)
+	assert_false(boot._app_chrome_root.visible)
+	assert_false(boot._back_button.visible)
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Resumo da batalha - replay pulado"))
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Vencedor"))
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Vitoria"))
@@ -555,6 +581,9 @@ func test_boot_battle_summary_renders_fullscreen_stats_resources_and_actions() -
 	assert_true(boot._action_buttons.has("return_refuge"))
 	assert_true(boot._action_buttons.has("replay_latest_battle"))
 	assert_true(boot._action_buttons.has("show_battle_history"))
+	assert_false(boot._action_buttons.has("request_battle"))
+	assert_true(AppShellRouteContractScript.is_read_only_battle_action("replay_latest_battle"))
+	assert_true(AppShellRouteContractScript.is_read_only_battle_action("show_battle_history"))
 
 func test_boot_battle_summary_return_to_refuge_clears_lifecycle_state() -> void:
 	var boot = BootScreenScript.new()
@@ -583,6 +612,7 @@ func test_boot_battle_summary_return_to_refuge_clears_lifecycle_state() -> void:
 	assert_false(boot._skip_replay)
 	assert_false(boot._battle_summary_skipped)
 	assert_null(boot._battle_fullscreen_overlay)
+	assert_true(boot._app_chrome_root.visible)
 
 func test_boot_play_battle_log_finishes_on_summary_route() -> void:
 	var boot = BootScreenScript.new()

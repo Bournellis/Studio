@@ -3,8 +3,8 @@
 - Last Updated: `2026-05-27`
 - Status: `ACTIVE_FOUNDATION_HARDENING`
 - Depends On: `T07_INTEGRATED_PRESENTATION_READY`
-- Current Stage: `T08_B_T08_C_T08_D_T08_F_COMPLETE`
-- Next Action: continue integrating T08-E, then create T08-G validation harness and close T08-H.
+- Current Stage: `T08_B_TO_T08_F_COMPLETE`
+- Next Action: create T08-G validation harness and close T08-H.
 
 ## Estado
 
@@ -18,6 +18,8 @@ T08-C Session/Save Boundary is complete in `codex/draxos-mobile/t08-session-save
 
 T08-D Mobile UI Contract is complete in `codex/draxos-mobile/t08-mobile-ui-contract`. It adds `DraxosMobileUiContract` as the small shared contract for minimum touch target, touch-scroll drag threshold, scrollbar/touch policy and portrait/landscape layout columns. `DraxosTouchScrollContainer`, `boot.gd` and existing shell/base buttons now reuse the helper without redesign, new assets, backend/schema changes or gameplay changes.
 
+T08-E Battle Mode Contract is complete in `codex/draxos-mobile/t08-battle-mode-contract`. It extended `DraxosAppShellRouteContract` with explicit battle gameplay-mode rules, hides app chrome for fullscreen `battle_running`/`battle_summary`, keeps skip as the only replay-safe action, forces completed replays through the summary route, and covers read-only history/replay actions plus return to Refugio in GUT. Guardrails preserved: no simulator, `battle_log_v1`, reward, ranking or `battle/*` endpoint changes.
+
 T08-F Service/Asset Contract Checks is complete in `codex/draxos-mobile/t08-service-asset-contracts`. It adds a no-network Deno test for `docs/contracts/api-endpoints.md` endpoint matrix scopes and Track 06 feature card completeness, plus focused GUT coverage that keeps optional `AssetIds` missing-art fallback stable apart from installed Asset Pack 01 ids. No endpoint, schema, migration, service or final asset was added.
 
 ## Ordem Atual
@@ -26,7 +28,7 @@ T08-F Service/Asset Contract Checks is complete in `codex/draxos-mobile/t08-serv
 2. `T08-B` App Shell Lifecycle: complete; route/back/orientation contract helper and tests delivered.
 3. `T08-C` Session/Save Boundary: complete; session/save/cache/runtime config invariants and diagnostics delivered.
 4. `T08-D` Mobile UI Contract: complete; centralized touch/scroll/button/layout rules and covered them in GUT plus mobile presentation smoke.
-5. `T08-E` Battle Mode Contract: pending after T08-B.
+5. `T08-E` Battle Mode Contract: complete; fullscreen battle/replay contract and tests delivered.
 6. `T08-F` Service/Asset Contract Checks: complete; endpoint matrix, feature registry and asset fallback checks delivered.
 7. `T08-G` Validation Harness: pending after T08-B to T08-F.
 8. `T08-H` Integracao: pending after T08-B to T08-G.
@@ -78,6 +80,13 @@ Latest T08-B validation:
 
 - `tools/validate.gd`: passed.
 - GUT client complete: passed, `88/88` tests and `1003` asserts.
+- `git diff --check`: passed.
+
+Latest T08-E validation:
+
+- `tools/smoke_battle_replay.gd`: default local Edge Runtime returned `NOT_FOUND` for `/battle/history`; passed after serving the current worktree `battle` function on `http://127.0.0.1:8000` and setting `BATTLE_FUNCTION_URL=http://127.0.0.1:8000`.
+- GUT client complete: passed, `89/89` tests and `1031` asserts.
+- `tools/validate.gd`: passed, including GUT `89/89` tests and `1031` asserts.
 - `git diff --check`: passed.
 
 Backend/docs packages:
