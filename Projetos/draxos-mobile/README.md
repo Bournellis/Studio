@@ -4,7 +4,7 @@ Jogo mobile multi-plataforma de PVP assincrono com base manager, progressao de p
 
 **Nao confundir com:** `draxos-roguelike-cardgame` - projeto Steam separado.
 
-Status: `P2_IMPLEMENTACAO - internal alpha v0 published unlisted`
+Status: `P2_IMPLEMENTACAO - internal alpha v0 downloads green; Portal/Web static host pending`
 
 ---
 
@@ -13,7 +13,7 @@ Status: `P2_IMPLEMENTACAO - internal alpha v0 published unlisted`
 - Track 00 completa: Godot client, Supabase local, auth guest, batalha server-authoritative, Base, Social/Competicao, Monetizacao, pipeline de conteudo, exports e testes.
 - Track 01 completa: hardening do alpha PC local, telemetria client nao autoritativa, reset seguro de sessao local, smokes de loop alpha e checklist de playtest.
 - Track 02 com tooling v1 implementado: Progression Lab gera 25 estados saudaveis, saves Supabase locais, bot pool, recomendacoes de poder, matriz no Battle Lab e fluxo manual de teste no Godot para as primeiras 2h-20h.
-- Track 03 com design lock, T03-P02 repo-ready, T03-P11 local QA completo, T03-P12 release prep completo, T03-P13 remoto bootstrap completo, T03-P14 auth email/senha completo, T03-P15 manifest/version gate completo, T03-P16 exports locais completos e T03-P17 publicacao unlisted automatizada verde: Internal Alpha v0 documentada para email/senha, dois saves por conta, Supabase remoto Free, plano de saida para Backend Proprio + Postgres, Progression Lab isolado, Base/Social/Competicao/Loja jogaveis, leaderboard sem bots, redeems diarios em Diamante, Batalha com polish visual pequeno, manifest de updates e playtest fechado Fabio + 1 amigo. O cliente ja possui `BackendConfig`, ambiente `internal_alpha_v0`, env vars seguras, smoke remoto, save ativo `normal`/`progression_lab`, cache/HUD de save, `save_type` server-side em todos os endpoints alpha, reset separado por save, aplicacao server-backed de perfis do Progression Lab no save Lab, Base Manager jogavel, Social basico jogavel, Competicao com pontos/top 10/self rank, Loja proof-of-concept com redeems diarios de Diamante, Battle Pass, fila dupla aplicada na Base e pacotes por Diamante, readout compacto/HP percentual/tooltips melhores na Batalha e QA automatizado local verde apos reset completo. Supabase remoto `armxgipvnbbshzqawklw` esta linkado, migrado, com functions publicadas, Auth email/senha sem confirmacao obrigatoria, manifest remoto publicado, Storage unlisted publicado e smokes remotos verdes para email/senha, saves, manifest, batalha, base, loja, social, competicao e telemetria. A proxima etapa e signoff manual Fabio + 1 tester antes de `T03-P18`.
+- Track 03 com design lock, T03-P02 repo-ready, T03-P11 local QA completo, T03-P12 release prep completo, T03-P13 remoto bootstrap completo, T03-P14 auth email/senha completo, T03-P15 manifest/version gate completo, T03-P16 exports locais completos e T03-P17 verde para backend/downloads: Internal Alpha v0 documentada para email/senha, dois saves por conta, Supabase remoto Free, plano de saida para Backend Proprio + Postgres, Progression Lab isolado, Base/Social/Competicao/Loja jogaveis, leaderboard sem bots, redeems diarios em Diamante, Batalha com polish visual pequeno, manifest de updates e playtest fechado Fabio + 1 amigo. O cliente ja possui `BackendConfig`, ambiente `internal_alpha_v0`, env vars seguras, smoke remoto, save ativo `normal`/`progression_lab`, cache/HUD de save, `save_type` server-side em todos os endpoints alpha, reset separado por save, aplicacao server-backed de perfis do Progression Lab no save Lab, Base Manager jogavel, Social basico jogavel, Competicao com pontos/top 10/self rank, Loja proof-of-concept com redeems diarios de Diamante, Battle Pass, fila dupla aplicada na Base e pacotes por Diamante, readout compacto/HP percentual/tooltips melhores na Batalha e QA automatizado local verde apos reset completo. Supabase remoto `armxgipvnbbshzqawklw` esta linkado, migrado, com functions publicadas, Auth email/senha sem confirmacao obrigatoria, manifest remoto publicado, Storage unlisted publicado para APK/PC ZIP e smokes remotos verdes para email/senha, saves, manifest, batalha, base, loja, social, competicao e telemetria. Portal/Web aguardam host estatico externo porque Supabase nao serve HTML como pagina.
 - Rework de personagem 2026-05-25 implementado em docs, catalogo e simulador: armas viraram Instrumentos Rituais, passivas viraram Doutrinas, pets viraram Familiares, Mental e familia de status, e as fontes vivas sao Arcano/Fisico/Fogo/Agua/Gelo/Terra/Vento/Raio/Veneno/Sangue/Morte.
 - Battle Lab offline + dev-only no Godot implementado: `tools/battle_lab/` gera HTML/CSV/JSON/replays em `docs/battle-lab/generated/`, arquiva runs oficiais em `docs/battle-lab/runs/`, compara deltas, marca compatibilidade/stale e pode ser aberto no editor pelo Refugio para montar builds e assistir replays debug 2D; exports excluem a ferramenta. A rodada atual mede o rework de personagem e preserva o baseline 2026-05-21 apenas como historico pre-rework.
 - Supabase runtime local configurado em `supabase/`: Docker Desktop, `npx supabase`, `npx deno`, migrations MVP/base/social/ranking/monetizacao/auth alpha, Auth email/senha e anonimo dev, healthcheck e Edge Functions `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*` e `progression-lab/*`.
@@ -50,7 +50,7 @@ Status: `P2_IMPLEMENTACAO - internal alpha v0 published unlisted`
 
 | Objetivo | Status |
 |---|---|
-| Build fechada Internal Alpha v0 com conta email/senha, dois saves, backend remoto, updates e features principais funcionais | T03-P17 publicacao unlisted e QA automatizado remoto verdes; falta signoff manual Fabio + tester antes do handoff |
+| Build fechada Internal Alpha v0 com conta email/senha, dois saves, backend remoto, updates e features principais funcionais | T03-P17 backend/downloads e QA automatizado remoto verdes; falta host estatico para Portal/Web e signoff manual Fabio + tester |
 
 ---
 
@@ -144,7 +144,8 @@ draxos-mobile/
 5. `docs/internal-alpha-v0.md`
 6. `docs/internal-alpha-remote-setup.md`
 7. `docs/internal-alpha-release-plan.md`
-8. `docs/internal-alpha-v0-export-report.md`
-9. `docs/supabase-remote-tutorial.md`
-10. `docs/internal-alpha-v0-design-lock.md`
-11. `docs/design-pending.md`
+8. `docs/internal-alpha-static-hosting.md`
+9. `docs/internal-alpha-v0-export-report.md`
+10. `docs/supabase-remote-tutorial.md`
+11. `docs/internal-alpha-v0-design-lock.md`
+12. `docs/design-pending.md`

@@ -59,7 +59,7 @@ Fabio vai trabalhar somente no Godot/local ate o jogo estar implementado o basta
 
 Durante a fase local-first, `T03-P02` permaneceu repo-ready: a configuracao segura existe e agora volta a ser a proxima trilha de release.
 
-Atualizacao de 2026-05-27: o projeto Supabase remoto (`armxgipvnbbshzqawklw`, `https://armxgipvnbbshzqawklw.supabase.co`) foi linkado pela CLI, recebeu migrations/functions, config de Auth email/senha sem confirmacao obrigatoria, passou em smokes remotos de healthcheck/Auth/email+saves, recebeu `GET /release/manifest` com smoke remoto verde, exportou builds locais Android/PC/Web em `T03-P16` e publicou portal/Web/APK/PC ZIP em Storage unlisted em `T03-P17`. Proxima etapa: signoff manual Fabio + tester e depois `T03-P18`.
+Atualizacao de 2026-05-27: o projeto Supabase remoto (`armxgipvnbbshzqawklw`, `https://armxgipvnbbshzqawklw.supabase.co`) foi linkado pela CLI, recebeu migrations/functions, config de Auth email/senha sem confirmacao obrigatoria, passou em smokes remotos de healthcheck/Auth/email+saves, recebeu `GET /release/manifest` com smoke remoto verde, exportou builds locais Android/PC/Web em `T03-P16` e publicou APK/PC ZIP em Storage unlisted em `T03-P17`. Correcao pos-publicacao: Portal/Web precisam de host estatico externo porque Supabase Storage/Edge Functions nao servem HTML como pagina. Proxima etapa: escolher/publicar esse host e depois seguir signoff Fabio + tester e `T03-P18`.
 
 ### T03-P03 - Conta Email/Senha E Dois Saves
 
@@ -260,7 +260,7 @@ Implementado em modo local-first:
 
 Lacunas intencionais:
 
-- Builds exportadas foram fechadas em `T03-P16`; publicacao unlisted e QA remoto automatizado foram fechados em `T03-P17`; signoff manual e handoff seguem encaminhados para `T03-P17`/`T03-P18`.
+- Builds exportadas foram fechadas em `T03-P16`; backend/downloads e QA remoto automatizado foram fechados em `T03-P17`; Portal/Web aguardam host estatico externo antes do signoff manual e handoff.
 
 ### T03-P12 - Release Plan, Portal Base E Tutorial Remoto
 
@@ -354,9 +354,9 @@ Status: `COMPLETE`.
 
 ### T03-P17 - Remote QA Fechado
 
-Status: `PUBLICATION_GREEN - AUTOMATED_REMOTE_QA_GREEN - MANUAL_SIGNOFF_PENDING`.
+Status: `DOWNLOADS_GREEN - AUTOMATED_REMOTE_QA_GREEN - PORTAL_WEB_STATIC_HOST_PENDING`.
 
-- Publicar portal/Web/APK/PC em links unlisted.
+- Publicar APK/PC em links unlisted e Portal/Web em host estatico externo.
 - Rodar smoke remoto automatizado.
 - Rodar checklist manual com duas contas reais.
 - Validar save comum entre plataformas.

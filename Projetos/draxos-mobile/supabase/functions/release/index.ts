@@ -9,31 +9,35 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
   minimum_supported_version_code: 1,
   released_at: "2026-05-27T00:00:00Z",
   requires_save_reset: false,
-  portal_url: "PORTAL_URL_PENDING_T03_P17",
+  portal_url: "",
   notes: [
     "Primeira release candidate interna.",
-    "APK Android, PC ZIP e Web compartilham o mesmo backend remoto.",
+    "APK Android e PC ZIP compartilham o mesmo backend remoto.",
+    "Portal/Web precisam de host estatico externo; Supabase Storage/Edge Functions nao servem HTML como pagina.",
     "Progression Lab usa save separado e nao pontua ranking.",
   ],
   artifacts: {
     android: {
       label: "Android APK",
-      url: "ANDROID_APK_URL_PENDING_T03_P17",
-      sha256: "ANDROID_APK_SHA256_PENDING_T03_P17",
+      url:
+        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.apk",
+      sha256: "87533f150ffb773ef3bb7e41f6d69e98c7fdd4a85cbbf1e28544040aaade2448",
     },
     pc_windows: {
       label: "PC Windows ZIP",
-      url: "PC_ZIP_URL_PENDING_T03_P17",
-      sha256: "PC_ZIP_SHA256_PENDING_T03_P17",
+      url:
+        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.zip",
+      sha256: "e678fb7e2d2e984ad7356a47cbdcf4fdb12628ebe23636ab1a3b976365111082",
     },
     web: {
       label: "Web",
-      url: "WEB_GAME_URL_PENDING_T03_P17",
+      url: "",
     },
   },
   known_issues: [
     "Layout Android paisagem ainda precisa de ergonomia real no aparelho.",
-    "Portal visual e placeholders serao refinados depois de T03-P18.",
+    "APK desta publicacao usa debug_fallback enquanto a keystore release dedicada nao estiver configurada.",
+    "Link Web/Portal aguarda publicacao em host estatico externo.",
   ],
 };
 
@@ -126,6 +130,9 @@ function buildManifest(): ReleaseManifest {
 }
 
 function manifestOverrideText(): string {
+  if ((Deno.env.get("RELEASE_MANIFEST_OVERRIDE_ENABLED") ?? "").trim() !== "1") {
+    return "";
+  }
   const encoded = Deno.env.get("RELEASE_MANIFEST_JSON_BASE64")?.trim() ?? "";
   if (encoded !== "") {
     return new TextDecoder().decode(

@@ -60,4 +60,4 @@ Resultado: ambos passaram. O Godot ainda emite `ObjectDB instances leaked at exi
 
 ## Proximo Passo
 
-`T03-P17` publicou portal/Web/APK/PC em links unlisted e atualizou o manifest remoto com URLs/hashes finais; detalhes em `internal-alpha-v0-publication-report.md`. Falta o signoff manual Fabio + 1 tester antes de `T03-P18`.
+`T03-P17` publicou APK/PC em links unlisted e atualizou o manifest remoto com hashes finais; Portal/Web aguardam host estatico externo porque Supabase nao serve HTML como pagina. Detalhes em `internal-alpha-v0-publication-report.md`. Falta publicar Portal/Web e fazer o signoff manual Fabio + 1 tester antes de `T03-P18`.

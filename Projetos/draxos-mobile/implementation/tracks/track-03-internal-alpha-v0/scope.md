@@ -30,7 +30,7 @@ Track 00 provou a fundacao tecnica, Track 01 endureceu o alpha local e Track 02 
 - Competicao: leaderboards basicas e bots podem contar pontos no alpha interno se isso ajudar a testar fluxo.
 - Backend remoto: Supabase Free primeiro; upgrade apenas se pausas/limites atrapalharem o teste.
 - Updates: Android, PC e Web devem receber updates na mesma cadencia.
-- Distribuicao/updates: usar Supabase Storage como fonte simples de manifest e artefatos versionados para internal alpha.
+- Distribuicao/updates: usar Supabase Storage para downloads binarios e host estatico externo para Portal/Web; manifest vive em Edge Function `release/manifest`.
 - Android: usar keystore dedicada de Internal Alpha.
 - Plataformas: Android nativo, PC executavel e PC browser. iOS e mobile browser seguem fora do escopo.
 

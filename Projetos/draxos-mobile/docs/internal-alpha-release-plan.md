@@ -99,7 +99,7 @@ Saida:
 
 - build metadata definida no `ProjectInfo`: canal `internal_alpha`, versao `0.0.1-alpha.0`, version code `1` e schema `internal_alpha_manifest_v1`;
 - `BackendConfig` e `SupabaseClient` resolvem `DRAXOS_MOBILE_UPDATE_MANIFEST_URL` e usam `<supabase_url>/functions/v1/release/manifest` como padrao;
-- Edge Function publica `GET /release/manifest` implementada/local/remota, com manifest default e override operacional por `RELEASE_MANIFEST_JSON_BASE64` ou `RELEASE_MANIFEST_JSON`;
+- Edge Function publica `GET /release/manifest` implementada/local/remota, com manifest default versionado e override operacional opcional por `RELEASE_MANIFEST_JSON_BASE64` ou `RELEASE_MANIFEST_JSON` quando `RELEASE_MANIFEST_OVERRIDE_ENABLED=1`;
 - Hub do Godot mostra status de update no boot, permite checar manualmente e bloqueia acoes online quando `minimum_supported_version_code` exige;
 - manifest exemplo do portal atualizado com version codes, portal URL e placeholders de artefatos para `T03-P17`;
 - smokes local/remoto validam o contrato do manifest.
@@ -122,16 +122,18 @@ Observacao Android: como nenhuma keystore release foi configurada em ambiente lo
 
 ### T03-P17 - Publicacao Unlisted E QA Remoto Fechado
 
-Status: `PUBLICATION_GREEN - AUTOMATED_REMOTE_QA_GREEN - MANUAL_SIGNOFF_PENDING`.
+Status: `DOWNLOADS_GREEN - AUTOMATED_REMOTE_QA_GREEN - PORTAL_WEB_STATIC_HOST_PENDING`.
 
 Saida entregue em 2026-05-27:
 
-- portal publicado em URL unlisted via Supabase Storage;
-- Web build publicada no mesmo bucket;
+- APK e PC ZIP publicados em URL unlisted via Supabase Storage;
+- portal/Web gerados, mas aguardando host estatico externo;
 - APK e PC ZIP disponiveis por link publico unlisted;
-- manifest remoto reconfigurado com URLs e hashes finais via `RELEASE_MANIFEST_JSON_BASE64`;
+- manifest remoto reconfigurado com hashes finais de Android/PC no default versionado da Edge Function `release`;
 - QA remoto automatizado verde para release manifest, email/senha, dois saves, batalha, base, loja, social, competicao e telemetria;
-- signoff manual Fabio + tester ainda pendente antes de `T03-P18`.
+- signoff manual Fabio + tester ainda pendente antes de `T03-P18`, bloqueado pelo host estatico de Portal/Web.
+
+Correcao pos-publicacao: links diretos de Storage para HTML/Web nao devem ser usados como link final, porque a Supabase retorna HTML como `text/plain` com CSP sandbox. Edge Functions tambem nao servem HTML como pagina. O caminho correto e publicar `build/internal-alpha/publish/` em host estatico externo e depois rodar `publish_internal_alpha.ps1 -StaticSiteBaseUrl <url> -SkipUpload -UseManifestSecret`.
 
 ### T03-P18 - Handoff Da Internal Alpha v0
 

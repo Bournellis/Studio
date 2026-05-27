@@ -3,6 +3,8 @@ param(
     [string]$EnvFile = "",
     [string]$BucketName = "draxos-internal-alpha",
     [string]$ReleaseRoot = "internal-alpha/v0",
+    [string]$StaticSiteBaseUrl = "",
+    [switch]$UseManifestSecret,
     [switch]$SkipUpload,
     [switch]$SkipManifestSecret
 )
@@ -67,6 +69,18 @@ function Invoke-Supabase {
     & npx -y supabase @Arguments
     if ($LASTEXITCODE -ne 0) {
         throw "Supabase CLI failed with exit code $LASTEXITCODE`: supabase $($Arguments -join ' ')"
+    }
+}
+
+function Invoke-SupabaseOptional {
+    param([string[]]$Arguments)
+    $previousErrorActionPreference = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    try {
+        & npx -y supabase @Arguments *> $null
+        return $LASTEXITCODE
+    } finally {
+        $ErrorActionPreference = $previousErrorActionPreference
     }
 }
 
@@ -182,8 +196,13 @@ $downloadsPublishDir = Join-Path $publishDir "downloads"
 New-Item -ItemType Directory -Force -Path $portalPublishDir, $webPublishDir, $downloadsPublishDir | Out-Null
 
 $storageBaseUrl = "$supabaseUrl/storage/v1/object/public/$BucketName/$ReleaseRoot"
-$portalUrl = "$storageBaseUrl/portal/index.html"
-$webUrl = "$storageBaseUrl/web/index.html"
+$normalizedStaticSiteBaseUrl = $StaticSiteBaseUrl.Trim().TrimEnd("/")
+$portalUrl = ""
+$webUrl = ""
+if ($normalizedStaticSiteBaseUrl -ne "") {
+    $portalUrl = "$normalizedStaticSiteBaseUrl/portal/index.html"
+    $webUrl = "$normalizedStaticSiteBaseUrl/web/index.html"
+}
 $androidUrl = "$storageBaseUrl/downloads/draxos-mobile-alpha.apk"
 $pcUrl = "$storageBaseUrl/downloads/draxos-mobile-alpha.zip"
 
@@ -207,7 +226,8 @@ $manifest = [ordered]@{
     portal_url = $portalUrl
     notes = @(
         "Primeira release candidate interna.",
-        "APK Android, PC ZIP e Web compartilham o mesmo backend remoto.",
+        "APK Android e PC ZIP compartilham o mesmo backend remoto.",
+        "Portal/Web precisam de host estatico externo; Supabase Storage/Edge Functions nao servem HTML como pagina.",
         "Progression Lab usa save separado e nao pontua ranking."
     )
     artifacts = [ordered]@{
@@ -228,7 +248,8 @@ $manifest = [ordered]@{
     }
     known_issues = @(
         "Layout Android paisagem ainda precisa de ergonomia real no aparelho.",
-        "APK desta publicacao usa debug_fallback enquanto a keystore release dedicada nao estiver configurada."
+        "APK desta publicacao usa debug_fallback enquanto a keystore release dedicada nao estiver configurada.",
+        "Link Web/Portal aguarda publicacao em host estatico externo."
     )
 }
 
@@ -245,7 +266,7 @@ Get-ChildItem -LiteralPath $portalDir -File | Where-Object {
 
 $portalIndexPath = Join-Path $portalPublishDir "index.html"
 $portalText = Get-Content -LiteralPath $portalIndexPath -Raw
-$portalText = $portalText.Replace("WEB_GAME_URL_PENDING_T03_P17", $webUrl)
+$portalText = $portalText.Replace("WEB_GAME_URL_PENDING_T03_P17", $(if ($webUrl -ne "") { $webUrl } else { "STATIC_HOST_PENDING_T03_P17" }))
 $portalText = $portalText.Replace("ANDROID_APK_URL_PENDING_T03_P17", $androidUrl)
 $portalText = $portalText.Replace("PC_ZIP_URL_PENDING_T03_P17", $pcUrl)
 $portalText | Set-Content -LiteralPath $portalIndexPath -Encoding UTF8
@@ -261,6 +282,13 @@ if (-not $SkipUpload) {
         $sourcePath = Resolve-Path -LiteralPath $file.FullName -Relative
         $destination = "ss:///$BucketName/$ReleaseRoot/$relative"
         $contentType = Content-TypeFor -Path $file.FullName
+        [void](Invoke-SupabaseOptional -Arguments @(
+            "storage", "rm",
+            "--linked",
+            "--experimental",
+            "--yes",
+            $destination
+        ))
         Invoke-Supabase -Arguments @(
             "storage", "cp",
             "--linked",
@@ -275,25 +303,31 @@ if (-not $SkipUpload) {
     }
 }
 
-if (-not $SkipManifestSecret) {
+if ($UseManifestSecret -and -not $SkipManifestSecret) {
     $manifestBase64 = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($manifestJson))
     Invoke-Supabase -Arguments @(
         "secrets", "set",
         "--project-ref",
         $projectRef,
+        "RELEASE_MANIFEST_OVERRIDE_ENABLED=1",
         "RELEASE_MANIFEST_JSON_BASE64=$manifestBase64"
-    )
-    Invoke-Supabase -Arguments @(
-        "functions", "deploy",
-        "release",
-        "--project-ref",
-        $projectRef,
-        "--no-verify-jwt"
     )
 }
 
-Assert-UrlOk -Url $portalUrl -Label "Portal" -ExpectedText "DraxosMobile"
-Assert-UrlOk -Url $webUrl -Label "Web build" -ExpectedText "GODOT_CONFIG"
+Invoke-Supabase -Arguments @(
+    "functions", "deploy",
+    "release",
+    "--project-ref",
+    $projectRef,
+    "--no-verify-jwt"
+)
+
+if ($portalUrl -ne "") {
+    Assert-UrlOk -Url $portalUrl -Label "Portal" -ExpectedText "DraxosMobile"
+}
+if ($webUrl -ne "") {
+    Assert-UrlOk -Url $webUrl -Label "Web build" -ExpectedText "GODOT_CONFIG"
+}
 Assert-HeadOk -Url $androidUrl -Label "Android APK" -ExpectedMinimumBytes 1000000
 Assert-HeadOk -Url $pcUrl -Label "PC ZIP" -ExpectedMinimumBytes 1000000
 
@@ -331,8 +365,16 @@ $reportPath = Join-Path $buildDir "internal-alpha\publication-report.json"
 $report | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $reportPath -Encoding UTF8
 
 Write-Host "[publish-internal-alpha] OK"
-Write-Host "Portal: $portalUrl"
-Write-Host "Web: $webUrl"
+if ($portalUrl -ne "") {
+    Write-Host "Portal: $portalUrl"
+} else {
+    Write-Host "Portal: pending external static host"
+}
+if ($webUrl -ne "") {
+    Write-Host "Web: $webUrl"
+} else {
+    Write-Host "Web: pending external static host"
+}
 Write-Host "Android APK: $androidUrl"
 Write-Host "PC ZIP: $pcUrl"
 Write-Host "Manifest: $supabaseUrl/functions/v1/release/manifest"

@@ -2,7 +2,7 @@
 
 - Data: `2026-05-27`
 - Track: `T03-P17 - Publicacao Unlisted E QA Remoto Fechado`
-- Status: `PUBLICATION_GREEN - AUTOMATED_REMOTE_QA_GREEN - MANUAL_SIGNOFF_PENDING`
+- Status: `DOWNLOADS_GREEN - AUTOMATED_REMOTE_QA_GREEN - PORTAL_WEB_STATIC_HOST_PENDING`
 - Canal: `internal_alpha`
 - Versao in-app: `0.0.1-alpha.0`
 - Version code: `1`
@@ -14,8 +14,8 @@
 
 | Item | URL |
 |---|---|
-| Portal | `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/portal/index.html` |
-| Web | `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/web/index.html` |
+| Portal | Pendente de host estatico externo |
+| Web | Pendente de host estatico externo |
 | Android APK | `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.apk` |
 | PC ZIP | `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.zip` |
 | Manifest | `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest` |
@@ -31,10 +31,16 @@
 ## Resultado Tecnico
 
 - `202605270002_internal_alpha_storage.sql` criou/configurou o bucket publico unlisted `draxos-internal-alpha`.
-- `tools/publish_internal_alpha.ps1` gerou `build/internal-alpha/publish/`, publicou portal/Web/APK/ZIP no Storage e validou HTTP dos links.
-- O manifest remoto usa `RELEASE_MANIFEST_JSON_BASE64` para evitar quebra de escaping no CLI.
-- `release` Edge Function foi redeployada com suporte a override base64.
+- `tools/publish_internal_alpha.ps1` gerou `build/internal-alpha/publish/`, publicou APK/ZIP no Storage e validou HTTP dos downloads.
+- Portal/Web foram gerados localmente, mas precisam de host estatico externo para abrir como pagina.
+- O manifest remoto usa o default versionado da Edge Function `release`, com links/hashes finais de Android/PC e Portal/Web pendentes de host estatico externo.
+- Override por secret (`RELEASE_MANIFEST_JSON_BASE64` ou `RELEASE_MANIFEST_JSON`) continua possivel apenas quando `RELEASE_MANIFEST_OVERRIDE_ENABLED=1`.
+- `release` Edge Function foi redeployada para ignorar secrets antigos por padrao, evitando que um override obsoleto mantenha URLs diretas de Storage para HTML/Web.
 - `build/internal-alpha/publication-report.json` guarda metadata local ignorada pelo Git.
+
+## Correcao Pos-Publicacao
+
+Na primeira abertura manual, o link direto do Storage exibiu o HTML do portal como texto puro porque a resposta veio com `Content-Type: text/plain`, `nosniff` e CSP sandbox. A tentativa de servir por Edge Function confirmou a mesma politica para `text/html`. Portanto, Supabase continua como backend/downloads, enquanto Portal/Web precisam ir para um host estatico externo antes do signoff completo.
 
 ## QA Remoto Automatizado
 
@@ -53,8 +59,9 @@ Os smokes foram ajustados para aceitar o comportamento remoto do gateway Supabas
 
 ## Pendencia Manual
 
-A parte automatizada de `T03-P17` esta verde, mas o signoff humano ainda precisa ser feito por Fabio + 1 tester:
+A parte automatizada de backend/downloads esta verde, mas Portal/Web ainda precisam de host estatico externo antes do signoff humano completo:
 
+- publicar `build/internal-alpha/publish/` em host estatico externo e atualizar o manifest;
 - abrir portal e baixar/abrir pelo menos duas plataformas;
 - criar/login com email e senha;
 - confirmar save comum entre plataformas;
@@ -62,4 +69,4 @@ A parte automatizada de `T03-P17` esta verde, mas o signoff humano ainda precisa
 - alternar para `progression_lab`, confirmar isolamento e ausencia no ranking;
 - registrar problemas de ergonomia Android paisagem e qualquer bloqueio de update/login.
 
-Depois desse signoff, seguir para `T03-P18 - Handoff Da Internal Alpha v0`.
+Depois desse host estatico e signoff, seguir para `T03-P18 - Handoff Da Internal Alpha v0`.

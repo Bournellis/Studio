@@ -15,7 +15,7 @@ Durante a Internal Alpha v0, o manifest vive como Edge Function publica:
 https://<project-ref>.supabase.co/functions/v1/release/manifest
 ```
 
-A funcao retorna um JSON sem secrets e sem depender de login. A implementacao possui um manifest padrao versionado no repo e aceita override operacional por variavel de ambiente `RELEASE_MANIFEST_JSON`. Para publicacao real, o caminho preferido e `RELEASE_MANIFEST_JSON_BASE64`, evitando problemas de escaping do JSON no CLI.
+A funcao retorna um JSON sem secrets e sem depender de login. A implementacao possui um manifest padrao versionado no repo. Override operacional por `RELEASE_MANIFEST_JSON_BASE64` ou `RELEASE_MANIFEST_JSON` fica disponivel apenas quando `RELEASE_MANIFEST_OVERRIDE_ENABLED=1`, para evitar que secrets antigos mantenham links obsoletos.
 
 ## Payload
 
@@ -71,4 +71,4 @@ A funcao retorna um JSON sem secrets e sem depender de login. A implementacao po
 
 ## Evolucao
 
-Em `T03-P16`, os artefatos locais foram exportados e seus hashes foram registrados em `../internal-alpha-v0-export-report.md`. Em `T03-P17`, portal/Web/APK/PC ZIP foram publicados no Supabase Storage unlisted e o manifest remoto passou a usar URLs/hashes reais; detalhes em `../internal-alpha-v0-publication-report.md`. Em releases futuras, subir `latest_version_code` gera update recomendado; subir `minimum_supported_version_code` torna o update obrigatorio para acoes online.
+Em `T03-P16`, os artefatos locais foram exportados e seus hashes foram registrados em `../internal-alpha-v0-export-report.md`. Em `T03-P17`, APK/PC ZIP foram publicados no Supabase Storage unlisted e o manifest remoto passou a usar hashes reais para downloads. A correcao pos-publicacao registrou que Portal/Web precisam de host estatico externo, pois Supabase Storage/Edge Functions nao servem HTML como pagina. Detalhes em `../internal-alpha-v0-publication-report.md`. Em releases futuras, subir `latest_version_code` gera update recomendado; subir `minimum_supported_version_code` torna o update obrigatorio para acoes online.

@@ -8,6 +8,8 @@ Este runbook deixa a Internal Alpha v0 preparada para usar Supabase remoto sem c
 
 Tutorial detalhado para Fabio: `supabase-remote-tutorial.md`.
 
+Host estatico para Portal/Web: `internal-alpha-static-hosting.md`.
+
 ## Decisao
 
 - Usar Supabase remoto Free para acelerar a Internal Alpha v0.
@@ -26,6 +28,7 @@ Tutorial detalhado para Fabio: `supabase-remote-tutorial.md`.
 - `server/tests/email_auth_alpha_smoke.ts` valida localmente signup/login email/senha e `/account/bootstrap`.
 - `docs/supabase-remote-tutorial.md` descreve a configuracao manual, os comandos e exatamente quais valores enviar.
 - `portal/internal-alpha/` contem a base do portal unlisted para distribuir Web/APK/PC quando as builds forem exportadas.
+- Portal/Web precisam de host estatico externo; Supabase Storage/Edge Functions nao servem HTML como pagina.
 
 ## Projeto Remoto Observado
 
@@ -37,7 +40,7 @@ Tutorial detalhado para Fabio: `supabase-remote-tutorial.md`.
 - Regiao: `West US (Oregon)`.
 - Status no dashboard: `Healthy`.
 
-Estado operacional: o dashboard mostrou o projeto saudavel e, em 2026-05-27, o bootstrap remoto aplicou as migrations, publicou as Edge Functions, atualizou config de Auth, validou o fluxo email/senha, publicou o manifest de updates, exportou artefatos locais em `T03-P16` e publicou portal/Web/APK/PC ZIP em `T03-P17`. Falta signoff manual Fabio + tester antes do handoff.
+Estado operacional: o dashboard mostrou o projeto saudavel e, em 2026-05-27, o bootstrap remoto aplicou as migrations, publicou as Edge Functions, atualizou config de Auth, validou o fluxo email/senha, publicou o manifest de updates, exportou artefatos locais em `T03-P16` e publicou APK/PC ZIP em `T03-P17`. Portal/Web aguardam host estatico externo antes do signoff completo.
 
 ## Resultado T03-P13
 
@@ -78,15 +81,19 @@ Estado operacional: o dashboard mostrou o projeto saudavel e, em 2026-05-27, o b
 ## Resultado T03-P17
 
 - Bucket publico unlisted `draxos-internal-alpha` criado por migration `202605270002_internal_alpha_storage.sql`.
-- Portal/Web/APK/PC ZIP publicados em `internal-alpha/v0`.
-- Manifest remoto reconfigurado por `RELEASE_MANIFEST_JSON_BASE64`.
+- APK/PC ZIP publicados em `internal-alpha/v0/downloads`.
+- Web build e portal foram gerados, mas nao devem ser compartilhados por link direto do Storage porque HTML e retornado como texto puro.
+- Portal/Web aguardam host estatico externo.
+- Manifest remoto reconfigurado pelo default versionado da Edge Function `release`; override por secret fica opt-in com `RELEASE_MANIFEST_OVERRIDE_ENABLED=1`.
 - Relatorio versionado: `internal-alpha-v0-publication-report.md`.
 - Metadata local ignorada: `build/internal-alpha/publication-report.json`.
 
 Links de teste:
 
-- Portal: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/portal/index.html`
-- Web: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/web/index.html`
+- Portal: pendente de host estatico externo.
+- Web: pendente de host estatico externo.
+- Android APK: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.apk`
+- PC ZIP: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.zip`
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 
 ## Variaveis Do Cliente
@@ -190,6 +197,7 @@ No alpha interno, reset destrutivo pode ser aceitavel, mas precisa ser explicito
 Supabase Storage pode hospedar manifest e artefatos pequenos, mas o limite do plano Free pode nao ser ideal para todos os builds. Para a Internal Alpha v0:
 
 - manifest vive no endpoint publico `release/manifest`;
+- Portal/Web devem viver em host estatico externo (Cloudflare Pages, Netlify, Vercel ou GitHub Pages);
 - links podem apontar para storage externo se os artefatos ficarem grandes;
 - o cliente deve depender do schema do manifest, nao do fornecedor de storage.
 
@@ -207,7 +215,8 @@ Supabase Storage pode hospedar manifest e artefatos pequenos, mas o limite do pl
 - Fluxo email/senha implementado no cliente/backend.
 - Manifest remoto de updates e version gate implementados.
 - Builds locais Android, PC e Web exportadas.
-- Portal/Web/APK/PC publicados em links unlisted.
+- APK/PC publicados em links unlisted.
+- Portal/Web pendentes de host estatico externo.
 - Manifest remoto aponta para URLs/hashes finais.
 - QA remoto automatizado verde.
 - Proximo: Fabio + tester fazem signoff manual em pelo menos duas plataformas e registram bugs antes de `T03-P18`.
