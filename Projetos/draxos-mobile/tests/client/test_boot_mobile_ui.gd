@@ -2,19 +2,12 @@ extends GutTest
 
 const BootScreenScript = preload("res://modes/boot/boot.gd")
 
+func before_each() -> void:
+	_reset_session_store_for_test()
+
 func after_each() -> void:
 	ProjectSettings.set_setting("draxos_mobile/ui/force_compact_layout", false)
-	SessionStore.access_token = ""
-	SessionStore.expires_at = 0
-	SessionStore.player = {}
-	SessionStore.resources = {}
-	SessionStore.build = {}
-	SessionStore.base_state = {}
-	SessionStore.monetization_state = {}
-	SessionStore.social_state = {}
-	SessionStore.competition_state = {}
-	SessionStore.progression_lab = {}
-	SessionStore.active_save_type = SessionStore.SAVE_TYPE_NORMAL
+	_reset_session_store_for_test()
 
 func test_boot_compact_layout_groups_actions_for_mobile_landscape() -> void:
 	ProjectSettings.set_setting("draxos_mobile/ui/force_compact_layout", true)
@@ -85,6 +78,18 @@ func test_boot_surface_presenters_render_shells_without_network() -> void:
 	assert_true(boot._action_buttons.has("claim_reward:daily_collect_base"))
 	assert_not_null(boot._shop_state_container)
 	await get_tree().process_frame
+
+func test_boot_surface_presenters_keep_render_only_contract() -> void:
+	assert_false(FileAccess.file_exists("res://modes/boot/surfaces/battle_surface_presenter.gd"))
+	var boot_source := FileAccess.get_file_as_string("res://modes/boot/boot.gd")
+	assert_false(boot_source.contains("battle_surface_presenter.gd"))
+	for script_path: String in _surface_presenter_script_paths():
+		var source := FileAccess.get_file_as_string(script_path)
+		for fragment: String in _forbidden_presenter_fragments():
+			assert_false(
+				source.contains(fragment),
+				"%s must stay render-only and host-owned for '%s'" % [script_path, fragment]
+			)
 
 func test_base_presenter_renders_loaded_state_without_network() -> void:
 	var boot = BootScreenScript.new()
@@ -205,6 +210,43 @@ func _label_tree_contains(root: Node, needle: String) -> bool:
 		if _label_tree_contains(child, needle):
 			return true
 	return false
+
+func _surface_presenter_script_paths() -> PackedStringArray:
+	var paths: PackedStringArray = PackedStringArray()
+	var dir := DirAccess.open("res://modes/boot/surfaces")
+	assert_not_null(dir)
+	if dir == null:
+		return paths
+	for file_name: String in dir.get_files():
+		if not file_name.ends_with(".gd"):
+			continue
+		paths.append("res://modes/boot/surfaces/%s" % file_name)
+	return paths
+
+func _forbidden_presenter_fragments() -> PackedStringArray:
+	return PackedStringArray([
+		"SupabaseClient",
+		"BackendConfig",
+		"HTTPRequest",
+		"await ",
+		"_execute_action",
+		"_emit_client_event",
+		"_send_telemetry_deferred",
+		"send_client_telemetry",
+		"SessionStore.apply_",
+		"SessionStore.save_cache",
+		"SessionStore.clear_session",
+		"SessionStore.set_active_save_type",
+		"SessionStore.mark_offline",
+		"SessionStore.session_changed",
+		"SessionStore.access_token =",
+		"SessionStore.player =",
+		"SessionStore.resources =",
+		"configure_save_type",
+	])
+
+func _reset_session_store_for_test() -> void:
+	SessionStore.clear_session()
 
 func _prepare_account_state() -> void:
 	SessionStore.access_token = "test-token"

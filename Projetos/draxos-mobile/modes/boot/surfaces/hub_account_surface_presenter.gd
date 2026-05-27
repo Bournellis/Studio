@@ -120,7 +120,9 @@ static func update_status_text(host: Node) -> String:
 	])
 	lines.append(str(update_gate.get("summary", "Update ainda nao verificado.")))
 	lines.append(str(update_gate.get("detail", "O jogo vai checar o manifest remoto antes do teste fechado.")))
-	var manifest_url := str(update_gate.get("manifest_url", SupabaseClient.manifest_url()))
+	var manifest_url := str(update_gate.get("manifest_url", ""))
+	if manifest_url == "" and host.has_method("_manifest_url"):
+		manifest_url = str(host.call("_manifest_url"))
 	if manifest_url != "":
 		lines.append("Manifest: %s" % manifest_url)
 	var manifest := _as_dictionary(update_gate.get("manifest", {}))

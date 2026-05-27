@@ -120,6 +120,9 @@ func _should_use_compact_layout() -> bool:
 	var viewport_size := get_viewport_rect().size
 	return viewport_size.y <= 620.0 and viewport_size.x > viewport_size.y
 
+func _manifest_url() -> String:
+	return SupabaseClient.manifest_url()
+
 func _button_min_size() -> Vector2:
 	return Vector2(154, 50) if _compact_layout else Vector2(220, 44)
 
