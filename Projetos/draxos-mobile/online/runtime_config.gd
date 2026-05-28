@@ -65,13 +65,13 @@ static func normalize(payload: Dictionary, source_url: String = "") -> Dictionar
 
 static func from_fetch_result(result: Dictionary, source_url: String) -> Dictionary:
 	if bool(result.get("ok", false)):
-		var config := normalize(_as_dictionary(result.get("body", {})), source_url)
+		var normalized_config := normalize(_as_dictionary(result.get("body", {})), source_url)
 		return {
 			"ok": true,
 			"status": int(result.get("status", 200)),
-			"body": config,
-			"runtime_config": config,
-			"fallback": bool(config.get("fallback", false)),
+			"body": normalized_config,
+			"runtime_config": normalized_config,
+			"fallback": bool(normalized_config.get("fallback", false)),
 		}
 
 	var error := _as_dictionary(result.get("error", {}))

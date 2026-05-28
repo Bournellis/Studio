@@ -50,10 +50,10 @@ func _gui_input(event: InputEvent) -> void:
 func is_touch_dragging_for_test() -> bool:
 	return _dragging
 
-func _begin_drag_tracking(position: Vector2) -> void:
+func _begin_drag_tracking(input_position: Vector2) -> void:
 	_pressing = true
 	_dragging = false
-	_last_position = position
+	_last_position = input_position
 	_accumulated_drag = Vector2.ZERO
 
 func _end_drag_tracking() -> void:

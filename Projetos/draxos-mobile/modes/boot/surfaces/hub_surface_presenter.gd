@@ -73,7 +73,7 @@ static func render_refuge(host: Node) -> void:
 	body.add_child(_refuge_scene_panel(host, compact))
 	body.add_child(_refuge_hotspot_panel(host, compact))
 
-static func _screen_body(host: Node, root: Control, body_name: String, compact: bool) -> VBoxContainer:
+static func _screen_body(_host: Node, root: Control, body_name: String, compact: bool) -> VBoxContainer:
 	var margin := MarginContainer.new()
 	margin.name = "%sFrame" % body_name
 	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -207,7 +207,7 @@ static func _entry_input(parent: VBoxContainer, label_text: String, placeholder:
 	parent.add_child(input)
 	return input
 
-static func _entry_action_button(host: Node, text: String, action_id: String, compact: bool, confirm_message: String = "", primary: bool = false) -> Button:
+static func _entry_action_button(host: Node, text: String, action_id: String, _compact: bool, confirm_message: String = "", primary: bool = false) -> Button:
 	var button := Button.new()
 	button.text = text
 	button.tooltip_text = text

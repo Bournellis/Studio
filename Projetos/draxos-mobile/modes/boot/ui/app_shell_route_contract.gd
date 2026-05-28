@@ -87,10 +87,10 @@ static func is_refuge_home(route_id: String) -> bool:
 static func uses_immersive_layer(route_id: String) -> bool:
 	return bool(_IMMERSIVE_ROUTES.get(normalize(route_id), false))
 
-static func prefers_landscape(route_id: String) -> bool:
+static func prefers_landscape(_route_id: String) -> bool:
 	return false
 
-static func prefers_portrait(route_id: String = "") -> bool:
+static func prefers_portrait(_route_id: String = "") -> bool:
 	return true
 
 static func is_battle_mode(route_id: String) -> bool:

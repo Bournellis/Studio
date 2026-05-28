@@ -23,7 +23,7 @@ static func input_min_size(compact: bool) -> Vector2:
 static func apply_touch_button(button: Button, mouse_filter: int = Control.MOUSE_FILTER_PASS) -> void:
 	if button == null:
 		return
-	button.mouse_filter = mouse_filter
+	button.mouse_filter = mouse_filter as Control.MouseFilter
 	button.focus_mode = Control.FOCUS_NONE
 	button.custom_minimum_size.y = maxf(button.custom_minimum_size.y, MIN_TOUCH_TARGET)
 
@@ -51,7 +51,7 @@ static func action_button_columns_for_size(viewport_size: Vector2, compact: bool
 		return 1
 	return 2
 
-static func surface_columns_for_size(viewport_size: Vector2, max_columns: int = 2) -> int:
+static func surface_columns_for_size(_viewport_size: Vector2, _max_columns: int = 2) -> int:
 	return 1
 
 static func base_map_columns_for_size(viewport_size: Vector2, compact: bool) -> int:

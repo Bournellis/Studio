@@ -282,7 +282,7 @@ func _sync_app_chrome_for_route(route_id: String) -> void:
 	if _first_screen_root != null and is_instance_valid(_first_screen_root):
 		_first_screen_root.visible = _route_shows_first_screen(route_id)
 
-func _apply_orientation_for_route(route_id: String) -> void:
+func _apply_orientation_for_route(_route_id: String) -> void:
 	if OS.get_name() != "Android":
 		return
 	DisplayServer.screen_set_orientation(APP_ORIENTATION_PORTRAIT)
