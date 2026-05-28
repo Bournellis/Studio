@@ -15,9 +15,10 @@ Read live docs in this order:
 2. `implementation/current-status.md` - short decision snapshot.
 3. `docs/documentation-index.md` - where each doc belongs.
 4. `docs/foundation-app-v0-audit.md` - current Foundation Audit compass.
-5. `docs/product-vision.md` - local long-term product canon.
-6. `docs/game-design-document.md` - implementation reference and mock/substance context.
-7. `docs/design-pending.md` - only live register of unresolved design decisions.
+5. `docs/foundation-loop-audit.md` - executed audit of post-login loop ergonomics.
+6. `docs/product-vision.md` - local long-term product canon.
+7. `docs/game-design-document.md` - implementation reference and mock/substance context.
+8. `docs/design-pending.md` - only live register of unresolved design decisions.
 
 If a historical track conflicts with these docs, the live docs win. If local product design conflicts with shared lore in `../../canon/`, escalate instead of silently choosing.
 
@@ -25,7 +26,7 @@ If a historical track conflicts with these docs, the live docs win. If local pro
 
 Active stage: `FOUNDATION_AUDIT_ACTIVE`.
 
-The project is a base implemented for refinement. The next work is documentation and audit of the post-login loop:
+The project is a base implemented for refinement. The Foundation Loop Audit is documented, and the next implementation should be a focused pass on the post-login loop:
 
 `Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again`
 
@@ -72,14 +73,14 @@ Register work in `../../08_Coordenacao_Agentes/Kanban/Doing/` or a handoff note.
 - validation plan;
 - next handoff point.
 
-For Foundation Audit, the expected DraxosMobile Doing card must state the branch, worktree and loop-audit objective. Historical DraxosMobile cards belong in `Kanban/Done/`.
+For Foundation Audit, the expected DraxosMobile Doing card must state the branch, worktree and current loop/UX objective. Historical DraxosMobile cards belong in `Kanban/Done/`.
 
 ## Read Order By Task
 
 | Task type | Required docs |
 |---|---|
 | Small code fix | `AGENTS.md`, `implementation/current-status.md`, touched files |
-| Agent/doc operation | `AGENTS.md`, this manual, `docs/documentation-index.md`, `docs/foundation-app-v0-audit.md` |
+| Agent/doc operation | `AGENTS.md`, this manual, `docs/documentation-index.md`, `docs/foundation-app-v0-audit.md`, `docs/foundation-loop-audit.md` |
 | Product/design | `docs/product-vision.md`, `docs/product-brief.md`, `docs/game-design-document.md`, `docs/design-pending.md` |
 | Backend/contracts | `docs/architecture.md`, `docs/contracts/`, `server/schema/`, `server/functions/`, `supabase/` mirrors |
 | Godot client | `AGENTS.md`, `modes/boot/surfaces/README.md`, relevant tests, relevant flow/presenter |
@@ -92,17 +93,17 @@ Use the smallest profile that proves the change, then broaden when touching shar
 
 | Change | Minimum validation |
 |---|---|
-| Docs only | `git diff --check`; `validate_foundation.ps1 -Profile Quick -RequireClean:$false` when docs affect status/operation |
-| PowerShell tools | `validate_foundation.ps1 -Profile Release -RequireClean:$false` |
-| Godot client | Godot `validate.gd`, GUT client, then `validate_foundation.ps1 -Profile Client -RequireClean:$false` |
+| Docs only | `git diff --check`; `validate_foundation.ps1 -Profile Quick` when docs affect status/operation |
+| PowerShell tools | `validate_foundation.ps1 -Profile Release` |
+| Godot client | Godot `validate.gd`, GUT client, then `validate_foundation.ps1 -Profile Client` |
 | Backend/functions | `npx -y deno task --cwd server/functions check` and `npx -y deno task --cwd supabase/functions check` |
-| Release safety | `validate_foundation.ps1 -Profile Release -RequireClean:$false` plus `tools/check_release_safety.ps1` |
-| Foundation or cross-cutting work | `validate_foundation.ps1 -Profile Full -RequireClean:$false` plus explicit Godot/GUT/Deno commands |
+| Release safety | `validate_foundation.ps1 -Profile Release` plus `tools/check_release_safety.ps1` |
+| Foundation or cross-cutting work | `validate_foundation.ps1 -Profile Full` plus explicit Godot/GUT/Deno commands |
 
 Default full gate:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Full -RequireClean:$false
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Full
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/client -gexit
 npx -y deno task --cwd server/functions check

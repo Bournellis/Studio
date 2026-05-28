@@ -33,6 +33,7 @@
 |---|---|---|
 | `docs/product-vision.md` | `VIVO` | Local long-term product canon until promoted to shared canon. |
 | `docs/foundation-app-v0-audit.md` | `VIVO` | Current Foundation Audit compass: real foundation, current mock, live-product gaps and post-login loop focus. |
+| `docs/foundation-loop-audit.md` | `VIVO` | Executed audit of the current post-login loop ergonomics and next UX pass criteria. |
 | `docs/product-brief.md` | `VIVO` | Short product/slice summary. |
 | `docs/game-design-document.md` | `VIVO` | Implementation reference and mock/substance context; not the current expansion target. |
 | `docs/design-pending.md` | `VIVO` | Only live register of unresolved design decisions. |

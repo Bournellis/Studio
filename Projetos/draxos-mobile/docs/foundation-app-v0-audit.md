@@ -10,7 +10,9 @@ Este documento registra a leitura atual do projeto como uma fundacao de produto,
 
 O objetivo imediato nao e abrir o jogo ao publico. A etapa atual e descobrir o jogo com o fundador e um circulo muito proximo de possiveis colaboradores, usando um prototipo agradavel o suficiente para pensar melhor o produto real.
 
-Esta auditoria tambem e a proxima etapa operacional. Antes de implementar mais UX, social, visual, batalha, armas, spells ou economia, os documentos vivos precisam explicar corretamente a situacao real do projeto.
+Esta auditoria orienta a etapa operacional atual. Antes de implementar mais UX, social, visual, batalha, armas, spells ou economia, os documentos vivos precisam explicar corretamente a situacao real do projeto.
+
+Auditoria executada do loop interno: `docs/foundation-loop-audit.md`. Ela deve ser lida antes de qualquer pacote de implementacao de UX no Refugio/Base/Batalha.
 
 ## Enquadramento Atual
 
@@ -85,13 +87,12 @@ O que precisa ser real desde cedo:
 
 ## Lacunas Mais Importantes Agora
 
-1. Reenquadrar a documentacao principal para `FOUNDATION_AUDIT_ACTIVE`, evitando que mock de tema/conteudo vire promessa implicita.
-2. Auditar o loop interno pos-login antes de mexer em social, visual geral, batalha, armas, spells ou economia.
-3. Mapear exatamente onde a quantidade de etapas, posicao de icones e formato de apresentacao atrapalham coletar, evoluir, batalhar, receber recompensa e voltar para base.
-4. Separar conteudo mock de conteudo candidato a produto por schema, pasta, flag ou estado documental claro.
-5. Auditar conta/save/backend como fundacao live antes de expandir conteudo.
-6. Definir um contrato de minigames, mesmo sem implementar novos minigames agora.
-7. Definir o minimo de live ops, telemetria, admin e suporte que um app com possivel sucesso precisara carregar.
+1. Usar `docs/foundation-loop-audit.md` para executar um Foundation Loop UX Pass antes de social, visual geral, batalha, armas, spells ou economia.
+2. Corrigir a ergonomia real de cliques, hierarquia visual e feedback para coletar, evoluir, batalhar, receber recompensa e voltar para base.
+3. Separar conteudo mock de conteudo candidato a produto por schema, pasta, flag ou estado documental claro.
+4. Auditar conta/save/backend como fundacao live antes de expandir conteudo.
+5. Definir um contrato de minigames, mesmo sem implementar novos minigames agora.
+6. Definir o minimo de live ops, telemetria, admin e suporte que um app com possivel sucesso precisara carregar.
 
 ## Nao Priorizar Nesta Etapa
 
@@ -105,9 +106,9 @@ O que precisa ser real desde cedo:
 
 ## Melhor Ordem Recomendada
 
-1. Fechar o enquadramento `FOUNDATION_AUDIT_ACTIVE` nos documentos centrais.
-2. Fazer a Foundation Audit do loop interno pos-login: base, coleta, evolucao, batalha, recompensa e retorno para base.
-3. Escolher quais lacunas de clique, hierarquia visual e feedback viram hardening imediato do V0.
+1. Enquadramento `FOUNDATION_AUDIT_ACTIVE` fechado nos documentos centrais.
+2. Foundation Loop Audit executada em `docs/foundation-loop-audit.md`.
+3. Executar um Foundation Loop UX Pass para as lacunas de clique, hierarquia visual e feedback.
 4. Discutir social.
 5. Discutir visual geral.
 6. Discutir apresentacao da batalha.

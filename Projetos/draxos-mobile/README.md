@@ -9,7 +9,7 @@ DraxosMobile is the Godot/Supabase project for Android, PC executable and PC bro
 
 The project is a strong implemented base for refinement, not a final product and not a content-expansion track.
 
-The immediate focus is Foundation Audit for the post-login internal loop:
+The Foundation Loop Audit is documented in `docs/foundation-loop-audit.md`. The immediate focus is now a focused UX pass for the post-login internal loop:
 
 `Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again`
 
@@ -24,6 +24,7 @@ Start with:
 3. `implementation/current-status.md`
 4. `docs/documentation-index.md`
 5. `docs/foundation-app-v0-audit.md`
+6. `docs/foundation-loop-audit.md`
 
 Do not start from old Track 04/08/10/15/16 notes. They are history or technical context unless a live doc points to them for a specific detail.
 
@@ -31,8 +32,8 @@ Do not start from old Track 04/08/10/15/16 notes. They are history or technical 
 
 Before any new feature, numeric tuning, account/save migration, assets-final pass, battle presentation pass, social expansion or remote publication:
 
-1. Complete Foundation Audit for the post-login loop.
-2. Record whether the current UX makes collect, upgrade, battle, reward and return-to-base obvious.
+1. Read `docs/foundation-loop-audit.md`.
+2. Execute the Foundation Loop UX Pass before expanding social, visuals, battle presentation or content systems.
 3. Keep release publishing in `Mode Plan` or `Mode Package` unless the user explicitly approves remote mutation.
 4. Run the real Android / Windows / Web walkthrough in `docs/track-13-manual-walkthrough-gate.md` before any remote publication.
 
@@ -40,7 +41,7 @@ Before any new feature, numeric tuning, account/save migration, assets-final pas
 
 ```powershell
 cd <WORKTREE>\Projetos\draxos-mobile
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Full -RequireClean:$false
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Full
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/client -gexit
 npx -y deno task --cwd server/functions check
@@ -57,6 +58,7 @@ git status --short
 | Current state | `implementation/current-status.md` |
 | Documentation map | `docs/documentation-index.md` |
 | Foundation Audit | `docs/foundation-app-v0-audit.md` |
+| Foundation Loop Audit | `docs/foundation-loop-audit.md` |
 | Product canon local | `docs/product-vision.md` |
 | Implementation GDD | `docs/game-design-document.md` |
 | Pending decisions | `docs/design-pending.md` |
@@ -71,7 +73,7 @@ git status --short
 - `../_conceitos/mobile-universe/`: archive only.
 - Remote Supabase/Cloudflare publication: opt-in only.
 - Account/save migration from `players.save_type` to `account_profiles/game_saves`: separate future package.
-- Tuning numbers, weapons, spells, Battle Pass, economy and final visual identity: blocked until Foundation Audit and explicit user decision.
+- Tuning numbers, weapons, spells, Battle Pass, economy and final visual identity: blocked until an explicit package decision after the loop UX pass.
 - Secrets: never in client, exports, portal, manifest or docs.
 
 ## Release Snapshot

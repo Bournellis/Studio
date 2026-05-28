@@ -30,7 +30,7 @@ Validacao local:
 .\tools\validate_foundation.ps1 -ProjectDir . -Profile Quick
 .\tools\validate_foundation.ps1 -ProjectDir . -Profile Client -GodotExe "D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe"
 .\tools\validate_foundation.ps1 -ProjectDir . -Profile Release
-.\tools\validate_foundation.ps1 -ProjectDir . -Profile Full -RequireClean:$false
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile Full
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_agent_ops_foundation.ps1 -ProjectDir .
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_runtime_config.gd

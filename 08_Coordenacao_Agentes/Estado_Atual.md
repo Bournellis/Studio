@@ -28,10 +28,10 @@
 - Local: `Projetos/draxos-mobile/`
 - Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
 - Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
-- Baseline atual: Track 00-15 integradas. O projeto tem uma base implementada para refinamento: primeiro slice server-authoritative, Refugio/Base, batalha, recompensa, social/competicao/loja em substancia de prototipo, Supabase remoto, manifest/version gate e builds Internal Alpha site/Web/APK/Windows republicadas em 2026-05-28. Track 16 e o ultimo pacote tecnico local de comportamento, Po de Osso e crafting inicial, mas nao e a etapa ativa de produto. Conteudo atual de armas, spells, economia, tema, visual e apresentacao existe para nao parecer app vazio e deve ser tratado como mock/substancia.
+- Baseline atual: Track 00-15 integradas. O projeto tem uma base implementada para refinamento: primeiro slice server-authoritative, Refugio/Base, batalha, recompensa, social/competicao/loja em substancia de prototipo, Supabase remoto, manifest/version gate e builds Internal Alpha site/Web/APK/Windows republicadas em 2026-05-28. Track 16 e o ultimo pacote tecnico local de comportamento, Po de Osso e crafting inicial, mas nao e a etapa ativa de produto. Conteudo atual de armas, spells, economia, tema, visual e apresentacao existe para nao parecer app vazio e deve ser tratado como mock/substancia. A auditoria do loop esta registrada em `Projetos/draxos-mobile/docs/foundation-loop-audit.md`.
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
-- Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation`. Migration conta/save, tuning numerico, armas, spells, economia, visual final e apresentacao de batalha ficam bloqueados ate Foundation Audit e decisao propria.
-- Proximo passo: executar Foundation Audit dos docs vivos e do loop pos-login: Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente.
+- Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation`. Migration conta/save, tuning numerico, armas, spells, economia, visual final e apresentacao de batalha ficam bloqueados ate decisao propria.
+- Proximo passo: revisar a Foundation Loop Audit e executar um Foundation Loop UX Pass: Refugio como home do loop, CTA confiavel, coleta/evolucao visiveis, recompensa retornando para base e smoke sem rede do loop.
 
 ## rpg-isometrico
 

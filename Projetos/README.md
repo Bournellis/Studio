@@ -24,6 +24,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Agent manual: `draxos-mobile/docs/agent-operating-manual.md`
   - Documentation index: `draxos-mobile/docs/documentation-index.md`
   - Foundation Audit: `draxos-mobile/docs/foundation-app-v0-audit.md`
+  - Foundation Loop Audit: `draxos-mobile/docs/foundation-loop-audit.md`
   - Operational status: `draxos-mobile/implementation/current-status.md`
   - Product vision: `draxos-mobile/docs/product-vision.md`
   - Product brief: `draxos-mobile/docs/product-brief.md`
@@ -39,7 +40,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Progression Lab: `draxos-mobile/docs/progression-lab/README.md`
   - Design archive: `_conceitos/mobile-universe/`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: execute Foundation Audit for docs and loop ergonomics before social, visual, battle presentation, weapons, spells, economy or tuning work.
+  - Current next step: review the Foundation Loop Audit and execute a focused Foundation Loop UX Pass before social, visual, battle presentation, weapons, spells, economy or tuning work.
 
 ## Arquivo De Design
 

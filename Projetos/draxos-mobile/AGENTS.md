@@ -13,7 +13,7 @@ This file is the fast entrypoint for agents working in `Projetos/draxos-mobile`.
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety` delivered on `2026-05-28`
 - Agent baseline: `Track 14 - Agent Operations Foundation` is the current operations/docs foundation.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting`, local and not the current product focus.
-- Immediate product gate: run Foundation Audit before implementation expansion. Focus on the post-login loop: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again.
+- Immediate product gate: the Foundation Loop Audit is documented in `docs/foundation-loop-audit.md`; next implementation should be a focused Foundation Loop UX Pass before broader expansion.
 
 DraxosMobile is an async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. The real product direction is base builder + autobattler + social, with room for future minigames and seasons. Current names, spells, weapons, economy values, battle flavor, visual style and premium systems are mock/substance for evaluation unless a live doc explicitly promotes them.
 
@@ -25,7 +25,8 @@ Read in this order for almost every task:
 2. `implementation/current-status.md`
 3. `docs/documentation-index.md`
 4. `docs/foundation-app-v0-audit.md`
-5. The files you intend to touch
+5. `docs/foundation-loop-audit.md`
+6. The files you intend to touch
 
 For product or design work, also read:
 
@@ -55,10 +56,10 @@ For release, validation or publication work, also read:
 Run commands from `Projetos/draxos-mobile` unless noted.
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Quick -RequireClean:$false
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Client -RequireClean:$false
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Release -RequireClean:$false
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Full -RequireClean:$false
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Quick
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Client
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Release
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Full
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/client -gexit
 npx -y deno task --cwd server/functions check
@@ -89,6 +90,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alp
 
 - `docs/product-vision.md` is the local long-term product canon until promoted to shared canon.
 - `docs/foundation-app-v0-audit.md` is the current product/agent compass for Foundation Audit.
+- `docs/foundation-loop-audit.md` is the executed audit for loop ergonomics and the next UX pass criteria.
 - `docs/game-design-document.md` is the authoritative implementation GDD.
 - `docs/design-pending.md` is the only live register of unresolved design decisions.
 - `docs/documentation-index.md` classifies live docs, contracts, runbooks, history and design archive.
@@ -97,4 +99,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alp
 
 ## Current Handoff
 
-Foundation Audit is the active handoff. Agents must align docs and then audit the post-login internal loop before expanding implementation. Do not change gameplay tuning, backend/schema, Supabase APIs, economy, content, weapons, spells, final visuals or authoritative flows during this documentation package.
+Foundation Audit is the active handoff. The post-login loop audit is documented; agents should use it to scope a focused Foundation Loop UX Pass before expanding implementation. Do not change gameplay tuning, backend/schema, Supabase APIs, economy, content, weapons, spells, final visuals or authoritative flows without an explicit package decision.
