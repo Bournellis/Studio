@@ -1,5 +1,6 @@
 # DraxosMobile - Site Visual Upgrade
 
+- Status: `Done`
 - Data: `2026-05-28`
 - Agente: `Codex`
 - Branch: `codex/draxos-mobile/site-protection`

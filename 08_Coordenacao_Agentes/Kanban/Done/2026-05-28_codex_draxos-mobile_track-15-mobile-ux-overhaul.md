@@ -1,6 +1,6 @@
 # Track 15 - DraxosMobile Mobile UX Overhaul
 
-- status: `Doing`
+- status: `Done`
 - projeto: `draxos-mobile`
 - agente: `Codex`
 - branch: `codex/draxos-mobile/track-15-mobile-ux-overhaul`

@@ -1,5 +1,6 @@
 # DraxosMobile - Site Protection
 
+- Status: `Done`
 - Data: `2026-05-27`
 - Agente: `Codex`
 - Branch: `codex/draxos-mobile/site-protection`
