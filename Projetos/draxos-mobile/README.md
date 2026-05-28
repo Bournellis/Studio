@@ -68,4 +68,4 @@ git status --short
 - Version code: `1`
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal/Web: Cloudflare Access protected.
-- Latest verified preview: `https://36b1d46c.draxos-mobile-internal-alpha.pages.dev`
+- Latest verified preview: `https://b16705ab.draxos-mobile-internal-alpha.pages.dev`

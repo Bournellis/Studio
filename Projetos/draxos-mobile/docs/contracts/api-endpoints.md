@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
 - Ultima atualizacao: `2026-05-28`
-- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*` e `release/*` implementados local/remoto; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`; Track 03 implementou email/senha via `/account/bootstrap`, selecao de save via `x-draxos-save-type`, reset separado por save, aplicacao server-backed do Progression Lab no save `progression_lab`, Base/Social/Competicao/Loja jogaveis, leaderboard alpha com pontos por batalha normal e manifest/version gate de updates internos; Track 06 adicionou `GET /release/config`; Track 16 adicionou crafting de pocoes, Po de Osso, slot de pocao e comportamento server-authoritative para spells/pocoes.
+- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*` e `content/*` implementados local/remoto; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`; Track 03 implementou email/senha via `/account/bootstrap`, selecao de save via `x-draxos-save-type`, reset separado por save, aplicacao server-backed do Progression Lab no save `progression_lab`, Base/Social/Competicao/Loja jogaveis, leaderboard alpha com pontos por batalha normal e manifest/version gate de updates internos; Track 06 adicionou `GET /release/config`; o upgrade do site adicionou `/release/download` e `/content/grimoire`; Track 16 adicionou crafting de pocoes, Po de Osso, slot de pocao e comportamento server-authoritative para spells/pocoes.
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -13,8 +13,8 @@ Este documento descreve a interface logica entre cliente Godot e Supabase Edge F
 - Internal Alpha: cliente cria sessao Supabase Auth por email/senha; depois chama `/account/bootstrap` com JWT registrado, username e convite para criar o primeiro save.
 - Guest dev: cliente ainda pode criar sessao Supabase Auth anonima e chamar `/account/guest`, mas esse fluxo e ferramenta de desenvolvimento/fallback e nao o caminho real da build interna.
 - Correlation: cliente envia `request_id` em mutacoes para idempotencia.
-- Runtime local atual: `supabase/functions/healthcheck`, `account`, `battle`, `base`, `build`, `crafting`, `social`, `competition`, `monetization`, `telemetry`, `progression-lab` e `release`, espelhados em `server/functions/`.
-- Anti-lock-in: os endpoints logicos deste documento pertencem ao jogo, nao ao Supabase. O cliente Godot deve depender de `account`, `battle`, `base`, `build`, `crafting`, `social`, `competition`, `monetization`, `telemetry`, `progression-lab` e `release`, permitindo futura migracao para Backend Proprio + Postgres sem redesenhar o cliente.
+- Runtime local atual: `supabase/functions/healthcheck`, `account`, `battle`, `base`, `build`, `crafting`, `social`, `competition`, `monetization`, `telemetry`, `progression-lab`, `release` e `content`, espelhados em `server/functions/`.
+- Anti-lock-in: os endpoints logicos deste documento pertencem ao jogo, nao ao Supabase. O cliente Godot e o hub alpha devem depender de `account`, `battle`, `base`, `build`, `crafting`, `social`, `competition`, `monetization`, `telemetry`, `progression-lab`, `release` e `content`, permitindo futura migracao para Backend Proprio + Postgres sem redesenhar o cliente/site.
 - Resposta de erro padrao:
 
 ```json
@@ -59,6 +59,8 @@ novo.
 | GET | `/healthcheck` | `release` | Nao | Nao | Healthcheck operacional local/remoto; nao le gameplay. |
 | GET | `/release/manifest` | `release` | Nao | Nao | Manifest publico de update/version gate. |
 | GET | `/release/config` | `release` | Nao | Nao | Runtime config publico read-only com flags T06; nao le secrets, gameplay state nem tuning. |
+| GET | `/release/download` | `release` | Nao | Nao | Gera URL assinada temporaria para APK/PC quando downloads privados estiverem ativos. |
+| GET | `/content/grimoire` | `release` | Nao | Nao | Catalogo privado do Grimorio para o hub alpha; exige JWT email/senha com save `normal`. |
 | POST | `/account/bootstrap` | `save-scoped` | Sim | `request_id` por save | Cria/recupera o save `normal` ou `progression_lab` de conta registrada; o gate de convite e account-aware. |
 | POST | `/account/guest` | `save-scoped` | Sim | `request_id` por save | Fallback dev/local anonimo; cria/recupera o save selecionado. |
 | GET | `/account/state` | `save-scoped` | Sim | Nao | Retorna snapshot do save ativo. |
@@ -94,6 +96,46 @@ novo.
 convites, suporte, moderacao, entitlement account-wide, operacao de release ou
 publicacao remota. Esses endpoints nao devem reutilizar silenciosamente
 `save-scoped`.
+
+## Endpoints De Conteudo
+
+### `GET /content/grimoire`
+
+Retorna o catalogo privado do Grimorio usado pelo hub alpha.
+
+Status: **implementado no upgrade do site em 2026-05-27**.
+
+Scope: `release`.
+
+Auth: exige JWT Supabase de conta email/senha com save `normal` registrado na alpha. JWT anonimo e conta sem alpha sao rejeitados.
+
+Response:
+
+```json
+{
+  "ok": true,
+  "schema_version": "grimoire_catalog_v1",
+  "catalog_version": "internal_alpha_v0",
+  "source": "data/definitions",
+  "collections": {
+    "weapons": [],
+    "spells": [],
+    "doutrines": [],
+    "familiars": [],
+    "base_structures": [],
+    "rewards": [],
+    "power_bands": [],
+    "bot_archetypes": []
+  },
+  "counts": {}
+}
+```
+
+Regras:
+
+- Conteudo vem de `data/definitions/*.json` via `tools/generate_grimoire_catalog.ts`.
+- O endpoint nao retorna dados de jogadores, ranking, email, saves ou recursos pessoais.
+- Erros minimos: `UNAUTHENTICATED`, `AUTH_REQUIRES_EMAIL`, `ALPHA_ACCESS_REQUIRED`, `METHOD_NOT_ALLOWED`.
 
 ## Endpoints De Release
 
@@ -158,6 +200,43 @@ Regras do cliente:
 - `requires_save_reset` apenas avisa; reset destrutivo continua manual e documentado.
 
 Contrato detalhado: `update-manifest.md`.
+
+### `GET /release/download`
+
+Gera URL assinada temporaria para baixar artefatos privados da Internal Alpha v0 quando o manifest aponta APK/PC para a funcao em vez de Storage publico.
+
+Status: **implementado no upgrade do site em 2026-05-27**.
+
+Scope: `release`.
+
+Auth: exige JWT Supabase de conta email/senha com save `normal` registrado na alpha. JWT anonimo e conta sem alpha sao rejeitados.
+
+Query:
+
+```text
+artifact=android
+artifact=pc_windows
+```
+
+Response:
+
+```json
+{
+  "ok": true,
+  "artifact": "android",
+  "url": "https://...signed...",
+  "expires_in": 300
+}
+```
+
+Regras:
+
+- JWT anonimo nao pode baixar builds.
+- Conta email/senha sem save alpha `normal` recebe `ALPHA_ACCESS_REQUIRED`.
+- A Edge Function usa service role apenas no servidor para verificar acesso e gerar URL assinada.
+- APK/PC ZIP vivem no bucket privado `draxos-internal-alpha-private` quando downloads privados estiverem ativos.
+- A URL retornada deve usar rota valida de Supabase Storage; caminhos assinados sem prefixo de Storage sao normalizados pela funcao.
+- Web build continua abrindo pelo Cloudflare Pages; assets grandes do Web export continuam em Storage publico enquanto houver limite de tamanho no Pages.
 
 ### `GET /release/config`
 

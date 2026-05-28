@@ -39,6 +39,8 @@ npx -y deno run --allow-net --allow-env server/tests/reset_save_context_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/progression_lab_apply_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/email_auth_alpha_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/release_manifest_smoke.ts
+npx -y deno run --allow-net --allow-env server/tests/release_download_smoke.ts
+npx -y deno run --allow-net --allow-env server/tests/grimoire_catalog_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/runtime_config_smoke.ts
 ```
 
@@ -97,6 +99,14 @@ posterior na mesma conta.
 O smoke `release_manifest_smoke.ts` valida `GET /release/manifest`: schema do
 manifest de update, canal `internal_alpha`, versao/code atuais e metadados de
 artefatos Android/PC/Web.
+
+O smoke `release_download_smoke.ts` valida `GET /release/download` com conta
+email/senha alpha: cria URLs assinadas temporarias de Android/PC e confirma
+que elas usam rota valida de Supabase Storage.
+
+O smoke `grimoire_catalog_smoke.ts` valida `GET /content/grimoire`: auth
+obrigatoria, bloqueio de JWT anonimo, bloqueio de conta email sem save alpha e
+catalogo `grimoire_catalog_v1` completo apos `/account/bootstrap`.
 
 O smoke `runtime_config_smoke.ts` valida `GET /release/config`: schema
 `runtime_config_v1`, flags booleanas da Track 06, fallback offline permitido e

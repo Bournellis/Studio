@@ -96,6 +96,29 @@ Links de teste:
 - PC ZIP: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.zip`
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 
+## Protecao Do Portal E Downloads
+
+Modelo recomendado pos-publicacao:
+
+- Portal/Web: proteger com Cloudflare Access e allowlist de emails.
+- Estado atual do portal: APK/PC ZIP usam links diretos do pacote publicado para usuarios que passaram pelo Cloudflare Access; registro/login ficam apenas in-game.
+- Fluxo preservado para futuro: bucket privado `draxos-internal-alpha-private`, manifest apontando para `GET /release/download?artifact=android|pc_windows` e portal chamando `/release/download` com JWT de conta email/senha alpha.
+- Web assets grandes: continuam no bucket publico `draxos-internal-alpha` enquanto o Cloudflare Pages nao puder hospedar `index.wasm`; eles nao podem conter secrets e nao substituem Auth/RLS.
+
+Ativacao versionada:
+
+```powershell
+cd D:\Estudio\Projetos\draxos-mobile
+npx -y supabase db push
+npx -y supabase functions deploy release --project-ref armxgipvnbbshzqawklw --no-verify-jwt
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 -ProjectDir . -StaticSiteBaseUrl "https://draxos-mobile-internal-alpha.pages.dev" -UseManifestSecret
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build_cloudflare_pages_package.ps1 -ProjectDir .
+npx -y wrangler pages deploy .\build\internal-alpha\cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main
+```
+
+O comando acima exige que a Supabase CLI esteja linkada/logada e que `wrangler login` tenha sido executado. Se o Cloudflare Access ainda nao estiver configurado, nao considerar o portal privado.
+Para ensaio local sem tocar remoto, usar `publish_internal_alpha.ps1` com `-SkipUpload -SkipDeploy`.
+
 ## Variaveis Do Cliente
 
 Estas variaveis podem ser usadas no editor ou em execucao local:
@@ -215,8 +238,8 @@ Supabase Storage pode hospedar manifest e artefatos pequenos, mas o limite do pl
 - Fluxo email/senha implementado no cliente/backend.
 - Manifest remoto de updates e version gate implementados.
 - Builds locais Android, PC e Web exportadas.
-- APK/PC publicados em links unlisted.
-- Portal/Web publicados no Cloudflare Pages.
+- APK/PC publicados em links unlisted; proximo hardening move downloads para bucket privado com URL assinada.
+- Portal/Web publicados no Cloudflare Pages; proximo hardening exige Cloudflare Access.
 - Manifest remoto aponta para URLs/hashes finais.
 - QA remoto automatizado verde.
 - Proximo: rodada fechada Fabio + tester; bugs encontrados entram no backlog pos-handoff.

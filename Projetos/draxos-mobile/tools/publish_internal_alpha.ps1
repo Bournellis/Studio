@@ -2,6 +2,7 @@ param(
     [string]$ProjectDir = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path,
     [string]$EnvFile = "",
     [string]$BucketName = "draxos-internal-alpha",
+    [string]$PrivateDownloadBucketName = "draxos-internal-alpha-private",
     [string]$ReleaseRoot = "internal-alpha/v0",
     [string]$StaticSiteBaseUrl = "",
     [ValidateSet("Plan", "Package", "Upload", "DeployManifest", "FullPublish")]
@@ -9,7 +10,8 @@ param(
     [switch]$ConfirmRemoteMutation,
     [switch]$UseManifestSecret,
     [switch]$SkipUpload,
-    [switch]$SkipManifestSecret
+    [switch]$SkipManifestSecret,
+    [switch]$PublicDownloads
 )
 
 $ErrorActionPreference = "Stop"
@@ -146,6 +148,11 @@ function Content-TypeFor {
         ".apk" { return "application/vnd.android.package-archive" }
         ".zip" { return "application/zip" }
         ".png" { return "image/png" }
+        ".jpg" { return "image/jpeg" }
+        ".jpeg" { return "image/jpeg" }
+        ".webp" { return "image/webp" }
+        ".svg" { return "image/svg+xml" }
+        ".css" { return "text/css; charset=utf-8" }
         ".txt" { return "text/plain; charset=utf-8" }
         default { return "application/octet-stream" }
     }
@@ -225,7 +232,7 @@ function Build-Manifest {
         notes = @(
             "Primeira release candidate interna.",
             "APK Android e PC ZIP compartilham o mesmo backend remoto.",
-            "Portal/Web rodam no Cloudflare Pages; downloads e assets grandes continuam no Supabase Storage.",
+            $(if ($PublicDownloads) { "Portal/Web rodam no Cloudflare Pages; downloads e assets grandes continuam no Supabase Storage." } else { "Portal/Web rodam no Cloudflare Pages; downloads usam login alpha e URLs assinadas temporarias." }),
             "Progression Lab usa save separado e nao pontua ranking."
         )
         artifacts = [ordered]@{
@@ -233,11 +240,13 @@ function Build-Manifest {
                 label = "Android APK"
                 url = $AndroidRecord.url
                 sha256 = $AndroidRecord.sha256
+                auth_required = (-not $PublicDownloads)
             }
             pc_windows = [ordered]@{
                 label = "PC Windows ZIP"
                 url = $PcRecord.url
                 sha256 = $PcRecord.sha256
+                auth_required = (-not $PublicDownloads)
             }
             web = [ordered]@{
                 label = "Web"
@@ -384,6 +393,7 @@ $planMarkdownPath = Join-Path $internalAlphaDir "release-plan.md"
 $publicationReportPath = Join-Path $internalAlphaDir "publication-report.json"
 
 $storageBaseUrl = "$supabaseUrl/storage/v1/object/public/$BucketName/$ReleaseRoot"
+$protectedDownloadBaseUrl = "$supabaseUrl/functions/v1/release/download"
 $normalizedStaticSiteBaseUrl = $StaticSiteBaseUrl.Trim().TrimEnd("/")
 $portalUrl = ""
 $webUrl = ""
@@ -393,8 +403,8 @@ if ($normalizedStaticSiteBaseUrl -ne "") {
 } else {
     $warnings.Add("StaticSiteBaseUrl is empty; Portal/Web URLs remain pending in the planned manifest.") | Out-Null
 }
-$androidUrl = "$storageBaseUrl/downloads/draxos-mobile-alpha.apk"
-$pcUrl = "$storageBaseUrl/downloads/draxos-mobile-alpha.zip"
+$androidUrl = if ($PublicDownloads) { "$storageBaseUrl/downloads/draxos-mobile-alpha.apk" } else { "${protectedDownloadBaseUrl}?artifact=android" }
+$pcUrl = if ($PublicDownloads) { "$storageBaseUrl/downloads/draxos-mobile-alpha.zip" } else { "${protectedDownloadBaseUrl}?artifact=pc_windows" }
 
 $androidRecord = Artifact-Record -Path $androidApk -Label "Android APK" -Url $androidUrl -ExpectedMinimumBytes 1000000
 $pcRecord = Artifact-Record -Path $pcZip -Label "PC Windows ZIP" -Url $pcUrl -ExpectedMinimumBytes 1000000
@@ -433,7 +443,9 @@ $plan = [ordered]@{
     confirm_remote_mutation = $ConfirmRemoteMutation.IsPresent
     legacy_flags_protected = (-not $ModeProvided -and $LegacyFlagUsed)
     bucket = $BucketName
+    private_download_bucket = $(if ($PublicDownloads) { $null } else { $PrivateDownloadBucketName })
     release_root = $ReleaseRoot
+    downloads_protected = (-not $PublicDownloads)
     supabase_url = $supabaseUrl
     manifest_url = "$supabaseUrl/functions/v1/release/manifest"
     storage_base_url = $storageBaseUrl
@@ -485,18 +497,25 @@ Copy-DirectoryFiles -SourceDir $webDir -DestinationDir $webPublishDir -ExcludeEx
 Copy-Item -LiteralPath $androidApk -Destination (Join-Path $downloadsPublishDir "draxos-mobile-alpha.apk") -Force
 Copy-Item -LiteralPath $pcZip -Destination (Join-Path $downloadsPublishDir "draxos-mobile-alpha.zip") -Force
 
-Get-ChildItem -LiteralPath $portalDir -File | Where-Object {
-    @(".html", ".json") -contains $_.Extension.ToLowerInvariant()
+Get-ChildItem -LiteralPath $portalDir -Recurse -File | Where-Object {
+    @(".html", ".json", ".svg", ".png", ".jpg", ".jpeg", ".webp", ".css", ".js") -contains $_.Extension.ToLowerInvariant()
 } | ForEach-Object {
-    $target = Join-Path $portalPublishDir $_.Name
+    $relative = $_.FullName.Substring($portalDir.Length + 1)
+    $target = Join-Path $portalPublishDir $relative
+    $targetParent = Split-Path -Parent $target
+    if (-not (Test-Path -LiteralPath $targetParent -PathType Container)) {
+        New-Item -ItemType Directory -Force -Path $targetParent | Out-Null
+    }
     Copy-Item -LiteralPath $_.FullName -Destination $target -Force
 }
 
 $portalPublishIndexPath = Join-Path $portalPublishDir "index.html"
 $portalText = Get-Content -LiteralPath $portalPublishIndexPath -Raw
-$portalText = $portalText.Replace("WEB_GAME_URL_PLACEHOLDER", $(if ($webUrl -ne "") { $webUrl } else { "STATIC_HOST_PLACEHOLDER" }))
-$portalText = $portalText.Replace("ANDROID_APK_URL_PLACEHOLDER", $androidUrl)
-$portalText = $portalText.Replace("PC_ZIP_URL_PLACEHOLDER", $pcUrl)
+$portalText = $portalText.Replace("WEB_GAME_URL_PENDING_T03_P17", $(if ($webUrl -ne "") { $webUrl } else { "STATIC_HOST_PENDING_T03_P17" }))
+$portalText = $portalText.Replace("ANDROID_APK_URL_PENDING_T03_P17", $androidUrl)
+$portalText = $portalText.Replace("PC_ZIP_URL_PENDING_T03_P17", $pcUrl)
+$portalText = $portalText.Replace("SUPABASE_URL_PENDING_T03_P17", $supabaseUrl)
+$portalText = $portalText.Replace("SUPABASE_PUBLISHABLE_KEY_PENDING_T03_P17", $publishableKey)
 Assert-NoSecretLikeText -Text $portalText -Label "portal package"
 Write-TextUtf8NoBom -Path $portalPublishIndexPath -Text $portalText
 
@@ -523,7 +542,11 @@ if ($ShouldUpload -and -not $SkipUpload) {
     foreach ($file in Get-ChildItem -LiteralPath $publishDir -Recurse -File) {
         $relative = $file.FullName.Substring($publishDir.Length + 1).Replace("\", "/")
         $sourcePath = Resolve-Path -LiteralPath $file.FullName -Relative
-        $destination = "ss:///$BucketName/$ReleaseRoot/$relative"
+        $targetBucket = $BucketName
+        if (-not $PublicDownloads -and $relative.StartsWith("downloads/")) {
+            $targetBucket = $PrivateDownloadBucketName
+        }
+        $destination = "ss:///$targetBucket/$ReleaseRoot/$relative"
         $contentType = Content-TypeFor -Path $file.FullName
         [void](Invoke-SupabaseOptional -Arguments @(
             "storage", "rm",
@@ -569,9 +592,11 @@ if ($ShouldDeployManifest) {
     )
 }
 
-if ($ShouldUpload -and -not $SkipUpload) {
+if ($ShouldUpload -and -not $SkipUpload -and $PublicDownloads) {
     Assert-HeadOk -Url $androidUrl -Label "Android APK" -ExpectedMinimumBytes 1000000
     Assert-HeadOk -Url $pcUrl -Label "PC ZIP" -ExpectedMinimumBytes 1000000
+} elseif ($ShouldUpload -and -not $SkipUpload) {
+    Write-Host "Protected downloads enabled; direct HEAD validation is skipped for APK/ZIP."
 }
 
 if ($ShouldDeployManifest) {
@@ -610,7 +635,9 @@ $report = [ordered]@{
     mode = $Mode
     generated_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
     bucket = $BucketName
+    private_download_bucket = $(if ($PublicDownloads) { $null } else { $PrivateDownloadBucketName })
     release_root = $ReleaseRoot
+    downloads_protected = (-not $PublicDownloads)
     portal_url = $portalUrl
     web_url = $webUrl
     manifest_url = "$supabaseUrl/functions/v1/release/manifest"

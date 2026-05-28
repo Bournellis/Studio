@@ -18,7 +18,7 @@ This directory contains active, conceptual and paused projects for the studio.
 
 ## Implementacao - Internal Alpha
 
-- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 00-15 are integrated and Track 16 is adding behavior, Po de Osso and potion crafting.
+- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 00-15 are integrated, the themed Internal Alpha portal is deployed on Cloudflare Pages preview `https://b16705ab.draxos-mobile-internal-alpha.pages.dev`, and Track 16 is adding behavior, Po de Osso and potion crafting.
   - Priority/status: `P2_IMPLEMENTACAO - Track 16 TRACK_16_BEHAVIOR_CRAFTING_ACTIVE`
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Agent manual: `draxos-mobile/docs/agent-operating-manual.md`

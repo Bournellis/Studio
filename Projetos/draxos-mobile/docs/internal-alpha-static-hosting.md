@@ -158,3 +158,22 @@ Web:    https://draxos-mobile-internal-alpha.pages.dev/web/index.html
 - O jogo continua exigindo email/senha e acesso alpha.
 - Nunca publicar service role, senha de banco, senha de keystore ou `.env.internal-alpha.local`.
 - Publishable key pode estar no cliente/export, mas RLS e Edge Functions continuam sendo a barreira real.
+
+## Hardening Do Site
+
+- O portal `pages.dev` e unlisted, nao privado de verdade.
+- Para fechar o acesso do Portal/Web, proteger o dominio publicado com Cloudflare Access e allowlist de emails dos testadores.
+- Estado atual do portal: downloads APK/PC usam links diretos do pacote publicado para usuarios que passaram pelo Cloudflare Access. O fluxo protegido por Supabase Auth (`GET /release/download?artifact=android|pc_windows`) permanece implementado e preservado para reativacao futura.
+- Assets grandes do Web export (`index.wasm`, `index.js`, `index.pck`) continuam no bucket publico por causa do limite por arquivo do Cloudflare Pages. Eles nao devem conter secrets; o backend continua exigindo Auth/RLS/Edge Functions para qualquer progresso real.
+
+## Cloudflare Access
+
+Para tornar o site privado de verdade:
+
+1. Usar dominio proprio para a alpha, por exemplo `alpha.draxos...`.
+2. No Cloudflare Zero Trust, criar uma aplicacao Self-hosted apontando para esse hostname.
+3. Criar policy `Allow` com os emails dos testadores.
+4. Confirmar que `/`, `/portal/index.html`, `/web` e `/web/index.html` pedem login Cloudflare antes de abrir.
+5. Manter o jogo exigindo Supabase Auth mesmo atras do Access.
+
+Observacao: proteger apenas `pages.dev` depende das opcoes atuais da conta/projeto no Cloudflare. O caminho mais previsivel e usar um dominio proprio sob a zona Cloudflare.

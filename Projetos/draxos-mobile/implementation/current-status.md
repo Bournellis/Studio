@@ -51,7 +51,7 @@ Links:
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal: `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
 - Stable Web: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest verified preview: `https://36b1d46c.draxos-mobile-internal-alpha.pages.dev`
+- Latest verified preview: `https://b16705ab.draxos-mobile-internal-alpha.pages.dev`
 
 The stable Cloudflare Pages domain is protected by Cloudflare Access. Anonymous public validation should use an unprotected preview or an authenticated Access session.
 
