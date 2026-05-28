@@ -10,6 +10,7 @@ const BaseSurfacePresenterScript := preload("res://modes/boot/surfaces/base_surf
 const SocialSurfacePresenterScript := preload("res://modes/boot/surfaces/social_surface_presenter.gd")
 const CompetitionSurfacePresenterScript := preload("res://modes/boot/surfaces/competition_surface_presenter.gd")
 const ShopSurfacePresenterScript := preload("res://modes/boot/surfaces/shop_surface_presenter.gd")
+const SurfaceUiHelpersScript := preload("res://modes/boot/surfaces/surface_ui_helpers.gd")
 const AppShellRouteContractScript := preload("res://modes/boot/ui/app_shell_route_contract.gd")
 const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
 const AppShellErrorContractScript := preload("res://modes/boot/ui/app_shell_error_contract.gd")
@@ -1060,754 +1061,123 @@ func _require_account(message: String) -> bool:
 	return false
 
 func _render_base_state(collected: Dictionary = {}) -> void:
-	BaseSurfacePresenterScript.render_state(self, collected)
-
+	SurfaceUiHelpersScript.render_base_state(self, collected)
 func _render_base_playable_panels(structures: Array, base: Dictionary, collected: Dictionary) -> void:
-	if _base_state_container == null:
-		return
-	_ensure_selected_base_structure(structures)
-	_base_state_container.add_child(_base_summary_panel(base, collected))
-	_base_state_container.add_child(_base_map_panel(structures))
-	_base_state_container.add_child(_base_detail_panel(structures))
-
+	SurfaceUiHelpersScript.render_base_playable_panels(self, structures, base, collected)
 func _base_summary_panel(base: Dictionary, collected: Dictionary) -> Control:
-	var panel := _base_panel()
-	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", 6)
-	panel.add_child(box)
-	box.add_child(_base_label("Resumo do Refugio", "text_primary", 17))
-	box.add_child(_base_label("Recursos: %s" % _format_resources(SessionStore.resources), "text_secondary"))
-	var active_jobs := _active_base_jobs(_as_array(base.get("jobs", [])))
-	box.add_child(_base_label("Fila de construcao: %d/%d" % [
-		active_jobs.size(),
-		int(base.get("construction_slots", 1)),
-	], "text_secondary"))
-	if not collected.is_empty():
-		var collect_text := "Coleta: nada acumulado agora."
-		if _resource_total(collected) > 0.0:
-			collect_text = "Coletado agora: %s" % _format_resources(collected, false)
-		box.add_child(_base_label(collect_text, "status_success"))
-	if SessionStore.is_progression_lab_active():
-		box.add_child(_base_label("Progression Lab: base isolada do save normal.", "status_warning"))
-	return panel
-
+	return SurfaceUiHelpersScript.base_summary_panel(self, base, collected)
 func _base_map_panel(structures: Array) -> Control:
-	var panel := _base_panel()
-	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", 8)
-	panel.add_child(box)
-	box.add_child(_base_label("Mapa do Refugio", "text_primary", 17))
-	var grid := GridContainer.new()
-	grid.columns = _base_map_columns()
-	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	grid.add_theme_constant_override("h_separation", 8)
-	grid.add_theme_constant_override("v_separation", 8)
-	box.add_child(grid)
-	for structure_id: String in BASE_STRUCTURE_IDS:
-		var structure := _base_structure_by_id(structures, structure_id)
-		if structure.is_empty():
-			continue
-		grid.add_child(_base_structure_button(structure))
-	return panel
-
+	return SurfaceUiHelpersScript.base_map_panel(self, structures)
 func _base_detail_panel(structures: Array) -> Control:
-	var structure := _base_structure_by_id(structures, _selected_base_structure_id)
-	if structure.is_empty() and not structures.is_empty():
-		structure = _as_dictionary(structures[0])
-	var panel := _base_panel()
-	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", 7)
-	panel.add_child(box)
-	if structure.is_empty():
-		box.add_child(_base_label("Selecione um predio no mapa do Refugio.", "text_secondary"))
-		return panel
-
-	var structure_id := str(structure.get("structure_id", ""))
-	var display_label := _structure_label(structure_id, str(structure.get("display_name", "")))
-	box.add_child(_base_label("%s - Level %s/%s" % [
-		display_label,
-		str(structure.get("level", 0)),
-		str(structure.get("max_level", 40)),
-	], "text_primary", 18))
-	box.add_child(_base_label(str(structure.get("description", "")), "text_secondary"))
-	box.add_child(_base_label("Beneficio: %s" % _base_benefit_text(structure), "text_secondary"))
-	box.add_child(_base_label("Producao pendente: %s" % _base_pending_text(structure), "text_secondary"))
-	box.add_child(_base_label("Proximo upgrade: %s" % _base_upgrade_text(structure), "text_secondary"))
-	box.add_child(_base_label("Status: %s" % str(structure.get("blocked_message", "")), _base_status_color_token(structure)))
-
-	var action_id := AppShellActionContractScript.upgrade_base_structure_action(structure_id)
-	var upgrade_button := Button.new()
-	upgrade_button.text = "Evoluir %s" % display_label
-	upgrade_button.custom_minimum_size = _button_min_size()
-	upgrade_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	upgrade_button.tooltip_text = _base_structure_tooltip(structure)
-	upgrade_button.disabled = not _can_upgrade_base_structure(structure_id)
-	upgrade_button.pressed.connect(func() -> void:
-		_trigger_action(action_id, "Iniciar upgrade de %s no servidor?" % display_label)
-	)
-	box.add_child(upgrade_button)
-	_action_buttons[action_id] = upgrade_button
-	return panel
-
+	return SurfaceUiHelpersScript.base_detail_panel(self, structures)
 func _base_structure_button(structure: Dictionary) -> Button:
-	var structure_id := str(structure.get("structure_id", ""))
-	var selected := structure_id == _selected_base_structure_id
-	var button := Button.new()
-	button.text = "%s\n%s\nL%s -> %s\n%s" % [
-		_base_structure_symbol(structure_id),
-		_base_structure_short_label(structure_id),
-		str(structure.get("level", 0)),
-		_base_next_level_text(structure),
-		_base_short_status(structure),
-	]
-	button.custom_minimum_size = Vector2(132, 96) if _compact_layout else Vector2(170, 112)
-	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	button.tooltip_text = _base_structure_tooltip(structure)
-	button.add_theme_stylebox_override("normal", _base_structure_card_style(structure_id, selected))
-	button.add_theme_stylebox_override("hover", _base_structure_card_style(structure_id, true))
-	button.add_theme_stylebox_override("pressed", _base_structure_card_style(structure_id, true))
-	var action_id := AppShellActionContractScript.select_base_structure_action(structure_id)
-	button.pressed.connect(func() -> void:
-		_trigger_action(action_id)
-	)
-	_action_buttons[action_id] = button
-	return button
-
+	return SurfaceUiHelpersScript.base_structure_button(self, structure)
 func _select_base_structure(structure_id: String) -> void:
-	BaseSurfacePresenterScript.select_structure(self, structure_id)
-
+	SurfaceUiHelpersScript.select_base_structure(self, structure_id)
 func _ensure_selected_base_structure(structures: Array) -> void:
-	if not _base_structure_by_id(structures, _selected_base_structure_id).is_empty():
-		return
-	for structure_id: String in BASE_STRUCTURE_IDS:
-		if not _base_structure_by_id(structures, structure_id).is_empty():
-			_selected_base_structure_id = structure_id
-			return
-	if not structures.is_empty():
-		_selected_base_structure_id = str(_as_dictionary(structures[0]).get("structure_id", _selected_base_structure_id))
-
+	SurfaceUiHelpersScript.ensure_selected_base_structure(self, structures)
 func _base_structure_by_id(structures: Array, structure_id: String) -> Dictionary:
-	for item: Variant in structures:
-		var structure := _as_dictionary(item)
-		if str(structure.get("structure_id", "")) == structure_id:
-			return structure
-	return {}
-
+	return SurfaceUiHelpersScript.base_structure_by_id(structures, structure_id)
 func _base_panel() -> PanelContainer:
-	var panel := PanelContainer.new()
-	panel.add_theme_stylebox_override("panel", _panel_style("bg_panel", "border_default"))
-	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	return panel
-
+	return SurfaceUiHelpersScript.base_panel(self)
 func _base_info_panel(title_text: String, body_text: String) -> Control:
-	var panel := _base_panel()
-	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", 6)
-	panel.add_child(box)
-	box.add_child(_base_label(title_text, "text_primary", 17))
-	box.add_child(_base_label(body_text, "text_secondary"))
-	return panel
-
+	return SurfaceUiHelpersScript.base_info_panel(self, title_text, body_text)
 func _base_label(text: String, color_token: String = "text_secondary", font_size: int = 0) -> Label:
-	var label := Label.new()
-	label.text = text
-	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	label.add_theme_color_override("font_color", UiTokens.color(color_token))
-	if font_size > 0:
-		label.add_theme_font_size_override("font_size", max(12, font_size - 1) if _compact_layout else font_size)
-	elif _compact_layout:
-		label.add_theme_font_size_override("font_size", 13)
-	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	return label
-
+	return SurfaceUiHelpersScript.base_label(self, text, color_token, font_size)
 func _base_structure_card_style(structure_id: String, selected: bool) -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = _base_structure_color(structure_id).darkened(0.25 if selected else 0.45)
-	style.border_color = UiTokens.color("status_success") if selected else UiTokens.color("border_default")
-	style.set_border_width_all(2 if selected else 1)
-	style.set_corner_radius_all(6)
-	style.content_margin_left = 10
-	style.content_margin_right = 10
-	style.content_margin_top = 10
-	style.content_margin_bottom = 10
-	return style
-
+	return SurfaceUiHelpersScript.base_structure_card_style(structure_id, selected)
 func _base_structure_color(structure_id: String) -> Color:
-	match structure_id:
-		"altar_das_almas":
-			return Color(0.45, 0.35, 0.78)
-		"nucleo_energia":
-			return Color(0.25, 0.58, 0.86)
-		"pocos_sangue":
-			return Color(0.70, 0.20, 0.26)
-		"minas_cristal":
-			return Color(0.22, 0.66, 0.62)
-		"estrutura_stats":
-			return Color(0.58, 0.58, 0.50)
-		"ossario":
-			return Color(0.72, 0.66, 0.54)
-	return UiTokens.color("bg_panel_alt")
-
+	return SurfaceUiHelpersScript.base_structure_color(structure_id)
 func _base_structure_symbol(structure_id: String) -> String:
-	match structure_id:
-		"altar_das_almas":
-			return "[ALM]"
-		"nucleo_energia":
-			return "[ENE]"
-		"pocos_sangue":
-			return "[SAN]"
-		"minas_cristal":
-			return "[CRI]"
-		"estrutura_stats":
-			return "[STA]"
-		"ossario":
-			return "[OSS]"
-	return "[???]"
-
+	return SurfaceUiHelpersScript.base_structure_symbol(structure_id)
 func _base_structure_short_label(structure_id: String) -> String:
-	match structure_id:
-		"altar_das_almas":
-			return "Altar"
-		"nucleo_energia":
-			return "Nucleo"
-		"pocos_sangue":
-			return "Pocos"
-		"minas_cristal":
-			return "Minas"
-		"estrutura_stats":
-			return "Stats"
-		"ossario":
-			return "Ossario"
-	return structure_id
-
+	return SurfaceUiHelpersScript.base_structure_short_label(structure_id)
 func _base_benefit_text(structure: Dictionary) -> String:
-	var produces := str(structure.get("produces", ""))
-	if produces != "" and produces != "<null>":
-		return "%s por dia: %s | armazenamento: %s" % [
-			produces.capitalize(),
-			_format_number(float(structure.get("daily_production", 0.0))),
-			_format_number(float(structure.get("storage_cap", 0.0))),
-		]
-	return str(structure.get("benefit_label", "Bonus permanente."))
-
+	return SurfaceUiHelpersScript.base_benefit_text(structure)
 func _base_pending_text(structure: Dictionary) -> String:
-	var produces := str(structure.get("produces", ""))
-	if produces == "" or produces == "<null>":
-		return "Este predio nao gera coleta direta."
-	return "%s %s de %s" % [
-		_format_number(float(structure.get("pending_collectable", 0.0))),
-		produces.capitalize(),
-		_format_number(float(structure.get("storage_cap", 0.0))),
-	]
-
+	return SurfaceUiHelpersScript.base_pending_text(structure)
 func _base_upgrade_text(structure: Dictionary) -> String:
-	var next_level: Variant = structure.get("next_level", null)
-	if next_level == null:
-		return "nivel maximo"
-	var cost := _as_dictionary(structure.get("upgrade_cost", {}))
-	return "L%s | custo %s | tempo %s" % [
-		str(next_level),
-		_format_cost(cost),
-		_format_duration(int(structure.get("upgrade_duration_seconds", 0))),
-	]
-
+	return SurfaceUiHelpersScript.base_upgrade_text(structure)
 func _base_next_level_text(structure: Dictionary) -> String:
-	var next_level: Variant = structure.get("next_level", null)
-	return "max" if next_level == null else "L%s" % str(next_level)
-
+	return SurfaceUiHelpersScript.base_next_level_text(structure)
 func _base_short_status(structure: Dictionary) -> String:
-	var active_job := _as_dictionary(structure.get("active_job", {}))
-	if not active_job.is_empty():
-		return "Upgrade %s" % _format_duration(int(active_job.get("remaining_seconds", 0)))
-	if bool(structure.get("can_upgrade", false)):
-		return "Upgrade pronto"
-	return str(structure.get("blocked_message", "Bloqueado"))
-
+	return SurfaceUiHelpersScript.base_short_status(structure)
 func _base_status_color_token(structure: Dictionary) -> String:
-	if bool(structure.get("can_upgrade", false)):
-		return "status_success"
-	var reason := str(structure.get("blocked_reason", ""))
-	if reason == "INSUFFICIENT_RESOURCES" or reason == "CONSTRUCTION_QUEUE_FULL":
-		return "status_warning"
-	return "text_secondary"
-
+	return SurfaceUiHelpersScript.base_status_color_token(structure)
 func _base_structure_tooltip(structure: Dictionary) -> String:
-	var structure_id := str(structure.get("structure_id", ""))
-	return "%s\nO que e: %s\nComo funciona: %s\nImporta porque: %s" % [
-		_structure_label(structure_id, str(structure.get("display_name", ""))),
-		str(structure.get("description", "")),
-		_base_upgrade_text(structure),
-		_base_benefit_text(structure),
-	]
-
+	return SurfaceUiHelpersScript.base_structure_tooltip(structure)
 func _can_upgrade_base_structure(structure_id: String) -> bool:
-	return BaseSurfacePresenterScript.can_upgrade_structure(self, structure_id)
-
+	return SurfaceUiHelpersScript.can_upgrade_base_structure(self, structure_id)
 func _active_base_jobs(jobs: Array) -> Array:
-	var active: Array = []
-	for item: Variant in jobs:
-		var job := _as_dictionary(item)
-		if str(job.get("status", "")) == "active":
-			active.append(job)
-	return active
-
+	return SurfaceUiHelpersScript.active_base_jobs(jobs)
 func _format_cost(cost: Dictionary) -> String:
-	if cost.is_empty():
-		return "-"
-	var parts := PackedStringArray()
-	for key: String in cost.keys():
-		parts.append("%s %s" % [str(key).capitalize(), _format_number(float(cost.get(key, 0.0)))])
-	return " | ".join(parts)
-
+	return SurfaceUiHelpersScript.format_cost(cost)
 func _format_duration(total_seconds: int) -> String:
-	var seconds: int = max(0, total_seconds)
-	var hours := int(float(seconds) / 3600.0)
-	var minutes := int(float(seconds % 3600) / 60.0)
-	var remaining_seconds: int = seconds % 60
-	if hours > 0:
-		return "%dh %02dm" % [hours, minutes]
-	if minutes > 0:
-		return "%dm %02ds" % [minutes, remaining_seconds]
-	return "%ds" % remaining_seconds
-
+	return SurfaceUiHelpersScript.format_duration(total_seconds)
 func _format_number(value: float) -> String:
-	if abs(value - round(value)) < 0.005:
-		return str(int(round(value)))
-	return "%.2f" % value
-
+	return SurfaceUiHelpersScript.format_number(value)
 func _render_social_state() -> void:
-	SocialSurfacePresenterScript.render_state(self)
-
+	SurfaceUiHelpersScript.render_social_state(self)
 func _social_identity_panel(identity: Dictionary, social_player: Dictionary, active_player: Dictionary) -> Control:
-	var panel := _base_panel()
-	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", 6)
-	panel.add_child(box)
-	box.add_child(_base_label("Identidade Social", "text_primary", 17))
-	box.add_child(_base_label("Username social: %s" % _social_username_text(social_player), "text_secondary"))
-	box.add_child(_base_label("Save ativo: %s" % _social_username_text(active_player), "text_secondary"))
-	var badge := str(identity.get("viewer_badge", SessionStore.active_save_badge()))
-	var badge_label := _base_label("Marcador visivel: %s" % _social_save_badge_text(badge), "status_error" if badge == "lab" else "status_success")
-	box.add_child(badge_label)
-	if bool(identity.get("fallback_to_active_save", false)):
-		box.add_child(_base_label("Aviso: save Normal ainda nao existe; o social esta usando o save ativo como fallback.", "status_warning"))
-	return panel
-
+	return SurfaceUiHelpersScript.social_identity_panel(self, identity, social_player, active_player)
 func _social_friends_panel(friends: Array) -> Control:
-	var panel := _base_panel()
-	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", 6)
-	panel.add_child(box)
-	box.add_child(_base_label("Amigos (%d)" % friends.size(), "text_primary", 17))
-	if friends.is_empty():
-		box.add_child(_base_label("Nenhum amigo ainda. Use o username do outro jogador para adicionar.", "text_secondary"))
-		return panel
-	for item: Variant in friends:
-		var friendship := _as_dictionary(item)
-		var profile := _as_dictionary(friendship.get("friend", {}))
-		box.add_child(_base_label("%s | %s | L%s | Poder %s" % [
-			_social_username_text(profile),
-			str(friendship.get("status", "accepted")),
-			str(profile.get("level", 1)),
-			str(profile.get("power", 0)),
-		], "status_error" if str(profile.get("save_badge", "")) == "lab" else "text_secondary"))
-	return panel
-
+	return SurfaceUiHelpersScript.social_friends_panel(self, friends)
 func _social_guild_panel(guild: Dictionary, members: Array, structures: Array) -> Control:
-	var panel := _base_panel()
-	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", 6)
-	panel.add_child(box)
-	box.add_child(_base_label("Guilda", "text_primary", 17))
-	if guild.is_empty():
-		box.add_child(_base_label("Sem guilda. Crie uma guilda ou entre pelo nome.", "text_secondary"))
-		return panel
-	box.add_child(_base_label("%s | Level %s | %d membros" % [
-		str(guild.get("name", "")),
-		str(guild.get("level", 1)),
-		members.size(),
-	], "text_secondary"))
-	box.add_child(_base_label("Membros", "text_primary"))
-	for item: Variant in members:
-		var member := _as_dictionary(item)
-		var profile := _as_dictionary(member.get("player", {}))
-		var badge := str(profile.get("save_badge", "normal"))
-		box.add_child(_base_label("%s | %s | L%s | Poder %s" % [
-			_social_username_text(profile),
-			str(member.get("role", "member")),
-			str(profile.get("level", 1)),
-			str(profile.get("power", 0)),
-		], "status_error" if badge == "lab" else "text_secondary"))
-	box.add_child(_base_label("Estruturas", "text_primary"))
-	for item: Variant in structures:
-		var structure := _as_dictionary(item)
-		box.add_child(_base_label("%s L%s" % [
-			_guild_structure_label(str(structure.get("structure_id", ""))),
-			str(structure.get("level", 1)),
-		], "text_secondary"))
-	return panel
-
+	return SurfaceUiHelpersScript.social_guild_panel(self, guild, members, structures)
 func _social_chat_panel(messages: Array) -> Control:
-	var panel := _base_panel()
-	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", 6)
-	panel.add_child(box)
-	box.add_child(_base_label("Chat de Guilda (%d recentes)" % messages.size(), "text_primary", 17))
-	if messages.is_empty():
-		box.add_child(_base_label("Sem mensagens recentes. Entre em uma guilda e envie a primeira mensagem.", "text_secondary"))
-		return panel
-	for item: Variant in messages:
-		var message := _as_dictionary(item)
-		var badge := str(message.get("sender_save_badge", "normal"))
-		var sender_label := str(message.get("sender_username", "desconhecido"))
-		if badge == "lab":
-			sender_label += " [lab]"
-		box.add_child(_base_label("%s: %s" % [
-			sender_label,
-			str(message.get("content", "")),
-		], "status_error" if badge == "lab" else "text_secondary"))
-	return panel
-
+	return SurfaceUiHelpersScript.social_chat_panel(self, messages)
 func _social_input_text(input: LineEdit, fallback: String = "") -> String:
-	if input == null:
-		return fallback.strip_edges()
-	var text := input.text.strip_edges()
-	if text == "":
-		return fallback.strip_edges()
-	return text
-
+	return SurfaceUiHelpersScript.social_input_text(input, fallback)
 func _default_social_guild_text() -> String:
-	if _last_social_guild_name.strip_edges() != "":
-		return _last_social_guild_name
-	var guild := _as_dictionary(SessionStore.social_state.get("guild", {}))
-	if not guild.is_empty():
-		return str(guild.get("name", "")).strip_edges()
-	return _default_guild_name()
-
+	return SurfaceUiHelpersScript.default_social_guild_text(self)
 func _social_username_text(profile: Dictionary) -> String:
-	var username := str(profile.get("username", "")).strip_edges()
-	if username == "":
-		username = "sem username"
-	var badge := str(profile.get("save_badge", "normal"))
-	if badge == "lab":
-		return "%s [lab]" % username
-	return username
-
+	return SurfaceUiHelpersScript.social_username_text(profile)
 func _social_save_badge_text(badge: String) -> String:
-	if badge == "lab":
-		return "lab"
-	return "normal"
-
+	return SurfaceUiHelpersScript.social_save_badge_text(badge)
 func _guild_structure_label(structure_id: String) -> String:
-	match structure_id:
-		"oficina_ritual":
-			return "Oficina Ritual"
-		"condensador_astral":
-			return "Condensador Astral"
-		"arquivo_de_dominio":
-			return "Arquivo de Dominio"
-		"cofre_abissal":
-			return "Cofre Abissal"
-	return structure_id
-
+	return SurfaceUiHelpersScript.guild_structure_label(structure_id)
 func _render_competition_state() -> void:
-	CompetitionSurfacePresenterScript.render_state(self)
-
+	SurfaceUiHelpersScript.render_competition_state(self)
 func _render_competition_panels(last_battle: Dictionary, matchmaking: Dictionary, ranking: Dictionary) -> void:
-	if _competition_state_container == null:
-		return
-	if not last_battle.is_empty():
-		_competition_state_container.add_child(_competition_last_battle_panel(last_battle))
-	_competition_state_container.add_child(_competition_matchmaking_panel(matchmaking))
-	_competition_state_container.add_child(_competition_ranking_panel(ranking))
-
+	SurfaceUiHelpersScript.render_competition_panels(self, last_battle, matchmaking, ranking)
 func _competition_last_battle_panel(last_battle: Dictionary) -> Control:
-	var panel := _base_panel()
-	panel.tooltip_text = "Resumo competitivo retornado pela ultima battle/request. O cliente apenas apresenta estes dados; a pontuacao vem do servidor."
-	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", 6)
-	panel.add_child(box)
-	box.add_child(_base_label("Ultima Batalha Competitiva", "text_primary", 17))
-	if not bool(last_battle.get("ranked", false)):
-		box.add_child(_base_label("Sem pontuacao: %s" % str(last_battle.get("excluded_reason", "fora do ranking")), "status_warning"))
-		return panel
-	var ranking := _as_dictionary(last_battle.get("ranking", {}))
-	var raw_delta := int(last_battle.get("arena_delta_raw", last_battle.get("arena_delta", 0)))
-	var applied_delta := int(last_battle.get("arena_delta", 0))
-	var delta_color := "status_success" if raw_delta >= 0 else "status_warning"
-	box.add_child(_base_label("%s | Delta %s%d | Total %s pontos" % [
-		_competition_result_text(str(last_battle.get("result", "draw"))),
-		"+" if applied_delta >= 0 else "",
-		applied_delta,
-		str(ranking.get("arena_points", 0)),
-	], delta_color))
-	if raw_delta != applied_delta:
-		box.add_child(_base_label("Formula: %s%d | aplicado: %s%d por piso minimo em 0" % [
-			"+" if raw_delta >= 0 else "",
-			raw_delta,
-			"+" if applied_delta >= 0 else "",
-			applied_delta,
-		], "text_secondary"))
-	box.add_child(_base_label("Poder: voce %s vs oponente %s | Modelo %s" % [
-		str(last_battle.get("player_power", 0)),
-		str(last_battle.get("opponent_power", 0)),
-		_competition_scoring_model_text(str(last_battle.get("scoring_model", ""))),
-	], "text_secondary"))
-	return panel
-
+	return SurfaceUiHelpersScript.competition_last_battle_panel(self, last_battle)
 func _competition_matchmaking_panel(matchmaking: Dictionary) -> Control:
-	var panel := _base_panel()
-	panel.tooltip_text = "Preview de matchmaking: mostra quem o servidor escolheria para uma batalha pelo poder atual."
-	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", 6)
-	panel.add_child(box)
-	box.add_child(_base_label("Matchmaking", "text_primary", 17))
-	if matchmaking.is_empty():
-		box.add_child(_base_label("Ainda nao carregado. Use Preview matchmaking.", "text_secondary"))
-		return panel
-	var opponent := _as_dictionary(matchmaking.get("selected_opponent", {}))
-	box.add_child(_base_label("Seu poder: %s | candidatos: %s" % [
-		str(matchmaking.get("player_power", 0)),
-		str(matchmaking.get("candidate_count", "?")),
-	], "text_secondary"))
-	if opponent.is_empty():
-		box.add_child(_base_label("Nenhum oponente disponivel agora.", "status_warning"))
-		return panel
-	box.add_child(_base_label("Oponente: %s | Poder %s | Faixa %s" % [
-		str(opponent.get("id", "desconhecido")),
-		str(opponent.get("power", "?")),
-		str(opponent.get("power_band", "?")),
-	], "text_secondary"))
-	box.add_child(_base_label("Bot de treino: %s | Entra no ranking: %s" % [
-		"sim" if bool(opponent.get("is_bot", false)) else "nao",
-		"sim" if bool(opponent.get("is_ranked", false)) else "nao",
-	], "status_warning" if bool(opponent.get("is_bot", false)) else "text_secondary"))
-	return panel
-
+	return SurfaceUiHelpersScript.competition_matchmaking_panel(self, matchmaking)
 func _competition_ranking_panel(ranking: Dictionary) -> Control:
-	var panel := _base_panel()
-	panel.tooltip_text = "Leaderboard da season alpha. Mostra top 10 e sua posicao mesmo quando voce estiver fora do top."
-	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", 6)
-	panel.add_child(box)
-	box.add_child(_base_label("Leaderboard", "text_primary", 17))
-	if ranking.is_empty():
-		box.add_child(_base_label("Ainda nao carregado. Use Ver ranking.", "text_secondary"))
-		return panel
-	if str(ranking.get("excluded_reason", "")) == "PROGRESSION_LAB_DOES_NOT_RANK":
-		box.add_child(_base_label("Progression Lab nao pontua competicao e fica fora do leaderboard.", "status_error"))
-		return panel
-	var season := _as_dictionary(ranking.get("season", {}))
-	box.add_child(_base_label("%s | Modelo %s" % [
-		str(season.get("display_name", "Season alpha")),
-		_competition_scoring_model_text(str(ranking.get("scoring_model", ""))),
-	], "text_secondary"))
-	var self_ranking := _as_dictionary(ranking.get("self", {}))
-	if not self_ranking.is_empty():
-		box.add_child(_base_label("Sua posicao: #%s | %s pontos | %sV/%sD" % [
-			str(self_ranking.get("rank", "?")),
-			str(self_ranking.get("arena_points", 0)),
-			str(self_ranking.get("wins", 0)),
-			str(self_ranking.get("losses", 0)),
-		], "status_success" if bool(ranking.get("self_in_top", false)) else "status_warning"))
-	var entries := _as_array(ranking.get("entries", []))
-	if entries.is_empty():
-		box.add_child(_base_label("Nenhum jogador pontuou ainda nesta season.", "text_secondary"))
-		return panel
-	box.add_child(_base_label("Top %s" % str(ranking.get("top_limit", 10)), "text_primary"))
-	for item: Variant in entries:
-		var entry := _as_dictionary(item)
-		if entry.is_empty():
-			continue
-		box.add_child(_base_label("#%s  %s  |  %s pts  |  %sV/%sD" % [
-			str(entry.get("rank", "?")),
-			_competition_entry_name(entry),
-			str(entry.get("arena_points", 0)),
-			str(entry.get("wins", 0)),
-			str(entry.get("losses", 0)),
-		], "status_success" if str(entry.get("player_id", "")) == str(self_ranking.get("player_id", "")) else "text_secondary"))
-	return panel
-
+	return SurfaceUiHelpersScript.competition_ranking_panel(self, ranking)
 func _competition_entry_name(entry: Dictionary) -> String:
-	var player := _as_dictionary(entry.get("player", {}))
-	var username := str(entry.get("username", player.get("username", ""))).strip_edges()
-	if username == "":
-		username = "jogador"
-	var badge := str(player.get("save_badge", "normal"))
-	if badge == "lab":
-		return "%s [lab]" % username
-	return username
-
+	return SurfaceUiHelpersScript.competition_entry_name(entry)
 func _competition_result_text(result: String) -> String:
-	match result:
-		"win":
-			return "Vitoria"
-		"loss":
-			return "Derrota"
-	return "Empate"
-
+	return SurfaceUiHelpersScript.competition_result_text(result)
 func _competition_scoring_model_text(model: String) -> String:
-	if model == "alpha_v0_power_adjusted":
-		return "alpha v0: +20/-10 ajustado por poder"
-	if model.strip_edges() == "":
-		return "nao informado"
-	return model
-
+	return SurfaceUiHelpersScript.competition_scoring_model_text(model)
 func _render_monetization_state() -> void:
-	ShopSurfacePresenterScript.render_state(self)
-
+	SurfaceUiHelpersScript.render_monetization_state(self)
 func _render_shop_panels(monetization: Dictionary) -> void:
-	var summary := _as_dictionary(monetization.get("shop_summary", {}))
-	if not summary.is_empty():
-		_shop_state_container.add_child(_shop_summary_panel(summary))
-
-	var redeem_products: Array = []
-	var purchase_products: Array = []
-	for item: Variant in _as_array(monetization.get("alpha_products", [])):
-		var product := _as_dictionary(item)
-		if product.is_empty():
-			continue
-		if bool(product.get("daily_redeem", false)):
-			redeem_products.append(product)
-		else:
-			purchase_products.append(product)
-	_shop_state_container.add_child(_shop_product_group_panel("Redeems diarios de Diamante", redeem_products))
-	_shop_state_container.add_child(_shop_product_group_panel("Compras e conveniencias", purchase_products))
-	_shop_state_container.add_child(_shop_reward_group_panel("Recompensas diarias", _as_array(monetization.get("daily_rewards", []))))
-
-	var battle_pass := _as_dictionary(monetization.get("battle_pass", {}))
-	_shop_state_container.add_child(_shop_reward_group_panel("Battle Pass", _as_array(battle_pass.get("rewards", []))))
-
+	SurfaceUiHelpersScript.render_shop_panels(self, monetization)
 func _shop_summary_panel(summary: Dictionary) -> Control:
-	var panel := _base_panel()
-	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", 6)
-	panel.add_child(box)
-	box.add_child(_base_label("Resumo da Loja", "text_primary", 17))
-	box.add_child(_base_label("Diamante: %s | Moeda principal do alpha: %s" % [
-		str(summary.get("diamond_balance", 0)),
-		str(summary.get("currency", "diamante")).capitalize(),
-	], "text_secondary"))
-	box.add_child(_base_label("Premium: %s | Redeems hoje: %s/%s | Reset: meia-noite America/Sao_Paulo" % [
-		"ativo" if bool(summary.get("premium_unlocked", false)) else "inativo",
-		str(summary.get("daily_redeems_claimed", 0)),
-		str(summary.get("daily_redeems_total", 0)),
-	], "text_secondary"))
-	var owned := _as_array(summary.get("convenience_owned", []))
-	if owned.is_empty():
-		box.add_child(_base_label("Conveniencias ativas: nenhuma.", "text_secondary"))
-	else:
-		var owned_ids := PackedStringArray()
-		for item: Variant in owned:
-			owned_ids.append(str(item))
-		box.add_child(_base_label("Conveniencias ativas: %s" % ", ".join(owned_ids), "status_success"))
-	return panel
-
+	return SurfaceUiHelpersScript.shop_summary_panel(self, summary)
 func _shop_product_group_panel(title_text: String, products: Array) -> Control:
-	var panel := _base_panel()
-	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", 8)
-	panel.add_child(box)
-	box.add_child(_base_label(title_text, "text_primary", 17))
-	if products.is_empty():
-		box.add_child(_base_label("Nenhum produto retornado pelo servidor.", "text_secondary"))
-		return panel
-	for item: Variant in products:
-		var product := _as_dictionary(item)
-		if product.is_empty():
-			continue
-		box.add_child(_base_label("%s | %s" % [
-			str(product.get("label", product.get("id", ""))),
-			_shop_product_status_text(product),
-		], _shop_product_status_color(product)))
-		box.add_child(_base_label("Custo: %s | Recebe: %s | Efeito: %s" % [
-			_format_shop_delta(_as_dictionary(product.get("cost", {})), "gratis"),
-			_format_shop_delta(_as_dictionary(product.get("resources", {})), "nenhum recurso direto"),
-			_shop_effect_text(_as_dictionary(product.get("effect", {}))),
-		], "text_secondary"))
-		var description := str(product.get("description", ""))
-		if description != "":
-			box.add_child(_base_label(description, "text_secondary"))
-	return panel
-
+	return SurfaceUiHelpersScript.shop_product_group_panel(self, title_text, products)
 func _shop_reward_group_panel(title_text: String, rewards: Array) -> Control:
-	var panel := _base_panel()
-	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", 8)
-	panel.add_child(box)
-	box.add_child(_base_label(title_text, "text_primary", 17))
-	if rewards.is_empty():
-		box.add_child(_base_label("Nenhuma recompensa retornada pelo servidor.", "text_secondary"))
-		return panel
-	for item: Variant in rewards:
-		var reward := _as_dictionary(item)
-		if reward.is_empty():
-			continue
-		var status_text := "resgatada" if bool(reward.get("claimed", false)) else "disponivel"
-		var color_token := "status_success" if not bool(reward.get("claimed", false)) else "text_secondary"
-		if bool(reward.get("premium_required", false)):
-			status_text += " | premium"
-		box.add_child(_base_label("%s | XP %s | %s" % [
-			str(reward.get("label", reward.get("id", ""))),
-			str(reward.get("xp", 0)),
-			status_text,
-		], color_token))
-		box.add_child(_base_label("Recursos: %s | Periodo: %s" % [
-			_format_shop_delta(_as_dictionary(reward.get("resources", {})), "nenhum recurso"),
-			str(reward.get("period_key", "")),
-		], "text_secondary"))
-	return panel
-
+	return SurfaceUiHelpersScript.shop_reward_group_panel(self, title_text, rewards)
 func _shop_product_status_text(product: Dictionary) -> String:
-	if bool(product.get("already_redeemed", false)):
-		return "resgatado hoje"
-	if bool(product.get("already_owned", false)):
-		return "ja ativo"
-	if bool(product.get("can_purchase", true)):
-		return "disponivel"
-	return _shop_locked_reason_text(str(product.get("locked_reason", "")))
-
+	return SurfaceUiHelpersScript.shop_product_status_text(product)
 func _shop_product_status_color(product: Dictionary) -> String:
-	if bool(product.get("can_purchase", true)):
-		return "status_success"
-	if bool(product.get("already_redeemed", false)) or bool(product.get("already_owned", false)):
-		return "text_secondary"
-	return "status_warning"
-
+	return SurfaceUiHelpersScript.shop_product_status_color(product)
 func _shop_locked_reason_text(reason: String) -> String:
-	match reason:
-		"DAILY_REDEEM_ALREADY_CLAIMED":
-			return "resgatado hoje"
-		"ALREADY_OWNED":
-			return "ja ativo"
-		"INSUFFICIENT_RESOURCES":
-			return "Diamante insuficiente"
-		"":
-			return "indisponivel"
-	return reason
-
+	return SurfaceUiHelpersScript.shop_locked_reason_text(reason)
 func _shop_effect_text(effect: Dictionary) -> String:
-	if effect.is_empty():
-		return "nenhum efeito persistente"
-	match str(effect.get("type", "")):
-		"construction_slots":
-			return "fila do Refugio: %s slots" % str(effect.get("value", 0))
-	return str(effect)
-
+	return SurfaceUiHelpersScript.shop_effect_text(effect)
 func _format_shop_delta(delta: Dictionary, empty_text: String) -> String:
-	if delta.is_empty():
-		return empty_text
-	return _format_cost(delta)
-
+	return SurfaceUiHelpersScript.format_shop_delta(delta, empty_text)
 func _shop_product_by_id(product_id: String) -> Dictionary:
-	return ShopSurfacePresenterScript.product_by_id(product_id)
-
+	return SurfaceUiHelpersScript.shop_product_by_id(product_id)
 func _shop_reward_by_id(reward_id: String) -> Dictionary:
-	return ShopSurfacePresenterScript.reward_by_id(reward_id)
-
+	return SurfaceUiHelpersScript.shop_reward_by_id(reward_id)
 func _shop_purchase_message(product_id: String, body: Dictionary) -> String:
-	return ShopSurfacePresenterScript.purchase_message(product_id, body)
-
+	return SurfaceUiHelpersScript.shop_purchase_message(product_id, body)
 func _play_battle_log(battle_log: Dictionary, rewards: Dictionary) -> void:
 	await _battle_lifecycle_flow.play_battle_log(self, battle_log, rewards)
 
@@ -1849,37 +1219,11 @@ func _default_guild_name() -> String:
 	return "Conclave %s" % suffix
 
 func _format_resources(resources: Dictionary, include_diamond: bool = true) -> String:
-	var parts := PackedStringArray()
-	for key: String in RESOURCE_KEYS:
-		if key == "diamante" and not include_diamond:
-			continue
-		parts.append("%s %s" % [key.capitalize(), str(resources.get(key, 0))])
-	return " | ".join(parts)
-
+	return SurfaceUiHelpersScript.format_resources(resources, include_diamond)
 func _resource_total(resources: Dictionary) -> float:
-	var total := 0.0
-	for key: String in RESOURCE_KEYS:
-		total += float(resources.get(key, 0.0))
-	return total
-
+	return SurfaceUiHelpersScript.resource_total(resources)
 func _structure_label(structure_id: String, fallback: String = "") -> String:
-	if fallback != "":
-		return fallback
-	match structure_id:
-		"altar_das_almas":
-			return "Altar das Almas"
-		"nucleo_energia":
-			return "Nucleo de Energia"
-		"pocos_sangue":
-			return "Pocos de Sangue"
-		"minas_cristal":
-			return "Minas de Cristal"
-		"estrutura_stats":
-			return "Estrutura de Stats"
-		"ossario":
-			return "Ossario"
-	return structure_id
-
+	return SurfaceUiHelpersScript.structure_label(structure_id, fallback)
 func _extract_error(result: Dictionary) -> Dictionary:
 	return AppShellErrorContractScript.extract_error(result)
 
