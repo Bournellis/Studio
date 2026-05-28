@@ -14,6 +14,7 @@ const AppShellRouteContractScript := preload("res://modes/boot/ui/app_shell_rout
 const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
 const AppShellErrorContractScript := preload("res://modes/boot/ui/app_shell_error_contract.gd")
 const MobileUiContractScript := preload("res://modes/boot/ui/mobile_ui_contract.gd")
+const AccountSessionFlowScript := preload("res://modes/boot/flows/account_session_flow.gd")
 
 const ROUTE_ENTRY := AppShellRouteContractScript.ROUTE_ENTRY
 const ROUTE_REFUGE := AppShellRouteContractScript.ROUTE_REFUGE
@@ -103,6 +104,7 @@ var _last_social_friend_username := ""
 var _last_social_guild_name := ""
 var _last_social_chat_message := "Primeiro pulso do Conclave."
 var _update_gate := ProjectInfoScript.unchecked_update_status()
+var _account_session_flow = AccountSessionFlowScript.new()
 var _battle_replay_presenter = BattleReplayPresenterScript.new()
 var _battle_history_entries: Array[Dictionary] = []
 var _battle_history_save_type := SessionStoreScript.SAVE_TYPE_NORMAL
@@ -785,88 +787,16 @@ func _execute_action(action_id: String) -> void:
 	_active_action_id = ""
 
 func _check_runtime_config() -> void:
-	var config_result: Dictionary = await SupabaseClient.fetch_runtime_config()
-	var config_payload := _as_dictionary(config_result.get("runtime_config", {}))
-	if config_payload.is_empty():
-		config_payload = _as_dictionary(config_result.get("body", {}))
-	SessionStore.apply_runtime_config(config_payload)
+	await _account_session_flow.check_runtime_config(self)
 
 func _check_update_manifest(manual: bool = false) -> void:
-	if manual:
-		_set_busy(true, "Checando manifest de update...")
-	var manifest_result: Dictionary = await SupabaseClient.fetch_update_manifest()
-	if bool(manifest_result.get("ok", false)):
-		_update_gate = ProjectInfoScript.update_status_from_manifest(
-			_as_dictionary(manifest_result.get("body", {})),
-			SupabaseClient.manifest_url()
-		)
-		_error_label.text = ""
-	else:
-		var update_error := _extract_error(manifest_result)
-		_update_gate = ProjectInfoScript.update_status_error(
-			str(update_error.get("code", "UPDATE_CHECK_FAILED")),
-			str(update_error.get("message", "Manifest indisponivel.")),
-			SupabaseClient.manifest_url()
-		)
-		if manual:
-			_error_label.text = str(_update_gate.get("detail", "Manifest indisponivel."))
-	if manual:
-		_set_busy(false, str(_update_gate.get("summary", "Checagem concluida.")))
-	elif bool(_update_gate.get("block_online", false)):
-		_error_label.text = "Update obrigatorio antes de usar recursos online."
-		_detail_label.text = str(_update_gate.get("detail", "Baixe a nova build pelo portal."))
-	_refresh_update_output_label()
-	_sync_status_from_session()
+	await _account_session_flow.check_update_manifest(self, manual)
 
 func _enter_guest() -> void:
-	_set_busy(true, "Criando sessao guest...")
-	var auth_result: Dictionary = {"ok": true}
-	if not SessionStore.has_valid_access_token() or SessionStore.is_progression_lab_local_only():
-		auth_result = await SupabaseClient.sign_in_anonymously()
-		if not bool(auth_result.get("ok", false)):
-			_fail_with_error(auth_result)
-			return
-		SessionStore.apply_auth_session(_as_dictionary(auth_result.get("session", {})))
-		_clear_battle_history()
-		SessionStore.save_cache()
-
-	var request_id := SessionStore.ensure_guest_request_id()
-	var guest_result: Dictionary = await SupabaseClient.create_guest_account(
-		SessionStore.DEFAULT_INVITE_CODE,
-		request_id,
-		OS.get_name(),
-		SessionStore.access_token
-	)
-	if not bool(guest_result.get("ok", false)):
-		_fail_with_error(guest_result)
-		return
-
-	SessionStore.apply_server_state(guest_result)
-	var recovered := await _recover_session_state()
-	if not recovered:
-		return
-	_show_notice("Sessao guest pronta. Todas as abas do alpha estao disponiveis.")
-	_show_screen(SCREEN_REFUGE, false)
+	await _account_session_flow.enter_guest(self)
 
 func _enter_refuge() -> void:
-	if SessionStore.is_progression_lab_local_only() and SessionStore.has_account_state():
-		_show_screen(SCREEN_REFUGE)
-		return
-	if SessionStore.has_valid_access_token():
-		if not SessionStore.has_account_state():
-			var active_save_ready := await _recover_or_create_active_save()
-			if not active_save_ready:
-				return
-		_show_screen(SCREEN_REFUGE)
-		return
-	_error_label.text = "Escolha um save e entre/crie uma conta antes de abrir o Refugio."
-	_detail_label.text = "Para teste local, use Guest dev ou carregue um save pelo Progression Lab."
-	_sync_immersive_feedback()
-	_emit_client_event("precondition_failed", {
-		"action_id": AppShellActionContractScript.ACTION_ENTER_REFUGE,
-		"screen": _current_screen,
-		"reason": "missing_session",
-	})
+	await _account_session_flow.enter_refuge(self)
 
 func _open_create_account_dialog() -> void:
 	if _create_account_dialog == null:
@@ -882,327 +812,55 @@ func _on_create_account_confirmed() -> void:
 	await _email_sign_up_from_dialog()
 
 func _email_sign_up() -> void:
-	var credentials := _auth_form_values(true)
-	if credentials.is_empty():
-		return
-	await _email_sign_up_with_credentials(credentials)
+	await _account_session_flow.email_sign_up(self)
 
 func _email_sign_up_from_dialog() -> void:
-	var credentials := _create_account_form_values()
-	if credentials.is_empty():
-		return
-	await _email_sign_up_with_credentials(credentials)
+	await _account_session_flow.email_sign_up_from_dialog(self)
 
 func _email_sign_up_with_credentials(credentials: Dictionary) -> void:
-	_set_busy(true, "Criando conta por email...")
-	var auth_result: Dictionary = await SupabaseClient.sign_up_with_email(
-		str(credentials.get("email", "")),
-		str(credentials.get("password", ""))
-	)
-	if not bool(auth_result.get("ok", false)):
-		_fail_with_error(auth_result)
-		return
-	var selected_save_type := SessionStore.active_save_type
-	SessionStore.clear_session()
-	_clear_battle_history()
-	SessionStore.set_active_save_type(selected_save_type)
-	SupabaseClient.configure_save_type(SessionStore.active_save_type)
-	SessionStore.apply_auth_session(_as_dictionary(auth_result.get("session", {})))
-	SessionStore.account_username = str(credentials.get("username", ""))
-	SessionStore.save_cache()
-	var save_ready := await _recover_or_create_active_save(str(credentials.get("invite", "")), str(credentials.get("username", "")))
-	if not save_ready:
-		return
-	_show_notice("Conta alpha criada. O save %s esta pronto." % SessionStore.active_save_label())
-	_show_screen(SCREEN_REFUGE, false)
+	await _account_session_flow.email_sign_up_with_credentials(self, credentials)
 
 func _email_sign_in() -> void:
-	var credentials := _auth_form_values(false)
-	if credentials.is_empty():
-		return
-	_set_busy(true, "Entrando com email...")
-	var auth_result: Dictionary = await SupabaseClient.sign_in_with_email(
-		str(credentials.get("email", "")),
-		str(credentials.get("password", ""))
-	)
-	if not bool(auth_result.get("ok", false)):
-		_fail_with_error(auth_result)
-		return
-	var selected_save_type := SessionStore.active_save_type
-	SessionStore.clear_session()
-	_clear_battle_history()
-	SessionStore.set_active_save_type(selected_save_type)
-	SupabaseClient.configure_save_type(SessionStore.active_save_type)
-	SessionStore.apply_auth_session(_as_dictionary(auth_result.get("session", {})))
-	if str(credentials.get("username", "")) != "":
-		SessionStore.account_username = str(credentials.get("username", ""))
-	SessionStore.save_cache()
-	var recovered := await _recover_session_state()
-	if not recovered:
-		var error_payload := _extract_error({
-			"error": SessionStore.last_error,
-		})
-		if str(error_payload.get("code", "")) == "PLAYER_NOT_FOUND" and str(credentials.get("username", "")) != "":
-			recovered = await _recover_or_create_active_save(str(credentials.get("invite", "")), str(credentials.get("username", "")))
-	if not recovered:
-		return
-	_show_notice("Login concluido. Save %s sincronizado." % SessionStore.active_save_label())
-	_show_screen(SCREEN_REFUGE, false)
+	await _account_session_flow.email_sign_in(self)
 
 func _refresh_session() -> void:
-	if not _require_session("Entre com email ou use guest dev antes de sincronizar."):
-		return
-	var recovered := await _recover_session_state()
-	if recovered:
-		_show_screen(_current_screen, false)
+	await _account_session_flow.refresh_session(self)
 
 func _reset_local_session() -> void:
-	var previous_player_id := str(SessionStore.player.get("id", ""))
-	var previous_session_id := SessionStore.ensure_session_id()
-	if SessionStore.has_valid_access_token() and not SessionStore.is_progression_lab_local_only():
-		await SupabaseClient.send_client_telemetry(
-			SessionStore.access_token,
-			previous_session_id,
-			"local_session_reset",
-			{
-				"player_id": previous_player_id,
-				"screen": _current_screen,
-			}
-		)
-	SessionStore.clear_session()
-	_clear_battle_history()
-	SessionStore.save_cache()
-	_screen_history.clear()
-	_set_busy(false, "Cache local limpo. Entre com email para recuperar a conta alpha ou use guest dev.")
-	_show_screen(SCREEN_HUB, false)
+	await _account_session_flow.reset_local_session(self)
 
 func _reset_active_save() -> void:
-	if not _require_account("Entre com email antes de resetar o save ativo."):
-		return
-	_set_busy(true, "Resetando save %s..." % SessionStore.active_save_label())
-	var reset_result: Dictionary = await SupabaseClient.reset_active_save(
-		SessionStoreScript.create_request_id(),
-		SessionStore.access_token
-	)
-	if not bool(reset_result.get("ok", false)):
-		_fail_with_error(reset_result)
-		return
-	if not SessionStore.apply_save_reset(reset_result):
-		_fail_with_error({
-			"ok": false,
-			"error": SessionStore.last_error,
-		})
-		return
-	SessionStore.save_cache()
-	_clear_battle_history()
-	_screen_history.clear()
-	_set_busy(false, "Save %s resetado. O outro save foi preservado." % SessionStore.active_save_label())
-	_show_screen(SCREEN_HUB, false)
+	await _account_session_flow.reset_active_save(self)
 
 func _select_save(save_type: String) -> void:
-	var changed := SessionStore.set_active_save_type(save_type)
-	SupabaseClient.configure_save_type(SessionStore.active_save_type)
-	if changed:
-		_clear_battle_history()
-		_screen_history.clear()
-
-	if SessionStore.has_valid_access_token() and not SessionStore.is_progression_lab_local_only():
-		var active_save_ready := await _recover_or_create_active_save()
-		if not active_save_ready:
-			_show_screen(SCREEN_HUB, false)
-			return
-		var ready_message := "Save %s pronto. Batalha, Refugio, Social, Competicao e Loja usam este contexto." % SessionStore.active_save_label()
-		if SessionStore.is_progression_lab_active():
-			ready_message = "Save Progression Lab pronto. As abas usam o player Lab isolado e ele nao pontua ranking."
-		_set_busy(false, ready_message)
-		_show_screen(SCREEN_HUB, false)
-		return
-
-	if changed:
-		var message := "Save ativo alterado para %s." % SessionStore.active_save_label()
-		if SessionStore.is_progression_lab_active():
-			message = "Save Progression Lab selecionado. Entre com email para criar/carregar o player Lab isolado ou use guest dev."
-		_set_busy(false, message)
-	else:
-		_set_busy(false, "Save %s ja estava ativo." % SessionStore.active_save_label())
-	_show_screen(SCREEN_HUB, false)
+	await _account_session_flow.select_save(self, save_type)
 
 func _recover_session_state() -> bool:
-	if SessionStore.is_progression_lab_local_only():
-		_sync_status_from_session()
-		return false
-	if not SessionStore.has_valid_access_token():
-		_sync_status_from_session()
-		return false
-
-	_set_busy(true, "Recuperando estado do servidor...")
-	var state_result: Dictionary = await SupabaseClient.fetch_account_state(SessionStore.access_token)
-	if not bool(state_result.get("ok", false)):
-		_fail_with_error(state_result)
-		return false
-
-	return _apply_recovered_state(state_result, "Sessao sincronizada com o servidor.")
+	return await _account_session_flow.recover_session_state(self)
 
 func _recover_or_create_active_save(invite_code: String = "", username: String = "") -> bool:
-	if SessionStore.is_progression_lab_local_only():
-		_sync_status_from_session()
-		return false
-	if not SessionStore.has_valid_access_token():
-		_sync_status_from_session()
-		return false
-
-	_set_busy(true, "Carregando save %s..." % SessionStore.active_save_label())
-	var state_result: Dictionary = await SupabaseClient.fetch_account_state(SessionStore.access_token)
-	if bool(state_result.get("ok", false)):
-		return _apply_recovered_state(state_result, "Save %s sincronizado." % SessionStore.active_save_label())
-
-	var state_error := _extract_error(state_result)
-	if str(state_error.get("code", "")) != "PLAYER_NOT_FOUND":
-		_fail_with_error(state_result)
-		return false
-
-	_set_busy(true, "Criando save %s..." % SessionStore.active_save_label())
-	var account_result: Dictionary
-	if SessionStore.is_registered_session():
-		var effective_username := _effective_alpha_username(username)
-		var effective_invite := _effective_alpha_invite(invite_code)
-		account_result = await SupabaseClient.bootstrap_alpha_account(
-			effective_invite,
-			effective_username,
-			SessionStore.ensure_alpha_account_request_id(),
-			OS.get_name(),
-			SessionStore.access_token
-		)
-	else:
-		account_result = await SupabaseClient.create_guest_account(
-			SessionStore.DEFAULT_INVITE_CODE,
-			SessionStore.ensure_guest_request_id(),
-			OS.get_name(),
-			SessionStore.access_token
-		)
-	if not bool(account_result.get("ok", false)):
-		var account_error := _extract_error(account_result)
-		if str(account_error.get("code", "")) == "ACCOUNT_ALREADY_CREATED":
-			state_result = await SupabaseClient.fetch_account_state(SessionStore.access_token)
-			if bool(state_result.get("ok", false)):
-				return _apply_recovered_state(state_result, "Save %s sincronizado." % SessionStore.active_save_label())
-		_fail_with_error(account_result)
-		return false
-
-	return _apply_recovered_state(account_result, "Save %s pronto." % SessionStore.active_save_label())
+	return await _account_session_flow.recover_or_create_active_save(self, invite_code, username)
 
 func _auth_form_values(require_username: bool) -> Dictionary:
-	var email := _social_input_text(_auth_email_input).to_lower()
-	var password := _social_input_text(_auth_password_input)
-	var username := _normalized_alpha_username(_social_input_text(_auth_username_input, SessionStore.account_username))
-	var invite := _social_input_text(_auth_invite_input, SessionStore.DEFAULT_INVITE_CODE).to_upper()
-
-	if email == "" or not email.contains("@") or not email.contains("."):
-		_error_label.text = "Informe um email valido."
-		_detail_label.text = "A conta alpha usa email/senha para compartilhar o save entre PC, Web e Android."
-		return {}
-	if password.length() < 6:
-		_error_label.text = "A senha precisa ter pelo menos 6 caracteres."
-		_detail_label.text = "Use a mesma senha para recuperar o save em outra plataforma."
-		return {}
-	if require_username and username == "":
-		_error_label.text = "Informe um username valido."
-		_detail_label.text = "Use 3 a 24 caracteres: letras minusculas, numeros ou underscore."
-		return {}
-	if username != "" and not _is_valid_alpha_username(username):
-		_error_label.text = "Username invalido."
-		_detail_label.text = "Use 3 a 24 caracteres: letras minusculas, numeros ou underscore."
-		return {}
-	if require_username and invite == "":
-		_error_label.text = "Informe o convite alpha."
-		_detail_label.text = "O convite libera o primeiro save desta conta."
-		return {}
-
-	return {
-		"email": email,
-		"password": password,
-		"username": username,
-		"invite": invite,
-	}
+	return _account_session_flow.auth_form_values(self, require_username)
 
 func _create_account_form_values() -> Dictionary:
-	var email := _social_input_text(_signup_email_input).to_lower()
-	var password := _social_input_text(_signup_password_input)
-	var username := _normalized_alpha_username(_social_input_text(_signup_username_input, SessionStore.account_username))
-
-	if email == "" or not email.contains("@") or not email.contains("."):
-		_error_label.text = "Informe um email valido."
-		_detail_label.text = "A conta alpha usa email/senha para compartilhar o save entre PC, Web e Android."
-		_sync_immersive_feedback()
-		return {}
-	if password.length() < 6:
-		_error_label.text = "A senha precisa ter pelo menos 6 caracteres."
-		_detail_label.text = "Use a mesma senha para recuperar o save em outra plataforma."
-		_sync_immersive_feedback()
-		return {}
-	if username == "":
-		_error_label.text = "Informe um username valido."
-		_detail_label.text = "Use 3 a 24 caracteres: letras minusculas, numeros ou underscore."
-		_sync_immersive_feedback()
-		return {}
-	if not _is_valid_alpha_username(username):
-		_error_label.text = "Username invalido."
-		_detail_label.text = "Use 3 a 24 caracteres: letras minusculas, numeros ou underscore."
-		_sync_immersive_feedback()
-		return {}
-
-	return {
-		"email": email,
-		"password": password,
-		"username": username,
-		"invite": SessionStore.DEFAULT_INVITE_CODE,
-	}
+	return _account_session_flow.create_account_form_values(self)
 
 func _effective_alpha_username(username: String) -> String:
-	var normalized := _normalized_alpha_username(username)
-	if normalized == "":
-		normalized = _normalized_alpha_username(SessionStore.account_username)
-	if normalized == "":
-		normalized = _normalized_alpha_username(SessionStore.player_display_name())
-	if normalized == "":
-		normalized = "tester_%s" % SessionStore.ensure_session_id().replace("-", "").substr(0, 8)
-	normalized = SessionStoreScript.base_account_username(normalized)
-	return normalized
+	return _account_session_flow.effective_alpha_username(username)
 
 func _effective_alpha_invite(invite_code: String) -> String:
-	var normalized := invite_code.strip_edges().to_upper()
-	if normalized == "":
-		normalized = _social_input_text(_auth_invite_input, SessionStore.DEFAULT_INVITE_CODE).to_upper()
-	if normalized == "":
-		normalized = SessionStore.DEFAULT_INVITE_CODE
-	return normalized
+	return _account_session_flow.effective_alpha_invite(self, invite_code)
 
 func _normalized_alpha_username(username: String) -> String:
-	return username.strip_edges().to_lower()
+	return _account_session_flow.normalized_alpha_username(username)
 
 func _is_valid_alpha_username(username: String) -> bool:
-	if username.length() < 3 or username.length() > 24:
-		return false
-	for index in username.length():
-		var code := username.unicode_at(index)
-		var is_number := code >= 48 and code <= 57
-		var is_lower := code >= 97 and code <= 122
-		var is_underscore := code == 95
-		if not is_number and not is_lower and not is_underscore:
-			return false
-	return true
+	return _account_session_flow.is_valid_alpha_username(username)
 
 func _apply_recovered_state(state_result: Dictionary, message: String) -> bool:
-	if not SessionStore.apply_server_state(state_result):
-		_fail_with_error({
-			"ok": false,
-			"error": SessionStore.last_error,
-		})
-		return false
-	SessionStore.save_cache()
-	_set_busy(false, message)
-	_sync_status_from_session()
-	return true
+	return _account_session_flow.apply_recovered_state(self, state_result, message)
 
 func _request_battle() -> void:
 	if not _require_account("Entre com email antes de solicitar batalha."):
