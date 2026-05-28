@@ -5,7 +5,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 ## Foco Atual
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Foco P2 de implementacao (Track 10 `INTEGRATED_BATTLE_PRESENTATION_READY`, builds publicadas em 2026-05-28): `Projetos/draxos-mobile/`
+- Foco P2 de implementacao (Track 11 `INTEGRATED_CONSOLIDATION_READY`, pos-Track 10 publicada em 2026-05-28): `Projetos/draxos-mobile/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/` (preservado como referencia - nao e o projeto ativo)
 - Projetos pausados: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -14,7 +14,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 | Prioridade | Projeto | Caminho | Fase | Status | Trabalho permitido | Proximo passo | Restricao operacional |
 |---|---|---|---|---|---|---|---|
 | P0 | Draxos Roguelike Cardgame | `Projetos/draxos-roguelike-cardgame/` | Implementacao | `P0_IMPLEMENTACAO` | Codigo, validacao, playtest, documentacao local | Playtest de usuario da Track 02 completa | Pode receber trabalho de implementacao por padrao |
-| P2 | DraxosMobile | `Projetos/draxos-mobile/` | Implementacao - Track 10 `INTEGRATED_BATTLE_PRESENTATION_READY` | `P2_IMPLEMENTACAO` | Codigo, design, documentacao local, configuracao de infraestrutura | Testar builds publicadas em Android, Windows e Web autenticado via Cloudflare Access | iOS sem pedido explicito; mobile browser fora do escopo primario; secrets e service role nunca entram no cliente/export; migration conta/save fora do pacote atual; referencias em `assets/referenciaimagens/` sao moodboard, nao runtime assets |
+| P2 | DraxosMobile | `Projetos/draxos-mobile/` | Implementacao - Track 11 `INTEGRATED_CONSOLIDATION_READY` | `P2_IMPLEMENTACAO` | Codigo, design, documentacao local, configuracao de infraestrutura | Executar walkthrough manual Android, Windows e Web autenticado via Cloudflare Access/preview antes de novas features | iOS sem pedido explicito; mobile browser fora do escopo primario; secrets e service role nunca entram no cliente/export; migration conta/save fora do pacote atual; tuning numerico bloqueado ate rodada humana Progression Lab; referencias em `assets/referenciaimagens/` sao moodboard, nao runtime assets |
 | Arquivo | Mobile Universe (conceito) | `Projetos/_conceitos/mobile-universe/` | Arquivo de design | `ARQUIVO_DESIGN` | Leitura e referencia de design apenas | - | Nao criar codigo, cenas, assets ou projeto Godot a partir daqui |
 | Pausado | RPG Isometrico | `Projetos/rpg-isometrico/` | Pausado | `PAUSADO_INDEFINIDO` | Consulta historica quando solicitado | Nenhum enquanto pausado | Nao implementar, expandir gates ou selecionar Next Gate sem pedido explicito |
 | Pausado | RPG Turnos | `Projetos/rpg-turnos/` | Pausado | `PAUSADO_INDEFINIDO` | Consulta historica quando solicitado | Nenhum enquanto pausado | Nao implementar, selecionar track/gate, regenerar `.tres` ou alterar escopo sem pedido explicito |

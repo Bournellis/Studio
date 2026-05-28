@@ -7,7 +7,7 @@
 ## Prioridade do Estudio
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Foco P2 de implementacao: `Projetos/draxos-mobile/` (Track 10 `INTEGRATED_BATTLE_PRESENTATION_READY`, builds publicadas em 2026-05-28)
+- Foco P2 de implementacao: `Projetos/draxos-mobile/` (Track 11 `INTEGRATED_CONSOLIDATION_READY`, pos-Track 10 publicada em 2026-05-28)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -23,15 +23,15 @@
 
 ## DraxosMobile
 
-- Status: **P2_IMPLEMENTACAO - Track 10 INTEGRATED_BATTLE_PRESENTATION_READY**
+- Status: **P2_IMPLEMENTACAO - Track 11 INTEGRATED_CONSOLIDATION_READY**
 - Fase: `Implementacao`
 - Local: `Projetos/draxos-mobile/`
 - Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
 - Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
-- Baseline atual: Track 00 completa com primeiro slice server-authoritative, Track 01 completa para hardening do alpha PC local e Track 02 com Progression Lab/Battle Lab v1, Character Systems Rework, Source Identity Balance v2, batalha visual procedural 2D, smokes e validacoes verdes. Track 03 esta completa para Internal Alpha v0 e Fabio confirmou que os testes Fabio + tester passaram. Track 04 consolidou presenters render-only do Hub, Track 05 integrou a fundacao validada, Track 06 integrou feature rails e primeiras features, Track 07 integrou apresentacao mobile-first e Track 08 endureceu a fundacao. Track 09 integrou o loop visual portrait; Track 09B enxugou `entry`; Track 09C transformou o Refugio em cena fullscreen portrait com icones e popups/drawers. Track 10 reformulou a batalha portrait: palco limpo fullscreen, `Pular batalha`, summary minimo e logs da batalha atual em tela propria. Builds Internal Alpha site/Web/APK/Windows foram republicadas em 2026-05-28; dominio Cloudflare principal esta protegido por Access. Supabase segue para alpha, Backend Proprio + Postgres e o plano de saida preferido, e Nakama fica apenas se realtime/social competitivo virar pilar.
+- Baseline atual: Track 00-11 integradas. O projeto tem primeiro slice server-authoritative, Internal Alpha v0 aprovada por Fabio + tester, Refugio portrait como cena de jogo, batalha portrait com palco limpo fullscreen, `Pular batalha`, summary minimo, logs da batalha atual, Supabase remoto, manifest/version gate e builds Internal Alpha site/Web/APK/Windows republicadas em 2026-05-28. Track 11 consolidou estado vivo, Kanban, docs, primeiro corte de extracao de `boot.gd`, readiness check e matriz de walkthrough manual antes de novas features. Supabase segue para alpha, Backend Proprio + Postgres e o plano de saida preferido, e Nakama fica apenas se realtime/social competitivo virar pilar.
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
 - Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export.
-- Proximo passo: instalar/abrir as builds publicadas e executar walkthrough visual/manual de Entry -> Refugio -> Batalha -> Summary -> Logs em Android, Windows e Web autenticado via Cloudflare Access.
+- Proximo passo: executar walkthrough visual/manual de Entry -> Refugio -> Batalha -> Summary -> Logs em Android, Windows e Web autenticado via Cloudflare Access/preview.
 
 ## rpg-isometrico
 

@@ -1,166 +1,100 @@
 # DraxosMobile
 
-Jogo mobile multi-plataforma de PVP assincrono com base manager, progressao de personagem e sistema social. O jogador e um mago Draxos que cresce em poder ao longo do tempo.
+DraxosMobile e o projeto Godot/Supabase para Android, PC executavel e PC browser. O jogo e um async PVP autobattler com Refugio/Base, social, competicao e progressao de personagem. O cliente anima e opera UI; batalha, recursos e estado autoritativo ficam no servidor.
 
-**Nao confundir com:** `draxos-roguelike-cardgame` - projeto Steam separado.
+**Nao confundir com:** `Projetos/draxos-roguelike-cardgame/`, projeto Steam separado.
 
-Status: `P2_IMPLEMENTACAO - T03-P18 internal alpha v0 handoff complete; rodada fechada Fabio + tester e backlog de feedback pos-handoff`
-
----
+Status: `P2_IMPLEMENTACAO - Track 11 INTEGRATED_CONSOLIDATION_READY`
 
 ## Current Shape
 
-- Track 00 completa: Godot client, Supabase local, auth guest, batalha server-authoritative, Base, Social/Competicao, Monetizacao, pipeline de conteudo, exports e testes.
-- Track 01 completa: hardening do alpha PC local, telemetria client nao autoritativa, reset seguro de sessao local, smokes de loop alpha e checklist de playtest.
-- Track 02 com tooling v1 implementado: Progression Lab gera 25 estados saudaveis, saves Supabase locais, bot pool, recomendacoes de poder, matriz no Battle Lab e fluxo manual de teste no Godot para as primeiras 2h-20h.
-- Track 03 completa ate T03-P18: Internal Alpha v0 documentada, publicada e entregue para rodada fechada Fabio + tester. O pacote cobre email/senha, dois saves por conta, Supabase remoto Free, plano de saida para Backend Proprio + Postgres, Progression Lab isolado, Base/Social/Competicao/Loja jogaveis, leaderboard sem bots, redeems diarios em Diamante, Batalha com polish visual pequeno, manifest de updates e playtest fechado Fabio + 1 amigo. O cliente ja possui `BackendConfig`, ambiente `internal_alpha_v0`, env vars seguras, smoke remoto, save ativo `normal`/`progression_lab`, cache/HUD de save, `save_type` server-side em todos os endpoints alpha, reset separado por save, aplicacao server-backed de perfis do Progression Lab no save Lab, Base Manager jogavel, Social basico jogavel, Competicao com pontos/top 10/self rank, Loja proof-of-concept com redeems diarios de Diamante, Battle Pass, fila dupla aplicada na Base e pacotes por Diamante, readout compacto/HP percentual/tooltips melhores na Batalha e QA automatizado local verde apos reset completo. Supabase remoto `armxgipvnbbshzqawklw` esta linkado, migrado, com functions publicadas, Auth email/senha sem confirmacao obrigatoria, manifest remoto publicado, Storage unlisted publicado para APK/PC ZIP, Portal/Web publicados no Cloudflare Pages, handoff final registrado em `docs/internal-alpha-v0-handoff.md` e smokes remotos verdes para email/senha, saves, manifest, batalha, base, loja, social, competicao e telemetria.
-- Rework de personagem 2026-05-25 implementado em docs, catalogo e simulador: armas viraram Instrumentos Rituais, passivas viraram Doutrinas, pets viraram Familiares, Mental e familia de status, e as fontes vivas sao Arcano/Fisico/Fogo/Agua/Gelo/Terra/Vento/Raio/Veneno/Sangue/Morte.
-- Battle Lab offline + dev-only no Godot implementado: `tools/battle_lab/` gera HTML/CSV/JSON/replays em `docs/battle-lab/generated/`, arquiva runs oficiais em `docs/battle-lab/runs/`, compara deltas, marca compatibilidade/stale e pode ser aberto no editor pelo Refugio para montar builds e assistir replays debug 2D; exports excluem a ferramenta. A rodada atual mede o rework de personagem e preserva o baseline 2026-05-21 apenas como historico pre-rework.
-- Supabase runtime local configurado em `supabase/`: Docker Desktop, `npx supabase`, `npx deno`, migrations MVP/base/social/ranking/monetizacao/auth alpha, Auth email/senha e anonimo dev, healthcheck e Edge Functions `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*` e `progression-lab/*`.
-- Conta guest alpha implementada: `account/guest`, `account/state`, convite `ALPHA-TEST`, fixture inicial de player/resources/build, cache local nao autoritativo e escrita direta do cliente bloqueada.
-- Reuso conservador documentado em `docs/reuse-map.md`; padroes tecnicos foram adotados sem importar gameplay de outros projetos.
-- Backend definido: Supabase Auth, Postgres, Edge Functions e Realtime.
-- Plataformas do primeiro slice: Android + PC executavel + PC browser.
-
----
-
-## Track 00
-
-| Nivel | Objetivo | Status |
+| Track | Estado | Resultado |
 |---|---|---|
-| MVP tecnico minimo | Provar Godot 4.6.2 + Supabase com guest, battle fixture server-authoritative e log animavel placeholder | Completo |
-| Primeiro slice completo | PVP autobattler, base manager, social, ranking, bots, conta, economia, Battle Pass/Diamante, validacao e exports | Completo para alpha |
+| Track 00 | Completa | Primeiro slice server-authoritative com Godot, Supabase local, batalha, Base, Social/Competicao, Loja, exports e validacao. |
+| Track 01 | Completa | Hardening do alpha PC local, telemetria client, reset local seguro e checklist de playtest. |
+| Track 02 | Completa como tooling | Progression Lab/Battle Lab v1, saves saudaveis, bots e relatorios; tuning humano ainda pendente. |
+| Track 03 | Completa | Internal Alpha v0 com email/senha, dois saves, Supabase remoto, manifest, Storage, Cloudflare Pages e handoff. |
+| Track 04 | Integrada | Pos-handoff, presenters render-only do Hub, decisao de manter `players.save_type` no curto prazo. |
+| Track 05 | Integrada | Fundacao validada, matriz de checks, asset/service readiness e release ops sem publicar. |
+| Track 06 | Integrada | Feature rails, runtime config, perfil/conta, historico de batalha, rotina da Base, Social QoL e Asset Pack 01. |
+| Track 07 | Integrada | App shell mobile-first, rotas, touch/scroll e apresentacao full-screen. |
+| Track 08 | Integrada | Hardening de contratos de shell, session/save/cache, UI mobile, battle mode e validation harness. |
+| Track 09 | Integrada | Entry/Refugio portrait, Refugio como primeira tela jogavel e menu de jogo com popups/drawers. |
+| Track 10 | Integrada | Batalha portrait com palco limpo fullscreen, `Pular batalha`, summary minimo e logs proprios. |
+| Track 11 | Integrada | Consolidacao documental/operacional, release state sync, readiness check e primeiro corte seguro do `boot.gd`. |
 
-## Track 01
+## Release Atual
 
-| Objetivo | Status |
-|---|---|
-| Hardening do alpha PC local sem expandir modos ou mecanicas | Completo |
-| Telemetria client nao autoritativa em `telemetry_events` | Completo |
-| Smoke guest -> state -> battle -> base -> social -> competition -> shop | Completo |
-| Checklist e template de feedback de playtest | Completo |
+- Canal: `internal_alpha`
+- Versao: `0.0.1-alpha.0`
+- Version code: `1`
+- Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
+- Portal/Web estavel: protegido por Cloudflare Access.
+- Preview verificado: `https://36b1d46c.draxos-mobile-internal-alpha.pages.dev`
 
-## Track 02
-
-| Objetivo | Status |
-|---|---|
-| Progression Lab para saves saudaveis 2h-20h, perfis economicos, bots, poder e teste manual no Godot | Tooling v1 implementado; falta rodada manual com Supabase local |
-
-## Track 03
-
-| Objetivo | Status |
-|---|---|
-| Build fechada Internal Alpha v0 com conta email/senha, dois saves, backend remoto, updates e features principais funcionais | Completo em T03-P18; handoff pronto para rodada fechada Fabio + tester |
-
-## Track 04
-
-| Objetivo | Status |
-|---|---|
-| Pos-handoff: bugs reais, UX Android/onboarding, modularizacao incremental do Hub e gate futuro de conta/save | Planejada apos rodada fechada Fabio + tester |
-
----
-
-## Primeiro Slice Completo
-
-| Sistema | Status |
-|---|---|
-| Character Autobattler PVP assincrono | Alpha implementado |
-| Base Manager com estruturas de producao | Alpha implementado |
-| Sistema social (amigos, guilda, chat) | Alpha implementado |
-| Infraestrutura (Supabase, contas, matchmaking) | Alpha implementado |
-| Godot project inicializado | Completo - T00-P01 |
-| Supabase base standalone | Completo - T00-P02A |
-| Supabase runtime local | Completo - T00-P02B |
-| Fundacao client reutilizavel | Completo - T00-P03 |
-| Fixtures MVP e catalogo gerado | Completo - T00-P04 |
-| Conta Guest MVP | Completo - T00-P05 |
-| Batalha, replay, Base, Social, Competicao e Monetizacao | Completo - T00-P07 a T00-P13 |
-| Alpha Playtest Hardening | Completo - Track 01 |
-| Battle Lab, historico, replay dev e tuning de fonte/arquetipo | Completo - baseline v02 2026-05-21 |
-| Progression Lab, saves saudaveis e teste manual por milestone | Tooling v1 implementado - Track 02 |
-
----
-
-## Directory Map
-
-```
-draxos-mobile/
-|-- AGENTS.md
-|-- README.md
-|-- docs/
-|   |-- battle-lab/
-|   |-- progression-lab/
-|   |-- product-vision.md
-|   |-- product-brief.md
-|   |-- game-design-document.md
-|   |-- design-pending.md
-|   |-- reuse-map.md
-|   |-- pre-implementation-decisions.md
-|   |-- architecture.md
-|   `-- contracts/
-|       |-- api-endpoints.md
-|       |-- battle-event-log.md
-|       |-- database-schema.md
-|       `-- content-definitions.md
-|-- implementation/
-|   |-- current-status.md
-|   `-- tracks/
-|       |-- track-00-first-slice-foundation/
-|           |-- current-status.md
-|           |-- scope.md
-|           |-- mvp-technical-definition.md
-|           |-- implementation-plan.md
-|           `-- implementation-prompts.md
-|       |-- track-01-alpha-playtest-hardening/
-|           |-- current-status.md
-|           |-- scope.md
-|           `-- implementation-plan.md
-|       |-- track-02-progression-lab/
-|           |-- current-status.md
-|           |-- scope.md
-|           `-- implementation-plan.md
-|       |-- track-03-internal-alpha-v0/
-|           |-- current-status.md
-|           |-- scope.md
-|           `-- implementation-plan.md
-|       `-- track-04-post-handoff-hardening-and-hub-modularization/
-|           |-- current-status.md
-|           |-- scope.md
-|           `-- implementation-plan.md
-|-- server/
-|-- portal/
-|   `-- internal-alpha/
-|-- supabase/
-|-- core/
-|-- data/
-|-- dev/
-|-- ui/
-|-- modes/
-|-- social/
-|-- tools/
-|   |-- battle_lab/
-|   |-- progression_lab/
-|-- tests/
-`-- addons/
-```
-
----
+| Artefato | Bytes | SHA256 |
+|---|---:|---|
+| Android APK | `27965106` | `ad6d2579ce003769cfce2536b788c1330abb283d0ae90cc785d1d016ae514ca6` |
+| PC Windows ZIP | `36466312` | `ad5fb8351bb001604479d95737fc702bb9b0ff6779afb9e3e31692b7bc189031` |
+| Web index | `5442` | `75fdd260b889582cb723256e87ca9867ae35b7cdd3411cbb2ca21ace5585366a` |
 
 ## Start Here
 
 1. `AGENTS.md`
 2. `implementation/current-status.md`
-3. `docs/product-vision.md`
-4. `implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/current-status.md`
-5. `implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/scope.md`
-6. `implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/implementation-plan.md`
-7. `docs/internal-alpha-v0-handoff.md`
-8. `docs/internal-alpha-v0.md`
-9. `docs/internal-alpha-remote-setup.md`
-10. `docs/internal-alpha-release-plan.md`
-11. `docs/internal-alpha-static-hosting.md`
-12. `docs/internal-alpha-v0-export-report.md`
-13. `docs/internal-alpha-v0-publication-report.md`
-14. `docs/supabase-remote-tutorial.md`
-15. `docs/internal-alpha-v0-design-lock.md`
-16. `docs/design-pending.md`
+3. `implementation/tracks/track-11-product-foundation-consolidation/current-status.md`
+4. `implementation/tracks/track-11-product-foundation-consolidation/foundation-audit.md`
+5. `docs/track-11-manual-walkthrough.md`
+6. `docs/product-vision.md`
+7. `docs/game-design-document.md`
+8. `docs/design-pending.md`
+9. `docs/internal-alpha-v0-handoff.md`
+10. `docs/release-ops-checklist.md`
+
+## Directory Map
+
+```text
+draxos-mobile/
+|-- AGENTS.md
+|-- README.md
+|-- docs/
+|   |-- contracts/
+|   |-- progression-lab/
+|   |-- product-vision.md
+|   |-- game-design-document.md
+|   |-- internal-alpha-v0-handoff.md
+|   |-- release-ops-checklist.md
+|   `-- track-11-manual-walkthrough.md
+|-- implementation/
+|   |-- current-status.md
+|   `-- tracks/
+|       |-- track-00-first-slice-foundation/
+|       |-- track-01-alpha-playtest-hardening/
+|       |-- track-02-progression-lab/
+|       |-- track-03-internal-alpha-v0/
+|       |-- track-04-post-handoff-hardening-and-hub-modularization/
+|       |-- track-05-foundation-stabilization-and-asset-service-readiness/
+|       |-- track-06-feature-installation-rails-and-first-slices/
+|       |-- track-07-mobile-presentation-loop-and-layout-rework/
+|       |-- track-08-foundation-review-and-hardening/
+|       |-- track-09-portrait-entry-refuge-scene-and-visual-loop-rework/
+|       |-- track-10-battle-presentation-rework/
+|       `-- track-11-product-foundation-consolidation/
+|-- modes/boot/
+|-- online/
+|-- server/
+|-- supabase/
+|-- portal/internal-alpha/
+|-- tools/
+|-- tests/
+`-- addons/
+```
+
+## Quick Validation
+
+```powershell
+cd <WORKTREE>\Projetos\draxos-mobile
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_track11_readiness.ps1 -ProjectDir .
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <WORKTREE>\Projetos\draxos-mobile -s res://tools/validate.gd
+npx -y deno check supabase/functions/release/index.ts server/functions/release/index.ts server/tests/release_artifacts_remote_smoke.ts
+```
