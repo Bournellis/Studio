@@ -56,22 +56,48 @@ static func render_entry(host: Node) -> void:
 		return
 	var compact := bool(host.get("_compact_layout"))
 	var body := _screen_body(host, root, "EntryFirstScreenBody", compact)
-	body.add_child(_title_label("DraxosMobile", 28 if compact else 34))
-	body.add_child(_subtitle_label("Entrada", "Login, save e labs antes de abrir o Refugio."))
-	body.add_child(_entry_status_panel(host, compact))
+	body.add_child(_title_label("Conta", 28 if compact else 34))
 	body.add_child(_entry_account_panel(host, compact))
 	body.add_child(_entry_save_panel(host, compact))
 	body.add_child(_entry_dev_panel(host, compact))
+	body.add_child(_entry_footer_panel(host, compact))
 
 static func render_refuge(host: Node) -> void:
 	var root := _first_screen_root(host)
 	if root == null:
 		return
 	var compact := bool(host.get("_compact_layout"))
-	var body := _screen_body(host, root, "RefugeSceneBody", compact)
-	body.add_child(_refuge_top_bar(host, compact))
-	body.add_child(_refuge_scene_panel(host, compact))
-	body.add_child(_refuge_hotspot_panel(host, compact))
+	var background := RefugeAltarView.new(compact)
+	background.name = "RefugeAltarBackground"
+	background.set_anchors_preset(Control.PRESET_FULL_RECT)
+	background.custom_minimum_size = Vector2.ZERO
+	root.add_child(background)
+
+	var margin := MarginContainer.new()
+	margin.name = "RefugeSceneOverlay"
+	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
+	var edge := 10 if compact else 16
+	margin.add_theme_constant_override("margin_left", edge)
+	margin.add_theme_constant_override("margin_top", edge)
+	margin.add_theme_constant_override("margin_right", edge)
+	margin.add_theme_constant_override("margin_bottom", edge)
+	root.add_child(margin)
+
+	var layout := VBoxContainer.new()
+	layout.name = "RefugeSceneLayout"
+	layout.add_theme_constant_override("separation", 10 if compact else 14)
+	layout.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	layout.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	margin.add_child(layout)
+
+	var spacer := Control.new()
+	spacer.name = "RefugeAltarViewSpace"
+	spacer.custom_minimum_size = Vector2(0, 130 if compact else 190)
+	spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	layout.add_child(spacer)
+
+	layout.add_child(_refuge_hotspot_panel(host, compact))
+	layout.add_child(_refuge_footer_panel(host, compact))
 
 static func _screen_body(_host: Node, root: Control, body_name: String, compact: bool) -> VBoxContainer:
 	var margin := MarginContainer.new()
@@ -110,19 +136,17 @@ static func _entry_status_panel(host: Node, compact: bool) -> PanelContainer:
 static func _entry_account_panel(host: Node, compact: bool) -> PanelContainer:
 	var panel := _panel(host, "EntryAccountPanel", "bg_panel_alt", "border_default")
 	var box := _panel_box(panel, compact)
-	box.add_child(_section_label("Login / Criar conta", compact))
-	box.add_child(_body_label("Use email/senha para o teste principal. Guest dev fica como atalho local.", compact))
+	box.add_child(_section_label("Entrar", compact))
 	host.set("_auth_email_input", _entry_input(box, "Email", "tester@exemplo.com", SessionStore.auth_email, false, compact))
 	host.set("_auth_password_input", _entry_input(box, "Senha", "Senha da conta alpha", "", true, compact))
-	host.set("_auth_username_input", _entry_input(box, "Username", "draxos_tester", SessionStore.account_username, false, compact))
-	host.set("_auth_invite_input", _entry_input(box, "Convite alpha", SessionStore.DEFAULT_INVITE_CODE, SessionStore.DEFAULT_INVITE_CODE, false, compact))
+	host.set("_auth_username_input", null)
+	host.set("_auth_invite_input", null)
+	box.add_child(_entry_action_button(host, "Entrar", "email_sign_in", compact, "", true))
 	var grid := _button_grid(compact)
 	box.add_child(grid)
-	grid.add_child(_entry_action_button(host, "Criar conta", "email_sign_up", compact))
-	grid.add_child(_entry_action_button(host, "Entrar", "email_sign_in", compact))
+	grid.add_child(_entry_action_button(host, "Criar conta", "open_create_account", compact))
 	grid.add_child(_entry_action_button(host, "Guest dev", "enter_guest", compact))
 	grid.add_child(_entry_action_button(host, "Reset local", "reset_session", compact, "Limpar apenas token/cache local desta maquina? O estado salvo no servidor nao sera apagado."))
-	box.add_child(_entry_action_button(host, "Entrar no Refugio", "enter_refuge", compact, "", true))
 	return panel
 
 static func _entry_save_panel(host: Node, compact: bool) -> PanelContainer:
@@ -162,6 +186,15 @@ static func _entry_dev_panel(host: Node, compact: bool) -> PanelContainer:
 		grid.add_child(_entry_action_button(host, "Progression Lab", "open_progression_lab", compact))
 	return panel
 
+static func _entry_footer_panel(host: Node, compact: bool) -> PanelContainer:
+	var panel := _panel(host, "EntryFooterPanel", "bg_panel", "border_default")
+	var box := _panel_box(panel, compact)
+	box.add_child(_body_label(_entry_status_text(host), compact))
+	if SessionStore.has_valid_access_token() or (SessionStore.is_progression_lab_local_only() and SessionStore.has_account_state()):
+		box.add_child(_entry_action_button(host, "Continuar", "enter_refuge", compact, "", true))
+	_add_feedback_labels(host, box, compact)
+	return panel
+
 static func _refuge_top_bar(host: Node, compact: bool) -> PanelContainer:
 	var panel := _panel(host, "RefugeTopBar", "bg_panel", "border_active")
 	var box := _panel_box(panel, compact)
@@ -183,7 +216,7 @@ static func _refuge_hotspot_panel(host: Node, compact: bool) -> PanelContainer:
 	var panel := _panel(host, "RefugeHotspotPanel", "bg_panel_alt", "border_default")
 	var box := _panel_box(panel, compact)
 	box.add_child(_section_label("Caminhos do Refugio", compact))
-	var grid := _button_grid(compact)
+	var grid := _button_grid(compact, 2)
 	box.add_child(grid)
 	_add_route_hotspot(host, grid, compact, "Batalha", "battle_entry", "Pedir batalha e ver replay server-authoritative.", "accent_blood")
 	_add_action_hotspot(host, grid, compact, "Base", "show_base", "Coletar, evoluir estruturas e acompanhar rotina.", "accent_astral")
@@ -191,6 +224,14 @@ static func _refuge_hotspot_panel(host: Node, compact: bool) -> PanelContainer:
 	_add_action_hotspot(host, grid, compact, "Competicao", "show_matchmaking", "Preview de matchmaking e ranking alpha.", "status_warning")
 	_add_action_hotspot(host, grid, compact, "Loja", "show_shop", "Redeems, recompensas e compras alpha.", "accent_bone")
 	_add_route_hotspot(host, grid, compact, "Perfil", "account", "Conta, updates e detalhes do save.", "border_active")
+	return panel
+
+static func _refuge_footer_panel(host: Node, compact: bool) -> PanelContainer:
+	var panel := _panel(host, "RefugeFooterPanel", "bg_panel", "border_default")
+	var box := _panel_box(panel, compact)
+	box.add_child(_body_label("Recursos: %s" % _format_resources(SessionStore.resources), compact))
+	box.add_child(_body_label(_short_account_status(), compact))
+	_add_feedback_labels(host, box, compact)
 	return panel
 
 static func _entry_input(parent: VBoxContainer, label_text: String, placeholder: String, initial_text: String, secret: bool, compact: bool) -> LineEdit:
@@ -322,6 +363,23 @@ static func _add_feedback_labels(host: Node, box: VBoxContainer, compact: bool) 
 	host.set("_immersive_error_label", error)
 	if host.has_method("_sync_immersive_feedback"):
 		host.call("_sync_immersive_feedback")
+
+static func _entry_status_text(host: Node) -> String:
+	var update_gate := {}
+	var update_value: Variant = host.get("_update_gate")
+	if update_value is Dictionary:
+		update_gate = Dictionary(update_value)
+	var auth_text := "sem sessao"
+	if SessionStore.is_progression_lab_local_only():
+		auth_text = "lab local"
+	elif SessionStore.has_valid_access_token():
+		auth_text = SessionStore.auth_method
+	var update_text := str(update_gate.get("summary", "update nao checado"))
+	return "Save: %s | Auth: %s | %s" % [
+		SessionStore.active_save_label(),
+		auth_text,
+		update_text,
+	]
 
 static func _short_account_status() -> String:
 	if SessionStore.is_progression_lab_local_only() and SessionStore.has_account_state():

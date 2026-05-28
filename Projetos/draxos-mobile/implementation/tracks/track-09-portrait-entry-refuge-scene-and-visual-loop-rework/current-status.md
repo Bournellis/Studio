@@ -1,6 +1,6 @@
 # Track 09 Current Status
 
-Status: `INTEGRATED_PORTRAIT_LOOP_READY`
+Status: `INTEGRATED_PORTRAIT_SLIM_LOOP_READY`
 
 Date: 2026-05-28
 
@@ -18,18 +18,26 @@ Date: 2026-05-28
   - Android export uses portrait;
   - PC/Web keep the same vertical frame model.
 - Rebuilt the first screen as operational Entry:
-  - account/login/create account;
+  - slim account/login first;
+  - create account via popup with email, password and username;
   - normal/lab save controls;
   - reset/sync/update actions;
   - dev labs when enabled;
-  - explicit `Entrar no Refugio` CTA.
+  - login, signup and guest dev navigate to Refugio after save recovery without a second CTA.
 - Rebuilt Refugio as the playable altar scene:
-  - resources/status bar;
-  - altar-focused visual scene;
+  - fullscreen altar background;
+  - `Caminhos do Refugio` as the main interaction block;
   - hotspots for Battle, Base, Social, Competition, Shop and Profile;
+  - resources/status in a compact footer;
   - internal surfaces open through existing actions/routes with Back support.
 - Reworked battle running and summary for portrait fullscreen.
 - Updated presentation/foundation tests and smokes for the new loop.
+- Applied Track 09B slim UX correction:
+  - removed username/invite from inline Entry login;
+  - moved create account to runtime `ConfirmationDialog`;
+  - removed the mandatory `Entrar no Refugio` step;
+  - kept saves and Labs Dev as secondary Entry blocks;
+  - changed Refugio composition so the altar is background and Caminhos is the foreground.
 
 ## Guardrails Preserved
 
@@ -44,6 +52,7 @@ Date: 2026-05-28
 
 Local validation result:
 
+- Track 09B patch: `tools/validate.gd` passed with GUT `96/96` tests and `1163` asserts; `tools/smoke_mobile_presentation.gd`, `tools/smoke_foundation_hardening.gd` and `git diff --check` passed.
 - `tools/validate.gd`: passed with GUT `95/95` tests and `1144` asserts.
 - `tools/smoke_mobile_presentation.gd`: passed.
 - `tools/smoke_foundation_hardening.gd`: passed.
@@ -56,4 +65,4 @@ Local validation result:
 
 ## Next Step
 
-Manual visual QA in Godot/Android export should focus on the Entry flow, Refugio hotspot readability, Base management in the vertical frame and battle summary ergonomics.
+Manual visual QA in Godot/Android export should focus on the slim Entry auth flow, create-account popup, Refugio Caminhos readability, Base management in the vertical frame and battle summary ergonomics.

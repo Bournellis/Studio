@@ -28,11 +28,12 @@ func test_boot_compact_layout_groups_actions_for_mobile() -> void:
 	assert_not_null(boot._first_screen_root)
 	assert_true(boot._first_screen_root.visible)
 	assert_false(boot._app_chrome_root.visible)
-	assert_true(_label_tree_contains(boot._first_screen_root, "Entrada"))
-	assert_false(_label_tree_contains(boot._content_body, "Entrada"))
-	var enter_button := _find_button_by_text(boot._first_screen_root, "Entrar no Refugio")
-	assert_not_null(enter_button)
-	assert_true(enter_button.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
+	assert_true(_label_tree_contains(boot._first_screen_root, "Conta"))
+	assert_false(_label_tree_contains(boot._content_body, "Conta"))
+	var sign_in_button := _find_button_by_text(boot._first_screen_root, "Entrar")
+	assert_not_null(sign_in_button)
+	assert_true(sign_in_button.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
+	assert_null(_find_button_by_text(boot._first_screen_root, "Entrar no Refugio"))
 	assert_false(_has_direct_button_child(boot._first_screen_root))
 
 	boot._show_screen("account")
@@ -134,19 +135,25 @@ func test_boot_refugio_home_renders_altar_hotspots_and_account_route() -> void:
 	add_child_autofree(boot)
 
 	assert_eq(boot._current_screen, "entry")
-	assert_true(_label_tree_contains(boot._first_screen_root, "Entrada"))
-	assert_not_null(_find_button_by_text(boot._first_screen_root, "Entrar no Refugio"))
+	assert_true(_label_tree_contains(boot._first_screen_root, "Conta"))
+	assert_null(_find_button_by_text(boot._first_screen_root, "Entrar no Refugio"))
 	assert_not_null(boot._auth_email_input)
-	assert_true(boot._action_buttons.has("email_sign_up"))
+	assert_not_null(boot._auth_password_input)
+	assert_null(boot._auth_username_input)
+	assert_null(boot._auth_invite_input)
+	assert_false(boot._action_buttons.has("email_sign_up"))
+	assert_true(boot._action_buttons.has("open_create_account"))
+	assert_true(boot._action_buttons.has("email_sign_in"))
 
 	boot._show_screen("refuge")
 	assert_eq(boot._current_screen, "refuge")
 	assert_not_null(boot._first_screen_root)
 	assert_true(boot._first_screen_root.visible)
 	assert_false(boot._app_chrome_root.visible)
-	assert_true(_label_tree_contains(boot._first_screen_root, "Altar do Mago"))
+	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeAltarBackground"))
 	assert_true(_label_tree_contains(boot._first_screen_root, "Caminhos do Refugio"))
 	assert_false(_label_tree_contains(boot._content_body, "Altar do Mago"))
+	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeFooterPanel"))
 	assert_null(boot._auth_email_input)
 	assert_false(boot._action_buttons.has("email_sign_up"))
 
@@ -162,6 +169,27 @@ func test_boot_refugio_home_renders_altar_hotspots_and_account_route() -> void:
 	assert_false(boot._first_screen_root.visible)
 	assert_not_null(boot._auth_email_input)
 	assert_true(boot._back_button.visible)
+
+func test_entry_create_account_opens_popup_without_inline_signup_fields() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	assert_not_null(boot._create_account_dialog)
+	assert_not_null(boot._signup_email_input)
+	assert_not_null(boot._signup_password_input)
+	assert_not_null(boot._signup_username_input)
+	assert_null(boot._auth_username_input)
+	assert_null(boot._auth_invite_input)
+	assert_false(boot._action_buttons.has("email_sign_up"))
+
+	var create_button := _find_button_by_text(boot._first_screen_root, "Criar conta")
+	assert_not_null(create_button)
+	create_button.pressed.emit()
+	await get_tree().process_frame
+
+	assert_true(boot._create_account_dialog.visible)
+	assert_true(boot._signup_password_input.secret)
+	assert_eq(boot._signup_email_input.text, _social_input_text_for_test(boot._auth_email_input))
 
 func test_boot_refugio_home_shows_progression_lab_when_dev_tools_are_enabled() -> void:
 	ProjectSettings.set_setting("draxos_mobile/progression_lab/enabled", true)
@@ -699,6 +727,22 @@ func _find_button_by_text(root: Node, text: String) -> Button:
 		if found != null:
 			return found
 	return null
+
+func _find_node_by_name(root: Node, node_name: String) -> Node:
+	if root == null:
+		return null
+	if root.name == node_name:
+		return root
+	for child: Node in root.get_children():
+		var found := _find_node_by_name(child, node_name)
+		if found != null:
+			return found
+	return null
+
+func _social_input_text_for_test(input: LineEdit) -> String:
+	if input == null:
+		return ""
+	return input.text.strip_edges()
 
 func _label_tree_contains(root: Node, needle: String) -> bool:
 	if root == null:

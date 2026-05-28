@@ -62,12 +62,16 @@ var _auth_email_input: LineEdit
 var _auth_password_input: LineEdit
 var _auth_username_input: LineEdit
 var _auth_invite_input: LineEdit
+var _signup_email_input: LineEdit
+var _signup_password_input: LineEdit
+var _signup_username_input: LineEdit
 var _social_friend_input: LineEdit
 var _social_guild_input: LineEdit
 var _social_chat_input: LineEdit
 var _battle_visual: Control
 var _battle_fullscreen_overlay: Control
 var _confirm_dialog: ConfirmationDialog
+var _create_account_dialog: ConfirmationDialog
 var _app_chrome_root: Control
 var _first_screen_root: Control
 var _immersive_status_label: Label
@@ -118,6 +122,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not event.is_action_pressed("ui_cancel"):
 		return
 	get_viewport().set_input_as_handled()
+	if _create_account_dialog != null and _create_account_dialog.visible:
+		_create_account_dialog.hide()
+		return
 	if _confirm_dialog != null and _confirm_dialog.visible:
 		_confirm_dialog.hide()
 		return
@@ -141,6 +148,42 @@ func _clear_existing_scene() -> void:
 func _build_ui() -> void:
 	_compact_layout = _should_use_compact_layout()
 	ShellSurfacePresenterScript.render(self)
+	_render_create_account_dialog()
+
+func _render_create_account_dialog() -> void:
+	var dialog := ConfirmationDialog.new()
+	dialog.title = "Criar conta"
+	dialog.confirmed.connect(Callable(self, "_on_create_account_confirmed"))
+	add_child(dialog)
+
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 8)
+	dialog.add_child(box)
+
+	var intro := Label.new()
+	intro.text = "Crie a conta alpha com email, senha e username."
+	intro.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	box.add_child(intro)
+
+	_signup_email_input = _dialog_line_edit(box, "Email", "tester@exemplo.com", false)
+	_signup_password_input = _dialog_line_edit(box, "Senha", "Minimo 6 caracteres", true)
+	_signup_username_input = _dialog_line_edit(box, "Username", "draxos_tester", false)
+
+	dialog.get_ok_button().text = "Criar conta"
+	dialog.get_cancel_button().text = "Voltar"
+	_create_account_dialog = dialog
+
+func _dialog_line_edit(parent: VBoxContainer, label_text: String, placeholder: String, secret: bool) -> LineEdit:
+	var label := Label.new()
+	label.text = label_text
+	parent.add_child(label)
+	var input := LineEdit.new()
+	input.placeholder_text = placeholder
+	input.secret = secret
+	input.custom_minimum_size = MobileUiContractScript.input_min_size(true)
+	input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	parent.add_child(input)
+	return input
 
 func _should_use_compact_layout() -> bool:
 	if bool(ProjectSettings.get_setting("draxos_mobile/ui/force_compact_layout", false)):
@@ -626,6 +669,8 @@ func _execute_action(action_id: String) -> void:
 				await _enter_guest()
 			"enter_refuge":
 				await _enter_refuge()
+			"open_create_account":
+				_open_create_account_dialog()
 			"check_update":
 				await _check_update_manifest(true)
 			"email_sign_up":
@@ -761,7 +806,7 @@ func _enter_guest() -> void:
 	if not recovered:
 		return
 	_show_notice("Sessao guest pronta. Todas as abas do alpha estao disponiveis.")
-	_show_screen(SCREEN_HUB, false)
+	_show_screen(SCREEN_REFUGE, false)
 
 func _enter_refuge() -> void:
 	if SessionStore.is_progression_lab_local_only() and SessionStore.has_account_state():
@@ -783,10 +828,32 @@ func _enter_refuge() -> void:
 		"reason": "missing_session",
 	})
 
+func _open_create_account_dialog() -> void:
+	if _create_account_dialog == null:
+		return
+	_signup_email_input.text = _social_input_text(_auth_email_input, SessionStore.auth_email)
+	_signup_password_input.text = _social_input_text(_auth_password_input)
+	_signup_username_input.text = SessionStore.account_username
+	_error_label.text = ""
+	_sync_immersive_feedback()
+	_create_account_dialog.popup_centered(Vector2i(340, 340))
+
+func _on_create_account_confirmed() -> void:
+	await _email_sign_up_from_dialog()
+
 func _email_sign_up() -> void:
 	var credentials := _auth_form_values(true)
 	if credentials.is_empty():
 		return
+	await _email_sign_up_with_credentials(credentials)
+
+func _email_sign_up_from_dialog() -> void:
+	var credentials := _create_account_form_values()
+	if credentials.is_empty():
+		return
+	await _email_sign_up_with_credentials(credentials)
+
+func _email_sign_up_with_credentials(credentials: Dictionary) -> void:
 	_set_busy(true, "Criando conta por email...")
 	var auth_result: Dictionary = await SupabaseClient.sign_up_with_email(
 		str(credentials.get("email", "")),
@@ -807,7 +874,7 @@ func _email_sign_up() -> void:
 	if not save_ready:
 		return
 	_show_notice("Conta alpha criada. O save %s esta pronto." % SessionStore.active_save_label())
-	_show_screen(SCREEN_HUB, false)
+	_show_screen(SCREEN_REFUGE, false)
 
 func _email_sign_in() -> void:
 	var credentials := _auth_form_values(false)
@@ -840,7 +907,7 @@ func _email_sign_in() -> void:
 	if not recovered:
 		return
 	_show_notice("Login concluido. Save %s sincronizado." % SessionStore.active_save_label())
-	_show_screen(SCREEN_HUB, false)
+	_show_screen(SCREEN_REFUGE, false)
 
 func _refresh_session() -> void:
 	if not _require_session("Entre com email ou use guest dev antes de sincronizar."):
@@ -1016,6 +1083,39 @@ func _auth_form_values(require_username: bool) -> Dictionary:
 		"password": password,
 		"username": username,
 		"invite": invite,
+	}
+
+func _create_account_form_values() -> Dictionary:
+	var email := _social_input_text(_signup_email_input).to_lower()
+	var password := _social_input_text(_signup_password_input)
+	var username := _normalized_alpha_username(_social_input_text(_signup_username_input, SessionStore.account_username))
+
+	if email == "" or not email.contains("@") or not email.contains("."):
+		_error_label.text = "Informe um email valido."
+		_detail_label.text = "A conta alpha usa email/senha para compartilhar o save entre PC, Web e Android."
+		_sync_immersive_feedback()
+		return {}
+	if password.length() < 6:
+		_error_label.text = "A senha precisa ter pelo menos 6 caracteres."
+		_detail_label.text = "Use a mesma senha para recuperar o save em outra plataforma."
+		_sync_immersive_feedback()
+		return {}
+	if username == "":
+		_error_label.text = "Informe um username valido."
+		_detail_label.text = "Use 3 a 24 caracteres: letras minusculas, numeros ou underscore."
+		_sync_immersive_feedback()
+		return {}
+	if not _is_valid_alpha_username(username):
+		_error_label.text = "Username invalido."
+		_detail_label.text = "Use 3 a 24 caracteres: letras minusculas, numeros ou underscore."
+		_sync_immersive_feedback()
+		return {}
+
+	return {
+		"email": email,
+		"password": password,
+		"username": username,
+		"invite": SessionStore.DEFAULT_INVITE_CODE,
 	}
 
 func _effective_alpha_username(username: String) -> String:

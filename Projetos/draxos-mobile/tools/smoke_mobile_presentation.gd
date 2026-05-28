@@ -38,21 +38,37 @@ func _check_portrait_app_loop() -> void:
 	_expect(str(boot.get("_current_screen")) == "entry", "portrait opens on Entry")
 	_expect(_get_first_screen_root(boot) != null and _get_first_screen_root(boot).visible, "portrait opens on first-screen Entry layer")
 	_expect(_get_app_chrome_root(boot) != null and not _get_app_chrome_root(boot).visible, "portrait Entry hides app chrome")
-	_expect(_label_tree_contains(boot, "Entrada"), "portrait Entry shows operational start page")
-	_expect(_find_button_by_text(boot, "Entrar no Refugio") != null, "portrait Entry has Refugio CTA")
-	_expect(_find_button_by_text(boot, "Save normal") != null, "portrait Entry has save selector")
+	_expect(_label_tree_contains(boot, "Conta"), "portrait Entry shows slim account page")
+	_expect(_find_button_by_text(boot, "Entrar") != null, "portrait Entry has direct login action")
+	_expect(_find_button_by_text(boot, "Entrar no Refugio") == null, "portrait Entry does not require a second Refugio CTA")
+	_expect(_find_button_by_text(boot, "Save normal") != null, "portrait Entry keeps save selector")
+	_expect(boot.get("_auth_username_input") == null, "portrait Entry keeps username out of inline login")
+	_expect(boot.get("_auth_invite_input") == null, "portrait Entry keeps invite out of inline login")
+	var create_button := _find_button_by_text(boot, "Criar conta")
+	_expect(create_button != null, "portrait Entry has account creation popup action")
+	if create_button != null:
+		create_button.pressed.emit()
+		await process_frame
+		var create_dialog := boot.get("_create_account_dialog") as Window
+		_expect(create_dialog != null and create_dialog.visible, "Criar conta opens popup")
+		_expect(boot.get("_signup_username_input") != null, "signup popup owns username field")
+		_expect_layout_fits_width(boot, float(root.size.x), "create account popup")
+		if create_dialog != null:
+			create_dialog.hide()
 	_expect_layout_fits_width(boot, float(root.size.x), "portrait Entry")
 
 	boot.call("_show_screen", "refuge")
 	await process_frame
 	_expect(str(boot.get("_current_screen")) == "refuge", "Refugio route opens after Entry")
-	_expect(_label_tree_contains(boot, "Altar do Mago"), "portrait Refugio shows mage altar")
+	_expect(_find_node_by_name(boot, "RefugeAltarBackground") != null, "portrait Refugio uses altar background")
+	_expect(_label_tree_contains(boot, "Caminhos do Refugio"), "portrait Refugio foregrounds Caminhos")
 	_expect(_find_button_by_text(boot, "Perfil") != null, "portrait Refugio has account hotspot")
 	_expect(_find_button_by_text(boot, "Base") != null, "portrait Refugio has Base hotspot")
 	var battle_hotspot := _find_button_by_text(boot, "Batalha")
 	_expect(battle_hotspot != null, "portrait Refugio has Battle hotspot")
 	_expect(battle_hotspot != null and battle_hotspot.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET, "portrait hotspots keep mobile touch target")
 	_expect(_get_back_button(boot) != null and not _get_back_button(boot).visible, "portrait Refugio hides app chrome Back")
+	_expect(_find_node_by_name(boot, "RefugeFooterPanel") != null, "portrait Refugio moves status to footer")
 	_expect_layout_fits_width(boot, float(root.size.x), "portrait Refugio")
 
 	boot.call("_show_screen", "account")
@@ -220,6 +236,17 @@ func _find_button_by_text(root_node: Node, text: String) -> Button:
 		return root_node as Button
 	for child: Node in root_node.get_children():
 		var found := _find_button_by_text(child, text)
+		if found != null:
+			return found
+	return null
+
+func _find_node_by_name(root_node: Node, node_name: String) -> Node:
+	if root_node == null:
+		return null
+	if root_node.name == node_name:
+		return root_node
+	for child: Node in root_node.get_children():
+		var found := _find_node_by_name(child, node_name)
 		if found != null:
 			return found
 	return null
