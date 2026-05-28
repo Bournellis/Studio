@@ -15,6 +15,7 @@ const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_act
 const AppShellErrorContractScript := preload("res://modes/boot/ui/app_shell_error_contract.gd")
 const MobileUiContractScript := preload("res://modes/boot/ui/mobile_ui_contract.gd")
 const AccountSessionFlowScript := preload("res://modes/boot/flows/account_session_flow.gd")
+const SurfaceActionFlowScript := preload("res://modes/boot/flows/surface_action_flow.gd")
 
 const ROUTE_ENTRY := AppShellRouteContractScript.ROUTE_ENTRY
 const ROUTE_REFUGE := AppShellRouteContractScript.ROUTE_REFUGE
@@ -105,6 +106,7 @@ var _last_social_guild_name := ""
 var _last_social_chat_message := "Primeiro pulso do Conclave."
 var _update_gate := ProjectInfoScript.unchecked_update_status()
 var _account_session_flow = AccountSessionFlowScript.new()
+var _surface_action_flow = SurfaceActionFlowScript.new()
 var _battle_replay_presenter = BattleReplayPresenterScript.new()
 var _battle_history_entries: Array[Dictionary] = []
 var _battle_history_save_type := SessionStoreScript.SAVE_TYPE_NORMAL
@@ -985,121 +987,19 @@ func _show_battle_replay(battle_id: String) -> void:
 	await _play_battle_log(SessionStore.last_battle_log, SessionStore.last_battle_rewards)
 
 func _show_base() -> void:
-	var target_screen := _base_surface_target_screen()
-	if SessionStore.is_progression_lab_local_only():
-		_show_screen(target_screen, false)
-		_set_busy(false, "Snapshot local do Progression Lab carregado. Refugio em modo somente leitura; coletas e upgrades precisam de save seeded no Supabase local.")
-		_render_base_state()
-		return
-	if not _require_session("Entre com email ou use guest dev antes de atualizar o Refugio."):
-		return
-
-	_show_screen(target_screen, false)
-	_set_busy(true, "Buscando Refugio...")
-	var base_result: Dictionary = await SupabaseClient.fetch_base_state(SessionStore.access_token)
-	if not bool(base_result.get("ok", false)):
-		_fail_with_error(base_result)
-		return
-
-	if not SessionStore.apply_base_result(base_result):
-		_fail_with_error({"error": SessionStore.last_error})
-		return
-
-	SessionStore.save_cache()
-	_set_busy(false, "Refugio recuperado.")
-	_render_base_state()
+	await _surface_action_flow.show_base(self)
 
 func _sync_refuge_state_if_needed() -> void:
-	if _current_screen != SCREEN_REFUGE:
-		return
-	if _is_busy or not SessionStore.base_state.is_empty():
-		return
-	if SessionStore.is_progression_lab_local_only():
-		return
-	if not SessionStore.has_valid_access_token():
-		return
-	await _show_base()
+	await _surface_action_flow.sync_refuge_state_if_needed(self)
 
 func _collect_base() -> void:
-	if not _require_account("Entre com email ou use guest dev antes de coletar o Refugio."):
-		return
-
-	_show_screen(_base_surface_target_screen(), false)
-	_set_busy(true, "Coletando producao offline...")
-	var base_result: Dictionary = await SupabaseClient.collect_base(
-		SessionStoreScript.create_request_id(),
-		SessionStore.access_token
-	)
-	if not bool(base_result.get("ok", false)):
-		_fail_with_error(base_result)
-		return
-
-	if not SessionStore.apply_base_result(base_result):
-		_fail_with_error({"error": SessionStore.last_error})
-		return
-
-	var body := _as_dictionary(base_result.get("body", {}))
-	var collected := _as_dictionary(body.get("collected", {}))
-	var message := "Coleta registrada no servidor."
-	if _resource_total(collected) <= 0.0:
-		message = "Nada para coletar agora."
-	SessionStore.save_cache()
-	_set_busy(false, message)
-	_render_base_state(collected)
+	await _surface_action_flow.collect_base(self)
 
 func _buy_energy_pack_alpha() -> void:
-	if not _require_account("Entre com email ou use guest dev antes de comprar Energia alpha."):
-		return
-
-	_show_screen(_base_surface_target_screen(), false)
-	_set_busy(true, "Comprando pacote de Energia alpha...")
-	var monetization_result: Dictionary = await SupabaseClient.alpha_purchase(
-		SessionStoreScript.create_request_id(),
-		ALPHA_ENERGY_PACK_PRODUCT_ID,
-		SessionStore.access_token
-	)
-	if not bool(monetization_result.get("ok", false)):
-		_fail_with_error(monetization_result)
-		return
-
-	if not SessionStore.apply_monetization_result(monetization_result):
-		_fail_with_error({"error": SessionStore.last_error})
-		return
-
-	var base_result: Dictionary = await SupabaseClient.fetch_base_state(SessionStore.access_token)
-	if bool(base_result.get("ok", false)):
-		SessionStore.apply_base_result(base_result)
-
-	SessionStore.save_cache()
-	_set_busy(false, "Energia alpha comprada. O Refugio foi atualizado com o novo saldo.")
-	_render_base_state()
+	await _surface_action_flow.buy_energy_pack_alpha(self)
 
 func _upgrade_base_structure(structure_id: String) -> void:
-	if not _require_account("Entre com email ou use guest dev antes de evoluir o Refugio."):
-		return
-	var target_structure_id := structure_id.strip_edges()
-	if target_structure_id == "":
-		target_structure_id = _selected_base_structure_id
-	_selected_base_structure_id = target_structure_id
-
-	_show_screen(_base_surface_target_screen(), false)
-	_set_busy(true, "Solicitando evolucao de %s..." % _structure_label(target_structure_id))
-	var base_result: Dictionary = await SupabaseClient.upgrade_base_structure(
-		SessionStoreScript.create_request_id(),
-		target_structure_id,
-		SessionStore.access_token
-	)
-	if not bool(base_result.get("ok", false)):
-		_fail_with_error(base_result)
-		return
-
-	if not SessionStore.apply_base_result(base_result):
-		_fail_with_error({"error": SessionStore.last_error})
-		return
-
-	SessionStore.save_cache()
-	_set_busy(false, "Evolucao de %s iniciada no servidor." % _structure_label(target_structure_id))
-	_render_base_state()
+	await _surface_action_flow.upgrade_base_structure(self, structure_id)
 
 func _base_surface_target_screen() -> String:
 	if _current_screen == SCREEN_REFUGE:
@@ -1107,233 +1007,34 @@ func _base_surface_target_screen() -> String:
 	return SCREEN_BASE
 
 func _show_social() -> void:
-	if not _require_session("Entre com email ou use guest dev antes de abrir Social."):
-		return
-
-	_show_screen(SCREEN_SOCIAL, false)
-	_set_busy(true, "Buscando Social...")
-	var social_result: Dictionary = await SupabaseClient.fetch_social_state(SessionStore.access_token)
-	if not bool(social_result.get("ok", false)):
-		_fail_with_error(social_result)
-		return
-	if not SessionStore.apply_social_result(social_result):
-		_fail_with_error({"error": SessionStore.last_error})
-		return
-
-	SessionStore.save_cache()
-	_set_busy(false, "Social recuperado.")
-	_render_social_state()
+	await _surface_action_flow.show_social(self)
 
 func _add_friend() -> void:
-	if not _require_account("Entre com email ou use guest dev antes de adicionar amigo."):
-		return
-
-	_last_social_friend_username = _social_input_text(_social_friend_input)
-	if _last_social_friend_username == "":
-		_error_label.text = "Informe o username do amigo."
-		return
-
-	_show_screen(SCREEN_SOCIAL, false)
-	_set_busy(true, "Adicionando amigo...")
-	var social_result: Dictionary = await SupabaseClient.add_friend(
-		SessionStoreScript.create_request_id(),
-		_last_social_friend_username,
-		SessionStore.access_token
-	)
-	if not bool(social_result.get("ok", false)):
-		_fail_with_error(social_result)
-		return
-	if not SessionStore.apply_social_result(social_result):
-		_fail_with_error({"error": SessionStore.last_error})
-		return
-
-	SessionStore.save_cache()
-	_set_busy(false, "Amigo adicionado.")
-	_render_social_state()
+	await _surface_action_flow.add_friend(self)
 
 func _create_guild() -> void:
-	if not _require_account("Entre com email ou use guest dev antes de criar guilda."):
-		return
-
-	_last_social_guild_name = _social_input_text(_social_guild_input, _default_guild_name())
-	_show_screen(SCREEN_SOCIAL, false)
-	_set_busy(true, "Criando guilda alpha...")
-	var social_result: Dictionary = await SupabaseClient.create_guild(
-		SessionStoreScript.create_request_id(),
-		_last_social_guild_name,
-		SessionStore.access_token
-	)
-	if not bool(social_result.get("ok", false)):
-		_fail_with_error(social_result)
-		return
-	if not SessionStore.apply_social_result(social_result):
-		_fail_with_error({"error": SessionStore.last_error})
-		return
-
-	SessionStore.save_cache()
-	_set_busy(false, "Guilda criada no servidor.")
-	_render_social_state()
+	await _surface_action_flow.create_guild(self)
 
 func _join_guild() -> void:
-	if not _require_account("Entre com email ou use guest dev antes de entrar em guilda."):
-		return
-
-	_last_social_guild_name = _social_input_text(_social_guild_input)
-	if _last_social_guild_name == "":
-		_error_label.text = "Informe o nome da guilda."
-		return
-
-	_show_screen(SCREEN_SOCIAL, false)
-	_set_busy(true, "Entrando na guilda...")
-	var social_result: Dictionary = await SupabaseClient.join_guild(
-		SessionStoreScript.create_request_id(),
-		_last_social_guild_name,
-		SessionStore.access_token
-	)
-	if not bool(social_result.get("ok", false)):
-		_fail_with_error(social_result)
-		return
-	if not SessionStore.apply_social_result(social_result):
-		_fail_with_error({"error": SessionStore.last_error})
-		return
-
-	SessionStore.save_cache()
-	_set_busy(false, "Guilda sincronizada.")
-	_render_social_state()
+	await _surface_action_flow.join_guild(self)
 
 func _send_guild_chat() -> void:
-	if not _require_account("Entre com email ou use guest dev antes de usar chat."):
-		return
-
-	_last_social_chat_message = _social_input_text(_social_chat_input, _last_social_chat_message)
-	if _last_social_chat_message == "":
-		_error_label.text = "Digite uma mensagem para o chat da guilda."
-		return
-
-	_show_screen(SCREEN_SOCIAL, false)
-	_set_busy(true, "Enviando mensagem de guilda...")
-	var social_result: Dictionary = await SupabaseClient.send_guild_chat(
-		SessionStoreScript.create_request_id(),
-		_last_social_chat_message,
-		SessionStore.access_token
-	)
-	if not bool(social_result.get("ok", false)):
-		_fail_with_error(social_result)
-		return
-	if not SessionStore.apply_social_result(social_result):
-		_fail_with_error({"error": SessionStore.last_error})
-		return
-
-	SessionStore.save_cache()
-	_set_busy(false, "Mensagem registrada no servidor.")
-	_render_social_state()
+	await _surface_action_flow.send_guild_chat(self)
 
 func _show_matchmaking() -> void:
-	if not _require_session("Entre com email ou use guest dev antes de abrir matchmaking."):
-		return
-
-	_show_screen(SCREEN_COMPETITION, false)
-	_set_busy(true, "Buscando matchmaking...")
-	var competition_result: Dictionary = await SupabaseClient.fetch_matchmaking_preview(SessionStore.access_token)
-	if not bool(competition_result.get("ok", false)):
-		_fail_with_error(competition_result)
-		return
-	if not SessionStore.apply_competition_result(competition_result):
-		_fail_with_error({"error": SessionStore.last_error})
-		return
-
-	SessionStore.save_cache()
-	_set_busy(false, "Matchmaking recuperado.")
-	_render_competition_state()
+	await _surface_action_flow.show_matchmaking(self)
 
 func _show_ranking() -> void:
-	if not _require_session("Entre com email ou use guest dev antes de abrir ranking."):
-		return
-
-	_show_screen(SCREEN_COMPETITION, false)
-	_set_busy(true, "Buscando ranking...")
-	var competition_result: Dictionary = await SupabaseClient.fetch_ranking_current(SessionStore.access_token)
-	if not bool(competition_result.get("ok", false)):
-		_fail_with_error(competition_result)
-		return
-	if not SessionStore.apply_competition_result(competition_result):
-		_fail_with_error({"error": SessionStore.last_error})
-		return
-
-	SessionStore.save_cache()
-	_set_busy(false, "Ranking recuperado.")
-	_render_competition_state()
+	await _surface_action_flow.show_ranking(self)
 
 func _show_shop() -> void:
-	if not _require_session("Entre com email ou use guest dev antes de abrir Loja."):
-		return
-
-	_show_screen(SCREEN_SHOP, false)
-	_set_busy(true, "Buscando loja alpha...")
-	var monetization_result: Dictionary = await SupabaseClient.fetch_monetization_state(SessionStore.access_token)
-	if not bool(monetization_result.get("ok", false)):
-		_fail_with_error(monetization_result)
-		return
-	if not SessionStore.apply_monetization_result(monetization_result):
-		_fail_with_error({"error": SessionStore.last_error})
-		return
-
-	SessionStore.save_cache()
-	_set_busy(false, "Loja alpha recuperada.")
-	_render_monetization_state()
+	await _surface_action_flow.show_shop(self)
 
 func _buy_shop_product(product_id: String) -> void:
-	if not _require_account("Entre com email ou use guest dev antes de comprar na Loja."):
-		return
-
-	_show_screen(SCREEN_SHOP, false)
-	_set_busy(true, "Processando produto alpha...")
-	var monetization_result: Dictionary = await SupabaseClient.alpha_purchase(
-		SessionStoreScript.create_request_id(),
-		product_id,
-		SessionStore.access_token
-	)
-	if not bool(monetization_result.get("ok", false)):
-		_fail_with_error(monetization_result)
-		return
-	if not SessionStore.apply_monetization_result(monetization_result):
-		_fail_with_error({"error": SessionStore.last_error})
-		return
-
-	if product_id == ALPHA_ENERGY_PACK_PRODUCT_ID or product_id == "alpha_double_construction_queue":
-		var base_result: Dictionary = await SupabaseClient.fetch_base_state(SessionStore.access_token)
-		if bool(base_result.get("ok", false)):
-			SessionStore.apply_base_result(base_result)
-
-	SessionStore.save_cache()
-	_set_busy(false, _shop_purchase_message(product_id, _as_dictionary(monetization_result.get("body", {}))))
-	_render_monetization_state()
+	await _surface_action_flow.buy_shop_product(self, product_id)
 
 func _claim_shop_reward(reward_id: String) -> void:
-	if not _require_account("Entre com email ou use guest dev antes de resgatar recompensa."):
-		return
-
-	_show_screen(SCREEN_SHOP, false)
-	_set_busy(true, "Resgatando recompensa...")
-	var monetization_result: Dictionary = await SupabaseClient.claim_reward(
-		SessionStoreScript.create_request_id(),
-		reward_id,
-		SessionStore.access_token
-	)
-	if not bool(monetization_result.get("ok", false)):
-		_fail_with_error(monetization_result)
-		return
-	if not SessionStore.apply_monetization_result(monetization_result):
-		_fail_with_error({"error": SessionStore.last_error})
-		return
-
-	var body := _as_dictionary(monetization_result.get("body", {}))
-	var message := "Recompensa registrada no servidor."
-	if bool(body.get("already_claimed", false)):
-		message = "Recompensa ja havia sido resgatada neste periodo."
-	SessionStore.save_cache()
-	_set_busy(false, message)
-	_render_monetization_state()
+	await _surface_action_flow.claim_shop_reward(self, reward_id)
 
 func _set_busy(is_busy: bool, message: String) -> void:
 	_is_busy = is_busy
