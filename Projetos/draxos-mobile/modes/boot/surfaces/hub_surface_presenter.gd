@@ -44,14 +44,14 @@ static func _refuge_scene_board(host: Node, root: Control, compact: bool) -> voi
 	var title_label := popup_data["title_label"] as Label
 	var body := popup_data["body"] as VBoxContainer
 
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "battle", "BT", "Batalha", "accent_blood", Vector2(0.50, 0.20), "PVP assincrono e replay.")
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "refuge", "RF", "Refugio", "accent_astral", Vector2(0.22, 0.40), "Coleta, energia e estruturas.")
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "social", "SO", "Social", "status_success", Vector2(0.78, 0.40), "Amigos, guilda e chat.")
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "competition", "CP", "Competicao", "status_warning", Vector2(0.22, 0.60), "Matchmaking e ranking.")
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "shop", "LJ", "Loja", "accent_bone", Vector2(0.78, 0.60), "Recompensas e compras alpha.")
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "profile", "PF", "Perfil", "border_active", Vector2(0.50, 0.71), "Conta, save e update.")
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "collect", "CL", "Coletar", "status_success", Vector2(0.28, 0.83), "Coletar producao do Refugio.", true)
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "energy", "EN", "Energia", "accent_astral", Vector2(0.72, 0.83), "Comprar Energia alpha.", true)
+	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "battle", "BT", "Batalha", "accent_blood", Vector2(0.50, 0.19), "PVP assincrono e replay.")
+	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "refuge", "RF", "Refugio", "accent_astral", Vector2(0.22, 0.37), "Coleta, energia e estruturas.")
+	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "social", "SO", "Social", "status_success", Vector2(0.78, 0.37), "Amigos, guilda e chat.")
+	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "competition", "CP", "Competicao", "status_warning", Vector2(0.22, 0.56), "Matchmaking e ranking.")
+	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "shop", "LJ", "Loja", "accent_bone", Vector2(0.78, 0.56), "Recompensas e compras alpha.")
+	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "profile", "PF", "Perfil", "border_active", Vector2(0.50, 0.66), "Conta, save e update.")
+	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "collect", "CL", "Coletar", "status_success", Vector2(0.28, 0.77), "Coletar producao do Refugio.", true)
+	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "energy", "EN", "Energia", "accent_astral", Vector2(0.72, 0.77), "Comprar Energia alpha.", true)
 	if bool(host.call("_battle_lab_available")) or bool(host.call("_progression_lab_available")):
 		_add_refuge_icon_button(host, board, popup, title_label, body, compact, "labs", "LB", "Labs", "border_default", Vector2(0.88, 0.16), "Ferramentas internas.", true)
 
@@ -67,8 +67,8 @@ static func _add_refuge_altar_stage(host: Node, board: Control, compact: bool) -
 	stage.name = "RefugeAltarStage"
 	stage.anchor_left = 0.16
 	stage.anchor_right = 0.84
-	stage.anchor_top = 0.30
-	stage.anchor_bottom = 0.67
+	stage.anchor_top = 0.25
+	stage.anchor_bottom = 0.63
 	board.add_child(stage)
 
 	var glow := PanelContainer.new()
@@ -127,20 +127,20 @@ static func _add_refuge_footer_bar(host: Node, board: Control, compact: bool) ->
 	panel.name = "RefugeFooterPanel"
 	panel.anchor_left = 0.03
 	panel.anchor_right = 0.97
-	panel.anchor_top = 0.925
-	panel.anchor_bottom = 0.985
+	panel.anchor_top = 0.855
+	panel.anchor_bottom = 0.91
 	panel.add_theme_stylebox_override("panel", _hud_style("bg_panel", "border_default"))
 	board.add_child(panel)
 
 	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", 1)
+	box.add_theme_constant_override("separation", 0)
 	panel.add_child(box)
-	var status := _scene_label(_short_account_status(), "text_secondary", 10 if compact else 12)
+	var status := _scene_label(_short_account_status(), "text_secondary", 9 if compact else 11)
 	status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	status.autowrap_mode = TextServer.AUTOWRAP_OFF
 	status.clip_text = true
 	box.add_child(status)
-	_add_feedback_labels(host, box, compact)
+	_add_refuge_feedback_labels(host, box, compact, status)
 
 static func _add_refuge_icon_button(host: Node, board: Control, popup: PopupPanel, title_label: Label, body: VBoxContainer, compact: bool, menu_id: String, symbol: String, title: String, color_token: String, anchor: Vector2, detail: String, quick: bool = false) -> void:
 	var button := Button.new()
@@ -684,6 +684,21 @@ static func _add_feedback_labels(host: Node, box: VBoxContainer, compact: bool) 
 	error.add_theme_color_override("font_color", UiTokens.color("status_error"))
 	box.add_child(status)
 	box.add_child(detail)
+	box.add_child(error)
+	host.set("_immersive_status_label", status)
+	host.set("_immersive_detail_label", detail)
+	host.set("_immersive_error_label", error)
+	if host.has_method("_sync_immersive_feedback"):
+		host.call("_sync_immersive_feedback")
+
+static func _add_refuge_feedback_labels(host: Node, box: VBoxContainer, compact: bool, status: Label) -> void:
+	var detail := Label.new()
+	detail.visible = false
+	box.add_child(detail)
+	var error := _scene_label("", "status_error", 9 if compact else 10)
+	error.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	error.autowrap_mode = TextServer.AUTOWRAP_OFF
+	error.clip_text = true
 	box.add_child(error)
 	host.set("_immersive_status_label", status)
 	host.set("_immersive_detail_label", detail)
