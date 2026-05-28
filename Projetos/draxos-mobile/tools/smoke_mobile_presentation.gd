@@ -68,6 +68,8 @@ func _check_portrait_app_loop() -> void:
 	_expect(_find_node_by_name(boot, "RefugeAltarViewSpace") == null, "portrait Refugio removes empty top spacer")
 	_expect(_find_node_by_name(boot, "RefugeHotspotPanel") != null, "portrait Refugio puts Caminhos at the top")
 	_expect(_label_tree_contains(boot, "Caminhos do Refugio"), "portrait Refugio foregrounds Caminhos")
+	var path_grid := _find_node_by_name(boot, "RefugePathGrid") as GridContainer
+	_expect(path_grid != null and path_grid.columns == 1, "portrait Refugio path menu uses one column")
 	_expect(_find_button_by_text(boot, "Perfil") != null, "portrait Refugio has account hotspot")
 	_expect(_find_button_by_text(boot, "Base") == null, "portrait Refugio has no separate Base hotspot")
 	_expect(boot.get("_base_state_container") != null, "portrait Refugio embeds base management directly")
@@ -118,6 +120,8 @@ func _check_narrow_loaded_refuge_layout() -> void:
 
 	boot.call("_show_screen", "refuge")
 	await process_frame
+	var path_grid := _find_node_by_name(boot, "RefugePathGrid") as GridContainer
+	_expect(path_grid != null and path_grid.columns == 1, "narrow Refugio path menu uses one column")
 	_expect(_label_tree_contains(boot, "Altar do Refugio"), "narrow Refugio shows compact altar panel")
 	_expect(_label_tree_contains(boot, "Mapa do Refugio"), "narrow Refugio keeps structure map visible")
 	_expect(_find_button_by_text(boot, "Coletar") != null, "narrow Refugio keeps collect action visible")

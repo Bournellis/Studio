@@ -127,7 +127,8 @@ static func _refuge_hotspot_panel(host: Node, compact: bool) -> PanelContainer:
 	var panel := _panel(host, "RefugeHotspotPanel", "bg_panel_alt", "border_default")
 	var box := _panel_box(panel, compact)
 	box.add_child(_section_label("Caminhos do Refugio", compact))
-	var grid := _button_grid(compact, 2)
+	var grid := _button_grid(compact, 1 if compact else 2)
+	grid.name = "RefugePathGrid"
 	box.add_child(grid)
 	_add_route_hotspot(host, grid, compact, "Batalha", "battle_entry", "Pedir batalha e ver replay server-authoritative.", "accent_blood")
 	_add_action_hotspot(host, grid, compact, "Social", "show_social", "Amigos, guilda e chat por polling.", "status_success")
