@@ -655,7 +655,7 @@ func test_battle_log_presenter_formats_first_slice_rich_events() -> void:
 	assert_string_contains(formatted, "invocou")
 	assert_string_contains(formatted, "Anti-stall")
 	assert_eq(BattleLogPresenterScript.count_events_of_type(battle_log, "spell_cast"), 1)
-	assert_string_contains(BattleLogPresenterScript.format_summary(battle_log, {"type": "FIRST_SLICE_SIM", "resources": {"xp": 50}}), "FIRST_SLICE_SIM")
+	assert_string_contains(BattleLogPresenterScript.format_summary(battle_log, {"type": "FIRST_SLICE_SIM", "resources": {"xp": 50}}), "Xp +50")
 
 func test_battle_log_presenter_tolerates_null_optional_payloads() -> void:
 	var battle_log := {

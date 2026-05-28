@@ -7,7 +7,7 @@
 ## Prioridade Do Estudio
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Foco P2 de implementacao: `Projetos/draxos-mobile/` (Track 14 `TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`, sobre Track 13 release safety entregue em 2026-05-28)
+- Foco P2 de implementacao: `Projetos/draxos-mobile/` (Track 15 `TRACK_15_MOBILE_UX_OVERHAUL_ACTIVE`, sobre Track 13 release safety e Track 14 agent ops)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -23,15 +23,15 @@
 
 ## DraxosMobile
 
-- Status: **P2_IMPLEMENTACAO - Track 14 TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE**
+- Status: **P2_IMPLEMENTACAO - Track 15 TRACK_15_MOBILE_UX_OVERHAUL_ACTIVE**
 - Fase: `Implementacao`
 - Local: `Projetos/draxos-mobile/`
 - Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
 - Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
-- Baseline atual: Track 00-13 integradas. O projeto tem primeiro slice server-authoritative, Internal Alpha v0 aprovada por Fabio + tester, Refugio portrait como cena de jogo, batalha portrait fullscreen, `Pular batalha`, summary minimo, logs da batalha atual, Supabase remoto, manifest/version gate e builds Internal Alpha site/Web/APK/Windows republicadas em 2026-05-28. Track 11 consolidou estado vivo, Kanban, docs e walkthrough; Track 12 decompos `boot.gd` para 1301 linhas com action contract, account/session flow, surface action flow, battle lifecycle flow e helpers de superficie; Track 13 centralizou validacao foundation e protegeu release/publicacao por `Mode Plan` default, `-ConfirmRemoteMutation`, checks de safety/readiness e gate manual Android/Windows/Web. Track 14 reorganiza entrada de agentes, indice documental, snapshot vivo, coordenacao e guardas de validacao para evitar drift.
+- Baseline atual: Track 00-14 integradas. O projeto tem primeiro slice server-authoritative, Internal Alpha v0 aprovada por Fabio + tester, Refugio portrait como cena de jogo, batalha portrait fullscreen, Supabase remoto, manifest/version gate e builds Internal Alpha site/Web/APK/Windows republicadas em 2026-05-28. Track 11 consolidou estado vivo, Kanban, docs e walkthrough; Track 12 decompos `boot.gd` com action contract, account/session flow, surface action flow, battle lifecycle flow e helpers de superficie; Track 13 centralizou validacao foundation e protegeu release/publicacao por `Mode Plan` default, `-ConfirmRemoteMutation`, checks de safety/readiness e gate manual Android/Windows/Web; Track 14 reorganizou entrada de agentes, indice documental, snapshot vivo, coordenacao e guardas de validacao. Track 15 esta convertendo o app de alpha/dev funcional para UX interna premium Android portrait sem alterar gameplay, backend, schema ou economia.
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
 - Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation`. Migration conta/save e tuning numerico ficam bloqueados ate walkthrough manual e decisao propria.
-- Proximo passo: fechar Track 14 Agent Operations Foundation; depois executar walkthrough manual Track 13 de Entry -> Refugio -> Batalha -> Summary -> Logs, Base, Social, Competicao, Loja e update gate em Android, Windows, Web preview e Web Access-protected.
+- Proximo passo: revisar checkpoint visual Track 15 em Android portrait para Entry, Refugio, Batalha/Summary, Base e Loja; depois continuar polish focado ou executar walkthrough manual Track 13 antes de gameplay, tuning, migration conta/save ou release.
 
 ## rpg-isometrico
 

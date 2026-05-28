@@ -13,6 +13,7 @@ Ferramentas de desenvolvimento e validacao.
 - `build_cloudflare_pages_package.ps1` - gera o pacote hibrido para Cloudflare Pages, mantendo HTML no Cloudflare e assets grandes do Web export no Supabase Storage.
 - `smoke_dev_labs.gd` - smoke do caminho real `OS.execute` para Battle Lab e Progression Lab.
 - `smoke_dev_lab_ui.gd` - smoke visual/comportamental das telas dev-only; salva screenshots quando rodado sem `--headless`.
+- `capture_track15_mobile_ux.gd` - captura screenshots locais da Track 15 em `build/track15_mobile_ux_checkpoint/` quando rodado sem `--headless`.
 - `smoke_runtime_config.gd` - smoke focado do parser/fallback conservador de `runtime_config_v1`.
 - `smoke_foundation_surfaces.gd` - smoke focado de Base, Shop, Social e Competition usando fluxos existentes do cliente contra Supabase local/remoto configurado.
 - `smoke_foundation_hardening.gd` - smoke sem rede dos contratos Track 08: rotas/back, UI mobile, session/save boundary e battle mode fullscreen.
@@ -37,6 +38,12 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_dev_labs.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_dev_lab_ui.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_exports.gd
+```
+
+Checkpoint visual Track 15:
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --path . -s res://tools/capture_track15_mobile_ux.gd
 ```
 
 Export Internal Alpha v0:

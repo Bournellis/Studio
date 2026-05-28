@@ -16,7 +16,7 @@ func test_project_info_constants_are_set() -> void:
 func test_boot_actions_match_mvp_scope() -> void:
 	var actions := ProjectInfo.boot_actions()
 	assert_eq(actions.size(), 24)
-	assert_has(actions, "Criar conta alpha")
+	assert_has(actions, "Criar conta")
 	assert_has(actions, "Entrar com email")
 	assert_has(actions, "Entrar como guest dev")
 	assert_has(actions, "Sincronizar sessao")
@@ -37,9 +37,9 @@ func test_boot_actions_match_mvp_scope() -> void:
 	assert_has(actions, "Preview matchmaking")
 	assert_has(actions, "Ver ranking")
 	assert_has(actions, "Ver loja")
-	assert_has(actions, "Comprar premium alpha")
+	assert_has(actions, "Comprar premium")
 	assert_has(actions, "Receber Diamante")
-	assert_has(actions, "Claim diario")
+	assert_has(actions, "Resgate diario")
 
 func test_version_compare_handles_alpha_style_strings() -> void:
 	assert_eq(ProjectInfo.compare_versions("0.0.1-alpha.0", "0.0.1-alpha.0"), 0)

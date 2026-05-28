@@ -84,6 +84,7 @@ var _create_account_dialog: ConfirmationDialog
 var _refuge_menu_popup: PopupPanel
 var _app_chrome_root: Control
 var _first_screen_root: Control
+var _immersive_feedback_panel: Control
 var _immersive_status_label: Label
 var _immersive_detail_label: Label
 var _immersive_error_label: Label
@@ -184,7 +185,7 @@ func _render_create_account_dialog() -> void:
 	dialog.add_child(box)
 
 	var intro := Label.new()
-	intro.text = "Crie a conta alpha com email, senha e username."
+	intro.text = "Crie a conta com email, senha e username."
 	intro.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	box.add_child(intro)
 
@@ -273,6 +274,7 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	_auth_password_input = null
 	_auth_username_input = null
 	_auth_invite_input = null
+	_immersive_feedback_panel = null
 	_immersive_status_label = null
 	_immersive_detail_label = null
 	_immersive_error_label = null
@@ -322,6 +324,11 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 		"has_account": SessionStore.has_account_state(),
 		"offline": SessionStore.offline,
 	})
+
+func _show_surface_screen(screen_id: String) -> void:
+	var target_screen := _normalize_route(screen_id)
+	var current_screen := _normalize_route(_current_screen)
+	_show_screen(target_screen, target_screen != current_screen)
 
 func _go_back() -> void:
 	if _is_busy:
@@ -958,12 +965,21 @@ func _sync_status_from_session() -> void:
 	_sync_buttons()
 
 func _sync_immersive_feedback() -> void:
+	var has_visible_feedback := false
 	if _immersive_status_label != null and is_instance_valid(_immersive_status_label):
 		_immersive_status_label.text = _status_label.text if _status_label != null else _session_status_text()
+		_immersive_status_label.visible = _immersive_status_label.text.strip_edges() != "" and _is_busy
+		has_visible_feedback = has_visible_feedback or _immersive_status_label.visible
 	if _immersive_detail_label != null and is_instance_valid(_immersive_detail_label):
 		_immersive_detail_label.text = _detail_label.text if _detail_label != null else ""
+		_immersive_detail_label.visible = _immersive_detail_label.text.strip_edges() != ""
+		has_visible_feedback = has_visible_feedback or _immersive_detail_label.visible
 	if _immersive_error_label != null and is_instance_valid(_immersive_error_label):
 		_immersive_error_label.text = _error_label.text if _error_label != null else ""
+		_immersive_error_label.visible = _immersive_error_label.text.strip_edges() != ""
+		has_visible_feedback = has_visible_feedback or _immersive_error_label.visible
+	if _immersive_feedback_panel != null and is_instance_valid(_immersive_feedback_panel):
+		_immersive_feedback_panel.visible = has_visible_feedback
 
 func _sync_buttons() -> void:
 	for action_id: String in _action_buttons.keys():
@@ -1017,7 +1033,7 @@ func _sync_nav_buttons() -> void:
 func _require_session(message: String) -> bool:
 	if SessionStore.is_progression_lab_local_only():
 		_error_label.text = "Save local-only do Progression Lab nao executa acoes online."
-		_detail_label.text = "Use o seeder com Supabase local para testar batalha, coleta, upgrades e outras mutacoes server-authoritative."
+		_detail_label.text = "Use o seeder com Supabase local para testar batalha, coleta, upgrades e outras mudancas."
 		_sync_immersive_feedback()
 		_emit_client_event("precondition_failed", {
 			"action_id": _active_action_id,
@@ -1028,7 +1044,7 @@ func _require_session(message: String) -> bool:
 	if SessionStore.has_valid_access_token():
 		return true
 	_error_label.text = message
-	_detail_label.text = "Entre com email no Refugio ou use guest dev para teste local."
+	_detail_label.text = "Entre com email na Entrada ou use guest dev para teste local."
 	_sync_immersive_feedback()
 	_emit_client_event("precondition_failed", {
 		"action_id": _active_action_id,
@@ -1040,7 +1056,7 @@ func _require_session(message: String) -> bool:
 func _require_account(message: String) -> bool:
 	if SessionStore.is_progression_lab_local_only():
 		_error_label.text = "Save local-only do Progression Lab nao executa acoes online."
-		_detail_label.text = "Para batalhas, coleta, upgrades e compras, rode o seeder com Supabase local e carregue o cache server-backed."
+		_detail_label.text = "Para batalhas, coleta, upgrades e compras, rode o seeder com Supabase local e carregue o save."
 		_sync_immersive_feedback()
 		_emit_client_event("precondition_failed", {
 			"action_id": _active_action_id,
@@ -1051,7 +1067,7 @@ func _require_account(message: String) -> bool:
 	if SessionStore.has_valid_access_token() and SessionStore.has_account_state():
 		return true
 	_error_label.text = message
-	_detail_label.text = "Entre com email no Refugio ou use guest dev para teste local."
+	_detail_label.text = "Entre com email na Entrada ou use guest dev para teste local."
 	_sync_immersive_feedback()
 	_emit_client_event("precondition_failed", {
 		"action_id": _active_action_id,

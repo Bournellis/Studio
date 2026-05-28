@@ -211,14 +211,14 @@ static func format_summary(battle_log: Dictionary, rewards: Dictionary = {}) -> 
 	var result := _as_dictionary(battle_log.get("result", {}))
 	var participants := _as_dictionary(battle_log.get("participants", {}))
 	var opponent := _as_dictionary(participants.get("opponent", {}))
-	var reward_type := str(rewards.get("type", "MVP_ONLY"))
-	return "Modo: %s | Resultado: %s contra %s | motivo: %s | recompensa: %s%s" % [
-		str(battle_log.get("mode", "MVP_ONLY")),
+	var reward_text := _format_resource_suffix(_as_dictionary(rewards.get("resources", {})))
+	if reward_text == "":
+		reward_text = "sem recompensa registrada"
+	return "Resultado: %s contra %s | motivo: %s | recompensa: %s" % [
 		str(result.get("winner", "desconhecido")),
 		str(opponent.get("display_name", "oponente")),
 		str(result.get("reason", "sem_motivo")),
-		reward_type,
-		_format_resource_suffix(_as_dictionary(rewards.get("resources", {}))),
+		reward_text,
 	]
 
 static func has_unknown_events(battle_log: Dictionary) -> bool:
@@ -263,10 +263,10 @@ static func _format_resource_suffix(resources: Dictionary) -> String:
 		return ""
 	var parts: PackedStringArray = PackedStringArray()
 	for key: String in resources.keys():
-		parts.append("%s %s" % [str(resources[key]), key])
+		parts.append("%s +%s" % [key.capitalize(), str(resources[key])])
 	if parts.is_empty():
 		return ""
-	return " [%s]" % ", ".join(parts)
+	return ", ".join(parts)
 
 static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:

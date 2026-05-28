@@ -39,6 +39,9 @@ const EXPECTED_ASSET_PATHS: Dictionary = {
 	"icon_guest": "res://assets/ui/icon_guest.png",
 	"icon_battle": "res://assets/ui/icon_battle.png",
 	"icon_result": "res://assets/ui/icon_result.png",
+	"ux_entry_necromante": "res://assets/ux_overhaul/entry_necromante.png",
+	"ux_refuge_ship_hub": "res://assets/ux_overhaul/refuge_ship_hub.png",
+	"ux_battle_duel_stage": "res://assets/ux_overhaul/battle_duel_stage.png",
 	"portrait_draxos_mage": "res://assets/portraits/portrait_draxos_mage.png",
 	"portrait_training_bot": "res://assets/portraits/portrait_training_bot.png",
 	"placeholder_card": "res://assets/ui/placeholder_card.png",
@@ -72,6 +75,11 @@ const EXPECTED_ASSET_CATEGORIES: Dictionary = {
 	"portraits": [
 		"portrait_draxos_mage",
 		"portrait_training_bot"
+	],
+	"ux_overhaul": [
+		"ux_battle_duel_stage",
+		"ux_entry_necromante",
+		"ux_refuge_ship_hub"
 	],
 	"battle_characters": [
 		"battle_character_opponent",
@@ -108,7 +116,7 @@ func test_foundation_autoloads_are_available() -> void:
 func test_ui_tokens_expose_mvp_colors() -> void:
 	assert_true(UiTokens.has_color("accent_astral"))
 	assert_eq(UiTokens.mode_badge_color(ProjectInfo.MVP_MODE), UiTokens.color("rarity_mvp"))
-	assert_eq(int(UiTokens.text_style("button").get("font_size", 0)), 16)
+	assert_eq(int(UiTokens.text_style("button").get("font_size", 0)), 17)
 
 func test_asset_ids_are_registered_without_requiring_art_yet() -> void:
 	var all_ids: Array = Array(AssetIds.all_ids())

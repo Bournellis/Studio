@@ -121,7 +121,7 @@ func show_empty_state(message: String) -> void:
 	_timeline_lines = PackedStringArray([message])
 	_summary_label.text = message
 	_counts_label.text = "0 eventos"
-	_result_label.text = "Aguardando battle_log_v1"
+	_result_label.text = "Aguardando batalha"
 	_render_dynamic_state()
 	if _stage_2d != null and is_instance_valid(_stage_2d) and _stage_2d.has_method("show_empty_state"):
 		_stage_2d.show_empty_state(message)
@@ -342,7 +342,7 @@ func _build_side_card(side: String) -> Control:
 	box.add_child(status_row)
 	_status_rows[side] = status_row
 
-	box.add_child(_small_caption("Spells/Cooldowns"))
+	box.add_child(_small_caption("Habilidades/Recargas"))
 	var cooldown_row := HFlowContainer.new()
 	cooldown_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	cooldown_row.add_theme_constant_override("h_separation", 4)
@@ -350,7 +350,7 @@ func _build_side_card(side: String) -> Control:
 	box.add_child(cooldown_row)
 	_cooldown_rows[side] = cooldown_row
 
-	box.add_child(_small_caption("Familiares/Summons"))
+	box.add_child(_small_caption("Familiares/Invocacoes"))
 	var summon_row := HFlowContainer.new()
 	summon_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	summon_row.add_theme_constant_override("h_separation", 4)
@@ -386,7 +386,7 @@ func _build_event_card() -> Control:
 	_event_title_label.add_theme_color_override("font_color", _token_color("text_primary"))
 	box.add_child(_event_title_label)
 
-	_event_detail_label = _body_label("O visual usa apenas eventos recebidos.")
+	_event_detail_label = _body_label("Os lances da luta aparecem aqui.")
 	_event_detail_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	box.add_child(_event_detail_label)
 
@@ -513,10 +513,10 @@ func _render_dynamic_state(animate_stage_event: bool = false) -> void:
 
 	if _latest_event.is_empty():
 		_event_icon_label.text = "..."
-		_set_visual_tooltip(_event_icon_label, "Replay aguardando evento do battle_log_v1. Ataques, spells, buffs e resultado aparecem aqui conforme o log avanca.")
+		_set_visual_tooltip(_event_icon_label, "Replay aguardando o proximo lance. Ataques, habilidades, efeitos e resultado aparecem aqui conforme a luta avanca.")
 		_event_icon_label.add_theme_stylebox_override("normal", _badge_style(_token_color("placeholder")))
 		_event_title_label.text = "Aguardando evento"
-		_event_detail_label.text = "Ataques, spells, buffs, dano, efeitos e icons entram aqui."
+		_event_detail_label.text = "Ataques, habilidades, dano e efeitos entram aqui."
 	else:
 		var event_type := str(_latest_event.get("type", ""))
 		_event_icon_label.text = _event_code(event_type)
@@ -781,7 +781,7 @@ func _event_count_text() -> String:
 	var status_count := BattleLogPresenterScript.count_events_of_type(_battle_log, "status_apply")
 	var summon_count := BattleLogPresenterScript.count_events_of_type(_battle_log, "summon_attack")
 	var pet_count := BattleLogPresenterScript.count_events_of_type(_battle_log, "pet_attack")
-	return "Eventos: %d total | %d ataque basico | %d spell | %d DoT | %d status | %d summon | %d familiar" % [
+	return "Eventos: %d total | %d ataque basico | %d habilidade | %d dano periodico | %d status | %d invocacao | %d familiar" % [
 		_events.size(),
 		weapon_count,
 		spell_count,
@@ -806,12 +806,12 @@ func _status_tooltip(status_id: String, status: Dictionary) -> String:
 	var lines := PackedStringArray()
 	lines.append("Status ativo: %s." % _humanize_id(status_id))
 	lines.append("Stacks: %d." % stacks)
-	lines.append("Pode representar buff, debuff, DoT ou resistencia. O efeito real e a expiracao vem do battle_log_v1.")
+	lines.append("Pode representar reforco, enfraquecimento, dano periodico ou resistencia.")
 	lines.append("Asset futuro: battle_icon_status ou battle_icon_buff.")
 	return "\n".join(lines)
 
 func _cooldown_tooltip(spell_id: String, ready_at: float, remaining: float) -> String:
-	return "Cooldown de spell: %s\nA spell ja foi usada e fica indisponivel ate ready_at no replay.\nTempo atual do replay: %ss.\nRestante: %ss.\nPronta em: %ss.\nO cliente mostra o timer; o servidor decide quando ela pode ser usada de novo.\nAsset futuro: battle_icon_spell." % [
+	return "Recarga de habilidade: %s\nA habilidade ja foi usada e fica indisponivel ate o tempo indicado.\nTempo atual do replay: %ss.\nRestante: %ss.\nPronta em: %ss." % [
 		_humanize_id(spell_id),
 		_number_text(_current_replay_time()),
 		_number_text(remaining),
@@ -837,7 +837,7 @@ func _summon_tooltip(kind: String, entity_id: String, side: String, slot: String
 			entity_id,
 			_default_side_name(side),
 		]
-	return "Summon: %s\nCriatura invocada por spell de %s. Ocupa a posicao %s para leitura espacial e anima em summon_attack.\nAsset futuro: battle_icon_summon ou sprite proprio." % [
+	return "Invocacao: %s\nCriatura chamada por %s. Ocupa a posicao %s para leitura espacial e anima quando atacar." % [
 		entity_id,
 		_default_side_name(side),
 		_slot_label(slot),
@@ -847,7 +847,7 @@ func _event_tooltip(event: Dictionary) -> String:
 	var event_type := str(event.get("type", ""))
 	var lines := PackedStringArray()
 	lines.append("%s (%s)." % [_event_title(event_type), event_type])
-	lines.append("Evento %d/%d em %ss do battle_log_v1." % [
+	lines.append("Evento %d/%d em %ss do replay." % [
 		_event_index,
 		_events.size(),
 		_number_text(float(event.get("t", 0.0))),
@@ -860,7 +860,7 @@ func _event_tooltip(event: Dictionary) -> String:
 		"weapon_attack":
 			lines.append("Ataque basico com dano e HP final recebidos do servidor.")
 		"spell_cast":
-			lines.append("Spell conjurada: %s." % _humanize_id(str(event.get("spell_id", "spell"))))
+			lines.append("Habilidade conjurada: %s." % _humanize_id(str(event.get("spell_id", "spell"))))
 		"dot_apply", "status_apply", "resistance_apply":
 			lines.append("Aplica efeito: %s." % _humanize_id(str(event.get("status_id", event.get("spell_id", event_type)))))
 		"dot_tick":
@@ -870,9 +870,9 @@ func _event_tooltip(event: Dictionary) -> String:
 			var remaining: float = maxf(0.0, ready_at - float(event.get("t", _current_replay_time())))
 			lines.append("Inicia recarga de %s: restante %ss, pronta em %ss." % [_humanize_id(str(event.get("spell_id", "spell"))), _number_text(remaining), _number_text(ready_at)])
 		"summon_spawn":
-			lines.append("Summon entra no palco no lado de quem conjurou.")
+			lines.append("Invocacao entra no palco no lado de quem conjurou.")
 		"summon_attack":
-			lines.append("Summon ataca a partir de sua posicao visual.")
+			lines.append("Invocacao ataca a partir de sua posicao visual.")
 		"pet_attack":
 			lines.append("Familiar ataca; o resultado ja veio calculado.")
 		"anti_stall":
@@ -893,7 +893,7 @@ func _event_title(event_type: String) -> String:
 		"weapon_attack":
 			return "Ataque basico"
 		"spell_cast":
-			return "Spell conjurada"
+			return "Habilidade conjurada"
 		"dot_apply":
 			return "DoT aplicado"
 		"dot_tick":
@@ -911,11 +911,11 @@ func _event_title(event_type: String) -> String:
 		"resistance_apply":
 			return "Resistencia aplicada"
 		"summon_spawn":
-			return "Summon invocado"
+			return "Invocacao"
 		"summon_attack":
-			return "Summon atacou"
+			return "Invocacao atacou"
 		"summon_expire":
-			return "Summon saiu"
+			return "Invocacao saiu"
 		"pet_attack":
 			return "Familiar atacou"
 		"heal":
@@ -923,9 +923,9 @@ func _event_title(event_type: String) -> String:
 		"battle_start":
 			return "Inicio da batalha"
 		"cooldown_start":
-			return "Cooldown iniciado"
+			return "Recarga iniciada"
 		"cooldown_ready":
-			return "Spell pronta"
+			return "Habilidade pronta"
 		"mana_change":
 			return "Mana alterada"
 		"anti_stall":
@@ -1008,9 +1008,8 @@ func _default_side_name(side: String) -> String:
 	return "Draxos" if side == SIDE_PLAYER else "Oponente"
 
 func _actor_asset_hint(side: String) -> String:
-	return "Combatente principal: %s\nRepresentacao procedural do personagem parado no palco 2D. HP, mana, barreira, status e summons vem do battle_log_v1.\nAsset futuro: %s" % [
+	return "Combatente principal: %s\nRepresentacao do personagem no palco 2D. HP, mana, barreira, status e invocacoes aparecem conforme o replay." % [
 		_default_side_name(side),
-		"battle_character_player" if side == SIDE_PLAYER else "battle_character_opponent",
 	]
 
 func _slot_label(slot: String) -> String:

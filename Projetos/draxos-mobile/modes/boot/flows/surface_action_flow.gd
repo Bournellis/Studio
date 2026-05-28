@@ -10,14 +10,14 @@ const PRODUCT_ALPHA_DOUBLE_CONSTRUCTION_QUEUE := "alpha_double_construction_queu
 func show_base(host: Node) -> void:
 	var target_screen := str(host.call("_base_surface_target_screen"))
 	if SessionStore.is_progression_lab_local_only():
-		host.call("_show_screen", target_screen, false)
+		host.call("_show_surface_screen", target_screen)
 		host.call("_set_busy", false, "Snapshot local do Progression Lab carregado. Refugio em modo somente leitura; coletas e upgrades precisam de save seeded no Supabase local.")
 		host.call("_render_base_state")
 		return
 	if not bool(host.call("_require_session", "Entre com email ou use guest dev antes de atualizar o Refugio.")):
 		return
 
-	host.call("_show_screen", target_screen, false)
+	host.call("_show_surface_screen", target_screen)
 	host.call("_set_busy", true, "Buscando Refugio...")
 	var base_result: Dictionary = await SupabaseClient.fetch_base_state(SessionStore.access_token)
 	if not bool(base_result.get("ok", false)):
@@ -71,11 +71,11 @@ func collect_base(host: Node) -> void:
 	host.call("_render_base_state", collected)
 
 func buy_energy_pack_alpha(host: Node) -> void:
-	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de comprar Energia alpha.")):
+	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de comprar Energia.")):
 		return
 
 	host.call("_show_screen", str(host.call("_base_surface_target_screen")), false)
-	host.call("_set_busy", true, "Comprando pacote de Energia alpha...")
+	host.call("_set_busy", true, "Comprando pacote de Energia...")
 	var monetization_result: Dictionary = await SupabaseClient.alpha_purchase(
 		SessionStoreScript.create_request_id(),
 		AppShellActionContractScript.PRODUCT_ALPHA_ENERGY_PACK,
@@ -94,7 +94,7 @@ func buy_energy_pack_alpha(host: Node) -> void:
 		SessionStore.apply_base_result(base_result)
 
 	SessionStore.save_cache()
-	host.call("_set_busy", false, "Energia alpha comprada. O Refugio foi atualizado com o novo saldo.")
+	host.call("_set_busy", false, "Energia comprada. O Refugio foi atualizado com o novo saldo.")
 	host.call("_render_base_state")
 
 func upgrade_base_structure(host: Node, structure_id: String) -> void:
@@ -128,7 +128,7 @@ func show_social(host: Node) -> void:
 	if not bool(host.call("_require_session", "Entre com email ou use guest dev antes de abrir Social.")):
 		return
 
-	host.call("_show_screen", AppShellRouteContractScript.ROUTE_SOCIAL, false)
+	host.call("_show_surface_screen", AppShellRouteContractScript.ROUTE_SOCIAL)
 	host.call("_set_busy", true, "Buscando Social...")
 	var social_result: Dictionary = await SupabaseClient.fetch_social_state(SessionStore.access_token)
 	if not bool(social_result.get("ok", false)):
@@ -177,7 +177,7 @@ func create_guild(host: Node) -> void:
 	var guild_name := _input_text(host, "_social_guild_input", str(host.call("_default_guild_name")))
 	host.set("_last_social_guild_name", guild_name)
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_SOCIAL, false)
-	host.call("_set_busy", true, "Criando guilda alpha...")
+	host.call("_set_busy", true, "Criando guilda...")
 	var social_result: Dictionary = await SupabaseClient.create_guild(
 		SessionStoreScript.create_request_id(),
 		guild_name,
@@ -254,7 +254,7 @@ func show_matchmaking(host: Node) -> void:
 	if not bool(host.call("_require_session", "Entre com email ou use guest dev antes de abrir matchmaking.")):
 		return
 
-	host.call("_show_screen", AppShellRouteContractScript.ROUTE_COMPETITION, false)
+	host.call("_show_surface_screen", AppShellRouteContractScript.ROUTE_COMPETITION)
 	host.call("_set_busy", true, "Buscando matchmaking...")
 	var competition_result: Dictionary = await SupabaseClient.fetch_matchmaking_preview(SessionStore.access_token)
 	if not bool(competition_result.get("ok", false)):
@@ -272,7 +272,7 @@ func show_ranking(host: Node) -> void:
 	if not bool(host.call("_require_session", "Entre com email ou use guest dev antes de abrir ranking.")):
 		return
 
-	host.call("_show_screen", AppShellRouteContractScript.ROUTE_COMPETITION, false)
+	host.call("_show_surface_screen", AppShellRouteContractScript.ROUTE_COMPETITION)
 	host.call("_set_busy", true, "Buscando ranking...")
 	var competition_result: Dictionary = await SupabaseClient.fetch_ranking_current(SessionStore.access_token)
 	if not bool(competition_result.get("ok", false)):
@@ -290,8 +290,8 @@ func show_shop(host: Node) -> void:
 	if not bool(host.call("_require_session", "Entre com email ou use guest dev antes de abrir Loja.")):
 		return
 
-	host.call("_show_screen", AppShellRouteContractScript.ROUTE_SHOP, false)
-	host.call("_set_busy", true, "Buscando loja alpha...")
+	host.call("_show_surface_screen", AppShellRouteContractScript.ROUTE_SHOP)
+	host.call("_set_busy", true, "Buscando loja...")
 	var monetization_result: Dictionary = await SupabaseClient.fetch_monetization_state(SessionStore.access_token)
 	if not bool(monetization_result.get("ok", false)):
 		host.call("_fail_with_error", monetization_result)
@@ -301,7 +301,7 @@ func show_shop(host: Node) -> void:
 		return
 
 	SessionStore.save_cache()
-	host.call("_set_busy", false, "Loja alpha recuperada.")
+	host.call("_set_busy", false, "Loja recuperada.")
 	host.call("_render_monetization_state")
 
 func buy_shop_product(host: Node, product_id: String) -> void:
@@ -309,7 +309,7 @@ func buy_shop_product(host: Node, product_id: String) -> void:
 		return
 
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_SHOP, false)
-	host.call("_set_busy", true, "Processando produto alpha...")
+	host.call("_set_busy", true, "Processando produto...")
 	var monetization_result: Dictionary = await SupabaseClient.alpha_purchase(
 		SessionStoreScript.create_request_id(),
 		product_id,

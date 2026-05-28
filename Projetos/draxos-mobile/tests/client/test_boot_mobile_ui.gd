@@ -6,6 +6,7 @@ const AppShellActionContractScript = preload("res://modes/boot/ui/app_shell_acti
 const AppShellErrorContractScript = preload("res://modes/boot/ui/app_shell_error_contract.gd")
 const BaseSurfacePresenterScript = preload("res://modes/boot/surfaces/base_surface_presenter.gd")
 const BattleReplayPresenterScript = preload("res://modes/boot/surfaces/battle_replay_presenter.gd")
+const HubSurfacePresenterScript = preload("res://modes/boot/surfaces/hub_surface_presenter.gd")
 const MobileUiContractScript = preload("res://modes/boot/ui/mobile_ui_contract.gd")
 const TouchScrollContainerScript = preload("res://modes/boot/ui/touch_scroll_container.gd")
 
@@ -30,8 +31,10 @@ func test_boot_compact_layout_groups_actions_for_mobile() -> void:
 	assert_not_null(boot._first_screen_root)
 	assert_true(boot._first_screen_root.visible)
 	assert_false(boot._app_chrome_root.visible)
-	assert_true(_label_tree_contains(boot._first_screen_root, "Conta"))
-	assert_false(_label_tree_contains(boot._content_body, "Conta"))
+	assert_true(_label_tree_contains(boot._first_screen_root, "Escolha seu save"))
+	assert_false(_label_tree_contains(boot._content_body, "Escolha seu save"))
+	assert_not_null(_find_node_by_name(boot._first_screen_root, "EntrySceneBackground"))
+	assert_null(_find_node_by_name(boot._first_screen_root, "EntryHeroPanel"))
 	var sign_in_button := _find_button_by_text(boot._first_screen_root, "Entrar")
 	assert_not_null(sign_in_button)
 	assert_true(sign_in_button.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
@@ -44,9 +47,10 @@ func test_boot_compact_layout_groups_actions_for_mobile() -> void:
 	var action_grid := _first_action_grid(boot._content_body)
 	assert_not_null(action_grid)
 	assert_eq(action_grid.columns, boot._action_button_columns())
-	var sign_up_button := boot._action_buttons["email_sign_up"] as Button
-	assert_true(sign_up_button.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
-	assert_eq(sign_up_button.mouse_filter, Control.MOUSE_FILTER_PASS)
+	var reset_button := boot._action_buttons["reset_session"] as Button
+	assert_true(reset_button.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
+	assert_eq(reset_button.mouse_filter, Control.MOUSE_FILTER_PASS)
+	assert_null(boot._auth_email_input)
 	assert_false(_has_direct_button_child(boot._content_body))
 	assert_not_null(boot._confirm_dialog)
 
@@ -117,7 +121,7 @@ func test_app_shell_error_contract_normalizes_known_errors_without_boot_ui() -> 
 	)
 	assert_eq(
 		friendly_message,
-		"Produto alpha nao encontrado no catalogo atual."
+		"Produto nao encontrado no catalogo atual."
 	)
 	assert_true(AppShellErrorContractScript.is_network_error("NETWORK_UNAVAILABLE"))
 	assert_false(AppShellErrorContractScript.is_network_error("INVALID_PRODUCT"))
@@ -169,6 +173,19 @@ func test_boot_back_stack_returns_nested_routes_to_refugio_root() -> void:
 	assert_true(boot._screen_history.is_empty())
 	assert_false(boot._back_button.visible)
 
+func test_surface_actions_opened_from_refuge_go_back_to_refuge() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	boot._show_screen("refuge", false)
+	for route: String in ["social", "competition", "shop"]:
+		boot._show_surface_screen(route)
+		assert_eq(boot._current_screen, boot._normalize_route(route))
+		assert_eq(boot._screen_history, ["refuge"])
+		boot._go_back()
+		assert_eq(boot._current_screen, "refuge")
+		assert_true(boot._screen_history.is_empty())
+
 func test_boot_shell_has_no_global_tab_navigation() -> void:
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)
@@ -188,7 +205,7 @@ func test_boot_refugio_home_renders_altar_hotspots_and_account_route() -> void:
 	add_child_autofree(boot)
 
 	assert_eq(boot._current_screen, "entry")
-	assert_true(_label_tree_contains(boot._first_screen_root, "Conta"))
+	assert_true(_label_tree_contains(boot._first_screen_root, "Escolha seu save"))
 	assert_null(_find_button_by_text(boot._first_screen_root, "Entrar no Refugio"))
 	assert_not_null(boot._auth_email_input)
 	assert_not_null(boot._auth_password_input)
@@ -247,7 +264,7 @@ func test_boot_refugio_home_renders_altar_hotspots_and_account_route() -> void:
 	assert_eq(boot._current_screen, "account")
 	assert_true(boot._app_chrome_root.visible)
 	assert_false(boot._first_screen_root.visible)
-	assert_not_null(boot._auth_email_input)
+	assert_null(boot._auth_email_input)
 	assert_true(boot._back_button.visible)
 
 func test_entry_create_account_opens_popup_without_inline_signup_fields() -> void:
@@ -270,6 +287,70 @@ func test_entry_create_account_opens_popup_without_inline_signup_fields() -> voi
 	assert_true(boot._create_account_dialog.visible)
 	assert_true(boot._signup_password_input.secret)
 	assert_eq(boot._signup_email_input.text, _social_input_text_for_test(boot._auth_email_input))
+
+func test_entry_puts_login_before_save_choice_and_keeps_dev_tools_collapsed() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	var body := _find_node_by_name(boot._first_screen_root, "EntryFirstScreenBody")
+	assert_not_null(body)
+	assert_true(_child_index_by_name(body, "EntryAccountPanel") < _child_index_by_name(body, "EntrySavePanel"))
+	assert_true(_child_index_by_name(body, "EntrySavePanel") < _child_index_by_name(body, "EntryDevPanel"))
+	assert_not_null(_find_node_by_name(boot._first_screen_root, "EntrySceneBackground"))
+	assert_null(_find_node_by_name(boot._first_screen_root, "EntryHeroPanel"))
+	assert_not_null(_find_button_by_text(boot._first_screen_root, "Normal"))
+	assert_not_null(_find_button_by_text(boot._first_screen_root, "Lab"))
+	assert_not_null(_find_button_by_text(boot._first_screen_root, "Entrar"))
+	assert_not_null(_find_button_by_text(boot._first_screen_root, "Criar conta"))
+	assert_not_null(_find_button_by_text(boot._first_screen_root, "Ferramentas internas"))
+	assert_not_null(_find_node_by_name(boot._first_screen_root, "EntryResetPanel"))
+
+func test_refuge_hides_labs_after_login_surface() -> void:
+	ProjectSettings.set_setting("draxos_mobile/progression_lab/enabled", true)
+	ProjectSettings.set_setting("draxos_mobile/battle_lab/enabled", true)
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	boot._show_screen("refuge")
+	await get_tree().process_frame
+
+	assert_false(_label_tree_contains(boot._first_screen_root, "Labs Dev"))
+	assert_null(_find_button_by_text(boot._first_screen_root, "Battle Lab"))
+	assert_null(_find_button_by_text(boot._first_screen_root, "Progression Lab"))
+	assert_false(boot._action_buttons.has("open_battle_lab"))
+	assert_false(boot._action_buttons.has("open_progression_lab"))
+
+func test_refuge_context_cta_priority_uses_loaded_state() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	SessionStore.last_battle_log = _battle_log_fixture()
+	var cta := HubSurfacePresenterScript._refuge_context_cta_data(boot)
+	assert_eq(str(cta.get("action_id", "")), "show_latest_battle")
+	assert_eq(str(cta.get("text", "")), "Ver resultado")
+
+	SessionStore.last_battle_log = {}
+	SessionStore.base_state = _base_state_fixture()
+	cta = HubSurfacePresenterScript._refuge_context_cta_data(boot)
+	assert_eq(str(cta.get("action_id", "")), "collect_base")
+	assert_eq(str(cta.get("text", "")), "Coletar")
+
+	var upgrade_only := _base_state_fixture()
+	var structures := Array(upgrade_only.get("structures", []))
+	for index in range(structures.size()):
+		var structure := Dictionary(structures[index])
+		structure["pending_collectable"] = 0
+		structures[index] = structure
+	upgrade_only["structures"] = structures
+	SessionStore.base_state = upgrade_only
+	cta = HubSurfacePresenterScript._refuge_context_cta_data(boot)
+	assert_eq(str(cta.get("action_id", "")), "upgrade_base_structure:nucleo_energia")
+	assert_eq(str(cta.get("text", "")), "Evoluir")
+
+	SessionStore.base_state = {}
+	cta = HubSurfacePresenterScript._refuge_context_cta_data(boot)
+	assert_eq(str(cta.get("action_id", "")), "request_battle")
+	assert_eq(str(cta.get("text", "")), "Batalhar")
 
 func test_boot_refugio_home_shows_progression_lab_when_dev_tools_are_enabled() -> void:
 	ProjectSettings.set_setting("draxos_mobile/progression_lab/enabled", true)
@@ -393,25 +474,26 @@ func test_touch_scroll_container_uses_drag_threshold_and_wide_scrollbar() -> voi
 	assert_true(scroll.is_touch_dragging_for_test())
 	assert_true(scroll.get_v_scroll_bar().custom_minimum_size.x >= MobileUiContractScript.TOUCH_SCROLLBAR_WIDTH)
 
-func test_boot_account_panel_renders_login_save_session_and_update_gate() -> void:
+func test_boot_account_panel_renders_profile_settings_without_login_form() -> void:
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)
 	boot._show_screen("account")
 
-	assert_not_null(boot._auth_email_input)
-	assert_not_null(boot._auth_password_input)
-	assert_true(boot._auth_password_input.secret)
-	assert_not_null(boot._auth_username_input)
-	assert_not_null(boot._auth_invite_input)
+	assert_null(boot._auth_email_input)
+	assert_null(boot._auth_password_input)
+	assert_null(boot._auth_username_input)
+	assert_null(boot._auth_invite_input)
 	assert_not_null(boot._update_output_label)
 	assert_string_contains(boot._update_output_label.text, "Canal:")
-	assert_true(boot._action_buttons.has("email_sign_up"))
-	assert_true(boot._action_buttons.has("email_sign_in"))
-	assert_true(boot._action_buttons.has("select_save_normal"))
-	assert_true(boot._action_buttons.has("select_save_progression_lab"))
+	assert_false(boot._action_buttons.has("email_sign_up"))
+	assert_false(boot._action_buttons.has("email_sign_in"))
+	assert_false(boot._action_buttons.has("select_save_normal"))
+	assert_false(boot._action_buttons.has("select_save_progression_lab"))
 	assert_true(boot._action_buttons.has("check_update"))
+	assert_true(boot._action_buttons.has("refresh_session"))
+	assert_true(boot._action_buttons.has("reset_session"))
 
-func test_boot_profile_account_panel_shows_save_account_update_and_alpha_status() -> void:
+func test_boot_profile_account_panel_shows_save_account_update_and_build_status() -> void:
 	_prepare_account_state()
 	SessionStore.auth_method = "email"
 	SessionStore.auth_email = "alpha@example.com"
@@ -426,12 +508,13 @@ func test_boot_profile_account_panel_shows_save_account_update_and_alpha_status(
 	assert_true(_label_tree_contains(boot._content_body, "Username: tester"))
 	assert_true(_label_tree_contains(boot._content_body, "Conta: alpha_tester"))
 	assert_true(_label_tree_contains(boot._content_body, "Save ativo: Normal (normal)"))
-	assert_true(_label_tree_contains(boot._content_body, "Level: 8"))
+	assert_true(_label_tree_contains(boot._content_body, "Nivel: 8"))
 	assert_true(_label_tree_contains(boot._content_body, "Poder: 120"))
 	assert_true(_label_tree_contains(boot._content_body, "Auth: email/senha (alpha@example.com)"))
-	assert_true(_label_tree_contains(boot._content_body, "account/state: carregado do save ativo"))
+	assert_true(_label_tree_contains(boot._content_body, "Estado: carregado do save ativo"))
 	assert_true(_label_tree_contains(boot._content_body, "Update: Build atualizada"))
-	assert_true(_label_tree_contains(boot._content_body, "Alpha: internal_alpha 0.0.1-alpha.0 | online pronto"))
+	assert_true(_label_tree_contains(boot._content_body, "Build: internal_alpha 0.0.1-alpha.0 | online pronto"))
+	assert_null(boot._auth_email_input)
 
 func test_boot_profile_account_panel_has_clear_empty_state_without_account() -> void:
 	var boot = BootScreenScript.new()
@@ -439,8 +522,9 @@ func test_boot_profile_account_panel_has_clear_empty_state_without_account() -> 
 	boot._show_screen("account")
 
 	assert_true(_label_tree_contains(boot._content_body, "Username: sem conta carregada"))
-	assert_true(_label_tree_contains(boot._content_body, "account/state: sem sessao auth"))
-	assert_true(_label_tree_contains(boot._content_body, "Alpha: internal_alpha 0.0.1-alpha.0 | aguardando login"))
+	assert_true(_label_tree_contains(boot._content_body, "Estado: sem sessao auth"))
+	assert_true(_label_tree_contains(boot._content_body, "Build: internal_alpha 0.0.1-alpha.0 | aguardando login"))
+	assert_null(boot._auth_email_input)
 
 func test_boot_surface_presenters_render_shells_without_network() -> void:
 	var boot = BootScreenScript.new()
@@ -512,6 +596,12 @@ func test_boot_action_ids_are_centralized_in_contract() -> void:
 				"%s must use AppShellActionContractScript for action id '%s'" % [script_path, action_literal]
 			)
 
+func test_auth_success_paths_return_directly_to_refuge() -> void:
+	var source := FileAccess.get_file_as_string("res://modes/boot/flows/account_session_flow.gd")
+	assert_true(source.contains("func email_sign_in"))
+	assert_true(source.contains("func email_sign_up_with_credentials"))
+	assert_true(source.count("host.call(\"_show_screen\", AppShellRouteContractScript.ROUTE_REFUGE, false)") >= 3)
+
 func test_boot_flows_do_not_create_visual_controls() -> void:
 	for script_path: String in _flow_script_paths():
 		var source := FileAccess.get_file_as_string(script_path)
@@ -530,7 +620,7 @@ func test_base_presenter_renders_loaded_state_without_network() -> void:
 	boot._show_screen("base")
 	await get_tree().process_frame
 
-	assert_string_contains(boot._timeline_label.text, "Refugio server-authoritative")
+	assert_string_contains(boot._timeline_label.text, "Refugio sincronizado")
 	assert_string_contains(boot._timeline_label.text, "Fila: 1/2")
 	assert_true(boot._action_buttons.has("select_base_structure:nucleo_energia"))
 	assert_true(boot._action_buttons.has("upgrade_base_structure:nucleo_energia"))
@@ -561,11 +651,13 @@ func test_base_routine_panel_derives_objective_from_existing_payload() -> void:
 	await get_tree().process_frame
 
 	assert_true(_label_tree_contains(boot._base_state_container, "Rotina do Refugio"))
-	assert_true(_label_tree_contains(boot._base_state_container, "Coleta pronta: Almas 4 | Energia 12."))
-	assert_true(_label_tree_contains(boot._base_state_container, "Jobs em andamento: 1."))
+	assert_true(_label_tree_contains(boot._base_state_container, "Coleta pronta:"))
+	assert_true(_label_tree_contains(boot._base_state_container, "Almas 4"))
+	assert_true(_label_tree_contains(boot._base_state_container, "Energia 12"))
+	assert_true(_label_tree_contains(boot._base_state_container, "Fila em andamento: 1 obra(s)."))
 	assert_true(_label_tree_contains(boot._base_state_container, "Altar das Almas -> L2 | resta 1m 30s"))
 	assert_true(_label_tree_contains(boot._base_state_container, "Slots livres: 1/2."))
-	assert_true(_label_tree_contains(boot._base_state_container, "Proximo upgrade: Nucleo de Energia para L3"))
+	assert_true(_label_tree_contains(boot._base_state_container, "Proximo: Nucleo de Energia pronto"))
 
 func test_shop_presenter_renders_loaded_state_and_disables_claimed_items() -> void:
 	var boot = BootScreenScript.new()
@@ -576,8 +668,8 @@ func test_shop_presenter_renders_loaded_state_and_disables_claimed_items() -> vo
 	boot._show_screen("shop")
 	await get_tree().process_frame
 
-	assert_string_contains(boot._timeline_label.text, "Loja alpha server-authoritative")
-	assert_string_contains(boot._timeline_label.text, "Redeems hoje: 1/4")
+	assert_string_contains(boot._timeline_label.text, "Loja sincronizada")
+	assert_string_contains(boot._timeline_label.text, "Resgates hoje: 1/4")
 	assert_true(boot._action_buttons.has("shop_purchase:alpha_battle_pass_premium"))
 	assert_true(boot._action_buttons.has("claim_reward:daily_collect_base"))
 	assert_not_null(boot._shop_state_container)
@@ -586,6 +678,37 @@ func test_shop_presenter_renders_loaded_state_and_disables_claimed_items() -> vo
 	assert_true(pass_button.disabled)
 	var reward_button := boot._action_buttons["claim_reward:daily_collect_base"] as Button
 	assert_true(reward_button.disabled)
+
+func test_normal_surfaces_hide_internal_copy_terms() -> void:
+	var forbidden_terms := PackedStringArray(["server-authoritative", "polling", "snapshot", "redeem", "alpha"])
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	SessionStore.base_state = _base_state_fixture()
+	SessionStore.monetization_state = _shop_state_fixture()
+	SessionStore.social_state = {
+		"identity": {"viewer_badge": "normal"},
+		"player": {"username": "fabio", "save_badge": "normal"},
+		"active_player": {"username": "fabio", "save_badge": "normal"},
+		"friends": [],
+		"guild": null,
+		"guild_members": [],
+		"guild_structures": [],
+		"guild_chat": [],
+	}
+	SessionStore.competition_state = {
+		"matchmaking": {"player_power": 720, "candidate_count": 0, "selected_opponent": {}},
+		"ranking": {"season": {"display_name": "Season alpha"}, "entries": []},
+	}
+	SessionStore.last_battle_log = _battle_log_fixture()
+	SessionStore.last_battle_rewards = _battle_rewards_fixture()
+
+	for screen_id: String in ["entry", "refuge", "base", "social", "competition", "shop", "battle_summary"]:
+		boot._show_screen(screen_id, false)
+		await get_tree().process_frame
+		var visible_text := _visible_text_tree(boot).to_lower()
+		for term: String in forbidden_terms:
+			assert_false(visible_text.contains(term), "%s should hide '%s' from normal UI copy." % [screen_id, term])
 
 func test_boot_social_presenter_renders_chat_polling_and_lab_badges() -> void:
 	var boot = BootScreenScript.new()
@@ -613,10 +736,10 @@ func test_boot_social_presenter_renders_chat_polling_and_lab_badges() -> void:
 	}
 
 	boot._show_screen("social")
-	assert_string_contains(boot._timeline_label.text, "Refresh: snapshot atual por polling manual")
+	assert_string_contains(boot._timeline_label.text, "Use Atualizar social para carregar novas mensagens")
 	assert_string_contains(boot._timeline_label.text, "Chat de guilda: 1 mensagem atual")
 	assert_string_contains(boot._timeline_label.text, "Mensagem atual: tester_lab [lab]: Ola atual")
-	assert_true(_label_tree_contains(boot._social_state_container, "Mensagens mais recentes recebidas por polling."))
+	assert_true(_label_tree_contains(boot._social_state_container, "Mensagens mais recentes. Use Atualizar social para sincronizar."))
 	assert_true(_label_tree_contains(boot._social_state_container, "tester_lab [lab]: Ola atual (2026-05-27 14:45)"))
 	assert_true(_label_tree_contains(boot._social_state_container, "Oficina Ritual L1"))
 	await get_tree().process_frame
@@ -637,7 +760,7 @@ func test_boot_social_presenter_renders_empty_states_and_refresh_hint() -> void:
 
 	boot._show_screen("social")
 	assert_string_contains(boot._timeline_label.text, "Mensagem atual: nenhuma")
-	assert_true(_label_tree_contains(boot._social_state_container, "Refresh e Polling"))
+	assert_true(_label_tree_contains(boot._social_state_container, "Atualizacao"))
 	assert_true(_label_tree_contains(boot._social_state_container, "Nenhum amigo ainda. Use o username do outro jogador para adicionar."))
 	assert_true(_label_tree_contains(boot._social_state_container, "Chat e estruturas aparecem depois que a conta entra em uma guilda."))
 	assert_true(_label_tree_contains(boot._social_state_container, "Sem guilda. O chat fica disponivel depois de criar ou entrar em uma guilda."))
@@ -667,9 +790,9 @@ func test_boot_competition_presenter_preserves_lab_and_bot_ranking_messages() ->
 	}
 
 	boot._show_screen("competition")
-	assert_string_contains(boot._timeline_label.text, "bots no ranking:")
-	assert_true(_label_tree_contains(boot._competition_state_container, "Bot de treino: sim | Entra no ranking: nao"))
-	assert_true(_label_tree_contains(boot._competition_state_container, "Progression Lab nao pontua competicao e fica fora do leaderboard."))
+	assert_string_contains(boot._timeline_label.text, "Treinos no ranking:")
+	assert_true(_label_tree_contains(boot._competition_state_container, "Alvo de treino: sim | Pontua no ranking: nao"))
+	assert_true(_label_tree_contains(boot._competition_state_container, "Progression Lab nao pontua competicao e fica fora do ranking."))
 	await get_tree().process_frame
 
 func test_boot_battle_presenter_renders_history_entries_without_network() -> void:
@@ -694,7 +817,7 @@ func test_boot_battle_presenter_renders_history_entries_without_network() -> voi
 
 	assert_true(boot._action_buttons.has("show_battle_history"))
 	assert_true(boot._action_buttons.has("battle_replay:11111111-1111-4111-8111-111111111111"))
-	assert_true(_label_tree_contains(boot._content_body, "FIRST_SLICE_SIM"))
+	assert_true(_label_tree_contains(boot._content_body, "recompensa Xp +10"))
 	assert_true(_label_tree_contains(boot._content_body, "vitoria"))
 
 func test_boot_battle_running_renders_fullscreen_overlay_and_skip() -> void:
@@ -720,9 +843,9 @@ func test_boot_battle_running_renders_fullscreen_overlay_and_skip() -> void:
 	assert_false(_label_tree_contains(boot._battle_fullscreen_overlay, "Timeline"))
 	var skip_button := boot._action_buttons["skip_battle_replay"] as Button
 	assert_eq(skip_button.name, "BattleSkipButton")
-	assert_eq(skip_button.text, "Pular batalha")
-	assert_true(skip_button.custom_minimum_size.x >= 142.0)
-	assert_true(skip_button.custom_minimum_size.y >= 58.0)
+	assert_eq(skip_button.text, "Pular")
+	assert_true(skip_button.custom_minimum_size.x >= 96.0)
+	assert_true(skip_button.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
 	assert_true((skip_button.size_flags_horizontal & Control.SIZE_SHRINK_END) != 0)
 	assert_eq((skip_button.get_parent() as HBoxContainer).alignment, BoxContainer.ALIGNMENT_END)
 	assert_eq(skip_button.mouse_filter, Control.MOUSE_FILTER_STOP)
@@ -733,7 +856,7 @@ func test_boot_battle_running_renders_fullscreen_overlay_and_skip() -> void:
 	boot._skip_current_replay()
 	assert_true(boot._skip_replay)
 
-func test_boot_battle_summary_renders_minimal_result_and_actions() -> void:
+func test_boot_battle_summary_renders_reward_result_and_actions() -> void:
 	_prepare_account_state()
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)
@@ -753,8 +876,9 @@ func test_boot_battle_summary_renders_minimal_result_and_actions() -> void:
 	assert_false(_label_tree_contains(boot._battle_fullscreen_overlay, "Vencedor"))
 	assert_false(_label_tree_contains(boot._battle_fullscreen_overlay, "Duracao"))
 	assert_false(_label_tree_contains(boot._battle_fullscreen_overlay, "Eventos"))
-	assert_false(_label_tree_contains(boot._battle_fullscreen_overlay, "Recompensa"))
-	assert_false(_label_tree_contains(boot._battle_fullscreen_overlay, "Recursos"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Recompensa"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Recursos"))
+	assert_not_null(_find_button_by_text(boot._battle_fullscreen_overlay, "Voltar ao Refugio"))
 	assert_true(boot._action_buttons.has("return_refuge"))
 	assert_true(boot._action_buttons.has("show_current_battle_logs"))
 	assert_false(boot._action_buttons.has("replay_latest_battle"))
@@ -832,7 +956,7 @@ func test_boot_play_battle_log_finishes_on_summary_route() -> void:
 	assert_false(boot._action_buttons.has("show_battle_history"))
 	assert_true(boot._action_buttons.has("return_refuge"))
 
-func test_battle_summary_data_uses_battle_log_rewards_and_resource_snapshot() -> void:
+func test_battle_summary_data_uses_battle_log_rewards_and_resource_state() -> void:
 	var summary := BattleReplayPresenterScript.summary_data(
 		_battle_log_fixture(),
 		_battle_rewards_fixture(),
@@ -843,8 +967,8 @@ func test_battle_summary_data_uses_battle_log_rewards_and_resource_snapshot() ->
 	assert_eq(str(summary.get("winner_label", "")), "Vitoria")
 	assert_eq(str(summary.get("duration_text", "")), "12.5s")
 	assert_eq(int(summary.get("event_count", 0)), 2)
-	assert_eq(str(summary.get("reward_text", "")), "FIRST_SLICE_SIM xp=10, almas=0.8, ossos=1")
-	assert_eq(str(summary.get("resources_text", "")), "almas=7, energia=9, diamante=2")
+	assert_eq(str(summary.get("reward_text", "")), "Xp +10, Almas +0.8, Ossos +1")
+	assert_eq(str(summary.get("resources_text", "")), "Almas 7, Energia 9, Diamante 2")
 
 func _first_action_grid(parent: Node) -> GridContainer:
 	for child: Node in parent.get_children():
@@ -880,6 +1004,16 @@ func _find_node_by_name(root: Node, node_name: String) -> Node:
 			return found
 	return null
 
+func _child_index_by_name(root: Node, node_name: String) -> int:
+	if root == null:
+		return -1
+	var children := root.get_children()
+	for index in range(children.size()):
+		var child := children[index] as Node
+		if child != null and child.name == node_name:
+			return index
+	return -1
+
 func _social_input_text_for_test(input: LineEdit) -> String:
 	if input == null:
 		return ""
@@ -894,6 +1028,22 @@ func _label_tree_contains(root: Node, needle: String) -> bool:
 		if _label_tree_contains(child, needle):
 			return true
 	return false
+
+func _visible_text_tree(root: Node) -> String:
+	if root == null:
+		return ""
+	if root is CanvasItem and not (root as CanvasItem).visible:
+		return ""
+	var lines := PackedStringArray()
+	if root is Label:
+		lines.append(str((root as Label).text))
+	elif root is Button:
+		lines.append(str((root as Button).text))
+	for child: Node in root.get_children():
+		var child_text := _visible_text_tree(child)
+		if child_text != "":
+			lines.append(child_text)
+	return "\n".join(lines)
 
 func _panel_tree_count(root: Node) -> int:
 	if root == null:

@@ -70,7 +70,7 @@ func enter_guest(host: Node) -> void:
 	var recovered := await recover_session_state(host)
 	if not recovered:
 		return
-	host.call("_show_notice", "Sessao guest pronta. Todas as abas do alpha estao disponiveis.")
+	host.call("_show_notice", "Sessao guest pronta. Todos os paineis estao disponiveis.")
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_REFUGE, false)
 
 func enter_refuge(host: Node) -> void:
@@ -129,7 +129,7 @@ func email_sign_up_with_credentials(host: Node, credentials: Dictionary) -> void
 	)
 	if not save_ready:
 		return
-	host.call("_show_notice", "Conta alpha criada. O save %s esta pronto." % SessionStore.active_save_label())
+	host.call("_show_notice", "Conta criada. O save %s esta pronto." % SessionStore.active_save_label())
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_REFUGE, false)
 
 func email_sign_in(host: Node) -> void:
@@ -193,7 +193,7 @@ func reset_local_session(host: Node) -> void:
 	host.call("_clear_battle_history")
 	SessionStore.save_cache()
 	_clear_screen_history(host)
-	host.call("_set_busy", false, "Cache local limpo. Entre com email para recuperar a conta alpha ou use guest dev.")
+	host.call("_set_busy", false, "Dados locais limpos. Entre com email para recuperar a conta ou use guest dev.")
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_ENTRY, false)
 
 func reset_active_save(host: Node) -> void:
@@ -319,7 +319,7 @@ func auth_form_values(host: Node, require_username: bool) -> Dictionary:
 
 	if email == "" or not email.contains("@") or not email.contains("."):
 		_set_error_text(host, "Informe um email valido.")
-		_set_detail_text(host, "A conta alpha usa email/senha para compartilhar o save entre PC, Web e Android.")
+		_set_detail_text(host, "A conta usa email/senha para compartilhar o save entre PC, Web e Android.")
 		return {}
 	if password.length() < 6:
 		_set_error_text(host, "A senha precisa ter pelo menos 6 caracteres.")
@@ -334,7 +334,7 @@ func auth_form_values(host: Node, require_username: bool) -> Dictionary:
 		_set_detail_text(host, "Use 3 a 24 caracteres: letras minusculas, numeros ou underscore.")
 		return {}
 	if require_username and invite == "":
-		_set_error_text(host, "Informe o convite alpha.")
+		_set_error_text(host, "Informe o convite.")
 		_set_detail_text(host, "O convite libera o primeiro save desta conta.")
 		return {}
 
@@ -352,7 +352,7 @@ func create_account_form_values(host: Node) -> Dictionary:
 
 	if email == "" or not email.contains("@") or not email.contains("."):
 		_set_error_text(host, "Informe um email valido.")
-		_set_detail_text(host, "A conta alpha usa email/senha para compartilhar o save entre PC, Web e Android.")
+		_set_detail_text(host, "A conta usa email/senha para compartilhar o save entre PC, Web e Android.")
 		host.call("_sync_immersive_feedback")
 		return {}
 	if password.length() < 6:

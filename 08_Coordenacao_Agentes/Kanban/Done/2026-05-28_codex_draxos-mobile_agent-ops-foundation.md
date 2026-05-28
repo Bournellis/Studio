@@ -1,6 +1,6 @@
 # Track 14 - DraxosMobile Agent Operations Foundation
 
-- status: `Doing`
+- status: `Done`
 - projeto: `draxos-mobile`
 - agente: `Codex`
 - branch: `codex/draxos-mobile/agent-ops-foundation`
@@ -51,4 +51,4 @@ git status --short
 
 ## Handoff
 
-Proximo ponto: branch commitada, worktree limpa, validacao registrada em `implementation/tracks/track-14-agent-ops-foundation/current-status.md`. Nao abrir feature, tuning, migration de conta/save ou publicacao remota nesta track.
+Track 14 fica preservada como fundacao operacional sobre a qual a Track 15 esta trabalhando. Proximo ponto vivo: `implementation/tracks/track-15-mobile-ux-overhaul/current-status.md`. Nao abrir gameplay, tuning, migration conta/save ou publicacao remota dentro do pacote de UX.

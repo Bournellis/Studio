@@ -11,14 +11,12 @@ const SCREEN_COMPETITION := "competition"
 const SCREEN_SHOP := "shop"
 
 static func render_account_panel(host: Node) -> void:
-	_add_section_label(host, "Painel de conta")
-	_add_body_text(host, "Login, registro, save ativo, updates e teste guest ficam concentrados aqui para manter o Refugio como home limpa.")
+	_add_section_label(host, "Perfil e ajustes")
+	_add_body_text(host, "Conta, update e area de risco ficam aqui para manter o Refugio limpo.")
 	render_profile_account_panel(host)
-	render_login(host)
-	render_guest_access(host)
-	render_active_save(host)
 	render_session_status(host)
 	render_update_gate(host)
+	render_profile_actions(host)
 
 static func home_account_summary_text(host: Node) -> String:
 	var update_gate := _as_dictionary(host.get("_update_gate")) if host != null else {}
@@ -26,7 +24,7 @@ static func home_account_summary_text(host: Node) -> String:
 	lines.append("Conta: %s" % _account_identity_text(SessionStore))
 	lines.append("Save ativo: %s (%s)" % [SessionStore.active_save_label(), SessionStore.active_save_badge()])
 	lines.append("Estado: %s" % _account_state_text(SessionStore))
-	lines.append("Alpha: %s %s | %s" % [
+	lines.append("Build: %s %s | %s" % [
 		ProjectInfoScript.RELEASE_CHANNEL,
 		ProjectInfoScript.APP_VERSION,
 		_alpha_status_text(SessionStore, update_gate),
@@ -35,21 +33,21 @@ static func home_account_summary_text(host: Node) -> String:
 	return "\n".join(lines)
 
 static func render_login(host: Node) -> void:
-	_add_section_label(host, "Conta Internal Alpha")
+	_add_section_label(host, "Conta")
 	_add_body_text(host, "Entre com email e senha para usar o save compartilhado entre PC, Web e Android. O convite libera o primeiro save desta conta.")
 	host.set("_auth_email_input", _add_social_input(
 		host,
 		"Email",
 		"tester@exemplo.com",
 		SessionStore.auth_email,
-		"Email usado no Supabase Auth da Internal Alpha."
+		"Email usado na conta."
 	))
 	var password_input := _add_social_input(
 		host,
 		"Senha",
-		"Senha da conta alpha",
+		"Senha da conta",
 		"",
-		"Senha da conta alpha. Ela nao e salva no cache local."
+		"Senha da conta. Ela nao e salva nesta maquina."
 	)
 	password_input.secret = true
 	host.set("_auth_password_input", password_input)
@@ -62,19 +60,19 @@ static func render_login(host: Node) -> void:
 	))
 	host.set("_auth_invite_input", _add_social_input(
 		host,
-		"Convite alpha",
+		"Convite",
 		SessionStore.DEFAULT_INVITE_CODE,
 		SessionStore.DEFAULT_INVITE_CODE,
 		"Convite usado apenas para liberar o primeiro save da conta."
 	))
-	_add_action_button(host, "Criar conta alpha", AppShellActionContractScript.ACTION_EMAIL_SIGN_UP)
+	_add_action_button(host, "Criar conta", AppShellActionContractScript.ACTION_EMAIL_SIGN_UP)
 	_add_action_button(host, "Entrar com email", AppShellActionContractScript.ACTION_EMAIL_SIGN_IN)
 	_add_action_button(host, "Sincronizar sessao", AppShellActionContractScript.ACTION_REFRESH_SESSION)
 	_add_action_button(host, "Resetar sessao local", AppShellActionContractScript.ACTION_RESET_SESSION, "Limpar apenas token/cache local desta maquina? O estado salvo no servidor nao sera apagado.")
 
 static func render_guest_access(host: Node) -> void:
 	_add_section_label(host, "Teste rapido local")
-	_add_body_text(host, "Use guest apenas para validar rapidamente sem criar conta. O teste principal da alpha usa email/senha.")
+	_add_body_text(host, "Use guest apenas para validar rapidamente sem criar conta. O teste principal usa email/senha.")
 	_add_action_button(host, "Entrar como guest", AppShellActionContractScript.ACTION_ENTER_GUEST)
 
 static func render_quick_test(host: Node) -> void:
@@ -88,14 +86,14 @@ static func render_quick_test(host: Node) -> void:
 
 static func render_active_save(host: Node) -> void:
 	_add_section_label(host, "Save ativo")
-	_add_body_text(host, "O save Normal executa o loop server-authoritative local. O save Progression Lab fica isolado para testes e nao deve pontuar ranking/social.")
+	_add_body_text(host, "O save Normal executa o loop principal. O save Progression Lab fica isolado para testes e nao deve pontuar ranking/social.")
 	_add_action_button(host, "Usar save normal", AppShellActionContractScript.ACTION_SELECT_SAVE_NORMAL)
 	_add_action_button(host, "Usar save Progression Lab", AppShellActionContractScript.ACTION_SELECT_SAVE_PROGRESSION_LAB)
 	_add_action_button(
 		host,
 		"Resetar save ativo",
 		AppShellActionContractScript.ACTION_RESET_ACTIVE_SAVE,
-		"Resetar apenas o save %s no servidor? O outro save e a sessao local serao preservados." % SessionStore.active_save_label()
+		"Resetar apenas o save %s? O outro save e a sessao local serao preservados." % SessionStore.active_save_label()
 	)
 	_add_output_label(host, "Save atual: %s (%s)" % [
 		SessionStore.active_save_label(),
@@ -106,16 +104,23 @@ static func render_profile_account_panel(host: Node) -> void:
 	_add_section_label(host, "Perfil e conta")
 	_add_output_label(host, profile_account_status_text(host))
 
+static func render_profile_actions(host: Node) -> void:
+	_add_section_label(host, "Ajustes")
+	_add_action_button(host, "Sincronizar", AppShellActionContractScript.ACTION_REFRESH_SESSION)
+	_add_action_button(host, "Reset local", AppShellActionContractScript.ACTION_RESET_SESSION, "Limpar apenas os dados locais desta maquina? O save da conta nao sera apagado.")
+	if SessionStore.has_valid_access_token() or SessionStore.has_account_state():
+		_add_action_button(host, "Reset save", AppShellActionContractScript.ACTION_RESET_ACTIVE_SAVE, "Resetar apenas o save %s? O outro save e a sessao local serao preservados." % SessionStore.active_save_label())
+
 static func render_session_status(host: Node) -> void:
 	var account := "Conta: nao iniciada"
 	if SessionStore.is_progression_lab_local_only() and SessionStore.has_account_state():
-		account = "Progression Lab local: %s | Level %s | Poder %s" % [
+		account = "Progression Lab local: %s | Nivel %s | Poder %s" % [
 			SessionStore.player_display_name(),
 			str(SessionStore.player.get("level", 1)),
 			str(SessionStore.player.get("power", 0)),
 		]
 	elif SessionStore.has_account_state():
-		account = "Conta %s: %s | Level %s | Poder %s" % [
+		account = "Conta %s: %s | Nivel %s | Poder %s" % [
 			SessionStore.auth_method,
 			SessionStore.player_display_name(),
 			str(SessionStore.player.get("level", 1)),
@@ -183,15 +188,15 @@ static func profile_account_status_lines(store: Object, update_gate: Dictionary 
 	lines.append("Username: %s" % _profile_username(store))
 	lines.append("Conta: %s" % _account_identity_text(store))
 	lines.append("Save ativo: %s (%s)" % [_store_call_string(store, "active_save_label", "Normal"), _store_call_string(store, "active_save_badge", "normal")])
-	lines.append("Level: %s" % _player_field_text(store, "level", "sem save carregado"))
+	lines.append("Nivel: %s" % _player_field_text(store, "level", "sem save carregado"))
 	lines.append("Poder: %s" % _player_field_text(store, "power", "sem save carregado"))
 	lines.append("Auth: %s" % _auth_method_text(store))
-	lines.append("account/state: %s" % _account_state_text(store))
+	lines.append("Estado: %s" % _account_state_text(store))
 	lines.append("Update: %s (%s)" % [
 		str(update_gate.get("summary", "Update ainda nao verificado.")),
 		str(update_gate.get("status", "unchecked")),
 	])
-	lines.append("Alpha: %s %s | %s" % [
+	lines.append("Build: %s %s | %s" % [
 		ProjectInfoScript.RELEASE_CHANNEL,
 		ProjectInfoScript.APP_VERSION,
 		_alpha_status_text(store, update_gate),
@@ -221,7 +226,7 @@ static func _account_identity_text(store: Object) -> String:
 	var auth_email := _store_string(store, "auth_email").strip_edges()
 	if auth_email != "":
 		return auth_email
-	return "sem identidade alpha"
+	return "sem identidade"
 
 static func _player_field_text(store: Object, key: String, fallback: String) -> String:
 	var player := _store_dictionary(store, "player")
@@ -246,7 +251,7 @@ static func _auth_method_text(store: Object) -> String:
 static func _account_state_text(store: Object) -> String:
 	if _store_call_bool(store, "has_account_state"):
 		if _store_call_bool(store, "is_progression_lab_local_only"):
-			return "snapshot local-only do Progression Lab"
+			return "dados locais do Progression Lab"
 		return "carregado do save ativo"
 	if _store_call_bool(store, "has_valid_access_token"):
 		return "sessao auth pronta; falta sincronizar/criar save"
