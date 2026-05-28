@@ -1055,7 +1055,10 @@ func _sync_buttons() -> void:
 			if not reward.is_empty():
 				button.disabled = button.disabled or bool(reward.get("claimed", false))
 		if action_id == AppShellActionContractScript.ACTION_SHOW_LATEST_BATTLE:
-			button.text = "Pular replay" if _replay_running else "Ver resultado"
+			if button.name == "RefugeContextCta" and SessionStore.has_unseen_battle_result():
+				button.text = "Ver recompensa"
+			else:
+				button.text = "Pular replay" if _replay_running else "Ver resultado"
 	for screen_id: String in _nav_buttons.keys():
 		var nav_button: Button = _nav_buttons[screen_id]
 		nav_button.disabled = _is_busy or _replay_running

@@ -206,7 +206,7 @@ func _check_battle_fullscreen_loop() -> void:
 	_expect(_label_tree_contains(boot, "Resultado da batalha"), "battle_summary shows result title")
 	_expect(_label_tree_contains(boot, "Vitoria"), "battle_summary shows minimal result")
 	_expect(_find_button_by_text(boot, "Ver logs") != null, "battle_summary can open current logs")
-	_expect(_label_tree_contains(boot, "Voltar ao Refugio"), "battle_summary can return to Refugio")
+	_expect(_label_tree_contains(boot, "Voltar e verificar base"), "battle_summary can return to base loop")
 	_expect(_find_button_by_text(boot, "Historico") == null, "battle_summary does not expose history")
 	_expect_layout_fits_width(boot, float(root.size.x), "battle_summary")
 

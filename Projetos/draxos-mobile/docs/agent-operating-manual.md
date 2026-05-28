@@ -26,9 +26,11 @@ If a historical track conflicts with these docs, the live docs win. If local pro
 
 Active stage: `FOUNDATION_AUDIT_ACTIVE`.
 
-The project is a base implemented for refinement. The Foundation Loop Audit is documented, and the next implementation should be a focused pass on the post-login loop:
+The project is a base implemented for refinement. The Foundation Loop Audit is documented, and Foundation Loop UX Pass 01 is implemented locally as the current candidate for the post-login loop:
 
 `Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again`
+
+The next product action is manual review of that loop pass before choosing social, visual-general or battle-presentation work.
 
 Track 16 remains the latest local technical package, but it is not the current product focus. Current spells, weapons, economy values, Battle Pass, battle flavor and visual identity are mock/substance, not priority areas.
 
@@ -126,9 +128,8 @@ Never run remote mutation modes as a drive-by validation step.
 
 Do not start these without explicit user direction and a fresh track/package:
 
-- feature gameplay or content expansion before Foundation Audit is complete;
-- UX implementation before the post-login loop audit identifies the exact friction;
-- social expansion before the internal loop is handled;
+- feature gameplay or content expansion before Foundation Loop UX Pass 01 is manually reviewed;
+- social expansion before Foundation Loop UX Pass 01 is manually reviewed;
 - visual-general or battle-presentation work before the loop and social order is explicitly chosen;
 - numeric tuning without human playthrough and Progression Lab evidence;
 - weapons, spells, Battle Pass or economy pass while they are still mock/substance;
@@ -158,4 +159,4 @@ Every handoff should say:
 - whether the worktree is clean;
 - next safe action for the following agent.
 
-Keep `implementation/current-status.md` short. Put detailed history, logs and validation notes in the Foundation Audit handoff or relevant historical track directory.
+Keep `implementation/current-status.md` short. Put detailed history, logs and validation notes in the Foundation Audit handoff, Kanban Done card or relevant historical track directory.

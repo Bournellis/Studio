@@ -169,9 +169,19 @@ func test_session_store_accepts_battle_log_snapshot_without_mutating_resources()
 	})
 	assert_true(applied)
 	assert_true(store.has_battle_log())
+	assert_true(store.has_unseen_battle_result())
 	assert_eq(str(store.last_battle_id), "battle-1")
 	assert_eq(int(store.resources.get("ossos", 0)), 0)
 	assert_eq(int(Dictionary(store.competition_state["last_battle"]).get("arena_delta", 0)), 20)
+	store.mark_battle_result_seen()
+	assert_false(store.has_unseen_battle_result())
+	assert_true(bool(store.snapshot().get("last_battle_result_seen", false)))
+	assert_true(store.apply_battle_result({
+		"ok": true,
+		"battle_log": _battle_log_fixture(),
+		"rewards": {"type": "MVP_ONLY"},
+	}))
+	assert_false(store.has_unseen_battle_result())
 	store.free()
 
 func test_session_store_rejects_stale_save_scoped_surface_payloads() -> void:

@@ -38,7 +38,9 @@ The major foundation baseline is:
 
 Foundation Audit is the active stage. It must align documents and then audit the internal post-login loop before implementation expands.
 
-Documentation alignment is complete, and the first loop audit is recorded in `docs/foundation-loop-audit.md`. The audit conclusion is: the foundation exists technically, but the V0 UX needs a focused pass so the player always understands the next post-login action.
+Documentation alignment is complete, and the first loop audit is recorded in `docs/foundation-loop-audit.md`. The audit conclusion was: the foundation exists technically, but the V0 UX needed a focused pass so the player always understands the next post-login action.
+
+Foundation Loop UX Pass 01 is now implemented locally on branch `codex/draxos-mobile/foundation-loop-ux-pass`. It makes Refugio the operational loop home, adds a visible loop panel, separates unseen battle rewards from old battle history, removes confirmation from routine collection, changes the battle summary return to `Voltar e verificar base`, marks battle results as seen on return, and adds the no-network smoke `tools/smoke_foundation_loop.gd`.
 
 Priority order after the docs are aligned:
 
@@ -82,7 +84,7 @@ The stable Cloudflare Pages domain is protected by Cloudflare Access. Anonymous 
 ## Risks And Blocks
 
 - Track 16 is not remotely published; Supabase migrations/functions must be deployed deliberately if this package is promoted later.
-- Foundation Loop Audit is documented; implementation expansion should wait for a focused Foundation Loop UX Pass decision.
+- Foundation Loop UX Pass 01 is local only; it needs manual Android/Windows/Web review before it becomes the accepted V0 UX baseline.
 - Manual Android/Windows/Web walkthrough from Track 13 is still required before remote publication.
 - `players.save_type` remains an alpha shortcut. `account_profiles` + `game_saves` is a future migration package.
 - Progression/economy remains mock/substance and not the current tuning focus.
@@ -90,7 +92,7 @@ The stable Cloudflare Pages domain is protected by Cloudflare Access. Anonymous 
 
 ## Next Step
 
-Review `docs/foundation-loop-audit.md`, then execute a focused Foundation Loop UX Pass: Refugio as loop home, reliable next-action CTA, visible collect/evolve states, battle reward returning to base, and a no-network smoke for the loop priority.
+Manually review Foundation Loop UX Pass 01 on Android/Windows/Web: confirm the post-login loop feels natural, the primary CTA is obvious, collect/evolve states are visible, reward return sends the player back to base intent, and social/visual/battle-presentation work stays secondary until this loop is accepted.
 
 ## Validation
 
@@ -100,6 +102,7 @@ Documentation/foundation validation for this stage:
 git diff --check
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Quick
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_agent_ops_foundation.ps1 -ProjectDir .
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_foundation_loop.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_foundation_hardening.gd
 ```
 

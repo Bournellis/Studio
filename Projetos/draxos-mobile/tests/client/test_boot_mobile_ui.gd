@@ -224,6 +224,7 @@ func test_boot_refugio_home_renders_altar_hotspots_and_account_route() -> void:
 	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeAltarViewSpace"))
 	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeSceneBoard"))
 	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeAltarStage"))
+	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeLoopPanel"))
 	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeMenuPopup"))
 	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeHotspotPanel"))
 	assert_null(_find_node_by_name(boot._first_screen_root, "RefugePathGrid"))
@@ -327,13 +328,22 @@ func test_refuge_context_cta_priority_uses_loaded_state() -> void:
 	SessionStore.last_battle_log = _battle_log_fixture()
 	var cta := HubSurfacePresenterScript._refuge_context_cta_data(boot)
 	assert_eq(str(cta.get("action_id", "")), "show_latest_battle")
-	assert_eq(str(cta.get("text", "")), "Ver resultado")
+	assert_eq(str(cta.get("text", "")), "Ver recompensa")
+
+	SessionStore.base_state = _base_state_fixture()
+	SessionStore.mark_battle_result_seen()
+	cta = HubSurfacePresenterScript._refuge_context_cta_data(boot)
+	assert_eq(str(cta.get("action_id", "")), "collect_base")
+	assert_eq(str(cta.get("text", "")), "Coletar")
+	assert_eq(str(cta.get("confirm", "")), "")
 
 	SessionStore.last_battle_log = {}
+	SessionStore.last_battle_result_seen = false
 	SessionStore.base_state = _base_state_fixture()
 	cta = HubSurfacePresenterScript._refuge_context_cta_data(boot)
 	assert_eq(str(cta.get("action_id", "")), "collect_base")
 	assert_eq(str(cta.get("text", "")), "Coletar")
+	assert_eq(str(cta.get("confirm", "")), "")
 
 	var upgrade_only := _base_state_fixture()
 	var structures := Array(upgrade_only.get("structures", []))
@@ -951,7 +961,8 @@ func test_boot_battle_summary_renders_reward_result_and_actions() -> void:
 	assert_false(_label_tree_contains(boot._battle_fullscreen_overlay, "Eventos"))
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Recompensa"))
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Recursos"))
-	assert_not_null(_find_button_by_text(boot._battle_fullscreen_overlay, "Voltar ao Refugio"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "verificar a base"))
+	assert_not_null(_find_button_by_text(boot._battle_fullscreen_overlay, "Voltar e verificar base"))
 	assert_true(boot._action_buttons.has("return_refuge"))
 	assert_true(boot._action_buttons.has("show_current_battle_logs"))
 	assert_false(boot._action_buttons.has("replay_latest_battle"))
@@ -986,6 +997,7 @@ func test_boot_battle_summary_return_to_refuge_clears_lifecycle_state() -> void:
 	add_child_autofree(boot)
 	SessionStore.last_battle_log = _battle_log_fixture()
 	SessionStore.last_battle_rewards = _battle_rewards_fixture()
+	SessionStore.last_battle_result_seen = false
 
 	boot._show_screen("battle")
 	boot._show_screen("battle_running")
@@ -1002,6 +1014,7 @@ func test_boot_battle_summary_return_to_refuge_clears_lifecycle_state() -> void:
 	boot._return_to_refuge()
 
 	assert_eq(boot._current_screen, "refuge")
+	assert_true(SessionStore.last_battle_result_seen)
 	assert_true(boot._screen_history.is_empty())
 	assert_false(boot._back_button.visible)
 	assert_false(boot._replay_running)

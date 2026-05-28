@@ -8,7 +8,7 @@ This file governs agent behavior for the `D:\Estudio` workspace.
 - `08_Coordenacao_Agentes/Painel_Visual_Estudio.html` is the human-facing local dashboard for the same portfolio state.
 - `canon/` is the shared source of truth for established product identity, lore context, gameplay contracts, progression, shared architecture, mode standard, and platform strategy.
 - `Projetos/draxos-roguelike-cardgame/` is the current P0 implementation workspace for the menu-first Draxos roguelike cardgame.
-- `Projetos/draxos-mobile/` is the P2 implementation workspace for DraxosMobile - async PVP autobattler, base manager, social; Godot 4.6.2 + Supabase; Android + PC + PC browser. Current operational stage: `FOUNDATION_AUDIT_ACTIVE`; Track 16 is only the latest local technical package, on top of Track 13 validation/release safety, Track 14 `TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE` agent ops and Track 15 UX history.
+- `Projetos/draxos-mobile/` is the P2 implementation workspace for DraxosMobile - async PVP autobattler, base manager, social; Godot 4.6.2 + Supabase; Android + PC + PC browser. Current operational stage: `FOUNDATION_AUDIT_ACTIVE`; Foundation Loop UX Pass 01 is the local loop baseline candidate; Track 16 is only the latest local technical package, on top of Track 13 validation/release safety, Track 14 `TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE` agent ops and Track 15 UX history.
 - `Projetos/_conceitos/mobile-universe/` is a design archive; it was promoted to `draxos-mobile/` on 2026-05-18 and is now read-only design reference.
 - `Projetos/rpg-isometrico/` is paused indefinitely and preserved for historical/contextual consultation.
 - `Projetos/rpg-turnos/` is paused indefinitely and preserved for historical/contextual consultation.
@@ -63,7 +63,7 @@ Use esses documentos para identificar se o pedido e sobre implementacao ativa, c
 Depois do Portfolio Gate, escolha o projeto alvo usando o pedido do usuario, `Prioridades_Estudio.md`, `Projetos/README.md` e `Estado_Atual.md`.
 
 - Se o usuario citar `draxos-roguelike-cardgame`, `Draxos roguelike`, `roguelike cardgame`, `ship hub`, `run map`, `mapa de run`, `10 mapas`, `almas`, `classe no hub`, `rota completa`, `sacrificio`, `Cinzas` ou `batalhas por lanes`, use `Projetos/draxos-roguelike-cardgame/`.
-- Se o usuario citar `draxos-mobile`, `DraxosMobile`, `Draxos mobile`, `autobattler`, `base manager`, `PVP assincrono`, `Supabase`, `Foundation Audit`, `FOUNDATION_AUDIT_ACTIVE`, `loop pos-login`, `Track 00`, `Track 04`, `Track 11`, `Track 13`, `Track 14`, `Track 15`, `Track 16`, `Agent Operating Manual`, `documentation-index`, `primeiro slice mobile`, `guilda`, `conta guest`, `matchmaking por poder`, `Progression Lab humano`, `account_profiles`, `game_saves`, `Hub modularization`, `release artifacts`, `release safety`, `Cloudflare Access` ou `simulacao no servidor`, use `Projetos/draxos-mobile/`.
+- Se o usuario citar `draxos-mobile`, `DraxosMobile`, `Draxos mobile`, `autobattler`, `base manager`, `PVP assincrono`, `Supabase`, `Foundation Audit`, `FOUNDATION_AUDIT_ACTIVE`, `Foundation Loop UX Pass`, `loop pos-login`, `Track 00`, `Track 04`, `Track 11`, `Track 13`, `Track 14`, `Track 15`, `Track 16`, `Agent Operating Manual`, `documentation-index`, `primeiro slice mobile`, `guilda`, `conta guest`, `matchmaking por poder`, `Progression Lab humano`, `account_profiles`, `game_saves`, `Hub modularization`, `release artifacts`, `release safety`, `Cloudflare Access` ou `simulacao no servidor`, use `Projetos/draxos-mobile/`.
 - Se o usuario citar `mobile-universe` ou `_conceitos/mobile-universe`, use `Projetos/_conceitos/mobile-universe/` apenas para leitura e referencia de design — nao criar codigo, cenas ou assets a partir dali.
 - Se o usuario citar `rpg-turnos`, `RPG Turnos`, exploracao 2D, NPC, mundo, `class_select`, `Track 02 - Draxos Lore And Progression Alignment` ou `P10 - Necromante`, use `Projetos/rpg-turnos/` apenas para consulta historica, salvo pedido explicito de retomar trabalho.
 - Se o usuario citar `rpg-isometrico`, campanha isometrica, Arena, Survival, Boss, loadout de acao ou gates Fxx, use `Projetos/rpg-isometrico/` apenas para consulta historica, salvo pedido explicito de retomar trabalho.
@@ -123,7 +123,7 @@ Implementacoes Godot vivem sob `Projetos/`.
 Projetos Godot ativos:
 
 - `Projetos/draxos-roguelike-cardgame/` — P0, Steam, roguelike cardgame
-- `Projetos/draxos-mobile/` - P2, mobile + PC + browser, Godot 4.6.2 + Supabase (`FOUNDATION_AUDIT_ACTIVE`; Track 16 e ultimo pacote tecnico local sobre Track 13/14/15)
+- `Projetos/draxos-mobile/` - P2, mobile + PC + browser, Godot 4.6.2 + Supabase (`FOUNDATION_AUDIT_ACTIVE`; Foundation Loop UX Pass 01 e candidato local de baseline do loop; Track 16 e ultimo pacote tecnico local sobre Track 13/14/15)
 
 Projetos Godot pausados:
 

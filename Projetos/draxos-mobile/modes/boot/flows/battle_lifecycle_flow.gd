@@ -118,7 +118,11 @@ func return_to_refuge(host: Node) -> void:
 	host.set("_replay_running", false)
 	host.set("_skip_replay", false)
 	host.set("_battle_summary_skipped", false)
+	if SessionStore.has_battle_log():
+		SessionStore.mark_battle_result_seen()
+		SessionStore.save_cache()
 	host.call("_show_screen", AppShellRouteContractScript.clear_for_refuge_return(_screen_history(host)), false)
+	host.call("_show_notice", "Recompensa registrada. Verifique coleta e evolucao da base.")
 
 func show_current_battle_logs(host: Node) -> void:
 	if not SessionStore.has_battle_log():

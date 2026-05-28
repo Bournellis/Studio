@@ -4,6 +4,21 @@ Status: VIVO
 Atualizado em: 2026-05-28
 Etapa atual: `FOUNDATION_AUDIT_ACTIVE`
 
+## Estado Do Passe
+
+Foundation Loop UX Pass 01 foi executado localmente em `2026-05-28` na branch `codex/draxos-mobile/foundation-loop-ux-pass`.
+
+Entregue:
+
+- Refugio como home operacional do loop com painel visivel de proxima acao, coleta e evolucao.
+- CTA primaria separando recompensa de batalha nao vista de historico de batalha ja visto.
+- Coleta rotineira sem confirmacao intermediaria.
+- Resumo de batalha conduzindo para `Voltar e verificar base`.
+- Retorno da batalha marcando o resultado como visto e reabrindo o ciclo de base.
+- Smoke sem rede `tools/smoke_foundation_loop.gd` cobrindo a prioridade do loop.
+
+Proximo uso deste documento: validar manualmente se o passe resolve a experiencia real do loop antes de promover social, visual geral, apresentacao de batalha, armas, spells, economia ou tuning.
+
 ## Proposito
 
 Esta auditoria executa a primeira leitura pratica da Foundation Audit sobre o loop interno pos-login:
@@ -94,7 +109,7 @@ Os testes atuais cobrem presenca de icones, prioridade da CTA, renderizacao de B
 
 Recomendacao: criar um smoke sem rede, com fixtures de `SessionStore`, para validar a ordem e prioridade visual do loop antes de implementar novos conteudos.
 
-## Melhor Proximo Pacote
+## Pacote Recomendado E Executado
 
 Nome sugerido: `Foundation Loop UX Pass`.
 

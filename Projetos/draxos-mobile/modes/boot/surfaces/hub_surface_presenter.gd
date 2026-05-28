@@ -43,6 +43,7 @@ static func _refuge_scene_board(host: Node, root: Control, compact: bool) -> voi
 	board.add_child(_refuge_scene_background(host, compact))
 	_add_refuge_altar_stage(host, board, compact)
 	_add_refuge_status_bar(host, board, compact)
+	_add_refuge_loop_panel(host, board, compact)
 	_add_refuge_footer_bar(host, board, compact)
 	_add_refuge_context_cta(host, board, compact)
 
@@ -192,6 +193,35 @@ static func _add_refuge_context_cta(host: Node, board: Control, compact: bool) -
 	action_buttons[action_id] = button
 	board.add_child(button)
 
+static func _add_refuge_loop_panel(host: Node, board: Control, compact: bool) -> void:
+	var state := _refuge_loop_state(host)
+	var panel := PanelContainer.new()
+	panel.name = "RefugeLoopPanel"
+	panel.anchor_left = 0.04
+	panel.anchor_right = 0.96
+	panel.anchor_top = 0.635
+	panel.anchor_bottom = 0.715
+	panel.add_theme_stylebox_override("panel", _hud_style("bg_panel", "border_active"))
+	board.add_child(panel)
+
+	var grid := GridContainer.new()
+	grid.columns = 3
+	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	grid.add_theme_constant_override("h_separation", 6 if compact else 8)
+	panel.add_child(grid)
+	grid.add_child(_loop_status_label("Proximo\n%s" % str(state.get("next_text", "Batalhar")), "text_primary", compact, "RefugeLoopNextLabel"))
+	grid.add_child(_loop_status_label("Coleta\n%s" % str(state.get("collect_text", "Nada agora")), str(state.get("collect_color", "text_secondary")), compact, "RefugeLoopCollectLabel"))
+	grid.add_child(_loop_status_label("Evolucao\n%s" % str(state.get("upgrade_text", "Sem upgrade")), str(state.get("upgrade_color", "text_secondary")), compact, "RefugeLoopUpgradeLabel"))
+
+static func _loop_status_label(text: String, color_token: String, compact: bool, node_name: String) -> Label:
+	var label := _scene_label(text, color_token, 9 if compact else 11)
+	label.name = node_name
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.clip_text = true
+	return label
+
 static func _add_refuge_profile_button(host: Node, board: Control, popup: PopupPanel, title_label: Label, body: VBoxContainer, compact: bool) -> void:
 	var button := Button.new()
 	button.name = "RefugeIcon_Perfil"
@@ -338,7 +368,7 @@ static func _populate_refuge_menu(host: Node, popup: PopupPanel, body: VBoxConta
 			body.add_child(_popup_action_button(host, popup, "Checar atualizacao", AppShellActionContractScript.ACTION_CHECK_UPDATE))
 		"collect":
 			body.add_child(_popup_hint("Receber a producao acumulada do Refugio.", compact))
-			body.add_child(_popup_action_button(host, popup, "Coletar agora", AppShellActionContractScript.ACTION_COLLECT_BASE, "Coletar a producao acumulada do Refugio?", true))
+			body.add_child(_popup_action_button(host, popup, "Coletar agora", AppShellActionContractScript.ACTION_COLLECT_BASE, "", true))
 		"energy":
 			body.add_child(_popup_hint("Comprar pacote de Energia no save ativo.", compact))
 			body.add_child(_popup_action_button(host, popup, "Comprar Energia", AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA, "Gastar 80 Diamantes para comprar 80 Energia no save ativo?", true))
@@ -524,10 +554,10 @@ static func _format_resource_amount(amount: Variant) -> String:
 	return str(amount)
 
 static func _refuge_context_cta_data(host: Node) -> Dictionary:
-	if SessionStore.has_battle_log():
+	if SessionStore.has_unseen_battle_result():
 		return {
-			"text": "Ver resultado",
-			"detail": "Abrir o resultado e recompensas da batalha mais recente.",
+			"text": "Ver recompensa",
+			"detail": "Abrir o resultado e receber a recompensa da batalha mais recente.",
 			"action_id": AppShellActionContractScript.ACTION_SHOW_LATEST_BATTLE,
 			"color_token": "accent_blood",
 		}
@@ -539,7 +569,6 @@ static func _refuge_context_cta_data(host: Node) -> Dictionary:
 				"text": "Coletar",
 				"detail": "Receber a producao acumulada do Refugio.",
 				"action_id": AppShellActionContractScript.ACTION_COLLECT_BASE,
-				"confirm": "Coletar a producao acumulada do Refugio?",
 				"color_token": "status_success",
 			}
 		if bool(routine.get("next_upgrade_ready", false)):
@@ -558,6 +587,39 @@ static func _refuge_context_cta_data(host: Node) -> Dictionary:
 		"action_id": AppShellActionContractScript.ACTION_REQUEST_BATTLE,
 		"color_token": "accent_blood",
 	}
+
+static func _refuge_loop_state(host: Node) -> Dictionary:
+	var cta := _refuge_context_cta_data(host)
+	var collect_text := "Sincronizar"
+	var collect_color := "text_secondary"
+	var upgrade_text := "Sem dados"
+	var upgrade_color := "text_secondary"
+	var base := SessionStore.base_state
+	if not base.is_empty():
+		var routine := BaseSurfacePresenterScript.routine_summary(base)
+		collect_text = "Pronta" if bool(routine.get("has_collect_ready", false)) else "Nada agora"
+		collect_color = "status_success" if bool(routine.get("has_collect_ready", false)) else "text_secondary"
+		if bool(routine.get("next_upgrade_ready", false)):
+			upgrade_text = _short_loop_text(str(routine.get("next_upgrade_text", "Pronta")))
+			upgrade_color = "status_success"
+		else:
+			upgrade_text = "Sem upgrade"
+	return {
+		"next_text": str(cta.get("text", "Batalhar")),
+		"collect_text": collect_text,
+		"collect_color": collect_color,
+		"upgrade_text": upgrade_text,
+		"upgrade_color": upgrade_color,
+	}
+
+static func _short_loop_text(text: String) -> String:
+	var shortened := text.strip_edges()
+	var separator_index := shortened.find(" | ")
+	if separator_index >= 0:
+		shortened = shortened.substr(0, separator_index).strip_edges()
+	if shortened.length() > 22:
+		shortened = "%s..." % shortened.substr(0, 19)
+	return shortened
 
 static func _host_viewport_size(host: Node) -> Vector2:
 	var resolved_size := Vector2.ZERO

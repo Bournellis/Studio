@@ -132,6 +132,7 @@ func render_fullscreen_summary(
 	var ranking_text := str(summary.get("ranking_text", ""))
 	if ranking_text != "":
 		details.add_child(_summary_detail_panel("Ranking", ranking_text, compact_layout))
+	stack.add_child(_fullscreen_center_label("Recompensa registrada. Volte para verificar a base.", 13 if compact_layout else 15, "text_secondary"))
 
 	var actions := GridContainer.new()
 	actions.columns = 1
@@ -139,7 +140,7 @@ func render_fullscreen_summary(
 	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	actions.custom_minimum_size = Vector2(0, 112 if compact_layout else 128)
 	stack.add_child(actions)
-	actions.add_child(_fullscreen_action_button("Voltar ao Refugio", ACTION_RETURN_REFUGE, Vector2(0, 58)))
+	actions.add_child(_fullscreen_action_button("Voltar e verificar base", ACTION_RETURN_REFUGE, Vector2(0, 58)))
 	actions.add_child(_fullscreen_action_button("Ver logs da batalha", ACTION_SHOW_CURRENT_LOGS, Vector2(0, 48)))
 	_timeline_label = null
 

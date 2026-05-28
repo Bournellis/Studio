@@ -9,9 +9,11 @@ DraxosMobile is the Godot/Supabase project for Android, PC executable and PC bro
 
 The project is a strong implemented base for refinement, not a final product and not a content-expansion track.
 
-The Foundation Loop Audit is documented in `docs/foundation-loop-audit.md`. The immediate focus is now a focused UX pass for the post-login internal loop:
+The Foundation Loop Audit is documented in `docs/foundation-loop-audit.md`. Foundation Loop UX Pass 01 is implemented locally as the current UX baseline candidate for the post-login internal loop:
 
 `Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again`
+
+The immediate focus is manual review of that loop pass on Android, Windows and Web before choosing the next package.
 
 Current content, names, spells, weapons, economy values, battle flavor, visual style and premium systems exist to give substance to the prototype. Treat them as mock/substance for evaluation, not as final game direction or current tuning priorities.
 
@@ -33,7 +35,7 @@ Do not start from old Track 04/08/10/15/16 notes. They are history or technical 
 Before any new feature, numeric tuning, account/save migration, assets-final pass, battle presentation pass, social expansion or remote publication:
 
 1. Read `docs/foundation-loop-audit.md`.
-2. Execute the Foundation Loop UX Pass before expanding social, visuals, battle presentation or content systems.
+2. Review Foundation Loop UX Pass 01 and accept or revise the loop before expanding social, visuals, battle presentation or content systems.
 3. Keep release publishing in `Mode Plan` or `Mode Package` unless the user explicitly approves remote mutation.
 4. Run the real Android / Windows / Web walkthrough in `docs/track-13-manual-walkthrough-gate.md` before any remote publication.
 
@@ -43,6 +45,7 @@ Before any new feature, numeric tuning, account/save migration, assets-final pas
 cd <WORKTREE>\Projetos\draxos-mobile
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Full
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_foundation_loop.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/client -gexit
 npx -y deno task --cwd server/functions check
 npx -y deno task --cwd supabase/functions check
