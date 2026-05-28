@@ -2,9 +2,9 @@
 
 - Last Updated: `2026-05-28`
 - Active Project Name: `draxos-mobile`
-- Active Surface: `Boot/foundation architecture`
-- Active Track: `Track 12 - Boot Decomposition`
-- Active Track Status: `TRACK_12_BOOT_DECOMPOSITION_DELIVERED`
+- Active Surface: `Foundation validation and release safety`
+- Active Track: `Track 13 - Foundation Validation And Release Safety`
+- Active Track Status: `TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`
 - Portfolio Status: `P2_IMPLEMENTACAO`
 - Current Build Channel: `internal_alpha`
 - Current Version: `0.0.1-alpha.0`
@@ -12,7 +12,7 @@
 
 ## Baseline Atual
 
-DraxosMobile saiu bem da fase de crescimento rapido: Track 00 a Track 12 estao integradas sobre Godot 4.6.2 + Supabase, com cliente Android/PC/Web, conta email/senha, dois saves por conta (`normal` e `progression_lab`), batalha server-authoritative, Base/Social/Competicao/Loja alpha, Progression Lab/Battle Lab, Refugio portrait como primeira tela jogavel, batalha fullscreen portrait, summary minimo, logs em tela propria e `boot.gd` decomposto em contratos/flows/helpers menores.
+DraxosMobile saiu bem da fase de crescimento rapido: Track 00 a Track 13 estao integradas sobre Godot 4.6.2 + Supabase, com cliente Android/PC/Web, conta email/senha, dois saves por conta (`normal` e `progression_lab`), batalha server-authoritative, Base/Social/Competicao/Loja alpha, Progression Lab/Battle Lab, Refugio portrait como primeira tela jogavel, batalha fullscreen portrait, summary minimo, logs em tela propria, `boot.gd` decomposto em contratos/flows/helpers menores e validacao/release protegidos por runner e guardas automatizados.
 
 As builds Internal Alpha foram republicadas em 2026-05-28:
 
@@ -56,17 +56,29 @@ Track 12 nao adiciona feature jogavel; ela reduz risco arquitetural do app shell
 - Helpers visuais compartilhados extraidos para `modes/boot/surfaces/surface_ui_helpers.gd` e fronteira de presenters atualizada em `modes/boot/surfaces/README.md`.
 - Guardas em `tests/client/test_boot_mobile_ui.gd` impedem regressao estrutural de linhas, actions, rede/mutacao em presenters e UI criada dentro de flows.
 
+## Track 13 Entregue
+
+Track 13 nao adiciona feature jogavel; ela transforma validacao e release em fundacao auditavel. Entregas:
+
+- `tools/validate_foundation.ps1` centraliza perfis `Quick`, `Client`, `Release` e `Full`, com relatorios locais em `build/validation/`.
+- `tools/publish_internal_alpha.ps1` agora usa `Mode Plan` por default e nao faz upload, deploy, secret update ou verificacao remota sem modo explicito.
+- `Mode Package` prepara apenas arquivos locais; `Upload`, `DeployManifest` e `FullPublish` exigem `-ConfirmRemoteMutation`.
+- `tools/check_release_safety.ps1` valida parse, default seguro, guarda de mutacao e manifest defaults espelhados.
+- `tools/check_track13_readiness.ps1` valida docs/status, `boot.gd` abaixo de `1500` linhas, mirrors server/supabase e Kanban sem card obsoleto.
+- `docs/track-13-manual-walkthrough-gate.md` define o gate manual Android/Windows/Web; a execucao real fica como proximo passo, sem bloquear a track.
+
 ## O Que Nao Esta Bom Ainda
 
 - A fronteira entre presenters, helpers e host ainda usa muitos callbacks dinamicos (`host.call`). Esta aceitavel para nao mexer em UX agora, mas pode virar uma etapa futura de tipagem/ports menores.
 - O modelo `players.save_type` segue como atalho alpha. A migracao para `account_profiles` + `game_saves` ainda precisa de decisao e pacote proprio.
 - Progression/Economia segue em `REVIEW`: sem tuning numerico ate uma rodada humana no Godot com save real e Progression Lab.
 - Assets finais, UX Android em aparelho real, keystore release e live ops ainda nao sao maturidade de produto. O jogo esta pronto para alpha fechado, nao para beta publico.
-- O script de publicacao ainda mistura preparacao, upload e redeploy de release; deve ganhar modo dry-run/plan antes de virar rotina segura de release.
+- O walkthrough manual real Android/Windows/Web ainda precisa acontecer usando o gate da Track 13 antes de novas features.
+- O release flow agora e seguro por default, mas ainda precisa de uma rodada real de `Mode Package` com artefatos frescos antes de virar rotina de publicacao.
 
 ## Proximo Passo
 
-Executar walkthrough manual real em Android, Windows e Web autenticado/preview:
+Executar walkthrough manual real em Android, Windows e Web autenticado/preview usando `docs/track-13-manual-walkthrough-gate.md`:
 
 1. `Entry`: login/criar conta e recuperacao de save.
 2. `Refugio`: primeira tela, hotspots, Base embutida, Loja/Social/Competicao.
@@ -82,6 +94,7 @@ Nao abrir feature nova, tuning numerico ou migration de conta/save antes desse w
 cd <WORKTREE>\Projetos\draxos-mobile
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <WORKTREE>\Projetos\draxos-mobile -s res://tools/validate.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <WORKTREE>\Projetos\draxos-mobile -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/client -gexit
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile Full -RequireClean:$false
 npx -y deno check supabase/functions/release/index.ts server/functions/release/index.ts server/tests/release_artifacts_remote_smoke.ts
 git diff --check
 ```
@@ -89,9 +102,9 @@ git diff --check
 ## Read Next
 
 1. `../AGENTS.md`
-2. `implementation/tracks/track-12-boot-decomposition/current-status.md`
-3. `implementation/tracks/track-12-boot-decomposition/scope.md`
-4. `implementation/tracks/track-11-product-foundation-consolidation/foundation-audit.md`
-5. `docs/track-11-manual-walkthrough.md`
-6. `docs/internal-alpha-v0-handoff.md`
+2. `implementation/tracks/track-13-validation-release-safety/current-status.md`
+3. `implementation/tracks/track-13-validation-release-safety/scope.md`
+4. `implementation/tracks/track-13-validation-release-safety/validation-matrix.md`
+5. `implementation/tracks/track-13-validation-release-safety/release-safety-contract.md`
+6. `docs/track-13-manual-walkthrough-gate.md`
 7. `docs/release-ops-checklist.md`

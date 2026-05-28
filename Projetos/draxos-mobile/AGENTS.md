@@ -25,15 +25,15 @@ Este projeto foi promovido de `Projetos/_conceitos/mobile-universe/` em 2026-05-
 
 ## Read Order
 
-### Fast Lane Atual - Track 12
+### Fast Lane Atual - Track 13
 
 1. `implementation/current-status.md`
-2. `implementation/tracks/track-12-boot-decomposition/current-status.md`
-3. `implementation/tracks/track-12-boot-decomposition/scope.md`
-4. `implementation/tracks/track-12-boot-decomposition/implementation-plan.md`
-5. `implementation/tracks/track-11-product-foundation-consolidation/foundation-audit.md`
-6. `docs/track-11-manual-walkthrough.md`
-7. `docs/internal-alpha-v0-handoff.md`
+2. `implementation/tracks/track-13-validation-release-safety/current-status.md`
+3. `implementation/tracks/track-13-validation-release-safety/scope.md`
+4. `implementation/tracks/track-13-validation-release-safety/implementation-plan.md`
+5. `implementation/tracks/track-13-validation-release-safety/validation-matrix.md`
+6. `implementation/tracks/track-13-validation-release-safety/release-safety-contract.md`
+7. `docs/track-13-manual-walkthrough-gate.md`
 8. `docs/release-ops-checklist.md`
 9. este arquivo
 10. arquivos tocados
@@ -51,7 +51,7 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos, 
 7. `docs/architecture.md`
 8. `docs/contracts/`
 9. `implementation/current-status.md`
-10. `implementation/tracks/track-12-boot-decomposition/`
+10. `implementation/tracks/track-13-validation-release-safety/`
 11. este arquivo
 12. arquivos tocados
 
@@ -66,9 +66,9 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos, 
 | Pergunta | Documento |
 |---|---|
 | Estado operacional atual | `implementation/current-status.md` |
-| Escopo/plan/status da Track 12 | `implementation/tracks/track-12-boot-decomposition/` |
+| Escopo/plan/status da Track 13 | `implementation/tracks/track-13-validation-release-safety/` |
 | Auditoria do que cresceu bem e do que precisa melhorar | `implementation/tracks/track-11-product-foundation-consolidation/foundation-audit.md` |
-| Walkthrough manual pos-publicacao | `docs/track-11-manual-walkthrough.md` |
+| Walkthrough manual gate Track 13 | `docs/track-13-manual-walkthrough-gate.md` |
 | Visao longa, pilares, anti-pilares e limites de produto | `docs/product-vision.md` |
 | O que e o jogo, quais plataformas, escopo do slice | `docs/product-brief.md` |
 | Como um sistema funciona | `docs/game-design-document.md` |
@@ -78,7 +78,7 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos, 
 | O que pode ser reutilizado de outros projetos | `docs/reuse-map.md` |
 | API, log de batalha, schema e conteudo | `docs/contracts/` |
 | Internal Alpha v0 runbook/handoff | `docs/internal-alpha-v0.md`, `docs/internal-alpha-v0-handoff.md` |
-| Release ops e publicacao | `docs/release-ops-checklist.md`, `docs/internal-alpha-v0-publication-report.md` |
+| Release ops e publicacao segura | `docs/release-ops-checklist.md`, `implementation/tracks/track-13-validation-release-safety/release-safety-contract.md` |
 | Track 10 batalha portrait | `implementation/tracks/track-10-battle-presentation-rework/` |
 | Tracks historicas | `implementation/tracks/track-00-first-slice-foundation/` a `implementation/tracks/track-09-portrait-entry-refuge-scene-and-visual-loop-rework/` |
 | GDD historico completo | `../_conceitos/mobile-universe/gdd.md` |
@@ -129,6 +129,6 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos, 
 
 ## Active Track
 
-Track ativa: `Track 12 - Boot Decomposition` (`TRACK_12_BOOT_DECOMPOSITION_DELIVERED`).
+Track ativa: `Track 13 - Foundation Validation And Release Safety` (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`).
 
-Comece por `implementation/current-status.md` e siga `implementation/tracks/track-12-boot-decomposition/current-status.md`.
+Comece por `implementation/current-status.md` e siga `implementation/tracks/track-13-validation-release-safety/current-status.md`.

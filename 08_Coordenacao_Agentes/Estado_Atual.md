@@ -7,7 +7,7 @@
 ## Prioridade do Estudio
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Foco P2 de implementacao: `Projetos/draxos-mobile/` (Track 12 `TRACK_12_BOOT_DECOMPOSITION_DELIVERED`, pos-Track 10 publicada em 2026-05-28)
+- Foco P2 de implementacao: `Projetos/draxos-mobile/` (Track 13 `TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`, pos-Track 10 publicada em 2026-05-28)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -23,15 +23,15 @@
 
 ## DraxosMobile
 
-- Status: **P2_IMPLEMENTACAO - Track 12 TRACK_12_BOOT_DECOMPOSITION_DELIVERED**
+- Status: **P2_IMPLEMENTACAO - Track 13 TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED**
 - Fase: `Implementacao`
 - Local: `Projetos/draxos-mobile/`
 - Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
 - Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
-- Baseline atual: Track 00-12 integradas. O projeto tem primeiro slice server-authoritative, Internal Alpha v0 aprovada por Fabio + tester, Refugio portrait como cena de jogo, batalha portrait com palco limpo fullscreen, `Pular batalha`, summary minimo, logs da batalha atual, Supabase remoto, manifest/version gate e builds Internal Alpha site/Web/APK/Windows republicadas em 2026-05-28. Track 11 consolidou estado vivo, Kanban, docs e matriz de walkthrough; Track 12 decompôs `boot.gd` para 1301 linhas com action contract, account/session flow, surface action flow, battle lifecycle flow, helpers de superficie e guardas estruturais. Supabase segue para alpha, Backend Proprio + Postgres e o plano de saida preferido, e Nakama fica apenas se realtime/social competitivo virar pilar.
+- Baseline atual: Track 00-13 integradas. O projeto tem primeiro slice server-authoritative, Internal Alpha v0 aprovada por Fabio + tester, Refugio portrait como cena de jogo, batalha portrait com palco limpo fullscreen, `Pular batalha`, summary minimo, logs da batalha atual, Supabase remoto, manifest/version gate e builds Internal Alpha site/Web/APK/Windows republicadas em 2026-05-28. Track 11 consolidou estado vivo, Kanban, docs e matriz de walkthrough; Track 12 decompôs `boot.gd` para 1301 linhas com action contract, account/session flow, surface action flow, battle lifecycle flow, helpers de superficie e guardas estruturais; Track 13 centralizou validacao foundation e protegeu release/publicacao por `Mode Plan` default, `-ConfirmRemoteMutation`, checks de safety/readiness e gate manual Android/Windows/Web. Supabase segue para alpha, Backend Proprio + Postgres e o plano de saida preferido, e Nakama fica apenas se realtime/social competitivo virar pilar.
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
-- Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export.
-- Proximo passo: executar walkthrough visual/manual de Entry -> Refugio -> Batalha -> Summary -> Logs em Android, Windows e Web autenticado via Cloudflare Access/preview.
+- Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation`.
+- Proximo passo: executar walkthrough manual Track 13 de Entry -> Refugio -> Batalha -> Summary -> Logs, Base, Social, Competicao, Loja e update gate em Android, Windows, Web preview e Web Access-protected.
 
 ## rpg-isometrico
 

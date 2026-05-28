@@ -19,8 +19,8 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
 ## Implementacao - Internal Alpha
 
-- `draxos-mobile/`: jogo mobile multi-plataforma - mago Draxos (PVP assincrono, base manager, social). Plataformas: Android + PC executavel + PC browser. Backend: Supabase para alpha, com Backend Proprio + Postgres como plano de saida preferido. Batalha 100% simulada no servidor. Track 00-12 estao integradas: primeiro slice server-authoritative, Internal Alpha v0 aprovada por Fabio + tester, Base/Social/Competicao/Loja jogaveis, Progression Lab/Battle Lab, Refugio portrait como cena de jogo, batalha portrait com palco limpo fullscreen, `Pular batalha`, summary minimo, logs da batalha atual, builds Internal Alpha site/Web/APK/Windows republicadas em 2026-05-28, estado vivo consolidado e `boot.gd` decomposto em action contract, account/session flow, surface action flow, battle lifecycle flow, helpers e guardas estruturais. Handoff: `draxos-mobile/docs/internal-alpha-v0-handoff.md`.
-  - Priority/status: `P2_IMPLEMENTACAO - Track 12 TRACK_12_BOOT_DECOMPOSITION_DELIVERED`
+- `draxos-mobile/`: jogo mobile multi-plataforma - mago Draxos (PVP assincrono, base manager, social). Plataformas: Android + PC executavel + PC browser. Backend: Supabase para alpha, com Backend Proprio + Postgres como plano de saida preferido. Batalha 100% simulada no servidor. Track 00-13 estao integradas: primeiro slice server-authoritative, Internal Alpha v0 aprovada por Fabio + tester, Base/Social/Competicao/Loja jogaveis, Progression Lab/Battle Lab, Refugio portrait como cena de jogo, batalha portrait com palco limpo fullscreen, `Pular batalha`, summary minimo, logs da batalha atual, builds Internal Alpha site/Web/APK/Windows republicadas em 2026-05-28, estado vivo consolidado, `boot.gd` decomposto em action contract/flows/helpers e release validation protegido por runner, modos seguros e checks de safety/readiness. Handoff: `draxos-mobile/docs/internal-alpha-v0-handoff.md`.
+  - Priority/status: `P2_IMPLEMENTACAO - Track 13 TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Operational status: `draxos-mobile/implementation/current-status.md`
   - Product vision: `draxos-mobile/docs/product-vision.md`
@@ -37,7 +37,9 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
   - Track 10 scope: `draxos-mobile/implementation/tracks/track-10-battle-presentation-rework/scope.md`
   - Track 11 scope: `draxos-mobile/implementation/tracks/track-11-product-foundation-consolidation/scope.md`
   - Track 12 scope: `draxos-mobile/implementation/tracks/track-12-boot-decomposition/scope.md`
+  - Track 13 scope: `draxos-mobile/implementation/tracks/track-13-validation-release-safety/scope.md`
   - Track 11 walkthrough: `draxos-mobile/docs/track-11-manual-walkthrough.md`
+  - Track 13 manual walkthrough gate: `draxos-mobile/docs/track-13-manual-walkthrough-gate.md`
   - Internal Alpha v0 runbook: `draxos-mobile/docs/internal-alpha-v0.md`
   - Internal Alpha remote setup: `draxos-mobile/docs/internal-alpha-remote-setup.md`
   - Internal Alpha release plan: `draxos-mobile/docs/internal-alpha-release-plan.md`
@@ -53,7 +55,7 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
   - Economy model: `draxos-mobile/docs/economy/README.md`
   - Design archive: `_conceitos/mobile-universe/gdd.md`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: executar walkthrough manual Android, Windows e Web autenticado via Cloudflare Access/preview.
+  - Current next step: executar walkthrough manual pelo gate Track 13 em Android, Windows, Web preview e Web Access-protected.
 
 ## Arquivo De Design
 
