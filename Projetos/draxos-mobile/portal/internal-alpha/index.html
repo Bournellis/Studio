@@ -7,19 +7,30 @@
   <style>
     :root {
       color-scheme: dark;
-      --bg: #080b10;
-      --surface: #111820;
-      --surface-2: #17212b;
-      --surface-3: #1d2a35;
-      --line: #334454;
-      --text: #f2efe4;
-      --muted: #aeb8c2;
-      --soft: #d2d7da;
-      --teal: #56d6c9;
+      --bg: #050409;
+      --surface: #101018;
+      --surface-2: #171322;
+      --surface-3: #201932;
+      --line: #46395e;
+      --text: #f6efe2;
+      --muted: #b9afc7;
+      --soft: #e5dce8;
+      --teal: #6de6e5;
       --gold: #d8bd7a;
-      --red: #d85d68;
-      --green: #72c27c;
+      --violet: #a752ff;
+      --violet-2: #6316c7;
+      --red: #df596c;
+      --green: #76d38a;
       --shadow: rgba(0, 0, 0, 0.32);
+      --hero-image: url("/portal/assets/visual/hub-ritual-hall.jpg");
+      --web-image: url("/portal/assets/visual/web-void-arena.jpg");
+      --grimoire-image: url("/portal/assets/visual/grimoire-vault.jpg");
+      --academy-image: url("/portal/assets/visual/academy-structures.jpg");
+      --arcano-image: url("/portal/assets/visual/portrait-arcano.jpg");
+      --necro-image: url("/portal/assets/visual/portrait-necromante.jpg");
+      --sigil-arcane: url("/portal/assets/visual/sigil-arcane.jpg");
+      --sigil-necro: url("/portal/assets/visual/sigil-necro.jpg");
+      --card-frame: url("/portal/assets/visual/grimoire-card-frame.png");
     }
 
     * {
@@ -35,13 +46,15 @@
       min-height: 100%;
       margin: 0;
       background:
-        linear-gradient(180deg, rgba(8, 11, 16, 0.82), #080b10 560px),
-        radial-gradient(circle at 12% 18%, rgba(86, 214, 201, 0.14), transparent 300px),
-        radial-gradient(circle at 86% 20%, rgba(216, 93, 104, 0.12), transparent 320px),
-        #080b10;
+        linear-gradient(180deg, rgba(5, 4, 9, 0.88), #050409 620px),
+        radial-gradient(circle at 16% 14%, rgba(167, 82, 255, 0.24), transparent 340px),
+        radial-gradient(circle at 78% 20%, rgba(109, 230, 229, 0.12), transparent 360px),
+        radial-gradient(circle at 50% 92%, rgba(216, 189, 122, 0.08), transparent 420px),
+        #050409;
       color: var(--text);
       font-family: Arial, Helvetica, sans-serif;
       line-height: 1.5;
+      overflow-x: hidden;
     }
 
     a {
@@ -67,6 +80,8 @@
       gap: 16px;
       min-height: 48px;
       margin-bottom: 20px;
+      position: relative;
+      z-index: 20;
     }
 
     .brand {
@@ -82,8 +97,9 @@
       border: 1px solid rgba(216, 189, 122, 0.55);
       border-radius: 8px;
       background:
-        linear-gradient(135deg, rgba(86, 214, 201, 0.24), rgba(216, 93, 104, 0.16)),
-        #111820;
+        radial-gradient(circle at 50% 28%, rgba(167, 82, 255, 0.62), transparent 34%),
+        linear-gradient(135deg, rgba(109, 230, 229, 0.18), rgba(216, 189, 122, 0.14)),
+        #101018;
       display: grid;
       place-items: center;
       color: var(--gold);
@@ -113,7 +129,7 @@
       border-radius: 999px;
       padding: 6px 12px;
       color: var(--muted);
-      background: rgba(17, 24, 32, 0.78);
+      background: rgba(10, 8, 16, 0.78);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -121,20 +137,33 @@
     }
 
     .hero {
+      position: relative;
+      width: 100vw;
+      min-height: 520px;
+      margin: 0 0 20px calc(50% - 50vw);
+      padding: 58px max(20px, calc((100vw - 1280px) / 2 + 16px)) 26px;
       display: grid;
-      grid-template-columns: minmax(0, 0.9fr) minmax(380px, 1.1fr);
-      gap: 22px;
-      align-items: stretch;
-      margin-bottom: 20px;
+      grid-template-rows: 1fr auto;
+      align-items: end;
+      gap: 28px;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(5, 4, 9, 0.94) 0%, rgba(5, 4, 9, 0.76) 42%, rgba(5, 4, 9, 0.28) 72%, rgba(5, 4, 9, 0.82) 100%),
+        linear-gradient(180deg, rgba(5, 4, 9, 0.2), #050409 100%),
+        var(--hero-image) center / cover no-repeat;
+      box-shadow: inset 0 -1px 0 rgba(216, 189, 122, 0.22);
     }
 
     .hero-copy {
-      min-height: 430px;
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      min-height: 360px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: flex-end;
       gap: 18px;
-      padding: 10px 0;
+      padding: 10px 0 0;
     }
 
     .eyebrow {
@@ -154,6 +183,7 @@
       max-width: 720px;
       font-size: 54px;
       line-height: 1.02;
+      text-shadow: 0 3px 28px rgba(0, 0, 0, 0.9);
     }
 
     h2 {
@@ -179,12 +209,8 @@
 
     .hero-art-wrap {
       position: relative;
-      min-height: 430px;
       overflow: hidden;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #111820;
-      box-shadow: 0 20px 44px var(--shadow);
+      min-height: 0;
     }
 
     .hero-art {
@@ -196,10 +222,9 @@
     }
 
     .hero-art-overlay {
-      position: absolute;
-      left: 18px;
-      right: 18px;
-      bottom: 18px;
+      position: relative;
+      z-index: 1;
+      width: min(760px, 100%);
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 8px;
@@ -207,10 +232,10 @@
 
     .metric {
       min-height: 58px;
-      border: 1px solid rgba(242, 239, 228, 0.16);
+      border: 1px solid rgba(216, 189, 122, 0.22);
       border-radius: 8px;
       padding: 9px 10px;
-      background: rgba(8, 11, 16, 0.7);
+      background: linear-gradient(180deg, rgba(28, 18, 42, 0.78), rgba(8, 6, 13, 0.78));
       backdrop-filter: blur(8px);
     }
 
@@ -238,7 +263,7 @@
       border: 1px solid var(--line);
       border-radius: 8px;
       padding: 10px 14px;
-      background: var(--surface-2);
+      background: linear-gradient(180deg, rgba(39, 28, 55, 0.95), rgba(19, 14, 30, 0.95));
       color: var(--text);
       text-decoration: none;
       display: inline-flex;
@@ -257,7 +282,7 @@
 
     .button.primary {
       border-color: var(--teal);
-      background: #12302f;
+      background: linear-gradient(180deg, rgba(35, 91, 94, 0.92), rgba(18, 48, 47, 0.92));
     }
 
     .button.ghost {
@@ -344,12 +369,41 @@
     .card {
       border: 1px solid var(--line);
       border-radius: 8px;
-      background: rgba(17, 24, 32, 0.88);
+      background:
+        linear-gradient(180deg, rgba(24, 18, 35, 0.9), rgba(11, 9, 17, 0.92));
       box-shadow: 0 14px 28px rgba(0, 0, 0, 0.16);
     }
 
     .panel {
       padding: 18px;
+    }
+
+    .visual-panel {
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(5, 4, 9, 0.1), rgba(5, 4, 9, 0.88) 78%),
+        var(--panel-image) center / cover no-repeat;
+    }
+
+    .visual-panel p,
+    .visual-panel li {
+      color: var(--soft);
+    }
+
+    .visual-panel.web-panel {
+      --panel-image: var(--web-image);
+    }
+
+    .visual-panel.grimoire-panel {
+      --panel-image: var(--grimoire-image);
+    }
+
+    .visual-panel.academy-panel {
+      --panel-image: var(--academy-image);
     }
 
     .panel-head {
@@ -376,6 +430,56 @@
 
     .card p {
       margin-top: 7px;
+    }
+
+    .feature-card {
+      position: relative;
+      min-height: 220px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(6, 4, 10, 0.12), rgba(6, 4, 10, 0.92) 78%),
+        var(--card-image) center / cover no-repeat;
+    }
+
+    .feature-card h3,
+    .feature-card p {
+      position: relative;
+      z-index: 1;
+    }
+
+    .feature-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 72% 18%, rgba(167, 82, 255, 0.28), transparent 34%);
+      pointer-events: none;
+    }
+
+    .feature-card.battle {
+      --card-image: var(--web-image);
+    }
+
+    .feature-card.base {
+      --card-image: var(--academy-image);
+    }
+
+    .feature-card.arcano {
+      --card-image: var(--arcano-image);
+    }
+
+    .feature-card.necro {
+      --card-image: var(--necro-image);
+    }
+
+    .feature-card.grimoire {
+      --card-image: var(--grimoire-image);
+    }
+
+    .feature-card.hub {
+      --card-image: var(--hero-image);
     }
 
     .auth-form {
@@ -427,6 +531,28 @@
       flex-direction: column;
       justify-content: space-between;
       gap: 16px;
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(12, 8, 18, 0.34), rgba(12, 8, 18, 0.94)),
+        var(--download-image) center / cover no-repeat;
+    }
+
+    .download-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .download-card.android-card {
+      --download-image: var(--arcano-image);
+    }
+
+    .download-card.pc-card {
+      --download-image: var(--academy-image);
+    }
+
+    .download-card.web-card {
+      --download-image: var(--web-image);
     }
 
     .toolbar {
@@ -448,7 +574,9 @@
       border: 1px solid var(--line);
       border-radius: 8px;
       padding: 10px;
-      background: rgba(29, 42, 53, 0.72);
+      background:
+        radial-gradient(circle at 85% 18%, rgba(167, 82, 255, 0.2), transparent 44%),
+        rgba(29, 20, 48, 0.72);
     }
 
     .catalog-count strong {
@@ -470,11 +598,60 @@
     }
 
     .item-card {
+      position: relative;
       min-height: 220px;
       display: flex;
       flex-direction: column;
       gap: 10px;
       overflow: hidden;
+      isolation: isolate;
+      background:
+        linear-gradient(180deg, rgba(18, 12, 29, 0.92), rgba(7, 5, 12, 0.95));
+    }
+
+    .item-card::before {
+      content: "";
+      position: absolute;
+      inset: 7px;
+      z-index: -1;
+      background: var(--card-frame) center / 100% 100% no-repeat;
+      opacity: 0.26;
+      pointer-events: none;
+    }
+
+    .item-card::after {
+      content: "";
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      background:
+        linear-gradient(180deg, rgba(5, 4, 9, 0.15), rgba(5, 4, 9, 0.52)),
+        var(--item-sigil, var(--sigil-arcane)) center / cover no-repeat;
+      opacity: 0.22;
+      filter: saturate(1.2);
+      pointer-events: none;
+    }
+
+    .item-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .item-card[data-collection="familiars"],
+    .item-card[data-collection="bot_archetypes"] {
+      --item-sigil: var(--sigil-necro);
+    }
+
+    .item-card[data-collection="base_structures"] {
+      --item-sigil: var(--academy-image);
+    }
+
+    .item-card[data-collection="rewards"],
+    .item-card[data-collection="power_bands"] {
+      --item-sigil: var(--grimoire-image);
     }
 
     .item-card .item-title {
@@ -592,14 +769,15 @@
     }
 
     @media (max-width: 980px) {
-      .hero,
       .layout {
         grid-template-columns: 1fr;
       }
 
-      .hero-copy,
-      .hero-art,
-      .hero-art-wrap {
+      .hero {
+        min-height: 500px;
+      }
+
+      .hero-copy {
         min-height: 340px;
       }
 
@@ -653,6 +831,16 @@
         grid-template-columns: repeat(2, 1fr);
       }
 
+      .hero {
+        min-height: 520px;
+        width: 100%;
+        margin-left: 0;
+        padding-top: 42px;
+        padding-right: 16px;
+        padding-left: 16px;
+        background-position: 58% center;
+      }
+
       h1 {
         font-size: 34px;
       }
@@ -698,14 +886,11 @@
         </div>
       </div>
 
-      <div class="hero-art-wrap">
-        <img class="hero-art" src="/portal/assets/draxos-arena.svg" alt="Arena ritual do Draxos">
-        <div class="hero-art-overlay">
-          <div class="metric"><strong>8</strong><span>instrumentos</span></div>
-          <div class="metric"><strong>20</strong><span>spells</span></div>
-          <div class="metric"><strong>11</strong><span>doutrinas</span></div>
-          <div class="metric"><strong>9</strong><span>familiares</span></div>
-        </div>
+      <div class="hero-art-overlay">
+        <div class="metric"><strong>8</strong><span>instrumentos</span></div>
+        <div class="metric"><strong>20</strong><span>spells</span></div>
+        <div class="metric"><strong>11</strong><span>doutrinas</span></div>
+        <div class="metric"><strong>9</strong><span>familiares</span></div>
       </div>
     </section>
 
@@ -728,27 +913,27 @@
             </div>
           </div>
           <div class="grid">
-            <article class="card">
+            <article class="card feature-card battle">
               <h3>Batalha</h3>
               <p>Replay server-authoritative com arena 2D procedural e logs `battle_log_v1`.</p>
             </article>
-            <article class="card">
+            <article class="card feature-card base">
               <h3>Base</h3>
               <p>Seis estruturas permanentes, coleta offline, upgrades e fila de construcao alpha.</p>
             </article>
-            <article class="card">
+            <article class="card feature-card arcano">
               <h3>Social</h3>
               <p>Conta, username, amigos, guilda e chat por polling para o teste fechado.</p>
             </article>
-            <article class="card">
+            <article class="card feature-card grimoire">
               <h3>Loja</h3>
               <p>Redeems diarios, Diamante alpha, Battle Pass e pacotes sem pagamento real.</p>
             </article>
-            <article class="card">
+            <article class="card feature-card necro">
               <h3>Dois saves</h3>
               <p>`normal` para progresso real e `progression_lab` para cenarios controlados.</p>
             </article>
-            <article class="card">
+            <article class="card feature-card hub">
               <h3>Updates</h3>
               <p>Manifest remoto com versao vigente, minimo suportado e links de plataforma.</p>
             </article>
@@ -767,21 +952,21 @@
           <button class="button ghost" type="button" data-tab-target="status">Ver status</button>
         </div>
         <div class="download-list">
-          <article class="card download-card">
+          <article class="card download-card android-card">
             <div>
               <h3>Android APK</h3>
               <p>Build nativa para sideload no aparelho de teste.</p>
             </div>
             <a class="button primary" href="ANDROID_APK_URL_PENDING_T03_P17">Baixar APK</a>
           </article>
-          <article class="card download-card">
+          <article class="card download-card pc-card">
             <div>
               <h3>PC Windows</h3>
               <p>ZIP com executavel. Extraia a pasta inteira antes de abrir.</p>
             </div>
             <a class="button primary" href="PC_ZIP_URL_PENDING_T03_P17">Baixar PC ZIP</a>
           </article>
-          <article class="card download-card">
+          <article class="card download-card web-card">
             <div>
               <h3>PC Browser</h3>
               <p>Web build para teste rapido no navegador com o mesmo backend remoto.</p>
@@ -794,7 +979,7 @@
 
     <section class="tab-panel" id="tab-web">
       <div class="layout">
-        <div class="panel">
+        <div class="panel visual-panel web-panel">
           <h2>Web build</h2>
           <p>A build Web abre pelo Cloudflare Pages. Quem chegou aqui ja passou pelo Access; login e registro continuam dentro do jogo.</p>
           <div class="actions" style="margin-top: 14px;">
@@ -814,7 +999,7 @@
     </section>
 
     <section class="tab-panel" id="tab-grimoire">
-      <div class="panel">
+      <div class="panel visual-panel grimoire-panel">
         <div class="panel-head">
           <div>
             <h2>Grimorio privado</h2>
@@ -852,7 +1037,7 @@
             <li>Trocar para Progression Lab e confirmar isolamento do save normal.</li>
           </ul>
         </div>
-        <aside class="panel">
+        <aside class="panel visual-panel academy-panel">
           <h2>Problemas conhecidos</h2>
           <ul class="guide-list">
             <li>APK usa `debug_fallback` enquanto a keystore dedicada nao estiver configurada.</li>
@@ -876,7 +1061,7 @@
           <div id="manifestStatus" class="empty">Status ainda nao carregado.</div>
           <div class="manifest-table" id="manifestTable"></div>
         </div>
-        <aside class="panel">
+        <aside class="panel visual-panel academy-panel">
           <h2>Seguranca ativa</h2>
           <ul class="guide-list">
             <li>Cloudflare Access bloqueia o site antes de carregar.</li>
@@ -1111,9 +1296,7 @@
         grimoireGrid.innerHTML = "";
         catalogSummary.innerHTML = "";
         if (!catalog?.collections) {
-          if (!currentToken()) {
-            setGrimoireStatus("Entre com a conta alpha para carregar o Grimorio.", "");
-          }
+          setGrimoireStatus("Abra esta aba para carregar o Grimorio.", "");
           return;
         }
 
@@ -1160,6 +1343,7 @@
         const raw = item.raw || {};
         const card = document.createElement("article");
         card.className = "card item-card";
+        card.dataset.collection = item.collection;
         const name = raw.display_name || raw.id || "Item";
         const id = raw.id || "";
         const tags = itemSources(raw).slice(0, 5);

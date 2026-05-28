@@ -16,6 +16,7 @@ Este portal e o hub privado da Internal Alpha v0. Cloudflare Access protege o si
 
 - `index.html`: hub alpha estatico com abas.
 - `assets/draxos-arena.svg`: arte local privada do portal.
+- `assets/visual/`: imagens derivadas de `assets/referenciaimagens/`, otimizadas para o portal.
 - `assets/grimoire-catalog.json`: copia estatica do catalogo gerado por `tools/generate_grimoire_catalog.ts`.
 - `manifest.example.json`: exemplo do manifest de updates usado por `GET /release/manifest`.
 
@@ -42,6 +43,8 @@ O arquivo `manifest.example.json` e a copia documental do schema esperado para a
 Em `T03-P17`, o portal publicado foi gerado em `build/internal-alpha/publish/portal/` por `tools/publish_internal_alpha.ps1`, com os placeholders substituidos por URLs reais. O source versionado continua como template.
 
 O upgrade de 2026-05-27 adicionou abas, assets locais e Grimorio. O script de publicacao agora copia subpastas do portal. A build Web fica visivel no hub para usuarios que passaram pelo Cloudflare Access. O fluxo de login Supabase do site esta escondido/preservado para uso futuro.
+
+O upgrade visual de 2026-05-28 troca a linguagem limpa por um hub ritual privado: hero com sala Draxos, cards com fundos de arena/base/Grimorio, moldura visual nos itens do Grimorio e assets JPG/PNG otimizados em `assets/visual/`.
 
 ## Guardrails
 
