@@ -152,8 +152,12 @@ func test_boot_refugio_home_renders_altar_hotspots_and_account_route() -> void:
 	assert_false(boot._app_chrome_root.visible)
 	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeAltarBackground"))
 	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeAltarViewSpace"))
-	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeHotspotPanel"))
-	assert_true(_label_tree_contains(boot._first_screen_root, "Caminhos do Refugio"))
+	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeSceneBoard"))
+	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeAltarStage"))
+	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeMenuPopup"))
+	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeHotspotPanel"))
+	assert_null(_find_node_by_name(boot._first_screen_root, "RefugePathGrid"))
+	assert_false(_label_tree_contains(boot._first_screen_root, "Caminhos do Refugio"))
 	assert_false(_label_tree_contains(boot._content_body, "Altar do Mago"))
 	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeFooterPanel"))
 	assert_null(boot._auth_email_input)
@@ -161,20 +165,32 @@ func test_boot_refugio_home_renders_altar_hotspots_and_account_route() -> void:
 
 	assert_null(_find_button_by_text(boot._first_screen_root, "Base"))
 	assert_false(boot._action_buttons.has("show_base"))
-	assert_true(boot._action_buttons.has("collect_base"))
-	assert_not_null(boot._base_state_container)
 	assert_null(_find_button_by_text(boot._first_screen_root, "Atualizar Refugio"))
-	assert_true(_label_tree_contains(boot._first_screen_root, "Altar do Refugio"))
-	assert_true(_label_tree_contains(boot._first_screen_root, "Entre ou use Guest dev para sincronizar."))
-	assert_not_null(_find_button_by_text(boot._first_screen_root, "Coletar"))
+	assert_true(_label_tree_contains(boot._first_screen_root, "ALTAR"))
+	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeIcon_Coletar"))
 
-	for hotspot_text: String in ["Batalha", "Social", "Competicao", "Loja", "Perfil"]:
-		var hotspot := _find_button_by_text(boot._first_screen_root, hotspot_text)
-		assert_not_null(hotspot, "Refugio should expose hotspot '%s'." % hotspot_text)
+	for hotspot_text: String in ["Batalha", "Refugio", "Social", "Competicao", "Loja", "Perfil"]:
+		var hotspot := _find_node_by_name(boot._first_screen_root, "RefugeIcon_%s" % hotspot_text) as Button
+		assert_not_null(hotspot, "Refugio should expose icon '%s'." % hotspot_text)
 		assert_true(hotspot.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
 
-	var account_hotspot := _find_button_by_text(boot._first_screen_root, "Perfil")
+	var battle_hotspot := _find_node_by_name(boot._first_screen_root, "RefugeIcon_Batalha") as Button
+	battle_hotspot.pressed.emit()
+	await get_tree().process_frame
+	var menu_popup := boot._refuge_menu_popup as PopupPanel
+	assert_not_null(menu_popup)
+	assert_true(menu_popup.visible)
+	assert_true(_label_tree_contains(menu_popup, "Batalha"))
+	assert_not_null(_find_button_by_text(menu_popup, "Pedir batalha"))
+	boot._go_back()
+	assert_false(menu_popup.visible)
+
+	var account_hotspot := _find_node_by_name(boot._first_screen_root, "RefugeIcon_Perfil") as Button
 	account_hotspot.pressed.emit()
+	await get_tree().process_frame
+	var open_profile_button := _find_button_by_text(boot._refuge_menu_popup as Node, "Abrir Perfil")
+	assert_not_null(open_profile_button)
+	open_profile_button.pressed.emit()
 	assert_eq(boot._current_screen, "account")
 	assert_true(boot._app_chrome_root.visible)
 	assert_false(boot._first_screen_root.visible)

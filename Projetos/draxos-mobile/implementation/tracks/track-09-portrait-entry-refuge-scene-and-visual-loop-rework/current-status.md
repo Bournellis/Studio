@@ -1,6 +1,6 @@
 # Track 09 Current Status
 
-Status: `INTEGRATED_PORTRAIT_SLIM_LOOP_READY`
+Status: `INTEGRATED_REFUGE_GAME_MENU_READY`
 
 Date: 2026-05-28
 
@@ -62,6 +62,12 @@ Date: 2026-05-28
   - forced `Caminhos do Refugio` to one column in compact/portrait;
   - named the grid `RefugePathGrid`;
   - added smoke coverage that asserts one-column path menu in portrait and narrow loaded Refugio.
+- Applied Track 09C Refugio game menu rework:
+  - replaced the Refugio home list/grid with `RefugeSceneBoard` fullscreen portrait;
+  - added procedural altar scene, compact HUD/footer and icon buttons for Batalha, Refugio, Social, Competicao, Loja, Perfil, Coletar and Energia;
+  - added `RefugeMenuPopup` drawers for each icon, reusing existing actions/routes and embedded Refugio/Base presenter content;
+  - made Voltar/Esc close the Refugio popup before route navigation;
+  - preserved procedural/fallback visuals only, with no final asset import.
 
 ## Guardrails Preserved
 
@@ -80,6 +86,7 @@ Local validation result:
 - Track 09B Refugio presentation patch: `tools/validate.gd` passed with GUT `96/96` tests and `1171` asserts; `tools/smoke_mobile_presentation.gd`, `tools/smoke_foundation_hardening.gd` and `git diff --check` passed.
 - Track 09B Refugio layout fix: `tools/validate.gd` passed with GUT `96/96` tests and `1171` asserts; `tools/smoke_mobile_presentation.gd`, `tools/smoke_foundation_hardening.gd` and `git diff --check` passed.
 - Track 09B Refugio menu alignment fix: `tools/validate.gd` passed with GUT `96/96` tests and `1171` asserts; `tools/smoke_mobile_presentation.gd`, `tools/smoke_foundation_hardening.gd` and `git diff --check` passed.
+- Track 09C Refugio game menu rework: `tools/validate.gd` passed with GUT `96/96` tests and `1180` asserts; `tools/smoke_mobile_presentation.gd`, `tools/smoke_foundation_hardening.gd` and `git diff --check` passed.
 - Track 09B patch: `tools/validate.gd` passed with GUT `96/96` tests and `1163` asserts; `tools/smoke_mobile_presentation.gd`, `tools/smoke_foundation_hardening.gd` and `git diff --check` passed.
 - `tools/validate.gd`: passed with GUT `95/95` tests and `1144` asserts.
 - `tools/smoke_mobile_presentation.gd`: passed.

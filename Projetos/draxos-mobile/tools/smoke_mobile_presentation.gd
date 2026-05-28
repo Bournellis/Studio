@@ -66,25 +66,41 @@ func _check_portrait_app_loop() -> void:
 	_expect(str(boot.get("_current_screen")) == "refuge", "Refugio route opens after Entry")
 	_expect(_find_node_by_name(boot, "RefugeAltarBackground") == null, "portrait Refugio removes altar background")
 	_expect(_find_node_by_name(boot, "RefugeAltarViewSpace") == null, "portrait Refugio removes empty top spacer")
-	_expect(_find_node_by_name(boot, "RefugeHotspotPanel") != null, "portrait Refugio puts Caminhos at the top")
-	_expect(_label_tree_contains(boot, "Caminhos do Refugio"), "portrait Refugio foregrounds Caminhos")
-	var path_grid := _find_node_by_name(boot, "RefugePathGrid") as GridContainer
-	_expect(path_grid != null and path_grid.columns == 1, "portrait Refugio path menu uses one column")
-	_expect(_find_button_by_text(boot, "Perfil") != null, "portrait Refugio has account hotspot")
+	_expect(_find_node_by_name(boot, "RefugeSceneBoard") != null, "portrait Refugio renders game scene board")
+	_expect(_find_node_by_name(boot, "RefugeHotspotPanel") == null, "portrait Refugio no longer renders list panel")
+	_expect(_find_node_by_name(boot, "RefugePathGrid") == null, "portrait Refugio no longer renders path list grid")
+	_expect(not _label_tree_contains(boot, "Caminhos do Refugio"), "portrait Refugio removes Caminhos list title")
+	_expect(_find_node_by_name(boot, "RefugeIcon_Perfil") != null, "portrait Refugio has profile icon")
 	_expect(_find_button_by_text(boot, "Base") == null, "portrait Refugio has no separate Base hotspot")
-	_expect(boot.get("_base_state_container") != null, "portrait Refugio embeds base management directly")
+	_expect(boot.get("_base_state_container") == null or not (boot.get("_base_state_container") as Node).is_visible_in_tree(), "portrait Refugio keeps base management inside popup")
 	_expect(_find_button_by_text(boot, "Atualizar Refugio") == null, "portrait Refugio does not require manual refresh to expose core")
-	_expect(_label_tree_contains(boot, "Altar do Refugio"), "portrait Refugio uses compact game-like command panel")
-	_expect(_find_button_by_text(boot, "Coletar") != null, "portrait Refugio exposes collect action near main paths")
-	_expect(_label_tree_contains(boot, "Mapa do Refugio"), "portrait Refugio keeps structure map visible with loaded state")
-	var battle_hotspot := _find_button_by_text(boot, "Batalha")
-	_expect(battle_hotspot != null, "portrait Refugio has Battle hotspot")
+	_expect(_label_tree_contains(boot, "ALTAR"), "portrait Refugio shows altar scene")
+	_expect(_find_node_by_name(boot, "RefugeIcon_Coletar") != null, "portrait Refugio exposes collect icon")
+	var battle_hotspot := _find_node_by_name(boot, "RefugeIcon_Batalha") as Button
+	_expect(battle_hotspot != null, "portrait Refugio has Battle icon")
 	_expect(battle_hotspot != null and battle_hotspot.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET, "portrait hotspots keep mobile touch target")
+	if battle_hotspot != null:
+		battle_hotspot.pressed.emit()
+		await process_frame
+		var menu_popup := boot.get("_refuge_menu_popup") as PopupPanel
+		_expect(menu_popup != null and menu_popup.visible, "Battle icon opens menu popup")
+		_expect(menu_popup != null and _find_button_by_text(menu_popup, "Pedir batalha") != null, "Battle popup exposes request action")
+		boot.set("_is_busy", false)
+		boot.call("_go_back")
+		await process_frame
+		_expect(menu_popup != null and not menu_popup.visible, "Back closes Refugio popup")
 	_expect(_get_back_button(boot) != null and not _get_back_button(boot).visible, "portrait Refugio hides app chrome Back")
 	_expect(_find_node_by_name(boot, "RefugeFooterPanel") != null, "portrait Refugio moves status to footer")
 	_expect_layout_fits_width(boot, float(root.size.x), "portrait Refugio")
 
-	boot.call("_show_screen", "account")
+	var profile_icon := _find_node_by_name(boot, "RefugeIcon_Perfil") as Button
+	if profile_icon != null:
+		profile_icon.pressed.emit()
+		await process_frame
+		var open_profile := _find_button_by_text(boot.get("_refuge_menu_popup") as Node, "Abrir Perfil")
+		_expect(open_profile != null, "Profile popup exposes account route")
+		if open_profile != null:
+			open_profile.pressed.emit()
 	await process_frame
 	_expect(str(boot.get("_current_screen")) == "account", "account route opens from Refugio")
 	_expect(_get_first_screen_root(boot) != null and not _get_first_screen_root(boot).visible, "account hides first-screen Refugio layer")
@@ -120,11 +136,10 @@ func _check_narrow_loaded_refuge_layout() -> void:
 
 	boot.call("_show_screen", "refuge")
 	await process_frame
-	var path_grid := _find_node_by_name(boot, "RefugePathGrid") as GridContainer
-	_expect(path_grid != null and path_grid.columns == 1, "narrow Refugio path menu uses one column")
-	_expect(_label_tree_contains(boot, "Altar do Refugio"), "narrow Refugio shows compact altar panel")
-	_expect(_label_tree_contains(boot, "Mapa do Refugio"), "narrow Refugio keeps structure map visible")
-	_expect(_find_button_by_text(boot, "Coletar") != null, "narrow Refugio keeps collect action visible")
+	_expect(_find_node_by_name(boot, "RefugeSceneBoard") != null, "narrow Refugio shows scene board")
+	_expect(_find_node_by_name(boot, "RefugePathGrid") == null, "narrow Refugio does not render path grid")
+	_expect(_find_node_by_name(boot, "RefugeIcon_Refugio") != null, "narrow Refugio keeps Refugio menu icon")
+	_expect(_find_node_by_name(boot, "RefugeIcon_Coletar") != null, "narrow Refugio keeps collect icon visible")
 	_expect_layout_fits_width(boot, float(root.size.x), "narrow loaded Refugio")
 	boot.queue_free()
 	await process_frame

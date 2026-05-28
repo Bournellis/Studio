@@ -72,6 +72,7 @@ var _battle_visual: Control
 var _battle_fullscreen_overlay: Control
 var _confirm_dialog: ConfirmationDialog
 var _create_account_dialog: ConfirmationDialog
+var _refuge_menu_popup: PopupPanel
 var _app_chrome_root: Control
 var _first_screen_root: Control
 var _immersive_status_label: Label
@@ -128,6 +129,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	if _confirm_dialog != null and _confirm_dialog.visible:
 		_confirm_dialog.hide()
 		return
+	if _close_refuge_menu_popup_if_open():
+		return
 	if _battle_lab_overlay != null and is_instance_valid(_battle_lab_overlay):
 		_close_battle_lab_overlay()
 		return
@@ -149,6 +152,14 @@ func _build_ui() -> void:
 	_compact_layout = _should_use_compact_layout()
 	ShellSurfacePresenterScript.render(self)
 	_render_create_account_dialog()
+
+func _close_refuge_menu_popup_if_open() -> bool:
+	if _refuge_menu_popup == null or not is_instance_valid(_refuge_menu_popup):
+		return false
+	if not _refuge_menu_popup.visible:
+		return false
+	_refuge_menu_popup.hide()
+	return true
 
 func _render_create_account_dialog() -> void:
 	var dialog := ConfirmationDialog.new()
@@ -300,6 +311,8 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 
 func _go_back() -> void:
 	if _is_busy:
+		return
+	if _close_refuge_menu_popup_if_open():
 		return
 	var previous := AppShellRouteContractScript.pop_back_or_root(_screen_history)
 	_show_screen(previous, false)
