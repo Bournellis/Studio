@@ -1,69 +1,51 @@
 # Projetos
 
-This directory contains active, conceptual, and paused projects for the studio.
+This directory contains active, conceptual and paused projects for the studio.
 
-Portfolio source of truth: `../08_Coordenacao_Agentes/Prioridades_Estudio.md`
-Studio snapshot: `../08_Coordenacao_Agentes/Estado_Atual.md`
-Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
+- Portfolio source of truth: `../08_Coordenacao_Agentes/Prioridades_Estudio.md`
+- Studio snapshot: `../08_Coordenacao_Agentes/Estado_Atual.md`
+- Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
 ## Implementacao Ativa
 
-- `draxos-roguelike-cardgame/`: menu-first Draxos roguelike cardgame with Track 02 complete for user playtest: fixed 29-map route, save v5, reward schedule/progression, universal relics, expanded Souls shop, canonical keyword/status tooltips, full keyword engine, promoted class reward cards, elemental enemy galleries, hybrid enemy AI, visible enemy intent, encounter modes, board formats, field effects, boss hooks, UI readability polish, full-route pacing telemetry, and validation green.
+- `draxos-roguelike-cardgame/`: menu-first Draxos roguelike cardgame with Track 02 complete for user playtest: fixed 29-map route, save v5, reward schedule/progression, universal relics, expanded Souls shop, keyword/status tooltips, keyword engine, enemy AI/intent, encounter modes, board formats, field effects, boss hooks, readability polish, pacing telemetry and validation green.
   - Priority/status: `P0_IMPLEMENTACAO`
   - Local agent guide: `draxos-roguelike-cardgame/AGENTS.md`
   - Operational status: `draxos-roguelike-cardgame/implementation/current-status.md`
-  - Studio snapshot: `../08_Coordenacao_Agentes/Estado_Atual.md`
   - Validation command: `draxos-roguelike-cardgame/tools/validate.gd`
   - Allowed work: code, validation, playtest, local documentation.
   - Current next step: user playtest of the Track 02 complete-run build.
 
 ## Implementacao - Internal Alpha
 
-- `draxos-mobile/`: jogo mobile multi-plataforma - mago Draxos (PVP assincrono, base manager, social). Plataformas: Android + PC executavel + PC browser. Backend: Supabase para alpha, com Backend Proprio + Postgres como plano de saida preferido. Batalha 100% simulada no servidor. Track 00-13 estao integradas: primeiro slice server-authoritative, Internal Alpha v0 aprovada por Fabio + tester, Base/Social/Competicao/Loja jogaveis, Progression Lab/Battle Lab, Refugio portrait como cena de jogo, batalha portrait com palco limpo fullscreen, `Pular batalha`, summary minimo, logs da batalha atual, builds Internal Alpha site/Web/APK/Windows republicadas em 2026-05-28, estado vivo consolidado, `boot.gd` decomposto em action contract/flows/helpers e release validation protegido por runner, modos seguros e checks de safety/readiness. Handoff: `draxos-mobile/docs/internal-alpha-v0-handoff.md`.
-  - Priority/status: `P2_IMPLEMENTACAO - Track 13 TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`
+- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 00-13 are integrated and Track 14 is reorganizing agent operations on top of that hardening baseline.
+  - Priority/status: `P2_IMPLEMENTACAO - Track 14 TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`
   - Local agent guide: `draxos-mobile/AGENTS.md`
+  - Agent manual: `draxos-mobile/docs/agent-operating-manual.md`
+  - Documentation index: `draxos-mobile/docs/documentation-index.md`
   - Operational status: `draxos-mobile/implementation/current-status.md`
   - Product vision: `draxos-mobile/docs/product-vision.md`
-  - Track 00 scope: `draxos-mobile/implementation/tracks/track-00-first-slice-foundation/scope.md`
-  - Track 01 scope: `draxos-mobile/implementation/tracks/track-01-alpha-playtest-hardening/scope.md`
-  - Track 02 scope: `draxos-mobile/implementation/tracks/track-02-progression-lab/scope.md`
-  - Track 03 scope: `draxos-mobile/implementation/tracks/track-03-internal-alpha-v0/scope.md`
-  - Track 04 scope: `draxos-mobile/implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/scope.md`
-  - Track 05 scope: `draxos-mobile/implementation/tracks/track-05-foundation-stabilization-and-asset-service-readiness/scope.md`
-  - Track 06 scope: `draxos-mobile/implementation/tracks/track-06-feature-installation-rails-and-first-slices/scope.md`
-  - Track 07 scope: `draxos-mobile/implementation/tracks/track-07-mobile-presentation-loop-and-layout-rework/scope.md`
-  - Track 08 scope: `draxos-mobile/implementation/tracks/track-08-foundation-review-and-hardening/scope.md`
-  - Track 09 scope: `draxos-mobile/implementation/tracks/track-09-portrait-entry-refuge-scene-and-visual-loop-rework/scope.md`
-  - Track 10 scope: `draxos-mobile/implementation/tracks/track-10-battle-presentation-rework/scope.md`
-  - Track 11 scope: `draxos-mobile/implementation/tracks/track-11-product-foundation-consolidation/scope.md`
-  - Track 12 scope: `draxos-mobile/implementation/tracks/track-12-boot-decomposition/scope.md`
-  - Track 13 scope: `draxos-mobile/implementation/tracks/track-13-validation-release-safety/scope.md`
-  - Track 11 walkthrough: `draxos-mobile/docs/track-11-manual-walkthrough.md`
-  - Track 13 manual walkthrough gate: `draxos-mobile/docs/track-13-manual-walkthrough-gate.md`
-  - Internal Alpha v0 runbook: `draxos-mobile/docs/internal-alpha-v0.md`
-  - Internal Alpha remote setup: `draxos-mobile/docs/internal-alpha-remote-setup.md`
-  - Internal Alpha release plan: `draxos-mobile/docs/internal-alpha-release-plan.md`
-  - Internal Alpha static hosting: `draxos-mobile/docs/internal-alpha-static-hosting.md`
-  - Supabase remote tutorial: `draxos-mobile/docs/supabase-remote-tutorial.md`
-  - Internal Alpha portal base: `draxos-mobile/portal/internal-alpha/`
-  - Internal Alpha v0 checklist: `draxos-mobile/docs/playtest-internal-alpha-v0.md`
-  - Internal Alpha v0 handoff: `draxos-mobile/docs/internal-alpha-v0-handoff.md`
-  - Playtest checklist: `draxos-mobile/docs/playtest-alpha.md`
-  - Progression Lab: `draxos-mobile/docs/progression-lab/README.md`
-  - Battle visual mockup: `draxos-mobile/docs/battle-visual-mockup.md`
+  - Product brief: `draxos-mobile/docs/product-brief.md`
+  - GDD: `draxos-mobile/docs/game-design-document.md`
   - Design pending: `draxos-mobile/docs/design-pending.md`
-  - Economy model: `draxos-mobile/docs/economy/README.md`
-  - Design archive: `_conceitos/mobile-universe/gdd.md`
+  - Contracts: `draxos-mobile/docs/contracts/`
+  - Active track: `draxos-mobile/implementation/tracks/track-14-agent-ops-foundation/`
+  - Release safety baseline: `draxos-mobile/implementation/tracks/track-13-validation-release-safety/`
+  - Manual walkthrough gate: `draxos-mobile/docs/track-13-manual-walkthrough-gate.md`
+  - Internal Alpha handoff: `draxos-mobile/docs/internal-alpha-v0-handoff.md`
+  - Release ops: `draxos-mobile/docs/release-ops-checklist.md`
+  - Progression Lab: `draxos-mobile/docs/progression-lab/README.md`
+  - Design archive: `_conceitos/mobile-universe/`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: executar walkthrough manual pelo gate Track 13 em Android, Windows, Web preview e Web Access-protected.
+  - Current next step: finish Track 14 agent operations foundation; then execute the Track 13 manual walkthrough on Android, Windows, Web preview and Web Access-protected before new features, tuning, account/save migration or remote publication.
 
 ## Arquivo De Design
 
-- `_conceitos/mobile-universe/`: arquivo de design do DraxosMobile. Promovido para `draxos-mobile/` em 2026-05-18. Preservado como referencia de design - nao e o projeto ativo.
+- `_conceitos/mobile-universe/`: design archive for DraxosMobile. Promoted to `draxos-mobile/` on `2026-05-18`; preserved only as reference.
   - Priority/status: `ARQUIVO_DESIGN`
-  - GDD completo: `_conceitos/mobile-universe/gdd.md`
-  - Decisoes historicas: `_conceitos/mobile-universe/pendencias.md`
-  - Allowed work: leitura e referencia de design apenas.
+  - Historical GDD: `_conceitos/mobile-universe/gdd.md`
+  - Historical decisions: `_conceitos/mobile-universe/pendencias.md`
+  - Allowed work: read-only design reference.
 
 ## Pausados Por Tempo Indeterminado
 
@@ -73,6 +55,7 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
   - Operational status: `rpg-isometrico/implementation/current-status.md`
   - Validation reference: `rpg-isometrico/docs/validation.md`
   - Allowed work: historical/contextual consultation only, unless the user explicitly asks to resume work.
+
 - `rpg-turnos/`: provisional turn-based RPG-cardgame with independent mechanics and shared lore context.
   - Priority/status: `PAUSADO_INDEFINIDO`
   - Local agent guide: `rpg-turnos/AGENTS.md`
@@ -82,13 +65,13 @@ Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
 ## Project Disambiguation
 
-- Use `draxos-roguelike-cardgame/` for the current implementation focus: Draxos roguelike, ship hub, run map, 29-map complete-run evolution, reward/relic/shop systems, full keyword scope, enemy AI/intent, lane battles, card/enemy redesign, sacrifice/movement/Cinzas tuning, and Track 02 production prompts.
-- Use `draxos-mobile/` for all DraxosMobile implementation work - Godot project, Supabase, first slice, alpha hardening and design pending.
-- Use `_conceitos/mobile-universe/` for design reference only - not the active project.
-- Use `rpg-isometrico/` only for explicit historical/contextual consultation about the campaign-first isometric action RPG.
-- Use `rpg-turnos/` only for explicit historical/contextual consultation about the provisional 2D RPG-cardgame.
+- Use `draxos-roguelike-cardgame/` for the current P0 implementation focus: roguelike cardgame, ship hub, run map, complete-run route, Souls, relics, keyword engine, enemy intent and lane battles.
+- Use `draxos-mobile/` for DraxosMobile implementation: Godot mobile/PC/browser client, Supabase, async autobattler, Base, social, Internal Alpha, release ops, validation and agent foundation.
+- Use `_conceitos/mobile-universe/` only as design reference for DraxosMobile.
+- Use `rpg-isometrico/` only for explicit historical/contextual consultation about the isometric action RPG.
+- Use `rpg-turnos/` only for explicit historical/contextual consultation about the 2D turn-based RPG-cardgame.
 
-`Draxos` and `cardgame` are shared vocabulary, not enough to pick `rpg-turnos`. Prefer the portfolio priority, the explicitly named project, or the operational surface above before reading a local project guide.
+`Draxos` alone is shared vocabulary and does not select a paused project. Prefer portfolio priority, explicit project name and operational terms above.
 
 ## Agent Rule
 
@@ -98,26 +81,24 @@ Before working in a project, read:
 2. the workspace `AGENTS.md`
 3. this registry
 4. the relevant section of `../08_Coordenacao_Agentes/Estado_Atual.md`
-5. the target project's local docs, only if the portfolio status allows the requested work
-
-Do not import mechanics from one project into another unless the target project's local docs explicitly adopt them.
+5. the target project's local `AGENTS.md` and current status if the portfolio status allows the requested work
 
 Multi-agent default:
 
 - Use a dedicated worktree outside `D:\Estudio`: `D:\Estudio-worktrees\<projeto>--<agente>--<slug>`.
 - Use branch `codex/<projeto>/<slug>` for Codex or `<agente>/<projeto>/<slug>` for non-Codex agents.
 - Register branch, worktree, objective, intended files, base docs read and validation plan in Kanban/Doing or Handoffs before editing.
-- Commit each logical stage separately. Avoid mega commits that mix documentation, contracts, backend, client, validation and publication.
-- Before editing shared portfolio/canon/coordination files, check `git status --short`, `git worktree list` and the coordination docs.
+- Commit each logical stage separately.
+- Before editing shared portfolio/canon/coordination files, check `git status --short`, `git worktree list` and coordination docs.
 - Do not edit another agent's worktree unless the user explicitly asks for that intervention.
 
 ## Future Projects
 
 A future project under `Projetos/` becomes an official implementation project only when it has:
 
-- a local `AGENTS.md`
-- a local `implementation/current-status.md`
-- an entry in this registry outside `_conceitos/`
-- a summary entry in `../08_Coordenacao_Agentes/Estado_Atual.md`
+- a local `AGENTS.md`;
+- a local `implementation/current-status.md`;
+- an entry in this registry outside `_conceitos/`;
+- a summary entry in `../08_Coordenacao_Agentes/Estado_Atual.md`.
 
-Until then, treat it as experimental, conceptual, or preparatory material.
+Until then, treat it as experimental, conceptual or preparatory material.
