@@ -1,11 +1,13 @@
 class_name BootCompetitionSurfacePresenter
 extends RefCounted
 
+const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
+
 static func render(host: Node) -> void:
 	_add_body_text(host, "Competicao alpha com matchmaking por poder, pontos de arena por batalha normal e leaderboard sem bots.")
-	var matchmaking_button := _add_action_button(host, "Preview matchmaking", "show_matchmaking")
+	var matchmaking_button := _add_action_button(host, "Preview matchmaking", AppShellActionContractScript.ACTION_SHOW_MATCHMAKING)
 	matchmaking_button.tooltip_text = "Mostra o oponente sugerido para o seu poder atual. Bots podem aparecer como alvo de treino, mas nao entram no leaderboard."
-	var ranking_button := _add_action_button(host, "Ver ranking", "show_ranking")
+	var ranking_button := _add_action_button(host, "Ver ranking", AppShellActionContractScript.ACTION_SHOW_RANKING)
 	ranking_button.tooltip_text = "Busca o top 10 da season, sua posicao atual e o modelo de pontos de arena aplicado no servidor."
 	host.set("_timeline_label", _add_output_label(host, ""))
 	var competition_state_container := VBoxContainer.new()

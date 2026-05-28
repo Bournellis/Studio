@@ -1,4 +1,4 @@
-# Multi-Agent Doing: DraxosMobile Track 12 Boot Decomposition
+# Multi-Agent Done: DraxosMobile Track 12 Boot Decomposition
 
 ## Metadata
 
@@ -52,10 +52,15 @@ Extrair responsabilidades reais de `modes/boot/boot.gd` para contratos, flows e 
 ## Validacao
 
 - `git diff --check`
-- `powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_track11_readiness.ps1 -ProjectDir .`
 - `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd`
 - `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/client -gexit`
 
 ## Proximo Handoff
 
-Handoff quando a decomposicao estiver validada, com commits logicos aplicados, status/documentacao atualizados e worktree limpa.
+Track entregue com decomposicao validada, commits logicos aplicados, status/documentacao atualizados e worktree limpa.
+
+## Resultado
+
+- `boot.gd` reduziu para `1301` linhas.
+- Contratos/flows/helpers novos adicionados sem alterar UX, schema, backend, economia ou cenas `.tscn`.
+- GUT client e `tools/validate.gd` verdes.

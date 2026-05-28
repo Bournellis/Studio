@@ -1,9 +1,11 @@
 class_name BootSocialSurfacePresenter
 extends RefCounted
 
+const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
+
 static func render(host: Node) -> void:
 	_add_body_text(host, "Social alpha da conta: encontre outro jogador por username, crie ou entre em uma guilda e teste chat de guilda por polling.")
-	var refresh_social_button := _add_action_button(host, "Atualizar social", "show_social")
+	var refresh_social_button := _add_action_button(host, "Atualizar social", AppShellActionContractScript.ACTION_SHOW_SOCIAL)
 	refresh_social_button.tooltip_text = "Busca amigos, guilda, membros, estruturas e mensagens recentes no servidor."
 	host.set("_social_friend_input", _add_social_input(
 		host,
@@ -12,7 +14,7 @@ static func render(host: Node) -> void:
 		str(host.get("_last_social_friend_username")),
 		"Digite o username do outro jogador. No alpha a amizade e aceita automaticamente."
 	))
-	var add_friend_button := _add_action_button(host, "Adicionar amigo", "add_friend")
+	var add_friend_button := _add_action_button(host, "Adicionar amigo", AppShellActionContractScript.ACTION_ADD_FRIEND)
 	add_friend_button.tooltip_text = "Cria amizade aceita nos dois sentidos, usando o username informado."
 	host.set("_social_guild_input", _add_social_input(
 		host,
@@ -21,9 +23,9 @@ static func render(host: Node) -> void:
 		str(host.call("_default_social_guild_text")),
 		"Digite o nome da guilda para criar ou entrar. O nome precisa ter 3 a 32 caracteres."
 	))
-	var create_guild_button := _add_action_button(host, "Criar guilda", "create_guild", "Criar uma guilda alpha para esta conta?")
+	var create_guild_button := _add_action_button(host, "Criar guilda", AppShellActionContractScript.ACTION_CREATE_GUILD, "Criar uma guilda alpha para esta conta?")
 	create_guild_button.tooltip_text = "Cria uma guilda, adiciona voce como owner e inicializa estruturas e canal de chat."
-	var join_guild_button := _add_action_button(host, "Entrar guilda", "join_guild")
+	var join_guild_button := _add_action_button(host, "Entrar guilda", AppShellActionContractScript.ACTION_JOIN_GUILD)
 	join_guild_button.tooltip_text = "Entra na guilda pelo nome exato. Voce so pode participar de uma guilda por vez."
 	host.set("_social_chat_input", _add_social_input(
 		host,
@@ -32,7 +34,7 @@ static func render(host: Node) -> void:
 		str(host.get("_last_social_chat_message")),
 		"Mensagem enviada para o canal da guilda. O alpha aplica rate limit simples para evitar spam."
 	))
-	var send_chat_button := _add_action_button(host, "Enviar chat guilda", "send_guild_chat")
+	var send_chat_button := _add_action_button(host, "Enviar chat guilda", AppShellActionContractScript.ACTION_SEND_GUILD_CHAT)
 	send_chat_button.tooltip_text = "Envia a mensagem digitada e atualiza o polling do chat."
 	host.set("_timeline_label", _add_output_label(host, ""))
 	var social_state_container := VBoxContainer.new()

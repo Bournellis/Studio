@@ -4,7 +4,7 @@ DraxosMobile e o projeto Godot/Supabase para Android, PC executavel e PC browser
 
 **Nao confundir com:** `Projetos/draxos-roguelike-cardgame/`, projeto Steam separado.
 
-Status: `P2_IMPLEMENTACAO - Track 11 INTEGRATED_CONSOLIDATION_READY`
+Status: `P2_IMPLEMENTACAO - Track 12 TRACK_12_BOOT_DECOMPOSITION_DELIVERED`
 
 ## Current Shape
 
@@ -22,6 +22,7 @@ Status: `P2_IMPLEMENTACAO - Track 11 INTEGRATED_CONSOLIDATION_READY`
 | Track 09 | Integrada | Entry/Refugio portrait, Refugio como primeira tela jogavel e menu de jogo com popups/drawers. |
 | Track 10 | Integrada | Batalha portrait com palco limpo fullscreen, `Pular batalha`, summary minimo e logs proprios. |
 | Track 11 | Integrada | Consolidacao documental/operacional, release state sync, readiness check e primeiro corte seguro do `boot.gd`. |
+| Track 12 | Entregue | Decomposicao real do `boot.gd` em action contract, flows de conta/superficies/batalha, helpers compartilhados e guardas estruturais. |
 
 ## Release Atual
 
@@ -42,8 +43,8 @@ Status: `P2_IMPLEMENTACAO - Track 11 INTEGRATED_CONSOLIDATION_READY`
 
 1. `AGENTS.md`
 2. `implementation/current-status.md`
-3. `implementation/tracks/track-11-product-foundation-consolidation/current-status.md`
-4. `implementation/tracks/track-11-product-foundation-consolidation/foundation-audit.md`
+3. `implementation/tracks/track-12-boot-decomposition/current-status.md`
+4. `implementation/tracks/track-12-boot-decomposition/scope.md`
 5. `docs/track-11-manual-walkthrough.md`
 6. `docs/product-vision.md`
 7. `docs/game-design-document.md`
@@ -79,7 +80,8 @@ draxos-mobile/
 |       |-- track-08-foundation-review-and-hardening/
 |       |-- track-09-portrait-entry-refuge-scene-and-visual-loop-rework/
 |       |-- track-10-battle-presentation-rework/
-|       `-- track-11-product-foundation-consolidation/
+|       |-- track-11-product-foundation-consolidation/
+|       `-- track-12-boot-decomposition/
 |-- modes/boot/
 |-- online/
 |-- server/
@@ -94,7 +96,7 @@ draxos-mobile/
 
 ```powershell
 cd <WORKTREE>\Projetos\draxos-mobile
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_track11_readiness.ps1 -ProjectDir .
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <WORKTREE>\Projetos\draxos-mobile -s res://tools/validate.gd
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <WORKTREE>\Projetos\draxos-mobile -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/client -gexit
 npx -y deno check supabase/functions/release/index.ts server/functions/release/index.ts server/tests/release_artifacts_remote_smoke.ts
 ```

@@ -1,14 +1,16 @@
 class_name BootBaseSurfacePresenter
 extends RefCounted
 
+const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
+
 const RESOURCE_KEYS := ["almas", "energia", "sangue", "cristais", "ossos", "diamante"]
 const BASE_STRUCTURE_IDS := ["altar_das_almas", "nucleo_energia", "pocos_sangue", "minas_cristal", "estrutura_stats", "ossario"]
 
 static func render(host: Node) -> void:
 	_add_body_text(host, "Refugio: predios permanentes, coleta offline e uma fila de construcao server-authoritative.")
-	_add_action_button(host, "Sincronizar Refugio", "show_base")
-	_add_action_button(host, "Coletar producao", "collect_base", "Coletar a producao offline acumulada do Refugio?")
-	_add_action_button(host, "Comprar Energia alpha", "buy_energy_pack_alpha", "Gastar 80 Diamantes para comprar 80 Energia no save ativo?")
+	_add_action_button(host, "Sincronizar Refugio", AppShellActionContractScript.ACTION_SHOW_BASE)
+	_add_action_button(host, "Coletar producao", AppShellActionContractScript.ACTION_COLLECT_BASE, "Coletar a producao offline acumulada do Refugio?")
+	_add_action_button(host, "Comprar Energia alpha", AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA, "Gastar 80 Diamantes para comprar 80 Energia no save ativo?")
 	host.set("_timeline_label", _add_output_label(host, ""))
 	var base_state_container := VBoxContainer.new()
 	base_state_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -168,8 +170,8 @@ static func _refuge_empty_panel(host: Node) -> Control:
 	actions.add_theme_constant_override("h_separation", 8)
 	actions.add_theme_constant_override("v_separation", 8)
 	box.add_child(actions)
-	actions.add_child(_embedded_action_button(host, "Coletar", "collect_base", "Coletar a producao offline acumulada do Refugio?"))
-	actions.add_child(_embedded_action_button(host, "Energia", "buy_energy_pack_alpha", "Gastar 80 Diamantes para comprar 80 Energia no save ativo?"))
+	actions.add_child(_embedded_action_button(host, "Coletar", AppShellActionContractScript.ACTION_COLLECT_BASE, "Coletar a producao offline acumulada do Refugio?"))
+	actions.add_child(_embedded_action_button(host, "Energia", AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA, "Gastar 80 Diamantes para comprar 80 Energia no save ativo?"))
 	return panel
 
 static func _refuge_command_panel(host: Node, base: Dictionary, collected: Dictionary) -> Control:
@@ -194,8 +196,8 @@ static func _refuge_command_panel(host: Node, base: Dictionary, collected: Dicti
 	actions.add_theme_constant_override("h_separation", 8)
 	actions.add_theme_constant_override("v_separation", 8)
 	box.add_child(actions)
-	actions.add_child(_embedded_action_button(host, "Coletar", "collect_base", "Coletar a producao offline acumulada do Refugio?"))
-	actions.add_child(_embedded_action_button(host, "Energia", "buy_energy_pack_alpha", "Gastar 80 Diamantes para comprar 80 Energia no save ativo?"))
+	actions.add_child(_embedded_action_button(host, "Coletar", AppShellActionContractScript.ACTION_COLLECT_BASE, "Coletar a producao offline acumulada do Refugio?"))
+	actions.add_child(_embedded_action_button(host, "Energia", AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA, "Gastar 80 Diamantes para comprar 80 Energia no save ativo?"))
 	return panel
 
 static func _add_refuge_status_line(host: Node, box: VBoxContainer, title: String, value: String, value_color: String) -> void:
@@ -314,7 +316,7 @@ static func _base_detail_panel(host: Node, structures: Array) -> Control:
 	box.add_child(_base_label(host, "Proximo upgrade: %s" % _base_upgrade_text(structure), "text_secondary"))
 	box.add_child(_base_label(host, "Status: %s" % str(structure.get("blocked_message", "")), _base_status_color_token(structure)))
 
-	var action_id := "upgrade_base_structure:%s" % structure_id
+	var action_id := AppShellActionContractScript.upgrade_base_structure_action(structure_id)
 	var upgrade_button := Button.new()
 	upgrade_button.text = "Evoluir %s" % display_label
 	upgrade_button.custom_minimum_size = _button_min_size(host)
@@ -347,7 +349,7 @@ static func _base_structure_button(host: Node, structure: Dictionary) -> Button:
 	button.add_theme_stylebox_override("hover", _base_structure_card_style(structure_id, true))
 	button.add_theme_stylebox_override("pressed", _base_structure_card_style(structure_id, true))
 	_prepare_touch_button(host, button)
-	var action_id := "select_base_structure:%s" % structure_id
+	var action_id := AppShellActionContractScript.select_base_structure_action(structure_id)
 	button.pressed.connect(func() -> void:
 		host.call("_trigger_action", action_id)
 	)

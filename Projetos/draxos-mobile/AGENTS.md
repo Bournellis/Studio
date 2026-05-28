@@ -25,13 +25,13 @@ Este projeto foi promovido de `Projetos/_conceitos/mobile-universe/` em 2026-05-
 
 ## Read Order
 
-### Fast Lane Atual - Track 11
+### Fast Lane Atual - Track 12
 
 1. `implementation/current-status.md`
-2. `implementation/tracks/track-11-product-foundation-consolidation/current-status.md`
-3. `implementation/tracks/track-11-product-foundation-consolidation/foundation-audit.md`
-4. `implementation/tracks/track-11-product-foundation-consolidation/scope.md`
-5. `implementation/tracks/track-11-product-foundation-consolidation/implementation-plan.md`
+2. `implementation/tracks/track-12-boot-decomposition/current-status.md`
+3. `implementation/tracks/track-12-boot-decomposition/scope.md`
+4. `implementation/tracks/track-12-boot-decomposition/implementation-plan.md`
+5. `implementation/tracks/track-11-product-foundation-consolidation/foundation-audit.md`
 6. `docs/track-11-manual-walkthrough.md`
 7. `docs/internal-alpha-v0-handoff.md`
 8. `docs/release-ops-checklist.md`
@@ -51,7 +51,7 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos, 
 7. `docs/architecture.md`
 8. `docs/contracts/`
 9. `implementation/current-status.md`
-10. `implementation/tracks/track-11-product-foundation-consolidation/`
+10. `implementation/tracks/track-12-boot-decomposition/`
 11. este arquivo
 12. arquivos tocados
 
@@ -66,7 +66,7 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos, 
 | Pergunta | Documento |
 |---|---|
 | Estado operacional atual | `implementation/current-status.md` |
-| Escopo/plan/status da Track 11 | `implementation/tracks/track-11-product-foundation-consolidation/` |
+| Escopo/plan/status da Track 12 | `implementation/tracks/track-12-boot-decomposition/` |
 | Auditoria do que cresceu bem e do que precisa melhorar | `implementation/tracks/track-11-product-foundation-consolidation/foundation-audit.md` |
 | Walkthrough manual pos-publicacao | `docs/track-11-manual-walkthrough.md` |
 | Visao longa, pilares, anti-pilares e limites de produto | `docs/product-vision.md` |
@@ -129,6 +129,6 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos, 
 
 ## Active Track
 
-Track ativa: `Track 11 - Product Foundation Consolidation` (`INTEGRATED_CONSOLIDATION_READY`).
+Track ativa: `Track 12 - Boot Decomposition` (`TRACK_12_BOOT_DECOMPOSITION_DELIVERED`).
 
-Comece por `implementation/current-status.md` e siga `implementation/tracks/track-11-product-foundation-consolidation/current-status.md`.
+Comece por `implementation/current-status.md` e siga `implementation/tracks/track-12-boot-decomposition/current-status.md`.

@@ -1,15 +1,16 @@
 extends RefCounted
 
+const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
 const BattleLogPresenterScript := preload("res://ui/battle_log_presenter.gd")
 const BattleVisualMockupScript := preload("res://ui/battle_visual_mockup.gd")
 
 const EMPTY_BATTLE_TEXT := "Nenhuma batalha carregada. Solicite uma batalha, carregue o historico ou busque o ultimo resultado."
 const EMPTY_HISTORY_TEXT := "Historico recente vazio para este save."
 const MAX_RENDERED_HISTORY_ENTRIES := 5
-const ACTION_SKIP_REPLAY := "skip_battle_replay"
-const ACTION_RETURN_REFUGE := "return_refuge"
-const ACTION_SHOW_CURRENT_LOGS := "show_current_battle_logs"
-const ACTION_RETURN_SUMMARY := "return_battle_summary"
+const ACTION_SKIP_REPLAY := AppShellActionContractScript.ACTION_SKIP_REPLAY
+const ACTION_RETURN_REFUGE := AppShellActionContractScript.ACTION_RETURN_REFUGE
+const ACTION_SHOW_CURRENT_LOGS := AppShellActionContractScript.ACTION_SHOW_CURRENT_BATTLE_LOGS
+const ACTION_RETURN_SUMMARY := AppShellActionContractScript.ACTION_RETURN_BATTLE_SUMMARY
 const SUMMARY_RESOURCE_KEYS := ["almas", "energia", "sangue", "cristais", "ossos", "diamante"]
 
 var _host: Node
@@ -34,9 +35,9 @@ func render(
 	clear()
 	_host = host
 	_call_host("_add_body_text", ["Batalha server-authoritative: o cliente solicita a luta, recebe o log e apenas apresenta o replay."])
-	_call_host("_add_action_button", ["Solicitar batalha", "request_battle"])
-	_call_host("_add_action_button", ["Historico", "show_battle_history"])
-	_call_host("_add_action_button", ["Ver resultado", "show_latest_battle"])
+	_call_host("_add_action_button", ["Solicitar batalha", AppShellActionContractScript.ACTION_REQUEST_BATTLE])
+	_call_host("_add_action_button", ["Historico", AppShellActionContractScript.ACTION_SHOW_BATTLE_HISTORY])
+	_call_host("_add_action_button", ["Ver resultado", AppShellActionContractScript.ACTION_SHOW_LATEST_BATTLE])
 	_render_history_entries(history_entries)
 
 	_visual = BattleVisualMockupScript.new()
@@ -318,7 +319,7 @@ func _render_history_entries(history_entries: Array[Dictionary]) -> void:
 		])
 		_call_host("_add_action_button", [
 			"Replay %d" % (index + 1),
-			"battle_replay:%s" % battle_id,
+			AppShellActionContractScript.battle_replay_action(battle_id),
 		])
 
 static func _winner_text(result: Dictionary) -> String:
