@@ -8,14 +8,14 @@ static func render(host: Control) -> void:
 	var compact := bool(host.get("_compact_layout"))
 	var background := ColorRect.new()
 	background.color = UiTokens.color("bg_deep")
-	background.set_anchors_preset(Control.PRESET_FULL_RECT)
+	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	host.add_child(background)
 
 	_render_refuge_first_screen_layer(host)
 
 	var root := VBoxContainer.new()
 	root.name = "AppShellChromeRoot"
-	root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	root.offset_left = 8 if compact else 16
 	root.offset_top = 8 if compact else 12
 	root.offset_right = -8 if compact else -16
@@ -31,7 +31,7 @@ static func render(host: Control) -> void:
 static func _render_refuge_first_screen_layer(host: Control) -> void:
 	var first_screen_root := Control.new()
 	first_screen_root.name = "RefugeFirstScreenRoot"
-	first_screen_root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	first_screen_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	first_screen_root.mouse_filter = Control.MOUSE_FILTER_PASS
 	host.add_child(first_screen_root)
 	host.set("_first_screen_root", first_screen_root)

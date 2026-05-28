@@ -58,7 +58,7 @@ static func _refuge_scene_board(host: Node, root: Control, compact: bool) -> voi
 static func _refuge_scene_background(host: Node, compact: bool) -> PanelContainer:
 	var panel := PanelContainer.new()
 	panel.name = "RefugeSceneBackground"
-	panel.set_anchors_preset(Control.PRESET_FULL_RECT)
+	panel.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	panel.add_theme_stylebox_override("panel", _refuge_scene_style(host, compact))
 	return panel
 
@@ -429,12 +429,25 @@ static func _format_resource_amount(amount: Variant) -> String:
 	return str(amount)
 
 static func _host_viewport_size(host: Node) -> Vector2:
+	var resolved_size := Vector2.ZERO
 	if host != null and host.get_tree() != null and host.get_tree().root != null:
 		var window_size := host.get_tree().root.size
 		if window_size.x > 0 and window_size.y > 0:
-			return Vector2(window_size)
+			resolved_size = Vector2(window_size)
+	if host is Control:
+		var host_size := (host as Control).size
+		if host_size.x > resolved_size.x:
+			resolved_size.x = host_size.x
+		if host_size.y > resolved_size.y:
+			resolved_size.y = host_size.y
 	if host != null and host.get_viewport() != null:
-		return host.get_viewport().get_visible_rect().size
+		var viewport_size := host.get_viewport().get_visible_rect().size
+		if resolved_size.x <= 0 and viewport_size.x > 0:
+			resolved_size.x = viewport_size.x
+		if resolved_size.y <= 0 and viewport_size.y > 0:
+			resolved_size.y = viewport_size.y
+	if resolved_size.x > 0 and resolved_size.y > 0:
+		return resolved_size
 	return Vector2(390, 844)
 
 static func _clear_node_children(parent: Node) -> void:
