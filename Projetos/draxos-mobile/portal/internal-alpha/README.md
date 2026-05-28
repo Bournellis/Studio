@@ -46,6 +46,8 @@ O upgrade de 2026-05-27 adicionou abas, assets locais e Grimorio. O script de pu
 
 O upgrade visual de 2026-05-28 troca a linguagem limpa por um hub ritual privado: hero com sala Draxos, cards com fundos de arena/base/Grimorio, moldura visual nos itens do Grimorio e assets JPG/PNG otimizados em `assets/visual/`.
 
+A limpeza visual de 2026-05-28 removeu a barra superior visivel e definiu a regra do portal: a primeira tela prioriza acao do tester; detalhes operacionais, seguranca, manifest, versao e links publicados ficam na aba Status ou no rodape.
+
 ## Guardrails
 
 - Nao colocar `service_role`, `sb_secret_...`, senha de banco ou senha de keystore no portal.
@@ -56,4 +58,4 @@ O upgrade visual de 2026-05-28 troca a linguagem limpa por um hub ritual privado
 
 ## Refinamento Futuro
 
-Fabio vai trabalhar melhor no portal depois de `T03-P18`. Ate la, esta base e suficiente para release candidate.
+Proximos refinamentos devem preservar a primeira tela orientada a acao e mover informacao tecnica para Status sempre que possivel.
