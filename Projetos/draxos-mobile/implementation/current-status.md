@@ -77,9 +77,9 @@ Links:
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal: `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
 - Stable Web: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest verified preview: `https://7cd67833.draxos-mobile-internal-alpha.pages.dev`
+- Latest verified preview: `https://ab1f2977.draxos-mobile-internal-alpha.pages.dev`
 
-The stable Cloudflare Pages domain is protected by Cloudflare Access. Anonymous public validation should use an unprotected preview or an authenticated Access session.
+The stable Cloudflare Pages domain is protected by Cloudflare Access. Anonymous public validation should use an unprotected preview or an authenticated Access session. APK/PC downloads currently use unlisted public Supabase Storage URLs so testers can download directly from mobile after passing the portal link.
 
 ## Risks And Blocks
 

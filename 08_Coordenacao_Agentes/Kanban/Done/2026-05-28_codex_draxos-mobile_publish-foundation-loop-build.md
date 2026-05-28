@@ -18,9 +18,9 @@ Publicar o build atual do Foundation Loop UX Pass 01 para Internal Alpha: Web/si
 - Android APK publicado como `debug_fallback`.
 - Supabase Storage atualizado com Web assets, APK e Windows ZIP.
 - `release/manifest` atualizado e Edge Function `release` redeployada.
-- Cloudflare Pages publicado em `https://7cd67833.draxos-mobile-internal-alpha.pages.dev`.
+- Cloudflare Pages publicado inicialmente em `https://7cd67833.draxos-mobile-internal-alpha.pages.dev` e corrigido para downloads publicos em `https://ab1f2977.draxos-mobile-internal-alpha.pages.dev`.
 - Dominio estavel permanece `https://draxos-mobile-internal-alpha.pages.dev`, protegido por Cloudflare Access.
-- Manifest remoto aponta para downloads protegidos por `release/download` e URLs assinadas temporarias.
+- Manifest remoto aponta para downloads publicos nao indexados no Supabase Storage para permitir download direto no celular.
 
 ## Artefatos
 
@@ -43,6 +43,12 @@ Publicar o build atual do Foundation Loop UX Pass 01 para Internal Alpha: Web/si
 - `build_cloudflare_pages_package.ps1`: OK.
 - `publish_internal_alpha.ps1 -Mode Upload -ConfirmRemoteMutation`: OK.
 - `wrangler pages deploy`: OK, preview `https://7cd67833.draxos-mobile-internal-alpha.pages.dev`.
+- Hotfix downloads publicos: `publish_internal_alpha.ps1 -Mode Upload -PublicDownloads`: OK.
+- Hotfix Cloudflare Pages: OK, preview `https://ab1f2977.draxos-mobile-internal-alpha.pages.dev`.
+- Hotfix manifest publico: `publish_internal_alpha.ps1 -Mode DeployManifest -PublicDownloads`: OK.
+- HEAD direto do APK publico: OK, `200`, `application/vnd.android.package-archive`, `31563411` bytes.
+- HEAD direto do ZIP publico: OK, `200`, `application/zip`, `40030744` bytes.
+- `release_artifacts_remote_smoke.ts` apos hotfix: OK; Portal/Web reconhecidos como protegidos por Cloudflare Access.
 - `publish_internal_alpha.ps1 -Mode DeployManifest -ConfirmRemoteMutation`: OK.
 - `release_manifest_smoke.ts`: OK.
 - `internal_alpha_remote_smoke.ts` com `DRAXOS_REMOTE_RELEASE_SMOKE=1`: OK.
@@ -52,7 +58,7 @@ Publicar o build atual do Foundation Loop UX Pass 01 para Internal Alpha: Web/si
 - `check_agent_ops_foundation.ps1`: OK.
 - `check_track13_readiness.ps1`: falhou apenas no drift SQL preexistente dos mirrors `server/schema/migrations` e `supabase/migrations` para `202605270003_internal_alpha_private_downloads.sql`; nao corrigido porque schema/backend esta fora deste pacote.
 
-Observacao: `release_artifacts_remote_smoke.ts` retornou `401` no APK porque o manifest atual usa downloads protegidos. A validacao correta para esse modo e `release_download_smoke.ts`, que passou e confirmou URLs assinadas temporarias para Android/PC.
+Observacao: o primeiro publish usou downloads protegidos e gerou `401` no celular sem Bearer token. O hotfix mudou APK/ZIP para URLs publicas nao indexadas no Storage, mantendo o site estavel atras de Cloudflare Access.
 
 ## Proximo Passo
 
