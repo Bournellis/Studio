@@ -23,7 +23,7 @@
 | `implementation/current-status.md` | `VIVO` | Decision snapshot: baseline, active track, risks, next step and validation. |
 | `docs/agent-operating-manual.md` | `VIVO` | Detailed agent runbook. |
 | `docs/documentation-index.md` | `VIVO` | This classification map. |
-| `implementation/tracks/track-15-mobile-ux-overhaul/current-status.md` | `VIVO` | Current Track 15 mobile UX working state. |
+| `implementation/tracks/track-16-behavior-crafting/current-status.md` | `VIVO` | Current Track 16 behavior/crafting working state. |
 | `../../08_Coordenacao_Agentes/Prioridades_Estudio.md` | `VIVO` | Portfolio source of truth. |
 | `../../08_Coordenacao_Agentes/Estado_Atual.md` | `VIVO` | Compact studio snapshot. |
 | `../README.md` | `VIVO` | Project registry. |
@@ -33,6 +33,7 @@
 | Document | Category | Role |
 |---|---|---|
 | `docs/product-vision.md` | `VIVO` | Local long-term product canon until promoted to shared canon. |
+| `docs/foundation-app-v0-audit.md` | `VIVO` | Foundation App V0 framing: real foundation, current mock and live-product gaps. |
 | `docs/product-brief.md` | `VIVO` | Short product/slice summary. |
 | `docs/game-design-document.md` | `VIVO` | Authoritative implementation GDD. |
 | `docs/design-pending.md` | `VIVO` | Only live register of unresolved design decisions. |
