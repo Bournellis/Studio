@@ -51,6 +51,7 @@ Flags antigas (`-SkipUpload`, `-UseManifestSecret`, `-SkipManifestSecret`) sem `
 | Foundation runner | `tools/validate_foundation.ps1` | Runner unico `Quick`/`Client`/`Release`/`Full` com relatorio local | Sim |
 | Release safety check | `tools/check_release_safety.ps1` | Garante publish default seguro e mutacao protegida por confirmacao | Sim |
 | Track 13 readiness | `tools/check_track13_readiness.ps1` | Garante docs/status/mirrors/budget/Kanban alinhados | Sim |
+| Agent ops readiness | `tools/check_agent_ops_foundation.ps1` | Garante entrada de agentes, indice documental, portfolio/Kanban e terminologia viva | Sim |
 | Publish script | `tools/publish_internal_alpha.ps1` | Planeja/package local por default; publica somente com modo remoto + confirmacao | `Plan`/`Package` sim; modos remotos sao publicacao |
 | Cloudflare package | `tools/build_cloudflare_pages_package.ps1` | Gera pacote local hibrido para Pages a partir de publish existente | Seguro se rodar sobre artefatos locais existentes; nao faz deploy |
 | Static hosting doc | `docs/internal-alpha-static-hosting.md` | Regras Cloudflare Pages + Supabase Storage | Sim, leitura |
@@ -69,6 +70,7 @@ Antes de qualquer publicacao futura:
 - `tools\validate_foundation.ps1 -Profile Full` verde.
 - `tools\check_release_safety.ps1` verde.
 - `tools\check_track13_readiness.ps1` verde.
+- `tools\check_agent_ops_foundation.ps1` verde enquanto Track 14 estiver ativa.
 - `publish_internal_alpha.ps1 -Mode Plan` revisado.
 - `release_manifest_smoke.ts` verde contra o alvo de release.
 - `release_artifacts_remote_smoke.ts` verde somente depois que artefatos ja existirem no remoto.
@@ -131,6 +133,7 @@ npx -y deno check server/tests/release_manifest_smoke.ts
 npx -y deno check server/tests/release_artifacts_remote_smoke.ts
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_release_safety.ps1 -ProjectDir .
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_track13_readiness.ps1 -ProjectDir .
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_agent_ops_foundation.ps1 -ProjectDir .
 ```
 
 PowerShell syntax check seguro dos scripts de release:

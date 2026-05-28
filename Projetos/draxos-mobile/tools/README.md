@@ -6,6 +6,7 @@ Ferramentas de desenvolvimento e validacao.
 - `validate_foundation.ps1` - runner unico Track 13 com perfis `Quick`, `Client`, `Release` e `Full`; gera relatorios em `build/validation/`.
 - `check_release_safety.ps1` - guarda de regressao para publish seguro, parse PowerShell e manifest defaults espelhados.
 - `check_track13_readiness.ps1` - readiness final da Track 13: docs/status, mirrors, Kanban e budget de `boot.gd`.
+- `check_agent_ops_foundation.ps1` - readiness da Track 14: entrada de agentes, indice documental, portfolio/Kanban, terminologia viva e ausencia de entrypoints obsoletos.
 - `smoke_exports.gd` - smoke leve dos presets Android Alpha, PC Windows Alpha e PC Browser Alpha.
 - `export_internal_alpha.ps1` - exporta Android APK, PC Windows ZIP e Web usando `.env.internal-alpha.local`, sem commitar config real do cliente.
 - `publish_internal_alpha.ps1` - gera plano/package local por default e so publica/remota com `Mode` explicito + `-ConfirmRemoteMutation`.
@@ -28,13 +29,14 @@ Validacao local:
 .\tools\validate_foundation.ps1 -ProjectDir . -Profile Client -GodotExe "D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe"
 .\tools\validate_foundation.ps1 -ProjectDir . -Profile Release
 .\tools\validate_foundation.ps1 -ProjectDir . -Profile Full -RequireClean:$false
-D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-mobile -s res://tools/validate.gd
-D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-mobile -s res://tools/smoke_runtime_config.gd
-D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-mobile -s res://tools/smoke_foundation_surfaces.gd
-D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-mobile -s res://tools/smoke_foundation_hardening.gd
-D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-mobile -s res://tools/smoke_dev_labs.gd
-D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-mobile -s res://tools/smoke_dev_lab_ui.gd
-D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-mobile -s res://tools/smoke_exports.gd
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_agent_ops_foundation.ps1 -ProjectDir .
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_runtime_config.gd
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_foundation_surfaces.gd
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_foundation_hardening.gd
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_dev_labs.gd
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_dev_lab_ui.gd
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_exports.gd
 ```
 
 Export Internal Alpha v0:

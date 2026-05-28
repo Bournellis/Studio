@@ -191,6 +191,8 @@ function Assert-StructuralReadiness {
         "server\tests\release_manifest_smoke.ts",
         "server\tests\release_artifacts_remote_smoke.ts",
         "server\tests\internal_alpha_remote_smoke.ts",
+        "docs\agent-operating-manual.md",
+        "docs\documentation-index.md",
         "docs\release-ops-checklist.md",
         "implementation\current-status.md"
     )) {
@@ -345,7 +347,8 @@ Invoke-Step -Name "PowerShell parse" -Stage "Quick" -Command "[Parser]::ParseFil
     )
     foreach ($optional in @(
         "tools\check_release_safety.ps1",
-        "tools\check_track13_readiness.ps1"
+        "tools\check_track13_readiness.ps1",
+        "tools\check_agent_ops_foundation.ps1"
     )) {
         if (Test-Path -LiteralPath (Join-Path $ProjectPath $optional) -PathType Leaf) {
             $scripts += $optional
@@ -436,6 +439,16 @@ if ($RunRelease) {
         }
     } else {
         Skip-Step -Name "Track 13 readiness" -Stage "Release" -Command ".\tools\check_track13_readiness.ps1" -Reason "Track 13 readiness script not created yet."
+    }
+    $agentOpsFoundation = Join-Path $ProjectPath "tools\check_agent_ops_foundation.ps1"
+    if (Test-Path -LiteralPath $agentOpsFoundation -PathType Leaf) {
+        Invoke-Step -Name "agent operations foundation" -Stage "Release" -Command ".\tools\check_agent_ops_foundation.ps1 -ProjectDir ." -ScriptBlock {
+            Invoke-External -Command "check_agent_ops_foundation.ps1" -WorkingDirectory $ProjectPath -ScriptBlock {
+                & powershell -NoProfile -ExecutionPolicy Bypass -File ".\tools\check_agent_ops_foundation.ps1" -ProjectDir "."
+            }
+        }
+    } else {
+        Skip-Step -Name "agent operations foundation" -Stage "Release" -Command ".\tools\check_agent_ops_foundation.ps1" -Reason "Track 14 agent ops script not created yet."
     }
 } else {
     Skip-Step -Name "release validation matrix" -Stage "Release" -Command "manifest/release/secrets/readiness" -Reason "Profile $Profile does not include Release."
