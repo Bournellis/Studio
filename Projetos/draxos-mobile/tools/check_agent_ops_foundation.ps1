@@ -133,6 +133,13 @@ Test-FileContains $RepoPath '08_Coordenacao_Agentes\Prioridades_Estudio.md' 'Tra
 Test-FileContains $RepoPath '08_Coordenacao_Agentes\Estado_Atual.md' 'Track 14'
 Test-FileContains $RepoPath 'Projetos\README.md' 'Track 14'
 Test-FileContains $RepoPath '08_Coordenacao_Agentes\Painel_Visual_Estudio.html' 'Track 14'
+Test-FileContains $RepoPath 'AGENTS.md' 'Track 14'
+Test-FileContains $RepoPath 'AGENTS.md' 'TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE'
+Test-FileContains $RepoPath 'AGENTS.md' 'docs/agent-operating-manual.md'
+Test-FileContains $RepoPath 'AGENTS.md' 'docs/documentation-index.md'
+Test-FileContains $RepoPath 'AGENTS.md' 'Track 13 validation/release safety'
+Test-FileDoesNotContain $RepoPath 'AGENTS.md' 'Track 03 Internal Alpha v0 completa'
+Test-FileDoesNotContain $RepoPath 'AGENTS.md' 'Track 04 pos-handoff planejada'
 Test-DoingCards
 
 if ($Failures.Count -gt 0) {
