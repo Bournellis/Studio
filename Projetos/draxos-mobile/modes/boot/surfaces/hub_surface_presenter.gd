@@ -127,6 +127,7 @@ static func _refuge_hotspot_panel(host: Node, compact: bool) -> PanelContainer:
 	var panel := _panel(host, "RefugeHotspotPanel", "bg_panel_alt", "border_default")
 	var box := _panel_box(panel, compact)
 	box.add_child(_section_label("Caminhos do Refugio", compact))
+	BaseSurfacePresenterScript.render_refuge_embedded(host, box)
 	var grid := _button_grid(compact, 2)
 	box.add_child(grid)
 	_add_route_hotspot(host, grid, compact, "Batalha", "battle_entry", "Pedir batalha e ver replay server-authoritative.", "accent_blood")
@@ -134,7 +135,6 @@ static func _refuge_hotspot_panel(host: Node, compact: bool) -> PanelContainer:
 	_add_action_hotspot(host, grid, compact, "Competicao", "show_matchmaking", "Preview de matchmaking e ranking alpha.", "status_warning")
 	_add_action_hotspot(host, grid, compact, "Loja", "show_shop", "Redeems, recompensas e compras alpha.", "accent_bone")
 	_add_route_hotspot(host, grid, compact, "Perfil", "account", "Conta, updates e detalhes do save.", "border_active")
-	BaseSurfacePresenterScript.render_refuge_embedded(host, box)
 	return panel
 
 static func _refuge_footer_panel(host: Node, compact: bool) -> PanelContainer:

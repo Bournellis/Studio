@@ -44,6 +44,10 @@ Date: 2026-05-28
   - removed the separate `Base` hotspot from Refugio;
   - embedded Refugio management actions and structure panels directly inside `Caminhos do Refugio`;
   - kept the legacy `base`/`base_management` route only as compatibility, with user-facing labels shifted to Refugio.
+- Applied Track 09B Refugio core-flow follow-up:
+  - removed the `Atualizar Refugio` requirement from the main Refugio screen;
+  - moved Refugio routine/structure content above the secondary path buttons;
+  - added automatic Refugio state sync when the screen opens with a valid session and no local snapshot.
 
 ## Guardrails Preserved
 
@@ -58,6 +62,7 @@ Date: 2026-05-28
 
 Local validation result:
 
+- Track 09B core-flow patch: `tools/validate.gd` passed with GUT `96/96` tests and `1170` asserts; `tools/smoke_mobile_presentation.gd`, `tools/smoke_foundation_hardening.gd` and `git diff --check` passed.
 - Track 09B patch: `tools/validate.gd` passed with GUT `96/96` tests and `1163` asserts; `tools/smoke_mobile_presentation.gd`, `tools/smoke_foundation_hardening.gd` and `git diff --check` passed.
 - `tools/validate.gd`: passed with GUT `95/95` tests and `1144` asserts.
 - `tools/smoke_mobile_presentation.gd`: passed.
@@ -71,4 +76,4 @@ Local validation result:
 
 ## Next Step
 
-Manual visual QA in Godot/Android export should focus on the slim Entry auth flow, create-account popup, Refugio Caminhos at the top with management embedded, and battle summary ergonomics.
+Manual visual QA in Godot/Android export should focus on the slim Entry auth flow, create-account popup, Refugio Caminhos with routine/structures immediately visible, and battle summary ergonomics.

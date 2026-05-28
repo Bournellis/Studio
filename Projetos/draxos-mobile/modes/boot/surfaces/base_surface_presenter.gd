@@ -6,7 +6,7 @@ const BASE_STRUCTURE_IDS := ["altar_das_almas", "nucleo_energia", "pocos_sangue"
 
 static func render(host: Node) -> void:
 	_add_body_text(host, "Refugio: predios permanentes, coleta offline e uma fila de construcao server-authoritative.")
-	_add_action_button(host, "Atualizar Refugio", "show_base")
+	_add_action_button(host, "Sincronizar Refugio", "show_base")
 	_add_action_button(host, "Coletar producao", "collect_base", "Coletar a producao offline acumulada do Refugio?")
 	_add_action_button(host, "Comprar Energia alpha", "buy_energy_pack_alpha", "Gastar 80 Diamantes para comprar 80 Energia no save ativo?")
 	host.set("_timeline_label", _add_output_label(host, ""))
@@ -18,16 +18,6 @@ static func render(host: Node) -> void:
 	render_state(host)
 
 static func render_refuge_embedded(host: Node, parent: VBoxContainer) -> void:
-	var actions := GridContainer.new()
-	actions.columns = 1
-	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	actions.add_theme_constant_override("h_separation", 8)
-	actions.add_theme_constant_override("v_separation", 8)
-	parent.add_child(actions)
-	actions.add_child(_embedded_action_button(host, "Atualizar Refugio", "show_base"))
-	actions.add_child(_embedded_action_button(host, "Coletar producao", "collect_base", "Coletar a producao offline acumulada do Refugio?"))
-	actions.add_child(_embedded_action_button(host, "Comprar Energia alpha", "buy_energy_pack_alpha", "Gastar 80 Diamantes para comprar 80 Energia no save ativo?"))
-
 	var timeline := _base_label(host, "", "text_secondary")
 	parent.add_child(timeline)
 	host.set("_timeline_label", timeline)
@@ -39,6 +29,15 @@ static func render_refuge_embedded(host: Node, parent: VBoxContainer) -> void:
 	host.set("_base_state_container", base_state_container)
 	render_state(host)
 
+	var actions := GridContainer.new()
+	actions.columns = 2 if not _compact_layout(host) else 1
+	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	actions.add_theme_constant_override("h_separation", 8)
+	actions.add_theme_constant_override("v_separation", 8)
+	parent.add_child(actions)
+	actions.add_child(_embedded_action_button(host, "Coletar producao", "collect_base", "Coletar a producao offline acumulada do Refugio?"))
+	actions.add_child(_embedded_action_button(host, "Comprar Energia alpha", "buy_energy_pack_alpha", "Gastar 80 Diamantes para comprar 80 Energia no save ativo?"))
+
 static func render_state(host: Node, collected: Dictionary = {}) -> void:
 	var timeline := _timeline_label(host)
 	if timeline == null:
@@ -48,12 +47,12 @@ static func render_state(host: Node, collected: Dictionary = {}) -> void:
 		_clear_node_children(container)
 	var base := SessionStore.base_state
 	if base.is_empty():
-		timeline.text = "Refugio ainda nao carregado. Use Atualizar Refugio."
+		timeline.text = _empty_refuge_timeline_text()
 		if container != null:
 			container.add_child(_base_info_panel(
 				host,
-				"Refugio nao carregado",
-				"Use Atualizar Refugio para buscar os predios, a fila de construcao e os recursos no servidor."
+				"Rotina do Refugio",
+				_empty_refuge_body_text()
 			))
 		return
 
@@ -296,6 +295,20 @@ static func _embedded_action_button(host: Node, text: String, action_id: String,
 	)
 	_register_action_button(host, action_id, button)
 	return button
+
+static func _empty_refuge_timeline_text() -> String:
+	if SessionStore.has_valid_access_token():
+		return "Refugio sincronizando automaticamente..."
+	if SessionStore.is_progression_lab_local_only():
+		return "Refugio local do Lab sem snapshot carregado."
+	return "Refugio pronto para carregar depois da entrada."
+
+static func _empty_refuge_body_text() -> String:
+	if SessionStore.has_valid_access_token():
+		return "Carregando predios, coleta e fila de construcao sem exigir uma acao manual."
+	if SessionStore.is_progression_lab_local_only():
+		return "Carregue um snapshot do Lab para ver rotina, predios e proximos upgrades aqui."
+	return "Entre ou use Guest dev para sincronizar rotina, predios e proximos upgrades aqui."
 
 static func _ensure_selected_base_structure(host: Node, structures: Array) -> void:
 	var selected_id := _selected_base_structure_id(host)

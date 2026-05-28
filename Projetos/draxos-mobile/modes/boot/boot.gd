@@ -442,6 +442,7 @@ func _render_entry_screen() -> void:
 
 func _render_refuge_screen() -> void:
 	HubSurfacePresenterScript.render_refuge(self)
+	call_deferred("_sync_refuge_state_if_needed")
 
 func _render_account_screen() -> void:
 	HubAccountSurfacePresenterScript.render_account_panel(self)
@@ -1301,6 +1302,17 @@ func _show_base() -> void:
 	SessionStore.save_cache()
 	_set_busy(false, "Refugio recuperado.")
 	_render_base_state()
+
+func _sync_refuge_state_if_needed() -> void:
+	if _current_screen != SCREEN_REFUGE:
+		return
+	if _is_busy or not SessionStore.base_state.is_empty():
+		return
+	if SessionStore.is_progression_lab_local_only():
+		return
+	if not SessionStore.has_valid_access_token():
+		return
+	await _show_base()
 
 func _collect_base() -> void:
 	if not _require_account("Entre com email ou use guest dev antes de coletar o Refugio."):
