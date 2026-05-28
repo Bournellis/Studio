@@ -12,9 +12,9 @@ config_version=5
 
 config/name="DraxosMobile"
 config/version="0.0.1-alpha.0"
-config/icon="res://icon.svg"
 run/main_scene="res://modes/boot/boot.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
+config/icon="res://icon.svg"
 
 [autoload]
 
