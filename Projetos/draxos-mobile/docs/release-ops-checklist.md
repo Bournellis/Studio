@@ -1,22 +1,45 @@
 # DraxosMobile - Release Ops Checklist
 
-- Data: `2026-05-27`
-- Track: `Track 05 - Foundation Stabilization And Asset/Service Readiness`
-- Status: `T05-G_READY_FOR_INTEGRATION`
-- Escopo: readiness operacional de release para Android, PC e Web, sem publicar build nova.
+- Data: `2026-05-28`
+- Track: `Track 13 - Foundation Validation And Release Safety`
+- Status: `TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`
+- Escopo: readiness operacional de release para Android, PC e Web, com safety por default e sem publicar build nova.
 
-## Guardrails T05-G
+## Guardrails Track 13
 
-- Nao publicar, redeployar, alterar manifest remoto real ou subir arquivos para Storage nesta trilha.
-- Nao gerar build final como parte da validacao T05-G.
+- Nao publicar, redeployar, alterar manifest remoto real ou subir arquivos para Storage por default.
+- Nao gerar build final como parte da validacao Track 13.
 - Nao tocar em secrets, service role, senha de banco, senha de keystore ou `.env.internal-alpha.local`.
 - Usar apenas publishable/client key em smokes remotos.
-- Qualquer check remoto nesta trilha deve ser somente leitura: `GET`, `HEAD` ou auth/smoke explicitamente solicitado.
-- `publish_internal_alpha.ps1`, `supabase db push`, `supabase functions deploy`, `supabase secrets set`, Wrangler deploy e upload Cloudflare sao comandos de publicacao, nao validacao segura T05-G.
+- Qualquer check remoto automatico deve ser somente leitura: `GET`, `HEAD` ou auth/smoke explicitamente solicitado.
+- `supabase db push`, `supabase functions deploy`, `supabase secrets set`, Wrangler deploy e upload Cloudflare sao comandos de publicacao, nao validacao segura.
+- `publish_internal_alpha.ps1` so pode mutar remoto em `Mode Upload`, `Mode DeployManifest` ou `Mode FullPublish` com `-ConfirmRemoteMutation`.
+
+## Contrato Track 13 De Modos
+
+| Modo | Mutacao remota | Saida | Uso |
+|---|---:|---|---|
+| `Mode Plan` | Nao | `build/internal-alpha/release-plan.json` e `.md` | Default seguro, revisao local |
+| `Mode Package` | Nao | `build/internal-alpha/publish/` | Preparar pacote local |
+| `Mode Upload` | Sim, exige `-ConfirmRemoteMutation` | Storage Supabase | Upload de artefatos ja aprovados |
+| `Mode DeployManifest` | Sim, exige `-ConfirmRemoteMutation` | Manifest override/deploy `release` | Alinhar manifest remoto |
+| `Mode FullPublish` | Sim, exige `-ConfirmRemoteMutation` | Upload + manifest/deploy + verificacoes | Publicacao completa aprovada |
+
+Comandos:
+
+```powershell
+.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Plan
+.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Package
+.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Upload -ConfirmRemoteMutation
+.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode DeployManifest -ConfirmRemoteMutation
+.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode FullPublish -ConfirmRemoteMutation
+```
+
+Flags antigas (`-SkipUpload`, `-UseManifestSecret`, `-SkipManifestSecret`) sem `-Mode` ficam protegidas: executam apenas `Mode Plan` e emitem aviso.
 
 ## Inventario Atual
 
-| Area | Fonte | Papel | Seguro Em T05-G |
+| Area | Fonte | Papel | Seguro Em Track 13 |
 |---|---|---|---|
 | Version gate client | `core/project_info.gd`, `tests/client/test_project_info.gd` | Canal, versao, version code, schema e bloqueio por `minimum_supported_version_code` | Sim, via `validate.gd`/GUT se necessario |
 | Manifest contract | `docs/contracts/update-manifest.md` | Payload autoritativo de `GET /release/manifest` | Sim, leitura |
@@ -25,10 +48,14 @@
 | Artifact smoke remoto | `server/tests/release_artifacts_remote_smoke.ts` | Valida manifest, downloads APK/ZIP via `HEAD` ou `GET` parcial, Portal e Web HTML existentes | Sim, somente leitura, exige URL e publishable key |
 | Export presets | `export_presets.cfg`, `tools/smoke_exports.gd` | Android Alpha, PC Windows Alpha e PC Browser Alpha | Sim |
 | Export script | `tools/export_internal_alpha.ps1` | Gera APK, PC ZIP, Web e metadata local | Syntax check seguro. Execucao gera builds, usar so em release real |
-| Publish script | `tools/publish_internal_alpha.ps1` | Prepara publish dir, publica Storage, atualiza manifest override e redeploya `release` | Syntax check seguro. Execucao publica/redeploya |
+| Foundation runner | `tools/validate_foundation.ps1` | Runner unico `Quick`/`Client`/`Release`/`Full` com relatorio local | Sim |
+| Release safety check | `tools/check_release_safety.ps1` | Garante publish default seguro e mutacao protegida por confirmacao | Sim |
+| Track 13 readiness | `tools/check_track13_readiness.ps1` | Garante docs/status/mirrors/budget/Kanban alinhados | Sim |
+| Agent ops readiness | `tools/check_agent_ops_foundation.ps1` | Garante entrada de agentes, indice documental, portfolio/Kanban e terminologia viva | Sim |
+| Publish script | `tools/publish_internal_alpha.ps1` | Planeja/package local por default; publica somente com modo remoto + confirmacao | `Plan`/`Package` sim; modos remotos sao publicacao |
 | Cloudflare package | `tools/build_cloudflare_pages_package.ps1` | Gera pacote local hibrido para Pages a partir de publish existente | Seguro se rodar sobre artefatos locais existentes; nao faz deploy |
 | Static hosting doc | `docs/internal-alpha-static-hosting.md` | Regras Cloudflare Pages + Supabase Storage | Sim, leitura |
-| Supabase remote doc | `docs/supabase-remote-tutorial.md` | Setup, deploy e smokes remotos | Leitura. Deploy/comandos administrativos ficam fora de T05-G |
+| Supabase remote doc | `docs/supabase-remote-tutorial.md` | Setup, deploy e smokes remotos | Leitura. Deploy/comandos administrativos ficam fora de validacao segura |
 
 ## Checklist Comum Release-Ready
 
@@ -40,8 +67,15 @@ Antes de qualquer publicacao futura:
 - `tools/smoke_exports.gd` verde.
 - `tools/validate.gd` e GUT completos verdes quando houver mudanca de runtime/client.
 - Deno check/lint de `server/functions` e `supabase/functions` verdes quando houver mudanca de server/manifest.
+- `tools\validate_foundation.ps1 -Profile Full` verde.
+- `tools\check_release_safety.ps1` verde.
+- `tools\check_track13_readiness.ps1` verde.
+- `tools\check_agent_ops_foundation.ps1` verde enquanto Track 14 estiver ativa.
+- `publish_internal_alpha.ps1 -Mode Plan` revisado.
 - `release_manifest_smoke.ts` verde contra o alvo de release.
 - `release_artifacts_remote_smoke.ts` verde somente depois que artefatos ja existirem no remoto.
+- Em dominio Cloudflare Pages protegido, usar preview liberado ou rodar o smoke com `DRAXOS_RELEASE_ALLOW_CLOUDFLARE_ACCESS=1` apenas para reconhecer a tela de Access como protecao esperada.
+- Para conferir hashes completos de APK/ZIP, rodar o smoke com `DRAXOS_RELEASE_FULL_HASH=1`; sem essa flag ele usa `HEAD`/`GET` parcial para ser rapido.
 - `service_role`, `sb_secret_`, `sb_service_`, senha de banco e senha de keystore ausentes de cliente, portal, APK, ZIP, Web build, manifest e Git.
 - `build/internal-alpha/release-artifacts.json` ou relatorio equivalente contem hashes SHA256 atuais.
 - Manifest remoto planejado referencia exatamente os hashes/URLs dos artefatos aprovados.
@@ -87,15 +121,19 @@ Release-ready Web exige:
 - `https://draxos-mobile-internal-alpha.pages.dev/web/index.html` abre Web build.
 - Smoke somente leitura `release_artifacts_remote_smoke.ts` valida Portal com `DraxosMobile` e Web com `GODOT_CONFIG`.
 
-## Sequencia De Validacao Segura T05-G
+## Sequencia De Validacao Segura Track 13
 
-Use esta sequencia em worktree de Track 05 sem publicar nada:
+Use esta sequencia em worktree de Track 13 sem publicar nada:
 
 ```powershell
 cd <WORKTREE>\Projetos\draxos-mobile
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile Full -RequireClean:$false
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <WORKTREE>\Projetos\draxos-mobile -s res://tools/smoke_exports.gd
 npx -y deno check server/tests/release_manifest_smoke.ts
 npx -y deno check server/tests/release_artifacts_remote_smoke.ts
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_release_safety.ps1 -ProjectDir .
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_track13_readiness.ps1 -ProjectDir .
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_agent_ops_foundation.ps1 -ProjectDir .
 ```
 
 PowerShell syntax check seguro dos scripts de release:
@@ -107,6 +145,10 @@ if ($errors.Count -gt 0) { throw $errors }
 [System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path .\tools\publish_internal_alpha.ps1), [ref]$null, [ref]$errors) | Out-Null
 if ($errors.Count -gt 0) { throw $errors }
 [System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path .\tools\build_cloudflare_pages_package.ps1), [ref]$null, [ref]$errors) | Out-Null
+if ($errors.Count -gt 0) { throw $errors }
+[System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path .\tools\validate_foundation.ps1), [ref]$null, [ref]$errors) | Out-Null
+if ($errors.Count -gt 0) { throw $errors }
+[System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path .\tools\check_release_safety.ps1), [ref]$null, [ref]$errors) | Out-Null
 if ($errors.Count -gt 0) { throw $errors }
 ```
 
@@ -121,7 +163,15 @@ Remote read-only smoke, somente com URL remota e publishable key local:
 ```powershell
 $env:SUPABASE_URL='https://<project-ref>.supabase.co'
 $env:SUPABASE_PUBLISHABLE_KEY='sb_publishable_<public-key>'
+$env:DRAXOS_RELEASE_ALLOW_CLOUDFLARE_ACCESS='1'
 npx -y deno run --allow-net --allow-env server/tests/release_artifacts_remote_smoke.ts
+```
+
+Hash completo opcional para APK/ZIP:
+
+```powershell
+$env:DRAXOS_RELEASE_FULL_HASH='1'
+npx -y deno run --allow-net --allow-env --allow-read server/tests/release_artifacts_remote_smoke.ts
 ```
 
 Encerrar sempre com:
@@ -130,29 +180,31 @@ Encerrar sempre com:
 git diff --check
 ```
 
-Validado nesta branch em `2026-05-27`:
+Validado nesta branch em `2026-05-28`:
 
-- Pass: `tools/smoke_exports.gd` (com avisos de cache/autoload pre-existentes em worktree fresca antes do OK).
-- Pass: `npx -y deno task --cwd supabase/functions check`.
-- Pass: `npx -y deno task --cwd server/functions check`.
-- Pass: `npx -y deno check server/tests/release_artifacts_remote_smoke.ts`.
-- Pass: `npx -y deno lint server/tests/release_artifacts_remote_smoke.ts`.
-- Pass: parse seguro de `export_internal_alpha.ps1`, `publish_internal_alpha.ps1` e `build_cloudflare_pages_package.ps1`.
+- Pass: `tools/validate.gd` e GUT client 103 tests / 1662 asserts.
+- Pass: `tools/validate_foundation.ps1 -Profile Client`.
+- Pass: `tools/check_release_safety.ps1`.
+- Pass: `publish_internal_alpha.ps1 -Mode Plan` sem mutacao remota.
+- Pass: `publish_internal_alpha.ps1 -Mode Upload` sem confirmacao bloqueia antes de rede.
+- Pass: Deno check de smokes de release.
 - Pass: `git diff --check`.
 
 ## Sequencia De Publicacao Futura
 
-Esta sequencia fica fora de T05-G e deve ser usada apenas em uma tarefa de release aprovada:
+Esta sequencia fica fora da validacao automatica segura e deve ser usada apenas em uma tarefa de release aprovada:
 
 1. Rodar validacao full/release local.
 2. Exportar Android, PC e Web com `tools/export_internal_alpha.ps1`.
 3. Revisar hashes em `build/internal-alpha/release-artifacts.json`.
-4. Publicar APK/PC ZIP e preparar publish dir com `tools/publish_internal_alpha.ps1`.
-5. Gerar pacote Cloudflare com `tools/build_cloudflare_pages_package.ps1`.
-6. Publicar pacote no Cloudflare Pages por fluxo aprovado.
-7. Rodar `tools/publish_internal_alpha.ps1 -StaticSiteBaseUrl <url> -SkipUpload -UseManifestSecret` para alinhar manifest remoto.
-8. Rodar smokes remotos, incluindo `release_manifest_smoke.ts`, `release_artifacts_remote_smoke.ts` e `internal_alpha_remote_smoke.ts` com flags necessarias.
-9. Registrar relatorio de export/publicacao e atualizar handoff.
+4. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Plan -StaticSiteBaseUrl <url>` e revisar o plano.
+5. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Package -StaticSiteBaseUrl <url>` para preparar pacote local.
+6. Gerar pacote Cloudflare com `tools/build_cloudflare_pages_package.ps1`.
+7. Publicar pacote no Cloudflare Pages por fluxo aprovado.
+8. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Upload -ConfirmRemoteMutation -StaticSiteBaseUrl <url>` para Storage.
+9. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode DeployManifest -ConfirmRemoteMutation -StaticSiteBaseUrl <url>` para manifest/deploy.
+10. Rodar smokes remotos, incluindo `release_manifest_smoke.ts`, `release_artifacts_remote_smoke.ts` e `internal_alpha_remote_smoke.ts` com flags necessarias.
+11. Registrar relatorio de export/publicacao e atualizar handoff.
 
 ## Validacoes Remotas Que Exigem Credenciais
 
@@ -162,7 +214,9 @@ Esta sequencia fica fora de T05-G e deve ser usada apenas em uma tarefa de relea
 | `release_manifest_smoke.ts` remoto | `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` | Nao | Pode rodar contra local ou remoto conforme env |
 | `internal_alpha_remote_smoke.ts` healthcheck/release | `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` | Nao | Sem flags de auth, so healthcheck; com `DRAXOS_REMOTE_RELEASE_SMOKE=1`, tambem manifest |
 | `internal_alpha_remote_smoke.ts` email/account | `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, convite alpha | Sim, cria usuario/save de teste | Usar so quando explicitamente autorizado |
-| `publish_internal_alpha.ps1` | Project ref, Supabase CLI auth, publishable key e possivel manifest secret | Sim | Publica Storage, secrets e redeploya `release` |
+| `publish_internal_alpha.ps1 -Mode Plan` | Opcional URL/project ref para plano completo | Nao | Gera plano local e nao chama Supabase mutante |
+| `publish_internal_alpha.ps1 -Mode Package` | Artefatos locais e opcional URL/project ref | Nao | Prepara pacote local |
+| `publish_internal_alpha.ps1 -Mode Upload/DeployManifest/FullPublish -ConfirmRemoteMutation` | Project ref, Supabase CLI auth, publishable key e possivel manifest override | Sim | Publica somente em tarefa aprovada |
 | Cloudflare Pages deploy | Conta Cloudflare | Sim | Publica Portal/Web |
 
 ## Red Flags
@@ -172,12 +226,12 @@ Esta sequencia fica fora de T05-G e deve ser usada apenas em uma tarefa de relea
 - Portal/Web final hospedado diretamente no Supabase Storage.
 - APK debug fallback usado sem estar em `known_issues`.
 - Smoke remoto usa `service_role` ou URL local.
-- Script de publicacao foi executado em tarefa marcada como "sem publicar".
+- Script de publicacao remota foi executado sem `-ConfirmRemoteMutation`.
+- Script sem `-Mode` publicou algo em vez de gerar apenas `Plan`.
 - Release altera schema, economia, assets finais ou servicos novos junto com artefatos.
 
-## Handoff Para T05-H
+## Handoff Pos-Track 13
 
-- Integrar este checklist com a matriz de validacao da Track 05.
-- Decidir se `release_artifacts_remote_smoke.ts` entra no pacote `remote` oficial.
-- Manter `publish_internal_alpha.ps1` fora dos checks automaticos de T05, salvo tarefa de release explicitamente aprovada.
-- Atualizar o status da Track 05 somente na integracao final, para evitar conflito com worktrees paralelas.
+- Executar walkthrough manual real via `docs/track-13-manual-walkthrough-gate.md`.
+- Rodar uma rodada real de `Mode Package` com artefatos frescos antes de qualquer nova publicacao.
+- Manter remoto read-only opt-in no runner; mutacao remota continua exigindo tarefa aprovada e `-ConfirmRemoteMutation`.

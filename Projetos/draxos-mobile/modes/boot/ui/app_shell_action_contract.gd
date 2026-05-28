@@ -1,0 +1,130 @@
+class_name DraxosAppShellActionContract
+extends RefCounted
+
+const RouteContract := preload("res://modes/boot/ui/app_shell_route_contract.gd")
+
+const ACTION_ENTER_GUEST := "enter_guest"
+const ACTION_ENTER_REFUGE := "enter_refuge"
+const ACTION_OPEN_CREATE_ACCOUNT := "open_create_account"
+const ACTION_CHECK_UPDATE := "check_update"
+const ACTION_EMAIL_SIGN_UP := "email_sign_up"
+const ACTION_EMAIL_SIGN_IN := "email_sign_in"
+const ACTION_REFRESH_SESSION := "refresh_session"
+const ACTION_RESET_SESSION := "reset_session"
+const ACTION_RESET_ACTIVE_SAVE := "reset_active_save"
+const ACTION_SELECT_SAVE_NORMAL := "select_save_normal"
+const ACTION_SELECT_SAVE_PROGRESSION_LAB := "select_save_progression_lab"
+const ACTION_OPEN_BATTLE_LAB := "open_battle_lab"
+const ACTION_OPEN_PROGRESSION_LAB := "open_progression_lab"
+const ACTION_REQUEST_BATTLE := RouteContract.ACTION_REQUEST_BATTLE
+const ACTION_SHOW_LATEST_BATTLE := "show_latest_battle"
+const ACTION_SHOW_BATTLE_HISTORY := RouteContract.ACTION_SHOW_BATTLE_HISTORY
+const ACTION_SKIP_REPLAY := RouteContract.ACTION_SKIP_REPLAY
+const ACTION_RETURN_REFUGE := "return_refuge"
+const ACTION_REPLAY_LATEST := RouteContract.ACTION_REPLAY_LATEST
+const ACTION_SHOW_CURRENT_BATTLE_LOGS := RouteContract.ACTION_SHOW_CURRENT_BATTLE_LOGS
+const ACTION_RETURN_BATTLE_SUMMARY := RouteContract.ACTION_RETURN_BATTLE_SUMMARY
+const ACTION_SHOW_BASE := "show_base"
+const ACTION_COLLECT_BASE := "collect_base"
+const ACTION_BUY_ENERGY_PACK_ALPHA := "buy_energy_pack_alpha"
+const ACTION_UPGRADE_NUCLEO := "upgrade_nucleo"
+const ACTION_SHOW_SOCIAL := "show_social"
+const ACTION_ADD_FRIEND := "add_friend"
+const ACTION_CREATE_GUILD := "create_guild"
+const ACTION_JOIN_GUILD := "join_guild"
+const ACTION_SEND_GUILD_CHAT := "send_guild_chat"
+const ACTION_SHOW_MATCHMAKING := "show_matchmaking"
+const ACTION_SHOW_RANKING := "show_ranking"
+const ACTION_SHOW_SHOP := "show_shop"
+const ACTION_BUY_PREMIUM_ALPHA := "buy_premium_alpha"
+const ACTION_GRANT_DIAMOND_ALPHA := "grant_diamond_alpha"
+const ACTION_CLAIM_DAILY_REWARD := "claim_daily_reward"
+
+const PREFIX_SELECT_BASE_STRUCTURE := "select_base_structure:"
+const PREFIX_UPGRADE_BASE_STRUCTURE := "upgrade_base_structure:"
+const PREFIX_SHOP_PURCHASE := "shop_purchase:"
+const PREFIX_CLAIM_REWARD := "claim_reward:"
+const PREFIX_BATTLE_REPLAY := RouteContract.ACTION_BATTLE_REPLAY_PREFIX
+
+const PRODUCT_ALPHA_ENERGY_PACK := "alpha_energy_pack_small"
+const PRODUCT_ALPHA_BATTLE_PASS_PREMIUM := "alpha_battle_pass_premium"
+const PRODUCT_ALPHA_REDEEM_MEDIUM := "alpha_redeem_medium"
+const REWARD_DAILY_COLLECT_BASE := "daily_collect_base"
+const STRUCTURE_NUCLEO_ENERGIA := "nucleo_energia"
+
+const _UPDATE_GATE_ALLOWED_ACTIONS := {
+	ACTION_CHECK_UPDATE: true,
+	ACTION_RESET_SESSION: true,
+	ACTION_SELECT_SAVE_NORMAL: true,
+	ACTION_SELECT_SAVE_PROGRESSION_LAB: true,
+	ACTION_OPEN_BATTLE_LAB: true,
+	ACTION_OPEN_PROGRESSION_LAB: true,
+	ACTION_SKIP_REPLAY: true,
+	ACTION_RETURN_REFUGE: true,
+	ACTION_REPLAY_LATEST: true,
+}
+
+static func action_payload(
+	action_id: String,
+	screen: String,
+	save_type: String,
+	has_account: bool,
+	offline: bool
+) -> Dictionary:
+	return {
+		"action_id": action_id,
+		"screen": screen,
+		"save_type": save_type,
+		"has_account": has_account,
+		"offline": offline,
+	}
+
+static func update_gate_blocks_action(action_id: String, update_gate: Dictionary, replay_running: bool) -> bool:
+	if not bool(update_gate.get("block_online", false)):
+		return false
+	if replay_running and is_allowed_during_replay(action_id):
+		return false
+	if bool(_UPDATE_GATE_ALLOWED_ACTIONS.get(action_id.strip_edges(), false)):
+		return false
+	if is_select_base_structure(action_id):
+		return false
+	return true
+
+static func is_allowed_during_replay(action_id: String) -> bool:
+	return RouteContract.is_safe_replay_action(action_id)
+
+static func is_select_base_structure(action_id: String) -> bool:
+	return action_id.strip_edges().begins_with(PREFIX_SELECT_BASE_STRUCTURE)
+
+static func is_upgrade_base_structure(action_id: String) -> bool:
+	return action_id.strip_edges().begins_with(PREFIX_UPGRADE_BASE_STRUCTURE)
+
+static func is_shop_purchase(action_id: String) -> bool:
+	return action_id.strip_edges().begins_with(PREFIX_SHOP_PURCHASE)
+
+static func is_claim_reward(action_id: String) -> bool:
+	return action_id.strip_edges().begins_with(PREFIX_CLAIM_REWARD)
+
+static func is_battle_replay(action_id: String) -> bool:
+	return action_id.strip_edges().begins_with(PREFIX_BATTLE_REPLAY)
+
+static func select_base_structure_action(structure_id: String) -> String:
+	return "%s%s" % [PREFIX_SELECT_BASE_STRUCTURE, structure_id.strip_edges()]
+
+static func upgrade_base_structure_action(structure_id: String) -> String:
+	return "%s%s" % [PREFIX_UPGRADE_BASE_STRUCTURE, structure_id.strip_edges()]
+
+static func shop_purchase_action(product_id: String) -> String:
+	return "%s%s" % [PREFIX_SHOP_PURCHASE, product_id.strip_edges()]
+
+static func claim_reward_action(reward_id: String) -> String:
+	return "%s%s" % [PREFIX_CLAIM_REWARD, reward_id.strip_edges()]
+
+static func battle_replay_action(battle_id: String) -> String:
+	return "%s%s" % [PREFIX_BATTLE_REPLAY, battle_id.strip_edges()]
+
+static func action_value(action_id: String) -> String:
+	var candidate := action_id.strip_edges()
+	if not candidate.contains(":"):
+		return ""
+	return candidate.get_slice(":", 1).strip_edges()

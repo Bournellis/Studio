@@ -2,6 +2,8 @@ extends GutTest
 
 const BootScreenScript = preload("res://modes/boot/boot.gd")
 const AppShellRouteContractScript = preload("res://modes/boot/ui/app_shell_route_contract.gd")
+const AppShellActionContractScript = preload("res://modes/boot/ui/app_shell_action_contract.gd")
+const AppShellErrorContractScript = preload("res://modes/boot/ui/app_shell_error_contract.gd")
 const BaseSurfacePresenterScript = preload("res://modes/boot/surfaces/base_surface_presenter.gd")
 const BattleReplayPresenterScript = preload("res://modes/boot/surfaces/battle_replay_presenter.gd")
 const MobileUiContractScript = preload("res://modes/boot/ui/mobile_ui_contract.gd")
@@ -96,6 +98,57 @@ func test_app_shell_route_contract_manages_back_stack_without_boot_ui() -> void:
 	assert_true(history.is_empty())
 	assert_eq(AppShellRouteContractScript.clear_for_root_return(history), "entry")
 	assert_eq(AppShellRouteContractScript.clear_for_refuge_return(history), "refuge")
+
+func test_app_shell_error_contract_normalizes_known_errors_without_boot_ui() -> void:
+	var nested := {
+		"body": {
+			"error": {
+				"code": "INVALID_PRODUCT",
+				"message": "Raw backend text.",
+			},
+		},
+	}
+	var error_payload := AppShellErrorContractScript.extract_error(nested)
+
+	assert_eq(error_payload.get("code"), "INVALID_PRODUCT")
+	var friendly_message := AppShellErrorContractScript.friendly_message(
+		str(error_payload.get("code", "")),
+		str(error_payload.get("message", ""))
+	)
+	assert_eq(
+		friendly_message,
+		"Produto alpha nao encontrado no catalogo atual."
+	)
+	assert_true(AppShellErrorContractScript.is_network_error("NETWORK_UNAVAILABLE"))
+	assert_false(AppShellErrorContractScript.is_network_error("INVALID_PRODUCT"))
+	assert_eq(
+		AppShellErrorContractScript.friendly_message("UNKNOWN_CODE", "Raw backend text."),
+		"UNKNOWN_CODE: Raw backend text."
+	)
+
+func test_app_shell_action_contract_centralizes_online_gates_without_boot_ui() -> void:
+	var required_update := {"block_online": true}
+
+	assert_true(AppShellActionContractScript.update_gate_blocks_action(AppShellActionContractScript.ACTION_ENTER_GUEST, required_update, false))
+	assert_true(AppShellActionContractScript.update_gate_blocks_action(AppShellActionContractScript.ACTION_SHOW_SHOP, required_update, false))
+	assert_true(AppShellActionContractScript.update_gate_blocks_action(AppShellActionContractScript.shop_purchase_action("alpha_redeem_medium"), required_update, false))
+	assert_false(AppShellActionContractScript.update_gate_blocks_action(AppShellActionContractScript.ACTION_CHECK_UPDATE, required_update, false))
+	assert_false(AppShellActionContractScript.update_gate_blocks_action(AppShellActionContractScript.ACTION_RESET_SESSION, required_update, false))
+	assert_false(AppShellActionContractScript.update_gate_blocks_action(AppShellActionContractScript.ACTION_SELECT_SAVE_NORMAL, required_update, false))
+	assert_false(AppShellActionContractScript.update_gate_blocks_action(AppShellActionContractScript.ACTION_SELECT_SAVE_PROGRESSION_LAB, required_update, false))
+	assert_false(AppShellActionContractScript.update_gate_blocks_action(AppShellActionContractScript.ACTION_OPEN_BATTLE_LAB, required_update, false))
+	assert_false(AppShellActionContractScript.update_gate_blocks_action(AppShellActionContractScript.select_base_structure_action("nucleo_energia"), required_update, false))
+
+	assert_true(AppShellActionContractScript.is_allowed_during_replay(AppShellActionContractScript.ACTION_SKIP_REPLAY))
+	assert_false(AppShellActionContractScript.is_allowed_during_replay(AppShellActionContractScript.ACTION_SHOW_LATEST_BATTLE))
+	assert_eq(AppShellActionContractScript.action_value(AppShellActionContractScript.upgrade_base_structure_action("altar_das_almas")), "altar_das_almas")
+	assert_eq(AppShellActionContractScript.action_payload("show_shop", "shop", "normal", true, false), {
+		"action_id": "show_shop",
+		"screen": "shop",
+		"save_type": "normal",
+		"has_account": true,
+		"offline": false,
+	})
 
 func test_boot_back_stack_returns_nested_routes_to_refugio_root() -> void:
 	var boot = BootScreenScript.new()
@@ -434,6 +487,38 @@ func test_boot_surface_presenters_keep_render_only_contract() -> void:
 			assert_false(
 				source.contains(fragment),
 				"%s must stay render-only and host-owned for '%s'" % [script_path, fragment]
+			)
+
+func test_boot_decomposition_keeps_shell_budget_and_boundaries() -> void:
+	var boot_source := FileAccess.get_file_as_string("res://modes/boot/boot.gd")
+	var line_count := boot_source.split("\n").size()
+	assert_true(line_count <= 1500, "boot.gd must stay under the Track 12 shell budget; got %d lines" % line_count)
+	assert_true(boot_source.contains("app_shell_action_contract.gd"))
+	assert_true(boot_source.contains("account_session_flow.gd"))
+	assert_true(boot_source.contains("surface_action_flow.gd"))
+	assert_true(boot_source.contains("battle_lifecycle_flow.gd"))
+	assert_true(boot_source.contains("surface_ui_helpers.gd"))
+	assert_false(boot_source.contains("SupabaseClient.fetch_base_state"))
+	assert_false(boot_source.contains("SupabaseClient.collect_base"))
+	assert_false(boot_source.contains("SupabaseClient.fetch_social_state"))
+	assert_false(boot_source.contains("SupabaseClient.request_battle"))
+
+func test_boot_action_ids_are_centralized_in_contract() -> void:
+	for script_path: String in _action_consumer_script_paths():
+		var source := FileAccess.get_file_as_string(script_path)
+		for action_literal: String in _centralized_action_literals():
+			assert_false(
+				source.contains("\"%s\"" % action_literal) or source.contains("\"%s" % action_literal),
+				"%s must use AppShellActionContractScript for action id '%s'" % [script_path, action_literal]
+			)
+
+func test_boot_flows_do_not_create_visual_controls() -> void:
+	for script_path: String in _flow_script_paths():
+		var source := FileAccess.get_file_as_string(script_path)
+		for fragment: String in _forbidden_flow_ui_fragments():
+			assert_false(
+				source.contains(fragment),
+				"%s must orchestrate flows without creating UI controls via '%s'" % [script_path, fragment]
 			)
 
 func test_base_presenter_renders_loaded_state_without_network() -> void:
@@ -829,6 +914,88 @@ func _surface_presenter_script_paths() -> PackedStringArray:
 			continue
 		paths.append("res://modes/boot/surfaces/%s" % file_name)
 	return paths
+
+func _action_consumer_script_paths() -> PackedStringArray:
+	return PackedStringArray([
+		"res://modes/boot/boot.gd",
+		"res://modes/boot/surfaces/base_surface_presenter.gd",
+		"res://modes/boot/surfaces/battle_replay_presenter.gd",
+		"res://modes/boot/surfaces/competition_surface_presenter.gd",
+		"res://modes/boot/surfaces/hub_account_surface_presenter.gd",
+		"res://modes/boot/surfaces/hub_surface_presenter.gd",
+		"res://modes/boot/surfaces/shop_surface_presenter.gd",
+		"res://modes/boot/surfaces/social_surface_presenter.gd",
+		"res://modes/boot/surfaces/surface_ui_helpers.gd",
+	])
+
+func _flow_script_paths() -> PackedStringArray:
+	return PackedStringArray([
+		"res://modes/boot/flows/account_session_flow.gd",
+		"res://modes/boot/flows/surface_action_flow.gd",
+		"res://modes/boot/flows/battle_lifecycle_flow.gd",
+	])
+
+func _centralized_action_literals() -> PackedStringArray:
+	return PackedStringArray([
+		AppShellActionContractScript.ACTION_ENTER_GUEST,
+		AppShellActionContractScript.ACTION_ENTER_REFUGE,
+		AppShellActionContractScript.ACTION_OPEN_CREATE_ACCOUNT,
+		AppShellActionContractScript.ACTION_CHECK_UPDATE,
+		AppShellActionContractScript.ACTION_EMAIL_SIGN_UP,
+		AppShellActionContractScript.ACTION_EMAIL_SIGN_IN,
+		AppShellActionContractScript.ACTION_REFRESH_SESSION,
+		AppShellActionContractScript.ACTION_RESET_SESSION,
+		AppShellActionContractScript.ACTION_RESET_ACTIVE_SAVE,
+		AppShellActionContractScript.ACTION_SELECT_SAVE_NORMAL,
+		AppShellActionContractScript.ACTION_SELECT_SAVE_PROGRESSION_LAB,
+		AppShellActionContractScript.ACTION_OPEN_BATTLE_LAB,
+		AppShellActionContractScript.ACTION_OPEN_PROGRESSION_LAB,
+		AppShellActionContractScript.ACTION_REQUEST_BATTLE,
+		AppShellActionContractScript.ACTION_SHOW_LATEST_BATTLE,
+		AppShellActionContractScript.ACTION_SHOW_BATTLE_HISTORY,
+		AppShellActionContractScript.ACTION_SKIP_REPLAY,
+		AppShellActionContractScript.ACTION_RETURN_REFUGE,
+		AppShellActionContractScript.ACTION_REPLAY_LATEST,
+		AppShellActionContractScript.ACTION_SHOW_CURRENT_BATTLE_LOGS,
+		AppShellActionContractScript.ACTION_RETURN_BATTLE_SUMMARY,
+		AppShellActionContractScript.ACTION_SHOW_BASE,
+		AppShellActionContractScript.ACTION_COLLECT_BASE,
+		AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA,
+		AppShellActionContractScript.ACTION_UPGRADE_NUCLEO,
+		AppShellActionContractScript.ACTION_SHOW_SOCIAL,
+		AppShellActionContractScript.ACTION_ADD_FRIEND,
+		AppShellActionContractScript.ACTION_CREATE_GUILD,
+		AppShellActionContractScript.ACTION_JOIN_GUILD,
+		AppShellActionContractScript.ACTION_SEND_GUILD_CHAT,
+		AppShellActionContractScript.ACTION_SHOW_MATCHMAKING,
+		AppShellActionContractScript.ACTION_SHOW_RANKING,
+		AppShellActionContractScript.ACTION_SHOW_SHOP,
+		AppShellActionContractScript.ACTION_BUY_PREMIUM_ALPHA,
+		AppShellActionContractScript.ACTION_GRANT_DIAMOND_ALPHA,
+		AppShellActionContractScript.ACTION_CLAIM_DAILY_REWARD,
+		AppShellActionContractScript.PREFIX_SELECT_BASE_STRUCTURE,
+		AppShellActionContractScript.PREFIX_UPGRADE_BASE_STRUCTURE,
+		AppShellActionContractScript.PREFIX_SHOP_PURCHASE,
+		AppShellActionContractScript.PREFIX_CLAIM_REWARD,
+		AppShellActionContractScript.PREFIX_BATTLE_REPLAY,
+	])
+
+func _forbidden_flow_ui_fragments() -> PackedStringArray:
+	return PackedStringArray([
+		"Button.new(",
+		"Label.new(",
+		"LineEdit.new(",
+		"PanelContainer.new(",
+		"VBoxContainer.new(",
+		"HBoxContainer.new(",
+		"GridContainer.new(",
+		"ScrollContainer.new(",
+		"MarginContainer.new(",
+		"PopupPanel.new(",
+		"Control.new(",
+		"ColorRect.new(",
+		"TextureRect.new(",
+	])
 
 func _forbidden_presenter_fragments() -> PackedStringArray:
 	return PackedStringArray([

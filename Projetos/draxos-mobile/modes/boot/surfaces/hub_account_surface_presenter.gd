@@ -1,6 +1,7 @@
 class_name BootHubAccountSurfacePresenter
 extends RefCounted
 
+const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
 const ProjectInfoScript := preload("res://core/project_info.gd")
 
 const SCREEN_BATTLE := "battle_entry"
@@ -66,34 +67,34 @@ static func render_login(host: Node) -> void:
 		SessionStore.DEFAULT_INVITE_CODE,
 		"Convite usado apenas para liberar o primeiro save da conta."
 	))
-	_add_action_button(host, "Criar conta alpha", "email_sign_up")
-	_add_action_button(host, "Entrar com email", "email_sign_in")
-	_add_action_button(host, "Sincronizar sessao", "refresh_session")
-	_add_action_button(host, "Resetar sessao local", "reset_session", "Limpar apenas token/cache local desta maquina? O estado salvo no servidor nao sera apagado.")
+	_add_action_button(host, "Criar conta alpha", AppShellActionContractScript.ACTION_EMAIL_SIGN_UP)
+	_add_action_button(host, "Entrar com email", AppShellActionContractScript.ACTION_EMAIL_SIGN_IN)
+	_add_action_button(host, "Sincronizar sessao", AppShellActionContractScript.ACTION_REFRESH_SESSION)
+	_add_action_button(host, "Resetar sessao local", AppShellActionContractScript.ACTION_RESET_SESSION, "Limpar apenas token/cache local desta maquina? O estado salvo no servidor nao sera apagado.")
 
 static func render_guest_access(host: Node) -> void:
 	_add_section_label(host, "Teste rapido local")
 	_add_body_text(host, "Use guest apenas para validar rapidamente sem criar conta. O teste principal da alpha usa email/senha.")
-	_add_action_button(host, "Entrar como guest", "enter_guest")
+	_add_action_button(host, "Entrar como guest", AppShellActionContractScript.ACTION_ENTER_GUEST)
 
 static func render_quick_test(host: Node) -> void:
 	render_guest_access(host)
 	if bool(host.call("_battle_lab_available")) or bool(host.call("_progression_lab_available")):
 		_add_section_label(host, "Labs do editor")
 		if bool(host.call("_battle_lab_available")):
-			_add_action_button(host, "Battle Lab", "open_battle_lab")
+			_add_action_button(host, "Battle Lab", AppShellActionContractScript.ACTION_OPEN_BATTLE_LAB)
 		if bool(host.call("_progression_lab_available")):
-			_add_action_button(host, "Progression Lab", "open_progression_lab")
+			_add_action_button(host, "Progression Lab", AppShellActionContractScript.ACTION_OPEN_PROGRESSION_LAB)
 
 static func render_active_save(host: Node) -> void:
 	_add_section_label(host, "Save ativo")
 	_add_body_text(host, "O save Normal executa o loop server-authoritative local. O save Progression Lab fica isolado para testes e nao deve pontuar ranking/social.")
-	_add_action_button(host, "Usar save normal", "select_save_normal")
-	_add_action_button(host, "Usar save Progression Lab", "select_save_progression_lab")
+	_add_action_button(host, "Usar save normal", AppShellActionContractScript.ACTION_SELECT_SAVE_NORMAL)
+	_add_action_button(host, "Usar save Progression Lab", AppShellActionContractScript.ACTION_SELECT_SAVE_PROGRESSION_LAB)
 	_add_action_button(
 		host,
 		"Resetar save ativo",
-		"reset_active_save",
+		AppShellActionContractScript.ACTION_RESET_ACTIVE_SAVE,
 		"Resetar apenas o save %s no servidor? O outro save e a sessao local serao preservados." % SessionStore.active_save_label()
 	)
 	_add_output_label(host, "Save atual: %s (%s)" % [
@@ -131,7 +132,7 @@ static func render_session_status(host: Node) -> void:
 static func render_update_gate(host: Node) -> void:
 	_add_section_label(host, "Versao e updates")
 	host.set("_update_output_label", _add_output_label(host, update_status_text(host)))
-	_add_action_button(host, "Checar update", "check_update")
+	_add_action_button(host, "Checar update", AppShellActionContractScript.ACTION_CHECK_UPDATE)
 
 static func render_screen_links(host: Node) -> void:
 	_add_section_label(host, "Telas")

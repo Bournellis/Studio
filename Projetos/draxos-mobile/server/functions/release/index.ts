@@ -7,9 +7,10 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
   latest_version_code: 1,
   minimum_supported_version: "0.0.1-alpha.0",
   minimum_supported_version_code: 1,
-  released_at: "2026-05-27T15:02:12Z",
+  released_at: "2026-05-28T04:50:33Z",
   requires_save_reset: false,
-  portal_url: "https://draxos-mobile-internal-alpha.pages.dev/portal/index.html",
+  portal_url:
+    "https://draxos-mobile-internal-alpha.pages.dev/portal/index.html",
   notes: [
     "Primeira release candidate interna.",
     "APK Android e PC ZIP compartilham o mesmo backend remoto.",
@@ -21,13 +22,15 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
       label: "Android APK",
       url:
         "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.apk",
-      sha256: "6c39ce9a63eaf4796a67a9e5a29e9252f1f03266f713ffa58c5d2333c15102d6",
+      sha256:
+        "ad6d2579ce003769cfce2536b788c1330abb283d0ae90cc785d1d016ae514ca6",
     },
     pc_windows: {
       label: "PC Windows ZIP",
       url:
         "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.zip",
-      sha256: "4b7dc516bc4c5c4895930f8732ad9e97733cca85ba7574c9a0308c705982d236",
+      sha256:
+        "ad5fb8351bb001604479d95737fc702bb9b0ff6779afb9e3e31692b7bc189031",
     },
     web: {
       label: "Web",
@@ -38,6 +41,7 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
     "Layout Android paisagem ainda precisa de ergonomia real no aparelho.",
     "APK desta publicacao usa debug_fallback enquanto a keystore release dedicada nao estiver configurada.",
     "Web usa hospedagem hibrida Cloudflare Pages + Supabase Storage; validar /portal/index.html e /web/index.html apos cada deploy.",
+    "Dominio estavel do Cloudflare Pages pode exigir Cloudflare Access; validacao publica anonima deve usar preview liberado ou sessao autenticada.",
   ],
 };
 
@@ -137,12 +141,18 @@ Deno.serve((request: Request) => {
     }
     return jsonResponse(buildManifest());
   } catch (error) {
-    const routeLabel = route === "config" ? "runtime config" : "release manifest";
+    const routeLabel = route === "config"
+      ? "runtime config"
+      : "release manifest";
     return jsonResponse({
       ok: false,
       error: {
-        code: route === "config" ? "INVALID_RUNTIME_CONFIG" : "INVALID_RELEASE_MANIFEST",
-        message: error instanceof Error ? error.message : `${routeLabel} override is invalid.`,
+        code: route === "config"
+          ? "INVALID_RUNTIME_CONFIG"
+          : "INVALID_RELEASE_MANIFEST",
+        message: error instanceof Error
+          ? error.message
+          : `${routeLabel} override is invalid.`,
       },
     }, 500);
   }
@@ -168,9 +178,17 @@ function buildManifest(): ReleaseManifest {
   }
 
   return {
-    schema_version: stringOverride(parsed, "schema_version", DEFAULT_MANIFEST.schema_version),
+    schema_version: stringOverride(
+      parsed,
+      "schema_version",
+      DEFAULT_MANIFEST.schema_version,
+    ),
     channel: stringOverride(parsed, "channel", DEFAULT_MANIFEST.channel),
-    latest_version: stringOverride(parsed, "latest_version", DEFAULT_MANIFEST.latest_version),
+    latest_version: stringOverride(
+      parsed,
+      "latest_version",
+      DEFAULT_MANIFEST.latest_version,
+    ),
     latest_version_code: numberOverride(
       parsed,
       "latest_version_code",
@@ -186,18 +204,30 @@ function buildManifest(): ReleaseManifest {
       "minimum_supported_version_code",
       DEFAULT_MANIFEST.minimum_supported_version_code,
     ),
-    released_at: stringOverride(parsed, "released_at", DEFAULT_MANIFEST.released_at),
+    released_at: stringOverride(
+      parsed,
+      "released_at",
+      DEFAULT_MANIFEST.released_at,
+    ),
     requires_save_reset: booleanOverride(
       parsed,
       "requires_save_reset",
       DEFAULT_MANIFEST.requires_save_reset,
     ),
-    portal_url: stringOverride(parsed, "portal_url", DEFAULT_MANIFEST.portal_url),
+    portal_url: stringOverride(
+      parsed,
+      "portal_url",
+      DEFAULT_MANIFEST.portal_url,
+    ),
     notes: stringArrayOverride(parsed, "notes", DEFAULT_MANIFEST.notes),
     artifacts: isObject(parsed.artifacts)
       ? asRecordOfRecord(parsed.artifacts)
       : DEFAULT_MANIFEST.artifacts,
-    known_issues: stringArrayOverride(parsed, "known_issues", DEFAULT_MANIFEST.known_issues),
+    known_issues: stringArrayOverride(
+      parsed,
+      "known_issues",
+      DEFAULT_MANIFEST.known_issues,
+    ),
   };
 }
 
@@ -217,8 +247,16 @@ function buildRuntimeConfig(): RuntimeConfig {
   return {
     schema_version: DEFAULT_RUNTIME_CONFIG.schema_version,
     channel: stringOverride(parsed, "channel", DEFAULT_RUNTIME_CONFIG.channel),
-    config_version: stringOverride(parsed, "config_version", DEFAULT_RUNTIME_CONFIG.config_version),
-    generated_at: stringOverride(parsed, "generated_at", DEFAULT_RUNTIME_CONFIG.generated_at),
+    config_version: stringOverride(
+      parsed,
+      "config_version",
+      DEFAULT_RUNTIME_CONFIG.config_version,
+    ),
+    generated_at: stringOverride(
+      parsed,
+      "generated_at",
+      DEFAULT_RUNTIME_CONFIG.generated_at,
+    ),
     features: featureFlagOverrides(features),
     client: {
       offline_fallback_allowed: booleanOverride(
@@ -239,7 +277,9 @@ function buildRuntimeConfig(): RuntimeConfig {
 }
 
 function manifestOverrideText(): string {
-  if ((Deno.env.get("RELEASE_MANIFEST_OVERRIDE_ENABLED") ?? "").trim() !== "1") {
+  if (
+    (Deno.env.get("RELEASE_MANIFEST_OVERRIDE_ENABLED") ?? "").trim() !== "1"
+  ) {
     return "";
   }
   const encoded = Deno.env.get("RELEASE_MANIFEST_JSON_BASE64")?.trim() ?? "";
@@ -252,10 +292,14 @@ function manifestOverrideText(): string {
 }
 
 function runtimeConfigOverrideText(): string {
-  if ((Deno.env.get("RELEASE_RUNTIME_CONFIG_OVERRIDE_ENABLED") ?? "").trim() !== "1") {
+  if (
+    (Deno.env.get("RELEASE_RUNTIME_CONFIG_OVERRIDE_ENABLED") ?? "").trim() !==
+      "1"
+  ) {
     return "";
   }
-  const encoded = Deno.env.get("RELEASE_RUNTIME_CONFIG_JSON_BASE64")?.trim() ?? "";
+  const encoded = Deno.env.get("RELEASE_RUNTIME_CONFIG_JSON_BASE64")?.trim() ??
+    "";
   if (encoded !== "") {
     return new TextDecoder().decode(
       Uint8Array.from(atob(encoded), (character) => character.charCodeAt(0)),
@@ -264,14 +308,18 @@ function runtimeConfigOverrideText(): string {
   return Deno.env.get("RELEASE_RUNTIME_CONFIG_JSON")?.trim() ?? "";
 }
 
-function asRecordOfRecord(value: Record<string, unknown>): Record<string, Record<string, string>> {
+function asRecordOfRecord(
+  value: Record<string, unknown>,
+): Record<string, Record<string, string>> {
   const result: Record<string, Record<string, string>> = {};
   for (const [key, item] of Object.entries(value)) {
     if (!isObject(item)) {
       continue;
     }
     result[key] = Object.fromEntries(
-      Object.entries(item).map(([itemKey, itemValue]) => [itemKey, String(itemValue)]),
+      Object.entries(item).map((
+        [itemKey, itemValue],
+      ) => [itemKey, String(itemValue)]),
     );
   }
   return result;
@@ -327,7 +375,9 @@ function stringArrayOverride(
   return Array.isArray(value[key]) ? value[key].map(String) : fallback;
 }
 
-function featureFlagOverrides(value: Record<string, unknown>): Record<RuntimeFeatureFlag, boolean> {
+function featureFlagOverrides(
+  value: Record<string, unknown>,
+): Record<RuntimeFeatureFlag, boolean> {
   const features = { ...DEFAULT_RUNTIME_CONFIG.features };
   for (const flag of RUNTIME_FEATURE_FLAGS) {
     if (typeof value[flag] === "boolean") {

@@ -1,0 +1,378 @@
+class_name DraxosSurfaceActionFlow
+extends RefCounted
+
+const SessionStoreScript := preload("res://online/session_store.gd")
+const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
+const AppShellRouteContractScript := preload("res://modes/boot/ui/app_shell_route_contract.gd")
+
+const PRODUCT_ALPHA_DOUBLE_CONSTRUCTION_QUEUE := "alpha_double_construction_queue"
+
+func show_base(host: Node) -> void:
+	var target_screen := str(host.call("_base_surface_target_screen"))
+	if SessionStore.is_progression_lab_local_only():
+		host.call("_show_screen", target_screen, false)
+		host.call("_set_busy", false, "Snapshot local do Progression Lab carregado. Refugio em modo somente leitura; coletas e upgrades precisam de save seeded no Supabase local.")
+		host.call("_render_base_state")
+		return
+	if not bool(host.call("_require_session", "Entre com email ou use guest dev antes de atualizar o Refugio.")):
+		return
+
+	host.call("_show_screen", target_screen, false)
+	host.call("_set_busy", true, "Buscando Refugio...")
+	var base_result: Dictionary = await SupabaseClient.fetch_base_state(SessionStore.access_token)
+	if not bool(base_result.get("ok", false)):
+		host.call("_fail_with_error", base_result)
+		return
+
+	if not SessionStore.apply_base_result(base_result):
+		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		return
+
+	SessionStore.save_cache()
+	host.call("_set_busy", false, "Refugio recuperado.")
+	host.call("_render_base_state")
+
+func sync_refuge_state_if_needed(host: Node) -> void:
+	if str(host.get("_current_screen")) != AppShellRouteContractScript.ROUTE_REFUGE:
+		return
+	if bool(host.get("_is_busy")) or not SessionStore.base_state.is_empty():
+		return
+	if SessionStore.is_progression_lab_local_only():
+		return
+	if not SessionStore.has_valid_access_token():
+		return
+	await show_base(host)
+
+func collect_base(host: Node) -> void:
+	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de coletar o Refugio.")):
+		return
+
+	host.call("_show_screen", str(host.call("_base_surface_target_screen")), false)
+	host.call("_set_busy", true, "Coletando producao offline...")
+	var base_result: Dictionary = await SupabaseClient.collect_base(
+		SessionStoreScript.create_request_id(),
+		SessionStore.access_token
+	)
+	if not bool(base_result.get("ok", false)):
+		host.call("_fail_with_error", base_result)
+		return
+
+	if not SessionStore.apply_base_result(base_result):
+		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		return
+
+	var body := _as_dictionary(base_result.get("body", {}))
+	var collected := _as_dictionary(body.get("collected", {}))
+	var message := "Coleta registrada no servidor."
+	if _resource_total(collected) <= 0.0:
+		message = "Nada para coletar agora."
+	SessionStore.save_cache()
+	host.call("_set_busy", false, message)
+	host.call("_render_base_state", collected)
+
+func buy_energy_pack_alpha(host: Node) -> void:
+	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de comprar Energia alpha.")):
+		return
+
+	host.call("_show_screen", str(host.call("_base_surface_target_screen")), false)
+	host.call("_set_busy", true, "Comprando pacote de Energia alpha...")
+	var monetization_result: Dictionary = await SupabaseClient.alpha_purchase(
+		SessionStoreScript.create_request_id(),
+		AppShellActionContractScript.PRODUCT_ALPHA_ENERGY_PACK,
+		SessionStore.access_token
+	)
+	if not bool(monetization_result.get("ok", false)):
+		host.call("_fail_with_error", monetization_result)
+		return
+
+	if not SessionStore.apply_monetization_result(monetization_result):
+		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		return
+
+	var base_result: Dictionary = await SupabaseClient.fetch_base_state(SessionStore.access_token)
+	if bool(base_result.get("ok", false)):
+		SessionStore.apply_base_result(base_result)
+
+	SessionStore.save_cache()
+	host.call("_set_busy", false, "Energia alpha comprada. O Refugio foi atualizado com o novo saldo.")
+	host.call("_render_base_state")
+
+func upgrade_base_structure(host: Node, structure_id: String) -> void:
+	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de evoluir o Refugio.")):
+		return
+	var target_structure_id := structure_id.strip_edges()
+	if target_structure_id == "":
+		target_structure_id = str(host.get("_selected_base_structure_id"))
+	host.set("_selected_base_structure_id", target_structure_id)
+
+	host.call("_show_screen", str(host.call("_base_surface_target_screen")), false)
+	host.call("_set_busy", true, "Solicitando evolucao de %s..." % str(host.call("_structure_label", target_structure_id)))
+	var base_result: Dictionary = await SupabaseClient.upgrade_base_structure(
+		SessionStoreScript.create_request_id(),
+		target_structure_id,
+		SessionStore.access_token
+	)
+	if not bool(base_result.get("ok", false)):
+		host.call("_fail_with_error", base_result)
+		return
+
+	if not SessionStore.apply_base_result(base_result):
+		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		return
+
+	SessionStore.save_cache()
+	host.call("_set_busy", false, "Evolucao de %s iniciada no servidor." % str(host.call("_structure_label", target_structure_id)))
+	host.call("_render_base_state")
+
+func show_social(host: Node) -> void:
+	if not bool(host.call("_require_session", "Entre com email ou use guest dev antes de abrir Social.")):
+		return
+
+	host.call("_show_screen", AppShellRouteContractScript.ROUTE_SOCIAL, false)
+	host.call("_set_busy", true, "Buscando Social...")
+	var social_result: Dictionary = await SupabaseClient.fetch_social_state(SessionStore.access_token)
+	if not bool(social_result.get("ok", false)):
+		host.call("_fail_with_error", social_result)
+		return
+	if not SessionStore.apply_social_result(social_result):
+		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		return
+
+	SessionStore.save_cache()
+	host.call("_set_busy", false, "Social recuperado.")
+	host.call("_render_social_state")
+
+func add_friend(host: Node) -> void:
+	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de adicionar amigo.")):
+		return
+
+	var username := _input_text(host, "_social_friend_input")
+	host.set("_last_social_friend_username", username)
+	if username == "":
+		_set_error_text(host, "Informe o username do amigo.")
+		return
+
+	host.call("_show_screen", AppShellRouteContractScript.ROUTE_SOCIAL, false)
+	host.call("_set_busy", true, "Adicionando amigo...")
+	var social_result: Dictionary = await SupabaseClient.add_friend(
+		SessionStoreScript.create_request_id(),
+		username,
+		SessionStore.access_token
+	)
+	if not bool(social_result.get("ok", false)):
+		host.call("_fail_with_error", social_result)
+		return
+	if not SessionStore.apply_social_result(social_result):
+		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		return
+
+	SessionStore.save_cache()
+	host.call("_set_busy", false, "Amigo adicionado.")
+	host.call("_render_social_state")
+
+func create_guild(host: Node) -> void:
+	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de criar guilda.")):
+		return
+
+	var guild_name := _input_text(host, "_social_guild_input", str(host.call("_default_guild_name")))
+	host.set("_last_social_guild_name", guild_name)
+	host.call("_show_screen", AppShellRouteContractScript.ROUTE_SOCIAL, false)
+	host.call("_set_busy", true, "Criando guilda alpha...")
+	var social_result: Dictionary = await SupabaseClient.create_guild(
+		SessionStoreScript.create_request_id(),
+		guild_name,
+		SessionStore.access_token
+	)
+	if not bool(social_result.get("ok", false)):
+		host.call("_fail_with_error", social_result)
+		return
+	if not SessionStore.apply_social_result(social_result):
+		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		return
+
+	SessionStore.save_cache()
+	host.call("_set_busy", false, "Guilda criada no servidor.")
+	host.call("_render_social_state")
+
+func join_guild(host: Node) -> void:
+	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de entrar em guilda.")):
+		return
+
+	var guild_name := _input_text(host, "_social_guild_input")
+	host.set("_last_social_guild_name", guild_name)
+	if guild_name == "":
+		_set_error_text(host, "Informe o nome da guilda.")
+		return
+
+	host.call("_show_screen", AppShellRouteContractScript.ROUTE_SOCIAL, false)
+	host.call("_set_busy", true, "Entrando na guilda...")
+	var social_result: Dictionary = await SupabaseClient.join_guild(
+		SessionStoreScript.create_request_id(),
+		guild_name,
+		SessionStore.access_token
+	)
+	if not bool(social_result.get("ok", false)):
+		host.call("_fail_with_error", social_result)
+		return
+	if not SessionStore.apply_social_result(social_result):
+		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		return
+
+	SessionStore.save_cache()
+	host.call("_set_busy", false, "Guilda sincronizada.")
+	host.call("_render_social_state")
+
+func send_guild_chat(host: Node) -> void:
+	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de usar chat.")):
+		return
+
+	var message := _input_text(host, "_social_chat_input", str(host.get("_last_social_chat_message")))
+	host.set("_last_social_chat_message", message)
+	if message == "":
+		_set_error_text(host, "Digite uma mensagem para o chat da guilda.")
+		return
+
+	host.call("_show_screen", AppShellRouteContractScript.ROUTE_SOCIAL, false)
+	host.call("_set_busy", true, "Enviando mensagem de guilda...")
+	var social_result: Dictionary = await SupabaseClient.send_guild_chat(
+		SessionStoreScript.create_request_id(),
+		message,
+		SessionStore.access_token
+	)
+	if not bool(social_result.get("ok", false)):
+		host.call("_fail_with_error", social_result)
+		return
+	if not SessionStore.apply_social_result(social_result):
+		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		return
+
+	SessionStore.save_cache()
+	host.call("_set_busy", false, "Mensagem registrada no servidor.")
+	host.call("_render_social_state")
+
+func show_matchmaking(host: Node) -> void:
+	if not bool(host.call("_require_session", "Entre com email ou use guest dev antes de abrir matchmaking.")):
+		return
+
+	host.call("_show_screen", AppShellRouteContractScript.ROUTE_COMPETITION, false)
+	host.call("_set_busy", true, "Buscando matchmaking...")
+	var competition_result: Dictionary = await SupabaseClient.fetch_matchmaking_preview(SessionStore.access_token)
+	if not bool(competition_result.get("ok", false)):
+		host.call("_fail_with_error", competition_result)
+		return
+	if not SessionStore.apply_competition_result(competition_result):
+		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		return
+
+	SessionStore.save_cache()
+	host.call("_set_busy", false, "Matchmaking recuperado.")
+	host.call("_render_competition_state")
+
+func show_ranking(host: Node) -> void:
+	if not bool(host.call("_require_session", "Entre com email ou use guest dev antes de abrir ranking.")):
+		return
+
+	host.call("_show_screen", AppShellRouteContractScript.ROUTE_COMPETITION, false)
+	host.call("_set_busy", true, "Buscando ranking...")
+	var competition_result: Dictionary = await SupabaseClient.fetch_ranking_current(SessionStore.access_token)
+	if not bool(competition_result.get("ok", false)):
+		host.call("_fail_with_error", competition_result)
+		return
+	if not SessionStore.apply_competition_result(competition_result):
+		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		return
+
+	SessionStore.save_cache()
+	host.call("_set_busy", false, "Ranking recuperado.")
+	host.call("_render_competition_state")
+
+func show_shop(host: Node) -> void:
+	if not bool(host.call("_require_session", "Entre com email ou use guest dev antes de abrir Loja.")):
+		return
+
+	host.call("_show_screen", AppShellRouteContractScript.ROUTE_SHOP, false)
+	host.call("_set_busy", true, "Buscando loja alpha...")
+	var monetization_result: Dictionary = await SupabaseClient.fetch_monetization_state(SessionStore.access_token)
+	if not bool(monetization_result.get("ok", false)):
+		host.call("_fail_with_error", monetization_result)
+		return
+	if not SessionStore.apply_monetization_result(monetization_result):
+		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		return
+
+	SessionStore.save_cache()
+	host.call("_set_busy", false, "Loja alpha recuperada.")
+	host.call("_render_monetization_state")
+
+func buy_shop_product(host: Node, product_id: String) -> void:
+	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de comprar na Loja.")):
+		return
+
+	host.call("_show_screen", AppShellRouteContractScript.ROUTE_SHOP, false)
+	host.call("_set_busy", true, "Processando produto alpha...")
+	var monetization_result: Dictionary = await SupabaseClient.alpha_purchase(
+		SessionStoreScript.create_request_id(),
+		product_id,
+		SessionStore.access_token
+	)
+	if not bool(monetization_result.get("ok", false)):
+		host.call("_fail_with_error", monetization_result)
+		return
+	if not SessionStore.apply_monetization_result(monetization_result):
+		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		return
+
+	if product_id == AppShellActionContractScript.PRODUCT_ALPHA_ENERGY_PACK or product_id == PRODUCT_ALPHA_DOUBLE_CONSTRUCTION_QUEUE:
+		var base_result: Dictionary = await SupabaseClient.fetch_base_state(SessionStore.access_token)
+		if bool(base_result.get("ok", false)):
+			SessionStore.apply_base_result(base_result)
+
+	SessionStore.save_cache()
+	host.call("_set_busy", false, str(host.call("_shop_purchase_message", product_id, _as_dictionary(monetization_result.get("body", {})))))
+	host.call("_render_monetization_state")
+
+func claim_shop_reward(host: Node, reward_id: String) -> void:
+	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de resgatar recompensa.")):
+		return
+
+	host.call("_show_screen", AppShellRouteContractScript.ROUTE_SHOP, false)
+	host.call("_set_busy", true, "Resgatando recompensa...")
+	var monetization_result: Dictionary = await SupabaseClient.claim_reward(
+		SessionStoreScript.create_request_id(),
+		reward_id,
+		SessionStore.access_token
+	)
+	if not bool(monetization_result.get("ok", false)):
+		host.call("_fail_with_error", monetization_result)
+		return
+	if not SessionStore.apply_monetization_result(monetization_result):
+		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		return
+
+	var body := _as_dictionary(monetization_result.get("body", {}))
+	var message := "Recompensa registrada no servidor."
+	if bool(body.get("already_claimed", false)):
+		message = "Recompensa ja havia sido resgatada neste periodo."
+	SessionStore.save_cache()
+	host.call("_set_busy", false, message)
+	host.call("_render_monetization_state")
+
+func _input_text(host: Node, property_name: String, fallback: String = "") -> String:
+	return str(host.call("_social_input_text", host.get(property_name), fallback))
+
+func _set_error_text(host: Node, text: String) -> void:
+	var label := host.get("_error_label") as Label
+	if label != null:
+		label.text = text
+
+func _resource_total(resources: Dictionary) -> float:
+	var total := 0.0
+	for value in resources.values():
+		if value is int or value is float:
+			total += float(value)
+	return total
+
+static func _as_dictionary(value: Variant) -> Dictionary:
+	if value is Dictionary:
+		return value
+	return {}

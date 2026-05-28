@@ -65,10 +65,10 @@ Track 03 transforma o alpha local em uma build fechada realista para Fabio + 1 a
 | Matchmaking por poder | Sim |
 | Builds simuladas (bots) | Sim |
 | Conta guest + registrada + Google Sign-In | Sim; Internal Alpha v0 prioriza email/senha, guest fica para dev/local enquanto util |
-| Varinha Magica (arma unica) | Sim |
+| Instrumento Ritual inicial (`Varinha de Cinzas`) | Sim |
 | 0-3 slots de spell com selecao | Sim |
-| 1 slot de passiva (5 opcoes) | Sim |
-| 1 slot de pet (7 opcoes) | Sim |
+| 1 slot de Doutrina | Sim |
+| 1 slot de Familiar | Sim |
 | Battle Pass (Free + Premium) | Sim |
 | Moeda premium (Diamante) | Sim |
 | Character Autobattler PVE | Futuro |
@@ -129,15 +129,20 @@ Essa direcao favorece dados relacionais, transacoes, ledger e auditoria. Por iss
 
 ---
 
+## Terminologia Viva
+
+Use Instrumento Ritual, Spell, Doutrina e Familiar como linguagem de produto/design. Nomes antigos de arma/passiva/pet podem aparecer apenas como nomes tecnicos legados de schema, telemetria, catalogo antigo ou historico de track.
+
 ## Documentos Vivos
 
 - `product-vision.md` - visao longa local, pilares, anti-pilares e limites do produto.
 - `game-design-document.md` - design autoritativo para implementacao.
 - `design-pending.md` - pendencias de design e balanceamento.
+- `documentation-index.md` - classificacao de docs vivos, contratos, runbooks, historico e arquivo de design.
 - `contracts/` - contratos tecnicos antes das migrations/codigo.
-- `../implementation/tracks/track-00-first-slice-foundation/scope.md` - escopo da Track 00.
-- `../implementation/tracks/track-03-internal-alpha-v0/scope.md` - escopo da Internal Alpha v0.
-- `../implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/scope.md` - pos-handoff, UX Android/onboarding, modularizacao do Hub e gates futuros.
+- `../implementation/tracks/track-14-agent-ops-foundation/scope.md` - fundacao operacional atual para agentes.
+- `../implementation/tracks/track-13-validation-release-safety/scope.md` - baseline de validacao e release safety.
+- `../implementation/tracks/track-00-first-slice-foundation/scope.md` e `../implementation/tracks/track-03-internal-alpha-v0/scope.md` - historico de escopo do primeiro slice e Internal Alpha v0.
 - `internal-alpha-v0.md` - runbook operacional da build fechada.
 - `../../_conceitos/mobile-universe/gdd.md` - GDD historico completo.
 - `../../_conceitos/mobile-universe/pendencias.md` - historico de decisoes da fase conceitual.

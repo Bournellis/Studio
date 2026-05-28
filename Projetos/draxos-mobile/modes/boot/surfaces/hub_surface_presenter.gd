@@ -3,6 +3,7 @@ extends RefCounted
 
 const HubAccountSurfacePresenterScript := preload("res://modes/boot/surfaces/hub_account_surface_presenter.gd")
 const BaseSurfacePresenterScript := preload("res://modes/boot/surfaces/base_surface_presenter.gd")
+const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
 const TouchScrollContainerScript := preload("res://modes/boot/ui/touch_scroll_container.gd")
 const MobileUiContractScript := preload("res://modes/boot/ui/mobile_ui_contract.gd")
 
@@ -238,41 +239,41 @@ static func _populate_refuge_menu(host: Node, popup: PopupPanel, body: VBoxConta
 	match menu_id:
 		"battle":
 			body.add_child(_popup_hint("Pedir batalha, rever resultado ou abrir historico.", compact))
-			body.add_child(_popup_action_button(host, popup, "Pedir batalha", "request_battle", "", true))
-			body.add_child(_popup_action_button(host, popup, "Historico", "show_battle_history"))
-			body.add_child(_popup_action_button(host, popup, "Ver resultado", "show_latest_battle"))
+			body.add_child(_popup_action_button(host, popup, "Pedir batalha", AppShellActionContractScript.ACTION_REQUEST_BATTLE, "", true))
+			body.add_child(_popup_action_button(host, popup, "Historico", AppShellActionContractScript.ACTION_SHOW_BATTLE_HISTORY))
+			body.add_child(_popup_action_button(host, popup, "Ver resultado", AppShellActionContractScript.ACTION_SHOW_LATEST_BATTLE))
 			if bool(host.call("_battle_lab_available")):
-				body.add_child(_popup_action_button(host, popup, "Battle Lab", "open_battle_lab"))
+				body.add_child(_popup_action_button(host, popup, "Battle Lab", AppShellActionContractScript.ACTION_OPEN_BATTLE_LAB))
 		"refuge":
 			body.add_child(_popup_hint("Coleta, energia, estruturas e upgrades do Refugio.", compact))
 			BaseSurfacePresenterScript.render_refuge_embedded(host, body)
 		"social":
 			body.add_child(_popup_hint("Amigos, guilda e chat continuam por polling.", compact))
-			body.add_child(_popup_action_button(host, popup, "Abrir Social", "show_social", "", true))
+			body.add_child(_popup_action_button(host, popup, "Abrir Social", AppShellActionContractScript.ACTION_SHOW_SOCIAL, "", true))
 		"competition":
 			body.add_child(_popup_hint("Matchmaking, arena e ranking alpha.", compact))
-			body.add_child(_popup_action_button(host, popup, "Matchmaking", "show_matchmaking", "", true))
-			body.add_child(_popup_action_button(host, popup, "Ranking", "show_ranking"))
+			body.add_child(_popup_action_button(host, popup, "Matchmaking", AppShellActionContractScript.ACTION_SHOW_MATCHMAKING, "", true))
+			body.add_child(_popup_action_button(host, popup, "Ranking", AppShellActionContractScript.ACTION_SHOW_RANKING))
 		"shop":
 			body.add_child(_popup_hint("Recompensas, redeems e compras alpha.", compact))
-			body.add_child(_popup_action_button(host, popup, "Abrir Loja", "show_shop", "", true))
-			body.add_child(_popup_action_button(host, popup, "Reward diario", "claim_daily_reward"))
+			body.add_child(_popup_action_button(host, popup, "Abrir Loja", AppShellActionContractScript.ACTION_SHOW_SHOP, "", true))
+			body.add_child(_popup_action_button(host, popup, "Reward diario", AppShellActionContractScript.ACTION_CLAIM_DAILY_REWARD))
 		"profile":
 			body.add_child(_popup_hint(_short_account_status(), compact))
 			body.add_child(_popup_route_button(host, popup, "Abrir Perfil", "account", true))
-			body.add_child(_popup_action_button(host, popup, "Checar update", "check_update"))
+			body.add_child(_popup_action_button(host, popup, "Checar update", AppShellActionContractScript.ACTION_CHECK_UPDATE))
 		"collect":
 			body.add_child(_popup_hint("Registrar a producao acumulada no servidor.", compact))
-			body.add_child(_popup_action_button(host, popup, "Coletar agora", "collect_base", "Coletar a producao offline acumulada do Refugio?", true))
+			body.add_child(_popup_action_button(host, popup, "Coletar agora", AppShellActionContractScript.ACTION_COLLECT_BASE, "Coletar a producao offline acumulada do Refugio?", true))
 		"energy":
 			body.add_child(_popup_hint("Comprar pacote alpha de Energia no save ativo.", compact))
-			body.add_child(_popup_action_button(host, popup, "Comprar Energia", "buy_energy_pack_alpha", "Gastar 80 Diamantes para comprar 80 Energia no save ativo?", true))
+			body.add_child(_popup_action_button(host, popup, "Comprar Energia", AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA, "Gastar 80 Diamantes para comprar 80 Energia no save ativo?", true))
 		"labs":
 			body.add_child(_popup_hint("Ferramentas internas. Nao aparecem como feature publica.", compact))
 			if bool(host.call("_battle_lab_available")):
-				body.add_child(_popup_action_button(host, popup, "Battle Lab", "open_battle_lab"))
+				body.add_child(_popup_action_button(host, popup, "Battle Lab", AppShellActionContractScript.ACTION_OPEN_BATTLE_LAB))
 			if bool(host.call("_progression_lab_available")):
-				body.add_child(_popup_action_button(host, popup, "Progression Lab", "open_progression_lab"))
+				body.add_child(_popup_action_button(host, popup, "Progression Lab", AppShellActionContractScript.ACTION_OPEN_PROGRESSION_LAB))
 		_:
 			body.add_child(_popup_hint("Menu indisponivel.", compact))
 
@@ -486,7 +487,7 @@ static func _entry_status_panel(host: Node, compact: bool) -> PanelContainer:
 	box.add_child(_section_label("Status alpha", compact))
 	box.add_child(_body_label(HubAccountSurfacePresenterScript.home_account_summary_text(host), compact))
 	_add_feedback_labels(host, box, compact)
-	box.add_child(_entry_action_button(host, "Checar update", "check_update", compact))
+	box.add_child(_entry_action_button(host, "Checar update", AppShellActionContractScript.ACTION_CHECK_UPDATE, compact))
 	return panel
 
 static func _entry_account_panel(host: Node, compact: bool) -> PanelContainer:
@@ -497,12 +498,12 @@ static func _entry_account_panel(host: Node, compact: bool) -> PanelContainer:
 	host.set("_auth_password_input", _entry_input(box, "Senha", "Senha da conta alpha", "", true, compact))
 	host.set("_auth_username_input", null)
 	host.set("_auth_invite_input", null)
-	box.add_child(_entry_action_button(host, "Entrar", "email_sign_in", compact, "", true))
+	box.add_child(_entry_action_button(host, "Entrar", AppShellActionContractScript.ACTION_EMAIL_SIGN_IN, compact, "", true))
 	var grid := _button_grid(compact)
 	box.add_child(grid)
-	grid.add_child(_entry_action_button(host, "Criar conta", "open_create_account", compact))
-	grid.add_child(_entry_action_button(host, "Guest dev", "enter_guest", compact))
-	grid.add_child(_entry_action_button(host, "Reset local", "reset_session", compact, "Limpar apenas token/cache local desta maquina? O estado salvo no servidor nao sera apagado."))
+	grid.add_child(_entry_action_button(host, "Criar conta", AppShellActionContractScript.ACTION_OPEN_CREATE_ACCOUNT, compact))
+	grid.add_child(_entry_action_button(host, "Guest dev", AppShellActionContractScript.ACTION_ENTER_GUEST, compact))
+	grid.add_child(_entry_action_button(host, "Reset local", AppShellActionContractScript.ACTION_RESET_SESSION, compact, "Limpar apenas token/cache local desta maquina? O estado salvo no servidor nao sera apagado."))
 	return panel
 
 static func _entry_save_panel(host: Node, compact: bool) -> PanelContainer:
@@ -512,13 +513,13 @@ static func _entry_save_panel(host: Node, compact: bool) -> PanelContainer:
 	box.add_child(_body_label("Escolha Normal para jogar ou Progression Lab para testes isolados.", compact))
 	var grid := _button_grid(compact)
 	box.add_child(grid)
-	grid.add_child(_entry_action_button(host, "Save normal", "select_save_normal", compact))
-	grid.add_child(_entry_action_button(host, "Save Lab", "select_save_progression_lab", compact))
-	grid.add_child(_entry_action_button(host, "Sincronizar", "refresh_session", compact))
+	grid.add_child(_entry_action_button(host, "Save normal", AppShellActionContractScript.ACTION_SELECT_SAVE_NORMAL, compact))
+	grid.add_child(_entry_action_button(host, "Save Lab", AppShellActionContractScript.ACTION_SELECT_SAVE_PROGRESSION_LAB, compact))
+	grid.add_child(_entry_action_button(host, "Sincronizar", AppShellActionContractScript.ACTION_REFRESH_SESSION, compact))
 	grid.add_child(_entry_action_button(
 		host,
 		"Reset save",
-		"reset_active_save",
+		AppShellActionContractScript.ACTION_RESET_ACTIVE_SAVE,
 		compact,
 		"Resetar apenas o save %s no servidor? O outro save e a sessao local serao preservados." % SessionStore.active_save_label()
 	))
@@ -537,9 +538,9 @@ static func _entry_dev_panel(host: Node, compact: bool) -> PanelContainer:
 	var grid := _button_grid(compact, 2)
 	box.add_child(grid)
 	if battle_lab:
-		grid.add_child(_entry_action_button(host, "Battle Lab", "open_battle_lab", compact))
+		grid.add_child(_entry_action_button(host, "Battle Lab", AppShellActionContractScript.ACTION_OPEN_BATTLE_LAB, compact))
 	if progression_lab:
-		grid.add_child(_entry_action_button(host, "Progression Lab", "open_progression_lab", compact))
+		grid.add_child(_entry_action_button(host, "Progression Lab", AppShellActionContractScript.ACTION_OPEN_PROGRESSION_LAB, compact))
 	return panel
 
 static func _entry_footer_panel(host: Node, compact: bool) -> PanelContainer:
@@ -547,7 +548,7 @@ static func _entry_footer_panel(host: Node, compact: bool) -> PanelContainer:
 	var box := _panel_box(panel, compact)
 	box.add_child(_body_label(_entry_status_text(host), compact))
 	if SessionStore.has_valid_access_token() or (SessionStore.is_progression_lab_local_only() and SessionStore.has_account_state()):
-		box.add_child(_entry_action_button(host, "Continuar", "enter_refuge", compact, "", true))
+		box.add_child(_entry_action_button(host, "Continuar", AppShellActionContractScript.ACTION_ENTER_REFUGE, compact, "", true))
 	_add_feedback_labels(host, box, compact)
 	return panel
 
@@ -559,9 +560,9 @@ static func _refuge_hotspot_panel(host: Node, compact: bool) -> PanelContainer:
 	grid.name = "RefugePathGrid"
 	box.add_child(grid)
 	_add_route_hotspot(host, grid, compact, "Batalha", "battle_entry", "Pedir batalha e ver replay server-authoritative.", "accent_blood")
-	_add_action_hotspot(host, grid, compact, "Social", "show_social", "Amigos, guilda e chat por polling.", "status_success")
-	_add_action_hotspot(host, grid, compact, "Competicao", "show_matchmaking", "Preview de matchmaking e ranking alpha.", "status_warning")
-	_add_action_hotspot(host, grid, compact, "Loja", "show_shop", "Redeems, recompensas e compras alpha.", "accent_bone")
+	_add_action_hotspot(host, grid, compact, "Social", AppShellActionContractScript.ACTION_SHOW_SOCIAL, "Amigos, guilda e chat por polling.", "status_success")
+	_add_action_hotspot(host, grid, compact, "Competicao", AppShellActionContractScript.ACTION_SHOW_MATCHMAKING, "Preview de matchmaking e ranking alpha.", "status_warning")
+	_add_action_hotspot(host, grid, compact, "Loja", AppShellActionContractScript.ACTION_SHOW_SHOP, "Redeems, recompensas e compras alpha.", "accent_bone")
 	_add_route_hotspot(host, grid, compact, "Perfil", "account", "Conta, updates e detalhes do save.", "border_active")
 	BaseSurfacePresenterScript.render_refuge_embedded(host, box)
 	return panel

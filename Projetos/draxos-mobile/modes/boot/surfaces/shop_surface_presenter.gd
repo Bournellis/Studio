@@ -1,6 +1,8 @@
 class_name BootShopSurfacePresenter
 extends RefCounted
 
+const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
+
 const RESOURCE_KEYS := ["almas", "energia", "sangue", "cristais", "ossos", "diamante"]
 
 const SHOP_REDEEM_PRODUCTS := [
@@ -59,14 +61,14 @@ const SHOP_PURCHASE_PRODUCTS := [
 
 static func render(host: Node) -> void:
 	_add_body_text(host, "Loja alpha funcional: redeems diarios de Diamante, compras de progresso, Battle Pass e conveniencias por save.")
-	var refresh_button := _add_action_button(host, "Atualizar loja", "show_shop")
+	var refresh_button := _add_action_button(host, "Atualizar loja", AppShellActionContractScript.ACTION_SHOW_SHOP)
 	refresh_button.tooltip_text = "Busca saldo, produtos, resgates diarios e recompensas atuais no servidor."
 	_add_section_label(host, "Redeems diarios")
 	for spec: Dictionary in SHOP_REDEEM_PRODUCTS:
 		var redeem_button := _add_action_button(
 			host,
 			str(spec.get("label", "")),
-			"shop_purchase:%s" % str(spec.get("id", "")),
+			AppShellActionContractScript.shop_purchase_action(str(spec.get("id", ""))),
 			str(spec.get("confirm", ""))
 		)
 		redeem_button.tooltip_text = str(spec.get("tooltip", ""))
@@ -75,7 +77,7 @@ static func render(host: Node) -> void:
 		var product_button := _add_action_button(
 			host,
 			str(spec.get("label", "")),
-			"shop_purchase:%s" % str(spec.get("id", "")),
+			AppShellActionContractScript.shop_purchase_action(str(spec.get("id", ""))),
 			str(spec.get("confirm", ""))
 		)
 		product_button.tooltip_text = str(spec.get("tooltip", ""))
@@ -83,7 +85,7 @@ static func render(host: Node) -> void:
 	var daily_button := _add_action_button(
 		host,
 		"Claim coleta diaria",
-		"claim_reward:daily_collect_base",
+		AppShellActionContractScript.claim_reward_action(AppShellActionContractScript.REWARD_DAILY_COLLECT_BASE),
 		"Resgatar a recompensa diaria de coleta do Refugio?"
 	)
 	daily_button.tooltip_text = "Recompensa diaria server-authoritative ligada a XP, recursos e progresso de Battle Pass."

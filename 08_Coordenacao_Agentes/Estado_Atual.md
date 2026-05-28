@@ -4,10 +4,10 @@
 - Fonte de verdade de portfolio: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Painel visual local: `08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
-## Prioridade do Estudio
+## Prioridade Do Estudio
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Foco P2 de implementacao: `Projetos/draxos-mobile/` (Track 10 `INTEGRATED_BATTLE_PRESENTATION_READY`, builds publicadas em 2026-05-28)
+- Foco P2 de implementacao: `Projetos/draxos-mobile/` (Track 14 `TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`, sobre Track 13 release safety entregue em 2026-05-28)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -16,22 +16,22 @@
 - Status: **P0_IMPLEMENTACAO - ativo**
 - Fase: `Implementacao`
 - Track ativa: `Track 02 - Complete Run Evolution` (T02-P09_COMPLETE)
-- Baseline atual: Track 02 completa para playtest de usuario em Godot 4.6.2 com rota fixa de 29 mapas, recompensas/reliquias/loja expandida, keywords completas, AI/intent, modos e formatos de encontro, field effects, boss hooks, UI polida para mapa/batalha/recompensa/loja/tooltips, descarte marcado na fase principal, validacao verde 94/94, telemetria de rota completa e screenshots obrigatorias capturadas.
+- Baseline atual: Track 02 completa para playtest de usuario em Godot 4.6.2 com rota fixa de 29 mapas, recompensas/reliquias/loja, keywords, AI/intent, modos, field effects, boss hooks, UI polida, validacao verde 94/94, telemetria de rota completa e screenshots obrigatorias capturadas.
 - Meta ativa: playtest manual da Track 02 completa e coleta de feedback de balanceamento.
 - Trabalho permitido: codigo, validacao, playtest e documentacao local.
 - Proximo passo: executar playtest de usuario da Track 02 completa.
 
 ## DraxosMobile
 
-- Status: **P2_IMPLEMENTACAO - Track 10 INTEGRATED_BATTLE_PRESENTATION_READY**
+- Status: **P2_IMPLEMENTACAO - Track 14 TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE**
 - Fase: `Implementacao`
 - Local: `Projetos/draxos-mobile/`
 - Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
 - Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
-- Baseline atual: Track 00 completa com primeiro slice server-authoritative, Track 01 completa para hardening do alpha PC local e Track 02 com Progression Lab/Battle Lab v1, Character Systems Rework, Source Identity Balance v2, batalha visual procedural 2D, smokes e validacoes verdes. Track 03 esta completa para Internal Alpha v0 e Fabio confirmou que os testes Fabio + tester passaram. Track 04 consolidou presenters render-only do Hub, Track 05 integrou a fundacao validada, Track 06 integrou feature rails e primeiras features, Track 07 integrou apresentacao mobile-first e Track 08 endureceu a fundacao. Track 09 integrou o loop visual portrait; Track 09B enxugou `entry`; Track 09C transformou o Refugio em cena fullscreen portrait com icones e popups/drawers. Track 10 reformulou a batalha portrait: palco limpo fullscreen, `Pular batalha`, summary minimo e logs da batalha atual em tela propria. Builds Internal Alpha site/Web/APK/Windows foram republicadas em 2026-05-28; dominio Cloudflare principal esta protegido por Access. Supabase segue para alpha, Backend Proprio + Postgres e o plano de saida preferido, e Nakama fica apenas se realtime/social competitivo virar pilar.
+- Baseline atual: Track 00-13 integradas. O projeto tem primeiro slice server-authoritative, Internal Alpha v0 aprovada por Fabio + tester, Refugio portrait como cena de jogo, batalha portrait fullscreen, `Pular batalha`, summary minimo, logs da batalha atual, Supabase remoto, manifest/version gate e builds Internal Alpha site/Web/APK/Windows republicadas em 2026-05-28. Track 11 consolidou estado vivo, Kanban, docs e walkthrough; Track 12 decompos `boot.gd` para 1301 linhas com action contract, account/session flow, surface action flow, battle lifecycle flow e helpers de superficie; Track 13 centralizou validacao foundation e protegeu release/publicacao por `Mode Plan` default, `-ConfirmRemoteMutation`, checks de safety/readiness e gate manual Android/Windows/Web. Track 14 reorganiza entrada de agentes, indice documental, snapshot vivo, coordenacao e guardas de validacao para evitar drift.
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
-- Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export.
-- Proximo passo: instalar/abrir as builds publicadas e executar walkthrough visual/manual de Entry -> Refugio -> Batalha -> Summary -> Logs em Android, Windows e Web autenticado via Cloudflare Access.
+- Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation`. Migration conta/save e tuning numerico ficam bloqueados ate walkthrough manual e decisao propria.
+- Proximo passo: fechar Track 14 Agent Operations Foundation; depois executar walkthrough manual Track 13 de Entry -> Refugio -> Batalha -> Summary -> Logs, Base, Social, Competicao, Loja e update gate em Android, Windows, Web preview e Web Access-protected.
 
 ## rpg-isometrico
 
@@ -53,7 +53,7 @@
 - Restricao operacional: nao implementar, selecionar proxima track/gate, regenerar `.tres` ou alterar escopo sem pedido explicito.
 - Proximo passo: nenhum enquanto pausado.
 
-## Kanban rapido
+## Kanban Rapido
 
 - Backlog: `08_Coordenacao_Agentes/Kanban/Backlog/`
 - Doing: `08_Coordenacao_Agentes/Kanban/Doing/`
