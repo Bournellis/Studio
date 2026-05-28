@@ -44,16 +44,16 @@ static func _refuge_scene_board(host: Node, root: Control, compact: bool) -> voi
 	var title_label := popup_data["title_label"] as Label
 	var body := popup_data["body"] as VBoxContainer
 
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "battle", "BT", "Batalha", "accent_blood", Vector2(0.50, 0.22), "PVP assincrono e replay.")
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "refuge", "RF", "Refugio", "accent_astral", Vector2(0.22, 0.42), "Coleta, energia e estruturas.")
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "social", "SO", "Social", "status_success", Vector2(0.78, 0.42), "Amigos, guilda e chat.")
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "competition", "CP", "Competicao", "status_warning", Vector2(0.22, 0.63), "Matchmaking e ranking.")
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "shop", "LJ", "Loja", "accent_bone", Vector2(0.78, 0.63), "Recompensas e compras alpha.")
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "profile", "PF", "Perfil", "border_active", Vector2(0.50, 0.75), "Conta, save e update.")
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "collect", "CL", "Coletar", "status_success", Vector2(0.28, 0.86), "Coletar producao do Refugio.", true)
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "energy", "EN", "Energia", "accent_astral", Vector2(0.72, 0.86), "Comprar Energia alpha.", true)
+	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "battle", "BT", "Batalha", "accent_blood", Vector2(0.50, 0.20), "PVP assincrono e replay.")
+	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "refuge", "RF", "Refugio", "accent_astral", Vector2(0.22, 0.40), "Coleta, energia e estruturas.")
+	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "social", "SO", "Social", "status_success", Vector2(0.78, 0.40), "Amigos, guilda e chat.")
+	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "competition", "CP", "Competicao", "status_warning", Vector2(0.22, 0.60), "Matchmaking e ranking.")
+	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "shop", "LJ", "Loja", "accent_bone", Vector2(0.78, 0.60), "Recompensas e compras alpha.")
+	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "profile", "PF", "Perfil", "border_active", Vector2(0.50, 0.71), "Conta, save e update.")
+	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "collect", "CL", "Coletar", "status_success", Vector2(0.28, 0.83), "Coletar producao do Refugio.", true)
+	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "energy", "EN", "Energia", "accent_astral", Vector2(0.72, 0.83), "Comprar Energia alpha.", true)
 	if bool(host.call("_battle_lab_available")) or bool(host.call("_progression_lab_available")):
-		_add_refuge_icon_button(host, board, popup, title_label, body, compact, "labs", "LB", "Labs", "border_default", Vector2(0.50, 0.89), "Ferramentas internas.", true)
+		_add_refuge_icon_button(host, board, popup, title_label, body, compact, "labs", "LB", "Labs", "border_default", Vector2(0.88, 0.16), "Ferramentas internas.", true)
 
 static func _refuge_scene_background(host: Node, compact: bool) -> PanelContainer:
 	var panel := PanelContainer.new()
@@ -67,8 +67,8 @@ static func _add_refuge_altar_stage(host: Node, board: Control, compact: bool) -
 	stage.name = "RefugeAltarStage"
 	stage.anchor_left = 0.16
 	stage.anchor_right = 0.84
-	stage.anchor_top = 0.28
-	stage.anchor_bottom = 0.72
+	stage.anchor_top = 0.30
+	stage.anchor_bottom = 0.67
 	board.add_child(stage)
 
 	var glow := PanelContainer.new()
@@ -103,20 +103,20 @@ static func _add_refuge_altar_stage(host: Node, board: Control, compact: bool) -
 static func _add_refuge_status_bar(host: Node, board: Control, compact: bool) -> void:
 	var panel := PanelContainer.new()
 	panel.name = "RefugeTopHud"
-	panel.anchor_left = 0.03
-	panel.anchor_right = 0.97
-	panel.anchor_top = 0.02
-	panel.anchor_bottom = 0.12 if compact else 0.11
+	panel.anchor_left = 0.04
+	panel.anchor_right = 0.96
+	panel.anchor_top = 0.018
+	panel.anchor_bottom = 0.095 if compact else 0.088
 	panel.add_theme_stylebox_override("panel", _hud_style("bg_panel", "border_default"))
 	board.add_child(panel)
 
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 2)
 	panel.add_child(box)
-	var title := _scene_label("Refugio", "text_primary", 18 if compact else 22)
+	var title := _scene_label("Refugio", "text_primary", 17 if compact else 21)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	box.add_child(title)
-	var resources := _scene_label(_format_resources_short(SessionStore.resources), "text_secondary", 11 if compact else 13)
+	var resources := _scene_label(_format_resources_short(SessionStore.resources), "text_secondary", 10 if compact else 12)
 	resources.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	resources.autowrap_mode = TextServer.AUTOWRAP_OFF
 	resources.clip_text = true
@@ -127,7 +127,7 @@ static func _add_refuge_footer_bar(host: Node, board: Control, compact: bool) ->
 	panel.name = "RefugeFooterPanel"
 	panel.anchor_left = 0.03
 	panel.anchor_right = 0.97
-	panel.anchor_top = 0.91
+	panel.anchor_top = 0.925
 	panel.anchor_bottom = 0.985
 	panel.add_theme_stylebox_override("panel", _hud_style("bg_panel", "border_default"))
 	board.add_child(panel)
@@ -413,10 +413,20 @@ static func _format_resources_short(resources: Dictionary) -> String:
 	if resources.is_empty():
 		return "Sem snapshot de recursos"
 	return "Almas %s | Energia %s | Diamante %s" % [
-		str(resources.get("almas", 0)),
-		str(resources.get("energia", 0)),
-		str(resources.get("diamante", 0)),
+		_format_resource_amount(resources.get("almas", 0)),
+		_format_resource_amount(resources.get("energia", 0)),
+		_format_resource_amount(resources.get("diamante", 0)),
 	]
+
+static func _format_resource_amount(amount: Variant) -> String:
+	if amount is int:
+		return str(amount)
+	if amount is float:
+		var numeric_amount := float(amount)
+		if is_equal_approx(numeric_amount, roundf(numeric_amount)):
+			return str(int(roundf(numeric_amount)))
+		return "%.1f" % numeric_amount
+	return str(amount)
 
 static func _host_viewport_size(host: Node) -> Vector2:
 	if host != null and host.get_tree() != null and host.get_tree().root != null:
