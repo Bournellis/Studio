@@ -26,7 +26,8 @@ Read in this order for almost every task:
 3. `docs/documentation-index.md`
 4. `docs/foundation-app-v0-audit.md`
 5. `docs/foundation-loop-audit.md`
-6. The files you intend to touch
+6. `docs/foundation-responsive-layout-contract.md` when touching Entry, Refugio, Battle or visual/layout code
+7. The files you intend to touch
 
 For product or design work, also read:
 
@@ -62,6 +63,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Full
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/client -gexit
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_responsive_layout.gd
 npx -y deno task --cwd server/functions check
 npx -y deno task --cwd supabase/functions check
 git diff --check
@@ -83,6 +85,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alp
 - Do not run remote publishing modes without explicit user approval and `-ConfirmRemoteMutation`.
 - Do not start a new playable feature, numeric tuning pass, weapon/spell/economy pass, battle presentation pass, final visual pass, `account_profiles/game_saves` migration, iOS work or mobile browser support before Foundation Audit is complete and the user explicitly chooses the next package.
 - Do not edit `.tscn` files as raw text unless the user explicitly asks and the change is safer than an editor/tool path.
+- Do not publish Entry/Refugio/Battle layout changes unless `tools/smoke_responsive_layout.gd` passes.
 - Do not import gameplay rules from other Draxos projects unless this project's live docs explicitly adopt them.
 - Do not treat `Projetos/_conceitos/mobile-universe/` as active implementation material. It is design archive only.
 
@@ -91,6 +94,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alp
 - `docs/product-vision.md` is the local long-term product canon until promoted to shared canon.
 - `docs/foundation-app-v0-audit.md` is the current product/agent compass for Foundation Audit.
 - `docs/foundation-loop-audit.md` is the executed audit for loop ergonomics and the next UX pass criteria.
+- `docs/foundation-responsive-layout-contract.md` is the guardrail for responsive Entry Labs, Refugio and Battle safe frames.
 - `docs/game-design-document.md` is the authoritative implementation GDD.
 - `docs/design-pending.md` is the only live register of unresolved design decisions.
 - `docs/documentation-index.md` classifies live docs, contracts, runbooks, history and design archive.

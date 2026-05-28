@@ -3,6 +3,7 @@ extends RefCounted
 const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
 const BattleLogPresenterScript := preload("res://ui/battle_log_presenter.gd")
 const BattleVisualMockupScript := preload("res://ui/battle_visual_mockup.gd")
+const MobileUiContractScript := preload("res://modes/boot/ui/mobile_ui_contract.gd")
 
 const EMPTY_BATTLE_TEXT := "Nenhuma batalha carregada. Solicite uma batalha, carregue o historico ou busque o ultimo resultado."
 const EMPTY_HISTORY_TEXT := "Historico recente vazio para este save."
@@ -442,20 +443,25 @@ func _add_fullscreen_background(parent: Control) -> void:
 	parent.add_child(blood)
 
 func _add_portrait_frame(parent: Control, compact_layout: bool) -> PanelContainer:
-	var margin := MarginContainer.new()
-	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
-	var edge := 10 if compact_layout else 18
-	margin.add_theme_constant_override("margin_left", edge)
-	margin.add_theme_constant_override("margin_top", edge)
-	margin.add_theme_constant_override("margin_right", edge)
-	margin.add_theme_constant_override("margin_bottom", edge)
-	parent.add_child(margin)
+	var safe_frame := Control.new()
+	safe_frame.name = "BattleSafeFrame"
+	parent.add_child(safe_frame)
+	var sync_frame := func() -> void:
+		var viewport_size := parent.get_viewport_rect().size
+		if viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
+			viewport_size = parent.size
+		if viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
+			viewport_size = Vector2(390, 844)
+		var safe_rect := MobileUiContractScript.immersive_safe_rect(viewport_size, compact_layout)
+		safe_frame.position = safe_rect.position
+		safe_frame.size = safe_rect.size
+	sync_frame.call()
+	parent.resized.connect(sync_frame)
 
 	var frame := PanelContainer.new()
 	frame.add_theme_stylebox_override("panel", _panel_style("bg_panel_alt", "border_default"))
-	frame.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	frame.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	margin.add_child(frame)
+	frame.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	safe_frame.add_child(frame)
 	return frame
 
 func _battle_header_panel(battle_log: Dictionary, rewards: Dictionary, compact_layout: bool) -> PanelContainer:

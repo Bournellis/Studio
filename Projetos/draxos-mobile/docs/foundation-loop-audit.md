@@ -19,6 +19,8 @@ Entregue:
 
 Proximo uso deste documento: validar manualmente se o passe resolve a experiencia real do loop antes de promover social, visual geral, apresentacao de batalha, armas, spells, economia ou tuning.
 
+Revisao manual do build publicado identificou uma regressao anterior a qualquer discussao de gameplay: Entry perdeu Labs Dev em contexto interno e Refugio/Batalha puderam escapar dos limites de Web/Android. Isso gerou o contrato `docs/foundation-responsive-layout-contract.md` e o smoke `tools/smoke_responsive_layout.gd`; qualquer novo passe visual do loop deve passar por esse guardrail antes de publicacao.
+
 ## Proposito
 
 Esta auditoria executa a primeira leitura pratica da Foundation Audit sobre o loop interno pos-login:

@@ -289,7 +289,10 @@ func test_entry_create_account_opens_popup_without_inline_signup_fields() -> voi
 	assert_true(boot._signup_password_input.secret)
 	assert_eq(boot._signup_email_input.text, _social_input_text_for_test(boot._auth_email_input))
 
-func test_entry_puts_login_before_save_choice_and_keeps_dev_tools_collapsed() -> void:
+func test_entry_puts_login_before_save_choice_and_exposes_internal_dev_tools() -> void:
+	ProjectSettings.set_setting("draxos_mobile/internal_alpha/dev_tools_enabled", true)
+	ProjectSettings.set_setting("draxos_mobile/progression_lab/enabled", true)
+	ProjectSettings.set_setting("draxos_mobile/battle_lab/enabled", true)
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)
 
@@ -304,6 +307,11 @@ func test_entry_puts_login_before_save_choice_and_keeps_dev_tools_collapsed() ->
 	assert_not_null(_find_button_by_text(boot._first_screen_root, "Entrar"))
 	assert_not_null(_find_button_by_text(boot._first_screen_root, "Criar conta"))
 	assert_not_null(_find_button_by_text(boot._first_screen_root, "Ferramentas internas"))
+	assert_true(_label_tree_contains(boot._first_screen_root, "Labs Dev"))
+	assert_not_null(_find_button_by_text(boot._first_screen_root, "Battle Lab"))
+	assert_not_null(_find_button_by_text(boot._first_screen_root, "Progression Lab"))
+	assert_true(boot._action_buttons.has("open_battle_lab"))
+	assert_true(boot._action_buttons.has("open_progression_lab"))
 	assert_not_null(_find_node_by_name(boot._first_screen_root, "EntryResetPanel"))
 
 func test_refuge_hides_labs_after_login_surface() -> void:

@@ -34,33 +34,55 @@ static func render_refuge(host: Node) -> void:
 static func _refuge_scene_board(host: Node, root: Control, compact: bool) -> void:
 	var board := Control.new()
 	board.name = "RefugeSceneBoard"
-	board.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
-	board.position = Vector2.ZERO
-	board.size = _host_viewport_size(host)
+	board.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	board.mouse_filter = Control.MOUSE_FILTER_PASS
+	board.clip_contents = true
 	root.add_child(board)
 
 	board.add_child(_refuge_scene_background(host, compact))
-	_add_refuge_altar_stage(host, board, compact)
-	_add_refuge_status_bar(host, board, compact)
-	_add_refuge_loop_panel(host, board, compact)
-	_add_refuge_footer_bar(host, board, compact)
-	_add_refuge_context_cta(host, board, compact)
+	var safe_frame := _refuge_safe_frame(board, compact)
+	_add_refuge_altar_stage(host, safe_frame, compact)
+	_add_refuge_status_bar(host, safe_frame, compact)
+	_add_refuge_loop_panel(host, safe_frame, compact)
+	_add_refuge_footer_bar(host, safe_frame, compact)
+	_add_refuge_context_cta(host, safe_frame, compact)
 
 	var popup_data := _create_refuge_menu_popup(host, root, compact)
 	var popup := popup_data["popup"] as PopupPanel
 	var title_label := popup_data["title_label"] as Label
 	var body := popup_data["body"] as VBoxContainer
 
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "battle", "BT", "Batalha", "accent_blood", Vector2(0.50, 0.19), "Pedir batalha e ver resultado.")
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "preparation", "PP", "Preparacao", "accent_astral", Vector2(0.50, 0.32), "Spells e pocao antes da batalha.")
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "refuge", "RF", "Refugio", "accent_astral", Vector2(0.22, 0.37), "Coleta, energia e estruturas.")
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "social", "SO", "Social", "status_success", Vector2(0.78, 0.37), "Amigos, guilda e chat.")
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "competition", "CP", "Competicao", "status_warning", Vector2(0.22, 0.56), "Fila de oponentes e ranking.")
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "shop", "LJ", "Loja", "accent_bone", Vector2(0.78, 0.56), "Recompensas e compras.")
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "collect", "CL", "Coletar", "status_success", Vector2(0.28, 0.77), "Coletar producao do Refugio.", true)
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "energy", "EN", "Energia", "accent_astral", Vector2(0.72, 0.77), "Comprar Energia.", true)
-	_add_refuge_profile_button(host, board, popup, title_label, body, compact)
+	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "battle", "BT", "Batalha", "accent_blood", Vector2(0.50, 0.19), "Pedir batalha e ver resultado.")
+	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "preparation", "PP", "Preparacao", "accent_astral", Vector2(0.50, 0.32), "Spells e pocao antes da batalha.")
+	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "refuge", "RF", "Refugio", "accent_astral", Vector2(0.22, 0.37), "Coleta, energia e estruturas.")
+	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "social", "SO", "Social", "status_success", Vector2(0.78, 0.37), "Amigos, guilda e chat.")
+	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "competition", "CP", "Competicao", "status_warning", Vector2(0.22, 0.56), "Fila de oponentes e ranking.")
+	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "shop", "LJ", "Loja", "accent_bone", Vector2(0.78, 0.56), "Recompensas e compras.")
+	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "collect", "CL", "Coletar", "status_success", Vector2(0.28, 0.77), "Coletar producao do Refugio.", true)
+	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "energy", "EN", "Energia", "accent_astral", Vector2(0.72, 0.77), "Comprar Energia.", true)
+	_add_refuge_profile_button(host, safe_frame, popup, title_label, body, compact)
+
+static func _refuge_safe_frame(board: Control, compact: bool) -> Control:
+	var frame := Control.new()
+	frame.name = "RefugeSafeFrame"
+	frame.mouse_filter = Control.MOUSE_FILTER_PASS
+	board.add_child(frame)
+	var sync_frame := func() -> void:
+		var viewport_size := board.get_viewport_rect().size
+		if viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
+			viewport_size = board.size
+		if viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
+			var parent := board.get_parent() as Control
+			if parent != null and parent.size.x > 0.0 and parent.size.y > 0.0:
+				viewport_size = parent.size
+		if viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
+			viewport_size = Vector2(390, 844)
+		var safe_rect := MobileUiContractScript.immersive_safe_rect(viewport_size, compact)
+		frame.position = safe_rect.position
+		frame.size = safe_rect.size
+	sync_frame.call()
+	board.resized.connect(sync_frame)
+	return frame
 
 static func _refuge_scene_background(_host: Node, _compact: bool) -> Control:
 	var layer := Control.new()
@@ -622,25 +644,21 @@ static func _short_loop_text(text: String) -> String:
 	return shortened
 
 static func _host_viewport_size(host: Node) -> Vector2:
-	var resolved_size := Vector2.ZERO
+	var first_root := _first_screen_root(host)
+	if first_root != null and first_root.size.x > 0 and first_root.size.y > 0:
+		return first_root.size
+	if host is Control:
+		var host_size := (host as Control).size
+		if host_size.x > 0 and host_size.y > 0:
+			return host_size
+	if host != null and host.get_viewport() != null:
+		var viewport_size := host.get_viewport().get_visible_rect().size
+		if viewport_size.x > 0 and viewport_size.y > 0:
+			return viewport_size
 	if host != null and host.get_tree() != null and host.get_tree().root != null:
 		var window_size := host.get_tree().root.size
 		if window_size.x > 0 and window_size.y > 0:
-			resolved_size = Vector2(window_size)
-	if host is Control:
-		var host_size := (host as Control).size
-		if host_size.x > resolved_size.x:
-			resolved_size.x = host_size.x
-		if host_size.y > resolved_size.y:
-			resolved_size.y = host_size.y
-	if host != null and host.get_viewport() != null:
-		var viewport_size := host.get_viewport().get_visible_rect().size
-		if resolved_size.x <= 0 and viewport_size.x > 0:
-			resolved_size.x = viewport_size.x
-		if resolved_size.y <= 0 and viewport_size.y > 0:
-			resolved_size.y = viewport_size.y
-	if resolved_size.x > 0 and resolved_size.y > 0:
-		return resolved_size
+			return Vector2(window_size)
 	return Vector2(390, 844)
 
 static func _clear_node_children(parent: Node) -> void:
@@ -705,18 +723,19 @@ static func _entry_save_panel(host: Node, compact: bool) -> PanelContainer:
 static func _entry_dev_panel(host: Node, compact: bool) -> PanelContainer:
 	var battle_lab := bool(host.call("_battle_lab_available"))
 	var progression_lab := bool(host.call("_progression_lab_available"))
+	var dev_tools_visible := battle_lab or progression_lab or bool(ProjectSettings.get_setting("draxos_mobile/internal_alpha/dev_tools_enabled", false))
 	var panel := _panel(host, "EntryDevPanel", "bg_panel_alt", "border_default")
 	var box := _panel_box(panel, compact)
 	var toggle := CheckButton.new()
 	toggle.text = "Ferramentas internas"
 	toggle.tooltip_text = "Mostrar guest e ferramentas de validacao."
-	toggle.button_pressed = false
+	toggle.button_pressed = dev_tools_visible
 	toggle.add_theme_color_override("font_color", UiTokens.color("text_primary"))
 	host.call("_prepare_touch_button", toggle)
 	box.add_child(toggle)
 
 	var dev_body := VBoxContainer.new()
-	dev_body.visible = false
+	dev_body.visible = dev_tools_visible
 	dev_body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	dev_body.add_theme_constant_override("separation", 8 if compact else 10)
 	box.add_child(dev_body)

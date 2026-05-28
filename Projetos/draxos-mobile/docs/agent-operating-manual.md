@@ -16,9 +16,10 @@ Read live docs in this order:
 3. `docs/documentation-index.md` - where each doc belongs.
 4. `docs/foundation-app-v0-audit.md` - current Foundation Audit compass.
 5. `docs/foundation-loop-audit.md` - executed audit of post-login loop ergonomics.
-6. `docs/product-vision.md` - local long-term product canon.
-7. `docs/game-design-document.md` - implementation reference and mock/substance context.
-8. `docs/design-pending.md` - only live register of unresolved design decisions.
+6. `docs/foundation-responsive-layout-contract.md` - required when touching Entry, Refugio, Battle or visual/layout code.
+7. `docs/product-vision.md` - local long-term product canon.
+8. `docs/game-design-document.md` - implementation reference and mock/substance context.
+9. `docs/design-pending.md` - only live register of unresolved design decisions.
 
 If a historical track conflicts with these docs, the live docs win. If local product design conflicts with shared lore in `../../canon/`, escalate instead of silently choosing.
 
@@ -86,6 +87,7 @@ For Foundation Audit, the expected DraxosMobile Doing card must state the branch
 | Product/design | `docs/product-vision.md`, `docs/product-brief.md`, `docs/game-design-document.md`, `docs/design-pending.md` |
 | Backend/contracts | `docs/architecture.md`, `docs/contracts/`, `server/schema/`, `server/functions/`, `supabase/` mirrors |
 | Godot client | `AGENTS.md`, `modes/boot/surfaces/README.md`, relevant tests, relevant flow/presenter |
+| Entry/Refugio/Battle layout | `docs/foundation-responsive-layout-contract.md`, `tools/smoke_responsive_layout.gd`, relevant UI tests |
 | Release/publication | `docs/release-ops-checklist.md`, Track 13 release safety contract, `tools/README.md` |
 | Manual QA | `docs/track-13-manual-walkthrough-gate.md`, `docs/internal-alpha-v0-handoff.md` |
 
@@ -98,6 +100,7 @@ Use the smallest profile that proves the change, then broaden when touching shar
 | Docs only | `git diff --check`; `validate_foundation.ps1 -Profile Quick` when docs affect status/operation |
 | PowerShell tools | `validate_foundation.ps1 -Profile Release` |
 | Godot client | Godot `validate.gd`, GUT client, then `validate_foundation.ps1 -Profile Client` |
+| Entry/Refugio/Battle layout | `tools/smoke_responsive_layout.gd` plus relevant GUT/client validation |
 | Backend/functions | `npx -y deno task --cwd server/functions check` and `npx -y deno task --cwd supabase/functions check` |
 | Release safety | `validate_foundation.ps1 -Profile Release` plus `tools/check_release_safety.ps1` |
 | Foundation or cross-cutting work | `validate_foundation.ps1 -Profile Full` plus explicit Godot/GUT/Deno commands |
@@ -108,6 +111,7 @@ Default full gate:
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Full
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/client -gexit
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_responsive_layout.gd
 npx -y deno task --cwd server/functions check
 npx -y deno task --cwd supabase/functions check
 git diff --check
@@ -136,6 +140,7 @@ Do not start these without explicit user direction and a fresh track/package:
 - account/save migration from `players.save_type` to `account_profiles/game_saves`;
 - iOS or mobile browser support;
 - final asset production;
+- publishing visual/layout changes before `tools/smoke_responsive_layout.gd` passes;
 - remote publication;
 - secret handling outside ignored local env files.
 

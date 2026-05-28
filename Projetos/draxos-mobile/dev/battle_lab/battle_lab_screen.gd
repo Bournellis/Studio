@@ -95,7 +95,9 @@ var _replay_speed := 1.0
 var _replay_clock := 0.0
 
 static func is_available() -> bool:
-	return bool(ProjectSettings.get_setting("draxos_mobile/battle_lab/enabled", false)) and OS.has_feature("editor")
+	if not bool(ProjectSettings.get_setting("draxos_mobile/battle_lab/enabled", false)):
+		return false
+	return OS.has_feature("editor") or bool(ProjectSettings.get_setting("draxos_mobile/internal_alpha/dev_tools_enabled", false))
 
 static func deno_invocation(settings_prefix: String, fallback_prefix: PackedStringArray) -> Dictionary:
 	var command_text := str(ProjectSettings.get_setting("%s/deno_command" % settings_prefix, "npx")).strip_edges()

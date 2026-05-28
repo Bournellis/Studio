@@ -42,6 +42,8 @@ Documentation alignment is complete, and the first loop audit is recorded in `do
 
 Foundation Loop UX Pass 01 is implemented and published to the Internal Alpha artifact/site channel from branch `codex/draxos-mobile/foundation-loop-ux-pass`. It makes Refugio the operational loop home, adds a visible loop panel, separates unseen battle rewards from old battle history, removes confirmation from routine collection, changes the battle summary return to `Voltar e verificar base`, marks battle results as seen on return, and adds the no-network smoke `tools/smoke_foundation_loop.gd`.
 
+Foundation Responsive Guardrails are being applied after manual review found the published Web/APK layout clipping Entry tools, Refugio and Battle. The local fix restores Entry Labs in Internal Alpha, moves Refugio/Battle immersive UI into safe frames, and adds `docs/foundation-responsive-layout-contract.md` plus `tools/smoke_responsive_layout.gd`. It is not published remotely yet.
+
 Priority order after the docs are aligned:
 
 1. Internal loop ergonomics.
@@ -85,6 +87,7 @@ The stable Cloudflare Pages domain is protected by Cloudflare Access. Anonymous 
 
 - Track 16 schema/backend work was not separately promoted in this publication; Supabase migrations/functions for that package must still be deployed deliberately if Track 16 becomes product focus later.
 - Foundation Loop UX Pass 01 is published, but it still needs manual Android/Windows/Web review before it becomes the accepted V0 UX baseline.
+- Foundation Responsive Guardrails are local until Fabio approves a hotfix publication.
 - Track 13 manual Android/Windows/Web walkthrough is still required before widening access beyond the current internal/private audience.
 - `players.save_type` remains an alpha shortcut. `account_profiles` + `game_saves` is a future migration package.
 - Progression/economy remains mock/substance and not the current tuning focus.
@@ -92,7 +95,7 @@ The stable Cloudflare Pages domain is protected by Cloudflare Access. Anonymous 
 
 ## Next Step
 
-Manually review the published Foundation Loop UX Pass 01 on Android/Windows/Web: confirm the post-login loop feels natural, the primary CTA is obvious, collect/evolve states are visible, reward return sends the player back to base intent, and social/visual/battle-presentation work stays secondary until this loop is accepted.
+Validate the local Foundation Responsive Guardrails, then publish a hotfix only after explicit approval. After publication, manually review Android/Windows/Web again: Entry Labs visible, Refugio contained, Battle contained, loop CTA obvious, and reward return sends the player back to base intent.
 
 ## Validation
 
@@ -103,6 +106,7 @@ git diff --check
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Quick
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_agent_ops_foundation.ps1 -ProjectDir .
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_foundation_loop.gd
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_responsive_layout.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_foundation_hardening.gd
 ```
 

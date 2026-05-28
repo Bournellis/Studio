@@ -18,13 +18,14 @@ This directory contains active, conceptual and paused projects for the studio.
 
 ## Implementacao - Foundation Audit
 
-- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 13 release safety and Track 14 agent ops are preserved baselines, Track 00-15 are integrated, and Track 16 is the latest technical package. The active stage is Foundation Audit for the post-login loop: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again. Foundation Loop UX Pass 01 is implemented and published to Internal Alpha as the current loop baseline candidate.
+- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 13 release safety and Track 14 agent ops are preserved baselines, Track 00-15 are integrated, and Track 16 is the latest technical package. The active stage is Foundation Audit for the post-login loop: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again. Foundation Loop UX Pass 01 is implemented and published to Internal Alpha as the current loop baseline candidate; a local responsive hotfix now protects Entry/Refugio/Battle after manual review found Web/Android clipping.
   - Priority/status: `P2_IMPLEMENTACAO - FOUNDATION_AUDIT_ACTIVE`
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Agent manual: `draxos-mobile/docs/agent-operating-manual.md`
   - Documentation index: `draxos-mobile/docs/documentation-index.md`
   - Foundation Audit: `draxos-mobile/docs/foundation-app-v0-audit.md`
   - Foundation Loop Audit: `draxos-mobile/docs/foundation-loop-audit.md`
+  - Responsive layout contract: `draxos-mobile/docs/foundation-responsive-layout-contract.md`
   - Operational status: `draxos-mobile/implementation/current-status.md`
   - Product vision: `draxos-mobile/docs/product-vision.md`
   - Product brief: `draxos-mobile/docs/product-brief.md`
@@ -40,7 +41,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Progression Lab: `draxos-mobile/docs/progression-lab/README.md`
   - Design archive: `_conceitos/mobile-universe/`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: manually review the published Foundation Loop UX Pass 01 on Android/Windows/Web, then accept or adjust the loop before social, visual, battle presentation, weapons, spells, economy or tuning work.
+  - Current next step: validate and publish the local responsive hotfix only after explicit approval, then resume manual review of the Foundation Loop UX Pass 01 on Android/Windows/Web before social, visual, battle presentation, weapons, spells, economy or tuning work.
 
 ## Arquivo De Design
 

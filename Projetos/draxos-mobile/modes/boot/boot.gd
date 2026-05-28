@@ -162,6 +162,9 @@ func _clear_existing_scene() -> void:
 		child.free()
 
 func _build_ui() -> void:
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	if size.x <= 0.0 or size.y <= 0.0:
+		size = get_viewport_rect().size
 	_compact_layout = _should_use_compact_layout()
 	ShellSurfacePresenterScript.render(self)
 	_render_create_account_dialog()
@@ -365,7 +368,7 @@ func _apply_orientation_for_route(_route_id: String) -> void:
 	DisplayServer.screen_set_orientation(APP_ORIENTATION_PORTRAIT)
 
 func _battle_lab_available() -> bool:
-	if not OS.has_feature("editor"):
+	if not _internal_dev_tools_enabled():
 		return false
 	if not bool(ProjectSettings.get_setting("draxos_mobile/battle_lab/enabled", false)):
 		return false
@@ -402,11 +405,14 @@ func _close_battle_lab_overlay() -> void:
 	})
 
 func _progression_lab_available() -> bool:
-	if not OS.has_feature("editor"):
+	if not _internal_dev_tools_enabled():
 		return false
 	if not bool(ProjectSettings.get_setting("draxos_mobile/progression_lab/enabled", false)):
 		return false
 	return ResourceLoader.exists(PROGRESSION_LAB_SCREEN_PATH)
+
+func _internal_dev_tools_enabled() -> bool:
+	return OS.has_feature("editor") or bool(ProjectSettings.get_setting("draxos_mobile/internal_alpha/dev_tools_enabled", false))
 
 func _open_progression_lab_overlay() -> void:
 	if not _progression_lab_available():
@@ -465,10 +471,8 @@ func _clear_battle_fullscreen_overlay() -> void:
 func _create_battle_fullscreen_overlay() -> Control:
 	var overlay := Control.new()
 	overlay.name = "BattleFullscreenOverlay"
-	overlay.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	overlay.position = Vector2.ZERO
-	var root_size := Vector2(get_tree().root.size)
-	overlay.size = root_size if root_size.x > 0.0 and root_size.y > 0.0 else get_viewport_rect().size
 	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
 	add_child(overlay)
 	_battle_fullscreen_overlay = overlay

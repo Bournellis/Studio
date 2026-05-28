@@ -10,6 +10,7 @@ const COMPACT_WIDTH_BREAKPOINT := 760.0
 const LANDSCAPE_COLUMN_RATIO := 1.08
 const WIDE_LANDSCAPE_WIDTH := 1180.0
 const PORTRAIT_FRAME_WIDTH := 432.0
+const IMMERSIVE_SAFE_MAX_WIDTH := 1180.0
 const SHELL_MARGIN_COMPACT := 10.0
 const SHELL_MARGIN_REGULAR := 18.0
 const PANEL_GAP_COMPACT := 8.0
@@ -69,6 +70,16 @@ static func panel_gap(compact: bool) -> int:
 
 static func panel_padding(compact: bool) -> int:
 	return 12 if compact else 16
+
+static func immersive_safe_rect(viewport_size: Vector2, compact: bool) -> Rect2:
+	var margin := shell_margin(compact)
+	var available_width: float = maxf(1.0, viewport_size.x - margin * 2.0)
+	var available_height: float = maxf(1.0, viewport_size.y - margin * 2.0)
+	var safe_width := available_width
+	if not compact:
+		safe_width = minf(safe_width, IMMERSIVE_SAFE_MAX_WIDTH)
+	var safe_x := maxf(margin, (viewport_size.x - safe_width) * 0.5)
+	return Rect2(Vector2(safe_x, margin), Vector2(safe_width, available_height))
 
 static func action_button_columns_for_size(viewport_size: Vector2, compact: bool) -> int:
 	if compact:
