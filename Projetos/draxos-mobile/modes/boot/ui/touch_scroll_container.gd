@@ -4,6 +4,8 @@ extends ScrollContainer
 const MobileUiContractScript := preload("res://modes/boot/ui/mobile_ui_contract.gd")
 
 @export var drag_threshold := MobileUiContractScript.TOUCH_DRAG_THRESHOLD
+@export var scrollbar_width := MobileUiContractScript.TOUCH_SCROLLBAR_WIDTH
+@export var always_show_vertical_scrollbar := true
 
 var _pressing := false
 var _dragging := false
@@ -11,7 +13,13 @@ var _last_position := Vector2.ZERO
 var _accumulated_drag := Vector2.ZERO
 
 func _ready() -> void:
-	MobileUiContractScript.apply_touch_scroll_policy(self)
+	_apply_configured_scroll_policy()
+	call_deferred("_configure_scrollbars")
+
+func configure_subtle_scrollbar() -> void:
+	scrollbar_width = MobileUiContractScript.IMMERSIVE_SCROLLBAR_WIDTH
+	always_show_vertical_scrollbar = false
+	_apply_configured_scroll_policy()
 	call_deferred("_configure_scrollbars")
 
 func _gui_input(event: InputEvent) -> void:
@@ -66,4 +74,14 @@ func _apply_drag_delta(delta: Vector2) -> void:
 	accept_event()
 
 func _configure_scrollbars() -> void:
-	MobileUiContractScript.apply_scrollbar_touch_policy(self)
+	_apply_configured_scroll_policy()
+
+func _apply_configured_scroll_policy() -> void:
+	mouse_filter = Control.MOUSE_FILTER_PASS
+	vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_ALWAYS if always_show_vertical_scrollbar else ScrollContainer.SCROLL_MODE_AUTO
+	horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	var vertical_bar := get_v_scroll_bar()
+	if vertical_bar == null:
+		return
+	vertical_bar.custom_minimum_size.x = maxf(vertical_bar.custom_minimum_size.x, scrollbar_width)
+	vertical_bar.mouse_filter = Control.MOUSE_FILTER_PASS

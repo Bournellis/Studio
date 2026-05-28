@@ -79,7 +79,7 @@ func _check_mobile_ui_contract() -> void:
 	_expect(int(portrait.get("surface_columns", 0)) == 1, "portrait surface layout stays single-column")
 	_expect(str(landscape.get("orientation", "")) == "portrait", "wide viewport still uses portrait layout contract")
 	_expect(int(landscape.get("surface_columns", 0)) == 1, "wide viewport keeps single-column surfaces")
-	_expect(int(landscape.get("base_map_columns", 0)) == 2, "wide viewport keeps portrait base map columns")
+	_expect(int(landscape.get("base_map_columns", 0)) == 1, "wide viewport keeps compact portrait base map columns")
 
 func _check_session_save_boundary() -> void:
 	var store = SessionStoreScript.new()

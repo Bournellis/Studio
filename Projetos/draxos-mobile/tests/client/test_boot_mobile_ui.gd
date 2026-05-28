@@ -20,8 +20,8 @@ func test_boot_compact_layout_groups_actions_for_mobile() -> void:
 	add_child_autofree(boot)
 
 	assert_true(boot._compact_layout)
-	assert_true(boot._action_button_columns() >= 2)
-	assert_eq(boot._base_map_columns(), 2)
+	assert_eq(boot._action_button_columns(), 1)
+	assert_eq(boot._base_map_columns(), 1)
 	assert_true(boot._nav_buttons.is_empty())
 	assert_true(boot._back_button.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
 	assert_true(boot._content_scroll is TouchScrollContainerScript)
@@ -214,20 +214,20 @@ func test_app_shell_route_contract_declares_battle_gameplay_mode() -> void:
 func test_internal_app_screen_layout_uses_portrait_single_column() -> void:
 	assert_eq(BootScreenScript.surface_columns_for_size(Vector2(540, 960), 2), 1)
 	assert_eq(BootScreenScript.surface_columns_for_size(Vector2(1180, 720), 2), 1)
-	assert_eq(BootScreenScript.action_button_columns_for_size(Vector2(540, 960), true), 2)
-	assert_eq(BootScreenScript.action_button_columns_for_size(Vector2(1180, 720), true), 2)
+	assert_eq(BootScreenScript.action_button_columns_for_size(Vector2(540, 960), true), 1)
+	assert_eq(BootScreenScript.action_button_columns_for_size(Vector2(1180, 720), true), 1)
 
 	var portrait_contract := MobileUiContractScript.layout_summary_for_size(Vector2(540, 960), true)
 	assert_eq(str(portrait_contract.get("orientation", "")), "portrait")
 	assert_eq(int(portrait_contract.get("surface_columns", 0)), 1)
-	assert_eq(int(portrait_contract.get("action_button_columns", 0)), 2)
-	assert_eq(int(portrait_contract.get("base_map_columns", 0)), 2)
+	assert_eq(int(portrait_contract.get("action_button_columns", 0)), 1)
+	assert_eq(int(portrait_contract.get("base_map_columns", 0)), 1)
 
 	var landscape_contract := MobileUiContractScript.layout_summary_for_size(Vector2(1180, 720), true)
 	assert_eq(str(landscape_contract.get("orientation", "")), "portrait")
 	assert_eq(int(landscape_contract.get("surface_columns", 0)), 1)
-	assert_eq(int(landscape_contract.get("action_button_columns", 0)), 2)
-	assert_eq(int(landscape_contract.get("base_map_columns", 0)), 2)
+	assert_eq(int(landscape_contract.get("action_button_columns", 0)), 1)
+	assert_eq(int(landscape_contract.get("base_map_columns", 0)), 1)
 
 	var button := Button.new()
 	button.custom_minimum_size = Vector2(24, 12)
@@ -574,8 +574,9 @@ func test_boot_battle_running_renders_fullscreen_overlay_and_skip() -> void:
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Timeline"))
 	var skip_button := boot._action_buttons["skip_battle_replay"] as Button
 	assert_eq(skip_button.text, "Pular")
-	assert_true(skip_button.custom_minimum_size.x >= 176.0)
+	assert_eq(skip_button.custom_minimum_size.x, 0.0)
 	assert_true(skip_button.custom_minimum_size.y >= 64.0)
+	assert_true((skip_button.size_flags_horizontal & Control.SIZE_EXPAND_FILL) != 0)
 	assert_eq(skip_button.mouse_filter, Control.MOUSE_FILTER_STOP)
 
 	boot._replay_running = true

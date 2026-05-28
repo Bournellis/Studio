@@ -41,6 +41,7 @@ func _check_portrait_app_loop() -> void:
 	_expect(_label_tree_contains(boot, "Entrada"), "portrait Entry shows operational start page")
 	_expect(_find_button_by_text(boot, "Entrar no Refugio") != null, "portrait Entry has Refugio CTA")
 	_expect(_find_button_by_text(boot, "Save normal") != null, "portrait Entry has save selector")
+	_expect_layout_fits_width(boot, float(root.size.x), "portrait Entry")
 
 	boot.call("_show_screen", "refuge")
 	await process_frame
@@ -52,6 +53,7 @@ func _check_portrait_app_loop() -> void:
 	_expect(battle_hotspot != null, "portrait Refugio has Battle hotspot")
 	_expect(battle_hotspot != null and battle_hotspot.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET, "portrait hotspots keep mobile touch target")
 	_expect(_get_back_button(boot) != null and not _get_back_button(boot).visible, "portrait Refugio hides app chrome Back")
+	_expect_layout_fits_width(boot, float(root.size.x), "portrait Refugio")
 
 	boot.call("_show_screen", "account")
 	await process_frame
@@ -60,6 +62,7 @@ func _check_portrait_app_loop() -> void:
 	_expect(_get_app_chrome_root(boot) != null and _get_app_chrome_root(boot).visible, "account uses internal app shell")
 	_expect(_get_back_button(boot) != null and _get_back_button(boot).visible, "account route exposes Back")
 	_expect(boot.get("_auth_email_input") != null, "account route owns login fields")
+	_expect_layout_fits_width(boot, float(root.size.x), "portrait Account")
 
 	boot.call("_go_back")
 	await process_frame
@@ -85,6 +88,7 @@ func _check_wide_portrait_app_loop() -> void:
 	_expect(_get_content_scroll(boot) != null, "wide internal route uses touch scroll container")
 	_expect(_get_content_scroll(boot) is TouchScrollContainerScript, "wide internal route reuses DraxosTouchScrollContainer")
 	_expect(_label_tree_contains(boot, "Rotina da Base"), "wide Base keeps routine panel")
+	_expect_layout_fits_width(boot, float(root.size.x), "wide Base management")
 
 	var scroll := _get_content_scroll(boot)
 	if scroll != null:
@@ -98,6 +102,7 @@ func _check_wide_portrait_app_loop() -> void:
 	_expect(str(boot.get("_current_screen")) == "social", "wide Social route opens")
 	_expect(scroll != null and scroll.scroll_vertical == 0, "route changes reset scroll position")
 	_expect(_label_tree_contains(boot, "Refresh e Polling") or _label_tree_contains(boot, "Social server-authoritative"), "wide Social keeps readable state")
+	_expect_layout_fits_width(boot, float(root.size.x), "wide Social")
 	boot.queue_free()
 	await process_frame
 
@@ -118,6 +123,7 @@ func _check_battle_fullscreen_loop() -> void:
 	_expect(boot.get("_battle_fullscreen_overlay") != null, "battle_running creates fullscreen overlay")
 	_expect(_find_button_by_text(boot, "Pular") != null, "battle_running exposes fixed skip action")
 	_expect(_label_tree_contains(boot, "Autobattler"), "battle_running labels gameplay frame")
+	_expect_layout_fits_width(boot, float(root.size.x), "battle_running")
 
 	boot.set("_battle_summary_skipped", true)
 	boot.call("_show_screen", "battle_summary")
@@ -126,6 +132,7 @@ func _check_battle_fullscreen_loop() -> void:
 	_expect(_label_tree_contains(boot, "Resumo da batalha"), "battle_summary shows result title")
 	_expect(_label_tree_contains(boot, "Voltar ao Refugio"), "battle_summary can return to Refugio")
 	_expect(_find_button_by_text(boot, "Historico") != null, "battle_summary can open history")
+	_expect_layout_fits_width(boot, float(root.size.x), "battle_summary")
 	boot.queue_free()
 	await process_frame
 
@@ -141,6 +148,34 @@ func _new_boot() -> Control:
 func _expect(condition: bool, message: String) -> void:
 	if not condition:
 		_failures.append(message)
+
+func _expect_layout_fits_width(node: Node, viewport_width: float, context: String) -> void:
+	var overflowing := _first_horizontal_overflow(node, viewport_width)
+	if overflowing != "":
+		_failures.append("%s horizontal overflow: %s" % [context, overflowing])
+
+func _first_horizontal_overflow(node: Node, viewport_width: float) -> String:
+	if node == null:
+		return ""
+	if node is Control:
+		var control := node as Control
+		if control.is_visible_in_tree() and _is_layout_surface(control):
+			var rect := control.get_global_rect()
+			if rect.position.x < -1.0 or rect.end.x > viewport_width + 1.0:
+				return "%s left=%.1f right=%.1f viewport=%.1f" % [
+					control.name,
+					rect.position.x,
+					rect.end.x,
+					viewport_width,
+				]
+	for child: Node in node.get_children():
+		var found := _first_horizontal_overflow(child, viewport_width)
+		if found != "":
+			return found
+	return ""
+
+func _is_layout_surface(control: Control) -> bool:
+	return control is Button or control is LineEdit or control is PanelContainer or control is ScrollContainer
 
 func _get_back_button(boot: Control) -> Button:
 	var value: Variant = boot.get("_back_button")

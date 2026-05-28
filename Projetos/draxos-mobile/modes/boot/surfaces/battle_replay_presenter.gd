@@ -60,25 +60,33 @@ func render_fullscreen_replay(
 	_add_fullscreen_background(parent)
 	var frame := _add_portrait_frame(parent, compact_layout)
 	var stage_column := VBoxContainer.new()
-	stage_column.add_theme_constant_override("separation", 6 if compact_layout else 8)
+	stage_column.add_theme_constant_override("separation", 8 if compact_layout else 10)
 	stage_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	stage_column.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	frame.add_child(stage_column)
 
-	stage_column.add_child(_fullscreen_label("Autobattler", 18 if compact_layout else 24, "text_primary"))
-	stage_column.add_child(_fullscreen_label(BattleLogPresenterScript.format_summary(battle_log, rewards), 12 if compact_layout else 14, "text_secondary"))
+	stage_column.add_child(_battle_header_panel(battle_log, rewards, compact_layout))
 
 	_visual = BattleVisualMockupScript.new()
-	_visual.custom_minimum_size = Vector2(0, 360 if compact_layout else 460)
+	_visual.custom_minimum_size = Vector2(0, 0)
 	_visual.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_visual.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	stage_column.add_child(_visual)
+	var stage_panel := PanelContainer.new()
+	stage_panel.add_theme_stylebox_override("panel", _panel_style("bg_deep", "border_active"))
+	stage_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	stage_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	stage_panel.add_child(_visual)
+	stage_column.add_child(stage_panel)
+
+	var skip_button := _fullscreen_action_button("Pular", ACTION_SKIP_REPLAY, Vector2(0, 64))
+	skip_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	stage_column.add_child(skip_button)
 
 	var timeline_panel := PanelContainer.new()
 	timeline_panel.add_theme_stylebox_override("panel", _panel_style("bg_panel", "border_default"))
-	timeline_panel.custom_minimum_size = Vector2(0, 150 if compact_layout else 190)
+	timeline_panel.custom_minimum_size = Vector2(0, 104 if compact_layout else 130)
 	timeline_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	timeline_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	timeline_panel.size_flags_vertical = Control.SIZE_SHRINK_END
 	stage_column.add_child(timeline_panel)
 
 	var timeline_stack := VBoxContainer.new()
@@ -94,10 +102,6 @@ func render_fullscreen_replay(
 	_timeline_label = _fullscreen_label("", 12 if compact_layout else 13, "text_primary")
 	_timeline_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	timeline_scroll.add_child(_timeline_label)
-
-	var skip_button := _fullscreen_action_button("Pular", ACTION_SKIP_REPLAY, Vector2(176, 64))
-	skip_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	stage_column.add_child(skip_button)
 
 func render_fullscreen_summary(
 	host: Node,
@@ -126,7 +130,7 @@ func render_fullscreen_summary(
 
 	var summary := summary_data(battle_log, rewards, current_resources)
 	var stats := GridContainer.new()
-	stats.columns = 2
+	stats.columns = 1 if compact_layout else 2
 	stats.add_theme_constant_override("h_separation", 10 if compact_layout else 16)
 	stats.add_theme_constant_override("v_separation", 6 if compact_layout else 10)
 	stats.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -372,6 +376,17 @@ func _add_portrait_frame(parent: Control, compact_layout: bool) -> PanelContaine
 	frame.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	margin.add_child(frame)
 	return frame
+
+func _battle_header_panel(battle_log: Dictionary, rewards: Dictionary, compact_layout: bool) -> PanelContainer:
+	var panel := PanelContainer.new()
+	panel.add_theme_stylebox_override("panel", _panel_style("bg_panel", "border_default"))
+	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var stack := VBoxContainer.new()
+	stack.add_theme_constant_override("separation", 4 if compact_layout else 6)
+	panel.add_child(stack)
+	stack.add_child(_fullscreen_label("Autobattler", 20 if compact_layout else 24, "text_primary"))
+	stack.add_child(_fullscreen_label(BattleLogPresenterScript.format_summary(battle_log, rewards), 11 if compact_layout else 13, "text_secondary"))
+	return panel
 
 func _fullscreen_label(text: String, font_size: int, color_token: String) -> Label:
 	var label := Label.new()

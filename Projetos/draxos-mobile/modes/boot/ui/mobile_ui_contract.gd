@@ -2,7 +2,8 @@ class_name DraxosMobileUiContract
 extends RefCounted
 
 const MIN_TOUCH_TARGET := 48.0
-const TOUCH_SCROLLBAR_WIDTH := 30.0
+const TOUCH_SCROLLBAR_WIDTH := 18.0
+const IMMERSIVE_SCROLLBAR_WIDTH := 8.0
 const TOUCH_DRAG_THRESHOLD := 12.0
 const COMPACT_WIDTH_BREAKPOINT := 760.0
 const LANDSCAPE_COLUMN_RATIO := 1.08
@@ -10,12 +11,12 @@ const WIDE_LANDSCAPE_WIDTH := 1180.0
 const PORTRAIT_FRAME_WIDTH := 432.0
 
 static func button_min_size(compact: bool) -> Vector2:
-	var min_size := Vector2(154, 50) if compact else Vector2(220, MIN_TOUCH_TARGET)
+	var min_size := Vector2(0, 50) if compact else Vector2(0, MIN_TOUCH_TARGET)
 	min_size.y = maxf(min_size.y, MIN_TOUCH_TARGET)
 	return min_size
 
 static func input_min_size(compact: bool) -> Vector2:
-	var min_size := Vector2(260, 48) if compact else Vector2(260, 40)
+	var min_size := Vector2(0, 48) if compact else Vector2(0, 40)
 	min_size.y = maxf(min_size.y, MIN_TOUCH_TARGET)
 	return min_size
 
@@ -45,13 +46,19 @@ static func apply_scrollbar_touch_policy(scroll: ScrollContainer) -> void:
 
 static func action_button_columns_for_size(viewport_size: Vector2, compact: bool) -> int:
 	if compact:
-		return 2
+		return 1
+	if viewport_size.x <= PORTRAIT_FRAME_WIDTH + 80.0:
+		return 1
 	return 2
 
 static func surface_columns_for_size(viewport_size: Vector2, max_columns: int = 2) -> int:
 	return 1
 
 static func base_map_columns_for_size(viewport_size: Vector2, compact: bool) -> int:
+	if compact:
+		return 1
+	if viewport_size.x <= PORTRAIT_FRAME_WIDTH + 80.0:
+		return 1
 	return 2
 
 static func layout_summary_for_size(viewport_size: Vector2, compact: bool, max_surface_columns: int = 2) -> Dictionary:

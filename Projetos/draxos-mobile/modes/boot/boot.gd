@@ -148,6 +148,8 @@ func _should_use_compact_layout() -> bool:
 	if OS.get_name() == "Android":
 		return true
 	var viewport_size := get_viewport_rect().size
+	if viewport_size.x <= MobileUiContractScript.COMPACT_WIDTH_BREAKPOINT:
+		return true
 	return viewport_size.y <= 620.0 and viewport_size.x > viewport_size.y
 
 func _manifest_url() -> String:

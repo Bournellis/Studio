@@ -13,7 +13,7 @@ class RefugeAltarView:
 	func _init(is_compact: bool = false) -> void:
 		compact = is_compact
 		mouse_filter = Control.MOUSE_FILTER_IGNORE
-		custom_minimum_size = Vector2(320, 250) if compact else Vector2(390, 360)
+		custom_minimum_size = Vector2(0, 230) if compact else Vector2(0, 320)
 		size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		size_flags_vertical = Control.SIZE_EXPAND_FILL
 
@@ -86,6 +86,7 @@ static func _screen_body(host: Node, root: Control, body_name: String, compact: 
 
 	var scroll := TouchScrollContainerScript.new()
 	scroll.name = "%sScroll" % body_name
+	scroll.configure_subtle_scrollbar()
 	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	margin.add_child(scroll)
@@ -153,7 +154,7 @@ static func _entry_dev_panel(host: Node, compact: bool) -> PanelContainer:
 		box.add_child(_body_label("Labs internos aparecem aqui apenas no editor/dev tools.", compact))
 		return panel
 	box.add_child(_body_label("Ferramentas internas para preparar saves e conferir batalhas sem virar feature publica.", compact))
-	var grid := _button_grid(compact)
+	var grid := _button_grid(compact, 2)
 	box.add_child(grid)
 	if battle_lab:
 		grid.add_child(_entry_action_button(host, "Battle Lab", "open_battle_lab", compact))
@@ -254,9 +255,9 @@ static func _hotspot_button(host: Node, compact: bool, title: String, detail: St
 	host.call("_prepare_touch_button", button)
 	return button
 
-static func _button_grid(compact: bool) -> GridContainer:
+static func _button_grid(compact: bool, columns: int = 1) -> GridContainer:
 	var grid := GridContainer.new()
-	grid.columns = 2
+	grid.columns = maxi(1, columns)
 	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	grid.add_theme_constant_override("h_separation", 8 if compact else 10)
 	grid.add_theme_constant_override("v_separation", 8 if compact else 10)
