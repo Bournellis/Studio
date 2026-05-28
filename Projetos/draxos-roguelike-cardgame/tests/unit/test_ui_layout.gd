@@ -1,5 +1,8 @@
 ﻿extends "res://tests/unit/draxos_test_base.gd"
 
+const BattleCombatFxPresenterScript = preload("res://modes/battle/battle_combat_fx_presenter.gd")
+const BattleHudPresenterScript = preload("res://modes/battle/battle_hud_presenter.gd")
+
 func test_main_menu_defaults_to_slot_one_and_button_states() -> void:
 	var menu = await _instantiate_scene("res://modes/boot/boot.tscn")
 	assert_eq(SaveManager.current_slot_index, 1)
@@ -401,3 +404,60 @@ func test_battle_scene_shows_discard_hint_badge_near_hand() -> void:
 	assert_true(badge.get_global_rect().intersects(hand.get_parent().get_global_rect()))
 	battle.queue_free()
 	await get_tree().process_frame
+
+func test_battle_hud_presenter_preserves_resource_and_objective_text() -> void:
+	_start_class_run("arcano", 20260518)
+	RunSession.class_passive_unlocked = true
+	var state: Dictionary = {
+		"player_health": 17,
+		"mana": 2,
+		"mana_per_turn": 6,
+		"flow": 3,
+		"mode": BattleEngine.MODE_WAVES,
+		"wave_index": 2,
+		"waves_total": 4,
+		"enemy_commander_enabled": true,
+		"enemy_health": 22,
+		"enemy_mana": 1,
+		"enemy_mana_per_turn": 4,
+		"enemy_hand_count": 5
+	}
+	var player_values: Dictionary = BattleHudPresenterScript.player_values(state)
+	assert_eq(str(player_values.get("hp_text", "")), "17")
+	assert_eq(str(player_values.get("mana_text", "")), "2/6")
+	assert_eq(Dictionary(player_values.get("class_resource", {})), {"label": "Fluxo", "value": 3})
+	var enemy_values: Dictionary = BattleHudPresenterScript.enemy_commander_values(state)
+	assert_true(bool(enemy_values.get("visible", false)))
+	assert_eq(int(enemy_values.get("hand_count", 0)), 5)
+	assert_eq(BattleHudPresenterScript.objective_text(state, "Comandante inimigo"), "Onda 2/4")
+	assert_true(BattleHudPresenterScript.enemy_hero_visible({"mode": BattleEngine.MODE_DUEL}))
+
+func test_battle_combat_fx_presenter_preserves_damage_state_and_labels() -> void:
+	var state: Dictionary = {
+		"player_health": 20,
+		"enemy_health": 18,
+		"player_slots": [{"card_id": "arcano_fagulha", "health": 5}],
+		"enemy_slots": [null]
+	}
+	var slot_event: Dictionary = {
+		"type": "damage",
+		"target_owner": BattleEngine.PLAYER_ID,
+		"target_slot": 0,
+		"amount": 2,
+		"health_after": 3
+	}
+	var updated: Dictionary = BattleCombatFxPresenterScript.state_after_event(state, slot_event)
+	var updated_slots: Array = Array(updated.get("player_slots", []))
+	var original_slots: Array = Array(state.get("player_slots", []))
+	assert_eq(int(Dictionary(updated_slots[0]).get("health", 0)), 3)
+	assert_eq(int(Dictionary(original_slots[0]).get("health", 0)), 5)
+	assert_true(BattleCombatFxPresenterScript.event_targets_slot(slot_event, BattleEngine.PLAYER_ID, 0))
+	assert_eq(BattleCombatFxPresenterScript.event_text({"type": "attack", "source_name": "A", "target_name": "B", "damage": 4}), "A -> B | 4 dano")
+	var hero_updated: Dictionary = BattleCombatFxPresenterScript.state_after_event(state, {
+		"type": "damage",
+		"target_owner": BattleEngine.ENEMY_ID,
+		"target_hero": true,
+		"amount": 6
+	})
+	assert_eq(int(hero_updated.get("enemy_health", 0)), 12)
+	assert_eq(BattleCombatFxPresenterScript.filtered_events([slot_event, {"type": "ignored"}]).size(), 1)
