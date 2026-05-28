@@ -1,5 +1,7 @@
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
 
+type Route = "manifest" | "download";
+
 const DEFAULT_MANIFEST: ReleaseManifest = {
   schema_version: "internal_alpha_manifest_v1",
   channel: "internal_alpha",
@@ -20,14 +22,16 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
     android: {
       label: "Android APK",
       url:
-        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.apk",
+        "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=android",
       sha256: "87533f150ffb773ef3bb7e41f6d69e98c7fdd4a85cbbf1e28544040aaade2448",
+      auth_required: "true",
     },
     pc_windows: {
       label: "PC Windows ZIP",
       url:
-        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.zip",
+        "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=pc_windows",
       sha256: "e678fb7e2d2e984ad7356a47cbdcf4fdb12628ebe23636ab1a3b976365111082",
+      auth_required: "true",
     },
     web: {
       label: "Web",
@@ -56,9 +60,45 @@ interface ReleaseManifest {
   known_issues: string[];
 }
 
-Deno.serve((request: Request) => {
+interface EdgeConfig {
+  supabaseUrl: string;
+  serviceRoleKey: string;
+  privateBucket: string;
+  releaseRoot: string;
+  signedUrlExpiresIn: number;
+}
+
+interface RestError {
+  code: string;
+  message: string;
+  status: number;
+}
+
+interface JwtPayload {
+  sub?: unknown;
+  is_anonymous?: unknown;
+}
+
+interface PlayerRow {
+  id: string;
+}
+
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+Deno.serve(async (request: Request) => {
   if (request.method === "OPTIONS") {
     return emptyResponse();
+  }
+
+  const route = resolveRoute(new URL(request.url).pathname);
+  if (route === null) {
+    return jsonResponse({
+      ok: false,
+      error: {
+        code: "NOT_FOUND",
+        message: "Unknown release endpoint.",
+      },
+    }, 404);
   }
 
   if (request.method !== "GET") {
@@ -66,12 +106,15 @@ Deno.serve((request: Request) => {
       ok: false,
       error: {
         code: "METHOD_NOT_ALLOWED",
-        message: "Use GET /release/manifest.",
+        message: "Use GET for release endpoints.",
       },
     }, 405);
   }
 
   try {
+    if (route === "download") {
+      return await handleDownload(request);
+    }
     return jsonResponse(buildManifest());
   } catch (error) {
     return jsonResponse({
@@ -83,6 +126,49 @@ Deno.serve((request: Request) => {
     }, 500);
   }
 });
+
+async function handleDownload(request: Request): Promise<Response> {
+  const config = loadConfig();
+  if (config.error !== null) {
+    return errorResponse(config.error.code, config.error.message, config.error.status);
+  }
+
+  const auth = decodeAuth(request);
+  if (auth.error !== null) {
+    return errorResponse(auth.error.code, auth.error.message, auth.error.status);
+  }
+  if (auth.value.isAnonymous) {
+    return errorResponse(
+      "AUTH_REQUIRES_EMAIL",
+      "Internal Alpha downloads require an email/password alpha account.",
+      403,
+    );
+  }
+
+  const url = new URL(request.url);
+  const artifact = (url.searchParams.get("artifact") ?? "").trim();
+  const artifactPath = artifactStoragePath(artifact, config.value.releaseRoot);
+  if (artifactPath === null) {
+    return errorResponse("INVALID_ARTIFACT", "Artifact must be android or pc_windows.", 400);
+  }
+
+  const access = await assertAlphaAccess(auth.value.userId, config.value);
+  if (access.error !== null) {
+    return errorResponse(access.error.code, access.error.message, access.error.status);
+  }
+
+  const signedUrl = await createSignedUrl(config.value, artifactPath);
+  if (signedUrl.error !== null) {
+    return errorResponse(signedUrl.error.code, signedUrl.error.message, signedUrl.error.status);
+  }
+
+  return jsonResponse({
+    ok: true,
+    artifact,
+    url: signedUrl.value,
+    expires_in: config.value.signedUrlExpiresIn,
+  });
+}
 
 function buildManifest(): ReleaseManifest {
   const overrideText = manifestOverrideText();
@@ -129,6 +215,207 @@ function buildManifest(): ReleaseManifest {
   };
 }
 
+function resolveRoute(pathname: string): Route | null {
+  if (pathname.endsWith("/download")) return "download";
+  if (pathname.endsWith("/manifest")) return "manifest";
+  return null;
+}
+
+function decodeAuth(
+  request: Request,
+): { value: { userId: string; isAnonymous: boolean }; error: null } | {
+  value: null;
+  error: RestError;
+} {
+  const header = request.headers.get("authorization") ?? "";
+  const prefix = "Bearer ";
+  if (!header.startsWith(prefix)) {
+    return {
+      value: null,
+      error: { code: "UNAUTHENTICATED", message: "Bearer token is required.", status: 401 },
+    };
+  }
+  const token = header.slice(prefix.length);
+  const parts = token.split(".");
+  if (parts.length < 2) {
+    return {
+      value: null,
+      error: { code: "UNAUTHENTICATED", message: "Invalid bearer token.", status: 401 },
+    };
+  }
+  const payload = decodeJwtPayload(parts[1]);
+  if (payload === null || typeof payload.sub !== "string" || !UUID_PATTERN.test(payload.sub)) {
+    return {
+      value: null,
+      error: { code: "UNAUTHENTICATED", message: "Token subject is invalid.", status: 401 },
+    };
+  }
+  return {
+    value: { userId: payload.sub, isAnonymous: payload.is_anonymous === true },
+    error: null,
+  };
+}
+
+async function assertAlphaAccess(
+  userId: string,
+  config: EdgeConfig,
+): Promise<{ error: null } | { error: RestError }> {
+  const result = await restRequest<PlayerRow[]>(
+    config,
+    `players?auth_user_id=eq.${
+      encodeURIComponent(userId)
+    }&save_type=eq.normal&account_type=eq.registered&select=id&limit=1`,
+    { method: "GET" },
+  );
+  if (result.error !== null) {
+    return {
+      error: {
+        code: "ALPHA_ACCESS_READ_FAILED",
+        message: "Unable to verify Internal Alpha access.",
+        status: 500,
+      },
+    };
+  }
+  if ((result.value[0] ?? null) === null) {
+    return {
+      error: {
+        code: "ALPHA_ACCESS_REQUIRED",
+        message: "Create an Internal Alpha save before downloading builds.",
+        status: 403,
+      },
+    };
+  }
+  return { error: null };
+}
+
+async function createSignedUrl(
+  config: EdgeConfig,
+  path: string,
+): Promise<{ value: string; error: null } | { value: null; error: RestError }> {
+  const requestUrl = `${config.supabaseUrl}/storage/v1/object/sign/${
+    encodeURIComponent(config.privateBucket)
+  }/${path.split("/").map(encodeURIComponent).join("/")}`;
+  const response = await fetch(requestUrl, {
+    method: "POST",
+    headers: serviceHeaders(config, true),
+    body: JSON.stringify({ expiresIn: config.signedUrlExpiresIn }),
+  });
+  const text = await response.text();
+  const payload = text === "" ? null : parseJson(text);
+  if (!response.ok || !isObject(payload)) {
+    return {
+      value: null,
+      error: {
+        code: "SIGNED_URL_FAILED",
+        message: "Unable to create a signed download URL.",
+        status: 500,
+      },
+    };
+  }
+
+  const signedUrl = stringValue(payload.signedUrl, stringValue(payload.signedURL, ""));
+  if (signedUrl === "") {
+    return {
+      value: null,
+      error: {
+        code: "SIGNED_URL_INVALID",
+        message: "Storage did not return a signed URL.",
+        status: 500,
+      },
+    };
+  }
+  if (signedUrl.startsWith("http://") || signedUrl.startsWith("https://")) {
+    return { value: signedUrl, error: null };
+  }
+  return { value: normalizeStorageSignedUrl(config.supabaseUrl, signedUrl), error: null };
+}
+
+async function restRequest<T>(
+  config: EdgeConfig,
+  path: string,
+  init: RequestInit,
+): Promise<{ value: T; error: null } | { value: null; error: RestError }> {
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${path}`, {
+    ...init,
+    headers: serviceHeaders(config, init.body !== undefined),
+  });
+  const text = await response.text();
+  const payload = text === "" ? null : parseJson(text);
+  if (!response.ok) {
+    const body = isObject(payload) ? payload : {};
+    return {
+      value: null,
+      error: {
+        code: stringValue(body.code, "REST_ERROR"),
+        message: stringValue(body.message, response.statusText),
+        status: response.status,
+      },
+    };
+  }
+  return { value: payload as T, error: null };
+}
+
+function serviceHeaders(config: EdgeConfig, hasBody: boolean): Headers {
+  const headers = new Headers();
+  headers.set("accept", "application/json");
+  headers.set("apikey", config.serviceRoleKey);
+  headers.set("authorization", `Bearer ${config.serviceRoleKey}`);
+  if (hasBody) headers.set("content-type", "application/json");
+  return headers;
+}
+
+function artifactStoragePath(artifact: string, releaseRoot: string): string | null {
+  if (artifact === "android") return `${releaseRoot}/downloads/draxos-mobile-alpha.apk`;
+  if (artifact === "pc_windows") return `${releaseRoot}/downloads/draxos-mobile-alpha.zip`;
+  return null;
+}
+
+function normalizeStorageSignedUrl(supabaseUrl: string, signedUrl: string): string {
+  if (signedUrl.startsWith("/storage/v1/")) {
+    return `${supabaseUrl}${signedUrl}`;
+  }
+  if (signedUrl.startsWith("/object/")) {
+    return `${supabaseUrl}/storage/v1${signedUrl}`;
+  }
+  if (signedUrl.startsWith("storage/v1/")) {
+    return `${supabaseUrl}/${signedUrl}`;
+  }
+  if (signedUrl.startsWith("object/")) {
+    return `${supabaseUrl}/storage/v1/${signedUrl}`;
+  }
+  return `${supabaseUrl}/storage/v1/${signedUrl.replace(/^\/+/, "")}`;
+}
+
+function loadConfig(): { value: EdgeConfig; error: null } | { value: null; error: RestError } {
+  const supabaseUrl = (Deno.env.get("SUPABASE_URL") ?? "").replace(/\/$/, "");
+  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+  if (supabaseUrl === "" || serviceRoleKey === "") {
+    return {
+      value: null,
+      error: {
+        code: "SERVER_MISCONFIGURED",
+        message: "Release download function is missing Supabase runtime configuration.",
+        status: 500,
+      },
+    };
+  }
+  return {
+    value: {
+      supabaseUrl,
+      serviceRoleKey,
+      privateBucket: Deno.env.get("INTERNAL_ALPHA_PRIVATE_BUCKET")?.trim() ||
+        "draxos-internal-alpha-private",
+      releaseRoot: (Deno.env.get("INTERNAL_ALPHA_RELEASE_ROOT")?.trim() || "internal-alpha/v0")
+        .replace(/^\/+|\/+$/g, ""),
+      signedUrlExpiresIn: positiveInteger(
+        Deno.env.get("INTERNAL_ALPHA_SIGNED_URL_EXPIRES_IN"),
+        300,
+      ),
+    },
+    error: null,
+  };
+}
+
 function manifestOverrideText(): string {
   if ((Deno.env.get("RELEASE_MANIFEST_OVERRIDE_ENABLED") ?? "").trim() !== "1") {
     return "";
@@ -140,6 +427,30 @@ function manifestOverrideText(): string {
     );
   }
   return Deno.env.get("RELEASE_MANIFEST_JSON")?.trim() ?? "";
+}
+
+function decodeJwtPayload(encodedPayload: string): JwtPayload | null {
+  try {
+    const normalized = encodedPayload.replaceAll("-", "+").replaceAll("_", "/");
+    const padded = normalized + "=".repeat((4 - normalized.length % 4) % 4);
+    const bytes = Uint8Array.from(atob(padded), (character) => character.charCodeAt(0));
+    const payload: unknown = JSON.parse(new TextDecoder().decode(bytes));
+    return isObject(payload) ? payload as JwtPayload : null;
+  } catch {
+    return null;
+  }
+}
+
+function parseJson(text: string): unknown {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+}
+
+function errorResponse(code: string, message: string, status: number): Response {
+  return jsonResponse({ ok: false, error: { code, message } }, status);
 }
 
 function asRecordOfRecord(value: Record<string, unknown>): Record<string, Record<string, string>> {
@@ -167,6 +478,10 @@ function stringOverride(
   return typeof value[key] === "string" ? value[key] : fallback;
 }
 
+function stringValue(value: unknown, fallback: string): string {
+  return typeof value === "string" && value !== "" ? value : fallback;
+}
+
 function numberOverride(
   value: Record<string, unknown>,
   key: string,
@@ -189,4 +504,9 @@ function stringArrayOverride(
   fallback: string[],
 ): string[] {
   return Array.isArray(value[key]) ? value[key].map(String) : fallback;
+}
+
+function positiveInteger(value: string | undefined, fallback: number): number {
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
 }

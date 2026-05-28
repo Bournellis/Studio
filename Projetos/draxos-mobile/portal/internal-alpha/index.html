@@ -3,29 +3,42 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>DraxosMobile Internal Alpha</title>
+  <title>DraxosMobile Alpha Hub</title>
   <style>
     :root {
       color-scheme: dark;
       --bg: #080b10;
-      --panel: #151b22;
-      --panel-alt: #202832;
-      --line: #405060;
-      --text: #f0eee5;
-      --muted: #aeb7bf;
-      --teal: #5dd4c8;
-      --gold: #d6c08a;
-      --red: #b95757;
-      --green: #66b56f;
+      --surface: #111820;
+      --surface-2: #17212b;
+      --surface-3: #1d2a35;
+      --line: #334454;
+      --text: #f2efe4;
+      --muted: #aeb8c2;
+      --soft: #d2d7da;
+      --teal: #56d6c9;
+      --gold: #d8bd7a;
+      --red: #d85d68;
+      --green: #72c27c;
+      --shadow: rgba(0, 0, 0, 0.32);
     }
 
     * {
       box-sizing: border-box;
     }
 
-    body {
-      margin: 0;
+    html {
+      min-height: 100%;
       background: var(--bg);
+    }
+
+    body {
+      min-height: 100%;
+      margin: 0;
+      background:
+        linear-gradient(180deg, rgba(8, 11, 16, 0.82), #080b10 560px),
+        radial-gradient(circle at 12% 18%, rgba(86, 214, 201, 0.14), transparent 300px),
+        radial-gradient(circle at 86% 20%, rgba(216, 93, 104, 0.12), transparent 320px),
+        #080b10;
       color: var(--text);
       font-family: Arial, Helvetica, sans-serif;
       line-height: 1.5;
@@ -35,47 +48,122 @@
       color: inherit;
     }
 
-    .shell {
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 28px 20px 48px;
+    button,
+    input,
+    select {
+      font: inherit;
     }
 
-    header {
+    .shell {
+      width: min(1280px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0 44px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 48px;
+      margin-bottom: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .mark {
+      width: 40px;
+      height: 40px;
+      border: 1px solid rgba(216, 189, 122, 0.55);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(86, 214, 201, 0.24), rgba(216, 93, 104, 0.16)),
+        #111820;
       display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 24px;
-      align-items: stretch;
-      min-height: 360px;
-      border-bottom: 1px solid var(--line);
-      padding-bottom: 28px;
+      place-items: center;
+      color: var(--gold);
+      font-weight: 800;
+    }
+
+    .brand-text {
+      min-width: 0;
+    }
+
+    .brand-text strong {
+      display: block;
+      font-size: 16px;
+      line-height: 1.2;
+    }
+
+    .brand-text span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .session-chip {
+      min-height: 34px;
+      max-width: 360px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 12px;
+      color: var(--muted);
+      background: rgba(17, 24, 32, 0.78);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 13px;
     }
 
     .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(380px, 1.1fr);
+      gap: 22px;
+      align-items: stretch;
+      margin-bottom: 20px;
+    }
+
+    .hero-copy {
+      min-height: 430px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       gap: 18px;
+      padding: 10px 0;
     }
 
     .eyebrow {
       color: var(--gold);
       font-size: 13px;
-      letter-spacing: 0;
       text-transform: uppercase;
     }
 
-    h1 {
+    h1,
+    h2,
+    h3 {
       margin: 0;
-      font-size: 46px;
-      line-height: 1.05;
       letter-spacing: 0;
     }
 
+    h1 {
+      max-width: 720px;
+      font-size: 54px;
+      line-height: 1.02;
+    }
+
     h2 {
-      margin: 0 0 14px;
-      font-size: 22px;
-      letter-spacing: 0;
+      font-size: 24px;
+      line-height: 1.18;
+    }
+
+    h3 {
+      font-size: 17px;
+      line-height: 1.25;
     }
 
     p {
@@ -83,141 +171,31 @@
       color: var(--muted);
     }
 
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 8px;
+    .lead {
+      max-width: 620px;
+      color: var(--soft);
+      font-size: 17px;
     }
 
-    .button {
-      display: inline-flex;
-      min-height: 42px;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      padding: 10px 14px;
-      background: var(--panel-alt);
-      color: var(--text);
-      text-decoration: none;
-      font-weight: 700;
-    }
-
-    .button.primary {
-      border-color: var(--teal);
-      background: #12302f;
-    }
-
-    .stage {
+    .hero-art-wrap {
       position: relative;
+      min-height: 430px;
       overflow: hidden;
       border: 1px solid var(--line);
       border-radius: 8px;
-      background: #10151b;
-      min-height: 340px;
+      background: #111820;
+      box-shadow: 0 20px 44px var(--shadow);
     }
 
-    .stage::before {
-      content: "";
-      position: absolute;
-      inset: 18px;
-      border: 1px solid rgba(214, 192, 138, 0.22);
-      border-radius: 6px;
+    .hero-art {
+      width: 100%;
+      height: 100%;
+      min-height: 430px;
+      display: block;
+      object-fit: cover;
     }
 
-    .floor {
-      position: absolute;
-      left: 8%;
-      right: 8%;
-      bottom: 52px;
-      height: 2px;
-      background: var(--gold);
-      opacity: 0.55;
-    }
-
-    .mage {
-      position: absolute;
-      bottom: 55px;
-      width: 92px;
-      height: 164px;
-    }
-
-    .mage.left {
-      left: 16%;
-      color: var(--teal);
-    }
-
-    .mage.right {
-      right: 16%;
-      color: var(--red);
-      transform: scaleX(-1);
-    }
-
-    .mage .head {
-      position: absolute;
-      left: 28px;
-      top: 0;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: currentColor;
-    }
-
-    .mage .body {
-      position: absolute;
-      left: 22px;
-      top: 42px;
-      width: 48px;
-      height: 76px;
-      background: currentColor;
-      border: 2px solid rgba(255, 255, 255, 0.24);
-    }
-
-    .mage .arm {
-      position: absolute;
-      left: 62px;
-      top: 58px;
-      width: 44px;
-      height: 8px;
-      background: currentColor;
-      transform: rotate(-15deg);
-      transform-origin: left center;
-    }
-
-    .mage .leg {
-      position: absolute;
-      top: 118px;
-      width: 12px;
-      height: 46px;
-      background: currentColor;
-    }
-
-    .mage .leg.a {
-      left: 28px;
-      transform: rotate(8deg);
-    }
-
-    .mage .leg.b {
-      left: 52px;
-      transform: rotate(-8deg);
-    }
-
-    .orb {
-      position: absolute;
-      left: calc(50% - 24px);
-      top: 45%;
-      width: 48px;
-      height: 48px;
-      border: 2px solid var(--gold);
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      color: var(--gold);
-      font-weight: 800;
-    }
-
-    .status-strip {
+    .hero-art-overlay {
       position: absolute;
       left: 18px;
       right: 18px;
@@ -227,198 +205,1167 @@
       gap: 8px;
     }
 
-    .status-strip span {
-      min-height: 28px;
-      border: 1px solid var(--line);
-      border-radius: 4px;
-      display: grid;
-      place-items: center;
+    .metric {
+      min-height: 58px;
+      border: 1px solid rgba(242, 239, 228, 0.16);
+      border-radius: 8px;
+      padding: 9px 10px;
+      background: rgba(8, 11, 16, 0.7);
+      backdrop-filter: blur(8px);
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 17px;
+      line-height: 1.1;
+    }
+
+    .metric span {
+      display: block;
       color: var(--muted);
-      font-size: 12px;
+      font-size: 11px;
+      margin-top: 3px;
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      margin-top: 28px;
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
-    .card {
+    .button {
+      min-height: 42px;
       border: 1px solid var(--line);
       border-radius: 8px;
-      background: var(--panel);
-      padding: 18px;
+      padding: 10px 14px;
+      background: var(--surface-2);
+      color: var(--text);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 700;
+      cursor: pointer;
     }
 
-    .card strong {
-      display: block;
-      margin-bottom: 6px;
-      color: var(--text);
+    .button:hover,
+    .button:focus-visible {
+      border-color: var(--teal);
+      outline: none;
+    }
+
+    .button.primary {
+      border-color: var(--teal);
+      background: #12302f;
+    }
+
+    .button.ghost {
+      background: transparent;
+    }
+
+    .button.danger {
+      border-color: rgba(216, 93, 104, 0.58);
+      background: rgba(216, 93, 104, 0.12);
     }
 
     .meta {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-top: 12px;
     }
 
     .pill {
       border: 1px solid var(--line);
       border-radius: 999px;
-      padding: 4px 8px;
+      padding: 5px 9px;
+      color: var(--muted);
+      background: rgba(17, 24, 32, 0.7);
+      font-size: 12px;
+    }
+
+    .tabs {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      margin: 0 0 16px;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(8, 11, 16, 0.92);
+      backdrop-filter: blur(12px);
+    }
+
+    .tab-button {
+      min-height: 42px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .tab-button[aria-selected="true"] {
+      border-color: rgba(86, 214, 201, 0.6);
+      background: rgba(86, 214, 201, 0.12);
+      color: var(--text);
+    }
+
+    .tab-button:hover,
+    .tab-button:focus-visible {
+      color: var(--text);
+      outline: none;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.65fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .layout.single {
+      grid-template-columns: 1fr;
+    }
+
+    .panel,
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(17, 24, 32, 0.88);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.16);
+    }
+
+    .panel {
+      padding: 18px;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card {
+      padding: 16px;
+    }
+
+    .card p {
+      margin-top: 7px;
+    }
+
+    .auth-form {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .auth-form input,
+    .toolbar input,
+    .toolbar select {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #0c1117;
+      color: var(--text);
+      padding: 10px 12px;
+    }
+
+    .status-line {
+      min-height: 20px;
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    .status-line.ok {
+      color: var(--green);
+    }
+
+    .status-line.warn {
+      color: var(--gold);
+    }
+
+    .status-line.error {
+      color: var(--red);
+    }
+
+    .download-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .download-card {
+      min-height: 210px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1.3fr 0.85fr 0.85fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .catalog-summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .catalog-count {
+      min-height: 66px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: rgba(29, 42, 53, 0.72);
+    }
+
+    .catalog-count strong {
+      display: block;
+      color: var(--text);
+      font-size: 20px;
+      line-height: 1.15;
+    }
+
+    .catalog-count span {
       color: var(--muted);
       font-size: 12px;
     }
 
-    .sections {
+    .grimoire-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-      margin-top: 28px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
     }
 
-    ul {
+    .item-card {
+      min-height: 220px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow: hidden;
+    }
+
+    .item-card .item-title {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .item-id {
+      color: var(--muted);
+      font-size: 11px;
+      overflow-wrap: anywhere;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chip {
+      border: 1px solid rgba(242, 239, 228, 0.16);
+      border-radius: 999px;
+      padding: 3px 7px;
+      color: var(--muted);
+      font-size: 11px;
+      background: rgba(8, 11, 16, 0.38);
+    }
+
+    .chip.teal {
+      color: var(--teal);
+      border-color: rgba(86, 214, 201, 0.42);
+    }
+
+    .chip.gold {
+      color: var(--gold);
+      border-color: rgba(216, 189, 122, 0.42);
+    }
+
+    .details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: auto;
+    }
+
+    .detail {
+      border-top: 1px solid rgba(242, 239, 228, 0.12);
+      padding-top: 7px;
+      color: var(--muted);
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .detail strong {
+      display: block;
+      color: var(--soft);
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    .empty {
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      color: var(--muted);
+      background: rgba(17, 24, 32, 0.44);
+    }
+
+    .guide-list {
+      display: grid;
+      gap: 10px;
       margin: 0;
-      padding-left: 18px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .guide-list li {
+      min-height: 48px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      color: var(--muted);
+      background: rgba(29, 42, 53, 0.56);
+    }
+
+    .manifest-table {
+      display: grid;
+      gap: 8px;
+    }
+
+    .manifest-row {
+      display: grid;
+      grid-template-columns: 180px minmax(0, 1fr);
+      gap: 8px;
+      border-bottom: 1px solid rgba(242, 239, 228, 0.12);
+      padding: 8px 0;
+    }
+
+    .manifest-row span:first-child {
       color: var(--muted);
     }
 
-    li + li {
-      margin-top: 8px;
+    .manifest-row span:last-child {
+      overflow-wrap: anywhere;
     }
 
     footer {
-      margin-top: 28px;
+      margin-top: 24px;
       padding-top: 18px;
       border-top: 1px solid var(--line);
       color: var(--muted);
       font-size: 13px;
     }
 
-    @media (max-width: 820px) {
-      header,
-      .sections,
-      .grid {
+    @media (max-width: 980px) {
+      .hero,
+      .layout {
         grid-template-columns: 1fr;
+      }
+
+      .hero-copy,
+      .hero-art,
+      .hero-art-wrap {
+        min-height: 340px;
+      }
+
+      .grid,
+      .grid.two,
+      .download-list,
+      .grimoire-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .toolbar,
+      .catalog-summary {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      h1 {
+        font-size: 42px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .shell {
+        width: min(100% - 20px, 1280px);
+        padding-top: 14px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .session-chip {
+        width: 100%;
+        max-width: none;
+      }
+
+      .tabs {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .grid,
+      .grid.two,
+      .download-list,
+      .grimoire-grid,
+      .toolbar,
+      .catalog-summary {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-art-overlay {
+        grid-template-columns: repeat(2, 1fr);
       }
 
       h1 {
         font-size: 34px;
       }
 
-      .stage {
-        min-height: 300px;
+      .lead {
+        font-size: 15px;
+      }
+
+      .manifest-row {
+        grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
 <body>
   <main class="shell">
-    <header>
-      <section class="hero">
-        <div class="eyebrow">Internal Alpha v0</div>
-        <h1>DraxosMobile</h1>
-        <p>Build fechada para Fabio + 1 tester. Use esta pagina para baixar as builds, abrir a versao Web e acompanhar notas de teste.</p>
-        <div class="actions">
-          <a class="button primary" href="WEB_GAME_URL_PENDING_T03_P17">Jogar Web</a>
-          <a class="button" href="ANDROID_APK_URL_PENDING_T03_P17">Baixar APK</a>
-          <a class="button" href="PC_ZIP_URL_PENDING_T03_P17">Baixar PC ZIP</a>
+    <header class="topbar">
+      <div class="brand">
+        <div class="mark">D</div>
+        <div class="brand-text">
+          <strong>DraxosMobile Alpha Hub</strong>
+          <span>Internal Alpha v0 - acesso privado</span>
         </div>
-        <div class="meta">
-          <span class="pill">Versao 0.0.1-alpha.0</span>
-          <span class="pill">Servidor remoto</span>
-          <span class="pill">Email + senha</span>
-          <span class="pill">Unlisted</span>
-        </div>
-      </section>
-
-      <section class="stage" aria-label="Representacao procedural da batalha alpha">
-        <div class="floor"></div>
-        <div class="mage left">
-          <span class="head"></span>
-          <span class="body"></span>
-          <span class="arm"></span>
-          <span class="leg a"></span>
-          <span class="leg b"></span>
-        </div>
-        <div class="orb">VS</div>
-        <div class="mage right">
-          <span class="head"></span>
-          <span class="body"></span>
-          <span class="arm"></span>
-          <span class="leg a"></span>
-          <span class="leg b"></span>
-        </div>
-        <div class="status-strip">
-          <span>Batalha</span>
-          <span>Base</span>
-          <span>Social</span>
-          <span>Lab</span>
-        </div>
-      </section>
+      </div>
+      <div class="session-chip" id="sessionChip">Cloudflare Access ativo. Site liberado por e-mail.</div>
     </header>
 
-    <section class="grid" aria-label="Downloads">
-      <article class="card">
-        <strong>Android APK</strong>
-        <p>Instalacao direta por link. Aceite instalacao de fonte externa apenas para este teste.</p>
-        <div class="actions"><a class="button" href="ANDROID_APK_URL_PENDING_T03_P17">Download</a></div>
-      </article>
-      <article class="card">
-        <strong>PC Windows</strong>
-        <p>ZIP com executavel. Extraia a pasta inteira antes de abrir o jogo.</p>
-        <div class="actions"><a class="button" href="PC_ZIP_URL_PENDING_T03_P17">Download</a></div>
-      </article>
-      <article class="card">
-        <strong>PC Browser</strong>
-        <p>Build Web para teste rapido. O save deve ser o mesmo das outras plataformas.</p>
-        <div class="actions"><a class="button" href="WEB_GAME_URL_PENDING_T03_P17">Abrir</a></div>
-      </article>
+    <section class="hero" id="inicio">
+      <div class="hero-copy">
+        <div class="eyebrow">Fabio + testers autorizados</div>
+        <h1>O refugio alpha do mago Draxos.</h1>
+        <p class="lead">Build fechada com Android, PC, downloads protegidos e Grimorio privado alimentado pelo catalogo vivo do jogo.</p>
+        <div class="actions">
+          <button class="button primary" type="button" data-tab-target="downloads">Baixar builds</button>
+          <a class="button" href="WEB_GAME_URL_PENDING_T03_P17">Jogar Web</a>
+          <button class="button ghost" type="button" data-tab-target="grimoire">Abrir Grimorio</button>
+        </div>
+        <div class="meta">
+          <span class="pill">0.0.1-alpha.0</span>
+          <span class="pill">Supabase remoto</span>
+          <span class="pill">Cloudflare Access</span>
+          <span class="pill">Downloads assinados</span>
+        </div>
+      </div>
+
+      <div class="hero-art-wrap">
+        <img class="hero-art" src="/portal/assets/draxos-arena.svg" alt="Arena ritual do Draxos">
+        <div class="hero-art-overlay">
+          <div class="metric"><strong>8</strong><span>instrumentos</span></div>
+          <div class="metric"><strong>20</strong><span>spells</span></div>
+          <div class="metric"><strong>11</strong><span>doutrinas</span></div>
+          <div class="metric"><strong>9</strong><span>familiares</span></div>
+        </div>
+      </div>
     </section>
 
-    <section class="sections">
-      <article class="card">
-        <h2>Como Testar</h2>
-        <ul>
-          <li>Crie ou entre com email e senha.</li>
-          <li>Jogue uma batalha e confira recompensa.</li>
-          <li>Abra Base, Loja, Competicao e Social.</li>
-          <li>Troque para Progression Lab e confirme que o save normal nao mudou.</li>
-          <li>Teste em pelo menos duas plataformas.</li>
-        </ul>
-      </article>
+    <nav class="tabs" aria-label="Navegacao do hub alpha">
+      <button class="tab-button" type="button" data-tab="home" aria-selected="true">Inicio</button>
+      <button class="tab-button" type="button" data-tab="downloads" aria-selected="false">Downloads</button>
+      <button class="tab-button" type="button" data-tab="web" aria-selected="false">Web</button>
+      <button class="tab-button" type="button" data-tab="grimoire" aria-selected="false">Grimorio</button>
+      <button class="tab-button" type="button" data-tab="guide" aria-selected="false">Guia</button>
+      <button class="tab-button" type="button" data-tab="status" aria-selected="false">Status</button>
+    </nav>
 
-      <article class="card">
-        <h2>Notas Da Versao</h2>
-        <ul>
-          <li>Batalha server-authoritative com replay visual 2D procedural.</li>
-          <li>Base, Social, Competicao e Loja funcionais em alpha.</li>
-          <li>Dois saves por conta: normal e progression_lab.</li>
-          <li>Redeems diarios de Diamante para acelerar testes.</li>
-        </ul>
-      </article>
+    <section class="tab-panel active" id="tab-home">
+      <div class="layout single">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Alpha privada</h2>
+              <p>O site esta atras do Cloudflare Access. Registro, login de conta e progresso ficam dentro do jogo por enquanto.</p>
+            </div>
+          </div>
+          <div class="grid">
+            <article class="card">
+              <h3>Batalha</h3>
+              <p>Replay server-authoritative com arena 2D procedural e logs `battle_log_v1`.</p>
+            </article>
+            <article class="card">
+              <h3>Base</h3>
+              <p>Seis estruturas permanentes, coleta offline, upgrades e fila de construcao alpha.</p>
+            </article>
+            <article class="card">
+              <h3>Social</h3>
+              <p>Conta, username, amigos, guilda e chat por polling para o teste fechado.</p>
+            </article>
+            <article class="card">
+              <h3>Loja</h3>
+              <p>Redeems diarios, Diamante alpha, Battle Pass e pacotes sem pagamento real.</p>
+            </article>
+            <article class="card">
+              <h3>Dois saves</h3>
+              <p>`normal` para progresso real e `progression_lab` para cenarios controlados.</p>
+            </article>
+            <article class="card">
+              <h3>Updates</h3>
+              <p>Manifest remoto com versao vigente, minimo suportado e links de plataforma.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
 
-      <article class="card">
-        <h2>Problemas Conhecidos</h2>
-        <ul>
-          <li>Layout Android paisagem ainda precisa de validacao no aparelho real.</li>
-          <li>Sem arte final, animacoes ou icones definitivos.</li>
-          <li>Loja nao possui pagamento real e serve apenas como prova de conceito.</li>
-        </ul>
-      </article>
+    <section class="tab-panel" id="tab-downloads">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Downloads protegidos</h2>
+            <p>APK e PC ZIP ficam disponiveis para quem passou pelo Cloudflare Access.</p>
+          </div>
+          <button class="button ghost" type="button" data-tab-target="status">Ver status</button>
+        </div>
+        <div class="download-list">
+          <article class="card download-card">
+            <div>
+              <h3>Android APK</h3>
+              <p>Build nativa para sideload no aparelho de teste.</p>
+            </div>
+            <a class="button primary" href="ANDROID_APK_URL_PENDING_T03_P17">Baixar APK</a>
+          </article>
+          <article class="card download-card">
+            <div>
+              <h3>PC Windows</h3>
+              <p>ZIP com executavel. Extraia a pasta inteira antes de abrir.</p>
+            </div>
+            <a class="button primary" href="PC_ZIP_URL_PENDING_T03_P17">Baixar PC ZIP</a>
+          </article>
+          <article class="card download-card">
+            <div>
+              <h3>PC Browser</h3>
+              <p>Web build para teste rapido no navegador com o mesmo backend remoto.</p>
+            </div>
+            <a class="button primary" href="WEB_GAME_URL_PENDING_T03_P17">Jogar Web</a>
+          </article>
+        </div>
+      </div>
+    </section>
 
-      <article class="card">
-        <h2>Update</h2>
-        <p>Manifest da build: <a href="https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest">https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest</a></p>
-        <p>Se o jogo pedir update, volte a esta pagina e baixe a plataforma correta.</p>
-      </article>
+    <section class="tab-panel" id="tab-web">
+      <div class="layout">
+        <div class="panel">
+          <h2>Web build</h2>
+          <p>A build Web abre pelo Cloudflare Pages. Quem chegou aqui ja passou pelo Access; login e registro continuam dentro do jogo.</p>
+          <div class="actions" style="margin-top: 14px;">
+            <a class="button primary" href="WEB_GAME_URL_PENDING_T03_P17">Abrir jogo Web</a>
+            <button class="button ghost" type="button" data-tab-target="guide">Checklist</button>
+          </div>
+        </div>
+        <aside class="panel">
+          <h2>Notas rapidas</h2>
+          <ul class="guide-list">
+            <li>O login do jogo acontece dentro da build.</li>
+            <li>Save `normal` deve bater com Android e PC.</li>
+            <li>Tablet/mobile browser pode variar por suporte do navegador.</li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="tab-grimoire">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Grimorio privado</h2>
+            <p>Catalogo vivo da Internal Alpha v0: instrumentos, spells, doutrinas, familiares, base, recompensas e bots.</p>
+          </div>
+          <button class="button primary" id="refreshGrimoireButton" type="button">Atualizar</button>
+        </div>
+
+        <div class="catalog-summary" id="catalogSummary"></div>
+
+        <div class="toolbar">
+          <input id="grimoireSearch" type="search" placeholder="buscar por nome, id, tag ou efeito">
+          <select id="collectionFilter">
+            <option value="all">Todas categorias</option>
+          </select>
+          <select id="sourceFilter">
+            <option value="all">Todas fontes/tags</option>
+          </select>
+        </div>
+
+        <div id="grimoireStatus" class="empty">Abra esta aba para carregar o Grimorio.</div>
+        <div class="grimoire-grid" id="grimoireGrid"></div>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="tab-guide">
+      <div class="layout">
+        <div class="panel">
+          <h2>Checklist do tester</h2>
+          <ul class="guide-list">
+            <li>Criar ou entrar com email e senha no jogo.</li>
+            <li>Jogar uma batalha normal e conferir recompensa.</li>
+            <li>Abrir Base, Loja, Competicao e Social.</li>
+            <li>Baixar em pelo menos duas plataformas e conferir o mesmo save.</li>
+            <li>Trocar para Progression Lab e confirmar isolamento do save normal.</li>
+          </ul>
+        </div>
+        <aside class="panel">
+          <h2>Problemas conhecidos</h2>
+          <ul class="guide-list">
+            <li>APK usa `debug_fallback` enquanto a keystore dedicada nao estiver configurada.</li>
+            <li>Sem arte final, animacoes finalizadas ou icones definitivos.</li>
+            <li>Loja alpha nao possui pagamento real.</li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="tab-status">
+      <div class="layout">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Status da release</h2>
+              <p>Manifest remoto da Internal Alpha v0.</p>
+            </div>
+            <button class="button primary" id="refreshManifestButton" type="button">Atualizar</button>
+          </div>
+          <div id="manifestStatus" class="empty">Status ainda nao carregado.</div>
+          <div class="manifest-table" id="manifestTable"></div>
+        </div>
+        <aside class="panel">
+          <h2>Seguranca ativa</h2>
+          <ul class="guide-list">
+            <li>Cloudflare Access bloqueia o site antes de carregar.</li>
+            <li>Registro e login de conta ficam apenas dentro do jogo por enquanto.</li>
+            <li>O fluxo Supabase do site esta preservado para reativacao futura.</li>
+            <li>Service role segue apenas no servidor.</li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section class="future-auth" hidden aria-hidden="true">
+      <form class="auth-form" id="downloadAuthForm">
+        <input id="downloadEmail" type="email" autocomplete="email" placeholder="email">
+        <input id="downloadPassword" type="password" autocomplete="current-password" placeholder="senha">
+        <button class="button primary" type="submit">Entrar</button>
+        <button class="button danger" id="logoutButton" type="button">Sair</button>
+      </form>
+      <div class="status-line" id="downloadAuthStatus">Fluxo de login preservado para uso futuro.</div>
     </section>
 
     <footer>
-      Link unlisted nao e seguranca. Nao compartilhe fora do teste fechado. O acesso real depende de conta, alpha gate e backend.
+      Internal Alpha v0. Nao compartilhe fora da allowlist. Conteudo privado depende do Cloudflare Access e da allowlist de e-mails.
     </footer>
   </main>
+
+  <script>
+    (() => {
+      const SUPABASE_URL = "SUPABASE_URL_PENDING_T03_P17";
+      const PUBLISHABLE_KEY = "SUPABASE_PUBLISHABLE_KEY_PENDING_T03_P17";
+      const GRIMOIRE_STATIC_URL = "/portal/assets/grimoire-catalog.json";
+      const tokenStorageKey = "draxos_internal_alpha_access_token";
+      const emailStorageKey = "draxos_internal_alpha_email";
+
+      const collectionLabels = {
+        weapons: "Instrumentos",
+        spells: "Spells",
+        doutrines: "Doutrinas",
+        familiars: "Familiares",
+        base_structures: "Base",
+        rewards: "Recompensas",
+        power_bands: "Power Bands",
+        bot_archetypes: "Bots"
+      };
+
+      const tabButtons = Array.from(document.querySelectorAll(".tab-button"));
+      const panels = Array.from(document.querySelectorAll(".tab-panel"));
+      const targetButtons = Array.from(document.querySelectorAll("[data-tab-target]"));
+      const form = document.getElementById("downloadAuthForm");
+      const logoutButton = document.getElementById("logoutButton");
+      const emailInput = document.getElementById("downloadEmail");
+      const passwordInput = document.getElementById("downloadPassword");
+      const authStatus = document.getElementById("downloadAuthStatus");
+      const sessionChip = document.getElementById("sessionChip");
+      const downloadButtons = Array.from(document.querySelectorAll(".protected-download"));
+      const refreshGrimoireButton = document.getElementById("refreshGrimoireButton");
+      const refreshManifestButton = document.getElementById("refreshManifestButton");
+      const grimoireStatus = document.getElementById("grimoireStatus");
+      const grimoireGrid = document.getElementById("grimoireGrid");
+      const catalogSummary = document.getElementById("catalogSummary");
+      const searchInput = document.getElementById("grimoireSearch");
+      const collectionFilter = document.getElementById("collectionFilter");
+      const sourceFilter = document.getElementById("sourceFilter");
+      const manifestStatus = document.getElementById("manifestStatus");
+      const manifestTable = document.getElementById("manifestTable");
+
+      let activeTab = "home";
+      let catalog = null;
+      let loadingCatalog = false;
+
+      const hasConfig = () =>
+        SUPABASE_URL.startsWith("https://") &&
+        PUBLISHABLE_KEY.startsWith("sb_publishable_");
+
+      const currentToken = () => window.sessionStorage.getItem(tokenStorageKey) || "";
+      const currentEmail = () => window.sessionStorage.getItem(emailStorageKey) || "";
+
+      const setAuthStatus = (message, mode = "") => {
+        authStatus.textContent = message;
+        authStatus.className = mode ? `status-line ${mode}` : "status-line";
+      };
+
+      const setSessionChip = () => {
+        sessionChip.textContent = "Cloudflare Access ativo. Site liberado por e-mail.";
+      };
+
+      const switchTab = (tab) => {
+        activeTab = tab;
+        for (const button of tabButtons) {
+          button.setAttribute("aria-selected", button.dataset.tab === tab ? "true" : "false");
+        }
+        for (const panel of panels) {
+          panel.classList.toggle("active", panel.id === `tab-${tab}`);
+        }
+        if (tab === "grimoire" && catalog === null) {
+          void loadGrimoire();
+        }
+        if (tab === "status" && manifestTable.children.length === 0) {
+          void loadManifest();
+        }
+      };
+
+      const login = async () => {
+        if (!hasConfig()) {
+          throw new Error("Configuracao remota ausente no pacote publicado.");
+        }
+        const email = emailInput.value.trim();
+        const response = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+          method: "POST",
+          headers: {
+            apikey: PUBLISHABLE_KEY,
+            "content-type": "application/json"
+          },
+          body: JSON.stringify({
+            email,
+            password: passwordInput.value
+          })
+        });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok || !payload.access_token) {
+          throw new Error(payload.error_description || payload.msg || "Login recusado.");
+        }
+        window.sessionStorage.setItem(tokenStorageKey, payload.access_token);
+        window.sessionStorage.setItem(emailStorageKey, email);
+        passwordInput.value = "";
+        setSessionChip();
+        setAuthStatus("Fluxo de login futuro conectado nesta aba.", "ok");
+        if (activeTab === "grimoire") {
+          await loadGrimoire(true);
+        }
+      };
+
+      const logout = () => {
+        window.sessionStorage.removeItem(tokenStorageKey);
+        window.sessionStorage.removeItem(emailStorageKey);
+        catalog = null;
+        renderCatalog();
+        setSessionChip();
+        setAuthStatus("Sessao do jogo removida desta aba.", "warn");
+      };
+
+      const privateHeaders = () => ({
+        apikey: PUBLISHABLE_KEY,
+        authorization: `Bearer ${currentToken()}`
+      });
+
+      const requestDownload = async (artifact) => {
+        if (!currentToken()) {
+          setAuthStatus("Entre com email e senha antes de baixar.", "warn");
+          switchTab("home");
+          emailInput.focus();
+          return;
+        }
+        setAuthStatus("Gerando link temporario...", "warn");
+        const response = await fetch(
+          `${SUPABASE_URL}/functions/v1/release/download?artifact=${encodeURIComponent(artifact)}`,
+          { method: "GET", headers: privateHeaders() }
+        );
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok || !payload.url) {
+          handlePrivateFailure(response, payload);
+          throw new Error(payload.error?.message || "Download protegido recusado.");
+        }
+        setAuthStatus("Abrindo link temporario.", "ok");
+        window.location.href = payload.url;
+      };
+
+      const loadGrimoire = async (force = false) => {
+        if (loadingCatalog) return;
+        if (catalog !== null && !force) {
+          renderCatalog();
+          return;
+        }
+        loadingCatalog = true;
+        setGrimoireStatus("Carregando Grimorio privado...", "warn");
+        try {
+          const response = await fetch(GRIMOIRE_STATIC_URL, { method: "GET" });
+          const payload = await response.json().catch(() => ({}));
+          if (!response.ok || payload.ok !== true) {
+            throw new Error("Grimorio indisponivel neste pacote.");
+          }
+          catalog = payload;
+          populateFilters();
+          renderCatalog();
+          setGrimoireStatus("", "");
+        } catch (error) {
+          catalog = null;
+          renderCatalog();
+          setGrimoireStatus(error instanceof Error ? error.message : "Falha ao carregar Grimorio.", "error");
+        } finally {
+          loadingCatalog = false;
+        }
+      };
+
+      const handlePrivateFailure = (response, payload) => {
+        const code = payload?.error?.code || "";
+        if (response.status === 401 || code === "AUTH_REQUIRES_EMAIL" || code === "ALPHA_ACCESS_REQUIRED") {
+          window.sessionStorage.removeItem(tokenStorageKey);
+          window.sessionStorage.removeItem(emailStorageKey);
+          setSessionChip();
+        }
+      };
+
+      const populateFilters = () => {
+        if (!catalog?.collections) return;
+        const selectedCollection = collectionFilter.value || "all";
+        collectionFilter.innerHTML = '<option value="all">Todas categorias</option>';
+        for (const key of Object.keys(catalog.collections)) {
+          const option = document.createElement("option");
+          option.value = key;
+          option.textContent = collectionLabels[key] || key;
+          collectionFilter.appendChild(option);
+        }
+        collectionFilter.value = catalog.collections[selectedCollection] ? selectedCollection : "all";
+
+        const selectedSource = sourceFilter.value || "all";
+        const sources = new Set();
+        for (const item of allItems()) {
+          for (const value of itemSources(item.raw)) sources.add(value);
+        }
+        sourceFilter.innerHTML = '<option value="all">Todas fontes/tags</option>';
+        Array.from(sources).sort((a, b) => a.localeCompare(b, "pt-BR")).forEach((source) => {
+          const option = document.createElement("option");
+          option.value = source;
+          option.textContent = source;
+          sourceFilter.appendChild(option);
+        });
+        sourceFilter.value = sources.has(selectedSource) ? selectedSource : "all";
+      };
+
+      const renderCatalog = () => {
+        grimoireGrid.innerHTML = "";
+        catalogSummary.innerHTML = "";
+        if (!catalog?.collections) {
+          if (!currentToken()) {
+            setGrimoireStatus("Entre com a conta alpha para carregar o Grimorio.", "");
+          }
+          return;
+        }
+
+        renderSummary();
+        const query = normalize(searchInput.value);
+        const collection = collectionFilter.value;
+        const source = sourceFilter.value;
+        const items = allItems().filter((item) => {
+          if (collection !== "all" && item.collection !== collection) return false;
+          if (source !== "all" && !itemSources(item.raw).includes(source)) return false;
+          if (query === "") return true;
+          return normalize(searchHaystack(item.raw, item.collection)).includes(query);
+        });
+
+        if (items.length === 0) {
+          setGrimoireStatus("Nenhum item encontrado para os filtros atuais.", "warn");
+          return;
+        }
+        setGrimoireStatus("", "");
+        for (const item of items) {
+          grimoireGrid.appendChild(itemCard(item));
+        }
+      };
+
+      const renderSummary = () => {
+        const counts = catalog.counts || {};
+        const keys = ["weapons", "spells", "doutrines", "familiars", "base_structures", "rewards", "power_bands", "bot_archetypes"];
+        for (const key of keys) {
+          const block = document.createElement("div");
+          block.className = "catalog-count";
+          block.innerHTML = `<strong>${Number(counts[key] || 0)}</strong><span>${escapeHtml(collectionLabels[key] || key)}</span>`;
+          catalogSummary.appendChild(block);
+        }
+      };
+
+      const allItems = () => {
+        if (!catalog?.collections) return [];
+        return Object.entries(catalog.collections).flatMap(([collection, items]) =>
+          Array.isArray(items) ? items.map((raw) => ({ collection, raw })) : []
+        );
+      };
+
+      const itemCard = (item) => {
+        const raw = item.raw || {};
+        const card = document.createElement("article");
+        card.className = "card item-card";
+        const name = raw.display_name || raw.id || "Item";
+        const id = raw.id || "";
+        const tags = itemSources(raw).slice(0, 5);
+        const details = detailPairs(raw, item.collection);
+        card.innerHTML = `
+          <div class="item-title">
+            <div>
+              <h3>${escapeHtml(String(name))}</h3>
+              <div class="item-id">${escapeHtml(String(id))}</div>
+            </div>
+            <span class="chip gold">${escapeHtml(collectionLabels[item.collection] || item.collection)}</span>
+          </div>
+          <p>${escapeHtml(String(raw.description || "Sem descricao."))}</p>
+          <div class="chips">
+            ${tags.map((tag, index) => `<span class="chip ${index === 0 ? "teal" : ""}">${escapeHtml(tag)}</span>`).join("")}
+          </div>
+          <div class="details">
+            ${details.map(([label, value]) => `<div class="detail"><strong>${escapeHtml(label)}</strong>${escapeHtml(value)}</div>`).join("")}
+          </div>
+        `;
+        return card;
+      };
+
+      const detailPairs = (raw, collection) => {
+        const pairs = [];
+        const push = (label, key) => {
+          if (raw[key] !== undefined && raw[key] !== null && raw[key] !== "") {
+            pairs.push([label, formatValue(raw[key])]);
+          }
+        };
+        push("modo", "mode");
+        if (collection === "spells") {
+          push("fonte", "damage_type");
+          push("mana", "mana_cost");
+          push("cooldown", "cooldown_seconds");
+          push("unlock", "unlock_level");
+        } else if (collection === "weapons") {
+          push("fonte", "damage_type");
+          push("cadencia", "cadence_seconds");
+          push("dano", "base_damage");
+          push("especial", "special_every_attacks");
+        } else if (collection === "doutrines") {
+          push("stat", "stat");
+          push("unlock", "unlock_level");
+          push("bonus", "base_bonus");
+        } else if (collection === "familiars") {
+          push("fonte", "damage_type");
+          push("cadencia", "cadence_seconds");
+          push("unlock", "unlock_level");
+        } else if (collection === "base_structures") {
+          push("max level", "max_level");
+          push("produz", "produces");
+        } else if (collection === "rewards") {
+          push("recursos", "resources");
+          push("scope", "idempotency_scope");
+        } else if (collection === "power_bands") {
+          push("min", "min_power");
+          push("max", "max_power");
+        } else if (collection === "bot_archetypes") {
+          push("arquetipo", "archetype");
+          push("poder", "power");
+          push("level", "level");
+        }
+        if (pairs.length < 4) {
+          push("versao", "version");
+        }
+        return pairs.slice(0, 4);
+      };
+
+      const itemSources = (raw) => {
+        const values = [];
+        for (const key of ["damage_type", "weapon_type", "stat", "archetype", "power_band_id", "idempotency_scope"]) {
+          if (typeof raw[key] === "string" && raw[key] !== "") values.push(raw[key]);
+        }
+        if (Array.isArray(raw.tags)) {
+          for (const tag of raw.tags) {
+            if (typeof tag === "string" && tag !== "") values.push(tag);
+          }
+        }
+        return Array.from(new Set(values.map(String)));
+      };
+
+      const searchHaystack = (raw, collection) => {
+        return [
+          collection,
+          raw.id,
+          raw.display_name,
+          raw.description,
+          raw.damage_type,
+          raw.weapon_type,
+          raw.stat,
+          raw.archetype,
+          raw.mode,
+          JSON.stringify(raw.tags || []),
+          JSON.stringify(raw.effects || {}),
+          JSON.stringify(raw.resources || {})
+        ].join(" ");
+      };
+
+      const loadManifest = async () => {
+        manifestTable.innerHTML = "";
+        if (!hasConfig()) {
+          manifestStatus.textContent = "Configuracao remota ausente no pacote publicado.";
+          return;
+        }
+        manifestStatus.textContent = "Carregando manifest...";
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/release/manifest`, {
+          headers: { apikey: PUBLISHABLE_KEY }
+        });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          manifestStatus.textContent = "Falha ao carregar manifest.";
+          return;
+        }
+        manifestStatus.textContent = "";
+        const rows = [
+          ["schema", payload.schema_version],
+          ["canal", payload.channel],
+          ["versao", `${payload.latest_version} (${payload.latest_version_code})`],
+          ["minimo", `${payload.minimum_supported_version} (${payload.minimum_supported_version_code})`],
+          ["portal", payload.portal_url],
+          ["android", payload.artifacts?.android?.url],
+          ["pc", payload.artifacts?.pc_windows?.url],
+          ["web", payload.artifacts?.web?.url]
+        ];
+        for (const [label, value] of rows) {
+          const row = document.createElement("div");
+          row.className = "manifest-row";
+          row.innerHTML = `<span>${escapeHtml(String(label))}</span><span>${escapeHtml(String(value || ""))}</span>`;
+          manifestTable.appendChild(row);
+        }
+      };
+
+      const setGrimoireStatus = (message, mode = "") => {
+        grimoireStatus.textContent = message;
+        grimoireStatus.className = message ? `empty ${mode}` : "empty";
+        grimoireStatus.style.display = message ? "block" : "none";
+      };
+
+      const formatValue = (value) => {
+        if (Array.isArray(value)) {
+          return value.map((item) => formatValue(item)).join(", ");
+        }
+        if (value !== null && typeof value === "object") {
+          return Object.entries(value).map(([key, item]) => `${key}: ${formatValue(item)}`).join(", ");
+        }
+        if (typeof value === "number") {
+          return Number.isInteger(value) ? String(value) : String(Math.round(value * 100) / 100);
+        }
+        return String(value);
+      };
+
+      const normalize = (value) =>
+        String(value || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+      const escapeHtml = (value) =>
+        String(value).replace(/[&<>"']/g, (char) => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;"
+        }[char]));
+
+      for (const button of tabButtons) {
+        button.addEventListener("click", () => switchTab(button.dataset.tab || "home"));
+      }
+      for (const button of targetButtons) {
+        button.addEventListener("click", () => switchTab(button.dataset.tabTarget || "home"));
+      }
+      form?.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        try {
+          setAuthStatus("Entrando...", "warn");
+          await login();
+        } catch (error) {
+          setAuthStatus(error instanceof Error ? error.message : "Falha ao entrar.", "error");
+        }
+      });
+      logoutButton?.addEventListener("click", logout);
+      for (const button of downloadButtons) {
+        button.addEventListener("click", async () => {
+          try {
+            await requestDownload(button.dataset.artifact || "");
+          } catch (error) {
+            setAuthStatus(error instanceof Error ? error.message : "Falha ao gerar download.", "error");
+          }
+        });
+      }
+      refreshGrimoireButton?.addEventListener("click", () => void loadGrimoire(true));
+      refreshManifestButton?.addEventListener("click", () => void loadManifest());
+      searchInput?.addEventListener("input", renderCatalog);
+      collectionFilter?.addEventListener("change", renderCatalog);
+      sourceFilter?.addEventListener("change", renderCatalog);
+
+      if (!hasConfig()) {
+        setAuthStatus("Downloads e Grimorio aguardam configuracao do pacote publicado.", "warn");
+      } else if (currentToken()) {
+        setAuthStatus("Fluxo de login futuro conectado nesta aba.", "ok");
+      }
+      if (currentEmail()) {
+        emailInput.value = currentEmail();
+      }
+      setSessionChip();
+      renderCatalog();
+    })();
+  </script>
 </body>
 </html>

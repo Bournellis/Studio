@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Draxos ritual arena</title>
+  <desc id="desc">Private alpha artwork showing two arcane figures in a ritual arena.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#071019"/>
+      <stop offset="0.48" stop-color="#111824"/>
+      <stop offset="1" stop-color="#22131f"/>
+    </linearGradient>
+    <radialGradient id="rift" cx="50%" cy="42%" r="50%">
+      <stop offset="0" stop-color="#f3d48a" stop-opacity="0.85"/>
+      <stop offset="0.23" stop-color="#48d4c4" stop-opacity="0.5"/>
+      <stop offset="0.6" stop-color="#7c294c" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#071019" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#172636"/>
+      <stop offset="0.5" stop-color="#101720"/>
+      <stop offset="1" stop-color="#291722"/>
+    </linearGradient>
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <rect width="1600" height="900" fill="url(#rift)"/>
+
+  <g opacity="0.45">
+    <circle cx="820" cy="175" r="2.5" fill="#f1d28a"/>
+    <circle cx="1030" cy="105" r="2" fill="#48d4c4"/>
+    <circle cx="1240" cy="185" r="1.8" fill="#f1d28a"/>
+    <circle cx="420" cy="140" r="2" fill="#48d4c4"/>
+    <circle cx="265" cy="220" r="1.6" fill="#f1d28a"/>
+    <circle cx="1370" cy="310" r="1.4" fill="#48d4c4"/>
+  </g>
+
+  <path d="M0 650 C240 570 470 545 760 588 C1030 628 1270 590 1600 505 L1600 900 L0 900 Z" fill="url(#floor)"/>
+  <path d="M95 710 C420 630 810 622 1170 684 C1325 710 1450 707 1565 676" fill="none" stroke="#d8bd7a" stroke-opacity="0.28" stroke-width="3"/>
+  <ellipse cx="800" cy="690" rx="430" ry="92" fill="none" stroke="#d8bd7a" stroke-opacity="0.55" stroke-width="4"/>
+  <ellipse cx="800" cy="690" rx="292" ry="54" fill="none" stroke="#47d2c4" stroke-opacity="0.5" stroke-width="3"/>
+  <path d="M370 690 L1230 690 M800 598 L800 782 M555 638 L1045 742 M1045 638 L555 742" stroke="#d8bd7a" stroke-opacity="0.28" stroke-width="2"/>
+
+  <g transform="translate(320 388)" filter="url(#softGlow)">
+    <path d="M92 56 C125 18 184 23 208 66 C244 129 203 229 156 284 C117 239 72 157 92 56 Z" fill="#11242f"/>
+    <path d="M147 0 C203 27 223 91 201 165 C190 199 173 235 156 284 C129 224 97 177 94 117 C92 62 110 21 147 0 Z" fill="#17394a"/>
+    <circle cx="150" cy="80" r="31" fill="#53d1c6"/>
+    <path d="M66 188 C104 144 170 144 226 190" fill="none" stroke="#53d1c6" stroke-width="13" stroke-linecap="round"/>
+    <path d="M220 132 C272 164 306 218 320 292" stroke="#d8bd7a" stroke-width="10" stroke-linecap="round"/>
+    <circle cx="330" cy="306" r="17" fill="#d8bd7a"/>
+  </g>
+
+  <g transform="translate(1040 412)" opacity="0.92" filter="url(#softGlow)">
+    <path d="M150 5 C198 33 214 86 203 136 C189 202 156 243 128 292 C93 246 68 207 61 149 C53 83 92 25 150 5 Z" fill="#2b1725"/>
+    <circle cx="140" cy="86" r="28" fill="#d85d68"/>
+    <path d="M42 194 C84 145 150 146 214 188" fill="none" stroke="#d85d68" stroke-width="13" stroke-linecap="round"/>
+    <path d="M75 122 C27 156 2 209 -8 278" stroke="#d8bd7a" stroke-width="10" stroke-linecap="round"/>
+    <circle cx="-13" cy="292" r="16" fill="#d8bd7a"/>
+  </g>
+
+  <g opacity="0.72">
+    <circle cx="800" cy="482" r="62" fill="none" stroke="#d8bd7a" stroke-width="6"/>
+    <path d="M800 421 L817 473 L872 473 L827 506 L844 558 L800 526 L756 558 L773 506 L728 473 L783 473 Z" fill="none" stroke="#47d2c4" stroke-width="5"/>
+    <circle cx="800" cy="482" r="12" fill="#f1d28a"/>
+  </g>
+
+  <g opacity="0.42">
+    <path d="M190 598 C160 520 174 428 232 340" stroke="#d8bd7a" stroke-width="2" fill="none"/>
+    <path d="M1410 578 C1448 498 1434 416 1375 332" stroke="#d8bd7a" stroke-width="2" fill="none"/>
+    <rect x="125" y="342" width="46" height="230" fill="#0c1219"/>
+    <rect x="1428" y="330" width="46" height="240" fill="#0c1219"/>
+    <path d="M124 342 L150 296 L172 342 Z" fill="#18202b"/>
+    <path d="M1427 330 L1453 284 L1476 330 Z" fill="#18202b"/>
+  </g>
+</svg>

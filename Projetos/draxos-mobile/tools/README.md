@@ -7,6 +7,7 @@ Ferramentas de desenvolvimento e validacao.
 - `export_internal_alpha.ps1` - exporta Android APK, PC Windows ZIP e Web usando `.env.internal-alpha.local`, sem commitar config real do cliente.
 - `publish_internal_alpha.ps1` - publica APK/ZIP no Supabase Storage unlisted, prepara portal/Web para host estatico externo e valida `release/manifest`.
 - `build_cloudflare_pages_package.ps1` - gera o pacote hibrido para Cloudflare Pages, mantendo HTML no Cloudflare e assets grandes do Web export no Supabase Storage.
+- `generate_grimoire_catalog.ts` - gera o modulo compartilhado `grimoire_catalog.ts` para `GET /content/grimoire` a partir de `data/definitions/*.json` e a copia estatica do portal em `portal/internal-alpha/assets/grimoire-catalog.json`.
 - `smoke_dev_labs.gd` - smoke do caminho real `OS.execute` para Battle Lab e Progression Lab.
 - `smoke_dev_lab_ui.gd` - smoke visual/comportamental das telas dev-only; salva screenshots quando rodado sem `--headless`.
 - `content_generator.gd` - gera `data/generated/draxos_mobile_catalog.tres` a partir de `data/definitions/*.json`.
@@ -60,6 +61,13 @@ Publique `build/internal-alpha/cloudflare-pages/` ou `build/internal-alpha/draxo
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 -ProjectDir . -StaticSiteBaseUrl "https://draxos-mobile-internal-alpha.pages.dev" -SkipUpload -UseManifestSecret
+```
+
+Grimorio do site alpha:
+
+```powershell
+cd D:\Estudio\Projetos\draxos-mobile
+npx -y deno run --allow-read --allow-write tools/generate_grimoire_catalog.ts
 ```
 
 Simulador de economia:
