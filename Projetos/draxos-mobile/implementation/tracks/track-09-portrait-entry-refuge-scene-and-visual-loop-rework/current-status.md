@@ -25,8 +25,7 @@ Date: 2026-05-28
   - dev labs when enabled;
   - login, signup and guest dev navigate to Refugio after save recovery without a second CTA.
 - Rebuilt Refugio as the playable altar scene:
-  - fullscreen altar background;
-  - `Caminhos do Refugio` as the main interaction block;
+  - `Caminhos do Refugio` as the top/main interaction block;
   - hotspots for Battle, Base, Social, Competition, Shop and Profile;
   - resources/status in a compact footer;
   - internal surfaces open through existing actions/routes with Back support.
@@ -38,6 +37,9 @@ Date: 2026-05-28
   - removed the mandatory `Entrar no Refugio` step;
   - kept saves and Labs Dev as secondary Entry blocks;
   - changed Refugio composition so the altar is background and Caminhos is the foreground.
+- Applied Track 09B Refugio follow-up:
+  - removed the runtime altar background and empty top spacer;
+  - moved `Caminhos do Refugio` to the top of the Refugio screen.
 
 ## Guardrails Preserved
 
@@ -65,4 +67,4 @@ Local validation result:
 
 ## Next Step
 
-Manual visual QA in Godot/Android export should focus on the slim Entry auth flow, create-account popup, Refugio Caminhos readability, Base management in the vertical frame and battle summary ergonomics.
+Manual visual QA in Godot/Android export should focus on the slim Entry auth flow, create-account popup, Refugio Caminhos at the top, Base management in the vertical frame and battle summary ergonomics.

@@ -60,7 +60,9 @@ func _check_portrait_app_loop() -> void:
 	boot.call("_show_screen", "refuge")
 	await process_frame
 	_expect(str(boot.get("_current_screen")) == "refuge", "Refugio route opens after Entry")
-	_expect(_find_node_by_name(boot, "RefugeAltarBackground") != null, "portrait Refugio uses altar background")
+	_expect(_find_node_by_name(boot, "RefugeAltarBackground") == null, "portrait Refugio removes altar background")
+	_expect(_find_node_by_name(boot, "RefugeAltarViewSpace") == null, "portrait Refugio removes empty top spacer")
+	_expect(_find_node_by_name(boot, "RefugeHotspotPanel") != null, "portrait Refugio puts Caminhos at the top")
 	_expect(_label_tree_contains(boot, "Caminhos do Refugio"), "portrait Refugio foregrounds Caminhos")
 	_expect(_find_button_by_text(boot, "Perfil") != null, "portrait Refugio has account hotspot")
 	_expect(_find_button_by_text(boot, "Base") != null, "portrait Refugio has Base hotspot")

@@ -67,12 +67,6 @@ static func render_refuge(host: Node) -> void:
 	if root == null:
 		return
 	var compact := bool(host.get("_compact_layout"))
-	var background := RefugeAltarView.new(compact)
-	background.name = "RefugeAltarBackground"
-	background.set_anchors_preset(Control.PRESET_FULL_RECT)
-	background.custom_minimum_size = Vector2.ZERO
-	root.add_child(background)
-
 	var margin := MarginContainer.new()
 	margin.name = "RefugeSceneOverlay"
 	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -89,12 +83,6 @@ static func render_refuge(host: Node) -> void:
 	layout.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	layout.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	margin.add_child(layout)
-
-	var spacer := Control.new()
-	spacer.name = "RefugeAltarViewSpace"
-	spacer.custom_minimum_size = Vector2(0, 130 if compact else 190)
-	spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	layout.add_child(spacer)
 
 	layout.add_child(_refuge_hotspot_panel(host, compact))
 	layout.add_child(_refuge_footer_panel(host, compact))
