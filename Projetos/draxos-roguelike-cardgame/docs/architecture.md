@@ -1,7 +1,7 @@
 # Architecture
 
-- Last Updated: `2026-05-27`
-- Status: `Track 02 foundation hardening 5 baseline`
+- Last Updated: `2026-05-28`
+- Status: `Track 02 foundation hardening 6 baseline`
 
 ## Goal
 
@@ -141,7 +141,7 @@ Responsibilities:
 - run map node presentation;
 - reward/state text for fixed rewards, utility rewards, relics, upgrades and new-card choices.
 
-Foundation checkpoint: `BattleRoot` keeps current scene composition, anchors, layout and drag/drop behavior while pure battle preview/readout data now delegates to `modes/battle/battle_preview_presenter.gd`. Board/hand and modal extraction remain future small validated steps.
+Foundation checkpoint: `BattleRoot` keeps current scene composition, anchors, layout and drag/drop behavior while pure battle preview/readout data delegates to `modes/battle/battle_preview_presenter.gd`, HUD/objective readouts delegate to `modes/battle/battle_hud_presenter.gd`, and combat FX filtering/text/state projection delegates to `modes/battle/battle_combat_fx_presenter.gd`. Board/hand and modal extraction remain future small validated steps.
 
 ### `Validation`
 
@@ -155,7 +155,7 @@ Responsibilities:
 - run GUT;
 - report playtest readiness and known non-fatal art alpha debts.
 
-Expected baseline after 2026-05-27 hardening 5: GUT 100/100 with 1238 asserts, full-route smoke 29/29 through the shared route pacing simulator, Arcano seed `20260518` protected by exact golden metrics, Run Lab parity for class/seed sweeps, and repeated validation does not dirty generated content when the JSON is unchanged.
+Expected baseline after 2026-05-28 hardening 6: GUT 102/102 with 1252 asserts, full-route smoke 29/29 through the shared route pacing simulator, Arcano seed `20260518` protected by exact golden metrics, Run Lab parity for class/seed sweeps, and repeated validation does not dirty generated content when the JSON is unchanged.
 
 ### `Run Lab`
 

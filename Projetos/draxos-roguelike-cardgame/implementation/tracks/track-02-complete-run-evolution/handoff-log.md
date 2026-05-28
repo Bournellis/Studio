@@ -1,6 +1,6 @@
 # Track 02 Handoff Log
 
-- Last Updated: `2026-05-27`
+- Last Updated: `2026-05-28`
 - Status: `READY_FOR_THREAD_HANDOFFS`
 
 ## Protocol
@@ -144,3 +144,13 @@ Each entry should include:
 - validation result: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <worktree>\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd` passed with 100/100 GUT tests and 1238 asserts. Shared full-route pacing smoke completed 29/29 maps with 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 shop actions. Run Lab `--compare-golden --require-golden` passed for Arcano, Invocador, and Necromante seed `20260518`.
 - blockers: none. Remaining known debt: optional missing final PNG art and 4 non-fatal ship overlay alpha warnings.
 - next prompt id: none; Track 02 remains ready for human playtest. Recommended next foundation pass: BattleRoot Composition.
+
+### 2026-05-28 - Foundation Hardening 6
+
+- prompt id: `FOUNDATION-HARDENING-6`
+- summary: Extracted pure BattleRoot composition presenters for HUD/objective readouts and combat FX filtering/text/state projection while preserving scene composition, anchors, sizes, drag/drop behavior, node names, route metrics, and gameplay behavior.
+- changed files: `modes/battle/battle_root.gd`, `modes/battle/battle_hud_presenter.gd`, `modes/battle/battle_combat_fx_presenter.gd`, `tests/unit/test_ui_layout.gd`, docs/status snapshots, and coordination note.
+- validation result: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <worktree>\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd` passed with 102/102 GUT tests and 1252 asserts. Shared full-route pacing smoke completed 29/29 maps with 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 shop actions. Run Lab `--compare-golden --require-golden` passed for Arcano, Invocador, and Necromante seed `20260518`.
+- screenshots: not required; this pass extracted pure presentation helpers and did not change visual construction/layout.
+- blockers: none. Remaining known debt: optional missing final PNG art and 4 non-fatal ship overlay alpha warnings.
+- next prompt id: none; Track 02 remains ready for human playtest. Recommended next foundation pass: Catalog Foundation.

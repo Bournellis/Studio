@@ -1,13 +1,13 @@
 # Track 02 Validation And Tuning Notes
 
-- Last Updated: `2026-05-27`
-- Prompt: `FOUNDATION-HARDENING-5`
+- Last Updated: `2026-05-28`
+- Prompt: `FOUNDATION-HARDENING-6`
 - Status: `READY_FOR_USER_PLAYTEST`
 
 ## Validation Summary
 
 - Godot validation command: green.
-- GUT: `100/100` tests passing, `1238` asserts.
+- GUT: `102/102` tests passing, `1252` asserts.
 - Full-route pacing smoke: `29/29` maps completed.
 - Estimated route turns: `217`.
 - Estimated HP loss across route: `116`.
@@ -21,6 +21,7 @@
 - Run Lab parity: `--compare-golden --require-golden` passes for Arcano, Invocador, and Necromante with seed `20260518`.
 - Foundation Pass 4 added the golden comparison harness without changing route metrics or gameplay behavior.
 - Foundation Pass 5 moved Souls shop offers/mutations/sync into `core/run_shop_service.gd` behind `RunSession` wrappers without changing route metrics, shop economy, or gameplay behavior.
+- Foundation Pass 6 moved BattleRoot HUD/objective readouts and combat FX filtering/text/state projection into pure presenters without changing route metrics, UI layout, drag/drop, or gameplay behavior.
 
 ## First Tuning Pass
 

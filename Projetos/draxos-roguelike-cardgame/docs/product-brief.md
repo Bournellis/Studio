@@ -1,6 +1,6 @@
 # Product Brief
 
-- Last Updated: `2026-05-27`
+- Last Updated: `2026-05-28`
 - Status: `Track 02 complete-run build ready for user playtest`
 
 ## Identity
@@ -51,9 +51,9 @@ The current checkpoint is Track 02 complete-run build:
 - Deterministic hybrid enemy AI and visible enemy intent.
 - Encounter modes, board formats, field effects, and boss hooks for maps 8/15/22/29.
 - Shared validation/Run Lab telemetry for full-route pacing smoke, with Track 02 golden regression comparison.
-- Internal directors/services for enemy AI/intent, reward choices, Souls shop, and battle preview data.
+- Internal directors/services for enemy AI/intent, reward choices, Souls shop, battle preview data, HUD/objective readouts, and combat FX presentation.
 
-Current validation baseline on 2026-05-27: GUT 100/100 across 7 modular suites, 1238 asserts, full-route pacing smoke 29/29, 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 estimated shop actions. Run Lab golden comparison passes for Arcano, Invocador, and Necromante with seed `20260518`.
+Current validation baseline on 2026-05-28: GUT 102/102 across 7 modular suites, 1252 asserts, full-route pacing smoke 29/29, 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 estimated shop actions. Run Lab golden comparison passes for Arcano, Invocador, and Necromante with seed `20260518`.
 
 ## Historical Material
 

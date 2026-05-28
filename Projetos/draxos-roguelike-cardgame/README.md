@@ -21,7 +21,7 @@ Validation:
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd
 ```
 
-Expected foundation baseline after the 2026-05-27 hardening pass 5: GUT 100/100, 1238 asserts, full-route pacing smoke 29/29, golden Run Lab comparison for Track 02 class/seed regressions, internal directors/services for enemy AI/intent, rewards, Souls shop and battle previews, and no generated-catalog churn when validation is run repeatedly without semantic JSON changes.
+Expected foundation baseline after the 2026-05-28 hardening pass 6: GUT 102/102, 1252 asserts, full-route pacing smoke 29/29, golden Run Lab comparison for Track 02 class/seed regressions, internal directors/services for enemy AI/intent, rewards, Souls shop, battle previews, HUD/objective readouts and combat FX presentation, and no generated-catalog churn when validation is run repeatedly without semantic JSON changes.
 
 Run Lab:
 

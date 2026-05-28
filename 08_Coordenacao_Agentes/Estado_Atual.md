@@ -1,6 +1,6 @@
 # Estado Atual - Estudio
 
-- Ultima atualizacao: `2026-05-27`
+- Ultima atualizacao: `2026-05-28`
 - Fonte de verdade de portfolio: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Painel visual local: `08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
@@ -16,7 +16,7 @@
 - Status: **P0_IMPLEMENTACAO - ativo**
 - Fase: `Implementacao`
 - Track ativa: `Track 02 - Complete Run Evolution` (T02-P09_COMPLETE)
-- Baseline atual: Track 02 completa para playtest de usuario em Godot 4.6.2 com rota fixa de 29 mapas, save/snapshot v5, recompensas/reliquias/loja expandida, keywords completas, AI/intent, modos e formatos de encontro, field effects, boss hooks, UI polida para mapa/batalha/recompensa/loja/tooltips, descarte marcado na fase principal, testes modulares, diretores/servicos internos de fundacao incluindo reward/shop, geracao idempotente do catalogo, simulador compartilhado de pacing, checklist de playtest, Run Lab local JSON/CSV com golden comparison, validacao verde 100/100 em 2026-05-27 e telemetria de rota completa 29/29.
+- Baseline atual: Track 02 completa para playtest de usuario em Godot 4.6.2 com rota fixa de 29 mapas, save/snapshot v5, recompensas/reliquias/loja expandida, keywords completas, AI/intent, modos e formatos de encontro, field effects, boss hooks, UI polida para mapa/batalha/recompensa/loja/tooltips, descarte marcado na fase principal, testes modulares, diretores/servicos internos de fundacao incluindo reward/shop/BattleRoot presenters, geracao idempotente do catalogo, simulador compartilhado de pacing, checklist de playtest, Run Lab local JSON/CSV com golden comparison, validacao verde 102/102 em 2026-05-28 e telemetria de rota completa 29/29.
 - Meta ativa: playtest manual da Track 02 completa e coleta de feedback de balanceamento.
 - Trabalho permitido: codigo, validacao, playtest e documentacao local.
 - Proximo passo: executar playtest de usuario da Track 02 completa.
