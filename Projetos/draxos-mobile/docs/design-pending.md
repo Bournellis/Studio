@@ -1,8 +1,8 @@
 # DraxosMobile - Design Pending
 
-- Ultima atualizacao: `2026-05-26`
+- Ultima atualizacao: `2026-05-28`
 - Status: registro vivo de pendencias de design
-- Escopo: DraxosMobile, Track 00 e evolucoes futuras
+- Escopo: DraxosMobile, Foundation Audit e evolucoes futuras
 
 Este documento e o unico lugar para registrar pendencias de design do projeto ativo. Ele nao resolve design; ele nomeia o que ainda precisa ser decidido, classifica o bloqueio e aponta para o documento que deve receber a resposta quando a decisao existir.
 
@@ -14,7 +14,7 @@ Campos obrigatorios:
 |---|---|
 | ID | Identificador estavel da pendencia |
 | Sistema | Area afetada |
-| Bloqueia | `MVP_TECNICO`, `PRIMEIRO_SLICE`, `PLAYTEST_ALPHA`, `CALIBRAVEL_ALPHA`, `OPERACIONAL` ou `POS_SLICE` |
+| Bloqueia | `FOUNDATION_AUDIT`, `MVP_TECNICO`, `PRIMEIRO_SLICE`, `PLAYTEST_ALPHA`, `CALIBRAVEL_ALPHA`, `OPERACIONAL` ou `POS_SLICE` |
 | Pergunta | Decisao de design ainda em aberto |
 | Impacto | Risco se a decisao nao existir |
 | Documento destino | Documento que deve ser atualizado quando resolver |
@@ -23,12 +23,23 @@ Campos obrigatorios:
 
 Categorias:
 
+- `FOUNDATION_AUDIT`: bloqueia a leitura atual do projeto, a auditoria do loop interno ou a escolha segura do proximo pacote.
 - `MVP_TECNICO`: bloqueia a prova tecnica minima da Track 00.
 - `PRIMEIRO_SLICE`: bloqueia completar o primeiro slice funcional.
 - `PLAYTEST_ALPHA`: pode ser implementado com placeholder, mas precisa existir antes de playtest real.
 - `CALIBRAVEL_ALPHA`: pode nascer com valor inicial e ser ajustado com dados.
 - `OPERACIONAL`: nao altera game design, mas bloqueia validacao, ambiente, seguranca ou execucao tecnica confiavel.
 - `POS_SLICE`: fora da Track 00 completa.
+
+## Etapa Atual - Foundation Audit
+
+A etapa atual e `FOUNDATION_AUDIT_ACTIVE`. O projeto deve ser lido como uma base implementada para refinamento, nao como produto final e nao como trilha de expansao de conteudo.
+
+Foco imediato:
+
+`Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
+
+Armas, spells, nomes, tema, imagens, economia, Battle Pass, apresentacao de batalha e visual final existem como substancia/mock. Eles nao sao prioridade de decisao ate que o loop interno, social, visual geral e apresentacao da batalha sejam discutidos nessa ordem.
 
 ## Estado Do MVP Tecnico
 
@@ -42,6 +53,11 @@ O MVP tecnico ja implementou conta guest server-authoritative, cliente de sessao
 
 | ID | Sistema | Bloqueia | Pergunta | Impacto | Documento destino | Status | Resolvido em |
 |---|---|---|---|---|---|---|---|
+| DMOB-D056 | Foundation Audit | FOUNDATION_AUDIT | Quais documentos vivos ainda induzem agentes a tratar alpha, Track 15, Track 16, economia, armas, spells ou visual final como foco atual? | Agentes podem continuar planejando expansao de conteudo em vez de auditar a fundacao. | `foundation-app-v0-audit.md` | ABERTO | - |
+| DMOB-D057 | Loop interno | FOUNDATION_AUDIT | Onde o loop pos-login quebra: quantidade de etapas, posicao de icones, hierarquia da tela, feedback de recompensa ou retorno para base? | O app pode ter substancia, mas continuar ruim de usar no fluxo principal. | `foundation-app-v0-audit.md` | ABERTO | - |
+| DMOB-D058 | UX de cliques | FOUNDATION_AUDIT | Qual deve ser o caminho ideal de cliques para coletar recursos, evoluir base, batalhar, receber recompensa e verificar base novamente? | Sem esse contrato, implementacoes futuras podem reorganizar telas sem reduzir atrito real. | `foundation-app-v0-audit.md` | ABERTO | - |
+| DMOB-D059 | Ordem de foco | FOUNDATION_AUDIT | Quais criterios liberam a passagem de loop interno para social, depois visual geral, depois apresentacao da batalha? | Social, visual e batalha podem entrar cedo demais e esconder problemas do loop fundador. | `foundation-app-v0-audit.md` | ABERTO | - |
+| DMOB-D060 | Mock vs fundacao | FOUNDATION_AUDIT | Como marcar conteudo atual como substancia/mock sem perder valor tecnico para backend, app e validacao? | Conteudo temporario pode virar divida conceitual ou ser apagado antes de cumprir papel de teste. | `foundation-app-v0-audit.md` | ABERTO | - |
 | DMOB-D001 | Escopo | PRIMEIRO_SLICE | O primeiro slice completo usa cap de level 10, 40 ou outro recorte dentro da Season 1? | Resolvido: Season 1 usa cap 40 por padrao, todos os levels sao permanentes e o simulador permite calibrar cap inicial 40/50/60. | `../implementation/tracks/track-00-first-slice-foundation/scope.md` | RESOLVIDO | 2026-05-20 |
 | DMOB-D002 | Progressao | PRIMEIRO_SLICE | Quais sao os gatilhos exatos de unlock de slots de spell, Doutrina e Familiar? | Resolvido: 0 slots no inicio; spell slots nos levels 3, 7 e 25; Doutrina no level 10; Familiar no level 15. | `game-design-document.md` | RESOLVIDO | 2026-05-20 |
 | DMOB-D003 | Base Manager | PRIMEIRO_SLICE | Quais stats a Estrutura de Stats altera, quanto por level e com qual custo/recurso? | Resolvido: pacote unico permanente por level com Vida +0.8%, Ataque/dano base +0.5%, Defesa +0.4%, Mana/regen +0.3%, custando Energia + tempo como as demais estruturas. | `game-design-document.md` | RESOLVIDO | 2026-05-20 |

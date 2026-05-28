@@ -16,20 +16,21 @@ This directory contains active, conceptual and paused projects for the studio.
   - Allowed work: code, validation, playtest, local documentation.
   - Current next step: user playtest of the Track 02 complete-run build.
 
-## Implementacao - Internal Alpha
+## Implementacao - Foundation Audit
 
-- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 00-15 are integrated, the themed Internal Alpha portal is deployed on Cloudflare Pages preview `https://b16705ab.draxos-mobile-internal-alpha.pages.dev`, and Track 16 is adding behavior, Po de Osso and potion crafting.
-  - Priority/status: `P2_IMPLEMENTACAO - Track 16 TRACK_16_BEHAVIOR_CRAFTING_ACTIVE`
+- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 13 release safety and Track 14 agent ops are preserved baselines, Track 00-15 are integrated, and Track 16 is the latest local technical package. The active stage is Foundation Audit for the post-login loop: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again.
+  - Priority/status: `P2_IMPLEMENTACAO - FOUNDATION_AUDIT_ACTIVE`
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Agent manual: `draxos-mobile/docs/agent-operating-manual.md`
   - Documentation index: `draxos-mobile/docs/documentation-index.md`
+  - Foundation Audit: `draxos-mobile/docs/foundation-app-v0-audit.md`
   - Operational status: `draxos-mobile/implementation/current-status.md`
   - Product vision: `draxos-mobile/docs/product-vision.md`
   - Product brief: `draxos-mobile/docs/product-brief.md`
   - GDD: `draxos-mobile/docs/game-design-document.md`
   - Design pending: `draxos-mobile/docs/design-pending.md`
   - Contracts: `draxos-mobile/docs/contracts/`
-  - Active track: `draxos-mobile/implementation/tracks/track-16-behavior-crafting/`
+  - Latest technical package: `draxos-mobile/implementation/tracks/track-16-behavior-crafting/`
   - Agent foundation: `draxos-mobile/implementation/tracks/track-14-agent-ops-foundation/`
   - Release safety baseline: `draxos-mobile/implementation/tracks/track-13-validation-release-safety/`
   - Manual walkthrough gate: `draxos-mobile/docs/track-13-manual-walkthrough-gate.md`
@@ -38,7 +39,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Progression Lab: `draxos-mobile/docs/progression-lab/README.md`
   - Design archive: `_conceitos/mobile-universe/`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: validate Track 16 locally for crafting, preparation behavior and potion battle consumption; then execute the Track 13 manual walkthrough before remote publication.
+  - Current next step: execute Foundation Audit for docs and loop ergonomics before social, visual, battle presentation, weapons, spells, economy or tuning work.
 
 ## Arquivo De Design
 

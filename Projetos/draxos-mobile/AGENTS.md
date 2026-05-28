@@ -8,13 +8,14 @@ This file is the fast entrypoint for agents working in `Projetos/draxos-mobile`.
 
 - Project: `DraxosMobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
-- Active operational track: `Track 15 - Mobile UX Overhaul`
-- Active track status: `TRACK_15_MOBILE_UX_OVERHAUL_ACTIVE`
+- Active operational stage: `Foundation Audit`
+- Active stage status: `FOUNDATION_AUDIT_ACTIVE`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety` delivered on `2026-05-28`
 - Agent baseline: `Track 14 - Agent Operations Foundation` is the current operations/docs foundation.
-- Immediate product gate: review the Track 15 Android portrait UX checkpoint before expanding scope; keep the real Android / Windows / Web walkthrough from `docs/track-13-manual-walkthrough-gate.md` before gameplay features, numeric tuning, account/save migration or remote publication.
+- Latest technical package: `Track 16 - Behavior And Potion Crafting`, local and not the current product focus.
+- Immediate product gate: run Foundation Audit before implementation expansion. Focus on the post-login loop: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again.
 
-DraxosMobile is an async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms for the first slice are Android app, PC executable and PC browser. Backend for alpha is Supabase Auth/Postgres/Edge Functions/Storage; battle simulation, resources and authoritative state stay on the server.
+DraxosMobile is an async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. The real product direction is base builder + autobattler + social, with room for future minigames and seasons. Current names, spells, weapons, economy values, battle flavor, visual style and premium systems are mock/substance for evaluation unless a live doc explicitly promotes them.
 
 ## Start Here
 
@@ -23,7 +24,7 @@ Read in this order for almost every task:
 1. `docs/agent-operating-manual.md`
 2. `implementation/current-status.md`
 3. `docs/documentation-index.md`
-4. `implementation/tracks/track-15-mobile-ux-overhaul/current-status.md`
+4. `docs/foundation-app-v0-audit.md`
 5. The files you intend to touch
 
 For product or design work, also read:
@@ -79,7 +80,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alp
 
 - Do not put `service_role`, Supabase secrets, database passwords, keystore passwords or private tokens in client code, exports, portal files, manifests or operational docs.
 - Do not run remote publishing modes without explicit user approval and `-ConfirmRemoteMutation`.
-- Do not start a new playable feature, numeric tuning pass, `account_profiles/game_saves` migration, iOS work or mobile browser support until the Track 13 manual gate has been executed and recorded.
+- Do not start a new playable feature, numeric tuning pass, weapon/spell/economy pass, battle presentation pass, final visual pass, `account_profiles/game_saves` migration, iOS work or mobile browser support before Foundation Audit is complete and the user explicitly chooses the next package.
 - Do not edit `.tscn` files as raw text unless the user explicitly asks and the change is safer than an editor/tool path.
 - Do not import gameplay rules from other Draxos projects unless this project's live docs explicitly adopt them.
 - Do not treat `Projetos/_conceitos/mobile-universe/` as active implementation material. It is design archive only.
@@ -87,6 +88,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alp
 ## Live Source Rules
 
 - `docs/product-vision.md` is the local long-term product canon until promoted to shared canon.
+- `docs/foundation-app-v0-audit.md` is the current product/agent compass for Foundation Audit.
 - `docs/game-design-document.md` is the authoritative implementation GDD.
 - `docs/design-pending.md` is the only live register of unresolved design decisions.
 - `docs/documentation-index.md` classifies live docs, contracts, runbooks, history and design archive.
@@ -95,4 +97,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alp
 
 ## Current Handoff
 
-Track 15 is reorganizing the mobile UX from alpha/dev surfaces into an internal premium Android portrait app. Do not change gameplay tuning, backend/schema, Supabase APIs, economy or authoritative flows in this track. The expected DraxosMobile Kanban Doing card is the Track 15 mobile UX overhaul card.
+Foundation Audit is the active handoff. Agents must align docs and then audit the post-login internal loop before expanding implementation. Do not change gameplay tuning, backend/schema, Supabase APIs, economy, content, weapons, spells, final visuals or authoritative flows during this documentation package.

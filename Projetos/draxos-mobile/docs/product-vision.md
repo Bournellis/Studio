@@ -1,6 +1,6 @@
 # DraxosMobile - Product Vision
 
-- Ultima atualizacao: `2026-05-27`
+- Ultima atualizacao: `2026-05-28`
 - Status: `LOCAL_PRODUCT_VISION - fonte viva do produto DraxosMobile`
 - Escopo: direcao de longo prazo, limites de produto, plataforma, economia, social, live ops, backend e monetizacao.
 
@@ -13,6 +13,24 @@ DraxosMobile e um jogo mobile-first de progressao persistente onde o jogador con
 O produto deve funcionar como um jogo de longo prazo: facil de abrir todos os dias, claro para evoluir em sessoes curtas, rico o bastante para gerar objetivos semanais e robusto o bastante para crescer em seasons sem reescrever a fundacao.
 
 O jogador nao e o heroi. O jogador e um Draxos em ascensao.
+
+## Situacao Atual
+
+Etapa atual: `FOUNDATION_AUDIT_ACTIVE`.
+
+O projeto ja tem uma base implementada com substancia suficiente para nao parecer um app vazio. A prioridade agora nao e adicionar conteudo, balancear combate ou consolidar tema final. A prioridade e auditar e refinar a experiencia do loop interno pos-login:
+
+`Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
+
+Nesta etapa, nomes, spells, armas, numeros de economia, Battle Pass, visual final e apresentacao atual de batalha sao tratados como mock/substancia. Eles ajudam a sentir o produto, mas nao definem a direcao final.
+
+Ordem de foco:
+
+1. Loop interno pos-login.
+2. Social.
+3. Visual geral.
+4. Apresentacao da batalha.
+5. Armas, spells, economia, balanceamento e conteudo detalhado.
 
 ## Pilares
 
@@ -60,18 +78,18 @@ Todo fluxo essencial deve ser validado em Android antes de ser considerado pront
 ## Core Loop
 
 1. Entrar na conta.
-2. Ver estado do Refugio.
-3. Coletar recursos e resolver filas.
-4. Melhorar personagem/base/economia.
-5. Batalhar e receber replay/recompensa.
-6. Conferir ranking/social/loja quando fizer sentido.
-7. Sair com um proximo objetivo claro.
+2. Ver estado da base/refugio.
+3. Coletar recursos.
+4. Evoluir base.
+5. Batalhar.
+6. Receber recompensas.
+7. Verificar a base novamente e sair com um proximo objetivo claro.
 
-O loop deve funcionar em sessoes curtas, mas ter objetivos de 2h, 5h, 10h, 15h e 20h para Progression Lab e playtest humano.
+O loop deve funcionar em sessoes curtas. A Foundation Audit deve medir se as telas, icones, botoes, retornos e feedbacks tornam esse caminho obvio antes de qualquer expansao de conteudo.
 
 ## Economia E Progressao
 
-Direcao atual:
+Direcao longa, nao foco imediato:
 
 - seasons podem subir caps e introduzir novos objetivos;
 - levels permanentes sao preferidos para personagem, spells, base e sistemas centrais;
@@ -89,7 +107,7 @@ Regras de maturidade:
 
 ## Social E Competicao
 
-Social deve comecar simples e confiavel:
+Social deve comecar simples e confiavel, mas a proxima discussao social vem depois da auditoria do loop interno:
 
 - identidade por conta;
 - amigos por username;
@@ -153,14 +171,16 @@ Este documento e canon local de produto para DraxosMobile. Ele informa `docs/pro
 
 O canon compartilhado em `../../canon/` informa lore, identidade Draxos e limites gerais do estudio. Ele ainda e majoritariamente orientado ao RPG Isometrico em produto/gameplay/plataforma; portanto, regras de RPG Isometrico nao sao aplicadas automaticamente aqui.
 
-## Calibravel No Alpha
+## Preservado Para Calibragem Futura
+
+Os itens abaixo existem como substancia/mock e nao sao foco da Foundation Audit:
 
 - ritmo de recursos e XP;
 - premium gap;
 - tamanho das janelas 15h/20h;
 - poder de bots;
 - pontos de ranking;
-- clareza de onboarding;
+- clareza de onboarding fora do loop imediato;
 - densidade do Hub no Android;
 - frequencia de updates.
 
@@ -181,8 +201,10 @@ Esses itens podem virar projeto ou fase futura, mas nao devem ser tratados como 
 
 ## Gates De Proxima Decisao
 
-1. Rodada fechada Fabio + tester.
-2. Backlog de bugs e UX Android/onboarding.
-3. Rodada humana do Progression Lab em 2h, 5h, 10h, 15h e 20h.
-4. Decisao sobre premium gap, janelas 15h/20h, poder e bots.
-5. Decisao se `account_profiles` + `game_saves` e necessario antes da proxima publicacao maior.
+1. Foundation Audit documental completa.
+2. Auditoria do loop interno pos-login.
+3. Decisao de hardening do loop.
+4. Discussao social.
+5. Discussao visual geral.
+6. Discussao de apresentacao da batalha.
+7. Somente depois, discussao de armas, spells, economia, premium gap, poder e bots.

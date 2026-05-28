@@ -8,7 +8,7 @@ This file governs agent behavior for the `D:\Estudio` workspace.
 - `08_Coordenacao_Agentes/Painel_Visual_Estudio.html` is the human-facing local dashboard for the same portfolio state.
 - `canon/` is the shared source of truth for established product identity, lore context, gameplay contracts, progression, shared architecture, mode standard, and platform strategy.
 - `Projetos/draxos-roguelike-cardgame/` is the current P0 implementation workspace for the menu-first Draxos roguelike cardgame.
-- `Projetos/draxos-mobile/` is the P2 implementation workspace for DraxosMobile - async PVP autobattler, base manager, social; Godot 4.6.2 + Supabase; Android + PC + PC browser. Current operational layer: Track 14 `TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`, on top of Track 13 validation/release safety.
+- `Projetos/draxos-mobile/` is the P2 implementation workspace for DraxosMobile - async PVP autobattler, base manager, social; Godot 4.6.2 + Supabase; Android + PC + PC browser. Current operational stage: `FOUNDATION_AUDIT_ACTIVE`; Track 16 is only the latest local technical package, on top of Track 13 validation/release safety, Track 14 `TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE` agent ops and Track 15 UX history.
 - `Projetos/_conceitos/mobile-universe/` is a design archive; it was promoted to `draxos-mobile/` on 2026-05-18 and is now read-only design reference.
 - `Projetos/rpg-isometrico/` is paused indefinitely and preserved for historical/contextual consultation.
 - `Projetos/rpg-turnos/` is paused indefinitely and preserved for historical/contextual consultation.
@@ -63,12 +63,12 @@ Use esses documentos para identificar se o pedido e sobre implementacao ativa, c
 Depois do Portfolio Gate, escolha o projeto alvo usando o pedido do usuario, `Prioridades_Estudio.md`, `Projetos/README.md` e `Estado_Atual.md`.
 
 - Se o usuario citar `draxos-roguelike-cardgame`, `Draxos roguelike`, `roguelike cardgame`, `ship hub`, `run map`, `mapa de run`, `10 mapas`, `almas`, `classe no hub`, `rota completa`, `sacrificio`, `Cinzas` ou `batalhas por lanes`, use `Projetos/draxos-roguelike-cardgame/`.
-- Se o usuario citar `draxos-mobile`, `DraxosMobile`, `Draxos mobile`, `autobattler`, `base manager`, `PVP assincrono`, `Supabase`, `Track 00`, `Track 04`, `Track 11`, `Track 13`, `Track 14`, `Agent Operating Manual`, `documentation-index`, `primeiro slice mobile`, `guilda`, `conta guest`, `matchmaking por poder`, `Progression Lab humano`, `account_profiles`, `game_saves`, `Hub modularization`, `release artifacts`, `release safety`, `Cloudflare Access` ou `simulacao no servidor`, use `Projetos/draxos-mobile/`.
+- Se o usuario citar `draxos-mobile`, `DraxosMobile`, `Draxos mobile`, `autobattler`, `base manager`, `PVP assincrono`, `Supabase`, `Foundation Audit`, `FOUNDATION_AUDIT_ACTIVE`, `loop pos-login`, `Track 00`, `Track 04`, `Track 11`, `Track 13`, `Track 14`, `Track 15`, `Track 16`, `Agent Operating Manual`, `documentation-index`, `primeiro slice mobile`, `guilda`, `conta guest`, `matchmaking por poder`, `Progression Lab humano`, `account_profiles`, `game_saves`, `Hub modularization`, `release artifacts`, `release safety`, `Cloudflare Access` ou `simulacao no servidor`, use `Projetos/draxos-mobile/`.
 - Se o usuario citar `mobile-universe` ou `_conceitos/mobile-universe`, use `Projetos/_conceitos/mobile-universe/` apenas para leitura e referencia de design — nao criar codigo, cenas ou assets a partir dali.
 - Se o usuario citar `rpg-turnos`, `RPG Turnos`, exploracao 2D, NPC, mundo, `class_select`, `Track 02 - Draxos Lore And Progression Alignment` ou `P10 - Necromante`, use `Projetos/rpg-turnos/` apenas para consulta historica, salvo pedido explicito de retomar trabalho.
 - Se o usuario citar `rpg-isometrico`, campanha isometrica, Arena, Survival, Boss, loadout de acao ou gates Fxx, use `Projetos/rpg-isometrico/` apenas para consulta historica, salvo pedido explicito de retomar trabalho.
 - `Draxos` sozinho e contexto de lore compartilhada nao bastam para escolher `rpg-turnos` ou `draxos-mobile`; confirme pelo projeto citado, pela prioridade atual ou pelos termos operacionais acima.
-- Depois de escolher o projeto alvo, leia apenas o `AGENTS.md`, `implementation/current-status.md` e track local desse projeto, salvo tarefa transversal. Para DraxosMobile, comece pelo `AGENTS.md` local e siga `docs/agent-operating-manual.md`, `docs/documentation-index.md` e `implementation/current-status.md`.
+- Depois de escolher o projeto alvo, leia apenas o `AGENTS.md`, `implementation/current-status.md` e etapa local desse projeto, salvo tarefa transversal. Para DraxosMobile, comece pelo `AGENTS.md` local e siga `docs/agent-operating-manual.md`, `docs/documentation-index.md`, `docs/foundation-app-v0-audit.md` e `implementation/current-status.md`.
 
 ## Read Order - Fast Lane
 
@@ -112,7 +112,7 @@ Nao aplique silenciosamente a mecanica de um projeto em outro. `rpg-turnos` pode
 
 Nao trate `draxos-roguelike-cardgame` como variante de `rpg-turnos`. O projeto foi bootstrapped com reuso estreito, mas possui contratos locais proprios. Qualquer regra de combate, deck, mana, compra, recompensa, hub, mapa ou pacing de `rpg-turnos` so vale em Draxos se um documento local de `draxos-roguelike-cardgame` adotar explicitamente.
 
-DraxosMobile tem visao longa local em `Projetos/draxos-mobile/docs/product-vision.md`. Ate promocao explicita ao canon compartilhado, use esse documento para pilares, anti-pilares, limites de plataforma, monetizacao, live ops e futuro nao prometido do mobile. A operacao de agentes do projeto vive em `Projetos/draxos-mobile/docs/agent-operating-manual.md`, e o mapa de autoridade documental vive em `Projetos/draxos-mobile/docs/documentation-index.md`.
+DraxosMobile tem visao longa local em `Projetos/draxos-mobile/docs/product-vision.md`. Ate promocao explicita ao canon compartilhado, use esse documento para pilares, anti-pilares, limites de plataforma, monetizacao, live ops e futuro nao prometido do mobile. A etapa atual vive em `Projetos/draxos-mobile/docs/foundation-app-v0-audit.md`, a operacao de agentes vive em `Projetos/draxos-mobile/docs/agent-operating-manual.md`, e o mapa de autoridade documental vive em `Projetos/draxos-mobile/docs/documentation-index.md`.
 
 Nao trate RPGMobile ou BattleMobile como projetos Godot oficiais ate que recebam `AGENTS.md`, `implementation/current-status.md`, entrada oficial em `Projetos/README.md` como projeto implementavel e entrada resumida em `Estado_Atual.md`.
 
@@ -123,7 +123,7 @@ Implementacoes Godot vivem sob `Projetos/`.
 Projetos Godot ativos:
 
 - `Projetos/draxos-roguelike-cardgame/` — P0, Steam, roguelike cardgame
-- `Projetos/draxos-mobile/` - P2, mobile + PC + browser, Godot 4.6.2 + Supabase (Track 14 agent ops foundation ativa sobre Track 13 validation/release safety entregue)
+- `Projetos/draxos-mobile/` - P2, mobile + PC + browser, Godot 4.6.2 + Supabase (`FOUNDATION_AUDIT_ACTIVE`; Track 16 e ultimo pacote tecnico local sobre Track 13/14/15)
 
 Projetos Godot pausados:
 

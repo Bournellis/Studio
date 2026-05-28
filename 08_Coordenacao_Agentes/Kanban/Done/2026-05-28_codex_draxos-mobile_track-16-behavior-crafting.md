@@ -1,6 +1,6 @@
 # Track 16 - DraxosMobile Behavior And Potion Crafting
 
-- status: `Doing`
+- status: `Done`
 - projeto: `draxos-mobile`
 - agente: `Codex`
 - branch: `codex/draxos-mobile/track-16-behavior-crafting`
@@ -86,4 +86,4 @@ Validacao executada:
 
 ## Handoff
 
-Registrar schema/endpoints, simulador, UI, testes e qualquer limitacao do pacote. Se a validacao completa ficar bloqueada por ambiente, registrar comando, erro e proximo passo seguro.
+Track 16 ficou como ultimo pacote tecnico local, concluido e validado, sem publicacao remota. A etapa ativa de produto foi reorientada para `FOUNDATION_AUDIT_ACTIVE`; este card sai de Doing para nao induzir agentes a tratar Track 16 como foco operacional atual.

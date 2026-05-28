@@ -2,6 +2,7 @@
 
 Status: VIVO
 Atualizado em: 2026-05-28
+Etapa atual: `FOUNDATION_AUDIT_ACTIVE`
 
 ## Proposito
 
@@ -9,9 +10,19 @@ Este documento registra a leitura atual do projeto como uma fundacao de produto,
 
 O objetivo imediato nao e abrir o jogo ao publico. A etapa atual e descobrir o jogo com o fundador e um circulo muito proximo de possiveis colaboradores, usando um prototipo agradavel o suficiente para pensar melhor o produto real.
 
+Esta auditoria tambem e a proxima etapa operacional. Antes de implementar mais UX, social, visual, batalha, armas, spells ou economia, os documentos vivos precisam explicar corretamente a situacao real do projeto.
+
 ## Enquadramento Atual
 
-Etapa atual: `FOUNDATION_APP_V0_DISCOVERY`
+Etapa atual: `FOUNDATION_AUDIT_ACTIVE`
+
+Leitura correta: o projeto atual e uma base implementada para refinamento. Ele nao e produto final, nao e uma trilha de expansao de conteudo e nao e uma rodada de balanceamento.
+
+Foco imediato da Foundation Audit:
+
+`Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
+
+O problema a auditar nao e se existe conteudo suficiente. O conteudo atual ja existe para dar substancia ao jogo e impedir que o app pareca vazio. O problema atual e como, onde e com quantas etapas o usuario clica para executar o loop interno pos-login.
 
 Nucleo que nao deve mudar:
 
@@ -27,6 +38,7 @@ O que deve ser tratado como mock nesta etapa:
 - Balanceamento, numeros de combate, economia e ritmo.
 - Conteudo premium, pass, rankings e progresso como oferta final.
 - Visual final, identidade final, assets finais e fantasia definitiva do jogo.
+- Apresentacao final da batalha.
 
 O que precisa ser real desde cedo:
 
@@ -43,13 +55,14 @@ O que precisa ser real desde cedo:
 3. Se algo parece necessario para futuro minigame, registre contrato e fronteira; nao implemente minigame por ansiedade.
 4. Se algo melhora a capacidade do usuario entender o loop, o feedback visual, o estado do app ou a confianca na resposta tecnica, ele pode ser prioridade mesmo sendo prototipo.
 5. Antes de produzir muito conteudo, garantir que o app e o backend aceitam trocar conteudo sem reescrever fundacao.
+6. A ordem de discussao/execucao apos esta auditoria e: loop interno, social, visual geral, apresentacao da batalha, depois armas/spells/economia.
 
 ## Auditoria Dura
 
 | Area | Fundacao real | Mock atual | Lacuna para produto live |
 | --- | --- | --- | --- |
-| Estado do produto | O projeto deve ser lido como Foundation App V0: base builder + autobattler + social basico, com futuro de minigames. | O historico ainda mistura alpha, slice jogavel, tema de magos, pass, guilda, rankings e features como se fossem promessa de produto. | Atualizar o estado mental/documental para separar descoberta interna, prototipo de design e readiness live. |
-| Loop do usuario | App precisa ensinar rapidamente: entrar, ver base, coletar/usar progresso, batalhar, receber resultado, voltar para evoluir. | Telas e fluxos atuais dao cor ao conceito, mas ainda podem representar mais uma demo de features do que um loop fundador polido. | Definir o loop minimo de V0 por jornada, estados vazios, feedback, loading, erro, retry e retorno emocional apos cada acao. |
+| Estado do produto | O projeto deve ser lido como Foundation Audit ativa sobre uma base implementada: base builder + autobattler + social basico, com futuro de minigames. | O historico ainda mistura alpha, slice jogavel, tema de magos, pass, guilda, rankings e features como se fossem promessa de produto. | Atualizar documentos vivos para separar descoberta interna, prototipo de design e readiness live. |
+| Loop do usuario | App precisa ensinar rapidamente: entrar, ver base, coletar recursos, evoluir base, batalhar, receber recompensa e verificar base novamente. | Telas e fluxos atuais dao cor ao conceito, mas a quantidade de etapas, posicao de icones e apresentacao atrapalham a experiencia. | Auditar a ergonomia real de cliques, estados, feedback, loading, erro, recompensa e retorno para base. |
 | App shell e navegacao | Godot client com autoloads, presenters e modularizacao ja forma base de aplicacao. | Layout, tema visual, nomes de secoes e composicao ainda sao casca temporaria. | Endurecer padrao de navegacao, estado global, loading, falhas de rede, modo offline/recuperacao, responsividade e consistencia mobile/PC/web. |
 | Conta e identidade | Email/password, guest/upsert e base de auth ja apontam para conta real. | Nomes, perfis, avatares e identidade social atual sao placeholders. | Consolidar modelo final de account/profile, migracao guest, recuperacao, ban/suspensao, privacidade e suporte. |
 | Modelo de save | Existencia de saves e tipos como `normal`/`progression_lab` ajuda a separar laboratorio de jogo principal. | O proprio modelo ainda funciona como atalho de prototipo em partes, incluindo dados de laboratorio e progresso experimental. | Evoluir para contrato robusto de `account_profiles` + `game_saves`, migracoes, snapshots, rollback, ambientes e compatibilidade com seasons. |
@@ -72,40 +85,43 @@ O que precisa ser real desde cedo:
 
 ## Lacunas Mais Importantes Agora
 
-1. Reenquadrar a documentacao principal para `FOUNDATION_APP_V0_DISCOVERY`, evitando que mock de tema/conteudo vire promessa implicita.
-2. Auditar conta/save/backend como fundacao live antes de expandir conteudo.
-3. Definir um contrato de minigames, mesmo sem implementar novos minigames agora.
-4. Melhorar o loop do usuario e a qualidade de resposta tecnica/visual do app acima de balanceamento.
-5. Separar conteudo mock de conteudo candidato a produto por schema, pasta, flag ou estado documental claro.
-6. Definir o minimo de live ops, telemetria, admin e suporte que um app com possivel sucesso precisara carregar.
-7. Transformar social basico em contrato seguro e moderavel, nao apenas em tela de demonstracao.
+1. Reenquadrar a documentacao principal para `FOUNDATION_AUDIT_ACTIVE`, evitando que mock de tema/conteudo vire promessa implicita.
+2. Auditar o loop interno pos-login antes de mexer em social, visual geral, batalha, armas, spells ou economia.
+3. Mapear exatamente onde a quantidade de etapas, posicao de icones e formato de apresentacao atrapalham coletar, evoluir, batalhar, receber recompensa e voltar para base.
+4. Separar conteudo mock de conteudo candidato a produto por schema, pasta, flag ou estado documental claro.
+5. Auditar conta/save/backend como fundacao live antes de expandir conteudo.
+6. Definir um contrato de minigames, mesmo sem implementar novos minigames agora.
+7. Definir o minimo de live ops, telemetria, admin e suporte que um app com possivel sucesso precisara carregar.
 
 ## Nao Priorizar Nesta Etapa
 
 - Balanceamento fino de combate.
 - Nomes finais de spells, personagens, predios, recursos ou passivas.
 - Arte final, tema final ou identidade visual definitiva.
+- Apresentacao final da batalha.
 - Promessa publica de alpha, beta, launch ou monetizacao.
 - Implementar varios minigames antes do contrato modular.
 - Produzir grande volume de conteudo antes da fundacao aceitar substituicao e versionamento.
 
 ## Melhor Ordem Recomendada
 
-1. Fechar o enquadramento Foundation App V0 nos documentos centrais.
-2. Fazer auditorias tecnicas curtas por dominio: app shell, account/save, backend/API, base, autobattler, social, content pipeline e live ops.
-3. Escolher quais lacunas viram hardening imediato do V0.
-4. Melhorar a experiencia do loop fundador para o usuario e futuros colaboradores sentirem o produto.
-5. Registrar minigames futuros como contratos e hipoteses, sem transformar isso em escopo de implementacao agora.
+1. Fechar o enquadramento `FOUNDATION_AUDIT_ACTIVE` nos documentos centrais.
+2. Fazer a Foundation Audit do loop interno pos-login: base, coleta, evolucao, batalha, recompensa e retorno para base.
+3. Escolher quais lacunas de clique, hierarquia visual e feedback viram hardening imediato do V0.
+4. Discutir social.
+5. Discutir visual geral.
+6. Discutir apresentacao da batalha.
+7. So depois discutir armas, spells, economia, balanceamento e conteudo detalhado.
 
 Isto ainda nao e um plano completo. E a ordem recomendada para investigar e decidir com menos ruido.
 
 ## Perguntas Para A Proxima Rodada
 
-1. Para Foundation App V0, qual e a jornada minima que deve parecer impecavel: entrar e ver base, evoluir base, batalhar, socializar, ou uma combinacao exata dessas?
+1. Onde o loop atual mais atrapalha: quantidade de etapas, posicao dos icones, formato de apresentacao, feedback de recompensa ou retorno para a base?
 2. O V0 deve tratar conta guest como caminho oficial temporario ou ja devemos priorizar account/save final antes de polir mais telas?
-3. Quais minigames futuros precisam entrar primeiro no registro de contratos: PVE, hero defense, roguelike cardgame, open world, outro?
-4. Social basico significa guilda, amigos, chat, ajuda/contribuicao, ranking compartilhado, ou apenas presenca social inicial?
-5. Para voce, "APP perfeito" nesta fase significa mais estabilidade tecnica, fluidez visual, clareza de loop, qualidade mobile, ou resposta elegante a erro/rede?
+3. Social basico significa guilda, amigos, chat, ajuda/contribuicao, ranking compartilhado, ou apenas presenca social inicial?
+4. Quais minigames futuros precisam entrar primeiro no registro de contratos: PVE, hero defense, roguelike cardgame, open world, outro?
+5. Para voce, "APP perfeito" nesta fase significa mais fluidez de loop, estabilidade tecnica, qualidade mobile, clareza visual, ou resposta elegante a erro/rede?
 
 ## Fontes Consultadas
 

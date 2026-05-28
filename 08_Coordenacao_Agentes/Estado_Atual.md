@@ -7,7 +7,7 @@
 ## Prioridade Do Estudio
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Foco P2 de implementacao: `Projetos/draxos-mobile/` (Track 16 `TRACK_16_BEHAVIOR_CRAFTING_ACTIVE`, sobre Track 13 release safety, Track 14 agent ops e Track 15 UX)
+- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`FOUNDATION_AUDIT_ACTIVE`, sobre Track 13 release safety, Track 14 agent ops, Track 15 UX e ultimo pacote tecnico Track 16 local)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -23,15 +23,15 @@
 
 ## DraxosMobile
 
-- Status: **P2_IMPLEMENTACAO - Track 16 TRACK_16_BEHAVIOR_CRAFTING_ACTIVE**
+- Status: **P2_IMPLEMENTACAO - FOUNDATION_AUDIT_ACTIVE**
 - Fase: `Implementacao`
 - Local: `Projetos/draxos-mobile/`
 - Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
 - Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
-- Baseline atual: Track 00-15 integradas. O projeto tem primeiro slice server-authoritative, Internal Alpha v0 aprovada por Fabio + tester, Refugio portrait como cena de jogo, batalha portrait fullscreen, Supabase remoto, manifest/version gate e builds Internal Alpha site/Web/APK/Windows republicadas em 2026-05-28; o portal alpha visual foi redeployado no Cloudflare Pages em `https://b16705ab.draxos-mobile-internal-alpha.pages.dev`. Track 11 consolidou estado vivo, Kanban, docs e walkthrough; Track 12 decompos `boot.gd`; Track 13 centralizou validacao foundation e release safety; Track 14 reorganizou operacao de agentes; Track 15 converteu o app para UX interna premium Android portrait. Track 16 esta implementando comportamento configuravel, Po de Osso e crafting inicial de Pocoes server-authoritative.
+- Baseline atual: Track 00-15 integradas. O projeto tem uma base implementada para refinamento: primeiro slice server-authoritative, Refugio/Base, batalha, recompensa, social/competicao/loja em substancia de prototipo, Supabase remoto, manifest/version gate e builds Internal Alpha site/Web/APK/Windows republicadas em 2026-05-28. Track 16 e o ultimo pacote tecnico local de comportamento, Po de Osso e crafting inicial, mas nao e a etapa ativa de produto. Conteudo atual de armas, spells, economia, tema, visual e apresentacao existe para nao parecer app vazio e deve ser tratado como mock/substancia.
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
-- Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation`. Migration conta/save e tuning numerico ficam bloqueados ate walkthrough manual e decisao propria.
-- Proximo passo: revisar/validar Track 16 localmente antes de qualquer publicacao remota; depois executar walkthrough manual Track 13 para confirmar o fluxo Android/Windows/Web com crafting, preparacao e batalha.
+- Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation`. Migration conta/save, tuning numerico, armas, spells, economia, visual final e apresentacao de batalha ficam bloqueados ate Foundation Audit e decisao propria.
+- Proximo passo: executar Foundation Audit dos docs vivos e do loop pos-login: Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente.
 
 ## rpg-isometrico
 

@@ -5,7 +5,7 @@
 - Last updated: `2026-05-28`
 - Applies to: `Projetos/draxos-mobile/`
 
-This manual explains how agents should operate DraxosMobile without reopening old work, drifting from the current track or mutating remote infrastructure by accident.
+This manual explains how agents should operate DraxosMobile without reopening old work, drifting from Foundation Audit or mutating remote infrastructure by accident.
 
 ## Source Of Truth
 
@@ -14,12 +14,22 @@ Read live docs in this order:
 1. `AGENTS.md` - fast operating rules.
 2. `implementation/current-status.md` - short decision snapshot.
 3. `docs/documentation-index.md` - where each doc belongs.
-4. `docs/product-vision.md` - local long-term product canon.
-5. `docs/game-design-document.md` - authoritative implementation design.
-6. `docs/design-pending.md` - only live register of unresolved design decisions.
-7. `implementation/tracks/track-15-mobile-ux-overhaul/` - current mobile UX overhaul work.
+4. `docs/foundation-app-v0-audit.md` - current Foundation Audit compass.
+5. `docs/product-vision.md` - local long-term product canon.
+6. `docs/game-design-document.md` - implementation reference and mock/substance context.
+7. `docs/design-pending.md` - only live register of unresolved design decisions.
 
 If a historical track conflicts with these docs, the live docs win. If local product design conflicts with shared lore in `../../canon/`, escalate instead of silently choosing.
+
+## Current Stage
+
+Active stage: `FOUNDATION_AUDIT_ACTIVE`.
+
+The project is a base implemented for refinement. The next work is documentation and audit of the post-login loop:
+
+`Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again`
+
+Track 16 remains the latest local technical package, but it is not the current product focus. Current spells, weapons, economy values, Battle Pass, battle flavor and visual identity are mock/substance, not priority areas.
 
 ## Current Baseline
 
@@ -62,14 +72,14 @@ Register work in `../../08_Coordenacao_Agentes/Kanban/Doing/` or a handoff note.
 - validation plan;
 - next handoff point.
 
-For Track 15, the expected DraxosMobile Doing card is the mobile UX overhaul card. Historical DraxosMobile cards belong in `Kanban/Done/`.
+For Foundation Audit, the expected DraxosMobile Doing card must state the branch, worktree and loop-audit objective. Historical DraxosMobile cards belong in `Kanban/Done/`.
 
 ## Read Order By Task
 
 | Task type | Required docs |
 |---|---|
 | Small code fix | `AGENTS.md`, `implementation/current-status.md`, touched files |
-| Agent/doc operation | `AGENTS.md`, this manual, `docs/documentation-index.md`, active track |
+| Agent/doc operation | `AGENTS.md`, this manual, `docs/documentation-index.md`, `docs/foundation-app-v0-audit.md` |
 | Product/design | `docs/product-vision.md`, `docs/product-brief.md`, `docs/game-design-document.md`, `docs/design-pending.md` |
 | Backend/contracts | `docs/architecture.md`, `docs/contracts/`, `server/schema/`, `server/functions/`, `supabase/` mirrors |
 | Godot client | `AGENTS.md`, `modes/boot/surfaces/README.md`, relevant tests, relevant flow/presenter |
@@ -115,9 +125,12 @@ Never run remote mutation modes as a drive-by validation step.
 
 Do not start these without explicit user direction and a fresh track/package:
 
-- feature gameplay after Track 13 without manual walkthrough results;
-- expanded UX polish after Track 15 without human review of the current Android portrait checkpoint;
+- feature gameplay or content expansion before Foundation Audit is complete;
+- UX implementation before the post-login loop audit identifies the exact friction;
+- social expansion before the internal loop is handled;
+- visual-general or battle-presentation work before the loop and social order is explicitly chosen;
 - numeric tuning without human playthrough and Progression Lab evidence;
+- weapons, spells, Battle Pass or economy pass while they are still mock/substance;
 - account/save migration from `players.save_type` to `account_profiles/game_saves`;
 - iOS or mobile browser support;
 - final asset production;
@@ -144,4 +157,4 @@ Every handoff should say:
 - whether the worktree is clean;
 - next safe action for the following agent.
 
-Keep `implementation/current-status.md` short. Put detailed history, logs and validation notes in the active track directory.
+Keep `implementation/current-status.md` short. Put detailed history, logs and validation notes in the Foundation Audit handoff or relevant historical track directory.
