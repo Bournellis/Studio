@@ -36,6 +36,8 @@ func _check_portrait_app_loop() -> void:
 	await process_frame
 
 	_expect(str(boot.get("_current_screen")) == "refuge_home", "portrait opens on Refugio home")
+	_expect(_get_first_screen_root(boot) != null and _get_first_screen_root(boot).visible, "portrait opens on first-screen Refugio layer")
+	_expect(_get_app_chrome_root(boot) != null and not _get_app_chrome_root(boot).visible, "portrait Refugio hides app chrome")
 	_expect(_label_tree_contains(boot, "Altar do Refugio"), "portrait Refugio shows altar")
 	_expect(_find_button_by_text(boot, "Perfil/Conta") != null, "portrait Refugio has account hotspot")
 	_expect(_find_button_by_text(boot, "Base") != null, "portrait Refugio has Base hotspot")
@@ -47,12 +49,16 @@ func _check_portrait_app_loop() -> void:
 	boot.call("_show_screen", "account")
 	await process_frame
 	_expect(str(boot.get("_current_screen")) == "account", "account route opens from Refugio")
+	_expect(_get_first_screen_root(boot) != null and not _get_first_screen_root(boot).visible, "account hides first-screen Refugio layer")
+	_expect(_get_app_chrome_root(boot) != null and _get_app_chrome_root(boot).visible, "account uses internal app shell")
 	_expect(_get_back_button(boot) != null and _get_back_button(boot).visible, "account route exposes Back")
 	_expect(boot.get("_auth_email_input") != null, "account route owns login fields")
 
 	boot.call("_go_back")
 	await process_frame
 	_expect(str(boot.get("_current_screen")) == "refuge_home", "Back returns to Refugio root")
+	_expect(_get_first_screen_root(boot) != null and _get_first_screen_root(boot).visible, "Back restores first-screen Refugio layer")
+	_expect(_get_app_chrome_root(boot) != null and not _get_app_chrome_root(boot).visible, "Back hides app shell on Refugio root")
 	boot.queue_free()
 	await process_frame
 
@@ -133,6 +139,18 @@ func _get_back_button(boot: Control) -> Button:
 	var value: Variant = boot.get("_back_button")
 	if value is Button:
 		return value as Button
+	return null
+
+func _get_first_screen_root(boot: Control) -> Control:
+	var value: Variant = boot.get("_first_screen_root")
+	if value is Control:
+		return value as Control
+	return null
+
+func _get_app_chrome_root(boot: Control) -> Control:
+	var value: Variant = boot.get("_app_chrome_root")
+	if value is Control:
+		return value as Control
 	return null
 
 func _get_content_scroll(boot: Control) -> ScrollContainer:

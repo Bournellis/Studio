@@ -11,6 +11,8 @@ static func render(host: Control) -> void:
 	background.set_anchors_preset(Control.PRESET_FULL_RECT)
 	host.add_child(background)
 
+	_render_refuge_first_screen_layer(host)
+
 	var root := VBoxContainer.new()
 	root.name = "AppShellChromeRoot"
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -25,6 +27,14 @@ static func render(host: Control) -> void:
 	_render_header(host, root, compact)
 	_render_content_shell(host, root, compact)
 	_render_confirmation_dialog(host)
+
+static func _render_refuge_first_screen_layer(host: Control) -> void:
+	var first_screen_root := Control.new()
+	first_screen_root.name = "RefugeFirstScreenRoot"
+	first_screen_root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	first_screen_root.mouse_filter = Control.MOUSE_FILTER_PASS
+	host.add_child(first_screen_root)
+	host.set("_first_screen_root", first_screen_root)
 
 static func _render_header(host: Control, root: VBoxContainer, compact: bool) -> void:
 	var header := PanelContainer.new()

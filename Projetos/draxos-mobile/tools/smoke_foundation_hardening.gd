@@ -39,6 +39,8 @@ func _check_route_contract() -> void:
 	_expect(AppShellRouteContractScript.normalize("hub") == AppShellRouteContractScript.ROUTE_REFUGE_HOME, "legacy hub alias returns Refugio root")
 	_expect(AppShellRouteContractScript.normalize("monetization") == AppShellRouteContractScript.ROUTE_SHOP, "legacy monetization alias returns shop route")
 	_expect(not AppShellRouteContractScript.supports_back(current), "Refugio root does not expose Back")
+	_expect(AppShellRouteContractScript.is_first_screen(current), "Refugio root is the first-screen route")
+	_expect(not AppShellRouteContractScript.shows_app_chrome(current), "Refugio first screen hides app chrome")
 
 	current = AppShellRouteContractScript.push_route(history, current, "base", true)
 	_expect(current == AppShellRouteContractScript.ROUTE_BASE, "base route normalizes through route contract")
@@ -198,6 +200,10 @@ func _check_battle_mode_contract() -> void:
 	boot.call("_return_to_refuge")
 	await process_frame
 	_expect(str(boot.get("_current_screen")) == "refuge_home", "Return to Refugio clears battle route")
+	var first_screen := _get_control(boot, "_first_screen_root")
+	var app_chrome := _get_control(boot, "_app_chrome_root")
+	_expect(first_screen != null and first_screen.visible, "Return to Refugio restores first-screen layer")
+	_expect(app_chrome != null and not app_chrome.visible, "Return to Refugio keeps app chrome hidden")
 	boot.queue_free()
 	await process_frame
 
@@ -221,6 +227,14 @@ func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:
 		return Dictionary(value)
 	return {}
+
+func _get_control(root_node: Node, property_name: String) -> Control:
+	if root_node == null:
+		return null
+	var value: Variant = root_node.get(property_name)
+	if value is Control:
+		return value as Control
+	return null
 
 func _find_button_by_text(root_node: Node, text: String) -> Button:
 	if root_node == null:

@@ -68,6 +68,7 @@ var _battle_visual: Control
 var _battle_fullscreen_overlay: Control
 var _confirm_dialog: ConfirmationDialog
 var _app_chrome_root: Control
+var _first_screen_root: Control
 
 var _action_buttons: Dictionary = {}
 var _nav_buttons: Dictionary = {}
@@ -206,6 +207,8 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	_clear_battle_fullscreen_overlay()
 	_battle_replay_presenter.clear()
 	_error_label.text = ""
+	if _route_shows_first_screen(screen_id):
+		_clear_first_screen_root()
 	_clear_content_body()
 	if _content_scroll != null:
 		_content_scroll.scroll_vertical = 0
@@ -261,9 +264,14 @@ func _route_prefers_landscape(route_id: String) -> bool:
 func _route_shows_app_chrome(route_id: String) -> bool:
 	return AppShellRouteContractScript.shows_app_chrome(route_id)
 
+func _route_shows_first_screen(route_id: String) -> bool:
+	return AppShellRouteContractScript.is_first_screen(route_id)
+
 func _sync_app_chrome_for_route(route_id: String) -> void:
 	if _app_chrome_root != null and is_instance_valid(_app_chrome_root):
 		_app_chrome_root.visible = _route_shows_app_chrome(route_id)
+	if _first_screen_root != null and is_instance_valid(_first_screen_root):
+		_first_screen_root.visible = _route_shows_first_screen(route_id)
 
 func _apply_orientation_for_route(route_id: String) -> void:
 	if OS.get_name() != "Android":
@@ -356,6 +364,13 @@ func _clear_content_body() -> void:
 	for child: Node in _content_body.get_children():
 		_content_body.remove_child(child)
 		child.queue_free()
+
+func _clear_first_screen_root() -> void:
+	if _first_screen_root == null or not is_instance_valid(_first_screen_root):
+		return
+	for child: Node in _first_screen_root.get_children():
+		_first_screen_root.remove_child(child)
+		child.free()
 
 func _clear_node_children(parent: Node) -> void:
 	for child: Node in parent.get_children():

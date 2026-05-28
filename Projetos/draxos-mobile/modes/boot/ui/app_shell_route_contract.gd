@@ -62,6 +62,9 @@ static func normalize(route_id: String) -> String:
 static func supports_back(route_id: String) -> bool:
 	return normalize(route_id) != ROUTE_REFUGE_HOME
 
+static func is_first_screen(route_id: String) -> bool:
+	return normalize(route_id) == ROUTE_REFUGE_HOME
+
 static func prefers_landscape(route_id: String) -> bool:
 	return normalize(route_id) == ROUTE_BATTLE_RUNNING
 
@@ -72,7 +75,7 @@ static func is_fullscreen_gameplay(route_id: String) -> bool:
 	return bool(_FULLSCREEN_GAMEPLAY_ROUTES.get(normalize(route_id), false))
 
 static func shows_app_chrome(route_id: String) -> bool:
-	return not is_fullscreen_gameplay(route_id)
+	return not is_first_screen(route_id) and not is_fullscreen_gameplay(route_id)
 
 static func summary_route_for(route_id: String) -> String:
 	if is_battle_mode(route_id):

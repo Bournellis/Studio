@@ -25,13 +25,19 @@ func test_boot_compact_layout_groups_actions_for_mobile() -> void:
 	assert_true(boot._nav_buttons.is_empty())
 	assert_true(boot._back_button.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
 	assert_true(boot._content_scroll is TouchScrollContainerScript)
-	assert_true(_label_tree_contains(boot._content_body, "Altar do Refugio"))
-	var battle_hotspot := _find_button_by_text(boot._content_body, "Batalha")
+	assert_not_null(boot._first_screen_root)
+	assert_true(boot._first_screen_root.visible)
+	assert_false(boot._app_chrome_root.visible)
+	assert_true(_label_tree_contains(boot._first_screen_root, "Altar do Refugio"))
+	assert_false(_label_tree_contains(boot._content_body, "Altar do Refugio"))
+	var battle_hotspot := _find_button_by_text(boot._first_screen_root, "Batalha")
 	assert_not_null(battle_hotspot)
 	assert_true(battle_hotspot.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
-	assert_false(_has_direct_button_child(boot._content_body))
+	assert_false(_has_direct_button_child(boot._first_screen_root))
 
 	boot._show_screen("account")
+	assert_false(boot._first_screen_root.visible)
+	assert_true(boot._app_chrome_root.visible)
 	var action_grid := _first_action_grid(boot._content_body)
 	assert_not_null(action_grid)
 	assert_eq(action_grid.columns, boot._action_button_columns())
@@ -112,7 +118,10 @@ func test_boot_shell_has_no_global_tab_navigation() -> void:
 
 	assert_true(boot._nav_buttons.is_empty())
 	assert_true(boot._back_button.visible == false)
+	assert_false(boot._app_chrome_root.visible)
 	boot._show_screen("base")
+	assert_true(boot._app_chrome_root.visible)
+	assert_false(boot._first_screen_root.visible)
 	assert_true(boot._back_button.visible)
 	assert_true(boot._nav_buttons.is_empty())
 
@@ -121,20 +130,26 @@ func test_boot_refugio_home_renders_altar_hotspots_and_account_route() -> void:
 	add_child_autofree(boot)
 
 	assert_eq(boot._current_screen, "refuge_home")
-	assert_true(_label_tree_contains(boot._content_body, "Altar do Refugio"))
-	assert_true(_label_tree_contains(boot._content_body, "Estado do Refugio"))
-	assert_true(_label_tree_contains(boot._content_body, "Hotspots"))
+	assert_not_null(boot._first_screen_root)
+	assert_true(boot._first_screen_root.visible)
+	assert_false(boot._app_chrome_root.visible)
+	assert_true(_label_tree_contains(boot._first_screen_root, "Altar do Refugio"))
+	assert_true(_label_tree_contains(boot._first_screen_root, "Estado do Refugio"))
+	assert_true(_label_tree_contains(boot._first_screen_root, "Menu do Refugio"))
+	assert_false(_label_tree_contains(boot._content_body, "Altar do Refugio"))
 	assert_null(boot._auth_email_input)
 	assert_false(boot._action_buttons.has("email_sign_up"))
 
 	for hotspot_text: String in ["Batalha", "Base", "Social", "Competicao", "Loja", "Perfil/Conta"]:
-		var hotspot := _find_button_by_text(boot._content_body, hotspot_text)
+		var hotspot := _find_button_by_text(boot._first_screen_root, hotspot_text)
 		assert_not_null(hotspot, "Refugio should expose hotspot '%s'." % hotspot_text)
 		assert_true(hotspot.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
 
-	var account_hotspot := _find_button_by_text(boot._content_body, "Perfil/Conta")
+	var account_hotspot := _find_button_by_text(boot._first_screen_root, "Perfil/Conta")
 	account_hotspot.pressed.emit()
 	assert_eq(boot._current_screen, "account")
+	assert_true(boot._app_chrome_root.visible)
+	assert_false(boot._first_screen_root.visible)
 	assert_not_null(boot._auth_email_input)
 	assert_true(boot._back_button.visible)
 
@@ -144,8 +159,8 @@ func test_boot_refugio_home_shows_progression_lab_when_dev_tools_are_enabled() -
 	add_child_autofree(boot)
 
 	if boot._progression_lab_available():
-		assert_true(_label_tree_contains(boot._content_body, "Labs dev"))
-		assert_not_null(_find_button_by_text(boot._content_body, "Progression Lab"))
+		assert_true(_label_tree_contains(boot._first_screen_root, "Labs dev"))
+		assert_not_null(_find_button_by_text(boot._first_screen_root, "Progression Lab"))
 		assert_true(boot._action_buttons.has("open_progression_lab"))
 
 func test_boot_battle_running_route_declares_landscape() -> void:
@@ -164,9 +179,11 @@ func test_app_shell_route_contract_declares_battle_gameplay_mode() -> void:
 	assert_true(AppShellRouteContractScript.is_battle_mode("battle_running"))
 	assert_true(AppShellRouteContractScript.is_battle_mode("battle_summary"))
 	assert_false(AppShellRouteContractScript.is_battle_mode("base"))
+	assert_true(AppShellRouteContractScript.is_first_screen("refugio"))
 	assert_false(AppShellRouteContractScript.is_fullscreen_gameplay("battle"))
 	assert_true(AppShellRouteContractScript.is_fullscreen_gameplay("battle_running"))
 	assert_true(AppShellRouteContractScript.is_fullscreen_gameplay("battle_summary"))
+	assert_false(AppShellRouteContractScript.shows_app_chrome("refuge_home"))
 	assert_true(AppShellRouteContractScript.shows_app_chrome("battle"))
 	assert_false(AppShellRouteContractScript.shows_app_chrome("battle_running"))
 	assert_false(AppShellRouteContractScript.shows_app_chrome("battle_summary"))
@@ -612,7 +629,8 @@ func test_boot_battle_summary_return_to_refuge_clears_lifecycle_state() -> void:
 	assert_false(boot._skip_replay)
 	assert_false(boot._battle_summary_skipped)
 	assert_null(boot._battle_fullscreen_overlay)
-	assert_true(boot._app_chrome_root.visible)
+	assert_false(boot._app_chrome_root.visible)
+	assert_true(boot._first_screen_root.visible)
 
 func test_boot_play_battle_log_finishes_on_summary_route() -> void:
 	var boot = BootScreenScript.new()

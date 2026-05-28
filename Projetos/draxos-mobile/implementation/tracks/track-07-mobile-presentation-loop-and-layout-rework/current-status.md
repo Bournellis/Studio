@@ -1,6 +1,6 @@
 # Track 07 - Current Status
 
-- Last Updated: `2026-05-27`
+- Last Updated: `2026-05-28`
 - Status: `INTEGRATED_PRESENTATION_READY`
 - Depends On: `T06_INTEGRATED_FEATURE_SLICES_READY`
 - Current Stage: `T07_G_COMPLETE_VALIDATED`
@@ -9,6 +9,8 @@
 ## Estado
 
 Track 07 is integrated as the mobile-first presentation and layout rework.
+
+Corrective follow-up `T07R` is active on branch `codex/draxos-mobile/t07r-refugio-first-screen` because the original integration treated "first screen" as the root route inside the app shell. The correction makes `refuge_home` a true first-screen layer in `RefugeFirstScreenRoot`, hides `AppShellChromeRoot` on the Refugio, and reserves the app shell for internal screens opened from the Refugio.
 
 The track responds to the first post-Track 06 walkthrough findings: the current Hub still reads like a tab/list app, touch scrolling competes with buttons, the scrollbar affordance is too narrow, Refugio/account/login are cluttered, Progression Lab access became too hidden, and battle should feel like a full-screen landscape game moment instead of a screen inside the Hub chrome.
 
