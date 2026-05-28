@@ -62,7 +62,7 @@ static func _refuge_scene_background(host: Node, compact: bool) -> PanelContaine
 	panel.add_theme_stylebox_override("panel", _refuge_scene_style(host, compact))
 	return panel
 
-static func _add_refuge_altar_stage(host: Node, board: Control, compact: bool) -> void:
+static func _add_refuge_altar_stage(_host: Node, board: Control, compact: bool) -> void:
 	var stage := Control.new()
 	stage.name = "RefugeAltarStage"
 	stage.anchor_left = 0.16
@@ -100,7 +100,7 @@ static func _add_refuge_altar_stage(host: Node, board: Control, compact: bool) -
 	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	box.add_child(subtitle)
 
-static func _add_refuge_status_bar(host: Node, board: Control, compact: bool) -> void:
+static func _add_refuge_status_bar(_host: Node, board: Control, compact: bool) -> void:
 	var panel := PanelContainer.new()
 	panel.name = "RefugeTopHud"
 	panel.anchor_left = 0.04

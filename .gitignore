@@ -21,6 +21,7 @@ Projetos/**/*.uid
 Projetos/**/export_presets.cfg
 Projetos/**/supabase/.branches/
 Projetos/**/supabase/.temp/
+Projetos/draxos-mobile/assets/referenciaimagens/
 
 # Claude Code agent tooling
 .claude/
