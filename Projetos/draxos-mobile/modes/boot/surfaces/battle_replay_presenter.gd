@@ -58,33 +58,28 @@ func render_fullscreen_replay(
 	clear()
 	_host = host
 	_add_fullscreen_background(parent)
-	var frame := _add_landscape_frame(parent, compact_layout)
-	var body := HBoxContainer.new()
-	body.add_theme_constant_override("separation", 10 if compact_layout else 14)
-	body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	frame.add_child(body)
-
+	var frame := _add_portrait_frame(parent, compact_layout)
 	var stage_column := VBoxContainer.new()
 	stage_column.add_theme_constant_override("separation", 6 if compact_layout else 8)
 	stage_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	stage_column.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	body.add_child(stage_column)
+	frame.add_child(stage_column)
 
 	stage_column.add_child(_fullscreen_label("Autobattler", 18 if compact_layout else 24, "text_primary"))
 	stage_column.add_child(_fullscreen_label(BattleLogPresenterScript.format_summary(battle_log, rewards), 12 if compact_layout else 14, "text_secondary"))
 
 	_visual = BattleVisualMockupScript.new()
-	_visual.custom_minimum_size = Vector2(640, 360) if compact_layout else Vector2(860, 480)
+	_visual.custom_minimum_size = Vector2(0, 360 if compact_layout else 460)
 	_visual.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_visual.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	stage_column.add_child(_visual)
 
 	var timeline_panel := PanelContainer.new()
 	timeline_panel.add_theme_stylebox_override("panel", _panel_style("bg_panel", "border_default"))
-	timeline_panel.custom_minimum_size = Vector2(260, 0) if compact_layout else Vector2(320, 0)
+	timeline_panel.custom_minimum_size = Vector2(0, 150 if compact_layout else 190)
+	timeline_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	timeline_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	body.add_child(timeline_panel)
+	stage_column.add_child(timeline_panel)
 
 	var timeline_stack := VBoxContainer.new()
 	timeline_stack.add_theme_constant_override("separation", 6)
@@ -101,12 +96,8 @@ func render_fullscreen_replay(
 	timeline_scroll.add_child(_timeline_label)
 
 	var skip_button := _fullscreen_action_button("Pular", ACTION_SKIP_REPLAY, Vector2(176, 64))
-	skip_button.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
-	skip_button.offset_left = -196
-	skip_button.offset_top = -84
-	skip_button.offset_right = -20
-	skip_button.offset_bottom = -20
-	parent.add_child(skip_button)
+	skip_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	stage_column.add_child(skip_button)
 
 func render_fullscreen_summary(
 	host: Node,
@@ -120,7 +111,7 @@ func render_fullscreen_summary(
 	clear()
 	_host = host
 	_add_fullscreen_background(parent)
-	var frame := _add_landscape_frame(parent, compact_layout)
+	var frame := _add_portrait_frame(parent, compact_layout)
 	var stack := VBoxContainer.new()
 	stack.add_theme_constant_override("separation", 8 if compact_layout else 12)
 	stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -145,21 +136,22 @@ func render_fullscreen_summary(
 	_add_summary_stat(stats, "Eventos", str(summary.get("event_count", 0)), compact_layout)
 	_add_summary_stat(stats, "Modo", str(summary.get("mode", "")), compact_layout)
 
-	var detail_row := HBoxContainer.new()
-	detail_row.add_theme_constant_override("separation", 8 if compact_layout else 12)
-	detail_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	detail_row.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	stack.add_child(detail_row)
-	detail_row.add_child(_summary_detail_panel("Recompensa", str(summary.get("reward_text", "")), compact_layout))
-	detail_row.add_child(_summary_detail_panel("Recursos", str(summary.get("resources_text", "")), compact_layout))
+	var detail_stack := VBoxContainer.new()
+	detail_stack.add_theme_constant_override("separation", 8 if compact_layout else 12)
+	detail_stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	detail_stack.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	stack.add_child(detail_stack)
+	detail_stack.add_child(_summary_detail_panel("Recompensa", str(summary.get("reward_text", "")), compact_layout))
+	detail_stack.add_child(_summary_detail_panel("Recursos", str(summary.get("resources_text", "")), compact_layout))
 
-	var actions := HBoxContainer.new()
+	var actions := GridContainer.new()
+	actions.columns = 1
 	actions.add_theme_constant_override("separation", 8 if compact_layout else 12)
-	actions.alignment = BoxContainer.ALIGNMENT_END
+	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	stack.add_child(actions)
-	actions.add_child(_fullscreen_action_button("Voltar ao Refugio", ACTION_RETURN_REFUGE, Vector2(190, 58)))
-	actions.add_child(_fullscreen_action_button("Rever replay", ACTION_REPLAY_LATEST, Vector2(170, 58)))
-	actions.add_child(_fullscreen_action_button("Historico", "show_battle_history", Vector2(150, 58)))
+	actions.add_child(_fullscreen_action_button("Voltar ao Refugio", ACTION_RETURN_REFUGE, Vector2(0, 58)))
+	actions.add_child(_fullscreen_action_button("Rever replay", ACTION_REPLAY_LATEST, Vector2(0, 58)))
+	actions.add_child(_fullscreen_action_button("Historico", "show_battle_history", Vector2(0, 58)))
 
 func get_timeline_label() -> Label:
 	return _timeline_label
@@ -364,7 +356,7 @@ func _add_fullscreen_background(parent: Control) -> void:
 	background.set_anchors_preset(Control.PRESET_FULL_RECT)
 	parent.add_child(background)
 
-func _add_landscape_frame(parent: Control, compact_layout: bool) -> PanelContainer:
+func _add_portrait_frame(parent: Control, compact_layout: bool) -> PanelContainer:
 	var margin := MarginContainer.new()
 	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
 	var edge := 10 if compact_layout else 18
@@ -374,17 +366,11 @@ func _add_landscape_frame(parent: Control, compact_layout: bool) -> PanelContain
 	margin.add_theme_constant_override("margin_bottom", edge)
 	parent.add_child(margin)
 
-	var aspect := AspectRatioContainer.new()
-	aspect.ratio = 16.0 / 9.0
-	aspect.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	aspect.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	margin.add_child(aspect)
-
 	var frame := PanelContainer.new()
 	frame.add_theme_stylebox_override("panel", _panel_style("bg_panel_alt", "border_default"))
 	frame.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	frame.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	aspect.add_child(frame)
+	margin.add_child(frame)
 	return frame
 
 func _fullscreen_label(text: String, font_size: int, color_token: String) -> Label:

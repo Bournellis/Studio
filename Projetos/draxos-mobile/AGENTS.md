@@ -106,6 +106,9 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 | Escopo da Track 08 | `implementation/tracks/track-08-foundation-review-and-hardening/scope.md` |
 | Plano da Track 08 | `implementation/tracks/track-08-foundation-review-and-hardening/implementation-plan.md` |
 | Status da Track 08 | `implementation/tracks/track-08-foundation-review-and-hardening/current-status.md` |
+| Escopo da Track 09 | `implementation/tracks/track-09-portrait-entry-refuge-scene-and-visual-loop-rework/scope.md` |
+| Plano da Track 09 | `implementation/tracks/track-09-portrait-entry-refuge-scene-and-visual-loop-rework/implementation-plan.md` |
+| Status da Track 09 | `implementation/tracks/track-09-portrait-entry-refuge-scene-and-visual-loop-rework/current-status.md` |
 | Runbook Internal Alpha v0 | `docs/internal-alpha-v0.md` |
 | Setup remoto Internal Alpha v0 | `docs/internal-alpha-remote-setup.md` |
 | Host estatico Internal Alpha v0 | `docs/internal-alpha-static-hosting.md` |
@@ -175,6 +178,6 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 
 ## Active Track
 
-Track ativa: `Track 08 - Foundation Review And Hardening` (`INTEGRATED_FOUNDATION_HARDENED`).
+Track ativa: `Track 09 - Portrait Entry, Refugio Scene And Visual Loop Rework` (`INTEGRATED_PORTRAIT_LOOP_READY`).
 
-Comece por `implementation/current-status.md` e siga `implementation/tracks/track-08-foundation-review-and-hardening/current-status.md`.
+Comece por `implementation/current-status.md` e siga `implementation/tracks/track-09-portrait-entry-refuge-scene-and-visual-loop-rework/current-status.md`.

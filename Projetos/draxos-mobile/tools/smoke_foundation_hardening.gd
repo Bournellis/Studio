@@ -35,20 +35,26 @@ func _run_smoke() -> int:
 
 func _check_route_contract() -> void:
 	var history: Array[String] = []
-	var current := AppShellRouteContractScript.ROUTE_REFUGE_HOME
-	_expect(AppShellRouteContractScript.normalize("hub") == AppShellRouteContractScript.ROUTE_REFUGE_HOME, "legacy hub alias returns Refugio root")
+	var current := AppShellRouteContractScript.ROUTE_ENTRY
+	_expect(AppShellRouteContractScript.normalize("hub") == AppShellRouteContractScript.ROUTE_ENTRY, "legacy hub alias returns Entry root")
+	_expect(AppShellRouteContractScript.normalize("refuge_home") == AppShellRouteContractScript.ROUTE_ENTRY, "legacy refuge_home alias returns Entry")
+	_expect(AppShellRouteContractScript.normalize("refugio") == AppShellRouteContractScript.ROUTE_REFUGE, "refugio alias returns playable Refugio")
+	_expect(AppShellRouteContractScript.normalize("base") == AppShellRouteContractScript.ROUTE_BASE, "base alias returns Base management")
 	_expect(AppShellRouteContractScript.normalize("monetization") == AppShellRouteContractScript.ROUTE_SHOP, "legacy monetization alias returns shop route")
-	_expect(not AppShellRouteContractScript.supports_back(current), "Refugio root does not expose Back")
-	_expect(AppShellRouteContractScript.is_first_screen(current), "Refugio root is the first-screen route")
-	_expect(not AppShellRouteContractScript.shows_app_chrome(current), "Refugio first screen hides app chrome")
+	_expect(not AppShellRouteContractScript.supports_back(current), "Entry root does not expose Back")
+	_expect(AppShellRouteContractScript.is_first_screen(current), "Entry is the first-screen route")
+	_expect(not AppShellRouteContractScript.is_first_screen("refuge"), "Playable Refugio is not the operational first screen")
+	_expect(AppShellRouteContractScript.uses_immersive_layer("refuge"), "Playable Refugio uses immersive layer")
+	_expect(not AppShellRouteContractScript.shows_app_chrome(current), "Entry first screen hides app chrome")
 
 	current = AppShellRouteContractScript.push_route(history, current, "base", true)
 	_expect(current == AppShellRouteContractScript.ROUTE_BASE, "base route normalizes through route contract")
-	_expect(history.size() == 1 and history[0] == AppShellRouteContractScript.ROUTE_REFUGE_HOME, "push_route records root history")
+	_expect(history.size() == 1 and history[0] == AppShellRouteContractScript.ROUTE_ENTRY, "push_route records root history")
 	current = AppShellRouteContractScript.push_route(history, current, "social", true)
 	_expect(current == AppShellRouteContractScript.ROUTE_SOCIAL, "social route pushes from base")
 	_expect(AppShellRouteContractScript.pop_back_or_root(history) == AppShellRouteContractScript.ROUTE_BASE, "back stack pops to previous internal screen")
-	_expect(AppShellRouteContractScript.clear_for_root_return(history) == AppShellRouteContractScript.ROUTE_REFUGE_HOME, "root return clears history")
+	_expect(AppShellRouteContractScript.clear_for_root_return(history) == AppShellRouteContractScript.ROUTE_ENTRY, "root return clears history")
+	_expect(AppShellRouteContractScript.clear_for_refuge_return(history) == AppShellRouteContractScript.ROUTE_REFUGE, "Refugio return clears history")
 	_expect(history.is_empty(), "root return leaves empty history")
 
 func _check_mobile_ui_contract() -> void:
@@ -71,8 +77,9 @@ func _check_mobile_ui_contract() -> void:
 	var landscape := MobileUiContractScript.layout_summary_for_size(Vector2(1280, 720), true)
 	_expect(str(portrait.get("orientation", "")) == "portrait", "portrait layout summary detects portrait")
 	_expect(int(portrait.get("surface_columns", 0)) == 1, "portrait surface layout stays single-column")
-	_expect(str(landscape.get("orientation", "")) == "landscape", "landscape layout summary detects landscape")
-	_expect(int(landscape.get("base_map_columns", 0)) >= 3, "landscape base map keeps dense columns")
+	_expect(str(landscape.get("orientation", "")) == "portrait", "wide viewport still uses portrait layout contract")
+	_expect(int(landscape.get("surface_columns", 0)) == 1, "wide viewport keeps single-column surfaces")
+	_expect(int(landscape.get("base_map_columns", 0)) == 2, "wide viewport keeps portrait base map columns")
 
 func _check_session_save_boundary() -> void:
 	var store = SessionStoreScript.new()
@@ -160,7 +167,8 @@ func _check_battle_mode_contract() -> void:
 	_expect(AppShellRouteContractScript.is_battle_mode("battle_running"), "battle running is a battle mode")
 	_expect(AppShellRouteContractScript.is_fullscreen_gameplay("battle_running"), "battle running is fullscreen gameplay")
 	_expect(AppShellRouteContractScript.is_fullscreen_gameplay("battle_summary"), "battle summary is fullscreen gameplay")
-	_expect(AppShellRouteContractScript.prefers_landscape("battle_running"), "battle running prefers landscape")
+	_expect(not AppShellRouteContractScript.prefers_landscape("battle_running"), "battle running stays portrait")
+	_expect(AppShellRouteContractScript.prefers_portrait("battle_running"), "battle running prefers portrait")
 	_expect(not AppShellRouteContractScript.shows_app_chrome("battle_running"), "battle running hides app chrome")
 	_expect(not AppShellRouteContractScript.shows_app_chrome("battle_summary"), "battle summary hides app chrome")
 	_expect(AppShellRouteContractScript.is_safe_replay_action("skip_battle_replay"), "skip is replay-safe action")
@@ -199,7 +207,7 @@ func _check_battle_mode_contract() -> void:
 	_expect(_find_button_by_text(boot, "Voltar ao Refugio") != null, "Battle summary exposes return to Refugio")
 	boot.call("_return_to_refuge")
 	await process_frame
-	_expect(str(boot.get("_current_screen")) == "refuge_home", "Return to Refugio clears battle route")
+	_expect(str(boot.get("_current_screen")) == "refuge", "Return to Refugio clears battle route")
 	var first_screen := _get_control(boot, "_first_screen_root")
 	var app_chrome := _get_control(boot, "_app_chrome_root")
 	_expect(first_screen != null and first_screen.visible, "Return to Refugio restores first-screen layer")

@@ -7,6 +7,7 @@ const TOUCH_DRAG_THRESHOLD := 12.0
 const COMPACT_WIDTH_BREAKPOINT := 760.0
 const LANDSCAPE_COLUMN_RATIO := 1.08
 const WIDE_LANDSCAPE_WIDTH := 1180.0
+const PORTRAIT_FRAME_WIDTH := 432.0
 
 static func button_min_size(compact: bool) -> Vector2:
 	var min_size := Vector2(154, 50) if compact else Vector2(220, MIN_TOUCH_TARGET)
@@ -44,28 +45,20 @@ static func apply_scrollbar_touch_policy(scroll: ScrollContainer) -> void:
 
 static func action_button_columns_for_size(viewport_size: Vector2, compact: bool) -> int:
 	if compact:
-		if viewport_size.x <= viewport_size.y or viewport_size.x < COMPACT_WIDTH_BREAKPOINT:
-			return 2
-		return 3
+		return 2
 	return 2
 
 static func surface_columns_for_size(viewport_size: Vector2, max_columns: int = 2) -> int:
-	var clamped_columns := clampi(max_columns, 1, 3)
-	if viewport_size.x < COMPACT_WIDTH_BREAKPOINT:
-		return 1
-	if viewport_size.x <= viewport_size.y * LANDSCAPE_COLUMN_RATIO:
-		return 1
-	return clamped_columns
+	return 1
 
 static func base_map_columns_for_size(viewport_size: Vector2, compact: bool) -> int:
-	if not compact:
-		return 3
-	return 6 if viewport_size.x >= WIDE_LANDSCAPE_WIDTH else 3
+	return 2
 
 static func layout_summary_for_size(viewport_size: Vector2, compact: bool, max_surface_columns: int = 2) -> Dictionary:
 	return {
-		"orientation": "landscape" if viewport_size.x > viewport_size.y else "portrait",
+		"orientation": "portrait",
 		"action_button_columns": action_button_columns_for_size(viewport_size, compact),
 		"surface_columns": surface_columns_for_size(viewport_size, max_surface_columns),
 		"base_map_columns": base_map_columns_for_size(viewport_size, compact),
+		"portrait_frame_width": PORTRAIT_FRAME_WIDTH,
 	}

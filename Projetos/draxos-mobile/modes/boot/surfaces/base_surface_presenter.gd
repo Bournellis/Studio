@@ -248,7 +248,7 @@ static func _base_structure_button(host: Node, structure: Dictionary) -> Button:
 		_base_next_level_text(structure),
 		_base_short_status(structure),
 	]
-	button.custom_minimum_size = Vector2(148, 96) if _compact_layout(host) else Vector2(190, 112)
+	button.custom_minimum_size = Vector2(132, 96) if _compact_layout(host) else Vector2(170, 112)
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	button.tooltip_text = _base_structure_tooltip(structure)
 	button.add_theme_stylebox_override("normal", _base_structure_card_style(structure_id, selected))

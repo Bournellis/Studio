@@ -13,7 +13,8 @@ const ShopSurfacePresenterScript := preload("res://modes/boot/surfaces/shop_surf
 const AppShellRouteContractScript := preload("res://modes/boot/ui/app_shell_route_contract.gd")
 const MobileUiContractScript := preload("res://modes/boot/ui/mobile_ui_contract.gd")
 
-const ROUTE_REFUGE_HOME := AppShellRouteContractScript.ROUTE_REFUGE_HOME
+const ROUTE_ENTRY := AppShellRouteContractScript.ROUTE_ENTRY
+const ROUTE_REFUGE := AppShellRouteContractScript.ROUTE_REFUGE
 const ROUTE_ACCOUNT := AppShellRouteContractScript.ROUTE_ACCOUNT
 const ROUTE_BASE := AppShellRouteContractScript.ROUTE_BASE
 const ROUTE_SOCIAL := AppShellRouteContractScript.ROUTE_SOCIAL
@@ -25,7 +26,8 @@ const ROUTE_BATTLE_SUMMARY := AppShellRouteContractScript.ROUTE_BATTLE_SUMMARY
 const ROUTE_BATTLE_LAB := "battle_lab"
 const ROUTE_PROGRESSION_LAB := "progression_lab"
 
-const SCREEN_HUB := ROUTE_REFUGE_HOME
+const SCREEN_HUB := ROUTE_ENTRY
+const SCREEN_REFUGE := ROUTE_REFUGE
 const SCREEN_BATTLE := ROUTE_BATTLE_ENTRY
 const SCREEN_BASE := ROUTE_BASE
 const SCREEN_SOCIAL := ROUTE_SOCIAL
@@ -34,8 +36,7 @@ const SCREEN_SHOP := ROUTE_SHOP
 const BATTLE_LAB_SCREEN_PATH := "res://dev/battle_lab/battle_lab_screen.gd"
 const PROGRESSION_LAB_SCREEN_PATH := "res://dev/progression_lab/progression_lab_screen.gd"
 const BATTLE_REPLAY_TICK_SECONDS := 0.05
-const APP_ORIENTATION_SENSOR := DisplayServer.SCREEN_SENSOR
-const APP_ORIENTATION_LANDSCAPE := DisplayServer.SCREEN_LANDSCAPE
+const APP_ORIENTATION_PORTRAIT := DisplayServer.SCREEN_PORTRAIT
 const ACTION_SKIP_REPLAY := "skip_battle_replay"
 const ACTION_RETURN_REFUGE := "return_refuge"
 const ACTION_REPLAY_LATEST := "replay_latest_battle"
@@ -69,14 +70,15 @@ var _battle_fullscreen_overlay: Control
 var _confirm_dialog: ConfirmationDialog
 var _app_chrome_root: Control
 var _first_screen_root: Control
+var _immersive_status_label: Label
+var _immersive_detail_label: Label
+var _immersive_error_label: Label
 
 var _action_buttons: Dictionary = {}
 var _nav_buttons: Dictionary = {}
 var _current_action_grid: GridContainer
 var _screen_history: Array[String] = []
 var _current_screen := SCREEN_HUB
-var _app_orientation_locked := false
-var _orientation_restore_pending := false
 var _pending_confirmation_action := ""
 var _active_action_id := ""
 var _is_busy := false
@@ -203,6 +205,9 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	_auth_password_input = null
 	_auth_username_input = null
 	_auth_invite_input = null
+	_immersive_status_label = null
+	_immersive_detail_label = null
+	_immersive_error_label = null
 	_battle_visual = null
 	_clear_battle_fullscreen_overlay()
 	_battle_replay_presenter.clear()
@@ -219,7 +224,9 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 
 	match screen_id:
 		SCREEN_HUB:
-			_render_hub_screen()
+			_render_entry_screen()
+		SCREEN_REFUGE:
+			_render_refuge_screen()
 		ROUTE_ACCOUNT:
 			_render_account_screen()
 		SCREEN_BATTLE:
@@ -237,7 +244,7 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 		SCREEN_SHOP:
 			_render_shop_screen()
 		_:
-			_render_hub_screen()
+			_render_entry_screen()
 
 	_sync_status_from_session()
 	_emit_client_event("screen_opened", {
@@ -265,7 +272,7 @@ func _route_shows_app_chrome(route_id: String) -> bool:
 	return AppShellRouteContractScript.shows_app_chrome(route_id)
 
 func _route_shows_first_screen(route_id: String) -> bool:
-	return AppShellRouteContractScript.is_first_screen(route_id)
+	return AppShellRouteContractScript.uses_immersive_layer(route_id)
 
 func _sync_app_chrome_for_route(route_id: String) -> void:
 	if _app_chrome_root != null and is_instance_valid(_app_chrome_root):
@@ -276,15 +283,7 @@ func _sync_app_chrome_for_route(route_id: String) -> void:
 func _apply_orientation_for_route(route_id: String) -> void:
 	if OS.get_name() != "Android":
 		return
-	if _route_prefers_landscape(route_id):
-		if not _app_orientation_locked:
-			_orientation_restore_pending = true
-		_app_orientation_locked = true
-		DisplayServer.screen_set_orientation(APP_ORIENTATION_LANDSCAPE)
-	elif _app_orientation_locked or _orientation_restore_pending:
-		_app_orientation_locked = false
-		_orientation_restore_pending = false
-		DisplayServer.screen_set_orientation(APP_ORIENTATION_SENSOR)
+	DisplayServer.screen_set_orientation(APP_ORIENTATION_PORTRAIT)
 
 func _battle_lab_available() -> bool:
 	if not OS.has_feature("editor"):
@@ -370,7 +369,7 @@ func _clear_first_screen_root() -> void:
 		return
 	for child: Node in _first_screen_root.get_children():
 		_first_screen_root.remove_child(child)
-		child.free()
+		child.queue_free()
 
 func _clear_node_children(parent: Node) -> void:
 	for child: Node in parent.get_children():
@@ -393,8 +392,11 @@ func _create_battle_fullscreen_overlay() -> Control:
 	_battle_fullscreen_overlay = overlay
 	return overlay
 
-func _render_hub_screen() -> void:
-	HubSurfacePresenterScript.render(self)
+func _render_entry_screen() -> void:
+	HubSurfacePresenterScript.render_entry(self)
+
+func _render_refuge_screen() -> void:
+	HubSurfacePresenterScript.render_refuge(self)
 
 func _render_account_screen() -> void:
 	HubAccountSurfacePresenterScript.render_account_panel(self)
@@ -620,6 +622,8 @@ func _execute_action(action_id: String) -> void:
 		match action_id:
 			"enter_guest":
 				await _enter_guest()
+			"enter_refuge":
+				await _enter_refuge()
 			"check_update":
 				await _check_update_manifest(true)
 			"email_sign_up":
@@ -756,6 +760,26 @@ func _enter_guest() -> void:
 		return
 	_show_notice("Sessao guest pronta. Todas as abas do alpha estao disponiveis.")
 	_show_screen(SCREEN_HUB, false)
+
+func _enter_refuge() -> void:
+	if SessionStore.is_progression_lab_local_only() and SessionStore.has_account_state():
+		_show_screen(SCREEN_REFUGE)
+		return
+	if SessionStore.has_valid_access_token():
+		if not SessionStore.has_account_state():
+			var active_save_ready := await _recover_or_create_active_save()
+			if not active_save_ready:
+				return
+		_show_screen(SCREEN_REFUGE)
+		return
+	_error_label.text = "Escolha um save e entre/crie uma conta antes de abrir o Refugio."
+	_detail_label.text = "Para teste local, use Guest dev ou carregue um save pelo Progression Lab."
+	_sync_immersive_feedback()
+	_emit_client_event("precondition_failed", {
+		"action_id": "enter_refuge",
+		"screen": _current_screen,
+		"reason": "missing_session",
+	})
 
 func _email_sign_up() -> void:
 	var credentials := _auth_form_values(true)
@@ -1099,7 +1123,7 @@ func _return_to_refuge() -> void:
 	_replay_running = false
 	_skip_replay = false
 	_battle_summary_skipped = false
-	_show_screen(AppShellRouteContractScript.clear_for_root_return(_screen_history), false)
+	_show_screen(AppShellRouteContractScript.clear_for_refuge_return(_screen_history), false)
 
 func _replay_latest_battle_from_summary() -> void:
 	if not SessionStore.has_battle_log():
@@ -1494,11 +1518,13 @@ func _set_busy(is_busy: bool, message: String) -> void:
 	else:
 		_status_label.text = _session_status_text()
 		_detail_label.text = message
+	_sync_immersive_feedback()
 	_sync_buttons()
 
 func _show_notice(message: String) -> void:
 	if _detail_label != null:
 		_detail_label.text = message
+	_sync_immersive_feedback()
 
 func _fail_with_error(result: Dictionary) -> void:
 	var error_payload := _extract_error(result)
@@ -1511,6 +1537,7 @@ func _fail_with_error(result: Dictionary) -> void:
 		SessionStore.session_changed.emit()
 	_set_busy(false, "Acao nao concluida.")
 	_error_label.text = _friendly_error_message(code, str(error_payload.get("message", "Falha na requisicao.")))
+	_sync_immersive_feedback()
 	_emit_client_event("action_failure", {
 		"action_id": _active_action_id,
 		"screen": _current_screen,
@@ -1530,7 +1557,16 @@ func _sync_status_from_session() -> void:
 		return
 	if not _is_busy and not _replay_running:
 		_status_label.text = _session_status_text()
+	_sync_immersive_feedback()
 	_sync_buttons()
+
+func _sync_immersive_feedback() -> void:
+	if _immersive_status_label != null and is_instance_valid(_immersive_status_label):
+		_immersive_status_label.text = _status_label.text if _status_label != null else _session_status_text()
+	if _immersive_detail_label != null and is_instance_valid(_immersive_detail_label):
+		_immersive_detail_label.text = _detail_label.text if _detail_label != null else ""
+	if _immersive_error_label != null and is_instance_valid(_immersive_error_label):
+		_immersive_error_label.text = _error_label.text if _error_label != null else ""
 
 func _sync_buttons() -> void:
 	for action_id: String in _action_buttons.keys():
@@ -1606,6 +1642,7 @@ func _require_session(message: String) -> bool:
 	if SessionStore.is_progression_lab_local_only():
 		_error_label.text = "Save local-only do Progression Lab nao executa acoes online."
 		_detail_label.text = "Use o seeder com Supabase local para testar batalha, coleta, upgrades e outras mutacoes server-authoritative."
+		_sync_immersive_feedback()
 		_emit_client_event("precondition_failed", {
 			"action_id": _active_action_id,
 			"screen": _current_screen,
@@ -1616,6 +1653,7 @@ func _require_session(message: String) -> bool:
 		return true
 	_error_label.text = message
 	_detail_label.text = "Entre com email no Refugio ou use guest dev para teste local."
+	_sync_immersive_feedback()
 	_emit_client_event("precondition_failed", {
 		"action_id": _active_action_id,
 		"screen": _current_screen,
@@ -1627,6 +1665,7 @@ func _require_account(message: String) -> bool:
 	if SessionStore.is_progression_lab_local_only():
 		_error_label.text = "Save local-only do Progression Lab nao executa acoes online."
 		_detail_label.text = "Para batalhas, coleta, upgrades e compras, rode o seeder com Supabase local e carregue o cache server-backed."
+		_sync_immersive_feedback()
 		_emit_client_event("precondition_failed", {
 			"action_id": _active_action_id,
 			"screen": _current_screen,
@@ -1637,6 +1676,7 @@ func _require_account(message: String) -> bool:
 		return true
 	_error_label.text = message
 	_detail_label.text = "Entre com email no Refugio ou use guest dev para teste local."
+	_sync_immersive_feedback()
 	_emit_client_event("precondition_failed", {
 		"action_id": _active_action_id,
 		"screen": _current_screen,
@@ -1745,7 +1785,7 @@ func _base_structure_button(structure: Dictionary) -> Button:
 		_base_next_level_text(structure),
 		_base_short_status(structure),
 	]
-	button.custom_minimum_size = Vector2(148, 96) if _compact_layout else Vector2(190, 112)
+	button.custom_minimum_size = Vector2(132, 96) if _compact_layout else Vector2(170, 112)
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	button.tooltip_text = _base_structure_tooltip(structure)
 	button.add_theme_stylebox_override("normal", _base_structure_card_style(structure_id, selected))

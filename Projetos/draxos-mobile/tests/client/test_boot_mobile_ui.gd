@@ -21,18 +21,18 @@ func test_boot_compact_layout_groups_actions_for_mobile() -> void:
 
 	assert_true(boot._compact_layout)
 	assert_true(boot._action_button_columns() >= 2)
-	assert_eq(boot._base_map_columns(), 6)
+	assert_eq(boot._base_map_columns(), 2)
 	assert_true(boot._nav_buttons.is_empty())
 	assert_true(boot._back_button.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
 	assert_true(boot._content_scroll is TouchScrollContainerScript)
 	assert_not_null(boot._first_screen_root)
 	assert_true(boot._first_screen_root.visible)
 	assert_false(boot._app_chrome_root.visible)
-	assert_true(_label_tree_contains(boot._first_screen_root, "Altar do Refugio"))
-	assert_false(_label_tree_contains(boot._content_body, "Altar do Refugio"))
-	var battle_hotspot := _find_button_by_text(boot._first_screen_root, "Batalha")
-	assert_not_null(battle_hotspot)
-	assert_true(battle_hotspot.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
+	assert_true(_label_tree_contains(boot._first_screen_root, "Entrada"))
+	assert_false(_label_tree_contains(boot._content_body, "Entrada"))
+	var enter_button := _find_button_by_text(boot._first_screen_root, "Entrar no Refugio")
+	assert_not_null(enter_button)
+	assert_true(enter_button.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
 	assert_false(_has_direct_button_child(boot._first_screen_root))
 
 	boot._show_screen("account")
@@ -51,12 +51,14 @@ func test_boot_route_stack_normalizes_legacy_screen_ids() -> void:
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)
 
-	assert_eq(boot._current_screen, "refuge_home")
+	assert_eq(boot._current_screen, "entry")
 	assert_false(boot._route_supports_back("hub"))
 	assert_true(boot._route_supports_back("battle"))
-	assert_eq(boot._normalize_route("hub"), "refuge_home")
-	assert_eq(boot._normalize_route("refugio"), "refuge_home")
-	assert_eq(boot._normalize_route("refuge"), "refuge_home")
+	assert_eq(boot._normalize_route("hub"), "entry")
+	assert_eq(boot._normalize_route("refuge_home"), "entry")
+	assert_eq(boot._normalize_route("refugio"), "refuge")
+	assert_eq(boot._normalize_route("refuge"), "refuge")
+	assert_eq(boot._normalize_route("base"), "base_management")
 	assert_eq(boot._normalize_route("conta"), "account")
 	assert_eq(boot._normalize_route("perfil"), "account")
 	assert_eq(boot._normalize_route("profile"), "account")
@@ -65,33 +67,34 @@ func test_boot_route_stack_normalizes_legacy_screen_ids() -> void:
 	boot._show_screen("battle")
 	assert_eq(boot._current_screen, "battle_entry")
 	assert_eq(boot._screen_history.size(), 1)
-	assert_eq(boot._screen_history[0], "refuge_home")
+	assert_eq(boot._screen_history[0], "entry")
 	assert_eq(boot._screen_title("battle"), "Batalha")
 
 	boot._go_back()
-	assert_eq(boot._current_screen, "refuge_home")
+	assert_eq(boot._current_screen, "entry")
 	assert_true(boot._screen_history.is_empty())
 
 func test_app_shell_route_contract_manages_back_stack_without_boot_ui() -> void:
 	var history: Array[String] = []
-	var current := AppShellRouteContractScript.ROUTE_REFUGE_HOME
+	var current := AppShellRouteContractScript.ROUTE_ENTRY
 
 	current = AppShellRouteContractScript.push_route(history, current, "base", true)
-	assert_eq(current, "base")
-	assert_eq(history, ["refuge_home"])
+	assert_eq(current, "base_management")
+	assert_eq(history, ["entry"])
 
 	current = AppShellRouteContractScript.push_route(history, current, "social", true)
 	assert_eq(current, "social")
-	assert_eq(history, ["refuge_home", "base"])
+	assert_eq(history, ["entry", "base_management"])
 
 	current = AppShellRouteContractScript.pop_back_or_root(history)
-	assert_eq(current, "base")
-	assert_eq(history, ["refuge_home"])
+	assert_eq(current, "base_management")
+	assert_eq(history, ["entry"])
 
 	current = AppShellRouteContractScript.pop_back_or_root(history)
-	assert_eq(current, "refuge_home")
+	assert_eq(current, "entry")
 	assert_true(history.is_empty())
-	assert_eq(AppShellRouteContractScript.clear_for_root_return(history), "refuge_home")
+	assert_eq(AppShellRouteContractScript.clear_for_root_return(history), "entry")
+	assert_eq(AppShellRouteContractScript.clear_for_refuge_return(history), "refuge")
 
 func test_boot_back_stack_returns_nested_routes_to_refugio_root() -> void:
 	var boot = BootScreenScript.new()
@@ -101,14 +104,14 @@ func test_boot_back_stack_returns_nested_routes_to_refugio_root() -> void:
 	boot._show_screen("social")
 
 	assert_eq(boot._current_screen, "social")
-	assert_eq(boot._screen_history, ["refuge_home", "base"])
+	assert_eq(boot._screen_history, ["entry", "base_management"])
 
 	boot._go_back()
-	assert_eq(boot._current_screen, "base")
-	assert_eq(boot._screen_history, ["refuge_home"])
+	assert_eq(boot._current_screen, "base_management")
+	assert_eq(boot._screen_history, ["entry"])
 
 	boot._go_back()
-	assert_eq(boot._current_screen, "refuge_home")
+	assert_eq(boot._current_screen, "entry")
 	assert_true(boot._screen_history.is_empty())
 	assert_false(boot._back_button.visible)
 
@@ -120,6 +123,7 @@ func test_boot_shell_has_no_global_tab_navigation() -> void:
 	assert_true(boot._back_button.visible == false)
 	assert_false(boot._app_chrome_root.visible)
 	boot._show_screen("base")
+	assert_eq(boot._current_screen, "base_management")
 	assert_true(boot._app_chrome_root.visible)
 	assert_false(boot._first_screen_root.visible)
 	assert_true(boot._back_button.visible)
@@ -129,23 +133,29 @@ func test_boot_refugio_home_renders_altar_hotspots_and_account_route() -> void:
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)
 
-	assert_eq(boot._current_screen, "refuge_home")
+	assert_eq(boot._current_screen, "entry")
+	assert_true(_label_tree_contains(boot._first_screen_root, "Entrada"))
+	assert_not_null(_find_button_by_text(boot._first_screen_root, "Entrar no Refugio"))
+	assert_not_null(boot._auth_email_input)
+	assert_true(boot._action_buttons.has("email_sign_up"))
+
+	boot._show_screen("refuge")
+	assert_eq(boot._current_screen, "refuge")
 	assert_not_null(boot._first_screen_root)
 	assert_true(boot._first_screen_root.visible)
 	assert_false(boot._app_chrome_root.visible)
-	assert_true(_label_tree_contains(boot._first_screen_root, "Altar do Refugio"))
-	assert_true(_label_tree_contains(boot._first_screen_root, "Estado do Refugio"))
-	assert_true(_label_tree_contains(boot._first_screen_root, "Menu do Refugio"))
-	assert_false(_label_tree_contains(boot._content_body, "Altar do Refugio"))
+	assert_true(_label_tree_contains(boot._first_screen_root, "Altar do Mago"))
+	assert_true(_label_tree_contains(boot._first_screen_root, "Caminhos do Refugio"))
+	assert_false(_label_tree_contains(boot._content_body, "Altar do Mago"))
 	assert_null(boot._auth_email_input)
 	assert_false(boot._action_buttons.has("email_sign_up"))
 
-	for hotspot_text: String in ["Batalha", "Base", "Social", "Competicao", "Loja", "Perfil/Conta"]:
+	for hotspot_text: String in ["Batalha", "Base", "Social", "Competicao", "Loja", "Perfil"]:
 		var hotspot := _find_button_by_text(boot._first_screen_root, hotspot_text)
 		assert_not_null(hotspot, "Refugio should expose hotspot '%s'." % hotspot_text)
 		assert_true(hotspot.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
 
-	var account_hotspot := _find_button_by_text(boot._first_screen_root, "Perfil/Conta")
+	var account_hotspot := _find_button_by_text(boot._first_screen_root, "Perfil")
 	account_hotspot.pressed.emit()
 	assert_eq(boot._current_screen, "account")
 	assert_true(boot._app_chrome_root.visible)
@@ -159,27 +169,31 @@ func test_boot_refugio_home_shows_progression_lab_when_dev_tools_are_enabled() -
 	add_child_autofree(boot)
 
 	if boot._progression_lab_available():
-		assert_true(_label_tree_contains(boot._first_screen_root, "Labs dev"))
+		assert_true(_label_tree_contains(boot._first_screen_root, "Labs Dev"))
 		assert_not_null(_find_button_by_text(boot._first_screen_root, "Progression Lab"))
 		assert_true(boot._action_buttons.has("open_progression_lab"))
 
-func test_boot_battle_running_route_declares_landscape() -> void:
+func test_boot_battle_running_route_stays_portrait() -> void:
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)
 
 	assert_false(boot._route_prefers_landscape("battle_entry"))
-	assert_true(boot._route_prefers_landscape("battle_running"))
+	assert_false(boot._route_prefers_landscape("battle_running"))
 	assert_false(boot._route_prefers_landscape("refuge_home"))
 	assert_false(AppShellRouteContractScript.prefers_landscape("battle"))
-	assert_true(AppShellRouteContractScript.prefers_landscape("battle_running"))
+	assert_false(AppShellRouteContractScript.prefers_landscape("battle_running"))
 	assert_false(AppShellRouteContractScript.prefers_landscape("battle_summary"))
+	assert_true(AppShellRouteContractScript.prefers_portrait("battle_running"))
 
 func test_app_shell_route_contract_declares_battle_gameplay_mode() -> void:
 	assert_true(AppShellRouteContractScript.is_battle_mode("battle"))
 	assert_true(AppShellRouteContractScript.is_battle_mode("battle_running"))
 	assert_true(AppShellRouteContractScript.is_battle_mode("battle_summary"))
 	assert_false(AppShellRouteContractScript.is_battle_mode("base"))
-	assert_true(AppShellRouteContractScript.is_first_screen("refugio"))
+	assert_true(AppShellRouteContractScript.is_first_screen("entry"))
+	assert_false(AppShellRouteContractScript.is_first_screen("refugio"))
+	assert_true(AppShellRouteContractScript.is_refuge_home("refugio"))
+	assert_true(AppShellRouteContractScript.uses_immersive_layer("refuge"))
 	assert_false(AppShellRouteContractScript.is_fullscreen_gameplay("battle"))
 	assert_true(AppShellRouteContractScript.is_fullscreen_gameplay("battle_running"))
 	assert_true(AppShellRouteContractScript.is_fullscreen_gameplay("battle_summary"))
@@ -189,7 +203,7 @@ func test_app_shell_route_contract_declares_battle_gameplay_mode() -> void:
 	assert_false(AppShellRouteContractScript.shows_app_chrome("battle_summary"))
 	assert_eq(AppShellRouteContractScript.summary_route_for("battle_running"), "battle_summary")
 	assert_eq(AppShellRouteContractScript.summary_route_for("battle"), "battle_summary")
-	assert_eq(AppShellRouteContractScript.summary_route_for("base"), "base")
+	assert_eq(AppShellRouteContractScript.summary_route_for("base"), "base_management")
 	assert_true(AppShellRouteContractScript.is_safe_replay_action("skip_battle_replay"))
 	assert_false(AppShellRouteContractScript.is_safe_replay_action("show_latest_battle"))
 	assert_true(AppShellRouteContractScript.is_read_only_battle_action("show_battle_history"))
@@ -197,23 +211,23 @@ func test_app_shell_route_contract_declares_battle_gameplay_mode() -> void:
 	assert_true(AppShellRouteContractScript.is_read_only_battle_action("replay_latest_battle"))
 	assert_false(AppShellRouteContractScript.is_read_only_battle_action("request_battle"))
 
-func test_internal_app_screen_layout_uses_portrait_single_column_and_landscape_columns() -> void:
+func test_internal_app_screen_layout_uses_portrait_single_column() -> void:
 	assert_eq(BootScreenScript.surface_columns_for_size(Vector2(540, 960), 2), 1)
-	assert_eq(BootScreenScript.surface_columns_for_size(Vector2(1180, 720), 2), 2)
+	assert_eq(BootScreenScript.surface_columns_for_size(Vector2(1180, 720), 2), 1)
 	assert_eq(BootScreenScript.action_button_columns_for_size(Vector2(540, 960), true), 2)
-	assert_eq(BootScreenScript.action_button_columns_for_size(Vector2(1180, 720), true), 3)
+	assert_eq(BootScreenScript.action_button_columns_for_size(Vector2(1180, 720), true), 2)
 
 	var portrait_contract := MobileUiContractScript.layout_summary_for_size(Vector2(540, 960), true)
 	assert_eq(str(portrait_contract.get("orientation", "")), "portrait")
 	assert_eq(int(portrait_contract.get("surface_columns", 0)), 1)
 	assert_eq(int(portrait_contract.get("action_button_columns", 0)), 2)
-	assert_eq(int(portrait_contract.get("base_map_columns", 0)), 3)
+	assert_eq(int(portrait_contract.get("base_map_columns", 0)), 2)
 
 	var landscape_contract := MobileUiContractScript.layout_summary_for_size(Vector2(1180, 720), true)
-	assert_eq(str(landscape_contract.get("orientation", "")), "landscape")
-	assert_eq(int(landscape_contract.get("surface_columns", 0)), 2)
-	assert_eq(int(landscape_contract.get("action_button_columns", 0)), 3)
-	assert_eq(int(landscape_contract.get("base_map_columns", 0)), 6)
+	assert_eq(str(landscape_contract.get("orientation", "")), "portrait")
+	assert_eq(int(landscape_contract.get("surface_columns", 0)), 1)
+	assert_eq(int(landscape_contract.get("action_button_columns", 0)), 2)
+	assert_eq(int(landscape_contract.get("base_map_columns", 0)), 2)
 
 	var button := Button.new()
 	button.custom_minimum_size = Vector2(24, 12)
@@ -229,13 +243,13 @@ func test_app_surfaces_open_as_internal_routes_with_back_and_touch_scroll() -> v
 
 	for route: String in ["base", "social", "competition", "shop"]:
 		boot._show_screen(route)
-		assert_eq(boot._current_screen, route)
+		assert_eq(boot._current_screen, boot._normalize_route(route))
 		assert_true(boot._back_button.visible)
 		assert_true(boot._content_scroll is TouchScrollContainerScript)
 		assert_true(boot._nav_buttons.is_empty())
-		assert_eq(boot._screen_history.back(), "refuge_home")
+		assert_eq(boot._screen_history.back(), "entry")
 		boot._go_back()
-		assert_eq(boot._current_screen, "refuge_home")
+		assert_eq(boot._current_screen, "entry")
 		assert_true(boot._screen_history.is_empty())
 
 func test_touch_scroll_container_uses_drag_threshold_and_wide_scrollbar() -> void:
@@ -622,7 +636,7 @@ func test_boot_battle_summary_return_to_refuge_clears_lifecycle_state() -> void:
 	boot._skip_replay = true
 	boot._return_to_refuge()
 
-	assert_eq(boot._current_screen, "refuge_home")
+	assert_eq(boot._current_screen, "refuge")
 	assert_true(boot._screen_history.is_empty())
 	assert_false(boot._back_button.visible)
 	assert_false(boot._replay_running)

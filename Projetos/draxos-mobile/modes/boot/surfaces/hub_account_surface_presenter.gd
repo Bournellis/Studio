@@ -3,8 +3,8 @@ extends RefCounted
 
 const ProjectInfoScript := preload("res://core/project_info.gd")
 
-const SCREEN_BATTLE := "battle"
-const SCREEN_BASE := "base"
+const SCREEN_BATTLE := "battle_entry"
+const SCREEN_BASE := "base_management"
 const SCREEN_SOCIAL := "social"
 const SCREEN_COMPETITION := "competition"
 const SCREEN_SHOP := "shop"

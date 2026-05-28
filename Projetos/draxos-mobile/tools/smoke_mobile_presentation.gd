@@ -17,8 +17,8 @@ func _run() -> void:
 func _run_smoke() -> int:
 	print("[smoke-mobile-presentation] checking portrait app loop")
 	await _check_portrait_app_loop()
-	print("[smoke-mobile-presentation] checking landscape app loop")
-	await _check_landscape_app_loop()
+	print("[smoke-mobile-presentation] checking wide portrait app loop")
+	await _check_wide_portrait_app_loop()
 	print("[smoke-mobile-presentation] checking battle fullscreen loop")
 	await _check_battle_fullscreen_loop()
 
@@ -35,16 +35,23 @@ func _check_portrait_app_loop() -> void:
 	var boot: Control = _new_boot()
 	await process_frame
 
-	_expect(str(boot.get("_current_screen")) == "refuge_home", "portrait opens on Refugio home")
-	_expect(_get_first_screen_root(boot) != null and _get_first_screen_root(boot).visible, "portrait opens on first-screen Refugio layer")
-	_expect(_get_app_chrome_root(boot) != null and not _get_app_chrome_root(boot).visible, "portrait Refugio hides app chrome")
-	_expect(_label_tree_contains(boot, "Altar do Refugio"), "portrait Refugio shows altar")
-	_expect(_find_button_by_text(boot, "Perfil/Conta") != null, "portrait Refugio has account hotspot")
+	_expect(str(boot.get("_current_screen")) == "entry", "portrait opens on Entry")
+	_expect(_get_first_screen_root(boot) != null and _get_first_screen_root(boot).visible, "portrait opens on first-screen Entry layer")
+	_expect(_get_app_chrome_root(boot) != null and not _get_app_chrome_root(boot).visible, "portrait Entry hides app chrome")
+	_expect(_label_tree_contains(boot, "Entrada"), "portrait Entry shows operational start page")
+	_expect(_find_button_by_text(boot, "Entrar no Refugio") != null, "portrait Entry has Refugio CTA")
+	_expect(_find_button_by_text(boot, "Save normal") != null, "portrait Entry has save selector")
+
+	boot.call("_show_screen", "refuge")
+	await process_frame
+	_expect(str(boot.get("_current_screen")) == "refuge", "Refugio route opens after Entry")
+	_expect(_label_tree_contains(boot, "Altar do Mago"), "portrait Refugio shows mage altar")
+	_expect(_find_button_by_text(boot, "Perfil") != null, "portrait Refugio has account hotspot")
 	_expect(_find_button_by_text(boot, "Base") != null, "portrait Refugio has Base hotspot")
 	var battle_hotspot := _find_button_by_text(boot, "Batalha")
 	_expect(battle_hotspot != null, "portrait Refugio has Battle hotspot")
 	_expect(battle_hotspot != null and battle_hotspot.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET, "portrait hotspots keep mobile touch target")
-	_expect(_get_back_button(boot) != null and not _get_back_button(boot).visible, "portrait root hides Back")
+	_expect(_get_back_button(boot) != null and not _get_back_button(boot).visible, "portrait Refugio hides app chrome Back")
 
 	boot.call("_show_screen", "account")
 	await process_frame
@@ -56,13 +63,13 @@ func _check_portrait_app_loop() -> void:
 
 	boot.call("_go_back")
 	await process_frame
-	_expect(str(boot.get("_current_screen")) == "refuge_home", "Back returns to Refugio root")
+	_expect(str(boot.get("_current_screen")) == "refuge", "Back returns to Refugio")
 	_expect(_get_first_screen_root(boot) != null and _get_first_screen_root(boot).visible, "Back restores first-screen Refugio layer")
 	_expect(_get_app_chrome_root(boot) != null and not _get_app_chrome_root(boot).visible, "Back hides app shell on Refugio root")
 	boot.queue_free()
 	await process_frame
 
-func _check_landscape_app_loop() -> void:
+func _check_wide_portrait_app_loop() -> void:
 	root.size = Vector2i(1280, 720)
 	await process_frame
 	var boot: Control = _new_boot()
@@ -73,11 +80,11 @@ func _check_landscape_app_loop() -> void:
 
 	boot.call("_show_screen", "base")
 	await process_frame
-	_expect(str(boot.get("_current_screen")) == "base", "landscape Base route opens")
-	_expect(_get_back_button(boot) != null and _get_back_button(boot).visible, "landscape internal route exposes Back")
-	_expect(_get_content_scroll(boot) != null, "landscape internal route uses touch scroll container")
-	_expect(_get_content_scroll(boot) is TouchScrollContainerScript, "landscape internal route reuses DraxosTouchScrollContainer")
-	_expect(_label_tree_contains(boot, "Rotina da Base"), "landscape Base keeps routine panel")
+	_expect(str(boot.get("_current_screen")) == "base_management", "wide viewport still opens Base management route")
+	_expect(_get_back_button(boot) != null and _get_back_button(boot).visible, "wide internal route exposes Back")
+	_expect(_get_content_scroll(boot) != null, "wide internal route uses touch scroll container")
+	_expect(_get_content_scroll(boot) is TouchScrollContainerScript, "wide internal route reuses DraxosTouchScrollContainer")
+	_expect(_label_tree_contains(boot, "Rotina da Base"), "wide Base keeps routine panel")
 
 	var scroll := _get_content_scroll(boot)
 	if scroll != null:
@@ -88,9 +95,9 @@ func _check_landscape_app_loop() -> void:
 	boot.call("_show_screen", "social")
 	await process_frame
 	scroll = _get_content_scroll(boot)
-	_expect(str(boot.get("_current_screen")) == "social", "landscape Social route opens")
+	_expect(str(boot.get("_current_screen")) == "social", "wide Social route opens")
 	_expect(scroll != null and scroll.scroll_vertical == 0, "route changes reset scroll position")
-	_expect(_label_tree_contains(boot, "Refresh e Polling") or _label_tree_contains(boot, "Social server-authoritative"), "landscape Social keeps readable state")
+	_expect(_label_tree_contains(boot, "Refresh e Polling") or _label_tree_contains(boot, "Social server-authoritative"), "wide Social keeps readable state")
 	boot.queue_free()
 	await process_frame
 
@@ -107,7 +114,7 @@ func _check_battle_fullscreen_loop() -> void:
 	boot.call("_show_screen", "battle_running")
 	await process_frame
 	_expect(str(boot.get("_current_screen")) == "battle_running", "battle_running route opens")
-	_expect(bool(boot.call("_route_prefers_landscape", "battle_running")), "battle_running declares landscape")
+	_expect(not bool(boot.call("_route_prefers_landscape", "battle_running")), "battle_running stays portrait")
 	_expect(boot.get("_battle_fullscreen_overlay") != null, "battle_running creates fullscreen overlay")
 	_expect(_find_button_by_text(boot, "Pular") != null, "battle_running exposes fixed skip action")
 	_expect(_label_tree_contains(boot, "Autobattler"), "battle_running labels gameplay frame")
