@@ -42,7 +42,7 @@ const _TITLES := {
 	ROUTE_REFUGE: "Refugio",
 	ROUTE_REFUGE_HOME: "Entrada",
 	ROUTE_ACCOUNT: "Conta",
-	ROUTE_BASE_MANAGEMENT: "Base",
+	ROUTE_BASE_MANAGEMENT: "Refugio",
 	ROUTE_SOCIAL: "Social",
 	ROUTE_COMPETITION: "Competicao",
 	ROUTE_SHOP: "Loja",

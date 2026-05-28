@@ -5,15 +5,37 @@ const RESOURCE_KEYS := ["almas", "energia", "sangue", "cristais", "ossos", "diam
 const BASE_STRUCTURE_IDS := ["altar_das_almas", "nucleo_energia", "pocos_sangue", "minas_cristal", "estrutura_stats", "ossario"]
 
 static func render(host: Node) -> void:
-	_add_body_text(host, "Base do Refugio: predios permanentes, coleta offline e uma fila de construcao server-authoritative.")
-	_add_action_button(host, "Atualizar base", "show_base")
-	_add_action_button(host, "Coletar producao", "collect_base", "Coletar a producao offline acumulada da base?")
+	_add_body_text(host, "Refugio: predios permanentes, coleta offline e uma fila de construcao server-authoritative.")
+	_add_action_button(host, "Atualizar Refugio", "show_base")
+	_add_action_button(host, "Coletar producao", "collect_base", "Coletar a producao offline acumulada do Refugio?")
 	_add_action_button(host, "Comprar Energia alpha", "buy_energy_pack_alpha", "Gastar 80 Diamantes para comprar 80 Energia no save ativo?")
 	host.set("_timeline_label", _add_output_label(host, ""))
 	var base_state_container := VBoxContainer.new()
 	base_state_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	base_state_container.add_theme_constant_override("separation", 10)
 	_content_body(host).add_child(base_state_container)
+	host.set("_base_state_container", base_state_container)
+	render_state(host)
+
+static func render_refuge_embedded(host: Node, parent: VBoxContainer) -> void:
+	var actions := GridContainer.new()
+	actions.columns = 1
+	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	actions.add_theme_constant_override("h_separation", 8)
+	actions.add_theme_constant_override("v_separation", 8)
+	parent.add_child(actions)
+	actions.add_child(_embedded_action_button(host, "Atualizar Refugio", "show_base"))
+	actions.add_child(_embedded_action_button(host, "Coletar producao", "collect_base", "Coletar a producao offline acumulada do Refugio?"))
+	actions.add_child(_embedded_action_button(host, "Comprar Energia alpha", "buy_energy_pack_alpha", "Gastar 80 Diamantes para comprar 80 Energia no save ativo?"))
+
+	var timeline := _base_label(host, "", "text_secondary")
+	parent.add_child(timeline)
+	host.set("_timeline_label", timeline)
+
+	var base_state_container := VBoxContainer.new()
+	base_state_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	base_state_container.add_theme_constant_override("separation", 10)
+	parent.add_child(base_state_container)
 	host.set("_base_state_container", base_state_container)
 	render_state(host)
 
@@ -26,12 +48,12 @@ static func render_state(host: Node, collected: Dictionary = {}) -> void:
 		_clear_node_children(container)
 	var base := SessionStore.base_state
 	if base.is_empty():
-		timeline.text = "Base ainda nao carregada. Use Atualizar base."
+		timeline.text = "Refugio ainda nao carregado. Use Atualizar Refugio."
 		if container != null:
 			container.add_child(_base_info_panel(
 				host,
-				"Base nao carregada",
-				"Use Atualizar base para buscar os predios, a fila de construcao e os recursos no servidor."
+				"Refugio nao carregado",
+				"Use Atualizar Refugio para buscar os predios, a fila de construcao e os recursos no servidor."
 			))
 		return
 
@@ -134,7 +156,7 @@ static func _base_summary_panel(host: Node, base: Dictionary, collected: Diction
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 6)
 	panel.add_child(box)
-	box.add_child(_base_label(host, "Resumo da Base", "text_primary", 17))
+	box.add_child(_base_label(host, "Resumo do Refugio", "text_primary", 17))
 	box.add_child(_base_label(host, "Recursos: %s" % _format_resources(SessionStore.resources), "text_secondary"))
 	var active_jobs := _active_base_jobs(_as_array(base.get("jobs", [])))
 	box.add_child(_base_label(host, "Fila de construcao: %d/%d" % [
@@ -147,7 +169,7 @@ static func _base_summary_panel(host: Node, base: Dictionary, collected: Diction
 			collect_text = "Coletado agora: %s" % _format_resources(collected, false)
 		box.add_child(_base_label(host, collect_text, "status_success"))
 	if SessionStore.is_progression_lab_active():
-		box.add_child(_base_label(host, "Progression Lab: base isolada do save normal.", "status_warning"))
+		box.add_child(_base_label(host, "Progression Lab: Refugio isolado do save normal.", "status_warning"))
 	return panel
 
 static func _base_routine_panel(host: Node, base: Dictionary, collected: Dictionary) -> Control:
@@ -156,10 +178,10 @@ static func _base_routine_panel(host: Node, base: Dictionary, collected: Diction
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 6)
 	panel.add_child(box)
-	box.add_child(_base_label(host, "Rotina da Base", "text_primary", 17))
+	box.add_child(_base_label(host, "Rotina do Refugio", "text_primary", 17))
 
 	var collect_color := "status_success" if bool(routine.get("has_collect_ready", false)) else "text_secondary"
-	box.add_child(_base_label(host, str(routine.get("collect_text", "Coleta pronta: sem dados da Base.")), collect_color))
+	box.add_child(_base_label(host, str(routine.get("collect_text", "Coleta pronta: sem dados do Refugio.")), collect_color))
 
 	var active_job_count := int(routine.get("active_job_count", 0))
 	if active_job_count <= 0:
@@ -183,7 +205,7 @@ static func _base_map_panel(host: Node, structures: Array) -> Control:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 8)
 	panel.add_child(box)
-	box.add_child(_base_label(host, "Mapa da Base", "text_primary", 17))
+	box.add_child(_base_label(host, "Mapa do Refugio", "text_primary", 17))
 	var grid := GridContainer.new()
 	grid.columns = _base_map_columns(host)
 	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -206,7 +228,7 @@ static func _base_detail_panel(host: Node, structures: Array) -> Control:
 	box.add_theme_constant_override("separation", 7)
 	panel.add_child(box)
 	if structure.is_empty():
-		box.add_child(_base_label(host, "Selecione um predio no mapa da Base.", "text_secondary"))
+		box.add_child(_base_label(host, "Selecione um predio no mapa do Refugio.", "text_secondary"))
 		return panel
 
 	var structure_id := str(structure.get("structure_id", ""))
@@ -258,6 +280,19 @@ static func _base_structure_button(host: Node, structure: Dictionary) -> Button:
 	var action_id := "select_base_structure:%s" % structure_id
 	button.pressed.connect(func() -> void:
 		host.call("_trigger_action", action_id)
+	)
+	_register_action_button(host, action_id, button)
+	return button
+
+static func _embedded_action_button(host: Node, text: String, action_id: String, confirm_message: String = "") -> Button:
+	var button := Button.new()
+	button.text = text
+	button.tooltip_text = text
+	button.custom_minimum_size = _button_min_size(host)
+	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_prepare_touch_button(host, button)
+	button.pressed.connect(func() -> void:
+		host.call("_trigger_action", action_id, confirm_message)
 	)
 	_register_action_button(host, action_id, button)
 	return button

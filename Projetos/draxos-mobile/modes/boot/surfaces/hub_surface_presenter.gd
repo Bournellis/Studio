@@ -2,53 +2,9 @@ class_name BootHubSurfacePresenter
 extends RefCounted
 
 const HubAccountSurfacePresenterScript := preload("res://modes/boot/surfaces/hub_account_surface_presenter.gd")
+const BaseSurfacePresenterScript := preload("res://modes/boot/surfaces/base_surface_presenter.gd")
 const TouchScrollContainerScript := preload("res://modes/boot/ui/touch_scroll_container.gd")
 const MobileUiContractScript := preload("res://modes/boot/ui/mobile_ui_contract.gd")
-
-class RefugeAltarView:
-	extends Control
-
-	var compact := false
-
-	func _init(is_compact: bool = false) -> void:
-		compact = is_compact
-		mouse_filter = Control.MOUSE_FILTER_IGNORE
-		custom_minimum_size = Vector2(0, 230) if compact else Vector2(0, 320)
-		size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		size_flags_vertical = Control.SIZE_EXPAND_FILL
-
-	func _draw() -> void:
-		var rect := Rect2(Vector2.ZERO, size)
-		draw_rect(rect, UiTokens.color("bg_deep").lightened(0.02), true)
-		var center := rect.get_center()
-		var horizon_y := size.y * 0.42
-		draw_rect(Rect2(Vector2(0, horizon_y), Vector2(size.x, size.y - horizon_y)), UiTokens.color("bg_panel").darkened(0.08), true)
-		for index: int in range(6):
-			var x := lerpf(0.0, size.x, float(index) / 5.0)
-			draw_line(Vector2(x, horizon_y), Vector2(center.x, size.y * 0.82), UiTokens.color("border_default").darkened(0.15), 1.0)
-		var altar_width := minf(size.x * 0.62, 290.0)
-		var altar_height := minf(size.y * 0.25, 92.0)
-		var base_y := size.y * 0.72
-		var top_y := base_y - altar_height
-		var platform := PackedVector2Array([
-			Vector2(center.x - altar_width * 0.55, base_y),
-			Vector2(center.x + altar_width * 0.55, base_y),
-			Vector2(center.x + altar_width * 0.36, top_y),
-			Vector2(center.x - altar_width * 0.36, top_y),
-		])
-		draw_polygon(platform, PackedColorArray([
-			UiTokens.color("accent_bone").darkened(0.30),
-			UiTokens.color("accent_bone").darkened(0.30),
-			UiTokens.color("accent_bone").darkened(0.12),
-			UiTokens.color("accent_bone").darkened(0.12),
-		]))
-		draw_arc(center + Vector2(0, -36), 54, 0, TAU, 72, UiTokens.color("accent_astral"), 4.0)
-		draw_arc(center + Vector2(0, -36), 28, 0, TAU, 72, UiTokens.color("accent_blood").lightened(0.15), 3.0)
-		draw_line(Vector2(center.x, top_y - 72.0), Vector2(center.x, top_y + 12.0), UiTokens.color("accent_astral").lightened(0.35), 5.0)
-		draw_line(Vector2(center.x - 44.0, top_y - 28.0), Vector2(center.x + 44.0, top_y - 28.0), UiTokens.color("accent_blood"), 3.0)
-		for index: int in range(5):
-			var offset := float(index - 2) * 38.0
-			draw_circle(Vector2(center.x + offset, top_y - 92.0 + absf(offset) * 0.18), 4.0, UiTokens.color("accent_astral").lightened(0.2))
 
 static func render_entry(host: Node) -> void:
 	var root := _first_screen_root(host)
@@ -67,25 +23,9 @@ static func render_refuge(host: Node) -> void:
 	if root == null:
 		return
 	var compact := bool(host.get("_compact_layout"))
-	var margin := MarginContainer.new()
-	margin.name = "RefugeSceneOverlay"
-	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
-	var edge := 10 if compact else 16
-	margin.add_theme_constant_override("margin_left", edge)
-	margin.add_theme_constant_override("margin_top", edge)
-	margin.add_theme_constant_override("margin_right", edge)
-	margin.add_theme_constant_override("margin_bottom", edge)
-	root.add_child(margin)
-
-	var layout := VBoxContainer.new()
-	layout.name = "RefugeSceneLayout"
-	layout.add_theme_constant_override("separation", 10 if compact else 14)
-	layout.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	layout.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	margin.add_child(layout)
-
-	layout.add_child(_refuge_hotspot_panel(host, compact))
-	layout.add_child(_refuge_footer_panel(host, compact))
+	var body := _screen_body(host, root, "RefugeSceneBody", compact)
+	body.add_child(_refuge_hotspot_panel(host, compact))
+	body.add_child(_refuge_footer_panel(host, compact))
 
 static func _screen_body(_host: Node, root: Control, body_name: String, compact: bool) -> VBoxContainer:
 	var margin := MarginContainer.new()
@@ -183,23 +123,6 @@ static func _entry_footer_panel(host: Node, compact: bool) -> PanelContainer:
 	_add_feedback_labels(host, box, compact)
 	return panel
 
-static func _refuge_top_bar(host: Node, compact: bool) -> PanelContainer:
-	var panel := _panel(host, "RefugeTopBar", "bg_panel", "border_active")
-	var box := _panel_box(panel, compact)
-	box.add_child(_title_label("Refugio", 24 if compact else 30))
-	box.add_child(_body_label("Recursos: %s" % _format_resources(SessionStore.resources), compact))
-	box.add_child(_body_label(_short_account_status(), compact))
-	_add_feedback_labels(host, box, compact)
-	return panel
-
-static func _refuge_scene_panel(host: Node, compact: bool) -> PanelContainer:
-	var panel := _panel(host, "RefugeAltarPanel", "bg_deep", "border_active")
-	var box := _panel_box(panel, compact)
-	box.add_child(_section_label("Altar do Mago", compact))
-	box.add_child(_body_label("O centro do Refugio: daqui voce abre batalha, rotina da Base, social, competicao e loja.", compact))
-	box.add_child(RefugeAltarView.new(compact))
-	return panel
-
 static func _refuge_hotspot_panel(host: Node, compact: bool) -> PanelContainer:
 	var panel := _panel(host, "RefugeHotspotPanel", "bg_panel_alt", "border_default")
 	var box := _panel_box(panel, compact)
@@ -207,11 +130,11 @@ static func _refuge_hotspot_panel(host: Node, compact: bool) -> PanelContainer:
 	var grid := _button_grid(compact, 2)
 	box.add_child(grid)
 	_add_route_hotspot(host, grid, compact, "Batalha", "battle_entry", "Pedir batalha e ver replay server-authoritative.", "accent_blood")
-	_add_action_hotspot(host, grid, compact, "Base", "show_base", "Coletar, evoluir estruturas e acompanhar rotina.", "accent_astral")
 	_add_action_hotspot(host, grid, compact, "Social", "show_social", "Amigos, guilda e chat por polling.", "status_success")
 	_add_action_hotspot(host, grid, compact, "Competicao", "show_matchmaking", "Preview de matchmaking e ranking alpha.", "status_warning")
 	_add_action_hotspot(host, grid, compact, "Loja", "show_shop", "Redeems, recompensas e compras alpha.", "accent_bone")
 	_add_route_hotspot(host, grid, compact, "Perfil", "account", "Conta, updates e detalhes do save.", "border_active")
+	BaseSurfacePresenterScript.render_refuge_embedded(host, box)
 	return panel
 
 static func _refuge_footer_panel(host: Node, compact: bool) -> PanelContainer:

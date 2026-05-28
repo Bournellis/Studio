@@ -136,7 +136,7 @@ static func render_update_gate(host: Node) -> void:
 static func render_screen_links(host: Node) -> void:
 	_add_section_label(host, "Telas")
 	_add_screen_button(host, "Abrir Batalha", SCREEN_BATTLE)
-	_add_screen_button(host, "Abrir Base", SCREEN_BASE)
+	_add_screen_button(host, "Abrir Refugio", "refuge")
 	_add_screen_button(host, "Abrir Social", SCREEN_SOCIAL)
 	_add_screen_button(host, "Abrir Competicao", SCREEN_COMPETITION)
 	_add_screen_button(host, "Abrir Loja", SCREEN_SHOP)

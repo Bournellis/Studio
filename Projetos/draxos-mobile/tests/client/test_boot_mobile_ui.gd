@@ -159,7 +159,13 @@ func test_boot_refugio_home_renders_altar_hotspots_and_account_route() -> void:
 	assert_null(boot._auth_email_input)
 	assert_false(boot._action_buttons.has("email_sign_up"))
 
-	for hotspot_text: String in ["Batalha", "Base", "Social", "Competicao", "Loja", "Perfil"]:
+	assert_null(_find_button_by_text(boot._first_screen_root, "Base"))
+	assert_true(boot._action_buttons.has("show_base"))
+	assert_true(boot._action_buttons.has("collect_base"))
+	assert_not_null(boot._base_state_container)
+	assert_true(_label_tree_contains(boot._first_screen_root, "Refugio nao carregado"))
+
+	for hotspot_text: String in ["Batalha", "Social", "Competicao", "Loja", "Perfil"]:
 		var hotspot := _find_button_by_text(boot._first_screen_root, hotspot_text)
 		assert_not_null(hotspot, "Refugio should expose hotspot '%s'." % hotspot_text)
 		assert_true(hotspot.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
@@ -445,7 +451,7 @@ func test_base_routine_panel_derives_objective_from_existing_payload() -> void:
 	boot._show_screen("base")
 	await get_tree().process_frame
 
-	assert_true(_label_tree_contains(boot._base_state_container, "Rotina da Base"))
+	assert_true(_label_tree_contains(boot._base_state_container, "Rotina do Refugio"))
 	assert_true(_label_tree_contains(boot._base_state_container, "Coleta pronta: Almas 4 | Energia 12."))
 	assert_true(_label_tree_contains(boot._base_state_container, "Jobs em andamento: 1."))
 	assert_true(_label_tree_contains(boot._base_state_container, "Altar das Almas -> L2 | resta 1m 30s"))

@@ -65,7 +65,10 @@ func _check_portrait_app_loop() -> void:
 	_expect(_find_node_by_name(boot, "RefugeHotspotPanel") != null, "portrait Refugio puts Caminhos at the top")
 	_expect(_label_tree_contains(boot, "Caminhos do Refugio"), "portrait Refugio foregrounds Caminhos")
 	_expect(_find_button_by_text(boot, "Perfil") != null, "portrait Refugio has account hotspot")
-	_expect(_find_button_by_text(boot, "Base") != null, "portrait Refugio has Base hotspot")
+	_expect(_find_button_by_text(boot, "Base") == null, "portrait Refugio has no separate Base hotspot")
+	_expect(boot.get("_base_state_container") != null, "portrait Refugio embeds base management directly")
+	_expect(_find_button_by_text(boot, "Atualizar Refugio") != null, "portrait Refugio exposes direct refresh action")
+	_expect(_label_tree_contains(boot, "Refugio nao carregado"), "portrait Refugio embeds base empty state")
 	var battle_hotspot := _find_button_by_text(boot, "Batalha")
 	_expect(battle_hotspot != null, "portrait Refugio has Battle hotspot")
 	_expect(battle_hotspot != null and battle_hotspot.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET, "portrait hotspots keep mobile touch target")
@@ -101,12 +104,12 @@ func _check_wide_portrait_app_loop() -> void:
 
 	boot.call("_show_screen", "base")
 	await process_frame
-	_expect(str(boot.get("_current_screen")) == "base_management", "wide viewport still opens Base management route")
+	_expect(str(boot.get("_current_screen")) == "base_management", "wide viewport still opens legacy Refugio management route")
 	_expect(_get_back_button(boot) != null and _get_back_button(boot).visible, "wide internal route exposes Back")
 	_expect(_get_content_scroll(boot) != null, "wide internal route uses touch scroll container")
 	_expect(_get_content_scroll(boot) is TouchScrollContainerScript, "wide internal route reuses DraxosTouchScrollContainer")
-	_expect(_label_tree_contains(boot, "Rotina da Base"), "wide Base keeps routine panel")
-	_expect_layout_fits_width(boot, float(root.size.x), "wide Base management")
+	_expect(_label_tree_contains(boot, "Rotina do Refugio"), "wide legacy route keeps Refugio routine panel")
+	_expect_layout_fits_width(boot, float(root.size.x), "wide Refugio management")
 
 	var scroll := _get_content_scroll(boot)
 	if scroll != null:

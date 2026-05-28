@@ -40,8 +40,8 @@ const SHOP_PURCHASE_PRODUCTS := [
 	{
 		"id": "alpha_double_construction_queue",
 		"label": "Comprar fila dupla",
-		"confirm": "Comprar a fila dupla de construcao da Base com Diamante?",
-		"tooltip": "Aumenta a fila da Base para dois upgrades ativos ao mesmo tempo neste save.",
+		"confirm": "Comprar a fila dupla de construcao do Refugio com Diamante?",
+		"tooltip": "Aumenta a fila do Refugio para dois upgrades ativos ao mesmo tempo neste save.",
 	},
 	{
 		"id": "alpha_energy_pack_small",
@@ -84,7 +84,7 @@ static func render(host: Node) -> void:
 		host,
 		"Claim coleta diaria",
 		"claim_reward:daily_collect_base",
-		"Resgatar a recompensa diaria de coleta da base?"
+		"Resgatar a recompensa diaria de coleta do Refugio?"
 	)
 	daily_button.tooltip_text = "Recompensa diaria server-authoritative ligada a XP, recursos e progresso de Battle Pass."
 	host.set("_timeline_label", _add_output_label(host, ""))
@@ -318,7 +318,7 @@ static func _shop_effect_text(effect: Dictionary) -> String:
 		return "nenhum efeito persistente"
 	match str(effect.get("type", "")):
 		"construction_slots":
-			return "fila da Base: %s slots" % str(effect.get("value", 0))
+			return "fila do Refugio: %s slots" % str(effect.get("value", 0))
 	return str(effect)
 
 static func _format_shop_delta(delta: Dictionary, empty_text: String) -> String:

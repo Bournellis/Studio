@@ -971,7 +971,7 @@ func _select_save(save_type: String) -> void:
 		if not active_save_ready:
 			_show_screen(SCREEN_HUB, false)
 			return
-		var ready_message := "Save %s pronto. Batalha, Base, Social, Competicao e Loja usam este contexto." % SessionStore.active_save_label()
+		var ready_message := "Save %s pronto. Batalha, Refugio, Social, Competicao e Loja usam este contexto." % SessionStore.active_save_label()
 		if SessionStore.is_progression_lab_active():
 			ready_message = "Save Progression Lab pronto. As abas usam o player Lab isolado e ele nao pontua ranking."
 		_set_busy(false, ready_message)
@@ -1278,15 +1278,16 @@ func _show_battle_replay(battle_id: String) -> void:
 	await _play_battle_log(SessionStore.last_battle_log, SessionStore.last_battle_rewards)
 
 func _show_base() -> void:
+	var target_screen := _base_surface_target_screen()
 	if SessionStore.is_progression_lab_local_only():
-		_show_screen(SCREEN_BASE, false)
-		_set_busy(false, "Snapshot local do Progression Lab carregado. Base em modo somente leitura; coletas e upgrades precisam de save seeded no Supabase local.")
+		_show_screen(target_screen, false)
+		_set_busy(false, "Snapshot local do Progression Lab carregado. Refugio em modo somente leitura; coletas e upgrades precisam de save seeded no Supabase local.")
 		_render_base_state()
 		return
-	if not _require_session("Entre com email ou use guest dev antes de abrir a base."):
+	if not _require_session("Entre com email ou use guest dev antes de atualizar o Refugio."):
 		return
 
-	_show_screen(SCREEN_BASE, false)
+	_show_screen(target_screen, false)
 	_set_busy(true, "Buscando Refugio...")
 	var base_result: Dictionary = await SupabaseClient.fetch_base_state(SessionStore.access_token)
 	if not bool(base_result.get("ok", false)):
@@ -1302,10 +1303,10 @@ func _show_base() -> void:
 	_render_base_state()
 
 func _collect_base() -> void:
-	if not _require_account("Entre com email ou use guest dev antes de coletar a base."):
+	if not _require_account("Entre com email ou use guest dev antes de coletar o Refugio."):
 		return
 
-	_show_screen(SCREEN_BASE, false)
+	_show_screen(_base_surface_target_screen(), false)
 	_set_busy(true, "Coletando producao offline...")
 	var base_result: Dictionary = await SupabaseClient.collect_base(
 		SessionStoreScript.create_request_id(),
@@ -1332,7 +1333,7 @@ func _buy_energy_pack_alpha() -> void:
 	if not _require_account("Entre com email ou use guest dev antes de comprar Energia alpha."):
 		return
 
-	_show_screen(SCREEN_BASE, false)
+	_show_screen(_base_surface_target_screen(), false)
 	_set_busy(true, "Comprando pacote de Energia alpha...")
 	var monetization_result: Dictionary = await SupabaseClient.alpha_purchase(
 		SessionStoreScript.create_request_id(),
@@ -1352,18 +1353,18 @@ func _buy_energy_pack_alpha() -> void:
 		SessionStore.apply_base_result(base_result)
 
 	SessionStore.save_cache()
-	_set_busy(false, "Energia alpha comprada. A Base foi atualizada com o novo saldo.")
+	_set_busy(false, "Energia alpha comprada. O Refugio foi atualizado com o novo saldo.")
 	_render_base_state()
 
 func _upgrade_base_structure(structure_id: String) -> void:
-	if not _require_account("Entre com email ou use guest dev antes de evoluir a base."):
+	if not _require_account("Entre com email ou use guest dev antes de evoluir o Refugio."):
 		return
 	var target_structure_id := structure_id.strip_edges()
 	if target_structure_id == "":
 		target_structure_id = _selected_base_structure_id
 	_selected_base_structure_id = target_structure_id
 
-	_show_screen(SCREEN_BASE, false)
+	_show_screen(_base_surface_target_screen(), false)
 	_set_busy(true, "Solicitando evolucao de %s..." % _structure_label(target_structure_id))
 	var base_result: Dictionary = await SupabaseClient.upgrade_base_structure(
 		SessionStoreScript.create_request_id(),
@@ -1381,6 +1382,11 @@ func _upgrade_base_structure(structure_id: String) -> void:
 	SessionStore.save_cache()
 	_set_busy(false, "Evolucao de %s iniciada no servidor." % _structure_label(target_structure_id))
 	_render_base_state()
+
+func _base_surface_target_screen() -> String:
+	if _current_screen == SCREEN_REFUGE:
+		return SCREEN_REFUGE
+	return SCREEN_BASE
 
 func _show_social() -> void:
 	if not _require_session("Entre com email ou use guest dev antes de abrir Social."):
@@ -1802,7 +1808,7 @@ func _base_summary_panel(base: Dictionary, collected: Dictionary) -> Control:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 6)
 	panel.add_child(box)
-	box.add_child(_base_label("Resumo da Base", "text_primary", 17))
+	box.add_child(_base_label("Resumo do Refugio", "text_primary", 17))
 	box.add_child(_base_label("Recursos: %s" % _format_resources(SessionStore.resources), "text_secondary"))
 	var active_jobs := _active_base_jobs(_as_array(base.get("jobs", [])))
 	box.add_child(_base_label("Fila de construcao: %d/%d" % [
@@ -1823,7 +1829,7 @@ func _base_map_panel(structures: Array) -> Control:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 8)
 	panel.add_child(box)
-	box.add_child(_base_label("Mapa da Base", "text_primary", 17))
+	box.add_child(_base_label("Mapa do Refugio", "text_primary", 17))
 	var grid := GridContainer.new()
 	grid.columns = _base_map_columns()
 	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -1846,7 +1852,7 @@ func _base_detail_panel(structures: Array) -> Control:
 	box.add_theme_constant_override("separation", 7)
 	panel.add_child(box)
 	if structure.is_empty():
-		box.add_child(_base_label("Selecione um predio no mapa da Base.", "text_secondary"))
+		box.add_child(_base_label("Selecione um predio no mapa do Refugio.", "text_secondary"))
 		return panel
 
 	var structure_id := str(structure.get("structure_id", ""))
@@ -2518,7 +2524,7 @@ func _shop_effect_text(effect: Dictionary) -> String:
 		return "nenhum efeito persistente"
 	match str(effect.get("type", "")):
 		"construction_slots":
-			return "fila da Base: %s slots" % str(effect.get("value", 0))
+			return "fila do Refugio: %s slots" % str(effect.get("value", 0))
 	return str(effect)
 
 func _format_shop_delta(delta: Dictionary, empty_text: String) -> String:
@@ -2715,7 +2721,7 @@ func _friendly_error_message(code: String, message: String) -> String:
 		"ACCOUNT_ALREADY_CREATED":
 			return "Esta conta ja possui save criado. Sincronize a sessao para carregar o estado."
 		"INSUFFICIENT_RESOURCES":
-			return "Recursos insuficientes para esta acao. Na Base, confira Energia, custo e loja alpha."
+			return "Recursos insuficientes para esta acao. No Refugio, confira Energia, custo e loja alpha."
 		"CONSTRUCTION_QUEUE_FULL":
 			return "Fila de construcao cheia. Aguarde o upgrade ativo terminar antes de iniciar outro."
 		"STRUCTURE_ALREADY_UPGRADING":
@@ -2723,7 +2729,7 @@ func _friendly_error_message(code: String, message: String) -> String:
 		"LEVEL_CAP_REACHED":
 			return "O level do jogador limita o proximo upgrade deste predio."
 		"INVALID_STRUCTURE":
-			return "Predio da Base nao encontrado no contrato atual."
+			return "Predio do Refugio nao encontrado no contrato atual."
 		"USER_NOT_FOUND":
 			return "Usuario nao encontrado. Confirme o username do outro jogador."
 		"INVALID_FRIEND":

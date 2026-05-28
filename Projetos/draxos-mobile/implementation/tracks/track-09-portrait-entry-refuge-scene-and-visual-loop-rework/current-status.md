@@ -40,6 +40,10 @@ Date: 2026-05-28
 - Applied Track 09B Refugio follow-up:
   - removed the runtime altar background and empty top spacer;
   - moved `Caminhos do Refugio` to the top of the Refugio screen.
+- Applied Track 09B Refugio-as-Base follow-up:
+  - removed the separate `Base` hotspot from Refugio;
+  - embedded Refugio management actions and structure panels directly inside `Caminhos do Refugio`;
+  - kept the legacy `base`/`base_management` route only as compatibility, with user-facing labels shifted to Refugio.
 
 ## Guardrails Preserved
 
@@ -67,4 +71,4 @@ Local validation result:
 
 ## Next Step
 
-Manual visual QA in Godot/Android export should focus on the slim Entry auth flow, create-account popup, Refugio Caminhos at the top, Base management in the vertical frame and battle summary ergonomics.
+Manual visual QA in Godot/Android export should focus on the slim Entry auth flow, create-account popup, Refugio Caminhos at the top with management embedded, and battle summary ergonomics.

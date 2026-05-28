@@ -39,7 +39,7 @@ func _check_route_contract() -> void:
 	_expect(AppShellRouteContractScript.normalize("hub") == AppShellRouteContractScript.ROUTE_ENTRY, "legacy hub alias returns Entry root")
 	_expect(AppShellRouteContractScript.normalize("refuge_home") == AppShellRouteContractScript.ROUTE_ENTRY, "legacy refuge_home alias returns Entry")
 	_expect(AppShellRouteContractScript.normalize("refugio") == AppShellRouteContractScript.ROUTE_REFUGE, "refugio alias returns playable Refugio")
-	_expect(AppShellRouteContractScript.normalize("base") == AppShellRouteContractScript.ROUTE_BASE, "base alias returns Base management")
+	_expect(AppShellRouteContractScript.normalize("base") == AppShellRouteContractScript.ROUTE_BASE, "base alias returns legacy Refugio management")
 	_expect(AppShellRouteContractScript.normalize("monetization") == AppShellRouteContractScript.ROUTE_SHOP, "legacy monetization alias returns shop route")
 	_expect(not AppShellRouteContractScript.supports_back(current), "Entry root does not expose Back")
 	_expect(AppShellRouteContractScript.is_first_screen(current), "Entry is the first-screen route")
