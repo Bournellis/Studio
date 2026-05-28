@@ -2,6 +2,7 @@ extends GutTest
 
 const BootScreenScript = preload("res://modes/boot/boot.gd")
 const AppShellRouteContractScript = preload("res://modes/boot/ui/app_shell_route_contract.gd")
+const AppShellErrorContractScript = preload("res://modes/boot/ui/app_shell_error_contract.gd")
 const BaseSurfacePresenterScript = preload("res://modes/boot/surfaces/base_surface_presenter.gd")
 const BattleReplayPresenterScript = preload("res://modes/boot/surfaces/battle_replay_presenter.gd")
 const MobileUiContractScript = preload("res://modes/boot/ui/mobile_ui_contract.gd")
@@ -96,6 +97,33 @@ func test_app_shell_route_contract_manages_back_stack_without_boot_ui() -> void:
 	assert_true(history.is_empty())
 	assert_eq(AppShellRouteContractScript.clear_for_root_return(history), "entry")
 	assert_eq(AppShellRouteContractScript.clear_for_refuge_return(history), "refuge")
+
+func test_app_shell_error_contract_normalizes_known_errors_without_boot_ui() -> void:
+	var nested := {
+		"body": {
+			"error": {
+				"code": "INVALID_PRODUCT",
+				"message": "Raw backend text.",
+			},
+		},
+	}
+	var error_payload := AppShellErrorContractScript.extract_error(nested)
+
+	assert_eq(error_payload.get("code"), "INVALID_PRODUCT")
+	var friendly_message := AppShellErrorContractScript.friendly_message(
+		str(error_payload.get("code", "")),
+		str(error_payload.get("message", ""))
+	)
+	assert_eq(
+		friendly_message,
+		"Produto alpha nao encontrado no catalogo atual."
+	)
+	assert_true(AppShellErrorContractScript.is_network_error("NETWORK_UNAVAILABLE"))
+	assert_false(AppShellErrorContractScript.is_network_error("INVALID_PRODUCT"))
+	assert_eq(
+		AppShellErrorContractScript.friendly_message("UNKNOWN_CODE", "Raw backend text."),
+		"UNKNOWN_CODE: Raw backend text."
+	)
 
 func test_boot_back_stack_returns_nested_routes_to_refugio_root() -> void:
 	var boot = BootScreenScript.new()

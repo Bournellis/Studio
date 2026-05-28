@@ -11,6 +11,7 @@ const SocialSurfacePresenterScript := preload("res://modes/boot/surfaces/social_
 const CompetitionSurfacePresenterScript := preload("res://modes/boot/surfaces/competition_surface_presenter.gd")
 const ShopSurfacePresenterScript := preload("res://modes/boot/surfaces/shop_surface_presenter.gd")
 const AppShellRouteContractScript := preload("res://modes/boot/ui/app_shell_route_contract.gd")
+const AppShellErrorContractScript := preload("res://modes/boot/ui/app_shell_error_contract.gd")
 const MobileUiContractScript := preload("res://modes/boot/ui/mobile_ui_contract.gd")
 
 const ROUTE_ENTRY := AppShellRouteContractScript.ROUTE_ENTRY
@@ -2737,91 +2738,13 @@ func _structure_label(structure_id: String, fallback: String = "") -> String:
 	return structure_id
 
 func _extract_error(result: Dictionary) -> Dictionary:
-	var error_payload := _as_dictionary(result.get("error", {}))
-	if error_payload.is_empty():
-		var body := _as_dictionary(result.get("body", {}))
-		error_payload = _as_dictionary(body.get("error", {}))
-	if error_payload.is_empty():
-		error_payload = {
-			"code": "REQUEST_FAILED",
-			"message": "Acao nao concluida.",
-		}
-	return error_payload
+	return AppShellErrorContractScript.extract_error(result)
 
 func _friendly_error_message(code: String, message: String) -> String:
-	match code:
-		"PROGRESSION_LAB_SAVE_PENDING":
-			return "Save Progression Lab selecionado. Acoes online serao ligadas ao Supabase local na proxima subetapa."
-		"PROGRESSION_LAB_LOCAL_ONLY":
-			return "Save local-only do Progression Lab. Use o seeder com Supabase local para testar acoes online."
-		"PROGRESSION_LAB_SAVE_REQUIRED":
-			return "Selecione o save Progression Lab antes de aplicar um perfil do laboratorio."
-		"PROGRESSION_LAB_SAVE_NOT_FOUND":
-			return "Perfil/milestone do Progression Lab nao encontrado no catalogo do servidor."
-		"INVALID_PROGRESSION_LAB_SAVE":
-			return "O servidor recusou o estado gerado do Progression Lab."
-		"NETWORK_UNAVAILABLE":
-			return "Supabase local indisponivel. Confirme Docker/Supabase local em http://127.0.0.1:54321 e tente sincronizar."
-		"REQUEST_NOT_STARTED":
-			return "Requisicao nao iniciou. Verifique URL/chave local do Supabase nas Project Settings."
-		"CLIENT_MISCONFIGURED":
-			return "Cliente Supabase sem chave publishable configurada."
-		"AUTH_REQUIRES_EMAIL":
-			return "Esta acao exige conta por email/senha. Use Criar conta alpha ou Entrar com email."
-		"AUTH_NOT_ANONYMOUS":
-			return "Esta rota e apenas para guest dev. Use o fluxo de email/senha para a conta alpha."
-		"INVALID_LOGIN_CREDENTIALS":
-			return "Email ou senha invalidos. Confira os dados e tente novamente."
-		"INVALID_USERNAME":
-			return "Username invalido. Use 3 a 24 caracteres: letras minusculas, numeros ou underscore."
-		"USERNAME_TAKEN":
-			return "Este username ja esta em uso. Escolha outro para a conta alpha."
-		"ACCOUNT_ALREADY_CREATED":
-			return "Esta conta ja possui save criado. Sincronize a sessao para carregar o estado."
-		"INSUFFICIENT_RESOURCES":
-			return "Recursos insuficientes para esta acao. No Refugio, confira Energia, custo e loja alpha."
-		"CONSTRUCTION_QUEUE_FULL":
-			return "Fila de construcao cheia. Aguarde o upgrade ativo terminar antes de iniciar outro."
-		"STRUCTURE_ALREADY_UPGRADING":
-			return "Este predio ja esta em upgrade."
-		"LEVEL_CAP_REACHED":
-			return "O level do jogador limita o proximo upgrade deste predio."
-		"INVALID_STRUCTURE":
-			return "Predio do Refugio nao encontrado no contrato atual."
-		"USER_NOT_FOUND":
-			return "Usuario nao encontrado. Confirme o username do outro jogador."
-		"INVALID_FRIEND":
-			return "Voce nao pode adicionar a propria conta como amigo."
-		"INVALID_GUILD_NAME":
-			return "Nome de guilda invalido. Use de 3 a 32 caracteres."
-		"GUILD_NOT_FOUND":
-			return "Guilda nao encontrada. Confira o nome exato com o outro jogador."
-		"GUILD_REQUIRED":
-			return "Entre em uma guilda antes de enviar mensagem no chat."
-		"GUILD_ALREADY_JOINED":
-			return "Esta conta ja participa de uma guilda."
-		"GUILD_FULL":
-			return "Esta guilda esta cheia."
-		"EMPTY_MESSAGE":
-			return "Digite uma mensagem antes de enviar."
-		"CHAT_RATE_LIMITED":
-			return "Aguarde alguns segundos antes de enviar outra mensagem."
-		"PRODUCT_NOT_FOUND":
-			return "Produto alpha nao encontrado no servidor."
-		"INVALID_PRODUCT":
-			return "Produto alpha nao encontrado no catalogo atual."
-		"DAILY_REDEEM_ALREADY_CLAIMED":
-			return "Este redeem diario ja foi resgatado hoje neste save."
-		"ALREADY_OWNED":
-			return "Este produto ja esta ativo neste save."
-		"REWARD_NOT_FOUND":
-			return "Recompensa alpha nao encontrada no servidor."
-		"UNAUTHENTICATED":
-			return "Sessao expirada. Entre com email novamente ou use guest dev."
-	return "%s: %s" % [code, message]
+	return AppShellErrorContractScript.friendly_message(code, message)
 
 func _is_network_error(code: String) -> bool:
-	return code in ["NETWORK_UNAVAILABLE", "REQUEST_NOT_STARTED", "CLIENT_MISCONFIGURED", "INVALID_JSON"]
+	return AppShellErrorContractScript.is_network_error(code)
 
 func _panel_style(bg_token: String, border_token: String) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
