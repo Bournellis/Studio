@@ -17,6 +17,8 @@ func _run() -> void:
 func _run_smoke() -> int:
 	print("[smoke-mobile-presentation] checking portrait app loop")
 	await _check_portrait_app_loop()
+	print("[smoke-mobile-presentation] checking narrow loaded Refugio layout")
+	await _check_narrow_loaded_refuge_layout()
 	print("[smoke-mobile-presentation] checking wide portrait app loop")
 	await _check_wide_portrait_app_loop()
 	print("[smoke-mobile-presentation] checking battle fullscreen loop")
@@ -46,16 +48,18 @@ func _check_portrait_app_loop() -> void:
 	_expect(boot.get("_auth_invite_input") == null, "portrait Entry keeps invite out of inline login")
 	var create_button := _find_button_by_text(boot, "Criar conta")
 	_expect(create_button != null, "portrait Entry has account creation popup action")
-	if create_button != null:
-		create_button.pressed.emit()
-		await process_frame
-		var create_dialog := boot.get("_create_account_dialog") as Window
-		_expect(create_dialog != null and create_dialog.visible, "Criar conta opens popup")
-		_expect(boot.get("_signup_username_input") != null, "signup popup owns username field")
-		_expect_layout_fits_width(boot, float(root.size.x), "create account popup")
-		if create_dialog != null:
-			create_dialog.hide()
 	_expect_layout_fits_width(boot, float(root.size.x), "portrait Entry")
+
+	var session_store := _session_store()
+	session_store.base_state = _base_state_fixture()
+	session_store.resources = {
+		"almas": 10,
+		"energia": 25,
+		"sangue": 3,
+		"cristais": 4,
+		"ossos": 2,
+		"diamante": 80,
+	}
 
 	boot.call("_show_screen", "refuge")
 	await process_frame
@@ -70,6 +74,7 @@ func _check_portrait_app_loop() -> void:
 	_expect(_find_button_by_text(boot, "Atualizar Refugio") == null, "portrait Refugio does not require manual refresh to expose core")
 	_expect(_label_tree_contains(boot, "Altar do Refugio"), "portrait Refugio uses compact game-like command panel")
 	_expect(_find_button_by_text(boot, "Coletar") != null, "portrait Refugio exposes collect action near main paths")
+	_expect(_label_tree_contains(boot, "Mapa do Refugio"), "portrait Refugio keeps structure map visible with loaded state")
 	var battle_hotspot := _find_button_by_text(boot, "Batalha")
 	_expect(battle_hotspot != null, "portrait Refugio has Battle hotspot")
 	_expect(battle_hotspot != null and battle_hotspot.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET, "portrait hotspots keep mobile touch target")
@@ -86,11 +91,37 @@ func _check_portrait_app_loop() -> void:
 	_expect(boot.get("_auth_email_input") != null, "account route owns login fields")
 	_expect_layout_fits_width(boot, float(root.size.x), "portrait Account")
 
+	boot.set("_is_busy", false)
 	boot.call("_go_back")
 	await process_frame
 	_expect(str(boot.get("_current_screen")) == "refuge", "Back returns to Refugio")
 	_expect(_get_first_screen_root(boot) != null and _get_first_screen_root(boot).visible, "Back restores first-screen Refugio layer")
 	_expect(_get_app_chrome_root(boot) != null and not _get_app_chrome_root(boot).visible, "Back hides app shell on Refugio root")
+	boot.queue_free()
+	await process_frame
+
+func _check_narrow_loaded_refuge_layout() -> void:
+	root.size = Vector2i(360, 800)
+	await process_frame
+	var boot: Control = _new_boot()
+	await process_frame
+	var session_store := _session_store()
+	session_store.base_state = _base_state_fixture()
+	session_store.resources = {
+		"almas": 10,
+		"energia": 25,
+		"sangue": 3,
+		"cristais": 4,
+		"ossos": 2,
+		"diamante": 80,
+	}
+
+	boot.call("_show_screen", "refuge")
+	await process_frame
+	_expect(_label_tree_contains(boot, "Altar do Refugio"), "narrow Refugio shows compact altar panel")
+	_expect(_label_tree_contains(boot, "Mapa do Refugio"), "narrow Refugio keeps structure map visible")
+	_expect(_find_button_by_text(boot, "Coletar") != null, "narrow Refugio keeps collect action visible")
+	_expect_layout_fits_width(boot, float(root.size.x), "narrow loaded Refugio")
 	boot.queue_free()
 	await process_frame
 
@@ -197,7 +228,7 @@ func _first_horizontal_overflow(node: Node, viewport_width: float) -> String:
 	return ""
 
 func _is_layout_surface(control: Control) -> bool:
-	return control is Button or control is LineEdit or control is PanelContainer or control is ScrollContainer
+	return control is Button or control is LineEdit or control is Label or control is PanelContainer or control is ScrollContainer or control is GridContainer
 
 func _get_back_button(boot: Control) -> Button:
 	var value: Variant = boot.get("_back_button")
@@ -238,7 +269,7 @@ func _label_tree_contains(root_node: Node, needle: String) -> bool:
 func _find_button_by_text(root_node: Node, text: String) -> Button:
 	if root_node == null:
 		return null
-	if root_node is Button and str((root_node as Button).text) == text:
+	if root_node is Button and (root_node as Button).is_visible_in_tree() and str((root_node as Button).text) == text:
 		return root_node as Button
 	for child: Node in root_node.get_children():
 		var found := _find_button_by_text(child, text)

@@ -163,7 +163,7 @@ static func _refuge_empty_panel(host: Node) -> Control:
 	box.add_child(_base_label(host, "Altar do Refugio", "text_primary", 18))
 	box.add_child(_base_label(host, _empty_refuge_body_text(), "text_secondary"))
 	var actions := GridContainer.new()
-	actions.columns = 2
+	actions.columns = _refuge_action_columns(host)
 	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	actions.add_theme_constant_override("h_separation", 8)
 	actions.add_theme_constant_override("v_separation", 8)
@@ -180,18 +180,16 @@ static func _refuge_command_panel(host: Node, base: Dictionary, collected: Dicti
 	panel.add_child(box)
 	box.add_child(_base_label(host, "Altar do Refugio", "text_primary", 18))
 
-	var grid := GridContainer.new()
-	grid.columns = 2
-	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	grid.add_theme_constant_override("h_separation", 8)
-	grid.add_theme_constant_override("v_separation", 5)
-	box.add_child(grid)
-	_add_refuge_status_row(host, grid, "Coleta", _refuge_collect_status(routine, collected), "status_success" if bool(routine.get("has_collect_ready", false)) else "text_secondary")
-	_add_refuge_status_row(host, grid, "Fila", _refuge_queue_status(routine), "status_success" if int(routine.get("free_slots", 0)) > 0 else "status_warning")
-	_add_refuge_status_row(host, grid, "Proximo", _refuge_upgrade_status(routine), "status_success" if bool(routine.get("next_upgrade_ready", false)) else "text_secondary")
+	var status_box := VBoxContainer.new()
+	status_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	status_box.add_theme_constant_override("separation", 3)
+	box.add_child(status_box)
+	_add_refuge_status_line(host, status_box, "Coleta", _refuge_collect_status(routine, collected), "status_success" if bool(routine.get("has_collect_ready", false)) else "text_secondary")
+	_add_refuge_status_line(host, status_box, "Fila", _refuge_queue_status(routine), "status_success" if int(routine.get("free_slots", 0)) > 0 else "status_warning")
+	_add_refuge_status_line(host, status_box, "Proximo", _refuge_upgrade_status(routine), "status_success" if bool(routine.get("next_upgrade_ready", false)) else "text_secondary")
 
 	var actions := GridContainer.new()
-	actions.columns = 2
+	actions.columns = _refuge_action_columns(host)
 	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	actions.add_theme_constant_override("h_separation", 8)
 	actions.add_theme_constant_override("v_separation", 8)
@@ -200,13 +198,10 @@ static func _refuge_command_panel(host: Node, base: Dictionary, collected: Dicti
 	actions.add_child(_embedded_action_button(host, "Energia", "buy_energy_pack_alpha", "Gastar 80 Diamantes para comprar 80 Energia no save ativo?"))
 	return panel
 
-static func _add_refuge_status_row(host: Node, grid: GridContainer, title: String, value: String, value_color: String) -> void:
-	var title_label := _base_label(host, title, "text_primary")
-	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	grid.add_child(title_label)
-	var value_label := _base_label(host, value, value_color)
-	value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	grid.add_child(value_label)
+static func _add_refuge_status_line(host: Node, box: VBoxContainer, title: String, value: String, value_color: String) -> void:
+	var label := _base_label(host, "%s: %s" % [title, value], value_color)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	box.add_child(label)
 
 static func _refuge_collect_status(routine: Dictionary, collected: Dictionary) -> String:
 	if bool(routine.get("has_collect_ready", false)):
@@ -223,7 +218,8 @@ static func _refuge_queue_status(routine: Dictionary) -> String:
 	]
 
 static func _refuge_upgrade_status(routine: Dictionary) -> String:
-	return _strip_after_separator(str(routine.get("next_upgrade_text", "")))
+	var status := _strip_after_separator(str(routine.get("next_upgrade_text", "")))
+	return "Sem upgrade" if status == "" else status
 
 static func _base_summary_panel(host: Node, base: Dictionary, collected: Dictionary) -> Control:
 	var panel := _base_panel(host)
@@ -344,7 +340,7 @@ static func _base_structure_button(host: Node, structure: Dictionary) -> Button:
 		_base_next_level_text(structure),
 		_base_short_status(structure),
 	]
-	button.custom_minimum_size = Vector2(132, 96) if _compact_layout(host) else Vector2(170, 112)
+	button.custom_minimum_size = Vector2(0, 96) if _compact_layout(host) else Vector2(0, 112)
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	button.tooltip_text = _base_structure_tooltip(structure)
 	button.add_theme_stylebox_override("normal", _base_structure_card_style(structure_id, selected))
@@ -732,6 +728,9 @@ static func _compact_layout(host: Node) -> bool:
 
 static func _is_refuge_screen(host: Node) -> bool:
 	return str(host.get("_current_screen")) == "refuge"
+
+static func _refuge_action_columns(host: Node) -> int:
+	return 1 if _compact_layout(host) else 2
 
 static func _base_map_columns(host: Node) -> int:
 	return int(host.call("_base_map_columns"))

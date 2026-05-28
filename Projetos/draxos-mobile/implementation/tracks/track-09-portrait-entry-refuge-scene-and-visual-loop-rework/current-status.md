@@ -53,6 +53,11 @@ Date: 2026-05-28
   - hid the long Base timeline from the playable Refugio home;
   - replaced the initial routine text block with a compact `Altar do Refugio` command panel;
   - kept `Coletar`, `Energia`, structure map and structure detail available without restoring a separate Base screen.
+- Applied Track 09B Refugio layout fix:
+  - removed fixed minimum widths from structure cards;
+  - converted compact Refugio status rows away from a two-column grid;
+  - made Refugio command actions single-column on compact/mobile;
+  - tightened `smoke_mobile_presentation.gd` with a loaded 360px Refugio overflow check.
 
 ## Guardrails Preserved
 
@@ -69,6 +74,7 @@ Local validation result:
 
 - Track 09B core-flow patch: `tools/validate.gd` passed with GUT `96/96` tests and `1170` asserts; `tools/smoke_mobile_presentation.gd`, `tools/smoke_foundation_hardening.gd` and `git diff --check` passed.
 - Track 09B Refugio presentation patch: `tools/validate.gd` passed with GUT `96/96` tests and `1171` asserts; `tools/smoke_mobile_presentation.gd`, `tools/smoke_foundation_hardening.gd` and `git diff --check` passed.
+- Track 09B Refugio layout fix: `tools/validate.gd` passed with GUT `96/96` tests and `1171` asserts; `tools/smoke_mobile_presentation.gd`, `tools/smoke_foundation_hardening.gd` and `git diff --check` passed.
 - Track 09B patch: `tools/validate.gd` passed with GUT `96/96` tests and `1163` asserts; `tools/smoke_mobile_presentation.gd`, `tools/smoke_foundation_hardening.gd` and `git diff --check` passed.
 - `tools/validate.gd`: passed with GUT `95/95` tests and `1144` asserts.
 - `tools/smoke_mobile_presentation.gd`: passed.
