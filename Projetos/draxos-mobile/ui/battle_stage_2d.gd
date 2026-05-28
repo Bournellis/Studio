@@ -101,8 +101,8 @@ func show_empty_state(message: String) -> void:
 	_last_animated_key = ""
 	_empty_label.text = message
 	_empty_label.visible = true
-	_event_label.text = "Aguardando battle_log_v1"
-	_event_icon.configure("...", _token_color("placeholder"), "Palco de batalha vazio. Quando um replay carregar, este icone mostra o evento atual recebido do battle_log_v1.")
+	_event_label.text = "Aguardando batalha"
+	_event_icon.configure("...", _token_color("placeholder"), "Palco de batalha vazio. Quando um replay carregar, este icone mostra o lance atual.")
 	_render_dynamic_state()
 
 func render_snapshot(side_state: Dictionary, latest_event: Dictionary, event_index: int, event_count: int, animate_event: bool = false, replay_time: float = -1.0) -> void:
@@ -233,7 +233,7 @@ func _ensure_ui() -> void:
 	_event_icon.custom_minimum_size = Vector2(42, 42)
 	event_row.add_child(_event_icon)
 	_bind_stage_tooltip(_event_icon)
-	_event_label = _stage_label("Aguardando battle_log_v1", 13, _token_color("text_primary"))
+	_event_label = _stage_label("Aguardando batalha", 13, _token_color("text_primary"))
 	_event_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_event_label.custom_minimum_size = Vector2(240, 42)
 	event_row.add_child(_event_label)
@@ -277,19 +277,21 @@ func _layout_nodes() -> void:
 		return
 	var stage_size := _stage_size()
 	var actor_size := Vector2(138, min(210.0, max(176.0, stage_size.y * 0.56)))
+	var name_label_width: float = min(164.0, max(132.0, (stage_size.x - 56.0) * 0.5))
 	for side: String in SIDES:
 		var center := _actor_center(side)
-		var actor = _actors[side]
+		var actor: Control = _actors[side]
 		actor.size = actor_size
 		actor.position = center - actor_size * Vector2(0.5, 0.62)
 
 		var name_label: Label = _name_labels[side]
-		name_label.size = Vector2(210, 24)
-		name_label.position = Vector2(_clamped_stage_x(center.x - name_label.size.x * 0.5, name_label.size.x, stage_size.x), actor.position.y - 28.0)
+		name_label.size = Vector2(name_label_width, 42)
+		var label_x: float = 20.0 if side == SIDE_PLAYER else stage_size.x - name_label_width - 20.0
+		name_label.position = Vector2(label_x, actor.position.y - 58.0)
 
 		var status_row: Control = _status_rows[side]
-		status_row.size = Vector2(260, 44)
-		status_row.position = Vector2(_clamped_stage_x(center.x - status_row.size.x * 0.5, status_row.size.x, stage_size.x), max(10.0, actor.position.y - 78.0))
+		status_row.size = Vector2(name_label_width, 36)
+		status_row.position = Vector2(label_x, max(10.0, actor.position.y - 98.0))
 
 		var cooldown_row: Control = _cooldown_rows[side]
 		cooldown_row.size = Vector2(260, 44)
@@ -360,11 +362,10 @@ func _render_dynamic_state() -> void:
 			summons.size() + (1 if familiar != "" else 0)
 		)
 		var name_label: Label = _name_labels[side]
-		name_label.text = "%s  HP %s/%s (%s%%)" % [
+		name_label.text = "%s\nHP %s/%s" % [
 			display_name,
 			_number_text(float(side_data.get("hp", 0.0))),
 			_number_text(float(side_data.get("max_hp", 1.0))),
-			_hp_percent_text(side_data),
 		]
 		_set_stage_tooltip(actor, actor.tooltip_text)
 		_set_stage_tooltip(name_label, _stage_tooltip_text(actor))
@@ -480,7 +481,7 @@ func _render_slots() -> void:
 
 func _render_event_panel() -> void:
 	if _latest_event.is_empty():
-		var empty_tooltip := "Replay aguardando o proximo evento do battle_log_v1."
+		var empty_tooltip := "Replay aguardando o proximo lance."
 		_event_icon.configure("...", _token_color("placeholder"), empty_tooltip)
 		_set_stage_tooltip(_event_icon, empty_tooltip)
 		_event_label.text = "Evento %d/%d | aguardando replay" % [_event_index, _event_count]
@@ -505,9 +506,9 @@ func _render_event_panel() -> void:
 func _render_readout() -> void:
 	if _readout_label == null:
 		return
-	var readout_tooltip := "Resumo rapido da batalha\nMostra progresso do replay, tempo atual, vida percentual, status, cooldowns e aliados visiveis de cada lado.\nTodos os valores sao derivados do battle_log_v1 recebido; o cliente apresenta o replay e nao calcula resultado."
+	var readout_tooltip := "Resumo rapido da batalha\nMostra progresso do replay, tempo atual, vida percentual, status, recargas e aliados visiveis de cada lado."
 	if _side_state.is_empty() and _latest_event.is_empty():
-		_readout_label.text = "Replay 0/0 | aguardando battle_log_v1\nHP, status, cooldowns e aliados aparecem quando uma batalha carregar."
+		_readout_label.text = "Replay 0/0 | aguardando batalha\nHP, status, recargas e aliados aparecem quando uma batalha carregar."
 		_set_stage_tooltip(_readout_label, readout_tooltip)
 		_set_stage_tooltip(_readout_panel, readout_tooltip)
 		_refresh_stage_tooltip(_readout_label)
@@ -515,7 +516,7 @@ func _render_readout() -> void:
 		return
 	var player_data := _as_dictionary(_side_state.get(SIDE_PLAYER, {}))
 	var opponent_data := _as_dictionary(_side_state.get(SIDE_OPPONENT, {}))
-	var readout_text := "Replay %d/%d | Tempo %ss | %s x %s\nStatus %d x %d | Cooldowns %d x %d | Aliados %d x %d" % [
+	var readout_text := "Replay %d/%d | Tempo %ss | %s x %s\nStatus %d x %d | Recargas %d x %d | Aliados %d x %d" % [
 		_event_index,
 		_event_count,
 		_number_text(_current_replay_time()),
@@ -558,7 +559,7 @@ func _visible_ally_count(side_data: Dictionary) -> int:
 func _empty_row_tooltip(row_kind: String) -> String:
 	match row_kind:
 		"cooldown":
-			return "Cooldowns\nNenhuma spell esta em recarga agora. Quando o simulador emitir cooldown_start, o icone mostra o tempo restante ate ready_at."
+			return "Recargas\nNenhuma habilidade esta em recarga agora. Quando uma habilidade entrar em espera, o icone mostra o tempo restante."
 		"status":
 			return "Status e buffs\nNenhum buff, debuff, DoT ou resistencia esta ativo neste lado da batalha."
 	return "Nenhum marcador ativo nesta linha."
@@ -578,7 +579,7 @@ func _status_tooltip(status_id: String, value: Variant) -> String:
 	return "Status ativo: %s\n%s" % [_humanize_id(status_id), "\n".join(details)]
 
 func _cooldown_tooltip(spell_id: String, ready_at: float, remaining: float) -> String:
-	return "Cooldown de spell: %s\nA spell foi usada e fica indisponivel ate o tempo do replay chegar ao ready_at.\nTempo atual do replay: %ss.\nRestante: %ss.\nPronta em: %ss.\nO aro escuro mostra a recarga visual; a regra real vem do battle_log_v1." % [
+	return "Recarga de habilidade: %s\nA habilidade foi usada e fica indisponivel ate o tempo indicado.\nTempo atual do replay: %ss.\nRestante: %ss.\nPronta em: %ss." % [
 		_humanize_id(spell_id),
 		_number_text(_current_replay_time()),
 		_number_text(remaining),
@@ -619,7 +620,7 @@ func _slot_entry_tooltip(entry: Dictionary, side: String, slot: String) -> Strin
 		title = "Familiar"
 		behavior = "Companheiro equipado do combatente. Ele aparece atras e anima quando o log receber pet_attack."
 	elif kind == "summon":
-		title = "Summon"
+		title = "Invocacao"
 		behavior = "Criatura invocada por spell. Ela ocupa frente, meio ou tras e anima quando o log receber summon_attack."
 	return "%s: %s\nLado: %s | Posicao: %s\n%s\nO cliente nao calcula ataques; ele apenas apresenta eventos recebidos." % [
 		title,
@@ -633,7 +634,7 @@ func _event_tooltip(event: Dictionary) -> String:
 	var event_type := str(event.get("type", ""))
 	var lines := PackedStringArray()
 	lines.append("%s (%s)" % [_event_title(event_type), event_type])
-	lines.append("Evento %d/%d em %ss do battle_log_v1." % [
+	lines.append("Evento %d/%d em %ss do replay." % [
 		_event_index,
 		_event_count,
 		_number_text(float(event.get("t", 0.0))),
@@ -649,7 +650,7 @@ func _event_tooltip(event: Dictionary) -> String:
 		"weapon_attack":
 			lines.append("Ataque basico do combatente. Mostra dano e HP final recebidos do servidor.")
 		"spell_cast":
-			lines.append("Spell conjurada: %s. O icone resume dano, tipo e alvo do cast." % str(event.get("spell_id", "spell")))
+			lines.append("Habilidade conjurada: %s. O icone resume dano, tipo e alvo." % str(event.get("spell_id", "spell")))
 		"dot_apply", "status_apply", "resistance_apply":
 			lines.append("Aplica status/buff/debuff: %s." % str(event.get("status_id", event.get("spell_id", event_type))))
 		"dot_tick":
@@ -663,9 +664,9 @@ func _event_tooltip(event: Dictionary) -> String:
 		"pet_attack":
 			lines.append("Familiar ataca. O familiar e visual; resultado ja veio do simulador.")
 		"summon_spawn":
-			lines.append("Summon aparece no slot visual de seu lado da arena.")
+			lines.append("Invocacao aparece no espaco visual de seu lado da arena.")
 		"summon_attack":
-			lines.append("Summon ataca a partir do slot onde esta representado.")
+			lines.append("Invocacao ataca a partir do espaco onde esta representada.")
 		"heal":
 			lines.append("Cura aplicada ao alvo, com HP final informado no evento.")
 		"barrier_gain", "barrier_absorb", "passive_apply":
@@ -692,7 +693,7 @@ func _event_title(event_type: String) -> String:
 		"weapon_attack":
 			return "Ataque basico"
 		"spell_cast":
-			return "Spell conjurada"
+			return "Habilidade conjurada"
 		"dot_apply":
 			return "DoT aplicado"
 		"dot_tick":
@@ -710,11 +711,11 @@ func _event_title(event_type: String) -> String:
 		"resistance_apply":
 			return "Resistencia aplicada"
 		"summon_spawn":
-			return "Summon invocado"
+			return "Invocacao"
 		"summon_attack":
-			return "Summon atacou"
+			return "Invocacao atacou"
 		"summon_expire":
-			return "Summon saiu"
+			return "Invocacao saiu"
 		"pet_attack":
 			return "Familiar atacou"
 		"heal":
@@ -722,9 +723,9 @@ func _event_title(event_type: String) -> String:
 		"battle_start":
 			return "Inicio da batalha"
 		"cooldown_start":
-			return "Cooldown iniciado"
+			return "Recarga iniciada"
 		"cooldown_ready":
-			return "Spell pronta"
+			return "Habilidade pronta"
 		"mana_change":
 			return "Mana alterada"
 		"anti_stall":
@@ -1076,11 +1077,11 @@ func _effect_feedback_text(event: Dictionary) -> String:
 		"weapon_attack":
 			return _feedback_with_suffix("Ataque basico", _damage_suffix(event))
 		"spell_cast":
-			return _feedback_with_suffix("Spell: %s" % _humanize_id(str(event.get("spell_id", "spell"))), _damage_suffix(event))
+			return _feedback_with_suffix("Habilidade: %s" % _humanize_id(str(event.get("spell_id", "spell"))), _damage_suffix(event))
 		"dot_tick":
 			return _feedback_with_suffix("Dano periodico: %s" % _humanize_id(str(event.get("status_id", "dot"))), _damage_suffix(event))
 		"summon_attack":
-			return _feedback_with_suffix("Summon: %s" % _humanize_id(str(event.get("source", "summon"))), _damage_suffix(event))
+			return _feedback_with_suffix("Invocacao: %s" % _humanize_id(str(event.get("source", "summon"))), _damage_suffix(event))
 		"pet_attack":
 			return _feedback_with_suffix("Familiar: %s" % _humanize_id(str(event.get("pet_id", "familiar"))), _damage_suffix(event))
 		"heal":
@@ -1102,15 +1103,15 @@ func _effect_feedback_text(event: Dictionary) -> String:
 		"cooldown_start":
 			var ready_at: float = float(event.get("ready_at", 0.0))
 			var remaining: float = maxf(0.0, ready_at - float(event.get("t", _current_replay_time())))
-			return "Cooldown: %s (%ss)" % [_humanize_id(str(event.get("spell_id", "spell"))), _number_text(remaining)]
+			return "Recarga: %s (%ss)" % [_humanize_id(str(event.get("spell_id", "spell"))), _number_text(remaining)]
 		"cooldown_ready":
-			return "Spell pronta: %s" % _humanize_id(str(event.get("spell_id", "spell")))
+			return "Habilidade pronta: %s" % _humanize_id(str(event.get("spell_id", "spell")))
 		"mana_change":
 			return "Mana: %s" % _number_text(float(event.get("mana_after", 0.0)))
 		"summon_spawn":
-			return "Summon invocado: %s" % _humanize_id(str(event.get("target", "summon")))
+			return "Invocacao: %s" % _humanize_id(str(event.get("target", "summon")))
 		"summon_expire":
-			return "Summon saiu: %s" % _humanize_id(str(event.get("source", event.get("target", "summon"))))
+			return "Invocacao saiu: %s" % _humanize_id(str(event.get("source", event.get("target", "summon"))))
 		"anti_stall":
 			return "Anti-stall"
 		"reward_preview":

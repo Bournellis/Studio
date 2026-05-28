@@ -9,6 +9,11 @@ const CATEGORY_IDS: Dictionary = {
 		"icon_result",
 		"placeholder_card"
 	],
+	"ux_overhaul": [
+		"ux_entry_necromante",
+		"ux_refuge_ship_hub",
+		"ux_battle_duel_stage"
+	],
 	"portraits": [
 		"portrait_draxos_mage",
 		"portrait_training_bot"
@@ -62,6 +67,9 @@ const PATHS: Dictionary = {
 	"icon_guest": "res://assets/ui/icon_guest.png",
 	"icon_battle": "res://assets/ui/icon_battle.png",
 	"icon_result": "res://assets/ui/icon_result.png",
+	"ux_entry_necromante": "res://assets/ux_overhaul/entry_necromante.png",
+	"ux_refuge_ship_hub": "res://assets/ux_overhaul/refuge_ship_hub.png",
+	"ux_battle_duel_stage": "res://assets/ux_overhaul/battle_duel_stage.png",
 	"portrait_draxos_mage": "res://assets/portraits/portrait_draxos_mage.png",
 	"portrait_training_bot": "res://assets/portraits/portrait_training_bot.png",
 	"placeholder_card": "res://assets/ui/placeholder_card.png",

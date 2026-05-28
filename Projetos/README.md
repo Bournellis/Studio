@@ -18,8 +18,8 @@ This directory contains active, conceptual and paused projects for the studio.
 
 ## Implementacao - Internal Alpha
 
-- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 00-13 are integrated and Track 14 is reorganizing agent operations on top of that hardening baseline.
-  - Priority/status: `P2_IMPLEMENTACAO - Track 14 TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`
+- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 00-14 are integrated and Track 15 is overhauling the Android portrait UX into an internal premium app without gameplay/backend/economy changes.
+  - Priority/status: `P2_IMPLEMENTACAO - Track 15 TRACK_15_MOBILE_UX_OVERHAUL_ACTIVE`
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Agent manual: `draxos-mobile/docs/agent-operating-manual.md`
   - Documentation index: `draxos-mobile/docs/documentation-index.md`
@@ -29,7 +29,8 @@ This directory contains active, conceptual and paused projects for the studio.
   - GDD: `draxos-mobile/docs/game-design-document.md`
   - Design pending: `draxos-mobile/docs/design-pending.md`
   - Contracts: `draxos-mobile/docs/contracts/`
-  - Active track: `draxos-mobile/implementation/tracks/track-14-agent-ops-foundation/`
+  - Active track: `draxos-mobile/implementation/tracks/track-15-mobile-ux-overhaul/`
+  - Agent foundation: `draxos-mobile/implementation/tracks/track-14-agent-ops-foundation/`
   - Release safety baseline: `draxos-mobile/implementation/tracks/track-13-validation-release-safety/`
   - Manual walkthrough gate: `draxos-mobile/docs/track-13-manual-walkthrough-gate.md`
   - Internal Alpha handoff: `draxos-mobile/docs/internal-alpha-v0-handoff.md`
@@ -37,7 +38,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Progression Lab: `draxos-mobile/docs/progression-lab/README.md`
   - Design archive: `_conceitos/mobile-universe/`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: finish Track 14 agent operations foundation; then execute the Track 13 manual walkthrough on Android, Windows, Web preview and Web Access-protected before new features, tuning, account/save migration or remote publication.
+  - Current next step: review the Track 15 Android portrait UX checkpoint for Entry, Refugio, Battle/Summary, Base and Shop; then continue focused polish or execute the Track 13 manual walkthrough before new gameplay, tuning, account/save migration or remote publication.
 
 ## Arquivo De Design
 

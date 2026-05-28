@@ -70,7 +70,7 @@ Antes de qualquer publicacao futura:
 - `tools\validate_foundation.ps1 -Profile Full` verde.
 - `tools\check_release_safety.ps1` verde.
 - `tools\check_track13_readiness.ps1` verde.
-- `tools\check_agent_ops_foundation.ps1` verde enquanto Track 14 estiver ativa.
+- `tools\check_agent_ops_foundation.ps1` verde quando alterar a fundacao operacional de agentes.
 - `publish_internal_alpha.ps1 -Mode Plan` revisado.
 - `release_manifest_smoke.ts` verde contra o alvo de release.
 - `release_artifacts_remote_smoke.ts` verde somente depois que artefatos ja existirem no remoto.

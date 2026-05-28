@@ -15,7 +15,7 @@ const DEFAULT_BATTLE_MODE := FIRST_SLICE_MODE
 
 static func boot_actions() -> PackedStringArray:
 	return PackedStringArray([
-		"Criar conta alpha",
+		"Criar conta",
 		"Entrar com email",
 		"Entrar como guest dev",
 		"Sincronizar sessao",
@@ -36,9 +36,9 @@ static func boot_actions() -> PackedStringArray:
 		"Preview matchmaking",
 		"Ver ranking",
 		"Ver loja",
-		"Comprar premium alpha",
+		"Comprar premium",
 		"Receber Diamante",
-		"Claim diario"
+		"Resgate diario"
 	])
 
 static func unchecked_update_status(manifest_url: String = "") -> Dictionary:
@@ -152,7 +152,7 @@ static func _update_detail(status: String, manifest: Dictionary, requires_save_r
 			return "Esta versao nao pode executar acoes online. Baixe a build nova pelo portal.%s %s" % [reset_text, note]
 		"recommended":
 			return "Existe build mais nova no portal, mas esta versao ainda pode jogar.%s %s" % [reset_text, note]
-	return "Voce esta na versao esperada para o canal alpha. %s" % note
+	return "Voce esta na versao esperada para este canal. %s" % note
 
 static func _version_parts(version: String) -> Array[int]:
 	var result: Array[int] = []

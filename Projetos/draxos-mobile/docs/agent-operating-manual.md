@@ -17,7 +17,7 @@ Read live docs in this order:
 4. `docs/product-vision.md` - local long-term product canon.
 5. `docs/game-design-document.md` - authoritative implementation design.
 6. `docs/design-pending.md` - only live register of unresolved design decisions.
-7. `implementation/tracks/track-14-agent-ops-foundation/` - current agent foundation work.
+7. `implementation/tracks/track-15-mobile-ux-overhaul/` - current mobile UX overhaul work.
 
 If a historical track conflicts with these docs, the live docs win. If local product design conflicts with shared lore in `../../canon/`, escalate instead of silently choosing.
 
@@ -32,6 +32,7 @@ The hardening base is `Track 13 - Foundation Validation And Release Safety`, del
 - `tools/validate_foundation.ps1`.
 - Safe release modes in `tools/publish_internal_alpha.ps1`.
 - Release safety/readiness checks.
+- Track 14 agent operating manual, documentation index and drift guards.
 
 Do not reimplement those systems unless validation proves they regressed.
 
@@ -61,7 +62,7 @@ Register work in `../../08_Coordenacao_Agentes/Kanban/Doing/` or a handoff note.
 - validation plan;
 - next handoff point.
 
-For Track 14, the only DraxosMobile Doing card should be the agent-ops foundation card. Historical DraxosMobile cards belong in `Kanban/Done/`.
+For Track 15, the expected DraxosMobile Doing card is the mobile UX overhaul card. Historical DraxosMobile cards belong in `Kanban/Done/`.
 
 ## Read Order By Task
 
@@ -115,6 +116,7 @@ Never run remote mutation modes as a drive-by validation step.
 Do not start these without explicit user direction and a fresh track/package:
 
 - feature gameplay after Track 13 without manual walkthrough results;
+- expanded UX polish after Track 15 without human review of the current Android portrait checkpoint;
 - numeric tuning without human playthrough and Progression Lab evidence;
 - account/save migration from `players.save_type` to `account_profiles/game_saves`;
 - iOS or mobile browser support;

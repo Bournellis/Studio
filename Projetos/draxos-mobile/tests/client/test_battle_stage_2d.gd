@@ -24,11 +24,11 @@ func test_battle_stage_2d_tooltips_remain_available_during_effects() -> void:
 	var tooltips := Dictionary(snapshot.get("tooltips", {}))
 	assert_true(stage.custom_minimum_size.x <= 360.0)
 	assert_true(int(snapshot.get("effect_count", 0)) > 0)
-	assert_string_contains(str(tooltips.get("event", "")), "Spell conjurada")
+	assert_string_contains(str(tooltips.get("event", "")), "Habilidade conjurada")
 	assert_string_contains(_joined_tooltips(Array(tooltips.get("slots", []))), "Familiar")
-	assert_string_contains(_joined_tooltips(Array(tooltips.get("slots", []))), "Summon")
+	assert_string_contains(_joined_tooltips(Array(tooltips.get("slots", []))), "Invocacao")
 	assert_string_contains(_joined_tooltips(Array(tooltips.get("status", []))), "Status ativo")
-	assert_string_contains(_joined_tooltips(Array(tooltips.get("cooldowns", []))), "Cooldown de spell")
+	assert_string_contains(_joined_tooltips(Array(tooltips.get("cooldowns", []))), "Recarga de habilidade")
 	assert_false(str(tooltips).to_lower().contains("placeholder"))
 	assert_false(stage.debug_has_native_tooltips(), str(stage.debug_native_tooltip_paths()))
 
@@ -85,12 +85,12 @@ func test_battle_stage_2d_exposes_compact_replay_readout() -> void:
 	assert_string_contains(readout, "Draxos Teste HP 90%")
 	assert_string_contains(readout, "Bot Teste HP 72%")
 	assert_string_contains(readout, "Status 1 x 1")
-	assert_string_contains(readout, "Cooldowns 1 x 0")
+	assert_string_contains(readout, "Recargas 1 x 0")
 	assert_string_contains(readout, "Aliados 3 x 0")
-	assert_string_contains(readout_tooltip, "battle_log_v1")
+	assert_string_contains(readout_tooltip, "recargas e aliados")
 	assert_string_contains(str(tooltips.get("event", "")), "Fonte: Draxos")
 	assert_string_contains(str(tooltips.get("event", "")), "Alvo: Oponente")
-	assert_string_contains(str(tooltips.get("event", "")), "Leitura rapida: Spell: Marca Brasa -27")
+	assert_string_contains(str(tooltips.get("event", "")), "Leitura rapida: Habilidade: Marca Brasa -27")
 
 func test_battle_stage_2d_effect_feedback_uses_full_names() -> void:
 	var stage = BattleStage2DScript.new()
@@ -116,7 +116,7 @@ func test_battle_stage_2d_empty_state_is_stable() -> void:
 	var snapshot: Dictionary = stage.debug_snapshot()
 	assert_eq(int(snapshot.get("event_count", -1)), 0)
 	assert_eq(str(snapshot.get("latest_event_type", "x")), "")
-	assert_string_contains(str(snapshot.get("readout", "")), "aguardando battle_log_v1")
+	assert_string_contains(str(snapshot.get("readout", "")), "aguardando batalha")
 	assert_false(str(snapshot.get("readout", "")).contains("HP 0%"))
 
 func _side_state() -> Dictionary:

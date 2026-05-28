@@ -8,27 +8,27 @@ const RESOURCE_KEYS := ["almas", "energia", "sangue", "cristais", "ossos", "diam
 const SHOP_REDEEM_PRODUCTS := [
 	{
 		"id": "alpha_redeem_small",
-		"label": "Redeem pequeno",
+		"label": "Resgatar pequeno",
 		"confirm": "Resgatar o pacote diario pequeno de Diamante neste save?",
 		"tooltip": "Pacote diario pequeno: entrega Diamante para testar compras leves no save ativo. Reseta a meia-noite de Sao Paulo.",
 	},
 	{
 		"id": "alpha_redeem_medium",
-		"label": "Redeem medio",
+		"label": "Resgatar medio",
 		"confirm": "Resgatar o pacote diario medio de Diamante neste save?",
 		"tooltip": "Pacote diario medio: entrega Diamante para comprar alguns recursos e acelerar um teste curto.",
 	},
 	{
 		"id": "alpha_redeem_large",
-		"label": "Redeem grande",
+		"label": "Resgatar grande",
 		"confirm": "Resgatar o pacote diario grande de Diamante neste save?",
 		"tooltip": "Pacote diario grande: entrega Diamante para testar compras maiores sem resetar o save.",
 	},
 	{
 		"id": "alpha_redeem_premium",
-		"label": "Redeem premium",
+		"label": "Resgatar premium",
 		"confirm": "Resgatar o pacote diario premium de Diamante neste save?",
-		"tooltip": "Pacote diario premium: entrega Diamante suficiente para Battle Pass, fila dupla e conveniencias alpha.",
+		"tooltip": "Pacote diario premium: entrega Diamante suficiente para Battle Pass, fila dupla e conveniencias.",
 	},
 ]
 
@@ -36,7 +36,7 @@ const SHOP_PURCHASE_PRODUCTS := [
 	{
 		"id": "alpha_battle_pass_premium",
 		"label": "Comprar Battle Pass",
-		"confirm": "Comprar a trilha premium do Battle Pass alpha com Diamante?",
+		"confirm": "Comprar a trilha premium do Battle Pass com Diamante?",
 		"tooltip": "Libera recompensas premium do Battle Pass neste save. Nao pode ser comprado duas vezes.",
 	},
 	{
@@ -54,16 +54,16 @@ const SHOP_PURCHASE_PRODUCTS := [
 	{
 		"id": "alpha_resource_pack_medium",
 		"label": "Comprar recursos",
-		"confirm": "Gastar Diamante para comprar o pacote de recursos alpha?",
+		"confirm": "Gastar Diamante para comprar o pacote de recursos?",
 		"tooltip": "Converte Diamante em Almas, Energia, Sangue, Cristais e Ossos para simular progresso comprado.",
 	},
 ]
 
 static func render(host: Node) -> void:
-	_add_body_text(host, "Loja alpha funcional: redeems diarios de Diamante, compras de progresso, Battle Pass e conveniencias por save.")
+	_add_body_text(host, "Loja: resgate Diamante diario, compre recursos e destrave conveniencias para o save atual.")
 	var refresh_button := _add_action_button(host, "Atualizar loja", AppShellActionContractScript.ACTION_SHOW_SHOP)
 	refresh_button.tooltip_text = "Busca saldo, produtos, resgates diarios e recompensas atuais no servidor."
-	_add_section_label(host, "Redeems diarios")
+	_add_section_label(host, "Resgates diarios")
 	for spec: Dictionary in SHOP_REDEEM_PRODUCTS:
 		var redeem_button := _add_action_button(
 			host,
@@ -72,7 +72,7 @@ static func render(host: Node) -> void:
 			str(spec.get("confirm", ""))
 		)
 		redeem_button.tooltip_text = str(spec.get("tooltip", ""))
-	_add_section_label(host, "Compras alpha")
+	_add_section_label(host, "Compras")
 	for spec: Dictionary in SHOP_PURCHASE_PRODUCTS:
 		var product_button := _add_action_button(
 			host,
@@ -84,12 +84,14 @@ static func render(host: Node) -> void:
 	_add_section_label(host, "Recompensas")
 	var daily_button := _add_action_button(
 		host,
-		"Claim coleta diaria",
+		"Resgatar coleta diaria",
 		AppShellActionContractScript.claim_reward_action(AppShellActionContractScript.REWARD_DAILY_COLLECT_BASE),
 		"Resgatar a recompensa diaria de coleta do Refugio?"
 	)
-	daily_button.tooltip_text = "Recompensa diaria server-authoritative ligada a XP, recursos e progresso de Battle Pass."
-	host.set("_timeline_label", _add_output_label(host, ""))
+	daily_button.tooltip_text = "Recompensa diaria ligada a XP, recursos e progresso de Battle Pass."
+	var timeline := _add_output_label(host, "")
+	timeline.visible = false
+	host.set("_timeline_label", timeline)
 	var shop_state_container := VBoxContainer.new()
 	shop_state_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	shop_state_container.add_theme_constant_override("separation", 10)
@@ -106,7 +108,7 @@ static func render_state(host: Node) -> void:
 		_clear_node_children(container)
 	var monetization := SessionStore.monetization_state
 	if monetization.is_empty():
-		timeline.text = "Loja alpha ainda nao carregada. Use Atualizar loja."
+		timeline.text = "Loja ainda nao carregada. Use Atualizar loja."
 		if container != null:
 			container.add_child(_shop_info_panel(
 				host,
@@ -117,10 +119,10 @@ static func render_state(host: Node) -> void:
 
 	var lines := PackedStringArray()
 	var summary := _as_dictionary(monetization.get("shop_summary", {}))
-	lines.append("Loja alpha server-authoritative")
+	lines.append("Loja sincronizada")
 	lines.append("Recursos: %s" % _format_resources(SessionStore.resources))
 	if not summary.is_empty():
-		lines.append("Diamante: %s | Premium: %s | Redeems hoje: %s/%s" % [
+		lines.append("Diamante: %s | Premium: %s | Resgates hoje: %s/%s" % [
 			str(summary.get("diamond_balance", SessionStore.resources.get("diamante", 0))),
 			"ativo" if bool(summary.get("premium_unlocked", false)) else "inativo",
 			str(summary.get("daily_redeems_claimed", 0)),
@@ -133,14 +135,14 @@ static func render_state(host: Node) -> void:
 	var battle_pass := _as_dictionary(monetization.get("battle_pass", {}))
 	var pass_config := _as_dictionary(battle_pass.get("pass", {}))
 	var progress := _as_dictionary(battle_pass.get("progress", {}))
-	lines.append("Battle Pass: %s | XP %s | premium=%s" % [
-		str(pass_config.get("display_name", pass_config.get("id", ""))),
+	lines.append("Battle Pass: %s | XP %s | Premium %s" % [
+		_shop_display_text(str(pass_config.get("display_name", pass_config.get("id", "")))),
 		str(progress.get("pass_xp", 0)),
 		str(progress.get("premium_unlocked", false)),
 	])
 	var daily_rewards := _as_array(monetization.get("daily_rewards", []))
 	var products := _as_array(monetization.get("alpha_products", []))
-	lines.append("Produtos alpha: %d | Recompensas diarias: %d" % [products.size(), daily_rewards.size()])
+	lines.append("Produtos: %d | Recompensas diarias: %d" % [products.size(), daily_rewards.size()])
 	timeline.text = "\n".join(lines)
 	if container != null:
 		_render_shop_panels(host, monetization)
@@ -170,7 +172,7 @@ static func reward_by_id(reward_id: String) -> Dictionary:
 
 static func purchase_message(product_id: String, body: Dictionary) -> String:
 	if bool(body.get("already_redeemed", false)):
-		return "Redeem diario ja havia sido resgatado neste save."
+		return "Resgate diario ja havia sido usado neste save."
 	if bool(body.get("already_owned", false)):
 		return "Produto ja estava ativo neste save."
 	var purchase := _as_dictionary(body.get("purchase", {}))
@@ -199,7 +201,7 @@ static func _render_shop_panels(host: Node, monetization: Dictionary) -> void:
 			redeem_products.append(product)
 		else:
 			purchase_products.append(product)
-	panels.append(_shop_product_group_panel(host, "Redeems diarios de Diamante", redeem_products))
+	panels.append(_shop_product_group_panel(host, "Resgates diarios de Diamante", redeem_products))
 	panels.append(_shop_product_group_panel(host, "Compras e conveniencias", purchase_products))
 	panels.append(_shop_reward_group_panel(host, "Recompensas diarias", _as_array(monetization.get("daily_rewards", []))))
 
@@ -213,11 +215,11 @@ static func _shop_summary_panel(host: Node, summary: Dictionary) -> Control:
 	box.add_theme_constant_override("separation", 6)
 	panel.add_child(box)
 	box.add_child(_shop_label(host, "Resumo da Loja", "text_primary", 17))
-	box.add_child(_shop_label(host, "Diamante: %s | Moeda principal do alpha: %s" % [
+	box.add_child(_shop_label(host, "Diamante: %s | Moeda principal: %s" % [
 		str(summary.get("diamond_balance", 0)),
 		str(summary.get("currency", "diamante")).capitalize(),
 	], "text_secondary"))
-	box.add_child(_shop_label(host, "Premium: %s | Redeems hoje: %s/%s | Reset: meia-noite America/Sao_Paulo" % [
+	box.add_child(_shop_label(host, "Premium: %s | Resgates hoje: %s/%s | Reset: meia-noite America/Sao_Paulo" % [
 		"ativo" if bool(summary.get("premium_unlocked", false)) else "inativo",
 		str(summary.get("daily_redeems_claimed", 0)),
 		str(summary.get("daily_redeems_total", 0)),
@@ -228,7 +230,7 @@ static func _shop_summary_panel(host: Node, summary: Dictionary) -> Control:
 	else:
 		var owned_ids := PackedStringArray()
 		for item: Variant in owned:
-			owned_ids.append(str(item))
+			owned_ids.append(_shop_display_text(str(item)))
 		box.add_child(_shop_label(host, "Conveniencias ativas: %s" % ", ".join(owned_ids), "status_success"))
 	return panel
 
@@ -246,7 +248,7 @@ static func _shop_product_group_panel(host: Node, title_text: String, products: 
 		if product.is_empty():
 			continue
 		box.add_child(_shop_label(host, "%s | %s" % [
-			str(product.get("label", product.get("id", ""))),
+			_shop_display_text(str(product.get("label", product.get("id", "")))),
 			_shop_product_status_text(product),
 		], _shop_product_status_color(product)))
 		box.add_child(_shop_label(host, "Custo: %s | Recebe: %s | Efeito: %s" % [
@@ -256,7 +258,7 @@ static func _shop_product_group_panel(host: Node, title_text: String, products: 
 		], "text_secondary"))
 		var description := str(product.get("description", ""))
 		if description != "":
-			box.add_child(_shop_label(host, description, "text_secondary"))
+			box.add_child(_shop_label(host, _shop_display_text(description), "text_secondary"))
 	return panel
 
 static func _shop_reward_group_panel(host: Node, title_text: String, rewards: Array) -> Control:
@@ -277,7 +279,7 @@ static func _shop_reward_group_panel(host: Node, title_text: String, rewards: Ar
 		if bool(reward.get("premium_required", false)):
 			status_text += " | premium"
 		box.add_child(_shop_label(host, "%s | XP %s | %s" % [
-			str(reward.get("label", reward.get("id", ""))),
+			_shop_display_text(str(reward.get("label", reward.get("id", "")))),
 			str(reward.get("xp", 0)),
 			status_text,
 		], color_token))
@@ -327,6 +329,15 @@ static func _format_shop_delta(delta: Dictionary, empty_text: String) -> String:
 	if delta.is_empty():
 		return empty_text
 	return _format_cost(delta)
+
+static func _shop_display_text(text: String) -> String:
+	var value := text.strip_edges()
+	value = value.replace("Redeem", "Resgate")
+	value = value.replace("redeem", "resgate")
+	value = value.replace("Alpha", "Teste")
+	value = value.replace("alpha", "teste")
+	value = value.replace("_", " ")
+	return value
 
 static func _format_cost(cost: Dictionary) -> String:
 	if cost.is_empty():

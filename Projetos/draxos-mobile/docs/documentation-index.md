@@ -23,7 +23,7 @@
 | `implementation/current-status.md` | `VIVO` | Decision snapshot: baseline, active track, risks, next step and validation. |
 | `docs/agent-operating-manual.md` | `VIVO` | Detailed agent runbook. |
 | `docs/documentation-index.md` | `VIVO` | This classification map. |
-| `implementation/tracks/track-14-agent-ops-foundation/current-status.md` | `VIVO` | Current Track 14 working state. |
+| `implementation/tracks/track-15-mobile-ux-overhaul/current-status.md` | `VIVO` | Current Track 15 mobile UX working state. |
 | `../../08_Coordenacao_Agentes/Prioridades_Estudio.md` | `VIVO` | Portfolio source of truth. |
 | `../../08_Coordenacao_Agentes/Estado_Atual.md` | `VIVO` | Compact studio snapshot. |
 | `../README.md` | `VIVO` | Project registry. |
@@ -83,6 +83,7 @@
 | `implementation/tracks/track-11-product-foundation-consolidation/` | `HISTORICO` | Documentation/coordination consolidation and first boot cut. |
 | `implementation/tracks/track-12-boot-decomposition/` | `HISTORICO` | Boot decomposition. |
 | `implementation/tracks/track-13-validation-release-safety/` | `HISTORICO` | Validation and release safety baseline. |
+| `implementation/tracks/track-14-agent-ops-foundation/` | `HISTORICO` | Agent operating foundation and documentation index baseline. |
 
 ## Design Archive
 
@@ -94,7 +95,7 @@
 
 ## Drift Rules
 
-- A live doc must not tell agents to start from Track 04, Track 08 or Track 10.
+- A live doc must not tell agents to start from Track 04, Track 08, Track 10 or Track 14 as the current track.
 - Historical docs can keep old language when they are clearly historical.
 - Product-facing language should use Instrumento Ritual, Doutrina and Familiar.
 - Technical field names such as `weapon`, `passive`, `pet`, `WeaponQualityTier`, `PassiveLevelsTotal` and `PetLevel` may remain only where they describe existing schema, telemetry or legacy compatibility.

@@ -140,7 +140,8 @@ Use Instrumento Ritual, Spell, Doutrina e Familiar como linguagem de produto/des
 - `design-pending.md` - pendencias de design e balanceamento.
 - `documentation-index.md` - classificacao de docs vivos, contratos, runbooks, historico e arquivo de design.
 - `contracts/` - contratos tecnicos antes das migrations/codigo.
-- `../implementation/tracks/track-14-agent-ops-foundation/scope.md` - fundacao operacional atual para agentes.
+- `../implementation/tracks/track-15-mobile-ux-overhaul/scope.md` - overhaul UX mobile atual.
+- `../implementation/tracks/track-14-agent-ops-foundation/scope.md` - fundacao operacional de agentes.
 - `../implementation/tracks/track-13-validation-release-safety/scope.md` - baseline de validacao e release safety.
 - `../implementation/tracks/track-00-first-slice-foundation/scope.md` e `../implementation/tracks/track-03-internal-alpha-v0/scope.md` - historico de escopo do primeiro slice e Internal Alpha v0.
 - `internal-alpha-v0.md` - runbook operacional da build fechada.

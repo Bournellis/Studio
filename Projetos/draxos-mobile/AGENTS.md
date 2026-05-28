@@ -8,10 +8,11 @@ This file is the fast entrypoint for agents working in `Projetos/draxos-mobile`.
 
 - Project: `DraxosMobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
-- Active operational track: `Track 14 - Agent Operations Foundation`
-- Active track status: `TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`
+- Active operational track: `Track 15 - Mobile UX Overhaul`
+- Active track status: `TRACK_15_MOBILE_UX_OVERHAUL_ACTIVE`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety` delivered on `2026-05-28`
-- Immediate product gate: run the real Android / Windows / Web walkthrough from `docs/track-13-manual-walkthrough-gate.md` before any new feature, numeric tuning, account/save migration or remote publication.
+- Agent baseline: `Track 14 - Agent Operations Foundation` is the current operations/docs foundation.
+- Immediate product gate: review the Track 15 Android portrait UX checkpoint before expanding scope; keep the real Android / Windows / Web walkthrough from `docs/track-13-manual-walkthrough-gate.md` before gameplay features, numeric tuning, account/save migration or remote publication.
 
 DraxosMobile is an async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms for the first slice are Android app, PC executable and PC browser. Backend for alpha is Supabase Auth/Postgres/Edge Functions/Storage; battle simulation, resources and authoritative state stay on the server.
 
@@ -22,7 +23,7 @@ Read in this order for almost every task:
 1. `docs/agent-operating-manual.md`
 2. `implementation/current-status.md`
 3. `docs/documentation-index.md`
-4. `implementation/tracks/track-14-agent-ops-foundation/current-status.md`
+4. `implementation/tracks/track-15-mobile-ux-overhaul/current-status.md`
 5. The files you intend to touch
 
 For product or design work, also read:
@@ -94,4 +95,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alp
 
 ## Current Handoff
 
-Track 14 is reorganizing documentation and coordination for long-term agent operation on top of the Track 13 hardening baseline. Until Track 14 is closed or merged, the only expected DraxosMobile card in Kanban Doing is the agent-ops foundation card.
+Track 15 is reorganizing the mobile UX from alpha/dev surfaces into an internal premium Android portrait app. Do not change gameplay tuning, backend/schema, Supabase APIs, economy or authoritative flows in this track. The expected DraxosMobile Kanban Doing card is the Track 15 mobile UX overhaul card.

@@ -7,11 +7,13 @@ const RESOURCE_KEYS := ["almas", "energia", "sangue", "cristais", "ossos", "diam
 const BASE_STRUCTURE_IDS := ["altar_das_almas", "nucleo_energia", "pocos_sangue", "minas_cristal", "estrutura_stats", "ossario"]
 
 static func render(host: Node) -> void:
-	_add_body_text(host, "Refugio: predios permanentes, coleta offline e uma fila de construcao server-authoritative.")
+	_add_body_text(host, "Colete producao, veja a fila e escolha o proximo upgrade.")
 	_add_action_button(host, "Sincronizar Refugio", AppShellActionContractScript.ACTION_SHOW_BASE)
 	_add_action_button(host, "Coletar producao", AppShellActionContractScript.ACTION_COLLECT_BASE, "Coletar a producao offline acumulada do Refugio?")
-	_add_action_button(host, "Comprar Energia alpha", AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA, "Gastar 80 Diamantes para comprar 80 Energia no save ativo?")
-	host.set("_timeline_label", _add_output_label(host, ""))
+	_add_action_button(host, "Comprar Energia", AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA, "Gastar 80 Diamantes para comprar 80 Energia no save ativo?")
+	var timeline := _add_output_label(host, "")
+	timeline.visible = false
+	host.set("_timeline_label", timeline)
 	var base_state_container := VBoxContainer.new()
 	base_state_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	base_state_container.add_theme_constant_override("separation", 10)
@@ -53,9 +55,9 @@ static func render_state(host: Node, collected: Dictionary = {}) -> void:
 	var lines := PackedStringArray()
 	if SessionStore.is_progression_lab_local_only():
 		lines.append("Refugio Progression Lab local (somente leitura)")
-		lines.append("Acoes online exigem cache server-backed criado pelo seeder Supabase.")
+		lines.append("Acoes online exigem um save normal sincronizado.")
 	else:
-		lines.append("Refugio server-authoritative")
+		lines.append("Refugio sincronizado")
 	lines.append("Recursos: %s" % _format_resources(resources))
 	if not collected.is_empty():
 		if _resource_total(collected) <= 0.0:
@@ -65,9 +67,9 @@ static func render_state(host: Node, collected: Dictionary = {}) -> void:
 
 	var structures := _as_array(base.get("structures", []))
 	if structures.is_empty():
-		lines.append("Estruturas: nenhuma estrutura retornada pelo servidor.")
+		lines.append("Estruturas: nenhuma construcao carregada.")
 	else:
-		lines.append("Estruturas: %d predios clicaveis no mapa abaixo." % structures.size())
+		lines.append("Estruturas: %d predios no mapa abaixo." % structures.size())
 	for item: Variant in structures:
 		var structure := _as_dictionary(item)
 		if structure.is_empty():
@@ -77,7 +79,7 @@ static func render_state(host: Node, collected: Dictionary = {}) -> void:
 			str(structure.get("level", 0)),
 			_format_number(float(structure.get("pending_collectable", 0.0))),
 			_format_number(float(structure.get("storage_cap", 0.0))),
-			str(structure.get("blocked_message", "Upgrade bloqueado.")),
+			str(structure.get("blocked_message", "Upgrade indisponivel.")),
 		])
 
 	var jobs := _as_array(base.get("jobs", []))
@@ -228,8 +230,8 @@ static func _base_summary_panel(host: Node, base: Dictionary, collected: Diction
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 6)
 	panel.add_child(box)
-	box.add_child(_base_label(host, "Resumo do Refugio", "text_primary", 17))
-	box.add_child(_base_label(host, "Recursos: %s" % _format_resources(SessionStore.resources), "text_secondary"))
+	box.add_child(_base_label(host, "Coleta e fila", "text_primary", 17))
+	box.add_child(_base_label(host, "Recursos: %s" % _format_short_resources(SessionStore.resources, 3), "text_secondary"))
 	var active_jobs := _active_base_jobs(_as_array(base.get("jobs", [])))
 	box.add_child(_base_label(host, "Fila de construcao: %d/%d" % [
 		active_jobs.size(),
@@ -241,7 +243,7 @@ static func _base_summary_panel(host: Node, base: Dictionary, collected: Diction
 			collect_text = "Coletado agora: %s" % _format_resources(collected, false)
 		box.add_child(_base_label(host, collect_text, "status_success"))
 	if SessionStore.is_progression_lab_active():
-		box.add_child(_base_label(host, "Progression Lab: Refugio isolado do save normal.", "status_warning"))
+		box.add_child(_base_label(host, "Lab: Refugio separado do save normal.", "status_warning"))
 	return panel
 
 static func _base_routine_panel(host: Node, base: Dictionary, collected: Dictionary) -> Control:
@@ -253,13 +255,13 @@ static func _base_routine_panel(host: Node, base: Dictionary, collected: Diction
 	box.add_child(_base_label(host, "Rotina do Refugio", "text_primary", 17))
 
 	var collect_color := "status_success" if bool(routine.get("has_collect_ready", false)) else "text_secondary"
-	box.add_child(_base_label(host, str(routine.get("collect_text", "Coleta pronta: sem dados do Refugio.")), collect_color))
+	box.add_child(_base_label(host, _routine_collect_display_text(routine), collect_color))
 
 	var active_job_count := int(routine.get("active_job_count", 0))
 	if active_job_count <= 0:
-		box.add_child(_base_label(host, "Jobs em andamento: nenhum.", "text_secondary"))
+		box.add_child(_base_label(host, "Fila em andamento: nenhuma obra.", "text_secondary"))
 	else:
-		box.add_child(_base_label(host, "Jobs em andamento: %d." % active_job_count, "text_secondary"))
+		box.add_child(_base_label(host, "Fila em andamento: %d obra(s)." % active_job_count, "text_secondary"))
 		for line: String in Array(routine.get("job_lines", [])):
 			box.add_child(_base_label(host, "- %s" % line, "text_secondary"))
 
@@ -269,7 +271,7 @@ static func _base_routine_panel(host: Node, base: Dictionary, collected: Diction
 	box.add_child(_base_label(host, "Slots livres: %d/%d." % [free_slots, slots], slot_color))
 
 	var upgrade_color := "status_success" if bool(routine.get("next_upgrade_ready", false)) else "text_secondary"
-	box.add_child(_base_label(host, "Proximo upgrade: %s" % str(routine.get("next_upgrade_text", "")), upgrade_color))
+	box.add_child(_base_label(host, "Proximo: %s" % _routine_upgrade_display_text(routine), upgrade_color))
 	return panel
 
 static func _base_map_panel(host: Node, structures: Array) -> Control:
@@ -305,7 +307,7 @@ static func _base_detail_panel(host: Node, structures: Array) -> Control:
 
 	var structure_id := str(structure.get("structure_id", ""))
 	var display_label := _structure_label(structure_id, str(structure.get("display_name", "")))
-	box.add_child(_base_label(host, "%s - Level %s/%s" % [
+	box.add_child(_base_label(host, "%s - Nivel %s/%s" % [
 		display_label,
 		str(structure.get("level", 0)),
 		str(structure.get("max_level", 40)),
@@ -373,14 +375,14 @@ static func _empty_refuge_timeline_text() -> String:
 	if SessionStore.has_valid_access_token():
 		return "Refugio sincronizando automaticamente..."
 	if SessionStore.is_progression_lab_local_only():
-		return "Refugio local do Lab sem snapshot carregado."
+		return "Refugio local do Lab ainda sem dados carregados."
 	return "Refugio pronto para carregar depois da entrada."
 
 static func _empty_refuge_body_text() -> String:
 	if SessionStore.has_valid_access_token():
 		return "Sincronizando predios, coleta e fila."
 	if SessionStore.is_progression_lab_local_only():
-		return "Carregue um snapshot do Lab."
+		return "Carregue os dados do Lab."
 	return "Entre ou use Guest dev para sincronizar."
 
 static func _strip_routine_prefix(text: String, prefix: String) -> String:
@@ -631,7 +633,7 @@ static func _routine_next_upgrade_text(structure: Dictionary) -> String:
 	var next_level: Variant = structure.get("next_level", null)
 	if next_level == null:
 		return "%s no nivel maximo." % _structure_label(structure_id, str(structure.get("display_name", "")))
-	var status := "pronto para iniciar" if bool(structure.get("can_upgrade", false)) else str(structure.get("blocked_message", "Upgrade bloqueado."))
+	var status := "pronto para iniciar" if bool(structure.get("can_upgrade", false)) else str(structure.get("blocked_message", "Upgrade indisponivel."))
 	return "%s para L%s | custo %s | tempo %s | %s" % [
 		_structure_label(structure_id, str(structure.get("display_name", ""))),
 		str(next_level),
@@ -686,8 +688,43 @@ static func _format_resources(resources: Dictionary, include_diamond: bool = tru
 	for key: String in RESOURCE_KEYS:
 		if key == "diamante" and not include_diamond:
 			continue
-		parts.append("%s %s" % [key.capitalize(), str(resources.get(key, 0))])
+		parts.append("%s %s" % [key.capitalize(), _format_number(float(resources.get(key, 0)))])
 	return " | ".join(parts)
+
+static func _format_short_resources(resources: Dictionary, max_items: int = 3, include_diamond: bool = true) -> String:
+	var parts := PackedStringArray()
+	for key: String in RESOURCE_KEYS:
+		if key == "diamante" and not include_diamond:
+			continue
+		if not resources.has(key):
+			continue
+		parts.append("%s %s" % [key.capitalize(), str(resources.get(key, 0))])
+		if parts.size() >= max_items:
+			break
+	var remaining := 0
+	for key: String in RESOURCE_KEYS:
+		if key == "diamante" and not include_diamond:
+			continue
+		if resources.has(key) and not parts.has("%s %s" % [key.capitalize(), _format_number(float(resources.get(key, 0)))]):
+			remaining += 1
+	if remaining > 0:
+		parts.append("+%d" % remaining)
+	if parts.is_empty():
+		return "sem recursos"
+	return ", ".join(parts)
+
+static func _routine_collect_display_text(routine: Dictionary) -> String:
+	var collect_ready := _as_dictionary(routine.get("collect_ready", {}))
+	if collect_ready.is_empty():
+		return "Coleta pronta: nada agora."
+	return "Coleta pronta: %s." % _format_short_resources(collect_ready, 3, false)
+
+static func _routine_upgrade_display_text(routine: Dictionary) -> String:
+	var next_upgrade_id := str(routine.get("next_upgrade_id", ""))
+	if next_upgrade_id == "":
+		return "sem upgrade disponivel"
+	var status := "pronto" if bool(routine.get("next_upgrade_ready", false)) else "aguardando recursos"
+	return "%s %s" % [_structure_label(next_upgrade_id), status]
 
 static func _resource_total(resources: Dictionary) -> float:
 	var total := 0.0
