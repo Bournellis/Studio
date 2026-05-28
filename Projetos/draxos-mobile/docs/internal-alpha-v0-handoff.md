@@ -21,9 +21,17 @@
 
 | Artefato | Bytes | SHA256 |
 |---|---:|---|
-| Android APK | `27811908` | `6c39ce9a63eaf4796a67a9e5a29e9252f1f03266f713ffa58c5d2333c15102d6` |
-| PC Windows ZIP | `36331728` | `4b7dc516bc4c5c4895930f8732ad9e97733cca85ba7574c9a0308c705982d236` |
-| Web index | `5442` | `04c8da05bcada497128a9c506092579bf47075d8da636634ffb1722e3cbd1a1b` |
+| Android APK | `27965106` | `ad6d2579ce003769cfce2536b788c1330abb283d0ae90cc785d1d016ae514ca6` |
+| PC Windows ZIP | `36466312` | `ad5fb8351bb001604479d95737fc702bb9b0ff6779afb9e3e31692b7bc189031` |
+| Web index | `5442` | `75fdd260b889582cb723256e87ca9867ae35b7cdd3411cbb2ca21ace5585366a` |
+
+## Atualizacao Pos-Handoff Track 10 - 2026-05-28
+
+- Builds Android/PC/Web foram republicadas apos a rework de apresentacao da batalha.
+- Manifest remoto atual: `released_at = 2026-05-28T04:50:33Z`, version code `1`, `requires_save_reset = false`.
+- Deploy Cloudflare Pages verificado: `https://36b1d46c.draxos-mobile-internal-alpha.pages.dev`.
+- Dominio estavel `https://draxos-mobile-internal-alpha.pages.dev` esta protegido por Cloudflare Access; validacao publica anonima deve usar preview liberado ou sessao autenticada.
+- Este handoff continua valido como pacote Internal Alpha v0, mas a experiencia visual atual corresponde a Track 10 + Track 11.
 
 ## Release Notes
 
@@ -56,6 +64,7 @@
 - Loja nao possui pagamento real e serve apenas como simulacao premium/proof-of-concept.
 - Portal visual e suficiente para handoff, mas Fabio pretende refinar depois de `T03-P18`.
 - Web usa hospedagem hibrida Cloudflare Pages + Supabase Storage; validar `/portal/index.html` e `/web/index.html` apos cada deploy.
+- Dominio estavel do Cloudflare Pages pode exigir Cloudflare Access; usar preview liberado ou login Access para validacao Web anonima.
 - Supabase Free e adequado para esta alpha; Backend Proprio + Postgres segue como plano de saida preferido.
 
 ## Instrucoes De Update
@@ -74,4 +83,3 @@
 - Usar a build fechada com Fabio + tester e registrar bugs reais.
 - Priorizar feedback de usabilidade Android, fluxo de onboarding/login, clareza dos tooltips e loop batalha -> base -> loja/social/competicao.
 - Definir a proxima fase apos a rodada de feedback: polish de UI/UX, bugs bloqueantes ou expansao de sistema.
-

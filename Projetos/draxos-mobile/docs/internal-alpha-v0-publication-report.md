@@ -24,9 +24,22 @@
 
 | Plataforma | Bytes | SHA256 |
 |---|---:|---|
-| Android APK | `27811908` | `6c39ce9a63eaf4796a67a9e5a29e9252f1f03266f713ffa58c5d2333c15102d6` |
-| PC Windows ZIP | `36331728` | `4b7dc516bc4c5c4895930f8732ad9e97733cca85ba7574c9a0308c705982d236` |
-| Web index | `5442` | `04c8da05bcada497128a9c506092579bf47075d8da636634ffb1722e3cbd1a1b` |
+| Android APK | `27965106` | `ad6d2579ce003769cfce2536b788c1330abb283d0ae90cc785d1d016ae514ca6` |
+| PC Windows ZIP | `36466312` | `ad5fb8351bb001604479d95737fc702bb9b0ff6779afb9e3e31692b7bc189031` |
+| Web index | `5442` | `75fdd260b889582cb723256e87ca9867ae35b7cdd3411cbb2ca21ace5585366a` |
+
+## Republicacao Track 10 - 2026-05-28
+
+Depois da rework de apresentacao da batalha, as builds Internal Alpha foram republicadas sem subir version code e sem exigir reset de save.
+
+Resultado observado:
+
+- Android APK remoto: `200`, `27965106` bytes, SHA256 `ad6d2579ce003769cfce2536b788c1330abb283d0ae90cc785d1d016ae514ca6`.
+- PC ZIP remoto: `200`, `36466312` bytes, SHA256 `ad5fb8351bb001604479d95737fc702bb9b0ff6779afb9e3e31692b7bc189031`.
+- Web index local/publicado: `5442` bytes, SHA256 `75fdd260b889582cb723256e87ca9867ae35b7cdd3411cbb2ca21ace5585366a`.
+- Manifest remoto: `released_at = 2026-05-28T04:50:33Z`, `requires_save_reset = false`.
+- Cloudflare Pages preview: `https://36b1d46c.draxos-mobile-internal-alpha.pages.dev`.
+- Dominio estavel protegido por Cloudflare Access; smokes anonimos devem usar preview ou `DRAXOS_RELEASE_ALLOW_CLOUDFLARE_ACCESS=1` para reconhecer a tela de Access como protecao esperada, nao como Portal/Web validado.
 
 ## Resultado Tecnico
 

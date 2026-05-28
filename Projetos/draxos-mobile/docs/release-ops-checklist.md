@@ -42,6 +42,8 @@ Antes de qualquer publicacao futura:
 - Deno check/lint de `server/functions` e `supabase/functions` verdes quando houver mudanca de server/manifest.
 - `release_manifest_smoke.ts` verde contra o alvo de release.
 - `release_artifacts_remote_smoke.ts` verde somente depois que artefatos ja existirem no remoto.
+- Em dominio Cloudflare Pages protegido, usar preview liberado ou rodar o smoke com `DRAXOS_RELEASE_ALLOW_CLOUDFLARE_ACCESS=1` apenas para reconhecer a tela de Access como protecao esperada.
+- Para conferir hashes completos de APK/ZIP, rodar o smoke com `DRAXOS_RELEASE_FULL_HASH=1`; sem essa flag ele usa `HEAD`/`GET` parcial para ser rapido.
 - `service_role`, `sb_secret_`, `sb_service_`, senha de banco e senha de keystore ausentes de cliente, portal, APK, ZIP, Web build, manifest e Git.
 - `build/internal-alpha/release-artifacts.json` ou relatorio equivalente contem hashes SHA256 atuais.
 - Manifest remoto planejado referencia exatamente os hashes/URLs dos artefatos aprovados.
@@ -96,6 +98,7 @@ cd <WORKTREE>\Projetos\draxos-mobile
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <WORKTREE>\Projetos\draxos-mobile -s res://tools/smoke_exports.gd
 npx -y deno check server/tests/release_manifest_smoke.ts
 npx -y deno check server/tests/release_artifacts_remote_smoke.ts
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_track11_readiness.ps1 -ProjectDir .
 ```
 
 PowerShell syntax check seguro dos scripts de release:
@@ -121,7 +124,15 @@ Remote read-only smoke, somente com URL remota e publishable key local:
 ```powershell
 $env:SUPABASE_URL='https://<project-ref>.supabase.co'
 $env:SUPABASE_PUBLISHABLE_KEY='sb_publishable_<public-key>'
+$env:DRAXOS_RELEASE_ALLOW_CLOUDFLARE_ACCESS='1'
 npx -y deno run --allow-net --allow-env server/tests/release_artifacts_remote_smoke.ts
+```
+
+Hash completo opcional para APK/ZIP:
+
+```powershell
+$env:DRAXOS_RELEASE_FULL_HASH='1'
+npx -y deno run --allow-net --allow-env --allow-read server/tests/release_artifacts_remote_smoke.ts
 ```
 
 Encerrar sempre com:
