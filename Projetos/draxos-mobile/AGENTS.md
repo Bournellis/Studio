@@ -1,134 +1,97 @@
-# AGENTS.md
+# Agent Operating Manual - DraxosMobile
 
-This file governs agent behavior for `Projetos/draxos-mobile`.
+This file is the fast entrypoint for agents working in `Projetos/draxos-mobile`.
 
-**Nao confundir com:** `Projetos/draxos-roguelike-cardgame/` - projeto Steam separado.
+**Do not confuse this project with** `Projetos/draxos-roguelike-cardgame/`, the separate Steam roguelike cardgame.
 
-## Project Role
+## Current Truth
 
-DraxosMobile e um jogo mobile multi-plataforma de PVP assincrono com base manager e sistema social. O jogador e um mago Draxos que cresce em poder ao longo do tempo.
+- Project: `DraxosMobile`
+- Portfolio status: `P2_IMPLEMENTACAO`
+- Active operational track: `Track 14 - Agent Operations Foundation`
+- Active track status: `TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`
+- Hardening baseline: `Track 13 - Foundation Validation And Release Safety` delivered on `2026-05-28`
+- Immediate product gate: run the real Android / Windows / Web walkthrough from `docs/track-13-manual-walkthrough-gate.md` before any new feature, numeric tuning, account/save migration or remote publication.
 
-Plataformas do primeiro slice: Android app nativo, PC executavel, PC browser via Godot web export.
+DraxosMobile is an async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms for the first slice are Android app, PC executable and PC browser. Backend for alpha is Supabase Auth/Postgres/Edge Functions/Storage; battle simulation, resources and authoritative state stay on the server.
 
-Backend: Supabase Auth, Postgres, Edge Functions e Realtime. Batalha 100% simulada no servidor; o cliente Godot apenas anima o log de eventos recebido.
+## Start Here
 
-Este projeto foi promovido de `Projetos/_conceitos/mobile-universe/` em 2026-05-18. Os documentos originais em `../_conceitos/mobile-universe/` sao arquivo historico de design.
+Read in this order for almost every task:
 
-## Regra Multi-Agente E Git
+1. `docs/agent-operating-manual.md`
+2. `implementation/current-status.md`
+3. `docs/documentation-index.md`
+4. `implementation/tracks/track-14-agent-ops-foundation/current-status.md`
+5. The files you intend to touch
 
-- Por padrao, trabalhe em worktree propria fora de `D:\Estudio`: `D:\Estudio-worktrees\draxos-mobile--<agente>--<slug>`.
-- Branch padrao Codex: `codex/draxos-mobile/<slug>`. Outros agentes: `<agente>/draxos-mobile/<slug>`.
-- Nao edite a worktree de outro agente e nao use a worktree principal `D:\Estudio` para implementacao, salvo pedido explicito.
-- Antes de tocar `AGENTS.md`, `../../canon/`, `../../08_Coordenacao_Agentes/` ou `../README.md`, rode `git status --short`, `git worktree list` e leia os docs de coordenacao.
-- Registre no inicio em Kanban/Doing ou Handoff: worktree, branch, objetivo, arquivos pretendidos, base lida, validacao planejada e proximo ponto de handoff.
-- Commits devem ser por etapa logica: documentacao, contrato, backend, client Godot, validacao, publicacao e coordenacao.
+For product or design work, also read:
 
-## Read Order
+1. `docs/product-vision.md`
+2. `docs/product-brief.md`
+3. `docs/game-design-document.md`
+4. `docs/design-pending.md`
 
-### Fast Lane Atual - Track 13
+For release, validation or publication work, also read:
 
-1. `implementation/current-status.md`
-2. `implementation/tracks/track-13-validation-release-safety/current-status.md`
-3. `implementation/tracks/track-13-validation-release-safety/scope.md`
-4. `implementation/tracks/track-13-validation-release-safety/implementation-plan.md`
-5. `implementation/tracks/track-13-validation-release-safety/validation-matrix.md`
-6. `implementation/tracks/track-13-validation-release-safety/release-safety-contract.md`
-7. `docs/track-13-manual-walkthrough-gate.md`
-8. `docs/release-ops-checklist.md`
-9. este arquivo
-10. arquivos tocados
+1. `implementation/tracks/track-13-validation-release-safety/release-safety-contract.md`
+2. `implementation/tracks/track-13-validation-release-safety/validation-matrix.md`
+3. `docs/release-ops-checklist.md`
+4. `docs/track-13-manual-walkthrough-gate.md`
 
-### Trabalho substancial
+## Worktree And Branch Rules
 
-Use quando afetar arquitetura, progressao, economia, modos, backend, contratos, release ou escopo.
+- Do not implement in `D:\Estudio` unless the user explicitly asks for direct work there.
+- Use a dedicated worktree outside the main root: `D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>`.
+- Codex branches use `codex/draxos-mobile/<slug>`.
+- Do not edit another agent's worktree without explicit user direction.
+- Before touching shared files (`AGENTS.md`, `../../canon/`, `../../08_Coordenacao_Agentes/`, `../README.md`), run `git status --short`, `git worktree list` and read the coordination snapshot.
+- Register active work in `../../08_Coordenacao_Agentes/Kanban/Doing/` or a handoff note with branch, worktree, objective, intended files, docs read, validation plan and next handoff point.
 
-1. `../../canon/canon-brief.md`
-2. `docs/product-vision.md`
-3. `docs/product-brief.md`
-4. `docs/game-design-document.md`
-5. `docs/design-pending.md`
-6. `docs/pre-implementation-decisions.md`
-7. `docs/architecture.md`
-8. `docs/contracts/`
-9. `implementation/current-status.md`
-10. `implementation/tracks/track-13-validation-release-safety/`
-11. este arquivo
-12. arquivos tocados
+## Safe Commands
 
-### Trabalho delimitado
+Run commands from `Projetos/draxos-mobile` unless noted.
 
-1. `implementation/current-status.md`
-2. este arquivo
-3. arquivos tocados
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Quick -RequireClean:$false
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Client -RequireClean:$false
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Release -RequireClean:$false
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Full -RequireClean:$false
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/client -gexit
+npx -y deno task --cwd server/functions check
+npx -y deno task --cwd supabase/functions check
+git diff --check
+git status --short
+```
 
-## Mapa De Documentos
+Release scripts are safe by default:
 
-| Pergunta | Documento |
-|---|---|
-| Estado operacional atual | `implementation/current-status.md` |
-| Escopo/plan/status da Track 13 | `implementation/tracks/track-13-validation-release-safety/` |
-| Auditoria do que cresceu bem e do que precisa melhorar | `implementation/tracks/track-11-product-foundation-consolidation/foundation-audit.md` |
-| Walkthrough manual gate Track 13 | `docs/track-13-manual-walkthrough-gate.md` |
-| Visao longa, pilares, anti-pilares e limites de produto | `docs/product-vision.md` |
-| O que e o jogo, quais plataformas, escopo do slice | `docs/product-brief.md` |
-| Como um sistema funciona | `docs/game-design-document.md` |
-| O que ainda precisa de design | `docs/design-pending.md` |
-| Por que uma decisao foi tomada | `docs/pre-implementation-decisions.md` |
-| Stack e arquitetura tecnica | `docs/architecture.md` |
-| O que pode ser reutilizado de outros projetos | `docs/reuse-map.md` |
-| API, log de batalha, schema e conteudo | `docs/contracts/` |
-| Internal Alpha v0 runbook/handoff | `docs/internal-alpha-v0.md`, `docs/internal-alpha-v0-handoff.md` |
-| Release ops e publicacao segura | `docs/release-ops-checklist.md`, `implementation/tracks/track-13-validation-release-safety/release-safety-contract.md` |
-| Track 10 batalha portrait | `implementation/tracks/track-10-battle-presentation-rework/` |
-| Tracks historicas | `implementation/tracks/track-00-first-slice-foundation/` a `implementation/tracks/track-09-portrait-entry-refuge-scene-and-visual-loop-rework/` |
-| GDD historico completo | `../_conceitos/mobile-universe/gdd.md` |
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Plan
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Package
+```
 
-**Regra de conflito:** `docs/game-design-document.md` e a referencia autoritativa para implementacao. `../_conceitos/mobile-universe/gdd.md` e historico; consulte para contexto, nao para sobrepor documento local vivo.
+`Mode Upload`, `Mode DeployManifest` and `Mode FullPublish` require explicit user approval and `-ConfirmRemoteMutation`.
 
-## Regra De Canon
+## Hard Stops
 
-- Lore compartilhado em `../../canon/` informa o projeto.
-- `docs/product-vision.md` e a fonte viva local para visao longa de produto ate eventual promocao de partes ao canon compartilhado.
-- Nao importar mecanicas de outros projetos do estudio sem documento local adotando a regra.
-- Reuso tecnico permitido vive em `docs/reuse-map.md`; gameplay de outros projetos continua vetado por padrao.
-- Se design local conflita com lore compartilhado, lore prevalece ate o canon ser atualizado.
+- Do not put `service_role`, Supabase secrets, database passwords, keystore passwords or private tokens in client code, exports, portal files, manifests or operational docs.
+- Do not run remote publishing modes without explicit user approval and `-ConfirmRemoteMutation`.
+- Do not start a new playable feature, numeric tuning pass, `account_profiles/game_saves` migration, iOS work or mobile browser support until the Track 13 manual gate has been executed and recorded.
+- Do not edit `.tscn` files as raw text unless the user explicitly asks and the change is safer than an editor/tool path.
+- Do not import gameplay rules from other Draxos projects unless this project's live docs explicitly adopt them.
+- Do not treat `Projetos/_conceitos/mobile-universe/` as active implementation material. It is design archive only.
 
-## Regra Godot
+## Live Source Rules
 
-- Engine: Godot `4.6.2-stable`.
-- Language: GDScript only.
-- Tests: GUT `9.6.0`.
-- Scenes sao editor-owned por padrao; agentes nao editam `.tscn` como texto bruto.
-- Content source: JSON em `data/definitions/`.
-- Resources gerados em `data/generated/` sao produzidos por ferramentas locais.
+- `docs/product-vision.md` is the local long-term product canon until promoted to shared canon.
+- `docs/game-design-document.md` is the authoritative implementation GDD.
+- `docs/design-pending.md` is the only live register of unresolved design decisions.
+- `docs/documentation-index.md` classifies live docs, contracts, runbooks, history and design archive.
+- `implementation/current-status.md` must remain short and decision-oriented; detailed history belongs in `implementation/tracks/`.
+- Supabase mirrors under `server/` and `supabase/` must stay aligned.
 
-## Regra De Backend
+## Current Handoff
 
-- Toda logica de jogo autoritativa roda em Supabase Edge Functions, nunca no cliente.
-- Cliente Godot se comunica com Supabase via HTTPRequest REST.
-- Batalha: cliente envia intencao, recebe log, anima. Nao executa simulacao.
-- Recursos sao mutados apenas via Edge Functions.
-- Row Level Security (RLS) isola dados por jogador.
-- Contratos vivem em `docs/contracts/`.
-- Schema espelhado vive em `server/schema/`.
-- Edge Functions espelhadas vivem em `server/functions/` e `supabase/functions/`; manter mirrors alinhados.
-
-## Regra De Plataforma
-
-- Android: app nativo, unico canal mobile do primeiro slice.
-- PC: executavel nativo + PC browser.
-- Mobile browser: fora do escopo.
-- iOS: futuro; nao implementar sem decisao explicita.
-- Cloudflare Pages estavel pode estar protegido por Access; smokes anonimos devem usar preview liberado ou flag explicita para reconhecer a tela de Access.
-
-## Regra De Design Pending
-
-- Nao inventar design durante implementacao.
-- Se faltar decisao, registrar em `docs/design-pending.md` com categoria de bloqueio.
-- Ao resolver uma pendencia, atualizar `docs/design-pending.md` e o documento destino no mesmo commit.
-
-## Active Track
-
-Track ativa: `Track 13 - Foundation Validation And Release Safety` (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`).
-
-Comece por `implementation/current-status.md` e siga `implementation/tracks/track-13-validation-release-safety/current-status.md`.
+Track 14 is reorganizing documentation and coordination for long-term agent operation on top of the Track 13 hardening baseline. Until Track 14 is closed or merged, the only expected DraxosMobile card in Kanban Doing is the agent-ops foundation card.

@@ -1,110 +1,96 @@
 # DraxosMobile - Current Status
 
-- Last Updated: `2026-05-28`
-- Active Project Name: `draxos-mobile`
-- Active Surface: `Foundation validation and release safety`
-- Active Track: `Track 13 - Foundation Validation And Release Safety`
-- Active Track Status: `TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`
-- Portfolio Status: `P2_IMPLEMENTACAO`
-- Current Build Channel: `internal_alpha`
-- Current Version: `0.0.1-alpha.0`
-- Current Version Code: `1`
+- Last updated: `2026-05-28`
+- Project: `draxos-mobile`
+- Portfolio status: `P2_IMPLEMENTACAO`
+- Active surface: `Agent operations foundation`
+- Active track: `Track 14 - Agent Operations Foundation`
+- Active track status: `TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`
+- Hardening baseline: `Track 13 - Foundation Validation And Release Safety` (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
+- Build channel: `internal_alpha`
+- Version: `0.0.1-alpha.0`
+- Version code: `1`
 
-## Baseline Atual
+## Baseline
 
-DraxosMobile saiu bem da fase de crescimento rapido: Track 00 a Track 13 estao integradas sobre Godot 4.6.2 + Supabase, com cliente Android/PC/Web, conta email/senha, dois saves por conta (`normal` e `progression_lab`), batalha server-authoritative, Base/Social/Competicao/Loja alpha, Progression Lab/Battle Lab, Refugio portrait como primeira tela jogavel, batalha fullscreen portrait, summary minimo, logs em tela propria, `boot.gd` decomposto em contratos/flows/helpers menores e validacao/release protegidos por runner e guardas automatizados.
+Track 00-13 are integrated on Godot 4.6.2 + Supabase. The project has Android/PC/Web alpha surfaces, email/password account flow, `normal` and `progression_lab` saves, server-authoritative battle, Base/Social/Competition/Shop alpha loops, Progression Lab/Battle Lab, portrait Refugio as the first playable screen, fullscreen portrait battle, skip, minimal summary and current-battle logs.
 
-As builds Internal Alpha foram republicadas em 2026-05-28:
+The major hardening baseline is:
 
-| Artefato | Bytes | SHA256 |
+- Track 11: live docs, release state, Kanban cleanup, manual walkthrough and first safe `boot.gd` cut.
+- Track 12: `boot.gd` decomposed to action contract, account/session flow, surface action flow, battle lifecycle flow and shared surface helpers; current budget is under `1500` lines.
+- Track 13: `tools/validate_foundation.ps1`, safe `publish_internal_alpha.ps1` modes, release safety checks, readiness checks and Android/Windows/Web manual gate.
+
+## Release Snapshot
+
+| Artifact | Bytes | SHA256 |
 |---|---:|---|
 | Android APK | `27965106` | `ad6d2579ce003769cfce2536b788c1330abb283d0ae90cc785d1d016ae514ca6` |
 | PC Windows ZIP | `36466312` | `ad5fb8351bb001604479d95737fc702bb9b0ff6779afb9e3e31692b7bc189031` |
 | Web index | `5442` | `75fdd260b889582cb723256e87ca9867ae35b7cdd3411cbb2ca21ace5585366a` |
 
-Links vivos:
+Links:
 
-- Supabase remoto: `https://armxgipvnbbshzqawklw.supabase.co`
+- Supabase remote: `https://armxgipvnbbshzqawklw.supabase.co`
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
-- Portal estavel: `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
-- Web estavel: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Cloudflare preview mais recente verificado: `https://36b1d46c.draxos-mobile-internal-alpha.pages.dev`
+- Stable portal: `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+- Stable Web: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- Latest verified preview: `https://36b1d46c.draxos-mobile-internal-alpha.pages.dev`
 
-Observacao: o dominio estavel do Cloudflare Pages esta protegido por Cloudflare Access. Validacao anonima publica deve usar preview nao protegido ou uma sessao autenticada no Access.
+The stable Cloudflare Pages domain is protected by Cloudflare Access. Anonymous public validation should use an unprotected preview or an authenticated Access session.
 
-## Track 11 Entregue
+## Active Track 14
 
-Track 11 nao adiciona feature jogavel; ela consolida a fundacao para a proxima etapa longa. Entregas:
+Track 14 does not add gameplay. It reorganizes the project so agents can enter safely, find the live truth quickly, avoid old-track drift and validate without accidental remote mutation.
 
-- Estado vivo sincronizado: portfolio, README local, AGENTS local, `implementation/current-status.md`, docs de release e painel do estudio apontam para Track 11 e para as builds publicadas corretas.
-- Kanban antigo de DraxosMobile foi arquivado para `Done`, removendo dezenas de cards obsoletos de `Doing`.
-- Nova trilha oficial em `implementation/tracks/track-11-product-foundation-consolidation/` com escopo, plano, auditoria, status e registro de pacotes paralelos.
-- Runbook manual de walkthrough em `docs/track-11-manual-walkthrough.md`.
-- Primeiro corte seguro do monolito `modes/boot/boot.gd`: contrato de erro do app shell extraido para `modes/boot/ui/app_shell_error_contract.gd`, com teste dedicado.
-- Release ops alinhado ao estado publicado de 2026-05-28: defaults de manifest, manifest exemplo, docs de handoff/publicacao e smoke remoto aceitam o cenario real de Cloudflare Access quando explicitamente autorizado.
-- Readiness check local em `tools/check_track11_readiness.ps1` para impedir drift entre docs, release defaults, mirrors server/supabase e Kanban.
+Current package:
 
-## Track 12 Entregue
+- `AGENTS.md` starts with agent operation, safe commands and hard stops.
+- `README.md` is a short project portal instead of a long status archive.
+- `docs/agent-operating-manual.md` becomes the detailed agent runbook.
+- `docs/documentation-index.md` classifies docs as `VIVO`, `CONTRATO`, `RUNBOOK`, `HISTORICO` or `ARQUIVO_DESIGN`.
+- Portfolio and Kanban point to the real current foundation work.
+- Product terms are aligned around Instrumento Ritual, Doutrina and Familiar, with `weapon/passive/pet` preserved only as legacy technical field names where needed.
 
-Track 12 nao adiciona feature jogavel; ela reduz risco arquitetural do app shell. Entregas:
+## Risks And Blocks
 
-- `modes/boot/boot.gd` reduzido para `1301` linhas e coberto por orçamento permanente de `1500` linhas.
-- Action ids, prefixos, update gate, replay gate e payload de telemetria centralizados em `modes/boot/ui/app_shell_action_contract.gd`.
-- Conta, sessao, save e update/runtime checks extraidos para `modes/boot/flows/account_session_flow.gd`.
-- Acoes online de Base, Social, Competicao e Loja extraidas para `modes/boot/flows/surface_action_flow.gd`, mantendo autoridade no servidor.
-- Request/latest/history/replay/skip/summary/logs de batalha extraidos para `modes/boot/flows/battle_lifecycle_flow.gd`, sem simulacao client-side.
-- Helpers visuais compartilhados extraidos para `modes/boot/surfaces/surface_ui_helpers.gd` e fronteira de presenters atualizada em `modes/boot/surfaces/README.md`.
-- Guardas em `tests/client/test_boot_mobile_ui.gd` impedem regressao estrutural de linhas, actions, rede/mutacao em presenters e UI criada dentro de flows.
+- Manual Android/Windows/Web walkthrough has not been executed yet. This blocks new features, tuning, account/save migration and release publication.
+- `players.save_type` remains an alpha shortcut. `account_profiles` + `game_saves` is a future migration package.
+- Progression/economy remains `REVIEW`; numeric changes need human playthrough and Progression Lab evidence.
+- Release scripts are safe by default, but a real `Mode Package` with fresh artifacts is still needed before publication becomes routine.
+- Presenters/helpers still use dynamic `host.call` boundaries in places. Acceptable for this foundation, but future typed ports would reduce risk.
 
-## Track 13 Entregue
+## Next Step
 
-Track 13 nao adiciona feature jogavel; ela transforma validacao e release em fundacao auditavel. Entregas:
+Finish Track 14 validation and keep the branch clean. After merge, execute the Track 13 manual walkthrough in:
 
-- `tools/validate_foundation.ps1` centraliza perfis `Quick`, `Client`, `Release` e `Full`, com relatorios locais em `build/validation/`.
-- `tools/publish_internal_alpha.ps1` agora usa `Mode Plan` por default e nao faz upload, deploy, secret update ou verificacao remota sem modo explicito.
-- `Mode Package` prepara apenas arquivos locais; `Upload`, `DeployManifest` e `FullPublish` exigem `-ConfirmRemoteMutation`.
-- `tools/check_release_safety.ps1` valida parse, default seguro, guarda de mutacao e manifest defaults espelhados.
-- `tools/check_track13_readiness.ps1` valida docs/status, `boot.gd` abaixo de `1500` linhas, mirrors server/supabase e Kanban sem card obsoleto.
-- `docs/track-13-manual-walkthrough-gate.md` define o gate manual Android/Windows/Web; a execucao real fica como proximo passo, sem bloquear a track.
+1. Android app.
+2. Windows executable.
+3. Web preview.
+4. Web stable through Cloudflare Access.
 
-## O Que Nao Esta Bom Ainda
+Record Entry/Login/Save, Refugio, Base, Battle, Summary, Logs, Social, Competition, Shop and update gate behavior before opening the next gameplay package.
 
-- A fronteira entre presenters, helpers e host ainda usa muitos callbacks dinamicos (`host.call`). Esta aceitavel para nao mexer em UX agora, mas pode virar uma etapa futura de tipagem/ports menores.
-- O modelo `players.save_type` segue como atalho alpha. A migracao para `account_profiles` + `game_saves` ainda precisa de decisao e pacote proprio.
-- Progression/Economia segue em `REVIEW`: sem tuning numerico ate uma rodada humana no Godot com save real e Progression Lab.
-- Assets finais, UX Android em aparelho real, keystore release e live ops ainda nao sao maturidade de produto. O jogo esta pronto para alpha fechado, nao para beta publico.
-- O walkthrough manual real Android/Windows/Web ainda precisa acontecer usando o gate da Track 13 antes de novas features.
-- O release flow agora e seguro por default, mas ainda precisa de uma rodada real de `Mode Package` com artefatos frescos antes de virar rotina de publicacao.
+## Validation
 
-## Proximo Passo
-
-Executar walkthrough manual real em Android, Windows e Web autenticado/preview usando `docs/track-13-manual-walkthrough-gate.md`:
-
-1. `Entry`: login/criar conta e recuperacao de save.
-2. `Refugio`: primeira tela, hotspots, Base embutida, Loja/Social/Competicao.
-3. `Batalha`: iniciar, assistir/pular, summary minimo, logs.
-4. `Conta`: update gate, save normal, Progression Lab isolado.
-5. Registrar bloqueios, friccao e qualquer diferenca entre Android, Windows e Web.
-
-Nao abrir feature nova, tuning numerico ou migration de conta/save antes desse walkthrough.
-
-## Validacao Recomendada
+Minimum foundation validation:
 
 ```powershell
 cd <WORKTREE>\Projetos\draxos-mobile
-D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <WORKTREE>\Projetos\draxos-mobile -s res://tools/validate.gd
-D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <WORKTREE>\Projetos\draxos-mobile -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/client -gexit
-.\tools\validate_foundation.ps1 -ProjectDir . -Profile Full -RequireClean:$false
-npx -y deno check supabase/functions/release/index.ts server/functions/release/index.ts server/tests/release_artifacts_remote_smoke.ts
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Full -RequireClean:$false
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/client -gexit
+npx -y deno task --cwd server/functions check
+npx -y deno task --cwd supabase/functions check
 git diff --check
+git status --short
 ```
 
 ## Read Next
 
 1. `../AGENTS.md`
-2. `implementation/tracks/track-13-validation-release-safety/current-status.md`
-3. `implementation/tracks/track-13-validation-release-safety/scope.md`
-4. `implementation/tracks/track-13-validation-release-safety/validation-matrix.md`
+2. `docs/agent-operating-manual.md`
+3. `docs/documentation-index.md`
+4. `implementation/tracks/track-14-agent-ops-foundation/current-status.md`
 5. `implementation/tracks/track-13-validation-release-safety/release-safety-contract.md`
 6. `docs/track-13-manual-walkthrough-gate.md`
-7. `docs/release-ops-checklist.md`
