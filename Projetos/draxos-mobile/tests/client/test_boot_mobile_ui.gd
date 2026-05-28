@@ -164,8 +164,9 @@ func test_boot_refugio_home_renders_altar_hotspots_and_account_route() -> void:
 	assert_true(boot._action_buttons.has("collect_base"))
 	assert_not_null(boot._base_state_container)
 	assert_null(_find_button_by_text(boot._first_screen_root, "Atualizar Refugio"))
-	assert_true(_label_tree_contains(boot._first_screen_root, "Rotina do Refugio"))
-	assert_true(_label_tree_contains(boot._first_screen_root, "Refugio pronto para carregar depois da entrada."))
+	assert_true(_label_tree_contains(boot._first_screen_root, "Altar do Refugio"))
+	assert_true(_label_tree_contains(boot._first_screen_root, "Entre ou use Guest dev para sincronizar."))
+	assert_not_null(_find_button_by_text(boot._first_screen_root, "Coletar"))
 
 	for hotspot_text: String in ["Batalha", "Social", "Competicao", "Loja", "Perfil"]:
 		var hotspot := _find_button_by_text(boot._first_screen_root, hotspot_text)

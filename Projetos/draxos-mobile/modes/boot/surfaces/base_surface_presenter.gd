@@ -19,6 +19,7 @@ static func render(host: Node) -> void:
 
 static func render_refuge_embedded(host: Node, parent: VBoxContainer) -> void:
 	var timeline := _base_label(host, "", "text_secondary")
+	timeline.visible = false
 	parent.add_child(timeline)
 	host.set("_timeline_label", timeline)
 
@@ -28,15 +29,6 @@ static func render_refuge_embedded(host: Node, parent: VBoxContainer) -> void:
 	parent.add_child(base_state_container)
 	host.set("_base_state_container", base_state_container)
 	render_state(host)
-
-	var actions := GridContainer.new()
-	actions.columns = 2 if not _compact_layout(host) else 1
-	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	actions.add_theme_constant_override("h_separation", 8)
-	actions.add_theme_constant_override("v_separation", 8)
-	parent.add_child(actions)
-	actions.add_child(_embedded_action_button(host, "Coletar producao", "collect_base", "Coletar a producao offline acumulada do Refugio?"))
-	actions.add_child(_embedded_action_button(host, "Comprar Energia alpha", "buy_energy_pack_alpha", "Gastar 80 Diamantes para comprar 80 Energia no save ativo?"))
 
 static func render_state(host: Node, collected: Dictionary = {}) -> void:
 	var timeline := _timeline_label(host)
@@ -49,11 +41,10 @@ static func render_state(host: Node, collected: Dictionary = {}) -> void:
 	if base.is_empty():
 		timeline.text = _empty_refuge_timeline_text()
 		if container != null:
-			container.add_child(_base_info_panel(
-				host,
-				"Rotina do Refugio",
-				_empty_refuge_body_text()
-			))
+			if _is_refuge_screen(host):
+				container.add_child(_refuge_empty_panel(host))
+			else:
+				container.add_child(_base_info_panel(host, "Rotina do Refugio", _empty_refuge_body_text()))
 		return
 
 	var resources := SessionStore.resources
@@ -100,7 +91,10 @@ static func render_state(host: Node, collected: Dictionary = {}) -> void:
 			])
 	lines.append("Fila: %d/%d" % [active_jobs, int(base.get("construction_slots", 1))])
 	timeline.text = "\n".join(lines)
-	_render_playable_panels(host, structures, base, collected)
+	if _is_refuge_screen(host):
+		_render_refuge_panels(host, structures, base, collected)
+	else:
+		_render_playable_panels(host, structures, base, collected)
 
 static func select_structure(host: Node, structure_id: String) -> void:
 	if structure_id.strip_edges() == "":
@@ -149,6 +143,87 @@ static func _render_playable_panels(host: Node, structures: Array, base: Diction
 		_base_map_panel(host, structures),
 		_base_detail_panel(host, structures),
 	], 2)
+
+static func _render_refuge_panels(host: Node, structures: Array, base: Dictionary, collected: Dictionary) -> void:
+	var container := _base_state_container(host)
+	if container == null:
+		return
+	_ensure_selected_base_structure(host, structures)
+	_add_responsive_panel_layout(host, container, [
+		_refuge_command_panel(host, base, collected),
+		_base_map_panel(host, structures),
+		_base_detail_panel(host, structures),
+	], 1)
+
+static func _refuge_empty_panel(host: Node) -> Control:
+	var panel := _base_panel(host)
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 8)
+	panel.add_child(box)
+	box.add_child(_base_label(host, "Altar do Refugio", "text_primary", 18))
+	box.add_child(_base_label(host, _empty_refuge_body_text(), "text_secondary"))
+	var actions := GridContainer.new()
+	actions.columns = 2
+	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	actions.add_theme_constant_override("h_separation", 8)
+	actions.add_theme_constant_override("v_separation", 8)
+	box.add_child(actions)
+	actions.add_child(_embedded_action_button(host, "Coletar", "collect_base", "Coletar a producao offline acumulada do Refugio?"))
+	actions.add_child(_embedded_action_button(host, "Energia", "buy_energy_pack_alpha", "Gastar 80 Diamantes para comprar 80 Energia no save ativo?"))
+	return panel
+
+static func _refuge_command_panel(host: Node, base: Dictionary, collected: Dictionary) -> Control:
+	var routine := routine_summary(base, collected)
+	var panel := _base_panel(host)
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 8)
+	panel.add_child(box)
+	box.add_child(_base_label(host, "Altar do Refugio", "text_primary", 18))
+
+	var grid := GridContainer.new()
+	grid.columns = 2
+	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	grid.add_theme_constant_override("h_separation", 8)
+	grid.add_theme_constant_override("v_separation", 5)
+	box.add_child(grid)
+	_add_refuge_status_row(host, grid, "Coleta", _refuge_collect_status(routine, collected), "status_success" if bool(routine.get("has_collect_ready", false)) else "text_secondary")
+	_add_refuge_status_row(host, grid, "Fila", _refuge_queue_status(routine), "status_success" if int(routine.get("free_slots", 0)) > 0 else "status_warning")
+	_add_refuge_status_row(host, grid, "Proximo", _refuge_upgrade_status(routine), "status_success" if bool(routine.get("next_upgrade_ready", false)) else "text_secondary")
+
+	var actions := GridContainer.new()
+	actions.columns = 2
+	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	actions.add_theme_constant_override("h_separation", 8)
+	actions.add_theme_constant_override("v_separation", 8)
+	box.add_child(actions)
+	actions.add_child(_embedded_action_button(host, "Coletar", "collect_base", "Coletar a producao offline acumulada do Refugio?"))
+	actions.add_child(_embedded_action_button(host, "Energia", "buy_energy_pack_alpha", "Gastar 80 Diamantes para comprar 80 Energia no save ativo?"))
+	return panel
+
+static func _add_refuge_status_row(host: Node, grid: GridContainer, title: String, value: String, value_color: String) -> void:
+	var title_label := _base_label(host, title, "text_primary")
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	grid.add_child(title_label)
+	var value_label := _base_label(host, value, value_color)
+	value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	grid.add_child(value_label)
+
+static func _refuge_collect_status(routine: Dictionary, collected: Dictionary) -> String:
+	if bool(routine.get("has_collect_ready", false)):
+		return _strip_routine_prefix(str(routine.get("collect_text", "")), "Coleta pronta: ")
+	if _resource_total(collected) > 0.0:
+		return "Coletado: %s" % _format_nonzero_resources(collected)
+	return "Nada agora"
+
+static func _refuge_queue_status(routine: Dictionary) -> String:
+	return "%d/%d ativos | %d livre" % [
+		int(routine.get("active_job_count", 0)),
+		int(routine.get("construction_slots", 0)),
+		int(routine.get("free_slots", 0)),
+	]
+
+static func _refuge_upgrade_status(routine: Dictionary) -> String:
+	return _strip_after_separator(str(routine.get("next_upgrade_text", "")))
 
 static func _base_summary_panel(host: Node, base: Dictionary, collected: Dictionary) -> Control:
 	var panel := _base_panel(host)
@@ -305,10 +380,27 @@ static func _empty_refuge_timeline_text() -> String:
 
 static func _empty_refuge_body_text() -> String:
 	if SessionStore.has_valid_access_token():
-		return "Carregando predios, coleta e fila de construcao sem exigir uma acao manual."
+		return "Sincronizando predios, coleta e fila."
 	if SessionStore.is_progression_lab_local_only():
-		return "Carregue um snapshot do Lab para ver rotina, predios e proximos upgrades aqui."
-	return "Entre ou use Guest dev para sincronizar rotina, predios e proximos upgrades aqui."
+		return "Carregue um snapshot do Lab."
+	return "Entre ou use Guest dev para sincronizar."
+
+static func _strip_routine_prefix(text: String, prefix: String) -> String:
+	var stripped := text.strip_edges()
+	if stripped.begins_with(prefix):
+		stripped = stripped.substr(prefix.length()).strip_edges()
+	if stripped.ends_with("."):
+		stripped = stripped.substr(0, stripped.length() - 1).strip_edges()
+	return stripped
+
+static func _strip_after_separator(text: String) -> String:
+	var stripped := text.strip_edges()
+	var separator_index := stripped.find(" | ")
+	if separator_index >= 0:
+		stripped = stripped.substr(0, separator_index).strip_edges()
+	if stripped.ends_with("."):
+		stripped = stripped.substr(0, stripped.length() - 1).strip_edges()
+	return stripped
 
 static func _ensure_selected_base_structure(host: Node, structures: Array) -> void:
 	var selected_id := _selected_base_structure_id(host)
@@ -637,6 +729,9 @@ static func _selected_base_structure_id(host: Node) -> String:
 
 static func _compact_layout(host: Node) -> bool:
 	return bool(host.get("_compact_layout"))
+
+static func _is_refuge_screen(host: Node) -> bool:
+	return str(host.get("_current_screen")) == "refuge"
 
 static func _base_map_columns(host: Node) -> int:
 	return int(host.call("_base_map_columns"))

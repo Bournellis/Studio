@@ -48,6 +48,11 @@ Date: 2026-05-28
   - removed the `Atualizar Refugio` requirement from the main Refugio screen;
   - moved Refugio routine/structure content above the secondary path buttons;
   - added automatic Refugio state sync when the screen opens with a valid session and no local snapshot.
+- Applied Track 09B Refugio presentation follow-up:
+  - moved the main `Caminhos do Refugio` hotspots before technical state text;
+  - hid the long Base timeline from the playable Refugio home;
+  - replaced the initial routine text block with a compact `Altar do Refugio` command panel;
+  - kept `Coletar`, `Energia`, structure map and structure detail available without restoring a separate Base screen.
 
 ## Guardrails Preserved
 
@@ -63,6 +68,7 @@ Date: 2026-05-28
 Local validation result:
 
 - Track 09B core-flow patch: `tools/validate.gd` passed with GUT `96/96` tests and `1170` asserts; `tools/smoke_mobile_presentation.gd`, `tools/smoke_foundation_hardening.gd` and `git diff --check` passed.
+- Track 09B Refugio presentation patch: `tools/validate.gd` passed with GUT `96/96` tests and `1171` asserts; `tools/smoke_mobile_presentation.gd`, `tools/smoke_foundation_hardening.gd` and `git diff --check` passed.
 - Track 09B patch: `tools/validate.gd` passed with GUT `96/96` tests and `1163` asserts; `tools/smoke_mobile_presentation.gd`, `tools/smoke_foundation_hardening.gd` and `git diff --check` passed.
 - `tools/validate.gd`: passed with GUT `95/95` tests and `1144` asserts.
 - `tools/smoke_mobile_presentation.gd`: passed.
