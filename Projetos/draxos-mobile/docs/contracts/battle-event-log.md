@@ -1,13 +1,13 @@
 # Battle Event Log Contract
 
-- Ultima atualizacao: `2026-05-20`
+- Ultima atualizacao: `2026-05-28`
 - Versao atual: `battle_log_v1`
 
 O log de batalha e a unica fonte que o cliente usa para animar uma batalha. O cliente nao recalcula dano, vida, vitoria, recompensa ou ranking.
 
 Status MVP: `battle/request` server-authoritative implementado em T00-P07 com bot `mvp_training_bot`, seed deterministica e eventos `battle_log_v1`.
 
-Status primeiro slice: `FIRST_SLICE_SIM` completo em T00-P10 com simulador TypeScript deterministico, bots de variacao, Instrumentos Rituais, mana, spells diretas, DoTs, status, resistencias, barreiras, Familiares, Doutrinas, summons, cooldowns, anti-stall e recompensas `FIRST_SLICE_SIM`.
+Status primeiro slice: `FIRST_SLICE_SIM` completo em T00-P10 com simulador TypeScript deterministico, bots de variacao, Instrumentos Rituais, mana, spells diretas, DoTs, status, resistencias, barreiras, Familiares, Doutrinas, summons, cooldowns, anti-stall e recompensas `FIRST_SLICE_SIM`. Track 16 adiciona `consumable_use` e cura por pocao.
 
 ## Envelope
 
@@ -317,7 +317,33 @@ aplica fallback visual.
 }
 ```
 
+### `consumable_use`
+
+```json
+{
+  "t": 4.0,
+  "seq": 21,
+  "type": "consumable_use",
+  "source": "player",
+  "target": "player",
+  "item_id": "pocao_vida",
+  "slot_index": 1,
+  "effect_id": "heal_over_time",
+  "duration": 5,
+  "tick_percent": 4
+}
+```
+
+Regras:
+
+- pocao equipada dispara antes da escolha de spell;
+- cada slot usa no maximo 1 pocao por batalha;
+- se nao houver estoque, nenhum evento de uso/cura e emitido;
+- o consumo do item e aplicado fora do replay, pelo servidor, uma unica vez por batalha/request.
+
 ### `heal`
+
+Track 16 usa `heal` tambem para ticks de Pocao de Vida. Quando a cura vem de consumivel, o evento inclui `item_id`, `effect_id` e `max_hp`.
 
 ```json
 {
@@ -326,8 +352,11 @@ aplica fallback visual.
   "type": "heal",
   "source": "player",
   "target": "player",
+  "item_id": "pocao_vida",
+  "effect_id": "heal_over_time",
   "amount": 2,
-  "hp_after": 84
+  "hp_after": 84,
+  "max_hp": 100
 }
 ```
 

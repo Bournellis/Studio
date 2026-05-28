@@ -20,6 +20,7 @@ const KNOWN_EVENT_TYPES := {
 	"summon_attack": true,
 	"summon_expire": true,
 	"pet_attack": true,
+	"consumable_use": true,
 	"heal": true,
 	"anti_stall": true,
 	"reward_preview": true,
@@ -177,6 +178,14 @@ static func format_event(event: Dictionary) -> String:
 				str(event.get("hp_after", "?")),
 				_absorb_suffix(event),
 			]
+		"consumable_use":
+			return "%s - %s usou %s: %s por %ss" % [
+				timestamp,
+				_source_label(str(event.get("source", ""))),
+				_item_label(str(event.get("item_id", "item"))),
+				str(event.get("effect", "efeito")),
+				str(event.get("duration_seconds", "?")),
+			]
 		"heal":
 			return "%s - %s curou %s, HP %s" % [
 				timestamp,
@@ -267,6 +276,13 @@ static func _format_resource_suffix(resources: Dictionary) -> String:
 	if parts.is_empty():
 		return ""
 	return ", ".join(parts)
+
+static func _item_label(item_id: String) -> String:
+	match item_id:
+		"pocao_vida":
+			return "Pocao de Vida"
+		_:
+			return item_id
 
 static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:

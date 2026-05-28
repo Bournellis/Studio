@@ -18,6 +18,8 @@ const SURFACE_SOCIAL := "social"
 const SURFACE_COMPETITION := "competition"
 const SURFACE_MONETIZATION := "monetization"
 const SURFACE_BATTLE := "battle"
+const SURFACE_CRAFTING := "crafting"
+const SURFACE_BUILD := "build"
 
 var access_token := ""
 var refresh_token := ""
@@ -37,6 +39,8 @@ var base_state: Dictionary = {}
 var social_state: Dictionary = {}
 var competition_state: Dictionary = {}
 var monetization_state: Dictionary = {}
+var crafting_state: Dictionary = {}
+var combat_build_state: Dictionary = {}
 var progression_lab: Dictionary = {}
 var last_battle_id: Variant = null
 var last_battle_log: Dictionary = {}
@@ -115,6 +119,8 @@ func clear_session() -> void:
 	social_state = {}
 	competition_state = {}
 	monetization_state = {}
+	crafting_state = {}
+	combat_build_state = {}
 	progression_lab = {}
 	last_battle_id = null
 	last_battle_log = {}
@@ -403,6 +409,68 @@ func apply_monetization_result(payload: Dictionary) -> bool:
 	session_changed.emit()
 	return true
 
+func apply_crafting_result(payload: Dictionary) -> bool:
+	var body := _unwrap_body(payload)
+	if not _accept_save_scoped_payload(SURFACE_CRAFTING, payload, active_save_type):
+		return false
+	if not bool(body.get("ok", false)):
+		last_error = _as_dictionary(body.get("error", {
+			"code": "CRAFTING_NOT_OK",
+			"message": "Servidor recusou crafting.",
+		}))
+		session_changed.emit()
+		return false
+
+	var state := _as_dictionary(body.get("crafting", {}))
+	if state.is_empty():
+		last_error = {
+			"code": "CRAFTING_STATE_INCOMPLETE",
+			"message": "Estado de crafting incompleto.",
+		}
+		session_changed.emit()
+		return false
+
+	if body.get("resources", null) is Dictionary:
+		resources = _as_dictionary(body.get("resources", {})).duplicate(true)
+		_remember_surface_snapshot(SURFACE_ACCOUNT)
+	crafting_state = state.duplicate(true)
+	_remember_surface_snapshot(SURFACE_CRAFTING)
+	last_error = {}
+	offline = false
+	session_changed.emit()
+	return true
+
+func apply_build_result(payload: Dictionary) -> bool:
+	var body := _unwrap_body(payload)
+	if not _accept_save_scoped_payload(SURFACE_BUILD, payload, active_save_type):
+		return false
+	if not bool(body.get("ok", false)):
+		last_error = _as_dictionary(body.get("error", {
+			"code": "BUILD_NOT_OK",
+			"message": "Servidor recusou preparacao.",
+		}))
+		session_changed.emit()
+		return false
+
+	var state := _as_dictionary(body.get("combat_build", {}))
+	if state.is_empty():
+		last_error = {
+			"code": "BUILD_STATE_INCOMPLETE",
+			"message": "Estado de preparacao incompleto.",
+		}
+		session_changed.emit()
+		return false
+
+	if body.get("build", null) is Dictionary:
+		build = _as_dictionary(body.get("build", {})).duplicate(true)
+		_remember_surface_snapshot(SURFACE_ACCOUNT)
+	combat_build_state = state.duplicate(true)
+	_remember_surface_snapshot(SURFACE_BUILD)
+	last_error = {}
+	offline = false
+	session_changed.emit()
+	return true
+
 func apply_runtime_config(config: Dictionary) -> bool:
 	runtime_config = RuntimeConfigScript.normalize(config)
 	session_changed.emit()
@@ -433,6 +501,12 @@ func has_competition_state() -> bool:
 
 func has_monetization_state() -> bool:
 	return not monetization_state.is_empty() and _surface_matches_active_save(SURFACE_MONETIZATION)
+
+func has_crafting_state() -> bool:
+	return not crafting_state.is_empty() and _surface_matches_active_save(SURFACE_CRAFTING)
+
+func has_build_state() -> bool:
+	return not combat_build_state.is_empty() and _surface_matches_active_save(SURFACE_BUILD)
 
 func is_progression_lab_local_only() -> bool:
 	return bool(progression_lab.get("local_only", false))
@@ -569,6 +643,8 @@ func snapshot() -> Dictionary:
 		"social_state": social_state.duplicate(true),
 		"competition_state": competition_state.duplicate(true),
 		"monetization_state": monetization_state.duplicate(true),
+		"crafting_state": crafting_state.duplicate(true),
+		"combat_build_state": combat_build_state.duplicate(true),
 		"progression_lab": progression_lab.duplicate(true),
 		"surface_save_types": surface_save_types.duplicate(true),
 		"last_battle_id": last_battle_id,
@@ -621,6 +697,8 @@ func _apply_cache(cache: Dictionary) -> void:
 	social_state = _as_dictionary(cache.get("social_state", {})).duplicate(true)
 	competition_state = _as_dictionary(cache.get("competition_state", {})).duplicate(true)
 	monetization_state = _as_dictionary(cache.get("monetization_state", {})).duplicate(true)
+	crafting_state = _as_dictionary(cache.get("crafting_state", {})).duplicate(true)
+	combat_build_state = _as_dictionary(cache.get("combat_build_state", {})).duplicate(true)
 	progression_lab = _as_dictionary(cache.get("progression_lab", {})).duplicate(true)
 	surface_save_types = _normalized_surface_save_types(_as_dictionary(cache.get("surface_save_types", {})))
 	last_battle_id = cache.get("last_battle_id", null)
@@ -650,6 +728,8 @@ func _clear_account_snapshots() -> void:
 	social_state = {}
 	competition_state = {}
 	monetization_state = {}
+	crafting_state = {}
+	combat_build_state = {}
 	if active_save_type == SAVE_TYPE_NORMAL:
 		progression_lab = {}
 	last_battle_id = null
@@ -662,6 +742,8 @@ func _clear_gameplay_snapshots() -> void:
 	social_state = {}
 	competition_state = {}
 	monetization_state = {}
+	crafting_state = {}
+	combat_build_state = {}
 	last_battle_id = null
 	last_battle_log = {}
 	last_battle_rewards = {}
@@ -669,6 +751,8 @@ func _clear_gameplay_snapshots() -> void:
 	surface_save_types.erase(SURFACE_SOCIAL)
 	surface_save_types.erase(SURFACE_COMPETITION)
 	surface_save_types.erase(SURFACE_MONETIZATION)
+	surface_save_types.erase(SURFACE_CRAFTING)
+	surface_save_types.erase(SURFACE_BUILD)
 	surface_save_types.erase(SURFACE_BATTLE)
 
 func ensure_alpha_account_request_id() -> String:
@@ -732,6 +816,10 @@ func _backfill_surface_save_types() -> void:
 		_remember_surface_snapshot(SURFACE_COMPETITION)
 	if not monetization_state.is_empty() and not surface_save_types.has(SURFACE_MONETIZATION):
 		_remember_surface_snapshot(SURFACE_MONETIZATION)
+	if not crafting_state.is_empty() and not surface_save_types.has(SURFACE_CRAFTING):
+		_remember_surface_snapshot(SURFACE_CRAFTING)
+	if not combat_build_state.is_empty() and not surface_save_types.has(SURFACE_BUILD):
+		_remember_surface_snapshot(SURFACE_BUILD)
 	if not last_battle_log.is_empty() and not surface_save_types.has(SURFACE_BATTLE):
 		_remember_surface_snapshot(SURFACE_BATTLE)
 
@@ -742,6 +830,8 @@ func _diagnostics_surfaces() -> Dictionary:
 		SURFACE_SOCIAL: _diagnostics_surface(SURFACE_SOCIAL, has_social_state()),
 		SURFACE_COMPETITION: _diagnostics_surface(SURFACE_COMPETITION, has_competition_state()),
 		SURFACE_MONETIZATION: _diagnostics_surface(SURFACE_MONETIZATION, has_monetization_state()),
+		SURFACE_CRAFTING: _diagnostics_surface(SURFACE_CRAFTING, has_crafting_state()),
+		SURFACE_BUILD: _diagnostics_surface(SURFACE_BUILD, has_build_state()),
 		SURFACE_BATTLE: _diagnostics_surface(SURFACE_BATTLE, has_battle_log()),
 	}
 

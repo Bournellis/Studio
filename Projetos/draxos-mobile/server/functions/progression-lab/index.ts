@@ -43,6 +43,11 @@ interface JwtPayload {
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const HEALTHY_SAVES = (healthySavesDocument as HealthySavesDocument).saves;
+const DEFAULT_POTION_BEHAVIOR = {
+  enabled: true,
+  hp: { mode: "below", percent: 40 },
+  mana: { mode: "ignore", percent: 0 },
+};
 
 Deno.serve(async (request: Request) => {
   if (request.method === "OPTIONS") {
@@ -135,7 +140,67 @@ async function handleApply(
     return errorResponse(mapped.code, mapped.message, mapped.status);
   }
 
-  return jsonResponse(rpc.value);
+  const playerId = playerIdFromPayload(rpc.value);
+  if (playerId !== "") {
+    const cleanup = await resetConsumableAndBehaviorState(config, playerId);
+    if (cleanup !== null) {
+      return errorResponse(cleanup.code, cleanup.message, cleanup.status);
+    }
+  }
+
+  return jsonResponse(withResourceDefaults(rpc.value));
+}
+
+async function resetConsumableAndBehaviorState(
+  config: EdgeConfig,
+  playerId: string,
+): Promise<RestError | null> {
+  const tables = [
+    "player_consumables",
+    "player_spell_behaviors",
+    "player_potion_slots",
+    "item_transactions",
+  ];
+
+  for (const table of tables) {
+    const result = await restRequest<unknown>(
+      config,
+      `${table}?player_id=eq.${encodeURIComponent(playerId)}`,
+      { method: "DELETE" },
+    );
+    if (result.error !== null) {
+      return {
+        code: "PROGRESSION_LAB_TRACK16_RESET_FAILED",
+        message: "Unable to reset consumables and behavior state.",
+        status: 500,
+      };
+    }
+  }
+
+  const slotResult = await restRequest<unknown>(
+    config,
+    "player_potion_slots?on_conflict=player_id,slot_index",
+    {
+      method: "POST",
+      headers: { prefer: "resolution=merge-duplicates" },
+      body: JSON.stringify({
+        player_id: playerId,
+        slot_index: 1,
+        potion_id: null,
+        behavior: DEFAULT_POTION_BEHAVIOR,
+      }),
+    },
+  );
+
+  if (slotResult.error !== null) {
+    return {
+      code: "PROGRESSION_LAB_TRACK16_RESET_FAILED",
+      message: "Unable to recreate default potion slot.",
+      status: 500,
+    };
+  }
+
+  return null;
 }
 
 function resolveRoute(pathname: string): Route | null {
@@ -333,6 +398,37 @@ function parseJson(text: string): unknown {
   } catch {
     return null;
   }
+}
+
+function playerIdFromPayload(payload: unknown): string {
+  if (payload === null || typeof payload !== "object" || Array.isArray(payload)) {
+    return "";
+  }
+
+  const root = payload as Record<string, unknown>;
+  const player = root.player;
+  if (player === null || typeof player !== "object" || Array.isArray(player)) {
+    return "";
+  }
+
+  return stringValue((player as Record<string, unknown>).id, "");
+}
+
+function withResourceDefaults(payload: unknown): unknown {
+  if (payload === null || typeof payload !== "object" || Array.isArray(payload)) {
+    return payload;
+  }
+
+  const root = payload as Record<string, unknown>;
+  const resources = root.resources;
+  if (resources !== null && typeof resources === "object" && !Array.isArray(resources)) {
+    const resourceMap = resources as Record<string, unknown>;
+    if (resourceMap.po_osso === undefined) {
+      resourceMap.po_osso = 0;
+    }
+  }
+
+  return payload;
 }
 
 function stringValue(value: unknown, fallback: string): string {

@@ -37,6 +37,7 @@ interface ResourceRow {
   sangue: string | number;
   cristais: string | number;
   ossos: string | number;
+  po_osso: string | number;
   diamante: string | number;
   updated_at: string;
 }
@@ -131,7 +132,7 @@ const STRUCTURES: StructureDefinition[] = [
     description: "Produz Ossos e sustenta crafting de qualidade do instrumento ritual.",
     benefitLabel: "Ossos para crafting",
     resource: "ossos",
-    dailyAtLevel40: 2,
+    dailyAtLevel40: 200,
   },
 ];
 
@@ -476,7 +477,7 @@ async function loadBaseState(
   const playerId = encodeURIComponent(player.id);
   const resourcesResult = await restRequest<ResourceRow[]>(
     config,
-    `resources?player_id=eq.${playerId}&select=player_id,almas,energia,sangue,cristais,ossos,diamante,updated_at&limit=1`,
+    `resources?player_id=eq.${playerId}&select=player_id,almas,energia,sangue,cristais,ossos,po_osso,diamante,updated_at&limit=1`,
     { method: "GET" },
   );
   const structuresResult = await restRequest<BaseStructureRow[]>(

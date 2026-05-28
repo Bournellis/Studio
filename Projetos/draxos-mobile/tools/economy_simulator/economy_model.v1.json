@@ -78,9 +78,9 @@
     {
       "id": "ossos",
       "display_name": "Ossos",
-      "role": "Qualidade e crafting do Instrumento Ritual",
+      "role": "Qualidade, crafting e materia-prima de itens",
       "primary_sources": ["battle", "daily_missions", "weekly_missions", "battle_pass", "base"],
-      "primary_sinks": ["weapon_quality"],
+      "primary_sinks": ["weapon_quality", "crafting"],
       "persistence": "permanent"
     },
     {
@@ -109,13 +109,13 @@
     }
   ],
   "source_values": {
-    "battle": {"xp": 50, "almas": 4, "energia": 2, "sangue": 1, "cristais": 0, "ossos": 0.2, "diamante": 0},
-    "daily_missions_full": {"xp": 350, "almas": 25, "energia": 20, "sangue": 8, "cristais": 4, "ossos": 3, "diamante": 0},
-    "weekly_missions_daily_average": {"xp": 140, "almas": 12, "energia": 12, "sangue": 4, "cristais": 2, "ossos": 1, "diamante": 0},
-    "free_battle_pass_daily_average": {"xp": 80, "almas": 8, "energia": 8, "sangue": 3, "cristais": 2, "ossos": 1, "diamante": 0.25},
-    "premium_battle_pass_daily_average": {"xp": 150, "almas": 15, "energia": 15, "sangue": 7, "cristais": 4, "ossos": 2, "diamante": 0.5},
-    "base_checkin_daily_value": {"xp": 0, "almas": 10, "energia": 80, "sangue": 8, "cristais": 5, "ossos": 2, "diamante": 0},
-    "limited_premium_pack_daily_equivalent": {"xp": 0, "almas": 40, "energia": 80, "sangue": 16, "cristais": 8, "ossos": 4, "diamante": 0}
+    "battle": {"xp": 50, "almas": 4, "energia": 2, "sangue": 1, "cristais": 0, "ossos": 20, "diamante": 0},
+    "daily_missions_full": {"xp": 350, "almas": 25, "energia": 20, "sangue": 8, "cristais": 4, "ossos": 300, "diamante": 0},
+    "weekly_missions_daily_average": {"xp": 140, "almas": 12, "energia": 12, "sangue": 4, "cristais": 2, "ossos": 100, "diamante": 0},
+    "free_battle_pass_daily_average": {"xp": 80, "almas": 8, "energia": 8, "sangue": 3, "cristais": 2, "ossos": 100, "diamante": 0.25},
+    "premium_battle_pass_daily_average": {"xp": 150, "almas": 15, "energia": 15, "sangue": 7, "cristais": 4, "ossos": 200, "diamante": 0.5},
+    "base_checkin_daily_value": {"xp": 0, "almas": 10, "energia": 80, "sangue": 8, "cristais": 5, "ossos": 200, "diamante": 0},
+    "limited_premium_pack_daily_equivalent": {"xp": 0, "almas": 40, "energia": 80, "sangue": 16, "cristais": 8, "ossos": 400, "diamante": 0}
   },
   "upgrade_costs": {
     "xp_total_formula": "3 * (level^3 - 6 * level^2 + 17 * level - 12)",
@@ -125,7 +125,7 @@
     "passive_cristais": {"resource": "cristais", "min": 5, "coefficient": 0.1, "formula": "max(min, round(coefficient * level^2))"},
     "base_structure_energia": {"resource": "energia", "min": 20, "coefficient": 0.5, "formula": "max(min, round(coefficient * level^2))"},
     "base_structure_duration_hours": {"min": 0.033, "coefficient": 0.1, "formula": "max(min, coefficient * level^2)"},
-    "weapon_quality_ossos_total": {"resource": "ossos", "formula": "30 * cap", "coefficient": 30}
+    "weapon_quality_ossos_total": {"resource": "ossos", "formula": "3000 * cap", "coefficient": 3000}
   },
   "profile_defaults": [
     {

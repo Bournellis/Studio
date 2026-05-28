@@ -10,7 +10,7 @@
       "enabled": true,
       "tags": ["MVP_ONLY", "reward", "battle"],
       "mode": "MVP_ONLY",
-      "resources": {"xp": 5, "ossos": 1},
+      "resources": {"xp": 5, "ossos": 100},
       "idempotency_scope": "battle_result"
     },
     {
@@ -21,7 +21,7 @@
       "enabled": true,
       "tags": ["FIRST_SLICE", "reward", "battle", "win"],
       "mode": "FIRST_SLICE",
-      "resources": {"xp": 50, "almas": 4, "energia": 2, "sangue": 1, "ossos": 0.2},
+      "resources": {"xp": 50, "almas": 4, "energia": 2, "sangue": 1, "ossos": 20},
       "idempotency_scope": "battle_result"
     },
     {
@@ -32,7 +32,7 @@
       "enabled": true,
       "tags": ["FIRST_SLICE", "reward", "battle", "loss"],
       "mode": "FIRST_SLICE",
-      "resources": {"xp": 10, "almas": 0.8, "energia": 0.4, "sangue": 0.2, "ossos": 0.04},
+      "resources": {"xp": 10, "almas": 0.8, "energia": 0.4, "sangue": 0.2, "ossos": 4},
       "idempotency_scope": "battle_result"
     },
     {
@@ -43,7 +43,7 @@
       "enabled": true,
       "tags": ["FIRST_SLICE", "reward", "daily"],
       "mode": "FIRST_SLICE",
-      "resources": {"xp": 120, "almas": 8, "energia": 4, "sangue": 2, "ossos": 1},
+      "resources": {"xp": 120, "almas": 8, "energia": 4, "sangue": 2, "ossos": 100},
       "idempotency_scope": "daily_reward"
     },
     {
@@ -54,7 +54,7 @@
       "enabled": true,
       "tags": ["FIRST_SLICE", "reward", "battle_pass", "free"],
       "mode": "FIRST_SLICE",
-      "resources": {"xp": 4800, "almas": 480, "energia": 480, "sangue": 180, "cristais": 120, "ossos": 60, "diamante": 15},
+      "resources": {"xp": 4800, "almas": 480, "energia": 480, "sangue": 180, "cristais": 120, "ossos": 6000, "diamante": 15},
       "idempotency_scope": "battle_pass"
     },
     {
@@ -65,7 +65,7 @@
       "enabled": true,
       "tags": ["FIRST_SLICE", "reward", "battle_pass", "premium"],
       "mode": "FIRST_SLICE",
-      "resources": {"xp": 9000, "almas": 900, "energia": 900, "sangue": 420, "cristais": 240, "ossos": 120, "diamante": 30},
+      "resources": {"xp": 9000, "almas": 900, "energia": 900, "sangue": 420, "cristais": 240, "ossos": 12000, "diamante": 30},
       "idempotency_scope": "battle_pass"
     }
   ]

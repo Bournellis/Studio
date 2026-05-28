@@ -45,14 +45,15 @@ Esses tetos vivem tambem em `../../tools/economy_simulator/economy_model.v1.json
 | Energia | Gargalo da base | Nucleo, batalhas, missoes, Battle Pass, Diamante | Construcoes, fila e aceleracao | Permanente |
 | Sangue | Progressao de Familiar | Pocos, batalhas, missoes, Battle Pass | Familiares | Permanente |
 | Cristais | Progressao de Doutrina | Minas, missoes, Battle Pass | Doutrinas | Permanente |
-| Ossos | Qualidade/crafting do Instrumento Ritual | Ossario, batalha, quests, Battle Pass | Qualidade do Instrumento Ritual | Permanente |
+| Ossos | Materia-prima geral de crafting e qualidade do Instrumento Ritual | Ossario, batalha, quests, Battle Pass | Qualidade do Instrumento Ritual, trituracao para consumiveis | Permanente |
+| Po de Osso | Crafting de consumiveis | Triturar Ossos | Pocoes e consumiveis | Permanente |
 | Diamante | Premium, tempo e conforto | Compra, passe premium, recompensas raras | Aceleracao, fila, pacotes limitados | Permanente |
 | Tempo/Fila | Controle de ritmo | Espera, fila gratis, segunda fila | Construcoes e aceleracao | Permanente |
 | Poder | Matchmaking e leitura de forca | Derivado de level/build/upgrades | Nao e gasto | Recalculado |
 | Arena | Ranking competitivo | PvP sazonal | Perdas/decay se existir | Sazonal |
 | Maestria | Progressao permanente por uso | Dano causado | Nao e gasto | Permanente |
 
-Regra de ownership: cada recurso deve ter um papel claro. XP libera, Almas fortalecem magia e Instrumento Ritual, Energia move a base, Sangue move Familiar, Cristais movem Doutrinas, Ossos movem qualidade do Instrumento Ritual e Diamante compra tempo/conforto.
+Regra de ownership: cada recurso deve ter um papel claro. XP libera, Almas fortalecem magia e Instrumento Ritual, Energia move a base, Sangue move Familiar, Cristais movem Doutrinas, Ossos movem qualidade/crafting, Po de Osso move consumiveis e Diamante compra tempo/conforto.
 
 ## Perfis Do Simulador
 
@@ -103,28 +104,28 @@ Total por passe de 60 dias:
 
 | Trilha | XP | Almas | Energia | Sangue | Cristais | Ossos | Diamante | Extras |
 |---|---:|---:|---:|---:|---:|---:|---:|---|
-| Free | 4800 | 480 | 480 | 180 | 120 | 60 | 15 | titulos simples e badges |
-| Premium adicional | 9000 | 900 | 900 | 420 | 240 | 120 | 30 | cosmeticos premium e conveniencia |
+| Free | 4800 | 480 | 480 | 180 | 120 | 6000 | 15 | titulos simples e badges |
+| Premium adicional | 9000 | 900 | 900 | 420 | 240 | 12000 | 30 | cosmeticos premium e conveniencia |
 
 Recompensas diarias v0:
 
 | Missao | XP | Almas | Energia | Sangue | Cristais | Ossos |
 |---|---:|---:|---:|---:|---:|---:|
-| Primeira vitoria | 120 | 8 | 4 | 2 | 0 | 1 |
-| Segunda vitoria | 100 | 7 | 4 | 2 | 1 | 1 |
-| Terceira vitoria | 80 | 5 | 4 | 2 | 1 | 1 |
+| Primeira vitoria | 120 | 8 | 4 | 2 | 0 | 100 |
+| Segunda vitoria | 100 | 7 | 4 | 2 | 1 | 100 |
+| Terceira vitoria | 80 | 5 | 4 | 2 | 1 | 100 |
 | Coletar base | 25 | 2 | 4 | 1 | 1 | 0 |
 | Construir ou evoluir | 25 | 3 | 4 | 1 | 1 | 0 |
-| **Total diario cheio** | **350** | **25** | **20** | **8** | **4** | **3** |
+| **Total diario cheio** | **350** | **25** | **20** | **8** | **4** | **300** |
 
 Recompensas semanais v0:
 
 | Missao | XP | Almas | Energia | Sangue | Cristais | Ossos |
 |---|---:|---:|---:|---:|---:|---:|
-| Participacao de arena | 420 | 36 | 36 | 12 | 6 | 3 |
-| Dominio de arena | 360 | 36 | 24 | 8 | 4 | 2 |
-| Rotina do refugio | 200 | 12 | 24 | 8 | 4 | 2 |
-| **Total semanal cheio** | **980** | **84** | **84** | **28** | **14** | **7** |
+| Participacao de arena | 420 | 36 | 36 | 12 | 6 | 300 |
+| Dominio de arena | 360 | 36 | 24 | 8 | 4 | 200 |
+| Rotina do refugio | 200 | 12 | 24 | 8 | 4 | 200 |
+| **Total semanal cheio** | **980** | **84** | **84** | **28** | **14** | **700** |
 
 Diamante v0:
 

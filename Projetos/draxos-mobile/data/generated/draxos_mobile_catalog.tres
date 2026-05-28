@@ -4,7 +4,7 @@
 
 [resource]
 script = ExtResource("1_55hau")
-generated_from = PackedStringArray("res://data/definitions/spells.json", "res://data/definitions/pets.json", "res://data/definitions/passives.json", "res://data/definitions/weapons.json", "res://data/definitions/base_structures.json", "res://data/definitions/bot_builds.json", "res://data/definitions/power_bands.json", "res://data/definitions/battle_fixtures.json", "res://data/definitions/rewards.json")
+generated_from = PackedStringArray("res://data/definitions/spells.json", "res://data/definitions/pets.json", "res://data/definitions/passives.json", "res://data/definitions/weapons.json", "res://data/definitions/base_structures.json", "res://data/definitions/bot_builds.json", "res://data/definitions/power_bands.json", "res://data/definitions/battle_fixtures.json", "res://data/definitions/potions.json", "res://data/definitions/crafting_recipes.json", "res://data/definitions/rewards.json")
 collections = {
 "base_structures": [{
 "description": "Produz Almas e abriga upgrades de arma, slots de spell e spells.",
@@ -97,7 +97,7 @@ collections = {
 "max_level": 40.0,
 "mode": "FIRST_SLICE",
 "produces": [{
-"daily_at_level_40": 2.0,
+"daily_at_level_40": 200.0,
 "resource": "ossos"
 }],
 "storage_rule": "max(8, ceil(daily_production * 2))",
@@ -350,6 +350,21 @@ collections = {
 "weapon_id": "cajado_ossario",
 "weapon_level": 32.0,
 "weapon_quality": "cosmica"
+}],
+"crafting_recipes": [{
+"description": "Transforma Po de Osso em uma Pocao de Vida.",
+"display_name": "Criar Pocao de Vida",
+"enabled": true,
+"id": "craft_pocao_vida",
+"input": {
+"po_osso": 50.0
+},
+"output": {
+"item_id": "pocao_vida",
+"quantity": 1.0
+},
+"tags": ["crafting", "potion", "healing"],
+"version": 1.0
 }],
 "passives": [{
 "base_bonus": 0.08,
@@ -726,6 +741,33 @@ collections = {
 "unlock_level": 15.0,
 "version": 1.0
 }],
+"potions": [{
+"default_behavior": {
+"enabled": true,
+"hp": {
+"mode": "below",
+"percent": 40.0
+},
+"mana": {
+"mode": "ignore",
+"percent": 0.0
+}
+},
+"description": "Consumivel de batalha que recupera 20% da vida maxima ao longo de 5 segundos.",
+"display_name": "Pocao de Vida",
+"effect": {
+"duration_seconds": 5.0,
+"tick_percent_max_hp": 4.0,
+"tick_seconds": 1.0,
+"total_percent_max_hp": 20.0,
+"type": "heal_over_time"
+},
+"enabled": true,
+"id": "pocao_vida",
+"slot_type": "potion",
+"tags": ["battle", "consumable", "potion", "healing"],
+"version": 1.0
+}],
 "power_bands": [{
 "description": "Faixa inicial para Draxos sem spells ou com primeiro unlock.",
 "display_name": "Banda 001",
@@ -801,7 +843,7 @@ collections = {
 "idempotency_scope": "battle_result",
 "mode": "MVP_ONLY",
 "resources": {
-"ossos": 1.0,
+"ossos": 100.0,
 "xp": 5.0
 },
 "tags": ["MVP_ONLY", "reward", "battle"],
@@ -816,7 +858,7 @@ collections = {
 "resources": {
 "almas": 4.0,
 "energia": 2.0,
-"ossos": 0.2,
+"ossos": 20.0,
 "sangue": 1.0,
 "xp": 50.0
 },
@@ -832,7 +874,7 @@ collections = {
 "resources": {
 "almas": 0.8,
 "energia": 0.4,
-"ossos": 0.04,
+"ossos": 4.0,
 "sangue": 0.2,
 "xp": 10.0
 },
@@ -848,7 +890,7 @@ collections = {
 "resources": {
 "almas": 8.0,
 "energia": 4.0,
-"ossos": 1.0,
+"ossos": 100.0,
 "sangue": 2.0,
 "xp": 120.0
 },
@@ -866,7 +908,7 @@ collections = {
 "cristais": 120.0,
 "diamante": 15.0,
 "energia": 480.0,
-"ossos": 60.0,
+"ossos": 6000.0,
 "sangue": 180.0,
 "xp": 4800.0
 },
@@ -884,7 +926,7 @@ collections = {
 "cristais": 240.0,
 "diamante": 30.0,
 "energia": 900.0,
-"ossos": 120.0,
+"ossos": 12000.0,
 "sangue": 420.0,
 "xp": 9000.0
 },

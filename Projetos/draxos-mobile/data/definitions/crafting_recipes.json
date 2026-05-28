@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "collection": "crafting_recipes",
+  "items": [
+    {
+      "id": "craft_pocao_vida",
+      "display_name": "Criar Pocao de Vida",
+      "description": "Transforma Po de Osso em uma Pocao de Vida.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["crafting", "potion", "healing"],
+      "input": {"po_osso": 50},
+      "output": {"item_id": "pocao_vida", "quantity": 1}
+    }
+  ]
+}

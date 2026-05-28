@@ -17,6 +17,8 @@ const EXPECTED_DEFINITIONS: Array = [
 	{"file": "bot_builds.json", "collection": "bot_builds"},
 	{"file": "power_bands.json", "collection": "power_bands"},
 	{"file": "battle_fixtures.json", "collection": "battle_fixtures"},
+	{"file": "potions.json", "collection": "potions"},
+	{"file": "crafting_recipes.json", "collection": "crafting_recipes"},
 	{"file": "rewards.json", "collection": "rewards"}
 ]
 

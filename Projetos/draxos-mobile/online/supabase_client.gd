@@ -297,6 +297,81 @@ func upgrade_base_structure(request_id: String, structure_id: String, access_tok
 		}
 	)
 
+func fetch_crafting_state(access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("crafting/state"),
+		HTTPClient.METHOD_GET,
+		_auth_headers(access_token),
+		{}
+	)
+
+func crush_bones(request_id: String, amount: int, access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("crafting/crush-bones"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		{
+			"request_id": request_id,
+			"amount": maxi(1, amount),
+		}
+	)
+
+func craft_item(request_id: String, recipe_id: String, quantity: int, access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("crafting/craft"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		{
+			"request_id": request_id,
+			"recipe_id": recipe_id,
+			"quantity": maxi(1, quantity),
+		}
+	)
+
+func fetch_build_state(access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("build/state"),
+		HTTPClient.METHOD_GET,
+		_auth_headers(access_token),
+		{}
+	)
+
+func update_spell_behavior(request_id: String, spell_id: String, behavior: Dictionary, access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("build/spell-behavior"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		{
+			"request_id": request_id,
+			"spell_id": spell_id,
+			"behavior": behavior,
+		}
+	)
+
+func equip_potion(request_id: String, item_id: Variant, access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("build/potion/equip"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		{
+			"request_id": request_id,
+			"slot_index": 1,
+			"item_id": item_id,
+		}
+	)
+
+func update_potion_behavior(request_id: String, behavior: Dictionary, access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("build/potion-behavior"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		{
+			"request_id": request_id,
+			"slot_index": 1,
+			"behavior": behavior,
+		}
+	)
+
 func fetch_social_state(access_token: String) -> Dictionary:
 	return await _send_json(
 		function_url("social/state"),

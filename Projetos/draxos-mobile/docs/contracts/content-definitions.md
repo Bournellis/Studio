@@ -1,7 +1,7 @@
 # Content Definitions Contract
 
-- Ultima atualizacao: `2026-05-25`
-- Status: contrato inicial implementado com rework de personagem
+- Ultima atualizacao: `2026-05-28`
+- Status: contrato inicial implementado com rework de personagem; Track 16 adicionou pocoes e receitas de crafting.
 
 Conteudo autorado vive em `../../data/definitions/`. Resources Godot gerados vivem em `../../data/generated/` e nao devem ser editados manualmente.
 
@@ -45,6 +45,8 @@ IDs sao estaveis. Nao renomear ID para mudar texto player-facing.
 | `power_bands.json` | `power_bands` | Faixas de matchmaking |
 | `battle_fixtures.json` | `battle_fixtures` | Fixtures `MVP_ONLY` e testes deterministas |
 | `rewards.json` | `rewards` | Recompensas diarias, semanais, quests e battle pass |
+| `potions.json` | `potions` | Consumiveis de batalha, efeito e comportamento default |
+| `crafting_recipes.json` | `crafting_recipes` | Receitas server-authoritative de crafting |
 
 ## Fixture MVP Atual
 
@@ -80,7 +82,7 @@ Itens relacionados:
 
 `tools/validate.gd` executa:
 
-- geracao do catalogo a partir dos 9 JSONs esperados;
+- geracao do catalogo a partir dos JSONs esperados;
 - validacao de campos comuns;
 - validacao de IDs unicos por collection;
 - validacao de referencias entre fixture, bot, weapon, spells, passive e pet;
@@ -95,6 +97,15 @@ Exemplos:
 
 - Custos de Ossos dependem de `DMOB-D021`.
 - Recompensas v0 vivem em `../game-design-document.md` e `../economy/README.md`; valores numericos continuam calibraveis no alpha.
+
+## Consumiveis E Crafting Track 16
+
+Conteudo inicial:
+
+- `pocao_vida`: consumivel de batalha, `heal_over_time`, cura `20%` da vida maxima em `5s` (`4%/s`) sem ultrapassar a vida maxima.
+- `craft_pocao_vida`: custa `50 po_osso` e gera `1 pocao_vida`.
+
+`po_osso` nao e item de inventario; e recurso tecnico inteiro em `resources`. A conversao `1 Osso -> 1 Po de Osso` vive no endpoint `crafting/crush-bones` para manter autoridade no servidor.
 
 ## Bots E Faixas De Poder Do Primeiro Slice
 

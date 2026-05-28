@@ -1,7 +1,7 @@
 # Database Schema Contract
 
-- Ultima atualizacao: `2026-05-27`
-- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type`, reset separado por save, aplicacao do Progression Lab no save de lab e auth email/senha com alpha gate implementados; Internal Alpha v0 publicada com manifest/update em T03-P18
+- Ultima atualizacao: `2026-05-28`
+- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type`, reset separado por save, Progression Lab, auth email/senha, manifest/update e Track 16 de comportamento/crafting/consumiveis implementados localmente.
 
 Este documento define o schema esperado. A fonte tecnica viva do runtime local e `../../supabase/migrations/`; `../../server/schema/migrations/` permanece como espelho backend durante o alpha local.
 
@@ -17,6 +17,7 @@ Migrations atuais:
 - `202605260002_reset_save_context.sql`: RPC `reset_player_save` para reconstruir apenas o save ativo sem tocar o outro.
 - `202605260003_progression_lab_apply.sql`: RPC `apply_progression_lab_save` para aplicar um healthy save gerado no save `progression_lab`.
 - `202605270001_alpha_email_account.sql`: RPC `create_alpha_account` para conta email/senha registrada, alpha gate por convite/username e criacao dos saves `normal`/`progression_lab`.
+- `202605280001_behavior_crafting.sql`: `po_osso`, Ossos inteiros reescalados, inventario de consumiveis, slot de pocao, comportamentos de spells e ledger de itens.
 
 ## Regras De Escopo De Servico
 
@@ -72,8 +73,15 @@ Campos minimos:
 - `sangue`
 - `cristais`
 - `ossos`
+- `po_osso`
 - `diamante`
 - `updated_at`
+
+Regras Track 16:
+
+- `ossos` e inteiro na escala atual (`1 Osso atual = 0.01 Osso antigo`).
+- `po_osso` e inteiro, sempre nao negativo.
+- A migracao Track 16 multiplica saldos/logs/rewards existentes de Ossos por `100` e impede novo saldo fracionario.
 
 ### `builds`
 
@@ -100,6 +108,61 @@ Schema do primeiro slice:
 - `player_spell_slots` guarda equipamento por slot: `player_id`, `slot_index` (`1..3`), `unlocked_at_level` (`3`, `7`, `25`), `equipped_spell_id`, `updated_at`.
 - `player_passive_state` guarda Doutrinas desbloqueadas e levels. O slot de doutrina abre no level 10.
 - `player_pet_state` guarda Familiares desbloqueados e levels. O slot de familiar abre no level 15.
+
+### `player_consumables`
+
+Inventario save-scoped de consumiveis.
+
+Campos minimos:
+
+- `player_id`
+- `item_id`
+- `quantity`
+- `updated_at`
+
+Regras:
+
+- chave unica por `player_id + item_id`;
+- `quantity >= 0`;
+- consumo em batalha e crafting sao server-authoritative.
+
+### `player_potion_slots`
+
+Slot save-scoped de pocao. Track 16 libera apenas o slot `1`, vazio por padrao.
+
+Campos minimos:
+
+- `player_id`
+- `slot_index`
+- `potion_id`
+- `behavior`
+- `updated_at`
+
+### `player_spell_behaviors`
+
+Comportamento salvo por spell equipada.
+
+Campos minimos:
+
+- `player_id`
+- `spell_id`
+- `behavior`
+- `updated_at`
+
+### `item_transactions`
+
+Ledger de itens para crafting e consumo.
+
+Campos minimos:
+
+- `id`
+- `player_id`
+- `source`
+- `request_id`
+- `item_id`
+- `delta`
+- `metadata`
+- `created_at`
 
 Regras:
 

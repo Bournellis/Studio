@@ -673,6 +673,10 @@ func _execute_action(action_id: String) -> void:
 		await _buy_shop_product(AppShellActionContractScript.action_value(action_id))
 	elif AppShellActionContractScript.is_claim_reward(action_id):
 		await _claim_shop_reward(AppShellActionContractScript.action_value(action_id))
+	elif AppShellActionContractScript.is_enable_spell_behavior(action_id):
+		await _enable_spell_behavior(AppShellActionContractScript.action_value(action_id))
+	elif AppShellActionContractScript.is_disable_spell_behavior(action_id):
+		await _disable_spell_behavior(AppShellActionContractScript.action_value(action_id))
 	elif AppShellActionContractScript.is_battle_replay(action_id):
 		await _show_battle_replay(AppShellActionContractScript.action_value(action_id))
 	else:
@@ -730,6 +734,22 @@ func _execute_action(action_id: String) -> void:
 				await _buy_energy_pack_alpha()
 			AppShellActionContractScript.ACTION_UPGRADE_NUCLEO:
 				await _upgrade_base_structure(AppShellActionContractScript.STRUCTURE_NUCLEO_ENERGIA)
+			AppShellActionContractScript.ACTION_SHOW_CRAFTING:
+				await _show_crafting()
+			AppShellActionContractScript.ACTION_CRUSH_BONES:
+				await _crush_bones()
+			AppShellActionContractScript.ACTION_CRAFT_HEALTH_POTION:
+				await _craft_health_potion()
+			AppShellActionContractScript.ACTION_SHOW_PREPARATION:
+				await _show_preparation()
+			AppShellActionContractScript.ACTION_EQUIP_HEALTH_POTION:
+				await _equip_health_potion()
+			AppShellActionContractScript.ACTION_UNEQUIP_POTION:
+				await _unequip_potion()
+			AppShellActionContractScript.ACTION_ENABLE_POTION_DEFAULT:
+				await _enable_potion_default()
+			AppShellActionContractScript.ACTION_DISABLE_POTION:
+				await _disable_potion()
 			AppShellActionContractScript.ACTION_SHOW_SOCIAL:
 				await _show_social()
 			AppShellActionContractScript.ACTION_ADD_FRIEND:
@@ -878,10 +898,40 @@ func _buy_energy_pack_alpha() -> void:
 func _upgrade_base_structure(structure_id: String) -> void:
 	await _surface_action_flow.upgrade_base_structure(self, structure_id)
 
+func _show_crafting() -> void:
+	await _surface_action_flow.show_crafting(self)
+
+func _crush_bones() -> void:
+	await _surface_action_flow.crush_bones(self)
+
+func _craft_health_potion() -> void:
+	await _surface_action_flow.craft_health_potion(self)
+
 func _base_surface_target_screen() -> String:
 	if _current_screen == SCREEN_REFUGE:
 		return SCREEN_REFUGE
 	return SCREEN_BASE
+
+func _show_preparation() -> void:
+	await _surface_action_flow.show_preparation(self)
+
+func _equip_health_potion() -> void:
+	await _surface_action_flow.equip_health_potion(self)
+
+func _unequip_potion() -> void:
+	await _surface_action_flow.unequip_potion(self)
+
+func _enable_potion_default() -> void:
+	await _surface_action_flow.enable_potion_default(self)
+
+func _disable_potion() -> void:
+	await _surface_action_flow.disable_potion(self)
+
+func _enable_spell_behavior(spell_id: String) -> void:
+	await _surface_action_flow.enable_spell_behavior(self, spell_id)
+
+func _disable_spell_behavior(spell_id: String) -> void:
+	await _surface_action_flow.disable_spell_behavior(self, spell_id)
 
 func _show_social() -> void:
 	await _surface_action_flow.show_social(self)

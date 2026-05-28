@@ -3,7 +3,14 @@ import { type SaveType, saveTypeFromRequest, saveTypeQuery } from "../_shared/sa
 
 type Route = "state" | "reward_claim" | "alpha_purchase";
 type RewardSource = "daily" | "weekly" | "battle_pass";
-type ResourceKey = "almas" | "energia" | "sangue" | "cristais" | "ossos" | "diamante";
+type ResourceKey =
+  | "almas"
+  | "energia"
+  | "sangue"
+  | "cristais"
+  | "ossos"
+  | "po_osso"
+  | "diamante";
 
 interface EdgeConfig {
   supabaseUrl: string;
@@ -42,6 +49,7 @@ interface ResourceRow {
   sangue: string | number;
   cristais: string | number;
   ossos: string | number;
+  po_osso: string | number;
   diamante: string | number;
   updated_at: string;
 }
@@ -126,6 +134,7 @@ const RESOURCE_KEYS: ResourceKey[] = [
   "sangue",
   "cristais",
   "ossos",
+  "po_osso",
   "diamante",
 ];
 
@@ -135,21 +144,21 @@ const DAILY_REWARDS: RewardDefinition[] = [
     source: "daily",
     label: "Primeira vitoria diaria",
     xp: 120,
-    resources: { almas: 8, energia: 4, sangue: 2, ossos: 1 },
+    resources: { almas: 8, energia: 4, sangue: 2, ossos: 100 },
   },
   {
     id: "daily_second_victory",
     source: "daily",
     label: "Segunda vitoria diaria",
     xp: 100,
-    resources: { almas: 7, energia: 4, sangue: 2, cristais: 1, ossos: 1 },
+    resources: { almas: 7, energia: 4, sangue: 2, cristais: 1, ossos: 100 },
   },
   {
     id: "daily_third_victory",
     source: "daily",
     label: "Terceira vitoria diaria",
     xp: 80,
-    resources: { almas: 5, energia: 4, sangue: 2, cristais: 1, ossos: 1 },
+    resources: { almas: 5, energia: 4, sangue: 2, cristais: 1, ossos: 100 },
   },
   {
     id: "daily_collect_base",
@@ -173,21 +182,21 @@ const WEEKLY_REWARDS: RewardDefinition[] = [
     source: "weekly",
     label: "Participacao semanal na Arena",
     xp: 420,
-    resources: { almas: 36, energia: 36, sangue: 12, cristais: 6, ossos: 3 },
+    resources: { almas: 36, energia: 36, sangue: 12, cristais: 6, ossos: 300 },
   },
   {
     id: "weekly_arena_mastery",
     source: "weekly",
     label: "Dominio semanal da Arena",
     xp: 360,
-    resources: { almas: 36, energia: 24, sangue: 8, cristais: 4, ossos: 2 },
+    resources: { almas: 36, energia: 24, sangue: 8, cristais: 4, ossos: 200 },
   },
   {
     id: "weekly_refuge_routine",
     source: "weekly",
     label: "Rotina semanal do Refugio",
     xp: 200,
-    resources: { almas: 12, energia: 24, sangue: 8, cristais: 4, ossos: 2 },
+    resources: { almas: 12, energia: 24, sangue: 8, cristais: 4, ossos: 200 },
   },
 ];
 
@@ -198,7 +207,7 @@ const BATTLE_PASS_REWARDS: RewardDefinition[] = [
     label: "Battle Pass Free Tier 1",
     tier: 1,
     xp: 160,
-    resources: { almas: 16, energia: 16, sangue: 6, cristais: 4, ossos: 2, diamante: 1 },
+    resources: { almas: 16, energia: 16, sangue: 6, cristais: 4, ossos: 200, diamante: 1 },
   },
   {
     id: "bp_premium_tier_1",
@@ -206,7 +215,7 @@ const BATTLE_PASS_REWARDS: RewardDefinition[] = [
     label: "Battle Pass Premium Tier 1",
     tier: 1,
     xp: 300,
-    resources: { almas: 30, energia: 30, sangue: 14, cristais: 8, ossos: 4, diamante: 1 },
+    resources: { almas: 30, energia: 30, sangue: 14, cristais: 8, ossos: 400, diamante: 1 },
     premiumRequired: true,
   },
 ];
@@ -285,7 +294,7 @@ const ALPHA_PRODUCTS: AlphaProduct[] = [
     description: "Converte Diamante em recursos mistos para simular compra de progresso.",
     kind: "resource_pack",
     cost: { diamante: -250 },
-    resources: { almas: 50, energia: 120, sangue: 20, cristais: 10, ossos: 5 },
+    resources: { almas: 50, energia: 120, sangue: 20, cristais: 10, ossos: 500 },
     sortOrder: 210,
   },
 ];

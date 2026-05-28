@@ -86,7 +86,7 @@
       "tags": ["FIRST_SLICE", "base", "ossos"],
       "mode": "FIRST_SLICE",
       "max_level": 40,
-      "produces": [{"resource": "ossos", "daily_at_level_40": 2}],
+      "produces": [{"resource": "ossos", "daily_at_level_40": 200}],
       "storage_rule": "max(8, ceil(daily_production * 2))",
       "upgrade_cost_formula": "max(20, round(0.5 * level^2)) energia",
       "duration_formula": "max(0.033h, 0.1 * level^2 hours)"

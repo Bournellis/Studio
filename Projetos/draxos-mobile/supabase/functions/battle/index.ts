@@ -1,5 +1,10 @@
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
-import { type CombatantBuild, simulateFirstSliceBattle } from "../_shared/battle_simulator.ts";
+import {
+  type BattleConsumableUse,
+  type BehaviorConfig,
+  type CombatantBuild,
+  simulateFirstSliceBattle,
+} from "../_shared/battle_simulator.ts";
 import {
   isProgressionLabSave,
   type SaveType,
@@ -46,6 +51,7 @@ interface ResourceRow {
   sangue: string | number;
   cristais: string | number;
   ossos: string | number;
+  po_osso: string | number;
   diamante: string | number;
 }
 
@@ -67,6 +73,28 @@ interface BotBuildRow {
   power_band: string;
   build_data: unknown;
   is_active: boolean;
+}
+
+interface ConsumableRow {
+  player_id: string;
+  item_id: string;
+  quantity: number;
+  updated_at: string;
+}
+
+interface PotionSlotRow {
+  player_id: string;
+  slot_index: number;
+  potion_id: string | null;
+  behavior: unknown;
+  updated_at: string;
+}
+
+interface SpellBehaviorRow {
+  player_id: string;
+  spell_id: string;
+  behavior: unknown;
+  updated_at: string;
 }
 
 interface BattleRow {
@@ -278,7 +306,7 @@ async function handleFirstSliceRequest(
   const simulation = simulateFirstSliceBattle({
     battleId,
     seed,
-    player: playerCombatant(playerState.value.player, playerState.value.build),
+    player: playerCombatant(playerState.value),
     opponent: botCombatant(bot),
   });
   const reward = simulation.reward.resources;
@@ -310,6 +338,16 @@ async function handleFirstSliceRequest(
     return errorResponse(applyReward.code, applyReward.message, applyReward.status);
   }
 
+  const applyConsumables = await applyBattleConsumables(
+    config,
+    playerState.value,
+    requestId,
+    simulation.consumables.used,
+  );
+  if (applyConsumables !== null) {
+    return errorResponse(applyConsumables.code, applyConsumables.message, applyConsumables.status);
+  }
+
   const competition = await applyArenaResult(
     config,
     auth,
@@ -329,6 +367,7 @@ async function handleFirstSliceRequest(
     ok: true,
     battle_log: simulation.battleLog,
     rewards: simulation.reward,
+    consumables: simulation.consumables,
     competition: competition.value,
   };
   const insertIdempotency = await restRequest<unknown>(config, "idempotency_keys", {
@@ -558,7 +597,14 @@ async function loadPlayerState(
   config: EdgeConfig,
 ): Promise<
   {
-    value: { player: PlayerRow; resources: ResourceRow; build: BuildRow };
+    value: {
+      player: PlayerRow;
+      resources: ResourceRow;
+      build: BuildRow;
+      inventory: ConsumableRow[];
+      potionSlots: PotionSlotRow[];
+      spellBehaviors: SpellBehaviorRow[];
+    };
     error: null;
   } | { value: null; error: RestError }
 > {
@@ -588,7 +634,7 @@ async function loadPlayerState(
   const playerId = encodeURIComponent(player.id);
   const resourcesResult = await restRequest<ResourceRow[]>(
     config,
-    `resources?player_id=eq.${playerId}&select=almas,energia,sangue,cristais,ossos,diamante&limit=1`,
+    `resources?player_id=eq.${playerId}&select=almas,energia,sangue,cristais,ossos,po_osso,diamante&limit=1`,
     { method: "GET" },
   );
   const buildResult = await restRequest<BuildRow[]>(
@@ -596,8 +642,26 @@ async function loadPlayerState(
     `builds?player_id=eq.${playerId}&select=weapon_type,weapon_quality,weapon_level,spell_slots,spells_unlocked,pet_id,pet_level,passive_id,passive_level&limit=1`,
     { method: "GET" },
   );
+  const inventoryResult = await restRequest<ConsumableRow[]>(
+    config,
+    `player_consumables?player_id=eq.${playerId}&select=player_id,item_id,quantity,updated_at&order=item_id.asc`,
+    { method: "GET" },
+  );
+  const slotsResult = await restRequest<PotionSlotRow[]>(
+    config,
+    `player_potion_slots?player_id=eq.${playerId}&select=player_id,slot_index,potion_id,behavior,updated_at&order=slot_index.asc`,
+    { method: "GET" },
+  );
+  const behaviorsResult = await restRequest<SpellBehaviorRow[]>(
+    config,
+    `player_spell_behaviors?player_id=eq.${playerId}&select=player_id,spell_id,behavior,updated_at&order=spell_id.asc`,
+    { method: "GET" },
+  );
 
-  if (resourcesResult.error !== null || buildResult.error !== null) {
+  if (
+    resourcesResult.error !== null || buildResult.error !== null ||
+    inventoryResult.error !== null || slotsResult.error !== null || behaviorsResult.error !== null
+  ) {
     return { value: null, error: stateReadError() };
   }
 
@@ -614,7 +678,17 @@ async function loadPlayerState(
     };
   }
 
-  return { value: { player, resources, build }, error: null };
+  return {
+    value: {
+      player,
+      resources,
+      build,
+      inventory: inventoryResult.value,
+      potionSlots: slotsResult.value,
+      spellBehaviors: behaviorsResult.value,
+    },
+    error: null,
+  };
 }
 
 async function applyBattleReward(
@@ -683,6 +757,72 @@ async function applyBattleReward(
       message: "Unable to record battle reward transaction.",
       status: 500,
     };
+  }
+
+  return null;
+}
+
+async function applyBattleConsumables(
+  config: EdgeConfig,
+  state: { player: PlayerRow; inventory: ConsumableRow[] },
+  requestId: string,
+  consumablesUsed: BattleConsumableUse[],
+): Promise<RestError | null> {
+  const playerConsumables = consumablesUsed.filter((item) => item.owner === "player");
+  if (playerConsumables.length === 0) {
+    return null;
+  }
+
+  for (const used of playerConsumables) {
+    const current = state.inventory.find((item) => item.item_id === used.item_id);
+    if (current === undefined || current.quantity < used.quantity) {
+      return {
+        code: "CONSUMABLE_APPLY_FAILED",
+        message: "Potion stock changed before battle could be applied.",
+        status: 409,
+      };
+    }
+    const nextQuantity = current.quantity - used.quantity;
+    const update = await restRequest<unknown>(
+      config,
+      `player_consumables?player_id=eq.${encodeURIComponent(state.player.id)}&item_id=eq.${
+        encodeURIComponent(used.item_id)
+      }`,
+      {
+        method: "PATCH",
+        headers: { prefer: "return=minimal" },
+        body: JSON.stringify({
+          quantity: nextQuantity,
+          updated_at: new Date().toISOString(),
+        }),
+      },
+    );
+    if (update.error !== null) {
+      return {
+        code: "CONSUMABLE_APPLY_FAILED",
+        message: "Unable to consume potion stock.",
+        status: 500,
+      };
+    }
+    const ledger = await restRequest<unknown>(config, "item_transactions", {
+      method: "POST",
+      headers: { prefer: "return=minimal" },
+      body: JSON.stringify({
+        player_id: state.player.id,
+        source: "battle/request",
+        request_id: requestId,
+        item_id: used.item_id,
+        delta: -used.quantity,
+        payload: { slot_index: used.slot_index },
+      }),
+    });
+    if (ledger.error !== null) {
+      return {
+        code: "CONSUMABLE_APPLY_FAILED",
+        message: "Unable to record consumed potion.",
+        status: 500,
+      };
+    }
   }
 
   return null;
@@ -907,10 +1047,18 @@ function arenaPointDelta(
   return -10;
 }
 
-function playerCombatant(player: PlayerRow, build: BuildRow): CombatantBuild {
+function playerCombatant(state: {
+  player: PlayerRow;
+  build: BuildRow;
+  inventory: ConsumableRow[];
+  potionSlots: PotionSlotRow[];
+  spellBehaviors: SpellBehaviorRow[];
+}): CombatantBuild {
+  const { player, build } = state;
   const spells = arrayOfStrings(build.spell_slots).length > 0
     ? arrayOfStrings(build.spell_slots)
     : arrayOfStrings(build.spells_unlocked);
+  const potionSlot = potionSlotForBattle(state);
 
   return {
     id: player.id,
@@ -928,6 +1076,8 @@ function playerCombatant(player: PlayerRow, build: BuildRow): CombatantBuild {
     passiveLevel: build.passive_id === null ? undefined : numberValue(build.passive_level, 1),
     petId: build.pet_id ?? undefined,
     petLevel: build.pet_id === null ? undefined : numberValue(build.pet_level, 1),
+    spellBehaviors: spellBehaviorMap(state.spellBehaviors),
+    potionSlot,
   };
 }
 
@@ -952,6 +1102,64 @@ function botCombatant(bot: BotBuildRow): CombatantBuild {
       ? undefined
       : numberValue(data.pet_level, 1),
   };
+}
+
+function potionSlotForBattle(state: {
+  inventory: ConsumableRow[];
+  potionSlots: PotionSlotRow[];
+}): CombatantBuild["potionSlot"] {
+  const slot = state.potionSlots.find((candidate) => candidate.slot_index === 1);
+  if (slot === undefined || slot.potion_id !== "pocao_vida") {
+    return undefined;
+  }
+  const inventory = state.inventory.find((item) => item.item_id === slot.potion_id);
+  const quantity = inventory?.quantity ?? 0;
+  if (quantity <= 0) {
+    return undefined;
+  }
+  return {
+    slotIndex: 1,
+    itemId: "pocao_vida",
+    quantity,
+    behavior: normalizeBehavior(slot.behavior, {
+      enabled: true,
+      hp: { mode: "below", percent: 40 },
+      mana: { mode: "ignore", percent: 0 },
+    }),
+  };
+}
+
+function spellBehaviorMap(rows: SpellBehaviorRow[]): Record<string, BehaviorConfig> {
+  const result: Record<string, BehaviorConfig> = {};
+  for (const row of rows) {
+    result[row.spell_id] = normalizeBehavior(row.behavior, {
+      enabled: true,
+      hp: { mode: "ignore", percent: 0 },
+      mana: { mode: "ignore", percent: 0 },
+    });
+  }
+  return result;
+}
+
+function normalizeBehavior(value: unknown, fallback: BehaviorConfig): BehaviorConfig {
+  const payload = isObject(value) ? value : {};
+  return {
+    enabled: typeof payload.enabled === "boolean" ? payload.enabled : fallback.enabled,
+    hp: normalizeCondition(payload.hp, fallback.hp),
+    mana: normalizeCondition(payload.mana, fallback.mana),
+  };
+}
+
+function normalizeCondition(value: unknown, fallback: BehaviorConfig["hp"]): BehaviorConfig["hp"] {
+  if (!isObject(value)) {
+    return fallback;
+  }
+  const mode = stringValue(value.mode, fallback.mode);
+  const percent = numberValue(value.percent, fallback.percent);
+  if (mode !== "ignore" && mode !== "below" && mode !== "above") {
+    return fallback;
+  }
+  return { mode, percent: Math.max(0, Math.min(100, Math.trunc(percent))) };
 }
 
 function resolveRoute(pathname: string): Route | null {

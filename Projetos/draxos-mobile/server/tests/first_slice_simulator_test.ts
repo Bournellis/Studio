@@ -1,4 +1,7 @@
-import { simulateFirstSliceBattle } from "../functions/_shared/battle_simulator.ts";
+import {
+  type BattleSimulationInput,
+  simulateFirstSliceBattle,
+} from "../functions/_shared/battle_simulator.ts";
 
 Deno.test("first-slice battle simulator is deterministic and emits rich v1 combat events", () => {
   const input = {
@@ -157,6 +160,116 @@ Deno.test("first-slice simulator supports long defensive status expiry and coold
   assert(
     result.battleLog.duration > 8,
     "defensive simulation should last long enough to validate time-based effects",
+  );
+});
+
+Deno.test("first-slice simulator uses one health potion and emits five healing ticks", () => {
+  const result = simulateFirstSliceBattle({
+    battleId: "00000000-0000-4000-8000-000000000005",
+    seed: "first_slice:potion:00000000-0000-4000-8000-000000000006",
+    player: {
+      id: "player-potion",
+      displayName: "Draxos",
+      level: 20,
+      weaponId: "varinha_cinzas",
+      weaponLevel: 3,
+      weaponQualityTier: 0,
+      spellIds: ["coagulo_negro"],
+      spellLevels: { coagulo_negro: 8 },
+      potionSlot: {
+        slotIndex: 1,
+        itemId: "pocao_vida",
+        quantity: 2,
+        behavior: {
+          enabled: true,
+          hp: { mode: "below", percent: 100 },
+          mana: { mode: "ignore", percent: 0 },
+        },
+      },
+    },
+    opponent: {
+      id: "bot-potion-test",
+      displayName: "Atacante de Teste",
+      level: 20,
+      weaponId: "athame_hematico",
+      weaponLevel: 10,
+      weaponQualityTier: 1,
+      spellIds: ["incisao_ritual"],
+      spellLevels: { incisao_ritual: 10 },
+    },
+  });
+
+  const consumableEvents = result.battleLog.events.filter((event) =>
+    event.type === "consumable_use" && event.item_id === "pocao_vida"
+  );
+  const potionHeals = result.battleLog.events.filter((event) =>
+    event.type === "heal" && event.item_id === "pocao_vida"
+  );
+
+  assertEq(consumableEvents.length, 1, "potion should be used once");
+  assertEq(potionHeals.length, 5, "potion should heal in five ticks");
+  assertEq(result.consumables.used.length, 1, "simulation should report one consumed item");
+  assertEq(result.consumables.used[0].quantity, 1, "simulation should consume one potion");
+  assert(
+    potionHeals.every((event) => Number(event.hp_after) <= Number(event.max_hp)),
+    "potion heal should not overheal beyond max HP",
+  );
+});
+
+Deno.test("spell behavior disables configured spell while missing behavior keeps baseline", () => {
+  const baseInput: BattleSimulationInput = {
+    battleId: "00000000-0000-4000-8000-000000000007",
+    seed: "first_slice:spell_behavior:00000000-0000-4000-8000-000000000008",
+    player: {
+      id: "player-spell-behavior",
+      displayName: "Draxos",
+      level: 18,
+      weaponId: "varinha_cinzas",
+      weaponLevel: 2,
+      weaponQualityTier: 0,
+      spellIds: ["sussurro_medo"],
+      spellLevels: { sussurro_medo: 12 },
+    },
+    opponent: {
+      id: "bot-spell-behavior",
+      displayName: "Alvo de Teste",
+      level: 18,
+      weaponId: "varinha_cinzas",
+      weaponLevel: 1,
+      weaponQualityTier: 0,
+      spellIds: [],
+      spellLevels: {},
+    },
+  };
+
+  const baseline = simulateFirstSliceBattle(baseInput);
+  const disabled = simulateFirstSliceBattle({
+    ...baseInput,
+    player: {
+      ...baseInput.player,
+      spellBehaviors: {
+        sussurro_medo: {
+          enabled: false,
+          hp: { mode: "ignore", percent: 0 },
+          mana: { mode: "ignore", percent: 0 },
+        },
+      },
+    },
+  });
+
+  assert(
+    baseline.battleLog.events.some((event) =>
+      event.type === "spell_cast" && event.source === "player" &&
+      event.spell_id === "sussurro_medo"
+    ),
+    "spell without behavior should keep baseline casting",
+  );
+  assert(
+    !disabled.battleLog.events.some((event) =>
+      event.type === "spell_cast" && event.source === "player" &&
+      event.spell_id === "sussurro_medo"
+    ),
+    "disabled spell should not be cast",
   );
 });
 

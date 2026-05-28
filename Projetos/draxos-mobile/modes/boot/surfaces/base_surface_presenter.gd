@@ -3,12 +3,13 @@ extends RefCounted
 
 const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
 
-const RESOURCE_KEYS := ["almas", "energia", "sangue", "cristais", "ossos", "diamante"]
+const RESOURCE_KEYS := ["almas", "energia", "sangue", "cristais", "ossos", "po_osso", "diamante"]
 const BASE_STRUCTURE_IDS := ["altar_das_almas", "nucleo_energia", "pocos_sangue", "minas_cristal", "estrutura_stats", "ossario"]
 
 static func render(host: Node) -> void:
 	_add_body_text(host, "Colete producao, veja a fila e escolha o proximo upgrade.")
 	_add_action_button(host, "Sincronizar Refugio", AppShellActionContractScript.ACTION_SHOW_BASE)
+	_add_action_button(host, "Abrir Crafting", AppShellActionContractScript.ACTION_SHOW_CRAFTING)
 	_add_action_button(host, "Coletar producao", AppShellActionContractScript.ACTION_COLLECT_BASE, "Coletar a producao offline acumulada do Refugio?")
 	_add_action_button(host, "Comprar Energia", AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA, "Gastar 80 Diamantes para comprar 80 Energia no save ativo?")
 	var timeline := _add_output_label(host, "")
@@ -144,6 +145,7 @@ static func _render_playable_panels(host: Node, structures: Array, base: Diction
 	_add_responsive_panel_layout(host, container, [
 		_base_summary_panel(host, base, collected),
 		_base_routine_panel(host, base, collected),
+		_crafting_panel(host),
 		_base_map_panel(host, structures),
 		_base_detail_panel(host, structures),
 	], 2)
@@ -155,6 +157,7 @@ static func _render_refuge_panels(host: Node, structures: Array, base: Dictionar
 	_ensure_selected_base_structure(host, structures)
 	_add_responsive_panel_layout(host, container, [
 		_refuge_command_panel(host, base, collected),
+		_crafting_panel(host),
 		_base_map_panel(host, structures),
 		_base_detail_panel(host, structures),
 	], 1)
@@ -174,6 +177,38 @@ static func _refuge_empty_panel(host: Node) -> Control:
 	box.add_child(actions)
 	actions.add_child(_embedded_action_button(host, "Coletar", AppShellActionContractScript.ACTION_COLLECT_BASE, "Coletar a producao offline acumulada do Refugio?"))
 	actions.add_child(_embedded_action_button(host, "Energia", AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA, "Gastar 80 Diamantes para comprar 80 Energia no save ativo?"))
+	return panel
+
+static func _crafting_panel(host: Node) -> Control:
+	var panel := _base_panel(host)
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 8)
+	panel.add_child(box)
+	box.add_child(_base_label(host, "Crafting", "text_primary", 18))
+
+	var crafting := SessionStore.crafting_state
+	if crafting.is_empty():
+		box.add_child(_base_label(host, "Triture Ossos em Po de Osso e crie Pocoes de Vida.", "text_secondary"))
+		box.add_child(_embedded_action_button(host, "Sincronizar Crafting", AppShellActionContractScript.ACTION_SHOW_CRAFTING))
+		return panel
+
+	var inventory := _as_array(crafting.get("inventory", []))
+	var stock := _inventory_quantity(inventory, AppShellActionContractScript.ITEM_HEALTH_POTION)
+	box.add_child(_base_label(host, "Ossos %s | Po de Osso %s | Pocao de Vida %d" % [
+		_format_number(float(SessionStore.resources.get("ossos", 0))),
+		_format_number(float(SessionStore.resources.get("po_osso", 0))),
+		stock,
+	], "text_secondary"))
+	box.add_child(_base_label(host, "Triturar 1 Osso cria 1 Po de Osso. Criar Pocao de Vida custa 50 Po de Osso.", "text_secondary"))
+
+	var actions := GridContainer.new()
+	actions.columns = _refuge_action_columns(host)
+	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	actions.add_theme_constant_override("h_separation", 8)
+	actions.add_theme_constant_override("v_separation", 8)
+	box.add_child(actions)
+	actions.add_child(_embedded_action_button(host, "Triturar Ossos", AppShellActionContractScript.ACTION_CRUSH_BONES, "Triturar 1 Osso em 1 Po de Osso?"))
+	actions.add_child(_embedded_action_button(host, "Criar Pocao de Vida", AppShellActionContractScript.ACTION_CRAFT_HEALTH_POTION, "Gastar 50 Po de Osso para criar 1 Pocao de Vida?"))
 	return panel
 
 static func _refuge_command_panel(host: Node, base: Dictionary, collected: Dictionary) -> Control:
@@ -671,14 +706,14 @@ static func _format_nonzero_resources(resources: Dictionary) -> String:
 	for key: String in RESOURCE_KEYS:
 		var amount := float(resources.get(key, 0.0))
 		if amount > 0.005:
-			parts.append("%s %s" % [key.capitalize(), _format_number(amount)])
+			parts.append("%s %s" % [_resource_label(key), _format_number(amount)])
 	for raw_key: Variant in resources.keys():
 		var key := str(raw_key)
 		if RESOURCE_KEYS.has(key):
 			continue
 		var amount := float(resources.get(key, 0.0))
 		if amount > 0.005:
-			parts.append("%s %s" % [key.capitalize(), _format_number(amount)])
+			parts.append("%s %s" % [_resource_label(key), _format_number(amount)])
 	if parts.is_empty():
 		return "nenhum recurso"
 	return " | ".join(parts)
@@ -688,7 +723,7 @@ static func _format_resources(resources: Dictionary, include_diamond: bool = tru
 	for key: String in RESOURCE_KEYS:
 		if key == "diamante" and not include_diamond:
 			continue
-		parts.append("%s %s" % [key.capitalize(), _format_number(float(resources.get(key, 0)))])
+		parts.append("%s %s" % [_resource_label(key), _format_number(float(resources.get(key, 0)))])
 	return " | ".join(parts)
 
 static func _format_short_resources(resources: Dictionary, max_items: int = 3, include_diamond: bool = true) -> String:
@@ -698,14 +733,14 @@ static func _format_short_resources(resources: Dictionary, max_items: int = 3, i
 			continue
 		if not resources.has(key):
 			continue
-		parts.append("%s %s" % [key.capitalize(), str(resources.get(key, 0))])
+		parts.append("%s %s" % [_resource_label(key), str(resources.get(key, 0))])
 		if parts.size() >= max_items:
 			break
 	var remaining := 0
 	for key: String in RESOURCE_KEYS:
 		if key == "diamante" and not include_diamond:
 			continue
-		if resources.has(key) and not parts.has("%s %s" % [key.capitalize(), _format_number(float(resources.get(key, 0)))]):
+		if resources.has(key) and not parts.has("%s %s" % [_resource_label(key), _format_number(float(resources.get(key, 0)))]):
 			remaining += 1
 	if remaining > 0:
 		parts.append("+%d" % remaining)
@@ -731,6 +766,32 @@ static func _resource_total(resources: Dictionary) -> float:
 	for key: String in RESOURCE_KEYS:
 		total += float(resources.get(key, 0.0))
 	return total
+
+static func _resource_label(key: String) -> String:
+	match key:
+		"po_osso":
+			return "Po de Osso"
+		"almas":
+			return "Almas"
+		"energia":
+			return "Energia"
+		"sangue":
+			return "Sangue"
+		"cristais":
+			return "Cristais"
+		"ossos":
+			return "Ossos"
+		"diamante":
+			return "Diamante"
+		_:
+			return key.capitalize()
+
+static func _inventory_quantity(inventory: Array, item_id: String) -> int:
+	for item_variant: Variant in inventory:
+		var item := _as_dictionary(item_variant)
+		if str(item.get("item_id", "")) == item_id:
+			return int(item.get("quantity", 0))
+	return 0
 
 static func _structure_label(structure_id: String, fallback: String = "") -> String:
 	if fallback != "":

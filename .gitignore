@@ -14,6 +14,10 @@ materiais/exports-temp/
 Projetos/**/.godot/
 Projetos/**/android/
 Projetos/**/build/
+!Projetos/draxos-mobile/server/functions/build/
+!Projetos/draxos-mobile/server/functions/build/**
+!Projetos/draxos-mobile/supabase/functions/build/
+!Projetos/draxos-mobile/supabase/functions/build/**
 Projetos/**/.wrangler/
 Projetos/**/*.import
 Projetos/**/*.translation

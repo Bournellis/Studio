@@ -52,6 +52,7 @@ static func _refuge_scene_board(host: Node, root: Control, compact: bool) -> voi
 	var body := popup_data["body"] as VBoxContainer
 
 	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "battle", "BT", "Batalha", "accent_blood", Vector2(0.50, 0.19), "Pedir batalha e ver resultado.")
+	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "preparation", "PP", "Preparacao", "accent_astral", Vector2(0.50, 0.32), "Spells e pocao antes da batalha.")
 	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "refuge", "RF", "Refugio", "accent_astral", Vector2(0.22, 0.37), "Coleta, energia e estruturas.")
 	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "social", "SO", "Social", "status_success", Vector2(0.78, 0.37), "Amigos, guilda e chat.")
 	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "competition", "CP", "Competicao", "status_warning", Vector2(0.22, 0.56), "Fila de oponentes e ranking.")
@@ -311,6 +312,12 @@ static func _populate_refuge_menu(host: Node, popup: PopupPanel, body: VBoxConta
 			body.add_child(_popup_action_button(host, popup, "Pedir batalha", AppShellActionContractScript.ACTION_REQUEST_BATTLE, "", true))
 			body.add_child(_popup_action_button(host, popup, "Historico", AppShellActionContractScript.ACTION_SHOW_BATTLE_HISTORY))
 			body.add_child(_popup_action_button(host, popup, "Ver resultado", AppShellActionContractScript.ACTION_SHOW_LATEST_BATTLE))
+		"preparation":
+			body.add_child(_popup_hint("Spells e pocao antes da batalha.", compact))
+			if SessionStore.combat_build_state.is_empty():
+				body.add_child(_popup_action_button(host, popup, "Sincronizar Preparacao", AppShellActionContractScript.ACTION_SHOW_PREPARATION, "", true))
+			else:
+				body.add_child(_preparation_panel(host, compact))
 		"refuge":
 			body.add_child(_popup_hint("Coleta, energia, estruturas e upgrades do Refugio.", compact))
 			BaseSurfacePresenterScript.render_refuge_embedded(host, body)
@@ -376,6 +383,8 @@ static func _menu_title(menu_id: String) -> String:
 	match menu_id:
 		"battle":
 			return "Batalha"
+		"preparation":
+			return "Preparacao"
 		"refuge":
 			return "Refugio"
 		"social":
@@ -497,10 +506,11 @@ static func _apply_optional_icon_texture(_button: Button, _asset_id: String) -> 
 static func _format_resources_short(resources: Dictionary) -> String:
 	if resources.is_empty():
 		return "Sem recursos carregados"
-	return "Almas %s | Energia %s | Diamante %s" % [
+	return "Almas %s | Energia %s | Ossos %s | Po %s" % [
 		_format_resource_amount(resources.get("almas", 0)),
 		_format_resource_amount(resources.get("energia", 0)),
-		_format_resource_amount(resources.get("diamante", 0)),
+		_format_resource_amount(resources.get("ossos", 0)),
+		_format_resource_amount(resources.get("po_osso", 0)),
 	]
 
 static func _format_resource_amount(amount: Variant) -> String:
@@ -698,11 +708,55 @@ static func _refuge_hotspot_panel(host: Node, compact: bool) -> PanelContainer:
 	grid.name = "RefugePathGrid"
 	box.add_child(grid)
 	_add_route_hotspot(host, grid, compact, "Batalha", "battle_entry", "Pedir batalha e ver replay.", "accent_blood")
+	_add_action_hotspot(host, grid, compact, "Preparacao", AppShellActionContractScript.ACTION_SHOW_PREPARATION, "Spells e pocao antes da batalha.", "accent_astral")
 	_add_action_hotspot(host, grid, compact, "Social", AppShellActionContractScript.ACTION_SHOW_SOCIAL, "Amigos, guilda e chat.", "status_success")
 	_add_action_hotspot(host, grid, compact, "Competicao", AppShellActionContractScript.ACTION_SHOW_MATCHMAKING, "Fila de oponentes e ranking.", "status_warning")
 	_add_action_hotspot(host, grid, compact, "Loja", AppShellActionContractScript.ACTION_SHOW_SHOP, "Resgates, recompensas e compras.", "accent_bone")
 	_add_route_hotspot(host, grid, compact, "Perfil", "account", "Conta, updates e detalhes do save.", "border_active")
+	if not SessionStore.combat_build_state.is_empty():
+		box.add_child(_preparation_panel(host, compact))
 	BaseSurfacePresenterScript.render_refuge_embedded(host, box)
+	return panel
+
+static func _preparation_panel(host: Node, compact: bool) -> PanelContainer:
+	var panel := _panel(host, "PreparationPanel", "bg_panel", "border_active")
+	var box := _panel_box(panel, compact)
+	box.add_child(_section_label("Preparacao", compact))
+
+	var combat_build := SessionStore.combat_build_state
+	var inventory := _as_array(combat_build.get("inventory", []))
+	var potion_slots := _as_array(combat_build.get("potion_slots", []))
+	var equipped_spells := _as_array(combat_build.get("equipped_spells", []))
+	var stock := _inventory_quantity(inventory, AppShellActionContractScript.ITEM_HEALTH_POTION)
+	var potion_slot := _first_dictionary(potion_slots)
+	var potion_id := str(potion_slot.get("potion_id", ""))
+	var potion_behavior := _as_dictionary(potion_slot.get("behavior", {}))
+	box.add_child(_body_label("Pocao: %s | estoque %d | %s" % [
+		"Pocao de Vida" if potion_id == AppShellActionContractScript.ITEM_HEALTH_POTION else "vazio",
+		stock,
+		_behavior_text(potion_behavior),
+	], compact))
+
+	var potion_actions := _button_grid(compact, 2)
+	box.add_child(potion_actions)
+	potion_actions.add_child(_entry_action_button(host, "Equipar", AppShellActionContractScript.ACTION_EQUIP_HEALTH_POTION, compact))
+	potion_actions.add_child(_entry_action_button(host, "Remover", AppShellActionContractScript.ACTION_UNEQUIP_POTION, compact))
+	potion_actions.add_child(_entry_action_button(host, "Vida <40%", AppShellActionContractScript.ACTION_ENABLE_POTION_DEFAULT, compact))
+	potion_actions.add_child(_entry_action_button(host, "Pausar", AppShellActionContractScript.ACTION_DISABLE_POTION, compact))
+
+	if equipped_spells.is_empty():
+		box.add_child(_body_label("Nenhuma spell equipada.", compact))
+		return panel
+
+	for spell_variant: Variant in equipped_spells.slice(0, mini(3, equipped_spells.size())):
+		var spell := _as_dictionary(spell_variant)
+		var spell_id := str(spell.get("spell_id", ""))
+		var behavior := _as_dictionary(spell.get("behavior", {}))
+		box.add_child(_body_label("%s: %s" % [spell_id, _behavior_text(behavior)], compact))
+		var spell_actions := _button_grid(compact, 2)
+		box.add_child(spell_actions)
+		spell_actions.add_child(_entry_action_button(host, "Usar", AppShellActionContractScript.enable_spell_behavior_action(spell_id), compact))
+		spell_actions.add_child(_entry_action_button(host, "Pausar", AppShellActionContractScript.disable_spell_behavior_action(spell_id), compact))
 	return panel
 
 static func _refuge_footer_panel(host: Node, compact: bool) -> PanelContainer:
@@ -900,9 +954,73 @@ static func _format_resources(resources: Dictionary) -> String:
 	if resources.is_empty():
 		return "sem recursos carregados"
 	var parts: PackedStringArray = PackedStringArray()
-	for key in ["almas", "energia", "sangue", "cristais", "ossos", "diamante"]:
-		parts.append("%s %s" % [key.capitalize(), str(resources.get(key, 0))])
+	for key in ["almas", "energia", "sangue", "cristais", "ossos", "po_osso", "diamante"]:
+		parts.append("%s %s" % [_resource_label(key), str(resources.get(key, 0))])
 	return " | ".join(parts)
+
+static func _resource_label(key: String) -> String:
+	match key:
+		"po_osso":
+			return "Po de Osso"
+		"almas":
+			return "Almas"
+		"energia":
+			return "Energia"
+		"sangue":
+			return "Sangue"
+		"cristais":
+			return "Cristais"
+		"ossos":
+			return "Ossos"
+		"diamante":
+			return "Diamante"
+		_:
+			return key.capitalize()
+
+static func _behavior_text(behavior: Dictionary) -> String:
+	if behavior.is_empty():
+		return "Usar quando pronto"
+	if not bool(behavior.get("enabled", true)):
+		return "Nao usar"
+	var hp := _as_dictionary(behavior.get("hp", {}))
+	var mana := _as_dictionary(behavior.get("mana", {}))
+	var parts := PackedStringArray()
+	if str(hp.get("mode", "ignore")) != "ignore":
+		parts.append("Vida %s %d%%" % [
+			"abaixo de" if str(hp.get("mode", "")) == "below" else "acima de",
+			int(hp.get("percent", 0)),
+		])
+	if str(mana.get("mode", "ignore")) != "ignore":
+		parts.append("Mana %s %d%%" % [
+			"abaixo de" if str(mana.get("mode", "")) == "below" else "acima de",
+			int(mana.get("percent", 0)),
+		])
+	if parts.is_empty():
+		return "Usar quando pronto"
+	return "Usar quando %s" % " e ".join(parts)
+
+static func _inventory_quantity(inventory: Array, item_id: String) -> int:
+	for item_variant: Variant in inventory:
+		var item := _as_dictionary(item_variant)
+		if str(item.get("item_id", "")) == item_id:
+			return int(item.get("quantity", 0))
+	return 0
+
+static func _first_dictionary(items: Array) -> Dictionary:
+	for item: Variant in items:
+		if item is Dictionary:
+			return Dictionary(item)
+	return {}
+
+static func _as_dictionary(value: Variant) -> Dictionary:
+	if value is Dictionary:
+		return Dictionary(value)
+	return {}
+
+static func _as_array(value: Variant) -> Array:
+	if value is Array:
+		return Array(value)
+	return []
 
 static func _hotspot_style(color_token: String, active: bool) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()

@@ -28,6 +28,14 @@ const ACTION_SHOW_BASE := "show_base"
 const ACTION_COLLECT_BASE := "collect_base"
 const ACTION_BUY_ENERGY_PACK_ALPHA := "buy_energy_pack_alpha"
 const ACTION_UPGRADE_NUCLEO := "upgrade_nucleo"
+const ACTION_SHOW_CRAFTING := "show_crafting"
+const ACTION_CRUSH_BONES := "crush_bones"
+const ACTION_CRAFT_HEALTH_POTION := "craft_health_potion"
+const ACTION_SHOW_PREPARATION := "show_preparation"
+const ACTION_EQUIP_HEALTH_POTION := "equip_health_potion"
+const ACTION_UNEQUIP_POTION := "unequip_potion"
+const ACTION_ENABLE_POTION_DEFAULT := "enable_potion_default"
+const ACTION_DISABLE_POTION := "disable_potion"
 const ACTION_SHOW_SOCIAL := "show_social"
 const ACTION_ADD_FRIEND := "add_friend"
 const ACTION_CREATE_GUILD := "create_guild"
@@ -44,6 +52,8 @@ const PREFIX_SELECT_BASE_STRUCTURE := "select_base_structure:"
 const PREFIX_UPGRADE_BASE_STRUCTURE := "upgrade_base_structure:"
 const PREFIX_SHOP_PURCHASE := "shop_purchase:"
 const PREFIX_CLAIM_REWARD := "claim_reward:"
+const PREFIX_ENABLE_SPELL_BEHAVIOR := "enable_spell_behavior:"
+const PREFIX_DISABLE_SPELL_BEHAVIOR := "disable_spell_behavior:"
 const PREFIX_BATTLE_REPLAY := RouteContract.ACTION_BATTLE_REPLAY_PREFIX
 
 const PRODUCT_ALPHA_ENERGY_PACK := "alpha_energy_pack_small"
@@ -51,6 +61,8 @@ const PRODUCT_ALPHA_BATTLE_PASS_PREMIUM := "alpha_battle_pass_premium"
 const PRODUCT_ALPHA_REDEEM_MEDIUM := "alpha_redeem_medium"
 const REWARD_DAILY_COLLECT_BASE := "daily_collect_base"
 const STRUCTURE_NUCLEO_ENERGIA := "nucleo_energia"
+const RECIPE_HEALTH_POTION := "craft_pocao_vida"
+const ITEM_HEALTH_POTION := "pocao_vida"
 
 const _UPDATE_GATE_ALLOWED_ACTIONS := {
 	ACTION_CHECK_UPDATE: true,
@@ -105,6 +117,12 @@ static func is_shop_purchase(action_id: String) -> bool:
 static func is_claim_reward(action_id: String) -> bool:
 	return action_id.strip_edges().begins_with(PREFIX_CLAIM_REWARD)
 
+static func is_enable_spell_behavior(action_id: String) -> bool:
+	return action_id.strip_edges().begins_with(PREFIX_ENABLE_SPELL_BEHAVIOR)
+
+static func is_disable_spell_behavior(action_id: String) -> bool:
+	return action_id.strip_edges().begins_with(PREFIX_DISABLE_SPELL_BEHAVIOR)
+
 static func is_battle_replay(action_id: String) -> bool:
 	return action_id.strip_edges().begins_with(PREFIX_BATTLE_REPLAY)
 
@@ -119,6 +137,12 @@ static func shop_purchase_action(product_id: String) -> String:
 
 static func claim_reward_action(reward_id: String) -> String:
 	return "%s%s" % [PREFIX_CLAIM_REWARD, reward_id.strip_edges()]
+
+static func enable_spell_behavior_action(spell_id: String) -> String:
+	return "%s%s" % [PREFIX_ENABLE_SPELL_BEHAVIOR, spell_id.strip_edges()]
+
+static func disable_spell_behavior_action(spell_id: String) -> String:
+	return "%s%s" % [PREFIX_DISABLE_SPELL_BEHAVIOR, spell_id.strip_edges()]
 
 static func battle_replay_action(battle_id: String) -> String:
 	return "%s%s" % [PREFIX_BATTLE_REPLAY, battle_id.strip_edges()]

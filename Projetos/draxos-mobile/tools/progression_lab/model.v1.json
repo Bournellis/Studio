@@ -107,7 +107,7 @@
       "energia": 1.8,
       "sangue": 0.9,
       "cristais": 0.15,
-      "ossos": 0.16,
+      "ossos": 16,
       "diamante": 0
     },
     "routine_reward_hour_full": {
@@ -116,7 +116,7 @@
       "energia": 8,
       "sangue": 2.8,
       "cristais": 1.4,
-      "ossos": 1,
+      "ossos": 100,
       "diamante": 0
     },
     "free_pass_hour_full": {
@@ -125,7 +125,7 @@
       "energia": 3.5,
       "sangue": 1.2,
       "cristais": 0.8,
-      "ossos": 0.4,
+      "ossos": 40,
       "diamante": 0.1
     },
     "premium_pass_hour_full": {
@@ -134,7 +134,7 @@
       "energia": 6.5,
       "sangue": 2.8,
       "cristais": 1.6,
-      "ossos": 0.8,
+      "ossos": 80,
       "diamante": 0.18
     },
     "base_checkin_hour": {
@@ -143,7 +143,7 @@
       "energia": 14,
       "sangue": 1.5,
       "cristais": 1,
-      "ossos": 0.35,
+      "ossos": 35,
       "diamante": 0
     },
     "store_pack_hour": {
@@ -152,7 +152,7 @@
       "energia": 22,
       "sangue": 4.5,
       "cristais": 2.2,
-      "ossos": 1.4,
+      "ossos": 140,
       "diamante": -18
     }
   },
@@ -162,7 +162,7 @@
     "pet_sangue": { "min": 5, "coefficient": 0.15 },
     "passive_cristais": { "min": 5, "coefficient": 0.1 },
     "base_structure_energia": { "min": 20, "coefficient": 0.5 },
-    "weapon_quality_thresholds": [0, 120, 360, 720, 1200]
+    "weapon_quality_thresholds": [0, 12000, 36000, 72000, 120000]
   },
   "power_weights": {
     "level": 42,

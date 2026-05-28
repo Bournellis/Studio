@@ -149,8 +149,9 @@ e o simulador `FIRST_SLICE_SIM`.
 - Ataque especial: 4o ataque = 3x dano
 - Tres dimensoes: tipo de instrumento / qualidade (Ossos, craftado no Ossario) / level (Almas, permanente, limitado pelo cap atual)
 - Instrumentos rituais podem mudar cadencia, fonte de dano, especial e afinidade de build.
-- Crafting (primeiro slice): upgrade de dano via Ossos — sem outras dimensoes por enquanto
-- Ossos: drops de batalha + quests iniciais + producao do Ossario
+- Crafting (primeiro slice): Ossos representam materia-prima geral de crafting; Po de Osso e a variacao triturada usada para consumiveis.
+- Ossos: drops de batalha + quests iniciais + producao do Ossario; valores sao inteiros na escala atual (`1 Osso atual = 0.01 Osso antigo`)
+- Po de Osso: obtido ao triturar Ossos no Ossario, usado inicialmente para criar pocoes.
 - Maestria: acumula por dano causado, amplifica dano do Instrumento Ritual, permanente na conta
 
 ### Spells — Pool Completa
@@ -204,15 +205,15 @@ Regras:
 
 ### Qualidades Do Instrumento v0
 
-O Instrumento Ritual tem 5 qualidades no primeiro slice. Qualidade e permanente, custa Ossos, nao tem RNG e deve ser craftada em ordem no Ossario. O custo total ate a qualidade maxima da Season 1 e `30 * cap`, ou 1200 Ossos no cap 40.
+O Instrumento Ritual tem 5 qualidades no primeiro slice. Qualidade e permanente, custa Ossos, nao tem RNG e deve ser craftada em ordem no Ossario. O custo total ate a qualidade maxima da Season 1 e `3000 * cap`, ou 120000 Ossos no cap 40.
 
 | Qualidade | Tier | Custo incremental | Custo acumulado | Multiplicador de dano |
 |---|---:|---:|---:|---:|
 | Inicial | 0 | 0 | 0 | 1.00x |
-| Reforcada | 1 | 120 | 120 | 1.08x |
-| Ritual | 2 | 240 | 360 | 1.18x |
-| Abissal | 3 | 360 | 720 | 1.30x |
-| Cosmica | 4 | 480 | 1200 | 1.45x |
+| Reforcada | 1 | 12000 | 12000 | 1.08x |
+| Ritual | 2 | 24000 | 36000 | 1.18x |
+| Abissal | 3 | 36000 | 72000 | 1.30x |
+| Cosmica | 4 | 48000 | 120000 | 1.45x |
 
 Regras:
 
@@ -321,7 +322,7 @@ Toda construcao pode evoluir a si mesma ate level 40 (custo: Energia + tempo). O
 | Pocos de Sangue | Sangue | Upgrade de Familiares |
 | Minas de Cristal | Cristais | Upgrade de Doutrinas |
 | Estrutura de Stats | — | Upgrade de stats do personagem |
-| Ossario | Ossos (drops + quests + producao) | Crafting de arma (upgrade de dano) |
+| Ossario | Ossos e Po de Osso | Crafting de arma e consumiveis |
 
 - 40 levels por estrutura, permanentes, limitados pelo level da conta
 - Fila: 1 slot padrao, 2 com compra unica
@@ -343,7 +344,7 @@ Producao diaria no level 40:
 | Nucleo de Energia | 80 Energia |
 | Pocos de Sangue | 8 Sangue |
 | Minas de Cristal | 5 Cristais |
-| Ossario | 2 Ossos |
+| Ossario | 200 Ossos |
 | Estrutura de Stats | Nao produz recurso |
 
 Regra de producao por level:
@@ -371,7 +372,7 @@ Esses bonus devem entrar no calculo server-side de combate e poder, mas nao subs
 
 ### Ossario
 
-Ossos continuam raros. Batalhas, quests e Battle Pass seguem como fontes principais; o Ossario fornece renda constante para crafting de qualidade do Instrumento Ritual. A meta inicial da Season 1 continua `30 * cap` Ossos para qualidade principal do Instrumento.
+Ossos continuam raros. Batalhas, quests e Battle Pass seguem como fontes principais; o Ossario fornece renda constante para crafting de qualidade do Instrumento Ritual. A meta inicial da Season 1 continua `3000 * cap` Ossos para qualidade principal do Instrumento. O Ossario tambem permite triturar `1 Osso` em `1 Po de Osso` para consumiveis; a primeira receita custa `50 Po de Osso` e cria `1 Pocao de Vida`.
 
 ### Segundo Slot De Construcao
 

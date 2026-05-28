@@ -5,7 +5,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 ## Foco Atual
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Foco P2 de implementacao (Track 15 `TRACK_15_MOBILE_UX_OVERHAUL_ACTIVE`, sobre Track 13 release safety e Track 14 agent ops): `Projetos/draxos-mobile/`
+- Foco P2 de implementacao (Track 16 `TRACK_16_BEHAVIOR_CRAFTING_ACTIVE`, sobre Track 13 release safety, Track 14 agent ops e Track 15 UX): `Projetos/draxos-mobile/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/` (preservado como referencia - nao e o projeto ativo)
 - Projetos pausados: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -14,7 +14,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 | Prioridade | Projeto | Caminho | Fase | Status | Trabalho permitido | Proximo passo | Restricao operacional |
 |---|---|---|---|---|---|---|---|
 | P0 | Draxos Roguelike Cardgame | `Projetos/draxos-roguelike-cardgame/` | Implementacao | `P0_IMPLEMENTACAO` | Codigo, validacao, playtest, documentacao local | Playtest de usuario da Track 02 completa | Pode receber trabalho de implementacao por padrao |
-| P2 | DraxosMobile | `Projetos/draxos-mobile/` | Implementacao - Track 15 `TRACK_15_MOBILE_UX_OVERHAUL_ACTIVE` | `P2_IMPLEMENTACAO` | Codigo, design, documentacao local, configuracao de infraestrutura | Revisar checkpoint UX Android portrait de Entry, Refugio, Batalha/Summary, Base e Loja; depois continuar polish ou executar walkthrough manual Track 13 antes de features/tuning/release | iOS sem pedido explicito; mobile browser fora do escopo primario; secrets e service role nunca entram no cliente/export; publicacao remota exige `-ConfirmRemoteMutation`; migration conta/save fora do pacote atual; tuning numerico bloqueado ate rodada humana Progression Lab; `assets/referenciaimagens/` e referencia, runtime seletivo deve ir para `assets/ux_overhaul/` |
+| P2 | DraxosMobile | `Projetos/draxos-mobile/` | Implementacao - Track 16 `TRACK_16_BEHAVIOR_CRAFTING_ACTIVE` | `P2_IMPLEMENTACAO` | Codigo, design, documentacao local, configuracao de infraestrutura | Validar localmente comportamento, Po de Osso, crafting de Pocao de Vida e fluxo de preparacao; depois walkthrough manual Track 13 antes de publicacao remota | iOS sem pedido explicito; mobile browser fora do escopo primario; secrets e service role nunca entram no cliente/export; publicacao remota exige `-ConfirmRemoteMutation`; migration conta/save estrutural fora do pacote atual; tuning numerico amplo bloqueado ate rodada humana Progression Lab |
 | Arquivo | Mobile Universe (conceito) | `Projetos/_conceitos/mobile-universe/` | Arquivo de design | `ARQUIVO_DESIGN` | Leitura e referencia de design apenas | - | Nao criar codigo, cenas, assets ou projeto Godot a partir daqui |
 | Pausado | RPG Isometrico | `Projetos/rpg-isometrico/` | Pausado | `PAUSADO_INDEFINIDO` | Consulta historica quando solicitado | Nenhum enquanto pausado | Nao implementar, expandir gates ou selecionar Next Gate sem pedido explicito |
 | Pausado | RPG Turnos | `Projetos/rpg-turnos/` | Pausado | `PAUSADO_INDEFINIDO` | Consulta historica quando solicitado | Nenhum enquanto pausado | Nao implementar, selecionar track/gate, regenerar `.tres` ou alterar escopo sem pedido explicito |

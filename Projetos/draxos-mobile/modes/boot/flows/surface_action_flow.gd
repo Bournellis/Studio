@@ -124,6 +124,107 @@ func upgrade_base_structure(host: Node, structure_id: String) -> void:
 	host.call("_set_busy", false, "Evolucao de %s iniciada no servidor." % str(host.call("_structure_label", target_structure_id)))
 	host.call("_render_base_state")
 
+func show_crafting(host: Node) -> void:
+	if not bool(host.call("_require_session", "Entre com email ou use guest dev antes de abrir Crafting.")):
+		return
+
+	host.call("_show_surface_screen", str(host.call("_base_surface_target_screen")))
+	host.call("_set_busy", true, "Buscando crafting...")
+	var crafting_result: Dictionary = await SupabaseClient.fetch_crafting_state(SessionStore.access_token)
+	if not bool(crafting_result.get("ok", false)):
+		host.call("_fail_with_error", crafting_result)
+		return
+	if not SessionStore.apply_crafting_result(crafting_result):
+		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		return
+
+	SessionStore.save_cache()
+	host.call("_set_busy", false, "Crafting recuperado.")
+	host.call("_render_base_state")
+
+func crush_bones(host: Node) -> void:
+	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de triturar Ossos.")):
+		return
+
+	host.call("_show_screen", str(host.call("_base_surface_target_screen")), false)
+	host.call("_set_busy", true, "Triturando Ossos...")
+	var crafting_result: Dictionary = await SupabaseClient.crush_bones(
+		SessionStoreScript.create_request_id(),
+		1,
+		SessionStore.access_token
+	)
+	if not bool(crafting_result.get("ok", false)):
+		host.call("_fail_with_error", crafting_result)
+		return
+	if not SessionStore.apply_crafting_result(crafting_result):
+		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		return
+
+	SessionStore.save_cache()
+	host.call("_set_busy", false, "1 Osso triturado em 1 Po de Osso.")
+	host.call("_render_base_state")
+
+func craft_health_potion(host: Node) -> void:
+	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de criar Pocao de Vida.")):
+		return
+
+	host.call("_show_screen", str(host.call("_base_surface_target_screen")), false)
+	host.call("_set_busy", true, "Criando Pocao de Vida...")
+	var crafting_result: Dictionary = await SupabaseClient.craft_item(
+		SessionStoreScript.create_request_id(),
+		AppShellActionContractScript.RECIPE_HEALTH_POTION,
+		1,
+		SessionStore.access_token
+	)
+	if not bool(crafting_result.get("ok", false)):
+		host.call("_fail_with_error", crafting_result)
+		return
+	if not SessionStore.apply_crafting_result(crafting_result):
+		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		return
+
+	SessionStore.save_cache()
+	host.call("_set_busy", false, "Pocao de Vida criada.")
+	host.call("_render_base_state")
+
+func show_preparation(host: Node) -> void:
+	if not bool(host.call("_require_session", "Entre com email ou use guest dev antes de abrir Preparacao.")):
+		return
+
+	host.call("_show_surface_screen", AppShellRouteContractScript.ROUTE_REFUGE)
+	host.call("_set_busy", true, "Buscando Preparacao...")
+	var build_result: Dictionary = await SupabaseClient.fetch_build_state(SessionStore.access_token)
+	if not bool(build_result.get("ok", false)):
+		host.call("_fail_with_error", build_result)
+		return
+	if not SessionStore.apply_build_result(build_result):
+		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		return
+
+	SessionStore.save_cache()
+	host.call("_set_busy", false, "Preparacao recuperada.")
+	host.call("_render_refuge_screen")
+
+func equip_health_potion(host: Node) -> void:
+	await _update_potion_equip(host, AppShellActionContractScript.ITEM_HEALTH_POTION, "Pocao de Vida equipada.")
+
+func unequip_potion(host: Node) -> void:
+	await _update_potion_equip(host, null, "Pocao removida.")
+
+func enable_potion_default(host: Node) -> void:
+	await _update_potion_behavior(host, _default_potion_behavior(), "Pocao usara Vida abaixo de 40%.")
+
+func disable_potion(host: Node) -> void:
+	var behavior := _default_potion_behavior()
+	behavior["enabled"] = false
+	await _update_potion_behavior(host, behavior, "Uso automatico de pocao pausado.")
+
+func enable_spell_behavior(host: Node, spell_id: String) -> void:
+	await _update_spell_behavior(host, spell_id, _default_spell_behavior(true), "Spell ativada.")
+
+func disable_spell_behavior(host: Node, spell_id: String) -> void:
+	await _update_spell_behavior(host, spell_id, _default_spell_behavior(false), "Spell pausada.")
+
 func show_social(host: Node) -> void:
 	if not bool(host.call("_require_session", "Entre com email ou use guest dev antes de abrir Social.")):
 		return
@@ -376,3 +477,87 @@ static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:
 		return value
 	return {}
+
+func _update_potion_equip(host: Node, item_id: Variant, message: String) -> void:
+	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de equipar pocao.")):
+		return
+
+	host.call("_show_screen", AppShellRouteContractScript.ROUTE_REFUGE, false)
+	host.call("_set_busy", true, "Atualizando pocao...")
+	var build_result: Dictionary = await SupabaseClient.equip_potion(
+		SessionStoreScript.create_request_id(),
+		item_id,
+		SessionStore.access_token
+	)
+	if not bool(build_result.get("ok", false)):
+		host.call("_fail_with_error", build_result)
+		return
+	if not SessionStore.apply_build_result(build_result):
+		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		return
+
+	SessionStore.save_cache()
+	host.call("_set_busy", false, message)
+	host.call("_render_refuge_screen")
+
+func _update_potion_behavior(host: Node, behavior: Dictionary, message: String) -> void:
+	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de configurar pocao.")):
+		return
+
+	host.call("_show_screen", AppShellRouteContractScript.ROUTE_REFUGE, false)
+	host.call("_set_busy", true, "Atualizando comportamento...")
+	var build_result: Dictionary = await SupabaseClient.update_potion_behavior(
+		SessionStoreScript.create_request_id(),
+		behavior,
+		SessionStore.access_token
+	)
+	if not bool(build_result.get("ok", false)):
+		host.call("_fail_with_error", build_result)
+		return
+	if not SessionStore.apply_build_result(build_result):
+		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		return
+
+	SessionStore.save_cache()
+	host.call("_set_busy", false, message)
+	host.call("_render_refuge_screen")
+
+func _update_spell_behavior(host: Node, spell_id: String, behavior: Dictionary, message: String) -> void:
+	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de configurar spell.")):
+		return
+	if spell_id.strip_edges() == "":
+		_set_error_text(host, "Spell invalida.")
+		return
+
+	host.call("_show_screen", AppShellRouteContractScript.ROUTE_REFUGE, false)
+	host.call("_set_busy", true, "Atualizando spell...")
+	var build_result: Dictionary = await SupabaseClient.update_spell_behavior(
+		SessionStoreScript.create_request_id(),
+		spell_id.strip_edges(),
+		behavior,
+		SessionStore.access_token
+	)
+	if not bool(build_result.get("ok", false)):
+		host.call("_fail_with_error", build_result)
+		return
+	if not SessionStore.apply_build_result(build_result):
+		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		return
+
+	SessionStore.save_cache()
+	host.call("_set_busy", false, message)
+	host.call("_render_refuge_screen")
+
+static func _default_potion_behavior() -> Dictionary:
+	return {
+		"enabled": true,
+		"hp": {"mode": "below", "percent": 40},
+		"mana": {"mode": "ignore", "percent": 0},
+	}
+
+static func _default_spell_behavior(enabled: bool) -> Dictionary:
+	return {
+		"enabled": enabled,
+		"hp": {"mode": "ignore", "percent": 0},
+		"mana": {"mode": "ignore", "percent": 0},
+	}

@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "collection": "potions",
+  "items": [
+    {
+      "id": "pocao_vida",
+      "display_name": "Pocao de Vida",
+      "description": "Consumivel de batalha que recupera 20% da vida maxima ao longo de 5 segundos.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["battle", "consumable", "potion", "healing"],
+      "slot_type": "potion",
+      "effect": {
+        "type": "heal_over_time",
+        "total_percent_max_hp": 20,
+        "duration_seconds": 5,
+        "tick_percent_max_hp": 4,
+        "tick_seconds": 1
+      },
+      "default_behavior": {
+        "enabled": true,
+        "hp": {"mode": "below", "percent": 40},
+        "mana": {"mode": "ignore", "percent": 0}
+      }
+    }
+  ]
+}

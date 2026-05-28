@@ -29,6 +29,8 @@ export interface CombatantBuild {
   passiveLevel?: number;
   petId?: string;
   petLevel?: number;
+  spellBehaviors?: Record<string, BehaviorConfig>;
+  potionSlot?: BattlePotionSlot;
 }
 
 export interface BattleSimulationInput {
@@ -59,6 +61,9 @@ export interface BattleSimulationResult {
     type: "FIRST_SLICE_SIM";
     reward_id: "first_slice_battle_win" | "first_slice_battle_loss";
     resources: Record<string, number>;
+  };
+  consumables: {
+    used: BattleConsumableUse[];
   };
 }
 
@@ -97,6 +102,42 @@ interface RuntimeCombatant {
   summons: RuntimeSummon[];
   dots: RuntimeDot[];
   statuses: RuntimeStatus[];
+  healingOverTime: RuntimeHealOverTime[];
+  consumablesUsed: Record<number, boolean>;
+}
+
+export interface BehaviorConfig {
+  enabled: boolean;
+  hp: BehaviorCondition;
+  mana: BehaviorCondition;
+}
+
+export interface BehaviorCondition {
+  mode: "ignore" | "below" | "above";
+  percent: number;
+}
+
+export interface BattlePotionSlot {
+  slotIndex: number;
+  itemId: "pocao_vida";
+  quantity: number;
+  behavior: BehaviorConfig;
+}
+
+export interface BattleConsumableUse {
+  owner: BattleSideId;
+  slot_index: number;
+  item_id: string;
+  quantity: number;
+}
+
+interface RuntimeHealOverTime {
+  id: string;
+  itemId: string;
+  source: BattleSideId;
+  tickAmount: number;
+  ticksRemaining: number;
+  nextTickAt: number;
 }
 
 interface RuntimeSummon {
@@ -181,6 +222,9 @@ interface PassiveStats {
 const MAX_DURATION = 36;
 const TICK_SECONDS = 0.5;
 const DOT_TICK_SECONDS = 1;
+const POTION_HEAL_TICK_SECONDS = 1;
+const POTION_HEAL_TICKS = 5;
+const POTION_HEAL_PERCENT_PER_TICK = 0.04;
 const COMBAT_PACE_HP_MULTIPLIER_BASE = 3.25;
 const COMBAT_PACE_HP_MULTIPLIER_PER_LEVEL = 0.085;
 
@@ -545,6 +589,7 @@ export function simulateFirstSliceBattle(
   input: BattleSimulationInput,
 ): BattleSimulationResult {
   const events: BattleEvent[] = [];
+  const consumablesUsed: BattleConsumableUse[] = [];
   let seq = 1;
   const player = createCombatant("player", input.player);
   const opponent = createCombatant("opponent", input.opponent);
@@ -559,10 +604,14 @@ export function simulateFirstSliceBattle(
     expireStatuses(time, opponent, events, nextSeq);
     processDots(time, player, events, nextSeq);
     processDots(time, opponent, events, nextSeq);
+    processHealOverTime(time, player, events, nextSeq);
+    processHealOverTime(time, opponent, events, nextSeq);
     regenerate(player);
     regenerate(opponent);
     processCooldownReady(time, player, events, nextSeq);
     processCooldownReady(time, opponent, events, nextSeq);
+    processPotion(time, player, events, nextSeq, consumablesUsed);
+    processPotion(time, opponent, events, nextSeq, consumablesUsed);
     processSpell(time, player, opponent, events, nextSeq);
     processSpell(time, opponent, player, events, nextSeq);
     processPet(time, player, opponent, events, nextSeq);
@@ -650,6 +699,7 @@ export function simulateFirstSliceBattle(
       events,
     },
     reward,
+    consumables: { used: consumablesUsed },
   };
 }
 
@@ -689,6 +739,8 @@ function createCombatant(
     summons: [],
     dots: [],
     statuses: [],
+    healingOverTime: [],
+    consumablesUsed: {},
   };
 }
 
@@ -821,7 +873,8 @@ function processSpell(
     const spell = SPELLS[candidate];
     return spell !== undefined &&
       (actor.spellCooldowns[candidate] ?? 0) <= time &&
-      actor.mana >= spell.manaCost;
+      actor.mana >= spell.manaCost &&
+      shouldUseSpell(actor, candidate);
   });
   if (spellId === undefined) {
     return;
@@ -933,6 +986,87 @@ function processSpell(
   if (spell.status !== undefined && target.hp > 0) {
     applyStatus(time, actor, target, spell, events, nextSeq);
   }
+}
+
+function processPotion(
+  time: number,
+  actor: RuntimeCombatant,
+  events: BattleEvent[],
+  nextSeq: () => number,
+  consumablesUsed: BattleConsumableUse[],
+): void {
+  const slot = actor.build.potionSlot;
+  if (
+    slot === undefined || actor.hp <= 0 || actor.consumablesUsed[slot.slotIndex] === true ||
+    slot.quantity <= 0 || slot.itemId !== "pocao_vida"
+  ) {
+    return;
+  }
+  if (!shouldUseBehavior(slot.behavior, actor, true)) {
+    return;
+  }
+
+  actor.consumablesUsed[slot.slotIndex] = true;
+  consumablesUsed.push({
+    owner: actor.side,
+    slot_index: slot.slotIndex,
+    item_id: slot.itemId,
+    quantity: 1,
+  });
+  actor.healingOverTime.push({
+    id: `${actor.side}:${slot.slotIndex}:${slot.itemId}`,
+    itemId: slot.itemId,
+    source: actor.side,
+    tickAmount: Math.max(1, Math.round(actor.maxHp * POTION_HEAL_PERCENT_PER_TICK)),
+    ticksRemaining: POTION_HEAL_TICKS,
+    nextTickAt: time + POTION_HEAL_TICK_SECONDS,
+  });
+  events.push({
+    ...baseEvent(time, nextSeq(), "consumable_use", actor.side, actor.side),
+    item_id: slot.itemId,
+    slot_index: slot.slotIndex,
+    effect: "heal_over_time",
+    duration_seconds: POTION_HEAL_TICKS * POTION_HEAL_TICK_SECONDS,
+    tick_percent_max_hp: POTION_HEAL_PERCENT_PER_TICK * 100,
+    hp_after: Math.max(0, actor.hp),
+  });
+}
+
+function processHealOverTime(
+  time: number,
+  actor: RuntimeCombatant,
+  events: BattleEvent[],
+  nextSeq: () => number,
+): void {
+  if (actor.healingOverTime.length === 0) {
+    return;
+  }
+  const active: RuntimeHealOverTime[] = [];
+  for (const healing of actor.healingOverTime) {
+    if (actor.hp <= 0) {
+      continue;
+    }
+    if (time + 0.0001 >= healing.nextTickAt && healing.ticksRemaining > 0) {
+      const before = actor.hp;
+      actor.hp = Math.min(actor.maxHp, actor.hp + healing.tickAmount);
+      const healed = Math.max(0, Math.round(actor.hp - before));
+      healing.ticksRemaining -= 1;
+      healing.nextTickAt += POTION_HEAL_TICK_SECONDS;
+      events.push({
+        ...baseEvent(time, nextSeq(), "heal", healing.source, actor.side),
+        item_id: healing.itemId,
+        effect_id: healing.id,
+        amount: healed,
+        hp_after: Math.max(0, Math.round(actor.hp)),
+        max_hp: actor.maxHp,
+        ticks_remaining: healing.ticksRemaining,
+      });
+    }
+    if (healing.ticksRemaining > 0) {
+      active.push(healing);
+    }
+  }
+  actor.healingOverTime = active;
 }
 
 function processPet(
@@ -1664,6 +1798,49 @@ function regenPenaltyMultiplier(target: RuntimeCombatant): number {
   return 1 - clampPercent(penalty, 0, 0.8);
 }
 
+function shouldUseSpell(actor: RuntimeCombatant, spellId: string): boolean {
+  const behavior = actor.build.spellBehaviors?.[spellId];
+  if (behavior === undefined) {
+    return true;
+  }
+  return shouldUseBehavior(behavior, actor, false);
+}
+
+function shouldUseBehavior(
+  behavior: BehaviorConfig,
+  actor: RuntimeCombatant,
+  defaultEnabled: boolean,
+): boolean {
+  const enabled = typeof behavior.enabled === "boolean" ? behavior.enabled : defaultEnabled;
+  if (!enabled) {
+    return false;
+  }
+  return conditionMatches(behavior.hp, hpPercent(actor)) &&
+    conditionMatches(behavior.mana, manaPercent(actor));
+}
+
+function conditionMatches(condition: BehaviorCondition | undefined, currentPercent: number): boolean {
+  if (condition === undefined || condition.mode === "ignore") {
+    return true;
+  }
+  const threshold = clampPercent(condition.percent, 0, 100);
+  if (condition.mode === "below") {
+    return currentPercent < threshold;
+  }
+  if (condition.mode === "above") {
+    return currentPercent > threshold;
+  }
+  return true;
+}
+
+function hpPercent(actor: RuntimeCombatant): number {
+  return actor.maxHp <= 0 ? 0 : actor.hp / actor.maxHp * 100;
+}
+
+function manaPercent(actor: RuntimeCombatant): number {
+  return actor.maxMana <= 0 ? 0 : actor.mana / actor.maxMana * 100;
+}
+
 function weaponDefinition(
   weaponId: string | undefined,
 ): typeof WEAPONS[keyof typeof WEAPONS] {
@@ -1703,7 +1880,7 @@ function winReward(): BattleSimulationResult["reward"] {
   return {
     type: "FIRST_SLICE_SIM",
     reward_id: "first_slice_battle_win",
-    resources: { xp: 50, almas: 4, energia: 2, sangue: 1, ossos: 0.2 },
+    resources: { xp: 50, almas: 4, energia: 2, sangue: 1, ossos: 20 },
   };
 }
 
@@ -1711,7 +1888,7 @@ function lossReward(): BattleSimulationResult["reward"] {
   return {
     type: "FIRST_SLICE_SIM",
     reward_id: "first_slice_battle_loss",
-    resources: { xp: 10, almas: 0.8, energia: 0.4, sangue: 0.2, ossos: 0.04 },
+    resources: { xp: 10, almas: 0.8, energia: 0.4, sangue: 0.2, ossos: 4 },
   };
 }
 

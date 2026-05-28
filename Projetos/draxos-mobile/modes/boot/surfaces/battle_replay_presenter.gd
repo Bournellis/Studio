@@ -11,7 +11,7 @@ const ACTION_SKIP_REPLAY := AppShellActionContractScript.ACTION_SKIP_REPLAY
 const ACTION_RETURN_REFUGE := AppShellActionContractScript.ACTION_RETURN_REFUGE
 const ACTION_SHOW_CURRENT_LOGS := AppShellActionContractScript.ACTION_SHOW_CURRENT_BATTLE_LOGS
 const ACTION_RETURN_SUMMARY := AppShellActionContractScript.ACTION_RETURN_BATTLE_SUMMARY
-const SUMMARY_RESOURCE_KEYS := ["almas", "energia", "sangue", "cristais", "ossos", "diamante"]
+const SUMMARY_RESOURCE_KEYS := ["almas", "energia", "sangue", "cristais", "ossos", "po_osso", "diamante"]
 const UX_BATTLE_BACKGROUND := "res://assets/ux_overhaul/battle_duel_stage.png"
 
 var _host: Node
@@ -369,7 +369,7 @@ static func _reward_text(rewards: Dictionary) -> String:
 	if resources.is_empty():
 		return ""
 	var parts: PackedStringArray = PackedStringArray()
-	for key in ["xp", "almas", "energia", "sangue", "cristais", "ossos", "diamante"]:
+	for key in ["xp", "almas", "energia", "sangue", "cristais", "ossos", "po_osso", "diamante"]:
 		if not resources.has(key):
 			continue
 		parts.append("%s +%s" % [key.capitalize(), str(resources.get(key, 0))])

@@ -26,7 +26,7 @@
         "energia": 22.35,
         "sangue": 20.68,
         "cristais": 6.12,
-        "ossos": 4.48,
+        "ossos": 448,
         "diamante": 0.09
       },
       "resource_debt": {
@@ -164,7 +164,7 @@
         "energia": 35.88,
         "sangue": 51.7,
         "cristais": 5.3,
-        "ossos": 11.2,
+        "ossos": 1120,
         "diamante": 0.23
       },
       "resource_debt": {
@@ -304,7 +304,7 @@
         "energia": 71.75,
         "sangue": 103.4,
         "cristais": 5.6,
-        "ossos": 22.4,
+        "ossos": 2240,
         "diamante": 0.45
       },
       "resource_debt": {
@@ -445,7 +445,7 @@
         "energia": 107.63,
         "sangue": 155.1,
         "cristais": 15.9,
-        "ossos": 33.6,
+        "ossos": 3360,
         "diamante": 0.68
       },
       "resource_debt": {
@@ -586,7 +586,7 @@
         "energia": 143.5,
         "sangue": 152.8,
         "cristais": 25.2,
-        "ossos": 44.8,
+        "ossos": 4480,
         "diamante": 0.9
       },
       "resource_debt": {
@@ -732,7 +732,7 @@
         "energia": 27,
         "sangue": 29,
         "cristais": 9.4,
-        "ossos": 6.7,
+        "ossos": 670,
         "diamante": 0.2
       },
       "resource_debt": {
@@ -870,7 +870,7 @@
         "energia": 57.5,
         "sangue": 72.5,
         "cristais": 8.5,
-        "ossos": 16.75,
+        "ossos": 1675,
         "diamante": 0.5
       },
       "resource_debt": {
@@ -1010,7 +1010,7 @@
         "energia": 115,
         "sangue": 145,
         "cristais": 11,
-        "ossos": 33.5,
+        "ossos": 3350,
         "diamante": 1
       },
       "resource_debt": {
@@ -1150,7 +1150,7 @@
         "energia": 152.5,
         "sangue": 108.5,
         "cristais": 16.5,
-        "ossos": 50.25,
+        "ossos": 5025,
         "diamante": 1.5
       },
       "resource_debt": {
@@ -1297,7 +1297,7 @@
         "energia": 195,
         "sangue": 181,
         "cristais": 28,
-        "ossos": 67,
+        "ossos": 6700,
         "diamante": 2
       },
       "resource_debt": {
@@ -1444,7 +1444,7 @@
         "energia": 12.8,
         "sangue": 31.88,
         "cristais": 11.08,
-        "ossos": 7.42,
+        "ossos": 742,
         "diamante": 500.45
       },
       "resource_debt": {
@@ -1583,7 +1583,7 @@
         "energia": 32,
         "sangue": 79.7,
         "cristais": 7.7,
-        "ossos": 18.55,
+        "ossos": 1855,
         "diamante": 501.12
       },
       "resource_debt": {
@@ -1724,7 +1724,7 @@
         "energia": 64,
         "sangue": 159.4,
         "cristais": 11.4,
-        "ossos": 37.1,
+        "ossos": 3710,
         "diamante": 502.24
       },
       "resource_debt": {
@@ -1865,7 +1865,7 @@
         "energia": 71,
         "sangue": 130.1,
         "cristais": 17.1,
-        "ossos": 55.65,
+        "ossos": 5565,
         "diamante": 503.36
       },
       "resource_debt": {
@@ -2013,7 +2013,7 @@
         "energia": 114,
         "sangue": 184.8,
         "cristais": 30.8,
-        "ossos": 74.2,
+        "ossos": 7420,
         "diamante": 504.48
       },
       "resource_debt": {
@@ -2160,7 +2160,7 @@
         "energia": 26.2,
         "sangue": 40.75,
         "cristais": 15.08,
-        "ossos": 9.95,
+        "ossos": 995,
         "diamante": 484.36
       },
       "resource_debt": {
@@ -2299,7 +2299,7 @@
         "energia": 35.5,
         "sangue": 101.88,
         "cristais": 7.7,
-        "ossos": 24.88,
+        "ossos": 2487.5,
         "diamante": 460.9
       },
       "resource_debt": {
@@ -2440,7 +2440,7 @@
         "energia": 71,
         "sangue": 69.75,
         "cristais": 21.4,
-        "ossos": 49.75,
+        "ossos": 4975,
         "diamante": 421.8
       },
       "resource_debt": {
@@ -2587,7 +2587,7 @@
         "energia": 100.5,
         "sangue": 171.63,
         "cristais": 33.1,
-        "ossos": 74.63,
+        "ossos": 7462.5,
         "diamante": 382.7
       },
       "resource_debt": {
@@ -2734,7 +2734,7 @@
         "energia": 156,
         "sangue": 210.5,
         "cristais": 33.8,
-        "ossos": 99.5,
+        "ossos": 9950,
         "diamante": 343.6
       },
       "resource_debt": {
@@ -2881,7 +2881,7 @@
         "energia": 32.4,
         "sangue": 52.3,
         "cristais": 19.2,
-        "ossos": 12.73,
+        "ossos": 1273,
         "diamante": 464.56
       },
       "resource_debt": {
@@ -3020,7 +3020,7 @@
         "energia": 51,
         "sangue": 130.75,
         "cristais": 12,
-        "ossos": 31.83,
+        "ossos": 3182.5,
         "diamante": 411.4
       },
       "resource_debt": {
@@ -3161,7 +3161,7 @@
         "energia": 112,
         "sangue": 98.5,
         "cristais": 30,
-        "ossos": 63.65,
+        "ossos": 6365,
         "diamante": 322.8
       },
       "resource_debt": {
@@ -3308,7 +3308,7 @@
         "energia": 146,
         "sangue": 157.25,
         "cristais": 27,
-        "ossos": 95.48,
+        "ossos": 9547.5,
         "diamante": 234.2
       },
       "resource_debt": {
@@ -3455,7 +3455,7 @@
         "energia": 175,
         "sangue": 196,
         "cristais": 52,
-        "ossos": 7.3,
+        "ossos": 730,
         "diamante": 145.6
       },
       "resource_debt": {

@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
-- Ultima atualizacao: `2026-05-27`
-- Status: contrato com `account/*`, `battle/*`, `base/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*` e `release/*` implementados local/remoto; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`; Track 03 implementou email/senha via `/account/bootstrap`, selecao de save via `x-draxos-save-type`, reset separado por save, aplicacao server-backed do Progression Lab no save `progression_lab`, Base/Social/Competicao/Loja jogaveis, leaderboard alpha com pontos por batalha normal e manifest/version gate de updates internos; Track 06 adicionou `GET /release/config` com `runtime_config_v1` release-scoped e read-only para flags conservadoras de features
+- Ultima atualizacao: `2026-05-28`
+- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*` e `release/*` implementados local/remoto; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`; Track 03 implementou email/senha via `/account/bootstrap`, selecao de save via `x-draxos-save-type`, reset separado por save, aplicacao server-backed do Progression Lab no save `progression_lab`, Base/Social/Competicao/Loja jogaveis, leaderboard alpha com pontos por batalha normal e manifest/version gate de updates internos; Track 06 adicionou `GET /release/config`; Track 16 adicionou crafting de pocoes, Po de Osso, slot de pocao e comportamento server-authoritative para spells/pocoes.
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -13,8 +13,8 @@ Este documento descreve a interface logica entre cliente Godot e Supabase Edge F
 - Internal Alpha: cliente cria sessao Supabase Auth por email/senha; depois chama `/account/bootstrap` com JWT registrado, username e convite para criar o primeiro save.
 - Guest dev: cliente ainda pode criar sessao Supabase Auth anonima e chamar `/account/guest`, mas esse fluxo e ferramenta de desenvolvimento/fallback e nao o caminho real da build interna.
 - Correlation: cliente envia `request_id` em mutacoes para idempotencia.
-- Runtime local atual: `supabase/functions/healthcheck`, `account`, `battle`, `base`, `social`, `competition`, `monetization`, `telemetry`, `progression-lab` e `release`, espelhados em `server/functions/`.
-- Anti-lock-in: os endpoints logicos deste documento pertencem ao jogo, nao ao Supabase. O cliente Godot deve depender de `account`, `battle`, `base`, `social`, `competition`, `monetization`, `telemetry`, `progression-lab` e `release`, permitindo futura migracao para Backend Proprio + Postgres sem redesenhar o cliente.
+- Runtime local atual: `supabase/functions/healthcheck`, `account`, `battle`, `base`, `build`, `crafting`, `social`, `competition`, `monetization`, `telemetry`, `progression-lab` e `release`, espelhados em `server/functions/`.
+- Anti-lock-in: os endpoints logicos deste documento pertencem ao jogo, nao ao Supabase. O cliente Godot deve depender de `account`, `battle`, `base`, `build`, `crafting`, `social`, `competition`, `monetization`, `telemetry`, `progression-lab` e `release`, permitindo futura migracao para Backend Proprio + Postgres sem redesenhar o cliente.
 - Resposta de erro padrao:
 
 ```json
@@ -70,6 +70,13 @@ novo.
 | GET | `/base/state` | `save-scoped` | Sim | Nao | Estado server-authoritative da Base do save ativo. |
 | POST | `/base/collect` | `save-scoped` | Sim | `request_id` por save | Coleta recursos do save ativo com ledger. |
 | POST | `/base/upgrade` | `save-scoped` | Sim | `request_id` por save | Inicia upgrade da Base do save ativo com ledger. |
+| GET | `/crafting/state` | `save-scoped` | Sim | Nao | Recursos, Po de Osso, receitas, inventario de consumiveis e slot de pocao. |
+| POST | `/crafting/crush-bones` | `save-scoped` | Sim | `request_id` por save | Tritura Ossos em Po de Osso sem duplicar por retry. |
+| POST | `/crafting/craft` | `save-scoped` | Sim | `request_id` por save | Cria consumiveis a partir de receitas server-authoritative. |
+| GET | `/build/state` | `save-scoped` | Sim | Nao | Spells equipadas, comportamentos e pocao equipada. |
+| POST | `/build/spell-behavior` | `save-scoped` | Sim | `request_id` por save | Atualiza comportamento de uma spell equipada. |
+| POST | `/build/potion/equip` | `save-scoped` | Sim | `request_id` por save | Equipa/remove pocao no slot 1. |
+| POST | `/build/potion-behavior` | `save-scoped` | Sim | `request_id` por save | Atualiza comportamento da pocao do slot 1. |
 | GET | `/social/state` | `account-scoped` | Sim, validado | Nao | Usa identidade social canonica da conta; Lab recebe marcador `lab`. |
 | POST | `/social/friends/add` | `account-scoped` | Sim, validado | `request_id` na identidade social | Amizade por username na identidade social canonica. |
 | POST | `/social/guild/create` | `account-scoped` | Sim, validado | `request_id` na identidade social | Cria guilda e membership para a identidade social canonica. |
@@ -833,6 +840,13 @@ Implementado localmente em `T03-P03B` por header HTTP:
 | GET | `/player/profile` | Perfil, level, XP, poder e season |
 | POST | `/build/equip` | Equipar instrumento ritual, spells, doutrina/passiva e familiar/pet |
 | POST | `/upgrade/request` | Solicitar upgrade de instrumento, spell, familiar, doutrina, stats ou construcao |
+| GET | `/crafting/state` | Ler recursos, receitas, inventario de consumiveis e slot de pocao |
+| POST | `/crafting/crush-bones` | Converter Ossos em Po de Osso |
+| POST | `/crafting/craft` | Criar consumivel por receita |
+| GET | `/build/state` | Ler spells equipadas, comportamentos e pocao equipada |
+| POST | `/build/spell-behavior` | Configurar comportamento de uma spell equipada |
+| POST | `/build/potion/equip` | Equipar ou remover pocao do slot 1 |
+| POST | `/build/potion-behavior` | Configurar comportamento da pocao equipada |
 | GET | `/base/state` | Ler estruturas, fila, producao pendente e recursos |
 | POST | `/base/upgrade` | Iniciar upgrade de estrutura permanente |
 | POST | `/base/collect` | Coletar recursos acumulados offline |
@@ -878,6 +892,108 @@ Request logico:
   "pet_id": "corvo_pressagio"
 }
 ```
+
+### `GET /crafting/state`
+
+Status: **implementado em Track 16**.
+
+Scope: `save-scoped`. Usa `x-draxos-save-type`. Read-only, sem idempotencia.
+
+Retorna recursos relevantes, catalogo inicial de pocoes/receitas, inventario de consumiveis e slot de pocao do save ativo.
+
+Response v1 inclui:
+
+```json
+{
+  "ok": true,
+  "resources": { "ossos": 100, "po_osso": 50 },
+  "potions": [{ "id": "pocao_vida" }],
+  "recipes": [{ "id": "craft_pocao_vida", "input": { "po_osso": 50 } }],
+  "inventory": [{ "item_id": "pocao_vida", "quantity": 1 }],
+  "potion_slots": [{ "slot_index": 1, "potion_id": null }]
+}
+```
+
+### `POST /crafting/crush-bones`
+
+Status: **implementado em Track 16**.
+
+Converte `amount` Ossos em `amount` Po de Osso, sempre inteiro. Mutacao idempotente por `request_id`, com ledger em `resource_transactions`.
+
+Request:
+
+```json
+{
+  "request_id": "uuid",
+  "amount": 1
+}
+```
+
+Erros minimos: `INVALID_REQUEST_ID`, `INVALID_AMOUNT`, `INSUFFICIENT_BONES`, `RESOURCE_UPDATE_FAILED`.
+
+### `POST /crafting/craft`
+
+Status: **implementado em Track 16**.
+
+Executa receita server-authoritative. A receita inicial e `craft_pocao_vida`: custa `50 po_osso` e adiciona `1 pocao_vida` ao inventario.
+
+Request:
+
+```json
+{
+  "request_id": "uuid",
+  "recipe_id": "craft_pocao_vida",
+  "quantity": 1
+}
+```
+
+Erros minimos: `INVALID_RECIPE`, `INVALID_QUANTITY`, `INSUFFICIENT_RESOURCES`, `CRAFT_FAILED`.
+
+### `GET /build/state`
+
+Status: **implementado em Track 16**.
+
+Scope: `save-scoped`. Usa `x-draxos-save-type`. Retorna spells equipadas, comportamentos salvos, inventario resumido e slot de pocao.
+
+Comportamento v1:
+
+- campos: `enabled`, `hp.mode`, `hp.percent`, `mana.mode`, `mana.percent`;
+- `mode` aceita `ignore`, `below` ou `above`;
+- percentuais aceitos: `0..100`;
+- spell sem comportamento salvo mantem baseline: usar quando pronta, com mana e cooldown validos;
+- Pocao de Vida usa default `enabled=true`, `hp below 40`, mana ignorada.
+
+### `POST /build/spell-behavior`
+
+Status: **implementado em Track 16**.
+
+Atualiza comportamento de uma spell equipada. Ataque basico e Doutrina nao passam por este contrato.
+
+Request:
+
+```json
+{
+  "request_id": "uuid",
+  "spell_id": "sussurro_medo",
+  "behavior": {
+    "enabled": true,
+    "hp": { "mode": "ignore", "percent": 0 },
+    "mana": { "mode": "ignore", "percent": 0 }
+  }
+}
+```
+
+### `POST /build/potion/equip`
+
+Status: **implementado em Track 16**.
+
+Equipa `pocao_vida` no slot 1 ou remove a pocao com `item_id: null`. Equipar exige estoque no inventario; remover nao consome item.
+
+### `POST /build/potion-behavior`
+
+Status: **implementado em Track 16**.
+
+Atualiza o comportamento da pocao do slot 1. A configuracao pode permanecer salva mesmo quando o estoque chega a zero; nesse caso a batalha nao consome nem cura.
 
 ### `GET /base/state`
 

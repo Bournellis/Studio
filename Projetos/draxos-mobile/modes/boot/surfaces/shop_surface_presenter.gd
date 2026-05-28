@@ -3,7 +3,7 @@ extends RefCounted
 
 const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
 
-const RESOURCE_KEYS := ["almas", "energia", "sangue", "cristais", "ossos", "diamante"]
+const RESOURCE_KEYS := ["almas", "energia", "sangue", "cristais", "ossos", "po_osso", "diamante"]
 
 const SHOP_REDEEM_PRODUCTS := [
 	{
@@ -357,8 +357,13 @@ static func _format_resources(resources: Dictionary, include_diamond: bool = tru
 	for key: String in RESOURCE_KEYS:
 		if key == "diamante" and not include_diamond:
 			continue
-		parts.append("%s %s" % [key.capitalize(), str(resources.get(key, 0))])
+		parts.append("%s %s" % [_resource_label(key), str(resources.get(key, 0))])
 	return " | ".join(parts)
+
+static func _resource_label(key: String) -> String:
+	if key == "po_osso":
+		return "Po de Osso"
+	return key.capitalize()
 
 static func _shop_panel(host: Node) -> PanelContainer:
 	var panel := PanelContainer.new()

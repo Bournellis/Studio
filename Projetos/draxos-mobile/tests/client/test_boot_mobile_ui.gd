@@ -631,6 +631,79 @@ func test_base_presenter_renders_loaded_state_without_network() -> void:
 	assert_eq(upgrade_button.mouse_filter, Control.MOUSE_FILTER_PASS)
 	assert_true(upgrade_button.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
 
+func test_base_presenter_renders_crafting_state_without_network() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	_prepare_account_state()
+	SessionStore.base_state = _base_state_fixture()
+	assert_true(SessionStore.apply_crafting_result({
+		"ok": true,
+		"save_type": SessionStore.SAVE_TYPE_NORMAL,
+		"resources": {"ossos": 125, "po_osso": 75, "almas": 10, "energia": 20, "sangue": 0, "cristais": 0, "diamante": 0},
+		"crafting": {
+			"inventory": [{"item_id": AppShellActionContractScript.ITEM_HEALTH_POTION, "quantity": 2}],
+			"potion_slots": [{"slot_index": 1, "potion_id": null}],
+			"recipes": [{"id": AppShellActionContractScript.RECIPE_HEALTH_POTION}],
+		},
+	}))
+
+	boot._show_screen("base")
+	await get_tree().process_frame
+
+	assert_true(_label_tree_contains(boot._base_state_container, "Po de Osso 75"))
+	assert_true(_label_tree_contains(boot._base_state_container, "Pocao de Vida 2"))
+	assert_true(_label_tree_contains(boot._base_state_container, "Criar Pocao de Vida custa 50 Po de Osso"))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_CRUSH_BONES))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_CRAFT_HEALTH_POTION))
+
+func test_refuge_preparation_renders_potion_slot_and_behavior_defaults() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	_prepare_account_state()
+	assert_true(SessionStore.apply_build_result({
+		"ok": true,
+		"save_type": SessionStore.SAVE_TYPE_NORMAL,
+		"build": {"weapon_type": "varinha_cinzas"},
+		"combat_build": {
+			"inventory": [{"item_id": AppShellActionContractScript.ITEM_HEALTH_POTION, "quantity": 3}],
+			"potion_slots": [{
+				"slot_index": 1,
+				"potion_id": AppShellActionContractScript.ITEM_HEALTH_POTION,
+				"behavior": {
+					"enabled": true,
+					"hp": {"mode": "below", "percent": 40},
+					"mana": {"mode": "ignore", "percent": 0},
+				},
+			}],
+			"equipped_spells": [{
+				"slot_index": 1,
+				"spell_id": "sussurro_medo",
+				"behavior": {
+					"enabled": true,
+					"hp": {"mode": "ignore", "percent": 0},
+					"mana": {"mode": "ignore", "percent": 0},
+				},
+			}],
+		},
+	}))
+
+	boot._show_screen("refuge")
+	await get_tree().process_frame
+
+	var prep_icon := _find_node_by_name(boot._first_screen_root, "RefugeIcon_Preparacao") as Button
+	assert_not_null(prep_icon)
+	prep_icon.pressed.emit()
+	await get_tree().process_frame
+	var popup := boot.get("_refuge_menu_popup") as PopupPanel
+	assert_not_null(popup)
+	assert_true(_label_tree_contains(popup, "Preparacao"))
+	assert_true(_label_tree_contains(popup, "Pocao: Pocao de Vida | estoque 3"))
+	assert_true(_label_tree_contains(popup, "Vida abaixo de 40%"))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_EQUIP_HEALTH_POTION))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_UNEQUIP_POTION))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ENABLE_POTION_DEFAULT))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.enable_spell_behavior_action("sussurro_medo")))
+
 func test_base_routine_panel_derives_objective_from_existing_payload() -> void:
 	var routine: Dictionary = BaseSurfacePresenterScript.routine_summary(_base_state_fixture())
 
