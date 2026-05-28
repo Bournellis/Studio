@@ -2,6 +2,7 @@ extends GutTest
 
 const BootScreenScript = preload("res://modes/boot/boot.gd")
 const AppShellRouteContractScript = preload("res://modes/boot/ui/app_shell_route_contract.gd")
+const AppShellActionContractScript = preload("res://modes/boot/ui/app_shell_action_contract.gd")
 const AppShellErrorContractScript = preload("res://modes/boot/ui/app_shell_error_contract.gd")
 const BaseSurfacePresenterScript = preload("res://modes/boot/surfaces/base_surface_presenter.gd")
 const BattleReplayPresenterScript = preload("res://modes/boot/surfaces/battle_replay_presenter.gd")
@@ -124,6 +125,30 @@ func test_app_shell_error_contract_normalizes_known_errors_without_boot_ui() -> 
 		AppShellErrorContractScript.friendly_message("UNKNOWN_CODE", "Raw backend text."),
 		"UNKNOWN_CODE: Raw backend text."
 	)
+
+func test_app_shell_action_contract_centralizes_online_gates_without_boot_ui() -> void:
+	var required_update := {"block_online": true}
+
+	assert_true(AppShellActionContractScript.update_gate_blocks_action(AppShellActionContractScript.ACTION_ENTER_GUEST, required_update, false))
+	assert_true(AppShellActionContractScript.update_gate_blocks_action(AppShellActionContractScript.ACTION_SHOW_SHOP, required_update, false))
+	assert_true(AppShellActionContractScript.update_gate_blocks_action(AppShellActionContractScript.shop_purchase_action("alpha_redeem_medium"), required_update, false))
+	assert_false(AppShellActionContractScript.update_gate_blocks_action(AppShellActionContractScript.ACTION_CHECK_UPDATE, required_update, false))
+	assert_false(AppShellActionContractScript.update_gate_blocks_action(AppShellActionContractScript.ACTION_RESET_SESSION, required_update, false))
+	assert_false(AppShellActionContractScript.update_gate_blocks_action(AppShellActionContractScript.ACTION_SELECT_SAVE_NORMAL, required_update, false))
+	assert_false(AppShellActionContractScript.update_gate_blocks_action(AppShellActionContractScript.ACTION_SELECT_SAVE_PROGRESSION_LAB, required_update, false))
+	assert_false(AppShellActionContractScript.update_gate_blocks_action(AppShellActionContractScript.ACTION_OPEN_BATTLE_LAB, required_update, false))
+	assert_false(AppShellActionContractScript.update_gate_blocks_action(AppShellActionContractScript.select_base_structure_action("nucleo_energia"), required_update, false))
+
+	assert_true(AppShellActionContractScript.is_allowed_during_replay(AppShellActionContractScript.ACTION_SKIP_REPLAY))
+	assert_false(AppShellActionContractScript.is_allowed_during_replay(AppShellActionContractScript.ACTION_SHOW_LATEST_BATTLE))
+	assert_eq(AppShellActionContractScript.action_value(AppShellActionContractScript.upgrade_base_structure_action("altar_das_almas")), "altar_das_almas")
+	assert_eq(AppShellActionContractScript.action_payload("show_shop", "shop", "normal", true, false), {
+		"action_id": "show_shop",
+		"screen": "shop",
+		"save_type": "normal",
+		"has_account": true,
+		"offline": false,
+	})
 
 func test_boot_back_stack_returns_nested_routes_to_refugio_root() -> void:
 	var boot = BootScreenScript.new()

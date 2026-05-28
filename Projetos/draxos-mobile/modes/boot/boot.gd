@@ -11,6 +11,7 @@ const SocialSurfacePresenterScript := preload("res://modes/boot/surfaces/social_
 const CompetitionSurfacePresenterScript := preload("res://modes/boot/surfaces/competition_surface_presenter.gd")
 const ShopSurfacePresenterScript := preload("res://modes/boot/surfaces/shop_surface_presenter.gd")
 const AppShellRouteContractScript := preload("res://modes/boot/ui/app_shell_route_contract.gd")
+const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
 const AppShellErrorContractScript := preload("res://modes/boot/ui/app_shell_error_contract.gd")
 const MobileUiContractScript := preload("res://modes/boot/ui/mobile_ui_contract.gd")
 
@@ -39,15 +40,15 @@ const BATTLE_LAB_SCREEN_PATH := "res://dev/battle_lab/battle_lab_screen.gd"
 const PROGRESSION_LAB_SCREEN_PATH := "res://dev/progression_lab/progression_lab_screen.gd"
 const BATTLE_REPLAY_TICK_SECONDS := 0.05
 const APP_ORIENTATION_PORTRAIT := DisplayServer.SCREEN_PORTRAIT
-const ACTION_SKIP_REPLAY := "skip_battle_replay"
-const ACTION_RETURN_REFUGE := "return_refuge"
-const ACTION_REPLAY_LATEST := "replay_latest_battle"
-const ACTION_SHOW_CURRENT_BATTLE_LOGS := "show_current_battle_logs"
-const ACTION_RETURN_BATTLE_SUMMARY := "return_battle_summary"
+const ACTION_SKIP_REPLAY := AppShellActionContractScript.ACTION_SKIP_REPLAY
+const ACTION_RETURN_REFUGE := AppShellActionContractScript.ACTION_RETURN_REFUGE
+const ACTION_REPLAY_LATEST := AppShellActionContractScript.ACTION_REPLAY_LATEST
+const ACTION_SHOW_CURRENT_BATTLE_LOGS := AppShellActionContractScript.ACTION_SHOW_CURRENT_BATTLE_LOGS
+const ACTION_RETURN_BATTLE_SUMMARY := AppShellActionContractScript.ACTION_RETURN_BATTLE_SUMMARY
 
 const RESOURCE_KEYS := ["almas", "energia", "sangue", "cristais", "ossos", "diamante"]
 const BASE_STRUCTURE_IDS := ["altar_das_almas", "nucleo_energia", "pocos_sangue", "minas_cristal", "estrutura_stats", "ossario"]
-const ALPHA_ENERGY_PACK_PRODUCT_ID := "alpha_energy_pack_small"
+const ALPHA_ENERGY_PACK_PRODUCT_ID := AppShellActionContractScript.PRODUCT_ALPHA_ENERGY_PACK
 
 var _status_label: Label
 var _detail_label: Label
@@ -688,45 +689,45 @@ func _execute_action(action_id: String) -> void:
 			"minimum_supported_version": str(_update_gate.get("minimum_supported_version", "")),
 		})
 		_sync_buttons()
-	elif action_id.begins_with("select_base_structure:"):
-		_select_base_structure(action_id.get_slice(":", 1))
-	elif action_id.begins_with("upgrade_base_structure:"):
-		await _upgrade_base_structure(action_id.get_slice(":", 1))
-	elif action_id.begins_with("shop_purchase:"):
-		await _buy_shop_product(action_id.get_slice(":", 1))
-	elif action_id.begins_with("claim_reward:"):
-		await _claim_shop_reward(action_id.get_slice(":", 1))
-	elif action_id.begins_with("battle_replay:"):
-		await _show_battle_replay(action_id.get_slice(":", 1))
+	elif AppShellActionContractScript.is_select_base_structure(action_id):
+		_select_base_structure(AppShellActionContractScript.action_value(action_id))
+	elif AppShellActionContractScript.is_upgrade_base_structure(action_id):
+		await _upgrade_base_structure(AppShellActionContractScript.action_value(action_id))
+	elif AppShellActionContractScript.is_shop_purchase(action_id):
+		await _buy_shop_product(AppShellActionContractScript.action_value(action_id))
+	elif AppShellActionContractScript.is_claim_reward(action_id):
+		await _claim_shop_reward(AppShellActionContractScript.action_value(action_id))
+	elif AppShellActionContractScript.is_battle_replay(action_id):
+		await _show_battle_replay(AppShellActionContractScript.action_value(action_id))
 	else:
 		match action_id:
-			"enter_guest":
+			AppShellActionContractScript.ACTION_ENTER_GUEST:
 				await _enter_guest()
-			"enter_refuge":
+			AppShellActionContractScript.ACTION_ENTER_REFUGE:
 				await _enter_refuge()
-			"open_create_account":
+			AppShellActionContractScript.ACTION_OPEN_CREATE_ACCOUNT:
 				_open_create_account_dialog()
-			"check_update":
+			AppShellActionContractScript.ACTION_CHECK_UPDATE:
 				await _check_update_manifest(true)
-			"email_sign_up":
+			AppShellActionContractScript.ACTION_EMAIL_SIGN_UP:
 				await _email_sign_up()
-			"email_sign_in":
+			AppShellActionContractScript.ACTION_EMAIL_SIGN_IN:
 				await _email_sign_in()
-			"refresh_session":
+			AppShellActionContractScript.ACTION_REFRESH_SESSION:
 				await _refresh_session()
-			"reset_session":
+			AppShellActionContractScript.ACTION_RESET_SESSION:
 				await _reset_local_session()
-			"reset_active_save":
+			AppShellActionContractScript.ACTION_RESET_ACTIVE_SAVE:
 				await _reset_active_save()
-			"select_save_normal":
+			AppShellActionContractScript.ACTION_SELECT_SAVE_NORMAL:
 				await _select_save(SessionStoreScript.SAVE_TYPE_NORMAL)
-			"select_save_progression_lab":
+			AppShellActionContractScript.ACTION_SELECT_SAVE_PROGRESSION_LAB:
 				await _select_save(SessionStoreScript.SAVE_TYPE_PROGRESSION_LAB)
-			"open_battle_lab":
+			AppShellActionContractScript.ACTION_OPEN_BATTLE_LAB:
 				_open_battle_lab_overlay()
-			"open_progression_lab":
+			AppShellActionContractScript.ACTION_OPEN_PROGRESSION_LAB:
 				_open_progression_lab_overlay()
-			"request_battle":
+			AppShellActionContractScript.ACTION_REQUEST_BATTLE:
 				await _request_battle()
 			ACTION_SKIP_REPLAY:
 				_skip_current_replay()
@@ -738,43 +739,43 @@ func _execute_action(action_id: String) -> void:
 				_show_current_battle_logs()
 			ACTION_RETURN_BATTLE_SUMMARY:
 				_return_to_battle_summary()
-			"show_latest_battle":
+			AppShellActionContractScript.ACTION_SHOW_LATEST_BATTLE:
 				if _replay_running:
 					_skip_replay = true
 					return
 				await _show_latest_battle()
-			"show_battle_history":
+			AppShellActionContractScript.ACTION_SHOW_BATTLE_HISTORY:
 				await _show_battle_history()
-			"show_base":
+			AppShellActionContractScript.ACTION_SHOW_BASE:
 				await _show_base()
-			"collect_base":
+			AppShellActionContractScript.ACTION_COLLECT_BASE:
 				await _collect_base()
-			"buy_energy_pack_alpha":
+			AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA:
 				await _buy_energy_pack_alpha()
-			"upgrade_nucleo":
-				await _upgrade_base_structure("nucleo_energia")
-			"show_social":
+			AppShellActionContractScript.ACTION_UPGRADE_NUCLEO:
+				await _upgrade_base_structure(AppShellActionContractScript.STRUCTURE_NUCLEO_ENERGIA)
+			AppShellActionContractScript.ACTION_SHOW_SOCIAL:
 				await _show_social()
-			"add_friend":
+			AppShellActionContractScript.ACTION_ADD_FRIEND:
 				await _add_friend()
-			"create_guild":
+			AppShellActionContractScript.ACTION_CREATE_GUILD:
 				await _create_guild()
-			"join_guild":
+			AppShellActionContractScript.ACTION_JOIN_GUILD:
 				await _join_guild()
-			"send_guild_chat":
+			AppShellActionContractScript.ACTION_SEND_GUILD_CHAT:
 				await _send_guild_chat()
-			"show_matchmaking":
+			AppShellActionContractScript.ACTION_SHOW_MATCHMAKING:
 				await _show_matchmaking()
-			"show_ranking":
+			AppShellActionContractScript.ACTION_SHOW_RANKING:
 				await _show_ranking()
-			"show_shop":
+			AppShellActionContractScript.ACTION_SHOW_SHOP:
 				await _show_shop()
-			"buy_premium_alpha":
-				await _buy_shop_product("alpha_battle_pass_premium")
-			"grant_diamond_alpha":
-				await _buy_shop_product("alpha_redeem_medium")
-			"claim_daily_reward":
-				await _claim_shop_reward("daily_collect_base")
+			AppShellActionContractScript.ACTION_BUY_PREMIUM_ALPHA:
+				await _buy_shop_product(AppShellActionContractScript.PRODUCT_ALPHA_BATTLE_PASS_PREMIUM)
+			AppShellActionContractScript.ACTION_GRANT_DIAMOND_ALPHA:
+				await _buy_shop_product(AppShellActionContractScript.PRODUCT_ALPHA_REDEEM_MEDIUM)
+			AppShellActionContractScript.ACTION_CLAIM_DAILY_REWARD:
+				await _claim_shop_reward(AppShellActionContractScript.REWARD_DAILY_COLLECT_BASE)
 	if _active_action_id == action_id:
 		var event_type := "action_failure" if _error_label.text != "" else "action_success"
 		var payload := _action_payload(action_id)
@@ -862,7 +863,7 @@ func _enter_refuge() -> void:
 	_detail_label.text = "Para teste local, use Guest dev ou carregue um save pelo Progression Lab."
 	_sync_immersive_feedback()
 	_emit_client_event("precondition_failed", {
-		"action_id": "enter_refuge",
+		"action_id": AppShellActionContractScript.ACTION_ENTER_REFUGE,
 		"screen": _current_screen,
 		"reason": "missing_session",
 	})
@@ -1744,21 +1745,21 @@ func _sync_buttons() -> void:
 		button.disabled = button.disabled or _update_gate_blocks_action(action_id)
 		if action_id == ACTION_SKIP_REPLAY:
 			button.disabled = not _replay_running
-		if action_id == "select_save_normal":
+		if action_id == AppShellActionContractScript.ACTION_SELECT_SAVE_NORMAL:
 			button.disabled = button.disabled or not SessionStore.is_progression_lab_active()
-		elif action_id == "select_save_progression_lab":
+		elif action_id == AppShellActionContractScript.ACTION_SELECT_SAVE_PROGRESSION_LAB:
 			button.disabled = button.disabled or SessionStore.is_progression_lab_active()
-		elif action_id.begins_with("upgrade_base_structure:"):
-			button.disabled = button.disabled or not _can_upgrade_base_structure(action_id.get_slice(":", 1))
-		elif action_id.begins_with("shop_purchase:"):
-			var product := _shop_product_by_id(action_id.get_slice(":", 1))
+		elif AppShellActionContractScript.is_upgrade_base_structure(action_id):
+			button.disabled = button.disabled or not _can_upgrade_base_structure(AppShellActionContractScript.action_value(action_id))
+		elif AppShellActionContractScript.is_shop_purchase(action_id):
+			var product := _shop_product_by_id(AppShellActionContractScript.action_value(action_id))
 			if not product.is_empty():
 				button.disabled = button.disabled or not bool(product.get("can_purchase", true))
-		elif action_id.begins_with("claim_reward:"):
-			var reward := _shop_reward_by_id(action_id.get_slice(":", 1))
+		elif AppShellActionContractScript.is_claim_reward(action_id):
+			var reward := _shop_reward_by_id(AppShellActionContractScript.action_value(action_id))
 			if not reward.is_empty():
 				button.disabled = button.disabled or bool(reward.get("claimed", false))
-		if action_id == "show_latest_battle":
+		if action_id == AppShellActionContractScript.ACTION_SHOW_LATEST_BATTLE:
 			button.text = "Pular replay" if _replay_running else "Ver resultado"
 	for screen_id: String in _nav_buttons.keys():
 		var nav_button: Button = _nav_buttons[screen_id]
@@ -1767,7 +1768,7 @@ func _sync_buttons() -> void:
 		_back_button.disabled = _is_busy or _replay_running
 
 func _action_allowed_during_replay(action_id: String) -> bool:
-	return AppShellRouteContractScript.is_safe_replay_action(action_id)
+	return AppShellActionContractScript.is_allowed_during_replay(action_id)
 
 func _update_status_text() -> String:
 	return HubAccountSurfacePresenterScript.update_status_text(self)
@@ -1777,28 +1778,7 @@ func _refresh_update_output_label() -> void:
 		_update_output_label.text = _update_status_text()
 
 func _update_gate_blocks_action(action_id: String) -> bool:
-	if not bool(_update_gate.get("block_online", false)):
-		return false
-	if _replay_running and AppShellRouteContractScript.is_safe_replay_action(action_id):
-		return false
-	if action_id in [
-		ACTION_SKIP_REPLAY,
-		ACTION_RETURN_REFUGE,
-		ACTION_REPLAY_LATEST,
-	]:
-		return false
-	if action_id in [
-		"check_update",
-		"reset_session",
-		"select_save_normal",
-		"select_save_progression_lab",
-		"open_battle_lab",
-		"open_progression_lab",
-	]:
-		return false
-	if action_id.begins_with("select_base_structure:"):
-		return false
-	return true
+	return AppShellActionContractScript.update_gate_blocks_action(action_id, _update_gate, _replay_running)
 
 func _sync_nav_buttons() -> void:
 	for screen_id: String in _nav_buttons.keys():
@@ -1927,7 +1907,7 @@ func _base_detail_panel(structures: Array) -> Control:
 	box.add_child(_base_label("Proximo upgrade: %s" % _base_upgrade_text(structure), "text_secondary"))
 	box.add_child(_base_label("Status: %s" % str(structure.get("blocked_message", "")), _base_status_color_token(structure)))
 
-	var action_id := "upgrade_base_structure:%s" % structure_id
+	var action_id := AppShellActionContractScript.upgrade_base_structure_action(structure_id)
 	var upgrade_button := Button.new()
 	upgrade_button.text = "Evoluir %s" % display_label
 	upgrade_button.custom_minimum_size = _button_min_size()
@@ -1958,7 +1938,7 @@ func _base_structure_button(structure: Dictionary) -> Button:
 	button.add_theme_stylebox_override("normal", _base_structure_card_style(structure_id, selected))
 	button.add_theme_stylebox_override("hover", _base_structure_card_style(structure_id, true))
 	button.add_theme_stylebox_override("pressed", _base_structure_card_style(structure_id, true))
-	var action_id := "select_base_structure:%s" % structure_id
+	var action_id := AppShellActionContractScript.select_base_structure_action(structure_id)
 	button.pressed.connect(func() -> void:
 		_trigger_action(action_id)
 	)
@@ -2787,13 +2767,13 @@ func _clear_battle_history() -> void:
 	_battle_history_save_type = SessionStore.active_save_type
 
 func _action_payload(action_id: String) -> Dictionary:
-	return {
-		"action_id": action_id,
-		"screen": _current_screen,
-		"save_type": SessionStore.active_save_type,
-		"has_account": SessionStore.has_account_state(),
-		"offline": SessionStore.offline,
-	}
+	return AppShellActionContractScript.action_payload(
+		action_id,
+		_current_screen,
+		SessionStore.active_save_type,
+		SessionStore.has_account_state(),
+		SessionStore.offline
+	)
 
 func _emit_client_event(event_type: String, payload: Dictionary) -> void:
 	if SessionStore.is_progression_lab_local_only():
