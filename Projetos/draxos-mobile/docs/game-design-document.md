@@ -216,7 +216,7 @@ O Instrumento Ritual tem 5 qualidades no primeiro slice. Qualidade e permanente,
 
 Regras:
 
-- Qualidade de Instrumento entra no calculo de poder como `WeaponQualityTier x 25`.
+- Qualidade de Instrumento entra no calculo de poder como `WeaponQualityTier x 25`; `WeaponQualityTier` e o nome tecnico legado do campo.
 - Qualidade melhora apenas dano do Instrumento Ritual; nao desbloqueia spell, Familiar ou Doutrina.
 - Qualidade nao e vendida como conteudo premium exclusivo.
 
@@ -224,9 +224,9 @@ Regras:
 
 Criaturas invocadas por spells de summon que combatem ao lado do mago.
 
-- Atacam e usam habilidades automaticamente (igual ao pet)
+- Atacam e usam habilidades automaticamente (igual ao Familiar, sem ocupar slot de Familiar)
 - **Tipo de alvo:** Direto — atacam o primeiro da fila inimiga
-- Diferente do pet: podem receber dano e serem mortos
+- Diferente do Familiar: podem receber dano e serem mortos
 - Possuem HP proprio e tempo de vida
 - Cada posicao (Frente / Meio / Tras) e um slot independente
 
@@ -367,7 +367,7 @@ Bonus acumulado por level da Estrutura de Stats:
 | Defesa | +0.4% | +16% |
 | Mana e regen de mana | +0.3% | +12% |
 
-Esses bonus devem entrar no calculo server-side de combate e poder, mas nao substituem progresso de arma, spells, pet ou passiva.
+Esses bonus devem entrar no calculo server-side de combate e poder, mas nao substituem progresso de Instrumento Ritual, spells, Familiar ou Doutrina.
 
 ### Ossario
 
@@ -434,8 +434,8 @@ Batalhas bot-vs-bot podem ser executadas como jobs de simulacao para gerar dados
 ### Curvas De Upgrade
 
 - Arma/Spell: `max(10, round(0.2 × n²))` Almas — total ~5.200/item
-- Pet: `max(5, round(0.15 × n²))` Sangue — total ~4.000
-- Passiva: 40 levels, custo em Cristais calibravel no simulador economico
+- Familiar: `max(5, round(0.15 * n^2))` Sangue - total ~4.000
+- Doutrina: 40 levels, custo em Cristais calibravel no simulador economico
 
 ---
 
@@ -495,7 +495,7 @@ Desbloqueios de telas e sistemas:
 | Loja/Passe | apos primeira batalha |
 | Social/Amigos | level 5 |
 | Guilda/Chat | level 10 |
-| Pet | level 15 |
+| Familiar | level 15 |
 | Conteudo avancado/summons | level 25 |
 
 ### Monetizacao E Recompensas v0
@@ -613,7 +613,8 @@ Ajudas:
 
 ## Matchmaking E Ranking
 
-- Poder inicial: `(Level x 50) + (ArmaLevel x 30) + (SpellLevelsTotal x 20) + (PetLevel x 15) + (PassiveLevelsTotal x 10) + (WeaponQualityTier x 25)`.
+- Poder inicial: `(Level x 50) + (InstrumentLevel x 30) + (SpellLevelsTotal x 20) + (FamiliarLevel x 15) + (DoutrinaLevelsTotal x 10) + (InstrumentQualityTier x 25)`.
+- Compatibilidade tecnica: alguns schemas, simuladores e logs antigos ainda podem usar os nomes `ArmaLevel`, `PetLevel`, `PassiveLevelsTotal` e `WeaponQualityTier`; trate-os como aliases legados, nao como linguagem de produto.
 - Componentes bloqueados por level contam como 0 ate o unlock.
 - Poder e recalculado no servidor em toda mudanca autoritativa de build, upgrade ou level.
 - Matchmaking tenta parear por diferenca maxima de poder, expandindo a tolerancia por tempo de busca.
