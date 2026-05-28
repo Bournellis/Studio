@@ -16,6 +16,7 @@ const AppShellErrorContractScript := preload("res://modes/boot/ui/app_shell_erro
 const MobileUiContractScript := preload("res://modes/boot/ui/mobile_ui_contract.gd")
 const AccountSessionFlowScript := preload("res://modes/boot/flows/account_session_flow.gd")
 const SurfaceActionFlowScript := preload("res://modes/boot/flows/surface_action_flow.gd")
+const BattleLifecycleFlowScript := preload("res://modes/boot/flows/battle_lifecycle_flow.gd")
 
 const ROUTE_ENTRY := AppShellRouteContractScript.ROUTE_ENTRY
 const ROUTE_REFUGE := AppShellRouteContractScript.ROUTE_REFUGE
@@ -107,6 +108,7 @@ var _last_social_chat_message := "Primeiro pulso do Conclave."
 var _update_gate := ProjectInfoScript.unchecked_update_status()
 var _account_session_flow = AccountSessionFlowScript.new()
 var _surface_action_flow = SurfaceActionFlowScript.new()
+var _battle_lifecycle_flow = BattleLifecycleFlowScript.new()
 var _battle_replay_presenter = BattleReplayPresenterScript.new()
 var _battle_history_entries: Array[Dictionary] = []
 var _battle_history_save_type := SessionStoreScript.SAVE_TYPE_NORMAL
@@ -475,54 +477,16 @@ func _render_account_screen() -> void:
 	HubAccountSurfacePresenterScript.render_account_panel(self)
 
 func _render_battle_screen() -> void:
-	_battle_replay_presenter.render(
-		self,
-		_compact_layout,
-		SessionStore.last_battle_log,
-		SessionStore.last_battle_rewards,
-		SessionStore.has_battle_log(),
-		_battle_history_for_active_save()
-	)
-	_timeline_label = _battle_replay_presenter.get_timeline_label()
-	_battle_visual = _battle_replay_presenter.get_visual()
+	_battle_lifecycle_flow.render_entry(self)
 
 func _render_battle_running_screen() -> void:
-	var overlay := _create_battle_fullscreen_overlay()
-	_battle_replay_presenter.render_fullscreen_replay(
-		self,
-		overlay,
-		_compact_layout,
-		SessionStore.last_battle_log,
-		SessionStore.last_battle_rewards
-	)
-	_timeline_label = _battle_replay_presenter.get_timeline_label()
-	_battle_visual = _battle_replay_presenter.get_visual()
+	_battle_lifecycle_flow.render_running(self)
 
 func _render_battle_summary_screen() -> void:
-	var overlay := _create_battle_fullscreen_overlay()
-	_battle_replay_presenter.render_fullscreen_summary(
-		self,
-		overlay,
-		_compact_layout,
-		SessionStore.last_battle_log,
-		SessionStore.last_battle_rewards,
-		SessionStore.resources,
-		_battle_summary_skipped
-	)
-	_timeline_label = _battle_replay_presenter.get_timeline_label()
-	_battle_visual = _battle_replay_presenter.get_visual()
+	_battle_lifecycle_flow.render_summary(self)
 
 func _render_battle_logs_screen() -> void:
-	var overlay := _create_battle_fullscreen_overlay()
-	_battle_replay_presenter.render_fullscreen_logs(
-		self,
-		overlay,
-		_compact_layout,
-		SessionStore.last_battle_log,
-		SessionStore.last_battle_rewards
-	)
-	_timeline_label = _battle_replay_presenter.get_timeline_label()
-	_battle_visual = _battle_replay_presenter.get_visual()
+	_battle_lifecycle_flow.render_logs(self)
 
 func _render_base_screen() -> void:
 	BaseSurfacePresenterScript.render(self)
@@ -865,126 +829,31 @@ func _apply_recovered_state(state_result: Dictionary, message: String) -> bool:
 	return _account_session_flow.apply_recovered_state(self, state_result, message)
 
 func _request_battle() -> void:
-	if not _require_account("Entre com email antes de solicitar batalha."):
-		return
-
-	_show_screen(SCREEN_BATTLE, false)
-	_set_busy(true, "Solicitando batalha...")
-	var battle_result: Dictionary = await SupabaseClient.request_battle(
-		SessionStoreScript.create_request_id(),
-		SessionStore.access_token,
-		ProjectInfoScript.DEFAULT_BATTLE_MODE
-	)
-	if not bool(battle_result.get("ok", false)):
-		_fail_with_error(battle_result)
-		return
-
-	if not SessionStore.apply_battle_result(battle_result):
-		_fail_with_error({"error": SessionStore.last_error})
-		return
-
-	SessionStore.save_cache()
-	var recovered := await _recover_session_state()
-	if not recovered:
-		return
-	await _play_battle_log(SessionStore.last_battle_log, SessionStore.last_battle_rewards)
+	await _battle_lifecycle_flow.request_battle(self)
 
 func _show_latest_battle() -> void:
-	if not _require_session("Entre com email ou use guest dev antes de ver resultado."):
-		return
-
-	_show_screen(SCREEN_BATTLE, false)
-	_set_busy(true, "Buscando ultimo resultado...")
-	var latest_result: Dictionary = await SupabaseClient.fetch_latest_battle(SessionStore.access_token)
-	if not bool(latest_result.get("ok", false)):
-		_fail_with_error(latest_result)
-		return
-
-	var body := _as_dictionary(latest_result.get("body", {}))
-	if body.get("battle_log", null) == null:
-		_set_busy(false, "Nenhuma batalha registrada.")
-		_battle_replay_presenter.show_empty_state("Solicite uma batalha para gerar o primeiro replay.")
-		return
-
-	if not SessionStore.apply_battle_result(latest_result):
-		_fail_with_error({"error": SessionStore.last_error})
-		return
-
-	SessionStore.save_cache()
-	_set_busy(false, "Ultimo resultado recuperado.")
-	await _play_battle_log(SessionStore.last_battle_log, SessionStore.last_battle_rewards)
+	await _battle_lifecycle_flow.show_latest_battle(self)
 
 func _skip_current_replay() -> void:
-	if not _replay_running:
-		return
-	_skip_replay = true
-	_show_notice("Replay pulando para o resumo final...")
-	_sync_buttons()
+	_battle_lifecycle_flow.skip_current_replay(self)
 
 func _return_to_refuge() -> void:
-	_replay_running = false
-	_skip_replay = false
-	_battle_summary_skipped = false
-	_show_screen(AppShellRouteContractScript.clear_for_refuge_return(_screen_history), false)
+	_battle_lifecycle_flow.return_to_refuge(self)
 
 func _show_current_battle_logs() -> void:
-	if not SessionStore.has_battle_log():
-		_error_label.text = "Nenhum log de batalha carregado."
-		return
-	_show_screen(ROUTE_BATTLE_LOGS)
+	_battle_lifecycle_flow.show_current_battle_logs(self)
 
 func _return_to_battle_summary() -> void:
-	_show_screen(ROUTE_BATTLE_SUMMARY, false)
+	_battle_lifecycle_flow.return_to_battle_summary(self)
 
 func _replay_latest_battle_from_summary() -> void:
-	if not SessionStore.has_battle_log():
-		_error_label.text = "Nenhum replay carregado para rever."
-		return
-	await _play_battle_log(SessionStore.last_battle_log, SessionStore.last_battle_rewards)
+	await _battle_lifecycle_flow.replay_latest_battle_from_summary(self)
 
 func _show_battle_history() -> void:
-	if not _require_session("Entre com email ou use guest dev antes de abrir o historico."):
-		return
-
-	_show_screen(SCREEN_BATTLE, false)
-	_set_busy(true, "Buscando historico de batalhas...")
-	var history_result: Dictionary = await SupabaseClient.fetch_battle_history(SessionStore.access_token)
-	if not bool(history_result.get("ok", false)):
-		_fail_with_error(history_result)
-		return
-
-	var body := _as_dictionary(history_result.get("body", {}))
-	_battle_history_entries = _as_dictionary_array(body.get("history", []))
-	_battle_history_save_type = SessionStore.active_save_type
-	_show_screen(SCREEN_BATTLE, false)
-	_set_busy(false, "Historico atualizado: %d batalhas recentes." % _battle_history_entries.size())
+	await _battle_lifecycle_flow.show_battle_history(self)
 
 func _show_battle_replay(battle_id: String) -> void:
-	if not _require_session("Entre com email ou use guest dev antes de reproduzir historico."):
-		return
-
-	var requested_battle_id := battle_id.strip_edges()
-	if requested_battle_id == "":
-		_error_label.text = "BATTLE_ID_MISSING: batalha invalida no historico."
-		return
-
-	_show_screen(SCREEN_BATTLE, false)
-	_set_busy(true, "Carregando replay salvo...")
-	var replay_result: Dictionary = await SupabaseClient.fetch_battle_replay(
-		requested_battle_id,
-		SessionStore.access_token
-	)
-	if not bool(replay_result.get("ok", false)):
-		_fail_with_error(replay_result)
-		return
-
-	if not SessionStore.apply_battle_result(replay_result):
-		_fail_with_error({"error": SessionStore.last_error})
-		return
-
-	SessionStore.save_cache()
-	_set_busy(false, "Replay salvo recuperado.")
-	await _play_battle_log(SessionStore.last_battle_log, SessionStore.last_battle_rewards)
+	await _battle_lifecycle_flow.show_battle_replay(self, battle_id)
 
 func _show_base() -> void:
 	await _surface_action_flow.show_base(self)
@@ -1940,72 +1809,7 @@ func _shop_purchase_message(product_id: String, body: Dictionary) -> String:
 	return ShopSurfacePresenterScript.purchase_message(product_id, body)
 
 func _play_battle_log(battle_log: Dictionary, rewards: Dictionary) -> void:
-	var schema_version := str(battle_log.get("schema_version", ""))
-	if schema_version != "battle_log_v1":
-		_error_label.text = "UNSUPPORTED_BATTLE_LOG: %s" % schema_version
-		_sync_status_from_session()
-		return
-
-	_error_label.text = ""
-	_show_screen(ROUTE_BATTLE_RUNNING, false)
-	_replay_running = true
-	_skip_replay = false
-	_set_busy(false, "Reproduzindo replay do primeiro slice...")
-	_sync_buttons()
-	_emit_client_event("replay_start", {
-		"battle_id": str(battle_log.get("battle_id", "")),
-		"mode": str(battle_log.get("mode", "")),
-	})
-
-	_battle_replay_presenter.begin_replay(battle_log, rewards)
-	_timeline_label = _battle_replay_presenter.get_timeline_label()
-	_battle_visual = _battle_replay_presenter.get_visual()
-
-	var events := _battle_replay_presenter.sorted_events(battle_log)
-	var warning_text := _battle_replay_presenter.build_warning_text(battle_log, ProjectInfoScript.DEFAULT_BATTLE_MODE)
-	if not warning_text.is_empty():
-		_error_label.text = warning_text
-
-	var replay_time := 0.0
-	for event: Dictionary in events:
-		if _skip_replay:
-			break
-		var event_time := maxf(replay_time, float(event.get("t", replay_time)))
-		while replay_time + 0.001 < event_time:
-			if _skip_replay:
-				break
-			var tick := minf(BATTLE_REPLAY_TICK_SECONDS, event_time - replay_time)
-			replay_time += tick
-			_battle_replay_presenter.set_replay_time(replay_time)
-			await get_tree().create_timer(tick).timeout
-		if _skip_replay:
-			break
-		_battle_replay_presenter.set_replay_time(event_time)
-		_battle_replay_presenter.append_event(event)
-		replay_time = event_time
-		await get_tree().process_frame
-
-	if _skip_replay:
-		_emit_client_event("replay_skip", {
-			"battle_id": str(battle_log.get("battle_id", "")),
-			"events": events.size(),
-		})
-		_battle_replay_presenter.reveal_all_events(events)
-
-	_battle_replay_presenter.reveal_all()
-
-	var skipped := _skip_replay
-	_replay_running = false
-	_skip_replay = false
-	_battle_summary_skipped = skipped
-	_emit_client_event("replay_end", {
-		"battle_id": str(battle_log.get("battle_id", "")),
-		"events": events.size(),
-		"skipped": skipped,
-	})
-	_show_screen(AppShellRouteContractScript.summary_route_for(ROUTE_BATTLE_RUNNING), false)
-	_set_busy(false, "Replay concluido.")
-	_sync_buttons()
+	await _battle_lifecycle_flow.play_battle_log(self, battle_log, rewards)
 
 func _screen_title(screen_id: String) -> String:
 	return AppShellRouteContractScript.title_for(screen_id)
@@ -2117,13 +1921,10 @@ static func _as_dictionary_array(value: Variant) -> Array[Dictionary]:
 	return result
 
 func _battle_history_for_active_save() -> Array[Dictionary]:
-	if _battle_history_save_type != SessionStore.active_save_type:
-		_clear_battle_history()
-	return _battle_history_entries
+	return _battle_lifecycle_flow.battle_history_for_active_save(self)
 
 func _clear_battle_history() -> void:
-	_battle_history_entries = []
-	_battle_history_save_type = SessionStore.active_save_type
+	_battle_lifecycle_flow.clear_battle_history(self)
 
 func _action_payload(action_id: String) -> Dictionary:
 	return AppShellActionContractScript.action_payload(
