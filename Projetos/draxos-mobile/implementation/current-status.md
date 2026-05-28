@@ -42,7 +42,7 @@ Documentation alignment is complete, and the first loop audit is recorded in `do
 
 Foundation Loop UX Pass 01 is implemented and published to the Internal Alpha artifact/site channel from branch `codex/draxos-mobile/foundation-loop-ux-pass`. It makes Refugio the operational loop home, adds a visible loop panel, separates unseen battle rewards from old battle history, removes confirmation from routine collection, changes the battle summary return to `Voltar e verificar base`, marks battle results as seen on return, and adds the no-network smoke `tools/smoke_foundation_loop.gd`.
 
-Foundation Responsive Guardrails are being applied after manual review found the published Web/APK layout clipping Entry tools, Refugio and Battle. The local fix restores Entry Labs in Internal Alpha, moves Refugio/Battle immersive UI into safe frames, and adds `docs/foundation-responsive-layout-contract.md` plus `tools/smoke_responsive_layout.gd`. It is not published remotely yet.
+Foundation Responsive Guardrails were applied and published on `2026-05-28` after manual review found the published Web/APK layout clipping Entry tools, Refugio and Battle. The hotfix restores Entry Labs in Internal Alpha, moves Refugio/Battle immersive UI into safe frames, and adds `docs/foundation-responsive-layout-contract.md` plus `tools/smoke_responsive_layout.gd`. The publication used public unlisted APK/PC Storage URLs so mobile downloads do not hit the protected Bearer-token endpoint.
 
 Priority order after the docs are aligned:
 
@@ -79,7 +79,7 @@ Links:
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal: `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
 - Stable Web: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest verified preview: `https://ab1f2977.draxos-mobile-internal-alpha.pages.dev`
+- Latest verified preview: `https://c8dc997b.draxos-mobile-internal-alpha.pages.dev`
 
 The stable Cloudflare Pages domain is protected by Cloudflare Access. Anonymous public validation should use an unprotected preview or an authenticated Access session. APK/PC downloads currently use unlisted public Supabase Storage URLs so testers can download directly from mobile after passing the portal link.
 
@@ -87,7 +87,6 @@ The stable Cloudflare Pages domain is protected by Cloudflare Access. Anonymous 
 
 - Track 16 schema/backend work was not separately promoted in this publication; Supabase migrations/functions for that package must still be deployed deliberately if Track 16 becomes product focus later.
 - Foundation Loop UX Pass 01 is published, but it still needs manual Android/Windows/Web review before it becomes the accepted V0 UX baseline.
-- Foundation Responsive Guardrails are local until Fabio approves a hotfix publication.
 - Track 13 manual Android/Windows/Web walkthrough is still required before widening access beyond the current internal/private audience.
 - `players.save_type` remains an alpha shortcut. `account_profiles` + `game_saves` is a future migration package.
 - Progression/economy remains mock/substance and not the current tuning focus.
@@ -95,7 +94,7 @@ The stable Cloudflare Pages domain is protected by Cloudflare Access. Anonymous 
 
 ## Next Step
 
-Validate the local Foundation Responsive Guardrails, then publish a hotfix only after explicit approval. After publication, manually review Android/Windows/Web again: Entry Labs visible, Refugio contained, Battle contained, loop CTA obvious, and reward return sends the player back to base intent.
+Manually review Android/Windows/Web again on the published hotfix: Entry Labs visible, Refugio contained, Battle contained, APK download works without Bearer-token error, loop CTA obvious, and reward return sends the player back to base intent.
 
 ## Validation
 
