@@ -63,6 +63,7 @@ const TOKEN_COLOR_FALLBACKS := {
 }
 
 var _built := false
+var _stage_only_mode := false
 var _battle_log: Dictionary = {}
 var _rewards: Dictionary = {}
 var _events: Array[Dictionary] = []
@@ -80,6 +81,9 @@ var _event_title_label: Label
 var _event_detail_label: Label
 var _timeline_label: Label
 var _stage_2d: Control
+var _header_panel: Control
+var _arena_panel: Control
+var _timeline_panel: Control
 var _name_labels: Dictionary = {}
 var _portrait_labels: Dictionary = {}
 var _hp_bars: Dictionary = {}
@@ -188,6 +192,18 @@ func debug_snapshot() -> Dictionary:
 func debug_has_native_tooltips() -> bool:
 	return _has_native_tooltip(self)
 
+func set_stage_only_mode(enabled: bool) -> void:
+	_stage_only_mode = enabled
+	_ensure_ui()
+	_apply_stage_only_mode()
+
+func is_stage_only_mode() -> bool:
+	return _stage_only_mode
+
+func get_stage_control() -> Control:
+	_ensure_ui()
+	return _stage_2d
+
 func _ensure_ui() -> void:
 	if _built:
 		return
@@ -197,9 +213,11 @@ func _ensure_ui() -> void:
 	add_theme_constant_override("separation", 8)
 
 	var header := PanelContainer.new()
+	header.name = "BattleVisualHeader"
 	header.add_theme_stylebox_override("panel", _panel_style("bg_panel", "border_default"))
 	header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	add_child(header)
+	_header_panel = header
 
 	var header_box := VBoxContainer.new()
 	header_box.add_theme_constant_override("separation", 4)
@@ -213,16 +231,19 @@ func _ensure_ui() -> void:
 	header_box.add_child(_counts_label)
 
 	_stage_2d = BattleStage2DScript.new()
+	_stage_2d.name = "BattleDuelStage"
 	_stage_2d.custom_minimum_size = Vector2(0, 360)
 	_stage_2d.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_stage_2d.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	add_child(_stage_2d)
 
 	var arena := PanelContainer.new()
+	arena.name = "BattleVisualArenaCards"
 	arena.add_theme_stylebox_override("panel", _panel_style("bg_deep", "border_default"))
 	arena.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	arena.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	add_child(arena)
+	_arena_panel = arena
 
 	var arena_row := HBoxContainer.new()
 	arena_row.add_theme_constant_override("separation", 10)
@@ -233,10 +254,12 @@ func _ensure_ui() -> void:
 	arena_row.add_child(_build_side_card(SIDE_OPPONENT))
 
 	var timeline_panel := PanelContainer.new()
+	timeline_panel.name = "BattleVisualTimelinePanel"
 	timeline_panel.add_theme_stylebox_override("panel", _panel_style("bg_panel", "border_default"))
 	timeline_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	timeline_panel.custom_minimum_size = Vector2(0, 140)
 	add_child(timeline_panel)
+	_timeline_panel = timeline_panel
 
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -253,7 +276,19 @@ func _ensure_ui() -> void:
 	scroll.add_child(_timeline_label)
 
 	_side_state = _build_empty_side_state()
+	_apply_stage_only_mode()
 	_render_dynamic_state()
+
+func _apply_stage_only_mode() -> void:
+	if _header_panel != null and is_instance_valid(_header_panel):
+		_header_panel.visible = not _stage_only_mode
+	if _arena_panel != null and is_instance_valid(_arena_panel):
+		_arena_panel.visible = not _stage_only_mode
+	if _timeline_panel != null and is_instance_valid(_timeline_panel):
+		_timeline_panel.visible = not _stage_only_mode
+	if _stage_2d != null and is_instance_valid(_stage_2d):
+		_stage_2d.custom_minimum_size = Vector2(0, 0) if _stage_only_mode else Vector2(0, 360)
+		_stage_2d.size_flags_vertical = Control.SIZE_EXPAND_FILL
 
 func _build_side_card(side: String) -> Control:
 	var card := PanelContainer.new()
@@ -581,7 +616,8 @@ func _render_summon_row(side: String, side_data: Dictionary) -> void:
 	_sync_badge_row(row, entries)
 
 func _render_timeline() -> void:
-	_timeline_label.text = "\n".join(_timeline_lines)
+	if _timeline_label != null and is_instance_valid(_timeline_label):
+		_timeline_label.text = "\n".join(_timeline_lines)
 
 func _apply_event(event: Dictionary) -> void:
 	_latest_event = event.duplicate(true)

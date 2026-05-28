@@ -47,6 +47,29 @@ func test_battle_visual_mockup_empty_state_is_stable() -> void:
 	assert_eq(visual.get_current_event_index(), 0)
 	assert_string_contains(visual.get_timeline_text(), "Nenhuma batalha")
 
+func test_battle_visual_mockup_stage_only_keeps_replay_state_without_outer_panels() -> void:
+	var visual = BattleVisualMockupScript.new()
+	add_child_autofree(visual)
+	visual.set_stage_only_mode(true)
+	visual.load_battle_log(_rich_battle_log())
+
+	assert_true(visual.is_stage_only_mode())
+	assert_not_null(visual.get_stage_control())
+	var header := _find_node_by_name(visual, "BattleVisualHeader") as Control
+	var arena_cards := _find_node_by_name(visual, "BattleVisualArenaCards") as Control
+	var timeline := _find_node_by_name(visual, "BattleVisualTimelinePanel") as Control
+	assert_not_null(header)
+	assert_not_null(arena_cards)
+	assert_not_null(timeline)
+	assert_false(header.visible)
+	assert_false(arena_cards.visible)
+	assert_false(timeline.visible)
+	assert_true(visual.step_next_event())
+	assert_string_contains(visual.get_timeline_text(), "Batalha iniciada")
+	var snapshot := visual.debug_snapshot()
+	var stage := Dictionary(snapshot.get("stage", {}))
+	assert_true(bool(stage.get("has_player_actor", false)))
+
 func test_battle_visual_mockup_updates_cooldown_against_continuous_replay_time() -> void:
 	var visual = BattleVisualMockupScript.new()
 	add_child_autofree(visual)
@@ -102,3 +125,14 @@ func _joined_tooltips(values: Array) -> String:
 	for value: Variant in values:
 		lines.append(str(value))
 	return "\n".join(lines)
+
+func _find_node_by_name(root: Node, node_name: String) -> Node:
+	if root == null:
+		return null
+	if root.name == node_name:
+		return root
+	for child: Node in root.get_children():
+		var found := _find_node_by_name(child, node_name)
+		if found != null:
+			return found
+	return null

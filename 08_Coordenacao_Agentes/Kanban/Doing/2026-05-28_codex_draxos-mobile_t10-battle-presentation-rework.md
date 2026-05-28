@@ -1,0 +1,42 @@
+# DraxosMobile - Track 10 Battle Presentation Rework
+
+- Data: `2026-05-28`
+- Agente: `codex`
+- Branch: `codex/draxos-mobile/t10-integration`
+- Worktree: `D:\Estudio-worktrees\draxos-mobile--codex--t10-integration`
+- Objetivo: reformular a apresentacao da batalha portrait para tela fullscreen com palco limpo, botao `Pular batalha`, summary minimo e logs em tela propria.
+- Arquivos pretendidos:
+  - `Projetos/draxos-mobile/implementation/tracks/track-10-battle-presentation-rework/`
+  - `Projetos/draxos-mobile/modes/boot/boot.gd`
+  - `Projetos/draxos-mobile/modes/boot/surfaces/battle_replay_presenter.gd`
+  - `Projetos/draxos-mobile/modes/boot/ui/app_shell_route_contract.gd`
+  - `Projetos/draxos-mobile/ui/battle_visual_mockup.gd`
+  - `Projetos/draxos-mobile/tests/client/test_boot_mobile_ui.gd`
+  - `Projetos/draxos-mobile/tools/smoke_mobile_presentation.gd`
+  - `Projetos/draxos-mobile/tools/smoke_foundation_hardening.gd`
+- Base lida:
+  - `08_Coordenacao_Agentes/Prioridades_Estudio.md`
+  - `Projetos/README.md`
+  - `08_Coordenacao_Agentes/Estado_Atual.md`
+  - `Projetos/draxos-mobile/AGENTS.md`
+  - `Projetos/draxos-mobile/implementation/current-status.md`
+  - `Projetos/draxos-mobile/implementation/tracks/track-09-portrait-entry-refuge-scene-and-visual-loop-rework/current-status.md`
+- Validacao planejada:
+  - `tools/validate.gd`
+  - GUT client completo
+  - `tools/smoke_battle_replay.gd`
+  - `tools/smoke_mobile_presentation.gd`
+  - `tools/smoke_foundation_hardening.gd`
+  - `git diff --check`
+- Guardrails:
+  - sem backend, schema, migracao, tuning, recompensa, ranking, simulador ou contrato `battle_log_v1`;
+  - nao tocar `project.godot` ou `assets/referenciaimagens/` sem pedido explicito.
+- Resultado: Track 10 integrada na worktree `codex/draxos-mobile/t10-integration`.
+- Validacao executada:
+  - `tools/validate.gd`: passou com GUT `98/98` testes e `1208` asserts.
+  - GUT client completo: passou com `98/98` testes e `1208` asserts.
+  - `tools/smoke_mobile_presentation.gd`: passou.
+  - `tools/smoke_foundation_hardening.gd`: passou.
+  - `git diff --check`: passou.
+  - `tools/smoke_battle_replay.gd`: chegou ate replay e falhou em `/battle/history` com `NOT_FOUND` por Edge Runtime local antiga, caveat ja conhecido desde Track 09.
+- Proximo handoff: walkthrough manual Refugio -> Batalha -> Summary -> Logs no Godot/Android.

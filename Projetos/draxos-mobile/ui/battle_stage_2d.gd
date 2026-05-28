@@ -285,15 +285,15 @@ func _layout_nodes() -> void:
 
 		var name_label: Label = _name_labels[side]
 		name_label.size = Vector2(210, 24)
-		name_label.position = Vector2(center.x - 105.0, actor.position.y - 28.0)
+		name_label.position = Vector2(_clamped_stage_x(center.x - name_label.size.x * 0.5, name_label.size.x, stage_size.x), actor.position.y - 28.0)
 
 		var status_row: Control = _status_rows[side]
 		status_row.size = Vector2(260, 44)
-		status_row.position = Vector2(center.x - 130.0, max(10.0, actor.position.y - 78.0))
+		status_row.position = Vector2(_clamped_stage_x(center.x - status_row.size.x * 0.5, status_row.size.x, stage_size.x), max(10.0, actor.position.y - 78.0))
 
 		var cooldown_row: Control = _cooldown_rows[side]
 		cooldown_row.size = Vector2(260, 44)
-		cooldown_row.position = Vector2(center.x - 130.0, actor.position.y + actor_size.y + 8.0)
+		cooldown_row.position = Vector2(_clamped_stage_x(center.x - cooldown_row.size.x * 0.5, cooldown_row.size.x, stage_size.x), actor.position.y + actor_size.y + 8.0)
 
 	_slot_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_effects_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -1057,6 +1057,12 @@ func _stage_size() -> Vector2:
 	if resolved.y < 10.0:
 		resolved.y = max(custom_minimum_size.y, 360.0)
 	return resolved
+
+func _clamped_stage_x(value: float, width: float, stage_width: float) -> float:
+	var margin := 8.0
+	if width >= stage_width - margin * 2.0:
+		return margin
+	return clampf(value, margin, maxf(margin, stage_width - width - margin))
 
 func _event_brief(event: Dictionary) -> String:
 	return _effect_feedback_text(event)

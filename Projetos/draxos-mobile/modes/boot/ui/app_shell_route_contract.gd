@@ -13,12 +13,15 @@ const ROUTE_SHOP := "shop"
 const ROUTE_BATTLE_ENTRY := "battle_entry"
 const ROUTE_BATTLE_RUNNING := "battle_running"
 const ROUTE_BATTLE_SUMMARY := "battle_summary"
+const ROUTE_BATTLE_LOGS := "battle_logs"
 
 const ACTION_REQUEST_BATTLE := "request_battle"
 const ACTION_SHOW_BATTLE_HISTORY := "show_battle_history"
 const ACTION_BATTLE_REPLAY_PREFIX := "battle_replay:"
 const ACTION_SKIP_REPLAY := "skip_battle_replay"
 const ACTION_REPLAY_LATEST := "replay_latest_battle"
+const ACTION_SHOW_CURRENT_BATTLE_LOGS := "show_current_battle_logs"
+const ACTION_RETURN_BATTLE_SUMMARY := "return_battle_summary"
 
 const _ALIASES := {
 	"hub": ROUTE_ENTRY,
@@ -49,17 +52,20 @@ const _TITLES := {
 	ROUTE_BATTLE_ENTRY: "Batalha",
 	ROUTE_BATTLE_RUNNING: "Batalha",
 	ROUTE_BATTLE_SUMMARY: "Resumo",
+	ROUTE_BATTLE_LOGS: "Logs",
 }
 
 const _BATTLE_MODE_ROUTES := {
 	ROUTE_BATTLE_ENTRY: true,
 	ROUTE_BATTLE_RUNNING: true,
 	ROUTE_BATTLE_SUMMARY: true,
+	ROUTE_BATTLE_LOGS: true,
 }
 
 const _FULLSCREEN_GAMEPLAY_ROUTES := {
 	ROUTE_BATTLE_RUNNING: true,
 	ROUTE_BATTLE_SUMMARY: true,
+	ROUTE_BATTLE_LOGS: true,
 }
 
 const _IMMERSIVE_ROUTES := {
@@ -114,6 +120,8 @@ static func is_read_only_battle_action(action_id: String) -> bool:
 	var candidate := action_id.strip_edges()
 	return candidate == ACTION_SHOW_BATTLE_HISTORY \
 		or candidate == ACTION_REPLAY_LATEST \
+		or candidate == ACTION_SHOW_CURRENT_BATTLE_LOGS \
+		or candidate == ACTION_RETURN_BATTLE_SUMMARY \
 		or candidate.begins_with(ACTION_BATTLE_REPLAY_PREFIX)
 
 static func title_for(route_id: String) -> String:

@@ -8,7 +8,8 @@ const EMPTY_HISTORY_TEXT := "Historico recente vazio para este save."
 const MAX_RENDERED_HISTORY_ENTRIES := 5
 const ACTION_SKIP_REPLAY := "skip_battle_replay"
 const ACTION_RETURN_REFUGE := "return_refuge"
-const ACTION_REPLAY_LATEST := "replay_latest_battle"
+const ACTION_SHOW_CURRENT_LOGS := "show_current_battle_logs"
+const ACTION_RETURN_SUMMARY := "return_battle_summary"
 const SUMMARY_RESOURCE_KEYS := ["almas", "energia", "sangue", "cristais", "ossos", "diamante"]
 
 var _host: Node
@@ -52,56 +53,39 @@ func render_fullscreen_replay(
 	host: Node,
 	parent: Control,
 	compact_layout: bool,
-	battle_log: Dictionary,
-	rewards: Dictionary
+	_battle_log: Dictionary,
+	_rewards: Dictionary
 ) -> void:
 	clear()
 	_host = host
 	_add_fullscreen_background(parent)
 	var frame := _add_portrait_frame(parent, compact_layout)
+	frame.name = "BattleRunningStageFrame"
 	var stage_column := VBoxContainer.new()
 	stage_column.add_theme_constant_override("separation", 8 if compact_layout else 10)
 	stage_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	stage_column.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	frame.add_child(stage_column)
 
-	stage_column.add_child(_battle_header_panel(battle_log, rewards, compact_layout))
-
 	_visual = BattleVisualMockupScript.new()
+	_visual.name = "BattleDuelVisual"
+	if _visual.has_method("set_stage_only_mode"):
+		_visual.set_stage_only_mode(true)
 	_visual.custom_minimum_size = Vector2(0, 0)
 	_visual.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_visual.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	var stage_panel := PanelContainer.new()
-	stage_panel.add_theme_stylebox_override("panel", _panel_style("bg_deep", "border_active"))
-	stage_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	stage_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	stage_panel.add_child(_visual)
-	stage_column.add_child(stage_panel)
+	stage_column.add_child(_visual)
+	_timeline_label = null
 
-	var skip_button := _fullscreen_action_button("Pular", ACTION_SKIP_REPLAY, Vector2(0, 64))
-	skip_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	stage_column.add_child(skip_button)
-
-	var timeline_panel := PanelContainer.new()
-	timeline_panel.add_theme_stylebox_override("panel", _panel_style("bg_panel", "border_default"))
-	timeline_panel.custom_minimum_size = Vector2(0, 104 if compact_layout else 130)
-	timeline_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	timeline_panel.size_flags_vertical = Control.SIZE_SHRINK_END
-	stage_column.add_child(timeline_panel)
-
-	var timeline_stack := VBoxContainer.new()
-	timeline_stack.add_theme_constant_override("separation", 6)
-	timeline_panel.add_child(timeline_stack)
-	timeline_stack.add_child(_fullscreen_label("Timeline", 15 if compact_layout else 17, "text_primary"))
-
-	var timeline_scroll := ScrollContainer.new()
-	timeline_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	timeline_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	timeline_stack.add_child(timeline_scroll)
-
-	_timeline_label = _fullscreen_label("", 12 if compact_layout else 13, "text_primary")
-	_timeline_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	timeline_scroll.add_child(_timeline_label)
+	var skip_row := HBoxContainer.new()
+	skip_row.name = "BattleSkipRow"
+	skip_row.alignment = BoxContainer.ALIGNMENT_END
+	skip_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	stage_column.add_child(skip_row)
+	var skip_button := _fullscreen_action_button("Pular batalha", ACTION_SKIP_REPLAY, Vector2(142, 58) if compact_layout else Vector2(172, 66))
+	skip_button.name = "BattleSkipButton"
+	skip_button.size_flags_horizontal = Control.SIZE_SHRINK_END
+	skip_row.add_child(skip_button)
 
 func render_fullscreen_summary(
 	host: Node,
@@ -116,46 +100,77 @@ func render_fullscreen_summary(
 	_host = host
 	_add_fullscreen_background(parent)
 	var frame := _add_portrait_frame(parent, compact_layout)
+	frame.name = "BattleSummaryFrame"
+	var stack := VBoxContainer.new()
+	stack.alignment = BoxContainer.ALIGNMENT_CENTER
+	stack.add_theme_constant_override("separation", 14 if compact_layout else 18)
+	stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	stack.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	frame.add_child(stack)
+
+	var summary := summary_data(battle_log, rewards, current_resources)
+	stack.add_child(_fullscreen_center_label("Resultado da batalha", 18 if compact_layout else 24, "text_secondary"))
+	var result_label := _fullscreen_center_label(str(summary.get("winner_label", "Resultado")), 34 if compact_layout else 44, "text_primary")
+	result_label.name = "BattleSummaryResult"
+	stack.add_child(result_label)
+	if skipped:
+		stack.add_child(_fullscreen_center_label("Batalha pulada para o resultado.", 13 if compact_layout else 15, "text_secondary"))
+
+	var actions := GridContainer.new()
+	actions.columns = 1
+	actions.add_theme_constant_override("separation", 8 if compact_layout else 12)
+	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	actions.custom_minimum_size = Vector2(0, 132 if compact_layout else 150)
+	stack.add_child(actions)
+	actions.add_child(_fullscreen_action_button("Ver logs", ACTION_SHOW_CURRENT_LOGS, Vector2(0, 58)))
+	actions.add_child(_fullscreen_action_button("Voltar ao Refugio", ACTION_RETURN_REFUGE, Vector2(0, 58)))
+	_timeline_label = null
+
+func render_fullscreen_logs(
+	host: Node,
+	parent: Control,
+	compact_layout: bool,
+	battle_log: Dictionary,
+	rewards: Dictionary
+) -> void:
+	clear()
+	_host = host
+	_add_fullscreen_background(parent)
+	var frame := _add_portrait_frame(parent, compact_layout)
+	frame.name = "BattleLogsFrame"
 	var stack := VBoxContainer.new()
 	stack.add_theme_constant_override("separation", 8 if compact_layout else 12)
 	stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	stack.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	frame.add_child(stack)
 
-	var title := "Resumo da batalha"
-	if skipped:
-		title += " - replay pulado"
-	stack.add_child(_fullscreen_label(title, 20 if compact_layout else 28, "text_primary"))
-	stack.add_child(_fullscreen_label(BattleLogPresenterScript.format_summary(battle_log, rewards), 12 if compact_layout else 14, "text_secondary"))
+	stack.add_child(_fullscreen_center_label("Logs da batalha", 20 if compact_layout else 28, "text_primary"))
+	stack.add_child(_fullscreen_label(BattleLogPresenterScript.format_summary(battle_log, rewards), 11 if compact_layout else 13, "text_secondary"))
 
-	var summary := summary_data(battle_log, rewards, current_resources)
-	var stats := GridContainer.new()
-	stats.columns = 1 if compact_layout else 2
-	stats.add_theme_constant_override("h_separation", 10 if compact_layout else 16)
-	stats.add_theme_constant_override("v_separation", 6 if compact_layout else 10)
-	stats.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	stack.add_child(stats)
-	_add_summary_stat(stats, "Vencedor", str(summary.get("winner_label", "")), compact_layout)
-	_add_summary_stat(stats, "Duracao", str(summary.get("duration_text", "")), compact_layout)
-	_add_summary_stat(stats, "Eventos", str(summary.get("event_count", 0)), compact_layout)
-	_add_summary_stat(stats, "Modo", str(summary.get("mode", "")), compact_layout)
+	var scroll := ScrollContainer.new()
+	scroll.name = "BattleLogsScroll"
+	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	stack.add_child(scroll)
 
-	var detail_stack := VBoxContainer.new()
-	detail_stack.add_theme_constant_override("separation", 8 if compact_layout else 12)
-	detail_stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	detail_stack.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	stack.add_child(detail_stack)
-	detail_stack.add_child(_summary_detail_panel("Recompensa", str(summary.get("reward_text", "")), compact_layout))
-	detail_stack.add_child(_summary_detail_panel("Recursos", str(summary.get("resources_text", "")), compact_layout))
+	_timeline_label = _fullscreen_label(_current_battle_logs_text(battle_log), 12 if compact_layout else 14, "text_primary")
+	_timeline_label.name = "BattleLogsList"
+	_timeline_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+	_timeline_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(_timeline_label)
+	scroll.resized.connect(func() -> void:
+		if _timeline_label != null and is_instance_valid(_timeline_label):
+			_timeline_label.custom_minimum_size.x = maxf(0.0, scroll.size.x - 18.0)
+	)
 
 	var actions := GridContainer.new()
 	actions.columns = 1
 	actions.add_theme_constant_override("separation", 8 if compact_layout else 12)
 	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	stack.add_child(actions)
-	actions.add_child(_fullscreen_action_button("Voltar ao Refugio", ACTION_RETURN_REFUGE, Vector2(0, 58)))
-	actions.add_child(_fullscreen_action_button("Rever replay", ACTION_REPLAY_LATEST, Vector2(0, 58)))
-	actions.add_child(_fullscreen_action_button("Historico", "show_battle_history", Vector2(0, 58)))
+	actions.add_child(_fullscreen_action_button("Voltar ao Resultado", ACTION_RETURN_SUMMARY, Vector2(0, 56)))
+	actions.add_child(_fullscreen_action_button("Voltar ao Refugio", ACTION_RETURN_REFUGE, Vector2(0, 56)))
 
 func get_timeline_label() -> Label:
 	return _timeline_label
@@ -262,6 +277,15 @@ static func summary_data(battle_log: Dictionary, rewards: Dictionary, current_re
 		"resources_text": _resources_text(current_resources),
 	}
 
+static func current_battle_logs_text(battle_log: Dictionary) -> String:
+	var events := BattleLogPresenterScript.sorted_events(battle_log)
+	if events.is_empty():
+		return "Nenhum evento textual carregado para esta batalha."
+	var lines := PackedStringArray()
+	for index in range(events.size()):
+		lines.append("%02d. %s" % [index + 1, BattleLogPresenterScript.format_event(events[index])])
+	return "\n".join(lines)
+
 func _initial_replay_lines(battle_log: Dictionary, rewards: Dictionary) -> PackedStringArray:
 	var lines: PackedStringArray = PackedStringArray()
 	lines.append(BattleLogPresenterScript.format_summary(battle_log, rewards))
@@ -354,6 +378,9 @@ func _set_timeline_text(text: String) -> void:
 	if _timeline_label != null and is_instance_valid(_timeline_label):
 		_timeline_label.text = text
 
+func _current_battle_logs_text(battle_log: Dictionary) -> String:
+	return current_battle_logs_text(battle_log)
+
 func _add_fullscreen_background(parent: Control) -> void:
 	var background := ColorRect.new()
 	background.color = UiTokens.color("bg_deep")
@@ -395,6 +422,12 @@ func _fullscreen_label(text: String, font_size: int, color_token: String) -> Lab
 	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", UiTokens.color(color_token))
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return label
+
+func _fullscreen_center_label(text: String, font_size: int, color_token: String) -> Label:
+	var label := _fullscreen_label(text, font_size, color_token)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	return label
 
 func _add_summary_stat(parent: Node, label_text: String, value_text: String, compact_layout: bool) -> void:

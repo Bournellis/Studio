@@ -23,6 +23,7 @@ const ROUTE_SHOP := AppShellRouteContractScript.ROUTE_SHOP
 const ROUTE_BATTLE_ENTRY := AppShellRouteContractScript.ROUTE_BATTLE_ENTRY
 const ROUTE_BATTLE_RUNNING := AppShellRouteContractScript.ROUTE_BATTLE_RUNNING
 const ROUTE_BATTLE_SUMMARY := AppShellRouteContractScript.ROUTE_BATTLE_SUMMARY
+const ROUTE_BATTLE_LOGS := AppShellRouteContractScript.ROUTE_BATTLE_LOGS
 const ROUTE_BATTLE_LAB := "battle_lab"
 const ROUTE_PROGRESSION_LAB := "progression_lab"
 
@@ -40,6 +41,8 @@ const APP_ORIENTATION_PORTRAIT := DisplayServer.SCREEN_PORTRAIT
 const ACTION_SKIP_REPLAY := "skip_battle_replay"
 const ACTION_RETURN_REFUGE := "return_refuge"
 const ACTION_REPLAY_LATEST := "replay_latest_battle"
+const ACTION_SHOW_CURRENT_BATTLE_LOGS := "show_current_battle_logs"
+const ACTION_RETURN_BATTLE_SUMMARY := "return_battle_summary"
 
 const RESOURCE_KEYS := ["almas", "energia", "sangue", "cristais", "ossos", "diamante"]
 const BASE_STRUCTURE_IDS := ["altar_das_almas", "nucleo_energia", "pocos_sangue", "minas_cristal", "estrutura_stats", "ossario"]
@@ -291,6 +294,8 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 			_render_battle_running_screen()
 		ROUTE_BATTLE_SUMMARY:
 			_render_battle_summary_screen()
+		ROUTE_BATTLE_LOGS:
+			_render_battle_logs_screen()
 		SCREEN_BASE:
 			_render_base_screen()
 		SCREEN_SOCIAL:
@@ -444,7 +449,10 @@ func _clear_battle_fullscreen_overlay() -> void:
 func _create_battle_fullscreen_overlay() -> Control:
 	var overlay := Control.new()
 	overlay.name = "BattleFullscreenOverlay"
-	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	overlay.position = Vector2.ZERO
+	var root_size := Vector2(get_tree().root.size)
+	overlay.size = root_size if root_size.x > 0.0 and root_size.y > 0.0 else get_viewport_rect().size
 	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
 	add_child(overlay)
 	_battle_fullscreen_overlay = overlay
@@ -494,6 +502,18 @@ func _render_battle_summary_screen() -> void:
 		SessionStore.last_battle_rewards,
 		SessionStore.resources,
 		_battle_summary_skipped
+	)
+	_timeline_label = _battle_replay_presenter.get_timeline_label()
+	_battle_visual = _battle_replay_presenter.get_visual()
+
+func _render_battle_logs_screen() -> void:
+	var overlay := _create_battle_fullscreen_overlay()
+	_battle_replay_presenter.render_fullscreen_logs(
+		self,
+		overlay,
+		_compact_layout,
+		SessionStore.last_battle_log,
+		SessionStore.last_battle_rewards
 	)
 	_timeline_label = _battle_replay_presenter.get_timeline_label()
 	_battle_visual = _battle_replay_presenter.get_visual()
@@ -713,6 +733,10 @@ func _execute_action(action_id: String) -> void:
 				_return_to_refuge()
 			ACTION_REPLAY_LATEST:
 				await _replay_latest_battle_from_summary()
+			ACTION_SHOW_CURRENT_BATTLE_LOGS:
+				_show_current_battle_logs()
+			ACTION_RETURN_BATTLE_SUMMARY:
+				_return_to_battle_summary()
 			"show_latest_battle":
 				if _replay_running:
 					_skip_replay = true
@@ -1240,6 +1264,15 @@ func _return_to_refuge() -> void:
 	_skip_replay = false
 	_battle_summary_skipped = false
 	_show_screen(AppShellRouteContractScript.clear_for_refuge_return(_screen_history), false)
+
+func _show_current_battle_logs() -> void:
+	if not SessionStore.has_battle_log():
+		_error_label.text = "Nenhum log de batalha carregado."
+		return
+	_show_screen(ROUTE_BATTLE_LOGS)
+
+func _return_to_battle_summary() -> void:
+	_show_screen(ROUTE_BATTLE_SUMMARY, false)
 
 func _replay_latest_battle_from_summary() -> void:
 	if not SessionStore.has_battle_log():

@@ -193,18 +193,31 @@ func _check_battle_fullscreen_loop() -> void:
 	_expect(str(boot.get("_current_screen")) == "battle_running", "battle_running route opens")
 	_expect(not bool(boot.call("_route_prefers_landscape", "battle_running")), "battle_running stays portrait")
 	_expect(boot.get("_battle_fullscreen_overlay") != null, "battle_running creates fullscreen overlay")
-	_expect(_find_button_by_text(boot, "Pular") != null, "battle_running exposes fixed skip action")
-	_expect(_label_tree_contains(boot, "Autobattler"), "battle_running labels gameplay frame")
+	_expect(_find_button_by_text(boot, "Pular batalha") != null, "battle_running exposes lower-right skip action")
+	_expect(_find_node_by_name(boot, "BattleDuelStage") != null, "battle_running exposes duel stage")
+	_expect(not _label_tree_contains(boot, "Autobattler"), "battle_running removes external gameplay header")
+	_expect(not _label_tree_contains(boot, "Timeline"), "battle_running removes external timeline")
 	_expect_layout_fits_width(boot, float(root.size.x), "battle_running")
 
 	boot.set("_battle_summary_skipped", true)
 	boot.call("_show_screen", "battle_summary")
 	await process_frame
 	_expect(str(boot.get("_current_screen")) == "battle_summary", "battle_summary route opens")
-	_expect(_label_tree_contains(boot, "Resumo da batalha"), "battle_summary shows result title")
+	_expect(_label_tree_contains(boot, "Resultado da batalha"), "battle_summary shows result title")
+	_expect(_label_tree_contains(boot, "Vitoria"), "battle_summary shows minimal result")
+	_expect(_find_button_by_text(boot, "Ver logs") != null, "battle_summary can open current logs")
 	_expect(_label_tree_contains(boot, "Voltar ao Refugio"), "battle_summary can return to Refugio")
-	_expect(_find_button_by_text(boot, "Historico") != null, "battle_summary can open history")
+	_expect(_find_button_by_text(boot, "Historico") == null, "battle_summary does not expose history")
 	_expect_layout_fits_width(boot, float(root.size.x), "battle_summary")
+
+	boot.call("_show_screen", "battle_logs")
+	await process_frame
+	_expect(str(boot.get("_current_screen")) == "battle_logs", "battle_logs route opens")
+	_expect(_label_tree_contains(boot, "Logs da batalha"), "battle_logs shows logs title")
+	_expect(_label_tree_contains(boot, "Batalha iniciada"), "battle_logs shows current battle events")
+	_expect(_find_button_by_text(boot, "Voltar ao Resultado") != null, "battle_logs can return to summary")
+	_expect(_find_button_by_text(boot, "Voltar ao Refugio") != null, "battle_logs can return to Refugio")
+	_expect_layout_fits_width(boot, float(root.size.x), "battle_logs")
 	boot.queue_free()
 	await process_frame
 

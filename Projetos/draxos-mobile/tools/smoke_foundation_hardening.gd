@@ -165,16 +165,21 @@ func _check_session_save_boundary() -> void:
 func _check_battle_mode_contract() -> void:
 	_expect(AppShellRouteContractScript.is_battle_mode("battle"), "battle entry is a battle mode")
 	_expect(AppShellRouteContractScript.is_battle_mode("battle_running"), "battle running is a battle mode")
+	_expect(AppShellRouteContractScript.is_battle_mode("battle_logs"), "battle logs is a battle mode")
 	_expect(AppShellRouteContractScript.is_fullscreen_gameplay("battle_running"), "battle running is fullscreen gameplay")
 	_expect(AppShellRouteContractScript.is_fullscreen_gameplay("battle_summary"), "battle summary is fullscreen gameplay")
+	_expect(AppShellRouteContractScript.is_fullscreen_gameplay("battle_logs"), "battle logs is fullscreen gameplay")
 	_expect(not AppShellRouteContractScript.prefers_landscape("battle_running"), "battle running stays portrait")
 	_expect(AppShellRouteContractScript.prefers_portrait("battle_running"), "battle running prefers portrait")
 	_expect(not AppShellRouteContractScript.shows_app_chrome("battle_running"), "battle running hides app chrome")
 	_expect(not AppShellRouteContractScript.shows_app_chrome("battle_summary"), "battle summary hides app chrome")
+	_expect(not AppShellRouteContractScript.shows_app_chrome("battle_logs"), "battle logs hides app chrome")
 	_expect(AppShellRouteContractScript.is_safe_replay_action("skip_battle_replay"), "skip is replay-safe action")
 	_expect(not AppShellRouteContractScript.is_safe_replay_action("request_battle"), "request battle is not replay-safe")
 	_expect(AppShellRouteContractScript.is_read_only_battle_action("show_battle_history"), "battle history action is read-only")
+	_expect(AppShellRouteContractScript.is_read_only_battle_action("show_current_battle_logs"), "current battle logs action is read-only")
 	_expect(AppShellRouteContractScript.summary_route_for("battle_running") == "battle_summary", "battle running resolves to summary route")
+	_expect(AppShellRouteContractScript.summary_route_for("battle_logs") == "battle_summary", "battle logs resolves to summary route")
 
 	root.size = Vector2i(1280, 720)
 	await process_frame
@@ -193,7 +198,7 @@ func _check_battle_mode_contract() -> void:
 	_expect(str(boot.get("_current_screen")) == "battle_running", "Boot enters battle_running route")
 	_expect(not bool(boot.call("_route_shows_app_chrome", "battle_running")), "Boot battle_running hides app chrome")
 	_expect(boot.get("_battle_fullscreen_overlay") != null, "Boot creates battle fullscreen overlay")
-	_expect(_find_button_by_text(boot, "Pular") != null, "Boot battle fullscreen exposes Pular")
+	_expect(_find_button_by_text(boot, "Pular batalha") != null, "Boot battle fullscreen exposes Pular batalha")
 
 	boot.set("_replay_running", true)
 	boot.call("_skip_current_replay")
@@ -203,8 +208,16 @@ func _check_battle_mode_contract() -> void:
 	boot.set("_skip_replay", false)
 	boot.call("_show_screen", "battle_summary")
 	await process_frame
-	_expect(_label_tree_contains(boot, "Resumo da batalha"), "Battle summary renders title")
+	_expect(_label_tree_contains(boot, "Resultado da batalha"), "Battle summary renders title")
+	_expect(_find_button_by_text(boot, "Ver logs") != null, "Battle summary exposes current logs")
 	_expect(_find_button_by_text(boot, "Voltar ao Refugio") != null, "Battle summary exposes return to Refugio")
+
+	boot.call("_show_screen", "battle_logs")
+	await process_frame
+	_expect(str(boot.get("_current_screen")) == "battle_logs", "Battle logs route opens")
+	_expect(_label_tree_contains(boot, "Logs da batalha"), "Battle logs renders title")
+	_expect(_label_tree_contains(boot, "Batalha iniciada"), "Battle logs renders current events")
+	_expect(_find_button_by_text(boot, "Voltar ao Resultado") != null, "Battle logs can return to summary")
 	boot.call("_return_to_refuge")
 	await process_frame
 	_expect(str(boot.get("_current_screen")) == "refuge", "Return to Refugio clears battle route")

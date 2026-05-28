@@ -178,6 +178,6 @@ Use quando afetar arquitetura, progressao, economia, modos, backend, contratos o
 
 ## Active Track
 
-Track ativa: `Track 09 - Portrait Entry, Refugio Scene And Visual Loop Rework` (`INTEGRATED_PORTRAIT_SLIM_LOOP_READY`).
+Track ativa: `Track 10 - Battle Presentation Rework` (`INTEGRATED_BATTLE_PRESENTATION_READY`).
 
-Comece por `implementation/current-status.md` e siga `implementation/tracks/track-09-portrait-entry-refuge-scene-and-visual-loop-rework/current-status.md`.
+Comece por `implementation/current-status.md` e siga `implementation/tracks/track-10-battle-presentation-rework/current-status.md`.
