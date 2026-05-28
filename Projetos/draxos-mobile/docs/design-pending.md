@@ -39,7 +39,7 @@ Foco imediato:
 
 `Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
 
-Foundation Loop UX Pass 01 esta implementado localmente como candidato de baseline do loop. A proxima decisao de design e manual: aceitar esse fluxo, pedir ajuste pontual ou registrar nova friccao antes de mover foco para social basico.
+Foundation Loop UX Pass 01 esta publicado no Internal Alpha como candidato de baseline do loop. A proxima decisao de design e manual: aceitar esse fluxo, pedir ajuste pontual ou registrar nova friccao antes de mover foco para social basico.
 
 Armas, spells, nomes, tema, imagens, economia, Battle Pass, apresentacao de batalha e visual final existem como substancia/mock. Eles nao sao prioridade de decisao ate que o loop interno, social, visual geral e apresentacao da batalha sejam discutidos nessa ordem.
 

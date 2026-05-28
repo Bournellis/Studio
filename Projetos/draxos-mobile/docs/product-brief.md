@@ -75,7 +75,7 @@ A base tecnica ja contem:
 - release manifest, build channel e runbooks de publicacao segura;
 - validacao local por `validate_foundation.ps1`.
 
-Track 16 e o ultimo pacote tecnico local, com comportamento/crafting/pocoes. Ele nao e a etapa ativa de produto.
+Track 16 e o ultimo pacote tecnico, com comportamento/crafting/pocoes. Ele nao e a etapa ativa de produto.
 
 ## Decisoes Que Permanecem Reais
 

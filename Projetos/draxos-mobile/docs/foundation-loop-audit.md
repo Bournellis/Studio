@@ -6,7 +6,7 @@ Etapa atual: `FOUNDATION_AUDIT_ACTIVE`
 
 ## Estado Do Passe
 
-Foundation Loop UX Pass 01 foi executado localmente em `2026-05-28` na branch `codex/draxos-mobile/foundation-loop-ux-pass`.
+Foundation Loop UX Pass 01 foi executado e publicado no Internal Alpha em `2026-05-28` a partir da branch `codex/draxos-mobile/foundation-loop-ux-pass`.
 
 Entregue:
 

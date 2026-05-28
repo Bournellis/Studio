@@ -12,8 +12,8 @@ This file is the fast entrypoint for agents working in `Projetos/draxos-mobile`.
 - Active stage status: `FOUNDATION_AUDIT_ACTIVE`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety` delivered on `2026-05-28`
 - Agent baseline: `Track 14 - Agent Operations Foundation` is the current operations/docs foundation.
-- Latest technical package: `Track 16 - Behavior And Potion Crafting`, local and not the current product focus.
-- Immediate product gate: the Foundation Loop Audit is documented in `docs/foundation-loop-audit.md`; Foundation Loop UX Pass 01 is implemented locally and must be manually reviewed before broader expansion.
+- Latest technical package: `Track 16 - Behavior And Potion Crafting`, technical context and not the current product focus.
+- Immediate product gate: the Foundation Loop Audit is documented in `docs/foundation-loop-audit.md`; Foundation Loop UX Pass 01 is published to Internal Alpha and must be manually reviewed before broader expansion.
 
 DraxosMobile is an async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. The real product direction is base builder + autobattler + social, with room for future minigames and seasons. Current names, spells, weapons, economy values, battle flavor, visual style and premium systems are mock/substance for evaluation unless a live doc explicitly promotes them.
 
@@ -99,4 +99,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alp
 
 ## Current Handoff
 
-Foundation Audit is the active handoff. Foundation Loop UX Pass 01 is implemented locally; agents should review or refine that post-login loop before expanding implementation. Do not change gameplay tuning, backend/schema, Supabase APIs, economy, content, weapons, spells, final visuals or authoritative flows without an explicit package decision.
+Foundation Audit is the active handoff. Foundation Loop UX Pass 01 is published to Internal Alpha; agents should review or refine that post-login loop before expanding implementation. Do not change gameplay tuning, backend/schema, Supabase APIs, economy, content, weapons, spells, final visuals or authoritative flows without an explicit package decision.

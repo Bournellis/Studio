@@ -26,13 +26,13 @@ If a historical track conflicts with these docs, the live docs win. If local pro
 
 Active stage: `FOUNDATION_AUDIT_ACTIVE`.
 
-The project is a base implemented for refinement. The Foundation Loop Audit is documented, and Foundation Loop UX Pass 01 is implemented locally as the current candidate for the post-login loop:
+The project is a base implemented for refinement. The Foundation Loop Audit is documented, and Foundation Loop UX Pass 01 is published to Internal Alpha as the current candidate for the post-login loop:
 
 `Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again`
 
 The next product action is manual review of that loop pass before choosing social, visual-general or battle-presentation work.
 
-Track 16 remains the latest local technical package, but it is not the current product focus. Current spells, weapons, economy values, Battle Pass, battle flavor and visual identity are mock/substance, not priority areas.
+Track 16 remains the latest technical package, but it is not the current product focus. Current spells, weapons, economy values, Battle Pass, battle flavor and visual identity are mock/substance, not priority areas.
 
 ## Current Baseline
 

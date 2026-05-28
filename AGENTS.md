@@ -8,7 +8,7 @@ This file governs agent behavior for the `D:\Estudio` workspace.
 - `08_Coordenacao_Agentes/Painel_Visual_Estudio.html` is the human-facing local dashboard for the same portfolio state.
 - `canon/` is the shared source of truth for established product identity, lore context, gameplay contracts, progression, shared architecture, mode standard, and platform strategy.
 - `Projetos/draxos-roguelike-cardgame/` is the current P0 implementation workspace for the menu-first Draxos roguelike cardgame.
-- `Projetos/draxos-mobile/` is the P2 implementation workspace for DraxosMobile - async PVP autobattler, base manager, social; Godot 4.6.2 + Supabase; Android + PC + PC browser. Current operational stage: `FOUNDATION_AUDIT_ACTIVE`; Foundation Loop UX Pass 01 is the local loop baseline candidate; Track 16 is only the latest local technical package, on top of Track 13 validation/release safety, Track 14 `TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE` agent ops and Track 15 UX history.
+- `Projetos/draxos-mobile/` is the P2 implementation workspace for DraxosMobile - async PVP autobattler, base manager, social; Godot 4.6.2 + Supabase; Android + PC + PC browser. Current operational stage: `FOUNDATION_AUDIT_ACTIVE`; Foundation Loop UX Pass 01 is the published Internal Alpha loop baseline candidate; Track 16 is only the latest technical package, on top of Track 13 validation/release safety, Track 14 `TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE` agent ops and Track 15 UX history.
 - `Projetos/_conceitos/mobile-universe/` is a design archive; it was promoted to `draxos-mobile/` on 2026-05-18 and is now read-only design reference.
 - `Projetos/rpg-isometrico/` is paused indefinitely and preserved for historical/contextual consultation.
 - `Projetos/rpg-turnos/` is paused indefinitely and preserved for historical/contextual consultation.
@@ -123,7 +123,7 @@ Implementacoes Godot vivem sob `Projetos/`.
 Projetos Godot ativos:
 
 - `Projetos/draxos-roguelike-cardgame/` — P0, Steam, roguelike cardgame
-- `Projetos/draxos-mobile/` - P2, mobile + PC + browser, Godot 4.6.2 + Supabase (`FOUNDATION_AUDIT_ACTIVE`; Foundation Loop UX Pass 01 e candidato local de baseline do loop; Track 16 e ultimo pacote tecnico local sobre Track 13/14/15)
+- `Projetos/draxos-mobile/` - P2, mobile + PC + browser, Godot 4.6.2 + Supabase (`FOUNDATION_AUDIT_ACTIVE`; Foundation Loop UX Pass 01 e candidato publicado de baseline do loop; Track 16 e ultimo pacote tecnico sobre Track 13/14/15)
 
 Projetos Godot pausados:
 
