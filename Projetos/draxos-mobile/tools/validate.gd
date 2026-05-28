@@ -1,6 +1,7 @@
 extends SceneTree
 
 const ContentGeneratorScript = preload("res://tools/content_generator.gd")
+const ProjectInfoScript = preload("res://core/project_info.gd")
 
 var _failures: Array[String] = []
 
@@ -102,7 +103,7 @@ func _validate_content_contract() -> Dictionary:
 	if not catalog.has_item("battle_fixtures", "mvp_training_battle"):
 		return {"ok": false, "message": "MVP battle fixture is missing from generated catalog."}
 	var fixture: Dictionary = catalog.find_item("battle_fixtures", "mvp_training_battle")
-	if str(fixture.get("mode", "")) != ProjectInfo.MVP_MODE:
+	if str(fixture.get("mode", "")) != ProjectInfoScript.MVP_MODE:
 		return {"ok": false, "message": "MVP battle fixture must be marked MVP_ONLY."}
 	return {"ok": true}
 

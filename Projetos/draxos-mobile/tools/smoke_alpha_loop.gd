@@ -1,5 +1,7 @@
 extends SceneTree
 
+const BackendConfigScript = preload("res://online/backend_config.gd")
+const ProjectInfoScript = preload("res://core/project_info.gd")
 const SessionStoreScript = preload("res://online/session_store.gd")
 const SupabaseClientScript = preload("res://online/supabase_client.gd")
 
@@ -11,11 +13,12 @@ func _run() -> void:
 	quit(exit_code)
 
 func _run_smoke() -> int:
+	var backend_config := BackendConfigScript.load_from_project_settings()
 	var client = SupabaseClientScript.new()
 	root.add_child(client)
 	client.configure(
-		str(ProjectSettings.get_setting("draxos_mobile/supabase/url", SupabaseClientScript.DEFAULT_SUPABASE_URL)),
-		str(ProjectSettings.get_setting("draxos_mobile/supabase/publishable_key", SupabaseClientScript.DEFAULT_PUBLISHABLE_KEY))
+		str(backend_config.get("supabase_url", SupabaseClientScript.DEFAULT_SUPABASE_URL)),
+		str(backend_config.get("publishable_key", SupabaseClientScript.DEFAULT_PUBLISHABLE_KEY))
 	)
 
 	var store = SessionStoreScript.new()
@@ -36,7 +39,7 @@ func _run_smoke() -> int:
 	var battle_result: Dictionary = await client.request_battle(
 		SessionStoreScript.create_request_id(),
 		store.access_token,
-		ProjectInfo.FIRST_SLICE_MODE,
+		ProjectInfoScript.FIRST_SLICE_MODE,
 		"bot_effect_trainer_01"
 	)
 	if not bool(battle_result.get("ok", false)) or not store.apply_battle_result(battle_result):

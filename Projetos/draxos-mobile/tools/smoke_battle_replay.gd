@@ -1,6 +1,8 @@
 extends SceneTree
 
 const BattleLogPresenterScript = preload("res://ui/battle_log_presenter.gd")
+const BackendConfigScript = preload("res://online/backend_config.gd")
+const ProjectInfoScript = preload("res://core/project_info.gd")
 const SessionStoreScript = preload("res://online/session_store.gd")
 const SupabaseClientScript = preload("res://online/supabase_client.gd")
 
@@ -12,8 +14,9 @@ func _run() -> void:
 	quit(exit_code)
 
 func _run_smoke() -> int:
-	var supabase_url := str(ProjectSettings.get_setting("draxos_mobile/supabase/url", SupabaseClientScript.DEFAULT_SUPABASE_URL))
-	var publishable_key := str(ProjectSettings.get_setting("draxos_mobile/supabase/publishable_key", SupabaseClientScript.DEFAULT_PUBLISHABLE_KEY))
+	var backend_config := BackendConfigScript.load_from_project_settings()
+	var supabase_url := str(backend_config.get("supabase_url", SupabaseClientScript.DEFAULT_SUPABASE_URL))
+	var publishable_key := str(backend_config.get("publishable_key", SupabaseClientScript.DEFAULT_PUBLISHABLE_KEY))
 	var client = SupabaseClientScript.new()
 	root.add_child(client)
 	client.configure(supabase_url, publishable_key)
@@ -36,7 +39,7 @@ func _run_smoke() -> int:
 	var battle_result: Dictionary = await battle_client.request_battle(
 		SessionStoreScript.create_request_id(),
 		store.access_token,
-		ProjectInfo.FIRST_SLICE_MODE,
+		ProjectInfoScript.FIRST_SLICE_MODE,
 		"bot_effect_trainer_01"
 	)
 	if not bool(battle_result.get("ok", false)):
