@@ -231,6 +231,56 @@ func enable_spell_behavior(host: Node, spell_id: String) -> void:
 func disable_spell_behavior(host: Node, spell_id: String) -> void:
 	await _update_spell_behavior(host, spell_id, _default_spell_behavior(false), "Magia pausada para a proxima batalha.")
 
+func handle_build_equip_action(host: Node, action_id: String) -> void:
+	var payload := {}
+	var message := "Preparacao atualizada."
+	if AppShellActionContractScript.is_equip_instrument(action_id):
+		var instrument_id := AppShellActionContractScript.action_value(action_id)
+		if instrument_id == "":
+			_set_error_text(host, "Instrumento invalido.")
+			return
+		payload["weapon"] = {"type": instrument_id}
+		message = "Instrumento Ritual equipado."
+	elif AppShellActionContractScript.is_equip_spell_position(action_id):
+		var position := int(AppShellActionContractScript.action_value(action_id))
+		var spell_id := AppShellActionContractScript.action_value_at(action_id, 2)
+		if position <= 0 or spell_id == "":
+			_set_error_text(host, "Habilidade invalida.")
+			return
+		payload["spell_slots"] = [{"slot_index": position, "spell_id": spell_id}]
+		message = "Habilidade equipada para a proxima batalha."
+	elif AppShellActionContractScript.is_remove_spell_position(action_id):
+		var position := int(AppShellActionContractScript.action_value(action_id))
+		if position <= 0:
+			_set_error_text(host, "Habilidade invalida.")
+			return
+		payload["spell_slots"] = [{"slot_index": position, "spell_id": null}]
+		message = "Habilidade removida da proxima batalha."
+	elif AppShellActionContractScript.is_equip_doctrine(action_id):
+		var doctrine_id := AppShellActionContractScript.action_value(action_id)
+		if doctrine_id == "":
+			_set_error_text(host, "Doutrina invalida.")
+			return
+		payload["passive_id"] = doctrine_id
+		message = "Doutrina equipada."
+	elif AppShellActionContractScript.is_remove_doctrine(action_id):
+		payload["passive_id"] = null
+		message = "Doutrina removida."
+	elif AppShellActionContractScript.is_equip_familiar(action_id):
+		var familiar_id := AppShellActionContractScript.action_value(action_id)
+		if familiar_id == "":
+			_set_error_text(host, "Familiar invalido.")
+			return
+		payload["pet_id"] = familiar_id
+		message = "Familiar equipado."
+	elif AppShellActionContractScript.is_remove_familiar(action_id):
+		payload["pet_id"] = null
+		message = "Familiar removido."
+	else:
+		_set_error_text(host, "Escolha de preparacao invalida.")
+		return
+	await _update_build_equip(host, payload, message)
+
 func show_social(host: Node) -> void:
 	if not bool(host.call("_require_session", "Entre com email ou use guest dev antes de abrir Social.")):
 		return
@@ -510,6 +560,31 @@ static func _as_dictionary(value: Variant) -> Dictionary:
 		return value
 	return {}
 
+func _update_build_equip(host: Node, payload: Dictionary, message: String) -> void:
+	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de preparar a batalha.")):
+		return
+	if payload.is_empty():
+		_set_error_text(host, "Escolha de preparacao invalida.")
+		return
+
+	host.call("_show_screen", AppShellRouteContractScript.ROUTE_REFUGE, false)
+	host.call("_set_busy", true, "Salvando preparacao...")
+	var build_result: Dictionary = await SupabaseClient.equip_build(
+		SessionStoreScript.create_request_id(),
+		payload,
+		SessionStore.access_token
+	)
+	if not bool(build_result.get("ok", false)):
+		_fail_preparation_action(host, build_result, "Nao foi possivel salvar a preparacao.")
+		return
+	if not SessionStore.apply_build_result(build_result):
+		_fail_preparation_action(host, {"error": SessionStore.last_error}, "Nao foi possivel salvar a preparacao.")
+		return
+
+	SessionStore.save_cache()
+	host.call("_set_busy", false, message)
+	host.call("_render_refuge_screen")
+
 func _update_potion_equip(host: Node, item_id: Variant, message: String) -> void:
 	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de equipar pocao.")):
 		return
@@ -628,13 +703,29 @@ static func _preparation_error_message(code: String) -> String:
 			return "Voce ainda nao tem essa Pocao de Vida. Crie uma no Refugio primeiro."
 		"INVALID_POTION":
 			return "Essa pocao ainda nao pode ser usada na preparacao."
+		"INVALID_WEAPON", "INVALID_WEAPON_QUALITY":
+			return "Esse Instrumento Ritual ainda nao pode ser usado na preparacao."
+		"WEAPON_LOCKED":
+			return "Esse Instrumento Ritual ainda esta bloqueado para seu nivel."
 		"SPELL_NOT_EQUIPPED":
 			return "Essa magia nao esta equipada para batalha."
 		"INVALID_SPELL":
 			return "Magia invalida para esta preparacao."
-		"BEHAVIOR_UPDATE_FAILED", "POTION_EQUIP_FAILED":
+		"SPELL_LOCKED", "SPELL_SLOT_LOCKED":
+			return "Essa habilidade ainda esta bloqueada para seu nivel."
+		"DUPLICATE_SPELL":
+			return "A mesma habilidade nao pode ocupar dois espacos."
+		"INVALID_DOCTRINE":
+			return "Doutrina invalida para esta preparacao."
+		"DOCTRINE_LOCKED":
+			return "Essa Doutrina ainda esta bloqueada para seu nivel."
+		"INVALID_FAMILIAR":
+			return "Familiar invalido para esta preparacao."
+		"FAMILIAR_LOCKED":
+			return "Esse Familiar ainda esta bloqueado para seu nivel."
+		"BEHAVIOR_UPDATE_FAILED", "POTION_EQUIP_FAILED", "BUILD_EQUIP_FAILED", "POWER_UPDATE_FAILED":
 			return "Nao foi possivel salvar essa escolha agora. Tente novamente."
-		"BUILD_NOT_FOUND", "INVALID_SLOT", "INVALID_BEHAVIOR", "INVALID_BEHAVIOR_PERCENT", "INVALID_REQUEST_ID", "INVALID_SAVE_TYPE":
+		"BUILD_NOT_FOUND", "INVALID_SLOT", "INVALID_SPELL_SLOT", "INVALID_BEHAVIOR", "INVALID_BEHAVIOR_PERCENT", "INVALID_REQUEST_ID", "INVALID_SAVE_TYPE":
 			return "Preparacao indisponivel agora. Tente novamente em instantes."
 		"NETWORK_UNAVAILABLE", "REQUEST_NOT_STARTED", "CLIENT_MISCONFIGURED", "INVALID_JSON":
 			return "Sem conexao para carregar a preparacao. Verifique a internet e tente de novo."

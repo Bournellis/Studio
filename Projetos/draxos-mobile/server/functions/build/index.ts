@@ -1,7 +1,8 @@
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import { GRIMOIRE_CATALOG } from "../_shared/grimoire_catalog.ts";
 import { type SaveType, saveTypeFromRequest, saveTypeQuery } from "../_shared/save_context.ts";
 
-type Route = "state" | "spell_behavior" | "potion_equip" | "potion_behavior";
+type Route = "state" | "equip" | "spell_behavior" | "potion_equip" | "potion_behavior";
 
 interface EdgeConfig {
   supabaseUrl: string;
@@ -27,6 +28,7 @@ interface PlayerRow {
   id: string;
   save_type: SaveType;
   level: number;
+  power: number;
 }
 
 interface BuildRow {
@@ -88,8 +90,44 @@ interface BehaviorCondition {
   percent: number;
 }
 
+interface CatalogItem {
+  id: string;
+  display_name?: string;
+  description?: string;
+  enabled?: boolean;
+  unlock_level?: number;
+  qualities?: unknown;
+}
+
+interface EquipResolution {
+  update: {
+    weapon_type: string;
+    weapon_quality: string;
+    spell_slots: Array<string | null>;
+    passive_id: string | null;
+    pet_id: string | null;
+  };
+  summary: Record<string, unknown>;
+}
+
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const ITEM_ID_PATTERN = /^[a-z0-9_]+$/;
+const DEFAULT_WEAPON_QUALITY = "starter";
+const SPELL_SLOT_UNLOCK_LEVELS = new Map<number, number>([
+  [1, 3],
+  [2, 7],
+  [3, 25],
+]);
+const PASSIVE_UNLOCK_LEVEL = 10;
+const PET_UNLOCK_LEVEL = 15;
+const POWER_WEIGHTS = {
+  level: 42,
+  weaponLevel: 28,
+  spellLevel: 40,
+  petLevel: 34,
+  passiveLevel: 22,
+  weaponQualityTier: 30,
+};
 const DEFAULT_SPELL_BEHAVIOR: BehaviorConfig = {
   enabled: true,
   hp: { mode: "ignore", percent: 0 },
@@ -115,6 +153,9 @@ Deno.serve(async (request: Request) => {
     if (route === "state" && request.method !== "GET") {
       return errorResponse("METHOD_NOT_ALLOWED", "Use GET /build/state.", 405);
     }
+    if (route === "equip" && request.method !== "POST") {
+      return errorResponse("METHOD_NOT_ALLOWED", "Use POST /build/equip.", 405);
+    }
     if (route === "spell_behavior" && request.method !== "POST") {
       return errorResponse("METHOD_NOT_ALLOWED", "Use POST /build/spell-behavior.", 405);
     }
@@ -137,6 +178,9 @@ Deno.serve(async (request: Request) => {
     if (route === "state") {
       return await handleState(auth.value, config.value);
     }
+    if (route === "equip") {
+      return await handleBuildEquip(request, auth.value, config.value);
+    }
     if (route === "spell_behavior") {
       return await handleSpellBehavior(request, auth.value, config.value);
     }
@@ -156,6 +200,86 @@ async function handleState(auth: AuthContext, config: EdgeConfig): Promise<Respo
     return errorResponse(state.error.code, state.error.message, state.error.status);
   }
   return jsonResponse(buildStatePayload(state.value));
+}
+
+async function handleBuildEquip(
+  request: Request,
+  auth: AuthContext,
+  config: EdgeConfig,
+): Promise<Response> {
+  const body = await readJsonObject(request);
+  if (body === null) {
+    return errorResponse("INVALID_JSON", "Request body must be a JSON object.", 400);
+  }
+  const requestId = stringField(body, "request_id");
+  if (!UUID_PATTERN.test(requestId)) {
+    return errorResponse("INVALID_REQUEST_ID", "request_id must be a UUID.", 400);
+  }
+
+  const state = await loadBuildState(auth, config);
+  if (state.error !== null) {
+    return errorResponse(state.error.code, state.error.message, state.error.status);
+  }
+  const existing = await loadIdempotency(config, state.value.player.id, "build/equip", requestId);
+  if (existing.error !== null) {
+    return errorResponse(existing.error.code, existing.error.message, existing.error.status);
+  }
+  if (existing.value !== null) {
+    return jsonResponse(existing.value);
+  }
+
+  const resolution = resolveEquipRequest(body, state.value);
+  if (resolution.error !== null) {
+    return errorResponse(resolution.error.code, resolution.error.message, resolution.error.status);
+  }
+
+  const now = new Date().toISOString();
+  const update = await restRequest<BuildRow[]>(
+    config,
+    `builds?player_id=eq.${encodeURIComponent(state.value.player.id)}&select=player_id,weapon_type,weapon_quality,weapon_level,spell_slots,spells_unlocked,pet_id,pet_level,passive_id,passive_level,updated_at`,
+    {
+      method: "PATCH",
+      headers: { prefer: "return=representation" },
+      body: JSON.stringify({ ...resolution.value.update, updated_at: now }),
+    },
+  );
+  if (update.error !== null || update.value.length === 0) {
+    return errorResponse("BUILD_EQUIP_FAILED", "Unable to update battle preparation.", 500);
+  }
+
+  const nextPower = calculatePower(state.value.player, update.value[0]);
+  const powerUpdate = await restRequest<PlayerRow[]>(
+    config,
+    `players?id=eq.${encodeURIComponent(state.value.player.id)}&select=id,save_type,level,power`,
+    {
+      method: "PATCH",
+      headers: { prefer: "return=representation" },
+      body: JSON.stringify({ power: nextPower }),
+    },
+  );
+  if (powerUpdate.error !== null || powerUpdate.value.length === 0) {
+    return errorResponse("POWER_UPDATE_FAILED", "Unable to refresh player power.", 500);
+  }
+
+  const refreshed = await loadBuildState(auth, config);
+  if (refreshed.error !== null) {
+    return errorResponse(refreshed.error.code, refreshed.error.message, refreshed.error.status);
+  }
+  const responsePayload = {
+    ...buildStatePayload(refreshed.value),
+    equipped_build: resolution.value.summary,
+  };
+  const idem = await insertIdempotency(
+    config,
+    state.value.player.id,
+    "build/equip",
+    requestId,
+    responsePayload,
+  );
+  if (idem !== null) {
+    return errorResponse(idem.code, idem.message, idem.status);
+  }
+  return jsonResponse(responsePayload);
 }
 
 async function handleSpellBehavior(
@@ -417,7 +541,7 @@ async function loadBuildState(
     config,
     `players?auth_user_id=eq.${encodeURIComponent(auth.userId)}&${
       saveTypeQuery(auth.saveType)
-    }&select=id,save_type,level&limit=1`,
+    }&select=id,save_type,level,power&limit=1`,
     { method: "GET" },
   );
   if (playerResult.error !== null) {
@@ -482,6 +606,143 @@ async function loadBuildState(
   };
 }
 
+function resolveEquipRequest(
+  body: Record<string, unknown>,
+  state: BuildState,
+): { value: EquipResolution; error: null } | { value: null; error: RestError } {
+  let weaponType = state.build.weapon_type;
+  let weaponQuality = state.build.weapon_quality || DEFAULT_WEAPON_QUALITY;
+  const spellSlots = normalizedSpellSlots(state.build);
+  let passiveId = state.build.passive_id;
+  let petId = state.build.pet_id;
+
+  if (hasOwn(body, "weapon")) {
+    if (!isObject(body.weapon)) {
+      return equipError("INVALID_WEAPON", "Instrumento Ritual invalido.", 400);
+    }
+    const requestedWeapon = stringField(body.weapon, "type");
+    if (!ITEM_ID_PATTERN.test(requestedWeapon)) {
+      return equipError("INVALID_WEAPON", "Instrumento Ritual invalido.", 400);
+    }
+    const weapon = catalogItem("weapons", requestedWeapon);
+    if (weapon === null || !catalogItemEnabled(weapon)) {
+      return equipError("INVALID_WEAPON", "Instrumento Ritual indisponivel.", 400);
+    }
+    const unlock = itemUnlockLevel(weapon, 1);
+    if (state.player.level < unlock) {
+      return equipError("WEAPON_LOCKED", "Instrumento Ritual bloqueado para este nivel.", 409);
+    }
+    const requestedQuality = isObject(body.weapon)
+      ? optionalString(body.weapon.quality)
+      : null;
+    const nextQuality = requestedQuality ??
+      (requestedWeapon === weaponType ? weaponQuality : DEFAULT_WEAPON_QUALITY);
+    if (!validWeaponQuality(weapon, nextQuality)) {
+      return equipError("INVALID_WEAPON_QUALITY", "Qualidade de instrumento indisponivel.", 400);
+    }
+    weaponType = requestedWeapon;
+    weaponQuality = nextQuality;
+  }
+
+  if (hasOwn(body, "spell_slots")) {
+    if (!Array.isArray(body.spell_slots)) {
+      return equipError("INVALID_SPELL_SLOT", "Habilidade invalida.", 400);
+    }
+    for (const entry of body.spell_slots) {
+      if (!isObject(entry)) {
+        return equipError("INVALID_SPELL_SLOT", "Habilidade invalida.", 400);
+      }
+      const slotIndex = positiveIntegerField(entry, "slot_index", 0);
+      if (slotIndex === null || slotIndex < 1 || slotIndex > 3) {
+        return equipError("INVALID_SPELL_SLOT", "Espaco de habilidade invalido.", 400);
+      }
+      const requestedSpell = hasOwn(entry, "spell_id") ? optionalString(entry.spell_id) : null;
+      if (requestedSpell !== null) {
+        if (!ITEM_ID_PATTERN.test(requestedSpell)) {
+          return equipError("INVALID_SPELL", "Habilidade invalida.", 400);
+        }
+        const slotUnlock = SPELL_SLOT_UNLOCK_LEVELS.get(slotIndex) ?? 25;
+        if (state.player.level < slotUnlock) {
+          return equipError("SPELL_SLOT_LOCKED", "Espaco de habilidade bloqueado para este nivel.", 409);
+        }
+        const spell = catalogItem("spells", requestedSpell);
+        if (spell === null || !catalogItemEnabled(spell)) {
+          return equipError("INVALID_SPELL", "Habilidade indisponivel.", 400);
+        }
+        const spellUnlock = itemUnlockLevel(spell, 1);
+        if (state.player.level < spellUnlock) {
+          return equipError("SPELL_LOCKED", "Habilidade bloqueada para este nivel.", 409);
+        }
+      }
+      spellSlots[slotIndex - 1] = requestedSpell;
+    }
+  }
+
+  const selectedSpells = spellSlots.filter((spellId): spellId is string =>
+    typeof spellId === "string" && spellId !== ""
+  );
+  if (new Set(selectedSpells).size !== selectedSpells.length) {
+    return equipError("DUPLICATE_SPELL", "A mesma habilidade nao pode ocupar dois espacos.", 409);
+  }
+
+  if (hasOwn(body, "passive_id")) {
+    const requestedPassive = optionalString(body.passive_id);
+    if (requestedPassive !== null) {
+      if (!ITEM_ID_PATTERN.test(requestedPassive)) {
+        return equipError("INVALID_DOCTRINE", "Doutrina invalida.", 400);
+      }
+      const passive = catalogItem("doutrines", requestedPassive);
+      if (passive === null || !catalogItemEnabled(passive)) {
+        return equipError("INVALID_DOCTRINE", "Doutrina indisponivel.", 400);
+      }
+      const unlock = Math.max(PASSIVE_UNLOCK_LEVEL, itemUnlockLevel(passive, PASSIVE_UNLOCK_LEVEL));
+      if (state.player.level < unlock) {
+        return equipError("DOCTRINE_LOCKED", "Doutrina bloqueada para este nivel.", 409);
+      }
+    }
+    passiveId = requestedPassive;
+  }
+
+  if (hasOwn(body, "pet_id")) {
+    const requestedPet = optionalString(body.pet_id);
+    if (requestedPet !== null) {
+      if (!ITEM_ID_PATTERN.test(requestedPet)) {
+        return equipError("INVALID_FAMILIAR", "Familiar invalido.", 400);
+      }
+      const pet = catalogItem("familiars", requestedPet);
+      if (pet === null || !catalogItemEnabled(pet)) {
+        return equipError("INVALID_FAMILIAR", "Familiar indisponivel.", 400);
+      }
+      const unlock = Math.max(PET_UNLOCK_LEVEL, itemUnlockLevel(pet, PET_UNLOCK_LEVEL));
+      if (state.player.level < unlock) {
+        return equipError("FAMILIAR_LOCKED", "Familiar bloqueado para este nivel.", 409);
+      }
+    }
+    petId = requestedPet;
+  }
+
+  const update = {
+    weapon_type: weaponType,
+    weapon_quality: weaponQuality,
+    spell_slots: trimTrailingEmptySpellSlots(spellSlots),
+    passive_id: passiveId,
+    pet_id: petId,
+  };
+  return {
+    value: {
+      update,
+      summary: {
+        weapon_type: update.weapon_type,
+        weapon_quality: update.weapon_quality,
+        spell_slots: update.spell_slots,
+        passive_id: update.passive_id,
+        pet_id: update.pet_id,
+      },
+    },
+    error: null,
+  };
+}
+
 async function ensurePotionSlot(config: EdgeConfig, playerId: string): Promise<void> {
   await restRequest<unknown>(config, "player_potion_slots", {
     method: "POST",
@@ -495,7 +756,10 @@ async function ensurePotionSlot(config: EdgeConfig, playerId: string): Promise<v
 }
 
 function buildStatePayload(state: BuildState): Record<string, unknown> {
-  const equipped = equippedSpellIds(state.build);
+  const spellSlots = normalizedSpellSlots(state.build);
+  const equipped = spellSlots.filter((spellId): spellId is string =>
+    typeof spellId === "string" && spellId !== ""
+  );
   const behaviors = Object.fromEntries(
     state.spellBehaviors.map((row) => [
       row.spell_id,
@@ -504,8 +768,38 @@ function buildStatePayload(state: BuildState): Record<string, unknown> {
   );
   return {
     ok: true,
+    player: {
+      level: state.player.level,
+      power: state.player.power,
+    },
     build: state.build,
     combat_build: {
+      power: state.player.power,
+      weapon_type: state.build.weapon_type,
+      weapon_quality: state.build.weapon_quality ?? DEFAULT_WEAPON_QUALITY,
+      weapon_level: state.build.weapon_level,
+      passive_id: state.build.passive_id,
+      passive_level: state.build.passive_level,
+      pet_id: state.build.pet_id,
+      pet_level: state.build.pet_level,
+      instrument: optionForCurrent("weapons", state.build.weapon_type, state.player.level),
+      doctrine: state.build.passive_id === null
+        ? null
+        : optionForCurrent("doutrines", state.build.passive_id, state.player.level, PASSIVE_UNLOCK_LEVEL),
+      familiar: state.build.pet_id === null
+        ? null
+        : optionForCurrent("familiars", state.build.pet_id, state.player.level, PET_UNLOCK_LEVEL),
+      spell_slots: [1, 2, 3].map((slotIndex) => {
+        const spellId = spellSlots[slotIndex - 1];
+        return {
+          slot_index: slotIndex,
+          unlock_level: SPELL_SLOT_UNLOCK_LEVELS.get(slotIndex) ?? 25,
+          unlocked: state.player.level >= (SPELL_SLOT_UNLOCK_LEVELS.get(slotIndex) ?? 25),
+          spell_id: spellId ?? null,
+          spell: spellId === null ? null : optionForCurrent("spells", spellId, state.player.level),
+          behavior: spellId === null ? DEFAULT_SPELL_BEHAVIOR : behaviors[spellId] ?? DEFAULT_SPELL_BEHAVIOR,
+        };
+      }),
       equipped_spells: equipped.map((spellId) => ({
         spell_id: spellId,
         behavior: behaviors[spellId] ?? DEFAULT_SPELL_BEHAVIOR,
@@ -523,6 +817,22 @@ function buildStatePayload(state: BuildState): Record<string, unknown> {
         quantity: item.quantity,
         updated_at: item.updated_at,
       })),
+      equipment_options: {
+        weapons: catalogOptions("weapons", state.player.level, state.build.weapon_type),
+        spells: catalogOptions("spells", state.player.level, selectedSet(equipped)),
+        doutrines: catalogOptions(
+          "doutrines",
+          state.player.level,
+          state.build.passive_id,
+          PASSIVE_UNLOCK_LEVEL,
+        ),
+        familiars: catalogOptions(
+          "familiars",
+          state.player.level,
+          state.build.pet_id,
+          PET_UNLOCK_LEVEL,
+        ),
+      },
     },
   };
 }
@@ -530,6 +840,143 @@ function buildStatePayload(state: BuildState): Record<string, unknown> {
 function equippedSpellIds(build: BuildRow): string[] {
   const slots = arrayOfStrings(build.spell_slots);
   return slots.length > 0 ? slots : arrayOfStrings(build.spells_unlocked);
+}
+
+function normalizedSpellSlots(build: BuildRow): Array<string | null> {
+  const rawSlots = Array.isArray(build.spell_slots) ? build.spell_slots : [];
+  const fallback = equippedSpellIds(build);
+  const slots: Array<string | null> = [null, null, null];
+  const source = rawSlots.length > 0 ? rawSlots : fallback;
+  for (let index = 0; index < Math.min(source.length, 3); index += 1) {
+    const value = source[index];
+    slots[index] = typeof value === "string" && value.trim() !== "" ? value.trim() : null;
+  }
+  return slots;
+}
+
+function trimTrailingEmptySpellSlots(slots: Array<string | null>): Array<string | null> {
+  const next = slots.slice(0, 3);
+  while (next.length > 0 && next[next.length - 1] === null) {
+    next.pop();
+  }
+  return next;
+}
+
+function selectedSet(ids: string[]): Set<string> {
+  return new Set(ids);
+}
+
+function catalogCollections(): Record<string, unknown[]> {
+  const collections = (GRIMOIRE_CATALOG as { collections?: unknown }).collections;
+  return isObject(collections) ? collections as Record<string, unknown[]> : {};
+}
+
+function catalogItems(collection: string): CatalogItem[] {
+  const items = catalogCollections()[collection];
+  if (!Array.isArray(items)) return [];
+  return items.filter(isObject).map((item) => item as unknown as CatalogItem);
+}
+
+function catalogItem(collection: string, id: string): CatalogItem | null {
+  return catalogItems(collection).find((item) => item.id === id) ?? null;
+}
+
+function catalogItemEnabled(item: CatalogItem): boolean {
+  return item.enabled !== false;
+}
+
+function itemUnlockLevel(item: CatalogItem, fallback: number): number {
+  return numberValue(item.unlock_level, fallback);
+}
+
+function optionForCurrent(
+  collection: string,
+  id: string,
+  playerLevel: number,
+  minimumUnlock = 1,
+): Record<string, unknown> {
+  const item = catalogItem(collection, id);
+  if (item === null) {
+    return {
+      id,
+      display_name: id,
+      description: "",
+      unlock_level: minimumUnlock,
+      enabled: true,
+      unlocked: true,
+      equipped: true,
+    };
+  }
+  const unlock = Math.max(minimumUnlock, itemUnlockLevel(item, minimumUnlock));
+  return optionPayload(item, playerLevel, true, unlock);
+}
+
+function catalogOptions(
+  collection: string,
+  playerLevel: number,
+  selected: string | Set<string> | null,
+  minimumUnlock = 1,
+): Record<string, unknown>[] {
+  return catalogItems(collection)
+    .filter(catalogItemEnabled)
+    .map((item) => {
+      const equipped = selected instanceof Set
+        ? selected.has(item.id)
+        : selected === item.id;
+      const unlock = Math.max(minimumUnlock, itemUnlockLevel(item, minimumUnlock));
+      return optionPayload(item, playerLevel, equipped, unlock);
+    });
+}
+
+function optionPayload(
+  item: CatalogItem,
+  playerLevel: number,
+  equipped: boolean,
+  unlockLevel: number,
+): Record<string, unknown> {
+  const unlocked = playerLevel >= unlockLevel;
+  return {
+    id: item.id,
+    display_name: stringValue(item.display_name, item.id),
+    description: stringValue(item.description, ""),
+    unlock_level: unlockLevel,
+    enabled: catalogItemEnabled(item),
+    unlocked,
+    equipped,
+    locked_reason: unlocked ? null : `Desbloqueia no nivel ${unlockLevel}.`,
+  };
+}
+
+function validWeaponQuality(weapon: CatalogItem, qualityId: string): boolean {
+  const qualities = Array.isArray(weapon.qualities) ? weapon.qualities : [];
+  if (qualities.length === 0) {
+    return qualityId === DEFAULT_WEAPON_QUALITY;
+  }
+  return qualities.some((quality) => isObject(quality) && quality.id === qualityId);
+}
+
+function weaponQualityTier(weapon: CatalogItem | null, qualityId: string): number {
+  const qualities = Array.isArray(weapon?.qualities) ? weapon?.qualities as unknown[] : [];
+  const found = qualities.find((quality) => isObject(quality) && quality.id === qualityId);
+  return isObject(found) ? numberValue(found.tier, 0) : 0;
+}
+
+function calculatePower(player: PlayerRow, build: BuildRow): number {
+  const weapon = catalogItem("weapons", build.weapon_type);
+  const spellTotal = normalizedSpellSlots(build).filter((spellId) => spellId !== null).length;
+  const petLevel = build.pet_id === null ? 0 : Math.max(1, numberValue(build.pet_level, 1));
+  const passiveLevel = build.passive_id === null ? 0 : Math.max(1, numberValue(build.passive_level, 1));
+  return Math.max(
+    1,
+    Math.round(
+      player.level * POWER_WEIGHTS.level +
+        build.weapon_level * POWER_WEIGHTS.weaponLevel +
+        spellTotal * POWER_WEIGHTS.spellLevel +
+        petLevel * POWER_WEIGHTS.petLevel +
+        passiveLevel * POWER_WEIGHTS.passiveLevel +
+        weaponQualityTier(weapon, build.weapon_quality) * POWER_WEIGHTS.weaponQualityTier,
+    ),
+  );
 }
 
 function slotFor(state: BuildState, slotIndex: number): PotionSlotRow | undefined {
@@ -629,6 +1076,7 @@ function resolveRoute(pathname: string): Route | null {
   if (pathname.endsWith("/state")) return "state";
   if (pathname.endsWith("/spell-behavior")) return "spell_behavior";
   if (pathname.endsWith("/potion/equip")) return "potion_equip";
+  if (pathname.endsWith("/equip")) return "equip";
   if (pathname.endsWith("/potion-behavior")) return "potion_behavior";
   return null;
 }
@@ -738,6 +1186,14 @@ function errorResponse(code: string, message: string, status: number): Response 
   return jsonResponse({ ok: false, error: { code, message } }, status);
 }
 
+function equipError(
+  code: string,
+  message: string,
+  status: number,
+): { value: null; error: RestError } {
+  return { value: null, error: { code, message, status } };
+}
+
 async function readJsonObject(request: Request): Promise<Record<string, unknown> | null> {
   try {
     const payload: unknown = await request.json();
@@ -796,6 +1252,10 @@ function numberValue(value: unknown, fallback: number): number {
     return Number.isFinite(parsed) ? parsed : fallback;
   }
   return fallback;
+}
+
+function hasOwn(payload: Record<string, unknown>, key: string): boolean {
+  return Object.prototype.hasOwnProperty.call(payload, key);
 }
 
 function isObject(value: unknown): value is Record<string, unknown> {
