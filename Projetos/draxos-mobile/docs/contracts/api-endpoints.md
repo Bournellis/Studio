@@ -75,7 +75,8 @@ novo.
 | GET | `/crafting/state` | `save-scoped` | Sim | Nao | Recursos, Po de Osso, receitas, inventario de consumiveis e slot de pocao. |
 | POST | `/crafting/crush-bones` | `save-scoped` | Sim | `request_id` por save | Tritura Ossos em Po de Osso sem duplicar por retry. |
 | POST | `/crafting/craft` | `save-scoped` | Sim | `request_id` por save | Cria consumiveis a partir de receitas server-authoritative. |
-| GET | `/build/state` | `save-scoped` | Sim | Nao | Spells equipadas, comportamentos e pocao equipada. |
+| GET | `/build/state` | `save-scoped` | Sim | Nao | Loadout atual, opcoes humanizadas, bloqueios, comportamentos e pocao equipada. |
+| POST | `/build/equip` | `save-scoped` | Sim | `request_id` por save | Equipa instrumento, spells, doutrina e familiar com validacao server-side. |
 | POST | `/build/spell-behavior` | `save-scoped` | Sim | `request_id` por save | Atualiza comportamento de uma spell equipada. |
 | POST | `/build/potion/equip` | `save-scoped` | Sim | `request_id` por save | Equipa/remove pocao no slot 1. |
 | POST | `/build/potion-behavior` | `save-scoped` | Sim | `request_id` por save | Atualiza comportamento da pocao do slot 1. |
@@ -948,14 +949,22 @@ Implementado localmente em `T03-P03B` por header HTTP:
 
 ### `POST /build/equip`
 
-Regras do primeiro slice:
+Status: **implementado em Battle Preparation Complete v1 em 2026-05-29**.
+
+Scope: `save-scoped`. Usa `x-draxos-save-type`. Mutacao idempotente por `request_id` no save ativo.
+
+Regras do primeiro slice, agora ativas no runtime:
 
 - Cliente envia intencao de equipamento, nunca poder final.
-- Servidor valida level, unlock, posse do conteudo e slot disponivel.
+- Campos omitidos nao mudam.
+- `spell_id`, `passive_id` e `pet_id` podem ser `null` para remover.
+- Instrumento ritual nao pode ficar vazio.
+- Servidor valida catalogo habilitado, level, unlock e posicao disponivel.
 - Spell desbloqueada pode ser equipada em qualquer slot de spell liberado.
 - Slot de spell 1 abre no level 3, slot 2 no level 7 e slot 3 no level 25.
 - Slot de doutrina/passiva abre no level 10.
 - Slot de familiar/pet abre no level 15.
+- A mesma spell nao pode ocupar duas posicoes.
 - Servidor recalcula `players.power` apos sucesso.
 
 Request logico:
@@ -971,6 +980,33 @@ Request logico:
   "pet_id": "corvo_pressagio"
 }
 ```
+
+Response v1 retorna o mesmo shape de `GET /build/state`, com `player.power` atualizado:
+
+```json
+{
+  "ok": true,
+  "player": { "power": 260 },
+  "build": { "weapon_type": "varinha_cinzas" },
+  "combat_build": {
+    "power": 260,
+    "weapon_type": "varinha_cinzas",
+    "spell_slots": [
+      { "slot_index": 1, "spell_id": "sussurro_medo", "unlocked": true }
+    ],
+    "passive_id": "doutrina_pavor",
+    "pet_id": "corvo_pressagio",
+    "equipment_options": {
+      "weapons": [{ "id": "varinha_cinzas", "display_name": "Varinha de Cinzas" }],
+      "spells": [{ "id": "sussurro_medo", "display_name": "Sussurro do Medo" }],
+      "doutrines": [{ "id": "doutrina_pavor", "display_name": "Doutrina do Pavor" }],
+      "familiars": [{ "id": "corvo_pressagio", "display_name": "Corvo de Pressagio" }]
+    }
+  }
+}
+```
+
+Erros minimos: `INVALID_REQUEST_ID`, `INVALID_WEAPON`, `INVALID_WEAPON_QUALITY`, `WEAPON_LOCKED`, `INVALID_SPELL`, `SPELL_LOCKED`, `SPELL_SLOT_LOCKED`, `DUPLICATE_SPELL`, `INVALID_DOCTRINE`, `DOCTRINE_LOCKED`, `INVALID_FAMILIAR`, `FAMILIAR_LOCKED`, `BUILD_EQUIP_FAILED`, `POWER_UPDATE_FAILED`.
 
 ### `GET /crafting/state`
 
@@ -1030,9 +1066,16 @@ Erros minimos: `INVALID_RECIPE`, `INVALID_QUANTITY`, `INSUFFICIENT_RESOURCES`, `
 
 ### `GET /build/state`
 
-Status: **implementado em Track 16**.
+Status: **implementado em Track 16** e estendido em Battle Preparation Complete v1.
 
-Scope: `save-scoped`. Usa `x-draxos-save-type`. Retorna spells equipadas, comportamentos salvos, inventario resumido e slot de pocao.
+Scope: `save-scoped`. Usa `x-draxos-save-type`. Retorna loadout atual, spells equipadas, opcoes humanizadas, bloqueios, comportamentos salvos, inventario resumido e slot de pocao.
+
+Extensao Battle Preparation Complete v1:
+
+- `combat_build.power` reflete o poder recalculado pelo servidor;
+- `combat_build.weapon_type`, `weapon_quality`, `passive_id`, `pet_id` e `spell_slots` descrevem o loadout vivo;
+- `combat_build.equipment_options` lista `weapons`, `spells`, `doutrines` e `familiars` com `display_name`, `unlocked`, `locked_reason` e `equipped`;
+- o cliente usa esses nomes/status para nao depender de ids crus na Preparacao.
 
 Comportamento v1:
 

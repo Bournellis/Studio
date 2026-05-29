@@ -46,6 +46,7 @@ npx -y deno run --allow-net --allow-env server/tests/email_auth_alpha_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/release_manifest_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/release_download_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/grimoire_catalog_smoke.ts
+npx -y deno run --allow-net --allow-env server/tests/build_equip_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/runtime_config_smoke.ts
 ```
 
@@ -112,6 +113,12 @@ que elas usam rota valida de Supabase Storage.
 O smoke `grimoire_catalog_smoke.ts` valida `GET /content/grimoire`: auth
 obrigatoria, bloqueio de JWT anonimo, bloqueio de conta email sem save alpha e
 catalogo `grimoire_catalog_v1` completo apos `/account/bootstrap`.
+
+O smoke `build_equip_smoke.ts` valida `GET /build/state` e
+`POST /build/equip` no save `progression_lab`: opcoes de equipamento com nomes
+publicos, equipar/remover instrumento, spell, doutrina e familiar, bloqueio de
+posicao por nivel, item inexistente, spell duplicada, idempotencia por
+`request_id` e `players.power` recalculado pelo servidor.
 
 O smoke `runtime_config_smoke.ts` valida `GET /release/config`: schema
 `runtime_config_v1`, flags booleanas da Track 06, fallback offline permitido e
