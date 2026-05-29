@@ -1,6 +1,6 @@
 # DraxosMobile - Battle Presentation v1
 
-- Status: `IMPLEMENTED_VALIDATED_UNPUBLISHED`
+- Status: `PUBLISHED_INTERNAL_ALPHA`
 - Last updated: `2026-05-29`
 - Scope: client-only presentation pass for `battle_running`, `battle_summary` and `battle_logs`.
 
@@ -9,7 +9,7 @@
 Battle Presentation v1 makes the existing server-resolved battle easier to read during real playtest. The player should understand who is fighting, what just happened, who is in danger, what the result was and why returning to the Refugio matters.
 
 This package does not change backend, schema, API, simulator, rewards, ranking, economy, weapons, spells or the `battle_log_v1` contract.
-It has not been published to the Internal Alpha site/artifact channel yet.
+It was published to the Internal Alpha site/artifact channel on `2026-05-29`.
 
 ## Player-Facing Rules
 
@@ -35,7 +35,31 @@ It has not been published to the Internal Alpha site/artifact channel yet.
 - Tooltips and readouts use player-facing language and avoid technical leakage.
 - Validation includes GUT/client coverage, `tools/smoke_mobile_presentation.gd`, `tools/smoke_responsive_layout.gd`, `tools/smoke_foundation_loop.gd`, `tools/validate.gd`, `validate_foundation.ps1 -Profile Client` and `git diff --check`.
 
+## Publication
+
+- Stable portal: `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+- Stable Web: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- Verified preview: `https://2a470539.draxos-mobile-internal-alpha.pages.dev`
+- Web asset root: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-battle-presentation-20260529/web`
+- Android APK: `31633429` bytes, SHA256 `e4789c43d83a4ae931d575daca27b10591c5d8f790b9ca2d1e968f8c089ded97`
+- PC Windows ZIP: `40101277` bytes, SHA256 `82b3b493ec5384fd18f7f3334d70297997489da7935c84dc193019ddcc6428a5`
+
+The publication uploaded both `internal-alpha/v0-battle-presentation-20260529` and stable `internal-alpha/v0`. Cloudflare Pages stable domain can require Access; unauthenticated verification used the preview URL. `publish_internal_alpha.ps1 -Mode DeployManifest` was blocked before remote secret mutation because `SUPABASE_ACCESS_TOKEN` was not available, so the portal package reads its bundled `manifest.example.json` for the current published links/hashes while the Edge manifest endpoint remains healthy.
+
 ## Validation
+
+Latest publication validation on `2026-05-29`:
+
+- `validate_foundation.ps1 -Profile Client`: PASS (`119/119`, `1895` GUT asserts plus runtime/hardening/responsive/export smokes).
+- `export_internal_alpha.ps1 -AllowAndroidDebugFallback`: PASS; Android export mode `debug_fallback`.
+- `publish_internal_alpha.ps1 -Mode Plan -PublicDownloads`: PASS.
+- `publish_internal_alpha.ps1 -Mode Package -PublicDownloads`: PASS.
+- Supabase Storage upload: PASS for versioned root and stable `internal-alpha/v0`.
+- `build_cloudflare_pages_package.ps1`: PASS with versioned Web asset root.
+- Cloudflare Pages deploy: PASS, preview `https://2a470539.draxos-mobile-internal-alpha.pages.dev`.
+- `server/tests/release_manifest_smoke.ts`: PASS.
+- `server/tests/internal_alpha_remote_smoke.ts` with `DRAXOS_REMOTE_RELEASE_SMOKE=1`: PASS.
+- Preview GET and remote HEAD checks: PASS for portal, local packaged manifest, Web `GODOT_CONFIG`, versioned `index.js`/`index.pck`/`index.wasm`, versioned APK and stable APK without Bearer token.
 
 Latest local validation on `2026-05-29`:
 

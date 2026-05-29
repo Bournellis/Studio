@@ -5,10 +5,10 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
 - Active stage: `Battle Presentation v1`
-- Active stage status: `BATTLE_PRESENTATION_V1_VALIDATED_UNPUBLISHED`
+- Active stage status: `BATTLE_PRESENTATION_V1_PUBLISHED`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety` (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation` (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published package: `Ossos Inteiros v1`
+- Latest published package: `Battle Presentation v1`
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical context, not current product focus)
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
@@ -59,7 +59,7 @@ Priority order after baseline confirmation:
 4. Battle presentation.
 5. Weapons, spells, economy, balance and content details.
 
-Internal loop ergonomics, Social Basico Guilda v1, Visual Direction v1 and Ossos Inteiros v1 have received explicit packages and are published to Internal Alpha. Battle Presentation v1 is implemented and validated locally, but not published yet. No new code, schema, backend, asset, gameplay or balance work belongs outside an explicit next package decision.
+Internal loop ergonomics, Social Basico Guilda v1, Visual Direction v1, Ossos Inteiros v1 and Battle Presentation v1 have received explicit packages and are published to Internal Alpha. No new code, schema, backend, asset, gameplay or balance work belongs outside an explicit next package decision.
 
 ## Battle Presentation v1
 
@@ -71,7 +71,8 @@ Battle Presentation v1 is implemented as a client-only readability pass for the 
 - `battle_summary` prioritizes the result, opponent, short outcome phrase, reward/resources/ranking when present and the primary CTA `Voltar e verificar base`.
 - `battle_logs` remains read-only and scoped to the current battle, with logs formatted for players instead of technical inspection.
 - `docs/battle-presentation-v1.md` is the live package note.
-- Publication remains out of scope until explicitly requested.
+- Battle Presentation v1 was published to Internal Alpha on `2026-05-29` after explicit release approval. The publication updated Android APK, PC Windows ZIP, Web assets, the Cloudflare Pages package and portal copy without backend/schema/API changes.
+- The public Web package now points to the cache-busted asset root `internal-alpha/v0-battle-presentation-20260529/web`.
 
 ## Social Basico Guilda v1
 
@@ -100,9 +101,9 @@ Ossos Inteiros v1 is now published on top of the Visual Direction v1 build. The 
 
 | Artifact | Bytes | SHA256 |
 |---|---:|---|
-| Android APK | `31629333` | `3e7e85bb9d18e6f939882abfc35020f5371decc77a44467b2c79760a5bc3013a` |
-| PC Windows ZIP | `40096077` | `7dd8f9d3f1e07a133a7e2078bfaf8ed4a6771c348e6101c5e9c24e5f5330a4c7` |
-| Web index | `5442` | `dfe52fc0efd0f059f761fc483d1396aa5bd30dac52adce89d859870ff304ed39` |
+| Android APK | `31633429` | `e4789c43d83a4ae931d575daca27b10591c5d8f790b9ca2d1e968f8c089ded97` |
+| PC Windows ZIP | `40101277` | `82b3b493ec5384fd18f7f3334d70297997489da7935c84dc193019ddcc6428a5` |
+| Web index | `5442` | `4a80d29956931a8363587ed01b4e1a7890b3858205dd243b41432ccd8d9e7582` |
 
 Links:
 
@@ -110,10 +111,10 @@ Links:
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal: `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
 - Stable Web: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest verified preview: `https://d7a31bf6.draxos-mobile-internal-alpha.pages.dev`
-- Web asset root: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-integer-bones-20260529/web`
+- Latest verified preview: `https://2a470539.draxos-mobile-internal-alpha.pages.dev`
+- Web asset root: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-battle-presentation-20260529/web`
 
-Ossos Inteiros v1 was published to the Internal Alpha artifact/site channel on `2026-05-29`. The stable root `internal-alpha/v0` carries the latest APK/PC/Web package, and Web assets were also uploaded to `internal-alpha/v0-integer-bones-20260529` so browser caches cannot reuse older `index.js`, `index.pck` or `index.wasm` paths. APK/PC downloads are public unlisted Storage URLs again, avoiding the earlier direct-download Bearer-token error while keeping the stable Cloudflare Pages domain behind Access. Public unauthenticated Web validation should use the verified preview URL or an authenticated Access session.
+Battle Presentation v1 was published to the Internal Alpha artifact/site channel on `2026-05-29`. The stable root `internal-alpha/v0` carries the latest APK/PC package, and Web assets were uploaded to `internal-alpha/v0-battle-presentation-20260529` so browser caches cannot reuse older `index.js`, `index.pck` or `index.wasm` paths. APK/PC downloads are public unlisted Storage URLs again, avoiding the earlier direct-download Bearer-token error while keeping the stable Cloudflare Pages domain behind Access. Public unauthenticated Web validation should use the verified preview URL or an authenticated Access session. The Edge manifest endpoint remains healthy, but the release override was not updated during this publication because the local environment did not include `SUPABASE_ACCESS_TOKEN`; the portal package now reads its bundled `manifest.example.json` for published links/hashes.
 
 ## Visual Direction v1
 
@@ -127,9 +128,9 @@ Visual Direction v1 is implemented and published as the next refinement package 
 ## Risks And Blocks
 
 - Track 16 migration/functions/catalog changes needed for Ossos Inteiros v1 are deployed. Further crafting, behavior, tuning, economy or content expansion still needs its own explicit package decision.
-- Foundation Loop UX Pass 01 is the accepted current V0 UX baseline after manual Android/Windows/Web review on `2026-05-29`; Social Basico Guilda v1 is now available in the published Internal Alpha build for human two-account validation.
-- Ossos Inteiros v1 is published to Internal Alpha with public APK/PC downloads and a cache-busted Web asset root; it still needs manual Android/Windows/Web confirmation that visible rewards/collection no longer show fractional Ossos.
-- Battle Presentation v1 is validated locally and merged as a client-only package, but not published to the Internal Alpha site/artifact channel.
+- Foundation Loop UX Pass 01 is the accepted current V0 UX baseline after manual Android/Windows/Web review on `2026-05-29`; Social Basico Guilda v1 and Battle Presentation v1 are now available in the published Internal Alpha build for human validation.
+- Battle Presentation v1 is published to Internal Alpha with public APK/PC downloads and a cache-busted Web asset root; it still needs manual Android/Windows/Web confirmation on the stable site/app channels.
+- Edge release manifest override needs `SUPABASE_ACCESS_TOKEN` available in the release environment for future `publish_internal_alpha.ps1 -Mode DeployManifest` runs. This publication kept the endpoint healthy and used the packaged portal manifest as the published-link source.
 - Track 13 release safety remains the baseline for any future publication or wider-access gate.
 - `players.save_type` remains an alpha shortcut. `account_profiles` + `game_saves` is a future migration package.
 - Progression/economy remains mock/substance and not the current tuning focus.
@@ -137,9 +138,25 @@ Visual Direction v1 is implemented and published as the next refinement package 
 
 ## Next Step
 
-Review Battle Presentation v1 locally or decide whether to publish it to the Internal Alpha artifact/site channel. Keep direct chat, helps, contributions, moderation, tuning numbers, weapons, spells, economy and broader replay controls out of scope until they receive their own explicit package.
+Manually review published Battle Presentation v1 on Android, Windows and Web, then choose the next product package. Keep direct chat, helps, contributions, moderation, tuning numbers, weapons, spells, economy and broader replay controls out of scope until they receive their own explicit package.
 
 ## Validation
+
+Latest validation for Battle Presentation v1 publication on `2026-05-29`:
+
+- One-time Godot `--headless --import`: PASS in fresh publication worktree.
+- `validate_foundation.ps1 -Profile Client`: PASS, including `tools/validate.gd`, GUT `tests/client` (`119/119`, `1895` asserts), runtime/hardening/responsive/export smokes.
+- `export_internal_alpha.ps1 -AllowAndroidDebugFallback`: PASS; Android export mode `debug_fallback`.
+- `publish_internal_alpha.ps1 -Mode Plan -PublicDownloads`: PASS for `internal-alpha/v0-battle-presentation-20260529`.
+- `publish_internal_alpha.ps1 -Mode Package -PublicDownloads`: PASS.
+- Supabase Storage upload: PASS for `internal-alpha/v0-battle-presentation-20260529` and stable `internal-alpha/v0`.
+- `build_cloudflare_pages_package.ps1 -StaticAssetBaseUrl https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-battle-presentation-20260529/web`: PASS.
+- Cloudflare Pages deploy: PASS, verified preview `https://2a470539.draxos-mobile-internal-alpha.pages.dev`.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -PublicDownloads -ConfirmRemoteMutation`: BLOCKED before remote secret mutation because `SUPABASE_ACCESS_TOKEN` was not available; Edge manifest endpoint remained healthy and portal was adjusted to read bundled `manifest.example.json`.
+- `server/tests/release_manifest_smoke.ts`: PASS against remote Supabase.
+- `server/tests/internal_alpha_remote_smoke.ts` with `DRAXOS_REMOTE_RELEASE_SMOKE=1`: PASS.
+- Preview GET checks: PASS for `/portal/index.html`, `/portal/manifest.example.json` and `/web/index.html` with versioned Web asset root.
+- Remote HEAD checks: PASS for versioned `index.js` (`315759` bytes), `index.pck` (`4227948` bytes), `index.wasm` (`37695054` bytes), versioned APK (`31633429` bytes) and stable APK (`31633429` bytes), all without Bearer token.
 
 Latest validation for Ossos Inteiros v1 publication on `2026-05-29`:
 
