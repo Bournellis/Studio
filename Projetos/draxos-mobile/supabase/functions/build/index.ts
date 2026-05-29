@@ -775,6 +775,13 @@ function buildStatePayload(state: BuildState): Record<string, unknown> {
     build: state.build,
     combat_build: {
       power: state.player.power,
+      weapon_type: state.build.weapon_type,
+      weapon_quality: state.build.weapon_quality ?? DEFAULT_WEAPON_QUALITY,
+      weapon_level: state.build.weapon_level,
+      passive_id: state.build.passive_id,
+      passive_level: state.build.passive_level,
+      pet_id: state.build.pet_id,
+      pet_level: state.build.pet_level,
       instrument: optionForCurrent("weapons", state.build.weapon_type, state.player.level),
       doctrine: state.build.passive_id === null
         ? null
