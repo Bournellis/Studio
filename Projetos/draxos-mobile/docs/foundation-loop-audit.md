@@ -1,8 +1,8 @@
 # DraxosMobile - Foundation Loop Audit
 
 Status: VIVO
-Atualizado em: 2026-05-28
-Etapa atual: `FOUNDATION_AUDIT_ACTIVE`
+Atualizado em: 2026-05-29
+Etapa atual: `FOUNDATION_BASELINE_CONFIRMED`
 
 ## Estado Do Passe
 
@@ -17,9 +17,9 @@ Entregue:
 - Retorno da batalha marcando o resultado como visto e reabrindo o ciclo de base.
 - Smoke sem rede `tools/smoke_foundation_loop.gd` cobrindo a prioridade do loop.
 
-Proximo uso deste documento: validar manualmente se o passe resolve a experiencia real do loop antes de promover social, visual geral, apresentacao de batalha, armas, spells, economia ou tuning.
+Revisao manual Android/Windows/Web passou em `2026-05-29`: Battle Lab e Progression Lab aparecem no menu inicial, Refugio/Batalha ficam contidos na tela, APK baixa sem erro de Bearer token, a solicitacao de batalha mostra splash estatico e o loop pos-login esta claro. Foundation Loop UX Pass 01 passa a ser o baseline atual antes da proxima decisao de produto.
 
-Revisao manual do build publicado identificou uma regressao anterior a qualquer discussao de gameplay: Entry perdeu Labs Dev em contexto interno e Refugio/Batalha puderam escapar dos limites de Web/Android. Isso gerou o contrato `docs/foundation-responsive-layout-contract.md` e o smoke `tools/smoke_responsive_layout.gd`; qualquer novo passe visual do loop deve passar por esse guardrail antes de publicacao.
+Revisao manual anterior do build publicado identificou uma regressao antes de qualquer discussao de gameplay: Entry perdeu Labs Dev em contexto interno e Refugio/Batalha puderam escapar dos limites de Web/Android. Isso gerou o contrato `docs/foundation-responsive-layout-contract.md` e o smoke `tools/smoke_responsive_layout.gd`; qualquer novo passe visual do loop deve passar por esse guardrail antes de publicacao.
 
 ## Proposito
 

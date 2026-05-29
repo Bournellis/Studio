@@ -2,18 +2,18 @@
 
 DraxosMobile is the Godot/Supabase project for Android, PC executable and PC browser. It is an async PVP autobattler with Refugio/Base management, social systems and server-authoritative progression.
 
-**Status:** `P2_IMPLEMENTACAO - FOUNDATION_AUDIT_ACTIVE`
+**Status:** `P2_IMPLEMENTACAO - FOUNDATION_BASELINE_CONFIRMED`
 **Baseline:** Track 00-15 integrated; Track 13 release safety and Track 14 agent ops baseline preserved; Track 16 is the latest technical package and has not been promoted as the current product focus.
 
 ## Current Focus
 
 The project is a strong implemented base for refinement, not a final product and not a content-expansion track.
 
-The Foundation Loop Audit is documented in `docs/foundation-loop-audit.md`. Foundation Loop UX Pass 01 is implemented and published to the Internal Alpha artifact/site channel as the current UX baseline candidate for the post-login internal loop:
+The Foundation Loop Audit is documented in `docs/foundation-loop-audit.md`. Foundation Loop UX Pass 01 is implemented, published to the Internal Alpha artifact/site channel and manually confirmed on Android/Windows/Web on `2026-05-29` as the current UX baseline for the post-login internal loop:
 
 `Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again`
 
-The immediate focus is manual review of the published loop pass on Android, Windows and Web before choosing the next package.
+The immediate focus is choosing the next package: Social Basico or a small loop adjustment.
 
 Current content, names, spells, weapons, economy values, battle flavor, visual style and premium systems exist to give substance to the prototype. Treat them as mock/substance for evaluation, not as final game direction or current tuning priorities.
 
@@ -35,7 +35,7 @@ Do not start from old Track 04/08/10/15/16 notes. They are history or technical 
 Before any new feature, numeric tuning, account/save migration, assets-final pass, battle presentation pass, social expansion or remote publication:
 
 1. Read `docs/foundation-loop-audit.md`.
-2. Review the published Foundation Loop UX Pass 01 and accept or revise the loop before expanding social, visuals, battle presentation or content systems.
+2. Treat Foundation Loop UX Pass 01 as the accepted current baseline, and choose an explicit next package before expanding social, visuals, battle presentation or content systems.
 3. Keep release publishing in `Mode Plan` or `Mode Package` unless the user explicitly approves remote mutation.
 4. Run the real Android / Windows / Web walkthrough in `docs/track-13-manual-walkthrough-gate.md` before any remote publication.
 
@@ -86,4 +86,4 @@ git status --short
 - Version code: `1`
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal/Web: Cloudflare Access protected.
-- Latest verified preview: `https://ab1f2977.draxos-mobile-internal-alpha.pages.dev`
+- Latest verified preview: `https://a1c7524d.draxos-mobile-internal-alpha.pages.dev`

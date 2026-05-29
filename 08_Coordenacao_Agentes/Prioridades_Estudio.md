@@ -5,7 +5,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 ## Foco Atual
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Foco P2 de implementacao (`FOUNDATION_AUDIT_ACTIVE`, sobre Track 13 release safety, Track 14 agent ops, Track 15 UX e ultimo pacote tecnico Track 16): `Projetos/draxos-mobile/`
+- Foco P2 de implementacao (`FOUNDATION_BASELINE_CONFIRMED`, sobre Track 13 release safety, Track 14 agent ops, Track 15 UX e ultimo pacote tecnico Track 16): `Projetos/draxos-mobile/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/` (preservado como referencia - nao e o projeto ativo)
 - Projetos pausados: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -14,7 +14,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 | Prioridade | Projeto | Caminho | Fase | Status | Trabalho permitido | Proximo passo | Restricao operacional |
 |---|---|---|---|---|---|---|---|
 | P0 | Draxos Roguelike Cardgame | `Projetos/draxos-roguelike-cardgame/` | Implementacao | `P0_IMPLEMENTACAO` | Codigo, validacao, playtest, documentacao local | Playtest de usuario da Track 02 completa | Pode receber trabalho de implementacao por padrao |
-| P2 | DraxosMobile | `Projetos/draxos-mobile/` | Implementacao - `FOUNDATION_AUDIT_ACTIVE` | `P2_IMPLEMENTACAO` | Codigo, design, documentacao local, configuracao de infraestrutura | Revisar Android/Windows/Web publicados; confirmar Labs Dev no menu inicial, Refugio/Batalha contidos, download APK sem Bearer token, splash estatico ao solicitar batalha e loop pos-login antes de social basico | iOS sem pedido explicito; mobile browser fora do escopo primario; secrets e service role nunca entram no cliente/export; publicacao remota exige `-ConfirmRemoteMutation`; mudancas visuais em Entry/Refugio/Batalha exigem `foundation-responsive-layout-contract.md` + `smoke_responsive_layout.gd`; migration conta/save estrutural fora do pacote atual; tuning numerico, armas, spells, economia, visual final e apresentacao de batalha bloqueados ate decisao explicita |
+| P2 | DraxosMobile | `Projetos/draxos-mobile/` | Implementacao - `FOUNDATION_BASELINE_CONFIRMED` | `P2_IMPLEMENTACAO` | Codigo, design, documentacao local, configuracao de infraestrutura | Decidir o proximo pacote: Social Basico ou um ajuste pequeno do loop, mantendo a base publicada como baseline atual | iOS sem pedido explicito; mobile browser fora do escopo primario; secrets e service role nunca entram no cliente/export; publicacao remota exige `-ConfirmRemoteMutation`; mudancas visuais em Entry/Refugio/Batalha exigem `foundation-responsive-layout-contract.md` + `smoke_responsive_layout.gd`; migration conta/save estrutural fora do pacote atual; tuning numerico, armas, spells, economia, visual final e apresentacao de batalha bloqueados ate decisao explicita |
 | Arquivo | Mobile Universe (conceito) | `Projetos/_conceitos/mobile-universe/` | Arquivo de design | `ARQUIVO_DESIGN` | Leitura e referencia de design apenas | - | Nao criar codigo, cenas, assets ou projeto Godot a partir daqui |
 | Pausado | RPG Isometrico | `Projetos/rpg-isometrico/` | Pausado | `PAUSADO_INDEFINIDO` | Consulta historica quando solicitado | Nenhum enquanto pausado | Nao implementar, expandir gates ou selecionar Next Gate sem pedido explicito |
 | Pausado | RPG Turnos | `Projetos/rpg-turnos/` | Pausado | `PAUSADO_INDEFINIDO` | Consulta historica quando solicitado | Nenhum enquanto pausado | Nao implementar, selecionar track/gate, regenerar `.tres` ou alterar escopo sem pedido explicito |

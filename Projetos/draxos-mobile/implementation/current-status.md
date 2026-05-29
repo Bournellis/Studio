@@ -1,11 +1,11 @@
 # DraxosMobile - Current Status
 
-- Last updated: `2026-05-28`
+- Last updated: `2026-05-29`
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
-- Active surface: `Foundation Audit`
-- Active stage: `Foundation Audit`
-- Active stage status: `FOUNDATION_AUDIT_ACTIVE`
+- Active surface: `Foundation Baseline`
+- Active stage: `Foundation Baseline`
+- Active stage status: `FOUNDATION_BASELINE_CONFIRMED`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety` (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation` (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical context, not current product focus)
@@ -36,7 +36,7 @@ The major foundation baseline is:
 
 ## Foundation Audit
 
-Foundation Audit is the active stage. It must align documents and then audit the internal post-login loop before implementation expands.
+Foundation Baseline is the active stage. Foundation Audit aligned documents, audited the internal post-login loop and produced the current published baseline before implementation expands.
 
 Documentation alignment is complete, and the first loop audit is recorded in `docs/foundation-loop-audit.md`. The audit conclusion was: the foundation exists technically, but the V0 UX needed a focused pass so the player always understands the next post-login action.
 
@@ -48,7 +48,9 @@ Follow-up refuge/battle hotfixes were published on `2026-05-28` from branch `cod
 
 Entry Dev Labs export hotfix was published on `2026-05-28` after manual review showed the published menu still hid Battle Lab and Progression Lab. The root cause was `export_presets.cfg` excluding `dev/**`, so exported builds could not satisfy `ResourceLoader.exists()` for the lab overlays. Internal Alpha exports now package `res://dev/battle_lab/battle_lab_screen.gd` and `res://dev/progression_lab/progression_lab_screen.gd`, and `tools/smoke_exports.gd` prevents this regression.
 
-Priority order after the docs are aligned:
+Manual Android/Windows/Web review passed on `2026-05-29`. The review confirmed Battle Lab and Progression Lab in the initial menu, Refugio/Battle contained in screen bounds, APK download without Bearer-token error, static splash while requesting battle and a clear post-login loop. Foundation Loop UX Pass 01 is therefore the current accepted baseline for the next product decision.
+
+Priority order after baseline confirmation:
 
 1. Internal loop ergonomics.
 2. Social.
@@ -56,7 +58,7 @@ Priority order after the docs are aligned:
 4. Battle presentation.
 5. Weapons, spells, economy, balance and content details.
 
-No new code, schema, backend, asset, gameplay or balance work belongs to this documentation alignment package.
+No new code, schema, backend, asset, gameplay or balance work belongs outside an explicit next package decision.
 
 ## Latest Technical Package
 
@@ -90,15 +92,15 @@ The stable Cloudflare Pages domain is protected by Cloudflare Access. Anonymous 
 ## Risks And Blocks
 
 - Track 16 schema/backend work was not separately promoted in this publication; Supabase migrations/functions for that package must still be deployed deliberately if Track 16 becomes product focus later.
-- Foundation Loop UX Pass 01 is published, but it still needs manual Android/Windows/Web review before it becomes the accepted V0 UX baseline.
-- Track 13 manual Android/Windows/Web walkthrough is still required before widening access beyond the current internal/private audience.
+- Foundation Loop UX Pass 01 is the accepted current V0 UX baseline after manual Android/Windows/Web review on `2026-05-29`; wider access still requires an explicit release/access decision.
+- Track 13 release safety remains the baseline for any future publication or wider-access gate.
 - `players.save_type` remains an alpha shortcut. `account_profiles` + `game_saves` is a future migration package.
 - Progression/economy remains mock/substance and not the current tuning focus.
 - Release scripts are safe by default; remote mutation remains opt-in with `-ConfirmRemoteMutation`.
 
 ## Next Step
 
-Manually review Android/Windows/Web again: Entry Labs visible in the initial menu, Refugio contained, Battle contained, APK download works without Bearer-token error, battle request shows only the static splash before opening, loop CTA is obvious, and reward return sends the player back to base intent. After this review, decide whether the next package stays on loop ergonomics or moves to the first social pass.
+Decide the next product package: Social Basico or a small loop adjustment. Keep tuning numbers, weapons, spells, economy, final visual identity and battle presentation out of scope until they receive their own explicit package.
 
 ## Validation
 

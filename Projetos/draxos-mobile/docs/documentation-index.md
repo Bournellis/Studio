@@ -1,7 +1,7 @@
 # DraxosMobile - Documentation Index
 
 - Status: `VIVO`
-- Last updated: `2026-05-28`
+- Last updated: `2026-05-29`
 - Purpose: classify project documents so agents know what to trust, what to update and what to treat as history.
 
 ## Categories
@@ -33,7 +33,7 @@
 |---|---|---|
 | `docs/product-vision.md` | `VIVO` | Local long-term product canon until promoted to shared canon. |
 | `docs/foundation-app-v0-audit.md` | `VIVO` | Current Foundation Audit compass: real foundation, current mock, live-product gaps and post-login loop focus. |
-| `docs/foundation-loop-audit.md` | `VIVO` | Executed audit of the current post-login loop ergonomics; records Foundation Loop UX Pass 01 as the published Internal Alpha UX baseline candidate. |
+| `docs/foundation-loop-audit.md` | `VIVO` | Executed audit of the current post-login loop ergonomics; records Foundation Loop UX Pass 01 as the accepted Internal Alpha UX baseline. |
 | `docs/foundation-responsive-layout-contract.md` | `CONTRATO` | Responsive guardrail for Entry Labs, Refugio and Battle safe frames across Android portrait and Web/Desktop viewports. |
 | `docs/product-brief.md` | `VIVO` | Short product/slice summary. |
 | `docs/game-design-document.md` | `VIVO` | Implementation reference and mock/substance context; not the current expansion target. |
@@ -100,10 +100,10 @@
 ## Drift Rules
 
 - A live doc must not tell agents to start from Track 04, Track 08, Track 10, Track 14, Track 15 or Track 16 as the current stage.
-- A live doc must treat `FOUNDATION_AUDIT_ACTIVE` as the active operational stage until the user chooses the next package.
+- A live doc must treat `FOUNDATION_BASELINE_CONFIRMED` as the active operational stage until the user chooses the next package.
 - A live doc must not direct agents to expand balance, weapons, spells, Battle Pass, economy, final visual identity or battle presentation before Foundation Audit.
 - Foundation Audit must prioritize the post-login loop: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again.
-- Foundation Loop UX Pass 01 is published to Internal Alpha until manual Android/Windows/Web review accepts or revises it.
+- Foundation Loop UX Pass 01 was manually accepted on Android/Windows/Web on `2026-05-29` and is the current baseline before the next package.
 - Visual/layout changes must respect `docs/foundation-responsive-layout-contract.md` and pass `tools/smoke_responsive_layout.gd` before publication.
 - Historical docs can keep old language when they are clearly historical.
 - Product-facing language should use Instrumento Ritual, Doutrina and Familiar.
