@@ -1,7 +1,7 @@
 extends Node
 
 const CATALOG_PATH: String = "res://data/generated/draxos_mobile_catalog.tres"
-const ContentGeneratorScript = preload("res://tools/content_generator.gd")
+const CONTENT_GENERATOR_PATH: String = "res://tools/content_generator.gd"
 
 var _catalog
 
@@ -9,7 +9,11 @@ func ensure_loaded():
 	if _catalog != null:
 		return _catalog
 	if not ResourceLoader.exists(CATALOG_PATH):
-		var result: Dictionary = ContentGeneratorScript.new().generate_all()
+		var generator = _new_content_generator()
+		if generator == null:
+			push_error("Generated DraxosMobile catalog is missing.")
+			return null
+		var result: Dictionary = generator.generate_all()
 		if not bool(result.get("ok", false)):
 			push_error(str(result.get("message", "Content generation failed.")))
 			return null
@@ -50,7 +54,18 @@ func get_display_name(collection_id: String, item_id: String) -> String:
 	return str(item.get("display_name", item_id))
 
 func validate_catalog() -> Dictionary:
-	var result: Dictionary = ContentGeneratorScript.new().validate_current_catalog()
+	var generator = _new_content_generator()
+	if generator == null:
+		return {"ok": false, "message": "Content generator is not available in this build."}
+	var result: Dictionary = generator.validate_current_catalog()
 	if not bool(result.get("ok", false)):
 		return result
 	return {"ok": true, "message": "DraxosMobile content catalog is valid."}
+
+func _new_content_generator():
+	if not ResourceLoader.exists(CONTENT_GENERATOR_PATH):
+		return null
+	var script: Script = load(CONTENT_GENERATOR_PATH)
+	if script == null:
+		return null
+	return script.new()

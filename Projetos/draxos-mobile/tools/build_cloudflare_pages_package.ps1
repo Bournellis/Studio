@@ -3,7 +3,8 @@ param(
     [string]$PublishDir = "",
     [string]$OutputDir = "",
     [string]$ZipPath = "",
-    [string]$StaticAssetBaseUrl = "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/web"
+    [string]$StaticAssetBaseUrl = "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/web",
+    [string]$MainPackUrl = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -65,15 +66,21 @@ function Get-RemoteContentLength {
 }
 
 function Assert-WebShellMatchesRemoteAssets {
-    param([string]$Html, [string]$AssetBase)
+    param([string]$Html, [string]$AssetBase, [string]$PackUrl = "")
     if ($AssetBase -notmatch "^https?://") {
         return
     }
+    $pckUrl = if ([string]::IsNullOrWhiteSpace($PackUrl)) { $AssetBase + "/index.pck" } else { $PackUrl }
+    $remoteAssetUrls = @{
+        "index.pck" = $pckUrl
+        "index.wasm" = $AssetBase + "/index.wasm"
+    }
     foreach ($fileName in @("index.pck", "index.wasm")) {
         $shellSize = Get-GodotWebFileSize -Html $Html -FileName $fileName
-        $remoteSize = Get-RemoteContentLength -Url ($AssetBase + "/" + $fileName)
+        $remoteUrl = $remoteAssetUrls[$fileName]
+        $remoteSize = Get-RemoteContentLength -Url $remoteUrl
         if ($shellSize -ne $remoteSize) {
-            throw "Web shell asset size mismatch for $fileName. publish/web/index.html says $shellSize bytes but $AssetBase/$fileName is $remoteSize bytes. Re-run export_internal_alpha.ps1 and publish_internal_alpha.ps1 -Mode Package in the same release worktree, or use a PublishDir generated from the uploaded Web asset root."
+            throw "Web shell asset size mismatch for $fileName. publish/web/index.html says $shellSize bytes but $remoteUrl is $remoteSize bytes. Re-run export_internal_alpha.ps1 and publish_internal_alpha.ps1 -Mode Package in the same release worktree, or use a PublishDir generated from the uploaded Web asset root."
         }
     }
 }
@@ -123,6 +130,11 @@ New-Item -ItemType Directory -Force -Path $OutputDir | Out-Null
 New-Item -ItemType Directory -Force -Path (Join-Path $OutputDir "web") | Out-Null
 
 Copy-Item -LiteralPath $portalSource -Destination (Join-Path $OutputDir "portal") -Recurse -Force
+Get-ChildItem -LiteralPath $webSource -File |
+    Where-Object { $_.Name -notin @("index.html", "index.pck", "index.wasm") } |
+    ForEach-Object {
+        Copy-Item -LiteralPath $_.FullName -Destination (Join-Path $OutputDir "web/$($_.Name)") -Force
+    }
 
 $portalIndexPath = Join-Path $OutputDir "portal/index.html"
 $portalHtml = Get-Content -Raw -LiteralPath $portalIndexPath
@@ -130,14 +142,18 @@ $portalHtml = $portalHtml.Replace("STATIC_HOST_PLACEHOLDER", "/web/index.html")
 [System.IO.File]::WriteAllText($portalIndexPath, $portalHtml, [System.Text.UTF8Encoding]::new($false))
 
 $assetBase = $StaticAssetBaseUrl.TrimEnd("/")
+$mainPack = $MainPackUrl.Trim()
 $webIndexPath = Join-Path $OutputDir "web/index.html"
 $webHtml = Get-Content -Raw -LiteralPath $webIndexSource
-$webHtml = $webHtml.Replace('href="index.icon.png"', ('href="' + $assetBase + '/index.icon.png"'))
-$webHtml = $webHtml.Replace('href="index.apple-touch-icon.png"', ('href="' + $assetBase + '/index.apple-touch-icon.png"'))
-$webHtml = $webHtml.Replace('src="index.png"', ('src="' + $assetBase + '/index.png"'))
-$webHtml = $webHtml.Replace('<script src="index.js"></script>', ('<script src="' + $assetBase + '/index.js"></script>'))
+$webHtml = $webHtml.Replace('href="index.icon.png"', 'href="/web/index.icon.png"')
+$webHtml = $webHtml.Replace('href="index.apple-touch-icon.png"', 'href="/web/index.apple-touch-icon.png"')
+$webHtml = $webHtml.Replace('src="index.png"', 'src="/web/index.png"')
+$webHtml = $webHtml.Replace('<script src="index.js"></script>', '<script src="/web/index.js"></script>')
 $webHtml = $webHtml.Replace('"executable":"index"', ('"executable":"' + $assetBase + '/index"'))
-Assert-WebShellMatchesRemoteAssets -Html $webHtml -AssetBase $assetBase
+if (-not [string]::IsNullOrWhiteSpace($mainPack)) {
+    $webHtml = $webHtml.Replace('"experimentalVK":true', ('"mainPack":"' + $mainPack + '","experimentalVK":true'))
+}
+Assert-WebShellMatchesRemoteAssets -Html $webHtml -AssetBase $assetBase -PackUrl $mainPack
 [System.IO.File]::WriteAllText($webIndexPath, $webHtml, [System.Text.UTF8Encoding]::new($false))
 
 # Flat root files make Cloudflare direct upload more forgiving when a browser

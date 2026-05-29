@@ -118,7 +118,8 @@ function Assert-UnderDirectory {
 
 function Invoke-Supabase {
     param([string[]]$Arguments)
-    & npx -y supabase @Arguments
+    $package = if ($script:SupabaseCliPackage) { $script:SupabaseCliPackage } else { "supabase" }
+    & npx -y $package @Arguments
     if ($LASTEXITCODE -ne 0) {
         throw "Supabase CLI failed with exit code $LASTEXITCODE`: supabase $($Arguments -join ' ')"
     }
@@ -129,7 +130,8 @@ function Invoke-SupabaseOptional {
     $previousErrorActionPreference = $ErrorActionPreference
     $ErrorActionPreference = "Continue"
     try {
-        & npx -y supabase @Arguments *> $null
+        $package = if ($script:SupabaseCliPackage) { $script:SupabaseCliPackage } else { "supabase" }
+        & npx -y $package @Arguments *> $null
         return $LASTEXITCODE
     } finally {
         $ErrorActionPreference = $previousErrorActionPreference
@@ -351,6 +353,7 @@ if ($EnvFile -eq "") {
 }
 
 $envValues = Read-DotEnv -Path $EnvFile
+$script:SupabaseCliPackage = Env-Value $envValues @("DRAXOS_MOBILE_SUPABASE_CLI_PACKAGE") "supabase@2.98.0"
 $projectRef = Env-Value $envValues @("SUPABASE_PROJECT_REF")
 $supabaseUrl = (Env-Value $envValues @("DRAXOS_MOBILE_SUPABASE_URL", "SUPABASE_URL")).TrimEnd("/")
 $publishableKey = Env-Value $envValues @("DRAXOS_MOBILE_SUPABASE_PUBLISHABLE_KEY", "SUPABASE_PUBLISHABLE_KEY")
