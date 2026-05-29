@@ -470,6 +470,11 @@ func apply_build_result(payload: Dictionary) -> bool:
 	if body.get("build", null) is Dictionary:
 		build = _as_dictionary(body.get("build", {})).duplicate(true)
 		_remember_surface_snapshot(SURFACE_ACCOUNT)
+	if body.get("player", null) is Dictionary:
+		var player_patch := _as_dictionary(body.get("player", {}))
+		for key_variant: Variant in player_patch.keys():
+			player[str(key_variant)] = player_patch.get(key_variant)
+		_remember_surface_snapshot(SURFACE_ACCOUNT)
 	combat_build_state = state.duplicate(true)
 	_remember_surface_snapshot(SURFACE_BUILD)
 	last_error = {}

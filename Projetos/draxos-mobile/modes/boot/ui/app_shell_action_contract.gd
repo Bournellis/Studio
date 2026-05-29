@@ -53,6 +53,13 @@ const PREFIX_SELECT_BASE_STRUCTURE := "select_base_structure:"
 const PREFIX_UPGRADE_BASE_STRUCTURE := "upgrade_base_structure:"
 const PREFIX_SHOP_PURCHASE := "shop_purchase:"
 const PREFIX_CLAIM_REWARD := "claim_reward:"
+const PREFIX_EQUIP_INSTRUMENT := "equip_instrument:"
+const PREFIX_EQUIP_SPELL_POSITION := "equip_spell_position:"
+const PREFIX_REMOVE_SPELL_POSITION := "remove_spell_position:"
+const PREFIX_EQUIP_DOCTRINE := "equip_doctrine:"
+const PREFIX_REMOVE_DOCTRINE := "remove_doctrine:"
+const PREFIX_EQUIP_FAMILIAR := "equip_familiar:"
+const PREFIX_REMOVE_FAMILIAR := "remove_familiar:"
 const PREFIX_ENABLE_SPELL_BEHAVIOR := "enable_spell_behavior:"
 const PREFIX_DISABLE_SPELL_BEHAVIOR := "disable_spell_behavior:"
 const PREFIX_BATTLE_REPLAY := RouteContract.ACTION_BATTLE_REPLAY_PREFIX
@@ -118,6 +125,38 @@ static func is_shop_purchase(action_id: String) -> bool:
 static func is_claim_reward(action_id: String) -> bool:
 	return action_id.strip_edges().begins_with(PREFIX_CLAIM_REWARD)
 
+static func is_equip_instrument(action_id: String) -> bool:
+	return action_id.strip_edges().begins_with(PREFIX_EQUIP_INSTRUMENT)
+
+static func is_equip_spell_position(action_id: String) -> bool:
+	return action_id.strip_edges().begins_with(PREFIX_EQUIP_SPELL_POSITION)
+
+static func is_remove_spell_position(action_id: String) -> bool:
+	return action_id.strip_edges().begins_with(PREFIX_REMOVE_SPELL_POSITION)
+
+static func is_equip_doctrine(action_id: String) -> bool:
+	return action_id.strip_edges().begins_with(PREFIX_EQUIP_DOCTRINE)
+
+static func is_remove_doctrine(action_id: String) -> bool:
+	return action_id.strip_edges() == PREFIX_REMOVE_DOCTRINE
+
+static func is_equip_familiar(action_id: String) -> bool:
+	return action_id.strip_edges().begins_with(PREFIX_EQUIP_FAMILIAR)
+
+static func is_remove_familiar(action_id: String) -> bool:
+	return action_id.strip_edges() == PREFIX_REMOVE_FAMILIAR
+
+static func is_build_equip_action(action_id: String) -> bool:
+	return (
+		is_equip_instrument(action_id)
+		or is_equip_spell_position(action_id)
+		or is_remove_spell_position(action_id)
+		or is_equip_doctrine(action_id)
+		or is_remove_doctrine(action_id)
+		or is_equip_familiar(action_id)
+		or is_remove_familiar(action_id)
+	)
+
 static func is_enable_spell_behavior(action_id: String) -> bool:
 	return action_id.strip_edges().begins_with(PREFIX_ENABLE_SPELL_BEHAVIOR)
 
@@ -139,6 +178,27 @@ static func shop_purchase_action(product_id: String) -> String:
 static func claim_reward_action(reward_id: String) -> String:
 	return "%s%s" % [PREFIX_CLAIM_REWARD, reward_id.strip_edges()]
 
+static func equip_instrument_action(instrument_id: String) -> String:
+	return "%s%s" % [PREFIX_EQUIP_INSTRUMENT, instrument_id.strip_edges()]
+
+static func equip_spell_position_action(position: int, spell_id: String) -> String:
+	return "%s%d:%s" % [PREFIX_EQUIP_SPELL_POSITION, maxi(1, position), spell_id.strip_edges()]
+
+static func remove_spell_position_action(position: int) -> String:
+	return "%s%d" % [PREFIX_REMOVE_SPELL_POSITION, maxi(1, position)]
+
+static func equip_doctrine_action(doctrine_id: String) -> String:
+	return "%s%s" % [PREFIX_EQUIP_DOCTRINE, doctrine_id.strip_edges()]
+
+static func remove_doctrine_action() -> String:
+	return PREFIX_REMOVE_DOCTRINE
+
+static func equip_familiar_action(familiar_id: String) -> String:
+	return "%s%s" % [PREFIX_EQUIP_FAMILIAR, familiar_id.strip_edges()]
+
+static func remove_familiar_action() -> String:
+	return PREFIX_REMOVE_FAMILIAR
+
 static func enable_spell_behavior_action(spell_id: String) -> String:
 	return "%s%s" % [PREFIX_ENABLE_SPELL_BEHAVIOR, spell_id.strip_edges()]
 
@@ -153,3 +213,11 @@ static func action_value(action_id: String) -> String:
 	if not candidate.contains(":"):
 		return ""
 	return candidate.get_slice(":", 1).strip_edges()
+
+static func action_value_at(action_id: String, index: int) -> String:
+	var candidate := action_id.strip_edges()
+	if index < 1 or not candidate.contains(":"):
+		return ""
+	if candidate.get_slice_count(":") <= index:
+		return ""
+	return candidate.get_slice(":", index).strip_edges()

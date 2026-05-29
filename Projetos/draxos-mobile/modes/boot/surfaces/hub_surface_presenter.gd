@@ -839,50 +839,118 @@ static func _refuge_hotspot_panel(host: Node, compact: bool) -> PanelContainer:
 static func _preparation_panel(host: Node, compact: bool) -> PanelContainer:
 	var panel := _panel(host, "PreparationPanel", "bg_panel", "border_active")
 	var box := _panel_box(panel, compact)
-	box.add_child(_section_label("Pronto para batalha", compact))
-	box.add_child(_body_label("Resumo do que Draxos leva para a proxima luta.", compact))
-
 	var combat_build := SessionStore.combat_build_state
 	var account_build := SessionStore.build
+	var options := _as_dictionary(combat_build.get("equipment_options", {}))
 	var inventory := _as_array(combat_build.get("inventory", []))
 	var potion_slots := _as_array(combat_build.get("potion_slots", []))
-	var equipped_spells := _as_array(combat_build.get("equipped_spells", []))
-	var instrument_id := _first_non_empty_string(combat_build, ["weapon_type", "weapon_id", "instrument_id", "ritual_instrument_id"])
-	if instrument_id == "":
-		instrument_id = _first_non_empty_string(account_build, ["weapon_type", "weapon_id", "instrument_id", "ritual_instrument_id"])
-	if instrument_id != "":
-		box.add_child(_body_label("Instrumento ritual: %s%s" % [
-			_preparation_item_label(instrument_id),
-			_preparation_level_suffix_with_fallback(combat_build, account_build, ["weapon_level", "instrument_level"]),
-		], compact))
-	var level_text := _preparation_account_power_text()
+	var spell_slots := _preparation_spell_slots(combat_build)
+
+	box.add_child(_section_label("Pronto para batalha", compact))
+	box.add_child(_body_label("Escolha o que Draxos leva para a proxima luta.", compact))
+	var level_text := _preparation_account_power_text(combat_build)
 	if level_text != "":
 		box.add_child(_body_label(level_text, compact))
 
+	var instrument_id := _first_non_empty_string(combat_build, ["weapon_type", "weapon_id", "instrument_id", "ritual_instrument_id"])
+	if instrument_id == "":
+		instrument_id = _first_non_empty_string(account_build, ["weapon_type", "weapon_id", "instrument_id", "ritual_instrument_id"])
 	var familiar_id := _first_non_empty_string(combat_build, ["pet_id", "familiar_id"])
 	if familiar_id == "":
 		familiar_id = _first_non_empty_string(account_build, ["pet_id", "familiar_id"])
 	var doctrine_id := _first_non_empty_string(combat_build, ["passive_id", "doctrine_id", "doutrina_id"])
 	if doctrine_id == "":
 		doctrine_id = _first_non_empty_string(account_build, ["passive_id", "doctrine_id", "doutrina_id"])
-	if familiar_id != "" or doctrine_id != "":
-		box.add_child(_body_label("Familiar e doutrina", compact))
-		if familiar_id != "":
-			box.add_child(_body_label("Familiar: %s%s" % [
-				_preparation_item_label(familiar_id),
-				_preparation_level_suffix_with_fallback(combat_build, account_build, ["pet_level", "familiar_level"]),
+
+	box.add_child(_body_label("Resumo: %s | %s | %s | %s" % [
+		_preparation_item_label(instrument_id),
+		_preparation_spell_summary(spell_slots),
+		_preparation_item_label(doctrine_id) if doctrine_id != "" else "Sem Doutrina",
+		_preparation_item_label(familiar_id) if familiar_id != "" else "Sem Familiar",
+	], compact))
+	var cta_grid := _button_grid(compact, 1)
+	box.add_child(cta_grid)
+	cta_grid.add_child(_entry_action_button(host, "Pedir batalha", AppShellActionContractScript.ACTION_REQUEST_BATTLE, compact, "", true))
+
+	box.add_child(_section_label("Instrumento Ritual", compact))
+	if instrument_id != "":
+		box.add_child(_body_label("Em uso: %s%s" % [
+			_preparation_item_label(instrument_id),
+			_preparation_level_suffix_with_fallback(combat_build, account_build, ["weapon_level", "instrument_level"]),
+		], compact))
+	_render_preparation_options(
+		host,
+		box,
+		compact,
+		_as_array(options.get("weapons", [])),
+		instrument_id,
+		"instrument",
+		false
+	)
+
+	box.add_child(_section_label("Habilidades", compact))
+	if spell_slots.is_empty():
+		box.add_child(_body_label("Nenhuma habilidade equipada.", compact))
+	else:
+		for slot: Dictionary in spell_slots:
+			var position := int(slot.get("slot_index", 1))
+			var spell_id := str(slot.get("spell_id", "")).strip_edges()
+			var unlocked := bool(slot.get("unlocked", true))
+			if not unlocked:
+				box.add_child(_body_label("Habilidade %d: desbloqueia no nivel %d." % [position, int(slot.get("unlock_level", 1))], compact))
+				continue
+			if spell_id == "" or spell_id == "<null>" or spell_id.to_lower() == "null":
+				box.add_child(_body_label("Habilidade %d: vazia." % position, compact))
+				continue
+			box.add_child(_body_label("Habilidade %d: %s | %s" % [
+				position,
+				_preparation_item_label(spell_id),
+				_spell_timing_text(_as_dictionary(slot.get("behavior", {}))),
 			], compact))
-		if doctrine_id != "":
-			box.add_child(_body_label("Doutrina: %s%s" % [
-				_preparation_item_label(doctrine_id),
-				_preparation_level_suffix_with_fallback(combat_build, account_build, ["passive_level", "doctrine_level", "doutrina_level"]),
-			], compact))
+			var remove_spell_actions := _button_grid(compact, 2)
+			box.add_child(remove_spell_actions)
+			remove_spell_actions.add_child(_entry_action_button(host, "Usar na batalha", AppShellActionContractScript.enable_spell_behavior_action(spell_id), compact))
+			remove_spell_actions.add_child(_entry_action_button(host, "Pausar", AppShellActionContractScript.disable_spell_behavior_action(spell_id), compact))
+			remove_spell_actions.add_child(_entry_action_button(host, "Remover", AppShellActionContractScript.remove_spell_position_action(position), compact))
+	_render_spell_options(host, box, compact, _as_array(options.get("spells", [])), spell_slots)
+
+	box.add_child(_section_label("Doutrina", compact))
+	var doctrine_text := _preparation_item_label(doctrine_id) if doctrine_id != "" else "Nenhuma Doutrina equipada"
+	if doctrine_id != "":
+		doctrine_text += _preparation_level_suffix_with_fallback(combat_build, account_build, ["passive_level", "doctrine_level", "doutrina_level"])
+	box.add_child(_body_label("Em uso: %s" % doctrine_text, compact))
+	_render_preparation_options(
+		host,
+		box,
+		compact,
+		_as_array(options.get("doutrines", [])),
+		doctrine_id,
+		"doctrine",
+		true,
+		AppShellActionContractScript.remove_doctrine_action()
+	)
+
+	box.add_child(_section_label("Familiar", compact))
+	var familiar_text := _preparation_item_label(familiar_id) if familiar_id != "" else "Nenhum Familiar equipado"
+	if familiar_id != "":
+		familiar_text += _preparation_level_suffix_with_fallback(combat_build, account_build, ["pet_level", "familiar_level"])
+	box.add_child(_body_label("Em uso: %s" % familiar_text, compact))
+	_render_preparation_options(
+		host,
+		box,
+		compact,
+		_as_array(options.get("familiars", [])),
+		familiar_id,
+		"familiar",
+		true,
+		AppShellActionContractScript.remove_familiar_action()
+	)
 
 	var stock := _inventory_quantity(inventory, AppShellActionContractScript.ITEM_HEALTH_POTION)
 	var potion_slot := _first_dictionary(potion_slots)
 	var potion_id := str(potion_slot.get("potion_id", ""))
 	var potion_behavior := _as_dictionary(potion_slot.get("behavior", {}))
-	box.add_child(_body_label("Pocao", compact))
+	box.add_child(_section_label("Pocao", compact))
 	box.add_child(_body_label(_potion_status_text(potion_id), compact))
 	box.add_child(_body_label("Estoque: %d" % stock, compact))
 	var potion_timing_text := _potion_timing_text(potion_id, potion_behavior)
@@ -895,24 +963,6 @@ static func _preparation_panel(host: Node, compact: bool) -> PanelContainer:
 	potion_actions.add_child(_entry_action_button(host, "Remover pocao", AppShellActionContractScript.ACTION_UNEQUIP_POTION, compact))
 	potion_actions.add_child(_entry_action_button(host, "Usar com vida baixa", AppShellActionContractScript.ACTION_ENABLE_POTION_DEFAULT, compact))
 	potion_actions.add_child(_entry_action_button(host, "Pausar pocao", AppShellActionContractScript.ACTION_DISABLE_POTION, compact))
-
-	box.add_child(_body_label("Habilidades", compact))
-	if equipped_spells.is_empty():
-		box.add_child(_body_label("Nenhuma habilidade equipada.", compact))
-		return panel
-
-	for spell_variant: Variant in equipped_spells.slice(0, mini(3, equipped_spells.size())):
-		var spell := _as_dictionary(spell_variant)
-		var spell_id := str(spell.get("spell_id", ""))
-		var behavior := _as_dictionary(spell.get("behavior", {}))
-		box.add_child(_body_label("%s: %s" % [
-			_preparation_item_label(spell_id),
-			_spell_timing_text(behavior),
-		], compact))
-		var spell_actions := _button_grid(compact, 2)
-		box.add_child(spell_actions)
-		spell_actions.add_child(_entry_action_button(host, "Usar na batalha", AppShellActionContractScript.enable_spell_behavior_action(spell_id), compact))
-		spell_actions.add_child(_entry_action_button(host, "Pausar", AppShellActionContractScript.disable_spell_behavior_action(spell_id), compact))
 	return panel
 
 static func _refuge_footer_panel(host: Node, compact: bool) -> PanelContainer:
@@ -1204,6 +1254,167 @@ static func _preparation_item_label(item_id: String) -> String:
 		return "Nao definido"
 	return _humanize_id(cleaned)
 
+static func _preparation_spell_slots(combat_build: Dictionary) -> Array:
+	var direct_slots := _as_array(combat_build.get("spell_slots", []))
+	if not direct_slots.is_empty():
+		var normalized := []
+		for slot_variant: Variant in direct_slots:
+			var slot := _as_dictionary(slot_variant)
+			if not slot.is_empty():
+				normalized.append(slot)
+		return normalized
+
+	var equipped := _as_array(combat_build.get("equipped_spells", []))
+	if equipped.is_empty():
+		return []
+
+	var fallback := []
+	for index in range(equipped.size()):
+		var equipped_spell := _as_dictionary(equipped[index])
+		var spell_id := str(equipped_spell.get("spell_id", "")).strip_edges()
+		if spell_id == "":
+			continue
+		fallback.append({
+			"slot_index": index + 1,
+			"unlock_level": 1,
+			"unlocked": true,
+			"spell_id": spell_id,
+			"behavior": _as_dictionary(equipped_spell.get("behavior", {})),
+		})
+	return fallback
+
+static func _preparation_spell_summary(spell_slots: Array) -> String:
+	var count := 0
+	for slot_variant: Variant in spell_slots:
+		var slot := _as_dictionary(slot_variant)
+		var spell_id := str(slot.get("spell_id", "")).strip_edges()
+		if spell_id != "" and spell_id != "<null>" and spell_id.to_lower() != "null":
+			count += 1
+	if count <= 0:
+		return "Sem habilidades"
+	if count == 1:
+		return "1 habilidade"
+	return "%d habilidades" % count
+
+static func _render_preparation_options(
+	host: Node,
+	box: VBoxContainer,
+	compact: bool,
+	options: Array,
+	current_id: String,
+	action_kind: String,
+	allow_remove: bool,
+	remove_action: String = ""
+) -> void:
+	var rendered := false
+	var visible_count := mini(options.size(), 8)
+	for index in range(visible_count):
+		var option := _as_dictionary(options[index])
+		var item_id := str(option.get("id", "")).strip_edges()
+		if item_id == "":
+			continue
+		rendered = true
+		var name := str(option.get("display_name", "")).strip_edges()
+		if name == "":
+			name = _preparation_item_label(item_id)
+		var equipped := bool(option.get("equipped", false)) or item_id == current_id
+		var unlocked := bool(option.get("unlocked", true))
+		var detail := "Em uso" if equipped else "Disponivel"
+		if not unlocked:
+			detail = str(option.get("locked_reason", "")).strip_edges()
+			if detail == "":
+				detail = "Bloqueado por nivel."
+		box.add_child(_body_label("%s: %s" % [name, detail], compact))
+		if unlocked and not equipped:
+			var grid := _button_grid(compact, 1)
+			box.add_child(grid)
+			grid.add_child(_entry_action_button(host, "Equipar", _preparation_equip_action(action_kind, item_id), compact))
+
+	if options.size() > visible_count:
+		box.add_child(_body_label("Mais escolhas aparecem conforme o catalogo cresce.", compact))
+	if not rendered:
+		box.add_child(_body_label("Nenhuma escolha disponivel agora.", compact))
+	if allow_remove and current_id != "" and remove_action != "":
+		var remove_grid := _button_grid(compact, 1)
+		box.add_child(remove_grid)
+		remove_grid.add_child(_entry_action_button(host, "Remover", remove_action, compact))
+
+static func _render_spell_options(host: Node, box: VBoxContainer, compact: bool, options: Array, spell_slots: Array) -> void:
+	var equipped_ids := _equipped_spell_ids(spell_slots)
+	var rendered := false
+	var visible_count := mini(options.size(), 10)
+	for index in range(visible_count):
+		var option := _as_dictionary(options[index])
+		var spell_id := str(option.get("id", "")).strip_edges()
+		if spell_id == "":
+			continue
+		rendered = true
+		var name := str(option.get("display_name", "")).strip_edges()
+		if name == "":
+			name = _preparation_item_label(spell_id)
+		var equipped := bool(option.get("equipped", false)) or bool(equipped_ids.get(spell_id, false))
+		var unlocked := bool(option.get("unlocked", true))
+		var detail := "Em uso" if equipped else "Disponivel"
+		if not unlocked:
+			detail = str(option.get("locked_reason", "")).strip_edges()
+			if detail == "":
+				detail = "Bloqueada por nivel."
+		box.add_child(_body_label("%s: %s" % [name, detail], compact))
+		if unlocked and not equipped:
+			var position := _first_open_spell_position(spell_slots)
+			if position <= 0:
+				position = _first_unlocked_spell_position(spell_slots)
+			if position > 0:
+				var grid := _button_grid(compact, 1)
+				box.add_child(grid)
+				grid.add_child(_entry_action_button(
+					host,
+					"Equipar na habilidade %d" % position,
+					AppShellActionContractScript.equip_spell_position_action(position, spell_id),
+					compact
+				))
+	if options.size() > visible_count:
+		box.add_child(_body_label("Mais habilidades aparecem conforme o catalogo cresce.", compact))
+	if not rendered:
+		box.add_child(_body_label("Nenhuma habilidade disponivel agora.", compact))
+
+static func _preparation_equip_action(action_kind: String, item_id: String) -> String:
+	match action_kind:
+		"instrument":
+			return AppShellActionContractScript.equip_instrument_action(item_id)
+		"doctrine":
+			return AppShellActionContractScript.equip_doctrine_action(item_id)
+		"familiar":
+			return AppShellActionContractScript.equip_familiar_action(item_id)
+		_:
+			return ""
+
+static func _equipped_spell_ids(spell_slots: Array) -> Dictionary:
+	var equipped := {}
+	for slot_variant: Variant in spell_slots:
+		var slot := _as_dictionary(slot_variant)
+		var spell_id := str(slot.get("spell_id", "")).strip_edges()
+		if spell_id != "" and spell_id != "<null>" and spell_id.to_lower() != "null":
+			equipped[spell_id] = true
+	return equipped
+
+static func _first_open_spell_position(spell_slots: Array) -> int:
+	for slot_variant: Variant in spell_slots:
+		var slot := _as_dictionary(slot_variant)
+		if not bool(slot.get("unlocked", true)):
+			continue
+		var spell_id := str(slot.get("spell_id", "")).strip_edges()
+		if spell_id == "" or spell_id == "<null>" or spell_id.to_lower() == "null":
+			return int(slot.get("slot_index", 1))
+	return 0
+
+static func _first_unlocked_spell_position(spell_slots: Array) -> int:
+	for slot_variant: Variant in spell_slots:
+		var slot := _as_dictionary(slot_variant)
+		if bool(slot.get("unlocked", true)):
+			return int(slot.get("slot_index", 1))
+	return 0
+
 static func _humanize_id(value: String) -> String:
 	var cleaned := value.strip_edges()
 	if cleaned == "":
@@ -1227,12 +1438,12 @@ static func _preparation_level_suffix_with_fallback(primary: Dictionary, fallbac
 		return suffix
 	return _preparation_level_suffix(fallback, keys)
 
-static func _preparation_account_power_text() -> String:
+static func _preparation_account_power_text(combat_build: Dictionary = {}) -> String:
 	var parts := PackedStringArray()
 	var level := int(SessionStore.player.get("level", 0))
 	if level > 0:
 		parts.append("Nivel %d" % level)
-	var power := int(SessionStore.player.get("power", 0))
+	var power := int(combat_build.get("power", SessionStore.player.get("power", 0)))
 	if power > 0:
 		parts.append("Poder %d" % power)
 	return " | ".join(parts)

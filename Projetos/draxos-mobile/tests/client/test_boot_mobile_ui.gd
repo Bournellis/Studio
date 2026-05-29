@@ -748,6 +748,10 @@ func test_refuge_preparation_renders_potion_slot_and_behavior_defaults() -> void
 		"save_type": SessionStore.SAVE_TYPE_NORMAL,
 		"build": {"weapon_type": "varinha_cinzas", "weapon_level": 4},
 		"combat_build": {
+			"power": 243,
+			"weapon_type": "varinha_cinzas",
+			"passive_id": "doutrina_pavor",
+			"pet_id": "corvo_pressagio",
 			"inventory": [{"item_id": AppShellActionContractScript.ITEM_HEALTH_POTION, "quantity": 3}],
 			"potion_slots": [{
 				"slot_index": 1,
@@ -758,15 +762,49 @@ func test_refuge_preparation_renders_potion_slot_and_behavior_defaults() -> void
 					"mana": {"mode": "ignore", "percent": 0},
 				},
 			}],
-			"equipped_spells": [{
+			"spell_slots": [{
 				"slot_index": 1,
+				"unlock_level": 3,
+				"unlocked": true,
 				"spell_id": "sussurro_medo",
 				"behavior": {
 					"enabled": true,
 					"hp": {"mode": "ignore", "percent": 0},
 					"mana": {"mode": "ignore", "percent": 0},
 				},
+			}, {
+				"slot_index": 2,
+				"unlock_level": 7,
+				"unlocked": true,
+				"spell_id": null,
+				"behavior": {},
+			}, {
+				"slot_index": 3,
+				"unlock_level": 25,
+				"unlocked": false,
+				"spell_id": null,
+				"behavior": {},
 			}],
+			"equipment_options": {
+				"weapons": [
+					{"id": "varinha_cinzas", "display_name": "Varinha de Cinzas", "unlocked": true, "equipped": true},
+					{"id": "athame_hematico", "display_name": "Athame Hematico", "unlocked": true, "equipped": false},
+				],
+				"spells": [
+					{"id": "sussurro_medo", "display_name": "Sussurro do Medo", "unlocked": true, "equipped": true},
+					{"id": "incisao_ritual", "display_name": "Incisao Ritual", "unlocked": true, "equipped": false},
+					{"id": "mandato_oculto", "display_name": "Mandato Oculto", "unlocked": false, "locked_reason": "Desbloqueia no nivel 25.", "equipped": false},
+				],
+				"doutrines": [
+					{"id": "doutrina_pavor", "display_name": "Doutrina do Pavor", "unlocked": true, "equipped": true},
+					{"id": "pacto_familiar", "display_name": "Pacto Familiar", "unlocked": true, "equipped": false},
+				],
+				"familiars": [
+					{"id": "corvo_pressagio", "display_name": "Corvo de Pressagio", "unlocked": true, "equipped": true},
+					{"id": "gato_tumular", "display_name": "Gato Tumular", "unlocked": true, "equipped": false},
+					{"id": "lobo_tumular", "display_name": "Lobo Tumular", "unlocked": false, "locked_reason": "Desbloqueia no nivel 15.", "equipped": false},
+				],
+			},
 		},
 	}))
 
@@ -780,11 +818,21 @@ func test_refuge_preparation_renders_potion_slot_and_behavior_defaults() -> void
 	var popup := boot.get("_refuge_menu_popup") as PopupPanel
 	assert_not_null(popup)
 	assert_true(_label_tree_contains(popup, "Pronto para batalha"))
-	assert_true(_label_tree_contains(popup, "Instrumento ritual: Varinha de Cinzas L4"))
+	assert_true(_label_tree_contains(popup, "Poder 243"))
+	assert_true(_label_tree_contains(popup, "Resumo: Varinha de Cinzas | 1 habilidade | Doutrina do Pavor | Corvo de Pressagio"))
+	assert_true(_label_tree_contains(popup, "Em uso: Varinha de Cinzas L4"))
+	assert_true(_label_tree_contains(popup, "Athame Hematico: Disponivel"))
 	assert_true(_label_tree_contains(popup, "Pocao de Vida equipada"))
 	assert_true(_label_tree_contains(popup, "Estoque: 3"))
 	assert_true(_label_tree_contains(popup, "Usa automaticamente com vida baixa"))
-	assert_true(_label_tree_contains(popup, "Sussurro do Medo: Usa quando estiver pronta"))
+	assert_true(_label_tree_contains(popup, "Habilidade 1: Sussurro do Medo | Usa quando estiver pronta"))
+	assert_true(_label_tree_contains(popup, "Habilidade 2: vazia."))
+	assert_true(_label_tree_contains(popup, "Habilidade 3: desbloqueia no nivel 25."))
+	assert_true(_label_tree_contains(popup, "Mandato Oculto: Desbloqueia no nivel 25."))
+	assert_true(_label_tree_contains(popup, "Pacto Familiar: Disponivel"))
+	assert_true(_label_tree_contains(popup, "Gato Tumular: Disponivel"))
+	assert_true(_label_tree_contains(popup, "Lobo Tumular: Desbloqueia no nivel 15."))
+	assert_not_null(_find_button_by_text(popup, "Pedir batalha"))
 	assert_not_null(_find_button_by_text(popup, "Equipar Pocao de Vida"))
 	assert_not_null(_find_button_by_text(popup, "Remover pocao"))
 	assert_not_null(_find_button_by_text(popup, "Usar com vida baixa"))
@@ -798,6 +846,11 @@ func test_refuge_preparation_renders_potion_slot_and_behavior_defaults() -> void
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_UNEQUIP_POTION))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ENABLE_POTION_DEFAULT))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.enable_spell_behavior_action("sussurro_medo")))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.remove_spell_position_action(1)))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.equip_instrument_action("athame_hematico")))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.equip_spell_position_action(2, "incisao_ritual")))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.equip_doctrine_action("pacto_familiar")))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.equip_familiar_action("gato_tumular")))
 
 func test_refuge_preparation_renders_empty_and_paused_states_without_network() -> void:
 	var boot = BootScreenScript.new()
@@ -831,7 +884,7 @@ func test_refuge_preparation_renders_empty_and_paused_states_without_network() -
 	await get_tree().process_frame
 	var popup := boot.get("_refuge_menu_popup") as PopupPanel
 	assert_not_null(popup)
-	assert_true(_label_tree_contains(popup, "Instrumento ritual: Orbe da Tempestade"))
+	assert_true(_label_tree_contains(popup, "Em uso: Orbe da Tempestade"))
 	assert_true(_label_tree_contains(popup, "Nenhuma pocao equipada"))
 	assert_true(_label_tree_contains(popup, "Estoque: 0"))
 	assert_true(_label_tree_contains(popup, "Nenhuma habilidade equipada."))
@@ -883,9 +936,9 @@ func test_refuge_preparation_renders_paused_potion_and_spell_publicly() -> void:
 	var popup := boot.get("_refuge_menu_popup") as PopupPanel
 	assert_not_null(popup)
 	assert_true(_label_tree_contains(popup, "Pocao pausada"))
-	assert_true(_label_tree_contains(popup, "Incisao Ritual: Pausada para batalha"))
-	assert_true(_label_tree_contains(popup, "Familiar: Corvo de Pressagio L2"))
-	assert_true(_label_tree_contains(popup, "Doutrina: Pacto Familiar L3"))
+	assert_true(_label_tree_contains(popup, "Habilidade 1: Incisao Ritual | Pausada para batalha"))
+	assert_true(_label_tree_contains(popup, "Corvo de Pressagio L2"))
+	assert_true(_label_tree_contains(popup, "Pacto Familiar L3"))
 
 func test_base_routine_panel_derives_objective_from_existing_payload() -> void:
 	var routine: Dictionary = BaseSurfacePresenterScript.routine_summary(_base_state_fixture())

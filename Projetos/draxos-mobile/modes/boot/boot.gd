@@ -718,6 +718,8 @@ func _execute_action(action_id: String) -> void:
 		await _buy_shop_product(AppShellActionContractScript.action_value(action_id))
 	elif AppShellActionContractScript.is_claim_reward(action_id):
 		await _claim_shop_reward(AppShellActionContractScript.action_value(action_id))
+	elif AppShellActionContractScript.is_build_equip_action(action_id):
+		await _surface_action_flow.handle_build_equip_action(self, action_id)
 	elif AppShellActionContractScript.is_enable_spell_behavior(action_id):
 		await _enable_spell_behavior(AppShellActionContractScript.action_value(action_id))
 	elif AppShellActionContractScript.is_disable_spell_behavior(action_id):

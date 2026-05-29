@@ -336,6 +336,16 @@ func fetch_build_state(access_token: String) -> Dictionary:
 		{}
 	)
 
+func equip_build(request_id: String, partial_payload: Dictionary, access_token: String) -> Dictionary:
+	var body := partial_payload.duplicate(true)
+	body["request_id"] = request_id
+	return await _send_json(
+		function_url("build/equip"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		body
+	)
+
 func update_spell_behavior(request_id: String, spell_id: String, behavior: Dictionary, access_token: String) -> Dictionary:
 	return await _send_json(
 		function_url("build/spell-behavior"),
