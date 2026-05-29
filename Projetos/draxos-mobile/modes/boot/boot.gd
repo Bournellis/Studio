@@ -100,6 +100,7 @@ var _is_busy := false
 var _replay_running := false
 var _skip_replay := false
 var _battle_summary_skipped := false
+var _battle_request_splash_active := false
 var _compact_layout := false
 var _battle_lab_overlay: Control
 var _progression_lab_overlay: Control
@@ -261,6 +262,8 @@ func _ensure_action_grid() -> GridContainer:
 func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	screen_id = AppShellRouteContractScript.push_route(_screen_history, _current_screen, screen_id, push_history)
 	_current_screen = screen_id
+	if screen_id != ROUTE_BATTLE_ENTRY:
+		_battle_request_splash_active = false
 	_apply_orientation_for_route(screen_id)
 	_action_buttons.clear()
 	_current_action_grid = null

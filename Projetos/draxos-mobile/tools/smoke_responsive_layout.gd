@@ -21,6 +21,9 @@ func _run_smoke() -> int:
 	await _check_refuge_layout(Vector2i(360, 800))
 	await _check_refuge_layout(Vector2i(1280, 720))
 	await _check_refuge_layout(Vector2i(1920, 1080))
+	print("[smoke-responsive-layout] checking Battle request splash")
+	await _check_battle_request_splash(Vector2i(390, 844))
+	await _check_battle_request_splash(Vector2i(1280, 720))
 	print("[smoke-responsive-layout] checking Battle safe frames")
 	await _check_battle_layout(Vector2i(390, 844))
 	await _check_battle_layout(Vector2i(1280, 720))
@@ -86,6 +89,24 @@ func _check_refuge_layout(viewport_size: Vector2i) -> void:
 	var safe_frame := _find_node_by_name(boot, "RefugeSafeFrame") as Control
 	if safe_frame != null:
 		_expect(safe_frame.size.x <= MobileUiContractScript.IMMERSIVE_SAFE_MAX_WIDTH + 1.0, "%s safe frame width is capped." % context)
+	boot.queue_free()
+	await process_frame
+
+func _check_battle_request_splash(viewport_size: Vector2i) -> void:
+	_prepare_viewport(viewport_size)
+	await process_frame
+	var boot: Control = _new_boot()
+	await process_frame
+	boot.set("_battle_request_splash_active", true)
+	boot.call("_show_screen", "battle")
+	await process_frame
+	await process_frame
+
+	var context := "Battle request splash %s" % str(viewport_size)
+	_expect_node_fits(boot, "BattleRequestSplash", context, false)
+	_expect_node_fits(boot, "BattleRequestSplashArt", context, false)
+	_expect(_find_node_by_name(boot, "BattleDuelVisual") == null, "%s does not render battle preview." % context)
+	_expect(not Dictionary(boot.get("_action_buttons")).has("request_battle"), "%s does not expose duplicate request action." % context)
 	boot.queue_free()
 	await process_frame
 

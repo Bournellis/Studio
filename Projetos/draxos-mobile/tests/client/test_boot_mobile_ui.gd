@@ -616,6 +616,33 @@ func test_boot_surface_presenters_render_shells_without_network() -> void:
 	assert_not_null(boot._shop_state_container)
 	await get_tree().process_frame
 
+func test_battle_request_pending_state_uses_static_splash_only() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	SessionStore.last_battle_log = _battle_log_fixture()
+	SessionStore.last_battle_rewards = _battle_rewards_fixture()
+
+	boot._battle_request_splash_active = true
+	boot._show_screen("battle")
+	await get_tree().process_frame
+
+	assert_eq(boot._current_screen, "battle_entry")
+	assert_not_null(_find_node_by_name(boot._content_body, "BattleRequestSplash"))
+	assert_not_null(_find_node_by_name(boot._content_body, "BattleRequestSplashArt"))
+	assert_null(boot._battle_visual)
+	assert_null(boot._timeline_label)
+	assert_false(boot._action_buttons.has("request_battle"))
+	assert_false(boot._action_buttons.has("show_latest_battle"))
+	assert_false(_label_tree_contains(boot._content_body, "Solicitar batalha"))
+	assert_null(_find_node_by_name(boot._content_body, "BattleDuelVisual"))
+
+	boot._battle_request_splash_active = false
+	boot._show_screen("battle", false)
+	await get_tree().process_frame
+
+	assert_not_null(boot._battle_visual)
+	assert_true(boot._action_buttons.has("request_battle"))
+
 func test_boot_surface_presenters_keep_render_only_contract() -> void:
 	assert_false(FileAccess.file_exists("res://modes/boot/surfaces/battle_surface_presenter.gd"))
 	var boot_source := FileAccess.get_file_as_string("res://modes/boot/boot.gd")

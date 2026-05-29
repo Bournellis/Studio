@@ -52,6 +52,11 @@ func render(
 	else:
 		show_empty_state(EMPTY_BATTLE_TEXT)
 
+func render_request_splash(host: Node, compact_layout: bool) -> void:
+	clear()
+	_host = host
+	_call_host("_add_content_control", [_request_splash(compact_layout)])
+
 func render_fullscreen_replay(
 	host: Node,
 	parent: Control,
@@ -419,26 +424,43 @@ func _set_timeline_text(text: String) -> void:
 func _current_battle_logs_text(battle_log: Dictionary) -> String:
 	return current_battle_logs_text(battle_log)
 
+func _request_splash(compact_layout: bool) -> Control:
+	var splash := Control.new()
+	splash.name = "BattleRequestSplash"
+	splash.custom_minimum_size = Vector2(0, 520 if compact_layout else 640)
+	splash.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	splash.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	splash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	splash.clip_contents = true
+	_add_battle_background_layers(splash, 0.88, 0.34, 0.12)
+	return splash
+
 func _add_fullscreen_background(parent: Control) -> void:
+	_add_battle_background_layers(parent, 0.70, 0.58, 0.22)
+
+func _add_battle_background_layers(parent: Control, art_alpha: float, void_alpha: float, blood_alpha: float) -> void:
 	if ResourceLoader.exists(UX_BATTLE_BACKGROUND):
 		var loaded_texture := load(UX_BATTLE_BACKGROUND)
 		if loaded_texture is Texture2D:
 			var art := TextureRect.new()
+			art.name = "BattleRequestSplashArt" if parent.name == "BattleRequestSplash" else "BattleFullscreenBackgroundArt"
 			art.texture = loaded_texture as Texture2D
 			art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-			art.modulate = Color(1, 1, 1, 0.70)
+			art.modulate = Color(1, 1, 1, art_alpha)
 			art.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			art.set_anchors_preset(Control.PRESET_FULL_RECT)
 			parent.add_child(art)
 	var wash := ColorRect.new()
+	wash.name = "BattleBackgroundVoidWash"
 	wash.color = UiTokens.color("bg_void")
-	wash.color.a = 0.58
+	wash.color.a = void_alpha
 	wash.set_anchors_preset(Control.PRESET_FULL_RECT)
 	parent.add_child(wash)
 	var blood := ColorRect.new()
+	blood.name = "BattleBackgroundBloodWash"
 	blood.color = UiTokens.color("bg_blood_wash")
-	blood.color.a = 0.22
+	blood.color.a = blood_alpha
 	blood.set_anchors_preset(Control.PRESET_FULL_RECT)
 	parent.add_child(blood)
 
