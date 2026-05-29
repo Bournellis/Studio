@@ -7,7 +7,7 @@
 ## Prioridade Do Estudio
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`FOUNDATION_BASELINE_CONFIRMED`, sobre Track 13 release safety, Track 14 agent ops, Track 15 UX e ultimo pacote tecnico Track 16)
+- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`SOCIAL_GUILD_V1_IMPLEMENTED`, sobre Foundation baseline confirmada, Track 13 release safety, Track 14 agent ops, Track 15 UX e ultimo pacote tecnico Track 16)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -23,15 +23,15 @@
 
 ## DraxosMobile
 
-- Status: **P2_IMPLEMENTACAO - FOUNDATION_BASELINE_CONFIRMED**
+- Status: **P2_IMPLEMENTACAO - SOCIAL_GUILD_V1_IMPLEMENTED**
 - Fase: `Implementacao`
 - Local: `Projetos/draxos-mobile/`
 - Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
 - Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
-- Baseline atual: Track 00-15 integradas. O projeto tem uma base implementada para refinamento: primeiro slice server-authoritative, Refugio/Base, batalha, recompensa, social/competicao/loja em substancia de prototipo, Supabase remoto, manifest/version gate e builds Internal Alpha site/Web/APK/Windows republicadas em 2026-05-28. Track 16 e o ultimo pacote tecnico de comportamento, Po de Osso e crafting inicial, mas nao e a etapa ativa de produto. Conteudo atual de armas, spells, economia, tema, visual e apresentacao existe para nao parecer app vazio e deve ser tratado como mock/substancia. A auditoria do loop esta registrada em `Projetos/draxos-mobile/docs/foundation-loop-audit.md`; Foundation Loop UX Pass 01 esta implementado, publicado e confirmado em revisao manual Android/Windows/Web em 2026-05-29. A revisao confirmou Battle Lab e Progression Lab no menu inicial, Refugio/Batalha contidos na tela, download APK sem erro de Bearer token, splash estatico ao solicitar batalha e loop pos-login claro. Esta base publicada passa a ser o baseline atual antes do proximo pacote.
+- Baseline atual: Track 00-15 integradas. O projeto tem uma base implementada para refinamento: primeiro slice server-authoritative, Refugio/Base, batalha, recompensa, social/competicao/loja em substancia de prototipo, Supabase remoto, manifest/version gate e builds Internal Alpha site/Web/APK/Windows republicadas em 2026-05-28. Track 16 e o ultimo pacote tecnico de comportamento, Po de Osso e crafting inicial, mas nao e a etapa ativa de produto. Conteudo atual de armas, spells, economia, tema, visual e apresentacao existe para nao parecer app vazio e deve ser tratado como mock/substancia. A auditoria do loop esta registrada em `Projetos/draxos-mobile/docs/foundation-loop-audit.md`; Foundation Loop UX Pass 01 esta implementado, publicado e confirmado em revisao manual Android/Windows/Web em 2026-05-29. Social Basico Guilda v1 foi implementado depois da baseline: tela Social mais clara, username proprio copiavel, secoes Amigos/Guilda/Chat e auto-sync leve de 8s no chat de guilda sem backend/schema novo.
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
-- Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation`. Mudancas visuais em Entry/Refugio/Batalha exigem `foundation-responsive-layout-contract.md` + `smoke_responsive_layout.gd`. Migration conta/save, tuning numerico, armas, spells, economia, visual final e apresentacao de batalha ficam bloqueados ate decisao propria.
-- Proximo passo: decidir o proximo pacote de produto: Social Basico ou ajuste pequeno do loop, mantendo tuning numerico, armas, spells, economia, visual final e apresentacao de batalha fora de escopo ate decisao propria.
+- Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation`. Mudancas visuais em Entry/Refugio/Batalha exigem `foundation-responsive-layout-contract.md` + `smoke_responsive_layout.gd`. Direct chat, ajudas, contribuicoes, moderacao, migration conta/save, tuning numerico, armas, spells, economia, visual final e apresentacao de batalha ficam bloqueados ate decisao propria.
+- Proximo passo: validar Social Basico Guilda v1 com duas contas humanas antes de decidir publicacao ou proximo pacote.
 
 ## rpg-isometrico
 

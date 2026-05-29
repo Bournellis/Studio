@@ -3,9 +3,9 @@
 - Last updated: `2026-05-29`
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
-- Active surface: `Foundation Baseline`
-- Active stage: `Foundation Baseline`
-- Active stage status: `FOUNDATION_BASELINE_CONFIRMED`
+- Active surface: `Social Basico Guilda v1`
+- Active stage: `Social Basico`
+- Active stage status: `SOCIAL_GUILD_V1_IMPLEMENTED`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety` (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation` (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical context, not current product focus)
@@ -60,6 +60,16 @@ Priority order after baseline confirmation:
 
 No new code, schema, backend, asset, gameplay or balance work belongs outside an explicit next package decision.
 
+## Social Basico Guilda v1
+
+Social Basico Guilda v1 is implemented as the next product package after the confirmed Foundation baseline. It keeps the existing backend/API/schema and focuses on making the current social loop usable by real testers:
+
+- Social screen now highlights account identity, own username, social save badge and clear Friends/Guild/Chat sections.
+- Copy/show own username is a local shell action; it does not touch the server.
+- Friends by username, guild create/join, member list, read-only guild structures and guild chat keep the existing endpoints.
+- Guild chat now has light auto-sync every 8s only while the Social screen is open, pausing outside Social, offline, without account/session, during another action or in local-only Progression Lab.
+- Realtime, direct chat, helps, guild contributions, chat global, moderation/report/block, invites, guild wars, backend/schema changes and remote publication remain out of scope.
+
 ## Latest Technical Package
 
 Track 16 added the first behavior/crafting/consumable package requested by the user. It remains technical context and not the current product focus; this publication did not separately promote Track 16 schema/backend work.
@@ -100,9 +110,20 @@ The stable Cloudflare Pages domain is protected by Cloudflare Access. Anonymous 
 
 ## Next Step
 
-Decide the next product package: Social Basico or a small loop adjustment. Keep tuning numbers, weapons, spells, economy, final visual identity and battle presentation out of scope until they receive their own explicit package.
+Validate Social Basico Guilda v1 manually with two human accounts before deciding publication or the next package. Keep direct chat, helps, contributions, moderation, tuning numbers, weapons, spells, economy, final visual identity and battle presentation out of scope until they receive their own explicit package.
 
 ## Validation
+
+Latest validation for Social Basico Guilda v1 on `2026-05-29`:
+
+- `tools/validate.gd`: PASS (`117/117`, `1857` asserts).
+- GUT `tests/client`: PASS (`117/117`, `1857` asserts).
+- `tools/smoke_foundation_loop.gd`: PASS, with expected local telemetry HTTP warnings while backend telemetry is unavailable.
+- `tools/smoke_responsive_layout.gd`: PASS.
+- `validate_foundation.ps1 -Profile Client`: PASS.
+- `git diff --check`: PASS.
+- `tools/smoke_foundation_surfaces.gd`: blocked in this workspace because local Supabase Edge Functions returned `503` on `/functions/v1/healthcheck`; rerun when the local/remote Supabase function runtime is available.
+- `server/tests/social_competition_smoke.ts`: not run for the same Supabase availability reason.
 
 Documentation/foundation validation for this stage:
 
@@ -113,6 +134,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_agent_ops_foun
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_foundation_loop.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_responsive_layout.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_foundation_hardening.gd
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/client -gexit
 ```
 
 Full release/backend validation remains available through `validate_foundation.ps1 -Profile Full` when a gate needs it.
