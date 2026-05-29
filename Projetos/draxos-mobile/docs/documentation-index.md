@@ -38,7 +38,8 @@
 | `docs/visual-direction-v1.md` | `VIVO` | Current client visual direction for the Foundation Loop and Social Basico build; defines surface accents, component rules and non-goals. |
 | `docs/battle-presentation-v1.md` | `VIVO` | Current Battle Presentation v1 package: client-only readability pass for running battle, summary and current-battle logs. |
 | `docs/battle-drama-v1-1.md` | `VIVO` | Follow-up client-only battle drama/readability pass for visible Web difference after Battle Presentation v1. |
-| `docs/battle-preparation-v1.md` | `VIVO` | Current Battle Preparation v1 package: client-first Refugio preparation panel, player-facing behavior copy and published Internal Alpha release snapshot. |
+| `docs/battle-preparation-complete-v1.md` | `VIVO` | Current Battle Preparation Complete v1 package: real Refugio loadout editor, `POST /build/equip`, enriched build state and published Internal Alpha release snapshot. |
+| `docs/battle-preparation-v1.md` | `HISTORICO` | Previous client-first preparation readability package over existing behavior endpoints. |
 | `docs/product-brief.md` | `VIVO` | Short product/slice summary. |
 | `docs/game-design-document.md` | `VIVO` | Implementation reference and mock/substance context; not the current expansion target. |
 | `docs/design-pending.md` | `VIVO` | Only live register of unresolved design decisions. |

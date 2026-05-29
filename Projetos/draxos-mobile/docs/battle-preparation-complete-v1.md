@@ -1,6 +1,6 @@
 # DraxosMobile - Battle Preparation Complete v1
 
-- Status: `IMPLEMENTADO_VALIDADO`
+- Status: `PUBLICADO_INTERNAL_ALPHA`
 - Data: `2026-05-29`
 - Pacote anterior: `docs/battle-preparation-v1.md`
 
@@ -80,4 +80,18 @@ Validacao local/remota executada em 2026-05-29:
 
 ## Publicacao
 
-Publicacao Internal Alpha em andamento com release root versionado `internal-alpha/v0-battle-preparation-complete-v1-20260529`.
+Publicacao Internal Alpha concluida em 2026-05-29.
+
+- Release root: `internal-alpha/v0-battle-preparation-complete-v1-20260529`.
+- Web preview publico verificado: `https://17ea0fa1.draxos-mobile-internal-alpha.pages.dev/web`.
+- Stable Pages: `https://draxos-mobile-internal-alpha.pages.dev` continua atras de Cloudflare Access para checagens anonimas.
+- Web asset root: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-battle-preparation-complete-v1-20260529/web`.
+- APK: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-battle-preparation-complete-v1-20260529/downloads/draxos-mobile-alpha.apk`.
+- PC ZIP: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-battle-preparation-complete-v1-20260529/downloads/draxos-mobile-alpha.zip`.
+
+Observacoes de release:
+
+- `assets/referenciaimagens/**` foi excluido dos presets exportados porque e moodboard/documentacao visual, nao runtime. Isso reduziu os artefatos para APK `31649813` bytes, PC ZIP `40118021` bytes e Web PCK `4247020` bytes, evitando o erro remoto `Payload too large`.
+- O bucket `draxos-internal-alpha` e o bucket privado espelho tiveram `file_size_limit` ajustado para `209715200` bytes por configuracao remota de release.
+- `publish_internal_alpha.ps1 -Mode DeployManifest` ficou bloqueado por falta de `SUPABASE_ACCESS_TOKEN`; o pacote Cloudflare publicado usa `portal/manifest.example.json` embutido com os links e hashes corretos.
+- HEAD remoto passou para `index.pck`, `index.wasm`, APK e ZIP no release root versionado.

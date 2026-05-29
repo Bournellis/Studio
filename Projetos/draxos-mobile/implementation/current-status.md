@@ -4,11 +4,11 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Battle Preparation v1`
-- Active stage status: `BATTLE_PREPARATION_V1_PUBLISHED`
+- Active stage: `Battle Preparation Complete v1`
+- Active stage status: `BATTLE_PREPARATION_COMPLETE_V1_PUBLISHED`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety` (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation` (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published package: `Battle Preparation v1`
+- Latest published package: `Battle Preparation Complete v1`
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical context, not current product focus)
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
@@ -59,20 +59,21 @@ Priority order after baseline confirmation:
 4. Battle presentation.
 5. Weapons, spells, economy, balance and content details.
 
-Internal loop ergonomics, Social Basico Guilda v1, Visual Direction v1, Ossos Inteiros v1, Battle Presentation v1, Battle Drama v1.1 and Battle Preparation v1 have received explicit packages and are published to Internal Alpha. No new code, schema, backend, asset, gameplay or balance work belongs outside an explicit next package decision.
+Internal loop ergonomics, Social Basico Guilda v1, Visual Direction v1, Ossos Inteiros v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation v1 and Battle Preparation Complete v1 have received explicit packages and are published to Internal Alpha. No new code, schema, backend, asset, gameplay or balance work belongs outside an explicit next package decision.
 
-## Battle Preparation v1
+## Battle Preparation Complete v1
 
-Battle Preparation v1 is implemented and published as a client-first readability package over the Track 16 behavior/potion systems. It keeps the existing backend/API/schema, simulator, economy, tuning, weapons and spells unchanged.
+Battle Preparation Complete v1 is implemented and published as the current loadout package for the Refugio preparation hotspot. It promotes the previous explanatory panel into a real pre-battle editor while keeping simulator, tuning, economy, new content, migrations and advanced tactics out of scope.
 
 - Refugio keeps the existing `Preparacao` hotspot and no new route was added.
-- The Preparation panel now opens with `Pronto para batalha` and summarizes ritual instrument, level/power when available, equipped potion, potion behavior, equipped spells, familiar and doctrine.
-- Potion and spell behavior is presented with player-facing copy such as `Usa automaticamente com vida baixa`, `Pocao pausada`, `Usa quando estiver pronta` and `Pausada para batalha`.
-- Existing actions for equipping/removing potion and activating/pausing potion/spells remain the only supported controls.
-- Error and success messages are mapped to public copy for missing session, missing potion stock, missing equipped spell, network failure and unavailable preparation.
-- `docs/battle-preparation-v1.md` is the live package note.
-- Battle Preparation v1 was published to Internal Alpha on `2026-05-29` with public unlisted APK/PC downloads, a cache-busted Web asset root and Cloudflare Pages preview `https://e2a7393d.draxos-mobile-internal-alpha.pages.dev`.
-- The Web package points to `internal-alpha/v0-battle-preparation-v1-20260529/web`.
+- The Preparation panel now opens with `Pronto para batalha` and summarizes power, ritual instrument, equipped skills, doctrine, familiar, potion and simple behavior presets.
+- The player can equip an instrument, equip/remove skills in positions 1/2/3, equip/remove doctrine, equip/remove familiar and keep potion/behavior controls from Track 16.
+- The server implements `POST /build/equip`, validates catalog ids, unlock levels and duplicate skills, updates `builds` and recalculates `players.power`; the client never sends final power.
+- `GET /build/state` returns enriched humanized equipment options and lock reasons so the UI does not need to show raw ids.
+- Export presets now exclude `assets/referenciaimagens/**`, which is moodboard/reference only, reducing published APK/ZIP/PCK sizes enough for the current Storage/Pages flow.
+- `docs/battle-preparation-complete-v1.md` is the live package note; `docs/battle-preparation-v1.md` is historical context.
+- Battle Preparation Complete v1 was published to Internal Alpha on `2026-05-29` with public unlisted APK/PC downloads, a cache-busted Web asset root and verified public Cloudflare Pages preview `https://17ea0fa1.draxos-mobile-internal-alpha.pages.dev/web`.
+- The Web package points to `internal-alpha/v0-battle-preparation-complete-v1-20260529/web`.
 
 ## Battle Presentation v1
 
@@ -129,9 +130,9 @@ Ossos Inteiros v1 is now published on top of the Visual Direction v1 build. The 
 
 | Artifact | Bytes | SHA256 |
 |---|---:|---|
-| Android APK | `31637525` | `6160dd7cb6d8e7c9bf935e955dc2420b0eb7e253cb11e09fea02b7fa7b4e2d07` |
-| PC Windows ZIP | `40104099` | `97e24d82c758a9889ffa6f5f96e0e88d0158c6eaa8ac1a6d1d74859c8fa42809` |
-| Web index | `5442` | `348217a4464e0d7903477473440e51a2f02120cc96149db95749f8abfe222e54` |
+| Android APK | `31649813` | `118cce77d40ebc2cefd73728e738244c6b3615c63d3efdcd2c88ade7eb05cc8a` |
+| PC Windows ZIP | `40118021` | `0955e062e3831e9c952e4d40369682b92a4d03922c1904de44d3b0fc04636e0a` |
+| Web index | `5442` | `ddd5061f0fc7b17907474fa577e90767d501f0a5b2b56d8ff6d0e2a71db2b858` |
 
 Links:
 
@@ -139,10 +140,10 @@ Links:
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal: `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
 - Stable Web: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest verified preview: `https://e2a7393d.draxos-mobile-internal-alpha.pages.dev`
-- Web asset root: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-battle-preparation-v1-20260529/web`
+- Latest verified preview: `https://17ea0fa1.draxos-mobile-internal-alpha.pages.dev`
+- Web asset root: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-battle-preparation-complete-v1-20260529/web`
 
-Battle Preparation v1 was published to the Internal Alpha artifact/site channel on `2026-05-29`. Android APK, PC ZIP and Web assets were uploaded to `internal-alpha/v0-battle-preparation-v1-20260529`; Web assets use the versioned root so browser caches cannot reuse older `index.js`, `index.pck` or `index.wasm` paths. Cloudflare Pages was redeployed with the matching package and preview `https://e2a7393d.draxos-mobile-internal-alpha.pages.dev`. The verified preview has `GODOT_CONFIG.fileSizes.index.pck = 4230572`, matching the remote versioned `index.pck`. APK/PC downloads are public unlisted Storage URLs. The stable Cloudflare Pages domain remains behind Access for public unauthenticated checks. The Edge manifest endpoint remains healthy, but the release override was not updated during this publication because the local environment did not include `SUPABASE_ACCESS_TOKEN`; the portal package reads its bundled `manifest.example.json` for published links/hashes.
+Battle Preparation Complete v1 was published to the Internal Alpha artifact/site channel on `2026-05-29`. Android APK, PC ZIP and Web assets were uploaded to `internal-alpha/v0-battle-preparation-complete-v1-20260529`; Web assets use the versioned root so browser caches cannot reuse older `index.js`, `index.pck` or `index.wasm` paths. Cloudflare Pages was redeployed with the matching package and verified preview `https://17ea0fa1.draxos-mobile-internal-alpha.pages.dev/web`. The verified preview has `GODOT_CONFIG.fileSizes.index.pck = 4247020`, matching the remote versioned `index.pck`. APK/PC downloads are public unlisted Storage URLs. The stable Cloudflare Pages domain remains behind Access for public unauthenticated checks. The Edge manifest endpoint remains healthy, but the release override was not updated during this publication because the local environment did not include `SUPABASE_ACCESS_TOKEN`; the portal package reads its bundled `manifest.example.json` for published links/hashes.
 
 ## Visual Direction v1
 
@@ -156,8 +157,8 @@ Visual Direction v1 is implemented and published as the next refinement package 
 ## Risks And Blocks
 
 - Track 16 migration/functions/catalog changes needed for Ossos Inteiros v1 are deployed. Further crafting, behavior, tuning, economy or content expansion still needs its own explicit package decision.
-- Foundation Loop UX Pass 01 is the accepted current V0 UX baseline after manual Android/Windows/Web review on `2026-05-29`; Social Basico Guilda v1, Battle Presentation v1, Battle Drama v1.1 and Battle Preparation v1 are now available in the published Internal Alpha build for human validation.
-- Battle Preparation v1 is published to Internal Alpha with public APK/PC downloads, a cache-busted Web asset root and no-store Cloudflare Pages headers; it still needs manual Android/Windows/Web confirmation on the preview/stable authenticated channels.
+- Foundation Loop UX Pass 01 is the accepted current V0 UX baseline after manual Android/Windows/Web review on `2026-05-29`; Social Basico Guilda v1, Battle Presentation v1, Battle Drama v1.1 and Battle Preparation Complete v1 are now available in the published Internal Alpha build for human validation.
+- Battle Preparation Complete v1 is published to Internal Alpha with public APK/PC downloads, a cache-busted Web asset root and no-store Cloudflare Pages headers; it still needs manual Android/Windows/Web confirmation on the preview/stable authenticated channels.
 - Edge release manifest override needs `SUPABASE_ACCESS_TOKEN` available in the release environment for future `publish_internal_alpha.ps1 -Mode DeployManifest` runs. This publication kept the endpoint healthy and used the packaged portal manifest as the published-link source.
 - Track 13 release safety remains the baseline for any future publication or wider-access gate.
 - `players.save_type` remains an alpha shortcut. `account_profiles` + `game_saves` is a future migration package.
@@ -166,27 +167,32 @@ Visual Direction v1 is implemented and published as the next refinement package 
 
 ## Next Step
 
-Manually review published Battle Preparation v1 on Android, Windows and Web, then choose the next product package. Keep advanced loadouts, custom thresholds, enemy-specific behavior, spell priorities, direct chat, helps, contributions, moderation, tuning numbers, weapons, spells, economy and broader replay controls out of scope until they receive their own explicit package.
+Manually review published Battle Preparation Complete v1 on Android, Windows and Web, then choose the next product package. Keep victory prediction, opponent counter-picks, custom thresholds, enemy-specific behavior, spell priorities, direct chat, helps, contributions, moderation, tuning numbers, new weapons, new spells, economy and broader replay controls out of scope until they receive their own explicit package.
 
 ## Validation
 
-Latest validation for Battle Preparation v1 publication on `2026-05-29`:
+Latest validation for Battle Preparation Complete v1 publication on `2026-05-29`:
 
-- GUT `tests/client`: PASS (`121/121`, `1926` asserts).
+- `npx -y deno check server/functions/build/index.ts supabase/functions/build/index.ts server/tests/build_equip_smoke.ts`: PASS.
+- `npx -y deno test --allow-read server/tests/foundation_contracts_test.ts`: PASS.
+- Remote `server/tests/build_equip_smoke.ts`: PASS against Supabase Internal Alpha after `build` function deploy.
+- GUT `tests/client`: PASS through `tools/validate.gd` (`121/121`).
 - `tools/smoke_foundation_loop.gd`: PASS.
 - `tools/smoke_responsive_layout.gd`: PASS.
 - `tools/validate.gd`: PASS.
 - `validate_foundation.ps1 -Profile Client`: PASS, including `tools/validate.gd`, GUT `tests/client`, runtime/hardening/responsive/export smokes and `git diff --check`.
 - `tools/smoke_foundation_surfaces.gd`: BLOCKED at anonymous auth with `NETWORK_UNAVAILABLE`; local/remote backend availability is outside the client-only package.
 - `export_internal_alpha.ps1 -AllowAndroidDebugFallback`: PASS; Android export mode `debug_fallback`.
-- `publish_internal_alpha.ps1 -Mode Plan -PublicDownloads`: PASS for `internal-alpha/v0-battle-preparation-v1-20260529`.
+- `export_presets.cfg` now excludes `assets/referenciaimagens/**`, keeping moodboard assets out of runtime exports and reducing APK/ZIP/PCK below current upload limits.
+- Supabase Storage bucket file limit was raised to `209715200` bytes for Internal Alpha release buckets.
+- `publish_internal_alpha.ps1 -Mode Plan -PublicDownloads`: PASS for `internal-alpha/v0-battle-preparation-complete-v1-20260529`.
 - `publish_internal_alpha.ps1 -Mode Package -PublicDownloads`: PASS.
-- Supabase Storage upload: PASS for 25 files using Supabase CLI `2.98.0` after CLI `2.102.0` stalled on `storage cp`.
-- `build_cloudflare_pages_package.ps1 -StaticAssetBaseUrl https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-battle-preparation-v1-20260529/web`: PASS.
-- Cloudflare Pages deploy: PASS, verified preview `https://e2a7393d.draxos-mobile-internal-alpha.pages.dev`.
+- Supabase Storage upload: PASS for versioned APK/ZIP/Web.
+- `build_cloudflare_pages_package.ps1 -StaticAssetBaseUrl https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-battle-preparation-complete-v1-20260529/web`: PASS.
+- Cloudflare Pages deploy: PASS, verified preview `https://17ea0fa1.draxos-mobile-internal-alpha.pages.dev`.
 - `publish_internal_alpha.ps1 -Mode DeployManifest -PublicDownloads -ConfirmRemoteMutation`: BLOCKED before remote secret mutation because `SUPABASE_ACCESS_TOKEN` was not available.
-- Preview GET checks: PASS for `/portal/index.html` and `/web/index.html` with versioned Web asset root and `GODOT_CONFIG.fileSizes.index.pck = 4230572`.
-- Remote HEAD checks: PASS for versioned `index.js` (`315759` bytes), `index.pck` (`4230572` bytes), `index.wasm` (`37695054` bytes), Android APK (`31637525` bytes) and PC ZIP (`40104099` bytes), all without Bearer token.
+- Preview GET checks: PASS for `https://17ea0fa1.draxos-mobile-internal-alpha.pages.dev/web` with versioned Web asset root and `GODOT_CONFIG.fileSizes.index.pck = 4247020`.
+- Remote HEAD checks: PASS for versioned `index.pck` (`4247020` bytes), `index.wasm` (`37695054` bytes), Android APK (`31649813` bytes) and PC ZIP (`40118021` bytes), all without Bearer token.
 
 Latest validation for Battle Drama v1.1 publication on `2026-05-29`:
 
