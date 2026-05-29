@@ -10,7 +10,7 @@ func test_battle_visual_mockup_steps_rich_battle_feedback() -> void:
 		"resources": {"xp": 25, "almas": 3},
 	})
 
-	assert_eq(visual.get_event_count(), 14)
+	assert_eq(visual.get_event_count(), 16)
 	assert_eq(visual.get_current_event_index(), 0)
 	assert_string_contains(visual.get_timeline_text(), "Eventos:")
 
@@ -21,8 +21,10 @@ func test_battle_visual_mockup_steps_rich_battle_feedback() -> void:
 	visual.reveal_all()
 	var snapshot := visual.debug_snapshot()
 	assert_eq(int(snapshot.get("event_index", 0)), visual.get_event_count())
-	assert_string_contains(str(snapshot.get("timeline", "")), "conjurou marca_brasa")
-	assert_string_contains(str(snapshot.get("timeline", "")), "Anti-stall")
+	assert_string_contains(str(snapshot.get("timeline", "")), "conjurou Marca Brasa")
+	assert_string_contains(str(snapshot.get("timeline", "")), "usou Pocao de Vida no slot 1: cura gradual por 5s, 4% por pulso")
+	assert_string_contains(str(snapshot.get("timeline", "")), "recuperou 8 de HP com Pocao de Vida")
+	assert_string_contains(str(snapshot.get("timeline", "")), "Limite da luta")
 	var stage := Dictionary(snapshot.get("stage", {}))
 	assert_eq(str(stage.get("latest_event_type", "")), "battle_result")
 	assert_true(bool(stage.get("has_player_actor", false)))
@@ -115,8 +117,10 @@ func _rich_battle_log() -> Dictionary:
 			{"t": 3.0, "seq": 10, "type": "summon_spawn", "source": "player", "target": "player_brasa_faminta", "spell_id": "invocar_brasa_faminta", "hp": 50, "damage_type": "fogo"},
 			{"t": 4.0, "seq": 11, "type": "summon_attack", "source": "player_brasa_faminta", "target": "opponent", "damage": 9, "damage_type": "fogo", "hp_after": 157},
 			{"t": 5.0, "seq": 12, "type": "pet_attack", "source": "player", "target": "opponent", "pet_id": "corvo_pressagio", "damage": 13, "damage_type": "morte", "hp_after": 144},
-			{"t": 30.0, "seq": 13, "type": "anti_stall", "source": "system", "target": "none", "player_hp_after": 90, "opponent_hp_after": 42},
-			{"t": 31.0, "seq": 14, "type": "battle_result", "source": "system", "target": "none", "winner": "player", "reason": "combatant_defeated"},
+			{"t": 5.25, "seq": 13, "type": "consumable_use", "source": "player", "target": "player", "item_id": "pocao_vida", "slot_index": 1, "effect_id": "heal_over_time", "duration": 5, "tick_percent": 4},
+			{"t": 5.5, "seq": 14, "type": "heal", "source": "player", "target": "player", "item_id": "pocao_vida", "effect_id": "heal_over_time", "amount": 8, "hp_after": 196, "max_hp": 200, "ticks_remaining": 4},
+			{"t": 30.0, "seq": 15, "type": "anti_stall", "source": "system", "target": "none", "player_hp_after": 90, "opponent_hp_after": 42},
+			{"t": 31.0, "seq": 16, "type": "battle_result", "source": "system", "target": "none", "winner": "player", "reason": "combatant_defeated"},
 		],
 	}
 

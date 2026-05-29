@@ -649,7 +649,7 @@ func test_battle_log_presenter_formats_first_slice_rich_events() -> void:
 		{"t": 4.0, "seq": 10, "type": "summon_spawn", "source": "opponent", "target": "opponent_esqueleto", "hp": 60},
 		{"t": 4.5, "seq": 11, "type": "summon_attack", "source": "opponent_esqueleto", "target": "player", "damage": 5, "damage_type": "morte", "hp_after": 80},
 		{"t": 5.0, "seq": 12, "type": "pet_attack", "source": "player", "target": "opponent", "pet_id": "cao_cinzas", "damage": 10, "damage_type": "fogo", "hp_after": 84},
-		{"t": 5.25, "seq": 13, "type": "consumable_use", "source": "player", "target": "player", "item_id": "pocao_vida", "effect_id": "heal_over_time", "duration": 5},
+		{"t": 5.25, "seq": 13, "type": "consumable_use", "source": "player", "target": "player", "item_id": "pocao_vida", "slot_index": 1, "effect_id": "heal_over_time", "duration": 5, "tick_percent": 4},
 		{"t": 5.5, "seq": 14, "type": "heal", "source": "player", "target": "player", "item_id": "pocao_vida", "amount": 2, "hp_after": 82},
 		{"t": 6.0, "seq": 15, "type": "status_expire", "source": "player", "target": "opponent", "status_id": "queimando"},
 		{"t": 7.5, "seq": 16, "type": "cooldown_ready", "source": "player", "target": "player", "spell_id": "marca_brasa"},
@@ -660,15 +660,15 @@ func test_battle_log_presenter_formats_first_slice_rich_events() -> void:
 	for event: Dictionary in BattleLogPresenterScript.sorted_events(battle_log):
 		lines.append(BattleLogPresenterScript.format_event(event))
 	var formatted := "\n".join(lines)
-	assert_string_contains(formatted, "aplicou queimando")
-	assert_string_contains(formatted, "conjurou marca_brasa")
+	assert_string_contains(formatted, "aplicou Queimando")
+	assert_string_contains(formatted, "conjurou Marca Brasa")
 	assert_string_contains(formatted, "Barreira")
 	assert_string_contains(formatted, "invocou")
 	assert_string_contains(formatted, "usou Pocao de Vida")
-	assert_string_contains(formatted, "curou")
-	assert_string_contains(formatted, "Anti-stall")
+	assert_string_contains(formatted, "recuperou")
+	assert_string_contains(formatted, "Limite da luta")
 	assert_eq(BattleLogPresenterScript.count_events_of_type(battle_log, "spell_cast"), 1)
-	assert_string_contains(BattleLogPresenterScript.format_summary(battle_log, {"type": "FIRST_SLICE_SIM", "resources": {"xp": 50}}), "Xp +50")
+	assert_string_contains(BattleLogPresenterScript.format_summary(battle_log, {"type": "FIRST_SLICE_SIM", "resources": {"xp": 50}}), "XP +50")
 
 func test_battle_log_presenter_tolerates_null_optional_payloads() -> void:
 	var battle_log := {

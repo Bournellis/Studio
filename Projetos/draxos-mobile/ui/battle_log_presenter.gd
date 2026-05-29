@@ -54,7 +54,7 @@ static func format_event(event: Dictionary) -> String:
 				_source_label(str(event.get("source", ""))),
 				_target_label(str(event.get("target", ""))),
 				str(event.get("damage", "?")),
-				str(event.get("damage_type", "dano")),
+				_humanize_id(str(event.get("damage_type", "dano"))),
 				str(event.get("hp_after", "?")),
 				_absorb_suffix(event),
 			]
@@ -65,31 +65,31 @@ static func format_event(event: Dictionary) -> String:
 				str(event.get("mana_after", "?")),
 			]
 		"cooldown_start":
-			return "%s - %s entrou em recarga ate %.1fs" % [
+			return "%s - %s entra em espera ate %.1fs" % [
 				timestamp,
-				str(event.get("spell_id", "spell_desconhecida")),
+				_humanize_id(str(event.get("spell_id", "spell_desconhecida"))),
 				float(event.get("ready_at", 0.0)),
 			]
 		"cooldown_ready":
 			return "%s - %s pronto novamente" % [
 				timestamp,
-				str(event.get("spell_id", "spell_desconhecida")),
+				_humanize_id(str(event.get("spell_id", "spell_desconhecida"))),
 			]
 		"passive_apply":
-			return "%s - %s ativou passiva %s nv.%s" % [
+			return "%s - %s ativou Doutrina %s nv.%s" % [
 				timestamp,
 				_source_label(str(event.get("source", ""))),
-				str(event.get("passive_id", "passiva_desconhecida")),
+				_humanize_id(str(event.get("passive_id", "doutrina_desconhecida"))),
 				str(event.get("passive_level", "?")),
 			]
 		"spell_cast":
 			return "%s - %s conjurou %s em %s: %s %s, alvo HP %s%s" % [
 				timestamp,
 				_source_label(str(event.get("source", ""))),
-				str(event.get("spell_id", "spell_desconhecida")),
+				_humanize_id(str(event.get("spell_id", "spell_desconhecida"))),
 				_target_label(str(event.get("target", ""))),
 				str(event.get("damage", "?")),
-				str(event.get("damage_type", "dano")),
+				_humanize_id(str(event.get("damage_type", "dano"))),
 				str(event.get("hp_after", "?")),
 				_absorb_suffix(event),
 			]
@@ -97,16 +97,16 @@ static func format_event(event: Dictionary) -> String:
 			return "%s - %s aplicou %s em %s (%s stacks)" % [
 				timestamp,
 				_source_label(str(event.get("source", ""))),
-				str(event.get("status_id", "dot")),
+				_humanize_id(str(event.get("status_id", "dot"))),
 				_target_label(str(event.get("target", ""))),
 				str(event.get("stacks", "1")),
 			]
 		"dot_tick":
 			return "%s - %s causou %s %s em %s, alvo HP %s%s" % [
 				timestamp,
-				str(event.get("status_id", "dot")),
+				_humanize_id(str(event.get("status_id", "dot"))),
 				str(event.get("damage", "?")),
-				str(event.get("damage_type", "dano")),
+				_humanize_id(str(event.get("damage_type", "dano"))),
 				_target_label(str(event.get("target", ""))),
 				str(event.get("hp_after", "?")),
 				_absorb_suffix(event),
@@ -115,14 +115,14 @@ static func format_event(event: Dictionary) -> String:
 			return "%s - %s aplicou status %s em %s (%s stacks)" % [
 				timestamp,
 				_source_label(str(event.get("source", ""))),
-				str(event.get("status_id", "status")),
+				_humanize_id(str(event.get("status_id", "status"))),
 				_target_label(str(event.get("target", ""))),
 				str(event.get("stacks", "1")),
 			]
 		"status_expire":
 			return "%s - %s expirou em %s" % [
 				timestamp,
-				str(event.get("status_id", "status")),
+				_humanize_id(str(event.get("status_id", "status"))),
 				_target_label(str(event.get("target", ""))),
 			]
 		"barrier_gain":
@@ -137,7 +137,7 @@ static func format_event(event: Dictionary) -> String:
 				timestamp,
 				_target_label(str(event.get("target", ""))),
 				str(event.get("amount", "?")),
-				str(event.get("damage_type", "dano")),
+				_humanize_id(str(event.get("damage_type", "dano"))),
 				str(event.get("barrier_after", "?")),
 			]
 		"resistance_apply":
@@ -150,51 +150,54 @@ static func format_event(event: Dictionary) -> String:
 			return "%s - %s invocou %s (%s HP)" % [
 				timestamp,
 				_source_label(str(event.get("source", ""))),
-				str(event.get("target", "summon")),
+				_humanize_id(str(event.get("target", "summon"))),
 				str(event.get("hp", "?")),
 			]
 		"summon_attack":
 			return "%s - %s atacou %s: %s %s, alvo HP %s%s" % [
 				timestamp,
-				str(event.get("source", "summon")),
+				_humanize_id(str(event.get("source", "summon"))),
 				_target_label(str(event.get("target", ""))),
 				str(event.get("damage", "?")),
-				str(event.get("damage_type", "dano")),
+				_humanize_id(str(event.get("damage_type", "dano"))),
 				str(event.get("hp_after", "?")),
 				_absorb_suffix(event),
 			]
 		"summon_expire":
 			return "%s - %s desapareceu" % [
 				timestamp,
-				str(event.get("source", "summon")),
+				_humanize_id(str(event.get("source", "summon"))),
 			]
 		"pet_attack":
-			return "%s - Pet %s atacou %s: %s %s, alvo HP %s%s" % [
+			return "%s - Familiar %s atacou %s: %s %s, alvo HP %s%s" % [
 				timestamp,
-				str(event.get("pet_id", "pet")),
+				_humanize_id(str(event.get("pet_id", "pet"))),
 				_target_label(str(event.get("target", ""))),
 				str(event.get("damage", "?")),
-				str(event.get("damage_type", "dano")),
+				_humanize_id(str(event.get("damage_type", "dano"))),
 				str(event.get("hp_after", "?")),
 				_absorb_suffix(event),
 			]
 		"consumable_use":
-			return "%s - %s usou %s: %s por %ss" % [
+			return "%s - %s usou %s%s: %s por %s%s" % [
 				timestamp,
 				_source_label(str(event.get("source", ""))),
 				_item_label(str(event.get("item_id", "item"))),
-				str(event.get("effect", "efeito")),
-				str(event.get("duration_seconds", "?")),
+				_slot_suffix(event),
+				_effect_label(str(event.get("effect_id", event.get("effect", "efeito")))),
+				_duration_text(event),
+				_tick_suffix(event),
 			]
 		"heal":
-			return "%s - %s curou %s, HP %s" % [
+			return "%s - %s recuperou %s de HP com %s, HP %s" % [
 				timestamp,
 				_source_label(str(event.get("source", ""))),
 				str(event.get("amount", "?")),
+				_item_label(str(event.get("item_id", "cura"))),
 				str(event.get("hp_after", "?")),
 			]
 		"anti_stall":
-			return "%s - Anti-stall ativado: Draxos HP %s, oponente HP %s" % [
+			return "%s - Limite da luta ativado: Draxos HP %s, oponente HP %s" % [
 				timestamp,
 				str(event.get("player_hp_after", "?")),
 				str(event.get("opponent_hp_after", "?")),
@@ -202,13 +205,13 @@ static func format_event(event: Dictionary) -> String:
 		"reward_preview":
 			return "%s - Recompensa recebida: %s" % [
 				timestamp,
-				str(event.get("reward_type", "desconhecida")),
+				_humanize_id(str(event.get("reward_type", "desconhecida"))),
 			]
 		"battle_result":
 			return "%s - Resultado: %s (%s)" % [
 				timestamp,
-				str(event.get("winner", "desconhecido")),
-				str(event.get("reason", "sem_motivo")),
+				_humanize_id(str(event.get("winner", "desconhecido"))),
+				_humanize_id(str(event.get("reason", "sem_motivo"))),
 			]
 		_:
 			return "%s - Evento desconhecido: %s" % [timestamp, event_type]
@@ -224,9 +227,9 @@ static func format_summary(battle_log: Dictionary, rewards: Dictionary = {}) -> 
 	if reward_text == "":
 		reward_text = "sem recompensa registrada"
 	return "Resultado: %s contra %s | motivo: %s | recompensa: %s" % [
-		str(result.get("winner", "desconhecido")),
+		_humanize_id(str(result.get("winner", "desconhecido"))),
 		str(opponent.get("display_name", "oponente")),
-		str(result.get("reason", "sem_motivo")),
+		_humanize_id(str(result.get("reason", "sem_motivo"))),
 		reward_text,
 	]
 
@@ -249,8 +252,8 @@ static func _source_label(source: String) -> String:
 	if source == "opponent":
 		return "Oponente"
 	if source == "system":
-		return "Sistema"
-	return source
+		return "Batalha"
+	return _humanize_id(source)
 
 static func _target_label(target: String) -> String:
 	if target == "player":
@@ -259,7 +262,7 @@ static func _target_label(target: String) -> String:
 		return "oponente"
 	if target == "none":
 		return "nenhum"
-	return target
+	return _humanize_id(target)
 
 static func _absorb_suffix(event: Dictionary) -> String:
 	var absorbed := float(event.get("absorbed", 0.0))
@@ -272,7 +275,7 @@ static func _format_resource_suffix(resources: Dictionary) -> String:
 		return ""
 	var parts: PackedStringArray = PackedStringArray()
 	for key: String in resources.keys():
-		parts.append("%s +%s" % [key.capitalize(), str(resources[key])])
+		parts.append("%s +%s" % [_resource_label(key), str(resources[key])])
 	if parts.is_empty():
 		return ""
 	return ", ".join(parts)
@@ -282,7 +285,74 @@ static func _item_label(item_id: String) -> String:
 		"pocao_vida":
 			return "Pocao de Vida"
 		_:
-			return item_id
+			return _humanize_id(item_id)
+
+static func _effect_label(effect_id: String) -> String:
+	match effect_id:
+		"heal_over_time":
+			return "cura gradual"
+		_:
+			return _humanize_id(effect_id)
+
+static func _duration_text(event: Dictionary) -> String:
+	var duration: Variant = event.get("duration", event.get("duration_seconds", "?"))
+	if duration is float or duration is int:
+		return "%ss" % _number_text(float(duration))
+	return str(duration)
+
+static func _tick_suffix(event: Dictionary) -> String:
+	if not event.has("tick_percent"):
+		return ""
+	return ", %s%% por pulso" % _number_text(float(event.get("tick_percent", 0.0)))
+
+static func _slot_suffix(event: Dictionary) -> String:
+	if not event.has("slot_index"):
+		return ""
+	return " no slot %s" % str(event.get("slot_index", "?"))
+
+static func _resource_label(resource_id: String) -> String:
+	match resource_id:
+		"xp":
+			return "XP"
+		"almas":
+			return "Almas"
+		"ossos":
+			return "Ossos"
+		"po_osso":
+			return "Po de Osso"
+		_:
+			return _humanize_id(resource_id)
+
+static func _humanize_id(value: String) -> String:
+	var cleaned := value.strip_edges()
+	if cleaned == "":
+		return ""
+	match cleaned:
+		"player":
+			return "Draxos"
+		"opponent":
+			return "Oponente"
+		"system":
+			return "Batalha"
+		"combatant_defeated", "opponent_defeated":
+			return "oponente derrotado"
+		"player_defeated":
+			return "Draxos derrotado"
+		"timeout":
+			return "tempo esgotado"
+		"heal_over_time":
+			return "cura gradual"
+	for prefix: String in ["player_", "opponent_"]:
+		if cleaned.begins_with(prefix):
+			cleaned = cleaned.substr(prefix.length())
+	cleaned = cleaned.replace("-", " ")
+	cleaned = cleaned.replace("_", " ")
+	return cleaned.capitalize()
+
+static func _number_text(value: float) -> String:
+	if is_equal_approx(value, roundf(value)):
+		return str(int(roundf(value)))
+	return "%.1f" % value
 
 static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:
