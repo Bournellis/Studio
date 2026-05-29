@@ -5,7 +5,7 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Social Basico Guilda v1`
 - Active stage: `Social Basico`
-- Active stage status: `SOCIAL_GUILD_V1_IMPLEMENTED`
+- Active stage status: `SOCIAL_GUILD_V1_PUBLISHED`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety` (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation` (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical context, not current product focus)
@@ -68,7 +68,7 @@ Social Basico Guilda v1 is implemented as the next product package after the con
 - Copy/show own username is a local shell action; it does not touch the server.
 - Friends by username, guild create/join, member list, read-only guild structures and guild chat keep the existing endpoints.
 - Guild chat now has light auto-sync every 8s only while the Social screen is open, pausing outside Social, offline, without account/session, during another action or in local-only Progression Lab.
-- Realtime, direct chat, helps, guild contributions, chat global, moderation/report/block, invites, guild wars, backend/schema changes and remote publication remain out of scope.
+- Published Internal Alpha builds now include Social Basico Guilda v1. Realtime, direct chat, helps, guild contributions, chat global, moderation/report/block, invites, guild wars and backend/schema changes remain out of scope.
 
 ## Latest Technical Package
 
@@ -85,9 +85,9 @@ Track 16 added the first behavior/crafting/consumable package requested by the u
 
 | Artifact | Bytes | SHA256 |
 |---|---:|---|
-| Android APK | `31621141` | `75e2f4e142c8d1def559cded4633f2606f2934c8609608a455d107b5ab8279eb` |
-| PC Windows ZIP | `40088244` | `3a4915fd826f2bf9f5516ea0e85f1718b1a09ab66ba8d3e27c858d750879cb9c` |
-| Web index | `5442` | `9d61d47cefb84de260c4b4009c8c98cd9bf7648e4ed137d1b3d4a93043bc09b8` |
+| Android APK | `31625237` | `8d8a88fbbc8f887fcb434c42f508f4bdf161556b0d9b70a93a31cd64544a938a` |
+| PC Windows ZIP | `40091415` | `3d0e8b04a6f338e51ce1d782a32cadeeb3889013f241d59c20bd7fe7f78c5339` |
+| Web index | `5442` | `34b9ad875b8cafa2b6e510224dc45bff21745d9c0d688c5bd738e2988d11c6c4` |
 
 Links:
 
@@ -95,14 +95,14 @@ Links:
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal: `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
 - Stable Web: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest verified preview: `https://a1c7524d.draxos-mobile-internal-alpha.pages.dev`
+- Latest verified preview: `https://483a73f3.draxos-mobile-internal-alpha.pages.dev`
 
-The stable Cloudflare Pages domain is protected by Cloudflare Access. Anonymous public validation should use an unprotected preview or an authenticated Access session. APK/PC downloads currently use unlisted public Supabase Storage URLs so testers can download directly from mobile after passing the portal link.
+Social Basico Guilda v1 was published to the Internal Alpha artifact/site channel on `2026-05-29`. The stable Cloudflare Pages domain is protected by Cloudflare Access and returns the Access sign-in page to anonymous requests; public unauthenticated web validation should use the verified preview URL or an authenticated Access session. APK/PC downloads use the protected `release/download` endpoint with an alpha email/password account and signed Storage URLs; unauthenticated artifact probes return `401` by design, while `release_download_smoke.ts` confirms the Bearer-token path.
 
 ## Risks And Blocks
 
 - Track 16 schema/backend work was not separately promoted in this publication; Supabase migrations/functions for that package must still be deployed deliberately if Track 16 becomes product focus later.
-- Foundation Loop UX Pass 01 is the accepted current V0 UX baseline after manual Android/Windows/Web review on `2026-05-29`; wider access still requires an explicit release/access decision.
+- Foundation Loop UX Pass 01 is the accepted current V0 UX baseline after manual Android/Windows/Web review on `2026-05-29`; Social Basico Guilda v1 is now available in the published Internal Alpha build for human two-account validation.
 - Track 13 release safety remains the baseline for any future publication or wider-access gate.
 - `players.save_type` remains an alpha shortcut. `account_profiles` + `game_saves` is a future migration package.
 - Progression/economy remains mock/substance and not the current tuning focus.
@@ -110,20 +110,25 @@ The stable Cloudflare Pages domain is protected by Cloudflare Access. Anonymous 
 
 ## Next Step
 
-Validate Social Basico Guilda v1 manually with two human accounts before deciding publication or the next package. Keep direct chat, helps, contributions, moderation, tuning numbers, weapons, spells, economy, final visual identity and battle presentation out of scope until they receive their own explicit package.
+Validate Social Basico Guilda v1 manually with two human accounts on the published Internal Alpha build before deciding the next package. Keep direct chat, helps, contributions, moderation, tuning numbers, weapons, spells, economy, final visual identity and battle presentation out of scope until they receive their own explicit package.
 
 ## Validation
 
-Latest validation for Social Basico Guilda v1 on `2026-05-29`:
+Latest validation for Social Basico Guilda v1 publication on `2026-05-29`:
 
-- `tools/validate.gd`: PASS (`117/117`, `1857` asserts).
-- GUT `tests/client`: PASS (`117/117`, `1857` asserts).
-- `tools/smoke_foundation_loop.gd`: PASS, with expected local telemetry HTTP warnings while backend telemetry is unavailable.
-- `tools/smoke_responsive_layout.gd`: PASS.
-- `validate_foundation.ps1 -Profile Client`: PASS.
+- `validate_foundation.ps1 -Profile Full`: PASS, including `tools/validate.gd`, GUT `tests/client` (`117/117`, `1857` asserts), runtime/hardening/responsive/export smokes, release typecheck, Track 13 readiness and Track 14 agent ops checks.
+- `export_internal_alpha.ps1 -AllowAndroidDebugFallback`: PASS; Android export mode `debug_fallback`.
+- `publish_internal_alpha.ps1 -Mode Plan`: PASS.
+- `publish_internal_alpha.ps1 -Mode Package`: PASS.
+- Cloudflare Pages deploy: PASS, preview `https://483a73f3.draxos-mobile-internal-alpha.pages.dev`.
+- Supabase Storage upload: PASS, `25` files uploaded across public site assets and protected downloads.
+- Supabase release manifest override + `release` function deploy: PASS.
+- `server/tests/release_manifest_smoke.ts`: PASS against remote Supabase.
+- `server/tests/release_download_smoke.ts`: PASS with signed HEAD checks for Android and PC downloads.
+- `server/tests/internal_alpha_remote_smoke.ts` with `DRAXOS_REMOTE_RELEASE_SMOKE=1`: PASS.
+- Preview GET checks: PASS for `/portal/index.html` (`Draxos Alpha`) and `/web/index.html` (`GODOT_CONFIG`).
 - `git diff --check`: PASS.
-- `tools/smoke_foundation_surfaces.gd`: blocked in this workspace because local Supabase Edge Functions returned `503` on `/functions/v1/healthcheck`; rerun when the local/remote Supabase function runtime is available.
-- `server/tests/social_competition_smoke.ts`: not run for the same Supabase availability reason.
+- `server/tests/release_artifacts_remote_smoke.ts`: unauthenticated artifact probe returns `401` for protected downloads by design; use `release_download_smoke.ts` for the signed download contract.
 
 Documentation/foundation validation for this stage:
 
