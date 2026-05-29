@@ -46,7 +46,7 @@ Foundation Responsive Guardrails were applied and published on `2026-05-28` afte
 
 Follow-up refuge/battle hotfixes were published on `2026-05-28` from branch `codex/draxos-mobile/foundation-responsive-guardrails`. They keep Refugio as the post-login session root, keep Labs Dev visible from Refugio, redirect accidental login returns back to Refugio during an active session, and replace the battle-request replay preview with a static battle splash while the real battle opens.
 
-Entry Dev Labs export hotfix is implemented locally after manual review showed the published menu still hid Battle Lab and Progression Lab. The root cause was `export_presets.cfg` excluding `dev/**`, so exported builds could not satisfy `ResourceLoader.exists()` for the lab overlays. Local exports now package `res://dev/battle_lab/battle_lab_screen.gd` and `res://dev/progression_lab/progression_lab_screen.gd`, and `tools/smoke_exports.gd` prevents this regression.
+Entry Dev Labs export hotfix was published on `2026-05-28` after manual review showed the published menu still hid Battle Lab and Progression Lab. The root cause was `export_presets.cfg` excluding `dev/**`, so exported builds could not satisfy `ResourceLoader.exists()` for the lab overlays. Internal Alpha exports now package `res://dev/battle_lab/battle_lab_screen.gd` and `res://dev/progression_lab/progression_lab_screen.gd`, and `tools/smoke_exports.gd` prevents this regression.
 
 Priority order after the docs are aligned:
 
@@ -73,9 +73,9 @@ Track 16 added the first behavior/crafting/consumable package requested by the u
 
 | Artifact | Bytes | SHA256 |
 |---|---:|---|
-| Android APK | `31567507` | `7e96dded13578764ff2cbcb84f795830e3aab371dde7754748c898f135e4de5e` |
-| PC Windows ZIP | `40035466` | `bccf2cecb4459f16cf68dcb4a43698128d76ae6fa25cd7ece3779656bbba8ecf` |
-| Web index | `5442` | `7769cf8acb38daffe1006683416cebfa82d42993b5a2e3a8e51a444a01718f27` |
+| Android APK | `31621141` | `75e2f4e142c8d1def559cded4633f2606f2934c8609608a455d107b5ab8279eb` |
+| PC Windows ZIP | `40088244` | `3a4915fd826f2bf9f5516ea0e85f1718b1a09ab66ba8d3e27c858d750879cb9c` |
+| Web index | `5442` | `9d61d47cefb84de260c4b4009c8c98cd9bf7648e4ed137d1b3d4a93043bc09b8` |
 
 Links:
 
@@ -83,7 +83,7 @@ Links:
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal: `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
 - Stable Web: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest verified preview: `https://34c70f2f.draxos-mobile-internal-alpha.pages.dev`
+- Latest verified preview: `https://a1c7524d.draxos-mobile-internal-alpha.pages.dev`
 
 The stable Cloudflare Pages domain is protected by Cloudflare Access. Anonymous public validation should use an unprotected preview or an authenticated Access session. APK/PC downloads currently use unlisted public Supabase Storage URLs so testers can download directly from mobile after passing the portal link.
 
@@ -98,7 +98,7 @@ The stable Cloudflare Pages domain is protected by Cloudflare Access. Anonymous 
 
 ## Next Step
 
-Publish the Entry Dev Labs export hotfix, then manually review Android/Windows/Web again: Entry Labs visible in the initial menu, Refugio contained, Battle contained, APK download works without Bearer-token error, battle request shows only the static splash before opening, loop CTA is obvious, and reward return sends the player back to base intent.
+Manually review Android/Windows/Web again: Entry Labs visible in the initial menu, Refugio contained, Battle contained, APK download works without Bearer-token error, battle request shows only the static splash before opening, loop CTA is obvious, and reward return sends the player back to base intent. After this review, decide whether the next package stays on loop ergonomics or moves to the first social pass.
 
 ## Validation
 
