@@ -6,7 +6,6 @@ const EXPECTED_PRESETS := {
 	"PC Browser Alpha": "Web",
 }
 const EXPECTED_EXCLUDES := [
-	"dev/**",
 	"tools/**",
 	"docs/**",
 	"tests/**",
@@ -21,6 +20,10 @@ const EXPECTED_EXCLUDES := [
 	".gutconfig.json",
 	".battle_lab_scratch/**",
 	".progression_lab_scratch/**",
+]
+const REQUIRED_INTERNAL_ALPHA_RESOURCES := [
+	"res://dev/battle_lab/battle_lab_screen.gd",
+	"res://dev/progression_lab/progression_lab_screen.gd",
 ]
 
 var _failures: Array[String] = []
@@ -84,6 +87,11 @@ func _check_presets(config: ConfigFile) -> void:
 			for expected_exclude: String in EXPECTED_EXCLUDES:
 				if not exclude_filter.contains(expected_exclude):
 					_failures.append("%s must exclude %s from packaged builds" % [name, expected_exclude])
+			if exclude_filter.contains("dev/**"):
+				_failures.append("%s must package dev lab overlays for Internal Alpha; remove dev/** from exclude_filter" % name)
+			for required_resource: String in REQUIRED_INTERNAL_ALPHA_RESOURCES:
+				if not FileAccess.file_exists(required_resource):
+					_failures.append("%s requires internal dev lab resource: %s" % [name, required_resource])
 			if name == "Android Alpha":
 				_check_android_options(config, "%s.options" % section)
 		index += 1

@@ -46,6 +46,8 @@ Foundation Responsive Guardrails were applied and published on `2026-05-28` afte
 
 Follow-up refuge/battle hotfixes were published on `2026-05-28` from branch `codex/draxos-mobile/foundation-responsive-guardrails`. They keep Refugio as the post-login session root, keep Labs Dev visible from Refugio, redirect accidental login returns back to Refugio during an active session, and replace the battle-request replay preview with a static battle splash while the real battle opens.
 
+Entry Dev Labs export hotfix is implemented locally after manual review showed the published menu still hid Battle Lab and Progression Lab. The root cause was `export_presets.cfg` excluding `dev/**`, so exported builds could not satisfy `ResourceLoader.exists()` for the lab overlays. Local exports now package `res://dev/battle_lab/battle_lab_screen.gd` and `res://dev/progression_lab/progression_lab_screen.gd`, and `tools/smoke_exports.gd` prevents this regression.
+
 Priority order after the docs are aligned:
 
 1. Internal loop ergonomics.
@@ -96,7 +98,7 @@ The stable Cloudflare Pages domain is protected by Cloudflare Access. Anonymous 
 
 ## Next Step
 
-Manually review Android/Windows/Web again on the published hotfix: Entry Labs visible, Refugio contained, Battle contained, APK download works without Bearer-token error, battle request shows only the static splash before opening, loop CTA is obvious, and reward return sends the player back to base intent.
+Publish the Entry Dev Labs export hotfix, then manually review Android/Windows/Web again: Entry Labs visible in the initial menu, Refugio contained, Battle contained, APK download works without Bearer-token error, battle request shows only the static splash before opening, loop CTA is obvious, and reward return sends the player back to base intent.
 
 ## Validation
 

@@ -18,7 +18,7 @@ This directory contains active, conceptual and paused projects for the studio.
 
 ## Implementacao - Foundation Audit
 
-- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 13 release safety and Track 14 agent ops are preserved baselines, Track 00-15 are integrated, and Track 16 is the latest technical package. The active stage is Foundation Audit for the post-login loop: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again. Foundation Loop UX Pass 01 is implemented and published to Internal Alpha as the current loop baseline candidate; hotfixes published on 2026-05-28 now protect Entry/Refugio/Battle, keep Refugio as the post-login root, restore Labs Dev and show only a static splash while requested battles open.
+- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 13 release safety and Track 14 agent ops are preserved baselines, Track 00-15 are integrated, and Track 16 is the latest technical package. The active stage is Foundation Audit for the post-login loop: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again. Foundation Loop UX Pass 01 is implemented and published to Internal Alpha as the current loop baseline candidate; hotfixes published on 2026-05-28 now protect Entry/Refugio/Battle, keep Refugio as the post-login root, restore Labs Dev in Refugio and show only a static splash while requested battles open. A local export hotfix now packages `dev/**` so Battle Lab/Progression Lab return to the initial menu after the next publication.
   - Priority/status: `P2_IMPLEMENTACAO - FOUNDATION_AUDIT_ACTIVE`
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Agent manual: `draxos-mobile/docs/agent-operating-manual.md`
@@ -41,7 +41,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Progression Lab: `draxos-mobile/docs/progression-lab/README.md`
   - Design archive: `_conceitos/mobile-universe/`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: manually review the published hotfix on Android/Windows/Web, including Labs Dev visibility, Refugio/Battle containment, APK download without Bearer-token error, static battle-request splash, and the post-login loop before social, visual, battle presentation, weapons, spells, economy or tuning work.
+  - Current next step: publish the Entry Dev Labs export hotfix, then manually review Android/Windows/Web, including Labs Dev visibility in the initial menu, Refugio/Battle containment, APK download without Bearer-token error, static battle-request splash, and the post-login loop before social, visual, battle presentation, weapons, spells, economy or tuning work.
 
 ## Arquivo De Design
 
