@@ -6,6 +6,7 @@ const BaseSurfacePresenterScript := preload("res://modes/boot/surfaces/base_surf
 const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
 const TouchScrollContainerScript := preload("res://modes/boot/ui/touch_scroll_container.gd")
 const MobileUiContractScript := preload("res://modes/boot/ui/mobile_ui_contract.gd")
+const ProgressionClarityPresenterScript := preload("res://modes/boot/surfaces/progression_clarity_presenter.gd")
 
 const UX_ENTRY_BACKGROUND := "res://assets/ux_overhaul/entry_necromante.png"
 const UX_REFUGE_BACKGROUND := "res://assets/ux_overhaul/refuge_ship_hub.png"
@@ -44,6 +45,7 @@ static func _refuge_scene_board(host: Node, root: Control, compact: bool) -> voi
 	_add_refuge_altar_stage(host, safe_frame, compact)
 	_add_refuge_status_bar(host, safe_frame, compact)
 	_add_refuge_loop_panel(host, safe_frame, compact)
+	_add_refuge_progression_panel(host, safe_frame, compact)
 	_add_refuge_footer_bar(host, safe_frame, compact)
 	_add_refuge_context_cta(host, safe_frame, compact)
 
@@ -236,6 +238,31 @@ static func _add_refuge_loop_panel(host: Node, board: Control, compact: bool) ->
 	grid.add_child(_loop_status_label("Proximo\n%s" % str(state.get("next_text", "Batalhar")), "text_primary", compact, "RefugeLoopNextLabel"))
 	grid.add_child(_loop_status_label("Coleta\n%s" % str(state.get("collect_text", "Nada agora")), str(state.get("collect_color", "text_secondary")), compact, "RefugeLoopCollectLabel"))
 	grid.add_child(_loop_status_label("Evolucao\n%s" % str(state.get("upgrade_text", "Sem upgrade")), str(state.get("upgrade_color", "text_secondary")), compact, "RefugeLoopUpgradeLabel"))
+
+static func _add_refuge_progression_panel(_host: Node, board: Control, compact: bool) -> void:
+	var panel := PanelContainer.new()
+	panel.name = "RefugeProgressionPanel"
+	panel.anchor_left = 0.04
+	panel.anchor_right = 0.96
+	panel.anchor_top = 0.724
+	panel.anchor_bottom = 0.815
+	panel.add_theme_stylebox_override("panel", _hud_style("bg_panel", "accent_astral"))
+	board.add_child(panel)
+
+	var box := VBoxContainer.new()
+	box.alignment = BoxContainer.ALIGNMENT_CENTER
+	box.add_theme_constant_override("separation", 1 if compact else 2)
+	panel.add_child(box)
+	var title := _scene_label("Progresso", "text_primary", 10 if compact else 12)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	box.add_child(title)
+	var line := _scene_label(ProgressionClarityPresenterScript.refuge_progress_line(SessionStore.combat_build_state), "text_secondary", 9 if compact else 11)
+	line.name = "RefugeProgressionLine"
+	line.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	line.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	line.clip_text = true
+	box.add_child(line)
 
 static func _loop_status_label(text: String, color_token: String, compact: bool, node_name: String) -> Label:
 	var label := _scene_label(text, color_token, 9 if compact else 11)
@@ -918,6 +945,11 @@ static func _preparation_panel(host: Node, compact: bool) -> PanelContainer:
 		_preparation_item_label(doctrine_id) if doctrine_id != "" else "Sem Doutrina",
 		_preparation_item_label(familiar_id) if familiar_id != "" else "Sem Familiar",
 	], compact))
+	var progression_lines := ProgressionClarityPresenterScript.preparation_progress_lines(combat_build, 3)
+	if not progression_lines.is_empty():
+		box.add_child(_section_label("Proximos marcos", compact))
+		for line: String in progression_lines:
+			box.add_child(_body_label(line, compact))
 	var cta_grid := _button_grid(compact, 1)
 	box.add_child(cta_grid)
 	cta_grid.add_child(_entry_action_button(host, "Pedir batalha", AppShellActionContractScript.ACTION_REQUEST_BATTLE, compact, "", true))

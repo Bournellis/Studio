@@ -4,6 +4,7 @@ const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_act
 const BattleLogPresenterScript := preload("res://ui/battle_log_presenter.gd")
 const BattleVisualMockupScript := preload("res://ui/battle_visual_mockup.gd")
 const MobileUiContractScript := preload("res://modes/boot/ui/mobile_ui_contract.gd")
+const ProgressionClarityPresenterScript := preload("res://modes/boot/surfaces/progression_clarity_presenter.gd")
 
 const EMPTY_BATTLE_TEXT := "Nenhuma batalha carregada. Solicite uma batalha, carregue o historico ou busque o ultimo resultado."
 const EMPTY_HISTORY_TEXT := "Historico recente vazio para este save."
@@ -155,6 +156,9 @@ func render_fullscreen_summary(
 	var ranking_text := str(summary.get("ranking_text", ""))
 	if ranking_text != "":
 		details.add_child(_summary_detail_panel("Ranking", ranking_text, compact_layout))
+	var progress_text := str(summary.get("progress_text", ""))
+	if progress_text != "":
+		details.add_child(_summary_detail_panel("Progresso", progress_text, compact_layout))
 	stack.add_child(_fullscreen_center_label("Recompensa registrada. Volte para verificar a base.", 13 if compact_layout else 15, "text_secondary"))
 
 	var actions := GridContainer.new()
@@ -333,6 +337,7 @@ static func summary_data(battle_log: Dictionary, rewards: Dictionary, current_re
 		"reward_text": _reward_text(rewards),
 		"resources_text": _resources_text(current_resources),
 		"ranking_text": ranking_text,
+		"progress_text": ProgressionClarityPresenterScript.battle_summary_text(rewards, SessionStore.combat_build_state),
 	}
 
 static func current_battle_logs_text(battle_log: Dictionary) -> String:

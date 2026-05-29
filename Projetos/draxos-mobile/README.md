@@ -2,7 +2,7 @@
 
 DraxosMobile is the Godot/Supabase project for Android, PC executable and PC browser. It is an async PVP autobattler with Refugio/Base management, social systems and server-authoritative progression.
 
-**Status:** `P2_IMPLEMENTACAO - VISUAL_DIRECTION_V1_PUBLISHED`
+**Status:** `P2_IMPLEMENTACAO - PROGRESSION_CLARITY_V1_PUBLISHED`
 **Baseline:** Track 00-15 integrated; Track 13 release safety and Track 14 agent ops baseline preserved; Track 16 is the latest technical package and has not been promoted as the current product focus.
 
 ## Current Focus
@@ -13,7 +13,7 @@ The Foundation Loop Audit is documented in `docs/foundation-loop-audit.md`. Foun
 
 `Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again`
 
-Social Basico Guilda v1 and Visual Direction v1 are published on the Internal Alpha channel. Visual Direction v1 centralizes surface accents, CTA/action styling and panel accents in `core/ui_tokens.gd` and is documented in `docs/visual-direction-v1.md`. The Web publication now uses a versioned Supabase asset root for the Godot loader files so browsers do not keep the previous `index.pck`/`index.wasm` paths.
+Social Basico Guilda v1, Visual Direction v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation Complete v1 and Progression Clarity v1 are published on the Internal Alpha channel. Refugio, Preparacao and battle summary now explain level, power, battle XP and next milestones using existing snapshots. The package is documented in `docs/progression-clarity-v1.md`.
 
 Current content, names, spells, weapons, economy values, battle flavor, visual style and premium systems exist to give substance to the prototype. Treat them as mock/substance for evaluation, not as final game direction or current tuning priorities.
 
@@ -27,7 +27,7 @@ Start with:
 4. `docs/documentation-index.md`
 5. `docs/foundation-app-v0-audit.md`
 6. `docs/foundation-loop-audit.md`
-7. `docs/visual-direction-v1.md`
+7. `docs/progression-clarity-v1.md`
 
 Do not start from old Track 04/08/10/15/16 notes. They are history or technical context unless a live doc points to them for a specific detail.
 
@@ -36,7 +36,7 @@ Do not start from old Track 04/08/10/15/16 notes. They are history or technical 
 Before any new feature, numeric tuning, account/save migration, assets-final pass, battle presentation pass or social expansion:
 
 1. Read `docs/foundation-loop-audit.md`.
-2. Treat Foundation Loop UX Pass 01, Social Basico Guilda v1 and Visual Direction v1 as the accepted published baseline, then choose an explicit next package before expanding social, visuals, battle presentation or content systems.
+2. Treat Foundation Loop UX Pass 01, Social Basico Guilda v1, Visual Direction v1, Battle Presentation v1, Battle Drama v1.1 and Battle Preparation Complete v1 as the accepted published baseline, then finish or choose an explicit next package before expanding social, visuals, battle presentation or content systems.
 3. Keep release publishing in `Mode Plan` or `Mode Package` unless the user explicitly approves remote mutation.
 4. Run the real Android / Windows / Web walkthrough in `docs/track-13-manual-walkthrough-gate.md` before any remote publication.
 
@@ -64,6 +64,7 @@ git status --short
 | Foundation Audit | `docs/foundation-app-v0-audit.md` |
 | Foundation Loop Audit | `docs/foundation-loop-audit.md` |
 | Visual Direction v1 | `docs/visual-direction-v1.md` |
+| Progression Clarity v1 | `docs/progression-clarity-v1.md` |
 | Product canon local | `docs/product-vision.md` |
 | Implementation GDD | `docs/game-design-document.md` |
 | Pending decisions | `docs/design-pending.md` |

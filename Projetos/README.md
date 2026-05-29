@@ -16,10 +16,10 @@ This directory contains active, conceptual and paused projects for the studio.
   - Allowed work: code, validation, playtest, local documentation.
   - Current next step: user playtest of the Track 02 complete-run build.
 
-## Implementacao - Battle Preparation Complete v1 Publicado
+## Implementacao - Progression Clarity v1 Publicado
 
-- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 13 release safety and Track 14 agent ops are preserved baselines, Track 00-15 are integrated, and Track 16 is the latest technical package. The confirmed Foundation post-login loop remains the accepted baseline: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again. Foundation Loop UX Pass 01 is implemented, published to Internal Alpha and manually confirmed on Android/Windows/Web on 2026-05-29, including initial-menu Battle Lab/Progression Lab visibility, contained Refugio/Battle screens, APK download without Bearer-token error, static battle-request splash and clear post-login loop. Social Basico Guilda v1, Visual Direction v1, Ossos Inteiros v1, Battle Presentation v1, Battle Drama v1.1 and Battle Preparation v1 are published. Battle Preparation Complete v1 is the current published package: the Refugio `Preparacao` hotspot is now a real loadout editor for ritual instrument, skills, doctrine, familiar, potion and simple behavior presets, backed by `POST /build/equip`, enriched `GET /build/state`, cache-busted Web assets and a published equip-feedback hotfix that keeps `Equipar` visibly updating the panel.
-  - Priority/status: `P2_IMPLEMENTACAO - BATTLE_PREPARATION_COMPLETE_V1_PUBLISHED`
+- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 13 release safety and Track 14 agent ops are preserved baselines, Track 00-15 are integrated, and Track 16 is the latest technical package. The confirmed Foundation post-login loop remains the accepted baseline: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again. Foundation Loop UX Pass 01 is implemented, published to Internal Alpha and manually confirmed on Android/Windows/Web on 2026-05-29, including initial-menu Battle Lab/Progression Lab visibility, contained Refugio/Battle screens, APK download without Bearer-token error, static battle-request splash and clear post-login loop. Social Basico Guilda v1, Visual Direction v1, Ossos Inteiros v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation v1 and Battle Preparation Complete v1 are published. Battle Preparation Complete v1 made the Refugio `Preparacao` hotspot a real loadout editor for ritual instrument, skills, doctrine, familiar, potion and simple behavior presets. Progression Clarity v1 is now published: Refugio, Preparacao and battle summary explain level, power, battle XP and next milestones using existing client snapshots, without backend/schema/tuning/content changes.
+  - Priority/status: `P2_IMPLEMENTACAO - PROGRESSION_CLARITY_V1_PUBLISHED`
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Agent manual: `draxos-mobile/docs/agent-operating-manual.md`
   - Documentation index: `draxos-mobile/docs/documentation-index.md`
@@ -30,6 +30,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Battle Presentation v1: `draxos-mobile/docs/battle-presentation-v1.md`
   - Battle Drama v1.1: `draxos-mobile/docs/battle-drama-v1-1.md`
   - Battle Preparation Complete v1: `draxos-mobile/docs/battle-preparation-complete-v1.md`
+  - Progression Clarity v1: `draxos-mobile/docs/progression-clarity-v1.md`
   - Operational status: `draxos-mobile/implementation/current-status.md`
   - Product vision: `draxos-mobile/docs/product-vision.md`
   - Product brief: `draxos-mobile/docs/product-brief.md`
@@ -45,7 +46,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Progression Lab: `draxos-mobile/docs/progression-lab/README.md`
   - Design archive: `_conceitos/mobile-universe/`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: review Battle Preparation Complete v1 published on Android/Windows/Web and choose the next product package.
+  - Current next step: review Progression Clarity v1 on Android/Windows/Web and choose the next explicit package.
 
 ## Arquivo De Design
 

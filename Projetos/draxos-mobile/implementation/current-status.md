@@ -4,11 +4,12 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Battle Preparation Complete v1`
-- Active stage status: `BATTLE_PREPARATION_COMPLETE_V1_PUBLISHED`
+- Active stage: `Progression Clarity v1`
+- Active stage status: `PROGRESSION_CLARITY_V1_PUBLISHED`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety` (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation` (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published package: `Battle Preparation Complete v1`
+- Latest published package: `Progression Clarity v1`
+- Latest implemented package: `Progression Clarity v1`
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical context, not current product focus)
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
@@ -59,7 +60,19 @@ Priority order after baseline confirmation:
 4. Battle presentation.
 5. Weapons, spells, economy, balance and content details.
 
-Internal loop ergonomics, Social Basico Guilda v1, Visual Direction v1, Ossos Inteiros v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation v1 and Battle Preparation Complete v1 have received explicit packages and are published to Internal Alpha. No new code, schema, backend, asset, gameplay or balance work belongs outside an explicit next package decision.
+Internal loop ergonomics, Social Basico Guilda v1, Visual Direction v1, Ossos Inteiros v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation v1, Battle Preparation Complete v1 and Progression Clarity v1 have received explicit packages and are published to Internal Alpha. No new code, schema, backend, asset, gameplay or balance work belongs outside an explicit next package decision.
+
+## Progression Clarity v1
+
+Progression Clarity v1 is implemented and published as a client-only readability layer over the existing account/build/battle snapshots. It does not change backend, schema, migrations, simulator, rewards, economy, tuning, weapons, spells or catalog content.
+
+- Refugio now has a compact `Progresso` panel in the immersive home layout with level, power and the next visible milestone.
+- Preparation now shows `Proximos marcos`, derived from current build state, lock reasons and known unlock levels.
+- Battle summary now includes `Progresso`, showing current level/power, battle XP when present and the next milestone without claiming resource balances were refreshed.
+- `modes/boot/surfaces/progression_clarity_presenter.gd` centralizes player-facing progression copy.
+- `docs/progression-clarity-v1.md` is the live package note.
+- Validation completed on `2026-05-29`: GUT client passed with `123/123` tests and `1984` asserts; `tools/smoke_foundation_loop.gd`, `tools/smoke_responsive_layout.gd`, `validate_foundation.ps1 -Profile Client` and `git diff --check` passed. `tools/smoke_foundation_surfaces.gd` remained blocked locally because Supabase local was unavailable.
+- Progression Clarity v1 was published to Internal Alpha on `2026-05-29` with release root `internal-alpha/v0-progression-clarity-v1-20260529`, public Cloudflare Pages preview `https://3cf22c65.draxos-mobile-internal-alpha.pages.dev/web`, public APK `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-progression-clarity-v1-20260529/downloads/draxos-mobile-alpha.apk` and public PC ZIP `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-progression-clarity-v1-20260529/downloads/draxos-mobile-alpha.zip`.
 
 ## Battle Preparation Complete v1
 

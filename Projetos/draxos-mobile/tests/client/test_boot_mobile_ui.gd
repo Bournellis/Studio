@@ -7,6 +7,7 @@ const AppShellErrorContractScript = preload("res://modes/boot/ui/app_shell_error
 const BaseSurfacePresenterScript = preload("res://modes/boot/surfaces/base_surface_presenter.gd")
 const BattleReplayPresenterScript = preload("res://modes/boot/surfaces/battle_replay_presenter.gd")
 const HubSurfacePresenterScript = preload("res://modes/boot/surfaces/hub_surface_presenter.gd")
+const ProgressionClarityPresenterScript = preload("res://modes/boot/surfaces/progression_clarity_presenter.gd")
 const MobileUiContractScript = preload("res://modes/boot/ui/mobile_ui_contract.gd")
 const TouchScrollContainerScript = preload("res://modes/boot/ui/touch_scroll_container.gd")
 
@@ -252,6 +253,7 @@ func test_boot_refugio_home_renders_altar_hotspots_and_account_route() -> void:
 	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeSceneBoard"))
 	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeAltarStage"))
 	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeLoopPanel"))
+	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeProgressionPanel"))
 	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeMenuPopup"))
 	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeHotspotPanel"))
 	assert_null(_find_node_by_name(boot._first_screen_root, "RefugePathGrid"))
@@ -820,6 +822,8 @@ func test_refuge_preparation_renders_potion_slot_and_behavior_defaults() -> void
 	assert_true(_label_tree_contains(popup, "Pronto para batalha"))
 	assert_true(_label_tree_contains(popup, "Poder 243"))
 	assert_true(_label_tree_contains(popup, "Resumo: Varinha de Cinzas | 1 habilidade | Doutrina do Pavor | Corvo de Pressagio"))
+	assert_true(_label_tree_contains(popup, "Proximos marcos"))
+	assert_true(_label_tree_contains(popup, "Nivel 10: doutrina de combate."))
 	assert_true(_label_tree_contains(popup, "Em uso: Varinha de Cinzas L4"))
 	assert_true(_label_tree_contains(popup, "Athame Hematico: Disponivel"))
 	assert_true(_label_tree_contains(popup, "Pocao de Vida equipada"))
@@ -851,6 +855,42 @@ func test_refuge_preparation_renders_potion_slot_and_behavior_defaults() -> void
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.equip_spell_position_action(2, "incisao_ritual")))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.equip_doctrine_action("pacto_familiar")))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.equip_familiar_action("gato_tumular")))
+
+func test_refuge_progression_clarity_uses_existing_account_and_build_state() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	_prepare_account_state()
+	assert_true(SessionStore.apply_build_result({
+		"ok": true,
+		"save_type": SessionStore.SAVE_TYPE_NORMAL,
+		"build": {"weapon_type": "varinha_cinzas"},
+		"combat_build": {
+			"power": 243,
+			"weapon_type": "varinha_cinzas",
+			"spell_slots": [{
+				"slot_index": 3,
+				"unlock_level": 25,
+				"unlocked": false,
+				"spell_id": null,
+				"behavior": {},
+			}],
+			"equipment_options": {
+				"familiars": [
+					{"id": "lobo_tumular", "display_name": "Lobo Tumular", "unlocked": false, "locked_reason": "Desbloqueia no nivel 15.", "equipped": false},
+				],
+			},
+		},
+	}))
+
+	boot._show_screen("refuge")
+	await get_tree().process_frame
+
+	assert_true(_label_tree_contains(boot._first_screen_root, "Progresso"))
+	assert_true(_label_tree_contains(boot._first_screen_root, "Nivel 8 | Poder 243"))
+	assert_true(_label_tree_contains(boot._first_screen_root, "Nivel 10: doutrina de combate."))
+	var lines := ProgressionClarityPresenterScript.unlock_lines(SessionStore.combat_build_state, 3)
+	assert_true(lines.has("Nivel 10: doutrina de combate."))
+	assert_true(lines.has("Nivel 15: Lobo Tumular."))
 
 func test_refuge_preparation_popup_refreshes_after_equip_feedback() -> void:
 	var boot = BootScreenScript.new()
@@ -1334,6 +1374,10 @@ func test_boot_battle_summary_renders_reward_result_and_actions() -> void:
 	assert_false(_label_tree_contains(boot._battle_fullscreen_overlay, "Eventos"))
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Recompensa"))
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Recursos"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Progresso"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Nivel 8 | Poder 120"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Esta batalha somou XP +10."))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Nivel 10: doutrina de combate."))
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "verificar a base"))
 	assert_not_null(_find_button_by_text(boot._battle_fullscreen_overlay, "Voltar e verificar base"))
 	assert_true(boot._action_buttons.has("return_refuge"))
@@ -1430,6 +1474,7 @@ func test_battle_summary_data_uses_battle_log_rewards_and_resource_state() -> vo
 	assert_eq(int(summary.get("event_count", 0)), 2)
 	assert_eq(str(summary.get("reward_text", "")), "XP +10, Almas +0.8, Ossos +1")
 	assert_eq(str(summary.get("resources_text", "")), "Almas 7, Energia 9, Diamantes 2")
+	assert_string_contains(str(summary.get("progress_text", "")), "Esta batalha somou XP +10.")
 
 func _first_action_grid(parent: Node) -> GridContainer:
 	for child: Node in parent.get_children():
