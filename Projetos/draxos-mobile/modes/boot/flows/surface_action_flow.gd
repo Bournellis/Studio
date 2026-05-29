@@ -6,6 +6,12 @@ const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_act
 const AppShellRouteContractScript := preload("res://modes/boot/ui/app_shell_route_contract.gd")
 
 const PRODUCT_ALPHA_DOUBLE_CONSTRUCTION_QUEUE := "alpha_double_construction_queue"
+const PREPARATION_NETWORK_ERROR_CODES := {
+	"NETWORK_UNAVAILABLE": true,
+	"REQUEST_NOT_STARTED": true,
+	"CLIENT_MISCONFIGURED": true,
+	"INVALID_JSON": true,
+}
 
 func show_base(host: Node) -> void:
 	var target_screen := str(host.call("_base_surface_target_screen"))
@@ -192,38 +198,38 @@ func show_preparation(host: Node) -> void:
 		return
 
 	host.call("_show_surface_screen", AppShellRouteContractScript.ROUTE_REFUGE)
-	host.call("_set_busy", true, "Buscando Preparacao...")
+	host.call("_set_busy", true, "Preparando suas escolhas de batalha...")
 	var build_result: Dictionary = await SupabaseClient.fetch_build_state(SessionStore.access_token)
 	if not bool(build_result.get("ok", false)):
-		host.call("_fail_with_error", build_result)
+		_fail_preparation_action(host, build_result, "Nao foi possivel carregar a preparacao.")
 		return
 	if not SessionStore.apply_build_result(build_result):
-		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		_fail_preparation_action(host, {"error": SessionStore.last_error}, "Nao foi possivel carregar a preparacao.")
 		return
 
 	SessionStore.save_cache()
-	host.call("_set_busy", false, "Preparacao recuperada.")
+	host.call("_set_busy", false, "Preparacao de batalha pronta.")
 	host.call("_render_refuge_screen")
 
 func equip_health_potion(host: Node) -> void:
-	await _update_potion_equip(host, AppShellActionContractScript.ITEM_HEALTH_POTION, "Pocao de Vida equipada.")
+	await _update_potion_equip(host, AppShellActionContractScript.ITEM_HEALTH_POTION, "Pocao de Vida equipada para a proxima batalha.")
 
 func unequip_potion(host: Node) -> void:
-	await _update_potion_equip(host, null, "Pocao removida.")
+	await _update_potion_equip(host, null, "Pocao removida da proxima batalha.")
 
 func enable_potion_default(host: Node) -> void:
-	await _update_potion_behavior(host, _default_potion_behavior(), "Pocao usara Vida abaixo de 40%.")
+	await _update_potion_behavior(host, _default_potion_behavior(), "Pocao de Vida sera usada quando a Vida ficar abaixo de 40%.")
 
 func disable_potion(host: Node) -> void:
 	var behavior := _default_potion_behavior()
 	behavior["enabled"] = false
-	await _update_potion_behavior(host, behavior, "Uso automatico de pocao pausado.")
+	await _update_potion_behavior(host, behavior, "Uso automatico da pocao pausado.")
 
 func enable_spell_behavior(host: Node, spell_id: String) -> void:
-	await _update_spell_behavior(host, spell_id, _default_spell_behavior(true), "Spell ativada.")
+	await _update_spell_behavior(host, spell_id, _default_spell_behavior(true), "Magia ativada para a proxima batalha.")
 
 func disable_spell_behavior(host: Node, spell_id: String) -> void:
-	await _update_spell_behavior(host, spell_id, _default_spell_behavior(false), "Spell pausada.")
+	await _update_spell_behavior(host, spell_id, _default_spell_behavior(false), "Magia pausada para a proxima batalha.")
 
 func show_social(host: Node) -> void:
 	if not bool(host.call("_require_session", "Entre com email ou use guest dev antes de abrir Social.")):
@@ -509,17 +515,17 @@ func _update_potion_equip(host: Node, item_id: Variant, message: String) -> void
 		return
 
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_REFUGE, false)
-	host.call("_set_busy", true, "Atualizando pocao...")
+	host.call("_set_busy", true, "Ajustando Pocao de Vida...")
 	var build_result: Dictionary = await SupabaseClient.equip_potion(
 		SessionStoreScript.create_request_id(),
 		item_id,
 		SessionStore.access_token
 	)
 	if not bool(build_result.get("ok", false)):
-		host.call("_fail_with_error", build_result)
+		_fail_preparation_action(host, build_result, "Nao foi possivel ajustar a pocao.")
 		return
 	if not SessionStore.apply_build_result(build_result):
-		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		_fail_preparation_action(host, {"error": SessionStore.last_error}, "Nao foi possivel ajustar a pocao.")
 		return
 
 	SessionStore.save_cache()
@@ -531,17 +537,17 @@ func _update_potion_behavior(host: Node, behavior: Dictionary, message: String) 
 		return
 
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_REFUGE, false)
-	host.call("_set_busy", true, "Atualizando comportamento...")
+	host.call("_set_busy", true, "Ajustando uso da Pocao de Vida...")
 	var build_result: Dictionary = await SupabaseClient.update_potion_behavior(
 		SessionStoreScript.create_request_id(),
 		behavior,
 		SessionStore.access_token
 	)
 	if not bool(build_result.get("ok", false)):
-		host.call("_fail_with_error", build_result)
+		_fail_preparation_action(host, build_result, "Nao foi possivel ajustar a pocao.")
 		return
 	if not SessionStore.apply_build_result(build_result):
-		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		_fail_preparation_action(host, {"error": SessionStore.last_error}, "Nao foi possivel ajustar a pocao.")
 		return
 
 	SessionStore.save_cache()
@@ -549,14 +555,14 @@ func _update_potion_behavior(host: Node, behavior: Dictionary, message: String) 
 	host.call("_render_refuge_screen")
 
 func _update_spell_behavior(host: Node, spell_id: String, behavior: Dictionary, message: String) -> void:
-	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de configurar spell.")):
+	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de ajustar magia.")):
 		return
 	if spell_id.strip_edges() == "":
-		_set_error_text(host, "Spell invalida.")
+		_set_error_text(host, "Magia invalida.")
 		return
 
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_REFUGE, false)
-	host.call("_set_busy", true, "Atualizando spell...")
+	host.call("_set_busy", true, "Ajustando magia...")
 	var build_result: Dictionary = await SupabaseClient.update_spell_behavior(
 		SessionStoreScript.create_request_id(),
 		spell_id.strip_edges(),
@@ -564,15 +570,79 @@ func _update_spell_behavior(host: Node, spell_id: String, behavior: Dictionary, 
 		SessionStore.access_token
 	)
 	if not bool(build_result.get("ok", false)):
-		host.call("_fail_with_error", build_result)
+		_fail_preparation_action(host, build_result, "Nao foi possivel ajustar a magia.")
 		return
 	if not SessionStore.apply_build_result(build_result):
-		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		_fail_preparation_action(host, {"error": SessionStore.last_error}, "Nao foi possivel ajustar a magia.")
 		return
 
 	SessionStore.save_cache()
 	host.call("_set_busy", false, message)
 	host.call("_render_refuge_screen")
+
+func _fail_preparation_action(host: Node, result: Dictionary, detail: String) -> void:
+	var error_payload := _preparation_error_payload(result)
+	var code := str(error_payload.get("code", "REQUEST_FAILED"))
+	var is_network := _is_preparation_network_error(code)
+	if is_network:
+		SessionStore.mark_offline(error_payload)
+	else:
+		SessionStore.offline = false
+		SessionStore.last_error = error_payload
+		SessionStore.session_changed.emit()
+	host.call("_set_busy", false, detail)
+	_set_error_text(host, _preparation_error_message(code))
+	host.call("_sync_immersive_feedback")
+	host.call("_emit_client_event", "action_failure", {
+		"action_id": str(host.get("_active_action_id")),
+		"screen": str(host.get("_current_screen")),
+		"code": code,
+		"message": str(error_payload.get("message", "")),
+		"network": is_network,
+	})
+	if is_network:
+		host.call("_emit_client_event", "network_failure", {
+			"action_id": str(host.get("_active_action_id")),
+			"screen": str(host.get("_current_screen")),
+			"code": code,
+		})
+	host.call("_sync_social_auto_sync_for_route")
+
+static func _preparation_error_payload(result: Dictionary) -> Dictionary:
+	var error_payload := _as_dictionary(result.get("error", {}))
+	if error_payload.is_empty():
+		var body := _as_dictionary(result.get("body", {}))
+		error_payload = _as_dictionary(body.get("error", {}))
+	if error_payload.is_empty():
+		error_payload = {
+			"code": "REQUEST_FAILED",
+			"message": "Acao nao concluida.",
+		}
+	return error_payload
+
+static func _preparation_error_message(code: String) -> String:
+	match code.strip_edges():
+		"UNAUTHENTICATED", "AUTH_REQUIRES_EMAIL":
+			return "Entre com email ou use guest dev para preparar a batalha."
+		"POTION_NOT_OWNED":
+			return "Voce ainda nao tem essa Pocao de Vida. Crie uma no Refugio primeiro."
+		"INVALID_POTION":
+			return "Essa pocao ainda nao pode ser usada na preparacao."
+		"SPELL_NOT_EQUIPPED":
+			return "Essa magia nao esta equipada para batalha."
+		"INVALID_SPELL":
+			return "Magia invalida para esta preparacao."
+		"BEHAVIOR_UPDATE_FAILED", "POTION_EQUIP_FAILED":
+			return "Nao foi possivel salvar essa escolha agora. Tente novamente."
+		"BUILD_NOT_FOUND", "INVALID_SLOT", "INVALID_BEHAVIOR", "INVALID_BEHAVIOR_PERCENT", "INVALID_REQUEST_ID", "INVALID_SAVE_TYPE":
+			return "Preparacao indisponivel agora. Tente novamente em instantes."
+		"NETWORK_UNAVAILABLE", "REQUEST_NOT_STARTED", "CLIENT_MISCONFIGURED", "INVALID_JSON":
+			return "Sem conexao para carregar a preparacao. Verifique a internet e tente de novo."
+		_:
+			return "Nao foi possivel atualizar a preparacao. Tente novamente."
+
+static func _is_preparation_network_error(code: String) -> bool:
+	return bool(PREPARATION_NETWORK_ERROR_CODES.get(code.strip_edges(), false))
 
 static func _default_potion_behavior() -> Dictionary:
 	return {
