@@ -600,6 +600,7 @@ func test_boot_surface_presenters_render_shells_without_network() -> void:
 
 	boot._show_screen("social")
 	assert_true(boot._action_buttons.has("show_social"))
+	assert_true(boot._action_buttons.has("copy_social_username"))
 	assert_true(boot._action_buttons.has("send_guild_chat"))
 	assert_not_null(boot._social_state_container)
 	await get_tree().process_frame
@@ -865,7 +866,7 @@ func test_normal_surfaces_hide_internal_copy_terms() -> void:
 		for term: String in forbidden_terms:
 			assert_false(visible_text.contains(term), "%s should hide '%s' from normal UI copy." % [screen_id, term])
 
-func test_boot_social_presenter_renders_chat_polling_and_lab_badges() -> void:
+func test_boot_social_presenter_renders_chat_status_and_lab_badges() -> void:
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)
 	SessionStore.social_state = {
@@ -891,10 +892,15 @@ func test_boot_social_presenter_renders_chat_polling_and_lab_badges() -> void:
 	}
 
 	boot._show_screen("social")
-	assert_string_contains(boot._timeline_label.text, "Use Atualizar social para carregar novas mensagens")
-	assert_string_contains(boot._timeline_label.text, "Chat de guilda: 1 mensagem atual")
+	assert_string_contains(boot._timeline_label.text, "Sincronizacao disponivel apos login.")
+	assert_string_contains(boot._timeline_label.text, "Meu username: fabio")
+	assert_string_contains(boot._timeline_label.text, "Badge social: Save Normal | Badge save: Save Lab")
+	assert_string_contains(boot._timeline_label.text, "Chat: 1 mensagem")
 	assert_string_contains(boot._timeline_label.text, "Mensagem atual: tester_lab [lab]: Ola atual")
-	assert_true(_label_tree_contains(boot._social_state_container, "Mensagens mais recentes. Use Atualizar social para sincronizar."))
+	assert_true(_label_tree_contains(boot._social_state_container, "Meu username"))
+	assert_true(_label_tree_contains(boot._social_state_container, "Badge social: Save Normal"))
+	assert_true(_label_tree_contains(boot._social_state_container, "Badge save: Save Lab"))
+	assert_true(_label_tree_contains(boot._social_state_container, "Mensagens mais recentes. Esta tela busca novidades enquanto permanece aberta."))
 	assert_true(_label_tree_contains(boot._social_state_container, "tester_lab [lab]: Ola atual (2026-05-27 14:45)"))
 	assert_true(_label_tree_contains(boot._social_state_container, "Oficina Ritual L1"))
 	await get_tree().process_frame
@@ -915,11 +921,89 @@ func test_boot_social_presenter_renders_empty_states_and_refresh_hint() -> void:
 
 	boot._show_screen("social")
 	assert_string_contains(boot._timeline_label.text, "Mensagem atual: nenhuma")
-	assert_true(_label_tree_contains(boot._social_state_container, "Atualizacao"))
-	assert_true(_label_tree_contains(boot._social_state_container, "Nenhum amigo ainda. Use o username do outro jogador para adicionar."))
-	assert_true(_label_tree_contains(boot._social_state_container, "Chat e estruturas aparecem depois que a conta entra em uma guilda."))
-	assert_true(_label_tree_contains(boot._social_state_container, "Sem guilda. O chat fica disponivel depois de criar ou entrar em uma guilda."))
+	assert_true(_label_tree_contains(boot._social_state_container, "Meu username"))
+	assert_true(_label_tree_contains(boot._social_state_container, "Sincronizacao disponivel apos login."))
+	assert_true(_label_tree_contains(boot._social_state_container, "Nenhum amigo ainda. Digite um username e toque Adicionar amigo."))
+	assert_true(_label_tree_contains(boot._social_state_container, "Crie uma guilda ou entre pelo nome para liberar membros, estruturas e chat."))
+	assert_true(_label_tree_contains(boot._social_state_container, "Entre em uma guilda para liberar o chat."))
 	await get_tree().process_frame
+
+func test_social_auto_sync_timer_starts_only_for_social_with_account() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	boot._show_screen("social")
+	await get_tree().process_frame
+	assert_true(boot._social_auto_sync_timer.is_stopped())
+
+	_prepare_account_state()
+	boot._show_screen("social", false)
+	await get_tree().process_frame
+	assert_false(boot._social_auto_sync_timer.is_stopped())
+	assert_eq(boot._social_auto_sync_timer.wait_time, 8.0)
+
+	boot._show_screen("base", false)
+	await get_tree().process_frame
+	assert_true(boot._social_auto_sync_timer.is_stopped())
+
+func test_social_auto_sync_timer_pauses_for_busy_and_offline_states() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	_prepare_account_state()
+
+	boot._show_screen("social")
+	await get_tree().process_frame
+	assert_false(boot._social_auto_sync_timer.is_stopped())
+
+	boot._set_busy(true, "Testando pausa...")
+	boot._sync_social_auto_sync_for_route()
+	assert_true(boot._social_auto_sync_timer.is_stopped())
+	assert_eq(boot._social_auto_sync_status_text(), "Sincronizacao pausada durante outra acao.")
+
+	boot._set_busy(false, "Teste concluido.")
+	SessionStore.offline = true
+	boot._sync_social_auto_sync_for_route()
+	assert_true(boot._social_auto_sync_timer.is_stopped())
+	assert_eq(boot._social_auto_sync_status_text(), "Sincronizacao pausada: sem conexao.")
+
+func test_social_auto_sync_error_pauses_until_manual_refresh_succeeds() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	_prepare_account_state()
+
+	boot._show_screen("social")
+	await get_tree().process_frame
+	assert_false(boot._social_auto_sync_timer.is_stopped())
+
+	boot._social_auto_sync_last_error = "Falha temporaria."
+	boot._sync_social_auto_sync_for_route()
+	assert_true(boot._social_auto_sync_timer.is_stopped())
+	assert_eq(boot._social_auto_sync_status_text(), "Sincronizacao pausada. Use Atualizar social para tentar novamente.")
+
+	boot._social_auto_sync_last_error = ""
+	boot._restart_social_auto_sync()
+	assert_false(boot._social_auto_sync_timer.is_stopped())
+
+func test_copy_social_username_uses_social_profile_without_network() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	SessionStore.social_state = {
+		"identity": {"viewer_badge": "normal"},
+		"player": {"username": "fabio", "save_badge": "normal"},
+		"active_player": {"username": "fabio", "save_badge": "normal"},
+		"friends": [],
+		"guild": null,
+		"guild_members": [],
+		"guild_structures": [],
+		"guild_chat": [],
+	}
+
+	boot._show_screen("social")
+	boot._copy_social_username()
+	await get_tree().process_frame
+
+	assert_eq(boot._social_username_for_copy(), "fabio")
+	assert_string_contains(boot._detail_label.text, "Username copiado: fabio")
 
 func test_boot_competition_presenter_preserves_lab_and_bot_ranking_messages() -> void:
 	var boot = BootScreenScript.new()
@@ -1271,6 +1355,7 @@ func _centralized_action_literals() -> PackedStringArray:
 		AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA,
 		AppShellActionContractScript.ACTION_UPGRADE_NUCLEO,
 		AppShellActionContractScript.ACTION_SHOW_SOCIAL,
+		AppShellActionContractScript.ACTION_COPY_SOCIAL_USERNAME,
 		AppShellActionContractScript.ACTION_ADD_FRIEND,
 		AppShellActionContractScript.ACTION_CREATE_GUILD,
 		AppShellActionContractScript.ACTION_JOIN_GUILD,

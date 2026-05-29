@@ -43,6 +43,7 @@ const SCREEN_SHOP := ROUTE_SHOP
 const BATTLE_LAB_SCREEN_PATH := "res://dev/battle_lab/battle_lab_screen.gd"
 const PROGRESSION_LAB_SCREEN_PATH := "res://dev/progression_lab/progression_lab_screen.gd"
 const BATTLE_REPLAY_TICK_SECONDS := 0.05
+const SOCIAL_AUTO_SYNC_SECONDS := 8.0
 const APP_ORIENTATION_PORTRAIT := DisplayServer.SCREEN_PORTRAIT
 const ACTION_SKIP_REPLAY := AppShellActionContractScript.ACTION_SKIP_REPLAY
 const ACTION_RETURN_REFUGE := AppShellActionContractScript.ACTION_RETURN_REFUGE
@@ -102,6 +103,10 @@ var _skip_replay := false
 var _battle_summary_skipped := false
 var _battle_request_splash_active := false
 var _compact_layout := false
+var _social_auto_sync_timer: Timer
+var _social_auto_sync_in_flight := false
+var _social_auto_sync_last_text := ""
+var _social_auto_sync_last_error := ""
 var _battle_lab_overlay: Control
 var _progression_lab_overlay: Control
 var _selected_base_structure_id := "nucleo_energia"
@@ -119,6 +124,7 @@ var _battle_history_save_type := SessionStoreScript.SAVE_TYPE_NORMAL
 func _ready() -> void:
 	_clear_existing_scene()
 	_build_ui()
+	_ensure_social_auto_sync_timer()
 	SessionStore.session_changed.connect(_sync_status_from_session)
 	var cache_loaded := SessionStore.load_cache()
 	SessionStore.ensure_session_id()
@@ -330,6 +336,7 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 		"has_account": SessionStore.has_account_state(),
 		"offline": SessionStore.offline,
 	})
+	_sync_social_auto_sync_for_route()
 
 func _show_refuge_root(message: String = "") -> void:
 	_show_screen(AppShellRouteContractScript.clear_for_refuge_return(_screen_history), false)
@@ -774,6 +781,8 @@ func _execute_action(action_id: String) -> void:
 				await _disable_potion()
 			AppShellActionContractScript.ACTION_SHOW_SOCIAL:
 				await _show_social()
+			AppShellActionContractScript.ACTION_COPY_SOCIAL_USERNAME:
+				_copy_social_username()
 			AppShellActionContractScript.ACTION_ADD_FRIEND:
 				await _add_friend()
 			AppShellActionContractScript.ACTION_CREATE_GUILD:
@@ -970,6 +979,22 @@ func _join_guild() -> void:
 func _send_guild_chat() -> void:
 	await _surface_action_flow.send_guild_chat(self)
 
+func _copy_social_username() -> void:
+	var username := _social_username_for_copy()
+	if username == "":
+		_error_label.text = "Username social ainda nao carregado. Atualize o Social e tente novamente."
+		_sync_immersive_feedback()
+		return
+	DisplayServer.clipboard_set(username)
+	_show_notice("Username copiado: %s" % username)
+
+func _social_username_for_copy() -> String:
+	var social_player := _as_dictionary(SessionStore.social_state.get("player", {}))
+	var username := str(social_player.get("username", "")).strip_edges()
+	if username != "":
+		return username
+	return str(SessionStore.player.get("username", "")).strip_edges()
+
 func _show_matchmaking() -> void:
 	await _surface_action_flow.show_matchmaking(self)
 
@@ -1027,6 +1052,71 @@ func _fail_with_error(result: Dictionary) -> void:
 			"screen": _current_screen,
 			"code": code,
 		})
+	_sync_social_auto_sync_for_route()
+
+func _ensure_social_auto_sync_timer() -> void:
+	if _social_auto_sync_timer != null and is_instance_valid(_social_auto_sync_timer): return
+	_social_auto_sync_timer = Timer.new()
+	_social_auto_sync_timer.name = "SocialAutoSyncTimer"
+	_social_auto_sync_timer.one_shot = true
+	_social_auto_sync_timer.wait_time = SOCIAL_AUTO_SYNC_SECONDS
+	_social_auto_sync_timer.timeout.connect(Callable(self, "_on_social_auto_sync_timeout"))
+	add_child(_social_auto_sync_timer)
+
+func _sync_social_auto_sync_for_route() -> void:
+	_ensure_social_auto_sync_timer()
+	if not _can_start_social_auto_sync():
+		_social_auto_sync_timer.stop()
+	elif _social_auto_sync_timer.is_stopped():
+		_social_auto_sync_timer.wait_time = SOCIAL_AUTO_SYNC_SECONDS
+		_social_auto_sync_timer.start()
+
+func _restart_social_auto_sync() -> void:
+	_ensure_social_auto_sync_timer()
+	_social_auto_sync_timer.stop()
+	if _can_start_social_auto_sync():
+		_social_auto_sync_timer.wait_time = SOCIAL_AUTO_SYNC_SECONDS
+		_social_auto_sync_timer.start()
+
+func _can_start_social_auto_sync() -> bool:
+	return _current_screen == SCREEN_SOCIAL and not _is_busy and not _social_auto_sync_in_flight and _social_auto_sync_last_error == "" and not SessionStore.offline and not SessionStore.is_progression_lab_local_only() and SessionStore.has_valid_access_token() and SessionStore.has_account_state()
+
+func _on_social_auto_sync_timeout() -> void:
+	await _auto_sync_social_state()
+
+func _auto_sync_social_state() -> void:
+	if _current_screen != SCREEN_SOCIAL:
+		_sync_social_auto_sync_for_route()
+		return
+	if _is_busy:
+		_restart_social_auto_sync()
+		return
+	if not _can_start_social_auto_sync():
+		_sync_social_auto_sync_for_route()
+		return
+	_social_auto_sync_in_flight = true
+	_social_auto_sync_last_error = ""
+	await _surface_action_flow.auto_sync_social(self)
+
+func _handle_social_auto_sync_error(result: Dictionary) -> void:
+	var error_payload := _extract_error(result)
+	var code := str(error_payload.get("code", "REQUEST_FAILED"))
+	_social_auto_sync_last_error = _friendly_error_message(code, str(error_payload.get("message", "Falha na requisicao.")))
+	if _is_network_error(code): SessionStore.mark_offline(error_payload)
+	_show_notice("Social nao atualizou agora. Use Atualizar social para tentar novamente.")
+	_render_social_state()
+	_sync_social_auto_sync_for_route()
+
+func _social_auto_sync_status_text() -> String:
+	if _social_auto_sync_in_flight: return "Sincronizacao do Social em andamento."
+	if SessionStore.offline: return "Sincronizacao pausada: sem conexao."
+	if _social_auto_sync_last_error != "": return "Sincronizacao pausada. Use Atualizar social para tentar novamente."
+	if SessionStore.is_progression_lab_local_only(): return "Sincronizacao pausada no Lab local."
+	if not SessionStore.has_valid_access_token() or not SessionStore.has_account_state(): return "Sincronizacao disponivel apos login."
+	if _is_busy: return "Sincronizacao pausada durante outra acao."
+	if _social_auto_sync_last_text != "":
+		return "Sincronizacao ativa a cada 8s | ultima: %s" % _social_auto_sync_last_text
+	return "Sincronizacao ativa a cada 8s nesta tela."
 
 func _sync_status_from_session() -> void:
 	if _status_label == null:

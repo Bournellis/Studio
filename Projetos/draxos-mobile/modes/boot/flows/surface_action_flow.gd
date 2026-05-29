@@ -242,6 +242,7 @@ func show_social(host: Node) -> void:
 	SessionStore.save_cache()
 	host.call("_set_busy", false, "Social recuperado.")
 	host.call("_render_social_state")
+	_mark_social_sync_success(host)
 
 func add_friend(host: Node) -> void:
 	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de adicionar amigo.")):
@@ -270,6 +271,7 @@ func add_friend(host: Node) -> void:
 	SessionStore.save_cache()
 	host.call("_set_busy", false, "Amigo adicionado.")
 	host.call("_render_social_state")
+	_mark_social_sync_success(host)
 
 func create_guild(host: Node) -> void:
 	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de criar guilda.")):
@@ -294,6 +296,7 @@ func create_guild(host: Node) -> void:
 	SessionStore.save_cache()
 	host.call("_set_busy", false, "Guilda criada no servidor.")
 	host.call("_render_social_state")
+	_mark_social_sync_success(host)
 
 func join_guild(host: Node) -> void:
 	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de entrar em guilda.")):
@@ -322,6 +325,7 @@ func join_guild(host: Node) -> void:
 	SessionStore.save_cache()
 	host.call("_set_busy", false, "Guilda sincronizada.")
 	host.call("_render_social_state")
+	_mark_social_sync_success(host)
 
 func send_guild_chat(host: Node) -> void:
 	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de usar chat.")):
@@ -350,6 +354,28 @@ func send_guild_chat(host: Node) -> void:
 	SessionStore.save_cache()
 	host.call("_set_busy", false, "Mensagem registrada no servidor.")
 	host.call("_render_social_state")
+	_mark_social_sync_success(host)
+
+func auto_sync_social(host: Node) -> void:
+	var social_result: Dictionary = await SupabaseClient.fetch_social_state(SessionStore.access_token)
+	host.set("_social_auto_sync_in_flight", false)
+	if str(host.get("_current_screen")) != AppShellRouteContractScript.ROUTE_SOCIAL:
+		host.call("_sync_social_auto_sync_for_route")
+		return
+	if not bool(social_result.get("ok", false)):
+		host.call("_handle_social_auto_sync_error", social_result)
+		return
+	if not SessionStore.apply_social_result(social_result):
+		host.call("_handle_social_auto_sync_error", {"error": SessionStore.last_error})
+		return
+	SessionStore.save_cache()
+	host.call("_render_social_state")
+	_mark_social_sync_success(host)
+
+func _mark_social_sync_success(host: Node) -> void:
+	host.set("_social_auto_sync_last_text", Time.get_time_string_from_system())
+	host.set("_social_auto_sync_last_error", "")
+	host.call("_restart_social_auto_sync")
 
 func show_matchmaking(host: Node) -> void:
 	if not bool(host.call("_require_session", "Entre com email ou use guest dev antes de abrir matchmaking.")):

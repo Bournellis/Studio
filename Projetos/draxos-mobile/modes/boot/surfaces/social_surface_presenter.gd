@@ -4,18 +4,22 @@ extends RefCounted
 const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
 
 static func render(host: Node) -> void:
-	_add_body_text(host, "Social da conta: encontre amigos, crie ou entre em uma guilda e converse no chat da guilda.")
+	_add_body_text(host, "Social Basico: amigos, guilda e chat de guilda em um so lugar.")
 	var refresh_social_button := _add_action_button(host, "Atualizar social", AppShellActionContractScript.ACTION_SHOW_SOCIAL)
-	refresh_social_button.tooltip_text = "Busca amigos, guilda, membros, estruturas e mensagens recentes no servidor."
+	refresh_social_button.tooltip_text = "Busca amigos, guilda, membros, estruturas e mensagens recentes."
+	var copy_username_button := _add_action_button(host, "Copiar meu username", AppShellActionContractScript.ACTION_COPY_SOCIAL_USERNAME)
+	copy_username_button.tooltip_text = "Copia o username social da conta para compartilhar com outro jogador."
+	_add_section_label(host, "Amigos")
 	host.set("_social_friend_input", _add_social_input(
 		host,
 		"Amigo por username",
 		"guest_12345678",
 		str(host.get("_last_social_friend_username")),
-		"Digite o username do outro jogador. A amizade e aceita automaticamente nesta versao."
+		"Digite o username do outro jogador para adicionar aos amigos."
 	))
 	var add_friend_button := _add_action_button(host, "Adicionar amigo", AppShellActionContractScript.ACTION_ADD_FRIEND)
-	add_friend_button.tooltip_text = "Cria amizade aceita nos dois sentidos, usando o username informado."
+	add_friend_button.tooltip_text = "Adiciona o username informado a sua lista de amigos."
+	_add_section_label(host, "Guilda")
 	host.set("_social_guild_input", _add_social_input(
 		host,
 		"Guilda",
@@ -24,18 +28,19 @@ static func render(host: Node) -> void:
 		"Digite o nome da guilda para criar ou entrar. O nome precisa ter 3 a 32 caracteres."
 	))
 	var create_guild_button := _add_action_button(host, "Criar guilda", AppShellActionContractScript.ACTION_CREATE_GUILD, "Criar uma guilda para esta conta?")
-	create_guild_button.tooltip_text = "Cria uma guilda, adiciona voce como owner e inicializa estruturas e canal de chat."
+	create_guild_button.tooltip_text = "Cria uma guilda e abre o canal de chat para seus membros."
 	var join_guild_button := _add_action_button(host, "Entrar guilda", AppShellActionContractScript.ACTION_JOIN_GUILD)
 	join_guild_button.tooltip_text = "Entra na guilda pelo nome exato. Voce so pode participar de uma guilda por vez."
+	_add_section_label(host, "Chat")
 	host.set("_social_chat_input", _add_social_input(
 		host,
 		"Mensagem de guilda",
 		"Mensagem curta para o chat",
 		str(host.get("_last_social_chat_message")),
-		"Mensagem enviada para o canal da guilda. Ha um limite curto para evitar spam."
+		"Mensagem enviada para o canal da guilda."
 	))
 	var send_chat_button := _add_action_button(host, "Enviar chat guilda", AppShellActionContractScript.ACTION_SEND_GUILD_CHAT)
-	send_chat_button.tooltip_text = "Envia a mensagem digitada e busca as conversas recentes."
+	send_chat_button.tooltip_text = "Envia a mensagem digitada e atualiza as conversas recentes."
 	host.set("_timeline_label", _add_output_label(host, ""))
 	var social_state_container := VBoxContainer.new()
 	social_state_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -54,16 +59,18 @@ static func render_state(host: Node) -> void:
 	var social := _as_dictionary(SessionStore.social_state)
 	if social.is_empty():
 		timeline_label.text = "\n".join(PackedStringArray([
-			"Social ainda nao carregado.",
-			"Use Atualizar social para buscar amigos, guilda e chat.",
-			"Estado atual: nenhuma informacao carregada.",
+			"Meu username: %s" % _fallback_username_text(),
+			"Badge social: pendente | Badge save: %s" % _social_save_badge_text(SessionStore.active_save_badge()),
+			str(host.call("_social_auto_sync_status_text")),
+			"Estado atual: nenhum dado social carregado.",
 		]))
 		if social_state_container != null:
-			social_state_container.add_child(_base_info_panel(
-				host,
-				"Social da conta",
-				"Atualize o Social para ver amigos, guilda, membros, estruturas e mensagens atuais."
-			))
+			host.call("_add_responsive_panel_layout", social_state_container, [
+				_social_identity_panel(host, {}, {}, {}, false),
+				_social_friends_panel(host, []),
+				_social_guild_panel(host, {}, [], []),
+				_social_chat_panel(host, [], false),
+			], 2)
 		return
 
 	var identity := _as_dictionary(social.get("identity", {}))
@@ -76,13 +83,13 @@ static func render_state(host: Node) -> void:
 	var messages := _as_array(social.get("guild_chat", []))
 
 	var lines := PackedStringArray()
-	lines.append("Social sincronizado")
-	lines.append("Use Atualizar social para carregar novas mensagens e mudancas de guilda.")
-	lines.append("Escopo: conta inteira | Save ativo: %s" % _social_save_badge_text(str(identity.get("viewer_badge", SessionStore.active_save_badge()))))
-	lines.append("Identidade: %s | Jogador ativo: %s" % [
-		_social_username_text(social_player),
-		_social_username_text(active_player),
+	lines.append("Meu username: %s" % _social_username_text(social_player, _fallback_username_text()))
+	lines.append("Badge social: %s | Badge save: %s" % [
+		_social_save_badge_text(str(identity.get("viewer_badge", SessionStore.active_save_badge()))),
+		_social_save_badge_text(_profile_save_badge(active_player)),
 	])
+	lines.append(str(host.call("_social_auto_sync_status_text")))
+	lines.append("Use Atualizar social quando quiser forcar uma nova busca.")
 	lines.append("Amigos: %s" % _count_text(friends.size(), "amigo", "amigos"))
 	if guild.is_empty():
 		lines.append("Guilda: nenhuma")
@@ -93,46 +100,32 @@ static func render_state(host: Node) -> void:
 			_count_text(members.size(), "membro", "membros"),
 			_count_text(structures.size(), "estrutura", "estruturas"),
 		])
-	lines.append("Chat de guilda: %s" % _count_text(messages.size(), "mensagem atual", "mensagens atuais"))
+	lines.append("Chat: %s" % _count_text(messages.size(), "mensagem", "mensagens"))
 	lines.append("Mensagem atual: %s" % _latest_message_text(messages))
 	timeline_label.text = "\n".join(lines)
 	if social_state_container != null:
 		host.call("_add_responsive_panel_layout", social_state_container, [
-			_social_refresh_panel(host, friends, guild, messages),
 			_social_identity_panel(host, identity, social_player, active_player),
 			_social_friends_panel(host, friends),
 			_social_guild_panel(host, guild, members, structures),
 			_social_chat_panel(host, messages, not guild.is_empty()),
 		], 2)
 
-static func _social_refresh_panel(host: Node, friends: Array, guild: Dictionary, messages: Array) -> Control:
-	var panel := _base_panel(host)
-	panel.tooltip_text = "Atualizar social busca as informacoes mais recentes."
-	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", 6)
-	panel.add_child(box)
-	box.add_child(_base_label(host, "Atualizacao", "text_primary", 17))
-	box.add_child(_base_label(host, "Agora: %s, guilda %s, %s." % [
-		_count_text(friends.size(), "amigo", "amigos"),
-		"ativa" if not guild.is_empty() else "ausente",
-		_count_text(messages.size(), "mensagem atual", "mensagens atuais"),
-	], "text_secondary"))
-	box.add_child(_base_label(host, "Use Atualizar social para buscar mensagens novas.", "status_warning"))
-	return panel
-
-static func _social_identity_panel(host: Node, identity: Dictionary, social_player: Dictionary, active_player: Dictionary) -> Control:
+static func _social_identity_panel(host: Node, identity: Dictionary, social_player: Dictionary, active_player: Dictionary, social_loaded: bool = true) -> Control:
 	var panel := _base_panel(host)
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 6)
 	panel.add_child(box)
-	box.add_child(_base_label(host, "Identidade da Conta", "text_primary", 17))
-	box.add_child(_base_label(host, "Perfil social: %s" % _social_username_text(social_player), "text_secondary"))
-	box.add_child(_base_label(host, "Jogador do save ativo: %s" % _social_username_text(active_player), "text_secondary"))
+	box.add_child(_base_label(host, "Meu username", "text_primary", 17))
+	box.add_child(_base_label(host, _social_username_text(social_player, _fallback_username_text()), "text_secondary"))
 	var badge := str(identity.get("viewer_badge", SessionStore.active_save_badge()))
-	var badge_label := _base_label(host, "Marcador visivel: %s" % _social_save_badge_text(badge), "status_error" if badge == "lab" else "status_success")
-	box.add_child(badge_label)
+	var active_badge := _profile_save_badge(active_player)
+	var social_badge_text := _social_save_badge_text(badge) if social_loaded else "pendente"
+	box.add_child(_base_label(host, "Badge social: %s" % social_badge_text, "status_error" if badge == "lab" else "status_success"))
+	box.add_child(_base_label(host, "Badge save: %s" % _social_save_badge_text(active_badge), "status_error" if active_badge == "lab" else "status_success"))
+	box.add_child(_base_label(host, str(host.call("_social_auto_sync_status_text")), "text_secondary"))
 	if bool(identity.get("fallback_to_active_save", false)):
-		box.add_child(_base_label(host, "Aviso: save Normal ainda nao existe; o social esta usando o save ativo como fallback.", "status_warning"))
+		box.add_child(_base_label(host, "Social usando o save ativo enquanto o perfil Normal ainda nao foi aberto.", "status_warning"))
 	return panel
 
 static func _social_friends_panel(host: Node, friends: Array) -> Control:
@@ -142,8 +135,8 @@ static func _social_friends_panel(host: Node, friends: Array) -> Control:
 	panel.add_child(box)
 	box.add_child(_base_label(host, "Amigos - %s" % _count_text(friends.size(), "amigo", "amigos"), "text_primary", 17))
 	if friends.is_empty():
-		box.add_child(_base_label(host, "Nenhum amigo ainda. Use o username do outro jogador para adicionar.", "text_secondary"))
-		box.add_child(_base_label(host, "A amizade e aceita automaticamente e aparece na proxima atualizacao.", "status_warning"))
+		box.add_child(_base_label(host, "Nenhum amigo ainda. Digite um username e toque Adicionar amigo.", "text_secondary"))
+		box.add_child(_base_label(host, "Depois de adicionar, o amigo aparece aqui na proxima sincronizacao.", "text_secondary"))
 		return panel
 	for item: Variant in friends:
 		var friendship := _as_dictionary(item)
@@ -167,8 +160,8 @@ static func _social_guild_panel(host: Node, guild: Dictionary, members: Array, s
 	panel.add_child(box)
 	box.add_child(_base_label(host, "Guilda", "text_primary", 17))
 	if guild.is_empty():
-		box.add_child(_base_label(host, "Sem guilda. Crie uma guilda ou entre pelo nome.", "text_secondary"))
-		box.add_child(_base_label(host, "Chat e estruturas aparecem depois que a conta entra em uma guilda.", "status_warning"))
+		box.add_child(_base_label(host, "Voce ainda nao esta em uma guilda.", "text_secondary"))
+		box.add_child(_base_label(host, "Crie uma guilda ou entre pelo nome para liberar membros, estruturas e chat.", "text_secondary"))
 		return panel
 	box.add_child(_base_label(host, "%s | Nivel %s | %s" % [
 		str(guild.get("name", "")),
@@ -189,9 +182,9 @@ static func _social_guild_panel(host: Node, guild: Dictionary, members: Array, s
 				str(profile.get("level", 1)),
 				str(profile.get("power", 0)),
 			], "status_error" if badge == "lab" else "text_secondary"))
-	box.add_child(_base_label(host, "Estruturas", "text_primary"))
+	box.add_child(_base_label(host, "Estruturas informativas", "text_primary"))
 	if structures.is_empty():
-		box.add_child(_base_label(host, "Nenhuma estrutura de guilda retornada.", "status_warning"))
+		box.add_child(_base_label(host, "Nenhuma estrutura de guilda carregada agora.", "text_secondary"))
 	else:
 		for item: Variant in structures:
 			var structure := _as_dictionary(item)
@@ -207,13 +200,13 @@ static func _social_chat_panel(host: Node, messages: Array, has_guild: bool) -> 
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 6)
 	panel.add_child(box)
-	box.add_child(_base_label(host, "Chat de Guilda - %s" % _count_text(messages.size(), "mensagem atual", "mensagens atuais"), "text_primary", 17))
-	box.add_child(_base_label(host, "Mensagens mais recentes. Use Atualizar social para sincronizar.", "text_secondary"))
+	box.add_child(_base_label(host, "Chat - %s" % _count_text(messages.size(), "mensagem", "mensagens"), "text_primary", 17))
+	box.add_child(_base_label(host, "Mensagens mais recentes. Esta tela busca novidades enquanto permanece aberta.", "text_secondary"))
 	if messages.is_empty():
 		if has_guild:
-			box.add_child(_base_label(host, "Sem mensagens atuais. Envie a primeira mensagem para iniciar o chat da guilda.", "text_secondary"))
+			box.add_child(_base_label(host, "Sem mensagens ainda. Envie uma mensagem curta para abrir a conversa.", "text_secondary"))
 		else:
-			box.add_child(_base_label(host, "Sem guilda. O chat fica disponivel depois de criar ou entrar em uma guilda.", "text_secondary"))
+			box.add_child(_base_label(host, "Entre em uma guilda para liberar o chat.", "text_secondary"))
 		return panel
 	for item: Variant in messages:
 		var message := _as_dictionary(item)
@@ -243,8 +236,10 @@ static func _message_summary_text(message: Dictionary) -> String:
 		return "%s: %s (%s)" % [sender_label, content, created_at]
 	return "%s: %s" % [sender_label, content]
 
-static func _social_username_text(profile: Dictionary) -> String:
+static func _social_username_text(profile: Dictionary, fallback: String = "sem username") -> String:
 	var username := str(profile.get("username", "")).strip_edges()
+	if username == "":
+		username = fallback.strip_edges()
 	if username == "":
 		username = "sem username"
 	var badge := str(profile.get("save_badge", "normal"))
@@ -254,8 +249,20 @@ static func _social_username_text(profile: Dictionary) -> String:
 
 static func _social_save_badge_text(badge: String) -> String:
 	if badge == "lab":
-		return "lab"
-	return "normal"
+		return "Save Lab"
+	return "Save Normal"
+
+static func _profile_save_badge(profile: Dictionary) -> String:
+	var badge := str(profile.get("save_badge", "")).strip_edges()
+	if badge == "":
+		badge = SessionStore.active_save_badge()
+	return badge
+
+static func _fallback_username_text() -> String:
+	var username := SessionStore.account_display_name().strip_edges()
+	if username == "":
+		username = "sem username"
+	return username
 
 static func _friend_status_text(status: String) -> String:
 	match status:
@@ -315,9 +322,6 @@ static func _content_body(host: Node) -> VBoxContainer:
 static func _base_panel(host: Node) -> PanelContainer:
 	return host.call("_base_panel") as PanelContainer
 
-static func _base_info_panel(host: Node, title: String, body: String) -> Control:
-	return host.call("_base_info_panel", title, body) as Control
-
 static func _base_label(host: Node, text: String, color_token: String = "text_secondary", font_size: int = 0) -> Label:
 	return host.call("_base_label", text, color_token, font_size) as Label
 
@@ -329,6 +333,9 @@ static func _add_output_label(host: Node, text: String) -> Label:
 
 static func _add_action_button(host: Node, text: String, action_id: String, confirm_message: String = "") -> Button:
 	return host.call("_add_action_button", text, action_id, confirm_message) as Button
+
+static func _add_section_label(host: Node, text: String) -> Label:
+	return host.call("_add_section_label", text) as Label
 
 static func _add_social_input(host: Node, label_text: String, placeholder: String, initial_text: String, input_tooltip: String) -> LineEdit:
 	return host.call("_add_social_input", label_text, placeholder, initial_text, input_tooltip) as LineEdit
