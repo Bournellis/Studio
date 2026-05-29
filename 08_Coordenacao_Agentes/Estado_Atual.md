@@ -7,7 +7,7 @@
 ## Prioridade Do Estudio
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`VISUAL_DIRECTION_V1_PUBLISHED`, sobre Social Guilda v1 publicado, Foundation baseline confirmada, Track 13 release safety, Track 14 agent ops, Track 15 UX e ultimo pacote tecnico Track 16)
+- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`INTEGER_BONES_V1_PUBLISHED`, sobre Visual Direction v1, Social Guilda v1 publicado, Foundation baseline confirmada, Track 13 release safety, Track 14 agent ops, Track 15 UX e Track 16 tecnico)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -23,15 +23,15 @@
 
 ## DraxosMobile
 
-- Status: **P2_IMPLEMENTACAO - VISUAL_DIRECTION_V1_PUBLISHED**
+- Status: **P2_IMPLEMENTACAO - INTEGER_BONES_V1_PUBLISHED**
 - Fase: `Implementacao`
 - Local: `Projetos/draxos-mobile/`
 - Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
 - Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
-- Baseline atual: Track 00-15 integradas. O projeto tem uma base implementada para refinamento: primeiro slice server-authoritative, Refugio/Base, batalha, recompensa, social/competicao/loja em substancia de prototipo, Supabase remoto, manifest/version gate e builds Internal Alpha site/Web/APK/Windows republicadas em 2026-05-29 com Social Basico Guilda v1 e Visual Direction v1. Track 16 e o ultimo pacote tecnico de comportamento, Po de Osso e crafting inicial, mas nao e a etapa ativa de produto. Conteudo atual de armas, spells, economia, tema, visual e apresentacao existe para nao parecer app vazio e deve ser tratado como mock/substancia. A auditoria do loop esta registrada em `Projetos/draxos-mobile/docs/foundation-loop-audit.md`; Foundation Loop UX Pass 01 esta implementado, publicado e confirmado em revisao manual Android/Windows/Web em 2026-05-29. Social Basico Guilda v1 esta publicado: tela Social mais clara, username proprio copiavel, secoes Amigos/Guilda/Chat e auto-sync leve de 8s no chat de guilda sem backend/schema novo. Visual Direction v1 esta publicado: acentos por superficie/acao, CTAs e paineis passam por `core/ui_tokens.gd` e `docs/visual-direction-v1.md`; Web foi redeployado com asset root versionado depois de cache de navegador reaproveitar caminhos antigos.
+- Baseline atual: Track 00-15 integradas. O projeto tem uma base implementada para refinamento: primeiro slice server-authoritative, Refugio/Base, batalha, recompensa, social/competicao/loja em substancia de prototipo, Supabase remoto, manifest/version gate e builds Internal Alpha site/Web/APK/Windows republicadas em 2026-05-29 com Social Basico Guilda v1, Visual Direction v1 e Ossos Inteiros v1. Track 16 e o ultimo pacote tecnico de comportamento, Po de Osso e crafting inicial; Ossos Inteiros v1 promoveu o subconjunto necessario para alinhar migration/funcoes/catalogo/build publicado e parar de expor `0.1 osso`. Conteudo atual de armas, spells, economia, tema, visual e apresentacao existe para nao parecer app vazio e deve ser tratado como mock/substancia. A auditoria do loop esta registrada em `Projetos/draxos-mobile/docs/foundation-loop-audit.md`; Foundation Loop UX Pass 01 esta implementado, publicado e confirmado em revisao manual Android/Windows/Web em 2026-05-29. Social Basico Guilda v1 esta publicado: tela Social mais clara, username proprio copiavel, secoes Amigos/Guilda/Chat e auto-sync leve de 8s no chat de guilda sem backend/schema novo. Visual Direction v1 esta publicado: acentos por superficie/acao, CTAs e paineis passam por `core/ui_tokens.gd` e `docs/visual-direction-v1.md`; Web foi redeployado com asset root versionado de novo em Ossos Inteiros v1 para evitar cache de navegador.
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
 - Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation`. Mudancas visuais em Entry/Refugio/Batalha exigem `foundation-responsive-layout-contract.md` + `smoke_responsive_layout.gd`. Direct chat, ajudas, contribuicoes, moderacao, migration conta/save, tuning numerico, armas, spells, economia, visual final e apresentacao de batalha ficam bloqueados ate decisao propria.
-- Proximo passo: revisar Visual Direction v1 publicado em Android/Windows/Web e decidir Battle Presentation v1 ou outro pacote explicito.
+- Proximo passo: revisar o build Ossos Inteiros v1 em Android/Windows/Web confirmando que Ossos nao aparecem fracionados, depois decidir Battle Presentation v1 ou outro pacote explicito.
 
 ## rpg-isometrico
 

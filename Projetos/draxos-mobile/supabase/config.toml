@@ -395,6 +395,15 @@ verify_jwt = true
 [functions.competition]
 verify_jwt = true
 
+[functions.build]
+verify_jwt = true
+
+[functions.crafting]
+verify_jwt = true
+
+[functions.content]
+verify_jwt = true
+
 [functions.monetization]
 verify_jwt = true
 

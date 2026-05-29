@@ -224,3 +224,43 @@ Resultado:
 - Deploy Cloudflare Pages: `https://5477aaf9.draxos-mobile-internal-alpha.pages.dev`.
 - Preview Portal/Web: passou para `/portal/index.html` (`Draxos Alpha`) e `/web/index.html` (`GODOT_CONFIG` + asset root versionado).
 - Remote HEAD: passou com `200` para `index.js`, `index.pck` e `index.wasm` no asset root versionado.
+
+## Ossos Inteiros v1 - 2026-05-29
+
+Fabio reportou que o Web ainda mostrava `0.1 osso`. A correcao publicada promoveu o subconjunto necessario do pacote tecnico Track 16 para a alpha publicada: migration remota aplicada, Edge Functions redeployadas, catalogos Grimoire regenerados em escala inteira e coleta de Ossario preservando accrual sub-unitario ate existir pelo menos `1` Osso inteiro a coletar.
+
+Resultado:
+
+- Branch: `codex/draxos-mobile/integer-bones`.
+- Migration remota: `202605280001_behavior_crafting.sql` aplicada e `migration list --linked` alinhado.
+- Edge Functions: deploy passou para `healthcheck account battle base social competition build crafting content monetization telemetry progression-lab release`.
+- Release root estavel: `internal-alpha/v0`.
+- Release root versionado para cache-bust Web: `internal-alpha/v0-integer-bones-20260529`.
+- Asset root Web: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-integer-bones-20260529/web`.
+- Cloudflare Pages deploy: `https://d7a31bf6.draxos-mobile-internal-alpha.pages.dev`.
+- Downloads Android/PC: publicos unlisted no Storage, sem exigir Bearer token no link direto do portal.
+
+Artefatos planejados no manifest:
+
+- Android APK: `31629333` bytes, SHA256 `3e7e85bb9d18e6f939882abfc35020f5371decc77a44467b2c79760a5bc3013a`.
+- PC Windows ZIP: `40096077` bytes, SHA256 `7dd8f9d3f1e07a133a7e2078bfaf8ed4a6771c348e6101c5e9c24e5f5330a4c7`.
+- Web Index: `5442` bytes, SHA256 `dfe52fc0efd0f059f761fc483d1396aa5bd30dac52adce89d859870ff304ed39`.
+
+Validacao:
+
+- `integer_bones_contract_test.ts`: passou.
+- Deno check das funcoes `base/content` e do teste novo: passou.
+- `foundation_contracts_test.ts` + `integer_bones_contract_test.ts`: passou.
+- `validate_foundation.ps1 -Profile Client`: passou apos import Godot inicial da worktree.
+- `validate_foundation.ps1 -Profile Quick`: passou.
+- Smokes remotos: `base_manager_smoke.ts`, `monetization_rewards_smoke.ts`, `grimoire_catalog_smoke.ts` e `first_slice_battle_smoke.ts` passaram.
+- `export_internal_alpha.ps1 -AllowAndroidDebugFallback`: passou, Android mode `debug_fallback`.
+- `publish_internal_alpha.ps1 -Mode Plan -PublicDownloads`: passou.
+- `publish_internal_alpha.ps1 -Mode Package -PublicDownloads`: passou.
+- Storage upload com Supabase CLI `2.98.0`: passou para root estavel e root versionado.
+- Release manifest override + deploy da funcao `release`: passou.
+- `release_manifest_smoke.ts`: passou.
+- `release_artifacts_remote_smoke.ts`: passou; dominio estavel reconhecido como protegido por Cloudflare Access.
+- `internal_alpha_remote_smoke.ts` com `DRAXOS_REMOTE_RELEASE_SMOKE=1`: passou.
+- Preview checks: passaram para `/portal/index.html` com link publico do APK e `/web/index.html` com `GODOT_CONFIG` + root versionado.
+- Remote HEAD: passou com `200` para APK publico (`31629333`, `application/vnd.android.package-archive`) e para `index.js`, `index.pck`, `index.wasm` versionados.

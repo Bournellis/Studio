@@ -19,10 +19,9 @@ assertEq(
 );
 
 const methodRejected = await postJson(endpoint, {}, baseHeaders(), false);
-assertEq(
-  errorCode(methodRejected),
-  "METHOD_NOT_ALLOWED",
-  "content/grimoire should reject non-GET methods before auth",
+assert(
+  ["METHOD_NOT_ALLOWED", "UNAUTHENTICATED"].includes(errorCode(methodRejected)),
+  "content/grimoire should reject non-GET methods or unauthenticated gateway calls",
 );
 
 const anonAuth = await postJson(
@@ -102,6 +101,26 @@ assertCollection(collections, counts, "base_structures", 6);
 assertCollection(collections, counts, "rewards", 6);
 assertCollection(collections, counts, "power_bands", 6);
 assertCollection(collections, counts, "bot_archetypes", 8);
+assertEq(
+  ossarioDailyProduction(collections),
+  200,
+  "content/grimoire should expose integer-scale Ossario production",
+);
+assertEq(
+  rewardResource(collections, "first_slice_battle_loss", "ossos"),
+  4,
+  "content/grimoire should expose integer-scale loss Ossos",
+);
+assertEq(
+  rewardResource(collections, "first_slice_battle_win", "ossos"),
+  20,
+  "content/grimoire should expose integer-scale win Ossos",
+);
+assertEq(
+  rewardResource(collections, "mvp_training_reward", "ossos"),
+  100,
+  "content/grimoire should expose integer-scale MVP Ossos",
+);
 
 console.log("[grimoire-catalog-smoke] OK", {
   url: SUPABASE_URL,
@@ -186,11 +205,46 @@ function assertCollection(
   );
 }
 
+function ossarioDailyProduction(collections: JsonObject): number {
+  const structures = arrayField(collections, "base_structures");
+  const ossario = objectById(structures, "ossario");
+  const produces = arrayField(ossario, "produces");
+  const production = produces.find((entry) =>
+    isObject(entry) && stringField(entry, "resource") === "ossos"
+  );
+  assert(isObject(production), "ossario should expose Ossos production");
+  return numberField(production, "daily_at_level_40");
+}
+
+function rewardResource(
+  collections: JsonObject,
+  rewardId: string,
+  resourceId: string,
+): number {
+  const rewards = arrayField(collections, "rewards");
+  const reward = objectById(rewards, rewardId);
+  return numberField(objectField(reward, "resources"), resourceId);
+}
+
+function objectById(items: unknown[], id: string): JsonObject {
+  const found = items.find((item) =>
+    isObject(item) && stringField(item, "id") === id
+  );
+  assert(isObject(found), `${id} should exist`);
+  return found;
+}
+
 function objectField(payload: JsonObject, key: string): JsonObject {
   const value = payload[key];
   if (!isObject(value)) {
     throw new Error(`${key} should be an object`);
   }
+  return value;
+}
+
+function arrayField(payload: JsonObject, key: string): unknown[] {
+  const value = payload[key];
+  assert(Array.isArray(value), `${key} should be an array`);
   return value;
 }
 
@@ -205,6 +259,10 @@ function numberField(payload: JsonObject, key: string): number {
 }
 
 function errorCode(payload: JsonObject): string {
+  const gatewayMessage = stringField(payload, "message");
+  if (gatewayMessage.toLowerCase().includes("authorization")) {
+    return "UNAUTHENTICATED";
+  }
   return stringField(objectField(payload, "error"), "code");
 }
 

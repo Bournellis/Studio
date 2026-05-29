@@ -563,7 +563,7 @@ Response primeiro slice v0:
       "almas": 0.8,
       "energia": 0.4,
       "sangue": 0.2,
-      "ossos": 0.04
+      "ossos": 4
     }
   },
   "competition": {

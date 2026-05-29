@@ -4,8 +4,8 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Visual Direction`
-- Active stage status: `VISUAL_DIRECTION_V1_PUBLISHED`
+- Active stage: `Ossos Inteiros v1`
+- Active stage status: `INTEGER_BONES_V1_PUBLISHED`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety` (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation` (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical context, not current product focus)
@@ -58,7 +58,7 @@ Priority order after baseline confirmation:
 4. Battle presentation.
 5. Weapons, spells, economy, balance and content details.
 
-Internal loop ergonomics, Social Basico Guilda v1 and Visual Direction v1 have now received explicit packages and are published to Internal Alpha. No new code, schema, backend, asset, gameplay or balance work belongs outside an explicit next package decision.
+Internal loop ergonomics, Social Basico Guilda v1, Visual Direction v1 and Ossos Inteiros v1 have now received explicit packages and are published to Internal Alpha. No new code, schema, backend, asset, gameplay or balance work belongs outside an explicit next package decision.
 
 ## Social Basico Guilda v1
 
@@ -72,7 +72,7 @@ Social Basico Guilda v1 is implemented as the next product package after the con
 
 ## Latest Technical Package
 
-Track 16 added the first behavior/crafting/consumable package requested by the user. It remains technical context and not the current product focus; this publication did not separately promote Track 16 schema/backend work.
+Track 16 added the first behavior/crafting/consumable package requested by the user. It remains technical context and not the current product focus; Ossos Inteiros v1 only promotes the subset needed to make the published alpha coherent around whole-number Ossos.
 
 - Ossos are represented as whole numbers in the new scale (`1 Osso atual = 0.01 Osso antigo`) and current economy/content/Progression Lab values were rescaled by `100`.
 - `po_osso` was added as a whole-number resource, created by crushing Ossos.
@@ -81,13 +81,15 @@ Track 16 added the first behavior/crafting/consumable package requested by the u
 - Battle simulator supports spell behavior, `consumable_use`, one potion use per slot per battle and five `heal` ticks of `4%` max HP.
 - Godot Base/Ossario and Refugio preparation panels expose crafting, potion equip/remove and simple behavior toggles.
 
+Ossos Inteiros v1 is now published on top of the Visual Direction v1 build. The remote migration `202605280001_behavior_crafting.sql` is applied, Edge Functions were redeployed, generated Grimoire catalogs now expose whole-number Ossos values, and Base collection preserves sub-one Ossos accrual until at least `1` whole Osso is collectable. This fixes the visible `0.1 osso` class of issue without adding a new schema/API package beyond Track 16.
+
 ## Release Snapshot
 
 | Artifact | Bytes | SHA256 |
 |---|---:|---|
-| Android APK | `31629333` | `2a6bff4f927dbb835c667347fa9f3b54d0c947f95b3454c65b8a561d57678200` |
-| PC Windows ZIP | `40096068` | `a29f7341c676866fda421d3ee9cf13cdf26a216644b0ce98ba3614964e9b8875` |
-| Web index | `5442` | `ac43ff4352f206822b54f199ff6eddabe0b72a6d4d1b41622e4f6e70148be40c` |
+| Android APK | `31629333` | `3e7e85bb9d18e6f939882abfc35020f5371decc77a44467b2c79760a5bc3013a` |
+| PC Windows ZIP | `40096077` | `7dd8f9d3f1e07a133a7e2078bfaf8ed4a6771c348e6101c5e9c24e5f5330a4c7` |
+| Web index | `5442` | `dfe52fc0efd0f059f761fc483d1396aa5bd30dac52adce89d859870ff304ed39` |
 
 Links:
 
@@ -95,10 +97,10 @@ Links:
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal: `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
 - Stable Web: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest verified preview: `https://5477aaf9.draxos-mobile-internal-alpha.pages.dev`
-- Web asset root: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-web-20260529-visual-direction-v1/web`
+- Latest verified preview: `https://d7a31bf6.draxos-mobile-internal-alpha.pages.dev`
+- Web asset root: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-integer-bones-20260529/web`
 
-Visual Direction v1 was published to the Internal Alpha artifact/site channel on `2026-05-29`. After the first web check still looked unchanged in browser, Web assets were republished under a versioned Supabase Storage path and Cloudflare Pages was redeployed so `index.js`, `index.pck` and `index.wasm` no longer reuse the previous stable asset URLs. The stable Cloudflare Pages domain is protected by Cloudflare Access and returns the Access sign-in page to anonymous requests; public unauthenticated web validation should use the verified preview URL or an authenticated Access session. APK/PC downloads use the protected `release/download` endpoint with an alpha email/password account and signed Storage URLs; unauthenticated artifact probes return `401` by design, while `release_download_smoke.ts` confirms the Bearer-token path.
+Ossos Inteiros v1 was published to the Internal Alpha artifact/site channel on `2026-05-29`. The stable root `internal-alpha/v0` carries the latest APK/PC/Web package, and Web assets were also uploaded to `internal-alpha/v0-integer-bones-20260529` so browser caches cannot reuse older `index.js`, `index.pck` or `index.wasm` paths. APK/PC downloads are public unlisted Storage URLs again, avoiding the earlier direct-download Bearer-token error while keeping the stable Cloudflare Pages domain behind Access. Public unauthenticated Web validation should use the verified preview URL or an authenticated Access session.
 
 ## Visual Direction v1
 
@@ -111,9 +113,9 @@ Visual Direction v1 is implemented and published as the next refinement package 
 
 ## Risks And Blocks
 
-- Track 16 schema/backend work was not separately promoted in this publication; Supabase migrations/functions for that package must still be deployed deliberately if Track 16 becomes product focus later.
+- Track 16 migration/functions/catalog changes needed for Ossos Inteiros v1 are deployed. Further crafting, behavior, tuning, economy or content expansion still needs its own explicit package decision.
 - Foundation Loop UX Pass 01 is the accepted current V0 UX baseline after manual Android/Windows/Web review on `2026-05-29`; Social Basico Guilda v1 is now available in the published Internal Alpha build for human two-account validation.
-- Visual Direction v1 is published to Internal Alpha with a cache-busted Web asset root and still needs manual Android/Windows/Web visual review before the next product package.
+- Ossos Inteiros v1 is published to Internal Alpha with public APK/PC downloads and a cache-busted Web asset root; it still needs manual Android/Windows/Web confirmation that visible rewards/collection no longer show fractional Ossos.
 - Track 13 release safety remains the baseline for any future publication or wider-access gate.
 - `players.save_type` remains an alpha shortcut. `account_profiles` + `game_saves` is a future migration package.
 - Progression/economy remains mock/substance and not the current tuning focus.
@@ -121,9 +123,29 @@ Visual Direction v1 is implemented and published as the next refinement package 
 
 ## Next Step
 
-Run a manual Android/Windows/Web visual review of the published Visual Direction v1 build, then decide whether to move to Battle Presentation v1. Keep direct chat, helps, contributions, moderation, tuning numbers, weapons, spells, economy and battle presentation out of scope until they receive their own explicit package.
+Run a manual Android/Windows/Web check of the published Ossos Inteiros v1 build, specifically confirming that Base collection, rewards and Grimoire surfaces no longer expose `0.1 osso`. Then decide whether to move to Battle Presentation v1 or another explicit package. Keep direct chat, helps, contributions, moderation, tuning numbers, weapons, spells, economy and battle presentation out of scope until they receive their own explicit package.
 
 ## Validation
+
+Latest validation for Ossos Inteiros v1 publication on `2026-05-29`:
+
+- `npx -y deno test --allow-read server/tests/integer_bones_contract_test.ts`: PASS.
+- `npx -y deno check server/functions/base/index.ts supabase/functions/base/index.ts server/functions/content/index.ts supabase/functions/content/index.ts server/tests/integer_bones_contract_test.ts`: PASS.
+- `npx -y deno test --allow-read server/tests/foundation_contracts_test.ts server/tests/integer_bones_contract_test.ts`: PASS.
+- `validate_foundation.ps1 -Profile Client`: PASS after one-time Godot import in the fresh worktree.
+- `validate_foundation.ps1 -Profile Quick`: PASS after server config and smoke updates.
+- Supabase remote migration push: PASS; local/remote migrations aligned through `202605280001_behavior_crafting.sql`.
+- Supabase Edge Function deploy: PASS for gameplay/release functions touched by the package.
+- Remote smokes: PASS for `base_manager_smoke.ts`, `monetization_rewards_smoke.ts`, `grimoire_catalog_smoke.ts` and `first_slice_battle_smoke.ts`.
+- `export_internal_alpha.ps1 -AllowAndroidDebugFallback`: PASS; Android export mode `debug_fallback`.
+- `publish_internal_alpha.ps1 -Mode Plan -PublicDownloads`: PASS.
+- `publish_internal_alpha.ps1 -Mode Package -PublicDownloads`: PASS.
+- Supabase Storage upload with CLI `2.98.0`: PASS for `internal-alpha/v0` and `internal-alpha/v0-integer-bones-20260529`.
+- Cloudflare Pages deploy: PASS, preview `https://d7a31bf6.draxos-mobile-internal-alpha.pages.dev`.
+- Supabase release manifest override + `release` function deploy: PASS.
+- Remote release smokes: PASS for `release_manifest_smoke.ts`, `release_artifacts_remote_smoke.ts`, `internal_alpha_remote_smoke.ts` with `DRAXOS_REMOTE_RELEASE_SMOKE=1`, and `grimoire_catalog_smoke.ts`.
+- Direct APK HEAD without Bearer token: PASS, `200`, `31629333` bytes, `application/vnd.android.package-archive`.
+- Cache-bust preview checks: PASS for `/portal/index.html` with public APK link, `/web/index.html` with `GODOT_CONFIG` and the versioned asset root, plus remote HEAD `200` for versioned `index.js`, `index.pck` and `index.wasm`.
 
 Latest validation for Visual Direction v1 publication on `2026-05-29`:
 
