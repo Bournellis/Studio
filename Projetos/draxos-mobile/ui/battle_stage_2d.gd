@@ -28,6 +28,7 @@ const EVENT_ASSET_IDS := {
 	"summon_attack": "battle_icon_summon",
 	"summon_expire": "battle_icon_summon",
 	"pet_attack": "battle_icon_pet",
+	"consumable_use": "battle_icon_heal",
 	"heal": "battle_icon_heal",
 	"anti_stall": "battle_icon_damage",
 	"reward_preview": "battle_icon_reward",
@@ -506,9 +507,9 @@ func _render_event_panel() -> void:
 func _render_readout() -> void:
 	if _readout_label == null:
 		return
-	var readout_tooltip := "Resumo rapido da batalha\nMostra progresso do replay, tempo atual, vida percentual, status, recargas e aliados visiveis de cada lado."
+	var readout_tooltip := "Resumo da luta\nMostra o lance atual, tempo, vida restante, efeitos, esperas e aliados visiveis de cada lado."
 	if _side_state.is_empty() and _latest_event.is_empty():
-		_readout_label.text = "Replay 0/0 | aguardando batalha\nHP, status, recargas e aliados aparecem quando uma batalha carregar."
+		_readout_label.text = "Lance 0/0 | aguardando luta\nVida, efeitos, esperas e aliados aparecem aqui."
 		_set_stage_tooltip(_readout_label, readout_tooltip)
 		_set_stage_tooltip(_readout_panel, readout_tooltip)
 		_refresh_stage_tooltip(_readout_label)
@@ -516,12 +517,12 @@ func _render_readout() -> void:
 		return
 	var player_data := _as_dictionary(_side_state.get(SIDE_PLAYER, {}))
 	var opponent_data := _as_dictionary(_side_state.get(SIDE_OPPONENT, {}))
-	var readout_text := "Replay %d/%d | Tempo %ss | %s x %s\nStatus %d x %d | Recargas %d x %d | Aliados %d x %d" % [
+	var readout_text := "Lance %d/%d | %ss | %s x %s\nEfeitos %d x %d | Esperas %d x %d | Aliados %d x %d" % [
 		_event_index,
 		_event_count,
 		_number_text(_current_replay_time()),
-		_side_hp_summary(player_data, SIDE_PLAYER),
-		_side_hp_summary(opponent_data, SIDE_OPPONENT),
+		_compact_side_hp_summary(player_data, SIDE_PLAYER),
+		_compact_side_hp_summary(opponent_data, SIDE_OPPONENT),
 		_active_status_count(player_data),
 		_active_status_count(opponent_data),
 		_active_cooldown_count(player_data),
@@ -538,6 +539,19 @@ func _render_readout() -> void:
 func _side_hp_summary(side_data: Dictionary, side: String) -> String:
 	var display_name := str(side_data.get("display_name", _default_side_name(side)))
 	return "%s HP %s%%" % [display_name, _hp_percent_text(side_data)]
+
+func _compact_side_hp_summary(side_data: Dictionary, side: String) -> String:
+	var display_name := str(side_data.get("display_name", _default_side_name(side)))
+	return "%s %s%%" % [_compact_name(display_name, side), _hp_percent_text(side_data)]
+
+func _compact_name(display_name: String, side: String) -> String:
+	var cleaned := display_name.strip_edges()
+	if cleaned == "":
+		return _default_side_name(side)
+	var words := cleaned.split(" ", false)
+	if words.size() <= 1:
+		return cleaned
+	return str(words[0])
 
 func _hp_percent_text(side_data: Dictionary) -> String:
 	var max_hp := maxf(1.0, float(side_data.get("max_hp", 1.0)))
@@ -573,9 +587,9 @@ func _status_tooltip(status_id: String, value: Variant) -> String:
 		if status.has("duration"):
 			details.append("Duracao informada: %ss." % _number_text(float(status.get("duration", 0.0))))
 		if status.has("source"):
-			details.append("Fonte: %s." % str(status.get("source", "")))
+			details.append("Fonte: %s." % _humanize_id(str(status.get("source", ""))))
 	details.append("Stacks: %d." % stacks)
-	details.append("O cliente mostra o estado atual; aplicacao, expiracao e efeito real vem do simulador autoritativo.")
+	details.append("Acompanhe este marcador para entender reforcos, enfraquecimentos, dano continuo ou protecao.")
 	return "Status ativo: %s\n%s" % [_humanize_id(status_id), "\n".join(details)]
 
 func _cooldown_tooltip(spell_id: String, ready_at: float, remaining: float) -> String:
@@ -618,13 +632,13 @@ func _slot_entry_tooltip(entry: Dictionary, side: String, slot: String) -> Strin
 	var behavior := "Marcador auxiliar do lado da batalha."
 	if kind == "familiar":
 		title = "Familiar"
-		behavior = "Companheiro equipado do combatente. Ele aparece atras e anima quando o log receber pet_attack."
+		behavior = "Companheiro equipado do combatente. Ele aparece atras e salta para a acao quando ataca."
 	elif kind == "summon":
 		title = "Invocacao"
-		behavior = "Criatura invocada por spell. Ela ocupa frente, meio ou tras e anima quando o log receber summon_attack."
-	return "%s: %s\nLado: %s | Posicao: %s\n%s\nO cliente nao calcula ataques; ele apenas apresenta eventos recebidos." % [
+		behavior = "Criatura chamada durante a luta. Ela ocupa frente, meio ou tras e ataca a partir dali."
+	return "%s: %s\nLado: %s | Posicao: %s\n%s" % [
 		title,
-		str(entry.get("id", "")),
+		_humanize_id(str(entry.get("id", ""))),
 		_default_side_name(side),
 		_slot_label(slot),
 		behavior,
@@ -633,8 +647,8 @@ func _slot_entry_tooltip(entry: Dictionary, side: String, slot: String) -> Strin
 func _event_tooltip(event: Dictionary) -> String:
 	var event_type := str(event.get("type", ""))
 	var lines := PackedStringArray()
-	lines.append("%s (%s)" % [_event_title(event_type), event_type])
-	lines.append("Evento %d/%d em %ss do replay." % [
+	lines.append(_event_title(event_type))
+	lines.append("Lance %d/%d aos %ss da luta." % [
 		_event_index,
 		_event_count,
 		_number_text(float(event.get("t", 0.0))),
@@ -648,31 +662,38 @@ func _event_tooltip(event: Dictionary) -> String:
 	lines.append("Leitura rapida: %s." % _effect_feedback_text(event))
 	match event_type:
 		"weapon_attack":
-			lines.append("Ataque basico do combatente. Mostra dano e HP final recebidos do servidor.")
+			lines.append("Ataque basico do combatente. Mostra dano e vida restante.")
 		"spell_cast":
-			lines.append("Habilidade conjurada: %s. O icone resume dano, tipo e alvo." % str(event.get("spell_id", "spell")))
+			lines.append("Habilidade conjurada: %s. O icone resume dano, tipo e alvo." % _humanize_id(str(event.get("spell_id", "spell"))))
 		"dot_apply", "status_apply", "resistance_apply":
-			lines.append("Aplica status/buff/debuff: %s." % str(event.get("status_id", event.get("spell_id", event_type))))
+			lines.append("Aplica efeito: %s." % _humanize_id(str(event.get("status_id", event.get("spell_id", event_type)))))
 		"dot_tick":
-			lines.append("Tick de dano ao longo do tempo: %s." % str(event.get("status_id", "dot")))
+			lines.append("Dano continuo de %s." % _humanize_id(str(event.get("status_id", "dot"))))
 		"cooldown_start":
 			var ready_at: float = float(event.get("ready_at", 0.0))
 			var remaining: float = maxf(0.0, ready_at - float(event.get("t", _current_replay_time())))
-			lines.append("Inicia recarga da spell %s: restante %ss, pronta em %ss." % [_humanize_id(str(event.get("spell_id", "spell"))), _number_text(remaining), _number_text(ready_at)])
+			lines.append("A habilidade %s entra em espera: faltam %ss, volta aos %ss." % [_humanize_id(str(event.get("spell_id", "spell"))), _number_text(remaining), _number_text(ready_at)])
 		"cooldown_ready":
-			lines.append("A spell %s voltou a ficar pronta." % _humanize_id(str(event.get("spell_id", "spell"))))
+			lines.append("A habilidade %s voltou a ficar pronta." % _humanize_id(str(event.get("spell_id", "spell"))))
 		"pet_attack":
-			lines.append("Familiar ataca. O familiar e visual; resultado ja veio do simulador.")
+			lines.append("Familiar ataca e ajuda a leitura do turno.")
 		"summon_spawn":
 			lines.append("Invocacao aparece no espaco visual de seu lado da arena.")
 		"summon_attack":
 			lines.append("Invocacao ataca a partir do espaco onde esta representada.")
+		"consumable_use":
+			lines.append("%s ativa %s por %s%s." % [
+				_item_label(str(event.get("item_id", "item"))),
+				_effect_label(str(event.get("effect_id", event.get("effect", "efeito")))),
+				_duration_text(event),
+				_tick_suffix(event),
+			])
 		"heal":
 			lines.append("Cura aplicada ao alvo, com HP final informado no evento.")
 		"barrier_gain", "barrier_absorb", "passive_apply":
-			lines.append("Feedback defensivo/passivo: mostra escudo, absorcao ou passiva ativa.")
+			lines.append("Mostra protecao, absorcao ou Doutrina ativa.")
 		"anti_stall":
-			lines.append("Regra anti-stall do simulador para encerrar lutas longas.")
+			lines.append("A luta chegou ao limite e recebeu dano de encerramento.")
 		"battle_result":
 			lines.append("Resultado final da batalha.")
 	if event.has("damage"):
@@ -684,8 +705,7 @@ func _event_tooltip(event: Dictionary) -> String:
 	if event.has("barrier_after"):
 		lines.append("Barreira apos evento: %s." % _number_text(float(event.get("barrier_after", 0.0))))
 	if event.has("winner"):
-		lines.append("Vencedor: %s." % str(event.get("winner", "")))
-	lines.append("Trocar asset futuro: %s." % _asset_id_for_event(event_type))
+		lines.append("Vencedor: %s." % _humanize_id(str(event.get("winner", ""))))
 	return "\n".join(lines)
 
 func _event_title(event_type: String) -> String:
@@ -703,7 +723,7 @@ func _event_title(event_type: String) -> String:
 		"status_expire":
 			return "Status expirou"
 		"passive_apply":
-			return "Passiva ativada"
+			return "Doutrina ativada"
 		"barrier_gain":
 			return "Barreira ganhou carga"
 		"barrier_absorb":
@@ -718,6 +738,8 @@ func _event_title(event_type: String) -> String:
 			return "Invocacao saiu"
 		"pet_attack":
 			return "Familiar atacou"
+		"consumable_use":
+			return "Consumivel usado"
 		"heal":
 			return "Cura"
 		"battle_start":
@@ -729,7 +751,7 @@ func _event_title(event_type: String) -> String:
 		"mana_change":
 			return "Mana alterada"
 		"anti_stall":
-			return "Anti-stall"
+			return "Limite da luta"
 		"reward_preview":
 			return "Previa de recompensa"
 		"battle_result":
@@ -901,7 +923,7 @@ func _animate_event(event: Dictionary) -> void:
 	var color := _event_color(event)
 	var source_side := _side_from_actor(str(event.get("source", "")))
 	var target_side := _side_from_actor(str(event.get("target", "")))
-	if target_side == "" and event_type in ["barrier_gain", "passive_apply", "cooldown_start", "mana_change"]:
+	if target_side == "" and event_type in ["barrier_gain", "passive_apply", "cooldown_start", "mana_change", "consumable_use"]:
 		target_side = source_side
 
 	if event_type in ["weapon_attack", "spell_cast", "summon_attack", "pet_attack", "dot_tick"]:
@@ -910,7 +932,7 @@ func _animate_event(event: Dictionary) -> void:
 		_spawn_projectile(from_pos, to_pos, color, _event_code(event_type))
 		_spawn_float_text(_effect_feedback_text(event), to_pos + Vector2(0, -70), color)
 		_pulse_actor(target_side, color)
-	elif event_type in ["heal"]:
+	elif event_type in ["heal", "consumable_use"]:
 		var heal_target := target_side if target_side != "" else source_side
 		_spawn_float_text(_effect_feedback_text(event), _actor_center(heal_target) + Vector2(0, -92), _token_color("status_success"))
 		_pulse_actor(heal_target, _token_color("status_success"))
@@ -1084,8 +1106,13 @@ func _effect_feedback_text(event: Dictionary) -> String:
 			return _feedback_with_suffix("Invocacao: %s" % _humanize_id(str(event.get("source", "summon"))), _damage_suffix(event))
 		"pet_attack":
 			return _feedback_with_suffix("Familiar: %s" % _humanize_id(str(event.get("pet_id", "familiar"))), _damage_suffix(event))
+		"consumable_use":
+			return "%s: %s" % [
+				_item_label(str(event.get("item_id", "item"))),
+				_effect_label(str(event.get("effect_id", event.get("effect", "efeito")))),
+			]
 		"heal":
-			return "Cura +%s" % _number_text(float(event.get("amount", event.get("healing", 0.0))))
+			return "%s +%s HP" % [_item_label(str(event.get("item_id", "cura"))), _number_text(float(event.get("amount", event.get("healing", 0.0))))]
 		"dot_apply":
 			return "DoT aplicado: %s" % _humanize_id(str(event.get("status_id", event.get("spell_id", "dot"))))
 		"status_apply":
@@ -1093,7 +1120,7 @@ func _effect_feedback_text(event: Dictionary) -> String:
 		"status_expire":
 			return "Status expirou: %s" % _humanize_id(str(event.get("status_id", "status")))
 		"passive_apply":
-			return "Doutrina: %s" % _humanize_id(str(event.get("passive_id", "passiva")))
+			return "Doutrina: %s" % _humanize_id(str(event.get("passive_id", "doutrina")))
 		"resistance_apply":
 			return "Resistencia: %s" % _humanize_id(str(event.get("status_id", event.get("spell_id", "resistencia"))))
 		"barrier_gain":
@@ -1113,7 +1140,7 @@ func _effect_feedback_text(event: Dictionary) -> String:
 		"summon_expire":
 			return "Invocacao saiu: %s" % _humanize_id(str(event.get("source", event.get("target", "summon"))))
 		"anti_stall":
-			return "Anti-stall"
+			return "Limite da luta"
 		"reward_preview":
 			return "Recompensa: %s" % _humanize_id(str(event.get("reward_type", "recompensa")))
 		"battle_result":
@@ -1142,9 +1169,19 @@ func _humanize_id(value: String) -> String:
 		return _default_side_name(SIDE_PLAYER)
 	if cleaned == SIDE_OPPONENT:
 		return _default_side_name(SIDE_OPPONENT)
+	if cleaned == "system":
+		return "Batalha"
+	match cleaned:
+		"combatant_defeated", "opponent_defeated":
+			return "oponente derrotado"
+		"player_defeated":
+			return "Draxos derrotado"
+		"heal_over_time":
+			return "cura gradual"
 	for prefix: String in ["player_", "opponent_"]:
 		if cleaned.begins_with(prefix):
 			cleaned = cleaned.substr(prefix.length())
+	cleaned = cleaned.replace("-", " ")
 	cleaned = cleaned.replace("_", " ")
 	return cleaned.capitalize()
 
@@ -1164,6 +1201,8 @@ func _event_code(event_type: String) -> String:
 			return "^"
 		"pet_attack":
 			return "@"
+		"consumable_use":
+			return "+"
 		"heal":
 			return "+"
 		"anti_stall":
@@ -1180,9 +1219,36 @@ func _event_code(event_type: String) -> String:
 			return "%"
 	return "?"
 
+func _item_label(item_id: String) -> String:
+	match item_id:
+		"pocao_vida":
+			return "Pocao de Vida"
+		"cura":
+			return "Cura"
+		_:
+			return _humanize_id(item_id)
+
+func _effect_label(effect_id: String) -> String:
+	match effect_id:
+		"heal_over_time":
+			return "cura gradual"
+		_:
+			return _humanize_id(effect_id)
+
+func _duration_text(event: Dictionary) -> String:
+	var duration: Variant = event.get("duration", event.get("duration_seconds", "?"))
+	if duration is float or duration is int:
+		return "%ss" % _number_text(float(duration))
+	return str(duration)
+
+func _tick_suffix(event: Dictionary) -> String:
+	if not event.has("tick_percent"):
+		return ""
+	return ", %s%% por pulso" % _number_text(float(event.get("tick_percent", 0.0)))
+
 func _event_color(event: Dictionary) -> Color:
 	var event_type := str(event.get("type", ""))
-	if event_type == "heal":
+	if event_type in ["heal", "consumable_use"]:
 		return _token_color("status_success")
 	if event_type == "anti_stall":
 		return _token_color("status_error")
