@@ -24,6 +24,7 @@ const EVENT_ASSET_IDS := {
 	"summon_attack": "battle_icon_summon",
 	"summon_expire": "battle_icon_summon",
 	"pet_attack": "battle_icon_pet",
+	"consumable_use": "battle_icon_heal",
 	"heal": "battle_icon_heal",
 	"anti_stall": "battle_icon_damage",
 	"reward_preview": "battle_icon_reward",
@@ -330,7 +331,7 @@ func _build_side_card(side: String) -> Control:
 	box.add_child(hp)
 	_hp_bars[side] = hp
 
-	var meter := _body_label("HP - | Mana - | Barreira -")
+	var meter := _body_label("Vida - | Mana - | Barreira -")
 	box.add_child(meter)
 	_meter_labels[side] = meter
 
@@ -381,7 +382,7 @@ func _build_event_card() -> Control:
 	_event_icon_label.add_theme_stylebox_override("normal", _badge_style(_token_color("placeholder")))
 	box.add_child(_event_icon_label)
 
-	_event_title_label = _body_label("Aguardando replay")
+	_event_title_label = _body_label("Aguardando luta")
 	_event_title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_event_title_label.add_theme_color_override("font_color", _token_color("text_primary"))
 	box.add_child(_event_title_label)
@@ -479,10 +480,7 @@ func _render_all() -> void:
 	_summary_label.text = BattleLogPresenterScript.format_summary(_battle_log, _rewards)
 	_counts_label.text = _event_count_text()
 	var result := _as_dictionary(_battle_log.get("result", {}))
-	_result_label.text = "Resultado: %s (%s)" % [
-		str(result.get("winner", "pendente")),
-		str(result.get("reason", "sem_motivo")),
-	]
+	_result_label.text = _battle_result_text(result)
 	_render_dynamic_state()
 	_render_timeline()
 
@@ -500,7 +498,7 @@ func _render_dynamic_state(animate_stage_event: bool = false) -> void:
 		_portrait_labels[side].text = _portrait_initial(display_name, side)
 		_hp_bars[side].max_value = max_hp
 		_hp_bars[side].value = clampf(hp, 0.0, max_hp)
-		_meter_labels[side].text = "HP %s/%s | Mana %s/%s | Barreira %s" % [
+		_meter_labels[side].text = "Vida %s/%s | Mana %s/%s | Barreira %s" % [
 			_number_text(hp),
 			_number_text(max_hp),
 			_number_text(mana),
@@ -513,9 +511,9 @@ func _render_dynamic_state(animate_stage_event: bool = false) -> void:
 
 	if _latest_event.is_empty():
 		_event_icon_label.text = "..."
-		_set_visual_tooltip(_event_icon_label, "Replay aguardando o proximo lance. Ataques, habilidades, efeitos e resultado aparecem aqui conforme a luta avanca.")
+		_set_visual_tooltip(_event_icon_label, "Luta aguardando o proximo lance. Ataques, habilidades, efeitos e resultado aparecem aqui conforme a luta avanca.")
 		_event_icon_label.add_theme_stylebox_override("normal", _badge_style(_token_color("placeholder")))
-		_event_title_label.text = "Aguardando evento"
+		_event_title_label.text = "Aguardando lance"
 		_event_detail_label.text = "Ataques, habilidades, dano e efeitos entram aqui."
 	else:
 		var event_type := str(_latest_event.get("type", ""))
@@ -538,7 +536,7 @@ func _render_status_row(side: String, statuses: Dictionary) -> void:
 			"key": "empty",
 			"text": "OK",
 			"color": _token_color("border_default"),
-			"tooltip": "Sem status ativo neste lado. Buffs, debuffs, DoTs e resistencias aparecem aqui quando o log aplicar um efeito.",
+			"tooltip": "Sem efeito ativo neste lado. Reforcos, enfraquecimentos, efeitos continuos e resistencias aparecem aqui quando a luta aplicar um efeito.",
 		})
 		_sync_badge_row(row, entries)
 		return
@@ -566,7 +564,7 @@ func _render_cooldown_row(side: String, cooldowns: Dictionary) -> void:
 			"key": "empty",
 			"text": "Livre",
 			"color": _token_color("border_default"),
-			"tooltip": "Nenhum cooldown ativo. Quando uma spell entrar em recarga, o icone mostra o tempo restante ate ready_at.",
+			"tooltip": "Nenhuma habilidade em espera. Quando uma habilidade entrar em recarga, o icone mostra quanto falta.",
 		})
 		_sync_badge_row(row, entries)
 		return
@@ -591,7 +589,7 @@ func _render_summon_row(side: String, side_data: Dictionary) -> void:
 	if familiar != "":
 		entries.append({
 			"key": "familiar:%s" % familiar,
-			"text": familiar,
+			"text": _humanize_id(familiar),
 			"color": DAMAGE_COLORS["morte"],
 			"tooltip": _summon_tooltip("familiar", familiar, side, "tras"),
 		})
@@ -602,7 +600,7 @@ func _render_summon_row(side: String, side_data: Dictionary) -> void:
 		var summon := _as_dictionary(summons[key])
 		entries.append({
 			"key": "summon:%s" % str(key),
-			"text": str(key),
+			"text": _humanize_id(str(key)),
 			"color": DAMAGE_COLORS["fogo"],
 			"tooltip": _summon_tooltip("summon", str(key), side, str(summon.get("slot", "frente"))),
 		})
@@ -611,7 +609,7 @@ func _render_summon_row(side: String, side_data: Dictionary) -> void:
 			"key": "empty",
 			"text": "Nenhum",
 			"color": _token_color("border_default"),
-			"tooltip": "Nenhum familiar ou summon visivel neste lado. Familiares aparecem atras; summons ocupam frente, meio ou tras.",
+			"tooltip": "Nenhum familiar ou invocacao visivel neste lado. Familiares aparecem atras; invocacoes ocupam frente, meio ou tras.",
 		})
 	_sync_badge_row(row, entries)
 
@@ -632,10 +630,7 @@ func _apply_event(event: Dictionary) -> void:
 		_apply_anti_stall(event)
 		return
 	if event_type == "battle_result":
-		_result_label.text = "Resultado: %s (%s)" % [
-			str(event.get("winner", "desconhecido")),
-			str(event.get("reason", "sem_motivo")),
-		]
+		_result_label.text = _battle_result_text(event)
 		return
 
 	if event.has("hp_after") and target_side != "":
@@ -674,9 +669,18 @@ func _apply_event(event: Dictionary) -> void:
 			_clear_summon(source_side, str(event.get("source", event.get("target", "summon"))))
 		"pet_attack":
 			_set_familiar(source_side, str(event.get("pet_id", "familiar")))
+		"consumable_use":
+			var consumable_side := target_side if target_side != "" else source_side
+			_set_status(consumable_side, str(event.get("item_id", "consumivel")), 1, {
+				"duration": event.get("duration", event.get("duration_seconds", 0.0)),
+				"tick_percent": event.get("tick_percent", 0.0),
+				"source": str(event.get("source", "")),
+			})
 		"heal":
 			if target_side != "":
 				_set_side_number(target_side, "hp", float(event.get("hp_after", 0.0)))
+			if int(event.get("ticks_remaining", 1)) <= 0:
+				_clear_status(target_side, str(event.get("item_id", "consumivel")))
 		"reward_preview":
 			_result_label.text = "Recompensa: %s" % str(event.get("reward_type", "desconhecida"))
 
@@ -695,12 +699,15 @@ func _set_side_number(side: String, key: String, value: float) -> void:
 	data[key] = value
 	_side_state[side] = data
 
-func _set_status(side: String, status_id: String, stacks: int) -> void:
+func _set_status(side: String, status_id: String, stacks: int, details: Dictionary = {}) -> void:
 	if side == "" or not _side_state.has(side) or status_id == "":
 		return
 	var data := _as_dictionary(_side_state[side])
 	var statuses := _as_dictionary(data.get("statuses", {}))
-	statuses[status_id] = {"stacks": max(1, stacks)}
+	var status := {"stacks": max(1, stacks)}
+	for key: String in details.keys():
+		status[key] = details[key]
+	statuses[status_id] = status
 	data["statuses"] = statuses
 	_side_state[side] = data
 
@@ -774,14 +781,16 @@ func _set_familiar(side: String, familiar_id: String) -> void:
 
 func _event_count_text() -> String:
 	if _battle_log.is_empty():
-		return "0 eventos"
+		return "0 lances"
 	var weapon_count := BattleLogPresenterScript.count_events_of_type(_battle_log, "weapon_attack")
 	var spell_count := BattleLogPresenterScript.count_events_of_type(_battle_log, "spell_cast")
 	var dot_count := BattleLogPresenterScript.count_events_of_type(_battle_log, "dot_tick")
 	var status_count := BattleLogPresenterScript.count_events_of_type(_battle_log, "status_apply")
 	var summon_count := BattleLogPresenterScript.count_events_of_type(_battle_log, "summon_attack")
 	var pet_count := BattleLogPresenterScript.count_events_of_type(_battle_log, "pet_attack")
-	return "Eventos: %d total | %d ataque basico | %d habilidade | %d dano periodico | %d status | %d invocacao | %d familiar" % [
+	var consumable_count := BattleLogPresenterScript.count_events_of_type(_battle_log, "consumable_use")
+	var heal_count := BattleLogPresenterScript.count_events_of_type(_battle_log, "heal")
+	return "Lances: %d total | %d ataque basico | %d habilidade | %d dano continuo | %d efeito | %d invocacao | %d familiar | %d consumivel | %d cura" % [
 		_events.size(),
 		weapon_count,
 		spell_count,
@@ -789,6 +798,8 @@ func _event_count_text() -> String:
 		status_count,
 		summon_count,
 		pet_count,
+		consumable_count,
+		heal_count,
 	]
 
 func _side_from_actor(actor: String) -> String:
@@ -804,14 +815,17 @@ func _event_is_damage(event_type: String) -> bool:
 func _status_tooltip(status_id: String, status: Dictionary) -> String:
 	var stacks: int = maxi(1, int(status.get("stacks", 1)))
 	var lines := PackedStringArray()
-	lines.append("Status ativo: %s." % _humanize_id(status_id))
-	lines.append("Stacks: %d." % stacks)
-	lines.append("Pode representar reforco, enfraquecimento, dano periodico ou resistencia.")
-	lines.append("Asset futuro: battle_icon_status ou battle_icon_buff.")
+	lines.append("Efeito ativo: %s." % _humanize_id(status_id))
+	lines.append("Cargas: %d." % stacks)
+	lines.append("Pode representar reforco, enfraquecimento, dano continuo ou resistencia.")
+	if status.has("duration") and float(status.get("duration", 0.0)) > 0.0:
+		lines.append("Duracao: %ss." % _number_text(float(status.get("duration", 0.0))))
+	if status.has("tick_percent") and float(status.get("tick_percent", 0.0)) > 0.0:
+		lines.append("Pulso de cura: %s%%." % _number_text(float(status.get("tick_percent", 0.0))))
 	return "\n".join(lines)
 
 func _cooldown_tooltip(spell_id: String, ready_at: float, remaining: float) -> String:
-	return "Recarga de habilidade: %s\nA habilidade ja foi usada e fica indisponivel ate o tempo indicado.\nTempo atual do replay: %ss.\nRestante: %ss.\nPronta em: %ss." % [
+	return "Recarga de habilidade: %s\nA habilidade ja foi usada e fica indisponivel ate o tempo indicado.\nTempo da luta: %ss.\nRestante: %ss.\nPronta em: %ss." % [
 		_humanize_id(spell_id),
 		_number_text(_current_replay_time()),
 		_number_text(remaining),
@@ -833,12 +847,12 @@ func _cooldown_remaining(value: Variant) -> float:
 
 func _summon_tooltip(kind: String, entity_id: String, side: String, slot: String) -> String:
 	if kind == "familiar":
-		return "Familiar: %s\nCompanheiro equipado de %s. Fica atras do personagem e anima quando o log recebe pet_attack.\nAsset futuro: battle_icon_pet ou sprite de familiar." % [
-			entity_id,
+		return "Familiar: %s\nCompanheiro equipado de %s. Fica atras do personagem e salta para a acao quando ataca." % [
+			_humanize_id(entity_id),
 			_default_side_name(side),
 		]
 	return "Invocacao: %s\nCriatura chamada por %s. Ocupa a posicao %s para leitura espacial e anima quando atacar." % [
-		entity_id,
+		_humanize_id(entity_id),
 		_default_side_name(side),
 		_slot_label(slot),
 	]
@@ -846,25 +860,25 @@ func _summon_tooltip(kind: String, entity_id: String, side: String, slot: String
 func _event_tooltip(event: Dictionary) -> String:
 	var event_type := str(event.get("type", ""))
 	var lines := PackedStringArray()
-	lines.append("%s (%s)." % [_event_title(event_type), event_type])
-	lines.append("Evento %d/%d em %ss do replay." % [
+	lines.append("%s." % _event_title(event_type))
+	lines.append("Lance %d/%d aos %ss da luta." % [
 		_event_index,
 		_events.size(),
 		_number_text(float(event.get("t", 0.0))),
 	])
 	if event.has("source"):
-		lines.append("Fonte: %s." % str(event.get("source", "")))
+		lines.append("Origem: %s." % _humanize_id(str(event.get("source", ""))))
 	if event.has("target") and str(event.get("target", "")) != "none":
-		lines.append("Alvo: %s." % str(event.get("target", "")))
+		lines.append("Alvo: %s." % _humanize_id(str(event.get("target", ""))))
 	match event_type:
 		"weapon_attack":
-			lines.append("Ataque basico com dano e HP final recebidos do servidor.")
+			lines.append("Ataque basico com dano e vida restante.")
 		"spell_cast":
 			lines.append("Habilidade conjurada: %s." % _humanize_id(str(event.get("spell_id", "spell"))))
 		"dot_apply", "status_apply", "resistance_apply":
 			lines.append("Aplica efeito: %s." % _humanize_id(str(event.get("status_id", event.get("spell_id", event_type)))))
 		"dot_tick":
-			lines.append("Tick de dano ao longo do tempo.")
+			lines.append("Dano continuo ao longo da luta.")
 		"cooldown_start":
 			var ready_at: float = float(event.get("ready_at", 0.0))
 			var remaining: float = maxf(0.0, ready_at - float(event.get("t", _current_replay_time())))
@@ -874,18 +888,26 @@ func _event_tooltip(event: Dictionary) -> String:
 		"summon_attack":
 			lines.append("Invocacao ataca a partir de sua posicao visual.")
 		"pet_attack":
-			lines.append("Familiar ataca; o resultado ja veio calculado.")
+			lines.append("Familiar ataca e ajuda a leitura do turno.")
+		"consumable_use":
+			lines.append("%s ativa %s por %s%s." % [
+				_item_label(str(event.get("item_id", "item"))),
+				_effect_label(str(event.get("effect_id", event.get("effect", "efeito")))),
+				_duration_text(event),
+				_tick_suffix(event),
+			])
+		"heal":
+			lines.append("Cura aplicada ao alvo, com vida restante atualizada.")
 		"anti_stall":
-			lines.append("Regra de seguranca para encerrar lutas longas.")
+			lines.append("A luta chegou ao limite e recebeu dano de encerramento.")
 		"battle_result":
 			lines.append("Resultado final do confronto.")
 	if event.has("damage"):
 		lines.append("Dano: %s %s." % [_number_text(float(event.get("damage", 0.0))), str(event.get("damage_type", "none"))])
 	if event.has("hp_after"):
-		lines.append("HP apos evento: %s." % _number_text(float(event.get("hp_after", 0.0))))
+		lines.append("Vida apos o lance: %s." % _number_text(float(event.get("hp_after", 0.0))))
 	if event.has("winner"):
-		lines.append("Vencedor: %s." % str(event.get("winner", "")))
-	lines.append("Asset futuro: %s." % _asset_id_for_event(event_type))
+		lines.append("Vencedor: %s." % _humanize_id(str(event.get("winner", ""))))
 	return "\n".join(lines)
 
 func _event_title(event_type: String) -> String:
@@ -895,15 +917,15 @@ func _event_title(event_type: String) -> String:
 		"spell_cast":
 			return "Habilidade conjurada"
 		"dot_apply":
-			return "DoT aplicado"
+			return "Efeito aplicado"
 		"dot_tick":
-			return "Dano periodico"
+			return "Dano continuo"
 		"status_apply":
 			return "Status aplicado"
 		"status_expire":
 			return "Status expirou"
 		"passive_apply":
-			return "Passiva ativada"
+			return "Doutrina ativada"
 		"barrier_gain":
 			return "Barreira ganhou carga"
 		"barrier_absorb":
@@ -918,6 +940,8 @@ func _event_title(event_type: String) -> String:
 			return "Invocacao saiu"
 		"pet_attack":
 			return "Familiar atacou"
+		"consumable_use":
+			return "Consumivel usado"
 		"heal":
 			return "Cura"
 		"battle_start":
@@ -929,7 +953,7 @@ func _event_title(event_type: String) -> String:
 		"mana_change":
 			return "Mana alterada"
 		"anti_stall":
-			return "Anti-stall"
+			return "Limite da luta"
 		"reward_preview":
 			return "Previa de recompensa"
 		"battle_result":
@@ -952,6 +976,8 @@ func _event_code(event_type: String) -> String:
 			return "^"
 		"pet_attack":
 			return "@"
+		"consumable_use":
+			return "+"
 		"heal":
 			return "+"
 		"anti_stall":
@@ -973,7 +999,7 @@ func _asset_id_for_event(event_type: String) -> String:
 
 func _event_color(event: Dictionary) -> Color:
 	var event_type := str(event.get("type", ""))
-	if event_type == "heal":
+	if event_type in ["heal", "consumable_use"]:
 		return _token_color("status_success")
 	if event_type == "anti_stall":
 		return _token_color("status_error")
@@ -1007,8 +1033,38 @@ func _portrait_initial(display_name: String, side: String) -> String:
 func _default_side_name(side: String) -> String:
 	return "Draxos" if side == SIDE_PLAYER else "Oponente"
 
+func _battle_result_text(result: Dictionary) -> String:
+	return "Resultado: %s - %s" % [
+		_winner_label(str(result.get("winner", ""))),
+		_reason_label(str(result.get("reason", ""))),
+	]
+
+func _winner_label(winner: String) -> String:
+	match winner:
+		"player":
+			return "Vitoria"
+		"opponent":
+			return "Derrota"
+		"draw":
+			return "Empate"
+		_:
+			return "Pendente"
+
+func _reason_label(reason: String) -> String:
+	match reason:
+		"opponent_defeated", "combatant_defeated":
+			return "oponente caiu"
+		"player_defeated":
+			return "Draxos caiu"
+		"draw":
+			return "empate confirmado"
+		"timeout", "anti_stall":
+			return "limite da luta"
+		_:
+			return "desfecho registrado"
+
 func _actor_asset_hint(side: String) -> String:
-	return "Combatente principal: %s\nRepresentacao do personagem no palco 2D. HP, mana, barreira, status e invocacoes aparecem conforme o replay." % [
+	return "Combatente principal: %s\nRepresentacao do personagem no palco. Vida, mana, barreira, efeitos e invocacoes aparecem conforme a luta." % [
 		_default_side_name(side),
 	]
 
@@ -1037,11 +1093,46 @@ func _humanize_id(value: String) -> String:
 		return _default_side_name(SIDE_PLAYER)
 	if cleaned == SIDE_OPPONENT:
 		return _default_side_name(SIDE_OPPONENT)
+	if cleaned == "system":
+		return "Batalha"
+	match cleaned:
+		"combatant_defeated", "opponent_defeated":
+			return "oponente derrotado"
+		"player_defeated":
+			return "Draxos derrotado"
+		"heal_over_time":
+			return "cura gradual"
 	for prefix: String in ["player_", "opponent_"]:
 		if cleaned.begins_with(prefix):
 			cleaned = cleaned.substr(prefix.length())
+	cleaned = cleaned.replace("-", " ")
 	cleaned = cleaned.replace("_", " ")
 	return cleaned.capitalize()
+
+func _item_label(item_id: String) -> String:
+	match item_id:
+		"pocao_vida":
+			return "Pocao de Vida"
+		_:
+			return _humanize_id(item_id)
+
+func _effect_label(effect_id: String) -> String:
+	match effect_id:
+		"heal_over_time":
+			return "cura gradual"
+		_:
+			return _humanize_id(effect_id)
+
+func _duration_text(event: Dictionary) -> String:
+	var duration: Variant = event.get("duration", event.get("duration_seconds", "?"))
+	if duration is float or duration is int:
+		return "%ss" % _number_text(float(duration))
+	return str(duration)
+
+func _tick_suffix(event: Dictionary) -> String:
+	if not event.has("tick_percent"):
+		return ""
+	return ", %s%% por pulso" % _number_text(float(event.get("tick_percent", 0.0)))
 
 func _body_label(text: String) -> Label:
 	var label := Label.new()

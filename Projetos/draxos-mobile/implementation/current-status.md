@@ -4,10 +4,11 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Ossos Inteiros v1`
-- Active stage status: `INTEGER_BONES_V1_PUBLISHED`
+- Active stage: `Battle Presentation v1`
+- Active stage status: `BATTLE_PRESENTATION_V1_VALIDATED_UNPUBLISHED`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety` (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation` (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
+- Latest published package: `Ossos Inteiros v1`
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical context, not current product focus)
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
@@ -58,7 +59,19 @@ Priority order after baseline confirmation:
 4. Battle presentation.
 5. Weapons, spells, economy, balance and content details.
 
-Internal loop ergonomics, Social Basico Guilda v1, Visual Direction v1 and Ossos Inteiros v1 have now received explicit packages and are published to Internal Alpha. No new code, schema, backend, asset, gameplay or balance work belongs outside an explicit next package decision.
+Internal loop ergonomics, Social Basico Guilda v1, Visual Direction v1 and Ossos Inteiros v1 have received explicit packages and are published to Internal Alpha. Battle Presentation v1 is implemented and validated locally, but not published yet. No new code, schema, backend, asset, gameplay or balance work belongs outside an explicit next package decision.
+
+## Battle Presentation v1
+
+Battle Presentation v1 is implemented as a client-only readability pass for the real battle loop. It keeps the existing backend/API/schema, simulator, rewards, ranking, economy, weapons, spells and `battle_log_v1` contract.
+
+- `battle_running` stays fullscreen, without app chrome, inside `BattleSafeFrame`.
+- Running battle now has a compact confrontation strip with player vs opponent, lance progress, current state and a touch-safe `Pular batalha` action.
+- `BattleVisualMockup`, `BattleStage2D` and `BattleLogPresenter` now present damage, healing, consumable use, status, familiars, summons and battle result with player-facing language.
+- `battle_summary` prioritizes the result, opponent, short outcome phrase, reward/resources/ranking when present and the primary CTA `Voltar e verificar base`.
+- `battle_logs` remains read-only and scoped to the current battle, with logs formatted for players instead of technical inspection.
+- `docs/battle-presentation-v1.md` is the live package note.
+- Publication remains out of scope until explicitly requested.
 
 ## Social Basico Guilda v1
 
@@ -116,6 +129,7 @@ Visual Direction v1 is implemented and published as the next refinement package 
 - Track 16 migration/functions/catalog changes needed for Ossos Inteiros v1 are deployed. Further crafting, behavior, tuning, economy or content expansion still needs its own explicit package decision.
 - Foundation Loop UX Pass 01 is the accepted current V0 UX baseline after manual Android/Windows/Web review on `2026-05-29`; Social Basico Guilda v1 is now available in the published Internal Alpha build for human two-account validation.
 - Ossos Inteiros v1 is published to Internal Alpha with public APK/PC downloads and a cache-busted Web asset root; it still needs manual Android/Windows/Web confirmation that visible rewards/collection no longer show fractional Ossos.
+- Battle Presentation v1 is validated locally and merged as a client-only package, but not published to the Internal Alpha site/artifact channel.
 - Track 13 release safety remains the baseline for any future publication or wider-access gate.
 - `players.save_type` remains an alpha shortcut. `account_profiles` + `game_saves` is a future migration package.
 - Progression/economy remains mock/substance and not the current tuning focus.
@@ -123,7 +137,7 @@ Visual Direction v1 is implemented and published as the next refinement package 
 
 ## Next Step
 
-Run a manual Android/Windows/Web check of the published Ossos Inteiros v1 build, specifically confirming that Base collection, rewards and Grimoire surfaces no longer expose `0.1 osso`. Then decide whether to move to Battle Presentation v1 or another explicit package. Keep direct chat, helps, contributions, moderation, tuning numbers, weapons, spells, economy and battle presentation out of scope until they receive their own explicit package.
+Review Battle Presentation v1 locally or decide whether to publish it to the Internal Alpha artifact/site channel. Keep direct chat, helps, contributions, moderation, tuning numbers, weapons, spells, economy and broader replay controls out of scope until they receive their own explicit package.
 
 ## Validation
 
@@ -183,6 +197,18 @@ Latest validation for Social Basico Guilda v1 publication on `2026-05-29`:
 - Preview GET checks: PASS for `/portal/index.html` (`Draxos Alpha`) and `/web/index.html` (`GODOT_CONFIG`).
 - `git diff --check`: PASS.
 - `server/tests/release_artifacts_remote_smoke.ts`: unauthenticated artifact probe returns `401` for protected downloads by design; use `release_download_smoke.ts` for the signed download contract.
+
+Latest validation for Battle Presentation v1 local merge on `2026-05-29`:
+
+- GUT `tests/client`: PASS (`119/119`, `1895` asserts).
+- `tools/smoke_mobile_presentation.gd`: PASS.
+- `tools/smoke_responsive_layout.gd`: PASS, including `battle_running`, `battle_summary` and `battle_logs` at `360x800`, `390x844`, `1280x720` and `1920x1080`.
+- `tools/smoke_foundation_loop.gd`: PASS.
+- `tools/validate.gd`: PASS (`119/119`, `1895` asserts).
+- `validate_foundation.ps1 -Profile Client`: PASS, including `git diff --check`, PowerShell parse, server/supabase mirrors, Deno release typecheck light, structural readiness, `tools/validate.gd`, GUT `tests/client`, `tools/smoke_runtime_config.gd`, `tools/smoke_foundation_hardening.gd`, `tools/smoke_responsive_layout.gd` and `tools/smoke_exports.gd`.
+- `validate_foundation.ps1 -Profile Quick`: PASS after documentation/status updates.
+- `tools/check_agent_ops_foundation.ps1`: PASS after Kanban/status updates.
+- `git diff --check`: PASS.
 
 Documentation/foundation validation for this stage:
 

@@ -18,13 +18,23 @@ const UX_BATTLE_BACKGROUND := "res://assets/ux_overhaul/battle_duel_stage.png"
 var _host: Node
 var _visual: Control
 var _timeline_label: Label
+var _duel_matchup_label: Label
+var _duel_progress_label: Label
+var _duel_state_label: Label
 var _timeline_lines: PackedStringArray = PackedStringArray()
+var _duel_visible_events := 0
+var _duel_total_events := 0
 
 func clear() -> void:
 	_host = null
 	_visual = null
 	_timeline_label = null
+	_duel_matchup_label = null
+	_duel_progress_label = null
+	_duel_state_label = null
 	_timeline_lines = PackedStringArray()
+	_duel_visible_events = 0
+	_duel_total_events = 0
 
 func render(
 	host: Node,
@@ -61,8 +71,8 @@ func render_fullscreen_replay(
 	host: Node,
 	parent: Control,
 	compact_layout: bool,
-	_battle_log: Dictionary,
-	_rewards: Dictionary
+	battle_log: Dictionary,
+	rewards: Dictionary
 ) -> void:
 	clear()
 	_host = host
@@ -74,6 +84,8 @@ func render_fullscreen_replay(
 	stage_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	stage_column.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	frame.add_child(stage_column)
+
+	stage_column.add_child(_battle_duel_shell_band(battle_log, rewards, compact_layout))
 
 	_visual = BattleVisualMockupScript.new()
 	_visual.name = "BattleDuelVisual"
@@ -90,7 +102,7 @@ func render_fullscreen_replay(
 	skip_row.alignment = BoxContainer.ALIGNMENT_END
 	skip_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	stage_column.add_child(skip_row)
-	var skip_button := _fullscreen_action_button("Pular", ACTION_SKIP_REPLAY, Vector2(96, 44) if compact_layout else Vector2(112, 48))
+	var skip_button := _fullscreen_action_button("Pular batalha", ACTION_SKIP_REPLAY, Vector2(132, 44) if compact_layout else Vector2(152, 48))
 	skip_button.name = "BattleSkipButton"
 	skip_button.size_flags_horizontal = Control.SIZE_SHRINK_END
 	skip_row.add_child(skip_button)
@@ -121,8 +133,13 @@ func render_fullscreen_summary(
 	var result_label := _fullscreen_center_label(str(summary.get("winner_label", "Resultado")), 34 if compact_layout else 44, "text_primary")
 	result_label.name = "BattleSummaryResult"
 	stack.add_child(result_label)
+	var outcome_text := str(summary.get("outcome_text", ""))
+	if outcome_text != "":
+		var outcome_label := _fullscreen_center_label(outcome_text, 14 if compact_layout else 17, "text_secondary")
+		outcome_label.name = "BattleSummaryOutcomeLabel"
+		stack.add_child(outcome_label)
 	if skipped:
-		stack.add_child(_fullscreen_center_label("Batalha pulada para o resultado.", 13 if compact_layout else 15, "text_secondary"))
+		stack.add_child(_fullscreen_center_label("Resultado aberto sem assistir todos os lances.", 13 if compact_layout else 15, "text_secondary"))
 
 	var details := GridContainer.new()
 	details.columns = 1
@@ -215,15 +232,20 @@ func show_empty_state(message: String = EMPTY_BATTLE_TEXT) -> void:
 
 func begin_replay(battle_log: Dictionary, rewards: Dictionary) -> void:
 	_timeline_lines = _initial_replay_lines(battle_log, rewards)
+	_duel_visible_events = 0
+	_duel_total_events = sorted_events(battle_log).size()
 	if _visual != null and is_instance_valid(_visual):
 		_visual.load_battle_log(battle_log, rewards)
 		set_replay_time(0.0)
+	_update_duel_shell_status("Aguardando primeiro lance", 0)
 	_refresh_timeline()
 
 func append_event(event: Dictionary) -> void:
 	_timeline_lines.append(BattleLogPresenterScript.format_event(event))
+	_duel_visible_events = mini(_duel_visible_events + 1, max(_duel_total_events, _duel_visible_events + 1))
 	if _visual != null and is_instance_valid(_visual):
 		_visual.step_next_event()
+	_update_duel_shell_status(_event_state_text(event), _duel_visible_events)
 	_refresh_timeline()
 
 func reveal_all_events(events: Array[Dictionary]) -> void:
@@ -231,13 +253,21 @@ func reveal_all_events(events: Array[Dictionary]) -> void:
 		var formatted := BattleLogPresenterScript.format_event(event)
 		if not _timeline_lines.has(formatted):
 			_timeline_lines.append(formatted)
+	_duel_total_events = maxi(_duel_total_events, events.size())
+	_duel_visible_events = _duel_total_events
 	if _visual != null and is_instance_valid(_visual):
 		_visual.reveal_all()
+	var final_state := "Todos os lances exibidos"
+	if not events.is_empty():
+		final_state = _event_state_text(events[events.size() - 1])
+	_update_duel_shell_status(final_state, _duel_visible_events)
 	_refresh_timeline()
 
 func reveal_all() -> void:
 	if _visual != null and is_instance_valid(_visual):
 		_visual.reveal_all()
+	_duel_visible_events = _duel_total_events
+	_update_duel_shell_status("Todos os lances exibidos", _duel_visible_events)
 
 func set_replay_time(replay_time: float) -> void:
 	if _visual != null and is_instance_valid(_visual) and _visual.has_method("set_replay_time"):
@@ -250,27 +280,24 @@ func build_warning_text(battle_log: Dictionary, expected_mode: String) -> String
 	var battle_mode := str(battle_log.get("mode", ""))
 	var spell_count := BattleLogPresenterScript.count_events_of_type(battle_log, "spell_cast")
 	if BattleLogPresenterScript.has_unknown_events(battle_log):
-		return "Aviso: replay contem evento desconhecido; exibindo fallback."
+		return "Aviso: esta luta tem um lance que ainda nao possui apresentacao completa."
 	if battle_mode != expected_mode:
-		return "Aviso: replay em modo %s. O rework atual usa %s; gere uma nova batalha com as Edge Functions atualizadas." % [
-			battle_mode,
-			expected_mode,
-		]
+		return "Aviso: esta batalha usa uma versao diferente. Solicite uma nova luta se algo parecer estranho."
 	if spell_count <= 0:
-		return "Aviso: replay sem habilidades registradas. Verifique se a versao local esta atualizada."
+		return "Aviso: esta luta nao registrou habilidades."
 	return ""
 
 static func history_entry_title(entry: Dictionary, index: int = 0) -> String:
-	var battle_id := str(entry.get("battle_id", ""))
-	var label_id := battle_id.substr(0, 8) if battle_id.length() >= 8 else battle_id
 	var result := _winner_text(_as_dictionary(entry.get("result", {})))
-	return "#%d %s | %s" % [index + 1, label_id, result]
+	return "Batalha %d | %s" % [index + 1, result]
 
 static func history_entry_detail(entry: Dictionary) -> String:
 	var opponent := _as_dictionary(entry.get("opponent", {}))
 	var rewards := _as_dictionary(entry.get("rewards", {}))
 	var created_at := str(entry.get("created_at", ""))
-	var opponent_name := str(opponent.get("display_name", opponent.get("id", "oponente")))
+	var opponent_name := str(opponent.get("display_name", "oponente")).strip_edges()
+	if opponent_name == "":
+		opponent_name = "oponente"
 	var event_count := int(entry.get("event_count", 0))
 	return "%s | %s eventos | %.1fs | recompensa %s | vs %s" % [
 		created_at if created_at != "" else "sem data",
@@ -296,6 +323,9 @@ static func summary_data(battle_log: Dictionary, rewards: Dictionary, current_re
 	return {
 		"winner": winner,
 		"winner_label": _winner_summary_text(winner),
+		"player_label": _participant_label(battle_log, "player", "Jogador"),
+		"opponent_label": _participant_label(battle_log, "opponent", "Oponente"),
+		"outcome_text": _outcome_text(battle_log, result, winner, duration),
 		"duration": duration,
 		"duration_text": "%.1fs" % duration,
 		"event_count": events.size(),
@@ -321,7 +351,7 @@ func _initial_replay_lines(battle_log: Dictionary, rewards: Dictionary) -> Packe
 	var weapon_count := BattleLogPresenterScript.count_events_of_type(battle_log, "weapon_attack")
 	var pet_count := BattleLogPresenterScript.count_events_of_type(battle_log, "pet_attack")
 	var summon_count := BattleLogPresenterScript.count_events_of_type(battle_log, "summon_attack")
-	lines.append("Eventos: %d spells | %d ataques | %d familiares | %d summons" % [
+	lines.append("Lances: %d habilidades | %d ataques | %d familiares | %d invocacoes" % [
 		spell_count,
 		weapon_count,
 		pet_count,
@@ -345,7 +375,7 @@ func _render_history_entries(history_entries: Array[Dictionary]) -> void:
 			"%s\n%s" % [history_entry_title(entry, index), history_entry_detail(entry)],
 		])
 		_call_host("_add_action_button", [
-			"Replay %d" % (index + 1),
+			"Assistir %d" % (index + 1),
 			AppShellActionContractScript.battle_replay_action(battle_id),
 		])
 
@@ -379,7 +409,7 @@ static func _reward_text(rewards: Dictionary) -> String:
 	for key in ["xp", "almas", "energia", "sangue", "cristais", "ossos", "po_osso", "diamante"]:
 		if not resources.has(key):
 			continue
-		parts.append("%s +%s" % [key.capitalize(), str(resources.get(key, 0))])
+		parts.append("%s +%s" % [_resource_label(key), str(resources.get(key, 0))])
 	return ", ".join(parts)
 
 static func _resources_text(resources: Dictionary) -> String:
@@ -388,10 +418,55 @@ static func _resources_text(resources: Dictionary) -> String:
 	var parts: PackedStringArray = PackedStringArray()
 	for key in SUMMARY_RESOURCE_KEYS:
 		if resources.has(key):
-			parts.append("%s %s" % [key.capitalize(), str(resources.get(key, 0))])
+			parts.append("%s %s" % [_resource_label(key), str(resources.get(key, 0))])
 	if parts.is_empty():
 		return ""
 	return ", ".join(parts)
+
+static func _resource_label(key: String) -> String:
+	match key:
+		"xp":
+			return "XP"
+		"po_osso":
+			return "Po de Osso"
+		"diamante":
+			return "Diamantes"
+		_:
+			return key.capitalize()
+
+static func _participant_label(battle_log: Dictionary, participant_key: String, fallback: String) -> String:
+	var participants := _as_dictionary(battle_log.get("participants", {}))
+	var participant := _as_dictionary(participants.get(participant_key, {}))
+	var display_name := str(participant.get("display_name", "")).strip_edges()
+	if display_name != "":
+		return display_name
+	return fallback
+
+static func _outcome_text(battle_log: Dictionary, result: Dictionary, winner: String, duration: float) -> String:
+	var opponent_label := _participant_label(battle_log, "opponent", "Oponente")
+	var reason := _reason_text(str(result.get("reason", "")), winner)
+	return "Contra %s - %s em %.1fs." % [opponent_label, reason, duration]
+
+static func _reason_text(reason: String, winner: String) -> String:
+	match reason:
+		"opponent_defeated":
+			return "oponente caiu" if winner == "player" else "duelo encerrado"
+		"player_defeated":
+			return "jogador caiu" if winner == "opponent" else "duelo encerrado"
+		"draw":
+			return "empate confirmado"
+		"timeout":
+			return "tempo esgotado"
+		_:
+			match winner:
+				"player":
+					return "vitoria confirmada"
+				"opponent":
+					return "derrota confirmada"
+				"draw":
+					return "empate confirmado"
+				_:
+					return "desfecho registrado"
 
 static func _ranking_text(result: Dictionary) -> String:
 	var ranking := _as_dictionary(result.get("ranking", {}))
@@ -434,6 +509,82 @@ func _request_splash(compact_layout: bool) -> Control:
 	splash.clip_contents = true
 	_add_battle_background_layers(splash, 0.88, 0.34, 0.12)
 	return splash
+
+func _battle_duel_shell_band(battle_log: Dictionary, _rewards: Dictionary, compact_layout: bool) -> PanelContainer:
+	_duel_total_events = sorted_events(battle_log).size()
+	_duel_visible_events = 0
+
+	var panel := PanelContainer.new()
+	panel.name = "BattleDuelShellBand"
+	panel.add_theme_stylebox_override("panel", _panel_style("bg_panel", "accent_battle"))
+	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	panel.custom_minimum_size = Vector2(0, 86 if compact_layout else 96)
+
+	var stack := VBoxContainer.new()
+	stack.add_theme_constant_override("separation", 4 if compact_layout else 6)
+	panel.add_child(stack)
+
+	_duel_matchup_label = _fullscreen_center_label(_matchup_text(battle_log), 15 if compact_layout else 18, "text_primary")
+	_duel_matchup_label.name = "BattleDuelMatchupLabel"
+	stack.add_child(_duel_matchup_label)
+
+	var status_row := HBoxContainer.new()
+	status_row.name = "BattleDuelStatusRow"
+	status_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	status_row.add_theme_constant_override("separation", 8 if compact_layout else 12)
+	status_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	stack.add_child(status_row)
+
+	_duel_progress_label = _fullscreen_center_label("", 12 if compact_layout else 14, "text_secondary")
+	_duel_progress_label.name = "BattleDuelProgressLabel"
+	_duel_progress_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	status_row.add_child(_duel_progress_label)
+
+	_duel_state_label = _fullscreen_center_label("", 12 if compact_layout else 14, "text_secondary")
+	_duel_state_label.name = "BattleDuelStateLabel"
+	_duel_state_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	status_row.add_child(_duel_state_label)
+
+	_update_duel_shell_status("Aguardando primeiro lance", 0)
+	return panel
+
+func _matchup_text(battle_log: Dictionary) -> String:
+	return "%s vs %s" % [
+		_participant_label(battle_log, "player", "Jogador"),
+		_participant_label(battle_log, "opponent", "Oponente"),
+	]
+
+func _update_duel_shell_status(state_text: String, visible_events: int = -1) -> void:
+	if visible_events >= 0:
+		_duel_visible_events = clampi(visible_events, 0, max(_duel_total_events, visible_events))
+	if _duel_progress_label != null and is_instance_valid(_duel_progress_label):
+		if _duel_total_events > 0:
+			_duel_progress_label.text = "Lances %d/%d" % [_duel_visible_events, _duel_total_events]
+		else:
+			_duel_progress_label.text = "Sem lances carregados"
+	if _duel_state_label != null and is_instance_valid(_duel_state_label):
+		_duel_state_label.text = state_text if state_text != "" else "Duelo em andamento"
+
+func _event_state_text(event: Dictionary) -> String:
+	match str(event.get("type", "")):
+		"battle_start":
+			return "Batalha iniciada"
+		"battle_result":
+			return "Resultado definido"
+		"spell_cast":
+			return "Habilidade conjurada"
+		"weapon_attack":
+			return "Ataque registrado"
+		"pet_attack":
+			return "Familiar avancou"
+		"summon_attack":
+			return "Aliado avancou"
+		"dot_tick":
+			return "Efeito continuo"
+		"heal", "consumable_use":
+			return "Recuperacao usada"
+		_:
+			return "Novo lance registrado"
 
 func _add_fullscreen_background(parent: Control) -> void:
 	_add_battle_background_layers(parent, 0.70, 0.58, 0.22)

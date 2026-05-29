@@ -101,7 +101,7 @@ func show_latest_battle(host: Node) -> void:
 	var body := _as_dictionary(latest_result.get("body", {}))
 	if body.get("battle_log", null) == null:
 		host.call("_set_busy", false, "Nenhuma batalha registrada.")
-		host.get("_battle_replay_presenter").show_empty_state("Solicite uma batalha para gerar o primeiro replay.")
+		host.get("_battle_replay_presenter").show_empty_state("Solicite uma batalha para gerar a primeira luta.")
 		return
 
 	if not SessionStore.apply_battle_result(latest_result):
@@ -116,7 +116,7 @@ func skip_current_replay(host: Node) -> void:
 	if not bool(host.get("_replay_running")):
 		return
 	host.set("_skip_replay", true)
-	host.call("_show_notice", "Replay pulando para o resumo final...")
+	host.call("_show_notice", "Pulando para o resultado final...")
 	host.call("_sync_buttons")
 
 func return_to_refuge(host: Node) -> void:
@@ -140,7 +140,7 @@ func return_to_battle_summary(host: Node) -> void:
 
 func replay_latest_battle_from_summary(host: Node) -> void:
 	if not SessionStore.has_battle_log():
-		_set_error_text(host, "Nenhum replay carregado para rever.")
+		_set_error_text(host, "Nenhuma batalha carregada para rever.")
 		return
 	await play_battle_log(host, SessionStore.last_battle_log, SessionStore.last_battle_rewards)
 
@@ -172,7 +172,7 @@ func show_battle_replay(host: Node, battle_id: String) -> void:
 		return
 
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_BATTLE_ENTRY, false)
-	host.call("_set_busy", true, "Carregando replay salvo...")
+	host.call("_set_busy", true, "Carregando batalha salva...")
 	var replay_result: Dictionary = await SupabaseClient.fetch_battle_replay(
 		requested_battle_id,
 		SessionStore.access_token
@@ -186,13 +186,13 @@ func show_battle_replay(host: Node, battle_id: String) -> void:
 		return
 
 	SessionStore.save_cache()
-	host.call("_set_busy", false, "Replay salvo recuperado.")
+	host.call("_set_busy", false, "Batalha salva recuperada.")
 	await play_battle_log(host, SessionStore.last_battle_log, SessionStore.last_battle_rewards)
 
 func play_battle_log(host: Node, battle_log: Dictionary, rewards: Dictionary) -> void:
 	var schema_version := str(battle_log.get("schema_version", ""))
 	if schema_version != "battle_log_v1":
-		_set_error_text(host, "UNSUPPORTED_BATTLE_LOG: %s" % schema_version)
+		_set_error_text(host, "Nao foi possivel abrir esta batalha. Solicite uma nova luta.")
 		host.call("_sync_status_from_session")
 		return
 
@@ -200,7 +200,7 @@ func play_battle_log(host: Node, battle_log: Dictionary, rewards: Dictionary) ->
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_BATTLE_RUNNING, false)
 	host.set("_replay_running", true)
 	host.set("_skip_replay", false)
-	host.call("_set_busy", false, "Reproduzindo replay do primeiro slice...")
+	host.call("_set_busy", false, "Apresentando batalha...")
 	host.call("_sync_buttons")
 	host.call("_emit_client_event", "replay_start", {
 		"battle_id": str(battle_log.get("battle_id", "")),
@@ -254,7 +254,7 @@ func play_battle_log(host: Node, battle_log: Dictionary, rewards: Dictionary) ->
 		"skipped": skipped,
 	})
 	host.call("_show_screen", AppShellRouteContractScript.summary_route_for(AppShellRouteContractScript.ROUTE_BATTLE_RUNNING), false)
-	host.call("_set_busy", false, "Replay concluido.")
+	host.call("_set_busy", false, "Batalha concluida.")
 	host.call("_sync_buttons")
 
 func battle_history_for_active_save(host: Node) -> Array[Dictionary]:
