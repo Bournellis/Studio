@@ -1,7 +1,7 @@
 # DraxosMobile - Battle Drama v1.1
 
 - Data: `2026-05-29`
-- Status: `VALIDADO_LOCAL`
+- Status: `PUBLICADO_INTERNAL_ALPHA`
 - Tipo: client-only visual/readability pass
 
 ## Objetivo
@@ -19,6 +19,17 @@ The package makes the running battle visibly different in the Web app without ch
 - Familiar and summon markers are slightly larger and keep tooltip/readout behavior.
 - The compact readout now speaks in battle language: life, pressure, effects, waits and allies.
 - Publication policy is updated: once a user-approved visible package needs human testing, Internal Alpha publication is the default completion step after validation.
+
+## Publication
+
+- Release root: `internal-alpha/v0-battle-drama-v1-1-20260529`
+- Verified public preview: `https://7261c476.draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- Versioned Web asset root: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-battle-drama-v1-1-20260529/web`
+- Web `GODOT_CONFIG.fileSizes.index.pck`: `4230188`, matching remote `index.pck` `Content-Length`.
+- Android APK: `31637525` bytes, SHA256 `30c7b8c90af00221de57e63d2434c80a774ebfe888e8cc6c6119228a23c1f50d`.
+- PC ZIP: `40103282` bytes, SHA256 `921795a9a3d3ffa96a41e77d39cfb1b3bee0773d42deed87bdf34d8506b8c93c`.
+- Cloudflare stable domain was redeployed, but public unauthenticated reads still hit Cloudflare Access; use the verified preview or an authenticated Access session for Web review.
+- Edge release manifest override was blocked because `SUPABASE_ACCESS_TOKEN` was not available in the local release environment.
 
 ## Non-Goals
 
