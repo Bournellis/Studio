@@ -60,6 +60,8 @@ static func _refuge_scene_board(host: Node, root: Control, compact: bool) -> voi
 	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "shop", "LJ", "Loja", "accent_bone", Vector2(0.78, 0.56), "Recompensas e compras.")
 	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "collect", "CL", "Coletar", "status_success", Vector2(0.28, 0.77), "Coletar producao do Refugio.", true)
 	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "energy", "EN", "Energia", "accent_astral", Vector2(0.72, 0.77), "Comprar Energia.", true)
+	if _refuge_has_dev_tools(host):
+		_add_refuge_dev_button(host, safe_frame, popup, title_label, body, compact)
 	_add_refuge_profile_button(host, safe_frame, popup, title_label, body, compact)
 
 static func _refuge_safe_frame(board: Control, compact: bool) -> Control:
@@ -265,6 +267,27 @@ static func _add_refuge_profile_button(host: Node, board: Control, popup: PopupP
 	)
 	board.add_child(button)
 
+static func _add_refuge_dev_button(host: Node, board: Control, popup: PopupPanel, title_label: Label, body: VBoxContainer, compact: bool) -> void:
+	var button := Button.new()
+	button.name = "RefugeIcon_LabsDev"
+	button.text = "Labs\nDev"
+	button.tooltip_text = "Ferramentas internas de desenvolvimento."
+	button.anchor_left = 0.04
+	button.anchor_right = 0.24 if compact else 0.18
+	button.anchor_top = 0.105
+	button.anchor_bottom = 0.158
+	button.custom_minimum_size = Vector2(76, 42)
+	button.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+	button.add_theme_font_size_override("font_size", 10 if compact else 11)
+	button.add_theme_stylebox_override("normal", _refuge_icon_style("accent_astral", false, true))
+	button.add_theme_stylebox_override("hover", _refuge_icon_style("accent_astral", true, true))
+	button.add_theme_stylebox_override("pressed", _refuge_icon_style("accent_astral", true, true))
+	host.call("_prepare_touch_button", button)
+	button.pressed.connect(func() -> void:
+		_open_refuge_menu_popup(host, popup, title_label, body, "dev", compact)
+	)
+	board.add_child(button)
+
 static func _add_refuge_icon_button(host: Node, board: Control, popup: PopupPanel, title_label: Label, body: VBoxContainer, compact: bool, menu_id: String, symbol: String, title: String, color_token: String, anchor: Vector2, detail: String, quick: bool = false) -> void:
 	var button := Button.new()
 	button.name = "RefugeIcon_%s" % title
@@ -387,7 +410,11 @@ static func _populate_refuge_menu(host: Node, popup: PopupPanel, body: VBoxConta
 		"profile":
 			body.add_child(_popup_hint(_short_account_status(), compact))
 			body.add_child(_popup_route_button(host, popup, "Abrir Perfil", "account", true))
+			_add_dev_tool_actions(host, popup, body)
 			body.add_child(_popup_action_button(host, popup, "Checar atualizacao", AppShellActionContractScript.ACTION_CHECK_UPDATE))
+		"dev":
+			body.add_child(_popup_hint("Ferramentas internas para validar batalha e progressao do prototipo.", compact))
+			_add_dev_tool_actions(host, popup, body, true)
 		"collect":
 			body.add_child(_popup_hint("Receber a producao acumulada do Refugio.", compact))
 			body.add_child(_popup_action_button(host, popup, "Coletar agora", AppShellActionContractScript.ACTION_COLLECT_BASE, "", true))
@@ -447,11 +474,22 @@ static func _menu_title(menu_id: String) -> String:
 			return "Loja"
 		"profile":
 			return "Perfil"
+		"dev":
+			return "Labs Dev"
 		"collect":
 			return "Coletar"
 		"energy":
 			return "Energia"
 	return "Menu"
+
+static func _refuge_has_dev_tools(host: Node) -> bool:
+	return bool(host.call("_battle_lab_available")) or bool(host.call("_progression_lab_available"))
+
+static func _add_dev_tool_actions(host: Node, popup: PopupPanel, body: VBoxContainer, primary: bool = false) -> void:
+	if bool(host.call("_battle_lab_available")):
+		body.add_child(_popup_action_button(host, popup, "Battle Lab", AppShellActionContractScript.ACTION_OPEN_BATTLE_LAB, "", primary))
+	if bool(host.call("_progression_lab_available")):
+		body.add_child(_popup_action_button(host, popup, "Progression Lab", AppShellActionContractScript.ACTION_OPEN_PROGRESSION_LAB, "", primary))
 
 static func _add_texture_layer(parent: Control, texture_path: String, alpha: float) -> void:
 	if parent == null or not ResourceLoader.exists(texture_path):

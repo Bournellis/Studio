@@ -328,6 +328,11 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 		"offline": SessionStore.offline,
 	})
 
+func _show_refuge_root(message: String = "") -> void:
+	_show_screen(AppShellRouteContractScript.clear_for_refuge_return(_screen_history), false)
+	if message != "":
+		_show_notice(message)
+
 func _show_surface_screen(screen_id: String) -> void:
 	var target_screen := _normalize_route(screen_id)
 	var current_screen := _normalize_route(_current_screen)
@@ -339,7 +344,17 @@ func _go_back() -> void:
 	if _close_refuge_menu_popup_if_open():
 		return
 	var previous := AppShellRouteContractScript.pop_back_or_root(_screen_history)
+	if previous == SCREEN_HUB and _session_uses_refuge_root():
+		previous = SCREEN_REFUGE
+		_screen_history.clear()
 	_show_screen(previous, false)
+
+func _session_uses_refuge_root() -> bool:
+	if SessionStore.has_valid_access_token():
+		return true
+	if SessionStore.has_account_state():
+		return true
+	return SessionStore.is_progression_lab_local_only()
 
 func _normalize_route(route_id: String) -> String:
 	return AppShellRouteContractScript.normalize(route_id)

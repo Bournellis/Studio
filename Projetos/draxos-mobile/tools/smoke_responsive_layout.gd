@@ -73,6 +73,7 @@ func _check_refuge_layout(viewport_size: Vector2i) -> void:
 		"RefugeLoopPanel",
 		"RefugeContextCta",
 		"RefugeIcon_Perfil",
+		"RefugeIcon_LabsDev",
 		"RefugeIcon_Batalha",
 		"RefugeIcon_Refugio",
 		"RefugeIcon_Social",

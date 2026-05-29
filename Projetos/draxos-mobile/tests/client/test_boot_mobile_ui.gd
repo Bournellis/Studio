@@ -186,6 +186,33 @@ func test_surface_actions_opened_from_refuge_go_back_to_refuge() -> void:
 		assert_eq(boot._current_screen, "refuge")
 		assert_true(boot._screen_history.is_empty())
 
+func test_authenticated_back_from_internal_surfaces_returns_to_refuge_root() -> void:
+	_prepare_account_state()
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	boot._show_screen("refuge")
+	assert_eq(boot._current_screen, "refuge")
+	assert_eq(boot._screen_history, ["entry"])
+
+	boot._go_back()
+	assert_eq(boot._current_screen, "refuge")
+	assert_true(boot._screen_history.is_empty())
+
+	boot._show_screen("account", false)
+	assert_eq(boot._current_screen, "account")
+	assert_true(boot._screen_history.is_empty())
+	boot._go_back()
+	assert_eq(boot._current_screen, "refuge")
+	assert_true(boot._screen_history.is_empty())
+
+	boot._show_surface_screen("social")
+	assert_eq(boot._current_screen, "social")
+	assert_eq(boot._screen_history, ["refuge"])
+	boot._go_back()
+	assert_eq(boot._current_screen, "refuge")
+	assert_true(boot._screen_history.is_empty())
+
 func test_boot_shell_has_no_global_tab_navigation() -> void:
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)
@@ -314,7 +341,8 @@ func test_entry_puts_login_before_save_choice_and_exposes_internal_dev_tools() -
 	assert_true(boot._action_buttons.has("open_progression_lab"))
 	assert_not_null(_find_node_by_name(boot._first_screen_root, "EntryResetPanel"))
 
-func test_refuge_hides_labs_after_login_surface() -> void:
+func test_refuge_exposes_labs_after_login_surface() -> void:
+	ProjectSettings.set_setting("draxos_mobile/internal_alpha/dev_tools_enabled", true)
 	ProjectSettings.set_setting("draxos_mobile/progression_lab/enabled", true)
 	ProjectSettings.set_setting("draxos_mobile/battle_lab/enabled", true)
 	var boot = BootScreenScript.new()
@@ -323,11 +351,20 @@ func test_refuge_hides_labs_after_login_surface() -> void:
 	boot._show_screen("refuge")
 	await get_tree().process_frame
 
-	assert_false(_label_tree_contains(boot._first_screen_root, "Labs Dev"))
-	assert_null(_find_button_by_text(boot._first_screen_root, "Battle Lab"))
-	assert_null(_find_button_by_text(boot._first_screen_root, "Progression Lab"))
-	assert_false(boot._action_buttons.has("open_battle_lab"))
-	assert_false(boot._action_buttons.has("open_progression_lab"))
+	var dev_hotspot := _find_node_by_name(boot._first_screen_root, "RefugeIcon_LabsDev") as Button
+	assert_not_null(dev_hotspot)
+	assert_true(dev_hotspot.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
+
+	dev_hotspot.pressed.emit()
+	await get_tree().process_frame
+	var menu_popup := boot._refuge_menu_popup as PopupPanel
+	assert_not_null(menu_popup)
+	assert_true(menu_popup.visible)
+	assert_true(_label_tree_contains(menu_popup, "Labs Dev"))
+	assert_not_null(_find_button_by_text(menu_popup, "Battle Lab"))
+	assert_not_null(_find_button_by_text(menu_popup, "Progression Lab"))
+	assert_true(boot._action_buttons.has("open_battle_lab"))
+	assert_true(boot._action_buttons.has("open_progression_lab"))
 
 func test_refuge_context_cta_priority_uses_loaded_state() -> void:
 	var boot = BootScreenScript.new()
@@ -618,7 +655,7 @@ func test_auth_success_paths_return_directly_to_refuge() -> void:
 	var source := FileAccess.get_file_as_string("res://modes/boot/flows/account_session_flow.gd")
 	assert_true(source.contains("func email_sign_in"))
 	assert_true(source.contains("func email_sign_up_with_credentials"))
-	assert_true(source.count("host.call(\"_show_screen\", AppShellRouteContractScript.ROUTE_REFUGE, false)") >= 3)
+	assert_true(source.count("host.call(\"_show_refuge_root") >= 5)
 
 func test_boot_flows_do_not_create_visual_controls() -> void:
 	for script_path: String in _flow_script_paths():
