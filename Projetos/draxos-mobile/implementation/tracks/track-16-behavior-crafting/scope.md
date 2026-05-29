@@ -1,6 +1,6 @@
 # Track 16 - Behavior And Potion Crafting Scope
 
-- Status: `ACTIVE`
+- Status: `HISTORICO_IMPLEMENTADO`
 - Start date: `2026-05-28`
 - Branch: `codex/draxos-mobile/track-16-behavior-crafting`
 - Worktree: `D:\Estudio-worktrees\draxos-mobile--codex--track-16-behavior-crafting`
@@ -9,6 +9,8 @@
 ## Goal
 
 Implement the first server-authoritative consumable and behavior package for DraxosMobile: integer Ossos, Po de Osso, potion crafting, one potion slot and behavior rules for spells and potions.
+
+Current live reference after publication follow-ups: `docs/behavior-potion-crafting-v1.md`.
 
 ## Decisions
 

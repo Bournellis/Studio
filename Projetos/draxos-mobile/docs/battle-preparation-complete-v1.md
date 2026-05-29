@@ -17,6 +17,8 @@ O jogador deve conseguir ver e alterar, antes de pedir uma batalha:
 - Pocao equipada;
 - comportamento basico de pocao e habilidades.
 
+Os controles de Pocao e comportamento simples sao a superficie de Preparacao para sistemas de Track 16, hoje resumidos em `docs/behavior-potion-crafting-v1.md`.
+
 ## Escopo
 
 O pacote implementa loadout real, com UI no cliente e contrato servidor, sem criar uma nova rota visual fora do Refugio.
@@ -40,12 +42,20 @@ O cliente envia apenas intencao de equipamento. O servidor valida item, nivel, d
 
 `GET /build/state` continua sendo o ponto de leitura da preparacao e passa a oferecer dados humanizados suficientes para a UI nao depender de ids crus.
 
+Os endpoints de comportamento e pocao permanecem os de Track 16:
+
+- `POST /build/spell-behavior`: atualiza preferencia simples de uso para uma habilidade equipada;
+- `POST /build/potion/equip`: equipa ou remove Pocao de Vida do slot 1;
+- `POST /build/potion-behavior`: atualiza preferencia simples de uso da pocao equipada.
+
 Campos vivos no pacote:
 
 - `weapon`: equipa Instrumento Ritual e qualidade quando enviada;
 - `spell_slots`: equipa ou remove habilidades nas posicoes 1, 2 e 3;
 - `passive_id`: equipa ou remove Doutrina;
 - `pet_id`: equipa ou remove Familiar;
+- `potion_slots`: mostra Pocao equipada/removida e estoque relevante;
+- `spell_behaviors` e `potion_behavior`: mostram preferencias simples de uso sem expor thresholds customizados;
 - `player.power` e `combat_build.power`: recalculados pelo servidor apos sucesso.
 
 ## UX
@@ -95,3 +105,4 @@ Observacoes de release:
 - O bucket `draxos-internal-alpha` e o bucket privado espelho tiveram `file_size_limit` ajustado para `209715200` bytes por configuracao remota de release.
 - `publish_internal_alpha.ps1 -Mode DeployManifest` ficou bloqueado por falta de `SUPABASE_ACCESS_TOKEN`; o pacote Cloudflare publicado usa `portal/manifest.example.json` embutido com os links e hashes corretos.
 - HEAD remoto passou para `index.pck`, `index.wasm`, APK e ZIP no release root versionado.
+- Hotfix posterior de equip feedback manteve/reabriu a Preparacao apos acoes de equipar e comportamento, exibiu `Ultima escolha: ...` e confirmou em Web que uma acao real de `Equipar` atualiza o item para `Em uso`.

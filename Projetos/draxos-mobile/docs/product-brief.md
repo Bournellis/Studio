@@ -1,6 +1,6 @@
 # DraxosMobile - Product Brief
 
-- Ultima atualizacao: `2026-05-28`
+- Ultima atualizacao: `2026-05-29`
 - Status: `VIVO`
 
 ---
@@ -75,7 +75,7 @@ A base tecnica ja contem:
 - release manifest, build channel e runbooks de publicacao segura;
 - validacao local por `validate_foundation.ps1`.
 
-Track 16 e o ultimo pacote tecnico, com comportamento/crafting/pocoes. Ele nao e a etapa ativa de produto.
+Track 16 e o ultimo pacote tecnico, com comportamento/crafting/pocoes. Ele esta registrado em `behavior-potion-crafting-v1.md` como base tecnica existente: Ossos inteiros, Po de Osso, Pocao de Vida, crafting inicial, slot de pocao e comportamento simples de habilidade/pocao. Ele nao e a etapa ativa de produto e nao libera tuning, economia, novas pocoes ou comportamento avancado sem novo pacote explicito.
 
 ## Decisoes Que Permanecem Reais
 
@@ -93,6 +93,7 @@ Track 16 e o ultimo pacote tecnico, com comportamento/crafting/pocoes. Ele nao e
 - `foundation-app-v0-audit.md` - bussola atual da Foundation Audit.
 - `product-vision.md` - visao longa local.
 - `game-design-document.md` - referencia de implementacao e substancia/mock existente.
+- `behavior-potion-crafting-v1.md` - estado vivo de pocoes, crafting inicial e comportamento simples.
 - `design-pending.md` - pendencias vivas e ordem de decisao.
 - `documentation-index.md` - classificacao de docs vivos, contratos, runbooks, historico e arquivo de design.
 - `contracts/` - contratos tecnicos antes de migrations/codigo.

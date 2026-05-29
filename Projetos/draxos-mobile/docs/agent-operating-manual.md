@@ -27,13 +27,13 @@ If a historical track conflicts with these docs, the live docs win. If local pro
 
 Active stage: `FOUNDATION_AUDIT_ACTIVE`.
 
-The project is a base implemented for refinement. The Foundation Loop Audit is documented, and Foundation Loop UX Pass 01 is published to Internal Alpha as the current candidate for the post-login loop:
+The project is a base implemented for refinement. The Foundation Loop Audit is documented, and Foundation Loop UX Pass 01 is the accepted baseline for the post-login loop:
 
 `Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again`
 
-The next product action is manual review of that loop pass before choosing social, visual-general or battle-presentation work.
+Social Basico Guilda v1, Visual Direction v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation Complete v1 and Progression Clarity v1 have since been published. The next product action is manual review of Progression Clarity v1 on Android/Windows/Web, including a quick regression pass through Preparation potion/behavior controls, before choosing the next explicit package.
 
-Track 16 remains the latest technical package, but it is not the current product focus. Current spells, weapons, economy values, Battle Pass, battle flavor and visual identity are mock/substance, not priority areas.
+Track 16 remains the latest technical package, but it is not the current product focus. Its current behavior/potion/crafting state is summarized in `docs/behavior-potion-crafting-v1.md`. Current spells, weapons, economy values, Battle Pass, battle flavor and visual identity are mock/substance, not priority areas.
 
 ## Current Baseline
 
@@ -86,6 +86,7 @@ For Foundation Audit, the expected DraxosMobile Doing card must state the branch
 | Agent/doc operation | `AGENTS.md`, this manual, `docs/documentation-index.md`, `docs/foundation-app-v0-audit.md`, `docs/foundation-loop-audit.md` |
 | Product/design | `docs/product-vision.md`, `docs/product-brief.md`, `docs/game-design-document.md`, `docs/design-pending.md` |
 | Backend/contracts | `docs/architecture.md`, `docs/contracts/`, `server/schema/`, `server/functions/`, `supabase/` mirrors |
+| Crafting/potions/behavior | `docs/behavior-potion-crafting-v1.md`, `docs/contracts/api-endpoints.md`, `docs/contracts/database-schema.md`, `docs/contracts/content-definitions.md`, `docs/contracts/battle-event-log.md` |
 | Godot client | `AGENTS.md`, `modes/boot/surfaces/README.md`, relevant tests, relevant flow/presenter |
 | Entry/Refugio/Battle layout | `docs/foundation-responsive-layout-contract.md`, `tools/smoke_responsive_layout.gd`, relevant UI tests |
 | Release/publication | `docs/release-ops-checklist.md`, Track 13 release safety contract, `tools/README.md` |
@@ -137,6 +138,7 @@ Do not start these without explicit user direction and a fresh track/package:
 - visual-general or battle-presentation work before the loop and social order is explicitly chosen;
 - numeric tuning without human playthrough and Progression Lab evidence;
 - weapons, spells, Battle Pass or economy pass while they are still mock/substance;
+- new potions, consumable expansion, custom thresholds, spell priorities, enemy-specific behavior or behavior tuning outside an explicit package;
 - account/save migration from `players.save_type` to `account_profiles/game_saves`;
 - iOS or mobile browser support;
 - final asset production;

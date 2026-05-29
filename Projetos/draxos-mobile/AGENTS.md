@@ -12,8 +12,8 @@ This file is the fast entrypoint for agents working in `Projetos/draxos-mobile`.
 - Active stage status: `FOUNDATION_AUDIT_ACTIVE`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety` delivered on `2026-05-28`
 - Agent baseline: `Track 14 - Agent Operations Foundation` is the current operations/docs foundation.
-- Latest technical package: `Track 16 - Behavior And Potion Crafting`, technical context and not the current product focus.
-- Immediate product gate: the Foundation Loop Audit is documented in `docs/foundation-loop-audit.md`; Foundation Loop UX Pass 01 is published to Internal Alpha and must be manually reviewed before broader expansion.
+- Latest technical package: `Track 16 - Behavior And Potion Crafting`, technical context and not the current product focus. Current behavior/potion/crafting state is summarized in `docs/behavior-potion-crafting-v1.md`.
+- Immediate product gate: Progression Clarity v1 is published to Internal Alpha and should be manually reviewed on Android/Windows/Web before choosing the next explicit package. Foundation Loop UX Pass 01 is the accepted baseline.
 
 DraxosMobile is an async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. The real product direction is base builder + autobattler + social, with room for future minigames and seasons. Current names, spells, weapons, economy values, battle flavor, visual style and premium systems are mock/substance for evaluation unless a live doc explicitly promotes them.
 
@@ -27,7 +27,8 @@ Read in this order for almost every task:
 4. `docs/foundation-app-v0-audit.md`
 5. `docs/foundation-loop-audit.md`
 6. `docs/foundation-responsive-layout-contract.md` when touching Entry, Refugio, Battle or visual/layout code
-7. The files you intend to touch
+7. `docs/behavior-potion-crafting-v1.md` when touching Ossos, crafting, potions, consumables or behavior
+8. The files you intend to touch
 
 For product or design work, also read:
 
@@ -85,7 +86,7 @@ For user-approved product packages that require human testing on Android, Window
 
 - Do not put `service_role`, Supabase secrets, database passwords, keystore passwords or private tokens in client code, exports, portal files, manifests or operational docs.
 - Do not run remote publishing modes without explicit user approval and `-ConfirmRemoteMutation`.
-- Do not start a new playable feature, numeric tuning pass, weapon/spell/economy pass, battle presentation pass, final visual pass, `account_profiles/game_saves` migration, iOS work or mobile browser support before Foundation Audit is complete and the user explicitly chooses the next package.
+- Do not start a new playable feature, numeric tuning pass, weapon/spell/economy pass, potion/consumable expansion, advanced behavior pass, battle presentation pass, final visual pass, `account_profiles/game_saves` migration, iOS work or mobile browser support before Foundation Audit is complete and the user explicitly chooses the next package.
 - Do not edit `.tscn` files as raw text unless the user explicitly asks and the change is safer than an editor/tool path.
 - Do not publish Entry/Refugio/Battle layout changes unless `tools/smoke_responsive_layout.gd` passes.
 - Do not import gameplay rules from other Draxos projects unless this project's live docs explicitly adopt them.
@@ -97,6 +98,7 @@ For user-approved product packages that require human testing on Android, Window
 - `docs/foundation-app-v0-audit.md` is the current product/agent compass for Foundation Audit.
 - `docs/foundation-loop-audit.md` is the executed audit for loop ergonomics and the next UX pass criteria.
 - `docs/foundation-responsive-layout-contract.md` is the guardrail for responsive Entry Labs, Refugio and Battle safe frames.
+- `docs/behavior-potion-crafting-v1.md` is the live bridge for Track 16 behavior, potion and crafting systems already present in the alpha baseline.
 - `docs/game-design-document.md` is the authoritative implementation GDD.
 - `docs/design-pending.md` is the only live register of unresolved design decisions.
 - `docs/documentation-index.md` classifies live docs, contracts, runbooks, history and design archive.
@@ -105,4 +107,4 @@ For user-approved product packages that require human testing on Android, Window
 
 ## Current Handoff
 
-Foundation Audit is the active handoff. Foundation Loop UX Pass 01 is published to Internal Alpha; agents should review or refine that post-login loop before expanding implementation. Do not change gameplay tuning, backend/schema, Supabase APIs, economy, content, weapons, spells, final visuals or authoritative flows without an explicit package decision.
+Progression Clarity v1 is the active published handoff inside the broader Foundation Audit. Agents should review it on Android/Windows/Web, including a quick regression pass through Preparation potion/behavior controls, before expanding implementation. Do not change gameplay tuning, backend/schema, Supabase APIs, economy, content, weapons, spells, potions, crafting, advanced behavior, final visuals or authoritative flows without an explicit package decision.

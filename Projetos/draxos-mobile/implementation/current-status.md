@@ -10,14 +10,14 @@
 - Agent baseline: `Track 14 - Agent Operations Foundation` (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Latest published package: `Progression Clarity v1`
 - Latest implemented package: `Progression Clarity v1`
-- Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical context, not current product focus)
+- Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical context, not current product focus; current state summarized in `docs/behavior-potion-crafting-v1.md`)
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
 - Version code: `1`
 
 ## Baseline
 
-Track 00-15 are integrated on Godot 4.6.2 + Supabase. Track 16 is the latest technical package and has not been promoted as the current product focus.
+Track 00-15 are integrated on Godot 4.6.2 + Supabase. Track 16 is the latest technical package and has not been promoted as the current product focus. Its live bridge document is `docs/behavior-potion-crafting-v1.md`.
 
 The implemented base includes Android/PC/Web alpha surfaces, email/password account flow, `normal` and `progression_lab` saves, server-authoritative battle, Base/Social/Competition/Shop loops, Progression Lab/Battle Lab, portrait Refugio, fullscreen portrait battle, skip, summary and current-battle logs.
 
@@ -128,7 +128,7 @@ Social Basico Guilda v1 is implemented as the next product package after the con
 
 ## Latest Technical Package
 
-Track 16 added the first behavior/crafting/consumable package requested by the user. It remains technical context and not the current product focus; Ossos Inteiros v1 only promotes the subset needed to make the published alpha coherent around whole-number Ossos.
+Track 16 added the first behavior/crafting/consumable package requested by the user. It remains technical context and not the current product focus; `docs/behavior-potion-crafting-v1.md` is the current live summary. Ossos Inteiros v1 only promotes the subset needed to make the published alpha coherent around whole-number Ossos.
 
 - Ossos are represented as whole numbers in the new scale (`1 Osso atual = 0.01 Osso antigo`) and current economy/content/Progression Lab values were rescaled by `100`.
 - `po_osso` was added as a whole-number resource, created by crushing Ossos.
@@ -136,6 +136,7 @@ Track 16 added the first behavior/crafting/consumable package requested by the u
 - Save-scoped `crafting/*` and `build/*` endpoints manage crafting, consumable inventory, potion slot and spell/potion behavior.
 - Battle simulator supports spell behavior, `consumable_use`, one potion use per slot per battle and five `heal` ticks of `4%` max HP.
 - Godot Base/Ossario and Refugio preparation panels expose crafting, potion equip/remove and simple behavior toggles.
+- Battle Preparation Complete v1 is the published product surface for potion equip/remove and simple behavior controls; further potion, behavior, crafting, tuning or economy expansion still needs a new explicit package.
 
 Ossos Inteiros v1 is now published on top of the Visual Direction v1 build. The remote migration `202605280001_behavior_crafting.sql` is applied, Edge Functions were redeployed, generated Grimoire catalogs now expose whole-number Ossos values, and Base collection preserves sub-one Ossos accrual until at least `1` whole Osso is collectable. This fixes the visible `0.1 osso` class of issue without adding a new schema/API package beyond Track 16.
 
@@ -183,7 +184,7 @@ Visual Direction v1 is implemented and published as the next refinement package 
 
 ## Next Step
 
-Manually review published Battle Preparation Complete v1 on Android, Windows and Web, then choose the next product package. Keep victory prediction, opponent counter-picks, custom thresholds, enemy-specific behavior, spell priorities, direct chat, helps, contributions, moderation, tuning numbers, new weapons, new spells, economy and broader replay controls out of scope until they receive their own explicit package.
+Manually review published Progression Clarity v1 on Android, Windows and Web, including a quick regression pass through Battle Preparation Complete v1 potion/behavior controls, then choose the next product package. Keep victory prediction, opponent counter-picks, custom thresholds, enemy-specific behavior, spell priorities, direct chat, helps, contributions, moderation, tuning numbers, new weapons, new spells, economy, new potions, crafting expansion and broader replay controls out of scope until they receive their own explicit package.
 
 ## Validation
 

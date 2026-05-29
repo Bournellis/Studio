@@ -30,6 +30,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Battle Presentation v1: `draxos-mobile/docs/battle-presentation-v1.md`
   - Battle Drama v1.1: `draxos-mobile/docs/battle-drama-v1-1.md`
   - Battle Preparation Complete v1: `draxos-mobile/docs/battle-preparation-complete-v1.md`
+  - Behavior/Potion Crafting v1: `draxos-mobile/docs/behavior-potion-crafting-v1.md`
   - Progression Clarity v1: `draxos-mobile/docs/progression-clarity-v1.md`
   - Operational status: `draxos-mobile/implementation/current-status.md`
   - Product vision: `draxos-mobile/docs/product-vision.md`

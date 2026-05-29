@@ -39,6 +39,7 @@
 | `docs/battle-presentation-v1.md` | `VIVO` | Current Battle Presentation v1 package: client-only readability pass for running battle, summary and current-battle logs. |
 | `docs/battle-drama-v1-1.md` | `VIVO` | Follow-up client-only battle drama/readability pass for visible Web difference after Battle Presentation v1. |
 | `docs/battle-preparation-complete-v1.md` | `VIVO` | Current Battle Preparation Complete v1 package: real Refugio loadout editor, `POST /build/equip`, enriched build state and published Internal Alpha release snapshot. |
+| `docs/behavior-potion-crafting-v1.md` | `VIVO` | Current technical reference for Track 16 systems now present in the alpha baseline: whole-number Ossos, Po de Osso, first potion, crafting, potion slot and simple behavior controls. |
 | `docs/progression-clarity-v1.md` | `VIVO` | Published Progression Clarity v1 package: client-only readability for level, power, rewards, next unlocks and next objective. |
 | `docs/battle-preparation-v1.md` | `HISTORICO` | Previous client-first preparation readability package over existing behavior endpoints. |
 | `docs/product-brief.md` | `VIVO` | Short product/slice summary. |
@@ -93,7 +94,7 @@
 | `implementation/tracks/track-13-validation-release-safety/` | `HISTORICO` | Validation and release safety baseline. |
 | `implementation/tracks/track-14-agent-ops-foundation/` | `HISTORICO` | Agent operating foundation and documentation index baseline. |
 | `implementation/tracks/track-15-mobile-ux-overhaul/` | `HISTORICO` | Prior Android portrait UX package; not the active stage. |
-| `implementation/tracks/track-16-behavior-crafting/` | `HISTORICO` | Latest local technical package for behavior/crafting; not the active product focus. |
+| `implementation/tracks/track-16-behavior-crafting/` | `HISTORICO` | Source track for behavior/crafting; use `docs/behavior-potion-crafting-v1.md` for current state. |
 
 ## Design Archive
 
@@ -113,5 +114,6 @@
 - Visual/layout changes must respect `docs/foundation-responsive-layout-contract.md` and pass `tools/smoke_responsive_layout.gd` before publication.
 - Historical docs can keep old language when they are clearly historical.
 - Product-facing language should use Instrumento Ritual, Doutrina and Familiar.
+- Potion/crafting/behavior systems exist in the current alpha baseline, but new potions, tuning, custom thresholds, spell priorities or enemy-specific behavior require an explicit package decision.
 - Technical field names such as `weapon`, `passive`, `pet`, `WeaponQualityTier`, `PassiveLevelsTotal` and `PetLevel` may remain only where they describe existing schema, telemetry or legacy compatibility.
 - New pending design questions must go to `docs/design-pending.md`, not historical track docs.
