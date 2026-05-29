@@ -1083,7 +1083,7 @@ func test_boot_battle_presenter_renders_history_entries_without_network() -> voi
 
 	assert_true(boot._action_buttons.has("show_battle_history"))
 	assert_true(boot._action_buttons.has("battle_replay:11111111-1111-4111-8111-111111111111"))
-	assert_true(_label_tree_contains(boot._content_body, "recompensa Xp +10"))
+	assert_true(_label_tree_contains(boot._content_body, "recompensa XP +10"))
 	assert_true(_label_tree_contains(boot._content_body, "vitoria"))
 
 func test_boot_battle_running_renders_fullscreen_overlay_and_skip() -> void:
@@ -1105,12 +1105,19 @@ func test_boot_battle_running_renders_fullscreen_overlay_and_skip() -> void:
 	assert_null(boot._timeline_label)
 	assert_true(boot._action_buttons.has("skip_battle_replay"))
 	assert_not_null(_find_node_by_name(boot._battle_fullscreen_overlay, "BattleDuelStage"))
+	assert_not_null(_find_node_by_name(boot._battle_fullscreen_overlay, "BattleDuelShellBand"))
+	assert_not_null(_find_node_by_name(boot._battle_fullscreen_overlay, "BattleDuelMatchupLabel"))
+	assert_not_null(_find_node_by_name(boot._battle_fullscreen_overlay, "BattleDuelProgressLabel"))
+	assert_not_null(_find_node_by_name(boot._battle_fullscreen_overlay, "BattleDuelStateLabel"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Draxos vs Treinador da Primeira Ruina"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Lances 0/2"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Aguardando primeiro lance"))
 	assert_false(_label_tree_contains(boot._battle_fullscreen_overlay, "Autobattler"))
 	assert_false(_label_tree_contains(boot._battle_fullscreen_overlay, "Timeline"))
 	var skip_button := boot._action_buttons["skip_battle_replay"] as Button
 	assert_eq(skip_button.name, "BattleSkipButton")
-	assert_eq(skip_button.text, "Pular")
-	assert_true(skip_button.custom_minimum_size.x >= 96.0)
+	assert_eq(skip_button.text, "Pular batalha")
+	assert_true(skip_button.custom_minimum_size.x >= 132.0)
 	assert_true(skip_button.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
 	assert_true((skip_button.size_flags_horizontal & Control.SIZE_SHRINK_END) != 0)
 	assert_eq((skip_button.get_parent() as HBoxContainer).alignment, BoxContainer.ALIGNMENT_END)
@@ -1139,6 +1146,8 @@ func test_boot_battle_summary_renders_reward_result_and_actions() -> void:
 	assert_false(boot._back_button.visible)
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Resultado da batalha"))
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Vitoria"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Contra Treinador da Primeira Ruina"))
+	assert_not_null(_find_node_by_name(boot._battle_fullscreen_overlay, "BattleSummaryOutcomeLabel"))
 	assert_false(_label_tree_contains(boot._battle_fullscreen_overlay, "Vencedor"))
 	assert_false(_label_tree_contains(boot._battle_fullscreen_overlay, "Duracao"))
 	assert_false(_label_tree_contains(boot._battle_fullscreen_overlay, "Eventos"))
@@ -1234,10 +1243,12 @@ func test_battle_summary_data_uses_battle_log_rewards_and_resource_state() -> vo
 
 	assert_eq(str(summary.get("winner", "")), "player")
 	assert_eq(str(summary.get("winner_label", "")), "Vitoria")
+	assert_eq(str(summary.get("opponent_label", "")), "Treinador da Primeira Ruina")
+	assert_string_contains(str(summary.get("outcome_text", "")), "Contra Treinador da Primeira Ruina")
 	assert_eq(str(summary.get("duration_text", "")), "12.5s")
 	assert_eq(int(summary.get("event_count", 0)), 2)
-	assert_eq(str(summary.get("reward_text", "")), "Xp +10, Almas +0.8, Ossos +1")
-	assert_eq(str(summary.get("resources_text", "")), "Almas 7, Energia 9, Diamante 2")
+	assert_eq(str(summary.get("reward_text", "")), "XP +10, Almas +0.8, Ossos +1")
+	assert_eq(str(summary.get("resources_text", "")), "Almas 7, Energia 9, Diamantes 2")
 
 func _first_action_grid(parent: Node) -> GridContainer:
 	for child: Node in parent.get_children():

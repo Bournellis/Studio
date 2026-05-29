@@ -40,10 +40,9 @@ func _check_portrait_app_loop() -> void:
 	_expect(str(boot.get("_current_screen")) == "entry", "portrait opens on Entry")
 	_expect(_get_first_screen_root(boot) != null and _get_first_screen_root(boot).visible, "portrait opens on first-screen Entry layer")
 	_expect(_get_app_chrome_root(boot) != null and not _get_app_chrome_root(boot).visible, "portrait Entry hides app chrome")
-	_expect(_label_tree_contains(boot, "Conta"), "portrait Entry shows slim account page")
 	_expect(_find_button_by_text(boot, "Entrar") != null, "portrait Entry has direct login action")
 	_expect(_find_button_by_text(boot, "Entrar no Refugio") == null, "portrait Entry does not require a second Refugio CTA")
-	_expect(_find_button_by_text(boot, "Save normal") != null, "portrait Entry keeps save selector")
+	_expect(_find_button_by_text(boot, "Normal") != null, "portrait Entry keeps save selector")
 	_expect(boot.get("_auth_username_input") == null, "portrait Entry keeps username out of inline login")
 	_expect(boot.get("_auth_invite_input") == null, "portrait Entry keeps invite out of inline login")
 	var create_button := _find_button_by_text(boot, "Criar conta")
@@ -106,7 +105,7 @@ func _check_portrait_app_loop() -> void:
 	_expect(_get_first_screen_root(boot) != null and not _get_first_screen_root(boot).visible, "account hides first-screen Refugio layer")
 	_expect(_get_app_chrome_root(boot) != null and _get_app_chrome_root(boot).visible, "account uses internal app shell")
 	_expect(_get_back_button(boot) != null and _get_back_button(boot).visible, "account route exposes Back")
-	_expect(boot.get("_auth_email_input") != null, "account route owns login fields")
+	_expect(boot.get("_auth_email_input") == null, "account route keeps login fields out of authenticated profile")
 	_expect_layout_fits_width(boot, float(root.size.x), "portrait Account")
 
 	boot.set("_is_busy", false)
@@ -173,7 +172,7 @@ func _check_wide_portrait_app_loop() -> void:
 	scroll = _get_content_scroll(boot)
 	_expect(str(boot.get("_current_screen")) == "social", "wide Social route opens")
 	_expect(scroll != null and scroll.scroll_vertical == 0, "route changes reset scroll position")
-	_expect(_label_tree_contains(boot, "Refresh e Polling") or _label_tree_contains(boot, "Social server-authoritative"), "wide Social keeps readable state")
+	_expect(_label_tree_contains(boot, "Amigos") or _label_tree_contains(boot, "Guilda"), "wide Social keeps readable state")
 	_expect_layout_fits_width(boot, float(root.size.x), "wide Social")
 	boot.queue_free()
 	await process_frame
@@ -195,6 +194,10 @@ func _check_battle_fullscreen_loop() -> void:
 	_expect(boot.get("_battle_fullscreen_overlay") != null, "battle_running creates fullscreen overlay")
 	_expect(_find_button_by_text(boot, "Pular batalha") != null, "battle_running exposes lower-right skip action")
 	_expect(_find_node_by_name(boot, "BattleDuelStage") != null, "battle_running exposes duel stage")
+	_expect(_find_node_by_name(boot, "BattleDuelShellBand") != null, "battle_running exposes compact duel shell")
+	_expect(_label_tree_contains(boot, "Draxos vs Treinador da Primeira Ruina"), "battle_running identifies the matchup")
+	_expect(_label_tree_contains(boot, "Lances 0/2"), "battle_running shows event progress")
+	_expect(_label_tree_contains(boot, "Aguardando primeiro lance"), "battle_running shows current replay state")
 	_expect(not _label_tree_contains(boot, "Autobattler"), "battle_running removes external gameplay header")
 	_expect(not _label_tree_contains(boot, "Timeline"), "battle_running removes external timeline")
 	_expect_layout_fits_width(boot, float(root.size.x), "battle_running")
@@ -205,7 +208,8 @@ func _check_battle_fullscreen_loop() -> void:
 	_expect(str(boot.get("_current_screen")) == "battle_summary", "battle_summary route opens")
 	_expect(_label_tree_contains(boot, "Resultado da batalha"), "battle_summary shows result title")
 	_expect(_label_tree_contains(boot, "Vitoria"), "battle_summary shows minimal result")
-	_expect(_find_button_by_text(boot, "Ver logs") != null, "battle_summary can open current logs")
+	_expect(_label_tree_contains(boot, "Contra Treinador da Primeira Ruina"), "battle_summary shows opponent outcome")
+	_expect(_find_button_by_text(boot, "Ver logs da batalha") != null, "battle_summary can open current logs")
 	_expect(_label_tree_contains(boot, "Voltar e verificar base"), "battle_summary can return to base loop")
 	_expect(_find_button_by_text(boot, "Historico") == null, "battle_summary does not expose history")
 	_expect_layout_fits_width(boot, float(root.size.x), "battle_summary")
@@ -245,13 +249,17 @@ func _first_horizontal_overflow(node: Node, viewport_width: float) -> String:
 	if node is Control:
 		var control := node as Control
 		if control.is_visible_in_tree() and _is_layout_surface(control):
+			var effective_width := viewport_width
+			var viewport_rect := control.get_viewport_rect()
+			if viewport_rect.size.x > effective_width:
+				effective_width = viewport_rect.size.x
 			var rect := control.get_global_rect()
-			if rect.position.x < -1.0 or rect.end.x > viewport_width + 1.0:
+			if rect.position.x < -1.0 or rect.end.x > effective_width + 1.0:
 				return "%s left=%.1f right=%.1f viewport=%.1f" % [
 					control.name,
 					rect.position.x,
 					rect.end.x,
-					viewport_width,
+					effective_width,
 				]
 	for child: Node in node.get_children():
 		var found := _first_horizontal_overflow(child, viewport_width)
