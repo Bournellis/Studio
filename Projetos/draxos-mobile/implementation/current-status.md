@@ -44,6 +44,8 @@ Foundation Loop UX Pass 01 is implemented and published to the Internal Alpha ar
 
 Foundation Responsive Guardrails were applied and published on `2026-05-28` after manual review found the published Web/APK layout clipping Entry tools, Refugio and Battle. The hotfix restores Entry Labs in Internal Alpha, moves Refugio/Battle immersive UI into safe frames, and adds `docs/foundation-responsive-layout-contract.md` plus `tools/smoke_responsive_layout.gd`. The publication used public unlisted APK/PC Storage URLs so mobile downloads do not hit the protected Bearer-token endpoint.
 
+Follow-up refuge/battle hotfixes were published on `2026-05-28` from branch `codex/draxos-mobile/foundation-responsive-guardrails`. They keep Refugio as the post-login session root, keep Labs Dev visible from Refugio, redirect accidental login returns back to Refugio during an active session, and replace the battle-request replay preview with a static battle splash while the real battle opens.
+
 Priority order after the docs are aligned:
 
 1. Internal loop ergonomics.
@@ -69,9 +71,9 @@ Track 16 added the first behavior/crafting/consumable package requested by the u
 
 | Artifact | Bytes | SHA256 |
 |---|---:|---|
-| Android APK | `31563411` | `8b5bb55f078a6bed24d53c9940e93ad118b13bee7b77bfbfb33d89a769742195` |
-| PC Windows ZIP | `40030744` | `ec64c7234acea0bd0c2b02588ea23c451439c9e1349fb8027d7162196efed49d` |
-| Web index | `5442` | `b263ceee49953df9ac67b5f784dcfc0e1b1df9b3457be92b603bfde386e22af1` |
+| Android APK | `31567507` | `7e96dded13578764ff2cbcb84f795830e3aab371dde7754748c898f135e4de5e` |
+| PC Windows ZIP | `40035466` | `bccf2cecb4459f16cf68dcb4a43698128d76ae6fa25cd7ece3779656bbba8ecf` |
+| Web index | `5442` | `7769cf8acb38daffe1006683416cebfa82d42993b5a2e3a8e51a444a01718f27` |
 
 Links:
 
@@ -79,7 +81,7 @@ Links:
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal: `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
 - Stable Web: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest verified preview: `https://c8dc997b.draxos-mobile-internal-alpha.pages.dev`
+- Latest verified preview: `https://34c70f2f.draxos-mobile-internal-alpha.pages.dev`
 
 The stable Cloudflare Pages domain is protected by Cloudflare Access. Anonymous public validation should use an unprotected preview or an authenticated Access session. APK/PC downloads currently use unlisted public Supabase Storage URLs so testers can download directly from mobile after passing the portal link.
 
@@ -94,7 +96,7 @@ The stable Cloudflare Pages domain is protected by Cloudflare Access. Anonymous 
 
 ## Next Step
 
-Manually review Android/Windows/Web again on the published hotfix: Entry Labs visible, Refugio contained, Battle contained, APK download works without Bearer-token error, loop CTA obvious, and reward return sends the player back to base intent.
+Manually review Android/Windows/Web again on the published hotfix: Entry Labs visible, Refugio contained, Battle contained, APK download works without Bearer-token error, battle request shows only the static splash before opening, loop CTA is obvious, and reward return sends the player back to base intent.
 
 ## Validation
 
