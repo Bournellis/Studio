@@ -20,7 +20,7 @@ var _flash_strength := 0.0
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
-	custom_minimum_size = Vector2(130, 190)
+	custom_minimum_size = Vector2(130, 196)
 
 func configure(new_side: String, new_display_name: String, new_tint: Color) -> void:
 	side = new_side
@@ -55,38 +55,68 @@ func _set_flash_strength(value: float) -> void:
 func _draw() -> void:
 	var bounds := Rect2(Vector2.ZERO, size)
 	var center := bounds.get_center()
-	var floor_y := size.y - 22.0
+	var unit := maxf(0.72, minf(size.x / 164.0, size.y / 230.0))
+	var floor_y := size.y - 18.0 * unit
 	var direction := 1.0 if side == SIDE_PLAYER else -1.0
 	var base_color := tint.lerp(_flash_color, _flash_strength * 0.65)
-	var shadow_color := Color(0, 0, 0, 0.28)
+	var shadow_color := Color(0, 0, 0, 0.34)
+	var aura_color := base_color.lightened(0.2)
+	aura_color.a = 0.16 + _flash_strength * 0.18
+	var aura_center := Vector2(center.x, floor_y - 98.0 * unit)
 
-	draw_rect(Rect2(center.x - 44.0, floor_y - 8.0, 88.0, 14.0), shadow_color, true)
-	draw_line(Vector2(center.x - 30.0 * direction, floor_y - 92.0), Vector2(center.x + 42.0 * direction, floor_y - 102.0), base_color.lightened(0.2), 8.0, true)
-	draw_line(Vector2(center.x - 24.0 * direction, floor_y - 48.0), Vector2(center.x + 38.0 * direction, floor_y - 28.0), base_color.darkened(0.1), 8.0, true)
-	draw_line(Vector2(center.x + 6.0 * direction, floor_y - 48.0), Vector2(center.x + 48.0 * direction, floor_y - 30.0), base_color.darkened(0.2), 8.0, true)
-	draw_rect(Rect2(center.x - 24.0, floor_y - 98.0, 48.0, 72.0), base_color.darkened(0.08), true)
-	draw_rect(Rect2(center.x - 26.0, floor_y - 100.0, 52.0, 76.0), base_color.lightened(0.05), false, 2.0)
-	draw_circle(Vector2(center.x, floor_y - 124.0), 20.0, base_color.lightened(0.08))
-	draw_circle(Vector2(center.x + 7.0 * direction, floor_y - 128.0), 3.0, Color("#080B10"))
+	draw_circle(aura_center, 58.0 * unit, aura_color)
+	draw_rect(Rect2(center.x - 58.0 * unit, floor_y - 9.0 * unit, 116.0 * unit, 14.0 * unit), shadow_color, true)
 
-	var shoulder := Vector2(center.x + 28.0 * direction, floor_y - 96.0)
-	var tip := Vector2(center.x + 56.0 * direction, floor_y - 105.0)
-	var lower := Vector2(center.x + 36.0 * direction, floor_y - 82.0)
-	draw_colored_polygon(PackedVector2Array([shoulder, tip, lower]), base_color.lightened(0.25))
+	var robe_color := base_color.darkened(0.08)
+	var robe_edge := base_color.lightened(0.10)
+	var robe := PackedVector2Array([
+		Vector2(center.x - 28.0 * unit, floor_y - 126.0 * unit),
+		Vector2(center.x + 26.0 * unit, floor_y - 126.0 * unit),
+		Vector2(center.x + 48.0 * unit, floor_y - 18.0 * unit),
+		Vector2(center.x + 15.0 * unit, floor_y - 7.0 * unit),
+		Vector2(center.x - 14.0 * unit, floor_y - 7.0 * unit),
+		Vector2(center.x - 48.0 * unit, floor_y - 18.0 * unit),
+	])
+	draw_colored_polygon(robe, robe_color)
+	for index: int in range(robe.size()):
+		draw_line(robe[index], robe[(index + 1) % robe.size()], robe_edge, 2.0 * unit, true)
+
+	var hood := PackedVector2Array([
+		Vector2(center.x - 31.0 * unit, floor_y - 143.0 * unit),
+		Vector2(center.x, floor_y - 166.0 * unit),
+		Vector2(center.x + 31.0 * unit, floor_y - 143.0 * unit),
+		Vector2(center.x + 22.0 * unit, floor_y - 115.0 * unit),
+		Vector2(center.x - 22.0 * unit, floor_y - 115.0 * unit),
+	])
+	draw_colored_polygon(hood, base_color.darkened(0.18))
+	draw_line(hood[0], hood[1], robe_edge, 2.0 * unit, true)
+	draw_line(hood[1], hood[2], robe_edge, 2.0 * unit, true)
+	draw_circle(Vector2(center.x, floor_y - 132.0 * unit), 16.0 * unit, base_color.lightened(0.18))
+	draw_circle(Vector2(center.x + 6.0 * direction * unit, floor_y - 137.0 * unit), 2.4 * unit, Color("#080B10"))
+
+	var staff_bottom := Vector2(center.x + 36.0 * direction * unit, floor_y - 13.0 * unit)
+	var staff_top := Vector2(center.x + 58.0 * direction * unit, floor_y - 164.0 * unit)
+	draw_line(staff_bottom, staff_top, Color("#D6C08A", 0.92), 3.0 * unit, true)
+	draw_circle(staff_top, 8.0 * unit, base_color.lightened(0.35))
+	draw_circle(staff_top, 3.5 * unit, Color("#F0EEE5", 0.84))
+
+	draw_line(Vector2(center.x - 22.0 * direction * unit, floor_y - 101.0 * unit), Vector2(center.x + 31.0 * direction * unit, floor_y - 105.0 * unit), base_color.lightened(0.08), 7.0 * unit, true)
+	draw_line(Vector2(center.x - 18.0 * unit, floor_y - 52.0 * unit), Vector2(center.x - 34.0 * unit, floor_y - 15.0 * unit), base_color.darkened(0.18), 6.0 * unit, true)
+	draw_line(Vector2(center.x + 18.0 * unit, floor_y - 52.0 * unit), Vector2(center.x + 34.0 * unit, floor_y - 15.0 * unit), base_color.darkened(0.18), 6.0 * unit, true)
 
 	if barrier > 0.0:
-		draw_arc(center + Vector2(0.0, -78.0), 62.0, -2.55, 2.55, 40, Color("#5DD4C8", 0.78), 3.0, true)
+		draw_arc(center + Vector2(0.0, -82.0 * unit), 66.0 * unit, -2.55, 2.55, 40, Color("#5DD4C8", 0.78), 3.0 * unit, true)
 
-	_draw_bar(Vector2(14.0, 8.0), size.x - 28.0, 9.0, hp / max_hp, Color("#B95757"), "Vida")
-	_draw_bar(Vector2(14.0, 22.0), size.x - 28.0, 7.0, mana / max_mana, Color("#5DD4C8"), "Mana")
+	_draw_bar(Vector2(14.0 * unit, 8.0 * unit), size.x - 28.0 * unit, 10.0 * unit, hp / max_hp, Color("#B95757"), "Vida")
+	_draw_bar(Vector2(14.0 * unit, 24.0 * unit), size.x - 28.0 * unit, 7.0 * unit, mana / max_mana, Color("#5DD4C8"), "Mana")
 	if barrier > 0.0:
-		_draw_bar(Vector2(14.0, 33.0), size.x - 28.0, 5.0, min(1.0, barrier / max_hp), Color("#D6C08A"), "Barreira")
+		_draw_bar(Vector2(14.0 * unit, 36.0 * unit), size.x - 28.0 * unit, 5.0 * unit, min(1.0, barrier / max_hp), Color("#D6C08A"), "Barreira")
 
-	var pip_y := floor_y - 14.0
+	var pip_y := floor_y - 13.0 * unit
 	for index: int in range(min(status_count, 5)):
-		draw_circle(Vector2(18.0 + index * 11.0, pip_y), 3.0, Color("#D6C08A"))
+		draw_circle(Vector2(18.0 * unit + index * 11.0 * unit, pip_y), 3.0 * unit, Color("#D6C08A"))
 	for index: int in range(min(summon_count, 4)):
-		draw_rect(Rect2(size.x - 20.0 - index * 11.0, pip_y - 3.0, 6.0, 6.0), Color("#A57BD8"), true)
+		draw_rect(Rect2(size.x - 20.0 * unit - index * 11.0 * unit, pip_y - 3.0 * unit, 6.0 * unit, 6.0 * unit), Color("#A57BD8"), true)
 
 func _draw_bar(origin: Vector2, width: float, height: float, ratio: float, color: Color, _label: String) -> void:
 	var clamped := clampf(ratio, 0.0, 1.0)

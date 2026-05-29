@@ -37,6 +37,16 @@ Comandos:
 
 Flags antigas (`-SkipUpload`, `-UseManifestSecret`, `-SkipManifestSecret`) sem `-Mode` ficam protegidas: executam apenas `Mode Plan` e emitem aviso.
 
+## Default Test Publication Policy
+
+Track 13 itself remains non-publishing by default. After Track 13, user-approved product packages that need human testing on Android, Windows or Web should treat Internal Alpha publication as the default completion step once local validation passes.
+
+- If the user asks to execute a visible package, test it in the published app, or review it in Web/APK/PC, plan export, package, Storage upload and Cloudflare Pages deploy unless the user explicitly says local-only.
+- Remote mutation still requires current-task approval plus `-ConfirmRemoteMutation`; never infer approval for schema, Edge Function, migration or secret changes from a client-only publication request.
+- Use a fresh versioned release root for every Web-visible package and generate Cloudflare Pages from the same worktree/session that exported and packaged the release.
+- Run `build_cloudflare_pages_package.ps1` after Storage upload with `-StaticAssetBaseUrl` pointing at the versioned Web asset root so the script can block stale `GODOT_CONFIG.fileSizes` mismatches.
+- Before reporting publication success, verify the deployed `/web/index.html` references the versioned asset root and that the shell `index.pck` size matches the remote `Content-Length`.
+
 ## Inventario Atual
 
 | Area | Fonte | Papel | Seguro Em Track 13 |
