@@ -111,7 +111,7 @@ Links:
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal: `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
 - Stable Web: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest verified preview: `https://6f1e6cb1.draxos-mobile-internal-alpha.pages.dev`
+- Latest verified preview: `https://e80987bc.draxos-mobile-internal-alpha.pages.dev`
 - Web asset root: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-battle-presentation-20260529/web`
 
 Battle Presentation v1 was published to the Internal Alpha artifact/site channel on `2026-05-29`. The stable root `internal-alpha/v0` carries the latest APK/PC package, and Web assets were uploaded to `internal-alpha/v0-battle-presentation-20260529` so browser caches cannot reuse older `index.js`, `index.pck` or `index.wasm` paths. A follow-up Web cache hotfix republished Cloudflare Pages with `_headers` and `Cache-Control: no-store` for the portal/Web shell after manual review reported no visible Web difference. APK/PC downloads are public unlisted Storage URLs again, avoiding the earlier direct-download Bearer-token error while keeping the stable Cloudflare Pages domain behind Access. Public unauthenticated Web validation should use the verified preview URL or an authenticated Access session. The Edge manifest endpoint remains healthy, but the release override was not updated during this publication because the local environment did not include `SUPABASE_ACCESS_TOKEN`; the portal package now reads its bundled `manifest.example.json` for published links/hashes.

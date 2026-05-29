@@ -16,7 +16,7 @@ Corrigir a percepcao de Web app sem mudancas apos a publicacao de Battle Present
 - `tools/build_cloudflare_pages_package.ps1` agora gera `_headers` no pacote Cloudflare Pages.
 - O pacote publicado inclui `Cache-Control: no-store` para o site interno, portal e web app.
 - Cloudflare Pages foi republicado em producao.
-- Preview publicado: `https://6f1e6cb1.draxos-mobile-internal-alpha.pages.dev`
+- Preview publicado: `https://e80987bc.draxos-mobile-internal-alpha.pages.dev`
 
 ## Validacao
 
