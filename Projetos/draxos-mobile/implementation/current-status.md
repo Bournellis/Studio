@@ -72,8 +72,8 @@ Battle Preparation Complete v1 is implemented and published as the current loado
 - `GET /build/state` returns enriched humanized equipment options and lock reasons so the UI does not need to show raw ids.
 - Export presets now exclude `assets/referenciaimagens/**`, which is moodboard/reference only, reducing published APK/ZIP/PCK sizes enough for the current Storage/Pages flow.
 - `docs/battle-preparation-complete-v1.md` is the live package note; `docs/battle-preparation-v1.md` is historical context.
-- Battle Preparation Complete v1 was published to Internal Alpha on `2026-05-29` with public unlisted APK/PC downloads, a cache-busted Web asset root and verified public Cloudflare Pages preview `https://d8f2e0a7.draxos-mobile-internal-alpha.pages.dev/web`.
-- The Web package points to `internal-alpha/v0-battle-preparation-complete-v1-20260529/web`, with visual hotfix PCK `internal-alpha/v0-battle-preparation-complete-v1-20260529-hotfix3/web/index.pck`.
+- Battle Preparation Complete v1 was published to Internal Alpha on `2026-05-29` with public unlisted APK/PC downloads, a cache-busted Web asset root and verified public Cloudflare Pages preview `https://0fee1018.draxos-mobile-internal-alpha.pages.dev/web`.
+- The Web package points to `internal-alpha/v0-battle-preparation-complete-v1-20260529/web`, with equip-feedback hotfix PCK `internal-alpha/v0-battle-preparation-complete-v1-20260529-hotfix4/web/index.pck`.
 
 ## Battle Presentation v1
 
@@ -140,11 +140,13 @@ Links:
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal: `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
 - Stable Web: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest verified preview: `https://d8f2e0a7.draxos-mobile-internal-alpha.pages.dev`
+- Latest verified preview: `https://0fee1018.draxos-mobile-internal-alpha.pages.dev`
 - Web asset root: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-battle-preparation-complete-v1-20260529/web`
-- Web hotfix pack: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-battle-preparation-complete-v1-20260529-hotfix3/web/index.pck`
+- Web hotfix pack: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-battle-preparation-complete-v1-20260529-hotfix4/web/index.pck`
 
 Battle Preparation Complete v1 was published to the Internal Alpha artifact/site channel on `2026-05-29`. Android APK, PC ZIP and Web assets were uploaded to `internal-alpha/v0-battle-preparation-complete-v1-20260529`; Web assets use the versioned root so browser caches cannot reuse older `index.js`, `index.pck` or `index.wasm` paths. Web hotfixes later republished the Cloudflare Pages shell at `https://d8f2e0a7.draxos-mobile-internal-alpha.pages.dev/web`, using local loader assets in Pages and hotfix PCK `4247612` bytes to avoid the exported `content_generator.gd` preload parse error and to fix the Preparation popup visual regression where Refugio/Batalhar showed through the panel. APK/PC downloads are public unlisted Storage URLs. The stable Cloudflare Pages domain remains behind Access for public unauthenticated checks. The Edge manifest endpoint remains healthy, but the release override was not updated during this publication because the local environment did not include `SUPABASE_ACCESS_TOKEN`; the portal package reads its bundled `manifest.example.json` for published links/hashes.
+
+Preparation equip-feedback hotfix was published on `2026-05-29` after Web review showed `Equipar` looked silent in the Preparation popup. The client now keeps/reopens the Preparation panel after equip and behavior actions, shows `Ultima escolha: ...`, refreshes the equipped item state, prunes stale popup action buttons during refresh, and keeps `boot.gd` under the Track 12 shell budget. Validation passed with GUT client (`122/122`), `validate_foundation.ps1 -Profile Client`, `smoke_responsive_layout.gd`, `smoke_foundation_loop.gd` and `git diff --check`. `smoke_foundation_surfaces.gd` was blocked by `NETWORK_UNAVAILABLE` against local Supabase, not by this change. Export/upload/deploy passed with hotfix PCK `4242428` bytes, public APK/ZIP HEAD checks and Browser visual review confirming a real `Equipar` click changes `Athame Hematico` to `Em uso` in the published Web preview `https://0fee1018.draxos-mobile-internal-alpha.pages.dev/web?cachebust=hotfix4`.
 
 ## Visual Direction v1
 

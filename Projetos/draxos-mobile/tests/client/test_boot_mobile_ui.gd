@@ -852,6 +852,34 @@ func test_refuge_preparation_renders_potion_slot_and_behavior_defaults() -> void
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.equip_doctrine_action("pacto_familiar")))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.equip_familiar_action("gato_tumular")))
 
+func test_refuge_preparation_popup_refreshes_after_equip_feedback() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	_prepare_account_state()
+	assert_true(_apply_preparation_instrument_fixture("varinha_cinzas"))
+
+	boot._show_screen("refuge")
+	await get_tree().process_frame
+
+	var prep_icon := _find_node_by_name(boot._first_screen_root, "RefugeIcon_Preparacao") as Button
+	assert_not_null(prep_icon)
+	prep_icon.pressed.emit()
+	await get_tree().process_frame
+	var popup := boot.get("_refuge_menu_popup") as PopupPanel
+	assert_not_null(popup)
+	assert_true(popup.visible)
+	assert_true(_label_tree_contains(popup, "Em uso: Varinha de Cinzas L4"))
+
+	assert_true(_apply_preparation_instrument_fixture("athame_hematico"))
+	boot.set_meta("preparation_feedback_message", "Instrumento Ritual equipado.")
+	assert_true(HubSurfacePresenterScript.refresh_open_refuge_menu_popup(boot))
+	await get_tree().process_frame
+
+	assert_true(popup.visible)
+	assert_true(_label_tree_contains(popup, "Ultima escolha: Instrumento Ritual equipado."))
+	assert_true(_label_tree_contains(popup, "Em uso: Athame Hematico L4"))
+	assert_true(_label_tree_contains(popup, "Varinha de Cinzas: Disponivel"))
+
 func test_refuge_preparation_renders_empty_and_paused_states_without_network() -> void:
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)
@@ -1605,6 +1633,27 @@ func _forbidden_presenter_fragments() -> PackedStringArray:
 
 func _reset_session_store_for_test() -> void:
 	SessionStore.clear_session()
+
+func _apply_preparation_instrument_fixture(active_instrument: String) -> bool:
+	return SessionStore.apply_build_result({
+		"ok": true,
+		"save_type": SessionStore.SAVE_TYPE_NORMAL,
+		"build": {"weapon_type": active_instrument, "weapon_level": 4},
+		"combat_build": {
+			"power": 243,
+			"weapon_type": active_instrument,
+			"weapon_level": 4,
+			"inventory": [],
+			"potion_slots": [{"slot_index": 1, "potion_id": null, "behavior": {}}],
+			"spell_slots": [],
+			"equipment_options": {
+				"weapons": [
+					{"id": "varinha_cinzas", "display_name": "Varinha de Cinzas", "unlocked": true, "equipped": active_instrument == "varinha_cinzas"},
+					{"id": "athame_hematico", "display_name": "Athame Hematico", "unlocked": true, "equipped": active_instrument == "athame_hematico"},
+				],
+			},
+		},
+	})
 
 func _prepare_account_state() -> void:
 	SessionStore.access_token = "test-token"

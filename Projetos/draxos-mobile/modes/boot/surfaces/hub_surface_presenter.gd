@@ -323,6 +323,8 @@ static func _create_refuge_menu_popup(host: Node, root: Control, compact: bool) 
 	popup.add_theme_stylebox_override("panel", _popup_panel_style(compact))
 	root.add_child(popup)
 	host.set("_refuge_menu_popup", popup)
+	popup.set_meta("refuge_menu_compact", compact)
+	popup.set_meta("refuge_menu_active_id", "")
 
 	var margin := MarginContainer.new()
 	var edge := 10 if compact else 14
@@ -347,6 +349,7 @@ static func _create_refuge_menu_popup(host: Node, root: Control, compact: bool) 
 	close_button.custom_minimum_size = Vector2(52, 44)
 	host.call("_prepare_touch_button", close_button)
 	close_button.pressed.connect(func() -> void:
+		popup.set_meta("refuge_menu_active_id", "")
 		popup.hide()
 	)
 	header.add_child(close_button)
@@ -364,6 +367,8 @@ static func _create_refuge_menu_popup(host: Node, root: Control, compact: bool) 
 	body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.add_theme_constant_override("separation", 8 if compact else 10)
 	scroll.add_child(body)
+	popup.set_meta("refuge_menu_title_label", title_label)
+	popup.set_meta("refuge_menu_body", body)
 	return {
 		"popup": popup,
 		"title_label": title_label,
@@ -373,14 +378,54 @@ static func _create_refuge_menu_popup(host: Node, root: Control, compact: bool) 
 static func _open_refuge_menu_popup(host: Node, popup: PopupPanel, title_label: Label, body: VBoxContainer, menu_id: String, compact: bool) -> void:
 	if popup == null or body == null or title_label == null:
 		return
+	_forget_action_buttons_in_tree(host, body)
 	_clear_node_children(body)
 	title_label.text = _menu_title(menu_id)
 	_populate_refuge_menu(host, popup, body, menu_id, compact)
+	popup.set_meta("refuge_menu_active_id", menu_id)
 	var viewport_size := _host_viewport_size(host)
 	var popup_width := clampi(int(viewport_size.x - 20.0), 312, 468 if compact else 560)
 	var vertical_padding := 16 if compact else 72
 	var popup_height := clampi(int(viewport_size.y - float(vertical_padding)), 420, 820 if compact else 700)
 	popup.popup_centered(Vector2i(popup_width, popup_height))
+
+static func open_refuge_menu_popup(host: Node, menu_id: String) -> bool:
+	var popup := host.get("_refuge_menu_popup") as PopupPanel
+	if popup == null or not is_instance_valid(popup):
+		return false
+	var title_label := popup.get_meta("refuge_menu_title_label", null) as Label
+	var body := popup.get_meta("refuge_menu_body", null) as VBoxContainer
+	if popup == null or title_label == null or body == null:
+		return false
+	var compact := bool(popup.get_meta("refuge_menu_compact", false))
+	_open_refuge_menu_popup(host, popup, title_label, body, menu_id, compact)
+	return true
+
+static func refresh_open_refuge_menu_popup(host: Node) -> bool:
+	var popup := host.get("_refuge_menu_popup") as PopupPanel
+	if popup == null or not is_instance_valid(popup):
+		return false
+	if not popup.visible:
+		return false
+	var menu_id := str(popup.get_meta("refuge_menu_active_id", "")).strip_edges()
+	if menu_id == "":
+		return false
+	return open_refuge_menu_popup(host, menu_id)
+
+static func _forget_action_buttons_in_tree(host: Node, root: Node) -> void:
+	var action_buttons := host.get("_action_buttons") as Dictionary
+	for action_id: String in action_buttons.keys():
+		var button := action_buttons.get(action_id) as Button
+		if button != null and is_instance_valid(button) and _node_is_inside(button, root):
+			action_buttons.erase(action_id)
+
+static func _node_is_inside(node: Node, root: Node) -> bool:
+	var cursor := node
+	while cursor != null:
+		if cursor == root:
+			return true
+		cursor = cursor.get_parent()
+	return false
 
 static func _populate_refuge_menu(host: Node, popup: PopupPanel, body: VBoxContainer, menu_id: String, compact: bool) -> void:
 	match menu_id:
@@ -850,6 +895,9 @@ static func _preparation_panel(host: Node, compact: bool) -> PanelContainer:
 
 	box.add_child(_section_label("Pronto para batalha", compact))
 	box.add_child(_body_label("Escolha o que Draxos leva para a proxima luta.", compact))
+	var feedback_message := str(host.get_meta("preparation_feedback_message", "")).strip_edges()
+	if feedback_message != "":
+		box.add_child(_body_label("Ultima escolha: %s" % feedback_message, compact))
 	var level_text := _preparation_account_power_text(combat_build)
 	if level_text != "":
 		box.add_child(_body_label(level_text, compact))

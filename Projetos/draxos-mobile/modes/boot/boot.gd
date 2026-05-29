@@ -279,6 +279,7 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	_social_state_container = null
 	_competition_state_container = null
 	_shop_state_container = null
+	_refuge_menu_popup = null
 	_social_friend_input = null
 	_social_guild_input = null
 	_social_chat_input = null
