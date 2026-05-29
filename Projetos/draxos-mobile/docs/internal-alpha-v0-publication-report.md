@@ -207,3 +207,20 @@ Hashes planejados no manifest:
 - Android APK: `2a6bff4f927dbb835c667347fa9f3b54d0c947f95b3454c65b8a561d57678200`
 - PC Windows ZIP: `a29f7341c676866fda421d3ee9cf13cdf26a216644b0ce98ba3614964e9b8875`
 - Web Index: `ac43ff4352f206822b54f199ff6eddabe0b72a6d4d1b41622e4f6e70148be40c`
+
+## Web Cache-Bust Hotfix - 2026-05-29
+
+Apos o primeiro check manual do Web indicar que as mudancas visuais ainda nao apareciam no navegador, foi confirmado que o HTML novo estava publicado, mas o loader Web continuava usando os mesmos caminhos publicos para `index.js`, `index.pck` e `index.wasm`. Para evitar reaproveitamento de cache, os assets Web foram republicados em um novo root versionado e o Cloudflare Pages foi redeployado com o HTML apontando para esse root.
+
+Resultado:
+
+- Branch: `codex/draxos-mobile/web-cache-bust-publish`.
+- Release root usado para assets Web: `internal-alpha/v0-web-20260529-visual-direction-v1`.
+- Asset root publico: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-web-20260529-visual-direction-v1/web`.
+- `export_internal_alpha.ps1 -AllowAndroidDebugFallback`: passou, Android mode `debug_fallback`.
+- `publish_internal_alpha.ps1 -Mode Upload -ReleaseRoot internal-alpha/v0-web-20260529-visual-direction-v1 -ConfirmRemoteMutation`: passou com downloads protegidos; o manifest/download endpoint estavel nao foi redeployado nesta correcao.
+- `build_cloudflare_pages_package.ps1 -StaticAssetBaseUrl https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-web-20260529-visual-direction-v1/web`: passou.
+- `npx -y wrangler pages deploy .\build\internal-alpha\cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`: passou.
+- Deploy Cloudflare Pages: `https://5477aaf9.draxos-mobile-internal-alpha.pages.dev`.
+- Preview Portal/Web: passou para `/portal/index.html` (`Draxos Alpha`) e `/web/index.html` (`GODOT_CONFIG` + asset root versionado).
+- Remote HEAD: passou com `200` para `index.js`, `index.pck` e `index.wasm` no asset root versionado.

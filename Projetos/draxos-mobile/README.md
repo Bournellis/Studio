@@ -13,7 +13,7 @@ The Foundation Loop Audit is documented in `docs/foundation-loop-audit.md`. Foun
 
 `Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again`
 
-Social Basico Guilda v1 and Visual Direction v1 are published on the Internal Alpha channel. Visual Direction v1 centralizes surface accents, CTA/action styling and panel accents in `core/ui_tokens.gd` and is documented in `docs/visual-direction-v1.md`.
+Social Basico Guilda v1 and Visual Direction v1 are published on the Internal Alpha channel. Visual Direction v1 centralizes surface accents, CTA/action styling and panel accents in `core/ui_tokens.gd` and is documented in `docs/visual-direction-v1.md`. The Web publication now uses a versioned Supabase asset root for the Godot loader files so browsers do not keep the previous `index.pck`/`index.wasm` paths.
 
 Current content, names, spells, weapons, economy values, battle flavor, visual style and premium systems exist to give substance to the prototype. Treat them as mock/substance for evaluation, not as final game direction or current tuning priorities.
 
@@ -88,4 +88,4 @@ git status --short
 - Version code: `1`
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal/Web: Cloudflare Access protected.
-- Latest verified preview: `https://6a6ae522.draxos-mobile-internal-alpha.pages.dev`
+- Latest verified preview: `https://5477aaf9.draxos-mobile-internal-alpha.pages.dev`

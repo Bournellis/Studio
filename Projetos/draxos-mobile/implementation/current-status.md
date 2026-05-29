@@ -95,9 +95,10 @@ Links:
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal: `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
 - Stable Web: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest verified preview: `https://6a6ae522.draxos-mobile-internal-alpha.pages.dev`
+- Latest verified preview: `https://5477aaf9.draxos-mobile-internal-alpha.pages.dev`
+- Web asset root: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-web-20260529-visual-direction-v1/web`
 
-Visual Direction v1 was published to the Internal Alpha artifact/site channel on `2026-05-29`. The stable Cloudflare Pages domain is protected by Cloudflare Access and returns the Access sign-in page to anonymous requests; public unauthenticated web validation should use the verified preview URL or an authenticated Access session. APK/PC downloads use the protected `release/download` endpoint with an alpha email/password account and signed Storage URLs; unauthenticated artifact probes return `401` by design, while `release_download_smoke.ts` confirms the Bearer-token path.
+Visual Direction v1 was published to the Internal Alpha artifact/site channel on `2026-05-29`. After the first web check still looked unchanged in browser, Web assets were republished under a versioned Supabase Storage path and Cloudflare Pages was redeployed so `index.js`, `index.pck` and `index.wasm` no longer reuse the previous stable asset URLs. The stable Cloudflare Pages domain is protected by Cloudflare Access and returns the Access sign-in page to anonymous requests; public unauthenticated web validation should use the verified preview URL or an authenticated Access session. APK/PC downloads use the protected `release/download` endpoint with an alpha email/password account and signed Storage URLs; unauthenticated artifact probes return `401` by design, while `release_download_smoke.ts` confirms the Bearer-token path.
 
 ## Visual Direction v1
 
@@ -112,7 +113,7 @@ Visual Direction v1 is implemented and published as the next refinement package 
 
 - Track 16 schema/backend work was not separately promoted in this publication; Supabase migrations/functions for that package must still be deployed deliberately if Track 16 becomes product focus later.
 - Foundation Loop UX Pass 01 is the accepted current V0 UX baseline after manual Android/Windows/Web review on `2026-05-29`; Social Basico Guilda v1 is now available in the published Internal Alpha build for human two-account validation.
-- Visual Direction v1 is published to Internal Alpha and still needs manual Android/Windows/Web visual review before the next product package.
+- Visual Direction v1 is published to Internal Alpha with a cache-busted Web asset root and still needs manual Android/Windows/Web visual review before the next product package.
 - Track 13 release safety remains the baseline for any future publication or wider-access gate.
 - `players.save_type` remains an alpha shortcut. `account_profiles` + `game_saves` is a future migration package.
 - Progression/economy remains mock/substance and not the current tuning focus.
@@ -139,6 +140,8 @@ Latest validation for Visual Direction v1 publication on `2026-05-29`:
 - `server/tests/release_download_smoke.ts`: PASS with signed HEAD checks for Android and PC downloads.
 - `server/tests/internal_alpha_remote_smoke.ts` with `DRAXOS_REMOTE_RELEASE_SMOKE=1`: PASS.
 - Preview GET checks: PASS for `/portal/index.html` (`Draxos Alpha`) and `/web/index.html` (`GODOT_CONFIG`).
+- Web cache-bust hotfix after browser check: PASS. `publish_internal_alpha.ps1 -Mode Upload -ReleaseRoot internal-alpha/v0-web-20260529-visual-direction-v1 -ConfirmRemoteMutation` uploaded versioned Web assets, `build_cloudflare_pages_package.ps1 -StaticAssetBaseUrl https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-web-20260529-visual-direction-v1/web` rewrote the loader URLs, and Cloudflare Pages deploy produced preview `https://5477aaf9.draxos-mobile-internal-alpha.pages.dev`.
+- Cache-bust preview checks: PASS for `/portal/index.html` (`Draxos Alpha`), `/web/index.html` (`GODOT_CONFIG` and versioned asset root), and remote HEAD `200` for versioned `index.js`, `index.pck` and `index.wasm`.
 - `tools/check_agent_ops_foundation.ps1`: PASS after status updates.
 - `validate_foundation.ps1 -Profile Quick`: PASS after status updates.
 - `git diff --check`: PASS.
