@@ -231,12 +231,12 @@ func _ensure_ui() -> void:
 	event_row.add_theme_constant_override("separation", 8)
 	event_panel.add_child(event_row)
 	_event_icon = BattleSymbolIconScript.new()
-	_event_icon.custom_minimum_size = Vector2(42, 42)
+	_event_icon.custom_minimum_size = Vector2(50, 50)
 	event_row.add_child(_event_icon)
 	_bind_stage_tooltip(_event_icon)
-	_event_label = _stage_label("Aguardando batalha", 13, _token_color("text_primary"))
+	_event_label = _stage_label("Aguardando batalha", 14, _token_color("text_primary"))
 	_event_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_event_label.custom_minimum_size = Vector2(240, 42)
+	_event_label.custom_minimum_size = Vector2(300, 50)
 	event_row.add_child(_event_label)
 	_bind_stage_tooltip(_event_label)
 
@@ -277,8 +277,11 @@ func _layout_nodes() -> void:
 	if not _built:
 		return
 	var stage_size := _stage_size()
-	var actor_size := Vector2(138, min(210.0, max(176.0, stage_size.y * 0.56)))
-	var name_label_width: float = min(164.0, max(132.0, (stage_size.x - 56.0) * 0.5))
+	var wide_stage := stage_size.x >= 720.0
+	var actor_width := clampf(stage_size.x * (0.16 if wide_stage else 0.32), 118.0, 190.0)
+	var actor_height := clampf(stage_size.y * (0.62 if wide_stage else 0.54), 168.0, 262.0)
+	var actor_size := Vector2(actor_width, maxf(actor_height, actor_width * 1.36))
+	var name_label_width: float = min(220.0, max(132.0, stage_size.x * (0.22 if wide_stage else 0.40)))
 	for side: String in SIDES:
 		var center := _actor_center(side)
 		var actor: Control = _actors[side]
@@ -288,14 +291,15 @@ func _layout_nodes() -> void:
 		var name_label: Label = _name_labels[side]
 		name_label.size = Vector2(name_label_width, 42)
 		var label_x: float = 20.0 if side == SIDE_PLAYER else stage_size.x - name_label_width - 20.0
-		name_label.position = Vector2(label_x, actor.position.y - 58.0)
 
 		var status_row: Control = _status_rows[side]
 		status_row.size = Vector2(name_label_width, 36)
-		status_row.position = Vector2(label_x, max(10.0, actor.position.y - 98.0))
+		var status_y: float = maxf(92.0, actor.position.y - 70.0)
+		status_row.position = Vector2(label_x, status_y)
+		name_label.position = Vector2(label_x, status_y + 34.0)
 
 		var cooldown_row: Control = _cooldown_rows[side]
-		cooldown_row.size = Vector2(260, 44)
+		cooldown_row.size = Vector2(minf(280.0, maxf(210.0, stage_size.x * 0.28)), 44)
 		cooldown_row.position = Vector2(_clamped_stage_x(center.x - cooldown_row.size.x * 0.5, cooldown_row.size.x, stage_size.x), actor.position.y + actor_size.y + 8.0)
 
 	_slot_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -303,13 +307,16 @@ func _layout_nodes() -> void:
 
 	var event_panel := get_node_or_null("EventPanel") as Control
 	if event_panel != null:
-		event_panel.size = Vector2(min(360.0, stage_size.x - 32.0), 62.0)
+		event_panel.size = Vector2(min(520.0, stage_size.x - 32.0), 74.0)
 		event_panel.position = Vector2((stage_size.x - event_panel.size.x) * 0.5, 12.0)
 
 	var readout_panel := get_node_or_null("ReadoutPanel") as Control
 	if readout_panel != null:
-		readout_panel.size = Vector2(min(560.0, stage_size.x - 32.0), 54.0)
-		readout_panel.position = Vector2((stage_size.x - readout_panel.size.x) * 0.5, 82.0)
+		readout_panel.size = Vector2(min(500.0, stage_size.x - 32.0), 54.0)
+		var readout_y := 94.0
+		if event_panel != null:
+			readout_y = event_panel.position.y + event_panel.size.y + 8.0
+		readout_panel.position = Vector2((stage_size.x - readout_panel.size.x) * 0.5, readout_y)
 		if _readout_label != null:
 			_readout_label.custom_minimum_size = Vector2(maxf(120.0, readout_panel.size.x - 18.0), 0.0)
 
@@ -321,27 +328,48 @@ func _draw() -> void:
 	var stage_size := _stage_size()
 	var bg_rect := Rect2(Vector2.ZERO, stage_size)
 	draw_rect(bg_rect, _token_color("bg_deep"), true)
-	draw_rect(Rect2(Vector2.ZERO, Vector2(stage_size.x, stage_size.y * 0.58)), Color("#101923"), true)
-	draw_rect(Rect2(Vector2(0, stage_size.y * 0.58), Vector2(stage_size.x, stage_size.y * 0.42)), Color("#11100E"), true)
+	draw_rect(Rect2(Vector2.ZERO, Vector2(stage_size.x, stage_size.y * 0.58)), Color("#0B1420"), true)
+	draw_rect(Rect2(Vector2(0, stage_size.y * 0.58), Vector2(stage_size.x, stage_size.y * 0.42)), Color("#0D0B09"), true)
+	for band: int in range(6):
+		var ratio := float(band) / 6.0
+		var alpha := 0.11 - ratio * 0.012
+		draw_rect(Rect2(Vector2(0, stage_size.y * ratio * 0.58), Vector2(stage_size.x, stage_size.y * 0.12)), Color("#5DD4C8", alpha), true)
 
 	var horizon_y := stage_size.y * 0.58
-	draw_line(Vector2(0, horizon_y), Vector2(stage_size.x, horizon_y), _token_color("border_active").darkened(0.15), 2.0, true)
+	var player_center := _actor_center(SIDE_PLAYER)
+	var opponent_center := _actor_center(SIDE_OPPONENT)
+	var clash_center := Vector2(stage_size.x * 0.5, horizon_y + stage_size.y * 0.08)
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(0.0, horizon_y - 10.0),
+		clash_center,
+		Vector2(0.0, stage_size.y),
+	]), Color("#5DD4C8", 0.07))
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(stage_size.x, horizon_y - 10.0),
+		Vector2(stage_size.x, stage_size.y),
+		clash_center,
+	]), Color("#B95757", 0.07))
+	draw_circle(player_center + Vector2(0, -54), clampf(stage_size.x * 0.07, 42.0, 96.0), Color("#5DD4C8", 0.12))
+	draw_circle(opponent_center + Vector2(0, -54), clampf(stage_size.x * 0.07, 42.0, 96.0), Color("#B95757", 0.12))
+	draw_circle(clash_center, clampf(stage_size.x * 0.035, 18.0, 42.0), Color("#D6C08A", 0.12))
+	draw_line(Vector2(0, horizon_y), Vector2(stage_size.x, horizon_y), _token_color("border_active").darkened(0.05), 2.0, true)
 	for index: int in range(8):
 		var y := horizon_y + index * 24.0
-		draw_line(Vector2(0, y), Vector2(stage_size.x, y), Color("#405060", 0.12), 1.0)
+		draw_line(Vector2(0, y), Vector2(stage_size.x, y), Color("#405060", 0.08), 1.0)
 	for index: int in range(7):
 		var x := stage_size.x * (float(index) / 6.0)
-		draw_line(Vector2(x, horizon_y), Vector2(stage_size.x * 0.5, stage_size.y - 10.0), Color("#405060", 0.16), 1.0)
+		draw_line(Vector2(x, horizon_y), Vector2(stage_size.x * 0.5, stage_size.y - 10.0), Color("#405060", 0.10), 1.0)
 
-	draw_line(Vector2(stage_size.x * 0.5, horizon_y - 28.0), Vector2(stage_size.x * 0.5, stage_size.y - 16.0), Color("#D6C08A", 0.25), 1.0, true)
+	draw_line(player_center + Vector2(34.0, -84.0), opponent_center + Vector2(-34.0, -84.0), Color("#F0EEE5", 0.10), 2.0, true)
+	draw_line(Vector2(stage_size.x * 0.5, horizon_y - 28.0), Vector2(stage_size.x * 0.5, stage_size.y - 16.0), Color("#D6C08A", 0.18), 1.0, true)
 	for side: String in SIDES:
 		for slot: String in SLOT_ORDER:
 			var pos := _slot_position(side, slot)
-			draw_circle(pos, 24.0, Color("#202832", 0.46))
-			draw_arc(pos, 24.0, 0.0, TAU, 28, _slot_color(slot), 1.5, true)
+			draw_circle(pos, 18.0, Color("#202832", 0.24))
+			draw_arc(pos, 18.0, 0.0, TAU, 28, _slot_color(slot).darkened(0.06), 1.2, true)
 			var front_marker := Vector2(10.0 if side == SIDE_PLAYER else -10.0, 0.0)
 			if slot == SLOT_FRONT:
-				draw_line(pos - front_marker, pos + front_marker, _slot_color(slot), 2.0, true)
+				draw_line(pos - front_marker, pos + front_marker, _slot_color(slot).darkened(0.1), 1.6, true)
 
 func _render_dynamic_state() -> void:
 	_layout_nodes()
@@ -385,15 +413,6 @@ func _render_dynamic_state() -> void:
 func _render_icon_row(row: HBoxContainer, values: Dictionary, row_kind: String) -> void:
 	var entries: Array[Dictionary] = []
 	if values.is_empty():
-		entries.append({
-			"key": "empty",
-			"symbol": "-",
-			"color": _token_color("border_default"),
-			"tooltip": _empty_row_tooltip(row_kind),
-			"count": "",
-			"cooldown_ratio": 0.0,
-			"size": Vector2(34, 34),
-		})
 		_sync_symbol_icon_row(row, entries)
 		return
 	var keys := values.keys()
@@ -475,8 +494,8 @@ func _render_slots() -> void:
 				"count": _slot_short(slot),
 				"cooldown_ratio": 0.0,
 				"asset_id": str(entry.get("asset_id", "")),
-				"size": Vector2(46, 46),
-				"position": pos - Vector2(46, 46) * 0.5 + Vector2(0, offset_count * 8.0),
+				"size": Vector2(52, 52),
+				"position": pos - Vector2(52, 52) * 0.5 + Vector2(0, offset_count * 8.0),
 			})
 	_sync_slot_icons(entries)
 
@@ -494,11 +513,12 @@ func _render_event_panel() -> void:
 	var event_tooltip := _event_tooltip(_latest_event)
 	_event_icon.configure(_event_code(event_type), _event_color(_latest_event), event_tooltip, "", 0.0, _asset_id_for_event(event_type))
 	_set_stage_tooltip(_event_icon, event_tooltip)
-	_event_label.text = "Lance %d/%d | %ss | %s" % [
+	_event_label.text = "%s - %s\nLance %d/%d aos %ss" % [
+		_event_title(event_type),
+		_event_brief(_latest_event),
 		_event_index,
 		_event_count,
 		"%.1f" % float(_latest_event.get("t", 0.0)),
-		_event_brief(_latest_event),
 	]
 	_set_stage_tooltip(_event_label, event_tooltip)
 	_refresh_stage_tooltip(_event_icon)
@@ -517,7 +537,7 @@ func _render_readout() -> void:
 		return
 	var player_data := _as_dictionary(_side_state.get(SIDE_PLAYER, {}))
 	var opponent_data := _as_dictionary(_side_state.get(SIDE_OPPONENT, {}))
-	var readout_text := "Lance %d/%d | %ss | %s x %s\nEfeitos %d x %d | Esperas %d x %d | Aliados %d x %d" % [
+	var readout_text := "Lance %d/%d | %ss | Vida %s contra %s\nPressao: efeitos %d-%d, esperas %d-%d, aliados %d-%d" % [
 		_event_index,
 		_event_count,
 		_number_text(_current_replay_time()),

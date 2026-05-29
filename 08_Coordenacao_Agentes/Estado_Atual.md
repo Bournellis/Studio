@@ -7,7 +7,7 @@
 ## Prioridade Do Estudio
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`BATTLE_PRESENTATION_V1_PUBLISHED`, sobre Ossos Inteiros v1 publicado, Visual Direction v1, Social Guilda v1 publicado, Foundation baseline confirmada, Track 13 release safety, Track 14 agent ops, Track 15 UX e Track 16 tecnico)
+- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`BATTLE_DRAMA_V1_1_PUBLISHED`, sobre Battle Presentation v1, Ossos Inteiros v1 publicado, Visual Direction v1, Social Guilda v1 publicado, Foundation baseline confirmada, Track 13 release safety, Track 14 agent ops, Track 15 UX e Track 16 tecnico)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -23,15 +23,15 @@
 
 ## DraxosMobile
 
-- Status: **P2_IMPLEMENTACAO - BATTLE_PRESENTATION_V1_PUBLISHED**
+- Status: **P2_IMPLEMENTACAO - BATTLE_DRAMA_V1_1_PUBLISHED**
 - Fase: `Implementacao`
 - Local: `Projetos/draxos-mobile/`
 - Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
 - Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
-- Baseline atual: Track 00-15 integradas. O projeto tem uma base implementada para refinamento: primeiro slice server-authoritative, Refugio/Base, batalha, recompensa, social/competicao/loja em substancia de prototipo, Supabase remoto, manifest/version gate e builds Internal Alpha site/Web/APK/Windows republicadas em 2026-05-29 com Social Basico Guilda v1, Visual Direction v1, Ossos Inteiros v1 e Battle Presentation v1. Track 16 e o ultimo pacote tecnico de comportamento, Po de Osso e crafting inicial; Ossos Inteiros v1 promoveu o subconjunto necessario para alinhar migration/funcoes/catalogo/build publicado e parar de expor `0.1 osso`. Battle Presentation v1 esta publicado como pacote client-only: batalha fullscreen com faixa de confronto, callouts de lance mais legiveis, consumivel/cura/status/familiar/invocacao em linguagem de jogador, summary reorganizado e logs atuais read-only, sem backend/schema/API novo. Conteudo atual de armas, spells, economia, tema e visual final continua mock/substancia. A auditoria do loop esta registrada em `Projetos/draxos-mobile/docs/foundation-loop-audit.md`; Foundation Loop UX Pass 01 esta implementado, publicado e confirmado em revisao manual Android/Windows/Web em 2026-05-29. Social Basico Guilda v1 esta publicado: tela Social mais clara, username proprio copiavel, secoes Amigos/Guilda/Chat e auto-sync leve de 8s no chat de guilda sem backend/schema novo. Visual Direction v1 esta publicado: acentos por superficie/acao, CTAs e paineis passam por `core/ui_tokens.gd` e `docs/visual-direction-v1.md`; Web usa asset root versionado de novo em Battle Presentation v1 para evitar cache de navegador.
+- Baseline atual: Track 00-15 integradas. O projeto tem uma base implementada para refinamento: primeiro slice server-authoritative, Refugio/Base, batalha, recompensa, social/competicao/loja em substancia de prototipo, Supabase remoto, manifest/version gate e builds Internal Alpha site/Web/APK/Windows republicadas em 2026-05-29 com Social Basico Guilda v1, Visual Direction v1, Ossos Inteiros v1, Battle Presentation v1 e Battle Drama v1.1. Track 16 e o ultimo pacote tecnico de comportamento, Po de Osso e crafting inicial; Ossos Inteiros v1 promoveu o subconjunto necessario para alinhar migration/funcoes/catalogo/build publicado e parar de expor `0.1 osso`. Battle Presentation v1 esta publicado como pacote client-only de estrutura do loop; Battle Drama v1.1 e o follow-up visual publicado que deixa o Web perceptivelmente diferente, com palco mais dramatico, combatentes procedurais maiores, menos marcador vazio/debug e callout de lance mais forte, sem backend/schema/API novo. Conteudo atual de armas, spells, economia, tema e visual final continua mock/substancia. A auditoria do loop esta registrada em `Projetos/draxos-mobile/docs/foundation-loop-audit.md`; Foundation Loop UX Pass 01 esta implementado, publicado e confirmado em revisao manual Android/Windows/Web em 2026-05-29. Social Basico Guilda v1 esta publicado: tela Social mais clara, username proprio copiavel, secoes Amigos/Guilda/Chat e auto-sync leve de 8s no chat de guilda sem backend/schema novo. Visual Direction v1 esta publicado: acentos por superficie/acao, CTAs e paineis passam por `core/ui_tokens.gd` e `docs/visual-direction-v1.md`; Web usa asset root versionado de novo em Battle Drama v1.1 para evitar cache de navegador.
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
 - Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation`; override do release manifest exige `SUPABASE_ACCESS_TOKEN`. Mudancas visuais em Entry/Refugio/Batalha exigem `foundation-responsive-layout-contract.md` + `smoke_responsive_layout.gd`. Direct chat, ajudas, contribuicoes, moderacao, migration conta/save, tuning numerico, armas, spells, economia, visual final e controles avancados de replay ficam bloqueados ate decisao propria.
-- Proximo passo: revisar Battle Presentation v1 publicado em Android/Windows/Web e escolher o proximo pacote.
+- Proximo passo: revisar Battle Drama v1.1 publicado em Android/Windows/Web e escolher o proximo pacote.
 
 ## rpg-isometrico
 

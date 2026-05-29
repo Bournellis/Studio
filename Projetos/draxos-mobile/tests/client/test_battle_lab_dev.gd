@@ -111,7 +111,7 @@ func test_battle_lab_autoplay_tracks_battle_log_time_for_cooldowns() -> void:
 	cooldown_counts = Dictionary(stage.get("cooldown_counts", {}))
 	assert_eq(screen._replay_index, 3)
 	assert_false(screen._replay_playing)
-	assert_true(Array(cooldown_counts.get("player", [])).has(""))
+	assert_eq(Array(cooldown_counts.get("player", [])).size(), 0)
 
 func test_battle_lab_deno_invocation_sanitizes_project_settings() -> void:
 	var settings_prefix := "draxos_mobile/battle_lab"

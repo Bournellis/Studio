@@ -4,11 +4,11 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Battle Presentation v1`
-- Active stage status: `BATTLE_PRESENTATION_V1_PUBLISHED`
+- Active stage: `Battle Drama v1.1`
+- Active stage status: `BATTLE_DRAMA_V1_1_PUBLISHED`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety` (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation` (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published package: `Battle Presentation v1`
+- Latest published package: `Battle Drama v1.1`
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical context, not current product focus)
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
@@ -59,7 +59,7 @@ Priority order after baseline confirmation:
 4. Battle presentation.
 5. Weapons, spells, economy, balance and content details.
 
-Internal loop ergonomics, Social Basico Guilda v1, Visual Direction v1, Ossos Inteiros v1 and Battle Presentation v1 have received explicit packages and are published to Internal Alpha. No new code, schema, backend, asset, gameplay or balance work belongs outside an explicit next package decision.
+Internal loop ergonomics, Social Basico Guilda v1, Visual Direction v1, Ossos Inteiros v1, Battle Presentation v1 and Battle Drama v1.1 have received explicit packages and are published to Internal Alpha. No new code, schema, backend, asset, gameplay or balance work belongs outside an explicit next package decision.
 
 ## Battle Presentation v1
 
@@ -73,6 +73,21 @@ Battle Presentation v1 is implemented as a client-only readability pass for the 
 - `docs/battle-presentation-v1.md` is the live package note.
 - Battle Presentation v1 was published to Internal Alpha on `2026-05-29` after explicit release approval. The publication updated Android APK, PC Windows ZIP, Web assets, the Cloudflare Pages package and portal copy without backend/schema/API changes.
 - The public Web package now points to the cache-busted asset root `internal-alpha/v0-battle-presentation-20260529/web`.
+
+## Battle Drama v1.1
+
+Battle Drama v1.1 is implemented and published as the client-only follow-up after Web review showed Battle Presentation v1 was technically updated but still looked too much like a mock/debug arena.
+
+- `BattleStage2D` now has stronger side lighting, clash focus, softer floor guides and less empty marker noise.
+- `BattleActorMarker` now draws a larger robed combatant silhouette with staff, aura, barrier read and stronger pulse feedback.
+- The current-lance callout is wider and more legible, with the event name and player-facing effect on the first line.
+- Empty status/cooldown rows no longer render dash icons that read like debug placeholders.
+- Familiar and summon markers are slightly larger while preserving tooltips and replay state.
+- The compact battle readout now uses player-facing pressure language for life, effects, waits and allies.
+- `docs/battle-drama-v1-1.md` is the live package note.
+- Battle Drama v1.1 was published to Internal Alpha on `2026-05-29` from branch `codex/draxos-mobile/battle-drama-v1-1`.
+- The verified public preview is `https://7261c476.draxos-mobile-internal-alpha.pages.dev/web/index.html`, and its Web shell points to `internal-alpha/v0-battle-drama-v1-1-20260529/web`.
+- The stable Cloudflare Pages domain was redeployed, but public unauthenticated GET still returns the Cloudflare Access page; use the verified preview URL or an authenticated Access session for human Web review.
 
 ## Social Basico Guilda v1
 
@@ -101,9 +116,9 @@ Ossos Inteiros v1 is now published on top of the Visual Direction v1 build. The 
 
 | Artifact | Bytes | SHA256 |
 |---|---:|---|
-| Android APK | `31633429` | `e4789c43d83a4ae931d575daca27b10591c5d8f790b9ca2d1e968f8c089ded97` |
-| PC Windows ZIP | `40101277` | `82b3b493ec5384fd18f7f3334d70297997489da7935c84dc193019ddcc6428a5` |
-| Web index | `5442` | `4a80d29956931a8363587ed01b4e1a7890b3858205dd243b41432ccd8d9e7582` |
+| Android APK | `31637525` | `30c7b8c90af00221de57e63d2434c80a774ebfe888e8cc6c6119228a23c1f50d` |
+| PC Windows ZIP | `40103282` | `921795a9a3d3ffa96a41e77d39cfb1b3bee0773d42deed87bdf34d8506b8c93c` |
+| Web index | `5442` | `1cb3d3564f9f56e95e5aad7048e4f53c1eed46c52602c4fdac8b6c5530ccab90` |
 
 Links:
 
@@ -111,10 +126,10 @@ Links:
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal: `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
 - Stable Web: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest verified preview: `https://64d01322.draxos-mobile-internal-alpha.pages.dev`
-- Web asset root: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-battle-presentation-20260529/web`
+- Latest verified preview: `https://7261c476.draxos-mobile-internal-alpha.pages.dev`
+- Web asset root: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-battle-drama-v1-1-20260529/web`
 
-Battle Presentation v1 was published to the Internal Alpha artifact/site channel on `2026-05-29`. The stable root `internal-alpha/v0` carries the latest APK/PC package, and Web assets were uploaded to `internal-alpha/v0-battle-presentation-20260529` so browser caches cannot reuse older `index.js`, `index.pck` or `index.wasm` paths. Follow-up Web hotfixes republished Cloudflare Pages with `_headers`, `Cache-Control: no-store` and a shell Web rebuilt from the matching versioned `index.html` after manual review reported no visible Web difference. The final verified preview has `GODOT_CONFIG.fileSizes.index.pck = 4227948`, matching the remote versioned `index.pck`, and no longer carries the stale `415856` pck size. APK/PC downloads are public unlisted Storage URLs again, avoiding the earlier direct-download Bearer-token error while keeping the stable Cloudflare Pages domain behind Access. Public unauthenticated Web validation should use the verified preview URL or an authenticated Access session. The Edge manifest endpoint remains healthy, but the release override was not updated during this publication because the local environment did not include `SUPABASE_ACCESS_TOKEN`; the portal package now reads its bundled `manifest.example.json` for published links/hashes.
+Battle Drama v1.1 was published to the Internal Alpha artifact/site channel on `2026-05-29`. Android APK, PC ZIP and Web assets were uploaded to `internal-alpha/v0-battle-drama-v1-1-20260529`; Web assets use the versioned root so browser caches cannot reuse older `index.js`, `index.pck` or `index.wasm` paths. Cloudflare Pages was redeployed with the matching package and preview `https://7261c476.draxos-mobile-internal-alpha.pages.dev`. The verified preview has `GODOT_CONFIG.fileSizes.index.pck = 4230188`, matching the remote versioned `index.pck`. APK/PC downloads are public unlisted Storage URLs. The stable Cloudflare Pages domain remains behind Access for public unauthenticated checks. The Edge manifest endpoint remains healthy, but the release override was not updated during this publication because the local environment did not include `SUPABASE_ACCESS_TOKEN`; the portal package reads its bundled `manifest.example.json` for published links/hashes.
 
 ## Visual Direction v1
 
@@ -128,8 +143,8 @@ Visual Direction v1 is implemented and published as the next refinement package 
 ## Risks And Blocks
 
 - Track 16 migration/functions/catalog changes needed for Ossos Inteiros v1 are deployed. Further crafting, behavior, tuning, economy or content expansion still needs its own explicit package decision.
-- Foundation Loop UX Pass 01 is the accepted current V0 UX baseline after manual Android/Windows/Web review on `2026-05-29`; Social Basico Guilda v1 and Battle Presentation v1 are now available in the published Internal Alpha build for human validation.
-- Battle Presentation v1 is published to Internal Alpha with public APK/PC downloads, a cache-busted Web asset root and no-store Cloudflare Pages headers; it still needs manual Android/Windows/Web confirmation on the stable site/app channels.
+- Foundation Loop UX Pass 01 is the accepted current V0 UX baseline after manual Android/Windows/Web review on `2026-05-29`; Social Basico Guilda v1, Battle Presentation v1 and Battle Drama v1.1 are now available in the published Internal Alpha build for human validation.
+- Battle Drama v1.1 is published to Internal Alpha with public APK/PC downloads, a cache-busted Web asset root and no-store Cloudflare Pages headers; it still needs manual Android/Windows/Web confirmation on the preview/stable authenticated channels.
 - Edge release manifest override needs `SUPABASE_ACCESS_TOKEN` available in the release environment for future `publish_internal_alpha.ps1 -Mode DeployManifest` runs. This publication kept the endpoint healthy and used the packaged portal manifest as the published-link source.
 - Track 13 release safety remains the baseline for any future publication or wider-access gate.
 - `players.save_type` remains an alpha shortcut. `account_profiles` + `game_saves` is a future migration package.
@@ -138,9 +153,25 @@ Visual Direction v1 is implemented and published as the next refinement package 
 
 ## Next Step
 
-Manually review published Battle Presentation v1 on Android, Windows and Web, then choose the next product package. Keep direct chat, helps, contributions, moderation, tuning numbers, weapons, spells, economy and broader replay controls out of scope until they receive their own explicit package.
+Manually review published Battle Drama v1.1 on Android, Windows and Web, then choose the next product package. Keep direct chat, helps, contributions, moderation, tuning numbers, weapons, spells, economy and broader replay controls out of scope until they receive their own explicit package.
 
 ## Validation
+
+Latest validation for Battle Drama v1.1 publication on `2026-05-29`:
+
+- One-time Godot `--headless --import`: PASS in fresh worktree.
+- GUT `tests/client`: PASS (`119/119`, `1896` asserts).
+- `tools/smoke_responsive_layout.gd`: PASS.
+- `validate_foundation.ps1 -Profile Client`: PASS, including `tools/validate.gd`, GUT `tests/client`, runtime/hardening/responsive/export smokes and `git diff --check`.
+- `export_internal_alpha.ps1 -AllowAndroidDebugFallback`: PASS; Android export mode `debug_fallback`.
+- `publish_internal_alpha.ps1 -Mode Plan -PublicDownloads`: PASS for `internal-alpha/v0-battle-drama-v1-1-20260529`.
+- `publish_internal_alpha.ps1 -Mode Package -PublicDownloads`: PASS.
+- `publish_internal_alpha.ps1 -Mode Upload -PublicDownloads -ConfirmRemoteMutation`: PASS for versioned Storage APK/ZIP/Web and portal manifest package.
+- `build_cloudflare_pages_package.ps1 -StaticAssetBaseUrl https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-battle-drama-v1-1-20260529/web`: PASS.
+- Cloudflare Pages deploy: PASS, verified preview `https://7261c476.draxos-mobile-internal-alpha.pages.dev`.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -PublicDownloads -ConfirmRemoteMutation`: BLOCKED before remote secret mutation because `SUPABASE_ACCESS_TOKEN` was not available.
+- Preview GET checks: PASS for `/web/index.html` with versioned Web asset root and `GODOT_CONFIG.fileSizes.index.pck = 4230188`.
+- Remote HEAD checks: PASS for versioned `index.js` (`315759` bytes), `index.pck` (`4230188` bytes), `index.wasm` (`37695054` bytes), Android APK (`31637525` bytes) and PC ZIP (`40103282` bytes), all without Bearer token.
 
 Latest validation for Battle Presentation v1 publication on `2026-05-29`:
 
