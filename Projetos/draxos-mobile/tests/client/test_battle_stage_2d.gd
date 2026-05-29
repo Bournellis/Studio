@@ -27,7 +27,7 @@ func test_battle_stage_2d_tooltips_remain_available_during_effects() -> void:
 	assert_string_contains(str(tooltips.get("event", "")), "Habilidade conjurada")
 	assert_string_contains(_joined_tooltips(Array(tooltips.get("slots", []))), "Familiar")
 	assert_string_contains(_joined_tooltips(Array(tooltips.get("slots", []))), "Invocacao")
-	assert_string_contains(_joined_tooltips(Array(tooltips.get("status", []))), "Status ativo")
+	assert_string_contains(_joined_tooltips(Array(tooltips.get("status", []))), "Efeito ativo")
 	assert_string_contains(_joined_tooltips(Array(tooltips.get("cooldowns", []))), "Recarga de habilidade")
 	assert_false(str(tooltips).to_lower().contains("placeholder"))
 	assert_false(stage.debug_has_native_tooltips(), str(stage.debug_native_tooltip_paths()))
@@ -67,7 +67,7 @@ func test_battle_stage_2d_cooldown_timer_uses_remaining_replay_time() -> void:
 	cooldown_tooltip_text = _joined_tooltips(Array(tooltips.get("cooldowns", [])))
 	assert_eq(float(snapshot.get("replay_time", 0.0)), 3.5)
 	assert_true(Array(cooldown_counts.get("player", [])).has("4s"))
-	assert_string_contains(cooldown_tooltip_text, "Tempo atual do replay: 3.5s")
+	assert_string_contains(cooldown_tooltip_text, "Tempo da luta: 3.5s")
 	assert_string_contains(cooldown_tooltip_text, "Restante: 4s")
 
 func test_battle_stage_2d_exposes_compact_replay_readout() -> void:
@@ -88,7 +88,7 @@ func test_battle_stage_2d_exposes_compact_replay_readout() -> void:
 	assert_string_contains(readout, "Esperas 1 x 0")
 	assert_string_contains(readout, "Aliados 3 x 0")
 	assert_string_contains(readout_tooltip, "esperas e aliados")
-	assert_string_contains(str(tooltips.get("event", "")), "Fonte: Draxos")
+	assert_string_contains(str(tooltips.get("event", "")), "Origem: Draxos")
 	assert_string_contains(str(tooltips.get("event", "")), "Alvo: Oponente")
 	assert_string_contains(str(tooltips.get("event", "")), "Leitura rapida: Habilidade: Marca Brasa -27")
 
@@ -107,7 +107,7 @@ func test_battle_stage_2d_effect_feedback_uses_full_names() -> void:
 	assert_eq(status_text, "Status aplicado: Lento")
 	assert_eq(mana_text, "Mana: 12")
 	assert_eq(consumable_text, "Pocao de Vida: cura gradual")
-	assert_eq(heal_text, "Pocao de Vida +8 HP")
+	assert_eq(heal_text, "Pocao de Vida +8 vida")
 	assert_false(spell_text.contains("SP"))
 	assert_false(status_text.contains("STS"))
 	assert_false(mana_text.contains("EVT"))

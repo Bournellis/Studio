@@ -77,10 +77,10 @@ func _draw() -> void:
 	if barrier > 0.0:
 		draw_arc(center + Vector2(0.0, -78.0), 62.0, -2.55, 2.55, 40, Color("#5DD4C8", 0.78), 3.0, true)
 
-	_draw_bar(Vector2(14.0, 8.0), size.x - 28.0, 9.0, hp / max_hp, Color("#B95757"), "HP")
-	_draw_bar(Vector2(14.0, 22.0), size.x - 28.0, 7.0, mana / max_mana, Color("#5DD4C8"), "MP")
+	_draw_bar(Vector2(14.0, 8.0), size.x - 28.0, 9.0, hp / max_hp, Color("#B95757"), "Vida")
+	_draw_bar(Vector2(14.0, 22.0), size.x - 28.0, 7.0, mana / max_mana, Color("#5DD4C8"), "Mana")
 	if barrier > 0.0:
-		_draw_bar(Vector2(14.0, 33.0), size.x - 28.0, 5.0, min(1.0, barrier / max_hp), Color("#D6C08A"), "BR")
+		_draw_bar(Vector2(14.0, 33.0), size.x - 28.0, 5.0, min(1.0, barrier / max_hp), Color("#D6C08A"), "Barreira")
 
 	var pip_y := floor_y - 14.0
 	for index: int in range(min(status_count, 5)):
@@ -95,7 +95,7 @@ func _draw_bar(origin: Vector2, width: float, height: float, ratio: float, color
 	draw_rect(Rect2(origin, Vector2(width, height)), Color("#F0EEE5", 0.22), false, 1.0)
 
 func _refresh_tooltip() -> void:
-	tooltip_text = "%s\nCombatente principal da luta. A leitura mostra vida, mana, barreira, efeitos e aliados conforme a batalha avanca.\nHP %s/%s | Mana %s/%s | Barreira %s\nEfeitos ativos %d | Familiares/invocacoes %d" % [
+	tooltip_text = "%s\nCombatente principal da luta. A leitura mostra vida, mana, barreira, efeitos e aliados conforme a batalha avanca.\nVida %s/%s | Mana %s/%s | Barreira %s\nEfeitos ativos %d | Aliados %d" % [
 		display_name,
 		_number_text(hp),
 		_number_text(max_hp),

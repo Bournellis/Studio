@@ -12,7 +12,7 @@ func test_battle_visual_mockup_steps_rich_battle_feedback() -> void:
 
 	assert_eq(visual.get_event_count(), 16)
 	assert_eq(visual.get_current_event_index(), 0)
-	assert_string_contains(visual.get_timeline_text(), "Eventos:")
+	assert_string_contains(visual.get_timeline_text(), "Lances:")
 
 	assert_true(visual.step_next_event())
 	assert_eq(visual.get_current_event_index(), 1)
@@ -23,7 +23,7 @@ func test_battle_visual_mockup_steps_rich_battle_feedback() -> void:
 	assert_eq(int(snapshot.get("event_index", 0)), visual.get_event_count())
 	assert_string_contains(str(snapshot.get("timeline", "")), "conjurou Marca Brasa")
 	assert_string_contains(str(snapshot.get("timeline", "")), "usou Pocao de Vida no slot 1: cura gradual por 5s, 4% por pulso")
-	assert_string_contains(str(snapshot.get("timeline", "")), "recuperou 8 de HP com Pocao de Vida")
+	assert_string_contains(str(snapshot.get("timeline", "")), "recuperou 8 de vida com Pocao de Vida")
 	assert_string_contains(str(snapshot.get("timeline", "")), "Limite da luta")
 	var stage := Dictionary(snapshot.get("stage", {}))
 	assert_eq(str(stage.get("latest_event_type", "")), "battle_result")
@@ -89,7 +89,7 @@ func test_battle_visual_mockup_updates_cooldown_against_continuous_replay_time()
 	var cooldown_tooltip_text := _joined_tooltips(Array(tooltips.get("cooldowns", [])))
 	assert_eq(float(snapshot.get("replay_time", 0.0)), 3.5)
 	assert_true(Array(cooldown_counts.get("player", [])).has("4s"))
-	assert_string_contains(cooldown_tooltip_text, "Tempo atual do replay: 3.5s")
+	assert_string_contains(cooldown_tooltip_text, "Tempo da luta: 3.5s")
 	assert_string_contains(cooldown_tooltip_text, "Restante: 4s")
 
 func _rich_battle_log() -> Dictionary:

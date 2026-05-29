@@ -25,9 +25,14 @@ func _run_smoke() -> int:
 	await _check_battle_request_splash(Vector2i(390, 844))
 	await _check_battle_request_splash(Vector2i(1280, 720))
 	print("[smoke-responsive-layout] checking Battle safe frames")
+	await _check_battle_layout(Vector2i(360, 800))
 	await _check_battle_layout(Vector2i(390, 844))
 	await _check_battle_layout(Vector2i(1280, 720))
 	await _check_battle_layout(Vector2i(1920, 1080))
+	print("[smoke-responsive-layout] checking Battle summary/log routes")
+	for viewport_size: Vector2i in [Vector2i(360, 800), Vector2i(390, 844), Vector2i(1280, 720), Vector2i(1920, 1080)]:
+		await _check_battle_summary_layout(viewport_size)
+		await _check_battle_logs_layout(viewport_size)
 
 	if not _failures.is_empty():
 		for failure: String in _failures:
@@ -114,10 +119,7 @@ func _check_battle_layout(viewport_size: Vector2i) -> void:
 	_prepare_viewport(viewport_size)
 	await process_frame
 	var boot: Control = _new_boot()
-	var store := _session_store()
-	store.last_battle_log = _battle_log_fixture()
-	store.last_battle_rewards = _battle_rewards_fixture()
-	store.resources = {"almas": 7, "energia": 9, "diamante": 2}
+	_prepare_battle_store()
 	await process_frame
 	boot.call("_show_screen", "battle_running")
 	await process_frame
@@ -142,6 +144,66 @@ func _check_battle_layout(viewport_size: Vector2i) -> void:
 		_expect(safe_frame.size.x <= MobileUiContractScript.IMMERSIVE_SAFE_MAX_WIDTH + 1.0, "%s safe frame width is capped." % context)
 	boot.queue_free()
 	await process_frame
+
+func _check_battle_summary_layout(viewport_size: Vector2i) -> void:
+	_prepare_viewport(viewport_size)
+	await process_frame
+	var boot: Control = _new_boot()
+	_prepare_battle_store()
+	await process_frame
+	boot.call("_show_screen", "battle_summary")
+	await process_frame
+	await process_frame
+
+	var context := "Battle summary %s" % str(viewport_size)
+	for node_name: String in [
+		"BattleFullscreenOverlay",
+		"BattleSafeFrame",
+		"BattleSummaryFrame",
+		"BattleSummaryResult",
+		"BattleSummaryOutcomeLabel",
+	]:
+		_expect_node_fits(boot, node_name, context)
+	_expect(_find_button_by_text(boot, "Voltar e verificar base") != null, "%s exposes return-to-base CTA." % context)
+	_expect(_find_button_by_text(boot, "Ver logs da batalha") != null, "%s exposes current logs CTA." % context)
+	var safe_frame := _find_node_by_name(boot, "BattleSafeFrame") as Control
+	if safe_frame != null:
+		_expect(safe_frame.size.x <= MobileUiContractScript.IMMERSIVE_SAFE_MAX_WIDTH + 1.0, "%s safe frame width is capped." % context)
+	boot.queue_free()
+	await process_frame
+
+func _check_battle_logs_layout(viewport_size: Vector2i) -> void:
+	_prepare_viewport(viewport_size)
+	await process_frame
+	var boot: Control = _new_boot()
+	_prepare_battle_store()
+	await process_frame
+	boot.call("_show_screen", "battle_logs")
+	await process_frame
+	await process_frame
+
+	var context := "Battle logs %s" % str(viewport_size)
+	for node_name: String in [
+		"BattleFullscreenOverlay",
+		"BattleSafeFrame",
+		"BattleLogsFrame",
+		"BattleLogsScroll",
+	]:
+		_expect_node_fits(boot, node_name, context)
+	_expect_node_fits(boot, "BattleLogsList", context, false)
+	_expect(_find_button_by_text(boot, "Voltar ao Resultado") != null, "%s exposes return-to-result CTA." % context)
+	_expect(_find_button_by_text(boot, "Voltar ao Refugio") != null, "%s exposes return-to-refuge CTA." % context)
+	var safe_frame := _find_node_by_name(boot, "BattleSafeFrame") as Control
+	if safe_frame != null:
+		_expect(safe_frame.size.x <= MobileUiContractScript.IMMERSIVE_SAFE_MAX_WIDTH + 1.0, "%s safe frame width is capped." % context)
+	boot.queue_free()
+	await process_frame
+
+func _prepare_battle_store() -> void:
+	var store := _session_store()
+	store.last_battle_log = _battle_log_fixture()
+	store.last_battle_rewards = _battle_rewards_fixture()
+	store.resources = {"almas": 7, "energia": 9, "diamante": 2}
 
 func _prepare_viewport(viewport_size: Vector2i) -> void:
 	root.size = viewport_size

@@ -49,7 +49,7 @@ static func format_event(event: Dictionary) -> String:
 		"battle_start":
 			return "%s - Batalha iniciada" % timestamp
 		"weapon_attack":
-			return "%s - %s atacou %s: %s %s, alvo HP %s%s" % [
+			return "%s - %s atacou %s: %s %s, vida do alvo %s%s" % [
 				timestamp,
 				_source_label(str(event.get("source", ""))),
 				_target_label(str(event.get("target", ""))),
@@ -83,7 +83,7 @@ static func format_event(event: Dictionary) -> String:
 				str(event.get("passive_level", "?")),
 			]
 		"spell_cast":
-			return "%s - %s conjurou %s em %s: %s %s, alvo HP %s%s" % [
+			return "%s - %s conjurou %s em %s: %s %s, vida do alvo %s%s" % [
 				timestamp,
 				_source_label(str(event.get("source", ""))),
 				_humanize_id(str(event.get("spell_id", "spell_desconhecida"))),
@@ -102,7 +102,7 @@ static func format_event(event: Dictionary) -> String:
 				str(event.get("stacks", "1")),
 			]
 		"dot_tick":
-			return "%s - %s causou %s %s em %s, alvo HP %s%s" % [
+			return "%s - %s causou %s %s em %s, vida do alvo %s%s" % [
 				timestamp,
 				_humanize_id(str(event.get("status_id", "dot"))),
 				str(event.get("damage", "?")),
@@ -147,14 +147,14 @@ static func format_event(event: Dictionary) -> String:
 				float(event.get("amount", 0.0)) * 100.0,
 			]
 		"summon_spawn":
-			return "%s - %s invocou %s (%s HP)" % [
+			return "%s - %s invocou %s (%s de vida)" % [
 				timestamp,
 				_source_label(str(event.get("source", ""))),
 				_humanize_id(str(event.get("target", "summon"))),
 				str(event.get("hp", "?")),
 			]
 		"summon_attack":
-			return "%s - %s atacou %s: %s %s, alvo HP %s%s" % [
+			return "%s - %s atacou %s: %s %s, vida do alvo %s%s" % [
 				timestamp,
 				_humanize_id(str(event.get("source", "summon"))),
 				_target_label(str(event.get("target", ""))),
@@ -169,7 +169,7 @@ static func format_event(event: Dictionary) -> String:
 				_humanize_id(str(event.get("source", "summon"))),
 			]
 		"pet_attack":
-			return "%s - Familiar %s atacou %s: %s %s, alvo HP %s%s" % [
+			return "%s - Familiar %s atacou %s: %s %s, vida do alvo %s%s" % [
 				timestamp,
 				_humanize_id(str(event.get("pet_id", "pet"))),
 				_target_label(str(event.get("target", ""))),
@@ -189,7 +189,7 @@ static func format_event(event: Dictionary) -> String:
 				_tick_suffix(event),
 			]
 		"heal":
-			return "%s - %s recuperou %s de HP com %s, HP %s" % [
+			return "%s - %s recuperou %s de vida com %s, vida %s" % [
 				timestamp,
 				_source_label(str(event.get("source", ""))),
 				str(event.get("amount", "?")),
@@ -197,7 +197,7 @@ static func format_event(event: Dictionary) -> String:
 				str(event.get("hp_after", "?")),
 			]
 		"anti_stall":
-			return "%s - Limite da luta ativado: Draxos HP %s, oponente HP %s" % [
+			return "%s - Limite da luta ativado: Draxos vida %s, oponente vida %s" % [
 				timestamp,
 				str(event.get("player_hp_after", "?")),
 				str(event.get("opponent_hp_after", "?")),
@@ -208,10 +208,10 @@ static func format_event(event: Dictionary) -> String:
 				_humanize_id(str(event.get("reward_type", "desconhecida"))),
 			]
 		"battle_result":
-			return "%s - Resultado: %s (%s)" % [
+			return "%s - Resultado: %s - %s" % [
 				timestamp,
-				_humanize_id(str(event.get("winner", "desconhecido"))),
-				_humanize_id(str(event.get("reason", "sem_motivo"))),
+				_winner_label(str(event.get("winner", ""))),
+				_reason_label(str(event.get("reason", ""))),
 			]
 		_:
 			return "%s - Evento desconhecido: %s" % [timestamp, event_type]
@@ -226,10 +226,10 @@ static func format_summary(battle_log: Dictionary, rewards: Dictionary = {}) -> 
 	var reward_text := _format_resource_suffix(_as_dictionary(rewards.get("resources", {})))
 	if reward_text == "":
 		reward_text = "sem recompensa registrada"
-	return "Resultado: %s contra %s | motivo: %s | recompensa: %s" % [
-		_humanize_id(str(result.get("winner", "desconhecido"))),
+	return "Resultado: %s contra %s | desfecho: %s | recompensa: %s" % [
+		_winner_label(str(result.get("winner", ""))),
 		str(opponent.get("display_name", "oponente")),
-		_humanize_id(str(result.get("reason", "sem_motivo"))),
+		_reason_label(str(result.get("reason", ""))),
 		reward_text,
 	]
 
@@ -322,6 +322,30 @@ static func _resource_label(resource_id: String) -> String:
 			return "Po de Osso"
 		_:
 			return _humanize_id(resource_id)
+
+static func _winner_label(winner: String) -> String:
+	match winner:
+		"player":
+			return "Vitoria"
+		"opponent":
+			return "Derrota"
+		"draw":
+			return "Empate"
+		_:
+			return "Resultado pendente"
+
+static func _reason_label(reason: String) -> String:
+	match reason:
+		"combatant_defeated", "opponent_defeated":
+			return "oponente caiu"
+		"player_defeated":
+			return "Draxos caiu"
+		"draw":
+			return "empate confirmado"
+		"timeout", "anti_stall":
+			return "limite da luta"
+		_:
+			return "desfecho registrado"
 
 static func _humanize_id(value: String) -> String:
 	var cleaned := value.strip_edges()

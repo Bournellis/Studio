@@ -103,7 +103,7 @@ func show_empty_state(message: String) -> void:
 	_empty_label.text = message
 	_empty_label.visible = true
 	_event_label.text = "Aguardando batalha"
-	_event_icon.configure("...", _token_color("placeholder"), "Palco de batalha vazio. Quando um replay carregar, este icone mostra o lance atual.")
+	_event_icon.configure("...", _token_color("placeholder"), "Palco de batalha vazio. Quando uma luta carregar, este icone mostra o lance atual.")
 	_render_dynamic_state()
 
 func render_snapshot(side_state: Dictionary, latest_event: Dictionary, event_index: int, event_count: int, animate_event: bool = false, replay_time: float = -1.0) -> void:
@@ -246,7 +246,7 @@ func _ensure_ui() -> void:
 	_readout_panel.mouse_filter = Control.MOUSE_FILTER_PASS
 	add_child(_readout_panel)
 	_bind_stage_tooltip(_readout_panel)
-	_readout_label = _stage_label("Replay 0/0 | Tempo 0s", 12, _token_color("text_secondary"))
+	_readout_label = _stage_label("Lance 0/0 | Tempo 0s", 12, _token_color("text_secondary"))
 	_readout_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_readout_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_readout_panel.add_child(_readout_label)
@@ -363,7 +363,7 @@ func _render_dynamic_state() -> void:
 			summons.size() + (1 if familiar != "" else 0)
 		)
 		var name_label: Label = _name_labels[side]
-		name_label.text = "%s\nHP %s/%s" % [
+		name_label.text = "%s\nVida %s/%s" % [
 			display_name,
 			_number_text(float(side_data.get("hp", 0.0))),
 			_number_text(float(side_data.get("max_hp", 1.0))),
@@ -482,10 +482,10 @@ func _render_slots() -> void:
 
 func _render_event_panel() -> void:
 	if _latest_event.is_empty():
-		var empty_tooltip := "Replay aguardando o proximo lance."
+		var empty_tooltip := "Luta aguardando o proximo lance."
 		_event_icon.configure("...", _token_color("placeholder"), empty_tooltip)
 		_set_stage_tooltip(_event_icon, empty_tooltip)
-		_event_label.text = "Evento %d/%d | aguardando replay" % [_event_index, _event_count]
+		_event_label.text = "Lance %d/%d | aguardando luta" % [_event_index, _event_count]
 		_set_stage_tooltip(_event_label, empty_tooltip)
 		_refresh_stage_tooltip(_event_icon)
 		_refresh_stage_tooltip(_event_label)
@@ -494,7 +494,7 @@ func _render_event_panel() -> void:
 	var event_tooltip := _event_tooltip(_latest_event)
 	_event_icon.configure(_event_code(event_type), _event_color(_latest_event), event_tooltip, "", 0.0, _asset_id_for_event(event_type))
 	_set_stage_tooltip(_event_icon, event_tooltip)
-	_event_label.text = "Evento %d/%d | %ss | %s" % [
+	_event_label.text = "Lance %d/%d | %ss | %s" % [
 		_event_index,
 		_event_count,
 		"%.1f" % float(_latest_event.get("t", 0.0)),
@@ -538,7 +538,7 @@ func _render_readout() -> void:
 
 func _side_hp_summary(side_data: Dictionary, side: String) -> String:
 	var display_name := str(side_data.get("display_name", _default_side_name(side)))
-	return "%s HP %s%%" % [display_name, _hp_percent_text(side_data)]
+	return "%s vida %s%%" % [display_name, _hp_percent_text(side_data)]
 
 func _compact_side_hp_summary(side_data: Dictionary, side: String) -> String:
 	var display_name := str(side_data.get("display_name", _default_side_name(side)))
@@ -575,7 +575,7 @@ func _empty_row_tooltip(row_kind: String) -> String:
 		"cooldown":
 			return "Recargas\nNenhuma habilidade esta em recarga agora. Quando uma habilidade entrar em espera, o icone mostra o tempo restante."
 		"status":
-			return "Status e buffs\nNenhum buff, debuff, DoT ou resistencia esta ativo neste lado da batalha."
+			return "Efeitos ativos\nNenhum efeito, protecao ou resistencia esta ativo neste lado da batalha."
 	return "Nenhum marcador ativo nesta linha."
 
 func _status_tooltip(status_id: String, value: Variant) -> String:
@@ -587,13 +587,13 @@ func _status_tooltip(status_id: String, value: Variant) -> String:
 		if status.has("duration"):
 			details.append("Duracao informada: %ss." % _number_text(float(status.get("duration", 0.0))))
 		if status.has("source"):
-			details.append("Fonte: %s." % _humanize_id(str(status.get("source", ""))))
-	details.append("Stacks: %d." % stacks)
+			details.append("Origem: %s." % _humanize_id(str(status.get("source", ""))))
+	details.append("Cargas: %d." % stacks)
 	details.append("Acompanhe este marcador para entender reforcos, enfraquecimentos, dano continuo ou protecao.")
-	return "Status ativo: %s\n%s" % [_humanize_id(status_id), "\n".join(details)]
+	return "Efeito ativo: %s\n%s" % [_humanize_id(status_id), "\n".join(details)]
 
 func _cooldown_tooltip(spell_id: String, ready_at: float, remaining: float) -> String:
-	return "Recarga de habilidade: %s\nA habilidade foi usada e fica indisponivel ate o tempo indicado.\nTempo atual do replay: %ss.\nRestante: %ss.\nPronta em: %ss." % [
+	return "Recarga de habilidade: %s\nA habilidade foi usada e fica indisponivel ate o tempo indicado.\nTempo da luta: %ss.\nRestante: %ss.\nPronta em: %ss." % [
 		_humanize_id(spell_id),
 		_number_text(_current_replay_time()),
 		_number_text(remaining),
@@ -656,7 +656,7 @@ func _event_tooltip(event: Dictionary) -> String:
 	var source := str(event.get("source", ""))
 	var target := str(event.get("target", ""))
 	if source != "":
-		lines.append("Fonte: %s." % _humanize_id(source))
+		lines.append("Origem: %s." % _humanize_id(source))
 	if target != "" and target != "none":
 		lines.append("Alvo: %s." % _humanize_id(target))
 	lines.append("Leitura rapida: %s." % _effect_feedback_text(event))
@@ -689,7 +689,7 @@ func _event_tooltip(event: Dictionary) -> String:
 				_tick_suffix(event),
 			])
 		"heal":
-			lines.append("Cura aplicada ao alvo, com HP final informado no evento.")
+			lines.append("Cura aplicada ao alvo, com vida atualizada no lance.")
 		"barrier_gain", "barrier_absorb", "passive_apply":
 			lines.append("Mostra protecao, absorcao ou Doutrina ativa.")
 		"anti_stall":
@@ -701,9 +701,9 @@ func _event_tooltip(event: Dictionary) -> String:
 	if event.has("absorbed"):
 		lines.append("Absorvido por barreira: %s." % _number_text(float(event.get("absorbed", 0.0))))
 	if event.has("hp_after"):
-		lines.append("HP apos evento: %s." % _number_text(float(event.get("hp_after", 0.0))))
+		lines.append("Vida apos o lance: %s." % _number_text(float(event.get("hp_after", 0.0))))
 	if event.has("barrier_after"):
-		lines.append("Barreira apos evento: %s." % _number_text(float(event.get("barrier_after", 0.0))))
+		lines.append("Barreira apos o lance: %s." % _number_text(float(event.get("barrier_after", 0.0))))
 	if event.has("winner"):
 		lines.append("Vencedor: %s." % _humanize_id(str(event.get("winner", ""))))
 	return "\n".join(lines)
@@ -715,9 +715,9 @@ func _event_title(event_type: String) -> String:
 		"spell_cast":
 			return "Habilidade conjurada"
 		"dot_apply":
-			return "DoT aplicado"
+			return "Efeito aplicado"
 		"dot_tick":
-			return "Dano periodico"
+			return "Dano continuo"
 		"status_apply":
 			return "Status aplicado"
 		"status_expire":
@@ -1101,7 +1101,7 @@ func _effect_feedback_text(event: Dictionary) -> String:
 		"spell_cast":
 			return _feedback_with_suffix("Habilidade: %s" % _humanize_id(str(event.get("spell_id", "spell"))), _damage_suffix(event))
 		"dot_tick":
-			return _feedback_with_suffix("Dano periodico: %s" % _humanize_id(str(event.get("status_id", "dot"))), _damage_suffix(event))
+			return _feedback_with_suffix("Dano continuo: %s" % _humanize_id(str(event.get("status_id", "dot"))), _damage_suffix(event))
 		"summon_attack":
 			return _feedback_with_suffix("Invocacao: %s" % _humanize_id(str(event.get("source", "summon"))), _damage_suffix(event))
 		"pet_attack":
@@ -1112,9 +1112,9 @@ func _effect_feedback_text(event: Dictionary) -> String:
 				_effect_label(str(event.get("effect_id", event.get("effect", "efeito")))),
 			]
 		"heal":
-			return "%s +%s HP" % [_item_label(str(event.get("item_id", "cura"))), _number_text(float(event.get("amount", event.get("healing", 0.0))))]
+			return "%s +%s vida" % [_item_label(str(event.get("item_id", "cura"))), _number_text(float(event.get("amount", event.get("healing", 0.0))))]
 		"dot_apply":
-			return "DoT aplicado: %s" % _humanize_id(str(event.get("status_id", event.get("spell_id", "dot"))))
+			return "Efeito aplicado: %s" % _humanize_id(str(event.get("status_id", event.get("spell_id", "dot"))))
 		"status_apply":
 			return "Status aplicado: %s" % _humanize_id(str(event.get("status_id", "status")))
 		"status_expire":

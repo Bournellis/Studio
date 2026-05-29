@@ -280,14 +280,11 @@ func build_warning_text(battle_log: Dictionary, expected_mode: String) -> String
 	var battle_mode := str(battle_log.get("mode", ""))
 	var spell_count := BattleLogPresenterScript.count_events_of_type(battle_log, "spell_cast")
 	if BattleLogPresenterScript.has_unknown_events(battle_log):
-		return "Aviso: replay contem evento desconhecido; exibindo fallback."
+		return "Aviso: esta luta tem um lance que ainda nao possui apresentacao completa."
 	if battle_mode != expected_mode:
-		return "Aviso: replay em modo %s. O rework atual usa %s; gere uma nova batalha com as Edge Functions atualizadas." % [
-			battle_mode,
-			expected_mode,
-		]
+		return "Aviso: esta batalha usa uma versao diferente. Solicite uma nova luta se algo parecer estranho."
 	if spell_count <= 0:
-		return "Aviso: replay sem habilidades registradas. Verifique se a versao local esta atualizada."
+		return "Aviso: esta luta nao registrou habilidades."
 	return ""
 
 static func history_entry_title(entry: Dictionary, index: int = 0) -> String:
@@ -354,7 +351,7 @@ func _initial_replay_lines(battle_log: Dictionary, rewards: Dictionary) -> Packe
 	var weapon_count := BattleLogPresenterScript.count_events_of_type(battle_log, "weapon_attack")
 	var pet_count := BattleLogPresenterScript.count_events_of_type(battle_log, "pet_attack")
 	var summon_count := BattleLogPresenterScript.count_events_of_type(battle_log, "summon_attack")
-	lines.append("Eventos: %d spells | %d ataques | %d familiares | %d summons" % [
+	lines.append("Lances: %d habilidades | %d ataques | %d familiares | %d invocacoes" % [
 		spell_count,
 		weapon_count,
 		pet_count,
@@ -378,7 +375,7 @@ func _render_history_entries(history_entries: Array[Dictionary]) -> void:
 			"%s\n%s" % [history_entry_title(entry, index), history_entry_detail(entry)],
 		])
 		_call_host("_add_action_button", [
-			"Replay %d" % (index + 1),
+			"Assistir %d" % (index + 1),
 			AppShellActionContractScript.battle_replay_action(battle_id),
 		])
 

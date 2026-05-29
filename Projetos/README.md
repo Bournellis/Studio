@@ -16,10 +16,10 @@ This directory contains active, conceptual and paused projects for the studio.
   - Allowed work: code, validation, playtest, local documentation.
   - Current next step: user playtest of the Track 02 complete-run build.
 
-## Implementacao - Ossos Inteiros Publicado
+## Implementacao - Battle Presentation v1 Validado Local
 
-- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 13 release safety and Track 14 agent ops are preserved baselines, Track 00-15 are integrated, and Track 16 is the latest technical package. The confirmed Foundation post-login loop remains the accepted baseline: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again. Foundation Loop UX Pass 01 is implemented, published to Internal Alpha and manually confirmed on Android/Windows/Web on 2026-05-29, including initial-menu Battle Lab/Progression Lab visibility, contained Refugio/Battle screens, APK download without Bearer-token error, static battle-request splash and clear post-login loop. Social Basico Guilda v1 is published on top of that baseline with clearer Social identity, username copy action, Friends/Guild/Chat sections and 8s auto-sync while Social stays open, without backend/schema changes. Visual Direction v1 is published with surface/action accents, centralized CTA style and panel accents in `core/ui_tokens.gd`, documented in `docs/visual-direction-v1.md`. Ossos Inteiros v1 is now published on top of it: remote migration/functions/catalog/build/site are aligned, downloads are public unlisted again, and Web uses a fresh versioned asset root so old cached loaders do not show stale economy values.
-  - Priority/status: `P2_IMPLEMENTACAO - INTEGER_BONES_V1_PUBLISHED`
+- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 13 release safety and Track 14 agent ops are preserved baselines, Track 00-15 are integrated, and Track 16 is the latest technical package. The confirmed Foundation post-login loop remains the accepted baseline: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again. Foundation Loop UX Pass 01 is implemented, published to Internal Alpha and manually confirmed on Android/Windows/Web on 2026-05-29, including initial-menu Battle Lab/Progression Lab visibility, contained Refugio/Battle screens, APK download without Bearer-token error, static battle-request splash and clear post-login loop. Social Basico Guilda v1 is published on top of that baseline with clearer Social identity, username copy action, Friends/Guild/Chat sections and 8s auto-sync while Social stays open, without backend/schema changes. Visual Direction v1 is published with surface/action accents, centralized CTA style and panel accents in `core/ui_tokens.gd`, documented in `docs/visual-direction-v1.md`. Ossos Inteiros v1 is published on top of it: remote migration/functions/catalog/build/site are aligned, downloads are public unlisted again, and Web uses a fresh versioned asset root so old cached loaders do not show stale economy values. Battle Presentation v1 is implemented and validated locally, but not published yet: battle running, summary and logs now read as a clearer player-facing battle presentation without backend/schema/API changes.
+  - Priority/status: `P2_IMPLEMENTACAO - BATTLE_PRESENTATION_V1_VALIDATED_UNPUBLISHED`
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Agent manual: `draxos-mobile/docs/agent-operating-manual.md`
   - Documentation index: `draxos-mobile/docs/documentation-index.md`
@@ -27,6 +27,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Foundation Loop Audit: `draxos-mobile/docs/foundation-loop-audit.md`
   - Responsive layout contract: `draxos-mobile/docs/foundation-responsive-layout-contract.md`
   - Visual Direction v1: `draxos-mobile/docs/visual-direction-v1.md`
+  - Battle Presentation v1: `draxos-mobile/docs/battle-presentation-v1.md`
   - Operational status: `draxos-mobile/implementation/current-status.md`
   - Product vision: `draxos-mobile/docs/product-vision.md`
   - Product brief: `draxos-mobile/docs/product-brief.md`
@@ -42,7 +43,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Progression Lab: `draxos-mobile/docs/progression-lab/README.md`
   - Design archive: `_conceitos/mobile-universe/`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: review the published Ossos Inteiros v1 build on Android/Windows/Web, confirming no visible `0.1 osso`, before selecting Battle Presentation v1 or another explicit next package.
+  - Current next step: review Battle Presentation v1 locally or decide publication to Internal Alpha; the published build currently remains Ossos Inteiros v1.
 
 ## Arquivo De Design
 
