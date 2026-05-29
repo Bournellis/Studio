@@ -894,8 +894,8 @@
       <div class="panel">
         <div class="panel-head">
           <div>
-            <h2>Downloads protegidos</h2>
-            <p>APK e PC ZIP ficam disponiveis para quem passou pelo Cloudflare Access.</p>
+            <h2>Downloads</h2>
+            <p>APK e PC ZIP ficam disponiveis pelos links publicados desta build interna.</p>
           </div>
           <button class="button ghost" type="button" data-tab-target="status">Ver status</button>
         </div>
@@ -1397,17 +1397,16 @@
 
       const loadManifest = async () => {
         manifestTable.innerHTML = "";
-        if (!hasConfig()) {
-          manifestStatus.textContent = "Configuracao remota ausente no pacote publicado.";
-          return;
+        manifestStatus.textContent = "Carregando status...";
+        let response = await fetch("manifest.example.json", { cache: "no-store" });
+        if (!response.ok && hasConfig()) {
+          response = await fetch(`${SUPABASE_URL}/functions/v1/release/manifest`, {
+            headers: { apikey: PUBLISHABLE_KEY }
+          });
         }
-        manifestStatus.textContent = "Carregando manifest...";
-        const response = await fetch(`${SUPABASE_URL}/functions/v1/release/manifest`, {
-          headers: { apikey: PUBLISHABLE_KEY }
-        });
         const payload = await response.json().catch(() => ({}));
         if (!response.ok) {
-          manifestStatus.textContent = "Falha ao carregar manifest.";
+          manifestStatus.textContent = "Falha ao carregar status.";
           return;
         }
         manifestStatus.textContent = "";
