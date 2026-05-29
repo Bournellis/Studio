@@ -746,7 +746,7 @@ func test_refuge_preparation_renders_potion_slot_and_behavior_defaults() -> void
 	assert_true(SessionStore.apply_build_result({
 		"ok": true,
 		"save_type": SessionStore.SAVE_TYPE_NORMAL,
-		"build": {"weapon_type": "varinha_cinzas"},
+		"build": {"weapon_type": "varinha_cinzas", "weapon_level": 4},
 		"combat_build": {
 			"inventory": [{"item_id": AppShellActionContractScript.ITEM_HEALTH_POTION, "quantity": 3}],
 			"potion_slots": [{
@@ -779,13 +779,113 @@ func test_refuge_preparation_renders_potion_slot_and_behavior_defaults() -> void
 	await get_tree().process_frame
 	var popup := boot.get("_refuge_menu_popup") as PopupPanel
 	assert_not_null(popup)
-	assert_true(_label_tree_contains(popup, "Preparacao"))
-	assert_true(_label_tree_contains(popup, "Pocao: Pocao de Vida | estoque 3"))
-	assert_true(_label_tree_contains(popup, "Vida abaixo de 40%"))
+	assert_true(_label_tree_contains(popup, "Pronto para batalha"))
+	assert_true(_label_tree_contains(popup, "Instrumento ritual: Varinha de Cinzas L4"))
+	assert_true(_label_tree_contains(popup, "Pocao de Vida equipada"))
+	assert_true(_label_tree_contains(popup, "Estoque: 3"))
+	assert_true(_label_tree_contains(popup, "Usa automaticamente com vida baixa"))
+	assert_true(_label_tree_contains(popup, "Sussurro do Medo: Usa quando estiver pronta"))
+	assert_not_null(_find_button_by_text(popup, "Equipar Pocao de Vida"))
+	assert_not_null(_find_button_by_text(popup, "Remover pocao"))
+	assert_not_null(_find_button_by_text(popup, "Usar com vida baixa"))
+	assert_not_null(_find_button_by_text(popup, "Pausar pocao"))
+	assert_not_null(_find_button_by_text(popup, "Usar na batalha"))
+	assert_not_null(_find_button_by_text(popup, "Pausar"))
+	var visible_text := _visible_text_tree(popup).to_lower()
+	for forbidden: String in ["behavior", "build", "slot", "endpoint", "server-authoritative", "schema", "snapshot"]:
+		assert_false(visible_text.contains(forbidden), "Preparation should hide technical term '%s'." % forbidden)
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_EQUIP_HEALTH_POTION))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_UNEQUIP_POTION))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ENABLE_POTION_DEFAULT))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.enable_spell_behavior_action("sussurro_medo")))
+
+func test_refuge_preparation_renders_empty_and_paused_states_without_network() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	_prepare_account_state()
+	assert_true(SessionStore.apply_build_result({
+		"ok": true,
+		"save_type": SessionStore.SAVE_TYPE_NORMAL,
+		"build": {"weapon_type": "orbe_tempestade"},
+		"combat_build": {
+			"inventory": [],
+			"potion_slots": [{
+				"slot_index": 1,
+				"potion_id": null,
+				"behavior": {
+					"enabled": true,
+					"hp": {"mode": "below", "percent": 40},
+					"mana": {"mode": "ignore", "percent": 0},
+				},
+			}],
+			"equipped_spells": [],
+		},
+	}))
+
+	boot._show_screen("refuge")
+	await get_tree().process_frame
+
+	var prep_icon := _find_node_by_name(boot._first_screen_root, "RefugeIcon_Preparacao") as Button
+	assert_not_null(prep_icon)
+	prep_icon.pressed.emit()
+	await get_tree().process_frame
+	var popup := boot.get("_refuge_menu_popup") as PopupPanel
+	assert_not_null(popup)
+	assert_true(_label_tree_contains(popup, "Instrumento ritual: Orbe da Tempestade"))
+	assert_true(_label_tree_contains(popup, "Nenhuma pocao equipada"))
+	assert_true(_label_tree_contains(popup, "Estoque: 0"))
+	assert_true(_label_tree_contains(popup, "Nenhuma habilidade equipada."))
+
+func test_refuge_preparation_renders_paused_potion_and_spell_publicly() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	_prepare_account_state()
+	assert_true(SessionStore.apply_build_result({
+		"ok": true,
+		"save_type": SessionStore.SAVE_TYPE_NORMAL,
+		"build": {
+			"weapon_type": "varinha_cinzas",
+			"pet_id": "corvo_pressagio",
+			"pet_level": 2,
+			"passive_id": "pacto_familiar",
+			"passive_level": 3,
+		},
+		"combat_build": {
+			"inventory": [{"item_id": AppShellActionContractScript.ITEM_HEALTH_POTION, "quantity": 1}],
+			"potion_slots": [{
+				"slot_index": 1,
+				"potion_id": AppShellActionContractScript.ITEM_HEALTH_POTION,
+				"behavior": {
+					"enabled": false,
+					"hp": {"mode": "below", "percent": 40},
+					"mana": {"mode": "ignore", "percent": 0},
+				},
+			}],
+			"equipped_spells": [{
+				"slot_index": 1,
+				"spell_id": "incisao_ritual",
+				"behavior": {
+					"enabled": false,
+					"hp": {"mode": "ignore", "percent": 0},
+					"mana": {"mode": "ignore", "percent": 0},
+				},
+			}],
+		},
+	}))
+
+	boot._show_screen("refuge")
+	await get_tree().process_frame
+
+	var prep_icon := _find_node_by_name(boot._first_screen_root, "RefugeIcon_Preparacao") as Button
+	assert_not_null(prep_icon)
+	prep_icon.pressed.emit()
+	await get_tree().process_frame
+	var popup := boot.get("_refuge_menu_popup") as PopupPanel
+	assert_not_null(popup)
+	assert_true(_label_tree_contains(popup, "Pocao pausada"))
+	assert_true(_label_tree_contains(popup, "Incisao Ritual: Pausada para batalha"))
+	assert_true(_label_tree_contains(popup, "Familiar: Corvo de Pressagio L2"))
+	assert_true(_label_tree_contains(popup, "Doutrina: Pacto Familiar L3"))
 
 func test_base_routine_panel_derives_objective_from_existing_payload() -> void:
 	var routine: Dictionary = BaseSurfacePresenterScript.routine_summary(_base_state_fixture())

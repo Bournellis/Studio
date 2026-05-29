@@ -843,29 +843,39 @@ static func _preparation_panel(host: Node, compact: bool) -> PanelContainer:
 	box.add_child(_body_label("Resumo do que Draxos leva para a proxima luta.", compact))
 
 	var combat_build := SessionStore.combat_build_state
+	var account_build := SessionStore.build
 	var inventory := _as_array(combat_build.get("inventory", []))
 	var potion_slots := _as_array(combat_build.get("potion_slots", []))
 	var equipped_spells := _as_array(combat_build.get("equipped_spells", []))
 	var instrument_id := _first_non_empty_string(combat_build, ["weapon_type", "weapon_id", "instrument_id", "ritual_instrument_id"])
+	if instrument_id == "":
+		instrument_id = _first_non_empty_string(account_build, ["weapon_type", "weapon_id", "instrument_id", "ritual_instrument_id"])
 	if instrument_id != "":
 		box.add_child(_body_label("Instrumento ritual: %s%s" % [
 			_preparation_item_label(instrument_id),
-			_preparation_level_suffix(combat_build, ["weapon_level", "instrument_level"]),
+			_preparation_level_suffix_with_fallback(combat_build, account_build, ["weapon_level", "instrument_level"]),
 		], compact))
+	var level_text := _preparation_account_power_text()
+	if level_text != "":
+		box.add_child(_body_label(level_text, compact))
 
 	var familiar_id := _first_non_empty_string(combat_build, ["pet_id", "familiar_id"])
+	if familiar_id == "":
+		familiar_id = _first_non_empty_string(account_build, ["pet_id", "familiar_id"])
 	var doctrine_id := _first_non_empty_string(combat_build, ["passive_id", "doctrine_id", "doutrina_id"])
+	if doctrine_id == "":
+		doctrine_id = _first_non_empty_string(account_build, ["passive_id", "doctrine_id", "doutrina_id"])
 	if familiar_id != "" or doctrine_id != "":
 		box.add_child(_body_label("Familiar e doutrina", compact))
 		if familiar_id != "":
 			box.add_child(_body_label("Familiar: %s%s" % [
 				_preparation_item_label(familiar_id),
-				_preparation_level_suffix(combat_build, ["pet_level", "familiar_level"]),
+				_preparation_level_suffix_with_fallback(combat_build, account_build, ["pet_level", "familiar_level"]),
 			], compact))
 		if doctrine_id != "":
 			box.add_child(_body_label("Doutrina: %s%s" % [
 				_preparation_item_label(doctrine_id),
-				_preparation_level_suffix(combat_build, ["passive_level", "doctrine_level", "doutrina_level"]),
+				_preparation_level_suffix_with_fallback(combat_build, account_build, ["passive_level", "doctrine_level", "doutrina_level"]),
 			], compact))
 
 	var stock := _inventory_quantity(inventory, AppShellActionContractScript.ITEM_HEALTH_POTION)
@@ -1210,6 +1220,22 @@ static func _preparation_level_suffix(data: Dictionary, keys: Array) -> String:
 			if level > 0:
 				return " L%d" % level
 	return ""
+
+static func _preparation_level_suffix_with_fallback(primary: Dictionary, fallback: Dictionary, keys: Array) -> String:
+	var suffix := _preparation_level_suffix(primary, keys)
+	if suffix != "":
+		return suffix
+	return _preparation_level_suffix(fallback, keys)
+
+static func _preparation_account_power_text() -> String:
+	var parts := PackedStringArray()
+	var level := int(SessionStore.player.get("level", 0))
+	if level > 0:
+		parts.append("Nivel %d" % level)
+	var power := int(SessionStore.player.get("power", 0))
+	if power > 0:
+		parts.append("Poder %d" % power)
+	return " | ".join(parts)
 
 static func _first_non_empty_string(data: Dictionary, keys: Array) -> String:
 	for key_variant: Variant in keys:
