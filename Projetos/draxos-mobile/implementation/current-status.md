@@ -111,10 +111,10 @@ Links:
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal: `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
 - Stable Web: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest verified preview: `https://2a470539.draxos-mobile-internal-alpha.pages.dev`
+- Latest verified preview: `https://6f1e6cb1.draxos-mobile-internal-alpha.pages.dev`
 - Web asset root: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-battle-presentation-20260529/web`
 
-Battle Presentation v1 was published to the Internal Alpha artifact/site channel on `2026-05-29`. The stable root `internal-alpha/v0` carries the latest APK/PC package, and Web assets were uploaded to `internal-alpha/v0-battle-presentation-20260529` so browser caches cannot reuse older `index.js`, `index.pck` or `index.wasm` paths. APK/PC downloads are public unlisted Storage URLs again, avoiding the earlier direct-download Bearer-token error while keeping the stable Cloudflare Pages domain behind Access. Public unauthenticated Web validation should use the verified preview URL or an authenticated Access session. The Edge manifest endpoint remains healthy, but the release override was not updated during this publication because the local environment did not include `SUPABASE_ACCESS_TOKEN`; the portal package now reads its bundled `manifest.example.json` for published links/hashes.
+Battle Presentation v1 was published to the Internal Alpha artifact/site channel on `2026-05-29`. The stable root `internal-alpha/v0` carries the latest APK/PC package, and Web assets were uploaded to `internal-alpha/v0-battle-presentation-20260529` so browser caches cannot reuse older `index.js`, `index.pck` or `index.wasm` paths. A follow-up Web cache hotfix republished Cloudflare Pages with `_headers` and `Cache-Control: no-store` for the portal/Web shell after manual review reported no visible Web difference. APK/PC downloads are public unlisted Storage URLs again, avoiding the earlier direct-download Bearer-token error while keeping the stable Cloudflare Pages domain behind Access. Public unauthenticated Web validation should use the verified preview URL or an authenticated Access session. The Edge manifest endpoint remains healthy, but the release override was not updated during this publication because the local environment did not include `SUPABASE_ACCESS_TOKEN`; the portal package now reads its bundled `manifest.example.json` for published links/hashes.
 
 ## Visual Direction v1
 
@@ -129,7 +129,7 @@ Visual Direction v1 is implemented and published as the next refinement package 
 
 - Track 16 migration/functions/catalog changes needed for Ossos Inteiros v1 are deployed. Further crafting, behavior, tuning, economy or content expansion still needs its own explicit package decision.
 - Foundation Loop UX Pass 01 is the accepted current V0 UX baseline after manual Android/Windows/Web review on `2026-05-29`; Social Basico Guilda v1 and Battle Presentation v1 are now available in the published Internal Alpha build for human validation.
-- Battle Presentation v1 is published to Internal Alpha with public APK/PC downloads and a cache-busted Web asset root; it still needs manual Android/Windows/Web confirmation on the stable site/app channels.
+- Battle Presentation v1 is published to Internal Alpha with public APK/PC downloads, a cache-busted Web asset root and no-store Cloudflare Pages headers; it still needs manual Android/Windows/Web confirmation on the stable site/app channels.
 - Edge release manifest override needs `SUPABASE_ACCESS_TOKEN` available in the release environment for future `publish_internal_alpha.ps1 -Mode DeployManifest` runs. This publication kept the endpoint healthy and used the packaged portal manifest as the published-link source.
 - Track 13 release safety remains the baseline for any future publication or wider-access gate.
 - `players.save_type` remains an alpha shortcut. `account_profiles` + `game_saves` is a future migration package.

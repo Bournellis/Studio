@@ -113,6 +113,21 @@ $redirects = @'
 '@
 [System.IO.File]::WriteAllText((Join-Path $OutputDir "_redirects"), $redirects, [System.Text.UTF8Encoding]::new($false))
 
+$headers = @'
+/*
+  Cache-Control: no-store
+
+/portal/*
+  Cache-Control: no-store
+
+/web
+  Cache-Control: no-store
+
+/web/*
+  Cache-Control: no-store
+'@
+[System.IO.File]::WriteAllText((Join-Path $OutputDir "_headers"), $headers, [System.Text.UTF8Encoding]::new($false))
+
 $oversizedFiles = Get-ChildItem -LiteralPath $OutputDir -Recurse -File |
     Where-Object { $_.Length -ge 25MB } |
     Select-Object FullName, Length
