@@ -34,32 +34,57 @@ static func render_refuge(host: Node) -> void:
 static func _refuge_scene_board(host: Node, root: Control, compact: bool) -> void:
 	var board := Control.new()
 	board.name = "RefugeSceneBoard"
-	board.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
-	board.position = Vector2.ZERO
-	board.size = _host_viewport_size(host)
+	board.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	board.mouse_filter = Control.MOUSE_FILTER_PASS
+	board.clip_contents = true
 	root.add_child(board)
 
 	board.add_child(_refuge_scene_background(host, compact))
-	_add_refuge_altar_stage(host, board, compact)
-	_add_refuge_status_bar(host, board, compact)
-	_add_refuge_footer_bar(host, board, compact)
-	_add_refuge_context_cta(host, board, compact)
+	var safe_frame := _refuge_safe_frame(board, compact)
+	_add_refuge_altar_stage(host, safe_frame, compact)
+	_add_refuge_status_bar(host, safe_frame, compact)
+	_add_refuge_loop_panel(host, safe_frame, compact)
+	_add_refuge_footer_bar(host, safe_frame, compact)
+	_add_refuge_context_cta(host, safe_frame, compact)
 
 	var popup_data := _create_refuge_menu_popup(host, root, compact)
 	var popup := popup_data["popup"] as PopupPanel
 	var title_label := popup_data["title_label"] as Label
 	var body := popup_data["body"] as VBoxContainer
 
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "battle", "BT", "Batalha", "accent_blood", Vector2(0.50, 0.19), "Pedir batalha e ver resultado.")
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "preparation", "PP", "Preparacao", "accent_astral", Vector2(0.50, 0.32), "Spells e pocao antes da batalha.")
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "refuge", "RF", "Refugio", "accent_astral", Vector2(0.22, 0.37), "Coleta, energia e estruturas.")
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "social", "SO", "Social", "status_success", Vector2(0.78, 0.37), "Amigos, guilda e chat.")
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "competition", "CP", "Competicao", "status_warning", Vector2(0.22, 0.56), "Fila de oponentes e ranking.")
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "shop", "LJ", "Loja", "accent_bone", Vector2(0.78, 0.56), "Recompensas e compras.")
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "collect", "CL", "Coletar", "status_success", Vector2(0.28, 0.77), "Coletar producao do Refugio.", true)
-	_add_refuge_icon_button(host, board, popup, title_label, body, compact, "energy", "EN", "Energia", "accent_astral", Vector2(0.72, 0.77), "Comprar Energia.", true)
-	_add_refuge_profile_button(host, board, popup, title_label, body, compact)
+	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "battle", "BT", "Batalha", "accent_blood", Vector2(0.50, 0.19), "Pedir batalha e ver resultado.")
+	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "preparation", "PP", "Preparacao", "accent_astral", Vector2(0.50, 0.32), "Spells e pocao antes da batalha.")
+	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "refuge", "RF", "Refugio", "accent_astral", Vector2(0.22, 0.37), "Coleta, energia e estruturas.")
+	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "social", "SO", "Social", "status_success", Vector2(0.78, 0.37), "Amigos, guilda e chat.")
+	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "competition", "CP", "Competicao", "status_warning", Vector2(0.22, 0.56), "Fila de oponentes e ranking.")
+	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "shop", "LJ", "Loja", "accent_bone", Vector2(0.78, 0.56), "Recompensas e compras.")
+	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "collect", "CL", "Coletar", "status_success", Vector2(0.28, 0.77), "Coletar producao do Refugio.", true)
+	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "energy", "EN", "Energia", "accent_astral", Vector2(0.72, 0.77), "Comprar Energia.", true)
+	if _refuge_has_dev_tools(host):
+		_add_refuge_dev_button(host, safe_frame, popup, title_label, body, compact)
+	_add_refuge_profile_button(host, safe_frame, popup, title_label, body, compact)
+
+static func _refuge_safe_frame(board: Control, compact: bool) -> Control:
+	var frame := Control.new()
+	frame.name = "RefugeSafeFrame"
+	frame.mouse_filter = Control.MOUSE_FILTER_PASS
+	board.add_child(frame)
+	var sync_frame := func() -> void:
+		var viewport_size := board.get_viewport_rect().size
+		if viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
+			viewport_size = board.size
+		if viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
+			var parent := board.get_parent() as Control
+			if parent != null and parent.size.x > 0.0 and parent.size.y > 0.0:
+				viewport_size = parent.size
+		if viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
+			viewport_size = Vector2(390, 844)
+		var safe_rect := MobileUiContractScript.immersive_safe_rect(viewport_size, compact)
+		frame.position = safe_rect.position
+		frame.size = safe_rect.size
+	sync_frame.call()
+	board.resized.connect(sync_frame)
+	return frame
 
 static func _refuge_scene_background(_host: Node, _compact: bool) -> Control:
 	var layer := Control.new()
@@ -192,6 +217,35 @@ static func _add_refuge_context_cta(host: Node, board: Control, compact: bool) -
 	action_buttons[action_id] = button
 	board.add_child(button)
 
+static func _add_refuge_loop_panel(host: Node, board: Control, compact: bool) -> void:
+	var state := _refuge_loop_state(host)
+	var panel := PanelContainer.new()
+	panel.name = "RefugeLoopPanel"
+	panel.anchor_left = 0.04
+	panel.anchor_right = 0.96
+	panel.anchor_top = 0.635
+	panel.anchor_bottom = 0.715
+	panel.add_theme_stylebox_override("panel", _hud_style("bg_panel", "border_active"))
+	board.add_child(panel)
+
+	var grid := GridContainer.new()
+	grid.columns = 3
+	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	grid.add_theme_constant_override("h_separation", 6 if compact else 8)
+	panel.add_child(grid)
+	grid.add_child(_loop_status_label("Proximo\n%s" % str(state.get("next_text", "Batalhar")), "text_primary", compact, "RefugeLoopNextLabel"))
+	grid.add_child(_loop_status_label("Coleta\n%s" % str(state.get("collect_text", "Nada agora")), str(state.get("collect_color", "text_secondary")), compact, "RefugeLoopCollectLabel"))
+	grid.add_child(_loop_status_label("Evolucao\n%s" % str(state.get("upgrade_text", "Sem upgrade")), str(state.get("upgrade_color", "text_secondary")), compact, "RefugeLoopUpgradeLabel"))
+
+static func _loop_status_label(text: String, color_token: String, compact: bool, node_name: String) -> Label:
+	var label := _scene_label(text, color_token, 9 if compact else 11)
+	label.name = node_name
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.clip_text = true
+	return label
+
 static func _add_refuge_profile_button(host: Node, board: Control, popup: PopupPanel, title_label: Label, body: VBoxContainer, compact: bool) -> void:
 	var button := Button.new()
 	button.name = "RefugeIcon_Perfil"
@@ -210,6 +264,27 @@ static func _add_refuge_profile_button(host: Node, board: Control, popup: PopupP
 	host.call("_prepare_touch_button", button)
 	button.pressed.connect(func() -> void:
 		_open_refuge_menu_popup(host, popup, title_label, body, "profile", compact)
+	)
+	board.add_child(button)
+
+static func _add_refuge_dev_button(host: Node, board: Control, popup: PopupPanel, title_label: Label, body: VBoxContainer, compact: bool) -> void:
+	var button := Button.new()
+	button.name = "RefugeIcon_LabsDev"
+	button.text = "Labs\nDev"
+	button.tooltip_text = "Ferramentas internas de desenvolvimento."
+	button.anchor_left = 0.04
+	button.anchor_right = 0.24 if compact else 0.18
+	button.anchor_top = 0.105
+	button.anchor_bottom = 0.158
+	button.custom_minimum_size = Vector2(76, 42)
+	button.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+	button.add_theme_font_size_override("font_size", 10 if compact else 11)
+	button.add_theme_stylebox_override("normal", _refuge_icon_style("accent_astral", false, true))
+	button.add_theme_stylebox_override("hover", _refuge_icon_style("accent_astral", true, true))
+	button.add_theme_stylebox_override("pressed", _refuge_icon_style("accent_astral", true, true))
+	host.call("_prepare_touch_button", button)
+	button.pressed.connect(func() -> void:
+		_open_refuge_menu_popup(host, popup, title_label, body, "dev", compact)
 	)
 	board.add_child(button)
 
@@ -335,10 +410,14 @@ static func _populate_refuge_menu(host: Node, popup: PopupPanel, body: VBoxConta
 		"profile":
 			body.add_child(_popup_hint(_short_account_status(), compact))
 			body.add_child(_popup_route_button(host, popup, "Abrir Perfil", "account", true))
+			_add_dev_tool_actions(host, popup, body)
 			body.add_child(_popup_action_button(host, popup, "Checar atualizacao", AppShellActionContractScript.ACTION_CHECK_UPDATE))
+		"dev":
+			body.add_child(_popup_hint("Ferramentas internas para validar batalha e progressao do prototipo.", compact))
+			_add_dev_tool_actions(host, popup, body, true)
 		"collect":
 			body.add_child(_popup_hint("Receber a producao acumulada do Refugio.", compact))
-			body.add_child(_popup_action_button(host, popup, "Coletar agora", AppShellActionContractScript.ACTION_COLLECT_BASE, "Coletar a producao acumulada do Refugio?", true))
+			body.add_child(_popup_action_button(host, popup, "Coletar agora", AppShellActionContractScript.ACTION_COLLECT_BASE, "", true))
 		"energy":
 			body.add_child(_popup_hint("Comprar pacote de Energia no save ativo.", compact))
 			body.add_child(_popup_action_button(host, popup, "Comprar Energia", AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA, "Gastar 80 Diamantes para comprar 80 Energia no save ativo?", true))
@@ -395,11 +474,22 @@ static func _menu_title(menu_id: String) -> String:
 			return "Loja"
 		"profile":
 			return "Perfil"
+		"dev":
+			return "Labs Dev"
 		"collect":
 			return "Coletar"
 		"energy":
 			return "Energia"
 	return "Menu"
+
+static func _refuge_has_dev_tools(host: Node) -> bool:
+	return bool(host.call("_battle_lab_available")) or bool(host.call("_progression_lab_available"))
+
+static func _add_dev_tool_actions(host: Node, popup: PopupPanel, body: VBoxContainer, primary: bool = false) -> void:
+	if bool(host.call("_battle_lab_available")):
+		body.add_child(_popup_action_button(host, popup, "Battle Lab", AppShellActionContractScript.ACTION_OPEN_BATTLE_LAB, "", primary))
+	if bool(host.call("_progression_lab_available")):
+		body.add_child(_popup_action_button(host, popup, "Progression Lab", AppShellActionContractScript.ACTION_OPEN_PROGRESSION_LAB, "", primary))
 
 static func _add_texture_layer(parent: Control, texture_path: String, alpha: float) -> void:
 	if parent == null or not ResourceLoader.exists(texture_path):
@@ -524,10 +614,10 @@ static func _format_resource_amount(amount: Variant) -> String:
 	return str(amount)
 
 static func _refuge_context_cta_data(host: Node) -> Dictionary:
-	if SessionStore.has_battle_log():
+	if SessionStore.has_unseen_battle_result():
 		return {
-			"text": "Ver resultado",
-			"detail": "Abrir o resultado e recompensas da batalha mais recente.",
+			"text": "Ver recompensa",
+			"detail": "Abrir o resultado e receber a recompensa da batalha mais recente.",
 			"action_id": AppShellActionContractScript.ACTION_SHOW_LATEST_BATTLE,
 			"color_token": "accent_blood",
 		}
@@ -539,7 +629,6 @@ static func _refuge_context_cta_data(host: Node) -> Dictionary:
 				"text": "Coletar",
 				"detail": "Receber a producao acumulada do Refugio.",
 				"action_id": AppShellActionContractScript.ACTION_COLLECT_BASE,
-				"confirm": "Coletar a producao acumulada do Refugio?",
 				"color_token": "status_success",
 			}
 		if bool(routine.get("next_upgrade_ready", false)):
@@ -559,26 +648,55 @@ static func _refuge_context_cta_data(host: Node) -> Dictionary:
 		"color_token": "accent_blood",
 	}
 
+static func _refuge_loop_state(host: Node) -> Dictionary:
+	var cta := _refuge_context_cta_data(host)
+	var collect_text := "Sincronizar"
+	var collect_color := "text_secondary"
+	var upgrade_text := "Sem dados"
+	var upgrade_color := "text_secondary"
+	var base := SessionStore.base_state
+	if not base.is_empty():
+		var routine := BaseSurfacePresenterScript.routine_summary(base)
+		collect_text = "Pronta" if bool(routine.get("has_collect_ready", false)) else "Nada agora"
+		collect_color = "status_success" if bool(routine.get("has_collect_ready", false)) else "text_secondary"
+		if bool(routine.get("next_upgrade_ready", false)):
+			upgrade_text = _short_loop_text(str(routine.get("next_upgrade_text", "Pronta")))
+			upgrade_color = "status_success"
+		else:
+			upgrade_text = "Sem upgrade"
+	return {
+		"next_text": str(cta.get("text", "Batalhar")),
+		"collect_text": collect_text,
+		"collect_color": collect_color,
+		"upgrade_text": upgrade_text,
+		"upgrade_color": upgrade_color,
+	}
+
+static func _short_loop_text(text: String) -> String:
+	var shortened := text.strip_edges()
+	var separator_index := shortened.find(" | ")
+	if separator_index >= 0:
+		shortened = shortened.substr(0, separator_index).strip_edges()
+	if shortened.length() > 22:
+		shortened = "%s..." % shortened.substr(0, 19)
+	return shortened
+
 static func _host_viewport_size(host: Node) -> Vector2:
-	var resolved_size := Vector2.ZERO
+	var first_root := _first_screen_root(host)
+	if first_root != null and first_root.size.x > 0 and first_root.size.y > 0:
+		return first_root.size
+	if host is Control:
+		var host_size := (host as Control).size
+		if host_size.x > 0 and host_size.y > 0:
+			return host_size
+	if host != null and host.get_viewport() != null:
+		var viewport_size := host.get_viewport().get_visible_rect().size
+		if viewport_size.x > 0 and viewport_size.y > 0:
+			return viewport_size
 	if host != null and host.get_tree() != null and host.get_tree().root != null:
 		var window_size := host.get_tree().root.size
 		if window_size.x > 0 and window_size.y > 0:
-			resolved_size = Vector2(window_size)
-	if host is Control:
-		var host_size := (host as Control).size
-		if host_size.x > resolved_size.x:
-			resolved_size.x = host_size.x
-		if host_size.y > resolved_size.y:
-			resolved_size.y = host_size.y
-	if host != null and host.get_viewport() != null:
-		var viewport_size := host.get_viewport().get_visible_rect().size
-		if resolved_size.x <= 0 and viewport_size.x > 0:
-			resolved_size.x = viewport_size.x
-		if resolved_size.y <= 0 and viewport_size.y > 0:
-			resolved_size.y = viewport_size.y
-	if resolved_size.x > 0 and resolved_size.y > 0:
-		return resolved_size
+			return Vector2(window_size)
 	return Vector2(390, 844)
 
 static func _clear_node_children(parent: Node) -> void:
@@ -643,18 +761,19 @@ static func _entry_save_panel(host: Node, compact: bool) -> PanelContainer:
 static func _entry_dev_panel(host: Node, compact: bool) -> PanelContainer:
 	var battle_lab := bool(host.call("_battle_lab_available"))
 	var progression_lab := bool(host.call("_progression_lab_available"))
+	var dev_tools_visible := battle_lab or progression_lab or bool(ProjectSettings.get_setting("draxos_mobile/internal_alpha/dev_tools_enabled", false))
 	var panel := _panel(host, "EntryDevPanel", "bg_panel_alt", "border_default")
 	var box := _panel_box(panel, compact)
 	var toggle := CheckButton.new()
 	toggle.text = "Ferramentas internas"
 	toggle.tooltip_text = "Mostrar guest e ferramentas de validacao."
-	toggle.button_pressed = false
+	toggle.button_pressed = dev_tools_visible
 	toggle.add_theme_color_override("font_color", UiTokens.color("text_primary"))
 	host.call("_prepare_touch_button", toggle)
 	box.add_child(toggle)
 
 	var dev_body := VBoxContainer.new()
-	dev_body.visible = false
+	dev_body.visible = dev_tools_visible
 	dev_body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	dev_body.add_theme_constant_override("separation", 8 if compact else 10)
 	box.add_child(dev_body)

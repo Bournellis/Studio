@@ -18,6 +18,7 @@ Ferramentas de desenvolvimento e validacao.
 - `smoke_runtime_config.gd` - smoke focado do parser/fallback conservador de `runtime_config_v1`.
 - `smoke_foundation_surfaces.gd` - smoke focado de Base, Shop, Social e Competition usando fluxos existentes do cliente contra Supabase local/remoto configurado.
 - `smoke_foundation_hardening.gd` - smoke sem rede dos contratos Track 08: rotas/back, UI mobile, session/save boundary e battle mode fullscreen.
+- `smoke_responsive_layout.gd` - smoke sem rede do contrato responsivo Foundation: Entry Labs, Refugio e Batalha precisam caber em viewports Android portrait e Web/desktop.
 - `content_generator.gd` - gera `data/generated/draxos_mobile_catalog.tres` a partir de `data/definitions/*.json`.
 - `create_boot_scene.gd` - gera a cena boot minima via API do Godot.
 - `economy_simulator/` - fonte JSON e gerador Deno/TypeScript para a planilha de economia de seasons.
@@ -30,12 +31,14 @@ Validacao local:
 .\tools\validate_foundation.ps1 -ProjectDir . -Profile Quick
 .\tools\validate_foundation.ps1 -ProjectDir . -Profile Client -GodotExe "D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe"
 .\tools\validate_foundation.ps1 -ProjectDir . -Profile Release
-.\tools\validate_foundation.ps1 -ProjectDir . -Profile Full -RequireClean:$false
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile Full
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_agent_ops_foundation.ps1 -ProjectDir .
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_runtime_config.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_foundation_surfaces.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_foundation_hardening.gd
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_foundation_loop.gd
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_responsive_layout.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_dev_labs.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_dev_lab_ui.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_exports.gd

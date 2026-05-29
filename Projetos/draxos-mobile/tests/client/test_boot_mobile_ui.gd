@@ -186,6 +186,33 @@ func test_surface_actions_opened_from_refuge_go_back_to_refuge() -> void:
 		assert_eq(boot._current_screen, "refuge")
 		assert_true(boot._screen_history.is_empty())
 
+func test_authenticated_back_from_internal_surfaces_returns_to_refuge_root() -> void:
+	_prepare_account_state()
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	boot._show_screen("refuge")
+	assert_eq(boot._current_screen, "refuge")
+	assert_eq(boot._screen_history, ["entry"])
+
+	boot._go_back()
+	assert_eq(boot._current_screen, "refuge")
+	assert_true(boot._screen_history.is_empty())
+
+	boot._show_screen("account", false)
+	assert_eq(boot._current_screen, "account")
+	assert_true(boot._screen_history.is_empty())
+	boot._go_back()
+	assert_eq(boot._current_screen, "refuge")
+	assert_true(boot._screen_history.is_empty())
+
+	boot._show_surface_screen("social")
+	assert_eq(boot._current_screen, "social")
+	assert_eq(boot._screen_history, ["refuge"])
+	boot._go_back()
+	assert_eq(boot._current_screen, "refuge")
+	assert_true(boot._screen_history.is_empty())
+
 func test_boot_shell_has_no_global_tab_navigation() -> void:
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)
@@ -224,6 +251,7 @@ func test_boot_refugio_home_renders_altar_hotspots_and_account_route() -> void:
 	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeAltarViewSpace"))
 	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeSceneBoard"))
 	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeAltarStage"))
+	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeLoopPanel"))
 	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeMenuPopup"))
 	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeHotspotPanel"))
 	assert_null(_find_node_by_name(boot._first_screen_root, "RefugePathGrid"))
@@ -288,7 +316,10 @@ func test_entry_create_account_opens_popup_without_inline_signup_fields() -> voi
 	assert_true(boot._signup_password_input.secret)
 	assert_eq(boot._signup_email_input.text, _social_input_text_for_test(boot._auth_email_input))
 
-func test_entry_puts_login_before_save_choice_and_keeps_dev_tools_collapsed() -> void:
+func test_entry_puts_login_before_save_choice_and_exposes_internal_dev_tools() -> void:
+	ProjectSettings.set_setting("draxos_mobile/internal_alpha/dev_tools_enabled", true)
+	ProjectSettings.set_setting("draxos_mobile/progression_lab/enabled", true)
+	ProjectSettings.set_setting("draxos_mobile/battle_lab/enabled", true)
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)
 
@@ -303,9 +334,15 @@ func test_entry_puts_login_before_save_choice_and_keeps_dev_tools_collapsed() ->
 	assert_not_null(_find_button_by_text(boot._first_screen_root, "Entrar"))
 	assert_not_null(_find_button_by_text(boot._first_screen_root, "Criar conta"))
 	assert_not_null(_find_button_by_text(boot._first_screen_root, "Ferramentas internas"))
+	assert_true(_label_tree_contains(boot._first_screen_root, "Labs Dev"))
+	assert_not_null(_find_button_by_text(boot._first_screen_root, "Battle Lab"))
+	assert_not_null(_find_button_by_text(boot._first_screen_root, "Progression Lab"))
+	assert_true(boot._action_buttons.has("open_battle_lab"))
+	assert_true(boot._action_buttons.has("open_progression_lab"))
 	assert_not_null(_find_node_by_name(boot._first_screen_root, "EntryResetPanel"))
 
-func test_refuge_hides_labs_after_login_surface() -> void:
+func test_refuge_exposes_labs_after_login_surface() -> void:
+	ProjectSettings.set_setting("draxos_mobile/internal_alpha/dev_tools_enabled", true)
 	ProjectSettings.set_setting("draxos_mobile/progression_lab/enabled", true)
 	ProjectSettings.set_setting("draxos_mobile/battle_lab/enabled", true)
 	var boot = BootScreenScript.new()
@@ -314,11 +351,20 @@ func test_refuge_hides_labs_after_login_surface() -> void:
 	boot._show_screen("refuge")
 	await get_tree().process_frame
 
-	assert_false(_label_tree_contains(boot._first_screen_root, "Labs Dev"))
-	assert_null(_find_button_by_text(boot._first_screen_root, "Battle Lab"))
-	assert_null(_find_button_by_text(boot._first_screen_root, "Progression Lab"))
-	assert_false(boot._action_buttons.has("open_battle_lab"))
-	assert_false(boot._action_buttons.has("open_progression_lab"))
+	var dev_hotspot := _find_node_by_name(boot._first_screen_root, "RefugeIcon_LabsDev") as Button
+	assert_not_null(dev_hotspot)
+	assert_true(dev_hotspot.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
+
+	dev_hotspot.pressed.emit()
+	await get_tree().process_frame
+	var menu_popup := boot._refuge_menu_popup as PopupPanel
+	assert_not_null(menu_popup)
+	assert_true(menu_popup.visible)
+	assert_true(_label_tree_contains(menu_popup, "Labs Dev"))
+	assert_not_null(_find_button_by_text(menu_popup, "Battle Lab"))
+	assert_not_null(_find_button_by_text(menu_popup, "Progression Lab"))
+	assert_true(boot._action_buttons.has("open_battle_lab"))
+	assert_true(boot._action_buttons.has("open_progression_lab"))
 
 func test_refuge_context_cta_priority_uses_loaded_state() -> void:
 	var boot = BootScreenScript.new()
@@ -327,13 +373,22 @@ func test_refuge_context_cta_priority_uses_loaded_state() -> void:
 	SessionStore.last_battle_log = _battle_log_fixture()
 	var cta := HubSurfacePresenterScript._refuge_context_cta_data(boot)
 	assert_eq(str(cta.get("action_id", "")), "show_latest_battle")
-	assert_eq(str(cta.get("text", "")), "Ver resultado")
+	assert_eq(str(cta.get("text", "")), "Ver recompensa")
+
+	SessionStore.base_state = _base_state_fixture()
+	SessionStore.mark_battle_result_seen()
+	cta = HubSurfacePresenterScript._refuge_context_cta_data(boot)
+	assert_eq(str(cta.get("action_id", "")), "collect_base")
+	assert_eq(str(cta.get("text", "")), "Coletar")
+	assert_eq(str(cta.get("confirm", "")), "")
 
 	SessionStore.last_battle_log = {}
+	SessionStore.last_battle_result_seen = false
 	SessionStore.base_state = _base_state_fixture()
 	cta = HubSurfacePresenterScript._refuge_context_cta_data(boot)
 	assert_eq(str(cta.get("action_id", "")), "collect_base")
 	assert_eq(str(cta.get("text", "")), "Coletar")
+	assert_eq(str(cta.get("confirm", "")), "")
 
 	var upgrade_only := _base_state_fixture()
 	var structures := Array(upgrade_only.get("structures", []))
@@ -561,6 +616,33 @@ func test_boot_surface_presenters_render_shells_without_network() -> void:
 	assert_not_null(boot._shop_state_container)
 	await get_tree().process_frame
 
+func test_battle_request_pending_state_uses_static_splash_only() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	SessionStore.last_battle_log = _battle_log_fixture()
+	SessionStore.last_battle_rewards = _battle_rewards_fixture()
+
+	boot._battle_request_splash_active = true
+	boot._show_screen("battle")
+	await get_tree().process_frame
+
+	assert_eq(boot._current_screen, "battle_entry")
+	assert_not_null(_find_node_by_name(boot._content_body, "BattleRequestSplash"))
+	assert_not_null(_find_node_by_name(boot._content_body, "BattleRequestSplashArt"))
+	assert_null(boot._battle_visual)
+	assert_null(boot._timeline_label)
+	assert_false(boot._action_buttons.has("request_battle"))
+	assert_false(boot._action_buttons.has("show_latest_battle"))
+	assert_false(_label_tree_contains(boot._content_body, "Solicitar batalha"))
+	assert_null(_find_node_by_name(boot._content_body, "BattleDuelVisual"))
+
+	boot._battle_request_splash_active = false
+	boot._show_screen("battle", false)
+	await get_tree().process_frame
+
+	assert_not_null(boot._battle_visual)
+	assert_true(boot._action_buttons.has("request_battle"))
+
 func test_boot_surface_presenters_keep_render_only_contract() -> void:
 	assert_false(FileAccess.file_exists("res://modes/boot/surfaces/battle_surface_presenter.gd"))
 	var boot_source := FileAccess.get_file_as_string("res://modes/boot/boot.gd")
@@ -600,7 +682,7 @@ func test_auth_success_paths_return_directly_to_refuge() -> void:
 	var source := FileAccess.get_file_as_string("res://modes/boot/flows/account_session_flow.gd")
 	assert_true(source.contains("func email_sign_in"))
 	assert_true(source.contains("func email_sign_up_with_credentials"))
-	assert_true(source.count("host.call(\"_show_screen\", AppShellRouteContractScript.ROUTE_REFUGE, false)") >= 3)
+	assert_true(source.count("host.call(\"_show_refuge_root") >= 5)
 
 func test_boot_flows_do_not_create_visual_controls() -> void:
 	for script_path: String in _flow_script_paths():
@@ -951,7 +1033,8 @@ func test_boot_battle_summary_renders_reward_result_and_actions() -> void:
 	assert_false(_label_tree_contains(boot._battle_fullscreen_overlay, "Eventos"))
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Recompensa"))
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Recursos"))
-	assert_not_null(_find_button_by_text(boot._battle_fullscreen_overlay, "Voltar ao Refugio"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "verificar a base"))
+	assert_not_null(_find_button_by_text(boot._battle_fullscreen_overlay, "Voltar e verificar base"))
 	assert_true(boot._action_buttons.has("return_refuge"))
 	assert_true(boot._action_buttons.has("show_current_battle_logs"))
 	assert_false(boot._action_buttons.has("replay_latest_battle"))
@@ -986,6 +1069,7 @@ func test_boot_battle_summary_return_to_refuge_clears_lifecycle_state() -> void:
 	add_child_autofree(boot)
 	SessionStore.last_battle_log = _battle_log_fixture()
 	SessionStore.last_battle_rewards = _battle_rewards_fixture()
+	SessionStore.last_battle_result_seen = false
 
 	boot._show_screen("battle")
 	boot._show_screen("battle_running")
@@ -1002,6 +1086,7 @@ func test_boot_battle_summary_return_to_refuge_clears_lifecycle_state() -> void:
 	boot._return_to_refuge()
 
 	assert_eq(boot._current_screen, "refuge")
+	assert_true(SessionStore.last_battle_result_seen)
 	assert_true(boot._screen_history.is_empty())
 	assert_false(boot._back_button.visible)
 	assert_false(boot._replay_running)

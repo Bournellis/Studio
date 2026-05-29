@@ -45,6 +45,7 @@ var progression_lab: Dictionary = {}
 var last_battle_id: Variant = null
 var last_battle_log: Dictionary = {}
 var last_battle_rewards: Dictionary = {}
+var last_battle_result_seen := false
 var last_error: Dictionary = {}
 var runtime_config: Dictionary = {}
 var surface_save_types: Dictionary = {}
@@ -125,6 +126,7 @@ func clear_session() -> void:
 	last_battle_id = null
 	last_battle_log = {}
 	last_battle_rewards = {}
+	last_battle_result_seen = false
 	last_error = {}
 	surface_save_types = {}
 	offline = false
@@ -190,9 +192,13 @@ func apply_battle_result(payload: Dictionary) -> bool:
 		session_changed.emit()
 		return false
 
+	var incoming_battle_id := str(battle_log.get("battle_id", ""))
+	var same_battle := incoming_battle_id != "" and incoming_battle_id == str(last_battle_id)
+	var previous_seen := last_battle_result_seen
 	last_battle_log = battle_log.duplicate(true)
 	last_battle_rewards = _as_dictionary(body.get("rewards", {})).duplicate(true)
-	last_battle_id = str(last_battle_log.get("battle_id", ""))
+	last_battle_id = incoming_battle_id
+	last_battle_result_seen = same_battle and previous_seen
 	_remember_surface_snapshot(SURFACE_BATTLE)
 	if body.get("competition", null) is Dictionary:
 		competition_state["last_battle"] = _as_dictionary(body.get("competition", {})).duplicate(true)
@@ -490,6 +496,15 @@ func has_account_state() -> bool:
 func has_battle_log() -> bool:
 	return not last_battle_log.is_empty() and _surface_matches_active_save(SURFACE_BATTLE)
 
+func has_unseen_battle_result() -> bool:
+	return has_battle_log() and not last_battle_result_seen
+
+func mark_battle_result_seen() -> void:
+	if not has_battle_log():
+		return
+	last_battle_result_seen = true
+	session_changed.emit()
+
 func has_base_state() -> bool:
 	return not base_state.is_empty() and _surface_matches_active_save(SURFACE_BASE)
 
@@ -650,6 +665,7 @@ func snapshot() -> Dictionary:
 		"last_battle_id": last_battle_id,
 		"last_battle_log": last_battle_log.duplicate(true),
 		"last_battle_rewards": last_battle_rewards.duplicate(true),
+		"last_battle_result_seen": last_battle_result_seen,
 		"offline": offline,
 		"last_error": last_error.duplicate(true),
 	}
@@ -704,6 +720,7 @@ func _apply_cache(cache: Dictionary) -> void:
 	last_battle_id = cache.get("last_battle_id", null)
 	last_battle_log = _as_dictionary(cache.get("last_battle_log", {})).duplicate(true)
 	last_battle_rewards = _as_dictionary(cache.get("last_battle_rewards", {})).duplicate(true)
+	last_battle_result_seen = bool(cache.get("last_battle_result_seen", false))
 	offline = bool(cache.get("offline", false))
 	last_error = _as_dictionary(cache.get("last_error", {})).duplicate(true)
 	if not progression_lab.is_empty() and not bool(progression_lab.get("local_only", false)):
@@ -735,6 +752,7 @@ func _clear_account_snapshots() -> void:
 	last_battle_id = null
 	last_battle_log = {}
 	last_battle_rewards = {}
+	last_battle_result_seen = false
 	surface_save_types = {}
 
 func _clear_gameplay_snapshots() -> void:
@@ -747,6 +765,7 @@ func _clear_gameplay_snapshots() -> void:
 	last_battle_id = null
 	last_battle_log = {}
 	last_battle_rewards = {}
+	last_battle_result_seen = false
 	surface_save_types.erase(SURFACE_BASE)
 	surface_save_types.erase(SURFACE_SOCIAL)
 	surface_save_types.erase(SURFACE_COMPETITION)

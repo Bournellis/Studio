@@ -100,6 +100,7 @@ var _is_busy := false
 var _replay_running := false
 var _skip_replay := false
 var _battle_summary_skipped := false
+var _battle_request_splash_active := false
 var _compact_layout := false
 var _battle_lab_overlay: Control
 var _progression_lab_overlay: Control
@@ -162,6 +163,9 @@ func _clear_existing_scene() -> void:
 		child.free()
 
 func _build_ui() -> void:
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	if size.x <= 0.0 or size.y <= 0.0:
+		size = get_viewport_rect().size
 	_compact_layout = _should_use_compact_layout()
 	ShellSurfacePresenterScript.render(self)
 	_render_create_account_dialog()
@@ -258,6 +262,8 @@ func _ensure_action_grid() -> GridContainer:
 func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	screen_id = AppShellRouteContractScript.push_route(_screen_history, _current_screen, screen_id, push_history)
 	_current_screen = screen_id
+	if screen_id != ROUTE_BATTLE_ENTRY:
+		_battle_request_splash_active = false
 	_apply_orientation_for_route(screen_id)
 	_action_buttons.clear()
 	_current_action_grid = null
@@ -325,6 +331,11 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 		"offline": SessionStore.offline,
 	})
 
+func _show_refuge_root(message: String = "") -> void:
+	_show_screen(AppShellRouteContractScript.clear_for_refuge_return(_screen_history), false)
+	if message != "":
+		_show_notice(message)
+
 func _show_surface_screen(screen_id: String) -> void:
 	var target_screen := _normalize_route(screen_id)
 	var current_screen := _normalize_route(_current_screen)
@@ -336,7 +347,17 @@ func _go_back() -> void:
 	if _close_refuge_menu_popup_if_open():
 		return
 	var previous := AppShellRouteContractScript.pop_back_or_root(_screen_history)
+	if previous == SCREEN_HUB and _session_uses_refuge_root():
+		previous = SCREEN_REFUGE
+		_screen_history.clear()
 	_show_screen(previous, false)
+
+func _session_uses_refuge_root() -> bool:
+	if SessionStore.has_valid_access_token():
+		return true
+	if SessionStore.has_account_state():
+		return true
+	return SessionStore.is_progression_lab_local_only()
 
 func _normalize_route(route_id: String) -> String:
 	return AppShellRouteContractScript.normalize(route_id)
@@ -365,7 +386,7 @@ func _apply_orientation_for_route(_route_id: String) -> void:
 	DisplayServer.screen_set_orientation(APP_ORIENTATION_PORTRAIT)
 
 func _battle_lab_available() -> bool:
-	if not OS.has_feature("editor"):
+	if not _internal_dev_tools_enabled():
 		return false
 	if not bool(ProjectSettings.get_setting("draxos_mobile/battle_lab/enabled", false)):
 		return false
@@ -402,11 +423,14 @@ func _close_battle_lab_overlay() -> void:
 	})
 
 func _progression_lab_available() -> bool:
-	if not OS.has_feature("editor"):
+	if not _internal_dev_tools_enabled():
 		return false
 	if not bool(ProjectSettings.get_setting("draxos_mobile/progression_lab/enabled", false)):
 		return false
 	return ResourceLoader.exists(PROGRESSION_LAB_SCREEN_PATH)
+
+func _internal_dev_tools_enabled() -> bool:
+	return OS.has_feature("editor") or bool(ProjectSettings.get_setting("draxos_mobile/internal_alpha/dev_tools_enabled", false))
 
 func _open_progression_lab_overlay() -> void:
 	if not _progression_lab_available():
@@ -465,10 +489,8 @@ func _clear_battle_fullscreen_overlay() -> void:
 func _create_battle_fullscreen_overlay() -> Control:
 	var overlay := Control.new()
 	overlay.name = "BattleFullscreenOverlay"
-	overlay.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	overlay.position = Vector2.ZERO
-	var root_size := Vector2(get_tree().root.size)
-	overlay.size = root_size if root_size.x > 0.0 and root_size.y > 0.0 else get_viewport_rect().size
 	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
 	add_child(overlay)
 	_battle_fullscreen_overlay = overlay
@@ -1055,7 +1077,10 @@ func _sync_buttons() -> void:
 			if not reward.is_empty():
 				button.disabled = button.disabled or bool(reward.get("claimed", false))
 		if action_id == AppShellActionContractScript.ACTION_SHOW_LATEST_BATTLE:
-			button.text = "Pular replay" if _replay_running else "Ver resultado"
+			if button.name == "RefugeContextCta" and SessionStore.has_unseen_battle_result():
+				button.text = "Ver recompensa"
+			else:
+				button.text = "Pular replay" if _replay_running else "Ver resultado"
 	for screen_id: String in _nav_buttons.keys():
 		var nav_button: Button = _nav_buttons[screen_id]
 		nav_button.disabled = _is_busy or _replay_running

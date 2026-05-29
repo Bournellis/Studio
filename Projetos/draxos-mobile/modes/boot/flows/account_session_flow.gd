@@ -70,19 +70,18 @@ func enter_guest(host: Node) -> void:
 	var recovered := await recover_session_state(host)
 	if not recovered:
 		return
-	host.call("_show_notice", "Sessao guest pronta. Todos os paineis estao disponiveis.")
-	host.call("_show_screen", AppShellRouteContractScript.ROUTE_REFUGE, false)
+	host.call("_show_refuge_root", "Sessao guest pronta. Todos os paineis estao disponiveis.")
 
 func enter_refuge(host: Node) -> void:
 	if SessionStore.is_progression_lab_local_only() and SessionStore.has_account_state():
-		host.call("_show_screen", AppShellRouteContractScript.ROUTE_REFUGE)
+		host.call("_show_refuge_root")
 		return
 	if SessionStore.has_valid_access_token():
 		if not SessionStore.has_account_state():
 			var active_save_ready := await recover_or_create_active_save(host)
 			if not active_save_ready:
 				return
-		host.call("_show_screen", AppShellRouteContractScript.ROUTE_REFUGE)
+		host.call("_show_refuge_root")
 		return
 	_set_error_text(host, "Escolha um save e entre/crie uma conta antes de abrir o Refugio.")
 	_set_detail_text(host, "Para teste local, use Guest dev ou carregue um save pelo Progression Lab.")
@@ -129,8 +128,7 @@ func email_sign_up_with_credentials(host: Node, credentials: Dictionary) -> void
 	)
 	if not save_ready:
 		return
-	host.call("_show_notice", "Conta criada. O save %s esta pronto." % SessionStore.active_save_label())
-	host.call("_show_screen", AppShellRouteContractScript.ROUTE_REFUGE, false)
+	host.call("_show_refuge_root", "Conta criada. O save %s esta pronto." % SessionStore.active_save_label())
 
 func email_sign_in(host: Node) -> void:
 	var credentials := auth_form_values(host, false)
@@ -166,8 +164,7 @@ func email_sign_in(host: Node) -> void:
 			)
 	if not recovered:
 		return
-	host.call("_show_notice", "Login concluido. Save %s sincronizado." % SessionStore.active_save_label())
-	host.call("_show_screen", AppShellRouteContractScript.ROUTE_REFUGE, false)
+	host.call("_show_refuge_root", "Login concluido. Save %s sincronizado." % SessionStore.active_save_label())
 
 func refresh_session(host: Node) -> void:
 	if not bool(host.call("_require_session", "Entre com email ou use guest dev antes de sincronizar.")):

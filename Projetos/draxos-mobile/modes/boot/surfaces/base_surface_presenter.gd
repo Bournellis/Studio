@@ -10,7 +10,7 @@ static func render(host: Node) -> void:
 	_add_body_text(host, "Colete producao, veja a fila e escolha o proximo upgrade.")
 	_add_action_button(host, "Sincronizar Refugio", AppShellActionContractScript.ACTION_SHOW_BASE)
 	_add_action_button(host, "Abrir Crafting", AppShellActionContractScript.ACTION_SHOW_CRAFTING)
-	_add_action_button(host, "Coletar producao", AppShellActionContractScript.ACTION_COLLECT_BASE, "Coletar a producao offline acumulada do Refugio?")
+	_add_action_button(host, "Coletar producao", AppShellActionContractScript.ACTION_COLLECT_BASE)
 	_add_action_button(host, "Comprar Energia", AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA, "Gastar 80 Diamantes para comprar 80 Energia no save ativo?")
 	var timeline := _add_output_label(host, "")
 	timeline.visible = false
@@ -175,7 +175,7 @@ static func _refuge_empty_panel(host: Node) -> Control:
 	actions.add_theme_constant_override("h_separation", 8)
 	actions.add_theme_constant_override("v_separation", 8)
 	box.add_child(actions)
-	actions.add_child(_embedded_action_button(host, "Coletar", AppShellActionContractScript.ACTION_COLLECT_BASE, "Coletar a producao offline acumulada do Refugio?"))
+	actions.add_child(_embedded_action_button(host, "Coletar", AppShellActionContractScript.ACTION_COLLECT_BASE))
 	actions.add_child(_embedded_action_button(host, "Energia", AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA, "Gastar 80 Diamantes para comprar 80 Energia no save ativo?"))
 	return panel
 
@@ -233,7 +233,7 @@ static func _refuge_command_panel(host: Node, base: Dictionary, collected: Dicti
 	actions.add_theme_constant_override("h_separation", 8)
 	actions.add_theme_constant_override("v_separation", 8)
 	box.add_child(actions)
-	actions.add_child(_embedded_action_button(host, "Coletar", AppShellActionContractScript.ACTION_COLLECT_BASE, "Coletar a producao offline acumulada do Refugio?"))
+	actions.add_child(_embedded_action_button(host, "Coletar", AppShellActionContractScript.ACTION_COLLECT_BASE))
 	actions.add_child(_embedded_action_button(host, "Energia", AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA, "Gastar 80 Diamantes para comprar 80 Energia no save ativo?"))
 	return panel
 

@@ -1,8 +1,8 @@
 # DraxosMobile - Design Pending
 
-- Ultima atualizacao: `2026-05-26`
+- Ultima atualizacao: `2026-05-28`
 - Status: registro vivo de pendencias de design
-- Escopo: DraxosMobile, Track 00 e evolucoes futuras
+- Escopo: DraxosMobile, Foundation Audit e evolucoes futuras
 
 Este documento e o unico lugar para registrar pendencias de design do projeto ativo. Ele nao resolve design; ele nomeia o que ainda precisa ser decidido, classifica o bloqueio e aponta para o documento que deve receber a resposta quando a decisao existir.
 
@@ -14,7 +14,7 @@ Campos obrigatorios:
 |---|---|
 | ID | Identificador estavel da pendencia |
 | Sistema | Area afetada |
-| Bloqueia | `MVP_TECNICO`, `PRIMEIRO_SLICE`, `PLAYTEST_ALPHA`, `CALIBRAVEL_ALPHA`, `OPERACIONAL` ou `POS_SLICE` |
+| Bloqueia | `FOUNDATION_AUDIT`, `MVP_TECNICO`, `PRIMEIRO_SLICE`, `PLAYTEST_ALPHA`, `CALIBRAVEL_ALPHA`, `OPERACIONAL` ou `POS_SLICE` |
 | Pergunta | Decisao de design ainda em aberto |
 | Impacto | Risco se a decisao nao existir |
 | Documento destino | Documento que deve ser atualizado quando resolver |
@@ -23,12 +23,27 @@ Campos obrigatorios:
 
 Categorias:
 
+- `FOUNDATION_AUDIT`: bloqueia a leitura atual do projeto, a auditoria do loop interno ou a escolha segura do proximo pacote.
 - `MVP_TECNICO`: bloqueia a prova tecnica minima da Track 00.
 - `PRIMEIRO_SLICE`: bloqueia completar o primeiro slice funcional.
 - `PLAYTEST_ALPHA`: pode ser implementado com placeholder, mas precisa existir antes de playtest real.
 - `CALIBRAVEL_ALPHA`: pode nascer com valor inicial e ser ajustado com dados.
 - `OPERACIONAL`: nao altera game design, mas bloqueia validacao, ambiente, seguranca ou execucao tecnica confiavel.
 - `POS_SLICE`: fora da Track 00 completa.
+
+## Etapa Atual - Foundation Audit
+
+A etapa atual e `FOUNDATION_AUDIT_ACTIVE`. O projeto deve ser lido como uma base implementada para refinamento, nao como produto final e nao como trilha de expansao de conteudo.
+
+Foco imediato:
+
+`Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
+
+Foundation Loop UX Pass 01 esta publicado no Internal Alpha como candidato de baseline do loop. A proxima decisao de design e manual: aceitar esse fluxo, pedir ajuste pontual ou registrar nova friccao antes de mover foco para social basico.
+
+Revisao manual do build publicado identificou regressao de responsividade: Labs Dev sumiram do menu inicial interno e Refugio/Batalha puderam sair dos limites em Web/Android. A partir de agora, mudancas visuais em Entry, Refugio ou Batalha precisam respeitar `docs/foundation-responsive-layout-contract.md` e passar em `tools/smoke_responsive_layout.gd` antes de nova publicacao.
+
+Armas, spells, nomes, tema, imagens, economia, Battle Pass, apresentacao de batalha e visual final existem como substancia/mock. Eles nao sao prioridade de decisao ate que o loop interno, social, visual geral e apresentacao da batalha sejam discutidos nessa ordem.
 
 ## Estado Do MVP Tecnico
 
@@ -42,6 +57,12 @@ O MVP tecnico ja implementou conta guest server-authoritative, cliente de sessao
 
 | ID | Sistema | Bloqueia | Pergunta | Impacto | Documento destino | Status | Resolvido em |
 |---|---|---|---|---|---|---|---|
+| DMOB-D056 | Foundation Audit | FOUNDATION_AUDIT | Resolvido: docs vivos foram alinhados para tratar Track 15/16 como contexto historico/tecnico e economia, armas, spells, Battle Pass e visual final como mock/substancia. | Agentes podem continuar planejando expansao de conteudo em vez de auditar a fundacao. | `foundation-app-v0-audit.md` | RESOLVIDO | 2026-05-28 |
+| DMOB-D057 | Loop interno | FOUNDATION_AUDIT | Resolvido: `docs/foundation-loop-audit.md` mapeia as friccoes do loop pos-login e Foundation Loop UX Pass 01 implementa o primeiro candidato de solucao. | O app pode ter substancia, mas continuar ruim de usar no fluxo principal. | `foundation-loop-audit.md` | RESOLVIDO | 2026-05-28 |
+| DMOB-D058 | UX de cliques | FOUNDATION_AUDIT | O Foundation Loop UX Pass 01 deve ser aceito como caminho ideal de cliques para coletar, evoluir, batalhar, receber recompensa e verificar base? | Sem essa revisao manual, implementacoes futuras podem reorganizar telas sem reduzir atrito real. | `foundation-loop-audit.md` | ABERTO | - |
+| DMOB-D059 | Ordem de foco | FOUNDATION_AUDIT | Quais criterios apos a revisao manual liberam a passagem de loop interno para social, depois visual geral, depois apresentacao da batalha? | Social, visual e batalha podem entrar cedo demais e esconder problemas do loop fundador. | `foundation-app-v0-audit.md` | ABERTO | - |
+| DMOB-D060 | Mock vs fundacao | FOUNDATION_AUDIT | Resolvido: docs vivos registram que conteudo atual existe para dar substancia ao prototipo sem virar direcao final de produto. | Conteudo temporario pode virar divida conceitual ou ser apagado antes de cumprir papel de teste. | `foundation-app-v0-audit.md` | RESOLVIDO | 2026-05-28 |
+| DMOB-D061 | Responsividade | FOUNDATION_AUDIT | Resolvido: Entry, Refugio e Batalha agora possuem contrato responsivo e smoke obrigatorio para proteger Android portrait e Web/desktop. | Sem contrato e teste, reformulacoes visuais podem esconder Labs Dev, cortar controles ou sair dos limites de tela sem falha automatica. | `foundation-responsive-layout-contract.md` | RESOLVIDO | 2026-05-28 |
 | DMOB-D001 | Escopo | PRIMEIRO_SLICE | O primeiro slice completo usa cap de level 10, 40 ou outro recorte dentro da Season 1? | Resolvido: Season 1 usa cap 40 por padrao, todos os levels sao permanentes e o simulador permite calibrar cap inicial 40/50/60. | `../implementation/tracks/track-00-first-slice-foundation/scope.md` | RESOLVIDO | 2026-05-20 |
 | DMOB-D002 | Progressao | PRIMEIRO_SLICE | Quais sao os gatilhos exatos de unlock de slots de spell, Doutrina e Familiar? | Resolvido: 0 slots no inicio; spell slots nos levels 3, 7 e 25; Doutrina no level 10; Familiar no level 15. | `game-design-document.md` | RESOLVIDO | 2026-05-20 |
 | DMOB-D003 | Base Manager | PRIMEIRO_SLICE | Quais stats a Estrutura de Stats altera, quanto por level e com qual custo/recurso? | Resolvido: pacote unico permanente por level com Vida +0.8%, Ataque/dano base +0.5%, Defesa +0.4%, Mana/regen +0.3%, custando Energia + tempo como as demais estruturas. | `game-design-document.md` | RESOLVIDO | 2026-05-20 |

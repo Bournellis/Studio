@@ -2,8 +2,20 @@
 
 DraxosMobile is the Godot/Supabase project for Android, PC executable and PC browser. It is an async PVP autobattler with Refugio/Base management, social systems and server-authoritative progression.
 
-**Status:** `P2_IMPLEMENTACAO - Track 14 TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`  
-**Baseline:** Track 00-13 integrated; Track 13 delivered foundation validation and release safety on `2026-05-28`.
+**Status:** `P2_IMPLEMENTACAO - FOUNDATION_AUDIT_ACTIVE`
+**Baseline:** Track 00-15 integrated; Track 13 release safety and Track 14 agent ops baseline preserved; Track 16 is the latest technical package and has not been promoted as the current product focus.
+
+## Current Focus
+
+The project is a strong implemented base for refinement, not a final product and not a content-expansion track.
+
+The Foundation Loop Audit is documented in `docs/foundation-loop-audit.md`. Foundation Loop UX Pass 01 is implemented and published to the Internal Alpha artifact/site channel as the current UX baseline candidate for the post-login internal loop:
+
+`Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again`
+
+The immediate focus is manual review of the published loop pass on Android, Windows and Web before choosing the next package.
+
+Current content, names, spells, weapons, economy values, battle flavor, visual style and premium systems exist to give substance to the prototype. Treat them as mock/substance for evaluation, not as final game direction or current tuning priorities.
 
 ## For Agents
 
@@ -13,23 +25,27 @@ Start with:
 2. `docs/agent-operating-manual.md`
 3. `implementation/current-status.md`
 4. `docs/documentation-index.md`
+5. `docs/foundation-app-v0-audit.md`
+6. `docs/foundation-loop-audit.md`
 
-Do not start from old Track 04/08/10 notes. They are history unless a live doc points to them for context.
+Do not start from old Track 04/08/10/15/16 notes. They are history or technical context unless a live doc points to them for a specific detail.
 
 ## Current Gate
 
-Before any new feature, numeric tuning, account/save migration, assets-final pass or remote publication:
+Before any new feature, numeric tuning, account/save migration, assets-final pass, battle presentation pass, social expansion or remote publication:
 
-1. Run the real Android / Windows / Web walkthrough in `docs/track-13-manual-walkthrough-gate.md`.
-2. Record results in the active track or handoff.
+1. Read `docs/foundation-loop-audit.md`.
+2. Review the published Foundation Loop UX Pass 01 and accept or revise the loop before expanding social, visuals, battle presentation or content systems.
 3. Keep release publishing in `Mode Plan` or `Mode Package` unless the user explicitly approves remote mutation.
+4. Run the real Android / Windows / Web walkthrough in `docs/track-13-manual-walkthrough-gate.md` before any remote publication.
 
 ## Safe Validation
 
 ```powershell
 cd <WORKTREE>\Projetos\draxos-mobile
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Full -RequireClean:$false
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Full
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_foundation_loop.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/client -gexit
 npx -y deno task --cwd server/functions check
 npx -y deno task --cwd supabase/functions check
@@ -44,13 +60,15 @@ git status --short
 | Agent operation | `docs/agent-operating-manual.md` |
 | Current state | `implementation/current-status.md` |
 | Documentation map | `docs/documentation-index.md` |
+| Foundation Audit | `docs/foundation-app-v0-audit.md` |
+| Foundation Loop Audit | `docs/foundation-loop-audit.md` |
 | Product canon local | `docs/product-vision.md` |
 | Implementation GDD | `docs/game-design-document.md` |
 | Pending decisions | `docs/design-pending.md` |
 | Contracts | `docs/contracts/` |
 | Release ops | `docs/release-ops-checklist.md` |
 | Manual gate | `docs/track-13-manual-walkthrough-gate.md` |
-| Track 14 work | `implementation/tracks/track-14-agent-ops-foundation/` |
+| Last technical package | `implementation/tracks/track-16-behavior-crafting/` |
 | Historical concept archive | `../_conceitos/mobile-universe/` |
 
 ## Do Not Touch Casually
@@ -58,7 +76,7 @@ git status --short
 - `../_conceitos/mobile-universe/`: archive only.
 - Remote Supabase/Cloudflare publication: opt-in only.
 - Account/save migration from `players.save_type` to `account_profiles/game_saves`: separate future package.
-- Tuning numbers: blocked until human walkthrough and Progression Lab review.
+- Tuning numbers, weapons, spells, Battle Pass, economy and final visual identity: blocked until an explicit package decision after the loop UX pass.
 - Secrets: never in client, exports, portal, manifest or docs.
 
 ## Release Snapshot
@@ -68,4 +86,4 @@ git status --short
 - Version code: `1`
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal/Web: Cloudflare Access protected.
-- Latest verified preview: `https://b16705ab.draxos-mobile-internal-alpha.pages.dev`
+- Latest verified preview: `https://ab1f2977.draxos-mobile-internal-alpha.pages.dev`

@@ -210,7 +210,7 @@ func _check_battle_mode_contract() -> void:
 	await process_frame
 	_expect(_label_tree_contains(boot, "Resultado da batalha"), "Battle summary renders title")
 	_expect(_find_button_by_text(boot, "Ver logs da batalha") != null, "Battle summary exposes current logs")
-	_expect(_find_button_by_text(boot, "Voltar ao Refugio") != null, "Battle summary exposes return to Refugio")
+	_expect(_find_button_by_text(boot, "Voltar e verificar base") != null, "Battle summary exposes return to base loop")
 
 	boot.call("_show_screen", "battle_logs")
 	await process_frame

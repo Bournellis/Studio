@@ -147,3 +147,37 @@ Validacao T03-P18:
 - Manifest remoto: `200 application/json` com known issue atualizado para validacao apos cada deploy.
 - `release_manifest_smoke.ts` remoto: passou.
 - `internal_alpha_remote_smoke.ts` com `DRAXOS_REMOTE_RELEASE_SMOKE=1`: passou.
+
+## Foundation Responsive Hotfix - 2026-05-28
+
+Depois da revisao manual do Foundation Loop UX Pass 01, Fabio reportou que Labs Dev sumiram do menu inicial interno, Refugio/Batalha estavam escapando do tamanho da tela em Web/Android e o APK no celular abria endpoint protegido com erro `Bearer token is required`.
+
+Publicacao executada a partir da branch `codex/draxos-mobile/foundation-responsive-guardrails`, commit `01e6237`:
+
+- `smoke_exports.gd`: passou.
+- `export_internal_alpha.ps1`: passou, Android mode `debug_fallback`.
+- `publish_internal_alpha.ps1 -Mode Plan -PublicDownloads`: passou.
+- `publish_internal_alpha.ps1 -Mode Package -PublicDownloads`: passou.
+- `build_cloudflare_pages_package.ps1`: passou.
+- `publish_internal_alpha.ps1 -Mode Upload -PublicDownloads -ConfirmRemoteMutation`: passou.
+- `npx -y wrangler pages deploy .\build\internal-alpha\cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`: passou.
+- Deploy Cloudflare Pages: `https://c8dc997b.draxos-mobile-internal-alpha.pages.dev`.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -PublicDownloads -ConfirmRemoteMutation`: passou.
+- `release_manifest_smoke.ts`: passou.
+- `release_artifacts_remote_smoke.ts`: passou; dominio estavel reconhecido como protegido por Cloudflare Access.
+- `internal_alpha_remote_smoke.ts` com `DRAXOS_REMOTE_RELEASE_SMOKE=1`: passou.
+- APK anonimo via `HEAD`: `200`, `31563411` bytes, `application/vnd.android.package-archive`.
+- PC ZIP anonimo via `HEAD`: `200`, `40032213` bytes, `application/zip`.
+
+Artefatos publicados:
+
+- Android APK: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.apk`
+- PC ZIP: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.zip`
+- Portal estavel: `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+- Web estavel: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
+
+Hashes planejados no manifest:
+
+- Android APK: `e13974b4adebae0646f536f09088f4af14e52bfb38940aa31e8133fcf5c0334f`
+- PC Windows ZIP: `4ec31aba91415ee6f6dac4f21bab8fc366bef6d5af916df2abeff86e3706ec23`
+- Web Index: `30802917fa9d0abc8b7cfcec922a3e93001f744e89a31dce1998cab9d5d98d81`

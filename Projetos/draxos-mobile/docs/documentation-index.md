@@ -20,10 +20,9 @@
 |---|---|---|
 | `AGENTS.md` | `VIVO` | Fast operating rules for agents. |
 | `README.md` | `VIVO` | Short project portal. |
-| `implementation/current-status.md` | `VIVO` | Decision snapshot: baseline, active track, risks, next step and validation. |
+| `implementation/current-status.md` | `VIVO` | Decision snapshot: baseline, active stage, risks, next step and validation. |
 | `docs/agent-operating-manual.md` | `VIVO` | Detailed agent runbook. |
 | `docs/documentation-index.md` | `VIVO` | This classification map. |
-| `implementation/tracks/track-15-mobile-ux-overhaul/current-status.md` | `VIVO` | Current Track 15 mobile UX working state. |
 | `../../08_Coordenacao_Agentes/Prioridades_Estudio.md` | `VIVO` | Portfolio source of truth. |
 | `../../08_Coordenacao_Agentes/Estado_Atual.md` | `VIVO` | Compact studio snapshot. |
 | `../README.md` | `VIVO` | Project registry. |
@@ -33,12 +32,15 @@
 | Document | Category | Role |
 |---|---|---|
 | `docs/product-vision.md` | `VIVO` | Local long-term product canon until promoted to shared canon. |
+| `docs/foundation-app-v0-audit.md` | `VIVO` | Current Foundation Audit compass: real foundation, current mock, live-product gaps and post-login loop focus. |
+| `docs/foundation-loop-audit.md` | `VIVO` | Executed audit of the current post-login loop ergonomics; records Foundation Loop UX Pass 01 as the published Internal Alpha UX baseline candidate. |
+| `docs/foundation-responsive-layout-contract.md` | `CONTRATO` | Responsive guardrail for Entry Labs, Refugio and Battle safe frames across Android portrait and Web/Desktop viewports. |
 | `docs/product-brief.md` | `VIVO` | Short product/slice summary. |
-| `docs/game-design-document.md` | `VIVO` | Authoritative implementation GDD. |
+| `docs/game-design-document.md` | `VIVO` | Implementation reference and mock/substance context; not the current expansion target. |
 | `docs/design-pending.md` | `VIVO` | Only live register of unresolved design decisions. |
-| `docs/character-systems-rework.md` | `VIVO` | Character taxonomy: Instrumentos Rituais, Spells, Doutrinas, Familiares and damage/status sources. |
-| `docs/economy/README.md` | `VIVO` | Economy model and calibratable alpha values. |
-| `docs/progression-lab/README.md` | `VIVO` | Progression Lab model and review notes. |
+| `docs/character-systems-rework.md` | `HISTORICO` | Character taxonomy implemented as current mock/substance; not a priority until Foundation Audit promotes character work. |
+| `docs/economy/README.md` | `HISTORICO` | Economy model and calibratable alpha values preserved as context; not a current tuning target. |
+| `docs/progression-lab/README.md` | `HISTORICO` | Progression Lab model and review notes preserved for later tuning/review. |
 
 ## Contracts
 
@@ -84,6 +86,8 @@
 | `implementation/tracks/track-12-boot-decomposition/` | `HISTORICO` | Boot decomposition. |
 | `implementation/tracks/track-13-validation-release-safety/` | `HISTORICO` | Validation and release safety baseline. |
 | `implementation/tracks/track-14-agent-ops-foundation/` | `HISTORICO` | Agent operating foundation and documentation index baseline. |
+| `implementation/tracks/track-15-mobile-ux-overhaul/` | `HISTORICO` | Prior Android portrait UX package; not the active stage. |
+| `implementation/tracks/track-16-behavior-crafting/` | `HISTORICO` | Latest local technical package for behavior/crafting; not the active product focus. |
 
 ## Design Archive
 
@@ -95,7 +99,12 @@
 
 ## Drift Rules
 
-- A live doc must not tell agents to start from Track 04, Track 08, Track 10 or Track 14 as the current track.
+- A live doc must not tell agents to start from Track 04, Track 08, Track 10, Track 14, Track 15 or Track 16 as the current stage.
+- A live doc must treat `FOUNDATION_AUDIT_ACTIVE` as the active operational stage until the user chooses the next package.
+- A live doc must not direct agents to expand balance, weapons, spells, Battle Pass, economy, final visual identity or battle presentation before Foundation Audit.
+- Foundation Audit must prioritize the post-login loop: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again.
+- Foundation Loop UX Pass 01 is published to Internal Alpha until manual Android/Windows/Web review accepts or revises it.
+- Visual/layout changes must respect `docs/foundation-responsive-layout-contract.md` and pass `tools/smoke_responsive_layout.gd` before publication.
 - Historical docs can keep old language when they are clearly historical.
 - Product-facing language should use Instrumento Ritual, Doutrina and Familiar.
 - Technical field names such as `weapon`, `passive`, `pet`, `WeaponQualityTier`, `PassiveLevelsTotal` and `PetLevel` may remain only where they describe existing schema, telemetry or legacy compatibility.

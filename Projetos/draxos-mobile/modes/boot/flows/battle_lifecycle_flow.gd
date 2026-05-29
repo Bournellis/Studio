@@ -9,14 +9,17 @@ const BATTLE_REPLAY_TICK_SECONDS := 0.05
 
 func render_entry(host: Node) -> void:
 	var presenter = host.get("_battle_replay_presenter")
-	presenter.render(
-		host,
-		bool(host.get("_compact_layout")),
-		SessionStore.last_battle_log,
-		SessionStore.last_battle_rewards,
-		SessionStore.has_battle_log(),
-		battle_history_for_active_save(host)
-	)
+	if bool(host.get("_battle_request_splash_active")):
+		presenter.render_request_splash(host, bool(host.get("_compact_layout")))
+	else:
+		presenter.render(
+			host,
+			bool(host.get("_compact_layout")),
+			SessionStore.last_battle_log,
+			SessionStore.last_battle_rewards,
+			SessionStore.has_battle_log(),
+			battle_history_for_active_save(host)
+		)
 	_sync_presenter_refs(host, presenter)
 
 func render_running(host: Node) -> void:
@@ -61,6 +64,7 @@ func request_battle(host: Node) -> void:
 	if not bool(host.call("_require_account", "Entre com email antes de solicitar batalha.")):
 		return
 
+	host.set("_battle_request_splash_active", true)
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_BATTLE_ENTRY, false)
 	host.call("_set_busy", true, "Solicitando batalha...")
 	var battle_result: Dictionary = await SupabaseClient.request_battle(
@@ -68,6 +72,7 @@ func request_battle(host: Node) -> void:
 		SessionStore.access_token,
 		ProjectInfoScript.DEFAULT_BATTLE_MODE
 	)
+	host.set("_battle_request_splash_active", false)
 	if not bool(battle_result.get("ok", false)):
 		host.call("_fail_with_error", battle_result)
 		return
@@ -118,7 +123,11 @@ func return_to_refuge(host: Node) -> void:
 	host.set("_replay_running", false)
 	host.set("_skip_replay", false)
 	host.set("_battle_summary_skipped", false)
+	if SessionStore.has_battle_log():
+		SessionStore.mark_battle_result_seen()
+		SessionStore.save_cache()
 	host.call("_show_screen", AppShellRouteContractScript.clear_for_refuge_return(_screen_history(host)), false)
+	host.call("_show_notice", "Recompensa registrada. Verifique coleta e evolucao da base.")
 
 func show_current_battle_logs(host: Node) -> void:
 	if not SessionStore.has_battle_log():

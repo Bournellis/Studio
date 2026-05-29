@@ -7,7 +7,7 @@
 ## Prioridade Do Estudio
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Foco P2 de implementacao: `Projetos/draxos-mobile/` (Track 16 `TRACK_16_BEHAVIOR_CRAFTING_ACTIVE`, sobre Track 13 release safety, Track 14 agent ops e Track 15 UX)
+- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`FOUNDATION_AUDIT_ACTIVE`, sobre Track 13 release safety, Track 14 agent ops, Track 15 UX e ultimo pacote tecnico Track 16)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -23,15 +23,15 @@
 
 ## DraxosMobile
 
-- Status: **P2_IMPLEMENTACAO - Track 16 TRACK_16_BEHAVIOR_CRAFTING_ACTIVE**
+- Status: **P2_IMPLEMENTACAO - FOUNDATION_AUDIT_ACTIVE**
 - Fase: `Implementacao`
 - Local: `Projetos/draxos-mobile/`
 - Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
 - Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
-- Baseline atual: Track 00-15 integradas. O projeto tem primeiro slice server-authoritative, Internal Alpha v0 aprovada por Fabio + tester, Refugio portrait como cena de jogo, batalha portrait fullscreen, Supabase remoto, manifest/version gate e builds Internal Alpha site/Web/APK/Windows republicadas em 2026-05-28; o portal alpha visual foi redeployado no Cloudflare Pages em `https://b16705ab.draxos-mobile-internal-alpha.pages.dev`. Track 11 consolidou estado vivo, Kanban, docs e walkthrough; Track 12 decompos `boot.gd`; Track 13 centralizou validacao foundation e release safety; Track 14 reorganizou operacao de agentes; Track 15 converteu o app para UX interna premium Android portrait. Track 16 esta implementando comportamento configuravel, Po de Osso e crafting inicial de Pocoes server-authoritative.
+- Baseline atual: Track 00-15 integradas. O projeto tem uma base implementada para refinamento: primeiro slice server-authoritative, Refugio/Base, batalha, recompensa, social/competicao/loja em substancia de prototipo, Supabase remoto, manifest/version gate e builds Internal Alpha site/Web/APK/Windows republicadas em 2026-05-28. Track 16 e o ultimo pacote tecnico de comportamento, Po de Osso e crafting inicial, mas nao e a etapa ativa de produto. Conteudo atual de armas, spells, economia, tema, visual e apresentacao existe para nao parecer app vazio e deve ser tratado como mock/substancia. A auditoria do loop esta registrada em `Projetos/draxos-mobile/docs/foundation-loop-audit.md`; Foundation Loop UX Pass 01 esta implementado e publicado no canal Internal Alpha como candidato de baseline do loop. Hotfixes publicados em 2026-05-28 restauraram Labs Dev no Refugio, limitaram Entry/Refugio/Batalha por contrato responsivo, voltaram APK/PC para links publicos unlisted sem Bearer token, mantiveram Refugio como raiz pos-login, trocaram a previa de batalha por splash estatico enquanto o replay abre e removeram `dev/**` dos excludes de export para devolver Battle Lab/Progression Lab ao menu inicial exportado.
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
-- Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation`. Migration conta/save e tuning numerico ficam bloqueados ate walkthrough manual e decisao propria.
-- Proximo passo: revisar/validar Track 16 localmente antes de qualquer publicacao remota; depois executar walkthrough manual Track 13 para confirmar o fluxo Android/Windows/Web com crafting, preparacao e batalha.
+- Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation`. Mudancas visuais em Entry/Refugio/Batalha exigem `foundation-responsive-layout-contract.md` + `smoke_responsive_layout.gd`. Migration conta/save, tuning numerico, armas, spells, economia, visual final e apresentacao de batalha ficam bloqueados ate decisao propria.
+- Proximo passo: revisar Android/Windows/Web publicados; confirmar Labs Dev no menu inicial, Refugio/Batalha contidos, download APK sem erro de Bearer token, splash estatico ao solicitar batalha e loop pos-login antes de mover foco para social.
 
 ## rpg-isometrico
 

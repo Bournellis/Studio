@@ -1,149 +1,100 @@
 # DraxosMobile - Product Brief
 
-- Ultima atualizacao: `2026-05-27`
+- Ultima atualizacao: `2026-05-28`
+- Status: `VIVO`
 
 ---
 
-## O Produto
+## Leitura Atual
 
-DraxosMobile e um jogo mobile multi-partes. O jogador e um Draxos, mago intergalactico que comeca fraco e cresce em poder ate se tornar uma ameaca cosmica.
+DraxosMobile e um jogo mobile-first de progressao persistente construido sobre tres pilares reais:
 
-O jogador nao e o heroi. O jogador e o vilao.
+- Base builder.
+- Autobattler assincrono server-authoritative.
+- Social basico.
 
-Todos os modos pertencem a um unico ecossistema com conta, personagem, base e progressao conectadas.
+O projeto atual deve ser lido como uma base implementada para refinamento. Ele nao e produto final, nao e uma trilha de expansao de conteudo e nao e uma rodada de balanceamento.
 
-Fonte viva de visao longa: `product-vision.md`. Este brief resume o produto e o slice atual; a visao longa define pilares, anti-pilares, limites de monetizacao, live ops, backend e futuro nao prometido.
+A etapa atual e `FOUNDATION_AUDIT_ACTIVE`.
 
----
+## Foco Imediato
+
+O foco imediato e auditar o loop interno pos-login:
+
+`Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
+
+A pergunta central da etapa e: como, onde e com quantas etapas o usuario clica para executar esse loop?
+
+Devem ser avaliados:
+
+- hierarquia da primeira tela apos login;
+- posicao dos icones e botoes principais;
+- quantidade de etapas ate coletar, evoluir e batalhar;
+- clareza do feedback de recurso, upgrade, batalha e recompensa;
+- retorno para base apos a recompensa;
+- estados de loading, erro, vazio e sucesso;
+- qualidade da resposta visual/tecnica em Android, PC e PC browser.
+
+## O Que Existe Como Substancia/Mock
+
+Armas, spells, nomes, tema, imagens, apresentacao atual de batalha, economia, Battle Pass, Diamante, loja, bots, rankings e valores de progressao existem para dar substancia ao jogo e impedir que o app pareca vazio.
+
+Esses elementos nao devem ser tratados como decisao final de design nesta etapa. Eles so viram prioridade quando a Foundation Audit e a ordem de trabalho atual promoverem o assunto.
+
+Terminologia implementada preservada como substancia/mock: Instrumento Ritual, Spell, Doutrina e Familiar.
+
+Ordem recomendada apos a auditoria documental:
+
+1. Loop interno pos-login.
+2. Social.
+3. Visual geral.
+4. Apresentacao da batalha.
+5. Armas, spells, economia, balanceamento e conteudo detalhado.
 
 ## Plataformas
 
-| Plataforma | Status |
+| Plataforma | Papel atual |
 |---|---|
-| Android | Primeiro slice - app nativo |
-| PC Windows/Linux | Primeiro slice - executavel |
-| PC Browser | Primeiro slice - Godot web export |
-| iOS | Futuro |
-| Mobile browser | Fora do escopo |
+| Android | Produto primario e principal referencia de UX |
+| PC executavel | Canal de teste, conforto e fallback |
+| PC browser | Canal rapido para review e handoff |
+| iOS | Futuro possivel, sem compromisso atual |
+| Mobile browser | Fora do escopo ate decisao explicita |
 
----
+## Base Implementada
 
-## Track 00
+A base tecnica ja contem:
 
-Track 00 monta o primeiro slice completo. A primeira etapa e o MVP tecnico minimo.
+- Godot `4.6.2-stable`;
+- Supabase Auth, Postgres, Edge Functions e Storage;
+- email/senha e fluxo de conta alpha;
+- saves `normal` e `progression_lab`;
+- batalha server-authoritative com replay/log;
+- Base/Refugio, coleta, upgrades e recursos;
+- social, competicao, loja e laboratorios em estado de prototipo;
+- release manifest, build channel e runbooks de publicacao segura;
+- validacao local por `validate_foundation.ps1`.
 
-| Nivel | Inclui |
+Track 16 e o ultimo pacote tecnico, com comportamento/crafting/pocoes. Ele nao e a etapa ativa de produto.
+
+## Decisoes Que Permanecem Reais
+
+| Area | Decisao |
 |---|---|
-| MVP tecnico minimo | Godot 4.6.2 + Supabase, guest com convite, batalha fixture server-authoritative e log animavel placeholder |
-| Primeiro slice completo | PVP autobattler, base manager, social, ranking, bots, conta, economia, Battle Pass/Diamante, validacao e exports |
-
-## Track 03 - Internal Alpha v0
-
-Track 03 transforma o alpha local em uma build fechada realista para Fabio + 1 amigo. O objetivo e simular um jogo real com conta, save compartilhado entre plataformas, servidor remoto, updates e features principais funcionando em estado de prova profissional.
-
-| Pilar | Decisao |
-|---|---|
-| Conta | Email + senha via Supabase Auth |
-| Acesso | Convite/flag alpha; link Web pode ser publico/unlisted, mas login e acesso alpha sao obrigatorios |
-| Saves | Dois saves por conta: `normal` e `progression_lab`, com reset separado |
-| Progression Lab | Ferramenta interna/gated, isolada do save normal |
-| Loja | Redeems alpha fixos para testar niveis premium sem pagamento real |
-| Backend | Supabase remoto Free primeiro |
-| Updates | Android, PC e Web recebem a mesma cadencia via manifest remoto |
-
----
-
-## Primeiro Slice - Escopo
-
-| Sistema | Incluido |
-|---|---|
-| Character Autobattler PVP assincrono | Sim |
-| Base Manager (Refugio) | Sim |
-| Lista de amigos + guilda + ajudas | Sim |
-| Chat de guilda + mensagens diretas | Sim |
-| Ranking por pontos de arena | Sim |
-| Matchmaking por poder | Sim |
-| Builds simuladas (bots) | Sim |
-| Conta guest + registrada + Google Sign-In | Sim; Internal Alpha v0 prioriza email/senha, guest fica para dev/local enquanto util |
-| Instrumento Ritual inicial (`Varinha de Cinzas`) | Sim |
-| 0-3 slots de spell com selecao | Sim |
-| 1 slot de Doutrina | Sim |
-| 1 slot de Familiar | Sim |
-| Battle Pass (Free + Premium) | Sim |
-| Moeda premium (Diamante) | Sim |
-| Character Autobattler PVE | Futuro |
-| PVP Cardgame Roguelike | Futuro |
-| Hero Defense | Futuro |
-| Open World RPG | Futuro |
-
----
-
-## UX/Layout Base Do Primeiro Slice
-
-O primeiro slice usa um layout funcional de alpha, com visual final de producao fora do escopo. A navegacao principal parte do `Refugio`, que concentra personagem, poder, recursos, fila de construcao e atalhos para os sistemas.
-
-Telas principais:
-
-| Tela | Funcao |
-|---|---|
-| Refugio | Hub principal, status do Draxos, poder, recursos, fila de construcao e proximas acoes |
-| Batalha | Preview de matchmaking, iniciar batalha, replay, skip/velocidade e resumo de recompensa |
-| Base | Seis estruturas, upgrades, coleta offline, armazenamento, pedir/enviar ajuda |
-| Social | Amigos, guilda, ajudas, chat de guilda e direct por polling |
-| Loja/Passe | Battle Pass, Diamante, recompensas diarias/semanais e fluxos de teste do alpha |
-
-Direcao visual: cartoon gore sombrio, arcano e legivel em mobile, sem depender de arte final para validar loop e balanceamento.
-
----
-
-## Decisoes Tecnicas Principais
-
-| Decisao | Valor |
-|---|---|
-| Engine | Godot `4.6.2-stable` |
-| Testes client | GUT `9.6.0` |
-| Backend alpha | Supabase Auth, Postgres, Edge Functions, Storage e Realtime quando util |
-| Plano de saida | Backend Proprio + Postgres |
-| Nakama | Alternativa futura apenas se realtime/lobbies/matchmaking/social competitivo virar pilar |
-| Batalha | 100% servidor - cliente anima log de eventos |
-| Autenticacao | Guest local/dev + email/senha no Internal Alpha v0; Google Sign-In futuro |
-| Alpha | Convite/flag alpha, Web/PC/Android internos, APK sideload ou canal interno |
-| Season | 4 meses, 2 Battle Passes por season |
-| Level maximo Season 1 | 40 por padrao; simulador permite testar 40/50/60 |
-| Persistencia de levels | Todos os levels sao permanentes; seasons futuras aumentam o cap |
-
-## Direcao Online
-
-DraxosMobile nao depende de jogadores juntos na mesma partida. As partidas sao PvE/PVP assincronas: o servidor resolve, grava resultado e entrega um replay para o cliente apresentar.
-
-Social existe como camada de retencao e cooperacao, nao como partida realtime:
-
-- amigos por username;
-- chat privado/direct;
-- chat de guilda;
-- guilda;
-- ajudas e contribuicoes;
-- possivel transferencia de recursos se aprovada em design futuro.
-
-Essa direcao favorece dados relacionais, transacoes, ledger e auditoria. Por isso, Supabase e uma boa ponte para a alpha, e Backend Proprio + Postgres e o melhor alvo de maturidade se o jogo crescer.
-
----
-
-## Terminologia Viva
-
-Use Instrumento Ritual, Spell, Doutrina e Familiar como linguagem de produto/design. Nomes antigos de arma/passiva/pet podem aparecer apenas como nomes tecnicos legados de schema, telemetria, catalogo antigo ou historico de track.
+| Produto | Base builder + autobattler + social basico, com futuro de minigames |
+| Batalha | Servidor resolve; cliente apresenta log/replay |
+| Backend | Supabase como ponte de alpha; Backend Proprio + Postgres como saida preferida se crescer |
+| Autoridade | Recurso, recompensa, ranking, batalha e mutacoes importantes ficam no servidor |
+| Plataforma | Android primeiro; PC/PC browser para teste e review |
+| Conteudo | Deve ser substituivel/versionavel sem reescrever fundacao |
 
 ## Documentos Vivos
 
-- `product-vision.md` - visao longa local, pilares, anti-pilares e limites do produto.
-- `game-design-document.md` - design autoritativo para implementacao.
-- `design-pending.md` - pendencias de design e balanceamento.
+- `foundation-app-v0-audit.md` - bussola atual da Foundation Audit.
+- `product-vision.md` - visao longa local.
+- `game-design-document.md` - referencia de implementacao e substancia/mock existente.
+- `design-pending.md` - pendencias vivas e ordem de decisao.
 - `documentation-index.md` - classificacao de docs vivos, contratos, runbooks, historico e arquivo de design.
-- `contracts/` - contratos tecnicos antes das migrations/codigo.
-- `../implementation/tracks/track-15-mobile-ux-overhaul/scope.md` - overhaul UX mobile atual.
-- `../implementation/tracks/track-14-agent-ops-foundation/scope.md` - fundacao operacional de agentes.
-- `../implementation/tracks/track-13-validation-release-safety/scope.md` - baseline de validacao e release safety.
-- `../implementation/tracks/track-00-first-slice-foundation/scope.md` e `../implementation/tracks/track-03-internal-alpha-v0/scope.md` - historico de escopo do primeiro slice e Internal Alpha v0.
+- `contracts/` - contratos tecnicos antes de migrations/codigo.
 - `internal-alpha-v0.md` - runbook operacional da build fechada.
-- `../../_conceitos/mobile-universe/gdd.md` - GDD historico completo.
-- `../../_conceitos/mobile-universe/pendencias.md` - historico de decisoes da fase conceitual.
+- `../../_conceitos/mobile-universe/gdd.md` - GDD historico completo, somente contexto.

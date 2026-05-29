@@ -5,7 +5,7 @@
 - Last updated: `2026-05-28`
 - Applies to: `Projetos/draxos-mobile/`
 
-This manual explains how agents should operate DraxosMobile without reopening old work, drifting from the current track or mutating remote infrastructure by accident.
+This manual explains how agents should operate DraxosMobile without reopening old work, drifting from Foundation Audit or mutating remote infrastructure by accident.
 
 ## Source Of Truth
 
@@ -14,12 +14,26 @@ Read live docs in this order:
 1. `AGENTS.md` - fast operating rules.
 2. `implementation/current-status.md` - short decision snapshot.
 3. `docs/documentation-index.md` - where each doc belongs.
-4. `docs/product-vision.md` - local long-term product canon.
-5. `docs/game-design-document.md` - authoritative implementation design.
-6. `docs/design-pending.md` - only live register of unresolved design decisions.
-7. `implementation/tracks/track-15-mobile-ux-overhaul/` - current mobile UX overhaul work.
+4. `docs/foundation-app-v0-audit.md` - current Foundation Audit compass.
+5. `docs/foundation-loop-audit.md` - executed audit of post-login loop ergonomics.
+6. `docs/foundation-responsive-layout-contract.md` - required when touching Entry, Refugio, Battle or visual/layout code.
+7. `docs/product-vision.md` - local long-term product canon.
+8. `docs/game-design-document.md` - implementation reference and mock/substance context.
+9. `docs/design-pending.md` - only live register of unresolved design decisions.
 
 If a historical track conflicts with these docs, the live docs win. If local product design conflicts with shared lore in `../../canon/`, escalate instead of silently choosing.
+
+## Current Stage
+
+Active stage: `FOUNDATION_AUDIT_ACTIVE`.
+
+The project is a base implemented for refinement. The Foundation Loop Audit is documented, and Foundation Loop UX Pass 01 is published to Internal Alpha as the current candidate for the post-login loop:
+
+`Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again`
+
+The next product action is manual review of that loop pass before choosing social, visual-general or battle-presentation work.
+
+Track 16 remains the latest technical package, but it is not the current product focus. Current spells, weapons, economy values, Battle Pass, battle flavor and visual identity are mock/substance, not priority areas.
 
 ## Current Baseline
 
@@ -62,17 +76,18 @@ Register work in `../../08_Coordenacao_Agentes/Kanban/Doing/` or a handoff note.
 - validation plan;
 - next handoff point.
 
-For Track 15, the expected DraxosMobile Doing card is the mobile UX overhaul card. Historical DraxosMobile cards belong in `Kanban/Done/`.
+For Foundation Audit, the expected DraxosMobile Doing card must state the branch, worktree and current loop/UX objective. Historical DraxosMobile cards belong in `Kanban/Done/`.
 
 ## Read Order By Task
 
 | Task type | Required docs |
 |---|---|
 | Small code fix | `AGENTS.md`, `implementation/current-status.md`, touched files |
-| Agent/doc operation | `AGENTS.md`, this manual, `docs/documentation-index.md`, active track |
+| Agent/doc operation | `AGENTS.md`, this manual, `docs/documentation-index.md`, `docs/foundation-app-v0-audit.md`, `docs/foundation-loop-audit.md` |
 | Product/design | `docs/product-vision.md`, `docs/product-brief.md`, `docs/game-design-document.md`, `docs/design-pending.md` |
 | Backend/contracts | `docs/architecture.md`, `docs/contracts/`, `server/schema/`, `server/functions/`, `supabase/` mirrors |
 | Godot client | `AGENTS.md`, `modes/boot/surfaces/README.md`, relevant tests, relevant flow/presenter |
+| Entry/Refugio/Battle layout | `docs/foundation-responsive-layout-contract.md`, `tools/smoke_responsive_layout.gd`, relevant UI tests |
 | Release/publication | `docs/release-ops-checklist.md`, Track 13 release safety contract, `tools/README.md` |
 | Manual QA | `docs/track-13-manual-walkthrough-gate.md`, `docs/internal-alpha-v0-handoff.md` |
 
@@ -82,19 +97,21 @@ Use the smallest profile that proves the change, then broaden when touching shar
 
 | Change | Minimum validation |
 |---|---|
-| Docs only | `git diff --check`; `validate_foundation.ps1 -Profile Quick -RequireClean:$false` when docs affect status/operation |
-| PowerShell tools | `validate_foundation.ps1 -Profile Release -RequireClean:$false` |
-| Godot client | Godot `validate.gd`, GUT client, then `validate_foundation.ps1 -Profile Client -RequireClean:$false` |
+| Docs only | `git diff --check`; `validate_foundation.ps1 -Profile Quick` when docs affect status/operation |
+| PowerShell tools | `validate_foundation.ps1 -Profile Release` |
+| Godot client | Godot `validate.gd`, GUT client, then `validate_foundation.ps1 -Profile Client` |
+| Entry/Refugio/Battle layout | `tools/smoke_responsive_layout.gd` plus relevant GUT/client validation |
 | Backend/functions | `npx -y deno task --cwd server/functions check` and `npx -y deno task --cwd supabase/functions check` |
-| Release safety | `validate_foundation.ps1 -Profile Release -RequireClean:$false` plus `tools/check_release_safety.ps1` |
-| Foundation or cross-cutting work | `validate_foundation.ps1 -Profile Full -RequireClean:$false` plus explicit Godot/GUT/Deno commands |
+| Release safety | `validate_foundation.ps1 -Profile Release` plus `tools/check_release_safety.ps1` |
+| Foundation or cross-cutting work | `validate_foundation.ps1 -Profile Full` plus explicit Godot/GUT/Deno commands |
 
 Default full gate:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Full -RequireClean:$false
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Full
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/client -gexit
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_responsive_layout.gd
 npx -y deno task --cwd server/functions check
 npx -y deno task --cwd supabase/functions check
 git diff --check
@@ -115,12 +132,15 @@ Never run remote mutation modes as a drive-by validation step.
 
 Do not start these without explicit user direction and a fresh track/package:
 
-- feature gameplay after Track 13 without manual walkthrough results;
-- expanded UX polish after Track 15 without human review of the current Android portrait checkpoint;
+- feature gameplay or content expansion before Foundation Loop UX Pass 01 is manually reviewed;
+- social expansion before Foundation Loop UX Pass 01 is manually reviewed;
+- visual-general or battle-presentation work before the loop and social order is explicitly chosen;
 - numeric tuning without human playthrough and Progression Lab evidence;
+- weapons, spells, Battle Pass or economy pass while they are still mock/substance;
 - account/save migration from `players.save_type` to `account_profiles/game_saves`;
 - iOS or mobile browser support;
 - final asset production;
+- publishing visual/layout changes before `tools/smoke_responsive_layout.gd` passes;
 - remote publication;
 - secret handling outside ignored local env files.
 
@@ -144,4 +164,4 @@ Every handoff should say:
 - whether the worktree is clean;
 - next safe action for the following agent.
 
-Keep `implementation/current-status.md` short. Put detailed history, logs and validation notes in the active track directory.
+Keep `implementation/current-status.md` short. Put detailed history, logs and validation notes in the Foundation Audit handoff, Kanban Done card or relevant historical track directory.

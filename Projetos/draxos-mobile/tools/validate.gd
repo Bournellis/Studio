@@ -55,6 +55,7 @@ func _run_validation() -> int:
 	_check_resource("res://tools/smoke_foundation_surfaces.gd")
 	_check_resource("res://tools/smoke_mobile_presentation.gd")
 	_check_resource("res://tools/smoke_foundation_hardening.gd")
+	_check_resource("res://tools/smoke_foundation_loop.gd")
 	_check_resource("res://tools/smoke_exports.gd")
 	_check_resource("res://export_presets.cfg")
 	_check_resource("res://data/content_library.gd")

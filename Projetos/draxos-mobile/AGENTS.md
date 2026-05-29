@@ -8,13 +8,14 @@ This file is the fast entrypoint for agents working in `Projetos/draxos-mobile`.
 
 - Project: `DraxosMobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
-- Active operational track: `Track 15 - Mobile UX Overhaul`
-- Active track status: `TRACK_15_MOBILE_UX_OVERHAUL_ACTIVE`
+- Active operational stage: `Foundation Audit`
+- Active stage status: `FOUNDATION_AUDIT_ACTIVE`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety` delivered on `2026-05-28`
 - Agent baseline: `Track 14 - Agent Operations Foundation` is the current operations/docs foundation.
-- Immediate product gate: review the Track 15 Android portrait UX checkpoint before expanding scope; keep the real Android / Windows / Web walkthrough from `docs/track-13-manual-walkthrough-gate.md` before gameplay features, numeric tuning, account/save migration or remote publication.
+- Latest technical package: `Track 16 - Behavior And Potion Crafting`, technical context and not the current product focus.
+- Immediate product gate: the Foundation Loop Audit is documented in `docs/foundation-loop-audit.md`; Foundation Loop UX Pass 01 is published to Internal Alpha and must be manually reviewed before broader expansion.
 
-DraxosMobile is an async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms for the first slice are Android app, PC executable and PC browser. Backend for alpha is Supabase Auth/Postgres/Edge Functions/Storage; battle simulation, resources and authoritative state stay on the server.
+DraxosMobile is an async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. The real product direction is base builder + autobattler + social, with room for future minigames and seasons. Current names, spells, weapons, economy values, battle flavor, visual style and premium systems are mock/substance for evaluation unless a live doc explicitly promotes them.
 
 ## Start Here
 
@@ -23,8 +24,10 @@ Read in this order for almost every task:
 1. `docs/agent-operating-manual.md`
 2. `implementation/current-status.md`
 3. `docs/documentation-index.md`
-4. `implementation/tracks/track-15-mobile-ux-overhaul/current-status.md`
-5. The files you intend to touch
+4. `docs/foundation-app-v0-audit.md`
+5. `docs/foundation-loop-audit.md`
+6. `docs/foundation-responsive-layout-contract.md` when touching Entry, Refugio, Battle or visual/layout code
+7. The files you intend to touch
 
 For product or design work, also read:
 
@@ -54,12 +57,13 @@ For release, validation or publication work, also read:
 Run commands from `Projetos/draxos-mobile` unless noted.
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Quick -RequireClean:$false
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Client -RequireClean:$false
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Release -RequireClean:$false
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Full -RequireClean:$false
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Quick
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Client
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Release
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Full
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/client -gexit
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_responsive_layout.gd
 npx -y deno task --cwd server/functions check
 npx -y deno task --cwd supabase/functions check
 git diff --check
@@ -79,14 +83,18 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alp
 
 - Do not put `service_role`, Supabase secrets, database passwords, keystore passwords or private tokens in client code, exports, portal files, manifests or operational docs.
 - Do not run remote publishing modes without explicit user approval and `-ConfirmRemoteMutation`.
-- Do not start a new playable feature, numeric tuning pass, `account_profiles/game_saves` migration, iOS work or mobile browser support until the Track 13 manual gate has been executed and recorded.
+- Do not start a new playable feature, numeric tuning pass, weapon/spell/economy pass, battle presentation pass, final visual pass, `account_profiles/game_saves` migration, iOS work or mobile browser support before Foundation Audit is complete and the user explicitly chooses the next package.
 - Do not edit `.tscn` files as raw text unless the user explicitly asks and the change is safer than an editor/tool path.
+- Do not publish Entry/Refugio/Battle layout changes unless `tools/smoke_responsive_layout.gd` passes.
 - Do not import gameplay rules from other Draxos projects unless this project's live docs explicitly adopt them.
 - Do not treat `Projetos/_conceitos/mobile-universe/` as active implementation material. It is design archive only.
 
 ## Live Source Rules
 
 - `docs/product-vision.md` is the local long-term product canon until promoted to shared canon.
+- `docs/foundation-app-v0-audit.md` is the current product/agent compass for Foundation Audit.
+- `docs/foundation-loop-audit.md` is the executed audit for loop ergonomics and the next UX pass criteria.
+- `docs/foundation-responsive-layout-contract.md` is the guardrail for responsive Entry Labs, Refugio and Battle safe frames.
 - `docs/game-design-document.md` is the authoritative implementation GDD.
 - `docs/design-pending.md` is the only live register of unresolved design decisions.
 - `docs/documentation-index.md` classifies live docs, contracts, runbooks, history and design archive.
@@ -95,4 +103,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alp
 
 ## Current Handoff
 
-Track 15 is reorganizing the mobile UX from alpha/dev surfaces into an internal premium Android portrait app. Do not change gameplay tuning, backend/schema, Supabase APIs, economy or authoritative flows in this track. The expected DraxosMobile Kanban Doing card is the Track 15 mobile UX overhaul card.
+Foundation Audit is the active handoff. Foundation Loop UX Pass 01 is published to Internal Alpha; agents should review or refine that post-login loop before expanding implementation. Do not change gameplay tuning, backend/schema, Supabase APIs, economy, content, weapons, spells, final visuals or authoritative flows without an explicit package decision.

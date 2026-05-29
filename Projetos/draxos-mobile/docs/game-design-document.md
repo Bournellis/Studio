@@ -1,9 +1,19 @@
 # DraxosMobile - Game Design Document (Referencia De Implementacao)
 
-- Ultima atualizacao: `2026-05-26`
+- Ultima atualizacao: `2026-05-28`
 - Fonte historica completa: `../../_conceitos/mobile-universe/gdd.md`
 
-> Este documento e uma referencia condensada para implementacao. Para o design completo com todas as formulas, tabelas e decisoes detalhadas, consulte o GDD completo no caminho acima.
+> Este documento e uma referencia condensada da implementacao existente. Durante `FOUNDATION_AUDIT_ACTIVE`, ele deve ser lido como contrato/contexto de substancia e mock implementado, nao como prioridade de expansao nem como design final.
+
+## Leitura Durante Foundation Audit
+
+A etapa atual nao e balanceamento, economia, armas, spells, visual final ou apresentacao final da batalha. O foco e auditar o loop interno pos-login:
+
+`Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
+
+Quando secoes antigas usam termos como "final", "primeiro slice", "alpha" ou "autoritativo", leia como "estado implementado ou referencia tecnica atual". Qualquer promocao desses detalhes para design final precisa de decisao futura explicita.
+
+O conteudo atual existe para dar substancia ao app e permitir que o fundador e possiveis colaboradores sintam o produto. Ele pode ser substituido quando o tema, arte e design final forem discutidos.
 
 ---
 
@@ -42,7 +52,7 @@ Regras de produto que preservam essa direcao:
 
 ### Character Systems Rework - 2026-05-25
 
-Fonte autoritativa detalhada: `character-systems-rework.md`.
+Referencia detalhada implementada: `character-systems-rework.md`.
 
 O personagem continua sendo um mago Draxos sem classes, mas a fantasia de build agora usa **Instrumentos Rituais**, **Spells**, **Doutrinas** e **Familiares**.
 
@@ -55,11 +65,11 @@ Slots preservados:
 
 Todos esses sistemas continuam com level proprio permanente e limitado pelo level global do personagem.
 
-Stats primarios finais: Vida, Mana, Potencia Ritual, Controle Ritual, Guarda, Vontade, Vitalidade e Celeridade Ritual.
+Stats primarios atuais: Vida, Mana, Potencia Ritual, Controle Ritual, Guarda, Vontade, Vitalidade e Celeridade Ritual.
 
 Stats derivados: Regen Vida, Regen Mana, Tenacidade, resistencias por fonte, intensidade/duracao de status e poder do Instrumento Ritual. Regen nao foi removido; `regen_vida` e `regen_mana` continuam no simulador e nas ferramentas, mas deixam de ser atributos de identidade primaria.
 
-Fontes de dano finais: Arcano, Fisico, Fogo, Agua, Gelo, Terra, Vento, Raio, Veneno, Sangue e Morte.
+Fontes de dano atuais: Arcano, Fisico, Fogo, Agua, Gelo, Terra, Vento, Raio, Veneno, Sangue e Morte.
 
 Reworks de placeholder:
 
@@ -70,7 +80,7 @@ Reworks de placeholder:
 - passivas genericas -> Doutrinas
 - pets por tipo de dano -> Familiares por papel e fantasia
 
-As secoes antigas abaixo permanecem como contexto de Track 00 quando necessario, mas o conteudo vivo de personagem deve seguir `character-systems-rework.md`, `data/definitions/*.json` e o simulador `FIRST_SLICE_SIM`.
+As secoes antigas abaixo permanecem como contexto de Track 00 quando necessario. Durante Foundation Audit, personagem, spells, instrumentos, doutrinas, familiares e numeros devem ser tratados como substancia/mock implementado, nao como foco atual.
 
 - Raca: Draxos. Nome definido pelo jogador. Sem classes.
 - Visual: silhueta vultuosa, manto comprido, etereo e energetico
