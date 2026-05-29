@@ -320,6 +320,7 @@ static func _add_refuge_icon_button(host: Node, board: Control, popup: PopupPane
 static func _create_refuge_menu_popup(host: Node, root: Control, compact: bool) -> Dictionary:
 	var popup := PopupPanel.new()
 	popup.name = "RefugeMenuPopup"
+	popup.add_theme_stylebox_override("panel", _popup_panel_style(compact))
 	root.add_child(popup)
 	host.set("_refuge_menu_popup", popup)
 
@@ -376,8 +377,9 @@ static func _open_refuge_menu_popup(host: Node, popup: PopupPanel, title_label: 
 	title_label.text = _menu_title(menu_id)
 	_populate_refuge_menu(host, popup, body, menu_id, compact)
 	var viewport_size := _host_viewport_size(host)
-	var popup_width := clampi(int(viewport_size.x - 28.0), 300, 412)
-	var popup_height := clampi(int(viewport_size.y - 88.0), 360, 620)
+	var popup_width := clampi(int(viewport_size.x - 20.0), 312, 468 if compact else 560)
+	var vertical_padding := 16 if compact else 72
+	var popup_height := clampi(int(viewport_size.y - float(vertical_padding)), 420, 820 if compact else 700)
 	popup.popup_centered(Vector2i(popup_width, popup_height))
 
 static func _populate_refuge_menu(host: Node, popup: PopupPanel, body: VBoxContainer, menu_id: String, compact: bool) -> void:
@@ -1046,6 +1048,19 @@ static func _panel(host: Node, name: String, bg_token: String, border_token: Str
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	panel.add_theme_stylebox_override("panel", _panel_style(host, bg_token, border_token))
 	return panel
+
+static func _popup_panel_style(compact: bool) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = UiTokens.color("bg_deep").lerp(UiTokens.color("accent_astral"), 0.07)
+	style.bg_color.a = 1.0
+	style.border_color = UiTokens.color("accent_astral")
+	style.set_border_width_all(2)
+	style.set_corner_radius_all(10 if compact else 12)
+	style.content_margin_left = 0
+	style.content_margin_right = 0
+	style.content_margin_top = 0
+	style.content_margin_bottom = 0
+	return style
 
 static func _panel_box(panel: PanelContainer, compact: bool) -> VBoxContainer:
 	var box := VBoxContainer.new()

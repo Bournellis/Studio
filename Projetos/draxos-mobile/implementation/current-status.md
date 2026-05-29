@@ -72,8 +72,8 @@ Battle Preparation Complete v1 is implemented and published as the current loado
 - `GET /build/state` returns enriched humanized equipment options and lock reasons so the UI does not need to show raw ids.
 - Export presets now exclude `assets/referenciaimagens/**`, which is moodboard/reference only, reducing published APK/ZIP/PCK sizes enough for the current Storage/Pages flow.
 - `docs/battle-preparation-complete-v1.md` is the live package note; `docs/battle-preparation-v1.md` is historical context.
-- Battle Preparation Complete v1 was published to Internal Alpha on `2026-05-29` with public unlisted APK/PC downloads, a cache-busted Web asset root and verified public Cloudflare Pages preview `https://dc29916b.draxos-mobile-internal-alpha.pages.dev/web`.
-- The Web package points to `internal-alpha/v0-battle-preparation-complete-v1-20260529/web`, with hotfix PCK `internal-alpha/v0-battle-preparation-complete-v1-20260529-hotfix1/web/index.pck`.
+- Battle Preparation Complete v1 was published to Internal Alpha on `2026-05-29` with public unlisted APK/PC downloads, a cache-busted Web asset root and verified public Cloudflare Pages preview `https://d8f2e0a7.draxos-mobile-internal-alpha.pages.dev/web`.
+- The Web package points to `internal-alpha/v0-battle-preparation-complete-v1-20260529/web`, with visual hotfix PCK `internal-alpha/v0-battle-preparation-complete-v1-20260529-hotfix3/web/index.pck`.
 
 ## Battle Presentation v1
 
@@ -140,11 +140,11 @@ Links:
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal: `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
 - Stable Web: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest verified preview: `https://dc29916b.draxos-mobile-internal-alpha.pages.dev`
+- Latest verified preview: `https://d8f2e0a7.draxos-mobile-internal-alpha.pages.dev`
 - Web asset root: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-battle-preparation-complete-v1-20260529/web`
-- Web hotfix pack: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-battle-preparation-complete-v1-20260529-hotfix1/web/index.pck`
+- Web hotfix pack: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-battle-preparation-complete-v1-20260529-hotfix3/web/index.pck`
 
-Battle Preparation Complete v1 was published to the Internal Alpha artifact/site channel on `2026-05-29`. Android APK, PC ZIP and Web assets were uploaded to `internal-alpha/v0-battle-preparation-complete-v1-20260529`; Web assets use the versioned root so browser caches cannot reuse older `index.js`, `index.pck` or `index.wasm` paths. A Web hotfix later republished the Cloudflare Pages shell at `https://dc29916b.draxos-mobile-internal-alpha.pages.dev/web`, using local loader assets in Pages and hotfix PCK `4247356` bytes to avoid the exported `content_generator.gd` preload parse error. APK/PC downloads are public unlisted Storage URLs. The stable Cloudflare Pages domain remains behind Access for public unauthenticated checks. The Edge manifest endpoint remains healthy, but the release override was not updated during this publication because the local environment did not include `SUPABASE_ACCESS_TOKEN`; the portal package reads its bundled `manifest.example.json` for published links/hashes.
+Battle Preparation Complete v1 was published to the Internal Alpha artifact/site channel on `2026-05-29`. Android APK, PC ZIP and Web assets were uploaded to `internal-alpha/v0-battle-preparation-complete-v1-20260529`; Web assets use the versioned root so browser caches cannot reuse older `index.js`, `index.pck` or `index.wasm` paths. Web hotfixes later republished the Cloudflare Pages shell at `https://d8f2e0a7.draxos-mobile-internal-alpha.pages.dev/web`, using local loader assets in Pages and hotfix PCK `4247612` bytes to avoid the exported `content_generator.gd` preload parse error and to fix the Preparation popup visual regression where Refugio/Batalhar showed through the panel. APK/PC downloads are public unlisted Storage URLs. The stable Cloudflare Pages domain remains behind Access for public unauthenticated checks. The Edge manifest endpoint remains healthy, but the release override was not updated during this publication because the local environment did not include `SUPABASE_ACCESS_TOKEN`; the portal package reads its bundled `manifest.example.json` for published links/hashes.
 
 ## Visual Direction v1
 
@@ -159,7 +159,7 @@ Visual Direction v1 is implemented and published as the next refinement package 
 
 - Track 16 migration/functions/catalog changes needed for Ossos Inteiros v1 are deployed. Further crafting, behavior, tuning, economy or content expansion still needs its own explicit package decision.
 - Foundation Loop UX Pass 01 is the accepted current V0 UX baseline after manual Android/Windows/Web review on `2026-05-29`; Social Basico Guilda v1, Battle Presentation v1, Battle Drama v1.1 and Battle Preparation Complete v1 are now available in the published Internal Alpha build for human validation.
-- Battle Preparation Complete v1 is published to Internal Alpha with public APK/PC downloads, a cache-busted Web asset root and no-store Cloudflare Pages headers; it still needs manual Android/Windows/Web confirmation on the preview/stable authenticated channels.
+- Battle Preparation Complete v1 is published to Internal Alpha with public APK/PC downloads, a cache-busted Web asset root and no-store Cloudflare Pages headers; Web/mobile visual confirmation passed on the latest preview, while Android/Windows still need manual confirmation.
 - Edge release manifest override needs `SUPABASE_ACCESS_TOKEN` available in the release environment for future `publish_internal_alpha.ps1 -Mode DeployManifest` runs. This publication kept the endpoint healthy and used the packaged portal manifest as the published-link source.
 - Track 13 release safety remains the baseline for any future publication or wider-access gate.
 - `players.save_type` remains an alpha shortcut. `account_profiles` + `game_saves` is a future migration package.
@@ -195,6 +195,7 @@ Latest validation for Battle Preparation Complete v1 publication on `2026-05-29`
 - Preview GET checks: PASS for `https://17ea0fa1.draxos-mobile-internal-alpha.pages.dev/web` with versioned Web asset root and `GODOT_CONFIG.fileSizes.index.pck = 4247020`.
 - Remote HEAD checks: PASS for versioned `index.pck` (`4247020` bytes), `index.wasm` (`37695054` bytes), Android APK (`31649813` bytes) and PC ZIP (`40118021` bytes), all without Bearer token.
 - Web hotfix after visual review: PASS. `tools/validate.gd` passed (`121/121`), `tools/smoke_exports.gd` passed, `tools/check_release_safety.ps1` passed, `git diff --check` passed, `export_internal_alpha.ps1 -AllowAndroidDebugFallback` passed, hotfix `index.pck` uploaded to `internal-alpha/v0-battle-preparation-complete-v1-20260529-hotfix1/web/index.pck` (`4247356` bytes), `build_cloudflare_pages_package.ps1 -MainPackUrl <hotfix-pck>` passed, Cloudflare Pages deploy passed with preview `https://dc29916b.draxos-mobile-internal-alpha.pages.dev/web`, and Browser visual review confirmed the Preparation panel opens in Web/mobile with readable Instrumento, Habilidades, Doutrina, Familiar and Pocao sections.
+- Preparation popup visual hotfix: PASS. GUT `tests/client` passed (`121/121`, `1941` asserts), `tools/smoke_responsive_layout.gd` passed, `git diff --check` passed, `export_internal_alpha.ps1 -AllowAndroidDebugFallback` passed, hotfix `index.pck` uploaded to `internal-alpha/v0-battle-preparation-complete-v1-20260529-hotfix3/web/index.pck` (`4247612` bytes), Cloudflare Pages deploy passed with preview `https://d8f2e0a7.draxos-mobile-internal-alpha.pages.dev/web`, public HEAD check confirmed the hotfix PCK, and Browser visual review confirmed the mobile Preparation popup is opaque/full-height and no longer exposes the Refugio `Batalhar` CTA behind it.
 
 Latest validation for Battle Drama v1.1 publication on `2026-05-29`:
 
