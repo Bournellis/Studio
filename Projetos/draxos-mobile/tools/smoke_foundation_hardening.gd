@@ -198,7 +198,7 @@ func _check_battle_mode_contract() -> void:
 	_expect(str(boot.get("_current_screen")) == "battle_running", "Boot enters battle_running route")
 	_expect(not bool(boot.call("_route_shows_app_chrome", "battle_running")), "Boot battle_running hides app chrome")
 	_expect(boot.get("_battle_fullscreen_overlay") != null, "Boot creates battle fullscreen overlay")
-	_expect(_find_button_by_text(boot, "Pular") != null, "Boot battle fullscreen exposes Pular")
+	_expect(_find_button_by_text(boot, "Pular batalha") != null, "Boot battle fullscreen exposes Pular batalha")
 
 	boot.set("_replay_running", true)
 	boot.call("_skip_current_replay")
