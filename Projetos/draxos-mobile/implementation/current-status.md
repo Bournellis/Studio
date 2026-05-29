@@ -3,9 +3,9 @@
 - Last updated: `2026-05-29`
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
-- Active surface: `Visual Direction v1`
+- Active surface: `Internal Alpha`
 - Active stage: `Visual Direction`
-- Active stage status: `VISUAL_DIRECTION_V1_IMPLEMENTED`
+- Active stage status: `VISUAL_DIRECTION_V1_PUBLISHED`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety` (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation` (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical context, not current product focus)
@@ -58,7 +58,7 @@ Priority order after baseline confirmation:
 4. Battle presentation.
 5. Weapons, spells, economy, balance and content details.
 
-Internal loop ergonomics, Social Basico Guilda v1 and Visual Direction v1 have now received explicit packages. No new code, schema, backend, asset, gameplay or balance work belongs outside an explicit next package decision.
+Internal loop ergonomics, Social Basico Guilda v1 and Visual Direction v1 have now received explicit packages and are published to Internal Alpha. No new code, schema, backend, asset, gameplay or balance work belongs outside an explicit next package decision.
 
 ## Social Basico Guilda v1
 
@@ -85,9 +85,9 @@ Track 16 added the first behavior/crafting/consumable package requested by the u
 
 | Artifact | Bytes | SHA256 |
 |---|---:|---|
-| Android APK | `31625237` | `8d8a88fbbc8f887fcb434c42f508f4bdf161556b0d9b70a93a31cd64544a938a` |
-| PC Windows ZIP | `40091415` | `3d0e8b04a6f338e51ce1d782a32cadeeb3889013f241d59c20bd7fe7f78c5339` |
-| Web index | `5442` | `34b9ad875b8cafa2b6e510224dc45bff21745d9c0d688c5bd738e2988d11c6c4` |
+| Android APK | `31629333` | `2a6bff4f927dbb835c667347fa9f3b54d0c947f95b3454c65b8a561d57678200` |
+| PC Windows ZIP | `40096068` | `a29f7341c676866fda421d3ee9cf13cdf26a216644b0ce98ba3614964e9b8875` |
+| Web index | `5442` | `ac43ff4352f206822b54f199ff6eddabe0b72a6d4d1b41622e4f6e70148be40c` |
 
 Links:
 
@@ -95,13 +95,13 @@ Links:
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal: `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
 - Stable Web: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest verified preview: `https://483a73f3.draxos-mobile-internal-alpha.pages.dev`
+- Latest verified preview: `https://6a6ae522.draxos-mobile-internal-alpha.pages.dev`
 
-Social Basico Guilda v1 was published to the Internal Alpha artifact/site channel on `2026-05-29`. The stable Cloudflare Pages domain is protected by Cloudflare Access and returns the Access sign-in page to anonymous requests; public unauthenticated web validation should use the verified preview URL or an authenticated Access session. APK/PC downloads use the protected `release/download` endpoint with an alpha email/password account and signed Storage URLs; unauthenticated artifact probes return `401` by design, while `release_download_smoke.ts` confirms the Bearer-token path.
+Visual Direction v1 was published to the Internal Alpha artifact/site channel on `2026-05-29`. The stable Cloudflare Pages domain is protected by Cloudflare Access and returns the Access sign-in page to anonymous requests; public unauthenticated web validation should use the verified preview URL or an authenticated Access session. APK/PC downloads use the protected `release/download` endpoint with an alpha email/password account and signed Storage URLs; unauthenticated artifact probes return `401` by design, while `release_download_smoke.ts` confirms the Bearer-token path.
 
 ## Visual Direction v1
 
-Visual Direction v1 is implemented locally as the next refinement package after Social Basico Guilda v1. It does not publish remote builds and does not change backend, schema, API, gameplay, economy, content tuning or final art.
+Visual Direction v1 is implemented and published as the next refinement package after Social Basico Guilda v1. It did not change backend, schema, API, gameplay, economy, content tuning or final art.
 
 - `docs/visual-direction-v1.md` is the live direction document for this package.
 - `core/ui_tokens.gd` now owns surface accents, action accents, CTA selection and shared panel/button style helpers.
@@ -112,7 +112,7 @@ Visual Direction v1 is implemented locally as the next refinement package after 
 
 - Track 16 schema/backend work was not separately promoted in this publication; Supabase migrations/functions for that package must still be deployed deliberately if Track 16 becomes product focus later.
 - Foundation Loop UX Pass 01 is the accepted current V0 UX baseline after manual Android/Windows/Web review on `2026-05-29`; Social Basico Guilda v1 is now available in the published Internal Alpha build for human two-account validation.
-- Visual Direction v1 is implemented in the local repo but has not been manually reviewed on Android/Windows/Web and has not been published.
+- Visual Direction v1 is published to Internal Alpha and still needs manual Android/Windows/Web visual review before the next product package.
 - Track 13 release safety remains the baseline for any future publication or wider-access gate.
 - `players.save_type` remains an alpha shortcut. `account_profiles` + `game_saves` is a future migration package.
 - Progression/economy remains mock/substance and not the current tuning focus.
@@ -120,17 +120,28 @@ Visual Direction v1 is implemented locally as the next refinement package after 
 
 ## Next Step
 
-Run a manual Android/Windows/Web visual review for Visual Direction v1, then decide whether to publish that package or move to Battle Presentation v1. Keep direct chat, helps, contributions, moderation, tuning numbers, weapons, spells, economy and battle presentation out of scope until they receive their own explicit package.
+Run a manual Android/Windows/Web visual review of the published Visual Direction v1 build, then decide whether to move to Battle Presentation v1. Keep direct chat, helps, contributions, moderation, tuning numbers, weapons, spells, economy and battle presentation out of scope until they receive their own explicit package.
 
 ## Validation
 
-Latest validation for Visual Direction v1 implementation on `2026-05-29`:
+Latest validation for Visual Direction v1 publication on `2026-05-29`:
 
+- One-time Godot `--headless --import`: PASS in fresh publication worktree.
 - `validate_foundation.ps1 -Profile Client`: PASS, including `git diff --check`, PowerShell parse, server/supabase mirrors, Deno release typecheck light, structural readiness, `tools/validate.gd`, GUT `tests/client` (`119/119`, `1880` asserts), `tools/smoke_runtime_config.gd`, `tools/smoke_foundation_hardening.gd`, `tools/smoke_responsive_layout.gd` and `tools/smoke_exports.gd`.
-- `tools/smoke_foundation_loop.gd`: PASS.
-- `tools/check_agent_ops_foundation.ps1`: PASS.
-- `tools/smoke_foundation_surfaces.gd`: attempted, blocked by `NETWORK_UNAVAILABLE` because anonymous auth/Supabase local was not available in this environment.
-- Remote publication was not requested and was not run.
+- `export_internal_alpha.ps1 -AllowAndroidDebugFallback`: PASS; Android export mode `debug_fallback`.
+- `publish_internal_alpha.ps1 -Mode Plan`: PASS.
+- `publish_internal_alpha.ps1 -Mode Package`: PASS.
+- `build_cloudflare_pages_package.ps1`: PASS.
+- Cloudflare Pages deploy: PASS, preview `https://6a6ae522.draxos-mobile-internal-alpha.pages.dev`.
+- Supabase Storage upload: PASS with Supabase CLI `2.98.0`, protected downloads enabled.
+- Supabase release manifest override + `release` function deploy: PASS.
+- `server/tests/release_manifest_smoke.ts`: PASS against remote Supabase.
+- `server/tests/release_download_smoke.ts`: PASS with signed HEAD checks for Android and PC downloads.
+- `server/tests/internal_alpha_remote_smoke.ts` with `DRAXOS_REMOTE_RELEASE_SMOKE=1`: PASS.
+- Preview GET checks: PASS for `/portal/index.html` (`Draxos Alpha`) and `/web/index.html` (`GODOT_CONFIG`).
+- `tools/check_agent_ops_foundation.ps1`: PASS after status updates.
+- `validate_foundation.ps1 -Profile Quick`: PASS after status updates.
+- `git diff --check`: PASS.
 
 Latest validation for Social Basico Guilda v1 publication on `2026-05-29`:
 

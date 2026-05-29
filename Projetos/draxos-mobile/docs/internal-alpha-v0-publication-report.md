@@ -181,3 +181,29 @@ Hashes planejados no manifest:
 - Android APK: `e13974b4adebae0646f536f09088f4af14e52bfb38940aa31e8133fcf5c0334f`
 - PC Windows ZIP: `4ec31aba91415ee6f6dac4f21bab8fc366bef6d5af916df2abeff86e3706ec23`
 - Web Index: `30802917fa9d0abc8b7cfcec922a3e93001f744e89a31dce1998cab9d5d98d81`
+
+## Visual Direction v1 - 2026-05-29
+
+Depois da implementacao de Visual Direction v1, Fabio aprovou exportar e subir novas versoes para o site. A publicacao foi executada a partir da branch `codex/draxos-mobile/visual-direction-v1-publish`.
+
+Resultado:
+
+- `validate_foundation.ps1 -Profile Client`: passou apos import Godot inicial da worktree.
+- `export_internal_alpha.ps1 -AllowAndroidDebugFallback`: passou, Android mode `debug_fallback`.
+- `publish_internal_alpha.ps1 -Mode Plan`: passou.
+- `publish_internal_alpha.ps1 -Mode Package`: passou.
+- `build_cloudflare_pages_package.ps1`: passou.
+- `npx -y wrangler pages deploy .\build\internal-alpha\cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`: passou.
+- Deploy Cloudflare Pages: `https://6a6ae522.draxos-mobile-internal-alpha.pages.dev`.
+- `publish_internal_alpha.ps1 -Mode Upload -ConfirmRemoteMutation`: passou com downloads protegidos.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -ConfirmRemoteMutation`: passou.
+- `release_manifest_smoke.ts`: passou.
+- `release_download_smoke.ts`: passou com signed HEAD para Android e PC.
+- `internal_alpha_remote_smoke.ts` com `DRAXOS_REMOTE_RELEASE_SMOKE=1`: passou.
+- Preview Portal/Web: passou para `/portal/index.html` (`Draxos Alpha`) e `/web/index.html` (`GODOT_CONFIG`).
+
+Hashes planejados no manifest:
+
+- Android APK: `2a6bff4f927dbb835c667347fa9f3b54d0c947f95b3454c65b8a561d57678200`
+- PC Windows ZIP: `a29f7341c676866fda421d3ee9cf13cdf26a216644b0ce98ba3614964e9b8875`
+- Web Index: `ac43ff4352f206822b54f199ff6eddabe0b72a6d4d1b41622e4f6e70148be40c`

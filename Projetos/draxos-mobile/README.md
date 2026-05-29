@@ -2,7 +2,7 @@
 
 DraxosMobile is the Godot/Supabase project for Android, PC executable and PC browser. It is an async PVP autobattler with Refugio/Base management, social systems and server-authoritative progression.
 
-**Status:** `P2_IMPLEMENTACAO - VISUAL_DIRECTION_V1_IMPLEMENTED`
+**Status:** `P2_IMPLEMENTACAO - VISUAL_DIRECTION_V1_PUBLISHED`
 **Baseline:** Track 00-15 integrated; Track 13 release safety and Track 14 agent ops baseline preserved; Track 16 is the latest technical package and has not been promoted as the current product focus.
 
 ## Current Focus
@@ -13,7 +13,7 @@ The Foundation Loop Audit is documented in `docs/foundation-loop-audit.md`. Foun
 
 `Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again`
 
-Social Basico Guilda v1 is published on the Internal Alpha channel. Visual Direction v1 is implemented locally as the next refinement package: surface accents, CTA/action styling and panel accents are now centralized in `core/ui_tokens.gd` and documented in `docs/visual-direction-v1.md`. Remote publication is still a separate opt-in step.
+Social Basico Guilda v1 and Visual Direction v1 are published on the Internal Alpha channel. Visual Direction v1 centralizes surface accents, CTA/action styling and panel accents in `core/ui_tokens.gd` and is documented in `docs/visual-direction-v1.md`.
 
 Current content, names, spells, weapons, economy values, battle flavor, visual style and premium systems exist to give substance to the prototype. Treat them as mock/substance for evaluation, not as final game direction or current tuning priorities.
 
@@ -33,10 +33,10 @@ Do not start from old Track 04/08/10/15/16 notes. They are history or technical 
 
 ## Current Gate
 
-Before any new feature, numeric tuning, account/save migration, assets-final pass, battle presentation pass, social expansion or remote publication:
+Before any new feature, numeric tuning, account/save migration, assets-final pass, battle presentation pass or social expansion:
 
 1. Read `docs/foundation-loop-audit.md`.
-2. Treat Foundation Loop UX Pass 01 as the accepted current baseline, and choose an explicit next package before expanding social, visuals, battle presentation or content systems.
+2. Treat Foundation Loop UX Pass 01, Social Basico Guilda v1 and Visual Direction v1 as the accepted published baseline, then choose an explicit next package before expanding social, visuals, battle presentation or content systems.
 3. Keep release publishing in `Mode Plan` or `Mode Package` unless the user explicitly approves remote mutation.
 4. Run the real Android / Windows / Web walkthrough in `docs/track-13-manual-walkthrough-gate.md` before any remote publication.
 
@@ -88,4 +88,4 @@ git status --short
 - Version code: `1`
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal/Web: Cloudflare Access protected.
-- Latest verified preview: `https://483a73f3.draxos-mobile-internal-alpha.pages.dev`
+- Latest verified preview: `https://6a6ae522.draxos-mobile-internal-alpha.pages.dev`
