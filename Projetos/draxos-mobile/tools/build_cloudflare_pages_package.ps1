@@ -37,6 +37,47 @@ function Assert-UnderDirectory {
     }
 }
 
+function Get-GodotWebFileSize {
+    param([string]$Html, [string]$FileName)
+    $pattern = '"' + [regex]::Escape($FileName) + '"\s*:\s*(\d+)'
+    $match = [regex]::Match($Html, $pattern)
+    if (-not $match.Success) {
+        throw "Godot Web file size missing from publish web index for $FileName"
+    }
+    return [int64]$match.Groups[1].Value
+}
+
+function Get-RemoteContentLength {
+    param([string]$Url)
+    try {
+        $response = Invoke-WebRequest -Uri $Url -Method Head -UseBasicParsing
+        $contentLength = $response.Headers["Content-Length"]
+        if ($contentLength -is [array]) {
+            $contentLength = $contentLength[0]
+        }
+        if (-not [string]::IsNullOrWhiteSpace($contentLength)) {
+            return [int64]$contentLength
+        }
+    } catch {
+        throw "Unable to read remote asset size for $Url. $($_.Exception.Message)"
+    }
+    throw "Remote asset did not return Content-Length: $Url"
+}
+
+function Assert-WebShellMatchesRemoteAssets {
+    param([string]$Html, [string]$AssetBase)
+    if ($AssetBase -notmatch "^https?://") {
+        return
+    }
+    foreach ($fileName in @("index.pck", "index.wasm")) {
+        $shellSize = Get-GodotWebFileSize -Html $Html -FileName $fileName
+        $remoteSize = Get-RemoteContentLength -Url ($AssetBase + "/" + $fileName)
+        if ($shellSize -ne $remoteSize) {
+            throw "Web shell asset size mismatch for $fileName. publish/web/index.html says $shellSize bytes but $AssetBase/$fileName is $remoteSize bytes. Re-run export_internal_alpha.ps1 and publish_internal_alpha.ps1 -Mode Package in the same release worktree, or use a PublishDir generated from the uploaded Web asset root."
+        }
+    }
+}
+
 if ([string]::IsNullOrWhiteSpace($ProjectDir)) {
     $ProjectDir = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot "..")).Path
 } else {
@@ -96,6 +137,7 @@ $webHtml = $webHtml.Replace('href="index.apple-touch-icon.png"', ('href="' + $as
 $webHtml = $webHtml.Replace('src="index.png"', ('src="' + $assetBase + '/index.png"'))
 $webHtml = $webHtml.Replace('<script src="index.js"></script>', ('<script src="' + $assetBase + '/index.js"></script>'))
 $webHtml = $webHtml.Replace('"executable":"index"', ('"executable":"' + $assetBase + '/index"'))
+Assert-WebShellMatchesRemoteAssets -Html $webHtml -AssetBase $assetBase
 [System.IO.File]::WriteAllText($webIndexPath, $webHtml, [System.Text.UTF8Encoding]::new($false))
 
 # Flat root files make Cloudflare direct upload more forgiving when a browser
