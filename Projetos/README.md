@@ -18,14 +18,15 @@ This directory contains active, conceptual and paused projects for the studio.
 
 ## Implementacao - Social Basico Publicado
 
-- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 13 release safety and Track 14 agent ops are preserved baselines, Track 00-15 are integrated, and Track 16 is the latest technical package. The confirmed Foundation post-login loop remains the accepted baseline: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again. Foundation Loop UX Pass 01 is implemented, published to Internal Alpha and manually confirmed on Android/Windows/Web on 2026-05-29, including initial-menu Battle Lab/Progression Lab visibility, contained Refugio/Battle screens, APK download without Bearer-token error, static battle-request splash and clear post-login loop. Social Basico Guilda v1 is now published on top of that baseline with clearer Social identity, username copy action, Friends/Guild/Chat sections and 8s auto-sync while Social stays open, without backend/schema changes.
-  - Priority/status: `P2_IMPLEMENTACAO - SOCIAL_GUILD_V1_PUBLISHED`
+- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 13 release safety and Track 14 agent ops are preserved baselines, Track 00-15 are integrated, and Track 16 is the latest technical package. The confirmed Foundation post-login loop remains the accepted baseline: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again. Foundation Loop UX Pass 01 is implemented, published to Internal Alpha and manually confirmed on Android/Windows/Web on 2026-05-29, including initial-menu Battle Lab/Progression Lab visibility, contained Refugio/Battle screens, APK download without Bearer-token error, static battle-request splash and clear post-login loop. Social Basico Guilda v1 is published on top of that baseline with clearer Social identity, username copy action, Friends/Guild/Chat sections and 8s auto-sync while Social stays open, without backend/schema changes. Visual Direction v1 is implemented locally with surface/action accents, centralized CTA style and panel accents in `core/ui_tokens.gd`, documented in `docs/visual-direction-v1.md`; it is not remotely published yet.
+  - Priority/status: `P2_IMPLEMENTACAO - VISUAL_DIRECTION_V1_IMPLEMENTED`
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Agent manual: `draxos-mobile/docs/agent-operating-manual.md`
   - Documentation index: `draxos-mobile/docs/documentation-index.md`
   - Foundation Audit: `draxos-mobile/docs/foundation-app-v0-audit.md`
   - Foundation Loop Audit: `draxos-mobile/docs/foundation-loop-audit.md`
   - Responsive layout contract: `draxos-mobile/docs/foundation-responsive-layout-contract.md`
+  - Visual Direction v1: `draxos-mobile/docs/visual-direction-v1.md`
   - Operational status: `draxos-mobile/implementation/current-status.md`
   - Product vision: `draxos-mobile/docs/product-vision.md`
   - Product brief: `draxos-mobile/docs/product-brief.md`

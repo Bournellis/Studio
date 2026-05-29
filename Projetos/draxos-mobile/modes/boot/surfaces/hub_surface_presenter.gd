@@ -425,7 +425,7 @@ static func _populate_refuge_menu(host: Node, popup: PopupPanel, body: VBoxConta
 			body.add_child(_popup_hint("Menu indisponivel.", compact))
 
 static func _popup_action_button(host: Node, popup: PopupPanel, text: String, action_id: String, confirm_message: String = "", primary: bool = false) -> Button:
-	var button := _drawer_button(host, text, primary)
+	var button := _drawer_button(host, text, primary, action_id, "refuge")
 	button.pressed.connect(func() -> void:
 		popup.hide()
 		host.call("_trigger_action", action_id, confirm_message)
@@ -435,24 +435,22 @@ static func _popup_action_button(host: Node, popup: PopupPanel, text: String, ac
 	return button
 
 static func _popup_route_button(host: Node, popup: PopupPanel, text: String, route_id: String, primary: bool = false) -> Button:
-	var button := _drawer_button(host, text, primary)
+	var target_route := str(host.call("_normalize_route", route_id))
+	var button := _drawer_button(host, text, primary, "screen:%s" % target_route, target_route)
 	button.pressed.connect(func() -> void:
 		popup.hide()
-		host.call("_show_screen", str(host.call("_normalize_route", route_id)))
+		host.call("_show_screen", target_route)
 	)
 	return button
 
-static func _drawer_button(host: Node, text: String, primary: bool) -> Button:
+static func _drawer_button(host: Node, text: String, primary: bool, action_id: String = "", surface_id: String = "refuge") -> Button:
 	var button := Button.new()
 	button.text = text
 	button.tooltip_text = text
 	button.custom_minimum_size = Vector2(0, 58 if primary else 50)
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	button.add_theme_color_override("font_color", UiTokens.color("text_primary"))
-	button.add_theme_stylebox_override("normal", _hotspot_style("accent_astral" if primary else "border_default", primary))
-	button.add_theme_stylebox_override("hover", _hotspot_style("accent_astral" if primary else "border_active", true))
-	button.add_theme_stylebox_override("pressed", _hotspot_style("accent_astral" if primary else "border_active", true))
 	host.call("_prepare_touch_button", button)
+	host.call("_apply_action_button_style", button, action_id, surface_id)
 	return button
 
 static func _popup_hint(text: String, compact: bool) -> Label:
@@ -558,8 +556,9 @@ static func _refuge_altar_style() -> StyleBoxFlat:
 
 static func _hud_style(bg_token: String, border_token: String) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
-	style.bg_color = UiTokens.color(bg_token).lerp(Color.TRANSPARENT, 0.12)
-	style.border_color = UiTokens.color(border_token)
+	var resolved_border := UiTokens.surface_accent_token("refuge", border_token) if border_token == "border_default" else border_token
+	style.bg_color = UiTokens.color(bg_token).lerp(UiTokens.color(resolved_border), 0.06).lerp(Color.TRANSPARENT, 0.12)
+	style.border_color = UiTokens.color(resolved_border)
 	style.set_border_width_all(1)
 	style.set_corner_radius_all(8)
 	style.content_margin_left = 8
@@ -906,11 +905,8 @@ static func _entry_action_button(host: Node, text: String, action_id: String, _c
 	button.tooltip_text = text
 	button.custom_minimum_size = Vector2(0, 58 if primary else 50)
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	button.add_theme_color_override("font_color", UiTokens.color("text_primary"))
-	button.add_theme_stylebox_override("normal", _hotspot_style("accent_astral" if primary else "border_default", primary))
-	button.add_theme_stylebox_override("hover", _hotspot_style("accent_astral" if primary else "border_active", true))
-	button.add_theme_stylebox_override("pressed", _hotspot_style("accent_astral" if primary else "border_active", true))
 	host.call("_prepare_touch_button", button)
+	host.call("_apply_action_button_style", button, action_id, "entry")
 	button.pressed.connect(func() -> void:
 		host.call("_trigger_action", action_id, confirm_message)
 	)
@@ -1142,6 +1138,8 @@ static func _as_array(value: Variant) -> Array:
 	return []
 
 static func _hotspot_style(color_token: String, active: bool) -> StyleBoxFlat:
+	if color_token == "border_default":
+		color_token = UiTokens.surface_accent_token("refuge", "border_default")
 	var style := StyleBoxFlat.new()
 	style.bg_color = UiTokens.color("bg_panel").lerp(UiTokens.color(color_token), 0.18 if active else 0.08)
 	style.border_color = UiTokens.color(color_token)

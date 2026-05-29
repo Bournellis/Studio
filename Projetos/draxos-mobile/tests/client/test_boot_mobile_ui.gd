@@ -835,6 +835,33 @@ func test_shop_presenter_renders_loaded_state_and_disables_claimed_items() -> vo
 	var reward_button := boot._action_buttons["claim_reward:daily_collect_base"] as Button
 	assert_true(reward_button.disabled)
 
+func test_visual_direction_v1_applies_surface_accents_without_changing_controls() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	boot._show_screen("social")
+	await get_tree().process_frame
+	var refresh_button := boot._action_buttons["show_social"] as Button
+	var chat_button := boot._action_buttons["send_guild_chat"] as Button
+	assert_not_null(refresh_button)
+	assert_not_null(chat_button)
+	assert_true(refresh_button.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
+	assert_true(chat_button.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
+	var refresh_style := refresh_button.get_theme_stylebox("normal") as StyleBoxFlat
+	var chat_style := chat_button.get_theme_stylebox("normal") as StyleBoxFlat
+	assert_not_null(refresh_style)
+	assert_not_null(chat_style)
+	assert_eq(refresh_style.border_color, UiTokens.color("accent_social"))
+	assert_eq(chat_style.border_color, UiTokens.button_style("cta", "normal", "accent_social").border_color)
+
+	boot._show_screen("shop")
+	await get_tree().process_frame
+	var shop_button := boot._action_buttons["shop_purchase:alpha_redeem_small"] as Button
+	assert_not_null(shop_button)
+	var shop_style := shop_button.get_theme_stylebox("normal") as StyleBoxFlat
+	assert_not_null(shop_style)
+	assert_eq(shop_style.border_color, UiTokens.button_style("cta", "normal", "accent_shop").border_color)
+
 func test_normal_surfaces_hide_internal_copy_terms() -> void:
 	var forbidden_terms := PackedStringArray(["server-authoritative", "polling", "snapshot", "redeem", "alpha"])
 	var boot = BootScreenScript.new()

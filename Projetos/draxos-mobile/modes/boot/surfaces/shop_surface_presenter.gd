@@ -422,16 +422,15 @@ static func _clear_node_children(parent: Node) -> void:
 		child.queue_free()
 
 static func _panel_style(host: Node, bg_token: String, border_token: String) -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = UiTokens.color(bg_token)
-	style.border_color = UiTokens.color(border_token)
-	style.set_border_width_all(1)
-	style.set_corner_radius_all(6)
-	style.content_margin_left = 10 if _compact_layout(host) else 14
-	style.content_margin_right = 10 if _compact_layout(host) else 14
-	style.content_margin_top = 8 if _compact_layout(host) else 12
-	style.content_margin_bottom = 8 if _compact_layout(host) else 12
-	return style
+	var surface_id := str(host.get("_current_screen"))
+	return UiTokens.panel_style_from_tokens(
+		bg_token,
+		border_token,
+		_compact_layout(host),
+		UiTokens.surface_accent_token(surface_id, border_token),
+		1,
+		6
+	)
 
 static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:

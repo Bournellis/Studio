@@ -118,6 +118,22 @@ func test_ui_tokens_expose_mvp_colors() -> void:
 	assert_eq(UiTokens.mode_badge_color(ProjectInfo.MVP_MODE), UiTokens.color("rarity_mvp"))
 	assert_eq(int(UiTokens.text_style("button").get("font_size", 0)), 17)
 
+func test_visual_direction_v1_tokens_bind_surfaces_and_actions() -> void:
+	assert_true(UiTokens.has_color("accent_social"))
+	assert_true(UiTokens.has_color("accent_shop"))
+	assert_eq(UiTokens.surface_accent_token("social"), "accent_social")
+	assert_eq(UiTokens.surface_accent_token("shop"), "accent_shop")
+	assert_eq(UiTokens.surface_accent_token("base_management"), "accent_refuge")
+	assert_eq(UiTokens.action_accent_token("send_guild_chat", "social"), "accent_social")
+	assert_eq(UiTokens.action_accent_token("shop_purchase:alpha_redeem_small", "shop"), "accent_shop")
+	assert_eq(UiTokens.action_accent_token("upgrade_base_structure:nucleo_energia", "base_management"), "accent_refuge")
+	assert_eq(UiTokens.action_button_style_id("request_battle"), "cta")
+	assert_eq(UiTokens.action_button_style_id("show_social"), "secondary")
+	var social_button_style := UiTokens.button_style("secondary", "hover", "accent_social")
+	assert_eq(social_button_style.border_color, UiTokens.color("accent_social"))
+	var shop_panel_style := UiTokens.surface_panel_style("shop", false, "bg_panel", "border_default")
+	assert_eq(shop_panel_style.border_color, UiTokens.color("accent_shop"))
+
 func test_asset_ids_are_registered_without_requiring_art_yet() -> void:
 	var all_ids: Array = Array(AssetIds.all_ids())
 	assert_eq(all_ids.size(), EXPECTED_ASSET_PATHS.size())

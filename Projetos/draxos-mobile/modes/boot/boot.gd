@@ -542,7 +542,7 @@ func _add_section_label(text: String) -> Label:
 	var label := Label.new()
 	label.text = text
 	label.add_theme_font_size_override("font_size", 16 if _compact_layout else 18)
-	label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+	label.add_theme_color_override("font_color", UiTokens.surface_accent_color(_current_screen, "text_primary"))
 	_content_body.add_child(label)
 	return label
 
@@ -561,7 +561,7 @@ func _add_body_text(text: String) -> Label:
 func _add_output_label(text: String) -> Label:
 	_reset_action_group()
 	var panel := PanelContainer.new()
-	panel.add_theme_stylebox_override("panel", _panel_style("bg_panel", "border_default"))
+	panel.add_theme_stylebox_override("panel", UiTokens.surface_panel_style(_current_screen, _compact_layout, "bg_panel", "border_default"))
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_content_body.add_child(panel)
 
@@ -617,6 +617,7 @@ func _add_action_button(text: String, action_id: String, confirm_message: String
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	button.tooltip_text = text
 	_prepare_touch_button(button)
+	_apply_action_button_style(button, action_id)
 	button.pressed.connect(func() -> void:
 		_trigger_action(action_id, confirm_message)
 	)
@@ -633,7 +634,7 @@ func _add_social_input(label_text: String, placeholder: String, initial_text: St
 
 	var label := Label.new()
 	label.text = label_text
-	label.add_theme_color_override("font_color", UiTokens.color("text_secondary"))
+	label.add_theme_color_override("font_color", UiTokens.surface_accent_color(_current_screen, "text_secondary"))
 	box.add_child(label)
 
 	var input := LineEdit.new()
@@ -653,6 +654,7 @@ func _add_screen_button(text: String, screen_id: String) -> Button:
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	button.tooltip_text = "Abrir %s." % _screen_title(screen_id)
 	_prepare_touch_button(button)
+	_apply_action_button_style(button, "screen:%s" % target_screen, target_screen)
 	button.pressed.connect(func() -> void:
 		_show_screen(target_screen)
 	)
@@ -661,6 +663,20 @@ func _add_screen_button(text: String, screen_id: String) -> Button:
 
 func _prepare_touch_button(button: Button) -> void:
 	MobileUiContractScript.apply_touch_button(button)
+
+func _apply_action_button_style(button: Button, action_id: String, surface_id: String = "") -> void:
+	if button == null:
+		return
+	var style_id := UiTokens.action_button_style_id(action_id)
+	var resolved_surface := surface_id.strip_edges()
+	if resolved_surface == "":
+		resolved_surface = _current_screen
+	var accent_token := UiTokens.action_accent_token(action_id, resolved_surface)
+	button.add_theme_color_override("font_color", UiTokens.color("text_on_accent" if style_id == "cta" else "text_primary"))
+	button.add_theme_stylebox_override("normal", UiTokens.button_style(style_id, "normal", accent_token))
+	button.add_theme_stylebox_override("hover", UiTokens.button_style(style_id, "hover", accent_token))
+	button.add_theme_stylebox_override("pressed", UiTokens.button_style(style_id, "pressed", accent_token))
+	button.add_theme_stylebox_override("focus", UiTokens.button_style(style_id, "hover", accent_token))
 
 func _trigger_action(action_id: String, confirm_message: String = "") -> void:
 	if _is_busy:
@@ -1415,16 +1431,14 @@ func _is_network_error(code: String) -> bool:
 	return AppShellErrorContractScript.is_network_error(code)
 
 func _panel_style(bg_token: String, border_token: String) -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = UiTokens.color(bg_token)
-	style.border_color = UiTokens.color(border_token)
-	style.set_border_width_all(1)
-	style.set_corner_radius_all(6)
-	style.content_margin_left = 10 if _compact_layout else 14
-	style.content_margin_right = 10 if _compact_layout else 14
-	style.content_margin_top = 8 if _compact_layout else 12
-	style.content_margin_bottom = 8 if _compact_layout else 12
-	return style
+	return UiTokens.panel_style_from_tokens(
+		bg_token,
+		border_token,
+		_compact_layout,
+		UiTokens.surface_accent_token(_current_screen, border_token),
+		1,
+		6
+	)
 
 static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:
