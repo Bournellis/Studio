@@ -115,8 +115,11 @@ Release-ready Web exige:
 - Preset `PC Browser Alpha` exporta `build/web/index.html` e assets Godot.
 - APK/ZIP e assets grandes continuam em Supabase Storage; HTML final de Portal/Web fica no Cloudflare Pages.
 - `tools/build_cloudflare_pages_package.ps1` gera `build/internal-alpha/cloudflare-pages/` e `build/internal-alpha/draxos-mobile-cloudflare-pages.zip`.
+- Gerar o pacote Cloudflare a partir do mesmo worktree/sessao que exportou e empacotou a release. Nao redeployar a partir de `build/` local antigo do workspace principal.
+- Quando `-StaticAssetBaseUrl` apontar para Supabase/HTTP, o script confere `GODOT_CONFIG.fileSizes` do shell Web contra `Content-Length` remoto de `index.pck` e `index.wasm`; mismatch bloqueia o pacote porque indica `publish/web/index.html` stale.
 - Pacote Cloudflare nao contem arquivo individual com `>= 25 MiB`.
 - `web/index.html` publicado no Cloudflare aponta para assets grandes no Supabase Storage.
+- `web/index.html` publicado tem `GODOT_CONFIG.fileSizes.index.pck` igual ao `Content-Length` remoto do `index.pck` versionado.
 - `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html` abre Portal.
 - `https://draxos-mobile-internal-alpha.pages.dev/web/index.html` abre Web build.
 - Smoke somente leitura `release_artifacts_remote_smoke.ts` valida Portal com `DraxosMobile` e Web com `GODOT_CONFIG`.
@@ -199,12 +202,13 @@ Esta sequencia fica fora da validacao automatica segura e deve ser usada apenas 
 3. Revisar hashes em `build/internal-alpha/release-artifacts.json`.
 4. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Plan -StaticSiteBaseUrl <url>` e revisar o plano.
 5. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Package -StaticSiteBaseUrl <url>` para preparar pacote local.
-6. Gerar pacote Cloudflare com `tools/build_cloudflare_pages_package.ps1`.
-7. Publicar pacote no Cloudflare Pages por fluxo aprovado.
-8. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Upload -ConfirmRemoteMutation -StaticSiteBaseUrl <url>` para Storage.
-9. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode DeployManifest -ConfirmRemoteMutation -StaticSiteBaseUrl <url>` para manifest/deploy.
-10. Rodar smokes remotos, incluindo `release_manifest_smoke.ts`, `release_artifacts_remote_smoke.ts` e `internal_alpha_remote_smoke.ts` com flags necessarias.
-11. Registrar relatorio de export/publicacao e atualizar handoff.
+6. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Upload -ConfirmRemoteMutation -StaticSiteBaseUrl <url>` para Storage.
+7. Gerar pacote Cloudflare no mesmo worktree com `tools/build_cloudflare_pages_package.ps1 -StaticAssetBaseUrl <asset-root-versionado>/web`; este passo deve acontecer depois do upload porque o script compara o shell local com os assets remotos.
+8. Publicar pacote no Cloudflare Pages por fluxo aprovado.
+9. Validar o preview Cloudflare antes do dominio estavel: `/web` deve conter o asset root versionado e `GODOT_CONFIG.fileSizes.index.pck` deve bater com o `Content-Length` de `<asset-root-versionado>/web/index.pck`.
+10. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode DeployManifest -ConfirmRemoteMutation -StaticSiteBaseUrl <url>` para manifest/deploy.
+11. Rodar smokes remotos, incluindo `release_manifest_smoke.ts`, `release_artifacts_remote_smoke.ts` e `internal_alpha_remote_smoke.ts` com flags necessarias.
+12. Registrar relatorio de export/publicacao e atualizar handoff.
 
 ## Validacoes Remotas Que Exigem Credenciais
 
@@ -224,6 +228,8 @@ Esta sequencia fica fora da validacao automatica segura e deve ser usada apenas 
 - Manifest remoto aponta para hash diferente do artefato local aprovado.
 - `minimum_supported_version_code` maior que o app atual sem build nova validada.
 - Portal/Web final hospedado diretamente no Supabase Storage.
+- Cloudflare Pages foi redeployado a partir de `build/` local antigo ou de worktree diferente da exportacao aprovada.
+- `web/index.html` publicado aponta para asset root novo, mas `GODOT_CONFIG.fileSizes.index.pck` nao bate com o `index.pck` remoto.
 - APK debug fallback usado sem estar em `known_issues`.
 - Smoke remoto usa `service_role` ou URL local.
 - Script de publicacao remota foi executado sem `-ConfirmRemoteMutation`.

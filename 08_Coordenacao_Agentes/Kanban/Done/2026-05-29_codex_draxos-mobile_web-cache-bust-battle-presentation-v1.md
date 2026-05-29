@@ -16,7 +16,7 @@ Corrigir a percepcao de Web app sem mudancas apos a publicacao de Battle Present
 - `tools/build_cloudflare_pages_package.ps1` agora gera `_headers` no pacote Cloudflare Pages.
 - O pacote publicado inclui `Cache-Control: no-store` para o site interno, portal e web app.
 - Cloudflare Pages foi republicado em producao.
-- Preview publicado: `https://e80987bc.draxos-mobile-internal-alpha.pages.dev`
+- Preview publicado: `https://64d01322.draxos-mobile-internal-alpha.pages.dev`
 
 ## Validacao
 
@@ -26,6 +26,7 @@ Corrigir a percepcao de Web app sem mudancas apos a publicacao de Battle Present
 - `wrangler pages deploy`: OK.
 - Preview `/web`: `200`, `Cache-Control: no-store, no-store`, contendo `v0-battle-presentation-20260529/web`.
 - Preview `/portal/manifest.example.json`: `200`, `Cache-Control: no-store, no-store`, contendo `v0-battle-presentation-20260529`.
+- Follow-up: o preview final `/web` tambem foi validado com `GODOT_CONFIG.fileSizes.index.pck = 4227948`, igual ao `Content-Length` remoto do `index.pck` versionado, removendo o shell stale que ainda tinha `415856`.
 - Stable anonimo ainda redireciona para Cloudflare Access, como esperado.
 
 ## Fora De Escopo Mantido
