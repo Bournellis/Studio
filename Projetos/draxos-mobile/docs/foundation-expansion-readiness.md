@@ -113,6 +113,7 @@ Esta primeira entrega da readiness cria a base tecnica e documental, mas nao abr
 - battle request/history/replay com metadata de ruleset e `FIRST_SLICE_SIM` aplicado via RPC transacional para battle row, rewards, consumiveis e ranking;
 - Base collect/upgrade, build equip, crafting craft/crush-bones, monetization rewards/alpha purchase e guild create/join migrados para o padrao `game_saves` + `request_hash` + idempotencia pending/completed;
 - `server/tests/transactional_rpc_live_test.ts` prova em Supabase local resetado que as RPCs v1 fazem rollback de falha parcial, permitem retry apos precondicao corrigida, retornam resposta idempotente por `request_id` e rejeitam `request_hash` divergente em battle rewards, build equip, crafting, reward claim, alpha purchase e guild create/join;
+- `server/tests/transactional_edge_rpc_smoke.ts` prova o caminho HTTP local das Edge Functions sobre os adapters RPC v1 e confirmou/corrigiu hash estavel em `battle/request` `FIRST_SLICE_SIM` e retry de `crafting/craft` sem prechecagem bloqueando a RPC;
 - `DraxosOperationState` e `DraxosAppShellActionRouter` sem tocar `boot.gd`;
 - contratos de account/save, ruleset registry, admin ops e minigame integration;
 - checker read-only integrado ao gate de fundacao.
