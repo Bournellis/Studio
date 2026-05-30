@@ -18,7 +18,7 @@ This directory contains active, conceptual and paused projects for the studio.
 
 ## Implementacao - Foundation Expansion Readiness
 
-- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 13 release safety and Track 14 agent ops remain preserved baselines. First Session Clarity v1 is approved, and the active package is Foundation Expansion Readiness: account/save authority, ruleset registry, idempotency v1, admin auditability, client shell split, multiagent contracts, transactional RPC promotion, local Supabase rollback/retry/idempotency proof, local Edge RPC adapter smoke, and portable domain modules for Base rules/projection, saved battle log projection and progression/power build projection before base builder/autobattler/social/minigame expansion. The confirmed Foundation post-login loop remains the accepted baseline: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again.
+- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 13 release safety and Track 14 agent ops remain preserved baselines. First Session Clarity v1 is approved, and the active package is Foundation Expansion Readiness: account/save authority, ruleset registry, idempotency v1, admin auditability, client shell split, multiagent contracts, transactional RPC promotion, local Supabase rollback/retry/idempotency proof, local Edge RPC adapter smoke, and portable domain modules for Base rules/projection, saved battle log projection, progression/power build projection and economy/crafting source-sink projection before base builder/autobattler/social/minigame expansion. The confirmed Foundation post-login loop remains the accepted baseline: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again.
   - Priority/status: `P2_IMPLEMENTACAO - FOUNDATION_EXPANSION_READINESS_ACTIVE`
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Agent manual: `draxos-mobile/docs/agent-operating-manual.md`
@@ -50,7 +50,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Progression Lab: `draxos-mobile/docs/progression-lab/README.md`
   - Design archive: `_conceitos/mobile-universe/`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: continue portable domain cuts for economy application/source-sink projection and then battle combatant mapping, then choose base builder, autobattler, social or minigame expansion by explicit decision.
+  - Current next step: continue the portable domain cut for battle combatant mapping, then choose base builder, autobattler, social or minigame expansion by explicit decision.
 
 ## Arquivo De Design
 

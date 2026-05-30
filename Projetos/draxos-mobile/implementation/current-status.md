@@ -98,11 +98,11 @@ Delivered in the current branch:
 - `battle`, `build`, `crafting`, `monetization` and `social` adapters now compute canonical `request_hash`, resolve `game_saves` and call domain RPCs while preserving the current client payload shape where the UI depends on it.
 - `server/tests/transactional_rpc_live_test.ts` now proves rollback/retry/idempotency against a reset local Supabase Postgres stack for battle rewards, build equip, crafting, reward claim, alpha purchase and guild create/join.
 - `server/tests/transactional_edge_rpc_smoke.ts` now proves the local Edge Function HTTP path over the v1 RPC adapters for base, battle, build, crafting, monetization and social. This pass fixed unstable `battle/request` `FIRST_SLICE_SIM` hashing and removed crafting resource prechecks that blocked idempotent retries before the RPC.
-- `server/functions/_shared/base_domain.ts`, `server/functions/_shared/battle_log_projection.ts` and `server/functions/_shared/progression_domain.ts` continue the portable domain-service split with mirrored Supabase modules and Deno contract tests for Base rules/projection, saved battle log projection, build payload/unlocks/equip validation, runtime power and battle helper projection.
+- `server/functions/_shared/base_domain.ts`, `server/functions/_shared/battle_log_projection.ts`, `server/functions/_shared/progression_domain.ts` and `server/functions/_shared/economy_domain.ts` continue the portable domain-service split with mirrored Supabase modules and Deno contract tests for Base rules/projection, saved battle log projection, build payload/unlocks/equip validation, runtime power, battle helper projection, rewards/products and crafting/monetization source-sink payloads.
 - `DraxosOperationState` and `DraxosAppShellActionRouter` create client shell contracts without adding logic to `boot.gd`.
 - `tools/check_foundation_expansion_readiness.ps1` is the read-only structural gate and is called from `validate_foundation.ps1`.
 
-This package does not implement a new gameplay feature, new social loop or new minigame. The remaining backend hardening before balance/content expansion is to continue the next portable domain cuts, starting with economy application/source-sink projection and then deeper battle combatant mapping. Progression Lab and Battle Lab still have local power heuristics and should be explicitly aligned or documented in a later lab-focused slice, without changing runtime tuning silently.
+This package does not implement a new gameplay feature, new social loop or new minigame. The remaining backend hardening before balance/content expansion is to continue the next portable domain cuts, starting with deeper battle combatant mapping. Progression Lab and Battle Lab still have local power heuristics that should be explicitly aligned or documented in a later lab-focused slice, without changing runtime tuning silently.
 
 ## Progression Clarity v1
 
@@ -226,7 +226,7 @@ Visual Direction v1 is implemented and published as the next refinement package 
 
 ## Next Step
 
-Foundation Expansion Readiness is active. Continue the next portable domain cuts, starting with economy application/source-sink projection and then deeper battle combatant mapping, before returning to product expansion. Do not open base builder tuning, autobattler tuning, social expansion, minigame implementation, victory prediction, opponent counter-picks, custom thresholds, enemy-specific behavior, spell priorities, direct chat, helps, contributions, moderation, tuning numbers, new weapons, new spells, economy, new potions, crafting expansion or broader replay controls without its own package decision.
+Foundation Expansion Readiness is active. Continue the next portable domain cut with deeper battle combatant mapping before returning to product expansion. Do not open base builder tuning, autobattler tuning, social expansion, minigame implementation, victory prediction, opponent counter-picks, custom thresholds, enemy-specific behavior, spell priorities, direct chat, helps, contributions, moderation, tuning numbers, new weapons, new spells, economy, new potions, crafting expansion or broader replay controls without its own package decision.
 
 ## Validation
 
