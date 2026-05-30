@@ -6,10 +6,9 @@ No MVP atual, o alvo inicial e validar:
 
 - `healthcheck` responde `ok: true`.
 - migrations aplicam em banco limpo.
-- `battle/request` exige auth, retorna `battle_log_v1` e respeita idempotencia
-  por `request_id`.
-- `telemetry/client-event` exige auth, grava eventos client nao autoritativos e
-  continua protegido por RLS contra insert direto.
+- `battle/request` exige auth, retorna `battle_log_v1` e respeita idempotencia por `request_id`.
+- `telemetry/client-event` exige auth, grava eventos client nao autoritativos e continua protegido
+  por RLS contra insert direto.
 
 ## Smokes
 
@@ -23,49 +22,49 @@ npx -y deno test --allow-read server/tests/remaining_transactional_domain_enforc
 npx -y deno test --allow-read server/tests/base_domain_test.ts
 npx -y deno test --allow-read server/tests/battle_log_projection_test.ts
 npx -y deno test --allow-read server/tests/progression_domain_test.ts
+npx -y deno test --allow-read server/tests/economy_domain_test.ts
 npx -y deno test --allow-read server/tests/foundation_ruleset_test.ts
 npx -y deno test --allow-read server/tests/integer_bones_contract_test.ts
 ```
 
-O teste `foundation_contracts_test.ts` le `docs/contracts/api-endpoints.md` e o
-feature registry para garantir que a matriz atual declare escopo por endpoint e
-que os cards mantenham campos obrigatorios completos antes de novas
-features/servicos.
+O teste `foundation_contracts_test.ts` le `docs/contracts/api-endpoints.md` e o feature registry
+para garantir que a matriz atual declare escopo por endpoint e que os cards mantenham campos
+obrigatorios completos antes de novas features/servicos.
 
-O teste `foundation_expansion_schema_test.ts` valida a migration espelhada de
-Foundation Expansion Readiness: account/save, ruleset registry, admin audit,
-idempotencia v1, metadata de ruleset e RPCs scaffold.
+O teste `foundation_expansion_schema_test.ts` valida a migration espelhada de Foundation Expansion
+Readiness: account/save, ruleset registry, admin audit, idempotencia v1, metadata de ruleset e RPCs
+scaffold.
 
-O teste `transactional_domain_enforcement_schema_test.ts` valida a promotion
-de Base para RPCs transacionais v1: migration espelhada, `collect_base_v1`,
-`start_base_upgrade_v1`, grants service-role e adapter HTTP sem writes REST
-multi-step para coleta/upgrade.
+O teste `transactional_domain_enforcement_schema_test.ts` valida a promotion de Base para RPCs
+transacionais v1: migration espelhada, `collect_base_v1`, `start_base_upgrade_v1`, grants
+service-role e adapter HTTP sem writes REST multi-step para coleta/upgrade.
 
-O teste `remaining_transactional_domain_enforcement_schema_test.ts` valida a
-promotion dos dominios restantes para RPCs transacionais v1: battle rewards,
-monetization rewards/alpha purchase, build equip, crafting e guild create/join.
+O teste `remaining_transactional_domain_enforcement_schema_test.ts` valida a promotion dos dominios
+restantes para RPCs transacionais v1: battle rewards, monetization rewards/alpha purchase, build
+equip, crafting e guild create/join.
 
-O teste `base_domain_test.ts` valida que regras puras de Base vivem no modulo
-portavel `_shared/base_domain.ts`: estruturas, producao, coleta pendente,
-custos/duracoes, bloqueios de upgrade, payload de estado e mirror
-server/supabase sem HTTP/Supabase REST.
+O teste `base_domain_test.ts` valida que regras puras de Base vivem no modulo portavel
+`_shared/base_domain.ts`: estruturas, producao, coleta pendente, custos/duracoes, bloqueios de
+upgrade, payload de estado e mirror server/supabase sem HTTP/Supabase REST.
 
-O teste `battle_log_projection_test.ts` valida que a projecao de
-`battle_log_v1`, historico e metadata de ruleset vive no modulo portavel
-`_shared/battle_log_projection.ts`, sem depender de simulacao atual nem do
-adapter HTTP.
+O teste `battle_log_projection_test.ts` valida que a projecao de `battle_log_v1`, historico e
+metadata de ruleset vive no modulo portavel `_shared/battle_log_projection.ts`, sem depender de
+simulacao atual nem do adapter HTTP.
 
-O teste `progression_domain_test.ts` valida que payload de build, unlocks,
-validacao de equipamento, power runtime e helpers usados pelo Battle vivem no
-modulo portavel `_shared/progression_domain.ts`, espelhado entre
-server/supabase e sem HTTP/Supabase REST.
+O teste `progression_domain_test.ts` valida que payload de build, unlocks, validacao de equipamento,
+power runtime e helpers usados pelo Battle vivem no modulo portavel `_shared/progression_domain.ts`,
+espelhado entre server/supabase e sem HTTP/Supabase REST.
 
-O teste `foundation_ruleset_test.ts` valida que `foundation_ruleset_v0` tem
-hashes deterministicos e mirrors server/supabase alinhados.
+O teste `economy_domain_test.ts` valida que rewards, produtos alpha, deltas de source/sink, payloads
+de monetization/crafting e projecoes de craft/conversao vivem no modulo portavel
+`_shared/economy_domain.ts`, espelhado entre server/supabase e sem HTTP/Supabase REST.
 
-O teste `integer_bones_contract_test.ts` valida que o catalogo Grimoire
-server/site publica Ossos em escala inteira e que a coleta da base preserva
-acumulo parcial ate existir pelo menos 1 Osso visivel para coletar.
+O teste `foundation_ruleset_test.ts` valida que `foundation_ruleset_v0` tem hashes deterministicos e
+mirrors server/supabase alinhados.
+
+O teste `integer_bones_contract_test.ts` valida que o catalogo Grimoire server/site publica Ossos em
+escala inteira e que a coleta da base preserva acumulo parcial ate existir pelo menos 1 Osso visivel
+para coletar.
 
 Com Supabase local rodando:
 
@@ -90,102 +89,87 @@ deno run --allow-net --allow-env server/tests/transactional_rpc_live_test.ts
 deno run --allow-net --allow-env server/tests/transactional_edge_rpc_smoke.ts
 ```
 
-O smoke cria uma sessao anonima, cria conta guest, solicita batalha `MVP_ONLY`,
-repete o mesmo `request_id`, consulta `battle/latest` e confirma que XP/Ossos
-nao duplicam.
+O smoke cria uma sessao anonima, cria conta guest, solicita batalha `MVP_ONLY`, repete o mesmo
+`request_id`, consulta `battle/latest` e confirma que XP/Ossos nao duplicam.
 
-O smoke `first_slice_battle_smoke.ts` cria sessao anonima, cria conta guest,
-solicita `FIRST_SLICE_SIM` contra bots de efeito/invocacao, repete o mesmo
-`request_id`, consulta `battle/latest`/`competition/ranking/current` e confirma
-eventos ricos, idempotencia, aplicacao de XP/Almas/Energia/Sangue/Ossos e
-pontuacao de arena sem duplicar o mesmo `request_id`.
+O smoke `first_slice_battle_smoke.ts` cria sessao anonima, cria conta guest, solicita
+`FIRST_SLICE_SIM` contra bots de efeito/invocacao, repete o mesmo `request_id`, consulta
+`battle/latest`/`competition/ranking/current` e confirma eventos ricos, idempotencia, aplicacao de
+XP/Almas/Energia/Sangue/Ossos e pontuacao de arena sem duplicar o mesmo `request_id`.
 
 O smoke `battle_history_replay_smoke.ts` valida `GET /battle/history` e
-`GET /battle/replay?battle_id=...`: auth obrigatoria, lista recente sem
-`event_log` completo, replay salvo com `battle_log_v1`, leitura sem alterar
-XP/recursos e isolamento entre saves `normal` e `progression_lab`.
-Use `BATTLE_FUNCTION_URL=http://127.0.0.1:8000` quando a funcao `battle` for
-servida diretamente por Deno para validar um worktree sem reiniciar o Edge
-Runtime compartilhado.
+`GET /battle/replay?battle_id=...`: auth obrigatoria, lista recente sem `event_log` completo, replay
+salvo com `battle_log_v1`, leitura sem alterar XP/recursos e isolamento entre saves `normal` e
+`progression_lab`. Use `BATTLE_FUNCTION_URL=http://127.0.0.1:8000` quando a funcao `battle` for
+servida diretamente por Deno para validar um worktree sem reiniciar o Edge Runtime compartilhado.
 
-O smoke `base_manager_smoke.ts` valida auth obrigatoria, inicializacao dos seis
-predios, payload de UI com custo/tempo/status, coleta idempotente, compra alpha
-de Energia, upgrade server-authoritative por predio e bloqueio de segunda
-construcao quando a fila esta cheia.
+O smoke `base_manager_smoke.ts` valida auth obrigatoria, inicializacao dos seis predios, payload de
+UI com custo/tempo/status, coleta idempotente, compra alpha de Energia, upgrade server-authoritative
+por predio e bloqueio de segunda construcao quando a fila esta cheia.
 
-O smoke `social_competition_smoke.ts` valida social basico com dois testadores:
-auth obrigatoria, identidade social de conta, amizade por username, guilda
-create/join, membros enriquecidos, chat de guilda idempotente, rate limit,
-polling com usernames, matchmaking com bot fora do ranking, ranking top 10 com
-posicao do jogador e RLS contra insert direto em guilda.
+O smoke `social_competition_smoke.ts` valida social basico com dois testadores: auth obrigatoria,
+identidade social de conta, amizade por username, guilda create/join, membros enriquecidos, chat de
+guilda idempotente, rate limit, polling com usernames, matchmaking com bot fora do ranking, ranking
+top 10 com posicao do jogador e RLS contra insert direto em guilda.
 
-O smoke `client_telemetry_smoke.ts` valida auth obrigatoria, evento pre-conta
-com `player_id = null`, evento pos-conta, rejeicao de schema desconhecido e
-bloqueio de insert direto em `telemetry_events` com JWT anonimo.
+O smoke `client_telemetry_smoke.ts` valida auth obrigatoria, evento pre-conta com
+`player_id = null`, evento pos-conta, rejeicao de schema desconhecido e bloqueio de insert direto em
+`telemetry_events` com JWT anonimo.
 
-O smoke `two_save_context_smoke.ts` valida o contexto `normal` e
-`progression_lab` usando o header `x-draxos-save-type`: dois players isolados
-na mesma sessao auth, batalha/base/loja no save Lab e ranking bloqueado para
-`progression_lab`.
+O smoke `two_save_context_smoke.ts` valida o contexto `normal` e `progression_lab` usando o header
+`x-draxos-save-type`: dois players isolados na mesma sessao auth, batalha/base/loja no save Lab e
+ranking bloqueado para `progression_lab`.
 
-O smoke `reset_save_context_smoke.ts` valida `POST /account/saves/reset`:
-reset do Lab preserva Normal, reset do Normal preserva Lab, `request_id` e
-idempotente e `save_type` divergente entre body/header e rejeitado.
+O smoke `reset_save_context_smoke.ts` valida `POST /account/saves/reset`: reset do Lab preserva
+Normal, reset do Normal preserva Lab, `request_id` e idempotente e `save_type` divergente entre
+body/header e rejeitado.
 
-O smoke `progression_lab_apply_smoke.ts` valida `POST /progression-lab/apply`:
-perfil/milestone versionado aplicado no save `progression_lab`, save normal
-preservado, idempotencia por `request_id`, ranking do Lab bloqueado e batalha
-do Lab ainda jogavel apos a aplicacao.
+O smoke `progression_lab_apply_smoke.ts` valida `POST /progression-lab/apply`: perfil/milestone
+versionado aplicado no save `progression_lab`, save normal preservado, idempotencia por
+`request_id`, ranking do Lab bloqueado e batalha do Lab ainda jogavel apos a aplicacao.
 
-O smoke `email_auth_alpha_smoke.ts` valida signup/login por email/senha,
-`POST /account/bootstrap`, criacao do save `normal`, criacao do save
-`progression_lab` com sufixo `*_lab`, recuperacao por `account/state` e login
-posterior na mesma conta.
+O smoke `email_auth_alpha_smoke.ts` valida signup/login por email/senha, `POST /account/bootstrap`,
+criacao do save `normal`, criacao do save `progression_lab` com sufixo `*_lab`, recuperacao por
+`account/state` e login posterior na mesma conta.
 
-O smoke `release_manifest_smoke.ts` valida `GET /release/manifest`: schema do
-manifest de update, canal `internal_alpha`, versao/code atuais e metadados de
-artefatos Android/PC/Web.
+O smoke `release_manifest_smoke.ts` valida `GET /release/manifest`: schema do manifest de update,
+canal `internal_alpha`, versao/code atuais e metadados de artefatos Android/PC/Web.
 
-O smoke `release_download_smoke.ts` valida `GET /release/download` com conta
-email/senha alpha: cria URLs assinadas temporarias de Android/PC e confirma
-que elas usam rota valida de Supabase Storage.
+O smoke `release_download_smoke.ts` valida `GET /release/download` com conta email/senha alpha: cria
+URLs assinadas temporarias de Android/PC e confirma que elas usam rota valida de Supabase Storage.
 
-O smoke `grimoire_catalog_smoke.ts` valida `GET /content/grimoire`: auth
-obrigatoria, bloqueio de JWT anonimo, bloqueio de conta email sem save alpha e
-catalogo `grimoire_catalog_v1` completo apos `/account/bootstrap`.
+O smoke `grimoire_catalog_smoke.ts` valida `GET /content/grimoire`: auth obrigatoria, bloqueio de
+JWT anonimo, bloqueio de conta email sem save alpha e catalogo `grimoire_catalog_v1` completo apos
+`/account/bootstrap`.
 
-O smoke `build_equip_smoke.ts` valida `GET /build/state` e
-`POST /build/equip` no save `progression_lab`: opcoes de equipamento com nomes
-publicos, equipar/remover instrumento, spell, doutrina e familiar, bloqueio de
-posicao por nivel, item inexistente, spell duplicada, idempotencia por
-`request_id` e `players.power` recalculado pelo servidor.
+O smoke `build_equip_smoke.ts` valida `GET /build/state` e `POST /build/equip` no save
+`progression_lab`: opcoes de equipamento com nomes publicos, equipar/remover instrumento, spell,
+doutrina e familiar, bloqueio de posicao por nivel, item inexistente, spell duplicada, idempotencia
+por `request_id` e `players.power` recalculado pelo servidor.
 
-O smoke `runtime_config_smoke.ts` valida `GET /release/config`: schema
-`runtime_config_v1`, flags booleanas da Track 06, fallback offline permitido e
-guardrails contra service role, secrets, estado de jogador e tuning de gameplay.
+O smoke `runtime_config_smoke.ts` valida `GET /release/config`: schema `runtime_config_v1`, flags
+booleanas da Track 06, fallback offline permitido e guardrails contra service role, secrets, estado
+de jogador e tuning de gameplay.
 
-O smoke `transactional_rpc_live_test.ts` valida as RPCs transacionais v1
-diretamente no Postgres local apos `supabase db reset`: rollback de falha
-parcial, retry apos precondicao corrigida, resposta idempotente por
-`request_id` e rejeicao de `request_hash` divergente para battle rewards,
+O smoke `transactional_rpc_live_test.ts` valida as RPCs transacionais v1 diretamente no Postgres
+local apos `supabase db reset`: rollback de falha parcial, retry apos precondicao corrigida,
+resposta idempotente por `request_id` e rejeicao de `request_hash` divergente para battle rewards,
 build equip, crafting, reward claim, alpha purchase e guild create/join. Ele usa
 `DRAXOS_LOCAL_DB_URL` quando definido, ou o banco local padrao da Supabase CLI
 `postgres://postgres:postgres@127.0.0.1:54322/postgres`.
 
-O smoke `transactional_edge_rpc_smoke.ts` valida o caminho HTTP local das Edge
-Functions sobre os adapters RPC v1. Ele exige `supabase functions serve` ativo,
-chama `base`, `battle`, `build`, `crafting`, `monetization` e `social` via
-`/functions/v1`, e confirma no Postgres local que cada mutation criou
-`idempotency_keys` `completed` com `request_hash` calculado pelo adapter.
+O smoke `transactional_edge_rpc_smoke.ts` valida o caminho HTTP local das Edge Functions sobre os
+adapters RPC v1. Ele exige `supabase functions serve` ativo, chama `base`, `battle`, `build`,
+`crafting`, `monetization` e `social` via `/functions/v1`, e confirma no Postgres local que cada
+mutation criou `idempotency_keys` `completed` com `request_hash` calculado pelo adapter.
 
-O smoke `release_artifacts_remote_smoke.ts` valida somente leitura contra o
-remoto publicado: manifest, hashes Android/PC no payload, alcance do APK/ZIP
-via `HEAD` ou `GET` parcial, Portal com `DraxosMobile` e Web HTML com
-`GODOT_CONFIG`. Ele exige URL remota e publishable key, recusa URL
+O smoke `release_artifacts_remote_smoke.ts` valida somente leitura contra o remoto publicado:
+manifest, hashes Android/PC no payload, alcance do APK/ZIP via `HEAD` ou `GET` parcial, Portal com
+`DraxosMobile` e Web HTML com `GODOT_CONFIG`. Ele exige URL remota e publishable key, recusa URL
 local/service role e nao publica nada.
 
-Validacao standalone de Edge Functions pode usar `npx deno`. Validacao de
-runtime Supabase depende de Docker e Supabase CLI no ambiente local.
+Validacao standalone de Edge Functions pode usar `npx deno`. Validacao de runtime Supabase depende
+de Docker e Supabase CLI no ambiente local.
 
 ## Remote Internal Alpha
 
@@ -197,11 +181,10 @@ $env:SUPABASE_PUBLISHABLE_KEY='sb_publishable_<public-key>'
 npx -y deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts
 ```
 
-O smoke remoto rejeita URLs locais e service role no lugar da publishable key.
-Use `DRAXOS_REMOTE_ANON_AUTH_SMOKE=1` para incluir Auth anonimo,
-`DRAXOS_REMOTE_ACCOUNT_SMOKE=1` para validar account guest dev e
-`DRAXOS_REMOTE_EMAIL_AUTH_SMOKE=1` para validar email/senha, `account/bootstrap`
-e os dois saves da conta alpha. Use `DRAXOS_REMOTE_RELEASE_SMOKE=1` para validar
+O smoke remoto rejeita URLs locais e service role no lugar da publishable key. Use
+`DRAXOS_REMOTE_ANON_AUTH_SMOKE=1` para incluir Auth anonimo, `DRAXOS_REMOTE_ACCOUNT_SMOKE=1` para
+validar account guest dev e `DRAXOS_REMOTE_EMAIL_AUTH_SMOKE=1` para validar email/senha,
+`account/bootstrap` e os dois saves da conta alpha. Use `DRAXOS_REMOTE_RELEASE_SMOKE=1` para validar
 tambem o manifest remoto de updates.
 
 Para validar links ja publicados sem redeploy:

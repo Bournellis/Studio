@@ -6,10 +6,20 @@ import {
   mapFoundationDatabaseError,
   mutationRequestHash,
 } from "../_shared/transactional_mutation.ts";
+import {
+  type CraftingInventoryRow,
+  type CraftingPotionSlotRow,
+  type CraftingProjectionState,
+  craftingRecipe,
+  craftingStatePayload,
+  craftProjection,
+  crushBonesConversion,
+  DEFAULT_POTION_BEHAVIOR,
+  type EconomyResourceRow,
+} from "../_shared/economy_domain.ts";
 import { type SaveType, saveTypeFromRequest, saveTypeQuery } from "../_shared/save_context.ts";
 
 type Route = "state" | "crush_bones" | "craft";
-type ResourceKey = "almas" | "energia" | "sangue" | "cristais" | "ossos" | "po_osso" | "diamante";
 
 interface EdgeConfig {
   supabaseUrl: string;
@@ -37,38 +47,20 @@ interface PlayerRow {
   level: number;
 }
 
-interface ResourceRow {
+interface ResourceRow extends EconomyResourceRow {
   player_id: string;
-  almas: string | number;
-  energia: string | number;
-  sangue: string | number;
-  cristais: string | number;
-  ossos: string | number;
-  po_osso: string | number;
-  diamante: string | number;
   updated_at: string;
 }
 
-interface ConsumableRow {
+interface ConsumableRow extends CraftingInventoryRow {
   player_id: string;
-  item_id: string;
-  quantity: number;
-  updated_at: string;
 }
 
-interface PotionSlotRow {
+interface PotionSlotRow extends CraftingPotionSlotRow {
   player_id: string;
-  slot_index: number;
-  potion_id: string | null;
-  behavior: unknown;
-  updated_at: string;
 }
 
-interface IdempotencyRow {
-  response_payload: unknown;
-}
-
-interface CraftingState {
+interface CraftingState extends CraftingProjectionState {
   player: PlayerRow;
   gameSave: FoundationGameSaveRow;
   resources: ResourceRow;
@@ -76,61 +68,7 @@ interface CraftingState {
   potionSlots: PotionSlotRow[];
 }
 
-interface PotionDefinition {
-  id: string;
-  displayName: string;
-  description: string;
-  effect: Record<string, unknown>;
-  defaultBehavior: BehaviorConfig;
-}
-
-interface CraftingRecipe {
-  id: string;
-  displayName: string;
-  input: Partial<Record<ResourceKey, number>>;
-  output: { itemId: string; quantity: number };
-}
-
-interface BehaviorConfig {
-  enabled: boolean;
-  hp: BehaviorCondition;
-  mana: BehaviorCondition;
-}
-
-interface BehaviorCondition {
-  mode: "ignore" | "below" | "above";
-  percent: number;
-}
-
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const DEFAULT_POTION_BEHAVIOR: BehaviorConfig = {
-  enabled: true,
-  hp: { mode: "below", percent: 40 },
-  mana: { mode: "ignore", percent: 0 },
-};
-const POTIONS: PotionDefinition[] = [
-  {
-    id: "pocao_vida",
-    displayName: "Pocao de Vida",
-    description: "Recupera 20% da vida maxima em 5 segundos.",
-    effect: {
-      type: "heal_over_time",
-      total_percent_max_hp: 20,
-      duration_seconds: 5,
-      tick_percent_max_hp: 4,
-      tick_seconds: 1,
-    },
-    defaultBehavior: DEFAULT_POTION_BEHAVIOR,
-  },
-];
-const RECIPES: CraftingRecipe[] = [
-  {
-    id: "craft_pocao_vida",
-    displayName: "Criar Pocao de Vida",
-    input: { po_osso: 50 },
-    output: { itemId: "pocao_vida", quantity: 1 },
-  },
-];
 
 Deno.serve(async (request: Request) => {
   if (request.method === "OPTIONS") {
@@ -231,7 +169,7 @@ async function handleCrushBones(
   }
   const responsePayload = {
     ...craftingStatePayload(refreshed.value),
-    conversion: rpcPayload.conversion ?? { input: { ossos: amount }, output: { po_osso: amount } },
+    conversion: rpcPayload.conversion ?? crushBonesConversion(amount),
   };
   return jsonResponse(responsePayload);
 }
@@ -254,7 +192,7 @@ async function handleCraft(
   if (quantity === null) {
     return errorResponse("INVALID_QUANTITY", "quantity must be a positive integer.", 400);
   }
-  const recipe = RECIPES.find((item) => item.id === recipeId);
+  const recipe = craftingRecipe(recipeId);
   if (recipe === undefined) {
     return errorResponse("INVALID_RECIPE", "recipe_id is not part of Crafting v1.", 400);
   }
@@ -264,17 +202,14 @@ async function handleCraft(
     return errorResponse(state.error.code, state.error.message, state.error.status);
   }
 
-  const cost = scaledResourceDelta(recipe.input, -quantity);
-  const outputQuantity = recipe.output.quantity * quantity;
-  const costPayload = resourceDelta(cost);
-  const outputPayload = { item_id: recipe.output.itemId, quantity: outputQuantity };
+  const projection = craftProjection(recipe, quantity);
   const requestHash = await mutationRequestHash("crafting/craft", body, {
     request_id: requestId,
     save_type: auth.saveType,
     recipe_id: recipe.id,
     quantity,
-    resource_delta: costPayload,
-    output: outputPayload,
+    resource_delta: projection.costPayload,
+    output: projection.outputPayload,
   });
   const rpc = await restRequest<unknown>(config, "rpc/craft_item_v1", {
     method: "POST",
@@ -286,8 +221,8 @@ async function handleCraft(
         request_id: requestId,
         recipe_id: recipe.id,
         quantity,
-        resource_delta: costPayload,
-        output: outputPayload,
+        resource_delta: projection.costPayload,
+        output: projection.outputPayload,
       },
     }),
   });
@@ -305,8 +240,8 @@ async function handleCraft(
     ...craftingStatePayload(refreshed.value),
     crafted: rpcPayload.crafted ?? {
       recipe_id: recipe.id,
-      output: outputPayload,
-      cost: costPayload,
+      output: projection.outputPayload,
+      cost: projection.costPayload,
     },
   };
   return jsonResponse(responsePayload);
@@ -400,247 +335,6 @@ async function ensurePotionSlot(config: EdgeConfig, playerId: string): Promise<v
       behavior: DEFAULT_POTION_BEHAVIOR,
     }),
   });
-}
-
-async function applyResources(
-  config: EdgeConfig,
-  resources: ResourceRow,
-  delta: Partial<Record<ResourceKey, number>>,
-): Promise<{ value: ResourceRow; error: null } | { value: null; error: RestError }> {
-  const patch: Record<string, number | string> = {};
-  for (const key of resourceKeys()) {
-    const change = numberValue(delta[key], 0);
-    if (change !== 0) {
-      patch[key] = numberValue(resources[key], 0) + change;
-    }
-  }
-  patch.updated_at = new Date().toISOString();
-  const result = await restRequest<ResourceRow[]>(
-    config,
-    `resources?player_id=eq.${encodeURIComponent(resources.player_id)}&select=*`,
-    {
-      method: "PATCH",
-      headers: { prefer: "return=representation" },
-      body: JSON.stringify(patch),
-    },
-  );
-  if (result.error !== null || result.value.length === 0) {
-    return {
-      value: null,
-      error: {
-        code: "RESOURCES_UPDATE_FAILED",
-        message: "Unable to apply resource delta.",
-        status: 500,
-      },
-    };
-  }
-  return { value: result.value[0], error: null };
-}
-
-function craftingStatePayload(state: CraftingState): Record<string, unknown> {
-  return {
-    ok: true,
-    resources: state.resources,
-    crafting: {
-      resources: {
-        ossos: numberValue(state.resources.ossos, 0),
-        po_osso: numberValue(state.resources.po_osso, 0),
-      },
-      potions: POTIONS.map(potionPayload),
-      recipes: RECIPES.map(recipePayload),
-      inventory: state.inventory.map((item) => ({
-        item_id: item.item_id,
-        quantity: item.quantity,
-        updated_at: item.updated_at,
-      })),
-      potion_slots: state.potionSlots.map((slot) => ({
-        slot_index: slot.slot_index,
-        unlocked: true,
-        potion_id: slot.potion_id,
-        behavior: normalizeBehaviorOrDefault(slot.behavior, DEFAULT_POTION_BEHAVIOR),
-        updated_at: slot.updated_at,
-      })),
-    },
-  };
-}
-
-function potionPayload(potion: PotionDefinition): Record<string, unknown> {
-  return {
-    id: potion.id,
-    display_name: potion.displayName,
-    description: potion.description,
-    effect: potion.effect,
-    default_behavior: potion.defaultBehavior,
-  };
-}
-
-function recipePayload(recipe: CraftingRecipe): Record<string, unknown> {
-  return {
-    id: recipe.id,
-    display_name: recipe.displayName,
-    input: resourceDelta(recipe.input),
-    output: {
-      item_id: recipe.output.itemId,
-      quantity: recipe.output.quantity,
-    },
-  };
-}
-
-function scaledResourceDelta(
-  input: Partial<Record<ResourceKey, number>>,
-  quantityMultiplier: number,
-): Partial<Record<ResourceKey, number>> {
-  const delta: Partial<Record<ResourceKey, number>> = {};
-  for (const [key, value] of Object.entries(input)) {
-    const resourceKey = key as ResourceKey;
-    delta[resourceKey] = numberValue(value, 0) * quantityMultiplier;
-  }
-  return delta;
-}
-
-function resourceDelta(delta: Partial<Record<ResourceKey, number>>): Record<string, number> {
-  const payload: Record<string, number> = {};
-  for (const key of resourceKeys()) {
-    const value = numberValue(delta[key], 0);
-    if (value !== 0) payload[key] = value;
-  }
-  return payload;
-}
-
-function normalizeBehaviorOrDefault(value: unknown, fallback: BehaviorConfig): BehaviorConfig {
-  const normalized = normalizeBehavior(value);
-  return normalized.error === null ? normalized.value : fallback;
-}
-
-function normalizeBehavior(value: unknown): { value: BehaviorConfig; error: null } | {
-  value: null;
-  error: RestError;
-} {
-  const payload = isObject(value) ? value : {};
-  const enabled = typeof payload.enabled === "boolean" ? payload.enabled : true;
-  const hp = normalizeCondition(payload.hp, { mode: "ignore", percent: 0 });
-  if (hp.error !== null) return { value: null, error: hp.error };
-  const mana = normalizeCondition(payload.mana, { mode: "ignore", percent: 0 });
-  if (mana.error !== null) return { value: null, error: mana.error };
-  return { value: { enabled, hp: hp.value, mana: mana.value }, error: null };
-}
-
-function normalizeCondition(
-  value: unknown,
-  fallback: BehaviorCondition,
-): { value: BehaviorCondition; error: null } | { value: null; error: RestError } {
-  if (!isObject(value)) {
-    return { value: fallback, error: null };
-  }
-  const mode = stringValue(value.mode, fallback.mode);
-  if (mode !== "ignore" && mode !== "below" && mode !== "above") {
-    return {
-      value: null,
-      error: { code: "INVALID_BEHAVIOR", message: "Behavior mode is invalid.", status: 400 },
-    };
-  }
-  const percent = numberValue(value.percent, fallback.percent);
-  if (percent < 0 || percent > 100) {
-    return {
-      value: null,
-      error: {
-        code: "INVALID_BEHAVIOR_PERCENT",
-        message: "Behavior percent must be between 0 and 100.",
-        status: 400,
-      },
-    };
-  }
-  return { value: { mode, percent: Math.trunc(percent) }, error: null };
-}
-
-async function loadIdempotency(
-  config: EdgeConfig,
-  playerId: string,
-  endpoint: string,
-  requestId: string,
-): Promise<{ value: unknown | null; error: null } | { value: null; error: RestError }> {
-  const result = await restRequest<IdempotencyRow[]>(
-    config,
-    `idempotency_keys?player_id=eq.${encodeURIComponent(playerId)}&endpoint=eq.${
-      encodeURIComponent(endpoint)
-    }&request_id=eq.${encodeURIComponent(requestId)}&select=response_payload&limit=1`,
-    { method: "GET" },
-  );
-  if (result.error !== null) {
-    return { value: null, error: stateReadError() };
-  }
-  return { value: result.value[0]?.response_payload ?? null, error: null };
-}
-
-async function insertIdempotency(
-  config: EdgeConfig,
-  playerId: string,
-  endpoint: string,
-  requestId: string,
-  responsePayload: unknown,
-): Promise<RestError | null> {
-  const result = await restRequest<unknown>(config, "idempotency_keys", {
-    method: "POST",
-    headers: { prefer: "return=minimal" },
-    body: JSON.stringify({
-      player_id: playerId,
-      endpoint,
-      request_id: requestId,
-      response_payload: responsePayload,
-    }),
-  });
-  return result.error === null ? null : {
-    code: "IDEMPOTENCY_WRITE_FAILED",
-    message: "Unable to persist crafting idempotency.",
-    status: 500,
-  };
-}
-
-async function insertResourceLedger(
-  config: EdgeConfig,
-  playerId: string,
-  source: string,
-  requestId: string,
-  delta: Record<string, number>,
-): Promise<RestError | null> {
-  const result = await restRequest<unknown>(config, "resource_transactions", {
-    method: "POST",
-    headers: { prefer: "return=minimal" },
-    body: JSON.stringify({ player_id: playerId, source, request_id: requestId, delta }),
-  });
-  return result.error === null ? null : {
-    code: "LEDGER_WRITE_FAILED",
-    message: "Unable to record resource ledger.",
-    status: 500,
-  };
-}
-
-async function insertItemLedger(
-  config: EdgeConfig,
-  playerId: string,
-  source: string,
-  requestId: string,
-  itemId: string,
-  delta: number,
-  payload: Record<string, unknown>,
-): Promise<RestError | null> {
-  const result = await restRequest<unknown>(config, "item_transactions", {
-    method: "POST",
-    headers: { prefer: "return=minimal" },
-    body: JSON.stringify({
-      player_id: playerId,
-      source,
-      request_id: requestId,
-      item_id: itemId,
-      delta,
-      payload,
-    }),
-  });
-  return result.error === null ? null : {
-    code: "ITEM_LEDGER_WRITE_FAILED",
-    message: "Unable to record item ledger.",
-    status: 500,
-  };
 }
 
 function resolveRoute(pathname: string): Route | null {
@@ -791,19 +485,6 @@ function positiveIntegerField(
 
 function stringValue(value: unknown, fallback: string): string {
   return typeof value === "string" && value !== "" ? value : fallback;
-}
-
-function numberValue(value: unknown, fallback: number): number {
-  if (typeof value === "number" && Number.isFinite(value)) return value;
-  if (typeof value === "string" && value.trim() !== "") {
-    const parsed = Number(value);
-    return Number.isFinite(parsed) ? parsed : fallback;
-  }
-  return fallback;
-}
-
-function resourceKeys(): ResourceKey[] {
-  return ["almas", "energia", "sangue", "cristais", "ossos", "po_osso", "diamante"];
 }
 
 function isObject(value: unknown): value is Record<string, unknown> {
