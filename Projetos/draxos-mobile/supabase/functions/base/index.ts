@@ -1,9 +1,5 @@
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
-import {
-  type SaveType,
-  saveTypeFromRequest,
-  saveTypeQuery,
-} from "../_shared/save_context.ts";
+import { type SaveType, saveTypeFromRequest, saveTypeQuery } from "../_shared/save_context.ts";
 
 type Route = "state" | "collect" | "upgrade";
 
@@ -32,6 +28,15 @@ interface PlayerRow {
   id: string;
   save_type: SaveType;
   level: number;
+}
+
+interface GameSaveRow {
+  id: string;
+  account_profile_id: string;
+  legacy_player_id: string;
+  save_type: SaveType;
+  ruleset_id: string;
+  ruleset_version: number;
 }
 
 interface ResourceRow {
@@ -69,10 +74,6 @@ interface ConstructionJobRow {
   updated_at: string;
 }
 
-interface IdempotencyRow {
-  response_payload: unknown;
-}
-
 interface StructureDefinition {
   id: string;
   displayName: string;
@@ -84,8 +85,7 @@ interface StructureDefinition {
 
 type ResourceKey = "almas" | "energia" | "sangue" | "cristais" | "ossos";
 
-const UUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const SECONDS_PER_DAY = 86_400;
 const MAX_STRUCTURE_LEVEL = 40;
 const DEFAULT_CONSTRUCTION_SLOTS = 1;
@@ -94,8 +94,7 @@ const STRUCTURES: StructureDefinition[] = [
   {
     id: "altar_das_almas",
     displayName: "Altar das Almas",
-    description:
-      "Produz Almas e sustenta upgrades de instrumento, slots de spell e spells.",
+    description: "Produz Almas e sustenta upgrades de instrumento, slots de spell e spells.",
     benefitLabel: "Almas para progressao arcana",
     resource: "almas",
     dailyAtLevel40: 10,
@@ -111,8 +110,7 @@ const STRUCTURES: StructureDefinition[] = [
   {
     id: "pocos_sangue",
     displayName: "Pocos de Sangue",
-    description:
-      "Produz Sangue para crescimento de Familiares e sistemas biologicos.",
+    description: "Produz Sangue para crescimento de Familiares e sistemas biologicos.",
     benefitLabel: "Sangue para Familiares",
     resource: "sangue",
     dailyAtLevel40: 8,
@@ -128,8 +126,7 @@ const STRUCTURES: StructureDefinition[] = [
   {
     id: "estrutura_stats",
     displayName: "Estrutura de Stats",
-    description:
-      "Abriga melhorias permanentes de Vida, dano base, Defesa, Mana e regen.",
+    description: "Abriga melhorias permanentes de Vida, dano base, Defesa, Mana e regen.",
     benefitLabel: "Bonus permanentes de personagem",
     resource: null,
     dailyAtLevel40: 0,
@@ -137,8 +134,7 @@ const STRUCTURES: StructureDefinition[] = [
   {
     id: "ossario",
     displayName: "Ossario",
-    description:
-      "Produz Ossos e sustenta crafting de qualidade do instrumento ritual.",
+    description: "Produz Ossos e sustenta crafting de qualidade do instrumento ritual.",
     benefitLabel: "Ossos para crafting",
     resource: "ossos",
     dailyAtLevel40: 200,
@@ -221,12 +217,10 @@ async function handleState(
       state.error.status,
     );
   }
-  await completeDueJobs(
-    config,
-    state.value.player.id,
-    state.value.jobs,
-    new Date(),
-  );
+  const completion = await completeDueJobs(config, state.value.player.id);
+  if (completion !== null) {
+    return errorResponse(completion.code, completion.message, completion.status);
+  }
   const refreshed = await loadBaseState(auth, config);
   if (refreshed.error !== null) {
     return errorResponse(
@@ -268,101 +262,26 @@ async function handleCollect(
       state.error.status,
     );
   }
-  const existing = await loadIdempotency(
-    config,
-    state.value.player.id,
-    "base/collect",
-    requestId,
-  );
-  if (existing.error !== null) {
-    return errorResponse(
-      existing.error.code,
-      existing.error.message,
-      existing.error.status,
-    );
-  }
-  if (existing.value !== null) {
-    return jsonResponse(existing.value);
-  }
-
-  const now = new Date();
-  await completeDueJobs(config, state.value.player.id, state.value.jobs, now);
-  const refreshed = await loadBaseState(auth, config);
-  if (refreshed.error !== null) {
-    return errorResponse(
-      refreshed.error.code,
-      refreshed.error.message,
-      refreshed.error.status,
-    );
-  }
-
-  const collected = calculateCollectable(refreshed.value.structures, now);
-  const hasDelta = Object.values(collected).some((value) => value > 0);
-  if (hasDelta) {
-    const resources = refreshed.value.resources;
-    const patch = {
-      almas: numberValue(resources.almas, 0) + (collected.almas ?? 0),
-      energia: numberValue(resources.energia, 0) + (collected.energia ?? 0),
-      sangue: numberValue(resources.sangue, 0) + (collected.sangue ?? 0),
-      cristais: numberValue(resources.cristais, 0) + (collected.cristais ?? 0),
-      ossos: numberValue(resources.ossos, 0) + (collected.ossos ?? 0),
-      updated_at: now.toISOString(),
-    };
-    const resourcePatch = await restRequest<unknown>(
-      config,
-      `resources?player_id=eq.${encodeURIComponent(refreshed.value.player.id)}`,
-      {
-        method: "PATCH",
-        headers: { prefer: "return=minimal" },
-        body: JSON.stringify(patch),
+  const requestHash = await mutationRequestHash("base/collect", body, {
+    request_id: requestId,
+    save_type: auth.saveType,
+  });
+  const rpc = await restRequest<unknown>(config, "rpc/collect_base_v1", {
+    method: "POST",
+    body: JSON.stringify({
+      p_game_save_id: state.value.gameSave.id,
+      p_request_id: requestId,
+      p_request_hash: requestHash,
+      p_request_payload: {
+        request_id: requestId,
       },
-    );
-    if (resourcePatch.error !== null) {
-      return errorResponse(
-        "BASE_COLLECT_FAILED",
-        "Unable to apply collected resources.",
-        500,
-      );
-    }
-    const transaction = await insertLedger(
-      config,
-      refreshed.value.player.id,
-      "base/collect",
-      requestId,
-      collected,
-    );
-    if (transaction !== null) {
-      return errorResponse(
-        transaction.code,
-        transaction.message,
-        transaction.status,
-      );
-    }
+    }),
+  });
+  if (rpc.error !== null) {
+    const mapped = mapBaseDatabaseError(rpc.error, "BASE_COLLECT_FAILED");
+    return errorResponse(mapped.code, mapped.message, mapped.status);
   }
-
-  for (const structure of refreshed.value.structures) {
-    const definition = definitionFor(structure.structure_id);
-    if (definition === undefined || definition.resource === null) {
-      continue;
-    }
-    if (collectableFor(structure, now) <= 0) {
-      continue;
-    }
-    await restRequest<unknown>(
-      config,
-      `base_structures?player_id=eq.${
-        encodeURIComponent(refreshed.value.player.id)
-      }&structure_id=eq.${encodeURIComponent(structure.structure_id)}`,
-      {
-        method: "PATCH",
-        headers: { prefer: "return=minimal" },
-        body: JSON.stringify({
-          last_collected_at: now.toISOString(),
-          updated_at: now.toISOString(),
-        }),
-      },
-    );
-  }
+  const rpcPayload = baseRpcPayload(rpc.value);
 
   const finalState = await loadBaseState(auth, config);
   if (finalState.error !== null) {
@@ -374,18 +293,9 @@ async function handleCollect(
   }
   const responsePayload = {
     ...baseStatePayload(finalState.value),
-    collected,
+    collected: rpcPayload.collected,
+    mutation: rpcPayload.mutation,
   };
-  const idem = await insertIdempotency(
-    config,
-    finalState.value.player.id,
-    "base/collect",
-    requestId,
-    responsePayload,
-  );
-  if (idem !== null) {
-    return errorResponse(idem.code, idem.message, idem.status);
-  }
   return jsonResponse(responsePayload);
 }
 
@@ -428,146 +338,28 @@ async function handleUpgrade(
       state.error.status,
     );
   }
-  const existing = await loadIdempotency(
-    config,
-    state.value.player.id,
-    "base/upgrade",
-    requestId,
-  );
-  if (existing.error !== null) {
-    return errorResponse(
-      existing.error.code,
-      existing.error.message,
-      existing.error.status,
-    );
-  }
-  if (existing.value !== null) {
-    return jsonResponse(existing.value);
-  }
-
-  const now = new Date();
-  await completeDueJobs(config, state.value.player.id, state.value.jobs, now);
-  const refreshed = await loadBaseState(auth, config);
-  if (refreshed.error !== null) {
-    return errorResponse(
-      refreshed.error.code,
-      refreshed.error.message,
-      refreshed.error.status,
-    );
-  }
-
-  const structure = refreshed.value.structures.find((item) =>
-    item.structure_id === structureId
-  );
-  if (structure === undefined) {
-    return errorResponse(
-      "BASE_STATE_INCOMPLETE",
-      "Base structure state is missing.",
-      409,
-    );
-  }
-  if (
-    refreshed.value.jobs.some((job) =>
-      job.status === "active" && job.structure_id === structureId
-    )
-  ) {
-    return errorResponse(
-      "STRUCTURE_ALREADY_UPGRADING",
-      "This structure already has an active upgrade.",
-      409,
-    );
-  }
-  if (
-    refreshed.value.jobs.filter((job) => job.status === "active").length >=
-      refreshed.value.constructionSlots
-  ) {
-    return errorResponse(
-      "CONSTRUCTION_QUEUE_FULL",
-      "No construction slot is available.",
-      409,
-    );
-  }
-
-  const targetLevel = structure.level + 1;
-  const cap = Math.min(
-    MAX_STRUCTURE_LEVEL,
-    Math.max(1, refreshed.value.player.level),
-  );
-  if (targetLevel > cap) {
-    return errorResponse(
-      "LEVEL_CAP_REACHED",
-      "Structure upgrade is limited by player level.",
-      409,
-    );
-  }
-  const cost = upgradeCost(targetLevel);
-  if (numberValue(refreshed.value.resources.energia, 0) < cost) {
-    return errorResponse(
-      "INSUFFICIENT_RESOURCES",
-      "Not enough Energia for this upgrade.",
-      409,
-    );
-  }
-
-  const resourcePatch = await restRequest<unknown>(
-    config,
-    `resources?player_id=eq.${encodeURIComponent(refreshed.value.player.id)}`,
-    {
-      method: "PATCH",
-      headers: { prefer: "return=minimal" },
-      body: JSON.stringify({
-        energia: numberValue(refreshed.value.resources.energia, 0) - cost,
-        updated_at: now.toISOString(),
-      }),
-    },
-  );
-  if (resourcePatch.error !== null) {
-    return errorResponse(
-      "BASE_UPGRADE_FAILED",
-      "Unable to spend Energia.",
-      500,
-    );
-  }
-
-  const completesAt = new Date(
-    now.getTime() + upgradeDurationSeconds(targetLevel) * 1000,
-  );
-  const jobInsert = await restRequest<ConstructionJobRow[]>(
-    config,
-    "construction_jobs?select=*",
-    {
-      method: "POST",
-      headers: { prefer: "return=representation" },
-      body: JSON.stringify({
-        player_id: refreshed.value.player.id,
-        structure_id: structureId,
-        target_level: targetLevel,
-        cost_payload: { energia: -cost },
-        started_at: now.toISOString(),
-        completes_at: completesAt.toISOString(),
+  const requestHash = await mutationRequestHash("base/upgrade", body, {
+    request_id: requestId,
+    save_type: auth.saveType,
+    structure_id: structureId,
+  });
+  const rpc = await restRequest<unknown>(config, "rpc/start_base_upgrade_v1", {
+    method: "POST",
+    body: JSON.stringify({
+      p_game_save_id: state.value.gameSave.id,
+      p_request_id: requestId,
+      p_request_hash: requestHash,
+      p_request_payload: {
         request_id: requestId,
-      }),
-    },
-  );
-  if (jobInsert.error !== null) {
-    return errorResponse(
-      "BASE_UPGRADE_FAILED",
-      "Unable to create construction job.",
-      500,
-    );
+        structure_id: structureId,
+      },
+    }),
+  });
+  if (rpc.error !== null) {
+    const mapped = mapBaseDatabaseError(rpc.error, "BASE_UPGRADE_FAILED");
+    return errorResponse(mapped.code, mapped.message, mapped.status);
   }
-  const ledger = await insertLedger(
-    config,
-    refreshed.value.player.id,
-    "base/upgrade",
-    requestId,
-    {
-      energia: -cost,
-    },
-  );
-  if (ledger !== null) {
-    return errorResponse(ledger.code, ledger.message, ledger.status);
-  }
+  const rpcPayload = baseRpcPayload(rpc.value);
 
   const finalState = await loadBaseState(auth, config);
   if (finalState.error !== null) {
@@ -579,18 +371,9 @@ async function handleUpgrade(
   }
   const responsePayload = {
     ...baseStatePayload(finalState.value),
-    job: jobInsert.value[0] ?? null,
+    job: rpcPayload.job,
+    mutation: rpcPayload.mutation,
   };
-  const idem = await insertIdempotency(
-    config,
-    finalState.value.player.id,
-    "base/upgrade",
-    requestId,
-    responsePayload,
-  );
-  if (idem !== null) {
-    return errorResponse(idem.code, idem.message, idem.status);
-  }
   return jsonResponse(responsePayload);
 }
 
@@ -601,6 +384,7 @@ async function loadBaseState(
   {
     value: {
       player: PlayerRow;
+      gameSave: GameSaveRow;
       resources: ResourceRow;
       structures: BaseStructureRow[];
       jobs: ConstructionJobRow[];
@@ -629,6 +413,11 @@ async function loadBaseState(
         status: 404,
       },
     };
+  }
+
+  const gameSave = await loadGameSave(config, auth, player.id);
+  if (gameSave.error !== null) {
+    return { value: null, error: gameSave.error };
   }
 
   await ensureBaseRows(config, player.id);
@@ -672,6 +461,7 @@ async function loadBaseState(
   return {
     value: {
       player,
+      gameSave: gameSave.value,
       resources,
       structures: structuresResult.value,
       jobs: jobsResult.value,
@@ -687,9 +477,7 @@ async function loadConstructionSlots(
 ): Promise<{ value: number; error: null } | { value: null; error: RestError }> {
   const result = await restRequest<{ id: string }[]>(
     config,
-    `alpha_purchases?player_id=eq.${
-      encodeURIComponent(playerId)
-    }&product_id=eq.${
+    `alpha_purchases?player_id=eq.${encodeURIComponent(playerId)}&product_id=eq.${
       encodeURIComponent(DOUBLE_CONSTRUCTION_QUEUE_PRODUCT_ID)
     }&select=id&limit=1`,
     { method: "GET" },
@@ -701,6 +489,63 @@ async function loadConstructionSlots(
     value: result.value.length > 0 ? 2 : DEFAULT_CONSTRUCTION_SLOTS,
     error: null,
   };
+}
+
+async function loadGameSave(
+  config: EdgeConfig,
+  auth: AuthContext,
+  playerId: string,
+): Promise<
+  { value: GameSaveRow; error: null } | { value: null; error: RestError }
+> {
+  const query = `game_saves?legacy_player_id=eq.${encodeURIComponent(playerId)}&save_type=eq.${
+    encodeURIComponent(auth.saveType)
+  }&lifecycle_status=eq.active&select=id,account_profile_id,legacy_player_id,save_type,ruleset_id,ruleset_version&limit=1`;
+  const existing = await restRequest<GameSaveRow[]>(config, query, {
+    method: "GET",
+  });
+  if (existing.error !== null) {
+    return { value: null, error: stateReadError() };
+  }
+  const current = existing.value[0] ?? null;
+  if (current !== null) {
+    return { value: current, error: null };
+  }
+
+  const ensure = await restRequest<unknown>(
+    config,
+    "rpc/ensure_foundation_profile_and_saves",
+    {
+      method: "POST",
+      body: JSON.stringify({
+        p_auth_user_id: auth.userId,
+        p_ruleset_id: "foundation_ruleset_v0",
+      }),
+    },
+  );
+  if (ensure.error !== null) {
+    const mapped = mapBaseDatabaseError(ensure.error, "GAME_SAVE_NOT_FOUND");
+    return { value: null, error: mapped };
+  }
+
+  const created = await restRequest<GameSaveRow[]>(config, query, {
+    method: "GET",
+  });
+  if (created.error !== null) {
+    return { value: null, error: stateReadError() };
+  }
+  const gameSave = created.value[0] ?? null;
+  if (gameSave === null) {
+    return {
+      value: null,
+      error: {
+        code: "GAME_SAVE_NOT_FOUND",
+        message: "Account save foundation row was not created yet.",
+        status: 404,
+      },
+    };
+  }
+  return { value: gameSave, error: null };
 }
 
 async function ensureBaseRows(
@@ -722,44 +567,20 @@ async function ensureBaseRows(
 async function completeDueJobs(
   config: EdgeConfig,
   playerId: string,
-  jobs: ConstructionJobRow[],
-  now: Date,
-): Promise<void> {
-  for (const job of jobs) {
-    if (
-      job.status !== "active" ||
-      new Date(job.completes_at).getTime() > now.getTime()
-    ) {
-      continue;
-    }
-    await restRequest<unknown>(
-      config,
-      `construction_jobs?id=eq.${encodeURIComponent(job.id)}`,
-      {
-        method: "PATCH",
-        headers: { prefer: "return=minimal" },
-        body: JSON.stringify({
-          status: "completed",
-          completed_at: now.toISOString(),
-          updated_at: now.toISOString(),
-        }),
-      },
-    );
-    await restRequest<unknown>(
-      config,
-      `base_structures?player_id=eq.${
-        encodeURIComponent(playerId)
-      }&structure_id=eq.${encodeURIComponent(job.structure_id)}`,
-      {
-        method: "PATCH",
-        headers: { prefer: "return=minimal" },
-        body: JSON.stringify({
-          level: job.target_level,
-          updated_at: now.toISOString(),
-        }),
-      },
-    );
-  }
+): Promise<RestError | null> {
+  const result = await restRequest<unknown>(
+    config,
+    "rpc/complete_due_base_jobs_v1",
+    {
+      method: "POST",
+      body: JSON.stringify({
+        p_player_id: playerId,
+      }),
+    },
+  );
+  return result.error === null
+    ? null
+    : mapBaseDatabaseError(result.error, "BASE_JOB_COMPLETION_FAILED");
 }
 
 function baseStatePayload(state: {
@@ -777,25 +598,16 @@ function baseStatePayload(state: {
     base: {
       server_time: now.toISOString(),
       construction_slots: state.constructionSlots,
-      construction_slots_source:
-        state.constructionSlots > DEFAULT_CONSTRUCTION_SLOTS
-          ? DOUBLE_CONSTRUCTION_QUEUE_PRODUCT_ID
-          : "default",
+      construction_slots_source: state.constructionSlots > DEFAULT_CONSTRUCTION_SLOTS
+        ? DOUBLE_CONSTRUCTION_QUEUE_PRODUCT_ID
+        : "default",
       structures: state.structures.map((structure) => {
         const definition = definitionFor(structure.structure_id);
         const pending = collectableFor(structure, now);
-        const activeJob = activeJobs.find((job) =>
-          job.structure_id === structure.structure_id
-        );
-        const nextLevel = structure.level >= MAX_STRUCTURE_LEVEL
-          ? null
-          : structure.level + 1;
-        const upgradeCostValue = nextLevel === null
-          ? null
-          : upgradeCost(nextLevel);
-        const upgradeDurationValue = nextLevel === null
-          ? null
-          : upgradeDurationSeconds(nextLevel);
+        const activeJob = activeJobs.find((job) => job.structure_id === structure.structure_id);
+        const nextLevel = structure.level >= MAX_STRUCTURE_LEVEL ? null : structure.level + 1;
+        const upgradeCostValue = nextLevel === null ? null : upgradeCost(nextLevel);
+        const upgradeDurationValue = nextLevel === null ? null : upgradeDurationSeconds(nextLevel);
         const blockedReason = upgradeBlockReason(
           structure,
           state.player,
@@ -815,16 +627,12 @@ function baseStatePayload(state: {
           storage_cap: storageCap(structure),
           pending_collectable: pending,
           next_level: nextLevel,
-          upgrade_cost: upgradeCostValue === null
-            ? null
-            : { energia: upgradeCostValue },
+          upgrade_cost: upgradeCostValue === null ? null : { energia: upgradeCostValue },
           upgrade_duration_seconds: upgradeDurationValue,
           can_upgrade: blockedReason === "",
           blocked_reason: blockedReason,
           blocked_message: upgradeBlockMessage(blockedReason),
-          active_job: activeJob === undefined
-            ? null
-            : jobPayload(activeJob, now),
+          active_job: activeJob === undefined ? null : jobPayload(activeJob, now),
         };
       }),
       jobs: state.jobs.map((job) => jobPayload(job, now)),
@@ -966,75 +774,173 @@ function definitionFor(structureId: string): StructureDefinition | undefined {
   return STRUCTURES.find((definition) => definition.id === structureId);
 }
 
-async function loadIdempotency(
-  config: EdgeConfig,
-  playerId: string,
+async function mutationRequestHash(
   endpoint: string,
-  requestId: string,
-): Promise<
-  { value: unknown | null; error: null } | { value: null; error: RestError }
-> {
-  const result = await restRequest<IdempotencyRow[]>(
-    config,
-    `idempotency_keys?player_id=eq.${
-      encodeURIComponent(playerId)
-    }&endpoint=eq.${encodeURIComponent(endpoint)}&request_id=eq.${
-      encodeURIComponent(requestId)
-    }&select=response_payload&limit=1`,
-    { method: "GET" },
-  );
-  if (result.error !== null) {
-    return { value: null, error: stateReadError() };
+  body: Record<string, unknown>,
+  canonicalPayload: Record<string, unknown>,
+): Promise<string> {
+  const explicitHash = stringField(body, "request_hash");
+  if (explicitHash !== "") {
+    return explicitHash;
   }
-  return { value: result.value[0]?.response_payload ?? null, error: null };
+  return `sha256:${await sha256Hex(stableStringify({
+    endpoint,
+    payload: canonicalPayload,
+  }))}`;
 }
 
-async function insertLedger(
-  config: EdgeConfig,
-  playerId: string,
-  source: string,
-  requestId: string,
-  delta: Record<string, number>,
-): Promise<RestError | null> {
-  const result = await restRequest<unknown>(config, "resource_transactions", {
-    method: "POST",
-    headers: { prefer: "return=minimal" },
-    body: JSON.stringify({
-      player_id: playerId,
-      source,
-      request_id: requestId,
-      delta,
-    }),
-  });
-  return result.error === null ? null : {
-    code: "LEDGER_WRITE_FAILED",
-    message: "Unable to record resource ledger.",
-    status: 500,
+function baseRpcPayload(value: unknown): {
+  collected: Record<ResourceKey, number>;
+  job: unknown | null;
+  mutation: unknown;
+} {
+  const payload = isObject(value) ? value : {};
+  const collected = isObject(payload.collected)
+    ? {
+      almas: numberValue(payload.collected.almas, 0),
+      energia: numberValue(payload.collected.energia, 0),
+      sangue: numberValue(payload.collected.sangue, 0),
+      cristais: numberValue(payload.collected.cristais, 0),
+      ossos: numberValue(payload.collected.ossos, 0),
+    }
+    : { almas: 0, energia: 0, sangue: 0, cristais: 0, ossos: 0 };
+  return {
+    collected,
+    job: payload.job ?? null,
+    mutation: payload,
   };
 }
 
-async function insertIdempotency(
-  config: EdgeConfig,
-  playerId: string,
-  endpoint: string,
-  requestId: string,
-  responsePayload: unknown,
-): Promise<RestError | null> {
-  const result = await restRequest<unknown>(config, "idempotency_keys", {
-    method: "POST",
-    headers: { prefer: "return=minimal" },
-    body: JSON.stringify({
-      player_id: playerId,
-      endpoint,
-      request_id: requestId,
-      response_payload: responsePayload,
-    }),
-  });
-  return result.error === null ? null : {
-    code: "IDEMPOTENCY_WRITE_FAILED",
-    message: "Unable to persist base idempotency.",
-    status: 500,
+async function sha256Hex(value: string): Promise<string> {
+  const bytes = new TextEncoder().encode(value);
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return Array.from(new Uint8Array(digest))
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+function stableStringify(value: unknown): string {
+  if (Array.isArray(value)) {
+    return `[${value.map(stableStringify).join(",")}]`;
+  }
+  if (isObject(value)) {
+    return `{${
+      Object.keys(value).sort().map((key) =>
+        `${JSON.stringify(key)}:${stableStringify(value[key])}`
+      ).join(",")
+    }}`;
+  }
+  return JSON.stringify(value);
+}
+
+function mapBaseDatabaseError(error: RestError, fallbackCode: string): RestError {
+  const message = error.message.toUpperCase();
+  const statusFor = (code: string): number => {
+    if (
+      code === "CONSTRUCTION_QUEUE_FULL" ||
+      code === "STRUCTURE_ALREADY_UPGRADING" ||
+      code === "LEVEL_CAP_REACHED" ||
+      code === "MAX_LEVEL_REACHED" ||
+      code === "INSUFFICIENT_RESOURCES" ||
+      code === "IDEMPOTENCY_HASH_MISMATCH"
+    ) {
+      return 409;
+    }
+    if (
+      code === "GAME_SAVE_NOT_FOUND" ||
+      code === "PLAYER_NOT_FOUND" ||
+      code === "RESOURCES_NOT_FOUND"
+    ) {
+      return 404;
+    }
+    if (
+      code === "INVALID_GAME_SAVE_ID" ||
+      code === "INVALID_PLAYER_ID" ||
+      code === "INVALID_REQUEST_ID" ||
+      code === "INVALID_REQUEST_HASH" ||
+      code === "INVALID_STRUCTURE"
+    ) {
+      return 400;
+    }
+    return error.status >= 400 ? error.status : 500;
   };
+
+  for (
+    const code of [
+      "IDEMPOTENCY_HASH_MISMATCH",
+      "CONSTRUCTION_QUEUE_FULL",
+      "STRUCTURE_ALREADY_UPGRADING",
+      "LEVEL_CAP_REACHED",
+      "MAX_LEVEL_REACHED",
+      "INSUFFICIENT_RESOURCES",
+      "INVALID_GAME_SAVE_ID",
+      "INVALID_PLAYER_ID",
+      "INVALID_REQUEST_ID",
+      "INVALID_REQUEST_HASH",
+      "INVALID_STRUCTURE",
+      "GAME_SAVE_NOT_FOUND",
+      "GAME_SAVE_WITHOUT_LEGACY_PLAYER",
+      "PLAYER_NOT_FOUND",
+      "RESOURCES_NOT_FOUND",
+      "RULESET_NOT_FOUND",
+      "BASE_STATE_INCOMPLETE",
+    ]
+  ) {
+    if (message.includes(code)) {
+      return {
+        code,
+        message: baseErrorMessage(code),
+        status: statusFor(code),
+      };
+    }
+  }
+
+  return {
+    code: fallbackCode,
+    message: fallbackCode === "BASE_UPGRADE_FAILED"
+      ? "Unable to start base upgrade."
+      : "Unable to apply base mutation.",
+    status: error.status >= 400 ? error.status : 500,
+  };
+}
+
+function baseErrorMessage(code: string): string {
+  switch (code) {
+    case "IDEMPOTENCY_HASH_MISMATCH":
+      return "request_id was already used with a different request_hash.";
+    case "CONSTRUCTION_QUEUE_FULL":
+      return "No construction slot is available.";
+    case "STRUCTURE_ALREADY_UPGRADING":
+      return "This structure already has an active upgrade.";
+    case "LEVEL_CAP_REACHED":
+      return "Structure upgrade is limited by player level.";
+    case "MAX_LEVEL_REACHED":
+      return "Structure is already at max level.";
+    case "INSUFFICIENT_RESOURCES":
+      return "Not enough Energia for this upgrade.";
+    case "GAME_SAVE_NOT_FOUND":
+      return "Account save foundation row was not created yet.";
+    case "GAME_SAVE_WITHOUT_LEGACY_PLAYER":
+      return "Account save is missing its compatibility player row.";
+    case "PLAYER_NOT_FOUND":
+      return "Guest account was not created yet.";
+    case "RESOURCES_NOT_FOUND":
+      return "Base resources were not created yet.";
+    case "RULESET_NOT_FOUND":
+      return "Active ruleset publication was not found.";
+    case "BASE_STATE_INCOMPLETE":
+      return "Base structure state is missing.";
+    case "INVALID_REQUEST_HASH":
+      return "request_hash must be a non-empty string.";
+    case "INVALID_STRUCTURE":
+      return "structure_id is not part of Base v0.";
+    case "INVALID_GAME_SAVE_ID":
+    case "INVALID_PLAYER_ID":
+    case "INVALID_REQUEST_ID":
+      return "Base mutation request is invalid.";
+    default:
+      return "Base mutation could not be completed.";
+  }
 }
 
 function resolveRoute(pathname: string): Route | null {
