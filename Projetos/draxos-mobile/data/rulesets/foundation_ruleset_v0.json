@@ -4,7 +4,7 @@
   "ruleset_version": 1,
   "lifecycle": "FOUNDATION_AUDIT_ACTIVE",
   "content_hash": "5b7121a37a78e966c06098cc70283dabc5dbbcc1d3f9a21d279b855d09aee1e7",
-  "simulator_hash": "6387afc69b1862c2c63b1fe04a85da42574eb0a6ab5ca46e8ae8950ed5b11536",
+  "simulator_hash": "e835cadde3c937cba45c46785da3761139373ab23ac9dfaaed814d79f933bbe9",
   "runtime": {
     "mode": "FIRST_SLICE_SIM",
     "battle_log_schema": "battle_log_v1",
@@ -97,22 +97,34 @@
       "canonical_bytes": 3873
     },
     {
+      "path": "server/functions/_shared/battle_combatants.ts",
+      "kind": "battle_simulator",
+      "sha256": "0b4599f1246a351f1f6d7f28f3f0132c929f252804a49f1721ff28c1bf530683",
+      "canonical_bytes": 7796
+    },
+    {
       "path": "server/functions/_shared/battle_simulator.ts",
       "kind": "battle_simulator",
-      "sha256": "6387afc69b1862c2c63b1fe04a85da42574eb0a6ab5ca46e8ae8950ed5b11536",
-      "canonical_bytes": 50626
+      "sha256": "314151ebc5cc1179828dab40aee80face4bfb1a2cd9309c889317a9f623a3338",
+      "canonical_bytes": 50127
+    },
+    {
+      "path": "supabase/functions/_shared/battle_combatants.ts",
+      "kind": "battle_simulator",
+      "sha256": "0b4599f1246a351f1f6d7f28f3f0132c929f252804a49f1721ff28c1bf530683",
+      "canonical_bytes": 7796
     },
     {
       "path": "supabase/functions/_shared/battle_simulator.ts",
       "kind": "battle_simulator",
-      "sha256": "6387afc69b1862c2c63b1fe04a85da42574eb0a6ab5ca46e8ae8950ed5b11536",
-      "canonical_bytes": 50626
+      "sha256": "314151ebc5cc1179828dab40aee80face4bfb1a2cd9309c889317a9f623a3338",
+      "canonical_bytes": 50127
     }
   ],
   "counts": {
     "definitions": 11,
     "tool_models": 3,
-    "battle_simulators": 2,
-    "total_sources": 16
+    "battle_simulators": 4,
+    "total_sources": 18
   }
 }

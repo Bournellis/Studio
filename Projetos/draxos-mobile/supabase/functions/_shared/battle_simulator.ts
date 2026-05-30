@@ -1,4 +1,20 @@
-export type BattleSideId = "player" | "opponent";
+import type {
+  BattleConsumableUse,
+  BattlePotionSlot,
+  BattleSideId,
+  BehaviorCondition,
+  BehaviorConfig,
+  CombatantBuild,
+} from "./battle_combatants.ts";
+
+export type {
+  BattleConsumableUse,
+  BattlePotionSlot,
+  BattleSideId,
+  BehaviorCondition,
+  BehaviorConfig,
+  CombatantBuild,
+} from "./battle_combatants.ts";
 
 type DamageType =
   | "arcano"
@@ -15,23 +31,6 @@ type DamageType =
   | "none";
 
 type DamageCategory = "weapon" | "spell" | "dot" | "pet" | "summon" | "system";
-
-export interface CombatantBuild {
-  id: string;
-  displayName: string;
-  level: number;
-  weaponId?: string;
-  weaponLevel: number;
-  weaponQualityTier: number;
-  spellIds: string[];
-  spellLevels: Record<string, number>;
-  passiveId?: string;
-  passiveLevel?: number;
-  petId?: string;
-  petLevel?: number;
-  spellBehaviors?: Record<string, BehaviorConfig>;
-  potionSlot?: BattlePotionSlot;
-}
 
 export interface BattleSimulationInput {
   battleId: string;
@@ -104,31 +103,6 @@ interface RuntimeCombatant {
   statuses: RuntimeStatus[];
   healingOverTime: RuntimeHealOverTime[];
   consumablesUsed: Record<number, boolean>;
-}
-
-export interface BehaviorConfig {
-  enabled: boolean;
-  hp: BehaviorCondition;
-  mana: BehaviorCondition;
-}
-
-export interface BehaviorCondition {
-  mode: "ignore" | "below" | "above";
-  percent: number;
-}
-
-export interface BattlePotionSlot {
-  slotIndex: number;
-  itemId: "pocao_vida";
-  quantity: number;
-  behavior: BehaviorConfig;
-}
-
-export interface BattleConsumableUse {
-  owner: BattleSideId;
-  slot_index: number;
-  item_id: string;
-  quantity: number;
 }
 
 interface RuntimeHealOverTime {
@@ -658,9 +632,13 @@ export function simulateFirstSliceBattle(
   }
 
   const winner: BattleSideId = player.hp > opponent.hp ? "player" : "opponent";
-  const reason = player.hp <= 0 || opponent.hp <= 0 ? "combatant_defeated" : "duration_limit";
+  const reason = player.hp <= 0 || opponent.hp <= 0
+    ? "combatant_defeated"
+    : "duration_limit";
   const reward = winner === "player" ? winReward() : lossReward();
-  const duration = events.length > 0 ? Number(events[events.length - 1].t.toFixed(1)) : 0;
+  const duration = events.length > 0
+    ? Number(events[events.length - 1].t.toFixed(1))
+    : 0;
 
   events.push({
     ...baseEvent(
@@ -902,7 +880,9 @@ function processSpell(
 
   if (spell.summonId !== undefined) {
     const summon = createSummon(spell.summonId, actor.side, spellLevel, time);
-    actor.summons = actor.summons.filter((existing) => existing.id !== summon.id);
+    actor.summons = actor.summons.filter((existing) =>
+      existing.id !== summon.id
+    );
     actor.summons.push(summon);
     events.push({
       ...baseEvent(time, nextSeq(), "summon_spawn", actor.side, summon.id),
@@ -997,7 +977,8 @@ function processPotion(
 ): void {
   const slot = actor.build.potionSlot;
   if (
-    slot === undefined || actor.hp <= 0 || actor.consumablesUsed[slot.slotIndex] === true ||
+    slot === undefined || actor.hp <= 0 ||
+    actor.consumablesUsed[slot.slotIndex] === true ||
     slot.quantity <= 0 || slot.itemId !== "pocao_vida"
   ) {
     return;
@@ -1017,7 +998,10 @@ function processPotion(
     id: `${actor.side}:${slot.slotIndex}:${slot.itemId}`,
     itemId: slot.itemId,
     source: actor.side,
-    tickAmount: Math.max(1, Math.round(actor.maxHp * POTION_HEAL_PERCENT_PER_TICK)),
+    tickAmount: Math.max(
+      1,
+      Math.round(actor.maxHp * POTION_HEAL_PERCENT_PER_TICK),
+    ),
     ticksRemaining: POTION_HEAL_TICKS,
     nextTickAt: time + POTION_HEAL_TICK_SECONDS,
   });
@@ -1280,7 +1264,8 @@ function applyDot(
     dot.id === spell.dot?.statusId && dot.source === actor.side
   );
   const passive = passiveStats(actor.build.passiveId, actor.build.passiveLevel);
-  const tickDamage = (spell.dot.tickDamage + Math.max(0, spellLevel - 1) * 0.35) *
+  const tickDamage =
+    (spell.dot.tickDamage + Math.max(0, spellLevel - 1) * 0.35) *
     (1 + passive.dotDamageBonus);
   if (existing !== undefined) {
     existing.stacks = clamp(existing.stacks + 1, 1, 5);
@@ -1507,7 +1492,9 @@ function applyDamage(
 ): DamageResult {
   const normalizedRaw = Math.max(0, Math.ceil(rawDamage));
   const vulnerability = targetVulnerabilityFor(target, damageType);
-  const resistance = category === "system" ? 0 : totalDamageReduction(target, damageType);
+  const resistance = category === "system"
+    ? 0
+    : totalDamageReduction(target, damageType);
   const mitigatedDamage = Math.max(
     0,
     Math.ceil(normalizedRaw * (1 + vulnerability) * (1 - resistance)),
@@ -1792,7 +1779,8 @@ function weaponInterval(actor: RuntimeCombatant): number {
 
 function regenPenaltyMultiplier(target: RuntimeCombatant): number {
   const penalty = target.statuses.reduce(
-    (total, status) => total + (status.regenPenaltyPerStack ?? 0) * status.stacks,
+    (total, status) =>
+      total + (status.regenPenaltyPerStack ?? 0) * status.stacks,
     0,
   );
   return 1 - clampPercent(penalty, 0, 0.8);
@@ -1811,7 +1799,9 @@ function shouldUseBehavior(
   actor: RuntimeCombatant,
   defaultEnabled: boolean,
 ): boolean {
-  const enabled = typeof behavior.enabled === "boolean" ? behavior.enabled : defaultEnabled;
+  const enabled = typeof behavior.enabled === "boolean"
+    ? behavior.enabled
+    : defaultEnabled;
   if (!enabled) {
     return false;
   }
@@ -1819,7 +1809,10 @@ function shouldUseBehavior(
     conditionMatches(behavior.mana, manaPercent(actor));
 }
 
-function conditionMatches(condition: BehaviorCondition | undefined, currentPercent: number): boolean {
+function conditionMatches(
+  condition: BehaviorCondition | undefined,
+  currentPercent: number,
+): boolean {
   if (condition === undefined || condition.mode === "ignore") {
     return true;
   }

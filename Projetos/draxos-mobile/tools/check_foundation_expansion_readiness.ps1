@@ -143,6 +143,8 @@ $requiredFiles = @(
   'supabase\functions\_shared\battle_simulator.ts',
   'server\functions\_shared\battle_log_projection.ts',
   'supabase\functions\_shared\battle_log_projection.ts',
+  'server\functions\_shared\battle_combatants.ts',
+  'supabase\functions\_shared\battle_combatants.ts',
   'server\functions\_shared\base_domain.ts',
   'supabase\functions\_shared\base_domain.ts',
   'server\functions\_shared\progression_domain.ts',
@@ -150,6 +152,7 @@ $requiredFiles = @(
   'server\functions\_shared\economy_domain.ts',
   'supabase\functions\_shared\economy_domain.ts',
   'server\tests\battle_log_projection_test.ts',
+  'server\tests\battle_combatants_test.ts',
   'server\tests\base_domain_test.ts',
   'server\tests\progression_domain_test.ts',
   'server\tests\economy_domain_test.ts',
@@ -235,9 +238,11 @@ Test-FileContains 'docs\contracts\battle-event-log.md' 'simulator_hash'
 Test-FileContains 'data\rulesets\foundation_ruleset_v0.json' 'foundation_ruleset_manifest_v1'
 Test-FileContains 'data\rulesets\foundation_ruleset_v0.json' 'foundation_ruleset_v0'
 Test-FileContains 'tools\generate_foundation_ruleset.ts' 'generate-foundation-ruleset'
+Test-FileContains 'tools\generate_foundation_ruleset.ts' 'battle_combatants.ts'
 Test-FileContains 'server\functions\_shared\foundation_ruleset.ts' 'FOUNDATION_RULESET'
 Test-FileContains 'supabase\functions\_shared\foundation_ruleset.ts' 'FOUNDATION_RULESET'
 Test-FileContains 'server\tests\foundation_ruleset_test.ts' 'foundation ruleset publishes deterministic metadata and hashes'
+Test-FileContains 'server\tests\foundation_ruleset_test.ts' 'battle_combatants.ts'
 Test-FileContains 'server\tests\foundation_expansion_schema_test.ts' 'foundation expansion migration is mirrored in server schema'
 Test-FileContains 'server\tests\transactional_domain_enforcement_schema_test.ts' 'base edge adapter calls transactional RPCs instead of direct multi-step writes'
 Test-FileContains 'server\tests\remaining_transactional_domain_enforcement_schema_test.ts' 'remaining transactional domain RPC dispatcher applies real atomic effects'
@@ -250,6 +255,9 @@ Test-FileContains 'server\tests\transactional_edge_rpc_smoke.ts' 'proveCraftingA
 Test-FileContains 'server\tests\transactional_edge_rpc_smoke.ts' 'assertCompletedIdempotency'
 Test-FileContains 'server\functions\_shared\battle_log_projection.ts' 'battleLogFromRow'
 Test-FileContains 'server\functions\_shared\battle_log_projection.ts' 'historyEntryFromRow'
+Test-FileContains 'server\functions\_shared\battle_combatants.ts' 'playerCombatantFromState'
+Test-FileContains 'server\functions\_shared\battle_combatants.ts' 'botCombatantFromRow'
+Test-FileContains 'server\functions\_shared\battle_combatants.ts' 'potionSlotForBattle'
 Test-FileContains 'server\functions\_shared\base_domain.ts' 'baseStatePayload'
 Test-FileContains 'server\functions\_shared\base_domain.ts' 'calculateCollectable'
 Test-FileContains 'server\functions\_shared\progression_domain.ts' 'buildStatePayload'
@@ -259,6 +267,7 @@ Test-FileContains 'server\functions\_shared\economy_domain.ts' 'monetizationStat
 Test-FileContains 'server\functions\_shared\economy_domain.ts' 'craftingStatePayload'
 Test-FileContains 'server\functions\_shared\economy_domain.ts' 'combineResourceDeltas'
 Test-FileContains 'server\tests\battle_log_projection_test.ts' 'projection module must not depend on current simulator code'
+Test-FileContains 'server\tests\battle_combatants_test.ts' 'battle combatants module is mirrored and adapter-free'
 Test-FileContains 'server\tests\base_domain_test.ts' 'base domain module is mirrored and adapter-free'
 Test-FileContains 'server\tests\progression_domain_test.ts' 'progression domain module is mirrored and adapter-free'
 Test-FileContains 'server\tests\economy_domain_test.ts' 'economy domain module is mirrored and adapter-free'
@@ -281,6 +290,7 @@ Test-FileContains 'server\tests\README.md' 'remaining_transactional_domain_enfor
 Test-FileContains 'server\tests\README.md' 'transactional_rpc_live_test.ts'
 Test-FileContains 'server\tests\README.md' 'transactional_edge_rpc_smoke.ts'
 Test-FileContains 'server\tests\README.md' 'battle_log_projection_test.ts'
+Test-FileContains 'server\tests\README.md' 'battle_combatants_test.ts'
 Test-FileContains 'server\tests\README.md' 'base_domain_test.ts'
 Test-FileContains 'server\tests\README.md' 'economy_domain_test.ts'
 

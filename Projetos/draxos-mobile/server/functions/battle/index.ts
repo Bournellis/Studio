@@ -6,16 +6,18 @@ import {
   rulesetMetadataFromRow,
 } from "../_shared/battle_log_projection.ts";
 import {
+  type BattleBotBuildRow,
+  type BattleBuildRow,
+  type BattleConsumableRow,
   type BattleConsumableUse,
-  type BehaviorConfig,
-  type CombatantBuild,
-  simulateFirstSliceBattle,
-} from "../_shared/battle_simulator.ts";
-import {
-  effectivePower,
-  spellLevelMap,
-  weaponQualityTierFromQualityId,
-} from "../_shared/progression_domain.ts";
+  type BattlePlayerRow,
+  type BattlePotionSlotRow,
+  type BattleSpellBehaviorRow,
+  botCombatantFromRow,
+  playerCombatantFromState,
+} from "../_shared/battle_combatants.ts";
+import { simulateFirstSliceBattle } from "../_shared/battle_simulator.ts";
+import { effectivePower } from "../_shared/progression_domain.ts";
 import {
   type FoundationGameSaveRow,
   loadFoundationGameSave,
@@ -53,7 +55,7 @@ interface JwtPayload {
   is_anonymous?: unknown;
 }
 
-interface PlayerRow {
+interface PlayerRow extends BattlePlayerRow {
   id: string;
   username?: string | null;
   save_type?: SaveType;
@@ -72,7 +74,7 @@ interface ResourceRow {
   diamante: string | number;
 }
 
-interface BuildRow {
+interface BuildRow extends BattleBuildRow {
   weapon_type: string;
   weapon_quality: string;
   weapon_level: number;
@@ -84,7 +86,7 @@ interface BuildRow {
   passive_level: number;
 }
 
-interface BotBuildRow {
+interface BotBuildRow extends BattleBotBuildRow {
   id: string;
   power: number;
   power_band: string;
@@ -92,25 +94,18 @@ interface BotBuildRow {
   is_active: boolean;
 }
 
-interface ConsumableRow {
+interface ConsumableRow extends BattleConsumableRow {
   player_id: string;
-  item_id: string;
-  quantity: number;
   updated_at: string;
 }
 
-interface PotionSlotRow {
+interface PotionSlotRow extends BattlePotionSlotRow {
   player_id: string;
-  slot_index: number;
-  potion_id: string | null;
-  behavior: unknown;
   updated_at: string;
 }
 
-interface SpellBehaviorRow {
+interface SpellBehaviorRow extends BattleSpellBehaviorRow {
   player_id: string;
-  spell_id: string;
-  behavior: unknown;
   updated_at: string;
 }
 
@@ -150,7 +145,8 @@ interface RankingRow {
 
 type BattleOutcome = "win" | "loss" | "draw";
 
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const DEFAULT_FIRST_SLICE_BOT_ID = "bot_effect_trainer_01";
 const BOT_ID_PATTERN = /^[a-z0-9_]+$/;
 const ARENA_SCORING_MODEL = "alpha_v0_power_adjusted";
@@ -361,8 +357,8 @@ async function handleFirstSliceRequest(
   const simulation = simulateFirstSliceBattle({
     battleId,
     seed,
-    player: playerCombatant(playerState.value),
-    opponent: botCombatant(bot),
+    player: playerCombatantFromState(playerState.value),
+    opponent: botCombatantFromRow(bot),
   });
   const reward = simulation.reward.resources;
 
@@ -855,13 +851,17 @@ async function applyBattleConsumables(
   requestId: string,
   consumablesUsed: BattleConsumableUse[],
 ): Promise<RestError | null> {
-  const playerConsumables = consumablesUsed.filter((item) => item.owner === "player");
+  const playerConsumables = consumablesUsed.filter((item) =>
+    item.owner === "player"
+  );
   if (playerConsumables.length === 0) {
     return null;
   }
 
   for (const used of playerConsumables) {
-    const current = state.inventory.find((item) => item.item_id === used.item_id);
+    const current = state.inventory.find((item) =>
+      item.item_id === used.item_id
+    );
     if (current === undefined || current.quantity < used.quantity) {
       return {
         code: "CONSUMABLE_APPLY_FAILED",
@@ -872,9 +872,9 @@ async function applyBattleConsumables(
     const nextQuantity = current.quantity - used.quantity;
     const update = await restRequest<unknown>(
       config,
-      `player_consumables?player_id=eq.${encodeURIComponent(state.player.id)}&item_id=eq.${
-        encodeURIComponent(used.item_id)
-      }`,
+      `player_consumables?player_id=eq.${
+        encodeURIComponent(state.player.id)
+      }&item_id=eq.${encodeURIComponent(used.item_id)}`,
       {
         method: "PATCH",
         headers: { prefer: "return=minimal" },
@@ -1132,131 +1132,6 @@ function arenaPointDelta(
     return -10 - Math.round(normalized * 5);
   }
   return -10;
-}
-
-function playerCombatant(state: {
-  player: PlayerRow;
-  build: BuildRow;
-  inventory: ConsumableRow[];
-  potionSlots: PotionSlotRow[];
-  spellBehaviors: SpellBehaviorRow[];
-}): CombatantBuild {
-  const { player, build } = state;
-  const spells = arrayOfStrings(build.spell_slots).length > 0
-    ? arrayOfStrings(build.spell_slots)
-    : arrayOfStrings(build.spells_unlocked);
-  const potionSlot = potionSlotForBattle(state);
-
-  return {
-    id: player.id,
-    displayName: stringValue(player.username, "Draxos"),
-    level: numberValue(player.level, 1),
-    weaponId: stringValue(build.weapon_type, "varinha_cinzas"),
-    weaponLevel: numberValue(build.weapon_level, 1),
-    weaponQualityTier: weaponQualityTierFromQualityId(build.weapon_quality),
-    spellIds: spells.length > 0 ? spells : ["sussurro_medo"],
-    spellLevels: spellLevelMap(
-      spells.length > 0 ? spells : ["sussurro_medo"],
-      numberValue(player.level, 1),
-    ),
-    passiveId: build.passive_id ?? undefined,
-    passiveLevel: build.passive_id === null ? undefined : numberValue(build.passive_level, 1),
-    petId: build.pet_id ?? undefined,
-    petLevel: build.pet_id === null ? undefined : numberValue(build.pet_level, 1),
-    spellBehaviors: spellBehaviorMap(state.spellBehaviors),
-    potionSlot,
-  };
-}
-
-function botCombatant(bot: BotBuildRow): CombatantBuild {
-  const data = isObject(bot.build_data) ? bot.build_data : {};
-  const spellIds = arrayOfStrings(data.spell_ids);
-  return {
-    id: bot.id,
-    displayName: stringValue(data.display_name, "Treinador da Primeira Ruina"),
-    level: numberValue(data.level, 5),
-    weaponId: stringValue(data.weapon_id, "varinha_cinzas"),
-    weaponLevel: numberValue(data.weapon_level, 5),
-    weaponQualityTier: weaponQualityTierFromQualityId(
-      stringValue(data.weapon_quality, "reforcada"),
-    ),
-    spellIds: spellIds.length > 0 ? spellIds : ["sussurro_medo"],
-    spellLevels: recordOfNumbers(data.spell_levels),
-    passiveId: optionalString(data.passive_id),
-    passiveLevel: optionalString(data.passive_id) === undefined
-      ? undefined
-      : numberValue(data.passive_level, 1),
-    petId: optionalString(data.pet_id),
-    petLevel: optionalString(data.pet_id) === undefined
-      ? undefined
-      : numberValue(data.pet_level, 1),
-  };
-}
-
-function potionSlotForBattle(state: {
-  inventory: ConsumableRow[];
-  potionSlots: PotionSlotRow[];
-}): CombatantBuild["potionSlot"] {
-  const slot = state.potionSlots.find((candidate) => candidate.slot_index === 1);
-  if (slot === undefined || slot.potion_id !== "pocao_vida") {
-    return undefined;
-  }
-  const inventory = state.inventory.find((item) => item.item_id === slot.potion_id);
-  const quantity = inventory?.quantity ?? 0;
-  if (quantity <= 0) {
-    return undefined;
-  }
-  return {
-    slotIndex: 1,
-    itemId: "pocao_vida",
-    quantity,
-    behavior: normalizeBehavior(slot.behavior, {
-      enabled: true,
-      hp: { mode: "below", percent: 40 },
-      mana: { mode: "ignore", percent: 0 },
-    }),
-  };
-}
-
-function spellBehaviorMap(
-  rows: SpellBehaviorRow[],
-): Record<string, BehaviorConfig> {
-  const result: Record<string, BehaviorConfig> = {};
-  for (const row of rows) {
-    result[row.spell_id] = normalizeBehavior(row.behavior, {
-      enabled: true,
-      hp: { mode: "ignore", percent: 0 },
-      mana: { mode: "ignore", percent: 0 },
-    });
-  }
-  return result;
-}
-
-function normalizeBehavior(
-  value: unknown,
-  fallback: BehaviorConfig,
-): BehaviorConfig {
-  const payload = isObject(value) ? value : {};
-  return {
-    enabled: typeof payload.enabled === "boolean" ? payload.enabled : fallback.enabled,
-    hp: normalizeCondition(payload.hp, fallback.hp),
-    mana: normalizeCondition(payload.mana, fallback.mana),
-  };
-}
-
-function normalizeCondition(
-  value: unknown,
-  fallback: BehaviorConfig["hp"],
-): BehaviorConfig["hp"] {
-  if (!isObject(value)) {
-    return fallback;
-  }
-  const mode = stringValue(value.mode, fallback.mode);
-  const percent = numberValue(value.percent, fallback.percent);
-  if (mode !== "ignore" && mode !== "below" && mode !== "above") {
-    return fallback;
-  }
-  return { mode, percent: Math.max(0, Math.min(100, Math.trunc(percent))) };
 }
 
 function resolveRoute(pathname: string): Route | null {
@@ -1537,28 +1412,6 @@ function errorResponse(
       message,
     },
   }, status);
-}
-
-function arrayOfStrings(value: unknown): string[] {
-  return Array.isArray(value)
-    ? value.filter((item): item is string => typeof item === "string" && item !== "")
-    : [];
-}
-
-function recordOfNumbers(value: unknown): Record<string, number> {
-  if (!isObject(value)) {
-    return {};
-  }
-
-  const result: Record<string, number> = {};
-  for (const [key, raw] of Object.entries(value)) {
-    result[key] = numberValue(raw, 1);
-  }
-  return result;
-}
-
-function optionalString(value: unknown): string | undefined {
-  return typeof value === "string" && value !== "" ? value : undefined;
 }
 
 function stringValue(value: unknown, fallback: string): string {

@@ -54,7 +54,9 @@ const TOOL_MODEL_SOURCES: SourceSpec[] = [
 }));
 
 const SIMULATOR_SOURCES: SourceSpec[] = [
+  "server/functions/_shared/battle_combatants.ts",
   "server/functions/_shared/battle_simulator.ts",
+  "supabase/functions/_shared/battle_combatants.ts",
   "supabase/functions/_shared/battle_simulator.ts",
 ].map((path) => ({
   path,
@@ -68,17 +70,10 @@ const contentSources = await digestSources([
 ]);
 const simulatorSources = await digestSources(SIMULATOR_SOURCES);
 
-const simulatorHashes = new Set(
-  simulatorSources.map((source) => source.sha256),
-);
-if (simulatorHashes.size !== 1) {
-  throw new Error(
-    "Battle simulator mirrors must have identical canonical hashes.",
-  );
-}
+assertMirroredSimulatorSources(simulatorSources);
 
 const contentHash = await sha256Hex(`${stableStringify(contentSources)}\n`);
-const simulatorHash = simulatorSources[0].sha256;
+const simulatorHash = await sha256Hex(`${stableStringify(simulatorSources)}\n`);
 const sources = [...contentSources, ...simulatorSources];
 
 const ruleset = {
@@ -179,4 +174,23 @@ function stableStringify(value: unknown): string {
       .map(([key, item]) => `${JSON.stringify(key)}:${stableStringify(item)}`)
       .join(",")
   }}`;
+}
+
+function assertMirroredSimulatorSources(sources: SourceDigest[]): void {
+  const byPath = new Map(sources.map((source) => [source.path, source]));
+  for (const source of sources) {
+    if (!source.path.startsWith("server/functions/")) {
+      continue;
+    }
+    const mirrorPath = source.path.replace(
+      "server/functions/",
+      "supabase/functions/",
+    );
+    const mirror = byPath.get(mirrorPath);
+    if (mirror === undefined || mirror.sha256 !== source.sha256) {
+      throw new Error(
+        `Battle simulator mirror mismatch: ${source.path} -> ${mirrorPath}.`,
+      );
+    }
+  }
 }

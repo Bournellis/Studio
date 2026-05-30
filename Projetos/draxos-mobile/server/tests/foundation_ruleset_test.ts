@@ -53,7 +53,9 @@ const TOOL_MODEL_SOURCES: SourceSpec[] = [
   canonicalization: "json",
 }));
 const SIMULATOR_SOURCES: SourceSpec[] = [
+  "server/functions/_shared/battle_combatants.ts",
   "server/functions/_shared/battle_simulator.ts",
+  "supabase/functions/_shared/battle_combatants.ts",
   "supabase/functions/_shared/battle_simulator.ts",
 ].map((path) => ({
   path,
@@ -123,13 +125,10 @@ Deno.test("foundation ruleset publishes deterministic metadata and hashes", asyn
     await sha256Hex(`${stableStringify(contentSources)}\n`),
   );
 
-  const simulatorHashes = new Set(
-    simulatorSources.map((source) => source.sha256),
-  );
-  assertEq(simulatorHashes.size, 1);
+  assertMirroredSimulatorSources(simulatorSources);
   assertEq(
     stringField(serverRuleset, "simulator_hash"),
-    simulatorSources[0].sha256,
+    await sha256Hex(`${stableStringify(simulatorSources)}\n`),
   );
 
   const counts = objectField(serverRuleset, "counts");
@@ -224,6 +223,29 @@ function assertSourcePaths(
     [...expectedPaths].sort(),
     "ruleset source paths",
   );
+}
+
+function assertMirroredSimulatorSources(sources: SourceDigest[]): void {
+  const byPath = new Map(sources.map((source) => [source.path, source]));
+  for (const source of sources) {
+    if (!source.path.startsWith("server/functions/")) {
+      continue;
+    }
+    const mirrorPath = source.path.replace(
+      "server/functions/",
+      "supabase/functions/",
+    );
+    const mirror = byPath.get(mirrorPath);
+    assert(
+      mirror !== undefined,
+      `missing simulator mirror for ${source.path}`,
+    );
+    assertEq(
+      mirror.sha256,
+      source.sha256,
+      `simulator mirror hash for ${source.path}`,
+    );
+  }
 }
 
 function assertNoSecretLikeText(source: string, label: string): void {
