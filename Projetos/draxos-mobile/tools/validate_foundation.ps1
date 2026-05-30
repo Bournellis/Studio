@@ -6,6 +6,7 @@ param(
     [switch]$RequireClean,
     [switch]$IncludeRemoteReadOnly,
     [switch]$IncludeLocalSupabaseRpc,
+    [switch]$IncludeLocalEdgeRpc,
     [switch]$AllowCloudflareAccess,
     [switch]$RemoteFullHash,
     [string]$JsonReportPath = "",
@@ -287,6 +288,7 @@ function Write-Reports {
         require_clean = $RequireClean.IsPresent
         include_remote_read_only = $IncludeRemoteReadOnly.IsPresent
         include_local_supabase_rpc = $IncludeLocalSupabaseRpc.IsPresent
+        include_local_edge_rpc = $IncludeLocalEdgeRpc.IsPresent
         summary = $summary
         results = @($Results.ToArray())
     }
@@ -423,6 +425,20 @@ if ($IncludeLocalSupabaseRpc) {
     }
 } else {
     Skip-Step -Name "local Supabase transactional RPC live proof" -Stage "Quick" -Command "npx -y deno run --allow-net --allow-env server/tests/transactional_rpc_live_test.ts" -Reason "-IncludeLocalSupabaseRpc was not set."
+}
+
+if ($IncludeLocalEdgeRpc) {
+    Invoke-Step -Name "local Edge transactional RPC adapter smoke" -Stage "Quick" -Command "npx -y deno check/run server/tests/transactional_edge_rpc_smoke.ts" -ScriptBlock {
+        Invoke-External -Command "transactional_edge_rpc_smoke.ts" -WorkingDirectory $ProjectPath -ScriptBlock {
+            & npx -y deno check server/tests/transactional_edge_rpc_smoke.ts
+            if ($LASTEXITCODE -ne 0) {
+                throw "deno check transactional_edge_rpc_smoke.ts exited with code $LASTEXITCODE."
+            }
+            & npx -y deno run --allow-net --allow-env server/tests/transactional_edge_rpc_smoke.ts
+        }
+    }
+} else {
+    Skip-Step -Name "local Edge transactional RPC adapter smoke" -Stage "Quick" -Command "npx -y deno run --allow-net --allow-env server/tests/transactional_edge_rpc_smoke.ts" -Reason "-IncludeLocalEdgeRpc was not set."
 }
 
 if ($RunClient) {

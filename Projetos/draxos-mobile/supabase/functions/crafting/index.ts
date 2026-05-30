@@ -205,10 +205,6 @@ async function handleCrushBones(
     return errorResponse(state.error.code, state.error.message, state.error.status);
   }
 
-  if (numberValue(state.value.resources.ossos, 0) < amount) {
-    return errorResponse("INSUFFICIENT_RESOURCES", "Not enough Ossos to crush.", 409);
-  }
-
   const requestHash = await mutationRequestHash("crafting/crush-bones", body, {
     request_id: requestId,
     save_type: auth.saveType,
@@ -269,10 +265,6 @@ async function handleCraft(
   }
 
   const cost = scaledResourceDelta(recipe.input, -quantity);
-  if (!canApplyDelta(state.value.resources, cost)) {
-    return errorResponse("INSUFFICIENT_RESOURCES", "Not enough resources for this recipe.", 409);
-  }
-
   const outputQuantity = recipe.output.quantity * quantity;
   const costPayload = resourceDelta(cost);
   const outputPayload = { item_id: recipe.output.itemId, quantity: outputQuantity };
@@ -504,17 +496,6 @@ function scaledResourceDelta(
     delta[resourceKey] = numberValue(value, 0) * quantityMultiplier;
   }
   return delta;
-}
-
-function canApplyDelta(
-  resources: ResourceRow,
-  delta: Partial<Record<ResourceKey, number>>,
-): boolean {
-  for (const key of resourceKeys()) {
-    const nextValue = numberValue(resources[key], 0) + numberValue(delta[key], 0);
-    if (nextValue < 0) return false;
-  }
-  return true;
 }
 
 function resourceDelta(delta: Partial<Record<ResourceKey, number>>): Record<string, number> {

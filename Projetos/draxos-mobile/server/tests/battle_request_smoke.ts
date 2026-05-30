@@ -69,6 +69,10 @@ const state = await getJson(
 const firstLog = objectField(firstBattle, "battle_log");
 const secondLog = objectField(secondBattle, "battle_log");
 const latestLog = objectField(latest, "battle_log");
+const rewardResources = objectField(
+  objectField(firstBattle, "rewards"),
+  "resources",
+);
 assertEq(
   stringField(firstLog, "schema_version"),
   "battle_log_v1",
@@ -100,12 +104,12 @@ assertEq(
 );
 assertEq(
   objectField(state, "player").xp,
-  5,
+  rewardResources.xp,
   "repeated request_id should not duplicate XP",
 );
 assertEq(
   objectField(state, "resources").ossos,
-  1,
+  rewardResources.ossos,
   "repeated request_id should not duplicate Ossos",
 );
 

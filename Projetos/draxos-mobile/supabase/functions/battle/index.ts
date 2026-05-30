@@ -140,8 +140,7 @@ interface RankingRow {
 
 type BattleOutcome = "win" | "loss" | "draw";
 
-const UUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const DEFAULT_FIRST_SLICE_BOT_ID = "bot_effect_trainer_01";
 const BOT_ID_PATTERN = /^[a-z0-9_]+$/;
 const ARENA_SCORING_MODEL = "alpha_v0_power_adjusted";
@@ -275,7 +274,13 @@ async function handleRequest(
     return errorResponse("INVALID_BOT_ID", "opponent_bot_id is invalid.", 400);
   }
 
-  return await handleFirstSliceRequest(auth, config, requestId, opponentBotId, body);
+  return await handleFirstSliceRequest(
+    auth,
+    config,
+    requestId,
+    opponentBotId,
+    body,
+  );
 }
 
 async function handleMvpRequest(
@@ -371,7 +376,6 @@ async function handleFirstSliceRequest(
     save_type: auth.saveType,
     mode: "FIRST_SLICE_SIM",
     opponent_bot_id: bot.id,
-    battle_id: battleId,
     seed,
   });
   const rpc = await restRequest<unknown>(config, "rpc/request_battle_v1", {
@@ -584,14 +588,10 @@ function battleLogFromRow(
   player: PlayerRow,
   battle: BattleRow,
 ): Record<string, unknown> {
-  const rewardPayload = isObject(battle.reward_payload)
-    ? battle.reward_payload
-    : {};
+  const rewardPayload = isObject(battle.reward_payload) ? battle.reward_payload : {};
   const events = Array.isArray(battle.event_log) ? battle.event_log : [];
   const rewardType = stringValue(rewardPayload.type, "MVP_ONLY");
-  const mode = rewardType === "FIRST_SLICE_SIM"
-    ? "FIRST_SLICE_SIM"
-    : "MVP_ONLY";
+  const mode = rewardType === "FIRST_SLICE_SIM" ? "FIRST_SLICE_SIM" : "MVP_ONLY";
 
   return {
     schema_version: battle.schema_version,
@@ -610,14 +610,10 @@ function battleLogFromRow(
 }
 
 function historyEntryFromRow(battle: BattleRow): Record<string, unknown> {
-  const rewardPayload = isObject(battle.reward_payload)
-    ? battle.reward_payload
-    : {};
+  const rewardPayload = isObject(battle.reward_payload) ? battle.reward_payload : {};
   const events = Array.isArray(battle.event_log) ? battle.event_log : [];
   const rewardType = stringValue(rewardPayload.type, "MVP_ONLY");
-  const mode = rewardType === "FIRST_SLICE_SIM"
-    ? "FIRST_SLICE_SIM"
-    : "MVP_ONLY";
+  const mode = rewardType === "FIRST_SLICE_SIM" ? "FIRST_SLICE_SIM" : "MVP_ONLY";
 
   return {
     battle_id: battle.id,
@@ -631,9 +627,7 @@ function historyEntryFromRow(battle: BattleRow): Record<string, unknown> {
     result: battle.result,
     rewards: {
       type: rewardType,
-      resources: isObject(rewardPayload.resources)
-        ? rewardPayload.resources
-        : {},
+      resources: isObject(rewardPayload.resources) ? rewardPayload.resources : {},
     },
   };
 }
@@ -644,9 +638,7 @@ function opponentSummaryFromRow(
 ): Record<string, unknown> {
   return {
     id: battle.defender_id,
-    display_name: mode === "FIRST_SLICE_SIM"
-      ? "Treinador da Primeira Ruina"
-      : "Bot de Treino",
+    display_name: mode === "FIRST_SLICE_SIM" ? "Treinador da Primeira Ruina" : "Bot de Treino",
     is_bot: battle.defender_is_bot,
   };
 }
@@ -673,9 +665,7 @@ function rulesetMetadataFromRow(battle: BattleRow): Record<string, unknown> {
 }
 
 function battleDuration(events: unknown[]): number {
-  const lastEvent = events.findLast((event) =>
-    isObject(event) && typeof event.t === "number"
-  );
+  const lastEvent = events.findLast((event) => isObject(event) && typeof event.t === "number");
   return isObject(lastEvent) ? numberValue(lastEvent.t, 4.2) : 4.2;
 }
 
@@ -940,17 +930,13 @@ async function applyBattleConsumables(
   requestId: string,
   consumablesUsed: BattleConsumableUse[],
 ): Promise<RestError | null> {
-  const playerConsumables = consumablesUsed.filter((item) =>
-    item.owner === "player"
-  );
+  const playerConsumables = consumablesUsed.filter((item) => item.owner === "player");
   if (playerConsumables.length === 0) {
     return null;
   }
 
   for (const used of playerConsumables) {
-    const current = state.inventory.find((item) =>
-      item.item_id === used.item_id
-    );
+    const current = state.inventory.find((item) => item.item_id === used.item_id);
     if (current === undefined || current.quantity < used.quantity) {
       return {
         code: "CONSUMABLE_APPLY_FAILED",
@@ -961,9 +947,9 @@ async function applyBattleConsumables(
     const nextQuantity = current.quantity - used.quantity;
     const update = await restRequest<unknown>(
       config,
-      `player_consumables?player_id=eq.${
-        encodeURIComponent(state.player.id)
-      }&item_id=eq.${encodeURIComponent(used.item_id)}`,
+      `player_consumables?player_id=eq.${encodeURIComponent(state.player.id)}&item_id=eq.${
+        encodeURIComponent(used.item_id)
+      }`,
       {
         method: "PATCH",
         headers: { prefer: "return=minimal" },
@@ -1258,13 +1244,9 @@ function playerCombatant(state: {
       numberValue(player.level, 1),
     ),
     passiveId: build.passive_id ?? undefined,
-    passiveLevel: build.passive_id === null
-      ? undefined
-      : numberValue(build.passive_level, 1),
+    passiveLevel: build.passive_id === null ? undefined : numberValue(build.passive_level, 1),
     petId: build.pet_id ?? undefined,
-    petLevel: build.pet_id === null
-      ? undefined
-      : numberValue(build.pet_level, 1),
+    petLevel: build.pet_id === null ? undefined : numberValue(build.pet_level, 1),
     spellBehaviors: spellBehaviorMap(state.spellBehaviors),
     potionSlot,
   };
@@ -1299,15 +1281,11 @@ function potionSlotForBattle(state: {
   inventory: ConsumableRow[];
   potionSlots: PotionSlotRow[];
 }): CombatantBuild["potionSlot"] {
-  const slot = state.potionSlots.find((candidate) =>
-    candidate.slot_index === 1
-  );
+  const slot = state.potionSlots.find((candidate) => candidate.slot_index === 1);
   if (slot === undefined || slot.potion_id !== "pocao_vida") {
     return undefined;
   }
-  const inventory = state.inventory.find((item) =>
-    item.item_id === slot.potion_id
-  );
+  const inventory = state.inventory.find((item) => item.item_id === slot.potion_id);
   const quantity = inventory?.quantity ?? 0;
   if (quantity <= 0) {
     return undefined;
@@ -1344,9 +1322,7 @@ function normalizeBehavior(
 ): BehaviorConfig {
   const payload = isObject(value) ? value : {};
   return {
-    enabled: typeof payload.enabled === "boolean"
-      ? payload.enabled
-      : fallback.enabled,
+    enabled: typeof payload.enabled === "boolean" ? payload.enabled : fallback.enabled,
     hp: normalizeCondition(payload.hp, fallback.hp),
     mana: normalizeCondition(payload.mana, fallback.mana),
   };
@@ -1649,9 +1625,7 @@ function errorResponse(
 
 function arrayOfStrings(value: unknown): string[] {
   return Array.isArray(value)
-    ? value.filter((item): item is string =>
-      typeof item === "string" && item !== ""
-    )
+    ? value.filter((item): item is string => typeof item === "string" && item !== "")
     : [];
 }
 

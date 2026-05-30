@@ -69,6 +69,7 @@ npx -y deno run --allow-net --allow-env server/tests/grimoire_catalog_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/build_equip_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/runtime_config_smoke.ts
 deno run --allow-net --allow-env server/tests/transactional_rpc_live_test.ts
+deno run --allow-net --allow-env server/tests/transactional_edge_rpc_smoke.ts
 ```
 
 O smoke cria uma sessao anonima, cria conta guest, solicita batalha `MVP_ONLY`,
@@ -152,6 +153,12 @@ parcial, retry apos precondicao corrigida, resposta idempotente por
 build equip, crafting, reward claim, alpha purchase e guild create/join. Ele usa
 `DRAXOS_LOCAL_DB_URL` quando definido, ou o banco local padrao da Supabase CLI
 `postgres://postgres:postgres@127.0.0.1:54322/postgres`.
+
+O smoke `transactional_edge_rpc_smoke.ts` valida o caminho HTTP local das Edge
+Functions sobre os adapters RPC v1. Ele exige `supabase functions serve` ativo,
+chama `base`, `battle`, `build`, `crafting`, `monetization` e `social` via
+`/functions/v1`, e confirma no Postgres local que cada mutation criou
+`idempotency_keys` `completed` com `request_hash` calculado pelo adapter.
 
 O smoke `release_artifacts_remote_smoke.ts` valida somente leitura contra o
 remoto publicado: manifest, hashes Android/PC no payload, alcance do APK/ZIP

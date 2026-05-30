@@ -146,6 +146,7 @@ $requiredFiles = @(
   'server\tests\transactional_domain_enforcement_schema_test.ts',
   'server\tests\remaining_transactional_domain_enforcement_schema_test.ts',
   'server\tests\transactional_rpc_live_test.ts',
+  'server\tests\transactional_edge_rpc_smoke.ts',
   'server\tests\foundation_contracts_test.ts',
   'server\tests\integer_bones_contract_test.ts',
   'server\tests\build_equip_smoke.ts',
@@ -232,6 +233,9 @@ Test-FileContains 'server\tests\transactional_rpc_live_test.ts' 'proveBattleRoll
 Test-FileContains 'server\tests\transactional_rpc_live_test.ts' 'proveRewardClaimRollbackRetryAndIdempotency'
 Test-FileContains 'server\tests\transactional_rpc_live_test.ts' 'proveAlphaPurchaseRollbackRetryAndIdempotency'
 Test-FileContains 'server\tests\transactional_rpc_live_test.ts' 'proveGuildCreateRollbackRetryAndIdempotency'
+Test-FileContains 'server\tests\transactional_edge_rpc_smoke.ts' 'proveBattleRequestAdapter'
+Test-FileContains 'server\tests\transactional_edge_rpc_smoke.ts' 'proveCraftingAdapters'
+Test-FileContains 'server\tests\transactional_edge_rpc_smoke.ts' 'assertCompletedIdempotency'
 Test-FileContains 'server\functions\base\index.ts' 'rpc/collect_base_v1'
 Test-FileContains 'server\functions\base\index.ts' 'rpc/start_base_upgrade_v1'
 Test-FileContains 'supabase\functions\base\index.ts' 'rpc/collect_base_v1'
@@ -249,6 +253,7 @@ Test-FileContains 'server\tests\README.md' 'foundation_expansion_schema_test.ts'
 Test-FileContains 'server\tests\README.md' 'transactional_domain_enforcement_schema_test.ts'
 Test-FileContains 'server\tests\README.md' 'remaining_transactional_domain_enforcement_schema_test.ts'
 Test-FileContains 'server\tests\README.md' 'transactional_rpc_live_test.ts'
+Test-FileContains 'server\tests\README.md' 'transactional_edge_rpc_smoke.ts'
 
 Test-PowerShellParses @(
   'tools\check_foundation_expansion_readiness.ps1',
