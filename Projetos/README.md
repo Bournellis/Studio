@@ -18,7 +18,7 @@ This directory contains active, conceptual and paused projects for the studio.
 
 ## Implementacao - Foundation Expansion Readiness
 
-- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 13 release safety and Track 14 agent ops remain preserved baselines. First Session Clarity v1 is approved, and the active package is Foundation Expansion Readiness: account/save authority, ruleset registry, idempotency v1, admin auditability, client shell split and multiagent contracts before base builder/autobattler/social/minigame expansion. The confirmed Foundation post-login loop remains the accepted baseline: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again.
+- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 13 release safety and Track 14 agent ops remain preserved baselines. First Session Clarity v1 is approved, and the active package is Foundation Expansion Readiness: account/save authority, ruleset registry, idempotency v1, admin auditability, client shell split, multiagent contracts and transactional RPC promotion for Base, battle rewards, monetization rewards/alpha purchase, build/crafting and guild create/join before base builder/autobattler/social/minigame expansion. The confirmed Foundation post-login loop remains the accepted baseline: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again.
   - Priority/status: `P2_IMPLEMENTACAO - FOUNDATION_EXPANSION_READINESS_ACTIVE`
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Agent manual: `draxos-mobile/docs/agent-operating-manual.md`
@@ -50,7 +50,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Progression Lab: `draxos-mobile/docs/progression-lab/README.md`
   - Design archive: `_conceitos/mobile-universe/`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: complete Foundation Expansion Readiness, then choose base builder, autobattler, social or minigame expansion by explicit decision.
+  - Current next step: prove rollback/retry/idempotency of the v1 RPCs against a live/local Supabase stack, then choose base builder, autobattler, social or minigame expansion by explicit decision.
 
 ## Arquivo De Design
 

@@ -1,7 +1,7 @@
 # Database Schema Contract
 
 - Ultima atualizacao: `2026-05-30`
-- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type`, reset separado por save, Progression Lab, auth email/senha, manifest/update, Track 16 de comportamento/crafting/consumiveis e Foundation Expansion Readiness com `account_profiles`, `game_saves`, `ruleset_registry`, `admin_audit_log`, idempotencia v1, metadata de ruleset e Base promovida para RPCs transacionais v1.
+- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type`, reset separado por save, Progression Lab, auth email/senha, manifest/update, Track 16 de comportamento/crafting/consumiveis e Foundation Expansion Readiness com `account_profiles`, `game_saves`, `ruleset_registry`, `admin_audit_log`, idempotencia v1, metadata de ruleset e dominios criticos promovidos para RPCs transacionais v1.
 
 Este documento define o schema esperado. A fonte tecnica viva do runtime local e `../../supabase/migrations/`; `../../server/schema/migrations/` permanece como espelho backend durante o alpha local.
 
@@ -20,6 +20,7 @@ Migrations atuais:
 - `202605280001_behavior_crafting.sql`: `po_osso`, Ossos inteiros reescalados, inventario de consumiveis, slot de pocao, comportamentos de spells e ledger de itens.
 - `202605300001_foundation_expansion_readiness.sql`: `account_profiles`, `game_saves`, `ruleset_registry`, `admin_audit_log`, idempotencia com `request_hash/scope_id/status`, metadata de ruleset em historicos e RPCs de bootstrap/idempotencia/reconciliacao.
 - `202605300002_transactional_domain_enforcement.sql`: promove Base para efeitos reais em RPCs v1 (`complete_due_base_jobs_v1`, `collect_base_v1`, `start_base_upgrade_v1`), com lock do save, reserva idempotente, ledger/saldo/job na mesma transacao e grants somente para `service_role`.
+- `202605300003_remaining_transactional_domain_enforcement.sql`: promove battle rewards, monetization rewards/alpha purchase, build equip, crafting craft/crush-bones e guild create/join para RPCs v1 com lock de `game_saves`, `request_hash`, idempotencia pending/completed, ledger e grants somente para `service_role`.
 
 ## Regras De Escopo De Servico
 

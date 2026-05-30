@@ -105,12 +105,13 @@ Pare e peca decisao explicita quando:
 
 Esta primeira entrega da readiness cria a base tecnica e documental, mas nao abre novas features de gameplay:
 
-- migration espelhada `202605300001_foundation_expansion_readiness.sql`;
+- migrations espelhadas `202605300001_foundation_expansion_readiness.sql`, `202605300002_transactional_domain_enforcement.sql` e `202605300003_remaining_transactional_domain_enforcement.sql`;
 - `account_profiles`, `game_saves`, `ruleset_registry` e `admin_audit_log`;
 - idempotencia com `request_hash`, `scope_id`, `pending/completed/failed` e timestamps;
-- RPCs base de profile/save, idempotencia e reconciliacao auditavel;
+- RPCs base de profile/save, idempotencia, reconciliacao auditavel e dominios transacionais v1;
 - `foundation_ruleset_v0` gerado a partir de definitions/modelos/simulador;
-- battle request/history/replay com metadata de ruleset;
+- battle request/history/replay com metadata de ruleset e `FIRST_SLICE_SIM` aplicado via RPC transacional para battle row, rewards, consumiveis e ranking;
+- Base collect/upgrade, build equip, crafting craft/crush-bones, monetization rewards/alpha purchase e guild create/join migrados para o padrao `game_saves` + `request_hash` + idempotencia pending/completed;
 - `DraxosOperationState` e `DraxosAppShellActionRouter` sem tocar `boot.gd`;
 - contratos de account/save, ruleset registry, admin ops e minigame integration;
 - checker read-only integrado ao gate de fundacao.

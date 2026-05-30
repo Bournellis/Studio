@@ -76,15 +76,15 @@ como slot contratado, mas a rota ainda precisa migrar o efeito de dominio.
 
 | Endpoint logico | RPC transacional alvo | Status |
 |---|---|---|
-| `POST /battle/request` | `request_battle_v1` | reservado; battle ja persiste `ruleset_id/version` no path `FIRST_SLICE_SIM` |
+| `POST /battle/request` | `request_battle_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql` para `FIRST_SLICE_SIM`; simulação continua no adapter e persistência/reward/consumables/ranking/idempotência entram no RPC |
 | `POST /base/collect` | `collect_base_v1` | ativo em `202605300002_transactional_domain_enforcement.sql`; adapter preserva payload de UI e move recursos/ledger/idempotencia para RPC |
 | `POST /base/upgrade` | `start_base_upgrade_v1` | ativo em `202605300002_transactional_domain_enforcement.sql`; adapter preserva payload de UI e move gasto/job/ledger/idempotencia para RPC |
-| `POST /build/equip` | `equip_build_v1` | reservado |
-| `POST /crafting/craft` | `craft_item_v1` | reservado |
-| `POST /monetization/rewards/claim` | `claim_reward_v1` | reservado |
-| `POST /monetization/alpha-purchase` | `alpha_purchase_v1` | reservado |
-| `POST /social/guild/create` | `guild_create_v1` | reservado |
-| `POST /social/guild/join` | `guild_join_v1` | reservado |
+| `POST /build/equip` | `equip_build_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql`; build + power são aplicados no mesmo RPC |
+| `POST /crafting/craft` | `craft_item_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql`; recurso + item + ledgers entram no mesmo RPC |
+| `POST /monetization/rewards/claim` | `claim_reward_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql`; claim + XP/recurso/pass/ledger/idempotência entram no mesmo RPC |
+| `POST /monetization/alpha-purchase` | `alpha_purchase_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql`; custo/recompensa/premium/compra/ledger/idempotência entram no mesmo RPC |
+| `POST /social/guild/create` | `guild_create_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql`; guilda + owner + estruturas + canal + idempotência entram no mesmo RPC |
+| `POST /social/guild/join` | `guild_join_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql`; membership + contador + idempotência entram no mesmo RPC |
 
 Nenhuma rota nova deve expandir economia sem passar para o padrao v1.
 

@@ -91,13 +91,15 @@ Delivered in the current branch:
 - `docs/contracts/admin-ops.md` defines minimum auditable admin/support operations.
 - Migration `202605300001_foundation_expansion_readiness.sql` adds `account_profiles`, `game_saves`, `ruleset_registry`, `admin_audit_log`, idempotency v1 fields and ruleset metadata columns.
 - Migration `202605300002_transactional_domain_enforcement.sql` promotes Base collect/upgrade to real v1 transactional RPCs with `game_saves`, `request_hash`, ruleset metadata, resource ledger and service-role-only grants.
+- Migration `202605300003_remaining_transactional_domain_enforcement.sql` promotes `battle/request` (`FIRST_SLICE_SIM`), rewards claim, alpha purchase, build equip, crafting craft/crush-bones and guild create/join to v1 transactional RPCs with `game_saves`, `request_hash`, ruleset metadata, ledger/idempotency and service-role-only grants.
 - `foundation_ruleset_v0` is generated with content/simulator hashes and mirrored into server/supabase shared modules.
 - `battle/request`, `battle/latest`, `battle/history` and `battle/replay` expose ruleset metadata for new battles/log reads.
 - `base/state`, `base/collect` and `base/upgrade` now use the Base transactional RPC path while preserving the current UI payload contract.
+- `battle`, `build`, `crafting`, `monetization` and `social` adapters now compute canonical `request_hash`, resolve `game_saves` and call domain RPCs while preserving the current client payload shape where the UI depends on it.
 - `DraxosOperationState` and `DraxosAppShellActionRouter` create client shell contracts without adding logic to `boot.gd`.
 - `tools/check_foundation_expansion_readiness.ps1` is the read-only structural gate and is called from `validate_foundation.ps1`.
 
-This package does not implement a new gameplay feature, new social loop or new minigame. The next backend hardening step is to migrate the remaining critical economy/social mutations to the v1 transactional RPC pattern (`request_hash`, pending/completed/failed idempotency, ledger and response in one transaction): battle reward application, rewards/alpha purchase, build/crafting and guild create/join.
+This package does not implement a new gameplay feature, new social loop or new minigame. The remaining backend hardening before balance/content expansion is to add deeper database-level failure/retry tests against a live local Supabase stack and then continue splitting domain services without changing UX.
 
 ## Progression Clarity v1
 
