@@ -70,7 +70,7 @@
 ## Current Limits
 
 - Critical economy/social mutations no longer use REST multi-step writes for their core effects: Base collect/upgrade, `FIRST_SLICE_SIM` battle persistence/rewards/consumables/ranking, reward claim, alpha purchase, build equip, crafting craft/crush-bones and guild create/join now reserve/complete idempotency and mutate state in RPCs.
-- Live database failure/retry/idempotency proof exists in `server/tests/transactional_rpc_live_test.ts` and passed against a reset local Supabase stack on `2026-05-30`.
+- Live database failure/retry/idempotency proof exists in `server/tests/transactional_rpc_live_test.ts` for battle rewards, build equip, crafting, reward claim, alpha purchase and guild create/join; it passed against a reset local Supabase stack on `2026-05-30`.
 - Local Edge Function HTTP smokes over the promoted adapters are still useful before treating the adapter layer as fully production-grade.
 - Migration is additive and not pushed remotely in this package.
 - No new gameplay, balance, social expansion or minigame is included.

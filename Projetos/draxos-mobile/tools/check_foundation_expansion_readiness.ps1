@@ -229,6 +229,7 @@ Test-FileContains 'server\tests\foundation_expansion_schema_test.ts' 'foundation
 Test-FileContains 'server\tests\transactional_domain_enforcement_schema_test.ts' 'base edge adapter calls transactional RPCs instead of direct multi-step writes'
 Test-FileContains 'server\tests\remaining_transactional_domain_enforcement_schema_test.ts' 'remaining transactional domain RPC dispatcher applies real atomic effects'
 Test-FileContains 'server\tests\transactional_rpc_live_test.ts' 'proveBattleRollbackRetryAndIdempotency'
+Test-FileContains 'server\tests\transactional_rpc_live_test.ts' 'proveRewardClaimRollbackRetryAndIdempotency'
 Test-FileContains 'server\tests\transactional_rpc_live_test.ts' 'proveAlphaPurchaseRollbackRetryAndIdempotency'
 Test-FileContains 'server\tests\transactional_rpc_live_test.ts' 'proveGuildCreateRollbackRetryAndIdempotency'
 Test-FileContains 'server\functions\base\index.ts' 'rpc/collect_base_v1'

@@ -149,7 +149,7 @@ O smoke `transactional_rpc_live_test.ts` valida as RPCs transacionais v1
 diretamente no Postgres local apos `supabase db reset`: rollback de falha
 parcial, retry apos precondicao corrigida, resposta idempotente por
 `request_id` e rejeicao de `request_hash` divergente para battle rewards,
-build equip, crafting, alpha purchase e guild create/join. Ele usa
+build equip, crafting, reward claim, alpha purchase e guild create/join. Ele usa
 `DRAXOS_LOCAL_DB_URL` quando definido, ou o banco local padrao da Supabase CLI
 `postgres://postgres:postgres@127.0.0.1:54322/postgres`.
 

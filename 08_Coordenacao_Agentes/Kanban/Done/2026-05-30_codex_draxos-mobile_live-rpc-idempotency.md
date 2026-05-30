@@ -16,7 +16,7 @@ Provar rollback/retry/idempotencia das RPCs transacionais v1 contra uma stack Su
 ## Entregue
 
 - Criado `server/tests/transactional_rpc_live_test.ts`, teste live contra Supabase/Postgres local que cobre falha parcial, retry, replay idempotente e rejeicao de `request_hash` divergente.
-- Cobertura live incluida para `request_battle_v1`, `equip_build_v1`, `craft_item_v1`, `alpha_purchase_v1`, `guild_create_v1` e `guild_join_v1`.
+- Cobertura live incluida para `request_battle_v1`, `equip_build_v1`, `craft_item_v1`, `claim_reward_v1`, `alpha_purchase_v1`, `guild_create_v1` e `guild_join_v1`.
 - `validate_foundation.ps1` ganhou `-IncludeLocalSupabaseRpc` para integrar a prova live ao gate Quick quando a stack local estiver ativa.
 - `check_foundation_expansion_readiness.ps1`, docs de testes, status local, Track 17 e portfolio foram atualizados com a nova evidencia.
 - Nao houve publicacao remota nem migracao remota.

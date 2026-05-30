@@ -33,6 +33,7 @@ try {
   await proveBattleRollbackRetryAndIdempotency(primary);
   await proveBuildEquipIdempotency(primary);
   await proveCraftIdempotency(primary);
+  await proveRewardClaimRollbackRetryAndIdempotency(primary);
   await proveAlphaPurchaseRollbackRetryAndIdempotency(primary);
   await proveGuildCreateRollbackRetryAndIdempotency(primary);
   await proveGuildJoinIdempotency(joinOwner, joinMember);
@@ -326,6 +327,128 @@ async function proveCraftIdempotency(account: TestAccount): Promise<void> {
   );
 }
 
+async function proveRewardClaimRollbackRetryAndIdempotency(
+  account: TestAccount,
+): Promise<void> {
+  await sql`
+    update public.resources
+    set almas = 0, energia = 0, sangue = 0, cristais = 0, ossos = 0, po_osso = 0, diamante = 0
+    where player_id = ${account.playerId}::uuid
+  `;
+  await sql`
+    update public.players
+    set xp = 0
+    where id = ${account.playerId}::uuid
+  `;
+
+  const requestId = crypto.randomUUID();
+  const rewardId = `live_reward_${requestId.slice(0, 8)}`;
+  const periodKey = `live-${requestId}`;
+  const hash = liveHash("reward-claim", requestId);
+  const validPayload = {
+    request_id: requestId,
+    reward_id: rewardId,
+    source: "daily",
+    period_key: periodKey,
+    pass_id: "bp_s1_01",
+    resources: { almas: 3, ossos: 7 },
+    xp: 25,
+    pass_xp_delta: 10,
+    reward_payload: { source: "transactional_rpc_live_test" },
+  };
+  const invalidPayload = { ...validPayload, source: "invalid_source" };
+
+  await assertRejects(
+    () => claimReward(account, requestId, hash, invalidPayload),
+    "reward_claims_source_check",
+    "reward claim should roll back resource/xp changes when claim insert fails",
+  );
+  await assertNoRows(
+    "reward claim rollback should not create claim row",
+    sql`select 1 from public.reward_claims where request_id = ${requestId}::uuid`,
+  );
+  await assertNoRows(
+    "reward claim rollback should not create resource ledger",
+    sql`select 1 from public.resource_transactions where request_id = ${requestId}::uuid`,
+  );
+  await assertNoRows(
+    "reward claim rollback should not leave battle pass progress",
+    sql`
+      select 1
+      from public.battle_pass_progress
+      where player_id = ${account.playerId}::uuid
+        and pass_id = 'bp_s1_01'
+    `,
+  );
+  await assertNoRows(
+    "reward claim rollback should remove idempotency row",
+    sql`
+      select 1 from public.idempotency_keys
+      where player_id = ${account.playerId}::uuid
+        and endpoint = 'monetization/rewards/claim'
+        and request_id = ${requestId}::uuid
+    `,
+  );
+  assertEq(
+    numberField(await resourcesFor(account.playerId), "almas"),
+    0,
+    "reward claim rollback should preserve resources",
+  );
+  assertEq(
+    await playerXpFor(account.playerId),
+    0,
+    "reward claim rollback should preserve player xp",
+  );
+
+  const first = await claimReward(account, requestId, hash, validPayload);
+  const afterFirst = await resourcesFor(account.playerId);
+  assertEq(
+    numberField(afterFirst, "almas"),
+    3,
+    "reward claim retry should add Almas once",
+  );
+  assertEq(
+    numberField(afterFirst, "ossos"),
+    7,
+    "reward claim retry should add Ossos once",
+  );
+  assertEq(
+    await playerXpFor(account.playerId),
+    25,
+    "reward claim should add XP once",
+  );
+  assertEq(
+    await countRows(
+      sql`select 1 from public.reward_claims where request_id = ${requestId}::uuid`,
+    ),
+    1,
+    "reward claim row should exist once",
+  );
+
+  const repeated = await claimReward(account, requestId, hash, validPayload);
+  assertStableJson(
+    first,
+    repeated,
+    "monetization/rewards/claim should return stored idempotent payload",
+  );
+  assertEq(
+    numberField(await resourcesFor(account.playerId), "almas"),
+    3,
+    "reward claim repeat should not add resources again",
+  );
+  assertEq(
+    await playerXpFor(account.playerId),
+    25,
+    "reward claim repeat should not add XP again",
+  );
+
+  await assertRejects(
+    () => claimReward(account, requestId, `${hash}:changed`, validPayload),
+    "IDEMPOTENCY_HASH_MISMATCH",
+    "monetization/rewards/claim should reject same request_id with a different hash",
+  );
+}
+
 async function proveAlphaPurchaseRollbackRetryAndIdempotency(
   account: TestAccount,
 ): Promise<void> {
@@ -564,6 +687,23 @@ async function craftItem(
   return row.payload;
 }
 
+async function claimReward(
+  account: TestAccount,
+  requestId: string,
+  requestHash: string,
+  payload: JsonObject,
+): Promise<JsonObject> {
+  const [row] = await sql<{ payload: JsonObject }[]>`
+    select public.claim_reward_v1(
+      ${account.gameSaveId}::uuid,
+      ${requestId}::uuid,
+      ${requestHash},
+      ${sql.json(payload as any)}
+    ) as payload
+  `;
+  return row.payload;
+}
+
 async function alphaPurchase(
   account: TestAccount,
   requestId: string,
@@ -623,6 +763,16 @@ async function resourcesFor(playerId: string): Promise<JsonObject> {
   `;
   assert(isObject(row), `resources should exist for ${playerId}`);
   return row;
+}
+
+async function playerXpFor(playerId: string): Promise<number> {
+  const [row] = await sql<{ xp: number }[]>`
+    select xp
+    from public.players
+    where id = ${playerId}::uuid
+  `;
+  assert(row !== undefined, `player should exist for ${playerId}`);
+  return row.xp;
 }
 
 async function countRows(
