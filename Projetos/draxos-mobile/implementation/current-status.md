@@ -4,12 +4,12 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `First Session Clarity v1`
-- Active stage status: `FIRST_SESSION_CLARITY_V1_APPROVED`
+- Active stage: `Foundation Expansion Readiness`
+- Active stage status: `FOUNDATION_EXPANSION_READINESS_ACTIVE`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety` (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation` (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Latest published package: `First Session Clarity v1`
-- Latest implemented package: `First Session Clarity v1`
+- Latest implemented package: `Foundation Expansion Readiness` (in progress on branch `codex/draxos-mobile/foundation-expansion-readiness`)
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical context, not current product focus; current state summarized in `docs/behavior-potion-crafting-v1.md`)
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
@@ -38,7 +38,7 @@ The major foundation baseline is:
 
 ## Foundation Audit
 
-Foundation Baseline is the active stage. Foundation Audit aligned documents, audited the internal post-login loop and produced the current published baseline before implementation expands.
+Foundation Expansion Readiness is the active stage. Foundation Audit aligned documents, audited the internal post-login loop and produced the current published baseline before implementation expands.
 
 Documentation alignment is complete, and the first loop audit is recorded in `docs/foundation-loop-audit.md`. The audit conclusion was: the foundation exists technically, but the V0 UX needed a focused pass so the player always understands the next post-login action.
 
@@ -76,7 +76,26 @@ First Session Clarity v1 is implemented, published and manually approved as the 
 - First Session Clarity v1 was published to Internal Alpha on `2026-05-30` with release root `internal-alpha/v0-first-session-clarity-v1-20260530`, public Web preview `https://f2ead4bd.draxos-mobile-internal-alpha.pages.dev/web/index.html`, public APK `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-first-session-clarity-v1-20260530/downloads/draxos-mobile-alpha.apk` and public PC ZIP `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-first-session-clarity-v1-20260530/downloads/draxos-mobile-alpha.zip`.
 - Manual review on `2026-05-30` approved the package as clearer. The project remains active in P2; do not open an initial-loop motivation package by default.
 
-Recommended next decision: choose the next DraxosMobile package explicitly when product focus returns to mobile; candidates remain small targeted adjustment, Social Routine v1.1 or a narrow visual clarity pass.
+Recommended next decision: complete the Foundation Expansion Readiness gate before opening base builder tuning, autobattler tuning, social expansion or a real minigame.
+
+## Foundation Expansion Readiness
+
+Foundation Expansion Readiness is the current pre-expansion package. It prepares DraxosMobile for production future, parallel agent work and larger feature lanes without changing the published player-facing UX.
+
+Delivered in the current branch:
+
+- `docs/foundation-expansion-readiness.md` defines the multiagent lane matrix and contract-first gate.
+- `docs/contracts/account-save.md` makes `account_profiles` + `game_saves` the account/save authority, with `players.save_type` as compatibility only.
+- `docs/contracts/ruleset-registry.md` records the approved third path: repo-generated ruleset as authorship source and database registry as publication record.
+- `docs/contracts/minigame-integration.md` blocks real minigames until entry, data, cost, reward, telemetry, admin and rollback are explicit.
+- `docs/contracts/admin-ops.md` defines minimum auditable admin/support operations.
+- Migration `202605300001_foundation_expansion_readiness.sql` adds `account_profiles`, `game_saves`, `ruleset_registry`, `admin_audit_log`, idempotency v1 fields and ruleset metadata columns.
+- `foundation_ruleset_v0` is generated with content/simulator hashes and mirrored into server/supabase shared modules.
+- `battle/request`, `battle/latest`, `battle/history` and `battle/replay` expose ruleset metadata for new battles/log reads.
+- `DraxosOperationState` and `DraxosAppShellActionRouter` create client shell contracts without adding logic to `boot.gd`.
+- `tools/check_foundation_expansion_readiness.ps1` is the read-only structural gate and is called from `validate_foundation.ps1`.
+
+This package does not implement a new gameplay feature, new social loop or new minigame. The next backend hardening step is to migrate critical economy mutations to the reserved v1 transactional RPC pattern (`request_hash`, pending/completed/failed idempotency, ledger and response in one transaction).
 
 ## Progression Clarity v1
 
@@ -194,13 +213,13 @@ Visual Direction v1 is implemented and published as the next refinement package 
 - Battle Preparation Complete v1 is published to Internal Alpha with public APK/PC downloads, a cache-busted Web asset root and no-store Cloudflare Pages headers; Web/mobile visual confirmation passed on the latest preview, while Android/Windows still need manual confirmation.
 - Edge release manifest override needs `SUPABASE_ACCESS_TOKEN` available in the release environment for future `publish_internal_alpha.ps1 -Mode DeployManifest` runs. This publication kept the endpoint healthy and used the packaged portal manifest as the published-link source.
 - Track 13 release safety remains the baseline for any future publication or wider-access gate.
-- `players.save_type` remains an alpha shortcut. `account_profiles` + `game_saves` is a future migration package.
+- `players.save_type` remains as alpha compatibility only. `account_profiles` + `game_saves` now exists as the foundation model; future account/save features should not use `players.save_type` as primary authority.
 - Progression/economy remains mock/substance and not the current tuning focus.
 - Release scripts are safe by default; remote mutation remains opt-in with `-ConfirmRemoteMutation`.
 
 ## Next Step
 
-First Session Clarity v1 is manually approved and DraxosMobile remains active in P2. Choose the next product package explicitly when returning to mobile; do not open initial-loop motivation, loop expansion, victory prediction, opponent counter-picks, custom thresholds, enemy-specific behavior, spell priorities, direct chat, helps, contributions, moderation, tuning numbers, new weapons, new spells, economy, new potions, crafting expansion or broader replay controls without its own package decision.
+Foundation Expansion Readiness is active. Finish the readiness validation/integration gate before returning to product expansion. Do not open base builder tuning, autobattler tuning, social expansion, minigame implementation, victory prediction, opponent counter-picks, custom thresholds, enemy-specific behavior, spell priorities, direct chat, helps, contributions, moderation, tuning numbers, new weapons, new spells, economy, new potions, crafting expansion or broader replay controls without its own package decision.
 
 ## Validation
 

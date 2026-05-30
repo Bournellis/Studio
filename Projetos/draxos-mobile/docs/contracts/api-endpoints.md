@@ -1,18 +1,19 @@
 # API Endpoints Contract
 
-- Ultima atualizacao: `2026-05-28`
-- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*` e `content/*` implementados local/remoto; `battle/request` aceita `MVP_ONLY` e `FIRST_SLICE_SIM`; Track 03 implementou email/senha via `/account/bootstrap`, selecao de save via `x-draxos-save-type`, reset separado por save, aplicacao server-backed do Progression Lab no save `progression_lab`, Base/Social/Competicao/Loja jogaveis, leaderboard alpha com pontos por batalha normal e manifest/version gate de updates internos; Track 06 adicionou `GET /release/config`; o upgrade do site adicionou `/release/download` e `/content/grimoire`; Track 16 adicionou crafting de pocoes, Po de Osso, slot de pocao e comportamento server-authoritative para spells/pocoes.
+- Ultima atualizacao: `2026-05-30`
+- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*` e `content/*` implementados local/remoto; Foundation Expansion Readiness adiciona contrato de API v1 por header, account/save context, ruleset metadata, request hash/idempotencia transacional e admin/minigame scopes reservados.
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
 ## Regras Gerais
 
 - Transporte: HTTPS REST via HTTPRequest do Godot.
+- Versao da API: usar header unico `x-draxos-api-version: 1`. A ausencia do header ainda e tolerada pelos endpoints alpha atuais, mas endpoints novos devem declarar suporte v1.
 - Autenticacao: JWT Supabase no header `Authorization: Bearer <token>`.
 - Save ativo: endpoints de gameplay aceitam `x-draxos-save-type: normal|progression_lab`; ausencia do header usa `normal`.
 - Internal Alpha: cliente cria sessao Supabase Auth por email/senha; depois chama `/account/bootstrap` com JWT registrado, username e convite para criar o primeiro save.
 - Guest dev: cliente ainda pode criar sessao Supabase Auth anonima e chamar `/account/guest`, mas esse fluxo e ferramenta de desenvolvimento/fallback e nao o caminho real da build interna.
-- Correlation: cliente envia `request_id` em mutacoes para idempotencia.
+- Correlation: cliente envia `request_id` em mutacoes para idempotencia. Mutacoes economicas novas tambem devem enviar `request_hash`, calculado pelo cliente/adapter sobre a intencao canonica, para bloquear reuse malicioso do mesmo `request_id` com outro payload.
 - Runtime local atual: `supabase/functions/healthcheck`, `account`, `battle`, `base`, `build`, `crafting`, `social`, `competition`, `monetization`, `telemetry`, `progression-lab`, `release` e `content`, espelhados em `server/functions/`.
 - Anti-lock-in: os endpoints logicos deste documento pertencem ao jogo, nao ao Supabase. O cliente Godot e o hub alpha devem depender de `account`, `battle`, `base`, `build`, `crafting`, `social`, `competition`, `monetization`, `telemetry`, `progression-lab`, `release` e `content`, permitindo futura migracao para Backend Proprio + Postgres sem redesenhar o cliente/site.
 - Resposta de erro padrao:
@@ -26,6 +27,64 @@ Este documento descreve a interface logica entre cliente Godot e Supabase Edge F
   }
 }
 ```
+
+## Envelope V1
+
+Todos os envelopes novos ou ampliados devem declarar `schema_version` quando o payload tiver contrato proprio. Payloads de estado devem incluir contexto explicito quando disponivel:
+
+```json
+{
+  "schema_version": "account_state_v1",
+  "ok": true,
+  "api_version": 1,
+  "account": {
+    "account_profile_id": "uuid",
+    "auth_user_id": "uuid"
+  },
+  "save": {
+    "game_save_id": "uuid",
+    "save_type": "normal",
+    "legacy_player_id": "uuid",
+    "ruleset_id": "foundation_ruleset_v0",
+    "ruleset_version": 1
+  }
+}
+```
+
+Estado esperado para expansao: `account/state`, `base/state`, `build/state`, `social/state`, `battle/latest`, `battle/history` e `battle/replay` devem retornar account/save context assim que suas lanes forem migradas para o novo modelo. Enquanto estiverem em compatibilidade, `player` e `x-draxos-save-type` continuam validos.
+
+## Idempotencia V1
+
+Mutacoes economicas novas devem seguir:
+
+- exigir `request_id`;
+- exigir `request_hash`;
+- reservar idempotencia com status `pending`;
+- aplicar estado, ledger e resposta na mesma transacao ou em RPC que falhe sem estado parcial;
+- gravar status `completed` com `response_payload`;
+- gravar status `failed` com payload seguro quando uma reserva precisar ser encerrada;
+- repetir o mesmo `request_id` + `request_hash` retorna o mesmo `response_payload`;
+- repetir o mesmo `request_id` com `request_hash` diferente retorna `IDEMPOTENCY_HASH_MISMATCH`.
+
+RPCs de apoio: `reserve_idempotency`, `complete_idempotency`, `fail_idempotency`.
+
+## Mutations V1 Reservadas
+
+As rotas abaixo continuam usando os endpoints atuais, mas a fundacao reserva seus RPCs transacionais para o proximo hardening de dominio:
+
+| Endpoint logico | RPC transacional alvo | Status |
+|---|---|---|
+| `POST /battle/request` | `request_battle_v1` | reservado; battle ja persiste `ruleset_id/version` no path `FIRST_SLICE_SIM` |
+| `POST /base/collect` | `collect_base_v1` | reservado |
+| `POST /base/upgrade` | `start_base_upgrade_v1` | reservado |
+| `POST /build/equip` | `equip_build_v1` | reservado |
+| `POST /crafting/craft` | `craft_item_v1` | reservado |
+| `POST /monetization/rewards/claim` | `claim_reward_v1` | reservado |
+| `POST /monetization/alpha-purchase` | `alpha_purchase_v1` | reservado |
+| `POST /social/guild/create` | `guild_create_v1` | reservado |
+| `POST /social/guild/join` | `guild_join_v1` | reservado |
+
+Nenhuma rota nova deve expandir economia sem passar para o padrao v1.
 
 ## Classificacao De Escopo - Track 05
 
@@ -97,6 +156,8 @@ novo.
 convites, suporte, moderacao, entitlement account-wide, operacao de release ou
 publicacao remota. Esses endpoints nao devem reutilizar silenciosamente
 `save-scoped`.
+
+`minigame` fica reservado por `docs/contracts/minigame-integration.md`; nenhum minigame jogavel deve criar endpoint antes do contrato de entrada, custo, recompensa, telemetry e admin.
 
 ## Endpoints De Conteudo
 

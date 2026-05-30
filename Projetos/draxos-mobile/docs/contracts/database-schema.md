@@ -1,7 +1,7 @@
 # Database Schema Contract
 
-- Ultima atualizacao: `2026-05-28`
-- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type`, reset separado por save, Progression Lab, auth email/senha, manifest/update e Track 16 de comportamento/crafting/consumiveis implementados localmente.
+- Ultima atualizacao: `2026-05-30`
+- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type`, reset separado por save, Progression Lab, auth email/senha, manifest/update, Track 16 de comportamento/crafting/consumiveis e Foundation Expansion Readiness com `account_profiles`, `game_saves`, `ruleset_registry`, `admin_audit_log`, idempotencia v1 e metadata de ruleset.
 
 Este documento define o schema esperado. A fonte tecnica viva do runtime local e `../../supabase/migrations/`; `../../server/schema/migrations/` permanece como espelho backend durante o alpha local.
 
@@ -18,14 +18,16 @@ Migrations atuais:
 - `202605260003_progression_lab_apply.sql`: RPC `apply_progression_lab_save` para aplicar um healthy save gerado no save `progression_lab`.
 - `202605270001_alpha_email_account.sql`: RPC `create_alpha_account` para conta email/senha registrada, alpha gate por convite/username e criacao dos saves `normal`/`progression_lab`.
 - `202605280001_behavior_crafting.sql`: `po_osso`, Ossos inteiros reescalados, inventario de consumiveis, slot de pocao, comportamentos de spells e ledger de itens.
+- `202605300001_foundation_expansion_readiness.sql`: `account_profiles`, `game_saves`, `ruleset_registry`, `admin_audit_log`, idempotencia com `request_hash/scope_id/status`, metadata de ruleset em historicos e RPCs de bootstrap/idempotencia/reconciliacao.
 
 ## Regras De Escopo De Servico
 
 Track 05 nao altera schema. A classificacao de escopo usa o schema atual como
 limite operacional:
 
-- `save-scoped`: endpoints resolvem `players.id` por `auth_user_id +
-  players.save_type`; tabelas de gameplay continuam referenciando `player_id`.
+- `save-scoped`: endpoints legados resolvem `players.id` por `auth_user_id +
+  players.save_type`; contratos novos devem resolver `game_saves.id` e manter
+  `legacy_player_id` apenas como compatibilidade.
 - `account-scoped`: endpoints sociais podem usar o save `normal` como
   identidade canonica da conta quando existir, validando o save ativo apenas
   para nao misturar `progression_lab` com ranking/social normal.
@@ -39,8 +41,39 @@ limite operacional:
 
 Mutacoes `save-scoped` e `account-scoped` atuais continuam usando
 `idempotency_keys` com o `player_id` do save ativo ou da identidade social
-canonica. Uma mutacao account-wide futura nao deve reutilizar esse padrao sem
-decisao explicita, porque ainda nao ha `account_profiles` ou `game_saves`.
+canonica. Mutacoes novas devem usar `request_hash`, `scope_id` e status
+`pending|completed|failed`; account-wide deve usar `account_profiles`.
+
+## Account/Save Foundation
+
+Contratos detalhados: `account-save.md`.
+
+`account_profiles` e a identidade account-wide. `game_saves` e o progresso por save. `players.save_type` permanece como compat layer alpha ate as tabelas de dominio serem migradas por pacote proprio.
+
+Campos novos minimos:
+
+- `account_profiles.id`, `auth_user_id`, `canonical_player_id`, `username`, `account_type`, `status`, `metadata`.
+- `game_saves.id`, `account_profile_id`, `legacy_player_id`, `save_type`, `slot_key`, `lifecycle_status`, `ruleset_id`, `ruleset_version`, `snapshot`.
+
+## Ruleset Registry Foundation
+
+Contrato detalhado: `ruleset-registry.md`.
+
+`ruleset_registry` registra publicacoes de ruleset. O registro inicial e `foundation_ruleset_v0`, versao `1`, canal `internal_alpha`, cohort `all`, com `content_hash` e `simulator_hash` gerados pelo repo.
+
+Tabelas com metadata de ruleset nesta fundacao:
+
+- `game_saves`
+- `battles`
+- `construction_jobs`
+- `reward_claims`
+- `alpha_purchases`
+
+## Admin Audit Foundation
+
+Contrato detalhado: `admin-ops.md`.
+
+`admin_audit_log` e a base minima de auditoria interna. `reconcile_resource_balance` grava `resource_transactions` e `admin_audit_log` na mesma operacao.
 
 ## MVP Tecnico
 
@@ -229,8 +262,15 @@ Campos minimos:
 - `player_id`
 - `endpoint`
 - `request_id`
+- `request_hash`
+- `scope_id`
+- `status`
 - `response_payload`
+- `completed_at`
+- `failed_at`
 - `created_at`
+
+Status v1: `pending`, `completed`, `failed`.
 
 ### `resource_transactions`
 

@@ -8,12 +8,12 @@ This file is the fast entrypoint for agents working in `Projetos/draxos-mobile`.
 
 - Project: `DraxosMobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
-- Active operational stage: `Foundation Audit`
-- Active stage status: `FOUNDATION_AUDIT_ACTIVE`
+- Active operational stage: `Foundation Expansion Readiness`
+- Active stage status: `FOUNDATION_EXPANSION_READINESS_ACTIVE`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety` delivered on `2026-05-28`
 - Agent baseline: `Track 14 - Agent Operations Foundation` is the current operations/docs foundation.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting`, technical context and not the current product focus. Current behavior/potion/crafting state is summarized in `docs/behavior-potion-crafting-v1.md`.
-- Immediate product gate: First Session Clarity v1 is published on top of Progression Clarity v1. It should be reviewed on Android/Windows/Web before choosing social, visual, battle or content expansion. Foundation Loop UX Pass 01 is the accepted baseline.
+- Immediate product gate: complete Foundation Expansion Readiness before choosing base builder, autobattler, social expansion or minigame work. Foundation Loop UX Pass 01 and First Session Clarity v1 are accepted baselines.
 
 DraxosMobile is an async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. The real product direction is base builder + autobattler + social, with room for future minigames and seasons. Current names, spells, weapons, economy values, battle flavor, visual style and premium systems are mock/substance for evaluation unless a live doc explicitly promotes them.
 
@@ -25,11 +25,12 @@ Read in this order for almost every task:
 2. `implementation/current-status.md`
 3. `docs/documentation-index.md`
 4. `docs/foundation-app-v0-audit.md`
-5. `docs/foundation-loop-audit.md`
-6. `docs/foundation-responsive-layout-contract.md` when touching Entry, Refugio, Battle or visual/layout code
-7. `docs/first-session-clarity-v1.md` when touching first-session guidance, Refugio loop copy, Preparation guidance or battle summary next-step copy
-8. `docs/behavior-potion-crafting-v1.md` when touching Ossos, crafting, potions, consumables or behavior
-9. The files you intend to touch
+5. `docs/foundation-expansion-readiness.md`
+6. `docs/foundation-loop-audit.md`
+7. `docs/foundation-responsive-layout-contract.md` when touching Entry, Refugio, Battle or visual/layout code
+8. `docs/first-session-clarity-v1.md` when touching first-session guidance, Refugio loop copy, Preparation guidance or battle summary next-step copy
+9. `docs/behavior-potion-crafting-v1.md` when touching Ossos, crafting, potions, consumables or behavior
+10. The files you intend to touch
 
 For product or design work, also read:
 
@@ -63,6 +64,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Client
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Release
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Full
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_foundation_expansion_readiness.ps1 -ProjectDir .
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/client -gexit
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_responsive_layout.gd
@@ -87,7 +89,8 @@ For user-approved product packages that require human testing on Android, Window
 
 - Do not put `service_role`, Supabase secrets, database passwords, keystore passwords or private tokens in client code, exports, portal files, manifests or operational docs.
 - Do not run remote publishing modes without explicit user approval and `-ConfirmRemoteMutation`.
-- Do not start a new playable feature, numeric tuning pass, weapon/spell/economy pass, potion/consumable expansion, advanced behavior pass, battle presentation pass, final visual pass, `account_profiles/game_saves` migration, iOS work or mobile browser support before Foundation Audit is complete and the user explicitly chooses the next package.
+- Do not start a new playable feature, numeric tuning pass, weapon/spell/economy pass, potion/consumable expansion, advanced behavior pass, battle presentation pass, final visual pass, iOS work or mobile browser support before Foundation Expansion Readiness is complete and the user explicitly chooses the next package.
+- Do not create new account/save, social, reward or minigame state that bypasses `account_profiles/game_saves`, ruleset registry, idempotency v1 or the relevant contract docs.
 - Do not edit `.tscn` files as raw text unless the user explicitly asks and the change is safer than an editor/tool path.
 - Do not publish Entry/Refugio/Battle layout changes unless `tools/smoke_responsive_layout.gd` passes.
 - Do not import gameplay rules from other Draxos projects unless this project's live docs explicitly adopt them.
@@ -96,7 +99,8 @@ For user-approved product packages that require human testing on Android, Window
 ## Live Source Rules
 
 - `docs/product-vision.md` is the local long-term product canon until promoted to shared canon.
-- `docs/foundation-app-v0-audit.md` is the current product/agent compass for Foundation Audit.
+- `docs/foundation-app-v0-audit.md` is the product/agent compass for the accepted Foundation Audit baseline.
+- `docs/foundation-expansion-readiness.md` is the current pre-expansion gate.
 - `docs/foundation-loop-audit.md` is the executed audit for loop ergonomics and the next UX pass criteria.
 - `docs/foundation-responsive-layout-contract.md` is the guardrail for responsive Entry Labs, Refugio and Battle safe frames.
 - `docs/behavior-potion-crafting-v1.md` is the live bridge for Track 16 behavior, potion and crafting systems already present in the alpha baseline.
@@ -108,4 +112,4 @@ For user-approved product packages that require human testing on Android, Window
 
 ## Current Handoff
 
-First Session Clarity v1 is the current published handoff inside the broader Foundation Audit. Agents should review it on Android/Windows/Web, including a quick regression pass through Preparation potion/behavior controls and the Refugio -> reward -> base return loop, before expanding implementation. Do not change gameplay tuning, backend/schema, Supabase APIs, economy, content, weapons, spells, potions, crafting, advanced behavior, final visuals or authoritative flows without an explicit package decision.
+Foundation Expansion Readiness is the current handoff. Complete the account/save, ruleset, idempotency, admin, QA and shell gate before expanding implementation. Do not change gameplay tuning, Supabase APIs beyond this package, economy, content, weapons, spells, potions, crafting, advanced behavior, final visuals or authoritative flows without an explicit package decision.

@@ -1,13 +1,18 @@
 # Content Definitions Contract
 
-- Ultima atualizacao: `2026-05-28`
-- Status: contrato inicial implementado com rework de personagem; Track 16 adicionou pocoes e receitas de crafting.
+- Ultima atualizacao: `2026-05-30`
+- Status: contrato inicial implementado com rework de personagem; Track 16 adicionou pocoes e receitas de crafting; Foundation Expansion Readiness adicionou `foundation_ruleset_v0` como manifest gerado de autoria/publicacao.
 
 Conteudo autorado vive em `../../data/definitions/`. Resources Godot gerados vivem em `../../data/generated/` e nao devem ser editados manualmente.
 
-Gerador vivo: `../../tools/content_generator.gd`.
+Geradores vivos:
+
+- `../../tools/content_generator.gd` para catalogo Godot.
+- `../../tools/generate_foundation_ruleset.ts` para manifest de ruleset e mirrors server/supabase.
 
 Catalogo gerado: `../../data/generated/draxos_mobile_catalog.tres`.
+
+Ruleset gerado: `../../data/rulesets/foundation_ruleset_v0.json`.
 
 ## Formato Dos JSONs
 
@@ -47,6 +52,25 @@ IDs sao estaveis. Nao renomear ID para mudar texto player-facing.
 | `rewards.json` | `rewards` | Recompensas diarias, semanais, quests e battle pass |
 | `potions.json` | `potions` | Consumiveis de batalha, efeito e comportamento default |
 | `crafting_recipes.json` | `crafting_recipes` | Receitas server-authoritative de crafting |
+
+## Foundation Ruleset v0
+
+`foundation_ruleset_v0` e o primeiro pacote explicito de regras/conteudo. Ele nao substitui os JSONs autorados; ele registra quais fontes e hashes compoem a publicacao atual.
+
+Inclui:
+
+- `content_hash`;
+- `simulator_hash`;
+- references para definitions, Battle Lab, Progression Lab, economy simulator e battle simulator mirrors;
+- `schema_version = foundation_ruleset_manifest_v1`;
+- `ruleset_version = 1`.
+
+Valide com:
+
+```powershell
+npx -y deno run --allow-read --allow-write tools/generate_foundation_ruleset.ts
+npx -y deno test --allow-read server/tests/foundation_ruleset_test.ts
+```
 
 ## Fixture MVP Atual
 

@@ -2,7 +2,7 @@
 
 - Status: `VIVO`
 - Owner: project agents
-- Last updated: `2026-05-28`
+- Last updated: `2026-05-30`
 - Applies to: `Projetos/draxos-mobile/`
 
 This manual explains how agents should operate DraxosMobile without reopening old work, drifting from Foundation Audit or mutating remote infrastructure by accident.
@@ -15,25 +15,37 @@ Read live docs in this order:
 2. `implementation/current-status.md` - short decision snapshot.
 3. `docs/documentation-index.md` - where each doc belongs.
 4. `docs/foundation-app-v0-audit.md` - current Foundation Audit compass.
-5. `docs/foundation-loop-audit.md` - executed audit of post-login loop ergonomics.
-6. `docs/foundation-responsive-layout-contract.md` - required when touching Entry, Refugio, Battle or visual/layout code.
-7. `docs/product-vision.md` - local long-term product canon.
-8. `docs/game-design-document.md` - implementation reference and mock/substance context.
-9. `docs/design-pending.md` - only live register of unresolved design decisions.
+5. `docs/foundation-expansion-readiness.md` - active pre-expansion gate.
+6. `docs/foundation-loop-audit.md` - executed audit of post-login loop ergonomics.
+7. `docs/foundation-responsive-layout-contract.md` - required when touching Entry, Refugio, Battle or visual/layout code.
+8. `docs/product-vision.md` - local long-term product canon.
+9. `docs/game-design-document.md` - implementation reference and mock/substance context.
+10. `docs/design-pending.md` - only live register of unresolved design decisions.
 
 If a historical track conflicts with these docs, the live docs win. If local product design conflicts with shared lore in `../../canon/`, escalate instead of silently choosing.
 
 ## Current Stage
 
-Active stage: `FOUNDATION_AUDIT_ACTIVE`.
+Active stage: `FOUNDATION_EXPANSION_READINESS_ACTIVE`.
 
-The project is a base implemented for refinement. The Foundation Loop Audit is documented, and Foundation Loop UX Pass 01 is the accepted baseline for the post-login loop:
+The project is a base implemented for refinement. First Session Clarity v1 is approved. The current work is Foundation Expansion Readiness: hardening the foundation for production future, parallel agents, account/save authority, ruleset publication, admin auditability and client shell split before expanding base builder, autobattler, social or minigames.
+
+The accepted loop baseline remains:
 
 `Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again`
 
-Social Basico Guilda v1, Visual Direction v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation Complete v1 and Progression Clarity v1 have since been published. The next product action is manual review of Progression Clarity v1 on Android/Windows/Web, including a quick regression pass through Preparation potion/behavior controls, before choosing the next explicit package.
+Social Basico Guilda v1, Visual Direction v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation Complete v1, Progression Clarity v1 and First Session Clarity v1 have since been published. Do not open feature expansion until the readiness gate is green.
 
 Track 16 remains the latest technical package, but it is not the current product focus. Its current behavior/potion/crafting state is summarized in `docs/behavior-potion-crafting-v1.md`. Current spells, weapons, economy values, Battle Pass, battle flavor and visual identity are mock/substance, not priority areas.
+
+Foundation Expansion Readiness adds:
+
+- `account_profiles` + `game_saves` as account/save authority;
+- `foundation_ruleset_v0` generated from repo sources and registered in database;
+- idempotency v1 with `request_hash`, `scope_id` and `pending/completed/failed`;
+- admin audit log and reconciliation scaffold;
+- `DraxosOperationState` and `DraxosAppShellActionRouter` as client shell contracts;
+- minigame/admin/account-save/ruleset contracts.
 
 ## Current Baseline
 
@@ -86,6 +98,7 @@ For Foundation Audit, the expected DraxosMobile Doing card must state the branch
 | Agent/doc operation | `AGENTS.md`, this manual, `docs/documentation-index.md`, `docs/foundation-app-v0-audit.md`, `docs/foundation-loop-audit.md` |
 | Product/design | `docs/product-vision.md`, `docs/product-brief.md`, `docs/game-design-document.md`, `docs/design-pending.md` |
 | Backend/contracts | `docs/architecture.md`, `docs/contracts/`, `server/schema/`, `server/functions/`, `supabase/` mirrors |
+| Foundation expansion | `docs/foundation-expansion-readiness.md`, `docs/contracts/account-save.md`, `docs/contracts/ruleset-registry.md`, `docs/contracts/admin-ops.md`, `docs/contracts/minigame-integration.md` |
 | Crafting/potions/behavior | `docs/behavior-potion-crafting-v1.md`, `docs/contracts/api-endpoints.md`, `docs/contracts/database-schema.md`, `docs/contracts/content-definitions.md`, `docs/contracts/battle-event-log.md` |
 | Godot client | `AGENTS.md`, `modes/boot/surfaces/README.md`, relevant tests, relevant flow/presenter |
 | Entry/Refugio/Battle layout | `docs/foundation-responsive-layout-contract.md`, `tools/smoke_responsive_layout.gd`, relevant UI tests |
@@ -105,6 +118,7 @@ Use the smallest profile that proves the change, then broaden when touching shar
 | Backend/functions | `npx -y deno task --cwd server/functions check` and `npx -y deno task --cwd supabase/functions check` |
 | Release safety | `validate_foundation.ps1 -Profile Release` plus `tools/check_release_safety.ps1` |
 | Foundation or cross-cutting work | `validate_foundation.ps1 -Profile Full` plus explicit Godot/GUT/Deno commands |
+| Foundation expansion readiness | `tools/check_foundation_expansion_readiness.ps1`, Deno ruleset/schema tests, GUT shell contracts, then `validate_foundation.ps1 -Profile Quick` or broader |
 
 Default full gate:
 
@@ -115,6 +129,7 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_responsive_layout.gd
 npx -y deno task --cwd server/functions check
 npx -y deno task --cwd supabase/functions check
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_foundation_expansion_readiness.ps1 -ProjectDir .
 git diff --check
 git status --short
 ```
@@ -139,7 +154,7 @@ Do not start these without explicit user direction and a fresh track/package:
 - numeric tuning without human playthrough and Progression Lab evidence;
 - weapons, spells, Battle Pass or economy pass while they are still mock/substance;
 - new potions, consumable expansion, custom thresholds, spell priorities, enemy-specific behavior or behavior tuning outside an explicit package;
-- account/save migration from `players.save_type` to `account_profiles/game_saves`;
+- bypassing `account_profiles/game_saves` for new account/save work;
 - iOS or mobile browser support;
 - final asset production;
 - publishing visual/layout changes before `tools/smoke_responsive_layout.gd` passes;

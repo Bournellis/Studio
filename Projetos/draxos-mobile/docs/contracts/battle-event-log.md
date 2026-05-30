@@ -1,6 +1,6 @@
 # Battle Event Log Contract
 
-- Ultima atualizacao: `2026-05-28`
+- Ultima atualizacao: `2026-05-30`
 - Versao atual: `battle_log_v1`
 
 O log de batalha e a unica fonte que o cliente usa para animar uma batalha. O cliente nao recalcula dano, vida, vitoria, recompensa ou ranking.
@@ -14,6 +14,12 @@ Status primeiro slice: `FIRST_SLICE_SIM` completo em T00-P10 com simulador TypeS
 ```json
 {
   "schema_version": "battle_log_v1",
+  "ruleset": {
+    "ruleset_id": "foundation_ruleset_v0",
+    "ruleset_version": 1,
+    "content_hash": "5b7121a37a78e966c06098cc70283dabc5dbbcc1d3f9a21d279b855d09aee1e7",
+    "simulator_hash": "6387afc69b1862c2c63b1fe04a85da42574eb0a6ab5ca46e8ae8950ed5b11536"
+  },
   "battle_id": "uuid",
   "seed": "string",
   "mode": "MVP_ONLY",
@@ -29,6 +35,21 @@ Status primeiro slice: `FIRST_SLICE_SIM` completo em T00-P10 com simulador TypeS
   "events": []
 }
 ```
+
+## Metadata De Ruleset
+
+`ruleset` e opcional para logs historicos, mas obrigatorio para batalhas criadas depois da Foundation Expansion Readiness. O replay deve ler o log salvo e essa metadata; nunca deve rerodar a batalha com o codigo atual para reconstruir resultado.
+
+Campos:
+
+| Campo | Tipo | Uso |
+|---|---|---|
+| `ruleset_id` | string | Ruleset publicado que gerou a batalha. |
+| `ruleset_version` | number | Versao do ruleset. |
+| `content_hash` | string | Hash das definitions/modelos autorados. |
+| `simulator_hash` | string | Hash do simulador usado pelo pacote. |
+
+Fallback para logs antigos: tratar como `foundation_ruleset_v0` apenas para leitura e nao gravar novamente.
 
 ## Evento Base
 

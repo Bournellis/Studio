@@ -1,8 +1,8 @@
 # DraxosMobile - Release Ops Checklist
 
-- Data: `2026-05-28`
-- Track: `Track 13 - Foundation Validation And Release Safety`
-- Status: `TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`
+- Data: `2026-05-30`
+- Track: `Track 13 - Foundation Validation And Release Safety` + `Track 17 - Foundation Expansion Readiness`
+- Status: `TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED` / `FOUNDATION_EXPANSION_READINESS_ACTIVE`
 - Escopo: readiness operacional de release para Android, PC e Web, com safety por default e sem publicar build nova.
 
 ## Guardrails Track 13
@@ -14,6 +14,8 @@
 - Qualquer check remoto automatico deve ser somente leitura: `GET`, `HEAD` ou auth/smoke explicitamente solicitado.
 - `supabase db push`, `supabase functions deploy`, `supabase secrets set`, Wrangler deploy e upload Cloudflare sao comandos de publicacao, nao validacao segura.
 - `publish_internal_alpha.ps1` so pode mutar remoto em `Mode Upload`, `Mode DeployManifest` ou `Mode FullPublish` com `-ConfirmRemoteMutation`.
+- Manifest/config publico nao deve exigir JWT nem carregar segredo. Download privado, se voltar a ser usado, deve exigir JWT verificado pelo backend e nunca expor service role.
+- Fonte viva de release e `implementation/current-status.md` + manifest/relatorios atuais; snapshots historicos devem ficar claramente historicos e nao competir com o status vivo.
 
 ## Contrato Track 13 De Modos
 
@@ -62,6 +64,7 @@ Track 13 itself remains non-publishing by default. After Track 13, user-approved
 | Release safety check | `tools/check_release_safety.ps1` | Garante publish default seguro e mutacao protegida por confirmacao | Sim |
 | Track 13 readiness | `tools/check_track13_readiness.ps1` | Garante docs/status/mirrors/budget/Kanban alinhados | Sim |
 | Agent ops readiness | `tools/check_agent_ops_foundation.ps1` | Garante entrada de agentes, indice documental, portfolio/Kanban e terminologia viva | Sim |
+| Foundation expansion readiness | `tools/check_foundation_expansion_readiness.ps1` | Garante account/save, ruleset, admin/minigame contracts, migrations espelhadas e testes fundacionais | Sim |
 | Publish script | `tools/publish_internal_alpha.ps1` | Planeja/package local por default; publica somente com modo remoto + confirmacao | `Plan`/`Package` sim; modos remotos sao publicacao |
 | Cloudflare package | `tools/build_cloudflare_pages_package.ps1` | Gera pacote local hibrido para Pages a partir de publish existente | Seguro se rodar sobre artefatos locais existentes; nao faz deploy |
 | Static hosting doc | `docs/internal-alpha-static-hosting.md` | Regras Cloudflare Pages + Supabase Storage | Sim, leitura |
@@ -81,6 +84,7 @@ Antes de qualquer publicacao futura:
 - `tools\check_release_safety.ps1` verde.
 - `tools\check_track13_readiness.ps1` verde.
 - `tools\check_agent_ops_foundation.ps1` verde quando alterar a fundacao operacional de agentes.
+- `tools\check_foundation_expansion_readiness.ps1` verde quando alterar account/save, ruleset, admin, minigame, migrations ou readiness.
 - `publish_internal_alpha.ps1 -Mode Plan` revisado.
 - `release_manifest_smoke.ts` verde contra o alvo de release.
 - `release_artifacts_remote_smoke.ts` verde somente depois que artefatos ja existirem no remoto.
@@ -147,6 +151,7 @@ npx -y deno check server/tests/release_artifacts_remote_smoke.ts
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_release_safety.ps1 -ProjectDir .
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_track13_readiness.ps1 -ProjectDir .
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_agent_ops_foundation.ps1 -ProjectDir .
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_foundation_expansion_readiness.ps1 -ProjectDir .
 ```
 
 PowerShell syntax check seguro dos scripts de release:

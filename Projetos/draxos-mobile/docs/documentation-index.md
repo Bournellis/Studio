@@ -1,7 +1,7 @@
 # DraxosMobile - Documentation Index
 
 - Status: `VIVO`
-- Last updated: `2026-05-29`
+- Last updated: `2026-05-30`
 - Purpose: classify project documents so agents know what to trust, what to update and what to treat as history.
 
 ## Categories
@@ -33,6 +33,7 @@
 |---|---|---|
 | `docs/product-vision.md` | `VIVO` | Local long-term product canon until promoted to shared canon. |
 | `docs/foundation-app-v0-audit.md` | `VIVO` | Current Foundation Audit compass: real foundation, current mock, live-product gaps and post-login loop focus. |
+| `docs/foundation-expansion-readiness.md` | `RUNBOOK` | Active expansion-readiness gate: lanes, ownership, contract-first requirements, account/save, ruleset and admin checks. |
 | `docs/foundation-loop-audit.md` | `VIVO` | Executed audit of the current post-login loop ergonomics; records Foundation Loop UX Pass 01 as the accepted Internal Alpha UX baseline. |
 | `docs/foundation-responsive-layout-contract.md` | `CONTRATO` | Responsive guardrail for Entry Labs, Refugio and Battle safe frames across Android portrait and Web/Desktop viewports. |
 | `docs/visual-direction-v1.md` | `VIVO` | Current client visual direction for the Foundation Loop and Social Basico build; defines surface accents, component rules and non-goals. |
@@ -55,6 +56,10 @@
 | Document | Category | Role |
 |---|---|---|
 | `docs/contracts/` | `CONTRATO` | API, battle log, schema and content contracts. |
+| `docs/contracts/account-save.md` | `CONTRATO` | `account_profiles` + `game_saves` account/save authority and `players.save_type` compatibility boundary. |
+| `docs/contracts/ruleset-registry.md` | `CONTRATO` | Ruleset generated-as-authoring-source plus database publication registry contract. |
+| `docs/contracts/minigame-integration.md` | `CONTRATO` | Contract-first gate for future minigames. |
+| `docs/contracts/admin-ops.md` | `CONTRATO` | Minimum auditable admin/support/ops contract. |
 | `docs/architecture.md` | `CONTRATO` | Technical architecture and backend boundaries. |
 | `server/schema/` | `CONTRATO` | Server schema mirror. |
 | `server/functions/` | `CONTRATO` | Edge Function source mirror. |
@@ -96,6 +101,7 @@
 | `implementation/tracks/track-14-agent-ops-foundation/` | `HISTORICO` | Agent operating foundation and documentation index baseline. |
 | `implementation/tracks/track-15-mobile-ux-overhaul/` | `HISTORICO` | Prior Android portrait UX package; not the active stage. |
 | `implementation/tracks/track-16-behavior-crafting/` | `HISTORICO` | Source track for behavior/crafting; use `docs/behavior-potion-crafting-v1.md` for current state. |
+| `implementation/tracks/track-17-foundation-expansion-readiness/` | `VIVO` | Active foundation package for future parallel expansion and production readiness. |
 
 ## Design Archive
 
@@ -111,6 +117,8 @@
 - A live doc must treat `implementation/current-status.md` as the active stage/status source after the user chooses the next package.
 - A live doc must not direct agents to expand balance, weapons, spells, Battle Pass, economy, final visual identity or battle presentation before Foundation Audit.
 - Foundation Audit must prioritize the post-login loop: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again.
+- Foundation Expansion Readiness is now the active pre-expansion gate before base builder, autobattler, expanded social or a real minigame.
+- New backend/data/content features must use `account_profiles` + `game_saves`, `foundation_ruleset_v0`/registry, idempotency v1 and explicit contracts.
 - Foundation Loop UX Pass 01 was manually accepted on Android/Windows/Web on `2026-05-29` and is the current baseline before the next package.
 - Visual/layout changes must respect `docs/foundation-responsive-layout-contract.md` and pass `tools/smoke_responsive_layout.gd` before publication.
 - Historical docs can keep old language when they are clearly historical.

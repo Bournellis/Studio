@@ -16,14 +16,15 @@ This directory contains active, conceptual and paused projects for the studio.
   - Allowed work: code, validation, playtest, local documentation.
   - Current next step: user playtest of the Track 02 complete-run build.
 
-## Implementacao - First Session Clarity v1 Aprovado
+## Implementacao - Foundation Expansion Readiness
 
-- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 13 release safety and Track 14 agent ops are preserved baselines, Track 00-15 are integrated, and Track 16 is the latest technical package. The confirmed Foundation post-login loop remains the accepted baseline: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again. Foundation Loop UX Pass 01 is implemented, published to Internal Alpha and manually confirmed on Android/Windows/Web on 2026-05-29, including initial-menu Battle Lab/Progression Lab visibility, contained Refugio/Battle screens, APK download without Bearer-token error, static battle-request splash and clear post-login loop. Social Basico Guilda v1, Visual Direction v1, Ossos Inteiros v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation v1, Battle Preparation Complete v1 and Progression Clarity v1 are published. First Session Clarity v1 is published and manually approved on 2026-05-30: Refugio, Preparacao and battle summary orient the first session through collect, evolve, prepare, battle, reward and return to base using existing client snapshots, without backend/schema/tuning/content changes.
-  - Priority/status: `P2_IMPLEMENTACAO - FIRST_SESSION_CLARITY_V1_APPROVED`
+- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 13 release safety and Track 14 agent ops remain preserved baselines. First Session Clarity v1 is approved, and the active package is Foundation Expansion Readiness: account/save authority, ruleset registry, idempotency v1, admin auditability, client shell split and multiagent contracts before base builder/autobattler/social/minigame expansion. The confirmed Foundation post-login loop remains the accepted baseline: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again.
+  - Priority/status: `P2_IMPLEMENTACAO - FOUNDATION_EXPANSION_READINESS_ACTIVE`
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Agent manual: `draxos-mobile/docs/agent-operating-manual.md`
   - Documentation index: `draxos-mobile/docs/documentation-index.md`
   - Foundation Audit: `draxos-mobile/docs/foundation-app-v0-audit.md`
+  - Foundation Expansion Readiness: `draxos-mobile/docs/foundation-expansion-readiness.md`
   - Foundation Loop Audit: `draxos-mobile/docs/foundation-loop-audit.md`
   - Responsive layout contract: `draxos-mobile/docs/foundation-responsive-layout-contract.md`
   - Visual Direction v1: `draxos-mobile/docs/visual-direction-v1.md`
@@ -40,6 +41,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Design pending: `draxos-mobile/docs/design-pending.md`
   - Contracts: `draxos-mobile/docs/contracts/`
   - Latest technical package: `draxos-mobile/implementation/tracks/track-16-behavior-crafting/`
+  - Active foundation package: `draxos-mobile/implementation/tracks/track-17-foundation-expansion-readiness/`
   - Agent foundation: `draxos-mobile/implementation/tracks/track-14-agent-ops-foundation/`
   - Release safety baseline: `draxos-mobile/implementation/tracks/track-13-validation-release-safety/`
   - Manual walkthrough gate: `draxos-mobile/docs/track-13-manual-walkthrough-gate.md`
@@ -48,7 +50,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Progression Lab: `draxos-mobile/docs/progression-lab/README.md`
   - Design archive: `_conceitos/mobile-universe/`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: keep DraxosMobile active in P2 and choose the next package by explicit decision; do not open initial-loop motivation by default.
+  - Current next step: complete Foundation Expansion Readiness, then choose base builder, autobattler, social or minigame expansion by explicit decision.
 
 ## Arquivo De Design
 
