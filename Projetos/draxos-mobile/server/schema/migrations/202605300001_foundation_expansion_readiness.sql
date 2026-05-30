@@ -733,6 +733,255 @@ begin
 end;
 $$;
 
+create or replace function public.foundation_command_v1(
+	p_game_save_id uuid,
+	p_endpoint text,
+	p_request_id uuid,
+	p_request_hash text,
+	p_request_payload jsonb default '{}'::jsonb
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public, auth, extensions
+as $$
+declare
+	normalized_endpoint text := trim(coalesce(p_endpoint, ''));
+	normalized_hash text := nullif(trim(coalesce(p_request_hash, '')), '');
+	save_row public.game_saves%rowtype;
+	ruleset_row public.ruleset_registry%rowtype;
+	reservation_payload jsonb;
+	response_payload jsonb;
+begin
+	if p_game_save_id is null then
+		raise exception 'INVALID_GAME_SAVE_ID' using errcode = 'P0001';
+	end if;
+
+	if normalized_endpoint = '' then
+		raise exception 'INVALID_ENDPOINT' using errcode = 'P0001';
+	end if;
+
+	if p_request_id is null then
+		raise exception 'INVALID_REQUEST_ID' using errcode = 'P0001';
+	end if;
+
+	if normalized_hash is null then
+		raise exception 'INVALID_REQUEST_HASH' using errcode = 'P0001';
+	end if;
+
+	select *
+	into save_row
+	from public.game_saves
+	where id = p_game_save_id
+		and lifecycle_status = 'active'
+	for update;
+
+	if save_row.id is null then
+		raise exception 'GAME_SAVE_NOT_FOUND' using errcode = 'P0001';
+	end if;
+
+	if save_row.legacy_player_id is null then
+		raise exception 'GAME_SAVE_WITHOUT_LEGACY_PLAYER' using errcode = 'P0001';
+	end if;
+
+	select *
+	into ruleset_row
+	from public.ruleset_registry
+	where ruleset_id = save_row.ruleset_id
+		and ruleset_version = save_row.ruleset_version;
+
+	if ruleset_row.ruleset_id is null then
+		raise exception 'RULESET_NOT_FOUND' using errcode = 'P0001';
+	end if;
+
+	reservation_payload := public.reserve_idempotency(
+		save_row.legacy_player_id,
+		normalized_endpoint,
+		p_request_id,
+		normalized_hash,
+		p_game_save_id::text
+	);
+
+	if coalesce((reservation_payload->>'pending_created')::boolean, false) = false then
+		return coalesce(reservation_payload->'response_payload', '{}'::jsonb);
+	end if;
+
+	response_payload := jsonb_build_object(
+		'ok', true,
+		'schema_version', 'foundation_mutation_response_v1',
+		'endpoint', normalized_endpoint,
+		'request_id', p_request_id,
+		'request_hash', normalized_hash,
+		'account_profile_id', save_row.account_profile_id,
+		'game_save_id', save_row.id,
+		'legacy_player_id', save_row.legacy_player_id,
+		'ruleset', jsonb_build_object(
+			'ruleset_id', ruleset_row.ruleset_id,
+			'ruleset_version', ruleset_row.ruleset_version,
+			'content_hash', ruleset_row.content_hash,
+			'simulator_hash', ruleset_row.simulator_hash,
+			'schema_version', ruleset_row.schema_version
+		),
+		'result', jsonb_build_object(
+			'status', 'reserved_for_domain_service',
+			'request_payload', coalesce(p_request_payload, '{}'::jsonb)
+		)
+	);
+
+	return public.complete_idempotency(
+		save_row.legacy_player_id,
+		normalized_endpoint,
+		p_request_id,
+		response_payload,
+		normalized_hash
+	);
+end;
+$$;
+
+create or replace function public.request_battle_v1(
+	p_game_save_id uuid,
+	p_request_id uuid,
+	p_request_hash text,
+	p_request_payload jsonb default '{}'::jsonb
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public, auth, extensions
+as $$
+begin
+	return public.foundation_command_v1(p_game_save_id, 'battle/request', p_request_id, p_request_hash, p_request_payload);
+end;
+$$;
+
+create or replace function public.collect_base_v1(
+	p_game_save_id uuid,
+	p_request_id uuid,
+	p_request_hash text,
+	p_request_payload jsonb default '{}'::jsonb
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public, auth, extensions
+as $$
+begin
+	return public.foundation_command_v1(p_game_save_id, 'base/collect', p_request_id, p_request_hash, p_request_payload);
+end;
+$$;
+
+create or replace function public.start_base_upgrade_v1(
+	p_game_save_id uuid,
+	p_request_id uuid,
+	p_request_hash text,
+	p_request_payload jsonb default '{}'::jsonb
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public, auth, extensions
+as $$
+begin
+	return public.foundation_command_v1(p_game_save_id, 'base/start_upgrade', p_request_id, p_request_hash, p_request_payload);
+end;
+$$;
+
+create or replace function public.equip_build_v1(
+	p_game_save_id uuid,
+	p_request_id uuid,
+	p_request_hash text,
+	p_request_payload jsonb default '{}'::jsonb
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public, auth, extensions
+as $$
+begin
+	return public.foundation_command_v1(p_game_save_id, 'build/equip', p_request_id, p_request_hash, p_request_payload);
+end;
+$$;
+
+create or replace function public.craft_item_v1(
+	p_game_save_id uuid,
+	p_request_id uuid,
+	p_request_hash text,
+	p_request_payload jsonb default '{}'::jsonb
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public, auth, extensions
+as $$
+begin
+	return public.foundation_command_v1(p_game_save_id, 'craft/item', p_request_id, p_request_hash, p_request_payload);
+end;
+$$;
+
+create or replace function public.claim_reward_v1(
+	p_game_save_id uuid,
+	p_request_id uuid,
+	p_request_hash text,
+	p_request_payload jsonb default '{}'::jsonb
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public, auth, extensions
+as $$
+begin
+	return public.foundation_command_v1(p_game_save_id, 'reward/claim', p_request_id, p_request_hash, p_request_payload);
+end;
+$$;
+
+create or replace function public.alpha_purchase_v1(
+	p_game_save_id uuid,
+	p_request_id uuid,
+	p_request_hash text,
+	p_request_payload jsonb default '{}'::jsonb
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public, auth, extensions
+as $$
+begin
+	return public.foundation_command_v1(p_game_save_id, 'alpha/purchase', p_request_id, p_request_hash, p_request_payload);
+end;
+$$;
+
+create or replace function public.guild_create_v1(
+	p_game_save_id uuid,
+	p_request_id uuid,
+	p_request_hash text,
+	p_request_payload jsonb default '{}'::jsonb
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public, auth, extensions
+as $$
+begin
+	return public.foundation_command_v1(p_game_save_id, 'guild/create', p_request_id, p_request_hash, p_request_payload);
+end;
+$$;
+
+create or replace function public.guild_join_v1(
+	p_game_save_id uuid,
+	p_request_id uuid,
+	p_request_hash text,
+	p_request_payload jsonb default '{}'::jsonb
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public, auth, extensions
+as $$
+begin
+	return public.foundation_command_v1(p_game_save_id, 'guild/join', p_request_id, p_request_hash, p_request_payload);
+end;
+$$;
+
 revoke all on function public.ensure_foundation_profile_and_saves(uuid, text) from public;
 grant execute on function public.ensure_foundation_profile_and_saves(uuid, text) to service_role;
 
@@ -747,3 +996,33 @@ grant execute on function public.fail_idempotency(uuid, text, uuid, jsonb) to se
 
 revoke all on function public.reconcile_resource_balance(uuid, jsonb, text, uuid, uuid) from public;
 grant execute on function public.reconcile_resource_balance(uuid, jsonb, text, uuid, uuid) to service_role;
+
+revoke all on function public.foundation_command_v1(uuid, text, uuid, text, jsonb) from public;
+grant execute on function public.foundation_command_v1(uuid, text, uuid, text, jsonb) to service_role;
+
+revoke all on function public.request_battle_v1(uuid, uuid, text, jsonb) from public;
+grant execute on function public.request_battle_v1(uuid, uuid, text, jsonb) to service_role;
+
+revoke all on function public.collect_base_v1(uuid, uuid, text, jsonb) from public;
+grant execute on function public.collect_base_v1(uuid, uuid, text, jsonb) to service_role;
+
+revoke all on function public.start_base_upgrade_v1(uuid, uuid, text, jsonb) from public;
+grant execute on function public.start_base_upgrade_v1(uuid, uuid, text, jsonb) to service_role;
+
+revoke all on function public.equip_build_v1(uuid, uuid, text, jsonb) from public;
+grant execute on function public.equip_build_v1(uuid, uuid, text, jsonb) to service_role;
+
+revoke all on function public.craft_item_v1(uuid, uuid, text, jsonb) from public;
+grant execute on function public.craft_item_v1(uuid, uuid, text, jsonb) to service_role;
+
+revoke all on function public.claim_reward_v1(uuid, uuid, text, jsonb) from public;
+grant execute on function public.claim_reward_v1(uuid, uuid, text, jsonb) to service_role;
+
+revoke all on function public.alpha_purchase_v1(uuid, uuid, text, jsonb) from public;
+grant execute on function public.alpha_purchase_v1(uuid, uuid, text, jsonb) to service_role;
+
+revoke all on function public.guild_create_v1(uuid, uuid, text, jsonb) from public;
+grant execute on function public.guild_create_v1(uuid, uuid, text, jsonb) to service_role;
+
+revoke all on function public.guild_join_v1(uuid, uuid, text, jsonb) from public;
+grant execute on function public.guild_join_v1(uuid, uuid, text, jsonb) to service_role;

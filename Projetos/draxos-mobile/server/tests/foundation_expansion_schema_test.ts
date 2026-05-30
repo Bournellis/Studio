@@ -153,6 +153,16 @@ Deno.test("foundation expansion declares RPC scaffolds with service-role grants"
     "complete_idempotency",
     "fail_idempotency",
     "reconcile_resource_balance",
+    "foundation_command_v1",
+    "request_battle_v1",
+    "collect_base_v1",
+    "start_base_upgrade_v1",
+    "equip_build_v1",
+    "craft_item_v1",
+    "claim_reward_v1",
+    "alpha_purchase_v1",
+    "guild_create_v1",
+    "guild_join_v1",
   ];
 
   for (const functionName of functions) {
@@ -180,6 +190,16 @@ Deno.test("foundation expansion declares RPC scaffolds with service-role grants"
     migration,
     "insert into public.resource_transactions",
     "resource reconciliation should preserve economy ledger entries",
+  );
+  assertIncludes(
+    migration,
+    "reserved_for_domain_service",
+    "foundation command RPCs should reserve idempotent domain-service mutations",
+  );
+  assertIncludes(
+    migration,
+    "p_game_save_id uuid",
+    "mutation RPCs should use game_saves rather than players.save_type as the public save scope",
   );
 });
 
