@@ -96,10 +96,11 @@ Delivered in the current branch:
 - `battle/request`, `battle/latest`, `battle/history` and `battle/replay` expose ruleset metadata for new battles/log reads.
 - `base/state`, `base/collect` and `base/upgrade` now use the Base transactional RPC path while preserving the current UI payload contract.
 - `battle`, `build`, `crafting`, `monetization` and `social` adapters now compute canonical `request_hash`, resolve `game_saves` and call domain RPCs while preserving the current client payload shape where the UI depends on it.
+- `server/tests/transactional_rpc_live_test.ts` now proves rollback/retry/idempotency against a reset local Supabase Postgres stack for battle rewards, build equip, crafting, alpha purchase and guild create/join.
 - `DraxosOperationState` and `DraxosAppShellActionRouter` create client shell contracts without adding logic to `boot.gd`.
 - `tools/check_foundation_expansion_readiness.ps1` is the read-only structural gate and is called from `validate_foundation.ps1`.
 
-This package does not implement a new gameplay feature, new social loop or new minigame. The remaining backend hardening before balance/content expansion is to add deeper database-level failure/retry tests against a live local Supabase stack and then continue splitting domain services without changing UX.
+This package does not implement a new gameplay feature, new social loop or new minigame. The remaining backend hardening before balance/content expansion is to run local Edge Function HTTP smokes over the promoted adapters, then continue splitting domain services without changing UX.
 
 ## Progression Clarity v1
 
@@ -223,7 +224,7 @@ Visual Direction v1 is implemented and published as the next refinement package 
 
 ## Next Step
 
-Foundation Expansion Readiness is active. Finish the readiness validation/integration gate before returning to product expansion. Do not open base builder tuning, autobattler tuning, social expansion, minigame implementation, victory prediction, opponent counter-picks, custom thresholds, enemy-specific behavior, spell priorities, direct chat, helps, contributions, moderation, tuning numbers, new weapons, new spells, economy, new potions, crafting expansion or broader replay controls without its own package decision.
+Foundation Expansion Readiness is active. Run local Edge Function HTTP smokes over the promoted RPC adapters and continue the portable domain-service split before returning to product expansion. Do not open base builder tuning, autobattler tuning, social expansion, minigame implementation, victory prediction, opponent counter-picks, custom thresholds, enemy-specific behavior, spell priorities, direct chat, helps, contributions, moderation, tuning numbers, new weapons, new spells, economy, new potions, crafting expansion or broader replay controls without its own package decision.
 
 ## Validation
 
