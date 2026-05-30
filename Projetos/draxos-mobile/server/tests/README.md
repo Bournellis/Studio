@@ -20,6 +20,8 @@ npx -y deno test --allow-read server/tests/foundation_contracts_test.ts
 npx -y deno test --allow-read server/tests/foundation_expansion_schema_test.ts
 npx -y deno test --allow-read server/tests/transactional_domain_enforcement_schema_test.ts
 npx -y deno test --allow-read server/tests/remaining_transactional_domain_enforcement_schema_test.ts
+npx -y deno test --allow-read server/tests/base_domain_test.ts
+npx -y deno test --allow-read server/tests/battle_log_projection_test.ts
 npx -y deno test --allow-read server/tests/foundation_ruleset_test.ts
 npx -y deno test --allow-read server/tests/integer_bones_contract_test.ts
 ```
@@ -41,6 +43,16 @@ multi-step para coleta/upgrade.
 O teste `remaining_transactional_domain_enforcement_schema_test.ts` valida a
 promotion dos dominios restantes para RPCs transacionais v1: battle rewards,
 monetization rewards/alpha purchase, build equip, crafting e guild create/join.
+
+O teste `base_domain_test.ts` valida que regras puras de Base vivem no modulo
+portavel `_shared/base_domain.ts`: estruturas, producao, coleta pendente,
+custos/duracoes, bloqueios de upgrade, payload de estado e mirror
+server/supabase sem HTTP/Supabase REST.
+
+O teste `battle_log_projection_test.ts` valida que a projecao de
+`battle_log_v1`, historico e metadata de ruleset vive no modulo portavel
+`_shared/battle_log_projection.ts`, sem depender de simulacao atual nem do
+adapter HTTP.
 
 O teste `foundation_ruleset_test.ts` valida que `foundation_ruleset_v0` tem
 hashes deterministicos e mirrors server/supabase alinhados.

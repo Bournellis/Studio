@@ -393,6 +393,8 @@ Invoke-Step -Name "Deno foundation contract tests" -Stage "Quick" -Command "npx 
             server/tests/foundation_expansion_schema_test.ts `
             server/tests/transactional_domain_enforcement_schema_test.ts `
             server/tests/remaining_transactional_domain_enforcement_schema_test.ts `
+            server/tests/base_domain_test.ts `
+            server/tests/battle_log_projection_test.ts `
             server/tests/foundation_ruleset_test.ts `
             server/tests/integer_bones_contract_test.ts
     }

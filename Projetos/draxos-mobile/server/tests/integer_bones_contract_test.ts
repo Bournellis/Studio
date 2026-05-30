@@ -30,14 +30,14 @@ Deno.test("base collect keeps bone production whole and preserves sub-one accrua
 
   for (
     const relativePath of [
-      "server/functions/base/index.ts",
-      "supabase/functions/base/index.ts",
+      "server/functions/_shared/base_domain.ts",
+      "supabase/functions/_shared/base_domain.ts",
     ]
   ) {
     const source = await readProjectText(relativePath);
     assert(
       source.includes('if (definition.resource === "ossos")'),
-      `${relativePath} should special-case Ossos as an integer resource`,
+      `${relativePath} should own the Ossos integer resource rule`,
     );
     assert(
       source.includes("return Math.floor(collectable);"),

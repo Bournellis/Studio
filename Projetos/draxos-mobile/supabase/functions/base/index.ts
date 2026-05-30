@@ -1,5 +1,16 @@
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
 import { type SaveType, saveTypeFromRequest, saveTypeQuery } from "../_shared/save_context.ts";
+import {
+  BASE_STRUCTURES,
+  type BaseConstructionJobRow as ConstructionJobRow,
+  type BaseResourceKey as ResourceKey,
+  type BaseResourceRow as ResourceRow,
+  baseStatePayload,
+  type BaseStructureRow,
+  DEFAULT_CONSTRUCTION_SLOTS,
+  definitionFor,
+  DOUBLE_CONSTRUCTION_QUEUE_PRODUCT_ID,
+} from "../_shared/base_domain.ts";
 
 type Route = "state" | "collect" | "upgrade";
 
@@ -39,107 +50,7 @@ interface GameSaveRow {
   ruleset_version: number;
 }
 
-interface ResourceRow {
-  player_id: string;
-  almas: string | number;
-  energia: string | number;
-  sangue: string | number;
-  cristais: string | number;
-  ossos: string | number;
-  po_osso: string | number;
-  diamante: string | number;
-  updated_at: string;
-}
-
-interface BaseStructureRow {
-  player_id: string;
-  structure_id: string;
-  level: number;
-  last_collected_at: string;
-  updated_at: string;
-}
-
-interface ConstructionJobRow {
-  id: string;
-  player_id: string;
-  structure_id: string;
-  target_level: number;
-  status: "active" | "completed";
-  cost_payload: unknown;
-  started_at: string;
-  completes_at: string;
-  completed_at: string | null;
-  request_id: string;
-  created_at: string;
-  updated_at: string;
-}
-
-interface StructureDefinition {
-  id: string;
-  displayName: string;
-  description: string;
-  benefitLabel: string;
-  resource: ResourceKey | null;
-  dailyAtLevel40: number;
-}
-
-type ResourceKey = "almas" | "energia" | "sangue" | "cristais" | "ossos";
-
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const SECONDS_PER_DAY = 86_400;
-const MAX_STRUCTURE_LEVEL = 40;
-const DEFAULT_CONSTRUCTION_SLOTS = 1;
-const DOUBLE_CONSTRUCTION_QUEUE_PRODUCT_ID = "alpha_double_construction_queue";
-const STRUCTURES: StructureDefinition[] = [
-  {
-    id: "altar_das_almas",
-    displayName: "Altar das Almas",
-    description: "Produz Almas e sustenta upgrades de instrumento, slots de spell e spells.",
-    benefitLabel: "Almas para progressao arcana",
-    resource: "almas",
-    dailyAtLevel40: 10,
-  },
-  {
-    id: "nucleo_energia",
-    displayName: "Nucleo de Energia",
-    description: "Produz Energia, o gargalo principal das construcoes da base.",
-    benefitLabel: "Energia para evoluir predios",
-    resource: "energia",
-    dailyAtLevel40: 80,
-  },
-  {
-    id: "pocos_sangue",
-    displayName: "Pocos de Sangue",
-    description: "Produz Sangue para crescimento de Familiares e sistemas biologicos.",
-    benefitLabel: "Sangue para Familiares",
-    resource: "sangue",
-    dailyAtLevel40: 8,
-  },
-  {
-    id: "minas_cristal",
-    displayName: "Minas de Cristal",
-    description: "Produz Cristais usados em Doutrinas e refinamentos arcanos.",
-    benefitLabel: "Cristais para Doutrinas",
-    resource: "cristais",
-    dailyAtLevel40: 5,
-  },
-  {
-    id: "estrutura_stats",
-    displayName: "Estrutura de Stats",
-    description: "Abriga melhorias permanentes de Vida, dano base, Defesa, Mana e regen.",
-    benefitLabel: "Bonus permanentes de personagem",
-    resource: null,
-    dailyAtLevel40: 0,
-  },
-  {
-    id: "ossario",
-    displayName: "Ossario",
-    description: "Produz Ossos e sustenta crafting de qualidade do instrumento ritual.",
-    benefitLabel: "Ossos para crafting",
-    resource: "ossos",
-    dailyAtLevel40: 200,
-  },
-];
 
 Deno.serve(async (request: Request) => {
   if (request.method === "OPTIONS") {
@@ -448,7 +359,7 @@ async function loadBaseState(
     return { value: null, error: stateReadError() };
   }
   const resources = resourcesResult.value[0] ?? null;
-  if (resources === null || structuresResult.value.length < STRUCTURES.length) {
+  if (resources === null || structuresResult.value.length < BASE_STRUCTURES.length) {
     return {
       value: null,
       error: {
@@ -552,7 +463,7 @@ async function ensureBaseRows(
   config: EdgeConfig,
   playerId: string,
 ): Promise<void> {
-  for (const definition of STRUCTURES) {
+  for (const definition of BASE_STRUCTURES) {
     await restRequest<unknown>(config, "base_structures", {
       method: "POST",
       headers: { prefer: "resolution=ignore-duplicates,return=minimal" },
@@ -581,197 +492,6 @@ async function completeDueJobs(
   return result.error === null
     ? null
     : mapBaseDatabaseError(result.error, "BASE_JOB_COMPLETION_FAILED");
-}
-
-function baseStatePayload(state: {
-  player: PlayerRow;
-  resources: ResourceRow;
-  structures: BaseStructureRow[];
-  jobs: ConstructionJobRow[];
-  constructionSlots: number;
-}) {
-  const now = new Date();
-  const activeJobs = state.jobs.filter((job) => job.status === "active");
-  return {
-    ok: true,
-    resources: state.resources,
-    base: {
-      server_time: now.toISOString(),
-      construction_slots: state.constructionSlots,
-      construction_slots_source: state.constructionSlots > DEFAULT_CONSTRUCTION_SLOTS
-        ? DOUBLE_CONSTRUCTION_QUEUE_PRODUCT_ID
-        : "default",
-      structures: state.structures.map((structure) => {
-        const definition = definitionFor(structure.structure_id);
-        const pending = collectableFor(structure, now);
-        const activeJob = activeJobs.find((job) => job.structure_id === structure.structure_id);
-        const nextLevel = structure.level >= MAX_STRUCTURE_LEVEL ? null : structure.level + 1;
-        const upgradeCostValue = nextLevel === null ? null : upgradeCost(nextLevel);
-        const upgradeDurationValue = nextLevel === null ? null : upgradeDurationSeconds(nextLevel);
-        const blockedReason = upgradeBlockReason(
-          structure,
-          state.player,
-          state.resources,
-          activeJob,
-          activeJobs.length,
-          state.constructionSlots,
-        );
-        return {
-          ...structure,
-          display_name: definition?.displayName ?? structure.structure_id,
-          description: definition?.description ?? "",
-          benefit_label: definition?.benefitLabel ?? "",
-          max_level: MAX_STRUCTURE_LEVEL,
-          produces: definition?.resource,
-          daily_production: dailyProduction(structure),
-          storage_cap: storageCap(structure),
-          pending_collectable: pending,
-          next_level: nextLevel,
-          upgrade_cost: upgradeCostValue === null ? null : { energia: upgradeCostValue },
-          upgrade_duration_seconds: upgradeDurationValue,
-          can_upgrade: blockedReason === "",
-          blocked_reason: blockedReason,
-          blocked_message: upgradeBlockMessage(blockedReason),
-          active_job: activeJob === undefined ? null : jobPayload(activeJob, now),
-        };
-      }),
-      jobs: state.jobs.map((job) => jobPayload(job, now)),
-    },
-  };
-}
-
-function jobPayload(job: ConstructionJobRow, now: Date) {
-  return {
-    ...job,
-    display_name: definitionFor(job.structure_id)?.displayName ??
-      job.structure_id,
-    remaining_seconds: Math.max(
-      0,
-      Math.ceil((new Date(job.completes_at).getTime() - now.getTime()) / 1000),
-    ),
-  };
-}
-
-function upgradeBlockReason(
-  structure: BaseStructureRow,
-  player: PlayerRow,
-  resources: ResourceRow,
-  activeJob: ConstructionJobRow | undefined,
-  activeJobCount: number,
-  constructionSlots: number,
-): string {
-  if (structure.level >= MAX_STRUCTURE_LEVEL) {
-    return "MAX_LEVEL_REACHED";
-  }
-  if (activeJob !== undefined) {
-    return "STRUCTURE_ALREADY_UPGRADING";
-  }
-  if (activeJobCount >= constructionSlots) {
-    return "CONSTRUCTION_QUEUE_FULL";
-  }
-  const targetLevel = structure.level + 1;
-  const cap = Math.min(MAX_STRUCTURE_LEVEL, Math.max(1, player.level));
-  if (targetLevel > cap) {
-    return "LEVEL_CAP_REACHED";
-  }
-  if (numberValue(resources.energia, 0) < upgradeCost(targetLevel)) {
-    return "INSUFFICIENT_RESOURCES";
-  }
-  return "";
-}
-
-function upgradeBlockMessage(reason: string): string {
-  switch (reason) {
-    case "":
-      return "Upgrade disponivel.";
-    case "MAX_LEVEL_REACHED":
-      return "Predio ja esta no nivel maximo.";
-    case "STRUCTURE_ALREADY_UPGRADING":
-      return "Este predio ja esta em upgrade.";
-    case "CONSTRUCTION_QUEUE_FULL":
-      return "Fila de construcao cheia.";
-    case "LEVEL_CAP_REACHED":
-      return "Nivel do predio limitado pelo level do jogador.";
-    case "INSUFFICIENT_RESOURCES":
-      return "Energia insuficiente para iniciar este upgrade.";
-    default:
-      return "Upgrade bloqueado.";
-  }
-}
-
-function calculateCollectable(
-  structures: BaseStructureRow[],
-  now: Date,
-): Record<ResourceKey, number> {
-  const collected: Record<ResourceKey, number> = {
-    almas: 0,
-    energia: 0,
-    sangue: 0,
-    cristais: 0,
-    ossos: 0,
-  };
-  for (const structure of structures) {
-    const definition = definitionFor(structure.structure_id);
-    if (definition === undefined || definition.resource === null) {
-      continue;
-    }
-    collected[definition.resource] += collectableFor(structure, now);
-  }
-  return Object.fromEntries(
-    Object.entries(collected).map(([key, value]) => [key, round2(value)]),
-  ) as Record<ResourceKey, number>;
-}
-
-function collectableFor(structure: BaseStructureRow, now: Date): number {
-  const definition = definitionFor(structure.structure_id);
-  if (
-    definition === undefined || definition.resource === null ||
-    structure.level <= 0
-  ) {
-    return 0;
-  }
-  const elapsedSeconds = Math.max(
-    0,
-    (now.getTime() - new Date(structure.last_collected_at).getTime()) / 1000,
-  );
-  const produced = dailyProduction(structure) *
-    (elapsedSeconds / SECONDS_PER_DAY);
-  const collectable = Math.min(storageCap(structure), produced);
-  if (definition.resource === "ossos") {
-    return Math.floor(collectable);
-  }
-  return round2(collectable);
-}
-
-function dailyProduction(structure: BaseStructureRow): number {
-  const definition = definitionFor(structure.structure_id);
-  if (
-    definition === undefined || definition.resource === null ||
-    structure.level <= 0
-  ) {
-    return 0;
-  }
-  return Math.max(
-    1,
-    Math.round(definition.dailyAtLevel40 * structure.level / 40),
-  );
-}
-
-function storageCap(structure: BaseStructureRow): number {
-  const daily = dailyProduction(structure);
-  return daily <= 0 ? 0 : Math.max(8, Math.ceil(daily * 2));
-}
-
-function upgradeCost(targetLevel: number): number {
-  return Math.max(20, Math.round(0.5 * targetLevel * targetLevel));
-}
-
-function upgradeDurationSeconds(targetLevel: number): number {
-  return Math.max(120, Math.round(0.1 * targetLevel * targetLevel * 3600));
-}
-
-function definitionFor(structureId: string): StructureDefinition | undefined {
-  return STRUCTURES.find((definition) => definition.id === structureId);
 }
 
 async function mutationRequestHash(
@@ -1128,10 +848,6 @@ function numberValue(value: unknown, fallback: number): number {
     return Number.isFinite(parsed) ? parsed : fallback;
   }
   return fallback;
-}
-
-function round2(value: number): number {
-  return Math.round(value * 100) / 100;
 }
 
 function isObject(value: unknown): value is Record<string, unknown> {

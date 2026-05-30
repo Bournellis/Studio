@@ -1,5 +1,10 @@
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
-import { FOUNDATION_RULESET } from "../_shared/foundation_ruleset.ts";
+import {
+  battleLogFromRow,
+  historyEntryFromRow,
+  rulesetMetadata,
+  rulesetMetadataFromRow,
+} from "../_shared/battle_log_projection.ts";
 import {
   type BattleConsumableUse,
   type BehaviorConfig,
@@ -582,91 +587,6 @@ async function loadPlayerForRead(
   }
 
   return { value: player, error: null };
-}
-
-function battleLogFromRow(
-  player: PlayerRow,
-  battle: BattleRow,
-): Record<string, unknown> {
-  const rewardPayload = isObject(battle.reward_payload) ? battle.reward_payload : {};
-  const events = Array.isArray(battle.event_log) ? battle.event_log : [];
-  const rewardType = stringValue(rewardPayload.type, "MVP_ONLY");
-  const mode = rewardType === "FIRST_SLICE_SIM" ? "FIRST_SLICE_SIM" : "MVP_ONLY";
-
-  return {
-    schema_version: battle.schema_version,
-    ruleset: rulesetMetadataFromRow(battle),
-    battle_id: battle.id,
-    seed: battle.seed,
-    mode,
-    duration: battleDuration(events),
-    participants: {
-      player: { id: player.id, display_name: "Draxos" },
-      opponent: opponentSummaryFromRow(battle, mode),
-    },
-    result: battle.result,
-    events,
-  };
-}
-
-function historyEntryFromRow(battle: BattleRow): Record<string, unknown> {
-  const rewardPayload = isObject(battle.reward_payload) ? battle.reward_payload : {};
-  const events = Array.isArray(battle.event_log) ? battle.event_log : [];
-  const rewardType = stringValue(rewardPayload.type, "MVP_ONLY");
-  const mode = rewardType === "FIRST_SLICE_SIM" ? "FIRST_SLICE_SIM" : "MVP_ONLY";
-
-  return {
-    battle_id: battle.id,
-    created_at: battle.created_at ?? null,
-    schema_version: battle.schema_version,
-    ruleset: rulesetMetadataFromRow(battle),
-    mode,
-    duration: battleDuration(events),
-    event_count: events.length,
-    opponent: opponentSummaryFromRow(battle, mode),
-    result: battle.result,
-    rewards: {
-      type: rewardType,
-      resources: isObject(rewardPayload.resources) ? rewardPayload.resources : {},
-    },
-  };
-}
-
-function opponentSummaryFromRow(
-  battle: BattleRow,
-  mode: BattleMode,
-): Record<string, unknown> {
-  return {
-    id: battle.defender_id,
-    display_name: mode === "FIRST_SLICE_SIM" ? "Treinador da Primeira Ruina" : "Bot de Treino",
-    is_bot: battle.defender_is_bot,
-  };
-}
-
-function rulesetMetadata(): Record<string, unknown> {
-  return {
-    ruleset_id: FOUNDATION_RULESET.ruleset_id,
-    ruleset_version: FOUNDATION_RULESET.ruleset_version,
-    content_hash: FOUNDATION_RULESET.content_hash,
-    simulator_hash: FOUNDATION_RULESET.simulator_hash,
-    schema_version: FOUNDATION_RULESET.schema_version,
-  };
-}
-
-function rulesetMetadataFromRow(battle: BattleRow): Record<string, unknown> {
-  return {
-    ruleset_id: battle.ruleset_id ?? FOUNDATION_RULESET.ruleset_id,
-    ruleset_version: battle.ruleset_version ??
-      FOUNDATION_RULESET.ruleset_version,
-    content_hash: FOUNDATION_RULESET.content_hash,
-    simulator_hash: FOUNDATION_RULESET.simulator_hash,
-    schema_version: FOUNDATION_RULESET.schema_version,
-  };
-}
-
-function battleDuration(events: unknown[]): number {
-  const lastEvent = events.findLast((event) => isObject(event) && typeof event.t === "number");
-  return isObject(lastEvent) ? numberValue(lastEvent.t, 4.2) : 4.2;
 }
 
 function historyLimit(url: URL): number {

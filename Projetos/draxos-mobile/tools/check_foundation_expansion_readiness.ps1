@@ -141,6 +141,12 @@ $requiredFiles = @(
   'supabase\functions\_shared\transactional_mutation.ts',
   'server\functions\_shared\battle_simulator.ts',
   'supabase\functions\_shared\battle_simulator.ts',
+  'server\functions\_shared\battle_log_projection.ts',
+  'supabase\functions\_shared\battle_log_projection.ts',
+  'server\functions\_shared\base_domain.ts',
+  'supabase\functions\_shared\base_domain.ts',
+  'server\tests\battle_log_projection_test.ts',
+  'server\tests\base_domain_test.ts',
   'server\tests\foundation_ruleset_test.ts',
   'server\tests\foundation_expansion_schema_test.ts',
   'server\tests\transactional_domain_enforcement_schema_test.ts',
@@ -236,6 +242,12 @@ Test-FileContains 'server\tests\transactional_rpc_live_test.ts' 'proveGuildCreat
 Test-FileContains 'server\tests\transactional_edge_rpc_smoke.ts' 'proveBattleRequestAdapter'
 Test-FileContains 'server\tests\transactional_edge_rpc_smoke.ts' 'proveCraftingAdapters'
 Test-FileContains 'server\tests\transactional_edge_rpc_smoke.ts' 'assertCompletedIdempotency'
+Test-FileContains 'server\functions\_shared\battle_log_projection.ts' 'battleLogFromRow'
+Test-FileContains 'server\functions\_shared\battle_log_projection.ts' 'historyEntryFromRow'
+Test-FileContains 'server\functions\_shared\base_domain.ts' 'baseStatePayload'
+Test-FileContains 'server\functions\_shared\base_domain.ts' 'calculateCollectable'
+Test-FileContains 'server\tests\battle_log_projection_test.ts' 'projection module must not depend on current simulator code'
+Test-FileContains 'server\tests\base_domain_test.ts' 'base domain module is mirrored and adapter-free'
 Test-FileContains 'server\functions\base\index.ts' 'rpc/collect_base_v1'
 Test-FileContains 'server\functions\base\index.ts' 'rpc/start_base_upgrade_v1'
 Test-FileContains 'supabase\functions\base\index.ts' 'rpc/collect_base_v1'
@@ -254,6 +266,8 @@ Test-FileContains 'server\tests\README.md' 'transactional_domain_enforcement_sch
 Test-FileContains 'server\tests\README.md' 'remaining_transactional_domain_enforcement_schema_test.ts'
 Test-FileContains 'server\tests\README.md' 'transactional_rpc_live_test.ts'
 Test-FileContains 'server\tests\README.md' 'transactional_edge_rpc_smoke.ts'
+Test-FileContains 'server\tests\README.md' 'battle_log_projection_test.ts'
+Test-FileContains 'server\tests\README.md' 'base_domain_test.ts'
 
 Test-PowerShellParses @(
   'tools\check_foundation_expansion_readiness.ps1',
