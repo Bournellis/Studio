@@ -68,7 +68,8 @@ function Test-DoingCards {
   $allowedActiveCards = @(
     '*agent-ops-foundation*',
     '*foundation-expansion-readiness*',
-    '*foundation-closeout*'
+    '*foundation-closeout*',
+    '*foundation-final-polish*'
   )
   $obsolete = @($draxosCards | Where-Object {
       $cardName = $_.Name

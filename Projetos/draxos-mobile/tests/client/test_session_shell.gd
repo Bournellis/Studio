@@ -486,6 +486,44 @@ func test_session_store_accepts_base_snapshot_without_local_mutation() -> void:
 	assert_eq(int(store.base_state.get("construction_slots", 0)), 1)
 	store.free()
 
+func test_session_store_domain_slices_are_deep_copy_snapshots() -> void:
+	var store = SessionStoreScript.new()
+	store.player = {"level": 3}
+	store.resources = {"energia": 5}
+	store.build = {"weapon": {"id": "varinha_cinzas"}}
+	store.base_state = {"structures": [{"structure_id": "nucleo_energia", "level": 1}]}
+	store.social_state = {"guild": {"name": "Conclave"}}
+	store.competition_state = {"ranking": {"self": {"score": 10}}}
+	store.monetization_state = {"summary": {"diamond_balance": 25}}
+	store.crafting_state = {"inventory": [{"item_id": "pocao_vida", "quantity": 1}]}
+	store.combat_build_state = {"spell_slots": [{"slot_index": 1, "spell_id": "sussurro_medo"}]}
+	store.last_battle_log = {"events": [{"type": "battle_result"}]}
+	store.last_battle_rewards = {"resources": {"ossos": 20}}
+
+	var resources_snapshot := store.resources_snapshot()
+	resources_snapshot["energia"] = 99
+	assert_eq(int(store.resources.get("energia", 0)), 5)
+
+	var base_snapshot := store.base_snapshot()
+	Dictionary(Array(base_snapshot["structures"])[0])["level"] = 99
+	assert_eq(int(Dictionary(Array(store.base_state["structures"])[0]).get("level", 0)), 1)
+
+	var battle_snapshot := store.battle_snapshot()
+	Dictionary(battle_snapshot["last_battle_rewards"])["resources"] = {"ossos": 999}
+	assert_eq(int(Dictionary(store.last_battle_rewards["resources"]).get("ossos", 0)), 20)
+
+	assert_eq(int(store.player_snapshot().get("level", 0)), 3)
+	assert_eq(str(Dictionary(store.build_snapshot().get("weapon", {})).get("id", "")), "varinha_cinzas")
+	assert_eq(str(Dictionary(store.social_snapshot().get("guild", {})).get("name", "")), "Conclave")
+	var competition_snapshot := Dictionary(store.competition_snapshot())
+	var ranking_snapshot := Dictionary(competition_snapshot.get("ranking", {}))
+	var self_snapshot := Dictionary(ranking_snapshot.get("self", {}))
+	assert_eq(int(self_snapshot.get("score", 0)), 10)
+	assert_eq(int(Dictionary(store.monetization_snapshot().get("summary", {})).get("diamond_balance", 0)), 25)
+	assert_eq(int(Dictionary(Array(store.crafting_snapshot().get("inventory", []))[0]).get("quantity", 0)), 1)
+	assert_eq(str(Dictionary(Array(store.combat_build_snapshot().get("spell_slots", []))[0]).get("spell_id", "")), "sussurro_medo")
+	store.free()
+
 func test_session_store_accepts_social_and_competition_snapshots() -> void:
 	var store = SessionStoreScript.new()
 	assert_true(store.apply_social_result({

@@ -1,13 +1,13 @@
 # DraxosMobile - Game Design Document (Referencia De Implementacao)
 
-- Ultima atualizacao: `2026-05-28`
+- Ultima atualizacao: `2026-05-30`
 - Fonte historica completa: `../../_conceitos/mobile-universe/gdd.md`
 
-> Este documento e uma referencia condensada da implementacao existente. Durante `FOUNDATION_AUDIT_ACTIVE`, ele deve ser lido como contrato/contexto de substancia e mock implementado, nao como prioridade de expansao nem como design final.
+> Este documento e uma referencia condensada da implementacao existente. Depois da Foundation Final Polish, ele deve ser lido como contrato/contexto de substancia e mock implementado, nao como prioridade de expansao nem como design final.
 
-## Leitura Durante Foundation Audit
+## Leitura Apos Foundation Final Polish
 
-A etapa atual nao e balanceamento, economia, armas, spells, visual final ou apresentacao final da batalha. O foco e auditar o loop interno pos-login:
+A etapa atual nao e balanceamento, economia, armas, spells, visual final ou apresentacao final da batalha. O foco imediato e provar o Full gate final e escolher explicitamente o primeiro pacote de tuning:
 
 `Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
 

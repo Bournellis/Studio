@@ -24,7 +24,7 @@ static func render_state(host: Node) -> void:
 	var competition_state_container := host.get("_competition_state_container") as VBoxContainer
 	if competition_state_container != null:
 		host.call("_clear_node_children", competition_state_container)
-	var competition := _as_dictionary(SessionStore.competition_state)
+	var competition := _as_dictionary(SessionStore.competition_snapshot())
 	if competition.is_empty():
 		timeline_label.text = "Competicao ainda nao carregada. Use Preview matchmaking ou Ver ranking."
 		if competition_state_container != null:

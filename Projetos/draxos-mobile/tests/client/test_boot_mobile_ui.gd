@@ -650,6 +650,8 @@ func test_boot_surface_presenters_keep_render_only_contract() -> void:
 	assert_false(FileAccess.file_exists("res://modes/boot/surfaces/battle_surface_presenter.gd"))
 	var boot_source := FileAccess.get_file_as_string("res://modes/boot/boot.gd")
 	assert_false(boot_source.contains("battle_surface_presenter.gd"))
+	var direct_session_read := RegEx.new()
+	assert_eq(direct_session_read.compile("SessionStore\\.(player|resources|build|base_state|social_state|competition_state|monetization_state|crafting_state|combat_build_state|last_battle_log|last_battle_rewards)\\b"), OK)
 	for script_path: String in _surface_presenter_script_paths():
 		var source := FileAccess.get_file_as_string(script_path)
 		for fragment: String in _forbidden_presenter_fragments():
@@ -657,11 +659,19 @@ func test_boot_surface_presenters_keep_render_only_contract() -> void:
 				source.contains(fragment),
 				"%s must stay render-only and host-owned for '%s'" % [script_path, fragment]
 			)
+		assert_eq(
+			direct_session_read.search(source),
+			null,
+			"%s must read SessionStore through read-only slices/snapshots" % script_path
+		)
 
 func test_boot_decomposition_keeps_shell_budget_and_boundaries() -> void:
 	var boot_source := FileAccess.get_file_as_string("res://modes/boot/boot.gd")
 	var line_count := boot_source.split("\n").size()
-	assert_true(line_count <= 1500, "boot.gd must stay under the Track 12 shell budget; got %d lines" % line_count)
+	assert_true(line_count <= 1200, "boot.gd must stay under the Foundation Final Polish shell budget; got %d lines" % line_count)
+	var hub_source := FileAccess.get_file_as_string("res://modes/boot/surfaces/hub_surface_presenter.gd")
+	var hub_line_count := hub_source.split("\n").size()
+	assert_true(hub_line_count <= 900, "hub_surface_presenter.gd must stay a thin facade; got %d lines" % hub_line_count)
 	assert_true(boot_source.contains("app_shell_action_contract.gd"))
 	assert_true(boot_source.contains("account_session_flow.gd"))
 	assert_true(boot_source.contains("surface_action_flow.gd"))
@@ -1580,10 +1590,12 @@ func _surface_presenter_script_paths() -> PackedStringArray:
 func _action_consumer_script_paths() -> PackedStringArray:
 	return PackedStringArray([
 		"res://modes/boot/boot.gd",
+		"res://modes/boot/boot_runtime.gd",
 		"res://modes/boot/surfaces/base_surface_presenter.gd",
 		"res://modes/boot/surfaces/battle_replay_presenter.gd",
 		"res://modes/boot/surfaces/competition_surface_presenter.gd",
 		"res://modes/boot/surfaces/hub_account_surface_presenter.gd",
+		"res://modes/boot/surfaces/hub_surface_full_presenter.gd",
 		"res://modes/boot/surfaces/hub_surface_presenter.gd",
 		"res://modes/boot/surfaces/shop_surface_presenter.gd",
 		"res://modes/boot/surfaces/social_surface_presenter.gd",
@@ -1679,6 +1691,14 @@ func _forbidden_presenter_fragments() -> PackedStringArray:
 		"SessionStore.access_token =",
 		"SessionStore.player =",
 		"SessionStore.resources =",
+		"SessionStore.build =",
+		"SessionStore.base_state =",
+		"SessionStore.social_state =",
+		"SessionStore.competition_state =",
+		"SessionStore.monetization_state =",
+		"SessionStore.crafting_state =",
+		"SessionStore.combat_build_state =",
+		"SessionStore.create_request_id(",
 		"configure_save_type",
 	])
 

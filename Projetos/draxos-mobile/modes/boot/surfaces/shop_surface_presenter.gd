@@ -106,7 +106,7 @@ static func render_state(host: Node) -> void:
 	var container := _shop_state_container(host)
 	if container != null:
 		_clear_node_children(container)
-	var monetization := SessionStore.monetization_state
+	var monetization := SessionStore.monetization_snapshot()
 	if monetization.is_empty():
 		timeline.text = "Loja ainda nao carregada. Use Atualizar loja."
 		if container != null:
@@ -120,10 +120,11 @@ static func render_state(host: Node) -> void:
 	var lines := PackedStringArray()
 	var summary := _as_dictionary(monetization.get("shop_summary", {}))
 	lines.append("Loja sincronizada")
-	lines.append("Recursos: %s" % _format_resources(SessionStore.resources))
+	var resources := SessionStore.resources_snapshot()
+	lines.append("Recursos: %s" % _format_resources(resources))
 	if not summary.is_empty():
 		lines.append("Diamante: %s | Premium: %s | Resgates hoje: %s/%s" % [
-			str(summary.get("diamond_balance", SessionStore.resources.get("diamante", 0))),
+			str(summary.get("diamond_balance", resources.get("diamante", 0))),
 			"ativo" if bool(summary.get("premium_unlocked", false)) else "inativo",
 			str(summary.get("daily_redeems_claimed", 0)),
 			str(summary.get("daily_redeems_total", 0)),
@@ -149,7 +150,7 @@ static func render_state(host: Node) -> void:
 	host.call("_sync_buttons")
 
 static func product_by_id(product_id: String) -> Dictionary:
-	var monetization := SessionStore.monetization_state
+	var monetization := SessionStore.monetization_snapshot()
 	for item: Variant in _as_array(monetization.get("alpha_products", [])):
 		var product := _as_dictionary(item)
 		if str(product.get("id", "")) == product_id:
@@ -157,7 +158,7 @@ static func product_by_id(product_id: String) -> Dictionary:
 	return {}
 
 static func reward_by_id(reward_id: String) -> Dictionary:
-	var monetization := SessionStore.monetization_state
+	var monetization := SessionStore.monetization_snapshot()
 	for group_key: String in ["daily_rewards", "weekly_rewards"]:
 		for item: Variant in _as_array(monetization.get(group_key, [])):
 			var reward := _as_dictionary(item)

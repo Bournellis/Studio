@@ -1,8 +1,8 @@
 # DraxosMobile - Release Ops Checklist
 
 - Data: `2026-05-30`
-- Track: `Track 13 - Foundation Validation And Release Safety` + `Track 17 - Foundation Expansion Readiness`
-- Status: `TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED` / `FOUNDATION_EXPANSION_READINESS_ACTIVE`
+- Track: `Track 13 - Foundation Validation And Release Safety` + `Track 17 - Foundation Expansion Readiness` + `Foundation Final Polish`
+- Status: `TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED` / `FOUNDATION_FINAL_POLISH_DELIVERED`
 - Escopo: readiness operacional de release para Android, PC e Web, com safety por default e sem publicar build nova.
 
 ## Guardrails Track 13
@@ -65,6 +65,7 @@ Track 13 itself remains non-publishing by default. After Track 13, user-approved
 | Track 13 readiness | `tools/check_track13_readiness.ps1` | Garante docs/status/mirrors/budget/Kanban alinhados | Sim |
 | Agent ops readiness | `tools/check_agent_ops_foundation.ps1` | Garante entrada de agentes, indice documental, portfolio/Kanban e terminologia viva | Sim |
 | Foundation expansion readiness | `tools/check_foundation_expansion_readiness.ps1` | Garante account/save, ruleset, admin/minigame contracts, migrations espelhadas e testes fundacionais | Sim |
+| Foundation admin/RLS live smoke | `server/tests/foundation_admin_rls_live_smoke.ts` | Prova RLS de account/save/ruleset/admin audit e RPCs admin `service_role`-only em Supabase/Edge local | Sim, somente local |
 | Publish script | `tools/publish_internal_alpha.ps1` | Planeja/package local por default; publica somente com modo remoto + confirmacao | `Plan`/`Package` sim; modos remotos sao publicacao |
 | Cloudflare package | `tools/build_cloudflare_pages_package.ps1` | Gera pacote local hibrido para Pages a partir de publish existente | Seguro se rodar sobre artefatos locais existentes; nao faz deploy |
 | Static hosting doc | `docs/internal-alpha-static-hosting.md` | Regras Cloudflare Pages + Supabase Storage | Sim, leitura |
@@ -85,6 +86,7 @@ Antes de qualquer publicacao futura:
 - `tools\check_track13_readiness.ps1` verde.
 - `tools\check_agent_ops_foundation.ps1` verde quando alterar a fundacao operacional de agentes.
 - `tools\check_foundation_expansion_readiness.ps1` verde quando alterar account/save, ruleset, admin, minigame, migrations ou readiness.
+- `server/tests/foundation_admin_rls_live_smoke.ts` verde no Full gate local quando alterar admin, RLS, account/save ou grants.
 - `publish_internal_alpha.ps1 -Mode Plan` revisado.
 - `release_manifest_smoke.ts` verde contra o alvo de release.
 - `release_artifacts_remote_smoke.ts` verde somente depois que artefatos ja existirem no remoto.

@@ -548,6 +548,59 @@ func runtime_feature_enabled(feature_id: String) -> bool:
 func runtime_config_is_fallback() -> bool:
 	return RuntimeConfigScript.is_fallback(runtime_config)
 
+func account_slice() -> Dictionary:
+	return {
+		"auth_user_id": auth_user_id,
+		"auth_method": auth_method,
+		"auth_email": auth_email,
+		"account_username": account_username,
+		"player": player.duplicate(true),
+	}
+
+func save_slice() -> Dictionary:
+	return {
+		"active_save_type": active_save_type,
+		"label": active_save_label(),
+		"badge": active_save_badge(),
+		"surface_save_types": surface_save_types.duplicate(true),
+		"progression_lab": progression_lab.duplicate(true),
+	}
+
+func player_snapshot() -> Dictionary:
+	return player.duplicate(true)
+
+func resources_snapshot() -> Dictionary:
+	return resources.duplicate(true)
+
+func build_snapshot() -> Dictionary:
+	return build.duplicate(true)
+
+func base_snapshot() -> Dictionary:
+	return base_state.duplicate(true)
+
+func battle_snapshot() -> Dictionary:
+	return {
+		"last_battle_id": last_battle_id,
+		"last_battle_log": last_battle_log.duplicate(true),
+		"last_battle_rewards": last_battle_rewards.duplicate(true),
+		"last_battle_result_seen": last_battle_result_seen,
+	}
+
+func social_snapshot() -> Dictionary:
+	return social_state.duplicate(true)
+
+func competition_snapshot() -> Dictionary:
+	return competition_state.duplicate(true)
+
+func monetization_snapshot() -> Dictionary:
+	return monetization_state.duplicate(true)
+
+func crafting_snapshot() -> Dictionary:
+	return crafting_state.duplicate(true)
+
+func combat_build_snapshot() -> Dictionary:
+	return combat_build_state.duplicate(true)
+
 func diagnostics_snapshot() -> Dictionary:
 	var runtime := RuntimeConfigScript.normalize(runtime_config)
 	return {

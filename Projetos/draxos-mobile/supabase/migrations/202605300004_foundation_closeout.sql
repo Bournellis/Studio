@@ -1613,47 +1613,107 @@ begin
 end;
 $$;
 
-revoke all on function public.active_ruleset_publication_v1(text, text, text) from public;
+revoke all on function public.ensure_foundation_profile_and_saves(uuid, text) from public, anon, authenticated;
+grant execute on function public.ensure_foundation_profile_and_saves(uuid, text) to service_role;
+
+revoke all on function public.reserve_idempotency(uuid, text, uuid, text, text) from public, anon, authenticated;
+grant execute on function public.reserve_idempotency(uuid, text, uuid, text, text) to service_role;
+
+revoke all on function public.complete_idempotency(uuid, text, uuid, jsonb, text) from public, anon, authenticated;
+grant execute on function public.complete_idempotency(uuid, text, uuid, jsonb, text) to service_role;
+
+revoke all on function public.fail_idempotency(uuid, text, uuid, jsonb) from public, anon, authenticated;
+grant execute on function public.fail_idempotency(uuid, text, uuid, jsonb) to service_role;
+
+revoke all on function public.reconcile_resource_balance(uuid, jsonb, text, uuid, uuid) from public, anon, authenticated;
+grant execute on function public.reconcile_resource_balance(uuid, jsonb, text, uuid, uuid) to service_role;
+
+revoke all on function public.foundation_command_v1(uuid, text, uuid, text, jsonb) from public, anon, authenticated;
+grant execute on function public.foundation_command_v1(uuid, text, uuid, text, jsonb) to service_role;
+
+revoke all on function public.complete_due_base_jobs_v1(uuid, timestamptz) from public, anon, authenticated;
+grant execute on function public.complete_due_base_jobs_v1(uuid, timestamptz) to service_role;
+
+revoke all on function public.collect_base_v1(uuid, uuid, text, jsonb) from public, anon, authenticated;
+grant execute on function public.collect_base_v1(uuid, uuid, text, jsonb) to service_role;
+
+revoke all on function public.start_base_upgrade_v1(uuid, uuid, text, jsonb) from public, anon, authenticated;
+grant execute on function public.start_base_upgrade_v1(uuid, uuid, text, jsonb) to service_role;
+
+revoke all on function public.foundation_jsonb_numeric_v1(jsonb, text) from public, anon, authenticated;
+grant execute on function public.foundation_jsonb_numeric_v1(jsonb, text) to service_role;
+
+revoke all on function public.foundation_jsonb_integer_v1(jsonb, text) from public, anon, authenticated;
+grant execute on function public.foundation_jsonb_integer_v1(jsonb, text) to service_role;
+
+revoke all on function public.apply_foundation_mutation_v1(uuid, text, uuid, text, jsonb) from public, anon, authenticated;
+grant execute on function public.apply_foundation_mutation_v1(uuid, text, uuid, text, jsonb) to service_role;
+
+revoke all on function public.request_battle_v1(uuid, uuid, text, jsonb) from public, anon, authenticated;
+grant execute on function public.request_battle_v1(uuid, uuid, text, jsonb) to service_role;
+
+revoke all on function public.equip_build_v1(uuid, uuid, text, jsonb) from public, anon, authenticated;
+grant execute on function public.equip_build_v1(uuid, uuid, text, jsonb) to service_role;
+
+revoke all on function public.crush_bones_v1(uuid, uuid, text, jsonb) from public, anon, authenticated;
+grant execute on function public.crush_bones_v1(uuid, uuid, text, jsonb) to service_role;
+
+revoke all on function public.craft_item_v1(uuid, uuid, text, jsonb) from public, anon, authenticated;
+grant execute on function public.craft_item_v1(uuid, uuid, text, jsonb) to service_role;
+
+revoke all on function public.claim_reward_v1(uuid, uuid, text, jsonb) from public, anon, authenticated;
+grant execute on function public.claim_reward_v1(uuid, uuid, text, jsonb) to service_role;
+
+revoke all on function public.alpha_purchase_v1(uuid, uuid, text, jsonb) from public, anon, authenticated;
+grant execute on function public.alpha_purchase_v1(uuid, uuid, text, jsonb) to service_role;
+
+revoke all on function public.guild_create_v1(uuid, uuid, text, jsonb) from public, anon, authenticated;
+grant execute on function public.guild_create_v1(uuid, uuid, text, jsonb) to service_role;
+
+revoke all on function public.guild_join_v1(uuid, uuid, text, jsonb) from public, anon, authenticated;
+grant execute on function public.guild_join_v1(uuid, uuid, text, jsonb) to service_role;
+
+revoke all on function public.active_ruleset_publication_v1(text, text, text) from public, anon, authenticated;
 grant execute on function public.active_ruleset_publication_v1(text, text, text) to service_role;
 
-revoke all on function public.resolve_ruleset_publication_v1(text, integer, text, text) from public;
+revoke all on function public.resolve_ruleset_publication_v1(text, integer, text, text) from public, anon, authenticated;
 grant execute on function public.resolve_ruleset_publication_v1(text, integer, text, text) to service_role;
 
-revoke all on function public.foundation_account_context_v1(uuid) from public;
+revoke all on function public.foundation_account_context_v1(uuid) from public, anon, authenticated;
 grant execute on function public.foundation_account_context_v1(uuid) to service_role;
 
-revoke all on function public.resource_reconciliation_report_v1(uuid) from public;
+revoke all on function public.resource_reconciliation_report_v1(uuid) from public, anon, authenticated;
 grant execute on function public.resource_reconciliation_report_v1(uuid) to service_role;
 
-revoke all on function public.admin_adjust_resource_balance_v1(uuid, jsonb, text, uuid, uuid) from public;
+revoke all on function public.admin_adjust_resource_balance_v1(uuid, jsonb, text, uuid, uuid) from public, anon, authenticated;
 grant execute on function public.admin_adjust_resource_balance_v1(uuid, jsonb, text, uuid, uuid) to service_role;
 
-revoke all on function public.admin_lookup_account_v1(uuid, text, uuid, uuid) from public;
+revoke all on function public.admin_lookup_account_v1(uuid, text, uuid, uuid) from public, anon, authenticated;
 grant execute on function public.admin_lookup_account_v1(uuid, text, uuid, uuid) to service_role;
 
-revoke all on function public.admin_battle_diagnostics_v1(uuid) from public;
+revoke all on function public.admin_battle_diagnostics_v1(uuid) from public, anon, authenticated;
 grant execute on function public.admin_battle_diagnostics_v1(uuid) to service_role;
 
-revoke all on function public.admin_flag_account_v1(uuid, text, text, uuid, uuid) from public;
+revoke all on function public.admin_flag_account_v1(uuid, text, text, uuid, uuid) from public, anon, authenticated;
 grant execute on function public.admin_flag_account_v1(uuid, text, text, uuid, uuid) to service_role;
 
-revoke all on function public.apply_build_preparation_mutation_v1(uuid, text, uuid, text, jsonb) from public;
+revoke all on function public.apply_build_preparation_mutation_v1(uuid, text, uuid, text, jsonb) from public, anon, authenticated;
 grant execute on function public.apply_build_preparation_mutation_v1(uuid, text, uuid, text, jsonb) to service_role;
 
-revoke all on function public.build_spell_behavior_v1(uuid, uuid, text, jsonb) from public;
+revoke all on function public.build_spell_behavior_v1(uuid, uuid, text, jsonb) from public, anon, authenticated;
 grant execute on function public.build_spell_behavior_v1(uuid, uuid, text, jsonb) to service_role;
 
-revoke all on function public.build_potion_equip_v1(uuid, uuid, text, jsonb) from public;
+revoke all on function public.build_potion_equip_v1(uuid, uuid, text, jsonb) from public, anon, authenticated;
 grant execute on function public.build_potion_equip_v1(uuid, uuid, text, jsonb) to service_role;
 
-revoke all on function public.build_potion_behavior_v1(uuid, uuid, text, jsonb) from public;
+revoke all on function public.build_potion_behavior_v1(uuid, uuid, text, jsonb) from public, anon, authenticated;
 grant execute on function public.build_potion_behavior_v1(uuid, uuid, text, jsonb) to service_role;
 
-revoke all on function public.apply_social_mutation_v1(uuid, text, uuid, text, jsonb) from public;
+revoke all on function public.apply_social_mutation_v1(uuid, text, uuid, text, jsonb) from public, anon, authenticated;
 grant execute on function public.apply_social_mutation_v1(uuid, text, uuid, text, jsonb) to service_role;
 
-revoke all on function public.social_friend_add_v1(uuid, uuid, text, jsonb) from public;
+revoke all on function public.social_friend_add_v1(uuid, uuid, text, jsonb) from public, anon, authenticated;
 grant execute on function public.social_friend_add_v1(uuid, uuid, text, jsonb) to service_role;
 
-revoke all on function public.social_chat_send_v1(uuid, uuid, text, jsonb) from public;
+revoke all on function public.social_chat_send_v1(uuid, uuid, text, jsonb) from public, anon, authenticated;
 grant execute on function public.social_chat_send_v1(uuid, uuid, text, jsonb) to service_role;

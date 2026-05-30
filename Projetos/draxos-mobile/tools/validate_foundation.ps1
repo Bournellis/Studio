@@ -7,6 +7,7 @@ param(
     [switch]$IncludeRemoteReadOnly,
     [switch]$IncludeLocalSupabaseRpc,
     [switch]$IncludeLocalEdgeRpc,
+    [switch]$IncludeLocalAdminRls,
     [switch]$AllowCloudflareAccess,
     [switch]$RemoteFullHash,
     [string]$JsonReportPath = "",
@@ -177,8 +178,15 @@ function Assert-BootBudget {
     $bootPath = Join-Path $ProjectPath "modes\boot\boot.gd"
     Assert-FileExists -Path $bootPath -Label "boot.gd"
     $lineCount = (Get-Content -LiteralPath $bootPath | Measure-Object -Line).Lines
-    if ($lineCount -gt 1500) {
-        throw "boot.gd has $lineCount lines; Track 12/13 budget is 1500."
+    if ($lineCount -gt 1200) {
+        throw "boot.gd has $lineCount lines; Foundation Final Polish budget is 1200."
+    }
+
+    $hubPath = Join-Path $ProjectPath "modes\boot\surfaces\hub_surface_presenter.gd"
+    Assert-FileExists -Path $hubPath -Label "hub_surface_presenter.gd"
+    $hubLineCount = (Get-Content -LiteralPath $hubPath | Measure-Object -Line).Lines
+    if ($hubLineCount -gt 900) {
+        throw "hub_surface_presenter.gd has $hubLineCount lines; Foundation Final Polish facade budget is 900."
     }
 }
 
@@ -194,6 +202,7 @@ function Assert-StructuralReadiness {
         "server\tests\release_manifest_smoke.ts",
         "server\tests\release_artifacts_remote_smoke.ts",
         "server\tests\internal_alpha_remote_smoke.ts",
+        "server\tests\foundation_admin_rls_live_smoke.ts",
         "docs\agent-operating-manual.md",
         "docs\documentation-index.md",
         "docs\release-ops-checklist.md",
@@ -273,6 +282,7 @@ function Assert-ClientSecretsAbsent {
 
 $RunLocalSupabaseRpc = $IncludeLocalSupabaseRpc.IsPresent -or $Profile -eq "Full"
 $RunLocalEdgeRpc = $IncludeLocalEdgeRpc.IsPresent -or $Profile -eq "Full"
+$RunLocalAdminRls = $IncludeLocalAdminRls.IsPresent -or $Profile -eq "Full"
 
 function Write-Reports {
     New-Item -ItemType Directory -Force -Path (Split-Path -Parent $JsonReportPath) | Out-Null
@@ -292,6 +302,7 @@ function Write-Reports {
         include_remote_read_only = $IncludeRemoteReadOnly.IsPresent
         include_local_supabase_rpc = $RunLocalSupabaseRpc
         include_local_edge_rpc = $RunLocalEdgeRpc
+        include_local_admin_rls = $RunLocalAdminRls
         summary = $summary
         results = @($Results.ToArray())
     }
@@ -409,7 +420,7 @@ Invoke-Step -Name "Deno foundation contract tests" -Stage "Quick" -Command "npx 
     }
 }
 
-Invoke-Step -Name "structural readiness" -Stage "Quick" -Command "required files + boot.gd budget" -ScriptBlock {
+Invoke-Step -Name "structural readiness" -Stage "Quick" -Command "required files + shell facade budgets" -ScriptBlock {
     Assert-StructuralReadiness
 }
 
@@ -450,6 +461,20 @@ if ($RunLocalEdgeRpc) {
     }
 } else {
     Skip-Step -Name "local Edge transactional RPC adapter smoke" -Stage "Quick" -Command "npx -y deno run --allow-net --allow-env server/tests/transactional_edge_rpc_smoke.ts" -Reason "-IncludeLocalEdgeRpc was not set and Profile is not Full."
+}
+
+if ($RunLocalAdminRls) {
+    Invoke-Step -Name "local admin RLS live smoke" -Stage "Quick" -Command "npx -y deno check/run server/tests/foundation_admin_rls_live_smoke.ts" -ScriptBlock {
+        Invoke-External -Command "foundation_admin_rls_live_smoke.ts" -WorkingDirectory $ProjectPath -ScriptBlock {
+            & npx -y deno check server/tests/foundation_admin_rls_live_smoke.ts
+            if ($LASTEXITCODE -ne 0) {
+                throw "deno check foundation_admin_rls_live_smoke.ts exited with code $LASTEXITCODE."
+            }
+            & npx -y deno run --allow-net --allow-env server/tests/foundation_admin_rls_live_smoke.ts
+        }
+    }
+} else {
+    Skip-Step -Name "local admin RLS live smoke" -Stage "Quick" -Command "npx -y deno run --allow-net --allow-env server/tests/foundation_admin_rls_live_smoke.ts" -Reason "-IncludeLocalAdminRls was not set and Profile is not Full."
 }
 
 if ($RunClient) {

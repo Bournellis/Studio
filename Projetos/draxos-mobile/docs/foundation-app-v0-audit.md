@@ -1,8 +1,8 @@
 # DraxosMobile - Foundation App V0 Audit
 
-Status: VIVO
-Atualizado em: 2026-05-28
-Etapa atual: `FOUNDATION_AUDIT_ACTIVE`
+Status: HISTORICO
+Atualizado em: 2026-05-30
+Etapa registrada: `FOUNDATION_AUDIT_ACTIVE` (fechada)
 
 ## Proposito
 
@@ -10,13 +10,13 @@ Este documento registra a leitura atual do projeto como uma fundacao de produto,
 
 O objetivo imediato nao e abrir o jogo ao publico. A etapa atual e descobrir o jogo com o fundador e um circulo muito proximo de possiveis colaboradores, usando um prototipo agradavel o suficiente para pensar melhor o produto real.
 
-Esta auditoria orienta a etapa operacional atual. Antes de implementar mais UX, social, visual, batalha, armas, spells ou economia, os documentos vivos precisam explicar corretamente a situacao real do projeto.
+Esta auditoria orientou a etapa operacional `FOUNDATION_AUDIT_ACTIVE`. O estado vivo atual esta em `implementation/current-status.md` e no Track 17; antes de tuning, social expandido ou minigame real, a base deve passar pelo Full gate final da Foundation Final Polish.
 
 Auditoria executada do loop interno: `docs/foundation-loop-audit.md`. Ela deve ser lida antes de qualquer pacote de implementacao de UX no Refugio/Base/Batalha.
 
-## Enquadramento Atual
+## Enquadramento Registrado
 
-Etapa atual: `FOUNDATION_AUDIT_ACTIVE`
+Etapa registrada: `FOUNDATION_AUDIT_ACTIVE`
 
 Leitura correta: o projeto atual e uma base implementada para refinamento. Ele nao e produto final, nao e uma trilha de expansao de conteudo e nao e uma rodada de balanceamento.
 

@@ -4,16 +4,16 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Foundation Expansion Readiness / Foundation Closeout`
-- Active stage status: `FOUNDATION_CLOSEOUT_DELIVERED`
+- Active stage: `Foundation Final Polish`
+- Active stage status: `FOUNDATION_FINAL_POLISH_DELIVERED`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Latest published package: `First Session Clarity v1`
-- Latest implemented package: `Lab Track 16 Alignment` delivered on branch
-  `codex/draxos-mobile/foundation-expansion-readiness` over the delivered
-  Foundation Closeout baseline.
+- Latest implemented package: `Foundation Final Polish` on branch
+  `codex/draxos-mobile/foundation-final-polish`, over Foundation Closeout and
+  Lab Track 16 Alignment.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -45,9 +45,9 @@ The major foundation baseline is:
 
 - Track 11: live docs, release state, Kanban cleanup, manual walkthrough and
   first safe `boot.gd` cut.
-- Track 12: `boot.gd` decomposed to action contract, account/session flow,
-  surface action flow, battle lifecycle flow and shared surface helpers; current
-  budget is under `1500` lines.
+- Track 12 + Foundation Final Polish: `boot.gd` stays as a thin scene-facing
+  shell, action/runtime flow lives behind dedicated scripts, and
+  `hub_surface_presenter.gd` stays a facade under the final shell budget.
 - Track 13: `tools/validate_foundation.ps1`, safe `publish_internal_alpha.ps1`
   modes, release safety checks, readiness checks and Android/Windows/Web manual
   gate.
@@ -167,9 +167,9 @@ now aligned with Track 16, but it still must not promote tuning by itself.
 
 ## Foundation Expansion Readiness
 
-Foundation Expansion Readiness is the current pre-expansion package. It prepares
-DraxosMobile for production future, parallel agent work and larger feature lanes
-without changing the published player-facing UX.
+Foundation Expansion Readiness is the delivered pre-expansion package. It
+prepares DraxosMobile for production future, parallel agent work and larger
+feature lanes without changing the published player-facing UX.
 
 Delivered in the current branch:
 
@@ -254,17 +254,44 @@ Delivered in the current branch:
   feature promise.
 - `tools/check_foundation_expansion_readiness.ps1` is the read-only structural
   gate and is called from `validate_foundation.ps1`. Full profile now requires
-  local Supabase RPC and Edge RPC smokes instead of silently skipping them.
+  local Supabase RPC, Edge RPC and admin/RLS smokes instead of silently skipping
+  them.
 
 This package does not implement a new gameplay feature, new social loop or new
 minigame. Remaining balance/content expansion should now start only after an
 explicit package choice, with Lab heuristics treated as evidence instead of
 runtime authority.
 
+## Foundation Final Polish
+
+Foundation Final Polish is the last local hardening pass before tuning. It does
+not add gameplay, economy, social expansion, minigame rewards or remote
+publication.
+
+- Live docs now identify Foundation Closeout and Lab Track 16 Alignment as
+  delivered; the final Full validation passed on the canonical local branch.
+- New agents should branch locally from `codex/draxos-mobile/foundation-final-polish`
+  at the final validated HEAD until a merge/push decision exists.
+- `modes/boot/boot.gd` is a thin shell facade and
+  `modes/boot/surfaces/hub_surface_presenter.gd` is a facade under automated
+  line budgets in `validate_foundation.ps1`.
+- `SessionStore` exposes read-only domain slices/snapshots, and touched
+  presenters read those snapshots instead of public mutable dictionaries.
+- Client source guards now block presenter calls to Supabase, direct telemetry,
+  direct `SessionStore` mutations and direct `create_request_id()` outside the
+  approved shell paths.
+- `server/tests/foundation_admin_rls_live_smoke.ts` proves local RLS/admin:
+  `anon/authenticated` cannot execute admin RPCs, `service_role` can lookup,
+  reconcile, diagnose, adjust resources with ledger/audit/idempotency and flag
+  accounts, and `admin_audit_log` is not client-readable.
+- `validate_foundation.ps1 -Profile Full` includes local Supabase RPC, local
+  Edge RPC and local admin/RLS smokes; if the local stack is not active, Full
+  fails instead of skipping silently.
+
 Closeout validation on this branch:
 
 - Deno check: `server/functions` PASS and `supabase/functions` PASS.
-- Static foundation contract tests: PASS (`55` tests through
+- Static foundation contract tests: PASS (`57` tests through
   `validate_foundation.ps1 -Profile Quick` before local Supabase/Edge gated
   steps).
 - Godot validate: PASS (`132/132`, `2052` asserts) after the client shell retry
@@ -294,9 +321,11 @@ Lab Track 16 Alignment validation on this branch:
   confirmed the corrected `foundation_ruleset_v0` content hash mirrored in the
   Closeout migration seed.
 
-Recommended next decision: choose one explicit package for base builder tuning,
-autobattler tuning, social expansion or minigame shell/contract. Do not start
-feature/tuning work implicitly from the Foundation Closeout branch.
+Recommended next decision: the final Full gate is green and this branch is
+commit-clean at the validated local HEAD; choose one explicit package for base
+builder tuning, autobattler tuning, social expansion or minigame shell/contract.
+Do not start feature/tuning work implicitly from the Foundation Final Polish
+branch.
 
 ## Progression Clarity v1
 
@@ -562,13 +591,15 @@ economy, content tuning or final art.
 
 ## Next Step
 
-Foundation Expansion Readiness is active. The next decision should explicitly
-choose one package: base builder tuning, autobattler tuning, social expansion or
-minigame shell/contract. Do not open victory prediction, opponent counter-picks,
-custom thresholds, enemy-specific behavior, spell priorities, direct chat,
-helps, contributions, moderation, tuning numbers, new weapons, new spells,
-economy, new potions, crafting expansion or broader replay controls without its
-own package decision.
+Foundation Final Polish is the current local canonical base:
+`codex/draxos-mobile/foundation-final-polish` at validated local HEAD. The next
+decision should explicitly choose one package: base builder tuning, autobattler
+tuning, social expansion or minigame shell/contract. Do not open victory
+prediction, opponent counter-picks, custom
+thresholds, enemy-specific behavior, spell priorities, direct chat, helps,
+contributions, moderation, tuning numbers, new weapons, new spells, economy,
+new potions, crafting expansion or broader replay controls without its own
+package decision.
 
 ## Validation
 

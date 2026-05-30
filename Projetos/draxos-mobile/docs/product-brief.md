@@ -15,19 +15,19 @@ DraxosMobile e um jogo mobile-first de progressao persistente construido sobre t
 
 O projeto atual deve ser lido como uma base implementada para refinamento. Ele nao e produto final, nao e uma trilha de expansao de conteudo e nao e uma rodada de balanceamento.
 
-A etapa atual e `FOUNDATION_AUDIT_ACTIVE`.
+A etapa atual e `FOUNDATION_FINAL_POLISH_DELIVERED`.
 
 ## Foco Imediato
 
-O foco imediato e auditar o loop interno pos-login:
+O foco imediato de fundacao foi fechado: Foundation Closeout entregou account/save, ruleset registry, idempotencia v1, admin minimo, API versioning e mutacoes transacionais; Lab Track 16 Alignment atualizou Battle Lab/Progression Lab para pocoes, comportamento, crafting e `po_osso`; Foundation Final Polish sincroniza docs, shell budgets, presenter guards e smoke local RLS/admin.
+
+A proxima etapa so deve comecar apos o Full gate final verde e escolha explicita do pacote. O loop interno pos-login aceito continua:
 
 `Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
 
-A pergunta central da etapa e: como, onde e com quantas etapas o usuario clica para executar esse loop?
-
 First Session Clarity v1 e o pacote publicado atual para essa pergunta: Refugio, Preparacao e Resultado agora orientam o primeiro ciclo sem novo backend, schema, tuning, economia ou conteudo.
 
-Devem ser avaliados:
+Ao abrir tuning, devem ser avaliados:
 
 - hierarquia da primeira tela apos login;
 - posicao dos icones e botoes principais;

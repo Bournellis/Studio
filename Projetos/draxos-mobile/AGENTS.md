@@ -8,12 +8,12 @@ This file is the fast entrypoint for agents working in `Projetos/draxos-mobile`.
 
 - Project: `DraxosMobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
-- Active operational stage: `Foundation Expansion Readiness`
-- Active stage status: `FOUNDATION_EXPANSION_READINESS_ACTIVE`
-- Hardening baseline: `Track 13 - Foundation Validation And Release Safety` delivered on `2026-05-28`
-- Agent baseline: `Track 14 - Agent Operations Foundation` is the current operations/docs foundation.
+- Active operational stage: `Foundation Final Polish`
+- Active stage status: `FOUNDATION_FINAL_POLISH_DELIVERED`
+- Hardening baseline: `Track 13 - Foundation Validation And Release Safety` delivered on `2026-05-28`; compatibility marker: Track 13 validation/release safety.
+- Agent baseline: `Track 14 - Agent Operations Foundation` is the current operations/docs foundation; compatibility marker: `TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting`, technical context and not the current product focus. Current behavior/potion/crafting state is summarized in `docs/behavior-potion-crafting-v1.md`.
-- Immediate product gate: complete Foundation Expansion Readiness before choosing base builder, autobattler, social expansion or minigame work. Foundation Loop UX Pass 01 and First Session Clarity v1 are accepted baselines.
+- Immediate product gate: Foundation Closeout and Lab Track 16 Alignment are delivered; use the Foundation Final Polish branch as the local canonical base after its Full gate is green, then choose one explicit tuning/social/minigame-contract package. Foundation Loop UX Pass 01 and First Session Clarity v1 are accepted baselines.
 
 DraxosMobile is an async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. The real product direction is base builder + autobattler + social, with room for future minigames and seasons. Current names, spells, weapons, economy values, battle flavor, visual style and premium systems are mock/substance for evaluation unless a live doc explicitly promotes them.
 
@@ -63,7 +63,7 @@ Run commands from `Projetos/draxos-mobile` unless noted.
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Quick
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Client
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Release
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Full
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Full -RequireClean
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_foundation_expansion_readiness.ps1 -ProjectDir .
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/client -gexit
@@ -89,7 +89,7 @@ For user-approved product packages that require human testing on Android, Window
 
 - Do not put `service_role`, Supabase secrets, database passwords, keystore passwords or private tokens in client code, exports, portal files, manifests or operational docs.
 - Do not run remote publishing modes without explicit user approval and `-ConfirmRemoteMutation`.
-- Do not start a new playable feature, numeric tuning pass, weapon/spell/economy pass, potion/consumable expansion, advanced behavior pass, battle presentation pass, final visual pass, iOS work or mobile browser support before Foundation Expansion Readiness is complete and the user explicitly chooses the next package.
+- Do not start a new playable feature, numeric tuning pass, weapon/spell/economy pass, potion/consumable expansion, advanced behavior pass, battle presentation pass, final visual pass, iOS work or mobile browser support until the Foundation Final Polish Full gate is green and the user explicitly chooses the next package.
 - Do not create new account/save, social, reward or minigame state that bypasses `account_profiles/game_saves`, ruleset registry, idempotency v1 or the relevant contract docs.
 - Do not edit `.tscn` files as raw text unless the user explicitly asks and the change is safer than an editor/tool path.
 - Do not publish Entry/Refugio/Battle layout changes unless `tools/smoke_responsive_layout.gd` passes.
@@ -100,7 +100,7 @@ For user-approved product packages that require human testing on Android, Window
 
 - `docs/product-vision.md` is the local long-term product canon until promoted to shared canon.
 - `docs/foundation-app-v0-audit.md` is the product/agent compass for the accepted Foundation Audit baseline.
-- `docs/foundation-expansion-readiness.md` is the current pre-expansion gate.
+- `docs/foundation-expansion-readiness.md` is the delivered pre-expansion gate and closeout contract base.
 - `docs/foundation-loop-audit.md` is the executed audit for loop ergonomics and the next UX pass criteria.
 - `docs/foundation-responsive-layout-contract.md` is the guardrail for responsive Entry Labs, Refugio and Battle safe frames.
 - `docs/behavior-potion-crafting-v1.md` is the live bridge for Track 16 behavior, potion and crafting systems already present in the alpha baseline.
@@ -112,4 +112,4 @@ For user-approved product packages that require human testing on Android, Window
 
 ## Current Handoff
 
-Foundation Expansion Readiness is the current handoff. Complete the account/save, ruleset, idempotency, admin, QA and shell gate before expanding implementation. Do not change gameplay tuning, Supabase APIs beyond this package, economy, content, weapons, spells, potions, crafting, advanced behavior, final visuals or authoritative flows without an explicit package decision.
+Foundation Final Polish is the current handoff. New DraxosMobile agents should branch from `codex/draxos-mobile/foundation-final-polish` at the final validated local HEAD until a remote merge/push decision exists. Do not change gameplay tuning, Supabase APIs beyond this package, economy, content, weapons, spells, potions, crafting, advanced behavior, final visuals or authoritative flows without an explicit package decision.

@@ -2,7 +2,7 @@
 
 - Ultima atualizacao: `2026-05-30`
 - Status: registro vivo de pendencias de design
-- Escopo: DraxosMobile, Foundation Audit e evolucoes futuras
+- Escopo: DraxosMobile, Foundation Final Polish entregue, tuning futuro e evolucoes futuras
 
 Este documento e o unico lugar para registrar pendencias de design do projeto ativo. Ele nao resolve design; ele nomeia o que ainda precisa ser decidido, classifica o bloqueio e aponta para o documento que deve receber a resposta quando a decisao existir.
 
@@ -31,19 +31,19 @@ Categorias:
 - `OPERACIONAL`: nao altera game design, mas bloqueia validacao, ambiente, seguranca ou execucao tecnica confiavel.
 - `POS_SLICE`: fora da Track 00 completa.
 
-## Etapa Atual - Foundation Audit
+## Etapa Atual - Foundation Final Polish Entregue
 
-A etapa atual e `FOUNDATION_AUDIT_ACTIVE`. O projeto deve ser lido como uma base implementada para refinamento, nao como produto final e nao como trilha de expansao de conteudo.
+A etapa atual e `FOUNDATION_FINAL_POLISH_DELIVERED`. O projeto deve ser lido como uma base fundacional pronta para o gate final local antes de tuning, nao como produto final e nao como trilha aberta de expansao de conteudo.
 
 Foco imediato:
 
 `Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
 
-Foundation Loop UX Pass 01 foi aceito como baseline do loop. First Session Clarity v1 esta publicado no Internal Alpha como o follow-up de primeira sessao; a proxima decisao de design e manual: aceitar esse pacote, pedir ajuste pontual ou mover foco para Social Routine v1.1.
+Foundation Loop UX Pass 01 foi aceito como baseline do loop. Foundation Closeout, Labs atualizados e Foundation Final Polish fecharam a base tecnica/documental; a proxima decisao de design deve escolher explicitamente o pacote de tuning, social expandido ou contrato de minigame depois do Full gate final.
 
 Revisao manual do build publicado identificou regressao de responsividade: Labs Dev sumiram do menu inicial interno e Refugio/Batalha puderam sair dos limites em Web/Android. A partir de agora, mudancas visuais em Entry, Refugio ou Batalha precisam respeitar `docs/foundation-responsive-layout-contract.md` e passar em `tools/smoke_responsive_layout.gd` antes de nova publicacao.
 
-Armas, spells, nomes, tema, imagens, economia, Battle Pass, apresentacao de batalha e visual final existem como substancia/mock. Eles nao sao prioridade de decisao ate que o loop interno, social, visual geral e apresentacao da batalha sejam discutidos nessa ordem.
+Armas, spells, nomes, tema, imagens, economia, Battle Pass, apresentacao de batalha e visual final existem como substancia/mock. Eles nao sao prioridade de decisao ate que o Full gate final esteja verde e o pacote de tuning seja escolhido.
 
 ## Estado Do MVP Tecnico
 

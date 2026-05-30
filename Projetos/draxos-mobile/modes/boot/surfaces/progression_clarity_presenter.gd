@@ -41,17 +41,17 @@ static func battle_summary_text(rewards: Dictionary = {}, combat_build: Dictiona
 static func next_objective_text(combat_build: Dictionary = {}) -> String:
 	if SessionStore.has_unseen_battle_result():
 		return "Abra a recompensa da ultima batalha."
-	if combat_build.is_empty() and SessionStore.combat_build_state.is_empty():
+	if combat_build.is_empty() and SessionStore.combat_build_snapshot().is_empty():
 		return "Atualize a preparacao para ver os proximos marcos."
 	var lines := unlock_lines(combat_build, 1)
 	if not lines.is_empty():
 		return str(lines[0])
-	if not SessionStore.base_state.is_empty():
+	if not SessionStore.base_snapshot().is_empty():
 		return "Evolua o Refugio para sustentar batalhas mais fortes."
 	return "Venca batalhas e ajuste a preparacao para aumentar seu poder."
 
 static func unlock_lines(combat_build: Dictionary = {}, max_count: int = 3) -> PackedStringArray:
-	var state := combat_build if not combat_build.is_empty() else SessionStore.combat_build_state
+	var state := combat_build if not combat_build.is_empty() else SessionStore.combat_build_snapshot()
 	var current_level := _current_level()
 	var candidates := _unlock_candidates_from_state(state)
 	for fallback: Dictionary in _fallback_unlock_candidates():
@@ -142,22 +142,22 @@ static func _battle_xp_text(rewards: Dictionary) -> String:
 	return "Esta batalha somou XP +%.1f." % xp
 
 static func _current_level() -> int:
-	var level := int(SessionStore.player.get("level", 0))
+	var level := int(SessionStore.player_snapshot().get("level", 0))
 	if level > 0:
 		return level
-	level = int(SessionStore.combat_build_state.get("level", 0))
+	level = int(SessionStore.combat_build_snapshot().get("level", 0))
 	if level > 0:
 		return level
-	return int(SessionStore.build.get("level", 0))
+	return int(SessionStore.build_snapshot().get("level", 0))
 
 static func _current_power(combat_build: Dictionary = {}) -> int:
 	var power := int(combat_build.get("power", 0))
 	if power > 0:
 		return power
-	power = int(SessionStore.combat_build_state.get("power", 0))
+	power = int(SessionStore.combat_build_snapshot().get("power", 0))
 	if power > 0:
 		return power
-	return int(SessionStore.player.get("power", 0))
+	return int(SessionStore.player_snapshot().get("power", 0))
 
 static func _first_positive_int(text: String) -> int:
 	var digits := ""

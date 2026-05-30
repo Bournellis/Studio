@@ -116,15 +116,15 @@ static func render_session_status(host: Node) -> void:
 	if SessionStore.is_progression_lab_local_only() and SessionStore.has_account_state():
 		account = "Progression Lab local: %s | Nivel %s | Poder %s" % [
 			SessionStore.player_display_name(),
-			str(SessionStore.player.get("level", 1)),
-			str(SessionStore.player.get("power", 0)),
+			str(SessionStore.player_snapshot().get("level", 1)),
+			str(SessionStore.player_snapshot().get("power", 0)),
 		]
 	elif SessionStore.has_account_state():
 		account = "Conta %s: %s | Nivel %s | Poder %s" % [
 			SessionStore.auth_method,
 			SessionStore.player_display_name(),
-			str(SessionStore.player.get("level", 1)),
-			str(SessionStore.player.get("power", 0)),
+			str(SessionStore.player_snapshot().get("level", 1)),
+			str(SessionStore.player_snapshot().get("power", 0)),
 		]
 	elif SessionStore.has_valid_access_token():
 		account = "Conta: sessao %s criada; falta carregar/criar save." % SessionStore.auth_method

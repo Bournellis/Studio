@@ -1,14 +1,14 @@
 # DraxosMobile - Foundation Responsive Layout Contract
 
 - Status: `CONTRATO`
-- Last updated: `2026-05-28`
-- Stage: `FOUNDATION_AUDIT_ACTIVE`
+- Last updated: `2026-05-30`
+- Stage: `FOUNDATION_FINAL_POLISH_DELIVERED`
 
-This contract exists because Foundation Loop UX Pass 01 exposed a dangerous visual regression pattern: immersive screens could look acceptable in one viewport while overflowing or being clipped in Android/Web builds.
+This contract exists because Foundation Loop UX Pass 01 exposed a dangerous visual regression pattern: immersive screens could look acceptable in one viewport while overflowing or being clipped in Android/Web builds. It remains a live guardrail after Foundation Final Polish.
 
 ## Current Scope
 
-This contract covers the current Foundation Audit loop surfaces:
+This contract covers the current foundation loop surfaces:
 
 - Entry/internal tools
 - Refugio first screen

@@ -2,8 +2,8 @@
 
 DraxosMobile is the Godot/Supabase project for Android, PC executable and PC browser. It is an async PVP autobattler with Refugio/Base management, social systems and server-authoritative progression.
 
-**Status:** `P2_IMPLEMENTACAO - FIRST_SESSION_CLARITY_V1_APPROVED`
-**Baseline:** Track 00-15 integrated; Track 13 release safety and Track 14 agent ops baseline preserved; Track 16 is the latest technical package and has not been promoted as the current product focus. Its current behavior/potion/crafting state is summarized in `docs/behavior-potion-crafting-v1.md`.
+**Status:** `P2_IMPLEMENTACAO - FOUNDATION_FINAL_POLISH_DELIVERED`
+**Baseline:** Track 00-15 integrated; Track 13 release safety and Track 14 agent ops baseline preserved; Track 16 is the latest technical package and has not been promoted as the current product focus. Foundation Closeout, Lab Track 16 Alignment and Foundation Final Polish are the pre-tuning foundation baseline.
 
 ## Current Focus
 
@@ -15,7 +15,7 @@ The Foundation Loop Audit is documented in `docs/foundation-loop-audit.md`. Foun
 
 Social Basico Guilda v1, Visual Direction v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation Complete v1, Progression Clarity v1 and First Session Clarity v1 are published on the Internal Alpha channel. First Session Clarity v1 was manually approved on `2026-05-30`; Refugio, Preparacao and battle summary now explain level, power, battle XP, next milestones and the next first-session action using existing snapshots.
 
-First Session Clarity v1 keeps the same foundation and adds client-only guidance so the first session reads as Refugio -> collect -> evolve -> prepare -> battle -> reward -> return to base. The project remains active in P2; the next package should be chosen explicitly instead of treating the loop as frozen. The package is documented in `docs/first-session-clarity-v1.md`.
+First Session Clarity v1 keeps the same foundation and adds client-only guidance so the first session reads as Refugio -> collect -> evolve -> prepare -> battle -> reward -> return to base. Foundation Closeout and Final Polish now make account/save, ruleset publication, idempotent retry, admin auditability, shell budgets and local RLS/admin validation the gate before tuning. The next package should be chosen explicitly instead of treating the loop as frozen. The package is documented in `docs/first-session-clarity-v1.md`.
 
 Behavior And Potion Crafting v1 is implemented as technical baseline: Ossos inteiros, Po de Osso, Pocao de Vida, crafting inicial, one potion slot and simple spell/potion use preferences are documented in `docs/behavior-potion-crafting-v1.md`. Treat this as existing foundation, not as permission to expand tuning, economy, new potions or advanced behavior without a new package decision.
 
@@ -39,18 +39,18 @@ Do not start from old Track 04/08/10/15/16 notes. They are history or technical 
 
 ## Current Gate
 
-Before any new feature, numeric tuning, account/save migration, assets-final pass, battle presentation pass or social expansion:
+Before any new feature, numeric tuning, assets-final pass, battle presentation pass or social expansion:
 
 1. Read `docs/foundation-loop-audit.md`.
-2. Treat Foundation Loop UX Pass 01, Social Basico Guilda v1, Visual Direction v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation Complete v1, Progression Clarity v1 and First Session Clarity v1 as the accepted published baseline, then choose an explicit next package before expanding social, visuals, battle presentation or content systems.
+2. Treat Foundation Loop UX Pass 01, Social Basico Guilda v1, Visual Direction v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation Complete v1, Progression Clarity v1, First Session Clarity v1, Foundation Closeout, Lab Track 16 Alignment and Foundation Final Polish as the accepted baseline, then choose an explicit next package before expanding social, visuals, battle presentation, base builder, autobattler or content systems.
 3. Keep release publishing in `Mode Plan` or `Mode Package` unless the user explicitly approves remote mutation.
-4. Run the real Android / Windows / Web walkthrough in `docs/track-13-manual-walkthrough-gate.md` before any remote publication.
+4. Run `validate_foundation.ps1 -Profile Full -RequireClean` with local Supabase/Edge active before tuning work starts, and run the real Android / Windows / Web walkthrough in `docs/track-13-manual-walkthrough-gate.md` before any remote publication.
 
 ## Safe Validation
 
 ```powershell
 cd <WORKTREE>\Projetos\draxos-mobile
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Full
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Full -RequireClean
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_foundation_loop.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/client -gexit
@@ -86,7 +86,7 @@ git status --short
 
 - `../_conceitos/mobile-universe/`: archive only.
 - Remote Supabase/Cloudflare publication: opt-in only.
-- Account/save migration from `players.save_type` to `account_profiles/game_saves`: separate future package.
+- `players.save_type` as new account/save authority: blocked. `account_profiles/game_saves` are the current foundation authority; `players.save_type` is compatibility only.
 - Tuning numbers, weapons, spells, Battle Pass, economy and final visual identity: blocked until an explicit package decision after the loop UX pass.
 - Secrets: never in client, exports, portal, manifest or docs.
 

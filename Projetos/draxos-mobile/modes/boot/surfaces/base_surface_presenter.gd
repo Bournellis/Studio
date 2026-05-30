@@ -42,7 +42,7 @@ static func render_state(host: Node, collected: Dictionary = {}) -> void:
 	var container := _base_state_container(host)
 	if container != null:
 		_clear_node_children(container)
-	var base := SessionStore.base_state
+	var base := SessionStore.base_snapshot()
 	if base.is_empty():
 		timeline.text = _empty_refuge_timeline_text()
 		if container != null:
@@ -52,7 +52,7 @@ static func render_state(host: Node, collected: Dictionary = {}) -> void:
 				container.add_child(_base_info_panel(host, "Rotina do Refugio", _empty_refuge_body_text()))
 		return
 
-	var resources := SessionStore.resources
+	var resources := SessionStore.resources_snapshot()
 	var lines := PackedStringArray()
 	if SessionStore.is_progression_lab_local_only():
 		lines.append("Refugio Progression Lab local (somente leitura)")
@@ -112,7 +112,7 @@ static func can_upgrade_structure(_host: Node, structure_id: String) -> bool:
 		return false
 	if not SessionStore.has_valid_access_token() or not SessionStore.has_account_state():
 		return false
-	var base := SessionStore.base_state
+	var base := SessionStore.base_snapshot()
 	var structures := _as_array(base.get("structures", []))
 	var structure := _base_structure_by_id(structures, structure_id)
 	return bool(structure.get("can_upgrade", false))
@@ -186,7 +186,7 @@ static func _crafting_panel(host: Node) -> Control:
 	panel.add_child(box)
 	box.add_child(_base_label(host, "Crafting", "text_primary", 18))
 
-	var crafting := SessionStore.crafting_state
+	var crafting := SessionStore.crafting_snapshot()
 	if crafting.is_empty():
 		box.add_child(_base_label(host, "Triture Ossos em Po de Osso e crie Pocoes de Vida.", "text_secondary"))
 		box.add_child(_embedded_action_button(host, "Sincronizar Crafting", AppShellActionContractScript.ACTION_SHOW_CRAFTING))
@@ -195,8 +195,8 @@ static func _crafting_panel(host: Node) -> Control:
 	var inventory := _as_array(crafting.get("inventory", []))
 	var stock := _inventory_quantity(inventory, AppShellActionContractScript.ITEM_HEALTH_POTION)
 	box.add_child(_base_label(host, "Ossos %s | Po de Osso %s | Pocao de Vida %d" % [
-		_format_number(float(SessionStore.resources.get("ossos", 0))),
-		_format_number(float(SessionStore.resources.get("po_osso", 0))),
+		_format_number(float(SessionStore.resources_snapshot().get("ossos", 0))),
+		_format_number(float(SessionStore.resources_snapshot().get("po_osso", 0))),
 		stock,
 	], "text_secondary"))
 	box.add_child(_base_label(host, "Triturar 1 Osso cria 1 Po de Osso. Criar Pocao de Vida custa 50 Po de Osso.", "text_secondary"))
@@ -266,7 +266,7 @@ static func _base_summary_panel(host: Node, base: Dictionary, collected: Diction
 	box.add_theme_constant_override("separation", 6)
 	panel.add_child(box)
 	box.add_child(_base_label(host, "Coleta e fila", "text_primary", 17))
-	box.add_child(_base_label(host, "Recursos: %s" % _format_short_resources(SessionStore.resources, 3), "text_secondary"))
+	box.add_child(_base_label(host, "Recursos: %s" % _format_short_resources(SessionStore.resources_snapshot(), 3), "text_secondary"))
 	var active_jobs := _active_base_jobs(_as_array(base.get("jobs", [])))
 	box.add_child(_base_label(host, "Fila de construcao: %d/%d" % [
 		active_jobs.size(),

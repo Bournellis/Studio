@@ -127,7 +127,7 @@ static func default_social_guild_text(host: Node) -> String:
 	var last_name := str(host.get("_last_social_guild_name")).strip_edges()
 	if last_name != "":
 		return last_name
-	var guild := _as_dictionary(SessionStore.social_state.get("guild", {}))
+	var guild := _as_dictionary(SessionStore.social_snapshot().get("guild", {}))
 	if not guild.is_empty():
 		return str(guild.get("name", "")).strip_edges()
 	return str(host.call("_default_guild_name"))

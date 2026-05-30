@@ -325,7 +325,7 @@ static func summary_data(battle_log: Dictionary, rewards: Dictionary, current_re
 		duration = 0.0
 	var ranking_text := _ranking_text(result)
 	if ranking_text == "":
-		var competition_state := _as_dictionary(SessionStore.competition_state)
+		var competition_state := _as_dictionary(SessionStore.competition_snapshot())
 		ranking_text = _ranking_text(_as_dictionary(competition_state.get("last_battle", {})))
 	return {
 		"winner": winner,
@@ -340,7 +340,7 @@ static func summary_data(battle_log: Dictionary, rewards: Dictionary, current_re
 		"reward_text": _reward_text(rewards),
 		"resources_text": _resources_text(current_resources),
 		"ranking_text": ranking_text,
-		"progress_text": ProgressionClarityPresenterScript.battle_summary_text(rewards, SessionStore.combat_build_state),
+		"progress_text": ProgressionClarityPresenterScript.battle_summary_text(rewards, SessionStore.combat_build_snapshot()),
 		"next_step_text": _summary_next_step_text(rewards),
 	}
 

@@ -1,11 +1,13 @@
 # Track 17 - Foundation Expansion Readiness
 
-- Status: `FOUNDATION_EXPANSION_READINESS_ACTIVE`
+- Status: `FOUNDATION_FINAL_POLISH_DELIVERED`
 - Started: `2026-05-30`
-- Branch: `codex/draxos-mobile/foundation-expansion-readiness`
+- Branch: `codex/draxos-mobile/foundation-final-polish`
+- Canonical commit: validated local HEAD of `codex/draxos-mobile/foundation-final-polish`
 - Goal: prepare DraxosMobile for production future, parallel expansion and
   multiple agents before base builder, autobattler, social expansion or a real
-  minigame.
+  minigame. Foundation Final Polish is the local canonical closeout branch after
+  the final Full gate PASS.
 
 ## Decisions
 
@@ -29,7 +31,7 @@
 | Portable Domain Services   | Base rules/projection, saved battle log projection, battle combatant mapping, progression/power build projection and economy/crafting source-sink projections extracted to mirrored `_shared` modules with Deno tests; adapters keep HTTP/Supabase/RPC ownership |
 | Ruleset/Content            | `foundation_ruleset_v0`, deterministic generator, server/supabase mirrors and Deno test                                                                                                                                                                          |
 | Client Shell               | `DraxosOperationState`, `DraxosAppShellActionRouter`, GUT shell contract test                                                                                                                                                                                    |
-| QA/Golden Tests            | structural checker integrated into `validate_foundation.ps1`; schema/ruleset/client tests; local Supabase transactional RPC live proof; local Edge RPC adapter smoke                                                                                             |
+| QA/Golden Tests            | structural checker integrated into `validate_foundation.ps1`; schema/ruleset/client tests; local Supabase transactional RPC live proof; local Edge RPC adapter smoke; local admin/RLS live smoke                                                                    |
 | Release/Ops/Admin          | release checklist/admin contract updated for audited operations and no-secret guardrails                                                                                                                                                                         |
 
 ## Implemented Files
@@ -82,6 +84,7 @@
 - `server/tests/remaining_transactional_domain_enforcement_schema_test.ts`
 - `server/tests/transactional_rpc_live_test.ts`
 - `server/tests/transactional_edge_rpc_smoke.ts`
+- `server/tests/foundation_admin_rls_live_smoke.ts`
 - `server/tests/base_domain_test.ts`
 - `server/tests/battle_log_projection_test.ts`
 - `server/tests/battle_combatants_test.ts`
@@ -117,6 +120,16 @@
 - Local Edge Function HTTP smoke exists in
   `server/tests/transactional_edge_rpc_smoke.ts`; it passed against local
   `supabase functions serve` on `2026-05-30`.
+- Local admin/RLS smoke exists in
+  `server/tests/foundation_admin_rls_live_smoke.ts` and is now part of the Full
+  gate: it verifies RLS for account/save/ruleset/admin audit tables, denies
+  admin RPCs to `anon/authenticated`, and proves `service_role` lookup,
+  reconciliation, diagnostics, audited/idempotent resource adjustment and
+  account flagging.
+- Foundation Final Polish keeps `boot.gd` and `hub_surface_presenter.gd` as
+  guarded facades, moves touched presenters to read-only `SessionStore` slices
+  and records `codex/draxos-mobile/foundation-final-polish` as the canonical
+  local base for new agents until a merge/push decision exists.
 - Migration is additive and not pushed remotely in this package.
 - No new gameplay, balance, social expansion or minigame is included.
 
@@ -135,15 +148,17 @@ npx -y deno test --allow-read server/tests/foundation_ruleset_test.ts
 npx -y deno test --allow-read server/tests/lab_heuristics_contract_test.ts
 deno run --allow-net --allow-env server/tests/transactional_rpc_live_test.ts
 deno run --allow-net --allow-env server/tests/transactional_edge_rpc_smoke.ts
+deno run --allow-net --allow-env server/tests/foundation_admin_rls_live_smoke.ts
 npx -y deno task --cwd server/functions check
 npx -y deno task --cwd supabase/functions check
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_foundation_expansion_readiness.ps1 -ProjectDir .
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Quick
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Quick -IncludeLocalSupabaseRpc
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Quick -IncludeLocalSupabaseRpc -IncludeLocalEdgeRpc
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Quick -IncludeLocalSupabaseRpc -IncludeLocalEdgeRpc -IncludeLocalAdminRls
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://addons/gut/gut_cmdln.gd -gtest=res://tests/client/test_foundation_shell_contracts.gd -gtest=res://tests/client/test_battle_lab_dev.gd -gtest=res://tests/client/test_progression_lab_dev.gd -gexit
 git diff --check
 ```
 
-Full release/client validation remains `validate_foundation.ps1 -Profile Full`
-before any publication or merge gate.
+Full release/client validation remains
+`validate_foundation.ps1 -Profile Full -RequireClean` before tuning,
+publication or merge gate.

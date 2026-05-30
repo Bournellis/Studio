@@ -165,6 +165,7 @@ $requiredFiles = @(
   'server\tests\remaining_transactional_domain_enforcement_schema_test.ts',
   'server\tests\transactional_rpc_live_test.ts',
   'server\tests\transactional_edge_rpc_smoke.ts',
+  'server\tests\foundation_admin_rls_live_smoke.ts',
   'server\tests\foundation_contracts_test.ts',
   'server\tests\lab_heuristics_contract_test.ts',
   'server\tests\integer_bones_contract_test.ts',
@@ -273,6 +274,11 @@ Test-FileContains 'server\tests\transactional_rpc_live_test.ts' 'proveGuildCreat
 Test-FileContains 'server\tests\transactional_edge_rpc_smoke.ts' 'proveBattleRequestAdapter'
 Test-FileContains 'server\tests\transactional_edge_rpc_smoke.ts' 'proveCraftingAdapters'
 Test-FileContains 'server\tests\transactional_edge_rpc_smoke.ts' 'assertCompletedIdempotency'
+Test-FileContains 'server\tests\foundation_admin_rls_live_smoke.ts' 'proveServiceRoleAdminOps'
+Test-FileContains 'server\tests\foundation_admin_rls_live_smoke.ts' 'admin_adjust_resource_balance_v1'
+Test-FileContains 'server\tests\foundation_admin_rls_live_smoke.ts' 'admin_audit_log'
+Test-FileContains 'tools\validate_foundation.ps1' 'IncludeLocalAdminRls'
+Test-FileContains 'tools\validate_foundation.ps1' 'foundation_admin_rls_live_smoke.ts'
 Test-FileContains 'server\functions\_shared\battle_log_projection.ts' 'battleLogFromRow'
 Test-FileContains 'server\functions\_shared\battle_log_projection.ts' 'historyEntryFromRow'
 Test-FileContains 'server\functions\_shared\battle_combatants.ts' 'playerCombatantFromState'

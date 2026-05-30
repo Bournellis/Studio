@@ -1,6 +1,6 @@
 # DraxosMobile - Product Vision
 
-- Ultima atualizacao: `2026-05-28`
+- Ultima atualizacao: `2026-05-30`
 - Status: `LOCAL_PRODUCT_VISION - fonte viva do produto DraxosMobile`
 - Escopo: direcao de longo prazo, limites de produto, plataforma, economia, social, live ops, backend e monetizacao.
 
@@ -16,9 +16,11 @@ O jogador nao e o heroi. O jogador e um Draxos em ascensao.
 
 ## Situacao Atual
 
-Etapa atual: `FOUNDATION_AUDIT_ACTIVE`.
+Etapa atual: `FOUNDATION_FINAL_POLISH_DELIVERED`.
 
-O projeto ja tem uma base implementada com substancia suficiente para nao parecer um app vazio. A prioridade agora nao e adicionar conteudo, balancear combate ou consolidar tema final. A prioridade e auditar e refinar a experiencia do loop interno pos-login:
+O projeto ja tem uma base implementada com substancia suficiente para nao parecer um app vazio. Foundation Closeout e Lab Track 16 Alignment anteciparam a fundacao de producao futura: `account_profiles/game_saves`, registry imutavel de ruleset, idempotencia com `request_hash`, admin minimo auditavel, shell/retry client e labs alinhados ao estado de pocoes/comportamento/crafting. Foundation Final Polish fecha essa base como gate local antes de tuning.
+
+A prioridade agora nao e adicionar conteudo, balancear combate ou consolidar tema final. A proxima etapa deve ser escolhida explicitamente entre base builder tuning, autobattler tuning, social expandido ou contrato/shell de minigame, condicionada ao Full gate final verde. O loop interno pos-login aceito continua:
 
 `Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
 

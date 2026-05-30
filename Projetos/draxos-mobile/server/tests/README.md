@@ -121,6 +121,7 @@ npx -y deno run --allow-net --allow-env server/tests/build_equip_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/runtime_config_smoke.ts
 deno run --allow-net --allow-env server/tests/transactional_rpc_live_test.ts
 deno run --allow-net --allow-env server/tests/transactional_edge_rpc_smoke.ts
+deno run --allow-net --allow-env server/tests/foundation_admin_rls_live_smoke.ts
 ```
 
 O smoke cria uma sessao anonima, cria conta guest, solicita batalha `MVP_ONLY`,
@@ -212,6 +213,13 @@ chama `base`, `battle`, `build`, `crafting`, `monetization` e `social` via
 `build/potion-behavior`, `social/friends/add`, `social/chat/send`, verifica
 `UNSUPPORTED_API_VERSION` e confirma no Postgres local que cada mutation criou
 `idempotency_keys` `completed` com `request_hash` calculado pelo adapter.
+
+O smoke `foundation_admin_rls_live_smoke.ts` valida o hardening final de
+Foundation em stack local real: RLS de `account_profiles`, `game_saves`,
+`ruleset_registry` e `admin_audit_log`; bloqueio das RPCs admin para
+`anon/authenticated`; execucao via `service_role` de lookup, reconciliacao,
+diagnostico, ajuste auditavel/idempotente e flag de conta. Ele recusa URLs
+remotas e exige Supabase local + Edge Runtime ativos.
 
 O smoke `release_artifacts_remote_smoke.ts` valida somente leitura contra o
 remoto publicado: manifest, hashes Android/PC no payload, alcance do APK/ZIP via

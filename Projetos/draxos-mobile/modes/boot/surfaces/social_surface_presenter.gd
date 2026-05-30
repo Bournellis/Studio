@@ -56,7 +56,7 @@ static func render_state(host: Node) -> void:
 	var social_state_container := host.get("_social_state_container") as VBoxContainer
 	if social_state_container != null:
 		host.call("_clear_node_children", social_state_container)
-	var social := _as_dictionary(SessionStore.social_state)
+	var social := _as_dictionary(SessionStore.social_snapshot())
 	if social.is_empty():
 		timeline_label.text = "\n".join(PackedStringArray([
 			"Meu username: %s" % _fallback_username_text(),

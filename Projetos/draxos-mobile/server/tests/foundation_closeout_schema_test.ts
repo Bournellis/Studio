@@ -145,7 +145,7 @@ Deno.test("foundation closeout admin RPCs are service-role only", async () => {
     assertRegex(
       migration,
       new RegExp(
-        `revoke all on function public\\.${functionName}\\([^;]+\\) from public;`,
+        `revoke all on function public\\.${functionName}\\([^;]+\\) from public, anon, authenticated;`,
         "s",
       ),
       `${functionName} should be revoked from public`,
@@ -188,7 +188,7 @@ Deno.test("foundation closeout promotes remaining build and social mutations", a
     assertRegex(
       migration,
       new RegExp(
-        `revoke all on function public\\.${functionName}\\([^;]+\\) from public;`,
+        `revoke all on function public\\.${functionName}\\([^;]+\\) from public, anon, authenticated;`,
         "s",
       ),
       `${functionName} should be revoked from public`,

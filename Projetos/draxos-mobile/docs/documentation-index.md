@@ -32,7 +32,7 @@
 | Document | Category | Role |
 |---|---|---|
 | `docs/product-vision.md` | `VIVO` | Local long-term product canon until promoted to shared canon. |
-| `docs/foundation-app-v0-audit.md` | `VIVO` | Current Foundation Audit compass: real foundation, current mock, live-product gaps and post-login loop focus. |
+| `docs/foundation-app-v0-audit.md` | `HISTORICO` | Closed audit compass: real foundation, current mock, live-product gaps and post-login loop focus preserved as context. |
 | `docs/foundation-expansion-readiness.md` | `RUNBOOK` | Active expansion-readiness gate: lanes, ownership, contract-first requirements, account/save, ruleset and admin checks. |
 | `docs/foundation-loop-audit.md` | `VIVO` | Executed audit of the current post-login loop ergonomics; records Foundation Loop UX Pass 01 as the accepted Internal Alpha UX baseline. |
 | `docs/foundation-responsive-layout-contract.md` | `CONTRATO` | Responsive guardrail for Entry Labs, Refugio and Battle safe frames across Android portrait and Web/Desktop viewports. |
@@ -103,7 +103,7 @@
 | `implementation/tracks/track-14-agent-ops-foundation/` | `HISTORICO` | Agent operating foundation and documentation index baseline. |
 | `implementation/tracks/track-15-mobile-ux-overhaul/` | `HISTORICO` | Prior Android portrait UX package; not the active stage. |
 | `implementation/tracks/track-16-behavior-crafting/` | `HISTORICO` | Source track for behavior/crafting; use `docs/behavior-potion-crafting-v1.md` for current state. |
-| `implementation/tracks/track-17-foundation-expansion-readiness/` | `VIVO` | Active foundation package for future parallel expansion, Foundation Closeout and production readiness. |
+| `implementation/tracks/track-17-foundation-expansion-readiness/` | `VIVO` | Delivered foundation package for future parallel expansion, Foundation Closeout, Foundation Final Polish and production readiness. |
 
 ## Design Archive
 
@@ -117,9 +117,9 @@
 
 - A live doc must not tell agents to start from Track 04, Track 08, Track 10, Track 14, Track 15 or Track 16 as the current stage.
 - A live doc must treat `implementation/current-status.md` as the active stage/status source after the user chooses the next package.
-- A live doc must not direct agents to expand balance, weapons, spells, Battle Pass, economy, final visual identity or battle presentation before Foundation Audit.
+- A live doc must not direct agents to expand balance, weapons, spells, Battle Pass, economy, final visual identity or battle presentation before Foundation Final Polish has a green Full gate and the user explicitly selects the next package.
 - Foundation Audit must prioritize the post-login loop: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again.
-- Foundation Expansion Readiness/Foundation Closeout is now the active pre-expansion gate before base builder, autobattler, expanded social or a real minigame.
+- Foundation Expansion Readiness/Foundation Closeout/Foundation Final Polish is now the delivered pre-expansion gate before base builder, autobattler, expanded social or a real minigame.
 - New backend/data/content features must use `account_profiles` + `game_saves`, `foundation_ruleset_v0`/registry, idempotency v1 and explicit contracts.
 - Foundation Loop UX Pass 01 was manually accepted on Android/Windows/Web on `2026-05-29` and is the current baseline before the next package.
 - Visual/layout changes must respect `docs/foundation-responsive-layout-contract.md` and pass `tools/smoke_responsive_layout.gd` before publication.
