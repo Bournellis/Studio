@@ -1,4 +1,5 @@
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import { FOUNDATION_RULESET } from "../_shared/foundation_ruleset.ts";
 import {
   type BattleConsumableUse,
   type BehaviorConfig,
@@ -100,6 +101,8 @@ interface SpellBehaviorRow {
 interface BattleRow {
   id: string;
   schema_version: string;
+  ruleset_id?: string | null;
+  ruleset_version?: number | string | null;
   seed: string;
   defender_id: string;
   defender_is_bot: boolean;
@@ -131,7 +134,8 @@ interface RankingRow {
 
 type BattleOutcome = "win" | "loss" | "draw";
 
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const DEFAULT_FIRST_SLICE_BOT_ID = "bot_effect_trainer_01";
 const BOT_ID_PATTERN = /^[a-z0-9_]+$/;
 const ARENA_SCORING_MODEL = "alpha_v0_power_adjusted";
@@ -150,29 +154,53 @@ Deno.serve(async (request: Request) => {
     }
 
     if (route === "request" && request.method !== "POST") {
-      return errorResponse("METHOD_NOT_ALLOWED", "Use POST /battle/request.", 405);
+      return errorResponse(
+        "METHOD_NOT_ALLOWED",
+        "Use POST /battle/request.",
+        405,
+      );
     }
 
     if (route === "latest" && request.method !== "GET") {
-      return errorResponse("METHOD_NOT_ALLOWED", "Use GET /battle/latest.", 405);
+      return errorResponse(
+        "METHOD_NOT_ALLOWED",
+        "Use GET /battle/latest.",
+        405,
+      );
     }
 
     if (route === "history" && request.method !== "GET") {
-      return errorResponse("METHOD_NOT_ALLOWED", "Use GET /battle/history.", 405);
+      return errorResponse(
+        "METHOD_NOT_ALLOWED",
+        "Use GET /battle/history.",
+        405,
+      );
     }
 
     if (route === "replay" && request.method !== "GET") {
-      return errorResponse("METHOD_NOT_ALLOWED", "Use GET /battle/replay?battle_id=...", 405);
+      return errorResponse(
+        "METHOD_NOT_ALLOWED",
+        "Use GET /battle/replay?battle_id=...",
+        405,
+      );
     }
 
     const auth = decodeAuthContext(request);
     if (auth.error !== null) {
-      return errorResponse(auth.error.code, auth.error.message, auth.error.status);
+      return errorResponse(
+        auth.error.code,
+        auth.error.message,
+        auth.error.status,
+      );
     }
 
     const config = loadConfig();
     if (config.error !== null) {
-      return errorResponse(config.error.code, config.error.message, config.error.status);
+      return errorResponse(
+        config.error.code,
+        config.error.message,
+        config.error.status,
+      );
     }
 
     if (route === "request") {
@@ -190,7 +218,11 @@ Deno.serve(async (request: Request) => {
     return await handleReplay(request, auth.value, config.value);
   } catch (error) {
     console.error(error);
-    return errorResponse("INTERNAL_ERROR", "Unexpected battle service error.", 500);
+    return errorResponse(
+      "INTERNAL_ERROR",
+      "Unexpected battle service error.",
+      500,
+    );
   }
 });
 
@@ -201,14 +233,22 @@ async function handleRequest(
 ): Promise<Response> {
   const body = await readJsonObject(request);
   if (body === null) {
-    return errorResponse("INVALID_JSON", "Request body must be a JSON object.", 400);
+    return errorResponse(
+      "INVALID_JSON",
+      "Request body must be a JSON object.",
+      400,
+    );
   }
 
   const requestId = stringField(body, "request_id");
   const mode = battleMode(stringField(body, "mode") || "MVP_ONLY");
 
   if (!UUID_PATTERN.test(requestId)) {
-    return errorResponse("INVALID_REQUEST_ID", "request_id must be a UUID.", 400);
+    return errorResponse(
+      "INVALID_REQUEST_ID",
+      "request_id must be a UUID.",
+      400,
+    );
   }
 
   if (mode === null) {
@@ -223,7 +263,8 @@ async function handleRequest(
     return await handleMvpRequest(auth, config, requestId, mode);
   }
 
-  const opponentBotId = stringField(body, "opponent_bot_id") || DEFAULT_FIRST_SLICE_BOT_ID;
+  const opponentBotId = stringField(body, "opponent_bot_id") ||
+    DEFAULT_FIRST_SLICE_BOT_ID;
   if (!BOT_ID_PATTERN.test(opponentBotId)) {
     return errorResponse("INVALID_BOT_ID", "opponent_bot_id is invalid.", 400);
   }
@@ -279,7 +320,11 @@ async function handleFirstSliceRequest(
     { method: "GET" },
   );
   if (existing.error !== null) {
-    return errorResponse("STATE_READ_FAILED", "Unable to check battle idempotency.", 500);
+    return errorResponse(
+      "STATE_READ_FAILED",
+      "Unable to check battle idempotency.",
+      500,
+    );
   }
   const existingPayload = existing.value[0]?.response_payload ?? null;
   if (existingPayload !== null) {
@@ -294,11 +339,19 @@ async function handleFirstSliceRequest(
     { method: "GET" },
   );
   if (botResult.error !== null) {
-    return errorResponse("STATE_READ_FAILED", "Unable to load first-slice bot.", 500);
+    return errorResponse(
+      "STATE_READ_FAILED",
+      "Unable to load first-slice bot.",
+      500,
+    );
   }
   const bot = botResult.value[0] ?? null;
   if (bot === null || !isObject(bot.build_data)) {
-    return errorResponse("SIMULATION_FAILED", "First-slice bot build is unavailable.", 500);
+    return errorResponse(
+      "SIMULATION_FAILED",
+      "First-slice bot build is unavailable.",
+      500,
+    );
   }
 
   const battleId = crypto.randomUUID();
@@ -326,6 +379,8 @@ async function handleFirstSliceRequest(
       reward_payload: simulation.reward,
       reward_applied: true,
       request_id: requestId,
+      ruleset_id: FOUNDATION_RULESET.ruleset_id,
+      ruleset_version: FOUNDATION_RULESET.ruleset_version,
     }),
   });
   if (insertBattle.error !== null) {
@@ -333,9 +388,18 @@ async function handleFirstSliceRequest(
     return errorResponse(mapped.code, mapped.message, mapped.status);
   }
 
-  const applyReward = await applyBattleReward(config, playerState.value, requestId, reward);
+  const applyReward = await applyBattleReward(
+    config,
+    playerState.value,
+    requestId,
+    reward,
+  );
   if (applyReward !== null) {
-    return errorResponse(applyReward.code, applyReward.message, applyReward.status);
+    return errorResponse(
+      applyReward.code,
+      applyReward.message,
+      applyReward.status,
+    );
   }
 
   const applyConsumables = await applyBattleConsumables(
@@ -345,7 +409,11 @@ async function handleFirstSliceRequest(
     simulation.consumables.used,
   );
   if (applyConsumables !== null) {
-    return errorResponse(applyConsumables.code, applyConsumables.message, applyConsumables.status);
+    return errorResponse(
+      applyConsumables.code,
+      applyConsumables.message,
+      applyConsumables.status,
+    );
   }
 
   const competition = await applyArenaResult(
@@ -366,43 +434,63 @@ async function handleFirstSliceRequest(
   const responsePayload = {
     ok: true,
     battle_log: simulation.battleLog,
+    ruleset: rulesetMetadata(),
     rewards: simulation.reward,
     consumables: simulation.consumables,
     competition: competition.value,
   };
-  const insertIdempotency = await restRequest<unknown>(config, "idempotency_keys", {
-    method: "POST",
-    headers: { prefer: "return=minimal" },
-    body: JSON.stringify({
-      player_id: playerState.value.player.id,
-      endpoint: "battle/request",
-      request_id: requestId,
-      response_payload: responsePayload,
-    }),
-  });
+  const insertIdempotency = await restRequest<unknown>(
+    config,
+    "idempotency_keys",
+    {
+      method: "POST",
+      headers: { prefer: "return=minimal" },
+      body: JSON.stringify({
+        player_id: playerState.value.player.id,
+        endpoint: "battle/request",
+        request_id: requestId,
+        response_payload: responsePayload,
+      }),
+    },
+  );
   if (insertIdempotency.error !== null) {
-    return errorResponse("SIMULATION_FAILED", "Unable to persist battle idempotency.", 500);
+    return errorResponse(
+      "SIMULATION_FAILED",
+      "Unable to persist battle idempotency.",
+      500,
+    );
   }
 
   return jsonResponse(responsePayload);
 }
 
-async function handleLatest(auth: AuthContext, config: EdgeConfig): Promise<Response> {
+async function handleLatest(
+  auth: AuthContext,
+  config: EdgeConfig,
+): Promise<Response> {
   const player = await loadPlayerForRead(auth, config);
   if (player.error !== null) {
-    return errorResponse(player.error.code, player.error.message, player.error.status);
+    return errorResponse(
+      player.error.code,
+      player.error.message,
+      player.error.status,
+    );
   }
 
   const battleResult = await restRequest<BattleRow[]>(
     config,
     `battles?attacker_id=eq.${
       encodeURIComponent(player.value.id)
-    }&select=id,schema_version,seed,defender_id,defender_is_bot,result,event_log,reward_payload,created_at&order=created_at.desc&limit=1`,
+    }&select=id,schema_version,ruleset_id,ruleset_version,seed,defender_id,defender_is_bot,result,event_log,reward_payload,created_at&order=created_at.desc&limit=1`,
     { method: "GET" },
   );
 
   if (battleResult.error !== null) {
-    return errorResponse("BATTLE_READ_FAILED", "Unable to load latest battle.", 500);
+    return errorResponse(
+      "BATTLE_READ_FAILED",
+      "Unable to load latest battle.",
+      500,
+    );
   }
 
   const battle = battleResult.value[0] ?? null;
@@ -417,6 +505,7 @@ async function handleLatest(auth: AuthContext, config: EdgeConfig): Promise<Resp
   return jsonResponse({
     ok: true,
     battle_log: battleLogFromRow(player.value, battle),
+    ruleset: rulesetMetadataFromRow(battle),
     rewards: battle.reward_payload,
   });
 }
@@ -428,7 +517,11 @@ async function handleHistory(
 ): Promise<Response> {
   const player = await loadPlayerForRead(auth, config);
   if (player.error !== null) {
-    return errorResponse(player.error.code, player.error.message, player.error.status);
+    return errorResponse(
+      player.error.code,
+      player.error.message,
+      player.error.status,
+    );
   }
 
   const limit = historyLimit(new URL(request.url));
@@ -436,18 +529,23 @@ async function handleHistory(
     config,
     `battles?attacker_id=eq.${
       encodeURIComponent(player.value.id)
-    }&select=id,schema_version,seed,defender_id,defender_is_bot,result,event_log,reward_payload,created_at&order=created_at.desc&limit=${limit}`,
+    }&select=id,schema_version,ruleset_id,ruleset_version,seed,defender_id,defender_is_bot,result,event_log,reward_payload,created_at&order=created_at.desc&limit=${limit}`,
     { method: "GET" },
   );
 
   if (battleResult.error !== null) {
-    return errorResponse("BATTLE_HISTORY_READ_FAILED", "Unable to load battle history.", 500);
+    return errorResponse(
+      "BATTLE_HISTORY_READ_FAILED",
+      "Unable to load battle history.",
+      500,
+    );
   }
 
   return jsonResponse({
     ok: true,
     schema_version: "battle_history_v1",
     save_type: player.value.save_type ?? auth.saveType,
+    ruleset: rulesetMetadata(),
     history: battleResult.value.map((battle) => historyEntryFromRow(battle)),
   });
 }
@@ -457,36 +555,50 @@ async function handleReplay(
   auth: AuthContext,
   config: EdgeConfig,
 ): Promise<Response> {
-  const battleId = new URL(request.url).searchParams.get("battle_id")?.trim() ?? "";
+  const battleId = new URL(request.url).searchParams.get("battle_id")?.trim() ??
+    "";
   if (!UUID_PATTERN.test(battleId)) {
     return errorResponse("INVALID_BATTLE_ID", "battle_id must be a UUID.", 400);
   }
 
   const player = await loadPlayerForRead(auth, config);
   if (player.error !== null) {
-    return errorResponse(player.error.code, player.error.message, player.error.status);
+    return errorResponse(
+      player.error.code,
+      player.error.message,
+      player.error.status,
+    );
   }
 
   const battleResult = await restRequest<BattleRow[]>(
     config,
     `battles?attacker_id=eq.${encodeURIComponent(player.value.id)}&id=eq.${
       encodeURIComponent(battleId)
-    }&select=id,schema_version,seed,defender_id,defender_is_bot,result,event_log,reward_payload,created_at&limit=1`,
+    }&select=id,schema_version,ruleset_id,ruleset_version,seed,defender_id,defender_is_bot,result,event_log,reward_payload,created_at&limit=1`,
     { method: "GET" },
   );
 
   if (battleResult.error !== null) {
-    return errorResponse("BATTLE_REPLAY_READ_FAILED", "Unable to load battle replay.", 500);
+    return errorResponse(
+      "BATTLE_REPLAY_READ_FAILED",
+      "Unable to load battle replay.",
+      500,
+    );
   }
 
   const battle = battleResult.value[0] ?? null;
   if (battle === null) {
-    return errorResponse("BATTLE_NOT_FOUND", "Battle was not found for the active save.", 404);
+    return errorResponse(
+      "BATTLE_NOT_FOUND",
+      "Battle was not found for the active save.",
+      404,
+    );
   }
 
   return jsonResponse({
     ok: true,
     battle_log: battleLogFromRow(player.value, battle),
+    ruleset: rulesetMetadataFromRow(battle),
     rewards: battle.reward_payload,
     replay: {
       battle_id: battle.id,
@@ -500,7 +612,9 @@ async function handleReplay(
 async function loadPlayerForRead(
   auth: AuthContext,
   config: EdgeConfig,
-): Promise<{ value: PlayerRow; error: null } | { value: null; error: RestError }> {
+): Promise<
+  { value: PlayerRow; error: null } | { value: null; error: RestError }
+> {
   const playerResult = await restRequest<PlayerRow[]>(
     config,
     `players?auth_user_id=eq.${encodeURIComponent(auth.userId)}&${
@@ -528,14 +642,22 @@ async function loadPlayerForRead(
   return { value: player, error: null };
 }
 
-function battleLogFromRow(player: PlayerRow, battle: BattleRow): Record<string, unknown> {
-  const rewardPayload = isObject(battle.reward_payload) ? battle.reward_payload : {};
+function battleLogFromRow(
+  player: PlayerRow,
+  battle: BattleRow,
+): Record<string, unknown> {
+  const rewardPayload = isObject(battle.reward_payload)
+    ? battle.reward_payload
+    : {};
   const events = Array.isArray(battle.event_log) ? battle.event_log : [];
   const rewardType = stringValue(rewardPayload.type, "MVP_ONLY");
-  const mode = rewardType === "FIRST_SLICE_SIM" ? "FIRST_SLICE_SIM" : "MVP_ONLY";
+  const mode = rewardType === "FIRST_SLICE_SIM"
+    ? "FIRST_SLICE_SIM"
+    : "MVP_ONLY";
 
   return {
     schema_version: battle.schema_version,
+    ruleset: rulesetMetadataFromRow(battle),
     battle_id: battle.id,
     seed: battle.seed,
     mode,
@@ -550,15 +672,20 @@ function battleLogFromRow(player: PlayerRow, battle: BattleRow): Record<string, 
 }
 
 function historyEntryFromRow(battle: BattleRow): Record<string, unknown> {
-  const rewardPayload = isObject(battle.reward_payload) ? battle.reward_payload : {};
+  const rewardPayload = isObject(battle.reward_payload)
+    ? battle.reward_payload
+    : {};
   const events = Array.isArray(battle.event_log) ? battle.event_log : [];
   const rewardType = stringValue(rewardPayload.type, "MVP_ONLY");
-  const mode = rewardType === "FIRST_SLICE_SIM" ? "FIRST_SLICE_SIM" : "MVP_ONLY";
+  const mode = rewardType === "FIRST_SLICE_SIM"
+    ? "FIRST_SLICE_SIM"
+    : "MVP_ONLY";
 
   return {
     battle_id: battle.id,
     created_at: battle.created_at ?? null,
     schema_version: battle.schema_version,
+    ruleset: rulesetMetadataFromRow(battle),
     mode,
     duration: battleDuration(events),
     event_count: events.length,
@@ -566,26 +693,58 @@ function historyEntryFromRow(battle: BattleRow): Record<string, unknown> {
     result: battle.result,
     rewards: {
       type: rewardType,
-      resources: isObject(rewardPayload.resources) ? rewardPayload.resources : {},
+      resources: isObject(rewardPayload.resources)
+        ? rewardPayload.resources
+        : {},
     },
   };
 }
 
-function opponentSummaryFromRow(battle: BattleRow, mode: BattleMode): Record<string, unknown> {
+function opponentSummaryFromRow(
+  battle: BattleRow,
+  mode: BattleMode,
+): Record<string, unknown> {
   return {
     id: battle.defender_id,
-    display_name: mode === "FIRST_SLICE_SIM" ? "Treinador da Primeira Ruina" : "Bot de Treino",
+    display_name: mode === "FIRST_SLICE_SIM"
+      ? "Treinador da Primeira Ruina"
+      : "Bot de Treino",
     is_bot: battle.defender_is_bot,
   };
 }
 
+function rulesetMetadata(): Record<string, unknown> {
+  return {
+    ruleset_id: FOUNDATION_RULESET.ruleset_id,
+    ruleset_version: FOUNDATION_RULESET.ruleset_version,
+    content_hash: FOUNDATION_RULESET.content_hash,
+    simulator_hash: FOUNDATION_RULESET.simulator_hash,
+    schema_version: FOUNDATION_RULESET.schema_version,
+  };
+}
+
+function rulesetMetadataFromRow(battle: BattleRow): Record<string, unknown> {
+  return {
+    ruleset_id: battle.ruleset_id ?? FOUNDATION_RULESET.ruleset_id,
+    ruleset_version: battle.ruleset_version ??
+      FOUNDATION_RULESET.ruleset_version,
+    content_hash: FOUNDATION_RULESET.content_hash,
+    simulator_hash: FOUNDATION_RULESET.simulator_hash,
+    schema_version: FOUNDATION_RULESET.schema_version,
+  };
+}
+
 function battleDuration(events: unknown[]): number {
-  const lastEvent = events.findLast((event) => isObject(event) && typeof event.t === "number");
+  const lastEvent = events.findLast((event) =>
+    isObject(event) && typeof event.t === "number"
+  );
   return isObject(lastEvent) ? numberValue(lastEvent.t, 4.2) : 4.2;
 }
 
 function historyLimit(url: URL): number {
-  const requested = Number(url.searchParams.get("limit") ?? DEFAULT_HISTORY_LIMIT);
+  const requested = Number(
+    url.searchParams.get("limit") ?? DEFAULT_HISTORY_LIMIT,
+  );
   if (!Number.isFinite(requested)) {
     return DEFAULT_HISTORY_LIMIT;
   }
@@ -660,7 +819,8 @@ async function loadPlayerState(
 
   if (
     resourcesResult.error !== null || buildResult.error !== null ||
-    inventoryResult.error !== null || slotsResult.error !== null || behaviorsResult.error !== null
+    inventoryResult.error !== null || slotsResult.error !== null ||
+    behaviorsResult.error !== null
   ) {
     return { value: null, error: stateReadError() };
   }
@@ -725,10 +885,14 @@ async function applyBattleReward(
       method: "PATCH",
       headers: { prefer: "return=minimal" },
       body: JSON.stringify({
-        almas: numberValue(state.resources.almas, 0) + numberValue(reward.almas, 0),
-        energia: numberValue(state.resources.energia, 0) + numberValue(reward.energia, 0),
-        sangue: numberValue(state.resources.sangue, 0) + numberValue(reward.sangue, 0),
-        ossos: numberValue(state.resources.ossos, 0) + numberValue(reward.ossos, 0),
+        almas: numberValue(state.resources.almas, 0) +
+          numberValue(reward.almas, 0),
+        energia: numberValue(state.resources.energia, 0) +
+          numberValue(reward.energia, 0),
+        sangue: numberValue(state.resources.sangue, 0) +
+          numberValue(reward.sangue, 0),
+        ossos: numberValue(state.resources.ossos, 0) +
+          numberValue(reward.ossos, 0),
         updated_at: new Date().toISOString(),
       }),
     },
@@ -741,16 +905,20 @@ async function applyBattleReward(
     };
   }
 
-  const transaction = await restRequest<unknown>(config, "resource_transactions", {
-    method: "POST",
-    headers: { prefer: "return=minimal" },
-    body: JSON.stringify({
-      player_id: state.player.id,
-      source: "battle/request",
-      request_id: requestId,
-      delta: reward,
-    }),
-  });
+  const transaction = await restRequest<unknown>(
+    config,
+    "resource_transactions",
+    {
+      method: "POST",
+      headers: { prefer: "return=minimal" },
+      body: JSON.stringify({
+        player_id: state.player.id,
+        source: "battle/request",
+        request_id: requestId,
+        delta: reward,
+      }),
+    },
+  );
   if (transaction.error !== null) {
     return {
       code: "REWARD_APPLY_FAILED",
@@ -768,13 +936,17 @@ async function applyBattleConsumables(
   requestId: string,
   consumablesUsed: BattleConsumableUse[],
 ): Promise<RestError | null> {
-  const playerConsumables = consumablesUsed.filter((item) => item.owner === "player");
+  const playerConsumables = consumablesUsed.filter((item) =>
+    item.owner === "player"
+  );
   if (playerConsumables.length === 0) {
     return null;
   }
 
   for (const used of playerConsumables) {
-    const current = state.inventory.find((item) => item.item_id === used.item_id);
+    const current = state.inventory.find((item) =>
+      item.item_id === used.item_id
+    );
     if (current === undefined || current.quantity < used.quantity) {
       return {
         code: "CONSUMABLE_APPLY_FAILED",
@@ -785,9 +957,9 @@ async function applyBattleConsumables(
     const nextQuantity = current.quantity - used.quantity;
     const update = await restRequest<unknown>(
       config,
-      `player_consumables?player_id=eq.${encodeURIComponent(state.player.id)}&item_id=eq.${
-        encodeURIComponent(used.item_id)
-      }`,
+      `player_consumables?player_id=eq.${
+        encodeURIComponent(state.player.id)
+      }&item_id=eq.${encodeURIComponent(used.item_id)}`,
       {
         method: "PATCH",
         headers: { prefer: "return=minimal" },
@@ -835,7 +1007,10 @@ async function applyArenaResult(
   bot: BotBuildRow,
   outcome: BattleOutcome,
 ): Promise<
-  { value: Record<string, unknown>; error: null } | { value: null; error: RestError }
+  { value: Record<string, unknown>; error: null } | {
+    value: null;
+    error: RestError;
+  }
 > {
   if (isProgressionLabSave(auth.saveType)) {
     return {
@@ -905,7 +1080,8 @@ async function applyArenaResult(
   const nextPoints = Math.max(0, currentPoints + rawArenaDelta);
   const arenaDelta = nextPoints - currentPoints;
   const nextWins = numberValue(current.wins, 0) + (outcome === "win" ? 1 : 0);
-  const nextLosses = numberValue(current.losses, 0) + (outcome === "loss" ? 1 : 0);
+  const nextLosses = numberValue(current.losses, 0) +
+    (outcome === "loss" ? 1 : 0);
   const updatedAt = new Date().toISOString();
 
   const updateRanking = await restRequest<RankingRow[]>(
@@ -967,7 +1143,9 @@ async function applyArenaResult(
 
 async function activeSeason(
   config: EdgeConfig,
-): Promise<{ value: SeasonRow; error: null } | { value: null; error: RestError }> {
+): Promise<
+  { value: SeasonRow; error: null } | { value: null; error: RestError }
+> {
   const result = await restRequest<SeasonRow[]>(
     config,
     "seasons?status=eq.active&select=id,display_name,starts_at,ends_at&order=starts_at.desc&limit=1",
@@ -1026,7 +1204,10 @@ function arenaPointDelta(
   }
 
   const referencePower = Math.max(1, playerPower);
-  const differenceRatio = Math.min(Math.abs(opponentPower - playerPower) / referencePower, 0.35);
+  const differenceRatio = Math.min(
+    Math.abs(opponentPower - playerPower) / referencePower,
+    0.35,
+  );
   const normalized = differenceRatio / 0.35;
   if (outcome === "win") {
     if (opponentPower > playerPower) {
@@ -1073,9 +1254,13 @@ function playerCombatant(state: {
       numberValue(player.level, 1),
     ),
     passiveId: build.passive_id ?? undefined,
-    passiveLevel: build.passive_id === null ? undefined : numberValue(build.passive_level, 1),
+    passiveLevel: build.passive_id === null
+      ? undefined
+      : numberValue(build.passive_level, 1),
     petId: build.pet_id ?? undefined,
-    petLevel: build.pet_id === null ? undefined : numberValue(build.pet_level, 1),
+    petLevel: build.pet_id === null
+      ? undefined
+      : numberValue(build.pet_level, 1),
     spellBehaviors: spellBehaviorMap(state.spellBehaviors),
     potionSlot,
   };
@@ -1090,7 +1275,9 @@ function botCombatant(bot: BotBuildRow): CombatantBuild {
     level: numberValue(data.level, 5),
     weaponId: stringValue(data.weapon_id, "varinha_cinzas"),
     weaponLevel: numberValue(data.weapon_level, 5),
-    weaponQualityTier: weaponQualityTier(stringValue(data.weapon_quality, "reforcada")),
+    weaponQualityTier: weaponQualityTier(
+      stringValue(data.weapon_quality, "reforcada"),
+    ),
     spellIds: spellIds.length > 0 ? spellIds : ["sussurro_medo"],
     spellLevels: recordOfNumbers(data.spell_levels),
     passiveId: optionalString(data.passive_id),
@@ -1108,11 +1295,15 @@ function potionSlotForBattle(state: {
   inventory: ConsumableRow[];
   potionSlots: PotionSlotRow[];
 }): CombatantBuild["potionSlot"] {
-  const slot = state.potionSlots.find((candidate) => candidate.slot_index === 1);
+  const slot = state.potionSlots.find((candidate) =>
+    candidate.slot_index === 1
+  );
   if (slot === undefined || slot.potion_id !== "pocao_vida") {
     return undefined;
   }
-  const inventory = state.inventory.find((item) => item.item_id === slot.potion_id);
+  const inventory = state.inventory.find((item) =>
+    item.item_id === slot.potion_id
+  );
   const quantity = inventory?.quantity ?? 0;
   if (quantity <= 0) {
     return undefined;
@@ -1129,7 +1320,9 @@ function potionSlotForBattle(state: {
   };
 }
 
-function spellBehaviorMap(rows: SpellBehaviorRow[]): Record<string, BehaviorConfig> {
+function spellBehaviorMap(
+  rows: SpellBehaviorRow[],
+): Record<string, BehaviorConfig> {
   const result: Record<string, BehaviorConfig> = {};
   for (const row of rows) {
     result[row.spell_id] = normalizeBehavior(row.behavior, {
@@ -1141,16 +1334,24 @@ function spellBehaviorMap(rows: SpellBehaviorRow[]): Record<string, BehaviorConf
   return result;
 }
 
-function normalizeBehavior(value: unknown, fallback: BehaviorConfig): BehaviorConfig {
+function normalizeBehavior(
+  value: unknown,
+  fallback: BehaviorConfig,
+): BehaviorConfig {
   const payload = isObject(value) ? value : {};
   return {
-    enabled: typeof payload.enabled === "boolean" ? payload.enabled : fallback.enabled,
+    enabled: typeof payload.enabled === "boolean"
+      ? payload.enabled
+      : fallback.enabled,
     hp: normalizeCondition(payload.hp, fallback.hp),
     mana: normalizeCondition(payload.mana, fallback.mana),
   };
 }
 
-function normalizeCondition(value: unknown, fallback: BehaviorConfig["hp"]): BehaviorConfig["hp"] {
+function normalizeCondition(
+  value: unknown,
+  fallback: BehaviorConfig["hp"],
+): BehaviorConfig["hp"] {
   if (!isObject(value)) {
     return fallback;
   }
@@ -1182,7 +1383,9 @@ function resolveRoute(pathname: string): Route | null {
   return null;
 }
 
-function decodeAuthContext(request: Request): { value: AuthContext; error: null } | {
+function decodeAuthContext(
+  request: Request,
+): { value: AuthContext; error: null } | {
   value: null;
   error: RestError;
 } {
@@ -1213,7 +1416,10 @@ function decodeAuthContext(request: Request): { value: AuthContext; error: null 
   }
 
   const payload = decodeJwtPayload(parts[1]);
-  if (payload === null || typeof payload.sub !== "string" || !UUID_PATTERN.test(payload.sub)) {
+  if (
+    payload === null || typeof payload.sub !== "string" ||
+    !UUID_PATTERN.test(payload.sub)
+  ) {
     return {
       value: null,
       error: {
@@ -1246,7 +1452,10 @@ function decodeJwtPayload(encodedPayload: string): JwtPayload | null {
   try {
     const normalized = encodedPayload.replaceAll("-", "+").replaceAll("_", "/");
     const padded = normalized + "=".repeat((4 - normalized.length % 4) % 4);
-    const bytes = Uint8Array.from(atob(padded), (character) => character.charCodeAt(0));
+    const bytes = Uint8Array.from(
+      atob(padded),
+      (character) => character.charCodeAt(0),
+    );
     const decoded = new TextDecoder().decode(bytes);
     const payload: unknown = JSON.parse(decoded);
     if (isObject(payload)) {
@@ -1259,7 +1468,10 @@ function decodeJwtPayload(encodedPayload: string): JwtPayload | null {
   return null;
 }
 
-function loadConfig(): { value: EdgeConfig; error: null } | { value: null; error: RestError } {
+function loadConfig(): { value: EdgeConfig; error: null } | {
+  value: null;
+  error: RestError;
+} {
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 
@@ -1283,7 +1495,9 @@ function loadConfig(): { value: EdgeConfig; error: null } | { value: null; error
   };
 }
 
-async function readJsonObject(request: Request): Promise<Record<string, unknown> | null> {
+async function readJsonObject(
+  request: Request,
+): Promise<Record<string, unknown> | null> {
   try {
     const payload: unknown = await request.json();
     if (isObject(payload)) {
@@ -1415,7 +1629,11 @@ function stateReadError(): RestError {
   };
 }
 
-function errorResponse(code: string, message: string, status: number): Response {
+function errorResponse(
+  code: string,
+  message: string,
+  status: number,
+): Response {
   return jsonResponse({
     ok: false,
     error: {
@@ -1427,7 +1645,9 @@ function errorResponse(code: string, message: string, status: number): Response 
 
 function arrayOfStrings(value: unknown): string[] {
   return Array.isArray(value)
-    ? value.filter((item): item is string => typeof item === "string" && item !== "")
+    ? value.filter((item): item is string =>
+      typeof item === "string" && item !== ""
+    )
     : [];
 }
 
@@ -1443,7 +1663,10 @@ function recordOfNumbers(value: unknown): Record<string, number> {
   return result;
 }
 
-function spellLevelMap(spellIds: string[], level: number): Record<string, number> {
+function spellLevelMap(
+  spellIds: string[],
+  level: number,
+): Record<string, number> {
   const result: Record<string, number> = {};
   for (const spellId of spellIds) {
     result[spellId] = Math.max(1, Math.min(40, Math.trunc(level)));

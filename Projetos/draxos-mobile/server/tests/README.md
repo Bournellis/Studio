@@ -17,6 +17,8 @@ Sem Supabase local:
 
 ```powershell
 npx -y deno test --allow-read server/tests/foundation_contracts_test.ts
+npx -y deno test --allow-read server/tests/foundation_expansion_schema_test.ts
+npx -y deno test --allow-read server/tests/foundation_ruleset_test.ts
 npx -y deno test --allow-read server/tests/integer_bones_contract_test.ts
 ```
 
@@ -24,6 +26,13 @@ O teste `foundation_contracts_test.ts` le `docs/contracts/api-endpoints.md` e o
 feature registry para garantir que a matriz atual declare escopo por endpoint e
 que os cards mantenham campos obrigatorios completos antes de novas
 features/servicos.
+
+O teste `foundation_expansion_schema_test.ts` valida a migration espelhada de
+Foundation Expansion Readiness: account/save, ruleset registry, admin audit,
+idempotencia v1, metadata de ruleset e RPCs scaffold.
+
+O teste `foundation_ruleset_test.ts` valida que `foundation_ruleset_v0` tem
+hashes deterministicos e mirrors server/supabase alinhados.
 
 O teste `integer_bones_contract_test.ts` valida que o catalogo Grimoire
 server/site publica Ossos em escala inteira e que a coleta da base preserva
