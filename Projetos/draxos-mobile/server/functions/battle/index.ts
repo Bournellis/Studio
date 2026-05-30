@@ -12,6 +12,11 @@ import {
   simulateFirstSliceBattle,
 } from "../_shared/battle_simulator.ts";
 import {
+  effectivePower,
+  spellLevelMap,
+  weaponQualityTierFromQualityId,
+} from "../_shared/progression_domain.ts";
+import {
   type FoundationGameSaveRow,
   loadFoundationGameSave,
   mapFoundationDatabaseError,
@@ -1095,15 +1100,6 @@ function battleOutcome(result: unknown): BattleOutcome {
   return "draw";
 }
 
-function effectivePower(power: unknown, level: unknown): number {
-  const explicitPower = numberValue(power, 0);
-  if (explicitPower > 0) {
-    return explicitPower;
-  }
-
-  return Math.max(50, numberValue(level, 1) * 50);
-}
-
 function arenaPointDelta(
   outcome: BattleOutcome,
   playerPower: number,
@@ -1157,7 +1153,7 @@ function playerCombatant(state: {
     level: numberValue(player.level, 1),
     weaponId: stringValue(build.weapon_type, "varinha_cinzas"),
     weaponLevel: numberValue(build.weapon_level, 1),
-    weaponQualityTier: weaponQualityTier(build.weapon_quality),
+    weaponQualityTier: weaponQualityTierFromQualityId(build.weapon_quality),
     spellIds: spells.length > 0 ? spells : ["sussurro_medo"],
     spellLevels: spellLevelMap(
       spells.length > 0 ? spells : ["sussurro_medo"],
@@ -1181,7 +1177,7 @@ function botCombatant(bot: BotBuildRow): CombatantBuild {
     level: numberValue(data.level, 5),
     weaponId: stringValue(data.weapon_id, "varinha_cinzas"),
     weaponLevel: numberValue(data.weapon_level, 5),
-    weaponQualityTier: weaponQualityTier(
+    weaponQualityTier: weaponQualityTierFromQualityId(
       stringValue(data.weapon_quality, "reforcada"),
     ),
     spellIds: spellIds.length > 0 ? spellIds : ["sussurro_medo"],
@@ -1559,29 +1555,6 @@ function recordOfNumbers(value: unknown): Record<string, number> {
     result[key] = numberValue(raw, 1);
   }
   return result;
-}
-
-function spellLevelMap(
-  spellIds: string[],
-  level: number,
-): Record<string, number> {
-  const result: Record<string, number> = {};
-  for (const spellId of spellIds) {
-    result[spellId] = Math.max(1, Math.min(40, Math.trunc(level)));
-  }
-  return result;
-}
-
-function weaponQualityTier(quality: string): number {
-  const tiers: Record<string, number> = {
-    varinha_simples: 0,
-    inicial: 0,
-    reforcada: 1,
-    ritual: 2,
-    abissal: 3,
-    cosmica: 4,
-  };
-  return tiers[quality] ?? 0;
 }
 
 function optionalString(value: unknown): string | undefined {

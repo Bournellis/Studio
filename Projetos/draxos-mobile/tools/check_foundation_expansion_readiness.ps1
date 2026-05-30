@@ -145,8 +145,11 @@ $requiredFiles = @(
   'supabase\functions\_shared\battle_log_projection.ts',
   'server\functions\_shared\base_domain.ts',
   'supabase\functions\_shared\base_domain.ts',
+  'server\functions\_shared\progression_domain.ts',
+  'supabase\functions\_shared\progression_domain.ts',
   'server\tests\battle_log_projection_test.ts',
   'server\tests\base_domain_test.ts',
+  'server\tests\progression_domain_test.ts',
   'server\tests\foundation_ruleset_test.ts',
   'server\tests\foundation_expansion_schema_test.ts',
   'server\tests\transactional_domain_enforcement_schema_test.ts',
@@ -246,8 +249,12 @@ Test-FileContains 'server\functions\_shared\battle_log_projection.ts' 'battleLog
 Test-FileContains 'server\functions\_shared\battle_log_projection.ts' 'historyEntryFromRow'
 Test-FileContains 'server\functions\_shared\base_domain.ts' 'baseStatePayload'
 Test-FileContains 'server\functions\_shared\base_domain.ts' 'calculateCollectable'
+Test-FileContains 'server\functions\_shared\progression_domain.ts' 'buildStatePayload'
+Test-FileContains 'server\functions\_shared\progression_domain.ts' 'resolveEquipRequest'
+Test-FileContains 'server\functions\_shared\progression_domain.ts' 'calculatePower'
 Test-FileContains 'server\tests\battle_log_projection_test.ts' 'projection module must not depend on current simulator code'
 Test-FileContains 'server\tests\base_domain_test.ts' 'base domain module is mirrored and adapter-free'
+Test-FileContains 'server\tests\progression_domain_test.ts' 'progression domain module is mirrored and adapter-free'
 Test-FileContains 'server\functions\base\index.ts' 'rpc/collect_base_v1'
 Test-FileContains 'server\functions\base\index.ts' 'rpc/start_base_upgrade_v1'
 Test-FileContains 'supabase\functions\base\index.ts' 'rpc/collect_base_v1'
