@@ -1,7 +1,7 @@
 # Database Schema Contract
 
 - Ultima atualizacao: `2026-05-30`
-- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type`, reset separado por save, Progression Lab, auth email/senha, manifest/update, Track 16 de comportamento/crafting/consumiveis e Foundation Expansion Readiness com `account_profiles`, `game_saves`, `ruleset_registry`, `admin_audit_log`, idempotencia v1 e metadata de ruleset.
+- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type`, reset separado por save, Progression Lab, auth email/senha, manifest/update, Track 16 de comportamento/crafting/consumiveis e Foundation Expansion Readiness com `account_profiles`, `game_saves`, `ruleset_registry`, `admin_audit_log`, idempotencia v1, metadata de ruleset e Base promovida para RPCs transacionais v1.
 
 Este documento define o schema esperado. A fonte tecnica viva do runtime local e `../../supabase/migrations/`; `../../server/schema/migrations/` permanece como espelho backend durante o alpha local.
 
@@ -19,6 +19,7 @@ Migrations atuais:
 - `202605270001_alpha_email_account.sql`: RPC `create_alpha_account` para conta email/senha registrada, alpha gate por convite/username e criacao dos saves `normal`/`progression_lab`.
 - `202605280001_behavior_crafting.sql`: `po_osso`, Ossos inteiros reescalados, inventario de consumiveis, slot de pocao, comportamentos de spells e ledger de itens.
 - `202605300001_foundation_expansion_readiness.sql`: `account_profiles`, `game_saves`, `ruleset_registry`, `admin_audit_log`, idempotencia com `request_hash/scope_id/status`, metadata de ruleset em historicos e RPCs de bootstrap/idempotencia/reconciliacao.
+- `202605300002_transactional_domain_enforcement.sql`: promove Base para efeitos reais em RPCs v1 (`complete_due_base_jobs_v1`, `collect_base_v1`, `start_base_upgrade_v1`), com lock do save, reserva idempotente, ledger/saldo/job na mesma transacao e grants somente para `service_role`.
 
 ## Regras De Escopo De Servico
 
@@ -43,6 +44,11 @@ Mutacoes `save-scoped` e `account-scoped` atuais continuam usando
 `idempotency_keys` com o `player_id` do save ativo ou da identidade social
 canonica. Mutacoes novas devem usar `request_hash`, `scope_id` e status
 `pending|completed|failed`; account-wide deve usar `account_profiles`.
+
+Excecao ja migrada: Base `collect` e `upgrade` continuam com compatibilidade de
+payload HTTP, mas o efeito economico usa `game_saves.id`, `request_hash`,
+`ruleset_registry`, `idempotency_keys.status`, `resource_transactions` e
+`construction_jobs.ruleset_id/version` dentro dos RPCs v1.
 
 ## Account/Save Foundation
 

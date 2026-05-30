@@ -20,6 +20,7 @@
 |---|---|
 | Docs/Contracts/Integration | `foundation-expansion-readiness.md`, account/save, ruleset registry, minigame and admin contracts, status/index updates |
 | Backend/Data | additive migration, account/save tables, ruleset registry, admin audit log, idempotency v1 fields and RPC scaffolds |
+| Backend/Domain Enforcement | Base collect/upgrade promoted from REST multi-step writes to v1 transactional RPCs; `base/state` uses atomic due-job completion |
 | Ruleset/Content | `foundation_ruleset_v0`, deterministic generator, server/supabase mirrors and Deno test |
 | Client Shell | `DraxosOperationState`, `DraxosAppShellActionRouter`, GUT shell contract test |
 | QA/Golden Tests | structural checker integrated into `validate_foundation.ps1`; schema/ruleset/client tests |
@@ -37,17 +38,22 @@
 - `tools/check_foundation_expansion_readiness.ps1`
 - `server/schema/migrations/202605300001_foundation_expansion_readiness.sql`
 - `supabase/migrations/202605300001_foundation_expansion_readiness.sql`
+- `server/schema/migrations/202605300002_transactional_domain_enforcement.sql`
+- `supabase/migrations/202605300002_transactional_domain_enforcement.sql`
 - `server/functions/_shared/foundation_ruleset.ts`
 - `supabase/functions/_shared/foundation_ruleset.ts`
+- `server/functions/base/index.ts`
+- `supabase/functions/base/index.ts`
 - `modes/boot/ui/operation_state.gd`
 - `modes/boot/ui/app_shell_action_router.gd`
 - `server/tests/foundation_expansion_schema_test.ts`
+- `server/tests/transactional_domain_enforcement_schema_test.ts`
 - `server/tests/foundation_ruleset_test.ts`
 - `tests/client/test_foundation_shell_contracts.gd`
 
 ## Current Limits
 
-- Existing endpoints still use several REST multi-step mutations. The foundation reserves v1 transactional RPCs, but the full domain-service rewrite is the next backend hardening step.
+- Base collect/upgrade no longer use REST multi-step writes for economic effects. Battle reward application, rewards/alpha purchase, build/crafting and guild create/join still need the same v1 transactional promotion.
 - Migration is additive and not pushed remotely in this package.
 - No new gameplay, balance, social expansion or minigame is included.
 
@@ -55,7 +61,10 @@
 
 ```powershell
 npx -y deno test --allow-read server/tests/foundation_expansion_schema_test.ts
+npx -y deno test --allow-read server/tests/transactional_domain_enforcement_schema_test.ts
 npx -y deno test --allow-read server/tests/foundation_ruleset_test.ts
+npx -y deno task --cwd server/functions check
+npx -y deno task --cwd supabase/functions check
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_foundation_expansion_readiness.ps1 -ProjectDir .
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Quick
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://addons/gut/gut_cmdln.gd -gtest=res://tests/client/test_foundation_shell_contracts.gd -gexit

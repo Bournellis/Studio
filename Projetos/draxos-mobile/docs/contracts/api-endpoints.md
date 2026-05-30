@@ -68,15 +68,17 @@ Mutacoes economicas novas devem seguir:
 
 RPCs de apoio: `reserve_idempotency`, `complete_idempotency`, `fail_idempotency`.
 
-## Mutations V1 Reservadas
+## Mutations V1
 
-As rotas abaixo continuam usando os endpoints atuais, mas a fundacao reserva seus RPCs transacionais para o proximo hardening de dominio:
+As rotas abaixo usam ou reservam RPCs transacionais. O status `ativo` significa
+que o adapter HTTP ja chama o RPC v1; `reservado` significa que o RPC existe
+como slot contratado, mas a rota ainda precisa migrar o efeito de dominio.
 
 | Endpoint logico | RPC transacional alvo | Status |
 |---|---|---|
 | `POST /battle/request` | `request_battle_v1` | reservado; battle ja persiste `ruleset_id/version` no path `FIRST_SLICE_SIM` |
-| `POST /base/collect` | `collect_base_v1` | reservado |
-| `POST /base/upgrade` | `start_base_upgrade_v1` | reservado |
+| `POST /base/collect` | `collect_base_v1` | ativo em `202605300002_transactional_domain_enforcement.sql`; adapter preserva payload de UI e move recursos/ledger/idempotencia para RPC |
+| `POST /base/upgrade` | `start_base_upgrade_v1` | ativo em `202605300002_transactional_domain_enforcement.sql`; adapter preserva payload de UI e move gasto/job/ledger/idempotencia para RPC |
 | `POST /build/equip` | `equip_build_v1` | reservado |
 | `POST /crafting/craft` | `craft_item_v1` | reservado |
 | `POST /monetization/rewards/claim` | `claim_reward_v1` | reservado |
@@ -129,8 +131,8 @@ novo.
 | GET | `/battle/history` | `save-scoped` | Sim | Nao | Retorna historico recente do save ativo como sumarios read-only, sem eventos completos. |
 | GET | `/battle/replay?battle_id=...` | `save-scoped` | Sim | Nao | Retorna o `battle_log_v1` salvo de uma batalha do save ativo, sem rerodar simulador nem reaplicar recompensa. |
 | GET | `/base/state` | `save-scoped` | Sim | Nao | Estado server-authoritative da Base do save ativo. |
-| POST | `/base/collect` | `save-scoped` | Sim | `request_id` por save | Coleta recursos do save ativo com ledger. |
-| POST | `/base/upgrade` | `save-scoped` | Sim | `request_id` por save | Inicia upgrade da Base do save ativo com ledger. |
+| POST | `/base/collect` | `save-scoped` | Sim | `request_id/request_hash` por save | Coleta recursos do save ativo via RPC transacional com ledger. |
+| POST | `/base/upgrade` | `save-scoped` | Sim | `request_id/request_hash` por save | Inicia upgrade da Base do save ativo via RPC transacional com ledger. |
 | GET | `/crafting/state` | `save-scoped` | Sim | Nao | Recursos, Po de Osso, receitas, inventario de consumiveis e slot de pocao. |
 | POST | `/crafting/crush-bones` | `save-scoped` | Sim | `request_id` por save | Tritura Ossos em Po de Osso sem duplicar por retry. |
 | POST | `/crafting/craft` | `save-scoped` | Sim | `request_id` por save | Cria consumiveis a partir de receitas server-authoritative. |
@@ -1223,7 +1225,8 @@ Campos de apresentacao como `description`, `benefit_label`, `upgrade_cost`, `upg
 
 ### `POST /base/collect`
 
-Status: **implementado em T00-P11; usado pela UI jogavel da Base em T03-P05**.
+Status: **implementado em T00-P11; usado pela UI jogavel da Base em T03-P05;
+promovido para RPC transacional v1 em 2026-05-30**.
 
 Coleta producao offline de todas as estruturas produtoras, respeitando storage por estrutura. O cliente envia somente a intencao e um `request_id`; deltas sao calculados no servidor e gravados em `resource_transactions`.
 
@@ -1231,9 +1234,14 @@ Request:
 
 ```json
 {
-  "request_id": "uuid"
+  "request_id": "uuid",
+  "request_hash": "sha256:..."
 }
 ```
+
+Compatibilidade alpha: se `request_hash` ainda nao vier do cliente, o adapter
+HTTP calcula um hash canonico da intencao e chama `collect_base_v1`. Chamada
+direta ao RPC exige `request_hash`.
 
 Erros minimos: `UNAUTHENTICATED`, `PLAYER_NOT_FOUND`, `INVALID_REQUEST_ID`, `BASE_COLLECT_FAILED`.
 
@@ -1241,7 +1249,8 @@ Idempotencia: repetir o mesmo `request_id` retorna o mesmo payload e nao duplica
 
 ### `POST /base/upgrade`
 
-Status: **implementado em T00-P11**.
+Status: **implementado em T00-P11; promovido para RPC transacional v1 em
+2026-05-30**.
 
 Inicia upgrade de uma estrutura permanente da base. O servidor valida estrutura, fila, cap de level do jogador, custo em Energia e jobs ativos da mesma estrutura.
 
@@ -1250,9 +1259,14 @@ Request:
 ```json
 {
   "request_id": "uuid",
+  "request_hash": "sha256:...",
   "structure_id": "nucleo_energia"
 }
 ```
+
+Compatibilidade alpha: se `request_hash` ainda nao vier do cliente, o adapter
+HTTP calcula um hash canonico de `request_id + save_type + structure_id` e
+chama `start_base_upgrade_v1`. Chamada direta ao RPC exige `request_hash`.
 
 Erros minimos: `UNAUTHENTICATED`, `PLAYER_NOT_FOUND`, `INVALID_STRUCTURE`, `CONSTRUCTION_QUEUE_FULL`, `STRUCTURE_ALREADY_UPGRADING`, `LEVEL_CAP_REACHED`, `INSUFFICIENT_RESOURCES`, `BASE_UPGRADE_FAILED`.
 
