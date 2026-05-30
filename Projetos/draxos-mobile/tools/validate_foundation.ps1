@@ -371,6 +371,17 @@ Invoke-Step -Name "Deno release typecheck light" -Stage "Quick" -Command "npx -y
     }
 }
 
+Invoke-Step -Name "Deno foundation contract tests" -Stage "Quick" -Command "npx -y deno test --allow-read foundation contracts" -ScriptBlock {
+    Invoke-External -Command "npx -y deno test foundation contracts" -WorkingDirectory $ProjectPath -ScriptBlock {
+        & npx -y deno test --allow-read `
+            server/tests/foundation_contracts_test.ts `
+            server/tests/foundation_expansion_schema_test.ts `
+            server/tests/transactional_domain_enforcement_schema_test.ts `
+            server/tests/foundation_ruleset_test.ts `
+            server/tests/integer_bones_contract_test.ts
+    }
+}
+
 Invoke-Step -Name "structural readiness" -Stage "Quick" -Command "required files + boot.gd budget" -ScriptBlock {
     Assert-StructuralReadiness
 }

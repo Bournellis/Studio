@@ -13,6 +13,21 @@ Deno.test("grimoire catalog publishes whole-number bone economy", async () => {
 });
 
 Deno.test("base collect keeps bone production whole and preserves sub-one accrual", async () => {
+  const migration = await readProjectText(
+    "supabase/migrations/202605300002_transactional_domain_enforcement.sql",
+  );
+  const normalizedMigration = migration.toLowerCase();
+  assert(
+    normalizedMigration.includes(
+      "when producers.resource_key = 'ossos' then floor(",
+    ),
+    "collect_base_v1 should floor Ossos collection to whole units",
+  );
+  assert(
+    normalizedMigration.includes("and collectable.amount > 0"),
+    "collect_base_v1 should avoid resetting collection timers with no visible gain",
+  );
+
   for (
     const relativePath of [
       "server/functions/base/index.ts",
@@ -27,10 +42,6 @@ Deno.test("base collect keeps bone production whole and preserves sub-one accrua
     assert(
       source.includes("return Math.floor(collectable);"),
       `${relativePath} should floor Ossos collection to whole units`,
-    );
-    assert(
-      source.includes("if (collectableFor(structure, now) <= 0)"),
-      `${relativePath} should avoid resetting collection timers with no visible gain`,
     );
   }
 });
