@@ -145,6 +145,7 @@ $requiredFiles = @(
   'server\tests\foundation_expansion_schema_test.ts',
   'server\tests\transactional_domain_enforcement_schema_test.ts',
   'server\tests\remaining_transactional_domain_enforcement_schema_test.ts',
+  'server\tests\transactional_rpc_live_test.ts',
   'server\tests\foundation_contracts_test.ts',
   'server\tests\integer_bones_contract_test.ts',
   'server\tests\build_equip_smoke.ts',
@@ -227,6 +228,9 @@ Test-FileContains 'server\tests\foundation_ruleset_test.ts' 'foundation ruleset 
 Test-FileContains 'server\tests\foundation_expansion_schema_test.ts' 'foundation expansion migration is mirrored in server schema'
 Test-FileContains 'server\tests\transactional_domain_enforcement_schema_test.ts' 'base edge adapter calls transactional RPCs instead of direct multi-step writes'
 Test-FileContains 'server\tests\remaining_transactional_domain_enforcement_schema_test.ts' 'remaining transactional domain RPC dispatcher applies real atomic effects'
+Test-FileContains 'server\tests\transactional_rpc_live_test.ts' 'proveBattleRollbackRetryAndIdempotency'
+Test-FileContains 'server\tests\transactional_rpc_live_test.ts' 'proveAlphaPurchaseRollbackRetryAndIdempotency'
+Test-FileContains 'server\tests\transactional_rpc_live_test.ts' 'proveGuildCreateRollbackRetryAndIdempotency'
 Test-FileContains 'server\functions\base\index.ts' 'rpc/collect_base_v1'
 Test-FileContains 'server\functions\base\index.ts' 'rpc/start_base_upgrade_v1'
 Test-FileContains 'supabase\functions\base\index.ts' 'rpc/collect_base_v1'
@@ -243,6 +247,7 @@ Test-FileContains 'server\tests\README.md' 'foundation_contracts_test.ts'
 Test-FileContains 'server\tests\README.md' 'foundation_expansion_schema_test.ts'
 Test-FileContains 'server\tests\README.md' 'transactional_domain_enforcement_schema_test.ts'
 Test-FileContains 'server\tests\README.md' 'remaining_transactional_domain_enforcement_schema_test.ts'
+Test-FileContains 'server\tests\README.md' 'transactional_rpc_live_test.ts'
 
 Test-PowerShellParses @(
   'tools\check_foundation_expansion_readiness.ps1',

@@ -68,6 +68,7 @@ npx -y deno run --allow-net --allow-env server/tests/release_download_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/grimoire_catalog_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/build_equip_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/runtime_config_smoke.ts
+deno run --allow-net --allow-env server/tests/transactional_rpc_live_test.ts
 ```
 
 O smoke cria uma sessao anonima, cria conta guest, solicita batalha `MVP_ONLY`,
@@ -143,6 +144,14 @@ posicao por nivel, item inexistente, spell duplicada, idempotencia por
 O smoke `runtime_config_smoke.ts` valida `GET /release/config`: schema
 `runtime_config_v1`, flags booleanas da Track 06, fallback offline permitido e
 guardrails contra service role, secrets, estado de jogador e tuning de gameplay.
+
+O smoke `transactional_rpc_live_test.ts` valida as RPCs transacionais v1
+diretamente no Postgres local apos `supabase db reset`: rollback de falha
+parcial, retry apos precondicao corrigida, resposta idempotente por
+`request_id` e rejeicao de `request_hash` divergente para battle rewards,
+build equip, crafting, alpha purchase e guild create/join. Ele usa
+`DRAXOS_LOCAL_DB_URL` quando definido, ou o banco local padrao da Supabase CLI
+`postgres://postgres:postgres@127.0.0.1:54322/postgres`.
 
 O smoke `release_artifacts_remote_smoke.ts` valida somente leitura contra o
 remoto publicado: manifest, hashes Android/PC no payload, alcance do APK/ZIP

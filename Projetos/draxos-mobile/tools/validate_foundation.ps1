@@ -5,6 +5,7 @@ param(
     [string]$GodotExe = "D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe",
     [switch]$RequireClean,
     [switch]$IncludeRemoteReadOnly,
+    [switch]$IncludeLocalSupabaseRpc,
     [switch]$AllowCloudflareAccess,
     [switch]$RemoteFullHash,
     [string]$JsonReportPath = "",
@@ -285,6 +286,7 @@ function Write-Reports {
         profile = $Profile
         require_clean = $RequireClean.IsPresent
         include_remote_read_only = $IncludeRemoteReadOnly.IsPresent
+        include_local_supabase_rpc = $IncludeLocalSupabaseRpc.IsPresent
         summary = $summary
         results = @($Results.ToArray())
     }
@@ -407,6 +409,20 @@ if (Test-Path -LiteralPath $foundationExpansion -PathType Leaf) {
     }
 } else {
     Skip-Step -Name "foundation expansion readiness" -Stage "Quick" -Command ".\tools\check_foundation_expansion_readiness.ps1" -Reason "Foundation expansion readiness script not created yet."
+}
+
+if ($IncludeLocalSupabaseRpc) {
+    Invoke-Step -Name "local Supabase transactional RPC live proof" -Stage "Quick" -Command "npx -y deno check/run server/tests/transactional_rpc_live_test.ts" -ScriptBlock {
+        Invoke-External -Command "transactional_rpc_live_test.ts" -WorkingDirectory $ProjectPath -ScriptBlock {
+            & npx -y deno check server/tests/transactional_rpc_live_test.ts
+            if ($LASTEXITCODE -ne 0) {
+                throw "deno check transactional_rpc_live_test.ts exited with code $LASTEXITCODE."
+            }
+            & npx -y deno run --allow-net --allow-env server/tests/transactional_rpc_live_test.ts
+        }
+    }
+} else {
+    Skip-Step -Name "local Supabase transactional RPC live proof" -Stage "Quick" -Command "npx -y deno run --allow-net --allow-env server/tests/transactional_rpc_live_test.ts" -Reason "-IncludeLocalSupabaseRpc was not set."
 }
 
 if ($RunClient) {
