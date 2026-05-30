@@ -1,6 +1,6 @@
 # First Session Clarity v1
 
-- Status: `PUBLICADO`
+- Status: `APROVADO_MANUALMENTE`
 - Data: `2026-05-30`
 - Escopo: client-only
 
@@ -90,10 +90,16 @@ npx -y deno run --allow-net --allow-env server/tests/release_artifacts_remote_sm
 
 Resultado remoto: PASS. O portal foi ajustado de `Draxos Alpha` para `DraxosMobile Alpha` para satisfazer o contrato do smoke remoto.
 
+## Revisao Manual
+
+Revisao manual em `2026-05-30`: aprovado como mais claro. O pacote passa a ser baseline aceito para a primeira sessao, sem congelar DraxosMobile.
+
+Decisao de direcao: nao abrir First Session Motivation v1 nem expandir o loop inicial por padrao. O projeto permanece ativo em P2, e qualquer proximo pacote deve ser escolhido explicitamente.
+
 ## Proxima Decisao
 
-Depois da revisao manual Android/Windows/Web deste pacote, a decisao recomendada e escolher entre:
+Quando o foco voltar para DraxosMobile, a decisao recomendada e escolher explicitamente entre:
 
 - ajuste pontual de primeira sessao, se o loop ainda tiver friccao;
-- Social Routine v1.1, se a primeira sessao for aceita;
+- Social Routine v1.1;
 - um passe visual pequeno apenas se a compreensao do loop estiver bloqueada por apresentacao.

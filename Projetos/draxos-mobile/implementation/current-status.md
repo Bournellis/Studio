@@ -5,7 +5,7 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
 - Active stage: `First Session Clarity v1`
-- Active stage status: `FIRST_SESSION_CLARITY_V1_PUBLISHED`
+- Active stage status: `FIRST_SESSION_CLARITY_V1_APPROVED`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety` (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation` (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Latest published package: `First Session Clarity v1`
@@ -64,7 +64,7 @@ Internal loop ergonomics, Social Basico Guilda v1, Visual Direction v1, Ossos In
 
 ## First Session Clarity v1
 
-First Session Clarity v1 is implemented and published as the current client-only first-session guidance package. It does not change backend, schema, migrations, simulator, rewards, economy, tuning, weapons, spells, potions, behavior or catalog content.
+First Session Clarity v1 is implemented, published and manually approved as the current client-only first-session guidance package. It does not change backend, schema, migrations, simulator, rewards, economy, tuning, weapons, spells, potions, behavior or catalog content.
 
 - Refugio now shows a persistent first-session hint inside the `Progresso` panel.
 - The contextual Refugio CTA now explains reward, collection, base evolution and battle as one cycle.
@@ -74,8 +74,9 @@ First Session Clarity v1 is implemented and published as the current client-only
 - `portal/internal-alpha/index.html` now uses `DraxosMobile Alpha`, matching the remote release smoke contract.
 - Validation completed on `2026-05-30`: one-time Godot import in the fresh worktree, `git diff --check`, `tools/smoke_foundation_loop.gd`, GUT client (`123/123`, `1990` asserts), `tools/smoke_responsive_layout.gd`, `validate_foundation.ps1 -Profile Client`, publication checks and `server/tests/release_artifacts_remote_smoke.ts` passed.
 - First Session Clarity v1 was published to Internal Alpha on `2026-05-30` with release root `internal-alpha/v0-first-session-clarity-v1-20260530`, public Web preview `https://f2ead4bd.draxos-mobile-internal-alpha.pages.dev/web/index.html`, public APK `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-first-session-clarity-v1-20260530/downloads/draxos-mobile-alpha.apk` and public PC ZIP `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-first-session-clarity-v1-20260530/downloads/draxos-mobile-alpha.zip`.
+- Manual review on `2026-05-30` approved the package as clearer. The project remains active in P2; do not open an initial-loop motivation package by default.
 
-Recommended next decision: review First Session Clarity v1 on Android/Windows/Web, then choose between a small first-session adjustment, Social Routine v1.1, or a narrow visual clarity pass.
+Recommended next decision: choose the next DraxosMobile package explicitly when product focus returns to mobile; candidates remain small targeted adjustment, Social Routine v1.1 or a narrow visual clarity pass.
 
 ## Progression Clarity v1
 
@@ -199,7 +200,7 @@ Visual Direction v1 is implemented and published as the next refinement package 
 
 ## Next Step
 
-Manually review published Progression Clarity v1 on Android, Windows and Web, including a quick regression pass through Battle Preparation Complete v1 potion/behavior controls, then choose the next product package. Keep victory prediction, opponent counter-picks, custom thresholds, enemy-specific behavior, spell priorities, direct chat, helps, contributions, moderation, tuning numbers, new weapons, new spells, economy, new potions, crafting expansion and broader replay controls out of scope until they receive their own explicit package.
+First Session Clarity v1 is manually approved and DraxosMobile remains active in P2. Choose the next product package explicitly when returning to mobile; do not open initial-loop motivation, loop expansion, victory prediction, opponent counter-picks, custom thresholds, enemy-specific behavior, spell priorities, direct chat, helps, contributions, moderation, tuning numbers, new weapons, new spells, economy, new potions, crafting expansion or broader replay controls without its own package decision.
 
 ## Validation
 
