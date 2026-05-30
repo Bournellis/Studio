@@ -22,6 +22,7 @@ npx -y deno test --allow-read server/tests/transactional_domain_enforcement_sche
 npx -y deno test --allow-read server/tests/remaining_transactional_domain_enforcement_schema_test.ts
 npx -y deno test --allow-read server/tests/base_domain_test.ts
 npx -y deno test --allow-read server/tests/battle_log_projection_test.ts
+npx -y deno test --allow-read server/tests/progression_domain_test.ts
 npx -y deno test --allow-read server/tests/foundation_ruleset_test.ts
 npx -y deno test --allow-read server/tests/integer_bones_contract_test.ts
 ```
@@ -53,6 +54,11 @@ O teste `battle_log_projection_test.ts` valida que a projecao de
 `battle_log_v1`, historico e metadata de ruleset vive no modulo portavel
 `_shared/battle_log_projection.ts`, sem depender de simulacao atual nem do
 adapter HTTP.
+
+O teste `progression_domain_test.ts` valida que payload de build, unlocks,
+validacao de equipamento, power runtime e helpers usados pelo Battle vivem no
+modulo portavel `_shared/progression_domain.ts`, espelhado entre
+server/supabase e sem HTTP/Supabase REST.
 
 O teste `foundation_ruleset_test.ts` valida que `foundation_ruleset_v0` tem
 hashes deterministicos e mirrors server/supabase alinhados.

@@ -21,7 +21,7 @@
 | Docs/Contracts/Integration | `foundation-expansion-readiness.md`, account/save, ruleset registry, minigame and admin contracts, status/index updates |
 | Backend/Data | additive migration, account/save tables, ruleset registry, admin audit log, idempotency v1 fields and RPC scaffolds |
 | Backend/Domain Enforcement | Base collect/upgrade, battle rewards, monetization rewards/alpha purchase, build equip, crafting craft/crush-bones and guild create/join promoted from REST multi-step writes to v1 transactional RPCs; `base/state` uses atomic due-job completion |
-| Portable Domain Services | Base rules/projection and saved battle log projection extracted to mirrored `_shared` modules with Deno tests; adapters keep HTTP/Supabase/RPC ownership |
+| Portable Domain Services | Base rules/projection, saved battle log projection and progression/power build projection extracted to mirrored `_shared` modules with Deno tests; adapters keep HTTP/Supabase/RPC ownership |
 | Ruleset/Content | `foundation_ruleset_v0`, deterministic generator, server/supabase mirrors and Deno test |
 | Client Shell | `DraxosOperationState`, `DraxosAppShellActionRouter`, GUT shell contract test |
 | QA/Golden Tests | structural checker integrated into `validate_foundation.ps1`; schema/ruleset/client tests; local Supabase transactional RPC live proof; local Edge RPC adapter smoke |
@@ -51,6 +51,8 @@
 - `supabase/functions/_shared/base_domain.ts`
 - `server/functions/_shared/battle_log_projection.ts`
 - `supabase/functions/_shared/battle_log_projection.ts`
+- `server/functions/_shared/progression_domain.ts`
+- `supabase/functions/_shared/progression_domain.ts`
 - `server/functions/battle/index.ts`
 - `supabase/functions/battle/index.ts`
 - `server/functions/build/index.ts`
@@ -72,13 +74,14 @@
 - `server/tests/transactional_edge_rpc_smoke.ts`
 - `server/tests/base_domain_test.ts`
 - `server/tests/battle_log_projection_test.ts`
+- `server/tests/progression_domain_test.ts`
 - `server/tests/foundation_ruleset_test.ts`
 - `tests/client/test_foundation_shell_contracts.gd`
 
 ## Current Limits
 
 - Critical economy/social mutations no longer use REST multi-step writes for their core effects: Base collect/upgrade, `FIRST_SLICE_SIM` battle persistence/rewards/consumables/ranking, reward claim, alpha purchase, build equip, crafting craft/crush-bones and guild create/join now reserve/complete idempotency and mutate state in RPCs.
-- Portable domain split has begun with Base rules/projection and battle log/history/ruleset projection. Next safe slices are battle combatant mapping, progression/power projection and economy application.
+- Portable domain split has begun with Base rules/projection, battle log/history/ruleset projection and progression/power build projection. Next safe slices are economy application/source-sink projection and deeper battle combatant mapping. Progression Lab and Battle Lab still keep local power heuristics that need a later explicit alignment/documentation slice.
 - Live database failure/retry/idempotency proof exists in `server/tests/transactional_rpc_live_test.ts` for battle rewards, build equip, crafting, reward claim, alpha purchase and guild create/join; it passed against a reset local Supabase stack on `2026-05-30`.
 - Local Edge Function HTTP smoke exists in `server/tests/transactional_edge_rpc_smoke.ts`; it passed against local `supabase functions serve` on `2026-05-30`.
 - Migration is additive and not pushed remotely in this package.
@@ -92,6 +95,7 @@ npx -y deno test --allow-read server/tests/transactional_domain_enforcement_sche
 npx -y deno test --allow-read server/tests/remaining_transactional_domain_enforcement_schema_test.ts
 npx -y deno test --allow-read server/tests/base_domain_test.ts
 npx -y deno test --allow-read server/tests/battle_log_projection_test.ts
+npx -y deno test --allow-read server/tests/progression_domain_test.ts
 npx -y deno test --allow-read server/tests/foundation_ruleset_test.ts
 deno run --allow-net --allow-env server/tests/transactional_rpc_live_test.ts
 deno run --allow-net --allow-env server/tests/transactional_edge_rpc_smoke.ts
