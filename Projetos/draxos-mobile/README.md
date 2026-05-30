@@ -15,6 +15,8 @@ The Foundation Loop Audit is documented in `docs/foundation-loop-audit.md`. Foun
 
 Social Basico Guilda v1, Visual Direction v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation Complete v1 and Progression Clarity v1 are published on the Internal Alpha channel. Refugio, Preparacao and battle summary now explain level, power, battle XP and next milestones using existing snapshots. The package is documented in `docs/progression-clarity-v1.md`.
 
+First Session Clarity v1 is the current follow-up package. It keeps the same foundation and adds client-only guidance so the first session reads as Refugio -> collect -> evolve -> prepare -> battle -> reward -> return to base. The package is documented in `docs/first-session-clarity-v1.md`.
+
 Behavior And Potion Crafting v1 is implemented as technical baseline: Ossos inteiros, Po de Osso, Pocao de Vida, crafting inicial, one potion slot and simple spell/potion use preferences are documented in `docs/behavior-potion-crafting-v1.md`. Treat this as existing foundation, not as permission to expand tuning, economy, new potions or advanced behavior without a new package decision.
 
 Current content, names, spells, weapons, economy values, battle flavor, visual style and premium systems exist to give substance to the prototype. Treat them as mock/substance for evaluation, not as final game direction or current tuning priorities.
@@ -30,7 +32,8 @@ Start with:
 5. `docs/foundation-app-v0-audit.md`
 6. `docs/foundation-loop-audit.md`
 7. `docs/progression-clarity-v1.md`
-8. `docs/behavior-potion-crafting-v1.md` when touching Ossos, crafting, potions, consumables or behavior.
+8. `docs/first-session-clarity-v1.md`
+9. `docs/behavior-potion-crafting-v1.md` when touching Ossos, crafting, potions, consumables or behavior.
 
 Do not start from old Track 04/08/10/15/16 notes. They are history or technical context unless a live doc points to them for a specific detail.
 
@@ -68,6 +71,7 @@ git status --short
 | Foundation Loop Audit | `docs/foundation-loop-audit.md` |
 | Visual Direction v1 | `docs/visual-direction-v1.md` |
 | Progression Clarity v1 | `docs/progression-clarity-v1.md` |
+| First Session Clarity v1 | `docs/first-session-clarity-v1.md` |
 | Behavior/potions/crafting | `docs/behavior-potion-crafting-v1.md` |
 | Product canon local | `docs/product-vision.md` |
 | Implementation GDD | `docs/game-design-document.md` |

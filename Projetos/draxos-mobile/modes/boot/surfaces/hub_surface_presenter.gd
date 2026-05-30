@@ -239,13 +239,13 @@ static func _add_refuge_loop_panel(host: Node, board: Control, compact: bool) ->
 	grid.add_child(_loop_status_label("Coleta\n%s" % str(state.get("collect_text", "Nada agora")), str(state.get("collect_color", "text_secondary")), compact, "RefugeLoopCollectLabel"))
 	grid.add_child(_loop_status_label("Evolucao\n%s" % str(state.get("upgrade_text", "Sem upgrade")), str(state.get("upgrade_color", "text_secondary")), compact, "RefugeLoopUpgradeLabel"))
 
-static func _add_refuge_progression_panel(_host: Node, board: Control, compact: bool) -> void:
+static func _add_refuge_progression_panel(host: Node, board: Control, compact: bool) -> void:
 	var panel := PanelContainer.new()
 	panel.name = "RefugeProgressionPanel"
 	panel.anchor_left = 0.04
 	panel.anchor_right = 0.96
 	panel.anchor_top = 0.724
-	panel.anchor_bottom = 0.815
+	panel.anchor_bottom = 0.825
 	panel.add_theme_stylebox_override("panel", _hud_style("bg_panel", "accent_astral"))
 	board.add_child(panel)
 
@@ -263,6 +263,13 @@ static func _add_refuge_progression_panel(_host: Node, board: Control, compact: 
 	line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	line.clip_text = true
 	box.add_child(line)
+	var first_session_hint := _scene_label(_first_session_hint_text(host), "text_secondary", 8 if compact else 10)
+	first_session_hint.name = "RefugeFirstSessionHintLabel"
+	first_session_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	first_session_hint.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	first_session_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	first_session_hint.clip_text = true
+	box.add_child(first_session_hint)
 
 static func _loop_status_label(text: String, color_token: String, compact: bool, node_name: String) -> Label:
 	var label := _scene_label(text, color_token, 9 if compact else 11)
@@ -690,7 +697,7 @@ static func _refuge_context_cta_data(host: Node) -> Dictionary:
 	if SessionStore.has_unseen_battle_result():
 		return {
 			"text": "Ver recompensa",
-			"detail": "Abrir o resultado e receber a recompensa da batalha mais recente.",
+			"detail": "Abrir a recompensa e voltar para conferir a base atualizada.",
 			"action_id": AppShellActionContractScript.ACTION_SHOW_LATEST_BATTLE,
 			"color_token": "accent_blood",
 		}
@@ -700,7 +707,7 @@ static func _refuge_context_cta_data(host: Node) -> Dictionary:
 		if bool(routine.get("has_collect_ready", false)):
 			return {
 				"text": "Coletar",
-				"detail": "Receber a producao acumulada do Refugio.",
+				"detail": "Primeiro passo do ciclo: receber recursos acumulados do Refugio.",
 				"action_id": AppShellActionContractScript.ACTION_COLLECT_BASE,
 				"color_token": "status_success",
 			}
@@ -709,14 +716,14 @@ static func _refuge_context_cta_data(host: Node) -> Dictionary:
 			if structure_id != "":
 				return {
 					"text": "Evoluir",
-					"detail": str(routine.get("next_upgrade_text", "Iniciar evolucao pronta.")),
+					"detail": "Usar recursos para evoluir a base antes da proxima batalha.",
 					"action_id": AppShellActionContractScript.upgrade_base_structure_action(structure_id),
 					"confirm": "Iniciar evolucao no Refugio?",
 					"color_token": "accent_astral",
 				}
 	return {
 		"text": "Batalhar",
-		"detail": "Pedir a proxima batalha.",
+		"detail": "Testar sua preparacao em uma batalha assincrona.",
 		"action_id": AppShellActionContractScript.ACTION_REQUEST_BATTLE,
 		"color_token": "accent_blood",
 	}
@@ -753,6 +760,38 @@ static func _short_loop_text(text: String) -> String:
 	if shortened.length() > 22:
 		shortened = "%s..." % shortened.substr(0, 19)
 	return shortened
+
+static func _first_session_hint_text(host: Node) -> String:
+	if SessionStore.has_unseen_battle_result():
+		return "Primeira sessao: abra a recompensa e volte para conferir a base."
+	var base := SessionStore.base_state
+	if not base.is_empty():
+		var routine := BaseSurfacePresenterScript.routine_summary(base)
+		if bool(routine.get("has_collect_ready", false)):
+			return "Primeira sessao: comece coletando recursos do Refugio."
+		if bool(routine.get("next_upgrade_ready", false)):
+			return "Primeira sessao: evolua uma estrutura antes da proxima luta."
+		if SessionStore.combat_build_state.is_empty():
+			return "Primeira sessao: abra Preparacao e confirme sua preparacao."
+		if not SessionStore.has_battle_log():
+			return "Primeira sessao: base pronta; peca a primeira batalha."
+	if host != null and host.has_method("_battle_lab_available") and bool(host.call("_battle_lab_available")) and not SessionStore.has_valid_access_token():
+		return "Primeira sessao: entre, escolha o save e siga o proximo passo."
+	return "Primeira sessao: siga o proximo passo e mantenha a base evoluindo."
+
+static func _preparation_first_session_hint(combat_build: Dictionary, spell_slots: Array) -> String:
+	var level := int(SessionStore.player.get("level", combat_build.get("level", 0)))
+	if level <= 2:
+		return "Primeira sessao: o Instrumento Ritual inicial ja basta para pedir a primeira batalha."
+	var equipped_spells := 0
+	for slot_variant: Variant in spell_slots:
+		var slot := _as_dictionary(slot_variant)
+		var spell_id := str(slot.get("spell_id", "")).strip_edges()
+		if spell_id != "" and spell_id != "<null>" and spell_id.to_lower() != "null":
+			equipped_spells += 1
+	if equipped_spells <= 0:
+		return "Primeira sessao: sem habilidades equipadas, confirme o Instrumento Ritual e batalhe."
+	return "Primeira sessao: confira instrumento, habilidades e pocao antes de batalhar."
 
 static func _host_viewport_size(host: Node) -> Vector2:
 	var first_root := _first_screen_root(host)
@@ -922,6 +961,7 @@ static func _preparation_panel(host: Node, compact: bool) -> PanelContainer:
 
 	box.add_child(_section_label("Pronto para batalha", compact))
 	box.add_child(_body_label("Escolha o que Draxos leva para a proxima luta.", compact))
+	box.add_child(_body_label(_preparation_first_session_hint(combat_build, spell_slots), compact))
 	var feedback_message := str(host.get_meta("preparation_feedback_message", "")).strip_edges()
 	if feedback_message != "":
 		box.add_child(_body_label("Ultima escolha: %s" % feedback_message, compact))

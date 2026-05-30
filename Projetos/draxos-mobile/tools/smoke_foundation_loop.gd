@@ -28,6 +28,7 @@ func _run_smoke() -> int:
 	await process_frame
 	_expect_cta(boot, "Ver recompensa", AppShellActionContractScript.ACTION_SHOW_LATEST_BATTLE)
 	_expect_label_contains(boot, "RefugeLoopNextLabel", "Ver recompensa")
+	_expect_label_contains(boot, "RefugeFirstSessionHintLabel", "abra a recompensa")
 	_expect_label_contains(boot, "RefugeLoopCollectLabel", "Pronta")
 	_expect_label_contains(boot, "RefugeLoopUpgradeLabel", "Nucleo")
 
@@ -36,6 +37,7 @@ func _run_smoke() -> int:
 	await process_frame
 	_expect_cta(boot, "Coletar", AppShellActionContractScript.ACTION_COLLECT_BASE)
 	_expect_label_contains(boot, "RefugeLoopNextLabel", "Coletar")
+	_expect_label_contains(boot, "RefugeFirstSessionHintLabel", "coletando recursos")
 
 	_store.base_state = _base_state_without_collect()
 	_remember_surface(SessionStoreScript.SURFACE_BASE)
@@ -43,6 +45,7 @@ func _run_smoke() -> int:
 	await process_frame
 	_expect_cta(boot, "Evoluir", AppShellActionContractScript.upgrade_base_structure_action("nucleo_energia"))
 	_expect_label_contains(boot, "RefugeLoopUpgradeLabel", "Nucleo")
+	_expect_label_contains(boot, "RefugeFirstSessionHintLabel", "evolua uma estrutura")
 
 	_store.base_state = {}
 	_store.surface_save_types.erase(SessionStoreScript.SURFACE_BASE)
@@ -54,6 +57,7 @@ func _run_smoke() -> int:
 	boot.call("_show_screen", "battle_summary", false)
 	await process_frame
 	_expect(_find_button_by_text(boot, "Voltar e verificar base") != null, "battle summary returns to base loop")
+	_expect_tree_contains(boot, "Proximo passo", "battle summary explains the next step")
 	boot.call("_return_to_refuge")
 	await process_frame
 	_expect(_store.last_battle_result_seen, "return to Refugio marks reward as seen")
@@ -105,6 +109,9 @@ func _expect_label_contains(root_node: Node, node_name: String, expected: String
 	if label != null:
 		_expect(label.text.contains(expected), "%s contains '%s' in '%s'" % [node_name, expected, label.text])
 
+func _expect_tree_contains(root_node: Node, expected: String, message: String) -> void:
+	_expect(_text_tree_contains(root_node, expected), "%s: '%s'" % [message, expected])
+
 func _expect(condition: bool, message: String) -> void:
 	if not condition:
 		_failures.append(message)
@@ -139,6 +146,18 @@ func _find_button_by_text(root_node: Node, text: String) -> Button:
 		if found != null:
 			return found
 	return null
+
+func _text_tree_contains(root_node: Node, text: String) -> bool:
+	if root_node == null:
+		return false
+	if root_node is Label and str((root_node as Label).text).contains(text):
+		return true
+	if root_node is Button and str((root_node as Button).text).contains(text):
+		return true
+	for child: Node in root_node.get_children():
+		if _text_tree_contains(child, text):
+			return true
+	return false
 
 func _base_state_without_collect() -> Dictionary:
 	var base := _base_state_fixture()

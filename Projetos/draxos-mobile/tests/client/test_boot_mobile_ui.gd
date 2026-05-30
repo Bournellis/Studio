@@ -820,6 +820,7 @@ func test_refuge_preparation_renders_potion_slot_and_behavior_defaults() -> void
 	var popup := boot.get("_refuge_menu_popup") as PopupPanel
 	assert_not_null(popup)
 	assert_true(_label_tree_contains(popup, "Pronto para batalha"))
+	assert_true(_label_tree_contains(popup, "Primeira sessao: confira instrumento, habilidades e pocao antes de batalhar."))
 	assert_true(_label_tree_contains(popup, "Poder 243"))
 	assert_true(_label_tree_contains(popup, "Resumo: Varinha de Cinzas | 1 habilidade | Doutrina do Pavor | Corvo de Pressagio"))
 	assert_true(_label_tree_contains(popup, "Proximos marcos"))
@@ -888,6 +889,8 @@ func test_refuge_progression_clarity_uses_existing_account_and_build_state() -> 
 	assert_true(_label_tree_contains(boot._first_screen_root, "Progresso"))
 	assert_true(_label_tree_contains(boot._first_screen_root, "Nivel 8 | Poder 243"))
 	assert_true(_label_tree_contains(boot._first_screen_root, "Nivel 10: doutrina de combate."))
+	assert_true(_label_tree_contains(boot._first_screen_root, "Primeira sessao: siga o proximo passo e mantenha a base evoluindo."))
+	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeFirstSessionHintLabel"))
 	var lines := ProgressionClarityPresenterScript.unlock_lines(SessionStore.combat_build_state, 3)
 	assert_true(lines.has("Nivel 10: doutrina de combate."))
 	assert_true(lines.has("Nivel 15: Lobo Tumular."))
@@ -1375,9 +1378,11 @@ func test_boot_battle_summary_renders_reward_result_and_actions() -> void:
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Recompensa"))
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Recursos"))
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Progresso"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Proximo passo"))
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Nivel 8 | Poder 120"))
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Esta batalha somou XP +10."))
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Nivel 10: doutrina de combate."))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "colete, evolua a base"))
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "verificar a base"))
 	assert_not_null(_find_button_by_text(boot._battle_fullscreen_overlay, "Voltar e verificar base"))
 	assert_true(boot._action_buttons.has("return_refuge"))
@@ -1475,6 +1480,7 @@ func test_battle_summary_data_uses_battle_log_rewards_and_resource_state() -> vo
 	assert_eq(str(summary.get("reward_text", "")), "XP +10, Almas +0.8, Ossos +1")
 	assert_eq(str(summary.get("resources_text", "")), "Almas 7, Energia 9, Diamantes 2")
 	assert_string_contains(str(summary.get("progress_text", "")), "Esta batalha somou XP +10.")
+	assert_string_contains(str(summary.get("next_step_text", "")), "evolua a base")
 
 func _first_action_grid(parent: Node) -> GridContainer:
 	for child: Node in parent.get_children():

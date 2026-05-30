@@ -159,7 +159,10 @@ func render_fullscreen_summary(
 	var progress_text := str(summary.get("progress_text", ""))
 	if progress_text != "":
 		details.add_child(_summary_detail_panel("Progresso", progress_text, compact_layout))
-	stack.add_child(_fullscreen_center_label("Recompensa registrada. Volte para verificar a base.", 13 if compact_layout else 15, "text_secondary"))
+	var next_step_text := str(summary.get("next_step_text", ""))
+	if next_step_text != "":
+		details.add_child(_summary_detail_panel("Proximo passo", next_step_text, compact_layout))
+	stack.add_child(_fullscreen_center_label("Recompensa registrada. Volte para verificar a base e escolher o proximo passo.", 13 if compact_layout else 15, "text_secondary"))
 
 	var actions := GridContainer.new()
 	actions.columns = 1
@@ -338,6 +341,7 @@ static func summary_data(battle_log: Dictionary, rewards: Dictionary, current_re
 		"resources_text": _resources_text(current_resources),
 		"ranking_text": ranking_text,
 		"progress_text": ProgressionClarityPresenterScript.battle_summary_text(rewards, SessionStore.combat_build_state),
+		"next_step_text": _summary_next_step_text(rewards),
 	}
 
 static func current_battle_logs_text(battle_log: Dictionary) -> String:
@@ -488,6 +492,12 @@ static func _ranking_text(result: Dictionary) -> String:
 	if arena_points != "":
 		parts.append("%s pontos totais" % arena_points)
 	return ", ".join(parts)
+
+static func _summary_next_step_text(rewards: Dictionary) -> String:
+	var reward_text := _reward_text(rewards)
+	if reward_text != "":
+		return "Use %s no Refugio: colete, evolua a base quando houver Energia e peca outra batalha." % reward_text
+	return "Volte ao Refugio para conferir coleta, evolucao e preparacao antes da proxima batalha."
 
 static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:
