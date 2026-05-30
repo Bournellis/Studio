@@ -7,6 +7,12 @@ import {
   simulateFirstSliceBattle,
 } from "../_shared/battle_simulator.ts";
 import {
+  type FoundationGameSaveRow,
+  loadFoundationGameSave,
+  mapFoundationDatabaseError,
+  mutationRequestHash,
+} from "../_shared/transactional_mutation.ts";
+import {
   isProgressionLabSave,
   type SaveType,
   saveTypeFromRequest,
@@ -269,7 +275,7 @@ async function handleRequest(
     return errorResponse("INVALID_BOT_ID", "opponent_bot_id is invalid.", 400);
   }
 
-  return await handleFirstSliceRequest(auth, config, requestId, opponentBotId);
+  return await handleFirstSliceRequest(auth, config, requestId, opponentBotId, body);
 }
 
 async function handleMvpRequest(
@@ -301,6 +307,7 @@ async function handleFirstSliceRequest(
   config: EdgeConfig,
   requestId: string,
   opponentBotId: string,
+  body: Record<string, unknown>,
 ): Promise<Response> {
   const playerState = await loadPlayerState(auth, config);
   if (playerState.error !== null) {
@@ -309,26 +316,6 @@ async function handleFirstSliceRequest(
       playerState.error.message,
       playerState.error.status,
     );
-  }
-
-  const playerId = encodeURIComponent(playerState.value.player.id);
-  const existing = await restRequest<IdempotencyRow[]>(
-    config,
-    `idempotency_keys?player_id=eq.${playerId}&endpoint=eq.battle/request&request_id=eq.${
-      encodeURIComponent(requestId)
-    }&select=response_payload&limit=1`,
-    { method: "GET" },
-  );
-  if (existing.error !== null) {
-    return errorResponse(
-      "STATE_READ_FAILED",
-      "Unable to check battle idempotency.",
-      500,
-    );
-  }
-  const existingPayload = existing.value[0]?.response_payload ?? null;
-  if (existingPayload !== null) {
-    return jsonResponse(existingPayload);
   }
 
   const botResult = await restRequest<BotBuildRow[]>(
@@ -364,59 +351,7 @@ async function handleFirstSliceRequest(
   });
   const reward = simulation.reward.resources;
 
-  const insertBattle = await restRequest<unknown>(config, "battles", {
-    method: "POST",
-    headers: { prefer: "return=minimal" },
-    body: JSON.stringify({
-      id: battleId,
-      attacker_id: playerState.value.player.id,
-      defender_id: bot.id,
-      defender_is_bot: true,
-      schema_version: simulation.battleLog.schema_version,
-      seed,
-      result: simulation.battleLog.result,
-      event_log: simulation.battleLog.events,
-      reward_payload: simulation.reward,
-      reward_applied: true,
-      request_id: requestId,
-      ruleset_id: FOUNDATION_RULESET.ruleset_id,
-      ruleset_version: FOUNDATION_RULESET.ruleset_version,
-    }),
-  });
-  if (insertBattle.error !== null) {
-    const mapped = mapDatabaseError(insertBattle.error);
-    return errorResponse(mapped.code, mapped.message, mapped.status);
-  }
-
-  const applyReward = await applyBattleReward(
-    config,
-    playerState.value,
-    requestId,
-    reward,
-  );
-  if (applyReward !== null) {
-    return errorResponse(
-      applyReward.code,
-      applyReward.message,
-      applyReward.status,
-    );
-  }
-
-  const applyConsumables = await applyBattleConsumables(
-    config,
-    playerState.value,
-    requestId,
-    simulation.consumables.used,
-  );
-  if (applyConsumables !== null) {
-    return errorResponse(
-      applyConsumables.code,
-      applyConsumables.message,
-      applyConsumables.status,
-    );
-  }
-
-  const competition = await applyArenaResult(
+  const competition = await prepareArenaMutationPayload(
     config,
     auth,
     playerState.value.player,
@@ -431,37 +366,40 @@ async function handleFirstSliceRequest(
     );
   }
 
-  const responsePayload = {
-    ok: true,
-    battle_log: simulation.battleLog,
-    ruleset: rulesetMetadata(),
-    rewards: simulation.reward,
-    consumables: simulation.consumables,
-    competition: competition.value,
-  };
-  const insertIdempotency = await restRequest<unknown>(
-    config,
-    "idempotency_keys",
-    {
-      method: "POST",
-      headers: { prefer: "return=minimal" },
-      body: JSON.stringify({
-        player_id: playerState.value.player.id,
-        endpoint: "battle/request",
+  const requestHash = await mutationRequestHash("battle/request", body, {
+    request_id: requestId,
+    save_type: auth.saveType,
+    mode: "FIRST_SLICE_SIM",
+    opponent_bot_id: bot.id,
+    battle_id: battleId,
+    seed,
+  });
+  const rpc = await restRequest<unknown>(config, "rpc/request_battle_v1", {
+    method: "POST",
+    body: JSON.stringify({
+      p_game_save_id: playerState.value.gameSave.id,
+      p_request_id: requestId,
+      p_request_hash: requestHash,
+      p_request_payload: {
         request_id: requestId,
-        response_payload: responsePayload,
-      }),
-    },
-  );
-  if (insertIdempotency.error !== null) {
-    return errorResponse(
-      "SIMULATION_FAILED",
-      "Unable to persist battle idempotency.",
-      500,
-    );
+        battle_id: battleId,
+        seed,
+        defender_id: bot.id,
+        defender_is_bot: true,
+        battle_log: simulation.battleLog,
+        reward_payload: simulation.reward,
+        reward_delta: reward,
+        consumables: simulation.consumables,
+        competition: competition.value,
+      },
+    }),
+  });
+  if (rpc.error !== null) {
+    const mapped = mapFoundationDatabaseError(rpc.error, "SIMULATION_FAILED");
+    return errorResponse(mapped.code, mapped.message, mapped.status);
   }
 
-  return jsonResponse(responsePayload);
+  return jsonResponse(rpc.value);
 }
 
 async function handleLatest(
@@ -758,6 +696,7 @@ async function loadPlayerState(
   {
     value: {
       player: PlayerRow;
+      gameSave: FoundationGameSaveRow;
       resources: ResourceRow;
       build: BuildRow;
       inventory: ConsumableRow[];
@@ -791,6 +730,17 @@ async function loadPlayerState(
   }
 
   const playerId = encodeURIComponent(player.id);
+  const gameSave = await loadFoundationGameSave(
+    config,
+    restRequest,
+    auth.userId,
+    auth.saveType,
+    player.id,
+  );
+  if (gameSave.error !== null) {
+    return { value: null, error: gameSave.error };
+  }
+
   const resourcesResult = await restRequest<ResourceRow[]>(
     config,
     `resources?player_id=eq.${playerId}&select=almas,energia,sangue,cristais,ossos,po_osso,diamante&limit=1`,
@@ -841,11 +791,65 @@ async function loadPlayerState(
   return {
     value: {
       player,
+      gameSave: gameSave.value,
       resources,
       build,
       inventory: inventoryResult.value,
       potionSlots: slotsResult.value,
       spellBehaviors: behaviorsResult.value,
+    },
+    error: null,
+  };
+}
+
+async function prepareArenaMutationPayload(
+  config: EdgeConfig,
+  auth: AuthContext,
+  player: PlayerRow,
+  bot: BotBuildRow,
+  outcome: BattleOutcome,
+): Promise<
+  { value: Record<string, unknown>; error: null } | {
+    value: null;
+    error: RestError;
+  }
+> {
+  if (isProgressionLabSave(auth.saveType)) {
+    return {
+      value: {
+        ranked: false,
+        excluded_reason: "PROGRESSION_LAB_DOES_NOT_RANK",
+        scoring_model: ARENA_SCORING_MODEL,
+      },
+      error: null,
+    };
+  }
+
+  const season = await activeSeason(config);
+  if (season.error !== null) {
+    return { value: null, error: season.error };
+  }
+
+  const playerPower = effectivePower(player.power, player.level);
+  const opponentPower = Math.max(1, numberValue(bot.power, 1));
+  const rawArenaDelta = arenaPointDelta(outcome, playerPower, opponentPower);
+
+  return {
+    value: {
+      ranked: true,
+      season: season.value,
+      result: outcome,
+      scoring_model: ARENA_SCORING_MODEL,
+      arena_delta_raw: rawArenaDelta,
+      player_power: playerPower,
+      opponent_power: opponentPower,
+      opponent: {
+        id: bot.id,
+        power: bot.power,
+        power_band: bot.power_band,
+        is_bot: true,
+        is_ranked: false,
+      },
     },
     error: null,
   };

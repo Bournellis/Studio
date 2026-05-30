@@ -1,4 +1,11 @@
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import {
+  type FoundationGameSaveRow,
+  foundationRpcPayload,
+  loadFoundationGameSave,
+  mapFoundationDatabaseError,
+  mutationRequestHash,
+} from "../_shared/transactional_mutation.ts";
 import { type SaveType, saveTypeFromRequest, saveTypeQuery } from "../_shared/save_context.ts";
 
 type Route = "state" | "reward_claim" | "alpha_purchase";
@@ -120,6 +127,7 @@ interface AlphaProduct {
 
 interface MonetizationState {
   player: PlayerRow;
+  gameSave: FoundationGameSaveRow;
   resources: ResourceRow;
   pass: BattlePassRow;
   progress: BattlePassProgressRow;
@@ -382,166 +390,71 @@ async function handleRewardClaim(
     return errorResponse(state.error.code, state.error.message, state.error.status);
   }
 
-  const existing = await loadIdempotency(
-    config,
-    state.value.player.id,
-    "monetization/rewards/claim",
-    requestId,
-  );
-  if (existing.error !== null) {
-    return errorResponse(existing.error.code, existing.error.message, existing.error.status);
-  }
-  if (existing.value !== null) {
-    return jsonResponse(existing.value);
-  }
-
   if (definition.premiumRequired === true && !state.value.progress.premium_unlocked) {
     return errorResponse("PREMIUM_REQUIRED", "Premium Battle Pass is not unlocked.", 409);
   }
 
   const now = new Date();
   const periodKey = rewardPeriodKey(definition, state.value.pass, now);
-  const previousClaim = await loadRewardClaim(
-    config,
-    state.value.player.id,
-    definition.source,
-    definition.id,
-    periodKey,
-  );
-  if (previousClaim.error !== null) {
-    return errorResponse(
-      previousClaim.error.code,
-      previousClaim.error.message,
-      previousClaim.error.status,
-    );
-  }
-  if (previousClaim.value !== null) {
-    const responsePayload = {
-      ...monetizationStatePayload(state.value, now),
-      already_claimed: true,
-      reward: {
-        id: definition.id,
-        source: definition.source,
-        period_key: periodKey,
-        payload: previousClaim.value.reward_payload,
-      },
-    };
-    const idem = await insertIdempotency(
-      config,
-      state.value.player.id,
-      "monetization/rewards/claim",
-      requestId,
-      responsePayload,
-    );
-    if (idem !== null) {
-      return errorResponse(idem.code, idem.message, idem.status);
-    }
-    return jsonResponse(responsePayload);
-  }
-
-  const updatedPlayer = await applyXp(config, state.value.player, definition.xp);
-  if (updatedPlayer.error !== null) {
-    return errorResponse(
-      updatedPlayer.error.code,
-      updatedPlayer.error.message,
-      updatedPlayer.error.status,
-    );
-  }
-  const updatedResources = await applyResources(
-    config,
-    state.value.resources,
-    definition.resources,
-  );
-  if (updatedResources.error !== null) {
-    return errorResponse(
-      updatedResources.error.code,
-      updatedResources.error.message,
-      updatedResources.error.status,
-    );
-  }
   const passXpDelta = definition.source === "battle_pass" ? 0 : definition.xp;
-  const updatedProgress = await updateBattlePassProgress(
-    config,
-    state.value.progress,
-    passXpDelta,
-    false,
-  );
-  if (updatedProgress.error !== null) {
-    return errorResponse(
-      updatedProgress.error.code,
-      updatedProgress.error.message,
-      updatedProgress.error.status,
-    );
-  }
-
   const rewardPayload = {
     label: definition.label,
     tier: definition.tier ?? null,
     xp: definition.xp,
     resources: resourceDelta(definition.resources),
   };
-  const claimError = await insertRewardClaim(
-    config,
-    state.value.player.id,
-    definition,
-    periodKey,
-    requestId,
-    rewardPayload,
-  );
-  if (claimError !== null) {
-    return errorResponse(claimError.code, claimError.message, claimError.status);
+  const resourcesPayload = resourceDelta(definition.resources);
+  const requestHash = await mutationRequestHash("monetization/rewards/claim", body, {
+    request_id: requestId,
+    save_type: auth.saveType,
+    reward_id: definition.id,
+    source: definition.source,
+    period_key: periodKey,
+    pass_id: state.value.pass.id,
+    premium_required: definition.premiumRequired === true,
+    xp: definition.xp,
+    pass_xp_delta: passXpDelta,
+    resources: resourcesPayload,
+  });
+  const rpc = await restRequest<unknown>(config, "rpc/claim_reward_v1", {
+    method: "POST",
+    body: JSON.stringify({
+      p_game_save_id: state.value.gameSave.id,
+      p_request_id: requestId,
+      p_request_hash: requestHash,
+      p_request_payload: {
+        request_id: requestId,
+        reward_id: definition.id,
+        source: definition.source,
+        period_key: periodKey,
+        pass_id: state.value.pass.id,
+        premium_required: definition.premiumRequired === true,
+        xp: definition.xp,
+        pass_xp_delta: passXpDelta,
+        resources: resourcesPayload,
+        reward_payload: rewardPayload,
+      },
+    }),
+  });
+  if (rpc.error !== null) {
+    const mapped = mapFoundationDatabaseError(rpc.error, "REWARD_CLAIM_FAILED");
+    return errorResponse(mapped.code, mapped.message, mapped.status);
   }
-  const ledgerError = await insertLedger(
-    config,
-    state.value.player.id,
-    "monetization/reward",
-    requestId,
-    {
-      xp: definition.xp,
-      ...resourceDelta(definition.resources),
-    },
-  );
-  if (ledgerError !== null) {
-    return errorResponse(ledgerError.code, ledgerError.message, ledgerError.status);
+  const rpcPayload = foundationRpcPayload(rpc.value);
+  const refreshed = await loadMonetizationState(auth, config);
+  if (refreshed.error !== null) {
+    return errorResponse(refreshed.error.code, refreshed.error.message, refreshed.error.status);
   }
-
   const responsePayload = {
-    ...monetizationStatePayload({
-      player: updatedPlayer.value,
-      resources: updatedResources.value,
-      pass: state.value.pass,
-      progress: updatedProgress.value,
-      claims: [
-        ...state.value.claims,
-        {
-          id: "",
-          source: definition.source,
-          reward_id: definition.id,
-          period_key: periodKey,
-          reward_payload: rewardPayload,
-          created_at: now.toISOString(),
-        },
-      ],
-      purchases: state.value.purchases,
-    }, now),
-    already_claimed: false,
-    reward: {
+    ...monetizationStatePayload(refreshed.value, now),
+    already_claimed: rpcPayload.already_claimed === true,
+    reward: rpcPayload.reward ?? {
       id: definition.id,
       source: definition.source,
       period_key: periodKey,
       payload: rewardPayload,
     },
   };
-  const idem = await insertIdempotency(
-    config,
-    state.value.player.id,
-    "monetization/rewards/claim",
-    requestId,
-    responsePayload,
-  );
-  if (idem !== null) {
-    return errorResponse(idem.code, idem.message, idem.status);
-  }
   return jsonResponse(responsePayload);
 }
 
@@ -568,92 +481,11 @@ async function handleAlphaPurchase(
   if (state.error !== null) {
     return errorResponse(state.error.code, state.error.message, state.error.status);
   }
-  const existing = await loadIdempotency(
-    config,
-    state.value.player.id,
-    "monetization/alpha-purchase",
-    requestId,
-  );
-  if (existing.error !== null) {
-    return errorResponse(existing.error.code, existing.error.message, existing.error.status);
-  }
-  if (existing.value !== null) {
-    return jsonResponse(existing.value);
-  }
 
   const now = new Date();
   const dailyRedeemPeriodKey = dateKeySaoPaulo(now);
-  if (
-    product.dailyRedeem === true && isDailyRedeemClaimed(
-      state.value.purchases,
-      product,
-      dailyRedeemPeriodKey,
-    )
-  ) {
-    const responsePayload = {
-      ...monetizationStatePayload(state.value, now),
-      already_redeemed: true,
-      purchase: alphaProductPayload(product, state.value, dailyRedeemPeriodKey),
-    };
-    const idem = await insertIdempotency(
-      config,
-      state.value.player.id,
-      "monetization/alpha-purchase",
-      requestId,
-      responsePayload,
-    );
-    if (idem !== null) {
-      return errorResponse(idem.code, idem.message, idem.status);
-    }
-    return jsonResponse(responsePayload);
-  }
-
-  if (isAlphaProductOwned(state.value, product)) {
-    const responsePayload = {
-      ...monetizationStatePayload(state.value, now),
-      already_owned: true,
-      purchase: alphaProductPayload(product, state.value, dailyRedeemPeriodKey),
-    };
-    const idem = await insertIdempotency(
-      config,
-      state.value.player.id,
-      "monetization/alpha-purchase",
-      requestId,
-      responsePayload,
-    );
-    if (idem !== null) {
-      return errorResponse(idem.code, idem.message, idem.status);
-    }
-    return jsonResponse(responsePayload);
-  }
 
   const delta = combineResourceDeltas(product.cost ?? {}, product.resources ?? {});
-  if (!canApplyDelta(state.value.resources, delta)) {
-    return errorResponse("INSUFFICIENT_RESOURCES", "Not enough resources for alpha product.", 409);
-  }
-
-  const updatedResources = await applyResources(config, state.value.resources, delta);
-  if (updatedResources.error !== null) {
-    return errorResponse(
-      updatedResources.error.code,
-      updatedResources.error.message,
-      updatedResources.error.status,
-    );
-  }
-  const updatedProgress = await updateBattlePassProgress(
-    config,
-    state.value.progress,
-    0,
-    product.kind === "premium_unlock",
-  );
-  if (updatedProgress.error !== null) {
-    return errorResponse(
-      updatedProgress.error.code,
-      updatedProgress.error.message,
-      updatedProgress.error.status,
-    );
-  }
-
   const purchasePayload = {
     product_id: product.id,
     label: product.label,
@@ -666,53 +498,51 @@ async function handleAlphaPurchase(
     redeem_period_key: product.dailyRedeem === true ? dailyRedeemPeriodKey : null,
     effect: product.effect ?? null,
   };
-  const purchaseError = await insertAlphaPurchase(
-    config,
-    state.value.player.id,
-    product.id,
-    requestId,
-    purchasePayload,
-  );
-  if (purchaseError !== null) {
-    return errorResponse(purchaseError.code, purchaseError.message, purchaseError.status);
-  }
-  const ledgerError = await insertLedger(
-    config,
-    state.value.player.id,
-    "monetization/alpha-purchase",
-    requestId,
-    resourceDelta(delta),
-  );
-  if (ledgerError !== null) {
-    return errorResponse(ledgerError.code, ledgerError.message, ledgerError.status);
-  }
-
-  const purchaseRow: AlphaPurchaseRow = {
-    id: "",
-    product_id: product.id,
+  const deltaPayload = resourceDelta(delta);
+  const productPayload = alphaProductPayload(product, state.value, dailyRedeemPeriodKey);
+  const requestHash = await mutationRequestHash("monetization/alpha-purchase", body, {
     request_id: requestId,
-    purchase_payload: purchasePayload,
-    created_at: now.toISOString(),
-  };
-  const responsePayload = {
-    ...monetizationStatePayload({
-      ...state.value,
-      resources: updatedResources.value,
-      progress: updatedProgress.value,
-      purchases: [purchaseRow, ...state.value.purchases],
-    }, now),
-    purchase: purchasePayload,
-  };
-  const idem = await insertIdempotency(
-    config,
-    state.value.player.id,
-    "monetization/alpha-purchase",
-    requestId,
-    responsePayload,
-  );
-  if (idem !== null) {
-    return errorResponse(idem.code, idem.message, idem.status);
+    save_type: auth.saveType,
+    product_id: product.id,
+    pass_id: state.value.pass.id,
+    resource_delta: deltaPayload,
+    daily_redeem_period_key: dailyRedeemPeriodKey,
+  });
+  const rpc = await restRequest<unknown>(config, "rpc/alpha_purchase_v1", {
+    method: "POST",
+    body: JSON.stringify({
+      p_game_save_id: state.value.gameSave.id,
+      p_request_id: requestId,
+      p_request_hash: requestHash,
+      p_request_payload: {
+        request_id: requestId,
+        product_id: product.id,
+        pass_id: state.value.pass.id,
+        resource_delta: deltaPayload,
+        purchase_payload: purchasePayload,
+        product_payload: productPayload,
+        daily_redeem: product.dailyRedeem === true,
+        daily_redeem_period_key: dailyRedeemPeriodKey,
+        unlock_premium: product.kind === "premium_unlock",
+        owned_once: product.kind === "convenience_unlock",
+      },
+    }),
+  });
+  if (rpc.error !== null) {
+    const mapped = mapFoundationDatabaseError(rpc.error, "ALPHA_PURCHASE_FAILED");
+    return errorResponse(mapped.code, mapped.message, mapped.status);
   }
+  const rpcPayload = foundationRpcPayload(rpc.value);
+  const refreshed = await loadMonetizationState(auth, config);
+  if (refreshed.error !== null) {
+    return errorResponse(refreshed.error.code, refreshed.error.message, refreshed.error.status);
+  }
+  const responsePayload = {
+    ...monetizationStatePayload(refreshed.value, now),
+    already_redeemed: rpcPayload.already_redeemed === true,
+    already_owned: rpcPayload.already_owned === true,
+    purchase: rpcPayload.purchase ?? purchasePayload,
+  };
   return jsonResponse(responsePayload);
 }
 
@@ -722,6 +552,14 @@ async function loadMonetizationState(
 ): Promise<{ value: MonetizationState; error: null } | { value: null; error: RestError }> {
   const player = await loadPlayer(auth, config);
   if (player.error !== null) return { value: null, error: player.error };
+  const gameSave = await loadFoundationGameSave(
+    config,
+    restRequest,
+    auth.userId,
+    auth.saveType,
+    player.value.id,
+  );
+  if (gameSave.error !== null) return { value: null, error: gameSave.error };
   const resources = await loadResources(config, player.value.id);
   if (resources.error !== null) return { value: null, error: resources.error };
   const pass = await activeBattlePass(config);
@@ -735,6 +573,7 @@ async function loadMonetizationState(
   return {
     value: {
       player: player.value,
+      gameSave: gameSave.value,
       resources: resources.value,
       pass: pass.value,
       progress: progress.value,

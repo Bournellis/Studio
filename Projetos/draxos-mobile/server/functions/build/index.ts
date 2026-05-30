@@ -1,4 +1,11 @@
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import {
+  type FoundationGameSaveRow,
+  foundationRpcPayload,
+  loadFoundationGameSave,
+  mapFoundationDatabaseError,
+  mutationRequestHash,
+} from "../_shared/transactional_mutation.ts";
 import { GRIMOIRE_CATALOG } from "../_shared/grimoire_catalog.ts";
 import { type SaveType, saveTypeFromRequest, saveTypeQuery } from "../_shared/save_context.ts";
 
@@ -73,6 +80,7 @@ interface IdempotencyRow {
 
 interface BuildState {
   player: PlayerRow;
+  gameSave: FoundationGameSaveRow;
   build: BuildRow;
   inventory: ConsumableRow[];
   potionSlots: PotionSlotRow[];
@@ -220,46 +228,42 @@ async function handleBuildEquip(
   if (state.error !== null) {
     return errorResponse(state.error.code, state.error.message, state.error.status);
   }
-  const existing = await loadIdempotency(config, state.value.player.id, "build/equip", requestId);
-  if (existing.error !== null) {
-    return errorResponse(existing.error.code, existing.error.message, existing.error.status);
-  }
-  if (existing.value !== null) {
-    return jsonResponse(existing.value);
-  }
 
   const resolution = resolveEquipRequest(body, state.value);
   if (resolution.error !== null) {
     return errorResponse(resolution.error.code, resolution.error.message, resolution.error.status);
   }
 
-  const now = new Date().toISOString();
-  const update = await restRequest<BuildRow[]>(
-    config,
-    `builds?player_id=eq.${encodeURIComponent(state.value.player.id)}&select=player_id,weapon_type,weapon_quality,weapon_level,spell_slots,spells_unlocked,pet_id,pet_level,passive_id,passive_level,updated_at`,
-    {
-      method: "PATCH",
-      headers: { prefer: "return=representation" },
-      body: JSON.stringify({ ...resolution.value.update, updated_at: now }),
-    },
-  );
-  if (update.error !== null || update.value.length === 0) {
-    return errorResponse("BUILD_EQUIP_FAILED", "Unable to update battle preparation.", 500);
+  const candidateBuild: BuildRow = {
+    ...state.value.build,
+    ...resolution.value.update,
+  };
+  const nextPower = calculatePower(state.value.player, candidateBuild);
+  const requestHash = await mutationRequestHash("build/equip", body, {
+    request_id: requestId,
+    save_type: auth.saveType,
+    build: resolution.value.update,
+    player_power: nextPower,
+  });
+  const rpc = await restRequest<unknown>(config, "rpc/equip_build_v1", {
+    method: "POST",
+    body: JSON.stringify({
+      p_game_save_id: state.value.gameSave.id,
+      p_request_id: requestId,
+      p_request_hash: requestHash,
+      p_request_payload: {
+        request_id: requestId,
+        build: resolution.value.update,
+        equipped_build: resolution.value.summary,
+        player_power: nextPower,
+      },
+    }),
+  });
+  if (rpc.error !== null) {
+    const mapped = mapFoundationDatabaseError(rpc.error, "BUILD_EQUIP_FAILED");
+    return errorResponse(mapped.code, mapped.message, mapped.status);
   }
-
-  const nextPower = calculatePower(state.value.player, update.value[0]);
-  const powerUpdate = await restRequest<PlayerRow[]>(
-    config,
-    `players?id=eq.${encodeURIComponent(state.value.player.id)}&select=id,save_type,level,power`,
-    {
-      method: "PATCH",
-      headers: { prefer: "return=representation" },
-      body: JSON.stringify({ power: nextPower }),
-    },
-  );
-  if (powerUpdate.error !== null || powerUpdate.value.length === 0) {
-    return errorResponse("POWER_UPDATE_FAILED", "Unable to refresh player power.", 500);
-  }
+  const rpcPayload = foundationRpcPayload(rpc.value);
 
   const refreshed = await loadBuildState(auth, config);
   if (refreshed.error !== null) {
@@ -267,18 +271,8 @@ async function handleBuildEquip(
   }
   const responsePayload = {
     ...buildStatePayload(refreshed.value),
-    equipped_build: resolution.value.summary,
+    equipped_build: rpcPayload.equipped_build ?? resolution.value.summary,
   };
-  const idem = await insertIdempotency(
-    config,
-    state.value.player.id,
-    "build/equip",
-    requestId,
-    responsePayload,
-  );
-  if (idem !== null) {
-    return errorResponse(idem.code, idem.message, idem.status);
-  }
   return jsonResponse(responsePayload);
 }
 
@@ -559,6 +553,17 @@ async function loadBuildState(
     };
   }
 
+  const gameSave = await loadFoundationGameSave(
+    config,
+    restRequest,
+    auth.userId,
+    auth.saveType,
+    player.id,
+  );
+  if (gameSave.error !== null) {
+    return { value: null, error: gameSave.error };
+  }
+
   await ensurePotionSlot(config, player.id);
   const playerId = encodeURIComponent(player.id);
   const buildResult = await restRequest<BuildRow[]>(
@@ -597,6 +602,7 @@ async function loadBuildState(
   return {
     value: {
       player,
+      gameSave: gameSave.value,
       build,
       inventory: inventoryResult.value,
       potionSlots: slotsResult.value,

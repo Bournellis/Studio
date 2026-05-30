@@ -1,4 +1,11 @@
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import {
+  type FoundationGameSaveRow,
+  foundationRpcPayload,
+  loadFoundationGameSave,
+  mapFoundationDatabaseError,
+  mutationRequestHash,
+} from "../_shared/transactional_mutation.ts";
 import { type SaveType, saveTypeFromRequest, saveTypeQuery } from "../_shared/save_context.ts";
 
 type Route = "state" | "crush_bones" | "craft";
@@ -63,6 +70,7 @@ interface IdempotencyRow {
 
 interface CraftingState {
   player: PlayerRow;
+  gameSave: FoundationGameSaveRow;
   resources: ResourceRow;
   inventory: ConsumableRow[];
   potionSlots: PotionSlotRow[];
@@ -196,53 +204,30 @@ async function handleCrushBones(
   if (state.error !== null) {
     return errorResponse(state.error.code, state.error.message, state.error.status);
   }
-  const existing = await loadIdempotency(
-    config,
-    state.value.player.id,
-    "crafting/crush-bones",
-    requestId,
-  );
-  if (existing.error !== null) {
-    return errorResponse(existing.error.code, existing.error.message, existing.error.status);
-  }
-  if (existing.value !== null) {
-    return jsonResponse(existing.value);
-  }
 
   if (numberValue(state.value.resources.ossos, 0) < amount) {
     return errorResponse("INSUFFICIENT_RESOURCES", "Not enough Ossos to crush.", 409);
   }
 
-  const now = new Date().toISOString();
-  const patch = {
-    ossos: numberValue(state.value.resources.ossos, 0) - amount,
-    po_osso: numberValue(state.value.resources.po_osso, 0) + amount,
-    updated_at: now,
-  };
-  const resourcePatch = await restRequest<ResourceRow[]>(
-    config,
-    `resources?player_id=eq.${encodeURIComponent(state.value.player.id)}&select=*`,
-    {
-      method: "PATCH",
-      headers: { prefer: "return=representation" },
-      body: JSON.stringify(patch),
-    },
-  );
-  if (resourcePatch.error !== null || resourcePatch.value.length === 0) {
-    return errorResponse("CRUSH_BONES_FAILED", "Unable to crush Ossos.", 500);
+  const requestHash = await mutationRequestHash("crafting/crush-bones", body, {
+    request_id: requestId,
+    save_type: auth.saveType,
+    amount,
+  });
+  const rpc = await restRequest<unknown>(config, "rpc/crush_bones_v1", {
+    method: "POST",
+    body: JSON.stringify({
+      p_game_save_id: state.value.gameSave.id,
+      p_request_id: requestId,
+      p_request_hash: requestHash,
+      p_request_payload: { request_id: requestId, amount },
+    }),
+  });
+  if (rpc.error !== null) {
+    const mapped = mapFoundationDatabaseError(rpc.error, "CRUSH_BONES_FAILED");
+    return errorResponse(mapped.code, mapped.message, mapped.status);
   }
-
-  const delta = { ossos: -amount, po_osso: amount };
-  const ledger = await insertResourceLedger(
-    config,
-    state.value.player.id,
-    "crafting/crush-bones",
-    requestId,
-    delta,
-  );
-  if (ledger !== null) {
-    return errorResponse(ledger.code, ledger.message, ledger.status);
-  }
+  const rpcPayload = foundationRpcPayload(rpc.value);
 
   const refreshed = await loadCraftingState(auth, config);
   if (refreshed.error !== null) {
@@ -250,18 +235,8 @@ async function handleCrushBones(
   }
   const responsePayload = {
     ...craftingStatePayload(refreshed.value),
-    conversion: { input: { ossos: amount }, output: { po_osso: amount } },
+    conversion: rpcPayload.conversion ?? { input: { ossos: amount }, output: { po_osso: amount } },
   };
-  const idem = await insertIdempotency(
-    config,
-    state.value.player.id,
-    "crafting/crush-bones",
-    requestId,
-    responsePayload,
-  );
-  if (idem !== null) {
-    return errorResponse(idem.code, idem.message, idem.status);
-  }
   return jsonResponse(responsePayload);
 }
 
@@ -292,76 +267,43 @@ async function handleCraft(
   if (state.error !== null) {
     return errorResponse(state.error.code, state.error.message, state.error.status);
   }
-  const existing = await loadIdempotency(
-    config,
-    state.value.player.id,
-    "crafting/craft",
-    requestId,
-  );
-  if (existing.error !== null) {
-    return errorResponse(existing.error.code, existing.error.message, existing.error.status);
-  }
-  if (existing.value !== null) {
-    return jsonResponse(existing.value);
-  }
 
   const cost = scaledResourceDelta(recipe.input, -quantity);
   if (!canApplyDelta(state.value.resources, cost)) {
     return errorResponse("INSUFFICIENT_RESOURCES", "Not enough resources for this recipe.", 409);
   }
 
-  const updatedResources = await applyResources(config, state.value.resources, cost);
-  if (updatedResources.error !== null) {
-    return errorResponse(
-      updatedResources.error.code,
-      updatedResources.error.message,
-      updatedResources.error.status,
-    );
-  }
-
   const outputQuantity = recipe.output.quantity * quantity;
-  const existingItem = state.value.inventory.find((item) => item.item_id === recipe.output.itemId);
-  const nextQuantity = (existingItem?.quantity ?? 0) + outputQuantity;
-  const upsertItem = await restRequest<ConsumableRow[]>(
-    config,
-    "player_consumables?on_conflict=player_id,item_id&select=*",
-    {
-      method: "POST",
-      headers: { prefer: "resolution=merge-duplicates,return=representation" },
-      body: JSON.stringify({
-        player_id: state.value.player.id,
-        item_id: recipe.output.itemId,
-        quantity: nextQuantity,
-        updated_at: new Date().toISOString(),
-      }),
-    },
-  );
-  if (upsertItem.error !== null || upsertItem.value.length === 0) {
-    return errorResponse("CRAFT_FAILED", "Unable to add crafted item.", 500);
+  const costPayload = resourceDelta(cost);
+  const outputPayload = { item_id: recipe.output.itemId, quantity: outputQuantity };
+  const requestHash = await mutationRequestHash("crafting/craft", body, {
+    request_id: requestId,
+    save_type: auth.saveType,
+    recipe_id: recipe.id,
+    quantity,
+    resource_delta: costPayload,
+    output: outputPayload,
+  });
+  const rpc = await restRequest<unknown>(config, "rpc/craft_item_v1", {
+    method: "POST",
+    body: JSON.stringify({
+      p_game_save_id: state.value.gameSave.id,
+      p_request_id: requestId,
+      p_request_hash: requestHash,
+      p_request_payload: {
+        request_id: requestId,
+        recipe_id: recipe.id,
+        quantity,
+        resource_delta: costPayload,
+        output: outputPayload,
+      },
+    }),
+  });
+  if (rpc.error !== null) {
+    const mapped = mapFoundationDatabaseError(rpc.error, "CRAFT_FAILED");
+    return errorResponse(mapped.code, mapped.message, mapped.status);
   }
-
-  const ledger = await insertResourceLedger(
-    config,
-    state.value.player.id,
-    "crafting/craft",
-    requestId,
-    resourceDelta(cost),
-  );
-  if (ledger !== null) {
-    return errorResponse(ledger.code, ledger.message, ledger.status);
-  }
-  const itemLedger = await insertItemLedger(
-    config,
-    state.value.player.id,
-    "crafting/craft",
-    requestId,
-    recipe.output.itemId,
-    outputQuantity,
-    { recipe_id: recipe.id },
-  );
-  if (itemLedger !== null) {
-    return errorResponse(itemLedger.code, itemLedger.message, itemLedger.status);
-  }
+  const rpcPayload = foundationRpcPayload(rpc.value);
 
   const refreshed = await loadCraftingState(auth, config);
   if (refreshed.error !== null) {
@@ -369,22 +311,12 @@ async function handleCraft(
   }
   const responsePayload = {
     ...craftingStatePayload(refreshed.value),
-    crafted: {
+    crafted: rpcPayload.crafted ?? {
       recipe_id: recipe.id,
-      output: { item_id: recipe.output.itemId, quantity: outputQuantity },
-      cost: resourceDelta(cost),
+      output: outputPayload,
+      cost: costPayload,
     },
   };
-  const idem = await insertIdempotency(
-    config,
-    state.value.player.id,
-    "crafting/craft",
-    requestId,
-    responsePayload,
-  );
-  if (idem !== null) {
-    return errorResponse(idem.code, idem.message, idem.status);
-  }
   return jsonResponse(responsePayload);
 }
 
@@ -412,6 +344,17 @@ async function loadCraftingState(
         status: 404,
       },
     };
+  }
+
+  const gameSave = await loadFoundationGameSave(
+    config,
+    restRequest,
+    auth.userId,
+    auth.saveType,
+    player.id,
+  );
+  if (gameSave.error !== null) {
+    return { value: null, error: gameSave.error };
   }
 
   await ensurePotionSlot(config, player.id);
@@ -446,6 +389,7 @@ async function loadCraftingState(
   return {
     value: {
       player,
+      gameSave: gameSave.value,
       resources,
       inventory: inventoryResult.value,
       potionSlots: slotsResult.value,

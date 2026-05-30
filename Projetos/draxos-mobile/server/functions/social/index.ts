@@ -5,6 +5,12 @@ import {
   saveTypeFromRequest,
   saveTypeQuery,
 } from "../_shared/save_context.ts";
+import {
+  type FoundationGameSaveRow,
+  loadFoundationGameSave,
+  mapFoundationDatabaseError,
+  mutationRequestHash,
+} from "../_shared/transactional_mutation.ts";
 
 type Route = "state" | "friend_add" | "guild_create" | "guild_join" | "chat_send";
 
@@ -245,53 +251,35 @@ async function handleGuildCreate(
     return errorResponse(context.error.code, context.error.message, context.error.status);
   }
   const player = context.value.socialPlayer;
-  const existing = await loadIdempotency(config, player.id, "guild/create", requestId);
-  if (existing.error !== null) {
-    return errorResponse(existing.error.code, existing.error.message, existing.error.status);
+  const gameSave = await loadSocialGameSave(config, context.value, player);
+  if (gameSave.error !== null) {
+    return errorResponse(gameSave.error.code, gameSave.error.message, gameSave.error.status);
   }
-  if (existing.value !== null) return jsonResponse(existing.value);
-
-  const currentGuild = await loadGuildMembership(config, player.id);
-  if (currentGuild.error !== null) {
-    return errorResponse(
-      currentGuild.error.code,
-      currentGuild.error.message,
-      currentGuild.error.status,
-    );
-  }
-  if (currentGuild.value !== null) {
-    return errorResponse("GUILD_ALREADY_JOINED", "Player already belongs to a guild.", 409);
-  }
-
-  const guildInsert = await restRequest<GuildRow[]>(config, "guilds?select=*", {
-    method: "POST",
-    headers: { prefer: "return=representation" },
-    body: JSON.stringify({ name: guildName, owner_id: player.id }),
+  const requestHash = await mutationRequestHash("guild/create", body, {
+    request_id: requestId,
+    save_type: player.save_type,
+    name: guildName,
+    structures: GUILD_STRUCTURES,
   });
-  if (guildInsert.error !== null) {
-    return errorResponse("GUILD_CREATE_FAILED", "Unable to create guild.", 409);
-  }
-  const guild = guildInsert.value[0];
-  await restRequest<unknown>(config, "guild_members", {
+  const rpc = await restRequest<unknown>(config, "rpc/guild_create_v1", {
     method: "POST",
-    headers: { prefer: "return=minimal" },
-    body: JSON.stringify({ guild_id: guild.id, player_id: player.id, role: "owner" }),
+    body: JSON.stringify({
+      p_game_save_id: gameSave.value.id,
+      p_request_id: requestId,
+      p_request_hash: requestHash,
+      p_request_payload: {
+        request_id: requestId,
+        name: guildName,
+        structures: GUILD_STRUCTURES,
+      },
+    }),
   });
-  for (const structureId of GUILD_STRUCTURES) {
-    await restRequest<unknown>(config, "guild_structures", {
-      method: "POST",
-      headers: { prefer: "resolution=ignore-duplicates,return=minimal" },
-      body: JSON.stringify({ guild_id: guild.id, structure_id: structureId, level: 1 }),
-    });
+  if (rpc.error !== null) {
+    const mapped = mapFoundationDatabaseError(rpc.error, "GUILD_CREATE_FAILED");
+    return errorResponse(mapped.code, mapped.message, mapped.status);
   }
-  await restRequest<unknown>(config, "chat_channels", {
-    method: "POST",
-    headers: { prefer: "resolution=ignore-duplicates,return=minimal" },
-    body: JSON.stringify({ channel_type: "guild", guild_id: guild.id }),
-  });
 
   const payload = await socialStatePayload(config, context.value);
-  await insertIdempotency(config, player.id, "guild/create", requestId, payload);
   return jsonResponse(payload);
 }
 
@@ -318,62 +306,50 @@ async function handleGuildJoin(
     return errorResponse(context.error.code, context.error.message, context.error.status);
   }
   const player = context.value.socialPlayer;
-  const existing = await loadIdempotency(config, player.id, "guild/join", requestId);
-  if (existing.error !== null) {
-    return errorResponse(existing.error.code, existing.error.message, existing.error.status);
+  const gameSave = await loadSocialGameSave(config, context.value, player);
+  if (gameSave.error !== null) {
+    return errorResponse(gameSave.error.code, gameSave.error.message, gameSave.error.status);
   }
-  if (existing.value !== null) return jsonResponse(existing.value);
-
-  const guildResult = await restRequest<GuildRow[]>(
-    config,
-    `guilds?name=ilike.${encodeURIComponent(guildName)}&select=*&limit=1`,
-    { method: "GET" },
-  );
-  if (guildResult.error !== null) {
-    return errorResponse("GUILD_JOIN_FAILED", "Unable to find guild.", 500);
-  }
-  const targetGuild = guildResult.value[0] ?? null;
-  if (targetGuild === null) {
-    return errorResponse("GUILD_NOT_FOUND", "Guild name was not found.", 404);
-  }
-
-  const currentGuild = await loadGuildMembership(config, player.id);
-  if (currentGuild.error !== null) {
-    return errorResponse(
-      currentGuild.error.code,
-      currentGuild.error.message,
-      currentGuild.error.status,
-    );
-  }
-  if (currentGuild.value !== null && currentGuild.value.guild_id !== targetGuild.id) {
-    return errorResponse("GUILD_ALREADY_JOINED", "Player already belongs to a guild.", 409);
-  }
-  if (currentGuild.value === null && targetGuild.member_count >= 50) {
-    return errorResponse("GUILD_FULL", "Guild member limit reached.", 409);
-  }
-
-  if (currentGuild.value === null) {
-    const insert = await restRequest<unknown>(config, "guild_members", {
-      method: "POST",
-      headers: { prefer: "return=minimal" },
-      body: JSON.stringify({ guild_id: targetGuild.id, player_id: player.id, role: "member" }),
-    });
-    if (insert.error !== null) {
-      return errorResponse("GUILD_JOIN_FAILED", "Unable to join guild.", 500);
-    }
-    await restRequest<unknown>(config, `guilds?id=eq.${encodeURIComponent(targetGuild.id)}`, {
-      method: "PATCH",
-      headers: { prefer: "return=minimal" },
-      body: JSON.stringify({
-        member_count: targetGuild.member_count + 1,
-        updated_at: new Date().toISOString(),
-      }),
-    });
+  const requestHash = await mutationRequestHash("guild/join", body, {
+    request_id: requestId,
+    save_type: player.save_type,
+    name: guildName,
+  });
+  const rpc = await restRequest<unknown>(config, "rpc/guild_join_v1", {
+    method: "POST",
+    body: JSON.stringify({
+      p_game_save_id: gameSave.value.id,
+      p_request_id: requestId,
+      p_request_hash: requestHash,
+      p_request_payload: {
+        request_id: requestId,
+        name: guildName,
+      },
+    }),
+  });
+  if (rpc.error !== null) {
+    const mapped = mapFoundationDatabaseError(rpc.error, "GUILD_JOIN_FAILED");
+    return errorResponse(mapped.code, mapped.message, mapped.status);
   }
 
   const payload = await socialStatePayload(config, context.value);
-  await insertIdempotency(config, player.id, "guild/join", requestId, payload);
   return jsonResponse(payload);
+}
+
+async function loadSocialGameSave(
+  config: EdgeConfig,
+  context: SocialContext,
+  player: PlayerRow,
+): Promise<
+  { value: FoundationGameSaveRow; error: null } | { value: null; error: RestError }
+> {
+  return await loadFoundationGameSave(
+    config,
+    restRequest,
+    player.auth_user_id,
+    context.fallbackToActiveSave ? context.saveType : player.save_type,
+    player.id,
+  );
 }
 
 async function handleChatSend(
@@ -813,7 +789,11 @@ async function readJsonObject(request: Request): Promise<Record<string, unknown>
   }
 }
 
-async function restRequest<T>(config: EdgeConfig, path: string, init: RequestInit) {
+async function restRequest<T>(
+  config: EdgeConfig,
+  path: string,
+  init: RequestInit,
+): Promise<{ value: T; error: null } | { value: null; error: RestError }> {
   const headers = new Headers(init.headers);
   headers.set("accept", "application/json");
   headers.set("apikey", config.serviceRoleKey);
@@ -825,7 +805,7 @@ async function restRequest<T>(config: EdgeConfig, path: string, init: RequestIni
   if (!response.ok) {
     const body = isObject(data) ? data : {};
     return {
-      value: null as T,
+      value: null,
       error: {
         code: stringValue(body.code, "REST_ERROR"),
         message: stringValue(body.message, response.statusText),
