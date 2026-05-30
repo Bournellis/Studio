@@ -3,29 +3,34 @@
 - Status: `FOUNDATION_EXPANSION_READINESS_ACTIVE`
 - Started: `2026-05-30`
 - Branch: `codex/draxos-mobile/foundation-expansion-readiness`
-- Goal: prepare DraxosMobile for production future, parallel expansion and multiple agents before base builder, autobattler, social expansion or a real minigame.
+- Goal: prepare DraxosMobile for production future, parallel expansion and
+  multiple agents before base builder, autobattler, social expansion or a real
+  minigame.
 
 ## Decisions
 
 - Target is future production readiness, not only Internal Alpha convenience.
-- Supabase remains the alpha backend, but contracts must stay portable to Backend Proprio + Postgres.
-- Account/save authority moves to `account_profiles` + `game_saves`; `players.save_type` stays compatibility only.
-- Ruleset uses generated repo artifact as source of authorship and database registry as publication record.
+- Supabase remains the alpha backend, but contracts must stay portable to
+  Backend Proprio + Postgres.
+- Account/save authority moves to `account_profiles` + `game_saves`;
+  `players.save_type` stays compatibility only.
+- Ruleset uses generated repo artifact as source of authorship and database
+  registry as publication record.
 - Admin is minimum auditable, not a public panel.
 - New minigames are blocked until contract-first integration is complete.
 
 ## Lanes
 
-| Lane | Delivered |
-|---|---|
-| Docs/Contracts/Integration | `foundation-expansion-readiness.md`, account/save, ruleset registry, minigame and admin contracts, status/index updates |
-| Backend/Data | additive migration, account/save tables, ruleset registry, admin audit log, idempotency v1 fields and RPC scaffolds |
-| Backend/Domain Enforcement | Base collect/upgrade, battle rewards, monetization rewards/alpha purchase, build equip, crafting craft/crush-bones and guild create/join promoted from REST multi-step writes to v1 transactional RPCs; `base/state` uses atomic due-job completion |
-| Portable Domain Services | Base rules/projection, saved battle log projection, progression/power build projection and economy/crafting source-sink projections extracted to mirrored `_shared` modules with Deno tests; adapters keep HTTP/Supabase/RPC ownership |
-| Ruleset/Content | `foundation_ruleset_v0`, deterministic generator, server/supabase mirrors and Deno test |
-| Client Shell | `DraxosOperationState`, `DraxosAppShellActionRouter`, GUT shell contract test |
-| QA/Golden Tests | structural checker integrated into `validate_foundation.ps1`; schema/ruleset/client tests; local Supabase transactional RPC live proof; local Edge RPC adapter smoke |
-| Release/Ops/Admin | release checklist/admin contract updated for audited operations and no-secret guardrails |
+| Lane                       | Delivered                                                                                                                                                                                                                                                        |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Docs/Contracts/Integration | `foundation-expansion-readiness.md`, account/save, ruleset registry, minigame and admin contracts, status/index updates                                                                                                                                          |
+| Backend/Data               | additive migration, account/save tables, ruleset registry, admin audit log, idempotency v1 fields and RPC scaffolds                                                                                                                                              |
+| Backend/Domain Enforcement | Base collect/upgrade, battle rewards, monetization rewards/alpha purchase, build equip, crafting craft/crush-bones and guild create/join promoted from REST multi-step writes to v1 transactional RPCs; `base/state` uses atomic due-job completion              |
+| Portable Domain Services   | Base rules/projection, saved battle log projection, battle combatant mapping, progression/power build projection and economy/crafting source-sink projections extracted to mirrored `_shared` modules with Deno tests; adapters keep HTTP/Supabase/RPC ownership |
+| Ruleset/Content            | `foundation_ruleset_v0`, deterministic generator, server/supabase mirrors and Deno test                                                                                                                                                                          |
+| Client Shell               | `DraxosOperationState`, `DraxosAppShellActionRouter`, GUT shell contract test                                                                                                                                                                                    |
+| QA/Golden Tests            | structural checker integrated into `validate_foundation.ps1`; schema/ruleset/client tests; local Supabase transactional RPC live proof; local Edge RPC adapter smoke                                                                                             |
+| Release/Ops/Admin          | release checklist/admin contract updated for audited operations and no-secret guardrails                                                                                                                                                                         |
 
 ## Implemented Files
 
@@ -51,6 +56,8 @@
 - `supabase/functions/_shared/base_domain.ts`
 - `server/functions/_shared/battle_log_projection.ts`
 - `supabase/functions/_shared/battle_log_projection.ts`
+- `server/functions/_shared/battle_combatants.ts`
+- `supabase/functions/_shared/battle_combatants.ts`
 - `server/functions/_shared/progression_domain.ts`
 - `supabase/functions/_shared/progression_domain.ts`
 - `server/functions/_shared/economy_domain.ts`
@@ -76,6 +83,7 @@
 - `server/tests/transactional_edge_rpc_smoke.ts`
 - `server/tests/base_domain_test.ts`
 - `server/tests/battle_log_projection_test.ts`
+- `server/tests/battle_combatants_test.ts`
 - `server/tests/progression_domain_test.ts`
 - `server/tests/economy_domain_test.ts`
 - `server/tests/foundation_ruleset_test.ts`
@@ -83,10 +91,24 @@
 
 ## Current Limits
 
-- Critical economy/social mutations no longer use REST multi-step writes for their core effects: Base collect/upgrade, `FIRST_SLICE_SIM` battle persistence/rewards/consumables/ranking, reward claim, alpha purchase, build equip, crafting craft/crush-bones and guild create/join now reserve/complete idempotency and mutate state in RPCs.
-- Portable domain split now covers Base rules/projection, battle log/history/ruleset projection, progression/power build projection, rewards/alpha products and crafting/monetization source-sink payloads. Next safe slice is deeper battle combatant mapping. Progression Lab and Battle Lab still keep local power heuristics that need a later explicit alignment/documentation slice.
-- Live database failure/retry/idempotency proof exists in `server/tests/transactional_rpc_live_test.ts` for battle rewards, build equip, crafting, reward claim, alpha purchase and guild create/join; it passed against a reset local Supabase stack on `2026-05-30`.
-- Local Edge Function HTTP smoke exists in `server/tests/transactional_edge_rpc_smoke.ts`; it passed against local `supabase functions serve` on `2026-05-30`.
+- Critical economy/social mutations no longer use REST multi-step writes for
+  their core effects: Base collect/upgrade, `FIRST_SLICE_SIM` battle
+  persistence/rewards/consumables/ranking, reward claim, alpha purchase, build
+  equip, crafting craft/crush-bones and guild create/join now reserve/complete
+  idempotency and mutate state in RPCs.
+- Portable domain split now covers Base rules/projection, battle
+  log/history/ruleset projection, battle player/bot combatant mapping,
+  progression/power build projection, rewards/alpha products and
+  crafting/monetization source-sink payloads. Progression Lab and Battle Lab
+  still keep local power heuristics that need a later explicit
+  alignment/documentation slice.
+- Live database failure/retry/idempotency proof exists in
+  `server/tests/transactional_rpc_live_test.ts` for battle rewards, build equip,
+  crafting, reward claim, alpha purchase and guild create/join; it passed
+  against a reset local Supabase stack on `2026-05-30`.
+- Local Edge Function HTTP smoke exists in
+  `server/tests/transactional_edge_rpc_smoke.ts`; it passed against local
+  `supabase functions serve` on `2026-05-30`.
 - Migration is additive and not pushed remotely in this package.
 - No new gameplay, balance, social expansion or minigame is included.
 
@@ -98,6 +120,7 @@ npx -y deno test --allow-read server/tests/transactional_domain_enforcement_sche
 npx -y deno test --allow-read server/tests/remaining_transactional_domain_enforcement_schema_test.ts
 npx -y deno test --allow-read server/tests/base_domain_test.ts
 npx -y deno test --allow-read server/tests/battle_log_projection_test.ts
+npx -y deno test --allow-read server/tests/battle_combatants_test.ts
 npx -y deno test --allow-read server/tests/progression_domain_test.ts
 npx -y deno test --allow-read server/tests/economy_domain_test.ts
 npx -y deno test --allow-read server/tests/foundation_ruleset_test.ts
@@ -113,4 +136,5 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 git diff --check
 ```
 
-Full release/client validation remains `validate_foundation.ps1 -Profile Full` before any publication or merge gate.
+Full release/client validation remains `validate_foundation.ps1 -Profile Full`
+before any publication or merge gate.
