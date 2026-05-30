@@ -112,6 +112,7 @@ $requiredFiles = @(
   'docs\contracts\ruleset-registry.md',
   'docs\contracts\minigame-integration.md',
   'docs\contracts\admin-ops.md',
+  'docs\contracts\lab-heuristics.md',
   'docs\contracts\api-endpoints.md',
   'docs\contracts\database-schema.md',
   'docs\contracts\content-definitions.md',
@@ -163,6 +164,7 @@ $requiredFiles = @(
   'server\tests\transactional_rpc_live_test.ts',
   'server\tests\transactional_edge_rpc_smoke.ts',
   'server\tests\foundation_contracts_test.ts',
+  'server\tests\lab_heuristics_contract_test.ts',
   'server\tests\integer_bones_contract_test.ts',
   'server\tests\build_equip_smoke.ts',
   'tests\client\test_foundation_shell_contracts.gd',
@@ -222,6 +224,17 @@ Test-FileContains 'docs\contracts\admin-ops.md' 'audit_id'
 Test-FileContains 'docs\contracts\admin-ops.md' 'admin_audit_log'
 Test-FileContains 'docs\contracts\admin-ops.md' 'ConfirmRemoteMutation'
 
+Test-FileContains 'docs\contracts\lab-heuristics.md' 'LAB_HEURISTICS_CONTRACT_V1'
+Test-FileContains 'docs\contracts\lab-heuristics.md' 'draxos_mobile_battle_lab_v4_source_identity'
+Test-FileContains 'docs\contracts\lab-heuristics.md' 'draxos_mobile_progression_lab_v1'
+Test-FileContains 'docs\contracts\lab-heuristics.md' 'blocked until explicit package decision'
+Test-FileContains 'docs\contracts\lab-heuristics.md' 'bot_power_offsets_percent'
+Test-FileContains 'docs\battle-lab\README.md' 'A ferramenta e offline'
+Test-FileContains 'docs\battle-lab\README.md' 'nao chama Supabase'
+Test-FileContains 'docs\battle-lab\README.md' 'dev/internal-alpha gated'
+Test-FileContains 'docs\progression-lab\README.md' 'Nao substitui Supabase como autoridade do jogo'
+Test-FileContains 'docs\progression-lab\README.md' 'Nao vira tuning runtime sem pacote explicito'
+
 Test-FileContains 'docs\contracts\api-endpoints.md' 'admin-future'
 Test-FileContains 'docs\contracts\database-schema.md' 'Migrations atuais'
 Test-FileContains 'docs\contracts\database-schema.md' 'admin-future'
@@ -243,6 +256,10 @@ Test-FileContains 'server\functions\_shared\foundation_ruleset.ts' 'FOUNDATION_R
 Test-FileContains 'supabase\functions\_shared\foundation_ruleset.ts' 'FOUNDATION_RULESET'
 Test-FileContains 'server\tests\foundation_ruleset_test.ts' 'foundation ruleset publishes deterministic metadata and hashes'
 Test-FileContains 'server\tests\foundation_ruleset_test.ts' 'battle_combatants.ts'
+Test-FileContains 'server\tests\lab_heuristics_contract_test.ts' 'lab heuristics contract records current lab model authority'
+Test-FileContains 'server\tests\lab_heuristics_contract_test.ts' 'dev lab generators remain offline and adapter-free'
+Test-FileContains 'server\tests\lab_heuristics_contract_test.ts' 'progression lab seeder remains local-only and explicit'
+Test-FileContains 'server\tests\lab_heuristics_contract_test.ts' 'server runtime does not import dev lab generators'
 Test-FileContains 'server\tests\foundation_expansion_schema_test.ts' 'foundation expansion migration is mirrored in server schema'
 Test-FileContains 'server\tests\transactional_domain_enforcement_schema_test.ts' 'base edge adapter calls transactional RPCs instead of direct multi-step writes'
 Test-FileContains 'server\tests\remaining_transactional_domain_enforcement_schema_test.ts' 'remaining transactional domain RPC dispatcher applies real atomic effects'
@@ -289,6 +306,7 @@ Test-FileContains 'server\tests\README.md' 'transactional_domain_enforcement_sch
 Test-FileContains 'server\tests\README.md' 'remaining_transactional_domain_enforcement_schema_test.ts'
 Test-FileContains 'server\tests\README.md' 'transactional_rpc_live_test.ts'
 Test-FileContains 'server\tests\README.md' 'transactional_edge_rpc_smoke.ts'
+Test-FileContains 'server\tests\README.md' 'lab_heuristics_contract_test.ts'
 Test-FileContains 'server\tests\README.md' 'battle_log_projection_test.ts'
 Test-FileContains 'server\tests\README.md' 'battle_combatants_test.ts'
 Test-FileContains 'server\tests\README.md' 'base_domain_test.ts'

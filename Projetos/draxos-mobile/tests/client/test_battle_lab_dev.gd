@@ -2,7 +2,7 @@ extends GutTest
 
 const BattleLabScreenScript = preload("res://dev/battle_lab/battle_lab_screen.gd")
 
-func test_battle_lab_power_formula_matches_contract() -> void:
+func test_battle_lab_power_preview_matches_runner_weights() -> void:
 	var build := {
 		"id": "test",
 		"displayName": "Test",
@@ -15,7 +15,7 @@ func test_battle_lab_power_formula_matches_contract() -> void:
 		"passiveId": "anatomista_profano",
 		"passiveLevel": 5,
 	}
-	assert_eq(BattleLabScreenScript.calculate_power(build), 1100)
+	assert_eq(BattleLabScreenScript.calculate_power(build), 1334)
 
 func test_battle_lab_unlock_validation_rejects_locked_slots() -> void:
 	var build := BattleLabScreenScript.default_build("player", 1)

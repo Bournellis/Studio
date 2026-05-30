@@ -83,8 +83,9 @@ npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --archiv
   locais de saves/bots saudaveis para simular combate; continua offline.
 - A ferramenta nao muda numeros de combate; isso pertence a uma etapa posterior
   de tuning.
-- A tela Godot e dev-only: aparece apenas no editor e os exports excluem
-  `dev/**`, `tools/battle_lab/**`, `docs/battle-lab/**` e scratch outputs.
+- A tela Godot e dev/internal-alpha gated: pode existir em builds de revisao quando
+  `dev_tools_enabled` estiver ativo, mas nao e produto, nao aplica tuning
+  autoritativo e nao deve aparecer em release publico.
 - Runs antigas recebem metadados de compatibilidade. Quando simulador, conteudo
   ou modelo mudam, elas aparecem como `stale` em vez de desaparecer.
 

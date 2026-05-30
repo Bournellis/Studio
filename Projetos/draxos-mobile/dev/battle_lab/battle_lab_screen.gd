@@ -70,6 +70,15 @@ const PETS := [
 	{"id": "olho_veu", "label": "Olho do Veu"},
 ]
 
+const POWER_WEIGHTS := {
+	"level": 42,
+	"weaponLevel": 28,
+	"spellLevelsTotal": 40,
+	"petLevel": 34,
+	"passiveLevel": 22,
+	"weaponQualityTier": 30,
+}
+
 var _status_label: Label
 var _summary_label: Label
 var _checks_label: Label
@@ -168,7 +177,16 @@ static func calculate_power(build: Dictionary) -> int:
 	var spell_levels := _as_dictionary_static(build.get("spellLevels", {}))
 	for value: Variant in spell_levels.values():
 		spell_total += int(value)
-	return int(build.get("level", 1)) * 50 + int(build.get("weaponLevel", 1)) * 30 + spell_total * 20 + int(build.get("petLevel", 0)) * 15 + int(build.get("passiveLevel", 0)) * 10 + int(build.get("weaponQualityTier", 0)) * 25
+	var pet_level := 0 if str(build.get("petId", "")) == "" else int(build.get("petLevel", 0))
+	var passive_level := 0 if str(build.get("passiveId", "")) == "" else int(build.get("passiveLevel", 0))
+	return (
+		int(build.get("level", 1)) * int(POWER_WEIGHTS["level"])
+		+ int(build.get("weaponLevel", 1)) * int(POWER_WEIGHTS["weaponLevel"])
+		+ spell_total * int(POWER_WEIGHTS["spellLevelsTotal"])
+		+ pet_level * int(POWER_WEIGHTS["petLevel"])
+		+ passive_level * int(POWER_WEIGHTS["passiveLevel"])
+		+ int(build.get("weaponQualityTier", 0)) * int(POWER_WEIGHTS["weaponQualityTier"])
+	)
 
 static func validate_build(build: Dictionary) -> Array[String]:
 	var errors: Array[String] = []

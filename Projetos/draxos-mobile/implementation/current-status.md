@@ -179,6 +179,9 @@ Delivered in the current branch:
   data, cost, reward, telemetry, admin and rollback are explicit.
 - `docs/contracts/admin-ops.md` defines minimum auditable admin/support
   operations.
+- `docs/contracts/lab-heuristics.md` fences Progression Lab and Battle Lab as
+  lab-only diagnostic/authoring tools, records current model IDs and blocks
+  tuning promotion without explicit package/ruleset validation.
 - Migration `202605300001_foundation_expansion_readiness.sql` adds
   `account_profiles`, `game_saves`, `ruleset_registry`, `admin_audit_log`,
   idempotency v1 fields and ruleset metadata columns.
@@ -219,15 +222,21 @@ Delivered in the current branch:
   combatant mapping, build payload/unlocks/equip validation, runtime power,
   battle helper projection, rewards/products and crafting/monetization
   source-sink payloads.
+- Battle Lab Godot power display now matches the Battle Lab TypeScript runner
+  weights, and `server/tests/lab_heuristics_contract_test.ts` guards Lab model
+  IDs, Battle Lab power weights, Progression Lab profile/milestone selectors and
+  ruleset model hashing. The same test now also keeps Lab generators
+  offline/adapter-free, keeps the Progression Lab seeder local-only and blocks
+  server runtime imports from dev Lab generators/screens.
 - `DraxosOperationState` and `DraxosAppShellActionRouter` create client shell
   contracts without adding logic to `boot.gd`.
 - `tools/check_foundation_expansion_readiness.ps1` is the read-only structural
   gate and is called from `validate_foundation.ps1`.
 
 This package does not implement a new gameplay feature, new social loop or new
-minigame. The remaining backend hardening before balance/content expansion is to
-align or document the remaining Progression Lab and Battle Lab local heuristics,
-without changing runtime tuning silently.
+minigame. Remaining balance/content expansion should now start only after an
+explicit package choice, with Lab heuristics treated as evidence instead of
+runtime authority.
 
 ## Progression Clarity v1
 
@@ -493,14 +502,13 @@ economy, content tuning or final art.
 
 ## Next Step
 
-Foundation Expansion Readiness is active. Continue by aligning or documenting
-the remaining Progression Lab and Battle Lab local heuristics before returning
-to product expansion. Do not open base builder tuning, autobattler tuning,
-social expansion, minigame implementation, victory prediction, opponent
-counter-picks, custom thresholds, enemy-specific behavior, spell priorities,
-direct chat, helps, contributions, moderation, tuning numbers, new weapons, new
-spells, economy, new potions, crafting expansion or broader replay controls
-without its own package decision.
+Foundation Expansion Readiness is active. The next decision should explicitly
+choose one package: base builder tuning, autobattler tuning, social expansion or
+minigame shell/contract. Do not open victory prediction, opponent counter-picks,
+custom thresholds, enemy-specific behavior, spell priorities, direct chat,
+helps, contributions, moderation, tuning numbers, new weapons, new spells,
+economy, new potions, crafting expansion or broader replay controls without its
+own package decision.
 
 ## Validation
 

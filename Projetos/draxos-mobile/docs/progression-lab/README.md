@@ -111,6 +111,7 @@ Esse diretorio guarda sessoes locais e nao deve entrar no Git.
 - Nao cria pagamento real.
 - Nao muda numeros automaticamente.
 - Nao promove pesos de poder sem Battle Lab + Progression Lab concordarem.
+- Nao vira tuning runtime sem pacote explicito de base builder ou autobattler.
 - Premium deve vender tempo e conforto, nao poder exclusivo acima do cap.
 
 ## Baseline Atual

@@ -3,6 +3,17 @@ extends GutTest
 const SessionStoreScript = preload("res://online/session_store.gd")
 const ProgressionLabScreenScript = preload("res://dev/progression_lab/progression_lab_screen.gd")
 
+func test_progression_lab_screen_profiles_and_milestones_match_model() -> void:
+	var model := _read_json("res://tools/progression_lab/model.v1.json")
+	var model_profiles := PackedStringArray()
+	for profile: Variant in _as_array(model.get("profiles", [])):
+		model_profiles.append(str(_as_dictionary(profile).get("id", "")))
+	var model_milestones := PackedStringArray()
+	for milestone: Variant in _as_array(model.get("milestones", [])):
+		model_milestones.append(str(_as_dictionary(milestone).get("id", "")))
+	assert_eq(PackedStringArray(ProgressionLabScreenScript.PROFILE_IDS), model_profiles)
+	assert_eq(PackedStringArray(ProgressionLabScreenScript.MILESTONE_IDS), model_milestones)
+
 func test_progression_lab_generated_saves_cover_manual_smoke_milestones() -> void:
 	var doc := _read_json("res://docs/progression-lab/generated/healthy_saves.json")
 	var saves := _as_array(doc.get("saves", []))

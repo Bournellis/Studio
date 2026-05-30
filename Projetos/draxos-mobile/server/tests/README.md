@@ -17,6 +17,7 @@ Sem Supabase local:
 
 ```powershell
 npx -y deno test --allow-read server/tests/foundation_contracts_test.ts
+npx -y deno test --allow-read server/tests/lab_heuristics_contract_test.ts
 npx -y deno test --allow-read server/tests/foundation_expansion_schema_test.ts
 npx -y deno test --allow-read server/tests/transactional_domain_enforcement_schema_test.ts
 npx -y deno test --allow-read server/tests/remaining_transactional_domain_enforcement_schema_test.ts
@@ -33,6 +34,15 @@ O teste `foundation_contracts_test.ts` le `docs/contracts/api-endpoints.md` e o
 feature registry para garantir que a matriz atual declare escopo por endpoint e
 que os cards mantenham campos obrigatorios completos antes de novas
 features/servicos.
+
+O teste `lab_heuristics_contract_test.ts` valida que
+`docs/contracts/lab-heuristics.md` registra os modelos atuais de Battle
+Lab/Progression Lab, que o Battle Lab Godot exibe os mesmos pesos de poder do
+runner TypeScript e que os seletores de perfil/milestone do Progression Lab
+seguem o modelo versionado. Ele tambem bloqueia regressao de autoridade:
+geradores dos Labs precisam continuar offline/adapter-free, o seeder do
+Progression Lab precisa continuar local-only e o runtime server nao pode
+importar geradores ou telas dev.
 
 O teste `foundation_expansion_schema_test.ts` valida a migration espelhada de
 Foundation Expansion Readiness: account/save, ruleset registry, admin audit,

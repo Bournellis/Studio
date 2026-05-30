@@ -112,6 +112,32 @@ Para a fundacao atual, o ruleset esperado e `foundation_ruleset_v0`:
 `supabase/functions/_shared/foundation_ruleset.ts`, teste
 `server/tests/foundation_ruleset_test.ts` e teste client de contratos do shell.
 
+## Lab Heuristics Gate
+
+Progression Lab e Battle Lab podem continuar existindo como ferramentas de
+diagnostico, mas nao podem virar fonte invisivel de tuning. A autoridade viva e
+`docs/contracts/lab-heuristics.md`.
+
+Antes de abrir base builder tuning, autobattler tuning, social expansion ou
+minigame, qualquer heuristica local de Lab deve estar classificada como:
+
+- `lab-only`;
+- `derived from ruleset/domain`;
+- `client presentation`;
+- `blocked until explicit package decision`.
+
+O gate minimo desta area e:
+
+```powershell
+npx -y deno test --allow-read server/tests/lab_heuristics_contract_test.ts
+```
+
+Se o pacote mudar `tools/battle_lab/model.v1.json`,
+`tools/progression_lab/model.v1.json`, `dev/battle_lab/battle_lab_screen.gd` ou
+`dev/progression_lab/progression_lab_screen.gd`, rode tambem os testes
+especificos dos Labs e atualize o contrato antes de considerar a fundacao pronta
+para tuning.
+
 ## Sinais De Bloqueio
 
 Pare e peca decisao explicita quando:

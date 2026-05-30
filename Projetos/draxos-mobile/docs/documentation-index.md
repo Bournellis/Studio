@@ -60,6 +60,7 @@
 | `docs/contracts/ruleset-registry.md` | `CONTRATO` | Ruleset generated-as-authoring-source plus database publication registry contract. |
 | `docs/contracts/minigame-integration.md` | `CONTRATO` | Contract-first gate for future minigames. |
 | `docs/contracts/admin-ops.md` | `CONTRATO` | Minimum auditable admin/support/ops contract. |
+| `docs/contracts/lab-heuristics.md` | `CONTRATO` | Boundary for Battle Lab and Progression Lab local heuristics, generated evidence and blocked tuning decisions. |
 | `docs/architecture.md` | `CONTRATO` | Technical architecture and backend boundaries. |
 | `server/schema/` | `CONTRATO` | Server schema mirror. |
 | `server/functions/` | `CONTRATO` | Edge Function source mirror. |

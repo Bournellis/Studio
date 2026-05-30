@@ -52,7 +52,7 @@ Registro inicial:
   "ruleset_id": "foundation_ruleset_v0",
   "ruleset_version": 1,
   "content_hash": "5b7121a37a78e966c06098cc70283dabc5dbbcc1d3f9a21d279b855d09aee1e7",
-  "simulator_hash": "6387afc69b1862c2c63b1fe04a85da42574eb0a6ab5ca46e8ae8950ed5b11536",
+  "simulator_hash": "e835cadde3c937cba45c46785da3761139373ab23ac9dfaaed814d79f933bbe9",
   "schema_version": "foundation_ruleset_manifest_v1",
   "channel": "internal_alpha",
   "cohort": "all",

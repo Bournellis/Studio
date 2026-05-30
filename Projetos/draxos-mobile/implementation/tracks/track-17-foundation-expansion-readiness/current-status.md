@@ -23,7 +23,7 @@
 
 | Lane                       | Delivered                                                                                                                                                                                                                                                        |
 | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Docs/Contracts/Integration | `foundation-expansion-readiness.md`, account/save, ruleset registry, minigame and admin contracts, status/index updates                                                                                                                                          |
+| Docs/Contracts/Integration | `foundation-expansion-readiness.md`, account/save, ruleset registry, minigame, admin and lab heuristics contracts, status/index updates                                                                                                                          |
 | Backend/Data               | additive migration, account/save tables, ruleset registry, admin audit log, idempotency v1 fields and RPC scaffolds                                                                                                                                              |
 | Backend/Domain Enforcement | Base collect/upgrade, battle rewards, monetization rewards/alpha purchase, build equip, crafting craft/crush-bones and guild create/join promoted from REST multi-step writes to v1 transactional RPCs; `base/state` uses atomic due-job completion              |
 | Portable Domain Services   | Base rules/projection, saved battle log projection, battle combatant mapping, progression/power build projection and economy/crafting source-sink projections extracted to mirrored `_shared` modules with Deno tests; adapters keep HTTP/Supabase/RPC ownership |
@@ -39,6 +39,7 @@
 - `docs/contracts/ruleset-registry.md`
 - `docs/contracts/minigame-integration.md`
 - `docs/contracts/admin-ops.md`
+- `docs/contracts/lab-heuristics.md`
 - `data/rulesets/foundation_ruleset_v0.json`
 - `tools/generate_foundation_ruleset.ts`
 - `tools/check_foundation_expansion_readiness.ps1`
@@ -87,7 +88,10 @@
 - `server/tests/progression_domain_test.ts`
 - `server/tests/economy_domain_test.ts`
 - `server/tests/foundation_ruleset_test.ts`
+- `server/tests/lab_heuristics_contract_test.ts`
 - `tests/client/test_foundation_shell_contracts.gd`
+- `tests/client/test_battle_lab_dev.gd`
+- `tests/client/test_progression_lab_dev.gd`
 
 ## Current Limits
 
@@ -100,8 +104,12 @@
   log/history/ruleset projection, battle player/bot combatant mapping,
   progression/power build projection, rewards/alpha products and
   crafting/monetization source-sink payloads. Progression Lab and Battle Lab
-  still keep local power heuristics that need a later explicit
-  alignment/documentation slice.
+  local heuristics are now fenced by `docs/contracts/lab-heuristics.md`;
+  Battle Lab Godot power display matches the TypeScript runner weights, and
+  Progression Lab screen profile/milestone selectors are guarded against model
+  drift. Lab generators are also guarded to remain offline/adapter-free, the
+  Progression Lab seeder remains local-only and server runtime imports from dev
+  Lab generators/screens are blocked by contract tests.
 - Live database failure/retry/idempotency proof exists in
   `server/tests/transactional_rpc_live_test.ts` for battle rewards, build equip,
   crafting, reward claim, alpha purchase and guild create/join; it passed
@@ -124,6 +132,7 @@ npx -y deno test --allow-read server/tests/battle_combatants_test.ts
 npx -y deno test --allow-read server/tests/progression_domain_test.ts
 npx -y deno test --allow-read server/tests/economy_domain_test.ts
 npx -y deno test --allow-read server/tests/foundation_ruleset_test.ts
+npx -y deno test --allow-read server/tests/lab_heuristics_contract_test.ts
 deno run --allow-net --allow-env server/tests/transactional_rpc_live_test.ts
 deno run --allow-net --allow-env server/tests/transactional_edge_rpc_smoke.ts
 npx -y deno task --cwd server/functions check
@@ -132,7 +141,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_foundation_exp
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Quick
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Quick -IncludeLocalSupabaseRpc
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Quick -IncludeLocalSupabaseRpc -IncludeLocalEdgeRpc
-D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://addons/gut/gut_cmdln.gd -gtest=res://tests/client/test_foundation_shell_contracts.gd -gexit
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://addons/gut/gut_cmdln.gd -gtest=res://tests/client/test_foundation_shell_contracts.gd -gtest=res://tests/client/test_battle_lab_dev.gd -gtest=res://tests/client/test_progression_lab_dev.gd -gexit
 git diff --check
 ```
 
