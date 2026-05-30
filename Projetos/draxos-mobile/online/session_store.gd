@@ -12,6 +12,9 @@ const SAVE_TYPE_NORMAL := "normal"
 const SAVE_TYPE_PROGRESSION_LAB := "progression_lab"
 const CLIENT_META_KEY := "_client"
 const CLIENT_SAVE_TYPE_KEY := "save_type"
+const MUTATION_STATUS_PENDING := "pending"
+const MUTATION_STATUS_COMPLETED := "completed"
+const MUTATION_STATUS_FAILED := "failed"
 const SURFACE_ACCOUNT := "account"
 const SURFACE_BASE := "base"
 const SURFACE_SOCIAL := "social"
@@ -49,6 +52,7 @@ var last_battle_result_seen := false
 var last_error: Dictionary = {}
 var runtime_config: Dictionary = {}
 var surface_save_types: Dictionary = {}
+var pending_mutations: Dictionary = {}
 var offline := false
 
 func _init() -> void:
@@ -129,6 +133,7 @@ func clear_session() -> void:
 	last_battle_result_seen = false
 	last_error = {}
 	surface_save_types = {}
+	pending_mutations = {}
 	offline = false
 	if FileAccess.file_exists(CACHE_PATH):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(CACHE_PATH))
@@ -667,6 +672,7 @@ func snapshot() -> Dictionary:
 		"combat_build_state": combat_build_state.duplicate(true),
 		"progression_lab": progression_lab.duplicate(true),
 		"surface_save_types": surface_save_types.duplicate(true),
+		"pending_mutations": pending_mutations.duplicate(true),
 		"last_battle_id": last_battle_id,
 		"last_battle_log": last_battle_log.duplicate(true),
 		"last_battle_rewards": last_battle_rewards.duplicate(true),
@@ -696,6 +702,113 @@ static func create_request_id() -> String:
 		parts[10], parts[11], parts[12], parts[13], parts[14], parts[15],
 	]
 
+func prepare_pending_mutation(endpoint: String, scope_id: String, action_id: String, payload: Dictionary = {}) -> Dictionary:
+	var normalized_endpoint := endpoint.strip_edges()
+	var normalized_scope := scope_id.strip_edges()
+	var normalized_action := action_id.strip_edges()
+	var base_payload := payload.duplicate(true)
+	base_payload.erase("request_hash")
+	var request_id := str(base_payload.get("request_id", "")).strip_edges()
+	if request_id == "":
+		request_id = _matching_pending_request_id(normalized_endpoint, normalized_scope, normalized_action, base_payload)
+	if request_id == "":
+		request_id = create_request_id()
+	base_payload["request_id"] = request_id
+	var request_hash := request_hash_for_mutation(normalized_endpoint, base_payload)
+	var attempts := 1
+	if pending_mutations.has(request_id):
+		attempts = int(_as_dictionary(pending_mutations.get(request_id, {})).get("attempts", 0)) + 1
+	var canonical_payload := canonical_json(base_payload)
+	var record := {
+		"request_id": request_id,
+		"request_hash": request_hash,
+		"endpoint": normalized_endpoint,
+		"scope_id": normalized_scope,
+		"action_id": normalized_action,
+		"payload": base_payload.duplicate(true),
+		"payload_canonical": canonical_payload,
+		"status": MUTATION_STATUS_PENDING,
+		"attempts": attempts,
+		"timestamp": Time.get_unix_time_from_system(),
+	}
+	pending_mutations[request_id] = record
+	var body := base_payload.duplicate(true)
+	body["request_hash"] = request_hash
+	session_changed.emit()
+	return {
+		"request_id": request_id,
+		"request_hash": request_hash,
+		"endpoint": normalized_endpoint,
+		"scope_id": normalized_scope,
+		"action_id": normalized_action,
+		"payload": body,
+		"attempts": attempts,
+	}
+
+func complete_pending_mutation(request_id: String, response_payload: Dictionary = {}) -> bool:
+	return _mark_pending_mutation(request_id, MUTATION_STATUS_COMPLETED, response_payload)
+
+func fail_pending_mutation(request_id: String, error_payload: Dictionary = {}) -> bool:
+	return _mark_pending_mutation(request_id, MUTATION_STATUS_FAILED, error_payload)
+
+func clear_pending_mutation(request_id: String) -> bool:
+	var normalized := request_id.strip_edges()
+	var had_record := pending_mutations.has(normalized)
+	pending_mutations.erase(normalized)
+	if had_record:
+		session_changed.emit()
+	return had_record
+
+func pending_mutation(request_id: String) -> Dictionary:
+	return _as_dictionary(pending_mutations.get(request_id.strip_edges(), {})).duplicate(true)
+
+static func request_hash_for_mutation(endpoint: String, payload: Dictionary) -> String:
+	var canonical_payload := payload.duplicate(true)
+	canonical_payload.erase("request_hash")
+	return sha256_text("sha256", canonical_json({
+		"endpoint": endpoint.strip_edges(),
+		"payload": canonical_payload,
+	}))
+
+static func sha256_text(prefix: String, value: String) -> String:
+	var hashing := HashingContext.new()
+	var start_error := hashing.start(HashingContext.HASH_SHA256)
+	if start_error != OK:
+		return ""
+	hashing.update(value.to_utf8_buffer())
+	var digest := hashing.finish().hex_encode()
+	if prefix.strip_edges() == "":
+		return digest
+	return "%s:%s" % [prefix.strip_edges(), digest]
+
+static func canonical_json(value: Variant) -> String:
+	match typeof(value):
+		TYPE_NIL:
+			return "null"
+		TYPE_BOOL:
+			return "true" if bool(value) else "false"
+		TYPE_INT, TYPE_FLOAT:
+			return JSON.stringify(value)
+		TYPE_STRING, TYPE_STRING_NAME, TYPE_NODE_PATH:
+			return JSON.stringify(str(value))
+		TYPE_ARRAY, TYPE_PACKED_STRING_ARRAY, TYPE_PACKED_INT32_ARRAY, TYPE_PACKED_INT64_ARRAY, TYPE_PACKED_FLOAT32_ARRAY, TYPE_PACKED_FLOAT64_ARRAY:
+			var parts := PackedStringArray()
+			for item: Variant in value:
+				parts.append(canonical_json(item))
+			return "[%s]" % ",".join(parts)
+		TYPE_DICTIONARY:
+			var dictionary := Dictionary(value)
+			var keys := PackedStringArray()
+			for key: Variant in dictionary.keys():
+				keys.append(str(key))
+			keys.sort()
+			var parts := PackedStringArray()
+			for key: String in keys:
+				parts.append("%s:%s" % [JSON.stringify(key), canonical_json(dictionary[key])])
+			return "{%s}" % ",".join(parts)
+		_:
+			return JSON.stringify(value)
+
 func _apply_cache(cache: Dictionary) -> void:
 	var auth := _as_dictionary(cache.get("auth", {}))
 	access_token = str(auth.get("access_token", ""))
@@ -722,6 +835,7 @@ func _apply_cache(cache: Dictionary) -> void:
 	combat_build_state = _as_dictionary(cache.get("combat_build_state", {})).duplicate(true)
 	progression_lab = _as_dictionary(cache.get("progression_lab", {})).duplicate(true)
 	surface_save_types = _normalized_surface_save_types(_as_dictionary(cache.get("surface_save_types", {})))
+	pending_mutations = _normalized_pending_mutations(_as_dictionary(cache.get("pending_mutations", {})))
 	last_battle_id = cache.get("last_battle_id", null)
 	last_battle_log = _as_dictionary(cache.get("last_battle_log", {})).duplicate(true)
 	last_battle_rewards = _as_dictionary(cache.get("last_battle_rewards", {})).duplicate(true)
@@ -759,6 +873,59 @@ func _clear_account_snapshots() -> void:
 	last_battle_rewards = {}
 	last_battle_result_seen = false
 	surface_save_types = {}
+
+func _matching_pending_request_id(endpoint: String, scope_id: String, action_id: String, payload: Dictionary) -> String:
+	var canonical_payload := canonical_json(payload)
+	for key: Variant in pending_mutations.keys():
+		var record := _as_dictionary(pending_mutations.get(key, {}))
+		if str(record.get("status", "")) != MUTATION_STATUS_PENDING:
+			continue
+		if str(record.get("endpoint", "")) != endpoint:
+			continue
+		if str(record.get("scope_id", "")) != scope_id:
+			continue
+		if str(record.get("action_id", "")) != action_id:
+			continue
+		var record_payload := _as_dictionary(record.get("payload", {})).duplicate(true)
+		record_payload.erase("request_id")
+		record_payload.erase("request_hash")
+		if canonical_json(record_payload) == canonical_payload:
+			return str(record.get("request_id", key)).strip_edges()
+	return ""
+
+func _mark_pending_mutation(request_id: String, status: String, payload: Dictionary = {}) -> bool:
+	var normalized := request_id.strip_edges()
+	if not pending_mutations.has(normalized):
+		return false
+	var record := _as_dictionary(pending_mutations.get(normalized, {})).duplicate(true)
+	record["status"] = status
+	record["completed_at"] = Time.get_unix_time_from_system()
+	if not payload.is_empty():
+		record["response_payload"] = payload.duplicate(true)
+	pending_mutations[normalized] = record
+	session_changed.emit()
+	return true
+
+func _normalized_pending_mutations(source: Dictionary) -> Dictionary:
+	var normalized := {}
+	for key: Variant in source.keys():
+		var request_id := str(key).strip_edges()
+		if request_id == "":
+			continue
+		var record := _as_dictionary(source.get(key, {})).duplicate(true)
+		record["request_id"] = str(record.get("request_id", request_id)).strip_edges()
+		record["request_hash"] = str(record.get("request_hash", "")).strip_edges()
+		record["endpoint"] = str(record.get("endpoint", "")).strip_edges()
+		record["scope_id"] = str(record.get("scope_id", "")).strip_edges()
+		record["action_id"] = str(record.get("action_id", "")).strip_edges()
+		record["status"] = str(record.get("status", MUTATION_STATUS_PENDING)).strip_edges()
+		if record["status"] == "":
+			record["status"] = MUTATION_STATUS_PENDING
+		record["attempts"] = maxi(1, int(record.get("attempts", 1)))
+		record["payload"] = _as_dictionary(record.get("payload", {})).duplicate(true)
+		record["payload_canonical"] = str(record.get("payload_canonical", canonical_json(record["payload"])))
+		normalized[request_id] = record
+	return normalized
 
 func _clear_gameplay_snapshots() -> void:
 	base_state = {}

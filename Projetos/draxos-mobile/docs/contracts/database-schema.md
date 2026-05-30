@@ -21,11 +21,12 @@ Migrations atuais:
 - `202605300001_foundation_expansion_readiness.sql`: `account_profiles`, `game_saves`, `ruleset_registry`, `admin_audit_log`, idempotencia com `request_hash/scope_id/status`, metadata de ruleset em historicos e RPCs de bootstrap/idempotencia/reconciliacao.
 - `202605300002_transactional_domain_enforcement.sql`: promove Base para efeitos reais em RPCs v1 (`complete_due_base_jobs_v1`, `collect_base_v1`, `start_base_upgrade_v1`), com lock do save, reserva idempotente, ledger/saldo/job na mesma transacao e grants somente para `service_role`.
 - `202605300003_remaining_transactional_domain_enforcement.sql`: promove battle rewards, monetization rewards/alpha purchase, build equip, crafting craft/crush-bones e guild create/join para RPCs v1 com lock de `game_saves`, `request_hash`, idempotencia pending/completed, ledger e grants somente para `service_role`.
+- `202605300004_foundation_closeout.sql`: corrige `ruleset_registry` para publicacao imutavel por `publication_id`, persiste hashes de ruleset em saves/historicos, cria admin interno auditavel e promove as mutacoes restantes de build behavior/potion e social friend/chat para RPCs v1 `service_role`-only.
 
 ## Regras De Escopo De Servico
 
-Track 05 nao altera schema. A classificacao de escopo usa o schema atual como
-limite operacional:
+Foundation Closeout altera o schema por migration corretiva/aditiva. A
+classificacao de escopo usa o schema atual como limite operacional:
 
 - `save-scoped`: endpoints legados resolvem `players.id` por `auth_user_id +
   players.save_type`; contratos novos devem resolver `game_saves.id` e manter
@@ -37,36 +38,43 @@ limite operacional:
   escrevem tabelas de gameplay.
 - `telemetry`: endpoints de diagnostico escrevem somente em `telemetry_events`
   e podem manter `player_id = null` antes da criacao de save.
-- `admin-future`: qualquer administracao de convites, suporte, moderacao,
-  entitlement account-wide ou publicacao deve receber contrato e autorizacao
-  propria antes de migration ou Edge Function.
+- `admin-internal`: administracao interna auditavel, `service_role`-only, sem
+  painel publico e sem segredo no cliente/export.
 
 Mutacoes `save-scoped` e `account-scoped` atuais continuam usando
 `idempotency_keys` com o `player_id` do save ativo ou da identidade social
 canonica. Mutacoes novas devem usar `request_hash`, `scope_id` e status
 `pending|completed|failed`; account-wide deve usar `account_profiles`.
 
-Excecao ja migrada: Base `collect` e `upgrade` continuam com compatibilidade de
-payload HTTP, mas o efeito economico usa `game_saves.id`, `request_hash`,
-`ruleset_registry`, `idempotency_keys.status`, `resource_transactions` e
-`construction_jobs.ruleset_id/version` dentro dos RPCs v1.
+Mutacoes v1 preservam compatibilidade de payload HTTP, mas o efeito autoritativo
+usa `game_saves.id`, `request_hash`, `ruleset_registry`, `idempotency_keys.status`
+e ledger/historicos dentro dos RPCs `service_role`-only.
 
 ## Account/Save Foundation
 
 Contratos detalhados: `account-save.md`.
 
-`account_profiles` e a identidade account-wide. `game_saves` e o progresso por save. `players.save_type` permanece como compat layer alpha ate as tabelas de dominio serem migradas por pacote proprio.
+`account_profiles` e a identidade account-wide. `game_saves` e o progresso por
+save. `players.save_type` permanece como compat layer alpha e alias historico,
+nao como fonte primaria para novos contratos.
 
 Campos novos minimos:
 
 - `account_profiles.id`, `auth_user_id`, `canonical_player_id`, `username`, `account_type`, `status`, `metadata`.
-- `game_saves.id`, `account_profile_id`, `legacy_player_id`, `save_type`, `slot_key`, `lifecycle_status`, `ruleset_id`, `ruleset_version`, `snapshot`.
+- `game_saves.id`, `account_profile_id`, `legacy_player_id`, `save_type`,
+  `slot_key`, `lifecycle_status`, `ruleset_id`, `ruleset_version`,
+  `ruleset_publication_id`, `ruleset_content_hash`, `ruleset_simulator_hash`,
+  `ruleset_schema_version`, `state_version`, `season_context`, `snapshot`.
 
 ## Ruleset Registry Foundation
 
 Contrato detalhado: `ruleset-registry.md`.
 
-`ruleset_registry` registra publicacoes de ruleset. O registro inicial e `foundation_ruleset_v0`, versao `1`, canal `internal_alpha`, cohort `all`, com `content_hash` e `simulator_hash` gerados pelo repo.
+`ruleset_registry` registra publicacoes imutaveis de ruleset. A identidade de
+publicacao e `publication_id`; `ruleset_id` continua legivel e compoe a unicidade
+`ruleset_id + ruleset_version + channel + cohort`. O registro inicial e
+`foundation_ruleset_v0`, versao `1`, canal `internal_alpha`, cohort `all`, com
+`content_hash` e `simulator_hash` gerados pelo repo.
 
 Tabelas com metadata de ruleset nesta fundacao:
 
@@ -80,7 +88,11 @@ Tabelas com metadata de ruleset nesta fundacao:
 
 Contrato detalhado: `admin-ops.md`.
 
-`admin_audit_log` e a base minima de auditoria interna. `reconcile_resource_balance` grava `resource_transactions` e `admin_audit_log` na mesma operacao.
+`admin_audit_log` e a base minima de auditoria interna. As RPCs
+`admin_lookup_account_v1`, `admin_battle_diagnostics_v1`,
+`resource_reconciliation_report_v1`, `admin_adjust_resource_balance_v1` e
+`admin_flag_account_v1` sao internas, auditaveis e sem grant para
+`anon`/`authenticated`.
 
 ## MVP Tecnico
 
@@ -359,26 +371,14 @@ Implementado em `T03-P14`:
 - a Edge Function `account/bootstrap` chama a RPC com `request_id` idempotente;
 - `account/guest` passa a rejeitar JWT registrado e fica restrito a fallback dev/local.
 
-Limites atuais desta etapa:
+Estado apos Foundation Closeout:
 
 - social foi promovido em `T03-P06` para identidade de conta no runtime: Edge Functions usam o save `normal` como `social_player` canonico quando ele existe e retornam marcador `lab` para o viewer em `progression_lab`;
-- as tabelas continuam referenciando `players.id`, entao uma refatoracao futura para `account_profiles/game_saves` continua recomendada antes de escalar social remoto;
-- o alpha gate ainda e simples: convite + username no primeiro save, sem painel administrativo de convites.
+- `account_profiles` + `game_saves` existem e nascem no bootstrap/guest/sync;
+- tabelas de dominio ainda podem manter `player_id` como compatibilidade, mas novas mutations devem resolver e travar `game_saves.id`;
+- o alpha gate ainda e simples: convite + username no primeiro save; admin minimo interno existe para lookup, diagnostico, reconciliacao, ajuste auditado e flag de conta, nao como painel publico.
 
-Decisao Track 04 em `../../implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/account-save-gate-decision.md`:
-
-- manter `players.save_type` para Internal Alpha v0 e primeiros pacotes da Track 04;
-- nao planejar migration `account_profiles` + `game_saves` agora;
-- reabrir o gate somente com bug real de isolamento/seguranca/corrupcao, pagamento ou entitlement account-wide, social remoto em escala, mais de dois saves/modos por conta ou inicio do plano de saida Supabase;
-- se reaberto, a migration deve ser track/commit proprio e nao pode ser misturada com modularizacao do Hub.
-
-Refatoracao futura, se o projeto crescer:
-
-- criar `account_profiles` para dados da conta;
-- criar `game_saves` para saves por modo/tipo;
-- migrar tabelas de gameplay de `player_id` para `save_id` ou manter `player_id` como alias de save.
-
-Gate Track 04: avaliado em 2026-05-27; nao ha migration planejada agora. Reabrir apenas pelos gatilhos da decisao acima.
+Decisao Track 04 em `../../implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/account-save-gate-decision.md` foi superseded pela Foundation Expansion Readiness/Closeout. Ela permanece como historico, nao como direcao ativa.
 
 Regras de seguranca:
 

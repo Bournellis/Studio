@@ -49,7 +49,8 @@
 | `docs/design-pending.md` | `VIVO` | Only live register of unresolved design decisions. |
 | `docs/character-systems-rework.md` | `HISTORICO` | Character taxonomy implemented as current mock/substance; not a priority until Foundation Audit promotes character work. |
 | `docs/economy/README.md` | `HISTORICO` | Economy model and calibratable alpha values preserved as context; not a current tuning target. |
-| `docs/progression-lab/README.md` | `HISTORICO` | Progression Lab model and review notes preserved for later tuning/review. |
+| `docs/progression-lab/README.md` | `RUNBOOK` | Progression Lab workflow vivo for review/tuning evidence; reports in dated subdocs can remain historical. |
+| `docs/battle-lab/README.md` | `RUNBOOK` | Battle Lab workflow vivo for combat evidence; dated runs are historical evidence. |
 
 ## Contracts
 
@@ -102,7 +103,7 @@
 | `implementation/tracks/track-14-agent-ops-foundation/` | `HISTORICO` | Agent operating foundation and documentation index baseline. |
 | `implementation/tracks/track-15-mobile-ux-overhaul/` | `HISTORICO` | Prior Android portrait UX package; not the active stage. |
 | `implementation/tracks/track-16-behavior-crafting/` | `HISTORICO` | Source track for behavior/crafting; use `docs/behavior-potion-crafting-v1.md` for current state. |
-| `implementation/tracks/track-17-foundation-expansion-readiness/` | `VIVO` | Active foundation package for future parallel expansion and production readiness. |
+| `implementation/tracks/track-17-foundation-expansion-readiness/` | `VIVO` | Active foundation package for future parallel expansion, Foundation Closeout and production readiness. |
 
 ## Design Archive
 
@@ -118,7 +119,7 @@
 - A live doc must treat `implementation/current-status.md` as the active stage/status source after the user chooses the next package.
 - A live doc must not direct agents to expand balance, weapons, spells, Battle Pass, economy, final visual identity or battle presentation before Foundation Audit.
 - Foundation Audit must prioritize the post-login loop: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again.
-- Foundation Expansion Readiness is now the active pre-expansion gate before base builder, autobattler, expanded social or a real minigame.
+- Foundation Expansion Readiness/Foundation Closeout is now the active pre-expansion gate before base builder, autobattler, expanded social or a real minigame.
 - New backend/data/content features must use `account_profiles` + `game_saves`, `foundation_ruleset_v0`/registry, idempotency v1 and explicit contracts.
 - Foundation Loop UX Pass 01 was manually accepted on Android/Windows/Web on `2026-05-29` and is the current baseline before the next package.
 - Visual/layout changes must respect `docs/foundation-responsive-layout-contract.md` and pass `tools/smoke_responsive_layout.gd` before publication.

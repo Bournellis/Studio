@@ -1,4 +1,5 @@
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import { validateApiVersion } from "../_shared/api_version.ts";
 import {
   type FoundationGameSaveRow,
   foundationRpcPayload,
@@ -73,6 +74,11 @@ const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3
 Deno.serve(async (request: Request) => {
   if (request.method === "OPTIONS") {
     return emptyResponse();
+  }
+
+  const apiVersionError = validateApiVersion(request);
+  if (apiVersionError !== null) {
+    return apiVersionError;
   }
 
   try {

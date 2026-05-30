@@ -387,13 +387,68 @@ func test_supabase_client_normalizes_save_context_header_state() -> void:
 	assert_eq(client.active_save_type, "progression_lab")
 	var annotated := client._with_client_context(
 		{"ok": true, "body": {"ok": true}},
-		PackedStringArray(["Accept: application/json", "x-draxos-save-type: progression_lab"])
+		PackedStringArray(["Accept: application/json", "x-draxos-save-type: progression_lab", "x-draxos-api-version: 1"])
 	)
 	assert_eq(str(Dictionary(annotated.get("_client", {})).get("save_type", "")), "progression_lab")
+	assert_eq(str(Dictionary(annotated.get("_client", {})).get("api_version", "")), "1")
+	var context := client.save_context_snapshot()
+	assert_eq(str(context.get("api_version_header", "")), "x-draxos-api-version")
+	assert_eq(str(context.get("api_version", "")), "1")
 	assert_eq(Dictionary(annotated.get("body", {})), {"ok": true})
 	client.configure_save_type("unknown")
 	assert_eq(client.active_save_type, "normal")
 	client.free()
+
+func test_mutation_hash_is_stable_and_uses_sorted_payload_keys() -> void:
+	var left := {
+		"request_id": "00000000-0000-4000-8000-000000000001",
+		"amount": 1,
+		"nested": {"b": true, "a": "x"},
+	}
+	var right := {
+		"nested": {"a": "x", "b": true},
+		"amount": 1,
+		"request_id": "00000000-0000-4000-8000-000000000001",
+	}
+	var left_hash := SessionStoreScript.request_hash_for_mutation("crafting/crush-bones", left)
+	var right_hash := SupabaseClientScript.request_hash_for_mutation("crafting/crush-bones", right)
+	assert_true(left_hash.begins_with("sha256:"))
+	assert_eq(left_hash, right_hash)
+
+func test_session_store_persists_pending_idempotent_mutation_for_retry() -> void:
+	var store = SessionStoreScript.new()
+	var first := store.prepare_pending_mutation(
+		"base/collect",
+		"base:normal",
+		"collect_base",
+		{}
+	)
+	var retry := store.prepare_pending_mutation(
+		"base/collect",
+		"base:normal",
+		"collect_base",
+		{}
+	)
+
+	assert_eq(str(first.get("request_id", "")), str(retry.get("request_id", "")))
+	assert_eq(str(first.get("request_hash", "")), str(retry.get("request_hash", "")))
+	assert_eq(int(retry.get("attempts", 0)), 2)
+	assert_true(store.pending_mutation(str(first.get("request_id", ""))).has("payload_canonical"))
+
+	var snapshot := store.snapshot()
+	var restored = SessionStoreScript.new()
+	restored._apply_cache(snapshot)
+	assert_eq(
+		str(restored.pending_mutation(str(first.get("request_id", ""))).get("request_hash", "")),
+		str(first.get("request_hash", ""))
+	)
+	assert_true(restored.complete_pending_mutation(str(first.get("request_id", "")), {"ok": true}))
+	assert_eq(
+		str(restored.pending_mutation(str(first.get("request_id", ""))).get("status", "")),
+		SessionStoreScript.MUTATION_STATUS_COMPLETED
+	)
+	store.free()
+	restored.free()
 
 func test_session_store_persists_local_telemetry_session_id() -> void:
 	var store = SessionStoreScript.new()

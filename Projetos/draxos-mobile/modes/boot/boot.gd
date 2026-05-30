@@ -1,5 +1,4 @@
-extends Control
-
+﻿extends Control
 const ProjectInfoScript := preload("res://core/project_info.gd")
 const SessionStoreScript := preload("res://online/session_store.gd")
 const ShellSurfacePresenterScript := preload("res://modes/boot/surfaces/shell_surface_presenter.gd")
@@ -13,12 +12,13 @@ const ShopSurfacePresenterScript := preload("res://modes/boot/surfaces/shop_surf
 const SurfaceUiHelpersScript := preload("res://modes/boot/surfaces/surface_ui_helpers.gd")
 const AppShellRouteContractScript := preload("res://modes/boot/ui/app_shell_route_contract.gd")
 const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
+const AppShellActionRouterScript := preload("res://modes/boot/ui/app_shell_action_router.gd")
 const AppShellErrorContractScript := preload("res://modes/boot/ui/app_shell_error_contract.gd")
+const OperationStateScript := preload("res://modes/boot/ui/operation_state.gd")
 const MobileUiContractScript := preload("res://modes/boot/ui/mobile_ui_contract.gd")
 const AccountSessionFlowScript := preload("res://modes/boot/flows/account_session_flow.gd")
 const SurfaceActionFlowScript := preload("res://modes/boot/flows/surface_action_flow.gd")
 const BattleLifecycleFlowScript := preload("res://modes/boot/flows/battle_lifecycle_flow.gd")
-
 const ROUTE_ENTRY := AppShellRouteContractScript.ROUTE_ENTRY
 const ROUTE_REFUGE := AppShellRouteContractScript.ROUTE_REFUGE
 const ROUTE_ACCOUNT := AppShellRouteContractScript.ROUTE_ACCOUNT
@@ -30,9 +30,9 @@ const ROUTE_BATTLE_ENTRY := AppShellRouteContractScript.ROUTE_BATTLE_ENTRY
 const ROUTE_BATTLE_RUNNING := AppShellRouteContractScript.ROUTE_BATTLE_RUNNING
 const ROUTE_BATTLE_SUMMARY := AppShellRouteContractScript.ROUTE_BATTLE_SUMMARY
 const ROUTE_BATTLE_LOGS := AppShellRouteContractScript.ROUTE_BATTLE_LOGS
+const ROUTE_MINIGAME_SHELL := AppShellRouteContractScript.ROUTE_MINIGAME_SHELL
 const ROUTE_BATTLE_LAB := "battle_lab"
 const ROUTE_PROGRESSION_LAB := "progression_lab"
-
 const SCREEN_HUB := ROUTE_ENTRY
 const SCREEN_REFUGE := ROUTE_REFUGE
 const SCREEN_BATTLE := ROUTE_BATTLE_ENTRY
@@ -50,11 +50,9 @@ const ACTION_RETURN_REFUGE := AppShellActionContractScript.ACTION_RETURN_REFUGE
 const ACTION_REPLAY_LATEST := AppShellActionContractScript.ACTION_REPLAY_LATEST
 const ACTION_SHOW_CURRENT_BATTLE_LOGS := AppShellActionContractScript.ACTION_SHOW_CURRENT_BATTLE_LOGS
 const ACTION_RETURN_BATTLE_SUMMARY := AppShellActionContractScript.ACTION_RETURN_BATTLE_SUMMARY
-
 const RESOURCE_KEYS := ["almas", "energia", "sangue", "cristais", "ossos", "diamante"]
 const BASE_STRUCTURE_IDS := ["altar_das_almas", "nucleo_energia", "pocos_sangue", "minas_cristal", "estrutura_stats", "ossario"]
 const ALPHA_ENERGY_PACK_PRODUCT_ID := AppShellActionContractScript.PRODUCT_ALPHA_ENERGY_PACK
-
 var _status_label: Label
 var _detail_label: Label
 var _error_label: Label
@@ -89,7 +87,6 @@ var _immersive_feedback_panel: Control
 var _immersive_status_label: Label
 var _immersive_detail_label: Label
 var _immersive_error_label: Label
-
 var _action_buttons: Dictionary = {}
 var _nav_buttons: Dictionary = {}
 var _current_action_grid: GridContainer
@@ -97,6 +94,7 @@ var _screen_history: Array[String] = []
 var _current_screen := SCREEN_HUB
 var _pending_confirmation_action := ""
 var _active_action_id := ""
+var _active_action_scope := OperationStateScript.DEFAULT_SCOPE
 var _is_busy := false
 var _replay_running := false
 var _skip_replay := false
@@ -117,10 +115,10 @@ var _update_gate := ProjectInfoScript.unchecked_update_status()
 var _account_session_flow = AccountSessionFlowScript.new()
 var _surface_action_flow = SurfaceActionFlowScript.new()
 var _battle_lifecycle_flow = BattleLifecycleFlowScript.new()
+var _operation_state = OperationStateScript.new()
 var _battle_replay_presenter = BattleReplayPresenterScript.new()
 var _battle_history_entries: Array[Dictionary] = []
 var _battle_history_save_type := SessionStoreScript.SAVE_TYPE_NORMAL
-
 func _ready() -> void:
 	_clear_existing_scene()
 	_build_ui()
@@ -138,7 +136,6 @@ func _ready() -> void:
 	call_deferred("_check_update_manifest")
 	if SessionStore.has_valid_access_token() and not SessionStore.is_progression_lab_local_only():
 		call_deferred("_recover_session_state")
-
 func _unhandled_input(event: InputEvent) -> void:
 	if not event.is_action_pressed("ui_cancel"):
 		return
@@ -162,12 +159,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if _current_screen != SCREEN_HUB:
 		_go_back()
-
 func _clear_existing_scene() -> void:
 	for child: Node in get_children():
 		remove_child(child)
 		child.free()
-
 func _build_ui() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	if size.x <= 0.0 or size.y <= 0.0:
@@ -175,7 +170,6 @@ func _build_ui() -> void:
 	_compact_layout = _should_use_compact_layout()
 	ShellSurfacePresenterScript.render(self)
 	_render_create_account_dialog()
-
 func _close_refuge_menu_popup_if_open() -> bool:
 	if _refuge_menu_popup == null or not is_instance_valid(_refuge_menu_popup):
 		return false
@@ -183,30 +177,24 @@ func _close_refuge_menu_popup_if_open() -> bool:
 		return false
 	_refuge_menu_popup.hide()
 	return true
-
 func _render_create_account_dialog() -> void:
 	var dialog := ConfirmationDialog.new()
 	dialog.title = "Criar conta"
 	dialog.confirmed.connect(Callable(self, "_on_create_account_confirmed"))
 	add_child(dialog)
-
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 8)
 	dialog.add_child(box)
-
 	var intro := Label.new()
 	intro.text = "Crie a conta com email, senha e username."
 	intro.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	box.add_child(intro)
-
 	_signup_email_input = _dialog_line_edit(box, "Email", "tester@exemplo.com", false)
 	_signup_password_input = _dialog_line_edit(box, "Senha", "Minimo 6 caracteres", true)
 	_signup_username_input = _dialog_line_edit(box, "Username", "draxos_tester", false)
-
 	dialog.get_ok_button().text = "Criar conta"
 	dialog.get_cancel_button().text = "Voltar"
 	_create_account_dialog = dialog
-
 func _dialog_line_edit(parent: VBoxContainer, label_text: String, placeholder: String, secret: bool) -> LineEdit:
 	var label := Label.new()
 	label.text = label_text
@@ -218,7 +206,6 @@ func _dialog_line_edit(parent: VBoxContainer, label_text: String, placeholder: S
 	input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	parent.add_child(input)
 	return input
-
 func _should_use_compact_layout() -> bool:
 	if bool(ProjectSettings.get_setting("draxos_mobile/ui/force_compact_layout", false)):
 		return true
@@ -228,31 +215,22 @@ func _should_use_compact_layout() -> bool:
 	if viewport_size.x <= MobileUiContractScript.COMPACT_WIDTH_BREAKPOINT:
 		return true
 	return viewport_size.y <= 620.0 and viewport_size.x > viewport_size.y
-
 func _manifest_url() -> String:
 	return SupabaseClient.manifest_url()
-
 func _button_min_size() -> Vector2:
 	return MobileUiContractScript.button_min_size(_compact_layout)
-
 func _action_button_columns() -> int:
 	return action_button_columns_for_size(get_viewport_rect().size, _compact_layout)
-
 func _surface_columns(max_columns: int = 2) -> int:
 	return surface_columns_for_size(get_viewport_rect().size, max_columns)
-
 static func action_button_columns_for_size(viewport_size: Vector2, compact: bool) -> int:
 	return MobileUiContractScript.action_button_columns_for_size(viewport_size, compact)
-
 static func surface_columns_for_size(viewport_size: Vector2, max_columns: int = 2) -> int:
 	return MobileUiContractScript.surface_columns_for_size(viewport_size, max_columns)
-
 func _base_map_columns() -> int:
 	return MobileUiContractScript.base_map_columns_for_size(get_viewport_rect().size, _compact_layout)
-
 func _reset_action_group() -> void:
 	_current_action_grid = null
-
 func _ensure_action_grid() -> GridContainer:
 	if _current_action_grid != null and is_instance_valid(_current_action_grid):
 		return _current_action_grid
@@ -264,7 +242,6 @@ func _ensure_action_grid() -> GridContainer:
 	_content_body.add_child(grid)
 	_current_action_grid = grid
 	return grid
-
 func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	screen_id = AppShellRouteContractScript.push_route(_screen_history, _current_screen, screen_id, push_history)
 	_current_screen = screen_id
@@ -304,7 +281,6 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	_back_button.visible = _route_shows_app_chrome(screen_id) and _route_supports_back(screen_id)
 	_sync_app_chrome_for_route(screen_id)
 	_sync_nav_buttons()
-
 	match screen_id:
 		SCREEN_HUB:
 			_render_entry_screen()
@@ -328,9 +304,10 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 			_render_competition_screen()
 		SCREEN_SHOP:
 			_render_shop_screen()
+		ROUTE_MINIGAME_SHELL:
+			_render_minigame_shell_screen()
 		_:
 			_render_entry_screen()
-
 	_sync_status_from_session()
 	_emit_client_event("screen_opened", {
 		"screen": screen_id,
@@ -338,17 +315,14 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 		"offline": SessionStore.offline,
 	})
 	_sync_social_auto_sync_for_route()
-
 func _show_refuge_root(message: String = "") -> void:
 	_show_screen(AppShellRouteContractScript.clear_for_refuge_return(_screen_history), false)
 	if message != "":
 		_show_notice(message)
-
 func _show_surface_screen(screen_id: String) -> void:
 	var target_screen := _normalize_route(screen_id)
 	var current_screen := _normalize_route(_current_screen)
 	_show_screen(target_screen, target_screen != current_screen)
-
 func _go_back() -> void:
 	if _is_busy:
 		return
@@ -359,47 +333,37 @@ func _go_back() -> void:
 		previous = SCREEN_REFUGE
 		_screen_history.clear()
 	_show_screen(previous, false)
-
 func _session_uses_refuge_root() -> bool:
 	if SessionStore.has_valid_access_token():
 		return true
 	if SessionStore.has_account_state():
 		return true
 	return SessionStore.is_progression_lab_local_only()
-
 func _normalize_route(route_id: String) -> String:
 	return AppShellRouteContractScript.normalize(route_id)
-
 func _route_supports_back(route_id: String) -> bool:
 	return AppShellRouteContractScript.supports_back(route_id)
-
 func _route_prefers_landscape(route_id: String) -> bool:
 	return AppShellRouteContractScript.prefers_landscape(route_id)
-
 func _route_shows_app_chrome(route_id: String) -> bool:
 	return AppShellRouteContractScript.shows_app_chrome(route_id)
-
 func _route_shows_first_screen(route_id: String) -> bool:
 	return AppShellRouteContractScript.uses_immersive_layer(route_id)
-
 func _sync_app_chrome_for_route(route_id: String) -> void:
 	if _app_chrome_root != null and is_instance_valid(_app_chrome_root):
 		_app_chrome_root.visible = _route_shows_app_chrome(route_id)
 	if _first_screen_root != null and is_instance_valid(_first_screen_root):
 		_first_screen_root.visible = _route_shows_first_screen(route_id)
-
 func _apply_orientation_for_route(_route_id: String) -> void:
 	if OS.get_name() != "Android":
 		return
 	DisplayServer.screen_set_orientation(APP_ORIENTATION_PORTRAIT)
-
 func _battle_lab_available() -> bool:
 	if not _internal_dev_tools_enabled():
 		return false
 	if not bool(ProjectSettings.get_setting("draxos_mobile/battle_lab/enabled", false)):
 		return false
 	return ResourceLoader.exists(BATTLE_LAB_SCREEN_PATH)
-
 func _open_battle_lab_overlay() -> void:
 	if not _battle_lab_available():
 		_error_label.text = "Battle Lab dev indisponivel neste ambiente."
@@ -419,7 +383,6 @@ func _open_battle_lab_overlay() -> void:
 	_emit_client_event("battle_lab_opened", {
 		"screen": _current_screen,
 	})
-
 func _close_battle_lab_overlay() -> void:
 	if _battle_lab_overlay == null or not is_instance_valid(_battle_lab_overlay):
 		_battle_lab_overlay = null
@@ -429,7 +392,6 @@ func _close_battle_lab_overlay() -> void:
 	_emit_client_event("battle_lab_closed", {
 		"screen": _current_screen,
 	})
-
 func _progression_lab_available() -> bool:
 	if not _internal_dev_tools_enabled():
 		return false
@@ -537,6 +499,13 @@ func _render_competition_screen() -> void:
 
 func _render_shop_screen() -> void:
 	ShopSurfacePresenterScript.render(self)
+
+func _render_minigame_shell_screen() -> void:
+	_content_title.text = "Minigame"
+	_status_label.text = _session_status_text()
+	_detail_label.text = "Indisponivel nesta build."
+	_add_body_text("Area reservada para desenvolvimento interno. Recompensas desativadas.")
+	_add_action_button("Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE)
 
 func _add_section_label(text: String) -> Label:
 	_reset_action_group()
@@ -697,38 +666,43 @@ func _on_confirmation_confirmed() -> void:
 	await _execute_action(action_id)
 
 func _execute_action(action_id: String) -> void:
-	_active_action_id = action_id
+	var route := AppShellActionRouterScript.route_action(action_id, _action_context())
+	var action := str(route.get("action_id", action_id))
+	_active_action_id = action
+	_active_action_scope = str(route.get("scope_id", OperationStateScript.DEFAULT_SCOPE))
 	_error_label.text = ""
-	_emit_client_event("action_start", _action_payload(action_id))
-	if _update_gate_blocks_action(action_id):
+	_emit_client_event("action_start", _as_dictionary(route.get("payload", _action_payload(action))))
+	if bool(route.get("blocked_by_update", false)):
 		_error_label.text = "Update obrigatorio antes de usar recursos online."
 		_detail_label.text = str(_update_gate.get("detail", "Baixe a nova build pelo portal."))
 		_emit_client_event("precondition_failed", {
-			"action_id": action_id,
+			"action_id": action,
 			"screen": _current_screen,
 			"reason": "required_update",
 			"current_version": ProjectInfoScript.APP_VERSION,
 			"minimum_supported_version": str(_update_gate.get("minimum_supported_version", "")),
 		})
 		_sync_buttons()
-	elif AppShellActionContractScript.is_select_base_structure(action_id):
-		_select_base_structure(AppShellActionContractScript.action_value(action_id))
-	elif AppShellActionContractScript.is_upgrade_base_structure(action_id):
-		await _upgrade_base_structure(AppShellActionContractScript.action_value(action_id))
-	elif AppShellActionContractScript.is_shop_purchase(action_id):
-		await _buy_shop_product(AppShellActionContractScript.action_value(action_id))
-	elif AppShellActionContractScript.is_claim_reward(action_id):
-		await _claim_shop_reward(AppShellActionContractScript.action_value(action_id))
-	elif AppShellActionContractScript.is_build_equip_action(action_id):
-		await _surface_action_flow.handle_build_equip_action(self, action_id)
-	elif AppShellActionContractScript.is_enable_spell_behavior(action_id):
-		await _enable_spell_behavior(AppShellActionContractScript.action_value(action_id))
-	elif AppShellActionContractScript.is_disable_spell_behavior(action_id):
-		await _disable_spell_behavior(AppShellActionContractScript.action_value(action_id))
-	elif AppShellActionContractScript.is_battle_replay(action_id):
-		await _show_battle_replay(AppShellActionContractScript.action_value(action_id))
+	elif AppShellActionContractScript.is_select_base_structure(action):
+		_select_base_structure(AppShellActionContractScript.action_value(action))
+	elif AppShellActionContractScript.is_upgrade_base_structure(action):
+		await _upgrade_base_structure(AppShellActionContractScript.action_value(action))
+	elif AppShellActionContractScript.is_shop_purchase(action):
+		await _buy_shop_product(AppShellActionContractScript.action_value(action))
+	elif AppShellActionContractScript.is_claim_reward(action):
+		await _claim_shop_reward(AppShellActionContractScript.action_value(action))
+	elif AppShellActionContractScript.is_build_equip_action(action):
+		await _surface_action_flow.handle_build_equip_action(self, action)
+	elif AppShellActionContractScript.is_enable_spell_behavior(action):
+		await _enable_spell_behavior(AppShellActionContractScript.action_value(action))
+	elif AppShellActionContractScript.is_disable_spell_behavior(action):
+		await _disable_spell_behavior(AppShellActionContractScript.action_value(action))
+	elif AppShellActionContractScript.is_battle_replay(action):
+		await _show_battle_replay(AppShellActionContractScript.action_value(action))
+	elif AppShellActionContractScript.is_open_minigame_shell(action):
+		_open_minigame_shell(AppShellActionContractScript.action_value(action))
 	else:
-		match action_id:
+		match action:
 			AppShellActionContractScript.ACTION_ENTER_GUEST:
 				await _enter_guest()
 			AppShellActionContractScript.ACTION_ENTER_REFUGE:
@@ -822,13 +796,14 @@ func _execute_action(action_id: String) -> void:
 				await _buy_shop_product(AppShellActionContractScript.PRODUCT_ALPHA_REDEEM_MEDIUM)
 			AppShellActionContractScript.ACTION_CLAIM_DAILY_REWARD:
 				await _claim_shop_reward(AppShellActionContractScript.REWARD_DAILY_COLLECT_BASE)
-	if _active_action_id == action_id:
+	if _active_action_id == action:
 		var event_type := "action_failure" if _error_label.text != "" else "action_success"
-		var payload := _action_payload(action_id)
+		var payload := _action_payload(action)
 		if _error_label.text != "":
 			payload["error_text"] = _error_label.text
 		_emit_client_event(event_type, payload)
 	_active_action_id = ""
+	_active_action_scope = OperationStateScript.DEFAULT_SCOPE
 
 func _check_runtime_config() -> void:
 	await _account_session_flow.check_runtime_config(self)
@@ -933,6 +908,9 @@ func _show_battle_history() -> void:
 func _show_battle_replay(battle_id: String) -> void:
 	await _battle_lifecycle_flow.show_battle_replay(self, battle_id)
 
+func _open_minigame_shell(_minigame_id: String = "") -> void:
+	_show_screen(ROUTE_MINIGAME_SHELL)
+
 func _show_base() -> void:
 	await _surface_action_flow.show_base(self)
 
@@ -1030,14 +1008,19 @@ func _claim_shop_reward(reward_id: String) -> void:
 	await _surface_action_flow.claim_shop_reward(self, reward_id)
 
 func _set_busy(is_busy: bool, message: String) -> void:
-	_is_busy = is_busy
 	if is_busy:
+		_operation_state.begin_busy(_active_action_scope, _active_action_id)
 		_status_label.text = message
 		_detail_label.text = "Aguardando resposta do servidor..."
 		_error_label.text = ""
 	else:
+		if _active_action_scope == "":
+			_operation_state.clear_all_busy()
+		else:
+			_operation_state.clear_busy(_active_action_scope)
 		_status_label.text = _session_status_text()
 		_detail_label.text = message
+	_is_busy = _operation_state.any_busy()
 	_sync_immersive_feedback()
 	_sync_buttons()
 
@@ -1055,6 +1038,7 @@ func _fail_with_error(result: Dictionary) -> void:
 		SessionStore.offline = false
 		SessionStore.last_error = error_payload
 		SessionStore.session_changed.emit()
+	_operation_state.set_action_error(_active_action_id, error_payload)
 	_set_busy(false, "Acao nao concluida.")
 	_error_label.text = _friendly_error_message(code, str(error_payload.get("message", "Falha na requisicao.")))
 	_sync_immersive_feedback()
@@ -1476,6 +1460,16 @@ func _action_payload(action_id: String) -> Dictionary:
 		SessionStore.has_account_state(),
 		SessionStore.offline
 	)
+
+func _action_context() -> Dictionary:
+	return {
+		"screen": _current_screen,
+		"save_type": SessionStore.active_save_type,
+		"has_account": SessionStore.has_account_state(),
+		"offline": SessionStore.offline,
+		"update_gate": _update_gate,
+		"replay_running": _replay_running,
+	}
 
 func _emit_client_event(event_type: String, payload: Dictionary) -> void:
 	if SessionStore.is_progression_lab_local_only():

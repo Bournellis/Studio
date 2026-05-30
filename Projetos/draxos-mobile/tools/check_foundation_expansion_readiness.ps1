@@ -124,6 +124,8 @@ $requiredFiles = @(
   'supabase\migrations\202605300002_transactional_domain_enforcement.sql',
   'server\schema\migrations\202605300003_remaining_transactional_domain_enforcement.sql',
   'supabase\migrations\202605300003_remaining_transactional_domain_enforcement.sql',
+  'server\schema\migrations\202605300004_foundation_closeout.sql',
+  'supabase\migrations\202605300004_foundation_closeout.sql',
   'data\rulesets\foundation_ruleset_v0.json',
   'data\definitions\battle_fixtures.json',
   'data\definitions\rewards.json',
@@ -219,7 +221,7 @@ Test-FileContains 'docs\contracts\minigame-integration.md' 'Checklist De Integra
 Test-FileContains 'docs\contracts\minigame-integration.md' 'admin-ops.md'
 
 Test-FileContains 'docs\contracts\admin-ops.md' 'ADMIN_OPS_CONTRACT_V1'
-Test-FileContains 'docs\contracts\admin-ops.md' 'admin-future'
+Test-FileContains 'docs\contracts\admin-ops.md' 'admin-internal'
 Test-FileContains 'docs\contracts\admin-ops.md' 'audit_id'
 Test-FileContains 'docs\contracts\admin-ops.md' 'admin_audit_log'
 Test-FileContains 'docs\contracts\admin-ops.md' 'ConfirmRemoteMutation'
@@ -235,12 +237,13 @@ Test-FileContains 'docs\battle-lab\README.md' 'dev/internal-alpha gated'
 Test-FileContains 'docs\progression-lab\README.md' 'Nao substitui Supabase como autoridade do jogo'
 Test-FileContains 'docs\progression-lab\README.md' 'Nao vira tuning runtime sem pacote explicito'
 
-Test-FileContains 'docs\contracts\api-endpoints.md' 'admin-future'
+Test-FileContains 'docs\contracts\api-endpoints.md' 'admin-internal'
 Test-FileContains 'docs\contracts\database-schema.md' 'Migrations atuais'
-Test-FileContains 'docs\contracts\database-schema.md' 'admin-future'
+Test-FileContains 'docs\contracts\database-schema.md' 'admin-internal'
 Test-FileContains 'docs\contracts\database-schema.md' '202605300001_foundation_expansion_readiness.sql'
 Test-FileContains 'docs\contracts\database-schema.md' '202605300002_transactional_domain_enforcement.sql'
 Test-FileContains 'docs\contracts\api-endpoints.md' '202605300003_remaining_transactional_domain_enforcement.sql'
+Test-FileContains 'docs\contracts\database-schema.md' '202605300004_foundation_closeout.sql'
 Test-FileContains 'docs\contracts\database-schema.md' 'pending|completed|failed'
 Test-FileContains 'docs\contracts\content-definitions.md' 'Arquivos Esperados'
 Test-FileContains 'docs\contracts\content-definitions.md' 'foundation_ruleset_v0'
@@ -299,6 +302,11 @@ Test-FileContains 'server\functions\monetization\index.ts' 'rpc/claim_reward_v1'
 Test-FileContains 'server\functions\monetization\index.ts' 'rpc/alpha_purchase_v1'
 Test-FileContains 'server\functions\social\index.ts' 'rpc/guild_create_v1'
 Test-FileContains 'server\functions\social\index.ts' 'rpc/guild_join_v1'
+Test-FileContains 'server\functions\build\index.ts' 'rpc/build_spell_behavior_v1'
+Test-FileContains 'server\functions\build\index.ts' 'rpc/build_potion_equip_v1'
+Test-FileContains 'server\functions\build\index.ts' 'rpc/build_potion_behavior_v1'
+Test-FileContains 'server\functions\social\index.ts' 'rpc/social_friend_add_v1'
+Test-FileContains 'server\functions\social\index.ts' 'rpc/social_chat_send_v1'
 Test-FileContains 'tests\client\test_foundation_shell_contracts.gd' 'test_operation_state_tracks_busy_by_scope'
 Test-FileContains 'server\tests\README.md' 'foundation_contracts_test.ts'
 Test-FileContains 'server\tests\README.md' 'foundation_expansion_schema_test.ts'

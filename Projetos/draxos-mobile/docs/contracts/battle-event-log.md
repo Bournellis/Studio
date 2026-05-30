@@ -15,10 +15,12 @@ Status primeiro slice: `FIRST_SLICE_SIM` completo em T00-P10 com simulador TypeS
 {
   "schema_version": "battle_log_v1",
   "ruleset": {
+    "publication_id": "uuid",
     "ruleset_id": "foundation_ruleset_v0",
     "ruleset_version": 1,
     "content_hash": "5b7121a37a78e966c06098cc70283dabc5dbbcc1d3f9a21d279b855d09aee1e7",
-    "simulator_hash": "6387afc69b1862c2c63b1fe04a85da42574eb0a6ab5ca46e8ae8950ed5b11536"
+    "simulator_hash": "e835cadde3c937cba45c46785da3761139373ab23ac9dfaaed814d79f933bbe9",
+    "schema_version": "foundation_ruleset_manifest_v1"
   },
   "battle_id": "uuid",
   "seed": "string",
@@ -38,16 +40,18 @@ Status primeiro slice: `FIRST_SLICE_SIM` completo em T00-P10 com simulador TypeS
 
 ## Metadata De Ruleset
 
-`ruleset` e opcional para logs historicos, mas obrigatorio para batalhas criadas depois da Foundation Expansion Readiness. O replay deve ler o log salvo e essa metadata; nunca deve rerodar a batalha com o codigo atual para reconstruir resultado.
+`ruleset` e opcional para logs historicos, mas obrigatorio para batalhas criadas depois da Foundation Expansion Readiness. Batalhas novas tambem persistem `ruleset_publication_id`, `ruleset_content_hash`, `ruleset_simulator_hash` e `ruleset_schema_version` na row de `battles`. O replay deve ler o log salvo e essa metadata; nunca deve rerodar a batalha com o codigo atual para reconstruir resultado.
 
 Campos:
 
 | Campo | Tipo | Uso |
 |---|---|---|
+| `publication_id` | uuid/null | Publicacao imutavel que gerou a batalha, quando a row ja tiver metadata Foundation Closeout. |
 | `ruleset_id` | string | Ruleset publicado que gerou a batalha. |
 | `ruleset_version` | number | Versao do ruleset. |
 | `content_hash` | string | Hash das definitions/modelos autorados. |
 | `simulator_hash` | string | Hash do simulador usado pelo pacote. |
+| `schema_version` | string | Versao do schema do manifest de ruleset. |
 
 Fallback para logs antigos: tratar como `foundation_ruleset_v0` apenas para leitura e nao gravar novamente.
 

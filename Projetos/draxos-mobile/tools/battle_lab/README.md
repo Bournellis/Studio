@@ -26,6 +26,12 @@ Run oficial atual:
 npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --archive-run 2026-05-25_source_identity_balance_v02 --compare-with 2026-05-25_initial_balance_v01
 ```
 
+Scratch de alinhamento Track 16 antes de tuning:
+
+```powershell
+npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --scratch-run 2026-05-30_track16_lab_alignment_v01 --compare-with 2026-05-25_source_identity_balance_v02
+```
+
 Bridge usado pelo Godot dev-only:
 
 ```powershell
@@ -69,6 +75,8 @@ Essa tela:
 - gera scratch runs e runs oficiais;
 - mostra resumo/checks/outliers;
 - permite montar builds manualmente com validacao de unlock;
+- permite ensaiar Pocao de Vida e desativacao simples da primeira spell em
+  replay custom;
 - gera replay custom sob demanda e registra esse resultado de sessao em Replay/History;
 - reproduz `battle_log_v1` no `BattleVisualMockup`, o mesmo mockup usado pela
   tela Batalha do alpha, com palco 2D procedural, slots front/middle/back,
@@ -95,6 +103,8 @@ Campos principais:
 - `random_builds_per_archetype_per_level`: volume de variantes deterministicas
   por arquetipo.
 - `thresholds`: janelas de duracao, anti-stall e dominancia.
+- `track16_scenarios`: cobertura lab-only de Pocao de Vida e comportamento
+  simples. Nao muda tuning por si so.
 - `archetypes`: preferencias de spells, Doutrinas, Familiares e ratios de level por
   build.
 
@@ -124,24 +134,30 @@ parametros em outra tarefa, regenere o relatorio e compare antes/depois.
 
 ## Baseline Atual
 
-O baseline gerado em `docs/battle-lab/generated/` inclui a run oficial
-`2026-05-25_source_identity_balance_v02` e os healthy saves do Progression Lab quando
-`docs/progression-lab/generated/progression_summary.json` existe.
+O baseline gerado em `docs/battle-lab/generated/` esta em Track 16 Lab
+Alignment. Ele inclui a run oficial `2026-05-25_source_identity_balance_v02`, os
+healthy saves do Progression Lab e cenarios lab-only de Pocao de Vida e
+comportamento simples.
 
 Resumo:
 
-- batalhas/builds: `3132` / `212`;
-- duracao media: `24.08s`;
+- batalhas/builds: `4644` / `244`;
+- duracao media: `24.03s`;
 - batalhas curtas: `0%`;
-- batalhas longas: `15.07%`;
-- anti-stall: `4.95%`;
-- dominancia em poder proximo: `63.46% max`;
+- batalhas longas: `16.86%`;
+- anti-stall: `6.4%` (`REVIEW`, acima da meta lab `<= 5%`);
+- dominancia em poder proximo: `63.34% max`;
+- cenarios com pocao: `1492`; uso de pocao em `76.61%` dos matchups com slot
+  equipado;
+- cenarios com comportamento: `1238`;
 - identidade de fonte: todos os checks em `PASS`;
-- status geral: `PASS`;
+- status geral: `REVIEW`;
 - `funeral_burst`: sucessor do antigo burst caster apos o rework de Morte/Fogo;
 - `familiar_handler`: sucessor do antigo pet handler com familiares por papel.
 
-Proximo foco recomendado: validar manualmente `familiar_handler`,
-`funeral_burst`, `mental_controller`, `defensive_occultist`, gap premium 10h e janelas 15h/20h usando
+Proximo foco recomendado: validar manualmente impacto da Pocao de Vida em
+anti-stall/sustain, `familiar_handler`, `funeral_burst`, `mental_controller`,
+`defensive_occultist`, gap premium 10h e janelas 15h/20h usando
 `battle_lab_source_by_archetype.csv`, `battle_lab_near_power_matrix.csv`,
-`battle_lab_progression_matrix.csv` e `battle_lab_compare.csv`.
+`battle_lab_progression_matrix.csv`, `battle_lab_matchups.csv` e
+`battle_lab_compare.csv`.

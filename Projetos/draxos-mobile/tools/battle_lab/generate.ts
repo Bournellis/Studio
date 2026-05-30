@@ -1,12 +1,13 @@
 import {
   type BattleEvent,
   type BattleSimulationResult,
+  type BehaviorConfig,
   type CombatantBuild,
   simulateFirstSliceBattle,
 } from "../../server/functions/_shared/battle_simulator.ts";
 
 type Status = "PASS" | "REVIEW" | "CRITICAL";
-type BuildKind = "fixed" | "random";
+type BuildKind = "fixed" | "random" | "track16";
 type BattleSide = "player" | "opponent";
 
 interface BattleLabModel {
@@ -20,6 +21,7 @@ interface BattleLabModel {
   random_builds_per_archetype_per_level: number;
   thresholds: Thresholds;
   power_bands: PowerBand[];
+  track16_scenarios?: Track16Scenario[];
   archetypes: ArchetypeModel[];
 }
 
@@ -67,6 +69,22 @@ interface ArchetypeModel {
   quality_bias: number;
 }
 
+interface Track16Scenario {
+  id: string;
+  display_name: string;
+  levels: number[];
+  archetypes: string[];
+  potion?: {
+    item_id: "pocao_vida";
+    quantity: number;
+    behavior: BehaviorConfig;
+  };
+  spell_behavior?: {
+    target: "first_spell";
+    behavior: BehaviorConfig;
+  };
+}
+
 interface LabBuild {
   id: string;
   kind: BuildKind;
@@ -77,6 +95,8 @@ interface LabBuild {
   power_band: string;
   seed: string;
   build: CombatantBuild;
+  track16_scenario_id?: string;
+  track16_scenario_name?: string;
 }
 
 interface LabMatchup {
@@ -105,6 +125,12 @@ interface LabMatchup {
   opponent_damage_by_type: NumericMap;
   barrier_absorbed: number;
   healing: number;
+  potion_uses: number;
+  player_potion_uses: number;
+  opponent_potion_uses: number;
+  potion_enabled_sides: number;
+  spell_behavior_rules: number;
+  disabled_spell_behavior_rules: number;
   summons_created: number;
   spell_casts: NumericMap;
   player_final_hp_percent: number;
@@ -332,6 +358,11 @@ interface BattleLabResult {
     short_rate_percent: number;
     long_rate_percent: number;
     anti_stall_rate_percent: number;
+    potion_enabled_matchups: number;
+    potion_use_rate_percent: number;
+    avg_healing_per_potion_matchup: number;
+    behavior_matchups: number;
+    disabled_behavior_matchups: number;
     raw_stress_dominance_max_percent: number;
     near_power_dominance_max_percent: number;
     damage_by_source: NumericMap;
@@ -438,6 +469,11 @@ const DAMAGE_TYPE_KEYS = [
 const COMBAT_PACE_HP_MULTIPLIER_BASE = 3.85;
 const COMBAT_PACE_HP_MULTIPLIER_PER_LEVEL = 0.095;
 const NEAR_POWER_MAX_DELTA_PERCENT = 20;
+const DEFAULT_POTION_BEHAVIOR: BehaviorConfig = {
+  enabled: true,
+  hp: { mode: "below", percent: 40 },
+  mana: { mode: "ignore", percent: 0 },
+};
 const RUN_OUTPUT_FILES = [
   "battle_lab_report.html",
   "battle_lab_summary.json",
@@ -485,6 +521,7 @@ export function createBuilds(model: BattleLabModel): LabBuild[] {
     }
   }
   builds.push(...createProgressionLabBuilds(model));
+  builds.push(...createTrack16Builds(model));
   return builds;
 }
 
@@ -569,6 +606,9 @@ export function analyzeBattleLog(
   const playerDamageByType = emptyDamageTypeMap();
   const opponentDamageByType = emptyDamageTypeMap();
   const spellCasts: NumericMap = {};
+  let potionUses = 0;
+  let playerPotionUses = 0;
+  let opponentPotionUses = 0;
   const maxHp = {
     player: maxHpForLevel(player.build.level),
     opponent: maxHpForLevel(opponent.build.level),
@@ -618,6 +658,11 @@ export function analyzeBattleLog(
       barrierAbsorbed += numberValue(event.amount, 0);
     } else if (eventType === "heal") {
       healing += numberValue(event.amount, 0);
+    } else if (eventType === "consumable_use") {
+      potionUses += 1;
+      const source = stringValue(event.source);
+      if (source === "player") playerPotionUses += 1;
+      if (source === "opponent") opponentPotionUses += 1;
     } else if (eventType === "summon_spawn") {
       summonsCreated += 1;
     } else if (eventType === "cooldown_start") {
@@ -685,6 +730,15 @@ export function analyzeBattleLog(
     opponent_damage_by_type: roundMap(opponentDamageByType),
     barrier_absorbed: round(barrierAbsorbed, 2),
     healing: round(healing, 2),
+    potion_uses: potionUses,
+    player_potion_uses: playerPotionUses,
+    opponent_potion_uses: opponentPotionUses,
+    potion_enabled_sides: potionEnabledSides(player.build, opponent.build),
+    spell_behavior_rules: spellBehaviorRuleCount(player.build) +
+      spellBehaviorRuleCount(opponent.build),
+    disabled_spell_behavior_rules:
+      disabledSpellBehaviorRuleCount(player.build) +
+      disabledSpellBehaviorRuleCount(opponent.build),
     summons_created: summonsCreated,
     spell_casts: spellCasts,
     player_final_hp_percent: round(playerFinalHpPercent, 2),
@@ -1243,6 +1297,81 @@ function createBuild(
   };
 }
 
+function createTrack16Builds(model: BattleLabModel): LabBuild[] {
+  const scenarios = model.track16_scenarios ?? [];
+  if (scenarios.length === 0) return [];
+
+  const builds: LabBuild[] = [];
+  for (const scenario of scenarios) {
+    for (const level of scenario.levels) {
+      const archetypes = model.archetypes.filter((archetype) =>
+        scenario.archetypes.includes(archetype.id)
+      );
+      for (const archetype of archetypes) {
+        const base = createBuild(model, archetype, level, "fixed", 0);
+        const build = applyTrack16Scenario(base.build, scenario);
+        if (build === null) continue;
+        const id = `T16_${scenario.id}_${base.id}`;
+        build.id = id;
+        build.displayName =
+          `${base.build.displayName} [${scenario.display_name}]`;
+        const power = calculatePower(build);
+        builds.push({
+          id,
+          kind: "track16",
+          archetype_id: archetype.id,
+          archetype_name:
+            `${archetype.display_name} (${scenario.display_name})`,
+          level,
+          power,
+          power_band: classifyPowerBand(power, model.power_bands),
+          seed: `${base.seed}:track16:${scenario.id}`,
+          build,
+          track16_scenario_id: scenario.id,
+          track16_scenario_name: scenario.display_name,
+        });
+      }
+    }
+  }
+  return uniqueBuilds(builds);
+}
+
+function applyTrack16Scenario(
+  baseBuild: CombatantBuild,
+  scenario: Track16Scenario,
+): CombatantBuild | null {
+  const build = structuredClone(baseBuild) as CombatantBuild;
+  if (scenario.potion !== undefined) {
+    build.potionSlot = {
+      slotIndex: 1,
+      itemId: scenario.potion.item_id,
+      quantity: Math.max(0, Math.trunc(scenario.potion.quantity)),
+      behavior: normalizeBehavior(
+        scenario.potion.behavior,
+        DEFAULT_POTION_BEHAVIOR,
+      ),
+    };
+  }
+
+  if (scenario.spell_behavior !== undefined) {
+    const spellId = build.spellIds[0];
+    if (spellId === undefined) return null;
+    build.spellBehaviors = {
+      ...(build.spellBehaviors ?? {}),
+      [spellId]: normalizeBehavior(
+        scenario.spell_behavior.behavior,
+        {
+          enabled: true,
+          hp: { mode: "ignore", percent: 0 },
+          mana: { mode: "ignore", percent: 0 },
+        },
+      ),
+    };
+  }
+
+  return build;
+}
+
 function loadProgressionLabDocument(): ProgressionLabDocument | null {
   const candidates = [
     new URL(
@@ -1416,6 +1545,15 @@ function summarize(
     ).length;
   const antiStallCount =
     matchups.filter((matchup) => matchup.anti_stall).length;
+  const potionEnabledMatchups =
+    matchups.filter((matchup) => matchup.potion_enabled_sides > 0).length;
+  const potionUseMatchups =
+    matchups.filter((matchup) => matchup.potion_uses > 0).length;
+  const behaviorMatchups =
+    matchups.filter((matchup) => matchup.spell_behavior_rules > 0).length;
+  const disabledBehaviorMatchups =
+    matchups.filter((matchup) => matchup.disabled_spell_behavior_rules > 0)
+      .length;
   const damageBySource = sumMaps(
     matchups.map((matchup) => matchup.damage_by_source),
     DAMAGE_SOURCE_KEYS,
@@ -1480,6 +1618,17 @@ function summarize(
       short_rate_percent: rate(shortCount, totalBattles),
       long_rate_percent: rate(longCount, totalBattles),
       anti_stall_rate_percent: rate(antiStallCount, totalBattles),
+      potion_enabled_matchups: potionEnabledMatchups,
+      potion_use_rate_percent: rate(potionUseMatchups, potionEnabledMatchups),
+      avg_healing_per_potion_matchup: round(
+        avg(
+          matchups.filter((matchup) => matchup.potion_uses > 0)
+            .map((matchup) => matchup.healing),
+        ),
+        2,
+      ),
+      behavior_matchups: behaviorMatchups,
+      disabled_behavior_matchups: disabledBehaviorMatchups,
       raw_stress_dominance_max_percent: maxAggregateWinRate(archetypes),
       near_power_dominance_max_percent: maxAggregateWinRate(
         nearPowerArchetypes,
@@ -1788,6 +1937,16 @@ function buildChecks(
   const configuredLevelsCovered =
     model.levels.filter((level) => coveredLevels.has(level)).length;
   const expectedLevels = model.levels.length;
+  const track16Scenarios = model.track16_scenarios ?? [];
+  const potionEnabledMatchups =
+    matchups.filter((matchup) => matchup.potion_enabled_sides > 0).length;
+  const potionUseMatchups =
+    matchups.filter((matchup) => matchup.potion_uses > 0).length;
+  const behaviorMatchups =
+    matchups.filter((matchup) => matchup.spell_behavior_rules > 0).length;
+  const disabledBehaviorMatchups =
+    matchups.filter((matchup) => matchup.disabled_spell_behavior_rules > 0)
+      .length;
 
   return [
     {
@@ -1849,6 +2008,42 @@ function buildChecks(
         `${configuredLevelsCovered}/${expectedLevels} configured, ${coveredLevels.size} total`,
       target: `${expectedLevels}/${expectedLevels}`,
       note: "Every configured level checkpoint should produce matchups.",
+    },
+    {
+      id: "track16_potion_build_coverage",
+      status: track16Scenarios.some((scenario) => scenario.potion !== undefined)
+        ? potionEnabledMatchups > 0 ? "PASS" : "CRITICAL"
+        : "PASS",
+      observed: `${potionEnabledMatchups} potion-enabled matchups`,
+      target: ">= 1 when Track 16 potion scenarios exist",
+      note:
+        "Battle Lab must exercise Pocao de Vida slots before autobattler tuning.",
+    },
+    {
+      id: "track16_potion_event_coverage",
+      status: track16Scenarios.some((scenario) => scenario.potion !== undefined)
+        ? potionUseMatchups > 0 ? "PASS" : "REVIEW"
+        : "PASS",
+      observed: `${potionUseMatchups} matchups with consumable_use`,
+      target: ">= 1 consumable_use event when potion is enabled",
+      note:
+        "Potion scenarios should produce at least one battle_log_v1 consumable_use/heal sample.",
+    },
+    {
+      id: "track16_spell_behavior_coverage",
+      status:
+        track16Scenarios.some((scenario) =>
+            scenario.spell_behavior !== undefined
+          )
+          ? behaviorMatchups > 0 && disabledBehaviorMatchups > 0
+            ? "PASS"
+            : "CRITICAL"
+          : "PASS",
+      observed:
+        `${behaviorMatchups} behavior matchups, ${disabledBehaviorMatchups} disabled-behavior matchups`,
+      target: ">= 1 spell behavior matchup and >= 1 disabled behavior matchup",
+      note:
+        "Battle Lab must exercise simple spell behavior before behavior-driven tuning.",
     },
     ...buildSourceIdentityChecks(model, matchups),
   ];
@@ -2044,6 +2239,9 @@ export async function writeOutputs(
       "pet_id",
       "weapon_level",
       "weapon_quality_tier",
+      "track16_scenario_id",
+      "potion_slot",
+      "spell_behaviors",
     ]),
   );
   await Deno.writeTextFile(
@@ -2065,6 +2263,12 @@ export async function writeOutputs(
       "anti_stall",
       "barrier_absorbed",
       "healing",
+      "potion_uses",
+      "player_potion_uses",
+      "opponent_potion_uses",
+      "potion_enabled_sides",
+      "spell_behavior_rules",
+      "disabled_spell_behavior_rules",
       "summons_created",
       "player_final_hp_percent",
       "opponent_final_hp_percent",
@@ -2238,6 +2442,13 @@ function buildRows(builds: LabBuild[]): Array<Record<string, unknown>> {
     pet_id: build.build.petId ?? "",
     weapon_level: build.build.weaponLevel,
     weapon_quality_tier: build.build.weaponQualityTier,
+    track16_scenario_id: build.track16_scenario_id ?? "",
+    potion_slot: build.build.potionSlot === undefined
+      ? ""
+      : JSON.stringify(build.build.potionSlot),
+    spell_behaviors: build.build.spellBehaviors === undefined
+      ? ""
+      : JSON.stringify(build.build.spellBehaviors),
   }));
 }
 
@@ -2259,6 +2470,12 @@ function matchupRows(matchups: LabMatchup[]): Array<Record<string, unknown>> {
     anti_stall: matchup.anti_stall,
     barrier_absorbed: matchup.barrier_absorbed,
     healing: matchup.healing,
+    potion_uses: matchup.potion_uses,
+    player_potion_uses: matchup.player_potion_uses,
+    opponent_potion_uses: matchup.opponent_potion_uses,
+    potion_enabled_sides: matchup.potion_enabled_sides,
+    spell_behavior_rules: matchup.spell_behavior_rules,
+    disabled_spell_behavior_rules: matchup.disabled_spell_behavior_rules,
     summons_created: matchup.summons_created,
     player_final_hp_percent: matchup.player_final_hp_percent,
     opponent_final_hp_percent: matchup.opponent_final_hp_percent,
@@ -2473,6 +2690,18 @@ export function buildReplaySamples(
       selected.set(representative.id, `level_${level}_representative`);
     }
   }
+  const potionSample = result.matchups.find((matchup) =>
+    matchupHasPotionUse(matchup)
+  );
+  if (potionSample !== undefined && selected.size < maxSamples) {
+    selected.set(potionSample.id, "track16_potion_behavior");
+  }
+  const behaviorSample = result.matchups.find((matchup) =>
+    matchup.disabled_spell_behavior_rules > 0
+  );
+  if (behaviorSample !== undefined && selected.size < maxSamples) {
+    selected.set(behaviorSample.id, "track16_spell_behavior");
+  }
   for (const outlier of result.outliers) {
     if (selected.size >= maxSamples) break;
     if (!selected.has(outlier.matchup_id)) {
@@ -2537,6 +2766,10 @@ function representativeReplayForLevel(
 
 function matchupHasSpellActivity(matchup: LabMatchup): boolean {
   return Object.values(matchup.spell_casts).some((count) => count > 0);
+}
+
+function matchupHasPotionUse(matchup: LabMatchup): boolean {
+  return matchup.potion_uses > 0;
 }
 
 function nonStarterMatchup(matchup: LabMatchup): boolean {
@@ -2767,6 +3000,11 @@ function renderHtml(
       ${metricCard("Short", `${result.summary.short_rate_percent}%`)}
       ${metricCard("Long", `${result.summary.long_rate_percent}%`)}
       ${metricCard("Anti-stall", `${result.summary.anti_stall_rate_percent}%`)}
+      ${metricCard("Potion use", `${result.summary.potion_use_rate_percent}%`)}
+      ${
+    metricCard("Potion heal avg", result.summary.avg_healing_per_potion_matchup)
+  }
+      ${metricCard("Behavior rows", result.summary.behavior_matchups)}
       ${
     metricCard(
       "Raw dominance",
@@ -3068,6 +3306,57 @@ function damageSideForEvent(event: BattleEvent): BattleSide | "" {
   return "";
 }
 
+function potionEnabledSides(
+  player: CombatantBuild,
+  opponent: CombatantBuild,
+): number {
+  return (potionEnabled(player) ? 1 : 0) + (potionEnabled(opponent) ? 1 : 0);
+}
+
+function potionEnabled(build: CombatantBuild): boolean {
+  const slot = build.potionSlot;
+  return slot !== undefined && slot.itemId === "pocao_vida" &&
+    slot.quantity > 0;
+}
+
+function spellBehaviorRuleCount(build: CombatantBuild): number {
+  return Object.keys(build.spellBehaviors ?? {}).length;
+}
+
+function disabledSpellBehaviorRuleCount(build: CombatantBuild): number {
+  return Object.values(build.spellBehaviors ?? {}).filter((behavior) =>
+    behavior.enabled === false
+  ).length;
+}
+
+function normalizeBehavior(
+  value: BehaviorConfig | undefined,
+  fallback: BehaviorConfig,
+): BehaviorConfig {
+  return {
+    enabled: typeof value?.enabled === "boolean"
+      ? value.enabled
+      : fallback.enabled,
+    hp: normalizeBehaviorCondition(value?.hp, fallback.hp),
+    mana: normalizeBehaviorCondition(value?.mana, fallback.mana),
+  };
+}
+
+function normalizeBehaviorCondition(
+  value: BehaviorConfig["hp"] | undefined,
+  fallback: BehaviorConfig["hp"],
+): BehaviorConfig["hp"] {
+  const mode = value?.mode === "below" || value?.mode === "above" ||
+      value?.mode === "ignore"
+    ? value.mode
+    : fallback.mode;
+  const percent =
+    typeof value?.percent === "number" && Number.isFinite(value.percent)
+      ? clampNumber(value.percent, 0, 100)
+      : fallback.percent;
+  return { mode, percent };
+}
+
 function statusForWinRate(model: BattleLabModel, winRate: number): Status {
   if (winRate > model.thresholds.dominance_critical_percent) {
     return "CRITICAL";
@@ -3217,7 +3506,7 @@ function validateBridgeBuild(
   if (errors.length > 0) {
     throw new Error(`${fieldName} invalid: ${errors.join("; ")}`);
   }
-  return {
+  const sanitized: CombatantBuild = {
     id: String(build.id),
     displayName: String(build.displayName),
     level,
@@ -3242,6 +3531,43 @@ function validateBridgeBuild(
       ? undefined
       : numberValue(build.petLevel, level),
   };
+  if (build.potionSlot !== undefined) {
+    const rawSlot = build.potionSlot as {
+      itemId?: unknown;
+      slotIndex?: unknown;
+      quantity?: unknown;
+      behavior?: BehaviorConfig;
+    };
+    if (rawSlot.itemId === "pocao_vida") {
+      sanitized.potionSlot = {
+        slotIndex: clamp(numberValue(rawSlot.slotIndex, 1), 1, 1),
+        itemId: "pocao_vida",
+        quantity: clamp(numberValue(rawSlot.quantity, 1), 0, 99),
+        behavior: normalizeBehavior(rawSlot.behavior, DEFAULT_POTION_BEHAVIOR),
+      };
+    }
+  }
+  if (
+    build.spellBehaviors !== undefined &&
+    typeof build.spellBehaviors === "object"
+  ) {
+    const behaviors: Record<string, BehaviorConfig> = {};
+    for (const spellId of sanitized.spellIds) {
+      const behavior =
+        (build.spellBehaviors as Record<string, BehaviorConfig>)[spellId];
+      if (behavior !== undefined) {
+        behaviors[spellId] = normalizeBehavior(behavior, {
+          enabled: true,
+          hp: { mode: "ignore", percent: 0 },
+          mana: { mode: "ignore", percent: 0 },
+        });
+      }
+    }
+    if (Object.keys(behaviors).length > 0) {
+      sanitized.spellBehaviors = behaviors;
+    }
+  }
+  return sanitized;
 }
 
 function customLabBuild(

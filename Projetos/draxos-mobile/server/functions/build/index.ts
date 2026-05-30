@@ -1,4 +1,5 @@
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import { validateApiVersion } from "../_shared/api_version.ts";
 import {
   type FoundationGameSaveRow,
   foundationRpcPayload,
@@ -11,9 +12,7 @@ import {
   calculatePower,
   DEFAULT_POTION_BEHAVIOR,
   DEFAULT_SPELL_BEHAVIOR,
-  equippedSpellIds,
   normalizeBehavior,
-  normalizeBehaviorOrDefault,
   type ProgressionBuildRow,
   type ProgressionBuildState,
   type ProgressionConsumableRow,
@@ -70,10 +69,6 @@ interface SpellBehaviorRow extends ProgressionSpellBehaviorRow {
   updated_at: string;
 }
 
-interface IdempotencyRow {
-  response_payload: unknown;
-}
-
 interface BuildState extends ProgressionBuildState {
   player: PlayerRow;
   gameSave: FoundationGameSaveRow;
@@ -90,6 +85,11 @@ const POTION_IDS = new Set(["pocao_vida"]);
 Deno.serve(async (request: Request) => {
   if (request.method === "OPTIONS") {
     return emptyResponse();
+  }
+
+  const apiVersionError = validateApiVersion(request);
+  if (apiVersionError !== null) {
+    return apiVersionError;
   }
 
   try {
@@ -241,44 +241,27 @@ async function handleSpellBehavior(
   if (state.error !== null) {
     return errorResponse(state.error.code, state.error.message, state.error.status);
   }
-  const existing = await loadIdempotency(
-    config,
-    state.value.player.id,
-    "build/spell-behavior",
-    requestId,
-  );
-  if (existing.error !== null) {
-    return errorResponse(existing.error.code, existing.error.message, existing.error.status);
-  }
-  if (existing.value !== null) {
-    return jsonResponse(existing.value);
-  }
-
-  const equippedSpells = equippedSpellIds(state.value.build);
-  if (!equippedSpells.includes(spellId)) {
-    return errorResponse(
-      "SPELL_NOT_EQUIPPED",
-      "Spell behavior can only be set for equipped spells.",
-      409,
-    );
-  }
-
-  const upsert = await restRequest<SpellBehaviorRow[]>(
-    config,
-    "player_spell_behaviors?on_conflict=player_id,spell_id&select=*",
-    {
-      method: "POST",
-      headers: { prefer: "resolution=merge-duplicates,return=representation" },
-      body: JSON.stringify({
-        player_id: state.value.player.id,
+  const requestHash = await mutationRequestHash("build/spell-behavior", body, {
+    request_id: requestId,
+    spell_id: spellId,
+    behavior: behavior.value,
+  });
+  const rpc = await restRequest<unknown>(config, "rpc/build_spell_behavior_v1", {
+    method: "POST",
+    body: JSON.stringify({
+      p_game_save_id: state.value.gameSave.id,
+      p_request_id: requestId,
+      p_request_hash: requestHash,
+      p_request_payload: {
+        request_id: requestId,
         spell_id: spellId,
         behavior: behavior.value,
-        updated_at: new Date().toISOString(),
-      }),
-    },
-  );
-  if (upsert.error !== null || upsert.value.length === 0) {
-    return errorResponse("BEHAVIOR_UPDATE_FAILED", "Unable to update spell behavior.", 500);
+      },
+    }),
+  });
+  if (rpc.error !== null) {
+    const mapped = mapFoundationDatabaseError(rpc.error, "BEHAVIOR_UPDATE_FAILED");
+    return errorResponse(mapped.code, mapped.message, mapped.status);
   }
 
   const refreshed = await loadBuildState(auth, config);
@@ -289,16 +272,6 @@ async function handleSpellBehavior(
     ...buildStatePayload(refreshed.value),
     updated_behavior: { spell_id: spellId, behavior: behavior.value },
   };
-  const idem = await insertIdempotency(
-    config,
-    state.value.player.id,
-    "build/spell-behavior",
-    requestId,
-    responsePayload,
-  );
-  if (idem !== null) {
-    return errorResponse(idem.code, idem.message, idem.status);
-  }
   return jsonResponse(responsePayload);
 }
 
@@ -328,45 +301,27 @@ async function handlePotionEquip(
   if (state.error !== null) {
     return errorResponse(state.error.code, state.error.message, state.error.status);
   }
-  const existing = await loadIdempotency(
-    config,
-    state.value.player.id,
-    "build/potion/equip",
-    requestId,
-  );
-  if (existing.error !== null) {
-    return errorResponse(existing.error.code, existing.error.message, existing.error.status);
-  }
-  if (existing.value !== null) {
-    return jsonResponse(existing.value);
-  }
-
-  if (requestedItemId !== null) {
-    const item = state.value.inventory.find((candidate) => candidate.item_id === requestedItemId);
-    if (item === undefined || item.quantity <= 0) {
-      return errorResponse("POTION_NOT_OWNED", "This potion is not in inventory.", 409);
-    }
-  }
-
-  const existingSlot = slotFor(state.value, slotIndex);
-  const behavior = normalizeBehaviorOrDefault(existingSlot?.behavior, DEFAULT_POTION_BEHAVIOR);
-  const upsert = await restRequest<PotionSlotRow[]>(
-    config,
-    "player_potion_slots?on_conflict=player_id,slot_index&select=*",
-    {
-      method: "POST",
-      headers: { prefer: "resolution=merge-duplicates,return=representation" },
-      body: JSON.stringify({
-        player_id: state.value.player.id,
+  const requestHash = await mutationRequestHash("build/potion/equip", body, {
+    request_id: requestId,
+    slot_index: slotIndex,
+    item_id: requestedItemId,
+  });
+  const rpc = await restRequest<unknown>(config, "rpc/build_potion_equip_v1", {
+    method: "POST",
+    body: JSON.stringify({
+      p_game_save_id: state.value.gameSave.id,
+      p_request_id: requestId,
+      p_request_hash: requestHash,
+      p_request_payload: {
+        request_id: requestId,
         slot_index: slotIndex,
-        potion_id: requestedItemId,
-        behavior,
-        updated_at: new Date().toISOString(),
-      }),
-    },
-  );
-  if (upsert.error !== null || upsert.value.length === 0) {
-    return errorResponse("POTION_EQUIP_FAILED", "Unable to update potion slot.", 500);
+        item_id: requestedItemId,
+      },
+    }),
+  });
+  if (rpc.error !== null) {
+    const mapped = mapFoundationDatabaseError(rpc.error, "POTION_EQUIP_FAILED");
+    return errorResponse(mapped.code, mapped.message, mapped.status);
   }
 
   const refreshed = await loadBuildState(auth, config);
@@ -377,16 +332,6 @@ async function handlePotionEquip(
     ...buildStatePayload(refreshed.value),
     equipped_potion: { slot_index: slotIndex, potion_id: requestedItemId },
   };
-  const idem = await insertIdempotency(
-    config,
-    state.value.player.id,
-    "build/potion/equip",
-    requestId,
-    responsePayload,
-  );
-  if (idem !== null) {
-    return errorResponse(idem.code, idem.message, idem.status);
-  }
   return jsonResponse(responsePayload);
 }
 
@@ -416,37 +361,27 @@ async function handlePotionBehavior(
   if (state.error !== null) {
     return errorResponse(state.error.code, state.error.message, state.error.status);
   }
-  const existing = await loadIdempotency(
-    config,
-    state.value.player.id,
-    "build/potion-behavior",
-    requestId,
-  );
-  if (existing.error !== null) {
-    return errorResponse(existing.error.code, existing.error.message, existing.error.status);
-  }
-  if (existing.value !== null) {
-    return jsonResponse(existing.value);
-  }
-
-  const existingSlot = slotFor(state.value, slotIndex);
-  const upsert = await restRequest<PotionSlotRow[]>(
-    config,
-    "player_potion_slots?on_conflict=player_id,slot_index&select=*",
-    {
-      method: "POST",
-      headers: { prefer: "resolution=merge-duplicates,return=representation" },
-      body: JSON.stringify({
-        player_id: state.value.player.id,
+  const requestHash = await mutationRequestHash("build/potion-behavior", body, {
+    request_id: requestId,
+    slot_index: slotIndex,
+    behavior: behavior.value,
+  });
+  const rpc = await restRequest<unknown>(config, "rpc/build_potion_behavior_v1", {
+    method: "POST",
+    body: JSON.stringify({
+      p_game_save_id: state.value.gameSave.id,
+      p_request_id: requestId,
+      p_request_hash: requestHash,
+      p_request_payload: {
+        request_id: requestId,
         slot_index: slotIndex,
-        potion_id: existingSlot?.potion_id ?? null,
         behavior: behavior.value,
-        updated_at: new Date().toISOString(),
-      }),
-    },
-  );
-  if (upsert.error !== null || upsert.value.length === 0) {
-    return errorResponse("BEHAVIOR_UPDATE_FAILED", "Unable to update potion behavior.", 500);
+      },
+    }),
+  });
+  if (rpc.error !== null) {
+    const mapped = mapFoundationDatabaseError(rpc.error, "BEHAVIOR_UPDATE_FAILED");
+    return errorResponse(mapped.code, mapped.message, mapped.status);
   }
 
   const refreshed = await loadBuildState(auth, config);
@@ -457,16 +392,6 @@ async function handlePotionBehavior(
     ...buildStatePayload(refreshed.value),
     updated_behavior: { slot_index: slotIndex, behavior: behavior.value },
   };
-  const idem = await insertIdempotency(
-    config,
-    state.value.player.id,
-    "build/potion-behavior",
-    requestId,
-    responsePayload,
-  );
-  if (idem !== null) {
-    return errorResponse(idem.code, idem.message, idem.status);
-  }
   return jsonResponse(responsePayload);
 }
 
@@ -565,53 +490,6 @@ async function ensurePotionSlot(config: EdgeConfig, playerId: string): Promise<v
       behavior: DEFAULT_POTION_BEHAVIOR,
     }),
   });
-}
-
-function slotFor(state: BuildState, slotIndex: number): PotionSlotRow | undefined {
-  return state.potionSlots.find((slot) => slot.slot_index === slotIndex);
-}
-
-async function loadIdempotency(
-  config: EdgeConfig,
-  playerId: string,
-  endpoint: string,
-  requestId: string,
-): Promise<{ value: unknown | null; error: null } | { value: null; error: RestError }> {
-  const result = await restRequest<IdempotencyRow[]>(
-    config,
-    `idempotency_keys?player_id=eq.${encodeURIComponent(playerId)}&endpoint=eq.${
-      encodeURIComponent(endpoint)
-    }&request_id=eq.${encodeURIComponent(requestId)}&select=response_payload&limit=1`,
-    { method: "GET" },
-  );
-  if (result.error !== null) {
-    return { value: null, error: stateReadError() };
-  }
-  return { value: result.value[0]?.response_payload ?? null, error: null };
-}
-
-async function insertIdempotency(
-  config: EdgeConfig,
-  playerId: string,
-  endpoint: string,
-  requestId: string,
-  responsePayload: unknown,
-): Promise<RestError | null> {
-  const result = await restRequest<unknown>(config, "idempotency_keys", {
-    method: "POST",
-    headers: { prefer: "return=minimal" },
-    body: JSON.stringify({
-      player_id: playerId,
-      endpoint,
-      request_id: requestId,
-      response_payload: responsePayload,
-    }),
-  });
-  return result.error === null ? null : {
-    code: "IDEMPOTENCY_WRITE_FAILED",
-    message: "Unable to persist build idempotency.",
-    status: 500,
-  };
 }
 
 function resolveRoute(pathname: string): Route | null {

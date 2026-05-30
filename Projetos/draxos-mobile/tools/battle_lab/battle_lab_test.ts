@@ -164,6 +164,42 @@ Deno.test("battle lab replay samples include a spell-active representative", () 
   assert(samples.length <= 24, "samples should respect max sample count");
 });
 
+Deno.test("battle lab Track 16 scenarios cover potion and spell behavior", () => {
+  const result = runBattleLab(testModel());
+  const potionCheck = result.checks.find((check) =>
+    check.id === "track16_potion_event_coverage"
+  );
+  const behaviorCheck = result.checks.find((check) =>
+    check.id === "track16_spell_behavior_coverage"
+  );
+  const potionReplay = buildReplaySamples(testModel(), result).find((sample) =>
+    sample.tag === "track16_potion_behavior"
+  );
+  const potionEvents =
+    potionReplay?.battle_log.events.filter((event) =>
+      event.type === "consumable_use" || event.type === "heal"
+    ) ?? [];
+
+  assertEquals(potionCheck?.status, "PASS", "potion events should be covered");
+  assertEquals(
+    behaviorCheck?.status,
+    "PASS",
+    "spell behavior scenarios should be covered",
+  );
+  assert(
+    result.summary.potion_enabled_matchups > 0,
+    "summary should count potion-enabled matchups",
+  );
+  assert(
+    result.summary.behavior_matchups > 0,
+    "summary should count behavior matchups",
+  );
+  assert(
+    potionEvents.length > 0,
+    "Track 16 replay sample should include consumable/heal events",
+  );
+});
+
 Deno.test("battle lab parses archive and compare options", () => {
   const options = parseOptions([
     "--archive-run",
@@ -374,6 +410,37 @@ function testModel(): BattleLabModel {
       dominance_critical_percent: 75,
       stomp_winner_hp_percent: 65,
     },
+    track16_scenarios: [
+      {
+        id: "potion_default",
+        display_name: "Pocao default hp<40",
+        levels: [25],
+        archetypes: ["dot_pressure", "defensive_occultist"],
+        potion: {
+          item_id: "pocao_vida",
+          quantity: 1,
+          behavior: {
+            enabled: true,
+            hp: { mode: "below", percent: 40 },
+            mana: { mode: "ignore", percent: 0 },
+          },
+        },
+      },
+      {
+        id: "spell_behavior_disabled",
+        display_name: "Primeira spell desativada",
+        levels: [25],
+        archetypes: ["dot_pressure", "defensive_occultist"],
+        spell_behavior: {
+          target: "first_spell",
+          behavior: {
+            enabled: false,
+            hp: { mode: "ignore", percent: 0 },
+            mana: { mode: "ignore", percent: 0 },
+          },
+        },
+      },
+    ],
     power_bands: [
       {
         id: "band_001",

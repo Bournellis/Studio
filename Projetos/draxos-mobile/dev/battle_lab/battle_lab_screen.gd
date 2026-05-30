@@ -78,6 +78,16 @@ const POWER_WEIGHTS := {
 	"passiveLevel": 22,
 	"weaponQualityTier": 30,
 }
+const DEFAULT_POTION_BEHAVIOR := {
+	"enabled": true,
+	"hp": {"mode": "below", "percent": 40},
+	"mana": {"mode": "ignore", "percent": 0},
+}
+const DISABLED_SPELL_BEHAVIOR := {
+	"enabled": false,
+	"hp": {"mode": "ignore", "percent": 0},
+	"mana": {"mode": "ignore", "percent": 0},
+}
 
 var _status_label: Label
 var _summary_label: Label
@@ -237,6 +247,18 @@ static func validate_build(build: Dictionary) -> Array[String]:
 		var pet_level := int(build.get("petLevel", 0))
 		if pet_level < 1 or pet_level > level:
 			errors.append("petLevel deve estar entre 1 e level")
+	var potion_slot := _as_dictionary_static(build.get("potionSlot", {}))
+	if not potion_slot.is_empty():
+		if int(potion_slot.get("slotIndex", 0)) != 1:
+			errors.append("potionSlot deve usar slotIndex 1")
+		if str(potion_slot.get("itemId", "")) != "pocao_vida":
+			errors.append("potionSlot itemId deve ser pocao_vida")
+		if int(potion_slot.get("quantity", 0)) < 0:
+			errors.append("potionSlot quantity deve ser >= 0")
+	var spell_behaviors := _as_dictionary_static(build.get("spellBehaviors", {}))
+	for spell_id_value: Variant in spell_behaviors.keys():
+		if not spell_ids.has(str(spell_id_value)):
+			errors.append("behavior sem spell equipada: %s" % str(spell_id_value))
 	return errors
 
 static func default_build(id_prefix: String, level: int = 25) -> Dictionary:
@@ -257,6 +279,15 @@ static func default_build(id_prefix: String, level: int = 25) -> Dictionary:
 		"passiveLevel": level,
 		"petId": "corvo_pressagio",
 		"petLevel": level,
+		"potionSlot": {
+			"slotIndex": 1,
+			"itemId": "pocao_vida",
+			"quantity": 1,
+			"behavior": DEFAULT_POTION_BEHAVIOR.duplicate(true),
+		},
+		"spellBehaviors": {
+			"sussurro_medo": DISABLED_SPELL_BEHAVIOR.duplicate(true),
+		},
 	}
 
 func _ready() -> void:
@@ -513,6 +544,22 @@ func _create_build_editor(side: String, initial_build: Dictionary) -> Dictionary
 	var pet_level := _spin(1, 40, int(initial_build.get("petLevel", int(level.value))))
 	box.add_child(_labeled_control("Pet Level", pet_level))
 
+	var initial_potion := _as_dictionary(initial_build.get("potionSlot", {}))
+	var potion_enabled := CheckBox.new()
+	potion_enabled.text = "Pocao de Vida"
+	potion_enabled.button_pressed = not initial_potion.is_empty() and int(initial_potion.get("quantity", 0)) > 0
+	box.add_child(_labeled_control("Pocao", potion_enabled))
+	var potion_quantity := _spin(0, 9, int(initial_potion.get("quantity", 1 if potion_enabled.button_pressed else 0)))
+	box.add_child(_labeled_control("Qtd Pocao", potion_quantity))
+
+	var first_spell_disabled := CheckBox.new()
+	first_spell_disabled.text = "Desativar primeira spell"
+	var initial_behaviors := _as_dictionary(initial_build.get("spellBehaviors", {}))
+	if not initial_spells.is_empty():
+		var first_behavior := _as_dictionary(initial_behaviors.get(str(initial_spells[0]), {}))
+		first_spell_disabled.button_pressed = not bool(first_behavior.get("enabled", true))
+	box.add_child(_labeled_control("Behavior", first_spell_disabled))
+
 	var power_label := Label.new()
 	box.add_child(power_label)
 	var editor := {
@@ -529,6 +576,9 @@ func _create_build_editor(side: String, initial_build: Dictionary) -> Dictionary
 		"passive_level": passive_level,
 		"pet_option": pet_option,
 		"pet_level": pet_level,
+		"potion_enabled": potion_enabled,
+		"potion_quantity": potion_quantity,
+		"first_spell_disabled": first_spell_disabled,
 		"power_label": power_label,
 	}
 	level.value_changed.connect(func(_value: float) -> void:
@@ -545,6 +595,15 @@ func _create_build_editor(side: String, initial_build: Dictionary) -> Dictionary
 		spin_box.value_changed.connect(func(_value: float) -> void:
 			_refresh_editor(editor)
 		)
+	potion_enabled.toggled.connect(func(_value: bool) -> void:
+		_refresh_editor(editor)
+	)
+	potion_quantity.value_changed.connect(func(_value: float) -> void:
+		_refresh_editor(editor)
+	)
+	first_spell_disabled.toggled.connect(func(_value: bool) -> void:
+		_refresh_editor(editor)
+	)
 	_refresh_editor(editor)
 	return editor
 
@@ -557,6 +616,9 @@ func _build_from_editor(editor: Dictionary) -> Dictionary:
 	var name_edit: LineEdit = editor["name"]
 	var passive_level_spin: SpinBox = editor["passive_level"]
 	var pet_level_spin: SpinBox = editor["pet_level"]
+	var potion_enabled: CheckBox = editor["potion_enabled"]
+	var potion_quantity: SpinBox = editor["potion_quantity"]
+	var first_spell_disabled: CheckBox = editor["first_spell_disabled"]
 	var level := int(level_spin.value)
 	var spell_ids: Array[String] = []
 	var spell_levels := {}
@@ -587,6 +649,17 @@ func _build_from_editor(editor: Dictionary) -> Dictionary:
 	if pet_id != "":
 		build["petId"] = pet_id
 		build["petLevel"] = clampi(int(pet_level_spin.value), 1, level)
+	if potion_enabled.button_pressed:
+		build["potionSlot"] = {
+			"slotIndex": 1,
+			"itemId": "pocao_vida",
+			"quantity": clampi(int(potion_quantity.value), 0, 9),
+			"behavior": DEFAULT_POTION_BEHAVIOR.duplicate(true),
+		}
+	if first_spell_disabled.button_pressed and not spell_ids.is_empty():
+		build["spellBehaviors"] = {
+			spell_ids[0]: DISABLED_SPELL_BEHAVIOR.duplicate(true),
+		}
 	return build
 
 func _refresh_editor(editor: Dictionary) -> void:

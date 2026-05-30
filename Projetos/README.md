@@ -18,8 +18,8 @@ This directory contains active, conceptual and paused projects for the studio.
 
 ## Implementacao - Foundation Expansion Readiness
 
-- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 13 release safety and Track 14 agent ops remain preserved baselines. First Session Clarity v1 is approved, and the active package is Foundation Expansion Readiness: account/save authority, ruleset registry, idempotency v1, admin auditability, client shell split, multiagent contracts, transactional RPC promotion, local Supabase rollback/retry/idempotency proof, local Edge RPC adapter smoke, portable domain modules for Base rules/projection, saved battle log projection, battle combatant mapping, progression/power build projection and economy/crafting source-sink projection, plus Lab heuristics fenced as lab-only evidence before base builder/autobattler/social/minigame expansion. The confirmed Foundation post-login loop remains the accepted baseline: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again.
-  - Priority/status: `P2_IMPLEMENTACAO - FOUNDATION_EXPANSION_READINESS_ACTIVE`
+- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 13 release safety and Track 14 agent ops remain preserved baselines. First Session Clarity v1 is approved, and Foundation Closeout is delivered over Foundation Expansion Readiness: account/save authority, immutable ruleset publication registry, persisted replay hashes, API v1 header, idempotency v1, internal auditable admin RPCs, client retry registry, ActionRouter/OperationState in the real shell path, minigame placeholder only, transactional RPC promotion including build behavior/potion and social friend/chat, and Full gate passed with local Supabase/Edge before base builder/autobattler/social/minigame expansion. Battle Lab and Progression Lab now cover Track 16 potions, behavior, crafting, `po_osso` and preparation state as lab-only evidence before tuning. The confirmed Foundation post-login loop remains the accepted baseline: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again.
+  - Priority/status: `P2_IMPLEMENTACAO - FOUNDATION_CLOSEOUT_DELIVERED`
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Agent manual: `draxos-mobile/docs/agent-operating-manual.md`
   - Documentation index: `draxos-mobile/docs/documentation-index.md`
@@ -49,6 +49,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Internal Alpha handoff: `draxos-mobile/docs/internal-alpha-v0-handoff.md`
   - Release ops: `draxos-mobile/docs/release-ops-checklist.md`
   - Progression Lab: `draxos-mobile/docs/progression-lab/README.md`
+  - Battle Lab: `draxos-mobile/docs/battle-lab/README.md`
   - Design archive: `_conceitos/mobile-universe/`
   - Allowed work: code, design, documentation, infrastructure setup.
   - Current next step: choose base builder tuning, autobattler tuning, social expansion or minigame shell/contract by explicit decision.

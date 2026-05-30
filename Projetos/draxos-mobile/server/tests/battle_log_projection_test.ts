@@ -13,8 +13,7 @@ import {
 } from "../../supabase/functions/_shared/battle_log_projection.ts";
 
 const SERVER_MODULE_PATH = "server/functions/_shared/battle_log_projection.ts";
-const SUPABASE_MODULE_PATH =
-  "supabase/functions/_shared/battle_log_projection.ts";
+const SUPABASE_MODULE_PATH = "supabase/functions/_shared/battle_log_projection.ts";
 
 Deno.test("battle log projection module is mirrored and simulator-free", async () => {
   const serverModule = await Deno.readTextFile(SERVER_MODULE_PATH);
@@ -40,8 +39,12 @@ Deno.test("battle log projection module is mirrored and simulator-free", async (
 Deno.test("battle log projection returns saved log metadata without resimulation", () => {
   const player = { id: "player-1" };
   const battle = sampleBattleRow({
+    ruleset_publication_id: "00000000-0000-4000-8000-000000000001",
     ruleset_id: "published_ruleset",
     ruleset_version: "7",
+    ruleset_content_hash: "content_hash_from_battle_row",
+    ruleset_simulator_hash: "simulator_hash_from_battle_row",
+    ruleset_schema_version: "ruleset_schema_from_battle_row",
   });
 
   const serverLog = battleLogFromRow(player, battle);
@@ -60,8 +63,15 @@ Deno.test("battle log projection returns saved log metadata without resimulation
   assertEq(arrayField(serverLog, "events").length, 2);
 
   const ruleset = objectField(serverLog, "ruleset");
+  assertEq(
+    stringField(ruleset, "publication_id"),
+    "00000000-0000-4000-8000-000000000001",
+  );
   assertEq(stringField(ruleset, "ruleset_id"), "published_ruleset");
   assertEq(stringField(ruleset, "ruleset_version"), "7");
+  assertEq(stringField(ruleset, "content_hash"), "content_hash_from_battle_row");
+  assertEq(stringField(ruleset, "simulator_hash"), "simulator_hash_from_battle_row");
+  assertEq(stringField(ruleset, "schema_version"), "ruleset_schema_from_battle_row");
 
   const participants = objectField(serverLog, "participants");
   const opponent = objectField(participants, "opponent");
@@ -196,9 +206,9 @@ function assert(condition: boolean, message: string): asserts condition {
 function assertEq(actual: unknown, expected: unknown, message?: string): void {
   if (actual !== expected) {
     throw new Error(
-      `${message ?? "values should match"}. Expected ${
-        JSON.stringify(expected)
-      }, got ${JSON.stringify(actual)}`,
+      `${message ?? "values should match"}. Expected ${JSON.stringify(expected)}, got ${
+        JSON.stringify(actual)
+      }`,
     );
   }
 }

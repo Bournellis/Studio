@@ -50,16 +50,30 @@ try {
 }
 
 async function assertLocalDatabaseIsCurrent(): Promise<void> {
-  const [{ has_function }] = await sql<{ has_function: boolean }[]>`
-    select exists (
-      select 1
-      from pg_proc
-      where proname = 'request_battle_v1'
-    ) as has_function
+  const rows = await sql<{ proname: string }[]>`
+    select proname
+    from pg_proc
+    where proname in (
+      'request_battle_v1',
+      'build_spell_behavior_v1',
+      'build_potion_equip_v1',
+      'build_potion_behavior_v1',
+      'social_friend_add_v1',
+      'social_chat_send_v1'
+    )
   `;
+  const names = new Set(rows.map((row) => row.proname));
+  const missing = [
+    "request_battle_v1",
+    "build_spell_behavior_v1",
+    "build_potion_equip_v1",
+    "build_potion_behavior_v1",
+    "social_friend_add_v1",
+    "social_chat_send_v1",
+  ].filter((name) => !names.has(name));
   assert(
-    has_function,
-    "local database must include transactional v1 RPC migrations",
+    missing.length === 0,
+    `local database must include Foundation Closeout RPC migrations. Missing: ${missing.join(", ")}`,
   );
 }
 

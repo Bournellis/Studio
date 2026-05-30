@@ -1,4 +1,5 @@
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import { validateApiVersion } from "../_shared/api_version.ts";
 import {
   battleLogFromRow,
   historyEntryFromRow,
@@ -112,8 +113,12 @@ interface SpellBehaviorRow extends BattleSpellBehaviorRow {
 interface BattleRow {
   id: string;
   schema_version: string;
+  ruleset_publication_id?: string | null;
   ruleset_id?: string | null;
   ruleset_version?: number | string | null;
+  ruleset_content_hash?: string | null;
+  ruleset_simulator_hash?: string | null;
+  ruleset_schema_version?: string | null;
   seed: string;
   defender_id: string;
   defender_is_bot: boolean;
@@ -145,17 +150,23 @@ interface RankingRow {
 
 type BattleOutcome = "win" | "loss" | "draw";
 
-const UUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const DEFAULT_FIRST_SLICE_BOT_ID = "bot_effect_trainer_01";
 const BOT_ID_PATTERN = /^[a-z0-9_]+$/;
 const ARENA_SCORING_MODEL = "alpha_v0_power_adjusted";
 const DEFAULT_HISTORY_LIMIT = 10;
 const MAX_HISTORY_LIMIT = 20;
+const BATTLE_SELECT =
+  "id,schema_version,ruleset_publication_id,ruleset_id,ruleset_version,ruleset_content_hash,ruleset_simulator_hash,ruleset_schema_version,seed,defender_id,defender_is_bot,result,event_log,reward_payload,created_at";
 
 Deno.serve(async (request: Request) => {
   if (request.method === "OPTIONS") {
     return emptyResponse();
+  }
+
+  const apiVersionError = validateApiVersion(request);
+  if (apiVersionError !== null) {
+    return apiVersionError;
   }
 
   try {
@@ -429,7 +440,7 @@ async function handleLatest(
     config,
     `battles?attacker_id=eq.${
       encodeURIComponent(player.value.id)
-    }&select=id,schema_version,ruleset_id,ruleset_version,seed,defender_id,defender_is_bot,result,event_log,reward_payload,created_at&order=created_at.desc&limit=1`,
+    }&select=${BATTLE_SELECT}&order=created_at.desc&limit=1`,
     { method: "GET" },
   );
 
@@ -477,7 +488,7 @@ async function handleHistory(
     config,
     `battles?attacker_id=eq.${
       encodeURIComponent(player.value.id)
-    }&select=id,schema_version,ruleset_id,ruleset_version,seed,defender_id,defender_is_bot,result,event_log,reward_payload,created_at&order=created_at.desc&limit=${limit}`,
+    }&select=${BATTLE_SELECT}&order=created_at.desc&limit=${limit}`,
     { method: "GET" },
   );
 
@@ -522,7 +533,7 @@ async function handleReplay(
     config,
     `battles?attacker_id=eq.${encodeURIComponent(player.value.id)}&id=eq.${
       encodeURIComponent(battleId)
-    }&select=id,schema_version,ruleset_id,ruleset_version,seed,defender_id,defender_is_bot,result,event_log,reward_payload,created_at&limit=1`,
+    }&select=${BATTLE_SELECT}&limit=1`,
     { method: "GET" },
   );
 
@@ -851,17 +862,13 @@ async function applyBattleConsumables(
   requestId: string,
   consumablesUsed: BattleConsumableUse[],
 ): Promise<RestError | null> {
-  const playerConsumables = consumablesUsed.filter((item) =>
-    item.owner === "player"
-  );
+  const playerConsumables = consumablesUsed.filter((item) => item.owner === "player");
   if (playerConsumables.length === 0) {
     return null;
   }
 
   for (const used of playerConsumables) {
-    const current = state.inventory.find((item) =>
-      item.item_id === used.item_id
-    );
+    const current = state.inventory.find((item) => item.item_id === used.item_id);
     if (current === undefined || current.quantity < used.quantity) {
       return {
         code: "CONSUMABLE_APPLY_FAILED",
@@ -872,9 +879,9 @@ async function applyBattleConsumables(
     const nextQuantity = current.quantity - used.quantity;
     const update = await restRequest<unknown>(
       config,
-      `player_consumables?player_id=eq.${
-        encodeURIComponent(state.player.id)
-      }&item_id=eq.${encodeURIComponent(used.item_id)}`,
+      `player_consumables?player_id=eq.${encodeURIComponent(state.player.id)}&item_id=eq.${
+        encodeURIComponent(used.item_id)
+      }`,
       {
         method: "PATCH",
         headers: { prefer: "return=minimal" },

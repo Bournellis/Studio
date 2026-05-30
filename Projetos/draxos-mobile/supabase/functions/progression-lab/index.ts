@@ -1,10 +1,13 @@
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import { validateApiVersion } from "../_shared/api_version.ts";
 import {
   SAVE_TYPE_PROGRESSION_LAB,
   type SaveType,
   saveTypeFromRequest,
 } from "../_shared/save_context.ts";
-import healthySavesDocument from "../_shared/progression_lab_saves.json" with { type: "json" };
+import healthySavesDocument from "../_shared/progression_lab_saves.json" with {
+  type: "json",
+};
 
 type Route = "apply";
 
@@ -37,11 +40,22 @@ interface HealthySave {
   [key: string]: unknown;
 }
 
+interface Track16Consumables {
+  inventory: Array<{ item_id: string; quantity: number }>;
+  potion_slots: Array<{
+    slot_index: number;
+    potion_id: string | null;
+    behavior: unknown;
+  }>;
+  spell_behaviors: Record<string, unknown>;
+}
+
 interface JwtPayload {
   sub?: unknown;
 }
 
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const HEALTHY_SAVES = (healthySavesDocument as HealthySavesDocument).saves;
 const DEFAULT_POTION_BEHAVIOR = {
   enabled: true,
@@ -54,19 +68,36 @@ Deno.serve(async (request: Request) => {
     return emptyResponse();
   }
 
+  const apiVersionError = validateApiVersion(request);
+  if (apiVersionError !== null) {
+    return apiVersionError;
+  }
+
   try {
     const route = resolveRoute(new URL(request.url).pathname);
     if (route === null) {
-      return errorResponse("NOT_FOUND", "Unknown Progression Lab endpoint.", 404);
+      return errorResponse(
+        "NOT_FOUND",
+        "Unknown Progression Lab endpoint.",
+        404,
+      );
     }
 
     if (route === "apply" && request.method !== "POST") {
-      return errorResponse("METHOD_NOT_ALLOWED", "Use POST /progression-lab/apply.", 405);
+      return errorResponse(
+        "METHOD_NOT_ALLOWED",
+        "Use POST /progression-lab/apply.",
+        405,
+      );
     }
 
     const auth = decodeAuthContext(request);
     if (auth.error !== null) {
-      return errorResponse(auth.error.code, auth.error.message, auth.error.status);
+      return errorResponse(
+        auth.error.code,
+        auth.error.message,
+        auth.error.status,
+      );
     }
 
     if (auth.value.saveType !== SAVE_TYPE_PROGRESSION_LAB) {
@@ -79,13 +110,21 @@ Deno.serve(async (request: Request) => {
 
     const config = loadConfig();
     if (config.error !== null) {
-      return errorResponse(config.error.code, config.error.message, config.error.status);
+      return errorResponse(
+        config.error.code,
+        config.error.message,
+        config.error.status,
+      );
     }
 
     return await handleApply(request, auth.value, config.value);
   } catch (error) {
     console.error(error);
-    return errorResponse("INTERNAL_ERROR", "Unexpected Progression Lab service error.", 500);
+    return errorResponse(
+      "INTERNAL_ERROR",
+      "Unexpected Progression Lab service error.",
+      500,
+    );
   }
 });
 
@@ -96,12 +135,20 @@ async function handleApply(
 ): Promise<Response> {
   const body = await readJsonObject(request);
   if (body === null) {
-    return errorResponse("INVALID_JSON", "Request body must be a JSON object.", 400);
+    return errorResponse(
+      "INVALID_JSON",
+      "Request body must be a JSON object.",
+      400,
+    );
   }
 
   const requestId = stringField(body, "request_id");
   if (!UUID_PATTERN.test(requestId)) {
-    return errorResponse("INVALID_REQUEST_ID", "request_id must be a UUID.", 400);
+    return errorResponse(
+      "INVALID_REQUEST_ID",
+      "request_id must be a UUID.",
+      400,
+    );
   }
 
   const profileId = normalizeId(stringField(body, "profile_id"));
@@ -124,16 +171,20 @@ async function handleApply(
     );
   }
 
-  const rpc = await restRequest<unknown>(config, "rpc/apply_progression_lab_save", {
-    method: "POST",
-    body: JSON.stringify({
-      p_auth_user_id: auth.userId,
-      p_request_id: requestId,
-      p_profile_id: profileId,
-      p_milestone_id: milestoneId,
-      p_save_payload: healthySave,
-    }),
-  });
+  const rpc = await restRequest<unknown>(
+    config,
+    "rpc/apply_progression_lab_save",
+    {
+      method: "POST",
+      body: JSON.stringify({
+        p_auth_user_id: auth.userId,
+        p_request_id: requestId,
+        p_profile_id: profileId,
+        p_milestone_id: milestoneId,
+        p_save_payload: healthySave,
+      }),
+    },
+  );
 
   if (rpc.error !== null) {
     const mapped = mapDatabaseError(rpc.error);
@@ -142,7 +193,11 @@ async function handleApply(
 
   const playerId = playerIdFromPayload(rpc.value);
   if (playerId !== "") {
-    const cleanup = await resetConsumableAndBehaviorState(config, playerId);
+    const cleanup = await resetConsumableAndBehaviorState(
+      config,
+      playerId,
+      healthySave,
+    );
     if (cleanup !== null) {
       return errorResponse(cleanup.code, cleanup.message, cleanup.status);
     }
@@ -154,6 +209,7 @@ async function handleApply(
 async function resetConsumableAndBehaviorState(
   config: EdgeConfig,
   playerId: string,
+  healthySave: HealthySave,
 ): Promise<RestError | null> {
   const tables = [
     "player_consumables",
@@ -177,18 +233,42 @@ async function resetConsumableAndBehaviorState(
     }
   }
 
+  const consumables = consumablesFromSave(healthySave);
+  if (consumables.inventory.length > 0) {
+    const inventoryResult = await restRequest<unknown>(
+      config,
+      "player_consumables?on_conflict=player_id,item_id",
+      {
+        method: "POST",
+        headers: { prefer: "resolution=merge-duplicates" },
+        body: JSON.stringify(consumables.inventory.map((item) => ({
+          player_id: playerId,
+          item_id: item.item_id,
+          quantity: item.quantity,
+        }))),
+      },
+    );
+    if (inventoryResult.error !== null) {
+      return {
+        code: "PROGRESSION_LAB_TRACK16_RESET_FAILED",
+        message: "Unable to seed Progression Lab consumables.",
+        status: 500,
+      };
+    }
+  }
+
   const slotResult = await restRequest<unknown>(
     config,
     "player_potion_slots?on_conflict=player_id,slot_index",
     {
       method: "POST",
       headers: { prefer: "resolution=merge-duplicates" },
-      body: JSON.stringify({
+      body: JSON.stringify(consumables.potion_slots.map((slot) => ({
         player_id: playerId,
-        slot_index: 1,
-        potion_id: null,
-        behavior: DEFAULT_POTION_BEHAVIOR,
-      }),
+        slot_index: slot.slot_index,
+        potion_id: slot.potion_id,
+        behavior: slot.behavior,
+      }))),
     },
   );
 
@@ -200,7 +280,110 @@ async function resetConsumableAndBehaviorState(
     };
   }
 
+  const spellBehaviorRows = Object.entries(consumables.spell_behaviors).map((
+    [spellId, behavior],
+  ) => ({
+    player_id: playerId,
+    spell_id: spellId,
+    behavior,
+  }));
+  if (spellBehaviorRows.length > 0) {
+    const behaviorResult = await restRequest<unknown>(
+      config,
+      "player_spell_behaviors?on_conflict=player_id,spell_id",
+      {
+        method: "POST",
+        headers: { prefer: "resolution=merge-duplicates" },
+        body: JSON.stringify(spellBehaviorRows),
+      },
+    );
+    if (behaviorResult.error !== null) {
+      return {
+        code: "PROGRESSION_LAB_TRACK16_RESET_FAILED",
+        message: "Unable to seed Progression Lab spell behaviors.",
+        status: 500,
+      };
+    }
+  }
+
   return null;
+}
+
+function consumablesFromSave(save: HealthySave): Track16Consumables {
+  const value = save.consumables;
+  if (value === null || typeof value !== "object" || Array.isArray(value)) {
+    return {
+      inventory: [],
+      potion_slots: [{
+        slot_index: 1,
+        potion_id: null,
+        behavior: DEFAULT_POTION_BEHAVIOR,
+      }],
+      spell_behaviors: {},
+    };
+  }
+  const source = value as Record<string, unknown>;
+  const inventory = Array.isArray(source.inventory)
+    ? source.inventory
+      .map((item) => itemFromUnknown(item))
+      .filter((item): item is { item_id: string; quantity: number } =>
+        item !== null
+      )
+    : [];
+  const potionSlots = Array.isArray(source.potion_slots)
+    ? source.potion_slots
+      .map((slot) => potionSlotFromUnknown(slot))
+      .filter((slot): slot is Track16Consumables["potion_slots"][number] =>
+        slot !== null
+      )
+    : [];
+  const spellBehaviors = source.spell_behaviors !== null &&
+      typeof source.spell_behaviors === "object" &&
+      !Array.isArray(source.spell_behaviors)
+    ? source.spell_behaviors as Record<string, unknown>
+    : {};
+  return {
+    inventory,
+    potion_slots: potionSlots.length > 0 ? potionSlots : [{
+      slot_index: 1,
+      potion_id: null,
+      behavior: DEFAULT_POTION_BEHAVIOR,
+    }],
+    spell_behaviors: spellBehaviors,
+  };
+}
+
+function itemFromUnknown(
+  value: unknown,
+): { item_id: string; quantity: number } | null {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) {
+    return null;
+  }
+  const item = value as Record<string, unknown>;
+  const itemId = typeof item.item_id === "string" ? item.item_id : "";
+  const quantity =
+    typeof item.quantity === "number" && Number.isFinite(item.quantity)
+      ? Math.max(0, Math.trunc(item.quantity))
+      : 0;
+  return itemId === "" || quantity <= 0 ? null : { item_id: itemId, quantity };
+}
+
+function potionSlotFromUnknown(
+  value: unknown,
+): Track16Consumables["potion_slots"][number] | null {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) {
+    return null;
+  }
+  const slot = value as Record<string, unknown>;
+  const slotIndex = typeof slot.slot_index === "number" ? slot.slot_index : 1;
+  if (slotIndex !== 1) return null;
+  return {
+    slot_index: 1,
+    potion_id: typeof slot.potion_id === "string" && slot.potion_id !== ""
+      ? slot.potion_id
+      : null,
+    behavior: slot.behavior ?? DEFAULT_POTION_BEHAVIOR,
+  };
 }
 
 function resolveRoute(pathname: string): Route | null {
@@ -211,7 +394,9 @@ function resolveRoute(pathname: string): Route | null {
   return null;
 }
 
-function decodeAuthContext(request: Request): { value: AuthContext; error: null } | {
+function decodeAuthContext(
+  request: Request,
+): { value: AuthContext; error: null } | {
   value: null;
   error: RestError;
 } {
@@ -242,7 +427,10 @@ function decodeAuthContext(request: Request): { value: AuthContext; error: null 
   }
 
   const payload = decodeJwtPayload(parts[1]);
-  if (payload === null || typeof payload.sub !== "string" || !UUID_PATTERN.test(payload.sub)) {
+  if (
+    payload === null || typeof payload.sub !== "string" ||
+    !UUID_PATTERN.test(payload.sub)
+  ) {
     return {
       value: null,
       error: {
@@ -275,10 +463,15 @@ function decodeJwtPayload(encodedPayload: string): JwtPayload | null {
   try {
     const normalized = encodedPayload.replaceAll("-", "+").replaceAll("_", "/");
     const padded = normalized + "=".repeat((4 - normalized.length % 4) % 4);
-    const bytes = Uint8Array.from(atob(padded), (character) => character.charCodeAt(0));
+    const bytes = Uint8Array.from(
+      atob(padded),
+      (character) => character.charCodeAt(0),
+    );
     const decoded = new TextDecoder().decode(bytes);
     const payload: unknown = JSON.parse(decoded);
-    if (payload !== null && typeof payload === "object" && !Array.isArray(payload)) {
+    if (
+      payload !== null && typeof payload === "object" && !Array.isArray(payload)
+    ) {
       return payload as JwtPayload;
     }
   } catch {
@@ -288,7 +481,10 @@ function decodeJwtPayload(encodedPayload: string): JwtPayload | null {
   return null;
 }
 
-function loadConfig(): { value: EdgeConfig; error: null } | { value: null; error: RestError } {
+function loadConfig(): { value: EdgeConfig; error: null } | {
+  value: null;
+  error: RestError;
+} {
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 
@@ -297,7 +493,8 @@ function loadConfig(): { value: EdgeConfig; error: null } | { value: null; error
       value: null,
       error: {
         code: "SERVER_MISCONFIGURED",
-        message: "Progression Lab function is missing Supabase runtime configuration.",
+        message:
+          "Progression Lab function is missing Supabase runtime configuration.",
         status: 500,
       },
     };
@@ -312,10 +509,14 @@ function loadConfig(): { value: EdgeConfig; error: null } | { value: null; error
   };
 }
 
-async function readJsonObject(request: Request): Promise<Record<string, unknown> | null> {
+async function readJsonObject(
+  request: Request,
+): Promise<Record<string, unknown> | null> {
   try {
     const payload: unknown = await request.json();
-    if (payload !== null && typeof payload === "object" && !Array.isArray(payload)) {
+    if (
+      payload !== null && typeof payload === "object" && !Array.isArray(payload)
+    ) {
       return payload as Record<string, unknown>;
     }
   } catch {
@@ -372,9 +573,10 @@ async function restRequest<T>(
   const data = text === "" ? null : parseJson(text);
 
   if (!response.ok) {
-    const responseBody = data !== null && typeof data === "object" && !Array.isArray(data)
-      ? data as Record<string, unknown>
-      : {};
+    const responseBody =
+      data !== null && typeof data === "object" && !Array.isArray(data)
+        ? data as Record<string, unknown>
+        : {};
 
     return {
       value: null,
@@ -401,7 +603,9 @@ function parseJson(text: string): unknown {
 }
 
 function playerIdFromPayload(payload: unknown): string {
-  if (payload === null || typeof payload !== "object" || Array.isArray(payload)) {
+  if (
+    payload === null || typeof payload !== "object" || Array.isArray(payload)
+  ) {
     return "";
   }
 
@@ -415,13 +619,18 @@ function playerIdFromPayload(payload: unknown): string {
 }
 
 function withResourceDefaults(payload: unknown): unknown {
-  if (payload === null || typeof payload !== "object" || Array.isArray(payload)) {
+  if (
+    payload === null || typeof payload !== "object" || Array.isArray(payload)
+  ) {
     return payload;
   }
 
   const root = payload as Record<string, unknown>;
   const resources = root.resources;
-  if (resources !== null && typeof resources === "object" && !Array.isArray(resources)) {
+  if (
+    resources !== null && typeof resources === "object" &&
+    !Array.isArray(resources)
+  ) {
     const resourceMap = resources as Record<string, unknown>;
     if (resourceMap.po_osso === undefined) {
       resourceMap.po_osso = 0;
@@ -477,7 +686,11 @@ function mapDatabaseError(error: RestError): RestError {
   };
 }
 
-function errorResponse(code: string, message: string, status: number): Response {
+function errorResponse(
+  code: string,
+  message: string,
+  status: number,
+): Response {
   return jsonResponse({
     ok: false,
     error: {

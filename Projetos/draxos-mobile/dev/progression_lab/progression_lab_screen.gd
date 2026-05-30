@@ -315,6 +315,7 @@ static func session_cache_from_save(save: Dictionary) -> Dictionary:
 	var build := _as_dictionary_static(save.get("build", {}))
 	var base := _as_dictionary_static(save.get("base", {}))
 	var monetization := _as_dictionary_static(save.get("monetization", {}))
+	var consumables := _as_dictionary_static(save.get("consumables", {}))
 	var resource_cache := resources.duplicate(true)
 	resource_cache["player_id"] = player_id
 	resource_cache["diamante"] = int(round(float(resources.get("diamante", 0))))
@@ -354,6 +355,12 @@ static func session_cache_from_save(save: Dictionary) -> Dictionary:
 			"passive_id": _nullable_text(str(build.get("passive_id", ""))),
 			"passive_level": int(build.get("passive_level", 0)),
 			"updated_at": now_text,
+		},
+		"build_state": {
+			"combat_build": _combat_build_with_track16(save),
+			"potion_slots": _as_array_static(consumables.get("potion_slots", [])).duplicate(true),
+			"inventory": _as_array_static(consumables.get("inventory", [])).duplicate(true),
+			"spell_behaviors": _as_dictionary_static(consumables.get("spell_behaviors", {})).duplicate(true),
 		},
 		"base_state": {
 			"construction_slots": int(base.get("construction_slots", 1)),
@@ -431,6 +438,23 @@ static func _base_jobs_from_save(base: Dictionary, now_text: String) -> Array:
 		"completes_at": now_text,
 	}]
 
+static func _combat_build_with_track16(save: Dictionary) -> Dictionary:
+	var combat_build := _as_dictionary_static(save.get("combat_build", {})).duplicate(true)
+	var consumables := _as_dictionary_static(save.get("consumables", {}))
+	var potion_slots := _as_array_static(consumables.get("potion_slots", []))
+	for item: Variant in potion_slots:
+		var slot := _as_dictionary_static(item)
+		if str(slot.get("potion_id", "")) == "pocao_vida":
+			combat_build["potionSlot"] = {
+				"slotIndex": int(slot.get("slot_index", 1)),
+				"itemId": "pocao_vida",
+				"quantity": int(consumables.get("crafted_life_potions", 0)),
+				"behavior": _as_dictionary_static(slot.get("behavior", {})).duplicate(true),
+			}
+			break
+	combat_build["spellBehaviors"] = _as_dictionary_static(consumables.get("spell_behaviors", {})).duplicate(true)
+	return combat_build
+
 static func _nullable_text(value: String) -> Variant:
 	var normalized := value.strip_edges()
 	if normalized == "":
@@ -450,6 +474,7 @@ func _refresh_checklist() -> void:
 	var player := _as_dictionary(save.get("player", {}))
 	var resources := _as_dictionary(save.get("resources", {}))
 	var monetization := _as_dictionary(save.get("monetization", {}))
+	var consumables := _as_dictionary(save.get("consumables", {}))
 	lines.append("%s | Level %s | Poder %s | Status %s" % [
 		str(save.get("id", "")),
 		str(player.get("level", "")),
@@ -460,6 +485,11 @@ func _refresh_checklist() -> void:
 	lines.append("Premium: %s | spend simulado %s" % [
 		str(monetization.get("premium_unlocked", false)),
 		str(monetization.get("simulated_store_spend", 0)),
+	])
+	lines.append("Track 16: %s Pocoes | %s Po de Osso | slot %s" % [
+		str(consumables.get("crafted_life_potions", 0)),
+		str(consumables.get("po_osso_remaining", 0)),
+		str(consumables.get("equipped_potion_id", "")),
 	])
 	lines.append("")
 	lines.append("Checklist manual:")

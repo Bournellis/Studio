@@ -1,4 +1,5 @@
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import { validateApiVersion } from "../_shared/api_version.ts";
 import {
   SAVE_TYPE_NORMAL,
   type SaveType,
@@ -49,10 +50,6 @@ interface SocialContext {
   socialPlayer: PlayerRow;
   saveType: SaveType;
   fallbackToActiveSave: boolean;
-}
-
-interface IdempotencyRow {
-  response_payload: unknown;
 }
 
 interface FriendshipRow {
@@ -107,11 +104,15 @@ const GUILD_STRUCTURES = [
   "arquivo_de_dominio",
   "cofre_abissal",
 ];
-const CHAT_RATE_LIMIT_SECONDS = 2;
 
 Deno.serve(async (request: Request) => {
   if (request.method === "OPTIONS") {
     return emptyResponse();
+  }
+
+  const apiVersionError = validateApiVersion(request);
+  if (apiVersionError !== null) {
+    return apiVersionError;
   }
 
   try {
@@ -175,56 +176,32 @@ async function handleFriendAdd(
     return errorResponse(context.error.code, context.error.message, context.error.status);
   }
   const player = context.value.socialPlayer;
-  const existing = await loadIdempotency(config, player.id, "friends/add", requestId);
-  if (existing.error !== null) {
-    return errorResponse(existing.error.code, existing.error.message, existing.error.status);
+  const gameSave = await loadSocialGameSave(config, context.value, player);
+  if (gameSave.error !== null) {
+    return errorResponse(gameSave.error.code, gameSave.error.message, gameSave.error.status);
   }
-  if (existing.value !== null) return jsonResponse(existing.value);
-
-  const targetResult = await restRequest<PlayerRow[]>(
-    config,
-    `players?username=eq.${
-      encodeURIComponent(username)
-    }&select=id,auth_user_id,username,save_type,level,power&limit=1`,
-    { method: "GET" },
-  );
-  if (targetResult.error !== null) {
-    return errorResponse("FRIEND_ADD_FAILED", "Unable to find player.", 500);
-  }
-  const target = targetResult.value[0] ?? null;
-  if (target === null) {
-    return errorResponse("USER_NOT_FOUND", "Friend username was not found.", 404);
-  }
-  const targetSocial = await loadCanonicalSocialPlayer(config, target);
-  if (targetSocial.error !== null) {
-    return errorResponse(
-      targetSocial.error.code,
-      targetSocial.error.message,
-      targetSocial.error.status,
-    );
-  }
-  if (targetSocial.value.auth_user_id === player.auth_user_id) {
-    return errorResponse("INVALID_FRIEND", "Cannot add yourself.", 400);
-  }
-
-  for (
-    const edge of [
-      { player_id: player.id, friend_id: targetSocial.value.id, status: "accepted" },
-      { player_id: targetSocial.value.id, friend_id: player.id, status: "accepted" },
-    ]
-  ) {
-    const insert = await restRequest<unknown>(config, "friendships", {
-      method: "POST",
-      headers: { prefer: "resolution=merge-duplicates,return=minimal" },
-      body: JSON.stringify(edge),
-    });
-    if (insert.error !== null) {
-      return errorResponse("FRIEND_ADD_FAILED", "Unable to add friend.", 500);
-    }
+  const requestHash = await mutationRequestHash("social/friends/add", body, {
+    request_id: requestId,
+    username,
+  });
+  const rpc = await restRequest<unknown>(config, "rpc/social_friend_add_v1", {
+    method: "POST",
+    body: JSON.stringify({
+      p_game_save_id: gameSave.value.id,
+      p_request_id: requestId,
+      p_request_hash: requestHash,
+      p_request_payload: {
+        request_id: requestId,
+        username,
+      },
+    }),
+  });
+  if (rpc.error !== null) {
+    const mapped = mapFoundationDatabaseError(rpc.error, "FRIEND_ADD_FAILED");
+    return errorResponse(mapped.code, mapped.message, mapped.status);
   }
 
   const payload = await socialStatePayload(config, context.value);
-  await insertIdempotency(config, player.id, "friends/add", requestId, payload);
   return jsonResponse(payload);
 }
 
@@ -373,70 +350,32 @@ async function handleChatSend(
     return errorResponse(context.error.code, context.error.message, context.error.status);
   }
   const player = context.value.socialPlayer;
-  const existing = await loadIdempotency(config, player.id, "chat/send", requestId);
-  if (existing.error !== null) {
-    return errorResponse(existing.error.code, existing.error.message, existing.error.status);
+  const gameSave = await loadSocialGameSave(config, context.value, player);
+  if (gameSave.error !== null) {
+    return errorResponse(gameSave.error.code, gameSave.error.message, gameSave.error.status);
   }
-  if (existing.value !== null) return jsonResponse(existing.value);
-
-  const membership = await loadGuildMembership(config, player.id);
-  if (membership.error !== null) {
-    return errorResponse(membership.error.code, membership.error.message, membership.error.status);
-  }
-  if (membership.value === null) {
-    return errorResponse("GUILD_REQUIRED", "Join a guild before using guild chat.", 409);
-  }
-
-  const channelResult = await restRequest<ChatChannelRow[]>(
-    config,
-    `chat_channels?channel_type=eq.guild&guild_id=eq.${
-      encodeURIComponent(membership.value.guild_id)
-    }&select=id,channel_type,guild_id&limit=1`,
-    { method: "GET" },
-  );
-  if (channelResult.error !== null || channelResult.value[0] === undefined) {
-    return errorResponse("CHAT_SEND_FAILED", "Guild chat channel is unavailable.", 500);
-  }
-  const channel = channelResult.value[0];
-  const since = new Date(Date.now() - CHAT_RATE_LIMIT_SECONDS * 1000).toISOString();
-  const recentMessages = await restRequest<ChatMessageRow[]>(
-    config,
-    `chat_messages?channel_id=eq.${encodeURIComponent(channel.id)}&sender_id=eq.${
-      encodeURIComponent(player.id)
-    }&deleted_at=is.null&created_at=gte.${
-      encodeURIComponent(since)
-    }&select=id,channel_id,sender_id,content,created_at&limit=1`,
-    { method: "GET" },
-  );
-  if (recentMessages.error !== null) {
-    return errorResponse("CHAT_SEND_FAILED", "Unable to check chat rate limit.", 500);
-  }
-  if ((recentMessages.value ?? []).length > 0) {
-    return errorResponse(
-      "CHAT_RATE_LIMITED",
-      "Wait a few seconds before sending another message.",
-      429,
-    );
-  }
-
-  const messageInsert = await restRequest<ChatMessageRow[]>(config, "chat_messages?select=*", {
+  const requestHash = await mutationRequestHash("social/chat/send", body, {
+    request_id: requestId,
+    content,
+  });
+  const rpc = await restRequest<unknown>(config, "rpc/social_chat_send_v1", {
     method: "POST",
-    headers: { prefer: "return=representation" },
     body: JSON.stringify({
-      channel_id: channel.id,
-      sender_id: player.id,
-      content,
+      p_game_save_id: gameSave.value.id,
+      p_request_id: requestId,
+      p_request_hash: requestHash,
+      p_request_payload: {
+        request_id: requestId,
+        content,
+      },
     }),
   });
-  if (messageInsert.error !== null) {
-    return errorResponse("CHAT_SEND_FAILED", "Unable to send chat message.", 500);
+  if (rpc.error !== null) {
+    const mapped = mapFoundationDatabaseError(rpc.error, "CHAT_SEND_FAILED");
+    return errorResponse(mapped.code, mapped.message, mapped.status);
   }
 
-  const payload = {
-    ...(await socialStatePayload(config, context.value)),
-    message: messageInsert.value[0],
-  };
-  await insertIdempotency(config, player.id, "chat/send", requestId, payload);
+  const payload = await socialStatePayload(config, context.value);
   return jsonResponse(payload);
 }
 
@@ -575,16 +514,6 @@ async function loadSocialContext(
   };
 }
 
-async function loadCanonicalSocialPlayer(
-  config: EdgeConfig,
-  player: PlayerRow,
-): Promise<{ value: PlayerRow; error: null } | { value: null; error: RestError }> {
-  if (player.save_type === SAVE_TYPE_NORMAL) return { value: player, error: null };
-  const normalPlayer = await loadPlayerBySaveType(config, player.auth_user_id, SAVE_TYPE_NORMAL);
-  if (normalPlayer.error !== null) return { value: null, error: normalPlayer.error };
-  return { value: normalPlayer.value ?? player, error: null };
-}
-
 async function loadPlayer(
   auth: AuthContext,
   config: EdgeConfig,
@@ -666,42 +595,6 @@ async function loadGuildMembership(
   );
   if (result.error !== null) return { value: null, error: stateReadError() };
   return { value: result.value[0] ?? null, error: null };
-}
-
-async function loadIdempotency(
-  config: EdgeConfig,
-  playerId: string,
-  endpoint: string,
-  requestId: string,
-) {
-  const result = await restRequest<IdempotencyRow[]>(
-    config,
-    `idempotency_keys?player_id=eq.${encodeURIComponent(playerId)}&endpoint=eq.${
-      encodeURIComponent(endpoint)
-    }&request_id=eq.${encodeURIComponent(requestId)}&select=response_payload&limit=1`,
-    { method: "GET" },
-  );
-  if (result.error !== null) return { value: null, error: stateReadError() };
-  return { value: result.value[0]?.response_payload ?? null, error: null };
-}
-
-async function insertIdempotency(
-  config: EdgeConfig,
-  playerId: string,
-  endpoint: string,
-  requestId: string,
-  responsePayload: unknown,
-): Promise<void> {
-  await restRequest<unknown>(config, "idempotency_keys", {
-    method: "POST",
-    headers: { prefer: "return=minimal" },
-    body: JSON.stringify({
-      player_id: playerId,
-      endpoint,
-      request_id: requestId,
-      response_payload: responsePayload,
-    }),
-  });
 }
 
 function resolveRoute(pathname: string): Route | null {

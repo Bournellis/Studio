@@ -4,6 +4,7 @@
 - Contract id: `ACCOUNT_SAVE_CONTRACT_V1`
 - Ultima atualizacao: `2026-05-30`
 - Migration base: `202605300001_foundation_expansion_readiness.sql`
+- Closeout migration: `202605300004_foundation_closeout.sql`
 
 ## Decisao
 
@@ -53,6 +54,12 @@ Campos contratuais:
 - `lifecycle_status`
 - `ruleset_id`
 - `ruleset_version`
+- `ruleset_publication_id`
+- `ruleset_content_hash`
+- `ruleset_simulator_hash`
+- `ruleset_schema_version`
+- `state_version`
+- `season_context`
 - `snapshot`
 - `created_at`
 - `updated_at`
@@ -63,6 +70,10 @@ Regras:
 - `legacy_player_id` e ponte temporaria para tabelas alpha que ainda usam `player_id`.
 - Novos sistemas devem declarar se referenciam `game_save_id`, `account_profile_id` ou mantem `legacy_player_id` por compatibilidade.
 - Save normal, Progression Lab e futuros saves devem ser modelados em `game_saves`.
+- `state_version` comeca em `1` e permite migracoes futuras de snapshot/save.
+- `season_context` comeca em `{"season_id":"alpha_0","channel":"internal_alpha"}`.
+- Contexto de ruleset salvo no save deve apontar para a publicacao usada para
+  explicar estado, reward, replay e diagnostico.
 - `snapshot` e somente contexto compacto; o estado autoritativo continua nas tabelas de dominio ate migracao dedicada.
 
 ## Compatibilidade
@@ -93,7 +104,7 @@ Resposta logica:
 Uso:
 
 - pos-migration;
-- bootstrap futuro de conta;
+- bootstrap de conta guest ou email/alpha;
 - reparo de dados antes de expandir social/admin/minigame.
 
 Nao usar este RPC para conceder recompensa ou resetar progresso.
@@ -114,7 +125,21 @@ Endpoints de estado devem evoluir para expor contexto explicito:
     "save_type": "normal",
     "legacy_player_id": "uuid",
     "ruleset_id": "foundation_ruleset_v0",
-    "ruleset_version": 1
+    "ruleset_version": 1,
+    "ruleset_publication_id": "uuid",
+    "state_version": 1,
+    "season_context": {
+      "season_id": "alpha_0",
+      "channel": "internal_alpha"
+    }
+  },
+  "ruleset": {
+    "publication_id": "uuid",
+    "ruleset_id": "foundation_ruleset_v0",
+    "ruleset_version": 1,
+    "content_hash": "sha256",
+    "simulator_hash": "sha256",
+    "schema_version": "foundation_ruleset_manifest_v1"
   }
 }
 ```

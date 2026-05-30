@@ -31,6 +31,8 @@ func test_battle_lab_default_level_25_build_is_valid() -> void:
 	assert_eq(errors.size(), 0)
 	assert_eq(BattleLabScreenScript.max_spell_slots(25), 3)
 	assert_true(BattleLabScreenScript.allowed_spell_ids(25).has("marca_sepulcral"))
+	assert_eq(str(Dictionary(build.get("potionSlot", {})).get("itemId", "")), "pocao_vida")
+	assert_true(Dictionary(build.get("spellBehaviors", {})).has("sussurro_medo"))
 
 func test_battle_lab_replay_response_registers_custom_replay() -> void:
 	var screen = BattleLabScreenScript.new()

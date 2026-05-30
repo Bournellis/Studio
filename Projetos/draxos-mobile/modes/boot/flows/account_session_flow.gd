@@ -7,6 +7,26 @@ const AppShellRouteContractScript := preload("res://modes/boot/ui/app_shell_rout
 const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
 const AppShellErrorContractScript := preload("res://modes/boot/ui/app_shell_error_contract.gd")
 
+func _prepare_mutation(endpoint: String, action_id: String, payload: Dictionary = {}) -> Dictionary:
+	return SessionStore.prepare_pending_mutation(
+		endpoint,
+		"session:%s" % SessionStore.active_save_type,
+		action_id,
+		payload
+	)
+
+func _request_id(mutation: Dictionary) -> String:
+	return str(mutation.get("request_id", ""))
+
+func _request_hash(mutation: Dictionary) -> String:
+	return str(mutation.get("request_hash", ""))
+
+func _complete_mutation(mutation: Dictionary, result: Dictionary) -> void:
+	SessionStore.complete_pending_mutation(_request_id(mutation), result)
+
+func _fail_mutation(mutation: Dictionary, result: Dictionary) -> void:
+	SessionStore.fail_pending_mutation(_request_id(mutation), result)
+
 func check_runtime_config(_host: Node) -> void:
 	var config_result: Dictionary = await SupabaseClient.fetch_runtime_config()
 	var config_payload := _as_dictionary(config_result.get("runtime_config", {}))
@@ -56,16 +76,24 @@ func enter_guest(host: Node) -> void:
 		SessionStore.save_cache()
 
 	var request_id := SessionStore.ensure_guest_request_id()
+	var mutation := _prepare_mutation("account/guest", AppShellActionContractScript.ACTION_ENTER_GUEST, {
+		"invite_code": SessionStore.DEFAULT_INVITE_CODE,
+		"device_label": OS.get_name(),
+		"request_id": request_id,
+	})
 	var guest_result: Dictionary = await SupabaseClient.create_guest_account(
 		SessionStore.DEFAULT_INVITE_CODE,
-		request_id,
+		_request_id(mutation),
 		OS.get_name(),
-		SessionStore.access_token
+		SessionStore.access_token,
+		_request_hash(mutation)
 	)
 	if not bool(guest_result.get("ok", false)):
+		_fail_mutation(mutation, guest_result)
 		host.call("_fail_with_error", guest_result)
 		return
 
+	_complete_mutation(mutation, guest_result)
 	SessionStore.apply_server_state(guest_result)
 	var recovered := await recover_session_state(host)
 	if not recovered:
@@ -197,19 +225,26 @@ func reset_active_save(host: Node) -> void:
 	if not bool(host.call("_require_account", "Entre com email antes de resetar o save ativo.")):
 		return
 	host.call("_set_busy", true, "Resetando save %s..." % SessionStore.active_save_label())
+	var mutation := _prepare_mutation("account/saves/reset", AppShellActionContractScript.ACTION_RESET_ACTIVE_SAVE, {
+		"save_type": SessionStore.active_save_type,
+	})
 	var reset_result: Dictionary = await SupabaseClient.reset_active_save(
-		SessionStoreScript.create_request_id(),
-		SessionStore.access_token
+		_request_id(mutation),
+		SessionStore.access_token,
+		_request_hash(mutation)
 	)
 	if not bool(reset_result.get("ok", false)):
+		_fail_mutation(mutation, reset_result)
 		host.call("_fail_with_error", reset_result)
 		return
 	if not SessionStore.apply_save_reset(reset_result):
+		_fail_mutation(mutation, {"error": SessionStore.last_error})
 		host.call("_fail_with_error", {
 			"ok": false,
 			"error": SessionStore.last_error,
 		})
 		return
+	_complete_mutation(mutation, reset_result)
 	SessionStore.save_cache()
 	host.call("_clear_battle_history")
 	_clear_screen_history(host)
@@ -280,24 +315,41 @@ func recover_or_create_active_save(host: Node, invite_code: String = "", usernam
 
 	host.call("_set_busy", true, "Criando save %s..." % SessionStore.active_save_label())
 	var account_result: Dictionary
+	var mutation: Dictionary = {}
 	if SessionStore.is_registered_session():
 		var effective_username := effective_alpha_username(username)
 		var effective_invite := effective_alpha_invite(host, invite_code)
+		var alpha_request_id := SessionStore.ensure_alpha_account_request_id()
+		mutation = _prepare_mutation("account/bootstrap", AppShellActionContractScript.ACTION_EMAIL_SIGN_UP, {
+			"invite_code": effective_invite,
+			"username": effective_username,
+			"device_label": OS.get_name(),
+			"request_id": alpha_request_id,
+		})
 		account_result = await SupabaseClient.bootstrap_alpha_account(
 			effective_invite,
 			effective_username,
-			SessionStore.ensure_alpha_account_request_id(),
+			_request_id(mutation),
 			OS.get_name(),
-			SessionStore.access_token
+			SessionStore.access_token,
+			_request_hash(mutation)
 		)
 	else:
+		var guest_request_id := SessionStore.ensure_guest_request_id()
+		mutation = _prepare_mutation("account/guest", AppShellActionContractScript.ACTION_ENTER_GUEST, {
+			"invite_code": SessionStore.DEFAULT_INVITE_CODE,
+			"device_label": OS.get_name(),
+			"request_id": guest_request_id,
+		})
 		account_result = await SupabaseClient.create_guest_account(
 			SessionStore.DEFAULT_INVITE_CODE,
-			SessionStore.ensure_guest_request_id(),
+			_request_id(mutation),
 			OS.get_name(),
-			SessionStore.access_token
+			SessionStore.access_token,
+			_request_hash(mutation)
 		)
 	if not bool(account_result.get("ok", false)):
+		_fail_mutation(mutation, account_result)
 		var account_error := AppShellErrorContractScript.extract_error(account_result)
 		if str(account_error.get("code", "")) == "ACCOUNT_ALREADY_CREATED":
 			state_result = await SupabaseClient.fetch_account_state(SessionStore.access_token)
@@ -306,6 +358,7 @@ func recover_or_create_active_save(host: Node, invite_code: String = "", usernam
 		host.call("_fail_with_error", account_result)
 		return false
 
+	_complete_mutation(mutation, account_result)
 	return apply_recovered_state(host, account_result, "Save %s pronto." % SessionStore.active_save_label())
 
 func auth_form_values(host: Node, require_username: bool) -> Dictionary:

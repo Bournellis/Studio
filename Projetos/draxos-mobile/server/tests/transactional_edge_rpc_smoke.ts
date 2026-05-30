@@ -47,7 +47,10 @@ try {
   await proveBattleRequestAdapter(primary);
   await proveCraftingAdapters(primary);
   await proveBuildEquipAdapter(primary);
+  await proveBuildBehaviorAdapters(primary);
+  await proveSocialFriendAdapter(primary, guildOwner);
   await proveGuildAdapters(guildOwner, guildMember);
+  await proveApiVersionHeader(primary);
 
   console.log("[transactional-edge-rpc-smoke] OK", {
     supabase_url: SUPABASE_URL,
@@ -72,16 +75,30 @@ async function assertLocalEdgeIsReachable(): Promise<void> {
 }
 
 async function assertLocalDatabaseIsCurrent(): Promise<void> {
-  const [{ has_function }] = await sql<{ has_function: boolean }[]>`
-    select exists (
-      select 1
-      from pg_proc
-      where proname = 'request_battle_v1'
-    ) as has_function
+  const rows = await sql<{ proname: string }[]>`
+    select proname
+    from pg_proc
+    where proname in (
+      'request_battle_v1',
+      'build_spell_behavior_v1',
+      'build_potion_equip_v1',
+      'build_potion_behavior_v1',
+      'social_friend_add_v1',
+      'social_chat_send_v1'
+    )
   `;
+  const names = new Set(rows.map((row) => row.proname));
+  const missing = [
+    "request_battle_v1",
+    "build_spell_behavior_v1",
+    "build_potion_equip_v1",
+    "build_potion_behavior_v1",
+    "social_friend_add_v1",
+    "social_chat_send_v1",
+  ].filter((name) => !names.has(name));
   assert(
-    has_function,
-    "local database must include transactional v1 RPC migrations",
+    missing.length === 0,
+    `local database must include Foundation Closeout RPC migrations. Missing: ${missing.join(", ")}`,
   );
 }
 
@@ -348,6 +365,112 @@ async function proveBuildEquipAdapter(account: TestAccount): Promise<void> {
   await assertCompletedIdempotency("build/equip", requestId);
 }
 
+async function proveBuildBehaviorAdapters(account: TestAccount): Promise<void> {
+  const spellRequestId = crypto.randomUUID();
+  const spellBody = {
+    request_id: spellRequestId,
+    spell_id: "sussurro_medo",
+    behavior: {
+      enabled: true,
+      hp: { mode: "ignore", percent: 0 },
+      mana: { mode: "above", percent: 25 },
+    },
+  };
+  const firstSpell = await postJson(
+    `${SUPABASE_URL}/functions/v1/build/spell-behavior`,
+    spellBody,
+    account.headers,
+  );
+  const repeatedSpell = await postJson(
+    `${SUPABASE_URL}/functions/v1/build/spell-behavior`,
+    spellBody,
+    account.headers,
+  );
+  assertStableJson(
+    objectField(firstSpell, "updated_behavior"),
+    objectField(repeatedSpell, "updated_behavior"),
+    "build/spell-behavior should be idempotent through HTTP adapter",
+  );
+  await assertCompletedIdempotency("build/spell-behavior", spellRequestId);
+
+  const equipRequestId = crypto.randomUUID();
+  const equipBody = {
+    request_id: equipRequestId,
+    slot_index: 1,
+    item_id: "pocao_vida",
+  };
+  const firstEquip = await postJson(
+    `${SUPABASE_URL}/functions/v1/build/potion/equip`,
+    equipBody,
+    account.headers,
+  );
+  const repeatedEquip = await postJson(
+    `${SUPABASE_URL}/functions/v1/build/potion/equip`,
+    equipBody,
+    account.headers,
+  );
+  assertStableJson(
+    objectField(firstEquip, "equipped_potion"),
+    objectField(repeatedEquip, "equipped_potion"),
+    "build/potion/equip should be idempotent through HTTP adapter",
+  );
+  await assertCompletedIdempotency("build/potion/equip", equipRequestId);
+
+  const behaviorRequestId = crypto.randomUUID();
+  const behaviorBody = {
+    request_id: behaviorRequestId,
+    slot_index: 1,
+    behavior: {
+      enabled: true,
+      hp: { mode: "below", percent: 55 },
+      mana: { mode: "ignore", percent: 0 },
+    },
+  };
+  const firstBehavior = await postJson(
+    `${SUPABASE_URL}/functions/v1/build/potion-behavior`,
+    behaviorBody,
+    account.headers,
+  );
+  const repeatedBehavior = await postJson(
+    `${SUPABASE_URL}/functions/v1/build/potion-behavior`,
+    behaviorBody,
+    account.headers,
+  );
+  assertStableJson(
+    objectField(firstBehavior, "updated_behavior"),
+    objectField(repeatedBehavior, "updated_behavior"),
+    "build/potion-behavior should be idempotent through HTTP adapter",
+  );
+  await assertCompletedIdempotency("build/potion-behavior", behaviorRequestId);
+}
+
+async function proveSocialFriendAdapter(
+  account: TestAccount,
+  target: TestAccount,
+): Promise<void> {
+  const requestId = crypto.randomUUID();
+  const body = {
+    request_id: requestId,
+    username: target.username,
+  };
+  const first = await postJson(
+    `${SUPABASE_URL}/functions/v1/social/friends/add`,
+    body,
+    account.headers,
+  );
+  const repeated = await postJson(
+    `${SUPABASE_URL}/functions/v1/social/friends/add`,
+    body,
+    account.headers,
+  );
+  assertEq(
+    arrayField(objectField(first, "social"), "friends").length,
+    arrayField(objectField(repeated, "social"), "friends").length,
+    "social/friends/add should be idempotent through HTTP adapter",
+  );
+  await assertCompletedIdempotency("social/friends/add", requestId);
+}
+
 async function proveGuildAdapters(
   owner: TestAccount,
   member: TestAccount,
@@ -400,6 +523,44 @@ async function proveGuildAdapters(
     "guild/join should keep member count at two",
   );
   await assertCompletedIdempotency("guild/join", joinRequestId);
+
+  const chatRequestId = crypto.randomUUID();
+  const chatBody = {
+    request_id: chatRequestId,
+    content: `edge closeout ${chatRequestId.slice(0, 8)}`,
+  };
+  const firstChat = await postJson(
+    `${SUPABASE_URL}/functions/v1/social/chat/send`,
+    chatBody,
+    member.headers,
+  );
+  const repeatedChat = await postJson(
+    `${SUPABASE_URL}/functions/v1/social/chat/send`,
+    chatBody,
+    member.headers,
+  );
+  assertEq(
+    arrayField(objectField(firstChat, "social"), "guild_chat").length,
+    arrayField(objectField(repeatedChat, "social"), "guild_chat").length,
+    "social/chat/send should be idempotent through HTTP adapter",
+  );
+  await assertCompletedIdempotency("social/chat/send", chatRequestId);
+}
+
+async function proveApiVersionHeader(account: TestAccount): Promise<void> {
+  const response = await fetch(`${SUPABASE_URL}/functions/v1/account/state`, {
+    method: "GET",
+    headers: {
+      ...account.headers,
+      "x-draxos-api-version": "2",
+    },
+  });
+  const payload = await parseResponse(response, false);
+  assertEq(
+    errorCode(payload),
+    "UNSUPPORTED_API_VERSION",
+    "explicit unsupported API version should fail",
+  );
 }
 
 async function assertCompletedIdempotency(
@@ -445,6 +606,7 @@ function baseHeaders(): Record<string, string> {
   return {
     apikey: PUBLISHABLE_KEY,
     "content-type": "application/json",
+    "x-draxos-api-version": "1",
   };
 }
 

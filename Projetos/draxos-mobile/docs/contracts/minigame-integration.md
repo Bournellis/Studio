@@ -48,6 +48,15 @@ Nenhum minigame deve escrever diretamente em `resources`, `ranking`, `guilds`, `
 
 ## Entrada E UI Shell
 
+Foundation Closeout reserva um shell client-side disabled/dev-only:
+
+- route id: `minigame_shell`;
+- action id: `open_minigame_shell:<minigame_id>`;
+- action category: `minigame`;
+- scope: `minigame:<id>:<save_type>`;
+- reward handoff: bloqueado ate contrato e endpoint server-authoritative;
+- sem ranking, economy, migration, promessa publica ou gameplay real.
+
 O minigame deve declarar:
 
 - onde aparece: Refugio, Base, Social, Competition, Labs Dev, portal ou menu separado;

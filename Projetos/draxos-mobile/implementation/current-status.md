@@ -4,15 +4,16 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Foundation Expansion Readiness`
-- Active stage status: `FOUNDATION_EXPANSION_READINESS_ACTIVE`
+- Active stage: `Foundation Expansion Readiness / Foundation Closeout`
+- Active stage status: `FOUNDATION_CLOSEOUT_DELIVERED`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Latest published package: `First Session Clarity v1`
-- Latest implemented package: `Foundation Expansion Readiness` (in progress on
-  branch `codex/draxos-mobile/foundation-expansion-readiness`)
+- Latest implemented package: `Lab Track 16 Alignment` delivered on branch
+  `codex/draxos-mobile/foundation-expansion-readiness` over the delivered
+  Foundation Closeout baseline.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -56,10 +57,14 @@ The major foundation baseline is:
   Battle/Summary, Base and Shop without gameplay/backend/economy changes.
 - Track 16: behavior, Po de Osso and potion crafting package; technical context
   and not current product focus.
+- Lab Track 16 Alignment: Battle Lab and Progression Lab now model Track 16
+  potion slots, potion crafting stock, `po_osso`, default potion behavior and
+  spell behavior toggles as lab-only evidence before tuning.
 
 ## Foundation Audit
 
-Foundation Expansion Readiness is the active stage. Foundation Audit aligned
+Foundation Expansion Readiness/Foundation Closeout is the delivered foundation
+gate. Foundation Audit aligned
 documents, audited the internal post-login loop and produced the current
 published baseline before implementation expands.
 
@@ -156,9 +161,9 @@ potions, behavior or catalog content.
   remains active in P2; do not open an initial-loop motivation package by
   default.
 
-Recommended next decision: complete the Foundation Expansion Readiness gate
-before opening base builder tuning, autobattler tuning, social expansion or a
-real minigame.
+Recommended next decision: choose one explicit package for base builder tuning,
+autobattler tuning, social expansion or minigame shell/contract. Lab evidence is
+now aligned with Track 16, but it still must not promote tuning by itself.
 
 ## Foundation Expansion Readiness
 
@@ -194,10 +199,20 @@ Delivered in the current branch:
   build equip, crafting craft/crush-bones and guild create/join to v1
   transactional RPCs with `game_saves`, `request_hash`, ruleset metadata,
   ledger/idempotency and service-role-only grants.
+- Migration `202605300004_foundation_closeout.sql` corrects
+  `ruleset_registry` to immutable `publication_id`, updates the active
+  `foundation_ruleset_v0` simulator hash, persists ruleset hashes in
+  `game_saves` and history rows, adds `state_version`/`season_context`, creates
+  internal admin RPCs and promotes build spell behavior, potion equip/behavior,
+  friend add and chat send to v1 transactional/idempotent RPCs.
+- Edge Functions now enforce `x-draxos-api-version: 1` when the header is
+  present, still tolerate absence during alpha, and reject other explicit
+  values with `UNSUPPORTED_API_VERSION`.
 - `foundation_ruleset_v0` is generated with content/simulator hashes and
   mirrored into server/supabase shared modules.
 - `battle/request`, `battle/latest`, `battle/history` and `battle/replay` expose
-  ruleset metadata for new battles/log reads.
+  ruleset metadata for new battles/log reads, using row-persisted hashes for
+  new rows and `FOUNDATION_RULESET` fallback only for old rows.
 - `base/state`, `base/collect` and `base/upgrade` now use the Base transactional
   RPC path while preserving the current UI payload contract.
 - `battle`, `build`, `crafting`, `monetization` and `social` adapters now
@@ -209,9 +224,9 @@ Delivered in the current branch:
   create/join.
 - `server/tests/transactional_edge_rpc_smoke.ts` now proves the local Edge
   Function HTTP path over the v1 RPC adapters for base, battle, build, crafting,
-  monetization and social. This pass fixed unstable `battle/request`
-  `FIRST_SLICE_SIM` hashing and removed crafting resource prechecks that blocked
-  idempotent retries before the RPC.
+  monetization and social, including the Closeout endpoints
+  `build/spell-behavior`, `build/potion/equip`, `build/potion-behavior`,
+  `social/friends/add`, `social/chat/send` and API version failure.
 - `server/functions/_shared/base_domain.ts`,
   `server/functions/_shared/battle_log_projection.ts`,
   `server/functions/_shared/battle_combatants.ts`,
@@ -229,14 +244,59 @@ Delivered in the current branch:
   offline/adapter-free, keeps the Progression Lab seeder local-only and blocks
   server runtime imports from dev Lab generators/screens.
 - `DraxosOperationState` and `DraxosAppShellActionRouter` create client shell
-  contracts without adding logic to `boot.gd`.
+  contracts without adding feature rules to `boot.gd`; the real action path now
+  routes through the action router and busy/error state is scoped by operation.
+- `SupabaseClient` sends API version and `request_hash`, while `SessionStore`
+  persists pending idempotent mutations so retries reuse the same
+  `request_id/request_hash`.
+- `ROUTE_MINIGAME_SHELL` and `open_minigame_shell:<id>` exist only as a
+  disabled/dev placeholder: no reward, ranking, economy, migration or public
+  feature promise.
 - `tools/check_foundation_expansion_readiness.ps1` is the read-only structural
-  gate and is called from `validate_foundation.ps1`.
+  gate and is called from `validate_foundation.ps1`. Full profile now requires
+  local Supabase RPC and Edge RPC smokes instead of silently skipping them.
 
 This package does not implement a new gameplay feature, new social loop or new
 minigame. Remaining balance/content expansion should now start only after an
 explicit package choice, with Lab heuristics treated as evidence instead of
 runtime authority.
+
+Closeout validation on this branch:
+
+- Deno check: `server/functions` PASS and `supabase/functions` PASS.
+- Static foundation contract tests: PASS (`55` tests through
+  `validate_foundation.ps1 -Profile Quick` before local Supabase/Edge gated
+  steps).
+- Godot validate: PASS (`132/132`, `2052` asserts) after the client shell retry
+  changes.
+- `supabase migration up --local`: PASS for
+  `202605300004_foundation_closeout.sql`.
+- `validate_foundation.ps1 -Profile Full`: PASS with local Supabase RPC and
+  local Edge RPC smokes included.
+
+Lab Track 16 Alignment validation on this branch:
+
+- Battle Lab model/generator now emits Track 16 potion-enabled,
+  potion-disabled and spell-behavior-disabled scenarios. The generated report is
+  `REVIEW` because anti-stall rate is `6.4%` against the current lab threshold
+  of `<=5%`; this is tuning evidence, not an automatic balance change.
+- Progression Lab model/generator now emits healthy saves with `po_osso`,
+  `craft_pocao_vida`, `pocao_vida`, potion slot state, inventory and spell
+  behaviors, plus potion affordability, crafting pressure and preparation
+  readiness artifacts.
+- Progression Lab apply/seeding now preserves generated consumable, potion slot
+  and spell behavior state for lab snapshots instead of wiping Track 16 state.
+- Validation: `npx -y deno test tools/battle_lab tools/progression_lab` PASS,
+  `npx -y deno test --allow-read server/tests/lab_heuristics_contract_test.ts`
+  PASS, Deno check for `server/functions` and `supabase/functions` PASS, GUT
+  client PASS (`132/132`, `2057` asserts), `tools/smoke_dev_labs.gd` PASS and
+  `validate_foundation.ps1 -Profile Quick` PASS. The Quick gate caught and then
+  confirmed the corrected `foundation_ruleset_v0` content hash mirrored in the
+  Closeout migration seed.
+
+Recommended next decision: choose one explicit package for base builder tuning,
+autobattler tuning, social expansion or minigame shell/contract. Do not start
+feature/tuning work implicitly from the Foundation Closeout branch.
 
 ## Progression Clarity v1
 

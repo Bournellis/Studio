@@ -18,6 +18,9 @@ Deno.test("lab heuristics contract records current lab model authority", async (
   assertContains(contract, progressionModel.model_id);
   assertContains(contract, progressionModel.status);
   assertContains(contract, "bot_power_offsets_percent");
+  assertContains(contract, "Track 16");
+  assertContains(contract, "potion");
+  assertContains(contract, "crafting");
 });
 
 Deno.test("battle lab screen power display follows battle lab runner weights", async () => {
@@ -139,6 +142,58 @@ Deno.test("dev lab generators remain offline and adapter-free", async () => {
     assertNotContains(source, "SUPABASE_SERVICE_ROLE_KEY");
     assertNotContains(source, "SUPABASE_URL");
   }
+});
+
+Deno.test("lab models declare Track 16 consumable and behavior coverage", async () => {
+  const battleModel = await readJson("tools/battle_lab/model.v1.json");
+  const progressionModel = await readJson(
+    "tools/progression_lab/model.v1.json",
+  );
+  const scenarios = battleModel.track16_scenarios as Array<
+    Record<string, unknown>
+  >;
+
+  assert(
+    scenarios.some((scenario) => scenario.potion !== undefined),
+    "Battle Lab model should include potion scenarios",
+  );
+  assert(
+    scenarios.some((scenario) => scenario.spell_behavior !== undefined),
+    "Battle Lab model should include spell behavior scenarios",
+  );
+  assertEquals(
+    progressionModel.track16_consumables.life_potion_item_id,
+    "pocao_vida",
+    "Progression Lab should model the Track 16 life potion",
+  );
+  assertEquals(
+    progressionModel.track16_consumables.life_potion_recipe_id,
+    "craft_pocao_vida",
+    "Progression Lab should model the Track 16 potion recipe",
+  );
+});
+
+Deno.test("Progression Lab generated saves expose Track 16 preparation state", async () => {
+  const generated = await readJson(
+    "docs/progression-lab/generated/healthy_saves.json",
+  );
+  const save = generated.saves.find((item: { id: string }) =>
+    item.id === "free_100_rewards_10h"
+  );
+
+  assert(save !== undefined, "generated 10h save should exist");
+  assert(
+    save.consumables?.crafted_life_potions > 0,
+    "generated 10h save should include life potions",
+  );
+  assert(
+    Array.isArray(save.consumables?.potion_slots),
+    "generated saves should include potion slots",
+  );
+  assert(
+    save.combat_build?.potionSlot?.itemId === "pocao_vida",
+    "generated combat build should include potion slot",
+  );
 });
 
 Deno.test("progression lab seeder remains local-only and explicit", async () => {

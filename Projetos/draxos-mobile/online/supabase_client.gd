@@ -8,8 +8,10 @@ const DEFAULT_PUBLISHABLE_KEY := BackendConfigScript.DEFAULT_LOCAL_PUBLISHABLE_K
 const REQUEST_TIMEOUT_SECONDS := 15.0
 const SAVE_TYPE_NORMAL := "normal"
 const SAVE_TYPE_PROGRESSION_LAB := "progression_lab"
+const DRAXOS_API_VERSION := "1"
 const CLIENT_META_KEY := "_client"
 const CLIENT_SAVE_TYPE_KEY := "save_type"
+const CLIENT_API_VERSION_KEY := "api_version"
 
 var supabase_url := DEFAULT_SUPABASE_URL
 var publishable_key := DEFAULT_PUBLISHABLE_KEY
@@ -73,6 +75,8 @@ func save_context_snapshot() -> Dictionary:
 	return {
 		"active_save_type": active_save_type,
 		"save_header": "x-draxos-save-type",
+		"api_version_header": "x-draxos-api-version",
+		"api_version": DRAXOS_API_VERSION,
 	}
 
 func configure_save_type(save_type: String) -> void:
@@ -174,29 +178,29 @@ func sign_in_with_email(email: String, password: String) -> Dictionary:
 
 	return {"ok": true, "session": session}
 
-func bootstrap_alpha_account(invite_code: String, username: String, request_id: String, device_label: String, access_token: String) -> Dictionary:
+func bootstrap_alpha_account(invite_code: String, username: String, request_id: String, device_label: String, access_token: String, request_hash: String = "") -> Dictionary:
 	return await _send_json(
 		function_url("account/bootstrap"),
 		HTTPClient.METHOD_POST,
 		_auth_headers(access_token),
-		{
+		_with_request_hash("account/bootstrap", {
 			"invite_code": invite_code,
 			"username": username,
 			"device_label": device_label,
 			"request_id": request_id,
-		}
+		}, request_hash)
 	)
 
-func create_guest_account(invite_code: String, request_id: String, device_label: String, access_token: String) -> Dictionary:
+func create_guest_account(invite_code: String, request_id: String, device_label: String, access_token: String, request_hash: String = "") -> Dictionary:
 	return await _send_json(
 		function_url("account/guest"),
 		HTTPClient.METHOD_POST,
 		_auth_headers(access_token),
-		{
+		_with_request_hash("account/guest", {
 			"invite_code": invite_code,
 			"device_label": device_label,
 			"request_id": request_id,
-		}
+		}, request_hash)
 	)
 
 func fetch_account_state(access_token: String) -> Dictionary:
@@ -207,31 +211,31 @@ func fetch_account_state(access_token: String) -> Dictionary:
 		{}
 	)
 
-func reset_active_save(request_id: String, access_token: String) -> Dictionary:
+func reset_active_save(request_id: String, access_token: String, request_hash: String = "") -> Dictionary:
 	return await _send_json(
 		function_url("account/saves/reset"),
 		HTTPClient.METHOD_POST,
 		_auth_headers(access_token),
-		{
+		_with_request_hash("account/saves/reset", {
 			"request_id": request_id,
 			"save_type": active_save_type,
-		}
+		}, request_hash)
 	)
 
-func apply_progression_lab_save(request_id: String, profile_id: String, milestone_id: String, save_id: String, access_token: String) -> Dictionary:
+func apply_progression_lab_save(request_id: String, profile_id: String, milestone_id: String, save_id: String, access_token: String, request_hash: String = "") -> Dictionary:
 	return await _send_json(
 		function_url("progression-lab/apply"),
 		HTTPClient.METHOD_POST,
 		_auth_headers(access_token),
-		{
+		_with_request_hash("progression-lab/apply", {
 			"request_id": request_id,
 			"profile_id": profile_id,
 			"milestone_id": milestone_id,
 			"save_id": save_id,
-		}
+		}, request_hash)
 	)
 
-func request_battle(request_id: String, access_token: String, mode: String = ProjectInfo.DEFAULT_BATTLE_MODE, opponent_bot_id: String = "") -> Dictionary:
+func request_battle(request_id: String, access_token: String, mode: String = ProjectInfo.DEFAULT_BATTLE_MODE, opponent_bot_id: String = "", request_hash: String = "") -> Dictionary:
 	var body := {
 		"request_id": request_id,
 		"mode": mode,
@@ -242,7 +246,7 @@ func request_battle(request_id: String, access_token: String, mode: String = Pro
 		function_url("battle/request"),
 		HTTPClient.METHOD_POST,
 		_auth_headers(access_token),
-		body
+		_with_request_hash("battle/request", body, request_hash)
 	)
 
 func fetch_latest_battle(access_token: String) -> Dictionary:
@@ -278,23 +282,23 @@ func fetch_base_state(access_token: String) -> Dictionary:
 		{}
 	)
 
-func collect_base(request_id: String, access_token: String) -> Dictionary:
+func collect_base(request_id: String, access_token: String, request_hash: String = "") -> Dictionary:
 	return await _send_json(
 		function_url("base/collect"),
 		HTTPClient.METHOD_POST,
 		_auth_headers(access_token),
-		{"request_id": request_id}
+		_with_request_hash("base/collect", {"request_id": request_id}, request_hash)
 	)
 
-func upgrade_base_structure(request_id: String, structure_id: String, access_token: String) -> Dictionary:
+func upgrade_base_structure(request_id: String, structure_id: String, access_token: String, request_hash: String = "") -> Dictionary:
 	return await _send_json(
 		function_url("base/upgrade"),
 		HTTPClient.METHOD_POST,
 		_auth_headers(access_token),
-		{
+		_with_request_hash("base/upgrade", {
 			"request_id": request_id,
 			"structure_id": structure_id,
-		}
+		}, request_hash)
 	)
 
 func fetch_crafting_state(access_token: String) -> Dictionary:
@@ -305,27 +309,27 @@ func fetch_crafting_state(access_token: String) -> Dictionary:
 		{}
 	)
 
-func crush_bones(request_id: String, amount: int, access_token: String) -> Dictionary:
+func crush_bones(request_id: String, amount: int, access_token: String, request_hash: String = "") -> Dictionary:
 	return await _send_json(
 		function_url("crafting/crush-bones"),
 		HTTPClient.METHOD_POST,
 		_auth_headers(access_token),
-		{
+		_with_request_hash("crafting/crush-bones", {
 			"request_id": request_id,
 			"amount": maxi(1, amount),
-		}
+		}, request_hash)
 	)
 
-func craft_item(request_id: String, recipe_id: String, quantity: int, access_token: String) -> Dictionary:
+func craft_item(request_id: String, recipe_id: String, quantity: int, access_token: String, request_hash: String = "") -> Dictionary:
 	return await _send_json(
 		function_url("crafting/craft"),
 		HTTPClient.METHOD_POST,
 		_auth_headers(access_token),
-		{
+		_with_request_hash("crafting/craft", {
 			"request_id": request_id,
 			"recipe_id": recipe_id,
 			"quantity": maxi(1, quantity),
-		}
+		}, request_hash)
 	)
 
 func fetch_build_state(access_token: String) -> Dictionary:
@@ -336,50 +340,50 @@ func fetch_build_state(access_token: String) -> Dictionary:
 		{}
 	)
 
-func equip_build(request_id: String, partial_payload: Dictionary, access_token: String) -> Dictionary:
+func equip_build(request_id: String, partial_payload: Dictionary, access_token: String, request_hash: String = "") -> Dictionary:
 	var body := partial_payload.duplicate(true)
 	body["request_id"] = request_id
 	return await _send_json(
 		function_url("build/equip"),
 		HTTPClient.METHOD_POST,
 		_auth_headers(access_token),
-		body
+		_with_request_hash("build/equip", body, request_hash)
 	)
 
-func update_spell_behavior(request_id: String, spell_id: String, behavior: Dictionary, access_token: String) -> Dictionary:
+func update_spell_behavior(request_id: String, spell_id: String, behavior: Dictionary, access_token: String, request_hash: String = "") -> Dictionary:
 	return await _send_json(
 		function_url("build/spell-behavior"),
 		HTTPClient.METHOD_POST,
 		_auth_headers(access_token),
-		{
+		_with_request_hash("build/spell-behavior", {
 			"request_id": request_id,
 			"spell_id": spell_id,
 			"behavior": behavior,
-		}
+		}, request_hash)
 	)
 
-func equip_potion(request_id: String, item_id: Variant, access_token: String) -> Dictionary:
+func equip_potion(request_id: String, item_id: Variant, access_token: String, request_hash: String = "") -> Dictionary:
 	return await _send_json(
 		function_url("build/potion/equip"),
 		HTTPClient.METHOD_POST,
 		_auth_headers(access_token),
-		{
+		_with_request_hash("build/potion/equip", {
 			"request_id": request_id,
 			"slot_index": 1,
 			"item_id": item_id,
-		}
+		}, request_hash)
 	)
 
-func update_potion_behavior(request_id: String, behavior: Dictionary, access_token: String) -> Dictionary:
+func update_potion_behavior(request_id: String, behavior: Dictionary, access_token: String, request_hash: String = "") -> Dictionary:
 	return await _send_json(
 		function_url("build/potion-behavior"),
 		HTTPClient.METHOD_POST,
 		_auth_headers(access_token),
-		{
+		_with_request_hash("build/potion-behavior", {
 			"request_id": request_id,
 			"slot_index": 1,
 			"behavior": behavior,
-		}
+		}, request_hash)
 	)
 
 func fetch_social_state(access_token: String) -> Dictionary:
@@ -390,48 +394,48 @@ func fetch_social_state(access_token: String) -> Dictionary:
 		{}
 	)
 
-func add_friend(request_id: String, friend_username: String, access_token: String) -> Dictionary:
+func add_friend(request_id: String, friend_username: String, access_token: String, request_hash: String = "") -> Dictionary:
 	return await _send_json(
 		function_url("social/friends/add"),
 		HTTPClient.METHOD_POST,
 		_auth_headers(access_token),
-		{
+		_with_request_hash("social/friends/add", {
 			"request_id": request_id,
 			"username": friend_username,
-		}
+		}, request_hash)
 	)
 
-func create_guild(request_id: String, guild_name: String, access_token: String) -> Dictionary:
+func create_guild(request_id: String, guild_name: String, access_token: String, request_hash: String = "") -> Dictionary:
 	return await _send_json(
 		function_url("social/guild/create"),
 		HTTPClient.METHOD_POST,
 		_auth_headers(access_token),
-		{
+		_with_request_hash("social/guild/create", {
 			"request_id": request_id,
 			"name": guild_name,
-		}
+		}, request_hash)
 	)
 
-func join_guild(request_id: String, guild_name: String, access_token: String) -> Dictionary:
+func join_guild(request_id: String, guild_name: String, access_token: String, request_hash: String = "") -> Dictionary:
 	return await _send_json(
 		function_url("social/guild/join"),
 		HTTPClient.METHOD_POST,
 		_auth_headers(access_token),
-		{
+		_with_request_hash("social/guild/join", {
 			"request_id": request_id,
 			"name": guild_name,
-		}
+		}, request_hash)
 	)
 
-func send_guild_chat(request_id: String, content: String, access_token: String) -> Dictionary:
+func send_guild_chat(request_id: String, content: String, access_token: String, request_hash: String = "") -> Dictionary:
 	return await _send_json(
 		function_url("social/chat/send"),
 		HTTPClient.METHOD_POST,
 		_auth_headers(access_token),
-		{
+		_with_request_hash("social/chat/send", {
 			"request_id": request_id,
 			"content": content,
-		}
+		}, request_hash)
 	)
 
 func fetch_matchmaking_preview(access_token: String) -> Dictionary:
@@ -458,26 +462,26 @@ func fetch_monetization_state(access_token: String) -> Dictionary:
 		{}
 	)
 
-func claim_reward(request_id: String, reward_id: String, access_token: String) -> Dictionary:
+func claim_reward(request_id: String, reward_id: String, access_token: String, request_hash: String = "") -> Dictionary:
 	return await _send_json(
 		function_url("monetization/rewards/claim"),
 		HTTPClient.METHOD_POST,
 		_auth_headers(access_token),
-		{
+		_with_request_hash("monetization/rewards/claim", {
 			"request_id": request_id,
 			"reward_id": reward_id,
-		}
+		}, request_hash)
 	)
 
-func alpha_purchase(request_id: String, product_id: String, access_token: String) -> Dictionary:
+func alpha_purchase(request_id: String, product_id: String, access_token: String, request_hash: String = "") -> Dictionary:
 	return await _send_json(
 		function_url("monetization/alpha-purchase"),
 		HTTPClient.METHOD_POST,
 		_auth_headers(access_token),
-		{
+		_with_request_hash("monetization/alpha-purchase", {
 			"request_id": request_id,
 			"product_id": product_id,
-		}
+		}, request_hash)
 	)
 
 func send_client_telemetry(access_token: String, session_id: String, event_type: String, payload: Dictionary = {}) -> Dictionary:
@@ -502,6 +506,7 @@ func _base_headers() -> PackedStringArray:
 		"Content-Type: application/json",
 		"apikey: %s" % publishable_key,
 		"x-draxos-save-type: %s" % active_save_type,
+		"x-draxos-api-version: %s" % DRAXOS_API_VERSION,
 	])
 
 func _manifest_headers() -> PackedStringArray:
@@ -520,6 +525,30 @@ func _auth_headers(access_token: String) -> PackedStringArray:
 	var headers := _base_headers()
 	headers.append("Authorization: Bearer %s" % access_token)
 	return headers
+
+func _with_request_hash(endpoint: String, body: Dictionary, request_hash: String = "") -> Dictionary:
+	var result := body.duplicate(true)
+	if str(result.get("request_id", "")).strip_edges() == "":
+		return result
+	var resolved_hash := request_hash.strip_edges()
+	if resolved_hash == "":
+		resolved_hash = request_hash_for_mutation(endpoint, result)
+	result["request_hash"] = resolved_hash
+	return result
+
+static func request_hash_for_mutation(endpoint: String, payload: Dictionary) -> String:
+	var canonical_payload := payload.duplicate(true)
+	canonical_payload.erase("request_hash")
+	var canonical := _stable_json({
+		"endpoint": endpoint.strip_edges(),
+		"payload": canonical_payload,
+	})
+	var hashing := HashingContext.new()
+	var start_error := hashing.start(HashingContext.HASH_SHA256)
+	if start_error != OK:
+		return ""
+	hashing.update(canonical.to_utf8_buffer())
+	return "sha256:%s" % hashing.finish().hex_encode()
 
 func _send_json(url: String, method: HTTPClient.Method, headers: PackedStringArray, body: Dictionary) -> Dictionary:
 	if not backend_config_errors.is_empty():
@@ -644,18 +673,46 @@ static func _with_client_context(result: Dictionary, headers: PackedStringArray)
 	return annotated
 
 static func _client_context_from_headers(headers: PackedStringArray) -> Dictionary:
+	var context := {}
 	for header: String in headers:
 		var delimiter_index := header.find(":")
 		if delimiter_index < 0:
 			continue
 		var header_name := header.substr(0, delimiter_index).strip_edges().to_lower()
-		if header_name != "x-draxos-save-type":
-			continue
 		var header_value := header.substr(delimiter_index + 1).strip_edges()
-		return {
-			CLIENT_SAVE_TYPE_KEY: _normalize_save_type(header_value),
-		}
-	return {}
+		if header_name == "x-draxos-save-type":
+			context[CLIENT_SAVE_TYPE_KEY] = _normalize_save_type(header_value)
+		elif header_name == "x-draxos-api-version":
+			context[CLIENT_API_VERSION_KEY] = header_value
+	return context
+
+static func _stable_json(value: Variant) -> String:
+	match typeof(value):
+		TYPE_NIL:
+			return "null"
+		TYPE_BOOL:
+			return "true" if bool(value) else "false"
+		TYPE_INT, TYPE_FLOAT:
+			return JSON.stringify(value)
+		TYPE_STRING, TYPE_STRING_NAME, TYPE_NODE_PATH:
+			return JSON.stringify(str(value))
+		TYPE_ARRAY, TYPE_PACKED_STRING_ARRAY, TYPE_PACKED_INT32_ARRAY, TYPE_PACKED_INT64_ARRAY, TYPE_PACKED_FLOAT32_ARRAY, TYPE_PACKED_FLOAT64_ARRAY:
+			var parts := PackedStringArray()
+			for item: Variant in value:
+				parts.append(_stable_json(item))
+			return "[%s]" % ",".join(parts)
+		TYPE_DICTIONARY:
+			var dictionary := Dictionary(value)
+			var keys := PackedStringArray()
+			for key: Variant in dictionary.keys():
+				keys.append(str(key))
+			keys.sort()
+			var parts := PackedStringArray()
+			for key: String in keys:
+				parts.append("%s:%s" % [JSON.stringify(key), _stable_json(dictionary[key])])
+			return "{%s}" % ",".join(parts)
+		_:
+			return JSON.stringify(value)
 
 static func _normalize_save_type(save_type: String) -> String:
 	if save_type.strip_edges().to_lower() == SAVE_TYPE_PROGRESSION_LAB:

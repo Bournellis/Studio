@@ -271,6 +271,9 @@ function Assert-ClientSecretsAbsent {
     }
 }
 
+$RunLocalSupabaseRpc = $IncludeLocalSupabaseRpc.IsPresent -or $Profile -eq "Full"
+$RunLocalEdgeRpc = $IncludeLocalEdgeRpc.IsPresent -or $Profile -eq "Full"
+
 function Write-Reports {
     New-Item -ItemType Directory -Force -Path (Split-Path -Parent $JsonReportPath) | Out-Null
     New-Item -ItemType Directory -Force -Path (Split-Path -Parent $MarkdownReportPath) | Out-Null
@@ -287,8 +290,8 @@ function Write-Reports {
         profile = $Profile
         require_clean = $RequireClean.IsPresent
         include_remote_read_only = $IncludeRemoteReadOnly.IsPresent
-        include_local_supabase_rpc = $IncludeLocalSupabaseRpc.IsPresent
-        include_local_edge_rpc = $IncludeLocalEdgeRpc.IsPresent
+        include_local_supabase_rpc = $RunLocalSupabaseRpc
+        include_local_edge_rpc = $RunLocalEdgeRpc
         summary = $summary
         results = @($Results.ToArray())
     }
@@ -391,6 +394,8 @@ Invoke-Step -Name "Deno foundation contract tests" -Stage "Quick" -Command "npx 
         & npx -y deno test --allow-read `
             server/tests/foundation_contracts_test.ts `
             server/tests/foundation_expansion_schema_test.ts `
+            server/tests/foundation_closeout_schema_test.ts `
+            server/tests/api_version_contract_test.ts `
             server/tests/transactional_domain_enforcement_schema_test.ts `
             server/tests/remaining_transactional_domain_enforcement_schema_test.ts `
             server/tests/lab_heuristics_contract_test.ts `
@@ -419,7 +424,7 @@ if (Test-Path -LiteralPath $foundationExpansion -PathType Leaf) {
     Skip-Step -Name "foundation expansion readiness" -Stage "Quick" -Command ".\tools\check_foundation_expansion_readiness.ps1" -Reason "Foundation expansion readiness script not created yet."
 }
 
-if ($IncludeLocalSupabaseRpc) {
+if ($RunLocalSupabaseRpc) {
     Invoke-Step -Name "local Supabase transactional RPC live proof" -Stage "Quick" -Command "npx -y deno check/run server/tests/transactional_rpc_live_test.ts" -ScriptBlock {
         Invoke-External -Command "transactional_rpc_live_test.ts" -WorkingDirectory $ProjectPath -ScriptBlock {
             & npx -y deno check server/tests/transactional_rpc_live_test.ts
@@ -430,10 +435,10 @@ if ($IncludeLocalSupabaseRpc) {
         }
     }
 } else {
-    Skip-Step -Name "local Supabase transactional RPC live proof" -Stage "Quick" -Command "npx -y deno run --allow-net --allow-env server/tests/transactional_rpc_live_test.ts" -Reason "-IncludeLocalSupabaseRpc was not set."
+    Skip-Step -Name "local Supabase transactional RPC live proof" -Stage "Quick" -Command "npx -y deno run --allow-net --allow-env server/tests/transactional_rpc_live_test.ts" -Reason "-IncludeLocalSupabaseRpc was not set and Profile is not Full."
 }
 
-if ($IncludeLocalEdgeRpc) {
+if ($RunLocalEdgeRpc) {
     Invoke-Step -Name "local Edge transactional RPC adapter smoke" -Stage "Quick" -Command "npx -y deno check/run server/tests/transactional_edge_rpc_smoke.ts" -ScriptBlock {
         Invoke-External -Command "transactional_edge_rpc_smoke.ts" -WorkingDirectory $ProjectPath -ScriptBlock {
             & npx -y deno check server/tests/transactional_edge_rpc_smoke.ts
@@ -444,7 +449,7 @@ if ($IncludeLocalEdgeRpc) {
         }
     }
 } else {
-    Skip-Step -Name "local Edge transactional RPC adapter smoke" -Stage "Quick" -Command "npx -y deno run --allow-net --allow-env server/tests/transactional_edge_rpc_smoke.ts" -Reason "-IncludeLocalEdgeRpc was not set."
+    Skip-Step -Name "local Edge transactional RPC adapter smoke" -Stage "Quick" -Command "npx -y deno run --allow-net --allow-env server/tests/transactional_edge_rpc_smoke.ts" -Reason "-IncludeLocalEdgeRpc was not set and Profile is not Full."
 }
 
 if ($RunClient) {

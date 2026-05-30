@@ -164,6 +164,31 @@
     "base_structure_energia": { "min": 20, "coefficient": 0.5 },
     "weapon_quality_thresholds": [0, 12000, 36000, 72000, 120000]
   },
+  "track16_consumables": {
+    "life_potion_recipe_id": "craft_pocao_vida",
+    "life_potion_item_id": "pocao_vida",
+    "bone_powder_item_id": "po_osso",
+    "bone_to_powder_rate": 1,
+    "life_potion_cost_po_osso": 50,
+    "target_potion_stock_by_milestone": {
+      "2h": 1,
+      "5h": 2,
+      "10h": 3,
+      "15h": 4,
+      "20h": 5
+    },
+    "equip_potion_from_milestone": "5h",
+    "default_potion_behavior": {
+      "enabled": true,
+      "hp": { "mode": "below", "percent": 40 },
+      "mana": { "mode": "ignore", "percent": 0 }
+    },
+    "default_spell_behavior": {
+      "enabled": true,
+      "hp": { "mode": "ignore", "percent": 0 },
+      "mana": { "mode": "ignore", "percent": 0 }
+    }
+  },
   "power_weights": {
     "level": 42,
     "weapon_level": 28,

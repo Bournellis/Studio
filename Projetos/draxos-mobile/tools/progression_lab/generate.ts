@@ -22,6 +22,7 @@ interface ProgressionModel {
   profiles: Profile[];
   source_values: Record<string, Partial<ResourceVector>>;
   costs: CostModel;
+  track16_consumables?: Track16ConsumableModel;
   power_weights: PowerWeights;
   thresholds: Thresholds;
   bot_archetypes: string[];
@@ -62,6 +63,29 @@ interface CostModel {
   passive_cristais: CostCurve;
   base_structure_energia: CostCurve;
   weapon_quality_thresholds: number[];
+}
+
+interface BehaviorConfig {
+  enabled: boolean;
+  hp: BehaviorCondition;
+  mana: BehaviorCondition;
+}
+
+interface BehaviorCondition {
+  mode: "ignore" | "below" | "above";
+  percent: number;
+}
+
+interface Track16ConsumableModel {
+  life_potion_recipe_id: string;
+  life_potion_item_id: "pocao_vida";
+  bone_powder_item_id: "po_osso";
+  bone_to_powder_rate: number;
+  life_potion_cost_po_osso: number;
+  target_potion_stock_by_milestone: Record<string, number>;
+  equip_potion_from_milestone: string;
+  default_potion_behavior: BehaviorConfig;
+  default_spell_behavior: BehaviorConfig;
 }
 
 interface PowerWeights {
@@ -112,6 +136,7 @@ interface HealthySave {
     premium_unlocked: boolean;
     simulated_store_spend: number;
   };
+  consumables: ConsumableState;
   combat_build: CombatBuild;
   manual_checklist: string[];
 }
@@ -144,6 +169,35 @@ interface CombatBuild {
   passiveLevel?: number;
   petId?: string;
   petLevel?: number;
+  spellBehaviors?: Record<string, BehaviorConfig>;
+  potionSlot?: {
+    slotIndex: number;
+    itemId: "pocao_vida";
+    quantity: number;
+    behavior: BehaviorConfig;
+  };
+}
+
+interface ConsumableState {
+  bone_powder_item_id: "po_osso";
+  life_potion_item_id: "pocao_vida";
+  life_potion_recipe_id: string;
+  available_po_osso: number;
+  po_osso_spent: number;
+  po_osso_remaining: number;
+  ossos_reserved_for_powder: number;
+  target_potion_stock: number;
+  crafted_life_potions: number;
+  craftable_life_potions: number;
+  equipped_potion_id: "pocao_vida" | "";
+  potion_slots: Array<{
+    slot_index: number;
+    potion_id: "pocao_vida" | null;
+    behavior: BehaviorConfig;
+  }>;
+  inventory: Array<{ item_id: string; quantity: number }>;
+  spell_behaviors: Record<string, BehaviorConfig>;
+  preparation_ready: boolean;
 }
 
 interface BaseStructureState {
@@ -164,6 +218,7 @@ interface ProgressionData {
   status: Status;
   saves: HealthySave[];
   reward_checks: CheckRow[];
+  consumable_checks: CheckRow[];
   premium_gap: PremiumGapRow[];
   power_recommendations: PowerRecommendationRow[];
   bot_pool: BotRow[];
@@ -313,12 +368,14 @@ export async function loadModel(
 export function buildProgressionData(model: ProgressionModel): ProgressionData {
   const saves = buildHealthySaves(model);
   const rewardChecks = buildRewardChecks(model, saves);
+  const consumableChecks = buildConsumableChecks(model, saves);
   const premiumGap = buildPremiumGap(model, saves);
   const powerRecommendations = buildPowerRecommendations(model, saves);
   const botPool = buildBotPool(model, saves);
   const statuses = [
     ...saves.map((save) => save.status),
     ...rewardChecks.map((check) => check.status),
+    ...consumableChecks.map((check) => check.status),
     ...premiumGap.map((gap) => gap.status),
     ...powerRecommendations.map((row) => row.status),
   ];
@@ -328,6 +385,7 @@ export function buildProgressionData(model: ProgressionModel): ProgressionData {
     status: worstStatus(statuses),
     saves,
     reward_checks: rewardChecks,
+    consumable_checks: consumableChecks,
     premium_gap: premiumGap,
     power_recommendations: powerRecommendations,
     bot_pool: botPool,
@@ -377,6 +435,9 @@ export async function writeProgressionOutputs(
       "cristais",
       "ossos",
       "diamante",
+      "po_osso",
+      "pocao_vida",
+      "potion_equipped",
       "weapon_level",
       "weapon_quality_tier",
       "spells",
@@ -393,6 +454,49 @@ export async function writeProgressionOutputs(
       "observed",
       "target",
       "note",
+    ]),
+  );
+  await Deno.writeTextFile(
+    new URL("potion_affordability.csv", outputUrl),
+    toCsv(
+      data.consumable_checks.filter((check) =>
+        check.id === "life_potion_stock"
+      ),
+      [
+        "id",
+        "profile_id",
+        "milestone_id",
+        "status",
+        "observed",
+        "target",
+        "note",
+      ],
+    ),
+  );
+  await Deno.writeTextFile(
+    new URL("crafting_pressure.csv", outputUrl),
+    toCsv(data.saves.map(craftingPressureRow), [
+      "id",
+      "profile_id",
+      "milestone_id",
+      "available_po_osso",
+      "po_osso_spent",
+      "po_osso_remaining",
+      "crafted_life_potions",
+      "target_potion_stock",
+      "ossos_after_crafting",
+    ]),
+  );
+  await Deno.writeTextFile(
+    new URL("preparation_readiness.csv", outputUrl),
+    toCsv(data.saves.map(preparationReadinessRow), [
+      "id",
+      "profile_id",
+      "milestone_id",
+      "status",
+      "potion_equipped",
+      "spell_behavior_count",
+      "manual_note",
     ]),
   );
   await Deno.writeTextFile(
@@ -460,6 +564,13 @@ export function buildHealthySave(
   const base = baseStateFor(model, profile, level, milestone, gains.energia);
   const spend = estimateSpend(model, build, base.structures);
   const resources = subtractResources(gains, spend);
+  const consumables = consumableStateFor(
+    model,
+    milestone,
+    build,
+    resources.ossos,
+  );
+  resources.ossos -= consumables.ossos_reserved_for_powder;
   const simulatedStoreSpend = Math.max(
     0,
     -(model.source_values.store_pack_hour?.diamante ?? 0) * milestone.hours *
@@ -472,6 +583,7 @@ export function buildHealthySave(
     `${profile.id}_${milestone.id}`,
     build,
     level,
+    consumables,
   );
   const power = calculatePower(
     model.power_weights,
@@ -509,8 +621,9 @@ export function buildHealthySave(
       premium_unlocked: profile.premium_pass,
       simulated_store_spend: Math.round(simulatedStoreSpend),
     },
+    consumables,
     combat_build: combatBuild,
-    manual_checklist: checklistFor(profile, milestone, build),
+    manual_checklist: checklistFor(profile, milestone, build, consumables),
   };
 }
 
@@ -526,8 +639,9 @@ export function calculatePower(
   );
   const petLevel = build.pet_id === "" ? 0 : build.pet_level;
   const passiveLevel = build.passive_id === "" ? 0 : build.passive_level;
-  const baseStats = structures.find((item) => item.structure_id === "estrutura_stats")?.level ??
-    0;
+  const baseStats =
+    structures.find((item) => item.structure_id === "estrutura_stats")?.level ??
+      0;
   const baseAverage = avg(structures.map((item) => item.level));
   return Math.round(
     level * weights.level +
@@ -599,6 +713,71 @@ function estimateSpend(
   return roundResources(spend);
 }
 
+function consumableStateFor(
+  model: ProgressionModel,
+  milestone: Milestone,
+  build: BuildState,
+  availableOssos: number,
+): ConsumableState {
+  const config = track16ConsumableModel(model);
+  const availablePoOsso = Math.max(
+    0,
+    Math.floor(availableOssos * config.bone_to_powder_rate),
+  );
+  const targetStock = config.target_potion_stock_by_milestone[milestone.id] ??
+    0;
+  const craftable = Math.floor(
+    availablePoOsso / Math.max(1, config.life_potion_cost_po_osso),
+  );
+  const crafted = Math.max(0, Math.min(targetStock, craftable));
+  const poOssoSpent = crafted * config.life_potion_cost_po_osso;
+  const ossosReserved = config.bone_to_powder_rate <= 0
+    ? 0
+    : Math.ceil(poOssoSpent / config.bone_to_powder_rate);
+  const shouldEquip = milestoneIndex(milestone.id) >=
+      milestoneIndex(config.equip_potion_from_milestone) && crafted > 0;
+  const spellBehaviors = Object.fromEntries(
+    build.spell_slots.map((spellId) => [
+      spellId,
+      normalizeBehavior(
+        config.default_spell_behavior,
+        defaultSpellBehavior(),
+      ),
+    ]),
+  );
+
+  return {
+    bone_powder_item_id: config.bone_powder_item_id,
+    life_potion_item_id: config.life_potion_item_id,
+    life_potion_recipe_id: config.life_potion_recipe_id,
+    available_po_osso: availablePoOsso,
+    po_osso_spent: poOssoSpent,
+    po_osso_remaining: availablePoOsso - poOssoSpent,
+    ossos_reserved_for_powder: ossosReserved,
+    target_potion_stock: targetStock,
+    crafted_life_potions: crafted,
+    craftable_life_potions: craftable,
+    equipped_potion_id: shouldEquip ? config.life_potion_item_id : "",
+    potion_slots: [{
+      slot_index: 1,
+      potion_id: shouldEquip ? config.life_potion_item_id : null,
+      behavior: normalizeBehavior(
+        config.default_potion_behavior,
+        defaultPotionBehavior(),
+      ),
+    }],
+    inventory: [
+      {
+        item_id: config.bone_powder_item_id,
+        quantity: availablePoOsso - poOssoSpent,
+      },
+      { item_id: config.life_potion_item_id, quantity: crafted },
+    ],
+    spell_behaviors: spellBehaviors,
+    preparation_ready: targetStock <= 0 || crafted >= Math.min(1, targetStock),
+  };
+}
+
 function estimateBuildSpend(
   model: ProgressionModel,
   build: BuildState,
@@ -617,7 +796,8 @@ function estimateBuildSpend(
       build.passive_level,
     );
   }
-  spend.ossos += model.costs.weapon_quality_thresholds[build.weapon_quality_tier] ?? 0;
+  spend.ossos +=
+    model.costs.weapon_quality_thresholds[build.weapon_quality_tier] ?? 0;
   return roundResources(spend);
 }
 
@@ -657,12 +837,18 @@ function buildStateFor(
   for (const spell of spellSlots) {
     spellLevels[spell] = spellLevel;
   }
-  const passiveId = level >= 10 ? ARCHETYPE_PASSIVE[archetypeId] ?? "doutrina_pavor" : "";
-  const petId = level >= 15 ? ARCHETYPE_PET[archetypeId] ?? "corvo_pressagio" : "";
+  const passiveId = level >= 10
+    ? ARCHETYPE_PASSIVE[archetypeId] ?? "doutrina_pavor"
+    : "";
+  const petId = level >= 15
+    ? ARCHETYPE_PET[archetypeId] ?? "corvo_pressagio"
+    : "";
   const passiveLevel = passiveId === ""
     ? 0
     : clampedScaledLevel(level, Math.max(0.1, ratio - 0.05));
-  const petLevel = petId === "" ? 0 : clampedScaledLevel(level, Math.min(1, ratio + 0.02));
+  const petLevel = petId === ""
+    ? 0
+    : clampedScaledLevel(level, Math.min(1, ratio + 0.02));
   const qualityTier = qualityTierFor(model, gains.ossos);
   const desired: BuildState = {
     archetype_id: archetypeId,
@@ -706,8 +892,9 @@ function baseStateFor(
     availableEnergia,
     profile,
   );
-  const primary = structures.find((item) => item.structure_id === "nucleo_energia") ??
-    structures[0];
+  const primary =
+    structures.find((item) => item.structure_id === "nucleo_energia") ??
+      structures[0];
   const activeJob = primary.level < level
     ? {
       structure_id: primary.structure_id,
@@ -825,8 +1012,9 @@ function combatBuildFor(
   id: string,
   build: BuildState,
   level: number,
+  consumables?: ConsumableState,
 ): CombatBuild {
-  return {
+  const combatBuild: CombatBuild = {
     id,
     displayName: id,
     level,
@@ -840,6 +1028,21 @@ function combatBuildFor(
     petId: build.pet_id || undefined,
     petLevel: build.pet_level || undefined,
   };
+  if (consumables !== undefined) {
+    combatBuild.spellBehaviors = consumables.spell_behaviors;
+    const equippedSlot = consumables.potion_slots.find((slot) =>
+      slot.potion_id === "pocao_vida"
+    );
+    if (equippedSlot !== undefined) {
+      combatBuild.potionSlot = {
+        slotIndex: equippedSlot.slot_index,
+        itemId: "pocao_vida",
+        quantity: Math.max(0, consumables.crafted_life_potions),
+        behavior: equippedSlot.behavior,
+      };
+    }
+  }
+  return combatBuild;
 }
 
 function buildRewardChecks(
@@ -848,7 +1051,9 @@ function buildRewardChecks(
 ): CheckRow[] {
   const rows: CheckRow[] = [];
   for (const save of saves) {
-    const milestone = model.milestones.find((item) => item.id === save.milestone_id)!;
+    const milestone = model.milestones.find((item) =>
+      item.id === save.milestone_id
+    )!;
     rows.push({
       id: "level_window",
       profile_id: save.profile_id,
@@ -876,6 +1081,43 @@ function buildRewardChecks(
       observed: String(round(worstDebt, 2)),
       target: `>= ${model.thresholds.negative_resource_review}`,
       note: "Healthy save should not require large hidden resource debt.",
+    });
+  }
+  return rows;
+}
+
+function buildConsumableChecks(
+  _model: ProgressionModel,
+  saves: HealthySave[],
+): CheckRow[] {
+  const rows: CheckRow[] = [];
+  for (const save of saves) {
+    const consumables = save.consumables;
+    rows.push({
+      id: "life_potion_stock",
+      profile_id: save.profile_id,
+      milestone_id: save.milestone_id,
+      status: consumables.crafted_life_potions >=
+          consumables.target_potion_stock
+        ? "PASS"
+        : "REVIEW",
+      observed:
+        `${consumables.crafted_life_potions}/${consumables.target_potion_stock} potions`,
+      target: `>= ${consumables.target_potion_stock}`,
+      note:
+        "Healthy save should show whether Po de Osso supports the intended lab potion stock.",
+    });
+    rows.push({
+      id: "preparation_potion_slot",
+      profile_id: save.profile_id,
+      milestone_id: save.milestone_id,
+      status: consumables.preparation_ready ? "PASS" : "REVIEW",
+      observed: consumables.equipped_potion_id === ""
+        ? "no potion equipped"
+        : `equipped ${consumables.equipped_potion_id}`,
+      target: "potion-ready when target stock is non-zero",
+      note:
+        "Progression Lab saves should exercise the Preparation potion slot once consumables exist.",
     });
   }
   return rows;
@@ -940,9 +1182,13 @@ function buildPowerRecommendations(
     const baseStats = save.base.structures.find((item) =>
       item.structure_id === "estrutura_stats"
     )?.level ?? 0;
-    const baseAverage = avg(save.base.structures.map((item) => item.level));
+    const baseAverage = avg(save.base.structures.map((item) =>
+      item.level
+    ));
     const petLevel = save.build.pet_id === "" ? 0 : save.build.pet_level;
-    const passiveLevel = save.build.passive_id === "" ? 0 : save.build.passive_level;
+    const passiveLevel = save.build.passive_id === ""
+      ? 0
+      : save.build.passive_level;
     const components = {
       level: save.player.level * model.power_weights.level,
       weapon_level: save.build.weapon_level * model.power_weights.weapon_level,
@@ -1021,8 +1267,9 @@ function buildStateForBot(
   );
   clone.spell_slots = preferred.slice(0, maxSpellSlots(save.player.level));
   clone.spell_levels = {};
-  const baseSpellLevel = save.build.spell_levels[Object.keys(save.build.spell_levels)[0]] ??
-    save.player.level;
+  const baseSpellLevel =
+    save.build.spell_levels[Object.keys(save.build.spell_levels)[0]] ??
+      save.player.level;
   for (const spell of clone.spell_slots) {
     clone.spell_levels[spell] = clamp(
       Math.round(baseSpellLevel * factor),
@@ -1033,7 +1280,9 @@ function buildStateForBot(
   clone.passive_id = save.player.level >= 10
     ? ARCHETYPE_PASSIVE[archetypeId] ?? clone.passive_id
     : "";
-  clone.pet_id = save.player.level >= 15 ? ARCHETYPE_PET[archetypeId] ?? clone.pet_id : "";
+  clone.pet_id = save.player.level >= 15
+    ? ARCHETYPE_PET[archetypeId] ?? clone.pet_id
+    : "";
   clone.weapon_level = clamp(
     Math.round(clone.weapon_level * factor),
     1,
@@ -1111,16 +1360,19 @@ function checklistFor(
   profile: Profile,
   milestone: Milestone,
   build: BuildState,
+  consumables: ConsumableState,
 ): string[] {
   return [
     `Carregar ${profile.id} em ${milestone.id}.`,
     "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
     "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
     "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+    "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
     "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
     `Conferir build: arma L${build.weapon_level}, spells ${
       build.spell_slots.join(", ") || "nenhuma"
     }.`,
+    `Conferir crafting: ${consumables.crafted_life_potions} Pocao de Vida, ${consumables.po_osso_remaining} Po de Osso restante.`,
     "Registrar gargalo, momento confuso e vontade de continuar.",
   ];
 }
@@ -1129,14 +1381,18 @@ function archetypeForLevel(level: number, profile: Profile): string {
   if (level < 3) return "starter_instrument";
   if (level < 7) return "mental_controller";
   if (level < 15) {
-    return profile.id === "free_50_rewards" ? "elemental_mixer" : "funeral_burst";
+    return profile.id === "free_50_rewards"
+      ? "elemental_mixer"
+      : "funeral_burst";
   }
   if (level < 25) {
     return profile.premium_pass ? "familiar_handler" : "elemental_mixer";
   }
   if (profile.id === "max_spender") return "summoner";
   if (profile.id === "spender_light") return "funeral_burst";
-  return profile.id === "free_50_rewards" ? "defensive_occultist" : "dot_pressure";
+  return profile.id === "free_50_rewards"
+    ? "defensive_occultist"
+    : "dot_pressure";
 }
 
 function botArchetypeFor(
@@ -1148,7 +1404,9 @@ function botArchetypeFor(
     return save.build.archetype_id;
   }
   if (offset > 0) {
-    return archetypes.includes("funeral_burst") ? "funeral_burst" : save.build.archetype_id;
+    return archetypes.includes("funeral_burst")
+      ? "funeral_burst"
+      : save.build.archetype_id;
   }
   return save.build.archetype_id;
 }
@@ -1269,6 +1527,72 @@ function classifyPowerBand(power: number): string {
   return "band_005";
 }
 
+function track16ConsumableModel(
+  model: ProgressionModel,
+): Track16ConsumableModel {
+  return model.track16_consumables ?? {
+    life_potion_recipe_id: "craft_pocao_vida",
+    life_potion_item_id: "pocao_vida",
+    bone_powder_item_id: "po_osso",
+    bone_to_powder_rate: 1,
+    life_potion_cost_po_osso: 50,
+    target_potion_stock_by_milestone: {},
+    equip_potion_from_milestone: "5h",
+    default_potion_behavior: defaultPotionBehavior(),
+    default_spell_behavior: defaultSpellBehavior(),
+  };
+}
+
+function defaultPotionBehavior(): BehaviorConfig {
+  return {
+    enabled: true,
+    hp: { mode: "below", percent: 40 },
+    mana: { mode: "ignore", percent: 0 },
+  };
+}
+
+function defaultSpellBehavior(): BehaviorConfig {
+  return {
+    enabled: true,
+    hp: { mode: "ignore", percent: 0 },
+    mana: { mode: "ignore", percent: 0 },
+  };
+}
+
+function normalizeBehavior(
+  value: BehaviorConfig | undefined,
+  fallback: BehaviorConfig,
+): BehaviorConfig {
+  return {
+    enabled: typeof value?.enabled === "boolean"
+      ? value.enabled
+      : fallback.enabled,
+    hp: normalizeBehaviorCondition(value?.hp, fallback.hp),
+    mana: normalizeBehaviorCondition(value?.mana, fallback.mana),
+  };
+}
+
+function normalizeBehaviorCondition(
+  value: BehaviorCondition | undefined,
+  fallback: BehaviorCondition,
+): BehaviorCondition {
+  const mode = value?.mode === "below" || value?.mode === "above" ||
+      value?.mode === "ignore"
+    ? value.mode
+    : fallback.mode;
+  const percent =
+    typeof value?.percent === "number" && Number.isFinite(value.percent)
+      ? clamp(value.percent, 0, 100)
+      : fallback.percent;
+  return { mode, percent };
+}
+
+function milestoneIndex(milestoneId: string): number {
+  const order = ["2h", "5h", "10h", "15h", "20h"];
+  const index = order.indexOf(milestoneId);
+  return index < 0 ? 0 : index;
+}
+
 function saveRow(save: HealthySave): Record<string, unknown> {
   return {
     id: save.id,
@@ -1285,6 +1609,9 @@ function saveRow(save: HealthySave): Record<string, unknown> {
     cristais: save.resources.cristais,
     ossos: save.resources.ossos,
     diamante: save.resources.diamante,
+    po_osso: save.consumables.po_osso_remaining,
+    pocao_vida: save.consumables.crafted_life_potions,
+    potion_equipped: save.consumables.equipped_potion_id,
     weapon_level: save.build.weapon_level,
     weapon_quality_tier: save.build.weapon_quality_tier,
     spells: save.build.spell_slots.join("|"),
@@ -1292,6 +1619,36 @@ function saveRow(save: HealthySave): Record<string, unknown> {
       avg(save.base.structures.map((item) => item.level)),
       2,
     ),
+  };
+}
+
+function craftingPressureRow(save: HealthySave): Record<string, unknown> {
+  return {
+    id: save.id,
+    profile_id: save.profile_id,
+    milestone_id: save.milestone_id,
+    available_po_osso: save.consumables.available_po_osso,
+    po_osso_spent: save.consumables.po_osso_spent,
+    po_osso_remaining: save.consumables.po_osso_remaining,
+    crafted_life_potions: save.consumables.crafted_life_potions,
+    target_potion_stock: save.consumables.target_potion_stock,
+    ossos_after_crafting: save.resources.ossos,
+  };
+}
+
+function preparationReadinessRow(save: HealthySave): Record<string, unknown> {
+  const spellBehaviorCount = Object.keys(save.consumables.spell_behaviors)
+    .length;
+  return {
+    id: save.id,
+    profile_id: save.profile_id,
+    milestone_id: save.milestone_id,
+    status: save.consumables.preparation_ready ? "PASS" : "REVIEW",
+    potion_equipped: save.consumables.equipped_potion_id,
+    spell_behavior_count: spellBehaviorCount,
+    manual_note: spellBehaviorCount > 0
+      ? "Preparation should show spell behavior defaults."
+      : "No spell slots unlocked yet.",
   };
 }
 
@@ -1316,6 +1673,13 @@ function reportHtml(model: ProgressionModel, data: ProgressionData): string {
     ["Healthy saves", String(data.saves.length)],
     ["Bots", String(data.bot_pool.length)],
     ["Profiles", String(model.profiles.length)],
+    [
+      "Life potions",
+      String(data.saves.reduce(
+        (total, save) => total + save.consumables.crafted_life_potions,
+        0,
+      )),
+    ],
   ];
   const saveRows = data.saves.map((save) =>
     `<tr><td>${save.id}</td><td>${save.status}</td><td>${save.player.level}</td><td>${save.player.power}</td><td>${
@@ -1323,6 +1687,9 @@ function reportHtml(model: ProgressionModel, data: ProgressionData): string {
     }</td></tr>`
   ).join("\n");
   const checkRows = data.reward_checks.map((check) =>
+    `<tr><td>${check.status}</td><td>${check.profile_id}</td><td>${check.milestone_id}</td><td>${check.id}</td><td>${check.observed}</td><td>${check.target}</td></tr>`
+  ).join("\n");
+  const consumableRows = data.consumable_checks.map((check) =>
     `<tr><td>${check.status}</td><td>${check.profile_id}</td><td>${check.milestone_id}</td><td>${check.id}</td><td>${check.observed}</td><td>${check.target}</td></tr>`
   ).join("\n");
   const gapRows = data.premium_gap.map((gap) =>
@@ -1347,13 +1714,17 @@ function reportHtml(model: ProgressionModel, data: ProgressionData): string {
   <h1>DraxosMobile Progression Lab</h1>
   <p>Model ${model.model_id}. Use this report to pick manual Godot saves and tuning hypotheses.</p>
   <div class="cards">${
-    cards.map(([label, value]) => `<div class="card"><strong>${label}</strong><br>${value}</div>`)
+    cards.map(([label, value]) =>
+      `<div class="card"><strong>${label}</strong><br>${value}</div>`
+    )
       .join("")
   }</div>
   <h2>Healthy Saves</h2>
   <table><tr><th>Save</th><th>Status</th><th>Level</th><th>Power</th><th>Notes</th></tr>${saveRows}</table>
   <h2>Reward Checks</h2>
   <table><tr><th>Status</th><th>Profile</th><th>Milestone</th><th>Check</th><th>Observed</th><th>Target</th></tr>${checkRows}</table>
+  <h2>Track 16 Consumables</h2>
+  <table><tr><th>Status</th><th>Profile</th><th>Milestone</th><th>Check</th><th>Observed</th><th>Target</th></tr>${consumableRows}</table>
   <h2>Premium Gap</h2>
   <table><tr><th>Status</th><th>Profile</th><th>Milestone</th><th>Power Gap</th><th>Premium Spend</th></tr>${gapRows}</table>
 </body>

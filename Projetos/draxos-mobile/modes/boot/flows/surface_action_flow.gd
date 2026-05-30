@@ -14,6 +14,35 @@ const PREPARATION_NETWORK_ERROR_CODES := {
 	"INVALID_JSON": true,
 }
 
+func _prepare_mutation(endpoint: String, action_id: String, payload: Dictionary = {}) -> Dictionary:
+	var scope_prefix := endpoint.get_slice("/", 0)
+	if endpoint.begins_with("build/"):
+		scope_prefix = "build"
+	elif endpoint.begins_with("monetization/"):
+		scope_prefix = "monetization"
+	elif endpoint.begins_with("social/"):
+		scope_prefix = "social"
+	elif endpoint.begins_with("crafting/"):
+		scope_prefix = "crafting"
+	return SessionStore.prepare_pending_mutation(
+		endpoint,
+		"%s:%s" % [scope_prefix, SessionStore.active_save_type],
+		action_id,
+		payload
+	)
+
+func _request_id(mutation: Dictionary) -> String:
+	return str(mutation.get("request_id", ""))
+
+func _request_hash(mutation: Dictionary) -> String:
+	return str(mutation.get("request_hash", ""))
+
+func _complete_mutation(mutation: Dictionary, result: Dictionary) -> void:
+	SessionStore.complete_pending_mutation(_request_id(mutation), result)
+
+func _fail_mutation(mutation: Dictionary, result: Dictionary) -> void:
+	SessionStore.fail_pending_mutation(_request_id(mutation), result)
+
 func show_base(host: Node) -> void:
 	var target_screen := str(host.call("_base_surface_target_screen"))
 	if SessionStore.is_progression_lab_local_only():
@@ -56,15 +85,19 @@ func collect_base(host: Node) -> void:
 
 	host.call("_show_screen", str(host.call("_base_surface_target_screen")), false)
 	host.call("_set_busy", true, "Coletando producao offline...")
+	var mutation := _prepare_mutation("base/collect", AppShellActionContractScript.ACTION_COLLECT_BASE)
 	var base_result: Dictionary = await SupabaseClient.collect_base(
-		SessionStoreScript.create_request_id(),
-		SessionStore.access_token
+		_request_id(mutation),
+		SessionStore.access_token,
+		_request_hash(mutation)
 	)
 	if not bool(base_result.get("ok", false)):
+		_fail_mutation(mutation, base_result)
 		host.call("_fail_with_error", base_result)
 		return
 
 	if not SessionStore.apply_base_result(base_result):
+		_fail_mutation(mutation, {"error": SessionStore.last_error})
 		host.call("_fail_with_error", {"error": SessionStore.last_error})
 		return
 
@@ -73,6 +106,7 @@ func collect_base(host: Node) -> void:
 	var message := "Coleta registrada no servidor."
 	if _resource_total(collected) <= 0.0:
 		message = "Nada para coletar agora."
+	_complete_mutation(mutation, base_result)
 	SessionStore.save_cache()
 	host.call("_set_busy", false, message)
 	host.call("_render_base_state", collected)
@@ -83,16 +117,22 @@ func buy_energy_pack_alpha(host: Node) -> void:
 
 	host.call("_show_screen", str(host.call("_base_surface_target_screen")), false)
 	host.call("_set_busy", true, "Comprando pacote de Energia...")
+	var mutation := _prepare_mutation("monetization/alpha-purchase", AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA, {
+		"product_id": AppShellActionContractScript.PRODUCT_ALPHA_ENERGY_PACK,
+	})
 	var monetization_result: Dictionary = await SupabaseClient.alpha_purchase(
-		SessionStoreScript.create_request_id(),
+		_request_id(mutation),
 		AppShellActionContractScript.PRODUCT_ALPHA_ENERGY_PACK,
-		SessionStore.access_token
+		SessionStore.access_token,
+		_request_hash(mutation)
 	)
 	if not bool(monetization_result.get("ok", false)):
+		_fail_mutation(mutation, monetization_result)
 		host.call("_fail_with_error", monetization_result)
 		return
 
 	if not SessionStore.apply_monetization_result(monetization_result):
+		_fail_mutation(mutation, {"error": SessionStore.last_error})
 		host.call("_fail_with_error", {"error": SessionStore.last_error})
 		return
 
@@ -100,6 +140,7 @@ func buy_energy_pack_alpha(host: Node) -> void:
 	if bool(base_result.get("ok", false)):
 		SessionStore.apply_base_result(base_result)
 
+	_complete_mutation(mutation, monetization_result)
 	SessionStore.save_cache()
 	host.call("_set_busy", false, "Energia comprada. O Refugio foi atualizado com o novo saldo.")
 	host.call("_render_base_state")
@@ -114,19 +155,26 @@ func upgrade_base_structure(host: Node, structure_id: String) -> void:
 
 	host.call("_show_screen", str(host.call("_base_surface_target_screen")), false)
 	host.call("_set_busy", true, "Solicitando evolucao de %s..." % str(host.call("_structure_label", target_structure_id)))
+	var mutation := _prepare_mutation("base/upgrade", AppShellActionContractScript.upgrade_base_structure_action(target_structure_id), {
+		"structure_id": target_structure_id,
+	})
 	var base_result: Dictionary = await SupabaseClient.upgrade_base_structure(
-		SessionStoreScript.create_request_id(),
+		_request_id(mutation),
 		target_structure_id,
-		SessionStore.access_token
+		SessionStore.access_token,
+		_request_hash(mutation)
 	)
 	if not bool(base_result.get("ok", false)):
+		_fail_mutation(mutation, base_result)
 		host.call("_fail_with_error", base_result)
 		return
 
 	if not SessionStore.apply_base_result(base_result):
+		_fail_mutation(mutation, {"error": SessionStore.last_error})
 		host.call("_fail_with_error", {"error": SessionStore.last_error})
 		return
 
+	_complete_mutation(mutation, base_result)
 	SessionStore.save_cache()
 	host.call("_set_busy", false, "Evolucao de %s iniciada no servidor." % str(host.call("_structure_label", target_structure_id)))
 	host.call("_render_base_state")
@@ -155,18 +203,25 @@ func crush_bones(host: Node) -> void:
 
 	host.call("_show_screen", str(host.call("_base_surface_target_screen")), false)
 	host.call("_set_busy", true, "Triturando Ossos...")
+	var mutation := _prepare_mutation("crafting/crush-bones", AppShellActionContractScript.ACTION_CRUSH_BONES, {
+		"amount": 1,
+	})
 	var crafting_result: Dictionary = await SupabaseClient.crush_bones(
-		SessionStoreScript.create_request_id(),
+		_request_id(mutation),
 		1,
-		SessionStore.access_token
+		SessionStore.access_token,
+		_request_hash(mutation)
 	)
 	if not bool(crafting_result.get("ok", false)):
+		_fail_mutation(mutation, crafting_result)
 		host.call("_fail_with_error", crafting_result)
 		return
 	if not SessionStore.apply_crafting_result(crafting_result):
+		_fail_mutation(mutation, {"error": SessionStore.last_error})
 		host.call("_fail_with_error", {"error": SessionStore.last_error})
 		return
 
+	_complete_mutation(mutation, crafting_result)
 	SessionStore.save_cache()
 	host.call("_set_busy", false, "1 Osso triturado em 1 Po de Osso.")
 	host.call("_render_base_state")
@@ -177,19 +232,27 @@ func craft_health_potion(host: Node) -> void:
 
 	host.call("_show_screen", str(host.call("_base_surface_target_screen")), false)
 	host.call("_set_busy", true, "Criando Pocao de Vida...")
+	var mutation := _prepare_mutation("crafting/craft", AppShellActionContractScript.ACTION_CRAFT_HEALTH_POTION, {
+		"recipe_id": AppShellActionContractScript.RECIPE_HEALTH_POTION,
+		"quantity": 1,
+	})
 	var crafting_result: Dictionary = await SupabaseClient.craft_item(
-		SessionStoreScript.create_request_id(),
+		_request_id(mutation),
 		AppShellActionContractScript.RECIPE_HEALTH_POTION,
 		1,
-		SessionStore.access_token
+		SessionStore.access_token,
+		_request_hash(mutation)
 	)
 	if not bool(crafting_result.get("ok", false)):
+		_fail_mutation(mutation, crafting_result)
 		host.call("_fail_with_error", crafting_result)
 		return
 	if not SessionStore.apply_crafting_result(crafting_result):
+		_fail_mutation(mutation, {"error": SessionStore.last_error})
 		host.call("_fail_with_error", {"error": SessionStore.last_error})
 		return
 
+	_complete_mutation(mutation, crafting_result)
 	SessionStore.save_cache()
 	host.call("_set_busy", false, "Pocao de Vida criada.")
 	host.call("_render_base_state")
@@ -314,18 +377,25 @@ func add_friend(host: Node) -> void:
 
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_SOCIAL, false)
 	host.call("_set_busy", true, "Adicionando amigo...")
+	var mutation := _prepare_mutation("social/friends/add", AppShellActionContractScript.ACTION_ADD_FRIEND, {
+		"username": username,
+	})
 	var social_result: Dictionary = await SupabaseClient.add_friend(
-		SessionStoreScript.create_request_id(),
+		_request_id(mutation),
 		username,
-		SessionStore.access_token
+		SessionStore.access_token,
+		_request_hash(mutation)
 	)
 	if not bool(social_result.get("ok", false)):
+		_fail_mutation(mutation, social_result)
 		host.call("_fail_with_error", social_result)
 		return
 	if not SessionStore.apply_social_result(social_result):
+		_fail_mutation(mutation, {"error": SessionStore.last_error})
 		host.call("_fail_with_error", {"error": SessionStore.last_error})
 		return
 
+	_complete_mutation(mutation, social_result)
 	SessionStore.save_cache()
 	host.call("_set_busy", false, "Amigo adicionado.")
 	host.call("_render_social_state")
@@ -339,18 +409,25 @@ func create_guild(host: Node) -> void:
 	host.set("_last_social_guild_name", guild_name)
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_SOCIAL, false)
 	host.call("_set_busy", true, "Criando guilda...")
+	var mutation := _prepare_mutation("social/guild/create", AppShellActionContractScript.ACTION_CREATE_GUILD, {
+		"name": guild_name,
+	})
 	var social_result: Dictionary = await SupabaseClient.create_guild(
-		SessionStoreScript.create_request_id(),
+		_request_id(mutation),
 		guild_name,
-		SessionStore.access_token
+		SessionStore.access_token,
+		_request_hash(mutation)
 	)
 	if not bool(social_result.get("ok", false)):
+		_fail_mutation(mutation, social_result)
 		host.call("_fail_with_error", social_result)
 		return
 	if not SessionStore.apply_social_result(social_result):
+		_fail_mutation(mutation, {"error": SessionStore.last_error})
 		host.call("_fail_with_error", {"error": SessionStore.last_error})
 		return
 
+	_complete_mutation(mutation, social_result)
 	SessionStore.save_cache()
 	host.call("_set_busy", false, "Guilda criada no servidor.")
 	host.call("_render_social_state")
@@ -368,18 +445,25 @@ func join_guild(host: Node) -> void:
 
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_SOCIAL, false)
 	host.call("_set_busy", true, "Entrando na guilda...")
+	var mutation := _prepare_mutation("social/guild/join", AppShellActionContractScript.ACTION_JOIN_GUILD, {
+		"name": guild_name,
+	})
 	var social_result: Dictionary = await SupabaseClient.join_guild(
-		SessionStoreScript.create_request_id(),
+		_request_id(mutation),
 		guild_name,
-		SessionStore.access_token
+		SessionStore.access_token,
+		_request_hash(mutation)
 	)
 	if not bool(social_result.get("ok", false)):
+		_fail_mutation(mutation, social_result)
 		host.call("_fail_with_error", social_result)
 		return
 	if not SessionStore.apply_social_result(social_result):
+		_fail_mutation(mutation, {"error": SessionStore.last_error})
 		host.call("_fail_with_error", {"error": SessionStore.last_error})
 		return
 
+	_complete_mutation(mutation, social_result)
 	SessionStore.save_cache()
 	host.call("_set_busy", false, "Guilda sincronizada.")
 	host.call("_render_social_state")
@@ -397,18 +481,25 @@ func send_guild_chat(host: Node) -> void:
 
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_SOCIAL, false)
 	host.call("_set_busy", true, "Enviando mensagem de guilda...")
+	var mutation := _prepare_mutation("social/chat/send", AppShellActionContractScript.ACTION_SEND_GUILD_CHAT, {
+		"content": message,
+	})
 	var social_result: Dictionary = await SupabaseClient.send_guild_chat(
-		SessionStoreScript.create_request_id(),
+		_request_id(mutation),
 		message,
-		SessionStore.access_token
+		SessionStore.access_token,
+		_request_hash(mutation)
 	)
 	if not bool(social_result.get("ok", false)):
+		_fail_mutation(mutation, social_result)
 		host.call("_fail_with_error", social_result)
 		return
 	if not SessionStore.apply_social_result(social_result):
+		_fail_mutation(mutation, {"error": SessionStore.last_error})
 		host.call("_fail_with_error", {"error": SessionStore.last_error})
 		return
 
+	_complete_mutation(mutation, social_result)
 	SessionStore.save_cache()
 	host.call("_set_busy", false, "Mensagem registrada no servidor.")
 	host.call("_render_social_state")
@@ -495,15 +586,21 @@ func buy_shop_product(host: Node, product_id: String) -> void:
 
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_SHOP, false)
 	host.call("_set_busy", true, "Processando produto...")
+	var mutation := _prepare_mutation("monetization/alpha-purchase", AppShellActionContractScript.shop_purchase_action(product_id), {
+		"product_id": product_id,
+	})
 	var monetization_result: Dictionary = await SupabaseClient.alpha_purchase(
-		SessionStoreScript.create_request_id(),
+		_request_id(mutation),
 		product_id,
-		SessionStore.access_token
+		SessionStore.access_token,
+		_request_hash(mutation)
 	)
 	if not bool(monetization_result.get("ok", false)):
+		_fail_mutation(mutation, monetization_result)
 		host.call("_fail_with_error", monetization_result)
 		return
 	if not SessionStore.apply_monetization_result(monetization_result):
+		_fail_mutation(mutation, {"error": SessionStore.last_error})
 		host.call("_fail_with_error", {"error": SessionStore.last_error})
 		return
 
@@ -512,6 +609,7 @@ func buy_shop_product(host: Node, product_id: String) -> void:
 		if bool(base_result.get("ok", false)):
 			SessionStore.apply_base_result(base_result)
 
+	_complete_mutation(mutation, monetization_result)
 	SessionStore.save_cache()
 	host.call("_set_busy", false, str(host.call("_shop_purchase_message", product_id, _as_dictionary(monetization_result.get("body", {})))))
 	host.call("_render_monetization_state")
@@ -522,15 +620,21 @@ func claim_shop_reward(host: Node, reward_id: String) -> void:
 
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_SHOP, false)
 	host.call("_set_busy", true, "Resgatando recompensa...")
+	var mutation := _prepare_mutation("monetization/rewards/claim", AppShellActionContractScript.claim_reward_action(reward_id), {
+		"reward_id": reward_id,
+	})
 	var monetization_result: Dictionary = await SupabaseClient.claim_reward(
-		SessionStoreScript.create_request_id(),
+		_request_id(mutation),
 		reward_id,
-		SessionStore.access_token
+		SessionStore.access_token,
+		_request_hash(mutation)
 	)
 	if not bool(monetization_result.get("ok", false)):
+		_fail_mutation(mutation, monetization_result)
 		host.call("_fail_with_error", monetization_result)
 		return
 	if not SessionStore.apply_monetization_result(monetization_result):
+		_fail_mutation(mutation, {"error": SessionStore.last_error})
 		host.call("_fail_with_error", {"error": SessionStore.last_error})
 		return
 
@@ -538,6 +642,7 @@ func claim_shop_reward(host: Node, reward_id: String) -> void:
 	var message := "Recompensa registrada no servidor."
 	if bool(body.get("already_claimed", false)):
 		message = "Recompensa ja havia sido resgatada neste periodo."
+	_complete_mutation(mutation, monetization_result)
 	SessionStore.save_cache()
 	host.call("_set_busy", false, message)
 	host.call("_render_monetization_state")
@@ -570,18 +675,23 @@ func _update_build_equip(host: Node, payload: Dictionary, message: String) -> vo
 		return
 
 	host.call("_set_busy", true, "Salvando preparacao...")
+	var mutation := _prepare_mutation("build/equip", str(host.get("_active_action_id")), payload)
 	var build_result: Dictionary = await SupabaseClient.equip_build(
-		SessionStoreScript.create_request_id(),
+		_request_id(mutation),
 		payload,
-		SessionStore.access_token
+		SessionStore.access_token,
+		_request_hash(mutation)
 	)
 	if not bool(build_result.get("ok", false)):
+		_fail_mutation(mutation, build_result)
 		_fail_preparation_action(host, build_result, "Nao foi possivel salvar a preparacao.")
 		return
 	if not SessionStore.apply_build_result(build_result):
+		_fail_mutation(mutation, {"error": SessionStore.last_error})
 		_fail_preparation_action(host, {"error": SessionStore.last_error}, "Nao foi possivel salvar a preparacao.")
 		return
 
+	_complete_mutation(mutation, build_result)
 	SessionStore.save_cache()
 	host.set_meta("preparation_feedback_message", message)
 	host.call("_set_busy", false, message)
@@ -592,18 +702,26 @@ func _update_potion_equip(host: Node, item_id: Variant, message: String) -> void
 		return
 
 	host.call("_set_busy", true, "Ajustando Pocao de Vida...")
+	var mutation := _prepare_mutation("build/potion/equip", str(host.get("_active_action_id")), {
+		"slot_index": 1,
+		"item_id": item_id,
+	})
 	var build_result: Dictionary = await SupabaseClient.equip_potion(
-		SessionStoreScript.create_request_id(),
+		_request_id(mutation),
 		item_id,
-		SessionStore.access_token
+		SessionStore.access_token,
+		_request_hash(mutation)
 	)
 	if not bool(build_result.get("ok", false)):
+		_fail_mutation(mutation, build_result)
 		_fail_preparation_action(host, build_result, "Nao foi possivel ajustar a pocao.")
 		return
 	if not SessionStore.apply_build_result(build_result):
+		_fail_mutation(mutation, {"error": SessionStore.last_error})
 		_fail_preparation_action(host, {"error": SessionStore.last_error}, "Nao foi possivel ajustar a pocao.")
 		return
 
+	_complete_mutation(mutation, build_result)
 	SessionStore.save_cache()
 	host.set_meta("preparation_feedback_message", message)
 	host.call("_set_busy", false, message)
@@ -614,18 +732,26 @@ func _update_potion_behavior(host: Node, behavior: Dictionary, message: String) 
 		return
 
 	host.call("_set_busy", true, "Ajustando uso da Pocao de Vida...")
+	var mutation := _prepare_mutation("build/potion-behavior", str(host.get("_active_action_id")), {
+		"slot_index": 1,
+		"behavior": behavior,
+	})
 	var build_result: Dictionary = await SupabaseClient.update_potion_behavior(
-		SessionStoreScript.create_request_id(),
+		_request_id(mutation),
 		behavior,
-		SessionStore.access_token
+		SessionStore.access_token,
+		_request_hash(mutation)
 	)
 	if not bool(build_result.get("ok", false)):
+		_fail_mutation(mutation, build_result)
 		_fail_preparation_action(host, build_result, "Nao foi possivel ajustar a pocao.")
 		return
 	if not SessionStore.apply_build_result(build_result):
+		_fail_mutation(mutation, {"error": SessionStore.last_error})
 		_fail_preparation_action(host, {"error": SessionStore.last_error}, "Nao foi possivel ajustar a pocao.")
 		return
 
+	_complete_mutation(mutation, build_result)
 	SessionStore.save_cache()
 	host.set_meta("preparation_feedback_message", message)
 	host.call("_set_busy", false, message)
@@ -639,19 +765,27 @@ func _update_spell_behavior(host: Node, spell_id: String, behavior: Dictionary, 
 		return
 
 	host.call("_set_busy", true, "Ajustando magia...")
+	var mutation := _prepare_mutation("build/spell-behavior", str(host.get("_active_action_id")), {
+		"spell_id": spell_id.strip_edges(),
+		"behavior": behavior,
+	})
 	var build_result: Dictionary = await SupabaseClient.update_spell_behavior(
-		SessionStoreScript.create_request_id(),
+		_request_id(mutation),
 		spell_id.strip_edges(),
 		behavior,
-		SessionStore.access_token
+		SessionStore.access_token,
+		_request_hash(mutation)
 	)
 	if not bool(build_result.get("ok", false)):
+		_fail_mutation(mutation, build_result)
 		_fail_preparation_action(host, build_result, "Nao foi possivel ajustar a magia.")
 		return
 	if not SessionStore.apply_build_result(build_result):
+		_fail_mutation(mutation, {"error": SessionStore.last_error})
 		_fail_preparation_action(host, {"error": SessionStore.last_error}, "Nao foi possivel ajustar a magia.")
 		return
 
+	_complete_mutation(mutation, build_result)
 	SessionStore.save_cache()
 	host.set_meta("preparation_feedback_message", message)
 	host.call("_set_busy", false, message)

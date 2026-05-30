@@ -19,6 +19,8 @@ Sem Supabase local:
 npx -y deno test --allow-read server/tests/foundation_contracts_test.ts
 npx -y deno test --allow-read server/tests/lab_heuristics_contract_test.ts
 npx -y deno test --allow-read server/tests/foundation_expansion_schema_test.ts
+npx -y deno test --allow-read server/tests/foundation_closeout_schema_test.ts
+npx -y deno test --allow-read server/tests/api_version_contract_test.ts
 npx -y deno test --allow-read server/tests/transactional_domain_enforcement_schema_test.ts
 npx -y deno test --allow-read server/tests/remaining_transactional_domain_enforcement_schema_test.ts
 npx -y deno test --allow-read server/tests/battle_combatants_test.ts
@@ -47,6 +49,15 @@ importar geradores ou telas dev.
 O teste `foundation_expansion_schema_test.ts` valida a migration espelhada de
 Foundation Expansion Readiness: account/save, ruleset registry, admin audit,
 idempotencia v1, metadata de ruleset e RPCs scaffold.
+
+O teste `foundation_closeout_schema_test.ts` valida a migration corretiva de
+Foundation Closeout: `publication_id` imutavel no registry, hashes persistidos
+em saves/historicos, admin interno `service_role`-only e as mutacoes restantes
+de build behavior/potion e social friend/chat promovidas para RPCs v1.
+
+O teste `api_version_contract_test.ts` valida o header oficial
+`x-draxos-api-version: 1`, CORS e rejeicao de valor explicito diferente de `1`
+nos endpoints versionados.
 
 O teste `transactional_domain_enforcement_schema_test.ts` valida a promotion de
 Base para RPCs transacionais v1: migration espelhada, `collect_base_v1`,
@@ -197,7 +208,9 @@ crafting, reward claim, alpha purchase e guild create/join. Ele usa
 O smoke `transactional_edge_rpc_smoke.ts` valida o caminho HTTP local das Edge
 Functions sobre os adapters RPC v1. Ele exige `supabase functions serve` ativo,
 chama `base`, `battle`, `build`, `crafting`, `monetization` e `social` via
-`/functions/v1`, e confirma no Postgres local que cada mutation criou
+`/functions/v1`, cobre `build/spell-behavior`, `build/potion/equip`,
+`build/potion-behavior`, `social/friends/add`, `social/chat/send`, verifica
+`UNSUPPORTED_API_VERSION` e confirma no Postgres local que cada mutation criou
 `idempotency_keys` `completed` com `request_hash` calculado pelo adapter.
 
 O smoke `release_artifacts_remote_smoke.ts` valida somente leitura contra o

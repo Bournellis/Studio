@@ -14,6 +14,7 @@ const ROUTE_BATTLE_ENTRY := "battle_entry"
 const ROUTE_BATTLE_RUNNING := "battle_running"
 const ROUTE_BATTLE_SUMMARY := "battle_summary"
 const ROUTE_BATTLE_LOGS := "battle_logs"
+const ROUTE_MINIGAME_SHELL := "minigame_shell"
 
 const ACTION_REQUEST_BATTLE := "request_battle"
 const ACTION_SHOW_BATTLE_HISTORY := "show_battle_history"
@@ -53,6 +54,7 @@ const _TITLES := {
 	ROUTE_BATTLE_RUNNING: "Batalha",
 	ROUTE_BATTLE_SUMMARY: "Resumo",
 	ROUTE_BATTLE_LOGS: "Logs",
+	ROUTE_MINIGAME_SHELL: "Minigame",
 }
 
 const _BATTLE_MODE_ROUTES := {

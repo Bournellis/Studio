@@ -5,7 +5,7 @@ export const FOUNDATION_RULESET = {
   "ruleset_version": 1,
   "lifecycle": "FOUNDATION_AUDIT_ACTIVE",
   "content_hash":
-    "5b7121a37a78e966c06098cc70283dabc5dbbcc1d3f9a21d279b855d09aee1e7",
+    "5f7e7fe5d1a1e8570e531bc3ce977188a74470df6d75da66b2b4c54219a68b97",
   "simulator_hash":
     "e835cadde3c937cba45c46785da3761139373ab23ac9dfaaed814d79f933bbe9",
   "runtime": {
@@ -96,8 +96,8 @@ export const FOUNDATION_RULESET = {
       "path": "tools/battle_lab/model.v1.json",
       "kind": "tool_model",
       "sha256":
-        "ead2e35d0857996f28ba60c3d4b39ef92b5734023fbba4edee2bd484240a2feb",
-      "canonical_bytes": 5154,
+        "3755eb0b1059391b760e60f3707cf545ff11e82a3e6cdeaf76256ff60f7ccd86",
+      "canonical_bytes": 6245,
     },
     {
       "path": "tools/economy_simulator/economy_model.v1.json",
@@ -110,8 +110,8 @@ export const FOUNDATION_RULESET = {
       "path": "tools/progression_lab/model.v1.json",
       "kind": "tool_model",
       "sha256":
-        "305ae797be22327e46ff651049ff3698e199acabbe02805639ee4f50468a6075",
-      "canonical_bytes": 3873,
+        "9e7e7311d7b746affac86fc58b28182842dc58d3c253723f5e54296adbf75259",
+      "canonical_bytes": 4400,
     },
     {
       "path": "server/functions/_shared/battle_combatants.ts",

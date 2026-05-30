@@ -4,6 +4,9 @@ Registro operacional dos problemas corrigidos nos labs do Godot em 2026-05-26.
 
 ## Regras Do Runner Godot
 
+- Internal Alpha pode empacotar overlays `dev/**` quando eles estiverem atras de
+  gate interno e cobertos por smoke. Isso nao transforma Battle Lab/Progression
+  Lab em feature publica nem libera rewards/ranking/economia de laboratorio.
 - As telas dev-only chamam Deno por `OS.execute`; no Windows, `npx` deve ser resolvido para `npx.cmd` e executado via `cmd.exe /C`.
 - Nunca acumular argumentos dinamicos (`generate.ts`, `--request`, `--response`, `--profile`, `--milestone`) dentro de `ProjectSettings`; a tela deve montar esses argumentos a cada chamada.
 - `tools/smoke_dev_labs.gd` valida o caminho real do processo dentro do Godot: Battle Lab bridge e Progression Lab generate.
@@ -15,6 +18,9 @@ Registro operacional dos problemas corrigidos nos labs do Godot em 2026-05-26.
 - A barra de velocidade do replay deve mostrar a porcentagem do tempo normal selecionada (`100%`, `250%`, etc.) para deixar claro o ritmo do autoplay.
 - O autoplay do Battle Lab deve avancar pelo campo `t` dos eventos de `battle_log_v1`; os cooldowns usam esse relogio continuo para atualizar numero, aro e tooltip entre eventos.
 - Antes de chamar o bridge, limpar o response JSON para evitar leitura de resposta antiga quando algum processo falhar silenciosamente.
+- Builds custom do Battle Lab podem montar `potionSlot` com `pocao_vida` e
+  `spellBehaviors` simples para provar Track 16 no replay. Isso continua
+  lab-only e nao publica tuning.
 - `tools/smoke_dev_lab_ui.gd` cobre o comportamento visual: Builds visivel, replay custom abrindo a aba Replay, History registrando a entrada custom e label de porcentagem na velocidade do replay.
 
 ## Progression Lab
@@ -25,6 +31,9 @@ Registro operacional dos problemas corrigidos nos labs do Godot em 2026-05-26.
 - Cache local-only nao deve gerar token de acesso valido. A shell pode abrir a base como snapshot, mas batalha, coleta, upgrade, social e loja devem ser bloqueados com mensagem objetiva em vez de tentar HTTP.
 - Acoes online ainda dependem de uma sessao real seeded no Supabase local pelo seeder.
 - `Carregar Save` deve ser tolerante: se nao houver cache em `.progression_lab_scratch/`, ele gera um cache local-only a partir do healthy save selecionado.
+- O cache local-only e o apply server-backed devem preservar `consumables`,
+  `potion_slots`, inventario e `spell_behaviors` do healthy save para que a
+  Preparacao exercite Track 16.
 
 ## UI
 

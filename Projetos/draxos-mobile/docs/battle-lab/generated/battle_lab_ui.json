@@ -2,40 +2,46 @@
   "schema_version": "battle_lab_ui_v1",
   "generated_at": "deterministic-local",
   "model_id": "draxos_mobile_battle_lab_v4_source_identity",
-  "overall_status": "PASS",
+  "overall_status": "REVIEW",
   "summary": {
-    "total_battles": 3132,
-    "total_builds": 212,
-    "avg_duration": 24.08,
+    "total_battles": 4644,
+    "total_builds": 244,
+    "avg_duration": 24.03,
     "median_duration": 22.7,
     "short_rate_percent": 0,
-    "long_rate_percent": 15.07,
-    "anti_stall_rate_percent": 4.95,
-    "raw_stress_dominance_max_percent": 67.33,
-    "near_power_dominance_max_percent": 63.46,
+    "long_rate_percent": 16.86,
+    "anti_stall_rate_percent": 6.4,
+    "potion_enabled_matchups": 1492,
+    "potion_use_rate_percent": 76.61,
+    "avg_healing_per_potion_matchup": 225.14,
+    "behavior_matchups": 1238,
+    "disabled_behavior_matchups": 644,
+    "raw_stress_dominance_max_percent": 61.36,
+    "near_power_dominance_max_percent": 63.34,
     "damage_by_source": {
-      "weapon": 2944909,
-      "spell": 1392978,
-      "dot": 518901,
-      "pet": 566260,
-      "summon": 148604,
+      "weapon": 4592316,
+      "spell": 2168105,
+      "dot": 860745,
+      "pet": 1045029,
+      "summon": 334828,
       "system": 0
     },
     "damage_by_type": {
-      "arcano": 1208488,
-      "fisico": 341772,
-      "fogo": 947560,
-      "agua": 42256,
-      "gelo": 127830,
-      "terra": 355671,
-      "vento": 59187,
-      "raio": 843538,
-      "veneno": 129260,
-      "morte": 1398824,
-      "sangue": 117266,
+      "arcano": 1688738,
+      "fisico": 677961,
+      "fogo": 1461369,
+      "agua": 67296,
+      "gelo": 221455,
+      "terra": 827811,
+      "vento": 80023,
+      "raio": 1187718,
+      "veneno": 305681,
+      "morte": 2280616,
+      "sangue": 202355,
       "none": 0
     },
     "top_notes": [
+      "REVIEW: anti_stall_rate observed 6.4%, target <= 5%.",
       "Review first matchup: LONG L1_M0001 (L1_starter_instrument_fixed vs L1_starter_instrument_r1)."
     ]
   },
@@ -43,7 +49,7 @@
     {
       "id": "average_duration_target",
       "status": "PASS",
-      "observed": "24.08s",
+      "observed": "24.03s",
       "target": "18-28s",
       "note": "Average battle duration should sit near the target playtest window."
     },
@@ -57,21 +63,21 @@
     {
       "id": "long_battle_rate",
       "status": "PASS",
-      "observed": "15.07%",
+      "observed": "16.86%",
       "target": "<= 20%",
       "note": "Too many long battles suggest defensive scaling or low damage pressure."
     },
     {
       "id": "anti_stall_rate",
-      "status": "PASS",
-      "observed": "4.95%",
+      "status": "REVIEW",
+      "observed": "6.4%",
       "target": "<= 5%",
       "note": "Anti-stall should be rare in normal same-level matchups."
     },
     {
       "id": "near_power_dominance",
       "status": "PASS",
-      "observed": "63.46% max / 31.97% min",
+      "observed": "63.34% max / 27.05% min",
       "target": "max <= 65%",
       "note": "Dominance uses <= 20% power delta and excludes same-archetype mirrors."
     },
@@ -83,51 +89,72 @@
       "note": "Every configured level checkpoint should produce matchups."
     },
     {
+      "id": "track16_potion_build_coverage",
+      "status": "PASS",
+      "observed": "1492 potion-enabled matchups",
+      "target": ">= 1 when Track 16 potion scenarios exist",
+      "note": "Battle Lab must exercise Pocao de Vida slots before autobattler tuning."
+    },
+    {
+      "id": "track16_potion_event_coverage",
+      "status": "PASS",
+      "observed": "1143 matchups with consumable_use",
+      "target": ">= 1 consumable_use event when potion is enabled",
+      "note": "Potion scenarios should produce at least one battle_log_v1 consumable_use/heal sample."
+    },
+    {
+      "id": "track16_spell_behavior_coverage",
+      "status": "PASS",
+      "observed": "1238 behavior matchups, 644 disabled-behavior matchups",
+      "target": ">= 1 spell behavior matchup and >= 1 disabled behavior matchup",
+      "note": "Battle Lab must exercise simple spell behavior before behavior-driven tuning."
+    },
+    {
       "id": "source_identity_weapon_cap",
       "status": "PASS",
-      "observed": "53.86% max (defensive_occultist)",
+      "observed": "54.38% max (defensive_occultist)",
       "target": "<= 75% from level 7+ outside starter",
       "note": "Non-starter archetypes should not read as ritual-instrument-only combat once spells enter the kit."
     },
     {
       "id": "source_identity_mental",
       "status": "PASS",
-      "observed": "42.54% (spell+pet)",
+      "observed": "42.34% (spell+pet)",
       "target": ">= 22%",
       "note": "Mental Controller should visibly pressure through spells and occult familiars, not only weapon cadence."
     },
     {
       "id": "source_identity_elemental",
       "status": "PASS",
-      "observed": "54.58% (spell+dot+pet)",
+      "observed": "54.15% (spell+dot+pet)",
       "target": ">= 28%",
       "note": "Elemental Mixer should show elemental spell, dot or familiar pressure in the damage mix."
     },
     {
       "id": "source_identity_familiar",
       "status": "PASS",
-      "observed": "17.3% (pet)",
+      "observed": "17.43% (pet)",
       "target": ">= 10%",
       "note": "Familiar Handler should have a measurable familiar contribution after pets unlock."
     },
     {
       "id": "source_identity_summoner",
       "status": "PASS",
-      "observed": "32.43% (summon)",
+      "observed": "38.48% (summon)",
       "target": ">= 10%",
       "note": "Summoner should produce real summon damage after superior physical rites unlock."
     },
     {
       "id": "source_identity_dot",
       "status": "PASS",
-      "observed": "21.99% (dot)",
+      "observed": "27.69% (dot)",
       "target": ">= 12%",
       "note": "Dot Pressure should be readable through bleed, poison, burn or death ticks."
     },
     {
       "id": "source_identity_funeral",
       "status": "PASS",
-      "observed": "44.08% (spell+dot+summon)",
+      "observed": "46.89% (spell+dot+summon)",
       "target": ">= 30%",
       "note": "Funeral Burst should lean on death/fire rites once advanced physical magic unlocks."
     }
@@ -3459,6 +3486,30 @@
         "spellLevels": {
           "descarga_nervosa": 2,
           "marca_brasa": 3
+        },
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
         }
       }
     },
@@ -3486,7 +3537,47 @@
           "marca_brasa": 7
         },
         "passiveId": "pulso_tempestade",
-        "passiveLevel": 3
+        "passiveLevel": 3,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 2,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       }
     },
     {
@@ -3513,7 +3604,47 @@
           "marca_brasa": 8
         },
         "passiveId": "pulso_tempestade",
-        "passiveLevel": 6
+        "passiveLevel": 6,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 3,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       }
     },
     {
@@ -3540,7 +3671,47 @@
           "marca_brasa": 9
         },
         "passiveId": "pulso_tempestade",
-        "passiveLevel": 7
+        "passiveLevel": 7,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 4,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       }
     },
     {
@@ -3569,7 +3740,47 @@
         "passiveId": "pulso_tempestade",
         "passiveLevel": 8,
         "petId": "serpe_tempestade",
-        "petLevel": 9
+        "petLevel": 9,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 5,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       }
     },
     {
@@ -3594,6 +3805,30 @@
         "spellLevels": {
           "descarga_nervosa": 3,
           "marca_brasa": 3
+        },
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
         }
       }
     },
@@ -3621,7 +3856,47 @@
           "marca_brasa": 9
         },
         "passiveId": "ossuario_interior",
-        "passiveLevel": 4
+        "passiveLevel": 4,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 2,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       }
     },
     {
@@ -3648,7 +3923,47 @@
           "marca_brasa": 11
         },
         "passiveId": "ossuario_interior",
-        "passiveLevel": 8
+        "passiveLevel": 8,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 3,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       }
     },
     {
@@ -3677,7 +3992,47 @@
         "passiveId": "pulso_tempestade",
         "passiveLevel": 10,
         "petId": "serpe_tempestade",
-        "petLevel": 12
+        "petLevel": 12,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 4,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       }
     },
     {
@@ -3706,7 +4061,47 @@
         "passiveId": "pulso_tempestade",
         "passiveLevel": 11,
         "petId": "serpe_tempestade",
-        "petLevel": 12
+        "petLevel": 12,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 5,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       }
     },
     {
@@ -3731,6 +4126,30 @@
         "spellLevels": {
           "descarga_nervosa": 3,
           "marca_brasa": 3
+        },
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
         }
       }
     },
@@ -3758,7 +4177,47 @@
           "marca_brasa": 9
         },
         "passiveId": "ossuario_interior",
-        "passiveLevel": 5
+        "passiveLevel": 5,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 2,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       }
     },
     {
@@ -3785,7 +4244,47 @@
           "marca_brasa": 12
         },
         "passiveId": "ossuario_interior",
-        "passiveLevel": 9
+        "passiveLevel": 9,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 3,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       }
     },
     {
@@ -3814,7 +4313,47 @@
         "passiveId": "pacto_familiar",
         "passiveLevel": 11,
         "petId": "corvo_pressagio",
-        "petLevel": 12
+        "petLevel": 12,
+        "spellBehaviors": {
+          "sussurro_medo": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 4,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       }
     },
     {
@@ -3843,7 +4382,47 @@
         "passiveId": "pacto_familiar",
         "passiveLevel": 12,
         "petId": "corvo_pressagio",
-        "petLevel": 13
+        "petLevel": 13,
+        "spellBehaviors": {
+          "sussurro_medo": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 5,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       }
     },
     {
@@ -3868,6 +4447,30 @@
         "spellLevels": {
           "descarga_nervosa": 3,
           "marca_brasa": 4
+        },
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
         }
       }
     },
@@ -3895,7 +4498,47 @@
           "marca_brasa": 10
         },
         "passiveId": "ossuario_interior",
-        "passiveLevel": 7
+        "passiveLevel": 7,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 2,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       }
     },
     {
@@ -3924,7 +4567,47 @@
         "passiveId": "pacto_familiar",
         "passiveLevel": 10,
         "petId": "corvo_pressagio",
-        "petLevel": 13
+        "petLevel": 13,
+        "spellBehaviors": {
+          "sussurro_medo": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 3,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       }
     },
     {
@@ -3953,7 +4636,47 @@
         "passiveId": "pacto_familiar",
         "passiveLevel": 12,
         "petId": "corvo_pressagio",
-        "petLevel": 13
+        "petLevel": 13,
+        "spellBehaviors": {
+          "sussurro_medo": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 4,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       }
     },
     {
@@ -3982,7 +4705,47 @@
         "passiveId": "pacto_familiar",
         "passiveLevel": 14,
         "petId": "corvo_pressagio",
-        "petLevel": 15
+        "petLevel": 15,
+        "spellBehaviors": {
+          "sussurro_medo": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 5,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       }
     },
     {
@@ -4007,6 +4770,30 @@
         "spellLevels": {
           "descarga_nervosa": 4,
           "marca_brasa": 5
+        },
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
         }
       }
     },
@@ -4034,7 +4821,47 @@
           "marca_brasa": 11
         },
         "passiveId": "ossuario_interior",
-        "passiveLevel": 8
+        "passiveLevel": 8,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 2,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       }
     },
     {
@@ -4063,7 +4890,47 @@
         "passiveId": "pacto_familiar",
         "passiveLevel": 11,
         "petId": "corvo_pressagio",
-        "petLevel": 14
+        "petLevel": 14,
+        "spellBehaviors": {
+          "sussurro_medo": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 3,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       }
     },
     {
@@ -4092,7 +4959,47 @@
         "passiveId": "pacto_familiar",
         "passiveLevel": 14,
         "petId": "corvo_pressagio",
-        "petLevel": 16
+        "petLevel": 16,
+        "spellBehaviors": {
+          "sussurro_medo": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 4,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       }
     },
     {
@@ -4121,7 +5028,47 @@
         "passiveId": "pacto_familiar",
         "passiveLevel": 15,
         "petId": "corvo_pressagio",
-        "petLevel": 18
+        "petLevel": 18,
+        "spellBehaviors": {
+          "sussurro_medo": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 5,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       }
     },
     {
@@ -6184,6 +7131,1396 @@
         "petId": "cranio_errante",
         "petLevel": 19
       }
+    },
+    {
+      "id": "T16_potion_default_L7_summoner_fixed",
+      "kind": "track16",
+      "archetype_id": "summoner",
+      "archetype_name": "Summoner (Pocao default hp<40)",
+      "level": 7,
+      "power": 746,
+      "power_band": "band_003",
+      "build": {
+        "id": "T16_potion_default_L7_summoner_fixed",
+        "displayName": "Summoner L7 [Pocao default hp<40]",
+        "level": 7,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 4,
+        "weaponQualityTier": 2,
+        "spellIds": [
+          "sussurro_medo"
+        ],
+        "spellLevels": {
+          "sussurro_medo": 7
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 1,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_potion_default_L7_defensive_occultist_fixed",
+      "kind": "track16",
+      "archetype_id": "defensive_occultist",
+      "archetype_name": "Defensive Occultist (Pocao default hp<40)",
+      "level": 7,
+      "power": 676,
+      "power_band": "band_003",
+      "build": {
+        "id": "T16_potion_default_L7_defensive_occultist_fixed",
+        "displayName": "Defensive Occultist L7 [Pocao default hp<40]",
+        "level": 7,
+        "weaponId": "idolo_pedra_viva",
+        "weaponLevel": 4,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "geada_ossos"
+        ],
+        "spellLevels": {
+          "geada_ossos": 6
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 1,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_potion_default_L7_dot_pressure_fixed",
+      "kind": "track16",
+      "archetype_id": "dot_pressure",
+      "archetype_name": "DoT Pressure (Pocao default hp<40)",
+      "level": 7,
+      "power": 916,
+      "power_band": "band_003",
+      "build": {
+        "id": "T16_potion_default_L7_dot_pressure_fixed",
+        "displayName": "DoT Pressure L7 [Pocao default hp<40]",
+        "level": 7,
+        "weaponId": "athame_hematico",
+        "weaponLevel": 4,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "toxina_palida",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "toxina_palida": 6,
+          "marca_brasa": 6
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 1,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_potion_default_L7_funeral_burst_fixed",
+      "kind": "track16",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst (Pocao default hp<40)",
+      "level": 7,
+      "power": 996,
+      "power_band": "band_003",
+      "build": {
+        "id": "T16_potion_default_L7_funeral_burst_fixed",
+        "displayName": "Funeral Burst L7 [Pocao default hp<40]",
+        "level": 7,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 4,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 7,
+          "marca_brasa": 7
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 1,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_potion_default_L15_summoner_fixed",
+      "kind": "track16",
+      "archetype_id": "summoner",
+      "archetype_name": "Summoner (Pocao default hp<40)",
+      "level": 15,
+      "power": 2228,
+      "power_band": "band_005",
+      "build": {
+        "id": "T16_potion_default_L15_summoner_fixed",
+        "displayName": "Summoner L15 [Pocao default hp<40]",
+        "level": 15,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 8,
+        "weaponQualityTier": 3,
+        "spellIds": [
+          "sussurro_medo"
+        ],
+        "spellLevels": {
+          "sussurro_medo": 15
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 11,
+        "petId": "cranio_errante",
+        "petLevel": 13,
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 1,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_potion_default_L15_defensive_occultist_fixed",
+      "kind": "track16",
+      "archetype_id": "defensive_occultist",
+      "archetype_name": "Defensive Occultist (Pocao default hp<40)",
+      "level": 15,
+      "power": 2784,
+      "power_band": "band_005",
+      "build": {
+        "id": "T16_potion_default_L15_defensive_occultist_fixed",
+        "displayName": "Defensive Occultist L15 [Pocao default hp<40]",
+        "level": 15,
+        "weaponId": "idolo_pedra_viva",
+        "weaponLevel": 8,
+        "weaponQualityTier": 2,
+        "spellIds": [
+          "coagulo_negro",
+          "raizes_pedra"
+        ],
+        "spellLevels": {
+          "coagulo_negro": 14,
+          "raizes_pedra": 14
+        },
+        "passiveId": "pedra_interna",
+        "passiveLevel": 14,
+        "petId": "escaravelho_pedra",
+        "petLevel": 13,
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 1,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_potion_default_L15_dot_pressure_fixed",
+      "kind": "track16",
+      "archetype_id": "dot_pressure",
+      "archetype_name": "DoT Pressure (Pocao default hp<40)",
+      "level": 15,
+      "power": 2684,
+      "power_band": "band_005",
+      "build": {
+        "id": "T16_potion_default_L15_dot_pressure_fixed",
+        "displayName": "DoT Pressure L15 [Pocao default hp<40]",
+        "level": 15,
+        "weaponId": "athame_hematico",
+        "weaponLevel": 8,
+        "weaponQualityTier": 2,
+        "spellIds": [
+          "toxina_palida",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "toxina_palida": 14,
+          "marca_brasa": 14
+        },
+        "passiveId": "alquimia_toxica",
+        "passiveLevel": 11,
+        "petId": "serpente_toxina",
+        "petLevel": 12,
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 1,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_potion_default_L15_funeral_burst_fixed",
+      "kind": "track16",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst (Pocao default hp<40)",
+      "level": 15,
+      "power": 2814,
+      "power_band": "band_005",
+      "build": {
+        "id": "T16_potion_default_L15_funeral_burst_fixed",
+        "displayName": "Funeral Burst L15 [Pocao default hp<40]",
+        "level": 15,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 9,
+        "weaponQualityTier": 2,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 15,
+          "marca_brasa": 15
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 12,
+        "petId": "cranio_errante",
+        "petLevel": 12,
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 1,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_potion_default_L25_summoner_fixed",
+      "kind": "track16",
+      "archetype_id": "summoner",
+      "archetype_name": "Summoner (Pocao default hp<40)",
+      "level": 25,
+      "power": 5694,
+      "power_band": "band_005",
+      "build": {
+        "id": "T16_potion_default_L25_summoner_fixed",
+        "displayName": "Summoner L25 [Pocao default hp<40]",
+        "level": 25,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 14,
+        "weaponQualityTier": 4,
+        "spellIds": [
+          "sussurro_medo",
+          "erguer_ossos",
+          "invocar_brasa_faminta"
+        ],
+        "spellLevels": {
+          "sussurro_medo": 25,
+          "erguer_ossos": 25,
+          "invocar_brasa_faminta": 25
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 19,
+        "petId": "cranio_errante",
+        "petLevel": 21,
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 1,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_potion_default_L25_defensive_occultist_fixed",
+      "kind": "track16",
+      "archetype_id": "defensive_occultist",
+      "archetype_name": "Defensive Occultist (Pocao default hp<40)",
+      "level": 25,
+      "power": 5534,
+      "power_band": "band_005",
+      "build": {
+        "id": "T16_potion_default_L25_defensive_occultist_fixed",
+        "displayName": "Defensive Occultist L25 [Pocao default hp<40]",
+        "level": 25,
+        "weaponId": "idolo_pedra_viva",
+        "weaponLevel": 14,
+        "weaponQualityTier": 3,
+        "spellIds": [
+          "coagulo_negro",
+          "raizes_pedra",
+          "geada_ossos"
+        ],
+        "spellLevels": {
+          "coagulo_negro": 23,
+          "raizes_pedra": 23,
+          "geada_ossos": 23
+        },
+        "passiveId": "pedra_interna",
+        "passiveLevel": 24,
+        "petId": "escaravelho_pedra",
+        "petLevel": 21,
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 1,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_potion_default_L25_dot_pressure_fixed",
+      "kind": "track16",
+      "archetype_id": "dot_pressure",
+      "archetype_name": "DoT Pressure (Pocao default hp<40)",
+      "level": 25,
+      "power": 5368,
+      "power_band": "band_005",
+      "build": {
+        "id": "T16_potion_default_L25_dot_pressure_fixed",
+        "displayName": "DoT Pressure L25 [Pocao default hp<40]",
+        "level": 25,
+        "weaponId": "athame_hematico",
+        "weaponLevel": 14,
+        "weaponQualityTier": 3,
+        "spellIds": [
+          "toxina_palida",
+          "marca_brasa",
+          "hemorragia_induzida"
+        ],
+        "spellLevels": {
+          "toxina_palida": 23,
+          "marca_brasa": 23,
+          "hemorragia_induzida": 23
+        },
+        "passiveId": "alquimia_toxica",
+        "passiveLevel": 18,
+        "petId": "serpente_toxina",
+        "petLevel": 20,
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 1,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_potion_default_L25_funeral_burst_fixed",
+      "kind": "track16",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst (Pocao default hp<40)",
+      "level": 25,
+      "power": 5708,
+      "power_band": "band_005",
+      "build": {
+        "id": "T16_potion_default_L25_funeral_burst_fixed",
+        "displayName": "Funeral Burst L25 [Pocao default hp<40]",
+        "level": 25,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 16,
+        "weaponQualityTier": 3,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa",
+          "incisao_ritual"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 25,
+          "marca_brasa": 25,
+          "incisao_ritual": 25
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 20,
+        "petId": "cranio_errante",
+        "petLevel": 20,
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 1,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_potion_default_L40_summoner_fixed",
+      "kind": "track16",
+      "archetype_id": "summoner",
+      "archetype_name": "Summoner (Pocao default hp<40)",
+      "level": 40,
+      "power": 8912,
+      "power_band": "band_005",
+      "build": {
+        "id": "T16_potion_default_L40_summoner_fixed",
+        "displayName": "Summoner L40 [Pocao default hp<40]",
+        "level": 40,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 22,
+        "weaponQualityTier": 4,
+        "spellIds": [
+          "sussurro_medo",
+          "erguer_ossos",
+          "invocar_brasa_faminta"
+        ],
+        "spellLevels": {
+          "sussurro_medo": 39,
+          "erguer_ossos": 39,
+          "invocar_brasa_faminta": 39
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 30,
+        "petId": "cranio_errante",
+        "petLevel": 34,
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 1,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_potion_default_L40_defensive_occultist_fixed",
+      "kind": "track16",
+      "archetype_id": "defensive_occultist",
+      "archetype_name": "Defensive Occultist (Pocao default hp<40)",
+      "level": 40,
+      "power": 8728,
+      "power_band": "band_005",
+      "build": {
+        "id": "T16_potion_default_L40_defensive_occultist_fixed",
+        "displayName": "Defensive Occultist L40 [Pocao default hp<40]",
+        "level": 40,
+        "weaponId": "idolo_pedra_viva",
+        "weaponLevel": 22,
+        "weaponQualityTier": 4,
+        "spellIds": [
+          "coagulo_negro",
+          "raizes_pedra",
+          "geada_ossos"
+        ],
+        "spellLevels": {
+          "coagulo_negro": 36,
+          "raizes_pedra": 36,
+          "geada_ossos": 36
+        },
+        "passiveId": "pedra_interna",
+        "passiveLevel": 38,
+        "petId": "escaravelho_pedra",
+        "petLevel": 34,
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 1,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_potion_default_L40_dot_pressure_fixed",
+      "kind": "track16",
+      "archetype_id": "dot_pressure",
+      "archetype_name": "DoT Pressure (Pocao default hp<40)",
+      "level": 40,
+      "power": 8526,
+      "power_band": "band_005",
+      "build": {
+        "id": "T16_potion_default_L40_dot_pressure_fixed",
+        "displayName": "DoT Pressure L40 [Pocao default hp<40]",
+        "level": 40,
+        "weaponId": "athame_hematico",
+        "weaponLevel": 22,
+        "weaponQualityTier": 4,
+        "spellIds": [
+          "toxina_palida",
+          "marca_brasa",
+          "hemorragia_induzida"
+        ],
+        "spellLevels": {
+          "toxina_palida": 37,
+          "marca_brasa": 37,
+          "hemorragia_induzida": 37
+        },
+        "passiveId": "alquimia_toxica",
+        "passiveLevel": 28,
+        "petId": "serpente_toxina",
+        "petLevel": 31,
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 1,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_potion_default_L40_funeral_burst_fixed",
+      "kind": "track16",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst (Pocao default hp<40)",
+      "level": 40,
+      "power": 9092,
+      "power_band": "band_005",
+      "build": {
+        "id": "T16_potion_default_L40_funeral_burst_fixed",
+        "displayName": "Funeral Burst L40 [Pocao default hp<40]",
+        "level": 40,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 25,
+        "weaponQualityTier": 4,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa",
+          "incisao_ritual"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 40,
+          "marca_brasa": 40,
+          "incisao_ritual": 40
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 32,
+        "petId": "cranio_errante",
+        "petLevel": 32,
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 1,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_potion_disabled_L15_defensive_occultist_fixed",
+      "kind": "track16",
+      "archetype_id": "defensive_occultist",
+      "archetype_name": "Defensive Occultist (Pocao behavior disabled)",
+      "level": 15,
+      "power": 2784,
+      "power_band": "band_005",
+      "build": {
+        "id": "T16_potion_disabled_L15_defensive_occultist_fixed",
+        "displayName": "Defensive Occultist L15 [Pocao behavior disabled]",
+        "level": 15,
+        "weaponId": "idolo_pedra_viva",
+        "weaponLevel": 8,
+        "weaponQualityTier": 2,
+        "spellIds": [
+          "coagulo_negro",
+          "raizes_pedra"
+        ],
+        "spellLevels": {
+          "coagulo_negro": 14,
+          "raizes_pedra": 14
+        },
+        "passiveId": "pedra_interna",
+        "passiveLevel": 14,
+        "petId": "escaravelho_pedra",
+        "petLevel": 13,
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 1,
+          "behavior": {
+            "enabled": false,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_potion_disabled_L15_funeral_burst_fixed",
+      "kind": "track16",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst (Pocao behavior disabled)",
+      "level": 15,
+      "power": 2814,
+      "power_band": "band_005",
+      "build": {
+        "id": "T16_potion_disabled_L15_funeral_burst_fixed",
+        "displayName": "Funeral Burst L15 [Pocao behavior disabled]",
+        "level": 15,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 9,
+        "weaponQualityTier": 2,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 15,
+          "marca_brasa": 15
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 12,
+        "petId": "cranio_errante",
+        "petLevel": 12,
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 1,
+          "behavior": {
+            "enabled": false,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_potion_disabled_L25_defensive_occultist_fixed",
+      "kind": "track16",
+      "archetype_id": "defensive_occultist",
+      "archetype_name": "Defensive Occultist (Pocao behavior disabled)",
+      "level": 25,
+      "power": 5534,
+      "power_band": "band_005",
+      "build": {
+        "id": "T16_potion_disabled_L25_defensive_occultist_fixed",
+        "displayName": "Defensive Occultist L25 [Pocao behavior disabled]",
+        "level": 25,
+        "weaponId": "idolo_pedra_viva",
+        "weaponLevel": 14,
+        "weaponQualityTier": 3,
+        "spellIds": [
+          "coagulo_negro",
+          "raizes_pedra",
+          "geada_ossos"
+        ],
+        "spellLevels": {
+          "coagulo_negro": 23,
+          "raizes_pedra": 23,
+          "geada_ossos": 23
+        },
+        "passiveId": "pedra_interna",
+        "passiveLevel": 24,
+        "petId": "escaravelho_pedra",
+        "petLevel": 21,
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 1,
+          "behavior": {
+            "enabled": false,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_potion_disabled_L25_funeral_burst_fixed",
+      "kind": "track16",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst (Pocao behavior disabled)",
+      "level": 25,
+      "power": 5708,
+      "power_band": "band_005",
+      "build": {
+        "id": "T16_potion_disabled_L25_funeral_burst_fixed",
+        "displayName": "Funeral Burst L25 [Pocao behavior disabled]",
+        "level": 25,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 16,
+        "weaponQualityTier": 3,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa",
+          "incisao_ritual"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 25,
+          "marca_brasa": 25,
+          "incisao_ritual": 25
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 20,
+        "petId": "cranio_errante",
+        "petLevel": 20,
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 1,
+          "behavior": {
+            "enabled": false,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_spell_behavior_disabled_L7_mental_controller_fixed",
+      "kind": "track16",
+      "archetype_id": "mental_controller",
+      "archetype_name": "Mental Controller (Primeira spell desativada)",
+      "level": 7,
+      "power": 996,
+      "power_band": "band_003",
+      "build": {
+        "id": "T16_spell_behavior_disabled_L7_mental_controller_fixed",
+        "displayName": "Mental Controller L7 [Primeira spell desativada]",
+        "level": 7,
+        "weaponId": "grimorio_veu",
+        "weaponLevel": 4,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "sussurro_medo",
+          "terror_primordial"
+        ],
+        "spellLevels": {
+          "sussurro_medo": 7,
+          "terror_primordial": 7
+        },
+        "spellBehaviors": {
+          "sussurro_medo": {
+            "enabled": false,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_spell_behavior_disabled_L7_elemental_mixer_fixed",
+      "kind": "track16",
+      "archetype_id": "elemental_mixer",
+      "archetype_name": "Elemental Mixer (Primeira spell desativada)",
+      "level": 7,
+      "power": 1024,
+      "power_band": "band_003",
+      "build": {
+        "id": "T16_spell_behavior_disabled_L7_elemental_mixer_fixed",
+        "displayName": "Elemental Mixer L7 [Primeira spell desativada]",
+        "level": 7,
+        "weaponId": "orbe_tempestade",
+        "weaponLevel": 5,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 7,
+          "marca_brasa": 7
+        },
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": false,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_spell_behavior_disabled_L7_summoner_fixed",
+      "kind": "track16",
+      "archetype_id": "summoner",
+      "archetype_name": "Summoner (Primeira spell desativada)",
+      "level": 7,
+      "power": 746,
+      "power_band": "band_003",
+      "build": {
+        "id": "T16_spell_behavior_disabled_L7_summoner_fixed",
+        "displayName": "Summoner L7 [Primeira spell desativada]",
+        "level": 7,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 4,
+        "weaponQualityTier": 2,
+        "spellIds": [
+          "sussurro_medo"
+        ],
+        "spellLevels": {
+          "sussurro_medo": 7
+        },
+        "spellBehaviors": {
+          "sussurro_medo": {
+            "enabled": false,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_spell_behavior_disabled_L7_dot_pressure_fixed",
+      "kind": "track16",
+      "archetype_id": "dot_pressure",
+      "archetype_name": "DoT Pressure (Primeira spell desativada)",
+      "level": 7,
+      "power": 916,
+      "power_band": "band_003",
+      "build": {
+        "id": "T16_spell_behavior_disabled_L7_dot_pressure_fixed",
+        "displayName": "DoT Pressure L7 [Primeira spell desativada]",
+        "level": 7,
+        "weaponId": "athame_hematico",
+        "weaponLevel": 4,
+        "weaponQualityTier": 1,
+        "spellIds": [
+          "toxina_palida",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "toxina_palida": 6,
+          "marca_brasa": 6
+        },
+        "spellBehaviors": {
+          "toxina_palida": {
+            "enabled": false,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_spell_behavior_disabled_L15_mental_controller_fixed",
+      "kind": "track16",
+      "archetype_id": "mental_controller",
+      "archetype_name": "Mental Controller (Primeira spell desativada)",
+      "level": 15,
+      "power": 2712,
+      "power_band": "band_005",
+      "build": {
+        "id": "T16_spell_behavior_disabled_L15_mental_controller_fixed",
+        "displayName": "Mental Controller L15 [Primeira spell desativada]",
+        "level": 15,
+        "weaponId": "grimorio_veu",
+        "weaponLevel": 9,
+        "weaponQualityTier": 2,
+        "spellIds": [
+          "sussurro_medo",
+          "terror_primordial"
+        ],
+        "spellLevels": {
+          "sussurro_medo": 14,
+          "terror_primordial": 14
+        },
+        "passiveId": "doutrina_pavor",
+        "passiveLevel": 11,
+        "petId": "corvo_pressagio",
+        "petLevel": 12,
+        "spellBehaviors": {
+          "sussurro_medo": {
+            "enabled": false,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_spell_behavior_disabled_L15_elemental_mixer_fixed",
+      "kind": "track16",
+      "archetype_id": "elemental_mixer",
+      "archetype_name": "Elemental Mixer (Primeira spell desativada)",
+      "level": 15,
+      "power": 2740,
+      "power_band": "band_005",
+      "build": {
+        "id": "T16_spell_behavior_disabled_L15_elemental_mixer_fixed",
+        "displayName": "Elemental Mixer L15 [Primeira spell desativada]",
+        "level": 15,
+        "weaponId": "orbe_tempestade",
+        "weaponLevel": 10,
+        "weaponQualityTier": 2,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 14,
+          "marca_brasa": 14
+        },
+        "passiveId": "pulso_tempestade",
+        "passiveLevel": 11,
+        "petId": "serpe_tempestade",
+        "petLevel": 12,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": false,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_spell_behavior_disabled_L15_summoner_fixed",
+      "kind": "track16",
+      "archetype_id": "summoner",
+      "archetype_name": "Summoner (Primeira spell desativada)",
+      "level": 15,
+      "power": 2228,
+      "power_band": "band_005",
+      "build": {
+        "id": "T16_spell_behavior_disabled_L15_summoner_fixed",
+        "displayName": "Summoner L15 [Primeira spell desativada]",
+        "level": 15,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 8,
+        "weaponQualityTier": 3,
+        "spellIds": [
+          "sussurro_medo"
+        ],
+        "spellLevels": {
+          "sussurro_medo": 15
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 11,
+        "petId": "cranio_errante",
+        "petLevel": 13,
+        "spellBehaviors": {
+          "sussurro_medo": {
+            "enabled": false,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_spell_behavior_disabled_L15_dot_pressure_fixed",
+      "kind": "track16",
+      "archetype_id": "dot_pressure",
+      "archetype_name": "DoT Pressure (Primeira spell desativada)",
+      "level": 15,
+      "power": 2684,
+      "power_band": "band_005",
+      "build": {
+        "id": "T16_spell_behavior_disabled_L15_dot_pressure_fixed",
+        "displayName": "DoT Pressure L15 [Primeira spell desativada]",
+        "level": 15,
+        "weaponId": "athame_hematico",
+        "weaponLevel": 8,
+        "weaponQualityTier": 2,
+        "spellIds": [
+          "toxina_palida",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "toxina_palida": 14,
+          "marca_brasa": 14
+        },
+        "passiveId": "alquimia_toxica",
+        "passiveLevel": 11,
+        "petId": "serpente_toxina",
+        "petLevel": 12,
+        "spellBehaviors": {
+          "toxina_palida": {
+            "enabled": false,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_spell_behavior_disabled_L25_mental_controller_fixed",
+      "kind": "track16",
+      "archetype_id": "mental_controller",
+      "archetype_name": "Mental Controller (Primeira spell desativada)",
+      "level": 25,
+      "power": 5566,
+      "power_band": "band_005",
+      "build": {
+        "id": "T16_spell_behavior_disabled_L25_mental_controller_fixed",
+        "displayName": "Mental Controller L25 [Primeira spell desativada]",
+        "level": 25,
+        "weaponId": "grimorio_veu",
+        "weaponLevel": 16,
+        "weaponQualityTier": 3,
+        "spellIds": [
+          "sussurro_medo",
+          "terror_primordial",
+          "labirinto_razao"
+        ],
+        "spellLevels": {
+          "sussurro_medo": 24,
+          "terror_primordial": 24,
+          "labirinto_razao": 24
+        },
+        "passiveId": "doutrina_pavor",
+        "passiveLevel": 19,
+        "petId": "corvo_pressagio",
+        "petLevel": 20,
+        "spellBehaviors": {
+          "sussurro_medo": {
+            "enabled": false,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_spell_behavior_disabled_L25_elemental_mixer_fixed",
+      "kind": "track16",
+      "archetype_id": "elemental_mixer",
+      "archetype_name": "Elemental Mixer (Primeira spell desativada)",
+      "level": 25,
+      "power": 5544,
+      "power_band": "band_005",
+      "build": {
+        "id": "T16_spell_behavior_disabled_L25_elemental_mixer_fixed",
+        "displayName": "Elemental Mixer L25 [Primeira spell desativada]",
+        "level": 25,
+        "weaponId": "orbe_tempestade",
+        "weaponLevel": 16,
+        "weaponQualityTier": 3,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa",
+          "mare_escura"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 24,
+          "marca_brasa": 24,
+          "mare_escura": 24
+        },
+        "passiveId": "pulso_tempestade",
+        "passiveLevel": 18,
+        "petId": "serpe_tempestade",
+        "petLevel": 20,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": false,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_spell_behavior_disabled_L25_summoner_fixed",
+      "kind": "track16",
+      "archetype_id": "summoner",
+      "archetype_name": "Summoner (Primeira spell desativada)",
+      "level": 25,
+      "power": 5694,
+      "power_band": "band_005",
+      "build": {
+        "id": "T16_spell_behavior_disabled_L25_summoner_fixed",
+        "displayName": "Summoner L25 [Primeira spell desativada]",
+        "level": 25,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 14,
+        "weaponQualityTier": 4,
+        "spellIds": [
+          "sussurro_medo",
+          "erguer_ossos",
+          "invocar_brasa_faminta"
+        ],
+        "spellLevels": {
+          "sussurro_medo": 25,
+          "erguer_ossos": 25,
+          "invocar_brasa_faminta": 25
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 19,
+        "petId": "cranio_errante",
+        "petLevel": 21,
+        "spellBehaviors": {
+          "sussurro_medo": {
+            "enabled": false,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "T16_spell_behavior_disabled_L25_dot_pressure_fixed",
+      "kind": "track16",
+      "archetype_id": "dot_pressure",
+      "archetype_name": "DoT Pressure (Primeira spell desativada)",
+      "level": 25,
+      "power": 5368,
+      "power_band": "band_005",
+      "build": {
+        "id": "T16_spell_behavior_disabled_L25_dot_pressure_fixed",
+        "displayName": "DoT Pressure L25 [Primeira spell desativada]",
+        "level": 25,
+        "weaponId": "athame_hematico",
+        "weaponLevel": 14,
+        "weaponQualityTier": 3,
+        "spellIds": [
+          "toxina_palida",
+          "marca_brasa",
+          "hemorragia_induzida"
+        ],
+        "spellLevels": {
+          "toxina_palida": 23,
+          "marca_brasa": 23,
+          "hemorragia_induzida": 23
+        },
+        "passiveId": "alquimia_toxica",
+        "passiveLevel": 18,
+        "petId": "serpente_toxina",
+        "petLevel": 20,
+        "spellBehaviors": {
+          "toxina_palida": {
+            "enabled": false,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
     }
   ],
   "near_power_archetypes": [
@@ -6204,99 +8541,99 @@
     {
       "id": "mental_controller",
       "display_name": "Mental Controller",
-      "total": 276,
-      "wins": 99,
-      "losses": 177,
-      "win_rate_percent": 35.87,
-      "avg_duration": 25.86,
-      "median_duration": 23.7,
+      "total": 488,
+      "wins": 132,
+      "losses": 356,
+      "win_rate_percent": 27.05,
+      "avg_duration": 24.58,
+      "median_duration": 23.2,
       "short_rate_percent": 0,
-      "long_rate_percent": 26.81,
-      "anti_stall_rate_percent": 9.42,
+      "long_rate_percent": 21.72,
+      "anti_stall_rate_percent": 7.58,
       "status": "REVIEW"
     },
     {
       "id": "elemental_mixer",
       "display_name": "Elemental Mixer",
-      "total": 538,
-      "wins": 226,
-      "losses": 312,
-      "win_rate_percent": 42.01,
-      "avg_duration": 23.92,
+      "total": 748,
+      "wins": 316,
+      "losses": 432,
+      "win_rate_percent": 42.25,
+      "avg_duration": 23.63,
       "median_duration": 22.7,
       "short_rate_percent": 0,
-      "long_rate_percent": 11.71,
-      "anti_stall_rate_percent": 4.28,
+      "long_rate_percent": 10.56,
+      "anti_stall_rate_percent": 3.74,
       "status": "PASS"
     },
     {
       "id": "familiar_handler",
       "display_name": "Familiar Handler",
-      "total": 572,
-      "wins": 363,
-      "losses": 209,
-      "win_rate_percent": 63.46,
-      "avg_duration": 22.44,
+      "total": 772,
+      "wins": 489,
+      "losses": 283,
+      "win_rate_percent": 63.34,
+      "avg_duration": 22.73,
       "median_duration": 21.2,
       "short_rate_percent": 0,
-      "long_rate_percent": 10.84,
-      "anti_stall_rate_percent": 2.1,
+      "long_rate_percent": 13.21,
+      "anti_stall_rate_percent": 4.66,
       "status": "PASS"
     },
     {
       "id": "summoner",
       "display_name": "Summoner",
-      "total": 250,
-      "wins": 122,
-      "losses": 128,
-      "win_rate_percent": 48.8,
-      "avg_duration": 26.2,
-      "median_duration": 26.2,
+      "total": 544,
+      "wins": 281,
+      "losses": 263,
+      "win_rate_percent": 51.65,
+      "avg_duration": 24.49,
+      "median_duration": 23.7,
       "short_rate_percent": 0,
-      "long_rate_percent": 21.2,
-      "anti_stall_rate_percent": 9.6,
+      "long_rate_percent": 17.83,
+      "anti_stall_rate_percent": 9.56,
       "status": "REVIEW"
     },
     {
       "id": "defensive_occultist",
       "display_name": "Defensive Occultist",
-      "total": 244,
-      "wins": 78,
-      "losses": 166,
-      "win_rate_percent": 31.97,
-      "avg_duration": 30.58,
-      "median_duration": 30.7,
+      "total": 520,
+      "wins": 210,
+      "losses": 310,
+      "win_rate_percent": 40.38,
+      "avg_duration": 32.09,
+      "median_duration": 33.95,
       "short_rate_percent": 0,
-      "long_rate_percent": 48.77,
-      "anti_stall_rate_percent": 24.18,
+      "long_rate_percent": 63.08,
+      "anti_stall_rate_percent": 29.81,
       "status": "REVIEW"
     },
     {
       "id": "dot_pressure",
       "display_name": "DoT Pressure",
-      "total": 258,
-      "wins": 161,
-      "losses": 97,
-      "win_rate_percent": 62.4,
-      "avg_duration": 24.1,
-      "median_duration": 22.7,
+      "total": 586,
+      "wins": 356,
+      "losses": 230,
+      "win_rate_percent": 60.75,
+      "avg_duration": 22.35,
+      "median_duration": 20.7,
       "short_rate_percent": 0,
-      "long_rate_percent": 22.48,
-      "anti_stall_rate_percent": 5.43,
-      "status": "REVIEW"
+      "long_rate_percent": 14.68,
+      "anti_stall_rate_percent": 4.1,
+      "status": "PASS"
     },
     {
       "id": "funeral_burst",
       "display_name": "Funeral Burst",
-      "total": 586,
-      "wins": 316,
-      "losses": 270,
-      "win_rate_percent": 53.92,
-      "avg_duration": 22.73,
-      "median_duration": 20.7,
+      "total": 902,
+      "wins": 499,
+      "losses": 403,
+      "win_rate_percent": 55.32,
+      "avg_duration": 22.61,
+      "median_duration": 20.45,
       "short_rate_percent": 0,
-      "long_rate_percent": 12.8,
-      "anti_stall_rate_percent": 2.39,
+      "long_rate_percent": 14.19,
+      "anti_stall_rate_percent": 3.55,
       "status": "PASS"
     }
   ],
@@ -6376,56 +8713,56 @@
     {
       "player_archetype_id": "mental_controller",
       "opponent_archetype_id": "elemental_mixer",
-      "total": 25,
-      "wins": 8,
-      "win_rate_percent": 32,
-      "avg_duration": 25.8,
+      "total": 39,
+      "wins": 12,
+      "win_rate_percent": 30.77,
+      "avg_duration": 24.42,
       "status": "REVIEW"
     },
     {
       "player_archetype_id": "mental_controller",
       "opponent_archetype_id": "familiar_handler",
-      "total": 30,
-      "wins": 15,
-      "win_rate_percent": 50,
-      "avg_duration": 23.72,
+      "total": 40,
+      "wins": 14,
+      "win_rate_percent": 35,
+      "avg_duration": 23.29,
       "status": "PASS"
     },
     {
       "player_archetype_id": "mental_controller",
       "opponent_archetype_id": "summoner",
-      "total": 20,
-      "wins": 6,
-      "win_rate_percent": 30,
-      "avg_duration": 26.87,
+      "total": 38,
+      "wins": 10,
+      "win_rate_percent": 26.32,
+      "avg_duration": 23.98,
       "status": "REVIEW"
     },
     {
       "player_archetype_id": "mental_controller",
       "opponent_archetype_id": "defensive_occultist",
-      "total": 15,
+      "total": 31,
       "wins": 2,
-      "win_rate_percent": 13.33,
-      "avg_duration": 32.43,
+      "win_rate_percent": 6.45,
+      "avg_duration": 33.86,
       "status": "REVIEW"
     },
     {
       "player_archetype_id": "mental_controller",
       "opponent_archetype_id": "dot_pressure",
-      "total": 16,
-      "wins": 7,
-      "win_rate_percent": 43.75,
-      "avg_duration": 24.17,
-      "status": "PASS"
+      "total": 40,
+      "wins": 12,
+      "win_rate_percent": 30,
+      "avg_duration": 21.96,
+      "status": "REVIEW"
     },
     {
       "player_archetype_id": "mental_controller",
       "opponent_archetype_id": "funeral_burst",
-      "total": 28,
-      "wins": 12,
-      "win_rate_percent": 42.86,
-      "avg_duration": 23.77,
-      "status": "PASS"
+      "total": 52,
+      "wins": 13,
+      "win_rate_percent": 25,
+      "avg_duration": 22.19,
+      "status": "REVIEW"
     },
     {
       "player_archetype_id": "elemental_mixer",
@@ -6439,55 +8776,55 @@
     {
       "player_archetype_id": "elemental_mixer",
       "opponent_archetype_id": "mental_controller",
-      "total": 25,
-      "wins": 17,
-      "win_rate_percent": 68,
-      "avg_duration": 25.64,
+      "total": 39,
+      "wins": 27,
+      "win_rate_percent": 69.23,
+      "avg_duration": 24.23,
       "status": "REVIEW"
     },
     {
       "player_archetype_id": "elemental_mixer",
       "opponent_archetype_id": "familiar_handler",
-      "total": 73,
-      "wins": 34,
-      "win_rate_percent": 46.58,
-      "avg_duration": 21.7,
+      "total": 83,
+      "wins": 35,
+      "win_rate_percent": 42.17,
+      "avg_duration": 21.93,
       "status": "PASS"
     },
     {
       "player_archetype_id": "elemental_mixer",
       "opponent_archetype_id": "summoner",
-      "total": 27,
-      "wins": 15,
-      "win_rate_percent": 55.56,
-      "avg_duration": 26.2,
+      "total": 49,
+      "wins": 25,
+      "win_rate_percent": 51.02,
+      "avg_duration": 23.75,
       "status": "PASS"
     },
     {
       "player_archetype_id": "elemental_mixer",
       "opponent_archetype_id": "defensive_occultist",
-      "total": 23,
-      "wins": 17,
-      "win_rate_percent": 73.91,
-      "avg_duration": 29.46,
-      "status": "REVIEW"
-    },
-    {
-      "player_archetype_id": "elemental_mixer",
-      "opponent_archetype_id": "dot_pressure",
-      "total": 17,
-      "wins": 8,
-      "win_rate_percent": 47.06,
-      "avg_duration": 22.73,
+      "total": 37,
+      "wins": 21,
+      "win_rate_percent": 56.76,
+      "avg_duration": 30.82,
       "status": "PASS"
     },
     {
       "player_archetype_id": "elemental_mixer",
+      "opponent_archetype_id": "dot_pressure",
+      "total": 39,
+      "wins": 13,
+      "win_rate_percent": 33.33,
+      "avg_duration": 20.82,
+      "status": "REVIEW"
+    },
+    {
+      "player_archetype_id": "elemental_mixer",
       "opponent_archetype_id": "funeral_burst",
-      "total": 100,
-      "wins": 27,
-      "win_rate_percent": 27,
-      "avg_duration": 22.99,
+      "total": 123,
+      "wins": 39,
+      "win_rate_percent": 31.71,
+      "avg_duration": 22.87,
       "status": "REVIEW"
     },
     {
@@ -6502,55 +8839,55 @@
     {
       "player_archetype_id": "familiar_handler",
       "opponent_archetype_id": "mental_controller",
-      "total": 30,
-      "wins": 25,
-      "win_rate_percent": 83.33,
-      "avg_duration": 23.67,
+      "total": 40,
+      "wins": 35,
+      "win_rate_percent": 87.5,
+      "avg_duration": 23.2,
       "status": "CRITICAL"
     },
     {
       "player_archetype_id": "familiar_handler",
       "opponent_archetype_id": "elemental_mixer",
-      "total": 73,
-      "wins": 51,
-      "win_rate_percent": 69.86,
-      "avg_duration": 21.59,
+      "total": 83,
+      "wins": 54,
+      "win_rate_percent": 65.06,
+      "avg_duration": 21.83,
       "status": "REVIEW"
     },
     {
       "player_archetype_id": "familiar_handler",
       "opponent_archetype_id": "summoner",
-      "total": 27,
-      "wins": 20,
-      "win_rate_percent": 74.07,
-      "avg_duration": 24.46,
+      "total": 44,
+      "wins": 30,
+      "win_rate_percent": 68.18,
+      "avg_duration": 23.39,
       "status": "REVIEW"
     },
     {
       "player_archetype_id": "familiar_handler",
       "opponent_archetype_id": "defensive_occultist",
-      "total": 27,
-      "wins": 18,
-      "win_rate_percent": 66.67,
-      "avg_duration": 29.9,
-      "status": "REVIEW"
+      "total": 48,
+      "wins": 26,
+      "win_rate_percent": 54.17,
+      "avg_duration": 32.1,
+      "status": "PASS"
     },
     {
       "player_archetype_id": "familiar_handler",
       "opponent_archetype_id": "dot_pressure",
-      "total": 30,
-      "wins": 10,
-      "win_rate_percent": 33.33,
-      "avg_duration": 22.58,
-      "status": "REVIEW"
+      "total": 52,
+      "wins": 23,
+      "win_rate_percent": 44.23,
+      "avg_duration": 20.97,
+      "status": "PASS"
     },
     {
       "player_archetype_id": "familiar_handler",
       "opponent_archetype_id": "funeral_burst",
-      "total": 95,
-      "wins": 70,
-      "win_rate_percent": 73.68,
-      "avg_duration": 19.54,
+      "total": 115,
+      "wins": 79,
+      "win_rate_percent": 68.7,
+      "avg_duration": 19.47,
       "status": "REVIEW"
     },
     {
@@ -6565,55 +8902,55 @@
     {
       "player_archetype_id": "summoner",
       "opponent_archetype_id": "mental_controller",
-      "total": 20,
-      "wins": 13,
-      "win_rate_percent": 65,
-      "avg_duration": 26.7,
-      "status": "PASS"
+      "total": 38,
+      "wins": 27,
+      "win_rate_percent": 71.05,
+      "avg_duration": 23.75,
+      "status": "REVIEW"
     },
     {
       "player_archetype_id": "summoner",
       "opponent_archetype_id": "elemental_mixer",
-      "total": 27,
-      "wins": 14,
-      "win_rate_percent": 51.85,
-      "avg_duration": 26.35,
+      "total": 49,
+      "wins": 25,
+      "win_rate_percent": 51.02,
+      "avg_duration": 23.83,
       "status": "PASS"
     },
     {
       "player_archetype_id": "summoner",
       "opponent_archetype_id": "familiar_handler",
-      "total": 27,
-      "wins": 7,
-      "win_rate_percent": 25.93,
-      "avg_duration": 24.61,
+      "total": 44,
+      "wins": 14,
+      "win_rate_percent": 31.82,
+      "avg_duration": 23.5,
       "status": "REVIEW"
     },
     {
       "player_archetype_id": "summoner",
       "opponent_archetype_id": "defensive_occultist",
-      "total": 16,
-      "wins": 9,
-      "win_rate_percent": 56.25,
-      "avg_duration": 31.61,
+      "total": 48,
+      "wins": 20,
+      "win_rate_percent": 41.67,
+      "avg_duration": 32.22,
       "status": "PASS"
     },
     {
       "player_archetype_id": "summoner",
       "opponent_archetype_id": "dot_pressure",
-      "total": 15,
-      "wins": 5,
-      "win_rate_percent": 33.33,
-      "avg_duration": 23.8,
-      "status": "REVIEW"
+      "total": 51,
+      "wins": 22,
+      "win_rate_percent": 43.14,
+      "avg_duration": 21.33,
+      "status": "PASS"
     },
     {
       "player_archetype_id": "summoner",
       "opponent_archetype_id": "funeral_burst",
-      "total": 18,
-      "wins": 10,
-      "win_rate_percent": 55.56,
-      "avg_duration": 24.14,
+      "total": 40,
+      "wins": 23,
+      "win_rate_percent": 57.5,
+      "avg_duration": 21.33,
       "status": "PASS"
     },
     {
@@ -6628,56 +8965,56 @@
     {
       "player_archetype_id": "defensive_occultist",
       "opponent_archetype_id": "mental_controller",
-      "total": 15,
-      "wins": 6,
-      "win_rate_percent": 40,
-      "avg_duration": 32.37,
+      "total": 31,
+      "wins": 16,
+      "win_rate_percent": 51.61,
+      "avg_duration": 33.83,
       "status": "PASS"
     },
     {
       "player_archetype_id": "defensive_occultist",
       "opponent_archetype_id": "elemental_mixer",
-      "total": 23,
-      "wins": 4,
-      "win_rate_percent": 17.39,
-      "avg_duration": 29.44,
+      "total": 37,
+      "wins": 12,
+      "win_rate_percent": 32.43,
+      "avg_duration": 30.82,
       "status": "REVIEW"
     },
     {
       "player_archetype_id": "defensive_occultist",
       "opponent_archetype_id": "familiar_handler",
-      "total": 27,
-      "wins": 5,
-      "win_rate_percent": 18.52,
-      "avg_duration": 30.22,
+      "total": 48,
+      "wins": 7,
+      "win_rate_percent": 14.58,
+      "avg_duration": 32.48,
       "status": "REVIEW"
     },
     {
       "player_archetype_id": "defensive_occultist",
       "opponent_archetype_id": "summoner",
-      "total": 16,
-      "wins": 1,
-      "win_rate_percent": 6.25,
-      "avg_duration": 31.7,
+      "total": 48,
+      "wins": 8,
+      "win_rate_percent": 16.67,
+      "avg_duration": 32.36,
       "status": "REVIEW"
     },
     {
       "player_archetype_id": "defensive_occultist",
       "opponent_archetype_id": "dot_pressure",
-      "total": 17,
-      "wins": 3,
-      "win_rate_percent": 17.65,
-      "avg_duration": 28.17,
+      "total": 40,
+      "wins": 6,
+      "win_rate_percent": 15,
+      "avg_duration": 30.15,
       "status": "REVIEW"
     },
     {
       "player_archetype_id": "defensive_occultist",
       "opponent_archetype_id": "funeral_burst",
-      "total": 19,
-      "wins": 5,
-      "win_rate_percent": 26.32,
-      "avg_duration": 31.91,
-      "status": "REVIEW"
+      "total": 51,
+      "wins": 18,
+      "win_rate_percent": 35.29,
+      "avg_duration": 33.26,
+      "status": "PASS"
     },
     {
       "player_archetype_id": "dot_pressure",
@@ -6691,55 +9028,55 @@
     {
       "player_archetype_id": "dot_pressure",
       "opponent_archetype_id": "mental_controller",
-      "total": 16,
-      "wins": 9,
-      "win_rate_percent": 56.25,
-      "avg_duration": 24.11,
-      "status": "PASS"
+      "total": 40,
+      "wins": 28,
+      "win_rate_percent": 70,
+      "avg_duration": 21.78,
+      "status": "REVIEW"
     },
     {
       "player_archetype_id": "dot_pressure",
       "opponent_archetype_id": "elemental_mixer",
-      "total": 17,
-      "wins": 8,
-      "win_rate_percent": 47.06,
-      "avg_duration": 22.7,
+      "total": 39,
+      "wins": 25,
+      "win_rate_percent": 64.1,
+      "avg_duration": 20.76,
       "status": "PASS"
     },
     {
       "player_archetype_id": "dot_pressure",
       "opponent_archetype_id": "familiar_handler",
-      "total": 30,
-      "wins": 21,
-      "win_rate_percent": 70,
-      "avg_duration": 22.4,
-      "status": "REVIEW"
+      "total": 52,
+      "wins": 29,
+      "win_rate_percent": 55.77,
+      "avg_duration": 20.85,
+      "status": "PASS"
     },
     {
       "player_archetype_id": "dot_pressure",
       "opponent_archetype_id": "summoner",
-      "total": 15,
-      "wins": 9,
-      "win_rate_percent": 60,
-      "avg_duration": 23.53,
+      "total": 51,
+      "wins": 30,
+      "win_rate_percent": 58.82,
+      "avg_duration": 21.17,
       "status": "PASS"
     },
     {
       "player_archetype_id": "dot_pressure",
       "opponent_archetype_id": "defensive_occultist",
-      "total": 17,
-      "wins": 12,
-      "win_rate_percent": 70.59,
-      "avg_duration": 27.94,
+      "total": 40,
+      "wins": 28,
+      "win_rate_percent": 70,
+      "avg_duration": 29.95,
       "status": "REVIEW"
     },
     {
       "player_archetype_id": "dot_pressure",
       "opponent_archetype_id": "funeral_burst",
-      "total": 27,
-      "wins": 16,
-      "win_rate_percent": 59.26,
-      "avg_duration": 22.01,
+      "total": 64,
+      "wins": 31,
+      "win_rate_percent": 48.44,
+      "avg_duration": 19.56,
       "status": "PASS"
     },
     {
@@ -6754,55 +9091,55 @@
     {
       "player_archetype_id": "funeral_burst",
       "opponent_archetype_id": "mental_controller",
-      "total": 28,
-      "wins": 19,
-      "win_rate_percent": 67.86,
-      "avg_duration": 23.7,
-      "status": "REVIEW"
+      "total": 52,
+      "wins": 42,
+      "win_rate_percent": 80.77,
+      "avg_duration": 21.88,
+      "status": "CRITICAL"
     },
     {
       "player_archetype_id": "funeral_burst",
       "opponent_archetype_id": "elemental_mixer",
-      "total": 100,
-      "wins": 74,
-      "win_rate_percent": 74,
-      "avg_duration": 22.95,
+      "total": 123,
+      "wins": 88,
+      "win_rate_percent": 71.54,
+      "avg_duration": 22.85,
       "status": "REVIEW"
     },
     {
       "player_archetype_id": "funeral_burst",
       "opponent_archetype_id": "familiar_handler",
-      "total": 95,
-      "wins": 38,
-      "win_rate_percent": 40,
-      "avg_duration": 19.49,
+      "total": 115,
+      "wins": 48,
+      "win_rate_percent": 41.74,
+      "avg_duration": 19.39,
       "status": "PASS"
     },
     {
       "player_archetype_id": "funeral_burst",
       "opponent_archetype_id": "summoner",
-      "total": 18,
-      "wins": 9,
-      "win_rate_percent": 50,
-      "avg_duration": 24.12,
+      "total": 40,
+      "wins": 18,
+      "win_rate_percent": 45,
+      "avg_duration": 21.31,
       "status": "PASS"
     },
     {
       "player_archetype_id": "funeral_burst",
       "opponent_archetype_id": "defensive_occultist",
-      "total": 19,
-      "wins": 9,
-      "win_rate_percent": 47.37,
-      "avg_duration": 31.75,
+      "total": 51,
+      "wins": 19,
+      "win_rate_percent": 37.25,
+      "avg_duration": 32.8,
       "status": "PASS"
     },
     {
       "player_archetype_id": "funeral_burst",
       "opponent_archetype_id": "dot_pressure",
-      "total": 27,
-      "wins": 13,
-      "win_rate_percent": 48.15,
-      "avg_duration": 22,
+      "total": 64,
+      "wins": 35,
+      "win_rate_percent": 54.69,
+      "avg_duration": 19.61,
       "status": "PASS"
     }
   ],
@@ -6810,121 +9147,121 @@
     {
       "archetype_id": "starter_instrument",
       "display_name": "Starter Instrument",
-      "total": 470,
-      "wins": 56,
-      "avg_duration": 25.4,
-      "weapon_damage": 222238,
+      "total": 598,
+      "wins": 62,
+      "avg_duration": 24.92,
+      "weapon_damage": 279620,
       "spell_damage": 0,
       "dot_damage": 0,
       "pet_damage": 0,
       "summon_damage": 0,
       "system_damage": 0,
-      "total_damage": 222238,
+      "total_damage": 279620,
       "dominant_source": "weapon"
     },
     {
       "archetype_id": "mental_controller",
       "display_name": "Mental Controller",
-      "total": 470,
-      "wins": 260,
-      "avg_duration": 26,
-      "weapon_damage": 263789,
-      "spell_damage": 132374,
-      "dot_damage": 14843,
-      "pet_damage": 56871,
-      "summon_damage": 10964,
+      "total": 756,
+      "wins": 345,
+      "avg_duration": 25.29,
+      "weapon_damage": 428847,
+      "spell_damage": 213175,
+      "dot_damage": 19730,
+      "pet_damage": 104324,
+      "summon_damage": 17652,
       "system_damage": 0,
-      "total_damage": 478841,
+      "total_damage": 783728,
       "dominant_source": "weapon"
     },
     {
       "archetype_id": "elemental_mixer",
       "display_name": "Elemental Mixer",
-      "total": 986,
-      "wins": 461,
-      "avg_duration": 23.71,
-      "weapon_damage": 454186,
-      "spell_damage": 301884,
-      "dot_damage": 113471,
-      "pet_damage": 88419,
+      "total": 1326,
+      "wins": 642,
+      "avg_duration": 23.69,
+      "weapon_damage": 636464,
+      "spell_damage": 406079,
+      "dot_damage": 164890,
+      "pet_damage": 139477,
       "summon_damage": 0,
       "system_damage": 0,
-      "total_damage": 957960,
+      "total_damage": 1346910,
       "dominant_source": "weapon"
     },
     {
       "archetype_id": "familiar_handler",
       "display_name": "Familiar Handler",
-      "total": 968,
-      "wins": 674,
-      "avg_duration": 22.74,
-      "weapon_damage": 542846,
-      "spell_damage": 278645,
-      "dot_damage": 115503,
-      "pet_damage": 168369,
+      "total": 1216,
+      "wins": 811,
+      "avg_duration": 22.94,
+      "weapon_damage": 677519,
+      "spell_damage": 353011,
+      "dot_damage": 141189,
+      "pet_damage": 215542,
       "summon_damage": 0,
       "system_damage": 0,
-      "total_damage": 1105363,
+      "total_damage": 1387261,
       "dominant_source": "weapon"
     },
     {
       "archetype_id": "summoner",
       "display_name": "Summoner",
-      "total": 470,
-      "wins": 272,
-      "avg_duration": 25.49,
-      "weapon_damage": 267853,
-      "spell_damage": 59946,
-      "dot_damage": 5480,
-      "pet_damage": 54633,
-      "summon_damage": 78378,
+      "total": 942,
+      "wins": 537,
+      "avg_duration": 24.08,
+      "weapon_damage": 559564,
+      "spell_damage": 107004,
+      "dot_damage": 8446,
+      "pet_damage": 140125,
+      "summon_damage": 234469,
       "system_damage": 0,
-      "total_damage": 466290,
+      "total_damage": 1049608,
       "dominant_source": "weapon"
     },
     {
       "archetype_id": "defensive_occultist",
       "display_name": "Defensive Occultist",
-      "total": 470,
-      "wins": 184,
-      "avg_duration": 28.95,
-      "weapon_damage": 252286,
-      "spell_damage": 99616,
-      "dot_damage": 5589,
-      "pet_damage": 60804,
-      "summon_damage": 18575,
+      "total": 902,
+      "wins": 393,
+      "avg_duration": 30.53,
+      "weapon_damage": 549281,
+      "spell_damage": 236664,
+      "dot_damage": 8597,
+      "pet_damage": 160672,
+      "summon_damage": 23960,
       "system_damage": 0,
-      "total_damage": 436870,
+      "total_damage": 979174,
       "dominant_source": "weapon"
     },
     {
       "archetype_id": "dot_pressure",
       "display_name": "DoT Pressure",
-      "total": 470,
-      "wins": 283,
-      "avg_duration": 23.85,
-      "weapon_damage": 220742,
-      "spell_damage": 82800,
-      "dot_damage": 92254,
-      "pet_damage": 42893,
-      "summon_damage": 11066,
+      "total": 942,
+      "wins": 595,
+      "avg_duration": 22.29,
+      "weapon_damage": 467954,
+      "spell_damage": 186583,
+      "dot_damage": 273657,
+      "pet_damage": 105277,
+      "summon_damage": 17132,
       "system_damage": 0,
-      "total_damage": 449755,
+      "total_damage": 1050603,
       "dominant_source": "weapon"
     },
     {
       "archetype_id": "funeral_burst",
       "display_name": "Funeral Burst",
-      "total": 1270,
-      "wins": 942,
-      "avg_duration": 22.55,
-      "weapon_damage": 720969,
-      "spell_damage": 437713,
-      "dot_damage": 171761,
-      "pet_damage": 94271,
-      "summon_damage": 29621,
+      "total": 1750,
+      "wins": 1259,
+      "avg_duration": 22.27,
+      "weapon_damage": 993067,
+      "spell_damage": 665589,
+      "dot_damage": 244236,
+      "pet_damage": 179612,
+      "summon_damage": 41615,
       "system_damage": 0,
-      "total_damage": 1454335,
+      "total_damage": 2124119,
       "dominant_source": "weapon"
     }
   ],
@@ -6971,10 +9308,113 @@
       "long_rate_percent": 15.07,
       "anti_stall_rate_percent": 4.95,
       "near_power_dominance_max_percent": 63.46,
-      "compatibility_status": "current"
+      "compatibility_status": "stale"
     }
   ],
-  "compare": [],
+  "compare": [
+    {
+      "metric": "baseline_run",
+      "baseline": "2026-05-25_source_identity_balance_v02",
+      "current": "draxos_mobile_battle_lab_v4_source_identity",
+      "delta": "changed"
+    },
+    {
+      "metric": "overall_status",
+      "baseline": "PASS",
+      "current": "REVIEW",
+      "delta": "changed"
+    },
+    {
+      "metric": "avg_duration",
+      "baseline": "24.08s",
+      "current": "24.03s",
+      "delta": "-0.05s"
+    },
+    {
+      "metric": "median_duration",
+      "baseline": "22.7s",
+      "current": "22.7s",
+      "delta": "0s"
+    },
+    {
+      "metric": "short_rate_percent",
+      "baseline": "0%",
+      "current": "0%",
+      "delta": "0%"
+    },
+    {
+      "metric": "long_rate_percent",
+      "baseline": "15.07%",
+      "current": "16.86%",
+      "delta": "+1.79%"
+    },
+    {
+      "metric": "anti_stall_rate_percent",
+      "baseline": "4.95%",
+      "current": "6.4%",
+      "delta": "+1.45%"
+    },
+    {
+      "metric": "raw_stress_dominance_max_percent",
+      "baseline": "67.33%",
+      "current": "61.36%",
+      "delta": "-5.97%"
+    },
+    {
+      "metric": "near_power_dominance_max_percent",
+      "baseline": "63.46%",
+      "current": "63.34%",
+      "delta": "-0.12%"
+    },
+    {
+      "metric": "near_power_win_rate:starter_instrument",
+      "baseline": "45.31%",
+      "current": "45.31%",
+      "delta": "0%"
+    },
+    {
+      "metric": "near_power_win_rate:mental_controller",
+      "baseline": "35.87%",
+      "current": "27.05%",
+      "delta": "-8.82%"
+    },
+    {
+      "metric": "near_power_win_rate:elemental_mixer",
+      "baseline": "42.01%",
+      "current": "42.25%",
+      "delta": "+0.24%"
+    },
+    {
+      "metric": "near_power_win_rate:familiar_handler",
+      "baseline": "63.46%",
+      "current": "63.34%",
+      "delta": "-0.12%"
+    },
+    {
+      "metric": "near_power_win_rate:summoner",
+      "baseline": "48.8%",
+      "current": "51.65%",
+      "delta": "+2.85%"
+    },
+    {
+      "metric": "near_power_win_rate:defensive_occultist",
+      "baseline": "31.97%",
+      "current": "40.38%",
+      "delta": "+8.41%"
+    },
+    {
+      "metric": "near_power_win_rate:dot_pressure",
+      "baseline": "62.4%",
+      "current": "60.75%",
+      "delta": "-1.65%"
+    },
+    {
+      "metric": "near_power_win_rate:funeral_burst",
+      "baseline": "53.92%",
+      "current": "55.32%",
+      "delta": "+1.4%"
+    }
+  ],
   "replay_index": [
     {
       "tag": "level_3_representative",
@@ -6990,7 +9430,7 @@
     },
     {
       "tag": "level_7_representative",
-      "matchup_id": "L7_M0059",
+      "matchup_id": "L7_M0091",
       "level": 7,
       "player_build_id": "L7_mental_controller_fixed",
       "opponent_build_id": "L7_mental_controller_r1",
@@ -7014,7 +9454,7 @@
     },
     {
       "tag": "level_15_representative",
-      "matchup_id": "L15_M0107",
+      "matchup_id": "L15_M0147",
       "level": 15,
       "player_build_id": "L15_mental_controller_fixed",
       "opponent_build_id": "L15_mental_controller_r1",
@@ -7026,7 +9466,7 @@
     },
     {
       "tag": "level_25_representative",
-      "matchup_id": "L25_M0059",
+      "matchup_id": "L25_M0099",
       "level": 25,
       "player_build_id": "L25_mental_controller_fixed",
       "opponent_build_id": "L25_mental_controller_r1",
@@ -7038,7 +9478,7 @@
     },
     {
       "tag": "level_40_representative",
-      "matchup_id": "L40_M0059",
+      "matchup_id": "L40_M0075",
       "level": 40,
       "player_build_id": "L40_mental_controller_fixed",
       "opponent_build_id": "L40_mental_controller_r1",
@@ -7058,6 +9498,30 @@
       "opponent_archetype_id": "starter_instrument",
       "duration": 35.2,
       "winner": "player",
+      "reason": "combatant_defeated"
+    },
+    {
+      "tag": "track16_potion_behavior",
+      "matchup_id": "L7_M0033",
+      "level": 7,
+      "player_build_id": "L7_starter_instrument_fixed",
+      "opponent_build_id": "T16_potion_default_L7_defensive_occultist_fixed",
+      "player_archetype_id": "starter_instrument",
+      "opponent_archetype_id": "defensive_occultist",
+      "duration": 36.2,
+      "winner": "opponent",
+      "reason": "combatant_defeated"
+    },
+    {
+      "tag": "track16_spell_behavior",
+      "matchup_id": "L7_M0039",
+      "level": 7,
+      "player_build_id": "L7_starter_instrument_fixed",
+      "opponent_build_id": "T16_spell_behavior_disabled_L7_mental_controller_fixed",
+      "player_archetype_id": "starter_instrument",
+      "opponent_archetype_id": "mental_controller",
+      "duration": 29.2,
+      "winner": "opponent",
       "reason": "combatant_defeated"
     },
     {
@@ -7238,30 +9702,6 @@
       "opponent_archetype_id": "starter_instrument",
       "duration": 32.2,
       "winner": "player",
-      "reason": "combatant_defeated"
-    },
-    {
-      "tag": "LONG",
-      "matchup_id": "L1_M0017",
-      "level": 1,
-      "player_build_id": "L1_starter_instrument_fixed",
-      "opponent_build_id": "L1_summoner_r1",
-      "player_archetype_id": "starter_instrument",
-      "opponent_archetype_id": "summoner",
-      "duration": 35.2,
-      "winner": "player",
-      "reason": "combatant_defeated"
-    },
-    {
-      "tag": "LONG",
-      "matchup_id": "L1_M0018",
-      "level": 1,
-      "player_build_id": "L1_summoner_r1",
-      "opponent_build_id": "L1_starter_instrument_fixed",
-      "player_archetype_id": "summoner",
-      "opponent_archetype_id": "starter_instrument",
-      "duration": 35.2,
-      "winner": "opponent",
       "reason": "combatant_defeated"
     }
   ]

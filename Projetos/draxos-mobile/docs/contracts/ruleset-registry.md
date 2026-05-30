@@ -4,6 +4,7 @@
 - Contract id: `RULESET_REGISTRY_CONTRACT_V1`
 - Ultima atualizacao: `2026-05-30`
 - Migration base: `202605300001_foundation_expansion_readiness.sql`
+- Closeout migration: `202605300004_foundation_closeout.sql`
 - Current ruleset: `foundation_ruleset_v0`
 
 ## Decisao
@@ -28,10 +29,13 @@ O banco nao e ferramenta de autoria de balanceamento. Ele registra o que foi pub
 
 ## Registry
 
-`ruleset_registry` registra publicacoes.
+`ruleset_registry` registra publicacoes imutaveis. A identidade tecnica de uma
+publicacao e `publication_id`; `ruleset_id` continua sendo o nome legivel do
+pacote e nao deve ser usado sozinho como chave unica.
 
 Campos contratuais:
 
+- `publication_id`
 - `ruleset_id`
 - `ruleset_version`
 - `content_hash`
@@ -45,10 +49,19 @@ Campos contratuais:
 - `created_at`
 - `updated_at`
 
+Invariantes:
+
+- primary key em `publication_id`;
+- unique em `ruleset_id + ruleset_version + channel + cohort`;
+- apenas uma publicacao ativa por `ruleset_id + channel + cohort`;
+- mudanca de hash/schema/status deve criar nova publicacao ou migration
+  corretiva explicita, nao sobrescrever historico silenciosamente.
+
 Registro inicial:
 
 ```json
 {
+  "publication_id": "uuid",
   "ruleset_id": "foundation_ruleset_v0",
   "ruleset_version": 1,
   "content_hash": "5b7121a37a78e966c06098cc70283dabc5dbbcc1d3f9a21d279b855d09aee1e7",
@@ -95,7 +108,11 @@ Linhas e snapshots que dependem de regra devem salvar contexto de ruleset:
 - `alpha_purchases`;
 - battle replay/history payloads.
 
-`battle_log_v1` aceita campo extra `ruleset`. Replays antigos sem o campo continuam validos e recebem fallback para `foundation_ruleset_v0` apenas para leitura.
+`battle_log_v1` aceita campo extra `ruleset`. Replays novos devem usar os
+hashes salvos na propria row (`ruleset_publication_id`, `content_hash`,
+`simulator_hash`, `schema_version`). Replays antigos sem hashes persistidos
+continuam validos e recebem fallback para `foundation_ruleset_v0` apenas para
+leitura historica.
 
 ## Regra De Hash
 

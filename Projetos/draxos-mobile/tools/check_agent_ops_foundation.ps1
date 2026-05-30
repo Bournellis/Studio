@@ -65,7 +65,15 @@ function Test-DoingCards {
     Add-Failure "more than one DraxosMobile Doing card exists: $($draxosCards.Name -join ', ')"
     return
   }
-  $obsolete = @($draxosCards | Where-Object { $_.Name -notlike '*agent-ops-foundation*' })
+  $allowedActiveCards = @(
+    '*agent-ops-foundation*',
+    '*foundation-expansion-readiness*',
+    '*foundation-closeout*'
+  )
+  $obsolete = @($draxosCards | Where-Object {
+      $cardName = $_.Name
+      -not @($allowedActiveCards | Where-Object { $cardName -like $_ }).Count
+    })
   if ($obsolete.Count -eq 0) {
     Add-Ok 'Kanban/Doing has no obsolete DraxosMobile cards'
   } else {

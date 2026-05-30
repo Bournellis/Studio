@@ -26,7 +26,7 @@
         "energia": 22.35,
         "sangue": 20.68,
         "cristais": 6.12,
-        "ossos": 448,
+        "ossos": 398,
         "diamante": 0.09
       },
       "resource_debt": {
@@ -115,6 +115,71 @@
         "premium_unlocked": false,
         "simulated_store_spend": 0
       },
+      "consumables": {
+        "bone_powder_item_id": "po_osso",
+        "life_potion_item_id": "pocao_vida",
+        "life_potion_recipe_id": "craft_pocao_vida",
+        "available_po_osso": 448,
+        "po_osso_spent": 50,
+        "po_osso_remaining": 398,
+        "ossos_reserved_for_powder": 50,
+        "target_potion_stock": 1,
+        "crafted_life_potions": 1,
+        "craftable_life_potions": 8,
+        "equipped_potion_id": "",
+        "potion_slots": [
+          {
+            "slot_index": 1,
+            "potion_id": null,
+            "behavior": {
+              "enabled": true,
+              "hp": {
+                "mode": "below",
+                "percent": 40
+              },
+              "mana": {
+                "mode": "ignore",
+                "percent": 0
+              }
+            }
+          }
+        ],
+        "inventory": [
+          {
+            "item_id": "po_osso",
+            "quantity": 398
+          },
+          {
+            "item_id": "pocao_vida",
+            "quantity": 1
+          }
+        ],
+        "spell_behaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "preparation_ready": true
+      },
       "combat_build": {
         "id": "free_50_rewards_2h",
         "displayName": "free_50_rewards_2h",
@@ -129,6 +194,30 @@
         "spellLevels": {
           "descarga_nervosa": 2,
           "marca_brasa": 3
+        },
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
         }
       },
       "manual_checklist": [
@@ -136,8 +225,10 @@
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
         "Conferir build: arma L4, spells descarga_nervosa, marca_brasa.",
+        "Conferir crafting: 1 Pocao de Vida, 398 Po de Osso restante.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -164,7 +255,7 @@
         "energia": 35.88,
         "sangue": 51.7,
         "cristais": 5.3,
-        "ossos": 1120,
+        "ossos": 1020,
         "diamante": 0.23
       },
       "resource_debt": {
@@ -253,6 +344,71 @@
         "premium_unlocked": false,
         "simulated_store_spend": 0
       },
+      "consumables": {
+        "bone_powder_item_id": "po_osso",
+        "life_potion_item_id": "pocao_vida",
+        "life_potion_recipe_id": "craft_pocao_vida",
+        "available_po_osso": 1120,
+        "po_osso_spent": 100,
+        "po_osso_remaining": 1020,
+        "ossos_reserved_for_powder": 100,
+        "target_potion_stock": 2,
+        "crafted_life_potions": 2,
+        "craftable_life_potions": 22,
+        "equipped_potion_id": "pocao_vida",
+        "potion_slots": [
+          {
+            "slot_index": 1,
+            "potion_id": "pocao_vida",
+            "behavior": {
+              "enabled": true,
+              "hp": {
+                "mode": "below",
+                "percent": 40
+              },
+              "mana": {
+                "mode": "ignore",
+                "percent": 0
+              }
+            }
+          }
+        ],
+        "inventory": [
+          {
+            "item_id": "po_osso",
+            "quantity": 1020
+          },
+          {
+            "item_id": "pocao_vida",
+            "quantity": 2
+          }
+        ],
+        "spell_behaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "preparation_ready": true
+      },
       "combat_build": {
         "id": "free_50_rewards_5h",
         "displayName": "free_50_rewards_5h",
@@ -269,15 +425,57 @@
           "marca_brasa": 7
         },
         "passiveId": "pulso_tempestade",
-        "passiveLevel": 3
+        "passiveLevel": 3,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 2,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       },
       "manual_checklist": [
         "Carregar free_50_rewards em 5h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
         "Conferir build: arma L5, spells descarga_nervosa, marca_brasa.",
+        "Conferir crafting: 2 Pocao de Vida, 1020 Po de Osso restante.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -304,7 +502,7 @@
         "energia": 71.75,
         "sangue": 103.4,
         "cristais": 5.6,
-        "ossos": 2240,
+        "ossos": 2090,
         "diamante": 0.45
       },
       "resource_debt": {
@@ -393,6 +591,71 @@
         "premium_unlocked": false,
         "simulated_store_spend": 0
       },
+      "consumables": {
+        "bone_powder_item_id": "po_osso",
+        "life_potion_item_id": "pocao_vida",
+        "life_potion_recipe_id": "craft_pocao_vida",
+        "available_po_osso": 2240,
+        "po_osso_spent": 150,
+        "po_osso_remaining": 2090,
+        "ossos_reserved_for_powder": 150,
+        "target_potion_stock": 3,
+        "crafted_life_potions": 3,
+        "craftable_life_potions": 44,
+        "equipped_potion_id": "pocao_vida",
+        "potion_slots": [
+          {
+            "slot_index": 1,
+            "potion_id": "pocao_vida",
+            "behavior": {
+              "enabled": true,
+              "hp": {
+                "mode": "below",
+                "percent": 40
+              },
+              "mana": {
+                "mode": "ignore",
+                "percent": 0
+              }
+            }
+          }
+        ],
+        "inventory": [
+          {
+            "item_id": "po_osso",
+            "quantity": 2090
+          },
+          {
+            "item_id": "pocao_vida",
+            "quantity": 3
+          }
+        ],
+        "spell_behaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "preparation_ready": true
+      },
       "combat_build": {
         "id": "free_50_rewards_10h",
         "displayName": "free_50_rewards_10h",
@@ -409,15 +672,57 @@
           "marca_brasa": 8
         },
         "passiveId": "pulso_tempestade",
-        "passiveLevel": 6
+        "passiveLevel": 6,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 3,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       },
       "manual_checklist": [
         "Carregar free_50_rewards em 10h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
         "Conferir build: arma L6, spells descarga_nervosa, marca_brasa.",
+        "Conferir crafting: 3 Pocao de Vida, 2090 Po de Osso restante.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -445,7 +750,7 @@
         "energia": 107.63,
         "sangue": 155.1,
         "cristais": 15.9,
-        "ossos": 3360,
+        "ossos": 3160,
         "diamante": 0.68
       },
       "resource_debt": {
@@ -534,6 +839,71 @@
         "premium_unlocked": false,
         "simulated_store_spend": 0
       },
+      "consumables": {
+        "bone_powder_item_id": "po_osso",
+        "life_potion_item_id": "pocao_vida",
+        "life_potion_recipe_id": "craft_pocao_vida",
+        "available_po_osso": 3360,
+        "po_osso_spent": 200,
+        "po_osso_remaining": 3160,
+        "ossos_reserved_for_powder": 200,
+        "target_potion_stock": 4,
+        "crafted_life_potions": 4,
+        "craftable_life_potions": 67,
+        "equipped_potion_id": "pocao_vida",
+        "potion_slots": [
+          {
+            "slot_index": 1,
+            "potion_id": "pocao_vida",
+            "behavior": {
+              "enabled": true,
+              "hp": {
+                "mode": "below",
+                "percent": 40
+              },
+              "mana": {
+                "mode": "ignore",
+                "percent": 0
+              }
+            }
+          }
+        ],
+        "inventory": [
+          {
+            "item_id": "po_osso",
+            "quantity": 3160
+          },
+          {
+            "item_id": "pocao_vida",
+            "quantity": 4
+          }
+        ],
+        "spell_behaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "preparation_ready": true
+      },
       "combat_build": {
         "id": "free_50_rewards_15h",
         "displayName": "free_50_rewards_15h",
@@ -550,15 +920,57 @@
           "marca_brasa": 9
         },
         "passiveId": "pulso_tempestade",
-        "passiveLevel": 7
+        "passiveLevel": 7,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 4,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       },
       "manual_checklist": [
         "Carregar free_50_rewards em 15h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
         "Conferir build: arma L7, spells descarga_nervosa, marca_brasa.",
+        "Conferir crafting: 4 Pocao de Vida, 3160 Po de Osso restante.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -586,7 +998,7 @@
         "energia": 143.5,
         "sangue": 152.8,
         "cristais": 25.2,
-        "ossos": 4480,
+        "ossos": 4230,
         "diamante": 0.9
       },
       "resource_debt": {
@@ -679,6 +1091,71 @@
         "premium_unlocked": false,
         "simulated_store_spend": 0
       },
+      "consumables": {
+        "bone_powder_item_id": "po_osso",
+        "life_potion_item_id": "pocao_vida",
+        "life_potion_recipe_id": "craft_pocao_vida",
+        "available_po_osso": 4480,
+        "po_osso_spent": 250,
+        "po_osso_remaining": 4230,
+        "ossos_reserved_for_powder": 250,
+        "target_potion_stock": 5,
+        "crafted_life_potions": 5,
+        "craftable_life_potions": 89,
+        "equipped_potion_id": "pocao_vida",
+        "potion_slots": [
+          {
+            "slot_index": 1,
+            "potion_id": "pocao_vida",
+            "behavior": {
+              "enabled": true,
+              "hp": {
+                "mode": "below",
+                "percent": 40
+              },
+              "mana": {
+                "mode": "ignore",
+                "percent": 0
+              }
+            }
+          }
+        ],
+        "inventory": [
+          {
+            "item_id": "po_osso",
+            "quantity": 4230
+          },
+          {
+            "item_id": "pocao_vida",
+            "quantity": 5
+          }
+        ],
+        "spell_behaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "preparation_ready": true
+      },
       "combat_build": {
         "id": "free_50_rewards_20h",
         "displayName": "free_50_rewards_20h",
@@ -697,15 +1174,57 @@
         "passiveId": "pulso_tempestade",
         "passiveLevel": 8,
         "petId": "serpe_tempestade",
-        "petLevel": 9
+        "petLevel": 9,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 5,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       },
       "manual_checklist": [
         "Carregar free_50_rewards em 20h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
         "Conferir build: arma L7, spells descarga_nervosa, marca_brasa.",
+        "Conferir crafting: 5 Pocao de Vida, 4230 Po de Osso restante.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -732,7 +1251,7 @@
         "energia": 27,
         "sangue": 29,
         "cristais": 9.4,
-        "ossos": 670,
+        "ossos": 620,
         "diamante": 0.2
       },
       "resource_debt": {
@@ -821,6 +1340,71 @@
         "premium_unlocked": false,
         "simulated_store_spend": 0
       },
+      "consumables": {
+        "bone_powder_item_id": "po_osso",
+        "life_potion_item_id": "pocao_vida",
+        "life_potion_recipe_id": "craft_pocao_vida",
+        "available_po_osso": 670,
+        "po_osso_spent": 50,
+        "po_osso_remaining": 620,
+        "ossos_reserved_for_powder": 50,
+        "target_potion_stock": 1,
+        "crafted_life_potions": 1,
+        "craftable_life_potions": 13,
+        "equipped_potion_id": "",
+        "potion_slots": [
+          {
+            "slot_index": 1,
+            "potion_id": null,
+            "behavior": {
+              "enabled": true,
+              "hp": {
+                "mode": "below",
+                "percent": 40
+              },
+              "mana": {
+                "mode": "ignore",
+                "percent": 0
+              }
+            }
+          }
+        ],
+        "inventory": [
+          {
+            "item_id": "po_osso",
+            "quantity": 620
+          },
+          {
+            "item_id": "pocao_vida",
+            "quantity": 1
+          }
+        ],
+        "spell_behaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "preparation_ready": true
+      },
       "combat_build": {
         "id": "free_100_rewards_2h",
         "displayName": "free_100_rewards_2h",
@@ -835,6 +1419,30 @@
         "spellLevels": {
           "descarga_nervosa": 3,
           "marca_brasa": 3
+        },
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
         }
       },
       "manual_checklist": [
@@ -842,8 +1450,10 @@
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
         "Conferir build: arma L5, spells descarga_nervosa, marca_brasa.",
+        "Conferir crafting: 1 Pocao de Vida, 620 Po de Osso restante.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -870,7 +1480,7 @@
         "energia": 57.5,
         "sangue": 72.5,
         "cristais": 8.5,
-        "ossos": 1675,
+        "ossos": 1575,
         "diamante": 0.5
       },
       "resource_debt": {
@@ -959,6 +1569,71 @@
         "premium_unlocked": false,
         "simulated_store_spend": 0
       },
+      "consumables": {
+        "bone_powder_item_id": "po_osso",
+        "life_potion_item_id": "pocao_vida",
+        "life_potion_recipe_id": "craft_pocao_vida",
+        "available_po_osso": 1675,
+        "po_osso_spent": 100,
+        "po_osso_remaining": 1575,
+        "ossos_reserved_for_powder": 100,
+        "target_potion_stock": 2,
+        "crafted_life_potions": 2,
+        "craftable_life_potions": 33,
+        "equipped_potion_id": "pocao_vida",
+        "potion_slots": [
+          {
+            "slot_index": 1,
+            "potion_id": "pocao_vida",
+            "behavior": {
+              "enabled": true,
+              "hp": {
+                "mode": "below",
+                "percent": 40
+              },
+              "mana": {
+                "mode": "ignore",
+                "percent": 0
+              }
+            }
+          }
+        ],
+        "inventory": [
+          {
+            "item_id": "po_osso",
+            "quantity": 1575
+          },
+          {
+            "item_id": "pocao_vida",
+            "quantity": 2
+          }
+        ],
+        "spell_behaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "preparation_ready": true
+      },
       "combat_build": {
         "id": "free_100_rewards_5h",
         "displayName": "free_100_rewards_5h",
@@ -975,15 +1650,57 @@
           "marca_brasa": 9
         },
         "passiveId": "ossuario_interior",
-        "passiveLevel": 4
+        "passiveLevel": 4,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 2,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       },
       "manual_checklist": [
         "Carregar free_100_rewards em 5h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
         "Conferir build: arma L7, spells descarga_nervosa, marca_brasa.",
+        "Conferir crafting: 2 Pocao de Vida, 1575 Po de Osso restante.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1010,7 +1727,7 @@
         "energia": 115,
         "sangue": 145,
         "cristais": 11,
-        "ossos": 3350,
+        "ossos": 3200,
         "diamante": 1
       },
       "resource_debt": {
@@ -1099,6 +1816,71 @@
         "premium_unlocked": false,
         "simulated_store_spend": 0
       },
+      "consumables": {
+        "bone_powder_item_id": "po_osso",
+        "life_potion_item_id": "pocao_vida",
+        "life_potion_recipe_id": "craft_pocao_vida",
+        "available_po_osso": 3350,
+        "po_osso_spent": 150,
+        "po_osso_remaining": 3200,
+        "ossos_reserved_for_powder": 150,
+        "target_potion_stock": 3,
+        "crafted_life_potions": 3,
+        "craftable_life_potions": 67,
+        "equipped_potion_id": "pocao_vida",
+        "potion_slots": [
+          {
+            "slot_index": 1,
+            "potion_id": "pocao_vida",
+            "behavior": {
+              "enabled": true,
+              "hp": {
+                "mode": "below",
+                "percent": 40
+              },
+              "mana": {
+                "mode": "ignore",
+                "percent": 0
+              }
+            }
+          }
+        ],
+        "inventory": [
+          {
+            "item_id": "po_osso",
+            "quantity": 3200
+          },
+          {
+            "item_id": "pocao_vida",
+            "quantity": 3
+          }
+        ],
+        "spell_behaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "preparation_ready": true
+      },
       "combat_build": {
         "id": "free_100_rewards_10h",
         "displayName": "free_100_rewards_10h",
@@ -1115,15 +1897,57 @@
           "marca_brasa": 11
         },
         "passiveId": "ossuario_interior",
-        "passiveLevel": 8
+        "passiveLevel": 8,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 3,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       },
       "manual_checklist": [
         "Carregar free_100_rewards em 10h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
         "Conferir build: arma L9, spells descarga_nervosa, marca_brasa.",
+        "Conferir crafting: 3 Pocao de Vida, 3200 Po de Osso restante.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1150,7 +1974,7 @@
         "energia": 152.5,
         "sangue": 108.5,
         "cristais": 16.5,
-        "ossos": 5025,
+        "ossos": 4825,
         "diamante": 1.5
       },
       "resource_debt": {
@@ -1243,6 +2067,71 @@
         "premium_unlocked": false,
         "simulated_store_spend": 0
       },
+      "consumables": {
+        "bone_powder_item_id": "po_osso",
+        "life_potion_item_id": "pocao_vida",
+        "life_potion_recipe_id": "craft_pocao_vida",
+        "available_po_osso": 5025,
+        "po_osso_spent": 200,
+        "po_osso_remaining": 4825,
+        "ossos_reserved_for_powder": 200,
+        "target_potion_stock": 4,
+        "crafted_life_potions": 4,
+        "craftable_life_potions": 100,
+        "equipped_potion_id": "pocao_vida",
+        "potion_slots": [
+          {
+            "slot_index": 1,
+            "potion_id": "pocao_vida",
+            "behavior": {
+              "enabled": true,
+              "hp": {
+                "mode": "below",
+                "percent": 40
+              },
+              "mana": {
+                "mode": "ignore",
+                "percent": 0
+              }
+            }
+          }
+        ],
+        "inventory": [
+          {
+            "item_id": "po_osso",
+            "quantity": 4825
+          },
+          {
+            "item_id": "pocao_vida",
+            "quantity": 4
+          }
+        ],
+        "spell_behaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "preparation_ready": true
+      },
       "combat_build": {
         "id": "free_100_rewards_15h",
         "displayName": "free_100_rewards_15h",
@@ -1261,15 +2150,57 @@
         "passiveId": "pulso_tempestade",
         "passiveLevel": 10,
         "petId": "serpe_tempestade",
-        "petLevel": 12
+        "petLevel": 12,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 4,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       },
       "manual_checklist": [
         "Carregar free_100_rewards em 15h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
         "Conferir build: arma L10, spells descarga_nervosa, marca_brasa.",
+        "Conferir crafting: 4 Pocao de Vida, 4825 Po de Osso restante.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1297,7 +2228,7 @@
         "energia": 195,
         "sangue": 181,
         "cristais": 28,
-        "ossos": 6700,
+        "ossos": 6450,
         "diamante": 2
       },
       "resource_debt": {
@@ -1390,6 +2321,71 @@
         "premium_unlocked": false,
         "simulated_store_spend": 0
       },
+      "consumables": {
+        "bone_powder_item_id": "po_osso",
+        "life_potion_item_id": "pocao_vida",
+        "life_potion_recipe_id": "craft_pocao_vida",
+        "available_po_osso": 6700,
+        "po_osso_spent": 250,
+        "po_osso_remaining": 6450,
+        "ossos_reserved_for_powder": 250,
+        "target_potion_stock": 5,
+        "crafted_life_potions": 5,
+        "craftable_life_potions": 134,
+        "equipped_potion_id": "pocao_vida",
+        "potion_slots": [
+          {
+            "slot_index": 1,
+            "potion_id": "pocao_vida",
+            "behavior": {
+              "enabled": true,
+              "hp": {
+                "mode": "below",
+                "percent": 40
+              },
+              "mana": {
+                "mode": "ignore",
+                "percent": 0
+              }
+            }
+          }
+        ],
+        "inventory": [
+          {
+            "item_id": "po_osso",
+            "quantity": 6450
+          },
+          {
+            "item_id": "pocao_vida",
+            "quantity": 5
+          }
+        ],
+        "spell_behaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "preparation_ready": true
+      },
       "combat_build": {
         "id": "free_100_rewards_20h",
         "displayName": "free_100_rewards_20h",
@@ -1408,15 +2404,57 @@
         "passiveId": "pulso_tempestade",
         "passiveLevel": 11,
         "petId": "serpe_tempestade",
-        "petLevel": 12
+        "petLevel": 12,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 5,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       },
       "manual_checklist": [
         "Carregar free_100_rewards em 20h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
         "Conferir build: arma L11, spells descarga_nervosa, marca_brasa.",
+        "Conferir crafting: 5 Pocao de Vida, 6450 Po de Osso restante.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1444,7 +2482,7 @@
         "energia": 12.8,
         "sangue": 31.88,
         "cristais": 11.08,
-        "ossos": 742,
+        "ossos": 692,
         "diamante": 500.45
       },
       "resource_debt": {
@@ -1533,6 +2571,71 @@
         "premium_unlocked": true,
         "simulated_store_spend": 0
       },
+      "consumables": {
+        "bone_powder_item_id": "po_osso",
+        "life_potion_item_id": "pocao_vida",
+        "life_potion_recipe_id": "craft_pocao_vida",
+        "available_po_osso": 742,
+        "po_osso_spent": 50,
+        "po_osso_remaining": 692,
+        "ossos_reserved_for_powder": 50,
+        "target_potion_stock": 1,
+        "crafted_life_potions": 1,
+        "craftable_life_potions": 14,
+        "equipped_potion_id": "",
+        "potion_slots": [
+          {
+            "slot_index": 1,
+            "potion_id": null,
+            "behavior": {
+              "enabled": true,
+              "hp": {
+                "mode": "below",
+                "percent": 40
+              },
+              "mana": {
+                "mode": "ignore",
+                "percent": 0
+              }
+            }
+          }
+        ],
+        "inventory": [
+          {
+            "item_id": "po_osso",
+            "quantity": 692
+          },
+          {
+            "item_id": "pocao_vida",
+            "quantity": 1
+          }
+        ],
+        "spell_behaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "preparation_ready": true
+      },
       "combat_build": {
         "id": "freemium_basic_2h",
         "displayName": "freemium_basic_2h",
@@ -1547,6 +2650,30 @@
         "spellLevels": {
           "descarga_nervosa": 3,
           "marca_brasa": 3
+        },
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
         }
       },
       "manual_checklist": [
@@ -1554,8 +2681,10 @@
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
         "Conferir build: arma L6, spells descarga_nervosa, marca_brasa.",
+        "Conferir crafting: 1 Pocao de Vida, 692 Po de Osso restante.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1583,7 +2712,7 @@
         "energia": 32,
         "sangue": 79.7,
         "cristais": 7.7,
-        "ossos": 1855,
+        "ossos": 1755,
         "diamante": 501.12
       },
       "resource_debt": {
@@ -1672,6 +2801,71 @@
         "premium_unlocked": true,
         "simulated_store_spend": 0
       },
+      "consumables": {
+        "bone_powder_item_id": "po_osso",
+        "life_potion_item_id": "pocao_vida",
+        "life_potion_recipe_id": "craft_pocao_vida",
+        "available_po_osso": 1855,
+        "po_osso_spent": 100,
+        "po_osso_remaining": 1755,
+        "ossos_reserved_for_powder": 100,
+        "target_potion_stock": 2,
+        "crafted_life_potions": 2,
+        "craftable_life_potions": 37,
+        "equipped_potion_id": "pocao_vida",
+        "potion_slots": [
+          {
+            "slot_index": 1,
+            "potion_id": "pocao_vida",
+            "behavior": {
+              "enabled": true,
+              "hp": {
+                "mode": "below",
+                "percent": 40
+              },
+              "mana": {
+                "mode": "ignore",
+                "percent": 0
+              }
+            }
+          }
+        ],
+        "inventory": [
+          {
+            "item_id": "po_osso",
+            "quantity": 1755
+          },
+          {
+            "item_id": "pocao_vida",
+            "quantity": 2
+          }
+        ],
+        "spell_behaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "preparation_ready": true
+      },
       "combat_build": {
         "id": "freemium_basic_5h",
         "displayName": "freemium_basic_5h",
@@ -1688,15 +2882,57 @@
           "marca_brasa": 9
         },
         "passiveId": "ossuario_interior",
-        "passiveLevel": 5
+        "passiveLevel": 5,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 2,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       },
       "manual_checklist": [
         "Carregar freemium_basic em 5h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
         "Conferir build: arma L7, spells descarga_nervosa, marca_brasa.",
+        "Conferir crafting: 2 Pocao de Vida, 1755 Po de Osso restante.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1724,7 +2960,7 @@
         "energia": 64,
         "sangue": 159.4,
         "cristais": 11.4,
-        "ossos": 3710,
+        "ossos": 3560,
         "diamante": 502.24
       },
       "resource_debt": {
@@ -1813,6 +3049,71 @@
         "premium_unlocked": true,
         "simulated_store_spend": 0
       },
+      "consumables": {
+        "bone_powder_item_id": "po_osso",
+        "life_potion_item_id": "pocao_vida",
+        "life_potion_recipe_id": "craft_pocao_vida",
+        "available_po_osso": 3710,
+        "po_osso_spent": 150,
+        "po_osso_remaining": 3560,
+        "ossos_reserved_for_powder": 150,
+        "target_potion_stock": 3,
+        "crafted_life_potions": 3,
+        "craftable_life_potions": 74,
+        "equipped_potion_id": "pocao_vida",
+        "potion_slots": [
+          {
+            "slot_index": 1,
+            "potion_id": "pocao_vida",
+            "behavior": {
+              "enabled": true,
+              "hp": {
+                "mode": "below",
+                "percent": 40
+              },
+              "mana": {
+                "mode": "ignore",
+                "percent": 0
+              }
+            }
+          }
+        ],
+        "inventory": [
+          {
+            "item_id": "po_osso",
+            "quantity": 3560
+          },
+          {
+            "item_id": "pocao_vida",
+            "quantity": 3
+          }
+        ],
+        "spell_behaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "preparation_ready": true
+      },
       "combat_build": {
         "id": "freemium_basic_10h",
         "displayName": "freemium_basic_10h",
@@ -1829,15 +3130,57 @@
           "marca_brasa": 12
         },
         "passiveId": "ossuario_interior",
-        "passiveLevel": 9
+        "passiveLevel": 9,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 3,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       },
       "manual_checklist": [
         "Carregar freemium_basic em 10h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
         "Conferir build: arma L10, spells descarga_nervosa, marca_brasa.",
+        "Conferir crafting: 3 Pocao de Vida, 3560 Po de Osso restante.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -1865,7 +3208,7 @@
         "energia": 71,
         "sangue": 130.1,
         "cristais": 17.1,
-        "ossos": 5565,
+        "ossos": 5365,
         "diamante": 503.36
       },
       "resource_debt": {
@@ -1958,6 +3301,71 @@
         "premium_unlocked": true,
         "simulated_store_spend": 0
       },
+      "consumables": {
+        "bone_powder_item_id": "po_osso",
+        "life_potion_item_id": "pocao_vida",
+        "life_potion_recipe_id": "craft_pocao_vida",
+        "available_po_osso": 5565,
+        "po_osso_spent": 200,
+        "po_osso_remaining": 5365,
+        "ossos_reserved_for_powder": 200,
+        "target_potion_stock": 4,
+        "crafted_life_potions": 4,
+        "craftable_life_potions": 111,
+        "equipped_potion_id": "pocao_vida",
+        "potion_slots": [
+          {
+            "slot_index": 1,
+            "potion_id": "pocao_vida",
+            "behavior": {
+              "enabled": true,
+              "hp": {
+                "mode": "below",
+                "percent": 40
+              },
+              "mana": {
+                "mode": "ignore",
+                "percent": 0
+              }
+            }
+          }
+        ],
+        "inventory": [
+          {
+            "item_id": "po_osso",
+            "quantity": 5365
+          },
+          {
+            "item_id": "pocao_vida",
+            "quantity": 4
+          }
+        ],
+        "spell_behaviors": {
+          "sussurro_medo": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "preparation_ready": true
+      },
       "combat_build": {
         "id": "freemium_basic_15h",
         "displayName": "freemium_basic_15h",
@@ -1976,15 +3384,57 @@
         "passiveId": "pacto_familiar",
         "passiveLevel": 11,
         "petId": "corvo_pressagio",
-        "petLevel": 12
+        "petLevel": 12,
+        "spellBehaviors": {
+          "sussurro_medo": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 4,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       },
       "manual_checklist": [
         "Carregar freemium_basic em 15h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
         "Conferir build: arma L11, spells sussurro_medo, marca_brasa.",
+        "Conferir crafting: 4 Pocao de Vida, 5365 Po de Osso restante.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2013,7 +3463,7 @@
         "energia": 114,
         "sangue": 184.8,
         "cristais": 30.8,
-        "ossos": 7420,
+        "ossos": 7170,
         "diamante": 504.48
       },
       "resource_debt": {
@@ -2106,6 +3556,71 @@
         "premium_unlocked": true,
         "simulated_store_spend": 0
       },
+      "consumables": {
+        "bone_powder_item_id": "po_osso",
+        "life_potion_item_id": "pocao_vida",
+        "life_potion_recipe_id": "craft_pocao_vida",
+        "available_po_osso": 7420,
+        "po_osso_spent": 250,
+        "po_osso_remaining": 7170,
+        "ossos_reserved_for_powder": 250,
+        "target_potion_stock": 5,
+        "crafted_life_potions": 5,
+        "craftable_life_potions": 148,
+        "equipped_potion_id": "pocao_vida",
+        "potion_slots": [
+          {
+            "slot_index": 1,
+            "potion_id": "pocao_vida",
+            "behavior": {
+              "enabled": true,
+              "hp": {
+                "mode": "below",
+                "percent": 40
+              },
+              "mana": {
+                "mode": "ignore",
+                "percent": 0
+              }
+            }
+          }
+        ],
+        "inventory": [
+          {
+            "item_id": "po_osso",
+            "quantity": 7170
+          },
+          {
+            "item_id": "pocao_vida",
+            "quantity": 5
+          }
+        ],
+        "spell_behaviors": {
+          "sussurro_medo": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "preparation_ready": true
+      },
       "combat_build": {
         "id": "freemium_basic_20h",
         "displayName": "freemium_basic_20h",
@@ -2124,15 +3639,57 @@
         "passiveId": "pacto_familiar",
         "passiveLevel": 12,
         "petId": "corvo_pressagio",
-        "petLevel": 13
+        "petLevel": 13,
+        "spellBehaviors": {
+          "sussurro_medo": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 5,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       },
       "manual_checklist": [
         "Carregar freemium_basic em 20h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
         "Conferir build: arma L12, spells sussurro_medo, marca_brasa.",
+        "Conferir crafting: 5 Pocao de Vida, 7170 Po de Osso restante.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2160,7 +3717,7 @@
         "energia": 26.2,
         "sangue": 40.75,
         "cristais": 15.08,
-        "ossos": 995,
+        "ossos": 945,
         "diamante": 484.36
       },
       "resource_debt": {
@@ -2249,6 +3806,71 @@
         "premium_unlocked": true,
         "simulated_store_spend": 16
       },
+      "consumables": {
+        "bone_powder_item_id": "po_osso",
+        "life_potion_item_id": "pocao_vida",
+        "life_potion_recipe_id": "craft_pocao_vida",
+        "available_po_osso": 995,
+        "po_osso_spent": 50,
+        "po_osso_remaining": 945,
+        "ossos_reserved_for_powder": 50,
+        "target_potion_stock": 1,
+        "crafted_life_potions": 1,
+        "craftable_life_potions": 19,
+        "equipped_potion_id": "",
+        "potion_slots": [
+          {
+            "slot_index": 1,
+            "potion_id": null,
+            "behavior": {
+              "enabled": true,
+              "hp": {
+                "mode": "below",
+                "percent": 40
+              },
+              "mana": {
+                "mode": "ignore",
+                "percent": 0
+              }
+            }
+          }
+        ],
+        "inventory": [
+          {
+            "item_id": "po_osso",
+            "quantity": 945
+          },
+          {
+            "item_id": "pocao_vida",
+            "quantity": 1
+          }
+        ],
+        "spell_behaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "preparation_ready": true
+      },
       "combat_build": {
         "id": "spender_light_2h",
         "displayName": "spender_light_2h",
@@ -2263,6 +3885,30 @@
         "spellLevels": {
           "descarga_nervosa": 3,
           "marca_brasa": 4
+        },
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
         }
       },
       "manual_checklist": [
@@ -2270,8 +3916,10 @@
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
         "Conferir build: arma L7, spells descarga_nervosa, marca_brasa.",
+        "Conferir crafting: 1 Pocao de Vida, 945 Po de Osso restante.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2299,7 +3947,7 @@
         "energia": 35.5,
         "sangue": 101.88,
         "cristais": 7.7,
-        "ossos": 2487.5,
+        "ossos": 2387.5,
         "diamante": 460.9
       },
       "resource_debt": {
@@ -2388,6 +4036,71 @@
         "premium_unlocked": true,
         "simulated_store_spend": 41
       },
+      "consumables": {
+        "bone_powder_item_id": "po_osso",
+        "life_potion_item_id": "pocao_vida",
+        "life_potion_recipe_id": "craft_pocao_vida",
+        "available_po_osso": 2487,
+        "po_osso_spent": 100,
+        "po_osso_remaining": 2387,
+        "ossos_reserved_for_powder": 100,
+        "target_potion_stock": 2,
+        "crafted_life_potions": 2,
+        "craftable_life_potions": 49,
+        "equipped_potion_id": "pocao_vida",
+        "potion_slots": [
+          {
+            "slot_index": 1,
+            "potion_id": "pocao_vida",
+            "behavior": {
+              "enabled": true,
+              "hp": {
+                "mode": "below",
+                "percent": 40
+              },
+              "mana": {
+                "mode": "ignore",
+                "percent": 0
+              }
+            }
+          }
+        ],
+        "inventory": [
+          {
+            "item_id": "po_osso",
+            "quantity": 2387
+          },
+          {
+            "item_id": "pocao_vida",
+            "quantity": 2
+          }
+        ],
+        "spell_behaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "preparation_ready": true
+      },
       "combat_build": {
         "id": "spender_light_5h",
         "displayName": "spender_light_5h",
@@ -2404,15 +4117,57 @@
           "marca_brasa": 10
         },
         "passiveId": "ossuario_interior",
-        "passiveLevel": 7
+        "passiveLevel": 7,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 2,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       },
       "manual_checklist": [
         "Carregar spender_light em 5h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
         "Conferir build: arma L9, spells descarga_nervosa, marca_brasa.",
+        "Conferir crafting: 2 Pocao de Vida, 2387 Po de Osso restante.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2440,7 +4195,7 @@
         "energia": 71,
         "sangue": 69.75,
         "cristais": 21.4,
-        "ossos": 4975,
+        "ossos": 4825,
         "diamante": 421.8
       },
       "resource_debt": {
@@ -2533,6 +4288,71 @@
         "premium_unlocked": true,
         "simulated_store_spend": 81
       },
+      "consumables": {
+        "bone_powder_item_id": "po_osso",
+        "life_potion_item_id": "pocao_vida",
+        "life_potion_recipe_id": "craft_pocao_vida",
+        "available_po_osso": 4975,
+        "po_osso_spent": 150,
+        "po_osso_remaining": 4825,
+        "ossos_reserved_for_powder": 150,
+        "target_potion_stock": 3,
+        "crafted_life_potions": 3,
+        "craftable_life_potions": 99,
+        "equipped_potion_id": "pocao_vida",
+        "potion_slots": [
+          {
+            "slot_index": 1,
+            "potion_id": "pocao_vida",
+            "behavior": {
+              "enabled": true,
+              "hp": {
+                "mode": "below",
+                "percent": 40
+              },
+              "mana": {
+                "mode": "ignore",
+                "percent": 0
+              }
+            }
+          }
+        ],
+        "inventory": [
+          {
+            "item_id": "po_osso",
+            "quantity": 4825
+          },
+          {
+            "item_id": "pocao_vida",
+            "quantity": 3
+          }
+        ],
+        "spell_behaviors": {
+          "sussurro_medo": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "preparation_ready": true
+      },
       "combat_build": {
         "id": "spender_light_10h",
         "displayName": "spender_light_10h",
@@ -2551,15 +4371,57 @@
         "passiveId": "pacto_familiar",
         "passiveLevel": 10,
         "petId": "corvo_pressagio",
-        "petLevel": 13
+        "petLevel": 13,
+        "spellBehaviors": {
+          "sussurro_medo": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 3,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       },
       "manual_checklist": [
         "Carregar spender_light em 10h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
         "Conferir build: arma L11, spells sussurro_medo, marca_brasa.",
+        "Conferir crafting: 3 Pocao de Vida, 4825 Po de Osso restante.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2587,7 +4449,7 @@
         "energia": 100.5,
         "sangue": 171.63,
         "cristais": 33.1,
-        "ossos": 7462.5,
+        "ossos": 7262.5,
         "diamante": 382.7
       },
       "resource_debt": {
@@ -2680,6 +4542,71 @@
         "premium_unlocked": true,
         "simulated_store_spend": 122
       },
+      "consumables": {
+        "bone_powder_item_id": "po_osso",
+        "life_potion_item_id": "pocao_vida",
+        "life_potion_recipe_id": "craft_pocao_vida",
+        "available_po_osso": 7462,
+        "po_osso_spent": 200,
+        "po_osso_remaining": 7262,
+        "ossos_reserved_for_powder": 200,
+        "target_potion_stock": 4,
+        "crafted_life_potions": 4,
+        "craftable_life_potions": 149,
+        "equipped_potion_id": "pocao_vida",
+        "potion_slots": [
+          {
+            "slot_index": 1,
+            "potion_id": "pocao_vida",
+            "behavior": {
+              "enabled": true,
+              "hp": {
+                "mode": "below",
+                "percent": 40
+              },
+              "mana": {
+                "mode": "ignore",
+                "percent": 0
+              }
+            }
+          }
+        ],
+        "inventory": [
+          {
+            "item_id": "po_osso",
+            "quantity": 7262
+          },
+          {
+            "item_id": "pocao_vida",
+            "quantity": 4
+          }
+        ],
+        "spell_behaviors": {
+          "sussurro_medo": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "preparation_ready": true
+      },
       "combat_build": {
         "id": "spender_light_15h",
         "displayName": "spender_light_15h",
@@ -2698,15 +4625,57 @@
         "passiveId": "pacto_familiar",
         "passiveLevel": 12,
         "petId": "corvo_pressagio",
-        "petLevel": 13
+        "petLevel": 13,
+        "spellBehaviors": {
+          "sussurro_medo": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 4,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       },
       "manual_checklist": [
         "Carregar spender_light em 15h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
         "Conferir build: arma L12, spells sussurro_medo, marca_brasa.",
+        "Conferir crafting: 4 Pocao de Vida, 7262 Po de Osso restante.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2734,7 +4703,7 @@
         "energia": 156,
         "sangue": 210.5,
         "cristais": 33.8,
-        "ossos": 9950,
+        "ossos": 9700,
         "diamante": 343.6
       },
       "resource_debt": {
@@ -2827,6 +4796,71 @@
         "premium_unlocked": true,
         "simulated_store_spend": 162
       },
+      "consumables": {
+        "bone_powder_item_id": "po_osso",
+        "life_potion_item_id": "pocao_vida",
+        "life_potion_recipe_id": "craft_pocao_vida",
+        "available_po_osso": 9950,
+        "po_osso_spent": 250,
+        "po_osso_remaining": 9700,
+        "ossos_reserved_for_powder": 250,
+        "target_potion_stock": 5,
+        "crafted_life_potions": 5,
+        "craftable_life_potions": 199,
+        "equipped_potion_id": "pocao_vida",
+        "potion_slots": [
+          {
+            "slot_index": 1,
+            "potion_id": "pocao_vida",
+            "behavior": {
+              "enabled": true,
+              "hp": {
+                "mode": "below",
+                "percent": 40
+              },
+              "mana": {
+                "mode": "ignore",
+                "percent": 0
+              }
+            }
+          }
+        ],
+        "inventory": [
+          {
+            "item_id": "po_osso",
+            "quantity": 9700
+          },
+          {
+            "item_id": "pocao_vida",
+            "quantity": 5
+          }
+        ],
+        "spell_behaviors": {
+          "sussurro_medo": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "preparation_ready": true
+      },
       "combat_build": {
         "id": "spender_light_20h",
         "displayName": "spender_light_20h",
@@ -2845,15 +4879,57 @@
         "passiveId": "pacto_familiar",
         "passiveLevel": 14,
         "petId": "corvo_pressagio",
-        "petLevel": 15
+        "petLevel": 15,
+        "spellBehaviors": {
+          "sussurro_medo": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 5,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       },
       "manual_checklist": [
         "Carregar spender_light em 20h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
         "Conferir build: arma L13, spells sussurro_medo, marca_brasa.",
+        "Conferir crafting: 5 Pocao de Vida, 9700 Po de Osso restante.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -2881,7 +4957,7 @@
         "energia": 32.4,
         "sangue": 52.3,
         "cristais": 19.2,
-        "ossos": 1273,
+        "ossos": 1223,
         "diamante": 464.56
       },
       "resource_debt": {
@@ -2970,6 +5046,71 @@
         "premium_unlocked": true,
         "simulated_store_spend": 36
       },
+      "consumables": {
+        "bone_powder_item_id": "po_osso",
+        "life_potion_item_id": "pocao_vida",
+        "life_potion_recipe_id": "craft_pocao_vida",
+        "available_po_osso": 1273,
+        "po_osso_spent": 50,
+        "po_osso_remaining": 1223,
+        "ossos_reserved_for_powder": 50,
+        "target_potion_stock": 1,
+        "crafted_life_potions": 1,
+        "craftable_life_potions": 25,
+        "equipped_potion_id": "",
+        "potion_slots": [
+          {
+            "slot_index": 1,
+            "potion_id": null,
+            "behavior": {
+              "enabled": true,
+              "hp": {
+                "mode": "below",
+                "percent": 40
+              },
+              "mana": {
+                "mode": "ignore",
+                "percent": 0
+              }
+            }
+          }
+        ],
+        "inventory": [
+          {
+            "item_id": "po_osso",
+            "quantity": 1223
+          },
+          {
+            "item_id": "pocao_vida",
+            "quantity": 1
+          }
+        ],
+        "spell_behaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "preparation_ready": true
+      },
       "combat_build": {
         "id": "max_spender_2h",
         "displayName": "max_spender_2h",
@@ -2984,6 +5125,30 @@
         "spellLevels": {
           "descarga_nervosa": 4,
           "marca_brasa": 5
+        },
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
         }
       },
       "manual_checklist": [
@@ -2991,8 +5156,10 @@
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
         "Conferir build: arma L8, spells descarga_nervosa, marca_brasa.",
+        "Conferir crafting: 1 Pocao de Vida, 1223 Po de Osso restante.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -3020,7 +5187,7 @@
         "energia": 51,
         "sangue": 130.75,
         "cristais": 12,
-        "ossos": 3182.5,
+        "ossos": 3082.5,
         "diamante": 411.4
       },
       "resource_debt": {
@@ -3109,6 +5276,71 @@
         "premium_unlocked": true,
         "simulated_store_spend": 90
       },
+      "consumables": {
+        "bone_powder_item_id": "po_osso",
+        "life_potion_item_id": "pocao_vida",
+        "life_potion_recipe_id": "craft_pocao_vida",
+        "available_po_osso": 3182,
+        "po_osso_spent": 100,
+        "po_osso_remaining": 3082,
+        "ossos_reserved_for_powder": 100,
+        "target_potion_stock": 2,
+        "crafted_life_potions": 2,
+        "craftable_life_potions": 63,
+        "equipped_potion_id": "pocao_vida",
+        "potion_slots": [
+          {
+            "slot_index": 1,
+            "potion_id": "pocao_vida",
+            "behavior": {
+              "enabled": true,
+              "hp": {
+                "mode": "below",
+                "percent": 40
+              },
+              "mana": {
+                "mode": "ignore",
+                "percent": 0
+              }
+            }
+          }
+        ],
+        "inventory": [
+          {
+            "item_id": "po_osso",
+            "quantity": 3082
+          },
+          {
+            "item_id": "pocao_vida",
+            "quantity": 2
+          }
+        ],
+        "spell_behaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "preparation_ready": true
+      },
       "combat_build": {
         "id": "max_spender_5h",
         "displayName": "max_spender_5h",
@@ -3125,15 +5357,57 @@
           "marca_brasa": 11
         },
         "passiveId": "ossuario_interior",
-        "passiveLevel": 8
+        "passiveLevel": 8,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 2,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       },
       "manual_checklist": [
         "Carregar max_spender em 5h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
         "Conferir build: arma L10, spells descarga_nervosa, marca_brasa.",
+        "Conferir crafting: 2 Pocao de Vida, 3082 Po de Osso restante.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -3161,7 +5435,7 @@
         "energia": 112,
         "sangue": 98.5,
         "cristais": 30,
-        "ossos": 6365,
+        "ossos": 6215,
         "diamante": 322.8
       },
       "resource_debt": {
@@ -3254,6 +5528,71 @@
         "premium_unlocked": true,
         "simulated_store_spend": 180
       },
+      "consumables": {
+        "bone_powder_item_id": "po_osso",
+        "life_potion_item_id": "pocao_vida",
+        "life_potion_recipe_id": "craft_pocao_vida",
+        "available_po_osso": 6365,
+        "po_osso_spent": 150,
+        "po_osso_remaining": 6215,
+        "ossos_reserved_for_powder": 150,
+        "target_potion_stock": 3,
+        "crafted_life_potions": 3,
+        "craftable_life_potions": 127,
+        "equipped_potion_id": "pocao_vida",
+        "potion_slots": [
+          {
+            "slot_index": 1,
+            "potion_id": "pocao_vida",
+            "behavior": {
+              "enabled": true,
+              "hp": {
+                "mode": "below",
+                "percent": 40
+              },
+              "mana": {
+                "mode": "ignore",
+                "percent": 0
+              }
+            }
+          }
+        ],
+        "inventory": [
+          {
+            "item_id": "po_osso",
+            "quantity": 6215
+          },
+          {
+            "item_id": "pocao_vida",
+            "quantity": 3
+          }
+        ],
+        "spell_behaviors": {
+          "sussurro_medo": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "preparation_ready": true
+      },
       "combat_build": {
         "id": "max_spender_10h",
         "displayName": "max_spender_10h",
@@ -3272,15 +5611,57 @@
         "passiveId": "pacto_familiar",
         "passiveLevel": 11,
         "petId": "corvo_pressagio",
-        "petLevel": 14
+        "petLevel": 14,
+        "spellBehaviors": {
+          "sussurro_medo": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 3,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       },
       "manual_checklist": [
         "Carregar max_spender em 10h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
         "Conferir build: arma L13, spells sussurro_medo, marca_brasa.",
+        "Conferir crafting: 3 Pocao de Vida, 6215 Po de Osso restante.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -3308,7 +5689,7 @@
         "energia": 146,
         "sangue": 157.25,
         "cristais": 27,
-        "ossos": 9547.5,
+        "ossos": 9347.5,
         "diamante": 234.2
       },
       "resource_debt": {
@@ -3401,6 +5782,71 @@
         "premium_unlocked": true,
         "simulated_store_spend": 270
       },
+      "consumables": {
+        "bone_powder_item_id": "po_osso",
+        "life_potion_item_id": "pocao_vida",
+        "life_potion_recipe_id": "craft_pocao_vida",
+        "available_po_osso": 9547,
+        "po_osso_spent": 200,
+        "po_osso_remaining": 9347,
+        "ossos_reserved_for_powder": 200,
+        "target_potion_stock": 4,
+        "crafted_life_potions": 4,
+        "craftable_life_potions": 190,
+        "equipped_potion_id": "pocao_vida",
+        "potion_slots": [
+          {
+            "slot_index": 1,
+            "potion_id": "pocao_vida",
+            "behavior": {
+              "enabled": true,
+              "hp": {
+                "mode": "below",
+                "percent": 40
+              },
+              "mana": {
+                "mode": "ignore",
+                "percent": 0
+              }
+            }
+          }
+        ],
+        "inventory": [
+          {
+            "item_id": "po_osso",
+            "quantity": 9347
+          },
+          {
+            "item_id": "pocao_vida",
+            "quantity": 4
+          }
+        ],
+        "spell_behaviors": {
+          "sussurro_medo": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "preparation_ready": true
+      },
       "combat_build": {
         "id": "max_spender_15h",
         "displayName": "max_spender_15h",
@@ -3419,15 +5865,57 @@
         "passiveId": "pacto_familiar",
         "passiveLevel": 14,
         "petId": "corvo_pressagio",
-        "petLevel": 16
+        "petLevel": 16,
+        "spellBehaviors": {
+          "sussurro_medo": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 4,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       },
       "manual_checklist": [
         "Carregar max_spender em 15h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
         "Conferir build: arma L15, spells sussurro_medo, marca_brasa.",
+        "Conferir crafting: 4 Pocao de Vida, 9347 Po de Osso restante.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     },
@@ -3455,7 +5943,7 @@
         "energia": 175,
         "sangue": 196,
         "cristais": 52,
-        "ossos": 730,
+        "ossos": 480,
         "diamante": 145.6
       },
       "resource_debt": {
@@ -3548,6 +6036,71 @@
         "premium_unlocked": true,
         "simulated_store_spend": 360
       },
+      "consumables": {
+        "bone_powder_item_id": "po_osso",
+        "life_potion_item_id": "pocao_vida",
+        "life_potion_recipe_id": "craft_pocao_vida",
+        "available_po_osso": 730,
+        "po_osso_spent": 250,
+        "po_osso_remaining": 480,
+        "ossos_reserved_for_powder": 250,
+        "target_potion_stock": 5,
+        "crafted_life_potions": 5,
+        "craftable_life_potions": 14,
+        "equipped_potion_id": "pocao_vida",
+        "potion_slots": [
+          {
+            "slot_index": 1,
+            "potion_id": "pocao_vida",
+            "behavior": {
+              "enabled": true,
+              "hp": {
+                "mode": "below",
+                "percent": 40
+              },
+              "mana": {
+                "mode": "ignore",
+                "percent": 0
+              }
+            }
+          }
+        ],
+        "inventory": [
+          {
+            "item_id": "po_osso",
+            "quantity": 480
+          },
+          {
+            "item_id": "pocao_vida",
+            "quantity": 5
+          }
+        ],
+        "spell_behaviors": {
+          "sussurro_medo": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "preparation_ready": true
+      },
       "combat_build": {
         "id": "max_spender_20h",
         "displayName": "max_spender_20h",
@@ -3566,15 +6119,57 @@
         "passiveId": "pacto_familiar",
         "passiveLevel": 15,
         "petId": "corvo_pressagio",
-        "petLevel": 18
+        "petLevel": 18,
+        "spellBehaviors": {
+          "sussurro_medo": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 5,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
       },
       "manual_checklist": [
         "Carregar max_spender em 20h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
         "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
+        "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
         "Conferir build: arma L16, spells sussurro_medo, marca_brasa.",
+        "Conferir crafting: 5 Pocao de Vida, 480 Po de Osso restante.",
         "Registrar gargalo, momento confuso e vontade de continuar."
       ]
     }
@@ -4029,6 +6624,458 @@
       "observed": "0",
       "target": ">= -1",
       "note": "Healthy save should not require large hidden resource debt."
+    }
+  ],
+  "consumable_checks": [
+    {
+      "id": "life_potion_stock",
+      "profile_id": "free_50_rewards",
+      "milestone_id": "2h",
+      "status": "PASS",
+      "observed": "1/1 potions",
+      "target": ">= 1",
+      "note": "Healthy save should show whether Po de Osso supports the intended lab potion stock."
+    },
+    {
+      "id": "preparation_potion_slot",
+      "profile_id": "free_50_rewards",
+      "milestone_id": "2h",
+      "status": "PASS",
+      "observed": "no potion equipped",
+      "target": "potion-ready when target stock is non-zero",
+      "note": "Progression Lab saves should exercise the Preparation potion slot once consumables exist."
+    },
+    {
+      "id": "life_potion_stock",
+      "profile_id": "free_50_rewards",
+      "milestone_id": "5h",
+      "status": "PASS",
+      "observed": "2/2 potions",
+      "target": ">= 2",
+      "note": "Healthy save should show whether Po de Osso supports the intended lab potion stock."
+    },
+    {
+      "id": "preparation_potion_slot",
+      "profile_id": "free_50_rewards",
+      "milestone_id": "5h",
+      "status": "PASS",
+      "observed": "equipped pocao_vida",
+      "target": "potion-ready when target stock is non-zero",
+      "note": "Progression Lab saves should exercise the Preparation potion slot once consumables exist."
+    },
+    {
+      "id": "life_potion_stock",
+      "profile_id": "free_50_rewards",
+      "milestone_id": "10h",
+      "status": "PASS",
+      "observed": "3/3 potions",
+      "target": ">= 3",
+      "note": "Healthy save should show whether Po de Osso supports the intended lab potion stock."
+    },
+    {
+      "id": "preparation_potion_slot",
+      "profile_id": "free_50_rewards",
+      "milestone_id": "10h",
+      "status": "PASS",
+      "observed": "equipped pocao_vida",
+      "target": "potion-ready when target stock is non-zero",
+      "note": "Progression Lab saves should exercise the Preparation potion slot once consumables exist."
+    },
+    {
+      "id": "life_potion_stock",
+      "profile_id": "free_50_rewards",
+      "milestone_id": "15h",
+      "status": "PASS",
+      "observed": "4/4 potions",
+      "target": ">= 4",
+      "note": "Healthy save should show whether Po de Osso supports the intended lab potion stock."
+    },
+    {
+      "id": "preparation_potion_slot",
+      "profile_id": "free_50_rewards",
+      "milestone_id": "15h",
+      "status": "PASS",
+      "observed": "equipped pocao_vida",
+      "target": "potion-ready when target stock is non-zero",
+      "note": "Progression Lab saves should exercise the Preparation potion slot once consumables exist."
+    },
+    {
+      "id": "life_potion_stock",
+      "profile_id": "free_50_rewards",
+      "milestone_id": "20h",
+      "status": "PASS",
+      "observed": "5/5 potions",
+      "target": ">= 5",
+      "note": "Healthy save should show whether Po de Osso supports the intended lab potion stock."
+    },
+    {
+      "id": "preparation_potion_slot",
+      "profile_id": "free_50_rewards",
+      "milestone_id": "20h",
+      "status": "PASS",
+      "observed": "equipped pocao_vida",
+      "target": "potion-ready when target stock is non-zero",
+      "note": "Progression Lab saves should exercise the Preparation potion slot once consumables exist."
+    },
+    {
+      "id": "life_potion_stock",
+      "profile_id": "free_100_rewards",
+      "milestone_id": "2h",
+      "status": "PASS",
+      "observed": "1/1 potions",
+      "target": ">= 1",
+      "note": "Healthy save should show whether Po de Osso supports the intended lab potion stock."
+    },
+    {
+      "id": "preparation_potion_slot",
+      "profile_id": "free_100_rewards",
+      "milestone_id": "2h",
+      "status": "PASS",
+      "observed": "no potion equipped",
+      "target": "potion-ready when target stock is non-zero",
+      "note": "Progression Lab saves should exercise the Preparation potion slot once consumables exist."
+    },
+    {
+      "id": "life_potion_stock",
+      "profile_id": "free_100_rewards",
+      "milestone_id": "5h",
+      "status": "PASS",
+      "observed": "2/2 potions",
+      "target": ">= 2",
+      "note": "Healthy save should show whether Po de Osso supports the intended lab potion stock."
+    },
+    {
+      "id": "preparation_potion_slot",
+      "profile_id": "free_100_rewards",
+      "milestone_id": "5h",
+      "status": "PASS",
+      "observed": "equipped pocao_vida",
+      "target": "potion-ready when target stock is non-zero",
+      "note": "Progression Lab saves should exercise the Preparation potion slot once consumables exist."
+    },
+    {
+      "id": "life_potion_stock",
+      "profile_id": "free_100_rewards",
+      "milestone_id": "10h",
+      "status": "PASS",
+      "observed": "3/3 potions",
+      "target": ">= 3",
+      "note": "Healthy save should show whether Po de Osso supports the intended lab potion stock."
+    },
+    {
+      "id": "preparation_potion_slot",
+      "profile_id": "free_100_rewards",
+      "milestone_id": "10h",
+      "status": "PASS",
+      "observed": "equipped pocao_vida",
+      "target": "potion-ready when target stock is non-zero",
+      "note": "Progression Lab saves should exercise the Preparation potion slot once consumables exist."
+    },
+    {
+      "id": "life_potion_stock",
+      "profile_id": "free_100_rewards",
+      "milestone_id": "15h",
+      "status": "PASS",
+      "observed": "4/4 potions",
+      "target": ">= 4",
+      "note": "Healthy save should show whether Po de Osso supports the intended lab potion stock."
+    },
+    {
+      "id": "preparation_potion_slot",
+      "profile_id": "free_100_rewards",
+      "milestone_id": "15h",
+      "status": "PASS",
+      "observed": "equipped pocao_vida",
+      "target": "potion-ready when target stock is non-zero",
+      "note": "Progression Lab saves should exercise the Preparation potion slot once consumables exist."
+    },
+    {
+      "id": "life_potion_stock",
+      "profile_id": "free_100_rewards",
+      "milestone_id": "20h",
+      "status": "PASS",
+      "observed": "5/5 potions",
+      "target": ">= 5",
+      "note": "Healthy save should show whether Po de Osso supports the intended lab potion stock."
+    },
+    {
+      "id": "preparation_potion_slot",
+      "profile_id": "free_100_rewards",
+      "milestone_id": "20h",
+      "status": "PASS",
+      "observed": "equipped pocao_vida",
+      "target": "potion-ready when target stock is non-zero",
+      "note": "Progression Lab saves should exercise the Preparation potion slot once consumables exist."
+    },
+    {
+      "id": "life_potion_stock",
+      "profile_id": "freemium_basic",
+      "milestone_id": "2h",
+      "status": "PASS",
+      "observed": "1/1 potions",
+      "target": ">= 1",
+      "note": "Healthy save should show whether Po de Osso supports the intended lab potion stock."
+    },
+    {
+      "id": "preparation_potion_slot",
+      "profile_id": "freemium_basic",
+      "milestone_id": "2h",
+      "status": "PASS",
+      "observed": "no potion equipped",
+      "target": "potion-ready when target stock is non-zero",
+      "note": "Progression Lab saves should exercise the Preparation potion slot once consumables exist."
+    },
+    {
+      "id": "life_potion_stock",
+      "profile_id": "freemium_basic",
+      "milestone_id": "5h",
+      "status": "PASS",
+      "observed": "2/2 potions",
+      "target": ">= 2",
+      "note": "Healthy save should show whether Po de Osso supports the intended lab potion stock."
+    },
+    {
+      "id": "preparation_potion_slot",
+      "profile_id": "freemium_basic",
+      "milestone_id": "5h",
+      "status": "PASS",
+      "observed": "equipped pocao_vida",
+      "target": "potion-ready when target stock is non-zero",
+      "note": "Progression Lab saves should exercise the Preparation potion slot once consumables exist."
+    },
+    {
+      "id": "life_potion_stock",
+      "profile_id": "freemium_basic",
+      "milestone_id": "10h",
+      "status": "PASS",
+      "observed": "3/3 potions",
+      "target": ">= 3",
+      "note": "Healthy save should show whether Po de Osso supports the intended lab potion stock."
+    },
+    {
+      "id": "preparation_potion_slot",
+      "profile_id": "freemium_basic",
+      "milestone_id": "10h",
+      "status": "PASS",
+      "observed": "equipped pocao_vida",
+      "target": "potion-ready when target stock is non-zero",
+      "note": "Progression Lab saves should exercise the Preparation potion slot once consumables exist."
+    },
+    {
+      "id": "life_potion_stock",
+      "profile_id": "freemium_basic",
+      "milestone_id": "15h",
+      "status": "PASS",
+      "observed": "4/4 potions",
+      "target": ">= 4",
+      "note": "Healthy save should show whether Po de Osso supports the intended lab potion stock."
+    },
+    {
+      "id": "preparation_potion_slot",
+      "profile_id": "freemium_basic",
+      "milestone_id": "15h",
+      "status": "PASS",
+      "observed": "equipped pocao_vida",
+      "target": "potion-ready when target stock is non-zero",
+      "note": "Progression Lab saves should exercise the Preparation potion slot once consumables exist."
+    },
+    {
+      "id": "life_potion_stock",
+      "profile_id": "freemium_basic",
+      "milestone_id": "20h",
+      "status": "PASS",
+      "observed": "5/5 potions",
+      "target": ">= 5",
+      "note": "Healthy save should show whether Po de Osso supports the intended lab potion stock."
+    },
+    {
+      "id": "preparation_potion_slot",
+      "profile_id": "freemium_basic",
+      "milestone_id": "20h",
+      "status": "PASS",
+      "observed": "equipped pocao_vida",
+      "target": "potion-ready when target stock is non-zero",
+      "note": "Progression Lab saves should exercise the Preparation potion slot once consumables exist."
+    },
+    {
+      "id": "life_potion_stock",
+      "profile_id": "spender_light",
+      "milestone_id": "2h",
+      "status": "PASS",
+      "observed": "1/1 potions",
+      "target": ">= 1",
+      "note": "Healthy save should show whether Po de Osso supports the intended lab potion stock."
+    },
+    {
+      "id": "preparation_potion_slot",
+      "profile_id": "spender_light",
+      "milestone_id": "2h",
+      "status": "PASS",
+      "observed": "no potion equipped",
+      "target": "potion-ready when target stock is non-zero",
+      "note": "Progression Lab saves should exercise the Preparation potion slot once consumables exist."
+    },
+    {
+      "id": "life_potion_stock",
+      "profile_id": "spender_light",
+      "milestone_id": "5h",
+      "status": "PASS",
+      "observed": "2/2 potions",
+      "target": ">= 2",
+      "note": "Healthy save should show whether Po de Osso supports the intended lab potion stock."
+    },
+    {
+      "id": "preparation_potion_slot",
+      "profile_id": "spender_light",
+      "milestone_id": "5h",
+      "status": "PASS",
+      "observed": "equipped pocao_vida",
+      "target": "potion-ready when target stock is non-zero",
+      "note": "Progression Lab saves should exercise the Preparation potion slot once consumables exist."
+    },
+    {
+      "id": "life_potion_stock",
+      "profile_id": "spender_light",
+      "milestone_id": "10h",
+      "status": "PASS",
+      "observed": "3/3 potions",
+      "target": ">= 3",
+      "note": "Healthy save should show whether Po de Osso supports the intended lab potion stock."
+    },
+    {
+      "id": "preparation_potion_slot",
+      "profile_id": "spender_light",
+      "milestone_id": "10h",
+      "status": "PASS",
+      "observed": "equipped pocao_vida",
+      "target": "potion-ready when target stock is non-zero",
+      "note": "Progression Lab saves should exercise the Preparation potion slot once consumables exist."
+    },
+    {
+      "id": "life_potion_stock",
+      "profile_id": "spender_light",
+      "milestone_id": "15h",
+      "status": "PASS",
+      "observed": "4/4 potions",
+      "target": ">= 4",
+      "note": "Healthy save should show whether Po de Osso supports the intended lab potion stock."
+    },
+    {
+      "id": "preparation_potion_slot",
+      "profile_id": "spender_light",
+      "milestone_id": "15h",
+      "status": "PASS",
+      "observed": "equipped pocao_vida",
+      "target": "potion-ready when target stock is non-zero",
+      "note": "Progression Lab saves should exercise the Preparation potion slot once consumables exist."
+    },
+    {
+      "id": "life_potion_stock",
+      "profile_id": "spender_light",
+      "milestone_id": "20h",
+      "status": "PASS",
+      "observed": "5/5 potions",
+      "target": ">= 5",
+      "note": "Healthy save should show whether Po de Osso supports the intended lab potion stock."
+    },
+    {
+      "id": "preparation_potion_slot",
+      "profile_id": "spender_light",
+      "milestone_id": "20h",
+      "status": "PASS",
+      "observed": "equipped pocao_vida",
+      "target": "potion-ready when target stock is non-zero",
+      "note": "Progression Lab saves should exercise the Preparation potion slot once consumables exist."
+    },
+    {
+      "id": "life_potion_stock",
+      "profile_id": "max_spender",
+      "milestone_id": "2h",
+      "status": "PASS",
+      "observed": "1/1 potions",
+      "target": ">= 1",
+      "note": "Healthy save should show whether Po de Osso supports the intended lab potion stock."
+    },
+    {
+      "id": "preparation_potion_slot",
+      "profile_id": "max_spender",
+      "milestone_id": "2h",
+      "status": "PASS",
+      "observed": "no potion equipped",
+      "target": "potion-ready when target stock is non-zero",
+      "note": "Progression Lab saves should exercise the Preparation potion slot once consumables exist."
+    },
+    {
+      "id": "life_potion_stock",
+      "profile_id": "max_spender",
+      "milestone_id": "5h",
+      "status": "PASS",
+      "observed": "2/2 potions",
+      "target": ">= 2",
+      "note": "Healthy save should show whether Po de Osso supports the intended lab potion stock."
+    },
+    {
+      "id": "preparation_potion_slot",
+      "profile_id": "max_spender",
+      "milestone_id": "5h",
+      "status": "PASS",
+      "observed": "equipped pocao_vida",
+      "target": "potion-ready when target stock is non-zero",
+      "note": "Progression Lab saves should exercise the Preparation potion slot once consumables exist."
+    },
+    {
+      "id": "life_potion_stock",
+      "profile_id": "max_spender",
+      "milestone_id": "10h",
+      "status": "PASS",
+      "observed": "3/3 potions",
+      "target": ">= 3",
+      "note": "Healthy save should show whether Po de Osso supports the intended lab potion stock."
+    },
+    {
+      "id": "preparation_potion_slot",
+      "profile_id": "max_spender",
+      "milestone_id": "10h",
+      "status": "PASS",
+      "observed": "equipped pocao_vida",
+      "target": "potion-ready when target stock is non-zero",
+      "note": "Progression Lab saves should exercise the Preparation potion slot once consumables exist."
+    },
+    {
+      "id": "life_potion_stock",
+      "profile_id": "max_spender",
+      "milestone_id": "15h",
+      "status": "PASS",
+      "observed": "4/4 potions",
+      "target": ">= 4",
+      "note": "Healthy save should show whether Po de Osso supports the intended lab potion stock."
+    },
+    {
+      "id": "preparation_potion_slot",
+      "profile_id": "max_spender",
+      "milestone_id": "15h",
+      "status": "PASS",
+      "observed": "equipped pocao_vida",
+      "target": "potion-ready when target stock is non-zero",
+      "note": "Progression Lab saves should exercise the Preparation potion slot once consumables exist."
+    },
+    {
+      "id": "life_potion_stock",
+      "profile_id": "max_spender",
+      "milestone_id": "20h",
+      "status": "PASS",
+      "observed": "5/5 potions",
+      "target": ">= 5",
+      "note": "Healthy save should show whether Po de Osso supports the intended lab potion stock."
+    },
+    {
+      "id": "preparation_potion_slot",
+      "profile_id": "max_spender",
+      "milestone_id": "20h",
+      "status": "PASS",
+      "observed": "equipped pocao_vida",
+      "target": "potion-ready when target stock is non-zero",
+      "note": "Progression Lab saves should exercise the Preparation potion slot once consumables exist."
     }
   ],
   "premium_gap": [

@@ -96,6 +96,11 @@ func test_progression_lab_builds_local_snapshot_cache_from_healthy_save() -> voi
 	assert_eq(str(_as_dictionary(cache.get("progression_lab", {})).get("save_id", "")), str(save.get("id", "")))
 	assert_eq(store.progression_lab_label(), "%s/%s" % [str(save.get("profile_id", "")), str(save.get("milestone_id", ""))])
 	assert_eq(str(store.build.get("weapon_type", "")), str(_as_dictionary(save.get("build", {})).get("weapon_type", "")))
+	var build_state := _as_dictionary(cache.get("build_state", {}))
+	var combat_build := _as_dictionary(build_state.get("combat_build", {}))
+	assert_true(build_state.has("potion_slots"))
+	assert_true(build_state.has("inventory"))
+	assert_true(combat_build.has("spellBehaviors"))
 	store.free()
 
 func test_progression_lab_deno_invocation_sanitizes_project_settings() -> void:

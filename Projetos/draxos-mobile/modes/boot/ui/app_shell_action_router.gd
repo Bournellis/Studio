@@ -11,6 +11,7 @@ const CATEGORY_PREPARATION := "preparation"
 const CATEGORY_SOCIAL := "social"
 const CATEGORY_COMPETITION := "competition"
 const CATEGORY_SHOP := "shop"
+const CATEGORY_MINIGAME := "minigame"
 
 static func normalize_action(action_id: String) -> String:
 	return action_id.strip_edges()
@@ -27,6 +28,9 @@ static func route_action(action_id: String, context: Dictionary = {}) -> Diction
 		"value": AppShellActionContractScript.action_value(action),
 		"secondary_value": AppShellActionContractScript.action_value_at(action, 2),
 		"payload": action_payload(action, context),
+		"scope_id": scope_for_action(action, context),
+		"mutation_endpoint": mutation_endpoint_for_action(action),
+		"requires_idempotent_retry": mutation_endpoint_for_action(action) != "",
 		"blocked_by_update": update_gate_blocks_action(action, context),
 		"allowed_during_replay": AppShellActionContractScript.is_allowed_during_replay(action),
 		"read_only_battle": _is_read_only_battle_action(action),
@@ -60,6 +64,8 @@ static func category_for_action(action_id: String) -> String:
 		return CATEGORY_PREPARATION
 	if _is_shop_action(action):
 		return CATEGORY_SHOP
+	if AppShellActionContractScript.is_open_minigame_shell(action):
+		return CATEGORY_MINIGAME
 	if _is_battle_action(action):
 		return CATEGORY_BATTLE
 	if _is_session_action(action):
@@ -69,6 +75,71 @@ static func category_for_action(action_id: String) -> String:
 	if _is_competition_action(action):
 		return CATEGORY_COMPETITION
 	return CATEGORY_UNKNOWN
+
+static func scope_for_action(action_id: String, context: Dictionary = {}) -> String:
+	var action := normalize_action(action_id)
+	var save_type := str(context.get("save_type", "normal")).strip_edges()
+	if save_type == "":
+		save_type = "normal"
+	if AppShellActionContractScript.is_open_minigame_shell(action):
+		var minigame_id := AppShellActionContractScript.action_value(action)
+		if minigame_id == "":
+			minigame_id = "placeholder"
+		return "minigame:%s:%s" % [minigame_id, save_type]
+	var category := category_for_action(action)
+	match category:
+		CATEGORY_BATTLE:
+			return "battle:%s" % save_type
+		CATEGORY_BASE:
+			return "base:%s" % save_type
+		CATEGORY_PREPARATION:
+			return "build:%s" % save_type
+		CATEGORY_SOCIAL:
+			return "social:%s" % save_type
+		CATEGORY_SHOP:
+			return "monetization:%s" % save_type
+		CATEGORY_COMPETITION:
+			return "competition:%s" % save_type
+		CATEGORY_SESSION:
+			return "session:%s" % save_type
+		_:
+			return "app"
+
+static func mutation_endpoint_for_action(action_id: String) -> String:
+	var action := normalize_action(action_id)
+	if action == AppShellActionContractScript.ACTION_REQUEST_BATTLE:
+		return "battle/request"
+	if action == AppShellActionContractScript.ACTION_COLLECT_BASE:
+		return "base/collect"
+	if action == AppShellActionContractScript.ACTION_UPGRADE_NUCLEO or AppShellActionContractScript.is_upgrade_base_structure(action):
+		return "base/upgrade"
+	if action == AppShellActionContractScript.ACTION_CRUSH_BONES:
+		return "crafting/crush-bones"
+	if action == AppShellActionContractScript.ACTION_CRAFT_HEALTH_POTION:
+		return "crafting/craft"
+	if AppShellActionContractScript.is_build_equip_action(action):
+		return "build/equip"
+	if AppShellActionContractScript.is_enable_spell_behavior(action) or AppShellActionContractScript.is_disable_spell_behavior(action):
+		return "build/spell-behavior"
+	if action == AppShellActionContractScript.ACTION_EQUIP_HEALTH_POTION or action == AppShellActionContractScript.ACTION_UNEQUIP_POTION:
+		return "build/potion/equip"
+	if action == AppShellActionContractScript.ACTION_ENABLE_POTION_DEFAULT or action == AppShellActionContractScript.ACTION_DISABLE_POTION:
+		return "build/potion-behavior"
+	if action == AppShellActionContractScript.ACTION_ADD_FRIEND:
+		return "social/friends/add"
+	if action == AppShellActionContractScript.ACTION_CREATE_GUILD:
+		return "social/guild/create"
+	if action == AppShellActionContractScript.ACTION_JOIN_GUILD:
+		return "social/guild/join"
+	if action == AppShellActionContractScript.ACTION_SEND_GUILD_CHAT:
+		return "social/chat/send"
+	if AppShellActionContractScript.is_shop_purchase(action) or action == AppShellActionContractScript.ACTION_BUY_PREMIUM_ALPHA or action == AppShellActionContractScript.ACTION_GRANT_DIAMOND_ALPHA or action == AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA:
+		return "monetization/alpha-purchase"
+	if AppShellActionContractScript.is_claim_reward(action) or action == AppShellActionContractScript.ACTION_CLAIM_DAILY_REWARD:
+		return "monetization/rewards/claim"
+	if action == AppShellActionContractScript.ACTION_RESET_ACTIVE_SAVE:
+		return "account/saves/reset"
+	return ""
 
 static func _is_base_action(action_id: String) -> bool:
 	return action_id in [

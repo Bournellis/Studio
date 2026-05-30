@@ -6,7 +6,8 @@
     "Offline battle balance lab for FIRST_SLICE_SIM.",
     "Character rework v2 uses ritual instruments, doutrines, familiars and the Arcano/Fisico/Sangue/Raio source taxonomy.",
     "This model must not change combat numbers; it only generates builds, matchups and reports.",
-    "Source identity v2 reduces instrument dominance, brings spells/familiars forward in the replay, and fails builds whose fantasy does not appear in source mix."
+    "Source identity v2 reduces instrument dominance, brings spells/familiars forward in the replay, and fails builds whose fantasy does not appear in source mix.",
+    "Track 16 alignment adds lab-only potion and behavior coverage for Pocao de Vida, default potion behavior and simple spell behavior without promoting tuning."
   ],
   "output_dir": "docs/battle-lab/generated",
   "seed": "battle_lab_character_rework_20260525",
@@ -56,6 +57,62 @@
       "display_name": "Banda 005",
       "min_power": 2201,
       "max_power": 999999
+    }
+  ],
+  "track16_scenarios": [
+    {
+      "id": "potion_default",
+      "display_name": "Pocao default hp<40",
+      "levels": [7, 15, 25, 40],
+      "archetypes": [
+        "dot_pressure",
+        "defensive_occultist",
+        "funeral_burst",
+        "summoner"
+      ],
+      "potion": {
+        "item_id": "pocao_vida",
+        "quantity": 1,
+        "behavior": {
+          "enabled": true,
+          "hp": { "mode": "below", "percent": 40 },
+          "mana": { "mode": "ignore", "percent": 0 }
+        }
+      }
+    },
+    {
+      "id": "potion_disabled",
+      "display_name": "Pocao behavior disabled",
+      "levels": [15, 25],
+      "archetypes": ["defensive_occultist", "funeral_burst"],
+      "potion": {
+        "item_id": "pocao_vida",
+        "quantity": 1,
+        "behavior": {
+          "enabled": false,
+          "hp": { "mode": "below", "percent": 40 },
+          "mana": { "mode": "ignore", "percent": 0 }
+        }
+      }
+    },
+    {
+      "id": "spell_behavior_disabled",
+      "display_name": "Primeira spell desativada",
+      "levels": [7, 15, 25],
+      "archetypes": [
+        "mental_controller",
+        "elemental_mixer",
+        "dot_pressure",
+        "summoner"
+      ],
+      "spell_behavior": {
+        "target": "first_spell",
+        "behavior": {
+          "enabled": false,
+          "hp": { "mode": "ignore", "percent": 0 },
+          "mana": { "mode": "ignore", "percent": 0 }
+        }
+      }
     }
   ],
   "archetypes": [

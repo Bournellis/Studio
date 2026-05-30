@@ -9,8 +9,12 @@ export interface BattleLogPlayerRow {
 export interface BattleLogBattleRow {
   id: string;
   schema_version: string;
+  ruleset_publication_id?: string | null;
   ruleset_id?: string | null;
   ruleset_version?: number | string | null;
+  ruleset_content_hash?: string | null;
+  ruleset_simulator_hash?: string | null;
+  ruleset_schema_version?: string | null;
   seed: string;
   defender_id: string;
   defender_is_bot: boolean;
@@ -72,6 +76,7 @@ export function historyEntryFromRow(
 
 export function rulesetMetadata(): Record<string, unknown> {
   return {
+    publication_id: null,
     ruleset_id: FOUNDATION_RULESET.ruleset_id,
     ruleset_version: FOUNDATION_RULESET.ruleset_version,
     content_hash: FOUNDATION_RULESET.content_hash,
@@ -84,11 +89,12 @@ export function rulesetMetadataFromRow(
   battle: BattleLogBattleRow,
 ): Record<string, unknown> {
   return {
+    publication_id: battle.ruleset_publication_id ?? null,
     ruleset_id: battle.ruleset_id ?? FOUNDATION_RULESET.ruleset_id,
     ruleset_version: battle.ruleset_version ?? FOUNDATION_RULESET.ruleset_version,
-    content_hash: FOUNDATION_RULESET.content_hash,
-    simulator_hash: FOUNDATION_RULESET.simulator_hash,
-    schema_version: FOUNDATION_RULESET.schema_version,
+    content_hash: battle.ruleset_content_hash ?? FOUNDATION_RULESET.content_hash,
+    simulator_hash: battle.ruleset_simulator_hash ?? FOUNDATION_RULESET.simulator_hash,
+    schema_version: battle.ruleset_schema_version ?? FOUNDATION_RULESET.schema_version,
   };
 }
 

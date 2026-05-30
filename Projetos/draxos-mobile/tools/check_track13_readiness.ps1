@@ -93,9 +93,15 @@ function Test-DoingCards {
     return
   }
   $draxosCards = @(Get-ChildItem -LiteralPath $doingPath -Filter '*draxos-mobile*' -File)
+  $allowedActiveCards = @(
+    '*track-13-validation-release-safety*',
+    '*agent-ops-foundation*',
+    '*foundation-expansion-readiness*',
+    '*foundation-closeout*'
+  )
   $obsolete = @($draxosCards | Where-Object {
-      $_.Name -notlike '*track-13-validation-release-safety*' -and
-      $_.Name -notlike '*agent-ops-foundation*'
+      $cardName = $_.Name
+      -not @($allowedActiveCards | Where-Object { $cardName -like $_ }).Count
     })
   if ($obsolete.Count -eq 0) {
     Add-Ok 'Kanban/Doing has no obsolete DraxosMobile cards'

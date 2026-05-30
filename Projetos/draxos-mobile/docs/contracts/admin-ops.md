@@ -9,7 +9,10 @@
 
 Admin minimo nao e painel completo. Admin minimo e a capacidade de explicar e auditar qualquer intervencao humana futura sem depender de memoria, chat solto ou acesso manual invisivel ao banco.
 
-Enquanto nao houver endpoint/migration dedicados, o escopo `admin-future` permanece reservado. Nao crie operacao administrativa reaproveitando endpoint `save-scoped`, `account-scoped`, `release` ou `telemetry` sem contrato novo.
+Foundation Closeout implementa o minimo interno auditavel como RPCs de banco
+`service_role`-only. Nao ha painel publico, rota de cliente ou segredo no
+export. Operacoes administrativas novas fora desse minimo ainda exigem contrato
+proprio.
 
 ## O Que Deve Ser Auditavel
 
@@ -47,21 +50,32 @@ Roles reais podem mudar, mas o contrato deve manter separacao entre leitura, sup
 
 ## Capacidades Minimas
 
-Antes de Alpha mais ampla, as capacidades abaixo devem ter contrato, audit log e teste/smoke quando forem implementadas:
+Antes de Alpha mais ampla, as capacidades abaixo devem manter contrato, audit
+log e teste/smoke quando forem expandidas:
 
 | Capacidade | Status atual | Requisito antes de codigo |
 |---|---|---|
-| localizar conta/save | futuro | endpoint `admin-future`, role read-only, redacao de dados sensiveis |
-| diagnosticar batalha | futuro | leitura por `battle_id`, sem rerodar simulador nem reaplicar recompensa |
-| compensar recurso/item | futuro | ledger dedicado, limite por role, `request_id`, before/after |
+| localizar conta/save | implementado minimo | RPC `admin_lookup_account_v1`, service-role-only, sem painel publico |
+| diagnosticar batalha | implementado minimo | RPC `admin_battle_diagnostics_v1`, leitura por `battle_id`, sem rerodar simulador nem reaplicar recompensa |
+| reconciliar recurso | implementado minimo | RPC `resource_reconciliation_report_v1`, read-only |
+| compensar recurso/item | implementado recurso | RPC `admin_adjust_resource_balance_v1`, ledger dedicado, `request_id`, before/after |
 | invalidar ou reconstruir save | futuro | decisao explicita; nao usar reset geral sem registro |
+| flaggar/suspender conta | implementado minimo | RPC `admin_flag_account_v1`, reason obrigatorio e audit log |
 | moderar chat/guilda | futuro | action canonica, reason, alvo, appeal/rollback basico |
 | ajustar release manifest | parcialmente coberto por release ops | manter `ConfirmRemoteMutation` e auditabilidade externa/local |
 | rodar migration remota | futuro | aprovacao explicita, backup/rollback, log de ambiente |
 
 ## Estado Implementado Na Fundacao
 
-`202605300001_foundation_expansion_readiness.sql` cria `admin_audit_log` como tabela minima de auditoria interna para operacoes de suporte/reconciliacao. Ela nao cria painel admin publico e nao autoriza endpoints administrativos amplos.
+`202605300001_foundation_expansion_readiness.sql` cria `admin_audit_log` como tabela minima de auditoria interna para operacoes de suporte/reconciliacao. `202605300004_foundation_closeout.sql` adiciona RPCs minimas internas:
+
+- `admin_lookup_account_v1`;
+- `admin_battle_diagnostics_v1`;
+- `resource_reconciliation_report_v1`;
+- `admin_adjust_resource_balance_v1`;
+- `admin_flag_account_v1`.
+
+Todas sao `service_role`-only, sem grant para `anon` ou `authenticated`.
 
 Campos implementados:
 
@@ -78,7 +92,8 @@ Campos implementados:
 - `metadata`
 - `created_at`
 
-`reconcile_resource_balance` usa essa tabela junto com `resource_transactions`, garantindo ledger e auditoria na mesma operacao.
+`admin_adjust_resource_balance_v1` usa essa tabela junto com
+`resource_transactions`, garantindo ledger e auditoria na mesma operacao.
 
 ## Guardrails De Segredo
 
@@ -94,7 +109,19 @@ Proibido colocar em cliente, export, portal, manifest ou docs operacionais publi
 
 Qualquer operacao que precise service role deve acontecer no servidor, em script local ignorado ou em pipeline configurado fora do cliente. O contrato do endpoint deve declarar exatamente que o cliente nunca recebe esse segredo.
 
-## Endpoints Admin-Future
+## RPCs Admin-Internal
+
+As RPCs existentes sao internas e nao devem ser chamadas pelo cliente:
+
+| RPC | Tipo | Auditabilidade |
+|---|---|---|
+| `admin_lookup_account_v1` | read-only | sem mutacao; usado para localizar account/profile/save |
+| `admin_battle_diagnostics_v1` | read-only | inclui battle, ruleset/hash, reward e ledger por `battle_id` |
+| `resource_reconciliation_report_v1` | read-only | compara saldo atual e ledger por `game_save_id` |
+| `admin_adjust_resource_balance_v1` | mutacao | exige `request_id`, reason, before/after, ledger e `admin_audit_log` |
+| `admin_flag_account_v1` | mutacao | exige `request_id`, status, reason e `admin_audit_log` |
+
+## Endpoints Admin-Futuros
 
 Todo endpoint admin futuro deve declarar:
 
@@ -102,7 +129,7 @@ Todo endpoint admin futuro deve declarar:
 |---|---|
 | metodo e rota | endpoint logico separado de gameplay |
 | auth | autenticacao forte e role esperada |
-| scope | `admin-future` |
+| scope | `admin-internal` ou contrato novo mais especifico |
 | target | conta/save/social/battle/release/migration afetado |
 | idempotencia | obrigatoria para mutacoes |
 | audit log | campos gravados e onde consultar |
@@ -142,7 +169,9 @@ Regras:
 - indices por `target_type + target_id`, `actor_id`, `created_at` e `request_id` quando houver mutacoes;
 - teste de contrato verificando que operacoes mutantes nao existem sem audit log.
 
-Esta fundacao cria a migration minima. Endpoints admin futuros ainda precisam contrato proprio, role/auth, teste e revisao antes de existir.
+Esta fundacao cria a migration minima e as RPCs internas listadas acima. Endpoints
+admin futuros ainda precisam contrato proprio, role/auth, teste e revisao antes
+de existir.
 
 ## Operacao Manual De Emergencia
 
@@ -170,7 +199,7 @@ O contrato admin nao relaxa esses gates. Ele adiciona rastreabilidade quando rel
 
 ## Checklist Antes De Implementar Admin
 
-- [ ] endpoint declarado como `admin-future`;
+- [ ] endpoint/RPC declarado como `admin-internal` ou contrato novo aprovado;
 - [ ] role e auth definidos;
 - [ ] audit log ou log operacional definido;
 - [ ] migration espelhada quando houver tabela nova;

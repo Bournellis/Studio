@@ -67,20 +67,31 @@ func request_battle(host: Node) -> void:
 	host.set("_battle_request_splash_active", true)
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_BATTLE_ENTRY, false)
 	host.call("_set_busy", true, "Solicitando batalha...")
+	var mutation := SessionStore.prepare_pending_mutation(
+		"battle/request",
+		"battle:%s" % SessionStore.active_save_type,
+		"request_battle",
+		{"mode": ProjectInfoScript.DEFAULT_BATTLE_MODE}
+	)
 	var battle_result: Dictionary = await SupabaseClient.request_battle(
-		SessionStoreScript.create_request_id(),
+		str(mutation.get("request_id", "")),
 		SessionStore.access_token,
-		ProjectInfoScript.DEFAULT_BATTLE_MODE
+		ProjectInfoScript.DEFAULT_BATTLE_MODE,
+		"",
+		str(mutation.get("request_hash", ""))
 	)
 	host.set("_battle_request_splash_active", false)
 	if not bool(battle_result.get("ok", false)):
+		SessionStore.fail_pending_mutation(str(mutation.get("request_id", "")), battle_result)
 		host.call("_fail_with_error", battle_result)
 		return
 
 	if not SessionStore.apply_battle_result(battle_result):
+		SessionStore.fail_pending_mutation(str(mutation.get("request_id", "")), {"error": SessionStore.last_error})
 		host.call("_fail_with_error", {"error": SessionStore.last_error})
 		return
 
+	SessionStore.complete_pending_mutation(str(mutation.get("request_id", "")), battle_result)
 	SessionStore.save_cache()
 	var recovered := bool(await host.call("_recover_session_state"))
 	if not recovered:

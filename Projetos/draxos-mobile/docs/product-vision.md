@@ -142,7 +142,7 @@ Direcao de maturidade:
 - manter contratos logicos do jogo independentes do vendor;
 - preservar Backend Proprio + Postgres como plano de saida preferido;
 - considerar Nakama apenas se realtime/lobbies/social competitivo virarem pilares reais;
-- migrar `players.save_type` para `account_profiles` + `game_saves` apenas quando playtest ou escala justificarem;
+- tratar `account_profiles` + `game_saves` como fundacao ja antecipada pela Foundation Expansion Readiness/Closeout; `players.save_type` fica apenas como compatibilidade alpha;
 - manter service role e secrets fora de cliente, export e repositorio.
 
 ## Monetizacao - Limites

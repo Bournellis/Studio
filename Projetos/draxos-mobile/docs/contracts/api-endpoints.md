@@ -8,7 +8,7 @@ Este documento descreve a interface logica entre cliente Godot e Supabase Edge F
 ## Regras Gerais
 
 - Transporte: HTTPS REST via HTTPRequest do Godot.
-- Versao da API: usar header unico `x-draxos-api-version: 1`. A ausencia do header ainda e tolerada pelos endpoints alpha atuais, mas endpoints novos devem declarar suporte v1.
+- Versao da API: usar header unico `x-draxos-api-version: 1`. A ausencia do header ainda e tolerada pelos endpoints alpha atuais; valor explicito diferente de `1` deve falhar com `UNSUPPORTED_API_VERSION`.
 - Autenticacao: JWT Supabase no header `Authorization: Bearer <token>`.
 - Save ativo: endpoints de gameplay aceitam `x-draxos-save-type: normal|progression_lab`; ausencia do header usa `normal`.
 - Internal Alpha: cliente cria sessao Supabase Auth por email/senha; depois chama `/account/bootstrap` com JWT registrado, username e convite para criar o primeiro save.
@@ -86,6 +86,12 @@ como slot contratado, mas a rota ainda precisa migrar o efeito de dominio.
 | `POST /social/guild/create` | `guild_create_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql`; guilda + owner + estruturas + canal + idempotência entram no mesmo RPC |
 | `POST /social/guild/join` | `guild_join_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql`; membership + contador + idempotência entram no mesmo RPC |
 
+| `POST /build/spell-behavior` | `build_spell_behavior_v1` | ativo em `202605300004_foundation_closeout.sql`; comportamento de spell equipada + idempotencia entram no mesmo RPC |
+| `POST /build/potion/equip` | `build_potion_equip_v1` | ativo em `202605300004_foundation_closeout.sql`; slot de pocao + idempotencia entram no mesmo RPC |
+| `POST /build/potion-behavior` | `build_potion_behavior_v1` | ativo em `202605300004_foundation_closeout.sql`; comportamento de pocao + idempotencia entram no mesmo RPC |
+| `POST /social/friends/add` | `social_friend_add_v1` | ativo em `202605300004_foundation_closeout.sql`; amizade bidirecional + idempotencia entram no mesmo RPC |
+| `POST /social/chat/send` | `social_chat_send_v1` | ativo em `202605300004_foundation_closeout.sql`; mensagem/rate-limit + idempotencia entram no mesmo RPC |
+
 Nenhuma rota nova deve expandir economia sem passar para o padrao v1.
 
 ## Classificacao De Escopo - Track 05
@@ -103,9 +109,8 @@ entrar em codigo, smoke, migration ou documentacao publica de payload.
   escrita de gameplay.
 - `telemetry`: endpoint de diagnostico/UX; pode associar evento ao save ativo
   quando existir, mas nunca concede recurso, ranking, recompensa ou progresso.
-- `admin-future`: superficie futura de administracao, convites, suporte,
-  moderacao, entitlement ou publicacao. Nao existe endpoint implementado neste
-  escopo na Track 05; qualquer criacao exige contrato e autorizacao explicitos.
+- `admin-internal`: superficie interna de administracao, suporte e diagnostico,
+  sempre `service_role`-only e auditavel. Nao ha painel publico nesta etapa.
 
 Regra para endpoints novos: adicionar `Scope: <valor>` na secao do endpoint,
 declarar se usa `x-draxos-save-type`, declarar o dono da idempotencia
@@ -134,30 +139,30 @@ novo.
 | POST | `/base/collect` | `save-scoped` | Sim | `request_id/request_hash` por save | Coleta recursos do save ativo via RPC transacional com ledger. |
 | POST | `/base/upgrade` | `save-scoped` | Sim | `request_id/request_hash` por save | Inicia upgrade da Base do save ativo via RPC transacional com ledger. |
 | GET | `/crafting/state` | `save-scoped` | Sim | Nao | Recursos, Po de Osso, receitas, inventario de consumiveis e slot de pocao. |
-| POST | `/crafting/crush-bones` | `save-scoped` | Sim | `request_id` por save | Tritura Ossos em Po de Osso sem duplicar por retry. |
-| POST | `/crafting/craft` | `save-scoped` | Sim | `request_id` por save | Cria consumiveis a partir de receitas server-authoritative. |
+| POST | `/crafting/crush-bones` | `save-scoped` | Sim | `request_id/request_hash` por save | Tritura Ossos em Po de Osso sem duplicar por retry. |
+| POST | `/crafting/craft` | `save-scoped` | Sim | `request_id/request_hash` por save | Cria consumiveis a partir de receitas server-authoritative. |
 | GET | `/build/state` | `save-scoped` | Sim | Nao | Loadout atual, opcoes humanizadas, bloqueios, comportamentos e pocao equipada. |
-| POST | `/build/equip` | `save-scoped` | Sim | `request_id` por save | Equipa instrumento, spells, doutrina e familiar com validacao server-side. |
-| POST | `/build/spell-behavior` | `save-scoped` | Sim | `request_id` por save | Atualiza comportamento de uma spell equipada. |
-| POST | `/build/potion/equip` | `save-scoped` | Sim | `request_id` por save | Equipa/remove pocao no slot 1. |
-| POST | `/build/potion-behavior` | `save-scoped` | Sim | `request_id` por save | Atualiza comportamento da pocao do slot 1. |
+| POST | `/build/equip` | `save-scoped` | Sim | `request_id/request_hash` por save | Equipa instrumento, spells, doutrina e familiar com validacao server-side. |
+| POST | `/build/spell-behavior` | `save-scoped` | Sim | `request_id/request_hash` por save | Atualiza comportamento de uma spell equipada. |
+| POST | `/build/potion/equip` | `save-scoped` | Sim | `request_id/request_hash` por save | Equipa/remove pocao no slot 1. |
+| POST | `/build/potion-behavior` | `save-scoped` | Sim | `request_id/request_hash` por save | Atualiza comportamento da pocao do slot 1. |
 | GET | `/social/state` | `account-scoped` | Sim, validado | Nao | Usa identidade social canonica da conta; Lab recebe marcador `lab`. |
-| POST | `/social/friends/add` | `account-scoped` | Sim, validado | `request_id` na identidade social | Amizade por username na identidade social canonica. |
-| POST | `/social/guild/create` | `account-scoped` | Sim, validado | `request_id` na identidade social | Cria guilda e membership para a identidade social canonica. |
-| POST | `/social/guild/join` | `account-scoped` | Sim, validado | `request_id` na identidade social | Entra em guilda pela identidade social canonica. |
-| POST | `/social/chat/send` | `account-scoped` | Sim, validado | `request_id` na identidade social | Envia chat de guilda; nao concede progresso. |
+| POST | `/social/friends/add` | `account-scoped` | Sim, validado | `request_id/request_hash` na identidade social | Amizade por username na identidade social canonica. |
+| POST | `/social/guild/create` | `account-scoped` | Sim, validado | `request_id/request_hash` na identidade social | Cria guilda e membership para a identidade social canonica. |
+| POST | `/social/guild/join` | `account-scoped` | Sim, validado | `request_id/request_hash` na identidade social | Entra em guilda pela identidade social canonica. |
+| POST | `/social/chat/send` | `account-scoped` | Sim, validado | `request_id/request_hash` na identidade social | Envia chat de guilda; nao concede progresso. |
 | GET | `/competition/matchmaking/preview` | `save-scoped` | Sim | Nao | Preview do save ativo; `progression_lab` pode ver preview sem ranquear. |
 | GET | `/competition/ranking/current` | `save-scoped` | Sim | Nao | Ranking do save `normal`; Lab retorna exclusao explicita. |
 | GET | `/monetization/state` | `save-scoped` | Sim | Nao | Loja/Battle Pass do save ativo. |
-| POST | `/monetization/rewards/claim` | `save-scoped` | Sim | `request_id` por save | Claim economico do save ativo com ledger. |
-| POST | `/monetization/alpha-purchase` | `save-scoped` | Sim | `request_id` por save | Compra/redeem alpha do save ativo com ledger. |
+| POST | `/monetization/rewards/claim` | `save-scoped` | Sim | `request_id/request_hash` por save | Claim economico do save ativo com ledger. |
+| POST | `/monetization/alpha-purchase` | `save-scoped` | Sim | `request_id/request_hash` por save | Compra/redeem alpha do save ativo com ledger. |
 | POST | `/telemetry/client-event` | `telemetry` | Sim, opcional | Nao | Grava diagnostico client; `player_id` pode ser nulo antes de conta/save. |
 | POST | `/progression-lab/apply` | `save-scoped` | Sim, exige `progression_lab` | `request_id` por save Lab | Interno/gated; aplica healthy save apenas no Lab e nunca escreve no Normal. |
 
-`admin-future` fica reservado para endpoints ainda inexistentes, como painel de
-convites, suporte, moderacao, entitlement account-wide, operacao de release ou
-publicacao remota. Esses endpoints nao devem reutilizar silenciosamente
-`save-scoped`.
+`admin-internal` existe apenas como RPC `service_role`-only no banco:
+`admin_lookup_account_v1`, `admin_battle_diagnostics_v1`,
+`resource_reconciliation_report_v1`, `admin_adjust_resource_balance_v1` e
+`admin_flag_account_v1`. Nenhum deles e endpoint publico ou chamada de cliente.
 
 `minigame` fica reservado por `docs/contracts/minigame-integration.md`; nenhum minigame jogavel deve criar endpoint antes do contrato de entrada, custo, recompensa, telemetry e admin.
 

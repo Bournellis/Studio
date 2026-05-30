@@ -16,7 +16,7 @@
 <body>
   <h1>DraxosMobile Progression Lab</h1>
   <p>Model draxos_mobile_progression_lab_v1. Use this report to pick manual Godot saves and tuning hypotheses.</p>
-  <div class="cards"><div class="card"><strong>Status</strong><br>REVIEW</div><div class="card"><strong>Healthy saves</strong><br>25</div><div class="card"><strong>Bots</strong><br>75</div><div class="card"><strong>Profiles</strong><br>5</div></div>
+  <div class="cards"><div class="card"><strong>Status</strong><br>REVIEW</div><div class="card"><strong>Healthy saves</strong><br>25</div><div class="card"><strong>Bots</strong><br>75</div><div class="card"><strong>Profiles</strong><br>5</div><div class="card"><strong>Life potions</strong><br>75</div></div>
   <h2>Healthy Saves</h2>
   <table><tr><th>Save</th><th>Status</th><th>Level</th><th>Power</th><th>Notes</th></tr><tr><td>free_50_rewards_2h</td><td>PASS</td><td>8</td><td>669</td><td>Use power 669 as initial matchmaking observation, not final truth.</td></tr>
 <tr><td>free_50_rewards_5h</td><td>PASS</td><td>10</td><td>1210</td><td>Use power 1210 as initial matchmaking observation, not final truth.</td></tr>
@@ -94,6 +94,57 @@
 <tr><td>PASS</td><td>max_spender</td><td>15h</td><td>resource_debt</td><td>0</td><td>>= -1</td></tr>
 <tr><td>PASS</td><td>max_spender</td><td>20h</td><td>level_window</td><td>19</td><td>18-36</td></tr>
 <tr><td>PASS</td><td>max_spender</td><td>20h</td><td>resource_debt</td><td>0</td><td>>= -1</td></tr></table>
+  <h2>Track 16 Consumables</h2>
+  <table><tr><th>Status</th><th>Profile</th><th>Milestone</th><th>Check</th><th>Observed</th><th>Target</th></tr><tr><td>PASS</td><td>free_50_rewards</td><td>2h</td><td>life_potion_stock</td><td>1/1 potions</td><td>>= 1</td></tr>
+<tr><td>PASS</td><td>free_50_rewards</td><td>2h</td><td>preparation_potion_slot</td><td>no potion equipped</td><td>potion-ready when target stock is non-zero</td></tr>
+<tr><td>PASS</td><td>free_50_rewards</td><td>5h</td><td>life_potion_stock</td><td>2/2 potions</td><td>>= 2</td></tr>
+<tr><td>PASS</td><td>free_50_rewards</td><td>5h</td><td>preparation_potion_slot</td><td>equipped pocao_vida</td><td>potion-ready when target stock is non-zero</td></tr>
+<tr><td>PASS</td><td>free_50_rewards</td><td>10h</td><td>life_potion_stock</td><td>3/3 potions</td><td>>= 3</td></tr>
+<tr><td>PASS</td><td>free_50_rewards</td><td>10h</td><td>preparation_potion_slot</td><td>equipped pocao_vida</td><td>potion-ready when target stock is non-zero</td></tr>
+<tr><td>PASS</td><td>free_50_rewards</td><td>15h</td><td>life_potion_stock</td><td>4/4 potions</td><td>>= 4</td></tr>
+<tr><td>PASS</td><td>free_50_rewards</td><td>15h</td><td>preparation_potion_slot</td><td>equipped pocao_vida</td><td>potion-ready when target stock is non-zero</td></tr>
+<tr><td>PASS</td><td>free_50_rewards</td><td>20h</td><td>life_potion_stock</td><td>5/5 potions</td><td>>= 5</td></tr>
+<tr><td>PASS</td><td>free_50_rewards</td><td>20h</td><td>preparation_potion_slot</td><td>equipped pocao_vida</td><td>potion-ready when target stock is non-zero</td></tr>
+<tr><td>PASS</td><td>free_100_rewards</td><td>2h</td><td>life_potion_stock</td><td>1/1 potions</td><td>>= 1</td></tr>
+<tr><td>PASS</td><td>free_100_rewards</td><td>2h</td><td>preparation_potion_slot</td><td>no potion equipped</td><td>potion-ready when target stock is non-zero</td></tr>
+<tr><td>PASS</td><td>free_100_rewards</td><td>5h</td><td>life_potion_stock</td><td>2/2 potions</td><td>>= 2</td></tr>
+<tr><td>PASS</td><td>free_100_rewards</td><td>5h</td><td>preparation_potion_slot</td><td>equipped pocao_vida</td><td>potion-ready when target stock is non-zero</td></tr>
+<tr><td>PASS</td><td>free_100_rewards</td><td>10h</td><td>life_potion_stock</td><td>3/3 potions</td><td>>= 3</td></tr>
+<tr><td>PASS</td><td>free_100_rewards</td><td>10h</td><td>preparation_potion_slot</td><td>equipped pocao_vida</td><td>potion-ready when target stock is non-zero</td></tr>
+<tr><td>PASS</td><td>free_100_rewards</td><td>15h</td><td>life_potion_stock</td><td>4/4 potions</td><td>>= 4</td></tr>
+<tr><td>PASS</td><td>free_100_rewards</td><td>15h</td><td>preparation_potion_slot</td><td>equipped pocao_vida</td><td>potion-ready when target stock is non-zero</td></tr>
+<tr><td>PASS</td><td>free_100_rewards</td><td>20h</td><td>life_potion_stock</td><td>5/5 potions</td><td>>= 5</td></tr>
+<tr><td>PASS</td><td>free_100_rewards</td><td>20h</td><td>preparation_potion_slot</td><td>equipped pocao_vida</td><td>potion-ready when target stock is non-zero</td></tr>
+<tr><td>PASS</td><td>freemium_basic</td><td>2h</td><td>life_potion_stock</td><td>1/1 potions</td><td>>= 1</td></tr>
+<tr><td>PASS</td><td>freemium_basic</td><td>2h</td><td>preparation_potion_slot</td><td>no potion equipped</td><td>potion-ready when target stock is non-zero</td></tr>
+<tr><td>PASS</td><td>freemium_basic</td><td>5h</td><td>life_potion_stock</td><td>2/2 potions</td><td>>= 2</td></tr>
+<tr><td>PASS</td><td>freemium_basic</td><td>5h</td><td>preparation_potion_slot</td><td>equipped pocao_vida</td><td>potion-ready when target stock is non-zero</td></tr>
+<tr><td>PASS</td><td>freemium_basic</td><td>10h</td><td>life_potion_stock</td><td>3/3 potions</td><td>>= 3</td></tr>
+<tr><td>PASS</td><td>freemium_basic</td><td>10h</td><td>preparation_potion_slot</td><td>equipped pocao_vida</td><td>potion-ready when target stock is non-zero</td></tr>
+<tr><td>PASS</td><td>freemium_basic</td><td>15h</td><td>life_potion_stock</td><td>4/4 potions</td><td>>= 4</td></tr>
+<tr><td>PASS</td><td>freemium_basic</td><td>15h</td><td>preparation_potion_slot</td><td>equipped pocao_vida</td><td>potion-ready when target stock is non-zero</td></tr>
+<tr><td>PASS</td><td>freemium_basic</td><td>20h</td><td>life_potion_stock</td><td>5/5 potions</td><td>>= 5</td></tr>
+<tr><td>PASS</td><td>freemium_basic</td><td>20h</td><td>preparation_potion_slot</td><td>equipped pocao_vida</td><td>potion-ready when target stock is non-zero</td></tr>
+<tr><td>PASS</td><td>spender_light</td><td>2h</td><td>life_potion_stock</td><td>1/1 potions</td><td>>= 1</td></tr>
+<tr><td>PASS</td><td>spender_light</td><td>2h</td><td>preparation_potion_slot</td><td>no potion equipped</td><td>potion-ready when target stock is non-zero</td></tr>
+<tr><td>PASS</td><td>spender_light</td><td>5h</td><td>life_potion_stock</td><td>2/2 potions</td><td>>= 2</td></tr>
+<tr><td>PASS</td><td>spender_light</td><td>5h</td><td>preparation_potion_slot</td><td>equipped pocao_vida</td><td>potion-ready when target stock is non-zero</td></tr>
+<tr><td>PASS</td><td>spender_light</td><td>10h</td><td>life_potion_stock</td><td>3/3 potions</td><td>>= 3</td></tr>
+<tr><td>PASS</td><td>spender_light</td><td>10h</td><td>preparation_potion_slot</td><td>equipped pocao_vida</td><td>potion-ready when target stock is non-zero</td></tr>
+<tr><td>PASS</td><td>spender_light</td><td>15h</td><td>life_potion_stock</td><td>4/4 potions</td><td>>= 4</td></tr>
+<tr><td>PASS</td><td>spender_light</td><td>15h</td><td>preparation_potion_slot</td><td>equipped pocao_vida</td><td>potion-ready when target stock is non-zero</td></tr>
+<tr><td>PASS</td><td>spender_light</td><td>20h</td><td>life_potion_stock</td><td>5/5 potions</td><td>>= 5</td></tr>
+<tr><td>PASS</td><td>spender_light</td><td>20h</td><td>preparation_potion_slot</td><td>equipped pocao_vida</td><td>potion-ready when target stock is non-zero</td></tr>
+<tr><td>PASS</td><td>max_spender</td><td>2h</td><td>life_potion_stock</td><td>1/1 potions</td><td>>= 1</td></tr>
+<tr><td>PASS</td><td>max_spender</td><td>2h</td><td>preparation_potion_slot</td><td>no potion equipped</td><td>potion-ready when target stock is non-zero</td></tr>
+<tr><td>PASS</td><td>max_spender</td><td>5h</td><td>life_potion_stock</td><td>2/2 potions</td><td>>= 2</td></tr>
+<tr><td>PASS</td><td>max_spender</td><td>5h</td><td>preparation_potion_slot</td><td>equipped pocao_vida</td><td>potion-ready when target stock is non-zero</td></tr>
+<tr><td>PASS</td><td>max_spender</td><td>10h</td><td>life_potion_stock</td><td>3/3 potions</td><td>>= 3</td></tr>
+<tr><td>PASS</td><td>max_spender</td><td>10h</td><td>preparation_potion_slot</td><td>equipped pocao_vida</td><td>potion-ready when target stock is non-zero</td></tr>
+<tr><td>PASS</td><td>max_spender</td><td>15h</td><td>life_potion_stock</td><td>4/4 potions</td><td>>= 4</td></tr>
+<tr><td>PASS</td><td>max_spender</td><td>15h</td><td>preparation_potion_slot</td><td>equipped pocao_vida</td><td>potion-ready when target stock is non-zero</td></tr>
+<tr><td>PASS</td><td>max_spender</td><td>20h</td><td>life_potion_stock</td><td>5/5 potions</td><td>>= 5</td></tr>
+<tr><td>PASS</td><td>max_spender</td><td>20h</td><td>preparation_potion_slot</td><td>equipped pocao_vida</td><td>potion-ready when target stock is non-zero</td></tr></table>
   <h2>Premium Gap</h2>
   <table><tr><th>Status</th><th>Profile</th><th>Milestone</th><th>Power Gap</th><th>Premium Spend</th></tr><tr><td>PASS</td><td>free_50_rewards</td><td>2h</td><td>-9.35%</td><td>0</td></tr>
 <tr><td>PASS</td><td>freemium_basic</td><td>2h</td><td>9.62%</td><td>0</td></tr>

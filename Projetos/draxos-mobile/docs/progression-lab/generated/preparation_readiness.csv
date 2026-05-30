@@ -1,0 +1,26 @@
+id,profile_id,milestone_id,status,potion_equipped,spell_behavior_count,manual_note
+free_50_rewards_2h,free_50_rewards,2h,PASS,,2,Preparation should show spell behavior defaults.
+free_50_rewards_5h,free_50_rewards,5h,PASS,pocao_vida,2,Preparation should show spell behavior defaults.
+free_50_rewards_10h,free_50_rewards,10h,PASS,pocao_vida,2,Preparation should show spell behavior defaults.
+free_50_rewards_15h,free_50_rewards,15h,PASS,pocao_vida,2,Preparation should show spell behavior defaults.
+free_50_rewards_20h,free_50_rewards,20h,PASS,pocao_vida,2,Preparation should show spell behavior defaults.
+free_100_rewards_2h,free_100_rewards,2h,PASS,,2,Preparation should show spell behavior defaults.
+free_100_rewards_5h,free_100_rewards,5h,PASS,pocao_vida,2,Preparation should show spell behavior defaults.
+free_100_rewards_10h,free_100_rewards,10h,PASS,pocao_vida,2,Preparation should show spell behavior defaults.
+free_100_rewards_15h,free_100_rewards,15h,PASS,pocao_vida,2,Preparation should show spell behavior defaults.
+free_100_rewards_20h,free_100_rewards,20h,PASS,pocao_vida,2,Preparation should show spell behavior defaults.
+freemium_basic_2h,freemium_basic,2h,PASS,,2,Preparation should show spell behavior defaults.
+freemium_basic_5h,freemium_basic,5h,PASS,pocao_vida,2,Preparation should show spell behavior defaults.
+freemium_basic_10h,freemium_basic,10h,PASS,pocao_vida,2,Preparation should show spell behavior defaults.
+freemium_basic_15h,freemium_basic,15h,PASS,pocao_vida,2,Preparation should show spell behavior defaults.
+freemium_basic_20h,freemium_basic,20h,PASS,pocao_vida,2,Preparation should show spell behavior defaults.
+spender_light_2h,spender_light,2h,PASS,,2,Preparation should show spell behavior defaults.
+spender_light_5h,spender_light,5h,PASS,pocao_vida,2,Preparation should show spell behavior defaults.
+spender_light_10h,spender_light,10h,PASS,pocao_vida,2,Preparation should show spell behavior defaults.
+spender_light_15h,spender_light,15h,PASS,pocao_vida,2,Preparation should show spell behavior defaults.
+spender_light_20h,spender_light,20h,PASS,pocao_vida,2,Preparation should show spell behavior defaults.
+max_spender_2h,max_spender,2h,PASS,,2,Preparation should show spell behavior defaults.
+max_spender_5h,max_spender,5h,PASS,pocao_vida,2,Preparation should show spell behavior defaults.
+max_spender_10h,max_spender,10h,PASS,pocao_vida,2,Preparation should show spell behavior defaults.
+max_spender_15h,max_spender,15h,PASS,pocao_vida,2,Preparation should show spell behavior defaults.
+max_spender_20h,max_spender,20h,PASS,pocao_vida,2,Preparation should show spell behavior defaults.

@@ -28,12 +28,12 @@ ruleset regenerado e validacao cruzada.
 | Artefato | Authority | Pode Mudar Runtime? | Observacao |
 |---|---|---:|---|
 | `tools/battle_lab/model.v1.json` | `lab-only` | Nao | Define matriz offline de build, archetypes, thresholds de relatorio, bands e checks. |
-| `tools/battle_lab/generate.ts` | `lab-only + simulator consumer` | Nao | Chama o simulador atual para relatorios, mas deve continuar offline/adapter-free e nao publica tuning sozinho. |
-| `dev/battle_lab/battle_lab_screen.gd` | `client dev shell` | Nao | UI de custom replay/scratch; deve espelhar pesos exibidos pelo Battle Lab, nao inventar formula nova. |
+| `tools/battle_lab/generate.ts` | `lab-only + simulator consumer` | Nao | Chama o simulador atual para relatorios, cobre Track 16 potion/behavior, mas deve continuar offline/adapter-free e nao publica tuning sozinho. |
+| `dev/battle_lab/battle_lab_screen.gd` | `client dev shell` | Nao | UI de custom replay/scratch; deve espelhar pesos exibidos pelo Battle Lab, nao inventar formula nova. Pode montar Pocao de Vida e desativacao simples de spell para replay custom lab-only. |
 | `docs/battle-lab/generated/` | `generated evidence` | Nao | Evidencia historica/diagnostica; nao substitui ruleset. |
 | `docs/battle-lab/runs/` | `archived evidence` | Nao | Runs oficiais sao snapshots; hashes podem ficar stale. |
-| `tools/progression_lab/model.v1.json` | `lab-only` | Nao | Define perfis, milestones, source values, custos, pesos macro e bot offsets para leitura offline. |
-| `tools/progression_lab/generate.ts` | `lab-only + generated save producer` | Nao | Gera healthy saves e bot pool para teste manual; deve continuar offline/adapter-free e nao altera save normal. |
+| `tools/progression_lab/model.v1.json` | `lab-only` | Nao | Define perfis, milestones, source values, custos, pesos macro, bot offsets e cobertura Track 16 de consumables/crafting para leitura offline. |
+| `tools/progression_lab/generate.ts` | `lab-only + generated save producer` | Nao | Gera healthy saves, consumable readiness e bot pool para teste manual; deve continuar offline/adapter-free e nao altera save normal. |
 | `dev/progression_lab/progression_lab_screen.gd` | `client dev shell` | Nao | Aplica ou carrega somente `progression_lab`; cache local-only nao tem token valido. |
 | `docs/progression-lab/generated/` | `generated evidence` | Nao | Healthy saves e relatorios para review manual. |
 | `POST /progression-lab/apply` | `server-authoritative lab adapter` | Sim, apenas save Lab | Escreve somente no save `progression_lab` e valida profile/milestone/save gerado. |
@@ -57,6 +57,11 @@ Heuristicas locais conhecidas:
 - near-power dominance usa delta maximo de `20%` e ignora mirrors de mesmo archetype;
 - archetypes, ratios de level e `quality_bias` existem para gerar stress cases,
   nao para publicar builds finais.
+- `track16_scenarios` cobre `pocao_vida`, comportamento default de pocao e
+  desativacao simples da primeira spell apenas como evidencia de laboratorio.
+- Generated atual de Track 16 Lab Alignment: `4644` batalhas, `244` builds,
+  status `REVIEW` por `anti_stall_rate = 6.4%`, dominancia near-power
+  `63.34%`, `1492` matchups com pocao e `1238` com comportamento de spell.
 
 Pesos de poder exibidos pelo Battle Lab:
 
@@ -93,6 +98,12 @@ Heuristicas locais conhecidas:
 - pesos macro incluem base stats e base average para leitura economica;
 - `bot_power_offsets_percent`: `-12`, `0`, `12`;
 - bot pool gerado fica fora de leaderboard e fora do save normal.
+- `track16_consumables` modela `po_osso`, `craft_pocao_vida`, `pocao_vida`,
+  estoque alvo por milestone, slot de pocao e comportamentos default.
+- `healthy_saves.json` deve carregar `consumables`, `combat_build.potionSlot`
+  quando aplicavel e `combat_build.spellBehaviors`; `potion_affordability.csv`,
+  `crafting_pressure.csv` e `preparation_readiness.csv` sao artefatos vivos do
+  runbook.
 
 O Progression Lab pode gerar `healthy_saves.json`, `bot_pool.csv` e cache
 local-only. Esses artefatos devem continuar isolados do save `normal`.
@@ -105,6 +116,7 @@ Ficam blocked until explicit package decision:
 - mudar `target_duration`, dominance, anti-stall ou win-rate gates;
 - adicionar bots ponte;
 - mudar source values, custos, recompensas, XP, Battle Pass ou store packs;
+- mudar custo/estoque/threshold/heal de pocao ou conversao de `ossos/po_osso`;
 - promover thresholds customizados, spell priorities, enemy-specific behavior
   ou previsao de vitoria para UI de jogador;
 - usar generated healthy saves como conteudo publicado sem ruleset/registry.
@@ -117,10 +129,12 @@ Mudancas em Labs devem provar:
 2. a documentacao lista o `model_id` atual;
 3. a tela Godot do Battle Lab exibe a mesma formula de poder do runner TS;
 4. Progression Lab screen e model mantem os mesmos profile/milestone ids;
-5. `progression_lab` continua isolado do save `normal`;
-6. geradores dev continuam offline/adapter-free;
-7. runtime server nao importa geradores nem telas dev dos Labs;
-8. `validate_foundation.ps1 -Profile Quick` continua verde.
+5. healthy saves do Progression Lab incluem Track 16 consumables/behavior sem
+   tocar save `normal`;
+6. `progression_lab` continua isolado do save `normal`;
+7. geradores dev continuam offline/adapter-free;
+8. runtime server nao importa geradores nem telas dev dos Labs;
+9. `validate_foundation.ps1 -Profile Quick` continua verde.
 
 Comandos minimos quando este contrato mudar:
 

@@ -54,6 +54,15 @@ interface HealthySave {
     premium_unlocked: boolean;
     simulated_store_spend: number;
   };
+  consumables?: {
+    inventory?: Array<{ item_id: string; quantity: number }>;
+    potion_slots?: Array<{
+      slot_index: number;
+      potion_id: string | null;
+      behavior: unknown;
+    }>;
+    spell_behaviors?: Record<string, unknown>;
+  };
   manual_checklist: string[];
 }
 
@@ -96,7 +105,8 @@ interface SeededSave {
 }
 
 const DEFAULT_SUPABASE_URL = "http://127.0.0.1:54321";
-const DEFAULT_PUBLISHABLE_KEY = "sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH";
+const DEFAULT_PUBLISHABLE_KEY =
+  "sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH";
 const HEALTHY_SAVES_PATH = "docs/progression-lab/generated/healthy_saves.json";
 const SCRATCH_DIR = ".progression_lab_scratch";
 const BATTLE_PASS_ID = "bp_s1_01";
@@ -185,6 +195,7 @@ async function seedSave(
   await upsertResources(config, player.id, save);
   await upsertBuild(config, player.id, save);
   await upsertBase(config, player.id, save);
+  await upsertConsumablesAndBehaviors(config, player.id, save);
   await upsertBattlePass(config, player.id, save);
   await insertRewardClaim(config, player.id, save);
 
@@ -373,6 +384,88 @@ async function upsertBase(
   });
 }
 
+async function upsertConsumablesAndBehaviors(
+  config: RestConfig,
+  playerId: string,
+  save: HealthySave,
+): Promise<void> {
+  const consumables = save.consumables;
+  if (consumables === undefined) {
+    await restRequest(
+      config,
+      "player_potion_slots?on_conflict=player_id,slot_index",
+      {
+        method: "POST",
+        body: [{
+          player_id: playerId,
+          slot_index: 1,
+          potion_id: null,
+          behavior: defaultPotionBehavior(),
+          updated_at: nowIso(),
+        }],
+      },
+    );
+    return;
+  }
+
+  const inventoryRows = (consumables.inventory ?? [])
+    .filter((item) => item.quantity > 0)
+    .map((item) => ({
+      player_id: playerId,
+      item_id: item.item_id,
+      quantity: Math.max(0, Math.trunc(item.quantity)),
+      updated_at: nowIso(),
+    }));
+  if (inventoryRows.length > 0) {
+    await restRequest(
+      config,
+      "player_consumables?on_conflict=player_id,item_id",
+      {
+        method: "POST",
+        body: inventoryRows,
+      },
+    );
+  }
+
+  const potionSlots = consumables.potion_slots ?? [{
+    slot_index: 1,
+    potion_id: null,
+    behavior: defaultPotionBehavior(),
+  }];
+  await restRequest(
+    config,
+    "player_potion_slots?on_conflict=player_id,slot_index",
+    {
+      method: "POST",
+      body: potionSlots.map((slot) => ({
+        player_id: playerId,
+        slot_index: slot.slot_index,
+        potion_id: nullableText(slot.potion_id ?? ""),
+        behavior: slot.behavior ?? defaultPotionBehavior(),
+        updated_at: nowIso(),
+      })),
+    },
+  );
+
+  const behaviorRows = Object.entries(consumables.spell_behaviors ?? {})
+    .map(([spellId, behavior]) => ({
+      player_id: playerId,
+      spell_id: spellId,
+      behavior,
+      updated_at: nowIso(),
+    }));
+  if (behaviorRows.length > 0) {
+    await restRequest(
+      config,
+      "player_spell_behaviors?on_conflict=player_id,spell_id",
+      {
+        method: "POST",
+        body: behaviorRows,
+      },
+    );
+  }
+}
+
 async function upsertBattlePass(
   config: RestConfig,
   playerId: string,
@@ -437,7 +530,9 @@ async function verifyAccountState(
   const body = await readJson(response);
   if (!response.ok || !(body as { ok?: boolean }).ok) {
     throw new Error(
-      `account/state verification failed (${response.status}): ${JSON.stringify(body)}`,
+      `account/state verification failed (${response.status}): ${
+        JSON.stringify(body)
+      }`,
     );
   }
   return true;
@@ -489,6 +584,12 @@ function buildSessionCache(
       passive_id: nullableText(save.build.passive_id),
       passive_level: save.build.passive_level,
       updated_at: nowIso(),
+    },
+    build_state: {
+      combat_build: saveWithConsumableCombatBuild(save),
+      potion_slots: save.consumables?.potion_slots ?? [],
+      inventory: save.consumables?.inventory ?? [],
+      spell_behaviors: save.consumables?.spell_behaviors ?? {},
     },
     base_state: {
       construction_slots: save.base.construction_slots,
@@ -580,7 +681,9 @@ async function restRequest<T = unknown>(
   const responseBody = await readJson(response);
   if (!response.ok) {
     throw new Error(
-      `REST ${path} failed (${response.status}): ${JSON.stringify(responseBody)}`,
+      `REST ${path} failed (${response.status}): ${
+        JSON.stringify(responseBody)
+      }`,
     );
   }
   return responseBody as T;
@@ -674,6 +777,28 @@ function assertLocalSupabase(supabaseUrl: string): void {
 
 function nullableText(value: string): string | null {
   return value.trim() === "" ? null : value;
+}
+
+function saveWithConsumableCombatBuild(
+  save: HealthySave,
+): Record<string, unknown> {
+  const combatBuild = (save as { combat_build?: unknown }).combat_build;
+  const base = combatBuild !== null && typeof combatBuild === "object" &&
+      !Array.isArray(combatBuild)
+    ? { ...(combatBuild as Record<string, unknown>) }
+    : {};
+  base.potion_slots = save.consumables?.potion_slots ?? [];
+  base.inventory = save.consumables?.inventory ?? [];
+  base.spell_behaviors = save.consumables?.spell_behaviors ?? {};
+  return base;
+}
+
+function defaultPotionBehavior(): Record<string, unknown> {
+  return {
+    enabled: true,
+    hp: { mode: "below", percent: 40 },
+    mana: { mode: "ignore", percent: 0 },
+  };
 }
 
 function structureLabel(structureId: string): string {

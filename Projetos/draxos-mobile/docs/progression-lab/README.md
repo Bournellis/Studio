@@ -19,6 +19,10 @@ O sistema deve responder:
 - qual diferenca premium e aceitavel;
 - que poder deve ser atribuido a esse personagem;
 - quais bots devem existir para pareamento inicial;
+- se `ossos -> po_osso -> craft_pocao_vida` sustenta estoque saudavel de
+  `pocao_vida` por milestone;
+- se o save saudavel exercita slot de pocao e comportamento simples na
+  Preparacao;
 - como a sensacao manual no Godot compara com os dados.
 
 ## Perfis
@@ -44,6 +48,9 @@ npx -y deno run --allow-read --allow-write tools/progression_lab/generate.ts
 
 - `generated/progression_report.html`
 - `generated/reward_scaling_checks.csv`
+- `generated/potion_affordability.csv`
+- `generated/crafting_pressure.csv`
+- `generated/preparation_readiness.csv`
 - `generated/premium_gap.csv`
 - `generated/power_recommendations.csv`
 - `generated/bot_pool.csv`
@@ -113,10 +120,15 @@ Esse diretorio guarda sessoes locais e nao deve entrar no Git.
 - Nao promove pesos de poder sem Battle Lab + Progression Lab concordarem.
 - Nao vira tuning runtime sem pacote explicito de base builder ou autobattler.
 - Premium deve vender tempo e conforto, nao poder exclusivo acima do cap.
+- Track 16 consumables sao cobertura de laboratorio: `po_osso`,
+  `craft_pocao_vida`, `pocao_vida`, slot de pocao e comportamentos default. Isso
+  nao libera novas pocoes, custos, thresholds ou comportamento avancado.
 
 ## Baseline Atual
 
-Ultima rodada viva de Battle Lab: `2026-05-25_source_identity_balance_v02`.
+Ultima rodada viva de Battle Lab versionada:
+`2026-05-25_source_identity_balance_v02`.
+Generated atual dos labs: Track 16 Lab Alignment em `2026-05-30`.
 Ultima rodada tecnica registrada de Progression Lab:
 `2026-05-27-t04-progression-economia.md`.
 Runbook humano Track 05:
@@ -124,6 +136,13 @@ Runbook humano Track 05:
 
 - `25` saves saudaveis e `75` bots gerados.
 - Status geral: `REVIEW`.
+- Track 16 consumables: `50` checks de consumivel em `PASS`.
+- Healthy saves agora incluem `consumables`, inventario de `po_osso` e
+  `pocao_vida`, `potion_slots`, `spell_behaviors` e `combat_build` com
+  `potionSlot` quando aplicavel.
+- `POST /progression-lab/apply` preserva o estado Track 16 do healthy save no
+  save `progression_lab`; o cache local-only tambem carrega `build_state` com
+  potion slots, inventario e comportamentos.
 - Power recommendations: todos os componentes em `PASS` com os pesos
   `level=42`, `weapon_level=28`, `spell_level=40`, `pet_level=34`,
   `passive_level=22`, `weapon_quality_tier=30`.
@@ -149,9 +168,10 @@ Casos obrigatorios de foco:
 - `free_100_rewards_20h`
 - `freemium_basic_20h`
 
-A rodada deve decidir premium gap, janela `20h`, bots ponte, recursos e pesos de
-poder. Qualquer ajuste de economia, poder, bots, loja, recompensas ou combate
-deve virar tarefa separada com comparacao before/after.
+A rodada deve decidir premium gap, janela `20h`, impacto de `pocao_vida` no
+anti-stall, pressao de `ossos/po_osso`, bots ponte, recursos e pesos de poder.
+Qualquer ajuste de economia, poder, bots, loja, recompensas, custos de crafting
+ou combate deve virar tarefa separada com comparacao before/after.
 
 ## Validacao Local
 

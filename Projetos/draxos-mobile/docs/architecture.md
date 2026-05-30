@@ -65,12 +65,13 @@ Cada Edge Function HTTP deve declarar escopo antes de evoluir:
   apenas valida o save ativo para marcar/limitar o Lab.
 - `release`: `release` e `healthcheck`, sem estado de gameplay.
 - `telemetry`: `telemetry`, sem autoridade economica, ranking ou recompensa.
-- `admin-future`: reservado para administracao futura; nao existe endpoint
-  implementado neste escopo na Track 05.
+- `admin-internal`: administracao interna auditavel, `service_role`-only, sem
+  painel publico e sem segredo no cliente/export.
 
 Novos endpoints devem declarar escopo no contrato de API antes de codigo,
-smoke ou migration. Track 05 mantem `players.save_type` e nao cria
-`account_profiles` ou `game_saves`.
+smoke ou migration. Foundation Expansion Readiness/Closeout antecipa
+`account_profiles` + `game_saves`; `players.save_type` permanece apenas como
+compatibilidade historica alpha.
 
 Plano de saida para Backend Proprio + Postgres:
 
@@ -108,7 +109,7 @@ Nakama deve ser reavaliado somente se pelo menos uma destas premissas mudar:
 - `T00-P12` completo: Social/Competicao v0 server-authoritative com `social/state`, guilda alpha, chat de guilda por polling, matchmaking preview com fallback de bot e ranking de season sem bots.
 - `T00-P13` completo e refinado em `T03-P08`: Monetizacao v0 server-authoritative com Battle Pass, redeems diarios de Diamante, recompensas diarias/semanais, claims free/premium, produtos alpha por Diamante, fila dupla, ledger, idempotencia e export smoke Android/PC/Web.
 - `Track 01` completo: hardening do alpha PC local com fluxo de primeira sessao mais claro, estados ocupados/erros offline/pre-condicoes visiveis, reset seguro de sessao local, telemetria client nao autoritativa e smoke do loop alpha.
-- `Track 03` completa ate T03-P18: Supabase remoto Free para alpha, `BackendConfig` no Godot, env vars seguras, `.env` reais ignorados, smokes remotos, `players.save_type`, header `x-draxos-save-type`, dois saves server-backed no Supabase local/remoto, reset separado por save, Progression Lab aplicado server-authoritative no save `progression_lab`, Base Manager jogavel, Social basico jogavel, Competicao com pontos/top 10/posicao do jogador, Loja proof-of-concept, auth email/senha, manifest/version gate, exports Android/PC/Web, Portal/Web no Cloudflare Pages e Backend Proprio + Postgres como plano de saida preferido. Track 04 decidiu manter `players.save_type` para o alpha e nao planejar migration `account_profiles` + `game_saves` agora; o gate so reabre com gatilho real de isolamento, conta, social, pagamento ou escala. Nakama fica apenas como alternativa futura se realtime/social competitivo virar pilar.
+- `Track 03` completa ate T03-P18: Supabase remoto Free para alpha, `BackendConfig` no Godot, env vars seguras, `.env` reais ignorados, smokes remotos, `players.save_type`, header `x-draxos-save-type`, dois saves server-backed no Supabase local/remoto, reset separado por save, Progression Lab aplicado server-authoritative no save `progression_lab`, Base Manager jogavel, Social basico jogavel, Competicao com pontos/top 10/posicao do jogador, Loja proof-of-concept, auth email/senha, manifest/version gate, exports Android/PC/Web, Portal/Web no Cloudflare Pages e Backend Proprio + Postgres como plano de saida preferido. A decisao antiga da Track 04 foi superseded pela Foundation Expansion Readiness/Closeout: `account_profiles` + `game_saves` agora sao a autoridade fundacional, `players.save_type` e compatibilidade alpha, e endpoints/state carregam contexto explicito de account/save/ruleset. Nakama fica apenas como alternativa futura se realtime/social competitivo virar pilar.
 
 ---
 
@@ -293,7 +294,11 @@ Implementado localmente ate `T03-P08`:
 - Competicao usa `battle/request` `FIRST_SLICE_SIM` para pontuar o save `normal` no servidor, retorna top 10 + posicao do jogador e mantem bots e `progression_lab` fora da tabela `ranking`.
 - Loja usa `monetization/state`/`alpha-purchase` para redeems diarios de Diamante, produtos por Diamante, Battle Pass premium, fila dupla, pacotes e status de compra por save.
 
-Decisao Track 04: `players.save_type` continua para Internal Alpha v0 e primeiros pacotes pos-handoff. A separacao `account_profiles` + `game_saves` nao sera planejada agora; deve ser reaberta somente se houver bug real de isolamento/seguranca/corrupcao, pagamento ou entitlement account-wide, social remoto em escala, mais de dois saves/modos por conta ou inicio do plano de saida Supabase.
+Decisao superseded pela Foundation Expansion Readiness/Closeout:
+`account_profiles` + `game_saves` sao criados no bootstrap e carregam
+`state_version`, `season_context` e metadata de ruleset. `players.save_type`
+continua legivel para compatibilidade alpha e payloads antigos, mas nao deve ser
+usado como nova fonte primaria de account/save.
 
 Modelo escolhido em `DMOB-D042`:
 

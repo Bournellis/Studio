@@ -51,3 +51,25 @@ Deno.test("calculated power is deterministic for generated saves", () => {
     throw new Error(`power mismatch: ${recalculated} != ${save.player.power}`);
   }
 });
+
+Deno.test("progression lab generated saves include Track 16 consumables and behavior", () => {
+  const data = buildProgressionData(model);
+  const save = data.saves.find((item) => item.id === "free_100_rewards_10h");
+  if (save === undefined) throw new Error("missing test save");
+  if (save.consumables.crafted_life_potions <= 0) {
+    throw new Error("expected crafted life potions in 10h healthy save");
+  }
+  if (save.combat_build.potionSlot?.itemId !== "pocao_vida") {
+    throw new Error("expected combat build potion slot");
+  }
+  if (Object.keys(save.combat_build.spellBehaviors ?? {}).length === 0) {
+    throw new Error("expected spell behavior defaults in combat build");
+  }
+  if (
+    !data.consumable_checks.some((check) =>
+      check.id === "life_potion_stock" && check.profile_id === save.profile_id
+    )
+  ) {
+    throw new Error("expected consumable checks");
+  }
+});

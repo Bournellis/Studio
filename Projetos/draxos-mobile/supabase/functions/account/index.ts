@@ -1,4 +1,5 @@
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import { validateApiVersion } from "../_shared/api_version.ts";
 import {
   normalizeSaveType,
   type SaveType,
@@ -67,6 +68,12 @@ interface BattleRow {
   id: string;
 }
 
+interface FoundationContext {
+  account?: unknown;
+  save?: unknown;
+  ruleset?: unknown;
+}
+
 interface JwtPayload {
   sub?: unknown;
   is_anonymous?: unknown;
@@ -82,6 +89,11 @@ const DEFAULT_POTION_BEHAVIOR = {
 Deno.serve(async (request: Request) => {
   if (request.method === "OPTIONS") {
     return emptyResponse();
+  }
+
+  const apiVersionError = validateApiVersion(request);
+  if (apiVersionError !== null) {
+    return apiVersionError;
   }
 
   try {
@@ -179,7 +191,16 @@ async function handleGuest(
     return errorResponse(mapped.code, mapped.message, mapped.status);
   }
 
-  return jsonResponse(withResourceDefaults(rpc.value));
+  const payload = withResourceDefaults(rpc.value);
+  const playerId = playerIdFromPayload(payload);
+  const context = playerId === "" ? null : await loadFoundationContext(config, playerId);
+  if (context !== null && context.error !== null) {
+    return errorResponse(context.error.code, context.error.message, context.error.status);
+  }
+
+  return jsonResponse(
+    withFoundationContext(payload, context?.value ?? null, "account_guest_response_v1"),
+  );
 }
 
 async function handleBootstrap(
@@ -226,7 +247,16 @@ async function handleBootstrap(
     return errorResponse(mapped.code, mapped.message, mapped.status);
   }
 
-  return jsonResponse(withResourceDefaults(rpc.value));
+  const payload = withResourceDefaults(rpc.value);
+  const playerId = playerIdFromPayload(payload);
+  const context = playerId === "" ? null : await loadFoundationContext(config, playerId);
+  if (context !== null && context.error !== null) {
+    return errorResponse(context.error.code, context.error.message, context.error.status);
+  }
+
+  return jsonResponse(
+    withFoundationContext(payload, context?.value ?? null, "account_bootstrap_response_v1"),
+  );
 }
 
 async function handleState(auth: AuthContext, config: EdgeConfig): Promise<Response> {
@@ -278,13 +308,22 @@ async function handleState(auth: AuthContext, config: EdgeConfig): Promise<Respo
     return errorResponse("ACCOUNT_STATE_INCOMPLETE", "Account save state is incomplete.", 409);
   }
 
-  return jsonResponse({
-    ok: true,
-    player,
-    resources,
-    build,
-    last_battle_id: battlesResult.value[0]?.id ?? null,
-  });
+  const context = await loadFoundationContext(config, player.id);
+  if (context.error !== null) {
+    return errorResponse(context.error.code, context.error.message, context.error.status);
+  }
+
+  return jsonResponse(withFoundationContext(
+    {
+      ok: true,
+      player,
+      resources,
+      build,
+      last_battle_id: battlesResult.value[0]?.id ?? null,
+    },
+    context.value,
+    "account_state_v1",
+  ));
 }
 
 async function handleSaveReset(
@@ -343,7 +382,18 @@ async function handleSaveReset(
     }
   }
 
-  return jsonResponse(withResourceDefaults(rpc.value));
+  const payload = withResourceDefaults(rpc.value);
+  const resetPayloadPlayerId = playerIdFromPayload(payload);
+  const context = resetPayloadPlayerId === ""
+    ? null
+    : await loadFoundationContext(config, resetPayloadPlayerId);
+  if (context !== null && context.error !== null) {
+    return errorResponse(context.error.code, context.error.message, context.error.status);
+  }
+
+  return jsonResponse(
+    withFoundationContext(payload, context?.value ?? null, "account_save_reset_response_v1"),
+  );
 }
 
 async function resetConsumableAndBehaviorState(
@@ -617,6 +667,68 @@ function withResourceDefaults(payload: unknown): unknown {
   return payload;
 }
 
+async function loadFoundationContext(
+  config: EdgeConfig,
+  playerId: string,
+): Promise<
+  { value: FoundationContext; error: null } | { value: null; error: RestError }
+> {
+  const contextResult = await restRequest<unknown>(
+    config,
+    "rpc/foundation_account_context_v1",
+    {
+      method: "POST",
+      body: JSON.stringify({ p_player_id: playerId }),
+    },
+  );
+  if (contextResult.error !== null) {
+    const mapped = mapDatabaseError(contextResult.error);
+    return {
+      value: null,
+      error: {
+        code: mapped.code === "ACCOUNT_CREATE_FAILED"
+          ? "FOUNDATION_CONTEXT_NOT_FOUND"
+          : mapped.code,
+        message: mapped.code === "ACCOUNT_CREATE_FAILED"
+          ? "Account/save foundation context was not created yet."
+          : mapped.message,
+        status: mapped.code === "ACCOUNT_CREATE_FAILED" ? 500 : mapped.status,
+      },
+    };
+  }
+  const context = isObject(contextResult.value) ? contextResult.value : {};
+  return {
+    value: {
+      account: context.account ?? null,
+      save: context.save ?? null,
+      ruleset: context.ruleset ?? null,
+    },
+    error: null,
+  };
+}
+
+function withFoundationContext(
+  payload: unknown,
+  context: FoundationContext | null,
+  schemaVersion: string,
+): unknown {
+  if (!isObject(payload)) {
+    return payload;
+  }
+  return {
+    schema_version: schemaVersion,
+    api_version: 1,
+    account: context?.account ?? null,
+    save: context?.save ?? null,
+    ruleset: context?.ruleset ?? null,
+    ...payload,
+  };
+}
+
+function isObject(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
 function stringValue(value: unknown, fallback: string): string {
   return typeof value === "string" && value !== "" ? value : fallback;
 }
@@ -692,6 +804,22 @@ function mapDatabaseError(error: RestError): RestError {
     return {
       code: "PLAYER_NOT_FOUND",
       message: "Account save was not created yet.",
+      status: 404,
+    };
+  }
+
+  if (message.includes("GAME_SAVE_NOT_FOUND")) {
+    return {
+      code: "GAME_SAVE_NOT_FOUND",
+      message: "Account save foundation row was not created yet.",
+      status: 404,
+    };
+  }
+
+  if (message.includes("ACCOUNT_PROFILE_NOT_FOUND")) {
+    return {
+      code: "ACCOUNT_PROFILE_NOT_FOUND",
+      message: "Account profile foundation row was not created yet.",
       status: 404,
     };
   }
