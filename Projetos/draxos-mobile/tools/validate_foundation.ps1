@@ -371,12 +371,24 @@ Invoke-Step -Name "Deno release typecheck light" -Stage "Quick" -Command "npx -y
     }
 }
 
+Invoke-Step -Name "Deno transactional domain typecheck light" -Stage "Quick" -Command "npx -y deno check transactional domain functions" -ScriptBlock {
+    Invoke-External -Command "npx -y deno check transactional domain functions" -WorkingDirectory $ProjectPath -ScriptBlock {
+        & npx -y deno check `
+            server/functions/battle/index.ts `
+            server/functions/build/index.ts `
+            server/functions/crafting/index.ts `
+            server/functions/monetization/index.ts `
+            server/functions/social/index.ts
+    }
+}
+
 Invoke-Step -Name "Deno foundation contract tests" -Stage "Quick" -Command "npx -y deno test --allow-read foundation contracts" -ScriptBlock {
     Invoke-External -Command "npx -y deno test foundation contracts" -WorkingDirectory $ProjectPath -ScriptBlock {
         & npx -y deno test --allow-read `
             server/tests/foundation_contracts_test.ts `
             server/tests/foundation_expansion_schema_test.ts `
             server/tests/transactional_domain_enforcement_schema_test.ts `
+            server/tests/remaining_transactional_domain_enforcement_schema_test.ts `
             server/tests/foundation_ruleset_test.ts `
             server/tests/integer_bones_contract_test.ts
     }

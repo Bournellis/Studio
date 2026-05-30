@@ -19,6 +19,7 @@ Sem Supabase local:
 npx -y deno test --allow-read server/tests/foundation_contracts_test.ts
 npx -y deno test --allow-read server/tests/foundation_expansion_schema_test.ts
 npx -y deno test --allow-read server/tests/transactional_domain_enforcement_schema_test.ts
+npx -y deno test --allow-read server/tests/remaining_transactional_domain_enforcement_schema_test.ts
 npx -y deno test --allow-read server/tests/foundation_ruleset_test.ts
 npx -y deno test --allow-read server/tests/integer_bones_contract_test.ts
 ```
@@ -36,6 +37,10 @@ O teste `transactional_domain_enforcement_schema_test.ts` valida a promotion
 de Base para RPCs transacionais v1: migration espelhada, `collect_base_v1`,
 `start_base_upgrade_v1`, grants service-role e adapter HTTP sem writes REST
 multi-step para coleta/upgrade.
+
+O teste `remaining_transactional_domain_enforcement_schema_test.ts` valida a
+promotion dos dominios restantes para RPCs transacionais v1: battle rewards,
+monetization rewards/alpha purchase, build equip, crafting e guild create/join.
 
 O teste `foundation_ruleset_test.ts` valida que `foundation_ruleset_v0` tem
 hashes deterministicos e mirrors server/supabase alinhados.
