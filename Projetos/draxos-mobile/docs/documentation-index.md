@@ -41,7 +41,7 @@
 | `docs/battle-preparation-complete-v1.md` | `VIVO` | Current Battle Preparation Complete v1 package: real Refugio loadout editor, `POST /build/equip`, enriched build state and published Internal Alpha release snapshot. |
 | `docs/behavior-potion-crafting-v1.md` | `VIVO` | Current technical reference for Track 16 systems now present in the alpha baseline: whole-number Ossos, Po de Osso, first potion, crafting, potion slot and simple behavior controls. |
 | `docs/progression-clarity-v1.md` | `VIVO` | Published Progression Clarity v1 package: client-only readability for level, power, rewards, next unlocks and next objective. |
-| `docs/first-session-clarity-v1.md` | `VIVO` | First Session Clarity v1 package: client-only first-session guidance for Refugio, Preparation and battle summary. |
+| `docs/first-session-clarity-v1.md` | `VIVO` | Published First Session Clarity v1 package: client-only first-session guidance for Refugio, Preparation and battle summary. |
 | `docs/battle-preparation-v1.md` | `HISTORICO` | Previous client-first preparation readability package over existing behavior endpoints. |
 | `docs/product-brief.md` | `VIVO` | Short product/slice summary. |
 | `docs/game-design-document.md` | `VIVO` | Implementation reference and mock/substance context; not the current expansion target. |

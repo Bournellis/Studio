@@ -1,6 +1,6 @@
 # DraxosMobile - Design Pending
 
-- Ultima atualizacao: `2026-05-28`
+- Ultima atualizacao: `2026-05-30`
 - Status: registro vivo de pendencias de design
 - Escopo: DraxosMobile, Foundation Audit e evolucoes futuras
 
@@ -39,7 +39,7 @@ Foco imediato:
 
 `Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
 
-Foundation Loop UX Pass 01 esta publicado no Internal Alpha como candidato de baseline do loop. A proxima decisao de design e manual: aceitar esse fluxo, pedir ajuste pontual ou registrar nova friccao antes de mover foco para social basico.
+Foundation Loop UX Pass 01 foi aceito como baseline do loop. First Session Clarity v1 esta publicado no Internal Alpha como o follow-up de primeira sessao; a proxima decisao de design e manual: aceitar esse pacote, pedir ajuste pontual ou mover foco para Social Routine v1.1.
 
 Revisao manual do build publicado identificou regressao de responsividade: Labs Dev sumiram do menu inicial interno e Refugio/Batalha puderam sair dos limites em Web/Android. A partir de agora, mudancas visuais em Entry, Refugio ou Batalha precisam respeitar `docs/foundation-responsive-layout-contract.md` e passar em `tools/smoke_responsive_layout.gd` antes de nova publicacao.
 
@@ -59,8 +59,8 @@ O MVP tecnico ja implementou conta guest server-authoritative, cliente de sessao
 |---|---|---|---|---|---|---|---|
 | DMOB-D056 | Foundation Audit | FOUNDATION_AUDIT | Resolvido: docs vivos foram alinhados para tratar Track 15/16 como contexto historico/tecnico e economia, armas, spells, Battle Pass e visual final como mock/substancia. | Agentes podem continuar planejando expansao de conteudo em vez de auditar a fundacao. | `foundation-app-v0-audit.md` | RESOLVIDO | 2026-05-28 |
 | DMOB-D057 | Loop interno | FOUNDATION_AUDIT | Resolvido: `docs/foundation-loop-audit.md` mapeia as friccoes do loop pos-login e Foundation Loop UX Pass 01 implementa o primeiro candidato de solucao. | O app pode ter substancia, mas continuar ruim de usar no fluxo principal. | `foundation-loop-audit.md` | RESOLVIDO | 2026-05-28 |
-| DMOB-D058 | UX de cliques | FOUNDATION_AUDIT | O Foundation Loop UX Pass 01 deve ser aceito como caminho ideal de cliques para coletar, evoluir, batalhar, receber recompensa e verificar base? | Sem essa revisao manual, implementacoes futuras podem reorganizar telas sem reduzir atrito real. | `foundation-loop-audit.md` | ABERTO | - |
-| DMOB-D059 | Ordem de foco | FOUNDATION_AUDIT | Quais criterios apos a revisao manual liberam a passagem de loop interno para social, depois visual geral, depois apresentacao da batalha? | Social, visual e batalha podem entrar cedo demais e esconder problemas do loop fundador. | `foundation-app-v0-audit.md` | ABERTO | - |
+| DMOB-D058 | UX de cliques | FOUNDATION_AUDIT | Resolvido: Foundation Loop UX Pass 01 foi aceito como baseline de cliques, e First Session Clarity v1 publicou o reforco para a primeira leitura do ciclo. | Sem essa revisao manual, implementacoes futuras podem reorganizar telas sem reduzir atrito real. | `foundation-loop-audit.md` | RESOLVIDO | 2026-05-30 |
+| DMOB-D059 | Ordem de foco | FOUNDATION_AUDIT | Resolvido: apos First Session Clarity v1, liberar Social Routine v1.1 se Android/Windows/Web confirmarem que o loop base esta claro; se nao, fazer ajuste pontual ou passe visual estreito antes de expandir. | Social, visual e batalha podem entrar cedo demais e esconder problemas do loop fundador. | `foundation-app-v0-audit.md` | RESOLVIDO | 2026-05-30 |
 | DMOB-D060 | Mock vs fundacao | FOUNDATION_AUDIT | Resolvido: docs vivos registram que conteudo atual existe para dar substancia ao prototipo sem virar direcao final de produto. | Conteudo temporario pode virar divida conceitual ou ser apagado antes de cumprir papel de teste. | `foundation-app-v0-audit.md` | RESOLVIDO | 2026-05-28 |
 | DMOB-D061 | Responsividade | FOUNDATION_AUDIT | Resolvido: Entry, Refugio e Batalha agora possuem contrato responsivo e smoke obrigatorio para proteger Android portrait e Web/desktop. | Sem contrato e teste, reformulacoes visuais podem esconder Labs Dev, cortar controles ou sair dos limites de tela sem falha automatica. | `foundation-responsive-layout-contract.md` | RESOLVIDO | 2026-05-28 |
 | DMOB-D001 | Escopo | PRIMEIRO_SLICE | O primeiro slice completo usa cap de level 10, 40 ou outro recorte dentro da Season 1? | Resolvido: Season 1 usa cap 40 por padrao, todos os levels sao permanentes e o simulador permite calibrar cap inicial 40/50/60. | `../implementation/tracks/track-00-first-slice-foundation/scope.md` | RESOLVIDO | 2026-05-20 |

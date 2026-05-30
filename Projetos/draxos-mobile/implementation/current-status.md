@@ -1,15 +1,15 @@
 # DraxosMobile - Current Status
 
-- Last updated: `2026-05-29`
+- Last updated: `2026-05-30`
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Progression Clarity v1`
-- Active stage status: `PROGRESSION_CLARITY_V1_PUBLISHED`
+- Active stage: `First Session Clarity v1`
+- Active stage status: `FIRST_SESSION_CLARITY_V1_PUBLISHED`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety` (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation` (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published package: `Progression Clarity v1`
-- Latest implemented package: `Progression Clarity v1`
+- Latest published package: `First Session Clarity v1`
+- Latest implemented package: `First Session Clarity v1`
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical context, not current product focus; current state summarized in `docs/behavior-potion-crafting-v1.md`)
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
@@ -60,7 +60,22 @@ Priority order after baseline confirmation:
 4. Battle presentation.
 5. Weapons, spells, economy, balance and content details.
 
-Internal loop ergonomics, Social Basico Guilda v1, Visual Direction v1, Ossos Inteiros v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation v1, Battle Preparation Complete v1 and Progression Clarity v1 have received explicit packages and are published to Internal Alpha. No new code, schema, backend, asset, gameplay or balance work belongs outside an explicit next package decision.
+Internal loop ergonomics, Social Basico Guilda v1, Visual Direction v1, Ossos Inteiros v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation v1, Battle Preparation Complete v1, Progression Clarity v1 and First Session Clarity v1 have received explicit packages and are published to Internal Alpha. No new code, schema, backend, asset, gameplay or balance work belongs outside an explicit next package decision.
+
+## First Session Clarity v1
+
+First Session Clarity v1 is implemented and published as the current client-only first-session guidance package. It does not change backend, schema, migrations, simulator, rewards, economy, tuning, weapons, spells, potions, behavior or catalog content.
+
+- Refugio now shows a persistent first-session hint inside the `Progresso` panel.
+- The contextual Refugio CTA now explains reward, collection, base evolution and battle as one cycle.
+- Preparation now gives a short first-session reading cue before loadout details.
+- Battle summary now includes `Proximo passo`, connecting rewards back to collection, base evolution and the next battle.
+- `tools/smoke_foundation_loop.gd` protects reward, collection, upgrade and summary guidance.
+- `portal/internal-alpha/index.html` now uses `DraxosMobile Alpha`, matching the remote release smoke contract.
+- Validation completed on `2026-05-30`: one-time Godot import in the fresh worktree, `git diff --check`, `tools/smoke_foundation_loop.gd`, GUT client (`123/123`, `1990` asserts), `tools/smoke_responsive_layout.gd`, `validate_foundation.ps1 -Profile Client`, publication checks and `server/tests/release_artifacts_remote_smoke.ts` passed.
+- First Session Clarity v1 was published to Internal Alpha on `2026-05-30` with release root `internal-alpha/v0-first-session-clarity-v1-20260530`, public Web preview `https://f2ead4bd.draxos-mobile-internal-alpha.pages.dev/web/index.html`, public APK `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-first-session-clarity-v1-20260530/downloads/draxos-mobile-alpha.apk` and public PC ZIP `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-first-session-clarity-v1-20260530/downloads/draxos-mobile-alpha.zip`.
+
+Recommended next decision: review First Session Clarity v1 on Android/Windows/Web, then choose between a small first-session adjustment, Social Routine v1.1, or a narrow visual clarity pass.
 
 ## Progression Clarity v1
 

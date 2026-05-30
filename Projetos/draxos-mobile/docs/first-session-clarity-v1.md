@@ -1,6 +1,6 @@
 # First Session Clarity v1
 
-- Status: `VALIDADO_LOCAL`
+- Status: `PUBLICADO`
 - Data: `2026-05-30`
 - Escopo: client-only
 
@@ -65,6 +65,30 @@ powershell -NoProfile -ExecutionPolicy Bypass -Command "& { .\tools\validate_fou
 ```
 
 Resultado em `2026-05-30`: PASS. O runner Client passou com GUT `123/123` e `1990` asserts, `smoke_foundation_loop.gd`, `smoke_responsive_layout.gd`, `smoke_runtime_config.gd`, `smoke_foundation_hardening.gd`, `smoke_exports.gd`, Deno release typecheck light e `git diff --check`.
+
+## Publicacao
+
+Publicado no Internal Alpha em `2026-05-30`.
+
+- Release root: `internal-alpha/v0-first-session-clarity-v1-20260530`
+- Portal: `https://f2ead4bd.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+- Web: `https://f2ead4bd.draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- APK: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-first-session-clarity-v1-20260530/downloads/draxos-mobile-alpha.apk`
+- PC ZIP: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-first-session-clarity-v1-20260530/downloads/draxos-mobile-alpha.zip`
+- Android SHA256: `f11f34e729b20e805048ad2a166fb69f67d614cac3b6c7fc3b9345d6ccaf3c71`
+- PC SHA256: `ccb0d531db1121bd54de662fd00b62fab29a19a2c662422ff9f7441c66d3197a`
+
+Publicacao verificada com:
+
+```powershell
+publish_internal_alpha.ps1 -Mode Upload -ReleaseRoot internal-alpha/v0-first-session-clarity-v1-20260530 -PublicDownloads -ConfirmRemoteMutation
+build_cloudflare_pages_package.ps1 -StaticAssetBaseUrl https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-first-session-clarity-v1-20260530/web
+wrangler pages deploy .\build\internal-alpha\cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main
+publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-first-session-clarity-v1-20260530 -StaticSiteBaseUrl https://f2ead4bd.draxos-mobile-internal-alpha.pages.dev -PublicDownloads -ConfirmRemoteMutation
+npx -y deno run --allow-net --allow-env server/tests/release_artifacts_remote_smoke.ts
+```
+
+Resultado remoto: PASS. O portal foi ajustado de `Draxos Alpha` para `DraxosMobile Alpha` para satisfazer o contrato do smoke remoto.
 
 ## Proxima Decisao
 

@@ -13,7 +13,7 @@ This file is the fast entrypoint for agents working in `Projetos/draxos-mobile`.
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety` delivered on `2026-05-28`
 - Agent baseline: `Track 14 - Agent Operations Foundation` is the current operations/docs foundation.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting`, technical context and not the current product focus. Current behavior/potion/crafting state is summarized in `docs/behavior-potion-crafting-v1.md`.
-- Immediate product gate: First Session Clarity v1 is the current package on top of published Progression Clarity v1. It should be reviewed on Android/Windows/Web after publication before choosing social, visual, battle or content expansion. Foundation Loop UX Pass 01 is the accepted baseline.
+- Immediate product gate: First Session Clarity v1 is published on top of Progression Clarity v1. It should be reviewed on Android/Windows/Web before choosing social, visual, battle or content expansion. Foundation Loop UX Pass 01 is the accepted baseline.
 
 DraxosMobile is an async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. The real product direction is base builder + autobattler + social, with room for future minigames and seasons. Current names, spells, weapons, economy values, battle flavor, visual style and premium systems are mock/substance for evaluation unless a live doc explicitly promotes them.
 
@@ -108,4 +108,4 @@ For user-approved product packages that require human testing on Android, Window
 
 ## Current Handoff
 
-First Session Clarity v1 is the active handoff inside the broader Foundation Audit. Agents should review it on Android/Windows/Web after publication, including a quick regression pass through Preparation potion/behavior controls and the Refugio -> reward -> base return loop, before expanding implementation. Do not change gameplay tuning, backend/schema, Supabase APIs, economy, content, weapons, spells, potions, crafting, advanced behavior, final visuals or authoritative flows without an explicit package decision.
+First Session Clarity v1 is the current published handoff inside the broader Foundation Audit. Agents should review it on Android/Windows/Web, including a quick regression pass through Preparation potion/behavior controls and the Refugio -> reward -> base return loop, before expanding implementation. Do not change gameplay tuning, backend/schema, Supabase APIs, economy, content, weapons, spells, potions, crafting, advanced behavior, final visuals or authoritative flows without an explicit package decision.

@@ -1,6 +1,6 @@
 # DraxosMobile - Product Brief
 
-- Ultima atualizacao: `2026-05-29`
+- Ultima atualizacao: `2026-05-30`
 - Status: `VIVO`
 
 ---
@@ -24,6 +24,8 @@ O foco imediato e auditar o loop interno pos-login:
 `Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
 
 A pergunta central da etapa e: como, onde e com quantas etapas o usuario clica para executar esse loop?
+
+First Session Clarity v1 e o pacote publicado atual para essa pergunta: Refugio, Preparacao e Resultado agora orientam o primeiro ciclo sem novo backend, schema, tuning, economia ou conteudo.
 
 Devem ser avaliados:
 
@@ -91,6 +93,7 @@ Track 16 e o ultimo pacote tecnico, com comportamento/crafting/pocoes. Ele esta 
 ## Documentos Vivos
 
 - `foundation-app-v0-audit.md` - bussola atual da Foundation Audit.
+- `first-session-clarity-v1.md` - pacote publicado de clareza da primeira sessao.
 - `product-vision.md` - visao longa local.
 - `game-design-document.md` - referencia de implementacao e substancia/mock existente.
 - `behavior-potion-crafting-v1.md` - estado vivo de pocoes, crafting inicial e comportamento simples.
