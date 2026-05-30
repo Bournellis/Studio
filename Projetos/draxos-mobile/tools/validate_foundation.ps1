@@ -195,6 +195,7 @@ function Assert-StructuralReadiness {
         "docs\agent-operating-manual.md",
         "docs\documentation-index.md",
         "docs\release-ops-checklist.md",
+        "docs\foundation-expansion-readiness.md",
         "implementation\current-status.md"
     )) {
         Assert-FileExists -Path (Join-Path $ProjectPath $relative) -Label $relative
@@ -349,7 +350,8 @@ Invoke-Step -Name "PowerShell parse" -Stage "Quick" -Command "[Parser]::ParseFil
     foreach ($optional in @(
         "tools\check_release_safety.ps1",
         "tools\check_track13_readiness.ps1",
-        "tools\check_agent_ops_foundation.ps1"
+        "tools\check_agent_ops_foundation.ps1",
+        "tools\check_foundation_expansion_readiness.ps1"
     )) {
         if (Test-Path -LiteralPath (Join-Path $ProjectPath $optional) -PathType Leaf) {
             $scripts += $optional
@@ -371,6 +373,17 @@ Invoke-Step -Name "Deno release typecheck light" -Stage "Quick" -Command "npx -y
 
 Invoke-Step -Name "structural readiness" -Stage "Quick" -Command "required files + boot.gd budget" -ScriptBlock {
     Assert-StructuralReadiness
+}
+
+$foundationExpansion = Join-Path $ProjectPath "tools\check_foundation_expansion_readiness.ps1"
+if (Test-Path -LiteralPath $foundationExpansion -PathType Leaf) {
+    Invoke-Step -Name "foundation expansion readiness" -Stage "Quick" -Command ".\tools\check_foundation_expansion_readiness.ps1 -ProjectDir ." -ScriptBlock {
+        Invoke-External -Command "check_foundation_expansion_readiness.ps1" -WorkingDirectory $ProjectPath -ScriptBlock {
+            & powershell -NoProfile -ExecutionPolicy Bypass -File ".\tools\check_foundation_expansion_readiness.ps1" -ProjectDir "."
+        }
+    }
+} else {
+    Skip-Step -Name "foundation expansion readiness" -Stage "Quick" -Command ".\tools\check_foundation_expansion_readiness.ps1" -Reason "Foundation expansion readiness script not created yet."
 }
 
 if ($RunClient) {

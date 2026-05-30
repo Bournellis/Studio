@@ -4,6 +4,7 @@ Ferramentas de desenvolvimento e validacao.
 
 - `validate.gd` - validacao headless do projeto Godot, gerando conteudo, checando contrato client e rodando GUT.
 - `validate_foundation.ps1` - runner unico Track 13 com perfis `Quick`, `Client`, `Release` e `Full`; gera relatorios em `build/validation/`.
+- `check_foundation_expansion_readiness.ps1` - checker read-only da Foundation Expansion Readiness: contratos, migrations espelhadas, ruleset, shell contracts e testes obrigatorios.
 - `check_release_safety.ps1` - guarda de regressao para publish seguro, parse PowerShell e manifest defaults espelhados.
 - `check_track13_readiness.ps1` - readiness final da Track 13: docs/status, mirrors, Kanban e budget de `boot.gd`.
 - `check_agent_ops_foundation.ps1` - readiness da Track 14: entrada de agentes, indice documental, portfolio/Kanban, terminologia viva e ausencia de entrypoints obsoletos.
@@ -32,6 +33,7 @@ Validacao local:
 .\tools\validate_foundation.ps1 -ProjectDir . -Profile Client -GodotExe "D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe"
 .\tools\validate_foundation.ps1 -ProjectDir . -Profile Release
 .\tools\validate_foundation.ps1 -ProjectDir . -Profile Full
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_foundation_expansion_readiness.ps1 -ProjectDir .
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_agent_ops_foundation.ps1 -ProjectDir .
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_runtime_config.gd
