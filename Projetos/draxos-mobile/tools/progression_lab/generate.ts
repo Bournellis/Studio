@@ -42,6 +42,11 @@ interface Profile {
   reward_completion: number;
   battle_pass_completion: number;
   battles_per_hour: number;
+  arena_attempts_per_hour?: number;
+  average_duels_per_attempt?: number;
+  clear_rate?: number;
+  repeat_reward_factor?: number;
+  first_clear_completion?: number;
   checkins_per_hour: number;
   premium_pass: boolean;
   second_construction_queue: boolean;
@@ -138,7 +143,19 @@ interface HealthySave {
   };
   consumables: ConsumableState;
   combat_build: CombatBuild;
+  arena: ArenaProgressionState;
   manual_checklist: string[];
+}
+
+interface ArenaProgressionState {
+  attempts_per_hour: number;
+  average_duels_per_attempt: number;
+  clear_rate: number;
+  repeat_reward_factor: number;
+  first_clear_completion: number;
+  expected_attempts: number;
+  expected_duels: number;
+  expected_clears: number;
 }
 
 interface BuildState {
@@ -218,6 +235,7 @@ interface ProgressionData {
   status: Status;
   saves: HealthySave[];
   reward_checks: CheckRow[];
+  arena_checks: CheckRow[];
   consumable_checks: CheckRow[];
   premium_gap: PremiumGapRow[];
   power_recommendations: PowerRecommendationRow[];
@@ -368,6 +386,7 @@ export async function loadModel(
 export function buildProgressionData(model: ProgressionModel): ProgressionData {
   const saves = buildHealthySaves(model);
   const rewardChecks = buildRewardChecks(model, saves);
+  const arenaChecks = buildArenaChecks(saves);
   const consumableChecks = buildConsumableChecks(model, saves);
   const premiumGap = buildPremiumGap(model, saves);
   const powerRecommendations = buildPowerRecommendations(model, saves);
@@ -375,6 +394,7 @@ export function buildProgressionData(model: ProgressionModel): ProgressionData {
   const statuses = [
     ...saves.map((save) => save.status),
     ...rewardChecks.map((check) => check.status),
+    ...arenaChecks.map((check) => check.status),
     ...consumableChecks.map((check) => check.status),
     ...premiumGap.map((gap) => gap.status),
     ...powerRecommendations.map((row) => row.status),
@@ -385,6 +405,7 @@ export function buildProgressionData(model: ProgressionModel): ProgressionData {
     status: worstStatus(statuses),
     saves,
     reward_checks: rewardChecks,
+    arena_checks: arenaChecks,
     consumable_checks: consumableChecks,
     premium_gap: premiumGap,
     power_recommendations: powerRecommendations,
@@ -438,6 +459,10 @@ export async function writeProgressionOutputs(
       "po_osso",
       "pocao_vida",
       "potion_equipped",
+      "arena_attempts",
+      "arena_duels",
+      "arena_clear_rate",
+      "arena_repeat_factor",
       "weapon_level",
       "weapon_quality_tier",
       "spells",
@@ -457,11 +482,21 @@ export async function writeProgressionOutputs(
     ]),
   );
   await Deno.writeTextFile(
+    new URL("arena_progression_checks.csv", outputUrl),
+    toCsv(data.arena_checks, [
+      "id",
+      "profile_id",
+      "milestone_id",
+      "status",
+      "observed",
+      "target",
+      "note",
+    ]),
+  );
+  await Deno.writeTextFile(
     new URL("potion_affordability.csv", outputUrl),
     toCsv(
-      data.consumable_checks.filter((check) =>
-        check.id === "life_potion_stock"
-      ),
+      data.consumable_checks.filter((check) => check.id === "life_potion_stock"),
       [
         "id",
         "profile_id",
@@ -585,6 +620,7 @@ export function buildHealthySave(
     level,
     consumables,
   );
+  const arena = arenaProgressionFor(profile, milestone);
   const power = calculatePower(
     model.power_weights,
     build,
@@ -623,6 +659,7 @@ export function buildHealthySave(
     },
     consumables,
     combat_build: combatBuild,
+    arena,
     manual_checklist: checklistFor(profile, milestone, build, consumables),
   };
 }
@@ -639,9 +676,8 @@ export function calculatePower(
   );
   const petLevel = build.pet_id === "" ? 0 : build.pet_level;
   const passiveLevel = build.passive_id === "" ? 0 : build.passive_level;
-  const baseStats =
-    structures.find((item) => item.structure_id === "estrutura_stats")?.level ??
-      0;
+  const baseStats = structures.find((item) => item.structure_id === "estrutura_stats")?.level ??
+    0;
   const baseAverage = avg(structures.map((item) => item.level));
   return Math.round(
     level * weights.level +
@@ -655,16 +691,51 @@ export function calculatePower(
   );
 }
 
+function arenaProgressionFor(
+  profile: Profile,
+  milestone: Milestone,
+): ArenaProgressionState {
+  const attemptsPerHour = profile.arena_attempts_per_hour ?? profile.battles_per_hour;
+  const averageDuelsPerAttempt = profile.average_duels_per_attempt ?? 2.4;
+  const clearRate = clamp(profile.clear_rate ?? 0.55, 0, 1);
+  const repeatRewardFactor = clamp(profile.repeat_reward_factor ?? 0.35, 0, 1);
+  const firstClearCompletion = clamp(profile.first_clear_completion ?? 1, 0, 6);
+  const expectedAttempts = milestone.hours * attemptsPerHour;
+  const expectedDuels = expectedAttempts * averageDuelsPerAttempt;
+  const expectedClears = expectedAttempts * clearRate;
+  return {
+    attempts_per_hour: attemptsPerHour,
+    average_duels_per_attempt: averageDuelsPerAttempt,
+    clear_rate: clearRate,
+    repeat_reward_factor: repeatRewardFactor,
+    first_clear_completion: firstClearCompletion,
+    expected_attempts: expectedAttempts,
+    expected_duels: expectedDuels,
+    expected_clears: expectedClears,
+  };
+}
+
 function estimateGains(
   model: ProgressionModel,
   profile: Profile,
   milestone: Milestone,
 ): ResourceVector {
   const gains = emptyResources();
+  const arena = arenaProgressionFor(profile, milestone);
   addScaled(
     gains,
-    model.source_values.battle,
-    milestone.hours * profile.battles_per_hour,
+    model.source_values.arena_duel ?? model.source_values.battle,
+    arena.expected_duels,
+  );
+  addScaled(
+    gains,
+    model.source_values.arena_completion ?? model.source_values.battle,
+    arena.expected_clears * arena.repeat_reward_factor,
+  );
+  addScaled(
+    gains,
+    model.source_values.arena_first_clear ?? model.source_values.battle,
+    Math.min(arena.expected_clears, arena.first_clear_completion),
   );
   addScaled(
     gains,
@@ -796,8 +867,7 @@ function estimateBuildSpend(
       build.passive_level,
     );
   }
-  spend.ossos +=
-    model.costs.weapon_quality_thresholds[build.weapon_quality_tier] ?? 0;
+  spend.ossos += model.costs.weapon_quality_thresholds[build.weapon_quality_tier] ?? 0;
   return roundResources(spend);
 }
 
@@ -837,18 +907,12 @@ function buildStateFor(
   for (const spell of spellSlots) {
     spellLevels[spell] = spellLevel;
   }
-  const passiveId = level >= 10
-    ? ARCHETYPE_PASSIVE[archetypeId] ?? "doutrina_pavor"
-    : "";
-  const petId = level >= 15
-    ? ARCHETYPE_PET[archetypeId] ?? "corvo_pressagio"
-    : "";
+  const passiveId = level >= 10 ? ARCHETYPE_PASSIVE[archetypeId] ?? "doutrina_pavor" : "";
+  const petId = level >= 15 ? ARCHETYPE_PET[archetypeId] ?? "corvo_pressagio" : "";
   const passiveLevel = passiveId === ""
     ? 0
     : clampedScaledLevel(level, Math.max(0.1, ratio - 0.05));
-  const petLevel = petId === ""
-    ? 0
-    : clampedScaledLevel(level, Math.min(1, ratio + 0.02));
+  const petLevel = petId === "" ? 0 : clampedScaledLevel(level, Math.min(1, ratio + 0.02));
   const qualityTier = qualityTierFor(model, gains.ossos);
   const desired: BuildState = {
     archetype_id: archetypeId,
@@ -892,9 +956,8 @@ function baseStateFor(
     availableEnergia,
     profile,
   );
-  const primary =
-    structures.find((item) => item.structure_id === "nucleo_energia") ??
-      structures[0];
+  const primary = structures.find((item) => item.structure_id === "nucleo_energia") ??
+    structures[0];
   const activeJob = primary.level < level
     ? {
       structure_id: primary.structure_id,
@@ -1030,9 +1093,7 @@ function combatBuildFor(
   };
   if (consumables !== undefined) {
     combatBuild.spellBehaviors = consumables.spell_behaviors;
-    const equippedSlot = consumables.potion_slots.find((slot) =>
-      slot.potion_id === "pocao_vida"
-    );
+    const equippedSlot = consumables.potion_slots.find((slot) => slot.potion_id === "pocao_vida");
     if (equippedSlot !== undefined) {
       combatBuild.potionSlot = {
         slotIndex: equippedSlot.slot_index,
@@ -1051,9 +1112,7 @@ function buildRewardChecks(
 ): CheckRow[] {
   const rows: CheckRow[] = [];
   for (const save of saves) {
-    const milestone = model.milestones.find((item) =>
-      item.id === save.milestone_id
-    )!;
+    const milestone = model.milestones.find((item) => item.id === save.milestone_id)!;
     rows.push({
       id: "level_window",
       profile_id: save.profile_id,
@@ -1086,6 +1145,32 @@ function buildRewardChecks(
   return rows;
 }
 
+function buildArenaChecks(saves: HealthySave[]): CheckRow[] {
+  const rows: CheckRow[] = [];
+  for (const save of saves) {
+    rows.push({
+      id: "arena_attempt_volume",
+      profile_id: save.profile_id,
+      milestone_id: save.milestone_id,
+      status: save.arena.expected_attempts > 0 ? "PASS" : "REVIEW",
+      observed: `${round(save.arena.expected_attempts, 1)} attempts`,
+      target: "> 0 attempts without combat cooldown",
+      note:
+        "Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.",
+    });
+    rows.push({
+      id: "arena_farm_pressure",
+      profile_id: save.profile_id,
+      milestone_id: save.milestone_id,
+      status: save.arena.repeat_reward_factor <= 0.5 ? "PASS" : "REVIEW",
+      observed: `repeat factor ${round(save.arena.repeat_reward_factor, 2)}`,
+      target: "<= 0.5",
+      note: "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.",
+    });
+  }
+  return rows;
+}
+
 function buildConsumableChecks(
   _model: ProgressionModel,
   saves: HealthySave[],
@@ -1101,11 +1186,9 @@ function buildConsumableChecks(
           consumables.target_potion_stock
         ? "PASS"
         : "REVIEW",
-      observed:
-        `${consumables.crafted_life_potions}/${consumables.target_potion_stock} potions`,
+      observed: `${consumables.crafted_life_potions}/${consumables.target_potion_stock} potions`,
       target: `>= ${consumables.target_potion_stock}`,
-      note:
-        "Healthy save should show whether Po de Osso supports the intended lab potion stock.",
+      note: "Healthy save should show whether Po de Osso supports the intended lab potion stock.",
     });
     rows.push({
       id: "preparation_potion_slot",
@@ -1182,13 +1265,9 @@ function buildPowerRecommendations(
     const baseStats = save.base.structures.find((item) =>
       item.structure_id === "estrutura_stats"
     )?.level ?? 0;
-    const baseAverage = avg(save.base.structures.map((item) =>
-      item.level
-    ));
+    const baseAverage = avg(save.base.structures.map((item) => item.level));
     const petLevel = save.build.pet_id === "" ? 0 : save.build.pet_level;
-    const passiveLevel = save.build.passive_id === ""
-      ? 0
-      : save.build.passive_level;
+    const passiveLevel = save.build.passive_id === "" ? 0 : save.build.passive_level;
     const components = {
       level: save.player.level * model.power_weights.level,
       weapon_level: save.build.weapon_level * model.power_weights.weapon_level,
@@ -1267,9 +1346,8 @@ function buildStateForBot(
   );
   clone.spell_slots = preferred.slice(0, maxSpellSlots(save.player.level));
   clone.spell_levels = {};
-  const baseSpellLevel =
-    save.build.spell_levels[Object.keys(save.build.spell_levels)[0]] ??
-      save.player.level;
+  const baseSpellLevel = save.build.spell_levels[Object.keys(save.build.spell_levels)[0]] ??
+    save.player.level;
   for (const spell of clone.spell_slots) {
     clone.spell_levels[spell] = clamp(
       Math.round(baseSpellLevel * factor),
@@ -1280,9 +1358,7 @@ function buildStateForBot(
   clone.passive_id = save.player.level >= 10
     ? ARCHETYPE_PASSIVE[archetypeId] ?? clone.passive_id
     : "";
-  clone.pet_id = save.player.level >= 15
-    ? ARCHETYPE_PET[archetypeId] ?? clone.pet_id
-    : "";
+  clone.pet_id = save.player.level >= 15 ? ARCHETYPE_PET[archetypeId] ?? clone.pet_id : "";
   clone.weapon_level = clamp(
     Math.round(clone.weapon_level * factor),
     1,
@@ -1381,18 +1457,14 @@ function archetypeForLevel(level: number, profile: Profile): string {
   if (level < 3) return "starter_instrument";
   if (level < 7) return "mental_controller";
   if (level < 15) {
-    return profile.id === "free_50_rewards"
-      ? "elemental_mixer"
-      : "funeral_burst";
+    return profile.id === "free_50_rewards" ? "elemental_mixer" : "funeral_burst";
   }
   if (level < 25) {
     return profile.premium_pass ? "familiar_handler" : "elemental_mixer";
   }
   if (profile.id === "max_spender") return "summoner";
   if (profile.id === "spender_light") return "funeral_burst";
-  return profile.id === "free_50_rewards"
-    ? "defensive_occultist"
-    : "dot_pressure";
+  return profile.id === "free_50_rewards" ? "defensive_occultist" : "dot_pressure";
 }
 
 function botArchetypeFor(
@@ -1404,9 +1476,7 @@ function botArchetypeFor(
     return save.build.archetype_id;
   }
   if (offset > 0) {
-    return archetypes.includes("funeral_burst")
-      ? "funeral_burst"
-      : save.build.archetype_id;
+    return archetypes.includes("funeral_burst") ? "funeral_burst" : save.build.archetype_id;
   }
   return save.build.archetype_id;
 }
@@ -1564,9 +1634,7 @@ function normalizeBehavior(
   fallback: BehaviorConfig,
 ): BehaviorConfig {
   return {
-    enabled: typeof value?.enabled === "boolean"
-      ? value.enabled
-      : fallback.enabled,
+    enabled: typeof value?.enabled === "boolean" ? value.enabled : fallback.enabled,
     hp: normalizeBehaviorCondition(value?.hp, fallback.hp),
     mana: normalizeBehaviorCondition(value?.mana, fallback.mana),
   };
@@ -1580,10 +1648,9 @@ function normalizeBehaviorCondition(
       value?.mode === "ignore"
     ? value.mode
     : fallback.mode;
-  const percent =
-    typeof value?.percent === "number" && Number.isFinite(value.percent)
-      ? clamp(value.percent, 0, 100)
-      : fallback.percent;
+  const percent = typeof value?.percent === "number" && Number.isFinite(value.percent)
+    ? clamp(value.percent, 0, 100)
+    : fallback.percent;
   return { mode, percent };
 }
 
@@ -1612,6 +1679,10 @@ function saveRow(save: HealthySave): Record<string, unknown> {
     po_osso: save.consumables.po_osso_remaining,
     pocao_vida: save.consumables.crafted_life_potions,
     potion_equipped: save.consumables.equipped_potion_id,
+    arena_attempts: round(save.arena.expected_attempts, 1),
+    arena_duels: round(save.arena.expected_duels, 1),
+    arena_clear_rate: round(save.arena.clear_rate, 2),
+    arena_repeat_factor: round(save.arena.repeat_reward_factor, 2),
     weapon_level: save.build.weapon_level,
     weapon_quality_tier: save.build.weapon_quality_tier,
     spells: save.build.spell_slots.join("|"),
@@ -1680,6 +1751,16 @@ function reportHtml(model: ProgressionModel, data: ProgressionData): string {
         0,
       )),
     ],
+    [
+      "Arena attempts",
+      String(round(
+        data.saves.reduce(
+          (total, save) => total + save.arena.expected_attempts,
+          0,
+        ),
+        0,
+      )),
+    ],
   ];
   const saveRows = data.saves.map((save) =>
     `<tr><td>${save.id}</td><td>${save.status}</td><td>${save.player.level}</td><td>${save.player.power}</td><td>${
@@ -1690,6 +1771,9 @@ function reportHtml(model: ProgressionModel, data: ProgressionData): string {
     `<tr><td>${check.status}</td><td>${check.profile_id}</td><td>${check.milestone_id}</td><td>${check.id}</td><td>${check.observed}</td><td>${check.target}</td></tr>`
   ).join("\n");
   const consumableRows = data.consumable_checks.map((check) =>
+    `<tr><td>${check.status}</td><td>${check.profile_id}</td><td>${check.milestone_id}</td><td>${check.id}</td><td>${check.observed}</td><td>${check.target}</td></tr>`
+  ).join("\n");
+  const arenaRows = data.arena_checks.map((check) =>
     `<tr><td>${check.status}</td><td>${check.profile_id}</td><td>${check.milestone_id}</td><td>${check.id}</td><td>${check.observed}</td><td>${check.target}</td></tr>`
   ).join("\n");
   const gapRows = data.premium_gap.map((gap) =>
@@ -1714,15 +1798,15 @@ function reportHtml(model: ProgressionModel, data: ProgressionData): string {
   <h1>DraxosMobile Progression Lab</h1>
   <p>Model ${model.model_id}. Use this report to pick manual Godot saves and tuning hypotheses.</p>
   <div class="cards">${
-    cards.map(([label, value]) =>
-      `<div class="card"><strong>${label}</strong><br>${value}</div>`
-    )
+    cards.map(([label, value]) => `<div class="card"><strong>${label}</strong><br>${value}</div>`)
       .join("")
   }</div>
   <h2>Healthy Saves</h2>
   <table><tr><th>Save</th><th>Status</th><th>Level</th><th>Power</th><th>Notes</th></tr>${saveRows}</table>
   <h2>Reward Checks</h2>
   <table><tr><th>Status</th><th>Profile</th><th>Milestone</th><th>Check</th><th>Observed</th><th>Target</th></tr>${checkRows}</table>
+  <h2>Arena PVE Checks</h2>
+  <table><tr><th>Status</th><th>Profile</th><th>Milestone</th><th>Check</th><th>Observed</th><th>Target</th></tr>${arenaRows}</table>
   <h2>Track 16 Consumables</h2>
   <table><tr><th>Status</th><th>Profile</th><th>Milestone</th><th>Check</th><th>Observed</th><th>Target</th></tr>${consumableRows}</table>
   <h2>Premium Gap</h2>
@@ -1778,6 +1862,7 @@ async function main(): Promise<void> {
   const reviewCount = [
     ...data.saves,
     ...data.reward_checks,
+    ...data.arena_checks,
     ...data.premium_gap,
     ...data.power_recommendations,
   ].filter((item) => item.status !== "PASS").length;

@@ -1,5 +1,5 @@
 id,profile_id,milestone_id,status,potion_equipped,spell_behavior_count,manual_note
-free_50_rewards_2h,free_50_rewards,2h,PASS,,2,Preparation should show spell behavior defaults.
+free_50_rewards_2h,free_50_rewards,2h,PASS,,1,Preparation should show spell behavior defaults.
 free_50_rewards_5h,free_50_rewards,5h,PASS,pocao_vida,2,Preparation should show spell behavior defaults.
 free_50_rewards_10h,free_50_rewards,10h,PASS,pocao_vida,2,Preparation should show spell behavior defaults.
 free_50_rewards_15h,free_50_rewards,15h,PASS,pocao_vida,2,Preparation should show spell behavior defaults.

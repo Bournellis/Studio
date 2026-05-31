@@ -18,6 +18,8 @@
     "disabled_behavior_matchups": 644,
     "raw_stress_dominance_max_percent": 61.36,
     "near_power_dominance_max_percent": 63.34,
+    "arena_sequence_count": 5,
+    "arena_clear_rate_min_percent": 2.77,
     "damage_by_source": {
       "weapon": 4592316,
       "spell": 2168105,
@@ -42,6 +44,7 @@
     },
     "top_notes": [
       "REVIEW: anti_stall_rate observed 6.4%, target <= 5%.",
+      "REVIEW: arena_sequence_clear_rate_floor observed 2.77% min clear, target >= 12% before difficulty tuning.",
       "Review first matchup: LONG L1_M0001 (L1_starter_instrument_fixed vs L1_starter_instrument_r1)."
     ]
   },
@@ -157,6 +160,27 @@
       "observed": "46.89% (spell+dot+summon)",
       "target": ">= 30%",
       "note": "Funeral Burst should lean on death/fire rites once advanced physical magic unlocks."
+    },
+    {
+      "id": "arena_sequence_coverage",
+      "status": "PASS",
+      "observed": "5 sequences, max 6 duels",
+      "target": "tutorial plus 3/4/5/6-duel arenas",
+      "note": "Arena PVE tuning needs sequence-level output, not only single-duel PVP matchups."
+    },
+    {
+      "id": "arena_sequence_clear_rate_floor",
+      "status": "REVIEW",
+      "observed": "2.77% min clear",
+      "target": ">= 12% before difficulty tuning",
+      "note": "Longer arena lists can be hard, but the initial lab should not project impossible clears."
+    },
+    {
+      "id": "arena_sequence_hp_reset",
+      "status": "PASS",
+      "observed": "HP reset true",
+      "target": "HP reset per duel",
+      "note": "Arena PVE is about winning each duel; it must not become survival attrition."
     }
   ],
   "outliers": [
@@ -9311,110 +9335,7 @@
       "compatibility_status": "stale"
     }
   ],
-  "compare": [
-    {
-      "metric": "baseline_run",
-      "baseline": "2026-05-25_source_identity_balance_v02",
-      "current": "draxos_mobile_battle_lab_v4_source_identity",
-      "delta": "changed"
-    },
-    {
-      "metric": "overall_status",
-      "baseline": "PASS",
-      "current": "REVIEW",
-      "delta": "changed"
-    },
-    {
-      "metric": "avg_duration",
-      "baseline": "24.08s",
-      "current": "24.03s",
-      "delta": "-0.05s"
-    },
-    {
-      "metric": "median_duration",
-      "baseline": "22.7s",
-      "current": "22.7s",
-      "delta": "0s"
-    },
-    {
-      "metric": "short_rate_percent",
-      "baseline": "0%",
-      "current": "0%",
-      "delta": "0%"
-    },
-    {
-      "metric": "long_rate_percent",
-      "baseline": "15.07%",
-      "current": "16.86%",
-      "delta": "+1.79%"
-    },
-    {
-      "metric": "anti_stall_rate_percent",
-      "baseline": "4.95%",
-      "current": "6.4%",
-      "delta": "+1.45%"
-    },
-    {
-      "metric": "raw_stress_dominance_max_percent",
-      "baseline": "67.33%",
-      "current": "61.36%",
-      "delta": "-5.97%"
-    },
-    {
-      "metric": "near_power_dominance_max_percent",
-      "baseline": "63.46%",
-      "current": "63.34%",
-      "delta": "-0.12%"
-    },
-    {
-      "metric": "near_power_win_rate:starter_instrument",
-      "baseline": "45.31%",
-      "current": "45.31%",
-      "delta": "0%"
-    },
-    {
-      "metric": "near_power_win_rate:mental_controller",
-      "baseline": "35.87%",
-      "current": "27.05%",
-      "delta": "-8.82%"
-    },
-    {
-      "metric": "near_power_win_rate:elemental_mixer",
-      "baseline": "42.01%",
-      "current": "42.25%",
-      "delta": "+0.24%"
-    },
-    {
-      "metric": "near_power_win_rate:familiar_handler",
-      "baseline": "63.46%",
-      "current": "63.34%",
-      "delta": "-0.12%"
-    },
-    {
-      "metric": "near_power_win_rate:summoner",
-      "baseline": "48.8%",
-      "current": "51.65%",
-      "delta": "+2.85%"
-    },
-    {
-      "metric": "near_power_win_rate:defensive_occultist",
-      "baseline": "31.97%",
-      "current": "40.38%",
-      "delta": "+8.41%"
-    },
-    {
-      "metric": "near_power_win_rate:dot_pressure",
-      "baseline": "62.4%",
-      "current": "60.75%",
-      "delta": "-1.65%"
-    },
-    {
-      "metric": "near_power_win_rate:funeral_burst",
-      "baseline": "53.92%",
-      "current": "55.32%",
-      "delta": "+1.4%"
-    }
-  ],
+  "compare": [],
   "replay_index": [
     {
       "tag": "level_3_representative",

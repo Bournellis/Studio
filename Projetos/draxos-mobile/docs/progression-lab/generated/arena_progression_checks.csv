@@ -1,0 +1,51 @@
+id,profile_id,milestone_id,status,observed,target,note
+arena_attempt_volume,free_50_rewards,2h,PASS,6.4 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,free_50_rewards,2h,PASS,repeat factor 0.25,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_attempt_volume,free_50_rewards,5h,PASS,16 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,free_50_rewards,5h,PASS,repeat factor 0.25,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_attempt_volume,free_50_rewards,10h,PASS,32 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,free_50_rewards,10h,PASS,repeat factor 0.25,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_attempt_volume,free_50_rewards,15h,PASS,48 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,free_50_rewards,15h,PASS,repeat factor 0.25,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_attempt_volume,free_50_rewards,20h,PASS,64 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,free_50_rewards,20h,PASS,repeat factor 0.25,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_attempt_volume,free_100_rewards,2h,PASS,8 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,free_100_rewards,2h,PASS,repeat factor 0.35,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_attempt_volume,free_100_rewards,5h,PASS,20 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,free_100_rewards,5h,PASS,repeat factor 0.35,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_attempt_volume,free_100_rewards,10h,PASS,40 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,free_100_rewards,10h,PASS,repeat factor 0.35,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_attempt_volume,free_100_rewards,15h,PASS,60 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,free_100_rewards,15h,PASS,repeat factor 0.35,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_attempt_volume,free_100_rewards,20h,PASS,80 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,free_100_rewards,20h,PASS,repeat factor 0.35,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_attempt_volume,freemium_basic,2h,PASS,8 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,freemium_basic,2h,PASS,repeat factor 0.35,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_attempt_volume,freemium_basic,5h,PASS,20 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,freemium_basic,5h,PASS,repeat factor 0.35,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_attempt_volume,freemium_basic,10h,PASS,40 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,freemium_basic,10h,PASS,repeat factor 0.35,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_attempt_volume,freemium_basic,15h,PASS,60 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,freemium_basic,15h,PASS,repeat factor 0.35,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_attempt_volume,freemium_basic,20h,PASS,80 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,freemium_basic,20h,PASS,repeat factor 0.35,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_attempt_volume,spender_light,2h,PASS,8.8 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,spender_light,2h,PASS,repeat factor 0.32,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_attempt_volume,spender_light,5h,PASS,22 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,spender_light,5h,PASS,repeat factor 0.32,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_attempt_volume,spender_light,10h,PASS,44 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,spender_light,10h,PASS,repeat factor 0.32,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_attempt_volume,spender_light,15h,PASS,66 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,spender_light,15h,PASS,repeat factor 0.32,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_attempt_volume,spender_light,20h,PASS,88 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,spender_light,20h,PASS,repeat factor 0.32,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_attempt_volume,max_spender,2h,PASS,11.2 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,max_spender,2h,PASS,repeat factor 0.25,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_attempt_volume,max_spender,5h,PASS,28 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,max_spender,5h,PASS,repeat factor 0.25,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_attempt_volume,max_spender,10h,PASS,56 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,max_spender,10h,PASS,repeat factor 0.25,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_attempt_volume,max_spender,15h,PASS,84 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,max_spender,15h,PASS,repeat factor 0.25,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_attempt_volume,max_spender,20h,PASS,112 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,max_spender,20h,PASS,repeat factor 0.25,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.

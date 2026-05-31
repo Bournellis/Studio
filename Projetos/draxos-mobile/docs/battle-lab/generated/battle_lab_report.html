@@ -126,12 +126,15 @@
       <div class="card"><div class="label">Behavior rows</div><div class="value">1238</div></div>
       <div class="card"><div class="label">Raw dominance</div><div class="value">61.36%</div></div>
       <div class="card"><div class="label">Near power</div><div class="value">63.34%</div></div>
+      <div class="card"><div class="label">Arena seq</div><div class="value">5</div></div>
+      <div class="card"><div class="label">Arena min clear</div><div class="value">2.77%</div></div>
     </div>
 
     <div class="grid">
       <section>
         <h2>O Que Olhar Primeiro</h2>
         <ul><li>REVIEW: anti_stall_rate observed 6.4%, target &lt;= 5%.</li>
+<li>REVIEW: arena_sequence_clear_rate_floor observed 2.77% min clear, target &gt;= 12% before difficulty tuning.</li>
 <li>Review first matchup: LONG L1_M0001 (L1_starter_instrument_fixed vs L1_starter_instrument_r1).</li></ul>
       </section>
       <section>
@@ -153,7 +156,10 @@
 <tr><td><span class="badge pass">PASS</span></td><td>source_identity_familiar</td><td>17.43% (pet)</td><td>&gt;= 10%</td><td>Familiar Handler should have a measurable familiar contribution after pets unlock.</td></tr>
 <tr><td><span class="badge pass">PASS</span></td><td>source_identity_summoner</td><td>38.48% (summon)</td><td>&gt;= 10%</td><td>Summoner should produce real summon damage after superior physical rites unlock.</td></tr>
 <tr><td><span class="badge pass">PASS</span></td><td>source_identity_dot</td><td>27.69% (dot)</td><td>&gt;= 12%</td><td>Dot Pressure should be readable through bleed, poison, burn or death ticks.</td></tr>
-<tr><td><span class="badge pass">PASS</span></td><td>source_identity_funeral</td><td>46.89% (spell+dot+summon)</td><td>&gt;= 30%</td><td>Funeral Burst should lean on death/fire rites once advanced physical magic unlocks.</td></tr></tbody>
+<tr><td><span class="badge pass">PASS</span></td><td>source_identity_funeral</td><td>46.89% (spell+dot+summon)</td><td>&gt;= 30%</td><td>Funeral Burst should lean on death/fire rites once advanced physical magic unlocks.</td></tr>
+<tr><td><span class="badge pass">PASS</span></td><td>arena_sequence_coverage</td><td>5 sequences, max 6 duels</td><td>tutorial plus 3/4/5/6-duel arenas</td><td>Arena PVE tuning needs sequence-level output, not only single-duel PVP matchups.</td></tr>
+<tr><td><span class="badge review">REVIEW</span></td><td>arena_sequence_clear_rate_floor</td><td>2.77% min clear</td><td>&gt;= 12% before difficulty tuning</td><td>Longer arena lists can be hard, but the initial lab should not project impossible clears.</td></tr>
+<tr><td><span class="badge pass">PASS</span></td><td>arena_sequence_hp_reset</td><td>HP reset true</td><td>HP reset per duel</td><td>Arena PVE is about winning each duel; it must not become survival attrition.</td></tr></tbody>
         </table>
       </section>
     </div>
@@ -454,26 +460,22 @@
     </section>
 
     <section class="wide">
+      <h2>Arena PVE Sequences</h2>
+      <table>
+        <thead><tr><th>Arena</th><th>Duelos</th><th>Samples</th><th>Base win</th><th>Buffed win</th><th>Clear</th><th>Avg duration</th><th>Expected step</th><th>Buff steps</th><th>Buff impact</th><th>Status</th></tr></thead>
+        <tbody><tr><td>arena_tutorial_cinzas</td><td>1</td><td>2312</td><td>48%</td><td>48%</td><td>48%</td><td>24.42s</td><td>1</td><td>0</td><td>0%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>arena_cinzas_curta</td><td>3</td><td>2312</td><td>48%</td><td>51%</td><td>13.27%</td><td>43.22s</td><td>1.77</td><td>2</td><td>3%</td><td><span class="badge pass">PASS</span></td></tr>
+<tr><td>arena_veu_curta</td><td>4</td><td>2312</td><td>48%</td><td>52%</td><td>7.31%</td><td>47.12s</td><td>1.93</td><td>3</td><td>4.5%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>arena_ossos_media</td><td>5</td><td>2312</td><td>48%</td><td>54%</td><td>4.59%</td><td>50.54s</td><td>2.07</td><td>4</td><td>6%</td><td><span class="badge review">REVIEW</span></td></tr>
+<tr><td>arena_abismo_longa</td><td>6</td><td>2312</td><td>48%</td><td>55%</td><td>2.77%</td><td>52.74s</td><td>2.16</td><td>5</td><td>7.5%</td><td><span class="badge review">REVIEW</span></td></tr></tbody>
+      </table>
+    </section>
+
+    <section class="wide">
       <h2>Compare</h2>
       <table>
         <thead><tr><th>Metric</th><th>Baseline</th><th>Current</th><th>Delta</th></tr></thead>
-        <tbody><tr><td>baseline_run</td><td>2026-05-25_source_identity_balance_v02</td><td>draxos_mobile_battle_lab_v4_source_identity</td><td>changed</td></tr>
-<tr><td>overall_status</td><td>PASS</td><td>REVIEW</td><td>changed</td></tr>
-<tr><td>avg_duration</td><td>24.08s</td><td>24.03s</td><td>-0.05s</td></tr>
-<tr><td>median_duration</td><td>22.7s</td><td>22.7s</td><td>0s</td></tr>
-<tr><td>short_rate_percent</td><td>0%</td><td>0%</td><td>0%</td></tr>
-<tr><td>long_rate_percent</td><td>15.07%</td><td>16.86%</td><td>+1.79%</td></tr>
-<tr><td>anti_stall_rate_percent</td><td>4.95%</td><td>6.4%</td><td>+1.45%</td></tr>
-<tr><td>raw_stress_dominance_max_percent</td><td>67.33%</td><td>61.36%</td><td>-5.97%</td></tr>
-<tr><td>near_power_dominance_max_percent</td><td>63.46%</td><td>63.34%</td><td>-0.12%</td></tr>
-<tr><td>near_power_win_rate:starter_instrument</td><td>45.31%</td><td>45.31%</td><td>0%</td></tr>
-<tr><td>near_power_win_rate:mental_controller</td><td>35.87%</td><td>27.05%</td><td>-8.82%</td></tr>
-<tr><td>near_power_win_rate:elemental_mixer</td><td>42.01%</td><td>42.25%</td><td>+0.24%</td></tr>
-<tr><td>near_power_win_rate:familiar_handler</td><td>63.46%</td><td>63.34%</td><td>-0.12%</td></tr>
-<tr><td>near_power_win_rate:summoner</td><td>48.8%</td><td>51.65%</td><td>+2.85%</td></tr>
-<tr><td>near_power_win_rate:defensive_occultist</td><td>31.97%</td><td>40.38%</td><td>+8.41%</td></tr>
-<tr><td>near_power_win_rate:dot_pressure</td><td>62.4%</td><td>60.75%</td><td>-1.65%</td></tr>
-<tr><td>near_power_win_rate:funeral_burst</td><td>53.92%</td><td>55.32%</td><td>+1.4%</td></tr></tbody>
+        <tbody></tbody>
       </table>
     </section>
 

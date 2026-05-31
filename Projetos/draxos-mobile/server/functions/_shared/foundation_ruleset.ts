@@ -4,7 +4,7 @@ export const FOUNDATION_RULESET = {
   "ruleset_id": "foundation_ruleset_v0",
   "ruleset_version": 1,
   "lifecycle": "FOUNDATION_AUDIT_ACTIVE",
-  "content_hash": "fb5ce8e4219f1f018f521c9d59ac9813c5c16eaace1cb3bfef05df9c956a914e",
+  "content_hash": "5ef9cf3f176a8e0d3953b9f2ba4837b19b32c46ca5003c56789457fbb304fc00",
   "simulator_hash": "e835cadde3c937cba45c46785da3761139373ab23ac9dfaaed814d79f933bbe9",
   "runtime": {
     "mode": "FIRST_SLICE_SIM",
@@ -118,8 +118,8 @@ export const FOUNDATION_RULESET = {
     {
       "path": "tools/progression_lab/model.v1.json",
       "kind": "tool_model",
-      "sha256": "9e7e7311d7b746affac86fc58b28182842dc58d3c253723f5e54296adbf75259",
-      "canonical_bytes": 4400
+      "sha256": "640ad3df11f3b82f91e881e9b38047a730f5c1cc45a277477fd180016ce71cea",
+      "canonical_bytes": 5380
     },
     {
       "path": "server/functions/_shared/battle_combatants.ts",

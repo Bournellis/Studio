@@ -15,3 +15,6 @@ source_identity_familiar,PASS,17.43% (pet),>= 10%,Familiar Handler should have a
 source_identity_summoner,PASS,38.48% (summon),>= 10%,Summoner should produce real summon damage after superior physical rites unlock.
 source_identity_dot,PASS,27.69% (dot),>= 12%,"Dot Pressure should be readable through bleed, poison, burn or death ticks."
 source_identity_funeral,PASS,46.89% (spell+dot+summon),>= 30%,Funeral Burst should lean on death/fire rites once advanced physical magic unlocks.
+arena_sequence_coverage,PASS,"5 sequences, max 6 duels",tutorial plus 3/4/5/6-duel arenas,"Arena PVE tuning needs sequence-level output, not only single-duel PVP matchups."
+arena_sequence_clear_rate_floor,REVIEW,2.77% min clear,>= 12% before difficulty tuning,"Longer arena lists can be hard, but the initial lab should not project impossible clears."
+arena_sequence_hp_reset,PASS,HP reset true,HP reset per duel,Arena PVE is about winning each duel; it must not become survival attrition.

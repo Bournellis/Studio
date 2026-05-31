@@ -225,6 +225,21 @@ interface CheckRow {
   note: string;
 }
 
+interface ArenaSequenceRow {
+  arena_id: string;
+  duel_count: number;
+  sampled_duels: number;
+  base_win_rate_percent: number;
+  buffed_win_rate_percent: number;
+  clear_rate_percent: number;
+  avg_duration_seconds: number;
+  expected_failure_step: number;
+  hp_reset_per_duel: boolean;
+  accumulated_buff_steps: number;
+  buff_impact_percent: number;
+  status: Status;
+}
+
 interface CompareRow {
   metric: string;
   baseline: string;
@@ -348,6 +363,7 @@ interface BattleLabResult {
   near_power_matrix: MatrixRow[];
   power_bands: PowerBandRow[];
   source_by_archetype: SourceByArchetypeRow[];
+  arena_sequences: ArenaSequenceRow[];
   outliers: OutlierRow[];
   checks: CheckRow[];
   summary: {
@@ -365,6 +381,8 @@ interface BattleLabResult {
     disabled_behavior_matchups: number;
     raw_stress_dominance_max_percent: number;
     near_power_dominance_max_percent: number;
+    arena_sequence_count: number;
+    arena_clear_rate_min_percent: number;
     damage_by_source: NumericMap;
     damage_by_type: NumericMap;
     top_notes: string[];
@@ -487,11 +505,19 @@ const RUN_OUTPUT_FILES = [
   "battle_lab_power_bands.csv",
   "battle_lab_outliers.csv",
   "battle_lab_source_by_archetype.csv",
+  "battle_lab_arena_sequences.csv",
   "battle_lab_near_power_matrix.csv",
   "battle_lab_history_index.csv",
   "battle_lab_compare.csv",
 ];
 const PROGRESSION_MILESTONE_IDS = ["2h", "5h", "10h", "15h", "20h"];
+const ARENA_SEQUENCE_CONFIGS = [
+  { arena_id: "arena_tutorial_cinzas", duel_count: 1 },
+  { arena_id: "arena_cinzas_curta", duel_count: 3 },
+  { arena_id: "arena_veu_curta", duel_count: 4 },
+  { arena_id: "arena_ossos_media", duel_count: 5 },
+  { arena_id: "arena_abismo_longa", duel_count: 6 },
+];
 
 export async function loadModel(
   modelUrl = new URL("model.v1.json", import.meta.url),
@@ -567,9 +593,7 @@ export function calculatePower(build: CombatantBuild): number {
     0,
   );
   const petLevel = (build.petId ?? "") === "" ? 0 : build.petLevel ?? 0;
-  const passiveLevel = (build.passiveId ?? "") === ""
-    ? 0
-    : build.passiveLevel ?? 0;
+  const passiveLevel = (build.passiveId ?? "") === "" ? 0 : build.passiveLevel ?? 0;
   return (build.level * 42) +
     (build.weaponLevel * 28) +
     (spellLevelsTotal * 40) +
@@ -680,14 +704,10 @@ export function analyzeBattleLog(
   }
 
   const winner = simulation.battleLog.result.winner;
-  const winnerArchetypeId = winner === "player"
-    ? player.archetype_id
-    : opponent.archetype_id;
+  const winnerArchetypeId = winner === "player" ? player.archetype_id : opponent.archetype_id;
   const playerFinalHpPercent = percent(lastHp.player, maxHp.player);
   const opponentFinalHpPercent = percent(lastHp.opponent, maxHp.opponent);
-  const winnerHpPercent = winner === "player"
-    ? playerFinalHpPercent
-    : opponentFinalHpPercent;
+  const winnerHpPercent = winner === "player" ? playerFinalHpPercent : opponentFinalHpPercent;
   const alerts: string[] = [];
 
   if (simulation.battleLog.duration < model.thresholds.short_duration) {
@@ -736,8 +756,7 @@ export function analyzeBattleLog(
     potion_enabled_sides: potionEnabledSides(player.build, opponent.build),
     spell_behavior_rules: spellBehaviorRuleCount(player.build) +
       spellBehaviorRuleCount(opponent.build),
-    disabled_spell_behavior_rules:
-      disabledSpellBehaviorRuleCount(player.build) +
+    disabled_spell_behavior_rules: disabledSpellBehaviorRuleCount(player.build) +
       disabledSpellBehaviorRuleCount(opponent.build),
     summons_created: summonsCreated,
     spell_casts: spellCasts,
@@ -783,25 +802,20 @@ async function runStandardGeneration(
   const compareRows = options.compareWithRunId === undefined
     ? []
     : await loadComparisonRows(runsUrl, options.compareWithRunId, result);
-  const manifest = options.archiveRunId === undefined
-    ? undefined
-    : await buildRunManifest(
-      projectRoot,
-      result,
-      options.archiveRunId,
-      compatibility,
-    );
-  const historyWithPending = manifest === undefined
-    ? history
-    : upsertHistory(history, manifest);
+  const manifest = options.archiveRunId === undefined ? undefined : await buildRunManifest(
+    projectRoot,
+    result,
+    options.archiveRunId,
+    compatibility,
+  );
+  const historyWithPending = manifest === undefined ? history : upsertHistory(history, manifest);
 
   await writeOutputs(model, result, outputUrl, historyWithPending, compareRows);
   if (manifest !== undefined) {
     await archiveRun(outputUrl, runsUrl, manifest, historyWithPending);
   }
 
-  const reviewCount =
-    result.checks.filter((check) => check.status !== "PASS").length;
+  const reviewCount = result.checks.filter((check) => check.status !== "PASS").length;
   console.log("[battle-lab] generated", {
     status: result.overall_status,
     battles: result.summary.total_battles,
@@ -1124,10 +1138,8 @@ export async function buildRunManifest(
     short_rate_percent: result.summary.short_rate_percent,
     long_rate_percent: result.summary.long_rate_percent,
     anti_stall_rate_percent: result.summary.anti_stall_rate_percent,
-    raw_stress_dominance_max_percent:
-      result.summary.raw_stress_dominance_max_percent,
-    near_power_dominance_max_percent:
-      result.summary.near_power_dominance_max_percent,
+    raw_stress_dominance_max_percent: result.summary.raw_stress_dominance_max_percent,
+    near_power_dominance_max_percent: result.summary.near_power_dominance_max_percent,
     critical_archetypes: result.near_power_archetypes
       .filter((row) => row.status === "CRITICAL")
       .map((row) => row.id),
@@ -1313,15 +1325,13 @@ function createTrack16Builds(model: BattleLabModel): LabBuild[] {
         if (build === null) continue;
         const id = `T16_${scenario.id}_${base.id}`;
         build.id = id;
-        build.displayName =
-          `${base.build.displayName} [${scenario.display_name}]`;
+        build.displayName = `${base.build.displayName} [${scenario.display_name}]`;
         const power = calculatePower(build);
         builds.push({
           id,
           kind: "track16",
           archetype_id: archetype.id,
-          archetype_name:
-            `${archetype.display_name} (${scenario.display_name})`,
+          archetype_name: `${archetype.display_name} (${scenario.display_name})`,
           level,
           power,
           power_band: classifyPowerBand(power, model.power_bands),
@@ -1517,8 +1527,7 @@ function runSingleMatchup(
   opponent: LabBuild,
 ): LabMatchup {
   const battleId = `L${level}_M${String(index).padStart(4, "0")}`;
-  const seed =
-    `battle_lab:${model.model_id}:${battleId}:${player.seed}:${opponent.seed}`;
+  const seed = `battle_lab:${model.model_id}:${battleId}:${player.seed}:${opponent.seed}`;
   const simulation = simulateFirstSliceBattle({
     battleId,
     seed,
@@ -1536,21 +1545,14 @@ function summarize(
   const durations = matchups.map((matchup) => matchup.duration);
   const totalBattles = matchups.length;
   const shortCount =
-    matchups.filter((matchup) =>
-      matchup.duration < model.thresholds.short_duration
-    ).length;
+    matchups.filter((matchup) => matchup.duration < model.thresholds.short_duration).length;
   const longCount =
-    matchups.filter((matchup) =>
-      matchup.duration > model.thresholds.long_duration
-    ).length;
-  const antiStallCount =
-    matchups.filter((matchup) => matchup.anti_stall).length;
+    matchups.filter((matchup) => matchup.duration > model.thresholds.long_duration).length;
+  const antiStallCount = matchups.filter((matchup) => matchup.anti_stall).length;
   const potionEnabledMatchups =
     matchups.filter((matchup) => matchup.potion_enabled_sides > 0).length;
-  const potionUseMatchups =
-    matchups.filter((matchup) => matchup.potion_uses > 0).length;
-  const behaviorMatchups =
-    matchups.filter((matchup) => matchup.spell_behavior_rules > 0).length;
+  const potionUseMatchups = matchups.filter((matchup) => matchup.potion_uses > 0).length;
+  const behaviorMatchups = matchups.filter((matchup) => matchup.spell_behavior_rules > 0).length;
   const disabledBehaviorMatchups =
     matchups.filter((matchup) => matchup.disabled_spell_behavior_rules > 0)
       .length;
@@ -1577,6 +1579,10 @@ function summarize(
   });
   const powerBands = aggregatePowerBands(model, matchups);
   const sourceByArchetype = aggregateSourceByArchetype(model, matchups);
+  const arenaSequences = buildArenaSequences(
+    model,
+    nearPowerMatchups.length > 0 ? nearPowerMatchups : matchups,
+  );
   const outliers = buildOutliers(
     model,
     matchups,
@@ -1593,8 +1599,10 @@ function summarize(
     antiStallCount,
     durations,
   );
+  checks.push(...buildArenaSequenceChecks(arenaSequences));
   const overallStatus = maxStatus(checks.map((check) => check.status));
   const topNotes = buildTopNotes(checks, outliers);
+  const arenaClearRates = arenaSequences.map((row) => row.clear_rate_percent);
 
   return {
     model_id: model.model_id,
@@ -1608,6 +1616,7 @@ function summarize(
     near_power_matrix: nearPowerMatrix,
     power_bands: powerBands,
     source_by_archetype: sourceByArchetype,
+    arena_sequences: arenaSequences,
     outliers,
     checks,
     summary: {
@@ -1633,6 +1642,8 @@ function summarize(
       near_power_dominance_max_percent: maxAggregateWinRate(
         nearPowerArchetypes,
       ),
+      arena_sequence_count: arenaSequences.length,
+      arena_clear_rate_min_percent: arenaClearRates.length > 0 ? Math.min(...arenaClearRates) : 0,
       damage_by_source: roundMap(damageBySource),
       damage_by_type: roundMap(damageByType),
       top_notes: topNotes,
@@ -1645,9 +1656,7 @@ function aggregateArchetypes(
   matchups: LabMatchup[],
 ): AggregateRow[] {
   return model.archetypes.map((archetype) => {
-    const rows = matchups.filter((matchup) =>
-      matchup.player_archetype_id === archetype.id
-    );
+    const rows = matchups.filter((matchup) => matchup.player_archetype_id === archetype.id);
     return aggregateRows(archetype.id, archetype.display_name, rows, model);
   });
 }
@@ -1661,9 +1670,7 @@ function aggregateArchetypesAcrossSides(
       matchup.player_archetype_id === archetype.id ||
       matchup.opponent_archetype_id === archetype.id
     );
-    const wins = rows.filter((matchup) =>
-      matchup.winner_archetype_id === archetype.id
-    ).length;
+    const wins = rows.filter((matchup) => matchup.winner_archetype_id === archetype.id).length;
     return aggregateRowsWithWins(
       archetype.id,
       archetype.display_name,
@@ -1690,9 +1697,7 @@ function aggregateMatrix(
         matchup.opponent_archetype_id === opponent.id
       );
       if (filtered.length === 0) continue;
-      const wins = filtered.filter((matchup) =>
-        matchup.winner === "player"
-      ).length;
+      const wins = filtered.filter((matchup) => matchup.winner === "player").length;
       const winRate = rate(wins, filtered.length);
       rows.push({
         player_archetype_id: player.id,
@@ -1759,12 +1764,10 @@ function aggregateRowsWithWins(
   model: BattleLabModel,
 ): AggregateRow {
   const durations = rows.map((matchup) => matchup.duration);
-  const shortCount =
-    rows.filter((matchup) => matchup.duration < model.thresholds.short_duration)
-      .length;
-  const longCount =
-    rows.filter((matchup) => matchup.duration > model.thresholds.long_duration)
-      .length;
+  const shortCount = rows.filter((matchup) => matchup.duration < model.thresholds.short_duration)
+    .length;
+  const longCount = rows.filter((matchup) => matchup.duration > model.thresholds.long_duration)
+    .length;
   const antiStallCount = rows.filter((matchup) => matchup.anti_stall).length;
   const winRate = rate(wins, rows.length);
   return {
@@ -1912,9 +1915,114 @@ function buildOutliers(
     }
   }
 
-  return rows.sort((left, right) =>
-    statusRank(right.severity) - statusRank(left.severity)
-  );
+  return rows.sort((left, right) => statusRank(right.severity) - statusRank(left.severity));
+}
+
+function buildArenaSequences(
+  model: BattleLabModel,
+  matchups: LabMatchup[],
+): ArenaSequenceRow[] {
+  if (matchups.length === 0) return [];
+  const sampledDuels = matchups.length;
+  const playerWins = matchups.filter((matchup) => matchup.winner === "player").length;
+  const baseWinRate = clamp(rate(playerWins, sampledDuels), 0, 100);
+  const avgDuelDuration = avg(matchups.map((matchup) => matchup.duration));
+  return ARENA_SEQUENCE_CONFIGS.map((config) => {
+    const accumulatedBuffSteps = Math.max(0, config.duel_count - 1);
+    const buffImpactPercent = round(accumulatedBuffSteps * 1.5, 2);
+    const buffedWinRate = clamp(baseWinRate + buffImpactPercent, 0, 95);
+    const duelClearProbability = buffedWinRate / 100;
+    const clearRate = round(
+      Math.pow(duelClearProbability, config.duel_count) * 100,
+      2,
+    );
+    const expectedFailureStep = round(
+      expectedArenaFailureStep(duelClearProbability, config.duel_count),
+      2,
+    );
+    const avgDurationSeconds = round(
+      expectedFailureStep * avgDuelDuration,
+      2,
+    );
+    return {
+      arena_id: config.arena_id,
+      duel_count: config.duel_count,
+      sampled_duels: sampledDuels,
+      base_win_rate_percent: round(baseWinRate, 2),
+      buffed_win_rate_percent: round(buffedWinRate, 2),
+      clear_rate_percent: clearRate,
+      avg_duration_seconds: avgDurationSeconds,
+      expected_failure_step: expectedFailureStep,
+      hp_reset_per_duel: true,
+      accumulated_buff_steps: accumulatedBuffSteps,
+      buff_impact_percent: buffImpactPercent,
+      status: arenaSequenceStatus(model, clearRate, avgDurationSeconds),
+    };
+  });
+}
+
+function expectedArenaFailureStep(
+  duelClearProbability: number,
+  duelCount: number,
+): number {
+  let expected = 0;
+  let reachProbability = 1;
+  for (let step = 1; step <= duelCount; step += 1) {
+    expected += reachProbability;
+    reachProbability *= duelClearProbability;
+  }
+  return expected;
+}
+
+function arenaSequenceStatus(
+  model: BattleLabModel,
+  clearRatePercent: number,
+  avgDurationSeconds: number,
+): Status {
+  if (clearRatePercent <= 0) return "CRITICAL";
+  if (clearRatePercent < 12) return "REVIEW";
+  if (avgDurationSeconds > model.thresholds.target_duration_max * 6) return "REVIEW";
+  return "PASS";
+}
+
+function buildArenaSequenceChecks(rows: ArenaSequenceRow[]): CheckRow[] {
+  if (rows.length === 0) {
+    return [{
+      id: "arena_sequence_coverage",
+      status: "CRITICAL",
+      observed: "0 sequences",
+      target: "tutorial plus 3/4/5/6-duel arenas",
+      note: "Battle Lab must expose Arena PVE sequence metrics before tuning the initial mode.",
+    }];
+  }
+  const minClear = Math.min(...rows.map((row) => row.clear_rate_percent));
+  const maxDuels = Math.max(...rows.map((row) => row.duel_count));
+  return [
+    {
+      id: "arena_sequence_coverage",
+      status: maxDuels >= 6 ? "PASS" : "CRITICAL",
+      observed: `${rows.length} sequences, max ${maxDuels} duels`,
+      target: "tutorial plus 3/4/5/6-duel arenas",
+      note: "Arena PVE tuning needs sequence-level output, not only single-duel PVP matchups.",
+    },
+    {
+      id: "arena_sequence_clear_rate_floor",
+      status: minClear < 12 ? "REVIEW" : "PASS",
+      observed: `${round(minClear, 2)}% min clear`,
+      target: ">= 12% before difficulty tuning",
+      note:
+        "Longer arena lists can be hard, but the initial lab should not project impossible clears.",
+    },
+    {
+      id: "arena_sequence_hp_reset",
+      status: rows.every((row) => row.hp_reset_per_duel) ? "PASS" : "CRITICAL",
+      observed: rows.every((row) => row.hp_reset_per_duel)
+        ? "HP reset true"
+        : "HP carry-over detected",
+      target: "HP reset per duel",
+      note: "Arena PVE is about winning each duel; it must not become survival attrition.",
+    },
+  ];
 }
 
 function buildChecks(
@@ -1934,16 +2042,13 @@ function buildChecks(
   const maxWinRate = maxAggregateWinRate(nearPowerArchetypes);
   const minWinRate = minAggregateWinRate(nearPowerArchetypes);
   const coveredLevels = new Set(matchups.map((matchup) => matchup.level));
-  const configuredLevelsCovered =
-    model.levels.filter((level) => coveredLevels.has(level)).length;
+  const configuredLevelsCovered = model.levels.filter((level) => coveredLevels.has(level)).length;
   const expectedLevels = model.levels.length;
   const track16Scenarios = model.track16_scenarios ?? [];
   const potionEnabledMatchups =
     matchups.filter((matchup) => matchup.potion_enabled_sides > 0).length;
-  const potionUseMatchups =
-    matchups.filter((matchup) => matchup.potion_uses > 0).length;
-  const behaviorMatchups =
-    matchups.filter((matchup) => matchup.spell_behavior_rules > 0).length;
+  const potionUseMatchups = matchups.filter((matchup) => matchup.potion_uses > 0).length;
+  const behaviorMatchups = matchups.filter((matchup) => matchup.spell_behavior_rules > 0).length;
   const disabledBehaviorMatchups =
     matchups.filter((matchup) => matchup.disabled_spell_behavior_rules > 0)
       .length;
@@ -1956,35 +2061,26 @@ function buildChecks(
         ? "PASS"
         : "REVIEW",
       observed: `${avgDuration}s`,
-      target:
-        `${model.thresholds.target_duration_min}-${model.thresholds.target_duration_max}s`,
-      note:
-        "Average battle duration should sit near the target playtest window.",
+      target: `${model.thresholds.target_duration_min}-${model.thresholds.target_duration_max}s`,
+      note: "Average battle duration should sit near the target playtest window.",
     },
     {
       id: "short_battle_rate",
-      status: shortRate <= model.thresholds.short_battle_rate_review_percent
-        ? "PASS"
-        : "REVIEW",
+      status: shortRate <= model.thresholds.short_battle_rate_review_percent ? "PASS" : "REVIEW",
       observed: `${shortRate}%`,
       target: `<= ${model.thresholds.short_battle_rate_review_percent}%`,
       note: "Too many short battles suggest burst or low HP scaling issues.",
     },
     {
       id: "long_battle_rate",
-      status: longRate <= model.thresholds.long_battle_rate_review_percent
-        ? "PASS"
-        : "REVIEW",
+      status: longRate <= model.thresholds.long_battle_rate_review_percent ? "PASS" : "REVIEW",
       observed: `${longRate}%`,
       target: `<= ${model.thresholds.long_battle_rate_review_percent}%`,
-      note:
-        "Too many long battles suggest defensive scaling or low damage pressure.",
+      note: "Too many long battles suggest defensive scaling or low damage pressure.",
     },
     {
       id: "anti_stall_rate",
-      status: antiStallRate <= model.thresholds.anti_stall_review_percent
-        ? "PASS"
-        : "REVIEW",
+      status: antiStallRate <= model.thresholds.anti_stall_review_percent ? "PASS" : "REVIEW",
       observed: `${antiStallRate}%`,
       target: `<= ${model.thresholds.anti_stall_review_percent}%`,
       note: "Anti-stall should be rare in normal same-level matchups.",
@@ -2016,8 +2112,7 @@ function buildChecks(
         : "PASS",
       observed: `${potionEnabledMatchups} potion-enabled matchups`,
       target: ">= 1 when Track 16 potion scenarios exist",
-      note:
-        "Battle Lab must exercise Pocao de Vida slots before autobattler tuning.",
+      note: "Battle Lab must exercise Pocao de Vida slots before autobattler tuning.",
     },
     {
       id: "track16_potion_event_coverage",
@@ -2031,19 +2126,13 @@ function buildChecks(
     },
     {
       id: "track16_spell_behavior_coverage",
-      status:
-        track16Scenarios.some((scenario) =>
-            scenario.spell_behavior !== undefined
-          )
-          ? behaviorMatchups > 0 && disabledBehaviorMatchups > 0
-            ? "PASS"
-            : "CRITICAL"
-          : "PASS",
+      status: track16Scenarios.some((scenario) => scenario.spell_behavior !== undefined)
+        ? behaviorMatchups > 0 && disabledBehaviorMatchups > 0 ? "PASS" : "CRITICAL"
+        : "PASS",
       observed:
         `${behaviorMatchups} behavior matchups, ${disabledBehaviorMatchups} disabled-behavior matchups`,
       target: ">= 1 spell behavior matchup and >= 1 disabled behavior matchup",
-      note:
-        "Battle Lab must exercise simple spell behavior before behavior-driven tuning.",
+      note: "Battle Lab must exercise simple spell behavior before behavior-driven tuning.",
     },
     ...buildSourceIdentityChecks(model, matchups),
   ];
@@ -2068,11 +2157,7 @@ function buildSourceIdentityChecks(
   const checks: CheckRow[] = [
     {
       id: "source_identity_weapon_cap",
-      status: maxWeaponShare > 85
-        ? "CRITICAL"
-        : maxWeaponShare > 75
-        ? "REVIEW"
-        : "PASS",
+      status: maxWeaponShare > 85 ? "CRITICAL" : maxWeaponShare > 75 ? "REVIEW" : "PASS",
       observed: maxWeaponRow === undefined
         ? "0%"
         : `${maxWeaponShare}% max (${maxWeaponRow.archetype_id})`,
@@ -2375,6 +2460,23 @@ export async function writeOutputs(
     ]),
   );
   await Deno.writeTextFile(
+    new URL("battle_lab_arena_sequences.csv", outputUrl),
+    toCsv(result.arena_sequences, [
+      "arena_id",
+      "duel_count",
+      "sampled_duels",
+      "base_win_rate_percent",
+      "buffed_win_rate_percent",
+      "clear_rate_percent",
+      "avg_duration_seconds",
+      "expected_failure_step",
+      "hp_reset_per_duel",
+      "accumulated_buff_steps",
+      "buff_impact_percent",
+      "status",
+    ]),
+  );
+  await Deno.writeTextFile(
     new URL("battle_lab_near_power_matrix.csv", outputUrl),
     toCsv(result.near_power_matrix, [
       "player_archetype_id",
@@ -2443,9 +2545,7 @@ function buildRows(builds: LabBuild[]): Array<Record<string, unknown>> {
     weapon_level: build.build.weaponLevel,
     weapon_quality_tier: build.build.weaponQualityTier,
     track16_scenario_id: build.track16_scenario_id ?? "",
-    potion_slot: build.build.potionSlot === undefined
-      ? ""
-      : JSON.stringify(build.build.potionSlot),
+    potion_slot: build.build.potionSlot === undefined ? "" : JSON.stringify(build.build.potionSlot),
     spell_behaviors: build.build.spellBehaviors === undefined
       ? ""
       : JSON.stringify(build.build.spellBehaviors),
@@ -2509,9 +2609,7 @@ function progressionMatrixRows(
     const category = progressionCategory(player.kind, opponent.kind);
     if (category === "") continue;
 
-    const milestoneId = player.milestone_id !== ""
-      ? player.milestone_id
-      : opponent.milestone_id;
+    const milestoneId = player.milestone_id !== "" ? player.milestone_id : opponent.milestone_id;
     const key = [
       category,
       milestoneId,
@@ -2690,9 +2788,7 @@ export function buildReplaySamples(
       selected.set(representative.id, `level_${level}_representative`);
     }
   }
-  const potionSample = result.matchups.find((matchup) =>
-    matchupHasPotionUse(matchup)
-  );
+  const potionSample = result.matchups.find((matchup) => matchupHasPotionUse(matchup));
   if (potionSample !== undefined && selected.size < maxSamples) {
     selected.set(potionSample.id, "track16_potion_behavior");
   }
@@ -2753,12 +2849,8 @@ function representativeReplayForLevel(
     matchup.alerts.length === 0 && matchupHasSpellActivity(matchup) &&
     nonStarterMatchup(matchup)
   ) ??
-    candidates.find((matchup) =>
-      matchupHasSpellActivity(matchup) && nonStarterMatchup(matchup)
-    ) ??
-    candidates.find((matchup) =>
-      matchup.alerts.length === 0 && matchupHasSpellActivity(matchup)
-    ) ??
+    candidates.find((matchup) => matchupHasSpellActivity(matchup) && nonStarterMatchup(matchup)) ??
+    candidates.find((matchup) => matchup.alerts.length === 0 && matchupHasSpellActivity(matchup)) ??
     candidates.find(matchupHasSpellActivity) ??
     candidates.find((matchup) => matchup.alerts.length === 0) ??
     candidates[0];
@@ -2824,15 +2916,11 @@ function renderHtml(
     .map((row) =>
       `<tr><td><span class="badge ${row.severity.toLowerCase()}">${row.severity}</span></td><td>${
         escapeHtml(row.type)
-      }</td><td>${escapeHtml(row.matchup_id)}</td><td>${
-        escapeHtml(row.level)
-      }</td><td>${escapeHtml(row.power)}</td><td>${
-        escapeHtml(row.duration)
-      }</td><td>${escapeHtml(row.winner)}</td><td>${
+      }</td><td>${escapeHtml(row.matchup_id)}</td><td>${escapeHtml(row.level)}</td><td>${
+        escapeHtml(row.power)
+      }</td><td>${escapeHtml(row.duration)}</td><td>${escapeHtml(row.winner)}</td><td>${
         escapeHtml(row.player_build_id)
-      }</td><td>${escapeHtml(row.opponent_build_id)}</td><td>${
-        escapeHtml(row.reason)
-      }</td></tr>`
+      }</td><td>${escapeHtml(row.opponent_build_id)}</td><td>${escapeHtml(row.reason)}</td></tr>`
     )
     .join("\n");
   const sourceRows = result.source_by_archetype
@@ -2844,13 +2932,18 @@ function renderHtml(
       }</td></tr>`
     )
     .join("\n");
+  const arenaSequenceRows = result.arena_sequences
+    .map((row) =>
+      `<tr><td>${
+        escapeHtml(row.arena_id)
+      }</td><td>${row.duel_count}</td><td>${row.sampled_duels}</td><td>${row.base_win_rate_percent}%</td><td>${row.buffed_win_rate_percent}%</td><td>${row.clear_rate_percent}%</td><td>${row.avg_duration_seconds}s</td><td>${row.expected_failure_step}</td><td>${row.accumulated_buff_steps}</td><td>${row.buff_impact_percent}%</td><td><span class="badge ${row.status.toLowerCase()}">${row.status}</span></td></tr>`
+    )
+    .join("\n");
   const compareTableRows = compareRows
     .map((row) =>
-      `<tr><td>${escapeHtml(row.metric)}</td><td>${
-        escapeHtml(row.baseline)
-      }</td><td>${escapeHtml(row.current)}</td><td>${
-        escapeHtml(row.delta)
-      }</td></tr>`
+      `<tr><td>${escapeHtml(row.metric)}</td><td>${escapeHtml(row.baseline)}</td><td>${
+        escapeHtml(row.current)
+      }</td><td>${escapeHtml(row.delta)}</td></tr>`
     )
     .join("\n");
   const historyTableRows = historyRows
@@ -2866,14 +2959,12 @@ function renderHtml(
     .map((row) =>
       `<tr><td><span class="badge ${row.status.toLowerCase()}">${row.status}</span></td><td>${
         escapeHtml(row.id)
-      }</td><td>${escapeHtml(row.observed)}</td><td>${
-        escapeHtml(row.target)
-      }</td><td>${escapeHtml(row.note)}</td></tr>`
+      }</td><td>${escapeHtml(row.observed)}</td><td>${escapeHtml(row.target)}</td><td>${
+        escapeHtml(row.note)
+      }</td></tr>`
     )
     .join("\n");
-  const notes = result.summary.top_notes.map((note) =>
-    `<li>${escapeHtml(note)}</li>`
-  ).join("\n");
+  const notes = result.summary.top_notes.map((note) => `<li>${escapeHtml(note)}</li>`).join("\n");
 
   return `<!doctype html>
 <html lang="pt-BR">
@@ -2986,9 +3077,9 @@ function renderHtml(
       <h1>DraxosMobile Battle Lab</h1>
       <span class="badge ${statusClass}">${result.overall_status}</span>
     </div>
-    <p>Model: ${escapeHtml(model.model_id)} | Status: ${
-    escapeHtml(model.status)
-  } | Generated: ${escapeHtml(result.generated_at)}</p>
+    <p>Model: ${escapeHtml(model.model_id)} | Status: ${escapeHtml(model.status)} | Generated: ${
+    escapeHtml(result.generated_at)
+  }</p>
     <p>Offline FIRST_SLICE_SIM analysis. This report does not mutate Supabase, rewards, ranking or client state.</p>
   </header>
   <main>
@@ -3001,9 +3092,7 @@ function renderHtml(
       ${metricCard("Long", `${result.summary.long_rate_percent}%`)}
       ${metricCard("Anti-stall", `${result.summary.anti_stall_rate_percent}%`)}
       ${metricCard("Potion use", `${result.summary.potion_use_rate_percent}%`)}
-      ${
-    metricCard("Potion heal avg", result.summary.avg_healing_per_potion_matchup)
-  }
+      ${metricCard("Potion heal avg", result.summary.avg_healing_per_potion_matchup)}
       ${metricCard("Behavior rows", result.summary.behavior_matchups)}
       ${
     metricCard(
@@ -3015,6 +3104,13 @@ function renderHtml(
     metricCard(
       "Near power",
       `${result.summary.near_power_dominance_max_percent}%`,
+    )
+  }
+      ${metricCard("Arena seq", result.summary.arena_sequence_count)}
+      ${
+    metricCard(
+      "Arena min clear",
+      `${result.summary.arena_clear_rate_min_percent}%`,
     )
   }
     </div>
@@ -3090,6 +3186,14 @@ function renderHtml(
     </section>
 
     <section class="wide">
+      <h2>Arena PVE Sequences</h2>
+      <table>
+        <thead><tr><th>Arena</th><th>Duelos</th><th>Samples</th><th>Base win</th><th>Buffed win</th><th>Clear</th><th>Avg duration</th><th>Expected step</th><th>Buff steps</th><th>Buff impact</th><th>Status</th></tr></thead>
+        <tbody>${arenaSequenceRows}</tbody>
+      </table>
+    </section>
+
+    <section class="wide">
       <h2>Compare</h2>
       <table>
         <thead><tr><th>Metric</th><th>Baseline</th><th>Current</th><th>Delta</th></tr></thead>
@@ -3123,16 +3227,14 @@ function renderHtml(
 }
 
 function metricCard(label: string, value: string | number): string {
-  return `<div class="card"><div class="label">${
-    escapeHtml(label)
-  }</div><div class="value">${escapeHtml(String(value))}</div></div>`;
+  return `<div class="card"><div class="label">${escapeHtml(label)}</div><div class="value">${
+    escapeHtml(String(value))
+  }</div></div>`;
 }
 
 function mapRows(map: NumericMap): string {
   return Object.entries(map)
-    .map(([key, value]) =>
-      `<tr><td>${escapeHtml(key)}</td><td>${round(value, 2)}</td></tr>`
-    )
+    .map(([key, value]) => `<tr><td>${escapeHtml(key)}</td><td>${round(value, 2)}</td></tr>`)
     .join("\n");
 }
 
@@ -3144,9 +3246,7 @@ function buildTopNotes(checks: CheckRow[], outliers: OutlierRow[]): string[] {
       `${check.status}: ${check.id} observed ${check.observed}, target ${check.target}.`,
     );
   }
-  const criticalOutlier = outliers.find((outlier) =>
-    outlier.severity === "CRITICAL"
-  );
+  const criticalOutlier = outliers.find((outlier) => outlier.severity === "CRITICAL");
   if (criticalOutlier !== undefined) {
     notes.push(
       `Critical outlier: ${criticalOutlier.type} on ${
@@ -3154,9 +3254,7 @@ function buildTopNotes(checks: CheckRow[], outliers: OutlierRow[]): string[] {
       }.`,
     );
   }
-  const reviewOutlier = outliers.find((outlier) =>
-    outlier.severity === "REVIEW"
-  );
+  const reviewOutlier = outliers.find((outlier) => outlier.severity === "REVIEW");
   if (reviewOutlier !== undefined) {
     notes.push(
       `Review first matchup: ${reviewOutlier.type} ${reviewOutlier.matchup_id} (${reviewOutlier.player_build_id} vs ${reviewOutlier.opponent_build_id}).`,
@@ -3181,12 +3279,8 @@ function selectSpells(
     return [];
   }
   const legal = allowedSpellIds(level);
-  const preferred = archetype.spell_preferences.filter((spellId) =>
-    legal.includes(spellId)
-  );
-  const candidates = kind === "fixed"
-    ? preferred
-    : shuffle(unique([...preferred, ...legal]), rng);
+  const preferred = archetype.spell_preferences.filter((spellId) => legal.includes(spellId));
+  const candidates = kind === "fixed" ? preferred : shuffle(unique([...preferred, ...legal]), rng);
   const desiredCount = kind === "fixed" ? maxSlots : 1 + rng.nextInt(maxSlots);
   return candidates.slice(0, Math.min(maxSlots, desiredCount));
 }
@@ -3228,15 +3322,7 @@ function qualityTierForLevel(
   kind: BuildKind,
   rng: SeededRandom,
 ): number {
-  const base = level >= 35
-    ? 4
-    : level >= 25
-    ? 3
-    : level >= 14
-    ? 2
-    : level >= 5
-    ? 1
-    : 0;
+  const base = level >= 35 ? 4 : level >= 25 ? 3 : level >= 14 ? 2 : level >= 5 ? 1 : 0;
   const jitter = kind === "fixed" ? 0 : rng.nextInt(3) - 1;
   return clamp(base + bias + jitter, 0, 4);
 }
@@ -3324,9 +3410,8 @@ function spellBehaviorRuleCount(build: CombatantBuild): number {
 }
 
 function disabledSpellBehaviorRuleCount(build: CombatantBuild): number {
-  return Object.values(build.spellBehaviors ?? {}).filter((behavior) =>
-    behavior.enabled === false
-  ).length;
+  return Object.values(build.spellBehaviors ?? {}).filter((behavior) => behavior.enabled === false)
+    .length;
 }
 
 function normalizeBehavior(
@@ -3334,9 +3419,7 @@ function normalizeBehavior(
   fallback: BehaviorConfig,
 ): BehaviorConfig {
   return {
-    enabled: typeof value?.enabled === "boolean"
-      ? value.enabled
-      : fallback.enabled,
+    enabled: typeof value?.enabled === "boolean" ? value.enabled : fallback.enabled,
     hp: normalizeBehaviorCondition(value?.hp, fallback.hp),
     mana: normalizeBehaviorCondition(value?.mana, fallback.mana),
   };
@@ -3350,10 +3433,9 @@ function normalizeBehaviorCondition(
       value?.mode === "ignore"
     ? value.mode
     : fallback.mode;
-  const percent =
-    typeof value?.percent === "number" && Number.isFinite(value.percent)
-      ? clampNumber(value.percent, 0, 100)
-      : fallback.percent;
+  const percent = typeof value?.percent === "number" && Number.isFinite(value.percent)
+    ? clampNumber(value.percent, 0, 100)
+    : fallback.percent;
   return { mode, percent };
 }
 
@@ -3393,15 +3475,11 @@ function addMap(target: NumericMap, source: NumericMap): void {
 }
 
 function maxAggregateWinRate(rows: AggregateRow[]): number {
-  return rows.length === 0
-    ? 0
-    : Math.max(...rows.map((row) => row.win_rate_percent));
+  return rows.length === 0 ? 0 : Math.max(...rows.map((row) => row.win_rate_percent));
 }
 
 function minAggregateWinRate(rows: AggregateRow[]): number {
-  return rows.length === 0
-    ? 0
-    : Math.min(...rows.map((row) => row.win_rate_percent));
+  return rows.length === 0 ? 0 : Math.min(...rows.map((row) => row.win_rate_percent));
 }
 
 function compareText(
@@ -3520,16 +3598,12 @@ function validateBridgeBuild(
         numberValue(build.spellLevels?.[spellId], level),
       ]),
     ),
-    passiveId: build.passiveId === undefined
-      ? undefined
-      : String(build.passiveId),
+    passiveId: build.passiveId === undefined ? undefined : String(build.passiveId),
     passiveLevel: build.passiveId === undefined
       ? undefined
       : numberValue(build.passiveLevel, level),
     petId: build.petId === undefined ? undefined : String(build.petId),
-    petLevel: build.petId === undefined
-      ? undefined
-      : numberValue(build.petLevel, level),
+    petLevel: build.petId === undefined ? undefined : numberValue(build.petLevel, level),
   };
   if (build.potionSlot !== undefined) {
     const rawSlot = build.potionSlot as {
@@ -3553,8 +3627,7 @@ function validateBridgeBuild(
   ) {
     const behaviors: Record<string, BehaviorConfig> = {};
     for (const spellId of sanitized.spellIds) {
-      const behavior =
-        (build.spellBehaviors as Record<string, BehaviorConfig>)[spellId];
+      const behavior = (build.spellBehaviors as Record<string, BehaviorConfig>)[spellId];
       if (behavior !== undefined) {
         behaviors[spellId] = normalizeBehavior(behavior, {
           enabled: true,
@@ -3752,9 +3825,7 @@ function median(values: number[]): number {
   if (values.length === 0) return 0;
   const sorted = [...values].sort((left, right) => left - right);
   const middle = Math.floor(sorted.length / 2);
-  return sorted.length % 2 === 0
-    ? (sorted[middle - 1] + sorted[middle]) / 2
-    : sorted[middle];
+  return sorted.length % 2 === 0 ? (sorted[middle - 1] + sorted[middle]) / 2 : sorted[middle];
 }
 
 function rate(count: number, total: number): number {
