@@ -7,6 +7,7 @@
 - Entry action: `open_minigame_shell:rpgsuave`
 - Surface: Labs Dev, dentro do app chrome
 - Public CTA: nao
+- Release root: `internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969`
 - Ultima atualizacao: `2026-05-31`
 
 ## Objetivo
@@ -18,6 +19,25 @@ upgrades simples. Na publicacao internal alpha, a sessao normal tambem exercita
 a ponte server-authoritative de recompensa limitada; falha de rede preserva o
 resultado local como pending mutation.
 
+## Publicacao Internal Alpha
+
+Publicado em `2026-05-31` para playtest humano interno:
+
+- Portal:
+  `https://d1e73b74.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+- Web:
+  `https://d1e73b74.draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969/downloads/draxos-mobile-alpha.apk`
+- PC ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969/downloads/draxos-mobile-alpha.zip`
+
+Validacao concluida: Full gate local limpo, migration remota aplicada, Edge
+Function `minigames` e manifest `release` publicados, smokes remotos de
+manifest/artefatos/minigame verdes e SHA remoto completo de APK/ZIP conferido.
+O proximo gate e playtest humano; nao abrir CTA publico no Refugio antes dessa
+leitura.
+
 ## Slice Travado
 
 O primeiro slice e `Bosque`, nao open world completo.
@@ -27,8 +47,9 @@ Mapa v0:
 - casa/local base com bau;
 - floresta com galhos, folhas, madeira, pedras, cogumelos, fungos, insetos e resina;
 - subzona leve de cemiterio/crematorio simbolico;
-- `cinzas_preview`, `ossos_preview` e `po_osso_preview` apenas como materiais
-  locais/preview ate o Reward Bridge aceitar resultado no servidor.
+- `cinzas_preview`, `ossos_preview` e `po_osso_preview` continuam materiais
+  locais/preview; o servidor so aceita o resultado limitado no `complete` e
+  converte para recompensas pequenas/auditaveis quando elegivel.
 
 Fora do escopo v0:
 

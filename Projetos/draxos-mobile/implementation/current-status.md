@@ -10,7 +10,8 @@
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published package: `Foundation Final Polish`
+- Latest published package: `Rpgsuave Bosque Integrated Alpha` from branch
+  `codex/draxos-mobile/rpgsuave-integrated-alpha`
 - Latest implemented package: `Rpgsuave Bosque + Minigame Platform v0` on branch
   `codex/draxos-mobile/rpgsuave-integrated-alpha`, over Foundation Final Polish.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
@@ -187,11 +188,29 @@ testing plus an integrated-alpha backend path for limited reward validation.
 - Remote Supabase migration and Edge Function `minigames` were deployed and
   passed an Internal Alpha remote smoke with email auth, battle request,
   minigame start/complete idempotency and progression-lab reward blocking.
+- Published to Internal Alpha on `2026-05-31` with release root
+  `internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969`.
+- Public playtest links:
+  - Portal:
+    `https://d1e73b74.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+  - Web:
+    `https://d1e73b74.draxos-mobile-internal-alpha.pages.dev/web/index.html`
+  - Android APK:
+    `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969/downloads/draxos-mobile-alpha.apk`
+  - PC ZIP:
+    `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969/downloads/draxos-mobile-alpha.zip`
+- Publication validation on `2026-05-31`: `validate_foundation.ps1 -Profile Full
+  -RequireClean`, export/package/upload, Cloudflare Pages deploy, manifest
+  deploy, `release_manifest_smoke.ts`, `release_artifacts_remote_smoke.ts`,
+  full remote artifact SHA smoke and `internal_alpha_remote_smoke.ts` with
+  email auth + minigame + release all passed.
 - Docs: `docs/minigames/rpgsuave.md` and
   `docs/contracts/minigame-platform-v0.md`.
 
 This package remains Labs Dev-only in the client shell and does not add a public
-Refugio CTA, Play Store surface or public product promise.
+Refugio CTA, Play Store surface or public product promise. The next gate is
+human playtest of the published Internal Alpha to judge movement, collection,
+weight, chest/crafting readability and limited reward clarity.
 
 ## Foundation Expansion Readiness
 

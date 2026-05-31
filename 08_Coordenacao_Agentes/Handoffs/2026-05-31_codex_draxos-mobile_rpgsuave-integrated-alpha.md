@@ -45,7 +45,7 @@ Registrar o estado final com arquivos alterados, comandos executados, bloqueios 
 - Implementada entrada em Labs Dev e tela `RpgsuaveForestScreen` com movimento topdown, coleta parada, cancelamento por movimento/distancia, bolso com peso, bau local, crafting local e resultado local.
 - Implementada plataforma backend `MINIGAME_PLATFORM_V0` com Edge Function `minigames`, registry/state/session start/session complete, schema minimo, idempotencia e RPCs service-role para Reward Bridge v0.
 - Implementada integracao client/backend em `SupabaseClient` e `SessionStore`, com modo `dev_local` e modo futuro `integrated_alpha` preservando pending mutation em falha de rede.
-- Atualizados contratos, documentacao, status local e portfolio para refletir que o pacote esta pronto para revisao/playtest local, sem deploy remoto.
+- Atualizados contratos, documentacao, status local e portfolio; na retomada de publicacao o pacote foi publicado remotamente e agora aguarda playtest humano.
 
 ## Validacao executada
 
@@ -61,9 +61,12 @@ Registrar o estado final com arquivos alterados, comandos executados, bloqueios 
 - `tools/validate_foundation.ps1 -ProjectDir . -Profile Quick` - OK.
 - `tools/validate_foundation.ps1 -ProjectDir . -Profile Client` - OK.
 
-## Nao executado
+## Validacao inicialmente nao executada
 
-- `validate_foundation.ps1 -Profile Full` nao foi executado porque dispara provas live locais de Supabase/Edge/Admin RLS (`transactional_rpc_live_test.ts`, `transactional_edge_rpc_smoke.ts`, `foundation_admin_rls_live_smoke.ts`) contra `127.0.0.1:54321/54322`. O stack local nao foi iniciado neste handoff e nao houve deploy/mutacao remota por regra operacional.
+- O primeiro handoff nao executou `validate_foundation.ps1 -Profile Full`
+  porque o stack local Supabase ainda nao estava iniciado. Na retomada de
+  publicacao, o stack local foi usado, a prova live de minigames entrou no Full
+  gate e o Full gate passou antes da publicacao remota.
 
 ## Riscos e proximos passos
 
@@ -76,4 +79,49 @@ Registrar o estado final com arquivos alterados, comandos executados, bloqueios 
 - Pedido do usuario: executar todos os proximos passos ate exigir playtest humano e publicar a nova versao.
 - Validacao adicionada: prova live local da Minigame Platform/Reward Bridge contra Supabase local, agora chamada pelo `validate_foundation.ps1 -Profile Full`.
 - Estado antes da publicacao: pacote Rpgsuave segue em branch de integracao; publicacao remota deve usar os scripts protegidos de Track 13 com `-ConfirmRemoteMutation`, sem copiar secrets para o repositorio.
-- Ponto de handoff esperado: Full gate limpo, release exportado/empacotado/publicado ou bloqueio explicito de credenciais/servico registrado.
+- Full gate local passou em `0aa3969`: `tools/validate_foundation.ps1 -ProjectDir . -Profile Full -RequireClean`.
+- Migration remota aplicada: `202605310001_minigame_platform_v0.sql`.
+- Edge Functions remotas publicadas: `minigames` e `release`.
+- Release exportado, empacotado, enviado ao Supabase Storage e publicado no Cloudflare Pages.
+- Release root: `internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969`.
+- Portal:
+  `https://d1e73b74.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+- Web:
+  `https://d1e73b74.draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969/downloads/draxos-mobile-alpha.apk`
+- PC ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969/downloads/draxos-mobile-alpha.zip`
+
+## Validacao final de publicacao
+
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile Full -RequireClean` - OK.
+- `tools/export_internal_alpha.ps1 -AllowAndroidDebugFallback` - OK; Android
+  `debug_fallback`.
+- `tools/publish_internal_alpha.ps1 -Mode Plan` - OK.
+- `tools/publish_internal_alpha.ps1 -Mode Package` - OK.
+- `tools/publish_internal_alpha.ps1 -Mode Upload -ConfirmRemoteMutation` - OK.
+- `tools/build_cloudflare_pages_package.ps1` - OK.
+- `wrangler pages deploy` - OK.
+- `tools/publish_internal_alpha.ps1 -Mode DeployManifest -ConfirmRemoteMutation` - OK.
+- `server/tests/release_manifest_smoke.ts` remoto - OK.
+- `server/tests/release_artifacts_remote_smoke.ts` remoto - OK.
+- `server/tests/release_artifacts_remote_smoke.ts` remoto com
+  `DRAXOS_RELEASE_FULL_HASH=1` - OK.
+- `server/tests/internal_alpha_remote_smoke.ts` remoto com
+  `DRAXOS_REMOTE_EMAIL_AUTH_SMOKE=1`,
+  `DRAXOS_REMOTE_MINIGAME_SMOKE=1` e
+  `DRAXOS_REMOTE_RELEASE_SMOKE=1` - OK.
+
+## Proximo bloqueio humano
+
+O trabalho automatico esta completo ate o ponto seguro. O proximo passo exige
+playtest humano do pacote publicado:
+
+- confirmar que o jogador entende em ate 2 minutos como andar, parar, coletar,
+  encher bolso, voltar ao bau, depositar e craftar;
+- sentir se `160 px/s`, raio de coleta, peso e tempos de coleta estao bons;
+- validar se a UI separa progresso local do modo e recompensa real da
+  Base/Conta;
+- observar Android real, Windows e Web antes de qualquer CTA publico no
+  Refugio.

@@ -1,29 +1,53 @@
 ﻿# DraxosMobile - Internal Alpha v0 Handoff
 
-- Data: `2026-05-27`
-- Status: `T03-P18_COMPLETE - INTERNAL_ALPHA_V0_HANDOFF_READY`
+- Data: `2026-05-31`
+- Status: `RPGSUAVE_INTEGRATED_ALPHA_PUBLISHED - AWAITING_HUMAN_PLAYTEST`
 - Canal: `internal_alpha`
 - Versao: `0.0.1-alpha.0`
 - Version code: `1`
 - Backend remoto: `https://armxgipvnbbshzqawklw.supabase.co`
-- Portal: `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
-- Web: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- Portal atual: `https://d1e73b74.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+- Web atual: `https://d1e73b74.draxos-mobile-internal-alpha.pages.dev/web/index.html`
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 
 ## Pacote Para Teste
 
 | Item | URL |
 |---|---|
-| Portal | `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html` |
-| Web | `https://draxos-mobile-internal-alpha.pages.dev/web/index.html` |
-| Android APK | `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.apk` |
-| PC ZIP | `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.zip` |
+| Portal | `https://d1e73b74.draxos-mobile-internal-alpha.pages.dev/portal/index.html` |
+| Web | `https://d1e73b74.draxos-mobile-internal-alpha.pages.dev/web/index.html` |
+| Android APK | `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969/downloads/draxos-mobile-alpha.apk` |
+| PC ZIP | `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969/downloads/draxos-mobile-alpha.zip` |
 
 | Artefato | Bytes | SHA256 |
 |---|---:|---|
-| Android APK | `27965106` | `ad6d2579ce003769cfce2536b788c1330abb283d0ae90cc785d1d016ae514ca6` |
-| PC Windows ZIP | `36466312` | `ad5fb8351bb001604479d95737fc702bb9b0ff6779afb9e3e31692b7bc189031` |
-| Web index | `5442` | `75fdd260b889582cb723256e87ca9867ae35b7cdd3411cbb2ca21ace5585366a` |
+| Android APK | `31725206` | `041dc7ff351214b77b0835991639b67c239152e0643237c4ef8ca7bc7b7933ee` |
+| PC Windows ZIP | `40188217` | `669013b975e9611e9b2e526fae1f2030afd42c2f027705e142a0fc81e41eabe9` |
+| Web index | `5442` | `fba1727cfa5bbf0c46c859c5581773378a2ca55004774b1c3ee08623c117fe2c` |
+
+## Atualizacao Rpgsuave Integrated Alpha - 2026-05-31
+
+- Release root atual:
+  `internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969`.
+- Portal:
+  `https://d1e73b74.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+- Web:
+  `https://d1e73b74.draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969/downloads/draxos-mobile-alpha.apk`
+- PC ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969/downloads/draxos-mobile-alpha.zip`
+
+| Artefato | Bytes | SHA256 |
+|---|---:|---|
+| Android APK | `31725206` | `041dc7ff351214b77b0835991639b67c239152e0643237c4ef8ca7bc7b7933ee` |
+| PC Windows ZIP | `40188217` | `669013b975e9611e9b2e526fae1f2030afd42c2f027705e142a0fc81e41eabe9` |
+| Web index | `5442` | `fba1727cfa5bbf0c46c859c5581773378a2ca55004774b1c3ee08623c117fe2c` |
+
+Escopo publicado: Rpgsuave Bosque em Labs Dev, Minigame Platform v0,
+Reward Bridge v0, manifest remoto atualizado e Portal/Web no Cloudflare Pages
+preview acima. Validacao: Full gate local, smokes remotos de manifest,
+artefatos, minigame integrado e hash completo de APK/ZIP verdes.
 
 ## Atualizacao Pos-Handoff Track 10 - 2026-05-28
 

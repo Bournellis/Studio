@@ -107,3 +107,22 @@ Resposta de sucesso de complete:
 - `tools/smoke_rpgsuave_forest.gd`;
 - GUT client para SessionStore/SupabaseClient/minigame local.
 
+## Publicacao 2026-05-31
+
+O contrato v0 foi publicado no Internal Alpha a partir da branch
+`codex/draxos-mobile/rpgsuave-integrated-alpha`.
+
+- Migration remota aplicada: `202605310001_minigame_platform_v0.sql`.
+- Edge Function remota publicada: `minigames`.
+- Release root:
+  `internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969`.
+- Full gate local: `tools/validate_foundation.ps1 -ProjectDir . -Profile Full
+  -RequireClean` passou.
+- Smoke remoto integrado: email auth, battle request, minigame
+  start/complete idempotente, bloqueio de recompensa em `progression_lab` e
+  release manifest passaram.
+- Smoke de artefatos: manifest remoto, Portal/Web, APK/ZIP e hash remoto
+  completo de APK/ZIP passaram.
+
+Proximo gate: playtest humano do `Rpgsuave Bosque` publicado. Mudancas de
+economia, tuning numerico, CTA publico ou fullscreen devem abrir pacote proprio.
