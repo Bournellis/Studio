@@ -166,16 +166,17 @@ now aligned with Track 16, but it still must not promote tuning by itself.
 
 ## Rpgsuave Bosque + Minigame Platform V0
 
-Rpgsuave Bosque is implemented as a dev-only minigame entry for sensation
-testing plus an integrated-alpha backend path for future reward validation.
+Rpgsuave Bosque is implemented as a Labs Dev minigame entry for sensation
+testing plus an integrated-alpha backend path for limited reward validation.
 
 - Labs Dev exposes `open_minigame_shell:rpgsuave`.
-- `RpgsuaveForestScreen` runs inside the existing app chrome and defaults to
-  `dev_local`.
+- `RpgsuaveForestScreen` runs inside the existing app chrome and uses
+  `integrated_alpha` when a valid Internal Alpha session is available.
 - Gameplay covers topdown movement, stopped collection, cancel-on-move,
   pocket weight, chest deposit, local crafting and local upgrades.
-- Network mode is gated by
-  `draxos_mobile/minigames/rpgsuave/integrated_alpha=false` by default.
+- Network mode is enabled for this internal package through
+  `draxos_mobile/minigames/rpgsuave/integrated_alpha=true`; failed network
+  requests keep the local result/pending mutation instead of losing play.
 - Edge Function `minigames` exposes registry, state, session start and session
   complete.
 - Migration `202605310001_minigame_platform_v0.sql` creates mode registry,
@@ -183,11 +184,14 @@ testing plus an integrated-alpha backend path for future reward validation.
   `minigame_session_start_v1`/`minigame_session_complete_v1`.
 - Reward Bridge v0 accepts only limited results, rejects/clamps tampering,
   blocks `progression_lab` rewards and writes `resource_transactions`.
+- Remote Supabase migration and Edge Function `minigames` were deployed and
+  passed an Internal Alpha remote smoke with email auth, battle request,
+  minigame start/complete idempotency and progression-lab reward blocking.
 - Docs: `docs/minigames/rpgsuave.md` and
   `docs/contracts/minigame-platform-v0.md`.
 
-This package is not published remotely and does not change public CTA, Play
-Store, Cloudflare or external release state.
+This package remains Labs Dev-only in the client shell and does not add a public
+Refugio CTA, Play Store surface or public product promise.
 
 ## Foundation Expansion Readiness
 

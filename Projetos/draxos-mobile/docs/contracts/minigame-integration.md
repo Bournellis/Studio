@@ -78,14 +78,14 @@ Se tocar Entry, Refugio ou Battle, o pacote tambem deve respeitar `docs/foundati
 | `minigame_id`/`mode_id` | `rpgsuave` |
 | `display_name` | `Rpgsuave Bosque` |
 | `slice_id` | `forest` |
-| `status` | `dev_only` no cliente; ponte `internal_alpha` pronta no backend |
+| `status` | `internal_alpha` em Labs Dev; sem CTA publico |
 | `surface` | Labs Dev |
 | `action` | `open_minigame_shell:rpgsuave` |
 | `service_scope` | `save-scoped` |
 | `ruleset_id` | `rpgsuave_forest_ruleset_v0` |
 | `ruleset_version` | `1` |
 | `data_strategy` | `minigame-local-progress` ate complete; `shared-save-progress` somente pela RPC |
-| `feature_flag` | `draxos_mobile/minigames/rpgsuave/enabled`; rede via `integrated_alpha=false` por default |
+| `feature_flag` | `draxos_mobile/minigames/rpgsuave/enabled`; rede via `integrated_alpha=true` nesta publicacao interna |
 
 Contrato detalhado: `docs/minigames/rpgsuave.md` e
 `docs/contracts/minigame-platform-v0.md`.

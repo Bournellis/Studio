@@ -1,6 +1,6 @@
 # Rpgsuave Bosque
 
-- Status: `DEV_ONLY_CLIENTE` com ponte `INTERNAL_ALPHA_READY`
+- Status: `INTERNAL_ALPHA_LABS_DEV`
 - Mode id: `rpgsuave`
 - Slice id: `forest`
 - Ruleset: `rpgsuave_forest_ruleset_v0`, version `1`
@@ -12,9 +12,11 @@
 ## Objetivo
 
 Rpgsuave Bosque existe para testar sensacao de jogo rapido dentro do shell
-DraxosMobile sem transformar preview local em saldo real. O jogador anda no
-mapa, para perto de recursos, coleta, enche o bolso, volta ao bau, deposita e
-usa crafting local para upgrades simples.
+DraxosMobile. Em Labs Dev, o jogador anda no mapa, para perto de recursos,
+coleta, enche o bolso, volta ao bau, deposita e usa crafting local para
+upgrades simples. Na publicacao internal alpha, a sessao normal tambem exercita
+a ponte server-authoritative de recompensa limitada; falha de rede preserva o
+resultado local como pending mutation.
 
 ## Slice Travado
 
@@ -91,14 +93,15 @@ Essa progressao nao e saldo de Base/Conta.
 
 `dev_local`:
 
-- default do cliente;
+- fallback local;
 - sem rede;
 - resultado e preview local;
-- usado para testar sensacao de jogo.
+- usado para testar sensacao de jogo quando a ponte nao estiver habilitada ou a
+  rede falhar antes do start.
 
 `integrated_alpha`:
 
-- desativado por default via `draxos_mobile/minigames/rpgsuave/integrated_alpha=false`;
+- ativado nesta publicacao via `draxos_mobile/minigames/rpgsuave/integrated_alpha=true`;
 - exige sessao valida e save normal;
 - abre sessao por `POST /minigames/session/start`;
 - completa por `POST /minigames/session/complete`;
@@ -134,4 +137,3 @@ Recompensa real sempre passa por RPC `service_role`, idempotencia
 - Edge Function: `server/functions/minigames/index.ts`
 - Migration: `server/schema/migrations/202605310001_minigame_platform_v0.sql`
 - Smokes/tests: `tools/smoke_rpgsuave_forest.gd`, `tests/client/test_rpgsuave_minigame_dev.gd`, `server/tests/minigame_*`
-
