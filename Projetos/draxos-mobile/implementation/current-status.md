@@ -10,7 +10,7 @@
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published package: `First Session Clarity v1`
+- Latest published package: `Foundation Final Polish`
 - Latest implemented package: `Foundation Final Polish` on branch
   `codex/draxos-mobile/foundation-final-polish`, over Foundation Closeout and
   Lab Track 16 Alignment.
@@ -264,9 +264,9 @@ runtime authority.
 
 ## Foundation Final Polish
 
-Foundation Final Polish is the last local hardening pass before tuning. It does
-not add gameplay, economy, social expansion, minigame rewards or remote
-publication.
+Foundation Final Polish is the last hardening pass before tuning. It does not
+add gameplay, economy, social expansion or minigame rewards. It was published
+to Internal Alpha after explicit release approval on `2026-05-30`.
 
 - Live docs now identify Foundation Closeout and Lab Track 16 Alignment as
   delivered; the final Full validation passed on the canonical local branch.
@@ -287,6 +287,23 @@ publication.
 - `validate_foundation.ps1 -Profile Full` includes local Supabase RPC, local
   Edge RPC and local admin/RLS smokes; if the local stack is not active, Full
   fails instead of skipping silently.
+- Internal Alpha publication used release root
+  `internal-alpha/v0-foundation-final-polish-20260530-8c658f6`, public
+  Cloudflare preview
+  `https://721dc985.draxos-mobile-internal-alpha.pages.dev/web/index.html`,
+  public APK
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-final-polish-20260530-8c658f6/downloads/draxos-mobile-alpha.apk`
+  and public PC ZIP
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-final-polish-20260530-8c658f6/downloads/draxos-mobile-alpha.zip`.
+- Publication validation passed: `validate_foundation.ps1 -Profile Release`,
+  export Android/PC/Web, `publish_internal_alpha.ps1 -Mode Plan`, `Package`,
+  `Upload -ConfirmRemoteMutation`, Cloudflare Pages deploy, `DeployManifest
+  -ConfirmRemoteMutation`, `release_manifest_smoke.ts`,
+  `release_artifacts_remote_smoke.ts`, `internal_alpha_remote_smoke.ts` with
+  release manifest check, and a direct preview shell check confirming
+  `GODOT_CONFIG`, versioned Web asset root and `index.pck` size match.
+- Known release risk: Android was exported with `debug_fallback` because no
+  release keystore was configured in the local env used for publication.
 
 Closeout validation on this branch:
 
@@ -321,11 +338,11 @@ Lab Track 16 Alignment validation on this branch:
   confirmed the corrected `foundation_ruleset_v0` content hash mirrored in the
   Closeout migration seed.
 
-Recommended next decision: the final Full gate is green and this branch is
-commit-clean at the validated local HEAD; choose one explicit package for base
-builder tuning, autobattler tuning, social expansion or minigame shell/contract.
-Do not start feature/tuning work implicitly from the Foundation Final Polish
-branch.
+Recommended next decision: the final Full gate is green and the latest
+Foundation Final Polish build is published to Internal Alpha; choose one
+explicit package for base builder tuning, autobattler tuning, social expansion
+or minigame shell/contract. Do not start feature/tuning work implicitly from the
+Foundation Final Polish branch.
 
 ## Progression Clarity v1
 
@@ -591,11 +608,14 @@ economy, content tuning or final art.
 
 ## Next Step
 
-Foundation Final Polish is the current local canonical base:
-`codex/draxos-mobile/foundation-final-polish` at validated local HEAD. The next
-decision should explicitly choose one package: base builder tuning, autobattler
-tuning, social expansion or minigame shell/contract. Do not open victory
-prediction, opponent counter-picks, custom
+Foundation Final Polish is the current local canonical base and latest Internal
+Alpha publication: `codex/draxos-mobile/foundation-final-polish` at validated
+local HEAD, release root
+`internal-alpha/v0-foundation-final-polish-20260530-8c658f6`, preview
+`https://721dc985.draxos-mobile-internal-alpha.pages.dev/web/index.html`. The
+next decision should explicitly choose one package: base builder tuning,
+autobattler tuning, social expansion or minigame shell/contract. Do not open
+victory prediction, opponent counter-picks, custom
 thresholds, enemy-specific behavior, spell priorities, direct chat, helps,
 contributions, moderation, tuning numbers, new weapons, new spells, economy,
 new potions, crafting expansion or broader replay controls without its own
