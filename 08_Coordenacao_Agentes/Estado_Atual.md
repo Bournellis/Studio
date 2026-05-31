@@ -7,7 +7,7 @@
 ## Prioridade Do Estudio
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`LAB_WEB_EXPORT_GUARD_PUBLISHED_INTERNAL_ALPHA`, hotfix publicado em `internal-alpha/v0-lab-web-export-guard-20260531-9a415c3`, preservando Track 19 Arena Consistency Pass, Track 13 release safety e Track 14 agent ops)
+- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`REMOTE_LAB_RUNNER_PUBLISHED_INTERNAL_ALPHA`, pacote publicado em `internal-alpha/v0-remote-lab-runner-20260531-e659d7e5`, preservando Track 19 Arena Consistency Pass, Track 13 release safety e Track 14 agent ops)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -23,15 +23,15 @@
 
 ## DraxosMobile
 
-- Status: **P2_IMPLEMENTACAO - LAB_WEB_EXPORT_GUARD_PUBLISHED_INTERNAL_ALPHA**
+- Status: **P2_IMPLEMENTACAO - REMOTE_LAB_RUNNER_PUBLISHED_INTERNAL_ALPHA**
 - Fase: `Implementacao`
 - Local: `Projetos/draxos-mobile/`
 - Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
 - Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
-- Baseline atual: Track 00-15 integradas, com Track 13 release safety e Track 14 agent ops preservados. Track 19 Arena Consistency Pass esta publicado em Internal Alpha e a publicacao remota atual e o hotfix Lab Web Export Guard (`internal-alpha/v0-lab-web-export-guard-20260531-9a415c3`, preview `https://fc60138d.draxos-mobile-internal-alpha.pages.dev/web/index.html`) a partir de `codex/draxos-mobile/lab-web-export-guard`: tentativa/progresso/recompensa server-authoritative, endpoints `arena/pve/*`, Refugio apontando para Arena, tutorial de 1 duelo, arenas de 3/4/5/6 duelos, loadout travado, buffs temporarios leves de stat, vida resetada por duelo, sem cooldown de combate, consumo de pocao por estoque vivo na Arena, claim apenas resumo/ack, endpoint publico `/arena/pve/buff/select`, lista de arenas data-driven no cliente, sanity targets de labs e Labs Dev protegidos contra execucao de `npx/deno` no Web export. PVP passa a modo posterior/competitivo, com bots apenas como fallback/simulacao.
+- Baseline atual: Track 00-15 integradas, com Track 13 release safety e Track 14 agent ops preservados. Track 19 Arena Consistency Pass esta publicado em Internal Alpha e a publicacao remota atual e o Remote Lab Runner (`internal-alpha/v0-remote-lab-runner-20260531-e659d7e5`, preview `https://9ae1e953.draxos-mobile-internal-alpha.pages.dev/web/index.html`) a partir de `codex/draxos-mobile/remote-lab-runner`: tentativa/progresso/recompensa server-authoritative, endpoints `arena/pve/*`, Refugio apontando para Arena, tutorial de 1 duelo, arenas de 3/4/5/6 duelos, loadout travado, buffs temporarios leves de stat, vida resetada por duelo, sem cooldown de combate, consumo de pocao por estoque vivo na Arena, claim apenas resumo/ack, endpoint publico `/arena/pve/buff/select`, lista de arenas data-driven no cliente, sanity targets de labs e Battle Lab/Progression Lab no Web export via Edge Function `lab-runner` protegida pela mesma conta alpha Supabase por email/senha e save `normal`. PVP passa a modo posterior/competitivo, com bots apenas como fallback/simulacao.
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
 - Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation` e Supabase/Cloudflare CLI autenticada. Mudancas visuais em Entry/Refugio/Batalha exigem `foundation-responsive-layout-contract.md` + `smoke_responsive_layout.gd`. Novas features devem respeitar `account_profiles/game_saves`, ruleset registry, idempotencia v1 e RPC transacional v1 para mutations economicas/social. Direct chat, ajudas, contribuicoes, moderacao, PVP, tuning numerico amplo, novas armas, novas spells, economia ampla, visual final, previsao de vitoria, contra-escolha por oponente, thresholds customizados, comportamento por inimigo e controles avancados de replay ficam bloqueados ate decisao propria.
-- Proximo passo: fazer playtest humano da Arena PVE tutorial/3 duelos no preview/APK hotfix publicado, confirmar que Battle Lab Dev nao tenta iniciar `npx/deno` no Web export e registrar tuning/UX blockers.
+- Proximo passo: fazer playtest humano da Arena PVE tutorial/3 duelos e dos Web Labs remotos no preview/APK publicado, confirmando que o acesso usa a mesma conta alpha Supabase por email/senha e registrando tuning/UX blockers.
 
 ## rpg-isometrico
 

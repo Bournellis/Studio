@@ -5,17 +5,17 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
 - Active stage: `Remote Lab Runner`
-- Active stage status: `REMOTE_LAB_RUNNER_LOCAL_VALIDATED`
+- Active stage status: `REMOTE_LAB_RUNNER_PUBLISHED_INTERNAL_ALPHA`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published remote package: `Lab Web Export Guard Hotfix`
+- Latest published remote package: `Remote Lab Runner`
 - Latest implemented package: `Remote Lab Runner` on branch
   `codex/draxos-mobile/remote-lab-runner`.
-- Active follow-up: publish/deploy the `lab-runner` Edge Function and updated
-  Web/Android/PC package, then human playtest Arena PVE plus Web Battle
-  Lab/Progression Lab remote generation.
+- Active follow-up: human playtest Arena PVE plus Web Battle Lab/Progression
+  Lab remote generation using the same Supabase email/password Internal Alpha
+  account gate as the game.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -40,14 +40,14 @@ Track 19 now aligns the same package for consistency before tuning: potions are
 consumed from live stock per Arena duel, claim is read as summary/ack only, the
 public buff endpoint is `/arena/pve/buff/select`, the client lists remote Arena
 data, and the labs report Arena PVE sequence sanity targets.
-Lab Web Export Guard is the current remote hotfix over Track 19: Battle Lab Dev
-and Progression Lab Dev now detect Web export before calling `OS.execute`,
-disable local-process actions in the browser and keep PC/editor Lab generation
-available.
-Remote Lab Runner is the current local follow-up over that hotfix: Web Battle
-Lab and Progression Lab can call Supabase Edge `lab-runner` with the same
-email/password Internal Alpha account gate used by the game, without exposing
-service role to the client or mutating economy/ranking/progress.
+Lab Web Export Guard is preserved as the browser safety baseline over Track 19:
+Battle Lab Dev and Progression Lab Dev detect Web export before calling
+`OS.execute`, disable local-process actions in the browser and keep PC/editor
+Lab generation available.
+Remote Lab Runner is the current published Internal Alpha package over that
+hotfix: Web Battle Lab and Progression Lab call Supabase Edge `lab-runner` with
+the same email/password Internal Alpha account gate used by the game, without
+exposing service role to the client or mutating economy/ranking/progress.
 
 Current product reading: this is a strong prototype base for refinement. The
 current product direction is Arena PVE initial, documented in
@@ -314,10 +314,9 @@ choose the focused tuning pass.
 
 ## Remote Lab Runner
 
-Remote Lab Runner is implemented locally on
-`codex/draxos-mobile/remote-lab-runner` as the follow-up to Lab Web Export
-Guard. It is not yet the latest published Internal Alpha package until the Edge
-Function and client package are deployed.
+Remote Lab Runner is implemented and published remotely on
+`codex/draxos-mobile/remote-lab-runner` as the current Internal Alpha package
+over Lab Web Export Guard.
 
 Implemented in this package:
 
@@ -336,7 +335,7 @@ Implemented in this package:
   `.progression_lab_scratch/**`, does not archive official runs and does not
   mutate reward, XP, resources, ranking, potion stock, saves or ledger.
 
-Local validation completed:
+Validation and publication completed:
 
 - `npx -y deno check server/functions/lab-runner/index.ts`
 - `npx -y deno check supabase/functions/lab-runner/index.ts`
@@ -349,9 +348,43 @@ Local validation completed:
 - `tools/check_agent_ops_foundation.ps1`: PASS.
 - `tools/validate_foundation.ps1 -Profile Quick`: PASS.
 - Godot `tools/validate.gd`: PASS (`138/138`, `2364` asserts).
+- `supabase functions deploy lab-runner`: PASS.
+- `tools/export_internal_alpha.ps1 -AllowAndroidDebugFallback`: PASS using the
+  ignored local Internal Alpha env file; Android export mode: `debug_fallback`.
+- `tools/publish_internal_alpha.ps1 -Mode Plan`: PASS.
+- `tools/publish_internal_alpha.ps1 -Mode Package`: PASS.
+- Supabase Storage upload: PASS for release root
+  `internal-alpha/v0-remote-lab-runner-20260531-e659d7e5`.
+- `tools/build_cloudflare_pages_package.ps1`: PASS with Web assets rooted at
+  the versioned Supabase Storage path.
+- `npx -y wrangler pages deploy`: PASS, preview
+  `https://9ae1e953.draxos-mobile-internal-alpha.pages.dev`.
+- `tools/publish_internal_alpha.ps1 -Mode DeployManifest`: BLOCKED because
+  `SUPABASE_ACCESS_TOKEN` is not available in the local release environment.
+  The release manifest was updated instead by deploying the `release` Edge
+  Function with a newer code default manifest; remote manifest smokes passed.
+- `server/tests/release_manifest_smoke.ts`: PASS remotely.
+- `server/tests/release_artifacts_remote_smoke.ts`: PASS remotely for manifest,
+  Portal, Web, APK and PC ZIP.
+- `server/tests/internal_alpha_remote_smoke.ts` with
+  `DRAXOS_REMOTE_RELEASE_SMOKE=1`: PASS remotely.
 
-Pending before human Web test: deploy the `lab-runner` Edge Function, publish a
-new Internal Alpha package and run the remote release smokes.
+Published Remote Lab Runner Internal Alpha artifacts:
+
+- Portal:
+  `https://9ae1e953.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+- Web:
+  `https://9ae1e953.draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-remote-lab-runner-20260531-e659d7e5/downloads/draxos-mobile-alpha.apk`
+  (`31745820` bytes,
+  `b013182633fbd5ef568344d3f551490d993dc9eb0edb77a89e46d0e4f028faf4`).
+- PC Windows ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-remote-lab-runner-20260531-e659d7e5/downloads/draxos-mobile-alpha.zip`
+  (`40206417` bytes,
+  `292f92916d30420dc8bb1cf49ac2e5d3375bd43548fb25ad8cb7e47b676c1495`).
+- Manifest:
+  `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 
 ## Foundation Audit
 
@@ -903,18 +936,19 @@ economy, content tuning or final art.
 
 ## Next Step
 
-Lab Web Export Guard is now the latest Internal Alpha publication:
-`codex/draxos-mobile/lab-web-export-guard`, release root
-`internal-alpha/v0-lab-web-export-guard-20260531-9a415c3`, preview
-`https://fc60138d.draxos-mobile-internal-alpha.pages.dev/web/index.html`.
+Remote Lab Runner is now the latest Internal Alpha publication:
+`codex/draxos-mobile/remote-lab-runner`, release root
+`internal-alpha/v0-remote-lab-runner-20260531-e659d7e5`, preview
+`https://9ae1e953.draxos-mobile-internal-alpha.pages.dev/web/index.html`.
 The next product step is human playtest and tuning notes for the Arena PVE
 tutorial/3-duel loop, including potion consumption, remote arena selection,
-buff selection, summary/claim behavior and the Web Lab guard. Do not open PVP,
-victory prediction, opponent counter-picks, custom thresholds, enemy-specific
-behavior, spell priorities, direct chat, helps, contributions, moderation,
-tuning numbers, new weapons, new spells, economy, new potions, crafting
-expansion or broader replay controls beyond the Arena PVE package without its
-own package decision.
+buff selection, summary/claim behavior and Web Battle Lab/Progression Lab
+remote generation through the same Supabase email/password Internal Alpha gate.
+Do not open PVP, victory prediction, opponent counter-picks, custom thresholds,
+enemy-specific behavior, spell priorities, direct chat, helps, contributions,
+moderation, tuning numbers, new weapons, new spells, economy, new potions,
+crafting expansion or broader replay controls beyond the Arena PVE package
+without its own package decision.
 
 ## Validation
 

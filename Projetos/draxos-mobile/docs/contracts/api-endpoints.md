@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
 - Ultima atualizacao: `2026-05-31`
-- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*`, `content/*` e `arena/pve/*` implementados local/remoto; `lab-runner/*` implementado como adaptador interno de Web Labs em validacao local; Foundation Expansion Readiness adiciona contrato de API v1 por header, account/save context, ruleset metadata, request hash/idempotencia transacional e admin/minigame scopes reservados; Arena PVE v1 esta publicada em Internal Alpha e Track 19 Arena Consistency Pass esta publicado.
+- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*`, `content/*`, `arena/pve/*` e `lab-runner/*` implementados local/remoto; Foundation Expansion Readiness adiciona contrato de API v1 por header, account/save context, ruleset metadata, request hash/idempotencia transacional e admin/minigame scopes reservados; Arena PVE v1, Track 19 Arena Consistency Pass e Remote Lab Runner estao publicados em Internal Alpha.
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -176,8 +176,8 @@ novo.
 
 ## Endpoints Internos De Lab Runner
 
-Status: **implementado localmente para Web Labs; publicacao remota exige deploy
-da Edge Function `lab-runner` e novo Web export**.
+Status: **implementado e publicado remotamente para Web Labs no pacote Remote
+Lab Runner**.
 
 Scope: `release`.
 
