@@ -105,6 +105,7 @@
 | `implementation/tracks/track-15-mobile-ux-overhaul/` | `HISTORICO` | Prior Android portrait UX package; not the active stage. |
 | `implementation/tracks/track-16-behavior-crafting/` | `HISTORICO` | Source track for behavior/crafting; use `docs/behavior-potion-crafting-v1.md` for current state. |
 | `implementation/tracks/track-17-foundation-expansion-readiness/` | `VIVO` | Delivered foundation package for future parallel expansion, Foundation Closeout, Foundation Final Polish and production readiness. |
+| `implementation/tracks/track-18-pve-arena-initial/` | `VIVO` | Active implementation package for Arena PVE initial: contracts, backend, client shell, labs and validation. |
 
 ## Design Archive
 
