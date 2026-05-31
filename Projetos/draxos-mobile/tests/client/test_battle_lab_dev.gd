@@ -141,6 +141,24 @@ func test_battle_lab_deno_invocation_sanitizes_project_settings() -> void:
 	ProjectSettings.set_setting(command_path, original_command)
 	ProjectSettings.set_setting(args_path, original_args)
 
+func test_battle_lab_web_export_guard_blocks_process_bridge() -> void:
+	var setting := "draxos_mobile/dev_labs/force_process_unavailable"
+	var original_value: Variant = ProjectSettings.get_setting(setting, false)
+	ProjectSettings.set_setting(setting, true)
+
+	var screen = BattleLabScreenScript.new()
+	add_child_autofree(screen)
+	assert_false(BattleLabScreenScript.local_process_supported())
+	assert_true(screen._status_label.text.contains("nao roda no Web export"))
+
+	var response := screen._send_bridge_request({"schema_version": "battle_lab_request_v1", "mode": "run"})
+	var error := Dictionary(response.get("error", {}))
+	assert_false(bool(response.get("ok", true)))
+	assert_eq(str(error.get("code", "")), "LOCAL_PROCESS_UNAVAILABLE")
+	assert_true(screen._status_label.text.contains("Deno local"))
+
+	ProjectSettings.set_setting(setting, original_value)
+
 func _runner_args(invocation: Dictionary, expected_windows_runner: Array[String]) -> PackedStringArray:
 	var command := str(invocation.get("command", ""))
 	var args := PackedStringArray(invocation.get("args", PackedStringArray()))

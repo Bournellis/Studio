@@ -17,6 +17,7 @@ const SESSION_PATH_TEMPLATE := "res://.progression_lab_scratch/session_%s_%s.jso
 const SESSION_LATEST_PATH := "res://.progression_lab_scratch/session_latest.json"
 const BATTLE_PASS_ID := "bp_s1_01"
 const SEASON_ID := "season_001"
+const FORCE_PROCESS_UNAVAILABLE_SETTING := "draxos_mobile/dev_labs/force_process_unavailable"
 
 var _profile_option: OptionButton
 var _milestone_option: OptionButton
@@ -29,6 +30,11 @@ static func is_available() -> bool:
 	if not bool(ProjectSettings.get_setting("draxos_mobile/progression_lab/enabled", false)):
 		return false
 	return OS.has_feature("editor") or bool(ProjectSettings.get_setting("draxos_mobile/internal_alpha/dev_tools_enabled", false))
+
+static func local_process_supported() -> bool:
+	if bool(ProjectSettings.get_setting(FORCE_PROCESS_UNAVAILABLE_SETTING, false)):
+		return false
+	return OS.get_name() != "Web" and not OS.has_feature("web")
 
 static func deno_invocation(settings_prefix: String, fallback_prefix: PackedStringArray) -> Dictionary:
 	var command_text := str(ProjectSettings.get_setting("%s/deno_command" % settings_prefix, "npx")).strip_edges()
@@ -80,7 +86,10 @@ static func clean_deno_prefix_args(configured: Variant, fallback: PackedStringAr
 
 func _ready() -> void:
 	_build_ui()
-	_set_status("Progression Lab Dev pronto. Selecione um perfil e milestone.")
+	if local_process_supported():
+		_set_status("Progression Lab Dev pronto. Selecione um perfil e milestone.")
+	else:
+		_set_status(_local_process_unavailable_message("Progression Lab"))
 	_refresh_checklist()
 
 func _build_ui() -> void:
@@ -146,9 +155,11 @@ func _build_ui() -> void:
 	var buttons := HBoxContainer.new()
 	buttons.add_theme_constant_override("separation", 8)
 	root.add_child(buttons)
-	buttons.add_child(_button("Gerar Relatorio", func() -> void:
+	var report_button := _button("Gerar Relatorio", func() -> void:
 		_generate_report()
-	))
+	)
+	_configure_process_button(report_button)
+	buttons.add_child(report_button)
 	buttons.add_child(_button("Preparar Save Local", func() -> void:
 		_prepare_local_save()
 	))
@@ -179,6 +190,9 @@ func _build_ui() -> void:
 	split.add_child(checklist_scroll)
 
 func _generate_report() -> void:
+	if not local_process_supported():
+		_set_status(_local_process_unavailable_message("Progression Lab"))
+		return
 	_set_status("Gerando outputs do Progression Lab...")
 	var script_path := ProjectSettings.globalize_path("res://tools/progression_lab/generate.ts")
 	var invocation := deno_invocation(
@@ -207,6 +221,9 @@ func _prepare_local_save() -> void:
 		_write_selected_cache(cache)
 		_set_status("Save local offline preparado. Use Carregar Save para aplicar no SessionStore.")
 		_summary_label.text = _session_summary(cache)
+		return
+	if not local_process_supported():
+		_set_status(_local_process_unavailable_message("Seeder"))
 		return
 	var script_path := ProjectSettings.globalize_path("res://tools/progression_lab/seed_supabase.ts")
 	var invocation := deno_invocation(
@@ -617,11 +634,20 @@ func _process_failure_message(tool_name: String, command: String, args: PackedSt
 		" ".join(args),
 	]
 
+func _local_process_unavailable_message(tool_name: String) -> String:
+	return "%s precisa de Deno local e nao roda no Web export. Use o build PC/editor para gerar relatorios; no navegador, carregue os saves/outputs ja gerados." % tool_name
+
 func _output_text(output: Array) -> String:
 	var lines := PackedStringArray()
 	for item: Variant in output:
 		lines.append(str(item))
 	return "\n".join(lines)
+
+func _configure_process_button(button: Button) -> void:
+	if local_process_supported():
+		return
+	button.disabled = true
+	button.tooltip_text = _local_process_unavailable_message("Progression Lab")
 
 func _button(text: String, callback: Callable) -> Button:
 	var button := Button.new()

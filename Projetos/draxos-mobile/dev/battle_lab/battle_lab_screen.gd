@@ -9,6 +9,7 @@ const REQUEST_SCHEMA := "battle_lab_request_v1"
 const RESPONSE_SCHEMA := "battle_lab_response_v1"
 const REQUEST_PATH := "user://battle_lab_request.json"
 const RESPONSE_PATH := "user://battle_lab_response.json"
+const FORCE_PROCESS_UNAVAILABLE_SETTING := "draxos_mobile/dev_labs/force_process_unavailable"
 
 const WEAPONS := [
 	{"id": "varinha_cinzas", "label": "Varinha de Cinzas"},
@@ -117,6 +118,11 @@ static func is_available() -> bool:
 	if not bool(ProjectSettings.get_setting("draxos_mobile/battle_lab/enabled", false)):
 		return false
 	return OS.has_feature("editor") or bool(ProjectSettings.get_setting("draxos_mobile/internal_alpha/dev_tools_enabled", false))
+
+static func local_process_supported() -> bool:
+	if bool(ProjectSettings.get_setting(FORCE_PROCESS_UNAVAILABLE_SETTING, false)):
+		return false
+	return OS.get_name() != "Web" and not OS.has_feature("web")
 
 static func deno_invocation(settings_prefix: String, fallback_prefix: PackedStringArray) -> Dictionary:
 	var command_text := str(ProjectSettings.get_setting("%s/deno_command" % settings_prefix, "npx")).strip_edges()
@@ -293,7 +299,10 @@ static func default_build(id_prefix: String, level: int = 25) -> Dictionary:
 func _ready() -> void:
 	set_process(true)
 	_build_ui()
-	_set_status("Battle Lab dev pronto. Use scratch para ensaios locais ou replay custom para ver uma build especifica.")
+	if local_process_supported():
+		_set_status("Battle Lab dev pronto. Use scratch para ensaios locais ou replay custom para ver uma build especifica.")
+	else:
+		_set_status(_local_process_unavailable_message("Battle Lab"))
 
 func _process(delta: float) -> void:
 	if not _replay_playing:
@@ -378,6 +387,7 @@ func _build_run_tab() -> Control:
 	scratch_button.pressed.connect(func() -> void:
 		_generate_run(false)
 	)
+	_configure_process_button(scratch_button)
 	box.add_child(scratch_button)
 
 	var generated_button := Button.new()
@@ -385,6 +395,7 @@ func _build_run_tab() -> Control:
 	generated_button.pressed.connect(func() -> void:
 		_generate_generated()
 	)
+	_configure_process_button(generated_button)
 	box.add_child(generated_button)
 
 	var official_button := Button.new()
@@ -392,6 +403,7 @@ func _build_run_tab() -> Control:
 	official_button.pressed.connect(func() -> void:
 		_generate_run(true)
 	)
+	_configure_process_button(official_button)
 	box.add_child(official_button)
 
 	_summary_label = _output_label("Nenhuma run carregada nesta sessao.")
@@ -415,6 +427,7 @@ func _build_builds_tab() -> Control:
 	replay_button.pressed.connect(func() -> void:
 		_generate_custom_replay()
 	)
+	_configure_process_button(replay_button)
 	box.add_child(replay_button)
 	return box.get_parent()
 
@@ -712,6 +725,16 @@ func _generate_custom_replay() -> void:
 	_send_bridge_request(request)
 
 func _send_bridge_request(request: Dictionary) -> Dictionary:
+	if not local_process_supported():
+		var message := _local_process_unavailable_message("Battle Lab")
+		_set_status(message)
+		return {
+			"ok": false,
+			"error": {
+				"code": "LOCAL_PROCESS_UNAVAILABLE",
+				"message": message,
+			},
+		}
 	_set_status("Chamando Battle Lab Deno...")
 	var request_path := ProjectSettings.globalize_path(REQUEST_PATH)
 	var response_path := ProjectSettings.globalize_path(RESPONSE_PATH)
@@ -1035,11 +1058,20 @@ func _process_failure_message(tool_name: String, command: String, args: PackedSt
 		" ".join(args),
 	]
 
+func _local_process_unavailable_message(tool_name: String) -> String:
+	return "%s precisa de Deno local e nao roda no Web export. Use o build PC/editor para gerar runs; no navegador, use os relatorios e replays ja gerados." % tool_name
+
 func _output_text(output: Array) -> String:
 	var lines := PackedStringArray()
 	for item: Variant in output:
 		lines.append(str(item))
 	return "\n".join(lines)
+
+func _configure_process_button(button: Button) -> void:
+	if local_process_supported():
+		return
+	button.disabled = true
+	button.tooltip_text = _local_process_unavailable_message("Battle Lab")
 
 func _scroll_vbox() -> VBoxContainer:
 	var scroll := ScrollContainer.new()
