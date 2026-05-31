@@ -213,7 +213,7 @@
     {
       "id": "pve_finalizador_abissal",
       "display_name": "Finalizador Abissal",
-      "description": "Finalizador do cap inicial de 5 duelos, focado em burst e pressao de summons sem nova regra customizada.",
+      "description": "Finalizador do cap inicial de 6 duelos, focado em burst e pressao de summons sem nova regra customizada.",
       "version": 1,
       "enabled": true,
       "tags": ["PVE_ARENA_V1", "enemy", "funeral_burst", "initial_cap"],

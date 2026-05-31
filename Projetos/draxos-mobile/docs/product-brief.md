@@ -45,7 +45,7 @@ Contrato v1 fechado para proxima implementacao:
 
 - tutorial de 1 duelo;
 - primeiras arenas reais de 3 duelos;
-- cap inicial de 5 duelos;
+- cap inicial de 6 duelos;
 - primeira lista de inimigos/arquetipos PVE;
 - buffs temporarios apenas de stat;
 - recompensa inicial calibravel por primeira clear, conclusao, recorde, repeticao reduzida e limites diarios/semanais.

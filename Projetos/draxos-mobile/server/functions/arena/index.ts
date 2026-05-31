@@ -18,13 +18,19 @@ import {
   loadFoundationGameSave,
   mutationRequestHash,
 } from "../_shared/transactional_mutation.ts";
-import {
-  type SaveType,
-  saveTypeFromRequest,
-  saveTypeQuery,
-} from "../_shared/save_context.ts";
+import { type SaveType, saveTypeFromRequest, saveTypeQuery } from "../_shared/save_context.ts";
 
-type Route = "list" | "start" | "duel/request" | "buff/choose" | "abandon";
+type Route = "list" | "start" | "duel/request" | "buff/choose" | "claim" | "abandon";
+type ArenaUnlock = "always" | "progression";
+type BuffStat =
+  | "max_hp"
+  | "ritual_power"
+  | "guard"
+  | "max_mana"
+  | "mana_regen"
+  | "ritual_haste"
+  | "will"
+  | "ritual_control";
 
 interface EdgeConfig {
   supabaseUrl: string;
@@ -170,76 +176,205 @@ interface ArenaDefinition {
   difficultyRank: number;
   maxSteps: number;
   enemySequence: string[];
-  unlock: "always" | "tutorial_completed";
+  unlock: ArenaUnlock;
+  requiredCompletedDifficulty: number;
 }
 
 interface BuffOption {
   id: string;
   label: string;
-  stat: "vitality" | "ritual_potency" | "guard" | "mana_flow" | "celerity";
+  stat: BuffStat;
   amount_percent: number;
+  stat_modifiers: { stat: BuffStat; operation: "add_percent"; value: number }[];
 }
 
-const UUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+interface ArenaRewardProfile {
+  resources: Record<string, number>;
+  firstClearMultiplier: number;
+  repeatMultiplier: number;
+  recordBonus: Record<string, number>;
+}
+
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 const ARENA_DEFINITIONS: ArenaDefinition[] = [
   {
-    id: "tutorial_arena_01",
-    displayName: "Tutorial da Arena",
-    difficultyId: "tutorial",
+    id: "arena_tutorial_cinzas",
+    displayName: "Tutorial: Cinzas Do Refugio",
+    difficultyId: "intro",
     difficultyRank: 0,
     maxSteps: 1,
-    enemySequence: ["mvp_training_bot"],
+    enemySequence: ["pve_aprendiz_cinzas"],
     unlock: "always",
+    requiredCompletedDifficulty: 0,
   },
   {
-    id: "arena_pve_3_duels_01",
-    displayName: "Arena PVE - Tres Duelos",
-    difficultyId: "initiate_01",
+    id: "arena_cinzas_curta",
+    displayName: "Arena Curta Das Cinzas",
+    difficultyId: "normal",
     difficultyRank: 1,
     maxSteps: 3,
     enemySequence: [
-      "bot_starter_instrument_01",
-      "bot_mental_controller_01",
-      "bot_effect_trainer_01",
+      "pve_aprendiz_cinzas",
+      "pve_guardiao_barreira",
+      "pve_sussurrador_veu",
     ],
-    unlock: "tutorial_completed",
+    unlock: "progression",
+    requiredCompletedDifficulty: 0,
+  },
+  {
+    id: "arena_veu_curta",
+    displayName: "Arena Do Veu",
+    difficultyId: "hard",
+    difficultyRank: 2,
+    maxSteps: 4,
+    enemySequence: [
+      "pve_sussurrador_veu",
+      "pve_pressao_veneno",
+      "pve_guardiao_barreira",
+      "pve_misturador_elemental",
+    ],
+    unlock: "progression",
+    requiredCompletedDifficulty: 1,
+  },
+  {
+    id: "arena_ossos_media",
+    displayName: "Arena Da Tempestade",
+    difficultyId: "expert",
+    difficultyRank: 3,
+    maxSteps: 5,
+    enemySequence: [
+      "pve_guardiao_barreira",
+      "pve_pressao_veneno",
+      "pve_condutor_familiar",
+      "pve_misturador_elemental",
+      "pve_invocador_ossario",
+    ],
+    unlock: "progression",
+    requiredCompletedDifficulty: 2,
+  },
+  {
+    id: "arena_abismo_longa",
+    displayName: "Arena Longa Do Abismo",
+    difficultyId: "expert",
+    difficultyRank: 4,
+    maxSteps: 6,
+    enemySequence: [
+      "pve_misturador_elemental",
+      "pve_condutor_familiar",
+      "pve_invocador_ossario",
+      "pve_defensor_abissal",
+      "pve_pressao_veneno",
+      "pve_finalizador_abissal",
+    ],
+    unlock: "progression",
+    requiredCompletedDifficulty: 3,
   },
 ];
 
 const BUFF_POOL: BuffOption[] = [
   {
-    id: "arena_vitality_minor",
-    label: "Vida maxima +5%",
-    stat: "vitality",
-    amount_percent: 5,
-  },
-  {
-    id: "arena_potency_minor",
-    label: "Potencia Ritual +4%",
-    stat: "ritual_potency",
+    id: "arena_buff_vitalidade_menor",
+    label: "Vitalidade Menor",
+    stat: "max_hp",
     amount_percent: 4,
+    stat_modifiers: [{ stat: "max_hp", operation: "add_percent", value: 4 }],
   },
   {
-    id: "arena_guard_minor",
-    label: "Guarda +4%",
+    id: "arena_buff_potencia_menor",
+    label: "Potencia Ritual Menor",
+    stat: "ritual_power",
+    amount_percent: 4,
+    stat_modifiers: [{ stat: "ritual_power", operation: "add_percent", value: 4 }],
+  },
+  {
+    id: "arena_buff_guarda_menor",
+    label: "Guarda Menor",
     stat: "guard",
     amount_percent: 4,
+    stat_modifiers: [{ stat: "guard", operation: "add_percent", value: 4 }],
   },
   {
-    id: "arena_mana_flow_minor",
-    label: "Fluxo de mana +5%",
-    stat: "mana_flow",
+    id: "arena_buff_mana_menor",
+    label: "Mana Menor",
+    stat: "max_mana",
+    amount_percent: 4,
+    stat_modifiers: [{ stat: "max_mana", operation: "add_percent", value: 4 }],
+  },
+  {
+    id: "arena_buff_regen_mana_menor",
+    label: "Regen De Mana Menor",
+    stat: "mana_regen",
     amount_percent: 5,
+    stat_modifiers: [{ stat: "mana_regen", operation: "add_percent", value: 5 }],
   },
   {
-    id: "arena_celerity_minor",
-    label: "Celeridade Ritual +3%",
-    stat: "celerity",
+    id: "arena_buff_celeridade_menor",
+    label: "Celeridade Ritual Menor",
+    stat: "ritual_haste",
     amount_percent: 3,
+    stat_modifiers: [{ stat: "ritual_haste", operation: "add_percent", value: 3 }],
+  },
+  {
+    id: "arena_buff_vontade_menor",
+    label: "Vontade Menor",
+    stat: "will",
+    amount_percent: 4,
+    stat_modifiers: [{ stat: "will", operation: "add_percent", value: 4 }],
+  },
+  {
+    id: "arena_buff_controle_menor",
+    label: "Controle Ritual Menor",
+    stat: "ritual_control",
+    amount_percent: 4,
+    stat_modifiers: [{ stat: "ritual_control", operation: "add_percent", value: 4 }],
   },
 ];
+
+const PVE_ENEMY_SOURCE_BOTS: Record<string, string> = {
+  pve_aprendiz_cinzas: "bot_starter_instrument_01",
+  pve_guardiao_barreira: "bot_effect_trainer_01",
+  pve_sussurrador_veu: "bot_mental_controller_01",
+  pve_misturador_elemental: "bot_elemental_mixer_01",
+  pve_pressao_veneno: "bot_effect_trainer_01",
+  pve_condutor_familiar: "bot_familiar_handler_01",
+  pve_invocador_ossario: "bot_summoner_01",
+  pve_defensor_abissal: "bot_familiar_handler_01",
+  pve_finalizador_abissal: "bot_summoner_01",
+};
+
+const ARENA_REWARD_PROFILES: Record<number, ArenaRewardProfile> = {
+  1: {
+    resources: { xp: 35, almas: 2, energia: 2, ossos: 20 },
+    firstClearMultiplier: 1.5,
+    repeatMultiplier: 0.25,
+    recordBonus: { xp: 10 },
+  },
+  3: {
+    resources: { xp: 90, almas: 6, energia: 4, sangue: 1, ossos: 60 },
+    firstClearMultiplier: 1.6,
+    repeatMultiplier: 0.35,
+    recordBonus: { xp: 20, almas: 1 },
+  },
+  4: {
+    resources: { xp: 120, almas: 8, energia: 5, sangue: 2, ossos: 90 },
+    firstClearMultiplier: 1.6,
+    repeatMultiplier: 0.35,
+    recordBonus: { xp: 25, almas: 1 },
+  },
+  5: {
+    resources: { xp: 170, almas: 11, energia: 7, sangue: 3, cristais: 1, ossos: 130 },
+    firstClearMultiplier: 1.7,
+    repeatMultiplier: 0.3,
+    recordBonus: { xp: 35, almas: 2 },
+  },
+  6: {
+    resources: { xp: 230, almas: 15, energia: 10, sangue: 4, cristais: 2, ossos: 180 },
+    firstClearMultiplier: 1.8,
+    repeatMultiplier: 0.25,
+    recordBonus: { xp: 50, almas: 3 },
+  },
+};
 
 Deno.serve(async (request: Request) => {
   if (request.method === "OPTIONS") {
@@ -273,7 +408,14 @@ Deno.serve(async (request: Request) => {
     if (route === "buff/choose" && request.method !== "POST") {
       return errorResponse(
         "METHOD_NOT_ALLOWED",
-        "Use POST /arena/buff/choose.",
+        "Use POST /arena/pve/buff/select.",
+        405,
+      );
+    }
+    if (route === "claim" && request.method !== "POST") {
+      return errorResponse(
+        "METHOD_NOT_ALLOWED",
+        "Use POST /arena/pve/claim.",
         405,
       );
     }
@@ -314,6 +456,9 @@ Deno.serve(async (request: Request) => {
     }
     if (route === "buff/choose") {
       return await handleBuffChoose(request, auth.value, config.value);
+    }
+    if (route === "claim") {
+      return await handleClaim(request, auth.value, config.value);
     }
     return await handleAbandon(request, auth.value, config.value);
   } catch (error) {
@@ -367,9 +512,7 @@ async function handleList(
     schema_version: "arena_list_response_v1",
     save_type: auth.saveType,
     progress: progress.value ?? defaultProgress(state.value),
-    arenas: ARENA_DEFINITIONS.map((definition) =>
-      arenaSummary(definition, progress.value)
-    ),
+    arenas: ARENA_DEFINITIONS.map((definition) => arenaSummary(definition, progress.value)),
     attempts: attempts.value,
     ranking: { mutated: false, reason: "ARENA_PVE_DOES_NOT_RANK" },
   });
@@ -514,11 +657,20 @@ async function handleDuelRequest(
   }
 
   const enemySequence = arrayOfStrings(attempt.value.enemy_sequence);
-  const opponentBotId = enemySequence[nextStep - 1] ?? enemySequence.at(-1) ??
-    "mvp_training_bot";
+  const enemyId = enemySequence[nextStep - 1] ?? enemySequence.at(-1) ??
+    "pve_aprendiz_cinzas";
+  const opponentBotId = sourceBotIdForEnemy(enemyId);
   const bot = await loadBot(config, opponentBotId);
   if (bot.error !== null) {
     return errorResponse(bot.error.code, bot.error.message, bot.error.status);
+  }
+  const progress = await loadArenaProgress(config, state.value.gameSave.id);
+  if (progress.error !== null) {
+    return errorResponse(
+      progress.error.code,
+      progress.error.message,
+      progress.error.status,
+    );
   }
 
   const battleId = crypto.randomUUID();
@@ -547,16 +699,24 @@ async function handleDuelRequest(
       difficulty_id: attempt.value.difficulty_id,
       step_index: nextStep,
       max_steps: attempt.value.max_steps,
+      enemy_id: enemyId,
       opponent_bot_id: bot.value.id,
       hp_reset_per_duel: true,
       ranking_mutated: false,
     },
   };
+  const rewardPayload = arenaRewardPayload(
+    attempt.value,
+    nextStep,
+    simulation.reward,
+    progress.value,
+  );
   const requestHash = await mutationRequestHash("arena/duel/request", body, {
     request_id: requestId,
     save_type: auth.saveType,
     attempt_id: attempt.value.id,
     step_index: nextStep,
+    enemy_id: enemyId,
     opponent_bot_id: bot.value.id,
     seed,
   });
@@ -570,11 +730,13 @@ async function handleDuelRequest(
         request_id: requestId,
         attempt_id: attempt.value.id,
         step_index: nextStep,
+        enemy_id: enemyId,
         opponent_bot_id: bot.value.id,
         seed,
         battle_log: arenaBattleLog,
         result: simulation.battleLog.result,
-        reward_payload: arenaRewardPayload(attempt.value, nextStep, simulation.reward),
+        reward_payload: rewardPayload,
+        reward_delta: rewardPayload.economy_delta,
         buff_options: buffOptions,
       },
     }),
@@ -648,6 +810,87 @@ async function handleBuffChoose(
     return errorResponse(mapped.code, mapped.message, mapped.status);
   }
   return jsonResponse(rpc.value);
+}
+
+async function handleClaim(
+  request: Request,
+  auth: AuthContext,
+  config: EdgeConfig,
+): Promise<Response> {
+  const body = await readJsonObject(request);
+  if (body === null) {
+    return errorResponse(
+      "INVALID_JSON",
+      "Request body must be a JSON object.",
+      400,
+    );
+  }
+  const requestId = stringField(body, "request_id");
+  const attemptId = stringField(body, "attempt_id");
+  if (!UUID_PATTERN.test(requestId)) {
+    return errorResponse("INVALID_REQUEST_ID", "request_id must be a UUID.", 400);
+  }
+  if (!UUID_PATTERN.test(attemptId)) {
+    return errorResponse(
+      "INVALID_ARENA_ATTEMPT",
+      "attempt_id must be a UUID.",
+      400,
+    );
+  }
+
+  const state = await loadPlayerState(auth, config);
+  if (state.error !== null) {
+    return errorResponse(
+      state.error.code,
+      state.error.message,
+      state.error.status,
+    );
+  }
+  const attempt = await loadAttempt(config, state.value.gameSave.id, attemptId);
+  if (attempt.error !== null) {
+    return errorResponse(
+      attempt.error.code,
+      attempt.error.message,
+      attempt.error.status,
+    );
+  }
+  if (attempt.value.status === "active") {
+    return errorResponse(
+      "ARENA_ATTEMPT_NOT_COMPLETE",
+      "Arena PVE attempt must finish before summary claim.",
+      409,
+    );
+  }
+  const progress = await loadArenaProgress(config, state.value.gameSave.id);
+  if (progress.error !== null) {
+    return errorResponse(
+      progress.error.code,
+      progress.error.message,
+      progress.error.status,
+    );
+  }
+  const requestHash = await mutationRequestHash("arena/claim", body, {
+    request_id: requestId,
+    save_type: auth.saveType,
+    attempt_id: attempt.value.id,
+    status: attempt.value.status,
+  });
+  return jsonResponse({
+    ok: true,
+    schema_version: "arena_claim_response_v1",
+    endpoint: "arena/claim",
+    request_id: requestId,
+    request_hash: requestHash,
+    game_save_id: state.value.gameSave.id,
+    legacy_player_id: state.value.player.id,
+    attempt: attempt.value,
+    progress: progress.value ?? defaultProgress(state.value),
+    player: state.value.player,
+    resources: state.value.resources,
+    reward_payload: attempt.value.reward_payload,
+    reward_already_applied: attempt.value.status === "completed",
+    ranking: { mutated: false, reason: "ARENA_PVE_DOES_NOT_RANK" },
+  });
 }
 
 async function handleAbandon(
@@ -859,6 +1102,37 @@ async function loadActiveAttempt(
   return { value: attempt, error: null };
 }
 
+async function loadAttempt(
+  config: EdgeConfig,
+  gameSaveId: string,
+  attemptId: string,
+): Promise<
+  { value: ArenaAttemptRow; error: null } | { value: null; error: RestError }
+> {
+  const result = await restRequest<ArenaAttemptRow[]>(
+    config,
+    `arena_attempts?id=eq.${encodeURIComponent(attemptId)}&game_save_id=eq.${
+      encodeURIComponent(gameSaveId)
+    }&select=*&limit=1`,
+    { method: "GET" },
+  );
+  if (result.error !== null) {
+    return { value: null, error: stateReadError() };
+  }
+  const attempt = result.value[0] ?? null;
+  if (attempt === null) {
+    return {
+      value: null,
+      error: {
+        code: "ARENA_ATTEMPT_NOT_FOUND",
+        message: "Arena PVE attempt was not found.",
+        status: 404,
+      },
+    };
+  }
+  return { value: attempt, error: null };
+}
+
 async function loadBot(
   config: EdgeConfig,
   botId: string,
@@ -900,11 +1174,11 @@ function definitionForStart(
 ): ArenaDefinition | null {
   const requestedArenaId = stringField(body, "arena_id");
   const fallbackId = progress?.tutorial_completed === true
-    ? "arena_pve_3_duels_01"
-    : "tutorial_arena_01";
-  const definition = ARENA_DEFINITIONS.find((candidate) =>
-    candidate.id === (requestedArenaId || fallbackId)
-  ) ?? null;
+    ? "arena_cinzas_curta"
+    : "arena_tutorial_cinzas";
+  const definition =
+    ARENA_DEFINITIONS.find((candidate) => candidate.id === (requestedArenaId || fallbackId)) ??
+      null;
   if (definition === null) {
     return null;
   }
@@ -924,6 +1198,7 @@ function arenaSummary(
     enemy_count: definition.enemySequence.length,
     unlocked: arenaUnlocked(definition, progress),
     unlock_rule: definition.unlock,
+    required_completed_difficulty: definition.requiredCompletedDifficulty,
     hp_reset_per_duel: true,
     loadout_locked: true,
     ranking_mutated: false,
@@ -937,7 +1212,12 @@ function arenaUnlocked(
   if (definition.unlock === "always") {
     return true;
   }
-  return progress?.tutorial_completed === true;
+  return progress?.tutorial_completed === true &&
+    (progress?.best_completed_difficulty ?? 0) >= definition.requiredCompletedDifficulty;
+}
+
+function sourceBotIdForEnemy(enemyId: string): string {
+  return PVE_ENEMY_SOURCE_BOTS[enemyId] ?? enemyId;
 }
 
 function defaultProgress(state: PlayerState): ArenaProgressRow {
@@ -961,9 +1241,7 @@ function defaultProgress(state: PlayerState): ArenaProgressRow {
 function combatantFromAttemptSnapshot(
   attempt: ArenaAttemptRow,
 ): CombatantBuild | null {
-  const snapshot = isObject(attempt.loadout_snapshot)
-    ? attempt.loadout_snapshot
-    : {};
+  const snapshot = isObject(attempt.loadout_snapshot) ? attempt.loadout_snapshot : {};
   const combatant = isObject(snapshot.combatant) ? snapshot.combatant : null;
   if (combatant === null) {
     return null;
@@ -1005,12 +1283,10 @@ function withCurrentBehavior(
   return {
     ...locked,
     spellBehaviors: spellBehaviorMap(state.spellBehaviors),
-    potionSlot: locked.potionSlot === undefined
-      ? undefined
-      : {
-        ...locked.potionSlot,
-        behavior: currentPotionSlot?.behavior ?? locked.potionSlot.behavior,
-      },
+    potionSlot: locked.potionSlot === undefined ? undefined : {
+      ...locked.potionSlot,
+      behavior: currentPotionSlot?.behavior ?? locked.potionSlot.behavior,
+    },
   };
 }
 
@@ -1019,11 +1295,14 @@ function applyArenaBuffs(
   activeBuffs: unknown,
 ): CombatantBuild {
   const buffs = Array.isArray(activeBuffs) ? activeBuffs.filter(isObject) : [];
-  const potency = totalBuffPercent(buffs, "ritual_potency") +
-    totalBuffPercent(buffs, "celerity");
-  const vitality = totalBuffPercent(buffs, "vitality") +
+  const potency = totalBuffPercent(buffs, "ritual_power") +
+    totalBuffPercent(buffs, "ritual_haste") +
+    totalBuffPercent(buffs, "ritual_control");
+  const vitality = totalBuffPercent(buffs, "max_hp") +
     totalBuffPercent(buffs, "guard");
-  const manaFlow = totalBuffPercent(buffs, "mana_flow");
+  const manaFlow = totalBuffPercent(buffs, "max_mana") +
+    totalBuffPercent(buffs, "mana_regen") +
+    totalBuffPercent(buffs, "will");
   return {
     ...combatant,
     level: combatant.level + Math.floor(vitality / 5),
@@ -1033,11 +1312,19 @@ function applyArenaBuffs(
 
 function totalBuffPercent(
   buffs: Record<string, unknown>[],
-  stat: BuffOption["stat"],
+  stat: BuffStat,
 ): number {
-  return buffs
-    .filter((buff) => buff.stat === stat)
-    .reduce((total, buff) => total + numberValue(buff.amount_percent, 0), 0);
+  return buffs.reduce((total, buff) => {
+    if (buff.stat === stat) {
+      return total + numberValue(buff.amount_percent, 0);
+    }
+    const modifiers = Array.isArray(buff.stat_modifiers)
+      ? buff.stat_modifiers.filter(isObject)
+      : [];
+    return total + modifiers
+      .filter((modifier) => modifier.stat === stat)
+      .reduce((modifierTotal, modifier) => modifierTotal + numberValue(modifier.value, 0), 0);
+  }, 0);
 }
 
 function buffOptionsForStep(
@@ -1052,12 +1339,15 @@ function arenaRewardPayload(
   attempt: ArenaAttemptRow,
   stepIndex: number,
   duelReward: { type: string; reward_id: string; resources: Record<string, number> },
+  progress: ArenaProgressRow | null,
 ): Record<string, unknown> {
   const completed = stepIndex >= attempt.max_steps;
+  const economyDelta = completed ? arenaCompletionReward(attempt, progress) : {};
   return {
-    schema_version: "arena_reward_stub_v1",
-    economy_applied: false,
-    reason: completed ? "COMPLETION_REWARD_PENDING_TUNING" : "DUEL_REWARD_PREVIEW_ONLY",
+    schema_version: "arena_reward_payload_v1",
+    economy_applied: completed,
+    reason: completed ? "COMPLETION_REWARD_APPLIED_ON_DUEL_CLEAR" : "DUEL_REWARD_PREVIEW_ONLY",
+    economy_delta: economyDelta,
     duel_reward_preview: duelReward,
     completion: {
       completed,
@@ -1066,15 +1356,66 @@ function arenaRewardPayload(
       step_index: stepIndex,
       max_steps: attempt.max_steps,
     },
+    repeat_reduction_applied: completed && arenaRewardIsRepeat(attempt, progress),
   };
 }
 
+function arenaCompletionReward(
+  attempt: ArenaAttemptRow,
+  progress: ArenaProgressRow | null,
+): Record<string, number> {
+  const profile = ARENA_REWARD_PROFILES[attempt.max_steps] ?? ARENA_REWARD_PROFILES[3];
+  const repeat = arenaRewardIsRepeat(attempt, progress);
+  const multiplier = repeat ? profile.repeatMultiplier : profile.firstClearMultiplier;
+  const delta = scaleResourceMap(profile.resources, multiplier);
+  if (!repeat && attempt.difficulty_rank > (progress?.best_completed_difficulty ?? 0)) {
+    return mergeResourceMaps(delta, profile.recordBonus);
+  }
+  return delta;
+}
+
+function arenaRewardIsRepeat(
+  attempt: ArenaAttemptRow,
+  progress: ArenaProgressRow | null,
+): boolean {
+  if (attempt.difficulty_rank <= 0) {
+    return progress?.tutorial_completed === true;
+  }
+  return (progress?.best_completed_difficulty ?? 0) >= attempt.difficulty_rank &&
+    (progress?.best_completed_length ?? 0) >= attempt.max_steps;
+}
+
+function scaleResourceMap(
+  resources: Record<string, number>,
+  multiplier: number,
+): Record<string, number> {
+  const output: Record<string, number> = {};
+  for (const [key, value] of Object.entries(resources)) {
+    output[key] = Math.max(0, Math.round(value * multiplier));
+  }
+  return output;
+}
+
+function mergeResourceMaps(
+  left: Record<string, number>,
+  right: Record<string, number>,
+): Record<string, number> {
+  const output = { ...left };
+  for (const [key, value] of Object.entries(right)) {
+    output[key] = Math.max(0, Math.round((output[key] ?? 0) + value));
+  }
+  return output;
+}
+
 function resolveRoute(pathname: string): Route | null {
-  if (pathname.endsWith("/list")) return "list";
-  if (pathname.endsWith("/start")) return "start";
+  if (pathname.endsWith("/list") || pathname.endsWith("/pve/state")) return "list";
+  if (pathname.endsWith("/start") || pathname.endsWith("/pve/start")) return "start";
   if (pathname.endsWith("/duel/request")) return "duel/request";
-  if (pathname.endsWith("/buff/choose")) return "buff/choose";
-  if (pathname.endsWith("/abandon")) return "abandon";
+  if (pathname.endsWith("/buff/choose") || pathname.endsWith("/pve/buff/select")) {
+    return "buff/choose";
+  }
+  if (pathname.endsWith("/claim") || pathname.endsWith("/pve/claim")) return "claim";
+  if (pathname.endsWith("/abandon") || pathname.endsWith("/pve/abandon")) return "abandon";
   return null;
 }
 
@@ -1222,13 +1563,16 @@ function mapArenaDatabaseError(error: RestError, fallbackCode: string): RestErro
     "INVALID_REQUEST_HASH",
     "INVALID_ARENA_ATTEMPT",
     "INVALID_ARENA_PAYLOAD",
+    "INVALID_ARENA_REWARD",
     "INVALID_ARENA_LENGTH",
     "GAME_SAVE_NOT_FOUND",
     "GAME_SAVE_WITHOUT_LEGACY_PLAYER",
     "RULESET_NOT_FOUND",
     "ARENA_ATTEMPT_ALREADY_ACTIVE",
+    "ARENA_ATTEMPT_NOT_FOUND",
     "ARENA_ATTEMPT_NOT_ACTIVE",
     "ARENA_ATTEMPT_COMPLETE",
+    "ARENA_ATTEMPT_NOT_COMPLETE",
     "ARENA_STEP_NOT_FOUND",
     "ARENA_BUFF_ALREADY_CHOSEN",
     "ARENA_BUFF_NOT_AVAILABLE",
@@ -1256,7 +1600,11 @@ function arenaStatus(code: string, fallback: number): number {
   ) {
     return 400;
   }
-  if (code === "GAME_SAVE_NOT_FOUND" || code === "ARENA_STEP_NOT_FOUND") {
+  if (
+    code === "GAME_SAVE_NOT_FOUND" ||
+    code === "ARENA_STEP_NOT_FOUND" ||
+    code === "ARENA_ATTEMPT_NOT_FOUND"
+  ) {
     return 404;
   }
   if (
@@ -1264,6 +1612,7 @@ function arenaStatus(code: string, fallback: number): number {
     code === "ARENA_ATTEMPT_ALREADY_ACTIVE" ||
     code === "ARENA_ATTEMPT_NOT_ACTIVE" ||
     code === "ARENA_ATTEMPT_COMPLETE" ||
+    code === "ARENA_ATTEMPT_NOT_COMPLETE" ||
     code === "ARENA_BUFF_ALREADY_CHOSEN"
   ) {
     return 409;
@@ -1279,8 +1628,12 @@ function arenaErrorMessage(code: string): string {
       return "Finish or abandon the active Arena PVE attempt before starting another.";
     case "ARENA_ATTEMPT_NOT_ACTIVE":
       return "Arena PVE attempt is not active.";
+    case "ARENA_ATTEMPT_NOT_FOUND":
+      return "Arena PVE attempt was not found.";
     case "ARENA_ATTEMPT_COMPLETE":
       return "Arena PVE attempt has no remaining duels.";
+    case "ARENA_ATTEMPT_NOT_COMPLETE":
+      return "Arena PVE attempt must be finished before summary claim.";
     case "ARENA_STEP_NOT_FOUND":
       return "Arena PVE step was not found.";
     case "ARENA_BUFF_ALREADY_CHOSEN":
@@ -1293,6 +1646,8 @@ function arenaErrorMessage(code: string): string {
       return "attempt_id must be a UUID.";
     case "INVALID_ARENA_PAYLOAD":
       return "Arena PVE request payload is invalid.";
+    case "INVALID_ARENA_REWARD":
+      return "Arena PVE reward payload is invalid.";
     case "GAME_SAVE_NOT_FOUND":
       return "Account save foundation row was not created yet.";
     case "GAME_SAVE_WITHOUT_LEGACY_PLAYER":
@@ -1373,9 +1728,7 @@ function numberValue(value: unknown, fallback: number): number {
 
 function arrayOfStrings(value: unknown): string[] {
   return Array.isArray(value)
-    ? value.filter((item): item is string =>
-      typeof item === "string" && item !== ""
-    )
+    ? value.filter((item): item is string => typeof item === "string" && item !== "")
     : [];
 }
 

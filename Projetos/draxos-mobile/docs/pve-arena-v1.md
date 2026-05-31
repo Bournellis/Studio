@@ -19,9 +19,9 @@ Esta entrega nao implementa backend, cliente Godot, migration ou tuning final. E
 | Core inicial | Arena PVE antes de PVP |
 | Tutorial | 1 duelo guiado |
 | Primeiras arenas reais | 3 duelos |
-| Limite maximo inicial | 5 duelos |
+| Limite maximo inicial | 6 duelos |
 | Arena de 4 duelos | Desbloqueia depois das primeiras arenas curtas provarem dificuldade 2 |
-| Arena de 5 duelos | Cap inicial; fica como conteudo contratado para dificuldade 4+ |
+| Arena de 6 duelos | Cap inicial; fica como conteudo contratado para dificuldade 4+ |
 | HP entre duelos | Reseta para 100% antes de cada duelo |
 | Loadout | Travado ao iniciar tentativa |
 | Entre duelos | Escolher 1 de 3 buffs temporarios e ajustar comportamento simples |
@@ -49,9 +49,9 @@ Esses arquivos entram no `foundation_ruleset_v0` como fonte autorada. Eles nao e
 |---|---:|---:|---|---|
 | `arena_tutorial_cinzas` | 1 | 0 | Sim | Ensinar pedido de duelo, replay, recompensa e retorno ao Refugio |
 | `arena_cinzas_curta` | 3 | 1 | Sim | Primeira arena real; apresenta buff entre duelos |
-| `arena_veu_curta` | 3 | 2 | Sim | Testa controle mental, barreira e pressao de DoT |
-| `arena_ossos_media` | 4 | 3 | Contratada/lockada | Primeiro aumento de comprimento |
-| `arena_abismo_longa` | 5 | 4 | Contratada/lockada | Cap inicial de comprimento |
+| `arena_veu_curta` | 4 | 2 | Sim | Testa controle mental, barreira e pressao de DoT |
+| `arena_ossos_media` | 5 | 3 | Contratada/lockada | Primeiro aumento longo de comprimento |
+| `arena_abismo_longa` | 6 | 4 | Contratada/lockada | Cap inicial de comprimento |
 
 Regra de unlock:
 
@@ -59,7 +59,7 @@ Regra de unlock:
 - primeira arena curta abre apos tutorial;
 - segunda arena curta abre apos primeira clear da arena curta;
 - arena de 4 duelos abre apos clear de dificuldade 2;
-- arena de 5 duelos abre apos clear de dificuldade 3 e continua sendo o cap inicial.
+- arena de 6 duelos abre apos clear de dificuldade 3 e continua sendo o cap inicial.
 
 ## Tentativa De Arena
 

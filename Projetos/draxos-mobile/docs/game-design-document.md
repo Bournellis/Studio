@@ -415,9 +415,9 @@ Contrato vivo do pacote: `pve-arena-v1.md`.
 
 A Arena PVE inicial e o primeiro modo jogavel de produto. Ela usa duelos assincronos server-authoritative contra inimigos controlados pelo jogo, sem depender de playerbase PVP e sem exigir campanha tradicional com assets pesados.
 
-Inspiracao de ritmo: uma lista de inimigos como torre/ladder de luta. O tutorial comeca com 1 duelo. As primeiras arenas reais comecam com 3 duelos. Depois de algumas dificuldades vencidas, arenas de 4 duelos sao liberadas, e assim por diante ate o cap inicial de 5 duelos.
+Inspiracao de ritmo: uma lista de inimigos como torre/ladder de luta. O tutorial comeca com 1 duelo. A primeira arena real comeca com 3 duelos. Depois de algumas dificuldades vencidas, arenas de 4 e 5 duelos sao liberadas, e assim por diante ate o cap inicial de 6 duelos.
 
-Decisao v1: o limite maximo inicial e 5 duelos. O primeiro pacote deve expor tutorial de 1 duelo e arenas reais de 3 duelos; arenas de 4 e 5 duelos ficam contratadas em dados para desbloqueio posterior dentro do mesmo cap inicial.
+Decisao v1: o limite maximo inicial e 6 duelos. O primeiro pacote deve expor tutorial de 1 duelo e arena real de 3 duelos; arenas de 4, 5 e 6 duelos ficam contratadas em dados para desbloqueio posterior dentro do mesmo cap inicial.
 
 Regras de modo:
 
@@ -437,7 +437,7 @@ Escala de arena:
 - Tutorial: 1 duelo guiado.
 - Primeiras arenas: 3 duelos.
 - Arena media: 4 duelos, liberada depois das primeiras arenas curtas provarem dificuldade 2.
-- Arena longa inicial: 5 duelos, cap v1 para dificuldade 4+.
+- Arena longa inicial: 6 duelos, cap v1 para dificuldade 4+.
 - Todas as duracoes continuam escalando dificuldade, para permitir que jogador avancado faca arena curta em dificuldade alta.
 
 Dados autorados v1:

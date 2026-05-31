@@ -375,8 +375,11 @@ declare
 	attempt_row public.arena_attempts%rowtype;
 	step_row public.arena_attempt_steps%rowtype;
 	progress_row public.arena_progress%rowtype;
+	player_row public.players%rowtype;
+	resource_row public.resources%rowtype;
 	reservation_payload jsonb;
 	response_payload jsonb;
+	reward_delta jsonb := '{}'::jsonb;
 	payload_attempt_id uuid;
 	next_step_index integer;
 	winner text;
@@ -384,6 +387,14 @@ declare
 	next_action text := 'choose_buff';
 	normalized_hash text := nullif(trim(coalesce(p_request_hash, '')), '');
 	now_ts timestamptz := now();
+	xp_delta integer := 0;
+	delta_almas numeric := 0;
+	delta_energia numeric := 0;
+	delta_sangue numeric := 0;
+	delta_cristais numeric := 0;
+	delta_ossos numeric := 0;
+	delta_po_osso numeric := 0;
+	delta_diamante integer := 0;
 begin
 	if p_game_save_id is null then
 		raise exception 'INVALID_GAME_SAVE_ID' using errcode = 'P0001';
@@ -507,6 +518,50 @@ begin
 	returning * into attempt_row;
 
 	progress_row := public.ensure_arena_progress_v1(save_row.id);
+
+	if next_status = 'completed' then
+		reward_delta := coalesce(
+			p_request_payload->'reward_delta',
+			p_request_payload#>'{reward_payload,economy_delta}',
+			'{}'::jsonb
+		);
+		if jsonb_typeof(reward_delta) <> 'object' then
+			raise exception 'INVALID_ARENA_REWARD' using errcode = 'P0001';
+		end if;
+
+		xp_delta := public.foundation_jsonb_integer_v1(reward_delta, 'xp');
+		delta_almas := public.foundation_jsonb_numeric_v1(reward_delta, 'almas');
+		delta_energia := public.foundation_jsonb_numeric_v1(reward_delta, 'energia');
+		delta_sangue := public.foundation_jsonb_numeric_v1(reward_delta, 'sangue');
+		delta_cristais := public.foundation_jsonb_numeric_v1(reward_delta, 'cristais');
+		delta_ossos := public.foundation_jsonb_numeric_v1(reward_delta, 'ossos');
+		delta_po_osso := public.foundation_jsonb_numeric_v1(reward_delta, 'po_osso');
+		delta_diamante := public.foundation_jsonb_integer_v1(reward_delta, 'diamante');
+
+		update public.players
+		set
+			xp = xp + greatest(0, xp_delta),
+			updated_at = now_ts
+		where id = save_row.legacy_player_id
+		returning * into player_row;
+
+		update public.resources
+		set
+			almas = almas + greatest(0, delta_almas),
+			energia = energia + greatest(0, delta_energia),
+			sangue = sangue + greatest(0, delta_sangue),
+			cristais = cristais + greatest(0, delta_cristais),
+			ossos = ossos + greatest(0, delta_ossos),
+			po_osso = po_osso + greatest(0, delta_po_osso),
+			diamante = diamante + greatest(0, delta_diamante),
+			updated_at = now_ts
+		where player_id = save_row.legacy_player_id
+		returning * into resource_row;
+
+		insert into public.resource_transactions (player_id, source, request_id, delta)
+		values (save_row.legacy_player_id, 'arena_pve_v1', p_request_id, reward_delta);
+	end if;
+
 	update public.arena_progress
 	set
 		best_attempt_step = greatest(best_attempt_step, next_step_index),
@@ -518,7 +573,7 @@ begin
 			when next_status = 'completed' then greatest(best_completed_length, attempt_row.max_steps)
 			else best_completed_length
 		end,
-		tutorial_completed = tutorial_completed or (next_status = 'completed' and attempt_row.arena_id = 'tutorial_arena_01'),
+		tutorial_completed = tutorial_completed or (next_status = 'completed' and attempt_row.arena_id = 'arena_tutorial_cinzas'),
 		total_clears = total_clears + case when next_status = 'completed' then 1 else 0 end,
 		last_attempt_id = attempt_row.id,
 		updated_at = now_ts
@@ -537,6 +592,9 @@ begin
 		'attempt', to_jsonb(attempt_row),
 		'step', to_jsonb(step_row),
 		'progress', to_jsonb(progress_row),
+		'player', to_jsonb(player_row),
+		'resources', to_jsonb(resource_row),
+		'reward_delta', reward_delta,
 		'next_action', next_action,
 		'ranking', jsonb_build_object('mutated', false, 'reason', 'ARENA_PVE_DOES_NOT_RANK')
 	);

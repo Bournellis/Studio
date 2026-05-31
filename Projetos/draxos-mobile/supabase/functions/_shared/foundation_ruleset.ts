@@ -4,7 +4,7 @@ export const FOUNDATION_RULESET = {
   "ruleset_id": "foundation_ruleset_v0",
   "ruleset_version": 1,
   "lifecycle": "FOUNDATION_AUDIT_ACTIVE",
-  "content_hash": "427c95ce7aecc48e44a0255cf2b4920eea845d43d4b864d28f6c5fe526387b31",
+  "content_hash": "fb5ce8e4219f1f018f521c9d59ac9813c5c16eaace1cb3bfef05df9c956a914e",
   "simulator_hash": "e835cadde3c937cba45c46785da3761139373ab23ac9dfaaed814d79f933bbe9",
   "runtime": {
     "mode": "FIRST_SLICE_SIM",
@@ -22,8 +22,8 @@ export const FOUNDATION_RULESET = {
     {
       "path": "data/definitions/arena_rewards.json",
       "kind": "definition_json",
-      "sha256": "3cfec72a6c53dcc849626b568f11a0e0d242f81a8c25e07ece64a878d70cc5e3",
-      "canonical_bytes": 3800
+      "sha256": "3e0e101e74865c290f157e5c106e9b57dd1e2ff44c49856eef82757d595425c3",
+      "canonical_bytes": 3804
     },
     {
       "path": "data/definitions/base_structures.json",
@@ -76,13 +76,13 @@ export const FOUNDATION_RULESET = {
     {
       "path": "data/definitions/pve_arenas.json",
       "kind": "definition_json",
-      "sha256": "23e5697372eac10cb2dd5b77621e3e515ef549f821aff4066870545e6e39e282",
-      "canonical_bytes": 4485
+      "sha256": "6b604bd3704004a27200dc85513860c80f0c70781916637bb01c0fec1db4272e",
+      "canonical_bytes": 4554
     },
     {
       "path": "data/definitions/pve_enemies.json",
       "kind": "definition_json",
-      "sha256": "7d4f41abfd5c3b700e98a5d0770c208695145eb7ccfc6013dbe9eafa1d3fb7e5",
+      "sha256": "f26f60fc435556cd562842b85bfda91636f8f08b5b282558d2e417198b5e91e6",
       "canonical_bytes": 6197
     },
     {
