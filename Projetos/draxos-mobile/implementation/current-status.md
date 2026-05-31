@@ -4,16 +4,15 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `PVE Arena Initial Direction`
-- Active stage status: `PVE_ARENA_INITIAL_DIRECTION_APPROVED`
+- Active stage: `Track 18 - PVE Arena Initial`
+- Active stage status: `PVE_ARENA_INITIAL_LOCAL_GATE_GREEN`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Latest published package: `Foundation Final Polish`
-- Latest implemented package: `Foundation Final Polish` on branch
-  `codex/draxos-mobile/foundation-final-polish`, over Foundation Closeout and
-  Lab Track 16 Alignment.
+- Latest implemented package: `Track 18 - PVE Arena Initial` on branch
+  `codex/draxos-mobile/pve-arena-integration`, over Foundation Final Polish.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -31,6 +30,9 @@ The implemented base includes Android/PC/Web alpha surfaces, email/password
 account flow, `normal` and `progression_lab` saves, server-authoritative battle,
 Base/Social/Competition/Shop loops, Progression Lab/Battle Lab, portrait
 Refugio, fullscreen portrait battle, skip, summary and current-battle logs.
+Track 18 now adds a local Arena PVE-first implementation branch with
+server-authoritative attempts, steps, temporary buffs, completion rewards,
+client shell routes and arena-specific lab outputs.
 
 Current product reading: this is a strong prototype base for refinement. The
 next product direction is Arena PVE initial, documented in
@@ -67,14 +69,17 @@ The major foundation baseline is:
   potion slots, potion crafting stock, `po_osso`, default potion behavior and
   spell behavior toggles as lab-only evidence before tuning.
 
-## PVE Arena Initial Direction
+## Track 18 - PVE Arena Initial
 
 On `2026-05-31`, the product direction changed from PVP-first to Arena
-PVE-first. Foundation Final Polish remains the implemented baseline, but the
-next package is now a small Arena PVE product/tuning package:
+PVE-first. Track 18 is implemented locally on
+`codex/draxos-mobile/pve-arena-integration`; Foundation Final Polish remains
+the latest published Internal Alpha package until release packaging/publication
+is explicitly approved.
 
 - tutorial starts with 1 guided duel;
 - first real arenas start with 3 duels;
+- v1 data includes 3, 4, 5 and 6-duel arenas;
 - longer arenas unlock later and keep scaling difficulty;
 - loadout is locked before the arena;
 - HP resets to 100% before every duel;
@@ -86,9 +91,37 @@ next package is now a small Arena PVE product/tuning package:
 - PVP moves to a later competitive package, with bots only as fallback or
   simulation while playerbase grows.
 
-Open design/tuning decisions are tracked in `docs/design-pending.md` as
-DMOB-D064 through DMOB-D067. Battle Lab and Progression Lab must be updated to
-model arena sequences before any numeric tuning is promoted.
+Implemented locally in Track 18:
+
+- `docs/pve-arena-v1.md` and contract docs define Arena PVE as a domain
+  separate from PVP/ranking.
+- `pve_arenas`, `pve_enemies`, `arena_buffs` and `arena_rewards` are registered
+  in `foundation_ruleset_v0`.
+- `arena_attempts`, `arena_attempt_steps` and `arena_progress` are
+  server-authoritative via transactional RPCs.
+- Edge Functions expose `arena/pve/state`, `arena/pve/start`,
+  `arena/pve/duel/request`, `arena/pve/buff/select`, `arena/pve/claim` and
+  `arena/pve/abandon`, mirrored in `server/` and `supabase/`.
+- Refugio now points the main CTA to Arena PVE, with selection, locked-loadout,
+  active attempt, replay, buff choice and summary surfaces.
+- Battle Lab now emits `battle_lab_arena_sequences.csv`; Progression Lab now
+  emits `arena_progression_checks.csv` and models attempts/duels/clear rate
+  instead of treating PVP battles as the early loop.
+
+Validation completed locally before commit:
+
+- `git diff --check`
+- `npx -y deno task --cwd server/functions check`
+- `npx -y deno task --cwd supabase/functions check`
+- `npx -y deno test --allow-read --allow-write tools/battle_lab/battle_lab_test.ts`
+- `npx -y deno test --allow-read --allow-write tools/progression_lab/progression_lab_test.ts`
+- `npx -y deno test --allow-read server/tests/foundation_ruleset_test.ts`
+- Godot `tools/validate.gd` after a one-time headless editor import: 134/134
+  tests, 2310 assertions.
+
+Remaining before publication: run the clean full foundation gate after commits,
+package Internal Alpha locally, then run human playtest. Remote upload/deploy
+still requires explicit approval and `-ConfirmRemoteMutation`.
 
 ## Foundation Audit
 

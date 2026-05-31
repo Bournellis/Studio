@@ -62,4 +62,13 @@ Implementar a virada completa para Arena PVE inicial, mantendo Foundation Final 
 
 ## Proximo Handoff
 
-Integrar as branches `arena-contracts`, `arena-backend` e `arena-client-labs`, resolver conflitos por dominio e rodar gate completo antes de qualquer pacote Internal Alpha.
+Track 18 integrado localmente em `codex/draxos-mobile/pve-arena-integration`.
+
+## Resultado
+
+- Contratos/dados/backend das branches `arena-contracts` e `arena-backend` integrados.
+- Shell Godot da Arena PVE, estado de sessão, endpoints cliente e labs integrados direto na branch de integração.
+- Battle Lab agora gera `battle_lab_arena_sequences.csv`.
+- Progression Lab agora gera `arena_progression_checks.csv`.
+- Godot `tools/validate.gd` passou com 134/134 testes depois de import headless dos assets.
+- Pendente pós-commit: rodar `check_foundation_expansion_readiness.ps1`, `validate_foundation.ps1 -Profile Full -RequireClean` e pacote local Internal Alpha.

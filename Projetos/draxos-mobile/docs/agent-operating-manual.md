@@ -27,9 +27,9 @@ If a historical track conflicts with these docs, the live docs win. If local pro
 
 ## Current Stage
 
-Active stage: `PVE_ARENA_INITIAL_DIRECTION_APPROVED`.
+Active stage: `PVE_ARENA_INITIAL_LOCAL_GATE_GREEN`.
 
-The project is a base implemented for refinement. First Session Clarity v1 is approved. Foundation Expansion Readiness, Foundation Closeout and Lab Track 16 Alignment are delivered. Foundation Final Polish is the implemented hardening baseline: it syncs live docs, keeps shell facade budgets guarded, strengthens presenter/session slices and adds the local RLS/admin smoke to the Full gate. The next product package is Arena PVE initial, not PVP-first.
+The project is a base implemented for refinement. First Session Clarity v1 is approved. Foundation Expansion Readiness, Foundation Closeout and Lab Track 16 Alignment are delivered. Foundation Final Polish is the latest published hardening baseline: it syncs live docs, keeps shell facade budgets guarded, strengthens presenter/session slices and adds the local RLS/admin smoke to the Full gate. Track 18 PVE Arena Initial is now implemented locally on `codex/draxos-mobile/pve-arena-integration`, not yet remotely published.
 
 The accepted loop baseline remains:
 
@@ -38,6 +38,8 @@ The accepted loop baseline remains:
 The selected first product loop is:
 
 `Refugio -> Arena PVE -> lock loadout -> duel list -> temporary stat buffs and behavior prep between duels -> rewards -> upgrades`
+
+Track 18 delivers server-authoritative Arena attempts/steps/progress, arena Edge Functions, separate PVE content/reward definitions, a Refugio Arena shell and lab outputs for Arena sequences/attempts. Before publication, run the clean full gate, package Internal Alpha locally and perform human playtest. Remote mutation still requires explicit approval and `-ConfirmRemoteMutation`.
 
 Social Basico Guilda v1, Visual Direction v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation Complete v1, Progression Clarity v1 and First Session Clarity v1 have since been published. Do not open feature expansion outside the Arena PVE initial package.
 

@@ -1,13 +1,13 @@
 # Estado Atual - Estudio
 
-- Ultima atualizacao: `2026-05-30`
+- Ultima atualizacao: `2026-05-31`
 - Fonte de verdade de portfolio: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Painel visual local: `08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
 ## Prioridade Do Estudio
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`PVE_ARENA_INITIAL_DIRECTION_APPROVED`, sobre Foundation Final Polish publicado em `internal-alpha/v0-foundation-final-polish-20260530-8c658f6`, preservando Track 13 release safety e Track 14 agent ops)
+- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`PVE_ARENA_INITIAL_LOCAL_GATE_GREEN`, Track 18 local sobre Foundation Final Polish publicado em `internal-alpha/v0-foundation-final-polish-20260530-8c658f6`, preservando Track 13 release safety e Track 14 agent ops)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -23,15 +23,15 @@
 
 ## DraxosMobile
 
-- Status: **P2_IMPLEMENTACAO - PVE_ARENA_INITIAL_DIRECTION_APPROVED**
+- Status: **P2_IMPLEMENTACAO - PVE_ARENA_INITIAL_LOCAL_GATE_GREEN**
 - Fase: `Implementacao`
 - Local: `Projetos/draxos-mobile/`
 - Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
 - Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
-- Baseline atual: Track 00-15 integradas, com Track 13 release safety e Track 14 agent ops preservados, e Foundation Final Polish publicado em Internal Alpha (`internal-alpha/v0-foundation-final-polish-20260530-8c658f6`, preview `https://721dc985.draxos-mobile-internal-alpha.pages.dev/web/index.html`). O projeto tem fundacao server-authoritative com Refugio/Base, batalha/recompensa, social/competicao/loja em substancia de prototipo, `account_profiles/game_saves`, registry de ruleset, idempotencia v1, ActionRouter/OperationState, smoke RLS/admin e labs alinhados ao Track 16. A direcao de produto aprovada em 2026-05-31 e Arena PVE inicial: tutorial de 1 duelo, primeiras arenas de 3 duelos, dificuldade escalavel, loadout travado, buffs temporarios leves de stat, vida resetada por duelo e sem cooldown de combate. PVP passa a modo posterior/competitivo, com bots apenas como fallback/simulacao.
+- Baseline atual: Track 00-15 integradas, com Track 13 release safety e Track 14 agent ops preservados, e Foundation Final Polish publicado em Internal Alpha (`internal-alpha/v0-foundation-final-polish-20260530-8c658f6`, preview `https://721dc985.draxos-mobile-internal-alpha.pages.dev/web/index.html`). Track 18 PVE Arena Initial esta implementado localmente em `codex/draxos-mobile/pve-arena-integration`: tentativa/progresso/recompensa server-authoritative, endpoints `arena/pve/*`, Refugio apontando para Arena, tutorial de 1 duelo, arenas de 3/4/5/6 duelos, loadout travado, buffs temporarios leves de stat, vida resetada por duelo, sem cooldown de combate e labs com sequencias/tentativas de Arena. PVP passa a modo posterior/competitivo, com bots apenas como fallback/simulacao.
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
 - Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation`; override do release manifest exige `SUPABASE_ACCESS_TOKEN`. Mudancas visuais em Entry/Refugio/Batalha exigem `foundation-responsive-layout-contract.md` + `smoke_responsive_layout.gd`. Novas features devem respeitar `account_profiles/game_saves`, ruleset registry, idempotencia v1 e RPC transacional v1 para mutations economicas/social. Direct chat, ajudas, contribuicoes, moderacao, PVP, tuning numerico amplo, novas armas, novas spells, economia ampla, visual final, previsao de vitoria, contra-escolha por oponente, thresholds customizados, comportamento por inimigo e controles avancados de replay ficam bloqueados ate decisao propria.
-- Proximo passo: fechar limite maximo inicial de lutas por arena, lista inicial de inimigos/arquetipos, recompensas e modelagem Battle Lab/Progression Lab para Arena PVE; depois implementar tutorial de 1 duelo e primeiras arenas de 3 duelos sem cooldown de combate.
+- Proximo passo: rodar gate full limpo, empacotar Internal Alpha localmente e fazer playtest humano da Arena PVE tutorial/3 duelos antes de qualquer publicacao remota.
 
 ## rpg-isometrico
 

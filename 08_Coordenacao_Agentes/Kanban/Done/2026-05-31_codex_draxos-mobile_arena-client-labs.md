@@ -50,4 +50,11 @@ Adicionar shell jogavel da Arena PVE no cliente e adaptar labs para medir tentat
 
 ## Proximo Handoff
 
-Entregar fluxo cliente/labs para integracao com endpoints reais do backend.
+Entregue e integrado na branch `codex/draxos-mobile/pve-arena-integration`.
+
+## Resultado
+
+- Refugio aponta para Arena PVE como CTA principal.
+- Cliente tem rotas de selecao, loadout, tentativa ativa, replay, buff choice e resumo.
+- `SessionStore` separa estado de Arena de `competition_state`.
+- Battle Lab e Progression Lab geram evidencia de sequencias/tentativas de Arena.

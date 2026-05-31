@@ -46,4 +46,9 @@ Definir contratos, docs e dados de conteudo para Arena PVE v1 antes de backend/c
 
 ## Proximo Handoff
 
-Entregar contratos e dados para backend, cliente e labs consumirem sem redefinir schema por conta propria.
+Entregue e integrado na branch `codex/draxos-mobile/pve-arena-integration`.
+
+## Resultado
+
+- Contrato `docs/pve-arena-v1.md`, docs de API/schema/content/battle log e dados `pve_arenas`, `pve_enemies`, `arena_buffs`, `arena_rewards` integrados.
+- Ruleset atualizado com fontes de Arena PVE.

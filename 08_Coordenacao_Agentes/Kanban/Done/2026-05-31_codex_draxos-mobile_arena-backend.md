@@ -48,4 +48,10 @@ Implementar estado server-authoritative da Arena PVE e endpoints `arena/*` sem t
 
 ## Proximo Handoff
 
-Entregar endpoints estaveis para o cliente e logs/rewards para a validacao integrada.
+Entregue e integrado na branch `codex/draxos-mobile/pve-arena-integration`.
+
+## Resultado
+
+- Tabelas/RPCs `arena_attempts`, `arena_attempt_steps` e `arena_progress` integradas.
+- Edge Function `arena` espelhada em `server/` e `supabase/`, com endpoints `arena/pve/*`.
+- Reward de conclusao aplicado no duelo final e Arena PVE sem mutacao de ranking.

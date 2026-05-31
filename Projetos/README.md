@@ -18,9 +18,9 @@ This directory contains active, conceptual and paused projects for the studio.
 
 ## Implementacao - Arena PVE Inicial
 
-- `draxos-mobile/`: mobile-first Draxos PVE Arena-first async autobattler with Refugio/Base, later PVP, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 13 release safety and Track 14 agent ops remain preserved baselines. First Session Clarity v1 is approved, and Foundation Closeout is delivered over Foundation Expansion Readiness: account/save authority, immutable ruleset publication registry, persisted replay hashes, API v1 header, idempotency v1, internal auditable admin RPCs, client retry registry, ActionRouter/OperationState in the real shell path, minigame placeholder only and transactional RPC promotion including build behavior/potion and social friend/chat. Foundation Final Polish adds shell/facade budgets, read-only presenter slices, stronger source guards and a local RLS/admin smoke in the Full gate, and is now published to Internal Alpha at `internal-alpha/v0-foundation-final-polish-20260530-8c658f6`. Battle Lab and Progression Lab now cover Track 16 potions, behavior, crafting, `po_osso` and preparation state as lab-only evidence before tuning. The confirmed Foundation post-login loop remains the accepted baseline, and the next product direction is Arena PVE initial: tutorial of 1 duel, first arenas of 3 duels, locked loadout, temporary stat buffs, HP reset per duel, no combat cooldown and PVP later.
-  - Priority/status: `P2_IMPLEMENTACAO - PVE_ARENA_INITIAL_DIRECTION_APPROVED`
-  - Canonical local branch for new agents: `codex/draxos-mobile/foundation-final-polish` at the final validated and published HEAD until merge/push is explicitly decided.
+- `draxos-mobile/`: mobile-first Draxos PVE Arena-first async autobattler with Refugio/Base, later PVP, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 13 release safety and Track 14 agent ops remain preserved baselines. First Session Clarity v1 is approved, and Foundation Closeout is delivered over Foundation Expansion Readiness: account/save authority, immutable ruleset publication registry, persisted replay hashes, API v1 header, idempotency v1, internal auditable admin RPCs, client retry registry, ActionRouter/OperationState in the real shell path, minigame placeholder only and transactional RPC promotion including build behavior/potion and social friend/chat. Foundation Final Polish is the latest Internal Alpha publication at `internal-alpha/v0-foundation-final-polish-20260530-8c658f6`. Track 18 PVE Arena Initial is implemented locally on `codex/draxos-mobile/pve-arena-integration`: tutorial of 1 duel, arenas de 3/4/5/6 duelos, locked loadout, temporary stat buffs, HP reset per duel, no combat cooldown, separate PVE attempts/progress/rewards and Arena-aware Battle/Progression Lab outputs.
+  - Priority/status: `P2_IMPLEMENTACAO - PVE_ARENA_INITIAL_LOCAL_GATE_GREEN`
+  - Canonical local branch for Arena PVE follow-up: `codex/draxos-mobile/pve-arena-integration`; use `codex/draxos-mobile/foundation-final-polish` only when explicitly returning to the latest published foundation baseline.
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Agent manual: `draxos-mobile/docs/agent-operating-manual.md`
   - Documentation index: `draxos-mobile/docs/documentation-index.md`
@@ -54,7 +54,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Battle Lab: `draxos-mobile/docs/battle-lab/README.md`
   - Design archive: `_conceitos/mobile-universe/`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: close Arena PVE length cap, enemy ladder, reward model and lab-modeling decisions, then implement the Arena PVE initial package.
+  - Current next step: run clean full gate/package locally, then human playtest the Arena PVE tutorial/3-duel loop before any remote publication decision.
 
 ## Arquivo De Design
 
