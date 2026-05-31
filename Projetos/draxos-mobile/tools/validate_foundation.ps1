@@ -463,6 +463,20 @@ if ($RunLocalEdgeRpc) {
     Skip-Step -Name "local Edge transactional RPC adapter smoke" -Stage "Quick" -Command "npx -y deno run --allow-net --allow-env server/tests/transactional_edge_rpc_smoke.ts" -Reason "-IncludeLocalEdgeRpc was not set and Profile is not Full."
 }
 
+if ($RunLocalEdgeRpc) {
+    Invoke-Step -Name "local minigame platform live proof" -Stage "Quick" -Command "npx -y deno check/run server/tests/minigame_platform_live_test.ts" -ScriptBlock {
+        Invoke-External -Command "minigame_platform_live_test.ts" -WorkingDirectory $ProjectPath -ScriptBlock {
+            & npx -y deno check server/tests/minigame_platform_live_test.ts
+            if ($LASTEXITCODE -ne 0) {
+                throw "deno check minigame_platform_live_test.ts exited with code $LASTEXITCODE."
+            }
+            & npx -y deno run --allow-net --allow-env server/tests/minigame_platform_live_test.ts
+        }
+    }
+} else {
+    Skip-Step -Name "local minigame platform live proof" -Stage "Quick" -Command "npx -y deno run --allow-net --allow-env server/tests/minigame_platform_live_test.ts" -Reason "-IncludeLocalEdgeRpc was not set and Profile is not Full."
+}
+
 if ($RunLocalAdminRls) {
     Invoke-Step -Name "local admin RLS live smoke" -Stage "Quick" -Command "npx -y deno check/run server/tests/foundation_admin_rls_live_smoke.ts" -ScriptBlock {
         Invoke-External -Command "foundation_admin_rls_live_smoke.ts" -WorkingDirectory $ProjectPath -ScriptBlock {

@@ -402,9 +402,9 @@ declare
 	ruleset_row public.mode_ruleset_registry%rowtype;
 	reservation_payload jsonb;
 	response_payload jsonb;
-	reward_payload jsonb;
-	resource_delta jsonb;
-	deposited_items jsonb := coalesce(p_request_payload->'deposited_items', '{}'::jsonb);
+	reward_payload_value jsonb;
+	resource_delta_value jsonb;
+	deposited_items_payload jsonb := coalesce(p_request_payload->'deposited_items', '{}'::jsonb);
 	item_record record;
 	item_quantity numeric;
 	total_deposited numeric := 0;
@@ -466,11 +466,11 @@ begin
 		raise exception 'MINIGAME_RESULT_REJECTED' using errcode = 'P0001';
 	end if;
 
-	if jsonb_typeof(deposited_items) <> 'object' then
+	if jsonb_typeof(deposited_items_payload) <> 'object' then
 		raise exception 'INVALID_RESULT' using errcode = 'P0001';
 	end if;
 
-	for item_record in select * from jsonb_each_text(deposited_items)
+	for item_record in select * from jsonb_each_text(deposited_items_payload)
 	loop
 		if item_record.key not in (
 			'madeira',
@@ -612,9 +612,9 @@ begin
 	base_xp := least(8, floor(plausible_score / 20.0)::integer);
 
 	select
-		coalesce(sum(coalesce(nullif(resource_delta->>'energia', '')::numeric, 0)), 0),
-		coalesce(sum(coalesce(nullif(resource_delta->>'ossos', '')::numeric, 0)), 0),
-		coalesce(sum(xp_delta), 0)
+		coalesce(sum(coalesce(nullif(mode_reward_claims.resource_delta->>'energia', '')::numeric, 0)), 0),
+		coalesce(sum(coalesce(nullif(mode_reward_claims.resource_delta->>'ossos', '')::numeric, 0)), 0),
+		coalesce(sum(mode_reward_claims.xp_delta), 0)
 	into daily_energia, daily_ossos, daily_xp
 	from public.mode_reward_claims
 	where player_id = save_row.legacy_player_id
@@ -624,7 +624,7 @@ begin
 	reward_energia := greatest(0, least(base_energia::numeric, 30 - daily_energia))::integer;
 	reward_ossos := greatest(0, least(base_ossos::numeric, 6 - daily_ossos))::integer;
 	reward_xp := greatest(0, least(base_xp::numeric, 24 - daily_xp))::integer;
-	resource_delta := jsonb_build_object(
+	resource_delta_value := jsonb_build_object(
 		'energia', reward_energia,
 		'ossos', reward_ossos,
 		'xp', reward_xp
@@ -655,10 +655,10 @@ begin
 		save_row.legacy_player_id,
 		'minigame:rpgsuave:forest',
 		p_request_id,
-		resource_delta
+		resource_delta_value
 	);
 
-	reward_payload := jsonb_build_object(
+	reward_payload_value := jsonb_build_object(
 		'schema_version', 'rpgsuave_reward_bridge_v0',
 		'mode_id', payload_mode_id,
 		'slice_id', payload_slice_id,
@@ -668,8 +668,8 @@ begin
 		'period_key', reward_period_key,
 		'activity_score', payload_activity_score,
 		'validated_score', plausible_score,
-		'resource_delta', resource_delta,
-		'local_items_accepted', deposited_items,
+		'resource_delta', resource_delta_value,
+		'local_items_accepted', deposited_items_payload,
 		'source', 'minigame:rpgsuave:forest'
 	);
 
@@ -693,8 +693,8 @@ begin
 		p_request_id,
 		p_request_hash,
 		reward_period_key,
-		reward_payload,
-		resource_delta,
+		reward_payload_value,
+		resource_delta_value,
 		reward_xp
 	);
 
@@ -704,9 +704,9 @@ begin
 		complete_request_id = p_request_id,
 		session_seconds = payload_session_seconds,
 		activity_score = payload_activity_score,
-		deposited_items = deposited_items,
+		deposited_items = deposited_items_payload,
 		result_payload = p_request_payload,
-		reward_payload = reward_payload,
+		reward_payload = reward_payload_value,
 		completed_at = now(),
 		updated_at = now()
 	where id = session_row.id
@@ -771,7 +771,7 @@ begin
 			'validated_score', plausible_score,
 			'completed_at', session_row.completed_at
 		),
-		'reward', reward_payload,
+		'reward', reward_payload_value,
 		'resources', jsonb_build_object(
 			'energia', resource_row.energia,
 			'ossos', resource_row.ossos,
@@ -780,7 +780,7 @@ begin
 		'limits', jsonb_build_object(
 			'daily', jsonb_build_object('energia', 30, 'ossos', 6, 'xp', 24),
 			'used_today_before', jsonb_build_object('energia', daily_energia, 'ossos', daily_ossos, 'xp', daily_xp),
-			'applied', resource_delta,
+			'applied', resource_delta_value,
 			'period_key', reward_period_key
 		),
 		'server_time', now()

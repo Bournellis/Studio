@@ -26,7 +26,12 @@ import {
   mapFoundationDatabaseError,
   mutationRequestHash,
 } from "../_shared/transactional_mutation.ts";
-import { type SaveType, saveTypeFromRequest, saveTypeQuery } from "../_shared/save_context.ts";
+import {
+  SAVE_TYPE_HEADER,
+  type SaveType,
+  saveTypeFromRequest,
+  saveTypeQuery,
+} from "../_shared/save_context.ts";
 
 type Route = "registry" | "state" | "session_start" | "session_complete";
 
@@ -67,7 +72,7 @@ interface MinigameState {
   resources: MinigameResourcesRow | null;
 }
 
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{12}$/i;
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 Deno.serve(async (request: Request) => {
   if (request.method === "OPTIONS") {
@@ -441,6 +446,17 @@ function decodeAuthContext(request: Request): { value: AuthContext; error: null 
     return {
       value: null,
       error: { code: "UNAUTHENTICATED", message: "Token subject is invalid.", status: 401 },
+    };
+  }
+  const saveTypeHeader = request.headers.get(SAVE_TYPE_HEADER);
+  if (saveTypeHeader === null || saveTypeHeader.trim() === "") {
+    return {
+      value: null,
+      error: {
+        code: "INVALID_SAVE_TYPE",
+        message: "x-draxos-save-type is required for minigame endpoints.",
+        status: 400,
+      },
     };
   }
   const saveType = saveTypeFromRequest(request);
