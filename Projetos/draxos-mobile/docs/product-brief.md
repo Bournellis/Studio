@@ -1,57 +1,62 @@
 # DraxosMobile - Product Brief
 
-- Ultima atualizacao: `2026-05-30`
+- Ultima atualizacao: `2026-05-31`
 - Status: `VIVO`
 
 ---
 
 ## Leitura Atual
 
-DraxosMobile e um jogo mobile-first de progressao persistente construido sobre tres pilares reais:
+DraxosMobile e um jogo mobile-first de progressao persistente construido sobre quatro pilares reais:
 
 - Base builder.
-- Autobattler assincrono server-authoritative.
-- Social basico.
+- Arena PVE inicial de duelos assincronos.
+- PVP assincrono posterior.
+- Social basico depois que a rotina PVE/PVP estiver clara.
 
 O projeto atual deve ser lido como uma base implementada para refinamento. Ele nao e produto final, nao e uma trilha de expansao de conteudo e nao e uma rodada de balanceamento.
 
-A etapa atual e `FOUNDATION_FINAL_POLISH_DELIVERED`.
+A etapa atual e `PVE_ARENA_INITIAL_DIRECTION_APPROVED`, sobre `FOUNDATION_FINAL_POLISH_DELIVERED`.
 
 ## Foco Imediato
 
 O foco imediato de fundacao foi fechado: Foundation Closeout entregou account/save, ruleset registry, idempotencia v1, admin minimo, API versioning e mutacoes transacionais; Lab Track 16 Alignment atualizou Battle Lab/Progression Lab para pocoes, comportamento, crafting e `po_osso`; Foundation Final Polish sincroniza docs, shell budgets, presenter guards e smoke local RLS/admin.
 
-A proxima etapa so deve comecar apos o Full gate final verde e escolha explicita do pacote. O loop interno pos-login aceito continua:
+A decisao de produto seguinte e `docs/pve-arena-initial-direction.md`: o jogo deve comecar por Arena PVE, nao por PVP-first. O loop interno pos-login aceito continua como fundacao de app:
 
 `Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
 
 First Session Clarity v1 e o pacote publicado atual para essa pergunta: Refugio, Preparacao e Resultado agora orientam o primeiro ciclo sem novo backend, schema, tuning, economia ou conteudo.
 
-Ao abrir tuning, devem ser avaliados:
+Ao abrir o pacote de Arena PVE inicial, devem ser avaliados juntos:
 
-- hierarquia da primeira tela apos login;
-- posicao dos icones e botoes principais;
-- quantidade de etapas ate coletar, evoluir e batalhar;
-- clareza do feedback de recurso, upgrade, batalha e recompensa;
-- retorno para base apos a recompensa;
-- estados de loading, erro, vazio e sucesso;
+- leveling;
+- upgrades;
+- recompensas;
+- poder de batalha;
+- lista inicial de inimigos PVE;
+- tamanho e dificuldade das arenas;
+- buffs temporarios de stat;
+- comportamento ajustavel entre lutas;
+- limites de recompensa sem cooldown de combate;
 - qualidade da resposta visual/tecnica em Android, PC e PC browser.
 
 ## O Que Existe Como Substancia/Mock
 
 Armas, spells, nomes, tema, imagens, apresentacao atual de batalha, economia, Battle Pass, Diamante, loja, bots, rankings e valores de progressao existem para dar substancia ao jogo e impedir que o app pareca vazio.
 
-Esses elementos nao devem ser tratados como decisao final de design nesta etapa. Eles so viram prioridade quando a Foundation Audit e a ordem de trabalho atual promoverem o assunto.
+Esses elementos nao devem ser tratados como decisao final de design nesta etapa. A Arena PVE inicial promove apenas a estrutura de early game e o tuning integrado necessario para que o jogador consiga vencer duelos, ganhar recursos, melhorar base/build e tentar dificuldade maior.
 
 Terminologia implementada preservada como substancia/mock: Instrumento Ritual, Spell, Doutrina e Familiar.
 
-Ordem recomendada apos a auditoria documental:
+Ordem recomendada agora:
 
-1. Loop interno pos-login.
-2. Social.
-3. Visual geral.
-4. Apresentacao da batalha.
-5. Armas, spells, economia, balanceamento e conteudo detalhado.
+1. Arena PVE tutorial e primeiras arenas de 3 lutas.
+2. Dificuldade, recompensas, poder e progression labs orientados a Arena PVE.
+3. Base/preparacao como suporte da Arena PVE.
+4. PVP assincrono posterior, com bots como fallback transparente.
+5. Social/competicao.
+6. Armas, spells, economia fina, novos conteudos e visual final.
 
 ## Plataformas
 
@@ -72,6 +77,7 @@ A base tecnica ja contem:
 - email/senha e fluxo de conta alpha;
 - saves `normal` e `progression_lab`;
 - batalha server-authoritative com replay/log;
+- preparacao de loadout e comportamento simples de habilidade/pocao;
 - Base/Refugio, coleta, upgrades e recursos;
 - social, competicao, loja e laboratorios em estado de prototipo;
 - release manifest, build channel e runbooks de publicacao segura;
@@ -83,7 +89,9 @@ Track 16 e o ultimo pacote tecnico, com comportamento/crafting/pocoes. Ele esta 
 
 | Area | Decisao |
 |---|---|
-| Produto | Base builder + autobattler + social basico, com futuro de minigames |
+| Produto | Base builder + Arena PVE inicial + PVP posterior + social basico |
+| Arena PVE | Core inicial: tutorial de 1 luta, primeiras arenas de 3 lutas, dificuldade escalavel, loadout travado, buffs temporarios de stat, vida resetada por duelo e sem cooldown de combate |
+| PVP | Modo posterior/competitivo; bots podem ser fallback/simulacao, nao fundacao escondida |
 | Batalha | Servidor resolve; cliente apresenta log/replay |
 | Backend | Supabase como ponte de alpha; Backend Proprio + Postgres como saida preferida se crescer |
 | Autoridade | Recurso, recompensa, ranking, batalha e mutacoes importantes ficam no servidor |
@@ -93,6 +101,7 @@ Track 16 e o ultimo pacote tecnico, com comportamento/crafting/pocoes. Ele esta 
 ## Documentos Vivos
 
 - `foundation-app-v0-audit.md` - bussola atual da Foundation Audit.
+- `pve-arena-initial-direction.md` - direcao viva do early game por Arena PVE.
 - `first-session-clarity-v1.md` - pacote publicado de clareza da primeira sessao.
 - `product-vision.md` - visao longa local.
 - `game-design-document.md` - referencia de implementacao e substancia/mock existente.

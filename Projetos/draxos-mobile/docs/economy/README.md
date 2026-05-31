@@ -1,12 +1,28 @@
 # DraxosMobile - Economia E Simulador De Seasons
 
-- Ultima atualizacao: `2026-05-20`
-- Status: baseline calibravel para T00-P09
+- Ultima atualizacao: `2026-05-31`
+- Status: baseline calibravel; proxima revisao deve ser Arena PVE inicial
 - Fonte de verdade numerica: `../../tools/economy_simulator/economy_model.v1.json`
 - Gerador: `../../tools/economy_simulator/generate.ts`
 - Saidas geradas: `generated/`
 
 Este documento organiza como a economia do DraxosMobile deve ser trabalhada daqui em diante. Ele nao fecha balanceamento final; ele define a estrutura de raciocinio, os recursos, os perfis e o simulador que permitem calibrar a Season 1 e preparar seasons futuras.
+
+---
+
+## Direcao Arena PVE Inicial
+
+A economia do early game deve partir da Arena PVE, nao de PVP-first. Nao existe cooldown de combate para controlar a Arena PVE inicial. O controle economico deve vir de:
+
+- primeira conclusao por arena/dificuldade;
+- recompensa de conclusao da lista;
+- recordes e progresso de dificuldade;
+- missoes diarias/semanais;
+- repeticao com recompensa reduzida;
+- limites diarios/semanais de bonus;
+- caps de season e sinks de upgrade.
+
+O simulador deve medir leveling, upgrades, recursos, poder e base em conjunto com arenas de 1 duelo tutorial, 3 duelos iniciais e arenas maiores futuras. PVP posterior deve ser calibrado contra essa base, nao o contrario.
 
 ---
 
@@ -51,6 +67,7 @@ Esses tetos vivem tambem em `../../tools/economy_simulator/economy_model.v1.json
 | Tempo/Fila | Controle de ritmo | Espera, fila gratis, segunda fila | Construcoes e aceleracao | Permanente |
 | Poder | Matchmaking e leitura de forca | Derivado de level/build/upgrades | Nao e gasto | Recalculado |
 | Arena | Ranking competitivo | PvP sazonal | Perdas/decay se existir | Sazonal |
+| Arena PVE | Early game, primeira conclusao, recorde e dificuldade | Duelos PVE, missoes, conclusoes, records | Recompensas limitadas/reduzidas e upgrades de build/base | Misto: progresso permanente + records sazonais se adotados |
 | Maestria | Progressao permanente por uso | Dano causado | Nao e gasto | Permanente |
 
 Regra de ownership: cada recurso deve ter um papel claro. XP libera, Almas fortalecem magia e Instrumento Ritual, Energia move a base, Sangue move Familiar, Cristais movem Doutrinas, Ossos movem qualidade/crafting, Po de Osso move consumiveis e Diamante compra tempo/conforto.
@@ -107,13 +124,13 @@ Total por passe de 60 dias:
 | Free | 4800 | 480 | 480 | 180 | 120 | 6000 | 15 | titulos simples e badges |
 | Premium adicional | 9000 | 900 | 900 | 420 | 240 | 12000 | 30 | cosmeticos premium e conveniencia |
 
-Recompensas diarias v0:
+Recompensas diarias v0 (reinterpretar como Arena PVE ate PVP virar modo ativo):
 
 | Missao | XP | Almas | Energia | Sangue | Cristais | Ossos |
 |---|---:|---:|---:|---:|---:|---:|
-| Primeira vitoria | 120 | 8 | 4 | 2 | 0 | 100 |
-| Segunda vitoria | 100 | 7 | 4 | 2 | 1 | 100 |
-| Terceira vitoria | 80 | 5 | 4 | 2 | 1 | 100 |
+| Primeira vitoria de Arena PVE | 120 | 8 | 4 | 2 | 0 | 100 |
+| Segunda vitoria de Arena PVE | 100 | 7 | 4 | 2 | 1 | 100 |
+| Terceira vitoria de Arena PVE | 80 | 5 | 4 | 2 | 1 | 100 |
 | Coletar base | 25 | 2 | 4 | 1 | 1 | 0 |
 | Construir ou evoluir | 25 | 3 | 4 | 1 | 1 | 0 |
 | **Total diario cheio** | **350** | **25** | **20** | **8** | **4** | **300** |

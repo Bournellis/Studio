@@ -15,6 +15,25 @@ nos numeros no escuro.
 - Cobrir Track 16 como evidencia lab-only: `pocao_vida`, slot de pocao,
   comportamento default de pocao e comportamento simples de spell.
 
+## Direcao Arena PVE Inicial
+
+A proxima rodada promovivel de Battle Lab deve simular sequencias de Arena PVE,
+nao apenas duelos isolados de PVP/matchmaking. O modelo precisa cobrir:
+
+- tutorial de 1 duelo;
+- arenas de 3 duelos como primeiro baseline;
+- arenas maiores desbloqueadas depois;
+- inimigos PVE por arquetipo, dificuldade, power alvo e posicao na lista;
+- HP resetado a 100% antes de cada duelo;
+- loadout travado no inicio da arena;
+- buffs temporarios de stat acumulando entre duelos;
+- comportamento simples ajustavel antes do proximo inimigo;
+- ausencia de cooldown de combate.
+
+O objetivo e medir se o jogador consegue vencer cada duelo da lista com um
+loadout compreensivel, nao testar sobrevivencia entre lutas. Runs antigas seguem
+validas como evidencia tecnica do simulador, mas nao fecham tuning da Arena PVE.
+
 ## Workflow
 
 1. Rodar o gerador:
@@ -93,6 +112,8 @@ npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --scratc
   locais de saves/bots saudaveis para simular combate; continua offline.
 - A ferramenta nao muda numeros de combate; isso pertence a uma etapa posterior
   de tuning.
+- A proxima etapa de tuning deve partir de runs de Arena PVE, incluindo listas
+  de duelos, buffs temporarios e HP resetado por duelo.
 - Cenarios Track 16 sao cobertura de laboratorio. Eles nao liberam novos
   thresholds, novas pocoes, prioridades de spell ou comportamento por inimigo.
 - A tela Godot e dev/internal-alpha gated: pode existir em builds de revisao quando
@@ -175,7 +196,8 @@ Leitura:
 
 - O `REVIEW` atual nao deve virar nerf automatico. Ele prova que a pocao mudou a
   leitura de sustain/anti-stall e que o tuning do autobattler deve partir deste
-  generated, nao da run pre-pocao.
+  generated, nao da run pre-pocao. Apos a decisao de `2026-05-31`, tambem deve
+  ser estendido para sequencias de Arena PVE antes de promover tuning.
 - `2026-05-25_initial_balance_v01` permanece arquivada como primeira passada
   numerica pos-rework.
 - Deltas numericos contra runs anteriores devem ser lidos como alerta de

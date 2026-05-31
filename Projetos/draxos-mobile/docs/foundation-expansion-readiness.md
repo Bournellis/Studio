@@ -118,8 +118,9 @@ Progression Lab e Battle Lab podem continuar existindo como ferramentas de
 diagnostico, mas nao podem virar fonte invisivel de tuning. A autoridade viva e
 `docs/contracts/lab-heuristics.md`.
 
-Antes de abrir base builder tuning, autobattler tuning, social expansion ou
-minigame, qualquer heuristica local de Lab deve estar classificada como:
+Antes de abrir Arena PVE tuning, base builder tuning, PVP/autobattler tuning,
+social expansion ou minigame, qualquer heuristica local de Lab deve estar
+classificada como:
 
 - `lab-only`;
 - `derived from ruleset/domain`;

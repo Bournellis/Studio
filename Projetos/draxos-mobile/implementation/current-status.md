@@ -1,11 +1,11 @@
 # DraxosMobile - Current Status
 
-- Last updated: `2026-05-30`
+- Last updated: `2026-05-31`
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Foundation Final Polish`
-- Active stage status: `FOUNDATION_FINAL_POLISH_DELIVERED`
+- Active stage: `PVE Arena Initial Direction`
+- Active stage status: `PVE_ARENA_INITIAL_DIRECTION_APPROVED`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
@@ -32,14 +32,20 @@ account flow, `normal` and `progression_lab` saves, server-authoritative battle,
 Base/Social/Competition/Shop loops, Progression Lab/Battle Lab, portrait
 Refugio, fullscreen portrait battle, skip, summary and current-battle logs.
 
-Current product reading: this is a strong prototype base for refinement. Names,
-spells, weapons, economy values, Battle Pass, battle flavor, visual identity and
-premium content are mock/substance used to keep the app from feeling empty, not
-final design direction.
+Current product reading: this is a strong prototype base for refinement. The
+next product direction is Arena PVE initial, documented in
+`docs/pve-arena-initial-direction.md`. Names, spells, weapons, economy values,
+Battle Pass, battle flavor, visual identity and premium content are
+mock/substance used to keep the app from feeling empty, not final design
+direction unless the Arena PVE package explicitly promotes them.
 
-Immediate loop under audit:
+Foundation shell loop:
 
 `Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again`
+
+Product loop now selected for the next package:
+
+`Refugio -> Arena PVE -> lock loadout -> duel list -> temporary stat buffs and behavior prep between duels -> rewards -> upgrades`
 
 The major foundation baseline is:
 
@@ -60,6 +66,29 @@ The major foundation baseline is:
 - Lab Track 16 Alignment: Battle Lab and Progression Lab now model Track 16
   potion slots, potion crafting stock, `po_osso`, default potion behavior and
   spell behavior toggles as lab-only evidence before tuning.
+
+## PVE Arena Initial Direction
+
+On `2026-05-31`, the product direction changed from PVP-first to Arena
+PVE-first. Foundation Final Polish remains the implemented baseline, but the
+next package is now a small Arena PVE product/tuning package:
+
+- tutorial starts with 1 guided duel;
+- first real arenas start with 3 duels;
+- longer arenas unlock later and keep scaling difficulty;
+- loadout is locked before the arena;
+- HP resets to 100% before every duel;
+- between duels, the player chooses 1 of 3 temporary stat buffs;
+- behavior can be adjusted before the next enemy;
+- combat has no cooldown;
+- rewards are controlled by first clears, completion, difficulty, records,
+  repeat reduction, daily/weekly limits and season caps;
+- PVP moves to a later competitive package, with bots only as fallback or
+  simulation while playerbase grows.
+
+Open design/tuning decisions are tracked in `docs/design-pending.md` as
+DMOB-D064 through DMOB-D067. Battle Lab and Progression Lab must be updated to
+model arena sequences before any numeric tuning is promoted.
 
 ## Foundation Audit
 
@@ -112,11 +141,11 @@ therefore the current accepted baseline for the next product decision.
 
 Priority order after baseline confirmation:
 
-1. Internal loop ergonomics.
-2. Social.
-3. General visual direction.
-4. Battle presentation.
-5. Weapons, spells, economy, balance and content details.
+1. Arena PVE initial product/tuning package.
+2. Integrated leveling/upgrades/rewards/power calibration.
+3. Base/preparation support for Arena PVE.
+4. PVP posterior, with controlled bot fallback.
+5. Social/competition after the PVE/PVP routine is clear.
 
 Internal loop ergonomics, Social Basico Guilda v1, Visual Direction v1, Ossos
 Inteiros v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation v1,
@@ -161,9 +190,9 @@ potions, behavior or catalog content.
   remains active in P2; do not open an initial-loop motivation package by
   default.
 
-Recommended next decision: choose one explicit package for base builder tuning,
-autobattler tuning, social expansion or minigame shell/contract. Lab evidence is
-now aligned with Track 16, but it still must not promote tuning by itself.
+Recommended next package: Arena PVE initial. Lab evidence is now aligned with
+Track 16, but it still must be extended to arena sequences before promoting
+numeric tuning.
 
 ## Foundation Expansion Readiness
 
@@ -338,11 +367,11 @@ Lab Track 16 Alignment validation on this branch:
   confirmed the corrected `foundation_ruleset_v0` content hash mirrored in the
   Closeout migration seed.
 
-Recommended next decision: the final Full gate is green and the latest
-Foundation Final Polish build is published to Internal Alpha; choose one
-explicit package for base builder tuning, autobattler tuning, social expansion
-or minigame shell/contract. Do not start feature/tuning work implicitly from the
-Foundation Final Polish branch.
+Recommended next package: the final Full gate is green and the latest
+Foundation Final Polish build is published to Internal Alpha; proceed with the
+Arena PVE initial package only after closing the open arena length, enemy list,
+reward and lab-modeling decisions. Do not start unrelated base builder, PVP,
+social or minigame work implicitly from the Foundation Final Polish branch.
 
 ## Progression Clarity v1
 
@@ -612,14 +641,16 @@ Foundation Final Polish is the current local canonical base and latest Internal
 Alpha publication: `codex/draxos-mobile/foundation-final-polish` at validated
 local HEAD, release root
 `internal-alpha/v0-foundation-final-polish-20260530-8c658f6`, preview
-`https://721dc985.draxos-mobile-internal-alpha.pages.dev/web/index.html`. The
-next decision should explicitly choose one package: base builder tuning,
-autobattler tuning, social expansion or minigame shell/contract. Do not open
-victory prediction, opponent counter-picks, custom
-thresholds, enemy-specific behavior, spell priorities, direct chat, helps,
-contributions, moderation, tuning numbers, new weapons, new spells, economy,
-new potions, crafting expansion or broader replay controls without its own
-package decision.
+`https://721dc985.draxos-mobile-internal-alpha.pages.dev/web/index.html`.
+The next product package is now Arena PVE initial: close the arena length cap,
+enemy ladder, reward model and lab-modeling decisions, then implement the
+tutorial of 1 duel and first arenas of 3 duels without combat cooldown. Do not
+open PVP,
+victory prediction, opponent counter-picks, custom thresholds, enemy-specific
+behavior, spell priorities, direct chat, helps, contributions, moderation,
+tuning numbers, new weapons, new spells, economy, new potions, crafting
+expansion or broader replay controls beyond the Arena PVE package without its
+own package decision.
 
 ## Validation
 
@@ -897,6 +928,7 @@ smokes if global class names are not yet registered.
 3. `docs/documentation-index.md`
 4. `docs/foundation-app-v0-audit.md`
 5. `docs/foundation-loop-audit.md`
-6. `docs/product-vision.md`
-7. `docs/product-brief.md`
-8. `docs/design-pending.md`
+6. `docs/pve-arena-initial-direction.md`
+7. `docs/product-vision.md`
+8. `docs/product-brief.md`
+9. `docs/design-pending.md`

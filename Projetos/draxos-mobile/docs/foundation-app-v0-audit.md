@@ -1,7 +1,7 @@
 # DraxosMobile - Foundation App V0 Audit
 
 Status: HISTORICO
-Atualizado em: 2026-05-30
+Atualizado em: 2026-05-31
 Etapa registrada: `FOUNDATION_AUDIT_ACTIVE` (fechada)
 
 ## Proposito
@@ -13,6 +13,8 @@ O objetivo imediato nao e abrir o jogo ao publico. A etapa atual e descobrir o j
 Esta auditoria orientou a etapa operacional `FOUNDATION_AUDIT_ACTIVE`. O estado vivo atual esta em `implementation/current-status.md` e no Track 17; antes de tuning, social expandido ou minigame real, a base deve passar pelo Full gate final da Foundation Final Polish.
 
 Auditoria executada do loop interno: `docs/foundation-loop-audit.md`. Ela deve ser lida antes de qualquer pacote de implementacao de UX no Refugio/Base/Batalha.
+
+Atualizacao pos-auditoria em `2026-05-31`: a decisao de produto seguinte foi tomada e vive em `docs/pve-arena-initial-direction.md`. O jogo comeca por Arena PVE, nao por PVP-first; PVP entra depois. A ordem antiga de discutir social/visual/batalha antes de armas/economia fica preservada como contexto historico, mas o proximo pacote vivo e Arena PVE inicial com tutorial de 1 luta, primeiras arenas de 3 lutas, loadout travado, buffs temporarios leves de stat, vida resetada por duelo e sem cooldown de combate.
 
 ## Enquadramento Registrado
 
@@ -57,7 +59,7 @@ O que precisa ser real desde cedo:
 3. Se algo parece necessario para futuro minigame, registre contrato e fronteira; nao implemente minigame por ansiedade.
 4. Se algo melhora a capacidade do usuario entender o loop, o feedback visual, o estado do app ou a confianca na resposta tecnica, ele pode ser prioridade mesmo sendo prototipo.
 5. Antes de produzir muito conteudo, garantir que o app e o backend aceitam trocar conteudo sem reescrever fundacao.
-6. A ordem de discussao/execucao apos esta auditoria e: loop interno, social, visual geral, apresentacao da batalha, depois armas/spells/economia.
+6. Ordem historica desta auditoria: loop interno, social, visual geral, apresentacao da batalha, depois armas/spells/economia. Ordem viva apos a decisao de 2026-05-31: Arena PVE inicial primeiro; PVP, social expandido, visual geral e tuning amplo depois.
 
 ## Auditoria Dura
 

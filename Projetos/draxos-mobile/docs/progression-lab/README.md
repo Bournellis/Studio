@@ -25,6 +25,21 @@ O sistema deve responder:
   Preparacao;
 - como a sensacao manual no Godot compara com os dados.
 
+## Direcao Arena PVE Inicial
+
+A proxima rodada de Progression Lab deve modelar Arena PVE antes de PVP. O laboratorio precisa representar:
+
+- tutorial de 1 duelo;
+- primeiras arenas de 3 duelos;
+- arenas maiores desbloqueadas por progresso/dificuldade;
+- loadout travado antes da arena;
+- vida resetada a 100% antes de cada duelo;
+- escolha de 1 entre 3 buffs temporarios leves de stat entre duelos;
+- comportamento ajustavel antes do proximo inimigo;
+- recompensas sem cooldown de combate, controladas por primeira conclusao, dificuldade, recorde, repeticao reduzida, limites diarios/semanais e caps.
+
+O Progression Lab deve responder se leveling, upgrades, recursos, poder e base evoluem em ritmo saudavel quando o jogador repete arenas curtas, tenta dificuldade maior ou desbloqueia arenas mais longas. PVP e bot pool posterior continuam uteis, mas nao sao mais a base do early game.
+
 ## Perfis
 
 | Perfil | Descricao |
@@ -118,7 +133,7 @@ Esse diretorio guarda sessoes locais e nao deve entrar no Git.
 - Nao cria pagamento real.
 - Nao muda numeros automaticamente.
 - Nao promove pesos de poder sem Battle Lab + Progression Lab concordarem.
-- Nao vira tuning runtime sem pacote explicito de base builder ou autobattler.
+- Nao vira tuning runtime sem pacote explicito. O pacote vivo atual e Arena PVE inicial.
 - Premium deve vender tempo e conforto, nao poder exclusivo acima do cap.
 - Track 16 consumables sao cobertura de laboratorio: `po_osso`,
   `craft_pocao_vida`, `pocao_vida`, slot de pocao e comportamentos default. Isso
@@ -153,7 +168,9 @@ Runbook humano Track 05:
 - Reward scaling: reviews nos levels `15h`/`20h` de alguns perfis free/freemium.
 
 O status `REVIEW` e intencional: a ferramenta ja nao bloqueia por erro numerico
-critico, mas ainda precisa validacao manual no Godot/Supabase local.
+critico, mas ainda precisa validacao manual no Godot/Supabase local. Depois da
+decisao de `2026-05-31`, esta rodada tambem passa a ser historica para PVP-first;
+a proxima evidencia promovivel precisa incluir Arena PVE.
 
 ## Rodada Humana Track 05
 
@@ -169,7 +186,8 @@ Casos obrigatorios de foco:
 - `freemium_basic_20h`
 
 A rodada deve decidir premium gap, janela `20h`, impacto de `pocao_vida` no
-anti-stall, pressao de `ossos/po_osso`, bots ponte, recursos e pesos de poder.
+anti-stall, pressao de `ossos/po_osso`, inimigos PVE, bots ponte, recursos,
+recompensas de arena e pesos de poder.
 Qualquer ajuste de economia, poder, bots, loja, recompensas, custos de crafting
 ou combate deve virar tarefa separada com comparacao before/after.
 

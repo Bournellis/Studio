@@ -8,14 +8,14 @@ This file is the fast entrypoint for agents working in `Projetos/draxos-mobile`.
 
 - Project: `DraxosMobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
-- Active operational stage: `Foundation Final Polish`
-- Active stage status: `FOUNDATION_FINAL_POLISH_DELIVERED`
+- Active operational stage: `PVE Arena Initial Direction`
+- Active stage status: `PVE_ARENA_INITIAL_DIRECTION_APPROVED`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety` delivered on `2026-05-28`; compatibility marker: Track 13 validation/release safety.
 - Agent baseline: `Track 14 - Agent Operations Foundation` is the current operations/docs foundation; compatibility marker: `TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting`, technical context and not the current product focus. Current behavior/potion/crafting state is summarized in `docs/behavior-potion-crafting-v1.md`.
-- Immediate product gate: Foundation Closeout and Lab Track 16 Alignment are delivered; Foundation Final Polish is implemented, Full-gated and published to Internal Alpha. Use branch `codex/draxos-mobile/foundation-final-polish` as the local canonical base until merge/push is explicitly decided, then choose one explicit tuning/social/minigame-contract package. Foundation Loop UX Pass 01 and First Session Clarity v1 are accepted baselines.
+- Immediate product gate: Foundation Closeout and Lab Track 16 Alignment are delivered; Foundation Final Polish is implemented, Full-gated and published to Internal Alpha. The next product direction is `docs/pve-arena-initial-direction.md`: Arena PVE initial before PVP, with no combat cooldown. Foundation Loop UX Pass 01 and First Session Clarity v1 are accepted baselines.
 
-DraxosMobile is an async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. The real product direction is base builder + autobattler + social, with room for future minigames and seasons. Current names, spells, weapons, economy values, battle flavor, visual style and premium systems are mock/substance for evaluation unless a live doc explicitly promotes them.
+DraxosMobile is now a PVE Arena-first async autobattler with Refugio/Base, later PVP, social systems and server-authoritative progression. The real product direction is base builder + Arena PVE + later PVP/social, with room for future minigames and seasons. Current names, spells, weapons, economy values, battle flavor, visual style and premium systems are mock/substance for evaluation unless a live doc explicitly promotes them.
 
 ## Start Here
 
@@ -30,14 +30,16 @@ Read in this order for almost every task:
 7. `docs/foundation-responsive-layout-contract.md` when touching Entry, Refugio, Battle or visual/layout code
 8. `docs/first-session-clarity-v1.md` when touching first-session guidance, Refugio loop copy, Preparation guidance or battle summary next-step copy
 9. `docs/behavior-potion-crafting-v1.md` when touching Ossos, crafting, potions, consumables or behavior
-10. The files you intend to touch
+10. `docs/pve-arena-initial-direction.md` when touching product direction, battles, rewards, tuning, onboarding or PVP
+11. The files you intend to touch
 
 For product or design work, also read:
 
 1. `docs/product-vision.md`
-2. `docs/product-brief.md`
-3. `docs/game-design-document.md`
-4. `docs/design-pending.md`
+2. `docs/pve-arena-initial-direction.md`
+3. `docs/product-brief.md`
+4. `docs/game-design-document.md`
+5. `docs/design-pending.md`
 
 For release, validation or publication work, also read:
 
@@ -89,7 +91,7 @@ For user-approved product packages that require human testing on Android, Window
 
 - Do not put `service_role`, Supabase secrets, database passwords, keystore passwords or private tokens in client code, exports, portal files, manifests or operational docs.
 - Do not run remote publishing modes without explicit user approval and `-ConfirmRemoteMutation`.
-- Do not start a new playable feature, numeric tuning pass, weapon/spell/economy pass, potion/consumable expansion, advanced behavior pass, battle presentation pass, final visual pass, iOS work or mobile browser support until the Foundation Final Polish Full gate is green and the user explicitly chooses the next package.
+- Do not start a new playable feature, numeric tuning pass, weapon/spell/economy pass, potion/consumable expansion, advanced behavior pass, battle presentation pass, final visual pass, iOS work or mobile browser support outside the approved Arena PVE initial package.
 - Do not create new account/save, social, reward or minigame state that bypasses `account_profiles/game_saves`, ruleset registry, idempotency v1 or the relevant contract docs.
 - Do not edit `.tscn` files as raw text unless the user explicitly asks and the change is safer than an editor/tool path.
 - Do not publish Entry/Refugio/Battle layout changes unless `tools/smoke_responsive_layout.gd` passes.
@@ -99,6 +101,7 @@ For user-approved product packages that require human testing on Android, Window
 ## Live Source Rules
 
 - `docs/product-vision.md` is the local long-term product canon until promoted to shared canon.
+- `docs/pve-arena-initial-direction.md` is the live early-game direction: Arena PVE first, PVP later, no combat cooldown, locked loadout, temporary stat buffs and duel-list scaling.
 - `docs/foundation-app-v0-audit.md` is the product/agent compass for the accepted Foundation Audit baseline.
 - `docs/foundation-expansion-readiness.md` is the delivered pre-expansion gate and closeout contract base.
 - `docs/foundation-loop-audit.md` is the executed audit for loop ergonomics and the next UX pass criteria.
@@ -112,4 +115,4 @@ For user-approved product packages that require human testing on Android, Window
 
 ## Current Handoff
 
-Foundation Final Polish is the current handoff and latest Internal Alpha publication. New DraxosMobile agents should branch from `codex/draxos-mobile/foundation-final-polish` at the final validated local HEAD until a remote merge/push decision exists. Latest published preview: `https://721dc985.draxos-mobile-internal-alpha.pages.dev/web/index.html`; release root: `internal-alpha/v0-foundation-final-polish-20260530-8c658f6`. Do not change gameplay tuning, Supabase APIs beyond this package, economy, content, weapons, spells, potions, crafting, advanced behavior, final visuals or authoritative flows without an explicit package decision.
+Foundation Final Polish is the latest Internal Alpha publication; PVE Arena Initial Direction is the current product handoff. New DraxosMobile agents should branch from the latest validated foundation/hotfix base, then follow `docs/pve-arena-initial-direction.md`. Latest published preview: `https://721dc985.draxos-mobile-internal-alpha.pages.dev/web/index.html`; release root: `internal-alpha/v0-foundation-final-polish-20260530-8c658f6`. Do not change gameplay tuning, Supabase APIs, economy, content, weapons, spells, potions, crafting, advanced behavior, final visuals or authoritative flows beyond the Arena PVE initial package without an explicit package decision.

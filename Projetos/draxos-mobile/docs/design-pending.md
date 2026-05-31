@@ -1,8 +1,8 @@
 # DraxosMobile - Design Pending
 
-- Ultima atualizacao: `2026-05-30`
+- Ultima atualizacao: `2026-05-31`
 - Status: registro vivo de pendencias de design
-- Escopo: DraxosMobile, Foundation Final Polish entregue, tuning futuro e evolucoes futuras
+- Escopo: DraxosMobile, Arena PVE inicial aprovada, Foundation Final Polish entregue, tuning futuro e evolucoes futuras
 
 Este documento e o unico lugar para registrar pendencias de design do projeto ativo. Ele nao resolve design; ele nomeia o que ainda precisa ser decidido, classifica o bloqueio e aponta para o documento que deve receber a resposta quando a decisao existir.
 
@@ -31,19 +31,19 @@ Categorias:
 - `OPERACIONAL`: nao altera game design, mas bloqueia validacao, ambiente, seguranca ou execucao tecnica confiavel.
 - `POS_SLICE`: fora da Track 00 completa.
 
-## Etapa Atual - Foundation Final Polish Entregue
+## Etapa Atual - Arena PVE Inicial Aprovada
 
-A etapa atual e `FOUNDATION_FINAL_POLISH_DELIVERED`. O projeto deve ser lido como uma base fundacional pronta para o gate final local antes de tuning, nao como produto final e nao como trilha aberta de expansao de conteudo.
+A etapa atual e `PVE_ARENA_INITIAL_DIRECTION_APPROVED`, sobre `FOUNDATION_FINAL_POLISH_DELIVERED`. O projeto deve ser lido como uma base fundacional pronta para o primeiro pacote de produto/tuning: Arena PVE inicial.
 
 Foco imediato:
 
 `Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
 
-Foundation Loop UX Pass 01 foi aceito como baseline do loop. Foundation Closeout, Labs atualizados e Foundation Final Polish fecharam a base tecnica/documental; a proxima decisao de design deve escolher explicitamente o pacote de tuning, social expandido ou contrato de minigame depois do Full gate final.
+Foundation Loop UX Pass 01 foi aceito como baseline do loop. Foundation Closeout, Labs atualizados e Foundation Final Polish fecharam a base tecnica/documental. A decisao seguinte ja foi tomada: o jogo comeca por Arena PVE, nao por PVP-first, e PVP entra depois como modo competitivo/fallback.
 
 Revisao manual do build publicado identificou regressao de responsividade: Labs Dev sumiram do menu inicial interno e Refugio/Batalha puderam sair dos limites em Web/Android. A partir de agora, mudancas visuais em Entry, Refugio ou Batalha precisam respeitar `docs/foundation-responsive-layout-contract.md` e passar em `tools/smoke_responsive_layout.gd` antes de nova publicacao.
 
-Armas, spells, nomes, tema, imagens, economia, Battle Pass, apresentacao de batalha e visual final existem como substancia/mock. Eles nao sao prioridade de decisao ate que o Full gate final esteja verde e o pacote de tuning seja escolhido.
+Armas, spells, nomes, tema, imagens, economia, Battle Pass, apresentacao de batalha e visual final existem como substancia/mock. Eles so devem ser ajustados agora quando forem necessarios para o pacote pequeno de Arena PVE inicial: tutorial de 1 luta, primeiras arenas de 3 lutas, dificuldade escalavel, loadout travado, buffs temporarios de stat, vida resetada por duelo e sem cooldown de combate.
 
 ## Estado Do MVP Tecnico
 
@@ -63,6 +63,12 @@ O MVP tecnico ja implementou conta guest server-authoritative, cliente de sessao
 | DMOB-D059 | Ordem de foco | FOUNDATION_AUDIT | Resolvido: apos First Session Clarity v1, liberar Social Routine v1.1 se Android/Windows/Web confirmarem que o loop base esta claro; se nao, fazer ajuste pontual ou passe visual estreito antes de expandir. | Social, visual e batalha podem entrar cedo demais e esconder problemas do loop fundador. | `foundation-app-v0-audit.md` | RESOLVIDO | 2026-05-30 |
 | DMOB-D060 | Mock vs fundacao | FOUNDATION_AUDIT | Resolvido: docs vivos registram que conteudo atual existe para dar substancia ao prototipo sem virar direcao final de produto. | Conteudo temporario pode virar divida conceitual ou ser apagado antes de cumprir papel de teste. | `foundation-app-v0-audit.md` | RESOLVIDO | 2026-05-28 |
 | DMOB-D061 | Responsividade | FOUNDATION_AUDIT | Resolvido: Entry, Refugio e Batalha agora possuem contrato responsivo e smoke obrigatorio para proteger Android portrait e Web/desktop. | Sem contrato e teste, reformulacoes visuais podem esconder Labs Dev, cortar controles ou sair dos limites de tela sem falha automatica. | `foundation-responsive-layout-contract.md` | RESOLVIDO | 2026-05-28 |
+| DMOB-D062 | Core inicial | PRIMEIRO_SLICE | Resolvido: o jogo comeca por Arena PVE antes de PVP; PVP posterior fica competitivo e pode usar bots como fallback/simulacao. | Sem essa decisao, o early game dependeria de playerbase PVP inexistente e bots virariam fundacao escondida. | `pve-arena-initial-direction.md` | RESOLVIDO | 2026-05-31 |
+| DMOB-D063 | Regras da Arena PVE | PRIMEIRO_SLICE | Resolvido: tutorial de 1 luta, primeiras arenas de 3 lutas, loadout travado antes da arena, vida 100% a cada duelo, buffs temporarios leves de stat, comportamento ajustavel entre lutas e sem cooldown de combate. | Sem regra-base, tuning de combate, progressao e economia continuaria sem alvo de experiencia. | `pve-arena-initial-direction.md` | RESOLVIDO | 2026-05-31 |
+| DMOB-D064 | Tamanho da arena | PRIMEIRO_SLICE | Qual e o limite maximo inicial de duelos por arena e em que dificuldades arenas de 4+ lutas desbloqueiam? | Bloqueia escopo, UX de lista, recompensa de conclusao, pacing e Progression Lab. | `pve-arena-initial-direction.md` | ABERTO | - |
+| DMOB-D065 | Inimigos PVE | PRIMEIRO_SLICE | Qual e a primeira lista de inimigos/arquetipos por tutorial, arena de 3 lutas e primeiras dificuldades? | Bloqueia conteudo minimo, Battle Lab, power target e leitura de progressao. | `game-design-document.md` | ABERTO | - |
+| DMOB-D066 | Recompensas Arena PVE | CALIBRAVEL_ALPHA | Qual formula de recompensa combina primeira conclusao, dificuldade, recorde, missoes, repeticao reduzida e limites diarios/semanais sem cooldown de combate? | Bloqueia economia e risco de grind infinito ou progressao lenta demais. | `docs/economy/README.md` | CALIBRAR | - |
+| DMOB-D067 | Labs Arena PVE | CALIBRAVEL_ALPHA | Como Progression Lab e Battle Lab representam listas de duelos, buffs temporarios, vida resetada, loadout travado e comportamento ajustavel? | Sem modelagem dos labs, tuning integrado de leveling/upgrades/recompensas/poder fica opinativo demais. | `docs/progression-lab/README.md` | CALIBRAR | - |
 | DMOB-D001 | Escopo | PRIMEIRO_SLICE | O primeiro slice completo usa cap de level 10, 40 ou outro recorte dentro da Season 1? | Resolvido: Season 1 usa cap 40 por padrao, todos os levels sao permanentes e o simulador permite calibrar cap inicial 40/50/60. | `../implementation/tracks/track-00-first-slice-foundation/scope.md` | RESOLVIDO | 2026-05-20 |
 | DMOB-D002 | Progressao | PRIMEIRO_SLICE | Quais sao os gatilhos exatos de unlock de slots de spell, Doutrina e Familiar? | Resolvido: 0 slots no inicio; spell slots nos levels 3, 7 e 25; Doutrina no level 10; Familiar no level 15. | `game-design-document.md` | RESOLVIDO | 2026-05-20 |
 | DMOB-D003 | Base Manager | PRIMEIRO_SLICE | Quais stats a Estrutura de Stats altera, quanto por level e com qual custo/recurso? | Resolvido: pacote unico permanente por level com Vida +0.8%, Ataque/dano base +0.5%, Defesa +0.4%, Mana/regen +0.3%, custando Energia + tempo como as demais estruturas. | `game-design-document.md` | RESOLVIDO | 2026-05-20 |
@@ -92,7 +98,7 @@ O MVP tecnico ja implementou conta guest server-authoritative, cliente de sessao
 | DMOB-D027 | Anuncios | PRIMEIRO_SLICE | Quais recompensas usam rewarded ads e qual pacote remove anuncios? | Resolvido: alpha nao usa anuncios reais; beta pode ter rewarded ads opcionais, max 3/dia, sem anuncio forcado e sem pacote de remocao no alpha. | `game-design-document.md` | RESOLVIDO | 2026-05-20 |
 | DMOB-D028 | Conquistas | PRIMEIRO_SLICE | Quais conquistas entram no primeiro slice e quais recompensas entregam? | Resolvido: conquistas v0 cobrem primeira batalha/vitoria, vitorias acumuladas, milestones de level, construcao, guilda e ajuda; recompensas sao titulos, molduras, pequenos Diamantes e recursos leves. | `game-design-document.md` | RESOLVIDO | 2026-05-20 |
 | DMOB-D029 | Poder | CALIBRAVEL_ALPHA | Quais pesos finais da formula de poder apos incluir summons e todos os upgrades? | Source Identity Balance v2 usa pesos alpha `level=42`, `instrument=28`, `spell=40`, `familiar=34`, `doutrina=22`, `quality=30`; aliases tecnicos antigos `weapon/pet/passive` podem existir no simulador. Manter calibravel ate playtest manual confirmar matchmaking. | `game-design-document.md` | CALIBRAR | - |
-| DMOB-D030 | Balanceamento | CALIBRAVEL_ALPHA | Quais valores finais de dano, cooldown, mana, DoT, Familiar, Doutrina e anti-stall? | Run oficial `2026-05-25_source_identity_balance_v02`: Battle Lab `PASS`, `3132` batalhas, duracao media `24.08s`, anti-stall `4.95%`, dominancia em poder proximo maxima `63.46%` e checks de identidade de fonte em `PASS`. Continua calibravel por sensacao manual e Progression Lab. | `game-design-document.md` | CALIBRAR | - |
+| DMOB-D030 | Balanceamento | CALIBRAVEL_ALPHA | Quais valores finais de dano, cooldown, mana, DoT, Familiar, Doutrina e anti-stall? | Run oficial `2026-05-25_source_identity_balance_v02` e Track 16 Lab Alignment continuam evidencia historica/tecnica. A proxima rodada precisa simular Arena PVE com listas de duelos, vida resetada, buffs temporarios e comportamento entre lutas antes de promover tuning. | `game-design-document.md` | CALIBRAR | - |
 | DMOB-D031 | Guilda | CALIBRAVEL_ALPHA | Os bonus de guilda estao leves o suficiente para nao serem obrigatorios? | Tuning social/economico precisa dados reais. | `game-design-document.md` | CALIBRAR | - |
 | DMOB-D032 | Diamante | CALIBRAVEL_ALPHA | A economia de Diamante cobre o gap esperado sem substituir gameplay? | Requer observacao de progressao free vs paga. | `game-design-document.md` | CALIBRAR | - |
 | DMOB-D044 | Progression Lab | CALIBRAVEL_ALPHA | Quais estados saudaveis representam 2h, 5h, 10h, 15h e 20h para cada perfil de jogador? | Rodada tecnica 2026-05-27 registrada em `docs/progression-lab/2026-05-27-t04-progression-economia.md`: 25 estados/75 bots, sem divida de recurso e `REVIEW` concentrado em free/freemium 20h. Ainda precisa validacao manual no Godot/Supabase local. | `docs/progression-lab/README.md` | CALIBRAR | - |
@@ -107,7 +113,7 @@ O MVP tecnico ja implementou conta guest server-authoritative, cliente de sessao
 | DMOB-D053 | Releases | OPERACIONAL | Qual politica de update sera usada: quando update e recomendado, quando e obrigatorio, e quando um save pode ser destruido? | Resolvido: versao `internal_alpha_v0`, update obrigatorio bloqueia login, Web mostra aviso, Android/PC mostram link no app e reset automatico e aceito quando update quebrar save. | `docs/internal-alpha-v0-design-lock.md` | RESOLVIDO | 2026-05-26 |
 | DMOB-D054 | Conta Alpha | OPERACIONAL | Qual fluxo manual de convite, criacao de conta, recuperacao de senha e bloqueio de acesso sera usado para dois testadores? | Resolvido: cadastro/login com email, senha, username e convite/flag alpha; tela inicial separa app comum, Lab e configuracoes. | `docs/internal-alpha-v0-design-lock.md` | RESOLVIDO | 2026-05-26 |
 | DMOB-D055 | Progression Lab | PLAYTEST_ALPHA | Quais acoes do jogo ficam permitidas, bloqueadas ou isoladas quando o save ativo e `progression_lab`? | Resolvido: save Lab compartilha conta/social, pode usar loja e batalhar/evoluir no proprio save, mas fica fora da competicao e nao pontua ranking. | `docs/internal-alpha-v0-design-lock.md` | RESOLVIDO | 2026-05-26 |
-| DMOB-D033 | PVE | POS_SLICE | Qual formato do Character Autobattler PVE? | Fora da Track 00, mas deve preservar compatibilidade futura. | `game-design-document.md` | ADIADO | - |
+| DMOB-D033 | PVE | PRIMEIRO_SLICE | Qual formato do Character Autobattler PVE? | Resolvido em alto nivel: Arena PVE inicial, sem campanha tradicional, com listas de duelos, dificuldade escalavel, loadout travado, buffs temporarios de stat e vida resetada por duelo. Detalhe de inimigos/recompensas fica em DMOB-D064 a DMOB-D067. | `pve-arena-initial-direction.md` | RESOLVIDO | 2026-05-31 |
 | DMOB-D034 | Cardgame Roguelike | POS_SLICE | Qual formato competitivo e progressao propria do PVP Cardgame Roguelike? | Fora da Track 00. | `game-design-document.md` | ADIADO | - |
 | DMOB-D035 | Hero Defense | POS_SLICE | Como funciona o Hero Defense e quais beneficios recebe da conta/base? | Fora da Track 00. | `game-design-document.md` | ADIADO | - |
 | DMOB-D036 | Open World | POS_SLICE | O que preservar para nao bloquear Open World futuro? | Fora da Track 00. | `game-design-document.md` | ADIADO | - |

@@ -1,13 +1,26 @@
 # DraxosMobile - Game Design Document (Referencia De Implementacao)
 
-- Ultima atualizacao: `2026-05-30`
+- Ultima atualizacao: `2026-05-31`
 - Fonte historica completa: `../../_conceitos/mobile-universe/gdd.md`
 
 > Este documento e uma referencia condensada da implementacao existente. Depois da Foundation Final Polish, ele deve ser lido como contrato/contexto de substancia e mock implementado, nao como prioridade de expansao nem como design final.
 
 ## Leitura Apos Foundation Final Polish
 
-A etapa atual nao e balanceamento, economia, armas, spells, visual final ou apresentacao final da batalha. O foco imediato e provar o Full gate final e escolher explicitamente o primeiro pacote de tuning:
+A etapa atual promoveu uma nova direcao de produto para o early game: Arena PVE inicial antes de PVP. A direcao detalhada vive em `pve-arena-initial-direction.md`.
+
+O foco imediato nao e campanha PVE tradicional, PVP-first, visual final ou expansao grande de conteudo. O foco e preparar um pacote pequeno de Arena PVE que permita calibrar em conjunto:
+
+- leveling;
+- upgrades;
+- recompensas;
+- poder de batalha;
+- inimigos PVE;
+- tamanho/dificuldade da arena;
+- buffs temporarios de stat;
+- comportamento ajustavel entre duelos.
+
+O loop de fundacao continua valido como app shell:
 
 `Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
 
@@ -19,10 +32,10 @@ O conteudo atual existe para dar substancia ao app e permitir que o fundador e p
 
 ## Direcao Online E Backend
 
-DraxosMobile e um jogo online assincrono. O jogador nao divide uma partida viva com outro jogador conectado ao mesmo tempo. As partidas sao PvE ou PVP assincrono:
+DraxosMobile e um jogo online assincrono. O jogador nao divide uma partida viva com outro jogador conectado ao mesmo tempo. O core inicial e Arena PVE; PVP assincrono entra depois como modo competitivo. As partidas seguem o mesmo contrato:
 
 - o cliente solicita uma batalha;
-- o servidor seleciona/resolve oponente ou bot;
+- o servidor seleciona/resolve inimigo PVE, oponente real ou fallback controlado;
 - o servidor simula o resultado;
 - o servidor grava log, recompensa, ranking e ledger;
 - o cliente apenas apresenta o replay.
@@ -44,6 +57,8 @@ Regras de produto que preservam essa direcao:
 - todo endpoint de gameplay deve ser logico (`account`, `battle`, `base`, `social`, `competition`, `monetization`) e nao acoplado ao fornecedor;
 - transferencias, recompensas, compras, claims e upgrades devem ser transacionais e auditaveis;
 - nenhuma mecanica central deve depender de jogadores simultaneamente conectados na mesma partida;
+- o early game nao deve depender de playerbase PVP;
+- bots de PVP sao fallback/simulacao, nao fundacao escondida do produto;
 - realtime pode ser usado como conveniencia de chat/presenca, mas nao como fundamento da batalha.
 
 ---
@@ -394,27 +409,56 @@ Ossos continuam raros. Batalhas, quests e Battle Pass seguem como fontes princip
 - O segundo slot nao reduz custo, tempo ou requisito de level.
 - Cada construcao tem ajuda social propria.
 
-## Autobattler PVP
+## Arena PVE Inicial
+
+A Arena PVE inicial e o primeiro modo jogavel de produto. Ela usa duelos assincronos server-authoritative contra inimigos controlados pelo jogo, sem depender de playerbase PVP e sem exigir campanha tradicional com assets pesados.
+
+Inspiracao de ritmo: uma lista de inimigos como torre/ladder de luta. O tutorial comeca com 1 duelo. As primeiras arenas reais comecam com 3 duelos. Depois de algumas dificuldades vencidas, arenas de 4 duelos sao liberadas, e assim por diante ate um limite maximo inicial que ainda precisa ser fechado em `design-pending.md`.
+
+Regras de modo:
+
+- Antes de entrar, o jogador trava loadout: Instrumento Ritual, spells, Doutrina/passiva, Familiar quando desbloqueado, pocao e demais escolhas equipaveis.
+- Cada etapa revela o proximo inimigo antes da luta.
+- Entre duelos, o jogador escolhe 1 entre 3 buffs temporarios da arena.
+- Buffs iniciais sao apenas stats, leves individualmente e relevantes pelo acumulo ao longo da lista.
+- Vida reseta para 100% antes de cada duelo.
+- Nao ha sobrevivencia de HP entre lutas e nao ha logica roguelike de desgaste permanente dentro da arena.
+- O desafio principal e "consigo vencer este duelo com este loadout e estes buffs acumulados?".
+- O comportamento simples pode ser ajustado entre duelos, mas o loadout travado nao pode ser trocado no meio da arena.
+- Nao existe cooldown de combate para jogar Arena PVE.
+- Controle economico vem de primeira conclusao, dificuldade, recorde, missoes, limites diarios/semanais, recompensas reduzidas de repeticao e caps de season.
+
+Escala de arena:
+
+- Tutorial: 1 duelo guiado.
+- Primeiras arenas: 3 duelos.
+- Arenas maiores: 4+ duelos liberados por progresso/dificuldade.
+- Todas as duracoes continuam escalando dificuldade, para permitir que jogador avancado faca arena curta em dificuldade alta.
+- O limite maximo inicial de duelos deve ser decidido antes da implementacao do primeiro pacote.
+
+## PVP Posterior
+
+PVP assincrono permanece planejado, mas nao e mais o modo inicial. Ele deve entrar depois que Arena PVE, poder de batalha, recompensas e preparacao estiverem compreensiveis. Bots de PVP sao fallback/simulacao controlada enquanto a playerbase cresce, nao a fundacao escondida do early game.
 
 - Batalha 100% automatica e assincrona
 - Simulada no servidor — cliente recebe log de eventos e anima
 - Anti-stall: dispara aos 30s — dano 10%/20%/40% HP/s aos 30s/32s/34s, letal 36s+
-- Recompensa vitoria: XP + Almas + Energia + Sangue completos
-- Recompensa derrota: 1/5 de todos
+- Recompensas de PVP devem ser recalibradas contra a Arena PVE antes de virarem contrato final.
 
 ### Dados De Combate Para Balanceamento
 
-Toda batalha real e toda batalha simulada entre bots deve gravar dados suficientes para balancear combate, bots e matchmaking sem depender de log visual completo no cliente.
+Toda batalha PVE, batalha PVP real e simulacao entre bots deve gravar dados suficientes para balancear combate, inimigos, bots, arena e matchmaking sem depender de log visual completo no cliente.
 
 Eventos minimos de telemetria por batalha:
 
-- `battle_requested`: power do jogador, faixa de matchmaking, modo, origem do oponente real/bot.
-- `match_selected`: power do jogador, power do oponente, diferenca absoluta e percentual, tempo de busca, motivo de fallback.
+- `battle_requested`: power do jogador, modo, arena, dificuldade, indice do duelo e origem do inimigo/oponente.
+- `match_selected`: power do jogador, power do inimigo/oponente, diferenca absoluta e percentual, arena, dificuldade, tempo de busca quando houver PVP e motivo de fallback.
+- `arena_step`: tamanho da arena, indice do duelo, buffs acumulados, buff escolhido entre 3, inimigo previsto e comportamento ativo.
 - `battle_simulated`: seed, duracao, vencedor, motivo de fim, dano total por participante, dano por tipo, cura, barreira absorvida, mana gasta, summons criados, anti-stall acionado.
 - `reward_applied`: reward table, deltas economicos, vitoria/derrota, idempotency key.
 - `build_snapshot`: build compacta dos dois lados no momento da batalha.
 
-Batalhas bot-vs-bot podem ser executadas como jobs de simulacao para gerar dados de balanceamento. Elas nao concedem recompensa, nao entram em ranking e devem ser marcadas com `simulation_type = "bot_balance"`.
+Batalhas PVE e bot-vs-bot podem ser executadas como jobs de simulacao para gerar dados de balanceamento. Elas nao concedem recompensa, nao entram em ranking e devem ser marcadas com `simulation_type = "pve_arena_balance"` ou `simulation_type = "bot_balance"`.
 
 ---
 
@@ -458,9 +502,9 @@ Missoes diarias fixas:
 
 | Missao | Regra | Recompensa |
 |---|---|---|
-| Primeira vitoria do dia | vencer 1 batalha PvP assincrona | XP + recursos calibraveis |
-| Segunda vitoria do dia | vencer 2 batalhas PvP assincronas no dia | XP + recursos calibraveis |
-| Terceira vitoria do dia | vencer 3 batalhas PvP assincronas no dia | XP + recursos calibraveis |
+| Primeira vitoria do dia | vencer 1 duelo de Arena PVE | XP + recursos calibraveis |
+| Segunda vitoria do dia | vencer 2 duelos de Arena PVE no dia | XP + recursos calibraveis |
+| Terceira vitoria do dia | vencer 3 duelos de Arena PVE no dia | XP + recursos calibraveis |
 | Coletar base | coletar qualquer producao da base 1 vez no dia | recursos calibraveis |
 | Construir ou evoluir | iniciar ou concluir 1 construcao no dia | XP + Energia calibraveis |
 
@@ -468,8 +512,8 @@ Missoes semanais fixas:
 
 | Missao | Regra | Recompensa |
 |---|---|---|
-| Participacao de arena | jogar X batalhas na semana | XP + recursos calibraveis |
-| Dominio de arena | vencer X batalhas na semana | XP + Almas calibraveis |
+| Participacao de arena | jogar ou concluir X duelos de Arena PVE na semana | XP + recursos calibraveis |
+| Dominio de arena | vencer X duelos de Arena PVE ou concluir dificuldade-alvo | XP + Almas calibraveis |
 | Rotina do refugio | coletar base em 5 dias diferentes da semana | Energia + recursos calibraveis |
 
 Regras:
@@ -477,7 +521,7 @@ Regras:
 - Recompensas numericas usam o simulador de economia antes de virar contrato final.
 - Missoes sao calculadas no servidor e reivindicadas com `request_id` idempotente.
 - Missao diaria reseta por dia de servidor; missao semanal reseta por semana de servidor.
-- O bonus das 3 primeiras vitorias do dia e a espinha dorsal da rotina diaria.
+- O bonus das 3 primeiras vitorias do dia usa Arena PVE enquanto PVP nao for o core inicial.
 - Randomizacao, reroll e missoes tematicas ficam fora do primeiro alpha.
 
 Onboarding da primeira sessao:
@@ -488,22 +532,24 @@ Onboarding da primeira sessao:
 | 2 | Mostrar recursos, poder e fila de construcao |
 | 3 | Coletar producao inicial da base |
 | 4 | Iniciar upgrade do Nucleo de Energia |
-| 5 | Fazer a primeira batalha |
+| 5 | Fazer a luta tutorial da Arena PVE |
 | 6 | Ver replay, skip e recompensa |
-| 7 | Voltar ao Refugio e abrir a Base |
-| 8 | Apresentar missoes diarias e bonus das primeiras vitorias |
-| 9 | Apresentar Loja/Passe como fluxo alpha/teste apos a primeira batalha |
-| 10 | Explicar o primeiro unlock de spell ao chegar no level 3 |
+| 7 | Voltar ao Refugio e mostrar primeira arena de 3 lutas |
+| 8 | Travar loadout antes da arena |
+| 9 | Apresentar escolha de 1 entre 3 buffs temporarios de stat entre duelos |
+| 10 | Ajustar comportamento antes do proximo inimigo |
+| 11 | Apresentar missoes diarias, bonus das primeiras vitorias e Base |
+| 12 | Explicar o primeiro unlock de spell ao chegar no level 3 |
 
 Desbloqueios de telas e sistemas:
 
 | Tela/Sistema | Desbloqueio |
 |---|---|
 | Refugio | imediato |
-| Batalha | imediato |
+| Arena PVE | imediato |
 | Base | apos primeira coleta/tutorial |
-| Missoes | apos primeira batalha |
-| Loja/Passe | apos primeira batalha |
+| Missoes | apos luta tutorial da Arena PVE |
+| Loja/Passe | apos luta tutorial da Arena PVE |
 | Social/Amigos | level 5 |
 | Guilda/Chat | level 10 |
 | Familiar | level 15 |
@@ -622,20 +668,22 @@ Ajudas:
 
 ---
 
-## Matchmaking E Ranking
+## PVP, Matchmaking E Ranking Posteriores
+
+Arena PVE nao usa matchmaking entre jogadores. Ela usa inimigos PVE por lista, dificuldade, poder esperado e arquetipo. A formula de poder abaixo continua relevante para leitura de forca, geracao de inimigos e PVP posterior.
 
 - Poder inicial: `(Level x 50) + (InstrumentLevel x 30) + (SpellLevelsTotal x 20) + (FamiliarLevel x 15) + (DoutrinaLevelsTotal x 10) + (InstrumentQualityTier x 25)`.
 - Compatibilidade tecnica: alguns schemas, simuladores e logs antigos ainda podem usar os nomes `ArmaLevel`, `PetLevel`, `PassiveLevelsTotal` e `WeaponQualityTier`; trate-os como aliases legados, nao como linguagem de produto.
 - Componentes bloqueados por level contam como 0 ate o unlock.
 - Poder e recalculado no servidor em toda mudanca autoritativa de build, upgrade ou level.
-- Matchmaking tenta parear por diferenca maxima de poder, expandindo a tolerancia por tempo de busca.
-- Faixas iniciais: ate 10% de diferenca nos primeiros 5s; ate 20% ate 15s; ate 35% depois disso; se nao houver jogador real, usar bot da faixa.
-- Bots simulados cobrem faixas de poder com builds legais para o level correspondente.
-- Ranking: pontos de arena por season (vitoria=+pontos, derrota=-pontos, variavel por diferenca de poder)
+- PVP posterior tenta parear por diferenca maxima de poder, expandindo a tolerancia por tempo de busca.
+- Faixas PVP iniciais: ate 10% de diferenca nos primeiros 5s; ate 20% ate 15s; ate 35% depois disso; se nao houver jogador real, usar bot da faixa.
+- Bots simulados cobrem faixas de poder com builds legais para o level correspondente e ficam separados dos inimigos PVE de arena.
+- Ranking competitivo por season pertence ao pacote PVP/competicao posterior; Arena PVE inicial pode ter records, primeira conclusao e dificuldade, mas nao precisa expor leaderboard PVP no early game.
 
 ### Ranking v0
 
-Ranking usa pontos de arena por season. Bots nao entram no ranking e nao concedem/retiram pontos como participante ranqueado.
+Ranking PVP usa pontos de arena por season. Bots nao entram no ranking e nao concedem/retiram pontos como participante ranqueado.
 
 Formula v0:
 
@@ -648,11 +696,11 @@ Formula v0:
 - Derrota contra oponente mais fraco: perda aumentada ate `-15`.
 - Pontos nunca ficam abaixo de 0.
 - Ranking reseta por season e gera snapshot ao encerrar.
-- Para a Internal Alpha v0, match normal contra bot pode conceder pontos ao jogador para validar o loop diario; o bot continua fora da leaderboard e nao possui linha propria em `ranking`.
+- Para a proxima Internal Alpha de Arena PVE, ranking PVP nao deve ser tratado como requisito do early game. Se PVP voltar para teste interno antes de playerbase suficiente, match normal contra bot pode conceder pontos ao jogador apenas em ambiente marcado de validacao; o bot continua fora da leaderboard e nao possui linha propria em `ranking`.
 
-### Bots Iniciais
+### Inimigos PVE E Bots Posteriores
 
-O primeiro slice precisa popular testes com bots gerados por faixas de poder. Cada bot deve ter:
+Arena PVE inicial precisa de inimigos por arquetipo, dificuldade, power alvo e posicao na lista. PVP posterior pode continuar usando bots gerados por faixas de poder. Cada inimigo/bot deve ter:
 
 - level, power, faixa de poder e archetype estavel;
 - build legal para os unlocks do level;
@@ -672,8 +720,8 @@ Archetypes iniciais sugeridos:
 
 Primeira versao jogavel deve priorizar clareza operacional em vez de visual final. Layout base:
 
-- `Refugio`: hub principal com personagem, poder, recursos, fila de construcao e acessos para Batalha, Base, Social e Loja.
-- `Batalha`: preview de faixa de matchmaking, botao de iniciar, replay com velocidade/skip e resumo de dano/recompensa.
+- `Refugio`: hub principal com personagem, poder, recursos, fila de construcao e acessos para Arena PVE, Base, Social e Loja.
+- `Arena PVE`: escolha de arena/dificuldade, trava de loadout, preview do inimigo, replay com velocidade/skip, resumo de dano/recompensa, escolha de buff entre duelos e ajuste simples de comportamento.
 - `Base`: seis estruturas em grade, estado de upgrade/coleta, pedido de ajuda e custos claros.
 - `Social`: abas Amigos, Guilda e Chat; polling simples no primeiro slice.
 - `Loja/Passe`: Battle Pass, Diamante e recompensas, com compras reais substituidas por fluxo de teste no alpha.

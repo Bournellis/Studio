@@ -1,7 +1,7 @@
 # DraxosMobile - Documentation Index
 
 - Status: `VIVO`
-- Last updated: `2026-05-30`
+- Last updated: `2026-05-31`
 - Purpose: classify project documents so agents know what to trust, what to update and what to treat as history.
 
 ## Categories
@@ -32,6 +32,7 @@
 | Document | Category | Role |
 |---|---|---|
 | `docs/product-vision.md` | `VIVO` | Local long-term product canon until promoted to shared canon. |
+| `docs/pve-arena-initial-direction.md` | `VIVO` | Current early-game direction: Arena PVE first, PVP later, no combat cooldown, locked loadout, temporary stat buffs and duel-list scaling. |
 | `docs/foundation-app-v0-audit.md` | `HISTORICO` | Closed audit compass: real foundation, current mock, live-product gaps and post-login loop focus preserved as context. |
 | `docs/foundation-expansion-readiness.md` | `RUNBOOK` | Active expansion-readiness gate: lanes, ownership, contract-first requirements, account/save, ruleset and admin checks. |
 | `docs/foundation-loop-audit.md` | `VIVO` | Executed audit of the current post-login loop ergonomics; records Foundation Loop UX Pass 01 as the accepted Internal Alpha UX baseline. |
@@ -117,14 +118,15 @@
 
 - A live doc must not tell agents to start from Track 04, Track 08, Track 10, Track 14, Track 15 or Track 16 as the current stage.
 - A live doc must treat `implementation/current-status.md` as the active stage/status source after the user chooses the next package.
-- A live doc must not direct agents to expand balance, weapons, spells, Battle Pass, economy, final visual identity or battle presentation before Foundation Final Polish has a green Full gate and the user explicitly selects the next package.
-- Foundation Audit must prioritize the post-login loop: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again.
-- Foundation Expansion Readiness/Foundation Closeout/Foundation Final Polish is now the delivered pre-expansion gate before base builder, autobattler, expanded social or a real minigame.
+- A live doc must treat `docs/pve-arena-initial-direction.md` as the current product direction after Foundation Final Polish: Arena PVE initial first, PVP later.
+- A live doc must not direct agents to expand balance, weapons, spells, Battle Pass, economy, final visual identity or battle presentation beyond what the Arena PVE initial package explicitly needs.
+- Foundation Audit must preserve the post-login loop as app shell, but the first playable product loop is now Refugio -> Arena PVE -> locked loadout -> duel list -> buffs/behavior between duels -> rewards -> upgrades.
+- Foundation Expansion Readiness/Foundation Closeout/Foundation Final Polish is now the delivered pre-expansion gate before Arena PVE implementation/tuning; base builder, PVP, expanded social or a real minigame are later packages unless explicitly selected.
 - New backend/data/content features must use `account_profiles` + `game_saves`, `foundation_ruleset_v0`/registry, idempotency v1 and explicit contracts.
 - Foundation Loop UX Pass 01 was manually accepted on Android/Windows/Web on `2026-05-29` and is the current baseline before the next package.
 - Visual/layout changes must respect `docs/foundation-responsive-layout-contract.md` and pass `tools/smoke_responsive_layout.gd` before publication.
 - Historical docs can keep old language when they are clearly historical.
 - Product-facing language should use Instrumento Ritual, Doutrina and Familiar.
-- Potion/crafting/behavior systems exist in the current alpha baseline, but new potions, tuning, custom thresholds, spell priorities or enemy-specific behavior require an explicit package decision.
+- Potion/crafting/behavior systems exist in the current alpha baseline, but new potions, custom thresholds, spell priorities or enemy-specific behavior require the Arena PVE package or another explicit package decision.
 - Technical field names such as `weapon`, `passive`, `pet`, `WeaponQualityTier`, `PassiveLevelsTotal` and `PetLevel` may remain only where they describe existing schema, telemetry or legacy compatibility.
 - New pending design questions must go to `docs/design-pending.md`, not historical track docs.
