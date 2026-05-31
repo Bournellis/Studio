@@ -7,7 +7,7 @@
 ## Prioridade Do Estudio
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`ARENA_CONSISTENCY_PASS_IMPLEMENTED_LOCAL`, Track 19 implementado localmente; Track 18 segue publicado em `internal-alpha/v0-pve-arena-entry-20260531-6cbc853`, preservando Track 13 release safety e Track 14 agent ops)
+- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`ARENA_CONSISTENCY_PASS_PUBLISHED_INTERNAL_ALPHA`, Track 19 publicado em `internal-alpha/v0-arena-consistency-pass-20260531-0865e43`, preservando Track 13 release safety e Track 14 agent ops)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -23,12 +23,12 @@
 
 ## DraxosMobile
 
-- Status: **P2_IMPLEMENTACAO - ARENA_CONSISTENCY_PASS_IMPLEMENTED_LOCAL**
+- Status: **P2_IMPLEMENTACAO - ARENA_CONSISTENCY_PASS_PUBLISHED_INTERNAL_ALPHA**
 - Fase: `Implementacao`
 - Local: `Projetos/draxos-mobile/`
 - Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
 - Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
-- Baseline atual: Track 00-15 integradas, com Track 13 release safety e Track 14 agent ops preservados. Track 18 PVE Arena Initial esta publicado em Internal Alpha (`internal-alpha/v0-pve-arena-entry-20260531-6cbc853`, preview `https://c185369d.draxos-mobile-internal-alpha.pages.dev/web/index.html`) a partir de `codex/draxos-mobile/pve-arena-integration`: tentativa/progresso/recompensa server-authoritative, endpoints `arena/pve/*`, Refugio apontando para Arena, tutorial de 1 duelo, arenas de 3/4/5/6 duelos, loadout travado, buffs temporarios leves de stat, vida resetada por duelo, sem cooldown de combate e labs com sequencias/tentativas de Arena. Track 19 Arena Consistency Pass esta implementado localmente em `codex/draxos-mobile/arena-consistency-pass`: consumo de pocao por estoque vivo na Arena, claim apenas resumo/ack, endpoint publico `/arena/pve/buff/select`, lista de arenas data-driven no cliente e sanity targets de labs. PVP passa a modo posterior/competitivo, com bots apenas como fallback/simulacao.
+- Baseline atual: Track 00-15 integradas, com Track 13 release safety e Track 14 agent ops preservados. Track 19 Arena Consistency Pass esta publicado em Internal Alpha (`internal-alpha/v0-arena-consistency-pass-20260531-0865e43`, preview `https://168dc669.draxos-mobile-internal-alpha.pages.dev/web/index.html`) a partir de `codex/draxos-mobile/arena-consistency-pass`: tentativa/progresso/recompensa server-authoritative, endpoints `arena/pve/*`, Refugio apontando para Arena, tutorial de 1 duelo, arenas de 3/4/5/6 duelos, loadout travado, buffs temporarios leves de stat, vida resetada por duelo, sem cooldown de combate, consumo de pocao por estoque vivo na Arena, claim apenas resumo/ack, endpoint publico `/arena/pve/buff/select`, lista de arenas data-driven no cliente e sanity targets de labs. PVP passa a modo posterior/competitivo, com bots apenas como fallback/simulacao.
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
 - Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation` e Supabase/Cloudflare CLI autenticada. Mudancas visuais em Entry/Refugio/Batalha exigem `foundation-responsive-layout-contract.md` + `smoke_responsive_layout.gd`. Novas features devem respeitar `account_profiles/game_saves`, ruleset registry, idempotencia v1 e RPC transacional v1 para mutations economicas/social. Direct chat, ajudas, contribuicoes, moderacao, PVP, tuning numerico amplo, novas armas, novas spells, economia ampla, visual final, previsao de vitoria, contra-escolha por oponente, thresholds customizados, comportamento por inimigo e controles avancados de replay ficam bloqueados ate decisao propria.
 - Proximo passo: fazer playtest humano da Arena PVE tutorial/3 duelos no preview/APK publicado e registrar tuning/UX blockers.

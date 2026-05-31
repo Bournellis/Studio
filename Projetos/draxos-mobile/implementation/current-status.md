@@ -5,16 +5,16 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
 - Active stage: `Track 19 - Arena Consistency Pass`
-- Active stage status: `ARENA_CONSISTENCY_PASS_IMPLEMENTED_LOCAL`
+- Active stage status: `ARENA_CONSISTENCY_PASS_PUBLISHED_INTERNAL_ALPHA`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published remote package: `Track 18 - PVE Arena Initial`
+- Latest published remote package: `Track 19 - Arena Consistency Pass`
 - Latest implemented package: `Track 19 - Arena Consistency Pass` on branch
   `codex/draxos-mobile/arena-consistency-pass`.
 - Active follow-up: human playtest of the Arena PVE tutorial/3-duel flow from
-  the Track 19 local package, then decide remote publication and tuning scope.
+  the Track 19 published package, then decide tuning scope.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -170,10 +170,9 @@ and return-to-Refugio loop in Web/APK/PC.
 
 ## Track 19 - Arena Consistency Pass
 
-Track 19 is implemented locally on
+Track 19 is implemented and published remotely on
 `codex/draxos-mobile/arena-consistency-pass` as a consistency package over the
-published Track 18 Arena PVE baseline. It does not change the latest remote
-publication until a future remote mutation is explicitly approved.
+published Track 18 Arena PVE baseline.
 
 Implemented in Track 19:
 
@@ -198,9 +197,47 @@ Implemented in Track 19:
 - Battle Lab and Progression Lab now report Arena PVE attempt/sequence language,
   potion pressure and sanity clear-rate targets for 1/3/4/5/6 duel arenas.
 
-Next after Track 19: package/playtest the Arena PVE tutorial and 3-duel arena,
-confirm the potion and summary behavior manually, then choose between a remote
-Internal Alpha publication or a focused tuning pass.
+Validation and publication completed for Track 19:
+
+- `tools/validate_foundation.ps1 -Profile Full -RequireClean`: passed.
+- `tools/export_internal_alpha.ps1 -AllowAndroidDebugFallback`: passed using
+  the ignored local Internal Alpha env file; Android export mode:
+  `debug_fallback`.
+- `tools/publish_internal_alpha.ps1 -Mode Plan`: passed.
+- `tools/publish_internal_alpha.ps1 -Mode Package`: passed and produced
+  `build/internal-alpha/publish`.
+- `tools/publish_internal_alpha.ps1 -Mode Upload -PublicDownloads
+  -ConfirmRemoteMutation`: passed for release root
+  `internal-alpha/v0-arena-consistency-pass-20260531-0865e43`.
+- `tools/build_cloudflare_pages_package.ps1`: passed with Web assets rooted at
+  the versioned Supabase Storage path.
+- `npx -y wrangler pages deploy`: passed, preview
+  `https://168dc669.draxos-mobile-internal-alpha.pages.dev`.
+- `tools/publish_internal_alpha.ps1 -Mode DeployManifest -PublicDownloads
+  -ConfirmRemoteMutation`: passed, manifest now points to the Track 19 preview.
+- `server/tests/release_manifest_smoke.ts`: passed remotely.
+- `server/tests/release_artifacts_remote_smoke.ts`: passed remotely for
+  manifest, Portal, Web, APK and PC ZIP.
+- `server/tests/internal_alpha_remote_smoke.ts` with
+  `DRAXOS_REMOTE_RELEASE_SMOKE=1`: passed remotely.
+
+Published Track 19 Internal Alpha artifacts:
+
+- Portal:
+  `https://168dc669.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+- Web:
+  `https://168dc669.draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-arena-consistency-pass-20260531-0865e43/downloads/draxos-mobile-alpha.apk`
+  (`31741724` bytes).
+- PC Windows ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-arena-consistency-pass-20260531-0865e43/downloads/draxos-mobile-alpha.zip`
+  (`40201184` bytes).
+- Manifest:
+  `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
+
+Next after Track 19: playtest the Arena PVE tutorial and 3-duel arena, confirm
+the potion and summary behavior manually, then choose the focused tuning pass.
 
 ## Foundation Audit
 
@@ -752,12 +789,13 @@ economy, content tuning or final art.
 
 ## Next Step
 
-Track 18 PVE Arena Initial is now the latest Internal Alpha publication:
-`codex/draxos-mobile/pve-arena-integration`, release root
-`internal-alpha/v0-pve-arena-entry-20260531-6cbc853`, preview
-`https://c185369d.draxos-mobile-internal-alpha.pages.dev/web/index.html`.
+Track 19 Arena Consistency Pass is now the latest Internal Alpha publication:
+`codex/draxos-mobile/arena-consistency-pass`, release root
+`internal-alpha/v0-arena-consistency-pass-20260531-0865e43`, preview
+`https://168dc669.draxos-mobile-internal-alpha.pages.dev/web/index.html`.
 The next product step is human playtest and tuning notes for the Arena PVE
-tutorial/3-duel loop. Do not open PVP,
+tutorial/3-duel loop, including potion consumption, remote arena selection,
+buff selection and summary/claim behavior. Do not open PVP,
 victory prediction, opponent counter-picks, custom thresholds, enemy-specific
 behavior, spell priorities, direct chat, helps, contributions, moderation,
 tuning numbers, new weapons, new spells, economy, new potions, crafting
