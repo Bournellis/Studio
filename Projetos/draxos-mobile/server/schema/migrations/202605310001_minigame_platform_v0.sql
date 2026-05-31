@@ -51,7 +51,7 @@ create table if not exists public.mode_sessions (
 	ruleset_id text not null,
 	ruleset_version integer not null check (ruleset_version > 0),
 	status text not null default 'started' check (status in ('started', 'completed', 'abandoned', 'rejected')),
-	server_seed text not null default encode(gen_random_bytes(16), 'hex'),
+	server_seed text not null default encode(extensions.gen_random_bytes(16), 'hex'),
 	start_request_id uuid not null,
 	complete_request_id uuid,
 	session_seconds integer check (session_seconds is null or session_seconds >= 0),
