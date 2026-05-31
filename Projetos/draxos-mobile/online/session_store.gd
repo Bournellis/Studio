@@ -67,11 +67,13 @@ func load_cache() -> bool:
 	if file == null:
 		return false
 
-	var parsed: Variant = JSON.parse_string(file.get_as_text())
-	if not parsed is Dictionary:
+	var parsed := _parse_json_dictionary(file.get_as_text())
+	if parsed.is_empty():
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(CACHE_PATH))
+		ensure_session_id()
 		return false
 
-	var cache := _as_dictionary(parsed)
+	var cache := parsed
 	if int(cache.get("cache_version", 0)) != CACHE_VERSION:
 		ensure_session_id()
 		return false
@@ -1095,4 +1097,13 @@ func _normalized_surface_save_types(value: Dictionary) -> Dictionary:
 static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:
 		return Dictionary(value)
+	return {}
+
+static func _parse_json_dictionary(text: String) -> Dictionary:
+	var parser := JSON.new()
+	if parser.parse(text) != OK:
+		return {}
+	var data: Variant = parser.data
+	if data is Dictionary:
+		return Dictionary(data)
 	return {}

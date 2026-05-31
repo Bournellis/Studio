@@ -385,7 +385,7 @@ func test_supabase_client_normalizes_save_context_header_state() -> void:
 	var client = SupabaseClientScript.new()
 	client.configure_save_type("progression_lab")
 	assert_eq(client.active_save_type, "progression_lab")
-	var annotated := client._with_client_context(
+	var annotated := SupabaseClientScript._with_client_context(
 		{"ok": true, "body": {"ok": true}},
 		PackedStringArray(["Accept: application/json", "x-draxos-save-type: progression_lab", "x-draxos-api-version: 1"])
 	)

@@ -18,7 +18,7 @@ const PANEL_GAP_REGULAR := 12.0
 const PANEL_RADIUS := 8
 
 static func button_min_size(compact: bool) -> Vector2:
-	var min_size := Vector2(0, MIN_TOUCH_TARGET if compact else 58)
+	var min_size := Vector2(0.0, MIN_TOUCH_TARGET if compact else 58.0)
 	min_size.y = maxf(min_size.y, MIN_TOUCH_TARGET)
 	return min_size
 
@@ -28,7 +28,7 @@ static func cta_min_size(compact: bool) -> Vector2:
 	return min_size
 
 static func input_min_size(compact: bool) -> Vector2:
-	var min_size := Vector2(0, MIN_TOUCH_TARGET if compact else 52)
+	var min_size := Vector2(0.0, MIN_TOUCH_TARGET if compact else 52.0)
 	min_size.y = maxf(min_size.y, MIN_TOUCH_TARGET)
 	return min_size
 

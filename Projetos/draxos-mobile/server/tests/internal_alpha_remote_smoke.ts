@@ -18,6 +18,20 @@ const healthcheck = await getJson(
 );
 assertEq(healthcheck.ok, true, "remote healthcheck should return ok");
 
+await assertCorsPreflights([
+  { url: `${SUPABASE_URL}/auth/v1/token?grant_type=password`, method: "POST" },
+  { url: `${SUPABASE_URL}/functions/v1/account/guest`, method: "POST" },
+  { url: `${SUPABASE_URL}/functions/v1/account/state`, method: "GET" },
+  { url: `${SUPABASE_URL}/functions/v1/base/state`, method: "GET" },
+  { url: `${SUPABASE_URL}/functions/v1/battle/request`, method: "POST" },
+  { url: `${SUPABASE_URL}/functions/v1/build/state`, method: "GET" },
+  { url: `${SUPABASE_URL}/functions/v1/social/state`, method: "GET" },
+  { url: `${SUPABASE_URL}/functions/v1/competition/ranking/current`, method: "GET" },
+  { url: `${SUPABASE_URL}/functions/v1/monetization/state`, method: "GET" },
+  { url: `${SUPABASE_URL}/functions/v1/telemetry/client-event`, method: "POST" },
+  { url: `${SUPABASE_URL}/functions/v1/release/manifest`, method: "GET" },
+]);
+
 let releaseManifestChecked = false;
 if (RUN_RELEASE_MANIFEST) {
   const manifest = await getJson(
@@ -214,7 +228,40 @@ function baseHeaders(): Record<string, string> {
   return {
     apikey: PUBLISHABLE_KEY,
     "content-type": "application/json",
+    "x-draxos-api-version": "1",
   };
+}
+
+async function assertCorsPreflights(
+  targets: Array<{ url: string; method: string }>,
+): Promise<void> {
+  for (const target of targets) {
+    await assertCorsPreflight(target.url, target.method);
+  }
+}
+
+async function assertCorsPreflight(url: string, method: string): Promise<void> {
+  const response = await fetch(url, {
+    method: "OPTIONS",
+    headers: {
+      apikey: PUBLISHABLE_KEY,
+      origin: "https://draxos-mobile-internal-alpha.pages.dev",
+      "access-control-request-method": method,
+      "access-control-request-headers":
+        "authorization,apikey,content-type,x-draxos-api-version,x-draxos-save-type",
+    },
+  });
+  assert(
+    response.ok,
+    `CORS preflight should pass for ${url}; status ${response.status}`,
+  );
+  const allowHeaders = response.headers.get("access-control-allow-headers") ??
+    "";
+  assertIncludes(
+    allowHeaders.toLowerCase(),
+    "x-draxos-api-version",
+    `CORS preflight should allow x-draxos-api-version for ${url}`,
+  );
 }
 
 async function getJson(
@@ -324,5 +371,15 @@ function assertEq(actual: unknown, expected: unknown, message: string): void {
     throw new Error(
       `${message}. Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`,
     );
+  }
+}
+
+function assertIncludes(
+  haystack: string,
+  needle: string,
+  message: string,
+): void {
+  if (!haystack.includes(needle)) {
+    throw new Error(`${message}. Missing: ${needle}. Got: ${haystack}`);
   }
 }

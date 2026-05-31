@@ -12,11 +12,14 @@ const MobileUiContractScript = preload("res://modes/boot/ui/mobile_ui_contract.g
 const TouchScrollContainerScript = preload("res://modes/boot/ui/touch_scroll_container.gd")
 
 func before_each() -> void:
+	ProjectSettings.set_setting("draxos_mobile/testing/disable_telemetry", true)
 	_reset_session_store_for_test()
 
 func after_each() -> void:
 	ProjectSettings.set_setting("draxos_mobile/ui/force_compact_layout", false)
+	ProjectSettings.set_setting("draxos_mobile/testing/disable_telemetry", false)
 	_reset_session_store_for_test()
+	await wait_process_frames(2)
 
 func test_boot_compact_layout_groups_actions_for_mobile() -> void:
 	ProjectSettings.set_setting("draxos_mobile/ui/force_compact_layout", true)
@@ -126,6 +129,10 @@ func test_app_shell_error_contract_normalizes_known_errors_without_boot_ui() -> 
 	)
 	assert_true(AppShellErrorContractScript.is_network_error("NETWORK_UNAVAILABLE"))
 	assert_false(AppShellErrorContractScript.is_network_error("INVALID_PRODUCT"))
+	assert_false(
+		AppShellErrorContractScript.friendly_message("NETWORK_UNAVAILABLE", "").contains("local"),
+		"Published Web builds should not describe remote CORS/network failures as local Supabase outages."
+	)
 	assert_eq(
 		AppShellErrorContractScript.friendly_message("UNKNOWN_CODE", "Raw backend text."),
 		"UNKNOWN_CODE: Raw backend text."

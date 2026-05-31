@@ -146,5 +146,9 @@ func _run_gut() -> int:
 		await process_frame
 
 	gut.queue_free()
-	await process_frame
+	await _drain_frames(8)
 	return exit_code[0]
+
+func _drain_frames(count: int) -> void:
+	for _index: int in range(count):
+		await process_frame

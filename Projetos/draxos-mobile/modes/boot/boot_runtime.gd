@@ -98,6 +98,7 @@ var _active_action_scope := OperationStateScript.DEFAULT_SCOPE
 var _is_busy := false
 var _replay_running := false
 var _skip_replay := false
+@warning_ignore("unused_private_class_variable")
 var _battle_summary_skipped := false
 var _battle_request_splash_active := false
 var _compact_layout := false
@@ -107,9 +108,13 @@ var _social_auto_sync_last_text := ""
 var _social_auto_sync_last_error := ""
 var _battle_lab_overlay: Control
 var _progression_lab_overlay: Control
+@warning_ignore("unused_private_class_variable")
 var _selected_base_structure_id := "nucleo_energia"
+@warning_ignore("unused_private_class_variable")
 var _last_social_friend_username := ""
+@warning_ignore("unused_private_class_variable")
 var _last_social_guild_name := ""
+@warning_ignore("unused_private_class_variable")
 var _last_social_chat_message := "Primeiro pulso do Conclave."
 var _update_gate := ProjectInfoScript.unchecked_update_status()
 var _account_session_flow = AccountSessionFlowScript.new()
@@ -117,7 +122,9 @@ var _surface_action_flow = SurfaceActionFlowScript.new()
 var _battle_lifecycle_flow = BattleLifecycleFlowScript.new()
 var _operation_state = OperationStateScript.new()
 var _battle_replay_presenter = BattleReplayPresenterScript.new()
+@warning_ignore("unused_private_class_variable")
 var _battle_history_entries: Array[Dictionary] = []
+@warning_ignore("unused_private_class_variable")
 var _battle_history_save_type := SessionStoreScript.SAVE_TYPE_NORMAL
 func _ready() -> void:
 	_clear_existing_scene()
@@ -1472,6 +1479,8 @@ func _action_context() -> Dictionary:
 	}
 
 func _emit_client_event(event_type: String, payload: Dictionary) -> void:
+	if bool(ProjectSettings.get_setting("draxos_mobile/testing/disable_telemetry", false)):
+		return
 	if SessionStore.is_progression_lab_local_only():
 		return
 	if not SessionStore.has_valid_access_token():

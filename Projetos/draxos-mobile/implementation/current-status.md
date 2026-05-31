@@ -11,9 +11,9 @@
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Latest published package: `Foundation Final Polish`
-- Latest implemented package: `Foundation Final Polish` on branch
-  `codex/draxos-mobile/foundation-final-polish`, over Foundation Closeout and
-  Lab Track 16 Alignment.
+- Latest implemented package: `Debug Clean Web Config` on branch
+  `codex/draxos-mobile/debug-clean-web-config`, over the published Foundation
+  Final Polish baseline.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -304,6 +304,38 @@ to Internal Alpha after explicit release approval on `2026-05-30`.
   `GODOT_CONFIG`, versioned Web asset root and `index.pck` size match.
 - Known release risk: Android was exported with `debug_fallback` because no
   release keystore was configured in the local env used for publication.
+
+## Debug Clean Web Config
+
+Debug Clean Web Config is a post-publication hardening pass over Foundation
+Final Polish. It does not add gameplay, tuning, schema changes, economy changes
+or new UX. It addresses debug-console noise and the manual Web login failure
+reported after publication.
+
+- Root cause for the Web login failure: the published Edge Functions still
+  answered browser CORS preflight without `x-draxos-api-version`, while the
+  Foundation Final Polish Web client correctly sent that API v1 header. The
+  browser blocked the request before it reached `account/guest`, and the client
+  surfaced the older generic "Supabase local unavailable" message.
+- Remote Edge Functions were redeployed for the Internal Alpha Supabase project
+  so the current published Web app can pass preflight with
+  `x-draxos-api-version: 1`.
+- `server/tests/internal_alpha_remote_smoke.ts` now performs non-mutating
+  browser preflight checks against auth and the major Edge Function adapters,
+  preventing a stale remote CORS deploy from looking like a local Supabase
+  outage again.
+- Client network error copy now distinguishes local Supabase outages from
+  remote/browser-blocked connection failures.
+- Debug cleanup removed invalid GUT font UID warnings, JSON parse noise from
+  corrupt session cache reads, unused-variable/parameter warnings, test
+  telemetry HTTP noise and detailed GUT orphan spam.
+- Main app debug pass is clean: no `WARNING`, `ERROR`, `SCRIPT ERROR`,
+  `ObjectDB`, leaked instance or HTTP noise in
+  `build/debug/godot_main_debug_clean_latest.log`.
+- Godot validation/GUT still reports a final engine-level
+  `GDScriptFunctionState` leak warning under `--debug` at process shutdown;
+  verbose output shows coroutine states from the async GUT runner, not live UI
+  nodes. Tests pass and the main app debug run is clean.
 
 Closeout validation on this branch:
 
@@ -608,14 +640,14 @@ economy, content tuning or final art.
 
 ## Next Step
 
-Foundation Final Polish is the current local canonical base and latest Internal
-Alpha publication: `codex/draxos-mobile/foundation-final-polish` at validated
-local HEAD, release root
-`internal-alpha/v0-foundation-final-polish-20260530-8c658f6`, preview
-`https://721dc985.draxos-mobile-internal-alpha.pages.dev/web/index.html`. The
-next decision should explicitly choose one package: base builder tuning,
-autobattler tuning, social expansion or minigame shell/contract. Do not open
-victory prediction, opponent counter-picks, custom
+Foundation Final Polish remains the latest Internal Alpha client publication:
+release root `internal-alpha/v0-foundation-final-polish-20260530-8c658f6`,
+preview `https://721dc985.draxos-mobile-internal-alpha.pages.dev/web/index.html`.
+The post-publication Debug Clean Web Config branch fixes remote Edge CORS for
+that published Web app and is the latest local implementation branch until it is
+merged or superseded. The next product decision should explicitly choose one
+package: base builder tuning, autobattler tuning, social expansion or minigame
+shell/contract. Do not open victory prediction, opponent counter-picks, custom
 thresholds, enemy-specific behavior, spell priorities, direct chat, helps,
 contributions, moderation, tuning numbers, new weapons, new spells, economy,
 new potions, crafting expansion or broader replay controls without its own

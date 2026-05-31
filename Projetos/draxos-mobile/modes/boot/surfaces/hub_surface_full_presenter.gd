@@ -696,7 +696,7 @@ static func _format_resource_amount(amount: Variant) -> String:
 		return "%.1f" % numeric_amount
 	return str(amount)
 
-static func _refuge_context_cta_data(host: Node) -> Dictionary:
+static func _refuge_context_cta_data(_host: Node) -> Dictionary:
 	if SessionStore.has_unseen_battle_result():
 		return {
 			"text": "Ver recompensa",

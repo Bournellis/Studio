@@ -587,7 +587,7 @@ func _send_json(url: String, method: HTTPClient.Method, headers: PackedStringArr
 
 	if result_code != HTTPRequest.RESULT_SUCCESS:
 		return _with_client_context(
-			_error("NETWORK_UNAVAILABLE", "Rede indisponivel ou Supabase local fora do ar.", response_code),
+			_error("NETWORK_UNAVAILABLE", _network_unavailable_message(), response_code),
 			headers
 		)
 
@@ -649,6 +649,11 @@ func _error(code: String, message: String, status: int = 0) -> Dictionary:
 			"message": message,
 		},
 	}
+
+func _network_unavailable_message() -> String:
+	if backend_environment == BackendConfigScript.ENVIRONMENT_LOCAL or supabase_url.begins_with("http://127.0.0.1") or supabase_url.begins_with("http://localhost"):
+		return "Rede indisponivel ou Supabase local fora do ar."
+	return "Rede indisponivel ou Supabase remoto bloqueou a conexao."
 
 static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:
