@@ -3,6 +3,7 @@
 - Data: `2026-05-31`
 - Projeto: `Projetos/draxos-mobile`
 - Track: `Track 20 - Season 1 Arena Calibration`
+- Status: `DONE_LOCAL_PACKAGE_READY`
 - Branch: `codex/draxos-mobile/s1-arena-calibration-integration`
 - Worktree: `D:\Estudio-worktrees\draxos-mobile--codex--s1-arena-calibration-integration`
 - Base: `codex/draxos-mobile/season1-arena-tuning-definitions` (`912776a`)
@@ -94,3 +95,9 @@ Entregar branch limpa com relatorio de calibragem, tiers em `REVIEW` documentado
   SHA256 `63bfb9aa4f79882413ff0b462f6420630cfedcdca825ba41b44ff51d65f6caff`.
 - Publicacao remota nao executada; requer aprovacao explicita e
   `-ConfirmRemoteMutation`.
+
+## Fechamento
+
+- Card movido para `Done` apos commit local `ce16029`.
+- Gate Full inicial falhou apenas por cards obsoletos em `Doing`; ambos foram
+  arquivados em `Done` para repetir o gate com worktree limpa.

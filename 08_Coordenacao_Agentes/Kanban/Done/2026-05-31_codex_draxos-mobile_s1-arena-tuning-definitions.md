@@ -3,6 +3,7 @@
 - Data: `2026-05-31`
 - Projeto: `Projetos/draxos-mobile/`
 - Track/contexto: follow-up de tuning da Arena PVE inicial sobre `Remote Lab Runner`
+- Status: `DONE_HANDOFF_CONSUMED_BY_TRACK_20`
 - Branch: `codex/draxos-mobile/season1-arena-tuning-definitions`
 - Worktree: `D:\Estudio-worktrees\draxos-mobile--codex--season1-arena-tuning-definitions`
 - Base: `codex/draxos-mobile/remote-lab-runner`
@@ -58,3 +59,8 @@ Entregar branch com worktree limpa, resumo dos arquivos alterados, validacoes ro
 ## Proximo Handoff
 
 Backend, cliente e labs ainda precisam adotar `pve_arena_difficulties.json` como fonte runtime/analitica. Este pacote apenas cria e valida o contrato de dados calibravel da Season 1.
+
+## Fechamento
+
+- Card arquivado em `Done` durante Track 20; o handoff foi consumido por
+  `codex/draxos-mobile/s1-arena-calibration-integration`.
