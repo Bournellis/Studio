@@ -386,6 +386,9 @@ verify_jwt = true
 [functions.battle]
 verify_jwt = true
 
+[functions.arena]
+verify_jwt = true
+
 [functions.base]
 verify_jwt = true
 
