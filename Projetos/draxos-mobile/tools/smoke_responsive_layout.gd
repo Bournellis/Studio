@@ -82,15 +82,16 @@ func _check_refuge_layout(viewport_size: Vector2i) -> void:
 		"RefugeContextCta",
 		"RefugeIcon_Perfil",
 		"RefugeIcon_LabsDev",
-		"RefugeIcon_Batalha",
+		"RefugeIcon_Arena PVE",
 		"RefugeIcon_Refugio",
 		"RefugeIcon_Social",
-		"RefugeIcon_Competicao",
 		"RefugeIcon_Loja",
 		"RefugeIcon_Coletar",
 		"RefugeIcon_Energia",
 	]:
 		_expect_node_fits(boot, node_name, context)
+	_expect(_find_node_by_name(boot, "RefugeIcon_Batalha") == null, "%s hides legacy battle shortcut." % context)
+	_expect(_find_node_by_name(boot, "RefugeIcon_Competicao") == null, "%s hides competition shortcut." % context)
 	var safe_frame := _find_node_by_name(boot, "RefugeSafeFrame") as Control
 	if safe_frame != null:
 		_expect(safe_frame.size.x <= MobileUiContractScript.IMMERSIVE_SAFE_MAX_WIDTH + 1.0, "%s safe frame width is capped." % context)

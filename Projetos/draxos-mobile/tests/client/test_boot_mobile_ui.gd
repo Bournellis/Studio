@@ -269,19 +269,21 @@ func test_boot_refugio_home_renders_altar_hotspots_and_account_route() -> void:
 	assert_true(_label_tree_contains(boot._first_screen_root, "ALTAR"))
 	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeIcon_Coletar"))
 
-	for hotspot_text: String in ["Batalha", "Refugio", "Social", "Competicao", "Loja", "Perfil"]:
+	for hotspot_text: String in ["Arena PVE", "Refugio", "Social", "Loja", "Perfil"]:
 		var hotspot := _find_node_by_name(boot._first_screen_root, "RefugeIcon_%s" % hotspot_text) as Button
 		assert_not_null(hotspot, "Refugio should expose icon '%s'." % hotspot_text)
 		assert_true(hotspot.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
+	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeIcon_Batalha"))
+	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeIcon_Competicao"))
 
-	var battle_hotspot := _find_node_by_name(boot._first_screen_root, "RefugeIcon_Batalha") as Button
-	battle_hotspot.pressed.emit()
+	var arena_hotspot := _find_node_by_name(boot._first_screen_root, "RefugeIcon_Arena PVE") as Button
+	arena_hotspot.pressed.emit()
 	await get_tree().process_frame
 	var menu_popup := boot._refuge_menu_popup as PopupPanel
 	assert_not_null(menu_popup)
 	assert_true(menu_popup.visible)
-	assert_true(_label_tree_contains(menu_popup, "Batalha"))
-	assert_not_null(_find_button_by_text(menu_popup, "Pedir batalha"))
+	assert_true(_label_tree_contains(menu_popup, "Arena PVE"))
+	assert_not_null(_find_button_by_text(menu_popup, "Abrir Arena PVE"))
 	boot._go_back()
 	assert_false(menu_popup.visible)
 
@@ -829,8 +831,8 @@ func test_refuge_preparation_renders_potion_slot_and_behavior_defaults() -> void
 	await get_tree().process_frame
 	var popup := boot.get("_refuge_menu_popup") as PopupPanel
 	assert_not_null(popup)
-	assert_true(_label_tree_contains(popup, "Pronto para batalha"))
-	assert_true(_label_tree_contains(popup, "Primeira sessao: confira instrumento, habilidades e pocao antes de batalhar."))
+	assert_true(_label_tree_contains(popup, "Pronto para Arena"))
+	assert_true(_label_tree_contains(popup, "Primeira sessao: confira instrumento, habilidades e pocao antes da Arena."))
 	assert_true(_label_tree_contains(popup, "Poder 243"))
 	assert_true(_label_tree_contains(popup, "Resumo: Varinha de Cinzas | 1 habilidade | Doutrina do Pavor | Corvo de Pressagio"))
 	assert_true(_label_tree_contains(popup, "Proximos marcos"))
@@ -847,12 +849,12 @@ func test_refuge_preparation_renders_potion_slot_and_behavior_defaults() -> void
 	assert_true(_label_tree_contains(popup, "Pacto Familiar: Disponivel"))
 	assert_true(_label_tree_contains(popup, "Gato Tumular: Disponivel"))
 	assert_true(_label_tree_contains(popup, "Lobo Tumular: Desbloqueia no nivel 15."))
-	assert_not_null(_find_button_by_text(popup, "Pedir batalha"))
+	assert_not_null(_find_button_by_text(popup, "Abrir Arena PVE"))
 	assert_not_null(_find_button_by_text(popup, "Equipar Pocao de Vida"))
 	assert_not_null(_find_button_by_text(popup, "Remover pocao"))
 	assert_not_null(_find_button_by_text(popup, "Usar com vida baixa"))
 	assert_not_null(_find_button_by_text(popup, "Pausar pocao"))
-	assert_not_null(_find_button_by_text(popup, "Usar na batalha"))
+	assert_not_null(_find_button_by_text(popup, "Usar na Arena"))
 	assert_not_null(_find_button_by_text(popup, "Pausar"))
 	var visible_text := _visible_text_tree(popup).to_lower()
 	for forbidden: String in ["behavior", "build", "slot", "endpoint", "server-authoritative", "schema", "snapshot"]:
@@ -1017,7 +1019,7 @@ func test_refuge_preparation_renders_paused_potion_and_spell_publicly() -> void:
 	var popup := boot.get("_refuge_menu_popup") as PopupPanel
 	assert_not_null(popup)
 	assert_true(_label_tree_contains(popup, "Pocao pausada"))
-	assert_true(_label_tree_contains(popup, "Habilidade 1: Incisao Ritual | Pausada para batalha"))
+	assert_true(_label_tree_contains(popup, "Habilidade 1: Incisao Ritual | Pausada para Arena"))
 	assert_true(_label_tree_contains(popup, "Corvo de Pressagio L2"))
 	assert_true(_label_tree_contains(popup, "Pacto Familiar L3"))
 
