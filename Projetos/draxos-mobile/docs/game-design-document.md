@@ -411,9 +411,13 @@ Ossos continuam raros. Batalhas, quests e Battle Pass seguem como fontes princip
 
 ## Arena PVE Inicial
 
+Contrato vivo do pacote: `pve-arena-v1.md`.
+
 A Arena PVE inicial e o primeiro modo jogavel de produto. Ela usa duelos assincronos server-authoritative contra inimigos controlados pelo jogo, sem depender de playerbase PVP e sem exigir campanha tradicional com assets pesados.
 
-Inspiracao de ritmo: uma lista de inimigos como torre/ladder de luta. O tutorial comeca com 1 duelo. As primeiras arenas reais comecam com 3 duelos. Depois de algumas dificuldades vencidas, arenas de 4 duelos sao liberadas, e assim por diante ate um limite maximo inicial que ainda precisa ser fechado em `design-pending.md`.
+Inspiracao de ritmo: uma lista de inimigos como torre/ladder de luta. O tutorial comeca com 1 duelo. As primeiras arenas reais comecam com 3 duelos. Depois de algumas dificuldades vencidas, arenas de 4 duelos sao liberadas, e assim por diante ate o cap inicial de 5 duelos.
+
+Decisao v1: o limite maximo inicial e 5 duelos. O primeiro pacote deve expor tutorial de 1 duelo e arenas reais de 3 duelos; arenas de 4 e 5 duelos ficam contratadas em dados para desbloqueio posterior dentro do mesmo cap inicial.
 
 Regras de modo:
 
@@ -432,9 +436,30 @@ Escala de arena:
 
 - Tutorial: 1 duelo guiado.
 - Primeiras arenas: 3 duelos.
-- Arenas maiores: 4+ duelos liberados por progresso/dificuldade.
+- Arena media: 4 duelos, liberada depois das primeiras arenas curtas provarem dificuldade 2.
+- Arena longa inicial: 5 duelos, cap v1 para dificuldade 4+.
 - Todas as duracoes continuam escalando dificuldade, para permitir que jogador avancado faca arena curta em dificuldade alta.
-- O limite maximo inicial de duelos deve ser decidido antes da implementacao do primeiro pacote.
+
+Dados autorados v1:
+
+- `data/definitions/pve_arenas.json` define arena, tamanho, unlock, inimigos, reward profile e regras de tentativa.
+- `data/definitions/pve_enemies.json` define inimigos PVE por arquetipo, poder alvo, papel didatico e build base.
+- `data/definitions/arena_buffs.json` define buffs temporarios apenas de stat.
+- `data/definitions/arena_rewards.json` define recompensas calibraveis por tutorial, conclusao, dificuldade, recorde, repeticao e limites.
+
+Lista inicial de inimigos/arquetipos:
+
+| Enemy ID | Arquetipo | Uso |
+|---|---|---|
+| `pve_aprendiz_cinzas` | `starter_instrument` | Tutorial e primeiro duelo basico |
+| `pve_guardiao_barreira` | `defensive_occultist` | Guarda/barreira e duracao maior |
+| `pve_sussurrador_veu` | `mental_controller` | Controle mental inicial |
+| `pve_misturador_elemental` | `elemental_mixer` | Duas fontes elementais |
+| `pve_pressao_veneno` | `dot_pressure` | Dano por tempo |
+| `pve_condutor_familiar` | `familiar_handler` | Familiar e pressao extra |
+| `pve_invocador_ossario` | `summoner` | Summons |
+| `pve_defensor_abissal` | `defensive_occultist` | Check defensivo de arena media/longa |
+| `pve_finalizador_abissal` | `funeral_burst` | Finalizador do cap inicial |
 
 ## PVP Posterior
 

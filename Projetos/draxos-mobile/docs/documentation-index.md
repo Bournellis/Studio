@@ -33,6 +33,7 @@
 |---|---|---|
 | `docs/product-vision.md` | `VIVO` | Local long-term product canon until promoted to shared canon. |
 | `docs/pve-arena-initial-direction.md` | `VIVO` | Current early-game direction: Arena PVE first, PVP later, no combat cooldown, locked loadout, temporary stat buffs and duel-list scaling. |
+| `docs/pve-arena-v1.md` | `VIVO` | Initial data-driven Arena PVE contract for arenas, enemies, temporary buffs, rewards, endpoints, schema and lab modeling. |
 | `docs/foundation-app-v0-audit.md` | `HISTORICO` | Closed audit compass: real foundation, current mock, live-product gaps and post-login loop focus preserved as context. |
 | `docs/foundation-expansion-readiness.md` | `RUNBOOK` | Active expansion-readiness gate: lanes, ownership, contract-first requirements, account/save, ruleset and admin checks. |
 | `docs/foundation-loop-audit.md` | `VIVO` | Executed audit of the current post-login loop ergonomics; records Foundation Loop UX Pass 01 as the accepted Internal Alpha UX baseline. |
@@ -120,6 +121,7 @@
 - A live doc must not tell agents to start from Track 04, Track 08, Track 10, Track 14, Track 15 or Track 16 as the current stage.
 - A live doc must treat `implementation/current-status.md` as the active stage/status source after the user chooses the next package.
 - A live doc must treat `docs/pve-arena-initial-direction.md` as the current product direction after Foundation Final Polish: Arena PVE initial first, PVP later.
+- A live doc may treat `docs/pve-arena-v1.md` as the current contract/data package for Arena PVE implementation, while values marked `CALIBRAVEL_ALPHA` still require labs and human playthrough.
 - A live doc must not direct agents to expand balance, weapons, spells, Battle Pass, economy, final visual identity or battle presentation beyond what the Arena PVE initial package explicitly needs.
 - Foundation Audit must preserve the post-login loop as app shell, but the first playable product loop is now Refugio -> Arena PVE -> locked loadout -> duel list -> buffs/behavior between duels -> rewards -> upgrades.
 - Foundation Expansion Readiness/Foundation Closeout/Foundation Final Polish is now the delivered pre-expansion gate before Arena PVE implementation/tuning; base builder, PVP, expanded social or a real minigame are later packages unless explicitly selected.

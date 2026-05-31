@@ -26,6 +26,8 @@ const OUTPUT_PATHS = [
 ];
 
 const CONTENT_SOURCES: SourceSpec[] = [
+  "arena_buffs.json",
+  "arena_rewards.json",
   "base_structures.json",
   "battle_fixtures.json",
   "bot_builds.json",
@@ -34,6 +36,8 @@ const CONTENT_SOURCES: SourceSpec[] = [
   "pets.json",
   "potions.json",
   "power_bands.json",
+  "pve_arenas.json",
+  "pve_enemies.json",
   "rewards.json",
   "spells.json",
   "weapons.json",

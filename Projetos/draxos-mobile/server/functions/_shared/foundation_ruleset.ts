@@ -4,150 +4,154 @@ export const FOUNDATION_RULESET = {
   "ruleset_id": "foundation_ruleset_v0",
   "ruleset_version": 1,
   "lifecycle": "FOUNDATION_AUDIT_ACTIVE",
-  "content_hash":
-    "5f7e7fe5d1a1e8570e531bc3ce977188a74470df6d75da66b2b4c54219a68b97",
-  "simulator_hash":
-    "e835cadde3c937cba45c46785da3761139373ab23ac9dfaaed814d79f933bbe9",
+  "content_hash": "427c95ce7aecc48e44a0255cf2b4920eea845d43d4b864d28f6c5fe526387b31",
+  "simulator_hash": "e835cadde3c937cba45c46785da3761139373ab23ac9dfaaed814d79f933bbe9",
   "runtime": {
     "mode": "FIRST_SLICE_SIM",
     "battle_log_schema": "battle_log_v1",
     "catalog_schema": "grimoire_catalog_v1",
-    "server_authoritative": true,
+    "server_authoritative": true
   },
   "sources": [
     {
+      "path": "data/definitions/arena_buffs.json",
+      "kind": "definition_json",
+      "sha256": "8f7fc6946749df4894c6d7d9c9e4db85d4af667bcbccf576904fe743b7a2ed59",
+      "canonical_bytes": 3379
+    },
+    {
+      "path": "data/definitions/arena_rewards.json",
+      "kind": "definition_json",
+      "sha256": "3cfec72a6c53dcc849626b568f11a0e0d242f81a8c25e07ece64a878d70cc5e3",
+      "canonical_bytes": 3800
+    },
+    {
       "path": "data/definitions/base_structures.json",
       "kind": "definition_json",
-      "sha256":
-        "45eb863e380dd94595a16fa8d405bf089361f569c22f70a06ef1e4f933c6407b",
-      "canonical_bytes": 2800,
+      "sha256": "45eb863e380dd94595a16fa8d405bf089361f569c22f70a06ef1e4f933c6407b",
+      "canonical_bytes": 2800
     },
     {
       "path": "data/definitions/battle_fixtures.json",
       "kind": "definition_json",
-      "sha256":
-        "7120ddc085cd23b4739a10c95d097a7bac0dacbd51e58cd9acb05dbe14d8cd79",
-      "canonical_bytes": 1042,
+      "sha256": "7120ddc085cd23b4739a10c95d097a7bac0dacbd51e58cd9acb05dbe14d8cd79",
+      "canonical_bytes": 1042
     },
     {
       "path": "data/definitions/bot_builds.json",
       "kind": "definition_json",
-      "sha256":
-        "f2b0960f726e03d60c19f2eef23daec9687432d6090fb951caf8e73bb494702f",
-      "canonical_bytes": 4852,
+      "sha256": "f2b0960f726e03d60c19f2eef23daec9687432d6090fb951caf8e73bb494702f",
+      "canonical_bytes": 4852
     },
     {
       "path": "data/definitions/crafting_recipes.json",
       "kind": "definition_json",
-      "sha256":
-        "35b1d036201ed923633744e2a1101067ee208cda26d468bda940028601616db3",
-      "canonical_bytes": 322,
+      "sha256": "35b1d036201ed923633744e2a1101067ee208cda26d468bda940028601616db3",
+      "canonical_bytes": 322
     },
     {
       "path": "data/definitions/passives.json",
       "kind": "definition_json",
-      "sha256":
-        "4472336d3e3443b29088a7f27dd6fc6b981366354c494cf5acc90973cae2040b",
-      "canonical_bytes": 4252,
+      "sha256": "4472336d3e3443b29088a7f27dd6fc6b981366354c494cf5acc90973cae2040b",
+      "canonical_bytes": 4252
     },
     {
       "path": "data/definitions/pets.json",
       "kind": "definition_json",
-      "sha256":
-        "900ea0d76b237ddf52eaf3877908bda5a93932648b65bd0bf26755ad505e8359",
-      "canonical_bytes": 4064,
+      "sha256": "900ea0d76b237ddf52eaf3877908bda5a93932648b65bd0bf26755ad505e8359",
+      "canonical_bytes": 4064
     },
     {
       "path": "data/definitions/potions.json",
       "kind": "definition_json",
-      "sha256":
-        "129f6f8f8f756f9ab5d73926000460c7a11549bf1d729580f73e3cb0d802a766",
-      "canonical_bytes": 528,
+      "sha256": "129f6f8f8f756f9ab5d73926000460c7a11549bf1d729580f73e3cb0d802a766",
+      "canonical_bytes": 528
     },
     {
       "path": "data/definitions/power_bands.json",
       "kind": "definition_json",
-      "sha256":
-        "e65aa003f9a875ae5ff604b57510ebf5f1d0bf6fea9b7e2357cb33a281c4df2b",
-      "canonical_bytes": 1619,
+      "sha256": "e65aa003f9a875ae5ff604b57510ebf5f1d0bf6fea9b7e2357cb33a281c4df2b",
+      "canonical_bytes": 1619
+    },
+    {
+      "path": "data/definitions/pve_arenas.json",
+      "kind": "definition_json",
+      "sha256": "23e5697372eac10cb2dd5b77621e3e515ef549f821aff4066870545e6e39e282",
+      "canonical_bytes": 4485
+    },
+    {
+      "path": "data/definitions/pve_enemies.json",
+      "kind": "definition_json",
+      "sha256": "7d4f41abfd5c3b700e98a5d0770c208695145eb7ccfc6013dbe9eafa1d3fb7e5",
+      "canonical_bytes": 6197
     },
     {
       "path": "data/definitions/rewards.json",
       "kind": "definition_json",
-      "sha256":
-        "310acb38bea00a24cf886c30f44d26ab5cd13c078a024a7c59756f91794380a0",
-      "canonical_bytes": 2144,
+      "sha256": "310acb38bea00a24cf886c30f44d26ab5cd13c078a024a7c59756f91794380a0",
+      "canonical_bytes": 2144
     },
     {
       "path": "data/definitions/spells.json",
       "kind": "definition_json",
-      "sha256":
-        "a8b80adaa7dca32f41591311af4d595b656924c92ee27c516231a1844184b4d0",
-      "canonical_bytes": 9656,
+      "sha256": "a8b80adaa7dca32f41591311af4d595b656924c92ee27c516231a1844184b4d0",
+      "canonical_bytes": 9656
     },
     {
       "path": "data/definitions/weapons.json",
       "kind": "definition_json",
-      "sha256":
-        "e0a0da2b16be7ae71fcbef78dd99fc95e758dec880d6e4c73e41895e7d804075",
-      "canonical_bytes": 4141,
+      "sha256": "e0a0da2b16be7ae71fcbef78dd99fc95e758dec880d6e4c73e41895e7d804075",
+      "canonical_bytes": 4141
     },
     {
       "path": "tools/battle_lab/model.v1.json",
       "kind": "tool_model",
-      "sha256":
-        "3755eb0b1059391b760e60f3707cf545ff11e82a3e6cdeaf76256ff60f7ccd86",
-      "canonical_bytes": 6245,
+      "sha256": "3755eb0b1059391b760e60f3707cf545ff11e82a3e6cdeaf76256ff60f7ccd86",
+      "canonical_bytes": 6245
     },
     {
       "path": "tools/economy_simulator/economy_model.v1.json",
       "kind": "tool_model",
-      "sha256":
-        "2648a04a6c3cd3f5f62b7e503d0c9df72b00a7289c54b60ada77ce8b09c21342",
-      "canonical_bytes": 7440,
+      "sha256": "2648a04a6c3cd3f5f62b7e503d0c9df72b00a7289c54b60ada77ce8b09c21342",
+      "canonical_bytes": 7440
     },
     {
       "path": "tools/progression_lab/model.v1.json",
       "kind": "tool_model",
-      "sha256":
-        "9e7e7311d7b746affac86fc58b28182842dc58d3c253723f5e54296adbf75259",
-      "canonical_bytes": 4400,
+      "sha256": "9e7e7311d7b746affac86fc58b28182842dc58d3c253723f5e54296adbf75259",
+      "canonical_bytes": 4400
     },
     {
       "path": "server/functions/_shared/battle_combatants.ts",
       "kind": "battle_simulator",
-      "sha256":
-        "0b4599f1246a351f1f6d7f28f3f0132c929f252804a49f1721ff28c1bf530683",
-      "canonical_bytes": 7796,
+      "sha256": "0b4599f1246a351f1f6d7f28f3f0132c929f252804a49f1721ff28c1bf530683",
+      "canonical_bytes": 7796
     },
     {
       "path": "server/functions/_shared/battle_simulator.ts",
       "kind": "battle_simulator",
-      "sha256":
-        "314151ebc5cc1179828dab40aee80face4bfb1a2cd9309c889317a9f623a3338",
-      "canonical_bytes": 50127,
+      "sha256": "314151ebc5cc1179828dab40aee80face4bfb1a2cd9309c889317a9f623a3338",
+      "canonical_bytes": 50127
     },
     {
       "path": "supabase/functions/_shared/battle_combatants.ts",
       "kind": "battle_simulator",
-      "sha256":
-        "0b4599f1246a351f1f6d7f28f3f0132c929f252804a49f1721ff28c1bf530683",
-      "canonical_bytes": 7796,
+      "sha256": "0b4599f1246a351f1f6d7f28f3f0132c929f252804a49f1721ff28c1bf530683",
+      "canonical_bytes": 7796
     },
     {
       "path": "supabase/functions/_shared/battle_simulator.ts",
       "kind": "battle_simulator",
-      "sha256":
-        "314151ebc5cc1179828dab40aee80face4bfb1a2cd9309c889317a9f623a3338",
-      "canonical_bytes": 50127,
-    },
+      "sha256": "314151ebc5cc1179828dab40aee80face4bfb1a2cd9309c889317a9f623a3338",
+      "canonical_bytes": 50127
+    }
   ],
   "counts": {
-    "definitions": 11,
+    "definitions": 15,
     "tool_models": 3,
     "battle_simulators": 4,
-    "total_sources": 18,
-  },
+    "total_sources": 22
+  }
 } as const;
 
 export type FoundationRuleset = typeof FOUNDATION_RULESET;

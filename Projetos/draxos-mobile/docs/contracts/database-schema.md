@@ -1,7 +1,7 @@
 # Database Schema Contract
 
-- Ultima atualizacao: `2026-05-30`
-- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type`, reset separado por save, Progression Lab, auth email/senha, manifest/update, Track 16 de comportamento/crafting/consumiveis e Foundation Expansion Readiness com `account_profiles`, `game_saves`, `ruleset_registry`, `admin_audit_log`, idempotencia v1, metadata de ruleset e dominios criticos promovidos para RPCs transacionais v1.
+- Ultima atualizacao: `2026-05-31`
+- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type`, reset separado por save, Progression Lab, auth email/senha, manifest/update, Track 16 de comportamento/crafting/consumiveis e Foundation Expansion Readiness com `account_profiles`, `game_saves`, `ruleset_registry`, `admin_audit_log`, idempotencia v1, metadata de ruleset e dominios criticos promovidos para RPCs transacionais v1. Arena PVE v1 acrescenta schema contratado para tentativa, duelos, buffs, progresso e rewards sem migration nesta branch.
 
 Este documento define o schema esperado. A fonte tecnica viva do runtime local e `../../supabase/migrations/`; `../../server/schema/migrations/` permanece como espelho backend durante o alpha local.
 
@@ -93,6 +93,161 @@ Contrato detalhado: `admin-ops.md`.
 `resource_reconciliation_report_v1`, `admin_adjust_resource_balance_v1` e
 `admin_flag_account_v1` sao internas, auditaveis e sem grant para
 `anon`/`authenticated`.
+
+## Arena PVE v1 Schema Contratado
+
+Status: contrato documental/data-driven; nenhuma migration e aplicada nesta branch.
+
+Contrato de produto: `../pve-arena-v1.md`.
+
+Novas tabelas futuras devem usar `game_saves.id` como autoridade primaria. `players.id` pode aparecer apenas como compatibilidade historica ou cache denormalizado.
+
+### `pve_arena_progress`
+
+Progresso agregado por save e arena.
+
+Campos minimos:
+
+- `id`
+- `game_save_id`
+- `arena_id`
+- `highest_difficulty_cleared`
+- `best_duel_index`
+- `best_duel_count`
+- `first_cleared_at`
+- `last_played_at`
+- `clear_count`
+- `ruleset_publication_id`
+- `created_at`
+- `updated_at`
+
+Regras:
+
+- unico por `game_save_id + arena_id`;
+- nao atualiza `ranking`;
+- reset do save limpa ou reconstrui progresso deste save;
+- `progression_lab` pode ter progresso proprio, sempre fora de ranking.
+
+### `pve_arena_attempts`
+
+Tentativa ativa ou historica de Arena PVE.
+
+Campos minimos:
+
+- `id`
+- `game_save_id`
+- `arena_id`
+- `difficulty_tier`
+- `state` (`active`, `completed`, `failed`, `abandoned`, `claimed`)
+- `duel_count`
+- `current_duel_index`
+- `locked_loadout_snapshot`
+- `locked_loadout_hash`
+- `behavior_snapshot`
+- `active_buff_payload`
+- `reward_profile_id`
+- `reward_payload`
+- `request_id`
+- `request_hash`
+- `ruleset_publication_id`
+- `ruleset_id`
+- `ruleset_version`
+- `ruleset_content_hash`
+- `ruleset_simulator_hash`
+- `ruleset_schema_version`
+- `started_at`
+- `completed_at`
+- `claimed_at`
+- `created_at`
+- `updated_at`
+
+Regras:
+
+- no maximo uma tentativa `active` por `game_save_id`;
+- loadout snapshot nao muda ate finalizar a tentativa;
+- comportamento pode mudar entre duelos, mas deve ser registrado em snapshot/step;
+- derrota encerra a tentativa v1;
+- abandono nao concede recompensa de conclusao.
+
+### `pve_arena_attempt_duels`
+
+Registro de cada duelo dentro da tentativa.
+
+Campos minimos:
+
+- `id`
+- `attempt_id`
+- `game_save_id`
+- `duel_index`
+- `enemy_id`
+- `battle_id`
+- `state` (`pending`, `won`, `lost`, `error`)
+- `buffs_before_duel`
+- `behavior_before_duel`
+- `hp_reset`
+- `seed`
+- `result_payload`
+- `created_at`
+- `resolved_at`
+
+Regras:
+
+- unico por `attempt_id + duel_index`;
+- `hp_reset` deve ser `true` no v1;
+- `battle_id` aponta para `battles.id` e o replay deve ler `battle_log_v1` salvo;
+- erro de simulacao nao pode aplicar recompensa.
+
+### `pve_arena_buff_offers`
+
+Oferta de 3 buffs apos uma vitoria quando ainda ha proximo duelo.
+
+Campos minimos:
+
+- `id`
+- `attempt_id`
+- `game_save_id`
+- `after_duel_index`
+- `offered_buff_ids`
+- `selected_buff_id`
+- `selected_at`
+- `request_id`
+- `request_hash`
+- `created_at`
+
+Regras:
+
+- `offered_buff_ids` deve ter exatamente 3 ids em v1;
+- `selected_buff_id` deve pertencer a oferta;
+- uma oferta so pode ser escolhida uma vez;
+- repetir `request_id/request_hash` retorna a mesma escolha.
+
+### `pve_arena_reward_claims`
+
+Claim de recompensa de arena.
+
+Campos minimos:
+
+- `id`
+- `attempt_id`
+- `game_save_id`
+- `arena_id`
+- `reward_profile_id`
+- `period_keys`
+- `reward_payload`
+- `repeat_multiplier`
+- `source`
+- `request_id`
+- `request_hash`
+- `ruleset_publication_id`
+- `created_at`
+
+Regras:
+
+- unico por `attempt_id`;
+- source de ledger: `arena_pve_v1`;
+- grava deltas economicos em `resource_transactions`;
+- primeira clear, recorde, repeticao e caps devem ser calculados no servidor;
+- nao toca `ranking`.
 
 ## MVP Tecnico
 
