@@ -16,7 +16,7 @@
 <body>
   <h1>DraxosMobile Progression Lab</h1>
   <p>Model draxos_mobile_progression_lab_v1. Use this report to pick manual Godot saves and tuning hypotheses.</p>
-  <div class="cards"><div class="card"><strong>Status</strong><br>REVIEW</div><div class="card"><strong>Healthy saves</strong><br>25</div><div class="card"><strong>Bots</strong><br>75</div><div class="card"><strong>Profiles</strong><br>5</div><div class="card"><strong>Life potions</strong><br>75</div><div class="card"><strong>Arena attempts</strong><br>1102</div></div>
+  <div class="cards"><div class="card"><strong>Status</strong><br>REVIEW</div><div class="card"><strong>Healthy saves</strong><br>25</div><div class="card"><strong>Bots</strong><br>75</div><div class="card"><strong>Profiles</strong><br>5</div><div class="card"><strong>Life potions</strong><br>75</div><div class="card"><strong>Arena attempts</strong><br>1102</div><div class="card"><strong>Projected potion uses</strong><br>586</div></div>
   <h2>Healthy Saves</h2>
   <table><tr><th>Save</th><th>Status</th><th>Level</th><th>Power</th><th>Notes</th></tr><tr><td>free_50_rewards_2h</td><td>PASS</td><td>6</td><td>389</td><td>Use power 389 as initial matchmaking observation, not final truth.</td></tr>
 <tr><td>free_50_rewards_5h</td><td>PASS</td><td>8</td><td>671</td><td>Use power 671 as initial matchmaking observation, not final truth.</td></tr>
@@ -97,54 +97,79 @@
   <h2>Arena PVE Checks</h2>
   <table><tr><th>Status</th><th>Profile</th><th>Milestone</th><th>Check</th><th>Observed</th><th>Target</th></tr><tr><td>PASS</td><td>free_50_rewards</td><td>2h</td><td>arena_attempt_volume</td><td>6.4 attempts</td><td>> 0 attempts without combat cooldown</td></tr>
 <tr><td>PASS</td><td>free_50_rewards</td><td>2h</td><td>arena_farm_pressure</td><td>repeat factor 0.25</td><td><= 0.5</td></tr>
+<tr><td>PASS</td><td>free_50_rewards</td><td>2h</td><td>arena_potion_consumption_pressure</td><td>0 projected uses, 1 stock, 100% coverage</td><td>>= 5% lab stock coverage when Pocao de Vida is equipped</td></tr>
 <tr><td>PASS</td><td>free_50_rewards</td><td>5h</td><td>arena_attempt_volume</td><td>16 attempts</td><td>> 0 attempts without combat cooldown</td></tr>
 <tr><td>PASS</td><td>free_50_rewards</td><td>5h</td><td>arena_farm_pressure</td><td>repeat factor 0.25</td><td><= 0.5</td></tr>
+<tr><td>PASS</td><td>free_50_rewards</td><td>5h</td><td>arena_potion_consumption_pressure</td><td>6.7 projected uses, 2 stock, 29.76% coverage</td><td>>= 5% lab stock coverage when Pocao de Vida is equipped</td></tr>
 <tr><td>PASS</td><td>free_50_rewards</td><td>10h</td><td>arena_attempt_volume</td><td>32 attempts</td><td>> 0 attempts without combat cooldown</td></tr>
 <tr><td>PASS</td><td>free_50_rewards</td><td>10h</td><td>arena_farm_pressure</td><td>repeat factor 0.25</td><td><= 0.5</td></tr>
+<tr><td>PASS</td><td>free_50_rewards</td><td>10h</td><td>arena_potion_consumption_pressure</td><td>13.4 projected uses, 3 stock, 22.32% coverage</td><td>>= 5% lab stock coverage when Pocao de Vida is equipped</td></tr>
 <tr><td>PASS</td><td>free_50_rewards</td><td>15h</td><td>arena_attempt_volume</td><td>48 attempts</td><td>> 0 attempts without combat cooldown</td></tr>
 <tr><td>PASS</td><td>free_50_rewards</td><td>15h</td><td>arena_farm_pressure</td><td>repeat factor 0.25</td><td><= 0.5</td></tr>
+<tr><td>PASS</td><td>free_50_rewards</td><td>15h</td><td>arena_potion_consumption_pressure</td><td>20.2 projected uses, 4 stock, 19.84% coverage</td><td>>= 5% lab stock coverage when Pocao de Vida is equipped</td></tr>
 <tr><td>PASS</td><td>free_50_rewards</td><td>20h</td><td>arena_attempt_volume</td><td>64 attempts</td><td>> 0 attempts without combat cooldown</td></tr>
 <tr><td>PASS</td><td>free_50_rewards</td><td>20h</td><td>arena_farm_pressure</td><td>repeat factor 0.25</td><td><= 0.5</td></tr>
+<tr><td>PASS</td><td>free_50_rewards</td><td>20h</td><td>arena_potion_consumption_pressure</td><td>26.9 projected uses, 5 stock, 18.6% coverage</td><td>>= 5% lab stock coverage when Pocao de Vida is equipped</td></tr>
 <tr><td>PASS</td><td>free_100_rewards</td><td>2h</td><td>arena_attempt_volume</td><td>8 attempts</td><td>> 0 attempts without combat cooldown</td></tr>
 <tr><td>PASS</td><td>free_100_rewards</td><td>2h</td><td>arena_farm_pressure</td><td>repeat factor 0.35</td><td><= 0.5</td></tr>
+<tr><td>PASS</td><td>free_100_rewards</td><td>2h</td><td>arena_potion_consumption_pressure</td><td>0 projected uses, 1 stock, 100% coverage</td><td>>= 5% lab stock coverage when Pocao de Vida is equipped</td></tr>
 <tr><td>PASS</td><td>free_100_rewards</td><td>5h</td><td>arena_attempt_volume</td><td>20 attempts</td><td>> 0 attempts without combat cooldown</td></tr>
 <tr><td>PASS</td><td>free_100_rewards</td><td>5h</td><td>arena_farm_pressure</td><td>repeat factor 0.35</td><td><= 0.5</td></tr>
+<tr><td>PASS</td><td>free_100_rewards</td><td>5h</td><td>arena_potion_consumption_pressure</td><td>10.4 projected uses, 2 stock, 19.23% coverage</td><td>>= 5% lab stock coverage when Pocao de Vida is equipped</td></tr>
 <tr><td>PASS</td><td>free_100_rewards</td><td>10h</td><td>arena_attempt_volume</td><td>40 attempts</td><td>> 0 attempts without combat cooldown</td></tr>
 <tr><td>PASS</td><td>free_100_rewards</td><td>10h</td><td>arena_farm_pressure</td><td>repeat factor 0.35</td><td><= 0.5</td></tr>
+<tr><td>PASS</td><td>free_100_rewards</td><td>10h</td><td>arena_potion_consumption_pressure</td><td>20.8 projected uses, 3 stock, 14.42% coverage</td><td>>= 5% lab stock coverage when Pocao de Vida is equipped</td></tr>
 <tr><td>PASS</td><td>free_100_rewards</td><td>15h</td><td>arena_attempt_volume</td><td>60 attempts</td><td>> 0 attempts without combat cooldown</td></tr>
 <tr><td>PASS</td><td>free_100_rewards</td><td>15h</td><td>arena_farm_pressure</td><td>repeat factor 0.35</td><td><= 0.5</td></tr>
+<tr><td>PASS</td><td>free_100_rewards</td><td>15h</td><td>arena_potion_consumption_pressure</td><td>31.2 projected uses, 4 stock, 12.82% coverage</td><td>>= 5% lab stock coverage when Pocao de Vida is equipped</td></tr>
 <tr><td>PASS</td><td>free_100_rewards</td><td>20h</td><td>arena_attempt_volume</td><td>80 attempts</td><td>> 0 attempts without combat cooldown</td></tr>
 <tr><td>PASS</td><td>free_100_rewards</td><td>20h</td><td>arena_farm_pressure</td><td>repeat factor 0.35</td><td><= 0.5</td></tr>
+<tr><td>PASS</td><td>free_100_rewards</td><td>20h</td><td>arena_potion_consumption_pressure</td><td>41.6 projected uses, 5 stock, 12.02% coverage</td><td>>= 5% lab stock coverage when Pocao de Vida is equipped</td></tr>
 <tr><td>PASS</td><td>freemium_basic</td><td>2h</td><td>arena_attempt_volume</td><td>8 attempts</td><td>> 0 attempts without combat cooldown</td></tr>
 <tr><td>PASS</td><td>freemium_basic</td><td>2h</td><td>arena_farm_pressure</td><td>repeat factor 0.35</td><td><= 0.5</td></tr>
+<tr><td>PASS</td><td>freemium_basic</td><td>2h</td><td>arena_potion_consumption_pressure</td><td>0 projected uses, 1 stock, 100% coverage</td><td>>= 5% lab stock coverage when Pocao de Vida is equipped</td></tr>
 <tr><td>PASS</td><td>freemium_basic</td><td>5h</td><td>arena_attempt_volume</td><td>20 attempts</td><td>> 0 attempts without combat cooldown</td></tr>
 <tr><td>PASS</td><td>freemium_basic</td><td>5h</td><td>arena_farm_pressure</td><td>repeat factor 0.35</td><td><= 0.5</td></tr>
+<tr><td>PASS</td><td>freemium_basic</td><td>5h</td><td>arena_potion_consumption_pressure</td><td>10.8 projected uses, 2 stock, 18.52% coverage</td><td>>= 5% lab stock coverage when Pocao de Vida is equipped</td></tr>
 <tr><td>PASS</td><td>freemium_basic</td><td>10h</td><td>arena_attempt_volume</td><td>40 attempts</td><td>> 0 attempts without combat cooldown</td></tr>
 <tr><td>PASS</td><td>freemium_basic</td><td>10h</td><td>arena_farm_pressure</td><td>repeat factor 0.35</td><td><= 0.5</td></tr>
+<tr><td>PASS</td><td>freemium_basic</td><td>10h</td><td>arena_potion_consumption_pressure</td><td>21.6 projected uses, 3 stock, 13.89% coverage</td><td>>= 5% lab stock coverage when Pocao de Vida is equipped</td></tr>
 <tr><td>PASS</td><td>freemium_basic</td><td>15h</td><td>arena_attempt_volume</td><td>60 attempts</td><td>> 0 attempts without combat cooldown</td></tr>
 <tr><td>PASS</td><td>freemium_basic</td><td>15h</td><td>arena_farm_pressure</td><td>repeat factor 0.35</td><td><= 0.5</td></tr>
+<tr><td>PASS</td><td>freemium_basic</td><td>15h</td><td>arena_potion_consumption_pressure</td><td>32.4 projected uses, 4 stock, 12.35% coverage</td><td>>= 5% lab stock coverage when Pocao de Vida is equipped</td></tr>
 <tr><td>PASS</td><td>freemium_basic</td><td>20h</td><td>arena_attempt_volume</td><td>80 attempts</td><td>> 0 attempts without combat cooldown</td></tr>
 <tr><td>PASS</td><td>freemium_basic</td><td>20h</td><td>arena_farm_pressure</td><td>repeat factor 0.35</td><td><= 0.5</td></tr>
+<tr><td>PASS</td><td>freemium_basic</td><td>20h</td><td>arena_potion_consumption_pressure</td><td>43.2 projected uses, 5 stock, 11.57% coverage</td><td>>= 5% lab stock coverage when Pocao de Vida is equipped</td></tr>
 <tr><td>PASS</td><td>spender_light</td><td>2h</td><td>arena_attempt_volume</td><td>8.8 attempts</td><td>> 0 attempts without combat cooldown</td></tr>
 <tr><td>PASS</td><td>spender_light</td><td>2h</td><td>arena_farm_pressure</td><td>repeat factor 0.32</td><td><= 0.5</td></tr>
+<tr><td>PASS</td><td>spender_light</td><td>2h</td><td>arena_potion_consumption_pressure</td><td>0 projected uses, 1 stock, 100% coverage</td><td>>= 5% lab stock coverage when Pocao de Vida is equipped</td></tr>
 <tr><td>PASS</td><td>spender_light</td><td>5h</td><td>arena_attempt_volume</td><td>22 attempts</td><td>> 0 attempts without combat cooldown</td></tr>
 <tr><td>PASS</td><td>spender_light</td><td>5h</td><td>arena_farm_pressure</td><td>repeat factor 0.32</td><td><= 0.5</td></tr>
+<tr><td>PASS</td><td>spender_light</td><td>5h</td><td>arena_potion_consumption_pressure</td><td>12.8 projected uses, 2 stock, 15.67% coverage</td><td>>= 5% lab stock coverage when Pocao de Vida is equipped</td></tr>
 <tr><td>PASS</td><td>spender_light</td><td>10h</td><td>arena_attempt_volume</td><td>44 attempts</td><td>> 0 attempts without combat cooldown</td></tr>
 <tr><td>PASS</td><td>spender_light</td><td>10h</td><td>arena_farm_pressure</td><td>repeat factor 0.32</td><td><= 0.5</td></tr>
+<tr><td>PASS</td><td>spender_light</td><td>10h</td><td>arena_potion_consumption_pressure</td><td>25.5 projected uses, 3 stock, 11.76% coverage</td><td>>= 5% lab stock coverage when Pocao de Vida is equipped</td></tr>
 <tr><td>PASS</td><td>spender_light</td><td>15h</td><td>arena_attempt_volume</td><td>66 attempts</td><td>> 0 attempts without combat cooldown</td></tr>
 <tr><td>PASS</td><td>spender_light</td><td>15h</td><td>arena_farm_pressure</td><td>repeat factor 0.32</td><td><= 0.5</td></tr>
+<tr><td>PASS</td><td>spender_light</td><td>15h</td><td>arena_potion_consumption_pressure</td><td>38.3 projected uses, 4 stock, 10.45% coverage</td><td>>= 5% lab stock coverage when Pocao de Vida is equipped</td></tr>
 <tr><td>PASS</td><td>spender_light</td><td>20h</td><td>arena_attempt_volume</td><td>88 attempts</td><td>> 0 attempts without combat cooldown</td></tr>
 <tr><td>PASS</td><td>spender_light</td><td>20h</td><td>arena_farm_pressure</td><td>repeat factor 0.32</td><td><= 0.5</td></tr>
+<tr><td>PASS</td><td>spender_light</td><td>20h</td><td>arena_potion_consumption_pressure</td><td>51 projected uses, 5 stock, 9.8% coverage</td><td>>= 5% lab stock coverage when Pocao de Vida is equipped</td></tr>
 <tr><td>PASS</td><td>max_spender</td><td>2h</td><td>arena_attempt_volume</td><td>11.2 attempts</td><td>> 0 attempts without combat cooldown</td></tr>
 <tr><td>PASS</td><td>max_spender</td><td>2h</td><td>arena_farm_pressure</td><td>repeat factor 0.25</td><td><= 0.5</td></tr>
+<tr><td>PASS</td><td>max_spender</td><td>2h</td><td>arena_potion_consumption_pressure</td><td>0 projected uses, 1 stock, 100% coverage</td><td>>= 5% lab stock coverage when Pocao de Vida is equipped</td></tr>
 <tr><td>PASS</td><td>max_spender</td><td>5h</td><td>arena_attempt_volume</td><td>28 attempts</td><td>> 0 attempts without combat cooldown</td></tr>
 <tr><td>PASS</td><td>max_spender</td><td>5h</td><td>arena_farm_pressure</td><td>repeat factor 0.25</td><td><= 0.5</td></tr>
+<tr><td>PASS</td><td>max_spender</td><td>5h</td><td>arena_potion_consumption_pressure</td><td>17.9 projected uses, 2 stock, 11.16% coverage</td><td>>= 5% lab stock coverage when Pocao de Vida is equipped</td></tr>
 <tr><td>PASS</td><td>max_spender</td><td>10h</td><td>arena_attempt_volume</td><td>56 attempts</td><td>> 0 attempts without combat cooldown</td></tr>
 <tr><td>PASS</td><td>max_spender</td><td>10h</td><td>arena_farm_pressure</td><td>repeat factor 0.25</td><td><= 0.5</td></tr>
+<tr><td>PASS</td><td>max_spender</td><td>10h</td><td>arena_potion_consumption_pressure</td><td>35.8 projected uses, 3 stock, 8.37% coverage</td><td>>= 5% lab stock coverage when Pocao de Vida is equipped</td></tr>
 <tr><td>PASS</td><td>max_spender</td><td>15h</td><td>arena_attempt_volume</td><td>84 attempts</td><td>> 0 attempts without combat cooldown</td></tr>
 <tr><td>PASS</td><td>max_spender</td><td>15h</td><td>arena_farm_pressure</td><td>repeat factor 0.25</td><td><= 0.5</td></tr>
+<tr><td>PASS</td><td>max_spender</td><td>15h</td><td>arena_potion_consumption_pressure</td><td>53.8 projected uses, 4 stock, 7.44% coverage</td><td>>= 5% lab stock coverage when Pocao de Vida is equipped</td></tr>
 <tr><td>PASS</td><td>max_spender</td><td>20h</td><td>arena_attempt_volume</td><td>112 attempts</td><td>> 0 attempts without combat cooldown</td></tr>
-<tr><td>PASS</td><td>max_spender</td><td>20h</td><td>arena_farm_pressure</td><td>repeat factor 0.25</td><td><= 0.5</td></tr></table>
+<tr><td>PASS</td><td>max_spender</td><td>20h</td><td>arena_farm_pressure</td><td>repeat factor 0.25</td><td><= 0.5</td></tr>
+<tr><td>PASS</td><td>max_spender</td><td>20h</td><td>arena_potion_consumption_pressure</td><td>71.7 projected uses, 5 stock, 6.98% coverage</td><td>>= 5% lab stock coverage when Pocao de Vida is equipped</td></tr></table>
   <h2>Track 16 Consumables</h2>
   <table><tr><th>Status</th><th>Profile</th><th>Milestone</th><th>Check</th><th>Observed</th><th>Target</th></tr><tr><td>PASS</td><td>free_50_rewards</td><td>2h</td><td>life_potion_stock</td><td>1/1 potions</td><td>>= 1</td></tr>
 <tr><td>PASS</td><td>free_50_rewards</td><td>2h</td><td>preparation_potion_slot</td><td>no potion equipped</td><td>potion-ready when target stock is non-zero</td></tr>

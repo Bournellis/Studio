@@ -3,13 +3,14 @@
 - Status: `VIVO`
 - Data: `2026-05-31`
 - Decisao-base: `PVE_ARENA_INITIAL_DIRECTION_APPROVED`
-- Escopo: contrato de produto, conteudo e regras para o primeiro pacote Arena PVE data-driven.
+- Estado de entrega: `IMPLEMENTADO_PUBLICADO_TRACK_18`; Track 19 Arena Consistency Pass implementado localmente.
+- Escopo: contrato de produto, conteudo, backend, client, schema, labs e regras para o primeiro pacote Arena PVE data-driven publicado.
 
 ## Papel Do Documento
 
-`docs/pve-arena-initial-direction.md` define a direcao de produto. Este documento transforma essa direcao em contrato inicial para docs, backend, client, Battle Lab, Progression Lab e ruleset.
+`docs/pve-arena-initial-direction.md` define a direcao de produto. Este documento registra a implementacao publicada de Track 18 para docs, backend, client, Battle Lab, Progression Lab e ruleset.
 
-Esta entrega nao implementa backend, cliente Godot, migration ou tuning final. Ela fecha o chao data-driven necessario para os proximos agentes conectarem Arena PVE sem reabrir a decisao de produto.
+Track 19 usa este documento como contrato vivo de consistencia antes de tuning fino. O pacote Track 18 ja esta implementado e publicado em Internal Alpha; Track 19 e a camada local de consistencia para potion stock, claim, buff endpoint, selecao data-driven e labs. Os valores `CALIBRAVEL_ALPHA` continuam sujeitos a labs e playtest humano.
 
 ## Decisoes Fechadas Para v1
 
@@ -76,8 +77,8 @@ Uma tentativa possui:
 - inimigo atual;
 - buffs acumulados;
 - ofertas de buff geradas pelo servidor;
-- estado `active`, `completed`, `failed`, `abandoned` ou `claimed`;
-- payload de recompensa calculado pelo servidor.
+- estado `active`, `completed`, `failed`, `abandoned` ou estado legado/compat `claimed`;
+- payload de recompensa calculado/aplicado pelo servidor no duelo final quando a tentativa e concluida.
 
 Invariantes:
 
@@ -153,18 +154,20 @@ Arena PVE nao usa cooldown. A economia e controlada por perfil de recompensa:
 
 Valores de `arena_rewards.json` sao `CALIBRAVEL_ALPHA`. Eles existem para destravar implementacao e labs, nao para declarar economia final.
 
-## API Contratada
+## API Publicada
 
-Status dos endpoints neste pacote: `contratado`, nao implementado nesta branch.
+Status dos endpoints neste pacote: implementado/publicado em Track 18; Track 19 alinha semantica, nomes publicos e leitura de contratos.
 
 | Metodo | Endpoint logico | Escopo | Idempotencia | Papel |
 |---|---|---|---|---|
 | GET | `/arena/pve/state` | `save-scoped` | Nao | Ler arenas, unlocks, tentativa ativa e recordes |
 | POST | `/arena/pve/start` | `save-scoped` | `request_id/request_hash` | Criar tentativa, travar loadout e gerar primeiro inimigo |
-| POST | `/arena/pve/duel/request` | `save-scoped` | `request_id/request_hash` | Resolver proximo duelo da tentativa via simulador server-authoritative |
-| POST | `/arena/pve/buff/select` | `save-scoped` | `request_id/request_hash` | Escolher 1 buff de uma oferta apos vitoria |
-| POST | `/arena/pve/claim` | `save-scoped` | `request_id/request_hash` | Aplicar recompensa de conclusao/recorde/primeira clear |
+| POST | `/arena/pve/duel/request` | `save-scoped` | `request_id/request_hash` | Resolver proximo duelo da tentativa via simulador server-authoritative; se for o ultimo duelo, aplicar recompensa/progresso da tentativa |
+| POST | `/arena/pve/buff/select` | `save-scoped` | `request_id/request_hash` | Endpoint publico oficial para escolher 1 buff de uma oferta apos vitoria |
+| POST | `/arena/pve/claim` | `save-scoped` | `request_id/request_hash` | Resumo/ack idempotente da tentativa; nao muta economia |
 | POST | `/arena/pve/abandon` | `save-scoped` | `request_id/request_hash` | Encerrar tentativa sem recompensa de conclusao |
+
+`/arena/buff/choose` existe apenas como alias interno/compatibilidade para `/arena/pve/buff/select`; documentacao publica, client e novos testes devem usar `/arena/pve/buff/select`.
 
 Comportamento simples entre duelos deve reutilizar `build/spell-behavior` e `build/potion-behavior` enquanto nao houver comportamento de arena proprio.
 
@@ -183,7 +186,7 @@ Cada duelo da Arena PVE continua usando `battle_log_v1`. O replay deve receber m
 - `hp_reset: true`;
 - `ruleset`.
 
-O log de batalha anima apenas o duelo. Buff offer, escolha de buff, tentativa completa e claim pertencem ao estado da arena e aos endpoints de arena.
+O log de batalha anima apenas o duelo. Buff offer e escolha de buff pertencem ao estado da arena e aos endpoints de arena. Quando o ultimo `/arena/pve/duel/request` conclui a tentativa, ele e o ponto autoritativo que aplica recompensa/progresso; `/arena/pve/claim` apenas devolve resumo/ack idempotente para a UI, com `mutates_economy: false`.
 
 ## Labs
 
@@ -215,14 +218,16 @@ Progression Lab precisa modelar:
 - inimigos com comportamento customizado por script;
 - novas armas, spells, pocoes ou economia final;
 - PVP, ranking PVP, leaderboard publica de bots;
-- client Godot ou backend nesta branch documental/data-driven.
+- novas rotas ou aliases publicos fora de `/arena/pve/*` sem decisao propria;
+- tuning fino, economia final e expansao de conteudo alem do pacote Arena PVE inicial publicado.
 
 ## Aceite Para Proximos Agentes
 
-Um pacote backend/client que consome este contrato deve provar:
+Qualquer pacote que altere este contrato depois da publicacao deve provar:
 
-- endpoints novos usam `account_profiles/game_saves`, ruleset metadata e idempotencia v1;
-- nenhum endpoint concede recompensa sem ledger `arena_pve_v1`;
+- endpoints de Arena PVE usam `account_profiles/game_saves`, ruleset metadata e idempotencia v1;
+- recompensa economica da Arena PVE e aplicada no ultimo `/arena/pve/duel/request`, com ledger `arena_pve_v1`;
+- `/arena/pve/claim` permanece resumo/ack sem mutar economia, ranking, recurso ou XP;
 - `battle_log_v1` preserva replay de duelo sem rerodar simulador;
 - tentativa ativa sobrevive a retry;
 - tutorial de 1 duelo e arena de 3 duelos funcionam sem cooldown;

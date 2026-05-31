@@ -16,7 +16,7 @@ alter table public.ruleset_registry
 
 update public.ruleset_registry
 set
-	content_hash = '5ef9cf3f176a8e0d3953b9f2ba4837b19b32c46ca5003c56789457fbb304fc00',
+	content_hash = 'dc2781f58e4d8229d712393342115dc9d0a555aaceb06a4241af2c77271508c9',
 	simulator_hash = 'e835cadde3c937cba45c46785da3761139373ab23ac9dfaaed814d79f933bbe9',
 	schema_version = 'foundation_ruleset_manifest_v1',
 	status = 'active',

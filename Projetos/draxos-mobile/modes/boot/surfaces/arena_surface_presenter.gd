@@ -6,21 +6,22 @@ const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_act
 func render_selection(host: Node) -> void:
 	var arena := SessionStore.arena_snapshot()
 	_call_host(host, "_add_body_text", ["Arena PVE inicial: escolha uma lista curta de duelos, trave o loadout e avance por buffs temporarios."])
-	_render_available_arenas(host, _as_array(arena.get("arenas", [])))
-	_call_host(host, "_add_action_button", ["Tutorial 1 duelo", AppShellActionContractScript.ACTION_ARENA_START_TUTORIAL])
-	_call_host(host, "_add_action_button", ["Arena inicial 3 duelos", AppShellActionContractScript.ACTION_ARENA_START_EARLY])
+	if _has_remote_arena_state(arena):
+		_render_available_arenas(host, _as_array(arena.get("arenas", [])))
+	else:
+		_render_dev_fallback_arenas(host)
 	_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
 
 func render_loadout(host: Node) -> void:
 	var attempt := SessionStore.active_arena_attempt()
-	_call_host(host, "_add_body_text", ["Revise o loadout antes da tentativa. Depois de travar, apenas comportamento simples pode mudar entre duelos."])
+	_call_host(host, "_add_body_text", ["Loadout travado para esta tentativa. Entre duelos, voce ainda pode ajustar comportamento simples e uso de pocao; instrumento, habilidades, doutrina e familiar nao trocam."])
 	_call_host(host, "_add_output_label", [_loadout_summary_text(attempt)])
-	_call_host(host, "_add_action_button", ["Travar loadout", AppShellActionContractScript.ACTION_ARENA_LOCK_LOADOUT])
+	_call_host(host, "_add_action_button", ["Continuar com loadout travado", AppShellActionContractScript.ACTION_ARENA_LOCK_LOADOUT])
 	_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
 
 func render_active(host: Node) -> void:
 	var attempt := SessionStore.active_arena_attempt()
-	_call_host(host, "_add_body_text", ["Tentativa ativa. Cada duelo comeca com HP cheio; vitoria revela o proximo inimigo e abre escolha de buff quando existir."])
+	_call_host(host, "_add_body_text", ["Tentativa ativa. O loadout segue travado; comportamento simples e uso de pocao ainda podem mudar antes do proximo duelo. Cada duelo comeca com HP cheio."])
 	_call_host(host, "_add_output_label", [_active_attempt_text(attempt)])
 	if not _pending_buff_choices(attempt).is_empty():
 		_call_host(host, "_add_action_button", ["Escolher buff", AppShellActionContractScript.arena_choose_buff_action(_first_buff_id(attempt))])
@@ -51,7 +52,7 @@ func render_summary(host: Node) -> void:
 	var arena := SessionStore.arena_snapshot()
 	var attempt := SessionStore.active_arena_attempt()
 	var summary := _as_dictionary(arena.get("summary", attempt.get("summary", {})))
-	_call_host(host, "_add_body_text", ["Resumo da Arena PVE. Recompensas e progresso devem vir do servidor; fixture local existe apenas para dev quando endpoints ainda nao existem."])
+	_call_host(host, "_add_body_text", ["Resumo da tentativa. Recompensas, progresso e limites seguem o estado retornado pela Arena PVE."])
 	_call_host(host, "_add_output_label", [_summary_text(attempt, summary)])
 	_call_host(host, "_add_action_button", ["Receber recompensa", AppShellActionContractScript.ACTION_ARENA_CLAIM_SUMMARY])
 	_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
@@ -62,17 +63,33 @@ func render_replay(host: Node, overlay: Control, compact_layout: bool, battle_lo
 
 func _render_available_arenas(host: Node, arenas: Array) -> void:
 	if arenas.is_empty():
-		_call_host(host, "_add_output_label", ["Contratos de Arena ainda nao carregados. As opcoes abaixo usam fixtures locais em ambiente dev."])
+		_render_dev_fallback_arenas(host)
 		return
 	var lines := PackedStringArray()
 	for arena_variant: Variant in arenas:
 		var arena := _as_dictionary(arena_variant)
-		lines.append("%s: %s duelos | %s" % [
+		var arena_id := str(arena.get("id", "")).strip_edges()
+		if arena_id == "":
+			continue
+		var label := _arena_button_label(arena)
+		var action_id := AppShellActionContractScript.arena_start_action(arena_id)
+		var unlocked := _arena_is_unlocked(arena)
+		var locked_reason := _arena_locked_reason(arena)
+		if not unlocked:
+			label = "%s - %s" % [label, locked_reason]
+		lines.append("%s: %s duelos | %s | %s" % [
 			str(arena.get("display_name", arena.get("id", "Arena"))),
 			str(arena.get("duel_count", 1)),
 			"dificuldade %s" % str(arena.get("difficulty_tier", 0)),
+			"disponivel" if unlocked else "bloqueada: %s" % locked_reason,
 		])
+		_call_host(host, "_add_action_button", [label, action_id, "", not unlocked, locked_reason])
 	_call_host(host, "_add_output_label", ["\n".join(lines)])
+
+func _render_dev_fallback_arenas(host: Node) -> void:
+	_call_host(host, "_add_output_label", ["Estado remoto da Arena indisponivel. Fallback dev local: tutorial e arena curta."])
+	_call_host(host, "_add_action_button", ["Tutorial 1 duelo", AppShellActionContractScript.ACTION_ARENA_START_TUTORIAL])
+	_call_host(host, "_add_action_button", ["Arena inicial 3 duelos", AppShellActionContractScript.ACTION_ARENA_START_EARLY])
 
 func _loadout_summary_text(attempt: Dictionary) -> String:
 	var loadout := _as_dictionary(attempt.get("loadout_summary", {}))
@@ -90,8 +107,10 @@ func _active_attempt_text(attempt: Dictionary) -> String:
 	var duels_total := maxi(1, int(attempt.get("duel_count", attempt.get("duels_total", 1))))
 	var next_enemy := _as_dictionary(attempt.get("next_enemy", {}))
 	var buffs := _as_array(attempt.get("temporary_buffs", []))
-	return "Status: %s\nVitorias: %d/%d\nProximo duelo: %d\nProximo inimigo: %s\nBuffs ativos: %d" % [
+	var locked_hash := str(attempt.get("locked_loadout_hash", "")).strip_edges()
+	return "Status: %s\nLoadout: %s\nComportamento: editavel entre duelos\nVitorias: %d/%d\nProximo duelo: %d\nProximo inimigo: %s\nBuffs ativos: %d" % [
 		_attempt_state(attempt),
+		"travado" if locked_hash != "" else "pendente",
 		clampi(duels_won, 0, duels_total),
 		duels_total,
 		clampi(next_duel, 1, duels_total),
@@ -104,10 +123,33 @@ func _summary_text(attempt: Dictionary, summary: Dictionary) -> String:
 		str(attempt.get("status", summary.get("status", "completed"))),
 		int(summary.get("duels_won", attempt.get("duels_won", 0))),
 		maxi(1, int(attempt.get("duel_count", attempt.get("duels_total", summary.get("duels_total", 1))))),
-		str(summary.get("clear_rate", "dev")),
-		str(summary.get("repeat_factor", "dev")),
-		str(summary.get("reward_label", "recompensa server-authoritative")),
+		str(summary.get("clear_rate", "servidor")),
+		str(summary.get("repeat_factor", "servidor")),
+		str(summary.get("reward_label", "recompensa da Arena PVE")),
 	]
+
+func _has_remote_arena_state(arena: Dictionary) -> bool:
+	return not bool(arena.get("dev_fixture", false)) and not _as_array(arena.get("arenas", [])).is_empty()
+
+func _arena_button_label(arena: Dictionary) -> String:
+	return "%s - %s duelo%s | D%s" % [
+		str(arena.get("display_name", arena.get("id", "Arena"))),
+		str(arena.get("duel_count", 1)),
+		"" if int(arena.get("duel_count", 1)) == 1 else "s",
+		str(arena.get("difficulty_tier", 0)),
+	]
+
+func _arena_is_unlocked(arena: Dictionary) -> bool:
+	if arena.has("unlocked"):
+		return bool(arena.get("unlocked", false))
+	return bool(arena.get("enabled", true))
+
+func _arena_locked_reason(arena: Dictionary) -> String:
+	for key: String in ["locked_reason", "unlock_reason", "blocked_message", "blocked_reason"]:
+		var reason := str(arena.get(key, "")).strip_edges()
+		if reason != "":
+			return reason
+	return "Bloqueada."
 
 func _first_buff_id(attempt: Dictionary) -> String:
 	for choice_variant: Variant in _pending_buff_choices(attempt):

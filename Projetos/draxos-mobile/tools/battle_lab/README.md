@@ -1,7 +1,6 @@
 # Battle Lab
 
-Ferramenta offline para gerar baseline de balanceamento do combate
-`FIRST_SLICE_SIM`.
+Arena PVE sequence analysis powered by battle simulator.
 
 Ela reutiliza `server/functions/_shared/battle_simulator.ts`, entao mede o mesmo
 simulador usado pelo backend local. A ferramenta nao chama Supabase, nao cria
@@ -105,6 +104,9 @@ Campos principais:
 - `thresholds`: janelas de duracao, anti-stall e dominancia.
 - `track16_scenarios`: cobertura lab-only de Pocao de Vida e comportamento
   simples. Nao muda tuning por si so.
+- `arena_sequences`: saida projetada para tentativa de Arena PVE, com tutorial,
+  arenas de 3/4/5/6 duelos, HP resetado por duelo e alvos de sanidade por
+  comprimento.
 - `archetypes`: preferencias de spells, Doutrinas, Familiares e ratios de level por
   build.
 

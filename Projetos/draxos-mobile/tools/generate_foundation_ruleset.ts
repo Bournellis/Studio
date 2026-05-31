@@ -85,10 +85,12 @@ const ruleset = {
   ruleset_id: RULESET_ID,
   ruleset_version: 1,
   lifecycle: "FOUNDATION_AUDIT_ACTIVE",
+  primary_product_mode: "PVE_ARENA_INITIAL",
   content_hash: contentHash,
   simulator_hash: simulatorHash,
   runtime: {
     mode: "FIRST_SLICE_SIM",
+    primary_product_mode: "PVE_ARENA_INITIAL",
     battle_log_schema: "battle_log_v1",
     catalog_schema: "grimoire_catalog_v1",
     server_authoritative: true,

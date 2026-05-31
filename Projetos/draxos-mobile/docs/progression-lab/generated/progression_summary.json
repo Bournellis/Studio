@@ -191,14 +191,16 @@
         "clear_rate": 0.45,
         "repeat_reward_factor": 0.25,
         "first_clear_completion": 0.5,
+        "projected_potion_uses_per_attempt": 0,
         "expected_attempts": 6.4,
         "expected_duels": 13.440000000000001,
-        "expected_clears": 2.8800000000000003
+        "expected_clears": 2.8800000000000003,
+        "expected_potion_uses": 0
       },
       "manual_checklist": [
         "Carregar free_50_rewards em 2h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -446,14 +448,16 @@
         "clear_rate": 0.45,
         "repeat_reward_factor": 0.25,
         "first_clear_completion": 0.5,
+        "projected_potion_uses_per_attempt": 0.42,
         "expected_attempts": 16,
         "expected_duels": 33.6,
-        "expected_clears": 7.2
+        "expected_clears": 7.2,
+        "expected_potion_uses": 6.72
       },
       "manual_checklist": [
         "Carregar free_50_rewards em 5h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -702,14 +706,16 @@
         "clear_rate": 0.45,
         "repeat_reward_factor": 0.25,
         "first_clear_completion": 0.5,
+        "projected_potion_uses_per_attempt": 0.42,
         "expected_attempts": 32,
         "expected_duels": 67.2,
-        "expected_clears": 14.4
+        "expected_clears": 14.4,
+        "expected_potion_uses": 13.44
       },
       "manual_checklist": [
         "Carregar free_50_rewards em 10h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -960,14 +966,16 @@
         "clear_rate": 0.45,
         "repeat_reward_factor": 0.25,
         "first_clear_completion": 0.5,
+        "projected_potion_uses_per_attempt": 0.42,
         "expected_attempts": 48,
         "expected_duels": 100.80000000000001,
-        "expected_clears": 21.6
+        "expected_clears": 21.6,
+        "expected_potion_uses": 20.16
       },
       "manual_checklist": [
         "Carregar free_50_rewards em 15h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -1218,14 +1226,16 @@
         "clear_rate": 0.45,
         "repeat_reward_factor": 0.25,
         "first_clear_completion": 0.5,
+        "projected_potion_uses_per_attempt": 0.42,
         "expected_attempts": 64,
         "expected_duels": 134.4,
-        "expected_clears": 28.8
+        "expected_clears": 28.8,
+        "expected_potion_uses": 26.88
       },
       "manual_checklist": [
         "Carregar free_50_rewards em 20h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -1457,14 +1467,16 @@
         "clear_rate": 0.6,
         "repeat_reward_factor": 0.35,
         "first_clear_completion": 1,
+        "projected_potion_uses_per_attempt": 0,
         "expected_attempts": 8,
         "expected_duels": 20.8,
-        "expected_clears": 4.8
+        "expected_clears": 4.8,
+        "expected_potion_uses": 0
       },
       "manual_checklist": [
         "Carregar free_100_rewards em 2h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -1712,14 +1724,16 @@
         "clear_rate": 0.6,
         "repeat_reward_factor": 0.35,
         "first_clear_completion": 1,
+        "projected_potion_uses_per_attempt": 0.52,
         "expected_attempts": 20,
         "expected_duels": 52,
-        "expected_clears": 12
+        "expected_clears": 12,
+        "expected_potion_uses": 10.4
       },
       "manual_checklist": [
         "Carregar free_100_rewards em 5h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -1969,14 +1983,16 @@
         "clear_rate": 0.6,
         "repeat_reward_factor": 0.35,
         "first_clear_completion": 1,
+        "projected_potion_uses_per_attempt": 0.52,
         "expected_attempts": 40,
         "expected_duels": 104,
-        "expected_clears": 24
+        "expected_clears": 24,
+        "expected_potion_uses": 20.8
       },
       "manual_checklist": [
         "Carregar free_100_rewards em 10h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -2227,14 +2243,16 @@
         "clear_rate": 0.6,
         "repeat_reward_factor": 0.35,
         "first_clear_completion": 1,
+        "projected_potion_uses_per_attempt": 0.52,
         "expected_attempts": 60,
         "expected_duels": 156,
-        "expected_clears": 36
+        "expected_clears": 36,
+        "expected_potion_uses": 31.200000000000003
       },
       "manual_checklist": [
         "Carregar free_100_rewards em 15h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -2485,14 +2503,16 @@
         "clear_rate": 0.6,
         "repeat_reward_factor": 0.35,
         "first_clear_completion": 1,
+        "projected_potion_uses_per_attempt": 0.52,
         "expected_attempts": 80,
         "expected_duels": 208,
-        "expected_clears": 48
+        "expected_clears": 48,
+        "expected_potion_uses": 41.6
       },
       "manual_checklist": [
         "Carregar free_100_rewards em 20h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -2725,14 +2745,16 @@
         "clear_rate": 0.62,
         "repeat_reward_factor": 0.35,
         "first_clear_completion": 1,
+        "projected_potion_uses_per_attempt": 0,
         "expected_attempts": 8,
         "expected_duels": 21.6,
-        "expected_clears": 4.96
+        "expected_clears": 4.96,
+        "expected_potion_uses": 0
       },
       "manual_checklist": [
         "Carregar freemium_basic em 2h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -2981,14 +3003,16 @@
         "clear_rate": 0.62,
         "repeat_reward_factor": 0.35,
         "first_clear_completion": 1,
+        "projected_potion_uses_per_attempt": 0.54,
         "expected_attempts": 20,
         "expected_duels": 54,
-        "expected_clears": 12.4
+        "expected_clears": 12.4,
+        "expected_potion_uses": 10.8
       },
       "manual_checklist": [
         "Carregar freemium_basic em 5h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -3239,14 +3263,16 @@
         "clear_rate": 0.62,
         "repeat_reward_factor": 0.35,
         "first_clear_completion": 1,
+        "projected_potion_uses_per_attempt": 0.54,
         "expected_attempts": 40,
         "expected_duels": 108,
-        "expected_clears": 24.8
+        "expected_clears": 24.8,
+        "expected_potion_uses": 21.6
       },
       "manual_checklist": [
         "Carregar freemium_basic em 10h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -3498,14 +3524,16 @@
         "clear_rate": 0.62,
         "repeat_reward_factor": 0.35,
         "first_clear_completion": 1,
+        "projected_potion_uses_per_attempt": 0.54,
         "expected_attempts": 60,
         "expected_duels": 162,
-        "expected_clears": 37.2
+        "expected_clears": 37.2,
+        "expected_potion_uses": 32.400000000000006
       },
       "manual_checklist": [
         "Carregar freemium_basic em 15h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -3757,14 +3785,16 @@
         "clear_rate": 0.62,
         "repeat_reward_factor": 0.35,
         "first_clear_completion": 1,
+        "projected_potion_uses_per_attempt": 0.54,
         "expected_attempts": 80,
         "expected_duels": 216,
-        "expected_clears": 49.6
+        "expected_clears": 49.6,
+        "expected_potion_uses": 43.2
       },
       "manual_checklist": [
         "Carregar freemium_basic em 20h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -3997,14 +4027,16 @@
         "clear_rate": 0.68,
         "repeat_reward_factor": 0.32,
         "first_clear_completion": 1.4,
+        "projected_potion_uses_per_attempt": 0,
         "expected_attempts": 8.8,
         "expected_duels": 25.52,
-        "expected_clears": 5.984000000000001
+        "expected_clears": 5.984000000000001,
+        "expected_potion_uses": 0
       },
       "manual_checklist": [
         "Carregar spender_light em 2h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -4255,14 +4287,16 @@
         "clear_rate": 0.68,
         "repeat_reward_factor": 0.32,
         "first_clear_completion": 1.4,
+        "projected_potion_uses_per_attempt": 0.58,
         "expected_attempts": 22,
         "expected_duels": 63.8,
-        "expected_clears": 14.96
+        "expected_clears": 14.96,
+        "expected_potion_uses": 12.76
       },
       "manual_checklist": [
         "Carregar spender_light em 5h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -4513,14 +4547,16 @@
         "clear_rate": 0.68,
         "repeat_reward_factor": 0.32,
         "first_clear_completion": 1.4,
+        "projected_potion_uses_per_attempt": 0.58,
         "expected_attempts": 44,
         "expected_duels": 127.6,
-        "expected_clears": 29.92
+        "expected_clears": 29.92,
+        "expected_potion_uses": 25.52
       },
       "manual_checklist": [
         "Carregar spender_light em 10h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -4772,14 +4808,16 @@
         "clear_rate": 0.68,
         "repeat_reward_factor": 0.32,
         "first_clear_completion": 1.4,
+        "projected_potion_uses_per_attempt": 0.58,
         "expected_attempts": 66,
         "expected_duels": 191.4,
-        "expected_clears": 44.88
+        "expected_clears": 44.88,
+        "expected_potion_uses": 38.279999999999994
       },
       "manual_checklist": [
         "Carregar spender_light em 15h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -5037,14 +5075,16 @@
         "clear_rate": 0.68,
         "repeat_reward_factor": 0.32,
         "first_clear_completion": 1.4,
+        "projected_potion_uses_per_attempt": 0.58,
         "expected_attempts": 88,
         "expected_duels": 255.2,
-        "expected_clears": 59.84
+        "expected_clears": 59.84,
+        "expected_potion_uses": 51.04
       },
       "manual_checklist": [
         "Carregar spender_light em 20h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -5277,14 +5317,16 @@
         "clear_rate": 0.75,
         "repeat_reward_factor": 0.25,
         "first_clear_completion": 2,
+        "projected_potion_uses_per_attempt": 0,
         "expected_attempts": 11.2,
         "expected_duels": 35.839999999999996,
-        "expected_clears": 8.399999999999999
+        "expected_clears": 8.399999999999999,
+        "expected_potion_uses": 0
       },
       "manual_checklist": [
         "Carregar max_spender em 2h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -5535,14 +5577,16 @@
         "clear_rate": 0.75,
         "repeat_reward_factor": 0.25,
         "first_clear_completion": 2,
+        "projected_potion_uses_per_attempt": 0.64,
         "expected_attempts": 28,
         "expected_duels": 89.60000000000001,
-        "expected_clears": 21
+        "expected_clears": 21,
+        "expected_potion_uses": 17.92
       },
       "manual_checklist": [
         "Carregar max_spender em 5h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -5793,14 +5837,16 @@
         "clear_rate": 0.75,
         "repeat_reward_factor": 0.25,
         "first_clear_completion": 2,
+        "projected_potion_uses_per_attempt": 0.64,
         "expected_attempts": 56,
         "expected_duels": 179.20000000000002,
-        "expected_clears": 42
+        "expected_clears": 42,
+        "expected_potion_uses": 35.84
       },
       "manual_checklist": [
         "Carregar max_spender em 10h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -6052,14 +6098,16 @@
         "clear_rate": 0.75,
         "repeat_reward_factor": 0.25,
         "first_clear_completion": 2,
+        "projected_potion_uses_per_attempt": 0.64,
         "expected_attempts": 84,
         "expected_duels": 268.8,
-        "expected_clears": 63
+        "expected_clears": 63,
+        "expected_potion_uses": 53.76
       },
       "manual_checklist": [
         "Carregar max_spender em 15h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -6317,14 +6365,16 @@
         "clear_rate": 0.75,
         "repeat_reward_factor": 0.25,
         "first_clear_completion": 2,
+        "projected_potion_uses_per_attempt": 0.64,
         "expected_attempts": 112,
         "expected_duels": 358.40000000000003,
-        "expected_clears": 84
+        "expected_clears": 84,
+        "expected_potion_uses": 71.68
       },
       "manual_checklist": [
         "Carregar max_spender em 20h.",
         "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-        "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+        "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
         "Abrir Base e avaliar se proximo upgrade parece desejavel.",
         "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
         "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -6806,6 +6856,15 @@
       "note": "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown."
     },
     {
+      "id": "arena_potion_consumption_pressure",
+      "profile_id": "free_50_rewards",
+      "milestone_id": "2h",
+      "status": "PASS",
+      "observed": "0 projected uses, 1 stock, 100% coverage",
+      "target": ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      "note": "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables."
+    },
+    {
       "id": "arena_attempt_volume",
       "profile_id": "free_50_rewards",
       "milestone_id": "5h",
@@ -6822,6 +6881,15 @@
       "observed": "repeat factor 0.25",
       "target": "<= 0.5",
       "note": "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown."
+    },
+    {
+      "id": "arena_potion_consumption_pressure",
+      "profile_id": "free_50_rewards",
+      "milestone_id": "5h",
+      "status": "PASS",
+      "observed": "6.7 projected uses, 2 stock, 29.76% coverage",
+      "target": ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      "note": "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables."
     },
     {
       "id": "arena_attempt_volume",
@@ -6842,6 +6910,15 @@
       "note": "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown."
     },
     {
+      "id": "arena_potion_consumption_pressure",
+      "profile_id": "free_50_rewards",
+      "milestone_id": "10h",
+      "status": "PASS",
+      "observed": "13.4 projected uses, 3 stock, 22.32% coverage",
+      "target": ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      "note": "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables."
+    },
+    {
       "id": "arena_attempt_volume",
       "profile_id": "free_50_rewards",
       "milestone_id": "15h",
@@ -6858,6 +6935,15 @@
       "observed": "repeat factor 0.25",
       "target": "<= 0.5",
       "note": "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown."
+    },
+    {
+      "id": "arena_potion_consumption_pressure",
+      "profile_id": "free_50_rewards",
+      "milestone_id": "15h",
+      "status": "PASS",
+      "observed": "20.2 projected uses, 4 stock, 19.84% coverage",
+      "target": ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      "note": "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables."
     },
     {
       "id": "arena_attempt_volume",
@@ -6878,6 +6964,15 @@
       "note": "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown."
     },
     {
+      "id": "arena_potion_consumption_pressure",
+      "profile_id": "free_50_rewards",
+      "milestone_id": "20h",
+      "status": "PASS",
+      "observed": "26.9 projected uses, 5 stock, 18.6% coverage",
+      "target": ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      "note": "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables."
+    },
+    {
       "id": "arena_attempt_volume",
       "profile_id": "free_100_rewards",
       "milestone_id": "2h",
@@ -6894,6 +6989,15 @@
       "observed": "repeat factor 0.35",
       "target": "<= 0.5",
       "note": "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown."
+    },
+    {
+      "id": "arena_potion_consumption_pressure",
+      "profile_id": "free_100_rewards",
+      "milestone_id": "2h",
+      "status": "PASS",
+      "observed": "0 projected uses, 1 stock, 100% coverage",
+      "target": ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      "note": "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables."
     },
     {
       "id": "arena_attempt_volume",
@@ -6914,6 +7018,15 @@
       "note": "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown."
     },
     {
+      "id": "arena_potion_consumption_pressure",
+      "profile_id": "free_100_rewards",
+      "milestone_id": "5h",
+      "status": "PASS",
+      "observed": "10.4 projected uses, 2 stock, 19.23% coverage",
+      "target": ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      "note": "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables."
+    },
+    {
       "id": "arena_attempt_volume",
       "profile_id": "free_100_rewards",
       "milestone_id": "10h",
@@ -6930,6 +7043,15 @@
       "observed": "repeat factor 0.35",
       "target": "<= 0.5",
       "note": "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown."
+    },
+    {
+      "id": "arena_potion_consumption_pressure",
+      "profile_id": "free_100_rewards",
+      "milestone_id": "10h",
+      "status": "PASS",
+      "observed": "20.8 projected uses, 3 stock, 14.42% coverage",
+      "target": ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      "note": "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables."
     },
     {
       "id": "arena_attempt_volume",
@@ -6950,6 +7072,15 @@
       "note": "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown."
     },
     {
+      "id": "arena_potion_consumption_pressure",
+      "profile_id": "free_100_rewards",
+      "milestone_id": "15h",
+      "status": "PASS",
+      "observed": "31.2 projected uses, 4 stock, 12.82% coverage",
+      "target": ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      "note": "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables."
+    },
+    {
       "id": "arena_attempt_volume",
       "profile_id": "free_100_rewards",
       "milestone_id": "20h",
@@ -6966,6 +7097,15 @@
       "observed": "repeat factor 0.35",
       "target": "<= 0.5",
       "note": "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown."
+    },
+    {
+      "id": "arena_potion_consumption_pressure",
+      "profile_id": "free_100_rewards",
+      "milestone_id": "20h",
+      "status": "PASS",
+      "observed": "41.6 projected uses, 5 stock, 12.02% coverage",
+      "target": ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      "note": "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables."
     },
     {
       "id": "arena_attempt_volume",
@@ -6986,6 +7126,15 @@
       "note": "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown."
     },
     {
+      "id": "arena_potion_consumption_pressure",
+      "profile_id": "freemium_basic",
+      "milestone_id": "2h",
+      "status": "PASS",
+      "observed": "0 projected uses, 1 stock, 100% coverage",
+      "target": ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      "note": "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables."
+    },
+    {
       "id": "arena_attempt_volume",
       "profile_id": "freemium_basic",
       "milestone_id": "5h",
@@ -7002,6 +7151,15 @@
       "observed": "repeat factor 0.35",
       "target": "<= 0.5",
       "note": "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown."
+    },
+    {
+      "id": "arena_potion_consumption_pressure",
+      "profile_id": "freemium_basic",
+      "milestone_id": "5h",
+      "status": "PASS",
+      "observed": "10.8 projected uses, 2 stock, 18.52% coverage",
+      "target": ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      "note": "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables."
     },
     {
       "id": "arena_attempt_volume",
@@ -7022,6 +7180,15 @@
       "note": "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown."
     },
     {
+      "id": "arena_potion_consumption_pressure",
+      "profile_id": "freemium_basic",
+      "milestone_id": "10h",
+      "status": "PASS",
+      "observed": "21.6 projected uses, 3 stock, 13.89% coverage",
+      "target": ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      "note": "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables."
+    },
+    {
       "id": "arena_attempt_volume",
       "profile_id": "freemium_basic",
       "milestone_id": "15h",
@@ -7040,6 +7207,15 @@
       "note": "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown."
     },
     {
+      "id": "arena_potion_consumption_pressure",
+      "profile_id": "freemium_basic",
+      "milestone_id": "15h",
+      "status": "PASS",
+      "observed": "32.4 projected uses, 4 stock, 12.35% coverage",
+      "target": ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      "note": "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables."
+    },
+    {
       "id": "arena_attempt_volume",
       "profile_id": "freemium_basic",
       "milestone_id": "20h",
@@ -7056,6 +7232,15 @@
       "observed": "repeat factor 0.35",
       "target": "<= 0.5",
       "note": "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown."
+    },
+    {
+      "id": "arena_potion_consumption_pressure",
+      "profile_id": "freemium_basic",
+      "milestone_id": "20h",
+      "status": "PASS",
+      "observed": "43.2 projected uses, 5 stock, 11.57% coverage",
+      "target": ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      "note": "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables."
     },
     {
       "id": "arena_attempt_volume",
@@ -7076,6 +7261,15 @@
       "note": "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown."
     },
     {
+      "id": "arena_potion_consumption_pressure",
+      "profile_id": "spender_light",
+      "milestone_id": "2h",
+      "status": "PASS",
+      "observed": "0 projected uses, 1 stock, 100% coverage",
+      "target": ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      "note": "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables."
+    },
+    {
       "id": "arena_attempt_volume",
       "profile_id": "spender_light",
       "milestone_id": "5h",
@@ -7092,6 +7286,15 @@
       "observed": "repeat factor 0.32",
       "target": "<= 0.5",
       "note": "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown."
+    },
+    {
+      "id": "arena_potion_consumption_pressure",
+      "profile_id": "spender_light",
+      "milestone_id": "5h",
+      "status": "PASS",
+      "observed": "12.8 projected uses, 2 stock, 15.67% coverage",
+      "target": ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      "note": "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables."
     },
     {
       "id": "arena_attempt_volume",
@@ -7112,6 +7315,15 @@
       "note": "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown."
     },
     {
+      "id": "arena_potion_consumption_pressure",
+      "profile_id": "spender_light",
+      "milestone_id": "10h",
+      "status": "PASS",
+      "observed": "25.5 projected uses, 3 stock, 11.76% coverage",
+      "target": ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      "note": "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables."
+    },
+    {
       "id": "arena_attempt_volume",
       "profile_id": "spender_light",
       "milestone_id": "15h",
@@ -7128,6 +7340,15 @@
       "observed": "repeat factor 0.32",
       "target": "<= 0.5",
       "note": "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown."
+    },
+    {
+      "id": "arena_potion_consumption_pressure",
+      "profile_id": "spender_light",
+      "milestone_id": "15h",
+      "status": "PASS",
+      "observed": "38.3 projected uses, 4 stock, 10.45% coverage",
+      "target": ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      "note": "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables."
     },
     {
       "id": "arena_attempt_volume",
@@ -7148,6 +7369,15 @@
       "note": "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown."
     },
     {
+      "id": "arena_potion_consumption_pressure",
+      "profile_id": "spender_light",
+      "milestone_id": "20h",
+      "status": "PASS",
+      "observed": "51 projected uses, 5 stock, 9.8% coverage",
+      "target": ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      "note": "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables."
+    },
+    {
       "id": "arena_attempt_volume",
       "profile_id": "max_spender",
       "milestone_id": "2h",
@@ -7164,6 +7394,15 @@
       "observed": "repeat factor 0.25",
       "target": "<= 0.5",
       "note": "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown."
+    },
+    {
+      "id": "arena_potion_consumption_pressure",
+      "profile_id": "max_spender",
+      "milestone_id": "2h",
+      "status": "PASS",
+      "observed": "0 projected uses, 1 stock, 100% coverage",
+      "target": ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      "note": "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables."
     },
     {
       "id": "arena_attempt_volume",
@@ -7184,6 +7423,15 @@
       "note": "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown."
     },
     {
+      "id": "arena_potion_consumption_pressure",
+      "profile_id": "max_spender",
+      "milestone_id": "5h",
+      "status": "PASS",
+      "observed": "17.9 projected uses, 2 stock, 11.16% coverage",
+      "target": ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      "note": "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables."
+    },
+    {
       "id": "arena_attempt_volume",
       "profile_id": "max_spender",
       "milestone_id": "10h",
@@ -7200,6 +7448,15 @@
       "observed": "repeat factor 0.25",
       "target": "<= 0.5",
       "note": "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown."
+    },
+    {
+      "id": "arena_potion_consumption_pressure",
+      "profile_id": "max_spender",
+      "milestone_id": "10h",
+      "status": "PASS",
+      "observed": "35.8 projected uses, 3 stock, 8.37% coverage",
+      "target": ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      "note": "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables."
     },
     {
       "id": "arena_attempt_volume",
@@ -7220,6 +7477,15 @@
       "note": "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown."
     },
     {
+      "id": "arena_potion_consumption_pressure",
+      "profile_id": "max_spender",
+      "milestone_id": "15h",
+      "status": "PASS",
+      "observed": "53.8 projected uses, 4 stock, 7.44% coverage",
+      "target": ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      "note": "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables."
+    },
+    {
       "id": "arena_attempt_volume",
       "profile_id": "max_spender",
       "milestone_id": "20h",
@@ -7236,6 +7502,15 @@
       "observed": "repeat factor 0.25",
       "target": "<= 0.5",
       "note": "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown."
+    },
+    {
+      "id": "arena_potion_consumption_pressure",
+      "profile_id": "max_spender",
+      "milestone_id": "20h",
+      "status": "PASS",
+      "observed": "71.7 projected uses, 5 stock, 6.98% coverage",
+      "target": ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      "note": "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables."
     }
   ],
   "consumable_checks": [

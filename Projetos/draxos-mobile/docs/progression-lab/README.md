@@ -21,6 +21,8 @@ O sistema deve responder:
 - quais bots devem existir para pareamento inicial;
 - se `ossos -> po_osso -> craft_pocao_vida` sustenta estoque saudavel de
   `pocao_vida` por milestone;
+- se a Arena PVE gera pressao aceitavel de pocoes por tentativa, considerando
+  estoque vivo consumido por duelo;
 - se o save saudavel exercita slot de pocao e comportamento simples na
   Preparacao;
 - como a sensacao manual no Godot compara com os dados.
@@ -66,6 +68,8 @@ npx -y deno run --allow-read --allow-write tools/progression_lab/generate.ts
 - `generated/potion_affordability.csv`
 - `generated/crafting_pressure.csv`
 - `generated/preparation_readiness.csv`
+- `generated/milestone_profiles.csv` para `arena_attempts`, `arena_duels`,
+  `expected_potion_uses` e `potion_attempt_coverage_percent`
 - `generated/premium_gap.csv`
 - `generated/power_recommendations.csv`
 - `generated/bot_pool.csv`

@@ -64,6 +64,26 @@ func start_tutorial(host: Node) -> void:
 func start_early(host: Node) -> void:
 	await _start_attempt(host, EARLY_ARENA_ID, EARLY_DIFFICULTY_TIER)
 
+func start_arena(host: Node, arena_id: String) -> void:
+	var normalized_id := arena_id.strip_edges()
+	if normalized_id == "":
+		_set_error_text(host, "Arena invalida.")
+		return
+	var arena := SessionStore.arena_by_id(normalized_id)
+	if arena.is_empty():
+		_set_error_text(host, "Arena nao encontrada no estado atual.")
+		return
+	if not _arena_is_unlocked(arena):
+		_set_error_text(host, "Arena bloqueada: %s" % _arena_locked_reason(arena))
+		return
+	var difficulty_tier := int(arena.get("difficulty_tier", arena.get("difficulty_rank", 0)))
+	await _start_attempt(
+		host,
+		normalized_id,
+		difficulty_tier,
+		AppShellActionContractScript.arena_start_action(normalized_id)
+	)
+
 func lock_loadout(host: Node) -> void:
 	var attempt := SessionStore.active_arena_attempt()
 	var attempt_id := _attempt_id(attempt)
@@ -205,15 +225,17 @@ func play_arena_replay(host: Node, battle_log: Dictionary, rewards: Dictionary) 
 	host.call("_set_busy", false, "Duelo da Arena concluido.")
 	host.call("_sync_buttons")
 
-func _start_attempt(host: Node, arena_id: String, difficulty_tier: int) -> void:
+func _start_attempt(host: Node, arena_id: String, difficulty_tier: int, action_id: String = "") -> void:
 	if not bool(host.call("_require_account", "Entre antes de iniciar a Arena PVE.")):
 		return
 	host.call("_set_busy", true, "Iniciando Arena PVE...")
-	var action_id := AppShellActionContractScript.ACTION_ARENA_START_TUTORIAL if arena_id == TUTORIAL_ARENA_ID else AppShellActionContractScript.ACTION_ARENA_START_EARLY
+	var start_action_id := action_id.strip_edges()
+	if start_action_id == "":
+		start_action_id = AppShellActionContractScript.ACTION_ARENA_START_TUTORIAL if arena_id == TUTORIAL_ARENA_ID else AppShellActionContractScript.ACTION_ARENA_START_EARLY
 	var mutation := SessionStore.prepare_pending_mutation(
 		"arena/pve/start",
 		"arena:%s" % SessionStore.active_save_type,
-		action_id,
+		start_action_id,
 		{"arena_id": arena_id, "difficulty_tier": difficulty_tier}
 	)
 	var result: Dictionary = await SupabaseClient.start_arena_attempt(
@@ -259,9 +281,10 @@ func _base_arena_state() -> Dictionary:
 	return {
 		"ok": true,
 		"schema_version": "pve_arena_state_v1",
+		"dev_fixture": true,
 		"arenas": [
-			{"id": TUTORIAL_ARENA_ID, "display_name": "Tutorial: Cinzas Do Refugio", "difficulty_tier": 0, "duel_count": 1, "enabled": true},
-			{"id": EARLY_ARENA_ID, "display_name": "Arena Curta Das Cinzas", "difficulty_tier": 1, "duel_count": 3, "enabled": true},
+			{"id": TUTORIAL_ARENA_ID, "display_name": "Tutorial: Cinzas Do Refugio", "difficulty_tier": 0, "duel_count": 1, "enabled": true, "unlocked": true},
+			{"id": EARLY_ARENA_ID, "display_name": "Arena Curta Das Cinzas", "difficulty_tier": 1, "duel_count": 3, "enabled": true, "unlocked": true},
 		],
 		"active_attempt": null,
 		"records": [],
@@ -345,6 +368,8 @@ func _fixture_claim_summary(attempt: Dictionary) -> Dictionary:
 	next_attempt["state"] = "claimed"
 	var summary := _summary_for_attempt(next_attempt, 1.0)
 	summary["claimed"] = true
+	summary["reward_already_applied"] = true
+	summary["mutates_economy"] = false
 	next_attempt["summary"] = summary
 	state["active_attempt"] = next_attempt
 	state["summary"] = summary
@@ -452,6 +477,8 @@ func _summary_for_attempt(attempt: Dictionary, clear_rate: float) -> Dictionary:
 		"clear_rate": clear_rate,
 		"repeat_factor": 0.65,
 		"reward_label": "XP, Ossos e recursos calibraveis da Arena PVE",
+		"reward_already_applied": true,
+		"mutates_economy": false,
 	}
 
 func _attempt_state(attempt: Dictionary) -> String:
@@ -468,6 +495,18 @@ func _current_offer_step_index(attempt: Dictionary) -> int:
 func _pending_buff_choices(attempt: Dictionary) -> Array:
 	var offer := _as_dictionary(attempt.get("buff_offer", {}))
 	return _as_array(offer.get("choices", attempt.get("pending_buff_choices", [])))
+
+func _arena_is_unlocked(arena: Dictionary) -> bool:
+	if arena.has("unlocked"):
+		return bool(arena.get("unlocked", false))
+	return bool(arena.get("enabled", true))
+
+func _arena_locked_reason(arena: Dictionary) -> String:
+	for key: String in ["locked_reason", "unlock_reason", "blocked_message", "blocked_reason"]:
+		var reason := str(arena.get(key, "")).strip_edges()
+		if reason != "":
+			return reason
+	return "Bloqueada."
 
 func _set_error_text(host: Node, text: String) -> void:
 	var label := host.get("_error_label") as Label

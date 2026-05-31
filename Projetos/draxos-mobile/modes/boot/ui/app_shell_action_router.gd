@@ -114,7 +114,9 @@ static func mutation_endpoint_for_action(action_id: String) -> String:
 	var action := normalize_action(action_id)
 	if action == AppShellActionContractScript.ACTION_REQUEST_BATTLE:
 		return "battle/request"
-	if action == AppShellActionContractScript.ACTION_ARENA_START_TUTORIAL or action == AppShellActionContractScript.ACTION_ARENA_START_EARLY:
+	if action == AppShellActionContractScript.ACTION_ARENA_START_TUTORIAL \
+			or action == AppShellActionContractScript.ACTION_ARENA_START_EARLY \
+			or AppShellActionContractScript.is_arena_start(action):
 		return "arena/pve/start"
 	if action == AppShellActionContractScript.ACTION_ARENA_RESOLVE_DUEL:
 		return "arena/pve/duel/request"
@@ -206,7 +208,8 @@ static func _is_arena_action(action_id: String) -> bool:
 		AppShellActionContractScript.ACTION_ARENA_LOCK_LOADOUT,
 		AppShellActionContractScript.ACTION_ARENA_RESOLVE_DUEL,
 		AppShellActionContractScript.ACTION_ARENA_CLAIM_SUMMARY,
-	] or AppShellActionContractScript.is_arena_choose_buff(action_id)
+	] or AppShellActionContractScript.is_arena_start(action_id) \
+		or AppShellActionContractScript.is_arena_choose_buff(action_id)
 
 static func _is_session_action(action_id: String) -> bool:
 	return action_id in [

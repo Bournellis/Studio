@@ -1,20 +1,20 @@
 id,status,observed,target,note
-average_duration_target,PASS,24.03s,18-28s,Average battle duration should sit near the target playtest window.
+average_duration_target,PASS,24.65s,18-28s,Average battle duration should sit near the target playtest window.
 short_battle_rate,PASS,0%,<= 20%,Too many short battles suggest burst or low HP scaling issues.
-long_battle_rate,PASS,16.86%,<= 20%,Too many long battles suggest defensive scaling or low damage pressure.
-anti_stall_rate,REVIEW,6.4%,<= 5%,Anti-stall should be rare in normal same-level matchups.
-near_power_dominance,PASS,63.34% max / 27.05% min,max <= 65%,Dominance uses <= 20% power delta and excludes same-archetype mirrors.
-level_coverage,PASS,"7/7 configured, 16 total",7/7,Every configured level checkpoint should produce matchups.
-track16_potion_build_coverage,PASS,1492 potion-enabled matchups,>= 1 when Track 16 potion scenarios exist,Battle Lab must exercise Pocao de Vida slots before autobattler tuning.
-track16_potion_event_coverage,PASS,1143 matchups with consumable_use,>= 1 consumable_use event when potion is enabled,Potion scenarios should produce at least one battle_log_v1 consumable_use/heal sample.
-track16_spell_behavior_coverage,PASS,"1238 behavior matchups, 644 disabled-behavior matchups",>= 1 spell behavior matchup and >= 1 disabled behavior matchup,Battle Lab must exercise simple spell behavior before behavior-driven tuning.
-source_identity_weapon_cap,PASS,54.38% max (defensive_occultist),<= 75% from level 7+ outside starter,Non-starter archetypes should not read as ritual-instrument-only combat once spells enter the kit.
-source_identity_mental,PASS,42.34% (spell+pet),>= 22%,"Mental Controller should visibly pressure through spells and occult familiars, not only weapon cadence."
-source_identity_elemental,PASS,54.15% (spell+dot+pet),>= 28%,"Elemental Mixer should show elemental spell, dot or familiar pressure in the damage mix."
-source_identity_familiar,PASS,17.43% (pet),>= 10%,Familiar Handler should have a measurable familiar contribution after pets unlock.
+long_battle_rate,PASS,16.16%,<= 20%,Too many long battles suggest defensive scaling or low damage pressure.
+anti_stall_rate,REVIEW,6.31%,<= 5%,Anti-stall should be rare in normal same-level matchups.
+near_power_dominance,REVIEW,66.53% max / 28.45% min,max <= 65%,Dominance uses <= 20% power delta and excludes same-archetype mirrors.
+level_coverage,PASS,"7/7 configured, 15 total",7/7,Every configured level checkpoint should produce matchups.
+track16_potion_build_coverage,PASS,1474 potion-enabled matchups,>= 1 when Track 16 potion scenarios exist,Battle Lab must exercise Pocao de Vida slots before autobattler tuning.
+track16_potion_event_coverage,PASS,1155 matchups with consumable_use,>= 1 consumable_use event when potion is enabled,Potion scenarios should produce at least one battle_log_v1 consumable_use/heal sample.
+track16_spell_behavior_coverage,PASS,"1308 behavior matchups, 644 disabled-behavior matchups",>= 1 spell behavior matchup and >= 1 disabled behavior matchup,Battle Lab must exercise simple spell behavior before behavior-driven tuning.
+source_identity_weapon_cap,PASS,55.05% max (defensive_occultist),<= 75% from level 7+ outside starter,Non-starter archetypes should not read as ritual-instrument-only combat once spells enter the kit.
+source_identity_mental,PASS,41.38% (spell+pet),>= 22%,"Mental Controller should visibly pressure through spells and occult familiars, not only weapon cadence."
+source_identity_elemental,PASS,50.58% (spell+dot+pet),>= 28%,"Elemental Mixer should show elemental spell, dot or familiar pressure in the damage mix."
+source_identity_familiar,PASS,17.57% (pet),>= 10%,Familiar Handler should have a measurable familiar contribution after pets unlock.
 source_identity_summoner,PASS,38.48% (summon),>= 10%,Summoner should produce real summon damage after superior physical rites unlock.
-source_identity_dot,PASS,27.69% (dot),>= 12%,"Dot Pressure should be readable through bleed, poison, burn or death ticks."
+source_identity_dot,PASS,27.97% (dot),>= 12%,"Dot Pressure should be readable through bleed, poison, burn or death ticks."
 source_identity_funeral,PASS,46.89% (spell+dot+summon),>= 30%,Funeral Burst should lean on death/fire rites once advanced physical magic unlocks.
 arena_sequence_coverage,PASS,"5 sequences, max 6 duels",tutorial plus 3/4/5/6-duel arenas,"Arena PVE tuning needs sequence-level output, not only single-duel PVP matchups."
-arena_sequence_clear_rate_floor,REVIEW,2.77% min clear,>= 12% before difficulty tuning,"Longer arena lists can be hard, but the initial lab should not project impossible clears."
+arena_sequence_clear_rate_floor,PASS,"1d 80.5%, 3d 35.5%, 4d 20.5%, 5d 12.5%, 6d 12.5%","1d >=80%, 3d >=35%, 4d >=20%, 5d >=12%, 6d >=12%","Track 19 sanity targets: tutorial >=80%, 3 duels >=35%, 4 duels >=20%, 5/6 duels >=12%."
 arena_sequence_hp_reset,PASS,HP reset true,HP reset per duel,Arena PVE is about winning each duel; it must not become survival attrition.

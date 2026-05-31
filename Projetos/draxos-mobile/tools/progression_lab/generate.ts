@@ -153,9 +153,11 @@ interface ArenaProgressionState {
   clear_rate: number;
   repeat_reward_factor: number;
   first_clear_completion: number;
+  projected_potion_uses_per_attempt: number;
   expected_attempts: number;
   expected_duels: number;
   expected_clears: number;
+  expected_potion_uses: number;
 }
 
 interface BuildState {
@@ -463,6 +465,9 @@ export async function writeProgressionOutputs(
       "arena_duels",
       "arena_clear_rate",
       "arena_repeat_factor",
+      "projected_potion_uses_per_attempt",
+      "expected_potion_uses",
+      "potion_attempt_coverage_percent",
       "weapon_level",
       "weapon_quality_tier",
       "spells",
@@ -496,7 +501,9 @@ export async function writeProgressionOutputs(
   await Deno.writeTextFile(
     new URL("potion_affordability.csv", outputUrl),
     toCsv(
-      data.consumable_checks.filter((check) => check.id === "life_potion_stock"),
+      data.consumable_checks.filter((check) =>
+        check.id === "life_potion_stock"
+      ),
       [
         "id",
         "profile_id",
@@ -620,7 +627,7 @@ export function buildHealthySave(
     level,
     consumables,
   );
-  const arena = arenaProgressionFor(profile, milestone);
+  const arena = arenaProgressionFor(profile, milestone, consumables);
   const power = calculatePower(
     model.power_weights,
     build,
@@ -676,8 +683,9 @@ export function calculatePower(
   );
   const petLevel = build.pet_id === "" ? 0 : build.pet_level;
   const passiveLevel = build.passive_id === "" ? 0 : build.passive_level;
-  const baseStats = structures.find((item) => item.structure_id === "estrutura_stats")?.level ??
-    0;
+  const baseStats =
+    structures.find((item) => item.structure_id === "estrutura_stats")?.level ??
+      0;
   const baseAverage = avg(structures.map((item) => item.level));
   return Math.round(
     level * weights.level +
@@ -694,24 +702,33 @@ export function calculatePower(
 function arenaProgressionFor(
   profile: Profile,
   milestone: Milestone,
+  consumables?: ConsumableState,
 ): ArenaProgressionState {
-  const attemptsPerHour = profile.arena_attempts_per_hour ?? profile.battles_per_hour;
+  const attemptsPerHour = profile.arena_attempts_per_hour ??
+    profile.battles_per_hour;
   const averageDuelsPerAttempt = profile.average_duels_per_attempt ?? 2.4;
   const clearRate = clamp(profile.clear_rate ?? 0.55, 0, 1);
   const repeatRewardFactor = clamp(profile.repeat_reward_factor ?? 0.35, 0, 1);
   const firstClearCompletion = clamp(profile.first_clear_completion ?? 1, 0, 6);
+  const hasEquippedPotion = consumables?.equipped_potion_id === "pocao_vida";
+  const projectedPotionUsesPerAttempt = hasEquippedPotion
+    ? round(clamp(averageDuelsPerAttempt * 0.2, 0, 0.85), 2)
+    : 0;
   const expectedAttempts = milestone.hours * attemptsPerHour;
   const expectedDuels = expectedAttempts * averageDuelsPerAttempt;
   const expectedClears = expectedAttempts * clearRate;
+  const expectedPotionUses = expectedAttempts * projectedPotionUsesPerAttempt;
   return {
     attempts_per_hour: attemptsPerHour,
     average_duels_per_attempt: averageDuelsPerAttempt,
     clear_rate: clearRate,
     repeat_reward_factor: repeatRewardFactor,
     first_clear_completion: firstClearCompletion,
+    projected_potion_uses_per_attempt: projectedPotionUsesPerAttempt,
     expected_attempts: expectedAttempts,
     expected_duels: expectedDuels,
     expected_clears: expectedClears,
+    expected_potion_uses: expectedPotionUses,
   };
 }
 
@@ -867,7 +884,8 @@ function estimateBuildSpend(
       build.passive_level,
     );
   }
-  spend.ossos += model.costs.weapon_quality_thresholds[build.weapon_quality_tier] ?? 0;
+  spend.ossos +=
+    model.costs.weapon_quality_thresholds[build.weapon_quality_tier] ?? 0;
   return roundResources(spend);
 }
 
@@ -907,12 +925,18 @@ function buildStateFor(
   for (const spell of spellSlots) {
     spellLevels[spell] = spellLevel;
   }
-  const passiveId = level >= 10 ? ARCHETYPE_PASSIVE[archetypeId] ?? "doutrina_pavor" : "";
-  const petId = level >= 15 ? ARCHETYPE_PET[archetypeId] ?? "corvo_pressagio" : "";
+  const passiveId = level >= 10
+    ? ARCHETYPE_PASSIVE[archetypeId] ?? "doutrina_pavor"
+    : "";
+  const petId = level >= 15
+    ? ARCHETYPE_PET[archetypeId] ?? "corvo_pressagio"
+    : "";
   const passiveLevel = passiveId === ""
     ? 0
     : clampedScaledLevel(level, Math.max(0.1, ratio - 0.05));
-  const petLevel = petId === "" ? 0 : clampedScaledLevel(level, Math.min(1, ratio + 0.02));
+  const petLevel = petId === ""
+    ? 0
+    : clampedScaledLevel(level, Math.min(1, ratio + 0.02));
   const qualityTier = qualityTierFor(model, gains.ossos);
   const desired: BuildState = {
     archetype_id: archetypeId,
@@ -956,8 +980,9 @@ function baseStateFor(
     availableEnergia,
     profile,
   );
-  const primary = structures.find((item) => item.structure_id === "nucleo_energia") ??
-    structures[0];
+  const primary =
+    structures.find((item) => item.structure_id === "nucleo_energia") ??
+      structures[0];
   const activeJob = primary.level < level
     ? {
       structure_id: primary.structure_id,
@@ -1093,7 +1118,9 @@ function combatBuildFor(
   };
   if (consumables !== undefined) {
     combatBuild.spellBehaviors = consumables.spell_behaviors;
-    const equippedSlot = consumables.potion_slots.find((slot) => slot.potion_id === "pocao_vida");
+    const equippedSlot = consumables.potion_slots.find((slot) =>
+      slot.potion_id === "pocao_vida"
+    );
     if (equippedSlot !== undefined) {
       combatBuild.potionSlot = {
         slotIndex: equippedSlot.slot_index,
@@ -1112,7 +1139,9 @@ function buildRewardChecks(
 ): CheckRow[] {
   const rows: CheckRow[] = [];
   for (const save of saves) {
-    const milestone = model.milestones.find((item) => item.id === save.milestone_id)!;
+    const milestone = model.milestones.find((item) =>
+      item.id === save.milestone_id
+    )!;
     rows.push({
       id: "level_window",
       profile_id: save.profile_id,
@@ -1165,7 +1194,23 @@ function buildArenaChecks(saves: HealthySave[]): CheckRow[] {
       status: save.arena.repeat_reward_factor <= 0.5 ? "PASS" : "REVIEW",
       observed: `repeat factor ${round(save.arena.repeat_reward_factor, 2)}`,
       target: "<= 0.5",
-      note: "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.",
+      note:
+        "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.",
+    });
+    const potionCoverage = potionAttemptCoveragePercent(save);
+    rows.push({
+      id: "arena_potion_consumption_pressure",
+      profile_id: save.profile_id,
+      milestone_id: save.milestone_id,
+      status: save.arena.expected_potion_uses <= 0 || potionCoverage >= 5
+        ? "PASS"
+        : "REVIEW",
+      observed: `${
+        round(save.arena.expected_potion_uses, 1)
+      } projected uses, ${save.consumables.crafted_life_potions} stock, ${potionCoverage}% coverage`,
+      target: ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      note:
+        "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.",
     });
   }
   return rows;
@@ -1186,9 +1231,11 @@ function buildConsumableChecks(
           consumables.target_potion_stock
         ? "PASS"
         : "REVIEW",
-      observed: `${consumables.crafted_life_potions}/${consumables.target_potion_stock} potions`,
+      observed:
+        `${consumables.crafted_life_potions}/${consumables.target_potion_stock} potions`,
       target: `>= ${consumables.target_potion_stock}`,
-      note: "Healthy save should show whether Po de Osso supports the intended lab potion stock.",
+      note:
+        "Healthy save should show whether Po de Osso supports the intended lab potion stock.",
     });
     rows.push({
       id: "preparation_potion_slot",
@@ -1265,9 +1312,13 @@ function buildPowerRecommendations(
     const baseStats = save.base.structures.find((item) =>
       item.structure_id === "estrutura_stats"
     )?.level ?? 0;
-    const baseAverage = avg(save.base.structures.map((item) => item.level));
+    const baseAverage = avg(save.base.structures.map((item) =>
+      item.level
+    ));
     const petLevel = save.build.pet_id === "" ? 0 : save.build.pet_level;
-    const passiveLevel = save.build.passive_id === "" ? 0 : save.build.passive_level;
+    const passiveLevel = save.build.passive_id === ""
+      ? 0
+      : save.build.passive_level;
     const components = {
       level: save.player.level * model.power_weights.level,
       weapon_level: save.build.weapon_level * model.power_weights.weapon_level,
@@ -1346,8 +1397,9 @@ function buildStateForBot(
   );
   clone.spell_slots = preferred.slice(0, maxSpellSlots(save.player.level));
   clone.spell_levels = {};
-  const baseSpellLevel = save.build.spell_levels[Object.keys(save.build.spell_levels)[0]] ??
-    save.player.level;
+  const baseSpellLevel =
+    save.build.spell_levels[Object.keys(save.build.spell_levels)[0]] ??
+      save.player.level;
   for (const spell of clone.spell_slots) {
     clone.spell_levels[spell] = clamp(
       Math.round(baseSpellLevel * factor),
@@ -1358,7 +1410,9 @@ function buildStateForBot(
   clone.passive_id = save.player.level >= 10
     ? ARCHETYPE_PASSIVE[archetypeId] ?? clone.passive_id
     : "";
-  clone.pet_id = save.player.level >= 15 ? ARCHETYPE_PET[archetypeId] ?? clone.pet_id : "";
+  clone.pet_id = save.player.level >= 15
+    ? ARCHETYPE_PET[archetypeId] ?? clone.pet_id
+    : "";
   clone.weapon_level = clamp(
     Math.round(clone.weapon_level * factor),
     1,
@@ -1441,7 +1495,7 @@ function checklistFor(
   return [
     `Carregar ${profile.id} em ${milestone.id}.`,
     "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-    "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+    "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
     "Abrir Base e avaliar se proximo upgrade parece desejavel.",
     "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
     "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -1457,14 +1511,18 @@ function archetypeForLevel(level: number, profile: Profile): string {
   if (level < 3) return "starter_instrument";
   if (level < 7) return "mental_controller";
   if (level < 15) {
-    return profile.id === "free_50_rewards" ? "elemental_mixer" : "funeral_burst";
+    return profile.id === "free_50_rewards"
+      ? "elemental_mixer"
+      : "funeral_burst";
   }
   if (level < 25) {
     return profile.premium_pass ? "familiar_handler" : "elemental_mixer";
   }
   if (profile.id === "max_spender") return "summoner";
   if (profile.id === "spender_light") return "funeral_burst";
-  return profile.id === "free_50_rewards" ? "defensive_occultist" : "dot_pressure";
+  return profile.id === "free_50_rewards"
+    ? "defensive_occultist"
+    : "dot_pressure";
 }
 
 function botArchetypeFor(
@@ -1476,7 +1534,9 @@ function botArchetypeFor(
     return save.build.archetype_id;
   }
   if (offset > 0) {
-    return archetypes.includes("funeral_burst") ? "funeral_burst" : save.build.archetype_id;
+    return archetypes.includes("funeral_burst")
+      ? "funeral_burst"
+      : save.build.archetype_id;
   }
   return save.build.archetype_id;
 }
@@ -1634,7 +1694,9 @@ function normalizeBehavior(
   fallback: BehaviorConfig,
 ): BehaviorConfig {
   return {
-    enabled: typeof value?.enabled === "boolean" ? value.enabled : fallback.enabled,
+    enabled: typeof value?.enabled === "boolean"
+      ? value.enabled
+      : fallback.enabled,
     hp: normalizeBehaviorCondition(value?.hp, fallback.hp),
     mana: normalizeBehaviorCondition(value?.mana, fallback.mana),
   };
@@ -1648,9 +1710,10 @@ function normalizeBehaviorCondition(
       value?.mode === "ignore"
     ? value.mode
     : fallback.mode;
-  const percent = typeof value?.percent === "number" && Number.isFinite(value.percent)
-    ? clamp(value.percent, 0, 100)
-    : fallback.percent;
+  const percent =
+    typeof value?.percent === "number" && Number.isFinite(value.percent)
+      ? clamp(value.percent, 0, 100)
+      : fallback.percent;
   return { mode, percent };
 }
 
@@ -1683,6 +1746,12 @@ function saveRow(save: HealthySave): Record<string, unknown> {
     arena_duels: round(save.arena.expected_duels, 1),
     arena_clear_rate: round(save.arena.clear_rate, 2),
     arena_repeat_factor: round(save.arena.repeat_reward_factor, 2),
+    projected_potion_uses_per_attempt: round(
+      save.arena.projected_potion_uses_per_attempt,
+      2,
+    ),
+    expected_potion_uses: round(save.arena.expected_potion_uses, 1),
+    potion_attempt_coverage_percent: potionAttemptCoveragePercent(save),
     weapon_level: save.build.weapon_level,
     weapon_quality_tier: save.build.weapon_quality_tier,
     spells: save.build.spell_slots.join("|"),
@@ -1691,6 +1760,15 @@ function saveRow(save: HealthySave): Record<string, unknown> {
       2,
     ),
   };
+}
+
+function potionAttemptCoveragePercent(save: HealthySave): number {
+  if (save.arena.expected_potion_uses <= 0) return 100;
+  return round(
+    (save.consumables.crafted_life_potions / save.arena.expected_potion_uses) *
+      100,
+    2,
+  );
 }
 
 function craftingPressureRow(save: HealthySave): Record<string, unknown> {
@@ -1761,6 +1839,16 @@ function reportHtml(model: ProgressionModel, data: ProgressionData): string {
         0,
       )),
     ],
+    [
+      "Projected potion uses",
+      String(round(
+        data.saves.reduce(
+          (total, save) => total + save.arena.expected_potion_uses,
+          0,
+        ),
+        0,
+      )),
+    ],
   ];
   const saveRows = data.saves.map((save) =>
     `<tr><td>${save.id}</td><td>${save.status}</td><td>${save.player.level}</td><td>${save.player.power}</td><td>${
@@ -1798,7 +1886,9 @@ function reportHtml(model: ProgressionModel, data: ProgressionData): string {
   <h1>DraxosMobile Progression Lab</h1>
   <p>Model ${model.model_id}. Use this report to pick manual Godot saves and tuning hypotheses.</p>
   <div class="cards">${
-    cards.map(([label, value]) => `<div class="card"><strong>${label}</strong><br>${value}</div>`)
+    cards.map(([label, value]) =>
+      `<div class="card"><strong>${label}</strong><br>${value}</div>`
+    )
       .join("")
   }</div>
   <h2>Healthy Saves</h2>

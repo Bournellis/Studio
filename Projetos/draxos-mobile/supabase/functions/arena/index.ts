@@ -393,15 +393,15 @@ Deno.serve(async (request: Request) => {
     }
 
     if (route === "list" && request.method !== "GET") {
-      return errorResponse("METHOD_NOT_ALLOWED", "Use GET /arena/list.", 405);
+      return errorResponse("METHOD_NOT_ALLOWED", "Use GET /arena/pve/state.", 405);
     }
     if (route === "start" && request.method !== "POST") {
-      return errorResponse("METHOD_NOT_ALLOWED", "Use POST /arena/start.", 405);
+      return errorResponse("METHOD_NOT_ALLOWED", "Use POST /arena/pve/start.", 405);
     }
     if (route === "duel/request" && request.method !== "POST") {
       return errorResponse(
         "METHOD_NOT_ALLOWED",
-        "Use POST /arena/duel/request.",
+        "Use POST /arena/pve/duel/request.",
         405,
       );
     }
@@ -422,7 +422,7 @@ Deno.serve(async (request: Request) => {
     if (route === "abandon" && request.method !== "POST") {
       return errorResponse(
         "METHOD_NOT_ALLOWED",
-        "Use POST /arena/abandon.",
+        "Use POST /arena/pve/abandon.",
         405,
       );
     }
@@ -750,6 +750,7 @@ async function handleDuelRequest(
         result: simulation.battleLog.result,
         reward_payload: rewardPayload,
         reward_delta: rewardPayload.economy_delta,
+        consumables_used: simulation.consumables.used,
         buff_options: buffOptions,
       },
     }),
@@ -797,7 +798,7 @@ async function handleBuffChoose(
       state.error.status,
     );
   }
-  const requestHash = await mutationRequestHash("arena/buff/choose", body, {
+  const requestHash = await mutationRequestHash("arena/pve/buff/select", body, {
     request_id: requestId,
     save_type: auth.saveType,
     attempt_id: attemptId,
@@ -882,7 +883,7 @@ async function handleClaim(
       progress.error.status,
     );
   }
-  const requestHash = await mutationRequestHash("arena/claim", body, {
+  const requestHash = await mutationRequestHash("arena/pve/claim", body, {
     request_id: requestId,
     save_type: auth.saveType,
     attempt_id: attempt.value.id,
@@ -891,7 +892,7 @@ async function handleClaim(
   return jsonResponse({
     ok: true,
     schema_version: "arena_claim_response_v1",
-    endpoint: "arena/claim",
+    endpoint: "arena/pve/claim",
     request_id: requestId,
     request_hash: requestHash,
     game_save_id: state.value.gameSave.id,
@@ -902,6 +903,7 @@ async function handleClaim(
     resources: state.value.resources,
     reward_payload: attempt.value.reward_payload,
     reward_already_applied: attempt.value.status === "completed",
+    mutates_economy: false,
     ranking: { mutated: false, reason: "ARENA_PVE_DOES_NOT_RANK" },
   });
 }
@@ -1293,13 +1295,20 @@ function withCurrentBehavior(
   state: PlayerState,
 ): CombatantBuild {
   const currentPotionSlot = potionSlotForBattle(state);
+  const lockedPotion = locked.potionSlot;
+  const livePotionQuantity = lockedPotion === undefined
+    ? 0
+    : (state.inventory.find((item) => item.item_id === lockedPotion.itemId)?.quantity ?? 0);
   return {
     ...locked,
     spellBehaviors: spellBehaviorMap(state.spellBehaviors),
-    potionSlot: locked.potionSlot === undefined ? undefined : {
-      ...locked.potionSlot,
-      behavior: currentPotionSlot?.behavior ?? locked.potionSlot.behavior,
-    },
+    potionSlot: lockedPotion === undefined || livePotionQuantity <= 0
+      ? undefined
+      : {
+        ...lockedPotion,
+        quantity: livePotionQuantity,
+        behavior: currentPotionSlot?.behavior ?? lockedPotion.behavior,
+      },
   };
 }
 

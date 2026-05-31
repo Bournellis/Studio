@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
 - Ultima atualizacao: `2026-05-31`
-- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*` e `content/*` implementados local/remoto; Foundation Expansion Readiness adiciona contrato de API v1 por header, account/save context, ruleset metadata, request hash/idempotencia transacional e admin/minigame scopes reservados; Arena PVE v1 adiciona endpoints contratados `arena/pve/*`.
+- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*`, `content/*` e `arena/pve/*` implementados local/remoto; Foundation Expansion Readiness adiciona contrato de API v1 por header, account/save context, ruleset metadata, request hash/idempotencia transacional e admin/minigame scopes reservados; Arena PVE v1 esta publicada em Internal Alpha e Track 19 Arena Consistency Pass esta em andamento.
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -76,7 +76,7 @@ como slot contratado, mas a rota ainda precisa migrar o efeito de dominio.
 
 | Endpoint logico | RPC transacional alvo | Status |
 |---|---|---|
-| `POST /battle/request` | `request_battle_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql` para `FIRST_SLICE_SIM`; simulação continua no adapter e persistência/reward/consumables/ranking/idempotência entram no RPC |
+| `POST /battle/request` | `request_battle_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql` para `FIRST_SLICE_SIM`, que e modo tecnico de simulador/replay do primeiro slice, nao modo de produto; simulacao continua no adapter e persistencia/reward/consumables/ranking/idempotencia entram no RPC |
 | `POST /base/collect` | `collect_base_v1` | ativo em `202605300002_transactional_domain_enforcement.sql`; adapter preserva payload de UI e move recursos/ledger/idempotencia para RPC |
 | `POST /base/upgrade` | `start_base_upgrade_v1` | ativo em `202605300002_transactional_domain_enforcement.sql`; adapter preserva payload de UI e move gasto/job/ledger/idempotencia para RPC |
 | `POST /build/equip` | `equip_build_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql`; build + power são aplicados no mesmo RPC |
@@ -131,16 +131,16 @@ novo.
 | POST | `/account/guest` | `save-scoped` | Sim | `request_id` por save | Fallback dev/local anonimo; cria/recupera o save selecionado. |
 | GET | `/account/state` | `save-scoped` | Sim | Nao | Retorna snapshot do save ativo. |
 | POST | `/account/saves/reset` | `save-scoped` | Sim | `request_id` por save | Reseta apenas o save ativo e exige consistencia entre body e header quando ambos aparecem. |
-| POST | `/battle/request` | `save-scoped` | Sim | `request_id` por save | Simula no servidor, aplica recompensa/ranking do save ativo e bloqueia ranking do Lab. |
+| POST | `/battle/request` | `save-scoped` | Sim | `request_id` por save | Rota tecnica de simulador/replay (`FIRST_SLICE_SIM`) para o primeiro slice; aplica recompensa/ranking do save ativo e bloqueia ranking do Lab, mas nao define o produto atual. |
 | GET | `/battle/latest` | `save-scoped` | Sim | Nao | Retorna ultima batalha do save ativo sem reaplicar efeitos. |
 | GET | `/battle/history` | `save-scoped` | Sim | Nao | Retorna historico recente do save ativo como sumarios read-only, sem eventos completos. |
 | GET | `/battle/replay?battle_id=...` | `save-scoped` | Sim | Nao | Retorna o `battle_log_v1` salvo de uma batalha do save ativo, sem rerodar simulador nem reaplicar recompensa. |
-| GET | `/arena/pve/state` | `save-scoped` | Sim | Nao | Contratado para Arena PVE v1: arenas, unlocks, recordes e tentativa ativa do save. |
-| POST | `/arena/pve/start` | `save-scoped` | Sim | `request_id/request_hash` por save | Contratado para criar tentativa, travar loadout e gerar primeiro inimigo. |
-| POST | `/arena/pve/duel/request` | `save-scoped` | Sim | `request_id/request_hash` por save | Contratado para resolver o proximo duelo da tentativa via simulador server-authoritative. |
-| POST | `/arena/pve/buff/select` | `save-scoped` | Sim | `request_id/request_hash` por save | Contratado para escolher 1 buff ofertado apos vitoria. |
-| POST | `/arena/pve/claim` | `save-scoped` | Sim | `request_id/request_hash` por save | Contratado para aplicar recompensa de conclusao/recorde/primeira clear. |
-| POST | `/arena/pve/abandon` | `save-scoped` | Sim | `request_id/request_hash` por save | Contratado para encerrar tentativa sem recompensa de conclusao. |
+| GET | `/arena/pve/state` | `save-scoped` | Sim | Nao | Implementado/publicado para Arena PVE v1: arenas, unlocks, recordes e tentativa ativa do save. |
+| POST | `/arena/pve/start` | `save-scoped` | Sim | `request_id/request_hash` por save | Implementado/publicado para criar tentativa, travar loadout e gerar primeiro inimigo. |
+| POST | `/arena/pve/duel/request` | `save-scoped` | Sim | `request_id/request_hash` por save | Implementado/publicado para resolver o proximo duelo da tentativa via simulador server-authoritative; no ultimo duelo aplica recompensa/progresso. |
+| POST | `/arena/pve/buff/select` | `save-scoped` | Sim | `request_id/request_hash` por save | Endpoint publico oficial implementado/publicado para escolher 1 buff ofertado apos vitoria. |
+| POST | `/arena/pve/claim` | `save-scoped` | Sim | `request_id/request_hash` por save | Implementado/publicado como resumo/ack idempotente; nao muta economia. |
+| POST | `/arena/pve/abandon` | `save-scoped` | Sim | `request_id/request_hash` por save | Implementado/publicado para encerrar tentativa sem recompensa de conclusao. |
 | GET | `/base/state` | `save-scoped` | Sim | Nao | Estado server-authoritative da Base do save ativo. |
 | POST | `/base/collect` | `save-scoped` | Sim | `request_id/request_hash` por save | Coleta recursos do save ativo via RPC transacional com ledger. |
 | POST | `/base/upgrade` | `save-scoped` | Sim | `request_id/request_hash` por save | Inicia upgrade da Base do save ativo via RPC transacional com ledger. |
@@ -174,7 +174,7 @@ novo.
 
 ## Endpoints De Arena PVE v1
 
-Status: **contratado em docs/data; nao implementado nesta branch**.
+Status: **implementado/publicado em Track 18; Track 19 Arena Consistency Pass em andamento**.
 
 Contrato de produto: `../pve-arena-v1.md`.
 
@@ -188,6 +188,8 @@ Regras comuns:
 - Cooldown: nenhum endpoint de Arena PVE pode impor cooldown de combate.
 - Loadout: `arena/pve/start` grava snapshot/hash de loadout; endpoints seguintes nao aceitam troca de loadout.
 - Comportamento: ajustes simples entre duelos devem reutilizar `build/spell-behavior` e `build/potion-behavior` ate haver contrato proprio.
+- Recompensa: o ultimo `/arena/pve/duel/request` da tentativa aplica recompensa/progresso e ledger `arena_pve_v1`; `/arena/pve/claim` e apenas resumo/ack idempotente e retorna `mutates_economy: false`.
+- Buff endpoint publico: novos clients, docs e smokes devem usar `/arena/pve/buff/select`. `/arena/buff/choose` existe apenas como alias interno/compatibilidade.
 
 ### `GET /arena/pve/state`
 
@@ -247,7 +249,7 @@ Erros minimos: `INVALID_ARENA`, `ARENA_LOCKED`, `ACTIVE_ARENA_ATTEMPT_EXISTS`, `
 
 ### `POST /arena/pve/duel/request`
 
-Resolve o proximo duelo da tentativa. O servidor seleciona o inimigo da sequencia, aplica buffs acumulados, reseta HP para 100% no inicio do duelo e grava battle log `battle_log_v1` com metadata de arena.
+Resolve o proximo duelo da tentativa. O servidor seleciona o inimigo da sequencia, aplica buffs acumulados, reseta HP para 100% no inicio do duelo e grava battle log `battle_log_v1` com metadata de arena. Quando este request resolve o ultimo duelo da tentativa, ele tambem aplica recompensa/progresso, ledger `arena_pve_v1` e response idempotente.
 
 Request:
 
@@ -263,7 +265,7 @@ Erros minimos: `ARENA_ATTEMPT_NOT_FOUND`, `ARENA_ATTEMPT_NOT_ACTIVE`, `ARENA_DUE
 
 ### `POST /arena/pve/buff/select`
 
-Escolhe 1 buff de uma oferta gerada pelo servidor depois de uma vitoria que ainda tem proximo duelo.
+Endpoint publico oficial para escolher 1 buff de uma oferta gerada pelo servidor depois de uma vitoria que ainda tem proximo duelo. O alias `/arena/buff/choose` deve ser tratado apenas como compatibilidade interna.
 
 Request:
 
@@ -281,7 +283,7 @@ Erros minimos: `ARENA_ATTEMPT_NOT_FOUND`, `BUFF_OFFER_NOT_FOUND`, `BUFF_NOT_OFFE
 
 ### `POST /arena/pve/claim`
 
-Aplica recompensa de conclusao, primeira clear, recorde e limites de repeticao. Claim deve gravar ledger `arena_pve_v1` e resposta idempotente.
+Retorna resumo/ack idempotente da tentativa concluida ou encerrada. Claim nao aplica recompensa, nao grava ledger economico, nao altera ranking e nao muda XP/recursos; recompensa/progresso sao aplicados no ultimo `/arena/pve/duel/request`.
 
 Request:
 
@@ -293,7 +295,24 @@ Request:
 }
 ```
 
-Erros minimos: `ARENA_ATTEMPT_NOT_COMPLETE`, `ARENA_REWARD_ALREADY_CLAIMED`, `ARENA_REWARD_LIMITED`, `ARENA_REWARD_FAILED`.
+Response minima:
+
+```json
+{
+  "ok": true,
+  "schema_version": "arena_claim_response_v1",
+  "endpoint": "arena/pve/claim",
+  "attempt": {},
+  "progress": {},
+  "resources": {},
+  "reward_payload": {},
+  "reward_already_applied": true,
+  "mutates_economy": false,
+  "ranking": { "mutated": false, "reason": "ARENA_PVE_DOES_NOT_RANK" }
+}
+```
+
+Erros minimos: `ARENA_ATTEMPT_NOT_COMPLETE`, `ARENA_CLAIM_FAILED`, `IDEMPOTENCY_HASH_MISMATCH`.
 
 ### `POST /arena/pve/abandon`
 
@@ -696,7 +715,7 @@ Erros minimos: `UNAUTHENTICATED`, `PLAYER_NOT_FOUND`, `ACCOUNT_STATE_INCOMPLETE`
 Solicita batalha server-authoritative.
 
 Status: **implementado em T00-P07** para `MVP_ONLY`; **completo em T00-P10** para `FIRST_SLICE_SIM`.
-Em `T03-P07`, `FIRST_SLICE_SIM` tambem retorna `competition` e aplica pontos de arena no save `normal`. O save `progression_lab` recebe `excluded_reason = PROGRESSION_LAB_DOES_NOT_RANK`.
+`FIRST_SLICE_SIM` e um modo tecnico do simulador/replay do primeiro slice. Ele continua valido para compatibilidade, historico, labs e leitura de batalha salva, mas nao e leitura de produto atual depois da decisao Arena PVE-first. Em `T03-P07`, `FIRST_SLICE_SIM` tambem retorna `competition` e aplica pontos de arena no save `normal`. O save `progression_lab` recebe `excluded_reason = PROGRESSION_LAB_DOES_NOT_RANK`.
 
 Request MVP:
 

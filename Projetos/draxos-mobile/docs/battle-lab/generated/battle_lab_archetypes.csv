@@ -1,9 +1,9 @@
 id,display_name,total,wins,losses,win_rate_percent,avg_duration,median_duration,short_rate_percent,long_rate_percent,anti_stall_rate_percent,status
-starter_instrument,Starter Instrument,306,16,290,5.23,25.17,23.2,0,25.49,11.44,REVIEW
-mental_controller,Mental Controller,391,169,222,43.22,25.37,23.7,0,19.95,6.91,REVIEW
-elemental_mixer,Elemental Mixer,712,322,390,45.22,23.69,22.7,0,9.97,2.81,PASS
-familiar_handler,Familiar Handler,678,416,262,61.36,22.75,21.2,0,11.5,4.13,PASS
-summoner,Summoner,495,258,237,52.12,24.02,23.2,0,16.16,6.26,REVIEW
-defensive_occultist,Defensive Occultist,472,138,334,29.24,30.79,32.7,0,56.57,25.85,REVIEW
-dot_pressure,DoT Pressure,495,294,201,59.39,22.09,20.2,0,11.92,3.64,PASS
-funeral_burst,Funeral Burst,1095,654,441,59.73,22.21,21.7,0,6.58,1.46,PASS
+starter_instrument,Starter Instrument,322,16,306,4.97,25.43,24.7,0,24.22,10.87,REVIEW
+mental_controller,Mental Controller,416,196,220,47.12,25.91,23.95,0,20.91,7.93,REVIEW
+elemental_mixer,Elemental Mixer,575,287,288,49.91,24.58,23.2,0,10.78,2.96,PASS
+familiar_handler,Familiar Handler,418,217,201,51.91,24.62,23.2,0,17.46,6.46,REVIEW
+summoner,Summoner,511,272,239,53.23,24.39,23.7,0,15.85,6.07,REVIEW
+defensive_occultist,Defensive Occultist,480,129,351,26.88,30.74,32.7,0,55.21,25.83,REVIEW
+dot_pressure,DoT Pressure,511,315,196,61.64,22.24,20.2,0,11.55,3.52,PASS
+funeral_burst,Funeral Burst,1667,959,708,57.53,23.29,23.2,0,5.22,1.44,PASS

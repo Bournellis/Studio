@@ -1,9 +1,9 @@
 archetype_id,display_name,total,wins,avg_duration,weapon_damage,spell_damage,dot_damage,pet_damage,summon_damage,system_damage,total_damage,dominant_source
-starter_instrument,Starter Instrument,598,62,24.92,279620,0,0,0,0,0,279620,weapon
-mental_controller,Mental Controller,756,345,25.29,428847,213175,19730,104324,17652,0,783728,weapon
-elemental_mixer,Elemental Mixer,1326,642,23.69,636464,406079,164890,139477,0,0,1346910,weapon
-familiar_handler,Familiar Handler,1216,811,22.94,677519,353011,141189,215542,0,0,1387261,weapon
-summoner,Summoner,942,537,24.08,559564,107004,8446,140125,234469,0,1049608,weapon
-defensive_occultist,Defensive Occultist,902,393,30.53,549281,236664,8597,160672,23960,0,979174,weapon
-dot_pressure,DoT Pressure,942,595,22.29,467954,186583,273657,105277,17132,0,1050603,weapon
-funeral_burst,Funeral Burst,1750,1259,22.27,993067,665589,244236,179612,41615,0,2124119,weapon
+starter_instrument,Starter Instrument,630,62,25.19,293731,0,0,0,0,0,293731,weapon
+mental_controller,Mental Controller,800,403,25.8,451232,218601,17574,96769,17652,0,801828,weapon
+elemental_mixer,Elemental Mixer,1088,565,24.55,528341,298483,125376,81407,0,0,1033607,weapon
+familiar_handler,Familiar Handler,798,438,24.69,415802,232921,58646,109935,0,0,817304,weapon
+summoner,Summoner,974,566,24.47,571553,110086,8446,127667,234469,0,1052221,weapon
+defensive_occultist,Defensive Occultist,918,379,30.5,549443,238246,8597,147756,23960,0,968002,weapon
+dot_pressure,DoT Pressure,974,635,22.44,474252,187837,272735,97229,17132,0,1049185,weapon
+funeral_burst,Funeral Burst,2480,1852,23.54,1431082,898309,345058,123264,41615,0,2839328,weapon

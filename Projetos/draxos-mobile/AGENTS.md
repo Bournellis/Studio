@@ -8,12 +8,12 @@ This file is the fast entrypoint for agents working in `Projetos/draxos-mobile`.
 
 - Project: `DraxosMobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
-- Active operational stage: `Track 18 - PVE Arena Initial`
-- Active stage status: `PVE_ARENA_INITIAL_PUBLISHED_INTERNAL_ALPHA`
+- Active operational stage: `Track 19 - Arena Consistency Pass`
+- Active stage status: `ARENA_CONSISTENCY_PASS_IMPLEMENTED_LOCAL`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety` delivered on `2026-05-28`; compatibility marker: Track 13 validation/release safety.
 - Agent baseline: `Track 14 - Agent Operations Foundation` is the current operations/docs foundation; compatibility marker: `TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting`, technical context and not the current product focus. Current behavior/potion/crafting state is summarized in `docs/behavior-potion-crafting-v1.md`.
-- Immediate product gate: Foundation Closeout and Lab Track 16 Alignment are delivered; Foundation Final Polish is implemented, Full-gated and published to Internal Alpha. Track 18 is now the latest published Internal Alpha package on `codex/draxos-mobile/pve-arena-integration`: Arena PVE first, PVP later, no combat cooldown, locked loadout, temporary stat buffs and HP reset per duel. Foundation Loop UX Pass 01 and First Session Clarity v1 are accepted baselines.
+- Immediate product gate: Foundation Closeout and Lab Track 16 Alignment are delivered; Foundation Final Polish is implemented, Full-gated and published to Internal Alpha. Track 18 remains the latest remote Internal Alpha package on `codex/draxos-mobile/pve-arena-integration`: Arena PVE first, PVP later, no combat cooldown, locked loadout, temporary stat buffs and HP reset per duel. Track 19 is the latest implemented local consistency pass on `codex/draxos-mobile/arena-consistency-pass`: live-stock potion consumption in Arena, summary-only claim, public buff select endpoint, data-driven Arena list and Arena-focused labs. Foundation Loop UX Pass 01 and First Session Clarity v1 are accepted baselines.
 
 DraxosMobile is now a PVE Arena-first async autobattler with Refugio/Base, later PVP, social systems and server-authoritative progression. The real product direction is base builder + Arena PVE + later PVP/social, with room for future minigames and seasons. Current names, spells, weapons, economy values, battle flavor, visual style and premium systems are mock/substance for evaluation unless a live doc explicitly promotes them.
 
@@ -115,4 +115,4 @@ For user-approved product packages that require human testing on Android, Window
 
 ## Current Handoff
 
-Track 18 PVE Arena Initial is the latest Internal Alpha publication. New DraxosMobile agents should branch from `codex/draxos-mobile/pve-arena-integration` for Arena PVE follow-up work, or from `codex/draxos-mobile/foundation-final-polish` only if explicitly returning to the previous foundation baseline. Latest published preview: `https://c185369d.draxos-mobile-internal-alpha.pages.dev/web/index.html`; release root: `internal-alpha/v0-pve-arena-entry-20260531-6cbc853`. Do not change gameplay tuning, Supabase APIs, economy, content, weapons, spells, potions, crafting, advanced behavior, final visuals or authoritative flows beyond the Arena PVE initial package without an explicit package decision.
+Track 19 Arena Consistency Pass is the latest implemented local package. New DraxosMobile agents should branch from `codex/draxos-mobile/arena-consistency-pass` for Arena PVE follow-up work, or from `codex/draxos-mobile/pve-arena-integration` only if explicitly returning to the Track 18 published baseline. Latest remote published preview remains `https://c185369d.draxos-mobile-internal-alpha.pages.dev/web/index.html`; release root: `internal-alpha/v0-pve-arena-entry-20260531-6cbc853`. Do not change gameplay tuning, Supabase APIs, economy, content, weapons, spells, potions, crafting, advanced behavior, final visuals or authoritative flows beyond the Arena PVE consistency package without an explicit package decision.

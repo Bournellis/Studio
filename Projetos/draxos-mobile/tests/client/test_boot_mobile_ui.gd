@@ -3,6 +3,7 @@ extends GutTest
 const BootScreenScript = preload("res://modes/boot/boot.gd")
 const AppShellRouteContractScript = preload("res://modes/boot/ui/app_shell_route_contract.gd")
 const AppShellActionContractScript = preload("res://modes/boot/ui/app_shell_action_contract.gd")
+const AppShellActionRouterScript = preload("res://modes/boot/ui/app_shell_action_router.gd")
 const AppShellErrorContractScript = preload("res://modes/boot/ui/app_shell_error_contract.gd")
 const BaseSurfacePresenterScript = preload("res://modes/boot/surfaces/base_surface_presenter.gd")
 const BattleReplayPresenterScript = preload("res://modes/boot/surfaces/battle_replay_presenter.gd")
@@ -147,6 +148,14 @@ func test_app_shell_action_contract_centralizes_online_gates_without_boot_ui() -
 	assert_true(AppShellActionContractScript.is_allowed_during_replay(AppShellActionContractScript.ACTION_SKIP_REPLAY))
 	assert_false(AppShellActionContractScript.is_allowed_during_replay(AppShellActionContractScript.ACTION_SHOW_LATEST_BATTLE))
 	assert_eq(AppShellActionContractScript.action_value(AppShellActionContractScript.upgrade_base_structure_action("altar_das_almas")), "altar_das_almas")
+	var arena_start_action := AppShellActionContractScript.arena_start_action("arena_veu_curta")
+	assert_eq(arena_start_action, "arena_start:arena_veu_curta")
+	assert_true(AppShellActionContractScript.is_arena_start(arena_start_action))
+	assert_eq(AppShellActionContractScript.action_value(arena_start_action), "arena_veu_curta")
+	var arena_route := AppShellActionRouterScript.route_action(arena_start_action, {"save_type": "normal"})
+	assert_eq(arena_route.get("category"), AppShellActionRouterScript.CATEGORY_ARENA)
+	assert_eq(arena_route.get("mutation_endpoint"), "arena/pve/start")
+	assert_true(bool(arena_route.get("requires_idempotent_retry", false)))
 	assert_eq(AppShellActionContractScript.action_payload("show_shop", "shop", "normal", true, false), {
 		"action_id": "show_shop",
 		"screen": "shop",
@@ -410,6 +419,78 @@ func test_refuge_context_cta_priority_uses_loaded_state() -> void:
 	cta = HubSurfacePresenterScript._refuge_context_cta_data(boot)
 	assert_eq(str(cta.get("action_id", "")), "open_arena")
 	assert_eq(str(cta.get("text", "")), "Arena PVE")
+
+func test_arena_selection_renders_remote_arenas_as_data_driven_actions() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	assert_true(SessionStore.apply_arena_result({
+		"ok": true,
+		"_client": {"save_type": SessionStore.SAVE_TYPE_NORMAL},
+		"body": {
+			"ok": true,
+			"schema_version": "pve_arena_state_v1",
+			"arenas": [
+				{
+					"id": "arena_tutorial_cinzas",
+					"display_name": "Tutorial: Cinzas Do Refugio",
+					"duel_count": 1,
+					"difficulty_tier": 0,
+					"unlocked": true,
+				},
+				{
+					"id": "arena_cinzas_curta",
+					"display_name": "Arena Curta Das Cinzas",
+					"max_steps": 3,
+					"difficulty_rank": 1,
+					"unlocked": true,
+				},
+				{
+					"id": "arena_veu_curta",
+					"display_name": "Arena Do Veu",
+					"max_steps": 4,
+					"difficulty_rank": 2,
+					"unlocked": false,
+					"locked_reason": "Conclua dificuldade 1.",
+				},
+			],
+			"active_attempt": null,
+		},
+	}))
+
+	boot._show_screen(AppShellRouteContractScript.ROUTE_ARENA_SELECTION)
+	await get_tree().process_frame
+
+	var tutorial_action := AppShellActionContractScript.arena_start_action("arena_tutorial_cinzas")
+	var early_action := AppShellActionContractScript.arena_start_action("arena_cinzas_curta")
+	var locked_action := AppShellActionContractScript.arena_start_action("arena_veu_curta")
+	assert_true(boot._action_buttons.has(tutorial_action))
+	assert_true(boot._action_buttons.has(early_action))
+	assert_true(boot._action_buttons.has(locked_action))
+	assert_false(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_START_TUTORIAL))
+	assert_false(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_START_EARLY))
+	assert_not_null(_find_button_by_text(boot._content_body, "Tutorial: Cinzas Do Refugio - 1 duelo | D0"))
+	assert_not_null(_find_button_by_text(boot._content_body, "Arena Curta Das Cinzas - 3 duelos | D1"))
+	var locked_button := boot._action_buttons[locked_action] as Button
+	assert_not_null(locked_button)
+	assert_true(locked_button.disabled)
+	assert_string_contains(locked_button.text, "Conclua dificuldade 1.")
+	assert_eq(locked_button.tooltip_text, "Conclua dificuldade 1.")
+	assert_true(_label_tree_contains(boot._content_body, "bloqueada: Conclua dificuldade 1."))
+	boot._sync_buttons()
+	assert_true(locked_button.disabled)
+
+func test_arena_selection_keeps_fixed_buttons_only_for_dev_fallback() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	SessionStore.arena_state = {}
+
+	boot._show_screen(AppShellRouteContractScript.ROUTE_ARENA_SELECTION)
+	await get_tree().process_frame
+
+	assert_true(_label_tree_contains(boot._content_body, "Fallback dev local"))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_START_TUTORIAL))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_START_EARLY))
+	assert_false(boot._action_buttons.has(AppShellActionContractScript.arena_start_action("arena_tutorial_cinzas")))
 
 func test_boot_refugio_home_shows_progression_lab_when_dev_tools_are_enabled() -> void:
 	ProjectSettings.set_setting("draxos_mobile/progression_lab/enabled", true)
@@ -1654,6 +1735,8 @@ func _centralized_action_literals() -> PackedStringArray:
 		AppShellActionContractScript.PREFIX_UPGRADE_BASE_STRUCTURE,
 		AppShellActionContractScript.PREFIX_SHOP_PURCHASE,
 		AppShellActionContractScript.PREFIX_CLAIM_REWARD,
+		AppShellActionContractScript.PREFIX_ARENA_START,
+		AppShellActionContractScript.PREFIX_ARENA_CHOOSE_BUFF,
 		AppShellActionContractScript.PREFIX_BATTLE_REPLAY,
 	])
 

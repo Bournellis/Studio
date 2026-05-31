@@ -65,11 +65,27 @@ Deno.test("progression lab generated saves include Track 16 consumables and beha
   if (Object.keys(save.combat_build.spellBehaviors ?? {}).length === 0) {
     throw new Error("expected spell behavior defaults in combat build");
   }
+  if (save.arena.projected_potion_uses_per_attempt <= 0) {
+    throw new Error(
+      "expected projected potion consumption per Arena PVE attempt",
+    );
+  }
+  if (save.arena.expected_potion_uses <= 0) {
+    throw new Error("expected projected potion uses across Arena PVE attempts");
+  }
   if (
     !data.consumable_checks.some((check) =>
       check.id === "life_potion_stock" && check.profile_id === save.profile_id
     )
   ) {
     throw new Error("expected consumable checks");
+  }
+  if (
+    !data.arena_checks.some((check) =>
+      check.id === "arena_potion_consumption_pressure" &&
+      check.profile_id === save.profile_id
+    )
+  ) {
+    throw new Error("expected Arena PVE potion pressure checks");
   }
 });

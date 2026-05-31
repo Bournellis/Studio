@@ -69,6 +69,7 @@ const PREFIX_EQUIP_FAMILIAR := "equip_familiar:"
 const PREFIX_REMOVE_FAMILIAR := "remove_familiar:"
 const PREFIX_ENABLE_SPELL_BEHAVIOR := "enable_spell_behavior:"
 const PREFIX_DISABLE_SPELL_BEHAVIOR := "disable_spell_behavior:"
+const PREFIX_ARENA_START := "arena_start:"
 const PREFIX_ARENA_CHOOSE_BUFF := "arena_choose_buff:"
 const PREFIX_BATTLE_REPLAY := RouteContract.ACTION_BATTLE_REPLAY_PREFIX
 const PREFIX_OPEN_MINIGAME_SHELL := "open_minigame_shell:"
@@ -172,6 +173,9 @@ static func is_enable_spell_behavior(action_id: String) -> bool:
 static func is_disable_spell_behavior(action_id: String) -> bool:
 	return action_id.strip_edges().begins_with(PREFIX_DISABLE_SPELL_BEHAVIOR)
 
+static func is_arena_start(action_id: String) -> bool:
+	return action_id.strip_edges().begins_with(PREFIX_ARENA_START)
+
 static func is_battle_replay(action_id: String) -> bool:
 	return action_id.strip_edges().begins_with(PREFIX_BATTLE_REPLAY)
 
@@ -220,6 +224,9 @@ static func enable_spell_behavior_action(spell_id: String) -> String:
 
 static func disable_spell_behavior_action(spell_id: String) -> String:
 	return "%s%s" % [PREFIX_DISABLE_SPELL_BEHAVIOR, spell_id.strip_edges()]
+
+static func arena_start_action(arena_id: String) -> String:
+	return "%s%s" % [PREFIX_ARENA_START, arena_id.strip_edges()]
 
 static func battle_replay_action(battle_id: String) -> String:
 	return "%s%s" % [PREFIX_BATTLE_REPLAY, battle_id.strip_edges()]

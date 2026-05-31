@@ -620,12 +620,21 @@ func _add_responsive_panel_layout(container: VBoxContainer, panels: Array, max_c
 			if column != null:
 				column.add_child(panel as Control)
 
-func _add_action_button(text: String, action_id: String, confirm_message: String = "") -> Button:
+func _add_action_button(
+	text: String,
+	action_id: String,
+	confirm_message: String = "",
+	force_disabled: bool = false,
+	disabled_reason: String = ""
+) -> Button:
 	var button := Button.new()
 	button.text = text
 	button.custom_minimum_size = _button_min_size()
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	button.tooltip_text = text
+	button.tooltip_text = disabled_reason if disabled_reason.strip_edges() != "" else text
+	button.disabled = force_disabled
+	button.set_meta("force_disabled", force_disabled)
+	button.set_meta("disabled_reason", disabled_reason.strip_edges())
 	_prepare_touch_button(button)
 	_apply_action_button_style(button, action_id)
 	button.pressed.connect(func() -> void:
@@ -737,6 +746,8 @@ func _execute_action(action_id: String) -> void:
 		await _enable_spell_behavior(AppShellActionContractScript.action_value(action))
 	elif AppShellActionContractScript.is_disable_spell_behavior(action):
 		await _disable_spell_behavior(AppShellActionContractScript.action_value(action))
+	elif AppShellActionContractScript.is_arena_start(action):
+		await _start_arena_by_id(AppShellActionContractScript.action_value(action))
 	elif AppShellActionContractScript.is_arena_choose_buff(action):
 		await _choose_arena_buff(AppShellActionContractScript.action_value(action))
 	elif AppShellActionContractScript.is_battle_replay(action):
@@ -970,6 +981,9 @@ func _start_arena_tutorial() -> void:
 
 func _start_arena_early() -> void:
 	await _arena_lifecycle_flow.start_early(self)
+
+func _start_arena_by_id(arena_id: String) -> void:
+	await _arena_lifecycle_flow.start_arena(self, arena_id)
 
 func _lock_arena_loadout() -> void:
 	_arena_lifecycle_flow.lock_loadout(self)
@@ -1226,8 +1240,11 @@ func _sync_buttons() -> void:
 		var button: Button = _action_buttons[action_id]
 		if not is_instance_valid(button):
 			continue
-		button.disabled = _is_busy or (_replay_running and not _action_allowed_during_replay(action_id))
+		var force_disabled := bool(button.get_meta("force_disabled", false))
+		button.disabled = force_disabled or _is_busy or (_replay_running and not _action_allowed_during_replay(action_id))
 		button.disabled = button.disabled or _update_gate_blocks_action(action_id)
+		if force_disabled and str(button.get_meta("disabled_reason", "")).strip_edges() != "":
+			button.tooltip_text = str(button.get_meta("disabled_reason", ""))
 		if action_id == ACTION_SKIP_REPLAY:
 			button.disabled = not _replay_running
 		if action_id == AppShellActionContractScript.ACTION_SELECT_SAVE_NORMAL:

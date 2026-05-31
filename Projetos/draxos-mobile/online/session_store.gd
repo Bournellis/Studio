@@ -258,6 +258,10 @@ func apply_arena_result(payload: Dictionary) -> bool:
 		build = _as_dictionary(body.get("build", {})).duplicate(true)
 		_remember_surface_snapshot(SURFACE_ACCOUNT)
 
+	if bool(body.get("dev_fixture", false)):
+		state["dev_fixture"] = true
+	elif not state.has("dev_fixture"):
+		state["dev_fixture"] = false
 	arena_state = state.duplicate(true)
 	_remember_surface_snapshot(SURFACE_ARENA)
 	last_error = {}
@@ -268,9 +272,9 @@ func apply_arena_result(payload: Dictionary) -> bool:
 func _arena_state_from_body(body: Dictionary) -> Dictionary:
 	var explicit_state := _as_dictionary(body.get("arena_state", {}))
 	if not explicit_state.is_empty():
-		return explicit_state.duplicate(true)
+		return _normalize_arena_state(explicit_state)
 	if str(body.get("schema_version", "")) == "pve_arena_state_v1":
-		return body.duplicate(true)
+		return _normalize_arena_state(body)
 	if str(body.get("schema_version", "")) == "arena_list_response_v1":
 		var list_state := _empty_arena_state()
 		list_state["arenas"] = _normalize_arena_list(_as_array(body.get("arenas", [])))
@@ -306,6 +310,14 @@ func _arena_state_from_body(body: Dictionary) -> Dictionary:
 		return state
 	return {}
 
+func _normalize_arena_state(state: Dictionary) -> Dictionary:
+	var normalized := state.duplicate(true)
+	normalized["arenas"] = _normalize_arena_list(_as_array(normalized.get("arenas", [])))
+	var active_attempt := _as_dictionary(normalized.get("active_attempt", {}))
+	if not active_attempt.is_empty():
+		normalized["active_attempt"] = _normalize_arena_attempt(active_attempt, {})
+	return normalized
+
 func _empty_arena_state() -> Dictionary:
 	return {
 		"ok": true,
@@ -323,6 +335,10 @@ func _normalize_arena_list(arenas: Array) -> Array:
 		var arena := _as_dictionary(arena_variant).duplicate(true)
 		arena["duel_count"] = int(arena.get("duel_count", arena.get("max_steps", 1)))
 		arena["difficulty_tier"] = int(arena.get("difficulty_tier", arena.get("difficulty_rank", 0)))
+		if not arena.has("unlocked"):
+			arena["unlocked"] = bool(arena.get("enabled", true))
+		if not bool(arena.get("unlocked", true)) and str(arena.get("locked_reason", "")).strip_edges() == "":
+			arena["locked_reason"] = _arena_locked_reason(arena)
 		output.append(arena)
 	return output
 
@@ -387,7 +403,7 @@ func _arena_summary_from_body(body: Dictionary, attempt: Dictionary) -> Dictiona
 		"duels_won": int(attempt.get("duels_won", attempt.get("current_step_index", 0))),
 		"duels_total": int(attempt.get("duel_count", attempt.get("max_steps", 1))),
 		"repeat_factor": "aplicado pelo servidor" if bool(reward_payload.get("repeat_reduction_applied", false)) else "first clear/record",
-		"reward_label": str(reward_payload.get("reason", "recompensa server-authoritative")),
+		"reward_label": str(reward_payload.get("reason", "recompensa da Arena PVE")),
 	}
 
 func _next_arena_enemy_id(attempt: Dictionary) -> String:
@@ -396,6 +412,25 @@ func _next_arena_enemy_id(attempt: Dictionary) -> String:
 		return ""
 	var index := clampi(int(attempt.get("current_step_index", attempt.get("duel_index", 0))), 0, sequence.size() - 1)
 	return str(sequence[index])
+
+func _arena_locked_reason(arena: Dictionary) -> String:
+	for key: String in ["unlock_reason", "blocked_message", "blocked_reason"]:
+		var reason := str(arena.get(key, "")).strip_edges()
+		if reason != "":
+			return reason
+	var required_difficulty := int(arena.get("required_completed_difficulty", -1))
+	if required_difficulty == 0:
+		return "Conclua tutorial."
+	if required_difficulty > 0:
+		return "Conclua dificuldade %d." % required_difficulty
+	var unlock_rule := str(arena.get("unlock_rule", "")).strip_edges()
+	if unlock_rule != "":
+		return "Conclua arenas anteriores."
+	var unlock := _as_dictionary(arena.get("unlock", {}))
+	var required_arena := str(unlock.get("arena_id", "")).strip_edges()
+	if required_arena != "":
+		return "Conclua a arena anterior."
+	return "Bloqueada."
 
 func apply_server_state(payload: Dictionary) -> bool:
 	var body := _unwrap_body(payload)
@@ -775,6 +810,19 @@ func battle_snapshot() -> Dictionary:
 
 func arena_snapshot() -> Dictionary:
 	return arena_state.duplicate(true)
+
+func has_remote_arena_state() -> bool:
+	return has_arena_state() and not bool(arena_state.get("dev_fixture", false))
+
+func arena_by_id(arena_id: String) -> Dictionary:
+	var normalized_id := arena_id.strip_edges()
+	if normalized_id == "":
+		return {}
+	for arena_variant: Variant in _as_array(arena_state.get("arenas", [])):
+		var arena := _as_dictionary(arena_variant)
+		if str(arena.get("id", "")).strip_edges() == normalized_id:
+			return arena.duplicate(true)
+	return {}
 
 func active_arena_attempt() -> Dictionary:
 	return _as_dictionary(arena_state.get("active_attempt", {})).duplicate(true)

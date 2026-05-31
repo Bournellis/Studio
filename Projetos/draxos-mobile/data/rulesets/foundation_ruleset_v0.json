@@ -3,10 +3,12 @@
   "ruleset_id": "foundation_ruleset_v0",
   "ruleset_version": 1,
   "lifecycle": "FOUNDATION_AUDIT_ACTIVE",
-  "content_hash": "5ef9cf3f176a8e0d3953b9f2ba4837b19b32c46ca5003c56789457fbb304fc00",
+  "primary_product_mode": "PVE_ARENA_INITIAL",
+  "content_hash": "dc2781f58e4d8229d712393342115dc9d0a555aaceb06a4241af2c77271508c9",
   "simulator_hash": "e835cadde3c937cba45c46785da3761139373ab23ac9dfaaed814d79f933bbe9",
   "runtime": {
     "mode": "FIRST_SLICE_SIM",
+    "primary_product_mode": "PVE_ARENA_INITIAL",
     "battle_log_schema": "battle_log_v1",
     "catalog_schema": "grimoire_catalog_v1",
     "server_authoritative": true
@@ -105,8 +107,8 @@
     {
       "path": "tools/battle_lab/model.v1.json",
       "kind": "tool_model",
-      "sha256": "3755eb0b1059391b760e60f3707cf545ff11e82a3e6cdeaf76256ff60f7ccd86",
-      "canonical_bytes": 6245
+      "sha256": "c51ae399980e6b1499d2cdaec4f245b4663e13b6f504e89b8cca5865876b57ac",
+      "canonical_bytes": 6387
     },
     {
       "path": "tools/economy_simulator/economy_model.v1.json",

@@ -1,6 +1,6 @@
-arena_id,duel_count,sampled_duels,base_win_rate_percent,buffed_win_rate_percent,clear_rate_percent,avg_duration_seconds,expected_failure_step,hp_reset_per_duel,accumulated_buff_steps,buff_impact_percent,status
-arena_tutorial_cinzas,1,2312,48,48,48,24.42,1,true,0,0,PASS
-arena_cinzas_curta,3,2312,48,51,13.27,43.22,1.77,true,2,3,PASS
-arena_veu_curta,4,2312,48,52,7.31,47.12,1.93,true,3,4.5,REVIEW
-arena_ossos_media,5,2312,48,54,4.59,50.54,2.07,true,4,6,REVIEW
-arena_abismo_longa,6,2312,48,55,2.77,52.74,2.16,true,5,7.5,REVIEW
+arena_id,duel_count,sampled_duels,base_win_rate_percent,buffed_win_rate_percent,clear_rate_percent,sanity_target_clear_rate_percent,avg_duration_seconds,expected_failure_step,hp_reset_per_duel,accumulated_buff_steps,buff_impact_percent,status
+arena_tutorial_cinzas,1,2156,80.5,80.5,80.5,80,25.35,1,true,0,0,PASS
+arena_cinzas_curta,3,2156,62.81,70.81,35.5,35,56.03,2.21,true,2,8,PASS
+arena_veu_curta,4,2156,55.29,67.29,20.5,20,61.61,2.43,true,3,12,PASS
+arena_ossos_media,5,2156,49.98,65.98,12.5,12,65.16,2.57,true,4,16,PASS
+arena_abismo_longa,6,2156,50.71,70.71,12.5,12,75.8,2.99,true,5,20,PASS

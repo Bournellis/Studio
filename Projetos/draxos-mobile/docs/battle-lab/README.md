@@ -5,8 +5,8 @@ nos numeros no escuro.
 
 ## Objetivo
 
-- Rodar batalhas offline em massa com o mesmo simulador `FIRST_SLICE_SIM` usado
-  pelo servidor.
+- Rodar sequencias offline de Arena PVE usando o mesmo simulador tecnico
+  `FIRST_SLICE_SIM` usado pelo servidor para resolver/replayar duelos.
 - Testar builds fixas e randomicas deterministicas em diferentes checkpoints de
   level e poder.
 - Encontrar batalhas curtas demais, longas demais, anti-stall frequente, stomps

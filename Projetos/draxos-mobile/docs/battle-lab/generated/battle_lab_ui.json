@@ -4,47 +4,47 @@
   "model_id": "draxos_mobile_battle_lab_v4_source_identity",
   "overall_status": "REVIEW",
   "summary": {
-    "total_battles": 4644,
+    "total_battles": 4900,
     "total_builds": 244,
-    "avg_duration": 24.03,
-    "median_duration": 22.7,
+    "avg_duration": 24.65,
+    "median_duration": 23.2,
     "short_rate_percent": 0,
-    "long_rate_percent": 16.86,
-    "anti_stall_rate_percent": 6.4,
-    "potion_enabled_matchups": 1492,
-    "potion_use_rate_percent": 76.61,
-    "avg_healing_per_potion_matchup": 225.14,
-    "behavior_matchups": 1238,
+    "long_rate_percent": 16.16,
+    "anti_stall_rate_percent": 6.31,
+    "potion_enabled_matchups": 1474,
+    "potion_use_rate_percent": 78.36,
+    "avg_healing_per_potion_matchup": 207.93,
+    "behavior_matchups": 1308,
     "disabled_behavior_matchups": 644,
-    "raw_stress_dominance_max_percent": 61.36,
-    "near_power_dominance_max_percent": 63.34,
+    "raw_stress_dominance_max_percent": 61.64,
+    "near_power_dominance_max_percent": 66.53,
     "arena_sequence_count": 5,
-    "arena_clear_rate_min_percent": 2.77,
+    "arena_clear_rate_min_percent": 12.5,
     "damage_by_source": {
-      "weapon": 4592316,
-      "spell": 2168105,
-      "dot": 860745,
-      "pet": 1045029,
+      "weapon": 4715436,
+      "spell": 2184483,
+      "dot": 836432,
+      "pet": 784027,
       "summon": 334828,
       "system": 0
     },
     "damage_by_type": {
-      "arcano": 1688738,
-      "fisico": 677961,
-      "fogo": 1461369,
-      "agua": 67296,
-      "gelo": 221455,
-      "terra": 827811,
-      "vento": 80023,
-      "raio": 1187718,
-      "veneno": 305681,
-      "morte": 2280616,
-      "sangue": 202355,
+      "arcano": 1407826,
+      "fisico": 691074,
+      "fogo": 1421926,
+      "agua": 70308,
+      "gelo": 226959,
+      "terra": 796722,
+      "vento": 85073,
+      "raio": 1100694,
+      "veneno": 297657,
+      "morte": 2558178,
+      "sangue": 198789,
       "none": 0
     },
     "top_notes": [
-      "REVIEW: anti_stall_rate observed 6.4%, target <= 5%.",
-      "REVIEW: arena_sequence_clear_rate_floor observed 2.77% min clear, target >= 12% before difficulty tuning.",
+      "REVIEW: anti_stall_rate observed 6.31%, target <= 5%.",
+      "REVIEW: near_power_dominance observed 66.53% max / 28.45% min, target max <= 65%.",
       "Review first matchup: LONG L1_M0001 (L1_starter_instrument_fixed vs L1_starter_instrument_r1)."
     ]
   },
@@ -52,7 +52,7 @@
     {
       "id": "average_duration_target",
       "status": "PASS",
-      "observed": "24.03s",
+      "observed": "24.65s",
       "target": "18-28s",
       "note": "Average battle duration should sit near the target playtest window."
     },
@@ -66,77 +66,77 @@
     {
       "id": "long_battle_rate",
       "status": "PASS",
-      "observed": "16.86%",
+      "observed": "16.16%",
       "target": "<= 20%",
       "note": "Too many long battles suggest defensive scaling or low damage pressure."
     },
     {
       "id": "anti_stall_rate",
       "status": "REVIEW",
-      "observed": "6.4%",
+      "observed": "6.31%",
       "target": "<= 5%",
       "note": "Anti-stall should be rare in normal same-level matchups."
     },
     {
       "id": "near_power_dominance",
-      "status": "PASS",
-      "observed": "63.34% max / 27.05% min",
+      "status": "REVIEW",
+      "observed": "66.53% max / 28.45% min",
       "target": "max <= 65%",
       "note": "Dominance uses <= 20% power delta and excludes same-archetype mirrors."
     },
     {
       "id": "level_coverage",
       "status": "PASS",
-      "observed": "7/7 configured, 16 total",
+      "observed": "7/7 configured, 15 total",
       "target": "7/7",
       "note": "Every configured level checkpoint should produce matchups."
     },
     {
       "id": "track16_potion_build_coverage",
       "status": "PASS",
-      "observed": "1492 potion-enabled matchups",
+      "observed": "1474 potion-enabled matchups",
       "target": ">= 1 when Track 16 potion scenarios exist",
       "note": "Battle Lab must exercise Pocao de Vida slots before autobattler tuning."
     },
     {
       "id": "track16_potion_event_coverage",
       "status": "PASS",
-      "observed": "1143 matchups with consumable_use",
+      "observed": "1155 matchups with consumable_use",
       "target": ">= 1 consumable_use event when potion is enabled",
       "note": "Potion scenarios should produce at least one battle_log_v1 consumable_use/heal sample."
     },
     {
       "id": "track16_spell_behavior_coverage",
       "status": "PASS",
-      "observed": "1238 behavior matchups, 644 disabled-behavior matchups",
+      "observed": "1308 behavior matchups, 644 disabled-behavior matchups",
       "target": ">= 1 spell behavior matchup and >= 1 disabled behavior matchup",
       "note": "Battle Lab must exercise simple spell behavior before behavior-driven tuning."
     },
     {
       "id": "source_identity_weapon_cap",
       "status": "PASS",
-      "observed": "54.38% max (defensive_occultist)",
+      "observed": "55.05% max (defensive_occultist)",
       "target": "<= 75% from level 7+ outside starter",
       "note": "Non-starter archetypes should not read as ritual-instrument-only combat once spells enter the kit."
     },
     {
       "id": "source_identity_mental",
       "status": "PASS",
-      "observed": "42.34% (spell+pet)",
+      "observed": "41.38% (spell+pet)",
       "target": ">= 22%",
       "note": "Mental Controller should visibly pressure through spells and occult familiars, not only weapon cadence."
     },
     {
       "id": "source_identity_elemental",
       "status": "PASS",
-      "observed": "54.15% (spell+dot+pet)",
+      "observed": "50.58% (spell+dot+pet)",
       "target": ">= 28%",
       "note": "Elemental Mixer should show elemental spell, dot or familiar pressure in the damage mix."
     },
     {
       "id": "source_identity_familiar",
       "status": "PASS",
-      "observed": "17.43% (pet)",
+      "observed": "17.57% (pet)",
       "target": ">= 10%",
       "note": "Familiar Handler should have a measurable familiar contribution after pets unlock."
     },
@@ -150,7 +150,7 @@
     {
       "id": "source_identity_dot",
       "status": "PASS",
-      "observed": "27.69% (dot)",
+      "observed": "27.97% (dot)",
       "target": ">= 12%",
       "note": "Dot Pressure should be readable through bleed, poison, burn or death ticks."
     },
@@ -170,10 +170,10 @@
     },
     {
       "id": "arena_sequence_clear_rate_floor",
-      "status": "REVIEW",
-      "observed": "2.77% min clear",
-      "target": ">= 12% before difficulty tuning",
-      "note": "Longer arena lists can be hard, but the initial lab should not project impossible clears."
+      "status": "PASS",
+      "observed": "1d 80.5%, 3d 35.5%, 4d 20.5%, 5d 12.5%, 6d 12.5%",
+      "target": "1d >=80%, 3d >=35%, 4d >=20%, 5d >=12%, 6d >=12%",
+      "note": "Track 19 sanity targets: tutorial >=80%, 3 duels >=35%, 4 duels >=20%, 5/6 duels >=12%."
     },
     {
       "id": "arena_sequence_hp_reset",
@@ -3491,39 +3491,26 @@
     {
       "id": "PL_free_50_rewards_2h",
       "kind": "fixed",
-      "archetype_id": "elemental_mixer",
-      "archetype_name": "Elemental Mixer",
-      "level": 8,
-      "power": 648,
-      "power_band": "band_003",
+      "archetype_id": "mental_controller",
+      "archetype_name": "Mental Controller",
+      "level": 6,
+      "power": 376,
+      "power_band": "band_002",
       "build": {
         "id": "PL_free_50_rewards_2h",
         "displayName": "PL free_50_rewards 2h",
-        "level": 8,
-        "weaponId": "orbe_tempestade",
-        "weaponLevel": 4,
+        "level": 6,
+        "weaponId": "grimorio_veu",
+        "weaponLevel": 3,
         "weaponQualityTier": 0,
         "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
+          "sussurro_medo"
         ],
         "spellLevels": {
-          "descarga_nervosa": 2,
-          "marca_brasa": 3
+          "sussurro_medo": 1
         },
         "spellBehaviors": {
-          "descarga_nervosa": {
-            "enabled": true,
-            "hp": {
-              "mode": "ignore",
-              "percent": 0
-            },
-            "mana": {
-              "mode": "ignore",
-              "percent": 0
-            }
-          },
-          "marca_brasa": {
+          "sussurro_medo": {
             "enabled": true,
             "hp": {
               "mode": "ignore",
@@ -3542,26 +3529,24 @@
       "kind": "fixed",
       "archetype_id": "elemental_mixer",
       "archetype_name": "Elemental Mixer",
-      "level": 10,
-      "power": 1186,
+      "level": 8,
+      "power": 648,
       "power_band": "band_003",
       "build": {
         "id": "PL_free_50_rewards_5h",
         "displayName": "PL free_50_rewards 5h",
-        "level": 10,
+        "level": 8,
         "weaponId": "orbe_tempestade",
-        "weaponLevel": 5,
+        "weaponLevel": 4,
         "weaponQualityTier": 0,
         "spellIds": [
           "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 7,
-          "marca_brasa": 7
+          "descarga_nervosa": 2,
+          "marca_brasa": 3
         },
-        "passiveId": "pulso_tempestade",
-        "passiveLevel": 3,
         "spellBehaviors": {
           "descarga_nervosa": {
             "enabled": true,
@@ -3609,26 +3594,24 @@
       "kind": "fixed",
       "archetype_id": "elemental_mixer",
       "archetype_name": "Elemental Mixer",
-      "level": 12,
-      "power": 1444,
-      "power_band": "band_004",
+      "level": 9,
+      "power": 930,
+      "power_band": "band_003",
       "build": {
         "id": "PL_free_50_rewards_10h",
         "displayName": "PL free_50_rewards 10h",
-        "level": 12,
+        "level": 9,
         "weaponId": "orbe_tempestade",
-        "weaponLevel": 6,
+        "weaponLevel": 4,
         "weaponQualityTier": 0,
         "spellIds": [
           "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 8,
-          "marca_brasa": 8
+          "descarga_nervosa": 5,
+          "marca_brasa": 6
         },
-        "passiveId": "pulso_tempestade",
-        "passiveLevel": 6,
         "spellBehaviors": {
           "descarga_nervosa": {
             "enabled": true,
@@ -3676,26 +3659,26 @@
       "kind": "fixed",
       "archetype_id": "elemental_mixer",
       "archetype_name": "Elemental Mixer",
-      "level": 14,
-      "power": 1658,
+      "level": 10,
+      "power": 1230,
       "power_band": "band_004",
       "build": {
         "id": "PL_free_50_rewards_15h",
         "displayName": "PL free_50_rewards 15h",
-        "level": 14,
+        "level": 10,
         "weaponId": "orbe_tempestade",
-        "weaponLevel": 7,
+        "weaponLevel": 5,
         "weaponQualityTier": 0,
         "spellIds": [
           "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 9,
-          "marca_brasa": 9
+          "descarga_nervosa": 7,
+          "marca_brasa": 7
         },
         "passiveId": "pulso_tempestade",
-        "passiveLevel": 7,
+        "passiveLevel": 5,
         "spellBehaviors": {
           "descarga_nervosa": {
             "enabled": true,
@@ -3743,28 +3726,26 @@
       "kind": "fixed",
       "archetype_id": "elemental_mixer",
       "archetype_name": "Elemental Mixer",
-      "level": 15,
-      "power": 2108,
+      "level": 11,
+      "power": 1294,
       "power_band": "band_004",
       "build": {
         "id": "PL_free_50_rewards_20h",
         "displayName": "PL free_50_rewards 20h",
-        "level": 15,
+        "level": 11,
         "weaponId": "orbe_tempestade",
-        "weaponLevel": 7,
+        "weaponLevel": 5,
         "weaponQualityTier": 0,
         "spellIds": [
           "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 10,
-          "marca_brasa": 10
+          "descarga_nervosa": 7,
+          "marca_brasa": 7
         },
         "passiveId": "pulso_tempestade",
-        "passiveLevel": 8,
-        "petId": "serpe_tempestade",
-        "petLevel": 9,
+        "passiveLevel": 6,
         "spellBehaviors": {
           "descarga_nervosa": {
             "enabled": true,
@@ -3812,23 +3793,23 @@
       "kind": "fixed",
       "archetype_id": "funeral_burst",
       "archetype_name": "Funeral Burst",
-      "level": 8,
-      "power": 716,
-      "power_band": "band_003",
+      "level": 7,
+      "power": 526,
+      "power_band": "band_002",
       "build": {
         "id": "PL_free_100_rewards_2h",
         "displayName": "PL free_100_rewards 2h",
-        "level": 8,
+        "level": 7,
         "weaponId": "cajado_ossario",
-        "weaponLevel": 5,
+        "weaponLevel": 4,
         "weaponQualityTier": 0,
         "spellIds": [
           "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 3,
-          "marca_brasa": 3
+          "descarga_nervosa": 1,
+          "marca_brasa": 2
         },
         "spellBehaviors": {
           "descarga_nervosa": {
@@ -3861,26 +3842,24 @@
       "kind": "fixed",
       "archetype_id": "funeral_burst",
       "archetype_name": "Funeral Burst",
-      "level": 11,
-      "power": 1426,
-      "power_band": "band_004",
+      "level": 9,
+      "power": 866,
+      "power_band": "band_003",
       "build": {
         "id": "PL_free_100_rewards_5h",
         "displayName": "PL free_100_rewards 5h",
-        "level": 11,
+        "level": 9,
         "weaponId": "cajado_ossario",
-        "weaponLevel": 7,
+        "weaponLevel": 6,
         "weaponQualityTier": 0,
         "spellIds": [
           "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 8,
-          "marca_brasa": 9
+          "descarga_nervosa": 4,
+          "marca_brasa": 4
         },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 4,
         "spellBehaviors": {
           "descarga_nervosa": {
             "enabled": true,
@@ -3928,26 +3907,26 @@
       "kind": "fixed",
       "archetype_id": "funeral_burst",
       "archetype_name": "Funeral Burst",
-      "level": 14,
-      "power": 1896,
+      "level": 11,
+      "power": 1470,
       "power_band": "band_004",
       "build": {
         "id": "PL_free_100_rewards_10h",
         "displayName": "PL free_100_rewards 10h",
-        "level": 14,
+        "level": 11,
         "weaponId": "cajado_ossario",
-        "weaponLevel": 9,
+        "weaponLevel": 7,
         "weaponQualityTier": 0,
         "spellIds": [
           "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 11,
-          "marca_brasa": 11
+          "descarga_nervosa": 8,
+          "marca_brasa": 9
         },
         "passiveId": "ossuario_interior",
-        "passiveLevel": 8,
+        "passiveLevel": 6,
         "spellBehaviors": {
           "descarga_nervosa": {
             "enabled": true,
@@ -3993,30 +3972,28 @@
     {
       "id": "PL_free_100_rewards_15h",
       "kind": "fixed",
-      "archetype_id": "elemental_mixer",
-      "archetype_name": "Elemental Mixer",
-      "level": 16,
-      "power": 2540,
-      "power_band": "band_005",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 13,
+      "power": 1746,
+      "power_band": "band_004",
       "build": {
         "id": "PL_free_100_rewards_15h",
         "displayName": "PL free_100_rewards 15h",
-        "level": 16,
-        "weaponId": "orbe_tempestade",
-        "weaponLevel": 10,
+        "level": 13,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 8,
         "weaponQualityTier": 0,
         "spellIds": [
           "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 12,
-          "marca_brasa": 12
+          "descarga_nervosa": 10,
+          "marca_brasa": 10
         },
-        "passiveId": "pulso_tempestade",
-        "passiveLevel": 10,
-        "petId": "serpe_tempestade",
-        "petLevel": 12,
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 8,
         "spellBehaviors": {
           "descarga_nervosa": {
             "enabled": true,
@@ -4062,30 +4039,28 @@
     {
       "id": "PL_free_100_rewards_20h",
       "kind": "fixed",
-      "archetype_id": "elemental_mixer",
-      "archetype_name": "Elemental Mixer",
-      "level": 17,
-      "power": 2712,
-      "power_band": "band_005",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 14,
+      "power": 1918,
+      "power_band": "band_004",
       "build": {
         "id": "PL_free_100_rewards_20h",
         "displayName": "PL free_100_rewards 20h",
-        "level": 17,
-        "weaponId": "orbe_tempestade",
-        "weaponLevel": 11,
+        "level": 14,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 9,
         "weaponQualityTier": 0,
         "spellIds": [
           "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 13,
-          "marca_brasa": 13
+          "descarga_nervosa": 11,
+          "marca_brasa": 11
         },
-        "passiveId": "pulso_tempestade",
-        "passiveLevel": 11,
-        "petId": "serpe_tempestade",
-        "petLevel": 12,
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 9,
         "spellBehaviors": {
           "descarga_nervosa": {
             "enabled": true,
@@ -4133,23 +4108,23 @@
       "kind": "fixed",
       "archetype_id": "funeral_burst",
       "archetype_name": "Funeral Burst",
-      "level": 9,
-      "power": 786,
-      "power_band": "band_003",
+      "level": 7,
+      "power": 554,
+      "power_band": "band_002",
       "build": {
         "id": "PL_freemium_basic_2h",
         "displayName": "PL freemium_basic 2h",
-        "level": 9,
+        "level": 7,
         "weaponId": "cajado_ossario",
-        "weaponLevel": 6,
+        "weaponLevel": 5,
         "weaponQualityTier": 0,
         "spellIds": [
           "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 3,
-          "marca_brasa": 3
+          "descarga_nervosa": 1,
+          "marca_brasa": 2
         },
         "spellBehaviors": {
           "descarga_nervosa": {
@@ -4182,26 +4157,24 @@
       "kind": "fixed",
       "archetype_id": "funeral_burst",
       "archetype_name": "Funeral Burst",
-      "level": 11,
-      "power": 1448,
-      "power_band": "band_004",
+      "level": 9,
+      "power": 906,
+      "power_band": "band_003",
       "build": {
         "id": "PL_freemium_basic_5h",
         "displayName": "PL freemium_basic 5h",
-        "level": 11,
+        "level": 9,
         "weaponId": "cajado_ossario",
-        "weaponLevel": 7,
+        "weaponLevel": 6,
         "weaponQualityTier": 0,
         "spellIds": [
           "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 8,
-          "marca_brasa": 9
+          "descarga_nervosa": 4,
+          "marca_brasa": 5
         },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 5,
         "spellBehaviors": {
           "descarga_nervosa": {
             "enabled": true,
@@ -4249,12 +4222,146 @@
       "kind": "fixed",
       "archetype_id": "funeral_burst",
       "archetype_name": "Funeral Burst",
-      "level": 14,
-      "power": 2026,
+      "level": 12,
+      "power": 1624,
       "power_band": "band_004",
       "build": {
         "id": "PL_freemium_basic_10h",
         "displayName": "PL freemium_basic 10h",
+        "level": 12,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 8,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 9,
+          "marca_brasa": 9
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 8,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 3,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "PL_freemium_basic_15h",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 13,
+      "power": 1876,
+      "power_band": "band_004",
+      "build": {
+        "id": "PL_freemium_basic_15h",
+        "displayName": "PL freemium_basic 15h",
+        "level": 13,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 9,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 11,
+          "marca_brasa": 11
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 9,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 4,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "PL_freemium_basic_20h",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 14,
+      "power": 2048,
+      "power_band": "band_004",
+      "build": {
+        "id": "PL_freemium_basic_20h",
+        "displayName": "PL freemium_basic 20h",
         "level": 14,
         "weaponId": "cajado_ossario",
         "weaponLevel": 10,
@@ -4266,6 +4373,189 @@
         "spellLevels": {
           "descarga_nervosa": 12,
           "marca_brasa": 12
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 10,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 5,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "PL_spender_light_2h",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 8,
+      "power": 664,
+      "power_band": "band_003",
+      "build": {
+        "id": "PL_spender_light_2h",
+        "displayName": "PL spender_light 2h",
+        "level": 8,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 6,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 2,
+          "marca_brasa": 2
+        },
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "PL_spender_light_5h",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 10,
+      "power": 1268,
+      "power_band": "band_004",
+      "build": {
+        "id": "PL_spender_light_5h",
+        "displayName": "PL spender_light 5h",
+        "level": 10,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 7,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 6,
+          "marca_brasa": 7
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 6,
+        "spellBehaviors": {
+          "descarga_nervosa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          },
+          "marca_brasa": {
+            "enabled": true,
+            "hp": {
+              "mode": "ignore",
+              "percent": 0
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        },
+        "potionSlot": {
+          "slotIndex": 1,
+          "itemId": "pocao_vida",
+          "quantity": 2,
+          "behavior": {
+            "enabled": true,
+            "hp": {
+              "mode": "below",
+              "percent": 40
+            },
+            "mana": {
+              "mode": "ignore",
+              "percent": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "PL_spender_light_10h",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 12,
+      "power": 1834,
+      "power_band": "band_004",
+      "build": {
+        "id": "PL_spender_light_10h",
+        "displayName": "PL spender_light 10h",
+        "level": 12,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 9,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 11,
+          "marca_brasa": 11
         },
         "passiveId": "ossuario_interior",
         "passiveLevel": 9,
@@ -4312,34 +4602,32 @@
       }
     },
     {
-      "id": "PL_freemium_basic_15h",
+      "id": "PL_spender_light_15h",
       "kind": "fixed",
-      "archetype_id": "familiar_handler",
-      "archetype_name": "Familiar Handler",
-      "level": 16,
-      "power": 2670,
-      "power_band": "band_005",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 14,
+      "power": 2150,
+      "power_band": "band_004",
       "build": {
-        "id": "PL_freemium_basic_15h",
-        "displayName": "PL freemium_basic 15h",
-        "level": 16,
-        "weaponId": "varinha_cinzas",
-        "weaponLevel": 11,
+        "id": "PL_spender_light_15h",
+        "displayName": "PL spender_light 15h",
+        "level": 14,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 10,
         "weaponQualityTier": 0,
         "spellIds": [
-          "sussurro_medo",
+          "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "sussurro_medo": 13,
+          "descarga_nervosa": 13,
           "marca_brasa": 13
         },
-        "passiveId": "pacto_familiar",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 11,
-        "petId": "corvo_pressagio",
-        "petLevel": 12,
         "spellBehaviors": {
-          "sussurro_medo": {
+          "descarga_nervosa": {
             "enabled": true,
             "hp": {
               "mode": "ignore",
@@ -4381,27 +4669,27 @@
       }
     },
     {
-      "id": "PL_freemium_basic_20h",
+      "id": "PL_spender_light_20h",
       "kind": "fixed",
       "archetype_id": "familiar_handler",
       "archetype_name": "Familiar Handler",
-      "level": 17,
-      "power": 2876,
+      "level": 15,
+      "power": 2684,
       "power_band": "band_005",
       "build": {
-        "id": "PL_freemium_basic_20h",
-        "displayName": "PL freemium_basic 20h",
-        "level": 17,
+        "id": "PL_spender_light_20h",
+        "displayName": "PL spender_light 20h",
+        "level": 15,
         "weaponId": "varinha_cinzas",
-        "weaponLevel": 12,
+        "weaponLevel": 11,
         "weaponQualityTier": 0,
         "spellIds": [
           "sussurro_medo",
           "marca_brasa"
         ],
         "spellLevels": {
-          "sussurro_medo": 14,
-          "marca_brasa": 14
+          "sussurro_medo": 13,
+          "marca_brasa": 13
         },
         "passiveId": "pacto_familiar",
         "passiveLevel": 12,
@@ -4450,17 +4738,17 @@
       }
     },
     {
-      "id": "PL_spender_light_2h",
+      "id": "PL_max_spender_2h",
       "kind": "fixed",
       "archetype_id": "funeral_burst",
       "archetype_name": "Funeral Burst",
-      "level": 9,
-      "power": 854,
+      "level": 8,
+      "power": 732,
       "power_band": "band_003",
       "build": {
-        "id": "PL_spender_light_2h",
-        "displayName": "PL spender_light 2h",
-        "level": 9,
+        "id": "PL_max_spender_2h",
+        "displayName": "PL max_spender 2h",
+        "level": 8,
         "weaponId": "cajado_ossario",
         "weaponLevel": 7,
         "weaponQualityTier": 0,
@@ -4469,8 +4757,8 @@
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 3,
-          "marca_brasa": 4
+          "descarga_nervosa": 2,
+          "marca_brasa": 3
         },
         "spellBehaviors": {
           "descarga_nervosa": {
@@ -4499,17 +4787,17 @@
       }
     },
     {
-      "id": "PL_spender_light_5h",
+      "id": "PL_max_spender_5h",
       "kind": "fixed",
       "archetype_id": "funeral_burst",
       "archetype_name": "Funeral Burst",
-      "level": 12,
-      "power": 1670,
+      "level": 10,
+      "power": 1426,
       "power_band": "band_004",
       "build": {
-        "id": "PL_spender_light_5h",
-        "displayName": "PL spender_light 5h",
-        "level": 12,
+        "id": "PL_max_spender_5h",
+        "displayName": "PL max_spender 5h",
+        "level": 10,
         "weaponId": "cajado_ossario",
         "weaponLevel": 9,
         "weaponQualityTier": 0,
@@ -4518,8 +4806,8 @@
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 9,
-          "marca_brasa": 10
+          "descarga_nervosa": 7,
+          "marca_brasa": 8
         },
         "passiveId": "ossuario_interior",
         "passiveLevel": 7,
@@ -4566,34 +4854,32 @@
       }
     },
     {
-      "id": "PL_spender_light_10h",
+      "id": "PL_max_spender_10h",
       "kind": "fixed",
-      "archetype_id": "familiar_handler",
-      "archetype_name": "Familiar Handler",
-      "level": 15,
-      "power": 2640,
-      "power_band": "band_005",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 13,
+      "power": 2016,
+      "power_band": "band_004",
       "build": {
-        "id": "PL_spender_light_10h",
-        "displayName": "PL spender_light 10h",
-        "level": 15,
-        "weaponId": "varinha_cinzas",
+        "id": "PL_max_spender_10h",
+        "displayName": "PL max_spender 10h",
+        "level": 13,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 11,
         "weaponQualityTier": 0,
         "spellIds": [
-          "sussurro_medo",
+          "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "sussurro_medo": 13,
-          "marca_brasa": 13
+          "descarga_nervosa": 11,
+          "marca_brasa": 12
         },
-        "passiveId": "pacto_familiar",
-        "passiveLevel": 10,
-        "petId": "corvo_pressagio",
-        "petLevel": 13,
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 11,
         "spellBehaviors": {
-          "sussurro_medo": {
+          "descarga_nervosa": {
             "enabled": true,
             "hp": {
               "mode": "ignore",
@@ -4635,34 +4921,32 @@
       }
     },
     {
-      "id": "PL_spender_light_15h",
+      "id": "PL_max_spender_15h",
       "kind": "fixed",
-      "archetype_id": "familiar_handler",
-      "archetype_name": "Familiar Handler",
-      "level": 16,
-      "power": 2834,
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 14,
+      "power": 2308,
       "power_band": "band_005",
       "build": {
-        "id": "PL_spender_light_15h",
-        "displayName": "PL spender_light 15h",
-        "level": 16,
-        "weaponId": "varinha_cinzas",
+        "id": "PL_max_spender_15h",
+        "displayName": "PL max_spender 15h",
+        "level": 14,
+        "weaponId": "cajado_ossario",
         "weaponLevel": 12,
         "weaponQualityTier": 0,
         "spellIds": [
-          "sussurro_medo",
+          "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "sussurro_medo": 14,
+          "descarga_nervosa": 14,
           "marca_brasa": 14
         },
-        "passiveId": "pacto_familiar",
+        "passiveId": "ossuario_interior",
         "passiveLevel": 12,
-        "petId": "corvo_pressagio",
-        "petLevel": 13,
         "spellBehaviors": {
-          "sussurro_medo": {
+          "descarga_nervosa": {
             "enabled": true,
             "hp": {
               "mode": "ignore",
@@ -4704,19 +4988,19 @@
       }
     },
     {
-      "id": "PL_spender_light_20h",
+      "id": "PL_max_spender_20h",
       "kind": "fixed",
       "archetype_id": "familiar_handler",
       "archetype_name": "Familiar Handler",
-      "level": 18,
-      "power": 3218,
+      "level": 16,
+      "power": 3162,
       "power_band": "band_005",
       "build": {
-        "id": "PL_spender_light_20h",
-        "displayName": "PL spender_light 20h",
-        "level": 18,
+        "id": "PL_max_spender_20h",
+        "displayName": "PL max_spender 20h",
+        "level": 16,
         "weaponId": "varinha_cinzas",
-        "weaponLevel": 13,
+        "weaponLevel": 14,
         "weaponQualityTier": 0,
         "spellIds": [
           "sussurro_medo",
@@ -4773,375 +5057,48 @@
       }
     },
     {
-      "id": "PL_max_spender_2h",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 9,
-      "power": 962,
-      "power_band": "band_003",
-      "build": {
-        "id": "PL_max_spender_2h",
-        "displayName": "PL max_spender 2h",
-        "level": 9,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 8,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 4,
-          "marca_brasa": 5
-        },
-        "spellBehaviors": {
-          "descarga_nervosa": {
-            "enabled": true,
-            "hp": {
-              "mode": "ignore",
-              "percent": 0
-            },
-            "mana": {
-              "mode": "ignore",
-              "percent": 0
-            }
-          },
-          "marca_brasa": {
-            "enabled": true,
-            "hp": {
-              "mode": "ignore",
-              "percent": 0
-            },
-            "mana": {
-              "mode": "ignore",
-              "percent": 0
-            }
-          }
-        }
-      }
-    },
-    {
-      "id": "PL_max_spender_5h",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 12,
-      "power": 1800,
-      "power_band": "band_004",
-      "build": {
-        "id": "PL_max_spender_5h",
-        "displayName": "PL max_spender 5h",
-        "level": 12,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 10,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 10,
-          "marca_brasa": 11
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 8,
-        "spellBehaviors": {
-          "descarga_nervosa": {
-            "enabled": true,
-            "hp": {
-              "mode": "ignore",
-              "percent": 0
-            },
-            "mana": {
-              "mode": "ignore",
-              "percent": 0
-            }
-          },
-          "marca_brasa": {
-            "enabled": true,
-            "hp": {
-              "mode": "ignore",
-              "percent": 0
-            },
-            "mana": {
-              "mode": "ignore",
-              "percent": 0
-            }
-          }
-        },
-        "potionSlot": {
-          "slotIndex": 1,
-          "itemId": "pocao_vida",
-          "quantity": 2,
-          "behavior": {
-            "enabled": true,
-            "hp": {
-              "mode": "below",
-              "percent": 40
-            },
-            "mana": {
-              "mode": "ignore",
-              "percent": 0
-            }
-          }
-        }
-      }
-    },
-    {
-      "id": "PL_max_spender_10h",
-      "kind": "fixed",
-      "archetype_id": "familiar_handler",
-      "archetype_name": "Familiar Handler",
-      "level": 15,
-      "power": 2872,
-      "power_band": "band_005",
-      "build": {
-        "id": "PL_max_spender_10h",
-        "displayName": "PL max_spender 10h",
-        "level": 15,
-        "weaponId": "varinha_cinzas",
-        "weaponLevel": 13,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "sussurro_medo",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "sussurro_medo": 14,
-          "marca_brasa": 15
-        },
-        "passiveId": "pacto_familiar",
-        "passiveLevel": 11,
-        "petId": "corvo_pressagio",
-        "petLevel": 14,
-        "spellBehaviors": {
-          "sussurro_medo": {
-            "enabled": true,
-            "hp": {
-              "mode": "ignore",
-              "percent": 0
-            },
-            "mana": {
-              "mode": "ignore",
-              "percent": 0
-            }
-          },
-          "marca_brasa": {
-            "enabled": true,
-            "hp": {
-              "mode": "ignore",
-              "percent": 0
-            },
-            "mana": {
-              "mode": "ignore",
-              "percent": 0
-            }
-          }
-        },
-        "potionSlot": {
-          "slotIndex": 1,
-          "itemId": "pocao_vida",
-          "quantity": 3,
-          "behavior": {
-            "enabled": true,
-            "hp": {
-              "mode": "below",
-              "percent": 40
-            },
-            "mana": {
-              "mode": "ignore",
-              "percent": 0
-            }
-          }
-        }
-      }
-    },
-    {
-      "id": "PL_max_spender_15h",
-      "kind": "fixed",
-      "archetype_id": "familiar_handler",
-      "archetype_name": "Familiar Handler",
-      "level": 17,
-      "power": 3346,
-      "power_band": "band_005",
-      "build": {
-        "id": "PL_max_spender_15h",
-        "displayName": "PL max_spender 15h",
-        "level": 17,
-        "weaponId": "varinha_cinzas",
-        "weaponLevel": 15,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "sussurro_medo",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "sussurro_medo": 17,
-          "marca_brasa": 17
-        },
-        "passiveId": "pacto_familiar",
-        "passiveLevel": 14,
-        "petId": "corvo_pressagio",
-        "petLevel": 16,
-        "spellBehaviors": {
-          "sussurro_medo": {
-            "enabled": true,
-            "hp": {
-              "mode": "ignore",
-              "percent": 0
-            },
-            "mana": {
-              "mode": "ignore",
-              "percent": 0
-            }
-          },
-          "marca_brasa": {
-            "enabled": true,
-            "hp": {
-              "mode": "ignore",
-              "percent": 0
-            },
-            "mana": {
-              "mode": "ignore",
-              "percent": 0
-            }
-          }
-        },
-        "potionSlot": {
-          "slotIndex": 1,
-          "itemId": "pocao_vida",
-          "quantity": 4,
-          "behavior": {
-            "enabled": true,
-            "hp": {
-              "mode": "below",
-              "percent": 40
-            },
-            "mana": {
-              "mode": "ignore",
-              "percent": 0
-            }
-          }
-        }
-      }
-    },
-    {
-      "id": "PL_max_spender_20h",
-      "kind": "fixed",
-      "archetype_id": "familiar_handler",
-      "archetype_name": "Familiar Handler",
-      "level": 19,
-      "power": 3738,
-      "power_band": "band_005",
-      "build": {
-        "id": "PL_max_spender_20h",
-        "displayName": "PL max_spender 20h",
-        "level": 19,
-        "weaponId": "varinha_cinzas",
-        "weaponLevel": 16,
-        "weaponQualityTier": 1,
-        "spellIds": [
-          "sussurro_medo",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "sussurro_medo": 19,
-          "marca_brasa": 19
-        },
-        "passiveId": "pacto_familiar",
-        "passiveLevel": 15,
-        "petId": "corvo_pressagio",
-        "petLevel": 18,
-        "spellBehaviors": {
-          "sussurro_medo": {
-            "enabled": true,
-            "hp": {
-              "mode": "ignore",
-              "percent": 0
-            },
-            "mana": {
-              "mode": "ignore",
-              "percent": 0
-            }
-          },
-          "marca_brasa": {
-            "enabled": true,
-            "hp": {
-              "mode": "ignore",
-              "percent": 0
-            },
-            "mana": {
-              "mode": "ignore",
-              "percent": 0
-            }
-          }
-        },
-        "potionSlot": {
-          "slotIndex": 1,
-          "itemId": "pocao_vida",
-          "quantity": 5,
-          "behavior": {
-            "enabled": true,
-            "hp": {
-              "mode": "below",
-              "percent": 40
-            },
-            "mana": {
-              "mode": "ignore",
-              "percent": 0
-            }
-          }
-        }
-      }
-    },
-    {
       "id": "PLBOT_bot_free_50_rewards_2h_m12",
       "kind": "fixed",
-      "archetype_id": "elemental_mixer",
-      "archetype_name": "Elemental Mixer",
-      "level": 8,
-      "power": 608,
-      "power_band": "band_003",
+      "archetype_id": "mental_controller",
+      "archetype_name": "Mental Controller",
+      "level": 6,
+      "power": 376,
+      "power_band": "band_002",
       "build": {
         "id": "PLBOT_bot_free_50_rewards_2h_m12",
-        "displayName": "PL Bot 2h elemental_mixer",
-        "level": 8,
-        "weaponId": "orbe_tempestade",
-        "weaponLevel": 4,
+        "displayName": "PL Bot 2h mental_controller",
+        "level": 6,
+        "weaponId": "grimorio_veu",
+        "weaponLevel": 3,
         "weaponQualityTier": 0,
         "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
+          "sussurro_medo"
         ],
         "spellLevels": {
-          "descarga_nervosa": 2,
-          "marca_brasa": 2
+          "sussurro_medo": 1
         }
       }
     },
     {
       "id": "PLBOT_bot_free_50_rewards_2h_p0",
       "kind": "fixed",
-      "archetype_id": "elemental_mixer",
-      "archetype_name": "Elemental Mixer",
-      "level": 8,
-      "power": 608,
-      "power_band": "band_003",
+      "archetype_id": "mental_controller",
+      "archetype_name": "Mental Controller",
+      "level": 6,
+      "power": 376,
+      "power_band": "band_002",
       "build": {
         "id": "PLBOT_bot_free_50_rewards_2h_p0",
-        "displayName": "PL Bot 2h elemental_mixer",
-        "level": 8,
-        "weaponId": "orbe_tempestade",
-        "weaponLevel": 4,
+        "displayName": "PL Bot 2h mental_controller",
+        "level": 6,
+        "weaponId": "grimorio_veu",
+        "weaponLevel": 3,
         "weaponQualityTier": 0,
         "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
+          "sussurro_medo"
         ],
         "spellLevels": {
-          "descarga_nervosa": 2,
-          "marca_brasa": 2
+          "sussurro_medo": 1
         }
       }
     },
@@ -5150,12 +5107,81 @@
       "kind": "fixed",
       "archetype_id": "funeral_burst",
       "archetype_name": "Funeral Burst",
+      "level": 6,
+      "power": 336,
+      "power_band": "band_002",
+      "build": {
+        "id": "PLBOT_bot_free_50_rewards_2h_p12",
+        "displayName": "PL Bot 2h funeral_burst",
+        "level": 6,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 3,
+        "weaponQualityTier": 0,
+        "spellIds": [],
+        "spellLevels": {}
+      }
+    },
+    {
+      "id": "PLBOT_bot_free_50_rewards_5h_m12",
+      "kind": "fixed",
+      "archetype_id": "elemental_mixer",
+      "archetype_name": "Elemental Mixer",
       "level": 8,
       "power": 608,
       "power_band": "band_003",
       "build": {
-        "id": "PLBOT_bot_free_50_rewards_2h_p12",
-        "displayName": "PL Bot 2h funeral_burst",
+        "id": "PLBOT_bot_free_50_rewards_5h_m12",
+        "displayName": "PL Bot 5h elemental_mixer",
+        "level": 8,
+        "weaponId": "orbe_tempestade",
+        "weaponLevel": 4,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 2,
+          "marca_brasa": 2
+        }
+      }
+    },
+    {
+      "id": "PLBOT_bot_free_50_rewards_5h_p0",
+      "kind": "fixed",
+      "archetype_id": "elemental_mixer",
+      "archetype_name": "Elemental Mixer",
+      "level": 8,
+      "power": 608,
+      "power_band": "band_003",
+      "build": {
+        "id": "PLBOT_bot_free_50_rewards_5h_p0",
+        "displayName": "PL Bot 5h elemental_mixer",
+        "level": 8,
+        "weaponId": "orbe_tempestade",
+        "weaponLevel": 4,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 2,
+          "marca_brasa": 2
+        }
+      }
+    },
+    {
+      "id": "PLBOT_bot_free_50_rewards_5h_p12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 8,
+      "power": 608,
+      "power_band": "band_003",
+      "build": {
+        "id": "PLBOT_bot_free_50_rewards_5h_p12",
+        "displayName": "PL Bot 5h funeral_burst",
         "level": 8,
         "weaponId": "cajado_ossario",
         "weaponLevel": 4,
@@ -5171,16 +5197,91 @@
       }
     },
     {
-      "id": "PLBOT_bot_free_50_rewards_5h_m12",
+      "id": "PLBOT_bot_free_50_rewards_10h_m12",
+      "kind": "fixed",
+      "archetype_id": "elemental_mixer",
+      "archetype_name": "Elemental Mixer",
+      "level": 9,
+      "power": 810,
+      "power_band": "band_003",
+      "build": {
+        "id": "PLBOT_bot_free_50_rewards_10h_m12",
+        "displayName": "PL Bot 10h elemental_mixer",
+        "level": 9,
+        "weaponId": "orbe_tempestade",
+        "weaponLevel": 4,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 4,
+          "marca_brasa": 4
+        }
+      }
+    },
+    {
+      "id": "PLBOT_bot_free_50_rewards_10h_p0",
+      "kind": "fixed",
+      "archetype_id": "elemental_mixer",
+      "archetype_name": "Elemental Mixer",
+      "level": 9,
+      "power": 890,
+      "power_band": "band_003",
+      "build": {
+        "id": "PLBOT_bot_free_50_rewards_10h_p0",
+        "displayName": "PL Bot 10h elemental_mixer",
+        "level": 9,
+        "weaponId": "orbe_tempestade",
+        "weaponLevel": 4,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 5,
+          "marca_brasa": 5
+        }
+      }
+    },
+    {
+      "id": "PLBOT_bot_free_50_rewards_10h_p12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 9,
+      "power": 970,
+      "power_band": "band_003",
+      "build": {
+        "id": "PLBOT_bot_free_50_rewards_10h_p12",
+        "displayName": "PL Bot 10h funeral_burst",
+        "level": 9,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 4,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 6,
+          "marca_brasa": 6
+        }
+      }
+    },
+    {
+      "id": "PLBOT_bot_free_50_rewards_15h_m12",
       "kind": "fixed",
       "archetype_id": "elemental_mixer",
       "archetype_name": "Elemental Mixer",
       "level": 10,
-      "power": 1078,
+      "power": 1100,
       "power_band": "band_003",
       "build": {
-        "id": "PLBOT_bot_free_50_rewards_5h_m12",
-        "displayName": "PL Bot 5h elemental_mixer",
+        "id": "PLBOT_bot_free_50_rewards_15h_m12",
+        "displayName": "PL Bot 15h elemental_mixer",
         "level": 10,
         "weaponId": "orbe_tempestade",
         "weaponLevel": 4,
@@ -5194,75 +5295,21 @@
           "marca_brasa": 6
         },
         "passiveId": "pulso_tempestade",
-        "passiveLevel": 3
+        "passiveLevel": 4
       }
     },
     {
-      "id": "PLBOT_bot_free_50_rewards_5h_p0",
+      "id": "PLBOT_bot_free_50_rewards_15h_p0",
       "kind": "fixed",
       "archetype_id": "elemental_mixer",
       "archetype_name": "Elemental Mixer",
       "level": 10,
-      "power": 1186,
-      "power_band": "band_003",
-      "build": {
-        "id": "PLBOT_bot_free_50_rewards_5h_p0",
-        "displayName": "PL Bot 5h elemental_mixer",
-        "level": 10,
-        "weaponId": "orbe_tempestade",
-        "weaponLevel": 5,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 7,
-          "marca_brasa": 7
-        },
-        "passiveId": "pulso_tempestade",
-        "passiveLevel": 3
-      }
-    },
-    {
-      "id": "PLBOT_bot_free_50_rewards_5h_p12",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 10,
-      "power": 1294,
+      "power": 1230,
       "power_band": "band_004",
       "build": {
-        "id": "PLBOT_bot_free_50_rewards_5h_p12",
-        "displayName": "PL Bot 5h funeral_burst",
+        "id": "PLBOT_bot_free_50_rewards_15h_p0",
+        "displayName": "PL Bot 15h elemental_mixer",
         "level": 10,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 6,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 8,
-          "marca_brasa": 8
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 3
-      }
-    },
-    {
-      "id": "PLBOT_bot_free_50_rewards_10h_m12",
-      "kind": "fixed",
-      "archetype_id": "elemental_mixer",
-      "archetype_name": "Elemental Mixer",
-      "level": 12,
-      "power": 1314,
-      "power_band": "band_004",
-      "build": {
-        "id": "PLBOT_bot_free_50_rewards_10h_m12",
-        "displayName": "PL Bot 10h elemental_mixer",
-        "level": 12,
         "weaponId": "orbe_tempestade",
         "weaponLevel": 5,
         "weaponQualityTier": 0,
@@ -5279,138 +5326,30 @@
       }
     },
     {
-      "id": "PLBOT_bot_free_50_rewards_10h_p0",
-      "kind": "fixed",
-      "archetype_id": "elemental_mixer",
-      "archetype_name": "Elemental Mixer",
-      "level": 12,
-      "power": 1444,
-      "power_band": "band_004",
-      "build": {
-        "id": "PLBOT_bot_free_50_rewards_10h_p0",
-        "displayName": "PL Bot 10h elemental_mixer",
-        "level": 12,
-        "weaponId": "orbe_tempestade",
-        "weaponLevel": 6,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 8,
-          "marca_brasa": 8
-        },
-        "passiveId": "pulso_tempestade",
-        "passiveLevel": 6
-      }
-    },
-    {
-      "id": "PLBOT_bot_free_50_rewards_10h_p12",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 12,
-      "power": 1574,
-      "power_band": "band_004",
-      "build": {
-        "id": "PLBOT_bot_free_50_rewards_10h_p12",
-        "displayName": "PL Bot 10h funeral_burst",
-        "level": 12,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 7,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 9,
-          "marca_brasa": 9
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 7
-      }
-    },
-    {
-      "id": "PLBOT_bot_free_50_rewards_15h_m12",
-      "kind": "fixed",
-      "archetype_id": "elemental_mixer",
-      "archetype_name": "Elemental Mixer",
-      "level": 14,
-      "power": 1528,
-      "power_band": "band_004",
-      "build": {
-        "id": "PLBOT_bot_free_50_rewards_15h_m12",
-        "displayName": "PL Bot 15h elemental_mixer",
-        "level": 14,
-        "weaponId": "orbe_tempestade",
-        "weaponLevel": 6,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 8,
-          "marca_brasa": 8
-        },
-        "passiveId": "pulso_tempestade",
-        "passiveLevel": 6
-      }
-    },
-    {
-      "id": "PLBOT_bot_free_50_rewards_15h_p0",
-      "kind": "fixed",
-      "archetype_id": "elemental_mixer",
-      "archetype_name": "Elemental Mixer",
-      "level": 14,
-      "power": 1658,
-      "power_band": "band_004",
-      "build": {
-        "id": "PLBOT_bot_free_50_rewards_15h_p0",
-        "displayName": "PL Bot 15h elemental_mixer",
-        "level": 14,
-        "weaponId": "orbe_tempestade",
-        "weaponLevel": 7,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 9,
-          "marca_brasa": 9
-        },
-        "passiveId": "pulso_tempestade",
-        "passiveLevel": 7
-      }
-    },
-    {
       "id": "PLBOT_bot_free_50_rewards_15h_p12",
       "kind": "fixed",
       "archetype_id": "funeral_burst",
       "archetype_name": "Funeral Burst",
-      "level": 14,
-      "power": 1788,
+      "level": 10,
+      "power": 1360,
       "power_band": "band_004",
       "build": {
         "id": "PLBOT_bot_free_50_rewards_15h_p12",
         "displayName": "PL Bot 15h funeral_burst",
-        "level": 14,
+        "level": 10,
         "weaponId": "cajado_ossario",
-        "weaponLevel": 8,
+        "weaponLevel": 6,
         "weaponQualityTier": 0,
         "spellIds": [
           "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 10,
-          "marca_brasa": 10
+          "descarga_nervosa": 8,
+          "marca_brasa": 8
         },
         "passiveId": "ossuario_interior",
-        "passiveLevel": 8
+        "passiveLevel": 6
       }
     },
     {
@@ -5418,28 +5357,26 @@
       "kind": "fixed",
       "archetype_id": "elemental_mixer",
       "archetype_name": "Elemental Mixer",
-      "level": 15,
-      "power": 1944,
-      "power_band": "band_004",
+      "level": 11,
+      "power": 1164,
+      "power_band": "band_003",
       "build": {
         "id": "PLBOT_bot_free_50_rewards_20h_m12",
         "displayName": "PL Bot 20h elemental_mixer",
-        "level": 15,
+        "level": 11,
         "weaponId": "orbe_tempestade",
-        "weaponLevel": 6,
+        "weaponLevel": 4,
         "weaponQualityTier": 0,
         "spellIds": [
           "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 9,
-          "marca_brasa": 9
+          "descarga_nervosa": 6,
+          "marca_brasa": 6
         },
         "passiveId": "pulso_tempestade",
-        "passiveLevel": 7,
-        "petId": "serpe_tempestade",
-        "petLevel": 8
+        "passiveLevel": 5
       }
     },
     {
@@ -5447,28 +5384,26 @@
       "kind": "fixed",
       "archetype_id": "elemental_mixer",
       "archetype_name": "Elemental Mixer",
-      "level": 15,
-      "power": 2108,
+      "level": 11,
+      "power": 1294,
       "power_band": "band_004",
       "build": {
         "id": "PLBOT_bot_free_50_rewards_20h_p0",
         "displayName": "PL Bot 20h elemental_mixer",
-        "level": 15,
+        "level": 11,
         "weaponId": "orbe_tempestade",
-        "weaponLevel": 7,
+        "weaponLevel": 5,
         "weaponQualityTier": 0,
         "spellIds": [
           "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 10,
-          "marca_brasa": 10
+          "descarga_nervosa": 7,
+          "marca_brasa": 7
         },
         "passiveId": "pulso_tempestade",
-        "passiveLevel": 8,
-        "petId": "serpe_tempestade",
-        "petLevel": 9
+        "passiveLevel": 6
       }
     },
     {
@@ -5476,28 +5411,26 @@
       "kind": "fixed",
       "archetype_id": "funeral_burst",
       "archetype_name": "Funeral Burst",
-      "level": 15,
-      "power": 2272,
-      "power_band": "band_005",
+      "level": 11,
+      "power": 1424,
+      "power_band": "band_004",
       "build": {
         "id": "PLBOT_bot_free_50_rewards_20h_p12",
         "displayName": "PL Bot 20h funeral_burst",
-        "level": 15,
+        "level": 11,
         "weaponId": "cajado_ossario",
-        "weaponLevel": 8,
+        "weaponLevel": 6,
         "weaponQualityTier": 0,
         "spellIds": [
           "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 11,
-          "marca_brasa": 11
+          "descarga_nervosa": 8,
+          "marca_brasa": 8
         },
         "passiveId": "ossuario_interior",
-        "passiveLevel": 9,
-        "petId": "cranio_errante",
-        "petLevel": 10
+        "passiveLevel": 7
       }
     },
     {
@@ -5505,13 +5438,13 @@
       "kind": "fixed",
       "archetype_id": "funeral_burst",
       "archetype_name": "Funeral Burst",
-      "level": 8,
-      "power": 688,
-      "power_band": "band_003",
+      "level": 7,
+      "power": 486,
+      "power_band": "band_002",
       "build": {
         "id": "PLBOT_bot_free_100_rewards_2h_m12",
         "displayName": "PL Bot 2h funeral_burst",
-        "level": 8,
+        "level": 7,
         "weaponId": "cajado_ossario",
         "weaponLevel": 4,
         "weaponQualityTier": 0,
@@ -5520,8 +5453,8 @@
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 3,
-          "marca_brasa": 3
+          "descarga_nervosa": 1,
+          "marca_brasa": 1
         }
       }
     },
@@ -5530,23 +5463,23 @@
       "kind": "fixed",
       "archetype_id": "funeral_burst",
       "archetype_name": "Funeral Burst",
-      "level": 8,
-      "power": 716,
-      "power_band": "band_003",
+      "level": 7,
+      "power": 486,
+      "power_band": "band_002",
       "build": {
         "id": "PLBOT_bot_free_100_rewards_2h_p0",
         "displayName": "PL Bot 2h funeral_burst",
-        "level": 8,
+        "level": 7,
         "weaponId": "cajado_ossario",
-        "weaponLevel": 5,
+        "weaponLevel": 4,
         "weaponQualityTier": 0,
         "spellIds": [
           "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 3,
-          "marca_brasa": 3
+          "descarga_nervosa": 1,
+          "marca_brasa": 1
         }
       }
     },
@@ -5555,11 +5488,772 @@
       "kind": "fixed",
       "archetype_id": "funeral_burst",
       "archetype_name": "Funeral Burst",
-      "level": 8,
-      "power": 744,
-      "power_band": "band_003",
+      "level": 7,
+      "power": 486,
+      "power_band": "band_002",
       "build": {
         "id": "PLBOT_bot_free_100_rewards_2h_p12",
+        "displayName": "PL Bot 2h funeral_burst",
+        "level": 7,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 4,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 1,
+          "marca_brasa": 1
+        }
+      }
+    },
+    {
+      "id": "PLBOT_bot_free_100_rewards_5h_m12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 9,
+      "power": 838,
+      "power_band": "band_003",
+      "build": {
+        "id": "PLBOT_bot_free_100_rewards_5h_m12",
+        "displayName": "PL Bot 5h funeral_burst",
+        "level": 9,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 5,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 4,
+          "marca_brasa": 4
+        }
+      }
+    },
+    {
+      "id": "PLBOT_bot_free_100_rewards_5h_p0",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 9,
+      "power": 866,
+      "power_band": "band_003",
+      "build": {
+        "id": "PLBOT_bot_free_100_rewards_5h_p0",
+        "displayName": "PL Bot 5h funeral_burst",
+        "level": 9,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 6,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 4,
+          "marca_brasa": 4
+        }
+      }
+    },
+    {
+      "id": "PLBOT_bot_free_100_rewards_5h_p12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 9,
+      "power": 894,
+      "power_band": "band_003",
+      "build": {
+        "id": "PLBOT_bot_free_100_rewards_5h_p12",
+        "displayName": "PL Bot 5h funeral_burst",
+        "level": 9,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 7,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 4,
+          "marca_brasa": 4
+        }
+      }
+    },
+    {
+      "id": "PLBOT_bot_free_100_rewards_10h_m12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 11,
+      "power": 1300,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_free_100_rewards_10h_m12",
+        "displayName": "PL Bot 10h funeral_burst",
+        "level": 11,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 6,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 7,
+          "marca_brasa": 7
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 5
+      }
+    },
+    {
+      "id": "PLBOT_bot_free_100_rewards_10h_p0",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 11,
+      "power": 1430,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_free_100_rewards_10h_p0",
+        "displayName": "PL Bot 10h funeral_burst",
+        "level": 11,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 7,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 8,
+          "marca_brasa": 8
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 6
+      }
+    },
+    {
+      "id": "PLBOT_bot_free_100_rewards_10h_p12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 11,
+      "power": 1560,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_free_100_rewards_10h_p12",
+        "displayName": "PL Bot 10h funeral_burst",
+        "level": 11,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 8,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 9,
+          "marca_brasa": 9
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 7
+      }
+    },
+    {
+      "id": "PLBOT_bot_free_100_rewards_15h_m12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 13,
+      "power": 1616,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_free_100_rewards_15h_m12",
+        "displayName": "PL Bot 15h funeral_burst",
+        "level": 13,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 7,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 9,
+          "marca_brasa": 9
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 7
+      }
+    },
+    {
+      "id": "PLBOT_bot_free_100_rewards_15h_p0",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 13,
+      "power": 1746,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_free_100_rewards_15h_p0",
+        "displayName": "PL Bot 15h funeral_burst",
+        "level": 13,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 8,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 10,
+          "marca_brasa": 10
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 8
+      }
+    },
+    {
+      "id": "PLBOT_bot_free_100_rewards_15h_p12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 13,
+      "power": 1876,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_free_100_rewards_15h_p12",
+        "displayName": "PL Bot 15h funeral_burst",
+        "level": 13,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 9,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 11,
+          "marca_brasa": 11
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 9
+      }
+    },
+    {
+      "id": "PLBOT_bot_free_100_rewards_20h_m12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 14,
+      "power": 1788,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_free_100_rewards_20h_m12",
+        "displayName": "PL Bot 20h funeral_burst",
+        "level": 14,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 8,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 10,
+          "marca_brasa": 10
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 8
+      }
+    },
+    {
+      "id": "PLBOT_bot_free_100_rewards_20h_p0",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 14,
+      "power": 1918,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_free_100_rewards_20h_p0",
+        "displayName": "PL Bot 20h funeral_burst",
+        "level": 14,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 9,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 11,
+          "marca_brasa": 11
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 9
+      }
+    },
+    {
+      "id": "PLBOT_bot_free_100_rewards_20h_p12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 14,
+      "power": 2048,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_free_100_rewards_20h_p12",
+        "displayName": "PL Bot 20h funeral_burst",
+        "level": 14,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 10,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 12,
+          "marca_brasa": 12
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 10
+      }
+    },
+    {
+      "id": "PLBOT_bot_freemium_basic_2h_m12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 7,
+      "power": 486,
+      "power_band": "band_002",
+      "build": {
+        "id": "PLBOT_bot_freemium_basic_2h_m12",
+        "displayName": "PL Bot 2h funeral_burst",
+        "level": 7,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 4,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 1,
+          "marca_brasa": 1
+        }
+      }
+    },
+    {
+      "id": "PLBOT_bot_freemium_basic_2h_p0",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 7,
+      "power": 514,
+      "power_band": "band_002",
+      "build": {
+        "id": "PLBOT_bot_freemium_basic_2h_p0",
+        "displayName": "PL Bot 2h funeral_burst",
+        "level": 7,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 5,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 1,
+          "marca_brasa": 1
+        }
+      }
+    },
+    {
+      "id": "PLBOT_bot_freemium_basic_2h_p12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 7,
+      "power": 542,
+      "power_band": "band_002",
+      "build": {
+        "id": "PLBOT_bot_freemium_basic_2h_p12",
+        "displayName": "PL Bot 2h funeral_burst",
+        "level": 7,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 6,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 1,
+          "marca_brasa": 1
+        }
+      }
+    },
+    {
+      "id": "PLBOT_bot_freemium_basic_5h_m12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 9,
+      "power": 838,
+      "power_band": "band_003",
+      "build": {
+        "id": "PLBOT_bot_freemium_basic_5h_m12",
+        "displayName": "PL Bot 5h funeral_burst",
+        "level": 9,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 5,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 4,
+          "marca_brasa": 4
+        }
+      }
+    },
+    {
+      "id": "PLBOT_bot_freemium_basic_5h_p0",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 9,
+      "power": 866,
+      "power_band": "band_003",
+      "build": {
+        "id": "PLBOT_bot_freemium_basic_5h_p0",
+        "displayName": "PL Bot 5h funeral_burst",
+        "level": 9,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 6,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 4,
+          "marca_brasa": 4
+        }
+      }
+    },
+    {
+      "id": "PLBOT_bot_freemium_basic_5h_p12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 9,
+      "power": 894,
+      "power_band": "band_003",
+      "build": {
+        "id": "PLBOT_bot_freemium_basic_5h_p12",
+        "displayName": "PL Bot 5h funeral_burst",
+        "level": 9,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 7,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 4,
+          "marca_brasa": 4
+        }
+      }
+    },
+    {
+      "id": "PLBOT_bot_freemium_basic_10h_m12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 12,
+      "power": 1494,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_freemium_basic_10h_m12",
+        "displayName": "PL Bot 10h funeral_burst",
+        "level": 12,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 7,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 8,
+          "marca_brasa": 8
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 7
+      }
+    },
+    {
+      "id": "PLBOT_bot_freemium_basic_10h_p0",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 12,
+      "power": 1624,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_freemium_basic_10h_p0",
+        "displayName": "PL Bot 10h funeral_burst",
+        "level": 12,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 8,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 9,
+          "marca_brasa": 9
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 8
+      }
+    },
+    {
+      "id": "PLBOT_bot_freemium_basic_10h_p12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 12,
+      "power": 1754,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_freemium_basic_10h_p12",
+        "displayName": "PL Bot 10h funeral_burst",
+        "level": 12,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 9,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 10,
+          "marca_brasa": 10
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 9
+      }
+    },
+    {
+      "id": "PLBOT_bot_freemium_basic_15h_m12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 13,
+      "power": 1746,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_freemium_basic_15h_m12",
+        "displayName": "PL Bot 15h funeral_burst",
+        "level": 13,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 8,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 10,
+          "marca_brasa": 10
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 8
+      }
+    },
+    {
+      "id": "PLBOT_bot_freemium_basic_15h_p0",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 13,
+      "power": 1876,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_freemium_basic_15h_p0",
+        "displayName": "PL Bot 15h funeral_burst",
+        "level": 13,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 9,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 11,
+          "marca_brasa": 11
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 9
+      }
+    },
+    {
+      "id": "PLBOT_bot_freemium_basic_15h_p12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 13,
+      "power": 2006,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_freemium_basic_15h_p12",
+        "displayName": "PL Bot 15h funeral_burst",
+        "level": 13,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 10,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 12,
+          "marca_brasa": 12
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 10
+      }
+    },
+    {
+      "id": "PLBOT_bot_freemium_basic_20h_m12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 14,
+      "power": 1918,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_freemium_basic_20h_m12",
+        "displayName": "PL Bot 20h funeral_burst",
+        "level": 14,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 9,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 11,
+          "marca_brasa": 11
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 9
+      }
+    },
+    {
+      "id": "PLBOT_bot_freemium_basic_20h_p0",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 14,
+      "power": 2048,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_freemium_basic_20h_p0",
+        "displayName": "PL Bot 20h funeral_burst",
+        "level": 14,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 10,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 12,
+          "marca_brasa": 12
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 10
+      }
+    },
+    {
+      "id": "PLBOT_bot_freemium_basic_20h_p12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 14,
+      "power": 2178,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_freemium_basic_20h_p12",
+        "displayName": "PL Bot 20h funeral_burst",
+        "level": 14,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 11,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 13,
+          "marca_brasa": 13
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 11
+      }
+    },
+    {
+      "id": "PLBOT_bot_spender_light_2h_m12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 8,
+      "power": 636,
+      "power_band": "band_003",
+      "build": {
+        "id": "PLBOT_bot_spender_light_2h_m12",
+        "displayName": "PL Bot 2h funeral_burst",
+        "level": 8,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 5,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 2,
+          "marca_brasa": 2
+        }
+      }
+    },
+    {
+      "id": "PLBOT_bot_spender_light_2h_p0",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 8,
+      "power": 664,
+      "power_band": "band_003",
+      "build": {
+        "id": "PLBOT_bot_spender_light_2h_p0",
         "displayName": "PL Bot 2h funeral_burst",
         "level": 8,
         "weaponId": "cajado_ossario",
@@ -5570,805 +6264,8 @@
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 3,
-          "marca_brasa": 3
-        }
-      }
-    },
-    {
-      "id": "PLBOT_bot_free_100_rewards_5h_m12",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 11,
-      "power": 1278,
-      "power_band": "band_004",
-      "build": {
-        "id": "PLBOT_bot_free_100_rewards_5h_m12",
-        "displayName": "PL Bot 5h funeral_burst",
-        "level": 11,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 6,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 7,
-          "marca_brasa": 7
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 4
-      }
-    },
-    {
-      "id": "PLBOT_bot_free_100_rewards_5h_p0",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 11,
-      "power": 1386,
-      "power_band": "band_004",
-      "build": {
-        "id": "PLBOT_bot_free_100_rewards_5h_p0",
-        "displayName": "PL Bot 5h funeral_burst",
-        "level": 11,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 7,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 8,
-          "marca_brasa": 8
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 4
-      }
-    },
-    {
-      "id": "PLBOT_bot_free_100_rewards_5h_p12",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 11,
-      "power": 1494,
-      "power_band": "band_004",
-      "build": {
-        "id": "PLBOT_bot_free_100_rewards_5h_p12",
-        "displayName": "PL Bot 5h funeral_burst",
-        "level": 11,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 8,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 9,
-          "marca_brasa": 9
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 4
-      }
-    },
-    {
-      "id": "PLBOT_bot_free_100_rewards_10h_m12",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 14,
-      "power": 1766,
-      "power_band": "band_004",
-      "build": {
-        "id": "PLBOT_bot_free_100_rewards_10h_m12",
-        "displayName": "PL Bot 10h funeral_burst",
-        "level": 14,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 8,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 10,
-          "marca_brasa": 10
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 7
-      }
-    },
-    {
-      "id": "PLBOT_bot_free_100_rewards_10h_p0",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 14,
-      "power": 1896,
-      "power_band": "band_004",
-      "build": {
-        "id": "PLBOT_bot_free_100_rewards_10h_p0",
-        "displayName": "PL Bot 10h funeral_burst",
-        "level": 14,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 9,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 11,
-          "marca_brasa": 11
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 8
-      }
-    },
-    {
-      "id": "PLBOT_bot_free_100_rewards_10h_p12",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 14,
-      "power": 2026,
-      "power_band": "band_004",
-      "build": {
-        "id": "PLBOT_bot_free_100_rewards_10h_p12",
-        "displayName": "PL Bot 10h funeral_burst",
-        "level": 14,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 10,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 12,
-          "marca_brasa": 12
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 9
-      }
-    },
-    {
-      "id": "PLBOT_bot_free_100_rewards_15h_m12",
-      "kind": "fixed",
-      "archetype_id": "elemental_mixer",
-      "archetype_name": "Elemental Mixer",
-      "level": 16,
-      "power": 2376,
-      "power_band": "band_005",
-      "build": {
-        "id": "PLBOT_bot_free_100_rewards_15h_m12",
-        "displayName": "PL Bot 15h elemental_mixer",
-        "level": 16,
-        "weaponId": "orbe_tempestade",
-        "weaponLevel": 9,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 11,
-          "marca_brasa": 11
-        },
-        "passiveId": "pulso_tempestade",
-        "passiveLevel": 9,
-        "petId": "serpe_tempestade",
-        "petLevel": 11
-      }
-    },
-    {
-      "id": "PLBOT_bot_free_100_rewards_15h_p0",
-      "kind": "fixed",
-      "archetype_id": "elemental_mixer",
-      "archetype_name": "Elemental Mixer",
-      "level": 16,
-      "power": 2540,
-      "power_band": "band_005",
-      "build": {
-        "id": "PLBOT_bot_free_100_rewards_15h_p0",
-        "displayName": "PL Bot 15h elemental_mixer",
-        "level": 16,
-        "weaponId": "orbe_tempestade",
-        "weaponLevel": 10,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 12,
-          "marca_brasa": 12
-        },
-        "passiveId": "pulso_tempestade",
-        "passiveLevel": 10,
-        "petId": "serpe_tempestade",
-        "petLevel": 12
-      }
-    },
-    {
-      "id": "PLBOT_bot_free_100_rewards_15h_p12",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 16,
-      "power": 2704,
-      "power_band": "band_005",
-      "build": {
-        "id": "PLBOT_bot_free_100_rewards_15h_p12",
-        "displayName": "PL Bot 15h funeral_burst",
-        "level": 16,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 11,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 13,
-          "marca_brasa": 13
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 11,
-        "petId": "cranio_errante",
-        "petLevel": 13
-      }
-    },
-    {
-      "id": "PLBOT_bot_free_100_rewards_20h_m12",
-      "kind": "fixed",
-      "archetype_id": "elemental_mixer",
-      "archetype_name": "Elemental Mixer",
-      "level": 17,
-      "power": 2468,
-      "power_band": "band_005",
-      "build": {
-        "id": "PLBOT_bot_free_100_rewards_20h_m12",
-        "displayName": "PL Bot 20h elemental_mixer",
-        "level": 17,
-        "weaponId": "orbe_tempestade",
-        "weaponLevel": 10,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 11,
-          "marca_brasa": 11
-        },
-        "passiveId": "pulso_tempestade",
-        "passiveLevel": 10,
-        "petId": "serpe_tempestade",
-        "petLevel": 11
-      }
-    },
-    {
-      "id": "PLBOT_bot_free_100_rewards_20h_p0",
-      "kind": "fixed",
-      "archetype_id": "elemental_mixer",
-      "archetype_name": "Elemental Mixer",
-      "level": 17,
-      "power": 2712,
-      "power_band": "band_005",
-      "build": {
-        "id": "PLBOT_bot_free_100_rewards_20h_p0",
-        "displayName": "PL Bot 20h elemental_mixer",
-        "level": 17,
-        "weaponId": "orbe_tempestade",
-        "weaponLevel": 11,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 13,
-          "marca_brasa": 13
-        },
-        "passiveId": "pulso_tempestade",
-        "passiveLevel": 11,
-        "petId": "serpe_tempestade",
-        "petLevel": 12
-      }
-    },
-    {
-      "id": "PLBOT_bot_free_100_rewards_20h_p12",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 17,
-      "power": 2956,
-      "power_band": "band_005",
-      "build": {
-        "id": "PLBOT_bot_free_100_rewards_20h_p12",
-        "displayName": "PL Bot 20h funeral_burst",
-        "level": 17,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 12,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 15,
-          "marca_brasa": 15
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 12,
-        "petId": "cranio_errante",
-        "petLevel": 13
-      }
-    },
-    {
-      "id": "PLBOT_bot_freemium_basic_2h_m12",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 9,
-      "power": 758,
-      "power_band": "band_003",
-      "build": {
-        "id": "PLBOT_bot_freemium_basic_2h_m12",
-        "displayName": "PL Bot 2h funeral_burst",
-        "level": 9,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 5,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 3,
-          "marca_brasa": 3
-        }
-      }
-    },
-    {
-      "id": "PLBOT_bot_freemium_basic_2h_p0",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 9,
-      "power": 786,
-      "power_band": "band_003",
-      "build": {
-        "id": "PLBOT_bot_freemium_basic_2h_p0",
-        "displayName": "PL Bot 2h funeral_burst",
-        "level": 9,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 6,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 3,
-          "marca_brasa": 3
-        }
-      }
-    },
-    {
-      "id": "PLBOT_bot_freemium_basic_2h_p12",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 9,
-      "power": 814,
-      "power_band": "band_003",
-      "build": {
-        "id": "PLBOT_bot_freemium_basic_2h_p12",
-        "displayName": "PL Bot 2h funeral_burst",
-        "level": 9,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 7,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 3,
-          "marca_brasa": 3
-        }
-      }
-    },
-    {
-      "id": "PLBOT_bot_freemium_basic_5h_m12",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 11,
-      "power": 1278,
-      "power_band": "band_004",
-      "build": {
-        "id": "PLBOT_bot_freemium_basic_5h_m12",
-        "displayName": "PL Bot 5h funeral_burst",
-        "level": 11,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 6,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 7,
-          "marca_brasa": 7
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 4
-      }
-    },
-    {
-      "id": "PLBOT_bot_freemium_basic_5h_p0",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 11,
-      "power": 1408,
-      "power_band": "band_004",
-      "build": {
-        "id": "PLBOT_bot_freemium_basic_5h_p0",
-        "displayName": "PL Bot 5h funeral_burst",
-        "level": 11,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 7,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 8,
-          "marca_brasa": 8
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 5
-      }
-    },
-    {
-      "id": "PLBOT_bot_freemium_basic_5h_p12",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 11,
-      "power": 1538,
-      "power_band": "band_004",
-      "build": {
-        "id": "PLBOT_bot_freemium_basic_5h_p12",
-        "displayName": "PL Bot 5h funeral_burst",
-        "level": 11,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 8,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 9,
-          "marca_brasa": 9
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 6
-      }
-    },
-    {
-      "id": "PLBOT_bot_freemium_basic_10h_m12",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 14,
-      "power": 1896,
-      "power_band": "band_004",
-      "build": {
-        "id": "PLBOT_bot_freemium_basic_10h_m12",
-        "displayName": "PL Bot 10h funeral_burst",
-        "level": 14,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 9,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 11,
-          "marca_brasa": 11
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 8
-      }
-    },
-    {
-      "id": "PLBOT_bot_freemium_basic_10h_p0",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 14,
-      "power": 2026,
-      "power_band": "band_004",
-      "build": {
-        "id": "PLBOT_bot_freemium_basic_10h_p0",
-        "displayName": "PL Bot 10h funeral_burst",
-        "level": 14,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 10,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 12,
-          "marca_brasa": 12
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 9
-      }
-    },
-    {
-      "id": "PLBOT_bot_freemium_basic_10h_p12",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 14,
-      "power": 2156,
-      "power_band": "band_004",
-      "build": {
-        "id": "PLBOT_bot_freemium_basic_10h_p12",
-        "displayName": "PL Bot 10h funeral_burst",
-        "level": 14,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 11,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 13,
-          "marca_brasa": 13
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 10
-      }
-    },
-    {
-      "id": "PLBOT_bot_freemium_basic_15h_m12",
-      "kind": "fixed",
-      "archetype_id": "familiar_handler",
-      "archetype_name": "Familiar Handler",
-      "level": 16,
-      "power": 2426,
-      "power_band": "band_005",
-      "build": {
-        "id": "PLBOT_bot_freemium_basic_15h_m12",
-        "displayName": "PL Bot 15h familiar_handler",
-        "level": 16,
-        "weaponId": "varinha_cinzas",
-        "weaponLevel": 10,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "sussurro_medo",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "sussurro_medo": 11,
-          "marca_brasa": 11
-        },
-        "passiveId": "pacto_familiar",
-        "passiveLevel": 10,
-        "petId": "corvo_pressagio",
-        "petLevel": 11
-      }
-    },
-    {
-      "id": "PLBOT_bot_freemium_basic_15h_p0",
-      "kind": "fixed",
-      "archetype_id": "familiar_handler",
-      "archetype_name": "Familiar Handler",
-      "level": 16,
-      "power": 2670,
-      "power_band": "band_005",
-      "build": {
-        "id": "PLBOT_bot_freemium_basic_15h_p0",
-        "displayName": "PL Bot 15h familiar_handler",
-        "level": 16,
-        "weaponId": "varinha_cinzas",
-        "weaponLevel": 11,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "sussurro_medo",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "sussurro_medo": 13,
-          "marca_brasa": 13
-        },
-        "passiveId": "pacto_familiar",
-        "passiveLevel": 11,
-        "petId": "corvo_pressagio",
-        "petLevel": 12
-      }
-    },
-    {
-      "id": "PLBOT_bot_freemium_basic_15h_p12",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 16,
-      "power": 2914,
-      "power_band": "band_005",
-      "build": {
-        "id": "PLBOT_bot_freemium_basic_15h_p12",
-        "displayName": "PL Bot 15h funeral_burst",
-        "level": 16,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 12,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 15,
-          "marca_brasa": 15
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 12,
-        "petId": "cranio_errante",
-        "petLevel": 13
-      }
-    },
-    {
-      "id": "PLBOT_bot_freemium_basic_20h_m12",
-      "kind": "fixed",
-      "archetype_id": "familiar_handler",
-      "archetype_name": "Familiar Handler",
-      "level": 17,
-      "power": 2598,
-      "power_band": "band_005",
-      "build": {
-        "id": "PLBOT_bot_freemium_basic_20h_m12",
-        "displayName": "PL Bot 20h familiar_handler",
-        "level": 17,
-        "weaponId": "varinha_cinzas",
-        "weaponLevel": 11,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "sussurro_medo",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "sussurro_medo": 12,
-          "marca_brasa": 12
-        },
-        "passiveId": "pacto_familiar",
-        "passiveLevel": 11,
-        "petId": "corvo_pressagio",
-        "petLevel": 11
-      }
-    },
-    {
-      "id": "PLBOT_bot_freemium_basic_20h_p0",
-      "kind": "fixed",
-      "archetype_id": "familiar_handler",
-      "archetype_name": "Familiar Handler",
-      "level": 17,
-      "power": 2876,
-      "power_band": "band_005",
-      "build": {
-        "id": "PLBOT_bot_freemium_basic_20h_p0",
-        "displayName": "PL Bot 20h familiar_handler",
-        "level": 17,
-        "weaponId": "varinha_cinzas",
-        "weaponLevel": 12,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "sussurro_medo",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "sussurro_medo": 14,
-          "marca_brasa": 14
-        },
-        "passiveId": "pacto_familiar",
-        "passiveLevel": 12,
-        "petId": "corvo_pressagio",
-        "petLevel": 13
-      }
-    },
-    {
-      "id": "PLBOT_bot_freemium_basic_20h_p12",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 17,
-      "power": 3154,
-      "power_band": "band_005",
-      "build": {
-        "id": "PLBOT_bot_freemium_basic_20h_p12",
-        "displayName": "PL Bot 20h funeral_burst",
-        "level": 17,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 13,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 16,
-          "marca_brasa": 16
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 13,
-        "petId": "cranio_errante",
-        "petLevel": 15
-      }
-    },
-    {
-      "id": "PLBOT_bot_spender_light_2h_m12",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 9,
-      "power": 786,
-      "power_band": "band_003",
-      "build": {
-        "id": "PLBOT_bot_spender_light_2h_m12",
-        "displayName": "PL Bot 2h funeral_burst",
-        "level": 9,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 6,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 3,
-          "marca_brasa": 3
-        }
-      }
-    },
-    {
-      "id": "PLBOT_bot_spender_light_2h_p0",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 9,
-      "power": 814,
-      "power_band": "band_003",
-      "build": {
-        "id": "PLBOT_bot_spender_light_2h_p0",
-        "displayName": "PL Bot 2h funeral_burst",
-        "level": 9,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 7,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 3,
-          "marca_brasa": 3
+          "descarga_nervosa": 2,
+          "marca_brasa": 2
         }
       }
     },
@@ -6377,23 +6274,23 @@
       "kind": "fixed",
       "archetype_id": "funeral_burst",
       "archetype_name": "Funeral Burst",
-      "level": 9,
-      "power": 842,
+      "level": 8,
+      "power": 692,
       "power_band": "band_003",
       "build": {
         "id": "PLBOT_bot_spender_light_2h_p12",
         "displayName": "PL Bot 2h funeral_burst",
-        "level": 9,
+        "level": 8,
         "weaponId": "cajado_ossario",
-        "weaponLevel": 8,
+        "weaponLevel": 7,
         "weaponQualityTier": 0,
         "spellIds": [
           "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 3,
-          "marca_brasa": 3
+          "descarga_nervosa": 2,
+          "marca_brasa": 2
         }
       }
     },
@@ -6402,13 +6299,67 @@
       "kind": "fixed",
       "archetype_id": "funeral_burst",
       "archetype_name": "Funeral Burst",
-      "level": 12,
-      "power": 1500,
-      "power_band": "band_004",
+      "level": 10,
+      "power": 1098,
+      "power_band": "band_003",
       "build": {
         "id": "PLBOT_bot_spender_light_5h_m12",
         "displayName": "PL Bot 5h funeral_burst",
-        "level": 12,
+        "level": 10,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 6,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 5,
+          "marca_brasa": 5
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 5
+      }
+    },
+    {
+      "id": "PLBOT_bot_spender_light_5h_p0",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 10,
+      "power": 1228,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_spender_light_5h_p0",
+        "displayName": "PL Bot 5h funeral_burst",
+        "level": 10,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 7,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 6,
+          "marca_brasa": 6
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 6
+      }
+    },
+    {
+      "id": "PLBOT_bot_spender_light_5h_p12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 10,
+      "power": 1358,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_spender_light_5h_p12",
+        "displayName": "PL Bot 5h funeral_burst",
+        "level": 10,
         "weaponId": "cajado_ossario",
         "weaponLevel": 8,
         "weaponQualityTier": 0,
@@ -6417,54 +6368,27 @@
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 8,
-          "marca_brasa": 8
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 6
-      }
-    },
-    {
-      "id": "PLBOT_bot_spender_light_5h_p0",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 12,
-      "power": 1630,
-      "power_band": "band_004",
-      "build": {
-        "id": "PLBOT_bot_spender_light_5h_p0",
-        "displayName": "PL Bot 5h funeral_burst",
-        "level": 12,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 9,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 9,
-          "marca_brasa": 9
+          "descarga_nervosa": 7,
+          "marca_brasa": 7
         },
         "passiveId": "ossuario_interior",
         "passiveLevel": 7
       }
     },
     {
-      "id": "PLBOT_bot_spender_light_5h_p12",
+      "id": "PLBOT_bot_spender_light_10h_m12",
       "kind": "fixed",
       "archetype_id": "funeral_burst",
       "archetype_name": "Funeral Burst",
       "level": 12,
-      "power": 1760,
+      "power": 1704,
       "power_band": "band_004",
       "build": {
-        "id": "PLBOT_bot_spender_light_5h_p12",
-        "displayName": "PL Bot 5h funeral_burst",
+        "id": "PLBOT_bot_spender_light_10h_m12",
+        "displayName": "PL Bot 10h funeral_burst",
         "level": 12,
         "weaponId": "cajado_ossario",
-        "weaponLevel": 10,
+        "weaponLevel": 8,
         "weaponQualityTier": 0,
         "spellIds": [
           "descarga_nervosa",
@@ -6479,16 +6403,151 @@
       }
     },
     {
-      "id": "PLBOT_bot_spender_light_10h_m12",
+      "id": "PLBOT_bot_spender_light_10h_p0",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 12,
+      "power": 1834,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_spender_light_10h_p0",
+        "displayName": "PL Bot 10h funeral_burst",
+        "level": 12,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 9,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 11,
+          "marca_brasa": 11
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 9
+      }
+    },
+    {
+      "id": "PLBOT_bot_spender_light_10h_p12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 12,
+      "power": 1964,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_spender_light_10h_p12",
+        "displayName": "PL Bot 10h funeral_burst",
+        "level": 12,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 10,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 12,
+          "marca_brasa": 12
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 10
+      }
+    },
+    {
+      "id": "PLBOT_bot_spender_light_15h_m12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 14,
+      "power": 1940,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_spender_light_15h_m12",
+        "displayName": "PL Bot 15h funeral_burst",
+        "level": 14,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 9,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 11,
+          "marca_brasa": 11
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 10
+      }
+    },
+    {
+      "id": "PLBOT_bot_spender_light_15h_p0",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 14,
+      "power": 2150,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_spender_light_15h_p0",
+        "displayName": "PL Bot 15h funeral_burst",
+        "level": 14,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 10,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 13,
+          "marca_brasa": 13
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 11
+      }
+    },
+    {
+      "id": "PLBOT_bot_spender_light_15h_p12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 14,
+      "power": 2280,
+      "power_band": "band_005",
+      "build": {
+        "id": "PLBOT_bot_spender_light_15h_p12",
+        "displayName": "PL Bot 15h funeral_burst",
+        "level": 14,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 11,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 14,
+          "marca_brasa": 14
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 12
+      }
+    },
+    {
+      "id": "PLBOT_bot_spender_light_20h_m12",
       "kind": "fixed",
       "archetype_id": "familiar_handler",
       "archetype_name": "Familiar Handler",
       "level": 15,
-      "power": 2362,
+      "power": 2406,
       "power_band": "band_005",
       "build": {
-        "id": "PLBOT_bot_spender_light_10h_m12",
-        "displayName": "PL Bot 10h familiar_handler",
+        "id": "PLBOT_bot_spender_light_20h_m12",
+        "displayName": "PL Bot 20h familiar_handler",
         "level": 15,
         "weaponId": "varinha_cinzas",
         "weaponLevel": 10,
@@ -6502,22 +6561,22 @@
           "marca_brasa": 11
         },
         "passiveId": "pacto_familiar",
-        "passiveLevel": 9,
+        "passiveLevel": 11,
         "petId": "corvo_pressagio",
         "petLevel": 11
       }
     },
     {
-      "id": "PLBOT_bot_spender_light_10h_p0",
+      "id": "PLBOT_bot_spender_light_20h_p0",
       "kind": "fixed",
       "archetype_id": "familiar_handler",
       "archetype_name": "Familiar Handler",
       "level": 15,
-      "power": 2640,
+      "power": 2684,
       "power_band": "band_005",
       "build": {
-        "id": "PLBOT_bot_spender_light_10h_p0",
-        "displayName": "PL Bot 10h familiar_handler",
+        "id": "PLBOT_bot_spender_light_20h_p0",
+        "displayName": "PL Bot 20h familiar_handler",
         "level": 15,
         "weaponId": "varinha_cinzas",
         "weaponLevel": 11,
@@ -6531,22 +6590,22 @@
           "marca_brasa": 13
         },
         "passiveId": "pacto_familiar",
-        "passiveLevel": 10,
+        "passiveLevel": 12,
         "petId": "corvo_pressagio",
         "petLevel": 13
       }
     },
     {
-      "id": "PLBOT_bot_spender_light_10h_p12",
+      "id": "PLBOT_bot_spender_light_20h_p12",
       "kind": "fixed",
       "archetype_id": "funeral_burst",
       "archetype_name": "Funeral Burst",
       "level": 15,
-      "power": 2918,
+      "power": 2962,
       "power_band": "band_005",
       "build": {
-        "id": "PLBOT_bot_spender_light_10h_p12",
-        "displayName": "PL Bot 10h funeral_burst",
+        "id": "PLBOT_bot_spender_light_20h_p12",
+        "displayName": "PL Bot 20h funeral_burst",
         "level": 15,
         "weaponId": "cajado_ossario",
         "weaponLevel": 12,
@@ -6560,42 +6619,331 @@
           "marca_brasa": 15
         },
         "passiveId": "ossuario_interior",
-        "passiveLevel": 11,
+        "passiveLevel": 13,
         "petId": "cranio_errante",
         "petLevel": 15
       }
     },
     {
-      "id": "PLBOT_bot_spender_light_15h_m12",
+      "id": "PLBOT_bot_max_spender_2h_m12",
       "kind": "fixed",
-      "archetype_id": "familiar_handler",
-      "archetype_name": "Familiar Handler",
-      "level": 16,
-      "power": 2556,
-      "power_band": "band_005",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 8,
+      "power": 664,
+      "power_band": "band_003",
       "build": {
-        "id": "PLBOT_bot_spender_light_15h_m12",
-        "displayName": "PL Bot 15h familiar_handler",
-        "level": 16,
-        "weaponId": "varinha_cinzas",
-        "weaponLevel": 11,
+        "id": "PLBOT_bot_max_spender_2h_m12",
+        "displayName": "PL Bot 2h funeral_burst",
+        "level": 8,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 6,
         "weaponQualityTier": 0,
         "spellIds": [
-          "sussurro_medo",
+          "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "sussurro_medo": 12,
-          "marca_brasa": 12
-        },
-        "passiveId": "pacto_familiar",
-        "passiveLevel": 11,
-        "petId": "corvo_pressagio",
-        "petLevel": 11
+          "descarga_nervosa": 2,
+          "marca_brasa": 2
+        }
       }
     },
     {
-      "id": "PLBOT_bot_spender_light_15h_p0",
+      "id": "PLBOT_bot_max_spender_2h_p0",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 8,
+      "power": 692,
+      "power_band": "band_003",
+      "build": {
+        "id": "PLBOT_bot_max_spender_2h_p0",
+        "displayName": "PL Bot 2h funeral_burst",
+        "level": 8,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 7,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 2,
+          "marca_brasa": 2
+        }
+      }
+    },
+    {
+      "id": "PLBOT_bot_max_spender_2h_p12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 8,
+      "power": 720,
+      "power_band": "band_003",
+      "build": {
+        "id": "PLBOT_bot_max_spender_2h_p12",
+        "displayName": "PL Bot 2h funeral_burst",
+        "level": 8,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 8,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 2,
+          "marca_brasa": 2
+        }
+      }
+    },
+    {
+      "id": "PLBOT_bot_max_spender_5h_m12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 10,
+      "power": 1256,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_max_spender_5h_m12",
+        "displayName": "PL Bot 5h funeral_burst",
+        "level": 10,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 8,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 6,
+          "marca_brasa": 6
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 6
+      }
+    },
+    {
+      "id": "PLBOT_bot_max_spender_5h_p0",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 10,
+      "power": 1386,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_max_spender_5h_p0",
+        "displayName": "PL Bot 5h funeral_burst",
+        "level": 10,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 9,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 7,
+          "marca_brasa": 7
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 7
+      }
+    },
+    {
+      "id": "PLBOT_bot_max_spender_5h_p12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 10,
+      "power": 1516,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_max_spender_5h_p12",
+        "displayName": "PL Bot 5h funeral_burst",
+        "level": 10,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 10,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 8,
+          "marca_brasa": 8
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 8
+      }
+    },
+    {
+      "id": "PLBOT_bot_max_spender_10h_m12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 13,
+      "power": 1846,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_max_spender_10h_m12",
+        "displayName": "PL Bot 10h funeral_burst",
+        "level": 13,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 10,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 10,
+          "marca_brasa": 10
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 10
+      }
+    },
+    {
+      "id": "PLBOT_bot_max_spender_10h_p0",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 13,
+      "power": 1976,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_max_spender_10h_p0",
+        "displayName": "PL Bot 10h funeral_burst",
+        "level": 13,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 11,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 11,
+          "marca_brasa": 11
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 11
+      }
+    },
+    {
+      "id": "PLBOT_bot_max_spender_10h_p12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 13,
+      "power": 2106,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_max_spender_10h_p12",
+        "displayName": "PL Bot 10h funeral_burst",
+        "level": 13,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 12,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 12,
+          "marca_brasa": 12
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 12
+      }
+    },
+    {
+      "id": "PLBOT_bot_max_spender_15h_m12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 14,
+      "power": 2098,
+      "power_band": "band_004",
+      "build": {
+        "id": "PLBOT_bot_max_spender_15h_m12",
+        "displayName": "PL Bot 15h funeral_burst",
+        "level": 14,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 11,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 12,
+          "marca_brasa": 12
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 11
+      }
+    },
+    {
+      "id": "PLBOT_bot_max_spender_15h_p0",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 14,
+      "power": 2308,
+      "power_band": "band_005",
+      "build": {
+        "id": "PLBOT_bot_max_spender_15h_p0",
+        "displayName": "PL Bot 15h funeral_burst",
+        "level": 14,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 12,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 14,
+          "marca_brasa": 14
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 12
+      }
+    },
+    {
+      "id": "PLBOT_bot_max_spender_15h_p12",
+      "kind": "fixed",
+      "archetype_id": "funeral_burst",
+      "archetype_name": "Funeral Burst",
+      "level": 14,
+      "power": 2358,
+      "power_band": "band_005",
+      "build": {
+        "id": "PLBOT_bot_max_spender_15h_p12",
+        "displayName": "PL Bot 15h funeral_burst",
+        "level": 14,
+        "weaponId": "cajado_ossario",
+        "weaponLevel": 13,
+        "weaponQualityTier": 0,
+        "spellIds": [
+          "descarga_nervosa",
+          "marca_brasa"
+        ],
+        "spellLevels": {
+          "descarga_nervosa": 14,
+          "marca_brasa": 14
+        },
+        "passiveId": "ossuario_interior",
+        "passiveLevel": 13
+      }
+    },
+    {
+      "id": "PLBOT_bot_max_spender_20h_m12",
       "kind": "fixed",
       "archetype_id": "familiar_handler",
       "archetype_name": "Familiar Handler",
@@ -6603,8 +6951,8 @@
       "power": 2834,
       "power_band": "band_005",
       "build": {
-        "id": "PLBOT_bot_spender_light_15h_p0",
-        "displayName": "PL Bot 15h familiar_handler",
+        "id": "PLBOT_bot_max_spender_20h_m12",
+        "displayName": "PL Bot 20h familiar_handler",
         "level": 16,
         "weaponId": "varinha_cinzas",
         "weaponLevel": 12,
@@ -6624,77 +6972,19 @@
       }
     },
     {
-      "id": "PLBOT_bot_spender_light_15h_p12",
+      "id": "PLBOT_bot_max_spender_20h_p0",
       "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
+      "archetype_id": "familiar_handler",
+      "archetype_name": "Familiar Handler",
       "level": 16,
-      "power": 3112,
+      "power": 3162,
       "power_band": "band_005",
       "build": {
-        "id": "PLBOT_bot_spender_light_15h_p12",
-        "displayName": "PL Bot 15h funeral_burst",
+        "id": "PLBOT_bot_max_spender_20h_p0",
+        "displayName": "PL Bot 20h familiar_handler",
         "level": 16,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 13,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 16,
-          "marca_brasa": 16
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 13,
-        "petId": "cranio_errante",
-        "petLevel": 15
-      }
-    },
-    {
-      "id": "PLBOT_bot_spender_light_20h_m12",
-      "kind": "fixed",
-      "archetype_id": "familiar_handler",
-      "archetype_name": "Familiar Handler",
-      "level": 18,
-      "power": 2890,
-      "power_band": "band_005",
-      "build": {
-        "id": "PLBOT_bot_spender_light_20h_m12",
-        "displayName": "PL Bot 20h familiar_handler",
-        "level": 18,
         "weaponId": "varinha_cinzas",
-        "weaponLevel": 11,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "sussurro_medo",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "sussurro_medo": 14,
-          "marca_brasa": 14
-        },
-        "passiveId": "pacto_familiar",
-        "passiveLevel": 12,
-        "petId": "corvo_pressagio",
-        "petLevel": 13
-      }
-    },
-    {
-      "id": "PLBOT_bot_spender_light_20h_p0",
-      "kind": "fixed",
-      "archetype_id": "familiar_handler",
-      "archetype_name": "Familiar Handler",
-      "level": 18,
-      "power": 3218,
-      "power_band": "band_005",
-      "build": {
-        "id": "PLBOT_bot_spender_light_20h_p0",
-        "displayName": "PL Bot 20h familiar_handler",
-        "level": 18,
-        "weaponId": "varinha_cinzas",
-        "weaponLevel": 13,
+        "weaponLevel": 14,
         "weaponQualityTier": 0,
         "spellIds": [
           "sussurro_medo",
@@ -6711,449 +7001,32 @@
       }
     },
     {
-      "id": "PLBOT_bot_spender_light_20h_p12",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 18,
-      "power": 3546,
-      "power_band": "band_005",
-      "build": {
-        "id": "PLBOT_bot_spender_light_20h_p12",
-        "displayName": "PL Bot 20h funeral_burst",
-        "level": 18,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 15,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 18,
-          "marca_brasa": 18
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 16,
-        "petId": "cranio_errante",
-        "petLevel": 17
-      }
-    },
-    {
-      "id": "PLBOT_bot_max_spender_2h_m12",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 9,
-      "power": 894,
-      "power_band": "band_003",
-      "build": {
-        "id": "PLBOT_bot_max_spender_2h_m12",
-        "displayName": "PL Bot 2h funeral_burst",
-        "level": 9,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 7,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 4,
-          "marca_brasa": 4
-        }
-      }
-    },
-    {
-      "id": "PLBOT_bot_max_spender_2h_p0",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 9,
-      "power": 922,
-      "power_band": "band_003",
-      "build": {
-        "id": "PLBOT_bot_max_spender_2h_p0",
-        "displayName": "PL Bot 2h funeral_burst",
-        "level": 9,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 8,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 4,
-          "marca_brasa": 4
-        }
-      }
-    },
-    {
-      "id": "PLBOT_bot_max_spender_2h_p12",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 9,
-      "power": 950,
-      "power_band": "band_003",
-      "build": {
-        "id": "PLBOT_bot_max_spender_2h_p12",
-        "displayName": "PL Bot 2h funeral_burst",
-        "level": 9,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 9,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 4,
-          "marca_brasa": 4
-        }
-      }
-    },
-    {
-      "id": "PLBOT_bot_max_spender_5h_m12",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 12,
-      "power": 1630,
-      "power_band": "band_004",
-      "build": {
-        "id": "PLBOT_bot_max_spender_5h_m12",
-        "displayName": "PL Bot 5h funeral_burst",
-        "level": 12,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 9,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 9,
-          "marca_brasa": 9
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 7
-      }
-    },
-    {
-      "id": "PLBOT_bot_max_spender_5h_p0",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 12,
-      "power": 1760,
-      "power_band": "band_004",
-      "build": {
-        "id": "PLBOT_bot_max_spender_5h_p0",
-        "displayName": "PL Bot 5h funeral_burst",
-        "level": 12,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 10,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 10,
-          "marca_brasa": 10
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 8
-      }
-    },
-    {
-      "id": "PLBOT_bot_max_spender_5h_p12",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 12,
-      "power": 1890,
-      "power_band": "band_004",
-      "build": {
-        "id": "PLBOT_bot_max_spender_5h_p12",
-        "displayName": "PL Bot 5h funeral_burst",
-        "level": 12,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 11,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 11,
-          "marca_brasa": 11
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 9
-      }
-    },
-    {
-      "id": "PLBOT_bot_max_spender_10h_m12",
-      "kind": "fixed",
-      "archetype_id": "familiar_handler",
-      "archetype_name": "Familiar Handler",
-      "level": 15,
-      "power": 2526,
-      "power_band": "band_005",
-      "build": {
-        "id": "PLBOT_bot_max_spender_10h_m12",
-        "displayName": "PL Bot 10h familiar_handler",
-        "level": 15,
-        "weaponId": "varinha_cinzas",
-        "weaponLevel": 11,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "sussurro_medo",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "sussurro_medo": 12,
-          "marca_brasa": 12
-        },
-        "passiveId": "pacto_familiar",
-        "passiveLevel": 10,
-        "petId": "corvo_pressagio",
-        "petLevel": 12
-      }
-    },
-    {
-      "id": "PLBOT_bot_max_spender_10h_p0",
-      "kind": "fixed",
-      "archetype_id": "familiar_handler",
-      "archetype_name": "Familiar Handler",
-      "level": 15,
-      "power": 2832,
-      "power_band": "band_005",
-      "build": {
-        "id": "PLBOT_bot_max_spender_10h_p0",
-        "displayName": "PL Bot 10h familiar_handler",
-        "level": 15,
-        "weaponId": "varinha_cinzas",
-        "weaponLevel": 13,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "sussurro_medo",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "sussurro_medo": 14,
-          "marca_brasa": 14
-        },
-        "passiveId": "pacto_familiar",
-        "passiveLevel": 11,
-        "petId": "corvo_pressagio",
-        "petLevel": 14
-      }
-    },
-    {
-      "id": "PLBOT_bot_max_spender_10h_p12",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 15,
-      "power": 3024,
-      "power_band": "band_005",
-      "build": {
-        "id": "PLBOT_bot_max_spender_10h_p12",
-        "displayName": "PL Bot 10h funeral_burst",
-        "level": 15,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 15,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 15,
-          "marca_brasa": 15
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 12,
-        "petId": "cranio_errante",
-        "petLevel": 15
-      }
-    },
-    {
-      "id": "PLBOT_bot_max_spender_15h_m12",
-      "kind": "fixed",
-      "archetype_id": "familiar_handler",
-      "archetype_name": "Familiar Handler",
-      "level": 17,
-      "power": 3018,
-      "power_band": "band_005",
-      "build": {
-        "id": "PLBOT_bot_max_spender_15h_m12",
-        "displayName": "PL Bot 15h familiar_handler",
-        "level": 17,
-        "weaponId": "varinha_cinzas",
-        "weaponLevel": 13,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "sussurro_medo",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "sussurro_medo": 15,
-          "marca_brasa": 15
-        },
-        "passiveId": "pacto_familiar",
-        "passiveLevel": 12,
-        "petId": "corvo_pressagio",
-        "petLevel": 14
-      }
-    },
-    {
-      "id": "PLBOT_bot_max_spender_15h_p0",
-      "kind": "fixed",
-      "archetype_id": "familiar_handler",
-      "archetype_name": "Familiar Handler",
-      "level": 17,
-      "power": 3346,
-      "power_band": "band_005",
-      "build": {
-        "id": "PLBOT_bot_max_spender_15h_p0",
-        "displayName": "PL Bot 15h familiar_handler",
-        "level": 17,
-        "weaponId": "varinha_cinzas",
-        "weaponLevel": 15,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "sussurro_medo",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "sussurro_medo": 17,
-          "marca_brasa": 17
-        },
-        "passiveId": "pacto_familiar",
-        "passiveLevel": 14,
-        "petId": "corvo_pressagio",
-        "petLevel": 16
-      }
-    },
-    {
-      "id": "PLBOT_bot_max_spender_15h_p12",
-      "kind": "fixed",
-      "archetype_id": "funeral_burst",
-      "archetype_name": "Funeral Burst",
-      "level": 17,
-      "power": 3480,
-      "power_band": "band_005",
-      "build": {
-        "id": "PLBOT_bot_max_spender_15h_p12",
-        "displayName": "PL Bot 15h funeral_burst",
-        "level": 17,
-        "weaponId": "cajado_ossario",
-        "weaponLevel": 17,
-        "weaponQualityTier": 0,
-        "spellIds": [
-          "descarga_nervosa",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "descarga_nervosa": 17,
-          "marca_brasa": 17
-        },
-        "passiveId": "ossuario_interior",
-        "passiveLevel": 16,
-        "petId": "cranio_errante",
-        "petLevel": 17
-      }
-    },
-    {
-      "id": "PLBOT_bot_max_spender_20h_m12",
-      "kind": "fixed",
-      "archetype_id": "familiar_handler",
-      "archetype_name": "Familiar Handler",
-      "level": 19,
-      "power": 3410,
-      "power_band": "band_005",
-      "build": {
-        "id": "PLBOT_bot_max_spender_20h_m12",
-        "displayName": "PL Bot 20h familiar_handler",
-        "level": 19,
-        "weaponId": "varinha_cinzas",
-        "weaponLevel": 14,
-        "weaponQualityTier": 1,
-        "spellIds": [
-          "sussurro_medo",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "sussurro_medo": 17,
-          "marca_brasa": 17
-        },
-        "passiveId": "pacto_familiar",
-        "passiveLevel": 13,
-        "petId": "corvo_pressagio",
-        "petLevel": 16
-      }
-    },
-    {
-      "id": "PLBOT_bot_max_spender_20h_p0",
-      "kind": "fixed",
-      "archetype_id": "familiar_handler",
-      "archetype_name": "Familiar Handler",
-      "level": 19,
-      "power": 3738,
-      "power_band": "band_005",
-      "build": {
-        "id": "PLBOT_bot_max_spender_20h_p0",
-        "displayName": "PL Bot 20h familiar_handler",
-        "level": 19,
-        "weaponId": "varinha_cinzas",
-        "weaponLevel": 16,
-        "weaponQualityTier": 1,
-        "spellIds": [
-          "sussurro_medo",
-          "marca_brasa"
-        ],
-        "spellLevels": {
-          "sussurro_medo": 19,
-          "marca_brasa": 19
-        },
-        "passiveId": "pacto_familiar",
-        "passiveLevel": 15,
-        "petId": "corvo_pressagio",
-        "petLevel": 18
-      }
-    },
-    {
       "id": "PLBOT_bot_max_spender_20h_p12",
       "kind": "fixed",
       "archetype_id": "funeral_burst",
       "archetype_name": "Funeral Burst",
-      "level": 19,
-      "power": 3872,
+      "level": 16,
+      "power": 3296,
       "power_band": "band_005",
       "build": {
         "id": "PLBOT_bot_max_spender_20h_p12",
         "displayName": "PL Bot 20h funeral_burst",
-        "level": 19,
+        "level": 16,
         "weaponId": "cajado_ossario",
-        "weaponLevel": 18,
-        "weaponQualityTier": 1,
+        "weaponLevel": 16,
+        "weaponQualityTier": 0,
         "spellIds": [
           "descarga_nervosa",
           "marca_brasa"
         ],
         "spellLevels": {
-          "descarga_nervosa": 19,
-          "marca_brasa": 19
+          "descarga_nervosa": 16,
+          "marca_brasa": 16
         },
         "passiveId": "ossuario_interior",
-        "passiveLevel": 17,
+        "passiveLevel": 16,
         "petId": "cranio_errante",
-        "petLevel": 19
+        "petLevel": 16
       }
     },
     {
@@ -8551,114 +8424,114 @@
     {
       "id": "starter_instrument",
       "display_name": "Starter Instrument",
-      "total": 64,
+      "total": 94,
       "wins": 29,
-      "losses": 35,
-      "win_rate_percent": 45.31,
-      "avg_duration": 34.25,
+      "losses": 65,
+      "win_rate_percent": 30.85,
+      "avg_duration": 31.98,
       "median_duration": 35.2,
       "short_rate_percent": 0,
-      "long_rate_percent": 87.5,
-      "anti_stall_rate_percent": 25,
+      "long_rate_percent": 59.57,
+      "anti_stall_rate_percent": 17.02,
       "status": "REVIEW"
     },
     {
       "id": "mental_controller",
       "display_name": "Mental Controller",
-      "total": 488,
-      "wins": 132,
-      "losses": 356,
-      "win_rate_percent": 27.05,
-      "avg_duration": 24.58,
+      "total": 478,
+      "wins": 136,
+      "losses": 342,
+      "win_rate_percent": 28.45,
+      "avg_duration": 25.16,
       "median_duration": 23.2,
       "short_rate_percent": 0,
-      "long_rate_percent": 21.72,
-      "anti_stall_rate_percent": 7.58,
+      "long_rate_percent": 23.43,
+      "anti_stall_rate_percent": 7.74,
       "status": "REVIEW"
     },
     {
       "id": "elemental_mixer",
       "display_name": "Elemental Mixer",
-      "total": 748,
-      "wins": 316,
-      "losses": 432,
-      "win_rate_percent": 42.25,
-      "avg_duration": 23.63,
-      "median_duration": 22.7,
+      "total": 666,
+      "wins": 268,
+      "losses": 398,
+      "win_rate_percent": 40.24,
+      "avg_duration": 24.56,
+      "median_duration": 23.7,
       "short_rate_percent": 0,
-      "long_rate_percent": 10.56,
-      "anti_stall_rate_percent": 3.74,
+      "long_rate_percent": 11.86,
+      "anti_stall_rate_percent": 4.2,
       "status": "PASS"
     },
     {
       "id": "familiar_handler",
       "display_name": "Familiar Handler",
-      "total": 772,
-      "wins": 489,
-      "losses": 283,
-      "win_rate_percent": 63.34,
-      "avg_duration": 22.73,
-      "median_duration": 21.2,
+      "total": 494,
+      "wins": 261,
+      "losses": 233,
+      "win_rate_percent": 52.83,
+      "avg_duration": 24.31,
+      "median_duration": 22.7,
       "short_rate_percent": 0,
-      "long_rate_percent": 13.21,
-      "anti_stall_rate_percent": 4.66,
-      "status": "PASS"
+      "long_rate_percent": 18.62,
+      "anti_stall_rate_percent": 6.48,
+      "status": "REVIEW"
     },
     {
       "id": "summoner",
       "display_name": "Summoner",
-      "total": 544,
-      "wins": 281,
-      "losses": 263,
-      "win_rate_percent": 51.65,
-      "avg_duration": 24.49,
-      "median_duration": 23.7,
+      "total": 536,
+      "wins": 270,
+      "losses": 266,
+      "win_rate_percent": 50.37,
+      "avg_duration": 24.77,
+      "median_duration": 24.2,
       "short_rate_percent": 0,
-      "long_rate_percent": 17.83,
-      "anti_stall_rate_percent": 9.56,
+      "long_rate_percent": 18.28,
+      "anti_stall_rate_percent": 9.7,
       "status": "REVIEW"
     },
     {
       "id": "defensive_occultist",
       "display_name": "Defensive Occultist",
       "total": 520,
-      "wins": 210,
-      "losses": 310,
-      "win_rate_percent": 40.38,
-      "avg_duration": 32.09,
-      "median_duration": 33.95,
+      "wins": 205,
+      "losses": 315,
+      "win_rate_percent": 39.42,
+      "avg_duration": 31.95,
+      "median_duration": 33.2,
       "short_rate_percent": 0,
-      "long_rate_percent": 63.08,
+      "long_rate_percent": 61.15,
       "anti_stall_rate_percent": 29.81,
       "status": "REVIEW"
     },
     {
       "id": "dot_pressure",
       "display_name": "DoT Pressure",
-      "total": 586,
-      "wins": 356,
-      "losses": 230,
-      "win_rate_percent": 60.75,
-      "avg_duration": 22.35,
+      "total": 580,
+      "wins": 359,
+      "losses": 221,
+      "win_rate_percent": 61.9,
+      "avg_duration": 22.55,
       "median_duration": 20.7,
       "short_rate_percent": 0,
-      "long_rate_percent": 14.68,
-      "anti_stall_rate_percent": 4.1,
+      "long_rate_percent": 14.83,
+      "anti_stall_rate_percent": 4.14,
       "status": "PASS"
     },
     {
       "id": "funeral_burst",
       "display_name": "Funeral Burst",
-      "total": 902,
-      "wins": 499,
-      "losses": 403,
-      "win_rate_percent": 55.32,
-      "avg_duration": 22.61,
-      "median_duration": 20.45,
+      "total": 944,
+      "wins": 628,
+      "losses": 316,
+      "win_rate_percent": 66.53,
+      "avg_duration": 24.32,
+      "median_duration": 23.2,
       "short_rate_percent": 0,
-      "long_rate_percent": 14.19,
-      "anti_stall_rate_percent": 3.55,
-      "status": "PASS"
+      "long_rate_percent": 14.3,
+      "anti_stall_rate_percent": 3.81,
+      "status": "REVIEW"
     }
   ],
   "near_power_matrix": [
@@ -8719,11 +8592,11 @@
     {
       "player_archetype_id": "starter_instrument",
       "opponent_archetype_id": "funeral_burst",
-      "total": 6,
+      "total": 21,
       "wins": 3,
-      "win_rate_percent": 50,
-      "avg_duration": 35.37,
-      "status": "PASS"
+      "win_rate_percent": 14.29,
+      "avg_duration": 29.49,
+      "status": "REVIEW"
     },
     {
       "player_archetype_id": "mental_controller",
@@ -8737,19 +8610,19 @@
     {
       "player_archetype_id": "mental_controller",
       "opponent_archetype_id": "elemental_mixer",
-      "total": 39,
-      "wins": 12,
-      "win_rate_percent": 30.77,
-      "avg_duration": 24.42,
+      "total": 37,
+      "wins": 11,
+      "win_rate_percent": 29.73,
+      "avg_duration": 24.58,
       "status": "REVIEW"
     },
     {
       "player_archetype_id": "mental_controller",
       "opponent_archetype_id": "familiar_handler",
-      "total": 40,
-      "wins": 14,
-      "win_rate_percent": 35,
-      "avg_duration": 23.29,
+      "total": 31,
+      "wins": 13,
+      "win_rate_percent": 41.94,
+      "avg_duration": 24.54,
       "status": "PASS"
     },
     {
@@ -8782,10 +8655,10 @@
     {
       "player_archetype_id": "mental_controller",
       "opponent_archetype_id": "funeral_burst",
-      "total": 52,
-      "wins": 13,
-      "win_rate_percent": 25,
-      "avg_duration": 22.19,
+      "total": 58,
+      "wins": 17,
+      "win_rate_percent": 29.31,
+      "avg_duration": 23.84,
       "status": "REVIEW"
     },
     {
@@ -8800,55 +8673,55 @@
     {
       "player_archetype_id": "elemental_mixer",
       "opponent_archetype_id": "mental_controller",
-      "total": 39,
-      "wins": 27,
-      "win_rate_percent": 69.23,
-      "avg_duration": 24.23,
+      "total": 37,
+      "wins": 26,
+      "win_rate_percent": 70.27,
+      "avg_duration": 24.38,
       "status": "REVIEW"
     },
     {
       "player_archetype_id": "elemental_mixer",
       "opponent_archetype_id": "familiar_handler",
-      "total": 83,
-      "wins": 35,
-      "win_rate_percent": 42.17,
-      "avg_duration": 21.93,
+      "total": 33,
+      "wins": 18,
+      "win_rate_percent": 54.55,
+      "avg_duration": 23.22,
       "status": "PASS"
     },
     {
       "player_archetype_id": "elemental_mixer",
       "opponent_archetype_id": "summoner",
-      "total": 49,
-      "wins": 25,
-      "win_rate_percent": 51.02,
-      "avg_duration": 23.75,
+      "total": 40,
+      "wins": 20,
+      "win_rate_percent": 50,
+      "avg_duration": 23.69,
       "status": "PASS"
     },
     {
       "player_archetype_id": "elemental_mixer",
       "opponent_archetype_id": "defensive_occultist",
-      "total": 37,
-      "wins": 21,
-      "win_rate_percent": 56.76,
-      "avg_duration": 30.82,
+      "total": 34,
+      "wins": 18,
+      "win_rate_percent": 52.94,
+      "avg_duration": 31.44,
       "status": "PASS"
     },
     {
       "player_archetype_id": "elemental_mixer",
       "opponent_archetype_id": "dot_pressure",
-      "total": 39,
+      "total": 41,
       "wins": 13,
-      "win_rate_percent": 33.33,
-      "avg_duration": 20.82,
+      "win_rate_percent": 31.71,
+      "avg_duration": 20.79,
       "status": "REVIEW"
     },
     {
       "player_archetype_id": "elemental_mixer",
       "opponent_archetype_id": "funeral_burst",
-      "total": 123,
-      "wins": 39,
-      "win_rate_percent": 31.71,
-      "avg_duration": 22.87,
+      "total": 144,
+      "wins": 40,
+      "win_rate_percent": 27.78,
+      "avg_duration": 24.27,
       "status": "REVIEW"
     },
     {
@@ -8863,56 +8736,56 @@
     {
       "player_archetype_id": "familiar_handler",
       "opponent_archetype_id": "mental_controller",
-      "total": 40,
-      "wins": 35,
-      "win_rate_percent": 87.5,
-      "avg_duration": 23.2,
+      "total": 31,
+      "wins": 26,
+      "win_rate_percent": 83.87,
+      "avg_duration": 24.47,
       "status": "CRITICAL"
     },
     {
       "player_archetype_id": "familiar_handler",
       "opponent_archetype_id": "elemental_mixer",
-      "total": 83,
-      "wins": 54,
-      "win_rate_percent": 65.06,
-      "avg_duration": 21.83,
-      "status": "REVIEW"
+      "total": 33,
+      "wins": 16,
+      "win_rate_percent": 48.48,
+      "avg_duration": 23.15,
+      "status": "PASS"
     },
     {
       "player_archetype_id": "familiar_handler",
       "opponent_archetype_id": "summoner",
-      "total": 44,
-      "wins": 30,
-      "win_rate_percent": 68.18,
-      "avg_duration": 23.39,
-      "status": "REVIEW"
+      "total": 38,
+      "wins": 24,
+      "win_rate_percent": 63.16,
+      "avg_duration": 23.84,
+      "status": "PASS"
     },
     {
       "player_archetype_id": "familiar_handler",
       "opponent_archetype_id": "defensive_occultist",
-      "total": 48,
-      "wins": 26,
-      "win_rate_percent": 54.17,
-      "avg_duration": 32.1,
+      "total": 38,
+      "wins": 17,
+      "win_rate_percent": 44.74,
+      "avg_duration": 32.21,
       "status": "PASS"
     },
     {
       "player_archetype_id": "familiar_handler",
       "opponent_archetype_id": "dot_pressure",
-      "total": 52,
-      "wins": 23,
-      "win_rate_percent": 44.23,
-      "avg_duration": 20.97,
+      "total": 40,
+      "wins": 15,
+      "win_rate_percent": 37.5,
+      "avg_duration": 21.78,
       "status": "PASS"
     },
     {
       "player_archetype_id": "familiar_handler",
       "opponent_archetype_id": "funeral_burst",
-      "total": 115,
-      "wins": 79,
-      "win_rate_percent": 68.7,
-      "avg_duration": 19.47,
-      "status": "REVIEW"
+      "total": 63,
+      "wins": 28,
+      "win_rate_percent": 44.44,
+      "avg_duration": 21.53,
+      "status": "PASS"
     },
     {
       "player_archetype_id": "summoner",
@@ -8935,19 +8808,19 @@
     {
       "player_archetype_id": "summoner",
       "opponent_archetype_id": "elemental_mixer",
-      "total": 49,
-      "wins": 25,
-      "win_rate_percent": 51.02,
-      "avg_duration": 23.83,
+      "total": 40,
+      "wins": 20,
+      "win_rate_percent": 50,
+      "avg_duration": 23.79,
       "status": "PASS"
     },
     {
       "player_archetype_id": "summoner",
       "opponent_archetype_id": "familiar_handler",
-      "total": 44,
-      "wins": 14,
-      "win_rate_percent": 31.82,
-      "avg_duration": 23.5,
+      "total": 38,
+      "wins": 13,
+      "win_rate_percent": 34.21,
+      "avg_duration": 23.92,
       "status": "REVIEW"
     },
     {
@@ -8971,10 +8844,10 @@
     {
       "player_archetype_id": "summoner",
       "opponent_archetype_id": "funeral_burst",
-      "total": 40,
+      "total": 51,
       "wins": 23,
-      "win_rate_percent": 57.5,
-      "avg_duration": 21.33,
+      "win_rate_percent": 45.1,
+      "avg_duration": 23.01,
       "status": "PASS"
     },
     {
@@ -8998,18 +8871,18 @@
     {
       "player_archetype_id": "defensive_occultist",
       "opponent_archetype_id": "elemental_mixer",
-      "total": 37,
+      "total": 34,
       "wins": 12,
-      "win_rate_percent": 32.43,
-      "avg_duration": 30.82,
-      "status": "REVIEW"
+      "win_rate_percent": 35.29,
+      "avg_duration": 31.42,
+      "status": "PASS"
     },
     {
       "player_archetype_id": "defensive_occultist",
       "opponent_archetype_id": "familiar_handler",
-      "total": 48,
+      "total": 38,
       "wins": 7,
-      "win_rate_percent": 14.58,
+      "win_rate_percent": 18.42,
       "avg_duration": 32.48,
       "status": "REVIEW"
     },
@@ -9034,11 +8907,11 @@
     {
       "player_archetype_id": "defensive_occultist",
       "opponent_archetype_id": "funeral_burst",
-      "total": 51,
-      "wins": 18,
-      "win_rate_percent": 35.29,
-      "avg_duration": 33.26,
-      "status": "PASS"
+      "total": 64,
+      "wins": 15,
+      "win_rate_percent": 23.44,
+      "avg_duration": 32.03,
+      "status": "REVIEW"
     },
     {
       "player_archetype_id": "dot_pressure",
@@ -9061,19 +8934,19 @@
     {
       "player_archetype_id": "dot_pressure",
       "opponent_archetype_id": "elemental_mixer",
-      "total": 39,
-      "wins": 25,
-      "win_rate_percent": 64.1,
-      "avg_duration": 20.76,
-      "status": "PASS"
+      "total": 41,
+      "wins": 27,
+      "win_rate_percent": 65.85,
+      "avg_duration": 20.71,
+      "status": "REVIEW"
     },
     {
       "player_archetype_id": "dot_pressure",
       "opponent_archetype_id": "familiar_handler",
-      "total": 52,
-      "wins": 29,
-      "win_rate_percent": 55.77,
-      "avg_duration": 20.85,
+      "total": 40,
+      "wins": 25,
+      "win_rate_percent": 62.5,
+      "avg_duration": 21.6,
       "status": "PASS"
     },
     {
@@ -9097,73 +8970,73 @@
     {
       "player_archetype_id": "dot_pressure",
       "opponent_archetype_id": "funeral_burst",
-      "total": 64,
-      "wins": 31,
-      "win_rate_percent": 48.44,
-      "avg_duration": 19.56,
+      "total": 71,
+      "wins": 35,
+      "win_rate_percent": 49.3,
+      "avg_duration": 20.06,
       "status": "PASS"
     },
     {
       "player_archetype_id": "funeral_burst",
       "opponent_archetype_id": "starter_instrument",
-      "total": 6,
-      "wins": 4,
-      "win_rate_percent": 66.67,
-      "avg_duration": 35.37,
-      "status": "REVIEW"
+      "total": 21,
+      "wins": 19,
+      "win_rate_percent": 90.48,
+      "avg_duration": 29.49,
+      "status": "CRITICAL"
     },
     {
       "player_archetype_id": "funeral_burst",
       "opponent_archetype_id": "mental_controller",
-      "total": 52,
-      "wins": 42,
-      "win_rate_percent": 80.77,
-      "avg_duration": 21.88,
+      "total": 58,
+      "wins": 45,
+      "win_rate_percent": 77.59,
+      "avg_duration": 23.61,
       "status": "CRITICAL"
     },
     {
       "player_archetype_id": "funeral_burst",
       "opponent_archetype_id": "elemental_mixer",
-      "total": 123,
-      "wins": 88,
-      "win_rate_percent": 71.54,
-      "avg_duration": 22.85,
-      "status": "REVIEW"
+      "total": 144,
+      "wins": 112,
+      "win_rate_percent": 77.78,
+      "avg_duration": 24.27,
+      "status": "CRITICAL"
     },
     {
       "player_archetype_id": "funeral_burst",
       "opponent_archetype_id": "familiar_handler",
-      "total": 115,
-      "wins": 48,
-      "win_rate_percent": 41.74,
-      "avg_duration": 19.39,
+      "total": 63,
+      "wins": 39,
+      "win_rate_percent": 61.9,
+      "avg_duration": 21.34,
       "status": "PASS"
     },
     {
       "player_archetype_id": "funeral_burst",
       "opponent_archetype_id": "summoner",
-      "total": 40,
-      "wins": 18,
-      "win_rate_percent": 45,
-      "avg_duration": 21.31,
+      "total": 51,
+      "wins": 30,
+      "win_rate_percent": 58.82,
+      "avg_duration": 22.9,
       "status": "PASS"
     },
     {
       "player_archetype_id": "funeral_burst",
       "opponent_archetype_id": "defensive_occultist",
-      "total": 51,
-      "wins": 19,
-      "win_rate_percent": 37.25,
-      "avg_duration": 32.8,
+      "total": 64,
+      "wins": 33,
+      "win_rate_percent": 51.56,
+      "avg_duration": 31.73,
       "status": "PASS"
     },
     {
       "player_archetype_id": "funeral_burst",
       "opponent_archetype_id": "dot_pressure",
-      "total": 64,
-      "wins": 35,
-      "win_rate_percent": 54.69,
-      "avg_duration": 19.61,
+      "total": 71,
+      "wins": 39,
+      "win_rate_percent": 54.93,
+      "avg_duration": 20.09,
       "status": "PASS"
     }
   ],
@@ -9171,121 +9044,121 @@
     {
       "archetype_id": "starter_instrument",
       "display_name": "Starter Instrument",
-      "total": 598,
+      "total": 630,
       "wins": 62,
-      "avg_duration": 24.92,
-      "weapon_damage": 279620,
+      "avg_duration": 25.19,
+      "weapon_damage": 293731,
       "spell_damage": 0,
       "dot_damage": 0,
       "pet_damage": 0,
       "summon_damage": 0,
       "system_damage": 0,
-      "total_damage": 279620,
+      "total_damage": 293731,
       "dominant_source": "weapon"
     },
     {
       "archetype_id": "mental_controller",
       "display_name": "Mental Controller",
-      "total": 756,
-      "wins": 345,
-      "avg_duration": 25.29,
-      "weapon_damage": 428847,
-      "spell_damage": 213175,
-      "dot_damage": 19730,
-      "pet_damage": 104324,
+      "total": 800,
+      "wins": 403,
+      "avg_duration": 25.8,
+      "weapon_damage": 451232,
+      "spell_damage": 218601,
+      "dot_damage": 17574,
+      "pet_damage": 96769,
       "summon_damage": 17652,
       "system_damage": 0,
-      "total_damage": 783728,
+      "total_damage": 801828,
       "dominant_source": "weapon"
     },
     {
       "archetype_id": "elemental_mixer",
       "display_name": "Elemental Mixer",
-      "total": 1326,
-      "wins": 642,
-      "avg_duration": 23.69,
-      "weapon_damage": 636464,
-      "spell_damage": 406079,
-      "dot_damage": 164890,
-      "pet_damage": 139477,
+      "total": 1088,
+      "wins": 565,
+      "avg_duration": 24.55,
+      "weapon_damage": 528341,
+      "spell_damage": 298483,
+      "dot_damage": 125376,
+      "pet_damage": 81407,
       "summon_damage": 0,
       "system_damage": 0,
-      "total_damage": 1346910,
+      "total_damage": 1033607,
       "dominant_source": "weapon"
     },
     {
       "archetype_id": "familiar_handler",
       "display_name": "Familiar Handler",
-      "total": 1216,
-      "wins": 811,
-      "avg_duration": 22.94,
-      "weapon_damage": 677519,
-      "spell_damage": 353011,
-      "dot_damage": 141189,
-      "pet_damage": 215542,
+      "total": 798,
+      "wins": 438,
+      "avg_duration": 24.69,
+      "weapon_damage": 415802,
+      "spell_damage": 232921,
+      "dot_damage": 58646,
+      "pet_damage": 109935,
       "summon_damage": 0,
       "system_damage": 0,
-      "total_damage": 1387261,
+      "total_damage": 817304,
       "dominant_source": "weapon"
     },
     {
       "archetype_id": "summoner",
       "display_name": "Summoner",
-      "total": 942,
-      "wins": 537,
-      "avg_duration": 24.08,
-      "weapon_damage": 559564,
-      "spell_damage": 107004,
+      "total": 974,
+      "wins": 566,
+      "avg_duration": 24.47,
+      "weapon_damage": 571553,
+      "spell_damage": 110086,
       "dot_damage": 8446,
-      "pet_damage": 140125,
+      "pet_damage": 127667,
       "summon_damage": 234469,
       "system_damage": 0,
-      "total_damage": 1049608,
+      "total_damage": 1052221,
       "dominant_source": "weapon"
     },
     {
       "archetype_id": "defensive_occultist",
       "display_name": "Defensive Occultist",
-      "total": 902,
-      "wins": 393,
-      "avg_duration": 30.53,
-      "weapon_damage": 549281,
-      "spell_damage": 236664,
+      "total": 918,
+      "wins": 379,
+      "avg_duration": 30.5,
+      "weapon_damage": 549443,
+      "spell_damage": 238246,
       "dot_damage": 8597,
-      "pet_damage": 160672,
+      "pet_damage": 147756,
       "summon_damage": 23960,
       "system_damage": 0,
-      "total_damage": 979174,
+      "total_damage": 968002,
       "dominant_source": "weapon"
     },
     {
       "archetype_id": "dot_pressure",
       "display_name": "DoT Pressure",
-      "total": 942,
-      "wins": 595,
-      "avg_duration": 22.29,
-      "weapon_damage": 467954,
-      "spell_damage": 186583,
-      "dot_damage": 273657,
-      "pet_damage": 105277,
+      "total": 974,
+      "wins": 635,
+      "avg_duration": 22.44,
+      "weapon_damage": 474252,
+      "spell_damage": 187837,
+      "dot_damage": 272735,
+      "pet_damage": 97229,
       "summon_damage": 17132,
       "system_damage": 0,
-      "total_damage": 1050603,
+      "total_damage": 1049185,
       "dominant_source": "weapon"
     },
     {
       "archetype_id": "funeral_burst",
       "display_name": "Funeral Burst",
-      "total": 1750,
-      "wins": 1259,
-      "avg_duration": 22.27,
-      "weapon_damage": 993067,
-      "spell_damage": 665589,
-      "dot_damage": 244236,
-      "pet_damage": 179612,
+      "total": 2480,
+      "wins": 1852,
+      "avg_duration": 23.54,
+      "weapon_damage": 1431082,
+      "spell_damage": 898309,
+      "dot_damage": 345058,
+      "pet_damage": 123264,
       "summon_damage": 41615,
       "system_damage": 0,
-      "total_damage": 2124119,
+      "total_damage": 2839328,
       "dominant_source": "weapon"
     }
   ],
@@ -9351,7 +9224,7 @@
     },
     {
       "tag": "level_7_representative",
-      "matchup_id": "L7_M0091",
+      "matchup_id": "L7_M0123",
       "level": 7,
       "player_build_id": "L7_mental_controller_fixed",
       "opponent_build_id": "L7_mental_controller_r1",
@@ -9363,7 +9236,7 @@
     },
     {
       "tag": "level_10_representative",
-      "matchup_id": "L10_M0075",
+      "matchup_id": "L10_M0107",
       "level": 10,
       "player_build_id": "L10_mental_controller_fixed",
       "opponent_build_id": "L10_mental_controller_r1",
@@ -9375,7 +9248,7 @@
     },
     {
       "tag": "level_15_representative",
-      "matchup_id": "L15_M0147",
+      "matchup_id": "L15_M0115",
       "level": 15,
       "player_build_id": "L15_mental_controller_fixed",
       "opponent_build_id": "L15_mental_controller_r1",
@@ -9423,7 +9296,7 @@
     },
     {
       "tag": "track16_potion_behavior",
-      "matchup_id": "L7_M0033",
+      "matchup_id": "L7_M0049",
       "level": 7,
       "player_build_id": "L7_starter_instrument_fixed",
       "opponent_build_id": "T16_potion_default_L7_defensive_occultist_fixed",
@@ -9435,7 +9308,7 @@
     },
     {
       "tag": "track16_spell_behavior",
-      "matchup_id": "L7_M0039",
+      "matchup_id": "L7_M0055",
       "level": 7,
       "player_build_id": "L7_starter_instrument_fixed",
       "opponent_build_id": "T16_spell_behavior_disabled_L7_mental_controller_fixed",

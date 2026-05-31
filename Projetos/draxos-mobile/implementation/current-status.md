@@ -4,15 +4,17 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Track 18 - PVE Arena Initial`
-- Active stage status: `PVE_ARENA_INITIAL_PUBLISHED_INTERNAL_ALPHA`
+- Active stage: `Track 19 - Arena Consistency Pass`
+- Active stage status: `ARENA_CONSISTENCY_PASS_IMPLEMENTED_LOCAL`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published package: `Track 18 - PVE Arena Initial`
-- Latest implemented package: `Track 18 - PVE Arena Initial` on branch
-  `codex/draxos-mobile/pve-arena-integration`.
+- Latest published remote package: `Track 18 - PVE Arena Initial`
+- Latest implemented package: `Track 19 - Arena Consistency Pass` on branch
+  `codex/draxos-mobile/arena-consistency-pass`.
+- Active follow-up: human playtest of the Arena PVE tutorial/3-duel flow from
+  the Track 19 local package, then decide remote publication and tuning scope.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -33,6 +35,10 @@ Refugio, fullscreen portrait battle, skip, summary and current-battle logs.
 Track 18 now adds the published Arena PVE-first implementation branch with
 server-authoritative attempts, steps, temporary buffs, completion rewards,
 client shell routes and arena-specific lab outputs.
+Track 19 now aligns the same package for consistency before tuning: potions are
+consumed from live stock per Arena duel, claim is read as summary/ack only, the
+public buff endpoint is `/arena/pve/buff/select`, the client lists remote Arena
+data, and the labs report Arena PVE sequence sanity targets.
 
 Current product reading: this is a strong prototype base for refinement. The
 current product direction is Arena PVE initial, documented in
@@ -41,7 +47,8 @@ Battle Pass, battle flavor, visual identity and premium content are
 mock/substance used to keep the app from feeling empty, not final design
 direction unless the Arena PVE package explicitly promotes them.
 
-Foundation shell loop:
+Historical foundation shell loop from Foundation Loop UX Pass 01
+(app-shell baseline, not the current product loop):
 
 `Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again`
 
@@ -100,6 +107,9 @@ Implemented and published in Track 18:
 - Edge Functions expose `arena/pve/state`, `arena/pve/start`,
   `arena/pve/duel/request`, `arena/pve/buff/select`, `arena/pve/claim` and
   `arena/pve/abandon`, mirrored in `server/` and `supabase/`.
+- Arena PVE reward/progress mutation happens on the final
+  `arena/pve/duel/request`; `arena/pve/claim` is a summary/ack endpoint and
+  returns `mutates_economy: false`.
 - Refugio now points the main CTA to Arena PVE, with selection, locked-loadout,
   active attempt, replay, buff choice and summary surfaces.
 - Battle Lab now emits `battle_lab_arena_sequences.csv`; Progression Lab now
@@ -158,6 +168,40 @@ Remaining after publication: run human playtest of the Arena PVE tutorial,
 3-duel arena, preparation/loadout lock, buff choice, defeat/conclusion summary
 and return-to-Refugio loop in Web/APK/PC.
 
+## Track 19 - Arena Consistency Pass
+
+Track 19 is implemented locally on
+`codex/draxos-mobile/arena-consistency-pass` as a consistency package over the
+published Track 18 Arena PVE baseline. It does not change the latest remote
+publication until a future remote mutation is explicitly approved.
+
+Implemented in Track 19:
+
+- Arena PVE potion use now treats the equipped potion as locked loadout intent,
+  but consumes live `player_consumables` stock per duel through
+  `arena_record_duel_v1` and `item_transactions` source `arena_pve_v1`.
+- `arena/pve/duel/request` passes simulator consumable usage to the RPC; retry
+  with the same idempotency key does not duplicate potion consumption, reward,
+  step progression or ledger effects.
+- `/arena/pve/claim` remains a compatibility endpoint for summary/ack and
+  returns `reward_already_applied` plus `mutates_economy: false`.
+- `/arena/pve/buff/select` is the public buff endpoint; `/arena/buff/choose`
+  remains compatibility alias only.
+- The Refugio Arena surface renders all arenas from `arena_state.arenas` with
+  `arena_start:<arena_id>` actions, disabled locked entries and fixture buttons
+  only as dev fallback.
+- Attempt summary, preparation and active-attempt copy now distinguish locked
+  loadout, editable behavior and already-applied rewards.
+- `foundation_ruleset_v0` now declares
+  `primary_product_mode: PVE_ARENA_INITIAL`; `FIRST_SLICE_SIM` remains a
+  technical simulator/replay mode.
+- Battle Lab and Progression Lab now report Arena PVE attempt/sequence language,
+  potion pressure and sanity clear-rate targets for 1/3/4/5/6 duel arenas.
+
+Next after Track 19: package/playtest the Arena PVE tutorial and 3-duel arena,
+confirm the potion and summary behavior manually, then choose between a remote
+Internal Alpha publication or a focused tuning pass.
+
 ## Foundation Audit
 
 Foundation Expansion Readiness/Foundation Closeout is the delivered foundation
@@ -205,7 +249,8 @@ Manual Android/Windows/Web review passed on `2026-05-29`. The review confirmed
 Battle Lab and Progression Lab in the initial menu, Refugio/Battle contained in
 screen bounds, APK download without Bearer-token error, static splash while
 requesting battle and a clear post-login loop. Foundation Loop UX Pass 01 is
-therefore the current accepted baseline for the next product decision.
+therefore the accepted historical app-shell baseline; the current product loop
+is Arena PVE.
 
 Priority order after baseline confirmation:
 
@@ -292,10 +337,11 @@ Delivered in the current branch:
   `request_hash`, ruleset metadata, resource ledger and service-role-only
   grants.
 - Migration `202605300003_remaining_transactional_domain_enforcement.sql`
-  promotes `battle/request` (`FIRST_SLICE_SIM`), rewards claim, alpha purchase,
-  build equip, crafting craft/crush-bones and guild create/join to v1
-  transactional RPCs with `game_saves`, `request_hash`, ruleset metadata,
-  ledger/idempotency and service-role-only grants.
+  promotes `battle/request` (`FIRST_SLICE_SIM`, technical simulator/replay mode
+  rather than current product mode), rewards claim, alpha purchase, build equip,
+  crafting craft/crush-bones and guild create/join to v1 transactional RPCs
+  with `game_saves`, `request_hash`, ruleset metadata, ledger/idempotency and
+  service-role-only grants.
 - Migration `202605300004_foundation_closeout.sql` corrects
   `ruleset_registry` to immutable `publication_id`, updates the active
   `foundation_ruleset_v0` simulator hash, persists ruleset hashes in
@@ -681,10 +727,11 @@ economy, content tuning or final art.
 - Track 16 migration/functions/catalog changes needed for Ossos Inteiros v1 are
   deployed. Further crafting, behavior, tuning, economy or content expansion
   still needs its own explicit package decision.
-- Foundation Loop UX Pass 01 is the accepted current V0 UX baseline after manual
-  Android/Windows/Web review on `2026-05-29`; Social Basico Guilda v1, Battle
-  Presentation v1, Battle Drama v1.1 and Battle Preparation Complete v1 are now
-  available in the published Internal Alpha build for human validation.
+- Foundation Loop UX Pass 01 is the accepted historical V0 app-shell UX
+  baseline after manual Android/Windows/Web review on `2026-05-29`; Social
+  Basico Guilda v1, Battle Presentation v1, Battle Drama v1.1 and Battle
+  Preparation Complete v1 are now available in the published Internal Alpha
+  build for human validation.
 - Battle Preparation Complete v1 is published to Internal Alpha with public
   APK/PC downloads, a cache-busted Web asset root and no-store Cloudflare Pages
   headers; Web/mobile visual confirmation passed on the latest preview, while

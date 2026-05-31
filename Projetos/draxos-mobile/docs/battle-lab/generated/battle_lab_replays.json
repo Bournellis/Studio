@@ -1087,8 +1087,8 @@
     },
     {
       "tag": "level_7_representative",
-      "matchup_id": "L7_M0091",
-      "seed": "battle_lab:draxos_mobile_battle_lab_v4_source_identity:L7_M0091:battle_lab_character_rework_20260525:mental_controller:L7:fixed:0:battle_lab_character_rework_20260525:mental_controller:L7:random:1",
+      "matchup_id": "L7_M0123",
+      "seed": "battle_lab:draxos_mobile_battle_lab_v4_source_identity:L7_M0123:battle_lab_character_rework_20260525:mental_controller:L7:fixed:0:battle_lab_character_rework_20260525:mental_controller:L7:random:1",
       "level": 7,
       "player_build_id": "L7_mental_controller_fixed",
       "opponent_build_id": "L7_mental_controller_r1",
@@ -1101,8 +1101,8 @@
       "reason": "combatant_defeated",
       "battle_log": {
         "schema_version": "battle_log_v1",
-        "battle_id": "L7_M0091",
-        "seed": "battle_lab:draxos_mobile_battle_lab_v4_source_identity:L7_M0091:battle_lab_character_rework_20260525:mental_controller:L7:fixed:0:battle_lab_character_rework_20260525:mental_controller:L7:random:1",
+        "battle_id": "L7_M0123",
+        "seed": "battle_lab:draxos_mobile_battle_lab_v4_source_identity:L7_M0123:battle_lab_character_rework_20260525:mental_controller:L7:fixed:0:battle_lab_character_rework_20260525:mental_controller:L7:random:1",
         "mode": "FIRST_SLICE_SIM",
         "duration": 27.2,
         "participants": {
@@ -2757,8 +2757,8 @@
     },
     {
       "tag": "level_10_representative",
-      "matchup_id": "L10_M0075",
-      "seed": "battle_lab:draxos_mobile_battle_lab_v4_source_identity:L10_M0075:battle_lab_character_rework_20260525:mental_controller:L10:fixed:0:battle_lab_character_rework_20260525:mental_controller:L10:random:1",
+      "matchup_id": "L10_M0107",
+      "seed": "battle_lab:draxos_mobile_battle_lab_v4_source_identity:L10_M0107:battle_lab_character_rework_20260525:mental_controller:L10:fixed:0:battle_lab_character_rework_20260525:mental_controller:L10:random:1",
       "level": 10,
       "player_build_id": "L10_mental_controller_fixed",
       "opponent_build_id": "L10_mental_controller_r1",
@@ -2771,8 +2771,8 @@
       "reason": "combatant_defeated",
       "battle_log": {
         "schema_version": "battle_log_v1",
-        "battle_id": "L10_M0075",
-        "seed": "battle_lab:draxos_mobile_battle_lab_v4_source_identity:L10_M0075:battle_lab_character_rework_20260525:mental_controller:L10:fixed:0:battle_lab_character_rework_20260525:mental_controller:L10:random:1",
+        "battle_id": "L10_M0107",
+        "seed": "battle_lab:draxos_mobile_battle_lab_v4_source_identity:L10_M0107:battle_lab_character_rework_20260525:mental_controller:L10:fixed:0:battle_lab_character_rework_20260525:mental_controller:L10:random:1",
         "mode": "FIRST_SLICE_SIM",
         "duration": 29.7,
         "participants": {
@@ -4311,8 +4311,8 @@
     },
     {
       "tag": "level_15_representative",
-      "matchup_id": "L15_M0147",
-      "seed": "battle_lab:draxos_mobile_battle_lab_v4_source_identity:L15_M0147:battle_lab_character_rework_20260525:mental_controller:L15:fixed:0:battle_lab_character_rework_20260525:mental_controller:L15:random:1",
+      "matchup_id": "L15_M0115",
+      "seed": "battle_lab:draxos_mobile_battle_lab_v4_source_identity:L15_M0115:battle_lab_character_rework_20260525:mental_controller:L15:fixed:0:battle_lab_character_rework_20260525:mental_controller:L15:random:1",
       "level": 15,
       "player_build_id": "L15_mental_controller_fixed",
       "opponent_build_id": "L15_mental_controller_r1",
@@ -4325,8 +4325,8 @@
       "reason": "combatant_defeated",
       "battle_log": {
         "schema_version": "battle_log_v1",
-        "battle_id": "L15_M0147",
-        "seed": "battle_lab:draxos_mobile_battle_lab_v4_source_identity:L15_M0147:battle_lab_character_rework_20260525:mental_controller:L15:fixed:0:battle_lab_character_rework_20260525:mental_controller:L15:random:1",
+        "battle_id": "L15_M0115",
+        "seed": "battle_lab:draxos_mobile_battle_lab_v4_source_identity:L15_M0115:battle_lab_character_rework_20260525:mental_controller:L15:fixed:0:battle_lab_character_rework_20260525:mental_controller:L15:random:1",
         "mode": "FIRST_SLICE_SIM",
         "duration": 18.7,
         "participants": {
@@ -11383,8 +11383,8 @@
     },
     {
       "tag": "track16_potion_behavior",
-      "matchup_id": "L7_M0033",
-      "seed": "battle_lab:draxos_mobile_battle_lab_v4_source_identity:L7_M0033:battle_lab_character_rework_20260525:starter_instrument:L7:fixed:0:battle_lab_character_rework_20260525:defensive_occultist:L7:fixed:0:track16:potion_default",
+      "matchup_id": "L7_M0049",
+      "seed": "battle_lab:draxos_mobile_battle_lab_v4_source_identity:L7_M0049:battle_lab_character_rework_20260525:starter_instrument:L7:fixed:0:battle_lab_character_rework_20260525:defensive_occultist:L7:fixed:0:track16:potion_default",
       "level": 7,
       "player_build_id": "L7_starter_instrument_fixed",
       "opponent_build_id": "T16_potion_default_L7_defensive_occultist_fixed",
@@ -11397,8 +11397,8 @@
       "reason": "combatant_defeated",
       "battle_log": {
         "schema_version": "battle_log_v1",
-        "battle_id": "L7_M0033",
-        "seed": "battle_lab:draxos_mobile_battle_lab_v4_source_identity:L7_M0033:battle_lab_character_rework_20260525:starter_instrument:L7:fixed:0:battle_lab_character_rework_20260525:defensive_occultist:L7:fixed:0:track16:potion_default",
+        "battle_id": "L7_M0049",
+        "seed": "battle_lab:draxos_mobile_battle_lab_v4_source_identity:L7_M0049:battle_lab_character_rework_20260525:starter_instrument:L7:fixed:0:battle_lab_character_rework_20260525:defensive_occultist:L7:fixed:0:track16:potion_default",
         "mode": "FIRST_SLICE_SIM",
         "duration": 36.2,
         "participants": {
@@ -12474,8 +12474,8 @@
     },
     {
       "tag": "track16_spell_behavior",
-      "matchup_id": "L7_M0039",
-      "seed": "battle_lab:draxos_mobile_battle_lab_v4_source_identity:L7_M0039:battle_lab_character_rework_20260525:starter_instrument:L7:fixed:0:battle_lab_character_rework_20260525:mental_controller:L7:fixed:0:track16:spell_behavior_disabled",
+      "matchup_id": "L7_M0055",
+      "seed": "battle_lab:draxos_mobile_battle_lab_v4_source_identity:L7_M0055:battle_lab_character_rework_20260525:starter_instrument:L7:fixed:0:battle_lab_character_rework_20260525:mental_controller:L7:fixed:0:track16:spell_behavior_disabled",
       "level": 7,
       "player_build_id": "L7_starter_instrument_fixed",
       "opponent_build_id": "T16_spell_behavior_disabled_L7_mental_controller_fixed",
@@ -12488,8 +12488,8 @@
       "reason": "combatant_defeated",
       "battle_log": {
         "schema_version": "battle_log_v1",
-        "battle_id": "L7_M0039",
-        "seed": "battle_lab:draxos_mobile_battle_lab_v4_source_identity:L7_M0039:battle_lab_character_rework_20260525:starter_instrument:L7:fixed:0:battle_lab_character_rework_20260525:mental_controller:L7:fixed:0:track16:spell_behavior_disabled",
+        "battle_id": "L7_M0055",
+        "seed": "battle_lab:draxos_mobile_battle_lab_v4_source_identity:L7_M0055:battle_lab_character_rework_20260525:starter_instrument:L7:fixed:0:battle_lab_character_rework_20260525:mental_controller:L7:fixed:0:track16:spell_behavior_disabled",
         "mode": "FIRST_SLICE_SIM",
         "duration": 29.2,
         "participants": {

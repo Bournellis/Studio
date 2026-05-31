@@ -45,7 +45,9 @@ Deno.test("battle lab generated builds obey unlock rules by level", () => {
       `${build.id} weapon level should not exceed character level`,
     );
     assert(
-      Object.values(build.build.spellLevels).every((level) => level <= build.level),
+      Object.values(build.build.spellLevels).every((level) =>
+        level <= build.level
+      ),
       `${build.id} spell levels should not exceed character level`,
     );
     if (build.level < 10) {
@@ -95,7 +97,9 @@ Deno.test("battle lab parses combat log metrics", () => {
   const model = testModel();
   const builds = createBuilds(model).filter((build) => build.level === 25);
   const player = builds.find((build) => build.archetype_id === "dot_pressure")!;
-  const opponent = builds.find((build) => build.archetype_id === "defensive_occultist")!;
+  const opponent = builds.find((build) =>
+    build.archetype_id === "defensive_occultist"
+  )!;
   const simulation = simulateFirstSliceBattle({
     battleId: "test_battle",
     seed: "battle_lab_test_seed",
@@ -132,11 +136,20 @@ Deno.test("battle lab can generate a minimal summary", () => {
   assert(result.summary.total_builds > 0, "summary should include builds");
   assert(result.summary.total_battles > 0, "summary should include battles");
   assert(result.checks.length > 0, "summary should include checks");
-  assertEquals(result.arena_sequences.length, 5, "Arena PVE sequence outputs should exist");
+  assertEquals(
+    result.arena_sequences.length,
+    5,
+    "Arena PVE sequence outputs should exist",
+  );
   assert(
     result.arena_sequences.every((row) => row.hp_reset_per_duel),
     "Arena PVE lab should model HP reset per duel",
   );
+  assertArenaClearRate(result, 1, 80);
+  assertArenaClearRate(result, 3, 35);
+  assertArenaClearRate(result, 4, 20);
+  assertArenaClearRate(result, 5, 12);
+  assertArenaClearRate(result, 6, 12);
   assert(
     ["PASS", "REVIEW", "CRITICAL"].includes(result.overall_status),
     "status should be valid",
@@ -153,7 +166,9 @@ Deno.test("battle lab replay samples include a spell-active representative", () 
     sample.opponent_archetype_id !== "starter_instrument"
   );
   const spellCasts =
-    representative?.battle_log.events.filter((event) => event.type === "spell_cast").length ?? 0;
+    representative?.battle_log.events.filter((event) =>
+      event.type === "spell_cast"
+    ).length ?? 0;
 
   assert(
     representative !== undefined,
@@ -165,7 +180,9 @@ Deno.test("battle lab replay samples include a spell-active representative", () 
 
 Deno.test("battle lab Track 16 scenarios cover potion and spell behavior", () => {
   const result = runBattleLab(testModel());
-  const potionCheck = result.checks.find((check) => check.id === "track16_potion_event_coverage");
+  const potionCheck = result.checks.find((check) =>
+    check.id === "track16_potion_event_coverage"
+  );
   const behaviorCheck = result.checks.find((check) =>
     check.id === "track16_spell_behavior_coverage"
   );
@@ -250,7 +267,9 @@ Deno.test("battle lab excludes same-archetype mirrors from near-power dominance"
     0,
     "same-archetype mirrors should not feed near-power dominance",
   );
-  const dominance = result.checks.find((check) => check.id === "near_power_dominance");
+  const dominance = result.checks.find((check) =>
+    check.id === "near_power_dominance"
+  );
   assertEquals(
     dominance?.status,
     "PASS",
@@ -262,7 +281,9 @@ Deno.test("battle lab separates damage by side before aggregating sources", () =
   const model = testModel();
   const builds = createBuilds(model).filter((build) => build.level === 25);
   const player = builds.find((build) => build.archetype_id === "dot_pressure")!;
-  const opponent = builds.find((build) => build.archetype_id === "defensive_occultist")!;
+  const opponent = builds.find((build) =>
+    build.archetype_id === "defensive_occultist"
+  )!;
   const simulation = simulateFirstSliceBattle({
     battleId: "side_damage_test",
     seed: "side_damage_test_seed",
@@ -585,7 +606,24 @@ function assertEquals(
 ): void {
   if (actual !== expected) {
     throw new Error(
-      `${message}. Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`,
+      `${message}. Expected ${JSON.stringify(expected)}, got ${
+        JSON.stringify(actual)
+      }`,
     );
   }
+}
+
+function assertArenaClearRate(
+  result: ReturnType<typeof runBattleLab>,
+  duelCount: number,
+  targetPercent: number,
+): void {
+  const row = result.arena_sequences.find((item) =>
+    item.duel_count === duelCount
+  );
+  assert(row !== undefined, `missing ${duelCount}-duel arena sequence`);
+  assert(
+    row.clear_rate_percent >= targetPercent,
+    `${duelCount}-duel arena clear rate should be >= ${targetPercent}%`,
+  );
 }
