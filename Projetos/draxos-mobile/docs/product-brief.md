@@ -22,7 +22,7 @@ A etapa atual e `PVE_ARENA_INITIAL_DIRECTION_APPROVED`, sobre `FOUNDATION_FINAL_
 
 O foco imediato de fundacao foi fechado: Foundation Closeout entregou account/save, ruleset registry, idempotencia v1, admin minimo, API versioning e mutacoes transacionais; Lab Track 16 Alignment atualizou Battle Lab/Progression Lab para pocoes, comportamento, crafting e `po_osso`; Foundation Final Polish sincroniza docs, shell budgets, presenter guards e smoke local RLS/admin.
 
-A decisao de produto seguinte e `docs/pve-arena-initial-direction.md`: o jogo deve comecar por Arena PVE, nao por PVP-first. O loop interno pos-login aceito continua como fundacao de app:
+A decisao de produto seguinte e `docs/pve-arena-initial-direction.md`: o jogo deve comecar por Arena PVE, nao por PVP-first. O pacote contratual/data-driven inicial vive em `docs/pve-arena-v1.md` e promove os arquivos `data/definitions/pve_arenas.json`, `pve_enemies.json`, `arena_buffs.json` e `arena_rewards.json` como fonte autorada para a proxima implementacao. O loop interno pos-login aceito continua como fundacao de app:
 
 `Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
 
@@ -40,6 +40,15 @@ Ao abrir o pacote de Arena PVE inicial, devem ser avaliados juntos:
 - comportamento ajustavel entre lutas;
 - limites de recompensa sem cooldown de combate;
 - qualidade da resposta visual/tecnica em Android, PC e PC browser.
+
+Contrato v1 fechado para proxima implementacao:
+
+- tutorial de 1 duelo;
+- primeiras arenas reais de 3 duelos;
+- cap inicial de 5 duelos;
+- primeira lista de inimigos/arquetipos PVE;
+- buffs temporarios apenas de stat;
+- recompensa inicial calibravel por primeira clear, conclusao, recorde, repeticao reduzida e limites diarios/semanais.
 
 ## O Que Existe Como Substancia/Mock
 
@@ -102,6 +111,7 @@ Track 16 e o ultimo pacote tecnico, com comportamento/crafting/pocoes. Ele esta 
 
 - `foundation-app-v0-audit.md` - bussola atual da Foundation Audit.
 - `pve-arena-initial-direction.md` - direcao viva do early game por Arena PVE.
+- `pve-arena-v1.md` - contrato inicial de Arena PVE para dados, endpoints, schema e labs.
 - `first-session-clarity-v1.md` - pacote publicado de clareza da primeira sessao.
 - `product-vision.md` - visao longa local.
 - `game-design-document.md` - referencia de implementacao e substancia/mock existente.

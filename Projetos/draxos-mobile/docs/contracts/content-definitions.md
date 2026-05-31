@@ -1,7 +1,7 @@
 # Content Definitions Contract
 
-- Ultima atualizacao: `2026-05-30`
-- Status: contrato inicial implementado com rework de personagem; Track 16 adicionou pocoes e receitas de crafting; Foundation Expansion Readiness adicionou `foundation_ruleset_v0` como manifest gerado de autoria/publicacao.
+- Ultima atualizacao: `2026-05-31`
+- Status: contrato inicial implementado com rework de personagem; Track 16 adicionou pocoes e receitas de crafting; Foundation Expansion Readiness adicionou `foundation_ruleset_v0` como manifest gerado de autoria/publicacao; Arena PVE v1 adiciona definitions ruleset-only para arenas, inimigos, buffs e rewards.
 
 Conteudo autorado vive em `../../data/definitions/`. Resources Godot gerados vivem em `../../data/generated/` e nao devem ser editados manualmente.
 
@@ -53,6 +53,25 @@ IDs sao estaveis. Nao renomear ID para mudar texto player-facing.
 | `potions.json` | `potions` | Consumiveis de batalha, efeito e comportamento default |
 | `crafting_recipes.json` | `crafting_recipes` | Receitas server-authoritative de crafting |
 
+## Arquivos Ruleset-Only Da Arena PVE v1
+
+Os arquivos abaixo entram no `foundation_ruleset_v0` e nos contratos de backend/labs, mas ainda nao entram no catalogo Godot gerado por `tools/content_generator.gd`.
+
+| Arquivo | Collection | Conteudo |
+|---|---|---|
+| `pve_arenas.json` | `pve_arenas` | Arenas, tamanho da lista, unlocks, sequencia de inimigos, reward profile e regras de tentativa |
+| `pve_enemies.json` | `pve_enemies` | Inimigos PVE por arquetipo, papel didatico, poder alvo e build base |
+| `arena_buffs.json` | `arena_buffs` | Buffs temporarios de stat oferecidos entre duelos |
+| `arena_rewards.json` | `arena_rewards` | Perfis de recompensa da Arena PVE, repeticao reduzida e limites |
+
+Campos minimos alem dos comuns:
+
+- `mode = "PVE_ARENA_V1"`;
+- `version`;
+- tags com `PVE_ARENA_V1`;
+- referencias estaveis para arena, inimigo, buff ou reward profile;
+- valores numericos marcados como `CALIBRAVEL_ALPHA` quando ainda dependem de Lab/rodada humana.
+
 ## Foundation Ruleset v0
 
 `foundation_ruleset_v0` e o primeiro pacote explicito de regras/conteudo. Ele nao substitui os JSONs autorados; ele registra quais fontes e hashes compoem a publicacao atual.
@@ -62,6 +81,7 @@ Inclui:
 - `content_hash`;
 - `simulator_hash`;
 - references para definitions, Battle Lab, Progression Lab, economy simulator e battle simulator mirrors;
+- references para definitions Arena PVE v1;
 - `schema_version = foundation_ruleset_manifest_v1`;
 - `ruleset_version = 1`.
 

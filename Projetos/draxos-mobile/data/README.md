@@ -10,6 +10,16 @@ Fluxo atual:
 
 ```text
 definitions/*.json -> tools/content_generator.gd -> generated/draxos_mobile_catalog.tres
+definitions/*.json + tool models + simulator mirrors -> tools/generate_foundation_ruleset.ts -> rulesets/foundation_ruleset_v0.json
 ```
 
 Fixtures `MVP_ONLY` sao tecnicas e nao representam balanceamento final.
+
+Arena PVE v1 adiciona definitions ruleset-only:
+
+- `definitions/pve_arenas.json`
+- `definitions/pve_enemies.json`
+- `definitions/arena_buffs.json`
+- `definitions/arena_rewards.json`
+
+Essas collections entram no ruleset e nos contratos backend/labs. Elas nao entram no catalogo Godot atual ate o client/package escolher consumi-las.
