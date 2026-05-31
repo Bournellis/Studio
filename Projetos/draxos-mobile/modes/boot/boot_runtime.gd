@@ -5,6 +5,7 @@ const ShellSurfacePresenterScript := preload("res://modes/boot/surfaces/shell_su
 const HubSurfacePresenterScript := preload("res://modes/boot/surfaces/hub_surface_presenter.gd")
 const HubAccountSurfacePresenterScript := preload("res://modes/boot/surfaces/hub_account_surface_presenter.gd")
 const BattleReplayPresenterScript := preload("res://modes/boot/surfaces/battle_replay_presenter.gd")
+const ArenaSurfacePresenterScript := preload("res://modes/boot/surfaces/arena_surface_presenter.gd")
 const BaseSurfacePresenterScript := preload("res://modes/boot/surfaces/base_surface_presenter.gd")
 const SocialSurfacePresenterScript := preload("res://modes/boot/surfaces/social_surface_presenter.gd")
 const CompetitionSurfacePresenterScript := preload("res://modes/boot/surfaces/competition_surface_presenter.gd")
@@ -19,6 +20,7 @@ const MobileUiContractScript := preload("res://modes/boot/ui/mobile_ui_contract.
 const AccountSessionFlowScript := preload("res://modes/boot/flows/account_session_flow.gd")
 const SurfaceActionFlowScript := preload("res://modes/boot/flows/surface_action_flow.gd")
 const BattleLifecycleFlowScript := preload("res://modes/boot/flows/battle_lifecycle_flow.gd")
+const ArenaLifecycleFlowScript := preload("res://modes/boot/flows/arena_lifecycle_flow.gd")
 const ROUTE_ENTRY := AppShellRouteContractScript.ROUTE_ENTRY
 const ROUTE_REFUGE := AppShellRouteContractScript.ROUTE_REFUGE
 const ROUTE_ACCOUNT := AppShellRouteContractScript.ROUTE_ACCOUNT
@@ -30,6 +32,12 @@ const ROUTE_BATTLE_ENTRY := AppShellRouteContractScript.ROUTE_BATTLE_ENTRY
 const ROUTE_BATTLE_RUNNING := AppShellRouteContractScript.ROUTE_BATTLE_RUNNING
 const ROUTE_BATTLE_SUMMARY := AppShellRouteContractScript.ROUTE_BATTLE_SUMMARY
 const ROUTE_BATTLE_LOGS := AppShellRouteContractScript.ROUTE_BATTLE_LOGS
+const ROUTE_ARENA_SELECTION := AppShellRouteContractScript.ROUTE_ARENA_SELECTION
+const ROUTE_ARENA_LOADOUT := AppShellRouteContractScript.ROUTE_ARENA_LOADOUT
+const ROUTE_ARENA_ACTIVE := AppShellRouteContractScript.ROUTE_ARENA_ACTIVE
+const ROUTE_ARENA_REPLAY := AppShellRouteContractScript.ROUTE_ARENA_REPLAY
+const ROUTE_ARENA_BUFF_CHOICE := AppShellRouteContractScript.ROUTE_ARENA_BUFF_CHOICE
+const ROUTE_ARENA_SUMMARY := AppShellRouteContractScript.ROUTE_ARENA_SUMMARY
 const ROUTE_MINIGAME_SHELL := AppShellRouteContractScript.ROUTE_MINIGAME_SHELL
 const ROUTE_BATTLE_LAB := "battle_lab"
 const ROUTE_PROGRESSION_LAB := "progression_lab"
@@ -115,8 +123,10 @@ var _update_gate := ProjectInfoScript.unchecked_update_status()
 var _account_session_flow = AccountSessionFlowScript.new()
 var _surface_action_flow = SurfaceActionFlowScript.new()
 var _battle_lifecycle_flow = BattleLifecycleFlowScript.new()
+var _arena_lifecycle_flow = ArenaLifecycleFlowScript.new()
 var _operation_state = OperationStateScript.new()
 var _battle_replay_presenter = BattleReplayPresenterScript.new()
+var _arena_surface_presenter = ArenaSurfacePresenterScript.new()
 var _battle_history_entries: Array[Dictionary] = []
 var _battle_history_save_type := SessionStoreScript.SAVE_TYPE_NORMAL
 func _ready() -> void:
@@ -296,6 +306,18 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 			_render_battle_summary_screen()
 		ROUTE_BATTLE_LOGS:
 			_render_battle_logs_screen()
+		ROUTE_ARENA_SELECTION:
+			_render_arena_selection_screen()
+		ROUTE_ARENA_LOADOUT:
+			_render_arena_loadout_screen()
+		ROUTE_ARENA_ACTIVE:
+			_render_arena_active_screen()
+		ROUTE_ARENA_REPLAY:
+			_render_arena_replay_screen()
+		ROUTE_ARENA_BUFF_CHOICE:
+			_render_arena_buff_choice_screen()
+		ROUTE_ARENA_SUMMARY:
+			_render_arena_summary_screen()
 		SCREEN_BASE:
 			_render_base_screen()
 		SCREEN_SOCIAL:
@@ -487,6 +509,24 @@ func _render_battle_summary_screen() -> void:
 
 func _render_battle_logs_screen() -> void:
 	_battle_lifecycle_flow.render_logs(self)
+
+func _render_arena_selection_screen() -> void:
+	_arena_lifecycle_flow.render_selection(self)
+
+func _render_arena_loadout_screen() -> void:
+	_arena_lifecycle_flow.render_loadout(self)
+
+func _render_arena_active_screen() -> void:
+	_arena_lifecycle_flow.render_active(self)
+
+func _render_arena_replay_screen() -> void:
+	_arena_lifecycle_flow.render_replay(self)
+
+func _render_arena_buff_choice_screen() -> void:
+	_arena_lifecycle_flow.render_buff_choice(self)
+
+func _render_arena_summary_screen() -> void:
+	_arena_lifecycle_flow.render_summary(self)
 
 func _render_base_screen() -> void:
 	BaseSurfacePresenterScript.render(self)
@@ -697,6 +737,8 @@ func _execute_action(action_id: String) -> void:
 		await _enable_spell_behavior(AppShellActionContractScript.action_value(action))
 	elif AppShellActionContractScript.is_disable_spell_behavior(action):
 		await _disable_spell_behavior(AppShellActionContractScript.action_value(action))
+	elif AppShellActionContractScript.is_arena_choose_buff(action):
+		await _choose_arena_buff(AppShellActionContractScript.action_value(action))
 	elif AppShellActionContractScript.is_battle_replay(action):
 		await _show_battle_replay(AppShellActionContractScript.action_value(action))
 	elif AppShellActionContractScript.is_open_minigame_shell(action):
@@ -729,6 +771,18 @@ func _execute_action(action_id: String) -> void:
 				_open_battle_lab_overlay()
 			AppShellActionContractScript.ACTION_OPEN_PROGRESSION_LAB:
 				_open_progression_lab_overlay()
+			AppShellActionContractScript.ACTION_OPEN_ARENA:
+				await _open_arena()
+			AppShellActionContractScript.ACTION_ARENA_START_TUTORIAL:
+				await _start_arena_tutorial()
+			AppShellActionContractScript.ACTION_ARENA_START_EARLY:
+				await _start_arena_early()
+			AppShellActionContractScript.ACTION_ARENA_LOCK_LOADOUT:
+				_lock_arena_loadout()
+			AppShellActionContractScript.ACTION_ARENA_RESOLVE_DUEL:
+				await _resolve_arena_duel()
+			AppShellActionContractScript.ACTION_ARENA_CLAIM_SUMMARY:
+				await _claim_arena_summary()
 			AppShellActionContractScript.ACTION_REQUEST_BATTLE:
 				await _request_battle()
 			ACTION_SKIP_REPLAY:
@@ -907,6 +961,27 @@ func _show_battle_history() -> void:
 
 func _show_battle_replay(battle_id: String) -> void:
 	await _battle_lifecycle_flow.show_battle_replay(self, battle_id)
+
+func _open_arena() -> void:
+	await _arena_lifecycle_flow.open_arena(self)
+
+func _start_arena_tutorial() -> void:
+	await _arena_lifecycle_flow.start_tutorial(self)
+
+func _start_arena_early() -> void:
+	await _arena_lifecycle_flow.start_early(self)
+
+func _lock_arena_loadout() -> void:
+	_arena_lifecycle_flow.lock_loadout(self)
+
+func _resolve_arena_duel() -> void:
+	await _arena_lifecycle_flow.resolve_duel(self)
+
+func _choose_arena_buff(buff_id: String) -> void:
+	await _arena_lifecycle_flow.choose_buff(self, buff_id)
+
+func _claim_arena_summary() -> void:
+	await _arena_lifecycle_flow.claim_summary(self)
 
 func _open_minigame_shell(_minigame_id: String = "") -> void:
 	_show_screen(ROUTE_MINIGAME_SHELL)

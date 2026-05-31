@@ -54,7 +54,8 @@ static func _refuge_scene_board(host: Node, root: Control, compact: bool) -> voi
 	var title_label := popup_data["title_label"] as Label
 	var body := popup_data["body"] as VBoxContainer
 
-	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "battle", "BT", "Batalha", "accent_blood", Vector2(0.50, 0.19), "Pedir batalha e ver resultado.")
+	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "arena", "AR", "Arena PVE", "accent_blood", Vector2(0.50, 0.19), "Escolher Arena PVE e travar loadout.")
+	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "battle", "BT", "Batalha", "accent_blood", Vector2(0.38, 0.19), "Pedir batalha legada e ver resultado.")
 	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "preparation", "PP", "Preparacao", "accent_astral", Vector2(0.50, 0.32), "Revisar pocao e habilidades antes da batalha.")
 	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "refuge", "RF", "Refugio", "accent_astral", Vector2(0.22, 0.37), "Coleta, energia e estruturas.")
 	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "social", "SO", "Social", "status_success", Vector2(0.78, 0.37), "Amigos, guilda e chat.")
@@ -463,6 +464,9 @@ static func _node_is_inside(node: Node, root: Node) -> bool:
 
 static func _populate_refuge_menu(host: Node, popup: PopupPanel, body: VBoxContainer, menu_id: String, compact: bool) -> void:
 	match menu_id:
+		"arena":
+			body.add_child(_popup_hint("Tutorial de 1 duelo e primeiras arenas de 3 duelos com buffs temporarios.", compact))
+			body.add_child(_popup_action_button(host, popup, "Abrir Arena PVE", AppShellActionContractScript.ACTION_OPEN_ARENA, "", true))
 		"battle":
 			body.add_child(_popup_hint("Pedir batalha, rever resultado ou abrir historico.", compact))
 			body.add_child(_popup_action_button(host, popup, "Pedir batalha", AppShellActionContractScript.ACTION_REQUEST_BATTLE, "", true))
@@ -539,6 +543,8 @@ static func _popup_hint(text: String, compact: bool) -> Label:
 
 static func _menu_title(menu_id: String) -> String:
 	match menu_id:
+		"arena":
+			return "Arena PVE"
 		"battle":
 			return "Batalha"
 		"preparation":
@@ -725,9 +731,9 @@ static func _refuge_context_cta_data(host: Node) -> Dictionary:
 					"color_token": "accent_astral",
 				}
 	return {
-		"text": "Batalhar",
-		"detail": "Testar sua preparacao em uma batalha assincrona.",
-		"action_id": AppShellActionContractScript.ACTION_REQUEST_BATTLE,
+		"text": "Arena PVE",
+		"detail": "Entrar na arena inicial, travar loadout e resolver duelos.",
+		"action_id": AppShellActionContractScript.ACTION_OPEN_ARENA,
 		"color_token": "accent_blood",
 	}
 

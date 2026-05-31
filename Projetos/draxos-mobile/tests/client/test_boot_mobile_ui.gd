@@ -406,8 +406,8 @@ func test_refuge_context_cta_priority_uses_loaded_state() -> void:
 
 	SessionStore.base_state = {}
 	cta = HubSurfacePresenterScript._refuge_context_cta_data(boot)
-	assert_eq(str(cta.get("action_id", "")), "request_battle")
-	assert_eq(str(cta.get("text", "")), "Batalhar")
+	assert_eq(str(cta.get("action_id", "")), "open_arena")
+	assert_eq(str(cta.get("text", "")), "Arena PVE")
 
 func test_boot_refugio_home_shows_progression_lab_when_dev_tools_are_enabled() -> void:
 	ProjectSettings.set_setting("draxos_mobile/progression_lab/enabled", true)

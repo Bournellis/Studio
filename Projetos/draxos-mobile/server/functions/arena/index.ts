@@ -704,6 +704,19 @@ async function handleDuelRequest(
       hp_reset_per_duel: true,
       ranking_mutated: false,
     },
+    metadata: {
+      ...(isObject((simulation.battleLog as Record<string, unknown>).metadata)
+        ? (simulation.battleLog as Record<string, unknown>).metadata as Record<string, unknown>
+        : {}),
+      arena_id: attempt.value.arena_id,
+      difficulty_id: attempt.value.difficulty_id,
+      attempt_id: attempt.value.id,
+      step_index: nextStep,
+      enemy_id: enemyId,
+      active_buffs: attempt.value.active_buffs,
+      hp_reset_per_duel: true,
+      ranking_mutated: false,
+    },
   };
   const rewardPayload = arenaRewardPayload(
     attempt.value,

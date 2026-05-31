@@ -14,6 +14,12 @@ const ROUTE_BATTLE_ENTRY := "battle_entry"
 const ROUTE_BATTLE_RUNNING := "battle_running"
 const ROUTE_BATTLE_SUMMARY := "battle_summary"
 const ROUTE_BATTLE_LOGS := "battle_logs"
+const ROUTE_ARENA_SELECTION := "arena_selection"
+const ROUTE_ARENA_LOADOUT := "arena_loadout"
+const ROUTE_ARENA_ACTIVE := "arena_active"
+const ROUTE_ARENA_REPLAY := "arena_replay"
+const ROUTE_ARENA_BUFF_CHOICE := "arena_buff_choice"
+const ROUTE_ARENA_SUMMARY := "arena_summary"
 const ROUTE_MINIGAME_SHELL := "minigame_shell"
 
 const ACTION_REQUEST_BATTLE := "request_battle"
@@ -38,6 +44,8 @@ const _ALIASES := {
 	"perfil": ROUTE_ACCOUNT,
 	"profile": ROUTE_ACCOUNT,
 	"battle": ROUTE_BATTLE_ENTRY,
+	"arena": ROUTE_ARENA_SELECTION,
+	"arena_pve": ROUTE_ARENA_SELECTION,
 	"monetization": ROUTE_SHOP,
 }
 
@@ -54,6 +62,12 @@ const _TITLES := {
 	ROUTE_BATTLE_RUNNING: "Batalha",
 	ROUTE_BATTLE_SUMMARY: "Resumo",
 	ROUTE_BATTLE_LOGS: "Logs",
+	ROUTE_ARENA_SELECTION: "Arena PVE",
+	ROUTE_ARENA_LOADOUT: "Loadout",
+	ROUTE_ARENA_ACTIVE: "Tentativa",
+	ROUTE_ARENA_REPLAY: "Duelo",
+	ROUTE_ARENA_BUFF_CHOICE: "Buff",
+	ROUTE_ARENA_SUMMARY: "Resumo",
 	ROUTE_MINIGAME_SHELL: "Minigame",
 }
 
@@ -64,10 +78,20 @@ const _BATTLE_MODE_ROUTES := {
 	ROUTE_BATTLE_LOGS: true,
 }
 
+const _ARENA_MODE_ROUTES := {
+	ROUTE_ARENA_SELECTION: true,
+	ROUTE_ARENA_LOADOUT: true,
+	ROUTE_ARENA_ACTIVE: true,
+	ROUTE_ARENA_REPLAY: true,
+	ROUTE_ARENA_BUFF_CHOICE: true,
+	ROUTE_ARENA_SUMMARY: true,
+}
+
 const _FULLSCREEN_GAMEPLAY_ROUTES := {
 	ROUTE_BATTLE_RUNNING: true,
 	ROUTE_BATTLE_SUMMARY: true,
 	ROUTE_BATTLE_LOGS: true,
+	ROUTE_ARENA_REPLAY: true,
 }
 
 const _IMMERSIVE_ROUTES := {
@@ -104,6 +128,9 @@ static func prefers_portrait(_route_id: String = "") -> bool:
 static func is_battle_mode(route_id: String) -> bool:
 	return bool(_BATTLE_MODE_ROUTES.get(normalize(route_id), false))
 
+static func is_arena_mode(route_id: String) -> bool:
+	return bool(_ARENA_MODE_ROUTES.get(normalize(route_id), false))
+
 static func is_fullscreen_gameplay(route_id: String) -> bool:
 	return bool(_FULLSCREEN_GAMEPLAY_ROUTES.get(normalize(route_id), false))
 
@@ -111,9 +138,12 @@ static func shows_app_chrome(route_id: String) -> bool:
 	return not uses_immersive_layer(route_id) and not is_fullscreen_gameplay(route_id)
 
 static func summary_route_for(route_id: String) -> String:
+	var normalized := normalize(route_id)
+	if is_arena_mode(normalized):
+		return ROUTE_ARENA_SUMMARY
 	if is_battle_mode(route_id):
 		return ROUTE_BATTLE_SUMMARY
-	return normalize(route_id)
+	return normalized
 
 static func is_safe_replay_action(action_id: String) -> bool:
 	return action_id.strip_edges() == ACTION_SKIP_REPLAY

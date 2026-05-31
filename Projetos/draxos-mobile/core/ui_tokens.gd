@@ -139,6 +139,12 @@ const ACTION_ACCENTS: Dictionary = {
 	"unequip_potion": "accent_refuge",
 	"enable_potion_default": "accent_refuge",
 	"disable_potion": "accent_refuge",
+	"open_arena": "accent_blood",
+	"arena_start_tutorial": "accent_blood",
+	"arena_start_early": "accent_blood",
+	"arena_lock_loadout": "accent_refuge",
+	"arena_resolve_duel": "accent_battle",
+	"arena_claim_summary": "accent_bone",
 	"request_battle": "accent_battle",
 	"show_latest_battle": "accent_battle",
 	"show_battle_history": "accent_battle",
@@ -177,12 +183,14 @@ const ACTION_ACCENT_PREFIXES: Dictionary = {
 	"claim_reward:": "accent_shop",
 	"enable_spell_behavior:": "accent_refuge",
 	"disable_spell_behavior:": "accent_refuge",
+	"arena_choose_buff:": "accent_ritual",
 	"battle_replay:": "accent_battle"
 }
 
 const CTA_ACTIONS: Dictionary = {
 	"enter_refuge": true,
 	"email_sign_in": true,
+	"open_arena": true,
 	"request_battle": true,
 	"show_latest_battle": true,
 	"return_refuge": true,

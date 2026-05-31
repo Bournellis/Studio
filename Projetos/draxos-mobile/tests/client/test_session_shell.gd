@@ -202,6 +202,48 @@ func test_session_store_rejects_stale_save_scoped_surface_payloads() -> void:
 	assert_eq(str(store.last_error.get("code", "")), "STALE_SAVE_RESPONSE")
 	store.free()
 
+func test_session_store_accepts_arena_state_without_competition_mutation() -> void:
+	var store = SessionStoreScript.new()
+	var applied := store.apply_arena_result({
+		"ok": true,
+		"_client": {"save_type": "normal"},
+		"body": {
+			"ok": true,
+			"schema_version": "arena_duel_response_v1",
+			"attempt": {
+				"id": "attempt-1",
+				"arena_id": "arena_cinzas_curta",
+				"difficulty_rank": 1,
+				"max_steps": 3,
+				"current_step_index": 1,
+				"status": "active",
+				"enemy_sequence": ["pve_aprendiz_cinzas", "pve_guardiao_barreira", "pve_sussurrador_veu"],
+				"active_buffs": [],
+			},
+			"step": {
+				"step_index": 1,
+				"battle_log": {"schema_version": "battle_log_v1", "battle_id": "arena-battle-1"},
+				"reward_payload": {"schema_version": "arena_reward_payload_v1", "economy_applied": false},
+				"buff_options": [
+					{"id": "arena_buff_vitalidade_menor", "display_name": "Vitalidade Menor"},
+					{"id": "arena_buff_potencia_menor", "display_name": "Potencia Ritual Menor"},
+					{"id": "arena_buff_guarda_menor", "display_name": "Guarda Menor"},
+				],
+			},
+			"ranking": {"mutated": false, "reason": "ARENA_PVE_DOES_NOT_RANK"},
+		},
+	})
+	assert_true(applied)
+	assert_true(store.has_arena_state())
+	assert_false(store.has_battle_log())
+	assert_true(store.competition_state.is_empty())
+	var attempt := store.active_arena_attempt()
+	assert_eq(str(attempt.get("attempt_id", "")), "attempt-1")
+	assert_eq(int(attempt.get("duel_count", 0)), 3)
+	assert_eq(int(Dictionary(attempt.get("buff_offer", {})).get("step_index", 0)), 1)
+	assert_eq(str(attempt.get("next_enemy_id", "")), "pve_guardiao_barreira")
+	store.free()
+
 func test_session_store_tracks_surface_snapshots_per_save() -> void:
 	var store = SessionStoreScript.new()
 	assert_true(store.apply_server_state({
@@ -248,6 +290,10 @@ func test_supabase_client_uses_local_contract_urls() -> void:
 	assert_eq(client.function_url("battle/request"), "http://127.0.0.1:54321/functions/v1/battle/request")
 	assert_eq(client.function_url("battle/history"), "http://127.0.0.1:54321/functions/v1/battle/history")
 	assert_eq(client.function_url("battle/replay"), "http://127.0.0.1:54321/functions/v1/battle/replay")
+	assert_eq(client.function_url("arena/pve/state"), "http://127.0.0.1:54321/functions/v1/arena/pve/state")
+	assert_eq(client.function_url("arena/pve/start"), "http://127.0.0.1:54321/functions/v1/arena/pve/start")
+	assert_eq(client.function_url("arena/pve/duel/request"), "http://127.0.0.1:54321/functions/v1/arena/pve/duel/request")
+	assert_eq(client.function_url("arena/pve/buff/select"), "http://127.0.0.1:54321/functions/v1/arena/pve/buff/select")
 	assert_eq(client.function_url("base/state"), "http://127.0.0.1:54321/functions/v1/base/state")
 	assert_eq(client.function_url("social/state"), "http://127.0.0.1:54321/functions/v1/social/state")
 	assert_eq(client.function_url("competition/ranking/current"), "http://127.0.0.1:54321/functions/v1/competition/ranking/current")
