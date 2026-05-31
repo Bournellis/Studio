@@ -1,6 +1,6 @@
 # Track 20 - Season 1 Arena Calibration
 
-- Status: `LOCAL_PACKAGE_READY`
+- Status: `PUBLISHED_INTERNAL_ALPHA`
 - Data: `2026-05-31`
 - Branch de integracao: `codex/draxos-mobile/s1-arena-calibration-integration`
 - Base: `codex/draxos-mobile/season1-arena-tuning-definitions`
@@ -16,7 +16,7 @@ Transformar a matriz de arenas da Season 1 em fonte operacional para labs, backe
 - Fazer Battle Lab e Progression Lab consumirem `pve_arena_difficulties.json`.
 - Rodar baseline e calibragem offline da Season 1.
 - Promover backend e cliente para `arena_id + difficulty_id` data-driven.
-- Validar e empacotar uma Internal Alpha local para playtest humano.
+- Validar, publicar e empacotar uma Internal Alpha remota para playtest humano.
 
 ## Nao Objetivos
 
@@ -34,7 +34,8 @@ Transformar a matriz de arenas da Season 1 em fonte operacional para labs, backe
 - Runtime inicia arena por `arena_id:difficulty_id`.
 - Rewards first-clear/repeat usam chave por tier.
 - Cliente lista dificuldades vindas do servidor.
-- Gates locais e pacote Internal Alpha local concluidos.
+- Gates locais, migrations/functions remotas, pacote Internal Alpha e manifest
+  publicados.
 
 ## Entrega Atual
 
@@ -66,9 +67,17 @@ Transformar a matriz de arenas da Season 1 em fonte operacional para labs, backe
 - `tools/publish_internal_alpha.ps1 -Mode Plan`: PASS.
 - `tools/publish_internal_alpha.ps1 -Mode Package`: PASS.
 
-## Pacote Local
+## Publicacao Remota
 
 - Publish dir: `build/internal-alpha/publish`.
+- Release root:
+  `internal-alpha/v0-s1-arena-calibration-20260531-c40c2a6`.
+- Portal:
+  `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`.
+- Web:
+  `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`.
+- Preview:
+  `https://c20c0ff3.draxos-mobile-internal-alpha.pages.dev`.
 - Android APK: `31762404` bytes,
   SHA256 `6c84aea08f9731d6449c9aca8186695020161a4fd688f0f0a59c24a952b1286d`.
 - PC Windows ZIP: `40221978` bytes,
@@ -76,4 +85,8 @@ Transformar a matriz de arenas da Season 1 em fonte operacional para labs, backe
 - Web Index: `5442` bytes,
   SHA256 `63bfb9aa4f79882413ff0b462f6420630cfedcdca825ba41b44ff51d65f6caff`.
 - Android export mode: `debug_fallback`; keystore release ainda nao configurada.
-- Publicacao remota nao foi executada nesta track local.
+- Remote migrations: PASS after repairing the initial Arena table drift; pending
+  migrations `202605310002` and `202605310003` applied.
+- Edge Functions: `arena`, `lab-runner` and `release` deployed.
+- Remote smokes: `release_manifest_smoke`, `release_artifacts_remote_smoke` and
+  `internal_alpha_remote_smoke` PASS.

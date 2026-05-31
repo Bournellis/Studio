@@ -5,17 +5,17 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
 - Active stage: `Season 1 Arena Calibration`
-- Active stage status: `LOCAL_PACKAGE_READY`
+- Active stage status: `PUBLISHED_INTERNAL_ALPHA`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published remote package: `Remote Lab Runner`
+- Latest published remote package: `Track 20 - Season 1 Arena Calibration`
 - Latest implemented package: `Track 20 - Season 1 Arena Calibration` on branch
   `codex/draxos-mobile/s1-arena-calibration-integration`.
-- Active follow-up: run human playtest from the calibrated local Internal Alpha
-  package across tutorial, 3-duel, difficulty selection, rewards and repeat flow
-  before fine tuning; remote publication still requires explicit approval.
+- Active follow-up: run human playtest from the published Track 20 Internal
+  Alpha across tutorial, 3-duel, difficulty selection, rewards, repeat flow and
+  Web Labs before fine tuning.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -44,18 +44,18 @@ Lab Web Export Guard is preserved as the browser safety baseline over Track 19:
 Battle Lab Dev and Progression Lab Dev detect Web export before calling
 `OS.execute`, disable local-process actions in the browser and keep PC/editor
 Lab generation available.
-Remote Lab Runner is the current published Internal Alpha package over that
-hotfix: Web Battle Lab and Progression Lab call Supabase Edge `lab-runner` with
-the same email/password Internal Alpha account gate used by the game, without
-exposing service role to the client or mutating economy/ranking/progress.
+Remote Lab Runner is preserved inside the current published Track 20 Internal
+Alpha package: Web Battle Lab and Progression Lab call Supabase Edge
+`lab-runner` with the same email/password Internal Alpha account gate used by
+the game, without exposing service role to the client or mutating
+economy/ranking/progress.
 
-Track 20 - Season 1 Arena Calibration is the current local follow-up on top of
-the published Remote Lab Runner package. It promotes `pve_arena_difficulties`
-from data contract to operational source for labs, generated Edge catalog,
-backend runtime and client difficulty selection. The package keeps global combat,
-XP formula, `players.power`, weapons, spells, passives, familiars, potions and
-assets untouched; Arena tuning power remains lab/runtime metadata for PVE enemy
-scaling only.
+Track 20 - Season 1 Arena Calibration is the current published remote package.
+It promotes `pve_arena_difficulties` from data contract to operational source
+for labs, generated Edge catalog, backend runtime and client difficulty
+selection. The package keeps global combat, XP formula, `players.power`,
+weapons, spells, passives, familiars, potions and assets untouched; Arena tuning
+power remains lab/runtime metadata for PVE enemy scaling only.
 
 Current product reading: this is a strong prototype base for refinement. The
 current product direction is Arena PVE initial, documented in
@@ -258,7 +258,7 @@ the potion and summary behavior manually, then choose the focused tuning pass.
 
 ## Track 20 - Season 1 Arena Calibration
 
-Track 20 is implemented locally on
+Track 20 is implemented and published remotely on
 `codex/draxos-mobile/s1-arena-calibration-integration` as the first playable
 Season 1 Arena calibration package.
 
@@ -297,38 +297,74 @@ Calibration evidence:
   `season_1_level_curve.csv`; remaining Progression Lab `REVIEW` items are
   non-blocking resource/model pressure notes for fine tuning.
 
-Local validation and packaging completed:
+Validation and publication completed:
 
 - `git diff --check`: passed.
 - Deno function check passed for `server/functions` and `supabase/functions`.
 - Deno data/schema tests passed for Arena difficulties, generated catalog,
   foundation ruleset and Arena consistency.
+- Deploy fix: the initial Arena migration now keeps `ruleset_id` as a textual
+  snapshot and references immutable ruleset context through
+  `ruleset_publication_id`; the remote database was repaired and then migrated
+  through `202605310002` and `202605310003`.
 - Deno Battle Lab and Progression Lab tests passed.
+- Deno `server/tests/lab_runner_contract_test.ts`: passed after remote function
+  publication.
 - Godot `tools/validate.gd`: passed (`138/138`, `2368` asserts).
 - GUT client: passed (`138/138`, `2368` asserts).
 - `tools/smoke_responsive_layout.gd`: passed.
 - `tools/validate_foundation.ps1 -Profile Quick`: passed.
+- `tools/validate_foundation.ps1 -Profile Full -RequireClean`: passed before
+  publication.
 - `tools/export_internal_alpha.ps1 -AllowAndroidDebugFallback`: passed using
   the ignored local Internal Alpha env file; Android export mode:
   `debug_fallback`.
 - `tools/publish_internal_alpha.ps1 -Mode Plan`: passed.
 - `tools/publish_internal_alpha.ps1 -Mode Package`: passed and produced the
   local package at `build/internal-alpha/publish`.
+- `supabase db push --linked --yes`: passed after remote Arena table repair.
+- `supabase functions deploy arena`: passed.
+- `supabase functions deploy lab-runner`: passed.
+- `tools/publish_internal_alpha.ps1 -Mode Upload -PublicDownloads
+  -ConfirmRemoteMutation`: passed for release root
+  `internal-alpha/v0-s1-arena-calibration-20260531-c40c2a6`.
+- `tools/build_cloudflare_pages_package.ps1`: passed with Web assets rooted at
+  the versioned Supabase Storage path.
+- `npx -y wrangler pages deploy`: passed, preview
+  `https://c20c0ff3.draxos-mobile-internal-alpha.pages.dev`.
+- `tools/publish_internal_alpha.ps1 -Mode DeployManifest -PublicDownloads
+  -ConfirmRemoteMutation`: passed; the manifest points at the stable protected
+  Cloudflare Pages domain.
+- `server/tests/release_manifest_smoke.ts`: passed remotely.
+- `server/tests/release_artifacts_remote_smoke.ts`: passed remotely; Portal and
+  Web are correctly protected by Cloudflare Access.
+- `server/tests/internal_alpha_remote_smoke.ts`: passed remotely.
 
-Track 20 local package artifacts:
+Published Track 20 Internal Alpha artifacts:
 
-- Android APK: `31762404` bytes,
+- Portal:
+  `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+- Web:
+  `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- Preview:
+  `https://c20c0ff3.draxos-mobile-internal-alpha.pages.dev`
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-s1-arena-calibration-20260531-c40c2a6/downloads/draxos-mobile-alpha.apk`
+  (`31762404` bytes),
   SHA256 `6c84aea08f9731d6449c9aca8186695020161a4fd688f0f0a59c24a952b1286d`.
-- PC Windows ZIP: `40221978` bytes,
+- PC Windows ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-s1-arena-calibration-20260531-c40c2a6/downloads/draxos-mobile-alpha.zip`
+  (`40221978` bytes),
   SHA256 `aab5adad9064f869b01ffe92c8d7244a0ec36be7253839d09ef1765364050992`.
 - Web Index: `5442` bytes,
   SHA256 `63bfb9aa4f79882413ff0b462f6420630cfedcdca825ba41b44ff51d65f6caff`.
-- Remote upload/deploy was not executed for Track 20; remote mutation still
-  requires explicit approval and `-ConfirmRemoteMutation`.
+- Manifest:
+  `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 
 Next after Track 20: run a human playtest focused on tutorial, multiple
 difficulties of the 3-duel arena, locked loadout, buff choice, potion
-consumption, summary ack and repeat rewards before tuning numbers finer.
+consumption, summary ack, repeat rewards and Web Battle/Progression Labs before
+tuning numbers finer.
 
 ## Lab Web Export Guard Hotfix
 
